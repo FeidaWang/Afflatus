@@ -1,6 +1,13 @@
 export function createPageTurnController({ root = document, body = document.body, delay = 220 } = {}) {
   let isPageTurning = false;
 
+  // bfcache guard: Back-navigation restores the page mid-transition;
+  // strip the blur/slide classes so the effect never sticks.
+  window.addEventListener('pageshow', () => {
+    isPageTurning = false;
+    body.classList.remove('page-turn-next', 'page-turn-prev', 'folding');
+  });
+
   function pageTurnTo(url, dir = 'next') {
     if (!url || isPageTurning) return;
     isPageTurning = true;
