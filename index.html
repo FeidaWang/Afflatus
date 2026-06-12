@@ -4,13 +4,26 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Project Afflatus - Deep-Space Captain Log</title>
+<meta name="description" content="Bruce's deep-space captain log: a lone commander disclosing his US-equity positions, allocation logic and risk discipline. 深空舰长日志 · 个人美股持仓与纪律公开。No ads, no tips, no promises.">
+<meta name="theme-color" content="#05070b">
+<!-- og:image/og:url need an absolute URL once the production domain is set; prefix it below -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Afflatus">
+<meta property="og:title" content="Project Afflatus · Deep-Space Captain Log">
+<meta property="og:description" content="A lone commander's US-equity captain log: positions, allocation logic, discipline. No ads, no tips, no promises.">
+<meta property="og:image" content="/assets/og/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Project Afflatus · Deep-Space Captain Log">
+<meta name="twitter:description" content="A lone commander's US-equity captain log: positions, allocation logic, discipline.">
+<meta name="twitter:image" content="/assets/og/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-CZ7QetIz.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-mXHSz8Bf.css">
 </head>
-<body class="hud-off">
+<body class="hud-off" data-prev="/signal.html" data-next="/sectors.html">
 
 <canvas id="starfield"></canvas>
 <canvas id="blackhole-gl" aria-hidden="true"></canvas>
@@ -28,19 +41,20 @@
   <div class="hud-subwarning">舰桥锁定 · 目标神谕 · 信号帷幕</div>
   <div class="hud-panels">
     <aside class="hud-panel hud-left">
-      <div class="hud-label" data-hud="radarTitle">雷达接触</div>
+      <div class="hud-label" data-hud="radarTitle">雷达</div>
       <canvas id="radarCanvas"></canvas>
     </aside>
     <aside class="hud-panel hud-center">
       <div class="hud-label" data-hud="battleTitle">防御模块</div>
       <div class="combat-module">
-        <div class="combat-card"><span data-hud="killsLabel">确认击毁</span><b id="killCounter">0</b></div>
-        <div class="combat-card ap-card"><button type="button" class="ap-toggle" id="apToggle" data-hot><span class="ap-switch" aria-hidden="true"></span><b id="apState">自动</b></button></div>
         <div class="weapon-matrix" id="weaponMatrix">
           <button class="weapon-choice" data-weapon="cannon" data-hot><span>▥</span><b data-hud="wCannon">密集阵</b></button>
           <button class="weapon-choice" data-weapon="missile" data-hot><span>↗</span><b data-hud="wMissile">导弹</b></button>
           <button class="weapon-choice" data-weapon="nuke" data-hot><span>☢</span><b data-hud="wNuke">核打击</b></button>
           <button class="weapon-choice" data-weapon="enforcer" data-hot><span>✦</span><b data-hud="wEnforcer">主炮</b></button>
+        </div>
+        <div class="battle-feed defense-command-log" id="battleFeed">
+          <output class="combat-kill-meter" aria-label="Confirmed kills"><b id="killCounter">0</b></output>
         </div>
         <form class="mobile-weapon-form weapon-form-hidden" id="weaponForm">
           <label for="weaponSelect">彗星截击裁决</label>
@@ -56,38 +70,45 @@
       </div>
     </aside>
     <aside class="hud-panel hud-pilot">
-      <div class="hud-label" data-hud="pilotTitle">飞行员视角</div>
+      <div class="hud-label" data-hud="pilotTitle">COMBAT VIEW</div>
       <canvas class="pilot-feed" id="pilotFeed"></canvas>
     </aside>
     <aside class="hud-panel hud-right">
-      <div class="hud-label" data-hud="hangarTitle">资产神谕</div>
+      <div class="hud-label" data-hud="hangarTitle">COMMANDER TERMINAL</div>
       <div class="signal-deck fleet-status-deck" id="signalDeck">
-        <div class="signal-head">
-          <b id="signalDeckTitle">AI SIGNAL DECK</b>
-          <div class="signal-head-meta">
-            <span class="live-tag">LIVE</span>
-            <span id="signalDeckDate">2026-06-01</span>
+        <div class="captain-terminal private-notebook" id="captainTerminal">
+          <div class="notebook-shell">
+            <div class="notebook-status">
+              <span class="terminal-led"></span>
+              <b>Commander Terminal</b>
+              <button class="starmap-toggle" id="starmapToggle" type="button" data-hot>LOGIN</button>
+              <em class="terminal-lock" aria-label="Locked"></em>
+            </div>
+            <div class="terminal-starmap active" id="terminalStarMapPanel" aria-label="Alphard galactic map">
+              <canvas id="terminalStarMap"></canvas>
+              <div class="starmap-readout">
+                <b>ALPHARD</b>
+                <span id="starmapDistance">2738 days from Earth</span>
+              </div>
+              <div class="voyage-pulse" id="voyagePulse" aria-live="polite">
+                <b>EARTH -> ALPHARD</b>
+                <span>2738 DAYS · BEARING 128° · COURSE LOCKED</span>
+                <i></i>
+              </div>
+            </div>
+            <form class="notebook-login" autocomplete="off">
+              <label>
+                <span>ACCOUNT</span>
+                <input type="text" name="commander-account" placeholder="BRUCE.WANG" inputmode="email" aria-label="Commander account">
+              </label>
+              <label>
+                <span>PASSWORD</span>
+                <input type="password" name="commander-password" placeholder="••••••••" aria-label="Commander password">
+              </label>
+              <button id="terminalLoginBtn" type="button" data-hot>LOGIN</button>
+            </form>
           </div>
         </div>
-        <div class="signal-body">
-          <div class="signal-chart">
-            <div class="signal-chart-label">PORTFOLIO YTD</div>
-            <div class="signal-line" aria-hidden="true">
-              <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-            </div>
-            <div class="signal-metrics">
-              <div><span id="signalRegimeLabel">REGIME</span><b id="signalRegime">AI INFRASTRUCTURE</b></div>
-              <div><span id="signalBetaLabel">BETA</span><b id="signalBeta">1.18</b></div>
-              <div><span id="signalRiskLabel">RISK</span><b id="signalRisk">CONCENTRATED</b></div>
-              <div><span>YTD</span><b class="gain">+30.3%</b></div>
-            </div>
-          </div>
-          <div class="signal-table">
-            <div class="signal-table-head"><span>FLEET</span><span>WT</span><span>STATUS</span></div>
-            <div class="signal-picks" id="signalDeckPicks"></div>
-          </div>
-        </div>
-        <div class="signal-footer"><span>CATALYSTS</span><b id="signalCatalyst">HBM · inference · custom silicon · power grid</b></div>
       </div>
     </aside>
   </div>
@@ -111,7 +132,6 @@
   <div class="cursor-target" id="cursorTarget">--</div>
 </div>
 
-<div class="battle-feed" id="battleFeed"></div>
 <div class="captain-watermark" id="captainWatermark">
   <b>Feida "Bruce" Wang · confirmed kill</b>
   <span>personal command watermark · sponsor constellation</span>
@@ -120,9 +140,19 @@
   </div>
 </div>
 
+<nav class="route-arrows" aria-label="Page turn navigation">
+  <a class="route-arrow prev" href="/signal.html" data-turn="prev" data-hot aria-label="Previous page">‹</a>
+  <a class="route-arrow next" href="/sectors.html" data-turn="next" data-hot aria-label="Next page">›</a>
+</nav>
+
 <nav>
-  <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Project Afflatus</span></div>
+  <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-word">AFFLATUS</span><span class="brand-sep" aria-hidden="true">|</span><span class="brand-version">v1.3</span></div>
   <div class="nav-center">
+    <div class="nav-links" aria-label="Primary navigation">
+      <a href="/sectors.html" data-hot>Sectors</a>
+      <a href="/fleet-log.html" data-hot>Fleet Log</a>
+      <a href="/signal.html" data-hot>Signal</a>
+    </div>
     <div class="top-telemetry" id="topTelemetry">
       <div class="top-stat primary"><span class="sys-dot"></span><span data-top="uplink">FLEET TELEMETRY</span><b id="topUplink">ACTIVE</b></div>
       <div class="top-stat"><span data-top="trajectory">VOID TRACK</span><b id="topTrajectory">L1 · stable</b></div>
@@ -133,8 +163,9 @@
   </div>
   <div class="nav-right">
     <button class="control-btn" id="commandModeBtn" data-hot>Command</button>
+    <button class="nav-menu-btn" type="button" data-hot aria-label="Open navigation">☰</button>
     <div class="nav-clock">
-      <span id="clockZone">LOCAL STARDATE</span>
+      <span id="clockZone" aria-hidden="true"></span>
       <b id="melDateTime">---</b>
     </div>
   </div>
@@ -156,22 +187,22 @@
   <div class="strip" id="strip">
     <div class="strip-cell">
       <div class="strip-label" id="sl0">Annualized Return</div>
-      <div class="strip-value pos" data-counter="30.3" data-suffix="%" id="sv0">0.0%</div>
+      <div class="strip-value pos" data-counter="38.66" data-suffix="%" id="sv0">0.0%</div>
       <div class="strip-foot" id="sf0">vs SPX +9.4 · vs QQQ +14.1</div>
     </div>
     <div class="strip-cell">
       <div class="strip-label" id="sl1">Sharpe · 1Y</div>
-      <div class="strip-value" data-counter="1.84" data-suffix="" data-fixed="2" id="sv1">0.00</div>
+      <div class="strip-value" data-counter="1.72" data-suffix="" data-fixed="2" id="sv1">0.00</div>
       <div class="strip-foot" id="sf1">rf @ AU 10y · 4.18%</div>
     </div>
     <div class="strip-cell">
       <div class="strip-label" id="sl2">Max Drawdown</div>
-      <div class="strip-value" data-counter="-7.3" data-suffix="%" id="sv2">0.0%</div>
-      <div class="strip-foot" id="sf2">2026-03-14 · 11 days to recover</div>
+      <div class="strip-value" data-counter="-13.04" data-suffix="%" id="sv2">0.0%</div>
+      <div class="strip-foot" id="sf2">2026-06-05 · risk reset</div>
     </div>
     <div class="strip-cell">
       <div class="strip-label" id="sl3">Beta</div>
-      <div class="strip-value" data-counter="1.18" data-suffix="" data-fixed="2" id="sv3">0.00</div>
+      <div class="strip-value" data-counter="1.31" data-suffix="" data-fixed="2" id="sv3">0.00</div>
       <div class="strip-foot" id="sf3">portfolio vs SPX · 2026 YTD</div>
     </div>
   </div>
@@ -193,13 +224,13 @@
           <button data-period="1Y" data-hot>一年</button>
           <button data-period="5Y" data-hot>五年</button>
         </div>
-        <div class="chart-last"><div class="v" id="chartValue">130.30</div><div class="d" id="chartReturn">+30.30%</div></div>
+        <div class="chart-last"><div class="v" id="chartValue">138.66</div><div class="d" id="chartReturn">+38.66%</div></div>
       </div>
       <canvas id="kchart"></canvas>
       <div class="chart-foot">
         <span id="chartStartLabel">2026·01·02 · 100.00</span>
         <span id="barsLabel">bars · <b id="barCount">0</b></span>
-        <span id="chartEndLabel">2026·05·26 · 130.30</span>
+        <span id="chartEndLabel">2026·06·05 · 138.66</span>
       </div>
     </div>
   </section>
@@ -219,5 +250,6 @@
   <div id="f3">signal origin · local stardate</div>
 </footer>
 
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>
