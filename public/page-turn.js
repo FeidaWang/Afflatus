@@ -2,12 +2,6 @@
   const prev = document.body.dataset.prev;
   const next = document.body.dataset.next;
   let turning = false;
-  // bfcache guard: returning via Back restores the page exactly as it was
-  // mid-transition — strip the blur/slide classes so it never sticks.
-  window.addEventListener('pageshow', () => {
-    turning = false;
-    document.body.classList.remove('turn-next', 'turn-prev');
-  });
   const turn = (url, dir) => {
     if (!url || turning) return;
     turning = true;
