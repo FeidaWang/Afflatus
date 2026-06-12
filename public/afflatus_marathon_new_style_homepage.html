@@ -1,0 +1,288 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<h2 class="sr-only">Afflatus value investing blog in new Marathon game aesthetic: acid yellow, cobalt blue, electric cyan on dark base, bold industrial design</h2>
+<style>
+.pg{background:#0d1018;font-family:'Rajdhani',sans-serif;font-weight:400;color:#f0f4ff;border:3px solid #c4ff00;overflow:hidden;position:relative}
+.orb{font-family:'Orbitron',sans-serif;font-weight:700}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* NAV */
+.nav{display:flex;justify-content:space-between;align-items:center;background:#141820;border-bottom:3px solid #c4ff00;height:48px;padding:0 20px}
+.brand{font-family:'Orbitron',sans-serif;font-weight:900;font-size:19px;color:#c4ff00;letter-spacing:.08em}
+.brand span{font-size:8px;letter-spacing:.32em;color:rgba(196,255,0,.4);vertical-align:4px;margin-left:10px}
+.nl{display:flex;font-family:'Orbitron',sans-serif;font-size:8.5px;font-weight:700;letter-spacing:.16em}
+.nl a{padding:0 13px;height:48px;display:flex;align-items:center;color:rgba(240,244,255,.38);border-left:1px solid rgba(196,255,0,.1);transition:all .18s;cursor:pointer}
+.nl a:hover{background:rgba(196,255,0,.06);color:#c4ff00}
+.nav-cta{background:#c4ff00;color:#0d1018;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.22em;padding:8px 14px;cursor:pointer;border:none;transition:all .2s}
+.nav-cta:hover{background:#d8ff40}
+.nav-dot{width:7px;height:7px;background:#c4ff00;border-radius:50%;margin-right:7px;animation:nd 2.2s ease-in-out infinite;display:inline-block;vertical-align:1px}
+@keyframes nd{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* WARNING STRIPE */
+.ws{height:6px;background:repeating-linear-gradient(-45deg,#c4ff00,#c4ff00 7px,#0d1018 7px,#0d1018 14px)}
+.ws.cyan{background:repeating-linear-gradient(-45deg,#00e8d4,#00e8d4 7px,#0d1018 7px,#0d1018 14px)}
+
+/* HERO */
+.hero{padding:24px 22px 22px;position:relative;border-left:5px solid #c4ff00}
+.htag{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.36em;color:rgba(196,255,0,.55);margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.htag::after{content:'';flex:1;height:1px;background:rgba(196,255,0,.2)}
+.htitle{font-family:'Orbitron',sans-serif;font-weight:900;font-size:26px;line-height:1.15;letter-spacing:.04em;color:#f0f4ff;margin-bottom:12px}
+.htitle em{font-style:normal;color:#c4ff00}
+.hdesc{font-size:14.5px;font-weight:400;color:rgba(240,244,255,.6);line-height:1.6;margin-bottom:18px;max-width:500px}
+.hdesc b{color:#c4ff00;font-weight:600}
+.hcta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.btn-y{background:#c4ff00;color:#0d1018;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;padding:10px 18px;border:none;cursor:pointer;transition:background .2s}
+.btn-y:hover{background:#d8ff40}
+.btn-o{background:transparent;color:#c4ff00;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;padding:10px 16px;border:2px solid rgba(196,255,0,.45);cursor:pointer;transition:all .2s}
+.btn-o:hover{background:rgba(196,255,0,.08)}
+.hstats{display:flex;gap:20px}
+.hs{text-align:center}
+.hs-v{font-family:'Orbitron',sans-serif;font-weight:700;font-size:20px;color:#c4ff00;line-height:1}
+.hs-l{font-size:9px;font-weight:600;letter-spacing:.18em;color:rgba(240,244,255,.4);margin-top:2px}
+
+/* SECTION HEADER */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:9px 22px;background:#141820;border-bottom:1px solid rgba(196,255,0,.15)}
+.sh-l{font-family:'Orbitron',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.28em;color:#c4ff00}
+.sh-r{font-size:10px;font-weight:600;letter-spacing:.14em;color:rgba(240,244,255,.35)}
+
+/* MANIFEST CARDS */
+.mg{display:grid;grid-template-columns:repeat(3,1fr)}
+.mc{border-right:1px solid rgba(196,255,0,.1);padding:14px 16px;position:relative;overflow:hidden}
+.mc:last-child{border-right:none}
+.mc-accent{position:absolute;left:0;top:0;bottom:0;width:4px}
+.mc-badge{display:inline-block;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.22em;padding:4px 10px;margin-bottom:10px}
+.mc-tk{font-family:'Orbitron',sans-serif;font-weight:900;font-size:20px;letter-spacing:.06em;line-height:1;color:#f0f4ff;margin-bottom:2px}
+.mc-nm{font-size:10px;font-weight:600;letter-spacing:.12em;color:rgba(240,244,255,.4);margin-bottom:10px}
+.mc-div{height:1px;background:rgba(196,255,0,.12);margin-bottom:10px;position:relative}
+.mc-div::before{content:'◆';position:absolute;left:50%;transform:translateX(-50%) translateY(-50%);font-size:6px;color:rgba(196,255,0,.35);background:#0d1018;padding:0 6px}
+.mc-thesis{font-size:12.5px;font-weight:400;color:rgba(240,244,255,.6);line-height:1.6;margin-bottom:12px}
+.mc-thesis strong{color:#f0f4ff;font-weight:700}
+
+/* Power cells (allocation bar) */
+.pbar{margin-bottom:8px}
+.pbar-lbl{display:flex;justify-content:space-between;font-size:10px;font-weight:600;letter-spacing:.12em;margin-bottom:4px}
+.pbar-lbl span{color:rgba(240,244,255,.5)}
+.pbar-track{height:8px;background:#1c2230;border:1px solid rgba(196,255,0,.18);overflow:hidden;display:flex;gap:2px;padding:2px}
+.pbar-cell{height:100%;border-radius:1px}
+
+/* Status badge */
+.sbadge{display:inline-block;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.22em;padding:4px 10px}
+.sb-hold{background:#c4ff00;color:#0d1018}
+.sb-acc{background:#00e8d4;color:#0d1018}
+.sb-wat{background:#2244ff;color:#f0f4ff}
+
+.mc-foot{display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:600;letter-spacing:.1em;color:rgba(240,244,255,.3);border-top:1px solid rgba(196,255,0,.08);padding-top:8px;margin-top:4px}
+
+/* DISPATCH LOG */
+.de{display:flex;align-items:center;gap:10px;padding:9px 22px;border-bottom:1px solid rgba(196,255,0,.07);transition:background .18s;cursor:pointer}
+.de:hover{background:rgba(196,255,0,.03)}
+.de-tag{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.16em;padding:4px 9px;flex-shrink:0;min-width:96px;text-align:center}
+.dt-y{background:#c4ff00;color:#0d1018}
+.dt-c{background:#00e8d4;color:#0d1018}
+.dt-b{background:#2244ff;color:#f0f4ff}
+.dt-r{background:#ff3030;color:#f0f4ff}
+.de-ts{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(240,244,255,.28);letter-spacing:.1em;flex-shrink:0;min-width:82px}
+.de-title{flex:1;font-size:13px;font-weight:600;color:rgba(240,244,255,.75);letter-spacing:.03em}
+.de-arrow{font-size:12px;color:rgba(196,255,0,.5);flex-shrink:0;font-weight:700}
+
+/* OPERATOR IDENTITY */
+.oid{padding:14px 22px;background:#141820;display:flex;justify-content:space-between;align-items:center;border-top:3px solid #c4ff00}
+.oid-left{display:flex;align-items:center;gap:16px}
+.oid-badge{width:44px;height:44px;border:2px solid #c4ff00;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;color:#c4ff00;flex-shrink:0}
+.oid-info{font-size:11px;font-weight:600;color:rgba(240,244,255,.55);letter-spacing:.1em;line-height:1.65}
+.oid-info strong{color:#f0f4ff;font-weight:700;display:block;font-size:13px;letter-spacing:.08em}
+.oid-motto{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.28em;color:rgba(196,255,0,.6);padding:6px 14px;border:2px solid rgba(196,255,0,.35)}
+.pfoot{padding:8px 22px;border-top:1px solid rgba(196,255,0,.15);display:flex;justify-content:space-between;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.18em;color:rgba(196,255,0,.3)}
+</style>
+
+<div style="padding:.5rem 0">
+<div style="font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.22em;color:rgba(196,255,0,.3);margin-bottom:5px">▸ AFFLATUS.AU · NEW MARATHON STYLE · ACID INDUSTRIAL HOMEPAGE PREVIEW ◂</div>
+<div class="pg">
+
+<!-- NAV -->
+<div class="nav">
+  <div>
+    <span class="brand">AFFLATUS<span>◈ RUNNER</span></span>
+  </div>
+  <div class="nl">
+    <a>SECTORS</a>
+    <a>MANIFEST</a>
+    <a>DISPATCH</a>
+    <a style="color:#c4ff00;background:rgba(196,255,0,.05)">SIGNAL</a>
+  </div>
+  <button class="nav-cta"><span class="nav-dot"></span>UPLINK ACTIVE</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="htag">OPERATOR: BRUCE · MELBOURNE 37°S · SECTOR VII · EQUITY DIVISION</div>
+  <div class="htitle">VALUE IS THE ONLY<br><em>TARGET</em> WORTH LOCKING.</div>
+  <div class="hdesc">Long-horizon targeting. Sub-light patience. <b>No noise. No tips. Only signal.</b><br>Dispatches from the field when the numbers have something real to say.</div>
+  <div class="hcta">
+    <button class="btn-y">READ LATEST DISPATCH</button>
+    <button class="btn-o">VIEW MANIFEST</button>
+    <div class="hstats">
+      <div class="hs"><div class="hs-v">047</div><div class="hs-l">DISPATCHES</div></div>
+      <div style="width:1px;background:rgba(196,255,0,.2)"></div>
+      <div class="hs"><div class="hs-v" style="color:#00e8d4">10</div><div class="hs-l">ACTIVE LOCKS</div></div>
+      <div style="width:1px;background:rgba(196,255,0,.2)"></div>
+      <div class="hs"><div class="hs-v">+22.7%</div><div class="hs-l">YTD</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WARNING STRIPE DIVIDER -->
+<div class="ws"></div>
+
+<!-- MANIFEST SECTION -->
+<div class="sh">
+  <div class="sh-l">ACTIVE MANIFEST</div>
+  <div class="sh-r">10 POSITIONS · 94% DEPLOYED → VIEW ALL</div>
+</div>
+<div class="mg">
+
+  <!-- NVDA -->
+  <div class="mc">
+    <div class="mc-accent" style="background:#c4ff00"></div>
+    <div style="padding-left:8px">
+      <div class="mc-badge" style="background:#c4ff00;color:#0d1018">▶ COMPUTE · ALLOC 15%</div>
+      <div class="mc-tk">NVDA</div>
+      <div class="mc-nm">NVIDIA CORPORATION</div>
+      <div class="mc-div"></div>
+      <div class="mc-thesis"><strong>AI compute moat intact.</strong> CUDA ecosystem has no credible replacement. Blackwell cycle still early innings.</div>
+      <div class="pbar">
+        <div class="pbar-lbl"><span>ALLOCATION</span><span style="color:#c4ff00">15.0%</span></div>
+        <div class="pbar-track">
+          <div class="pbar-cell" style="width:15%;background:#c4ff00"></div>
+          <div class="pbar-cell" style="flex:1;background:rgba(196,255,0,.06)"></div>
+        </div>
+      </div>
+      <div class="pbar">
+        <div class="pbar-lbl"><span>CONVICTION</span><span style="color:#c4ff00">ALPHA</span></div>
+        <div class="pbar-track">
+          <div class="pbar-cell" style="width:92%;background:repeating-linear-gradient(90deg,#c4ff00,#c4ff00 4px,#1a2030 4px,#1a2030 5px)"></div>
+        </div>
+      </div>
+      <div class="mc-foot">
+        <span>ENTERED 2025.11.14</span>
+        <span class="sbadge sb-hold">HOLD</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALM -->
+  <div class="mc">
+    <div class="mc-accent" style="background:#00e8d4"></div>
+    <div style="padding-left:8px">
+      <div class="mc-badge" style="background:#00e8d4;color:#0d1018">▶ CLOUD · ALLOC 13%</div>
+      <div class="mc-tk" style="color:#00e8d4">ALM</div>
+      <div class="mc-nm">ALMADEN MINERALS</div>
+      <div class="mc-div" style="background:rgba(0,232,212,.12)"></div>
+      <div class="mc-thesis"><strong>Azure + Copilot on rails.</strong> AI monetisation at enterprise scale. OpenAI distribution locked in.</div>
+      <div class="pbar">
+        <div class="pbar-lbl"><span>ALLOCATION</span><span style="color:#00e8d4">13.0%</span></div>
+        <div class="pbar-track" style="border-color:rgba(0,232,212,.18)">
+          <div class="pbar-cell" style="width:13%;background:#00e8d4"></div>
+          <div class="pbar-cell" style="flex:1;background:rgba(0,232,212,.06)"></div>
+        </div>
+      </div>
+      <div class="pbar">
+        <div class="pbar-lbl"><span>CONVICTION</span><span style="color:#00e8d4">ALPHA</span></div>
+        <div class="pbar-track" style="border-color:rgba(0,232,212,.18)">
+          <div class="pbar-cell" style="width:88%;background:repeating-linear-gradient(90deg,#00e8d4,#00e8d4 4px,#1a2030 4px,#1a2030 5px)"></div>
+        </div>
+      </div>
+      <div class="mc-foot" style="border-top-color:rgba(0,232,212,.08)">
+        <span>ENTERED 2024.08.22</span>
+        <span class="sbadge sb-acc">HOLD</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IBM -->
+  <div class="mc">
+    <div class="mc-accent" style="background:#2244ff"></div>
+    <div style="padding-left:8px">
+      <div class="mc-badge" style="background:#2244ff;color:#f0f4ff">▶ SEARCH · ALLOC 12%</div>
+      <div class="mc-tk" style="color:#99aaff">IBM</div>
+      <div class="mc-nm">INTERNATIONAL BUSINESS MACHINES</div>
+      <div class="mc-div" style="background:rgba(34,68,255,.15)"></div>
+      <div class="mc-thesis"><strong>Deepest AI discount.</strong> Search + Gemini + Cloud triple engine trading at distressed multiples. Anti-trust is the entry gift.</div>
+      <div class="pbar">
+        <div class="pbar-lbl"><span>ALLOCATION</span><span style="color:#99aaff">12.0%</span></div>
+        <div class="pbar-track" style="border-color:rgba(34,68,255,.25)">
+          <div class="pbar-cell" style="width:12%;background:#2244ff"></div>
+          <div class="pbar-cell" style="flex:1;background:rgba(34,68,255,.08)"></div>
+        </div>
+      </div>
+      <div class="pbar">
+        <div class="pbar-lbl"><span>CONVICTION</span><span style="color:#99aaff">HIGH</span></div>
+        <div class="pbar-track" style="border-color:rgba(34,68,255,.25)">
+          <div class="pbar-cell" style="width:76%;background:repeating-linear-gradient(90deg,#2244ff,#2244ff 4px,#1a2030 4px,#1a2030 5px)"></div>
+        </div>
+      </div>
+      <div class="mc-foot" style="border-top-color:rgba(34,68,255,.12)">
+        <span>ENTERED 2026.02.08</span>
+        <span class="sbadge sb-wat">ACCUMULATE</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DIVIDER -->
+<div class="ws cyan"></div>
+
+<!-- DISPATCH LOG -->
+<div class="sh">
+  <div class="sh-l">DISPATCH LOG</div>
+  <div class="sh-r">RECENT FIELD REPORTS → ALL ARCHIVES</div>
+</div>
+
+<div class="de">
+  <span class="de-tag dt-y">DISPATCH</span>
+  <span class="de-ts">2026.05.24</span>
+  <span class="de-title">NVDA at cycle inflection — why I added 2% at the dip, and the maths behind it.</span>
+  <span class="de-arrow">→</span>
+</div>
+<div class="de">
+  <span class="de-tag dt-c">FIELD NOTE</span>
+  <span class="de-ts">2026.05.20</span>
+  <span class="de-title">When the crowd sells, the patient accumulates: a framework for contrarian conviction.</span>
+  <span class="de-arrow">→</span>
+</div>
+<div class="de">
+  <span class="de-tag dt-b">SECTOR BRIEF</span>
+  <span class="de-ts">2026.05.15</span>
+  <span class="de-title">Healthcare moat: LLY vs NVO — who actually owns the GLP-1 decade?</span>
+  <span class="de-arrow">→</span>
+</div>
+<div class="de" style="border-bottom:none">
+  <span class="de-tag dt-r">RISK NOTE</span>
+  <span class="de-ts">2026.05.10</span>
+  <span class="de-title">Pricing power as the primary weapon — the one metric I never compromise on.</span>
+  <span class="de-arrow">→</span>
+</div>
+
+<!-- OPERATOR IDENTITY -->
+<div class="oid">
+  <div class="oid-left">
+    <div class="oid-badge">B</div>
+    <div class="oid-info">
+      <strong>BRUCE · OPERATOR</strong>
+      MELBOURNE 37°S · 144°E · CLASS: VALUE EQUITY<br>
+      INSTRUMENTS: FUNDAMENTAL ANALYSIS · MOAT MAPPING · FREE CASH FLOW
+    </div>
+  </div>
+  <div class="oid-motto">NO NOISE · ONLY SIGNAL</div>
+</div>
+
+<!-- FOOTER -->
+<div class="pfoot">
+  <span>AFFLATUS · BRUCE · MMXXVI</span>
+  <span>DISPATCH 047 · UPLINK ACTIVE</span>
+  <span>NO ADS · NO TIPS · NO PROMISES</span>
+</div>
+
+</div>
+</div>

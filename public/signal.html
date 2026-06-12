@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Afflatus · Signal</title>
+<meta name="description" content="Signal deck: curated market signals and telemetry from the Afflatus deep-space captain log.">
+<meta name="theme-color" content="#05070b">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Afflatus">
+<meta property="og:title" content="Project Afflatus · Signal">
+<meta property="og:description" content="Curated market signals and telemetry from the captain log.">
+<meta property="og:image" content="/assets/og/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="/assets/og/og-image.jpg">
+<link rel="stylesheet" href="/page-turn.css">
+<style>
+:root{--bg:#02070a;--panel:#071016;--rail:#11313b;--cyan:#7deaff;--green:#68ff9f;--amber:#f1c06c;--red:#ff6f61;--muted:#6c8190}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 78% 8%,rgba(125,234,255,.12),transparent 25%),linear-gradient(180deg,#041019,#010305 74%);color:#dceff5;font-family:"JetBrains Mono","Courier New",monospace}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(125,234,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(125,234,255,.03) 1px,transparent 1px);background-size:24px 24px;mask-image:linear-gradient(180deg,rgba(0,0,0,.92),rgba(0,0,0,.45))}
+a{color:inherit;text-decoration:none}
+.deck{width:min(1120px,calc(100% - 28px));margin:24px auto 36px;border:1px solid rgba(125,234,255,.32);background:linear-gradient(180deg,rgba(6,18,25,.94),rgba(1,4,7,.98));box-shadow:0 0 60px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.025)}
+.top{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:16px 18px;border-bottom:1px solid rgba(125,234,255,.22)}
+.brand{font-weight:800;letter-spacing:.25em;text-transform:uppercase;color:var(--cyan)}
+.brand span{display:block;margin-top:6px;color:var(--muted);font-size:10px;letter-spacing:.20em}
+.nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.nav a{border:1px solid rgba(125,234,255,.26);padding:9px 11px;color:#b9d6df;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.nav a.active{border-color:rgba(104,255,159,.68);color:var(--green);background:rgba(104,255,159,.08)}
+.hero{padding:20px 18px;border-bottom:1px solid rgba(125,234,255,.16);display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;align-items:end}
+.kicker{color:var(--amber);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+h1{margin:10px 0 8px;color:#f3fbff;font-size:clamp(30px,5vw,58px);line-height:.92;letter-spacing:.02em;text-transform:uppercase}
+.brief{margin:0;max-width:760px;color:#a7bdc7;line-height:1.65}
+.chip{border:1px solid rgba(241,192,108,.34);background:linear-gradient(180deg,rgba(241,192,108,.08),rgba(255,255,255,.015));padding:14px}
+.chip span{display:block;color:var(--muted);font-size:10px;letter-spacing:.20em;text-transform:uppercase}
+.chip b{display:block;margin-top:8px;color:var(--amber);font-size:24px}
+.matrix{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.panel{min-height:308px;padding:18px;border-right:1px solid rgba(125,234,255,.14);border-bottom:1px solid rgba(125,234,255,.14);position:relative;overflow:hidden}
+.panel:nth-child(2n){border-right:0}
+.panel::before{content:"";position:absolute;left:18px;right:18px;top:48px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.32}
+.panel h2{margin:0 0 22px;color:#eafaff;font-size:16px;letter-spacing:.20em;text-transform:uppercase}
+.prob{display:grid;gap:12px}
+.row{display:grid;grid-template-columns:132px minmax(0,1fr) 64px;gap:12px;align-items:center}
+.row span{color:#9fb7c0;font-size:12px;letter-spacing:.10em;text-transform:uppercase}
+.bar{height:12px;border:1px solid rgba(125,234,255,.25);background:rgba(0,0,0,.36);overflow:hidden}
+.bar i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--c),rgba(255,255,255,.68));box-shadow:0 0 16px var(--c)}
+.row b{text-align:right;color:#f5fbff;font-size:13px}
+.note{margin:16px 0 0;color:#a5bac4;line-height:1.65;font-size:13px}
+.ticker{display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px solid rgba(125,234,255,.10)}
+.ticker b{color:#fff;font-size:19px}.ticker span{color:#a9c0cb;line-height:1.5}
+.footer{padding:13px 18px;color:#687d87;font-size:11px;letter-spacing:.10em;border-top:1px solid rgba(125,234,255,.14)}
+@media(max-width:760px){.top,.hero,.matrix{grid-template-columns:1fr}.nav{justify-content:flex-start}.panel{border-right:0}.row{grid-template-columns:100px 1fr 46px}.chip b{font-size:20px}}
+</style>
+</head>
+<body class="signal-page" data-prev="/fleet-log.html" data-next="/">
+<nav class="page-turn-controls" aria-label="Page navigation">
+  <a class="page-turn" href="/fleet-log.html" data-page-turn="prev" aria-label="Back to fleet log">←</a>
+  <a class="page-turn" href="/" data-page-turn="next" aria-label="Return home">→</a>
+</nav>
+<main class="deck">
+  <header class="top">
+    <a class="brand" href="/">Afflatus Signal<span>rate probability and policy posture</span></a>
+    <nav class="nav">
+      <a href="/">Home</a><a href="/sectors.html">Sectors</a><a href="/fleet-log.html">Fleet Log</a><a class="active" href="/signal.html">Signal</a>
+    </nav>
+  </header>
+  <section class="hero">
+    <div>
+      <div class="kicker">AEST desk scenario · June 2026</div>
+      <h1>Policy risk is awake</h1>
+      <p class="brief">The May payroll release supports a higher-for-longer map. My operating rule is simple: no blind duration, no lazy beta, and no assuming central banks are already done.</p>
+    </div>
+    <div class="chip">
+      <span>base case</span>
+      <b>hawkish hold</b>
+      <span style="margin-top:10px">captain model · not official pricing</span>
+    </div>
+  </section>
+  <section class="matrix">
+    <article class="panel">
+      <h2>Federal Reserve</h2>
+      <div class="prob">
+        <div class="row"><span>Dec 2026 hike</span><div class="bar"><i style="--w:63%;--c:var(--amber)"></i></div><b>63%</b></div>
+        <div class="row"><span>By Jan 2027</span><div class="bar"><i style="--w:68%;--c:var(--red)"></i></div><b>68%</b></div>
+        <div class="row"><span>Hold corridor</span><div class="bar"><i style="--w:56%;--c:var(--cyan)"></i></div><b>56%</b></div>
+        <div class="row"><span>Cut impulse</span><div class="bar"><i style="--w:18%;--c:var(--muted)"></i></div><b>18%</b></div>
+      </div>
+      <p class="note">May payrolls at +172K, two-month revisions of +93K, and 4.3% unemployment reduce the case for quick easing. A hike is not my base demand, but the market should price the risk more seriously.</p>
+    </article>
+    <article class="panel">
+      <h2>Reserve Bank of Australia</h2>
+      <div class="prob">
+        <div class="row"><span>Next move hike</span><div class="bar"><i style="--w:42%;--c:var(--amber)"></i></div><b>42%</b></div>
+        <div class="row"><span>Hold path</span><div class="bar"><i style="--w:49%;--c:var(--green)"></i></div><b>49%</b></div>
+        <div class="row"><span>Cut by Q1 27</span><div class="bar"><i style="--w:9%;--c:var(--muted)"></i></div><b>9%</b></div>
+        <div class="row"><span>AUD risk bid</span><div class="bar"><i style="--w:61%;--c:var(--cyan)"></i></div><b>61%</b></div>
+      </div>
+      <p class="note">RBA language should stay cautious while inflation is sticky. I would model Australia as hold-first, hike-capable, and reluctant to signal cuts too early.</p>
+    </article>
+    <article class="panel">
+      <h2>Equity Signal</h2>
+      <div class="ticker"><b>NVDA</b><span>Full-stack accelerator gravity remains the cleanest AI infrastructure signal.</span></div>
+      <div class="ticker"><b>TSM</b><span>Foundry scarcity is the sovereign bottleneck behind the compute fleet.</span></div>
+      <div class="ticker"><b>MU</b><span>HBM and memory bandwidth still look like underpriced oxygen lines.</span></div>
+      <p class="note">I prefer unavoidable infrastructure over application-layer stories that need perfect rates and perfect execution.</p>
+    </article>
+    <article class="panel">
+      <h2>Strategy</h2>
+      <div class="prob">
+        <div class="row"><span>cash armor</span><div class="bar"><i style="--w:58%;--c:var(--cyan)"></i></div><b>live</b></div>
+        <div class="row"><span>AI capex</span><div class="bar"><i style="--w:86%;--c:var(--green)"></i></div><b>strong</b></div>
+        <div class="row"><span>broad beta</span><div class="bar"><i style="--w:31%;--c:var(--red)"></i></div><b>low</b></div>
+      </div>
+      <p class="note">This page is intentionally simple: update the probabilities, change the thesis, ship the signal. No hidden widgets, no fragile dependencies.</p>
+    </article>
+  </section>
+  <footer class="footer">Update file: public/signal.html · desk view only · not investment advice</footer>
+</main>
+<script src="/page-turn.js" defer></script>
+</body>
+</html>

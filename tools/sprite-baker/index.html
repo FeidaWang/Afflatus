@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Afflatus Sprite Baker · glTF → multi-angle atlas</title>
+<style>
+body{margin:0;background:#070b11;color:#dce8f2;font:14px/1.5 'JetBrains Mono',ui-monospace,monospace;padding:24px}
+h1{font-size:16px;letter-spacing:.18em;color:#9ae5ff}
+#drop{border:2px dashed rgba(154,229,255,.4);padding:34px;text-align:center;margin:16px 0;cursor:pointer}
+#drop.hot{border-color:#caff00;color:#caff00}
+label{display:inline-block;margin:0 18px 10px 0}
+input,select{background:#0d141d;color:#dce8f2;border:1px solid rgba(154,229,255,.3);padding:4px 8px;font:inherit;width:90px}
+button{background:#9ae5ff;color:#05070b;border:0;padding:10px 18px;font:700 13px monospace;letter-spacing:.12em;cursor:pointer;margin-right:10px}
+button:disabled{opacity:.3;cursor:default}
+canvas{background:repeating-conic-gradient(#0c1219 0 25%,#10161f 0 50%) 0 0/24px 24px;max-width:100%;margin-top:14px}
+pre{background:#0d141d;padding:12px;overflow:auto;border:1px solid rgba(154,229,255,.2)}
+.note{color:#748290}
+</style>
+</head>
+<body>
+<h1>AFFLATUS SPRITE BAKER</h1>
+<p class="note">Drop a .glb/.gltf (e.g. a free CC0 ship from Kenney / Quaternius / Sketchfab) →
+renders an azimuth × elevation atlas with the same conventions as
+<b>src/scene/spriteCraft.js</b> (nose screen-up in every frame). No Blender needed.</p>
+
+<div id="drop">DROP .glb / .gltf HERE (or click to pick)</div>
+<input type="file" id="file" accept=".glb,.gltf" hidden>
+
+<div>
+  <label>name <input id="name" value="ship"></label>
+  <label>cell px <input id="cell" type="number" value="128"></label>
+  <label>azimuth steps <input id="az" type="number" value="24"></label>
+  <label>elevations <input id="els" value="12,40,90" style="width:120px"></label>
+  <label>nose axis <select id="nose"><option>+X</option><option>-X</option><option>+Z</option><option selected>-Z</option><option>+Y</option><option>-Y</option></select></label>
+</div>
+<button id="bake" disabled>BAKE ATLAS</button>
+<button id="dl" disabled>DOWNLOAD PNG</button>
+<span id="status" class="note">no model loaded</span>
+<canvas id="out" width="512" height="256"></canvas>
+<pre id="meta">// atlas meta will appear here — paste the entry into src/data/spriteAtlasMeta.js</pre>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+
+const $=id=>document.getElementById(id);
+let model=null, atlasCanvas=null, lastName='ship';
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+renderer.setClearColor(0x000000,0);
+const scene=new THREE.Scene();
+const key=new THREE.DirectionalLight(0xfff4e0,2.6);key.position.set(-3.5,8.2,4.5);scene.add(key);
+const fill=new THREE.DirectionalLight(0x9ae5ff,.9);fill.position.set(4.5,-2.5,-5);scene.add(fill);
+scene.add(new THREE.AmbientLight(0x404a58,1.4));
+
+const NOSE={'+X':[1,0,0],'-X':[-1,0,0],'+Y':[0,1,0],'-Y':[0,-1,0],'+Z':[0,0,1],'-Z':[0,0,-1]};
+
+function loadFile(file){
+  const url=URL.createObjectURL(file);
+  new GLTFLoader().load(url,g=>{
+    if(model)scene.remove(model);
+    model=g.scene;
+    // normalize: center + reorient nose -> +X, world up stays +Y (three convention)
+    const noseV=new THREE.Vector3(...NOSE[$('nose').value]);
+    const q=new THREE.Quaternion().setFromUnitVectors(noseV,new THREE.Vector3(1,0,0));
+    model.quaternion.premultiply(q);
+    const box=new THREE.Box3().setFromObject(model);
+    const c=box.getCenter(new THREE.Vector3());
+    model.position.sub(c);
+    scene.add(model);
+    $('status').textContent=`loaded ${file.name}`;
+    $('bake').disabled=false;
+    lastName=file.name.replace(/\.(glb|gltf)$/i,'');$('name').value=lastName;
+  },undefined,e=>{$('status').textContent='load failed: '+e;});
+}
+
+$('drop').onclick=()=>$('file').click();
+$('file').onchange=e=>e.target.files[0]&&loadFile(e.target.files[0]);
+['dragover','dragleave','drop'].forEach(ev=>$('drop').addEventListener(ev,e=>{
+  e.preventDefault();$('drop').classList.toggle('hot',ev==='dragover');
+  if(ev==='drop'&&e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0]);
+}));
+
+$('bake').onclick=()=>{
+  const cell=+$('cell').value||128, azN=+$('az').value||24;
+  const els=$('els').value.split(',').map(Number).filter(n=>!isNaN(n));
+  const box=new THREE.Box3().setFromObject(model);
+  const R=box.getBoundingSphere(new THREE.Sphere()).radius;
+  const sizeBox=box.getSize(new THREE.Vector3());
+  const lenUnits=sizeBox.x;                       // nose axis = X after normalize
+  const pxPerUnit=(cell*.94)/(2*R);
+  renderer.setSize(cell,cell,false);
+  atlasCanvas=document.createElement('canvas');
+  atlasCanvas.width=cell*azN;atlasCanvas.height=cell*els.length;
+  const actx=atlasCanvas.getContext('2d');
+  const cam=new THREE.OrthographicCamera(-R/.94,R/.94,R/.94,-R/.94,.1,R*10);
+
+  // three.js world up is +Y; treat model up as +Y, nose +X, right -Z.
+  // az/el camera with nose-up roll, mirroring the runtime conventions.
+  for(let row=0;row<els.length;row++){
+    const el=els[row]*Math.PI/180;
+    for(let i=0;i<azN;i++){
+      const az=i*(2*Math.PI/azN);
+      const eye=new THREE.Vector3(Math.cos(el)*Math.cos(az),Math.sin(el),Math.cos(el)*Math.sin(az));
+      const f=eye.clone().negate();
+      let r0=new THREE.Vector3().crossVectors(f,new THREE.Vector3(0,1,0));
+      if(r0.lengthSq()<1e-8)r0.set(0,0,1);
+      r0.normalize();
+      const u0=new THREE.Vector3().crossVectors(r0,f).normalize();
+      const nose=new THREE.Vector3(1,0,0);
+      const phi=Math.atan2(nose.dot(r0),nose.dot(u0));
+      const U=r0.clone().multiplyScalar(Math.sin(phi)).add(u0.clone().multiplyScalar(Math.cos(phi)));
+      cam.position.copy(eye.multiplyScalar(R*4));
+      cam.up.copy(U);
+      cam.lookAt(0,0,0);
+      renderer.render(scene,cam);
+      actx.drawImage(renderer.domElement,i*cell,row*cell);
+    }
+  }
+  const view=$('out');view.width=Math.min(2048,atlasCanvas.width);view.height=atlasCanvas.height*(view.width/atlasCanvas.width);
+  view.getContext('2d').drawImage(atlasCanvas,0,0,view.width,view.height);
+  const name=$('name').value||lastName;
+  $('meta').textContent=
+`// add to SPRITE_ATLAS_META in src/data/spriteAtlasMeta.js
+"${name}": ${JSON.stringify({cell,cols:azN,elevations:els,pxPerUnit:+pxPerUnit.toFixed(5),lenUnits:+lenUnits.toFixed(2),src:`/assets/sprites/${name}.atlas.png`},null,2)}
+// then save the PNG as public/assets/sprites/${name}.atlas.png`;
+  $('dl').disabled=false;
+  $('status').textContent=`baked ${azN}×${els.length} frames @ ${cell}px`;
+};
+
+$('dl').onclick=()=>{
+  const a=document.createElement('a');
+  a.download=`${$('name').value||lastName}.atlas.png`;
+  a.href=atlasCanvas.toDataURL('image/png');
+  a.click();
+};
+</script>
+</body>
+</html>
