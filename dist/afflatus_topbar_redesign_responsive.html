@@ -1,0 +1,238 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<h2 class="sr-only">Redesigned Afflatus top navigation bar showing desktop and mobile versions with simplified brand, status dot, mode button, and time display</h2>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#03060a}
+
+/* ─── SHARED TOKEN ─── */
+:root{
+  --bg:#06090d;
+  --border:rgba(42,148,172,.28);
+  --cyan:#4ab8cc;
+  --cyan-dim:rgba(42,148,172,.55);
+  --green:#48d888;
+  --amber:#f0a840;
+  --text:#c8e8f2;
+}
+
+/* ─── TOP BAR ─── */
+.tb{
+  height:44px;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+  gap:12px;
+  position:relative;
+}
+/* Subtle top accent line */
+.tb::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(74,184,204,.35) 30%,rgba(74,184,204,.35) 70%,transparent);
+}
+
+/* ── BRAND ── */
+.tb-brand{
+  display:flex;align-items:center;gap:9px;flex-shrink:0;text-decoration:none;
+}
+.tb-logo{flex-shrink:0}
+.tb-name{
+  font-family:'Orbitron',sans-serif;font-weight:900;
+  font-size:14px;letter-spacing:.14em;color:var(--text);
+  white-space:nowrap;
+}
+
+/* ── STATUS DOT ── */
+.tb-status{
+  display:flex;align-items:center;gap:6px;
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;
+  letter-spacing:.18em;color:var(--cyan-dim);
+  flex-shrink:0;
+}
+.tb-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 7px rgba(72,216,136,.55);
+  animation:pulse 2.4s ease-in-out infinite;
+  flex-shrink:0;
+}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ── CENTER NAV (desktop) ── */
+.tb-nav{
+  display:flex;align-items:center;gap:2px;
+  flex:1;justify-content:center;
+}
+.tb-nav a{
+  font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;
+  letter-spacing:.2em;color:rgba(74,184,204,.5);
+  text-decoration:none;padding:6px 12px;
+  border-radius:0;transition:color .2s;
+  white-space:nowrap;
+}
+.tb-nav a:hover{color:var(--cyan)}
+
+/* ── RIGHT GROUP ── */
+.tb-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
+
+/* Mode button */
+.tb-mode{
+  font-family:'Orbitron',sans-serif;font-size:8.5px;font-weight:700;
+  letter-spacing:.25em;padding:6px 14px;
+  background:transparent;border:1px solid rgba(42,148,172,.45);
+  color:var(--cyan);cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.tb-mode:hover{background:rgba(42,148,172,.1);border-color:rgba(74,184,204,.75)}
+.tb-mode.battle{color:var(--amber);border-color:rgba(240,168,64,.5)}
+.tb-mode.battle:hover{background:rgba(240,168,64,.08)}
+
+/* Time */
+.tb-time{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.07em;color:var(--cyan-dim);white-space:nowrap;
+}
+
+/* Hamburger */
+.tb-burger{
+  display:none;background:none;border:none;
+  color:var(--cyan);cursor:pointer;padding:4px 6px;
+  font-size:17px;line-height:1;
+}
+
+/* ─── MOBILE: ≤ 640px ─── */
+@media(max-width:640px){
+  .tb{height:50px;padding:0 16px}
+  .tb-nav{display:none}
+  .tb-status{display:none}
+  .tb-time{display:none}
+  .tb-burger{display:flex;align-items:center}
+  .tb-mode{font-size:8px;padding:6px 12px;letter-spacing:.2em}
+  .tb-name{font-size:13px}
+}
+</style>
+
+<!-- ════ DESKTOP DEMO ════ -->
+<div style="background:#03060a;padding:1.2rem 0">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:rgba(42,148,172,.4);padding:0 16px;margin-bottom:8px">DESKTOP · FULL WIDTH</div>
+
+  <nav class="tb" id="mainTb">
+    <!-- Brand -->
+    <a class="tb-brand" href="#">
+      <svg class="tb-logo" width="26" height="26" viewBox="0 0 26 26">
+        <polygon points="13,3 23,21 3,21" fill="none" stroke="rgba(74,184,204,.65)" stroke-width="1.4"/>
+        <polygon points="13,8 19,19 7,19" fill="rgba(42,148,172,.18)" stroke="rgba(74,184,204,.38)" stroke-width=".7"/>
+        <line x1="13" y1="8" x2="13" y2="19" stroke="rgba(74,184,204,.3)" stroke-width=".7"/>
+      </svg>
+      <span class="tb-name">AFFLATUS</span>
+    </a>
+
+    <!-- Status dot (one dot, no verbose text) -->
+    <div class="tb-status">
+      <div class="tb-dot"></div>
+      <span>ONLINE</span>
+    </div>
+
+    <!-- Center nav links (optional, shown if needed) -->
+    <nav class="tb-nav">
+      <a href="#">SECTORS</a>
+      <a href="#">FLEET LOG</a>
+      <a href="#">SIGNAL</a>
+    </nav>
+
+    <!-- Right: Mode + Time -->
+    <div class="tb-right">
+      <button class="tb-mode" id="modeBtn" onclick="toggleMode()">CRUISE</button>
+      <span class="tb-time" id="clockD">--:--:--</span>
+      <button class="tb-burger">≡</button>
+    </div>
+  </nav>
+
+  <!-- ════ MOBILE DEMO (simulated) ════ -->
+  <div style="padding:1.2rem 16px 0">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:rgba(42,148,172,.4);margin-bottom:8px">MOBILE · 390px</div>
+    <div style="max-width:390px;border:1px solid rgba(42,148,172,.2);border-radius:2px;overflow:hidden">
+      <nav class="tb" style="height:50px;padding:0 16px">
+        <a class="tb-brand" href="#">
+          <svg width="24" height="24" viewBox="0 0 26 26">
+            <polygon points="13,3 23,21 3,21" fill="none" stroke="rgba(74,184,204,.65)" stroke-width="1.4"/>
+            <polygon points="13,8 19,19 7,19" fill="rgba(42,148,172,.18)" stroke="rgba(74,184,204,.38)" stroke-width=".7"/>
+          </svg>
+          <span class="tb-name" style="font-size:13px">AFFLATUS</span>
+        </a>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="tb-mode" style="font-size:8px;padding:6px 12px;letter-spacing:.2em">CRUISE</button>
+          <button class="tb-burger" style="display:flex;align-items:center">≡</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ════ BEFORE / AFTER BREAKDOWN ════ -->
+  <div style="padding:1.2rem 16px 0">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.22em;color:rgba(42,148,172,.4);margin-bottom:8px">WHAT CHANGED</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+
+      <div style="background:rgba(224,80,80,.05);border:1px solid rgba(224,80,80,.2);padding:10px 12px">
+        <div style="font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.24em;color:rgba(224,80,80,.7);margin-bottom:8px">❌ 删除</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.08em;color:rgba(224,120,100,.65);line-height:2">
+          FLEET TELEMETRY GREEN<br>
+          VOID TRACK L1 · STABLE<br>
+          DAYS FROM EARTH 2738<br>
+          TARGET ORACLE SCAN<br>
+          WARP DRAW ████ 45%<br>
+          LOCAL · STARDATE 前缀
+        </div>
+      </div>
+
+      <div style="background:rgba(72,216,136,.04);border:1px solid rgba(72,216,136,.2);padding:10px 12px">
+        <div style="font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:.24em;color:rgba(72,216,136,.7);margin-bottom:8px">✓ 保留</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.08em;color:rgba(72,200,136,.65);line-height:2">
+          △ Logo + AFFLATUS<br>
+          ● 单个在线状态点<br>
+          导航链接（可选）<br>
+          CRUISE / COMMAND 模式<br>
+          时间 HH:MM:SS<br>
+          移动端汉堡菜单
+        </div>
+      </div>
+
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;color:rgba(42,148,172,.45);margin-top:8px;line-height:1.7">
+      信息量：8 项 → 4 项 · 点击 CRUISE 可切换 COMMAND 模式
+    </div>
+  </div>
+</div>
+
+<script>
+// Live clock
+function tick(){
+  const n=new Date();
+  const t=[n.getHours(),n.getMinutes(),n.getSeconds()].map(v=>String(v).padStart(2,'0')).join(':');
+  const el=document.getElementById('clockD');
+  if(el) el.textContent=t;
+}
+tick(); setInterval(tick,1000);
+
+// Mode toggle
+let battle=false;
+function toggleMode(){
+  battle=!battle;
+  const btn=document.getElementById('modeBtn');
+  if(btn){
+    btn.textContent=battle?'COMMAND':'CRUISE';
+    btn.className='tb-mode'+(battle?' battle':'');
+  }
+  // Pulse the dot when switching
+  const dot=document.querySelector('.tb-dot');
+  if(dot){
+    dot.style.background=battle?'#f0a840':'#48d888';
+    dot.style.boxShadow=battle?'0 0 7px rgba(240,168,64,.55)':'0 0 7px rgba(72,216,136,.55)';
+  }
+}
+</script>

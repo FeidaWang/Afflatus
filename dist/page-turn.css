@@ -1,0 +1,82 @@
+/* ===== self-hosted fonts (OFL), shared by all sub-pages =====
+   Visitors without the commercial fonts get Anton / JetBrains Mono
+   instead of Impact / Courier fallbacks. local() stays first so
+   machines that own the real fonts keep using them. */
+@font-face{font-family:"Marathon Shapiro 65";src:local("Marathon Shapiro 65"),local("Shapiro 65"),local("Shapiro 65 Heavy"),url("/assets/fonts/anton-latin-400-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 749;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-800-normal.woff2") format("woff2");font-weight:750 950;font-display:swap}
+@font-face{font-family:"KH Interference";src:local("KH Interference"),local("Interference"),url("/assets/fonts/jetbrains-mono-latin-800-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 950;font-display:swap}
+
+/* motion-sensitive visitors: kill page transitions & pulses */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
+
+.page-turn-controls{
+  position:fixed;
+  inset:50% 18px auto;
+  z-index:20;
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+  --turn-accent:#caff00;
+  --turn-hover:#00e7ff;
+  --turn-bg-a:rgba(8,12,18,.72);
+  --turn-bg-b:rgba(1,3,7,.94);
+}
+.fleet-log-page .page-turn-controls{
+  --turn-accent:#e9bd78;
+  --turn-hover:#9be7ff;
+  --turn-bg-a:rgba(9,14,21,.84);
+  --turn-bg-b:rgba(1,3,7,.96);
+}
+.signal-page .page-turn-controls{
+  --turn-accent:#7deaff;
+  --turn-hover:#68ff9f;
+  --turn-bg-a:rgba(7,16,22,.84);
+  --turn-bg-b:rgba(1,4,7,.96);
+}
+.page-turn{
+  width:46px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  pointer-events:auto;
+  border:2px solid color-mix(in srgb,var(--turn-accent) 54%,transparent);
+  background:linear-gradient(180deg,var(--turn-bg-a),var(--turn-bg-b));
+  color:color-mix(in srgb,var(--turn-accent) 92%,white 8%);
+  font:900 28px/1 var(--font-hud,"JetBrains Mono",monospace);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--turn-accent) 5%,transparent),inset 0 0 24px color-mix(in srgb,var(--turn-hover) 9%,transparent);
+  transition:transform .18s ease,background .18s ease,border-color .18s ease;
+}
+.page-turn:hover{
+  transform:translateY(-2px);
+  border-color:color-mix(in srgb,var(--turn-hover) 85%,white 15%);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--turn-accent) 18%,transparent),var(--turn-bg-b));
+}
+body.turn-next main,
+body.turn-prev main{
+  transition:transform .24s ease,opacity .24s ease,filter .24s ease;
+  opacity:.22;
+  filter:blur(5px);
+}
+body.turn-next main{transform:translateX(-34px)}
+body.turn-prev main{transform:translateX(34px)}
+@media(max-width:760px){
+  .page-turn-controls{
+    inset:auto 16px 16px;
+  }
+  .page-turn{
+    width:42px;
+    height:44px;
+    font-size:22px;
+  }
+}
