@@ -41,7 +41,14 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
   }
 
   function resize() {
-    dpr = Math.min(2, devicePixelRatio || 1);
+    // Adaptive DPR cap: three fullscreen canvases at 2x on a large Retina
+    // window exhaust GPU tile memory and Chrome silently falls back to
+    // low-res rasterization — the whole page (text included) turns blurry.
+    // Soft glow content can't tell 1.25x from 2x, so scale the cap with
+    // viewport area and keep total backing-store pixels bounded.
+    const area = innerWidth * innerHeight;
+    const cap = area > 3_400_000 ? 1.25 : area > 2_300_000 ? 1.5 : 2;
+    dpr = Math.min(cap, devicePixelRatio || 1);
     width = canvas.width = innerWidth * dpr;
     height = canvas.height = innerHeight * dpr;
     canvas.style.width = `${innerWidth}px`;

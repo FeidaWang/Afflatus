@@ -2,13 +2,13 @@
    Visitors without the commercial fonts get Anton / JetBrains Mono
    instead of Impact / Courier fallbacks. local() stays first so
    machines that own the real fonts keep using them. */
-@font-face{font-family:"Marathon Shapiro 65";src:local("Marathon Shapiro 65"),local("Shapiro 65"),local("Shapiro 65 Heavy"),url("assets/fonts/anton-latin-400-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
-@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
-@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 749;font-display:swap}
-@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("assets/fonts/jetbrains-mono-latin-800-normal.woff2") format("woff2");font-weight:750 950;font-display:swap}
-@font-face{font-family:"KH Interference";src:local("KH Interference"),local("Interference"),url("assets/fonts/jetbrains-mono-latin-800-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
-@font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
-@font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 950;font-display:swap}
+@font-face{font-family:"Marathon Shapiro 65";src:local("Marathon Shapiro 65"),local("Shapiro 65"),local("Shapiro 65 Heavy"),url("/assets/fonts/anton-latin-400-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 749;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-800-normal.woff2") format("woff2");font-weight:750 950;font-display:swap}
+@font-face{font-family:"KH Interference";src:local("KH Interference"),local("Interference"),url("/assets/fonts/jetbrains-mono-latin-800-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 950;font-display:swap}
 
 /* motion-sensitive visitors: kill page transitions & pulses */
 @media (prefers-reduced-motion: reduce){
