@@ -15,7 +15,9 @@ export function createSpriteCraft(){
   const entries={};
   for(const [k,m] of Object.entries(SPRITE_ATLAS_META)){
     const img=new Image();
-    img.src=m.src;
+    // BASE_URL-safe: works at domain root and under /repo/ subpaths (GitHub Pages)
+    const base=(import.meta.env&&import.meta.env.BASE_URL)||'/';
+    img.src=base.replace(/\/$/,'/')+m.src.replace(/^\//,'');
     entries[k]={img,meta:m};
   }
   const readyFor=t=>{const e=entries[t];return !!(e&&e.img.complete&&e.img.naturalWidth);};
