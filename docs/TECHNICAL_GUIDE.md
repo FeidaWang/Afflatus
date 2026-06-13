@@ -252,38 +252,46 @@ Old version still appears:
 - Wait for the hosting provider cache.
 - Confirm the correct branch and output directory are deployed.
 
-Fullscreen blur (the whole page, text included, goes soft only when maximized):
+Fullscreen blur (the whole page, text included, looks Gaussian-blurred):
 
-- Root cause: the landing page stacks three full-viewport canvases — `#starfield`
-  (2D), `#blackhole-gl` (WebGL), `#event-layer` (2D) — that all share one `dpr`.
-  When the window is small (half-screen, mobile) their backing stores are small
-  and everything stays crisp. When maximized on a large/Retina display the three
-  backing stores grow large enough to exhaust the GPU tile-memory budget, and
-  Chrome silently re-rasterizes the *entire document* — DOM text included — at a
-  reduced scale. It looks like a CSS blur but no `filter` is involved.
-- Why earlier fixes didn't hold: the old cap stepped `dpr` down by viewport area
-  (1.25 / 1.5 / 2) but never put an absolute ceiling on each canvas, so at
-  fullscreen each canvas was still ~5.8MP (~17MP / ~70MB across the three) and
-  could still cross the GPU budget on big screens.
-- Current fix (`src/scene/backgroundScene.js` → `resize()`): a hard per-canvas
-  pixel budget. `dpr = sqrt(BUDGET_PX / viewportArea)`, clamped to
-  `[0.6, devicePixelRatio]`, with `BUDGET_PX = 3_600_000`. Each canvas is pinned
-  to <= 3.6MP, so the three together stay ~41MB flat from half-screen through 4K
-  (dpr auto-drops to ~0.66 at 4K, invisible on soft glow / black-hole content).
-  The freed memory lets the root/text layer keep its native scale and stay sharp.
-  Half-screen windows still resolve near 2x, which is why half-screen and mobile
-  always looked fine.
-- Verify root cause in ~60s: maximize the window, then DevTools -> three-dot menu
-  -> More tools -> Rendering -> enable **Frame Rendering Stats** and watch
-  **GPU memory**; or use the **Layers** panel and read each canvas layer's memory
-  estimate. The number should drop noticeably after the fix. Also confirm
-  hardware acceleration at `chrome://gpu`.
-- If text is still blurry after the fix *and* GPU memory is not maxed out, the
-  cause is almost certainly fractional display scaling (a non-integer
-  `devicePixelRatio` from a scaled monitor or OS zoom), not this code path.
-- Hard rule already encoded in `src/styles.css`: never put a `filter` on a
+- CONFIRMED ROOT CAUSE (2026-06-13): a full-viewport `backdrop-filter: blur()`
+  glass sheet sitting *on top of* the page content. The bare `nav { backdrop-filter:
+  blur(12px) !important }` rule at the end of `src/styles.css` matched **every**
+  `<nav>`, including `<nav class="route-arrows">`. That route-arrows element is a
+  `pointer-events:none` container stretched to `inset:0` (full viewport) whose only
+  job is to position the two edge page-turn arrows. Once it carried a backdrop
+  blur it became a page-wide frosted-glass layer over the hero, blurring the title,
+  the canvases and the top bar (and visually blocking the top bar). It is a true
+  CSS blur, NOT a resolution/GPU issue.
+- Why it looked size-dependent: the symptom is most obvious when the viewport (and
+  thus the hero text) is large; on small windows the same blur is there but far
+  less noticeable. It only affected the homepage because that page carries the
+  full HUD/route-arrows structure; the static routed pages and page-turns were
+  always sharp.
+- How it was diagnosed (repeatable in ~2 min): inject a plain `<div>` at
+  `z-index:99999` via the console — it stayed razor sharp while everything else
+  was blurred, proving the blur came from a layer *between* the content and that
+  div, i.e. an overlay, not from rasterization. Then enumerate every element with
+  an active `filter`/`backdrop-filter` (`getComputedStyle`), sort by area; the
+  full-viewport `nav.route-arrows` topped the list.
+- Fix (`src/styles.css`, final block): scope the nav glass with
+  `nav:not(.route-arrows)` so only the real top bar gets the blur, plus a final
+  `nav.route-arrows, .route-arrows { backdrop-filter:none; filter:none; background:none }`
+  guard (and the same on `::before`/`::after`) that outranks all earlier stacked
+  patches by both specificity and source order. The arrows themselves
+  (`.route-arrow`, singular) are untouched.
+- Standing rule: `.route-arrows` is a transparent, pointer-events:none position
+  container — it must NEVER carry `filter`, `backdrop-filter`, `background`, or
+  `box-shadow`. If you add a new blanket `nav {}` rule, exclude `.route-arrows`.
+- Secondary hardening (`src/scene/backgroundScene.js` → `resize()`): the three
+  fullscreen canvases share a hard per-canvas pixel budget
+  `dpr = clamp(sqrt(3_600_000 / viewportArea), 0.6, devicePixelRatio)`, capping
+  each backing store at ~3.6MP so a large window can't exhaust GPU tile memory.
+  This was NOT the cause of the blur above, but it is sound defensive coding and
+  stays in.
+- Also encoded in `src/styles.css`: never put a `filter` directly on a
   main/fullscreen canvas — Chrome rasterizes filtered layers at reduced
-  resolution on large Retina windows. Dimming is done via overlay vignettes.
+  resolution on large Retina windows. Dim via overlay vignettes instead.
 
 Git says this is not a repository:
 
