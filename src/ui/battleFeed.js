@@ -39,7 +39,7 @@ export function createBattleFeed({ getLang = () => 'en', timestamp }) {
       line.className = 'feed-line';
       line.style.cssText =
         'position:absolute;left:14px;right:62px;top:50%;transform:translateY(-50%);' +
-        'font:600 11px/1.15 "JetBrains Mono",monospace;letter-spacing:.03em;' +
+        'font:600 8.5px/1.2 "JetBrains Mono",monospace;letter-spacing:.04em;' +
         'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;' +
         'z-index:3;color:#cfe0ee;text-shadow:0 0 8px rgba(0,0,0,.7);';
       feed.appendChild(line);

@@ -2613,10 +2613,8 @@ function updateEscorts(dt, now) {
           ectx.fillStyle=cg;ectx.fillRect(-3,size*.35,6,size*.95);
           ectx.restore();
         }
-        const craftType=e.type==='b2'?'b2':'f47';
-        const f3=getFighter3D();
-        const drewSprite=(f3 && f3.drawOriented(ectx, craftType, {az:azv, el:elv, size}))
-          || spriteCraft.drawOriented(ectx, craftType, {az:azv, el:elv, size});
+        const drewSprite=spriteCraft.drawOriented(ectx, e.type==='b2'?'b2':'f47',
+          {az:azv, el:elv, size});
         if(!drewSprite){ if(e.type === 'b2') drawB2(ectx); else drawF47(ectx); }
       }
       ectx.globalAlpha = 1;
