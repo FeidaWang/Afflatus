@@ -57,9 +57,11 @@ export function createBattleFeed({ getLang = () => 'en', timestamp }) {
     pushBattleToast.at = now;
     const el = document.createElement('div');
     const sev = severity || battleSeverity(msg);
-    const time = timestamp ? timestamp(opts.offsetSec || 0) : '';
+    // Timestamp prefix removed: the per-toast <time> read like a second clock
+    // and stole horizontal space from the live combat message. The feed is a
+    // real-time ticker now — newest event is prepended and shown immediately.
     el.className = `toast sev-${sev}`;
-    el.innerHTML = `<time>${time}</time><span class="msg">${safeText(msg)}</span>`;
+    el.innerHTML = `<span class="sev-dot" aria-hidden="true"></span><span class="msg">${safeText(msg)}</span>`;
     feed.prepend(el);
     [...feed.querySelectorAll('.toast')].slice(9).forEach(node => node.remove());
     syncBattleFeedDisplay(true);
