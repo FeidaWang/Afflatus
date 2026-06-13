@@ -5,6 +5,7 @@
  * Login form and toggle behavior unchanged.
  */
 import { createStarMapScene } from '../scene/starMapScene.js';
+import { createBladeHologram } from '../scene/bladeHologram.js';
 
 export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const panel = document.getElementById('terminalStarMapPanel');
@@ -13,6 +14,7 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const login = document.querySelector('.notebook-login');
   if (!panel || !canvas || !toggle) return null;
 
+  let bladeHolo = null;
   const modeLabel = active => {
     if (active) return getLang() === 'zh' ? '登录' : 'LOGIN';
     return getLang() === 'zh' ? '星图' : 'STAR MAP';
@@ -22,6 +24,7 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     login?.classList.toggle('starmap-hidden', active);
     toggle.textContent = modeLabel(active);
     toggle.dataset.mode = active ? 'map' : 'login';
+    if (bladeHolo) bladeHolo.setActive(!active);   // hologram runs only on the login screen
   };
 
   // Build the login "desktop" chrome once: a title bar (with the return-to-map
@@ -67,9 +70,12 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     back.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
     head.append(title, back);
 
-    // AR hologram (left) — Blade Unit projection
+    // AR hologram (left) — WebGL Blade Unit projection (SVG fallback)
     const holo = make('div', 'term-hologram');
-    holo.innerHTML = HOLO_SVG;
+    const holoCanvas = make('canvas', 'term-holo-canvas');
+    bladeHolo = createBladeHologram(holoCanvas);
+    if (bladeHolo) holo.appendChild(holoCanvas);
+    else holo.innerHTML = HOLO_SVG;
     const holoLabel = make('div', 'term-holo-label');
     holoLabel.textContent = 'BLADE UNIT · LV 34';
     holo.appendChild(holoLabel);
