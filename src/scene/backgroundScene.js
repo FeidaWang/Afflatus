@@ -41,14 +41,20 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
   }
 
   function resize() {
-    // Adaptive DPR cap: three fullscreen canvases at 2x on a large Retina
-    // window exhaust GPU tile memory and Chrome silently falls back to
-    // low-res rasterization — the whole page (text included) turns blurry.
-    // Soft glow content can't tell 1.25x from 2x, so scale the cap with
-    // viewport area and keep total backing-store pixels bounded.
-    const area = innerWidth * innerHeight;
-    const cap = area > 3_400_000 ? 1.25 : area > 2_300_000 ? 1.5 : 2;
-    dpr = Math.min(cap, devicePixelRatio || 1);
+    // Hard backing-store budget. Three fullscreen canvases (starfield,
+    // black-hole WebGL, event-layer) all share this dpr. The previous stepped
+    // cap (1.25/1.5/2 by area) still let each canvas grow without an absolute
+    // ceiling, so at fullscreen the three backing stores together blew past the
+    // GPU tile-memory budget and Chrome re-rastered the WHOLE document — text
+    // included — at reduced scale. Here we instead pin each canvas to <= a fixed
+    // pixel ceiling: dpr = sqrt(BUDGET / viewportArea), clamped. Soft glow can't
+    // tell 0.9x from 2x, but freeing that memory lets the root/text layer keep
+    // its native scale and stay sharp. Half-screen windows stay near 2x (crisp),
+    // which is why half-screen already looked fine.
+    const BUDGET_PX = 3_600_000; // ~ a 2560x1440 frame, per canvas
+    const area = Math.max(1, innerWidth * innerHeight);
+    const budgetDpr = Math.sqrt(BUDGET_PX / area);
+    dpr = Math.min(devicePixelRatio || 1, Math.max(0.6, budgetDpr));
     width = canvas.width = innerWidth * dpr;
     height = canvas.height = innerHeight * dpr;
     canvas.style.width = `${innerWidth}px`;

@@ -62,4 +62,4 @@ git push origin main
 页面空白：浏览器 Console 看红字；多半是 build 失败，Vercel Deployments 里点开看构建日志。
 样式/图片 404：确认没有设置 VITE_BASE；本项目所有路径已做根域名/子路径双兼容。
 本地 `npm run preview` 看旧内容：preview 只是预览 `dist/`，先 `npm run build` 再 preview。
-全屏模糊：已在代码中修复（背景画布自适应 DPR）；若仍出现，检查 `chrome://gpu` 图形加速是否开启。
+全屏模糊：已在代码中修复（背景画布改为「硬性显存预算」，详见 TECHNICAL_GUIDE.md → Troubleshooting → Fullscreen blur）。三张全屏画布的 backing store 固定在每张 ≤3.6MP，全屏到 4K 合计稳定约 41MB，避免 Chrome 因显存触顶把整页（含文字）降分辨率重栅格化。若改后仍模糊：先 `chrome://gpu` 确认硬件加速开启；再用 DevTools → Rendering → Frame Rendering Stats 看 GPU memory 是否仍触顶；若没触顶但文字仍糊，多半是显示器分数缩放（非整数 devicePixelRatio）所致，与本项目无关。
