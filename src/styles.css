@@ -6432,3 +6432,43 @@ nav.route-arrows::after,
 }
 .toast.sev-critical .sev-dot{animation:sevPulse 1s ease-in-out infinite!important;}
 @keyframes sevPulse{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.25)}}
+
+/* ============================================================
+   2026-06-13 · Mobile simplification (final authoritative block)
+   Smaller favicon-unified logo, decluttered top bar, slimmer HUD.
+   Terminal (hud-right) and battle cam (hud-pilot) are kept fully
+   functional. Last in source order → wins over the stacked mobile
+   blocks above.
+   ============================================================ */
+@media (max-width:860px){
+  /* --- logo: use the actual favicon ship, smaller --- */
+  .brand-mark{
+    width:26px!important;height:26px!important;flex:0 0 26px!important;
+    background:url('/favicon.svg') center/contain no-repeat!important;
+    clip-path:none!important;border-radius:6px!important;box-shadow:none!important;
+    -webkit-text-fill-color:initial!important;animation:none!important;
+  }
+  .brand-mark::before,.brand-mark::after{display:none!important;content:none!important;}
+  .brand{gap:8px!important;letter-spacing:.12em!important;}
+  .brand .brand-word{font-size:14px!important;}
+  .brand-version{display:none!important;}  /* version chip is noise on mobile */
+
+  /* --- top bar: tighter, declutter the telemetry strip --- */
+  body>nav:not(.route-arrows){
+    min-height:0!important;padding:8px 12px!important;gap:6px!important;
+    grid-template-areas:"brand right" "center center"!important;
+  }
+  .top-telemetry{display:none!important;}      /* free vertical space for content */
+  .nav-center{padding:0!important;}
+  .nav-links{gap:16px!important;justify-content:center!important;}
+  .nav-links a{font-size:8px!important;letter-spacing:.14em!important;}
+  #commandModeBtn{min-width:84px!important;height:28px!important;min-height:28px!important;font-size:7px!important;}
+  .nav-clock b,.nav-clock time{font-size:10px!important;letter-spacing:.16em!important;}
+
+  /* --- HUD: slimmer overall, keep all 4 panels usable --- */
+  :root{--hud-combat-h:min(40svh,300px)!important;}
+  .hud-panels{padding:5px!important;gap:0!important;}
+  .hud-label{font-size:6px!important;letter-spacing:.16em!important;margin-bottom:4px!important;}
+  /* battle cam + terminal must stay legible — give them breathing room */
+  .hud-pilot,.hud-right{min-height:0!important;}
+}
