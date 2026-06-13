@@ -24,8 +24,31 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     toggle.dataset.mode = active ? 'map' : 'login';
   };
 
-  setMode(true);   // default view is the star map; toggle reveals the login
-  toggle.addEventListener('click', () => setMode(!panel.classList.contains('active')));
+  // Build the login "desktop" chrome once: a return-to-map button, a sweeping
+  // scan line and corner brackets. The old top status row + toggle are removed
+  // (hidden via CSS). The star map is now a full-panel live wallpaper you click
+  // anywhere to enter the computer; the button inside returns to the map.
+  if (login && !login.querySelector('.term-back')) {
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'term-back';
+    back.textContent = getLang() === 'zh' ? '◂ 星图' : '◂ STAR MAP';
+    back.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
+    login.appendChild(back);
+    const scan = document.createElement('div');
+    scan.className = 'term-scan';
+    login.appendChild(scan);
+    for (const c of ['tl', 'tr', 'bl', 'br']) {
+      const i = document.createElement('i');
+      i.className = 'term-corner ' + c;
+      login.appendChild(i);
+    }
+  }
+
+  setMode(true);   // default: the star-map wallpaper
+  panel.style.cursor = 'pointer';
+  panel.addEventListener('click', () => setMode(false));   // click anywhere on the map -> computer
+  toggle.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
 
   const scene = createStarMapScene();
   const ctx = canvas.getContext('2d');
