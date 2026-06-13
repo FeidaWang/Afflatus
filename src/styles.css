@@ -6485,11 +6485,16 @@ nav.route-arrows::after,
   gap:8px!important;align-items:center!important;
   font-size:9px!important;letter-spacing:.05em!important;line-height:1.2!important;
   white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
-  display:none!important;       /* dots hidden entirely — see .feed-line below */
 }
-/* The defense-module log text is rendered by JS into an inline-styled
-   .feed-line node (bypassing the dozen stacked toast rules that kept hiding the
-   message). This single rule just guarantees it is never hidden. */
+/* Hide every toast dot. NOTE the #battleFeed selector: an earlier
+   `#battleFeed .toast{display:grid!important}` (ID specificity) was overriding a
+   class-only `display:none`, which is why a red sev-dot kept bleeding behind the
+   text. Matching that specificity + later source order finally wins. */
+.combat-module .defense-command-log .toast,
+#battleFeed .toast{display:none!important;}
+/* The live log text is an inline-styled .feed-line node (not a .toast), so the
+   stacked toast rules can't touch it. */
+#battleFeed .feed-line,
 .combat-module .defense-command-log .feed-line{display:block!important;}
 
 /* Strip counters (Annualized Return etc.): the count-up animation changed the
@@ -6517,31 +6522,34 @@ nav.route-arrows::after,
 .terminal-starmap:not(.active){display:none!important;}
 .notebook-login.starmap-hidden{display:none!important;}
 
-/* futuristic secure-shell login screen, fills the panel */
+/* futuristic secure-shell login screen, fills the panel. Header and footer are
+   in-flow flex items (not absolute) so they never overlap the fields. */
 .notebook-login{
   position:absolute!important;left:12px;right:12px;top:42px;bottom:12px;
-  display:flex!important;flex-direction:column!important;justify-content:center!important;gap:11px!important;
-  grid-template-columns:none!important;padding:16px!important;
-  border:1px solid rgba(116,206,230,.28)!important;border-radius:3px!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;gap:8px!important;
+  grid-template-columns:none!important;padding:13px 15px!important;
+  border:1px solid rgba(116,206,230,.30)!important;border-radius:3px!important;
   background:
-    linear-gradient(180deg,rgba(4,12,18,.96),rgba(1,4,8,.98)),
-    repeating-linear-gradient(0deg,rgba(116,206,230,.05) 0 1px,transparent 1px 3px)!important;
-  box-shadow:inset 0 0 30px rgba(116,206,230,.06),inset 0 0 0 1px rgba(255,255,255,.02)!important;
+    linear-gradient(180deg,rgba(4,12,18,.96),rgba(1,4,8,.985)),
+    repeating-linear-gradient(0deg,rgba(116,206,230,.045) 0 1px,transparent 1px 3px)!important;
+  box-shadow:inset 0 0 32px rgba(116,206,230,.07),inset 0 0 0 1px rgba(255,255,255,.02),0 0 18px rgba(0,0,0,.4)!important;
   overflow:hidden!important;
 }
 .notebook-login::before{
-  content:'\25B8 AFFLATUS OS \00B7 SECURE SHELL v1.3   [ ENCRYPTED ]';
-  position:absolute;left:16px;right:16px;top:11px;
-  font:700 8px/1.2 'JetBrains Mono',monospace;letter-spacing:.16em;
-  color:rgba(116,206,230,.82);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  content:'\25B8 AFFLATUS OS \00B7 SECURE SHELL \00B7 ENCRYPTED';
+  align-self:stretch;flex:0 0 auto;
+  padding-bottom:7px;margin-bottom:2px;border-bottom:1px solid rgba(116,206,230,.20);
+  font:700 8px/1.3 'JetBrains Mono',monospace;letter-spacing:.15em;
+  color:rgba(120,210,235,.85);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .notebook-login::after{
-  content:'ACCESS RESTRICTED \00B7 CREDENTIALS REQUIRED \00B7 \79C1\4EBA\822A\884C\65E5\5FD7';
-  position:absolute;left:16px;right:16px;bottom:11px;
-  font:600 7px/1.3 'JetBrains Mono',monospace;letter-spacing:.1em;
-  color:rgba(232,179,128,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  content:'\25CF ACCESS RESTRICTED \00B7 CREDENTIALS REQUIRED \00B7 \79C1\4EBA\822A\884C\65E5\5FD7';
+  align-self:stretch;flex:0 0 auto;
+  padding-top:7px;margin-top:2px;border-top:1px solid rgba(232,179,128,.16);
+  font:600 7px/1.4 'JetBrains Mono',monospace;letter-spacing:.08em;
+  color:rgba(232,179,128,.62);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.notebook-login label{display:grid!important;gap:4px!important;min-width:0!important;}
+.notebook-login label{display:grid!important;gap:3px!important;min-width:0!important;}
 .notebook-login span{
   font:600 7.5px 'JetBrains Mono',monospace!important;letter-spacing:.2em!important;
   color:rgba(140,200,225,.7)!important;text-transform:uppercase!important;

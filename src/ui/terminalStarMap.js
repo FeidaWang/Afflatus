@@ -24,7 +24,7 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     toggle.dataset.mode = active ? 'map' : 'login';
   };
 
-  setMode(false);   // default view is the secure-shell login, not the star map
+  setMode(true);   // default view is the star map; toggle reveals the login
   toggle.addEventListener('click', () => setMode(!panel.classList.contains('active')));
 
   const scene = createStarMapScene();
