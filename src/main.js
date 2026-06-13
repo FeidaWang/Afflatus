@@ -3198,9 +3198,73 @@ function drawPilotMissilePOV(ctx,w,h,now,wpn){
   drawPilotHmd(ctx,w,h,now,stage==='drop'?'MISSILE DROP':stage==='ignite'?'MISSILE IGNITION':'MISSILE POV','missile');
 }
 
+/* Phalanx CIWS mount in the foreground (ref: Mk-15 close-in weapon system) —
+   white radome dome, boxy ammo-drum body, and a 6-barrel gatling cluster that
+   traverses onto the contact and spins while firing. Returns the muzzle point
+   so tracers originate from the barrels. */
+function drawPhalanxMount(ctx,w,h,now,tx,ty,firing){
+  const T=Math.PI*2, S=Math.min(w,h)/300;
+  const baseX=w*.5, baseY=h*1.03;
+  const gax=w*.5, gay=h-94*S;                 // gatling rotation axis
+  const dx=tx-gax, dy=ty-gay, dl=Math.hypot(dx,dy)||1;
+  const ux=dx/dl, uy=dy/dl, px=-uy, py=ux;    // aim + perpendicular
+  const recoil=firing?Math.sin(now/24)*2.4*S:0;
+  ctx.save();
+  // pedestal
+  ctx.fillStyle='#31363b';
+  ctx.beginPath();ctx.moveTo(baseX-80*S,baseY);ctx.lineTo(baseX+80*S,baseY);
+  ctx.lineTo(baseX+50*S,baseY-56*S);ctx.lineTo(baseX-50*S,baseY-56*S);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(14,18,22,.85)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.fillStyle='#c19a45';ctx.fillRect(baseX-50*S,baseY-56*S,100*S,4*S);   // hazard ring
+  // ammo-drum body (recoil shudder)
+  ctx.save();ctx.translate(0,recoil);
+  const body=ctx.createLinearGradient(0,baseY-104*S,0,baseY-56*S);
+  body.addColorStop(0,'#5a6066');body.addColorStop(.5,'#3d434a');body.addColorStop(1,'#22272c');
+  ctx.fillStyle=body;
+  ctx.beginPath();ctx.moveTo(baseX-46*S,baseY-56*S);ctx.lineTo(baseX+46*S,baseY-56*S);
+  ctx.lineTo(baseX+40*S,baseY-104*S);ctx.lineTo(baseX-40*S,baseY-104*S);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(150,168,184,.22)';ctx.stroke();
+  ctx.fillStyle='rgba(0,0,0,.22)';ctx.fillRect(baseX-38*S,baseY-98*S,15*S,34*S);ctx.fillRect(baseX+23*S,baseY-98*S,15*S,34*S);
+  // white radome dome (iconic), tilted back
+  ctx.save();ctx.translate(baseX+6*S,baseY-104*S);ctx.rotate(-.16);
+  const dome=ctx.createLinearGradient(-30*S,-66*S,30*S,0);
+  dome.addColorStop(0,'#f6f8f9');dome.addColorStop(.55,'#d7dde1');dome.addColorStop(1,'#9aa3a9');
+  ctx.fillStyle=dome;
+  ctx.beginPath();ctx.moveTo(-28*S,0);ctx.lineTo(-28*S,-42*S);ctx.arc(0,-42*S,28*S,Math.PI,0);ctx.lineTo(28*S,0);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(120,140,156,.5)';ctx.lineWidth=1;ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-22*S,-42*S);ctx.lineTo(22*S,-42*S);ctx.stroke();
+  ctx.restore();
+  ctx.restore();
+  // gatling cluster aimed along (ux,uy)
+  ctx.save();ctx.translate(recoil*.4,recoil);
+  ctx.fillStyle='#4c5258';ctx.beginPath();ctx.arc(gax,gay,13*S,0,T);ctx.fill();
+  ctx.strokeStyle='rgba(18,24,30,.8)';ctx.stroke();
+  const L=Math.min(w,h)*.20, spin=firing?now/14:now/700;
+  for(let i=0;i<6;i++){
+    const a=spin+i*Math.PI/3, off=Math.cos(a)*4.6*S;
+    ctx.strokeStyle=Math.sin(a)>0?'#272d33':'#454d54';ctx.lineWidth=3*S;
+    ctx.beginPath();ctx.moveTo(gax+px*off+ux*8*S,gay+py*off+uy*8*S);
+    ctx.lineTo(gax+px*off+ux*L,gay+py*off+uy*L);ctx.stroke();
+  }
+  const mx=gax+ux*L, my=gay+uy*L;
+  ctx.fillStyle='#1b2126';ctx.beginPath();ctx.arc(mx,my,7*S,0,T);ctx.fill();
+  if(firing){
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    const fl=.62+.38*Math.sin(now/20);
+    const fg=ctx.createRadialGradient(mx,my,0,mx,my,22*S*fl);
+    fg.addColorStop(0,'rgba(255,250,220,.95)');fg.addColorStop(.4,'rgba(255,180,90,.5)');fg.addColorStop(1,'rgba(255,120,60,0)');
+    ctx.fillStyle=fg;ctx.beginPath();ctx.arc(mx,my,22*S*fl,0,T);ctx.fill();
+    ctx.strokeStyle='rgba(255,230,170,.7)';ctx.lineWidth=1.5;
+    for(let i=0;i<5;i++){const a2=now/38+i*1.26;ctx.beginPath();ctx.moveTo(mx,my);ctx.lineTo(mx+Math.cos(a2)*15*S*fl,my+Math.sin(a2)*15*S*fl);ctx.stroke();}
+    ctx.restore();
+  }
+  ctx.restore();
+  ctx.restore();
+  return {mx,my};
+}
 function drawCiwsCamera(ctx,w,h,now,mode,elapsed){
-  // CIWS gun-camera v2 — no hand-drawn turret models: gimbal ring,
-  // real comet target, fine converging tracers, sparse readouts.
+  // CIWS gun-camera v3 — foreground Phalanx mount (white radome + spinning
+  // gatling) firing on the real comet target.
   drawPilotSpace(ctx,w,h,now,1.2);
   const active=mode==='ciws' && halley && !halley.destroyed;
   const tracked=pilotTrackedPoint(w,h,'ciws');
@@ -3221,20 +3285,6 @@ function drawCiwsCamera(ctx,w,h,now,mode,elapsed){
   ctx.fillStyle=frame;ctx.fillRect(0,0,w,h);
   hmdCornerFrame(ctx,w,h);
 
-  // gimbal ring, slowly rotating toward the aim point
-  const cx=w*.5, cy=h*.44, r=Math.min(w,h)*.27;
-  const aim=Math.atan2(ty-cy,tx-cx);
-  ctx.save();
-  ctx.translate(cx,cy);ctx.rotate(aim*.12+Math.sin(now/2400)*.04);
-  ctx.strokeStyle='rgba(140,232,255,.30)';ctx.lineWidth=1;
-  for(let k=0;k<4;k++){
-    const a=k*Math.PI/2+Math.PI*.12;
-    ctx.beginPath();ctx.arc(0,0,r,a,a+Math.PI*.26);ctx.stroke();
-  }
-  ctx.strokeStyle='rgba(140,232,255,.14)';
-  ctx.beginPath();ctx.arc(0,0,r*.86,0,Math.PI*2);ctx.stroke();
-  ctx.restore();
-
   if(active){
     const sizeScale={small:1,medium:1.2,large:1.4,giant:1.6}[halley?.sizeClass]||1.2;
     hmdComet(ctx,tx,ty,4.2*sizeScale,now,halley?.vx??-1,halley?.vy??.3);
@@ -3242,15 +3292,16 @@ function drawCiwsCamera(ctx,w,h,now,mode,elapsed){
       `${Math.round(Math.hypot((halley?.curX??0)-innerWidth/2,(halley?.curY??0)-innerHeight/2))} M`,'1P/HALLEY',HMD.red);
   }
 
+  // Phalanx mount in the foreground, aimed at the contact; tracers from muzzle
+  const muzzle=drawPhalanxMount(ctx,w,h,now,tx,ty,firing);
   if(firing){
-    hmdTracer(ctx,w*.10,h*.94,tx,ty,now,0,11);
-    hmdTracer(ctx,w*.90,h*.94,tx,ty,now,.5,11);
+    hmdTracer(ctx,muzzle.mx,muzzle.my,tx,ty,now,0,12);
+    hmdTracer(ctx,muzzle.mx,muzzle.my,tx,ty,now,.5,12);
     hmdSparks(ctx,tx,ty,now,1);
   }else if(mode==='ciws'&&active){
-    // laser designation: single fine dashed line per mount
-    ctx.save();ctx.strokeStyle='rgba(255,92,98,.5)';ctx.lineWidth=1;ctx.setLineDash([2,8]);
-    ctx.beginPath();ctx.moveTo(w*.10,h*.94);ctx.lineTo(tx,ty);
-    ctx.moveTo(w*.90,h*.94);ctx.lineTo(tx,ty);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    // laser designation from the muzzle to the contact
+    ctx.save();ctx.strokeStyle='rgba(255,92,98,.45)';ctx.lineWidth=1;ctx.setLineDash([2,8]);
+    ctx.beginPath();ctx.moveTo(muzzle.mx,muzzle.my);ctx.lineTo(tx,ty);ctx.stroke();ctx.setLineDash([]);ctx.restore();
   }
 
   hmdStatusChip(ctx,w,h,
