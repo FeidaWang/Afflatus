@@ -3013,14 +3013,115 @@ function drawPilotF47Nose(ctx,w,h,phase,landing=false){
     ctx.beginPath();ctx.moveTo(i*8,-1);ctx.lineTo(i*15,18);ctx.stroke();
   }
   ctx.globalCompositeOperation='lighter';
-  const flamePower=landing ? .48+Math.sin(phase*12)*.08 : .92+Math.sin(phase*20)*.13;
-  const flame=ctx.createRadialGradient(0,34,0,0,34,42*flamePower);
-  flame.addColorStop(0,'rgba(255,255,255,.70)');
-  flame.addColorStop(.22,'rgba(108,229,255,.54)');
-  flame.addColorStop(.70,'rgba(112,86,255,.20)');
-  flame.addColorStop(1,'rgba(112,86,255,0)');
-  ctx.fillStyle=flame;ctx.beginPath();ctx.ellipse(0,38,16*flamePower,42*flamePower,0,0,Math.PI*2);ctx.fill();
+  // Layered afterburner: outer violet halo cone + cyan mid plume + white-hot
+  // core + shock diamonds + nozzle glow, with idle flicker. Much richer than
+  // the old single radial blob.
+  const fp=landing ? .55+Math.sin(phase*13)*.10 : .98+Math.sin(phase*22)*.16;
+  const ny=30, len=66*fp;
+  const cone=ctx.createLinearGradient(0,ny,0,ny+len);
+  cone.addColorStop(0,'rgba(170,140,255,.30)');
+  cone.addColorStop(.45,'rgba(112,170,255,.20)');
+  cone.addColorStop(1,'rgba(80,60,200,0)');
+  ctx.fillStyle=cone;
+  ctx.beginPath();ctx.moveTo(-13*fp,ny);
+  ctx.quadraticCurveTo(-7*fp,ny+len*.7,0,ny+len);
+  ctx.quadraticCurveTo(7*fp,ny+len*.7,13*fp,ny);ctx.closePath();ctx.fill();
+  const mid=ctx.createLinearGradient(0,ny,0,ny+len*.72);
+  mid.addColorStop(0,'rgba(255,255,255,.88)');
+  mid.addColorStop(.3,'rgba(120,235,255,.60)');
+  mid.addColorStop(1,'rgba(90,150,255,0)');
+  ctx.fillStyle=mid;
+  ctx.beginPath();ctx.moveTo(-7*fp,ny);
+  ctx.quadraticCurveTo(-3*fp,ny+len*.55,0,ny+len*.72);
+  ctx.quadraticCurveTo(3*fp,ny+len*.55,7*fp,ny);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.92)';
+  ctx.beginPath();ctx.ellipse(0,ny+6,4.5*fp,12*fp,0,0,Math.PI*2);ctx.fill();
+  if(!landing){
+    for(let i=1;i<=3;i++){
+      const dy=ny+len*.16*i+Math.sin(phase*30+i)*1.5, dw=(3.6-i*.7)*fp;
+      ctx.fillStyle=`rgba(255,255,255,${.5-i*.12})`;
+      ctx.beginPath();ctx.ellipse(0,dy,dw,dw*1.7,0,0,Math.PI*2);ctx.fill();
+    }
+  }
+  ctx.fillStyle='rgba(255,228,196,.5)';
+  ctx.beginPath();ctx.ellipse(0,ny,9*fp,3,0,0,Math.PI*2);ctx.fill();
   ctx.globalCompositeOperation='source-over';
+  ctx.restore();
+}
+/* First-person cockpit frame for the pilot feed — canopy struts + a console
+   dashboard with two glowing MFD panels, in the language of the Star Citizen
+   reference shots. Drawn on top of the scene so the centre glass stays clear
+   for the HMD/target; the dashboard also masks any stray bottom-edge HUD line. */
+function drawCockpitFrame(ctx,w,h,now,landing=false){
+  const ac=landing?[93,255,157]:[120,210,255];
+  const [cr,cg,cb]=ac;
+  ctx.save();
+  // glass tint vignette at the canopy rim
+  const vig=ctx.createRadialGradient(w*.5,h*.42,Math.min(w,h)*.28,w*.5,h*.5,Math.max(w,h)*.72);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(1,`rgba(${cr},${cg},${cb},.05)`);
+  ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+  // --- canopy struts (A-frame) ---
+  ctx.lineCap='round';
+  const strut=(x0,y0,x1,y1,wd)=>{
+    const grad=ctx.createLinearGradient(x0,y0,x1,y1);
+    grad.addColorStop(0,'rgba(20,26,34,.97)');
+    grad.addColorStop(.5,'rgba(44,54,66,.94)');
+    grad.addColorStop(1,'rgba(12,18,26,.97)');
+    ctx.strokeStyle=grad;ctx.lineWidth=wd;
+    ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
+    ctx.strokeStyle=`rgba(${cr},${cg},${cb},.16)`;ctx.lineWidth=Math.max(1,wd*.16);
+    ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
+  };
+  const sw=Math.max(11,w*.05);
+  strut(-w*.03,h*.70, w*.41,-h*.05, sw);   // left bar
+  strut(w*1.03,h*.70, w*.59,-h*.05, sw);   // right bar
+  strut(w*.5,-h*.06, w*.5,h*.085, Math.max(7,w*.028)); // top centre pillar
+  // upper canopy bow
+  ctx.strokeStyle='rgba(34,42,54,.92)';ctx.lineWidth=Math.max(8,w*.04);
+  ctx.beginPath();ctx.moveTo(w*.41,-h*.05);ctx.quadraticCurveTo(w*.5,h*.02,w*.59,-h*.05);ctx.stroke();
+  // --- dashboard / console ---
+  const dy=h*.74;
+  const dg=ctx.createLinearGradient(0,dy-h*.02,0,h);
+  dg.addColorStop(0,'rgba(12,17,24,.45)');
+  dg.addColorStop(.28,'rgba(8,12,18,.97)');
+  dg.addColorStop(1,'rgba(2,4,8,1)');
+  ctx.fillStyle=dg;
+  ctx.beginPath();
+  ctx.moveTo(0,h);ctx.lineTo(0,dy+h*.05);
+  ctx.bezierCurveTo(w*.22,dy-h*.02, w*.36,dy+h*.06, w*.5,dy+h*.06);
+  ctx.bezierCurveTo(w*.64,dy+h*.06, w*.78,dy-h*.02, w,dy+h*.05);
+  ctx.lineTo(w,h);ctx.closePath();ctx.fill();
+  // rim light along the dash edge
+  ctx.strokeStyle=`rgba(${cr},${cg},${cb},.34)`;ctx.lineWidth=1.4;
+  ctx.beginPath();
+  ctx.moveTo(0,dy+h*.05);
+  ctx.bezierCurveTo(w*.22,dy-h*.02, w*.36,dy+h*.06, w*.5,dy+h*.06);
+  ctx.bezierCurveTo(w*.64,dy+h*.06, w*.78,dy-h*.02, w,dy+h*.05);
+  ctx.stroke();
+  // two MFD panels
+  const mfd=(px,py,pw,ph,glow)=>{
+    ctx.fillStyle='rgba(6,12,18,.92)';
+    ctx.strokeStyle=`rgba(${cr},${cg},${cb},.5)`;ctx.lineWidth=1;
+    ctx.beginPath();ctx.rect(px,py,pw,ph);ctx.fill();ctx.stroke();
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    for(let i=0;i<4;i++){
+      const bw=pw*(.3+.6*((Math.sin(now/520+i*1.7+glow)+1)/2));
+      ctx.fillStyle=`rgba(${cr},${cg},${cb},${.18+.12*((Math.sin(now/300+i)+1)/2)})`;
+      ctx.fillRect(px+5,py+5+i*(ph-10)/4,bw,Math.max(2,(ph-12)/6));
+    }
+    ctx.restore();
+  };
+  const mw=w*.2, mh=h*.13, my=h*.82;
+  mfd(w*.07,my,mw,mh,0);
+  mfd(w*.73,my,mw,mh,2.4);
+  // central console glow
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  const cc=ctx.createRadialGradient(w*.5,h*.96,2,w*.5,h*.96,w*.18);
+  cc.addColorStop(0,`rgba(${cr},${cg},${cb},.16)`);
+  cc.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
+  ctx.fillStyle=cc;ctx.beginPath();ctx.arc(w*.5,h*.96,w*.18,0,Math.PI*2);ctx.fill();
+  ctx.restore();
   ctx.restore();
 }
 function drawPilotSystemSequence(ctx,w,h,phase,landing=false){
@@ -3327,9 +3428,11 @@ function drawPilotFeed(now){
         drawPilotF47Nose(ctx,w,h,elapsed,true);
         drawPilotSystemSequence(ctx,w,h,elapsed,true);
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
+        drawCockpitFrame(ctx,w,h,now,true);
       }
     }else{
       drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
+      drawCockpitFrame(ctx,w,h,now,false);
     }
   }
   if(mode==='mosaic'){
