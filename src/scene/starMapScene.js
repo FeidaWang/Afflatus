@@ -38,11 +38,15 @@ export function createStarMapScene(){
 
   function draw(ctx,w,h,now,lang='en'){
     const cx=w/2, cy=h/2, R=Math.min(w,h)*.46;
+    // Fill the whole terminal panel: project the unit star field onto the
+    // panel's actual proportions (previously a small centred circle that left
+    // wide panels mostly empty).
+    const Rx=w*.48, Ry=h*.47;
     const rot=now*.000045;       // slow field rotation (matches old WebGL feel)
     const cosR=Math.cos(rot), sinR=Math.sin(rot);
-    const P=(x,y)=>{ // unit -> screen with rotation
+    const P=(x,y)=>{ // unit -> screen with rotation, panel-filling
       const rx=x*cosR-y*sinR, ry=x*sinR+y*cosR;
-      return [cx+rx*R, cy+ry*R*.92];
+      return [cx+rx*Rx, cy+ry*Ry];
     };
 
     ctx.clearRect(0,0,w,h);
@@ -178,7 +182,9 @@ export function createStarMapScene(){
     ctx.fillText(lang==='zh'?'阿尔法德星域 · 远征航线':'ALPHARD SECTOR · VOYAGE PLOT',8,6);
     ctx.textAlign='right';
     ctx.fillStyle='rgba(140,232,255,.55)';
-    ctx.fillText(`T-${2738-Math.floor((now/86400000))%30} D`,w-8,6);
+    // live distance from Earth (AU) — distinct from the bottom-left day count
+    const au=2.7384e6 + (now/1000)%1e5;
+    ctx.fillText(`${au.toLocaleString('en-US',{maximumFractionDigits:0})} AU · EARTH`,w-8,6);
   }
 
   return {draw};

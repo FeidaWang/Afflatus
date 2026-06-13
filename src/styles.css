@@ -6489,7 +6489,12 @@ nav.route-arrows::after,
 }
 .combat-module .defense-command-log .toast.active{
   display:grid!important;
-  animation:logEnter .4s ease!important;
+  opacity:1!important;          /* was reverting to base opacity:0 after the anim */
+  transform:none!important;
+  animation:none!important;
+}
+.combat-module .defense-command-log .toast.active .msg{
+  color:#dce8f8!important;      /* guarantee the message is legible on dark glass */
 }
 
 /* Strip counters (Annualized Return etc.): the count-up animation changed the
