@@ -3417,15 +3417,13 @@ function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
   ctx.strokeStyle=red;ctx.lineWidth=1.3;ctx.setLineDash([7,4]);
   ctx.beginPath();ctx.arc(targetX,targetY,mainLockRadius,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
   if(firing){
-    // Beam azimuth matches the comet's bearing on the homepage so the cam and
-    // the main scene read as the same shot. The beam runs THROUGH the target
-    // and fully pierces the frame, extremely thick.
-    let bang;
-    if(halley&&!halley.destroyed) bang=Math.atan2(halley.curY-innerHeight*.5,halley.curX-innerWidth*.5);
-    else if(fx) bang=Math.atan2((fx.ty??innerHeight*.5)-innerHeight*.5,(fx.tx??innerWidth*.5)-innerWidth*.5);
-    else bang=Math.atan2(targetY-h*.73,targetX-w*.5);
-    const ux=Math.cos(bang), uy=Math.sin(bang), span=Math.max(w,h)*2.4;
-    const sx=targetX-ux*span, sy=targetY-uy*span, ex=targetX+ux*span, ey=targetY+uy*span;
+    // The mothership main gun fires from below-frame centre — the same origin as
+    // the homepage beam (innerWidth*.5, innerHeight+420) — straight THROUGH the
+    // contact and out of frame: one extremely thick lance that pierces the view.
+    const ox=w*.5, oy=h*1.12;                 // muzzle / mothership centre, below frame
+    const dx=targetX-ox, dy=targetY-oy, len=Math.max(1,Math.hypot(dx,dy));
+    const ux=dx/len, uy=dy/len, span=Math.max(w,h)*2.8;
+    const sx=ox, sy=oy, ex=ox+ux*span, ey=oy+uy*span;   // from muzzle, through target, far beyond
     const grow=clamp(fireT/.16,0,1);   // beam slams to full width fast
     const beam=ctx.createLinearGradient(sx,sy,ex,ey);
     beam.addColorStop(0,'rgba(255,255,255,.92)');
