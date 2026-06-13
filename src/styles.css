@@ -6485,17 +6485,12 @@ nav.route-arrows::after,
   gap:8px!important;align-items:center!important;
   font-size:9px!important;letter-spacing:.05em!important;line-height:1.2!important;
   white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
-  display:none!important;
+  display:none!important;       /* dots hidden entirely — see .feed-line below */
 }
-.combat-module .defense-command-log .toast.active{
-  display:grid!important;
-  opacity:1!important;          /* was reverting to base opacity:0 after the anim */
-  transform:none!important;
-  animation:none!important;
-}
-.combat-module .defense-command-log .toast.active .msg{
-  color:#dce8f8!important;      /* guarantee the message is legible on dark glass */
-}
+/* The defense-module log text is rendered by JS into an inline-styled
+   .feed-line node (bypassing the dozen stacked toast rules that kept hiding the
+   message). This single rule just guarantees it is never hidden. */
+.combat-module .defense-command-log .feed-line{display:block!important;}
 
 /* Strip counters (Annualized Return etc.): the count-up animation changed the
    number's width every frame and, with a non-tabular font, could wrap to a
@@ -6507,3 +6502,60 @@ nav.route-arrows::after,
   white-space:nowrap!important;
   min-height:1em!important;
 }
+
+/* ============================================================
+   2026-06-13 · Commander Terminal: login computer <-> star map
+   Default view is the secure-shell login (visitors with account +
+   password). The STAR MAP toggle (top-right) swaps to the map. The
+   two are mutually exclusive and each fills the panel.
+   ============================================================ */
+.notebook-shell{position:relative!important;}
+.notebook-shell .starmap-toggle{
+  position:absolute!important;top:8px!important;right:10px!important;
+  z-index:6!important;height:20px!important;min-width:60px!important;
+}
+.terminal-starmap:not(.active){display:none!important;}
+.notebook-login.starmap-hidden{display:none!important;}
+
+/* futuristic secure-shell login screen, fills the panel */
+.notebook-login{
+  position:absolute!important;left:12px;right:12px;top:42px;bottom:12px;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;gap:11px!important;
+  grid-template-columns:none!important;padding:16px!important;
+  border:1px solid rgba(116,206,230,.28)!important;border-radius:3px!important;
+  background:
+    linear-gradient(180deg,rgba(4,12,18,.96),rgba(1,4,8,.98)),
+    repeating-linear-gradient(0deg,rgba(116,206,230,.05) 0 1px,transparent 1px 3px)!important;
+  box-shadow:inset 0 0 30px rgba(116,206,230,.06),inset 0 0 0 1px rgba(255,255,255,.02)!important;
+  overflow:hidden!important;
+}
+.notebook-login::before{
+  content:'\25B8 AFFLATUS OS \00B7 SECURE SHELL v1.3   [ ENCRYPTED ]';
+  position:absolute;left:16px;right:16px;top:11px;
+  font:700 8px/1.2 'JetBrains Mono',monospace;letter-spacing:.16em;
+  color:rgba(116,206,230,.82);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.notebook-login::after{
+  content:'ACCESS RESTRICTED \00B7 CREDENTIALS REQUIRED \00B7 \79C1\4EBA\822A\884C\65E5\5FD7';
+  position:absolute;left:16px;right:16px;bottom:11px;
+  font:600 7px/1.3 'JetBrains Mono',monospace;letter-spacing:.1em;
+  color:rgba(232,179,128,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.notebook-login label{display:grid!important;gap:4px!important;min-width:0!important;}
+.notebook-login span{
+  font:600 7.5px 'JetBrains Mono',monospace!important;letter-spacing:.2em!important;
+  color:rgba(140,200,225,.7)!important;text-transform:uppercase!important;
+}
+.notebook-login input{
+  width:100%!important;background:rgba(2,8,12,.82)!important;
+  border:1px solid rgba(116,206,230,.3)!important;border-radius:2px!important;color:#dffaff!important;
+  font:600 11px 'JetBrains Mono',monospace!important;letter-spacing:.08em!important;padding:7px 9px!important;
+}
+.notebook-login input:focus{border-color:rgba(116,206,230,.7)!important;box-shadow:0 0 12px rgba(116,206,230,.2)!important;outline:none!important;}
+.notebook-login button{
+  margin-top:4px!important;height:30px!important;width:100%!important;
+  border:1px solid rgba(202,255,0,.6)!important;border-radius:2px!important;
+  background:linear-gradient(180deg,rgba(202,255,0,.2),rgba(9,14,4,.85))!important;
+  color:#dfff65!important;font:800 9px 'Orbitron',sans-serif!important;letter-spacing:.22em!important;cursor:pointer!important;
+}
+.notebook-login button:hover{background:linear-gradient(180deg,rgba(202,255,0,.34),rgba(9,14,4,.85))!important;box-shadow:0 0 18px rgba(202,255,0,.22)!important;}
