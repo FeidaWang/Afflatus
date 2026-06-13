@@ -26,6 +26,27 @@ export function createBattleFeed({ getLang = () => 'en', timestamp }) {
     return meter;
   }
 
+  const SEV_COLORS = { critical: '#ff6d5f', warning: '#ffd17a', success: '#7ff0a3', info: '#cfe0ee' };
+  // The defense-module log message is rendered into this single inline-styled
+  // node. A dozen stacked CSS rules were hiding the toast text; an inline-styled
+  // element that is NOT a .toast sidesteps all of them and always shows.
+  function ensureFeedLine() {
+    const feed = document.getElementById('battleFeed');
+    if (!feed) return null;
+    let line = feed.querySelector('.feed-line');
+    if (!line) {
+      line = document.createElement('div');
+      line.className = 'feed-line';
+      line.style.cssText =
+        'position:absolute;left:84px;right:62px;top:50%;transform:translateY(-50%);' +
+        'font:600 11px/1.15 "JetBrains Mono",monospace;letter-spacing:.03em;' +
+        'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;' +
+        'z-index:3;color:#cfe0ee;text-shadow:0 0 8px rgba(0,0,0,.7);';
+      feed.appendChild(line);
+    }
+    return line;
+  }
+
   function syncBattleFeedDisplay(reset = false) {
     const feed = document.getElementById('battleFeed');
     if (!feed) return;
@@ -34,6 +55,13 @@ export function createBattleFeed({ getLang = () => 'en', timestamp }) {
     if (items.length) {
       cursor = ((cursor % items.length) + items.length) % items.length;
       items.forEach((el, i) => el.classList.toggle('active', i === cursor));
+      const line = ensureFeedLine();
+      if (line) {
+        const cur = items[cursor];
+        const sev = (cur.className.match(/sev-(\w+)/) || [])[1] || 'info';
+        line.textContent = cur.querySelector('.msg')?.textContent || '';
+        line.style.color = SEV_COLORS[sev] || '#cfe0ee';
+      }
     }
     ensureKillMeter();
     if (!timer) {
