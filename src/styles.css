@@ -6472,3 +6472,33 @@ nav.route-arrows::after,
   /* battle cam + terminal must stay legible — give them breathing room */
   .hud-pilot,.hud-right{min-height:0!important;}
 }
+
+/* ============================================================
+   2026-06-13 · Battle-log live ticker + strip counter fix
+   ============================================================ */
+/* Defense-module log was microscopic (~6px) and always showed the newest
+   line statically — it read as "two dots, no broadcast". Show only the
+   .active toast (the JS cycles it every 3.2s) so it scrolls as a live feed,
+   and bump the type to a readable size. */
+.combat-module .defense-command-log .toast{
+  grid-template-columns:12px minmax(0,1fr)!important;
+  gap:8px!important;align-items:center!important;
+  font-size:9px!important;letter-spacing:.05em!important;line-height:1.2!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  display:none!important;
+}
+.combat-module .defense-command-log .toast.active{
+  display:grid!important;
+  animation:logEnter .4s ease!important;
+}
+
+/* Strip counters (Annualized Return etc.): the count-up animation changed the
+   number's width every frame and, with a non-tabular font, could wrap to a
+   second line — jittering the whole strip on mobile/first paint. Lock to
+   tabular figures and a single line so the layout never reflows. */
+.strip-value{
+  font-variant-numeric:tabular-nums!important;
+  font-feature-settings:"tnum" 1!important;
+  white-space:nowrap!important;
+  min-height:1em!important;
+}
