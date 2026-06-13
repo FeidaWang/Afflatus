@@ -3204,8 +3204,13 @@ function drawCiwsCamera(ctx,w,h,now,mode,elapsed){
   drawPilotSpace(ctx,w,h,now,1.2);
   const active=mode==='ciws' && halley && !halley.destroyed;
   const tracked=pilotTrackedPoint(w,h,'ciws');
-  const tx=active?clamp(tracked.cx,44,w-44):w*.56;
-  const ty=active?clamp(tracked.cy,36,h*.62):h*.36;
+  const rawTx=active?clamp(tracked.cx,44,w-44):w*.56;
+  const rawTy=active?clamp(tracked.cy,36,h*.62):h*.36;
+  // Smooth the aim point so the reticle glides onto target instead of
+  // jittering frame-to-frame on the fast-moving comet (no crosshair shake).
+  drawCiwsCamera.sx = drawCiwsCamera.sx==null ? rawTx : lerp(drawCiwsCamera.sx, rawTx, .12);
+  drawCiwsCamera.sy = drawCiwsCamera.sy==null ? rawTy : lerp(drawCiwsCamera.sy, rawTy, .12);
+  const tx=drawCiwsCamera.sx, ty=drawCiwsCamera.sy;
   const firing=mode==='ciws'&&elapsed>.34;
   ctx.save();
 
@@ -3428,11 +3433,9 @@ function drawPilotFeed(now){
         drawPilotF47Nose(ctx,w,h,elapsed,true);
         drawPilotSystemSequence(ctx,w,h,elapsed,true);
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
-        drawCockpitFrame(ctx,w,h,now,true);
       }
     }else{
       drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
-      drawCockpitFrame(ctx,w,h,now,false);
     }
   }
   if(mode==='mosaic'){
