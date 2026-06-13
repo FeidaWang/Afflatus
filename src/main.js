@@ -65,6 +65,18 @@ function getShip3D(){
   return ship3D;
 }
 
+// Lazy-loaded three.js combat fighter (code-split; loads when escorts launch).
+let fighter3D=null, fighter3DTried=false;
+function getFighter3D(){
+  if(!fighter3DTried){
+    fighter3DTried=true;
+    import('./scene/fighter3D.js')
+      .then(m=>{ try{ fighter3D=m.createFighter3D(); }catch(e){ fighter3D=null; } })
+      .catch(()=>{ fighter3D=null; });
+  }
+  return fighter3D;
+}
+
 function HC(key){return getHudCopy(key,currentLang);}
 function lerpAngle(from,to,t){
   const delta=Math.atan2(Math.sin(to-from),Math.cos(to-from));
@@ -2601,8 +2613,10 @@ function updateEscorts(dt, now) {
           ectx.fillStyle=cg;ectx.fillRect(-3,size*.35,6,size*.95);
           ectx.restore();
         }
-        const drewSprite=spriteCraft.drawOriented(ectx, e.type==='b2'?'b2':'f47',
-          {az:azv, el:elv, size});
+        const craftType=e.type==='b2'?'b2':'f47';
+        const f3=getFighter3D();
+        const drewSprite=(f3 && f3.drawOriented(ectx, craftType, {az:azv, el:elv, size}))
+          || spriteCraft.drawOriented(ectx, craftType, {az:azv, el:elv, size});
         if(!drewSprite){ if(e.type === 'b2') drawB2(ectx); else drawF47(ectx); }
       }
       ectx.globalAlpha = 1;
