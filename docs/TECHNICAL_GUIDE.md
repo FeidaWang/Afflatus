@@ -274,12 +274,16 @@ Fullscreen blur (the whole page, text included, looks Gaussian-blurred):
   div, i.e. an overlay, not from rasterization. Then enumerate every element with
   an active `filter`/`backdrop-filter` (`getComputedStyle`), sort by area; the
   full-viewport `nav.route-arrows` topped the list.
-- Fix (`src/styles.css`, final block): scope the nav glass with
-  `nav:not(.route-arrows)` so only the real top bar gets the blur, plus a final
-  `nav.route-arrows, .route-arrows { backdrop-filter:none; filter:none; background:none }`
-  guard (and the same on `::before`/`::after`) that outranks all earlier stacked
-  patches by both specificity and source order. The arrows themselves
-  (`.route-arrow`, singular) are untouched.
+- Fix (`src/styles.css`): the ROOT source is the base nav rule at the top of the
+  `/* nav */` block — `nav { ... backdrop-filter:blur(14px) ... }`. It is now
+  `nav:not(.route-arrows){ ... }`, so the route-arrows container never matches the
+  blur declaration at the source and no cascade override is needed. (The trailing
+  `nav{ blur(12px) }` rule was likewise scoped to `nav:not(.route-arrows)`, and a
+  final `nav.route-arrows, .route-arrows { backdrop-filter:none!important }` guard
+  stays as belt-and-suspenders.) The arrows themselves (`.route-arrow`, singular)
+  are untouched. Note: pre-existing `.route-arrows{backdrop-filter:none}` resets
+  lived inside mobile `@media` blocks, which is why the blur only showed on large
+  / fullscreen windows.
 - Standing rule: `.route-arrows` is a transparent, pointer-events:none position
   container — it must NEVER carry `filter`, `backdrop-filter`, `background`, or
   `box-shadow`. If you add a new blanket `nav {}` rule, exclude `.route-arrows`.
