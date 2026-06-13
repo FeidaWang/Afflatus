@@ -313,9 +313,19 @@ function updateCursorTarget(){
     const threatIndex={small:0,medium:1,large:2,giant:3}[halley.sizeClass||'medium'];
     const prob = interceptProbability();
     box.innerHTML=`${h.speed} ${(halley.speedKms||0).toFixed(1)} KM/S<br>${h.heading} ${(halley.headingDeg||0).toFixed(0).padStart(3,'0')}°<br>${h.threatLabel} ${h.threat[threatIndex]} · ${h.intercept} ${prob}%`;
-    cursor.classList.toggle('target-left', mx > innerWidth*.55);
-    cursor.classList.toggle('target-bottom', my < innerHeight*.34);
-    cursor.classList.toggle('target-top', my >= innerHeight*.34);
+    // Keep the readout clear of the comet's bright tail. The tail trails
+    // opposite to the comet's velocity, so place the box on the leading side;
+    // flip near screen edges so it never runs off-frame.
+    const vx=halley.vx??-1, vy=halley.vy??.3;
+    let boxLeft = vx<0;                       // moving left → tail on right → box left
+    if(mx > innerWidth*.78) boxLeft=true;
+    if(mx < innerWidth*.22) boxLeft=false;
+    let boxAbove = vy<0;                       // moving up → tail below → box above
+    if(my < innerHeight*.24) boxAbove=false;
+    if(my > innerHeight*.72) boxAbove=true;
+    cursor.classList.toggle('target-left', boxLeft);
+    cursor.classList.toggle('target-top', boxAbove);
+    cursor.classList.toggle('target-bottom', !boxAbove);
     cursor.classList.add('targeting');
   }else{
     cursor.classList.remove('targeting');
@@ -422,11 +432,11 @@ function getCannonFx(){
   if(!mainCannonFx) return null;
   const now=Date.now();
   if(mainCannonFx.fireAt){
-    const t=(now-mainCannonFx.fireAt)/1700;
+    const t=(now-mainCannonFx.fireAt)/2400;
     if(t>1.05){mainCannonFx=null;return null;}
     return {...mainCannonFx,mode:'fire',t:clamp(t,0,1)};
   }
-  return {...mainCannonFx,mode:'charge',t:clamp((now-mainCannonFx.chargeStart)/3000,0,1)};
+  return {...mainCannonFx,mode:'charge',t:clamp((now-mainCannonFx.chargeStart)/4500,0,1)};
 }
 function drawRadar(){
   if(!combatHot){document.body.classList.remove('radar-sweeping');return;}
@@ -2125,13 +2135,13 @@ function fireEnforcerMain(tx, ty){
   }
   if(halley?.attackStarted) return;
   if(halley) halley.attackStarted=true;
-  setPilotView('mainGun',halley,7800);
+  setPilotView('mainGun',halley,9200);
   startService('ammo',26000,34); startService('bay',30000,24); startService('repair',9000);
-  logBattle(`${HC('logEnforcerCharge')}3.00s`);
-  pushBattleToast(`${HC('enforcerWarn')} · ${HC('brace')}3.00`);
-  enforcerChargeUntil=Date.now()+3000;
+  logBattle(`${HC('logEnforcerCharge')}4.50s`);
+  pushBattleToast(`${HC('enforcerWarn')} · ${HC('brace')}4.50`);
+  enforcerChargeUntil=Date.now()+4500;
   mainCannonFx={chargeStart:Date.now(),fireAt:0,tx,ty};
-  weaponWarning.innerHTML=`<b>${HC('enforcerWarn')}</b><span>${HC('brace')}3.00</span>`;
+  weaponWarning.innerHTML=`<b>${HC('enforcerWarn')}</b><span>${HC('brace')}4.50</span>`;
   weaponWarning.classList.add('on');
   const chargeTicker=setInterval(()=>{
     const remain=Math.max(0,(enforcerChargeUntil-Date.now())/1000);
@@ -2144,7 +2154,7 @@ function fireEnforcerMain(tx, ty){
     document.body.classList.add('weapon-cutoff');
     const fireTx=halley&&!halley.destroyed?halley.curX:tx;
     const fireTy=halley&&!halley.destroyed?halley.curY:ty;
-    mainCannonFx={...(mainCannonFx||{}),chargeStart:mainCannonFx?.chargeStart||Date.now()-3000,fireAt:Date.now(),tx:fireTx,ty:fireTy};
+    mainCannonFx={...(mainCannonFx||{}),chargeStart:mainCannonFx?.chargeStart||Date.now()-4500,fireAt:Date.now(),tx:fireTx,ty:fireTy};
     document.body.classList.add('main-cannon-firing');
     shipRecoil=42;
     document.body.classList.add('shake');
@@ -2152,7 +2162,7 @@ function fireEnforcerMain(tx, ty){
     setTimeout(()=>document.body.classList.remove('shake'),900);
     weapons.push({type:'enforcer', active:128, tx:fireTx, ty:fireTy, ox:innerWidth*.5, oy:innerHeight+420, particles:[]});
     setTimeout(()=>document.body.classList.remove('weapon-cutoff'), 1700);
-  },3000);
+  },4500);
 }
 
 function createExplosion(x, y, isGiant, isNuke=false) {
@@ -3383,13 +3393,13 @@ function drawNempIncomingCamera(ctx,w,h,now,elapsed){
   ctx.restore();
 }
 
-function drawMainGunCamera(ctx,w,h,now,elapsed){
+function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
   drawPilotSpace(ctx,w,h,now,1.4);
   ctx.save();
   const cyan='rgba(116,240,255,.82)', mag='rgba(255,80,188,.84)', red='rgba(255,30,70,.90)';
-  if(elapsed>.38){
-    const recoilWindow=clamp((elapsed-.38)/.18,0,1);
-    const recoil=Math.sin(recoilWindow*Math.PI)*Math.max(.16,1-elapsed)*26;
+  const fireT=fx&&fx.mode==='fire'?fx.t:0;
+  if(firing){
+    const recoil=Math.sin(clamp(fireT/.3,0,1)*Math.PI)*22+Math.max(0,1-fireT)*4;
     ctx.translate(Math.sin(now/35)*recoil*.34,recoil);
     ctx.rotate(Math.sin(now/51)*recoil*.0007);
   }
@@ -3400,29 +3410,36 @@ function drawMainGunCamera(ctx,w,h,now,elapsed){
   ctx.fillStyle='rgba(2,6,12,.72)';
   ctx.beginPath();ctx.moveTo(w*.50,h*.95);ctx.lineTo(w*.40,h*.70);ctx.lineTo(w*.60,h*.70);ctx.closePath();ctx.fill();
   ctx.strokeStyle=cyan;ctx.stroke();
-  const phase=elapsed<.38?'CHARGING PARTICLE SPINE':'MAIN GUN FIRING';
+  const phase=firing?'MAIN GUN FIRING':'CHARGING PARTICLE SPINE';
   ctx.fillStyle=cyan;ctx.font=`${Math.max(7,w*.02)}px 'JetBrains Mono',monospace`;ctx.textAlign='center';
   ctx.fillText(phase,w*.5,24);
   const mainLockRadius=lerp(46,16,tracked.lock||0)+2*Math.sin(now/110);
   ctx.strokeStyle=red;ctx.lineWidth=1.3;ctx.setLineDash([7,4]);
   ctx.beginPath();ctx.arc(targetX,targetY,mainLockRadius,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
-  if(elapsed>.38){
-    const bx=w*.5, by=h*.73;
-    const dx=targetX-bx, dy=targetY-by, len=Math.max(1,Math.hypot(dx,dy));
-    const ux=dx/len, uy=dy/len, span=Math.max(w,h)*2.3;
-    const sx=bx-ux*span, sy=by-uy*span, ex=bx+ux*span, ey=by+uy*span;
+  if(firing){
+    // Beam azimuth matches the comet's bearing on the homepage so the cam and
+    // the main scene read as the same shot. The beam runs THROUGH the target
+    // and fully pierces the frame, extremely thick.
+    let bang;
+    if(halley&&!halley.destroyed) bang=Math.atan2(halley.curY-innerHeight*.5,halley.curX-innerWidth*.5);
+    else if(fx) bang=Math.atan2((fx.ty??innerHeight*.5)-innerHeight*.5,(fx.tx??innerWidth*.5)-innerWidth*.5);
+    else bang=Math.atan2(targetY-h*.73,targetX-w*.5);
+    const ux=Math.cos(bang), uy=Math.sin(bang), span=Math.max(w,h)*2.4;
+    const sx=targetX-ux*span, sy=targetY-uy*span, ex=targetX+ux*span, ey=targetY+uy*span;
+    const grow=clamp(fireT/.16,0,1);   // beam slams to full width fast
     const beam=ctx.createLinearGradient(sx,sy,ex,ey);
     beam.addColorStop(0,'rgba(255,255,255,.92)');
     beam.addColorStop(.28,mag);
     beam.addColorStop(.55,red);
     beam.addColorStop(1,'rgba(255,255,255,.80)');
     ctx.globalCompositeOperation='lighter';
-    ctx.strokeStyle='rgba(120,235,255,.22)';ctx.lineWidth=w*.18;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
-    ctx.strokeStyle=beam;ctx.lineWidth=w*.105;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
-    ctx.strokeStyle='rgba(255,255,255,.94)';ctx.lineWidth=w*.020;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+    ctx.lineCap='round';
+    ctx.strokeStyle='rgba(120,235,255,.22)';ctx.lineWidth=w*.26*grow;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+    ctx.strokeStyle=beam;ctx.lineWidth=w*.15*grow;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.96)';ctx.lineWidth=w*.032*grow;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
     for(let wave=0;wave<4;wave++){
       ctx.strokeStyle=wave%2?'rgba(255,255,255,.30)':'rgba(255,40,90,.34)';
-      ctx.lineWidth=w*(.055+wave*.028);
+      ctx.lineWidth=w*(.07+wave*.032)*grow;
       ctx.setLineDash([18+wave*5,14+wave*4]);
       ctx.lineDashOffset=-now/(18+wave*5);
       ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
@@ -3461,9 +3478,17 @@ function drawPilotFeed(now){
   }else if(mode==='nemp'){
     drawNempIncomingCamera(ctx,w,h,now,elapsed);
   }else if(mode==='mainGun'){
-    // charging phase: cinematic capital-ship side flyby, then cut to gun cam
-    if(elapsed<.34) capitalFlyby.draw(ctx,w,h,now,elapsed/.34,currentLang);
-    else drawMainGunCamera(ctx,w,h,now,elapsed);
+    // Sync the cam to the real cannon timeline: a slow capital-ship flyby that
+    // pans from the thrusters across the main-gun spine while it charges, then
+    // cut to the gun cam the instant the cannon fires.
+    const fx=getCannonFx();
+    const firing=!!(fx && fx.mode==='fire');
+    const chargeT=fx ? (fx.mode==='charge'?fx.t:1) : clamp(elapsed/.5,0,1);
+    if(!firing && chargeT<1){
+      capitalFlyby.draw(ctx,w,h,now,chargeT,currentLang);
+    }else{
+      drawMainGunCamera(ctx,w,h,now,elapsed,firing,fx);
+    }
   }else{
     drawPilotSpace(ctx,w,h,now,mode==='combat'?1.45:1);
     const extCam=cameraDirector.available() && pilotView.trackSeed>Math.PI;

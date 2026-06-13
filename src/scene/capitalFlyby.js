@@ -230,10 +230,11 @@ export function createCapitalFlyby(){
     ctx.restore();
     starStreaks(ctx,w,h,now*1.7+400,1.6);
 
-    // hero hull pass
+    // hero hull pass — sails LEFT -> RIGHT so the camera reveals the stern
+    // thrusters first, then pans across the hull to the forward main gun.
     const s=(h/HH)*.92;
     const shipW=HW*s;
-    const x=lerp(w+shipW*.06,-shipW-40,easeInOut(t));
+    const x=lerp(-shipW-40,w+shipW*.06,easeInOut(t));
     const y=h*.10+Math.sin(t*Math.PI)*h*.02;
     ctx.drawImage(hull,x,y,shipW,HH*s);
 
