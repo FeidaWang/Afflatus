@@ -3349,9 +3349,9 @@ nav{
 }
 body.page-turn-next main,
 body.page-turn-prev main{
-  transition:transform .22s ease,opacity .22s ease,filter .22s ease;
-  opacity:.32;
-  filter:blur(4px);
+  transition:transform .22s ease,opacity .22s ease;
+  opacity:.42;
+  filter:none;
 }
 body.page-turn-next main{transform:translateX(-24px)}
 body.page-turn-prev main{transform:translateX(24px)}
