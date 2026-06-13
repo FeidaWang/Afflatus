@@ -39,69 +39,94 @@ export function createCapitalShip3D() {
 
   const ship = new THREE.Group();
 
-  // central hull — elongated along +Z (nose +Z, stern -Z)
-  const hull = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 18), hullMat);
-  hull.scale.set(0.85, 0.66, 2.9); ship.add(hull);
-  // belly keel
-  const keel = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.5, 4.4), trimMat);
+  // ---- segmented armored hull (nose +Z, stern -Z) ----
+  const hull = new THREE.Mesh(new THREE.SphereGeometry(1, 30, 20), hullMat);
+  hull.scale.set(0.8, 0.62, 2.95); ship.add(hull);
+  // dorsal spine + belly keel
+  const spine = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.32, 4.2), trimMat);
+  spine.position.set(0, 0.5, -0.2); ship.add(spine);
+  const keel = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.55, 4.2), trimMat);
   keel.position.y = -0.42; ship.add(keel);
-  // nose cone (forward)
-  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.6, 1.6, 20), hullMat);
-  nose.rotation.x = Math.PI / 2; nose.position.z = 3.0; ship.add(nose);
+  // armor band rings + side armor panels
+  for (let i = 0; i < 5; i++) {
+    const band = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.05, 8, 26), darkMat);
+    band.scale.set(1, 0.78, 1); band.position.z = -1.6 + i * 0.8; ship.add(band);
+  }
+  for (const sx of [-1, 1]) {
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.5, 3.2), trimMat);
+    panel.position.set(sx * 0.78, 0, -0.1); ship.add(panel);
+  }
+  // nose
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.7, 22), hullMat);
+  nose.rotation.x = Math.PI / 2; nose.position.z = 3.05; ship.add(nose);
 
-  // raised cockpit / bridge
-  const bridge = new THREE.Mesh(new THREE.SphereGeometry(0.62, 20, 14), hullMat);
-  bridge.scale.set(0.7, 0.6, 1.1); bridge.position.set(0, 0.5, 0.7); ship.add(bridge);
-  const canopy = new THREE.Mesh(new THREE.SphereGeometry(0.4, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.6), glassMat);
-  canopy.scale.set(0.7, 0.7, 1.1); canopy.position.set(0, 0.66, 1.0); ship.add(canopy);
+  // ---- forward cockpit pod + canopy ----
+  const cockpitPod = new THREE.Mesh(new THREE.SphereGeometry(0.6, 20, 14), hullMat);
+  cockpitPod.scale.set(0.78, 0.72, 1.2); cockpitPod.position.set(0, 0.42, 1.1); ship.add(cockpitPod);
+  const canopy = new THREE.Mesh(new THREE.SphereGeometry(0.4, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.62), glassMat);
+  canopy.scale.set(0.78, 0.7, 1.3); canopy.position.set(0, 0.6, 1.35); ship.add(canopy);
 
   // hull greebles (surface machinery)
-  for (let i = 0; i < 14; i++) {
-    const g = new THREE.Mesh(new THREE.BoxGeometry(0.18 + Math.random() * 0.3, 0.08, 0.18 + Math.random() * 0.4), i % 2 ? darkMat : trimMat);
-    g.position.set((Math.random() - 0.5) * 1.1, 0.3 + Math.random() * 0.3, (Math.random() - 0.5) * 4);
+  for (let i = 0; i < 22; i++) {
+    const g = new THREE.Mesh(new THREE.BoxGeometry(0.14 + Math.random() * 0.3, 0.07, 0.16 + Math.random() * 0.4), i % 2 ? darkMat : trimMat);
+    g.position.set((Math.random() - 0.5) * 1.2, 0.2 + Math.random() * 0.4, (Math.random() - 0.5) * 3.6);
     ship.add(g);
   }
 
-  // twin engine nacelles (stern -Z, sides)
+  // ---- raised dorsal engine nacelles (fig1 signature): ribbed body on a pylon ----
   const nacelle = (sx) => {
     const grp = new THREE.Group();
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 1.7, 18), trimMat);
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.52, 2.0, 22), hullMat);
     body.rotation.x = Math.PI / 2; grp.add(body);
-    const bell = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.34, 0.4, 18), darkMat);
-    bell.rotation.x = Math.PI / 2; bell.position.z = -0.95; grp.add(bell);
-    const glow = new THREE.Mesh(new THREE.CircleGeometry(0.33, 18), engineMat);
-    glow.position.z = -1.16; glow.rotation.y = Math.PI; grp.add(glow);
-    const light = new THREE.PointLight(0x6fe0ff, 6, 6); light.position.z = -1.4; grp.add(light);
-    grp.position.set(sx, -0.05, -1.9);
+    for (let i = 0; i < 4; i++) {
+      const rib = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.06, 8, 22), darkMat);
+      rib.position.z = -0.7 + i * 0.45; grp.add(rib);
+    }
+    const intake = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.47, 0.3, 22), darkMat);
+    intake.rotation.x = Math.PI / 2; intake.position.z = 1.05; grp.add(intake);
+    const bell = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.36, 0.5, 22), darkMat);
+    bell.rotation.x = Math.PI / 2; bell.position.z = -1.1; grp.add(bell);
+    const glow = new THREE.Mesh(new THREE.CircleGeometry(0.37, 22), engineMat);
+    glow.position.z = -1.34; glow.rotation.y = Math.PI; grp.add(glow);
+    const light = new THREE.PointLight(0x6fe0ff, 6, 7); light.position.z = -1.7; grp.add(light);
+    const pylon = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.75, 0.85), trimMat);
+    pylon.position.set(0, -0.55, -0.15); pylon.rotation.x = 0.08; grp.add(pylon);
+    grp.position.set(sx, 0.55, -1.85);                 // RAISED, at the rear
     grp.userData.glow = glow; grp.userData.light = light;
     return grp;
   };
-  const engL = nacelle(-0.78), engR = nacelle(0.78);
+  const engL = nacelle(-0.62), engR = nacelle(0.62);
   ship.add(engL, engR);
 
-  // side weapon pods + barrels
+  // ---- side wing-pods + barrels ----
   const pod = (sx) => {
     const grp = new THREE.Group();
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.22, 0.5), trimMat);
-    arm.position.x = sx * 0.6; grp.add(arm);
-    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 1.3, 12), darkMat);
-    barrel.rotation.x = Math.PI / 2; barrel.position.set(sx * 1.1, 0, 0.9); grp.add(barrel);
-    grp.position.set(sx * 0.85, -0.1, 0.4);
-    grp.rotation.z = sx * 0.12;
+    const wing = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.18, 0.9), trimMat);
+    wing.position.x = sx * 0.7; grp.add(wing);
+    const tip = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.7), hullMat);
+    tip.position.set(sx * 1.25, 0, 0); grp.add(tip);
+    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 1.4, 12), darkMat);
+    barrel.rotation.x = Math.PI / 2; barrel.position.set(sx * 1.25, 0, 0.95); grp.add(barrel);
+    grp.position.set(sx * 0.85, -0.18, 0.2);
+    grp.rotation.z = sx * 0.14; grp.rotation.y = sx * -0.06;
     return grp;
   };
   ship.add(pod(-1), pod(1));
 
-  // forward main-gun spine
-  const gunBarrel = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 2.4, 16), trimMat);
-  gunBarrel.rotation.x = Math.PI / 2; gunBarrel.position.set(0, 0.05, 2.6); ship.add(gunBarrel);
-  for (let i = 0; i < 4; i++) {
+  // ---- forward main-gun spine + chin guns ----
+  const gunBarrel = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 2.4, 16), trimMat);
+  gunBarrel.rotation.x = Math.PI / 2; gunBarrel.position.set(0, -0.05, 2.7); ship.add(gunBarrel);
+  for (let i = 0; i < 5; i++) {
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.04, 8, 16), darkMat);
-    ring.position.set(0, 0.05, 1.8 + i * 0.45); ship.add(ring);
+    ring.position.set(0, -0.05, 1.8 + i * 0.4); ship.add(ring);
+  }
+  for (const sx of [-0.32, 0.32]) {
+    const chin = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 1.1, 10), darkMat);
+    chin.rotation.x = Math.PI / 2; chin.position.set(sx, -0.3, 2.5); ship.add(chin);
   }
   const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 12), gunMat);
-  muzzle.position.set(0, 0.05, 3.85); ship.add(muzzle);
-  const muzzleLight = new THREE.PointLight(0xff3b30, 0, 6); muzzleLight.position.set(0, 0.05, 4.1); ship.add(muzzleLight);
+  muzzle.position.set(0, -0.05, 3.95); ship.add(muzzle);
+  const muzzleLight = new THREE.PointLight(0xff3b30, 0, 6); muzzleLight.position.set(0, -0.05, 4.2); ship.add(muzzleLight);
 
   scene.add(ship);
 
