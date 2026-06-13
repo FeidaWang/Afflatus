@@ -6666,6 +6666,8 @@ nav.route-arrows::after,
 .afpc .afpc-body{flex:1 1 auto!important;display:grid!important;grid-template-columns:38% 1fr!important;gap:13px!important;align-items:center!important;min-height:0!important;}
 .afpc .afpc-holo{position:relative!important;height:100%!important;min-height:0!important;border:1px solid rgba(116,206,230,.18)!important;border-radius:2px!important;background:radial-gradient(62% 80% at 50% 44%,rgba(116,206,230,.12),transparent 72%)!important;overflow:hidden!important;}
 .afpc .afpc-holo-canvas{width:100%!important;height:100%!important;display:block!important;}
+.afpc .afpc-holo svg{height:94%!important;width:auto!important;max-width:92%!important;display:block!important;filter:drop-shadow(0 0 6px rgba(116,206,230,.55))!important;animation:afpcHoloFloat 4.6s ease-in-out infinite!important;}
+@keyframes afpcHoloFloat{0%,100%{transform:translateY(0);opacity:.9}50%{transform:translateY(-3px);opacity:1}}
 .afpc .afpc-holo-label{position:absolute!important;left:6px!important;bottom:5px!important;font:700 6px 'JetBrains Mono',monospace!important;letter-spacing:.12em!important;color:rgba(150,235,255,.82)!important;text-transform:uppercase!important;}
 .afpc .afpc-fields{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:9px!important;min-width:0!important;}
 .afpc .afpc-field{display:grid!important;gap:3px!important;min-width:0!important;margin:0!important;}

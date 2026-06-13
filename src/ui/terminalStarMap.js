@@ -35,6 +35,36 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     }
   };
 
+  // Holographic top-down mothership (line-art): central armoured hull, cockpit,
+  // raised twin rear engine nacelles with ribs + bell glow, side wing-pods with
+  // guns, and a forward main-gun spine. Reliable 2D (the full 3D model is the
+  // main-gun cinematic).
+  const MOTHERSHIP_SVG = `
+    <svg viewBox="0 0 150 178" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <ellipse cx="55" cy="158" rx="11" ry="6" fill="#9af0ff" opacity=".45"/>
+      <ellipse cx="95" cy="158" rx="11" ry="6" fill="#9af0ff" opacity=".45"/>
+      <path d="M75 14 L92 60 L98 120 L88 152 L62 152 L52 120 L58 60 Z" fill="rgba(110,216,255,.12)" stroke="#7fe0ff" stroke-width="1.4"/>
+      <line x1="75" y1="22" x2="75" y2="148" stroke="#9af0ff" stroke-width="1" opacity=".55"/>
+      <line x1="58" y1="76" x2="92" y2="76" stroke="#7fe0ff" stroke-width=".8" opacity=".5"/>
+      <line x1="56" y1="100" x2="94" y2="100" stroke="#7fe0ff" stroke-width=".8" opacity=".5"/>
+      <line x1="56" y1="124" x2="94" y2="124" stroke="#7fe0ff" stroke-width=".8" opacity=".5"/>
+      <ellipse cx="75" cy="48" rx="9" ry="13" fill="rgba(190,243,255,.22)" stroke="#bdf3ff" stroke-width="1"/>
+      <rect x="43" y="118" width="22" height="42" rx="8" fill="rgba(110,216,255,.14)" stroke="#7fe0ff" stroke-width="1.2"/>
+      <rect x="85" y="118" width="22" height="42" rx="8" fill="rgba(110,216,255,.14)" stroke="#7fe0ff" stroke-width="1.2"/>
+      <line x1="45" y1="130" x2="63" y2="130" stroke="#7fe0ff" stroke-width=".7" opacity=".6"/>
+      <line x1="45" y1="142" x2="63" y2="142" stroke="#7fe0ff" stroke-width=".7" opacity=".6"/>
+      <line x1="87" y1="130" x2="105" y2="130" stroke="#7fe0ff" stroke-width=".7" opacity=".6"/>
+      <line x1="87" y1="142" x2="105" y2="142" stroke="#7fe0ff" stroke-width=".7" opacity=".6"/>
+      <path d="M52 90 L30 100 L34 112 L54 108 Z" fill="rgba(110,216,255,.10)" stroke="#7fe0ff" stroke-width="1"/>
+      <path d="M98 90 L120 100 L116 112 L96 108 Z" fill="rgba(110,216,255,.10)" stroke="#7fe0ff" stroke-width="1"/>
+      <line x1="31" y1="100" x2="27" y2="78" stroke="#9af0ff" stroke-width="1.4"/>
+      <line x1="119" y1="100" x2="123" y2="78" stroke="#9af0ff" stroke-width="1.4"/>
+      <line x1="75" y1="22" x2="75" y2="5" stroke="#cdf6ff" stroke-width="2"/>
+      <circle cx="75" cy="5" r="2.6" fill="#eafdff"/>
+      <circle cx="55" cy="159" r="4" fill="#eafdff"/>
+      <circle cx="95" cy="159" r="4" fill="#eafdff"/>
+    </svg>`;
+
   // Build the PC from scratch inside a fresh .afpc container with unique class
   // names, so NONE of the dozen stacked .notebook-login rules can touch it. The
   // old login content is hidden via CSS (.notebook-login > *:not(.afpc)).
@@ -53,12 +83,10 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     mapBtn.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
     head.append(title, mapBtn);
 
-    // body: mothership hologram (left) + credential fields (right)
+    // body: mothership hologram (left, fills the dead space) + fields (right)
     const body = make('div', 'afpc-body');
     const holo = make('div', 'afpc-holo');
-    const holoCanvas = make('canvas', 'afpc-holo-canvas');
-    holoCanvasRef = holoCanvas;          // hologram created lazily on first login-open
-    holo.appendChild(holoCanvas);
+    holo.innerHTML = MOTHERSHIP_SVG;     // reliable 2D holographic projection
     const holoLabel = make('div', 'afpc-holo-label');
     holoLabel.textContent = 'ENFORCER · MOTHERSHIP';
     holo.appendChild(holoLabel);
@@ -70,18 +98,19 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
       const inp = make('input', 'afpc-input'); inp.type = type; inp.placeholder = ph; inp.autocomplete = 'off';
       f.append(s, inp); return f;
     };
-    fields.append(mkField('ACCOUNT', 'text', 'BRUCE.WANG'), mkField('PASSWORD', 'password', '••••••••'));
-    body.append(holo, fields);
-
     const loginBtn = make('button', 'afpc-login');
     loginBtn.type = 'button';
     loginBtn.textContent = 'LOGIN';
+    // ACCOUNT / PASSWORD / LOGIN stacked in the right column → LOGIN never
+    // overlaps the password field.
+    fields.append(mkField('ACCOUNT', 'text', 'BRUCE.WANG'), mkField('PASSWORD', 'password', '••••••••'), loginBtn);
+    body.append(holo, fields);
 
     const foot = make('div', 'afpc-foot');
     foot.textContent = zh ? '● 访问受限 · 需要凭证 · 私人航行日志' : '● ACCESS RESTRICTED · CREDENTIALS REQUIRED · 私人航行日志';
 
     const scan = make('div', 'afpc-scan');
-    pc.append(head, body, loginBtn, foot, scan);
+    pc.append(head, body, foot, scan);
     for (const c of ['tl', 'tr', 'bl', 'br']) pc.appendChild(make('i', 'afpc-corner ' + c));
     login.appendChild(pc);
   }
