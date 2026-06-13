@@ -35,45 +35,55 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     }
   };
 
-  // Build the login "desktop" chrome once, as clean non-overlapping rows:
-  //   [ title bar | STAR MAP ] / [ mothership hologram | credential fields ] /
-  //   [ LOGIN ] / [ footer ]. The old top status row + toggle are hidden via
-  //   CSS; the star map is a full-panel wallpaper you click to enter here.
-  if (login && !login.querySelector('.term-body')) {
+  // Build the PC from scratch inside a fresh .afpc container with unique class
+  // names, so NONE of the dozen stacked .notebook-login rules can touch it. The
+  // old login content is hidden via CSS (.notebook-login > *:not(.afpc)).
+  if (login && !login.querySelector('.afpc')) {
     const make = (tag, cls) => { const e = document.createElement(tag); if (cls) e.className = cls; return e; };
+    const zh = getLang() === 'zh';
+    const pc = make('div', 'afpc');
 
-    const head = make('div', 'term-head');
-    const title = make('span', 'term-title');
-    title.textContent = '▸ AFFLATUS OS · SECURE SHELL';
-    const back = make('button', 'term-back');
-    back.type = 'button';
-    back.textContent = getLang() === 'zh' ? '◂ 星图' : '◂ STAR MAP';
-    back.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
-    head.append(title, back);
+    // title bar: name (left) + STAR MAP control (right)
+    const head = make('div', 'afpc-head');
+    const title = make('span', 'afpc-title');
+    title.textContent = 'AFFLATUS OS · SECURE SHELL';
+    const mapBtn = make('button', 'afpc-map');
+    mapBtn.type = 'button';
+    mapBtn.textContent = zh ? '星图 ▸' : 'STAR MAP ▸';
+    mapBtn.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
+    head.append(title, mapBtn);
 
-    // mothership hologram (left of the body row)
-    const body = make('div', 'term-body');
-    const holo = make('div', 'term-hologram');
-    const holoCanvas = make('canvas', 'term-holo-canvas');
-    holoCanvasRef = holoCanvas;          // hologram is created lazily on first login-open
+    // body: mothership hologram (left) + credential fields (right)
+    const body = make('div', 'afpc-body');
+    const holo = make('div', 'afpc-holo');
+    const holoCanvas = make('canvas', 'afpc-holo-canvas');
+    holoCanvasRef = holoCanvas;          // hologram created lazily on first login-open
     holo.appendChild(holoCanvas);
-    const holoLabel = make('div', 'term-holo-label');
+    const holoLabel = make('div', 'afpc-holo-label');
     holoLabel.textContent = 'ENFORCER · MOTHERSHIP';
     holo.appendChild(holoLabel);
 
-    const fields = make('div', 'term-fields');
-    login.querySelectorAll('label').forEach(l => fields.appendChild(l));
+    const fields = make('div', 'afpc-fields');
+    const mkField = (lab, type, ph) => {
+      const f = make('label', 'afpc-field');
+      const s = make('span', 'afpc-flabel'); s.textContent = lab;
+      const inp = make('input', 'afpc-input'); inp.type = type; inp.placeholder = ph; inp.autocomplete = 'off';
+      f.append(s, inp); return f;
+    };
+    fields.append(mkField('ACCOUNT', 'text', 'BRUCE.WANG'), mkField('PASSWORD', 'password', '••••••••'));
     body.append(holo, fields);
 
-    const loginBtn = login.querySelector('#terminalLoginBtn');
-    const foot = make('div', 'term-foot');
-    foot.textContent = '● ACCESS RESTRICTED · CREDENTIALS REQUIRED · 私人航行日志';
-    const scan = make('div', 'term-scan');
+    const loginBtn = make('button', 'afpc-login');
+    loginBtn.type = 'button';
+    loginBtn.textContent = 'LOGIN';
 
-    login.append(head, body);
-    if (loginBtn) login.appendChild(loginBtn);   // direct grid item → grid-area: login
-    login.append(foot, scan);
-    for (const c of ['tl', 'tr', 'bl', 'br']) login.appendChild(make('i', 'term-corner ' + c));
+    const foot = make('div', 'afpc-foot');
+    foot.textContent = zh ? '● 访问受限 · 需要凭证 · 私人航行日志' : '● ACCESS RESTRICTED · CREDENTIALS REQUIRED · 私人航行日志';
+
+    const scan = make('div', 'afpc-scan');
+    pc.append(head, body, loginBtn, foot, scan);
+    for (const c of ['tl', 'tr', 'bl', 'br']) pc.appendChild(make('i', 'afpc-corner ' + c));
+    login.appendChild(pc);
   }
 
   setMode(true);   // default: the star-map wallpaper

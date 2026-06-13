@@ -6638,3 +6638,47 @@ nav.route-arrows::after,
 .notebook-login .term-corner.tr{top:6px;right:6px;border-left:0!important;border-bottom:0!important;}
 .notebook-login .term-corner.bl{bottom:6px;left:6px;border-right:0!important;border-top:0!important;}
 .notebook-login .term-corner.br{bottom:6px;right:6px;border-left:0!important;border-top:0!important;}
+
+/* ============================================================
+   2026-06-14 · Commander PC, clean rebuild (.afpc)
+   Built from scratch with unique class names so the dozen stacked
+   .notebook-login rules can't break it. Old login content hidden.
+   ============================================================ */
+.notebook-login{padding:0!important;border:0!important;background:none!important;box-shadow:none!important;}
+.notebook-login > *:not(.afpc){display:none!important;}
+
+.afpc{
+  position:absolute!important;inset:0!important;z-index:5!important;
+  display:flex!important;flex-direction:column!important;gap:7px!important;
+  padding:11px 13px!important;box-sizing:border-box!important;
+  border:1px solid rgba(116,206,230,.32)!important;border-radius:3px!important;
+  background:
+    radial-gradient(120% 90% at 20% 40%,rgba(116,206,230,.10),transparent 60%),
+    linear-gradient(180deg,rgba(5,13,19,.97),rgba(1,4,8,.99)),
+    repeating-linear-gradient(0deg,rgba(116,206,230,.045) 0 1px,transparent 1px 3px)!important;
+  box-shadow:inset 0 0 30px rgba(116,206,230,.07)!important;overflow:hidden!important;
+  font-family:'JetBrains Mono',monospace!important;
+}
+.afpc .afpc-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex:0 0 auto!important;padding-bottom:6px!important;border-bottom:1px solid rgba(116,206,230,.22)!important;}
+.afpc .afpc-title{font:700 8px/1.3 'JetBrains Mono',monospace!important;letter-spacing:.14em!important;color:rgba(120,210,235,.86)!important;text-transform:uppercase!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;min-width:0!important;}
+.afpc .afpc-map{flex:0 0 auto!important;height:21px!important;width:auto!important;margin:0!important;padding:0 12px!important;border:1px solid rgba(116,206,230,.55)!important;border-radius:2px!important;background:linear-gradient(180deg,rgba(116,206,230,.18),rgba(4,10,16,.88))!important;color:rgba(204,242,255,.95)!important;font:800 8px 'Orbitron',sans-serif!important;letter-spacing:.14em!important;cursor:pointer!important;white-space:nowrap!important;}
+.afpc .afpc-map:hover{border-color:rgba(150,235,255,.95)!important;box-shadow:0 0 14px rgba(116,206,230,.34)!important;}
+.afpc .afpc-body{flex:1 1 auto!important;display:grid!important;grid-template-columns:38% 1fr!important;gap:13px!important;align-items:center!important;min-height:0!important;}
+.afpc .afpc-holo{position:relative!important;height:100%!important;min-height:0!important;border:1px solid rgba(116,206,230,.18)!important;border-radius:2px!important;background:radial-gradient(62% 80% at 50% 44%,rgba(116,206,230,.12),transparent 72%)!important;overflow:hidden!important;}
+.afpc .afpc-holo-canvas{width:100%!important;height:100%!important;display:block!important;}
+.afpc .afpc-holo-label{position:absolute!important;left:6px!important;bottom:5px!important;font:700 6px 'JetBrains Mono',monospace!important;letter-spacing:.12em!important;color:rgba(150,235,255,.82)!important;text-transform:uppercase!important;}
+.afpc .afpc-fields{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:9px!important;min-width:0!important;}
+.afpc .afpc-field{display:grid!important;gap:3px!important;min-width:0!important;margin:0!important;}
+.afpc .afpc-flabel{font:600 7.5px 'JetBrains Mono',monospace!important;letter-spacing:.2em!important;color:rgba(140,200,225,.7)!important;text-transform:uppercase!important;}
+.afpc .afpc-input{width:100%!important;box-sizing:border-box!important;background:rgba(2,8,12,.82)!important;border:1px solid rgba(116,206,230,.3)!important;border-radius:2px!important;color:#dffaff!important;font:600 11px 'JetBrains Mono',monospace!important;letter-spacing:.06em!important;padding:7px 9px!important;height:auto!important;}
+.afpc .afpc-input:focus{border-color:rgba(116,206,230,.7)!important;box-shadow:0 0 12px rgba(116,206,230,.2)!important;outline:none!important;}
+.afpc .afpc-login{flex:0 0 auto!important;height:32px!important;width:100%!important;margin:0!important;border:1px solid rgba(120,214,240,.6)!important;border-radius:3px!important;background:linear-gradient(180deg,rgba(120,214,240,.22),rgba(8,20,30,.92))!important;color:#eafdff!important;font:800 10px 'Orbitron',sans-serif!important;letter-spacing:.34em!important;cursor:pointer!important;box-shadow:inset 0 1px 0 rgba(190,240,255,.25),inset 0 0 16px rgba(116,206,230,.12),0 0 14px rgba(116,206,230,.14)!important;}
+.afpc .afpc-login:hover{border-color:rgba(150,235,255,.95)!important;box-shadow:inset 0 1px 0 rgba(190,240,255,.35),inset 0 0 22px rgba(116,206,230,.22),0 0 24px rgba(116,206,230,.32)!important;}
+.afpc .afpc-foot{flex:0 0 auto!important;padding-top:6px!important;border-top:1px solid rgba(232,179,128,.16)!important;font:600 7px/1.3 'JetBrains Mono',monospace!important;letter-spacing:.07em!important;color:rgba(232,179,128,.6)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;}
+.afpc .afpc-scan{position:absolute!important;left:0!important;right:0!important;top:0!important;height:2px!important;background:linear-gradient(90deg,transparent,rgba(116,206,230,.5),transparent)!important;box-shadow:0 0 10px rgba(116,206,230,.35)!important;pointer-events:none!important;z-index:2!important;animation:afpcScan 4.5s linear infinite!important;}
+@keyframes afpcScan{0%{top:0;opacity:0}8%{opacity:.75}92%{opacity:.75}100%{top:100%;opacity:0}}
+.afpc .afpc-corner{position:absolute!important;width:13px!important;height:13px!important;pointer-events:none!important;z-index:3!important;border:1.5px solid rgba(116,206,230,.55)!important;box-shadow:0 0 8px rgba(116,206,230,.18)!important;}
+.afpc .afpc-corner.tl{top:5px!important;left:5px!important;border-right:0!important;border-bottom:0!important;}
+.afpc .afpc-corner.tr{top:5px!important;right:5px!important;border-left:0!important;border-bottom:0!important;}
+.afpc .afpc-corner.bl{bottom:5px!important;left:5px!important;border-right:0!important;border-top:0!important;}
+.afpc .afpc-corner.br{bottom:5px!important;right:5px!important;border-left:0!important;border-top:0!important;}
