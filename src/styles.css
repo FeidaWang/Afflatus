@@ -6274,7 +6274,36 @@ body.hud-off .jump-toggle {
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
 }
-nav{
+/* IMPORTANT: scope nav glass to the top bar only. The bare `nav` selector also
+   matched <nav class="route-arrows">, which is stretched to inset:0 (full
+   viewport) as a pointer-events:none container for the two edge page-turn
+   arrows. Giving it backdrop-filter:blur turned it into a page-wide glass sheet
+   over the hero — the real cause of the "fullscreen blur" (text included). */
+nav:not(.route-arrows){
   backdrop-filter:blur(12px) saturate(1.25)!important;
   -webkit-backdrop-filter:blur(12px) saturate(1.25)!important;
+}
+
+/* 2026-06-13 · final guard: the route-arrows container must never carry any
+   filter/backdrop-filter/background. It only positions two edge arrows; the
+   arrows themselves (.route-arrow) keep their own styling. This outranks every
+   earlier stacked patch by both specificity and source order. */
+nav.route-arrows,
+.route-arrows{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+  background:none!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
+}
+nav.route-arrows::before,
+nav.route-arrows::after,
+.route-arrows::before,
+.route-arrows::after{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  filter:none!important;
+  content:none!important;
+  display:none!important;
 }
