@@ -5,7 +5,8 @@
  * Login form and toggle behavior unchanged.
  */
 import { createStarMapScene } from '../scene/starMapScene.js';
-import { createBladeHologram } from '../scene/bladeHologram.js';
+// shipHologram (three.js) is dynamically imported on first login-open so three
+// is code-split out of the main bundle.
 
 export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const panel = document.getElementById('terminalStarMapPanel');
@@ -14,7 +15,7 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const login = document.querySelector('.notebook-login');
   if (!panel || !canvas || !toggle) return null;
 
-  let bladeHolo = null;
+  let holoUnit = null, holoCanvasRef = null, holoLoading = false;
   const modeLabel = active => {
     if (active) return getLang() === 'zh' ? '登录' : 'LOGIN';
     return getLang() === 'zh' ? '星图' : 'STAR MAP';
@@ -24,73 +25,54 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     login?.classList.toggle('starmap-hidden', active);
     toggle.textContent = modeLabel(active);
     toggle.dataset.mode = active ? 'map' : 'login';
-    if (bladeHolo) bladeHolo.setActive(!active);   // hologram runs only on the login screen
+    if (holoUnit) {
+      holoUnit.setActive(!active);                 // hologram runs only on the login screen
+    } else if (!active && !holoLoading && holoCanvasRef) {
+      holoLoading = true;                          // first login-open → load three.js + ship hologram
+      import('../scene/shipHologram.js')
+        .then(m => { holoUnit = m.createShipHologram(holoCanvasRef); if (holoUnit) holoUnit.setActive(true); })
+        .catch(() => {});
+    }
   };
 
-  // Build the login "desktop" chrome once: a title bar (with the return-to-map
-  // control), an AR hologram of the Blade Unit on the left, the credential form
-  // on the right, a footer, a sweeping scan line and corner brackets. The old
-  // top status row + toggle are removed (hidden via CSS). The star map is now a
-  // full-panel live wallpaper you click anywhere to enter the computer.
-  const HOLO_SVG = `
-    <svg viewBox="0 0 120 168" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs>
-        <linearGradient id="bladeHolo" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#cdf6ff" stop-opacity=".9"/>
-          <stop offset="1" stop-color="#2f93cc" stop-opacity=".55"/>
-        </linearGradient>
-      </defs>
-      <ellipse cx="60" cy="158" rx="38" ry="7" fill="#6fe9ff" opacity=".22"/>
-      <line x1="98" y1="6" x2="66" y2="74" stroke="#6fe9ff" stroke-width="12" stroke-linecap="round" opacity=".3"/>
-      <line x1="98" y1="6" x2="66" y2="74" stroke="#eafdff" stroke-width="4.5" stroke-linecap="round" opacity=".95"/>
-      <rect x="60" y="72" width="11" height="15" rx="2.5" fill="url(#bladeHolo)" stroke="#9af0ff"/>
-      <path d="M50 28 l10 -6 10 6 v11 l-10 6 -10 -6 z" fill="url(#bladeHolo)" stroke="#cdf6ff"/>
-      <rect x="53" y="31" width="14" height="3.4" rx="1" fill="#eafdff"/>
-      <path d="M42 45 l8 -2 v11 l-11 3 z" fill="url(#bladeHolo)" stroke="#9af0ff"/>
-      <path d="M78 45 l-8 -2 v11 l11 3 z" fill="url(#bladeHolo)" stroke="#9af0ff"/>
-      <path d="M47 46 h26 l-4 36 h-18 z" fill="url(#bladeHolo)" stroke="#cdf6ff" opacity=".92"/>
-      <circle cx="60" cy="60" r="4.2" fill="#eafdff" opacity=".95"/>
-      <path d="M73 50 l-3 9 -4 14" fill="none" stroke="#bdf3ff" stroke-width="5.2" stroke-linecap="round"/>
-      <path d="M47 51 l-7 13 4 8" fill="none" stroke="#bdf3ff" stroke-width="5.2" stroke-linecap="round"/>
-      <path d="M51 82 h18 l-2 9 h-14 z" fill="url(#bladeHolo)" stroke="#9af0ff"/>
-      <path d="M54 91 l-7 31 -2 16" fill="none" stroke="#bdf3ff" stroke-width="6.4" stroke-linecap="round"/>
-      <path d="M66 91 l7 31 2 16" fill="none" stroke="#bdf3ff" stroke-width="6.4" stroke-linecap="round"/>
-    </svg>`;
-
-  if (login && !login.querySelector('.term-form')) {
+  // Build the login "desktop" chrome once, as clean non-overlapping rows:
+  //   [ title bar | STAR MAP ] / [ mothership hologram | credential fields ] /
+  //   [ LOGIN ] / [ footer ]. The old top status row + toggle are hidden via
+  //   CSS; the star map is a full-panel wallpaper you click to enter here.
+  if (login && !login.querySelector('.term-body')) {
     const make = (tag, cls) => { const e = document.createElement(tag); if (cls) e.className = cls; return e; };
 
-    // title bar: name + return-to-map control
     const head = make('div', 'term-head');
     const title = make('span', 'term-title');
-    title.textContent = '▸ AFFLATUS OS · SECURE SHELL · ENCRYPTED';
+    title.textContent = '▸ AFFLATUS OS · SECURE SHELL';
     const back = make('button', 'term-back');
     back.type = 'button';
     back.textContent = getLang() === 'zh' ? '◂ 星图' : '◂ STAR MAP';
     back.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
     head.append(title, back);
 
-    // AR hologram (left) — WebGL Blade Unit projection (SVG fallback)
+    // mothership hologram (left of the body row)
+    const body = make('div', 'term-body');
     const holo = make('div', 'term-hologram');
     const holoCanvas = make('canvas', 'term-holo-canvas');
-    bladeHolo = createBladeHologram(holoCanvas);
-    if (bladeHolo) holo.appendChild(holoCanvas);
-    else holo.innerHTML = HOLO_SVG;
+    holoCanvasRef = holoCanvas;          // hologram is created lazily on first login-open
+    holo.appendChild(holoCanvas);
     const holoLabel = make('div', 'term-holo-label');
-    holoLabel.textContent = 'BLADE UNIT · LV 34';
+    holoLabel.textContent = 'ENFORCER · MOTHERSHIP';
     holo.appendChild(holoLabel);
 
-    // credential form (right)
-    const form = make('div', 'term-form');
-    login.querySelectorAll('label').forEach(l => form.appendChild(l));
-    const loginBtn = login.querySelector('#terminalLoginBtn');
-    if (loginBtn) form.appendChild(loginBtn);
+    const fields = make('div', 'term-fields');
+    login.querySelectorAll('label').forEach(l => fields.appendChild(l));
+    body.append(holo, fields);
 
+    const loginBtn = login.querySelector('#terminalLoginBtn');
     const foot = make('div', 'term-foot');
     foot.textContent = '● ACCESS RESTRICTED · CREDENTIALS REQUIRED · 私人航行日志';
-
     const scan = make('div', 'term-scan');
-    login.append(head, holo, form, foot, scan);
+
+    login.append(head, body);
+    if (loginBtn) login.appendChild(loginBtn);   // direct grid item → grid-area: login
+    login.append(foot, scan);
     for (const c of ['tl', 'tr', 'bl', 'br']) login.appendChild(make('i', 'term-corner ' + c));
   }
 

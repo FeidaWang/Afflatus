@@ -52,6 +52,19 @@ const spriteCraft=createSpriteCraft();
 const cameraDirector=createCameraDirector(spriteCraft);
 const capitalFlyby=createCapitalFlyby();
 
+// Lazy-loaded three.js capital ship (code-split so three.js only downloads the
+// first time the main gun fires). Until it loads, the 2D flyby is the fallback.
+let ship3D=null, ship3DTried=false;
+function getShip3D(){
+  if(!ship3DTried){
+    ship3DTried=true;
+    import('./scene/capitalShip3D.js')
+      .then(m=>{ try{ ship3D=m.createCapitalShip3D(); }catch(e){ ship3D=null; } })
+      .catch(()=>{ ship3D=null; });
+  }
+  return ship3D;
+}
+
 function HC(key){return getHudCopy(key,currentLang);}
 function lerpAngle(from,to,t){
   const delta=Math.atan2(Math.sin(to-from),Math.cos(to-from));
@@ -3483,7 +3496,9 @@ function drawPilotFeed(now){
     const firing=!!(fx && fx.mode==='fire');
     const chargeT=fx ? (fx.mode==='charge'?fx.t:1) : clamp(elapsed/.5,0,1);
     if(!firing && chargeT<1){
-      capitalFlyby.draw(ctx,w,h,now,chargeT,currentLang);
+      const s3=getShip3D();
+      if(s3) s3.draw(ctx,w,h,now,chargeT,currentLang);
+      else capitalFlyby.draw(ctx,w,h,now,chargeT,currentLang);
     }else{
       drawMainGunCamera(ctx,w,h,now,elapsed,firing,fx);
     }
