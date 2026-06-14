@@ -45,8 +45,12 @@ export function createShipHologram(canvas) {
   ship.add(part(new THREE.SphereGeometry(0.42, 12, 9), [0, 0.34, 0.8], [0.8, 0.6, 1]));               // cockpit
   // forward main gun
   ship.add(part(new THREE.CylinderGeometry(0.1, 0.14, 1.9, 10), [0, 0.04, 2.4], null, [Math.PI / 2, 0, 0]));
-  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 7), glowMat);
+  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 7), glowMat.clone());
   muzzle.position.set(0, 0.04, 3.45); ship.add(muzzle);
+  // spinal beam — fires when the real main cannon fires (combat linkage)
+  const beamMat = new THREE.MeshBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.13, 3.4, 10), beamMat);
+  beam.rotation.x = Math.PI / 2; beam.position.set(0, 0.04, 5.1); beam.visible = false; ship.add(beam);
   // raised twin engine pods on pylons (the Executor's signature) + live plumes
   const plumeMat = new THREE.MeshBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
   const plumes = [];
@@ -76,15 +80,26 @@ export function createShipHologram(canvas) {
   let raf = 0, active = false, start = performance.now();
   function frame(now) {
     ship.rotation.y = (now - start) / 3600 + 0.5;
-    muzzle.material.opacity = 0.5 + 0.45 * Math.sin(now / 300);
-    // engines always burn; boost (longer, hotter violet) while warping
-    const warp = document.body.classList.contains('warp-hover');
+    const cl = document.body.classList;
+    const warp = cl.contains('warp-hover'), combat = cl.contains('combat-mode'), firing = cl.contains('main-cannon-firing');
+    // engines always burn; state follows the page: cruise(cyan) → combat(blue-green) → warp(violet)
+    let col = 0x7fe0ff, len = 1.1, op = 0.5, wide = 1;
+    if (combat) { col = 0x6effbf; len = 1.5; op = 0.66; }
+    if (warp) { col = 0xa898ff; len = 1.95; op = 0.82; wide = 1.3; }
     const flick = 0.85 + 0.15 * Math.sin(now / 55);
     for (const p of plumes) {
-      const wide = warp ? 1.3 : 1;
-      p.scale.set(wide, (warp ? 1.95 : 1.1) * flick, wide);
-      p.material.opacity = (warp ? 0.82 : 0.5) * (0.85 + 0.15 * Math.sin(now / 48));
-      p.material.color.setHex(warp ? 0xa898ff : 0x7fe0ff);
+      p.scale.set(wide, len * flick, wide);
+      p.material.opacity = op * (0.85 + 0.15 * Math.sin(now / 48));
+      p.material.color.setHex(col);
+    }
+    // main gun: fire the spinal beam in sync with the real cannon
+    beam.visible = firing;
+    if (firing) {
+      beamMat.opacity = 0.7 + 0.3 * Math.sin(now / 38);
+      beam.scale.x = beam.scale.z = 1 + 0.35 * Math.sin(now / 26);
+      muzzle.material.opacity = 1;
+    } else {
+      muzzle.material.opacity = 0.5 + 0.45 * Math.sin(now / 300);
     }
     renderer.render(scene, camera);
   }
