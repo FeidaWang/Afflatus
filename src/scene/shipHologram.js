@@ -1,12 +1,13 @@
 /**
- * Three.js holographic projection of the Enforcer mothership (fig2 "Executor":
- * elongated hull, raised twin ribbed engine pods on pylons, side outrigger arms
- * with weapon pods, cockpit, forward main gun). Translucent cyan fills + bright
- * wireframe edges + glowing engine/muzzle discs, slowly rotating.
+ * Three.js holographic projection of the "Enforcer" mothership — same twin-
+ * pronged design as the full PBR model (capitalShip3D): two armoured spear bows
+ * with a central weapons channel, a spinal coherent-beam cannon with focusing
+ * rings, a dense fuselage + bridge, midship fuel tanks, and four aft fusion
+ * engines. Rendered as translucent cyan fills + bright wireframe edges with
+ * always-on engine plumes; engines/beam follow the page state (cruise / combat /
+ * warp / main-gun firing).
  *
- * Renders into the supplied canvas with a FIXED-size buffer that CSS scales to
- * fill the box — so it never depends on clientWidth (the previous blank-render
- * cause) and always shows.
+ * Fixed-size render buffer scaled by CSS so it never blanks on a 0-width canvas.
  */
 import * as THREE from 'three';
 
@@ -16,18 +17,18 @@ export function createShipHologram(canvas) {
   catch (e) { return null; }
   renderer.setClearColor(0x000000, 0);
   const RW = 240, RH = 300;
-  renderer.setSize(RW, RH, false);   // fixed buffer; CSS scales the canvas to fill
+  renderer.setSize(RW, RH, false);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, RW / RH, 0.1, 100);
   scene.add(new THREE.AmbientLight(0x335577, 2));
   const key = new THREE.DirectionalLight(0x9fe6ff, 1.4); key.position.set(4, 6, 5); scene.add(key);
 
-  const fillMat = new THREE.MeshBasicMaterial({ color: 0x3aa8e0, transparent: true, opacity: 0.14 });
-  const edgeMat = new THREE.LineBasicMaterial({ color: 0x9af0ff, transparent: true, opacity: 0.9 });
+  const fillMat = new THREE.MeshBasicMaterial({ color: 0x3aa8e0, transparent: true, opacity: 0.13 });
+  const edgeMat = new THREE.LineBasicMaterial({ color: 0x9af0ff, transparent: true, opacity: 0.88 });
   const glowMat = new THREE.MeshBasicMaterial({ color: 0xcdf6ff, transparent: true, opacity: 0.95 });
 
-  // translucent body + wireframe edges, positioned/scaled/rotated
+  // translucent fill + wireframe edges, positioned/scaled/rotated
   const part = (geo, t, s, r) => {
     const g = new THREE.Group();
     g.add(new THREE.Mesh(geo, fillMat));
@@ -35,54 +36,59 @@ export function createShipHologram(canvas) {
     if (t) g.position.set(t[0], t[1], t[2]);
     if (s) g.scale.set(s[0], s[1], s[2]);
     if (r) g.rotation.set(r[0], r[1], r[2]);
-    return g;
+    ship.add(g); return g;
   };
 
   const ship = new THREE.Group();
-  // central hull (nose +Z, stern -Z)
-  ship.add(part(new THREE.CylinderGeometry(0.55, 0.42, 4.0, 12), [0, 0, 0], null, [Math.PI / 2, 0, 0]));
-  ship.add(part(new THREE.ConeGeometry(0.42, 1.5, 12), [0, 0, 2.75], null, [Math.PI / 2, 0, 0]));   // nose
-  ship.add(part(new THREE.SphereGeometry(0.42, 12, 9), [0, 0.34, 0.8], [0.8, 0.6, 1]));               // cockpit
-  // forward main gun
-  ship.add(part(new THREE.CylinderGeometry(0.1, 0.14, 1.9, 10), [0, 0.04, 2.4], null, [Math.PI / 2, 0, 0]));
-  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 7), glowMat.clone());
-  muzzle.position.set(0, 0.04, 3.45); ship.add(muzzle);
-  // spinal beam — fires when the real main cannon fires (combat linkage)
+
+  // central fuselage core
+  part(new THREE.BoxGeometry(1.1, 0.9, 3.6), [0, 0, -0.2]);
+  part(new THREE.BoxGeometry(1.3, 0.42, 2.9), [0, 0.26, -0.3]);   // dorsal deck
+
+  // twin-pronged forward bows + central channel
+  for (const sx of [-1, 1]) {
+    part(new THREE.BoxGeometry(0.42, 0.5, 2.6), [sx * 0.62, 0, 2.0]);
+    part(new THREE.ConeGeometry(0.27, 1.2, 4), [sx * 0.62, 0, 3.65], null, [Math.PI / 2, 0, Math.PI / 4]);
+  }
+
+  // spinal beam cannon + focusing rings
+  part(new THREE.CylinderGeometry(0.17, 0.22, 4.8, 12), [0, 0.02, 1.4], null, [Math.PI / 2, 0, 0]);
+  for (let i = 0; i < 5; i++) part(new THREE.TorusGeometry(0.27, 0.05, 6, 16), [0, 0.02, 1.0 + i * 0.62]);
+  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 9), glowMat.clone());
+  muzzle.position.set(0, 0.02, 4.05); ship.add(muzzle);
   const beamMat = new THREE.MeshBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
   const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.13, 3.4, 10), beamMat);
-  beam.rotation.x = Math.PI / 2; beam.position.set(0, 0.04, 5.1); beam.visible = false; ship.add(beam);
-  // raised twin engine pods on pylons (the Executor's signature) + live plumes
+  beam.rotation.x = Math.PI / 2; beam.position.set(0, 0.02, 5.4); beam.visible = false; ship.add(beam);
+
+  // bridge + midship fuel tanks
+  part(new THREE.BoxGeometry(0.6, 0.4, 0.9), [0, 0.58, -0.7]);
+  for (const sx of [-1, 1]) part(new THREE.CylinderGeometry(0.17, 0.17, 1.5, 10), [sx * 0.8, -0.12, -0.4], null, [Math.PI / 2, 0, 0]);
+
+  // four aft fusion engines + live plumes
   const plumeMat = new THREE.MeshBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
   const plumes = [];
-  for (const sx of [-0.66, 0.66]) {
-    ship.add(part(new THREE.CylinderGeometry(0.34, 0.4, 1.9, 12), [sx, 0.5, -1.55], null, [Math.PI / 2, 0, 0]));
-    for (let i = 0; i < 3; i++) ship.add(part(new THREE.TorusGeometry(0.38, 0.05, 6, 14), [sx, 0.5, -1.0 + i * 0.5]));
-    ship.add(part(new THREE.BoxGeometry(0.16, 0.72, 0.7), [sx, 0.08, -1.4]));                          // pylon
-    const bell = new THREE.Mesh(new THREE.CircleGeometry(0.28, 14), glowMat);
-    bell.position.set(sx, 0.5, -2.52); bell.rotation.y = Math.PI; ship.add(bell);
-    const plume = new THREE.Mesh(new THREE.ConeGeometry(0.24, 1.1, 14), plumeMat.clone());
-    plume.rotation.x = -Math.PI / 2;        // taper points aft (-Z)
-    plume.position.set(sx, 0.5, -3.05);
+  for (const [ex, ey] of [[-0.56, 0.2], [0.56, 0.2], [-0.56, -0.34], [0.56, -0.34]]) {
+    part(new THREE.CylinderGeometry(0.27, 0.33, 1.0, 12), [ex, ey, -1.95], null, [Math.PI / 2, 0, 0]);
+    const bell = new THREE.Mesh(new THREE.CircleGeometry(0.2, 12), glowMat);
+    bell.position.set(ex, ey, -2.6); bell.rotation.y = Math.PI; ship.add(bell);
+    const plume = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.9, 12), plumeMat.clone());
+    plume.rotation.x = -Math.PI / 2; plume.position.set(ex, ey, -3.05);
     ship.add(plume); plumes.push(plume);
   }
-  // side outrigger arms + weapon pods + barrels
-  for (const sx of [-1, 1]) {
-    ship.add(part(new THREE.BoxGeometry(1.1, 0.16, 0.5), [sx * 0.74, -0.12, 0.3], null, [0, 0, sx * 0.1]));
-    ship.add(part(new THREE.BoxGeometry(0.36, 0.4, 0.95), [sx * 1.3, -0.12, 0.2]));
-    ship.add(part(new THREE.CylinderGeometry(0.05, 0.07, 1.1, 8), [sx * 1.3, -0.12, 0.95], null, [Math.PI / 2, 0, 0]));
-  }
-  ship.scale.setScalar(0.82);
+  // rear manipulator arms
+  for (const sx of [-1, 1]) part(new THREE.BoxGeometry(0.1, 0.1, 0.75), [sx * 0.5, 0.12, -2.4], null, [0.32, 0, 0]);
+
+  ship.scale.setScalar(0.72);
   ship.rotation.x = 0.34;
   scene.add(ship);
 
-  camera.position.set(0, 1.0, 8.4); camera.lookAt(0, -0.05, -0.1);
+  camera.position.set(0, 1.0, 9.2); camera.lookAt(0, -0.05, -0.1);
 
   let raf = 0, active = false, start = performance.now();
   function frame(now) {
-    ship.rotation.y = (now - start) / 3600 + 0.5;
+    ship.rotation.y = (now - start) / 3800 + 0.5;
     const cl = document.body.classList;
     const warp = cl.contains('warp-hover'), combat = cl.contains('combat-mode'), firing = cl.contains('main-cannon-firing');
-    // engines always burn; state follows the page: cruise(cyan) → combat(blue-green) → warp(violet)
     let col = 0x7fe0ff, len = 1.1, op = 0.5, wide = 1;
     if (combat) { col = 0x6effbf; len = 1.5; op = 0.66; }
     if (warp) { col = 0xa898ff; len = 1.95; op = 0.82; wide = 1.3; }
@@ -92,7 +98,6 @@ export function createShipHologram(canvas) {
       p.material.opacity = op * (0.85 + 0.15 * Math.sin(now / 48));
       p.material.color.setHex(col);
     }
-    // main gun: fire the spinal beam in sync with the real cannon
     beam.visible = firing;
     if (firing) {
       beamMat.opacity = 0.7 + 0.3 * Math.sin(now / 38);
