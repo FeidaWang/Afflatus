@@ -99,6 +99,20 @@ export function createCapitalShip3D() {
   const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.18, 14, 10), gunMat); muzzle.position.set(0, -0.05, 3.5); ship.add(muzzle);
   const muzzleLight = new THREE.PointLight(0x7fb8ff, 0, 7); muzzleLight.position.set(0, -0.05, 3.8); ship.add(muzzleLight);
 
+  // ===== dense hard-surface detail: panel strips, recessed panels, bolts =====
+  for (let i = 0; i < 46; i++) {
+    const x = (Math.random() - 0.5) * 1.7, z = -1.8 + Math.random() * 4.0, r = Math.random();
+    if (r < 0.55) M(new THREE.BoxGeometry(0.05 + Math.random() * 0.16, 0.02, 0.08 + Math.random() * 0.28), trimMat, [x, 0.24, z]);
+    else if (r < 0.85) M(new THREE.BoxGeometry(0.1 + Math.random() * 0.18, 0.025, 0.1 + Math.random() * 0.18), darkMat, [x, 0.23, z]);
+    else M(new THREE.BoxGeometry(0.04, 0.05, 0.04), trimMat, [x, 0.26, z]);
+  }
+  for (const sx of [-1, 1]) for (let i = 0; i < 9; i++) {
+    const r = Math.random();
+    M(new THREE.BoxGeometry(0.14 + r * 0.16, 0.02, 0.1 + r * 0.16), r < 0.5 ? trimMat : darkMat, [sx * (1.0 + Math.random() * 1.0), 0.04, -0.9 + (Math.random() - 0.5) * 1.1], null, [0, sx * 0.18, 0]);
+  }
+  // recessed bow strips
+  for (let i = 0; i < 5; i++) M(new THREE.BoxGeometry(0.9 - i * 0.12, 0.02, 0.05), darkMat, [0, 0.05, 2.4 - i * 0.4]);
+
   scene.add(ship);
 
   // starfield backdrop
@@ -144,7 +158,7 @@ export function createCapitalShip3D() {
     ctx.fillStyle = 'rgba(255,235,235,.9)';
     ctx.font = `${Math.max(7, Math.min(w, h) * .046)}px 'JetBrains Mono',monospace`;
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(lang === 'zh' ? '执法者号 · 粒子脊柱充能' : 'ENFORCER · PARTICLE SPINE CHARGING', 10, bar * .5);
+    ctx.fillText(lang === 'zh' ? '执法者号 · 粒子脊柱充能' : 'CONDOR · PARTICLE SPINE CHARGING', 10, bar * .5);
     ctx.textAlign = 'right';
     ctx.fillStyle = `rgba(255,90,100,${.6 + .4 * Math.sin(now / 140)})`;
     ctx.fillText(`${Math.round(t * 100)}%`, w - 10, bar * .5);
