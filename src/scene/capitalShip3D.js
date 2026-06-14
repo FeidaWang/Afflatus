@@ -131,6 +131,26 @@ export function createCapitalShip3D() {
   // recessed bow strips
   for (let i = 0; i < 5; i++) M(new THREE.BoxGeometry(0.9 - i * 0.12, 0.02, 0.05), darkMat, [0, 0.05, 2.4 - i * 0.4]);
 
+  // ===== CanvasTexture decals (hull markings + caution stripes) =====
+  const mkTex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const tx = new THREE.CanvasTexture(c); tx.anisotropy = 4; return tx; };
+  const decal = (tex, p, s, r) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(s[0], s[1]), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })); m.position.set(p[0], p[1], p[2]); m.rotation.set(r ? r[0] : -Math.PI / 2, r ? r[1] : 0, r ? r[2] : 0); m.renderOrder = 2; ship.add(m); return m; };
+  const textTex = (txt, col, fs) => mkTex(256, 64, (x, w, h) => { x.clearRect(0, 0, w, h); x.fillStyle = col || 'rgba(198,208,216,.94)'; x.font = `bold ${fs || 44}px Arial`; x.textBaseline = 'middle'; x.textAlign = 'center'; x.fillText(txt, w / 2, h / 2 + 2); });
+  const dangerTex = () => mkTex(256, 80, (x, w, h) => {
+    x.clearRect(0, 0, w, h);
+    for (let i = -h; i < w; i += 16) { x.fillStyle = (Math.floor((i + h) / 16) % 2) ? '#f2c200' : '#111'; x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 8, 0); x.lineTo(i + 8 + 22, 22); x.lineTo(i + 22, 22); x.closePath(); x.fill(); }
+    x.fillStyle = 'rgba(10,10,10,.92)'; x.fillRect(0, 24, w, h - 24);
+    x.fillStyle = '#ffb000'; x.font = 'bold 22px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('DANGER EJECTION PORT', w / 2, 52);
+  });
+  decal(textTex('TC CONDOR'), [0.45, 0.53, -0.5], [0.95, 0.22]);
+  decal(textTex('310106'), [-0.4, 0.53, 0.5], [0.62, 0.18]);
+  decal(textTex('01', 'rgba(214,222,230,.95)', 52), [-0.3, 0.625, 1.2], [0.26, 0.22]);
+  decal(dangerTex(), [0.5, 0.53, -1.5], [0.62, 0.2]);
+  decal(dangerTex(), [-0.5, 0.53, -1.5], [0.62, 0.2]);
+
+  // denser recessed panel grooves (dorsal + wings)
+  for (let i = 0; i < 18; i++) M(new THREE.BoxGeometry(0.02, 0.012, 0.3 + Math.random() * 0.4), darkMat, [(Math.random() - 0.5) * 1.6, 0.5, -1.6 + Math.random() * 3.6]);
+  for (const sx of [-1, 1]) for (let i = 0; i < 6; i++) M(new THREE.BoxGeometry(0.3, 0.008, 0.02), darkMat, [sx * (1.0 + Math.random() * 0.9), 0.025, -0.9 + (Math.random() - 0.5) * 1.0], null, [0, sx * 0.18, 0]);
+
   scene.add(ship);
 
   // starfield backdrop
