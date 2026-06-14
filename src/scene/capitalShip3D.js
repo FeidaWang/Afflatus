@@ -37,7 +37,8 @@ export function createCapitalShip3D() {
   const glassMat = new THREE.MeshStandardMaterial({ color: 0x3a2410, metalness: 0.4, roughness: 0.18, emissive: 0xcc7a22, emissiveIntensity: 0.7 }); // amber canopy
   const redMat = new THREE.MeshStandardMaterial({ color: 0xff4030, emissive: 0xff2010, emissiveIntensity: 0.7 });
   const blueMat = new THREE.MeshStandardMaterial({ color: 0x60c0ff, emissive: 0x3090ff, emissiveIntensity: 0.7 });
-  const engineMat = new THREE.MeshStandardMaterial({ color: 0xffb347, emissive: 0xffa030, emissiveIntensity: 2.0 });
+  const engineMat = new THREE.MeshStandardMaterial({ color: 0x9fe0ff, emissive: 0x4fb8ff, emissiveIntensity: 2.3 });
+  const plumeMat = new THREE.MeshBasicMaterial({ color: 0x6fd0ff, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
   const gunMat = new THREE.MeshStandardMaterial({ color: 0xbfe6ff, emissive: 0x6fb4ff, emissiveIntensity: 0.5 });
 
   const ship = new THREE.Group();
@@ -79,8 +80,10 @@ export function createCapitalShip3D() {
     const shield = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.1, 0.4), darkMat); shield.position.set(0, 0.24, -0.2); grp.add(shield); // heat shield
     const cavity = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.28, 0.16), darkMat); cavity.position.z = -0.5; grp.add(cavity);
     const glow = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.24), engineMat); glow.position.z = -0.56; glow.rotation.y = Math.PI; grp.add(glow);
-    const light = new THREE.PointLight(0xffb347, 3.5, 5); light.position.z = -0.85; grp.add(light);
-    grp.position.set(ex, ey, -2.1); grp.userData = { glow, light };
+    const light = new THREE.PointLight(0x4fb8ff, 3.5, 5); light.position.z = -0.85; grp.add(light);
+    const plume = new THREE.Mesh(new THREE.ConeGeometry(0.18, 1.2, 12), plumeMat.clone());
+    plume.rotation.x = -Math.PI / 2; plume.position.z = -1.05; grp.add(plume);
+    grp.position.set(ex, ey, -2.1); grp.userData = { glow, light, plume };
     ship.add(grp); engines.push(grp);
   }
   // support struts
@@ -136,10 +139,15 @@ export function createCapitalShip3D() {
     const cl = document.body.classList;
     const warp = cl.contains('warp-hover');
     const combat = t > 0.001 || cl.contains('combat-mode') || cl.contains('main-cannon-firing');
-    const engHex = warp ? 0x8f7cff : (combat ? 0x6fffc0 : 0xffb347);
+    const engHex = warp ? 0x8f7cff : (combat ? 0x8ff0ff : 0x4fb8ff);
     const pulse = 0.85 + 0.15 * Math.sin(now / 90);
-    engineMat.color.setHex(engHex); engineMat.emissive.setHex(engHex); engineMat.emissiveIntensity = 2.1 * pulse;
-    for (const g of engines) { g.userData.light.color.setHex(engHex); g.userData.light.intensity = 4 * pulse; }
+    engineMat.color.setHex(engHex); engineMat.emissive.setHex(engHex); engineMat.emissiveIntensity = 2.2 * pulse;
+    const plLen = (warp ? 1.9 : combat ? 1.45 : 1.1) * (0.9 + 0.1 * Math.sin(now / 50));
+    for (const g of engines) {
+      g.userData.light.color.setHex(engHex); g.userData.light.intensity = 4.2 * pulse;
+      const pl = g.userData.plume; pl.material.color.setHex(engHex);
+      pl.scale.set(1, plLen, 1); pl.material.opacity = (warp ? 0.82 : 0.6) * (0.85 + 0.15 * Math.sin(now / 45));
+    }
     muzzle.material.emissiveIntensity = 0.5 + t * 3.6 * (0.7 + 0.3 * Math.sin(now / 60));
     muzzleLight.intensity = t * t * 10;
 
