@@ -3310,7 +3310,7 @@ function drawCiwsCamera(ctx,w,h,now,mode,elapsed){
   drawCiwsCamera.sx = drawCiwsCamera.sx==null ? rawTx : lerp(drawCiwsCamera.sx, rawTx, .12);
   drawCiwsCamera.sy = drawCiwsCamera.sy==null ? rawTy : lerp(drawCiwsCamera.sy, rawTy, .12);
   const tx=drawCiwsCamera.sx, ty=drawCiwsCamera.sy;
-  const firing=mode==='ciws'&&elapsed>.34;
+  const firing=active&&elapsed>.12;   // ~reaction time, then continuous tracking fire
   ctx.save();
 
   const frame=ctx.createLinearGradient(0,0,0,h);
@@ -3330,9 +3330,9 @@ function drawCiwsCamera(ctx,w,h,now,mode,elapsed){
   // Phalanx mount in the foreground, aimed at the contact; tracers from muzzle
   const muzzle=drawPhalanxMount(ctx,w,h,now,tx,ty,firing);
   if(firing){
-    hmdTracer(ctx,muzzle.mx,muzzle.my,tx,ty,now,0,12);
-    hmdTracer(ctx,muzzle.mx,muzzle.my,tx,ty,now,.5,12);
-    hmdSparks(ctx,tx,ty,now,1);
+    // single bottom-centre gatling: one dense continuous tracer stream (M61-style)
+    hmdTracer(ctx,muzzle.mx,muzzle.my,tx,ty,now,0,24);
+    hmdSparks(ctx,tx,ty,now,1.35);
   }else if(mode==='ciws'&&active){
     // laser designation from the muzzle to the contact
     ctx.save();ctx.strokeStyle='rgba(255,92,98,.45)';ctx.lineWidth=1;ctx.setLineDash([2,8]);
