@@ -42,6 +42,32 @@ export function createPageTurnController({ root = document, body = document.body
     }
   });
 
+  const isInteractiveTarget = target => Boolean(target?.closest?.('a,button,input,textarea,select,label,[contenteditable="true"]'));
+  let touchStart = null;
+  window.addEventListener('touchstart', event => {
+    if (event.touches.length !== 1 || isInteractiveTarget(event.target)) {
+      touchStart = null;
+      return;
+    }
+    const touch = event.touches[0];
+    touchStart = { x: touch.clientX, y: touch.clientY, time: Date.now() };
+  }, { passive: true });
+
+  window.addEventListener('touchend', event => {
+    if (!touchStart || event.changedTouches.length !== 1) return;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - touchStart.x;
+    const dy = touch.clientY - touchStart.y;
+    const elapsed = Date.now() - touchStart.time;
+    touchStart = null;
+    if (elapsed > 900 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.35) return;
+    pageTurnTo(dx < 0 ? body.dataset.next : body.dataset.prev, dx < 0 ? 'next' : 'prev');
+  }, { passive: true });
+
+  window.addEventListener('touchcancel', () => {
+    touchStart = null;
+  }, { passive: true });
+
   window.addEventListener('pageshow', clearTurnState);
   window.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') clearTurnState();

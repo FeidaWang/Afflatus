@@ -6702,3 +6702,248 @@ nav.route-arrows::after,
 .afpc .afpc-corner.tr{top:5px!important;right:5px!important;border-left:0!important;border-bottom:0!important;}
 .afpc .afpc-corner.bl{bottom:5px!important;left:5px!important;border-right:0!important;border-top:0!important;}
 .afpc .afpc-corner.br{bottom:5px!important;right:5px!important;border-left:0!important;border-top:0!important;}
+
+/* ============================================================
+   2026-06-14 · Mobile target-first HUD + page arrows
+   Target link owns the upper half. Radar, defense, and combat view
+   share the lower half by proportion, with the desktop page arrows
+   restored for phone navigation.
+   ============================================================ */
+@media (max-width:860px){
+  :root{
+    --hud-combat-h:clamp(284px,42svh,336px)!important;
+  }
+
+  .hud-panels{
+    grid-template-columns:minmax(66px,.72fr) minmax(108px,1.08fr) minmax(126px,1.34fr)!important;
+    grid-template-rows:minmax(0,1fr) minmax(0,1fr)!important;
+    grid-template-areas:
+      "right right right"
+      "left center pilot"!important;
+    gap:5px!important;
+    padding:max(5px,env(safe-area-inset-top)) max(5px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(5px,env(safe-area-inset-left))!important;
+  }
+
+  .hud-left,
+  .hud-center,
+  .hud-pilot,
+  .hud-right{
+    display:block!important;
+    height:100%!important;
+    max-height:100%!important;
+    min-height:0!important;
+    padding:4px!important;
+  }
+
+  .hud-left{grid-area:left!important;}
+  .hud-center{grid-area:center!important;}
+  .hud-pilot{grid-area:pilot!important;}
+  .hud-right{grid-area:right!important;}
+
+  .hud-left{
+    display:grid!important;
+    place-items:stretch!important;
+  }
+
+  #radarCanvas{
+    width:100%!important;
+    height:100%!important;
+    max-height:100%!important;
+  }
+
+  .hud-center .combat-module,
+  .combat-module{
+    grid-template-rows:18px minmax(0,1fr)!important;
+    gap:3px!important;
+  }
+
+  .combat-module .defense-command-log,
+  .hud-center .defense-command-log,
+  #battleFeed{
+    height:18px!important;
+    min-height:18px!important;
+    max-height:18px!important;
+    padding:0 24px 0 6px!important;
+  }
+
+  .combat-kill-meter{
+    right:5px!important;
+    width:16px!important;
+    height:16px!important;
+  }
+
+  .combat-kill-meter b{
+    min-width:14px!important;
+    font-size:9px!important;
+  }
+
+  .combat-module .defense-command-log .feed-line,
+  #battleFeed .feed-line{
+    font-size:5.6px!important;
+    line-height:1!important;
+    letter-spacing:.04em!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  .combat-module .weapon-matrix,
+  .hud-center .weapon-matrix,
+  #weaponMatrix{
+    grid-template-rows:repeat(4,minmax(18px,1fr))!important;
+    gap:3px!important;
+  }
+
+  .hud-center .weapon-choice,
+  .weapon-choice{
+    grid-template-columns:18px minmax(0,1fr)!important;
+    gap:4px!important;
+    padding:0 4px 3px!important;
+  }
+
+  .hud-center .weapon-choice::before,
+  .weapon-choice::before{
+    display:none!important;
+    content:none!important;
+  }
+
+  .hud-center .weapon-choice span,
+  .weapon-choice span{
+    width:16px!important;
+    min-width:16px!important;
+    font-size:10px!important;
+  }
+
+  .hud-center .weapon-choice b,
+  .weapon-choice b{
+    justify-self:start!important;
+    min-width:0!important;
+    max-width:100%!important;
+    font-size:5.4px!important;
+    line-height:1.05!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  .battle-log,
+  .mobile-weapon-form{
+    display:none!important;
+  }
+
+  .hud-right .signal-deck,
+  .hud-right .captain-terminal,
+  .hud-right .notebook-shell,
+  .terminal-starmap,
+  #terminalStarMap{
+    height:100%!important;
+    min-height:0!important;
+  }
+
+  .starmap-readout{
+    left:9px!important;
+    bottom:8px!important;
+    max-width:72%!important;
+  }
+
+  .starmap-readout b{
+    font-size:9px!important;
+  }
+
+  .starmap-readout span{
+    font-size:5.4px!important;
+  }
+
+  .voyage-pulse{
+    left:8px!important;
+    right:8px!important;
+    bottom:8px!important;
+    padding:5px 7px!important;
+  }
+
+  .afpc{
+    padding:7px 9px!important;
+  }
+
+  .afpc .afpc-head{
+    top:8px!important;
+    left:10px!important;
+    right:10px!important;
+  }
+
+  .afpc .afpc-body{
+    top:39px!important;
+    bottom:10px!important;
+    left:10px!important;
+    right:10px!important;
+    grid-template-columns:34% 1fr!important;
+    gap:9px!important;
+  }
+
+  .afpc .afpc-title{
+    font-size:8px!important;
+  }
+
+  .afpc .afpc-input{
+    height:21px!important;
+    font-size:8.5px!important;
+  }
+
+  .afpc .afpc-login{
+    height:22px!important;
+    font-size:7.5px!important;
+  }
+
+  .route-arrows{
+    display:block!important;
+    position:fixed!important;
+    inset:0!important;
+    z-index:340!important;
+    pointer-events:none!important;
+  }
+
+  .route-arrow{
+    display:grid!important;
+    width:38px!important;
+    height:58px!important;
+    top:50%!important;
+    place-items:center!important;
+    pointer-events:auto!important;
+    border:1px solid rgba(154,229,255,.34)!important;
+    background:linear-gradient(180deg,rgba(7,16,23,.78),rgba(1,4,8,.92))!important;
+    color:rgba(224,244,255,.9)!important;
+    font:300 28px/1 'Orbitron',sans-serif!important;
+    text-decoration:none!important;
+    box-shadow:inset 0 0 18px rgba(154,229,255,.08),0 0 22px rgba(0,0,0,.38)!important;
+    transform:translateY(-50%)!important;
+  }
+
+  body:not(.hud-off) .route-arrow{
+    top:calc((100svh - var(--hud-combat-h)) / 2 + 34px)!important;
+  }
+
+  .route-arrow.prev{
+    left:max(8px,env(safe-area-inset-left))!important;
+  }
+
+  .route-arrow.next{
+    right:max(8px,env(safe-area-inset-right))!important;
+  }
+
+  .route-arrow:hover{
+    color:rgba(202,255,0,.95)!important;
+    border-color:rgba(202,255,0,.62)!important;
+  }
+}
+
+@media (max-width:520px){
+  .hud-panels{
+    grid-template-columns:minmax(58px,.64fr) minmax(98px,1.08fr) minmax(118px,1.42fr)!important;
+  }
+
+  .route-arrow{
+    width:34px!important;
+    height:54px!important;
+    font-size:25px!important;
+  }
+}
