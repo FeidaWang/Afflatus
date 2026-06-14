@@ -40,29 +40,38 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   // guns, and a forward main-gun spine. Reliable 2D (the full 3D model is the
   // main-gun cinematic).
   const MOTHERSHIP_SVG = `
-    <svg viewBox="0 0 150 178" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <ellipse cx="55" cy="158" rx="11" ry="6" fill="#9af0ff" opacity=".45"/>
-      <ellipse cx="95" cy="158" rx="11" ry="6" fill="#9af0ff" opacity=".45"/>
-      <path d="M75 14 L92 60 L98 120 L88 152 L62 152 L52 120 L58 60 Z" fill="rgba(110,216,255,.12)" stroke="#7fe0ff" stroke-width="1.4"/>
-      <line x1="75" y1="22" x2="75" y2="148" stroke="#9af0ff" stroke-width="1" opacity=".55"/>
-      <line x1="58" y1="76" x2="92" y2="76" stroke="#7fe0ff" stroke-width=".8" opacity=".5"/>
-      <line x1="56" y1="100" x2="94" y2="100" stroke="#7fe0ff" stroke-width=".8" opacity=".5"/>
-      <line x1="56" y1="124" x2="94" y2="124" stroke="#7fe0ff" stroke-width=".8" opacity=".5"/>
-      <ellipse cx="75" cy="48" rx="9" ry="13" fill="rgba(190,243,255,.22)" stroke="#bdf3ff" stroke-width="1"/>
-      <rect x="43" y="118" width="22" height="42" rx="8" fill="rgba(110,216,255,.14)" stroke="#7fe0ff" stroke-width="1.2"/>
-      <rect x="85" y="118" width="22" height="42" rx="8" fill="rgba(110,216,255,.14)" stroke="#7fe0ff" stroke-width="1.2"/>
-      <line x1="45" y1="130" x2="63" y2="130" stroke="#7fe0ff" stroke-width=".7" opacity=".6"/>
-      <line x1="45" y1="142" x2="63" y2="142" stroke="#7fe0ff" stroke-width=".7" opacity=".6"/>
-      <line x1="87" y1="130" x2="105" y2="130" stroke="#7fe0ff" stroke-width=".7" opacity=".6"/>
-      <line x1="87" y1="142" x2="105" y2="142" stroke="#7fe0ff" stroke-width=".7" opacity=".6"/>
-      <path d="M52 90 L30 100 L34 112 L54 108 Z" fill="rgba(110,216,255,.10)" stroke="#7fe0ff" stroke-width="1"/>
-      <path d="M98 90 L120 100 L116 112 L96 108 Z" fill="rgba(110,216,255,.10)" stroke="#7fe0ff" stroke-width="1"/>
-      <line x1="31" y1="100" x2="27" y2="78" stroke="#9af0ff" stroke-width="1.4"/>
-      <line x1="119" y1="100" x2="123" y2="78" stroke="#9af0ff" stroke-width="1.4"/>
-      <line x1="75" y1="22" x2="75" y2="5" stroke="#cdf6ff" stroke-width="2"/>
-      <circle cx="75" cy="5" r="2.6" fill="#eafdff"/>
-      <circle cx="55" cy="159" r="4" fill="#eafdff"/>
-      <circle cx="95" cy="159" r="4" fill="#eafdff"/>
+    <svg viewBox="0 0 140 182" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <ellipse cx="70" cy="170" rx="36" ry="7" fill="#6fe0ff" opacity=".30"/>
+      <!-- dagger hull, blunt armoured nose -->
+      <path d="M58 18 L82 18 L96 72 L100 132 L86 164 L54 164 L40 132 L44 72 Z" fill="rgba(96,200,245,.12)" stroke="#7fe0ff" stroke-width="1.5"/>
+      <rect x="61" y="11" width="18" height="9" rx="1.5" fill="rgba(120,216,255,.2)" stroke="#9af0ff" stroke-width="1"/>
+      <line x1="70" y1="11" x2="70" y2="3" stroke="#cdf6ff" stroke-width="2.2"/>
+      <circle cx="70" cy="3" r="2.2" fill="#eafdff"/>
+      <!-- segment + spine lines -->
+      <line x1="70" y1="20" x2="70" y2="158" stroke="#9af0ff" stroke-width="1" opacity=".45"/>
+      <line x1="46" y1="58" x2="94" y2="58" stroke="#7fe0ff" stroke-width=".7" opacity=".5"/>
+      <line x1="44" y1="86" x2="96" y2="86" stroke="#7fe0ff" stroke-width=".7" opacity=".5"/>
+      <line x1="43" y1="114" x2="97" y2="114" stroke="#7fe0ff" stroke-width=".7" opacity=".5"/>
+      <line x1="42" y1="140" x2="98" y2="140" stroke="#7fe0ff" stroke-width=".7" opacity=".5"/>
+      <!-- bridge tower -->
+      <path d="M60 70 L80 70 L76 96 L64 96 Z" fill="rgba(190,243,255,.18)" stroke="#bdf3ff" stroke-width="1"/>
+      <circle cx="70" cy="82" r="3" fill="#eafdff"/>
+      <!-- weapon turrets -->
+      <circle cx="50" cy="102" r="3.4" fill="rgba(110,216,255,.16)" stroke="#9af0ff" stroke-width=".8"/>
+      <circle cx="90" cy="102" r="3.4" fill="rgba(110,216,255,.16)" stroke="#9af0ff" stroke-width=".8"/>
+      <circle cx="52" cy="128" r="2.8" fill="rgba(110,216,255,.16)" stroke="#9af0ff" stroke-width=".8"/>
+      <circle cx="88" cy="128" r="2.8" fill="rgba(110,216,255,.16)" stroke="#9af0ff" stroke-width=".8"/>
+      <!-- side wing-pods -->
+      <path d="M44 96 L23 104 L27 119 L46 112 Z" fill="rgba(110,216,255,.10)" stroke="#7fe0ff" stroke-width="1"/>
+      <path d="M96 96 L117 104 L113 119 L94 112 Z" fill="rgba(110,216,255,.10)" stroke="#7fe0ff" stroke-width="1"/>
+      <line x1="25" y1="104" x2="21" y2="84" stroke="#9af0ff" stroke-width="1.3"/>
+      <line x1="115" y1="104" x2="119" y2="84" stroke="#9af0ff" stroke-width="1.3"/>
+      <!-- rear engine bank: four thrusters -->
+      <rect x="47" y="150" width="46" height="16" rx="4" fill="rgba(110,216,255,.14)" stroke="#7fe0ff" stroke-width="1.2"/>
+      <circle cx="56" cy="162" r="3.4" fill="#eafdff"/>
+      <circle cx="66" cy="162" r="3.4" fill="#eafdff"/>
+      <circle cx="74" cy="162" r="3.4" fill="#eafdff"/>
+      <circle cx="84" cy="162" r="3.4" fill="#eafdff"/>
     </svg>`;
 
   // Build the PC from scratch inside a fresh .afpc container with unique class
