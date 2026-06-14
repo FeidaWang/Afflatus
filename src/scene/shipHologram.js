@@ -47,13 +47,19 @@ export function createShipHologram(canvas) {
   ship.add(part(new THREE.CylinderGeometry(0.1, 0.14, 1.9, 10), [0, 0.04, 2.4], null, [Math.PI / 2, 0, 0]));
   const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 7), glowMat);
   muzzle.position.set(0, 0.04, 3.45); ship.add(muzzle);
-  // raised twin engine pods on pylons (the Executor's signature)
+  // raised twin engine pods on pylons (the Executor's signature) + live plumes
+  const plumeMat = new THREE.MeshBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
+  const plumes = [];
   for (const sx of [-0.66, 0.66]) {
     ship.add(part(new THREE.CylinderGeometry(0.34, 0.4, 1.9, 12), [sx, 0.5, -1.55], null, [Math.PI / 2, 0, 0]));
     for (let i = 0; i < 3; i++) ship.add(part(new THREE.TorusGeometry(0.38, 0.05, 6, 14), [sx, 0.5, -1.0 + i * 0.5]));
     ship.add(part(new THREE.BoxGeometry(0.16, 0.72, 0.7), [sx, 0.08, -1.4]));                          // pylon
     const bell = new THREE.Mesh(new THREE.CircleGeometry(0.28, 14), glowMat);
     bell.position.set(sx, 0.5, -2.52); bell.rotation.y = Math.PI; ship.add(bell);
+    const plume = new THREE.Mesh(new THREE.ConeGeometry(0.24, 1.1, 14), plumeMat.clone());
+    plume.rotation.x = -Math.PI / 2;        // taper points aft (-Z)
+    plume.position.set(sx, 0.5, -3.05);
+    ship.add(plume); plumes.push(plume);
   }
   // side outrigger arms + weapon pods + barrels
   for (const sx of [-1, 1]) {
@@ -71,6 +77,15 @@ export function createShipHologram(canvas) {
   function frame(now) {
     ship.rotation.y = (now - start) / 3600 + 0.5;
     muzzle.material.opacity = 0.5 + 0.45 * Math.sin(now / 300);
+    // engines always burn; boost (longer, hotter violet) while warping
+    const warp = document.body.classList.contains('warp-hover');
+    const flick = 0.85 + 0.15 * Math.sin(now / 55);
+    for (const p of plumes) {
+      const wide = warp ? 1.3 : 1;
+      p.scale.set(wide, (warp ? 1.95 : 1.1) * flick, wide);
+      p.material.opacity = (warp ? 0.82 : 0.5) * (0.85 + 0.15 * Math.sin(now / 48));
+      p.material.color.setHex(warp ? 0xa898ff : 0x7fe0ff);
+    }
     renderer.render(scene, camera);
   }
   function loop() { if (active) { frame(performance.now()); raf = requestAnimationFrame(loop); } }
