@@ -49,9 +49,15 @@ export function createCapitalShip3D() {
   M(new THREE.BoxGeometry(1.5, 0.34, 1.6), armMat, [0, 0.04, 1.5]);                       // forward deck
   for (let i = 0; i < 4; i++) M(new THREE.BoxGeometry(1.4 - i * 0.18, 0.04, 0.16), trimMat, [0, 0.22, 2.2 - i * 0.45]); // bow panel seams
   // off-centre twin-rail bow turret + "01" plate
-  const turret = M(new THREE.BoxGeometry(0.42, 0.2, 0.42), darkMat, [-0.34, 0.26, 1.1]);
-  for (const bx of [-0.46, -0.22]) M(new THREE.CylinderGeometry(0.04, 0.04, 0.9, 8), trimMat, [bx, 0.3, 1.55], null, [Math.PI / 2, 0, 0]);
-  M(new THREE.BoxGeometry(0.14, 0.1, 0.02), trimMat, [-0.34, 0.3, 0.9]);                  // "01" marker plate
+  // big forward-firing twin-barrel "01" turret
+  M(new THREE.BoxGeometry(0.66, 0.22, 0.66), darkMat, [-0.3, 0.3, 1.15]);                 // turret base ring
+  const turret = M(new THREE.BoxGeometry(0.56, 0.3, 0.5), trimMat, [-0.3, 0.46, 1.2]);    // gun house
+  M(new THREE.BoxGeometry(0.3, 0.2, 0.36), darkMat, [-0.3, 0.46, 1.46]);                  // mantlet
+  for (const bx of [-0.42, -0.18]) {
+    M(new THREE.CylinderGeometry(0.05, 0.065, 1.6, 12), trimMat, [bx, 0.46, 2.15], null, [Math.PI / 2, 0, 0]); // twin barrels (forward)
+    M(new THREE.CylinderGeometry(0.07, 0.07, 0.12, 12), darkMat, [bx, 0.46, 2.9], null, [Math.PI / 2, 0, 0]);  // muzzle brake
+  }
+  M(new THREE.BoxGeometry(0.22, 0.16, 0.02), darkMat, [-0.05, 0.46, 1.2], null, [0, -0.5, 0]); // "01" decal plate (right side of house)
 
   // ===== broad armoured midsection + raised command spine =====
   M(new THREE.BoxGeometry(1.9, 0.5, 2.8), hullMat, [0, 0, -0.5]);
