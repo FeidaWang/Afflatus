@@ -706,6 +706,10 @@ body.hud-off .jump-toggle::after{display:none}
   opacity:0;filter:drop-shadow(0 0 26px rgba(232,179,128,.22));transition:opacity .22s ease,transform .22s ease;
 }
 .bridge-callout.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+/* keep the hero / language buttons reliably clickable when the combat HUD is up
+   (the full-screen #combatHud is pointer-events:none, but make doubly sure) */
+.hero-cta,.hero-cta>*{pointer-events:auto!important;}
+body.combat-mode .hero-cta{position:relative;z-index:9!important;pointer-events:auto!important;}
 .verse-switch{border-color:rgba(232,179,128,.28);color:var(--warm)}
 body.warp-hover .verse-switch{border-color:rgba(93,255,157,.64);color:#b9ffd4;box-shadow:0 0 24px rgba(93,255,157,.16)}
 body.warp-hover #hudThrusters{color:#5dff9d;text-shadow:0 0 12px rgba(93,255,157,.7)}
