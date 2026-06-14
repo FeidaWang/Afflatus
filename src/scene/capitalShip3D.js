@@ -97,9 +97,18 @@ export function createCapitalShip3D() {
   // stabiliser fins (sharp stealth shapes)
   for (const sx of [-1, 1]) M(new THREE.BoxGeometry(0.06, 0.7, 0.7), armMat, [sx * 0.9, 0.3, -2.0], null, [0.2, 0, sx * 0.4]);
   M(new THREE.BoxGeometry(0.5, 0.5, 0.06), armMat, [0, 0.45, -2.4], null, [0.3, 0, 0]);   // vertical tail
-  // antenna mast + rods
-  M(new THREE.CylinderGeometry(0.015, 0.02, 1.2, 6), trimMat, [0.15, 0.9, -1.9]);
-  M(new THREE.SphereGeometry(0.035, 6, 5), redMat, [0.15, 1.5, -1.9]);
+  // raised multi-tiered command superstructure (mid-rear) — denser
+  M(new THREE.BoxGeometry(0.84, 0.3, 1.5), armMat, [0, 0.55, -1.0]);
+  M(new THREE.BoxGeometry(0.66, 0.26, 1.05), hullMat, [0, 0.79, -1.0]);
+  M(new THREE.BoxGeometry(0.5, 0.2, 0.72), trimMat, [0, 0.99, -1.1]);
+  M(new THREE.BoxGeometry(0.38, 0.14, 0.5), darkMat, [0, 1.14, -1.15]);
+  for (let i = 0; i < 6; i++) M(new THREE.BoxGeometry(0.72, 0.03, 0.07), trimMat, [0, 0.71, -0.5 - i * 0.22]); // tier panel lines
+  for (const sx of [-1, 1]) M(new THREE.BoxGeometry(0.06, 0.16, 0.42), darkMat, [sx * 0.43, 0.62, -1.0]);       // side housings
+  M(new THREE.BoxGeometry(0.3, 0.06, 0.3), darkMat, [0, 1.22, -1.15]);                                          // sensor dish base
+  // taller antenna mast + rods + tip light
+  M(new THREE.CylinderGeometry(0.012, 0.02, 2.5, 6), trimMat, [0.1, 1.55, -1.35]);
+  M(new THREE.SphereGeometry(0.032, 6, 5), redMat, [0.1, 2.8, -1.35]);
+  M(new THREE.CylinderGeometry(0.008, 0.008, 0.5, 5), trimMat, [-0.18, 1.4, -1.4], null, [Math.PI / 3, 0, -0.3]);
   for (const sx of [-1, 1]) M(new THREE.CylinderGeometry(0.01, 0.01, 0.5, 5), trimMat, [sx * 0.5, 0.1, -2.5], null, [Math.PI / 3, 0, sx * 0.3]);
 
   // ===== forward spinal main gun (fires through the bow channel) =====
@@ -139,8 +148,8 @@ export function createCapitalShip3D() {
     const rw = Math.max(2, Math.floor(w * dpr)), rh = Math.max(2, Math.floor(h * dpr));
     if (rw !== lastW || rh !== lastH) { renderer.setSize(rw, rh, false); camera.aspect = rw / rh; camera.updateProjectionMatrix(); lastW = rw; lastH = rh; }
 
-    ship.rotation.y = Math.sin(now / 4200) * 0.16 + 0.3;
-    ship.rotation.z = Math.sin(now / 5200) * 0.04;
+    ship.rotation.y = 0.5 + Math.sin(now / 5200) * 0.04;
+    ship.rotation.z = Math.sin(now / 6400) * 0.03;
 
     const cl = document.body.classList;
     const warp = cl.contains('warp-hover');
@@ -157,10 +166,10 @@ export function createCapitalShip3D() {
     muzzle.material.emissiveIntensity = 0.5 + t * 3.6 * (0.7 + 0.3 * Math.sin(now / 60));
     muzzleLight.intensity = t * t * 10;
 
-    // 3/4 top-front dolly from the engines to the gun
+    // locked 3/4 top-front showcase angle; the ship drifts across the frame (fly-by)
     const e = easeInOut(t);
-    camera.position.set(lerp(-3.2, 3.4, e), lerp(2.4, 1.6, e), lerp(-7.2, 7.0, e));
-    camera.lookAt(0, 0.2, lerp(-2.0, 2.4, e));
+    camera.position.set(5.0, 5.3, 6.4); camera.lookAt(0, 0.1, -0.3);
+    ship.position.set(lerp(-2.0, 2.0, e), 0, lerp(1.0, -1.4, e));
 
     renderer.render(scene, camera);
 
