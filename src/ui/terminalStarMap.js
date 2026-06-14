@@ -59,7 +59,7 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     holoCanvasRef = holoCanvas;          // WebGL hologram created lazily on first login-open
     holo.appendChild(holoCanvas);
     const holoLabel = make('div', 'afpc-holo-label');
-    holoLabel.textContent = 'ENFORCER · MOTHERSHIP';
+    holoLabel.textContent = getLang() === 'zh' ? '执法者 · 母舰' : 'CONDOR · MOTHERSHIP';
     holo.appendChild(holoLabel);
 
     const fields = make('div', 'afpc-fields');
