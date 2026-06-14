@@ -39,6 +39,18 @@ export function createCapitalShip3D() {
   const blueMat = new THREE.MeshStandardMaterial({ color: 0x60c0ff, emissive: 0x3090ff, emissiveIntensity: 0.7 });
   const engineMat = new THREE.MeshStandardMaterial({ color: 0x9fe0ff, emissive: 0x4fb8ff, emissiveIntensity: 2.3 });
   const plumeMat = new THREE.MeshBasicMaterial({ color: 0x6fd0ff, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
+
+  // procedural bump map → armour panel-line / rivet relief on the hull
+  const bc = document.createElement('canvas'); bc.width = 512; bc.height = 512;
+  const bx = bc.getContext('2d');
+  bx.fillStyle = '#808080'; bx.fillRect(0, 0, 512, 512);
+  bx.strokeStyle = '#3a3a3a'; bx.lineWidth = 2.5;
+  for (let i = 0; i < 16; i++) { const a = Math.random() * 512, b = Math.random() * 512; bx.beginPath(); bx.moveTo(a, 0); bx.lineTo(a, 512); bx.moveTo(0, b); bx.lineTo(512, b); bx.stroke(); }
+  bx.lineWidth = 1.4;
+  for (let i = 0; i < 46; i++) { bx.strokeStyle = Math.random() < 0.5 ? '#585858' : '#a2a2a2'; bx.strokeRect(Math.random() * 512, Math.random() * 512, 16 + Math.random() * 92, 16 + Math.random() * 92); }
+  for (let i = 0; i < 170; i++) { bx.fillStyle = Math.random() < 0.5 ? '#9a9a9a' : '#565656'; bx.beginPath(); bx.arc(Math.random() * 512, Math.random() * 512, 1.6, 0, 7); bx.fill(); }
+  const bumpTex = new THREE.CanvasTexture(bc); bumpTex.wrapS = bumpTex.wrapT = THREE.RepeatWrapping; bumpTex.repeat.set(3, 3);
+  for (const m of [hullMat, armMat, trimMat, darkMat]) { m.bumpMap = bumpTex; m.bumpScale = 0.014; }
   const gunMat = new THREE.MeshStandardMaterial({ color: 0xbfe6ff, emissive: 0x6fb4ff, emissiveIntensity: 0.5 });
 
   const ship = new THREE.Group();
@@ -87,9 +99,11 @@ export function createCapitalShip3D() {
     const cavity = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.28, 0.16), darkMat); cavity.position.z = -0.5; grp.add(cavity);
     const glow = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.24), engineMat); glow.position.z = -0.56; glow.rotation.y = Math.PI; grp.add(glow);
     const light = new THREE.PointLight(0x4fb8ff, 3.5, 5); light.position.z = -0.85; grp.add(light);
-    const plume = new THREE.Mesh(new THREE.ConeGeometry(0.18, 1.2, 12), plumeMat.clone());
-    plume.rotation.x = -Math.PI / 2; plume.position.z = -1.05; grp.add(plume);
-    grp.position.set(ex, ey, -2.1); grp.userData = { glow, light, plume };
+    const plume = new THREE.Mesh(new THREE.ConeGeometry(0.2, 2.3, 12), plumeMat.clone());
+    plume.rotation.x = -Math.PI / 2; plume.position.z = -1.7; grp.add(plume);
+    const halo = new THREE.Mesh(new THREE.ConeGeometry(0.38, 3.2, 12), plumeMat.clone()); halo.material.opacity = 0.16;
+    halo.rotation.x = -Math.PI / 2; halo.position.z = -2.1; grp.add(halo);
+    grp.position.set(ex, ey, -2.1); grp.userData = { glow, light, plume, halo };
     ship.add(grp); engines.push(grp);
   }
   // support struts
@@ -177,11 +191,13 @@ export function createCapitalShip3D() {
     const engHex = warp ? 0x8f7cff : (combat ? 0x8ff0ff : 0x4fb8ff);
     const pulse = 0.85 + 0.15 * Math.sin(now / 90);
     engineMat.color.setHex(engHex); engineMat.emissive.setHex(engHex); engineMat.emissiveIntensity = 2.2 * pulse;
-    const plLen = (warp ? 1.9 : combat ? 1.45 : 1.1) * (0.9 + 0.1 * Math.sin(now / 50));
+    const plLen = (warp ? 1.85 : combat ? 1.4 : 1.1) * (0.9 + 0.1 * Math.sin(now / 50));
     for (const g of engines) {
-      g.userData.light.color.setHex(engHex); g.userData.light.intensity = 4.2 * pulse;
-      const pl = g.userData.plume; pl.material.color.setHex(engHex);
-      pl.scale.set(1, plLen, 1); pl.material.opacity = (warp ? 0.82 : 0.6) * (0.85 + 0.15 * Math.sin(now / 45));
+      g.userData.light.color.setHex(engHex); g.userData.light.intensity = 4.5 * pulse;
+      const pl = g.userData.plume; pl.material.color.setHex(engHex); pl.scale.set(1, plLen, 1);
+      pl.material.opacity = (warp ? 0.82 : 0.6) * (0.85 + 0.15 * Math.sin(now / 45));
+      const ha = g.userData.halo; ha.material.color.setHex(engHex); ha.scale.set(1, plLen * 1.06, 1);
+      ha.material.opacity = (warp ? 0.26 : 0.16) * (0.85 + 0.15 * Math.sin(now / 60));
     }
     muzzle.material.emissiveIntensity = 0.5 + t * 3.6 * (0.7 + 0.3 * Math.sin(now / 60));
     muzzleLight.intensity = t * t * 10;
