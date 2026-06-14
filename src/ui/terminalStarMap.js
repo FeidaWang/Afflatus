@@ -40,38 +40,43 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   // guns, and a forward main-gun spine. Reliable 2D (the full 3D model is the
   // main-gun cinematic).
   const MOTHERSHIP_SVG = `
-    <svg viewBox="0 0 140 182" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <ellipse cx="70" cy="170" rx="36" ry="7" fill="#6fe0ff" opacity=".30"/>
-      <!-- dagger hull, blunt armoured nose -->
-      <path d="M58 18 L82 18 L96 72 L100 132 L86 164 L54 164 L40 132 L44 72 Z" fill="rgba(96,200,245,.12)" stroke="#7fe0ff" stroke-width="1.5"/>
-      <rect x="61" y="11" width="18" height="9" rx="1.5" fill="rgba(120,216,255,.2)" stroke="#9af0ff" stroke-width="1"/>
-      <line x1="70" y1="11" x2="70" y2="3" stroke="#cdf6ff" stroke-width="2.2"/>
-      <circle cx="70" cy="3" r="2.2" fill="#eafdff"/>
-      <!-- segment + spine lines -->
-      <line x1="70" y1="20" x2="70" y2="158" stroke="#9af0ff" stroke-width="1" opacity=".45"/>
-      <line x1="46" y1="58" x2="94" y2="58" stroke="#7fe0ff" stroke-width=".7" opacity=".5"/>
-      <line x1="44" y1="86" x2="96" y2="86" stroke="#7fe0ff" stroke-width=".7" opacity=".5"/>
-      <line x1="43" y1="114" x2="97" y2="114" stroke="#7fe0ff" stroke-width=".7" opacity=".5"/>
-      <line x1="42" y1="140" x2="98" y2="140" stroke="#7fe0ff" stroke-width=".7" opacity=".5"/>
-      <!-- bridge tower -->
-      <path d="M60 70 L80 70 L76 96 L64 96 Z" fill="rgba(190,243,255,.18)" stroke="#bdf3ff" stroke-width="1"/>
-      <circle cx="70" cy="82" r="3" fill="#eafdff"/>
-      <!-- weapon turrets -->
-      <circle cx="50" cy="102" r="3.4" fill="rgba(110,216,255,.16)" stroke="#9af0ff" stroke-width=".8"/>
-      <circle cx="90" cy="102" r="3.4" fill="rgba(110,216,255,.16)" stroke="#9af0ff" stroke-width=".8"/>
-      <circle cx="52" cy="128" r="2.8" fill="rgba(110,216,255,.16)" stroke="#9af0ff" stroke-width=".8"/>
-      <circle cx="88" cy="128" r="2.8" fill="rgba(110,216,255,.16)" stroke="#9af0ff" stroke-width=".8"/>
-      <!-- side wing-pods -->
-      <path d="M44 96 L23 104 L27 119 L46 112 Z" fill="rgba(110,216,255,.10)" stroke="#7fe0ff" stroke-width="1"/>
-      <path d="M96 96 L117 104 L113 119 L94 112 Z" fill="rgba(110,216,255,.10)" stroke="#7fe0ff" stroke-width="1"/>
-      <line x1="25" y1="104" x2="21" y2="84" stroke="#9af0ff" stroke-width="1.3"/>
-      <line x1="115" y1="104" x2="119" y2="84" stroke="#9af0ff" stroke-width="1.3"/>
-      <!-- rear engine bank: four thrusters -->
-      <rect x="47" y="150" width="46" height="16" rx="4" fill="rgba(110,216,255,.14)" stroke="#7fe0ff" stroke-width="1.2"/>
-      <circle cx="56" cy="162" r="3.4" fill="#eafdff"/>
-      <circle cx="66" cy="162" r="3.4" fill="#eafdff"/>
-      <circle cx="74" cy="162" r="3.4" fill="#eafdff"/>
-      <circle cx="84" cy="162" r="3.4" fill="#eafdff"/>
+    <svg viewBox="0 0 150 168" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="afHullL" x1="0" y1="0" x2="1" y2="0.2">
+          <stop offset="0" stop-color="#cdefff" stop-opacity=".34"/>
+          <stop offset="1" stop-color="#1f5e87" stop-opacity=".10"/>
+        </linearGradient>
+        <linearGradient id="afHullR" x1="1" y1="0" x2="0" y2="0.2">
+          <stop offset="0" stop-color="#173f5e" stop-opacity=".30"/>
+          <stop offset="1" stop-color="#2a6f9c" stop-opacity=".06"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="75" cy="156" rx="30" ry="6" fill="#6fe0ff" opacity=".30"/>
+      <!-- faceted hull: lit left facet + shaded right facet for depth -->
+      <polygon points="75,10 75,90 62,90 60,40" fill="url(#afHullL)" stroke="#9af0ff" stroke-width="1.2"/>
+      <polygon points="75,10 75,90 88,90 90,40" fill="url(#afHullR)" stroke="#9af0ff" stroke-width="1.2"/>
+      <polygon points="62,90 75,90 75,150 100,140 88,90" fill="url(#afHullR)" stroke="#8fe6ff" stroke-width="1.2"/>
+      <polygon points="62,90 75,90 75,150 50,140" fill="url(#afHullL)" stroke="#8fe6ff" stroke-width="1.2"/>
+      <!-- nose tip + main gun -->
+      <line x1="75" y1="10" x2="75" y2="2" stroke="#dffaff" stroke-width="2.4"/>
+      <circle cx="75" cy="3" r="2" fill="#eafdff"/>
+      <!-- bridge -->
+      <polygon points="68,52 82,52 79,76 71,76" fill="rgba(205,247,255,.26)" stroke="#cdf6ff" stroke-width="1"/>
+      <circle cx="75" cy="64" r="2.6" fill="#eafdff"/>
+      <!-- panel lines -->
+      <line x1="62" y1="70" x2="88" y2="70" stroke="#7fe0ff" stroke-width=".6" opacity=".5"/>
+      <line x1="60" y1="100" x2="90" y2="100" stroke="#7fe0ff" stroke-width=".6" opacity=".5"/>
+      <line x1="58" y1="122" x2="92" y2="122" stroke="#7fe0ff" stroke-width=".6" opacity=".5"/>
+      <!-- swept wings + guns -->
+      <polygon points="60,96 30,108 35,122 62,112" fill="url(#afHullL)" stroke="#7fe0ff" stroke-width="1"/>
+      <polygon points="90,96 120,108 115,122 88,112" fill="url(#afHullR)" stroke="#7fe0ff" stroke-width="1"/>
+      <line x1="32" y1="108" x2="28" y2="86" stroke="#9af0ff" stroke-width="1.4"/>
+      <line x1="118" y1="108" x2="122" y2="86" stroke="#9af0ff" stroke-width="1.4"/>
+      <!-- rear engine bank: triple thrusters -->
+      <polygon points="56,136 94,136 90,154 60,154" fill="url(#afHullR)" stroke="#7fe0ff" stroke-width="1.2"/>
+      <circle cx="65" cy="148" r="3.2" fill="#eafdff"/>
+      <circle cx="75" cy="148" r="3.8" fill="#eafdff"/>
+      <circle cx="85" cy="148" r="3.2" fill="#eafdff"/>
     </svg>`;
 
   // Build the PC from scratch inside a fresh .afpc container with unique class
@@ -116,7 +121,7 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     body.append(holo, fields);
 
     const foot = make('div', 'afpc-foot');
-    foot.textContent = zh ? '● 访问受限 · 需要凭证 · 私人航行日志' : '● ACCESS RESTRICTED · CREDENTIALS REQUIRED · 私人航行日志';
+    foot.textContent = zh ? '● 访问受限 · 需要凭证 · 私人航行日志' : '● ACCESS RESTRICTED · CREDENTIALS REQUIRED · PRIVATE VOYAGE LOG';
 
     const scan = make('div', 'afpc-scan');
     pc.append(head, body, foot, scan);
