@@ -135,6 +135,12 @@ a{color:inherit;text-decoration:none}
 .chart .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(61,255,154,.16);flex-wrap:wrap}
 .chart-badge{font:700 10px/1 var(--font-hud);letter-spacing:.16em;color:#ffd166;border:1px solid rgba(255,209,102,.5);padding:4px 7px;text-transform:uppercase}
 .chart-badge.is-live{color:var(--up);border-color:var(--up)}
+.chart-badge.is-modeled{color:var(--blue);border-color:rgba(58,91,255,.6)}
+.tf{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid rgba(61,255,154,.12);flex-wrap:wrap}
+.tf-b{cursor:pointer;background:var(--panel-2);border:1px solid rgba(120,140,200,.22);color:var(--muted);font:700 12px/1 var(--font-hud);letter-spacing:.08em;padding:7px 12px;min-width:36px}
+.tf-b:hover{border-color:var(--cyan);color:#fff}
+.tf-b.on{background:var(--acid);border-color:var(--acid);color:#04060d}
+.tk-sim{font:700 8px/1 var(--font-hud);letter-spacing:.1em;color:var(--bg);background:var(--magenta);padding:2px 4px}
 .chart .sym{font:900 28px/1 var(--font-display);letter-spacing:.03em}
 .chart .nm{color:var(--cyan);font:600 11px/1 var(--font-hud);letter-spacing:.14em;text-transform:uppercase;margin-top:6px}
 .chart .big{font:600 28px/1 var(--font-mono);margin-top:4px;display:flex;align-items:baseline;gap:10px}
@@ -343,6 +349,14 @@ body.embed .hero{border-top:2px solid var(--line)}
             <div class="ohlc" id="cOhlc"></div>
           </div>
         </div>
+        <div class="tf" id="tfRow" role="group" aria-label="Chart timeframe">
+          <button class="tf-b on" data-tf="D" aria-pressed="true">D</button>
+          <button class="tf-b" data-tf="W" aria-pressed="false">W</button>
+          <button class="tf-b" data-tf="M" aria-pressed="false">M</button>
+          <button class="tf-b" data-tf="6M" aria-pressed="false">6M</button>
+          <button class="tf-b" data-tf="Y" aria-pressed="false">Y</button>
+          <button class="tf-b" data-tf="5Y" aria-pressed="false">5Y</button>
+        </div>
         <div class="body">
           <svg class="area" id="cChart" preserveAspectRatio="none" viewBox="0 0 600 230" role="img" aria-label="Price history chart"></svg>
           <div class="loading" id="cLoading" style="display:none">
@@ -380,7 +394,7 @@ body.embed .hero{border-top:2px solid var(--line)}
     </aside>
   </div>
 
-  <footer class="foot">For entertainment only — not investment advice. Quotes may be delayed or simulated. SPCX &amp; FLKR are fictional house tickers. Scores are stored on this device.</footer>
+  <footer class="foot">For entertainment only — not investment advice. Live quotes via Finnhub (free tier); the <b>D</b> view is real intraday, while <b>W / M / 6M / Y / 5Y</b> are modeled (no free historical feed). Scores are stored on this device.</footer>
 </main>
 
 <div id="briefing" hidden></div>
