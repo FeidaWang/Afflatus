@@ -42,18 +42,10 @@ a{color:inherit;text-decoration:none}
 .lang-toggle{font-family:var(--disp);font-size:8px;color:#1a0f0a;background:var(--gold);border:3px solid #000;padding:8px 9px;box-shadow:2px 2px 0 #000;cursor:pointer;margin-left:4px}
 .lang-toggle:hover{transform:translate(1px,1px);box-shadow:1px 1px 0 #000}
 
-/* pixel scene */
-.scene{display:block;width:100%;border-bottom:4px solid #000;background:#0d0f1c;line-height:0}
-.scene svg{display:block;width:100%;height:auto;shape-rendering:crispEdges}
-.fl{transform-origin:center bottom;animation:flick .35s steps(2) infinite}
-.fl2{animation:flick .5s steps(2) infinite}
-.em{animation:ember 2.4s linear infinite}
-.em2{animation:ember 3.1s linear infinite}
-.eye{animation:glow 1.8s ease-in-out infinite}
-@keyframes flick{0%{transform:scaleY(1) translateX(0)}50%{transform:scaleY(.82) translateX(-1px)}100%{transform:scaleY(1.05) translateX(1px)}}
-@keyframes ember{0%{transform:translateY(0);opacity:.9}100%{transform:translateY(-26px);opacity:0}}
-@keyframes glow{0%,100%{opacity:1}50%{opacity:.4}}
-@media (prefers-reduced-motion: reduce){.fl,.fl2,.em,.em2,.eye{animation:none}}
+/* WebGL pixel scene */
+.scene{display:block;width:100%;aspect-ratio:16/9;border-bottom:4px solid #000;background:#071514;line-height:0;position:relative;overflow:hidden}
+.scene canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.scene::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px),linear-gradient(90deg,rgba(255,255,255,.04),transparent 20%,transparent 80%,rgba(0,0,0,.14));mix-blend-mode:soft-light}
 
 .hero{padding:14px;border-bottom:4px solid #000;background:linear-gradient(180deg,#1b1f38,#15182b)}
 .tagline{font-family:var(--disp);font-size:9px;line-height:1.6;color:var(--pink);margin:0 0 10px}
@@ -125,65 +117,8 @@ a{color:inherit;text-decoration:none}
     </nav>
   </header>
 
-  <div class="scene" aria-hidden="true">
-    <svg viewBox="0 0 256 96" preserveAspectRatio="xMidYMid slice" role="img">
-      <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#241a3a"/><stop offset=".6" stop-color="#3a2b52"/><stop offset="1" stop-color="#5a3a4e"/></linearGradient></defs>
-      <rect width="256" height="96" fill="url(#sky)"/>
-      <circle cx="34" cy="20" r="10" fill="#ffcd75"/><circle cx="38" cy="18" r="10" fill="#3a2b52"/>
-      <g fill="#f4e9d0"><rect x="70" y="10" width="2" height="2"/><rect x="120" y="7" width="2" height="2"/><rect x="160" y="14" width="2" height="2"/><rect x="210" y="9" width="2" height="2"/><rect x="236" y="20" width="2" height="2"/><rect x="96" y="22" width="2" height="2"/></g>
-      <!-- forest / mountains -->
-      <g fill="#1a1430"><polygon points="0,64 30,40 60,64"/><polygon points="40,64 76,34 112,64"/><polygon points="150,64 190,38 230,64"/><polygon points="206,64 240,44 256,64"/></g>
-      <g fill="#221a3c"><rect x="0" y="60" width="256" height="6"/></g>
-      <!-- ground -->
-      <rect x="0" y="66" width="256" height="30" fill="#16100f"/>
-      <rect x="0" y="66" width="256" height="3" fill="#241712"/>
-
-      <!-- KNIGHT (left), resting, sword planted -->
-      <g>
-        <rect x="44" y="58" width="14" height="14" fill="#6b7280"/>            <!-- torso armor -->
-        <rect x="46" y="60" width="10" height="3" fill="#9aa3b2"/>             <!-- chest shine -->
-        <rect x="47" y="50" width="8" height="9" fill="#8a93a3"/>             <!-- helmet -->
-        <rect x="47" y="49" width="8" height="2" fill="#5fcde4"/>             <!-- helmet crest base -->
-        <rect x="50" y="44" width="2" height="6" fill="#e26b9c"/>            <!-- plume -->
-        <rect x="49" y="54" width="4" height="2" fill="#000"/>               <!-- visor -->
-        <rect x="40" y="62" width="5" height="10" fill="#5b6270"/>           <!-- arm -->
-        <rect x="58" y="60" width="4" height="12" fill="#5b6270"/>           <!-- arm -->
-        <rect x="62" y="40" width="2" height="32" fill="#cfd6e2"/>           <!-- sword blade planted -->
-        <rect x="60" y="56" width="6" height="2" fill="#ffcd75"/>            <!-- guard -->
-      </g>
-
-      <!-- CAMPFIRE (center) with roasting meat -->
-      <g>
-        <ellipse cx="128" cy="84" rx="26" ry="5" fill="#0a0a12"/>            <!-- ground shadow -->
-        <g fill="#3a2418"><rect x="112" y="78" width="32" height="5"/><rect x="116" y="74" width="24" height="5"/></g>  <!-- logs -->
-        <g fill="#5b3a22"><rect x="110" y="80" width="8" height="3"/><rect x="138" y="80" width="10" height="3"/></g>    <!-- stones -->
-        <!-- flames -->
-        <g class="fl"><polygon points="128,58 120,80 136,80" fill="#ef7d57"/></g>
-        <g class="fl2"><polygon points="128,64 122,80 134,80" fill="#ffcd75"/></g>
-        <g class="fl"><polygon points="128,70 125,80 131,80" fill="#fff3b0"/></g>
-        <!-- embers -->
-        <rect class="em" x="124" y="62" width="2" height="2" fill="#ffcd75"/>
-        <rect class="em2" x="132" y="64" width="2" height="2" fill="#ef7d57"/>
-        <rect class="em" x="129" y="58" width="2" height="2" fill="#fff3b0"/>
-        <!-- skewer + roasting meat legs -->
-        <rect x="104" y="68" width="48" height="2" fill="#8a6a3a"/>
-        <g fill="#7a3b22"><ellipse cx="118" cy="70" rx="5" ry="3"/><rect x="115" y="66" width="2" height="3"/></g>
-        <g fill="#7a3b22"><ellipse cx="138" cy="70" rx="5" ry="3"/><rect x="137" y="66" width="2" height="3"/></g>
-        <rect x="117" y="69" width="2" height="1" fill="#c98a4a"/><rect x="137" y="69" width="2" height="1" fill="#c98a4a"/>
-      </g>
-
-      <!-- RED DRAGON (right), resting, head toward fire -->
-      <g>
-        <ellipse cx="206" cy="84" rx="40" ry="6" fill="#0a0a12"/>            <!-- shadow -->
-        <path d="M168 78 q40 -22 78 -2 q-6 8 -22 8 q-26 4 -56 0 z" fill="#9e1f1f"/>     <!-- body -->
-        <path d="M210 60 q26 -10 34 6 q-14 -2 -22 6 q-8 -4 -12 -12 z" fill="#7a1414"/>  <!-- folded wing -->
-        <path d="M176 76 q-12 2 -16 -6 q8 -2 14 0 z" fill="#9e1f1f"/>          <!-- snout toward fire -->
-        <rect x="170" y="72" width="3" height="3" fill="#7a1414"/>           <!-- nostril -->
-        <rect class="eye" x="182" y="70" width="3" height="3" fill="#ffcd75"/> <!-- glowing eye -->
-        <g fill="#c0392b"><rect x="196" y="66" width="3" height="4"/><rect x="204" y="64" width="3" height="4"/><rect x="212" y="64" width="3" height="4"/></g> <!-- back spikes -->
-        <path d="M244 80 q10 -2 12 -12 q-8 0 -12 6 z" fill="#7a1414"/>         <!-- tail curl -->
-      </g>
-    </svg>
+  <div class="scene">
+    <canvas id="signalScene" width="320" height="180" role="img" aria-label="8-bit night camp scene with a resting knight, a red dragon, mountains, stars, and a flickering campfire"></canvas>
   </div>
 
   <section class="hero">
@@ -310,6 +245,7 @@ a{color:inherit;text-decoration:none}
   btn.addEventListener('click', function () { playing ? stop() : start(); });
 })();
 </script>
+<script src="/signal-scene.js" defer></script>
 <script src="/i18n.js" defer></script>
 <script src="/transition.js" defer></script>
 <script src="/page-turn.js" defer></script>
