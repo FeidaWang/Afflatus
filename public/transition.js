@@ -9,8 +9,8 @@
 (() => {
   'use strict';
   const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
-  const TYPE = (path) => /arena\.html?$/.test(path) ? 'cannon' : /sectors\.html?$/.test(path) ? 'takeoff' : /signal\.html?$/.test(path) ? 'radio' : 'warp';
-  const PAL = { warp: ['#aae4ff', '#78c8ff'], cannon: ['#3dff9a', '#27e7ff'], takeoff: ['#ffd166', '#ff7a3c'], radio: ['#7deaff', '#68ff9f'] };
+  const TYPE = (path) => /arena\.html?$/.test(path) ? 'cannon' : /sectors\.html?$/.test(path) ? 'takeoff' : /signal\.html?$/.test(path) ? 'control' : 'warp';
+  const PAL = { warp: ['#aae4ff', '#78c8ff'], cannon: ['#3dff9a', '#27e7ff'], takeoff: ['#ffd166', '#ff7a3c'], control: ['#e01f1f', '#f5c84b'] };
 
   // ---------- audio ----------
   let ac = null, noiseBuf = null;
@@ -30,10 +30,11 @@
       const ch = c.createOscillator(), cg = c.createGain(); ch.type = 'sine'; ch.frequency.setValueAtTime(420, t); ch.frequency.exponentialRampToValueAtTime(1500, t + 0.22); env(c, cg, t, 0.02, 0.25, 0.18); ch.connect(cg).connect(M); ch.start(t); ch.stop(t + 0.26);
       const z = c.createOscillator(), bp = c.createBiquadFilter(), zg = c.createGain(); z.type = 'sawtooth'; z.frequency.setValueAtTime(1700, t + 0.26); z.frequency.exponentialRampToValueAtTime(180, t + 0.46); bp.type = 'bandpass'; bp.Q.value = 6; bp.frequency.value = 900; env(c, zg, t + 0.26, 0.01, 0.55, 0.3); z.connect(bp).connect(zg).connect(M); z.start(t + 0.26); z.stop(t + 0.6);
       const b = c.createOscillator(), bg = c.createGain(); b.type = 'sine'; b.frequency.setValueAtTime(120, t + 0.26); b.frequency.exponentialRampToValueAtTime(55, t + 0.6); env(c, bg, t + 0.26, 0.01, 0.5, 0.4); b.connect(bg).connect(M); b.start(t + 0.26); b.stop(t + 0.7);
-    } else {
-      let tt = t;
-      for (let i = 0; i < 6; i++) { const n = noise(c), bp = c.createBiquadFilter(), g = c.createGain(); bp.type = 'bandpass'; bp.Q.value = 2.4; bp.frequency.value = 1500 + Math.random() * 1400; const dur = 0.04 + Math.random() * 0.06; env(c, g, tt, 0.006, 0.3, dur); n.connect(bp).connect(g).connect(M); n.start(tt); n.stop(tt + dur + 0.05); tt += dur + 0.02 + Math.random() * 0.05; }
-      [880, 1320].forEach((f, i) => { const o = c.createOscillator(), g = c.createGain(), bt = t + 0.18 + i * 0.16; o.type = 'square'; o.frequency.value = f; env(c, g, bt, 0.005, 0.18, 0.1); o.connect(g).connect(M); o.start(bt); o.stop(bt + 0.13); });
+    } else { // control — Hiss drone + red impact + rune cluster
+      [55, 82.5, 110].forEach((f, i) => { const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f; o.detune.value = (i - 1) * 8; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.26, t + 0.12); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.72); o.connect(g).connect(M); o.start(t); o.stop(t + 0.78); });
+      const n = noise(c), bp = c.createBiquadFilter(), ng = c.createGain(); bp.type = 'bandpass'; bp.Q.value = 0.8; bp.frequency.setValueAtTime(1200, t); bp.frequency.exponentialRampToValueAtTime(420, t + 0.6); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.3, t + 0.25); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.7); n.connect(bp).connect(ng).connect(M); n.start(t); n.stop(t + 0.75);
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(300, t); o.frequency.exponentialRampToValueAtTime(60, t + 0.3); env(c, g, t, 0.005, 0.4, 0.3); o.connect(g).connect(M); o.start(t); o.stop(t + 0.4);
+      [1840, 1972].forEach((f) => { const o2 = c.createOscillator(), g2 = c.createGain(); o2.type = 'square'; o2.frequency.value = f; env(c, g2, t + 0.05, 0.005, 0.06, 0.18); o2.connect(g2).connect(M); o2.start(t + 0.05); o2.stop(t + 0.25); });
     }
   }
 
@@ -81,19 +82,23 @@
           c.strokeStyle = c1; c.globalAlpha = Math.max(0, 0.7 - q); c.lineWidth = 3; c.beginPath(); c.arc(cx, cy, q * Math.max(W, H) * 0.7, 0, 6.283); c.stroke();
           c.globalAlpha = Math.max(0, 0.55 - q * 1.2); c.fillStyle = '#fff'; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
         }
-      } else { // radio: CRT tune-in
-        // soft scanlines
-        c.globalAlpha = 0.06; c.fillStyle = c1; for (let y = 0; y < H; y += 3) c.fillRect(0, y, W, 1);
-        // rolling horizontal band
-        const by = ((now * 0.25) % (H + 120)) - 60; const bg = c.createLinearGradient(0, by, 0, by + 120); bg.addColorStop(0, 'transparent'); bg.addColorStop(0.5, `rgba(125,234,255,0.10)`); bg.addColorStop(1, 'transparent'); c.globalAlpha = 1; c.fillStyle = bg; c.fillRect(0, by, W, 120);
-        // glowing centered waveform settling
-        const amp = (1 - p) * 70 + 6, jit = (1 - p) * 26;
-        c.strokeStyle = c2; c.shadowColor = c2; c.shadowBlur = 12; c.lineWidth = 2; c.globalAlpha = 0.95; c.beginPath();
-        for (let x = 0; x <= W; x += 5) { const y = cy + Math.sin(x * 0.03 + now * 0.012) * amp * Math.sin(x / W * Math.PI) + (Math.random() - 0.5) * jit; x === 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
-        c.stroke(); c.shadowBlur = 0;
-        // vignette + dissolve to dark
-        c.globalAlpha = 1; const vg = c.createRadialGradient(cx, cy, H * 0.2, cx, cy, H * 0.75); vg.addColorStop(0, 'transparent'); vg.addColorStop(1, 'rgba(2,4,10,0.7)'); c.fillStyle = vg; c.fillRect(0, 0, W, H);
-        c.fillStyle = '#04060d'; c.globalAlpha = p > 0.6 ? (p - 0.6) / 0.4 : 0; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
+      } else { // control: brutalist concrete slabs close, red Hiss leaks, a rune flares
+        const e = ease(p);
+        c.fillStyle = `rgba(10,9,7,${0.35 + 0.5 * p})`; c.fillRect(0, 0, W, H);
+        const slab = e * (W * 0.5 + 30);
+        c.fillStyle = '#c7c4bb'; c.fillRect(0, 0, slab, H); c.fillRect(W - slab, 0, slab, H);
+        c.fillStyle = '#2a2820'; c.fillRect(slab - 8, 0, 8, H); c.fillRect(W - slab, 0, 8, H);
+        c.fillStyle = 'rgba(0,0,0,0.22)'; c.fillRect(slab, 0, 26, H); c.fillRect(W - slab - 26, 0, 26, H);
+        const gap = Math.max(0, W - slab * 2);
+        if (gap > 2) {
+          const gx = slab, grd = c.createLinearGradient(gx, 0, gx + gap, 0);
+          grd.addColorStop(0, 'rgba(224,31,31,0)'); grd.addColorStop(0.5, `rgba(224,31,31,${0.5 + 0.3 * Math.sin(now * 0.02)})`); grd.addColorStop(1, 'rgba(224,31,31,0)');
+          c.fillStyle = grd; c.fillRect(gx, 0, gap, H);
+          c.globalAlpha = 0.6; for (let i = 0; i < 14; i++) { c.fillStyle = Math.random() > 0.5 ? '#ff2a1a' : '#7a0f0f'; c.fillRect(gx + Math.random() * gap, Math.random() * H, 1 + Math.random() * 2, 8 + Math.random() * 44); } c.globalAlpha = 1;
+        }
+        if (p > 0.45) { const a = Math.min(1, (p - 0.45) / 0.2) * (1 - Math.max(0, (p - 0.82) / 0.18)); c.save(); c.translate(cx, cy); c.rotate(Math.PI / 4); c.globalAlpha = a; c.strokeStyle = c2; c.lineWidth = 3; const s = 26; c.strokeRect(-s, -s, s * 2, s * 2); c.beginPath(); c.moveTo(0, -s * 1.7); c.lineTo(0, s * 1.7); c.moveTo(-s * 1.7, 0); c.lineTo(s * 1.7, 0); c.stroke(); c.restore(); c.globalAlpha = 1; }
+        if (Math.random() > 0.55) { c.fillStyle = '#000'; for (let i = 0; i < 4; i++) c.fillRect(0, Math.random() * H, W, 2 + Math.random() * 5); }
+        c.globalAlpha = Math.max(0, p - 0.75) * 4; c.fillStyle = '#0a0907'; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
       }
       if (p < 1) requestAnimationFrame(frame); else { el.style.opacity = '0'; setTimeout(() => c.clearRect(0, 0, W, H), 200); }
     }
