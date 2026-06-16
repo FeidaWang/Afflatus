@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Project Afflatus · Signal — Fed Watch</title>
-<meta name="description" content="Signal: a Federal Reserve watch in 8-bit. Next-FOMC countdown, rate-decision odds and stance — a knight resting with a dragon by the campfire, with a relaxing lo-fi loop. Desk view, not advice.">
-<meta name="theme-color" content="#10121f">
+<title>Project Afflatus · Signal — Bureau of Federal Reserve Control</title>
+<meta name="description" content="Signal: a Federal Reserve watch rendered as an FBC case file — brutalist concrete, New Weird red Hiss, an FOMC containment countdown and rate-decision odds. Desk view, not advice.">
+<meta name="theme-color" content="#13120f">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Afflatus">
-<meta property="og:title" content="Project Afflatus · Signal — Fed Watch">
-<meta property="og:description" content="A Federal Reserve watch in 8-bit: FOMC countdown, rate odds, stance. Desk view, not advice.">
+<meta property="og:title" content="Project Afflatus · Signal — Control">
+<meta property="og:description" content="A Federal Reserve watch as an FBC case file: brutalism + New Weird. Desk view, not advice.">
 <meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
@@ -17,97 +17,145 @@
 <link rel="stylesheet" href="/page-turn.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --night:#15182b;--deep:#0d0f1c;--panel:#1b1f38;--ink:#f4e9d0;--dim:#b29ec8;
-  --teal:#5fcde4;--orange:#ef7d57;--gold:#ffcd75;--green:#a7f070;--pink:#e26b9c;--red:#ff6b6b;
-  --disp:'Press Start 2P',monospace;--body:'JetBrains Mono','Courier New',monospace;
+  --bg:#13120f;--concrete:#c7c4bb;--concrete-d:#a4a199;--slab:#1b1a16;--slab2:#222019;
+  --ink:#ece9e0;--dim:#8c887e;--line:#3a382f;
+  --hiss:#e01f1f;--hiss-glow:#ff2a1a;--rune:#f5c84b;--energy:#57b6ff;
+  --disp:'Archivo Black',Impact,system-ui,sans-serif;--mono:'Space Mono',ui-monospace,monospace;--body:'Archivo',system-ui,sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
-body{background:var(--deep);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.6;image-rendering:pixelated}
-body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);opacity:.5}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  background-image:radial-gradient(120% 60% at 50% -10%,rgba(40,38,32,.5),transparent 60%);}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:6;opacity:.5;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px)}
 a{color:inherit;text-decoration:none}
-.up,.green{color:var(--green)} .red{color:var(--red)} .gold{color:var(--gold)} .teal{color:var(--teal)}
+.red{color:var(--hiss)} .rune{color:var(--rune)} .energy{color:var(--energy)}
+:focus-visible{outline:2px solid var(--hiss);outline-offset:2px}
 
-.deck{width:min(960px,calc(100% - 22px));margin:16px auto 28px;position:relative;z-index:1;background:var(--night);border:4px solid #000;box-shadow:0 0 0 4px var(--panel),10px 10px 0 rgba(0,0,0,.5)}
-.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-bottom:4px solid #000;background:var(--deep);flex-wrap:wrap}
-.brand{font-family:var(--disp);font-size:13px;color:var(--gold);letter-spacing:1px;line-height:1.5;text-shadow:2px 2px 0 #000}
-.brand small{display:block;margin-top:8px;font-size:7px;color:var(--teal);letter-spacing:1px;line-height:1.6}
-.nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.nav a{font-family:var(--disp);font-size:8px;color:var(--ink);background:var(--panel);border:3px solid #000;padding:8px 8px;box-shadow:2px 2px 0 #000}
-.nav a:hover{transform:translate(1px,1px);box-shadow:1px 1px 0 #000;color:var(--gold)}
-.nav a.active{background:var(--orange);color:#1a0f0a}
-.lang-toggle{font-family:var(--disp);font-size:8px;color:#1a0f0a;background:var(--gold);border:3px solid #000;padding:8px 9px;box-shadow:2px 2px 0 #000;cursor:pointer;margin-left:4px}
-.lang-toggle:hover{transform:translate(1px,1px);box-shadow:1px 1px 0 #000}
+/* New Weird red Hiss haze */
+.hiss{position:fixed;inset:0;z-index:0;pointer-events:none}
+.hiss canvas{width:100%;height:100%;display:block;opacity:.6;mix-blend-mode:screen}
 
-/* WebGL pixel scene */
-.scene{display:block;width:100%;aspect-ratio:16/9;border-bottom:4px solid #000;background:#071514;line-height:0;position:relative;overflow:hidden}
-.scene canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
-.scene::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px),linear-gradient(90deg,rgba(255,255,255,.04),transparent 20%,transparent 80%,rgba(0,0,0,.14));mix-blend-mode:soft-light}
+.bureau{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:18px clamp(10px,3vw,26px) 50px}
 
-.hero{padding:14px;border-bottom:4px solid #000;background:linear-gradient(180deg,#1b1f38,#15182b)}
-.tagline{font-family:var(--disp);font-size:9px;line-height:1.6;color:var(--pink);margin:0 0 10px}
-.hero h1{font-family:var(--disp);font-size:clamp(13px,3.2vw,20px);line-height:1.5;margin:0 0 12px;text-shadow:2px 2px 0 #000}
-.hero h1 span{color:var(--gold)}
-.brief{margin:0;max-width:760px;color:#e7d8bf;font-size:14px;line-height:1.7}
+/* topbar — brutalist concrete bar */
+.topbar{display:flex;align-items:stretch;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  background:var(--concrete);color:#16140f;border:3px solid #000;box-shadow:9px 9px 0 #000;padding:12px 16px}
+.seal{display:flex;align-items:center;gap:12px}
+.seal .mk{width:38px;height:38px;border:3px solid #16140f;border-radius:50%;display:grid;place-items:center;font-family:var(--disp);font-size:15px;position:relative}
+.seal .mk::after{content:"";position:absolute;inset:6px;border:1px solid #16140f;border-radius:50%}
+.seal b{font-family:var(--disp);font-size:15px;letter-spacing:.02em;line-height:1;display:block}
+.seal small{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:#4a463c;display:block;margin-top:4px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.nav a{font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#16140f;border:2px solid #16140f;padding:8px 10px;background:transparent}
+.nav a:hover{background:#16140f;color:var(--concrete)}
+.nav a.active{background:var(--hiss);border-color:var(--hiss);color:#fff}
+.lang-toggle{font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.12em;color:#fff;background:var(--hiss);border:2px solid #16140f;padding:8px 11px;cursor:pointer}
+.lang-toggle:hover{background:#16140f;border-color:#16140f}
 
-.fomc{margin:14px;border:4px solid #000;background:var(--deep);box-shadow:4px 4px 0 rgba(0,0,0,.5)}
-.fomc-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);border-bottom:4px solid #000;flex-wrap:wrap}
-.fomc-h .lab{font-family:var(--disp);font-size:8px;line-height:1.6;color:var(--teal)}
-.fomc-h .rec{font-family:var(--disp);font-size:7px;color:var(--red)}
-.fomc-h .rec::before{content:"●";margin-right:5px;animation:blink 1.1s steps(1) infinite}
+/* hero slab */
+.hero{position:relative;margin-top:18px;background:var(--slab);border:3px solid #000;box-shadow:12px 12px 0 #000;
+  padding:clamp(20px,4vw,40px);overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent 30%),repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0 2px,transparent 2px 6px);pointer-events:none}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim)}
+.kicker b{color:var(--hiss)}
+.hero h1{font-family:var(--disp);font-size:clamp(34px,8vw,86px);line-height:.92;letter-spacing:-.01em;text-transform:uppercase;margin:14px 0 14px;max-width:14ch}
+.hero h1 .red{position:relative}
+.hero h1 .red::after{content:"";position:absolute;left:-2%;right:-2%;top:42%;height:14%;background:var(--hiss);mix-blend-mode:multiply;opacity:.85;animation:redaq 5s steps(1) infinite}
+@keyframes redaq{0%,92%,100%{transform:scaleX(1)}94%{transform:scaleX(.4)}96%{transform:scaleX(1.05)}}
+.brief{max-width:62ch;color:#cfccc2;font-size:16px}
+.stamp{position:absolute;top:18px;right:18px;transform:rotate(8deg);border:3px solid var(--hiss);color:var(--hiss);
+  font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.12em;padding:6px 9px;text-transform:uppercase;text-align:center;line-height:1.3;opacity:.92}
+.stamp span{display:block;font-size:9px;color:var(--rune)}
+.runes{margin-top:18px;display:flex;gap:12px;font-family:var(--mono);font-size:20px;color:var(--rune)}
+.runes i{font-style:normal;animation:rune 2.6s steps(1) infinite}
+.runes i:nth-child(2){animation-delay:.4s}.runes i:nth-child(3){animation-delay:.9s}.runes i:nth-child(4){animation-delay:1.3s}.runes i:nth-child(5){animation-delay:1.8s}
+@keyframes rune{0%,80%,100%{opacity:.9}85%{opacity:.15}88%{opacity:.7}}
+
+/* New Weird shifting geometry + floating figure */
+.weird{position:absolute;right:clamp(14px,5vw,60px);bottom:14px;width:120px;height:120px;pointer-events:none;opacity:.9}
+.cube{position:absolute;inset:0;display:grid;place-items:center;perspective:420px}
+.cube i{position:absolute;width:64px;height:64px;border:2px solid var(--energy);opacity:.5;transform-style:preserve-3d;animation:spin 14s linear infinite}
+.cube i:nth-child(2){border-color:var(--hiss);width:46px;height:46px;animation-duration:9s;animation-direction:reverse}
+@keyframes spin{0%{transform:rotateX(0) rotateY(0) rotateZ(0)}100%{transform:rotateX(360deg) rotateY(360deg) rotateZ(45deg)}}
+.figure{position:absolute;left:30px;bottom:6px;width:18px;height:42px;background:#0c0b09;border-top:6px solid #0c0b09;border-radius:9px 9px 3px 3px;box-shadow:0 0 22px 6px rgba(224,31,31,.45);animation:float 4.6s ease-in-out infinite}
+.figure::before{content:"";position:absolute;left:4px;top:-12px;width:10px;height:10px;border-radius:50%;background:#0c0b09;box-shadow:0 0 12px 3px rgba(224,31,31,.5)}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+
+/* containment countdown */
+.containment{margin-top:18px;background:var(--slab2);border:3px solid #000;box-shadow:9px 9px 0 #000;
+  display:grid;grid-template-columns:auto 1fr;gap:0}
+.containment .lab{background:var(--hiss);color:#fff;font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;padding:16px;display:flex;align-items:center;writing-mode:vertical-rl;transform:rotate(180deg)}
+.containment .body{padding:18px 18px}
+.containment .top{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.containment .top .alert{color:var(--hiss)}
+.containment .top .alert::before{content:"● ";animation:blink 1.1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
-.fomc-body{padding:16px 12px;text-align:center}
-.fomc-clock{font-family:var(--disp);font-size:clamp(16px,5vw,30px);color:var(--gold);letter-spacing:0;text-shadow:3px 3px 0 #000;line-height:1.4;transition:color .2s}
-.fomc-clock.tick{animation:pop .3s ease}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.06);color:#fff}100%{transform:scale(1)}}
-.fomc-when{margin-top:12px;font-size:12px;color:var(--dim);line-height:1.9}
-.fomc-when b{color:var(--ink)}
+.clock{font-family:var(--disp);font-size:clamp(30px,7vw,58px);line-height:1;color:var(--ink);margin:12px 0 8px;letter-spacing:.01em}
+.clock.tick{animation:cpop .3s ease}
+@keyframes cpop{0%{transform:scale(1)}40%{transform:scale(1.03);color:var(--hiss)}100%{transform:scale(1)}}
+.when{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--dim)}
+.when b{color:var(--ink)} .when .bc{color:var(--rune)}
 
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px}
-.card{border:4px solid #000;background:var(--panel);box-shadow:4px 4px 0 rgba(0,0,0,.5)}
-.card h2{font-family:var(--disp);font-size:9px;line-height:1.6;color:var(--gold);margin:0;padding:10px 12px;border-bottom:4px solid #000;background:var(--deep)}
-.card .in{padding:12px}
+/* case-file documents */
+.files{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.file{background:var(--concrete);color:#16140f;border:3px solid #000;box-shadow:9px 9px 0 #000;position:relative}
+.file h2{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin:0;padding:11px 14px;background:#16140f;color:var(--concrete);display:flex;justify-content:space-between}
+.file h2 .no{color:var(--hiss)}
+.file .in{padding:14px}
 .bars{display:flex;flex-direction:column;gap:12px}
-.row{display:grid;grid-template-columns:1fr 60px;gap:8px;align-items:center;font-size:13px}
-.row .lab{color:#e7d8bf}
-.bar{grid-column:1/-1;height:15px;background:#0d0f1c;border:3px solid #000;padding:2px}
-.bar i{display:block;height:100%;width:0;animation:grow 1s steps(12) forwards}
+.row{display:grid;grid-template-columns:1fr 58px;gap:8px;align-items:center;font-family:var(--mono);font-size:13px}
+.row .lab{letter-spacing:.02em}
+.bar{grid-column:1/-1;height:14px;background:#16140f;border:2px solid #16140f;padding:0}
+.bar i{display:block;height:100%;width:0;animation:grow 1s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes grow{to{width:var(--w)}}
-.bar.t i{background:var(--teal)} .bar.g i{background:var(--green)} .bar.o i{background:var(--orange)} .bar.r i{background:var(--red)}
-.row b{text-align:right;font-family:var(--disp);font-size:9px;color:var(--ink)}
-.note{margin:12px 0 0;color:#cdbca3;font-size:12.5px;line-height:1.7}
-.list .li{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:8px 0;border-bottom:2px dashed rgba(178,158,200,.3)}
+.bar.h i{background:var(--hiss)} .bar.y i{background:var(--rune)} .bar.b i{background:var(--energy)} .bar.k i{background:#16140f}
+.row b{text-align:right;font-family:var(--disp);font-size:14px}
+.note{margin:12px 0 0;font-family:var(--body);font-size:13.5px;line-height:1.55;color:#322f28}
+.list .li{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:9px 0;border-bottom:2px solid rgba(22,20,15,.18)}
 .list .li:last-child{border-bottom:0}
-.list .k{font-family:var(--disp);font-size:8px;line-height:1.7;color:var(--gold)}
-.list .v{color:#e7d8bf;font-size:12.5px}
+.list .k{font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.1em;color:var(--hiss)}
+.list .v{font-size:14px;color:#26241d}
+/* redaction bar that occasionally reveals */
+.redact{background:#16140f;color:transparent;padding:0 4px;border-radius:1px;animation:reveal 9s steps(1) infinite}
+@keyframes reveal{0%,90%,100%{background:#16140f;color:transparent}93%{background:transparent;color:inherit}}
 
-.dock{display:flex;align-items:center;gap:10px;padding:12px 14px;border-top:4px solid #000;background:var(--deep);flex-wrap:wrap}
-.cbtn{font-family:var(--disp);font-size:9px;color:#1a0f0a;background:var(--green);border:3px solid #000;padding:10px 12px;box-shadow:2px 2px 0 #000;cursor:pointer}
-.cbtn:hover{transform:translate(1px,1px);box-shadow:1px 1px 0 #000}
-.cbtn.off{background:var(--panel);color:var(--ink)}
+/* ambient dock */
+.dock{margin-top:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--slab);border:3px solid #000;box-shadow:9px 9px 0 #000;padding:14px 16px}
+.cbtn{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--hiss);border:2px solid #000;padding:11px 14px;cursor:pointer}
+.cbtn:hover{filter:brightness(1.1)} .cbtn.off{background:transparent;color:var(--ink);border-color:var(--line)}
 .eq{display:flex;gap:3px;align-items:flex-end;height:20px}
-.eq i{width:4px;background:var(--teal);height:6px}
-.dock.on .eq i{animation:eq .9s ease-in-out infinite}
-.eq i:nth-child(2){animation-delay:.12s}.eq i:nth-child(3){animation-delay:.28s}.eq i:nth-child(4){animation-delay:.18s}.eq i:nth-child(5){animation-delay:.33s}
-@keyframes eq{0%,100%{height:5px}50%{height:18px}}
-.msg{font-family:var(--disp);font-size:7px;line-height:1.7;color:var(--dim)}
-.foot{padding:12px 14px;border-top:4px solid #000;background:var(--night);color:var(--dim);font-family:var(--disp);font-size:7px;line-height:2}
-@media(max-width:680px){.grid{grid-template-columns:1fr}}
-@media (prefers-reduced-motion: reduce){.bar i{animation:none;width:var(--w)}.fomc-h .rec::before,.dock.on .eq i{animation:none}}
+.eq i{width:4px;background:var(--hiss);height:5px}
+.dock.on .eq i{animation:eq 1.4s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.2s}.eq i:nth-child(3){animation-delay:.5s}.eq i:nth-child(4){animation-delay:.3s}.eq i:nth-child(5){animation-delay:.6s}
+@keyframes eq{0%,100%{height:4px}50%{height:18px}}
+.msg{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--dim)}
+
+.foot{margin-top:22px;border-top:2px solid var(--line);padding-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--dim);text-transform:uppercase}
+.foot b{color:var(--hiss)}
+
+@media(max-width:760px){.files{grid-template-columns:1fr}.hero h1{max-width:none}.weird{display:none}.containment{grid-template-columns:1fr}.containment .lab{writing-mode:horizontal-tb;transform:none}}
+@media (prefers-reduced-motion: reduce){.hero h1 .red::after,.runes i,.cube i,.figure,.redact,.dock.on .eq i,.containment .top .alert::before{animation:none}.redact{background:transparent;color:inherit}}
 </style>
 </head>
-<body class="signal-page" data-prev="/sectors.html" data-next="/">
+<body class="signal-page control" data-prev="/sectors.html" data-next="/">
+<div class="hiss" aria-hidden="true"><canvas id="hissCanvas"></canvas></div>
+
 <nav class="page-turn-controls" aria-label="Page navigation">
   <a class="page-turn" href="/sectors.html" data-page-turn="prev" aria-label="Back to sectors">←</a>
   <a class="page-turn" href="/" data-page-turn="next" aria-label="Return home">→</a>
 </nav>
 
-<main class="deck">
-  <header class="top">
-    <div class="brand">AFFLATUS SIGNAL<small data-en="FED WATCH · STARDATE MMXXVI" data-zh="美联储观察 · 星历 MMXXVI">FED WATCH · STARDATE MMXXVI</small></div>
+<main class="bureau">
+  <header class="topbar">
+    <div class="seal">
+      <div class="mk" aria-hidden="true">◑</div>
+      <div><b>BUREAU OF FEDERAL RESERVE CONTROL</b><small data-en="MONETARY DIVISION · CLEARANCE 06" data-zh="货币司 · 权限 06">MONETARY DIVISION · CLEARANCE 06</small></div>
+    </div>
     <nav class="nav" aria-label="Primary">
       <a href="/" data-en="HOME" data-zh="首页">HOME</a>
       <a href="/arena.html" data-en="ARENA" data-zh="竞技场">ARENA</a>
@@ -117,75 +165,103 @@ a{color:inherit;text-decoration:none}
     </nav>
   </header>
 
-  <div class="scene">
-    <canvas id="signalScene" width="320" height="180" role="img" aria-label="8-bit night camp scene with a resting knight, a red dragon, mountains, stars, and a flickering campfire"></canvas>
-  </div>
-
   <section class="hero">
-    <p class="tagline" data-en="▸ 3, 2, 1… LET'S JAM — desk scenario MMXXVI" data-zh="▸ 3、2、1… 开整 — 交易台情景 MMXXVI">▸ 3, 2, 1… LET'S JAM — desk scenario MMXXVI</p>
-    <h1 data-i18n-html data-en="One hand moves the tape:<br>the <span>Fed</span>" data-zh="只有一只手能左右行情：<br><span>美联储</span>">One hand moves the tape:<br>the <span>Fed</span></h1>
-    <p class="brief" data-en="A lone watch over a single question — what does the Federal Reserve do next, and how priced is it? The range has sat at 3.50–3.75% into a leadership change. Respect the higher-for-longer map until the data, not hope, breaks it." data-zh="独自盯着一个问题——美联储下一步怎么走，又被市场price了多少？利率区间在领导层换届之际维持 3.50–3.75%。在数据（而非希望）打破之前，尊重“更高更久”的路径图。">A lone watch over a single question — what does the Federal Reserve do next, and how priced is it? The range has sat at 3.50–3.75% into a leadership change. Respect the higher-for-longer map until the data, not hope, breaks it.</p>
+    <div class="stamp" aria-hidden="true">ALTERED ITEM<span data-en="OBJECT OF POWER" data-zh="威能造物">OBJECT OF POWER</span></div>
+    <div class="kicker" data-i18n-html data-en="CASE FILE <b>FOMC/2026</b> · NEW WEIRD ADVISORY" data-zh="档案 <b>FOMC/2026</b> · 新怪谭警示">CASE FILE <b>FOMC/2026</b> · NEW WEIRD ADVISORY</div>
+    <h1 data-i18n-html data-en="THE FED <span class='red'>MOVES</span> THE TAPE" data-zh="美联储 <span class='red'>左右</span> 行情">THE FED <span class="red">MOVES</span> THE TAPE</h1>
+    <p class="brief" data-en="One institution bends the market the way an Object of Power bends a room. The target range has sat at 3.50–3.75% into a leadership change. Until the data — not hope — breaks it, the higher-for-longer map holds. Containment is procedure, not prophecy." data-zh="一个机构扭曲市场，就像威能造物扭曲一个房间。利率目标区间在领导层换届之际维持 3.50–3.75%。在数据（而非希望）打破它之前，“更高更久”的路径图依然成立。收容是程序，而非预言。">One institution bends the market the way an Object of Power bends a room. The target range has sat at 3.50–3.75% into a leadership change. Until the data — not hope — breaks it, the higher-for-longer map holds. Containment is procedure, not prophecy.</p>
+    <div class="runes" aria-hidden="true"><i>◆</i><i>⬡</i><i>⌖</i><i>◈</i><i>⏃</i></div>
+    <div class="weird" aria-hidden="true"><div class="cube"><i></i><i></i></div><div class="figure"></div></div>
   </section>
 
-  <section class="fomc" aria-label="Next FOMC countdown">
-    <div class="fomc-h"><span class="lab" data-en="▣ NEXT FOMC DECISION" data-zh="▣ 下次 FOMC 决议">▣ NEXT FOMC DECISION</span><span class="rec" data-en="LIVE WATCH" data-zh="实时观察">LIVE WATCH</span></div>
-    <div class="fomc-body">
-      <div class="fomc-clock" id="fomcClock" aria-live="off">--d --:--:--</div>
-      <div class="fomc-when"><span data-en="DECISION" data-zh="决议">DECISION</span> <b id="fomcDate">—</b> · 2:00 PM ET<br><span data-en="BASE CASE" data-zh="基准情形">BASE CASE</span> <b class="gold" data-en="HAWKISH HOLD 3.50–3.75%" data-zh="鹰派按兵不动 3.50–3.75%">HAWKISH HOLD 3.50–3.75%</b></div>
+  <section class="containment" aria-label="Next FOMC containment window">
+    <div class="lab" data-en="CONTAINMENT WINDOW" data-zh="收容窗口">CONTAINMENT WINDOW</div>
+    <div class="body">
+      <div class="top"><span data-en="NEXT FOMC DECISION" data-zh="下次 FOMC 决议">NEXT FOMC DECISION</span><span class="alert" data-en="HISS WATCH · ACTIVE" data-zh="嘶语监控 · 启用">HISS WATCH · ACTIVE</span></div>
+      <div class="clock" id="fomcClock" aria-live="off">--d --:--:--</div>
+      <div class="when"><span data-en="DECISION" data-zh="决议">DECISION</span> <b id="fomcDate">—</b> · 2:00 PM ET — <span data-en="BASE CASE" data-zh="基准情形">BASE CASE</span> <span class="bc" data-en="HAWKISH HOLD 3.50–3.75%" data-zh="鹰派按兵不动 3.50–3.75%">HAWKISH HOLD 3.50–3.75%</span></div>
     </div>
   </section>
 
-  <div class="grid">
-    <article class="card">
-      <h2 data-en="RATE DECISION ODDS" data-zh="利率决议概率">RATE DECISION ODDS</h2>
+  <div class="files">
+    <article class="file">
+      <h2><span data-en="FILE — RATE DECISION ODDS" data-zh="档案 — 利率决议概率">FILE — RATE DECISION ODDS</span><span class="no">01</span></h2>
       <div class="in"><div class="bars">
-        <div class="row"><span class="lab" data-en="Hold 3.50–3.75%" data-zh="维持 3.50–3.75%">Hold 3.50–3.75%</span><b>65%</b><div class="bar t"><i style="--w:65%"></i></div></div>
-        <div class="row"><span class="lab" data-en="Cut 25bp" data-zh="降息 25bp">Cut 25bp</span><b>20%</b><div class="bar g"><i style="--w:20%"></i></div></div>
-        <div class="row"><span class="lab" data-en="Hike 25bp" data-zh="加息 25bp">Hike 25bp</span><b>15%</b><div class="bar r"><i style="--w:15%"></i></div></div>
-      </div><p class="note" data-en="Desk read of market-implied odds. A hold is the path of least resistance into the first meeting under new leadership — but the tails matter more while the reaction function is being re-learned." data-zh="对市场隐含概率的台面解读。在新领导层的首次会议上，按兵不动是阻力最小的路径——但在反应函数被重新学习期间，尾部风险更值得重视。">Desk read of market-implied odds. A hold is the path of least resistance into the first meeting under new leadership — but the tails matter more while the reaction function is being re-learned.</p></div>
+        <div class="row"><span class="lab" data-en="Hold 3.50–3.75%" data-zh="维持 3.50–3.75%">Hold 3.50–3.75%</span><b>65%</b><div class="bar h"><i style="--w:65%"></i></div></div>
+        <div class="row"><span class="lab" data-en="Cut 25bp" data-zh="降息 25bp">Cut 25bp</span><b>20%</b><div class="bar b"><i style="--w:20%"></i></div></div>
+        <div class="row"><span class="lab" data-en="Hike 25bp" data-zh="加息 25bp">Hike 25bp</span><b>15%</b><div class="bar y"><i style="--w:15%"></i></div></div>
+      </div><p class="note" data-en="Desk read of market-implied odds. A hold is the path of least resistance into the first meeting under new leadership — but the tails matter more while the reaction function is being re-learned." data-zh="对市场隐含概率的台面解读。新领导层首次会议上，按兵不动是阻力最小的路径——但在反应函数被重新学习期间，尾部风险更值得重视。">Desk read of market-implied odds. A hold is the path of least resistance into the first meeting under new leadership — but the tails matter more while the reaction function is being re-learned.</p></div>
     </article>
 
-    <article class="card">
-      <h2 data-en="STANCE · LEADERSHIP" data-zh="立场 · 领导层">STANCE · LEADERSHIP</h2>
+    <article class="file">
+      <h2><span data-en="FILE — STANCE / LEADERSHIP" data-zh="档案 — 立场 / 领导层">FILE — STANCE / LEADERSHIP</span><span class="no">02</span></h2>
       <div class="in"><div class="list">
         <div class="li"><span class="k" data-en="RATE" data-zh="利率">RATE</span><span class="v" data-en="3.50–3.75%, held several meetings straight." data-zh="3.50–3.75%，已连续数次会议维持不变。">3.50–3.75%, held several meetings straight.</span></div>
-        <div class="li"><span class="k" data-en="CHAIR" data-zh="主席">CHAIR</span><span class="v" data-en="Powell → Warsh: a new hand on the gavel. Continuity first, personality later." data-zh="鲍威尔 → 沃什：新人接棒。先讲延续性，个人风格随后。">Powell → Warsh: a new hand on the gavel. Continuity first, personality later.</span></div>
+        <div class="li"><span class="k" data-en="CHAIR" data-zh="主席">CHAIR</span><span class="v" data-i18n-html data-en="Powell → Warsh: a <span class='redact'>new hand on the gavel</span>. Continuity first, personality later." data-zh="鲍威尔 → 沃什：<span class='redact'>新人接棒</span>。先讲延续性，个人风格随后。">Powell → Warsh: a <span class="redact">new hand on the gavel</span>. Continuity first, personality later.</span></div>
         <div class="li"><span class="k" data-en="MODE" data-zh="模式">MODE</span><span class="v" data-en="&quot;Meeting by meeting.&quot; Core inflation &amp; the labor market are the swing votes." data-zh="“逐次会议决定”。核心通胀与劳动力市场是关键摇摆因素。">"Meeting by meeting." Core inflation &amp; the labor market are the swing votes.</span></div>
       </div><p class="note" data-en="A transition raises headline risk around every speech — the market is re-pricing a reaction function it cannot yet observe." data-zh="换届让每一次讲话都暗藏头条风险——市场正在为一个尚无法观测的反应函数重新定价。">A transition raises headline risk around every speech — the market is re-pricing a reaction function it cannot yet observe.</p></div>
     </article>
 
-    <article class="card">
-      <h2 data-en="RATE PATH · MY MAP" data-zh="利率路径 · 我的研判">RATE PATH · MY MAP</h2>
+    <article class="file">
+      <h2><span data-en="FILE — RATE PATH / MY MAP" data-zh="档案 — 利率路径 / 我的研判">FILE — RATE PATH / MY MAP</span><span class="no">03</span></h2>
       <div class="in"><div class="bars">
-        <div class="row"><span class="lab" data-en="2026 holds (base)" data-zh="2026 维持（基准）">2026 holds (base)</span><b>70%</b><div class="bar t"><i style="--w:70%"></i></div></div>
-        <div class="row"><span class="lab" data-en="First cut in 2026" data-zh="2026 内首次降息">First cut in 2026</span><b>38%</b><div class="bar g"><i style="--w:38%"></i></div></div>
-        <div class="row"><span class="lab" data-en="Hike risk (tail)" data-zh="加息风险（尾部）">Hike risk (tail)</span><b>30%</b><div class="bar o"><i style="--w:30%"></i></div></div>
-        <div class="row"><span class="lab" data-en="Cuts into 2027" data-zh="进入 2027 的降息">Cuts into 2027</span><b>55%</b><div class="bar g"><i style="--w:55%"></i></div></div>
+        <div class="row"><span class="lab" data-en="2026 holds (base)" data-zh="2026 维持（基准）">2026 holds (base)</span><b>70%</b><div class="bar b"><i style="--w:70%"></i></div></div>
+        <div class="row"><span class="lab" data-en="First cut in 2026" data-zh="2026 内首次降息">First cut in 2026</span><b>38%</b><div class="bar y"><i style="--w:38%"></i></div></div>
+        <div class="row"><span class="lab" data-en="Hike risk (tail)" data-zh="加息风险（尾部）">Hike risk (tail)</span><b>30%</b><div class="bar h"><i style="--w:30%"></i></div></div>
+        <div class="row"><span class="lab" data-en="Cuts into 2027" data-zh="进入 2027 的降息">Cuts into 2027</span><b>55%</b><div class="bar b"><i style="--w:55%"></i></div></div>
       </div><p class="note" data-en="Flat 2026, first durable cut pushed out unless services inflation cracks. The bigger 2027 easing only arrives if growth — not just inflation — actually cools." data-zh="2026 大致走平，除非服务业通胀松动，否则首次实质性降息将后移。更大规模的 2027 宽松，只有在增长（而不仅是通胀）真正降温时才会到来。">Flat 2026, first durable cut pushed out unless services inflation cracks. The bigger 2027 easing only arrives if growth — not just inflation — actually cools.</p></div>
     </article>
 
-    <article class="card">
-      <h2 data-en="WHAT I'M WATCHING" data-zh="我在盯什么">WHAT I'M WATCHING</h2>
+    <article class="file">
+      <h2><span data-en="FILE — THREAT BOARD" data-zh="档案 — 威胁面板">FILE — THREAT BOARD</span><span class="no">04</span></h2>
       <div class="in"><div class="bars">
-        <div class="row"><span class="lab" data-en="core PCE" data-zh="核心 PCE">core PCE</span><b class="gold" data-en="HOT" data-zh="偏热">HOT</b><div class="bar o"><i style="--w:62%"></i></div></div>
-        <div class="row"><span class="lab" data-en="payrolls / wages" data-zh="非农 / 薪资">payrolls / wages</span><b class="gold" data-en="FIRM" data-zh="坚挺">FIRM</b><div class="bar o"><i style="--w:58%"></i></div></div>
-        <div class="row"><span class="lab" data-en="balance sheet · QT" data-zh="资产负债表 · QT">balance sheet · QT</span><b class="teal" data-en="TAPER" data-zh="缩减">TAPER</b><div class="bar t"><i style="--w:40%"></i></div></div>
-        <div class="row"><span class="lab" data-en="financial conditions" data-zh="金融条件">financial conditions</span><b class="teal" data-en="WATCH" data-zh="观察">WATCH</b><div class="bar t"><i style="--w:48%"></i></div></div>
-      </div><p class="note" data-en="Triggers that move the map: a sticky core PCE print, wage re-acceleration, the pace of runoff, and any loosening of financial conditions the Fed feels it must lean against." data-zh="会改变这张路径图的触发因素：黏性的核心 PCE、薪资重新加速、缩表节奏，以及任何让美联储觉得必须出手对抗的金融条件松动。">Triggers that move the map: a sticky core PCE print, wage re-acceleration, the pace of runoff, and any loosening of financial conditions the Fed feels it must lean against.</p></div>
+        <div class="row"><span class="lab" data-en="core PCE" data-zh="核心 PCE">core PCE</span><b class="red" data-en="HOT" data-zh="偏热">HOT</b><div class="bar h"><i style="--w:62%"></i></div></div>
+        <div class="row"><span class="lab" data-en="payrolls / wages" data-zh="非农 / 薪资">payrolls / wages</span><b class="rune" data-en="FIRM" data-zh="坚挺">FIRM</b><div class="bar y"><i style="--w:58%"></i></div></div>
+        <div class="row"><span class="lab" data-en="balance sheet · QT" data-zh="资产负债表 · QT">balance sheet · QT</span><b class="energy" data-en="TAPER" data-zh="缩减">TAPER</b><div class="bar b"><i style="--w:40%"></i></div></div>
+        <div class="row"><span class="lab" data-en="financial conditions" data-zh="金融条件">financial conditions</span><b class="energy" data-en="WATCH" data-zh="观察">WATCH</b><div class="bar b"><i style="--w:48%"></i></div></div>
+      </div><p class="note" data-en="Triggers that move the map: a sticky core PCE print, wage re-acceleration, the pace of runoff, and any loosening of financial conditions the Bureau feels it must lean against." data-zh="会改变这张路径图的触发因素：黏性的核心 PCE、薪资重新加速、缩表节奏，以及任何让“控制局”觉得必须出手对抗的金融条件松动。">Triggers that move the map: a sticky core PCE print, wage re-acceleration, the pace of runoff, and any loosening of financial conditions the Bureau feels it must lean against.</p></div>
     </article>
   </div>
 
   <div class="dock" id="dock">
-    <button class="cbtn off" id="chip" type="button" aria-pressed="false" data-en="♪ PLAY LO-FI" data-zh="♪ 播放 LO-FI">♪ PLAY LO-FI</button>
+    <button class="cbtn off" id="amb" type="button" aria-pressed="false" data-en="▣ AMBIENT SIGNAL — HISS" data-zh="▣ 环境信号 — 嘶语">▣ AMBIENT SIGNAL — HISS</button>
     <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-    <span class="msg" id="chipMsg" data-en="campfire lo-fi · tap to relax" data-zh="篝火 lo-fi · 点一下放松一下">campfire lo-fi · tap to relax</span>
+    <span class="msg" id="ambMsg" data-en="oldest house · resonance drone · tap to listen" data-zh="太古之屋 · 共鸣低鸣 · 点击聆听">oldest house · resonance drone · tap to listen</span>
   </div>
 
-  <footer class="foot" data-en="SEE YOU, SPACE COWBOY… · DESK VIEW ONLY · NOT INVESTMENT ADVICE" data-zh="后会有期，太空牛仔… · 仅为台面观点 · 非投资建议">SEE YOU, SPACE COWBOY… · DESK VIEW ONLY · NOT INVESTMENT ADVICE</footer>
+  <footer class="foot" data-i18n-html data-en="<b>ALTERED WORLD EVENT REPORT</b> — DESK VIEW ONLY · NOT INVESTMENT ADVICE · public/signal.html" data-zh="<b>异界事件报告</b> — 仅为台面观点 · 非投资建议 · public/signal.html"><b>ALTERED WORLD EVENT REPORT</b> — DESK VIEW ONLY · NOT INVESTMENT ADVICE · public/signal.html</footer>
 </main>
 
 <script>
-/* next-FOMC countdown */
+/* red Hiss haze — drifting vertical bands + rising motes */
+(function () {
+  var cv = document.getElementById('hissCanvas'); if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d'); var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+  var W, H, motes;
+  function init() { W = cv.width = innerWidth; H = cv.height = innerHeight; motes = []; var n = Math.min(60, Math.round(W / 22)); for (var i = 0; i < n; i++) motes.push({ x: Math.random() * W, y: Math.random() * H, s: 1 + Math.random() * 2, v: 0.2 + Math.random() * 0.7, p: Math.random() * 6.28 }); }
+  function frame(t) {
+    ctx.clearRect(0, 0, W, H);
+    // soft vertical red bands drifting
+    var bands = 4;
+    for (var i = 0; i < bands; i++) {
+      var x = ((t * 0.02 + i * W / bands) % (W + 200)) - 100;
+      var g = ctx.createLinearGradient(x - 80, 0, x + 80, 0);
+      g.addColorStop(0, 'rgba(224,31,31,0)'); g.addColorStop(0.5, 'rgba(224,31,31,' + (0.05 + 0.04 * Math.sin(t * 0.001 + i)) + ')'); g.addColorStop(1, 'rgba(224,31,31,0)');
+      ctx.fillStyle = g; ctx.fillRect(x - 80, 0, 160, H);
+    }
+    // rising motes
+    for (var k = 0; k < motes.length; k++) { var m = motes[k]; m.y -= m.v; m.x += Math.sin(t * 0.001 + m.p) * 0.3; if (m.y < -4) { m.y = H + 4; m.x = Math.random() * W; } ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,42,26,0.5)' : 'rgba(245,200,75,0.35)'; ctx.fillRect(m.x, m.y, m.s, m.s); }
+    // occasional flicker scan
+    if (Math.random() > 0.97) { ctx.fillStyle = 'rgba(224,31,31,0.06)'; ctx.fillRect(0, Math.random() * H, W, 2 + Math.random() * 40); }
+    raf = requestAnimationFrame(frame);
+  }
+  var raf = 0; init();
+  if (RM) { ctx.fillStyle = 'rgba(224,31,31,0.05)'; ctx.fillRect(0, 0, W, H); } else raf = requestAnimationFrame(frame);
+  addEventListener('resize', function () { clearTimeout(window.__hrt); window.__hrt = setTimeout(init, 200); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; } else if (!document.hidden && !raf && !RM) raf = requestAnimationFrame(frame); });
+})();
+
+/* next-FOMC containment countdown */
 (function () {
   var FOMC = [
     { iso: '2026-06-17T18:00:00Z', label: 'Jun 17, 2026' },
@@ -201,51 +277,40 @@ a{color:inherit;text-decoration:none}
   function tick() {
     var m = pick(); if (!m) { clk.textContent = 'NO DATE'; return; } dt.textContent = m.label;
     var s = Math.floor((m.t - Date.now()) / 1000);
-    if (s <= 0 && s > -3600) { clk.textContent = 'DECISION LIVE'; clk.classList.add('green'); return; } s = Math.max(0, s);
+    if (s <= 0 && s > -3600) { clk.textContent = 'DECISION LIVE'; clk.classList.add('red'); return; } s = Math.max(0, s);
     var d = Math.floor(s / 86400); s -= d * 86400; var h = Math.floor(s / 3600); s -= h * 3600; var mi = Math.floor(s / 60); var se = s - mi * 60;
-    var txt = d + 'd ' + pad(h) + ':' + pad(mi) + ':' + pad(se); clk.textContent = txt;
+    clk.textContent = d + 'd ' + pad(h) + ':' + pad(mi) + ':' + pad(se);
     if (se !== last) { last = se; clk.classList.remove('tick'); void clk.offsetWidth; clk.classList.add('tick'); }
   }
   tick(); setInterval(tick, 1000);
 })();
 
-/* relaxing campfire lo-fi loop (Web Audio, opt-in) */
+/* ambient "Hiss" resonance drone (Web Audio, opt-in) */
 (function () {
-  var btn = document.getElementById('chip'), dock = document.getElementById('dock'), msg = document.getElementById('chipMsg');
-  var ac = null, playing = false, timer = null, master = null, lp = null, nextT = 0, step = 0;
-  var hz = function (n) { return 220 * Math.pow(2, n / 12); };
-  // mellow maj7/9 wander (semitones from A3), slow + soft
-  var lead = [0, 4, 7, 11, 7, 4, 2, 5, 9, 12, 9, 5, 0, 4, 7, 9];
-  var bass = [-12, -12, -5, -5, -10, -10, -7, -7];
-  var STEP = 0.42; // ~71 bpm feel
-  function voice(freq, t, dur, type, peak, detune) {
-    var o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.value = freq; if (detune) o.detune.value = detune;
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.08); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g).connect(lp); o.start(t); o.stop(t + dur + 0.06);
-  }
-  function schedule() {
-    while (nextT < ac.currentTime + 0.4) {
-      var t = nextT, n = lead[step % lead.length];
-      voice(hz(n), t, STEP * 1.7, 'triangle', 0.12, +4);            // soft lead
-      voice(hz(n) * 1.003, t, STEP * 1.7, 'sine', 0.05, -6);        // gentle detuned layer
-      if (step % 2 === 0) voice(hz(bass[(step / 2) % bass.length]) / 2, t, STEP * 2.2, 'sine', 0.16);  // warm bass
-      if (step % 4 === 0) voice(hz(n + 16), t + STEP * 0.5, STEP * 1.2, 'sine', 0.03);                 // sparkle
-      step++; nextT += STEP;
-    }
-  }
+  var btn = document.getElementById('amb'), dock = document.getElementById('dock'), msg = document.getElementById('ambMsg');
+  var ac = null, on = false, nodes = [], lfoT = 0, timer = 0, master = null;
   function start() {
     try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { msg.textContent = 'audio unavailable'; return; }
     if (ac.state === 'suspended') ac.resume();
-    master = ac.createGain(); master.gain.value = 0.5; lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1100; lp.Q.value = 0.4; lp.connect(master); master.connect(ac.destination);
-    nextT = ac.currentTime + 0.06; step = 0; playing = true;
-    btn.textContent = '❚❚ PAUSE'; btn.classList.remove('off'); btn.setAttribute('aria-pressed', 'true'); dock.classList.add('on'); msg.textContent = 'now playing · campfire lo-fi';
-    timer = setInterval(schedule, 80);
+    master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+    master.gain.linearRampToValueAtTime(0.4, ac.currentTime + 1.2);
+    var lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; lp.connect(master);
+    // low detuned drone cluster (the resonance of the Oldest House)
+    [50, 50, 75, 100].forEach(function (f, i) { var o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f; o.detune.value = (i - 1.5) * 9; g.gain.value = 0.22; o.connect(g).connect(lp); o.start(); nodes.push(o, g); });
+    // slow amplitude LFO for breathing
+    var lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = 0.08; lg.gain.value = 0.12; lfo.connect(lg).connect(master.gain); lfo.start(); nodes.push(lfo, lg);
+    // Hiss whisper: filtered noise that swells in and out
+    var buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate), d = buf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    var src = ac.createBufferSource(); src.buffer = buf; src.loop = true; var bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = 0.7; var ng = ac.createGain(); ng.gain.value = 0.06; src.connect(bp).connect(ng).connect(master); src.start(); nodes.push(src, bp, ng);
+    // occasional dissonant "chant" tone
+    timer = setInterval(function () { if (!ac) return; var o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.value = [220, 233, 277, 207][Math.floor(Math.random() * 4)]; var t = ac.currentTime; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.05, t + 0.6); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.4); o.connect(g).connect(lp); o.start(t); o.stop(t + 2.6); }, 3800);
+    on = true; btn.textContent = '❚❚ ' + (lang() === 'zh' ? '暂停' : 'PAUSE'); btn.classList.remove('off'); btn.setAttribute('aria-pressed', 'true'); dock.classList.add('on'); msg.textContent = lang() === 'zh' ? '正在播放 · 太古之屋共鸣' : 'now resonating · the oldest house';
   }
-  function stop() { playing = false; clearInterval(timer); if (master) master.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.3); btn.textContent = (window.AfflatusI18N && window.AfflatusI18N.get() === 'zh') ? '♪ 播放 LO-FI' : '♪ PLAY LO-FI'; btn.classList.add('off'); btn.setAttribute('aria-pressed', 'false'); dock.classList.remove('on'); msg.textContent = 'paused · tap to relax'; }
-  btn.addEventListener('click', function () { playing ? stop() : start(); });
+  function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
+  function stop() { on = false; clearInterval(timer); if (master) master.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.6); nodes.forEach(function (n) { try { n.stop && n.stop(ac.currentTime + 0.7); } catch (e) {} }); nodes = []; btn.textContent = lang() === 'zh' ? '▣ 环境信号 — 嘶语' : '▣ AMBIENT SIGNAL — HISS'; btn.classList.add('off'); btn.setAttribute('aria-pressed', 'false'); dock.classList.remove('on'); msg.textContent = lang() === 'zh' ? '已暂停 · 点击聆听' : 'paused · tap to listen'; }
+  btn.addEventListener('click', function () { on ? stop() : start(); });
 })();
 </script>
-<script src="/signal-scene.js" defer></script>
 <script src="/i18n.js" defer></script>
 <script src="/transition.js" defer></script>
 <script src="/page-turn.js" defer></script>
