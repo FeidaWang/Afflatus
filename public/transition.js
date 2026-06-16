@@ -1,0 +1,110 @@
+/* ============================================================
+   Afflatus page-transition FX — Web Audio SFX + canvas animations.
+     /            → WARP JUMP   (hyperspace starfield)
+     /arena.html  → ENERGY LANCE (focused beam + shockwave)
+     /sectors.html→ LIFTOFF      (clean rocket ascent + plume)
+     /signal.html → CRT TUNE-IN  (waveform + soft static)
+   Capture-phase interception; respects prefers-reduced-motion.
+   ============================================================ */
+(() => {
+  'use strict';
+  const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
+  const TYPE = (path) => /arena\.html?$/.test(path) ? 'cannon' : /sectors\.html?$/.test(path) ? 'takeoff' : /signal\.html?$/.test(path) ? 'radio' : 'warp';
+  const PAL = { warp: ['#aae4ff', '#78c8ff'], cannon: ['#3dff9a', '#27e7ff'], takeoff: ['#ffd166', '#ff7a3c'], radio: ['#7deaff', '#68ff9f'] };
+
+  // ---------- audio ----------
+  let ac = null, noiseBuf = null;
+  function ctx() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch { ac = null; } } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function noise(c) { if (!noiseBuf) { const n = c.sampleRate * 1.2; noiseBuf = c.createBuffer(1, n, c.sampleRate); const d = noiseBuf.getChannelData(0); let last = 0; for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = (w * 0.6 + last * 2); } } const s = c.createBufferSource(); s.buffer = noiseBuf; return s; }
+  function env(c, g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+  function out(c) { const m = c.createGain(); m.gain.value = RM ? 0.12 : 0.22; m.connect(c.destination); return m; }
+  function sfx(type) {
+    const c = ctx(); if (!c) return; const t = c.currentTime, M = out(c);
+    if (type === 'warp') {
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(2200, t + 0.55); env(c, g, t, 0.05, 0.5, 0.45); o.connect(g).connect(M); o.start(t); o.stop(t + 0.7);
+      const n = noise(c), bp = c.createBiquadFilter(), ng = c.createGain(); bp.type = 'bandpass'; bp.Q.value = 1.2; bp.frequency.setValueAtTime(300, t); bp.frequency.exponentialRampToValueAtTime(6000, t + 0.6); env(c, ng, t, 0.12, 0.5, 0.5); n.connect(bp).connect(ng).connect(M); n.start(t); n.stop(t + 0.7);
+    } else if (type === 'takeoff') {
+      const n = noise(c), lp = c.createBiquadFilter(), ng = c.createGain(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(180, t); lp.frequency.linearRampToValueAtTime(420, t + 0.8); ng.gain.setValueAtTime(0.0001, t); ng.gain.linearRampToValueAtTime(0.6, t + 0.45); ng.gain.linearRampToValueAtTime(0.5, t + 0.75); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.95); n.connect(lp).connect(ng).connect(M); n.start(t); n.stop(t + 1.0);
+      const s = c.createOscillator(), sg = c.createGain(); s.type = 'sine'; s.frequency.setValueAtTime(44, t); s.frequency.linearRampToValueAtTime(72, t + 0.85); env(c, sg, t, 0.1, 0.55, 0.7); s.connect(sg).connect(M); s.start(t); s.stop(t + 1.0);
+    } else if (type === 'cannon') {
+      const ch = c.createOscillator(), cg = c.createGain(); ch.type = 'sine'; ch.frequency.setValueAtTime(420, t); ch.frequency.exponentialRampToValueAtTime(1500, t + 0.22); env(c, cg, t, 0.02, 0.25, 0.18); ch.connect(cg).connect(M); ch.start(t); ch.stop(t + 0.26);
+      const z = c.createOscillator(), bp = c.createBiquadFilter(), zg = c.createGain(); z.type = 'sawtooth'; z.frequency.setValueAtTime(1700, t + 0.26); z.frequency.exponentialRampToValueAtTime(180, t + 0.46); bp.type = 'bandpass'; bp.Q.value = 6; bp.frequency.value = 900; env(c, zg, t + 0.26, 0.01, 0.55, 0.3); z.connect(bp).connect(zg).connect(M); z.start(t + 0.26); z.stop(t + 0.6);
+      const b = c.createOscillator(), bg = c.createGain(); b.type = 'sine'; b.frequency.setValueAtTime(120, t + 0.26); b.frequency.exponentialRampToValueAtTime(55, t + 0.6); env(c, bg, t + 0.26, 0.01, 0.5, 0.4); b.connect(bg).connect(M); b.start(t + 0.26); b.stop(t + 0.7);
+    } else {
+      let tt = t;
+      for (let i = 0; i < 6; i++) { const n = noise(c), bp = c.createBiquadFilter(), g = c.createGain(); bp.type = 'bandpass'; bp.Q.value = 2.4; bp.frequency.value = 1500 + Math.random() * 1400; const dur = 0.04 + Math.random() * 0.06; env(c, g, tt, 0.006, 0.3, dur); n.connect(bp).connect(g).connect(M); n.start(tt); n.stop(tt + dur + 0.05); tt += dur + 0.02 + Math.random() * 0.05; }
+      [880, 1320].forEach((f, i) => { const o = c.createOscillator(), g = c.createGain(), bt = t + 0.18 + i * 0.16; o.type = 'square'; o.frequency.value = f; env(c, g, bt, 0.005, 0.18, 0.1); o.connect(g).connect(M); o.start(bt); o.stop(bt + 0.13); });
+    }
+  }
+
+  // ---------- visuals ----------
+  function overlay() { let el = document.getElementById('fx-overlay'); if (!el) { el = document.createElement('div'); el.id = 'fx-overlay'; el.style.cssText = 'position:fixed;inset:0;z-index:2147483600;pointer-events:none;opacity:0;transition:opacity .12s ease'; const cv = document.createElement('canvas'); cv.style.cssText = 'width:100%;height:100%;display:block'; el.appendChild(cv); document.body.appendChild(el); } return el; }
+  function animate(type, dur) {
+    const el = overlay(), cv = el.firstChild, c = cv.getContext('2d');
+    const W = cv.width = innerWidth, H = cv.height = innerHeight, [c1, c2] = PAL[type], cx = W / 2, cy = H / 2;
+    el.style.opacity = '1';
+    const t0 = performance.now();
+    const stars = (type === 'warp' || type === 'takeoff') ? Array.from({ length: type === 'warp' ? 240 : 90 }, () => ({ a: Math.random() * 6.283, r: Math.random() * 40 + 4, sp: Math.random() * 5 + 3, x: Math.random() * W, y: Math.random() * H, s: Math.random() * 2 + 0.5 })) : null;
+    const ease = (p) => 1 - Math.pow(1 - p, 3);
+    function frame(now) {
+      const p = Math.min(1, (now - t0) / dur);
+      c.clearRect(0, 0, W, H);
+      c.fillStyle = `rgba(3,5,12,${0.3 + 0.55 * p})`; c.fillRect(0, 0, W, H);
+      if (type === 'warp') {
+        c.lineCap = 'round';
+        for (const s of stars) { const rr = s.r + ease(p) * 1000 * (s.sp / 5); const c1x = cx + Math.cos(s.a) * rr, c1y = cy + Math.sin(s.a) * rr * 0.62, c2x = cx + Math.cos(s.a) * (rr + 26 + p * 160), c2y = cy + Math.sin(s.a) * (rr + 26 + p * 160) * 0.62; c.strokeStyle = Math.random() > 0.5 ? c1 : c2; c.globalAlpha = Math.min(1, 0.15 + p); c.lineWidth = 0.8 + p * 1.6; c.beginPath(); c.moveTo(c1x, c1y); c.lineTo(c2x, c2y); c.stroke(); }
+        c.globalAlpha = Math.max(0, p - 0.7) * 3; c.fillStyle = '#fff'; c.beginPath(); c.arc(cx, cy, 60 * p, 0, 6.283); c.fill(); c.globalAlpha = 1;
+      } else if (type === 'takeoff') {
+        // parallax stars
+        c.globalAlpha = 0.7; for (const s of stars) { c.fillStyle = '#cfe0ff'; const yy = (s.y + p * 700 * (s.s)) % H; c.fillRect(s.x, yy, s.s, s.s + p * 6); }
+        // rocket rises and shrinks toward top
+        const prog = ease(p), ry = cy + 120 - prog * (cy + 220), scale = 1 - prog * 0.7, bw = 26 * scale, bh = 64 * scale;
+        c.globalAlpha = 1;
+        // exhaust plume (tapered, flickering)
+        const flame = bh * (1.3 + Math.random() * 0.5);
+        const grd = c.createLinearGradient(0, ry + bh / 2, 0, ry + bh / 2 + flame); grd.addColorStop(0, '#fff'); grd.addColorStop(0.35, c1); grd.addColorStop(1, 'rgba(255,80,20,0)');
+        c.fillStyle = grd; c.beginPath(); c.moveTo(cx - bw * 0.42, ry + bh / 2); c.lineTo(cx + bw * 0.42, ry + bh / 2); c.lineTo(cx + (Math.random() - 0.5) * 6, ry + bh / 2 + flame); c.closePath(); c.fill();
+        // body
+        c.fillStyle = '#e9eefc'; c.beginPath(); c.moveTo(cx, ry - bh / 2); c.lineTo(cx + bw / 2, ry + bh / 2); c.lineTo(cx - bw / 2, ry + bh / 2); c.closePath(); c.fill();
+        c.fillStyle = c2; c.beginPath(); c.arc(cx, ry, bw * 0.18, 0, 6.283); c.fill();
+        // launch smoke ring at base (early)
+        if (p < 0.5) { c.strokeStyle = `rgba(255,209,102,${0.5 - p})`; c.lineWidth = 6 * (1 - p); c.beginPath(); c.arc(cx, cy + 120, 30 + p * 240, 0, 6.283); c.stroke(); }
+      } else if (type === 'cannon') {
+        if (p < 0.34) { // charge: contracting reticle
+          const r = 240 * (1 - p / 0.34) + 16; c.strokeStyle = c2; c.globalAlpha = 0.8; c.lineWidth = 2; c.beginPath(); c.arc(cx, cy, r, 0, 6.283); c.stroke();
+          c.beginPath(); c.arc(cx, cy, r * 0.6, 0, 6.283); c.stroke(); c.globalAlpha = 0.5; for (let i = 0; i < 5; i++) { const a = (i / 5) * 6.283 + p * 6; c.fillStyle = c1; c.fillRect(cx + Math.cos(a) * r - 2, cy + Math.sin(a) * r - 2, 4, 4); }
+          c.globalAlpha = 1;
+        } else { // fire: focused horizontal lance + bloom + shockwave
+          const q = (p - 0.34) / 0.66, len = W * Math.min(1, q * 1.8), core = 4 + 26 * Math.sin(Math.min(1, q * 2) * Math.PI);
+          for (let layer = 3; layer >= 1; layer--) { c.globalAlpha = 0.18 * layer; c.fillStyle = c2; const h = core * layer; c.fillRect(cx - len / 2, cy - h / 2, len, h); }
+          c.globalAlpha = 1; c.fillStyle = '#fff'; c.fillRect(cx - len / 2, cy - core / 6, len, Math.max(2, core / 3));
+          c.strokeStyle = c1; c.globalAlpha = Math.max(0, 0.7 - q); c.lineWidth = 3; c.beginPath(); c.arc(cx, cy, q * Math.max(W, H) * 0.7, 0, 6.283); c.stroke();
+          c.globalAlpha = Math.max(0, 0.55 - q * 1.2); c.fillStyle = '#fff'; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
+        }
+      } else { // radio: CRT tune-in
+        // soft scanlines
+        c.globalAlpha = 0.06; c.fillStyle = c1; for (let y = 0; y < H; y += 3) c.fillRect(0, y, W, 1);
+        // rolling horizontal band
+        const by = ((now * 0.25) % (H + 120)) - 60; const bg = c.createLinearGradient(0, by, 0, by + 120); bg.addColorStop(0, 'transparent'); bg.addColorStop(0.5, `rgba(125,234,255,0.10)`); bg.addColorStop(1, 'transparent'); c.globalAlpha = 1; c.fillStyle = bg; c.fillRect(0, by, W, 120);
+        // glowing centered waveform settling
+        const amp = (1 - p) * 70 + 6, jit = (1 - p) * 26;
+        c.strokeStyle = c2; c.shadowColor = c2; c.shadowBlur = 12; c.lineWidth = 2; c.globalAlpha = 0.95; c.beginPath();
+        for (let x = 0; x <= W; x += 5) { const y = cy + Math.sin(x * 0.03 + now * 0.012) * amp * Math.sin(x / W * Math.PI) + (Math.random() - 0.5) * jit; x === 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
+        c.stroke(); c.shadowBlur = 0;
+        // vignette + dissolve to dark
+        c.globalAlpha = 1; const vg = c.createRadialGradient(cx, cy, H * 0.2, cx, cy, H * 0.75); vg.addColorStop(0, 'transparent'); vg.addColorStop(1, 'rgba(2,4,10,0.7)'); c.fillStyle = vg; c.fillRect(0, 0, W, H);
+        c.fillStyle = '#04060d'; c.globalAlpha = p > 0.6 ? (p - 0.6) / 0.4 : 0; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
+      }
+      if (p < 1) requestAnimationFrame(frame); else { el.style.opacity = '0'; setTimeout(() => c.clearRect(0, 0, W, H), 200); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- run + intercept ----------
+  let busy = false;
+  function run(href, dir) { if (busy) return; busy = true; const type = TYPE(new URL(href, location.href).pathname); try { sfx(type); } catch {} const dur = RM ? 160 : 720; if (!RM) { try { animate(type, dur); document.body.classList.add(dir === 'prev' ? 'turn-prev' : 'turn-next'); } catch {} } setTimeout(() => { window.location.href = href; }, dur); }
+  window.AfflatusFX = { run, sfx, type: TYPE };
+  function internal(a) { if (!a || a.target === '_blank' || a.hasAttribute('download')) return null; const href = a.getAttribute('href'); if (!href || href.startsWith('#') || /^(mailto|tel|javascript):/i.test(href)) return null; let u; try { u = new URL(href, location.href); } catch { return null; } if (u.origin !== location.origin) return null; if (!(u.pathname === '/' || /\.html?$/.test(u.pathname))) return null; if (u.pathname === location.pathname) return null; return u.href; }
+  document.addEventListener('click', (e) => { if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; const a = e.target.closest && e.target.closest('a[href]'); const href = internal(a); if (!href) return; e.preventDefault(); e.stopImmediatePropagation(); let dir = 'next'; try { dir = (a.dataset.pageTurn === 'prev' || a.dataset.turn === 'prev' || href === new URL(document.body.dataset.prev || '', location.href).href) ? 'prev' : 'next'; } catch {} run(href, dir); }, true);
+  document.addEventListener('keydown', (e) => { const tag = (e.target?.tagName || '').toLowerCase(); if (e.metaKey || e.ctrlKey || e.altKey || ['input', 'textarea', 'select'].includes(tag)) return; const prev = document.body.dataset.prev, next = document.body.dataset.next; if (e.key === 'ArrowLeft' && prev) { e.preventDefault(); e.stopImmediatePropagation(); run(prev, 'prev'); } else if (e.key === 'ArrowRight' && next) { e.preventDefault(); e.stopImmediatePropagation(); run(next, 'next'); } }, true);
+})();
