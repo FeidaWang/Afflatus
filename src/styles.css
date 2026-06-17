@@ -620,21 +620,23 @@ body.folding::before{
 }
 /* soft reactive halo at the mouse point — subtle flourish that intensifies on
    hover (.hot) and warp (.warp), without obscuring content */
-/* reactive sci-fi reticle that orbits the mouse point and blends with the scene */
+/* understated, elegant halo at the mouse point — a thin glowing ring that
+   smoothly grows + warms when hovering an interactive element (.hot) so every
+   button visibly reacts; no spinning, kept low-key */
 #cursor::after{
-  content:'';position:absolute;left:20px;top:20px;width:30px;height:30px;
+  content:'';position:absolute;left:20px;top:20px;width:16px;height:16px;
   transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
-  border:1.5px dashed rgba(154,229,255,.55);
-  background:radial-gradient(circle,rgba(154,229,255,.12),transparent 58%);
-  box-shadow:0 0 10px rgba(154,229,255,.4),inset 0 0 8px rgba(154,229,255,.22);
-  opacity:.7;transition:width .2s ease,height .2s ease,opacity .2s ease,border-color .2s ease,box-shadow .2s ease;
-  animation:cursorSpin 5.5s linear infinite,cursorPulse 2.6s ease-in-out infinite;
+  border:1px solid rgba(154,229,255,.45);
+  background:radial-gradient(circle,rgba(154,229,255,.12),transparent 62%);
+  box-shadow:0 0 7px rgba(154,229,255,.28);
+  opacity:.5;transition:width .22s cubic-bezier(.2,.8,.2,1),height .22s cubic-bezier(.2,.8,.2,1),opacity .22s ease,border-color .22s ease,box-shadow .22s ease;
 }
-#cursor.hot::after{width:50px;height:50px;opacity:1;border-color:rgba(232,179,128,.8);box-shadow:0 0 16px rgba(232,179,128,.5),inset 0 0 12px rgba(154,229,255,.3);background:radial-gradient(circle,rgba(154,229,255,.22),rgba(232,179,128,.1) 52%,transparent 72%);animation-duration:2.4s,2.6s}
-#cursor.warp::after{width:60px;height:60px;opacity:1;border-color:rgba(97,255,229,.85);border-style:solid;box-shadow:0 0 22px rgba(97,255,229,.55),inset 0 0 16px rgba(120,104,255,.35);background:radial-gradient(circle,rgba(97,255,229,.3),rgba(120,104,255,.16) 52%,transparent 74%);animation-duration:1.6s,2.6s}
-@keyframes cursorPulse{0%,100%{opacity:.55}50%{opacity:.95}}
-@keyframes cursorSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
-@media (prefers-reduced-motion: reduce){#cursor::after{animation:none}}
+#cursor.hot::after{width:30px;height:30px;opacity:1;border-color:rgba(232,179,128,.85);box-shadow:0 0 14px rgba(232,179,128,.4),inset 0 0 8px rgba(154,229,255,.22);background:radial-gradient(circle,rgba(154,229,255,.16),rgba(232,179,128,.08) 55%,transparent 72%)}
+#cursor.warp::after{width:40px;height:40px;opacity:1;border-color:rgba(97,255,229,.85);box-shadow:0 0 18px rgba(97,255,229,.5);background:radial-gradient(circle,rgba(97,255,229,.24),rgba(120,104,255,.12) 55%,transparent 74%)}
+#cursor.hot:not(.targeting)::before{filter:drop-shadow(0 0 10px rgba(232,179,128,.7))}
+/* home click feedback — every control presses in so taps read as registered */
+.control-btn,.nav-menu-btn,.lang-btn,.jump-toggle,a[data-hot]{transition:transform .09s ease,filter .16s ease}
+.control-btn:active,.nav-menu-btn:active,.lang-btn:active,.jump-toggle:active,.route-arrow:active,a[data-hot]:active{transform:translateY(1px) scale(.97);filter:brightness(1.18)}
 #cursor:not(.targeting) svg{opacity:0}
 #cursor.warp::before{background:linear-gradient(145deg,#dffcff,#61ffe5 48%,#7868ff 100%);filter:drop-shadow(0 0 10px rgba(97,255,229,.78)) drop-shadow(0 0 18px rgba(120,104,255,.48))}
 #cursor.warp svg{opacity:0}

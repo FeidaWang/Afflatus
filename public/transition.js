@@ -10,7 +10,7 @@
   'use strict';
   const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
   const TYPE = (path) => /arena\.html?$/.test(path) ? 'cannon' : /sectors\.html?$/.test(path) ? 'takeoff' : /signal\.html?$/.test(path) ? 'control' : /games\.html?$/.test(path) ? 'cyber' : 'warp';
-  const PAL = { warp: ['#aae4ff', '#78c8ff'], cannon: ['#3dff9a', '#27e7ff'], takeoff: ['#ffd166', '#ff7a3c'], control: ['#e01f1f', '#f5c84b'], cyber: ['#ff2bd6', '#00efff'] };
+  const PAL = { warp: ['#aae4ff', '#78c8ff'], cannon: ['#3dff9a', '#27e7ff'], takeoff: ['#ffd166', '#ff7a3c'], control: ['#f0b429', '#5fd08a'], cyber: ['#ff2bd6', '#00efff'] };
 
   // ---------- audio ----------
   let ac = null, noiseBuf = null;
@@ -106,9 +106,9 @@
         const gap = Math.max(0, W - slab * 2);
         if (gap > 2) {
           const gx = slab, grd = c.createLinearGradient(gx, 0, gx + gap, 0);
-          grd.addColorStop(0, 'rgba(224,31,31,0)'); grd.addColorStop(0.5, `rgba(224,31,31,${0.5 + 0.3 * Math.sin(now * 0.02)})`); grd.addColorStop(1, 'rgba(224,31,31,0)');
+          grd.addColorStop(0, 'rgba(240,180,41,0)'); grd.addColorStop(0.5, `rgba(240,180,41,${0.45 + 0.3 * Math.sin(now * 0.02)})`); grd.addColorStop(1, 'rgba(240,180,41,0)');
           c.fillStyle = grd; c.fillRect(gx, 0, gap, H);
-          c.globalAlpha = 0.6; for (let i = 0; i < 14; i++) { c.fillStyle = Math.random() > 0.5 ? '#ff2a1a' : '#7a0f0f'; c.fillRect(gx + Math.random() * gap, Math.random() * H, 1 + Math.random() * 2, 8 + Math.random() * 44); } c.globalAlpha = 1;
+          c.globalAlpha = 0.6; for (let i = 0; i < 14; i++) { c.fillStyle = Math.random() > 0.5 ? '#f0b429' : '#5fd08a'; c.fillRect(gx + Math.random() * gap, Math.random() * H, 1 + Math.random() * 2, 8 + Math.random() * 44); } c.globalAlpha = 1;
         }
         if (p > 0.45) { const a = Math.min(1, (p - 0.45) / 0.2) * (1 - Math.max(0, (p - 0.82) / 0.18)); c.save(); c.translate(cx, cy); c.rotate(Math.PI / 4); c.globalAlpha = a; c.strokeStyle = c2; c.lineWidth = 3; const s = 26; c.strokeRect(-s, -s, s * 2, s * 2); c.beginPath(); c.moveTo(0, -s * 1.7); c.lineTo(0, s * 1.7); c.moveTo(-s * 1.7, 0); c.lineTo(s * 1.7, 0); c.stroke(); c.restore(); c.globalAlpha = 1; }
         if (Math.random() > 0.55) { c.fillStyle = '#000'; for (let i = 0; i < 4; i++) c.fillRect(0, Math.random() * H, W, 2 + Math.random() * 5); }
