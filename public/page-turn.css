@@ -39,10 +39,10 @@
   --turn-bg-b:rgba(1,3,7,.96);
 }
 .signal-page .page-turn-controls{
-  --turn-accent:#e01f1f;
-  --turn-hover:#f5c84b;
-  --turn-bg-a:rgba(22,21,17,.94);
-  --turn-bg-b:rgba(8,7,6,.98);
+  --turn-accent:#5fd08a;
+  --turn-hover:#f0b429;
+  --turn-bg-a:rgba(16,18,12,.95);
+  --turn-bg-b:rgba(6,8,5,.98);
 }
 /* Arena · Marathon neon-green + cyan, magenta glow */
 .arena-page .page-turn-controls{
@@ -80,7 +80,7 @@
 .arena-page .page-turn{box-shadow:0 0 0 3px rgba(61,255,154,.06),0 0 16px rgba(255,61,240,.18),inset 0 0 22px rgba(39,231,255,.10)}
 .arena-page .page-turn:hover{box-shadow:0 0 0 3px rgba(61,255,154,.10),0 0 22px rgba(255,61,240,.30),inset 0 0 26px rgba(39,231,255,.16)}
 .sectors-page .page-turn{box-shadow:0 0 0 3px rgba(202,255,0,.06),inset 0 0 22px rgba(0,231,255,.08)}
-.signal-page .page-turn{border-radius:0;box-shadow:0 0 0 3px rgba(224,31,31,.10),inset 0 0 18px rgba(224,31,31,.16)}
+.signal-page .page-turn{border-radius:0;box-shadow:0 0 0 3px rgba(95,208,138,.12),inset 0 0 18px rgba(95,208,138,.16)}
 body.turn-next main,
 body.turn-prev main{
   transition:transform .24s ease,opacity .24s ease,filter .24s ease;
@@ -101,3 +101,18 @@ body.turn-prev main{transform:translateX(34px)}
   }
   .page-turn:active,.page-turn:focus-visible{opacity:1}
 }
+
+/* ===== universal interaction feedback =====
+   every button / hot link visibly reacts on hover and presses in on click,
+   so a tap always reads as registered. Page-specific styles still win. */
+button:not(.page-turn):not(:disabled),a[data-hot],[role="button"]{
+  transition:transform .09s ease, filter .16s ease, box-shadow .16s ease;
+}
+button:not(.page-turn):not(:disabled):hover,a[data-hot]:hover,[role="button"]:hover{
+  filter:brightness(1.08);
+}
+button:not(.page-turn):not(:disabled):active,a[data-hot]:active,[role="button"]:active{
+  transform:translateY(1px) scale(.985);
+  filter:brightness(1.18);
+}
+button:not(.page-turn):focus-visible{outline:2px solid currentColor;outline-offset:2px}
