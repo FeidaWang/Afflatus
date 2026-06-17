@@ -91,11 +91,13 @@ body.turn-next main{transform:translateX(-34px)}
 body.turn-prev main{transform:translateX(34px)}
 @media(max-width:760px){
   .page-turn-controls{
-    inset:auto 16px 16px;
+    inset:50% 6px auto;
   }
   .page-turn{
-    width:42px;
-    height:44px;
-    font-size:22px;
+    width:28px;
+    height:38px;
+    font-size:16px;
+    opacity:.7;
   }
+  .page-turn:active,.page-turn:focus-visible{opacity:1}
 }
