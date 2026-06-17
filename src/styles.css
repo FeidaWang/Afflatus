@@ -620,16 +620,21 @@ body.folding::before{
 }
 /* soft reactive halo at the mouse point — subtle flourish that intensifies on
    hover (.hot) and warp (.warp), without obscuring content */
+/* reactive sci-fi reticle that orbits the mouse point and blends with the scene */
 #cursor::after{
-  content:'';position:absolute;left:20px;top:20px;width:26px;height:26px;
+  content:'';position:absolute;left:20px;top:20px;width:30px;height:30px;
   transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(154,229,255,.16),transparent 70%);
-  opacity:.55;transition:width .2s ease,height .2s ease,opacity .2s ease,background .2s ease;
-  animation:cursorPulse 2.6s ease-in-out infinite;
+  border:1.5px dashed rgba(154,229,255,.55);
+  background:radial-gradient(circle,rgba(154,229,255,.12),transparent 58%);
+  box-shadow:0 0 10px rgba(154,229,255,.4),inset 0 0 8px rgba(154,229,255,.22);
+  opacity:.7;transition:width .2s ease,height .2s ease,opacity .2s ease,border-color .2s ease,box-shadow .2s ease;
+  animation:cursorSpin 5.5s linear infinite,cursorPulse 2.6s ease-in-out infinite;
 }
-#cursor.hot::after{width:46px;height:46px;opacity:1;background:radial-gradient(circle,rgba(154,229,255,.3),rgba(232,179,128,.12) 52%,transparent 72%);}
-#cursor.warp::after{width:54px;height:54px;opacity:1;background:radial-gradient(circle,rgba(97,255,229,.34),rgba(120,104,255,.16) 52%,transparent 74%);}
-@keyframes cursorPulse{0%,100%{opacity:.45}50%{opacity:.72}}
+#cursor.hot::after{width:50px;height:50px;opacity:1;border-color:rgba(232,179,128,.8);box-shadow:0 0 16px rgba(232,179,128,.5),inset 0 0 12px rgba(154,229,255,.3);background:radial-gradient(circle,rgba(154,229,255,.22),rgba(232,179,128,.1) 52%,transparent 72%);animation-duration:2.4s,2.6s}
+#cursor.warp::after{width:60px;height:60px;opacity:1;border-color:rgba(97,255,229,.85);border-style:solid;box-shadow:0 0 22px rgba(97,255,229,.55),inset 0 0 16px rgba(120,104,255,.35);background:radial-gradient(circle,rgba(97,255,229,.3),rgba(120,104,255,.16) 52%,transparent 74%);animation-duration:1.6s,2.6s}
+@keyframes cursorPulse{0%,100%{opacity:.55}50%{opacity:.95}}
+@keyframes cursorSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){#cursor::after{animation:none}}
 #cursor:not(.targeting) svg{opacity:0}
 #cursor.warp::before{background:linear-gradient(145deg,#dffcff,#61ffe5 48%,#7868ff 100%);filter:drop-shadow(0 0 10px rgba(97,255,229,.78)) drop-shadow(0 0 18px rgba(120,104,255,.48))}
 #cursor.warp svg{opacity:0}

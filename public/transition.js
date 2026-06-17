@@ -9,8 +9,8 @@
 (() => {
   'use strict';
   const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
-  const TYPE = (path) => /arena\.html?$/.test(path) ? 'cannon' : /sectors\.html?$/.test(path) ? 'takeoff' : /signal\.html?$/.test(path) ? 'control' : 'warp';
-  const PAL = { warp: ['#aae4ff', '#78c8ff'], cannon: ['#3dff9a', '#27e7ff'], takeoff: ['#ffd166', '#ff7a3c'], control: ['#e01f1f', '#f5c84b'] };
+  const TYPE = (path) => /arena\.html?$/.test(path) ? 'cannon' : /sectors\.html?$/.test(path) ? 'takeoff' : /signal\.html?$/.test(path) ? 'control' : /games\.html?$/.test(path) ? 'cyber' : 'warp';
+  const PAL = { warp: ['#aae4ff', '#78c8ff'], cannon: ['#3dff9a', '#27e7ff'], takeoff: ['#ffd166', '#ff7a3c'], control: ['#e01f1f', '#f5c84b'], cyber: ['#ff2bd6', '#00efff'] };
 
   // ---------- audio ----------
   let ac = null, noiseBuf = null;
@@ -30,11 +30,16 @@
       const ch = c.createOscillator(), cg = c.createGain(); ch.type = 'sine'; ch.frequency.setValueAtTime(420, t); ch.frequency.exponentialRampToValueAtTime(1500, t + 0.22); env(c, cg, t, 0.02, 0.25, 0.18); ch.connect(cg).connect(M); ch.start(t); ch.stop(t + 0.26);
       const z = c.createOscillator(), bp = c.createBiquadFilter(), zg = c.createGain(); z.type = 'sawtooth'; z.frequency.setValueAtTime(1700, t + 0.26); z.frequency.exponentialRampToValueAtTime(180, t + 0.46); bp.type = 'bandpass'; bp.Q.value = 6; bp.frequency.value = 900; env(c, zg, t + 0.26, 0.01, 0.55, 0.3); z.connect(bp).connect(zg).connect(M); z.start(t + 0.26); z.stop(t + 0.6);
       const b = c.createOscillator(), bg = c.createGain(); b.type = 'sine'; b.frequency.setValueAtTime(120, t + 0.26); b.frequency.exponentialRampToValueAtTime(55, t + 0.6); env(c, bg, t + 0.26, 0.01, 0.5, 0.4); b.connect(bg).connect(M); b.start(t + 0.26); b.stop(t + 0.7);
-    } else { // control — Hiss drone + red impact + rune cluster
+    } else if (type === 'control') { // Hiss drone + red impact + rune cluster
       [55, 82.5, 110].forEach((f, i) => { const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f; o.detune.value = (i - 1) * 8; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.26, t + 0.12); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.72); o.connect(g).connect(M); o.start(t); o.stop(t + 0.78); });
       const n = noise(c), bp = c.createBiquadFilter(), ng = c.createGain(); bp.type = 'bandpass'; bp.Q.value = 0.8; bp.frequency.setValueAtTime(1200, t); bp.frequency.exponentialRampToValueAtTime(420, t + 0.6); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.3, t + 0.25); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.7); n.connect(bp).connect(ng).connect(M); n.start(t); n.stop(t + 0.75);
       const o = c.createOscillator(), g = c.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(300, t); o.frequency.exponentialRampToValueAtTime(60, t + 0.3); env(c, g, t, 0.005, 0.4, 0.3); o.connect(g).connect(M); o.start(t); o.stop(t + 0.4);
       [1840, 1972].forEach((f) => { const o2 = c.createOscillator(), g2 = c.createGain(); o2.type = 'square'; o2.frequency.value = f; env(c, g2, t + 0.05, 0.005, 0.06, 0.18); o2.connect(g2).connect(M); o2.start(t + 0.05); o2.stop(t + 0.25); });
+    } else { // cyber — neon glitch stab + arp + sub
+      const o = c.createOscillator(), bp = c.createBiquadFilter(), g = c.createGain(); o.type = 'sawtooth'; o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(1400, t + 0.18); bp.type = 'bandpass'; bp.Q.value = 4; bp.frequency.value = 1200; env(c, g, t, 0.01, 0.34, 0.25); o.connect(bp).connect(g).connect(M); o.start(t); o.stop(t + 0.45);
+      [660, 880, 1320, 1760].forEach((f, i) => { const o2 = c.createOscillator(), g2 = c.createGain(), dt = i * 0.07; o2.type = 'square'; o2.frequency.value = f; env(c, g2, t + dt, 0.005, 0.12, 0.08); o2.connect(g2).connect(M); o2.start(t + dt); o2.stop(t + dt + 0.12); });
+      const n = noise(c), hp = c.createBiquadFilter(), ng = c.createGain(); hp.type = 'highpass'; hp.frequency.value = 2000; env(c, ng, t, 0.005, 0.18, 0.18); n.connect(hp).connect(ng).connect(M); n.start(t); n.stop(t + 0.25);
+      const s = c.createOscillator(), sg = c.createGain(); s.type = 'sine'; s.frequency.setValueAtTime(120, t); s.frequency.exponentialRampToValueAtTime(50, t + 0.3); env(c, sg, t, 0.005, 0.4, 0.3); s.connect(sg).connect(M); s.start(t); s.stop(t + 0.4);
     }
   }
 
@@ -82,6 +87,15 @@
           c.strokeStyle = c1; c.globalAlpha = Math.max(0, 0.7 - q); c.lineWidth = 3; c.beginPath(); c.arc(cx, cy, q * Math.max(W, H) * 0.7, 0, 6.283); c.stroke();
           c.globalAlpha = Math.max(0, 0.55 - q * 1.2); c.fillStyle = '#fff'; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
         }
+      } else if (type === 'cyber') { // neon glitch slices + grid sweep
+        c.fillStyle = `rgba(7,6,15,${0.3 + 0.5 * p})`; c.fillRect(0, 0, W, H);
+        c.strokeStyle = c2; c.globalAlpha = 0.22;
+        for (let i = 0; i < 14; i++) { const yy = (i / 14 * H + (now * 0.2) % (H / 14)); c.beginPath(); c.moveTo(0, yy); c.lineTo(W, yy); c.stroke(); }
+        c.globalAlpha = 1;
+        for (let i = 0; i < 12; i++) { const sh = H / 12, off = (Math.random() - 0.5) * W * p * 0.7; c.globalAlpha = 0.5; c.fillStyle = i % 2 ? c1 : c2; c.fillRect(off, i * sh, W * (0.2 + Math.random() * 0.5), sh * (0.3 + Math.random() * 0.5)); }
+        c.globalAlpha = 0.5; c.fillStyle = c1; c.fillRect(0, cy - H * p * 0.5, W, H * p); c.globalAlpha = 1;
+        if (p > 0.5) { c.globalAlpha = Math.max(0, 0.6 - (p - 0.5)); c.fillStyle = '#fff'; c.fillRect(0, 0, W, H); c.globalAlpha = 1; }
+        c.globalAlpha = Math.max(0, p - 0.75) * 4; c.fillStyle = '#07060f'; c.fillRect(0, 0, W, H); c.globalAlpha = 1;
       } else { // control: brutalist concrete slabs close, red Hiss leaks, a rune flares
         const e = ease(p);
         c.fillStyle = `rgba(10,9,7,${0.35 + 0.5 * p})`; c.fillRect(0, 0, W, H);

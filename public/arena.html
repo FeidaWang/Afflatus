@@ -342,8 +342,9 @@ body.embed .arena{padding-top:6px}
 body.embed .hero{border-top:2px solid var(--line)}
 
 /* ===== responsive ===== */
-@media(max-width:1024px){.grid{grid-template-columns:1fr 320px}.watchlist{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px}.sec-label.wl{grid-column:1/-1}}
-@media(max-width:720px){.grid{grid-template-columns:1fr}.side{grid-column:1/-1}.brand h1{font-size:17px}.hero h2{font-size:26px}.opencd-clock{font-size:24px}}
+/* below 1080px (incl. Mac split-screen) stack to a single clean column */
+@media(max-width:1080px){.grid{grid-template-columns:1fr}.watchlist-wrap{grid-column:auto}.main{grid-column:auto}.side{grid-column:auto}.watchlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}}
+@media(max-width:720px){.brand h1{font-size:17px}.hero h2{font-size:26px}.opencd-clock{font-size:24px}}
 .arena ::-webkit-scrollbar{width:8px;height:8px}.arena ::-webkit-scrollbar-thumb,.bf-body::-webkit-scrollbar-thumb{background:rgba(120,140,200,.3)}
 </style>
 </head>
@@ -380,6 +381,7 @@ body.embed .hero{border-top:2px solid var(--line)}
       <a class="active" href="/arena.html" data-en="Arena" data-zh="竞技场">Arena</a>
       <a href="/sectors.html" data-en="Sectors" data-zh="板块">Sectors</a>
       <a href="/signal.html" data-en="Signal" data-zh="信号">Signal</a>
+      <a href="/games.html" data-en="Games" data-zh="竞猜">Games</a>
       <button class="hbtn lang-toggle" type="button">中文</button>
     </nav>
   </header>
