@@ -100,6 +100,7 @@ document.querySelectorAll('[data-hot],a,button').forEach(el=>{
 });
 
 const combatHud=document.getElementById('combatHud');
+const aceHud=document.getElementById('aceHud');
 const radarCanvas=document.getElementById('radarCanvas');
 const radarDeck=createRadarDeck(radarCanvas);
 const rctx=radarDeck.ctx;
@@ -3482,6 +3483,7 @@ function drawPilotFeed(now){
   if(pilotView.until<nowMs && pilotView.mode!=='mosaic') pilotView.mode='standby';
   let mode=pilotModeFor(craft);
   if(mode==='mosaic' && pilotView.until<nowMs){pilotView.mode='standby';mode='standby';}
+  if(aceHud) aceHud.setAttribute('data-phase', mode);  // drive the Ace Combat HUD overlay by real flight phase
   const elapsed=clamp((nowMs-(pilotView.started||nowMs))/Math.max(1,(pilotView.until||nowMs+1)-(pilotView.started||nowMs)),0,1);
   const shake=(
     mode==='launch' ? 4.8*(1-elapsed)+Math.sin(now/42)*1.1 :
