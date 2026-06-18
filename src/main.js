@@ -100,7 +100,6 @@ document.querySelectorAll('[data-hot],a,button').forEach(el=>{
 });
 
 const combatHud=document.getElementById('combatHud');
-const aceHud=document.getElementById('aceHud');
 const radarCanvas=document.getElementById('radarCanvas');
 const radarDeck=createRadarDeck(radarCanvas);
 const rctx=radarDeck.ctx;
@@ -3419,6 +3418,85 @@ function drawNempIncomingCamera(ctx,w,h,now,elapsed){
   ctx.restore();
 }
 
+/* SC-style large targeting scope — reference: Star Citizen zoom camera (image 3).
+   A large thin ring fills most of the frame; tick marks at 8 points; a tightening
+   lock-progress arc in red; target name + range readout at ring perimeter.
+   Called during main-gun charging phase (not while firing — the beam takes over). */
+function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
+  const R=Math.min(w,h)*(lerp(.44,.26,lockT));   // ring shrinks as lock tightens
+  const cyan='rgba(148,228,255,.82)';
+  const cyanDim='rgba(120,210,255,.30)';
+  const red='rgba(255,60,88,.90)';
+  const fs=Math.max(7,Math.min(9,w*.018));
+  ctx.save();
+
+  // Outer scope ring
+  ctx.strokeStyle=cyan;ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(tx,ty,R,0,Math.PI*2);ctx.stroke();
+
+  // Concentric inner ring (50 %)
+  ctx.strokeStyle=cyanDim;ctx.lineWidth=.8;
+  ctx.beginPath();ctx.arc(tx,ty,R*.5,0,Math.PI*2);ctx.stroke();
+
+  // Radial tick marks: 4 major (cardinal) + 4 minor
+  for(let i=0;i<8;i++){
+    const a=i*Math.PI/4, major=i%2===0, tl=major?14:7;
+    ctx.strokeStyle=major?cyan:cyanDim;ctx.lineWidth=major?1:.7;
+    ctx.beginPath();
+    ctx.moveTo(tx+Math.cos(a)*(R-tl),ty+Math.sin(a)*(R-tl));
+    ctx.lineTo(tx+Math.cos(a)*R,ty+Math.sin(a)*R);
+    ctx.stroke();
+    // cardinal labels (N/S/E/W) just outside the ring
+    if(major){
+      const labels=['N','E','S','W'];
+      ctx.font=`${Math.max(6,fs*.88)}px 'JetBrains Mono',monospace`;
+      ctx.fillStyle='rgba(148,228,255,.46)';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(labels[i/2],tx+Math.cos(a)*(R+13),ty+Math.sin(a)*(R+13));
+    }
+  }
+
+  // Lock progress arc (top → clockwise, red)
+  if(lockT>0){
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    ctx.strokeStyle=`rgba(255,60,88,${.55+.45*lockT})`;ctx.lineWidth=lockT<.95?2:2.8;
+    ctx.beginPath();ctx.arc(tx,ty,R+3,-Math.PI/2,-Math.PI/2+lockT*Math.PI*2);ctx.stroke();
+    ctx.restore();
+  }
+
+  // Outer ring glow (lighter blend)
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  ctx.strokeStyle=`rgba(90,200,255,${.12+.10*Math.sin(now/320)})`;ctx.lineWidth=8;
+  ctx.beginPath();ctx.arc(tx,ty,R,0,Math.PI*2);ctx.stroke();
+  ctx.restore();
+
+  // Labels — top: weapon name; right: range + lock status
+  ctx.font=`${fs}px 'JetBrains Mono',monospace`;ctx.textAlign='center';
+  ctx.fillStyle='rgba(148,228,255,.72)';
+  ctx.fillText('ENFORCER CANNON',tx,ty-R-12);
+  ctx.textAlign='left';
+  ctx.fillText(`RNG  ${range} M`,tx+R+8,ty-8);
+  ctx.fillStyle=lockT>.95?'rgba(255,60,88,.92)':cyan;
+  ctx.fillText(lockT>.95?'LOCK ACQUIRED':`LOCK  ${Math.round(lockT*100)}%`,tx+R+8,ty+7);
+  // Bottom: zoom factor
+  ctx.fillStyle='rgba(148,228,255,.50)';ctx.textAlign='center';
+  ctx.fillText(`ZOOM  ${(8+lockT*70.54).toFixed(2)} ×`,tx,ty+R+14);
+
+  // SC-style 4-corner target bracket (tighter = more lock)
+  const bR=Math.min(w,h)*.035+lockT*(-Math.min(w,h)*.012);
+  ctx.strokeStyle=lockT>.95?red:cyan;ctx.lineWidth=1.4;
+  const armLen=bR*.55;
+  for(let qx=-1;qx<=1;qx+=2) for(let qy=-1;qy<=1;qy+=2){
+    const bx=tx+qx*bR, by=ty+qy*bR;
+    ctx.beginPath();ctx.moveTo(bx-qx*armLen,by);ctx.lineTo(bx,by);ctx.lineTo(bx,by-qy*armLen);ctx.stroke();
+  }
+
+  // Fine crosshair at centre
+  const ch=8+lockT*4;
+  ctx.strokeStyle=`rgba(255,60,88,${.42+.58*lockT})`;ctx.lineWidth=.9;
+  ctx.beginPath();ctx.moveTo(tx-ch,ty);ctx.lineTo(tx+ch,ty);ctx.moveTo(tx,ty-ch);ctx.lineTo(tx,ty+ch);ctx.stroke();
+
+  ctx.restore();
+}
 function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
   drawPilotSpace(ctx,w,h,now,1.4);
   ctx.save();
@@ -3433,15 +3511,18 @@ function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
   const hasGunTarget=tracked.visible;
   const targetX=hasGunTarget?clamp(tracked.cx,28,w-28):w*.58;
   const targetY=hasGunTarget?clamp(tracked.cy,28,h*.72):h*.42;
-  ctx.fillStyle='rgba(2,6,12,.72)';
-  ctx.beginPath();ctx.moveTo(w*.50,h*.95);ctx.lineTo(w*.40,h*.70);ctx.lineTo(w*.60,h*.70);ctx.closePath();ctx.fill();
-  ctx.strokeStyle=cyan;ctx.stroke();
-  const phase=firing?'MAIN GUN FIRING':'CHARGING PARTICLE SPINE';
-  ctx.fillStyle=cyan;ctx.font=`${Math.max(7,w*.02)}px 'JetBrains Mono',monospace`;ctx.textAlign='center';
-  ctx.fillText(phase,w*.5,24);
-  const mainLockRadius=lerp(46,16,tracked.lock||0)+2*Math.sin(now/110);
-  ctx.strokeStyle=red;ctx.lineWidth=1.3;ctx.setLineDash([7,4]);
-  ctx.beginPath();ctx.arc(targetX,targetY,mainLockRadius,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  if(!firing){
+    // SC zoom scope during charge phase — large tightening ring
+    const range=hasGunTarget?Math.max(88,Math.round(720-(tracked.lock||0)*560)):620;
+    drawSCZoomScope(ctx,w,h,targetX,targetY,tracked.lock||0,range,now);
+  } else {
+    // keep the gun indicator triangle during actual fire
+    ctx.fillStyle='rgba(2,6,12,.72)';
+    ctx.beginPath();ctx.moveTo(w*.50,h*.95);ctx.lineTo(w*.40,h*.70);ctx.lineTo(w*.60,h*.70);ctx.closePath();ctx.fill();
+    ctx.strokeStyle=cyan;ctx.stroke();
+    ctx.fillStyle=cyan;ctx.font=`${Math.max(7,w*.02)}px 'JetBrains Mono',monospace`;ctx.textAlign='center';
+    ctx.fillText('MAIN GUN FIRING',w*.5,24);
+  }
   if(firing){
     // The mothership main gun fires from below-frame centre — the same origin as
     // the homepage beam (innerWidth*.5, innerHeight+420) — straight THROUGH the
@@ -3483,7 +3564,6 @@ function drawPilotFeed(now){
   if(pilotView.until<nowMs && pilotView.mode!=='mosaic') pilotView.mode='standby';
   let mode=pilotModeFor(craft);
   if(mode==='mosaic' && pilotView.until<nowMs){pilotView.mode='standby';mode='standby';}
-  if(aceHud) aceHud.setAttribute('data-phase', mode);  // drive the Ace Combat HUD overlay by real flight phase
   const elapsed=clamp((nowMs-(pilotView.started||nowMs))/Math.max(1,(pilotView.until||nowMs+1)-(pilotView.started||nowMs)),0,1);
   const shake=(
     mode==='launch' ? 4.8*(1-elapsed)+Math.sin(now/42)*1.1 :
@@ -3525,6 +3605,7 @@ function drawPilotFeed(now){
       }else{
         drawPilotDeck(ctx,w,h,easeOut(elapsed),false);
         drawPilotF47Nose(ctx,w,h,elapsed);
+        drawCockpitFrame(ctx,w,h,now,false);
         drawPilotSystemSequence(ctx,w,h,elapsed,false);
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'甲板起飞 · 12点方向':'DECK LAUNCH · 12 O CLOCK','launch');
       }
@@ -3534,10 +3615,13 @@ function drawPilotFeed(now){
       }else{
         drawPilotDeck(ctx,w,h,elapsed,true);
         drawPilotF47Nose(ctx,w,h,elapsed,true);
+        drawCockpitFrame(ctx,w,h,now,true);
         drawPilotSystemSequence(ctx,w,h,elapsed,true);
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
       }
     }else{
+      // combat / standby: cockpit POV framing around the space scene
+      drawCockpitFrame(ctx,w,h,now,false);
       drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
     }
   }
