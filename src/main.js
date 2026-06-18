@@ -2911,9 +2911,133 @@ function pilotOpLabel(mode){
     enforcer:currentLang==='zh'?'CURRENT OP: 执法者主炮':'CURRENT OP: ENFORCER CANNON'
   }[active] || 'CURRENT OP: OPERATION CHIMERA';
 }
+/* ===== Space-combat HMD helpers ============================================
+   Drawn as holographic projections inside the cockpit glass — they follow the
+   SC/SpaceX minimal language (thin 1px, sparse, real objects, tiered precision)
+   but add space-specific readouts: flight-path marker, power distribution,
+   target health bars, lead indicator, and off-screen threat arrows.         */
+
+/** Flight-path marker (velocity vector): a circle + three wing arms drifting
+ *  slightly from the boresight, showing where the ship is actually heading. */
+function drawVelocityVector(ctx,w,h,now){
+  const bx=w*.5, by=h*.46;
+  const vvX=bx+Math.sin(now/2800)*w*.022+Math.sin(now/5100)*w*.008;
+  const vvY=by+Math.cos(now/3200)*h*.018+Math.cos(now/4700)*h*.008;
+  ctx.save();
+  // ghost dash from boresight to flight-path marker
+  ctx.strokeStyle='rgba(148,228,255,.18)';ctx.lineWidth=1;ctx.setLineDash([2,5]);
+  ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(vvX,vvY);ctx.stroke();ctx.setLineDash([]);
+  // FPM circle
+  ctx.strokeStyle='rgba(148,228,255,.70)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(vvX,vvY,7,0,Math.PI*2);ctx.stroke();
+  // three wing arms (top, lower-left, lower-right) — aircraft FPM symbol
+  for(const a of[-Math.PI/2, Math.PI/2+Math.PI/3, Math.PI/2-Math.PI/3]){
+    ctx.beginPath();
+    ctx.moveTo(vvX+Math.cos(a)*7,vvY+Math.sin(a)*7);
+    ctx.lineTo(vvX+Math.cos(a)*14,vvY+Math.sin(a)*14);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/** Three vertical power-distribution pips (ENG / WPN / SHD) in the upper-left
+ *  margin — style: thin bars like SC's power management column. */
+function drawPowerPips(ctx,w,h,now){
+  // ENG = throttle; WPN = weapon readiness; SHD = shield proxy (inverse risk)
+  const eng=clamp(.68+warpIntensity*.28,0,1);
+  const wpn=1-clamp(weaponRemaining('enforcer')/45000,0,1);
+  const shd=clamp(1-(halley?.collisionRisk||0)*.9,.12,1);
+  const vals=[eng,wpn,shd];
+  const labels=['ENG','WPN','SHD'];
+  const colors=['rgba(148,228,255,.72)','rgba(255,205,128,.72)','rgba(120,255,178,.72)'];
+  // position: just inside the left corner frame, above the arc gauge
+  const px=w*.075, py=h*.22, bw=5, bh=h*.14, gap=w*.028;
+  ctx.save();
+  ctx.font=`${Math.max(6,w*.014)}px 'JetBrains Mono',monospace`;
+  ctx.textAlign='center';ctx.textBaseline='top';
+  vals.forEach((v,i)=>{
+    const x=px+i*gap;
+    // track (empty)
+    ctx.fillStyle='rgba(148,228,255,.10)';
+    ctx.fillRect(x,py,bw,bh);
+    // fill from bottom
+    const filled=bh*clamp(v,0,1);
+    ctx.fillStyle=colors[i];
+    ctx.fillRect(x,py+bh-filled,bw,filled);
+    // label below
+    ctx.fillStyle='rgba(148,228,255,.38)';
+    ctx.fillText(labels[i],x+bw/2,py+bh+3);
+  });
+  ctx.restore();
+}
+
+/** Target health bars (shield + armor) rendered below the SC bracket. */
+function drawTargetHealthBars(ctx,cx,cy,bracketS,now){
+  if(!halley||halley.destroyed) return;
+  const maxHp=200, hp=clamp(halley.hp||100,0,maxHp);
+  const shd=clamp(hp/maxHp,0,1);
+  const arm=clamp(hp/maxHp*.82+.18,0,1);   // armor degrades slower than shield
+  const bw=bracketS*2.2, bh=3.5;
+  const bx=cx-bracketS*1.1, by=cy+bracketS*1.38;
+  const fs=Math.max(6,Math.min(8,bw*.065));
+  ctx.save();
+  ctx.font=`${fs}px 'JetBrains Mono',monospace`;
+  ctx.textAlign='left';ctx.textBaseline='middle';
+  // Shield (blue)
+  ctx.fillStyle='rgba(120,200,255,.18)';ctx.fillRect(bx,by,bw,bh);
+  ctx.fillStyle='rgba(120,200,255,.72)';ctx.fillRect(bx,by,bw*shd,bh);
+  ctx.fillStyle='rgba(148,228,255,.44)';ctx.fillText(`SHD ${Math.round(shd*100)}%`,bx,by-5);
+  // Armor (amber)
+  ctx.fillStyle='rgba(255,205,128,.18)';ctx.fillRect(bx,by+bh+3,bw,bh);
+  ctx.fillStyle='rgba(255,205,128,.64)';ctx.fillRect(bx,by+bh+3,bw*arm,bh);
+  ctx.fillStyle='rgba(255,205,128,.40)';ctx.fillText(`ARM ${Math.round(arm*100)}%`,bx,by+bh+3+bh+5);
+  ctx.restore();
+}
+
+/** Lead indicator: small amber diamond ahead of the target, accounting for
+ *  projectile flight time. Visible only while the target is visible. */
+function drawLeadIndicator(ctx,cx,cy,w,h,now){
+  if(!halley||!halley.hover) return;
+  const vx=halley.vx||0, vy=halley.vy||0;
+  if(Math.hypot(vx,vy)<.04) return;  // near-stationary: skip
+  const tof=0.22;   // normalised projectile flight time
+  const lx=clamp(cx+vx*tof*w*.20, w*.04, w*.96);
+  const ly=clamp(cy+vy*tof*h*.20, h*.04, h*.92);
+  if(Math.hypot(lx-cx,ly-cy)<8) return;
+  ctx.save();
+  ctx.strokeStyle='rgba(255,205,128,.62)';ctx.lineWidth=1;
+  const d=6;
+  ctx.beginPath();
+  ctx.moveTo(lx,ly-d);ctx.lineTo(lx+d,ly);ctx.lineTo(lx,ly+d);ctx.lineTo(lx-d,ly);ctx.closePath();ctx.stroke();
+  ctx.strokeStyle='rgba(255,205,128,.22)';ctx.setLineDash([3,6]);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(lx,ly);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(255,205,128,.42)';
+  ctx.font=`${Math.max(6,w*.013)}px 'JetBrains Mono',monospace`;
+  ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillText('LEAD',lx+9,ly-5);
+  ctx.restore();
+}
+
+/** Edge threat arrow: when the target is off-screen, draw a red chevron at the
+ *  nearest panel edge pointing toward it. */
+function drawThreatEdgeArrow(ctx,w,h){
+  if(!halley||halley.destroyed) return;
+  const tx=halley.curX??halley.x, ty=halley.curY??halley.y;
+  if(tx>w*.06&&tx<w*.94&&ty>h*.06&&ty<h*.94) return;  // on-screen, skip
+  const dx=tx-w*.5, dy=ty-h*.5;
+  const angle=Math.atan2(dy,dx);
+  const mx=Math.abs(dx/(w*.5-14)), my=Math.abs(dy/(h*.5-14));
+  const sc=1/Math.max(mx,my,0.001);
+  const ex=clamp(w*.5+dx*sc, 12, w-12), ey=clamp(h*.5+dy*sc, 12, h-12);
+  ctx.save();ctx.translate(ex,ey);ctx.rotate(angle);
+  ctx.strokeStyle='rgba(255,92,98,.76)';ctx.fillStyle='rgba(255,92,98,.52)';ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-5,-5);ctx.lineTo(-5,5);ctx.closePath();
+  ctx.fill();ctx.stroke();
+  ctx.restore();
+}
+
+/* ===== Main combat HMD (v3 — full space-combat layout) ==================== */
 function drawCleanCombatHmd(ctx,w,h,now,label,mode){
-  // Minimal HMD v2 — Star Citizen / SpaceX-telecast language:
-  // thin strokes, sparse marks, real comet target inside an SC bracket.
   const missileLike=mode==='missile'||mode==='nukeAuth'||mode==='nemp';
   drawPilotSpace(ctx,w,h,now,missileLike?1.55:1.05);
   const lock=pilotTrackedPoint(w,h,mode);
@@ -2922,38 +3046,49 @@ function drawCleanCombatHmd(ctx,w,h,now,label,mode){
   const range=lock.visible?Math.max(88,Math.round(720-lock.approach*560+(halley?.collisionRisk||0)*80)):620;
   ctx.save();
 
-  // soft vignette only — no canopy scribbles, no runway grid
+  // Soft vignette — glass tint
   const g=ctx.createLinearGradient(0,0,0,h);
-  g.addColorStop(0,'rgba(8,26,42,.28)');
-  g.addColorStop(.5,'rgba(0,5,12,.02)');
-  g.addColorStop(1,'rgba(3,10,18,.40)');
+  g.addColorStop(0,'rgba(8,26,42,.28)');g.addColorStop(.5,'rgba(0,5,12,.02)');g.addColorStop(1,'rgba(3,10,18,.40)');
   ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
 
+  // ── Frame + nav ──────────────────────────────────────────────────────────
   hmdCornerFrame(ctx,w,h);
   hmdHeadingTape(ctx,w,h,heading);
+
+  // ── Self-status arcs (now centred at ±31% from mid so they fit inward) ──
   hmdArcGauge(ctx,w,h,-1,clamp((.68+warpIntensity*.28),0,1),'THR',`${Math.round(68+warpIntensity*28)}%`);
   hmdArcGauge(ctx,w,h, 1,clamp(speed/1200,0,1),'VEL',`${speed} M/S`);
+
+  // ── ENG / WPN / SHD power distribution pips (upper-left margin) ─────────
+  drawPowerPips(ctx,w,h,now);
+
+  // ── Flight-path marker (velocity vector) ─────────────────────────────────
+  drawVelocityVector(ctx,w,h,now);
+
+  // ── Boresight ────────────────────────────────────────────────────────────
   hmdBoresight(ctx,w,h);
 
+  // ── Target: comet + bracket + health bars + lead indicator ───────────────
   const cx=lock.visible?lock.cx:w*.62;
   const cy=lock.visible?lock.cy:h*.40;
   if(lock.visible){
     const sizeScale={small:1,medium:1.2,large:1.4,giant:1.65}[halley?.sizeClass]||1.2;
     hmdComet(ctx,cx,cy,4.4*sizeScale,now,halley?.vx??-1,halley?.vy??.3);
     hmdBracket(ctx,cx,cy,Math.min(w,h)*.085*sizeScale,lock.lock||0,!!lock.locked,now,`${range}.0 M`,'1P/HALLEY');
+    drawTargetHealthBars(ctx,cx,cy,Math.min(w,h)*.085*sizeScale,now);
+    drawLeadIndicator(ctx,cx,cy,w,h,now);
+  } else {
+    drawThreatEdgeArrow(ctx,w,h);
   }
 
+  // ── Mode-specific overlays ───────────────────────────────────────────────
   if(mode==='ciws'){
     hmdStatusChip(ctx,w,h,'CIWS · OPTICAL TRACK',HMD.amber,true,now);
   }else if(missileLike){
-    // missile POV: exhaust glow at frame bottom + guidance line to target
     ctx.save();ctx.globalCompositeOperation='lighter';
     const flame=ctx.createRadialGradient(w*.5,h*1.02,2,w*.5,h*1.02,w*.20);
-    flame.addColorStop(0,'rgba(255,250,230,.62)');
-    flame.addColorStop(.4,'rgba(232,179,128,.30)');
-    flame.addColorStop(1,'rgba(232,179,128,0)');
-    ctx.fillStyle=flame;ctx.beginPath();ctx.arc(w*.5,h*1.02,w*.20,0,Math.PI*2);ctx.fill();
-    ctx.restore();
+    flame.addColorStop(0,'rgba(255,250,230,.62)');flame.addColorStop(.4,'rgba(232,179,128,.30)');flame.addColorStop(1,'rgba(232,179,128,0)');
+    ctx.fillStyle=flame;ctx.beginPath();ctx.arc(w*.5,h*1.02,w*.20,0,Math.PI*2);ctx.fill();ctx.restore();
     if(lock.visible){
       ctx.save();ctx.strokeStyle='rgba(232,179,128,.4)';ctx.setLineDash([3,7]);
       ctx.beginPath();ctx.moveTo(w*.5,h*.96);ctx.lineTo(cx,cy);ctx.stroke();ctx.setLineDash([]);ctx.restore();
@@ -2970,6 +3105,7 @@ function drawCleanCombatHmd(ctx,w,h,now,label,mode){
     hmdStatusChip(ctx,w,h,label||'TARGET LINK',HMD.cyanSoft,false,now);
   }
 
+  // ── Telemetry strip ──────────────────────────────────────────────────────
   hmdTelemetry(ctx,w,h,
     `VEL ${speed} · G ${(1.2+warpIntensity*.9).toFixed(1)}`,
     lock.visible?`TGT 1P/HALLEY · ${lock.locked?'LOCK':'TRACK'}`:'SCANNING');
