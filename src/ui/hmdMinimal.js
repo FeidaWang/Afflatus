@@ -47,7 +47,7 @@ export function headingTape(ctx,w,h,heading,color=HMD.cyan){
 
 /** Thin lateral arc gauge (SC style). side: -1 left, +1 right. v: 0..1 */
 export function arcGauge(ctx,w,h,side,v,label,valueText,color=HMD.cyan){
-  const cx=w*.5+side*w*.40, cy=h*.46, r=Math.min(w,h)*.30;
+  const cx=w*.5+side*w*.31, cy=h*.46, r=Math.min(w,h)*.27;
   const a0=Math.PI*.5+side*Math.PI*.18, a1=-Math.PI*.5-side*Math.PI*.18;
   ctx.save();ctx.lineWidth=1;ctx.strokeStyle=HMD.cyanFaint;
   ctx.beginPath();ctx.arc(cx,cy,r,Math.min(a0,a1),Math.max(a0,a1));ctx.stroke();
