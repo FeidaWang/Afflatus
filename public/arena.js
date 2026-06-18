@@ -79,13 +79,14 @@
   function genSeries(seedStr, n, vol, anchor, stepMs) { const rnd = mulberry32(strHash(seedStr)); let p = anchor * (0.72 + rnd() * 0.3); const drift = (rnd() - 0.45) * vol * 0.3, raw = [], now = Date.now(); for (let i = 0; i < n; i++) { p = Math.max(0.1, p * (1 + drift + (rnd() - 0.5) * vol)); raw.push(p); } const ratio = anchor / raw[raw.length - 1]; return raw.map((x, i) => ({ t: now - (n - i) * stepMs, price: Number((x * ratio).toFixed(2)) })); }
 
   // ---- state --------------------------------------------------
-  const history = Object.fromEntries(TICKERS.map((t) => [t.symbol, genSeries('D' + t.symbol, SEED_LEN, TF_META.D.vol, t.seed, 60000)]));
+  const history = Object.fromEntries(TICKERS.map((t) => [t.symbol, [{ t: Date.now() - 60000, price: t.seed }, { t: Date.now(), price: t.seed }]]));
   const realHist = {};   // key sym|tf -> {series, real:bool}
   const lastBig = {};    // sym -> last price shown in chart header (for glow)
   function countNum(el, to) { if (!el) return; if (RM) { el.textContent = to; return; } const from = parseFloat((el.textContent || '').replace(/[^-\d.]/g, '')) || 0; if (from === to) { el.textContent = to; return; } const t0 = performance.now(), dur = 500; (function s(ts) { const p = Math.min(1, (ts - t0) / dur), v = from + (to - from) * (1 - Math.pow(1 - p, 3)); el.textContent = Math.round(v); if (p < 1) requestAnimationFrame(s); else el.textContent = to; })(performance.now()); }
   const tdPending = {};
   const rebased = new Set();
-  function modeledSeries(sym, tf) { const anchor = (latest[sym] && latest[sym].prevClose) || BY_SYM[sym].seed, m = TF_META[tf]; return genSeries(tf + sym, m.n, m.vol, anchor, 86400000); }
+  // when no real history is available we draw an honest flat snapshot line (prev close → last), never simulated movement
+  function modeledSeries(sym) { const a = (latest[sym] && latest[sym].prevClose) || BY_SYM[sym].seed, p = (latest[sym] && latest[sym].price) || a; return [{ t: 0, price: a }, { t: 1, price: p }]; }
 
   const latest = {};
   for (const t of TICKERS) { const h = history[t.symbol], last = h[h.length - 1].price, prev = h[0].price; latest[t.symbol] = { symbol: t.symbol, price: last, prevClose: prev, open: prev, high: Math.max(...h.map((x) => x.price)), low: Math.min(...h.map((x) => x.price)), change: +(last - prev).toFixed(2), changePct: +(((last - prev) / prev) * 100).toFixed(2), tick: 0, live: false }; }
@@ -103,24 +104,28 @@
 
   // ---- providers ----------------------------------------------
   function finnhubProvider(key) { const B = 'https://finnhub.io/api/v1/quote'; async function one(s) { const r = await fetch(`${B}?symbol=${encodeURIComponent(s)}&token=${key}`); if (!r.ok) throw 0; const q = await r.json(); if (!q || !q.c) throw 0; return { symbol: s, price: q.c, prevClose: q.pc || q.c, open: q.o || q.c, high: q.h || q.c, low: q.l || q.c, live: true }; } return { async fetchQuotes(syms) { const res = await Promise.allSettled(syms.map(one)); const out = {}; res.forEach((x, i) => { if (x.status === 'fulfilled') out[syms[i]] = x.value; }); return out; } }; }
-  function simProvider(tickers) { const st = {}; for (const t of tickers) { const last = (history[t.symbol] || []).slice(-1)[0], base = last ? last.price : t.seed; st[t.symbol] = { price: base, prevClose: base, open: base, high: base, low: base, vol: 0.0045 + Math.random() * 0.004, drift: 0.00004 }; } let sent = 0; const g = () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }; function step(s) { const j = Math.random() < 0.015 ? g() * s.vol * 6 : 0; s.price = Math.max(0.1, s.price * (1 + s.drift + sent * 0.0006 + g() * s.vol + j)); s.high = Math.max(s.high, s.price); s.low = Math.min(s.low, s.price); return { price: +s.price.toFixed(2), prevClose: +s.prevClose.toFixed(2), open: +s.open.toFixed(2), high: +s.high.toFixed(2), low: +s.low.toFixed(2), live: false }; } return { setSentiment(v) { sent = v; }, async fetchQuotes(syms) { const out = {}; for (const s of syms) if (st[s]) out[s] = { symbol: s, ...step(st[s]) }; return out; } }; }
   const liveProvider = CONFIG.finnhubKey ? finnhubProvider(CONFIG.finnhubKey) : null;
-  const sim = simProvider(TICKERS);
+
+  // Briefing snapshot (pre-market + prev close) — used when the free API can't supply a live quote.
+  // No price simulation: a symbol is either LIVE (Finnhub) or a static daily SNAPSHOT from the briefing.
+  function snapQuote(s) { const p = state.news.prices && state.news.prices[s]; if (!p) return null; return { symbol: s, price: p.price, prevClose: (p.prevClose != null ? p.prevClose : p.price), open: (p.open != null ? p.open : p.price), high: (p.high != null ? p.high : p.price), low: (p.low != null ? p.low : p.price), live: false, snap: true }; }
+  function seedD(s, anchor) { const ser = state.news.series && state.news.series[s]; if (ser && ser.length > 1) { const out = ser.map((v, i) => ({ t: i, price: +v })); out.push({ t: ser.length, price: anchor }); return out; } return [{ t: Date.now() - 60000, price: anchor }, { t: Date.now(), price: anchor }]; }
 
   let polling = false;
   async function poll() {
     if (polling) return; polling = true;
     try {
       let live = {}; if (liveProvider) { try { live = await liveProvider.fetchQuotes(SYMBOLS); } catch {} }
-      const simq = await sim.fetchQuotes(SYMBOLS); let liveCount = 0;
+      let liveCount = 0, snapCount = 0;
       for (const s of SYMBOLS) {
-        const q = live[s] || simq[s]; if (!q) continue; if (q.live) liveCount++;
-        if (q.live && !rebased.has(s)) { history[s] = genSeries('D' + s, SEED_LEN, TF_META.D.vol, q.prevClose, 60000); rebased.add(s); }
+        const q = live[s] || snapQuote(s); if (!q) continue;
+        if (q.live) liveCount++; else if (q.snap) snapCount++;
+        if (q.live && !rebased.has(s)) { history[s] = seedD(s, q.prevClose); rebased.add(s); }
         const prev = latest[s], change = q.price - q.prevClose;
         latest[s] = { ...q, symbol: s, change: +change.toFixed(2), changePct: q.prevClose ? +((change / q.prevClose) * 100).toFixed(2) : 0, tick: prev ? Math.sign(q.price - prev.price) : 0 };
-        const arr = history[s]; arr.push({ t: Date.now(), price: q.price }); if (arr.length > MAX_HISTORY) arr.shift();
+        const arr = history[s]; if (q.live || !arr.length || arr[arr.length - 1].price !== q.price) { arr.push({ t: Date.now(), price: q.price }); if (arr.length > MAX_HISTORY) arr.shift(); }
       }
-      state.liveCount = liveCount; state.lastUpdate = Date.now(); renderAll();
+      state.liveCount = liveCount; state.snapCount = snapCount; state.lastUpdate = Date.now(); renderAll();
     } finally { polling = false; }
   }
 
@@ -190,7 +195,7 @@
     if (q && lastBig[sym] !== q.price) { const cb = $('cBig'); cb.classList.remove('bump', 'bump-up', 'bump-dn'); void cb.offsetWidth; cb.classList.add('bump', up ? 'bump-up' : 'bump-dn'); lastBig[sym] = q.price; }
     $('cOhlc').innerHTML = q ? `<span>O<b>${q.open.toFixed(2)}</b></span><span>H<b>${q.high.toFixed(2)}</b></span><span>L<b>${q.low.toFixed(2)}</b></span><span>PC<b>${q.prevClose.toFixed(2)}</b></span>` : '';
     const st = marketStatus();
-    const badge = isD ? (st.state === 'open' ? 'INTRADAY · LIVE' : st.label.toUpperCase()) : (real ? `REAL · ${TF_META[tf].label}` : `MODELED · ${TF_META[tf].label}`);
+    const badge = isD ? (st.state === 'open' ? 'INTRADAY · LIVE' : (q && q.snap ? 'SNAPSHOT · ' + st.label.toUpperCase() : st.label.toUpperCase())) : (real ? `REAL · ${TF_META[tf].label}` : `SNAPSHOT · ${TF_META[tf].label}`);
     $('cBadge').textContent = badge; $('cBadge').className = 'chart-badge ' + (isD && st.state === 'open' ? 'is-live' : (!isD && real ? 'is-real' : (isD ? '' : 'is-modeled')));
     const svg = $('cChart'), loading = $('cLoading');
     if (!series || series.length < 2) { svg.innerHTML = ''; loading.style.display = 'grid'; return; }
@@ -224,7 +229,7 @@
   }
   function sideBox(el, s, lead) { el.classList.toggle('lead', lead); countNum(el.querySelector('.n'), s.score); const streak = s.streak !== 0 ? `<span class="${s.streak > 0 ? 'up' : 'down'}">${s.streak > 0 ? '🔥 ' + s.streak : '❄ ' + Math.abs(s.streak)}</span>` : ''; el.querySelector('.st').innerHTML = `<span>${accuracy(s)}% acc</span><span>·</span><span>${s.wins}-${s.losses}</span>${streak}`; }
   function renderScore() { sideBox($('scPlayer'), state.player, state.player.score > state.ai.score); sideBox($('scAI'), state.ai, state.ai.score > state.player.score); $('rounds').innerHTML = state.log.length ? state.log.map((r) => `<div class="rd"><span style="font-weight:700">${r.symbol}</span><span class="${r.actual === 'UP' ? 'up' : 'down'}">${r.actual === 'UP' ? '▲' : '▼'}</span><span class="ch ${r.player.correct ? 'ok' : 'bad'}">${T('You', '你')} ${r.player.correct ? '✓' : '✗'}</span><span class="ch ${r.ai.correct ? 'ok' : 'bad'}">AI ${r.ai.correct ? '✓' : '✗'}</span></div>`).join('') : `<div class="empty">${T('No rounds yet — make your first call.', '还没有对局——先做第一个判断。')}</div>`; }
-  function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = st.label; $('srcTxt').textContent = state.liveCount > 0 ? `LIVE (${state.liveCount}/${SYMBOLS.length})` : 'SIM ENGINE'; const sl = sentLabel(state.sentiment); $('sentChip').className = `chip ${sl.tone}`; $('sentTxt').textContent = sl.label; $('clkTxt').textContent = fmtClock(state.lastUpdate); }
+  function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = st.label; $('srcTxt').textContent = state.liveCount > 0 ? `LIVE (${state.liveCount}/${SYMBOLS.length})` : (state.snapCount > 0 ? 'BRIEFING SNAPSHOT' : 'AWAITING DATA'); const sl = sentLabel(state.sentiment); $('sentChip').className = `chip ${sl.tone}`; $('sentTxt').textContent = sl.label; $('clkTxt').textContent = fmtClock(state.lastUpdate); }
   function renderCountdown() { const { wd, sec } = nyNow(), open = wd >= 1 && wd <= 5 && sec >= OPEN_S && sec < CLOSE_S; $('openCd').classList.toggle('open', open); $('cdLabel').textContent = open ? 'US MARKET CLOSES IN' : 'US MARKET OPENS IN'; $('cdClock').textContent = fmtDur(open ? CLOSE_S - sec : secsToNextOpen(wd, sec)); }
   function renderAll() { renderStatus(); renderWatchlist(); renderTF(); renderChart(); renderPred(); renderScore(); postHeight(); }
 
@@ -270,7 +275,7 @@
   // ---- boot ---------------------------------------------------
   fetch(CONFIG.newsUrl, { cache: 'no-store' })
     .then((r) => r.ok ? r.json() : Promise.reject())
-    .then((data) => { const items = (data.items || []).map((it) => ({ ...it, sentiment: typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || it.title || ''} ${it.summary_en || it.summary || ''}`) })); state.news = { date: data.date || null, items, aiPredictions: data.aiPredictions || {}, disclaimer_en: data.disclaimer_en, disclaimer_zh: data.disclaimer_zh, predictionNote_en: data.predictionNote_en, predictionNote_zh: data.predictionNote_zh, loading: false }; state.sentiment = aggregateSentiment(items); sim.setSentiment(state.sentiment); })
+    .then((data) => { const items = (data.items || []).map((it) => ({ ...it, sentiment: typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || it.title || ''} ${it.summary_en || it.summary || ''}`) })); state.news = { date: data.date || null, items, aiPredictions: data.aiPredictions || {}, prices: data.prices || {}, series: data.series || {}, disclaimer_en: data.disclaimer_en, disclaimer_zh: data.disclaimer_zh, predictionNote_en: data.predictionNote_en, predictionNote_zh: data.predictionNote_zh, loading: false }; state.sentiment = aggregateSentiment(items); poll(); })
     .catch(() => { state.news = { date: null, items: [], aiPredictions: {}, loading: false }; })
     .finally(() => { renderNews(); renderStatus(); renderPred(); if (!EMBED && !briefingAcked()) openBriefing(); });
 

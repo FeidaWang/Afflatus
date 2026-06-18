@@ -22,6 +22,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Ace Combat-style flight HUD overlay — additive, shown only in combat-mode */
+#aceHud{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0;transition:opacity .5s ease;font-family:'JetBrains Mono','Orbitron',monospace;color:#8effb0;text-shadow:0 0 8px rgba(80,255,150,.55),0 0 2px rgba(0,0,0,.85)}
+body.combat-mode #aceHud{opacity:.92}
+#aceHud .ah-tl{position:absolute;left:24px;top:96px;font-size:13px;letter-spacing:.12em;line-height:1.7}
+#aceHud .ah-row{display:flex;gap:10px}
+#aceHud .ah-row span{color:rgba(142,255,176,.6);min-width:64px}
+#aceHud .ah-row b{font-weight:700}
+#aceHud .ah-spd,#aceHud .ah-alt{position:absolute;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.14em}
+#aceHud .ah-spd{left:18px}#aceHud .ah-alt{right:18px}
+#aceHud .ah-spd b,#aceHud .ah-alt b{font-size:20px;font-weight:700}
+#aceHud .ah-spd span,#aceHud .ah-alt span,#aceHud .ah-spd i,#aceHud .ah-alt i{color:rgba(142,255,176,.6);font-style:normal}
+#aceHud .ah-reticle{position:absolute;left:50%;top:50%;width:56px;height:56px;transform:translate(-50%,-50%);opacity:.5;
+  background:linear-gradient(#8effb0,#8effb0) left top/13px 1px no-repeat,linear-gradient(#8effb0,#8effb0) left top/1px 13px no-repeat,linear-gradient(#8effb0,#8effb0) right top/13px 1px no-repeat,linear-gradient(#8effb0,#8effb0) right top/1px 13px no-repeat,linear-gradient(#8effb0,#8effb0) left bottom/13px 1px no-repeat,linear-gradient(#8effb0,#8effb0) left bottom/1px 13px no-repeat,linear-gradient(#8effb0,#8effb0) right bottom/13px 1px no-repeat,linear-gradient(#8effb0,#8effb0) right bottom/1px 13px no-repeat;
+  animation:ahPulse 1.9s ease-in-out infinite}
+@keyframes ahPulse{0%,100%{opacity:.32;transform:translate(-50%,-50%) scale(1)}50%{opacity:.7;transform:translate(-50%,-50%) scale(1.08)}}
+@media (prefers-reduced-motion:reduce){#aceHud .ah-reticle{animation:none}}
+@media(max-width:760px){#aceHud .ah-tl{font-size:11px;top:74px;left:12px}#aceHud .ah-spd,#aceHud .ah-alt{font-size:10px}#aceHud .ah-spd b,#aceHud .ah-alt b{font-size:15px}}
+</style>
 </head>
 <body class="hud-off" data-prev="/games.html" data-next="/arena.html">
 
@@ -251,6 +270,19 @@
   <div id="f3">signal origin · local stardate</div>
 </footer>
 
+<div id="aceHud" aria-hidden="true">
+  <div class="ah-tl">
+    <div class="ah-row"><span>TIME</span><b id="ahTime">00:00:00</b></div>
+    <div class="ah-row"><span>SCORE</span><b id="ahScore">034795</b></div>
+    <div class="ah-row"><span>TARGET</span><b id="ahTarget">BRAVO 2 +6756</b></div>
+  </div>
+  <div class="ah-spd"><span>SPEED</span><b id="ahSpd">2785</b><i>&gt;</i></div>
+  <div class="ah-alt"><i>&lt;</i><b id="ahAlt">695</b><span>ALT</span></div>
+  <div class="ah-reticle"></div>
+</div>
+<script>
+(function(){var t=document.getElementById('ahTime'),sp=document.getElementById('ahSpd'),al=document.getElementById('ahAlt'),sc=document.getElementById('ahScore'),tg=document.getElementById('ahTarget');if(!t)return;var start=Date.now(),score=34795,spd=2785,alt=695,T=['BRAVO 2 +6756','MiG-31B +4120','GRIPEN E +5380','ALPHA 4 LOCK'],p=function(n,l){return String(Math.round(n)).padStart(l,'0');};setInterval(function(){if(!document.body.classList.contains('combat-mode'))return;var s=Math.floor((Date.now()-start)/1000);t.textContent=p(Math.floor(s/3600),2)+':'+p(Math.floor(s%3600/60),2)+':'+p(s%60,2);spd=Math.max(1800,Math.min(2980,spd+(Math.random()-0.5)*70));sp.textContent=p(spd,1);alt=Math.max(420,Math.min(740,alt+(Math.random()-0.5)*24));al.textContent=p(alt,1);score+=Math.floor(Math.random()*45);sc.textContent=p(score,6);if(Math.random()>0.93)tg.textContent=T[Math.floor(Math.random()*T.length)];},650);})();
+</script>
 <script src="/transition.js" defer></script>
 <script type="module" src="/src/main.js"></script>
 </body>
