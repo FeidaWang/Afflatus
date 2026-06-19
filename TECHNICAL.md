@@ -16,11 +16,18 @@
   - `arena.js` / `games.js` — 各自页面逻辑；`arena-bg.js`、`signal-scene.js` 背景。
 - **数据**：`public/arena-news.json`（每日定时任务生成）、`public/games-data.json`（手动更新）。
 
+### 首页渲染分层 / Home render layers
+- `#starfield`（背景星空，fixed z0）→ `#blackhole-gl`（黑洞 WebGL，z1）→ `#event-layer`（2D 战斗/彗星，z2）。
+- `.stardrive` 段（年化收益）自带一块 `#alphardForge` canvas，以顶/底渐隐 + `--bg` 调色融入页面背景；滚动进度写入 CSS 变量 `--forge`，驱动星体放大、台词逐字、数字点亮。
+- **战斗渲染迁移中**：combat view（`#pilotFeed`）目前是 `main.js` 内嵌 Canvas-2D；正迁往 `topdownCombat.js` 的 2.5D 上帝视角 WebGL（分阶段，见 ROADMAP §4）。预览：`feida.au/?combat=topdown`。
+
 ### 文件清单 / File map
 ```
 index.html              首页（Three.js）
 src/main.js (3.7k 行)    首页主程序（HUD/场景/光标/导航装配）
 src/scene/ src/ui/ ...   首页场景与 UI 模块
+src/scene/alphardForge.js  年化收益 · Alphard 跃迁点滚动镜头（SC "Forge" 式星涡 + 逐字台词）
+src/scene/topdownCombat.js 2.5D 上帝视角 WebGL 战斗场景（Phase 1；?combat=topdown 预览）
 public/arena.html .js    交易竞技场（Finnhub 实时 + Twelve Data 历史 + Opus 预测）
 public/sectors.html      AI/航天个股研判（静态 + 动效）
 public/signal.html       美联储 = SCP O5 收容档案（FOMC + Opus 板块研判）

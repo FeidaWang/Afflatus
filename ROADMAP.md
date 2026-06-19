@@ -65,27 +65,66 @@ src/             # 仅首页 Three.js 应用
 
 ---
 
-## 3. 首页专项（待办）/ Home-app pass — planned
+## 3. 首页专项 / Home-app pass
 
-> 这是一块独立的大工程，需谨慎隔离改动，避免回归首页 3700 行 JS / 6900 行 CSS。
+> 独立的大工程，谨慎隔离改动，避免回归首页 3700 行 JS / 6900 行 CSS。
 
-**3.1 皇牌空战式 HUD（起飞后 / 降落前）**
-- 在 `src/ui/` 新增 `aceHud.js`：一个 HTML/CSS overlay，含 TIME/SCORE/TARGET、SPEED/ALT 方括号、WARNING/HIT 条、锁定准星、队伍血条、右下武器面板。
-- 由飞行状态机驱动：`src/combat/combatRuntime.js` 暴露 `phase`（`takeoff → cruise → landing`），HUD 仅在 `cruise` 显示，起飞/降落做淡入淡出。
-- 纯 DOM overlay，不动 Three.js 渲染管线，降低风险。
+**3.1 皇牌空战式 HUD（起飞后 / 降落前）— ✅ 已完成**
+- `#aceHud` overlay 已移入 combat view（`.hud-pilot`），由飞行相位 `data-phase`（launch / combat / landing）驱动，TIME/SCORE/TARGET + SPEED/ALT + 准星 + 相位标签随相位变化。
+- 纯 DOM overlay，不动渲染管线。
 
-**3.2 高精度 F47 模型**
-- 现状 `src/scene/fighter3D.js`（97 行）为程序化低面模型。
-- 方案：引入 glTF 资源 + `GLTFLoader`（按需从 CDN 引入 three 插件），或显著提高程序化几何细节（机身分段、进气道、尾翼、挂载）。建议用 glTF，配 KTX2 压缩纹理；保留低模为加载前占位。
-- 需要一个体积可控的免费/自制模型资源（这一步需要资产，故单列）。
+**3.2 高精度 F47 模型 — ✅ 程序化高模已完成**
+- `src/scene/fighter3D.js` 已升级：blended delta 翼、前置鸭翼、双外倾垂尾、LERX、分面雷达罩 + 气泡座舱、翼尖挂架、双加力发动机（进气唇/喷口/加力锥），RES 320。
+- 后续可选：换 glTF + `GLTFLoader` + KTX2 压缩纹理（需要体积可控的资产），保留程序化模型为加载占位。
 
-**3.3 移动端布局**
-- 在 `styles.css` 统一的 `@media(max-width:860px)` / `520px` 块中：隐藏雷达（`hud-left` 内 `#radarCanvas`）与右侧防御面板（`hud-right`），把战斗视图给到约 2/3、星图约 1/3。
-- 需先确认 `combatView` 与 `terminalStarMap` 的容器层级，建议配合 `src/ui/combatView.js` 做一个 `mobile` 布局开关，而非纯 CSS 覆盖（更稳）。
+**3.3 移动端 combat / 星图布局 — ✅ 已完成**
+- `@media(max-width:560px)`：隐藏雷达 `hud-left` 与防御 `hud-center`，combat view 占约 2/3、星图约 1/3。
+
+**3.4 Alphard 跃迁点 · 年化收益镜头（SC "Forge" 式）— ✅ 已完成**
+- `src/scene/alphardForge.js` + `.stardrive` CSS：滚动渐进镜头拉伸（pinned + 不断放大），蓝色跃迁点星涡（顺时针旋转**风暴漩涡**——大尺度旋转星云盘 + 16 条湍流螺旋臂 + 细丝闪烁，独立于亮核尺寸，低进度时小亮眼 + 大风暴）、左右舰队侧翼（暖左/冷右 + 倒影 + 零星曳光）、逐字打字台词（下滚逐字输入、上滚逐字删除，中英双语跟随 `<html lang>`）。
+- **钉住改用 JS `position:fixed`**：首页 `html,body{overflow-x:hidden}` 会让 `position:sticky` 失效（overflow-y 被算成 auto），故由 `alphardForge.js` 显式切 `.pin-fixed`/`.pin-end`，星体 + 台词在整段接近过程居中钉住，台词未打完前上下滚动都停在星体页；修掉了"星体与 equity 之间整页空白"的 bug。
+- 与页面背景以顶/底渐隐 + `--bg` 调色融合；星体亮度由真实年化收益 `#sv0[data-counter]` 缩放；`prefers-reduced-motion` 退化为静帧。
 
 ---
 
-## 4. 各页设计备忘 & 未来点子 / Per-page notes & ideas
+## 4. 战斗系统迁移：2.5D 上帝视角 WebGL / Top-down combat migration ★
+
+> 本轮新增的**重点架构方向**。当前 combat view 与首页空战是 `main.js` 内嵌的 Canvas-2D（`drawPilotDeck` / `drawPilotF47Nose` / `drawPilotHmd` / 各武器相机 `drawNukeAuthCamera`…），观感偏卡通、伪 3D。目标：参考经典 **Top-Down View（俯视/上帝视角，2D/2.5D）**——如 Nexon《破碎银河系》(2011) 一类俯视战斗——用 **three.js / WebGL** 重建为更流畅精美的俯视战场。
+
+**目标渲染 / Target render**
+- 战术平面（god's-eye grid）+ 高位微俯透视相机（轻微 tilt → 2.5D），单位/曳光/爆炸以平面读图、同时保留体积纵深。
+- PBR 材质（`MeshStandardMaterial` metalness/roughness）+ emissive 引擎/喷口；**假辉光**用 additive 贴图 Sprite + emissive，不引 postprocessing 依赖以控体积。
+- 元素：玩家母舰、彗星（1P/HALLEY，含彗发 coma + 彗尾）、护航战机编队、曳光（cylinder/line 池）、激光（持续光束）、执法者主炮**等离子圆光炮**（orb 投射物）、制导导弹（拖尾 + 命中爆炸）、CIWS 点防、爆炸（扩张 Sprite + 点光）。
+
+**单位设计语言（对标《破碎银河系》截图）/ Unit design language**
+> 用户已提供 SG 各类战斗单位截图与攻击方式，作为最终美术目标。
+- **母舰 = 执法者 (Enforcer)**：雪茄形船体，**中央主炮**，**后两侧推进器 + 尾翼**，船体多处防御炮塔，青绿装甲点缀（图 4）。已做出第一版程序化几何（cigar hull + 中央主炮 + 充能光球 + 后侧双推进器/尾翼 + 4×2 防御炮塔）。
+- **战机 = 夜鹰 (Nighthawk)**：雷达隐身（图 8/9 全黑），后掠箭头形，暗色船体 + 发光翼缘。已做出第一版（暗箭头 + 青色翼缘 + 引擎辉光）。
+- **武器谱系（图 3–7）**：密集阵曳光（青/红点状）、持续激光束（绿，已加）、执法者圆形等离子光炮（青绿大光球，已加）、制导导弹（暖色拖尾）。后续按截图细化：光球的电弧、激光的收束闪烁、命中的多段爆炸序列。
+- **迭代目标**：从"几何体"逐步逼近 SG 的**精细贴图 + 法线/自发光**质感（Phase 3 引入 glTF/KTX2 资产），并把不同单位的攻击形式（视角、弹道、命中特效）逐一还原。**有不确定的单位/武器细节会直接向你确认。**
+
+**架构边界 / Module boundary**（关键：把"状态"与"渲染"解耦）
+```
+combatRuntime.js   →  战斗状态（halley 位置/速度、武器、击杀、相位）  [single source of truth]
+        │  state snapshot
+        ▼
+topdownCombat.js   →  纯渲染器（吃 state，画 three.js 俯视场景；无游戏逻辑）
+        │  offscreen render → drawImage(#pilotFeed)  或  直接 WebGL canvas
+        ▼
+combatView (#pilotFeed) / 首页 event-layer
+```
+
+**分阶段 / Phases**
+1. **Phase 1 — ✅ 已完成（持续迭代美术）**：`src/scene/topdownCombat.js` 自包含俯视场景（执法者母舰/夜鹰战机/彗星/曳光/激光/等离子光炮/导弹/爆炸 + 战术网格 + 星空），并挂一个**生产可达的预览舱**：访问 `?combat=topdown` 全屏预览（gated，不影响正常首页）。已按 SG 截图做出执法者/夜鹰第一版几何与武器谱系；下一步持续逼近贴图质感。
+2. **Phase 2**：接入 combat view——在 `combatRuntime` 与渲染间立 `getState()` 快照接口；`topdownCombat` 离屏渲染 → `drawImage` 进 `#pilotFeed`（沿用 `fighter3D` 既有模式），或把 `#pilotFeed` 直接换为 WebGL canvas。保留现有 2D 作为 `prefers-reduced-motion` / WebGL 失败的回退。逐武器相位迁移（combat → ciws → missile → nuke …），每步 build + 真机目检。
+3. **Phase 3**：首页主战斗（`event-layer` 上的彗星拦截）迁移到同一俯视渲染；统一资产与材质（可选 glTF + KTX2）、用 `InstancedMesh` 管理曳光/碎片、相机用 `cameraDirector` 统一调度。
+4. **Phase 4 — 体积优化**：`topdownCombat` 目前随首页入口静态引入 three（首屏包体增大）。改为 **动态 `import()` 代码分割**，仅在进入 combat / 预览时按需加载战斗渲染器与 three 插件。
+
+**风险控制**：combat 渲染深嵌 3700 行 `main.js`；务必先抽 `state → renderer` 接口、分阶段替换、每步可回退（2D 兜底）。
+
+---
+
+## 5. 各页设计备忘 & 未来点子 / Per-page notes & ideas
 
 - **Arena**：可加"模型 vs 你"的历史胜率曲线；真实历史接 Twelve Data 后把 W/M/6M/Y/5Y 徽标改 `REAL`。
 - **Sectors**：可把研判与 Arena 的 Opus 预测打通（同一数据源）。

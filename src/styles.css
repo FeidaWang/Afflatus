@@ -6955,3 +6955,84 @@ nav.route-arrows::after,
     font-size:25px!important;
   }
 }
+
+/* ============================================================
+   2026-06-19 · ALPHARD JUMP POINT — Star Citizen "Forge" homage
+   A scroll-driven approach to a blue jump-point vortex (rotating
+   halo, swirling tunnel), flanked by starfleet silhouettes, that
+   dramatizes the Annualised Return row. A bilingual tagline rises
+   and scales over the vortex with the scroll. Progress is written
+   into --forge (0..1) by src/scene/alphardForge.js. Without JS /
+   under reduced-motion the section degrades to a static, fully-lit
+   frame (--forge:1) so the numbers still read.
+   ============================================================ */
+.stardrive{position:relative;padding:0;margin:0;--forge:1}
+.stardrive-stage{position:relative;width:100%;height:100vh;overflow:hidden}
+/* live mode (JS confirmed motion ok): tall section gives scroll-room; the stage
+   is pinned by JS via position:fixed — NOT position:sticky, which is broken on
+   this page by html/body{overflow-x:hidden} (computes overflow-y:auto). The JS
+   toggles .pin-fixed (during the pin range) and .pin-end (after). */
+.stardrive.is-live{height:200vh;--forge:0}
+.stardrive.is-live .stardrive-stage{position:absolute;top:0;left:0;right:0;height:100vh}
+.stardrive.is-live .stardrive-stage.pin-fixed{position:fixed;top:0}
+.stardrive.is-live .stardrive-stage.pin-end{position:absolute;top:auto;bottom:0}
+
+#alphardForge{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.stardrive-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 0%,transparent 46%,rgba(4,6,10,.5) 100%);opacity:calc(.28 + var(--forge)*.36)}
+/* melt the section into the page bg above (hero) and below (equity) so there is
+   no hard seam — fades use the page --bg and sit above the canvas but below
+   the strip/tagline */
+.stardrive-stage::before,.stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:20vh;z-index:1;pointer-events:none}
+.stardrive-stage::before{top:0;background:linear-gradient(180deg,var(--bg) 0%,rgba(4,6,10,.55) 45%,rgba(4,6,10,0) 100%)}
+.stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
+
+.stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
+.fc-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.42em;color:#aee0ff;text-shadow:0 0 calc(8px + var(--forge)*22px) rgba(110,180,255,.7)}
+.fc-sub{font-family:'Orbitron',sans-serif;font-weight:300;font-size:13px;letter-spacing:.34em;color:rgba(200,228,255,.78);text-transform:uppercase}
+
+/* the page tagline over the jump point — clauses typed out by the scroll */
+.forge-tagline{position:absolute;left:0;right:0;top:43%;z-index:3;text-align:center;pointer-events:none;padding:0 8%;
+  display:flex;flex-direction:column;align-items:center;gap:.22em;
+  transform:translateY(-50%) scale(calc(.72 + var(--forge)*.46))}
+.forge-tagline b,.tw-line{display:block;min-height:1.22em;font-family:'Orbitron',sans-serif;font-weight:500;font-size:clamp(20px,3.2vw,44px);line-height:1.22;letter-spacing:.05em;color:#060d18;text-shadow:0 0 16px rgba(206,230,255,.62),0 0 3px rgba(224,240,255,.85)}
+.tw-cur{display:inline-block;width:.5ch;height:.95em;margin-left:3px;vertical-align:-0.1em;background:#0a1626;box-shadow:0 0 8px rgba(206,230,255,.8);animation:twBlink .72s steps(1) infinite}
+@keyframes twBlink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+@keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
+
+/* the metrics row as a telemetry band pinned near the bottom of the stage */
+.stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(6,9,15,.40),rgba(6,9,15,.14));backdrop-filter:blur(6px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
+.stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
+/* supporting metrics recede so the annualised return leads the eye */
+.stardrive .strip-cell:not(.hero-metric){opacity:calc(.55 + (1 - var(--forge))*.45)}
+
+/* the Annualised Return igniting in the jump-point's blue light */
+.stardrive .hero-metric{position:relative}
+.stardrive .hero-metric .strip-value{
+  color:#eef7ff;
+  transform:scale(calc(1 + var(--forge)*0.30));
+  transform-origin:left center;
+  text-shadow:
+    0 0 calc(var(--forge)*10px) rgba(255,255,255,calc(var(--forge)*.95)),
+    0 0 calc(var(--forge)*34px) rgba(150,210,255,calc(var(--forge)*.95)),
+    0 0 calc(var(--forge)*72px) rgba(80,150,255,calc(var(--forge)*.7));
+  will-change:transform;
+}
+.stardrive .hero-metric .strip-label{color:#bfe2ff}
+
+@media (max-width:640px){
+  .stardrive.is-live{height:170vh}
+  .stardrive .strip{left:20px;right:20px;bottom:5vh}
+  .stardrive .hero-metric .strip-value{transform:scale(calc(1 + var(--forge)*0.16))}
+  .forge-tagline{top:40%}
+  .fc-sub{font-size:11px;letter-spacing:.22em}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .stardrive.is-live{height:auto;--forge:1}
+  .stardrive.is-live .stardrive-stage{position:relative;height:100vh;top:auto;bottom:auto}
+  .stardrive.is-live .stardrive-stage.pin-fixed,.stardrive.is-live .stardrive-stage.pin-end{position:relative}
+  .stardrive .strip{transform:none}
+  .stardrive .hero-metric .strip-value{transform:none}
+  .forge-tagline b,.tw-line{animation:none}
+  .tw-cur{display:none}
+}
