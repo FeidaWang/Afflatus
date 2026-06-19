@@ -196,28 +196,41 @@
     </div>
   </section>
 
-  <div class="strip" id="strip">
-    <div class="strip-cell">
-      <div class="strip-label" id="sl0">Annualized Return</div>
-      <div class="strip-value pos" data-counter="38.66" data-suffix="%" id="sv0">0.0%</div>
-      <div class="strip-foot" id="sf0">vs SPX +9.4 · vs QQQ +14.1</div>
+  <section class="stardrive" id="stardrive" aria-label="Annualised return — approach to Alphard">
+    <div class="stardrive-stage">
+      <canvas id="alphardForge" aria-hidden="true"></canvas>
+      <div class="stardrive-veil" aria-hidden="true"></div>
+      <div class="stardrive-caption" aria-hidden="true">
+        <span class="fc-kicker">ALPHARD JUMP POINT · APPROACH VECTOR</span>
+        <span class="fc-sub">limit of charted space</span>
+      </div>
+      <div class="forge-tagline" id="forgeTagline">
+        <b data-en="Every return is a jump through the dark." data-zh="每一份回报，都是一次穿越深空的跃迁。">Every return is a jump through the dark.</b>
+      </div>
+      <div class="strip" id="strip">
+        <div class="strip-cell hero-metric">
+          <div class="strip-label" id="sl0">Annualized Return</div>
+          <div class="strip-value pos" data-counter="38.66" data-suffix="%" id="sv0">0.0%</div>
+          <div class="strip-foot" id="sf0">vs SPX +9.4 · vs QQQ +14.1</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label" id="sl1">Sharpe · 1Y</div>
+          <div class="strip-value" data-counter="1.72" data-suffix="" data-fixed="2" id="sv1">0.00</div>
+          <div class="strip-foot" id="sf1">rf @ AU 10y · 4.18%</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label" id="sl2">Max Drawdown</div>
+          <div class="strip-value" data-counter="-13.04" data-suffix="%" id="sv2">0.0%</div>
+          <div class="strip-foot" id="sf2">2026-06-05 · risk reset</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label" id="sl3">Beta</div>
+          <div class="strip-value" data-counter="1.31" data-suffix="" data-fixed="2" id="sv3">0.00</div>
+          <div class="strip-foot" id="sf3">portfolio vs SPX · 2026 YTD</div>
+        </div>
+      </div>
     </div>
-    <div class="strip-cell">
-      <div class="strip-label" id="sl1">Sharpe · 1Y</div>
-      <div class="strip-value" data-counter="1.72" data-suffix="" data-fixed="2" id="sv1">0.00</div>
-      <div class="strip-foot" id="sf1">rf @ AU 10y · 4.18%</div>
-    </div>
-    <div class="strip-cell">
-      <div class="strip-label" id="sl2">Max Drawdown</div>
-      <div class="strip-value" data-counter="-13.04" data-suffix="%" id="sv2">0.0%</div>
-      <div class="strip-foot" id="sf2">2026-06-05 · risk reset</div>
-    </div>
-    <div class="strip-cell">
-      <div class="strip-label" id="sl3">Beta</div>
-      <div class="strip-value" data-counter="1.31" data-suffix="" data-fixed="2" id="sv3">0.00</div>
-      <div class="strip-foot" id="sf3">portfolio vs SPX · 2026 YTD</div>
-    </div>
-  </div>
+  </section>
 
   <section class="equity">
     <div class="sec-num" id="s2num">02 · <span>equity curve</span></div>
@@ -264,5 +277,7 @@
 
 <script src="/transition.js" defer></script>
 <script type="module" src="/src/main.js"></script>
+<script type="module" src="/src/scene/alphardForge.js"></script>
+<script type="module" src="/src/scene/topdownCombat.js"></script>
 </body>
 </html>
