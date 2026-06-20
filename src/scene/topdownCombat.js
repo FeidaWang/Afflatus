@@ -19,6 +19,7 @@
  *   scene.stop(); scene.destroy();
  */
 import * as THREE from 'three';
+import { createNighthawk } from './nighthawk.js';
 
 function glowTexture() {
   const s = 128, c = document.createElement('canvas');
@@ -138,22 +139,14 @@ export function createTopdownCombat({ canvas }) {
     scene.add(capital);
   }
 
-  // ── escort fighters = "NIGHTHAWK": dark radar-stealth arrowhead, glowing edge
+  // ── escort fighters = "NIGHTHAWK" (high-detail hard-surface model) ───────
   function makeFighter() {
-    const g = new THREE.Group();
-    const dark = new THREE.MeshStandardMaterial({ color: 0x141a22, metalness: 0.6, roughness: 0.5, emissive: 0x0a2230, emissiveIntensity: 0.3 });
-    const edgeMat = new THREE.MeshBasicMaterial({ color: 0x4ad0ff });
-    const body = new THREE.Mesh(new THREE.ConeGeometry(1.15, 4.4, 4), dark);
-    body.rotation.x = -Math.PI / 2; body.scale.set(1, 0.4, 1); g.add(body);
-    for (const sx of [-1, 1]) {
-      const w = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.16, 1.5), dark);
-      w.position.set(sx * 1.4, 0, 0.9); w.rotation.z = sx * 0.16; w.rotation.y = sx * -0.5; g.add(w);
-      const edge = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.07, 1.5), edgeMat);
-      edge.position.set(sx * 2.5, 0, 0.9); edge.rotation.y = sx * -0.5; g.add(edge);
-    }
-    const eg = sprite(0x6ad8ff, 2.2, 0.85); eg.position.set(0, 0, 1.9); g.add(eg);
-    scene.add(g);
-    return g;
+    const nh = createNighthawk(THREE, { glowTex: GLOW });
+    nh.setMode('combat');
+    nh.group.scale.setScalar(0.62);   // fit the battle scale
+    nh.group.userData.nh = nh;
+    scene.add(nh.group);
+    return nh.group;
   }
   const fighters = [makeFighter(), makeFighter(), makeFighter()];
 
@@ -264,6 +257,7 @@ export function createTopdownCombat({ canvas }) {
       const next = new THREE.Vector3(Math.cos(ph + 0.1) * 16 + comet.position.x * 0.3, f.position.y, -2 + Math.sin(ph + 0.1) * 9);
       f.lookAt(next);
       f.rotateX(Math.PI / 2);
+      if (f.userData.nh) f.userData.nh.tick(t);
     });
 
     // tracer cadence
