@@ -47,12 +47,13 @@ src/             # 仅首页 Three.js 应用
   hud/  scene/  ui/  cursor/  state/   # main.js 拆分
 ```
 
-**优先级最高的一步：统一导航**
-新增 `public/lib/nav.js` + 一个 `SITE` 配置（页面顺序、标题、prev/next 自动推导），让每页只放一个 `<nav data-afflatus-nav>` 占位，由脚本渲染。**这样以后加页面只改 1 个配置文件**，彻底消除"每页改导航"的重复劳动。
+**优先级最高的一步：统一导航 — ✅ 已完成（四个非首页）**
+`public/lib/nav.js` 内含唯一的 `SITE` 数组（页面顺序 + 中英标题）。每个非首页的 `<nav class="nav" data-afflatus-nav>` 只保留自己的 `.lang-toggle`，链接由脚本按 `SITE` 渲染（当前页自动 `.active`）；prev/next 由顺序循环推导，写入 `body.dataset.prev/next`（page-turn.js 键盘翻页读取）与 `.page-turn` 箭头的 `href`。加载顺序 `i18n.js → lib/nav.js → page-turn.js`（renderer 末尾调用 `AfflatusI18N.apply()` 翻译新链接）。**以后加/改/重排非首页，只改 `SITE` 一处**——arena/sectors/signal/games 四页已迁移，内联导航链接与硬编码 prev/next 已删除。
+- 待办：**首页 `index.html`** 的导航（含遥测/指挥/时钟，耦合 `src/main.js`）暂未接入，其 nav 链接与 prev/next 仍是手写；后续可让 main.js 也吃 `SITE`（需小心不破坏现有 getElementById 绑定）。
 
 **分阶段计划 / Phases**
 1. **抽公共库**：把 `clock` / `audio` / `viz` 三块从 arena/signal/games 抽到 `public/lib/`，各页 `<script>` 引入。零行为变化，先减重。
-2. **统一导航**：`nav.js` + `SITE` 配置；替换四页内联导航与 `data-prev/next`。
+2. **统一导航 — ✅ 已完成（四个非首页）**：`public/lib/nav.js` + `SITE`；已替换四页内联导航与 `data-prev/next`。剩首页接入。
 3. **拆样式**：把各页 `<style>` 移到 `public/styles/<page>.css`，`<link>` 引入；公共 token（颜色/字体变量）集中到 `tokens.css`。
 4. **拆 main.js**：按职责拆为 `state`（飞行状态机）、`hud`、`cursor`、`nav`、`boot`，main 只做装配。
 5. **拆 styles.css**：用 `@layer base, hud, combat, starmap, responsive` 或 `@import` 分文件，集中响应式断点（统一 860 / 1080 / 520）。
