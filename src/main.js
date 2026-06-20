@@ -77,6 +77,30 @@ function getFighter3D(){
   return fighter3D;
 }
 
+// ── Top-down WebGL combat view (Phase 2 of the combat migration; opt-in) ──
+// Renders the 2.5D god's-eye scene (src/scene/topdownCombat.js) offscreen and
+// blits it into #pilotFeed for the main combat/standby modes. Off by default;
+// enable with ?combatview=topdown (persists), revert with ?combatview=2d.
+// Falls back to the existing 2D cockpit if WebGL/the module is unavailable.
+let topdownCV=null, topdownTried=false, topdownCanvas=null;
+function combatViewTopdown(){
+  try{
+    const q=location.search;
+    if(/[?&]combatview=topdown\b/.test(q)) localStorage.setItem('afflatus-combatview','topdown');
+    else if(/[?&]combatview=2d\b/.test(q)) localStorage.setItem('afflatus-combatview','2d');
+    return localStorage.getItem('afflatus-combatview')==='topdown';
+  }catch(e){ return /[?&]combatview=topdown\b/.test(location.search); }
+}
+function getTopdownCV(){
+  if(!topdownTried){
+    topdownTried=true;
+    import('./scene/topdownCombat.js')
+      .then(m=>{ try{ topdownCanvas=document.createElement('canvas'); topdownCV=m.createTopdownCombat({canvas:topdownCanvas}); }catch(e){ topdownCV=null; } })
+      .catch(()=>{ topdownCV=null; });
+  }
+  return topdownCV;
+}
+
 function HC(key){return getHudCopy(key,currentLang);}
 function lerpAngle(from,to,t){
   const delta=Math.atan2(Math.sin(to-from),Math.cos(to-from));
@@ -3700,6 +3724,22 @@ function drawPilotFeed(now){
   if(pilotView.until<nowMs && pilotView.mode!=='mosaic') pilotView.mode='standby';
   let mode=pilotModeFor(craft);
   if(mode==='mosaic' && pilotView.until<nowMs){pilotView.mode='standby';mode='standby';}
+  // Phase 2: top-down WebGL feed for the main combat/standby modes (opt-in).
+  if((mode==='combat'||mode==='standby') && combatViewTopdown()){
+    const td=getTopdownCV();
+    if(td){
+      td.resize(w,h);
+      td.renderOnce(now);
+      ctx.save();
+      const j=mode==='combat'?0.6:0;
+      if(j) ctx.translate(rand(-j,j),rand(-j,j));
+      ctx.drawImage(topdownCanvas,0,0,w,h);
+      ctx.restore();
+      drawCockpitFrame(ctx,w,h,now,false);
+      drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat');
+      return;
+    }
+  }
   const elapsed=clamp((nowMs-(pilotView.started||nowMs))/Math.max(1,(pilotView.until||nowMs+1)-(pilotView.started||nowMs)),0,1);
   const shake=(
     mode==='launch' ? 4.8*(1-elapsed)+Math.sin(now/42)*1.1 :
