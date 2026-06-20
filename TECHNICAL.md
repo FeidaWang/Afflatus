@@ -13,6 +13,7 @@
   - `page-turn.js` — 键盘左右 / 箭头翻页；自托管字体在 `page-turn.css`。
   - `transition.js` — 进出页动画 + Web Audio 音效；按目标页选类型。
   - `i18n.js` — 中英切换；翻译所有 `data-en` / `data-zh`；派发 `afflatus-lang` 事件。
+  - `lib/nav.js` — ★ 唯一的 `SITE` 配置：渲染各非首页导航链接（`[data-afflatus-nav]` 占位）、循环推导 prev/next 写入 `body.dataset` 与箭头 `href`。加 / 改页面只改这一处。加载顺序 `i18n.js → lib/nav.js → page-turn.js`。
   - `arena.js` / `games.js` — 各自页面逻辑；`arena-bg.js`、`signal-scene.js` 背景。
 - **数据**：`public/arena-news.json`（每日定时任务生成）、`public/games-data.json`（手动更新）。
 
