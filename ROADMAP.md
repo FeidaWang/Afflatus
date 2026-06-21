@@ -53,6 +53,8 @@ src/             # 仅首页 Three.js 应用
 
 **分阶段计划 / Phases**
 1. **抽公共库**：把 `clock` / `audio` / `viz` 三块从 arena/signal/games 抽到 `public/lib/`，各页 `<script>` 引入。零行为变化，先减重。
+   - ✅ **clock**：`public/lib/clock.js`（`window.AfflatusClock.fmtDur(ms)` / `fmtDurSec(s)`）。arena.js 与 games.js 里**完全相同**的倒计时格式化函数已抽走、改为薄包装；两页在各自脚本前 `<script src="/lib/clock.js" defer>`。已 build 验证、行为一致（`1d 01:01:01`）。
+   - 待抽：**audio**（signal.html + transition.js 的 Web Audio 环境音/SFX）、**viz**（count-up：当前仅 sectors.html 用，可与首页 marketDeck 的 count-up 合并为一个 helper）。signal 的 FOMC 倒计时格式如与 `AfflatusClock` 一致也可接入。
 2. **统一导航 — ✅ 已完成（四个非首页）**：`public/lib/nav.js` + `SITE`；已替换四页内联导航与 `data-prev/next`。剩首页接入。
 3. **拆样式**：把各页 `<style>` 移到 `public/styles/<page>.css`，`<link>` 引入；公共 token（颜色/字体变量）集中到 `tokens.css`。
 4. **拆 main.js**：按职责拆为 `state`（飞行状态机）、`hud`、`cursor`、`nav`、`boot`，main 只做装配。

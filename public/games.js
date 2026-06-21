@@ -19,7 +19,7 @@
   let scratched = new Set(ls(SCR_KEY, []));
   const saveScratch = () => save(SCR_KEY, [...scratched]);
 
-  const fmtDur = (ms) => { let s = Math.max(0, Math.floor(ms / 1000)); const d = Math.floor(s / 86400); s -= d * 86400; const h = Math.floor(s / 3600); s -= h * 3600; const m = Math.floor(s / 60); s -= m * 60; const p = (n) => String(n).padStart(2, '0'); return (d > 0 ? d + 'd ' : '') + p(h) + ':' + p(m) + ':' + p(s); };
+  const fmtDur = (ms) => window.AfflatusClock.fmtDur(ms);   // shared util (public/lib/clock.js); ms in milliseconds
   const isTBD = (f) => f.opus == null || /winner|runner|tbd|\?/i.test(f.home + f.away);
   const teamName = (f, side) => lang === 'zh' ? (f[side + '_zh'] || f[side]) : f[side];
 

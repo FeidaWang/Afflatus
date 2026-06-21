@@ -45,7 +45,7 @@
   const OPEN_S = 9 * 3600 + 30 * 60, CLOSE_S = 16 * 3600, PRE_S = 4 * 3600, POST_S = 20 * 3600;
   function marketStatus() { const { wd, sec } = nyNow(), wk = wd >= 1 && wd <= 5; if (wk && sec >= OPEN_S && sec < CLOSE_S) return { state: 'open', label: 'Regular Session' }; if (wk && sec >= PRE_S && sec < OPEN_S) return { state: 'pre', label: 'Pre-Market' }; if (wk && sec >= CLOSE_S && sec < POST_S) return { state: 'post', label: 'After Hours' }; return { state: 'closed', label: 'Market Closed' }; }
   function secsToNextOpen(wd, sec) { const wk = (d) => d >= 1 && d <= 5; if (wk(wd) && sec < OPEN_S) return OPEN_S - sec; let s = 86400 - sec, d = (wd + 1) % 7; for (let i = 0; i < 8; i++) { if (wk(d)) return s + OPEN_S; s += 86400; d = (d + 1) % 7; } return s + OPEN_S; }
-  function fmtDur(t) { let s = Math.max(0, Math.floor(t)); const d = Math.floor(s / 86400); s -= d * 86400; const h = Math.floor(s / 3600); s -= h * 3600; const m = Math.floor(s / 60); s -= m * 60; const p = (n) => String(n).padStart(2, '0'); return (d > 0 ? d + 'd ' : '') + p(h) + ':' + p(m) + ':' + p(s); }
+  const fmtDur = (t) => window.AfflatusClock.fmtDurSec(t);   // shared util (public/lib/clock.js); t is in seconds
 
   // ---- sentiment ----------------------------------------------
   const POS = ['rally','surge','soar','gain','beat','record','jump','rise','rises','up','growth','strong','bullish','upgrade','breakthrough','demand','boom','expansion','outperform','climb','optimism','deal','agreement','peace'];
