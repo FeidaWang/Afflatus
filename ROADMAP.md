@@ -169,7 +169,9 @@ combatView (#pilotFeed) / 首页 event-layer
 
 **待做 · 机库跑道起飞感（hangar）**：现状画成"正面仓库横栏"是错的。改为**跑道纵深透视**——地板向中心灭点收敛的跑道线 + 两侧机库墙向远处斜收 + 跑道边缘指示灯 + 远端舱门/星空。复用首页 `drawPilotDeck`（它本就画了起飞跑道）作为 launch/hangar 背景，HUD 叠加其上 + `REQUEST TAKEOFF` 键位 + 左下 THR/SHLD/COOL 功率三角。
 
-**待做 · 戏剧化武器镜头序列（combat view 内模拟，且与网页实际战斗时空对齐）**
+**✅ 已完成（第一版）· 戏剧化武器镜头序列** — `src/scene/combatCine.js`：`drawMissileCine`（自动锁定→发射→寻的追踪→命中白闪/冲击波/碎片）+ `drawNukeCine`（夜鹰激光指示并从两侧撤离→母舰 VLS 舱门开→核弹升起点火→末段跟踪→引爆）。已接进 `drawPilotFeed` 的 missile / nukeAuth 分支，由 `elapsed`（真实武器窗口）驱动、彗星方位用 `halley.curX/Y` 对齐；`?combatview=legacy` 回旧相机。**后续精修**：与 combatRuntime 真实命中时刻做帧级对齐、镜头切换加过场、核弹改用真 Condor/夜鹰模型离屏渲染。原始规格如下——
+
+**原始规格 · 戏剧化武器镜头序列（combat view 内模拟，且与网页实际战斗时空对齐）**
 > 关键约束：combat view 里的镜头必须与 `event-layer` 上真实发生的拦截（`combatRuntime` 驱动）在**时间与空间角度**一致——即镜头里导弹/核弹命中彗星的时刻、方位，要和页面上彗星被摧毁的时刻、屏幕位置对得上。实现时从 `combatRuntime` 取 halley 位置/相位/命中时间作为镜头时间线的锚点。
 - **导弹（missile）模式**：进入后准星**自动锁定**彗星（锁定框由大收紧到贴合 + "LOCK"提示 + 蜂鸣），随后**发射导弹**，镜头跟随导弹尾焰**追踪彗星**（导弹拖尾 + 轻微寻的摆动 + 彗星在框内放大），命中瞬间白闪 + 碎裂；全程与页面上该武器的真实命中时刻同步。做出精美、符合现实弹道的运镜。
 - **核弹（nuke）模式 — 多镜头序列**：
