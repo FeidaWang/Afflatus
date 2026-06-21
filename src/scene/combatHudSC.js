@@ -49,15 +49,14 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   ctx.save();
   ctx.translate(hx + hw * 0.5, hy + hh * 0.5);
   ctx.strokeStyle = A; ctx.globalAlpha = 0.9; ctx.lineWidth = Math.max(1, u * 0.0028);
-  // top-view wireframe of the NIGHTHAWK fighter (site asset): slim hull, two
-  // forward laser rods, short Su-47 forward-swept wings, twin rear turbines (nose = -y)
-  const Ld = hh * 0.42, Wd = hw * 0.1;
-  ctx.beginPath(); ctx.moveTo(0, -Ld); ctx.lineTo(Wd, -Ld * 0.3); ctx.lineTo(Wd * 0.8, Ld * 0.7); ctx.lineTo(-Wd * 0.8, Ld * 0.7); ctx.lineTo(-Wd, -Ld * 0.3); ctx.closePath(); ctx.stroke();
-  for (const r of [-Wd * 0.45, Wd * 0.45]) { ctx.beginPath(); ctx.moveTo(r, -Ld * 0.55); ctx.lineTo(r, -Ld * 1.15); ctx.stroke(); } // forward laser rods
-  for (const sgx of [-1, 1]) {
-    ctx.beginPath(); ctx.moveTo(sgx * Wd, Ld * 0.15); ctx.lineTo(sgx * Wd * 4.0, -Ld * 0.25); ctx.lineTo(sgx * Wd * 3.6, Ld * 0.05); ctx.lineTo(sgx * Wd, Ld * 0.4); ctx.closePath(); ctx.stroke(); // forward-swept wing
-    ctx.strokeRect(sgx * Wd * 0.55 - Wd * 0.16, Ld * 0.68, Wd * 0.32, Ld * 0.32); // turbine pod
-  }
+  // top-view wireframe of an F-14 TOMCAT: long nose + pancake fuselage, twin
+  // engine nacelles, swept wings, twin tails + stabilators (nose = -y)
+  const Ld = hh * 0.42, Wd = hw * 0.075;
+  ctx.beginPath(); ctx.moveTo(0, -Ld); ctx.lineTo(Wd * 0.8, -Ld * 0.4); ctx.lineTo(Wd, Ld * 0.3); ctx.lineTo(-Wd, Ld * 0.3); ctx.lineTo(-Wd * 0.8, -Ld * 0.4); ctx.closePath(); ctx.stroke();
+  for (const sgx of [-1, 1]) ctx.strokeRect(sgx * Wd * 1.0 - Wd * 0.42, Ld * 0.05, Wd * 0.84, Ld * 0.85); // nacelles
+  for (const sgx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sgx * Wd, -Ld * 0.05); ctx.lineTo(sgx * Wd * 5.2, Ld * 0.5); ctx.lineTo(sgx * Wd * 4.8, Ld * 0.62); ctx.lineTo(sgx * Wd, Ld * 0.18); ctx.closePath(); ctx.stroke(); } // swept wings
+  for (const sgx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sgx * Wd * 1.1, Ld * 0.5); ctx.lineTo(sgx * Wd * 1.7, Ld * 0.92); ctx.stroke(); } // twin tails
+  for (const sgx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sgx * Wd * 0.9, Ld * 0.8); ctx.lineTo(sgx * Wd * 3.0, Ld * 1.02); ctx.lineTo(sgx * Wd * 2.6, Ld * 1.06); ctx.closePath(); ctx.stroke(); } // stabilators
   ctx.restore();
   txt(ctx, S.shieldF, hx + hw * 0.32, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);
   txt(ctx, S.shieldR, hx + hw * 0.68, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);

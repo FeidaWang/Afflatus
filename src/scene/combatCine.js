@@ -62,6 +62,28 @@ function targetXY(halley, w, h) {
 function label(ctx, s, x, y, size, col, align) {
   ctx.font = `${size}px 'JetBrains Mono',monospace`; ctx.fillStyle = col; ctx.textAlign = align || 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s, x, y);
 }
+// realistic missile body drawn nose-up (-y) at origin: white body, tan ogive
+// nose, mid + tail fins, optional rocket flame (refs: AGM/SiAW + NSM launch)
+function missileBody(ctx, u, s, flameLen) {
+  const L = u * 0.055 * s, W = u * 0.011 * s;
+  ctx.fillStyle = '#d7dee6';
+  ctx.beginPath(); ctx.moveTo(0, -L); ctx.lineTo(W, -L * 0.55); ctx.lineTo(W, L * 0.5); ctx.lineTo(-W, L * 0.5); ctx.lineTo(-W, -L * 0.55); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#9a8455'; // tan nose cone
+  ctx.beginPath(); ctx.moveTo(0, -L); ctx.lineTo(W, -L * 0.55); ctx.lineTo(-W, -L * 0.55); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(40,46,54,.7)'; ctx.fillRect(-W, -L * 0.1, W * 2, Math.max(1, L * 0.02)); // seam
+  ctx.fillStyle = '#aeb8c4';
+  for (const sx of [-1, 1]) {
+    ctx.beginPath(); ctx.moveTo(sx * W, 0); ctx.lineTo(sx * W * 2.6, L * 0.22); ctx.lineTo(sx * W, L * 0.28); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(sx * W, L * 0.4); ctx.lineTo(sx * W * 2.2, L * 0.56); ctx.lineTo(sx * W, L * 0.5); ctx.closePath(); ctx.fill();
+  }
+  if (flameLen > 0) {
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    const fl = ctx.createLinearGradient(0, L * 0.5, 0, L * 0.5 + flameLen);
+    fl.addColorStop(0, 'rgba(255,245,210,.95)'); fl.addColorStop(0.4, 'rgba(255,150,50,.8)'); fl.addColorStop(1, 'rgba(255,80,30,0)');
+    ctx.fillStyle = fl; ctx.beginPath(); ctx.moveTo(-W * 0.95, L * 0.5); ctx.lineTo(0, L * 0.5 + flameLen); ctx.lineTo(W * 0.95, L * 0.5); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+}
 
 /* ── MISSILE ────────────────────────────────────────────────────────────── */
 export function drawMissileCine(ctx, w, h, now, e, opts = {}) {
@@ -95,11 +117,8 @@ export function drawMissileCine(ctx, w, h, now, e, opts = {}) {
     ctx.save(); ctx.globalCompositeOperation = 'lighter';
     for (let i = 1; i <= 10; i++) { const tp = p - i * 0.03; if (tp < 0) break; const tx = lerp(sx0, t.x, tp * tp * (3 - 2 * tp)), ty = lerp(sy0, t.y, tp); ctx.fillStyle = `rgba(255,180,120,${0.4 * (1 - i / 10)})`; ctx.beginPath(); ctx.arc(tx, ty, u * 0.012 * (1 - i / 12), 0, TAU); ctx.fill(); }
     ctx.restore();
-    // missile body
-    ctx.save(); ctx.translate(mx, my); ctx.rotate(ang + Math.PI / 2);
-    ctx.fillStyle = '#cfd8e2'; ctx.beginPath(); ctx.moveTo(0, -u * 0.03); ctx.lineTo(u * 0.01, u * 0.02); ctx.lineTo(-u * 0.01, u * 0.02); ctx.closePath(); ctx.fill();
-    ctx.globalCompositeOperation = 'lighter'; const fl = ctx.createLinearGradient(0, u * 0.02, 0, u * 0.07); fl.addColorStop(0, 'rgba(255,240,200,.9)'); fl.addColorStop(1, 'rgba(255,120,40,0)'); ctx.fillStyle = fl; ctx.beginPath(); ctx.moveTo(-u * 0.008, u * 0.02); ctx.lineTo(0, u * 0.075); ctx.lineTo(u * 0.008, u * 0.02); ctx.closePath(); ctx.fill();
-    ctx.restore();
+    // missile body (AGM/SiAW-style — image 2)
+    ctx.save(); ctx.translate(mx, my); ctx.rotate(ang + Math.PI / 2); missileBody(ctx, u, 1.0, u * 0.05); ctx.restore();
     label(ctx, `MSL · ${Math.round((1 - p) * 1800)} m`, w * 0.5, h - u * 0.05, Math.max(7, u * 0.026), 'rgba(154,229,255,.8)');
   }
 
@@ -154,9 +173,7 @@ export function drawNukeCine(ctx, w, h, now, e, opts = {}) {
     // nuke rises after doors open (p>0.4)
     if (p > 0.38) {
       const rp = clamp((p - 0.38) / 0.62, 0, 1), ny = lerp(bayY + bayH * 0.6, bayY - h * 0.18, rp);
-      ctx.fillStyle = '#d7dee6'; ctx.beginPath(); ctx.moveTo(cx, ny - u * 0.05); ctx.lineTo(cx + u * 0.02, ny + u * 0.03); ctx.lineTo(cx - u * 0.02, ny + u * 0.03); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = '#b03030'; ctx.fillRect(cx - u * 0.02, ny + u * 0.005, u * 0.04, u * 0.012);
-      if (rp > 0.5) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; const fl = ctx.createLinearGradient(0, ny + u * 0.03, 0, ny + u * 0.12); fl.addColorStop(0, 'rgba(255,240,200,.95)'); fl.addColorStop(1, 'rgba(255,120,40,0)'); ctx.fillStyle = fl; ctx.beginPath(); ctx.moveTo(cx - u * 0.015, ny + u * 0.03); ctx.lineTo(cx, ny + u * 0.13); ctx.lineTo(cx + u * 0.015, ny + u * 0.03); ctx.closePath(); ctx.fill(); ctx.restore(); }
+      ctx.save(); ctx.translate(cx, ny); missileBody(ctx, u, 1.4, rp > 0.5 ? u * 0.09 : 0); ctx.restore();
     }
     label(ctx, lang === 'zh' ? '母舰 · 垂直发射系统' : 'CARRIER · VLS LAUNCH', cx, u * 0.06, Math.max(7, u * 0.026), 'rgba(255,176,32,.85)');
   } else if (e < 0.9) {
@@ -170,7 +187,7 @@ export function drawNukeCine(ctx, w, h, now, e, opts = {}) {
     ctx.save(); ctx.globalCompositeOperation = 'lighter';
     for (let i = 1; i <= 14; i++) { const a = 1 - i / 14; ctx.fillStyle = `rgba(255,${190 - i * 8},120,${0.5 * a})`; ctx.beginPath(); ctx.arc(nx, ny + i * u * 0.03, u * 0.014 * a, 0, TAU); ctx.fill(); }
     ctx.restore();
-    ctx.save(); ctx.translate(nx, ny); ctx.fillStyle = '#e2e8ee'; ctx.beginPath(); ctx.moveTo(0, -u * 0.05); ctx.lineTo(u * 0.022, u * 0.03); ctx.lineTo(-u * 0.022, u * 0.03); ctx.closePath(); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.translate(nx, ny); missileBody(ctx, u, 1.9, u * 0.16); ctx.restore(); // big booster flame (image 3)
     label(ctx, `T-${((1 - p) * 3).toFixed(1)}`, cx, h - u * 0.05, Math.max(9, u * 0.036), 'rgba(255,90,90,.9)');
     label(ctx, lang === 'zh' ? '核弹 · 末段跟踪' : 'NUCLEAR · TERMINAL TRACK', cx, u * 0.06, Math.max(7, u * 0.026), 'rgba(255,176,32,.85)');
   } else {
