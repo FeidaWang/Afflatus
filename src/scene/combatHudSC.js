@@ -25,7 +25,7 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
     mode: 'GUN', scm: 'SCM', speed: 0, throttle: 0.0, ab: 1.0, hFuel: 99, qFuel: 100,
     alt: 3, vsi: 0, atmo: null, g: 0.0, gMax: 1.0, heading: 0, decoy: 48, noise: 5,
     shieldF: 75, shieldR: 75, status: 'ONLINE', warn: [], gimbal: 'P F', group: 'GUNS (ALL)',
-    accent: 'cy'
+    accent: 'cy', ladder: false
   }, state || {});
   const A = COL[S.accent] || COL.cy;           // theme accent (cy / am / rd)
   const cx = w * 0.5, cy = h * 0.5;
@@ -47,12 +47,18 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   ctx.strokeRect(hx, hy, hw, hh);
   // top-view ship wireframe (arrow body + 2 nacelles) in the box
   ctx.save();
-  ctx.translate(hx + hw * 0.5, hy + hh * 0.52);
-  ctx.strokeStyle = A; ctx.globalAlpha = 0.85; ctx.lineWidth = Math.max(1, u * 0.003);
-  const sw = hw * 0.32, sl = hh * 0.7;
-  ctx.beginPath();
-  ctx.moveTo(0, -sl); ctx.lineTo(sw * 0.5, -sl * 0.1); ctx.lineTo(sw * 0.4, sl * 0.7); ctx.lineTo(-sw * 0.4, sl * 0.7); ctx.lineTo(-sw * 0.5, -sl * 0.1); ctx.closePath(); ctx.stroke();
-  for (const sgx of [-1, 1]) { ctx.strokeRect(sgx * sw * 0.7 - sw * 0.12, sl * 0.1, sw * 0.24, sl * 0.5); ctx.beginPath(); ctx.moveTo(sgx * sw * 0.45, -sl * 0.05); ctx.lineTo(sgx * sw * 0.7, sl * 0.1); ctx.stroke(); }
+  ctx.translate(hx + hw * 0.5, hy + hh * 0.5);
+  ctx.strokeStyle = A; ctx.globalAlpha = 0.9; ctx.lineWidth = Math.max(1, u * 0.0028);
+  // top-view wireframe of the Condor / Enforcer (voyage-log ship): long hull,
+  // spine, broad swept wings, rear engine pods, twin bow guns (bow = -y)
+  const Ld = hh * 0.4, Wd = hw * 0.12;
+  ctx.beginPath(); ctx.moveTo(0, -Ld); ctx.lineTo(Wd, -Ld * 0.5); ctx.lineTo(Wd, Ld * 0.72); ctx.lineTo(-Wd, Ld * 0.72); ctx.lineTo(-Wd, -Ld * 0.5); ctx.closePath(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, -Ld * 0.45); ctx.lineTo(0, Ld * 0.6); ctx.stroke();
+  for (const sgx of [-1, 1]) {
+    ctx.beginPath(); ctx.moveTo(sgx * Wd, -Ld * 0.05); ctx.lineTo(sgx * Wd * 4.2, Ld * 0.28); ctx.lineTo(sgx * Wd * 3.7, Ld * 0.5); ctx.lineTo(sgx * Wd, Ld * 0.42); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sgx * Wd * 0.45, -Ld * 0.5); ctx.lineTo(sgx * Wd * 0.45, -Ld * 1.05); ctx.stroke(); // bow gun
+    ctx.strokeRect(sgx * Wd * 0.55 - Wd * 0.18, Ld * 0.62, Wd * 0.36, Ld * 0.3); // engine pod
+  }
   ctx.restore();
   txt(ctx, S.shieldF, hx + hw * 0.32, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);
   txt(ctx, S.shieldR, hx + hw * 0.68, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);
@@ -102,19 +108,20 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   // ── left column: ESP/CPLD, gimbal cross, SCM/GUN, speed, fuel ───────────
   const lx = w * 0.27;
   bar(lx, Math.max(0.04, Math.min(1, S.speed / Math.max(1, (S.scm === 'SCM' ? 220 : 1200)))));
-  const ex = w * 0.2;
+  const ex = w * 0.15;
   ctx.strokeStyle = A;
   ['ESP', 'CPLD'].forEach((s, i) => { const by = h * 0.49 + i * fs * 1.8; ctx.strokeRect(ex - fs * 1.6, by - fs * 0.7, fs * 3.2, fs * 1.4); txt(ctx, s, ex, by, fs, A, 'center', 600); });
   // gimbal cross [+]
-  const gx = w * 0.245, gy = h * 0.49;
+  const gx = w * 0.23, gy = h * 0.49;
   ctx.strokeStyle = COL.rd; ctx.beginPath(); ctx.moveTo(gx - fs, gy); ctx.lineTo(gx + fs, gy); ctx.moveTo(gx, gy - fs); ctx.lineTo(gx, gy + fs); ctx.stroke();
   ctx.fillStyle = 'rgba(255,92,102,.85)'; ctx.fillRect(gx + fs * 1.1, gy - fs * 0.45, fs * 0.9, fs * 0.9); txt(ctx, '+', gx + fs * 1.55, gy, fs, '#fff', 'center', 700);
-  txt(ctx, S.scm, w * 0.2, h * 0.36, fs * 1.05, A, 'left', 700);
-  txt(ctx, S.mode, w * 0.2, h * 0.36 + fs * 1.5, fs * 1.05, A, 'left', 700);
-  txt(ctx, Math.round(S.speed), lx, h * 0.72, fs * 2.0, '#eaf6ff', 'center', 700);
-  txt(ctx, 'm/s', lx, h * 0.72 + fs * 1.6, fs, COL.dim, 'center');
-  txt(ctx, S.hFuel + '%', w * 0.17, h * 0.7, fs, '#eaf6ff', 'left', 600); txt(ctx, 'H-FUEL', w * 0.17 + fs * 2.6, h * 0.7, fs, A, 'left');
-  txt(ctx, S.qFuel + '%', w * 0.17, h * 0.7 + fs * 1.4, fs, '#eaf6ff', 'left', 600); txt(ctx, 'Q-FUEL', w * 0.17 + fs * 2.6, h * 0.7 + fs * 1.4, fs, A, 'left');
+  txt(ctx, S.scm, w * 0.18, h * 0.30, fs * 1.05, A, 'left', 700);
+  txt(ctx, S.mode, w * 0.18, h * 0.30 + fs * 1.4, fs * 1.05, A, 'left', 700);
+  txt(ctx, Math.round(S.speed), lx, h * 0.74, fs * 2.0, '#eaf6ff', 'center', 700);
+  txt(ctx, 'm/s', lx, h * 0.74 + fs * 1.6, fs, COL.dim, 'center');
+  // fuel — bottom-left corner, clear of the speed readout
+  txt(ctx, S.hFuel + '%', m, h * 0.86, fs, '#eaf6ff', 'left', 600); txt(ctx, 'H-FUEL', m + fs * 2.9, h * 0.86, fs, A, 'left');
+  txt(ctx, S.qFuel + '%', m, h * 0.86 + fs * 1.5, fs, '#eaf6ff', 'left', 600); txt(ctx, 'Q-FUEL', m + fs * 2.9, h * 0.86 + fs * 1.5, fs, A, 'left');
 
   // ── right column: AB bar, G-meter node, decoy/noise, alt/vsi ────────────
   const rx = w * 0.73;
@@ -130,15 +137,17 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   txt(ctx, S.gMax.toFixed(1), w * 0.9, ngy + fs * 1.1, fs, COL.dim, 'right');
   txt(ctx, 'DECOY', w * 0.78, h * 0.31, fs, A); txt(ctx, S.decoy, w * 0.86, h * 0.31, fs, '#eaf6ff', 'left', 600);
   txt(ctx, 'NOISE', w * 0.78, h * 0.31 + fs * 1.4, fs, A); txt(ctx, S.noise, w * 0.86, h * 0.31 + fs * 1.4, fs, '#eaf6ff', 'left', 600);
-  txt(ctx, 'R-ALT', w * 0.78, h * 0.69, fs, A); txt(ctx, S.alt + (S.atmo != null ? 'm' : 'm'), w * 0.9, h * 0.69, fs, '#eaf6ff', 'right', 600);
-  txt(ctx, 'VSI', w * 0.78, h * 0.69 + fs * 1.4, fs, A); txt(ctx, S.vsi + 'm/s', w * 0.9, h * 0.69 + fs * 1.4, fs, '#eaf6ff', 'right', 600);
-  if (S.atmo != null) { txt(ctx, 'ATMO', w * 0.78, h * 0.69 + fs * 2.8, fs, A); txt(ctx, S.atmo, w * 0.9, h * 0.69 + fs * 2.8, fs, '#eaf6ff', 'right', 600); }
+  txt(ctx, 'R-ALT', w * 0.79, h * 0.80, fs, A); txt(ctx, S.alt + 'm', w * 0.96, h * 0.80, fs, '#eaf6ff', 'right', 600);
+  txt(ctx, 'VSI', w * 0.79, h * 0.80 + fs * 1.5, fs, A); txt(ctx, S.vsi + 'm/s', w * 0.96, h * 0.80 + fs * 1.5, fs, '#eaf6ff', 'right', 600);
+  if (S.atmo != null) { txt(ctx, 'ATMO', w * 0.79, h * 0.80 + fs * 3.0, fs, A); txt(ctx, S.atmo, w * 0.96, h * 0.80 + fs * 3.0, fs, '#eaf6ff', 'right', 600); }
 
-  // ── centre: pitch ladder brackets + boresight reticle ───────────────────
-  ctx.strokeStyle = COL.cyD;
-  for (const sgy of [-1, 1]) for (let i = 1; i <= 2; i++) {
-    const ly = cy + sgy * i * h * 0.1;
-    for (const sgx of [-1, 1]) { const bxp = cx + sgx * w * 0.13; ctx.beginPath(); ctx.moveTo(bxp - sgx * fs * 1.4, ly); ctx.lineTo(bxp, ly); ctx.lineTo(bxp, ly - fs * 0.7); ctx.stroke(); txt(ctx, -35 - (i - 1) * 5, bxp - sgx * fs * 2.2, ly, fs * 0.85, COL.dim, sgx < 0 ? 'right' : 'left'); }
+  // ── centre: pitch ladder (atmo/hangar only) + boresight reticle ─────────
+  if (S.ladder) {
+    ctx.strokeStyle = COL.cyD;
+    for (const sgy of [-1, 1]) for (let i = 1; i <= 2; i++) {
+      const ly = cy + sgy * i * h * 0.1;
+      for (const sgx of [-1, 1]) { const bxp = cx + sgx * w * 0.13; ctx.beginPath(); ctx.moveTo(bxp - sgx * fs * 1.4, ly); ctx.lineTo(bxp, ly); ctx.lineTo(bxp, ly - fs * 0.7); ctx.stroke(); txt(ctx, -35 - (i - 1) * 5, bxp - sgx * fs * 2.2, ly, fs * 0.85, COL.dim, sgx < 0 ? 'right' : 'left'); }
+    }
   }
   // side arcs ")("
   ctx.strokeStyle = A;
