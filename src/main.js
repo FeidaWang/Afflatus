@@ -18,6 +18,7 @@ import { createBackgroundScene } from './scene/backgroundScene.js';
 import { createSpriteCraft } from './scene/spriteCraft.js';
 import { createCameraDirector } from './scene/cameraDirector.js';
 import { createCapitalFlyby } from './scene/capitalFlyby.js';
+import { drawCombatHudSC } from './scene/combatHudSC.js';
 import { createBattleFeed } from './ui/battleFeed.js';
 import {
   HMD,
@@ -99,6 +100,24 @@ function getTopdownCV(){
       .catch(()=>{ topdownCV=null; });
   }
   return topdownCV;
+}
+
+// Star-Citizen-style combat-view HUD (default); ?combatview=legacy keeps the old one.
+function combatViewLegacy(){ try{ return /[?&]combatview=legacy\b/.test(location.search); }catch(e){ return false; } }
+function combatHudState(mode){
+  const cls=document.body.classList; const warn=[]; let accent='cy';
+  if(cls.contains('nuke-alert')){ warn.push(currentLang==='zh'?'警报：核打击在途':'ALERT: NUCLEAR STRIKE INBOUND'); accent='rd'; }
+  else if(cls.contains('emp-effect')){ warn.push(currentLang==='zh'?'警告：EMP · 系统降级':'WARNING: EMP — SYSTEMS DEGRADED'); accent='am'; }
+  const wp=(window.__warpPower||41)/100;
+  return {
+    scm:(mode==='launch'||mode==='landing')?'NAV':'SCM', mode:'GUN',
+    speed:Math.round(60+wp*180+warpIntensity*120), ab:clamp(0.4+wp*0.6,0,1),
+    hFuel:99, qFuel:100, alt:0, vsi:0, g:(window.__gLoad||1.2), gMax:8.0,
+    heading:Math.round((performance.now()/80)%360), decoy:48, noise:5,
+    shieldF:cls.contains('nuke-alert')?0:75, shieldR:cls.contains('nuke-alert')?0:75,
+    status: mode==='launch'?(currentLang==='zh'?'起飞授权':'TAKEOFF'):(mode==='landing'?(currentLang==='zh'?'进近':'APPROACH'):'ONLINE'),
+    warn, accent, ladder:false
+  };
 }
 
 function HC(key){return getHudCopy(key,currentLang);}
@@ -3735,8 +3754,8 @@ function drawPilotFeed(now){
       if(j) ctx.translate(rand(-j,j),rand(-j,j));
       ctx.drawImage(topdownCanvas,0,0,w,h);
       ctx.restore();
-      drawCockpitFrame(ctx,w,h,now,false);
-      drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat');
+      if(combatViewLegacy()){ drawCockpitFrame(ctx,w,h,now,false); drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat'); }
+      else { drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
       return;
     }
   }
@@ -3796,9 +3815,13 @@ function drawPilotFeed(now){
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
       }
     }else{
-      // combat / standby: cockpit POV framing around the space scene
-      drawCockpitFrame(ctx,w,h,now,false);
-      drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
+      // combat / standby: SC-style HUD over the space scene (legacy via ?combatview=legacy)
+      if(combatViewLegacy()){
+        drawCockpitFrame(ctx,w,h,now,false);
+        drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
+      }else{
+        drawCombatHudSC(ctx,w,h,now,combatHudState(mode));
+      }
     }
   }
   if(mode==='mosaic'){
