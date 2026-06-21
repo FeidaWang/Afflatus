@@ -19,6 +19,7 @@ import { createSpriteCraft } from './scene/spriteCraft.js';
 import { createCameraDirector } from './scene/cameraDirector.js';
 import { createCapitalFlyby } from './scene/capitalFlyby.js';
 import { drawCombatHudSC } from './scene/combatHudSC.js';
+import { drawMissileCine, drawNukeCine } from './scene/combatCine.js';
 import { createBattleFeed } from './ui/battleFeed.js';
 import {
   HMD,
@@ -3770,11 +3771,13 @@ function drawPilotFeed(now){
   );
   ctx.save();ctx.translate(rand(-shake,shake),rand(-shake,shake));
   if(mode==='missile' && pilotView.weapon){
-    drawPilotMissilePOV(ctx,w,h,now,pilotView.weapon);
+    if(combatViewLegacy()) drawPilotMissilePOV(ctx,w,h,now,pilotView.weapon);
+    else drawMissileCine(ctx,w,h,now,elapsed,{lang:currentLang,halley});
   }else if(mode==='ciws'||mode==='offline'){
     drawCiwsCamera(ctx,w,h,now,mode,elapsed);
   }else if(mode==='nukeAuth'){
-    drawNukeAuthCamera(ctx,w,h,now,elapsed);
+    if(combatViewLegacy()) drawNukeAuthCamera(ctx,w,h,now,elapsed);
+    else drawNukeCine(ctx,w,h,now,elapsed,{lang:currentLang,halley});
   }else if(mode==='nemp'){
     drawNempIncomingCamera(ctx,w,h,now,elapsed);
   }else if(mode==='mainGun'){
