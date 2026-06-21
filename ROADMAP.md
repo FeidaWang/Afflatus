@@ -143,6 +143,30 @@ combatView (#pilotFeed) / 首页 event-layer
 
 ---
 
+## 4b. Combat View HUD 重做（Star Citizen 风格）/ Combat-view HUD redesign ★
+
+> 用户对 combat view 现有 HUD 不满，要求按 SC 飞行 HUD 截图重做（机库视角 + 战斗视角），并融入截图 3–5 的优点。**这是 UI/2D 绘制，不是 3D 模型。**
+
+**已完成（本轮）**：`src/scene/combatHudSC.js` — `drawCombatHudSC(ctx,w,h,now,state)` 纯 canvas 绘制，已按截图实现：
+- 左上**战机全息框** + GIMBAL/GROUP/GUNS(ALL) + 两个护盾数值；
+- 顶部 **ONLINE 绿色状态条** + **航向带**（刻度+读数+游标）；
+- 左右**竖直油门条**（左 SCM 速度 / 右 AB），绿/红分段 + 滑块 + 端帽；
+- **ESP/CPLD** 方块 + 红色云台准星 [+]；**H-FUEL/Q-FUEL %**；
+- 右侧 **G 表节点图**（十字节点）+ G 值；**DECOY/NOISE**；**R-ALT/VSI/ATMO**；
+- 中央**俯仰梯**（-35/-40/-45 括号）+ 侧弧 ")(" + 准星；
+- **告警**（琥珀/红，如 MAJOR TORQUE IMBALANCE / SHIELDS DOWN）；
+- 主题色 cyan，受损切 amber/red（`state.accent`）。
+- 预览三态：hangar（速度0、无 ONLINE）/ cruise（1072 m/s、ONLINE、QT）/ combat（受损、橙色、告警）。
+
+**下次要做（接线 + 细化）**：
+1. **接入 `drawPilotFeed`（main.js）**：在 combat/standby（或全部相位）调用 `drawCombatHudSC(ctx,w,h,now,state)` 取代/叠加现有 HMD。先用 `?combatview=topdown` 同款 opt-in 开关灰度上线，2D 兜底。
+2. **数据绑定 `state`**：speed/throttle/ab←warpPower、heading←朝向、g←`window.__gLoad`、alt/vsi←飞行相位、shieldF/R←护盾、warn←`nuke-alert`/`emp-effect`/`offline`、status←launch=`REQUEST TAKEOFF`/cruise=`ONLINE`/combat。scm 在 launch/landing 显 `NAV/QT`。
+3. **三种环境皮肤**：机库（黄黑斜纹墙 + REQUEST TAKEOFF 键位 + 左下 THR/SHLD/COOL 功率三角 + GUNNERY/HUD%）；太空（深空 + ONLINE）；大气（地平线 + COLLISION 告警 + ATMO 读数）。截图1=机库、2=太空、4=大气。
+4. **融入图 3–5 优点**：图5 的**护盾四象限数值网格**（受击区块跳数字）、右侧**任务目标面板**（COMBAT GAUNTLET / Waves / objectives，可复用为战斗状态）、左上全息随机型切换；图3/4 的**俯仰梯随姿态滚动**、地平线仪。
+5. 中英：HUD 标签多为通用英文缩写（SCM/AB/G 等保持英文，符合 SC 风格）；告警/状态可中英（跟 `currentLang`）。
+
+---
+
 ## 5. 各页设计备忘 & 未来点子 / Per-page notes & ideas
 
 - **Arena**：可加"模型 vs 你"的历史胜率曲线；真实历史接 Twelve Data 后把 W/M/6M/Y/5Y 徽标改 `REAL`。
