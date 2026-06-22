@@ -45,9 +45,12 @@ ROADMAP.md TECHNICAL.md  仅有的两份文档
 
 ## 2. 数据与接口 / Data & APIs
 
-- **Finnhub**（实时报价，免费档 ~60/min）：key 在 `public/arena.js` 顶部 `CONFIG.finnhubKey`。自适应轮询（开盘前后快、休市慢）。
-- **Twelve Data**（历史 K 线 W/M/6M/Y/5Y，免费 8/min·800/day）：key 在 `arena.js` `CONFIG.twelveKey`；按需取、按天缓存到 localStorage。`D` 为实时日内。
-- ⚠️ 两个 key 都写在前端，部署后浏览器可见。个人用可接受；若要隐藏，加一个 Serverless 代理转发，把 key 留服务端（见 ROADMAP）。
+- **Finnhub**（实时报价，免费档 ~60/min）：前端调 **`/api/quote?symbol=…`**（Vercel Serverless 代理 `api/quote.js`），key 在服务端 `FINNHUB_KEY`。自适应轮询。
+- **Twelve Data**（历史 K 线 W/M/6M/Y/5Y，免费 8/min·800/day）：前端调 **`/api/history?symbol=…&interval=…&outputsize=…`**（代理 `api/history.js`），key 在服务端 `TWELVE_KEY`；按需取、按天缓存到 localStorage。`D` 为实时日内。
+- ✅ **API key 已下沉到服务端**：`/api/*.js` 是 Vercel 根目录 Serverless 函数（与 Vite 静态构建并存，零配置自动部署），key 不再出现在前端包里。
+  - **部署必做**：Vercel → Project → Settings → Environment Variables 添加 `FINNHUB_KEY` 与 `TWELVE_KEY`（值即原来的 key），重新部署。
+  - **⚠️ 务必轮换旧 key**：旧 key 曾明文存在于前端与 git 历史，已泄露——去 Finnhub / Twelve Data 后台**重置生成新 key**，新 key 只填进 Vercel 环境变量。
+  - 本地 `npm run dev`（纯 Vite）不跑 `/api`，实时行情会 404 并**自动降级到简报快照**（`arena-news.json` 的 `prices`），属预期；线上 Vercel 才有实时。
 - **定时任务**：每个工作日美东开盘前约 1 小时（墨尔本约 22:30）跑一次，搜索当日 AI 相关新闻 + 我的个股预测，写入 `public/arena-news.json`（中英双语 + `aiPredictions`）。
 
 ### 导航闭环 / Nav cycle
