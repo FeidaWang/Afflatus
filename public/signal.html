@@ -303,7 +303,8 @@ a{color:inherit;text-decoration:none}
   var ac = null, on = false, nodes = [], timer = 0, master = null;
   function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
   function start() {
-    try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { msg.textContent = 'audio unavailable'; return; }
+    try { ac = (window.AfflatusAudio ? window.AfflatusAudio.context() : (ac || new (window.AudioContext || window.webkitAudioContext)())); } catch (e) { ac = null; }
+    if (!ac) { msg.textContent = 'audio unavailable'; return; }
     if (ac.state === 'suspended') ac.resume();
     master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination); master.gain.linearRampToValueAtTime(0.36, ac.currentTime + 1.2);
     var lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 760; lp.connect(master);
@@ -311,7 +312,7 @@ a{color:inherit;text-decoration:none}
     var lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = 0.07; lg.gain.value = 0.12; lfo.connect(lg).connect(master.gain); lfo.start(); nodes.push(lfo, lg);
     var buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate), d = buf.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     var src = ac.createBufferSource(); src.buffer = buf; src.loop = true; var bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1400; bp.Q.value = 0.6; var ng = ac.createGain(); ng.gain.value = 0.05; src.connect(bp).connect(ng).connect(master); src.start(); nodes.push(src, bp, ng);
-    timer = setInterval(function () { if (!ac) return; var o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = [196, 220, 247][Math.floor(Math.random() * 3)]; var t = ac.currentTime; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.04, t + 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + 3); o.connect(g).connect(lp); o.start(t); o.stop(t + 3.1); }, 4600);
+    timer = setInterval(function () { if (!ac) return; var o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = [196, 220, 247][Math.floor(Math.random() * 3)]; var t = ac.currentTime; if (window.AfflatusAudio) { window.AfflatusAudio.env(g, t, 0.8, 0.04, 2.2); } else { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.04, t + 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + 3); } o.connect(g).connect(lp); o.start(t); o.stop(t + 3.1); }, 4600);
     on = true; btn.textContent = '❚❚ ' + (lang() === 'zh' ? '暂停' : 'PAUSE'); btn.classList.remove('off'); btn.setAttribute('aria-pressed', 'true'); dock.classList.add('on'); msg.textContent = lang() === 'zh' ? '正在播放 · 站点反应堆低鸣' : 'now humming · site-19 reactor';
   }
   function stop() { on = false; clearInterval(timer); if (master) master.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.6); nodes.forEach(function (n) { try { n.stop && n.stop(ac.currentTime + 0.7); } catch (e) {} }); nodes = []; btn.textContent = lang() === 'zh' ? '▣ 站点环境音 — 收容低鸣' : '▣ SITE AMBIENCE — CONTAINMENT HUM'; btn.classList.add('off'); btn.setAttribute('aria-pressed', 'false'); dock.classList.remove('on'); msg.textContent = lang() === 'zh' ? '已暂停 · 点击聆听' : 'paused · tap to listen'; }
@@ -320,6 +321,7 @@ a{color:inherit;text-decoration:none}
 </script>
 <script src="/i18n.js" defer></script>
 <script src="/lib/nav.js" defer></script>
+<script src="/lib/audio.js" defer></script>
 <script src="/transition.js" defer></script>
 <script src="/page-turn.js" defer></script>
 </body>

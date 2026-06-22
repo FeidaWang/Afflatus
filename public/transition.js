@@ -12,12 +12,14 @@
   const TYPE = (path) => /arena\.html?$/.test(path) ? 'cannon' : /sectors\.html?$/.test(path) ? 'takeoff' : /signal\.html?$/.test(path) ? 'control' : /games\.html?$/.test(path) ? 'cyber' : 'warp';
   const PAL = { warp: ['#aae4ff', '#78c8ff'], cannon: ['#3dff9a', '#27e7ff'], takeoff: ['#ffd166', '#ff7a3c'], control: ['#f0b429', '#5fd08a'], cyber: ['#ff2bd6', '#00efff'] };
 
-  // ---------- audio ----------
+  // ---------- audio (shared primitives via public/lib/audio.js; inline fallbacks
+  //            keep the SFX working even if that lib is missing/late) ----------
   let ac = null, noiseBuf = null;
-  function ctx() { if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch { ac = null; } } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
-  function noise(c) { if (!noiseBuf) { const n = c.sampleRate * 1.2; noiseBuf = c.createBuffer(1, n, c.sampleRate); const d = noiseBuf.getChannelData(0); let last = 0; for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = (w * 0.6 + last * 2); } } const s = c.createBufferSource(); s.buffer = noiseBuf; return s; }
-  function env(c, g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
-  function out(c) { const m = c.createGain(); m.gain.value = RM ? 0.12 : 0.22; m.connect(c.destination); return m; }
+  const AA = () => window.AfflatusAudio;
+  function ctx() { if (AA()) return AA().context(); if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch { ac = null; } } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+  function noise(c) { if (AA()) return AA().noise(c, { seconds: 1.2, pink: true }); if (!noiseBuf) { const n = c.sampleRate * 1.2; noiseBuf = c.createBuffer(1, n, c.sampleRate); const d = noiseBuf.getChannelData(0); let last = 0; for (let i = 0; i < n; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = (w * 0.6 + last * 2); } } const s = c.createBufferSource(); s.buffer = noiseBuf; return s; }
+  function env(c, g, t, a, peak, d) { if (AA()) return AA().env(g, t, a, peak, d); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+  function out(c) { if (AA()) return AA().masterGain(c, RM ? 0.12 : 0.22); const m = c.createGain(); m.gain.value = RM ? 0.12 : 0.22; m.connect(c.destination); return m; }
   function sfx(type) {
     const c = ctx(); if (!c) return; const t = c.currentTime, M = out(c);
     if (type === 'warp') {
