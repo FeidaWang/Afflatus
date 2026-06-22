@@ -41,6 +41,9 @@ export function createTopdownCombat({ canvas }) {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   } catch (e) { return null; }
   renderer.setClearColor(0x04060a, 1);
+  // context-loss resilience (home runs many WebGL contexts; recover instead of black-screening)
+  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false);
+  renderer.domElement.addEventListener('webglcontextrestored', () => { try { renderer.render(scene, camera); } catch (e) {} }, false);
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x04060a, 0.012);
@@ -225,7 +228,7 @@ export function createTopdownCombat({ canvas }) {
 
   function resize(w, h) {
     W = Math.max(1, w); H = Math.max(1, h);
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(1.75, window.devicePixelRatio || 1); // cap for retina GPU load
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.aspect = W / H; camera.updateProjectionMatrix();
