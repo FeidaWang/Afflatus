@@ -147,6 +147,9 @@ export function initAlphardForge() {
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' }); }
   catch (e) { return null; }
   renderer.setClearColor(0x04060a, 1);
+  // context-loss resilience (home runs many WebGL contexts; recover, don't black-screen)
+  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false);
+  renderer.domElement.addEventListener('webglcontextrestored', () => { try { size(); render(performance.now()); } catch (e) {} }, false);
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x061018, 0.0016);
