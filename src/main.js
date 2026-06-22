@@ -1587,6 +1587,7 @@ function createSaturnRenderer(canvas){
     powerPreference:'high-performance'
   });
   if(!gl) return null;
+  canvas.addEventListener('webglcontextlost',(e)=>e.preventDefault(),false); // keep the canvas alive on context loss
   const vert=`
     attribute vec2 aPos;
     void main(){gl_Position=vec4(aPos,0.0,1.0);}

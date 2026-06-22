@@ -117,4 +117,31 @@ git push origin main
 
 ---
 
+## 6. 部署 / Deploy（Vercel）
+
+站点托管在 **Vercel**，监听 GitHub 仓库 `FeidaWang/Afflatus` 的 `main` 分支。
+
+**日常部署 = 推代码即可**
+```bash
+cd ~/Documents/Codex/2026-05-26/html-javascript-logo-ytd-fill-in
+git add -A && git commit -m "..." && git push origin main
+```
+推送后 Vercel 自动 `vite build`（输出 `dist/`）并部署；根目录 `api/*.js` 自动成为 Serverless 函数。状态见 vercel.com → 项目 → **Deployments**。
+
+**环境变量（API 代理必需）**
+- vercel.com → 项目 → **Settings → Environment Variables**，添加（Production/Preview/Development 全勾）：
+  - `FINNHUB_KEY` = Finnhub key
+  - `TWELVE_KEY` = Twelve Data key
+- 改完环境变量必须 **Deployments → 最近一次 → ⋯ → Redeploy** 才生效。
+- ⚠️ 旧 key 曾泄露（前端 + git 历史），务必在 Finnhub / Twelve Data 后台**重置新 key**，新 key 只填进 Vercel 环境变量。
+
+**验证**
+- 开 `https://feida.au/api/quote?symbol=NVDA` → 返回含 `"c"` 的 JSON 即代理 + 环境变量 OK；返回 `FINNHUB_KEY not configured` = 没配/没 redeploy。
+- Arena 页股票卡显示 **LIVE**（而非全 SNAPSHOT）；F12 Network 看 `/api/quote`、`/api/history` 为 200。
+- 本地 `npm run dev` 不跑 `/api`，实时会 404 并降级到简报快照（预期），以线上为准。
+
+**首次接入（备忘）**：Vercel → Add New → Project → 选仓库 Import → 框架自动识别 Vite（Build `vite build`、Output `dist` 不改）→ 填环境变量 → Deploy → Settings → Domains 绑 `feida.au`。
+
+---
+
 *This file + ROADMAP.md are the only two markdown docs in the repo, by design.*

@@ -21,6 +21,7 @@ export function createCapitalShip3D() {
   try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' }); }
   catch (e) { return null; }
   renderer.setClearColor(0x000000, 0);
+  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false); // recover, not black-screen
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1.6, 0.1, 200);
