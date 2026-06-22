@@ -20,6 +20,7 @@ export function createFighter3D() {
   try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' }); }
   catch (e) { return null; }
   renderer.setClearColor(0x000000, 0);
+  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false); // recover, not black-screen (Three re-creates resources on restore; drawn every frame)
   const RES = 320;
   renderer.setSize(RES, RES, false);
   renderer.setPixelRatio(1);

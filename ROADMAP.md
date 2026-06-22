@@ -191,19 +191,23 @@ combatView (#pilotFeed) / 首页 event-layer
 
 > 首页同时存在多个 WebGL 上下文，接近浏览器上限（Chrome ~16），有"上下文丢失 = 黑屏"风险；跃迁点 shader + 6000 粒子在弱机/手机上也吃 GPU。
 
-**上下文清单**（按需/常驻）：
-- 常驻：`#blackhole-gl`（main.js:1580 raw GL）、土星/另一效果（main.js:1750 raw GL）、`shipHologram`、`bladeHologram`、`alphardForge`（跃迁点 shader）。
-- 按需懒建：`capitalShip3D`（主炮镜头）、`fighter3D`（护航）、`topdownCombat`（combat view / `?combat=topdown`）。
+**实测上下文清单（已核对，先前高估已修正）**：
+- 常驻（2 个）：`saturnRenderer`（`#blackhole-gl`，raw GL 背景）、`alphardForge`（跃迁点 shader，离屏暂停但上下文常驻）。
+- 按需懒建：`fighter3D`（护航）、`capitalShip3D`（主炮镜头，`getShip3D`）、`topdownCombat`（combat view / `?combat=topdown`）、`shipHologram`（舰长终端登录时动态 import）。
+- **死代码（未激活，不占上下文）**：`bladeHologram.js`（无任何引用，可删）、`createShipRenderer`（`shipSide/RearRenderer = null`，从不调用，可删）。
+- 结论：最坏并发 ~6 个上下文，**远低于浏览器上限（~16），上下文数量不是问题**；真正成本是跃迁点 shader + 战斗渲染的 GPU 占用，已被离屏/隐藏暂停 + dpr 上限充分约束。
 
-**已做（本轮，安全增量）**：
-- `alphardForge` + `topdownCombat` 加 `webglcontextlost`(preventDefault) + `webglcontextrestored`(重渲染) → 上下文丢失可恢复、不黑屏。
-- `topdownCombat` 像素比上限 2 → **1.75**（`alphardForge` 已 1.5、`capitalShip3D` 已 1.75），降 retina GPU 负载。
-- 既有：主循环 `document.hidden` 暂停；`alphardForge` 离屏(IntersectionObserver)暂停；rAF 后台自动节流。
+**已做（本轮，全部活跃渲染器都加了 context-lost 韧性）**：
+- `alphardForge` + `topdownCombat`：`webglcontextlost`(preventDefault) + `webglcontextrestored`(重渲染)。
+- `fighter3D` / `capitalShip3D` / `shipHologram`（Three）：`webglcontextlost`(preventDefault)（Three 在 restore 时自动重建资源，且这些每帧重绘，无需手动重渲染）。
+- `saturnRenderer`（raw GL）：canvas `webglcontextlost`(preventDefault) 保活。
+- `topdownCombat` dpr 上限 2 → **1.75**（`alphardForge` 1.5、`capitalShip3D` 1.75）。
+- 既有：主循环 `document.hidden` 暂停、`alphardForge` 离屏(IntersectionObserver)暂停、rAF 后台节流。
 
-**待做（需真机 profiling，谨慎）**：
-- 给其余常驻渲染器（shipHologram / bladeHologram / 两处 raw GL）也加 context-lost 处理。
-- 降上下文数：把 `shipHologram` / `bladeHologram` 改为**懒建 + 不可见即 `dispose()`**，或多个全息**共用一个**离屏渲染器轮流出图。
-- 跃迁点 shader：弱机降 fbm 八度（5→3）或降分辨率；可用 `navigator.hardwareConcurrency`/帧时探测自适应。
+**剩余可选（低优先，需真机 profiling）**：
+- 删死代码 `bladeHologram.js` + `createShipRenderer`（净化）。
+- `saturnRenderer` 等 raw-GL 的**完整** context-restored 重建（目前仅 preventDefault 保活；上下文极少丢失，优先级低）。
+- 跃迁点 shader 弱机自适应：降 fbm 八度（5→3）或分辨率（`navigator.hardwareConcurrency`/帧时探测）。
 - 统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量。
 
 ---

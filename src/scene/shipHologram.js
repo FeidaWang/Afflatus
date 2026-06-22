@@ -15,6 +15,7 @@ export function createShipHologram(canvas) {
   try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true }); }
   catch (e) { return null; }
   renderer.setClearColor(0x000000, 0);
+  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false); // recover, not black-screen
   renderer.setSize(240, 300, false);
 
   const scene = new THREE.Scene();
