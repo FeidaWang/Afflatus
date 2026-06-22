@@ -11,8 +11,8 @@
   'use strict';
 
   const CONFIG = {
-    finnhubKey: 'd8nvs5pr01qvtr6lft30d8nvs5pr01qvtr6lft3g',
-    twelveKey: '0c34ecb2e84a4c0ba32834f7f6c31a8c',
+    // API keys live server-side now — see /api/quote.js + /api/history.js
+    // (Vercel serverless proxies reading FINNHUB_KEY / TWELVE_KEY env vars).
     pollMs: 13000,
     newsUrl: '/arena-news.json',
   };
@@ -103,8 +103,8 @@
   const T = (en, zh) => state.lang === 'zh' ? zh : en;
 
   // ---- providers ----------------------------------------------
-  function finnhubProvider(key) { const B = 'https://finnhub.io/api/v1/quote'; async function one(s) { const r = await fetch(`${B}?symbol=${encodeURIComponent(s)}&token=${key}`); if (!r.ok) throw 0; const q = await r.json(); if (!q || !q.c) throw 0; return { symbol: s, price: q.c, prevClose: q.pc || q.c, open: q.o || q.c, high: q.h || q.c, low: q.l || q.c, live: true }; } return { async fetchQuotes(syms) { const res = await Promise.allSettled(syms.map(one)); const out = {}; res.forEach((x, i) => { if (x.status === 'fulfilled') out[syms[i]] = x.value; }); return out; } }; }
-  const liveProvider = CONFIG.finnhubKey ? finnhubProvider(CONFIG.finnhubKey) : null;
+  function finnhubProvider() { async function one(s) { const r = await fetch(`/api/quote?symbol=${encodeURIComponent(s)}`); if (!r.ok) throw 0; const q = await r.json(); if (!q || !q.c) throw 0; return { symbol: s, price: q.c, prevClose: q.pc || q.c, open: q.o || q.c, high: q.h || q.c, low: q.l || q.c, live: true }; } return { async fetchQuotes(syms) { const res = await Promise.allSettled(syms.map(one)); const out = {}; res.forEach((x, i) => { if (x.status === 'fulfilled') out[syms[i]] = x.value; }); return out; } }; }
+  const liveProvider = finnhubProvider();   // hits /api/quote (server-side key); falls back to briefing snapshot when unavailable
 
   // Briefing snapshot (pre-market + prev close) — used when the free API can't supply a live quote.
   // No price simulation: a symbol is either LIVE (Finnhub) or a static daily SNAPSHOT from the briefing.
@@ -133,7 +133,7 @@
   function tdCacheGet(sym, tf) { try { const r = JSON.parse(localStorage.getItem(`afflatus-td:${sym}:${tf}`)); if (r && r.d === new Date().toISOString().slice(0, 10) && Array.isArray(r.s) && r.s.length > 1) return r.s; } catch {} return null; }
   function tdCacheSet(sym, tf, s) { try { localStorage.setItem(`afflatus-td:${sym}:${tf}`, JSON.stringify({ d: new Date().toISOString().slice(0, 10), s })); } catch {} }
   async function fetchTD(sym, tf) {
-    const m = TD_MAP[tf]; const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(sym)}&interval=${m.int}&outputsize=${m.n}&apikey=${CONFIG.twelveKey}`;
+    const m = TD_MAP[tf]; const url = `/api/history?symbol=${encodeURIComponent(sym)}&interval=${encodeURIComponent(m.int)}&outputsize=${m.n}`;
     const r = await fetch(url); if (!r.ok) throw 0; const j = await r.json();
     if (!j || j.status !== 'ok' || !Array.isArray(j.values)) throw 0;
     const s = j.values.map((v) => ({ t: Date.parse(v.datetime) || 0, price: +v.close })).filter((p) => isFinite(p.price) && p.price > 0).reverse();
