@@ -25,7 +25,7 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
     mode: 'GUN', scm: 'SCM', speed: 0, throttle: 0.0, ab: 1.0, hFuel: 99, qFuel: 100,
     alt: 3, vsi: 0, atmo: null, g: 0.0, gMax: 1.0, heading: 0, decoy: 48, noise: 5,
     shieldF: 75, shieldR: 75, status: 'ONLINE', warn: [], gimbal: 'P F', group: 'GUNS (ALL)',
-    accent: 'cy', ladder: false
+    accent: 'cy', ladder: false, kills: 0, lock: false
   }, state || {});
   const A = COL[S.accent] || COL.cy;           // theme accent (cy / am / rd)
   const cx = w * 0.5, cy = h * 0.5;
@@ -135,6 +135,7 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   txt(ctx, S.gMax.toFixed(1), w * 0.9, ngy + fs * 1.1, fs, COL.dim, 'right');
   txt(ctx, 'DECOY', w * 0.78, h * 0.31, fs, A); txt(ctx, S.decoy, w * 0.86, h * 0.31, fs, '#eaf6ff', 'left', 600);
   txt(ctx, 'NOISE', w * 0.78, h * 0.31 + fs * 1.4, fs, A); txt(ctx, S.noise, w * 0.86, h * 0.31 + fs * 1.4, fs, '#eaf6ff', 'left', 600);
+  txt(ctx, 'KILLS', w * 0.78, h * 0.31 + fs * 2.8, fs, A); txt(ctx, S.kills, w * 0.86, h * 0.31 + fs * 2.8, fs, COL.gr, 'left', 700);
   txt(ctx, 'R-ALT', w * 0.79, h * 0.80, fs, A); txt(ctx, S.alt + 'm', w * 0.96, h * 0.80, fs, '#eaf6ff', 'right', 600);
   txt(ctx, 'VSI', w * 0.79, h * 0.80 + fs * 1.5, fs, A); txt(ctx, S.vsi + 'm/s', w * 0.96, h * 0.80 + fs * 1.5, fs, '#eaf6ff', 'right', 600);
   if (S.atmo != null) { txt(ctx, 'ATMO', w * 0.79, h * 0.80 + fs * 3.0, fs, A); txt(ctx, S.atmo, w * 0.96, h * 0.80 + fs * 3.0, fs, '#eaf6ff', 'right', 600); }
@@ -152,9 +153,11 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   ctx.beginPath(); ctx.arc(cx, cy, w * 0.16, -Math.PI * 0.16, Math.PI * 0.16); ctx.stroke();
   ctx.beginPath(); ctx.arc(cx, cy, w * 0.16, Math.PI - Math.PI * 0.16, Math.PI + Math.PI * 0.16); ctx.stroke();
   // boresight
-  ctx.strokeStyle = A; ctx.lineWidth = Math.max(1, u * 0.003);
+  const rc = S.lock ? COL.gr : A;          // reticle turns green when a target is locked
+  ctx.strokeStyle = rc; ctx.lineWidth = Math.max(1, u * 0.003);
   ctx.beginPath(); ctx.moveTo(cx - fs, cy); ctx.lineTo(cx - fs * 0.4, cy); ctx.moveTo(cx + fs, cy); ctx.lineTo(cx + fs * 0.4, cy); ctx.moveTo(cx, cy - fs); ctx.lineTo(cx, cy - fs * 0.4); ctx.moveTo(cx, cy + fs); ctx.lineTo(cx, cy + fs * 0.4); ctx.stroke();
   ctx.strokeRect(cx - 1.5, cy - 1.5, 3, 3);
+  if (S.lock) { ctx.strokeStyle = COL.gr; for (const sx of [-1, 1]) for (const sy of [-1, 1]) { ctx.beginPath(); ctx.moveTo(cx + sx * fs * 1.6 - sx * fs * 0.5, cy + sy * fs * 1.6); ctx.lineTo(cx + sx * fs * 1.6, cy + sy * fs * 1.6); ctx.lineTo(cx + sx * fs * 1.6, cy + sy * fs * 1.6 - sy * fs * 0.5); ctx.stroke(); } }
 
   // ── warnings (amber/red) ────────────────────────────────────────────────
   (S.warn || []).forEach((wln, i) => {
