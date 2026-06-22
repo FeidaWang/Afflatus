@@ -136,6 +136,8 @@ combatView (#pilotFeed) / 首页 event-layer
 
 **分阶段 / Phases**
 1. **Phase 1 — ✅ 已完成（持续迭代美术）**：`src/scene/topdownCombat.js` 自包含俯视场景（执法者母舰/夜鹰战机/彗星/曳光/激光/等离子光炮/导弹/爆炸 + 战术网格 + 星空），并挂一个**生产可达的预览舱**：访问 `?combat=topdown` 全屏预览（gated，不影响正常首页）。已按 SG 截图做出执法者/夜鹰第一版几何与武器谱系；下一步持续逼近贴图质感。
+2b. **真实战况绑定 — 🚧 第一步已完成**：combat view 现在读真实 `halley`（彗星）/`killCount` 状态——导弹/核弹镜头的**引爆与页面上彗星真正被摧毁（`halley.destroyed`）帧级对齐**（`opts.killed` 触发引爆相位）；导弹锁定框在真正锁定目标（`halley.hover`）时立即变绿/LOCK；SC HUD 显示真实 **KILLS** 计数、准星锁定时变绿 + 收紧角标。**待续**：把 `topdownCombat` 俯视场景也由真实状态驱动（彗星位置/护航开火），以及逐武器相位过场与 combatRuntime 的 `getState()` 正式接口化。
+
 2. **Phase 2 — 🚧 进行中（已接入，opt-in）**：`topdownCombat` 已以**离屏渲染 → `drawImage` 进 `#pilotFeed`** 的方式接入 `drawPilotFeed`（main.js），覆盖主 **combat / standby** 相位；动态 `import()` 懒加载，WebGL/模块不可用时自动回退现有 2D cockpit。
    - **开关**：默认关闭，`feida.au/?combatview=topdown` 开启（写入 `localStorage['afflatus-combatview']`，持久），`?combatview=2d` 还原。确认观感 OK 后改默认即可（drawPilotFeed 里去掉 `combatViewTopdown()` 判断或默认返回 true）。
    - **下一子步（2b）**：把场景与真实战况绑定——在 `combatRuntime` 暴露 `getState()` 快照（halley 位置/速度、相位、武器、击杀），`topdownCombat` 接收并以此驱动彗星/护航/曳光，而非当前自走时间线；再逐武器相位迁移（ciws → missile → nuke → mainGun）。每步 build + 真机目检。

@@ -89,6 +89,7 @@ function missileBody(ctx, u, s, flameLen) {
 export function drawMissileCine(ctx, w, h, now, e, opts = {}) {
   const lang = opts.lang || 'en', u = Math.min(w, h);
   const t = targetXY(opts.halley, w, h);
+  if (opts.killed) e = Math.max(e, 0.86); // snap to impact the instant the real comet dies (frame-level sync)
   spaceBg(ctx, w, h, now, false);
   const alive = e < 0.9;
   const cr = u * 0.045 * (1 + e * 1.1);
@@ -97,7 +98,7 @@ export function drawMissileCine(ctx, w, h, now, e, opts = {}) {
   // lock box (closes 0→0.28), then tracks
   if (e < 0.86) {
     const lp = clamp(e / 0.28, 0, 1), box = lerp(u * 0.32, cr * 2.4, lp);
-    const locked = lp >= 1;
+    const locked = lp >= 1 || opts.locked; // snap to LOCK when the real target is being tracked
     ctx.strokeStyle = locked ? 'rgba(93,255,157,.95)' : 'rgba(255,176,32,.9)'; ctx.lineWidth = Math.max(1, u * 0.005);
     const c = box / 2, cn = box * 0.28;
     for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
@@ -138,6 +139,7 @@ export function drawMissileCine(ctx, w, h, now, e, opts = {}) {
 export function drawNukeCine(ctx, w, h, now, e, opts = {}) {
   const lang = opts.lang || 'en', u = Math.min(w, h), cx = w * 0.5;
   const t = targetXY(opts.halley, w, h);
+  if (opts.killed) e = Math.max(e, 0.9); // detonate the instant the real comet dies (frame-level sync)
 
   if (e < 0.18) {
     // SHOT 1 — escorts laser-designate, then peel off both edges
