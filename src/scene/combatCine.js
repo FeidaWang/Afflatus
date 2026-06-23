@@ -62,25 +62,66 @@ function targetXY(halley, w, h) {
 function label(ctx, s, x, y, size, col, align) {
   ctx.font = `${size}px 'JetBrains Mono',monospace`; ctx.fillStyle = col; ctx.textAlign = align || 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s, x, y);
 }
-// realistic missile body drawn nose-up (-y) at origin: white body, tan ogive
-// nose, mid + tail fins, optional rocket flame (refs: AGM/SiAW + NSM launch)
+// AIM-120 AMRAAM drawn nose-up (-y) at origin: white body, long ogive radome,
+// twin gold/tan bands, slim mid strakes, large swept cruciform tail fins, glowing
+// nozzle + optional rocket flame. (ref: AMRAAM beauty render)
 function missileBody(ctx, u, s, flameLen) {
-  const L = u * 0.055 * s, W = u * 0.011 * s;
-  ctx.fillStyle = '#d7dee6';
-  ctx.beginPath(); ctx.moveTo(0, -L); ctx.lineTo(W, -L * 0.55); ctx.lineTo(W, L * 0.5); ctx.lineTo(-W, L * 0.5); ctx.lineTo(-W, -L * 0.55); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#9a8455'; // tan nose cone
-  ctx.beginPath(); ctx.moveTo(0, -L); ctx.lineTo(W, -L * 0.55); ctx.lineTo(-W, -L * 0.55); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = 'rgba(40,46,54,.7)'; ctx.fillRect(-W, -L * 0.1, W * 2, Math.max(1, L * 0.02)); // seam
-  ctx.fillStyle = '#aeb8c4';
+  const L = u * 0.06 * s, W = u * 0.0105 * s;      // L = half-length, W = body half-width
+  const noseBase = -L * 0.46, tail = L;            // ogive runs noseTip(-L) → shoulder(noseBase)
+  // large swept rear cruciform fins (drawn first, behind the body)
+  ctx.fillStyle = '#9aa3ad';
   for (const sx of [-1, 1]) {
-    ctx.beginPath(); ctx.moveTo(sx * W, 0); ctx.lineTo(sx * W * 2.6, L * 0.22); ctx.lineTo(sx * W, L * 0.28); ctx.closePath(); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(sx * W, L * 0.4); ctx.lineTo(sx * W * 2.2, L * 0.56); ctx.lineTo(sx * W, L * 0.5); ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(sx * W, tail - L * 0.34);
+    ctx.lineTo(sx * W * 3.6, tail - L * 0.04);
+    ctx.lineTo(sx * W * 3.6, tail + L * 0.06);
+    ctx.lineTo(sx * W, tail);
+    ctx.closePath(); ctx.fill();
   }
+  // slim mid-body strakes
+  ctx.fillStyle = '#b7c0ca';
+  for (const sx of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(sx * W, -L * 0.06);
+    ctx.lineTo(sx * W * 1.9, L * 0.06);
+    ctx.lineTo(sx * W * 1.9, L * 0.34);
+    ctx.lineTo(sx * W, L * 0.3);
+    ctx.closePath(); ctx.fill();
+  }
+  // cylindrical white body with soft round shading
+  const bg = ctx.createLinearGradient(-W, 0, W, 0);
+  bg.addColorStop(0, '#aeb6bf'); bg.addColorStop(0.32, '#f3f5f7'); bg.addColorStop(0.6, '#ffffff'); bg.addColorStop(1, '#c2cad2');
+  ctx.fillStyle = bg;
+  ctx.beginPath(); ctx.moveTo(-W, noseBase); ctx.lineTo(W, noseBase); ctx.lineTo(W, tail); ctx.lineTo(-W, tail); ctx.closePath(); ctx.fill();
+  // long ogive radome (white, slightly warm tip)
+  const ng = ctx.createLinearGradient(-W, 0, W, 0);
+  ng.addColorStop(0, '#bcc4cd'); ng.addColorStop(0.5, '#ffffff'); ng.addColorStop(1, '#cdd5dd');
+  ctx.fillStyle = ng;
+  ctx.beginPath();
+  ctx.moveTo(0, -L);
+  ctx.quadraticCurveTo(W * 1.05, noseBase - L * 0.18, W, noseBase);
+  ctx.lineTo(-W, noseBase);
+  ctx.quadraticCurveTo(-W * 1.05, noseBase - L * 0.18, 0, -L);
+  ctx.closePath(); ctx.fill();
+  // tip marker band (amber) + two gold/tan body bands
+  ctx.fillStyle = '#d98a32'; ctx.fillRect(-W * 0.7, -L * 0.78, W * 1.4, Math.max(1, L * 0.03));
+  ctx.fillStyle = '#b89a52';
+  ctx.fillRect(-W, -L * 0.14, W * 2, Math.max(1, L * 0.05));
+  ctx.fillRect(-W, L * 0.42, W * 2, Math.max(1, L * 0.05));
+  // panel seams
+  ctx.fillStyle = 'rgba(70,78,88,.5)';
+  ctx.fillRect(-W, noseBase, W * 2, Math.max(1, L * 0.012));
+  ctx.fillRect(-W, L * 0.18, W * 2, Math.max(1, L * 0.012));
+  // tail nozzle — glows hot once the motor is lit
+  const lit = flameLen > 0;
+  ctx.fillStyle = lit ? '#ffcf6b' : '#3a4048';
+  ctx.beginPath(); ctx.ellipse(0, tail, W * 0.85, Math.max(1, L * 0.04), 0, 0, TAU); ctx.fill();
+  if (lit) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,180,90,.8)'; ctx.beginPath(); ctx.ellipse(0, tail, W * 0.5, Math.max(1, L * 0.025), 0, 0, TAU); ctx.fill(); ctx.restore(); }
   if (flameLen > 0) {
     ctx.save(); ctx.globalCompositeOperation = 'lighter';
-    const fl = ctx.createLinearGradient(0, L * 0.5, 0, L * 0.5 + flameLen);
+    const fl = ctx.createLinearGradient(0, tail, 0, tail + flameLen);
     fl.addColorStop(0, 'rgba(255,245,210,.95)'); fl.addColorStop(0.4, 'rgba(255,150,50,.8)'); fl.addColorStop(1, 'rgba(255,80,30,0)');
-    ctx.fillStyle = fl; ctx.beginPath(); ctx.moveTo(-W * 0.95, L * 0.5); ctx.lineTo(0, L * 0.5 + flameLen); ctx.lineTo(W * 0.95, L * 0.5); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = fl; ctx.beginPath(); ctx.moveTo(-W * 0.9, tail); ctx.lineTo(0, tail + flameLen); ctx.lineTo(W * 0.9, tail); ctx.closePath(); ctx.fill();
     ctx.restore();
   }
 }
