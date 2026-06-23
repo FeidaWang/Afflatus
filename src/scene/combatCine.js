@@ -107,20 +107,56 @@ export function drawMissileCine(ctx, w, h, now, e, opts = {}) {
     label(ctx, locked ? 'LOCK' : 'LOCKING', t.x, t.y - box * 0.62, Math.max(8, u * 0.03), locked ? 'rgba(93,255,157,.95)' : 'rgba(255,176,32,.9)');
   }
 
-  // missile flight 0.22 → 0.86 (homing arc from bottom-centre)
+  // missile 0.20 → 0.86: cold-eject from bay → ignition → accelerating homing boost
   if (e >= 0.2 && e < 0.9) {
-    const p = clamp((e - 0.2) / 0.66, 0, 1), ep = p * p * (3 - 2 * p);
-    const sx0 = w * 0.5, sy0 = h * 1.02;
-    const bend = Math.sin(p * Math.PI) * (t.x - sx0) * 0.25;
-    const mx = lerp(sx0, t.x, ep) + bend * (1 - ep), my = lerp(sy0, t.y, ep);
-    const ang = Math.atan2(t.y - my, t.x - mx);
-    // smoke trail
-    ctx.save(); ctx.globalCompositeOperation = 'lighter';
-    for (let i = 1; i <= 10; i++) { const tp = p - i * 0.03; if (tp < 0) break; const tx = lerp(sx0, t.x, tp * tp * (3 - 2 * tp)), ty = lerp(sy0, t.y, tp); ctx.fillStyle = `rgba(255,180,120,${0.4 * (1 - i / 10)})`; ctx.beginPath(); ctx.arc(tx, ty, u * 0.012 * (1 - i / 12), 0, TAU); ctx.fill(); }
-    ctx.restore();
-    // missile body (AGM/SiAW-style — image 2)
-    ctx.save(); ctx.translate(mx, my); ctx.rotate(ang + Math.PI / 2); missileBody(ctx, u, 1.0, u * 0.05); ctx.restore();
-    label(ctx, `MSL · ${Math.round((1 - p) * 1800)} m`, w * 0.5, h - u * 0.05, Math.max(7, u * 0.026), 'rgba(154,229,255,.8)');
+    const bayX = w * 0.5, bayY = h * 1.04;            // weapons bay, just off the bottom edge
+    const ejEndY = h * 0.82;                          // where the cold-ejected round hangs before light-off
+    const EJ = 0.30, IGN_END = 0.36;                  // 0.20–0.30 eject · ~0.30 ignition · then boost
+    let mx, my, ang, flame = 0, boosting = false;
+
+    if (e < EJ) {
+      // COLD EJECT — pushed clear of the bay, motor UNLIT, drifting + tumbling
+      const ejP = clamp((e - 0.2) / (EJ - 0.2), 0, 1);
+      const eo = 1 - (1 - ejP) * (1 - ejP);            // ease-out: quick off the rail, then coasting
+      mx = bayX + Math.sin(e * 36) * u * 0.006;
+      my = lerp(bayY, ejEndY, eo);
+      ang = -Math.PI / 2 + Math.sin(e * 26) * 0.18;    // nose ~up with a gentle unpowered wobble
+    } else {
+      // BOOST — motor lit, accelerating toward the target (distance ∝ p² → visibly speeding up)
+      boosting = true;
+      const bp = clamp((e - EJ) / (0.86 - EJ), 0, 1);
+      const acc = bp * bp;
+      const bend = Math.sin(bp * Math.PI) * (t.x - bayX) * 0.18;
+      mx = lerp(bayX, t.x, acc) + bend * (1 - acc);
+      my = lerp(ejEndY, t.y, acc);
+      ang = Math.atan2(t.y - my, t.x - mx);
+      flame = u * (0.015 + bp * 0.085);                // exhaust lengthens as it spools up
+      // exhaust + smoke trail (only once the motor is lit)
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      for (let i = 1; i <= 12; i++) {
+        const tp = bp - i * 0.04; if (tp < 0) break;
+        const ta = tp * tp;
+        const tx = lerp(bayX, t.x, ta), ty = lerp(ejEndY, t.y, ta);
+        const k = 1 - i / 12;
+        ctx.fillStyle = `rgba(${230 + (k * 25 | 0)},${190 + (k * 50 | 0)},${150 + (k * 80 | 0)},${0.34 * k})`;
+        ctx.beginPath(); ctx.arc(tx, ty, u * 0.016 * (0.6 + k), 0, TAU); ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // ignition flash at motor light-off
+    if (e >= EJ - 0.01 && e < IGN_END) {
+      const fp = 1 - (e - (EJ - 0.01)) / (IGN_END - (EJ - 0.01));
+      flash(ctx, mx, my + u * 0.05, u * 0.17 * fp, fp);
+    }
+
+    ctx.save(); ctx.translate(mx, my); ctx.rotate(ang + Math.PI / 2); missileBody(ctx, u, 1.0, flame); ctx.restore();
+
+    const phase = e < EJ ? (lang === 'zh' ? '弹射' : 'EJECT')
+                : e < IGN_END ? (lang === 'zh' ? '点火' : 'IGNITION')
+                : (lang === 'zh' ? '加速' : 'BOOST');
+    label(ctx, `MSL · ${phase}`, w * 0.5, h - u * 0.05, Math.max(7, u * 0.026),
+      boosting ? 'rgba(255,200,120,.9)' : 'rgba(154,229,255,.85)');
   }
 
   // impact
