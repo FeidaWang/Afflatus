@@ -55,6 +55,15 @@
 
   // ---- algorithmic fallback model -----------------------------
   function ema(v, a = 0.4) { if (!v.length) return 0; let e = v[0]; for (let i = 1; i < v.length; i++) e = a * v[i] + (1 - a) * e; return e; }
+
+  // ---- technical indicators (computed on the close series) ----
+  // Note: the feed is close-only (no real OHLC/volume), so KDJ uses a rolling
+  // window of closes as a high/low proxy, and Volume is intentionally omitted.
+  function sma(v, n) { const out = new Array(v.length).fill(null); let s = 0; for (let i = 0; i < v.length; i++) { s += v[i]; if (i >= n) s -= v[i - n]; if (i >= n - 1) out[i] = s / n; } return out; }
+  function emaSeries(v, n) { const out = new Array(v.length).fill(null); const k = 2 / (n + 1); let e = 0; for (let i = 0; i < v.length; i++) { e = i === 0 ? v[0] : v[i] * k + e * (1 - k); out[i] = e; } return out; }
+  function macdCalc(v) { const f = emaSeries(v, 12), s = emaSeries(v, 26); const dif = v.map((_, i) => f[i] - s[i]); const dea = emaSeries(dif, 9); const hist = dif.map((d, i) => d - dea[i]); return { dif, dea, hist }; }
+  function kdjCalc(v, n = 9) { const K = new Array(v.length).fill(null), D = new Array(v.length).fill(null), J = new Array(v.length).fill(null); let k = 50, d = 50; for (let i = 0; i < v.length; i++) { const w = v.slice(Math.max(0, i - n + 1), i + 1), lo = Math.min(...w), hi = Math.max(...w); const rsv = hi === lo ? 50 : ((v[i] - lo) / (hi - lo)) * 100; k = (2 / 3) * k + (1 / 3) * rsv; d = (2 / 3) * d + (1 / 3) * k; K[i] = k; D[i] = d; J[i] = 3 * k - 2 * d; } return { K, D, J }; }
+  let chartCtx = null;   // last-rendered chart geometry, used by the crosshair
   function modelPredict(history, sentiment = 0) {
     const p = (history || []).map((h) => h.price);
     if (p.length < 4) return { direction: 'UP', confidence: 0.5, reason: 'Warming up.' };
@@ -90,13 +99,16 @@
   for (const t of TICKERS) { const h = history[t.symbol], last = h[h.length - 1].price, prev = h[0].price; latest[t.symbol] = { symbol: t.symbol, price: last, prevClose: prev, open: prev, high: Math.max(...h.map((x) => x.price)), low: Math.min(...h.map((x) => x.price)), change: +(last - prev).toFixed(2), changePct: +(((last - prev) / prev) * 100).toFixed(2), tick: 0, live: false }; }
 
   const emptySide = () => ({ score: 0, wins: 0, losses: 0, streak: 0, bestStreak: 0 });
-  function loadGame() { try { const s = JSON.parse(localStorage.getItem(STORAGE_KEY)); return s ? { player: { ...emptySide(), ...s.player }, ai: { ...emptySide(), ...s.ai }, log: s.log || [] } : { player: emptySide(), ai: emptySide(), log: [] }; } catch { return { player: emptySide(), ai: emptySide(), log: [] }; } }
+  function loadGame() { try { const s = JSON.parse(localStorage.getItem(STORAGE_KEY)); return s ? { player: { ...emptySide(), ...s.player }, ai: { ...emptySide(), ...s.ai }, log: s.log || [], active: s.active || {} } : { player: emptySide(), ai: emptySide(), log: [], active: {} }; } catch { return { player: emptySide(), ai: emptySide(), log: [], active: {} }; } }
   const g0 = loadGame();
   let tf0 = 'D'; try { const t = localStorage.getItem(TF_KEY); if (t && TF_LIST.includes(t)) tf0 = t; } catch {}
   let lang0 = 'en'; try { const l = localStorage.getItem(LANG_KEY); if (l === 'zh' || l === 'en') lang0 = l; } catch {}
-  const state = { selected: SYMBOLS[0], timeframe: tf0, lang: lang0, sentiment: 0, news: { date: null, items: [], aiPredictions: {}, loading: true }, lastUpdate: 0, liveCount: 0, player: g0.player, ai: g0.ai, log: g0.log, active: {}, result: {} };
+  let ind0 = { ma: true, vol: false, macd: false, kdj: false }; try { const i = JSON.parse(localStorage.getItem('afflatus-arena:ind')); if (i) ind0 = { ...ind0, ...i }; } catch {}
+  let pm0 = 'OPEN'; try { const p = localStorage.getItem('afflatus-arena:pm'); if (p === 'OPEN' || p === 'CLOSE') pm0 = p; } catch {}
+  const state = { selected: SYMBOLS[0], timeframe: tf0, lang: lang0, sentiment: 0, news: { date: null, items: [], aiPredictions: {}, loading: true }, lastUpdate: 0, liveCount: 0, player: g0.player, ai: g0.ai, log: g0.log, active: g0.active || {}, result: {}, indicators: ind0, predMode: pm0 };
   const timers = { round: {}, tick: {} };
-  function saveGame() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ player: state.player, ai: state.ai, log: state.log })); } catch {} }
+  function saveGame() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ player: state.player, ai: state.ai, log: state.log, active: state.active })); } catch {} }
+  function saveInd() { try { localStorage.setItem('afflatus-arena:ind', JSON.stringify(state.indicators)); } catch {} }
   function accuracy(s) { const n = s.wins + s.losses; return n ? Math.round((s.wins / n) * 100) : 0; }
   const T = (en, zh) => state.lang === 'zh' ? zh : en;
 
@@ -123,7 +135,7 @@
         latest[s] = { ...q, symbol: s, change: +change.toFixed(2), changePct: q.prevClose ? +((change / q.prevClose) * 100).toFixed(2) : 0, tick: prev ? Math.sign(q.price - prev.price) : 0 };
         const arr = history[s]; if (q.live || !arr.length || arr[arr.length - 1].price !== q.price) { arr.push({ t: Date.now(), price: q.price }); if (arr.length > MAX_HISTORY) arr.shift(); }
       }
-      state.liveCount = liveCount; state.snapCount = snapCount; state.lastUpdate = Date.now(); renderAll();
+      state.liveCount = liveCount; state.snapCount = snapCount; state.lastUpdate = Date.now(); resolvePending(); renderAll();
     } finally { polling = false; }
   }
 
@@ -134,7 +146,7 @@
     const m = TD_MAP[tf]; const url = `/api/history?symbol=${encodeURIComponent(sym)}&interval=${encodeURIComponent(m.int)}&outputsize=${m.n}`;
     const r = await fetch(url); if (!r.ok) throw 0; const j = await r.json();
     if (!j || j.status !== 'ok' || !Array.isArray(j.values)) throw 0;
-    const s = j.values.map((v) => ({ t: Date.parse(v.datetime) || 0, price: +v.close })).filter((p) => isFinite(p.price) && p.price > 0).reverse();
+    const s = j.values.map((v) => ({ t: Date.parse(v.datetime) || 0, price: +v.close, vol: +v.volume || 0 })).filter((p) => isFinite(p.price) && p.price > 0).reverse();
     if (s.length < 2) throw 0; return s;
   }
   function ensureHistory(sym, tf) {
@@ -146,29 +158,37 @@
     fetchTD(sym, tf).then((s) => { realHist[key] = { series: s, real: true }; tdCacheSet(sym, tf, s); }).catch(() => { realHist[key] = { series: modeledSeries(sym, tf), real: false }; }).finally(() => { tdPending[key] = false; if (state.selected === sym && state.timeframe === tf) renderChart(); });
   }
 
-  // ---- game (per-symbol rounds) -------------------------------
-  function resolveRound({ direction, startPrice, endPrice, confidence = 0.6, isAI = false }) { const actual = endPrice >= startPrice ? 'UP' : 'DOWN', correct = direction === actual, movePct = startPrice ? Math.abs((endPrice - startPrice) / startPrice) * 100 : 0; return { actual, correct, movePct: +movePct.toFixed(2), points: correct ? 10 + (isAI ? Math.round(confidence * 10) : Math.round(Math.min(10, movePct * 4))) : -4 }; }
+  // ---- game (daily OPEN / CLOSE direction calls) --------------
+  // OPEN  = will the stock OPEN up or down vs the prior close?  resolves at the open.
+  // CLOSE = will the stock CLOSE the day up or down vs the prior close?  resolves at the close.
+  // A call placed before its event stays PENDING and resolves automatically once
+  // the open (or close) is known; placed after the event, it resolves immediately.
+  function actualDir(end, base) { return end >= base ? 'UP' : 'DOWN'; }
+  function scoreRound({ direction, base, end, confidence = 0.6, isAI = false }) { const actual = actualDir(end, base), correct = direction === actual, movePct = base ? Math.abs((end - base) / base) * 100 : 0; return { actual, correct, movePct: +movePct.toFixed(2), points: correct ? 10 + (isAI ? Math.round(confidence * 10) : Math.round(Math.min(10, movePct * 4))) : -4 }; }
   function applyResult(side, correct, points) { side.score += points; if (correct) { side.wins++; side.streak = Math.max(1, side.streak + 1); } else { side.losses++; side.streak = Math.min(-1, side.streak - 1); } side.bestStreak = Math.max(side.bestStreak, side.streak); }
-  function placeBet(sym, dir) {
+  // Is the resolving event known yet? OPEN known once we're past the open; CLOSE known once the session is done.
+  function resolveInfo(mode, q, st) { if (!q) return { ready: false }; if (mode === 'OPEN') { if (st.state === 'pre') return { ready: false }; return { ready: true, end: (q.open != null ? q.open : q.price) }; } if (st.state === 'post' || st.state === 'closed') return { ready: true, end: q.price }; return { ready: false }; }
+  function placeBet(sym, dir, mode) {
     if (state.active[sym]) return; const q = latest[sym]; if (!q) return;
-    const ai = aiCall(sym), started = Date.now(), session = marketStatus().label;
-    state.active[sym] = { symbol: sym, playerDir: dir, ai, startPrice: q.price, endsAt: started + HORIZON_MS, remaining: HORIZON_MS, session };
-    delete state.result[sym];
-    timers.round[sym] = setTimeout(() => resolve(sym), HORIZON_MS);
-    timers.tick[sym] = setInterval(() => { const r = state.active[sym]; if (!r) return; r.remaining = Math.max(0, r.endsAt - Date.now()); if (state.selected === sym) renderPred(); }, 250);
-    renderPred(); renderWatchlist();
+    const st = marketStatus(), base = (q.prevClose != null ? q.prevClose : q.price);
+    state.active[sym] = { symbol: sym, mode: mode || state.predMode, playerDir: dir, ai: aiCall(sym), base, placed: Date.now(), session: st.label, day: state.news.date || todayStr() };
+    delete state.result[sym]; saveGame();
+    tryResolve(sym);
+    if (state.active[sym]) { renderPred(); renderWatchlist(); }
   }
-  function resolve(sym) {
-    const a = state.active[sym]; if (!a) return; clearInterval(timers.tick[sym]);
-    const endPrice = (latest[sym] || {}).price ?? a.startPrice;
-    const pr = resolveRound({ direction: a.playerDir, startPrice: a.startPrice, endPrice, isAI: false });
-    const ar = resolveRound({ direction: a.ai.direction, startPrice: a.startPrice, endPrice, confidence: a.ai.confidence, isAI: true });
+  function tryResolve(sym) {
+    const a = state.active[sym]; if (!a) return; const q = latest[sym], st = marketStatus();
+    const info = resolveInfo(a.mode, q, st); if (!info.ready) return;
+    const end = info.end;
+    const pr = scoreRound({ direction: a.playerDir, base: a.base, end, isAI: false });
+    const ar = scoreRound({ direction: a.ai.direction, base: a.base, end, confidence: a.ai.confidence, isAI: true });
     applyResult(state.player, pr.correct, pr.points); applyResult(state.ai, ar.correct, ar.points);
-    state.log = [{ id: sym + a.endsAt, symbol: sym, actual: pr.actual, player: { dir: a.playerDir, correct: pr.correct, points: pr.points }, ai: { dir: a.ai.direction, correct: ar.correct, points: ar.points } }, ...state.log].slice(0, 30);
-    state.result[sym] = { symbol: sym, actual: pr.actual, endPrice, movePct: pr.movePct, session: a.session, player: { ...pr, direction: a.playerDir }, ai: { ...ar, direction: a.ai.direction, confidence: a.ai.confidence, opus: a.ai.opus, reason: a.ai.reason }, winner: pr.points === ar.points ? 'tie' : (pr.points > ar.points ? 'player' : 'ai') };
+    state.log = [{ id: sym + a.placed, symbol: sym, mode: a.mode, actual: pr.actual, player: { dir: a.playerDir, correct: pr.correct, points: pr.points }, ai: { dir: a.ai.direction, correct: ar.correct, points: ar.points } }, ...state.log].slice(0, 30);
+    state.result[sym] = { symbol: sym, mode: a.mode, actual: pr.actual, endPrice: end, base: a.base, movePct: pr.movePct, session: a.session, player: { ...pr, direction: a.playerDir }, ai: { ...ar, direction: a.ai.direction, confidence: a.ai.confidence, opus: a.ai.opus, reason: a.ai.reason }, winner: pr.points === ar.points ? 'tie' : (pr.points > ar.points ? 'player' : 'ai') };
     delete state.active[sym]; saveGame(); if (state.selected === sym) renderPred(); renderScore(); renderWatchlist();
   }
-  function resetScores() { state.player = emptySide(); state.ai = emptySide(); state.log = []; state.result = {}; saveGame(); renderScore(); renderPred(); }
+  function resolvePending() { for (const sym of Object.keys(state.active)) tryResolve(sym); }
+  function resetScores() { state.player = emptySide(); state.ai = emptySide(); state.log = []; state.result = {}; state.active = {}; saveGame(); renderScore(); renderPred(); renderWatchlist(); }
 
   // ---- rendering ----------------------------------------------
   const $ = (id) => document.getElementById(id);
@@ -183,6 +203,9 @@
     host.querySelectorAll('.tk').forEach((b) => b.addEventListener('click', () => { state.selected = b.dataset.sym; ensureHistory(state.selected, state.timeframe); renderWatchlist(); renderChart(); renderPred(); }));
   }
   function renderTF() { const row = $('tfRow'); if (!row) return; row.querySelectorAll('.tf-b').forEach((b) => { const on = b.dataset.tf === state.timeframe; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); }
+  function fmtAxisTime(t, tf) { if (!t || t < 1e11) return ''; const d = new Date(t), p2 = (x) => String(x).padStart(2, '0'), md = `${p2(d.getMonth() + 1)}-${p2(d.getDate())}`; return (tf === 'D' || tf === 'W') ? `${md} ${p2(d.getHours())}:${p2(d.getMinutes())}` : `${d.getFullYear()}-${md}`; }
+  function mapLineY(arr, n, X, Yfn) { let d = '', started = false; for (let i = 0; i < n; i++) { const x = arr[i]; if (x == null || !isFinite(x)) continue; d += `${started ? 'L' : 'M'}${X(i).toFixed(1)},${Yfn(x).toFixed(1)}`; started = true; } return d; }
+  function renderIndBar() { const map = { ma: 'indMA', vol: 'indVOL', macd: 'indMACD', kdj: 'indKDJ' }; for (const k in map) { const b = $(map[k]); if (b) { b.classList.toggle('on', !!state.indicators[k]); b.setAttribute('aria-pressed', !!state.indicators[k]); } } }
   function renderChart() {
     const sym = state.selected, meta = BY_SYM[sym], q = latest[sym], tf = state.timeframe, isD = tf === 'D';
     let series, real = true;
@@ -195,38 +218,89 @@
     const st = marketStatus();
     const badge = isD ? (st.state === 'open' ? 'INTRADAY · LIVE' : (q && q.snap ? 'SNAPSHOT · ' + st.label.toUpperCase() : st.label.toUpperCase())) : (real ? `REAL · ${TF_META[tf].label}` : `SNAPSHOT · ${TF_META[tf].label}`);
     $('cBadge').textContent = badge; $('cBadge').className = 'chart-badge ' + (isD && st.state === 'open' ? 'is-live' : (!isD && real ? 'is-real' : (isD ? '' : 'is-modeled')));
+    renderIndBar();
     const svg = $('cChart'), loading = $('cLoading');
-    if (!series || series.length < 2) { svg.innerHTML = ''; loading.style.display = 'grid'; return; }
+    if (!series || series.length < 2) { svg.innerHTML = ''; chartCtx = null; svg.style.height = '240px'; loading.style.display = 'grid'; return; }
     loading.style.display = 'none';
-    const W = 600, H = 230, padR = 56, plotW = W - padR, v = series.map((h) => h.price), pc = isD && q ? q.prevClose : null;
+    const v = series.map((h) => h.price), times = series.map((h) => h.t), n = v.length, enough = n >= 8;
+    const hasVol = series.some((h) => h.vol > 0), vols = hasVol ? series.map((h) => h.vol || 0) : v.map((p, i) => Math.abs(p - (i ? v[i - 1] : p)));
+    const ind = state.indicators, showMA = !!ind.ma && n >= 5, showVOL = !!ind.vol && n >= 2, showMACD = !!ind.macd && enough, showKDJ = !!ind.kdj && enough;
+    const W = 600, padR = 58, plotW = W - padR, PH = 188, gap = 14, SH = 66, TA = 16;
+    const subs = []; if (showVOL) subs.push('vol'); if (showMACD) subs.push('macd'); if (showKDJ) subs.push('kdj');
+    const Htotal = PH + subs.length * (SH + gap) + TA;
+    const X = (i) => n > 1 ? (i / (n - 1)) * plotW : 0;
+    const pc = isD && q ? q.prevClose : null;
     const lo = Math.min(...v, ...(pc != null ? [pc] : [])), hi = Math.max(...v, ...(pc != null ? [pc] : [])), pad = (hi - lo) * 0.12 || 1, LO = lo - pad, HI = hi + pad, RG = HI - LO || 1;
-    const X = (i) => (i / (v.length - 1)) * plotW, Y = (p) => H - ((p - LO) / RG) * H;
-    let grid = '';
-    for (let i = 0; i <= 4; i++) { const yy = (i / 4) * H, price = HI - (i / 4) * RG; grid += `<line x1="0" y1="${yy.toFixed(1)}" x2="${plotW}" y2="${yy.toFixed(1)}" class="cgrid"/><text x="${W - 4}" y="${(yy + 3.5).toFixed(1)}" class="caxis" text-anchor="end">${price.toFixed(2)}</text>`; }
-    for (let i = 1; i < 6; i++) { const xx = (i / 6) * plotW; grid += `<line x1="${xx.toFixed(1)}" y1="0" x2="${xx.toFixed(1)}" y2="${H}" class="cgrid cgrid--v"/>`; }
-    if (pc != null) { const pcy = Y(pc); grid += `<line x1="0" y1="${pcy.toFixed(1)}" x2="${plotW}" y2="${pcy.toFixed(1)}" class="cpc"/><text x="2" y="${(pcy - 4).toFixed(1)}" class="cpc-t">PREV ${pc.toFixed(2)}</text>`; }
-    const line = v.map((p, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(p).toFixed(1)}`).join(' '), area = `${line} L${plotW.toFixed(1)},${H} L0,${H} Z`, c = up ? 'var(--up)' : 'var(--down)', lx = X(v.length - 1), ly = Y(v[v.length - 1]);
-    svg.innerHTML = `<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c}" stop-opacity="0.28"/><stop offset="100%" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${area}" fill="url(#ag)"/><path d="${line}" class="cline" fill="none" stroke="${c}"/><line x1="${lx.toFixed(1)}" y1="0" x2="${lx.toFixed(1)}" y2="${H}" class="cnow"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3.6" fill="${c}" class="cdot"/><rect x="${(lx + 4).toFixed(1)}" y="${(ly - 9).toFixed(1)}" width="50" height="16" class="ctagbg"/><text x="${(lx + 8).toFixed(1)}" y="${(ly + 3).toFixed(1)}" class="ctag" fill="${c}">${v[v.length - 1].toFixed(2)}</text>`;
+    const Y = (p) => PH - ((p - LO) / RG) * PH, c = up ? 'var(--up)' : 'var(--down)';
+    const ma7 = showMA ? sma(v, 7) : null, ma30 = showMA ? sma(v, 30) : null, mac = showMACD ? macdCalc(v) : null, kdj = showKDJ ? kdjCalc(v) : null;
+    let s = `<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${c}" stop-opacity="0.26"/><stop offset="100%" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>`;
+    for (let i = 0; i <= 4; i++) { const yy = (i / 4) * PH, price = HI - (i / 4) * RG; s += `<line x1="0" y1="${yy.toFixed(1)}" x2="${plotW}" y2="${yy.toFixed(1)}" class="cgrid"/><text x="${W - 4}" y="${(yy + 3.5).toFixed(1)}" class="caxis" text-anchor="end">${price.toFixed(2)}</text>`; }
+    for (let i = 1; i < 6; i++) { const xx = (i / 6) * plotW; s += `<line x1="${xx.toFixed(1)}" y1="0" x2="${xx.toFixed(1)}" y2="${(Htotal - TA).toFixed(1)}" class="cgrid cgrid--v"/>`; }
+    if (pc != null) { const pcy = Y(pc); s += `<line x1="0" y1="${pcy.toFixed(1)}" x2="${plotW}" y2="${pcy.toFixed(1)}" class="cpc"/><text x="2" y="${(pcy - 4).toFixed(1)}" class="cpc-t">PREV ${pc.toFixed(2)}</text>`; }
+    const line = v.map((p, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(p).toFixed(1)}`).join(' ');
+    s += `<path d="${line} L${plotW.toFixed(1)},${PH} L0,${PH} Z" fill="url(#ag)"/><path d="${line}" class="cline" fill="none" stroke="${c}"/>`;
+    if (showMA) { if (ma7) s += `<path d="${mapLineY(ma7, n, X, Y)}" class="cma cma7" fill="none"/>`; if (ma30) s += `<path d="${mapLineY(ma30, n, X, Y)}" class="cma cma30" fill="none"/>`; s += `<text x="2" y="11" class="cma-lg"><tspan class="cma7">MA7</tspan> <tspan class="cma30">MA30</tspan></text>`; }
+    const lx = X(n - 1), ly = Y(v[n - 1]);
+    s += `<line x1="${lx.toFixed(1)}" y1="0" x2="${lx.toFixed(1)}" y2="${PH}" class="cnow"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3.4" fill="${c}" class="cdot"/><rect x="${(lx + 4).toFixed(1)}" y="${(ly - 9).toFixed(1)}" width="50" height="16" class="ctagbg"/><text x="${(lx + 8).toFixed(1)}" y="${(ly + 3).toFixed(1)}" class="ctag" fill="${c}">${v[n - 1].toFixed(2)}</text>`;
+    const panels = []; let top = PH + gap;
+    const frame = (label, t0) => `<rect x="0" y="${t0.toFixed(1)}" width="${plotW}" height="${SH}" class="cpanel"/><text x="3" y="${(t0 + 11).toFixed(1)}" class="cpanel-t">${label}</text>`;
+    if (showVOL) { const t0 = top; panels.push({ type: 'vol', top: t0 }); const vmax = Math.max(1, ...vols), bw = Math.max(1, plotW / n * 0.62); let bars = ''; for (let i = 0; i < n; i++) { const hgt = (vols[i] / vmax) * (SH - 14), barUp = i === 0 ? true : v[i] >= v[i - 1]; bars += `<rect x="${(X(i) - bw / 2).toFixed(1)}" y="${(t0 + SH - hgt).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0.5, hgt).toFixed(1)}" class="${barUp ? 'cvol-up' : 'cvol-dn'}"/>`; } s += frame(hasVol ? 'VOL' : 'VOL · proxy', t0) + bars; top += SH + gap; }
+    if (showMACD) { const t0 = top; panels.push({ type: 'macd', top: t0 }); const all = mac.dif.concat(mac.dea, mac.hist).filter(isFinite); const mx = Math.max(0.0001, ...all.map(Math.abs)); const zeroY = t0 + SH / 2, MY = (x) => zeroY - (x / mx) * (SH / 2 - 4), bw = Math.max(1, plotW / n * 0.6); let bars = ''; for (let i = 0; i < n; i++) { const h = mac.hist[i]; if (!isFinite(h)) continue; const y = MY(h); bars += `<rect x="${(X(i) - bw / 2).toFixed(1)}" y="${Math.min(y, zeroY).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.abs(y - zeroY).toFixed(1)}" class="${h >= 0 ? 'cmh-up' : 'cmh-dn'}"/>`; } s += frame('MACD 12,26,9', t0) + `<line x1="0" y1="${zeroY.toFixed(1)}" x2="${plotW}" y2="${zeroY.toFixed(1)}" class="czero"/>` + bars + `<path d="${mapLineY(mac.dif, n, X, MY)}" class="cdif" fill="none"/><path d="${mapLineY(mac.dea, n, X, MY)}" class="cdea" fill="none"/>`; top += SH + gap; }
+    if (showKDJ) { const t0 = top; panels.push({ type: 'kdj', top: t0 }); const KY = (x) => t0 + SH - (Math.max(-20, Math.min(120, x)) + 20) / 140 * SH; s += frame('KDJ 9,3,3', t0) + `<line x1="0" y1="${KY(80).toFixed(1)}" x2="${plotW}" y2="${KY(80).toFixed(1)}" class="czero"/><line x1="0" y1="${KY(20).toFixed(1)}" x2="${plotW}" y2="${KY(20).toFixed(1)}" class="czero"/><path d="${mapLineY(kdj.K, n, X, KY)}" class="ck" fill="none"/><path d="${mapLineY(kdj.D, n, X, KY)}" class="cd2" fill="none"/><path d="${mapLineY(kdj.J, n, X, KY)}" class="cj" fill="none"/>`; top += SH + gap; }
+    const ticks = Math.min(6, n); for (let k = 0; k < ticks; k++) { const i = Math.round(k / Math.max(1, ticks - 1) * (n - 1)), lab = fmtAxisTime(times[i], tf); if (!lab) continue; const anchor = k === 0 ? 'start' : (k === ticks - 1 ? 'end' : 'middle'); s += `<text x="${X(i).toFixed(1)}" y="${(Htotal - 4).toFixed(1)}" class="caxis-x" text-anchor="${anchor}">${lab}</text>`; }
+    s += `<g id="xhair"></g>`;
+    svg.setAttribute('viewBox', `0 0 ${W} ${Htotal}`); svg.style.height = Htotal + 'px'; svg.innerHTML = s;
+    chartCtx = { W, Htotal, plotW, n, PH, TA, LO, HI, RG, times, v, vols, hasVol, ma7, ma30, mac, kdj, panels, tf };
   }
+  function moveCross(e) {
+    const ctx = chartCtx, svg = $('cChart'), xh = document.getElementById('xhair'); if (!ctx || !xh) return;
+    const rect = svg.getBoundingClientRect(); if (!rect.width) return;
+    const vx = (e.clientX - rect.left) / rect.width * ctx.W, vy = (e.clientY - rect.top) / rect.height * ctx.Htotal;
+    let i = Math.round(vx / ctx.plotW * (ctx.n - 1)); i = Math.max(0, Math.min(ctx.n - 1, i)); if (!isFinite(i)) return;
+    const px = (i / (ctx.n - 1)) * ctx.plotW, close = ctx.v[i];
+    let hLine = '', priceTag = '';
+    if (vy >= 0 && vy <= ctx.PH) { const price = ctx.HI - (vy / ctx.PH) * ctx.RG; hLine = `<line x1="0" y1="${vy.toFixed(1)}" x2="${ctx.plotW}" y2="${vy.toFixed(1)}" class="xh-l"/>`; priceTag = `<rect x="${ctx.plotW.toFixed(1)}" y="${(vy - 8).toFixed(1)}" width="${(ctx.W - ctx.plotW).toFixed(1)}" height="16" class="xh-tagbg"/><text x="${(ctx.plotW + 4).toFixed(1)}" y="${(vy + 3.5).toFixed(1)}" class="xh-tag">${price.toFixed(2)}</text>`; }
+    const tlab = fmtAxisTime(ctx.times[i], ctx.tf) || ('#' + (i + 1)), tw = Math.max(54, tlab.length * 6.4);
+    const tx = Math.max(0, Math.min(ctx.plotW - tw, px - tw / 2));
+    const timeTag = `<rect x="${tx.toFixed(1)}" y="${(ctx.Htotal - 15).toFixed(1)}" width="${tw.toFixed(1)}" height="14" class="xh-tagbg"/><text x="${px.toFixed(1)}" y="${(ctx.Htotal - 4.5).toFixed(1)}" class="xh-tag" text-anchor="middle">${tlab}</text>`;
+    const seg = [tlab, `C ${close.toFixed(2)}`];
+    if (ctx.ma7 && ctx.ma7[i] != null) seg.push(`MA7 ${ctx.ma7[i].toFixed(2)}`);
+    if (ctx.ma30 && ctx.ma30[i] != null) seg.push(`MA30 ${ctx.ma30[i].toFixed(2)}`);
+    if (ctx.mac && isFinite(ctx.mac.dif[i])) seg.push(`DIF ${ctx.mac.dif[i].toFixed(2)} DEA ${ctx.mac.dea[i].toFixed(2)}`);
+    if (ctx.vols && state.indicators.vol) { const vv = ctx.vols[i] || 0; seg.push((ctx.hasVol ? 'VOL ' : 'VOL* ') + (ctx.hasVol ? (vv >= 1e6 ? (vv / 1e6).toFixed(1) + 'M' : vv >= 1e3 ? (vv / 1e3).toFixed(0) + 'K' : Math.round(vv)) : vv.toFixed(2))); }
+    if (ctx.kdj && ctx.kdj.K[i] != null) seg.push(`K ${ctx.kdj.K[i].toFixed(0)} D ${ctx.kdj.D[i].toFixed(0)} J ${ctx.kdj.J[i].toFixed(0)}`);
+    const txt = seg.join('   '), legW = Math.min(ctx.plotW - 4, Math.max(120, txt.length * 5.7));
+    const legend = `<rect x="2" y="2" width="${legW.toFixed(0)}" height="15" class="xh-legbg"/><text x="6" y="13" class="xh-leg">${txt}</text>`;
+    const dotY = ctx.PH - ((close - ctx.LO) / ctx.RG) * ctx.PH;
+    xh.innerHTML = `<line x1="${px.toFixed(1)}" y1="0" x2="${px.toFixed(1)}" y2="${(ctx.Htotal - 16).toFixed(1)}" class="xh-l"/>${hLine}<circle cx="${px.toFixed(1)}" cy="${dotY.toFixed(1)}" r="3" class="xh-dot"/>${priceTag}${timeTag}${legend}`;
+  }
+  function hideCross() { const xh = document.getElementById('xhair'); if (xh) xh.innerHTML = ''; }
 
-  function callBox(who, dir, conf, resolved, correct, opus) { const cls = resolved ? (correct ? 'win' : 'lose') : (dir === 'UP' ? 'u' : 'd'); return `<div class="call ${cls}"><span class="who">${who}${opus ? ' · Opus 4.8' : ''}</span><span class="dir">${dir === 'UP' ? '▲ UP' : '▼ DOWN'}</span>${conf != null ? `<span class="cf">${Math.round(conf * 100)}% conf</span>` : ''}${resolved ? `<span class="mk">${correct ? '✓' : '✗'}</span>` : ''}</div>`; }
+  function callBox(who, dir, conf, resolved, correct, opus) {
+    const cls = resolved ? (correct ? 'win' : 'lose') : (dir === 'UP' ? 'u' : 'd'), arrow = dir === 'UP' ? '▲' : '▼';
+    return `<div class="call ${cls}"><div class="call-hd"><span class="who">${who}</span>${opus ? '<span class="opus">OPUS 4.8</span>' : ''}</div><div class="dir"><span class="ar">${arrow}</span> ${dir}</div><div class="cf">${conf != null ? Math.round(conf * 100) + '% ' + T('conf', '信心') : '&nbsp;'}</div>${resolved ? `<span class="mk">${correct ? '✓' : '✗'}</span>` : ''}</div>`;
+  }
   function renderPred() {
     $('pSym').textContent = state.selected;
     const host = $('predBody'), sym = state.selected, q = latest[sym], r = state.active[sym], res = state.result[sym], st = marketStatus();
     const sess = `<span class="sess sess--${st.state}">${st.label}</span>`;
+    const modeTabs = `<div class="pmode" role="tablist" aria-label="${T('Prediction type', '预测类型')}"><button class="pmode-b ${state.predMode === 'OPEN' ? 'on' : ''}" data-pm="OPEN" role="tab" aria-selected="${state.predMode === 'OPEN'}">${T('OPEN', '开盘')}</button><button class="pmode-b ${state.predMode === 'CLOSE' ? 'on' : ''}" data-pm="CLOSE" role="tab" aria-selected="${state.predMode === 'CLOSE'}">${T('CLOSE', '收盘')}</button></div>`;
+    const wireTabs = () => host.querySelectorAll('.pmode-b').forEach((b) => b.addEventListener('click', () => { state.predMode = b.dataset.pm; try { localStorage.setItem('afflatus-arena:pm', state.predMode); } catch {} renderPred(); }));
     if (r) {
-      const live = q ? q.price : r.startPrice, pct = Math.max(0, Math.min(100, (r.remaining / HORIZON_MS) * 100));
-      host.innerHTML = `<div class="live-wrap"><div class="sessline">${sess}<span class="sesssym">${sym}</span></div><div class="cd"><div class="bar"><div class="fill" style="width:${pct}%"></div></div><span class="s">${Math.ceil(r.remaining / 1000)}s</span></div><div class="calls">${callBox(T('You', '你'), r.playerDir)}<span class="vs">VS</span>${callBox('AI', r.ai.direction, r.ai.confidence, false, false, r.ai.opus)}</div><p class="reason">🤖 ${r.ai.reason || ''}</p><div class="pxs"><span>${T('Entry', '入场')} <b>$${r.startPrice.toFixed(2)}</b></span><span>${T('Now', '现价')} <b class="${live >= r.startPrice ? 'up' : 'down'}">$${live.toFixed(2)}</b></span></div></div>`;
+      const base = r.base, cur = q ? q.price : base, dpct = base ? ((cur - base) / base * 100) : 0, evt = r.mode === 'OPEN' ? T('the open', '开盘') : T('the close', '收盘');
+      host.innerHTML = `<div class="live-wrap"><div class="sessline">${sess}<span class="sesssym">${sym} · ${r.mode === 'OPEN' ? T('OPEN call', '开盘预测') : T('CLOSE call', '收盘预测')}</span></div><div class="pending"><span class="pulse"></span>${T('Locked in — waiting for', '已锁定——等待')} ${evt}</div><div class="calls">${callBox(T('You', '你'), r.playerDir)}<span class="vs">VS</span>${callBox('AI', r.ai.direction, r.ai.confidence, false, false, r.ai.opus)}</div><p class="reason">🤖 ${r.ai.reason || ''}</p><div class="pxs"><span>${T('Prev close', '前收')} <b>$${base.toFixed(2)}</b></span><span>${T('Now', '现价')} <b class="${cur >= base ? 'up' : 'down'}">$${cur.toFixed(2)} (${dpct >= 0 ? '+' : ''}${dpct.toFixed(2)}%)</b></span></div></div>`;
     } else if (res) {
-      host.innerHTML = `<div class="live-wrap"><div class="banner ${res.winner}">${res.winner === 'player' ? T('🏆 You beat the AI', '🏆 你赢了 AI') : res.winner === 'ai' ? T('🤖 The AI won', '🤖 AI 赢了') : T('🤝 Dead heat', '🤝 平手')}</div><div class="detail">${sym} ${T('went', '走')} <b class="${res.actual === 'UP' ? 'up' : 'down'}">${res.actual}</b> → $${res.endPrice.toFixed(2)} (${res.movePct}%)</div><div class="calls">${callBox(T('You', '你'), res.player.direction, null, true, res.player.correct)}<span class="vs">VS</span>${callBox('AI', res.ai.direction, res.ai.confidence, true, res.ai.correct, res.ai.opus)}</div><div class="points"><span class="${res.player.points >= 0 ? 'up' : 'down'}">${T('You', '你')} ${res.player.points >= 0 ? '+' : ''}${res.player.points}</span><span class="${res.ai.points >= 0 ? 'up' : 'down'}">AI ${res.ai.points >= 0 ? '+' : ''}${res.ai.points}</span></div><div class="again"><span class="lbl">${T('Go again', '再来')}</span><button class="bet bet--up" data-dir="UP"><b>▲</b> UP</button><button class="bet bet--down" data-dir="DOWN"><b>▼</b> DOWN</button></div></div>`;
-      host.querySelectorAll('.bet').forEach((b) => b.addEventListener('click', () => placeBet(sym, b.dataset.dir)));
+      const evt = res.mode === 'OPEN' ? T('opened', '开盘') : T('closed', '收盘');
+      host.innerHTML = `<div class="live-wrap"><div class="banner ${res.winner}">${res.winner === 'player' ? T('🏆 You beat the AI', '🏆 你赢了 AI') : res.winner === 'ai' ? T('🤖 The AI won', '🤖 AI 赢了') : T('🤝 Dead heat', '🤝 平手')}</div><div class="detail">${sym} ${evt} <b class="${res.actual === 'UP' ? 'up' : 'down'}">${res.actual === 'UP' ? T('UP', '涨') : T('DOWN', '跌')}</b> · $${res.base.toFixed(2)} → $${res.endPrice.toFixed(2)} (${res.movePct}%)</div><div class="calls">${callBox(T('You', '你'), res.player.direction, null, true, res.player.correct)}<span class="vs">VS</span>${callBox('AI', res.ai.direction, res.ai.confidence, true, res.ai.correct, res.ai.opus)}</div><div class="points"><span class="${res.player.points >= 0 ? 'up' : 'down'}">${T('You', '你')} ${res.player.points >= 0 ? '+' : ''}${res.player.points}</span><span class="${res.ai.points >= 0 ? 'up' : 'down'}">AI ${res.ai.points >= 0 ? '+' : ''}${res.ai.points}</span></div><div class="again"><span class="lbl">${T('Go again', '再来')}</span>${modeTabs}<div class="betrow betrow--again"><button class="bet bet--up" data-dir="UP"><b>▲</b><span>${T('UP', '看涨')}</span></button><button class="bet bet--down" data-dir="DOWN"><b>▼</b><span>${T('DOWN', '看跌')}</span></button></div></div></div>`;
+      wireTabs(); host.querySelectorAll('.bet').forEach((b) => b.addEventListener('click', () => placeBet(sym, b.dataset.dir, state.predMode)));
     } else if (q) {
-      host.innerHTML = `<div class="betwrap"><div class="sessline">${sess}<span class="sesssym">${T('Call the move', '猜涨跌')} · ${sym}</span></div><div class="betrow"><button class="bet bet--up" data-dir="UP"><b>▲</b><span>${T('UP', '看涨')}</span></button><button class="bet bet--down" data-dir="DOWN"><b>▼</b><span>${T('DOWN', '看跌')}</span></button></div></div>`;
-      host.querySelectorAll('.bet').forEach((b) => b.addEventListener('click', () => placeBet(sym, b.dataset.dir)));
+      const base = q.prevClose, ask = state.predMode === 'OPEN' ? T('Will it OPEN above or below the prior close?', '开盘会高于还是低于前收？') : T('Will it CLOSE up or down vs the prior close?', '收盘相对前收是涨还是跌？');
+      host.innerHTML = `<div class="betwrap"><div class="sessline">${sess}<span class="sesssym">${sym}</span></div>${modeTabs}<p class="ask">${ask}<b>${T('Prev close', '前收')} $${base.toFixed(2)}</b></p><div class="betrow"><button class="bet bet--up" data-dir="UP"><b>▲</b><span>${T('UP', '看涨')}</span></button><button class="bet bet--down" data-dir="DOWN"><b>▼</b><span>${T('DOWN', '看跌')}</span></button></div></div>`;
+      wireTabs(); host.querySelectorAll('.bet').forEach((b) => b.addEventListener('click', () => placeBet(sym, b.dataset.dir, state.predMode)));
     } else { host.innerHTML = `<div class="live-wrap"><p class="empty">${T('Waiting for a quote on', '正在等待报价')} ${sym}…</p></div>`; }
   }
   function sideBox(el, s, lead) { el.classList.toggle('lead', lead); countNum(el.querySelector('.n'), s.score); const streak = s.streak !== 0 ? `<span class="${s.streak > 0 ? 'up' : 'down'}">${s.streak > 0 ? '🔥 ' + s.streak : '❄ ' + Math.abs(s.streak)}</span>` : ''; el.querySelector('.st').innerHTML = `<span>${accuracy(s)}% acc</span><span>·</span><span>${s.wins}-${s.losses}</span>${streak}`; }
-  function renderScore() { sideBox($('scPlayer'), state.player, state.player.score > state.ai.score); sideBox($('scAI'), state.ai, state.ai.score > state.player.score); $('rounds').innerHTML = state.log.length ? state.log.map((r) => `<div class="rd"><span style="font-weight:700">${r.symbol}</span><span class="${r.actual === 'UP' ? 'up' : 'down'}">${r.actual === 'UP' ? '▲' : '▼'}</span><span class="ch ${r.player.correct ? 'ok' : 'bad'}">${T('You', '你')} ${r.player.correct ? '✓' : '✗'}</span><span class="ch ${r.ai.correct ? 'ok' : 'bad'}">AI ${r.ai.correct ? '✓' : '✗'}</span></div>`).join('') : `<div class="empty">${T('No rounds yet — make your first call.', '还没有对局——先做第一个判断。')}</div>`; }
+  function renderScore() { sideBox($('scPlayer'), state.player, state.player.score > state.ai.score); sideBox($('scAI'), state.ai, state.ai.score > state.player.score); $('rounds').innerHTML = state.log.length ? state.log.map((r) => `<div class="rd"><span class="rd-sym">${r.symbol}</span><span class="rd-mode">${r.mode === 'CLOSE' ? T('CLS', '收') : T('OPN', '开')}</span><span class="rd-dir ${r.actual === 'UP' ? 'up' : 'down'}">${r.actual === 'UP' ? '▲' : '▼'}</span><span class="ch ${r.player.correct ? 'ok' : 'bad'}">${T('You', '你')} ${r.player.correct ? '✓' : '✗'}</span><span class="ch ${r.ai.correct ? 'ok' : 'bad'}">AI ${r.ai.correct ? '✓' : '✗'}</span></div>`).join('') : `<div class="empty">${T('No rounds yet — make your first call.', '还没有对局——先做第一个判断。')}</div>`; }
   function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = st.label; $('srcTxt').textContent = state.liveCount > 0 ? `LIVE (${state.liveCount}/${SYMBOLS.length})` : (state.snapCount > 0 ? 'BRIEFING SNAPSHOT' : 'AWAITING DATA'); const sl = sentLabel(state.sentiment); $('sentChip').className = `chip ${sl.tone}`; $('sentTxt').textContent = sl.label; $('clkTxt').textContent = fmtClock(state.lastUpdate); }
   function renderCountdown() { const { wd, sec } = nyNow(), open = wd >= 1 && wd <= 5 && sec >= OPEN_S && sec < CLOSE_S; $('openCd').classList.toggle('open', open); $('cdLabel').textContent = open ? 'US MARKET CLOSES IN' : 'US MARKET OPENS IN'; $('cdClock').textContent = fmtDur(open ? CLOSE_S - sec : secsToNextOpen(wd, sec)); }
   function renderAll() { renderStatus(); renderWatchlist(); renderTF(); renderChart(); renderPred(); renderScore(); postHeight(); }
@@ -278,6 +352,8 @@
     .finally(() => { renderNews(); renderStatus(); renderPred(); if (!EMBED && !briefingAcked()) openBriefing(); });
 
   const tfRow = $('tfRow'); if (tfRow) tfRow.querySelectorAll('.tf-b').forEach((b) => b.addEventListener('click', () => { state.timeframe = b.dataset.tf; try { localStorage.setItem(TF_KEY, state.timeframe); } catch {} ensureHistory(state.selected, state.timeframe); renderTF(); renderChart(); }));
+  ['ma', 'vol', 'macd', 'kdj'].forEach((k) => { const b = $({ ma: 'indMA', vol: 'indVOL', macd: 'indMACD', kdj: 'indKDJ' }[k]); if (b) b.addEventListener('click', () => { state.indicators[k] = !state.indicators[k]; saveInd(); renderChart(); }); });
+  const cEl = $('cChart'); if (cEl) { cEl.addEventListener('pointermove', moveCross); cEl.addEventListener('pointerleave', hideCross); }
   const ob = $('openBriefBtn'); if (ob) ob.addEventListener('click', openBriefing);
   // language is owned by the shared i18n engine (.lang-toggle); arena re-renders on change
   window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; renderAll(); renderNews(); });
