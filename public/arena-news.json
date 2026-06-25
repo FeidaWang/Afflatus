@@ -1,23 +1,21 @@
 {
-  "date": "2026-06-18",
-  "generatedAt": "2026-06-18T08:30:00-04:00",
+  "date": "2026-06-25",
+  "generatedAt": "2026-06-25T08:30:00-04:00",
   "lang_default": "en",
   "prices": {
-    "NVDA": { "price": 214.6, "prevClose": 212.45 },
-    "SPCX": { "price": 196.2, "prevClose": 192.5 },
-    "MU":   { "price": 141.8, "prevClose": 138.4 },
-    "SNDK": { "price": 49.7,  "prevClose": 48.6 },
-    "LITE": { "price": 97.3,  "prevClose": 95.8 },
-    "AMD":  { "price": 183.1, "prevClose": 180.2 },
-    "MRVL": { "price": 79.9,  "prevClose": 78.4 },
-    "NOK":  { "price": 5.42,  "prevClose": 5.39 },
-    "ASML": { "price": 1905.0,"prevClose": 1892.66 },
-    "FLKR": { "price": 68.21, "prevClose": 68.03 },
-    "INTC": { "price": 31.6,  "prevClose": 32.1 },
-    "ARM":  { "price": 140.2, "prevClose": 138.0 }
+    "NVDA": { "price": 200.70, "prevClose": 200.94 },
+    "MU":   { "price": 1083.02, "prevClose": 1116.16 },
+    "ASML": { "price": 1778.46, "prevClose": 1802.23 },
+    "AVGO": { "price": 389.55, "prevClose": 385.00 },
+    "TSM":  { "price": 441.35, "prevClose": 436.00 },
+    "MRVL": { "price": 276.70, "prevClose": 281.96 },
+    "LITE": { "price": 838.00, "prevClose": 828.00 },
+    "SNDK": { "price": 2150.83, "prevClose": 1985.00 },
+    "AMD":  { "price": 519.74, "prevClose": 526.60 },
+    "SMH":  { "price": 647.00, "prevClose": 628.00 }
   },
-  "priceNote_en": "Snapshot taken at the daily briefing (pre-market + prior close). The Arena shows LIVE quotes during US hours; otherwise it shows this static snapshot — no simulated prices.",
-  "priceNote_zh": "快照取自每日简报（盘前 + 前收）。美股交易时段 Arena 显示实时报价，否则显示该静态快照——不再使用模拟价格。",
+  "priceNote_en": "Snapshot taken at the daily briefing (pre-market + prior close). The Arena shows LIVE quotes during US hours; otherwise it shows this static snapshot — no simulated prices. AVGO, TSM, LITE and SMH prior-close values are approximate where an exact print wasn't available.",
+  "priceNote_zh": "快照取自每日简报（盘前 + 前收）。美股交易时段 Arena 显示实时报价，否则显示该静态快照——不再使用模拟价格。AVGO、TSM、LITE、SMH 的前收价在缺少确切数据时为近似值。",
   "disclaimer_en": "NOT INVESTMENT ADVICE. This briefing and the Arena are for entertainment and education only. Nothing here is a recommendation to buy or sell any security. The AI model's calls are a game opponent, not financial guidance.",
   "disclaimer_zh": "非投资建议。本简报与 Arena 仅供娱乐与学习。其中任何内容都不构成买卖任何证券的建议。AI 模型的判断只是游戏对手，并非理财指引。",
   "predictionNote_en": "AI-model calls below are my (Opus 4.8) own pre-open reads, formed from recent price action and today's briefing. They are a game opponent — not advice.",
@@ -25,97 +23,165 @@
   "items": [
     {
       "category": "financial",
-      "title_en": "AI chips gap up on US–Iran peace deal; oil sinks, futures rise",
-      "title_zh": "美伊达成和平协议，AI 芯片跳涨；油价大跌、期指走高",
-      "summary_en": "A reported US–Iran agreement reopening the Strait of Hormuz pushed crude down ~5% and lifted risk assets. Micron leads chips +8%, AMD +4%, NVDA and Intel +2% pre-market.",
-      "summary_zh": "据报美伊达成协议、重开霍尔木兹海峡，原油下跌约 5%，风险资产走高。盘前美光领涨芯片 +8%，AMD +4%，英伟达与英特尔 +2%。",
-      "source": "TipRanks",
-      "url": "https://www.tipranks.com/news/why-ai-chip-stocks-nvda-amd-intc-and-avgo-are-rising-today-june-15-2026",
-      "tickers": ["MU", "AMD", "NVDA", "INTC"]
-    },
-    {
-      "category": "financial",
-      "title_en": "Micron leads into Q3 earnings (Jun 24); TD Cowen lifts target to $1,500",
-      "title_zh": "美光领涨、剑指 6/24 三季报；TD Cowen 上调目标价至 1,500 美元",
-      "summary_en": "Analysts keep raising memory targets on AI-driven HBM/DRAM demand. TD Cowen hiked its Micron target 127% to $1,500 with a Buy, framing memory as the tight link in the AI chain.",
-      "summary_zh": "受 AI 驱动的 HBM/DRAM 需求带动，分析师持续上调存储目标价。TD Cowen 将美光目标价上调 127% 至 1,500 美元并维持买入，称存储是 AI 链条上最紧的一环。",
-      "source": "TipRanks",
-      "url": "https://www.tipranks.com/news/why-ai-chip-stocks-nvda-amd-intc-and-avgo-are-rising-today-june-15-2026",
-      "tickers": ["MU"]
-    },
-    {
-      "category": "tech",
-      "title_en": "Data-center demand still the oxygen line for NVDA, AMD, MRVL",
-      "title_zh": "数据中心需求仍是英伟达、AMD、Marvell 的命脉",
-      "summary_en": "Hyperscaler AI capex keeps underpinning accelerators and the networking/custom-silicon names around them. The strongest signal remains full-stack infrastructure, not application-layer stories.",
-      "summary_zh": "超大规模厂商的 AI 资本开支持续支撑加速器，以及围绕其的网络/定制芯片厂商。最强信号仍是全栈基础设施，而非应用层故事。",
-      "source": "Yahoo Finance",
-      "url": "https://finance.yahoo.com/sectors/technology/articles/not-nvidia-not-micron-underrated-154300600.html",
-      "tickers": ["NVDA", "AMD", "MRVL"]
-    },
-    {
-      "category": "tech",
-      "title_en": "‘AI faith’ debate: some desks question lofty chip valuations",
-      "title_zh": "“AI 信仰”之辩：部分交易台质疑芯片高估值",
-      "summary_en": "Counter-narrative pieces flag stretched multiples across Broadcom, Micron, AMD and Nvidia and scrutinise the demand story — a reminder the trade is crowded and headline-sensitive.",
-      "summary_zh": "反向观点指出博通、美光、AMD、英伟达估值偏高，并审视需求叙事——提醒这一交易拥挤且对消息敏感。",
-      "source": "TradingKey",
-      "url": "https://www.tradingkey.com/analysis/stocks/us-stocks/261949433-stock-ai-nvda-jensenhuang-mu-qcom-intc-amd-avgo-tsm-computex-tradingkey",
-      "tickers": ["NVDA", "AMD", "MU"]
-    },
-    {
-      "category": "political",
-      "title_en": "Fed rate decision tomorrow (Jun 17) — the week's binary risk",
-      "title_zh": "美联储明日（6/17）利率决议——本周的二元风险点",
-      "summary_en": "The FOMC announces tomorrow. With the range held at 3.50–3.75% into a leadership change, any hawkish surprise hits high-beta AI names first. Position into it, don't get positioned by it.",
-      "summary_zh": "FOMC 明日公布决议。利率区间在领导层换届之际维持 3.50–3.75%，任何偏鹰意外都会先冲击高 beta 的 AI 标的。要主动布局，别被行情牵着走。",
-      "source": "desk note",
-      "url": "https://www.tipranks.com/news/why-ai-chip-stocks-nvda-amd-intc-and-avgo-are-rising-today-june-15-2026",
-      "tickers": ["NVDA", "AMD", "MRVL", "LITE"]
-    },
-    {
-      "category": "industrial",
-      "title_en": "Optical & networking ride the cluster build-out (LITE, MRVL, NOK)",
-      "title_zh": "光通信与网络受益于集群建设（Lumentum、Marvell、诺基亚）",
-      "summary_en": "As clusters scale, the interconnect layer — lasers, optical transceivers, switching, carrier gear — gets pulled along. Lumentum and Marvell sit on that demand; Nokia is the slower, cheaper beta.",
-      "summary_zh": "随着集群扩张，互连层——激光器、光模块、交换、运营商设备——被一同带动。Lumentum 与 Marvell 直接受益；诺基亚则是更慢、更便宜的 beta。",
-      "source": "desk note",
-      "url": "https://www.techi.com/best-ai-stocks/",
-      "tickers": ["LITE", "MRVL", "NOK"]
-    },
-    {
-      "category": "industrial",
-      "title_en": "Memory super-cycle: HBM tightness spills into NAND (MU, SNDK)",
-      "title_zh": "存储超级周期：HBM 紧张外溢至 NAND（美光、闪迪）",
-      "summary_en": "HBM allocation to AI is crowding out conventional memory supply, firming pricing across DRAM and NAND. Micron is the HBM proxy; SanDisk is the higher-torque NAND cyclical.",
-      "summary_zh": "HBM 向 AI 倾斜挤占了传统存储供给，带动 DRAM 与 NAND 价格走强。美光是 HBM 的代表，闪迪则是弹性更大的 NAND 周期股。",
-      "source": "desk note",
-      "url": "https://finance.yahoo.com/sectors/technology/articles/not-nvidia-not-micron-underrated-154300600.html",
+      "title_en": "Micron posts record fiscal Q3, guides Q4 to $50B on AI memory super-cycle",
+      "title_zh": "美光发布创纪录的第三财季，凭 AI 存储超级周期将第四季度指引上调至 500 亿美元",
+      "summary_en": "Micron reported FQ3-26 revenue of $41.46B (vs $9.30B a year ago), non-GAAP EPS of $25.11 and an 84.9% gross margin, crushing the ~$20 consensus. It guided FQ4 to ~$50B revenue, ~86% gross margin and ~$31 EPS, and cited transformational multi-year Strategic Customer Agreements that lock in pricing and make earnings more durable. HBM4 is now in high-volume shipment for its lead customer.",
+      "summary_zh": "美光公布 2026 财年第三季度营收 414.6 亿美元（去年同期为 93.0 亿美元），非 GAAP 每股收益 25.11 美元，毛利率 84.9%，远超约 20 美元的市场预期。公司将第四季度指引上调至营收约 500 亿美元、毛利率约 86%、每股收益约 31 美元，并提到具变革意义的多年期「战略客户协议」锁定了价格、使盈利更具持续性。HBM4 已为主要客户进入大批量出货。",
+      "source": "StockTitan",
+      "url": "https://www.stocktitan.net/news/MU/micron-technology-inc-reports-record-results-for-the-third-quarter-6f50161e5zxh.html",
       "tickers": ["MU", "SNDK"]
     },
     {
+      "category": "financial",
+      "title_en": "Micron pops ~13% after hours, then fades in pre-market as traders sell the news",
+      "title_zh": "美光盘后大涨约 13%，随后盘前回落，交易员「兑现利好」",
+      "summary_en": "Micron jumped roughly 13% after the close toward $1,188 on the blowout print, but slipped about 3% in June 25 pre-market trading to around $1,083 as traders booked profits after a powerful run. The reaction underscores how much good news is already priced into the memory leaders even after a historic beat-and-raise.",
+      "summary_zh": "受财报大幅超预期推动，美光盘后一度上涨约 13%、逼近 1,188 美元，但在 6 月 25 日盘前回落约 3% 至 1,083 美元附近，交易员在强劲上涨后获利了结。这一反应凸显出：即便经历了历史性的「超预期 + 上调指引」，存储龙头股价中也已计入大量利好。",
+      "source": "CNBC",
+      "url": "https://www.cnbc.com/2026/06/24/micron-mu-earnings-report-q3-2026.html",
+      "tickers": ["MU"]
+    },
+    {
+      "category": "financial",
+      "title_en": "Broadcom's OpenAI custom-ASIC deal cements its AI-accelerator role",
+      "title_zh": "博通与 OpenAI 的定制 ASIC 协议巩固其 AI 加速器地位",
+      "summary_en": "Broadcom has agreed to supply OpenAI with custom AI accelerator ASICs equivalent to roughly 10 gigawatts of compute over four years, on top of a ~$73B backlog and a $100B 2027 target. Analysts see Broadcom holding around 60% of AI server-compute ASIC share by 2027 with Microsoft, Google, Amazon and Meta as anchor customers — a structural counterweight to Nvidia.",
+      "summary_zh": "博通已同意在四年内向 OpenAI 供应相当于约 10 吉瓦算力的定制 AI 加速器 ASIC，此外还有约 730 亿美元的订单储备和 2027 年 1000 亿美元的目标。分析师预计到 2027 年博通将占据约 60% 的 AI 服务器算力 ASIC 份额，微软、谷歌、亚马逊和 Meta 为核心客户——这是对英伟达的结构性制衡。",
+      "source": "Yahoo Finance",
+      "url": "https://finance.yahoo.com/news/broadcom-deepens-ai-role-openai-201454380.html",
+      "tickers": ["AVGO", "MRVL"]
+    },
+    {
+      "category": "industrial",
+      "title_en": "TSMC's CoWoS packaging is now the AI build-out's binding constraint",
+      "title_zh": "台积电的 CoWoS 封装已成为 AI 建设的瓶颈所在",
+      "summary_en": "Industry coverage notes that virtually every AI accelerator — Nvidia GPUs and custom ASICs alike — depends on TSMC's CoWoS / CoWoS-L advanced packaging for HBM integration, and that packaging capacity is now a tighter bottleneck than wafer fabrication itself. Micron's HBM ramp only adds to that pull, reinforcing TSMC's chokepoint position.",
+      "summary_zh": "行业报道指出，几乎每一款 AI 加速器——无论是英伟达 GPU 还是定制 ASIC——都依赖台积电的 CoWoS / CoWoS-L 先进封装来集成 HBM，而封装产能如今已成为比晶圆制造更紧的瓶颈。美光的 HBM 放量进一步加大了这一需求，强化了台积电的咽喉地位。",
+      "source": "Tom's Hardware",
+      "url": "https://www.tomshardware.com/tech-industry/semiconductors/custom-ai-asics-examined-from-broadcom-to-mtia",
+      "tickers": ["TSM", "AVGO", "NVDA"]
+    },
+    {
       "category": "tech",
-      "title_en": "SpaceX (SPCX) trades as a new public name — space × AI infrastructure",
-      "title_zh": "SpaceX（SPCX）作为新上市标的交易——太空 × AI 基础设施",
-      "summary_en": "The recent SpaceX listing gives the tape a pure space-economy proxy: launch cadence plus Starlink's orbital network. High narrative beta, thin trading history, headline-driven.",
-      "summary_zh": "SpaceX 近期上市，为盘面提供了纯正的太空经济标的：发射节奏叠加星链的轨道网络。叙事 beta 高、交易历史薄、受消息驱动。",
-      "source": "desk note",
-      "url": "https://www.techi.com/best-ai-stocks/",
-      "tickers": ["SPCX"]
+      "title_en": "ASML's high-NA EUV machine seen powering chipmaking for a decade",
+      "title_zh": "ASML 的高数值孔径 EUV 光刻机被视为未来十年芯片制造的引擎",
+      "summary_en": "MIT Technology Review profiled ASML's roughly $400M high-NA EUV lithography system, arguing it can sustain denser-chip progress for at least another decade. Surging demand from AI labs building training and inference server farms underpins the long-term case, even as ASML shares drifted with the broad semi tape.",
+      "summary_zh": "《麻省理工科技评论》深度报道了 ASML 约 4 亿美元的高数值孔径 EUV 光刻系统，认为它至少能在未来十年内支撑更密集芯片的进步。AI 实验室建设训练与推理服务器集群的需求激增，构成长期支撑——尽管 ASML 股价随大盘半导体走势波动。",
+      "source": "MIT Technology Review",
+      "url": "https://www.technologyreview.com/2026/06/23/1138837/asml-400-million-dollar-machine-powering-future-of-chipmaking/",
+      "tickers": ["ASML"]
+    },
+    {
+      "category": "financial",
+      "title_en": "BofA lifts 2026 global chip forecast to $1.3 trillion",
+      "title_zh": "美银将 2026 年全球芯片预测上调至 1.3 万亿美元",
+      "summary_en": "Bank of America raised its 2026 global semiconductor revenue forecast to $1.3 trillion — a $300B increase from its prior estimate — naming Nvidia, Broadcom, Marvell and AMD as top drivers, with AI-spending visibility extending into 2028. The call frames the current pullback as a dip within a still-expanding capex cycle.",
+      "summary_zh": "美国银行将 2026 年全球半导体营收预测上调至 1.3 万亿美元——较此前估计增加 3000 亿美元——并将英伟达、博通、Marvell 和 AMD 列为主要驱动力，AI 支出可见度延伸至 2028 年。该判断将当前回调视为仍在扩张的资本开支周期中的一次回踩。",
+      "source": "Yahoo Finance",
+      "url": "https://finance.yahoo.com/news/bofa-hikes-2026-chips-forecast-to-13-trillion-names-nvidia-broadcom-marvell-amd-as-top-drivers-164800203.html",
+      "tickers": ["NVDA", "AVGO", "MRVL", "AMD"]
+    },
+    {
+      "category": "financial",
+      "title_en": "Hawkish Fed keeps a lid on the semiconductor bounce",
+      "title_zh": "鹰派美联储压制半导体反弹",
+      "summary_en": "Even with Micron validating AI demand, a hawkish Fed remains the cap on valuations. Traders increasingly price in a second 2026 rate hike by December under Chair Kevin Warsh, leaving high-beta chip leaders sensitive to rate headlines and any wobble in financial conditions.",
+      "summary_zh": "即便美光验证了 AI 需求，鹰派美联储仍是估值的天花板。在主席 Kevin Warsh 领导下，交易员越来越多地押注 2026 年 12 月前再加息一次，使高 beta 芯片龙头对利率消息以及金融条件的任何波动都高度敏感。",
+      "source": "U.S. News / Reuters",
+      "url": "https://money.usnews.com/investing/news/articles/2026-06-23/nasdaq-futures-fall-2-on-tech-worries-fed-hike-bets",
+      "tickers": ["NVDA", "AMD", "SMH"]
+    },
+    {
+      "category": "tech",
+      "title_en": "Nvidia rolls out BioNeMo Agent Toolkit and Halos robotics safety system",
+      "title_zh": "英伟达推出 BioNeMo 智能体工具包与 Halos 机器人安全系统",
+      "summary_en": "Nvidia unveiled the BioNeMo Agent Toolkit for agentic life-sciences workflows plus Nvidia Halos for Robotics, a full-stack safety system for robotics and physical AI — extending its platform beyond data-center GPUs. Polled analysts still rate NVDA a 'Strong Buy' with an average 12-month target near $299.",
+      "summary_zh": "英伟达发布了面向智能体生命科学工作流的 BioNeMo 智能体工具包，以及面向机器人与具身 AI 的全栈安全系统 Nvidia Halos——将其平台拓展至数据中心 GPU 之外。受访分析师仍给予 NVDA「强烈买入」评级，12 个月平均目标价接近 299 美元。",
+      "source": "Yahoo Finance",
+      "url": "https://finance.yahoo.com/quote/NVDA/news/",
+      "tickers": ["NVDA"]
+    },
+    {
+      "category": "industrial",
+      "title_en": "Lumentum optical interconnect demand stays structural as clusters scale",
+      "title_zh": "随集群扩张，Lumentum 光互连需求保持结构性增长",
+      "summary_en": "Lumentum remains a standout 2026 name because it sells a scarce AI input — the optical components that move data between accelerators. As GPU and ASIC counts climb, datacom laser and transceiver demand is pulled hard, making LITE a cleaner second-derivative play on the AI build-out than another compute name.",
+      "summary_zh": "Lumentum 仍是 2026 年的明星标的，因为它出售稀缺的 AI 原材料——在加速器之间传输数据的光学元件。随着 GPU 和 ASIC 数量攀升，数据通信激光器与光模块需求被强力拉动，使 LITE 成为比再买一只算力股更干净的 AI 建设二阶押注。",
+      "source": "HeyGoTrade",
+      "url": "https://www.heygotrade.com/en/blog/sandisk-lumentum-best-performing-tech-2026/",
+      "tickers": ["LITE"]
+    },
+    {
+      "category": "financial",
+      "title_en": "Memory read-through lifts SanDisk after Micron's blowout",
+      "title_zh": "美光超预期后，存储联动效应提振闪迪",
+      "summary_en": "SanDisk extended its rally on the Micron read-through, trading toward $2,150 as NAND and storage scarcity headlines compound the DRAM/HBM tightness story. The move leaves SNDK among the year's best performers but also among the most extended, raising the odds of sharp two-way swings.",
+      "summary_zh": "受美光联动效应推动，闪迪延续涨势，交易价逼近 2,150 美元，NAND 与存储稀缺的消息叠加 DRAM/HBM 紧张的主线。此举使 SNDK 跻身年内表现最佳之列，但也属涨幅最极端者，双向剧烈波动的概率随之上升。",
+      "source": "WEEX",
+      "url": "https://www.weex.com/wiki/article/micron-stock-after-record-earnings-is-mu-still-a-buy-in-2026-jmsqfec95ocxdth0cjac43h2",
+      "tickers": ["SNDK", "MU"]
     }
   ],
   "aiPredictions": {
-    "NVDA": { "direction": "UP", "confidence": 0.6, "rationale_en": "Risk-on tape + intact data-center demand; Fed-eve caps conviction.", "rationale_zh": "风险偏好回升、数据中心需求稳固；但联储前夕限制把握度。" },
-    "SPCX": { "direction": "UP", "confidence": 0.55, "rationale_en": "Momentum + space-narrative bid; thin float makes it whippy.", "rationale_zh": "动量叠加太空叙事买盘；流通盘薄、波动大。" },
-    "MU":   { "direction": "UP", "confidence": 0.68, "rationale_en": "Strongest setup: +8% leadership, target hikes, HBM tightness into Jun 24 print.", "rationale_zh": "结构最强：领涨 +8%、目标价上调、HBM 紧张，剑指 6/24 财报。" },
-    "SNDK": { "direction": "UP", "confidence": 0.58, "rationale_en": "NAND cyclical rides the memory pull; higher torque, higher noise.", "rationale_zh": "NAND 周期受存储拉动；弹性更大、噪声也更大。" },
-    "LITE": { "direction": "UP", "confidence": 0.56, "rationale_en": "Optical interconnect demand firm as clusters scale.", "rationale_zh": "集群扩张下光互连需求稳健。" },
-    "AMD":  { "direction": "UP", "confidence": 0.57, "rationale_en": "+4% pre-market with the group; second-derivative of NVDA demand.", "rationale_zh": "随板块盘前 +4%；英伟达需求的二阶受益者。" },
-    "MRVL": { "direction": "UP", "confidence": 0.54, "rationale_en": "Custom-silicon + networking beta to AI capex.", "rationale_zh": "定制芯片+网络，对 AI 资本开支的 beta。" },
-    "NOK":  { "direction": "DOWN", "confidence": 0.52, "rationale_en": "Laggard carrier beta; less direct AI pull, drifts on macro.", "rationale_zh": "运营商滞后 beta；AI 拉动较间接，随宏观漂移。" },
-    "ASML": { "direction": "UP", "confidence": 0.55, "rationale_en": "Litho monopoly benefits from the whole build-out; high price, low torque.", "rationale_zh": "光刻垄断受益于整体建设；价高、弹性低。" },
-    "INTC": { "direction": "DOWN", "confidence": 0.5, "rationale_en": "In the group bounce but structurally the weakest hand.", "rationale_zh": "随板块反弹，但结构上是最弱的一手。" },
-    "ARM":  { "direction": "UP", "confidence": 0.53, "rationale_en": "IP royalty story rides AI silicon proliferation.", "rationale_zh": "IP 版税故事受益于 AI 芯片扩散。" },
-    "FLKR": { "direction": "DOWN", "confidence": 0.51, "rationale_en": "Korea ETF: macro/FX beta, only indirect AI exposure.", "rationale_zh": "韩国 ETF：宏观/汇率 beta，对 AI 仅间接敞口。" }
+    "NVDA": {
+      "direction": "UP",
+      "confidence": 0.58,
+      "rationale_en": "Micron's blowout validates AI demand and should support a risk-on bounce in the compute leader; Fed risk caps the upside.",
+      "rationale_zh": "美光的超预期验证了 AI 需求，应支撑算力龙头的风险偏好反弹；美联储风险限制了上行空间。"
+    },
+    "MU": {
+      "direction": "DOWN",
+      "confidence": 0.55,
+      "rationale_en": "Classic sell-the-news: already up ~13% after hours then down ~3% pre-market despite a historic beat-and-raise.",
+      "rationale_zh": "典型的「兑现利好」：尽管历史性超预期并上调指引，盘后已涨约 13%，盘前转跌约 3%。"
+    },
+    "ASML": {
+      "direction": "UP",
+      "confidence": 0.55,
+      "rationale_en": "Micron's record capex plans and the decade-long high-NA EUV story reinforce equipment demand visibility.",
+      "rationale_zh": "美光创纪录的资本开支计划与长达十年的高数值孔径 EUV 故事，强化了设备需求的可见度。"
+    },
+    "AVGO": {
+      "direction": "UP",
+      "confidence": 0.62,
+      "rationale_en": "Strongest structural setup on the board: OpenAI 10GW ASIC deal, ~$73B backlog and dominant custom-silicon share.",
+      "rationale_zh": "盘面上结构最强：OpenAI 10 吉瓦 ASIC 协议、约 730 亿美元订单储备，以及定制芯片的主导份额。"
+    },
+    "TSM": {
+      "direction": "UP",
+      "confidence": 0.6,
+      "rationale_en": "CoWoS packaging is the binding AI constraint; Micron's HBM ramp adds to the pull on TSMC's chokepoint capacity.",
+      "rationale_zh": "CoWoS 封装是 AI 的瓶颈；美光的 HBM 放量进一步拉动台积电咽喉产能的需求。"
+    },
+    "MRVL": {
+      "direction": "UP",
+      "confidence": 0.55,
+      "rationale_en": "Oversold after recent drops; custom-silicon and optical-interconnect demand plus the BofA top-driver tag support a bounce.",
+      "rationale_zh": "近期下跌后超卖；定制芯片与光互连需求叠加美银「主要驱动力」标签，支撑反弹。"
+    },
+    "LITE": {
+      "direction": "UP",
+      "confidence": 0.55,
+      "rationale_en": "Optical interconnect demand is structural and firms as clusters scale; a cleaner second-derivative AI play.",
+      "rationale_zh": "光互连需求具结构性，并随集群扩张而走强；是更干净的 AI 二阶押注。"
+    },
+    "SNDK": {
+      "direction": "DOWN",
+      "confidence": 0.55,
+      "rationale_en": "A large read-through pop leaves storage extended and prone to a fade after one of the year's biggest rallies.",
+      "rationale_zh": "巨大的联动涨幅使存储股估值偏高，在年内最大涨势之一后易回落。"
+    },
+    "AMD": {
+      "direction": "UP",
+      "confidence": 0.53,
+      "rationale_en": "Should ride the sector bounce as the #2 accelerator, but trails Nvidia and Broadcom on AI-specific catalysts.",
+      "rationale_zh": "作为第二大加速器供应商应受益于板块反弹，但在 AI 专属催化剂上落后于英伟达和博通。"
+    },
+    "SMH": {
+      "direction": "UP",
+      "confidence": 0.58,
+      "rationale_en": "Broad semis ETF should lift on the Micron validation; diversification softens single-name risk into a Fed-sensitive tape.",
+      "rationale_zh": "广义半导体 ETF 应受美光验证提振；分散持仓在对美联储敏感的盘面中弱化了单一个股风险。"
+    }
   }
 }

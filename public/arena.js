@@ -18,18 +18,16 @@
   };
 
   const TICKERS = [
-    { symbol: 'NVDA', name: 'NVIDIA',         sector: 'AI Compute', seed: 205.0 },
-    { symbol: 'SPCX', name: 'SpaceX',         sector: 'Space',      seed: 192.5 },
-    { symbol: 'MU',   name: 'Micron',         sector: 'AI Memory',  seed: 132.0 },
-    { symbol: 'SNDK', name: 'SanDisk',        sector: 'Storage',    seed: 48.0 },
-    { symbol: 'LITE', name: 'Lumentum',       sector: 'Optical',    seed: 95.0 },
-    { symbol: 'AMD',  name: 'AMD',            sector: 'AI Chips',   seed: 178.0 },
-    { symbol: 'MRVL', name: 'Marvell',        sector: 'AI Network', seed: 78.0 },
-    { symbol: 'NOK',  name: 'Nokia',          sector: 'Networking', seed: 5.4 },
-    { symbol: 'ASML', name: 'ASML Holding',   sector: 'Litho',      seed: 1892.66 },
-    { symbol: 'FLKR', name: 'Franklin Korea', sector: 'Korea ETF',  seed: 68.03 },
-    { symbol: 'INTC', name: 'Intel',          sector: 'AI Chips',   seed: 32.0 },
-    { symbol: 'ARM',  name: 'Arm Holdings',   sector: 'Chip IP',    seed: 138.0 },
+    { symbol: 'NVDA', name: 'NVIDIA',         sector: 'AI Compute',  seed: 200.7 },
+    { symbol: 'MU',   name: 'Micron',         sector: 'AI Memory',   seed: 1083.0 },
+    { symbol: 'ASML', name: 'ASML Holding',   sector: 'Litho',       seed: 1778.46 },
+    { symbol: 'AVGO', name: 'Broadcom',       sector: 'Custom ASIC', seed: 389.55 },
+    { symbol: 'TSM',  name: 'TSMC',           sector: 'Foundry',     seed: 441.35 },
+    { symbol: 'MRVL', name: 'Marvell',        sector: 'AI Network',  seed: 276.7 },
+    { symbol: 'LITE', name: 'Lumentum',       sector: 'Optical',     seed: 838.0 },
+    { symbol: 'SNDK', name: 'SanDisk',        sector: 'Storage',     seed: 1985.0 },
+    { symbol: 'AMD',  name: 'AMD',            sector: 'AI Chips',    seed: 519.74 },
+    { symbol: 'SMH',  name: 'VanEck Semis',   sector: 'Semis ETF',   seed: 647.0 },
   ];
   const SYMBOLS = TICKERS.map((t) => t.symbol);
   const BY_SYM = Object.fromEntries(TICKERS.map((t) => [t.symbol, t]));
