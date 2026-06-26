@@ -144,7 +144,27 @@
     $('scMeta').textContent = n ? `${T('resolved', '已结算')} ${n}` : T('awaiting results', '等待赛果');
   }
   function renderUpdated() { if ($('updated')) $('updated').textContent = data.updated || ''; if ($('gnote')) $('gnote').textContent = T(data.note_en, data.note_zh); }
-  function renderAll() { if (!data) return; renderUpdated(); renderChampions(); renderPlayers(); renderFixtures(); renderGroups(); renderScore(); }
+
+  /* ---------- Opus historical track record (persisted across pushes) ---------- */
+  function renderRecord() {
+    const host = $('record'); if (!host) return;
+    const r = data && data.record;
+    if (!r) { host.innerHTML = ''; host.style.display = 'none'; return; }
+    host.style.display = '';
+    const rate = r.winRate != null ? r.winRate : (r.resolved ? Math.round((r.correctOutcome / r.resolved) * 100) : 0);
+    const log = (r.log || []).slice(0, 8).map((e) => `<span class="rlog ${e.ok ? 'ok' : 'no'}" title="${T(e.pick_en, e.pick_zh)}">${e.ok ? '✓' : '✗'} ${T(e.label_en, e.label_zh)}</span>`).join('');
+    host.innerHTML =
+      `<div class="rec-h"><span class="rec-t">🤖 ${T('OPUS TRACK RECORD', 'OPUS 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${r.since || ''}</span></div>` +
+      `<div class="rec-stats">` +
+        `<div class="rec-big"><b>${rate}%</b><i>${T('outcome win rate', '胜负命中率')}</i></div>` +
+        `<div class="rec-kv"><b>${r.correctOutcome || 0}/${r.resolved || 0}</b><i>${T('correct calls', '预测正确')}</i></div>` +
+        `<div class="rec-kv"><b>${r.exactScore || 0}</b><i>${T('exact scorelines', '比分全中')}</i></div>` +
+      `</div>` +
+      (log ? `<div class="rec-log">${log}</div>` : '') +
+      `<p class="rec-note">${T(r.note_en, r.note_zh)}</p>`;
+  }
+
+  function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderPlayers(); renderFixtures(); renderGroups(); renderScore(); }
 
   fetch('/games-data.json', { cache: 'no-store' }).then((r) => r.json()).then((d) => { data = d; renderAll(); }).catch(() => { if ($('fixtures')) $('fixtures').innerHTML = `<div class="empty">${T('Fixtures unavailable.', '赛程暂不可用。')}</div>`; });
   setInterval(tickFixtures, 1000);

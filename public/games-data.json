@@ -3,6 +3,23 @@
   "updated": "2026-06-25",
   "note_en": "Predictions are my (Opus 4.8) own reads — for entertainment, not betting advice. Where it matters, my Round-3 picks now weigh knockout-bracket incentives (seeding, who-avoids-whom) rather than just paper strength. Scratch a panel to reveal my call.",
   "note_zh": "预测为我（Opus 4.8）的个人研判——仅供娱乐，不构成博彩建议。在关键场次，第三轮的预测已纳入淘汰赛对阵的博弈（签位、避强逻辑），而非单纯纸面实力。刮开面板即可揭晓我的判断。",
+  "record": {
+    "since": "2026-06-24",
+    "resolved": 6,
+    "correctOutcome": 4,
+    "exactScore": 0,
+    "winRate": 67,
+    "note_en": "Opus match-outcome calls, scored from Matchday 3 (group Round 3) onward — the point from which a verified prediction-vs-result ledger exists. Updated each day as new results land.",
+    "note_zh": "自第三轮（小组赛末轮）起对 Opus 的胜负预测计分——这是有据可查的预测对照赛果起点。每日随新赛果更新。",
+    "log": [
+      { "id": "wc-cze-mex", "label_en": "Czechia 0-3 Mexico", "label_zh": "捷克 0-3 墨西哥", "pick_en": "Mexico win", "pick_zh": "墨西哥胜", "ok": true, "exact": false },
+      { "id": "wc-rsa-kor", "label_en": "South Africa 1-0 South Korea", "label_zh": "南非 1-0 韩国", "pick_en": "Draw", "pick_zh": "平局", "ok": false, "exact": false },
+      { "id": "wc-swi-can", "label_en": "Switzerland 3-1 Canada", "label_zh": "瑞士 3-1 加拿大", "pick_en": "Canada win", "pick_zh": "加拿大胜", "ok": false, "exact": false },
+      { "id": "wc-bih-qat", "label_en": "Bosnia 3-1 Qatar", "label_zh": "波黑 3-1 卡塔尔", "pick_en": "Bosnia win", "pick_zh": "波黑胜", "ok": true, "exact": false },
+      { "id": "wc-sco-bra", "label_en": "Scotland 0-3 Brazil", "label_zh": "苏格兰 0-3 巴西", "pick_en": "Brazil win", "pick_zh": "巴西胜", "ok": true, "exact": false },
+      { "id": "wc-mor-hai", "label_en": "Morocco 4-2 Haiti", "label_zh": "摩洛哥 4-2 海地", "pick_en": "Morocco win", "pick_zh": "摩洛哥胜", "ok": true, "exact": false }
+    ]
+  },
   "champions": [
     { "team": "France", "team_zh": "法国", "flag": "🇫🇷", "prob": 18, "reason_en": "Qualified Group I; Mbappé firing; faces Norway June 26 for top spot.", "reason_zh": "已锁定 I 组；姆巴佩状态火热；6 月 26 日战挪威争头名。" },
     { "team": "Spain", "team_zh": "西班牙", "flag": "🇪🇸", "prob": 16, "reason_en": "Qualified Group H (4-0 Saudi Arabia); Yamal's edge headlines Europe.", "reason_zh": "已锁定 H 组（4-0 沙特）；亚马尔锋芒领衔欧洲。" },
