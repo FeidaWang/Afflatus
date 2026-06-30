@@ -116,15 +116,21 @@ a{color:inherit;text-decoration:none}
 .resline{margin-top:8px;font:400 11px/1.3 var(--mono);color:var(--dim)}.resline b{color:var(--ink)}
 .empty{color:var(--dim);font:400 13px var(--mono);padding:14px}
 
-/* score guesser */
-.sgwrap{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.sglbl{font:400 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
-.sgbox{display:flex;align-items:center;gap:6px}
-.sgf{font-size:16px}
-.sgb{width:24px;height:24px;border:1px solid rgba(0,239,255,.4);background:#0a0818;color:var(--cyan);font:700 14px/1 var(--disp);cursor:pointer;padding:0}
-.sgb:hover{background:var(--cyan);color:#04060d}
-.sgv{min-width:18px;text-align:center;font:700 18px/1 var(--disp);color:var(--ink,#eafcff)}
-.sgc{color:var(--dim);font:700 16px var(--disp)}
+/* static team display (replaces clickable buttons) */
+.team-d{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;background:#0a0818;border:1px solid rgba(255,255,255,.1);font:600 12px/1.2 var(--disp);flex:1;text-align:center}
+.team-d .fl{font-size:22px}
+.team-vs{display:flex;align-items:center;justify-content:center;font:700 12px var(--mono);color:var(--dim);padding:0 6px}
+
+/* odds display */
+.odds{margin-top:10px;border:1px solid rgba(255,255,255,.1);background:#070614;padding:9px 10px}
+.odds-label{font:400 9px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.odds-1x2{display:flex;gap:5px;margin-bottom:6px}
+.odds-cell{flex:1;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:6px 4px}
+.odds-cell .ol{font:400 9px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.odds-cell .ov{font:700 16px/1 var(--disp);color:var(--cyan);margin-top:4px}
+.odds-scores{font:400 11px/1.5 var(--mono);color:#a39ed0}
+.odds-scores b{color:var(--ink)}
+.odds-src{display:block;margin-top:4px;font:400 10px/1 var(--mono);color:var(--dim)}
 
 /* scratch-to-reveal */
 .scratch{position:relative;margin-top:10px;border:1px dashed rgba(255,43,214,.4);background:#0a0818;min-height:42px;overflow:hidden}
@@ -139,21 +145,14 @@ a{color:inherit;text-decoration:none}
 .tbdnote{margin-top:10px;font:400 12px var(--mono);color:var(--dim)}
 
 /* group standings */
-.grp-tip{color:var(--dim);font:400 12px/1.5 var(--mono);margin:0 0 12px}
 .groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .grp{border:1px solid var(--line);background:var(--panel2);padding:12px}
 .grp-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .grp-h h3{margin:0;font:700 15px/1 var(--disp);letter-spacing:.08em;color:var(--yellow)}
-.grp-hint{font:400 9px/1.3 var(--mono);letter-spacing:.06em;color:var(--dim);text-transform:uppercase;text-align:right}
-.grp-teams{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
-.gt{display:flex;align-items:center;gap:6px;background:#0a0818;border:1px solid rgba(255,255,255,.1);color:var(--ink,#eafcff);padding:8px 8px;font:600 12px/1.1 var(--disp);cursor:pointer;text-align:left}
-.gt:hover{border-color:var(--cyan)}
-.gt.ranked{border-color:var(--mag);box-shadow:inset 0 0 0 1px var(--mag)}
-.gt .rk{display:inline-grid;place-items:center;width:18px;height:18px;flex:0 0 18px;border:1px solid rgba(255,43,214,.5);color:var(--mag);font:700 11px/1 var(--mono);border-radius:50%}
-.gt.ranked .rk{background:var(--mag);color:#0a0410}
-.gt .gfl{font-size:15px}.gt .gnm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.grp-cmp{margin-top:9px;font:400 11px/1 var(--mono);letter-spacing:.06em;color:var(--dim);text-transform:uppercase}
-.grp-cmp.on{color:var(--cyan)}.grp-cmp.on b{color:var(--yellow);font-size:14px}
+.grp-opus-order{font:400 12px/1.6 var(--mono);color:var(--cyan);margin-top:8px}
+.grp-opus-order .ord{display:inline-block;margin:2px 8px 2px 0;color:#eafcff;font-size:12.5px}
+.grp-opus-order .ord b{display:inline-block;width:16px;color:var(--mag);font-weight:700}
+.grp-cmp{margin-top:8px;font:400 11px/1.5 var(--mono);color:var(--dim)}
 @media(max-width:520px){.groups{grid-template-columns:1fr}}
 
 /* opus track record */
@@ -169,6 +168,7 @@ a{color:inherit;text-decoration:none}
 .rlog{font:400 11px/1 var(--mono);letter-spacing:.02em;padding:5px 8px;border:1px solid rgba(255,255,255,.12);background:#0a0818;color:#a39ed0}
 .rlog.ok{border-color:rgba(54,255,143,.45);color:var(--green)}
 .rlog.no{border-color:rgba(255,59,107,.45);color:var(--red)}
+.rlog.exact{border-color:rgba(247,255,60,.6);color:var(--yellow);background:rgba(247,255,60,.06);font-weight:700}
 .rec-note{margin:12px 0 0;color:var(--dim);font:400 11px/1.5 var(--mono);border-left:2px solid var(--cyan);padding-left:10px}
 
 .foot{margin-top:24px;border-top:1px solid var(--line);padding-top:14px;font:400 11px/1.6 var(--mono);letter-spacing:.04em;color:var(--dim);text-transform:uppercase}
@@ -190,7 +190,7 @@ a{color:inherit;text-decoration:none}
       <div class="mk" aria-hidden="true">⚽</div>
       <div>
         <h1><span>WORLD CUP</span> PREDICTION ARENA</h1>
-        <p data-en="FIFA 2026 · You vs. Opus 4.8" data-zh="2026 世界杯 · 你 vs. Opus 4.8">FIFA 2026 · You vs. Opus 4.8</p>
+        <p data-en="FIFA 2026 · Opus 4.8 Predictions &amp; Odds" data-zh="2026 世界杯 · Opus 4.8 预测与赔率">FIFA 2026 · Opus 4.8 Predictions &amp; Odds</p>
       </div>
     </div>
     <nav class="nav" aria-label="Primary" data-afflatus-nav>
@@ -199,9 +199,9 @@ a{color:inherit;text-decoration:none}
   </header>
 
   <section class="hero">
-    <div class="kicker" data-en="// LIMITED-TIME PREDICTION · LOCKS AT KICKOFF" data-zh="// 限时竞猜 · 开球即锁定">// LIMITED-TIME PREDICTION · LOCKS AT KICKOFF</div>
+    <div class="kicker" data-en="// OPUS 4.8 PREDICTIONS · UPDATED DAILY" data-zh="// OPUS 4.8 预测 · 每日更新">// OPUS 4.8 PREDICTIONS · UPDATED DAILY</div>
     <h2 data-en="CALL THE CUP" data-zh="预言冠军之路">CALL THE CUP</h2>
-    <p class="brief" data-en="Pick the winner of each World Cup 2026 match before kickoff. Opus 4.8 reveals its own call — with reasoning — only after you commit. Champion and best-player odds below are refreshed daily." data-zh="在每场 2026 世界杯比赛开球前预测胜者。你提交之后，Opus 4.8 才会亮出它的判断与理由。下方的夺冠与最佳球员概率每日更新。">Pick the winner of each World Cup 2026 match before kickoff. Opus 4.8 reveals its own call — with reasoning — only after you commit. Champion and best-player odds below are refreshed daily.</p>
+    <p class="brief" data-en="Opus 4.8's live predictions for every World Cup 2026 knockout match — win/draw/loss calls with reasoning, real betting odds, and a scratch card hiding the exact predicted scoreline. Champion and best-player probabilities refreshed daily." data-zh="Opus 4.8 对每场 2026 世界杯淘汰赛的实时预测——胜平负研判附推理，真实赔率，以及隐藏精准比分预测的刮刮卡。夺冠与最佳球员概率每日更新。">Opus 4.8's live predictions for every World Cup 2026 knockout match — win/draw/loss calls with reasoning, real betting odds, and a scratch card hiding the exact predicted scoreline. Champion and best-player probabilities refreshed daily.</p>
     <p class="note"><b>⚠</b> <span id="gnote">…</span></p>
   </section>
 
@@ -218,20 +218,13 @@ a{color:inherit;text-decoration:none}
     </section>
   </div>
 
-  <div class="sec-label" data-en="FIXTURES · YOU vs OPUS" data-zh="赛程 · 你 vs Opus">FIXTURES · YOU vs OPUS</div>
-  <div class="score">
-    <div class="s you"><div class="lab" data-en="YOU" data-zh="你">YOU</div><div class="n" id="scYou">0</div></div>
-    <span class="vs">VS</span>
-    <div class="s ai"><div class="lab">OPUS</div><div class="n" id="scAI">0</div></div>
-    <div class="meta" id="scMeta"></div>
-  </div>
+  <div class="sec-label" data-en="FIXTURES · ODDS &amp; PREDICTIONS" data-zh="赛程 · 赔率与预测">FIXTURES · ODDS &amp; PREDICTIONS</div>
   <div class="fxs" id="fixtures"><div class="empty">…</div></div>
 
-  <div class="sec-label" data-en="GROUP STANDINGS · YOU vs OPUS" data-zh="小组排名 · 你 vs Opus">GROUP STANDINGS · YOU vs OPUS</div>
-  <p class="grp-tip" data-en="Tap the four teams in your predicted finishing order, then scratch the panel to reveal Opus's call." data-zh="按你预测的名次依次点选四支球队，再刮开面板揭晓 Opus 的判断。">Tap the four teams in your predicted finishing order, then scratch the panel to reveal Opus's call.</p>
+  <div class="sec-label" data-en="GROUP STANDINGS" data-zh="小组排名">GROUP STANDINGS</div>
   <div class="groups" id="groups"><div class="empty">…</div></div>
 
-  <footer class="foot" data-i18n-html data-en="<b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · picks stored on this device · public/games-data.json" data-zh="<b>竞猜竞技场</b> · 仅供娱乐 · 非博彩建议 · 选择保存在本设备 · public/games-data.json"><b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · picks stored on this device · public/games-data.json</footer>
+  <footer class="foot" data-i18n-html data-en="<b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · odds from FanDuel/bet365 · public/games-data.json" data-zh="<b>竞猜竞技场</b> · 仅供娱乐 · 非博彩建议 · 赔率来源 FanDuel/bet365 · public/games-data.json"><b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · odds from FanDuel/bet365 · public/games-data.json</footer>
 </main>
 
 <script src="/lib/clock.js" defer></script>
