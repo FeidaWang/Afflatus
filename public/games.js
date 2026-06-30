@@ -123,15 +123,31 @@
     });
   }
 
-  /* ---------- group standings — Opus order shown directly (group stage over) ---------- */
+  /* ---------- group standings — proper table with W/D/L/GF/GA/GD/Pts ---------- */
   function renderGroups() {
     const host = $('groups'); if (!host || !data || !data.groups) return;
     host.innerHTML = data.groups.map((gp) => {
-      const order = gp.opusOrder.map((nm, i) => {
-        const t = gp.teams.find((x) => x.name === nm) || { flag: '', name: nm, name_zh: nm };
-        return `<span class="ord"><b>${i + 1}</b>${t.flag} ${lang === 'zh' ? t.name_zh : t.name}</span>`;
-      }).join('');
-      return `<article class="grp" data-g="${gp.id}"><div class="grp-h"><h3>${T('GROUP', '小组')} ${gp.id}</h3></div><div class="grp-opus-order">🤖 ${order}</div><p class="grp-cmp">${T(gp.reason_en, gp.reason_zh)}</p></article>`;
+      let tableHtml = '';
+      if (gp.standings && gp.standings.length) {
+        const hdr = `<tr><th>#</th><th>${T('Team','队伍')}</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th></tr>`;
+        const rows = gp.standings.map((t, i) => {
+          const pos = i + 1;
+          const nm = lang === 'zh' ? (t.name_zh || t.name) : t.name;
+          const gdStr = t.gd > 0 ? '+' + t.gd : String(t.gd);
+          const elimMark = t.elim ? '<span class="st-x">✕</span>' : '';
+          const rowCls = t.elim ? 'st-row elim' : (pos <= 2 ? 'st-row adv' : 'st-row third');
+          return `<tr class="${rowCls}"><td class="st-pos">${pos}</td><td class="st-name">${t.flag} ${nm}${elimMark}</td><td>${t.mp}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td><td class="st-gd">${gdStr}</td><td class="st-pts">${t.pts}</td></tr>`;
+        }).join('');
+        tableHtml = `<table class="st-table"><thead>${hdr}</thead><tbody>${rows}</tbody></table>`;
+      } else {
+        // fallback: show opus order list
+        const order = (gp.opusOrder || []).map((nm, i) => {
+          const t = (gp.teams || []).find((x) => x.name === nm) || { flag: '', name: nm, name_zh: nm };
+          return `<span class="ord"><b>${i + 1}</b>${t.flag} ${lang === 'zh' ? t.name_zh : t.name}</span>`;
+        }).join('');
+        tableHtml = `<div class="grp-opus-order">🤖 ${order}</div>`;
+      }
+      return `<article class="grp" data-g="${gp.id}"><div class="grp-h"><h3>${T('GROUP', '小组')} ${gp.id}</h3></div>${tableHtml}<p class="grp-cmp">${T(gp.reason_en, gp.reason_zh)}</p></article>`;
     }).join('');
     if (window.AfflatusI18N) window.AfflatusI18N.apply();
   }

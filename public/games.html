@@ -153,6 +153,26 @@ a{color:inherit;text-decoration:none}
 .grp-opus-order .ord{display:inline-block;margin:2px 8px 2px 0;color:#eafcff;font-size:12.5px}
 .grp-opus-order .ord b{display:inline-block;width:16px;color:var(--mag);font-weight:700}
 .grp-cmp{margin-top:8px;font:400 11px/1.5 var(--mono);color:var(--dim)}
+
+/* Group standings table */
+.st-table{width:100%;border-collapse:collapse;margin-top:8px;font:400 11px/1.3 var(--mono)}
+.st-table thead tr{border-bottom:1px solid rgba(255,43,214,.35)}
+.st-table th{color:var(--dim);font:400 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:3px 4px;text-align:right;white-space:nowrap}
+.st-table th:nth-child(1){text-align:center;width:18px}
+.st-table th:nth-child(2){text-align:left}
+.st-table td{padding:4px 4px;border-bottom:1px solid rgba(255,255,255,.04);text-align:right;white-space:nowrap}
+.st-table td:nth-child(1){text-align:center}
+.st-table td:nth-child(2){text-align:left;max-width:100px;overflow:hidden;text-overflow:ellipsis}
+.st-row.adv td{color:var(--ink)}
+.st-row.adv td:last-child{color:var(--cyan);font-weight:700}
+.st-row.third td{color:#b0aad4}
+.st-row.third td:last-child{color:var(--cyan);font-weight:600}
+.st-row.elim td{color:var(--dim);opacity:.5}
+.st-pos{color:var(--mag);font-weight:700}
+.st-gd{min-width:28px}
+.st-pts{min-width:22px}
+.st-name{display:flex;align-items:center;gap:3px}
+.st-x{color:var(--red);font-size:10px;font-weight:700;margin-left:2px;opacity:1 !important}
 @media(max-width:520px){.groups{grid-template-columns:1fr}}
 
 /* opus track record */
