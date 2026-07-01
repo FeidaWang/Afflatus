@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Project Afflatus · Novels — 万界种春</title>
+<meta name="description" content="万界种春：无限流·种田·多女主小说连载。高冷学霸男主穿梭坍缩位面，种田重建的同时，与多位女主展开虐心羁绊。护眼配色，每日更新。">
+<meta name="theme-color" content="#15120f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Afflatus">
+<meta property="og:title" content="Project Afflatus · Novels — 万界种春">
+<meta property="og:description" content="无限流·种田·多女主小说连载，护眼阅读，每日更新。">
+<meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/page-turn.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* retro-futurism chrome: gunmetal chassis + copper/teal duotone */
+  --chassis:#15120f;--chassis2:#1c1712;--panel:#211b15;--panel2:#281f17;
+  --copper:#c9834a;--copper-b:#e8ad6f;--teal:#4fd6c4;--teal-d:#2b7f78;
+  --chrome:#ece2cf;--chrome-dim:#a89a83;--line:rgba(201,131,74,.32);
+  --disp:'Zen Dots',ui-sans-serif,system-ui;--mono:'JetBrains Mono',ui-monospace,monospace;
+  --serif:'Noto Serif SC',"Songti SC","STSong",serif;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);--safe-r:env(safe-area-inset-right,0px);
+  --read-fs:18px;
+}
+/* ---- reading-mode palettes (low-blue, long-read friendly) ---- */
+.reader{--read-bg:#f2e8d2;--read-bg2:#ece0c4;--read-ink:#3b2f22;--read-ink-dim:#6b5c46;--read-accent:#8a5a2b;--read-line:rgba(59,47,34,.14);}
+.reader[data-theme="green"]{--read-bg:#cfe6d1;--read-bg2:#c1dcc4;--read-ink:#213325;--read-ink-dim:#4b6350;--read-accent:#2f6b46;--read-line:rgba(33,51,37,.14);}
+.reader[data-theme="night"]{--read-bg:#211a12;--read-bg2:#291f15;--read-ink:#e8c98a;--read-ink-dim:#b8945f;--read-accent:#e8c98a;--read-line:rgba(232,201,138,.14);}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:var(--chassis);color:var(--chrome);font-family:var(--mono);font-size:14px;line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+/* ---- retro CRT backdrop ---- */
+.crt-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.crt-bg canvas{width:100%;height:100%;display:block;opacity:.55}
+.crt-bg .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);opacity:.4}
+.crt-bg .vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
+
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:calc(14px + var(--safe-t)) clamp(12px,4vw,26px) calc(120px + var(--safe-b))}
+
+/* ---- top bar ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid var(--line);background:linear-gradient(90deg,rgba(201,131,74,.10),transparent 60%),var(--panel);padding:11px 14px;border-radius:2px}
+.seal{display:flex;align-items:center;gap:10px;min-width:0}
+.seal svg{width:34px;height:34px;flex:0 0 34px}
+.seal b{font:400 15px/1.2 var(--disp);letter-spacing:.04em;color:var(--chrome);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seal small{font:400 9.5px/1.5 var(--mono);letter-spacing:.12em;color:var(--copper-b);display:block;margin-top:3px;text-transform:uppercase}
+.nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.nav a{font:600 10.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--chrome-dim);border:1px solid rgba(236,226,207,.14);padding:8px 9px;border-radius:2px}
+.nav a:hover{border-color:var(--teal);color:var(--teal)}
+.nav a.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
+.lang-toggle{font:700 10.5px/1 var(--mono);letter-spacing:.08em;color:#1a1410;background:var(--copper-b);border:1px solid var(--copper-b);padding:8px 10px;border-radius:2px}
+.lang-toggle:hover{background:var(--teal);border-color:var(--teal)}
+
+/* ---- hero ---- */
+.hero{margin-top:14px;border:1px solid var(--line);background:linear-gradient(160deg,var(--panel2),var(--panel));position:relative;overflow:hidden;border-radius:2px}
+.hero .bar{height:5px;background:linear-gradient(90deg,var(--copper),var(--teal))}
+.hero .pad{padding:clamp(16px,4vw,28px)}
+.kicker{font:400 10.5px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
+.hero h1{font:400 clamp(26px,7vw,42px)/1.2 var(--disp);color:var(--chrome);margin:12px 0 8px;letter-spacing:.01em}
+.hero .sub{font:400 12.5px/1.6 var(--mono);color:var(--copper-b);letter-spacing:.03em;margin:0 0 12px}
+.hero .intro{max-width:66ch;color:var(--chrome-dim);font:400 13.5px/1.8 var(--serif)}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 0}
+.tag{font:400 10.5px/1 var(--mono);letter-spacing:.06em;color:var(--teal);border:1px solid var(--teal-d);padding:6px 9px;border-radius:20px}
+.author-row{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px 20px;font:400 11px/1.6 var(--mono);color:var(--chrome-dim);border-top:1px dashed rgba(236,226,207,.16);padding-top:12px}
+.author-row b{color:var(--chrome)}
+
+/* ---- HUD gauges ---- */
+.hud{margin-top:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.gauge{border:1px solid var(--line);background:var(--panel);padding:11px 13px;border-radius:2px}
+.gauge .lb{font:400 9.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--chrome-dim);display:flex;justify-content:space-between}
+.gauge .lb b{color:var(--copper-b);font-weight:400}
+.gauge .track{margin-top:8px;height:7px;background:rgba(0,0,0,.4);border:1px solid rgba(236,226,207,.1)}
+.gauge .track i{display:block;height:100%;background:linear-gradient(90deg,var(--teal-d),var(--teal))}
+@media(min-width:640px){.hud{grid-template-columns:repeat(4,1fr)}}
+
+/* ---- toolbar ---- */
+.toolbar{position:sticky;top:8px;z-index:5;margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(6px);padding:9px 10px;border-radius:2px}
+.tbtn{display:inline-flex;align-items:center;gap:6px;font:400 11.5px/1 var(--mono);letter-spacing:.03em;color:var(--chrome);border:1px solid rgba(236,226,207,.16);padding:9px 11px;border-radius:2px;min-height:38px}
+.tbtn:hover{border-color:var(--teal);color:var(--teal)}
+.tbtn.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
+.swatches{display:flex;gap:6px}
+.swatch{width:26px;height:26px;border-radius:50%;border:2px solid rgba(236,226,207,.25);cursor:pointer;padding:0}
+.swatch.on{border-color:var(--teal);box-shadow:0 0 0 2px rgba(79,214,196,.25)}
+.swatch.s-cream{background:#f2e8d2}.swatch.s-green{background:#cfe6d1}.swatch.s-night{background:#2a2015}
+.fsize{display:flex;align-items:center;gap:2px;border:1px solid rgba(236,226,207,.16);border-radius:2px}
+.fsize button{padding:9px 12px;min-height:38px;font:700 13px/1 var(--mono)}
+.fsize button:hover{color:var(--teal)}
+.fsize .val{font:400 10.5px/1 var(--mono);color:var(--chrome-dim);padding:0 6px;min-width:28px;text-align:center}
+.speedsel{display:flex;gap:4px}
+.speedsel button{font:400 10.5px/1 var(--mono);padding:8px 9px;border:1px solid rgba(236,226,207,.14);border-radius:2px;min-height:34px}
+.speedsel button.on{border-color:var(--teal);color:var(--teal)}
+.spacer{flex:1 1 auto}
+
+/* ---- reader shell / TOC drawer ---- */
+.reader-shell{position:relative;margin-top:14px}
+.toc-drawer{position:fixed;inset:0 auto 0 0;z-index:40;width:min(320px,86vw);background:var(--chassis2);border-right:1px solid var(--line);transform:translateX(-105%);transition:transform .28s ease;overflow-y:auto;padding:calc(14px + var(--safe-t)) 14px calc(20px + var(--safe-b));box-shadow:8px 0 30px rgba(0,0,0,.5)}
+.toc-drawer.open{transform:translateX(0)}
+.toc-drawer h3{font:400 13px/1 var(--disp);letter-spacing:.05em;color:var(--copper-b);margin:0 0 4px;text-transform:uppercase}
+.toc-drawer .note{font:400 10.5px/1.6 var(--mono);color:var(--chrome-dim);margin:0 0 14px}
+.toc-item{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;padding:11px 10px;border:1px solid rgba(236,226,207,.10);border-radius:2px;margin-bottom:7px;color:var(--chrome);min-height:44px}
+.toc-item:hover{border-color:var(--teal)}
+.toc-item.current{background:rgba(201,131,74,.16);border-color:var(--copper)}
+.toc-item .t{font:400 12.5px/1.4 var(--serif);flex:1}
+.toc-item .wc{font:400 9.5px/1 var(--mono);color:var(--chrome-dim);white-space:nowrap}
+.toc-item .bk{color:var(--copper-b);flex:0 0 auto}
+.toc-backdrop{position:fixed;inset:0;z-index:39;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .28s ease}
+.toc-backdrop.open{opacity:1;pointer-events:auto}
+.toc-close{position:absolute;top:calc(10px + var(--safe-t));right:10px;font:700 18px/1 var(--mono);color:var(--chrome-dim);padding:10px;min-width:44px;min-height:44px}
+
+/* ---- reader (eye-comfort palette lives here only) ---- */
+.reader{background:var(--read-bg);color:var(--read-ink);border:1px solid rgba(0,0,0,.15);box-shadow:0 8px 0 rgba(0,0,0,.35);border-radius:2px;position:relative;transition:background .25s ease,color .25s ease}
+.reader-progress{position:sticky;top:0;height:3px;background:var(--read-line);z-index:2}
+.reader-progress i{display:block;height:100%;width:0;background:var(--read-accent);transition:width .1s linear}
+.reader .pad{padding:clamp(18px,5vw,34px) clamp(16px,5vw,40px) clamp(24px,5vw,40px)}
+.reader h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px}
+.reader .meta{font:400 11px/1.6 var(--mono);color:var(--read-ink-dim);letter-spacing:.04em;margin:0 0 20px;text-transform:uppercase}
+.reader .body p{font:400 var(--read-fs)/1.95 var(--serif);color:var(--read-ink);margin:0 0 1.35em;text-indent:2em;letter-spacing:.02em}
+.reader .body .sys{font:400 calc(var(--read-fs) - 3px)/1.7 var(--mono);color:var(--read-ink);background:color-mix(in srgb,var(--read-ink) 6%,transparent);border:1px dashed var(--read-ink-dim);padding:11px 14px;margin:0 0 1.35em;border-radius:2px;text-indent:0;white-space:pre-wrap}
+.chapter-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:26px;padding-top:16px;border-top:1px dashed var(--read-line)}
+.chapter-nav button{font:400 12px/1 var(--mono);color:var(--read-ink);border:1px solid var(--read-ink-dim);padding:11px 14px;border-radius:2px;min-height:44px}
+.chapter-nav button:disabled{opacity:.35;cursor:default}
+.chapter-nav button:not(:disabled):hover{border-color:var(--read-accent);color:var(--read-accent)}
+.chapter-nav .ind{font:400 11px/1 var(--mono);color:var(--read-ink-dim)}
+
+/* ---- mobile FAB quick-nav (thumb-reachable) ---- */
+.fab{position:fixed;right:calc(14px + var(--safe-r));bottom:calc(16px + var(--safe-b));z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.fab-toggle{width:52px;height:52px;border-radius:50%;background:var(--copper);color:#1a1410;font:700 20px/1 var(--mono);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.5);border:1px solid var(--copper-b)}
+.fab-menu{display:flex;flex-direction:column;gap:8px;align-items:flex-end;max-height:0;overflow:hidden;transition:max-height .25s ease}
+.fab-menu.open{max-height:320px}
+.fab-menu button{display:flex;align-items:center;gap:8px;font:400 11.5px/1 var(--mono);color:var(--chrome);background:var(--panel2);border:1px solid var(--line);padding:10px 13px;border-radius:24px;min-height:44px;white-space:nowrap}
+.fab-menu button:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ---- toast ---- */
+.toast{position:fixed;left:50%;bottom:calc(90px + var(--safe-b));transform:translate(-50%,10px);z-index:50;background:var(--panel2);border:1px solid var(--teal-d);color:var(--chrome);font:400 11.5px/1.5 var(--mono);padding:10px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;max-width:88vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.foot{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font:400 10.5px/1.7 var(--mono);letter-spacing:.04em;color:var(--chrome-dim);text-transform:uppercase}
+.foot b{color:var(--copper-b)}
+
+@media(max-width:640px){
+  .toolbar{gap:6px;top:4px}
+  .tbtn{padding:8px 9px;font-size:11px}
+  .hero .pad{padding-bottom:20px}
+}
+@media (prefers-reduced-motion: reduce){
+  .toc-drawer,.toc-backdrop,.fab-menu,.reader-progress i,.toast{transition:none}
+}
+</style>
+</head>
+<body class="novels-page retro" data-prev="/games.html" data-next="/">
+<div class="crt-bg" aria-hidden="true"><canvas id="retroCanvas"></canvas><div class="scan"></div><div class="vig"></div></div>
+
+<nav class="page-turn-controls" aria-label="Page navigation">
+  <a class="page-turn" href="/games.html" data-page-turn="prev" aria-label="Back to games">←</a>
+  <a class="page-turn" href="/" data-page-turn="next" aria-label="Next to home">→</a>
+</nav>
+
+<div class="toc-backdrop" id="tocBackdrop"></div>
+<aside class="toc-drawer" id="tocDrawer" aria-label="章节目录">
+  <button class="toc-close" id="tocClose" type="button" aria-label="关闭目录">×</button>
+  <h3>章节目录</h3>
+  <p class="note" id="tocNote">共 0 章 · 每日更新</p>
+  <div id="tocList"></div>
+</aside>
+
+<main class="wrap">
+  <header class="top">
+    <div class="seal">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="none" stroke="#c9834a" stroke-width="1.6"/><path d="M24 6 L24 42 M6 24 L42 24" stroke="#4fd6c4" stroke-width="1.2" opacity=".6"/><circle cx="24" cy="24" r="6" fill="none" stroke="#e8ad6f" stroke-width="1.6"/></svg>
+      <div><b>万界种春</b><small>归墟 · 看守人档案 001</small></div>
+    </div>
+    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+      <button class="lang-toggle" type="button">中文</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="bar" aria-hidden="true"></div>
+    <div class="pad">
+      <div class="kicker">无限流 · 种田 · 多女主 · 连载中</div>
+      <h1>万界种春</h1>
+      <p class="sub">GENESIS OF SPRING ACROSS TEN THOUSAND PLANES</p>
+      <p class="intro" id="novelIntro">正在加载简介……</p>
+      <div class="tags" id="novelTags"></div>
+      <div class="author-row">
+        <span>作者：<b id="novelAuthor">—</b></span>
+        <span id="novelUpdateNote">—</span>
+        <span>连载起始：<b id="novelStart">—</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="hud" aria-hidden="true">
+    <div class="gauge"><div class="lb"><span>位面收容进度</span><b>100%</b></div><div class="track"><i style="width:100%"></i></div></div>
+    <div class="gauge"><div class="lb"><span>情感共鸣值</span><b>MAX</b></div><div class="track"><i style="width:96%"></i></div></div>
+    <div class="gauge"><div class="lb"><span>已解锁看守人档案</span><b>1/5</b></div><div class="track"><i style="width:20%"></i></div></div>
+    <div class="gauge"><div class="lb"><span>夜溯协议冷却</span><b>就绪</b></div><div class="track"><i style="width:100%"></i></div></div>
+  </section>
+
+  <section class="toolbar" id="toolbar" aria-label="阅读工具">
+    <button class="tbtn" id="tocOpen" type="button">☰ 目录</button>
+    <div class="swatches" role="group" aria-label="阅读主题">
+      <button class="swatch s-cream on" type="button" data-theme="cream" title="米黄纸感（默认护眼）" aria-label="米黄纸感"></button>
+      <button class="swatch s-green" type="button" data-theme="green" title="豆沙绿护眼" aria-label="豆沙绿"></button>
+      <button class="swatch s-night" type="button" data-theme="night" title="夜间琥珀（低蓝光）" aria-label="夜间模式"></button>
+    </div>
+    <div class="fsize">
+      <button id="fsMinus" type="button" aria-label="减小字号">A-</button>
+      <span class="val" id="fsVal">18</span>
+      <button id="fsPlus" type="button" aria-label="增大字号">A+</button>
+    </div>
+    <div class="speedsel" role="group" aria-label="自动翻页速度">
+      <button class="tbtn" id="autoToggle" type="button">▶ 自动翻页</button>
+      <button data-speed="1" type="button">慢</button>
+      <button class="on" data-speed="2" type="button">中</button>
+      <button data-speed="3" type="button">快</button>
+    </div>
+    <div class="spacer"></div>
+    <button class="tbtn" id="bookmarkBtn" type="button">☆ 书签</button>
+  </section>
+
+  <section class="reader-shell">
+    <article class="reader" id="reader" data-theme="cream">
+      <div class="reader-progress"><i id="progressBar"></i></div>
+      <div class="pad">
+        <h2 id="chapterTitle">加载中…</h2>
+        <p class="meta" id="chapterMeta"></p>
+        <div class="body" id="chapterBody"></div>
+        <div class="chapter-nav">
+          <button id="prevChapter" type="button">← 上一章</button>
+          <span class="ind" id="chapterIndicator">- / -</span>
+          <button id="nextChapter" type="button">下一章 →</button>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <footer class="foot"><b>SEED. RESTORE. REMEMBER.</b> — 归墟 · 看守人日志 · public/novels.html</footer>
+</main>
+
+<div class="fab">
+  <div class="fab-menu" id="fabMenu">
+    <button id="fabTop" type="button">⤒ 回到顶部</button>
+    <button id="fabBookmarkGo" type="button">☆ 跳转书签</button>
+    <button id="fabToc" type="button">☰ 章节目录</button>
+    <button id="fabTheme" type="button">◐ 切换主题</button>
+  </div>
+  <button class="fab-toggle" id="fabToggle" type="button" aria-label="快捷导航">≡</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+  var LS = { theme:'afflatus:novels:theme', fs:'afflatus:novels:fs', progress:'afflatus:novels:progress', bookmark:'afflatus:novels:bookmark', visited:'afflatus:novels:visited' };
+  var reader = document.getElementById('reader');
+  var state = { data:null, chapters:[], idx:0, autoTimer:0, autoSpeed:2 };
+
+  function toast(msg, ms) {
+    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove('show'); }, ms || 2200);
+  }
+
+  /* ---------- theme ---------- */
+  function applyTheme(name) {
+    reader.setAttribute('data-theme', name);
+    document.querySelectorAll('.swatch').forEach(function (b) { b.classList.toggle('on', b.dataset.theme === name); });
+    try { localStorage.setItem(LS.theme, name); } catch (e) {}
+  }
+  document.querySelectorAll('.swatch').forEach(function (b) { b.addEventListener('click', function () { applyTheme(b.dataset.theme); }); });
+
+  /* ---------- font size ---------- */
+  function applyFs(px) {
+    px = Math.max(15, Math.min(24, px));
+    document.documentElement.style.setProperty('--read-fs', px + 'px');
+    document.getElementById('fsVal').textContent = px;
+    try { localStorage.setItem(LS.fs, String(px)); } catch (e) {}
+    return px;
+  }
+  var curFs = 18;
+  document.getElementById('fsMinus').addEventListener('click', function () { curFs = applyFs(curFs - 1); });
+  document.getElementById('fsPlus').addEventListener('click', function () { curFs = applyFs(curFs + 1); });
+
+  /* ---------- TOC drawer ---------- */
+  var drawer = document.getElementById('tocDrawer'), backdrop = document.getElementById('tocBackdrop');
+  function openDrawer() { drawer.classList.add('open'); backdrop.classList.add('open'); }
+  function closeDrawer() { drawer.classList.remove('open'); backdrop.classList.remove('open'); }
+  document.getElementById('tocOpen').addEventListener('click', openDrawer);
+  document.getElementById('fabToc').addEventListener('click', openDrawer);
+  document.getElementById('tocClose').addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', closeDrawer);
+
+  function visitedSet() { try { return new Set(JSON.parse(localStorage.getItem(LS.visited) || '[]')); } catch (e) { return new Set(); } }
+  function markVisited(id) { var s = visitedSet(); s.add(id); try { localStorage.setItem(LS.visited, JSON.stringify(Array.from(s))); } catch (e) {} }
+
+  function renderToc() {
+    var list = document.getElementById('tocList'); list.innerHTML = '';
+    document.getElementById('tocNote').textContent = '共 ' + state.chapters.length + ' 章 · ' + (state.data.novel.updateNote || '每日更新');
+    var visited = visitedSet();
+    var bm = getBookmark();
+    state.chapters.forEach(function (c, i) {
+      var b = document.createElement('button');
+      b.className = 'toc-item' + (i === state.idx ? ' current' : '');
+      b.innerHTML = '<span class="t">' + (visited.has(c.id) ? '' : '● ') + c.title + '</span><span class="wc">' + (c.wordCount || '') + '字' + (bm && bm.chapterId === c.id ? ' <span class="bk">☆</span>' : '') + '</span>';
+      b.addEventListener('click', function () { closeDrawer(); loadChapter(i, true); });
+      list.appendChild(b);
+    });
+  }
+
+  /* ---------- bookmark ---------- */
+  function getBookmark() { try { return JSON.parse(localStorage.getItem(LS.bookmark) || 'null'); } catch (e) { return null; } }
+  function setBookmark() {
+    var bm = { chapterId: state.chapters[state.idx].id, scrollY: window.scrollY, ts: Date.now() };
+    try { localStorage.setItem(LS.bookmark, JSON.stringify(bm)); } catch (e) {}
+    toast('已在本章加入书签');
+    renderToc();
+  }
+  function goBookmark() {
+    var bm = getBookmark();
+    if (!bm) { toast('还没有书签，先在想要标记的地方点一下「书签」吧'); return; }
+    var i = state.chapters.findIndex(function (c) { return c.id === bm.chapterId; });
+    if (i < 0) { toast('书签指向的章节不存在了'); return; }
+    loadChapter(i, true, function () { window.scrollTo({ top: bm.scrollY, behavior: 'smooth' }); });
+    toast('已跳转到书签位置');
+  }
+  document.getElementById('bookmarkBtn').addEventListener('click', setBookmark);
+  document.getElementById('fabBookmarkGo').addEventListener('click', goBookmark);
+
+  /* ---------- reading progress (per-chapter + persisted "continue reading") ---------- */
+  function saveProgress() {
+    try { localStorage.setItem(LS.progress, JSON.stringify({ chapterId: state.chapters[state.idx].id, scrollY: window.scrollY, ts: Date.now() })); } catch (e) {}
+  }
+  var progressSaveTimer = 0;
+  window.addEventListener('scroll', function () {
+    updateProgressBar();
+    clearTimeout(progressSaveTimer); progressSaveTimer = setTimeout(saveProgress, 400);
+  }, { passive: true });
+
+  function updateProgressBar() {
+    var art = reader, rect = art.getBoundingClientRect();
+    var scrolled = Math.min(Math.max(-rect.top, 0), art.scrollHeight);
+    var pct = art.scrollHeight > 0 ? Math.min(100, (scrolled / art.scrollHeight) * 100) : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+  }
+
+  /* ---------- chapter rendering ---------- */
+  function renderBlocks(blocks) {
+    return blocks.map(function (b) {
+      if (b.type === 'sys') return '<div class="sys">' + escapeHtml(b.text) + '</div>';
+      return '<p>' + escapeHtml(b.text) + '</p>';
+    }).join('');
+  }
+  function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function loadChapter(i, scrollToTop, after) {
+    if (i < 0 || i >= state.chapters.length) return;
+    state.idx = i;
+    var c = state.chapters[i];
+    document.getElementById('chapterTitle').textContent = c.title;
+    document.getElementById('chapterMeta').textContent = '第 ' + (i + 1) + ' / ' + state.chapters.length + ' 章 · 约 ' + (c.wordCount || 0) + ' 字';
+    document.getElementById('chapterBody').innerHTML = renderBlocks(c.blocks);
+    document.getElementById('chapterIndicator').textContent = (i + 1) + ' / ' + state.chapters.length;
+    document.getElementById('prevChapter').disabled = i === 0;
+    document.getElementById('nextChapter').disabled = i === state.chapters.length - 1;
+    markVisited(c.id);
+    renderToc();
+    if (scrollToTop !== false) window.scrollTo({ top: reader.offsetTop - 10, behavior: 'smooth' });
+    updateProgressBar();
+    saveProgress();
+    if (after) setTimeout(after, 260);
+  }
+
+  document.getElementById('prevChapter').addEventListener('click', function () { loadChapter(state.idx - 1, true); });
+  document.getElementById('nextChapter').addEventListener('click', function () { loadChapter(state.idx + 1, true); });
+
+  /* ---------- auto-scroll ("自动翻页") ---------- */
+  var SPEED_PX = { 1: 0.4, 2: 0.9, 3: 1.7 };
+  function startAuto() {
+    stopAuto(false);
+    var btn = document.getElementById('autoToggle'); btn.textContent = '❚❚ 停止翻页'; btn.classList.add('active');
+    state.autoTimer = setInterval(function () {
+      window.scrollBy(0, SPEED_PX[state.autoSpeed]);
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
+        if (state.idx < state.chapters.length - 1) { loadChapter(state.idx + 1, true); } else { stopAuto(); toast('已经是最新一章啦，明天再来吧～'); }
+      }
+    }, 16);
+  }
+  function stopAuto() {
+    clearInterval(state.autoTimer); state.autoTimer = 0;
+    var btn = document.getElementById('autoToggle'); btn.textContent = '▶ 自动翻页'; btn.classList.remove('active');
+  }
+  document.getElementById('autoToggle').addEventListener('click', function () { state.autoTimer ? stopAuto() : startAuto(); });
+  document.querySelectorAll('.speedsel button[data-speed]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.autoSpeed = Number(b.dataset.speed);
+      document.querySelectorAll('.speedsel button[data-speed]').forEach(function (x) { x.classList.toggle('on', x === b); });
+    });
+  });
+  ['touchstart','wheel'].forEach(function (ev) {
+    window.addEventListener(ev, function () { if (state.autoTimer) { stopAuto(); toast('检测到手动滑动，已暂停自动翻页'); } }, { passive: true });
+  });
+
+  /* ---------- FAB ---------- */
+  var fabMenu = document.getElementById('fabMenu'), fabToggle = document.getElementById('fabToggle');
+  fabToggle.addEventListener('click', function () { fabMenu.classList.toggle('open'); });
+  document.getElementById('fabTop').addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); fabMenu.classList.remove('open'); });
+  document.getElementById('fabTheme').addEventListener('click', function () {
+    var order = ['cream','green','night']; var cur = reader.getAttribute('data-theme'); var next = order[(order.indexOf(cur) + 1) % order.length];
+    applyTheme(next); fabMenu.classList.remove('open'); toast('已切换到' + ({cream:'米黄纸感',green:'豆沙绿护眼',night:'夜间琥珀（低蓝光）'})[next]);
+  });
+
+  /* ---------- retro backdrop canvas ---------- */
+  (function () {
+    var cv = document.getElementById('retroCanvas'); if (!cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d'); var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+    var W, H, raf = 0;
+    function init() { W = cv.width = innerWidth; H = cv.height = innerHeight; }
+    function frame(t) {
+      ctx.clearRect(0, 0, W, H);
+      ctx.strokeStyle = 'rgba(201,131,74,0.06)'; ctx.lineWidth = 1;
+      var step = 64;
+      for (var x = (t * 0.004) % step; x < W; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (var y = (t * 0.002) % step; y < H; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      ctx.strokeStyle = 'rgba(79,214,196,0.05)';
+      var r = 90 + 60 * Math.sin(t * 0.0003);
+      ctx.beginPath(); ctx.arc(W * 0.85, H * 0.15, r, 0, 6.283); ctx.stroke();
+      raf = requestAnimationFrame(frame);
+    }
+    init(); if (RM) { frame(0); cancelAnimationFrame(raf); raf = 0; } else raf = requestAnimationFrame(frame);
+    addEventListener('resize', function () { clearTimeout(window.__st2); window.__st2 = setTimeout(init, 200); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; } else if (!document.hidden && !raf && !RM) raf = requestAnimationFrame(frame); });
+  })();
+
+  /* ---------- boot ---------- */
+  function boot() {
+    var savedTheme = 'cream'; try { savedTheme = localStorage.getItem(LS.theme) || 'cream'; } catch (e) {}
+    applyTheme(savedTheme);
+    var savedFs = 18; try { savedFs = Number(localStorage.getItem(LS.fs)) || 18; } catch (e) {}
+    curFs = applyFs(savedFs);
+
+    fetch('/novels-data.json').then(function (r) { return r.json(); }).then(function (data) {
+      state.data = data; state.chapters = data.chapters;
+      document.getElementById('novelIntro').textContent = data.novel.intro;
+      document.getElementById('novelAuthor').textContent = data.novel.author;
+      document.getElementById('novelUpdateNote').textContent = data.novel.updateNote;
+      document.getElementById('novelStart').textContent = data.novel.startDate;
+      var tagsEl = document.getElementById('novelTags'); tagsEl.innerHTML = '';
+      (data.novel.tags || []).forEach(function (tg) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = tg; tagsEl.appendChild(s); });
+
+      var resumeIdx = 0, resumeScroll = null;
+      try {
+        var prog = JSON.parse(localStorage.getItem(LS.progress) || 'null');
+        if (prog) { var i = state.chapters.findIndex(function (c) { return c.id === prog.chapterId; }); if (i >= 0) { resumeIdx = i; resumeScroll = prog.scrollY; } }
+      } catch (e) {}
+
+      loadChapter(resumeIdx, true, function () {
+        if (resumeScroll != null) { window.scrollTo({ top: resumeScroll }); if (resumeIdx > 0 || resumeScroll > 40) toast('已为你恢复到上次的阅读位置'); }
+      });
+    }).catch(function () {
+      document.getElementById('chapterTitle').textContent = '内容加载失败';
+      document.getElementById('chapterBody').innerHTML = '<p>暂时无法读取小说数据，请刷新页面重试。</p>';
+    });
+  }
+  if (document.readyState !== 'loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+})();
+</script>
+<script src="/i18n.js" defer></script>
+<script src="/lib/nav.js" defer></script>
+<script src="/transition.js" defer></script>
+<script src="/page-turn.js" defer></script>
+</body>
+</html>

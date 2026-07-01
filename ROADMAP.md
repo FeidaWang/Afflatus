@@ -14,6 +14,7 @@
 | Sectors | `public/sectors.html` | AI + 航天个股研判 | 酸性绿 + 故障艺术 |
 | Signal | `public/signal.html` | 美联储观察 = SCP O5 收容档案 | 机密文档 · 琥珀/绿 |
 | Games | `public/games.html` | 世界杯限时竞猜 vs Opus | 赛博朋克 · 品红/青 |
+| Novels | `public/novels.html` | 无限流·种田小说连载《万界种春》 | 复古未来主义 · 铜/青（纯中文，护眼阅读，含夜间/豆沙绿/米黄三种阅读模式、自动翻页、书签、章节速览） |
 
 **原则**：每页保留**独立的字体与美术身份**，但共享一套基础系统，避免重复造轮子。
 
