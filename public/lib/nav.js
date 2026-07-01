@@ -21,7 +21,8 @@
     { path: '/arena.html',   en: 'Arena',   zh: '竞技场' },
     { path: '/sectors.html', en: 'Sectors', zh: '板块' },
     { path: '/signal.html',  en: 'Signal',  zh: '信号' },
-    { path: '/games.html',   en: 'Games',   zh: '竞猜' }
+    { path: '/games.html',   en: 'Games',   zh: '竞猜' },
+    { path: '/novels.html',  en: 'Novels',  zh: '小说' }
   ];
 
   const norm = (p) => { p = (p || '/').replace(/index\.html$/, ''); return p === '' ? '/' : p; };
