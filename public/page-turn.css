@@ -10,6 +10,22 @@
 @font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
 @font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 950;font-display:swap}
 
+/* Cross-document View Transitions (native browser crossfade) — opt in on
+   every page so navigations NOT intercepted by transition.js (typed URL,
+   bookmarks, back/forward, middle-click-then-switch-back) get a smooth
+   fade instead of an instant white flash. Navigations transition.js DOES
+   intercept already play their own richer per-destination canvas+audio FX
+   (see public/transition.js) and set html.vt-suppress right before the
+   real navigation fires, so the two effects don't stack. Support is
+   feature-detected by browsers that don't understand @view-transition
+   (it's simply ignored) — no fallback needed. */
+@view-transition{navigation:auto}
+html.vt-suppress::view-transition-old(root),
+html.vt-suppress::view-transition-new(root){
+  animation:none!important;
+  mix-blend-mode:normal!important;
+}
+
 /* motion-sensitive visitors: kill page transitions & pulses */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{

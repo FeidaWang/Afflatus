@@ -1279,6 +1279,8 @@ nav{
   transition:color .22s ease,text-shadow .22s ease;
 }
 .nav-links a:hover{color:#dff9ff;text-shadow:0 0 14px rgba(116,240,255,.48)}
+.nav-links a.active{color:#8cf1ff;text-shadow:0 0 10px rgba(116,240,255,.6);position:relative}
+.nav-links a.active::after{content:'';position:absolute;left:8%;right:8%;bottom:1px;height:1px;background:rgba(140,241,255,.72)}
 .top-telemetry{
   grid-template-columns:repeat(4,max-content);
   gap:4px 13px;
@@ -7025,6 +7027,17 @@ nav.route-arrows::after,
   .stardrive .hero-metric .strip-value{transform:scale(calc(1 + var(--forge)*0.16))}
   .forge-tagline{top:40%}
   .fc-sub{font-size:11px;letter-spacing:.22em}
+}
+
+/* Cross-document View Transitions — same opt-in as public/page-turn.css
+   (see that file for the full rationale). index.html's own click/keyboard
+   nav is intercepted by transition.js too and sets html.vt-suppress before
+   navigating, so only non-intercepted navigations get the native crossfade. */
+@view-transition{navigation:auto}
+html.vt-suppress::view-transition-old(root),
+html.vt-suppress::view-transition-new(root){
+  animation:none!important;
+  mix-blend-mode:normal!important;
 }
 
 @media (prefers-reduced-motion: reduce){
