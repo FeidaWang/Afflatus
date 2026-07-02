@@ -225,6 +225,12 @@ export function createTopdownCombat({ canvas }) {
 
   // ── animation loop ────────────────────────────────────────────────────────
   let W = 1, H = 1, raf = 0, running = false, t0 = 0, lastFire = 0, lastMissile = 0, lastLaser = 0, lastOrb = 0;
+  // Real-state hooks (Phase 2b, partial): renderOnce(now, state) can pass a
+  // snapshot from main.js's getBattleSnapshot(). Consumed narrowly for now —
+  // kill events trigger a real explosion flash, and the comet hides while the
+  // real halley is destroyed — without replacing the self-driven flight path
+  // (that full migration is a separate, larger follow-up; see ROADMAP §4).
+  let lastKillSeen = null, wasAlive = true;
 
   function resize(w, h) {
     W = Math.max(1, w); H = Math.max(1, h);
@@ -236,8 +242,9 @@ export function createTopdownCombat({ canvas }) {
 
   function tmp() { return new THREE.Vector3(); }
 
-  function update(now) {
+  function update(now, state) {
     const t = (now - t0) / 1000;
+    const alive = !state || !state.halley || !state.halley.destroyed;
 
     // comet drifts left→right and bobs; respawns after crossing
     const cx = -26 + ((t * 4) % 52);
@@ -246,6 +253,22 @@ export function createTopdownCombat({ canvas }) {
     comet.userData.rock.rotation.y = t * 0.7;
     comet.userData.coma.material.opacity = 0.45 + 0.15 * Math.sin(t * 6);
     const cometPos = new THREE.Vector3().setFromMatrixPosition(comet.matrixWorld);
+
+    // real-kill tie-in: a confirmed kill (killCount incrementing) fires a big
+    // warm flash at the comet's current position, distinct from routine hits
+    if (state && typeof state.killCount === 'number') {
+      if (lastKillSeen === null) lastKillSeen = state.killCount;
+      else if (state.killCount > lastKillSeen) {
+        lastKillSeen = state.killCount;
+        boom(cometPos.clone(), 4, 0xffe6b0);
+      }
+    }
+    // real-destroyed tie-in: hide the comet while the real halley is down,
+    // and stop new ambient fire from targeting it; reappears once a new
+    // halley spawns (alive again). In-flight tracers/orbs still decay normally.
+    if (!alive && wasAlive) { boom(cometPos.clone(), 4, 0xffe6b0); }
+    comet.visible = alive;
+    wasAlive = alive;
 
     // capital slow patrol
     capital.position.x = -2 + Math.sin(t * 0.25) * 6;
@@ -263,8 +286,8 @@ export function createTopdownCombat({ canvas }) {
       if (f.userData.nh) f.userData.nh.tick(t);
     });
 
-    // tracer cadence
-    if (now - lastFire > 110) {
+    // tracer cadence — only aim new fire at the comet while it's alive
+    if (alive && now - lastFire > 110) {
       lastFire = now;
       const f = fighters[(Math.random() * fighters.length) | 0];
       const from = new THREE.Vector3().setFromMatrixPosition(f.matrixWorld);
@@ -273,12 +296,12 @@ export function createTopdownCombat({ canvas }) {
       if (Math.random() > 0.55) boom(jitter, 0.5, 0x9fe6ff);
     }
     // capital CIWS occasional burst
-    if (Math.random() > 0.93) {
+    if (alive && Math.random() > 0.93) {
       const from = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld); from.y = 2;
       fireTracer(from, cometPos.clone().add(tmp().set((Math.random() - 0.5) * 5, 0, (Math.random() - 0.5) * 5)), 0xff5c62);
     }
     // Nighthawk sustained laser strafe
-    if (now - lastLaser > 620) {
+    if (alive && now - lastLaser > 620) {
       lastLaser = now;
       const f = fighters[(Math.random() * fighters.length) | 0];
       const from = new THREE.Vector3().setFromMatrixPosition(f.matrixWorld);
@@ -287,9 +310,9 @@ export function createTopdownCombat({ canvas }) {
     }
     // Enforcer main-cannon plasma orb (charge → fire)
     if (cannonOrbSprite) cannonOrbSprite.material.opacity = Math.min(0.95, cannonOrbSprite.material.opacity + 0.02) * (0.7 + 0.3 * Math.sin(t * 8));
-    if (now - lastOrb > 3200) { lastOrb = now; launchOrb(); }
+    if (alive && now - lastOrb > 3200) { lastOrb = now; launchOrb(); }
     // periodic missile + big explosion
-    if (now - lastMissile > 2600) { lastMissile = now; launchMissile(); }
+    if (alive && now - lastMissile > 2600) { lastMissile = now; launchMissile(); }
 
     // advance lasers (quick fade)
     for (let i = lasers.length - 1; i >= 0; i--) {
@@ -362,7 +385,10 @@ export function createTopdownCombat({ canvas }) {
     start() { if (!running) { running = true; raf = requestAnimationFrame(loop); } },
     stop() { running = false; if (raf) cancelAnimationFrame(raf); },
     resize,
-    renderOnce(now = performance.now()) { if (!t0) t0 = now; update(now); renderer.render(scene, camera); },
+    // state: optional real-battle snapshot (see main.js getBattleSnapshot()).
+    // Consumed for kill flashes + comet visibility; full state-driven flight
+    // path is a separate follow-up (ROADMAP §4 Phase 2b).
+    renderOnce(now = performance.now(), state = null) { if (!t0) t0 = now; update(now, state); renderer.render(scene, camera); },
     destroy() { this.stop(); renderer.dispose(); }
   };
 }

@@ -130,6 +130,32 @@ export function createCombatRuntime({
     return clamp((Date.now() - (weaponCooldownStart[type] || Date.now())) / ms, 0, 1);
   }
 
+  // Single-object snapshot of everything this module owns (ammo/deck/service
+  // windows, weapon cooldowns, fleet HP). Does NOT include halley/weapons/
+  // escorts/killCount — those are still owned directly by main.js module
+  // scope, not by combatRuntime. Callers that need the *full* battle picture
+  // (e.g. topdownCombat) should use main.js's getBattleSnapshot(), which
+  // merges this with the main.js-owned state. See ROADMAP §4 Phase 2b.
+  function getState() {
+    return {
+      fleetHp,
+      fleetHealthAverage: fleetHealthAverage(),
+      ammoLevel,
+      deckReadiness,
+      serviceActive: serviceActive(),
+      serviceWindows: {
+        ammoServiceStart, ammoServiceUntil,
+        repairServiceStart, repairServiceUntil,
+        bayServiceStart, bayServiceUntil,
+      },
+      weapons: Object.fromEntries(Object.keys(weaponCooldownUntil).map(type => [type, {
+        ready: weaponReady(type),
+        remainingMs: weaponRemaining(type),
+        cooldownRatio: weaponCooldownRatio(type),
+      }])),
+    };
+  }
+
   return {
     fleetHp,
     fleetHealthAverage,
@@ -143,6 +169,7 @@ export function createCombatRuntime({
     weaponCooldownRatio,
     weaponReady,
     weaponRemaining,
+    getState,
     getAmmoLevel: () => ammoLevel,
     getDeckReadiness: () => deckReadiness,
     getServiceWindows: () => ({
