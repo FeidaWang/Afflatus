@@ -256,13 +256,15 @@ combatView (#pilotFeed) / 首页 event-layer
 
 ### 5b.3 设计路线图（分阶段）
 
-**Phase 1 — 事件档案化（静态，先做）**
-- 新增 **INCIDENT LOG（收容事件簿）** 区块：每个宏观事件（NFP/CPI/PCE/FOMC/主席讲话）= 一份编号档案，含：事件前市场定价 → 数据 → 重定价 → 美股当日反应四段式，用 5b.1 的六月非农作为**首份档案 INCIDENT-2026-NFP-06**。
-- 事件倒计时从"只有 FOMC"扩展为**下一个催化剂**（NFP/CPI/FOMC 中最近者），标签如 `NEXT CONTAINMENT TEST`。
-- 数据文件 `public/data/signal-events.json`（结构：`{date, type, name, before, print, repricing, equityReaction, verdict}`），页面渲染 + 中英双语；更新方式与 `arena-news.json` 相同（定时任务/手动）。
+**Phase 1 — 事件档案化（静态）— ✅ 已完成**
+- **四份档案已刷新至 7 月 FOMC / 六月非农后状态**：01 DIRECTIVE 概率改为 Hold 91% / Cut 7% / Hike 2%（非农后加息尾部风险大幅收窄）；02 CHAIR 文案去掉"首次会议"、改为"鹰派基调首次迎战走弱就业数据"、DOT PLOT 行改为 STATEMENT（本次无 SEP）；03 从 `SEP / DOT-PLOT PROJECTION` 改造为 **`SEPTEMBER CUT TRACKER`**（7 月会议本就无点阵图，面板改追踪 9 月降息概率 + 提示下次 SEP 在 9/16）；04 THREAT BOARD 的 `payrolls/wages` 从 `FIRM` 降级为 `CRACKING`，新增 `labor participation`（`SLIPPING`）行。
+- **倒计时已从"只有 FOMC"扩展为 `NEXT CONTAINMENT TEST`**：新增 `CATALYSTS[]`（FOMC + CPI + NFP 混排，含 2026-07-14 六月 CPI / 2026-07-29 FOMC / 2026-08-12 七月 CPI / 2026-09-04 八月非农 / 后续 FOMC），倒计时逻辑改为取**最近一个**目标日期；标签、发布时间（FOMC 2:00 PM ET / 数据 8:30 AM ET）、DIRECTIVE↔READOUT 文案随目标类型动态切换（写入真实 `data-en/data-zh` 属性，交给全局 `i18n.js` 统一重绘，而非绕开翻译系统另写一套）。当前日期下会正确显示"下一次 CPI 数据"（7/14）而非 FOMC。
+- **新增 INCIDENT LOG（收容事件簿）区块**：每个宏观事件 = 一份编号档案，`before → print → repricing → equityReaction` 四段式 + `verdict` 裁定，卡片按 SCP 收容等级（`euclid`/`keter`/`safe`）着色。首份档案 **INCIDENT-2026-NFP-06**（六月非农：+5.7万 vs 预期 +11.3万，失业率 4.2% 但参与率降至 61.5%，4/5 月下修 -7.4万，盘前 risk-on）已写入。
+- **数据文件路径**：实际落地为 `public/signal-events.json`（根目录，与既有 `arena-news.json` / `games-data.json` 同级，而非原计划的 `public/data/` 子目录——沿用站内已有惯例）；`signal.html` 用 `fetch('/signal-events.json',{cache:'no-store'})` 拉取渲染，中英双语随 `afflatus-lang` 事件重渲染整个列表。后续新增事件只需在此 JSON 追加一条记录，不用碰 HTML。
+- 提交记录：`782a19c`。
 
-**Phase 2 — 传导链可视化**
-- **BREACH METER（重定价仪表）**：横向双状态 bar 展示"事件前 vs 事件后"的 9 月降息/加息概率位移，位移越大 = 收容失效等级越高（Keter/Euclid/Safe 对应大/中/小重定价），把 SCP 等级变成**真实波动语义**。
+**Phase 2 — 传导链可视化**（未开始）
+- **BREACH METER（重定价仪表）**：横向双状态 bar 展示"事件前 vs 事件后"的 9 月降息/加息概率位移，位移越大 = 收容失效等级越高（Keter/Euclid/Safe 对应大/中/小重定价），把 SCP 等级变成**真实波动语义**。Phase 1 已在 INCIDENT LOG 卡片上用 `class` 字段（`euclid`/`keter`/`safe`）打了地基，Phase 2 要做的是把这个等级从"人工评定"升级为"按重定价幅度自动映射"。
 - **鹰鸽罗盘**：主席+理事近期讲话的鹰鸽评分聚合成一个指针 dial（手动打分先行，后续可接文本分析）。
 - **事件回放迷你图**：SPX 5 分钟线在发布时刻前后 ±2h 的 sparkline（Twelve Data 拉一次存 JSON），直观呈现"一句话/一个数字"造成的瞬时波动。
 
@@ -272,6 +274,51 @@ combatView (#pilotFeed) / 首页 event-layer
 - FedWatch 概率若有可用数据源则自动刷新 01 面板；否则维持人工 JSON。
 
 **设计原则**（沿用全站规则）：SCP 皮肤只做叙事包装，数据本体必须**真实、注明日期与来源**；所有研判标注 "not advice"；中英文案成对（`data-en/data-zh`）；新增区块继续用琥珀/绿机密文档配色，避免引入新色系。
+
+---
+
+## 6. 架构演进与下一代视觉 / Architecture evolution & next-gen visuals ★
+
+> 站点将持续加页（1.4 → `novels.html`，之后更多）。本节回答两个问题：**现有架构撑不撑得住增长**、**用什么技术拿到更高帧率与"下一代"观感**。结论先行：**不需要换语言、不需要上 React**——瓶颈不在 JS 语言本身，而在 (a) 多页手工维护成本 (b) 主线程渲染压力 (c) 缺乏 GPU 后期处理。对症下药即可。
+
+### 6.1 现有架构的真实问题（按痛感排序）
+
+1. **public/*.html 不经打包**：五个子页的内联 `<style>`/`<script>` 由 Vite 原样拷贝——无压缩、无 tree-shaking、无资源哈希（改了 JS 用户可能吃旧缓存）。页面越加越多，这个税越重。
+2. **单体文件**：`main.js` 3700+ 行 / `styles.css` 6900+ 行（§2 已有拆分计划，未执行）。每次改动的回归风险随行数线性上涨。
+3. **重复的页面骨架**：nav 已统一（§2），但 `<head>` meta / 字体加载 / i18n 与 audio 脚本引入顺序仍是每页复制——novels.html 又要复制一遍。
+4. **主线程全包**：星空、combat、雷达、K 线全部在主线程 Canvas 2D 绘制；滚动 + 动画 + 绘制互相抢 16ms 预算，大窗口 Retina 下已经出现过降采样模糊。
+5. **多页跳转是整页刷新**：`transition.js` 用出/入动画掩盖白屏，但本质仍是丢弃全部状态重载。
+
+### 6.2 技术选型建议（诚实评估，含"不要做"）
+
+**✅ 值得做**
+
+| 技术 | 解决什么 | 成本 |
+| --- | --- | --- |
+| **Vite MPA 多入口** | 把 `public/*.html` 变成真正的 Vite entry（`rollupOptions.input` 列多个 html），子页获得打包/压缩/哈希/公共 chunk | 低，半天 |
+| **View Transitions API（跨文档）** | `@view-transition {navigation: auto}` + CSS 即可让多页跳转获得 SPA 级无缝过渡（元素连续变形），2026 年 Chrome/Edge/Safari 均支持，Firefox 渐进降级为普通跳转——**可大幅简化甚至替代 transition.js** | 低-中 |
+| **CSS Scroll-Driven Animations** | `animation-timeline: scroll()/view()` 把滚动驱动动画（alphardForge 的渐进拉伸、strip 计数触发）搬到合成器线程，**零 JS、不掉帧**；JS 版本保留为 Firefox 兜底 | 中 |
+| **OffscreenCanvas + Worker** | 星空/combat 背景移入 Worker 线程渲染，主线程只管 UI——这是当前**帧率提升性价比最高**的一步（Chrome/Safari/Firefox 均已支持） | 中 |
+| **three.js WebGPURenderer + TSL** | r170+ 的 WebGPU 渲染器（WebGL 自动兜底）。真正的收益：**compute shader 粒子**（百万级粒子模拟星涡/爆炸碎片，CPU 零参与）+ 更低的 draw call 开销。跃迁点星涡、combat 爆炸是最佳试点 | 中-高 |
+| **Bloom/HDR 后期处理** | "下一代观感"的最大单项来源不是换引擎，而是**发光管线**：three.js `UnrealBloomPass`（或 WebGPU 版 bloom node）+ ACES tone mapping，让引擎喷口/主炮/星体获得真实辉光，而非现在的 radial-gradient 假光晕 | 中 |
+| **TypeScript（渐进）** | 拆 main.js 时新模块直接 `.ts`，旧代码不动；`checkJs` 渐进覆盖。防回归价值随站点体积增长 | 低（增量） |
+| **Astro（当加页成本失控时）** | 静态站生成器：一份 layout 出所有子页 `<head>`/nav/字体，novels 章节用 Markdown/MDX 管理（写一章 = 加一个 .md 文件），零 JS 默认 + 岛屿式挂载现有 canvas 应用。**触发条件**：页面 ≥8 个或 novels 章节 ≥20 章时迁移，当前先不动 | 高（迁移） |
+
+**❌ 不要做（省下的时间就是性能）**
+
+- **换 React/Vue/Svelte 重写**：站点是 canvas 动画 + 静态内容，虚拟 DOM 毫无用武之地，只会加 100KB+ 运行时和一层调试间接性。
+- **Rust/WASM**：粒子/物理量级远未到 JS 瓶颈（几千粒子 vs WASM 值得的百万级）；WebGPU compute 已覆盖"大规模并行"需求且不用换语言。
+- **全站 WebGPU-only**：2026 年仍需 WebGL 兜底（旧设备/企业浏览器），three.js 的双后端正好免费给你。
+- **SSR/后端框架（Next 等）**：无动态内容、无用户系统，纯静态 + Vercel 已是最优部署形态；加后端只会引入冷启动和费用。
+
+### 6.3 落地顺序（与现有计划合并）
+
+1. **v1.4 前（novels 上线前）**：Vite MPA 多入口改造 → novels.html 从第一天就吃打包管线；`@view-transition` 跨文档过渡与 transition.js 共存灰度（CSS 有则用，无则旧动画）。
+2. **v1.4–v1.5**：OffscreenCanvas Worker 化首页星空背景（最大画布、最稳收益）；scroll-driven animations 替换 alphardForge 的 JS pin 逻辑（保留 JS 兜底）；main.js 拆分启动（§2 Phase 4），新模块用 TS。
+3. **v1.5+**：three.js WebGPURenderer 试点跃迁点星涡（compute 粒子 + bloom），A/B 对比帧率后推广到 combat 爆炸/主炮；KTX2 纹理管线（§4 Phase 3 已列）。
+4. **触发式**：页面/章节数量到阈值 → Astro 迁移（layout 收敛 + MDX 内容管理）。
+
+**衡量标准**：每步用 Chrome DevTools Performance 面板对比——主线程帧时间（目标 <8ms）、合成器帧率（目标 120fps 高刷屏）、LCP（子页 <1.5s）。观感目标：辉光/景深后的 combat 场景截图应接近 SC 参考图的光学质感。
 
 ---
 
