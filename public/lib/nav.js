@@ -24,6 +24,11 @@
     { path: '/games.html',   en: 'Games',   zh: '竞猜' },
     { path: '/novels.html',  en: 'Novels',  zh: '小说' }
   ];
+  // Exposed read-only for consumers that can't use the full DOM-rendering
+  // behaviour below (e.g. index.html's own nav, which has its own bilingual
+  // system instead of i18n.js/data-en/data-zh). Everything else in this file
+  // is unchanged for the five pages already using it.
+  window.AfflatusSite = SITE.slice();
 
   const norm = (p) => { p = (p || '/').replace(/index\.html$/, ''); return p === '' ? '/' : p; };
   const here = norm(location.pathname);
