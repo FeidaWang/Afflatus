@@ -103,6 +103,28 @@ a{color:inherit;text-decoration:none}
 .redact{background:#15140f;color:transparent;padding:0 4px;animation:rv 11s steps(1) infinite}
 @keyframes rv{0%,92%,100%{background:#15140f;color:transparent}94%{background:transparent;color:inherit}}
 
+/* incident log — real macro-event dossiers, before→print→repricing→reaction */
+.incidents{margin-top:16px}
+.incidents>h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;padding:13px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.incidents>h2 small{color:var(--dim);font:400 10px var(--mono);letter-spacing:.1em}
+.incidentList{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.incidentList .empty{padding:14px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--dim);font:400 12px var(--mono)}
+.incident{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,.55)}
+.incident .ihead{padding:11px 14px;background:var(--ink);color:var(--doc);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.incident .ihead .iid{font:700 13px/1 var(--disp);letter-spacing:.06em;text-transform:uppercase}
+.incident .ihead .idate{font:400 11px/1 var(--mono);color:var(--dim);flex:1}
+.incident .cls{font:700 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid currentColor}
+.incident .cls.euclid{color:var(--amber)}.incident .cls.keter{color:var(--red)}.incident .cls.safe{color:var(--green)}
+.incident .ibody{padding:14px}
+.incident .iname{font:700 15px/1.3 var(--disp);text-transform:uppercase;letter-spacing:.02em;margin:0 0 8px;color:#15140f}
+.incident .irow{display:grid;grid-template-columns:130px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed rgba(21,20,15,.25)}
+.incident .irow:last-of-type{border-bottom:0}
+.incident .irow .k{font:700 11px/1.6 var(--mono);letter-spacing:.06em;color:var(--red);text-transform:uppercase}
+.incident .irow .v{font:400 13px/1.6 var(--mono);color:#26241d}
+.incident .verdict{margin:12px 0 0;padding-top:12px;border-top:2px solid rgba(21,20,15,.25);font:400 13px/1.6 var(--mono);color:#26241d}
+.incident .verdict b{color:var(--red)}
+@media(max-width:760px){.incident .irow{grid-template-columns:1fr;gap:4px}}
+
 /* sector asset watch (Opus calls) */
 .watch{margin-top:16px;border:1px solid var(--line);background:var(--panel2)}
 .watch h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;padding:13px 16px;border-bottom:1px solid var(--line);color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -174,12 +196,12 @@ a{color:inherit;text-decoration:none}
     </div>
   </section>
 
-  <section class="review" aria-label="Next FOMC containment review">
+  <section class="review" aria-label="Next containment test">
     <div class="tag" data-en="CONTAINMENT REVIEW" data-zh="收容复核">CONTAINMENT REVIEW</div>
     <div class="b">
-      <div class="row1"><span data-en="NEXT FOMC DECISION" data-zh="下次 FOMC 决议">NEXT FOMC DECISION</span><span class="bias" data-en="POST-FOMC BIAS · BULLISH" data-zh="FOMC 后倾向 · 看涨">POST-FOMC BIAS · BULLISH</span><span class="live" data-en="O5 SESSION · ACTIVE" data-zh="O5 会议 · 进行中">O5 SESSION · ACTIVE</span></div>
+      <div class="row1"><span id="eventTypeLabel" data-en="NEXT CONTAINMENT TEST" data-zh="下一次收容测试">NEXT CONTAINMENT TEST</span><span class="bias" data-en="TAPE BIAS · BULLISH" data-zh="盘面倾向 · 看涨">TAPE BIAS · BULLISH</span><span class="live" data-en="MONITORING · LIVE" data-zh="监控中 · 实时">MONITORING · LIVE</span></div>
       <div class="clock" id="fomcClock" aria-live="off">--d --:--:--</div>
-      <div class="when"><span data-en="REVIEW" data-zh="复核">REVIEW</span> <b id="fomcDate">—</b> · 2:00 PM ET — <span data-en="DIRECTIVE" data-zh="指令">DIRECTIVE</span> <span class="bc" data-en="HOLD 3.50–3.75% · WATCH THE DOTS" data-zh="维持 3.50–3.75% · 紧盯点阵图">HOLD 3.50–3.75% · WATCH THE DOTS</span></div>
+      <div class="when"><span id="eventWhenLabel" data-en="REVIEW" data-zh="复核">REVIEW</span> <b id="fomcDate">—</b> · <span id="eventTime">2:00 PM ET</span> — <span id="eventDirectiveLabel" data-en="DIRECTIVE" data-zh="指令">DIRECTIVE</span> <span class="bc" id="eventDirective" data-en="HOLD 3.50–3.75% · WATCH THE DOTS" data-zh="维持 3.50–3.75% · 紧盯点阵图">HOLD 3.50–3.75% · WATCH THE DOTS</span></div>
     </div>
   </section>
 
@@ -187,41 +209,47 @@ a{color:inherit;text-decoration:none}
     <article class="file">
       <h2><span data-en="O5 DIRECTIVE — RATE DECISION" data-zh="O5 指令 — 利率决议">O5 DIRECTIVE — RATE DECISION</span><span class="c">01</span></h2>
       <div class="in"><div class="bars">
-        <div class="row"><span data-en="Hold 3.50–3.75%" data-zh="维持 3.50–3.75%">Hold 3.50–3.75%</span><b>97%</b><div class="bar g"><i style="--w:97%"></i></div></div>
-        <div class="row"><span data-en="Cut 25bp" data-zh="降息 25bp">Cut 25bp</span><b>2%</b><div class="bar a"><i style="--w:6%"></i></div></div>
-        <div class="row"><span data-en="Hike 25bp" data-zh="加息 25bp">Hike 25bp</span><b>1%</b><div class="bar r"><i style="--w:4%"></i></div></div>
-      </div><p class="note" data-en="CME FedWatch puts a hold near-certain (~97%). The decision is procedural; the signal is the Summary of Economic Projections — not the rate itself." data-zh="CME FedWatch 显示按兵不动几成定局（约 97%）。决议本身是程序性的；真正的信号在经济预测摘要（SEP），而非利率数字。">CME FedWatch puts a hold near-certain (~97%). The decision is procedural; the signal is the Summary of Economic Projections — not the rate itself.</p></div>
+        <div class="row"><span data-en="Hold 3.50–3.75%" data-zh="维持 3.50–3.75%">Hold 3.50–3.75%</span><b>91%</b><div class="bar g"><i style="--w:91%"></i></div></div>
+        <div class="row"><span data-en="Cut 25bp" data-zh="降息 25bp">Cut 25bp</span><b>7%</b><div class="bar a"><i style="--w:7%"></i></div></div>
+        <div class="row"><span data-en="Hike 25bp" data-zh="加息 25bp">Hike 25bp</span><b>2%</b><div class="bar r"><i style="--w:2%"></i></div></div>
+      </div><p class="note" data-en="Post-NFP repricing: the 57K miss unwound most of the September hike premium; CME FedWatch still calls July a hold (~91%), but the tail has moved toward cuts, not hikes." data-zh="非农后重定价：5.7万的疲软数据抹去了大部分9月加息溢价；CME FedWatch 仍显示7月按兵不动概率最高（约91%），但尾部风险已转向降息，而非加息。">Post-NFP repricing: the 57K miss unwound most of the September hike premium; CME FedWatch still calls July a hold (~91%), but the tail has moved toward cuts, not hikes.</p></div>
     </article>
 
     <article class="file">
       <h2><span data-en="ETHICS COMMITTEE — OVERSIGHT" data-zh="伦理委员会 — 监督">ETHICS COMMITTEE — OVERSIGHT</span><span class="c">02</span></h2>
       <div class="in"><div class="list">
-        <div class="li"><span class="k" data-en="CHAIR" data-zh="主席">CHAIR</span><span class="v" data-en="Warsh's FIRST meeting — a new hand on the gavel; tone &gt; text." data-zh="沃什的首次会议——新人执槌；语气比措辞更重要。">Warsh's FIRST meeting — a new hand on the gavel; tone &gt; text.</span></div>
-        <div class="li"><span class="k" data-en="DOT PLOT" data-zh="点阵图">DOT PLOT</span><span class="v" data-i18n-html data-en="Watch if the 2026 median drops its last cut; <span class='redact'>≥3 dots may show a 2026 hike</span>." data-zh="关注 2026 年中值是否抹去最后一次降息；<span class='redact'>或有 ≥3 个点显示 2026 加息</span>。">Watch if the 2026 median drops its last cut; <span class="redact">≥3 dots may show a 2026 hike</span>.</span></div>
-        <div class="li"><span class="k" data-en="WINDOW" data-zh="窗口">WINDOW</span><span class="v" data-en="First cut may slip from 2026 toward 2027; Sept stays the live test." data-zh="首次降息或从 2026 推迟至 2027；9 月仍是关键观察点。">First cut may slip from 2026 toward 2027; Sept stays the live test.</span></div>
-      </div><p class="note" data-en="A transition raises headline risk around every word; the 2:30 PM ET press conference is the breach window." data-zh="换届让每一个字都暗藏头条风险；美东下午 2:30 的发布会是“收容失效”窗口。">A transition raises headline risk around every word; the 2:30 PM ET press conference is the breach window.</p></div>
+        <div class="li"><span class="k" data-en="CHAIR" data-zh="主席">CHAIR</span><span class="v" data-en="Warsh's SECOND meeting — first real collision between his hawkish tone and a visibly cracking labor print." data-zh="沃什的第二次会议——鹰派基调首次正面迎战明显走弱的就业数据。">Warsh's SECOND meeting — first real collision between his hawkish tone and a visibly cracking labor print.</span></div>
+        <div class="li"><span class="k" data-en="STATEMENT" data-zh="声明">STATEMENT</span><span class="v" data-i18n-html data-en="Watch if 'higher-for-longer' language survives; <span class='redact'>a soft hedge here would confirm Sept is live again</span>." data-zh="关注「更高更久」措辞是否保留；<span class='redact'>若出现软化对冲，将确认9月降息重新激活</span>。">Watch if 'higher-for-longer' language survives; <span class="redact">a soft hedge here would confirm Sept is live again</span>.</span></div>
+        <div class="li"><span class="k" data-en="WINDOW" data-zh="窗口">WINDOW</span><span class="v" data-en="No SEP at this meeting — the next dot plot isn't until September; until then, data prints do the talking." data-zh="本次会议无 SEP——下一次点阵图要等到 9 月；在此之前，一切由数据说话。">No SEP at this meeting — the next dot plot isn't until September; until then, data prints do the talking.</span></div>
+      </div><p class="note" data-en="A cracked labor print raises headline risk around every word; the 2:30 PM ET press conference is the breach window." data-zh="走弱的就业数据让每一个字都暗藏头条风险；美东下午 2:30 的发布会是“收容失效”窗口。">A cracked labor print raises headline risk around every word; the 2:30 PM ET press conference is the breach window.</p></div>
     </article>
 
     <article class="file">
-      <h2><span data-en="SEP / DOT-PLOT PROJECTION" data-zh="SEP / 点阵图推演">SEP / DOT-PLOT PROJECTION</span><span class="c">03</span></h2>
+      <h2><span data-en="SEPTEMBER CUT TRACKER" data-zh="9 月降息概率追踪">SEPTEMBER CUT TRACKER</span><span class="c">03</span></h2>
       <div class="in"><div class="bars">
-        <div class="row"><span data-en="2026 holds (base)" data-zh="2026 维持（基准）">2026 holds (base)</span><b>72%</b><div class="bar g"><i style="--w:72%"></i></div></div>
-        <div class="row"><span data-en="First cut slips to 2027" data-zh="首降推迟至 2027">First cut slips to 2027</span><b>50%</b><div class="bar a"><i style="--w:50%"></i></div></div>
-        <div class="row"><span data-en="2026 hike on the table" data-zh="2026 加息进入视野">2026 hike on the table</span><b>28%</b><div class="bar r"><i style="--w:28%"></i></div></div>
-        <div class="row"><span data-en="Cuts resume 2027" data-zh="2027 重启降息">Cuts resume 2027</span><b>55%</b><div class="bar g"><i style="--w:55%"></i></div></div>
-      </div><p class="note" data-en="My map: flat through 2026 unless services inflation cracks; the bigger easing is a 2027 story, contingent on growth cooling — not just prices." data-zh="我的研判：2026 大致走平，除非服务业通胀松动；更大规模宽松是 2027 的故事，取决于增长降温，而非仅是物价。">My map: flat through 2026 unless services inflation cracks; the bigger easing is a 2027 story, contingent on growth cooling — not just prices.</p></div>
+        <div class="row"><span data-en="Sept cut now live again" data-zh="9 月降息重新激活">Sept cut now live again</span><b>61%</b><div class="bar g"><i style="--w:61%"></i></div></div>
+        <div class="row"><span data-en="2026 hike still on the table" data-zh="2026 加息仍未出局">2026 hike still on the table</span><b>15%</b><div class="bar r"><i style="--w:15%"></i></div></div>
+        <div class="row"><span data-en="Participation keeps falling" data-zh="参与率持续下滑">Participation keeps falling</span><b>44%</b><div class="bar a"><i style="--w:44%"></i></div></div>
+        <div class="row"><span data-en="Next SEP confirms cut (Sept 16)" data-zh="下次 SEP 确认降息（9/16）">Next SEP confirms cut (Sept 16)</span><b>48%</b><div class="bar g"><i style="--w:48%"></i></div></div>
+      </div><p class="note" data-en="No dot plot in July — this meeting is data-only. The next SEP (Sept 16) is the real decision point; between now and then, every CPI and claims print re-prices the September odds shown above." data-zh="7 月无点阵图——本次会议只看数据。下一次 SEP（9 月 16 日）才是真正的决策节点；在此之前，每一份 CPI 与初请数据都会重新定价上方的 9 月降息概率。">No dot plot in July — this meeting is data-only. The next SEP (Sept 16) is the real decision point; between now and then, every CPI and claims print re-prices the September odds shown above.</p></div>
     </article>
 
     <article class="file">
       <h2><span data-en="MTF THREAT BOARD" data-zh="机动特遣队 · 威胁面板">MTF THREAT BOARD</span><span class="c">04</span></h2>
       <div class="in"><div class="bars">
         <div class="row"><span data-en="core PCE" data-zh="核心 PCE">core PCE</span><b class="red" data-en="HOT" data-zh="偏热">HOT</b><div class="bar r"><i style="--w:62%"></i></div></div>
-        <div class="row"><span data-en="payrolls / wages" data-zh="非农 / 薪资">payrolls / wages</span><b class="amber" data-en="FIRM" data-zh="坚挺">FIRM</b><div class="bar a"><i style="--w:58%"></i></div></div>
+        <div class="row"><span data-en="payrolls / wages" data-zh="非农 / 薪资">payrolls / wages</span><b class="amber" data-en="CRACKING" data-zh="出现裂痕">CRACKING</b><div class="bar a"><i style="--w:34%"></i></div></div>
+        <div class="row"><span data-en="labor participation" data-zh="劳动参与率">labor participation</span><b class="amber" data-en="SLIPPING" data-zh="下滑中">SLIPPING</b><div class="bar a"><i style="--w:38%"></i></div></div>
         <div class="row"><span data-en="balance sheet · QT" data-zh="资产负债表 · QT">balance sheet · QT</span><b class="green" data-en="TAPER" data-zh="缩减">TAPER</b><div class="bar g"><i style="--w:40%"></i></div></div>
         <div class="row"><span data-en="financial conditions" data-zh="金融条件">financial conditions</span><b class="green" data-en="WATCH" data-zh="观察">WATCH</b><div class="bar g"><i style="--w:48%"></i></div></div>
-      </div><p class="note" data-en="Re-containment triggers: a sticky core PCE print, wage re-acceleration, the pace of runoff, and any loosening of financial conditions the Council must lean against." data-zh="触发“再收容”的因素：黏性的核心 PCE、薪资重新加速、缩表节奏，以及任何议会必须出手对抗的金融条件松动。">Re-containment triggers: a sticky core PCE print, wage re-acceleration, the pace of runoff, and any loosening of financial conditions the Council must lean against.</p></div>
+      </div><p class="note" data-en="Re-containment triggers: a sticky core PCE print reasserting itself, wage growth failing to cool alongside falling participation (stagflation tell), the pace of runoff, and any loosening of financial conditions the Council must lean against." data-zh="触发“再收容”的因素：核心 PCE 重新走热、薪资增速在参与率下滑的同时未能降温（滞胀信号）、缩表节奏，以及任何议会必须出手对抗的金融条件松动。">Re-containment triggers: a sticky core PCE print reasserting itself, wage growth failing to cool alongside falling participation (stagflation tell), the pace of runoff, and any loosening of financial conditions the Council must lean against.</p></div>
     </article>
   </div>
+
+  <section class="incidents" aria-label="Incident log">
+    <h2><span data-en="INCIDENT LOG — CONTAINMENT BREACHES" data-zh="收容事件簿 — 收容失效记录">INCIDENT LOG — CONTAINMENT BREACHES</span><small data-en="Real macro prints, traced from pre-release pricing to equity reaction · not advice" data-zh="真实宏观数据，从发布前定价到股市反应的完整追踪 · 非投资建议">Real macro prints, traced from pre-release pricing to equity reaction · not advice</small></h2>
+    <div class="incidentList" id="incidentList"></div>
+  </section>
 
   <section class="watch" aria-label="Opus sector calls">
     <h2><span data-en="ANOMALOUS ASSET WATCH — O5 PROJECTION" data-zh="异常资产监控 — O5 推演">ANOMALOUS ASSET WATCH — O5 PROJECTION</span><small data-en="Opus 4.8 · today's directional read · not advice" data-zh="Opus 4.8 · 今日方向研判 · 非投资建议">Opus 4.8 · today's directional read · not advice</small></h2>
@@ -273,21 +301,58 @@ a{color:inherit;text-decoration:none}
   document.addEventListener('visibilitychange', function () { if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; } else if (!document.hidden && !raf && !RM) raf = requestAnimationFrame(frame); });
 })();
 
-/* next-FOMC containment countdown */
+/* next-containment-test countdown — nearest of FOMC / CPI / NFP, not FOMC-only */
 (function () {
-  var FOMC = [
-    { iso: '2026-06-17T18:00:00Z', label: 'Jun 17, 2026' },
-    { iso: '2026-07-29T18:00:00Z', label: 'Jul 29, 2026' },
-    { iso: '2026-09-16T18:00:00Z', label: 'Sep 16, 2026' },
-    { iso: '2026-10-28T18:00:00Z', label: 'Oct 28, 2026' },
-    { iso: '2026-12-09T19:00:00Z', label: 'Dec 9, 2026' },
-    { iso: '2027-01-27T19:00:00Z', label: 'Jan 27, 2027' }
+  // type-specific bilingual copy: label / when-word / release time / directive-word / directive text
+  var COPY = {
+    FOMC: {
+      typeLabel: { en: 'NEXT FOMC DECISION', zh: '下次 FOMC 决议' },
+      whenWord: { en: 'REVIEW', zh: '复核' },
+      time: { en: '2:00 PM ET', zh: '美东 2:00 PM' },
+      dirWord: { en: 'DIRECTIVE', zh: '指令' }
+    },
+    CPI: {
+      typeLabel: { en: 'NEXT CPI PRINT', zh: '下一次 CPI 数据' },
+      whenWord: { en: 'RELEASE', zh: '发布' },
+      time: { en: '8:30 AM ET', zh: '美东 8:30 AM' },
+      dirWord: { en: 'READOUT', zh: '读数预期' }
+    },
+    NFP: {
+      typeLabel: { en: 'NEXT PAYROLLS PRINT', zh: '下一次非农数据' },
+      whenWord: { en: 'RELEASE', zh: '发布' },
+      time: { en: '8:30 AM ET', zh: '美东 8:30 AM' },
+      dirWord: { en: 'READOUT', zh: '读数预期' }
+    }
+  };
+  var CATALYSTS = [
+    { iso: '2026-07-14T12:30:00Z', label: 'Jul 14, 2026', type: 'CPI', directive: { en: 'JUNE CPI · CORE STILL THE SWING FACTOR', zh: '6 月 CPI · 核心通胀仍是摆动因素' } },
+    { iso: '2026-07-29T18:00:00Z', label: 'Jul 29, 2026', type: 'FOMC', directive: { en: 'HOLD LIKELY · HAWKISH TONE VS CRACKED LABOR DATA', zh: '大概率维持 · 鹰派基调迎战走弱就业数据' } },
+    { iso: '2026-08-12T12:30:00Z', label: 'Aug 12, 2026', type: 'CPI', directive: { en: 'JULY CPI · CONFIRM OR FADE THE COOLDOWN', zh: '7 月 CPI · 验证或证伪降温趋势' } },
+    { iso: '2026-09-04T12:30:00Z', label: 'Sep 4, 2026', type: 'NFP', directive: { en: 'AUGUST PAYROLLS · WATCH PARTICIPATION', zh: '8 月非农 · 紧盯参与率' } },
+    { iso: '2026-09-16T18:00:00Z', label: 'Sep 16, 2026', type: 'FOMC', directive: { en: 'NEXT SEP · REAL DECISION POINT', zh: '下次 SEP · 真正的决策节点' } },
+    { iso: '2026-10-28T18:00:00Z', label: 'Oct 28, 2026', type: 'FOMC', directive: { en: 'HOLD 3.50–3.75% · WATCH THE DOTS', zh: '维持 3.50–3.75% · 紧盯点阵图' } },
+    { iso: '2026-12-09T19:00:00Z', label: 'Dec 9, 2026', type: 'FOMC', directive: { en: 'HOLD 3.50–3.75% · WATCH THE DOTS', zh: '维持 3.50–3.75% · 紧盯点阵图' } },
+    { iso: '2027-01-27T19:00:00Z', label: 'Jan 27, 2027', type: 'FOMC', directive: { en: 'HOLD 3.50–3.75% · WATCH THE DOTS', zh: '维持 3.50–3.75% · 紧盯点阵图' } }
   ];
   var clk = document.getElementById('fomcClock'), dt = document.getElementById('fomcDate'), last = '';
-  function pick() { var now = Date.now(); for (var i = 0; i < FOMC.length; i++) { var t = Date.parse(FOMC[i].iso); if (t + 5400000 > now) return { t: t, label: FOMC[i].label }; } return null; }
+  var typeLabelEl = document.getElementById('eventTypeLabel'), whenLabelEl = document.getElementById('eventWhenLabel'),
+      timeEl = document.getElementById('eventTime'), dirLabelEl = document.getElementById('eventDirectiveLabel'), dirEl = document.getElementById('eventDirective');
+  function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
+  function setBilingual(el, en, zh) { if (!el) return; el.setAttribute('data-en', en); el.setAttribute('data-zh', zh); el.textContent = lang() === 'zh' ? zh : en; }
+  function pick() { var now = Date.now(); for (var i = 0; i < CATALYSTS.length; i++) { var t = Date.parse(CATALYSTS[i].iso); if (t + 5400000 > now) return { t: t, c: CATALYSTS[i] }; } return null; }
   function pad(n) { return String(n).padStart(2, '0'); }
+  var lastIso = null;
+  function paintCatalyst(c) {
+    if (lastIso === c.iso) return; lastIso = c.iso;
+    var cp = COPY[c.type] || COPY.FOMC;
+    setBilingual(typeLabelEl, cp.typeLabel.en, cp.typeLabel.zh);
+    setBilingual(whenLabelEl, cp.whenWord.en, cp.whenWord.zh);
+    setBilingual(timeEl, cp.time.en, cp.time.zh);
+    setBilingual(dirLabelEl, cp.dirWord.en, cp.dirWord.zh);
+    setBilingual(dirEl, c.directive.en, c.directive.zh);
+  }
   function tick() {
-    var m = pick(); if (!m) { clk.textContent = 'NO DATE'; return; } dt.textContent = m.label;
+    var m = pick(); if (!m) { clk.textContent = 'NO DATE'; return; } dt.textContent = m.c.label; paintCatalyst(m.c);
     var s = Math.floor((m.t - Date.now()) / 1000);
     if (s <= 0 && s > -5400) { clk.textContent = 'IN SESSION'; clk.classList.add('amber'); return; } s = Math.max(0, s);
     var d = Math.floor(s / 86400); s -= d * 86400; var h = Math.floor(s / 3600); s -= h * 3600; var mi = Math.floor(s / 60); var se = s - mi * 60;
@@ -295,6 +360,53 @@ a{color:inherit;text-decoration:none}
     if (se !== last) { last = se; clk.classList.remove('tick'); void clk.offsetWidth; clk.classList.add('tick'); }
   }
   tick(); setInterval(tick, 1000);
+  // no separate lang-change listener needed: setBilingual() writes real data-en/data-zh
+  // attributes onto these elements, so the shared i18n.js apply() repaints them on toggle.
+})();
+
+/* incident log — fetched dossiers, before→print→repricing→reaction, re-rendered on lang toggle */
+(function () {
+  var list = document.getElementById('incidentList'); if (!list) return;
+  var DATA = null;
+  function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
+  function T(en, zh) { return lang() === 'zh' ? zh : en; }
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  function fmtDate(iso) {
+    var d = new Date(iso + 'T00:00:00Z');
+    if (lang() === 'zh') return (d.getUTCMonth() + 1) + '月' + d.getUTCDate() + '日';
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[d.getUTCMonth()] + ' ' + d.getUTCDate() + ', ' + d.getUTCFullYear();
+  }
+  var ROW_KEYS = [
+    ['before', 'BEFORE', '事件前定价'],
+    ['print', 'PRINT', '实际数据'],
+    ['repricing', 'REPRICING', '利率路径重定价'],
+    ['equityReaction', 'EQUITY REACTION', '股市反应']
+  ];
+  var CLASS_LABEL = { euclid: ['EUCLID', 'Euclid 级'], keter: ['KETER', 'Keter 级'], safe: ['SAFE', 'Safe 级'] };
+  function render() {
+    if (!DATA) return;
+    if (!DATA.length) { list.innerHTML = '<div class="empty">' + T('Incident log unavailable.', '事件簿暂不可用。') + '</div>'; return; }
+    list.innerHTML = DATA.map(function (ev) {
+      var rows = ROW_KEYS.map(function (rk) {
+        var field = ev[rk[0]] || {}; var k = T(rk[1], rk[2]); var v = esc(T(field.en || '', field.zh || ''));
+        return '<div class="irow"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
+      }).join('');
+      var clsPair = CLASS_LABEL[ev['class']] || [ev['class'], ev['class']];
+      var clsLabel = T(clsPair[0], clsPair[1]);
+      var verdict = ev.verdict || {};
+      return '<article class="incident">'
+        + '<div class="ihead"><span class="iid">' + esc(ev.id) + '</span><span class="idate">' + fmtDate(ev.date) + ' · ' + esc(ev.type) + '</span><span class="cls ' + esc(ev['class']) + '">' + clsLabel + '</span></div>'
+        + '<div class="ibody">'
+        + '<div class="iname">' + esc(T((ev.name || {}).en || '', (ev.name || {}).zh || '')) + '</div>'
+        + rows
+        + '<p class="verdict"><b>' + T('VERDICT', '裁定') + ':</b> ' + esc(T(verdict.en || '', verdict.zh || '')) + '</p>'
+        + '</div></article>';
+    }).join('');
+  }
+  fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
+    .catch(function () { list.innerHTML = '<div class="empty">' + T('Incident log unavailable.', '事件簿暂不可用。') + '</div>'; });
+  addEventListener('afflatus-lang', render);
 })();
 
 /* Site-19 containment hum (Web Audio, opt-in) */
