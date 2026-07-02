@@ -7,12 +7,14 @@
 
 ## 0. 状态速览 + 优先级排序 / Status at a glance ★
 
-> 本轮（2026-07-02）逐条核对了本文档与代码库的实际状态：已验证**完全完成**的任务从路线图中移除（不再需要跟踪），**做到一半或未开始**的任务保留并标注 ⚠️，同时发现了 3 项文档未记录的新情况。以下是全部未完成事项按**重要程度**的排序，编号对应下文对应小节。
+> 本轮（2026-07-02）逐条核对了本文档与代码库的实际状态：已验证**完全完成**的任务从路线图中移除（不再需要跟踪），**做到一半或未开始**的任务保留并标注 ⚠️，同时发现了 3 项文档未记录的新情况，并按重要程度排序。**2026-07-03 更新：全部 3 项 P0 已完成**，详情见下方对应小节；P1 起为下一轮工作重点。
 
-**P0 · 立即处理（架构风险 / 文档已与代码脱节）**
-1. **HUD 双系统冲突**——combat/standby 默认视图现在走 `drawCombatHudSC`（新），但 `drawCleanCombatHmd` v3（起飞/降落仍在用、`?combatview=legacy` 下的旧默认）仍并存于代码中，两套视觉语言不一致。需要决策：合并、明确分工，还是弃用其一。详见 **§4b**。
-2. **4 个孤立遗留 HTML 死文件**——`public/afflatus_blog_homepage_marathon_style.html`、`afflatus_marathon_new_style_homepage.html`、`afflatus_terminal_dos_style.html`、`afflatus_topbar_redesign_responsive.html`，均为 2026-06-13 "Add files via upload" 事故遗留、无任何引用。建议删除；且是 **§6** Vite MPA 改造前必须先清掉的死重。详见 **§7**。
-3. **Vite MPA 多入口改造**——`vite.config.js` 目前没有 `build.rollupOptions.input`，`public/*.html` 仍是原样拷贝、不进打包管线。**novels.html 已经在没有这条管线的情况下上线**，说明代价已经开始累积，应在下一次加页前完成。详见 **§6**。
+**P0 · 已全部完成（2026-07-03）**
+1. ✅ **HUD 双系统冲突**——判定 `drawCleanCombatHmd` v3（cockpit 座舱 + FPM 飞行路径标记 + 功率柱 + 目标血条 + 前置量 + 边缘威胁箭头）为 combat/standby 默认视图——这是用户最近一次明确列出的太空战 HUD 需求规格（准星前置量/目标状态/自机弧形条/机动矢量/物理化座舱等）唯一完整实现的版本。`drawCombatHudSC`（GIMBAL/GROUP 全息 + SCM/AB 竖直油门条风格）降级为 `?combatview=sc` 时的可选皮肤，代码与素材均保留、未删除。详见 **§4b**。
+2. ✅ **4 个孤立遗留 HTML 死文件**——`public/afflatus_blog_homepage_marathon_style.html`、`afflatus_marathon_new_style_homepage.html`、`afflatus_terminal_dos_style.html`、`afflatus_topbar_redesign_responsive.html` 均已确认零引用并删除。
+3. ✅ **Vite MPA 多入口改造**——`arena.html`/`sectors.html`/`signal.html`/`games.html`/`novels.html` 已从 `public/` 移到项目根目录，`vite.config.js` 新增 `build.rollupOptions.input` 六个入口（含首页）。构建验证：全部子页在 `dist/` 下产出**独立压缩/精简的 HTML**（如 `signal.html` 46KB→gzip 15.5KB），页面自身引用的经典 `<script src="/x.js">`（`nav.js`/`audio.js`/`clock.js`/`i18n.js`/`transition.js`/`page-turn.js`/各页专属 `.js`）**仍留在 `public/`、作为静态直通文件**——本轮只让 HTML 本身进打包管线（压缩+正确资源注入），尚未把这些经典脚本转成 ES module 参与真正的打包/哈希（下一步见 §6）。`vite dev` 与 `vite preview` 均已起服务器 curl 验证六个入口 + 关键静态资源全部 200。
+
+**⚠️ P1 · 高价值，优先安排（下一轮）**
 
 **P1 · 高价值，优先安排**
 4. **main.js（3733 行）/ styles.css（7038 行）拆分**——§2 Phase 3–5 完全未开始，体量比上次记录时更大，回归风险持续线性上升。
@@ -83,15 +85,15 @@
 
 ## 3. 首页专项 / Home-app pass
 
-**3.1 Combat View 飞行员画面 HUD — ⚠️ 与文档描述已不一致，需要决策**
+**3.1 Combat View 飞行员画面 HUD — ✅ 双系统冲突已解决（2026-07-03）**
 
-此前记录的"皇牌空战式 `#aceHud` overlay"**已被完全移除**（DOM/CSS/JS 均已删除），替换为：
-- **驾驶舱框架** `drawCockpitFrame`（起飞/降落/legacy combat 模式下的 A 字支柱 + 仪表台）；
+此前记录的"皇牌空战式 `#aceHud` overlay"**已被完全移除**（DOM/CSS/JS 均已删除），替换为一套统一的 HMD v3 语言，现在**贯穿起飞/降落/巡航/战斗全阶段**：
+- **驾驶舱框架** `drawCockpitFrame`（A 字支柱 + 仪表台，物理化座舱）；
 - **SC 式主炮瞄准镜** `drawSCZoomScope`（main-gun 充能阶段）；
-- **HMD v3** `drawCleanCombatHmd`（飞行路径标记 FPM、ENG/WPN/SHD 功率柱、目标护盾/装甲血条、前置量指示、边缘威胁箭头）——但这套系统**目前只在起飞/降落阶段，以及 `?combatview=legacy` 时的 combat/standby 才会显示**；
-- 日常 combat/standby 的**默认**视图现在是 `drawCombatHudSC`（另一套独立实现，见 §4b）。
+- **HMD v3** `drawCleanCombatHmd`（飞行路径标记 FPM、ENG/WPN/SHD 功率柱、目标护盾/装甲血条、前置量指示、边缘威胁箭头）——**现为 combat/standby 的默认视图**（`main.js` `combatViewScPanel()` 判定）。
+- `drawCombatHudSC`（GIMBAL/GROUP 全息 + SCM/AB 竖直油门条风格，见 §4b）**保留代码但降级为可选皮肤**，通过 `?combatview=sc` 访问，不再默认显示。
 
-**需要处理**：两套 HUD 语言（HMD v3 的 SC/SpaceX 极简风 vs `combatHudSC` 的 SC 座舱面板风）并存造成起降与巡航之间视觉不连续。下一步要么把 HMD v3 的功率柱/血条/前置量元素移植进 `combatHudSC`，要么明确"起降用 HMD v3、巡航用 combatHudSC"是有意为之的分工并在文档中定案。
+**决策依据**：用户最近一次的详细 HUD 需求规格（准星前置量提示、目标护盾/装甲状态、雷达全向警示、自机状态弧形条、机动矢量标记、分级精确度、物理化座舱）只有 HMD v3 完整覆盖；`combatHudSC` 缺少飞行路径标记、目标血条、前置量指示、威胁边缘箭头。两套系统不再冲突，起降与巡航视觉语言统一。
 
 **已完成、无需继续跟踪**
 - ✅ 高精度 F-47 / B-2 程序化模型、夜鹰战机模型（`src/scene/fighter3D.js`、`nighthawk.js`）。
@@ -120,14 +122,14 @@
 
 ## 4b. Combat View HUD（Star Citizen 风格）/ Combat-view HUD ★
 
-> `src/scene/combatHudSC.js` 的 `drawCombatHudSC(ctx,w,h,now,state)`**现已是 combat/standby 的默认 HUD**（`?combatview=legacy` 才回退到旧版），比此前文档记录的"opt-in 灰度"状态更进一步——**这条待办已超额完成，文档曾经滞后**。
+> `src/scene/combatHudSC.js` 的 `drawCombatHudSC(ctx,w,h,now,state)`**已从默认降级为可选皮肤**（2026-07-03，见 §3.1/§0 P0-1）：`?combatview=sc` 时显示，代码与美术保留完好，未来若要把它的元素（护盾象限网格、任务面板等）移植进默认 HMD v3，仍可复用这里的实现。以下是它自身尚未完成的部分，独立于默认/可选状态，未来若启用仍值得修：
 
 **已实现**：左上战机全息框（GIMBAL/GROUP/GUNS(ALL) + 护盾数值）、顶部 ONLINE 状态条 + 航向带、左右竖直油门条（SCM/AB）、ESP/CPLD 方块 + 红色云台准星、H-FUEL/Q-FUEL、右侧 G 表节点图、DECOY/NOISE、R-ALT/VSI/ATMO、中央俯仰梯（仅 atmo/hangar，`state.ladder`）+ 侧弧 + 准星、琥珀/红告警。
 
-**⚠️ 待续（接线 + 细化）**
+**⚠️ 待续（若未来重新启用或移植元素）**
 1. **数据绑定精度校验**：speed/throttle/ab/heading/g/alt/vsi/shieldF/R 与真实飞行状态的映射需要逐项核对是否准确（此前只是设计意图，未见校验记录）。
-2. **机库跑道纵深透视**：代码中确认目前**没有**跑道透视实现（只有 `state.ladder` 控制的俯仰梯注释提及 atmo/hangar），仍是"待做"而非"已做"。建议复用首页 `drawPilotDeck` 作为 launch/hangar 背景。
-3. **融入 SC 参考图 3–5 优点**：护盾四象限数值网格、右侧任务目标面板（COMBAT GAUNTLET/Waves）——代码中确认**未实现**（`grep quadrant/mission/objective/GAUNTLET` 均为空）。
+2. **机库跑道纵深透视**：代码中确认目前**没有**跑道透视实现（只有 `state.ladder` 控制的俯仰梯注释提及 atmo/hangar）。建议复用首页 `drawPilotDeck` 作为 launch/hangar 背景。
+3. **融入 SC 参考图 3–5 优点**：护盾四象限数值网格、右侧任务目标面板（COMBAT GAUNTLET/Waves）——代码中确认**未实现**（`grep quadrant/mission/objective/GAUNTLET` 均为空）。这两项其实是默认 HMD v3 目前也缺的元素，**更合理的路径是直接搬到 `drawCleanCombatHmd` 里**，而不是先修好这套已经降级的可选皮肤。
 4. 中英标签规则维持：HUD 缩写保持英文，告警/状态跟随 `currentLang`。
 
 **已完成（第一版）· 戏剧化武器镜头序列** `src/scene/combatCine.js`：`drawMissileCine`（自动锁定→发射→追踪→命中）+ `drawNukeCine`（夜鹰激光指示撤离→VLS 舱门→核弹点火→跟踪→引爆），已接入 missile/nukeAuth 分支，`elapsed` 驱动、彗星方位对齐 `halley.curX/Y`。
@@ -181,12 +183,12 @@
 
 ## 6. 架构演进与下一代视觉 / Architecture evolution & next-gen visuals ★
 
-> 站点持续加页（novels.html 已上线，之后更多）。结论：**不需要换语言、不需要上 React**——瓶颈在 (a) 多页手工维护成本 (b) 主线程渲染压力 (c) 缺乏 GPU 后期处理，全部**尚未动工**。
+> 站点持续加页（novels.html 已上线，之后更多）。结论：**不需要换语言、不需要上 React**——瓶颈在 (a) 多页手工维护成本 (b) 主线程渲染压力 (c) 缺乏 GPU 后期处理。
 
-### 6.1 现有架构的真实问题（按痛感排序，均未处理）
+### 6.1 现有架构的真实问题（按痛感排序）
 
-1. **`public/*.html` 不经打包**——已核实 `vite.config.js` 无多入口配置；novels.html 已在此状态下上线，是本轮审查发现的最紧迫项（见 §0 P0-3）。
-2. **单体文件**——`main.js` 3733 行 / `styles.css` 7038 行，比此前记录时更大。
+1. ✅ **`public/*.html` 不经打包**——**已解决（2026-07-03）**：五个子页 HTML 已移出 `public/`、接入 `vite.config.js` 多入口，构建产出压缩 HTML。**注意范围**：只有 HTML 本身进了管线，页面引用的经典 `<script src="/x.js">`（`nav.js`/`audio.js`/`i18n.js`/`transition.js`/各页专属脚本）仍留在 `public/` 原样直通，未压缩/未哈希/未参与公共 chunk——这部分是 §6.2 "Vite MPA 多入口"行动项里**尚未做完**的下半场，见下方技术选型表的更新说明。
+2. **单体文件**——`main.js` 3733 行 / `styles.css` 7038 行，比此前记录时更大，仍未拆分。
 3. **重复的页面骨架**——nav 已统一，但 `<head>` meta / 字体加载顺序仍每页复制。
 4. **主线程全包**——星空、combat、雷达、K 线全部主线程 Canvas 2D。
 5. **多页跳转是整页刷新**——`transition.js` 掩盖白屏，本质仍丢弃状态重载。
@@ -197,7 +199,7 @@
 
 | 技术 | 解决什么 | 成本 |
 | --- | --- | --- |
-| **Vite MPA 多入口** | `public/*.html` 变成真正的 Vite entry，获得打包/压缩/哈希/公共 chunk | 低，半天（含清理 §7 的死文件） |
+| **Vite MPA 多入口** | ✅ HTML 入口部分已完成（2026-07-03）；⚠️ 剩余：把各页经典 `<script src>` 转成 ES module import，才能让这些脚本本身也吃到压缩/哈希/公共 chunk（当前仍是 `public/` 静态直通） | 低，半天已投入；剩余部分中（涉及 ~10 个互相依赖顺序的脚本文件） |
 | **View Transitions API（跨文档）** | `@view-transition {navigation: auto}` 让多页跳转获得 SPA 级无缝过渡，可简化/替代 `transition.js` | 低-中 |
 | **CSS Scroll-Driven Animations** | `animation-timeline: scroll()/view()` 把滚动动画搬到合成器线程，零 JS 不掉帧 | 中 |
 | **OffscreenCanvas + Worker** | 星空/combat 背景移入 Worker 线程，主线程只管 UI——当前帧率提升性价比最高的一步 | 中 |
@@ -210,7 +212,7 @@
 
 ### 6.3 落地顺序
 
-1. **立即**：清理 §7 死文件 → Vite MPA 多入口改造（novels.html 补票）；`@view-transition` 与 `transition.js` 共存灰度。
+1. ✅ **已完成**：清理 §7 死文件 → Vite MPA 多入口改造（HTML 部分）。**下一步**：把 `nav.js`/`audio.js`/`clock.js`/`i18n.js`/`transition.js`/`page-turn.js`/各页专属 `.js` 转成 ES module，真正参与打包；`@view-transition` 与 `transition.js` 共存灰度。
 2. **短期**：OffscreenCanvas Worker 化首页星空背景；scroll-driven animations 替换 alphardForge 的 JS pin 逻辑；main.js 拆分启动，新模块用 TS。
 3. **中期**：three.js WebGPURenderer 试点跃迁点星涡（compute 粒子 + bloom），A/B 对比帧率后再推广。
 4. **触发式**：页面/章节数量到阈值 → Astro 迁移。
@@ -221,9 +223,10 @@
 
 ## 7. 本轮审查新发现 / Newly found in this audit ★
 
-- **4 个孤立遗留 HTML 文件**（`public/afflatus_blog_homepage_marathon_style.html`、`afflatus_marathon_new_style_homepage.html`、`afflatus_terminal_dos_style.html`、`afflatus_topbar_redesign_responsive.html`）：均为 2026-06-13 一次性 `git commit b0f1260 "Add files via upload"` 遗留，无任何页面引用、无 nav 入口，纯死重。建议直接删除（如需保留设计参考，先另存到仓库外或 `docs/archive/` 再删）。
-- **HUD 双系统并存**：见 §3.1 / §4b，需要产品决策而非单纯代码清理。
-- **`combatRuntime.getState()` 缺失**：多处文档（§4 Phase 2b）引用此接口作为下一步基础，但代码中从未创建，属于被反复提及却从未落地的"隐性阻塞项"，本轮审查予以显式标注防止继续被忽略。
+- **4 个孤立遗留 HTML 文件 — ✅ 已删除（2026-07-03）**：`public/afflatus_blog_homepage_marathon_style.html`、`afflatus_marathon_new_style_homepage.html`、`afflatus_terminal_dos_style.html`、`afflatus_topbar_redesign_responsive.html`，均为 2026-06-13 一次性 `git commit b0f1260 "Add files via upload"` 遗留，确认零引用后删除。
+- **HUD 双系统并存 — ✅ 已解决（2026-07-03）**：见 §3.1 / §4b，判定 HMD v3 为默认，`combatHudSC` 降级为 `?combatview=sc` 可选皮肤。
+- **`combatRuntime.getState()` 缺失**：仍未创建，见 §0 P1-5 / §4 Phase 2b，是下一批要处理的阻塞项（P1，非本轮 P0 范围）。
+- **Vite MPA 多入口改造 — ✅ HTML 部分已完成（2026-07-03）**：五个子页从 `public/` 移到项目根目录并接入 `vite.config.js` 多入口；`vite dev`/`vite preview` 均验证六个入口 + 关键静态资源 200。⚠️ 范围说明：页面引用的经典脚本（`nav.js` 等 ~10 个文件）仍是 `public/` 静态直通，未参与打包/哈希，是下一轮的后续工作，见 §6.2/6.3。
 
 ---
 

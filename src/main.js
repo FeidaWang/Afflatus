@@ -103,8 +103,13 @@ function getTopdownCV(){
   return topdownCV;
 }
 
-// Star-Citizen-style combat-view HUD (default); ?combatview=legacy keeps the old one.
+// HMD v3 (cockpit frame + flight-path marker / power pips / target health bars /
+// lead indicator / threat edge arrows) is the default combat/standby HUD.
+// ?combatview=sc opts into the alternate SC-cockpit-panel HUD (combatHudSC.js —
+// GIMBAL/GROUP holo, SCM/AB throttle bars); ?combatview=legacy affects the
+// unrelated missile/nuke POV-vs-cinematic toggles below.
 function combatViewLegacy(){ try{ return /[?&]combatview=legacy\b/.test(location.search); }catch(e){ return false; } }
+function combatViewScPanel(){ try{ return /[?&]combatview=sc\b/.test(location.search); }catch(e){ return false; } }
 function combatHudState(mode){
   const cls=document.body.classList; const warn=[]; let accent='cy';
   if(cls.contains('nuke-alert')){ warn.push(currentLang==='zh'?'警报：核打击在途':'ALERT: NUCLEAR STRIKE INBOUND'); accent='rd'; }
@@ -3496,8 +3501,8 @@ function drawPilotFeed(now){
       if(j) ctx.translate(rand(-j,j),rand(-j,j));
       ctx.drawImage(topdownCanvas,0,0,w,h);
       ctx.restore();
-      if(combatViewLegacy()){ drawCockpitFrame(ctx,w,h,now,false); drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat'); }
-      else { drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
+      if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
+      else { drawCockpitFrame(ctx,w,h,now,false); drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat'); }
       return;
     }
   }
@@ -3559,12 +3564,13 @@ function drawPilotFeed(now){
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
       }
     }else{
-      // combat / standby: SC-style HUD over the space scene (legacy via ?combatview=legacy)
-      if(combatViewLegacy()){
+      // combat / standby: HMD v3 cockpit view is default; ?combatview=sc opts
+      // into the alternate SC-cockpit-panel HUD (combatHudSC.js).
+      if(combatViewScPanel()){
+        drawCombatHudSC(ctx,w,h,now,combatHudState(mode));
+      }else{
         drawCockpitFrame(ctx,w,h,now,false);
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
-      }else{
-        drawCombatHudSC(ctx,w,h,now,combatHudState(mode));
       }
     }
   }
