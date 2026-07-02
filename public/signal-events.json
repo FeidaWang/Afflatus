@@ -1,0 +1,29 @@
+[
+  {
+    "id": "INCIDENT-2026-NFP-06",
+    "date": "2026-07-02",
+    "type": "NFP",
+    "class": "euclid",
+    "name": { "en": "June Nonfarm Payrolls", "zh": "六月非农就业数据" },
+    "before": {
+      "en": "Consensus (Bloomberg) looked for +113K following May's blowout +172K print; futures priced better-than-even odds of a 2026 hike by September as a string of strong data pushed the 'higher-for-longer' narrative toward 'higher-for-even-longer.'",
+      "zh": "彭博一致预期为 +11.3 万，此前 5 月非农爆表至 +17.2 万；受连续强劲数据推动，期货市场一度押注 9 月前加息概率过半，「更高更久」叙事正滑向「更高更更久」。"
+    },
+    "print": {
+      "en": "Payrolls +57K, well below consensus; Apr/May revised down a combined -74K. Unemployment fell to 4.2% (1yr low) but labor-force participation slipped to 61.5% — the drop is a shrinking denominator, not stronger demand. Leisure & hospitality -61K after carrying May's beat; gains concentrated in professional/business services, social assistance and (slowing) healthcare.",
+      "zh": "非农新增 +5.7 万，远低于预期；4/5 月合计下修 -7.4 万。失业率降至 4.2%（一年新低），但劳动参与率同步跌至 61.5%——下降源于分母收缩，而非需求走强。休闲酒店业 -6.1 万（此前正是 5 月爆表的主贡献项）；增量集中在专业商务服务、社会救助与增速放缓的医疗业。"
+    },
+    "repricing": {
+      "en": "September hike bets unwind sharply; a month priced as a coin-flip cut/hold reverts to 'live cut candidate.' The Jul 29 FOMC becomes the first real test of Warsh's hawkish tone against a visibly cracking labor print — does the statement keep 'higher-for-longer,' or start hedging?",
+      "zh": "9 月加息押注大幅瓦解；此前被定价为降息/维持五五开的月份重新变回「活的降息候选」。7 月 29 日 FOMC 成为沃什鹰派基调首次正面迎战走弱就业数据的关键测试——声明会继续坚持「更高更久」，还是开始留后手？"
+    },
+    "equityReaction": {
+      "en": "Classic bad-news-is-good-news morning: S&P futures +0.4%, Nasdaq futures +0.5%, Dow futures +0.5%, VIX -3.7% to sub-16, gold +1.3% on lower real-rate expectations. Rate-sensitive growth/AI names led premarket strength; cyclicals were more mixed given the underlying growth-scare read.",
+      "zh": "典型的「坏消息=好消息」早盘：标普期货 +0.4%，纳指期货 +0.5%，道指期货 +0.5%，VIX 跌破 16（-3.7%），黄金因实际利率预期下移上涨 1.3%。对利率敏感的成长/AI 股盘前领涨；周期股表现相对分化，因数据本身也带有增长担忧的底色。"
+    },
+    "verdict": {
+      "en": "Same weak print, two possible regimes: if follow-through data (initial claims, JOLTS, July CPI) confirms cooling without cracking, this is a clean 'goldilocks' repricing — bullish for duration-sensitive growth. If participation keeps falling and wages don't hold, the same number turns into a growth-scare tell. Containment status: EUCLID — anomalous but currently within modeled bounds. Not advice.",
+      "zh": "同一份疲软数据，可能走向两种情境：若后续数据（初请、JOLTS、7 月 CPI）确认「降温而不失速」，这是一次干净的「金发姑娘」式重定价——利好久期敏感型成长股；若参与率持续下滑且薪资撑不住，同一个数字就会变成增长担忧的信号。收容状态：Euclid 级——异常但目前仍在可建模范围内。非投资建议。"
+    }
+  }
+]
