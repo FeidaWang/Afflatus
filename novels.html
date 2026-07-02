@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Project Afflatus · Novels — 万界种春</title>
-<meta name="description" content="万界种春：无限流·种田·多女主小说连载。高冷学霸男主穿梭坍缩位面，种田重建的同时，与多位女主展开虐心羁绊。护眼配色，每日更新。">
+<title>Project Afflatus · Novels — 小说连载书架</title>
+<meta name="description" content="Project Afflatus 小说书架：《万界种春》（无限流·种田·多女主）、《长夜请柬》（无限流·悬疑推理·大女主成长）等原创连载，复古未来主义视觉，纯中文护眼阅读，每日更新。">
 <meta name="theme-color" content="#15120f">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Afflatus">
-<meta property="og:title" content="Project Afflatus · Novels — 万界种春">
-<meta property="og:description" content="无限流·种田·多女主小说连载，护眼阅读，每日更新。">
+<meta property="og:title" content="Project Afflatus · Novels — 小说连载书架">
+<meta property="og:description" content="多部无限流原创小说连载，护眼阅读，每日更新。">
 <meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
@@ -62,6 +62,19 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .nav a.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
 .lang-toggle{font:700 10.5px/1 var(--mono);letter-spacing:.08em;color:#1a1410;background:var(--copper-b);border:1px solid var(--copper-b);padding:8px 10px;border-radius:2px}
 .lang-toggle:hover{background:var(--teal);border-color:var(--teal)}
+
+/* ---- bookshelf ---- */
+.shelf{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.book{text-align:left;border:1px solid var(--line);background:var(--panel);padding:14px;border-radius:2px;cursor:pointer;position:relative;overflow:hidden}
+.book::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--copper),var(--teal));opacity:.5;transition:opacity .2s ease}
+.book:hover{border-color:var(--copper-b)}
+.book.active{border-color:var(--teal);background:var(--panel2)}
+.book.active::before{opacity:1}
+.book h3{font:400 15px/1.3 var(--serif);color:var(--chrome);margin:0 0 6px;font-weight:700}
+.book .bk-sub{font:400 9.5px/1.5 var(--mono);letter-spacing:.08em;color:var(--teal);text-transform:uppercase;margin:0 0 8px}
+.book .bk-meta{font:400 10.5px/1.6 var(--mono);color:var(--chrome-dim)}
+.book .bk-badge{position:absolute;top:10px;right:10px;font:400 9px/1 var(--mono);color:#0d211f;background:var(--teal);padding:3px 7px;border-radius:10px;display:none}
+.book.active .bk-badge{display:inline-block}
 
 /* ---- hero ---- */
 .hero{margin-top:14px;border:1px solid var(--line);background:linear-gradient(160deg,var(--panel2),var(--panel));position:relative;overflow:hidden;border-radius:2px}
@@ -195,19 +208,21 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
   <header class="top">
     <div class="seal">
       <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21" fill="none" stroke="#c9834a" stroke-width="1.6"/><path d="M24 6 L24 42 M6 24 L42 24" stroke="#4fd6c4" stroke-width="1.2" opacity=".6"/><circle cx="24" cy="24" r="6" fill="none" stroke="#e8ad6f" stroke-width="1.6"/></svg>
-      <div><b>万界种春</b><small>归墟 · 看守人档案 001</small></div>
+      <div><b>小说连载</b><small>AFFLATUS NOVELS · 书架</small></div>
     </div>
     <nav class="nav" aria-label="Primary" data-afflatus-nav>
       <button class="lang-toggle" type="button">中文</button>
     </nav>
   </header>
 
+  <section class="shelf" id="shelf" aria-label="书架"></section>
+
   <section class="hero">
     <div class="bar" aria-hidden="true"></div>
     <div class="pad">
-      <div class="kicker">无限流 · 种田 · 多女主 · 连载中</div>
-      <h1>万界种春</h1>
-      <p class="sub">GENESIS OF SPRING ACROSS TEN THOUSAND PLANES</p>
+      <div class="kicker" id="novelKicker">无限流 · 连载中</div>
+      <h1 id="novelTitle">加载中…</h1>
+      <p class="sub" id="novelSub"></p>
       <p class="intro" id="novelIntro">正在加载简介……</p>
       <div class="tags" id="novelTags"></div>
       <div class="author-row">
@@ -218,12 +233,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
     </div>
   </section>
 
-  <section class="hud" aria-hidden="true">
-    <div class="gauge"><div class="lb"><span>位面收容进度</span><b>100%</b></div><div class="track"><i style="width:100%"></i></div></div>
-    <div class="gauge"><div class="lb"><span>情感共鸣值</span><b>MAX</b></div><div class="track"><i style="width:96%"></i></div></div>
-    <div class="gauge"><div class="lb"><span>已解锁看守人档案</span><b>1/5</b></div><div class="track"><i style="width:20%"></i></div></div>
-    <div class="gauge"><div class="lb"><span>夜溯协议冷却</span><b>就绪</b></div><div class="track"><i style="width:100%"></i></div></div>
-  </section>
+  <section class="hud" id="hudPanel" aria-hidden="true"></section>
 
   <section class="toolbar" id="toolbar" aria-label="阅读工具">
     <button class="tbtn" id="tocOpen" type="button">☰ 目录</button>
@@ -290,9 +300,10 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 <script>
 (function () {
   'use strict';
-  var LS = { theme:'afflatus:novels:theme', fs:'afflatus:novels:fs', progress:'afflatus:novels:progress', bookmark:'afflatus:novels:bookmark', visited:'afflatus:novels:visited', waterfall:'afflatus:novels:waterfall' };
+  var LS = { theme:'afflatus:novels:theme', fs:'afflatus:novels:fs', waterfall:'afflatus:novels:waterfall', lastNovel:'afflatus:novels:lastNovel' };
+  function nsKey(name) { return 'afflatus:novels:' + (state.novelId || 'default') + ':' + name; }
   var reader = document.getElementById('reader');
-  var state = { data:null, chapters:[], idx:0, autoTimer:0, autoSpeed:2, waterfall:false, wfIndex:0 };
+  var state = { data:null, novels:[], novelId:null, novelIdx:0, chapters:[], idx:0, autoTimer:0, autoSpeed:2, waterfall:false, wfIndex:0 };
 
   function toast(msg, ms) {
     var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
@@ -328,12 +339,13 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
   document.getElementById('tocClose').addEventListener('click', closeDrawer);
   backdrop.addEventListener('click', closeDrawer);
 
-  function visitedSet() { try { return new Set(JSON.parse(localStorage.getItem(LS.visited) || '[]')); } catch (e) { return new Set(); } }
-  function markVisited(id) { var s = visitedSet(); s.add(id); try { localStorage.setItem(LS.visited, JSON.stringify(Array.from(s))); } catch (e) {} }
+  function visitedSet() { try { return new Set(JSON.parse(localStorage.getItem(nsKey('visited')) || '[]')); } catch (e) { return new Set(); } }
+  function markVisited(id) { var s = visitedSet(); s.add(id); try { localStorage.setItem(nsKey('visited'), JSON.stringify(Array.from(s))); } catch (e) {} }
 
   function renderToc() {
     var list = document.getElementById('tocList'); list.innerHTML = '';
-    document.getElementById('tocNote').textContent = '共 ' + state.chapters.length + ' 章 · ' + (state.data.novel.updateNote || '每日更新');
+    var curNovel = state.novels[state.novelIdx];
+    document.getElementById('tocNote').textContent = '共 ' + state.chapters.length + ' 章 · ' + ((curNovel && curNovel.novel.updateNote) || '每日更新');
     var visited = visitedSet();
     var bm = getBookmark();
     state.chapters.forEach(function (c, i) {
@@ -346,10 +358,10 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
   }
 
   /* ---------- bookmark ---------- */
-  function getBookmark() { try { return JSON.parse(localStorage.getItem(LS.bookmark) || 'null'); } catch (e) { return null; } }
+  function getBookmark() { try { return JSON.parse(localStorage.getItem(nsKey('bookmark')) || 'null'); } catch (e) { return null; } }
   function setBookmark() {
     var bm = { chapterId: state.chapters[state.idx].id, scrollY: window.scrollY, ts: Date.now() };
-    try { localStorage.setItem(LS.bookmark, JSON.stringify(bm)); } catch (e) {}
+    try { localStorage.setItem(nsKey('bookmark'), JSON.stringify(bm)); } catch (e) {}
     toast('已在本章加入书签');
     renderToc();
   }
@@ -367,7 +379,8 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 
   /* ---------- reading progress (per-chapter + persisted "continue reading") ---------- */
   function saveProgress() {
-    try { localStorage.setItem(LS.progress, JSON.stringify({ chapterId: state.chapters[state.idx].id, scrollY: window.scrollY, ts: Date.now() })); } catch (e) {}
+    if (!state.chapters.length) return;
+    try { localStorage.setItem(nsKey('progress'), JSON.stringify({ chapterId: state.chapters[state.idx].id, scrollY: window.scrollY, ts: Date.now() })); } catch (e) {}
   }
   var progressSaveTimer = 0;
   window.addEventListener('scroll', function () {
@@ -573,6 +586,84 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
     document.addEventListener('visibilitychange', function () { if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; } else if (!document.hidden && !raf && !RM) raf = requestAnimationFrame(frame); });
   })();
 
+  /* ---------- bookshelf ---------- */
+  function renderShelf() {
+    var shelf = document.getElementById('shelf'); shelf.innerHTML = '';
+    state.novels.forEach(function (n, i) {
+      var b = document.createElement('button');
+      b.className = 'book' + (i === state.novelIdx ? ' active' : '');
+      b.type = 'button';
+      b.innerHTML = '<span class="bk-badge">正在阅读</span>' +
+        '<h3>' + escapeHtml(n.novel.title) + '</h3>' +
+        '<p class="bk-sub">' + escapeHtml(n.novel.subtitle || '') + '</p>' +
+        '<p class="bk-meta">共 ' + n.chapters.length + ' 章 · ' + escapeHtml(n.novel.author || '') + '</p>';
+      b.addEventListener('click', function () { if (i !== state.novelIdx) selectNovel(i, true); });
+      shelf.appendChild(b);
+    });
+  }
+
+  function renderHud(hud) {
+    var panel = document.getElementById('hudPanel'); panel.innerHTML = '';
+    (hud || []).forEach(function (g) {
+      var div = document.createElement('div'); div.className = 'gauge';
+      div.innerHTML = '<div class="lb"><span>' + escapeHtml(g.label) + '</span><b>' + escapeHtml(g.value) + '</b></div>' +
+        '<div class="track"><i style="width:' + (g.pct || 0) + '%"></i></div>';
+      panel.appendChild(div);
+    });
+  }
+
+  /* ---------- select / switch novel ---------- */
+  function selectNovel(idx, scrollToShelf) {
+    var n = state.novels[idx]; if (!n) return;
+    state.novelIdx = idx;
+    state.novelId = n.id;
+    state.chapters = n.chapters;
+    state.waterfall = false;
+
+    document.getElementById('novelKicker').textContent = (n.novel.tags || []).slice(0, 4).join(' · ') || '无限流 · 连载中';
+    document.getElementById('novelTitle').textContent = n.novel.title;
+    document.getElementById('novelSub').textContent = n.novel.subtitle || '';
+    document.getElementById('novelIntro').textContent = n.novel.intro;
+    document.getElementById('novelAuthor').textContent = n.novel.author;
+    document.getElementById('novelUpdateNote').textContent = n.novel.updateNote;
+    document.getElementById('novelStart').textContent = n.novel.startDate;
+    var tagsEl = document.getElementById('novelTags'); tagsEl.innerHTML = '';
+    (n.novel.tags || []).forEach(function (tg) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = tg; tagsEl.appendChild(s); });
+    renderHud(n.novel.hud);
+    renderShelf();
+    document.title = 'Project Afflatus · Novels — ' + n.novel.title;
+
+    try { localStorage.setItem(LS.lastNovel, n.id); } catch (e) {}
+
+    var resumeIdx = 0, resumeScroll = null;
+    try {
+      var prog = JSON.parse(localStorage.getItem(nsKey('progress')) || 'null');
+      if (prog) { var i = state.chapters.findIndex(function (c) { return c.id === prog.chapterId; }); if (i >= 0) { resumeIdx = i; resumeScroll = prog.scrollY; } }
+    } catch (e) {}
+
+    document.getElementById('readerNormal').hidden = false;
+    document.getElementById('readerWaterfall').hidden = true;
+    wfChip.classList.remove('show');
+    document.getElementById('waterfallToggle').classList.remove('active');
+
+    var wantWaterfall = false; try { wantWaterfall = localStorage.getItem(LS.waterfall) === '1'; } catch (e) {}
+    if (wantWaterfall) {
+      setupWfObservers();
+      state.waterfall = true;
+      document.getElementById('readerNormal').hidden = true;
+      document.getElementById('readerWaterfall').hidden = false;
+      wfChip.classList.add('show');
+      document.getElementById('waterfallToggle').classList.add('active');
+      resetWaterfallFrom(resumeIdx, true);
+      if (resumeIdx > 0) toast('已为你恢复到上次的阅读位置（瀑布流模式）');
+    } else {
+      loadChapter(resumeIdx, true, function () {
+        if (resumeScroll != null) { window.scrollTo({ top: resumeScroll }); if (resumeIdx > 0 || resumeScroll > 40) toast('已为你恢复到上次的阅读位置'); }
+      });
+    }
+    if (scrollToShelf) toast('已切换到《' + n.novel.title + '》');
+  }
+
   /* ---------- boot ---------- */
   function boot() {
     var savedTheme = 'cream'; try { savedTheme = localStorage.getItem(LS.theme) || 'cream'; } catch (e) {}
@@ -581,35 +672,17 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
     curFs = applyFs(savedFs);
 
     fetch('/novels-data.json').then(function (r) { return r.json(); }).then(function (data) {
-      state.data = data; state.chapters = data.chapters;
-      document.getElementById('novelIntro').textContent = data.novel.intro;
-      document.getElementById('novelAuthor').textContent = data.novel.author;
-      document.getElementById('novelUpdateNote').textContent = data.novel.updateNote;
-      document.getElementById('novelStart').textContent = data.novel.startDate;
-      var tagsEl = document.getElementById('novelTags'); tagsEl.innerHTML = '';
-      (data.novel.tags || []).forEach(function (tg) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = tg; tagsEl.appendChild(s); });
+      state.data = data;
+      state.novels = data.novels || (data.novel ? [{ id: 'default', novel: data.novel, chapters: data.chapters }] : []);
+      if (!state.novels.length) throw new Error('no novels');
 
-      var resumeIdx = 0, resumeScroll = null;
+      var startIdx = 0;
       try {
-        var prog = JSON.parse(localStorage.getItem(LS.progress) || 'null');
-        if (prog) { var i = state.chapters.findIndex(function (c) { return c.id === prog.chapterId; }); if (i >= 0) { resumeIdx = i; resumeScroll = prog.scrollY; } }
+        var lastId = localStorage.getItem(LS.lastNovel);
+        if (lastId) { var i = state.novels.findIndex(function (n) { return n.id === lastId; }); if (i >= 0) startIdx = i; }
       } catch (e) {}
 
-      var wantWaterfall = false; try { wantWaterfall = localStorage.getItem(LS.waterfall) === '1'; } catch (e) {}
-      if (wantWaterfall) {
-        setupWfObservers();
-        state.waterfall = true;
-        document.getElementById('readerNormal').hidden = true;
-        document.getElementById('readerWaterfall').hidden = false;
-        wfChip.classList.add('show');
-        document.getElementById('waterfallToggle').classList.add('active');
-        resetWaterfallFrom(resumeIdx, true);
-        if (resumeIdx > 0) toast('已为你恢复到上次的阅读位置（瀑布流模式）');
-      } else {
-        loadChapter(resumeIdx, true, function () {
-          if (resumeScroll != null) { window.scrollTo({ top: resumeScroll }); if (resumeIdx > 0 || resumeScroll > 40) toast('已为你恢复到上次的阅读位置'); }
-        });
-      }
+      selectNovel(startIdx, false);
     }).catch(function () {
       document.getElementById('chapterTitle').textContent = '内容加载失败';
       document.getElementById('chapterBody').innerHTML = '<p>暂时无法读取小说数据，请刷新页面重试。</p>';
