@@ -152,19 +152,18 @@
 </div>
 
 <nav class="route-arrows" aria-label="Page turn navigation">
-  <a class="route-arrow prev" href="/games.html" data-turn="prev" data-hot aria-label="Previous page">‹</a>
-  <a class="route-arrow next" href="/arena.html" data-turn="next" data-hot aria-label="Next page">›</a>
+  <a class="route-arrow prev" href="/novels.html" data-turn="prev" data-page-turn="prev" data-hot aria-label="Previous page">‹</a>
+  <a class="route-arrow next" href="/arena.html" data-turn="next" data-page-turn="next" data-hot aria-label="Next page">›</a>
 </nav>
 
 <nav>
   <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-word">AFFLATUS</span><span class="brand-sep" aria-hidden="true">|</span><span class="brand-version">v1.3</span></div>
   <div class="nav-center">
-    <div class="nav-links" aria-label="Primary navigation">
-      <a href="/arena.html" data-hot>Arena</a>
-      <a href="/sectors.html" data-hot>Sectors</a>
-      <a href="/signal.html" data-hot>Signal</a>
-      <a href="/games.html" data-hot>Games</a>
-    </div>
+    <!-- Links rendered by /lib/nav.js from the shared SITE list (same source
+         as arena/sectors/signal/games/novels) -- see ROADMAP §2. Home doesn't
+         use i18n.js's data-en/data-zh swap (it has its own bilingual system),
+         so labels stay English-only here, matching prior behaviour. -->
+    <div class="nav-links" aria-label="Primary navigation" data-afflatus-nav></div>
     <div class="top-telemetry" id="topTelemetry">
       <div class="top-stat primary"><span class="sys-dot"></span><span data-top="uplink">FLEET TELEMETRY</span><b id="topUplink">ACTIVE</b></div>
       <div class="top-stat"><span data-top="trajectory">VOID TRACK</span><b id="topTrajectory">L1 · stable</b></div>
@@ -276,6 +275,7 @@
 </footer>
 
 <script src="/lib/audio.js" defer></script>
+<script src="/lib/nav.js" defer></script>
 <script src="/transition.js" defer></script>
 <script type="module" src="/src/main.js"></script>
 <script type="module" src="/src/scene/alphardForge.js"></script>
