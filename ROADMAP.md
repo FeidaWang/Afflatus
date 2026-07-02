@@ -5,6 +5,35 @@
 
 ---
 
+## 0. 状态速览 + 优先级排序 / Status at a glance ★
+
+> 本轮（2026-07-02）逐条核对了本文档与代码库的实际状态：已验证**完全完成**的任务从路线图中移除（不再需要跟踪），**做到一半或未开始**的任务保留并标注 ⚠️，同时发现了 3 项文档未记录的新情况。以下是全部未完成事项按**重要程度**的排序，编号对应下文对应小节。
+
+**P0 · 立即处理（架构风险 / 文档已与代码脱节）**
+1. **HUD 双系统冲突**——combat/standby 默认视图现在走 `drawCombatHudSC`（新），但 `drawCleanCombatHmd` v3（起飞/降落仍在用、`?combatview=legacy` 下的旧默认）仍并存于代码中，两套视觉语言不一致。需要决策：合并、明确分工，还是弃用其一。详见 **§4b**。
+2. **4 个孤立遗留 HTML 死文件**——`public/afflatus_blog_homepage_marathon_style.html`、`afflatus_marathon_new_style_homepage.html`、`afflatus_terminal_dos_style.html`、`afflatus_topbar_redesign_responsive.html`，均为 2026-06-13 "Add files via upload" 事故遗留、无任何引用。建议删除；且是 **§6** Vite MPA 改造前必须先清掉的死重。详见 **§7**。
+3. **Vite MPA 多入口改造**——`vite.config.js` 目前没有 `build.rollupOptions.input`，`public/*.html` 仍是原样拷贝、不进打包管线。**novels.html 已经在没有这条管线的情况下上线**，说明代价已经开始累积，应在下一次加页前完成。详见 **§6**。
+
+**P1 · 高价值，优先安排**
+4. **main.js（3733 行）/ styles.css（7038 行）拆分**——§2 Phase 3–5 完全未开始，体量比上次记录时更大，回归风险持续线性上升。
+5. **`combatRuntime.getState()` 接口化**——确认代码中仍不存在，是阻塞 topdownCombat 真实战况绑定的关键缺口。详见 **§4** Phase 2b。
+6. **首页 `index.html` 导航接入 `nav.js` SITE**——唯一还没迁移到统一导航系统的页面。详见 **§2**。
+
+**P2 · 视觉/体验打磨，非阻塞**
+7. `combatHudSC` 数据绑定精度校验 + 机库跑道纵深透视 + 融入 SC 图 3–5 优点（护盾象限网格、任务目标面板）——详见 **§4b**。
+8. `combatCine` 武器镜头与真实命中时刻的帧级对齐精修——详见 **§4b**。
+9. OffscreenCanvas + Worker 化背景渲染（星空/combat）——详见 **§6**。
+10. View Transitions API 跨文档过渡，逐步替代/简化 `transition.js`——详见 **§6**。
+
+**P3 · 长线 / 待触发条件成熟**
+11. Signal Phase 2–3（重定价仪表、鹰鸽罗盘、事件回放迷你图、自动化生成）——详见 **§5b**。
+12. three.js WebGPURenderer + compute 粒子 + Bloom/ACES 后期处理——详见 **§6**。
+13. `viz.js` 公共库抽取（count-up 逻辑目前在 `sectors.html` 与 `marketDeck.js` 各自重复实现）——详见 **§2**。
+14. topdownCombat Phase 3–4（首页主战斗迁移到俯视渲染、代码分割体积优化）——详见 **§4**。
+15. Astro 迁移（触发式：页面 ≥8 或 novels 章节 ≥20 时再评估，当前未到阈值）——详见 **§6**。
+
+---
+
 ## 1. 站点结构与各页身份 / Pages & identities
 
 | Page | File | 身份 / Identity | 主题 |
@@ -16,202 +45,109 @@
 | Games | `public/games.html` | 世界杯限时竞猜 vs Opus | 赛博朋克 · 品红/青 |
 | Novels | `public/novels.html` | 无限流·种田小说连载《万界种春》 | 复古未来主义 · 铜/青（纯中文，护眼阅读，含夜间/豆沙绿/米黄三种阅读模式、自动翻页、书签、章节速览） |
 
-**原则**：每页保留**独立的字体与美术身份**，但共享一套基础系统，避免重复造轮子。
+**原则**：每页保留**独立的字体与美术身份**，但共享一套基础系统，避免重复造轮子。Novels 页已按此原则上线并从第一天起接入统一导航，验证了该架构决策可以随加页扩展。
 
 **共享系统 / Shared systems**
 - `page-turn.css` — 翻页箭头 + 自托管字体 + 全局按钮点击反馈（每页用 body class 切换箭头配色）。
 - `transition.js` — 进出页动画 + 音效；按目标页选择类型（warp / cannon / takeoff / control / cyber）。
-- `i18n.js` — 全局中英切换；任何带 `data-en` / `data-zh` 的元素自动翻译；右上角 `.lang-toggle`；切换时派发 `afflatus-lang` 事件供动态页面（arena/games）重渲染。
-- 数据文件 `arena-news.json`（每日定时任务生成）、`games-data.json`（手动更新）。
+- `i18n.js` — 全局中英切换；任何带 `data-en` / `data-zh` 的元素自动翻译；右上角 `.lang-toggle`；切换时派发 `afflatus-lang` 事件供动态页面（arena/games/signal）重渲染。
+- `public/lib/nav.js` — 唯一的 `SITE` 数组渲染导航 + 翻页 prev/next；五个非首页（arena/sectors/signal/games/novels）均已接入。
+- `public/lib/clock.js` / `public/lib/audio.js` — 倒计时格式化、Web Audio 环境音共享库（arena/games/signal/transition.js 复用）。
+- 数据文件：`arena-news.json`（每日定时任务）、`games-data.json`（手动更新）、`signal-events.json`（宏观事件档案，见 §5b）、`novels-data.json`（章节内容）。
 
 ---
 
 ## 2. 代码整理与优化方法 / Refactor & optimisation method
 
-**现状痛点**
-- `src/main.js` 3700+ 行、`src/styles.css` 6900+ 行，均为单体文件，难以维护。
-- 每个 `public/*.html` 各自内联一份 `<style>` 与脚本，**导航栏 / 翻页 cycle 每加一页都要改 4–5 个文件**（最大的维护成本）。
-- 倒计时、Web Audio 环境音、计数动画等逻辑在多页重复。
+**现状痛点（仍未缓解，且随加页在恶化）**
+- `src/main.js` **3733 行**、`src/styles.css` **7038 行**，均为单体文件，难以维护——拆分计划（见下）完全未开始。
+- 主线程渲染压力大：星空、combat、雷达、K 线全部在主线程 Canvas 2D 绘制（详细技术方案见 §6）。
 
-**建议的目标结构**
-```
-public/
-  lib/
-    clock.js     # FOMC / 开盘倒计时（signal、arena 复用）
-    audio.js     # Web Audio 环境音 + SFX 帮助函数（signal、transition 复用）
-    viz.js       # 数字 count-up、bar 动画、canvas 背景帮助函数
-    nav.js       # ★ 从单一 site 配置渲染导航 + 翻页 data-prev/next
-  data/          # arena-news.json, games-data.json
-  pages/         # arena/sectors/signal/games 的 html
-  styles/        # 每页样式拆出为 css，<link> 引入而非内联
-src/             # 仅首页 Three.js 应用
-  hud/  scene/  ui/  cursor/  state/   # main.js 拆分
-```
+**已完成（无需继续跟踪）**
+- ✅ 统一导航：`public/lib/nav.js` + `SITE`，五个非首页全部接入，链接/prev-next 由脚本渲染，新增页面只改 `SITE` 一处。
+- ✅ 抽公共库（部分）：`clock.js`（arena/games 复用）、`audio.js`（transition.js/signal.html 复用），build 验证通过。
 
-**优先级最高的一步：统一导航 — ✅ 已完成（四个非首页）**
-`public/lib/nav.js` 内含唯一的 `SITE` 数组（页面顺序 + 中英标题）。每个非首页的 `<nav class="nav" data-afflatus-nav>` 只保留自己的 `.lang-toggle`，链接由脚本按 `SITE` 渲染（当前页自动 `.active`）；prev/next 由顺序循环推导，写入 `body.dataset.prev/next`（page-turn.js 键盘翻页读取）与 `.page-turn` 箭头的 `href`。加载顺序 `i18n.js → lib/nav.js → page-turn.js`（renderer 末尾调用 `AfflatusI18N.apply()` 翻译新链接）。**以后加/改/重排非首页，只改 `SITE` 一处**——arena/sectors/signal/games 四页已迁移，内联导航链接与硬编码 prev/next 已删除。
-- 待办：**首页 `index.html`** 的导航（含遥测/指挥/时钟，耦合 `src/main.js`）暂未接入，其 nav 链接与 prev/next 仍是手写；后续可让 main.js 也吃 `SITE`（需小心不破坏现有 getElementById 绑定）。
+**⚠️ 待续 / 未开始**
+- **首页 `index.html` 导航**：仍是手写链接与硬编码 prev/next，未接入 `SITE`（耦合 `src/main.js` 的遥测/指挥/时钟，需小心不破坏现有 `getElementById` 绑定）。
+- **`viz.js` 抽取**：count-up 动画逻辑目前在 `sectors.html`（约 158 行处）与 `src/ui/marketDeck.js`（约 309 行处）各自实现，尚未合并成公共库。
+- **拆样式（Phase 3）**：各页 `<style>` 仍内联，未移到 `public/styles/<page>.css`。
+- **拆 main.js（Phase 4）**：`state`/`hud`/`cursor`/`nav`/`boot` 职责拆分未开始。
+- **拆 styles.css（Phase 5）**：`@layer` 分层未开始。
 
-**分阶段计划 / Phases**
-1. **抽公共库**：把 `clock` / `audio` / `viz` 三块从 arena/signal/games 抽到 `public/lib/`，各页 `<script>` 引入。零行为变化，先减重。
-   - ✅ **clock**：`public/lib/clock.js`（`window.AfflatusClock.fmtDur(ms)` / `fmtDurSec(s)`）。arena.js 与 games.js 里**完全相同**的倒计时格式化函数已抽走、改为薄包装；两页在各自脚本前 `<script src="/lib/clock.js" defer>`。已 build 验证、行为一致（`1d 01:01:01`）。
-   - ✅ **audio**：`public/lib/audio.js`（`window.AfflatusAudio.context()` 单一 AudioContext + `env()` 包络 + `noise()` + `masterGain()`）。`transition.js` 的 4 个底层 helper（ctx/noise/env/out）改为委托该库**并保留内联兜底**（库缺失/晚载也不会哑音）；`signal.html` 的 AudioContext 与音符包络改用共享库。五个页面在 `transition.js` 前加载 `/lib/audio.js`。build + 顺序校验通过。
-   - 待抽：**viz**（count-up：当前仅 sectors.html 用，可与首页 marketDeck 的 count-up 合并为一个 helper）。signal 的 FOMC 倒计时格式如与 `AfflatusClock` 一致也可接入。
-2. **统一导航 — ✅ 已完成（四个非首页）**：`public/lib/nav.js` + `SITE`；已替换四页内联导航与 `data-prev/next`。剩首页接入。
-3. **拆样式**：把各页 `<style>` 移到 `public/styles/<page>.css`，`<link>` 引入；公共 token（颜色/字体变量）集中到 `tokens.css`。
-4. **拆 main.js**：按职责拆为 `state`（飞行状态机）、`hud`、`cursor`、`nav`、`boot`，main 只做装配。
-5. **拆 styles.css**：用 `@layer base, hud, combat, starmap, responsive` 或 `@import` 分文件，集中响应式断点（统一 860 / 1080 / 520）。
-
-**优化清单 / Optimisation checklist**
-- 背景 canvas（arena-bg、scpCanvas、signal-scene）：`prefers-reduced-motion` 静帧、`visibilitychange` 暂停（已做）；可加 IntersectionObserver 在不可见时停。
-- API 预算：Finnhub 自适应轮询（开盘前后快、休市慢，已做）；Twelve Data 历史按需 + 按天缓存（已做）。
-- 资源：`public/*.js` 目前原样拷贝，未压缩；如需更小体积，可改为被 Vite 作为模块打包（注意保留多页入口）。
-- 一致性：统一所有响应式断点、统一 `--reduced-motion` 处理、统一按钮反馈（已通过 `page-turn.css` 全局规则覆盖）。
+**优化清单 / Optimisation checklist（现状）**
+- 背景 canvas：`prefers-reduced-motion` 静帧、`visibilitychange` 暂停已做；IntersectionObserver 不可见时停仍待做。
+- API 预算：Finnhub 自适应轮询、Twelve Data 按日缓存已做。
+- 资源：`public/*.js`/`public/*.html` 仍未进 Vite 打包（见 §0 P0-3 / §6）。
 
 ---
 
 ## 3. 首页专项 / Home-app pass
 
-> 独立的大工程，谨慎隔离改动，避免回归首页 3700 行 JS / 6900 行 CSS。
+**3.1 Combat View 飞行员画面 HUD — ⚠️ 与文档描述已不一致，需要决策**
 
-**3.1 皇牌空战式 HUD（起飞后 / 降落前）— ✅ 已完成**
-- `#aceHud` overlay 已移入 combat view（`.hud-pilot`），由飞行相位 `data-phase`（launch / combat / landing）驱动，TIME/SCORE/TARGET + SPEED/ALT + 准星 + 相位标签随相位变化。
-- 纯 DOM overlay，不动渲染管线。
+此前记录的"皇牌空战式 `#aceHud` overlay"**已被完全移除**（DOM/CSS/JS 均已删除），替换为：
+- **驾驶舱框架** `drawCockpitFrame`（起飞/降落/legacy combat 模式下的 A 字支柱 + 仪表台）；
+- **SC 式主炮瞄准镜** `drawSCZoomScope`（main-gun 充能阶段）；
+- **HMD v3** `drawCleanCombatHmd`（飞行路径标记 FPM、ENG/WPN/SHD 功率柱、目标护盾/装甲血条、前置量指示、边缘威胁箭头）——但这套系统**目前只在起飞/降落阶段，以及 `?combatview=legacy` 时的 combat/standby 才会显示**；
+- 日常 combat/standby 的**默认**视图现在是 `drawCombatHudSC`（另一套独立实现，见 §4b）。
 
-**3.2 高精度 F47 模型 — ✅ 程序化高模已完成**
-- `src/scene/fighter3D.js` 已升级：blended delta 翼、前置鸭翼、双外倾垂尾、LERX、分面雷达罩 + 气泡座舱、翼尖挂架、双加力发动机（进气唇/喷口/加力锥），RES 320。
-- 后续可选：换 glTF + `GLTFLoader` + KTX2 压缩纹理（需要体积可控的资产），保留程序化模型为加载占位。
+**需要处理**：两套 HUD 语言（HMD v3 的 SC/SpaceX 极简风 vs `combatHudSC` 的 SC 座舱面板风）并存造成起降与巡航之间视觉不连续。下一步要么把 HMD v3 的功率柱/血条/前置量元素移植进 `combatHudSC`，要么明确"起降用 HMD v3、巡航用 combatHudSC"是有意为之的分工并在文档中定案。
 
-**3.3 移动端 combat / 星图布局 — ✅ 已完成**
-- `@media(max-width:560px)`：隐藏雷达 `hud-left` 与防御 `hud-center`，combat view 占约 2/3、星图约 1/3。
-
-**3.4 Alphard 跃迁点 · 年化收益镜头（SC "Forge" 式）— ✅ 已完成**
-- `src/scene/alphardForge.js` + `.stardrive` CSS：滚动渐进镜头拉伸（pinned + 不断放大），蓝色跃迁点星涡（顺时针旋转**风暴漩涡**——大尺度旋转星云盘 + 16 条湍流螺旋臂 + 细丝闪烁，独立于亮核尺寸，低进度时小亮眼 + 大风暴）、左右舰队侧翼（暖左/冷右 + 倒影 + 零星曳光）、逐字打字台词（下滚逐字输入、上滚逐字删除，中英双语跟随 `<html lang>`）。
-- **钉住改用 JS `position:fixed`**：首页 `html,body{overflow-x:hidden}` 会让 `position:sticky` 失效（overflow-y 被算成 auto），故由 `alphardForge.js` 显式切 `.pin-fixed`/`.pin-end`，星体 + 台词在整段接近过程居中钉住，台词未打完前上下滚动都停在星体页；修掉了"星体与 equity 之间整页空白"的 bug。
-- 与页面背景以顶/底渐隐 + `--bg` 调色融合；星体亮度由真实年化收益 `#sv0[data-counter]` 缩放；`prefers-reduced-motion` 退化为静帧。
+**已完成、无需继续跟踪**
+- ✅ 高精度 F-47 / B-2 程序化模型、夜鹰战机模型（`src/scene/fighter3D.js`、`nighthawk.js`）。
+- ✅ 移动端 combat / 星图布局（`@media(max-width:560px)`）。
+- ✅ Alphard 跃迁点 · 年化收益镜头（`src/scene/alphardForge.js` + `.stardrive`，滚动渐进拉伸 + 风暴漩涡 + 逐字台词，已接入 `index.html`）。
 
 ---
 
 ## 4. 战斗系统迁移：2.5D 上帝视角 WebGL / Top-down combat migration ★
 
-> 本轮新增的**重点架构方向**。当前 combat view 与首页空战是 `main.js` 内嵌的 Canvas-2D（`drawPilotDeck` / `drawPilotF47Nose` / `drawPilotHmd` / 各武器相机 `drawNukeAuthCamera`…），观感偏卡通、伪 3D。目标：参考经典 **Top-Down View（俯视/上帝视角，2D/2.5D）**——如 Nexon《破碎银河系》(2011) 一类俯视战斗——用 **three.js / WebGL** 重建为更流畅精美的俯视战场。
+> 参考经典 Top-Down View（如 Nexon《破碎银河系》）用 three.js 重建俯视战场，替代 Canvas-2D 伪 3D 观感。
 
-**目标渲染 / Target render**
-- 战术平面（god's-eye grid）+ 高位微俯透视相机（轻微 tilt → 2.5D），单位/曳光/爆炸以平面读图、同时保留体积纵深。
-- PBR 材质（`MeshStandardMaterial` metalness/roughness）+ emissive 引擎/喷口；**假辉光**用 additive 贴图 Sprite + emissive，不引 postprocessing 依赖以控体积。
-- 元素：玩家母舰、彗星（1P/HALLEY，含彗发 coma + 彗尾）、护航战机编队、曳光（cylinder/line 池）、激光（持续光束）、执法者主炮**等离子圆光炮**（orb 投射物）、制导导弹（拖尾 + 命中爆炸）、CIWS 点防、爆炸（扩张 Sprite + 点光）。
+**已完成**
+- ✅ Phase 1：`src/scene/topdownCombat.js` 自包含俯视场景（执法者母舰、夜鹰战机、彗星、曳光、激光、等离子光炮、导弹、爆炸 + 战术网格），`?combat=topdown` 全屏预览可用。
+- ✅ 战斗真实状态部分绑定：导弹/核弹镜头引爆与页面上彗星真正被摧毁（`halley.destroyed`）帧级对齐；锁定框在 `halley.hover` 时立即变绿。
 
-**单位设计语言（对标《破碎银河系》截图）/ Unit design language**
-> 用户已提供 SG 各类战斗单位截图与攻击方式，作为最终美术目标。
-- **母舰 = 执法者 (Enforcer)**：雪茄形船体，**中央主炮**，**后两侧推进器 + 尾翼**，船体多处防御炮塔，青绿装甲点缀（图 4）。已做出第一版程序化几何（cigar hull + 中央主炮 + 充能光球 + 后侧双推进器/尾翼 + 4×2 防御炮塔）。
-- **战机 = 夜鹰 (Nighthawk)**：雷达隐身（图 8/9 全黑），后掠箭头形，暗色船体 + 发光翼缘。**✅ 已按下方硬表面规格做出高精度程序化模型** `src/scene/nighthawk.js`（`createNighthawk(THREE,{glowTex})→{group,setMode,tick}`）：装甲楔形机体 + 中脊、钝面四棱机首、深嵌偏光座舱、两侧武器挂架、三发磁约束环引擎（巡航橙/战斗青/跃迁紫，`setMode` 切换）、内嵌粒子炮口 + 腹部炮塔 + 背部导弹格、分布式 RCS、航行灯、发光隐身边缘、深色军用 PBR。已接入 `topdownCombat` 的护航战机（`?combat=topdown` 预览）。后续：换 glTF/贴图做战损质感、按飞行相位驱动 `setMode`。
+**⚠️ 待续**
+- **Phase 2b**：`combatRuntime.getState()` 快照接口**确认仍不存在**——`topdownCombat` 俯视场景仍未由真实战况（彗星位置/护航开火）驱动，仍是自走时间线。这是解锁后续所有真实数据绑定的前置工作，优先级见 §0 P1-5。
+- **Phase 2**：`topdownCombat` 接入 `drawPilotFeed` 仍是 **opt-in**（默认关闭，`?combatview=topdown` 开启），尚未评估转正。
+- **Phase 3**：首页主战斗（`event-layer`）迁移到同一俯视渲染——未开始。
+- **Phase 4**：`topdownCombat` 的 three.js 静态引入改为动态 `import()` 代码分割——未开始，首屏包体仍偏大。
 
-  > **下一步要做 · 夜鹰「常规模式」high-poly 硬表面规格（NEXT BUILD TARGET — 已存档，下个工作阶段开始建模）**
-  >
-  > - **分级 / 尺度**：轻型突击战机（Light Assault Fighter）；长 18m × 宽 11m × 高 4m。
-  > - **设计语言**：工业军用航天器，**无任何气动翼面（纯真空作战）**；剪影要有侵略性、紧凑、功能化。参考 Homeworld / Battlestar Galactica / EVE / The Expanse 的重工业硬科幻。
-  > - **主形体**：围绕一根**厚重装甲中脊**构建；机首短而钝，机体向中段渐宽，尾部为主推进总成；整体**三角楔形**，非对称机械细节，重装甲板，可见维护面板。
-  > - **座舱**：单人；深嵌装甲机体内；窄装甲座舱盖，深色偏光玻璃，最小观察开口，战斗导向。
-  > - **「机翼」= 两侧短武器挂架**：无气动翼面，仅角状装甲结构；用途＝武器挂载 / 机动推进器 / 传感器包；边缘锐利几何。
-  > - **引擎（三发）**：尾部中央 1 主引擎 + 两侧 2 辅助引擎；喷口为**圆形磁约束环 + 内部等离子辉光**。模式配色：巡航＝橙黄；战斗加速＝亮青；跃迁＝蓝紫。（与现有 `pilotModeFor` 相位可联动。）
-  > - **武器系统**：座舱两侧 2 门前向粒子炮；1 腹部机炮炮塔；1 背部导弹发射器；可选微型鱼雷硬点；**武器内嵌装甲，无外露炮管**。
-  > - **RCS 推进**：机首 / 翼根 / 腹部 / 尾稳定面分布多组 RCS，支持六轴机动，可见排气口。
-  > - **表面细节**：硬表面、数千独立组件——装甲板、维护舱盖、传感器阵列、散热片、通讯天线、机械关节；可见磨损与战损、细划痕、武器周围烧蚀痕。
-  > - **材质（PBR）**：深色军用金属 / 钛合金 / 陶瓷复合装甲；metalness 0.85、roughness 0.55；微表面瑕疵。
-  > - **灯光**：航行灯（白 / 琥珀 / 红）+ 小状态 LED + 引擎照明；仅军用感，少装饰光。
-  > - **风格**：AAA 资产、高模、影视级、真实比例、无奇幻元素。
-  > - **落地路径**：先按此规格做**程序化高模几何**（楔形中脊 + 嵌入式座舱 + 两侧角状挂架 + 三发磁环喷口 + 分布式 RCS 口 + 表面板线），用 emissive 做喷口/航灯；后续可换 glTF + KTX2 贴图。喷口配色绑定飞行相位（巡航橙黄 / 战斗青 / 跃迁蓝紫）。
-- **武器谱系（图 3–7）**：密集阵曳光（青/红点状）、持续激光束（绿，已加）、执法者圆形等离子光炮（青绿大光球，已加）、制导导弹（暖色拖尾）。后续按截图细化：光球的电弧、激光的收束闪烁、命中的多段爆炸序列。
-- **迭代目标**：从"几何体"逐步逼近 SG 的**精细贴图 + 法线/自发光**质感（Phase 3 引入 glTF/KTX2 资产），并把不同单位的攻击形式（视角、弹道、命中特效）逐一还原。**有不确定的单位/武器细节会直接向你确认。**
-
-**架构边界 / Module boundary**（关键：把"状态"与"渲染"解耦）
-```
-combatRuntime.js   →  战斗状态（halley 位置/速度、武器、击杀、相位）  [single source of truth]
-        │  state snapshot
-        ▼
-topdownCombat.js   →  纯渲染器（吃 state，画 three.js 俯视场景；无游戏逻辑）
-        │  offscreen render → drawImage(#pilotFeed)  或  直接 WebGL canvas
-        ▼
-combatView (#pilotFeed) / 首页 event-layer
-```
-
-**分阶段 / Phases**
-1. **Phase 1 — ✅ 已完成（持续迭代美术）**：`src/scene/topdownCombat.js` 自包含俯视场景（执法者母舰/夜鹰战机/彗星/曳光/激光/等离子光炮/导弹/爆炸 + 战术网格 + 星空），并挂一个**生产可达的预览舱**：访问 `?combat=topdown` 全屏预览（gated，不影响正常首页）。已按 SG 截图做出执法者/夜鹰第一版几何与武器谱系；下一步持续逼近贴图质感。
-2b. **真实战况绑定 — 🚧 第一步已完成**：combat view 现在读真实 `halley`（彗星）/`killCount` 状态——导弹/核弹镜头的**引爆与页面上彗星真正被摧毁（`halley.destroyed`）帧级对齐**（`opts.killed` 触发引爆相位）；导弹锁定框在真正锁定目标（`halley.hover`）时立即变绿/LOCK；SC HUD 显示真实 **KILLS** 计数、准星锁定时变绿 + 收紧角标。**待续**：把 `topdownCombat` 俯视场景也由真实状态驱动（彗星位置/护航开火），以及逐武器相位过场与 combatRuntime 的 `getState()` 正式接口化。
-
-2. **Phase 2 — 🚧 进行中（已接入，opt-in）**：`topdownCombat` 已以**离屏渲染 → `drawImage` 进 `#pilotFeed`** 的方式接入 `drawPilotFeed`（main.js），覆盖主 **combat / standby** 相位；动态 `import()` 懒加载，WebGL/模块不可用时自动回退现有 2D cockpit。
-   - **开关**：默认关闭，`feida.au/?combatview=topdown` 开启（写入 `localStorage['afflatus-combatview']`，持久），`?combatview=2d` 还原。确认观感 OK 后改默认即可（drawPilotFeed 里去掉 `combatViewTopdown()` 判断或默认返回 true）。
-   - **下一子步（2b）**：把场景与真实战况绑定——在 `combatRuntime` 暴露 `getState()` 快照（halley 位置/速度、相位、武器、击杀），`topdownCombat` 接收并以此驱动彗星/护航/曳光，而非当前自走时间线；再逐武器相位迁移（ciws → missile → nuke → mainGun）。每步 build + 真机目检。
-3. **Phase 3**：首页主战斗（`event-layer` 上的彗星拦截）迁移到同一俯视渲染；统一资产与材质（可选 glTF + KTX2）、用 `InstancedMesh` 管理曳光/碎片、相机用 `cameraDirector` 统一调度。
-4. **Phase 4 — 体积优化**：`topdownCombat` 目前随首页入口静态引入 three（首屏包体增大）。改为 **动态 `import()` 代码分割**，仅在进入 combat / 预览时按需加载战斗渲染器与 three 插件。
-
-**风险控制**：combat 渲染深嵌 3700 行 `main.js`；务必先抽 `state → renderer` 接口、分阶段替换、每步可回退（2D 兜底）。
+**架构边界**（保持不变，仍是正确的设计原则）：`combatRuntime.js`（状态）→ `topdownCombat.js`（纯渲染）→ `#pilotFeed`。
 
 ---
 
-## 4b. Combat View HUD 重做（Star Citizen 风格）/ Combat-view HUD redesign ★
+## 4b. Combat View HUD（Star Citizen 风格）/ Combat-view HUD ★
 
-> 用户对 combat view 现有 HUD 不满，要求按 SC 飞行 HUD 截图重做（机库视角 + 战斗视角），并融入截图 3–5 的优点。**这是 UI/2D 绘制，不是 3D 模型。**
+> `src/scene/combatHudSC.js` 的 `drawCombatHudSC(ctx,w,h,now,state)`**现已是 combat/standby 的默认 HUD**（`?combatview=legacy` 才回退到旧版），比此前文档记录的"opt-in 灰度"状态更进一步——**这条待办已超额完成，文档曾经滞后**。
 
-**已完成（本轮）**：`src/scene/combatHudSC.js` — `drawCombatHudSC(ctx,w,h,now,state)` 纯 canvas 绘制，已按截图实现：
-- 左上**战机全息框** + GIMBAL/GROUP/GUNS(ALL) + 两个护盾数值；
-- 顶部 **ONLINE 绿色状态条** + **航向带**（刻度+读数+游标）；
-- 左右**竖直油门条**（左 SCM 速度 / 右 AB），绿/红分段 + 滑块 + 端帽；
-- **ESP/CPLD** 方块 + 红色云台准星 [+]；**H-FUEL/Q-FUEL %**；
-- 右侧 **G 表节点图**（十字节点）+ G 值；**DECOY/NOISE**；**R-ALT/VSI/ATMO**；
-- 中央**俯仰梯**（-35/-40/-45 括号）+ 侧弧 ")(" + 准星；
-- **告警**（琥珀/红，如 MAJOR TORQUE IMBALANCE / SHIELDS DOWN）；
-- 主题色 cyan，受损切 amber/red（`state.accent`）。
-- 预览三态：hangar（速度0、无 ONLINE）/ cruise（1072 m/s、ONLINE、QT）/ combat（受损、橙色、告警）。
+**已实现**：左上战机全息框（GIMBAL/GROUP/GUNS(ALL) + 护盾数值）、顶部 ONLINE 状态条 + 航向带、左右竖直油门条（SCM/AB）、ESP/CPLD 方块 + 红色云台准星、H-FUEL/Q-FUEL、右侧 G 表节点图、DECOY/NOISE、R-ALT/VSI/ATMO、中央俯仰梯（仅 atmo/hangar，`state.ladder`）+ 侧弧 + 准星、琥珀/红告警。
 
-**下次要做（接线 + 细化）**：
-1. **接入 `drawPilotFeed`（main.js）**：在 combat/standby（或全部相位）调用 `drawCombatHudSC(ctx,w,h,now,state)` 取代/叠加现有 HMD。先用 `?combatview=topdown` 同款 opt-in 开关灰度上线，2D 兜底。
-2. **数据绑定 `state`**：speed/throttle/ab←warpPower、heading←朝向、g←`window.__gLoad`、alt/vsi←飞行相位、shieldF/R←护盾、warn←`nuke-alert`/`emp-effect`/`offline`、status←launch=`REQUEST TAKEOFF`/cruise=`ONLINE`/combat。scm 在 launch/landing 显 `NAV/QT`。
-3. **三种环境皮肤**：机库（黄黑斜纹墙 + REQUEST TAKEOFF 键位 + 左下 THR/SHLD/COOL 功率三角 + GUNNERY/HUD%）；太空（深空 + ONLINE）；大气（地平线 + COLLISION 告警 + ATMO 读数）。截图1=机库、2=太空、4=大气。
-4. **融入图 3–5 优点**：图5 的**护盾四象限数值网格**（受击区块跳数字）、右侧**任务目标面板**（COMBAT GAUNTLET / Waves / objectives，可复用为战斗状态）、左上全息随机型切换；图3/4 的**俯仰梯随姿态滚动**、地平线仪。
-5. 中英：HUD 标签多为通用英文缩写（SCM/AB/G 等保持英文，符合 SC 风格）；告警/状态可中英（跟 `currentLang`）。
+**⚠️ 待续（接线 + 细化）**
+1. **数据绑定精度校验**：speed/throttle/ab/heading/g/alt/vsi/shieldF/R 与真实飞行状态的映射需要逐项核对是否准确（此前只是设计意图，未见校验记录）。
+2. **机库跑道纵深透视**：代码中确认目前**没有**跑道透视实现（只有 `state.ladder` 控制的俯仰梯注释提及 atmo/hangar），仍是"待做"而非"已做"。建议复用首页 `drawPilotDeck` 作为 launch/hangar 背景。
+3. **融入 SC 参考图 3–5 优点**：护盾四象限数值网格、右侧任务目标面板（COMBAT GAUNTLET/Waves）——代码中确认**未实现**（`grep quadrant/mission/objective/GAUNTLET` 均为空）。
+4. 中英标签规则维持：HUD 缩写保持英文，告警/状态跟随 `currentLang`。
 
-**本轮已修（布局/观感）**：左上全息改为 **Condor/执法者 顶视线框**（三态通用）；修掉 H/Q-FUEL 压住速度的重叠（油门值居中于油门条下方、燃料移到左下角）；**combat / cruise 删除中央 35/40 俯仰梯**（`state.ladder=false`，仅 atmo/hangar 显示），中央只留侧弧 + 准星，不挡视野。
+**已完成（第一版）· 戏剧化武器镜头序列** `src/scene/combatCine.js`：`drawMissileCine`（自动锁定→发射→追踪→命中）+ `drawNukeCine`（夜鹰激光指示撤离→VLS 舱门→核弹点火→跟踪→引爆），已接入 missile/nukeAuth 分支，`elapsed` 驱动、彗星方位对齐 `halley.curX/Y`。
 
-**待做 · 机库跑道起飞感（hangar）**：现状画成"正面仓库横栏"是错的。改为**跑道纵深透视**——地板向中心灭点收敛的跑道线 + 两侧机库墙向远处斜收 + 跑道边缘指示灯 + 远端舱门/星空。复用首页 `drawPilotDeck`（它本就画了起飞跑道）作为 launch/hangar 背景，HUD 叠加其上 + `REQUEST TAKEOFF` 键位 + 左下 THR/SHLD/COOL 功率三角。
-
-**✅ 已完成（第一版）· 戏剧化武器镜头序列** — `src/scene/combatCine.js`：`drawMissileCine`（自动锁定→发射→寻的追踪→命中白闪/冲击波/碎片）+ `drawNukeCine`（夜鹰激光指示并从两侧撤离→母舰 VLS 舱门开→核弹升起点火→末段跟踪→引爆）。已接进 `drawPilotFeed` 的 missile / nukeAuth 分支，由 `elapsed`（真实武器窗口）驱动、彗星方位用 `halley.curX/Y` 对齐；`?combatview=legacy` 回旧相机。**后续精修**：与 combatRuntime 真实命中时刻做帧级对齐、镜头切换加过场、核弹改用真 Condor/夜鹰模型离屏渲染。原始规格如下——
-
-**原始规格 · 戏剧化武器镜头序列（combat view 内模拟，且与网页实际战斗时空对齐）**
-> 关键约束：combat view 里的镜头必须与 `event-layer` 上真实发生的拦截（`combatRuntime` 驱动）在**时间与空间角度**一致——即镜头里导弹/核弹命中彗星的时刻、方位，要和页面上彗星被摧毁的时刻、屏幕位置对得上。实现时从 `combatRuntime` 取 halley 位置/相位/命中时间作为镜头时间线的锚点。
-- **导弹（missile）模式**：进入后准星**自动锁定**彗星（锁定框由大收紧到贴合 + "LOCK"提示 + 蜂鸣），随后**发射导弹**，镜头跟随导弹尾焰**追踪彗星**（导弹拖尾 + 轻微寻的摆动 + 彗星在框内放大），命中瞬间白闪 + 碎裂；全程与页面上该武器的真实命中时刻同步。做出精美、符合现实弹道的运镜。
-- **核弹（nuke）模式 — 多镜头序列**：
-  1. 护航**夜鹰巡逻** + 对彗星发射**激光制导**（laser designation 光束指向彗星），随后战机**从屏幕两侧撤离**（划出画面）；
-  2. 镜头切到**母舰（Condor/执法者）垂直发射系统 VLS 舱门打开**；
-  3. **核弹头从 VLS 射出 → 点火**（尾焰拉长）；
-  4. 镜头**一路跟踪核弹**飞向彗星，直至**命中摧毁**（强白闪 + 冲击波环 + 余烬）；
-  5. 每一段镜头时长要算好，使核弹命中与页面上彗星被核打击摧毁的真实时刻/方位一致。
-- 实现建议：在 `drawPilotFeed` 的 missile/nuke 分支用一个**镜头状态机**（`phase`/`t`）驱动；几何元素（导弹、激光、VLS、核弹、爆炸）用 2D 画在 pilotFeed，或离屏 three.js 渲染后 drawImage；时间线锚点取自 `pilotView.started/until` 与 `combatRuntime` 的真实事件。
+**⚠️ 待续**：与 `combatRuntime` 真实命中时刻的帧级对齐精修（当前是近似同步，非精确锚定）；镜头切换过场效果；核弹序列改用真实 Condor/夜鹰模型离屏渲染替代当前的 2D 绘制。
 
 ---
 
 ## 4c. 首页 WebGL 上下文 / 性能审计 / Home WebGL context + perf audit
 
-> 首页同时存在多个 WebGL 上下文，接近浏览器上限（Chrome ~16），有"上下文丢失 = 黑屏"风险；跃迁点 shader + 6000 粒子在弱机/手机上也吃 GPU。
+**已完成，无需继续跟踪**
+- ✅ 死代码已清理：`bladeHologram.js`、`createShipRenderer` 均已确认从代码库移除。
+- ✅ 全部活跃渲染器（`alphardForge`/`topdownCombat`/`fighter3D`/`capitalShip3D`/`shipHologram`/`saturnRenderer`）已加 `webglcontextlost` 韧性处理。
+- ✅ dpr 上限已统一收紧（`topdownCombat`/`capitalShip3D` 1.75，`alphardForge` 1.5）。
+- ✅ 结论仍成立：最坏并发 ~6 个 WebGL 上下文，远低于浏览器上限，数量不是问题。
 
-**实测上下文清单（已核对，先前高估已修正）**：
-- 常驻（2 个）：`saturnRenderer`（`#blackhole-gl`，raw GL 背景）、`alphardForge`（跃迁点 shader，离屏暂停但上下文常驻）。
-- 按需懒建：`fighter3D`（护航）、`capitalShip3D`（主炮镜头，`getShip3D`）、`topdownCombat`（combat view / `?combat=topdown`）、`shipHologram`（舰长终端登录时动态 import）。
-- **死代码（未激活，不占上下文）**：`bladeHologram.js`（无任何引用，可删）、`createShipRenderer`（`shipSide/RearRenderer = null`，从不调用，可删）。
-- 结论：最坏并发 ~6 个上下文，**远低于浏览器上限（~16），上下文数量不是问题**；真正成本是跃迁点 shader + 战斗渲染的 GPU 占用，已被离屏/隐藏暂停 + dpr 上限充分约束。
-
-**已做（本轮，全部活跃渲染器都加了 context-lost 韧性）**：
-- `alphardForge` + `topdownCombat`：`webglcontextlost`(preventDefault) + `webglcontextrestored`(重渲染)。
-- `fighter3D` / `capitalShip3D` / `shipHologram`（Three）：`webglcontextlost`(preventDefault)（Three 在 restore 时自动重建资源，且这些每帧重绘，无需手动重渲染）。
-- `saturnRenderer`（raw GL）：canvas `webglcontextlost`(preventDefault) 保活。
-- `topdownCombat` dpr 上限 2 → **1.75**（`alphardForge` 1.5、`capitalShip3D` 1.75）。
-- 既有：主循环 `document.hidden` 暂停、`alphardForge` 离屏(IntersectionObserver)暂停、rAF 后台节流。
-
-**剩余可选（低优先，需真机 profiling）**：
-- 删死代码 `bladeHologram.js` + `createShipRenderer`（净化）。
-- `saturnRenderer` 等 raw-GL 的**完整** context-restored 重建（目前仅 preventDefault 保活；上下文极少丢失，优先级低）。
-- 跃迁点 shader 弱机自适应：降 fbm 八度（5→3）或分辨率（`navigator.hardwareConcurrency`/帧时探测）。
-- 统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量。
+**⚠️ 仍待续（低优先，需真机 profiling）**
+- `saturnRenderer` 等 raw-GL 的**完整** context-restored 重建（目前仅 preventDefault 保活）。
+- 跃迁点 shader 弱机自适应（降 fbm 八度或分辨率）。
+- 统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量（目前分散在各文件里，数值不完全一致：1.75 vs 1.5）。
 
 ---
 
@@ -219,106 +155,75 @@ combatView (#pilotFeed) / 首页 event-layer
 
 - **Arena**：可加"模型 vs 你"的历史胜率曲线；真实历史接 Twelve Data 后把 W/M/6M/Y/5Y 徽标改 `REAL`。
 - **Sectors**：可把研判与 Arena 的 Opus 预测打通（同一数据源）。
-- **Signal**：见下方 **5b Signal 专项**。
+- **Signal**：见 **§5b**。
 - **Games**：决赛阶段对阵确定后在 `games-data.json` 补 `home/away/result`；可加"夺冠路径"树状图。
-- **全站**：完成第 2 节的导航统一后，新增页面成本将大幅下降。
+- **Novels**：新页面，暂无额外待办；若章节数增长到 §6 提到的阈值，评估 Astro/MDX 迁移。
 
 ---
 
 ## 5b. Signal 专项：美联储观察站 / Fed-watch station ★
 
-> **页面使命**：捕捉美联储**日常政策变化与言论**对美股波动的影响。不是新闻站，而是"事件 → 利率路径重定价 → 美股/板块反应"的**传导链档案馆**。SCP O5 收容档案是叙事皮肤；内核是宏观事件驱动的交易情报板。
+> **页面使命**：捕捉美联储日常政策变化与言论对美股波动的影响，是"事件 → 利率路径重定价 → 美股/板块反应"的传导链档案馆，非新闻站。
 
-### 5b.1 案例研究：2026-07-02 六月非农（本次更新的锚点事件）
+**✅ Phase 1 已完成（事件档案化）**——四份既有档案已刷新至 7 月 FOMC / 六月非农后状态；倒计时扩展为 `NEXT CONTAINMENT TEST`（FOMC + CPI + NFP 混排，取最近目标日期）；新增 **INCIDENT LOG** 区块，数据源 `public/signal-events.json`（已验证存在，含首份档案 `INCIDENT-2026-NFP-06`：六月非农 +5.7万 vs 预期 +11.3万、失业率 4.2% 但参与率降至 61.5%、盘前 risk-on 反应，四段式 + SCP 等级 `class` 字段）。后续新增事件只需在此 JSON 追加记录。
 
-**数据（BLS，美东 7/2 8:30 发布，因 7/3 独立日休市提前至周四）**
-- 新增非农 **+5.7 万**，大幅低于预期的 **+11.3 万**；4/5 月合计**下修 7.4 万**。
-- 失业率 **4.2%**（一年新低，预期持平 4.3%）——但**劳动参与率同步降至 61.5%**：失业率下降是分母收缩（劳动力退出）造成的"虚假改善"，并非需求强劲。
-- 结构：休闲酒店业 **-6.1 万**（季节性招聘疲弱，恰是 5 月 +17.2 万爆表的主贡献项）；增量集中在专业商务服务、社会救助与医疗（医疗也在放缓）。
+**⚠️ Phase 2 — 传导链可视化（未开始）**
+- **BREACH METER**：事件前/后的降息-加息概率位移横条，位移幅度自动映射 SCP 收容等级（目前 `class` 字段是人工评定，Phase 2 要做成自动映射）。
+- **鹰鸽罗盘**：主席+理事讲话鹰鸽评分聚合指针（手动打分先行）。
+- **事件回放迷你图**：SPX 发布前后 ±2h 的 5 分钟 sparkline。
 
-**市场反应（发布后盘前）**：Bad news = good news。S&P 期货 +0.4%、纳指期货 +0.5%、道指期货 +0.5%，VIX -3.7% 至 16 下方，黄金 +1.3%。
+**⚠️ Phase 3 — 自动化与联动（未开始）**
+- 定时任务自动生成事件档案草稿；与 Arena/Sectors 打通；FedWatch 概率自动刷新（若有数据源）。
 
-**传导逻辑（这正是 Signal 要长期捕捉的链条）**
-1. **事件前的定价**：5 月非农爆表后，市场已从"何时降息"漂移到"9 月前加息概率过半"（Fed 现区间 3.50–3.75%，新主席 Warsh 鹰派基调），6/5 当天纳指曾因强就业+利率恐慌大跌。
-2. **数据落地**：57K + 下修 74K + 参与率下滑，直接击碎"劳动力过热 → 加息"叙事。
-3. **利率路径重定价**：加息押注瓦解，9 月重新变成"活的"降息观察窗口；下一次 FOMC（7 月底）的措辞与 Warsh 记者会语气成为新的"收容失效窗口"。
-4. **美股结构反应**：贴现率预期下移 → 长久期成长/AI 算力受益（盘前科技领涨）；但**若后续数据确认需求走弱**，叙事会从"降息利好"切换为"衰退担忧"——同一份弱数据在不同 regime 下方向相反，这是页面必须表达的核心张力。
-5. **风险提示**：失业率因参与率下降而"失真"，后续验证点：初请失业金、JOLTS 职位空缺（7.6M）、7 月 CPI。若参与率持续下滑 + 时薪重新加速，则滞胀组合利空股债双杀。
-
-### 5b.2 内容更新（本轮要改的静态内容）
-
-当前四份档案（01 利率决议 / 02 主席监督 / 03 点阵图 / 04 威胁面板）仍停留在 **6 月 FOMC 之前**（"Warsh 首次会议"已过时）。需要：
-- **01 O5 DIRECTIVE**：改为 **7 月 FOMC（7/28–29）** 的 CME FedWatch 概率；非农后 Hold/Cut/Hike 三条 bar 重刷（加息概率应大幅回落）。
-- **02 ETHICS COMMITTEE**：Warsh 已开过首会 → 改为"鹰派基调 vs 走弱数据的第一次正面冲突"；关注点改为 7 月会后声明是否删除紧缩倾向措辞。
-- **03 SEP 推演**：无 SEP 的会议（7 月无点阵图）→ 面板改为"9 月降息概率追踪"或"下次 SEP（9 月）前瞻"。
-- **04 MTF THREAT BOARD**：`payrolls / wages` 从 FIRM 降级为 **CRACKING**（琥珀→需新增状态）；新增 `labor participation` 监控行（61.5% ↓）。
-- **FOMC 倒计时**：确认 `FOMC` 数组含 7/28–29 及后续 2026 会期；DIRECTIVE 文案同步。
-
-### 5b.3 设计路线图（分阶段）
-
-**Phase 1 — 事件档案化（静态）— ✅ 已完成**
-- **四份档案已刷新至 7 月 FOMC / 六月非农后状态**：01 DIRECTIVE 概率改为 Hold 91% / Cut 7% / Hike 2%（非农后加息尾部风险大幅收窄）；02 CHAIR 文案去掉"首次会议"、改为"鹰派基调首次迎战走弱就业数据"、DOT PLOT 行改为 STATEMENT（本次无 SEP）；03 从 `SEP / DOT-PLOT PROJECTION` 改造为 **`SEPTEMBER CUT TRACKER`**（7 月会议本就无点阵图，面板改追踪 9 月降息概率 + 提示下次 SEP 在 9/16）；04 THREAT BOARD 的 `payrolls/wages` 从 `FIRM` 降级为 `CRACKING`，新增 `labor participation`（`SLIPPING`）行。
-- **倒计时已从"只有 FOMC"扩展为 `NEXT CONTAINMENT TEST`**：新增 `CATALYSTS[]`（FOMC + CPI + NFP 混排，含 2026-07-14 六月 CPI / 2026-07-29 FOMC / 2026-08-12 七月 CPI / 2026-09-04 八月非农 / 后续 FOMC），倒计时逻辑改为取**最近一个**目标日期；标签、发布时间（FOMC 2:00 PM ET / 数据 8:30 AM ET）、DIRECTIVE↔READOUT 文案随目标类型动态切换（写入真实 `data-en/data-zh` 属性，交给全局 `i18n.js` 统一重绘，而非绕开翻译系统另写一套）。当前日期下会正确显示"下一次 CPI 数据"（7/14）而非 FOMC。
-- **新增 INCIDENT LOG（收容事件簿）区块**：每个宏观事件 = 一份编号档案，`before → print → repricing → equityReaction` 四段式 + `verdict` 裁定，卡片按 SCP 收容等级（`euclid`/`keter`/`safe`）着色。首份档案 **INCIDENT-2026-NFP-06**（六月非农：+5.7万 vs 预期 +11.3万，失业率 4.2% 但参与率降至 61.5%，4/5 月下修 -7.4万，盘前 risk-on）已写入。
-- **数据文件路径**：实际落地为 `public/signal-events.json`（根目录，与既有 `arena-news.json` / `games-data.json` 同级，而非原计划的 `public/data/` 子目录——沿用站内已有惯例）；`signal.html` 用 `fetch('/signal-events.json',{cache:'no-store'})` 拉取渲染，中英双语随 `afflatus-lang` 事件重渲染整个列表。后续新增事件只需在此 JSON 追加一条记录，不用碰 HTML。
-- 提交记录：`782a19c`。
-
-**Phase 2 — 传导链可视化**（未开始）
-- **BREACH METER（重定价仪表）**：横向双状态 bar 展示"事件前 vs 事件后"的 9 月降息/加息概率位移，位移越大 = 收容失效等级越高（Keter/Euclid/Safe 对应大/中/小重定价），把 SCP 等级变成**真实波动语义**。Phase 1 已在 INCIDENT LOG 卡片上用 `class` 字段（`euclid`/`keter`/`safe`）打了地基，Phase 2 要做的是把这个等级从"人工评定"升级为"按重定价幅度自动映射"。
-- **鹰鸽罗盘**：主席+理事近期讲话的鹰鸽评分聚合成一个指针 dial（手动打分先行，后续可接文本分析）。
-- **事件回放迷你图**：SPX 5 分钟线在发布时刻前后 ±2h 的 sparkline（Twelve Data 拉一次存 JSON），直观呈现"一句话/一个数字"造成的瞬时波动。
-
-**Phase 3 — 自动化与联动**
-- 定时任务：每逢 NFP/CPI/FOMC 日自动生成事件档案草稿（搜索+摘要 → `signal-events.json`），人工校对后发布。
-- 与 Arena/Sectors 打通：事件日的 Opus 方向研判自动引用最新 INCIDENT 档案作为依据；首页 combat HUD 的"威胁等级"可选联动当日宏观事件（彩蛋）。
-- FedWatch 概率若有可用数据源则自动刷新 01 面板；否则维持人工 JSON。
-
-**设计原则**（沿用全站规则）：SCP 皮肤只做叙事包装，数据本体必须**真实、注明日期与来源**；所有研判标注 "not advice"；中英文案成对（`data-en/data-zh`）；新增区块继续用琥珀/绿机密文档配色，避免引入新色系。
+**设计原则**（沿用）：SCP 皮肤只做叙事包装，数据本体必须真实、注明日期与来源；所有研判标注 "not advice"；中英文案成对。
 
 ---
 
 ## 6. 架构演进与下一代视觉 / Architecture evolution & next-gen visuals ★
 
-> 站点将持续加页（1.4 → `novels.html`，之后更多）。本节回答两个问题：**现有架构撑不撑得住增长**、**用什么技术拿到更高帧率与"下一代"观感**。结论先行：**不需要换语言、不需要上 React**——瓶颈不在 JS 语言本身，而在 (a) 多页手工维护成本 (b) 主线程渲染压力 (c) 缺乏 GPU 后期处理。对症下药即可。
+> 站点持续加页（novels.html 已上线，之后更多）。结论：**不需要换语言、不需要上 React**——瓶颈在 (a) 多页手工维护成本 (b) 主线程渲染压力 (c) 缺乏 GPU 后期处理，全部**尚未动工**。
 
-### 6.1 现有架构的真实问题（按痛感排序）
+### 6.1 现有架构的真实问题（按痛感排序，均未处理）
 
-1. **public/*.html 不经打包**：五个子页的内联 `<style>`/`<script>` 由 Vite 原样拷贝——无压缩、无 tree-shaking、无资源哈希（改了 JS 用户可能吃旧缓存）。页面越加越多，这个税越重。
-2. **单体文件**：`main.js` 3700+ 行 / `styles.css` 6900+ 行（§2 已有拆分计划，未执行）。每次改动的回归风险随行数线性上涨。
-3. **重复的页面骨架**：nav 已统一（§2），但 `<head>` meta / 字体加载 / i18n 与 audio 脚本引入顺序仍是每页复制——novels.html 又要复制一遍。
-4. **主线程全包**：星空、combat、雷达、K 线全部在主线程 Canvas 2D 绘制；滚动 + 动画 + 绘制互相抢 16ms 预算，大窗口 Retina 下已经出现过降采样模糊。
-5. **多页跳转是整页刷新**：`transition.js` 用出/入动画掩盖白屏，但本质仍是丢弃全部状态重载。
+1. **`public/*.html` 不经打包**——已核实 `vite.config.js` 无多入口配置；novels.html 已在此状态下上线，是本轮审查发现的最紧迫项（见 §0 P0-3）。
+2. **单体文件**——`main.js` 3733 行 / `styles.css` 7038 行，比此前记录时更大。
+3. **重复的页面骨架**——nav 已统一，但 `<head>` meta / 字体加载顺序仍每页复制。
+4. **主线程全包**——星空、combat、雷达、K 线全部主线程 Canvas 2D。
+5. **多页跳转是整页刷新**——`transition.js` 掩盖白屏，本质仍丢弃状态重载。
 
-### 6.2 技术选型建议（诚实评估，含"不要做"）
+### 6.2 技术选型建议
 
 **✅ 值得做**
 
 | 技术 | 解决什么 | 成本 |
 | --- | --- | --- |
-| **Vite MPA 多入口** | 把 `public/*.html` 变成真正的 Vite entry（`rollupOptions.input` 列多个 html），子页获得打包/压缩/哈希/公共 chunk | 低，半天 |
-| **View Transitions API（跨文档）** | `@view-transition {navigation: auto}` + CSS 即可让多页跳转获得 SPA 级无缝过渡（元素连续变形），2026 年 Chrome/Edge/Safari 均支持，Firefox 渐进降级为普通跳转——**可大幅简化甚至替代 transition.js** | 低-中 |
-| **CSS Scroll-Driven Animations** | `animation-timeline: scroll()/view()` 把滚动驱动动画（alphardForge 的渐进拉伸、strip 计数触发）搬到合成器线程，**零 JS、不掉帧**；JS 版本保留为 Firefox 兜底 | 中 |
-| **OffscreenCanvas + Worker** | 星空/combat 背景移入 Worker 线程渲染，主线程只管 UI——这是当前**帧率提升性价比最高**的一步（Chrome/Safari/Firefox 均已支持） | 中 |
-| **three.js WebGPURenderer + TSL** | r170+ 的 WebGPU 渲染器（WebGL 自动兜底）。真正的收益：**compute shader 粒子**（百万级粒子模拟星涡/爆炸碎片，CPU 零参与）+ 更低的 draw call 开销。跃迁点星涡、combat 爆炸是最佳试点 | 中-高 |
-| **Bloom/HDR 后期处理** | "下一代观感"的最大单项来源不是换引擎，而是**发光管线**：three.js `UnrealBloomPass`（或 WebGPU 版 bloom node）+ ACES tone mapping，让引擎喷口/主炮/星体获得真实辉光，而非现在的 radial-gradient 假光晕 | 中 |
-| **TypeScript（渐进）** | 拆 main.js 时新模块直接 `.ts`，旧代码不动；`checkJs` 渐进覆盖。防回归价值随站点体积增长 | 低（增量） |
-| **Astro（当加页成本失控时）** | 静态站生成器：一份 layout 出所有子页 `<head>`/nav/字体，novels 章节用 Markdown/MDX 管理（写一章 = 加一个 .md 文件），零 JS 默认 + 岛屿式挂载现有 canvas 应用。**触发条件**：页面 ≥8 个或 novels 章节 ≥20 章时迁移，当前先不动 | 高（迁移） |
+| **Vite MPA 多入口** | `public/*.html` 变成真正的 Vite entry，获得打包/压缩/哈希/公共 chunk | 低，半天（含清理 §7 的死文件） |
+| **View Transitions API（跨文档）** | `@view-transition {navigation: auto}` 让多页跳转获得 SPA 级无缝过渡，可简化/替代 `transition.js` | 低-中 |
+| **CSS Scroll-Driven Animations** | `animation-timeline: scroll()/view()` 把滚动动画搬到合成器线程，零 JS 不掉帧 | 中 |
+| **OffscreenCanvas + Worker** | 星空/combat 背景移入 Worker 线程，主线程只管 UI——当前帧率提升性价比最高的一步 | 中 |
+| **three.js WebGPURenderer + TSL** | compute shader 粒子（百万级星涡/爆炸碎片）+ 更低 draw call 开销 | 中-高 |
+| **Bloom/HDR 后期处理** | `UnrealBloomPass` + ACES tone mapping，真实辉光替代 radial-gradient 假光晕 | 中 |
+| **TypeScript（渐进）** | 拆 main.js 时新模块直接 `.ts` | 低（增量） |
+| **Astro（触发式）** | 页面 ≥8 或 novels 章节 ≥20 时迁移，当前未到阈值 | 高（迁移） |
 
-**❌ 不要做（省下的时间就是性能）**
+**❌ 不要做**：React/Vue/Svelte 重写、Rust/WASM、全站 WebGPU-only、SSR/后端框架——理由不变（详见历史版本），站点是 canvas 动画 + 静态内容，加框架/后端只会增加体积与运维成本而无实际收益。
 
-- **换 React/Vue/Svelte 重写**：站点是 canvas 动画 + 静态内容，虚拟 DOM 毫无用武之地，只会加 100KB+ 运行时和一层调试间接性。
-- **Rust/WASM**：粒子/物理量级远未到 JS 瓶颈（几千粒子 vs WASM 值得的百万级）；WebGPU compute 已覆盖"大规模并行"需求且不用换语言。
-- **全站 WebGPU-only**：2026 年仍需 WebGL 兜底（旧设备/企业浏览器），three.js 的双后端正好免费给你。
-- **SSR/后端框架（Next 等）**：无动态内容、无用户系统，纯静态 + Vercel 已是最优部署形态；加后端只会引入冷启动和费用。
+### 6.3 落地顺序
 
-### 6.3 落地顺序（与现有计划合并）
+1. **立即**：清理 §7 死文件 → Vite MPA 多入口改造（novels.html 补票）；`@view-transition` 与 `transition.js` 共存灰度。
+2. **短期**：OffscreenCanvas Worker 化首页星空背景；scroll-driven animations 替换 alphardForge 的 JS pin 逻辑；main.js 拆分启动，新模块用 TS。
+3. **中期**：three.js WebGPURenderer 试点跃迁点星涡（compute 粒子 + bloom），A/B 对比帧率后再推广。
+4. **触发式**：页面/章节数量到阈值 → Astro 迁移。
 
-1. **v1.4 前（novels 上线前）**：Vite MPA 多入口改造 → novels.html 从第一天就吃打包管线；`@view-transition` 跨文档过渡与 transition.js 共存灰度（CSS 有则用，无则旧动画）。
-2. **v1.4–v1.5**：OffscreenCanvas Worker 化首页星空背景（最大画布、最稳收益）；scroll-driven animations 替换 alphardForge 的 JS pin 逻辑（保留 JS 兜底）；main.js 拆分启动（§2 Phase 4），新模块用 TS。
-3. **v1.5+**：three.js WebGPURenderer 试点跃迁点星涡（compute 粒子 + bloom），A/B 对比帧率后推广到 combat 爆炸/主炮；KTX2 纹理管线（§4 Phase 3 已列）。
-4. **触发式**：页面/章节数量到阈值 → Astro 迁移（layout 收敛 + MDX 内容管理）。
+**衡量标准**：Chrome DevTools Performance——主线程帧时间目标 <8ms、合成器帧率目标 120fps、子页 LCP <1.5s。
 
-**衡量标准**：每步用 Chrome DevTools Performance 面板对比——主线程帧时间（目标 <8ms）、合成器帧率（目标 120fps 高刷屏）、LCP（子页 <1.5s）。观感目标：辉光/景深后的 combat 场景截图应接近 SC 参考图的光学质感。
+---
+
+## 7. 本轮审查新发现 / Newly found in this audit ★
+
+- **4 个孤立遗留 HTML 文件**（`public/afflatus_blog_homepage_marathon_style.html`、`afflatus_marathon_new_style_homepage.html`、`afflatus_terminal_dos_style.html`、`afflatus_topbar_redesign_responsive.html`）：均为 2026-06-13 一次性 `git commit b0f1260 "Add files via upload"` 遗留，无任何页面引用、无 nav 入口，纯死重。建议直接删除（如需保留设计参考，先另存到仓库外或 `docs/archive/` 再删）。
+- **HUD 双系统并存**：见 §3.1 / §4b，需要产品决策而非单纯代码清理。
+- **`combatRuntime.getState()` 缺失**：多处文档（§4 Phase 2b）引用此接口作为下一步基础，但代码中从未创建，属于被反复提及却从未落地的"隐性阻塞项"，本轮审查予以显式标注防止继续被忽略。
 
 ---
 
