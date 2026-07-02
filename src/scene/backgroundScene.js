@@ -1,6 +1,97 @@
 import { clamp, rand } from '../utils/math.js';
 
+// Hard backing-store budget. Three fullscreen canvases (starfield,
+// black-hole WebGL, event-layer) all share this dpr. The previous stepped
+// cap (1.25/1.5/2 by area) still let each canvas grow without an absolute
+// ceiling, so at fullscreen the three backing stores together blew past the
+// GPU tile-memory budget and Chrome re-rastered the WHOLE document — text
+// included — at reduced scale. Here we instead pin each canvas to <= a fixed
+// pixel ceiling: dpr = sqrt(BUDGET / viewportArea), clamped. Soft glow can't
+// tell 0.9x from 2x, but freeing that memory lets the root/text layer keep
+// its native scale and stay sharp. Half-screen windows stay near 2x (crisp),
+// which is why half-screen already looked fine.
+const BUDGET_PX = 3_600_000; // ~ a 2560x1440 frame, per canvas
+function computeDpr(w, h) {
+  const area = Math.max(1, w * h);
+  const budgetDpr = Math.sqrt(BUDGET_PX / area);
+  return Math.min(devicePixelRatio || 1, Math.max(0.6, budgetDpr));
+}
+
+// Runs the star/warp draw loop in a Worker via OffscreenCanvas so the main
+// thread only pays for tiny postMessage calls each frame (pointer x/y +
+// warp intensity) instead of ~240 star draws + the warp-tunnel loop.
+// 2026-07-03: added as the "highest ROI" perf step from ROADMAP §6. Falls
+// back to the original main-thread canvas path (untouched below) on any
+// browser/engine that lacks transferControlToOffscreen or module Workers —
+// no feature gets worse, it just doesn't get the offload.
+function tryCreateWorkerScene(canvas) {
+  if (typeof OffscreenCanvas === 'undefined') return null;
+  if (typeof canvas.transferControlToOffscreen !== 'function') return null;
+  if (typeof Worker === 'undefined') return null;
+  try {
+    const offscreen = canvas.transferControlToOffscreen();
+    const worker = new Worker(new URL('./backgroundScene.worker.js', import.meta.url), { type: 'module' });
+    let width = 1, height = 1, dpr = 1;
+    let inited = false;
+
+    function resize() {
+      dpr = computeDpr(innerWidth, innerHeight);
+      width = Math.round(innerWidth * dpr);
+      height = Math.round(innerHeight * dpr);
+      canvas.style.width = `${innerWidth}px`;
+      canvas.style.height = `${innerHeight}px`;
+      const payload = { innerWidth, innerHeight, dpr };
+      if (!inited) {
+        inited = true;
+        worker.postMessage({ type: 'init', canvas: offscreen, ...payload }, [offscreen]);
+      } else {
+        worker.postMessage({ type: 'resize', ...payload });
+      }
+      return { width, height, dpr };
+    }
+
+    // Actual drawing happens inside the worker on its own timer; the real
+    // `draw` hook (assigned by createBackgroundScene below, since it needs
+    // getPointer/getWarpIntensity) just forwards the two live inputs the
+    // worker needs each time main.js's render loop calls it.
+    return {
+      resize,
+      draw: null, // replaced below once we know getPointer/getWarpIntensity
+      get width() { return width; },
+      get height() { return height; },
+      get dpr() { return dpr; },
+      _worker: worker,
+    };
+  } catch (err) {
+    console.warn('[backgroundScene] worker offload failed, falling back to main thread', err);
+    return null;
+  }
+}
+
 export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) {
+  const workerScene = tryCreateWorkerScene(canvas);
+  if (workerScene) {
+    const worker = workerScene._worker;
+    let lastIntensity = null;
+    workerScene.draw = () => {
+      const pointer = getPointer();
+      worker.postMessage({ type: 'pointer', x: pointer.x, y: pointer.y });
+      const intensity = getWarpIntensity();
+      if (intensity !== lastIntensity) {
+        lastIntensity = intensity;
+        worker.postMessage({ type: 'intensity', value: intensity });
+      }
+    };
+    return {
+      draw: workerScene.draw,
+      resize: workerScene.resize,
+      get width() { return workerScene.width; },
+      get height() { return workerScene.height; },
+      get dpr() { return workerScene.dpr; },
+    };
+  }
+
+  // ---- Fallback: original main-thread Canvas2D implementation ----
   const ctx = canvas.getContext('2d', { alpha: false });
   let width = 1;
   let height = 1;
@@ -41,20 +132,7 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
   }
 
   function resize() {
-    // Hard backing-store budget. Three fullscreen canvases (starfield,
-    // black-hole WebGL, event-layer) all share this dpr. The previous stepped
-    // cap (1.25/1.5/2 by area) still let each canvas grow without an absolute
-    // ceiling, so at fullscreen the three backing stores together blew past the
-    // GPU tile-memory budget and Chrome re-rastered the WHOLE document — text
-    // included — at reduced scale. Here we instead pin each canvas to <= a fixed
-    // pixel ceiling: dpr = sqrt(BUDGET / viewportArea), clamped. Soft glow can't
-    // tell 0.9x from 2x, but freeing that memory lets the root/text layer keep
-    // its native scale and stay sharp. Half-screen windows stay near 2x (crisp),
-    // which is why half-screen already looked fine.
-    const BUDGET_PX = 3_600_000; // ~ a 2560x1440 frame, per canvas
-    const area = Math.max(1, innerWidth * innerHeight);
-    const budgetDpr = Math.sqrt(BUDGET_PX / area);
-    dpr = Math.min(devicePixelRatio || 1, Math.max(0.6, budgetDpr));
+    dpr = computeDpr(innerWidth, innerHeight);
     width = canvas.width = innerWidth * dpr;
     height = canvas.height = innerHeight * dpr;
     canvas.style.width = `${innerWidth}px`;
