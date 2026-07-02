@@ -16,6 +16,35 @@ const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const lerp = (a, b, t) => a + (b - a) * t;
 const TAU = Math.PI * 2;
 
+// 2026-07-03 (ROADMAP §4b item 8): camera-cut whip-flash at shot-phase
+// boundaries, so multi-shot sequences (nuke's 5 shots) and the missile's
+// lock→ignition beat read as edited cuts instead of parameters silently
+// crossing a threshold mid-frame. `boundaryFlash` is purely a function of the
+// elapsed fraction `e` (no extra state needed — nuke's shots are crossed
+// exactly once per cycle since e is monotonic within one weapon camera run).
+function boundaryFlash(e, boundary, width = 0.015) {
+  const d = Math.abs(e - boundary);
+  return d < width ? 1 - d / width : 0;
+}
+function cutFlash(ctx, w, h, strength) {
+  if (strength <= 0) return;
+  ctx.save();
+  ctx.fillStyle = `rgba(255,255,255,${(0.55 * strength).toFixed(3)})`;
+  ctx.fillRect(0, 0, w, h);
+  ctx.restore();
+}
+// The real kill (halley.destroyed) can land at any point in the cine's
+// elapsed timeline, not just near the scripted impact beat — previously
+// `e = Math.max(e, IMPACT)` silently teleported the animation forward with
+// no visual cue, which reads as a glitch rather than an edit when the jump
+// is large (kill lands early in the flight/track phase). These per-weapon
+// one-shot flags fire a short decaying flash exactly on the frame the real
+// kill is first observed, then re-arm automatically once `opts.killed` goes
+// false again for the next weapon cycle — same rising-edge pattern already
+// used in topdownCombat.js's kill-flash detection (see ROADMAP §4 Phase 2b).
+let missilePrevKilled = false, missileKillFlashFrames = 0;
+let nukePrevKilled = false, nukeKillFlashFrames = 0;
+
 function spaceBg(ctx, w, h, now, streak) {
   ctx.fillStyle = '#04060a'; ctx.fillRect(0, 0, w, h);
   ctx.fillStyle = '#bcd';
@@ -130,6 +159,9 @@ function missileBody(ctx, u, s, flameLen) {
 export function drawMissileCine(ctx, w, h, now, e, opts = {}) {
   const lang = opts.lang || 'en', u = Math.min(w, h);
   const t = targetXY(opts.halley, w, h);
+  const missileJustKilled = !!opts.killed && !missilePrevKilled;
+  missilePrevKilled = !!opts.killed;
+  if (missileJustKilled && e < 0.86) missileKillFlashFrames = 5; // cut-to-impact cue, only when we're actually skipping ahead
   if (opts.killed) e = Math.max(e, 0.86); // snap to impact the instant the real comet dies (frame-level sync)
   spaceBg(ctx, w, h, now, false);
   const alive = e < 0.9;
@@ -210,12 +242,22 @@ export function drawMissileCine(ctx, w, h, now, e, opts = {}) {
   }
   // frame label
   label(ctx, lang === 'zh' ? '导弹 · 自主制导' : 'MISSILE · GUIDED', w * 0.5, u * 0.05, Math.max(7, u * 0.026), 'rgba(154,229,255,.7)');
+
+  // camera cuts: lock-acquired (~0.28) and motor ignition (~0.30) beats, plus
+  // the forced cut-to-impact flash when a real kill skips ahead of schedule.
+  const boundaryCut = Math.max(boundaryFlash(e, 0.28, 0.02), boundaryFlash(e, 0.30, 0.02));
+  const killCut = missileKillFlashFrames > 0 ? missileKillFlashFrames / 5 : 0;
+  cutFlash(ctx, w, h, Math.max(boundaryCut, killCut));
+  if (missileKillFlashFrames > 0) missileKillFlashFrames -= 1;
 }
 
 /* ── NUKE (multi-shot VLS sequence) ─────────────────────────────────────── */
 export function drawNukeCine(ctx, w, h, now, e, opts = {}) {
   const lang = opts.lang || 'en', u = Math.min(w, h), cx = w * 0.5;
   const t = targetXY(opts.halley, w, h);
+  const nukeJustKilled = !!opts.killed && !nukePrevKilled;
+  nukePrevKilled = !!opts.killed;
+  if (nukeJustKilled && e < 0.9) nukeKillFlashFrames = 5; // cut-to-detonation cue, only when actually skipping ahead
   if (opts.killed) e = Math.max(e, 0.9); // detonate the instant the real comet dies (frame-level sync)
 
   if (e < 0.18) {
@@ -278,4 +320,11 @@ export function drawNukeCine(ctx, w, h, now, e, opts = {}) {
     shock(ctx, t.x, t.y, u * (0.05 + p * 0.55), (1 - p) * 0.8, '255,160,90');
     if (p > 0.25) label(ctx, lang === 'zh' ? '目标消灭' : 'TARGET ELIMINATED', cx, h * 0.5, Math.max(10, u * 0.04), 'rgba(255,235,235,.95)');
   }
+
+  // camera cuts: the three shot-boundary edits (designate→VLS→terminal track)
+  // plus a forced cut-to-detonation flash when a real kill skips ahead.
+  const boundaryCut = Math.max(boundaryFlash(e, 0.18), boundaryFlash(e, 0.5), boundaryFlash(e, 0.9));
+  const killCut = nukeKillFlashFrames > 0 ? nukeKillFlashFrames / 5 : 0;
+  cutFlash(ctx, w, h, Math.max(boundaryCut, killCut));
+  if (nukeKillFlashFrames > 0) nukeKillFlashFrames -= 1;
 }
