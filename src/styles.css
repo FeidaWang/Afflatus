@@ -1284,22 +1284,27 @@ nav{
 /* "Labs" nav dropdown (Games/Novels today; future seasonal/experimental
    pages join here — see src/lib/nav.js's SITE `group:'labs'` tag). The
    trigger is a real .nav-links a element so the rules above already style
-   it for free; only the dropdown panel itself needs new CSS. */
+   it for free; only the dropdown panel itself needs new CSS.
+   The panel (.nav-labs__menu) is portaled to a direct child of <body> by
+   nav.js and positioned via JS (top/right set inline) rather than nested
+   under .nav-labs — this page's <nav> only reaches z-index:100 while
+   several HUD layers (.battle-feed, warnings, etc.) sit at z-index:900+,
+   which was silently painting over the panel. Open state is driven
+   entirely by the .open class (JS), not :hover/:focus-within, since the
+   panel is no longer a DOM descendant of the trigger. */
 .nav-labs{position:relative;display:inline-flex}
 .nav-labs__trigger::after{content:'▾';display:inline-block;margin-left:5px;font-size:.85em;transform:translateY(1px)}
 .nav-labs__menu{
-  position:absolute;top:calc(100% + 10px);right:0;z-index:50;
+  position:fixed;z-index:99000;
   display:flex;flex-direction:column;gap:8px;min-width:132px;padding:10px;
   background:rgba(4,8,14,.94);border:1px solid rgba(140,241,255,.22);border-radius:2px;
   box-shadow:0 14px 30px rgba(0,0,0,.55);
-  opacity:0;visibility:hidden;transform:translateY(-4px);
+  opacity:0;visibility:hidden;transform:translateY(-4px);pointer-events:none;
   transition:opacity .18s ease,transform .18s ease,visibility .18s;
 }
 .nav-labs__menu a{white-space:nowrap}
-.nav-labs:hover .nav-labs__menu,
-.nav-labs.open .nav-labs__menu,
-.nav-labs:focus-within .nav-labs__menu{
-  opacity:1;visibility:visible;transform:translateY(0);
+.nav-labs__menu.open{
+  opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;
 }
 .top-telemetry{
   grid-template-columns:repeat(4,max-content);

@@ -70,10 +70,10 @@
 **原则**：每页保留**独立的字体与美术身份**，但共享一套基础系统，避免重复造轮子。顶层导航只放长期核心页；季节性/实验性内容进 Labs（见上方 v1.4 说明）。
 
 **共享系统 / Shared systems**
-- `page-turn.css` — 翻页箭头 + 自托管字体 + 全局按钮点击反馈（每页用 body class 切换箭头配色）+ Labs 下拉菜单结构样式（2026-07-03）。
+- `page-turn.css` — 翻页箭头 + 自托管字体 + 全局按钮点击反馈（每页用 body class 切换箭头配色）+ Labs 下拉菜单结构样式（2026-07-03；2026-07-04 修复被遮挡问题，见下方说明）。
 - `src/lib/transition.js` — 进出页动画 + 音效；按目标页选择类型（warp / cannon / takeoff / control / cyber）。
 - `src/lib/i18n.js` — 全局中英切换；任何带 `data-en` / `data-zh` 的元素自动翻译；右上角 `.lang-toggle`；切换时派发 `afflatus-lang` 事件供动态页面（arena/games/signal）重渲染。
-- `src/lib/nav.js` — 唯一的 `SITE` 数组渲染导航 + 翻页 prev/next + Labs 下拉分组（2026-07-03 新增，`group:'labs'` 标记）；五个非首页（arena/sectors/signal/games/novels）均已接入（2026-07-03 从 `public/lib/` 移到 `src/lib/`，见 §0b A1）。
+- `src/lib/nav.js` — 唯一的 `SITE` 数组渲染导航 + 翻页 prev/next + Labs 下拉分组（2026-07-03 新增，`group:'labs'` 标记）；五个非首页（arena/sectors/signal/games/novels）均已接入（2026-07-03 从 `public/lib/` 移到 `src/lib/`，见 §0b A1）。**2026-07-04**：下拉面板改为 portal 到 `<body>`（`position:fixed`，JS 用 trigger 的 `getBoundingClientRect()` 定位，`z-index:99000`），不再嵌套在 `.nav-labs` 内——之前嵌套时在 games.html 上被 `.top` 的装饰性 `clip-path` 直接裁掉，在首页上又因为 `<nav>` 本身只有 `z-index:100` 而被 `.battle-feed`（910）等 HUD 层盖住，无论内部 z-index 设多高都逃不出祖先节点的裁剪/层叠上限。开关状态因此也从纯 CSS `:hover`/`:focus-within` 改成 JS 驱动的 `.open` class（mouseenter/leave + focus/blur + click + Escape/outside-click/scroll/resize 关闭）。
 - `src/lib/clock.js` / `src/lib/audio.js` — 倒计时格式化、Web Audio 环境音共享库（arena/games/signal/transition.js 复用）。
 - `src/ui/viz.js` — count-up 动画共享库（sectors.html/marketDeck.js 复用，见 §0b A3）。
 - 数据文件：`arena-news.json`（每日定时任务）、`games-data.json`（手动更新）、`signal-events.json`（宏观事件档案，见 §5b）、`novels-data.json`（章节内容）。

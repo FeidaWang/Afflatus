@@ -87,16 +87,60 @@
             labsTrigger.setAttribute('aria-haspopup', 'true');
             labsTrigger.setAttribute('aria-expanded', 'false');
             labsTrigger.textContent = LABS_LABEL.en;
+
+            // The dropdown PANEL is portaled to a direct child of <body>
+            // (position:fixed, positioned via JS from the trigger's own
+            // rect) instead of nesting inside .nav-labs. Two per-page
+            // ancestors were silently hiding it when it stayed nested:
+            // games.html's header (.top) has a decorative clip-path that
+            // slices away anything painted below the header edge, and the
+            // home page's <nav> only reaches z-index:100 while several HUD
+            // layers (.battle-feed, warnings, etc.) sit at 900+ — a
+            // descendant can never out-rank ancestors it's capped inside.
+            // Portaling sidesteps both: the panel is clipped/capped by
+            // nothing but the viewport. See run()'s open/close handlers
+            // below for how open state now travels via JS instead of pure
+            // CSS :hover/:focus-within (which required real DOM nesting).
+            labsMenu = document.createElement('div');
+            labsMenu.className = 'nav-labs__menu';
+            document.body.appendChild(labsMenu);
+
+            const openMenu = () => {
+              closeLabsMenus(labsMenu);
+              positionLabsMenu(labsTrigger, labsMenu);
+              labsWrap.classList.add('open');
+              labsMenu.classList.add('open');
+              labsTrigger.setAttribute('aria-expanded', 'true');
+            };
+            const closeMenu = () => {
+              labsWrap.classList.remove('open');
+              labsMenu.classList.remove('open');
+              labsTrigger.setAttribute('aria-expanded', 'false');
+            };
+            labsMenu._afflatusClose = closeMenu;
+
+            let closeTimer = null;
+            const cancelClose = () => { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } };
+            const scheduleClose = () => { cancelClose(); closeTimer = setTimeout(closeMenu, 160); };
+
             labsTrigger.addEventListener('click', (e) => {
               e.preventDefault();
               e.stopPropagation();
-              const open = labsWrap.classList.toggle('open');
-              labsTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+              if (labsMenu.classList.contains('open')) closeMenu(); else openMenu();
             });
-            labsMenu = document.createElement('div');
-            labsMenu.className = 'nav-labs__menu';
+            labsTrigger.addEventListener('mouseenter', () => { cancelClose(); openMenu(); });
+            labsTrigger.addEventListener('mouseleave', scheduleClose);
+            labsMenu.addEventListener('mouseenter', cancelClose);
+            labsMenu.addEventListener('mouseleave', scheduleClose);
+            labsTrigger.addEventListener('focus', openMenu);
+            labsWrap.addEventListener('focusout', (e) => {
+              if (!labsMenu.contains(e.relatedTarget) && e.relatedTarget !== labsTrigger) closeMenu();
+            });
+            labsMenu.addEventListener('focusout', (e) => {
+              if (!labsMenu.contains(e.relatedTarget) && e.relatedTarget !== labsTrigger) closeMenu();
+            });
+
             labsWrap.appendChild(labsTrigger);
-            labsWrap.appendChild(labsMenu);
             frag.appendChild(labsWrap);
           }
           labsMenu.appendChild(a);
@@ -108,19 +152,30 @@
       navEl.insertBefore(frag, navEl.firstChild);
     });
 
-    // close any open Labs menu on an outside click or Escape
-    document.addEventListener('click', closeLabsMenus);
+    // close any open Labs menu on an outside click, Escape, scroll or resize
+    // (scroll/resize would leave a stale-positioned fixed panel behind)
+    document.addEventListener('click', () => closeLabsMenus());
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLabsMenus(); });
+    window.addEventListener('scroll', () => closeLabsMenus(), { passive: true });
+    window.addEventListener('resize', () => closeLabsMenus());
 
     // translate freshly-rendered links to the current language
     try { if (window.AfflatusI18N) window.AfflatusI18N.apply(); } catch (e) {}
   }
 
-  function closeLabsMenus() {
-    document.querySelectorAll('.nav-labs.open').forEach((el) => {
-      el.classList.remove('open');
-      const t = el.querySelector('.nav-labs__trigger');
-      if (t) t.setAttribute('aria-expanded', 'false');
+  // Anchors the portaled panel under its trigger using the trigger's own
+  // viewport rect, right-aligned to match the old in-flow "right:0" look.
+  function positionLabsMenu(trigger, menu) {
+    const r = trigger.getBoundingClientRect();
+    menu.style.top = Math.round(r.bottom + 8) + 'px';
+    menu.style.right = Math.max(8, Math.round(window.innerWidth - r.right)) + 'px';
+    menu.style.left = 'auto';
+  }
+
+  function closeLabsMenus(except) {
+    document.querySelectorAll('.nav-labs__menu.open').forEach((m) => {
+      if (m === except) return;
+      if (m._afflatusClose) m._afflatusClose();
     });
   }
 
