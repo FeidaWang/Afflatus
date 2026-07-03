@@ -69,6 +69,43 @@ describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
     expect(info.mastTips.length).toBe(4);
   });
 
+  it('exposes 8 side modular-bay mounts (4/side) and 4 lateral point-defense turrets (2/side)', () => {
+    // added per the user's detailed reference breakdown: category 2 ("Mid-
+    // Section Modular Bays" — a repeating row on the hull FLANKS, called out
+    // as a scale/detail visual anchor) and category 4 ("Ventral and Lateral
+    // Defenses" — point-defense distributed across both bottom AND sides).
+    const { info } = buildForBBox('full');
+    expect(info.sideBayMounts.length).toBe(8);
+    expect(info.lateralTurretMounts.length).toBe(4);
+    const left = info.sideBayMounts.filter(m => m.side === -1).length;
+    const right = info.sideBayMounts.filter(m => m.side === 1).length;
+    expect(left).toBe(4);
+    expect(right).toBe(4);
+  });
+
+  it('side modular bays and lateral turrets sit within the midship z-span, mirrored left/right', () => {
+    const { info } = buildForBBox('full');
+    for (const m of info.sideBayMounts) {
+      expect(Number.isFinite(m.z)).toBe(true);
+      expect(Math.abs(m.x)).toBeGreaterThan(0.9); // proud of hull centerline, out toward the flank
+      expect(Math.abs(m.x)).toBeLessThan(1.6);    // but not flying off past the radiator fins (mounted further out at 1.7)
+    }
+    for (const m of info.lateralTurretMounts) {
+      expect(Math.abs(m.x)).toBeGreaterThan(0.9);
+      expect(Math.abs(m.x)).toBeLessThan(1.6);
+    }
+    // mirror symmetry: every left mount has a matching right mount at the same z
+    const leftZs = info.sideBayMounts.filter(m => m.side === -1).map(m => m.z).sort((a, b) => a - b);
+    const rightZs = info.sideBayMounts.filter(m => m.side === 1).map(m => m.z).sort((a, b) => a - b);
+    for (let i = 0; i < leftZs.length; i++) expect(leftZs[i]).toBeCloseTo(rightZs[i], 6);
+  });
+
+  it('"wire" keeps the side bays and lateral turrets too (structured accents, not random greeble)', () => {
+    const wire = buildForBBox('wire');
+    expect(wire.info.sideBayMounts.length).toBe(8);
+    expect(wire.info.lateralTurretMounts.length).toBe(4);
+  });
+
   it('engine mounts sit at the stern (negative Z, past the turret row)', () => {
     const { info } = buildForBBox('full');
     const turretMinZ = Math.min(...info.turretMounts.map(t => t.z));
