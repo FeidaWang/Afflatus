@@ -7,6 +7,36 @@
 
 ## v1.5 · Afflatus「Fable 5 Max 五模块」
 
+### V7.（S）Signal 定时任务升级 — 2026-07-04
+
+架构同 V4：Cowork scheduled-tasks，不是 launchd。新建 `public/signal-release-dates-2026.json`（WebSearch+直接抓取核实的 2026 全年 CPI/NFP/PCE/FOMC 发布日历，来源 bls.gov/bea.gov/federalreserve.gov 官方页面，非搜索摘要转述）供任务做 no-op 门禁：命中发布日 → event 模式；否则周五 → weekly 模式；否则跳过不跑（多数日子应该什么都不做，这是预期行为不是 bug）。新增 `src/lib/validateSignalEvents.js`（v2 schema 纯校验函数，12 条 vitest 覆盖：真实 fixture 通过、分数越界/pillar 数量或 tone 非法/事件 id 重复/双语字段缺失/version 错误等全部拒绝）+ `scripts/validate-signal-events.mjs`（CLI 发布门禁——任务必须先跑这个再 commit，非零退出码就中止发布，不留半成品到线上）。**这个校验器是吸取 V6 教训后加的**：V6 手工编辑时曾因未转义引号打断 `JSON.parse`，无人值守的定时任务没有人工审查这一步，必须靠代码把关。调度任务 `signal-warsh-daily`（cron `0 7 * * 2-6`，AEST 07:00 周二至周六，映射 ET 周一至周五 17:00 收盘后 1 小时，与 V4 的 AEST↔ET 错位规律一致）已创建，提示词自含 STEP 0-5（判定模式→读取上下文→WebSearch→按 schema 撰写→跑校验器→仅校验通过才 git add/commit/push，且只碰 `signal-events.json` 一个文件）。
+
+**验证**：`npm run test` 123/123 绿（新增 `validateSignalEvents.test.js` 12 条）；`npm run build` 绿；`vite preview` 7 页 + `signal-events.json` + `signal-release-dates-2026.json` 全部 curl 200；校验器 CLI 对真实文件（OK）与故意损坏的文件（FAIL，exit 1）都做过烟测。**首次真实触发**（本周二 AEST，映射 ET 周一）尚未发生，非发布日也非周五，预期是一次干净的 no-op——建议观察前几次运行日志确认门禁逻辑按预期工作。
+
+---
+
+### V6.（M）Signal「Warsh 时代」内容重构 — 2026-07-04
+
+`signal-events.json` 从 v1 裸数组迁移到 v2 对象结构（`hawkDoveCompass`/`pillarSummary`/`pillars`/`events`，事件仍用具名 `before/print/repricing/equityReaction` 四字段，未采用 prompt 草稿的 `record_zh/en` 数组写法——保留已验证过的渲染结构，`prompts/signal-warsh.md` 已同步更新对齐）；`signal.html` 新增鹰鸽罗盘区块（`-2..+2` 打分，v1.3/HAWKISH，人工打分，方法说明已注明自动化留给 V7）+ 五维信号矩阵网格（5 张 pillar 卡，通胀/货币政策/财报指引/产业科技/地缘贸易，各带 tone 红/琥珀/绿）+「PERSONNEL FILE — SITE DIRECTOR」人事档案卡（Warsh 7/1 ECB 论坛首秀原话，WebSearch 核实）；对应 CSS（`.compass`/`.pillars`/`.pillarGrid`/`.pillar`/`.gauge`/`.needle` 等）已按站内 SCP 琥珀/纸色调补齐。
+
+**修复一处真实 bug**：`signal-events.json` 的 `rationale_zh` 里混入了未转义的直引号导致 JSON 语法错误（`vite preview` 起服务后 curl 该文件才发现），已改为站内统一的「」引号约定并重新验证 `JSON.parse` 通过——V7 的校验器正是吸取这次教训后补上的门禁。
+
+**验证**：`npm run test` 111/111 绿（本轮无逻辑改动，纯内容/前端）；`npm run build` 绿；`vite preview` 7 页 + `signal-events.json` 全部 curl 200；解析后核对字段（`version:2`/`pillars:5`/`events:3`/`hawkDoveCompass.score:1.3`）。**视觉未验证**：罗盘指针定位与 pillar 网格排布的实际观感在沙盒无法渲染截图，样式逻辑已对齐现有 SCP 视觉语言但需本地确认。
+
+---
+
+### V4.（M）Arena 双模型定时任务（v1 切片：Model A 开盘窗）— 2026-07-04
+
+**实施路线偏离文档原计划**：查证 arena-news/games/leagues 三个既有自动化后发现全部走 Cowork scheduled-tasks，不是文档写的 launchd + 外部 API key 方案（那条路径从未真正建过）——V4 照抄已验证的模式。行情走 Cowork 任务实时 fetch 线上 `https://feida.au/api/quote?symbol=X`（已探测确认可用，Finnhub key 已在 Vercel 服务端配置，任务本身不接触任何密钥）。
+
+新增 `src/lib/arenaRun.js`（`runArenaLedger`，纯函数，对 `arenaRules.js` 做单次运行编排：mark-to-market→止损扫仓→逐单校验/撮合→熔断判定→赛季重置判定→复盘文案更新，14 条 vitest 覆盖同日多次运行/跨日/熔断/止损/Model B 星期二四门禁/赛季重置/纯函数不变性等场景）+ `scripts/apply-arena-run.mjs`（CLI 结算脚本，调度任务只产出提案 JSON，这个脚本调用 `arenaRun.js` 真正校验+落盘，任务本身不允许手改 `arena-ledger.json`）+ `public/nyse-holidays-2026.json`（已 WebSearch 核实 2026 全年 10 个休市日，任务运行前先查表 no-op）。`arena-ledger.json` 补充迁移字段 `lastRunDate`/`dayStartEquity`（两本账本各一份，日内多次运行与熔断判定的记账基准）。
+
+首个调度任务 `arena-autopilot-a-open`（AEST 00:30，对应 ET 开盘窗，cron `30 0 * * 2-6`，其余 3 个任务——尾盘窗/Model B 盘后/周度复盘——待这个跑几天验证稳定后再补）已创建——**调度工具的人类可读描述显示"only on Tuesday"，但底层 `cronExpression` 字段确认存的是完整的 `2-6`（周二至周六 AEST）**，这处描述文本的准确性还未跨两次以上运行验证过。提示词 `prompts/arena-autopilot.md`（已就绪，任务运行时直接读取，不复制内容，改动自动生效）。调度、数据获取与 key 管理见 **§7.5**——launchd 段落已过时（未采用），保留仅供历史对照。
+
+**验证**：`npm run test` 111/111 绿（新增 `arenaRun.test.js` 14 条）；`npm run build` 绿；`vite preview` 7 页 curl 200；CLI 脚本对真实 `public/arena-ledger.json` 做过一次实测调用（备份→跑→核对输出→还原），确认端到端读写路径正确。**未验证**：调度任务首次真实运行的完整行为（WebSearch 新闻质量、`/api/quote` 30 个标的连续 fetch 的实际耗时/稳定性、任务自己写的提案 JSON 格式是否总能匹配脚本预期）——这些只能等它真跑一次才知道，建议观察第一次运行的 commit 记录与 `arena-ledger.json` 差异。**V5（前端展示）已排入 roadmap.md，待账本积累 ≥3 个交易日数据后动工。**
+
+---
+
 ### V8.（S）v1.5 发布收尾 — 2026-07-04
 
 版本号 `1.4.0` → `1.5.0`（`package.json` 顶层 + `package-lock.json` 两处 version 字段 + `index.html` 首页 `.brand-version` 显示）。全站用户可见文案「Fable 5」→「Fable 5 Max」：`games.html`（meta description/og:description/kicker/brief，含大写 `FABLE 5` 变体）、`arena.html`（`data-en`/`data-zh` 品牌行）、`signal.html`（meta description + 小标题）、`public/games-data.json`（预测研判正文）；顺带同步了 `src/pages/arena.js`/`games.js` 顶部文档注释里的旧称呼（非用户可见，但保持内部文档与实际品牌一致）。`leagues.html`/`leagues-data.json` 因为是 7/4 当天新建，创建时就已直接用「Fable 5 Max」，无需改动。**改名纪律**：只动用户可见文案（HTML 文本节点、`data-en`/`data-zh`、模板字符串渲染内容、JSON 里会被渲染出来的正文字段），不动 JSON 键名/JS 属性名/CSS class；改完后做了大小写不敏感全库 re-grep（`(?i)fable 5(?! max)`）确认零残留，另外确认站内没有裸「Fable」简称需要处理。
