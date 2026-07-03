@@ -1291,18 +1291,33 @@ nav{
    several HUD layers (.battle-feed, warnings, etc.) sit at z-index:900+,
    which was silently painting over the panel. Open state is driven
    entirely by the .open class (JS), not :hover/:focus-within, since the
-   panel is no longer a DOM descendant of the trigger. */
+   panel is no longer a DOM descendant of the trigger.
+   Because it's no longer nested under .nav-links, its <a> children don't
+   inherit .nav-links a's look for free either — every rule below mirrors
+   .nav-links a / :hover / .active above exactly (Orbitron, same tracking,
+   same cyan ramp, same underline-on-active treatment) so the panel reads
+   as part of the same nav, not a generic browser dropdown. */
 .nav-labs{position:relative;display:inline-flex}
 .nav-labs__trigger::after{content:'▾';display:inline-block;margin-left:5px;font-size:.85em;transform:translateY(1px)}
 .nav-labs__menu{
   position:fixed;z-index:99000;
-  display:flex;flex-direction:column;gap:8px;min-width:132px;padding:10px;
-  background:rgba(4,8,14,.94);border:1px solid rgba(140,241,255,.22);border-radius:2px;
+  display:flex;flex-direction:column;gap:6px;min-width:150px;padding:10px;
+  background:rgba(4,8,14,.95);border:1px solid rgba(140,241,255,.22);border-radius:2px;
   box-shadow:0 14px 30px rgba(0,0,0,.55);
   opacity:0;visibility:hidden;transform:translateY(-4px);pointer-events:none;
   transition:opacity .18s ease,transform .18s ease,visibility .18s;
 }
-.nav-labs__menu a{white-space:nowrap}
+.nav-labs__menu a{
+  display:block;white-space:nowrap;text-align:left;text-decoration:none;
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(116,206,230,.74);
+  padding:8px 6px;
+  cursor:none;pointer-events:auto;
+  transition:color .22s ease,text-shadow .22s ease;
+}
+.nav-labs__menu a:hover{color:#dff9ff;text-shadow:0 0 14px rgba(116,240,255,.48)}
+.nav-labs__menu a.active{color:#8cf1ff;text-shadow:0 0 10px rgba(116,240,255,.6);position:relative}
+.nav-labs__menu a.active::after{content:'';position:absolute;left:6px;right:6px;bottom:2px;height:1px;background:rgba(140,241,255,.72)}
 .nav-labs__menu.open{
   opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;
 }
