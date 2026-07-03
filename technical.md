@@ -114,7 +114,7 @@ npm run dev        # http://127.0.0.1:5173  （逐页检查）
 npm run build      # 产出 dist/（七个入口各自压缩打包，public/ 静态资源原样拷贝进去）
 npm run preview    # 预览打包结果
 ```
-> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑五个文件共 93 条：`tests/arenaRules.test.js`（44 条，Arena 规则引擎）+ `tests/weaponClock.test.js`（20 条，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）+ `tests/cameraMath.test.js`（12 条，V14 临界阻尼弹簧/抢占规则/混合曲线）+ `tests/weaponCameraDirector.test.js`（6 条，V14 镜头状态机，用 mock 相机对象验证抢占/续期/自动回落/数值不发散，不依赖 WebGL）+ `tests/odinHull.test.js`（8 条，V15 舰体比例：长高比/艏占比/挂载点数量/wire 少于 full/无 NaN，用 mock `add()` 记录 mesh 算真实 `THREE.Box3`，不依赖 WebGL/DOM）。所有模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
+> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑五个文件共 94 条：`tests/arenaRules.test.js`（44 条，Arena 规则引擎）+ `tests/weaponClock.test.js`（20 条，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）+ `tests/cameraMath.test.js`（12 条，V14 临界阻尼弹簧/抢占规则/混合曲线）+ `tests/weaponCameraDirector.test.js`（6 条，V14 镜头状态机，用 mock 相机对象验证抢占/续期/自动回落/数值不发散，不依赖 WebGL）+ `tests/odinHull.test.js`（8 条，V15 舰体比例：长高比/艏占比/挂载点数量/wire 少于 full/无 NaN，用 mock `add()` 记录 mesh 算真实 `THREE.Box3`，不依赖 WebGL/DOM）。所有模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
 
 ---
 
