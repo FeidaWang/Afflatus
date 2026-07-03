@@ -1,68 +1,62 @@
-# CLAUDE.md — Project Afflatus Working Notes
+# 1. Think Before Coding
 
-> **End-of-session protocol**: at the end of every session, review this session's errors/fixes, high-value technical decisions, and user preferences,
-> and append to this file in an "Context → Instruction → Prohibition" format. Favor omission over noise: only record entries that will actually change future behavior, no filler.
-> Document division of labor: `roadmap.md` (todo + specs) / `technical.md` (operations manual) / this file (cross-session experience, machine-first).
-> Keep the filename uppercase `CLAUDE.md` — this is the toolchain's auto-load convention name, unlike the lowercase convention for roadmap/technical.
+Don't assume. Don't hide confusion. Surface tradeoffs.
 
-## Project hard facts (skip re-deriving these every time)
+Before implementing:
 
-- Site is feida.au; Vercel deployment, watches `main` on GitHub `FeidaWang/Afflatus`, builds from source — local `dist/` is irrelevant to deployment and already gitignored.
-- Six Vite HTML entries at the project root (index/arena/sectors/signal/games/novels), each page has exactly one module entry file (`src/pages/*Entry.js`/`*Libs.js`); `public/` only holds genuinely static assets and data JSON.
-- `src/scene/cameraDirector.js` is already taken by the takeoff/landing camera work — roadmap V14's weapon-camera module must use a different filename.
-- User's local path is `~/Documents/Codex/2026-05-26/<repo>`; the folder may get renamed to `afflatus`. The `REPO` variable in `scripts/` scripts hardcodes this path — a rename must be synced there too.
-- Internal field names like those in games-data.json are still called `opus*` — this is deliberately preserved internal naming, never "helpfully" unify it.
+* State your assumptions explicitly. If uncertain, ask.
+* If multiple interpretations exist, present them - don't pick silently.
+* If a simpler approach exists, say so. Push back when warranted.
+* If something is unclear, stop. Name what's confusing. Ask.
 
-## Build & frontend
+# 2. Simplicity First
 
-- New shared scripts: only go through "one explicit import-chain entry file per page," never multiple independent `<script type="module">` tags on the same page — Vite 8 will build successfully but silently drop the code from some pages' output. After building, always grep `dist/` to spot-check that key symbols actually made it into the output; a green build does not mean correct output.
-- When grepping `dist/`, **don't assume the output filename corresponds to the source filename**: libraries shared across multiple pages (nav.js/i18n.js/transition.js/page-turn.js) get merged by Rollup into some shared chunk, and the chunk naming depends on bundling order, not tied to any particular source file (in practice it ended up merged into `transition-*.js`). When verifying a new page is wired into nav, grep for a content fingerprint (e.g. the new path string in the SITE array), not by filename.
-- `nav.js` must execute before `page-turn.js` (the latter synchronously reads `body.dataset.prev/next` at module top level).
-- When an element is trapped by an ancestor's `clip-path` or a low z-index stacking context: portal it to `<body>` + `position:fixed` + JS positioning; just raising z-index never works. **The cost of a portal is a broken style-inheritance chain** — you must explicitly restore font/color/hover/active per page via CSS variables, or it falls back to default browser styling (the "purple underlined serif font" incident).
-- Site-wide copy renames: only change user-visible text (HTML text nodes, data-en/zh, template-string rendered content), never touch JSON field names/JS properties/CSS classes; after each pass, do a case-insensitive full-repo re-grep — the first pass always misses something, this is an empirical regularity, not an assumption.
-- Visual/CSS changes cannot be genuinely rendering-verified in the sandbox: when delivering, clearly distinguish "logic verified / visuals unverified, pending your local check" — never claim visual correctness. This project has already had the user's screenshots catch sandbox-invisible visual bugs twice.
-- Confirmed by testing: the sandbox cannot install a headless browser for visual self-verification — `npm install puppeteer` fails downloading Chromium because it needs `storage.googleapis.com` (not on the network allowlist), `EAI_AGAIN`. Don't retry this path on similar tasks (save a wasted round) — just assume visual verification can only be done by the user locally. For purely geometric/numeric modules (that don't touch DOM/Canvas), use "Node + a mock `add()` callback + a real `THREE.Box3` bounding-box computation" for proportion assertions (V15 `odinHull.js`'s approach) — this is the one part of a major 3D visual change that the sandbox CAN self-verify, and it's worth making a default move.
-- High-visual-risk changes (replacing a core visual asset that's currently visible in production, like the entire capital-ship geometry) carry higher risk than V14's kind of "add an optional camera" change, so the gate needs to be more conservative: the default path must stay byte-identical, and new content always goes behind a query-parameter opt-in (e.g. `?ship=odin`) — don't promote it to the default production path just because the user said "continue." "Continue" is usually just authorization to "move on to the next item," not authorization to "skip the risk gate and go straight to the production default path" — these two need to be judged separately.
-- **Real-world lesson on using THREE.js rotation+scale combinations to "flatten/stretch" geometry (hit this bug for real in V15)**: an `Object3D`'s scale is applied to the local coordinate system **before** rotation (`matrix = T*R*S`); `rotation.x = PI/2` maps the local Y axis onto the world Z axis — meaning "flattening local Y" actually compresses the post-rotation world Z (possibly the length axis rather than the thickness axis you meant to flatten). Writing this kind of transform by intuition can easily "feel right" while actually being wrong, and this class of bug won't show up if you only test "is the overall bounding box in a reasonable range" (individual components can coincidentally still land within coarse-grained thresholds). The correct approach: before making the change, run `new THREE.Box3().setFromObject(mesh)` in Node on **that one part** in isolation and print the actual world-space bounding box on all three axes, rather than trusting intuition or only testing the whole ship's aggregate bounding box; unit tests should also assert proportions (length/height/width ratios) for the newly added part itself, not just the coarse range of the full assembly. This class of bug is exactly the most dangerous kind of "sandbox-invisible" bug — logic review + a passing build + a green aggregate-bounding-box test can still be exactly the kind of thing that shows up in the user's screenshot as "doesn't look like the reference at all"; the only way to catch it ahead of time is to assert a measured bounding box on the individual part.
-- **Feedback like "looks like toy building blocks" is usually an architecture problem, not something numeric tuning can fix** (the lesson from V15's three fix rounds): when a hull is assembled from independent primitives (box/cone), no matter how precisely you tune the proportions, the seams between them will always read as "a pile of blocks" — the real fix is to switch to a continuous loft/extrusion geometry (stations + skin), with accessory parts then mounted onto that continuous shell. When you get feedback like "no detail/looks like a toy," first determine whether it's "the numeric proportions are wrong" or "the architecture itself can't support this look" — don't keep re-tuning parameters on top of the wrong architecture.
-- **When hand-writing a BufferGeometry, triangle winding direction can't be judged by intuition — verify it in Node**: inward-facing normals cause a weird effect where PBR lighting appears to shine from inside the object. Verification method: sample non-axial vertices and check that the normal's outward radial dot product (`(x*nx+y*ny)/r`) is positive; for "capping" faces (like a ship's stern), check that the averaged normal points in the declared outward direction (e.g. a ship's stern should have normal.z < 0). Both of these checks should be run immediately after writing a hand-built loft/extrusion geometry, not just assumed correct once the build passes.
-- **When you get "it got worse" feedback, first check whether the previous round's "denoise/simplify" pass overcorrected**: detail that was cut to fix "too cluttered" can turn into "too empty" once the root bug is actually fixed — the root cause changed, so simplification decisions made against the old root cause need to be re-evaluated, not carried forward by default. Distinguishing "structural accessory parts" (meaningful shapes, worth keeping) from "randomly scattered detail" (genuine visual noise, whose density can be tuned per render style) is the key judgment call here.
+Minimum code that solves the problem. Nothing speculative.
 
-## Git & sandbox environment
+* No features beyond what was asked.
+* No abstractions for single-use code.
+* No "flexibility" or "configurability" that wasn't requested.
+* No error handling for impossible scenarios.
+* If you write 200 lines and it could be 50, rewrite it.
 
-- Removing `.git` lock files with `rm` gets EPERM in the sandbox: use `mv` to relocate `index.lock`/`HEAD.lock`; they may regenerate after every git write operation, so **clear locks again before the next git command**.
-- The sandbox only commits, never pushes; at wrap-up, report the list of unpushed commits via `git log origin/main..HEAD --oneline` and remind the user to run `git pull --rebase origin main && git push origin main` locally. Note: when the user's cron-driven briefing push succeeds, it will also push along every local commit — don't leave half-finished commits sitting on local main overnight.
-- macOS's case-insensitive filesystem: renaming a file's case must use `git mv`, never rename via Finder.
-- A `git add` on a path covered by .gitignore is a silent no-op. The correct sequence for data-push scripts is "commit first → `git pull --rebase --autostash` → push"; never use "stash --keep-index → rebase" (rebase refuses to run with a dirty staging area, always fails).
-- `package-lock.json` has two version fields (top level + `packages[""]`) — changing the version number requires updating both.
-- The bash mount path changes every session (`/sessions/<random-name>/mnt/...`): probe it before `cd`-ing; Read/Write/Edit should always use native macOS paths.
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
-## Verification discipline
+# 3. Surgical Changes
 
-- To judge whether an automation pipeline is healthy, use **runtime evidence** (tail of logs, `git log --grep`) — reading the code alone isn't enough. Bugs of the "never actually worked but happened to never blow up" class (the rebase that logged an error every day for three years with nobody noticing) can only be exposed by logs.
-- Time-sensitive facts (event schedules, personnel appointments, market prices, product versions) must always be WebSearch-verified before being written into a plan or copy, with "verified via search on <date>" noted in the doc; scheduling decisions (hard deadlines) must be built on verified dates.
-- WebSearch's natural-language summaries will **fabricate scores/results** when the timeline is ambiguous (this happened for real once — a pure fabrication of "BLG beat T1 3-0" that contradicted structured data sources): for any match result being written into a data JSON, prefer structured data sources (like escorenews's match-page JSON, or gol.gg's game pages) over a search engine's summarized paraphrase, and cross-verify against at least two independent sources before committing it to disk.
-- **The scheduler's actual architecture is Cowork scheduled-tasks, not the launchd plan the docs once described** (confirmed for real via `list_scheduled_tasks` on 2026-07-04): it's not just short-lived tasks — `arena-news`/`games-worldcup`/`leagues-msi` all go through this path; launchd + a local API-key script was never actually built, not even once. New scheduled tasks should also default to Cowork scheduled-tasks — don't re-propose the launchd approach. Still need to tell the user the limitation is "only fires while the App is open" (a missed run while closed catches up on next launch), unlike a system-level wake.
-- Logic changes are verified in the sandbox via Node + a hand-written mock DOM replaying the real code path (jsdom won't install); after building, smoke-test with `vite preview` + curl 200 across every entry.
-- Any code touching the ledger/funds state isn't done unless it ships with vitest unit tests — a silently miscalculated ledger is this project's one unforgivable bug class; the tests need to cover state-machine edge cases like same-day multiple runs, cross-day runs, circuit breakers, stop-losses, and season resets, not just single-order validation.
-- **If the user pastes an API key/secret directly in chat and asks me to use it, decline every time** (this happened for real on 2026-07-04): no matter how explicitly the user says "use this one," credential-type secrets are never allowed to be entered into any file/script/config by me — this is a hard rule, not a negotiable preference. State the rule directly, and point out that if the key needs to go into a Vercel environment variable or `~/.config/afflatus/env`, the user needs to fill it in themselves at the relevant location — and also check whether the current need actually already has an existing solution that doesn't require a new key (this session's example: the `/api/quote` proxy was already running, so no new Finnhub key was needed at all).
+Touch only what you must. Clean up only your own mess.
 
-## Design & architecture decision principles
+When editing existing code:
 
-- LLM proposes, deterministic code settles: every hard constraint — risk-control red lines, order validation, probability normalization — is enforced at the code layer; writing it into the prompt is only to reduce the rate of useless proposals, **never rely on the model's own self-discipline**.
-- Scheduled tasks' model calls have zero session memory: state is externalized to data JSON (the single source of truth), with a fixed system prompt + a variable run payload split to take advantage of prompt caching — context bloat should be eliminated by architecture, not managed by being frugal.
-- The correct solution for keeping two systems in sync is "keep exactly one clock" (an authoritative event timeline + phase-rendering on both ends), not trying to align two separate timers.
-- When the user vetoes a proposal, first split "the part that was vetoed" from "the reusable assets" before doing anything — the top-down camera angle being vetoed did NOT mean the topdownCombat scene assets were wasted; this distinction saved a week-scale chunk of work.
-- The ironclad ordering rule: hard time-sensitive deadlines > dependency order > value density. Seasonal content (event pages) shipping a week late is equivalent to not shipping it at all — that overrides everything and goes to P0.
-- Ship new features by first cloning an existing page of the same kind (leagues cloned games), and push the unifying abstraction into a later dedicated task (V12) — "ship first, refactor later" is this project's established methodology.
-- Be honest about evaluation metrics: disable annualized figures when the sample is too small (fewer than 30 trading days — show only cumulative return/drawdown/hit rate); predictions must be probability-self-consistent (Σp=1) and any public scorecard must include the misses; returns must always be shown against a benchmark (SPY/SMH).
+* Don't "improve" adjacent code, comments, or formatting.
+* Don't refactor things that aren't broken.
+* Match existing style, even if you'd do it differently.
+* If you notice unrelated dead code, mention it - don't delete it.
 
-## User preferences & collaboration style
+When your changes create orphans:
 
-- Communicate in Chinese, keep replies concise and direct, minimal lists/bold; site content is always bilingual in pairs (`data-en`/`data-zh`).
-- The user wants critical review, not agreement: when a proposal has a structural problem, fix it directly and explain why (pseudo-high-frequency → dual windows, annualization convention, scene-asset reuse were all adopted this way); when given explicit authorization ("give me your best solution"), decide directly, flag the reversible points, and don't ask clarifying questions back.
-- Use AskUserQuestion to clarify genuine ambiguity before a big change (Labs page format, rename scope — these have already been asked and the answers are already baked into the docs; don't re-ask something already answered).
-- Tasks are driven by number ("do V0"): once a task number is issued in the roadmap, it stays stable; if cancelled, mark it with strikethrough noting where it went, never renumber.
-- Art direction red line: hard sci-fi / military space realism (Star Citizen-style), strictly no cartoonish/arcade/over-gamified look; every page keeps its own independent font and color identity, only the base system is shared.
-- Financial/prediction content always carries a "paper-trading simulation / not investment advice / not betting advice" label; concrete factual content (model parameters, match results, financial figures) never goes into the docs — it gets verified at runtime with injected data.
-- Documentation hygiene: completed items are archived out of the roadmap as Release Notes, keeping the roadmap containing only pending work — this is a standing practice the user explicitly asked for.
+* Remove imports/variables/functions that YOUR changes made unused.
+* Don't remove pre-existing dead code unless asked.
+
+The test: Every changed line should trace directly to the user's request.
+
+# 4. Goal-Driven Execution
+
+Define success criteria. Loop until verified.
+
+Transform tasks into verifiable goals:
+
+* "Add validation" → "Write tests for invalid inputs, then make them pass"
+* "Fix the bug" → "Write a test that reproduces it, then make it pass"
+* "Refactor X" → "Ensure tests pass before and after"
+
+For multi-step tasks, state a brief plan:
+
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+```
+
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+These guidelines are working if: fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
