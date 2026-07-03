@@ -2,7 +2,7 @@
    HUMAN vs AI TRADING ARENA · TRAXUS//CVKM build — vanilla JS
    - Live quotes: Finnhub (frequent polling)
    - Real history (W/M/6M/Y/5Y): Twelve Data (on-demand, cached/day)
-   - AI opponent: Fable 5 pre-open calls from the daily briefing
+   - AI opponent: Fable 5 Max pre-open calls from the daily briefing
    - Per-symbol rounds, pre/regular/after-hours sessions
    - Bilingual (EN/中) briefing + toggle
    For entertainment only — NOT investment advice.
