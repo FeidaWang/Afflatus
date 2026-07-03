@@ -26,6 +26,30 @@ html.vt-suppress::view-transition-new(root){
   mix-blend-mode:normal!important;
 }
 
+/* "Labs" nav dropdown (Games/Novels today; future seasonal/experimental
+   pages join here — see src/lib/nav.js's SITE `group:'labs'` tag). Purely
+   structural/positioning — colors are NOT set here on purpose: the trigger
+   is a real `.nav a` element, so each page's own existing `.nav a` /
+   `.nav a:hover` / `.nav a.active` rules already style it for free. The
+   dropdown panel itself uses a neutral dark-glass look that reads fine
+   against every page's theme without per-page overrides. */
+.nav-labs{position:relative;display:inline-flex}
+.nav-labs__trigger::after{content:'▾';display:inline-block;margin-left:6px;font-size:.85em;transform:translateY(1px)}
+.nav-labs__menu{
+  position:absolute;top:calc(100% + 6px);right:0;z-index:50;
+  display:flex;flex-direction:column;gap:6px;min-width:132px;padding:8px;
+  background:rgba(4,6,10,.94);border:1px solid rgba(255,255,255,.14);border-radius:2px;
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
+  opacity:0;visibility:hidden;transform:translateY(-4px);
+  transition:opacity .15s ease,transform .15s ease,visibility .15s;
+}
+.nav-labs__menu a{white-space:nowrap;text-align:left}
+.nav-labs:hover .nav-labs__menu,
+.nav-labs.open .nav-labs__menu,
+.nav-labs:focus-within .nav-labs__menu{
+  opacity:1;visibility:visible;transform:translateY(0);
+}
+
 /* motion-sensitive visitors: kill page transitions & pulses */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{
