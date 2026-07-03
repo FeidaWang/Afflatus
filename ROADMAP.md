@@ -32,9 +32,9 @@
 > 2026-07-03 整理：P0/P1/P2 全部收尾后，把散落在 §2/§4/§4b/§4c/§5/§5b/§6 里的所有"⚠️ 待续"项汇总去重，按优先级重新分组。想接着做时可以直接说编号（比如"做 A1"），每条都带了详情小节的链接。
 
 **A · 下一轮优先——技术债 + 收尾（成本可控、价值明确）**
-- **A1. 经典脚本转 ES module**——完成 Vite MPA 的下半场：`nav.js`/`audio.js`/`clock.js`/`i18n.js`/`transition.js`/`page-turn.js`/各页专属 `.js`（约 10 个互相有加载顺序依赖的文件）从 `public/` 静态直通改成真正参与 Vite 打包（压缩 + 哈希 + 公共 chunk）。详见 **§6.2 / §6.3**。
+- **A1. ✅ 已完成（2026-07-03）经典脚本转 ES module**——9 个文件（`i18n.js`、`lib/{audio,clock,nav}.js`、`page-turn.js`、`transition.js`、`arena-bg.js`、`arena.js`、`games.js`）从 `public/` 移到 `src/lib/`、`src/pages/`。**关键教训**：第一版尝试给每个文件挂一个独立的 `<script type="module" src>` 标签（逐条机械转换），构建虽然不报错，但实际抽查 `dist/` 发现 nav.js 的代码在好几个页面的产物里彻底消失了——Vite 8 对同一页面里多个独立 module-script 入口的自动合并/去重不可靠。改成每页一个入口文件（`homeLibs.js`/`arenaEntry.js`/`sectorsLibs.js`/`signalLibs.js`/`gamesEntry.js`/`novelsLibs.js`），用普通 `import` 按原顺序显式声明依赖后，Rollup 走的是常规、可靠的 import 图打包路径，问题消失。已验证：nav.js 所在 chunk 在所有页面都先于 page-turn.js 所在 chunk 执行（page-turn.js 在模块顶层同步读取 nav.js 设置的 `document.body.dataset.prev/next`，是这 9 个文件里唯一的真实顺序依赖）；用 Node + mock DOM 重放了这个顺序验证不出错；`vite preview` + curl 六个入口及其全部引用的 JS 资源均 200。
 - **A2. main.js 继续拆分（Phase 3–5）**——各页内联 `<style>` 移到 `public/styles/<page>.css`；`state`（飞行状态机）/`cursor`/`nav`/`boot` 职责从 main.js 拆出；`styles.css` 做 `@layer` 分层。main.js 目前仍 3421 行、styles.css 仍 7038 行。详见 **§2**。
-- **A3. `viz.js` 公共库抽取**——`sectors.html`（约 158 行处）与 `src/ui/marketDeck.js`（约 309 行处）里重复实现的 count-up 动画逻辑，合并成一个共享库。详见 **§2**。
+- **A3. ✅ 已完成（2026-07-03）`viz.js` 公共库抽取**——新增 `src/ui/viz.js`：`animateCountUp`（真正的缓动逻辑，cubic ease-out）+ 两个薄封装 `animateCountUpFromText`（sectors.html 的"解析 DOM 里已有数字"用法）与直接调用（marketDeck.js 的 `animateCounter`/`animatePick`）。sectors.html 的内联 `<script>` 从 14 行手写 rAF 循环变成 3 行 `type="module"` 调用；marketDeck.js 移除了不再使用的 `clamp`/`easeOut` 引用。
 
 **B · 体验与性能打磨——非阻塞，可按兴趣挑做**
 - **B1. CSS Scroll-Driven Animations**——`animation-timeline: scroll()/view()` 替换 `alphardForge` 现在的 JS scroll-pin 逻辑，把滚动动画搬到合成器线程。详见 **§6.2**。
@@ -71,8 +71,9 @@
 - `page-turn.css` — 翻页箭头 + 自托管字体 + 全局按钮点击反馈（每页用 body class 切换箭头配色）。
 - `transition.js` — 进出页动画 + 音效；按目标页选择类型（warp / cannon / takeoff / control / cyber）。
 - `i18n.js` — 全局中英切换；任何带 `data-en` / `data-zh` 的元素自动翻译；右上角 `.lang-toggle`；切换时派发 `afflatus-lang` 事件供动态页面（arena/games/signal）重渲染。
-- `public/lib/nav.js` — 唯一的 `SITE` 数组渲染导航 + 翻页 prev/next；五个非首页（arena/sectors/signal/games/novels）均已接入。
-- `public/lib/clock.js` / `public/lib/audio.js` — 倒计时格式化、Web Audio 环境音共享库（arena/games/signal/transition.js 复用）。
+- `src/lib/nav.js` — 唯一的 `SITE` 数组渲染导航 + 翻页 prev/next；五个非首页（arena/sectors/signal/games/novels）均已接入（2026-07-03 从 `public/lib/` 移到 `src/lib/`，见 §0b A1）。
+- `src/lib/clock.js` / `src/lib/audio.js` — 倒计时格式化、Web Audio 环境音共享库（arena/games/signal/transition.js 复用）。
+- `src/ui/viz.js` — count-up 动画共享库（sectors.html/marketDeck.js 复用，见 §0b A3）。
 - 数据文件：`arena-news.json`（每日定时任务）、`games-data.json`（手动更新）、`signal-events.json`（宏观事件档案，见 §5b）、`novels-data.json`（章节内容）。
 
 ---
@@ -84,20 +85,20 @@
 - 主线程渲染压力大：星空、combat、雷达、K 线全部在主线程 Canvas 2D 绘制（详细技术方案见 §6）。
 
 **已完成（无需继续跟踪）**
-- ✅ 统一导航：`public/lib/nav.js` + `SITE`，**六个页面（含首页）全部接入**，链接/prev-next 由脚本渲染，新增页面只改 `SITE` 一处。首页保留自己的双语系统，导航文字维持英文，视觉与改动前一致。
-- ✅ 抽公共库（部分）：`clock.js`（arena/games 复用）、`audio.js`（transition.js/signal.html 复用），build 验证通过。
+- ✅ 统一导航：`src/lib/nav.js` + `SITE`，**六个页面（含首页）全部接入**，链接/prev-next 由脚本渲染，新增页面只改 `SITE` 一处。首页保留自己的双语系统，导航文字维持英文，视觉与改动前一致。
+- ✅ 抽公共库：`clock.js`（arena/games 复用）、`audio.js`（transition.js/signal.html 复用）、`viz.js`（count-up 动画，sectors.html + marketDeck.js 复用，2026-07-03 §0b A3），build 验证通过。
 - ✅ 拆 main.js（Phase 4，第一步）：`src/ui/combatHmdV3.js` 已抽出 HMD v3 全部纯绘制函数，main.js −312 行。详见 §0 P1-4。
+- ✅ 经典脚本转 ES module（2026-07-03 §0b A1）：`i18n.js`/`lib/{audio,clock,nav}.js`/`page-turn.js`/`transition.js`/`arena-bg.js`/`arena.js`/`games.js` 从 `public/` 移到 `src/lib/`、`src/pages/`，参与 Vite 打包。
 
 **⚠️ 待续 / 未开始**
-- **`viz.js` 抽取**：count-up 动画逻辑目前在 `sectors.html`（约 158 行处）与 `src/ui/marketDeck.js`（约 309 行处）各自实现，尚未合并成公共库。
 - **拆样式（Phase 3）**：各页 `<style>` 仍内联，未移到 `public/styles/<page>.css`。
 - **拆 main.js（Phase 4，剩余部分）**：只完成了 combat HUD 绘制这一块；`state`（飞行状态机）/`cursor`/`nav`/`boot` 职责拆分仍未开始，main.js 仍有 3421 行。
 - **拆 styles.css（Phase 5）**：`@layer` 分层未开始。
 
 **优化清单 / Optimisation checklist（现状）**
-- 背景 canvas：`prefers-reduced-motion` 静帧、`visibilitychange` 暂停已做；IntersectionObserver 不可见时停仍待做。
+- 背景 canvas：`prefers-reduced-motion` 静帧、`visibilitychange` 暂停已做；IntersectionObserver 不可见时停仍待做（§0b B5）。
 - API 预算：Finnhub 自适应轮询、Twelve Data 按日缓存已做。
-- 资源：`public/*.js`/`public/*.html` 仍未进 Vite 打包（见 §0 P0-3 / §6）。
+- 资源：`public/*.js`/`public/*.html` 已全部进 Vite 打包（2026-07-03，见 §0b A1 / §6）。
 
 ---
 
@@ -211,7 +212,7 @@
 
 ### 6.1 现有架构的真实问题（按痛感排序）
 
-1. ✅ **`public/*.html` 不经打包**——**已解决（2026-07-03）**：五个子页 HTML 已移出 `public/`、接入 `vite.config.js` 多入口，构建产出压缩 HTML。**注意范围**：只有 HTML 本身进了管线，页面引用的经典 `<script src="/x.js">`（`nav.js`/`audio.js`/`i18n.js`/`transition.js`/各页专属脚本）仍留在 `public/` 原样直通，未压缩/未哈希/未参与公共 chunk——这部分是 §6.2 "Vite MPA 多入口"行动项里**尚未做完**的下半场，见下方技术选型表的更新说明。
+1. ✅ **`public/*.html` 不经打包**——**已解决（2026-07-03 HTML 部分 + 2026-07-03 脚本部分，见 §0b A1）**：五个子页 HTML 已移出 `public/`、接入 `vite.config.js` 多入口；页面引用的经典脚本（`nav.js`/`audio.js`/`i18n.js`/`transition.js`/各页专属脚本，9 个文件）也已从 `public/` 移到 `src/lib/`、`src/pages/`，改成每页一个显式 `import` 链的 ES module 入口，真正参与压缩/哈希/公共 chunk。
 2. **单体文件**——`main.js` 3421 行（2026-07-03 拆出 combat HUD 模块后，见 §2/§0 P1-4）/ `styles.css` 7038 行，仍需继续拆分。
 3. **重复的页面骨架**——nav 已统一，但 `<head>` meta / 字体加载顺序仍每页复制。
 4. **主线程全包**——combat、雷达、K 线仍在主线程 Canvas 2D；星空已移出（见下）。
@@ -223,7 +224,7 @@
 
 | 技术 | 解决什么 | 成本 |
 | --- | --- | --- |
-| **Vite MPA 多入口** | ✅ HTML 入口部分已完成（2026-07-03）；⚠️ 剩余：把各页经典 `<script src>` 转成 ES module import，才能让这些脚本本身也吃到压缩/哈希/公共 chunk（当前仍是 `public/` 静态直通） | 低，半天已投入；剩余部分中（涉及 ~10 个互相依赖顺序的脚本文件） |
+| **Vite MPA 多入口** | ✅ 已完成（2026-07-03，HTML + 脚本两部分）：HTML 入口 + 9 个经典脚本都已转成参与打包的 ES module，详见 §0b A1 | 低-中，已投入 |
 | **View Transitions API（跨文档）** | ✅ 已完成（2026-07-03）：`page-turn.css`/`styles.css` 加 `@view-transition{navigation:auto}`，`transition.js` 在真正跳转前打 `html.vt-suppress` 关闭原生 crossfade，避免和自定义每页特效叠加。**未替代** `transition.js`（那套效果更丰富，仍是点击/键盘翻页主效果）——净收益是补上了未被拦截的跳转（地址栏/书签/前进后退）原本的白屏一闪 | 低-中，已投入 |
 | **CSS Scroll-Driven Animations** | `animation-timeline: scroll()/view()` 把滚动动画搬到合成器线程，零 JS 不掉帧 | 中 |
 | **OffscreenCanvas + Worker** | ✅ 首页星空/warp-tunnel 已完成（2026-07-03）：`backgroundScene.js` 特性检测自动切换 Worker 渲染，不支持时完整回退主线程，main.js 零改动。⚠️ 范围：只做了星空这一个 canvas，combat/雷达/K 线仍在主线程；真实设备帧率提升未验证（沙盒无法跑浏览器） | 中，已投入首页星空部分 |
@@ -236,8 +237,8 @@
 
 ### 6.3 落地顺序
 
-1. ✅ **已完成**：清理 §7 死文件 → Vite MPA 多入口改造（HTML 部分）→ OffscreenCanvas Worker 化首页星空 → View Transitions API 跨文档过渡（与 `transition.js` 共存）。**下一步**：把 `nav.js`/`audio.js`/`clock.js`/`i18n.js`/`transition.js`/`page-turn.js`/各页专属 `.js` 转成 ES module，真正参与打包。
-2. **短期**：scroll-driven animations 替换 alphardForge 的 JS pin 逻辑；main.js 拆分继续（Phase 3–5）；新模块用 TS。
+1. ✅ **已完成**：清理 §7 死文件 → Vite MPA 多入口改造（HTML + 经典脚本两部分）→ OffscreenCanvas Worker 化首页星空 → View Transitions API 跨文档过渡（与 `transition.js` 共存）→ viz.js 公共库抽取。
+2. **短期**：scroll-driven animations 替换 alphardForge 的 JS pin 逻辑；main.js 拆分继续（Phase 3–5，§0b A2）；新模块用 TS。
 3. **中期**：three.js WebGPURenderer 试点跃迁点星涡（compute 粒子 + bloom），A/B 对比帧率后再推广。
 4. **触发式**：页面/章节数量到阈值 → Astro 迁移。
 
