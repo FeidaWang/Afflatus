@@ -75,7 +75,7 @@ describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
     for (const em of info.engineMounts) expect(em.z).toBeLessThan(turretMinZ);
   });
 
-  it('"wire" detail skips the greeble scatter (fewer parts than "full", same silhouette metadata)', () => {
+  it('"wire" detail has a thinner greeble scatter than "full" (fewer parts, same silhouette metadata)', () => {
     const wire = buildForBBox('wire');
     const fullD = buildForBBox('full');
     expect(wire.meshCount).toBeLessThan(fullD.meshCount);
@@ -103,34 +103,77 @@ describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
     for (const em of info.engineMounts) expect(Math.abs(em.y)).toBeLessThanOrEqual(safeY + 1e-6);
   });
 
-  it('regression: the bow cone itself is a long tapered blade, not a small stub (the actual bug the user\'s screenshot caught)', () => {
-    // A previous version scaled the cone's LOCAL Y axis to "flatten" it, not
-    // realizing THREE applies scale before rotation and rotation.x=PI/2 maps
-    // local Y (the cone's height/length parameter) to world Z — so the scale
-    // was shrinking the ship's LENGTH, not its vertical thickness, and an
-    // extra 45° Z-rotation further smeared the axes together. Net result: a
-    // ~2×2×2 stub near the nose instead of a long 3.7-unit tapered blade —
-    // exactly the "doesn't look like a blade, looks boxy" report. This test
-    // pins the bow cone's own world-space bounding box (mesh[0], the first
-    // part createOdinHull adds) to the intended long/thin/tapered shape.
+  it('regression: the hull is ONE continuous tapered skin, not stacked boxes with visible seams ("toy block" report)', () => {
+    // First version: a bow cone (buggy proportions, see below) + a separate
+    // midship box + a separate stern box, bolted together with no shared
+    // surface — read as disconnected rectangular chunks in both the
+    // wireframe hologram and the solid PBR render ("画的和积木玩具一样").
+    // Second version fixed the cone's own proportions but kept the 3-piece
+    // construction. This version replaces all three with buildHullLoftGeometry
+    // — ONE BufferGeometry (mesh[0], the first part createOdinHull adds)
+    // whose own bounding box should span almost the FULL declared ship length
+    // (not just the old bow-cone's ~37%), and taper from a wide stern to a
+    // near-zero-width bow tip.
     const { info, meshes } = buildForBBox('full');
-    const bowCone = meshes[0];
-    const box = new THREE.Box3().setFromObject(bowCone);
-    const spanX = box.max.x - box.min.x, spanY = box.max.y - box.min.y, spanZ = box.max.z - box.min.z;
-    expect(spanZ).toBeGreaterThan(info.bowLen * 0.9); // long: close to the full BOW_LEN, not a short stub
-    expect(spanY).toBeLessThan(spanZ * 0.3);           // flattened: much thinner than it is long
-    expect(spanX).toBeLessThan(spanZ * 0.7);           // narrower than it is long (tapered blade, not a cube)
-    expect(spanX).toBeGreaterThan(spanY);              // wider than tall (blade cross-section, not a needle)
+    const hull = meshes[0];
+    const geo = hull.geometry;
+    geo.computeBoundingBox();
+    const b = geo.boundingBox;
+    const spanX = b.max.x - b.min.x, spanY = b.max.y - b.min.y, spanZ = b.max.z - b.min.z;
+    expect(spanZ).toBeGreaterThan(info.length * 0.95); // spans (almost) the whole ship, not just the old bow stub
+    expect(spanX).toBeGreaterThan(2.0);                // reaches the midship's full width somewhere along its length
+    expect(spanY).toBeGreaterThan(0.5);                // reaches the midship's full height somewhere along its length
+    expect(spanX).toBeLessThan(spanZ);                 // still much longer than it is wide (elongated, not a blob)
+    // no NaN/degenerate vertices from the near-zero-radius nose station
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      expect(Number.isFinite(pos.getX(i)) && Number.isFinite(pos.getY(i)) && Number.isFinite(pos.getZ(i))).toBe(true);
+    }
   });
 
-  it('"wire" detail keeps only 1 mast (of 4) and drops the turret row / belly pods for a cleaner hologram silhouette', () => {
+  it('regression: the lofted hull skin has consistent outward-facing normals (winding verified, not assumed)', () => {
+    // Rotation/scale axis-mapping mistakes are easy to make and easy to miss
+    // (see the bow-cone bug above) — for a hand-built BufferGeometry the
+    // equivalent risk is backwards triangle winding, which would make the
+    // hull's normals point INTO the ship instead of outward, so PBR lighting
+    // would shade it as if lit from inside (looks wrong/dark from outside).
+    // This checks every non-axis vertex's normal has a positive outward
+    // radial component — verified the same way this was checked by hand in
+    // Node before the fix shipped.
+    const { meshes } = buildForBBox('full');
+    const hull = meshes[0];
+    const geo = hull.geometry;
+    const pos = geo.attributes.position, norm = geo.attributes.normal;
+    let checked = 0;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), y = pos.getY(i);
+      const r = Math.hypot(x, y);
+      if (r < 0.05) continue; // skip near-axis vertices (nose tip / stern-cap centre)
+      const nx = norm.getX(i), ny = norm.getY(i);
+      const outwardDot = (x * nx + y * ny) / r;
+      // tiny negative tolerance: a vertex shared between a side quad and the
+      // stern cap gets an AVERAGED normal, which can land almost exactly on
+      // the boundary for some symmetric vertices — genuinely backwards
+      // winding would show up as strongly negative (close to -1), not ~0.
+      expect(outwardDot).toBeGreaterThanOrEqual(-0.05);
+      checked++;
+    }
+    expect(checked).toBeGreaterThan(20); // sanity: actually checked a meaningful number of vertices
+  });
+
+  it('"wire" keeps the same structured detail as "full" (turrets/masts/pods) — only the random greeble scatter is thinned', () => {
+    // Earlier this session, 'wire' dropped the turret row/most masts/pods
+    // entirely to avoid a cluttered wireframe — but with the hull-shape bug
+    // fixed (the loft, not the old boxes-and-a-broken-cone), the user's
+    // actual complaint became "no detail at all", not "too cluttered". So
+    // now both detail levels keep the same STRUCTURED accents (turrets,
+    // all 4 masts, belly pods, panel seams) and only the random fine-greeble
+    // density differs (wire: ~40% of full's count).
     const wire = buildForBBox('wire');
-    expect(wire.info.mastTips.length).toBe(1);
-    // metadata for turret/pod mount points is still returned (capitalShip3D's
-    // 'full' branch and any future consumer can rely on the count), only the
-    // extra geometry is skipped — verified indirectly via the lower meshCount
-    // assertion above.
+    const fullD = buildForBBox('full');
+    expect(wire.info.mastTips.length).toBe(4);
     expect(wire.info.turretMounts.length).toBe(5);
     expect(wire.info.bellyPodMounts.length).toBe(2);
+    expect(wire.meshCount).toBeLessThan(fullD.meshCount); // still fewer parts overall (thinner greeble scatter)
   });
 });

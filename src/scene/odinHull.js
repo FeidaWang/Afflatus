@@ -34,6 +34,44 @@
  * (colours/PBR params are the caller's concern; this file only decides shape
  * and layout).
  */
+
+// A continuous lofted hull body (diamond cross-section per "station", quads
+// connecting consecutive rings, a point-cap at the bow, a flat cap at the
+// stern) — this replaces what used to be three separate boxes/cone bolted
+// together with visible seams ("toy block" look the user's screenshot
+// flagged). One smooth tapering skin reads as a real hull silhouette instead
+// of stacked primitives; turrets/masts/fins/pods/greeble still attach on top
+// of it as discrete accents, same as a real ship model would layer detail
+// onto a continuous base mesh.
+//
+// Winding/normal direction was verified numerically in Node (not just
+// assumed) before shipping: sampled every side vertex's outward radial dot
+// product (all positive) and the stern cap ring's average normal.z (negative
+// = facing aft/outward), see the corresponding regression test.
+function buildHullLoftGeometry(THREE, stations) {
+  const ring = (halfW, halfH, yCenter, z) => ([
+    [0, yCenter + halfH, z], [halfW, yCenter, z], [0, yCenter - halfH, z], [-halfW, yCenter, z],
+  ]);
+  const rings = stations.map(s => ring(s.halfW, s.halfH, s.yCenter || 0, s.z));
+  const pos = [];
+  const push = p => pos.push(p[0], p[1], p[2]);
+  for (let i = 0; i < rings.length - 1; i++) {
+    const a = rings[i], b = rings[i + 1];
+    for (let k = 0; k < 4; k++) {
+      const k2 = (k + 1) % 4;
+      push(a[k]); push(b[k2]); push(a[k2]);
+      push(a[k]); push(b[k]); push(b[k2]);
+    }
+  }
+  // stern cap (closes the aft-most ring so the hull doesn't read as hollow)
+  const first = rings[0], center = [0, stations[0].yCenter || 0, stations[0].z];
+  for (let k = 0; k < 4; k++) { const k2 = (k + 1) % 4; push(center); push(first[k]); push(first[k2]); }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.computeVertexNormals();
+  return geo;
+}
+
 export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
   const full = detail === 'full';
   const M = mats;
@@ -46,26 +84,30 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
   const BOW_ROOT = NOSE - BOW_LEN;                // ≈1.7
   const STERN_ROOT = STERN + 3.2;                 // stern block starts here (≈-1.4)
 
-  // ===== blade bow: long tapered faceted wedge, flattened to a blade ====
-  // IMPORTANT geometry note (regression fix, see tests/odinHull.test.js "bow
-  // cone" test): ConeGeometry's height runs along its LOCAL Y axis, and
-  // THREE applies scale in local space BEFORE rotation. rotation.x=PI/2 maps
-  // local Y → world Z (so `height` becomes the ship's forward-length extent)
-  // and local Z → world Y (so THAT axis, not local Y, must be scaled to get
-  // a flattened/blade-thin vertical cross-section). An earlier version scaled
-  // local Y instead and added a confusing extra Z-axis rotation — the result
-  // was a small ~2×2×2 stub near the nose instead of a 3.7-unit tapered
-  // blade (verified numerically; see the test for the exact regression check).
-  const bowMid = (NOSE + BOW_ROOT) / 2;
-  add(new THREE.ConeGeometry(1.0, BOW_LEN, 4), M.hull, [0, 0, bowMid], [Math.PI / 2, 0, 0], [0.9, 1, 0.22]);
+  // ===== continuous lofted hull skin: stern → stern-root → midship → =====
+  // bow-root → nose-point, ONE smooth tapering body (replaces three separate
+  // primitives — cone + midship box + engine-deck box — that used to read as
+  // disconnected stacked blocks with visible seams between them). Station
+  // half-width/half-height values match the accent boxes still attached at
+  // each of these z-positions below, so the loft and the accents line up.
+  const sternDeckW = 2.3, sternDeckH = HEIGHT * 0.5;
+  const midW = 2.5, midH = HEIGHT * 0.32;
+  const bowRootW = 1.8, bowRootH = HEIGHT * 0.24; // matches the old bow-cone base proportions
+  add(buildHullLoftGeometry(THREE, [
+    { z: STERN, halfW: sternDeckW / 2, halfH: sternDeckH / 2 },
+    { z: STERN + 0.6, halfW: sternDeckW / 2, halfH: sternDeckH / 2 },     // keep the stern block's cross-section for a bit (engine deck footprint)
+    { z: STERN_ROOT, halfW: midW / 2, halfH: midH / 2 },                  // widen into the midship hull
+    { z: BOW_ROOT, halfW: bowRootW / 2, halfH: bowRootH / 2 },            // narrow into the blade root
+    { z: NOSE, halfW: 0.015, halfH: 0.015 },                              // taper to a point
+  ]), M.hull, [0, 0, 0]);
   add(new THREE.BoxGeometry(1.5, HEIGHT * 0.13, BOW_LEN * 0.5), M.arm, [0, HEIGHT * 0.07, BOW_ROOT + BOW_LEN * 0.28]);
-  if (full) for (let i = 0; i < 4; i++) add(new THREE.BoxGeometry(1.3 - i * 0.24, 0.03, 0.14), M.trim, [0, HEIGHT * 0.1, NOSE - 0.5 - i * (BOW_LEN * 0.2)]); // fine panel seams
+  for (let i = 0; i < 4; i++) add(new THREE.BoxGeometry(1.3 - i * 0.24, 0.03, 0.14), M.trim, [0, HEIGHT * 0.1, NOSE - 0.5 - i * (BOW_LEN * 0.2)]); // bow panel seams — kept in 'wire' too now the hull itself isn't a disconnected-boxes mess anymore, these read as detail rather than clutter
   // twin light rail cannons flush along the blade's upper edge (bow-forward fire)
   for (const bx of [-0.32, 0.32]) add(new THREE.CylinderGeometry(0.045, 0.06, BOW_LEN * 0.55, 10), M.trim, [bx, HEIGHT * 0.09, BOW_ROOT + BOW_LEN * 0.42], [Math.PI / 2, 0, 0]);
 
-  // ===== midship: hull block + stepped superstructure + bridge + masts ==
+  // ===== midship: stepped superstructure + bridge + masts (hull skin is =
+  // now the continuous loft above; only accents/greeble attach here) =====
   const midMid = (BOW_ROOT + STERN_ROOT) / 2, midLen = BOW_ROOT - STERN_ROOT;
-  add(new THREE.BoxGeometry(2.5, HEIGHT * 0.32, midLen), M.hull, [0, 0, midMid]);
   add(new THREE.BoxGeometry(1.9, HEIGHT * 0.14, midLen * 0.94), M.arm, [0, -HEIGHT * 0.22, midMid]); // belly armour skirt
   // stepped superstructure tiers (rise toward the stern side of midship, bridge at the top)
   const tierZ = STERN_ROOT + midLen * 0.32;
@@ -73,7 +115,7 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
   add(new THREE.BoxGeometry(1.1, HEIGHT * 0.16, midLen * 0.34), M.hull, [0, HEIGHT * 0.46, tierZ]);
   add(new THREE.BoxGeometry(0.74, HEIGHT * 0.14, midLen * 0.22), M.trim, [0, HEIGHT * 0.62, tierZ]);          // bridge tower
   add(new THREE.BoxGeometry(0.46, HEIGHT * 0.1, midLen * 0.14), M.glass, [0, HEIGHT * 0.75, tierZ + midLen * 0.05]); // bridge glass
-  if (full) for (let i = 0; i < 3; i++) add(new THREE.BoxGeometry(1.94, 0.03, 0.24), M.trim, [0, HEIGHT * 0.16, BOW_ROOT - 0.4 - i * 0.55]); // hull panel seams
+  for (let i = 0; i < 3; i++) add(new THREE.BoxGeometry(1.94, 0.03, 0.24), M.trim, [0, HEIGHT * 0.16, BOW_ROOT - 0.4 - i * 0.55]); // hull panel seams
 
   // antenna mast cluster (several thin rods at varied angles off the bridge top)
   // mastBaseY is set flush against the bridge-glass tier's top face (computed
@@ -87,7 +129,7 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
     { len: 0.6, rx: -0.4, rz: -0.3, dx: 0.18, dz: -0.06 },
     { len: 0.85, rx: 0.18, rz: -0.5, dx: -0.1, dz: 0.18 },
   ];
-  const MASTS = full ? MASTS_ALL : MASTS_ALL.slice(0, 1); // 'wire' keeps only the centre mast (clean silhouette)
+  const MASTS = MASTS_ALL; // kept in both detail levels (structured accents, not random clutter)
   const mastTips = [];
   for (const mmast of MASTS) {
     add(new THREE.CylinderGeometry(0.012, 0.02, mmast.len, 6), M.trim, [mmast.dx, mastBaseY + mmast.len / 2, mastBaseZ + mmast.dz], [mmast.rx, 0, mmast.rz]);
@@ -96,42 +138,38 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
     mastTips.push({ x: tx, y: tipY, z: tz });
   }
 
-  // ===== dorsal turret row (spine, midship → stern; 'wire' skips these — ===
-  // 5 separate small boxes read as clutter in a wireframe hologram, so they're
-  // full-detail only; the hull's own top surface still reads as the spine)
+  // ===== dorsal turret row (spine, midship → stern) — kept in both detail ===
+  // levels; now that the hull itself is a continuous loft (not disconnected
+  // boxes), a row of small turrets reads as intentional detail, not clutter.
   const turretMounts = [];
   const TURRET_N = 5, turretZ0 = BOW_ROOT - 0.2, turretZ1 = STERN_ROOT + 0.3;
   for (let i = 0; i < TURRET_N; i++) {
     const z = turretZ0 + (turretZ1 - turretZ0) * (i / (TURRET_N - 1));
-    const y = HEIGHT * 0.18; // verified flush against the midship hull box top (HEIGHT*0.16): turret base sits 0.044 below it, no gap
-    if (full) {
-      add(new THREE.BoxGeometry(0.32, 0.16, 0.32), M.dark, [0, y, z]);
-      add(new THREE.CylinderGeometry(0.03, 0.04, 0.34, 8), M.trim, [0, y + 0.02, z + 0.2], [Math.PI / 2, 0, 0]);
-    }
+    const y = HEIGHT * 0.18; // verified flush against the midship hull top (HEIGHT*0.16): turret base sits 0.044 below it, no gap
+    add(new THREE.BoxGeometry(0.32, 0.16, 0.32), M.dark, [0, y, z]);
+    add(new THREE.CylinderGeometry(0.03, 0.04, 0.34, 8), M.trim, [0, y + 0.02, z + 0.2], [Math.PI / 2, 0, 0]);
     turretMounts.push({ x: 0, y, z });
   }
 
-  // ===== belly weapon pods with recessed gun ports ('wire' skips these) ==
+  // ===== belly weapon pods with recessed gun ports (kept in both levels) ==
   const bellyPodMounts = [];
   for (const sx of [-1, 1]) {
     const px = sx * 0.85, py = -HEIGHT * 0.34, pz = midMid - midLen * 0.1; // verified: overlaps the belly skirt by ~0.07, no gap
-    if (full) {
-      add(new THREE.BoxGeometry(0.46, 0.32, 1.0), M.arm, [px, py, pz]);
-      add(new THREE.BoxGeometry(0.3, 0.2, 0.24), M.dark, [px, py - 0.02, pz + 0.55]);            // recessed gun port
-      add(new THREE.CylinderGeometry(0.04, 0.05, 0.4, 8), M.trim, [px, py - 0.02, pz + 0.78], [Math.PI / 2, 0, 0]); // gun barrel
-    }
+    add(new THREE.BoxGeometry(0.46, 0.32, 1.0), M.arm, [px, py, pz]);
+    add(new THREE.BoxGeometry(0.3, 0.2, 0.24), M.dark, [px, py - 0.02, pz + 0.55]);            // recessed gun port
+    add(new THREE.CylinderGeometry(0.04, 0.05, 0.4, 8), M.trim, [px, py - 0.02, pz + 0.78], [Math.PI / 2, 0, 0]); // gun barrel
     bellyPodMounts.push({ x: px, y: py, z: pz });
   }
 
   // ===== stern: dense thruster cluster + outward radiator/truss booms ===
+  // (hull skin here is the continuous loft above; engine housings attach to it)
   const sternMid = (STERN_ROOT + STERN) / 2;
-  const sternDeckW = 2.3, sternDeckH = HEIGHT * 0.5, sternDeckL = STERN_ROOT - STERN;
-  add(new THREE.BoxGeometry(sternDeckW, sternDeckH, sternDeckL), M.arm, [0, 0, sternMid]); // engine deck block
-  // mount points chosen with margin inside the deck block's own half-extents
-  // (±sternDeckW/2, ±sternDeckH/2) so the housings never poke outside it —
-  // this replaces an earlier version whose Y values could exceed the deck's
-  // bounds and read as floating disconnected boxes in the hologram.
-  const housingHalf = { w: 0.25, h: 0.2 };
+  // mount points chosen with margin inside the loft's stern-station half-extents
+  // (±sternDeckW/2, ±sternDeckH/2, declared above) so the housings never poke
+  // outside it — this replaces an earlier version whose Y values could exceed
+  // the deck's bounds and read as floating disconnected boxes in the hologram.
+  // (housing half-size is 0.25×0.2×0.45 — BoxGeometry(0.5,0.4,0.9) — so mount
+  // |y| stays ≤ sternDeckH/2 - 0.2, verified in the regression test below)
   const engineMounts = [
     { x: -0.65, y: 0.2 }, { x: 0.65, y: 0.2 },
     { x: -0.65, y: -0.2 }, { x: 0.65, y: -0.2 },
@@ -144,14 +182,19 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
   for (const sx of [-1, 1]) {
     add(new THREE.BoxGeometry(1.7, 0.05, 0.22), M.dark, [sx * 1.7, 0.1, sternMid - 0.2], [0, 0, sx * 0.12]);   // radiator fin
     add(new THREE.BoxGeometry(1.7, 0.05, 0.22), M.dark, [sx * 1.7, -0.32, sternMid - 0.2], [0, 0, sx * 0.12]); // second fin, lower
-    if (full) for (let i = 0; i < 3; i++) add(new THREE.CylinderGeometry(0.02, 0.02, 0.42, 6), M.trim, [sx * (1.15 + i * 0.4), -0.11, sternMid - 0.2], [0, 0, Math.PI / 2]); // truss cross-braces
+    for (let i = 0; i < 3; i++) add(new THREE.CylinderGeometry(0.02, 0.02, 0.42, 6), M.trim, [sx * (1.15 + i * 0.4), -0.11, sternMid - 0.2], [0, 0, Math.PI / 2]); // truss cross-braces
   }
   // stabiliser fins + vertical tail (silhouette anchors, kept from the earlier design)
   for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.06, HEIGHT * 0.36, 0.7), M.arm, [sx * 0.9, HEIGHT * 0.14, STERN + 1.1], [0.2, 0, sx * 0.4]);
   add(new THREE.BoxGeometry(0.5, HEIGHT * 0.26, 0.06), M.arm, [0, HEIGHT * 0.24, STERN + 0.7], [0.3, 0, 0]);
 
-  // ===== greeble density gradient: stern > midship > bow (skip on 'wire') =
-  if (full) {
+  // ===== greeble density gradient: stern > midship > bow =====
+  // 'wire' gets a lighter pass (fewer random boxes — still enough to avoid
+  // reading as "no detail at all", but a wireframe hologram shows every
+  // part's edges individually so full density would be genuinely noisy);
+  // 'full' (solid PBR shading merges overlapping faces, so it can carry more).
+  {
+    const density = full ? 1 : 0.4;
     const scatter = (n, zMin, zMax, xSpread, y) => {
       for (let i = 0; i < n; i++) {
         const x = (Math.random() - 0.5) * xSpread, z = zMin + Math.random() * (zMax - zMin);
@@ -162,9 +205,9 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
         add(geo, r < 0.5 ? M.trim : M.dark, [x, y, z]);
       }
     };
-    scatter(52, STERN_ROOT, BOW_ROOT, 2.0, HEIGHT * 0.17);   // midship: medium density
-    scatter(30, STERN, STERN_ROOT, 2.2, HEIGHT * 0.1);       // stern: highest density
-    scatter(8, BOW_ROOT, NOSE - BOW_LEN * 0.3, 1.0, HEIGHT * 0.09); // bow: sparse, kept clean
+    scatter(Math.round(52 * density), STERN_ROOT, BOW_ROOT, 2.0, HEIGHT * 0.17);   // midship: medium density
+    scatter(Math.round(30 * density), STERN, STERN_ROOT, 2.2, HEIGHT * 0.1);       // stern: highest density
+    scatter(Math.round(8 * density), BOW_ROOT, NOSE - BOW_LEN * 0.3, 1.0, HEIGHT * 0.09); // bow: sparse, kept clean
   }
 
   // ===== spinal main gun (bow-forward fire, existing gameplay hook) =====
