@@ -11,7 +11,7 @@
  * This module is intentionally self-contained and side-effect free except for
  * an opt-in live harness at the bottom (gated on ?combat=topdown) so it can be
  * exercised in production without touching the live home app. Wiring it into
- * the combat-view render loop is the next migration phase (see ROADMAP.md).
+ * the combat-view render loop is the next migration phase (see roadmap.md).
  *
  *   const scene = createTopdownCombat({ canvas });
  *   scene.start();            // runs its own rAF battle loop

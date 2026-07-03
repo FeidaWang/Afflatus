@@ -1,7 +1,7 @@
 # Project Afflatus — Technical Guide / 技术细节与提交教程
 
 > 架构、数据/接口、日常更新，以及手把手的 git 提交教程。
-> 设计与路线图见 **ROADMAP.md**。
+> 设计与路线图见 **roadmap.md**。
 
 ---
 
@@ -38,7 +38,7 @@ public/page-turn.css     5 个子页共享：翻页箭头 + 自托管字体 + La
 public/*-data.json       games-data.json / signal-events.json / novels-data.json / arena-news.json
 scripts/push-arena-news.sh  cron 数据推送管线（写 JSON → stash/rebase/commit/push）
 prompts/                 v1.5 定时任务提示词库（README + 5 模块文件）
-ROADMAP.md TECHNICAL.md  仅有的两份文档
+roadmap.md technical.md  仅有的两份文档
 ```
 
 ---
@@ -74,7 +74,7 @@ ROADMAP.md TECHNICAL.md  仅有的两份文档
 
 ## 4. v1.5 数据管线与提示词库 / Data pipeline & prompts (v1.5)
 
-> 完整模块规格见 **ROADMAP.md §7**；这里只记工程约定。
+> 完整模块规格见 **roadmap.md §7**；这里只记工程约定。
 
 - **推送模式**：`scripts/push-arena-news.sh` 是现成的参考实现——cron 触发 → 写目标 JSON → `git add` 该文件 → 暂存其它未提交改动（`git stash --keep-index`）→ `git fetch` + `git rebase origin/main` → 提交并推送 → 恢复暂存。规划中的 `arena-ledger.json`/`leagues-data.json`/`sectors-data.json` 定时任务都应复用同一模式（V12 计划把脚本模板化成通用 `push-data.sh <file> <msg>`，目前还是各写各的独立脚本）。
 - **所有数据 JSON 顶层统一带 `{updated, version}`**，前端据此显示"数据龄"徽标。
@@ -155,4 +155,4 @@ git add -A && git commit -m "..." && git push origin main
 
 ---
 
-*This file + ROADMAP.md are the only two markdown docs in the repo, by design.*
+*This file + roadmap.md are the only two markdown docs in the repo, by design.*
