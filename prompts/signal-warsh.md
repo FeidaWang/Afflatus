@@ -32,19 +32,40 @@ For each event produce:
 - affected sector tags and a severity class suggestion (the frontend maps
   severity to SCP containment classes; suggest, don't theatricalize)
 
-Output exactly ONE JSON object, no markdown fences:
+Output exactly ONE JSON object, no markdown fences — this MUST match the
+schema already shipped in public/signal-events.json (V6, 2026-07-04):
+top-level object with hawkDoveCompass/pillarSummary/pillars/events, NOT a
+bare events array. Read public/signal-events.json once before writing
+anything, so your output merges into the existing shape instead of
+reintroducing the v1 bare-array format:
 {
-  "as_of": "...",
-  "events": [{
-    "id": "INCIDENT-2026-…", "pillar": 1-5, "title_zh": "...", "title_en": "...",
-    "record_zh": ["四段", "…"], "record_en": ["4 parts", "…"],
-    "hawk_dove": -2..2 | null, "sectors": ["semis", "software", "…"],
-    "severity": "euclid|keter|safe 建议", "confidence": 0.0-1.0,
-    "sources": ["payload 内来源标注"]
-  }],
-  "pillar_summary_zh": "<=200字本期五维扫描", "pillar_summary_en": "<=80w",
-  "next_watch": [{ "date": "…", "what": "…", "pillar": 1-5 }]
+  "updated": "YYYY-MM-DD", "version": 2, "as_of": "...",
+  "hawkDoveCompass": {
+    "score": -2..2, "scale": "-2 (dovish) .. +2 (hawkish)",
+    "label_en": "...", "label_zh": "...", "rationale_en": "...", "rationale_zh": "...",
+    "asOf": "...", "method_en": "...", "method_zh": "..."
+  },
+  "pillarSummary": { "en": "<=80w", "zh": "<=200字" },
+  "pillars": [
+    { "id": 1-5, "key": "inflation_data|fed_policy|earnings_guidance|industry_tech|geopolitics_trade",
+      "name_en": "...", "name_zh": "...", "status_en": "...", "status_zh": "...",
+      "tone": "green|amber|red", "read_en": "...", "read_zh": "...", "asOf": "..." }
+  ],
+  "events": [
+    { "id": "INCIDENT-2026-…", "date": "...", "type": "...", "pillar": 1-5,
+      "class": "euclid|keter|safe", "hawkDove": -2..2 | null,
+      "name": { "en": "...", "zh": "..." },
+      "before": { "en": "...", "zh": "..." }, "print": { "en": "...", "zh": "..." },
+      "repricing": { "en": "...", "zh": "..." }, "equityReaction": { "en": "...", "zh": "..." },
+      "verdict": { "en": "...", "zh": "..." } }
+  ]
 }
+Note the per-event record uses the four NAMED keys (before/print/repricing/
+equityReaction), not a positional record_zh/record_en array — this is what
+the frontend's incident-log renderer in signal.html actually reads. Append
+new events to the existing events[] (don't drop history), and refresh
+hawkDoveCompass/pillarSummary/pillars in place (these are current-state
+snapshots, not append-only logs).
 All analysis is desk-view commentary for a personal blog — not advice.
 ```
 
@@ -64,4 +85,6 @@ All analysis is desk-view commentary for a personal blog — not advice.
 ## 中文对照要点
 
 角色：Signal 页宏观策略师。固定背景：Warsh 执掌美联储（2026-05-22 宣誓），公开立场鹰派/反 QE/推进缩表/反前瞻指引——因此数据发布日权重更高，这是分析主轴。
-每个事件归入五维之一（通胀/货币政策/财报指引/产业科技/地缘贸易），产出四段式档案（发生了什么/即时重定价/对美股 AI 科技板块的传导/后续观察点）+ 鹰鸽分（-2~+2）+ 板块标签 + 收容等级建议 + 置信度。只用 payload 事实，输出单个 JSON，台面观点非建议。
+每个事件归入五维之一（通胀/货币政策/财报指引/产业科技/地缘贸易），产出四段式档案（`before`/`print`/`repricing`/`equityReaction` 四个具名字段，不是 record_zh/en 数组）+ 鹰鸽分（-2~+2）+ 板块标签 + 收容等级建议 + 置信度。只用 payload 事实，输出单个 JSON，台面观点非建议。
+
+**⚠️ Schema 对齐说明（V6 落地时确认，2026-07-04）**：`signal-events.json` 已从 v1 裸数组升级为 v2 对象结构（`hawkDoveCompass`/`pillarSummary`/`pillars`/`events`），且事件四段式用的是具名字段而不是本文档早期草稿设想的 `record_zh/record_en` 数组——V7 落地时必须先读现有文件的实际结构，产出增量更新（`events[]` 追加、`pillars`/`hawkDoveCompass`/`pillarSummary` 原地刷新），不要按本文档的旧草稿 schema 重新生成一份不兼容的文件。

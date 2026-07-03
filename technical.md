@@ -86,7 +86,7 @@ roadmap.md technical.md  仅有的两份设计文档（另见 CLAUDE.md、prompt
   - 补赛果：把对应 fixture 的 `"result": null` 改成 `"home"|"draw"|"away"`，计分板自动结算。
   - 淘汰赛对阵确定后：把 TBD fixture 的 `home/away/homeFlag/awayFlag/opus/conf/reason_*` 填好。
   - 更新 `champions` / `players` 概率与 `updated` 日期。
-- **Signal**：数据源是 `public/signal-events.json`（**不是**旧版内嵌在 `signal.html` 里的 `FOMC[]` 数组，那个写法已淘汰）——新增/编辑事件档案直接在这个 JSON 里追加/修改一条记录，结构见文件内现有条目（`id`/`date`/`type`/`class`/`name`/`before`/… 四段式 + 中英对照）。
+- **Signal**：数据源是 `public/signal-events.json`（**不是**旧版内嵌在 `signal.html` 里的 `FOMC[]` 数组，那个写法已淘汰）。**V6（2026-07-04）起 schema 已从 v1 裸数组升级为 v2 对象**：顶层 `{ updated, version:2, as_of, hawkDoveCompass, pillarSummary, pillars, events }`。`events[]` 追加/修改单条沿用四段式具名字段（`id`/`date`/`type`/`pillar`/`class`/`hawkDove`/`name`/`before`/`print`/`repricing`/`equityReaction`/`verdict`，均中英对照）；`hawkDoveCompass`（`-2..+2` 打分，v1 人工打分，自动化留给 V7）与 `pillars`（5 条，`id 1-5` 对应 `inflation_data|fed_policy|earnings_guidance|industry_tech|geopolitics_trade`）是当前状态快照，原地刷新不追加历史。**手改这个文件务必先跑 `node -e "JSON.parse(require('fs').readFileSync('public/signal-events.json','utf8'))"` 校验**——V6 落地时曾在 `rationale_zh` 里混入未转义直引号导致语法错误，全站中文引号统一用「」不用直引号，这是踩过的坑不是假设性提醒。前端渲染逻辑：`signal.html` 内联 IIFE fetch 该文件，`.events` 走既有事件簿渲染器，`.hawkDoveCompass`/`.pillars` 走 V6 新增的罗盘/五维矩阵渲染器（对应 CSS 也内联在 `signal.html` 的 `<style>` 里，不在共享 `main-*.css` chunk，grep dist 产物时按此路径找）。
 - **首页 Top 10 持仓**：`src/data/content.js` 的 `PICKS_ZH`/`PICKS_EN`，两个数组必须逐条一一对应（ticker 顺序、权重都要一致），权重合计应为 100。这是编译期数据，改完要走一次 build 才会生效，不是运行时读取。
 - **Novels 章节**：`public/novels-data.json`。
 - 改完务必本地 `npm run dev` 自查，再提交。
