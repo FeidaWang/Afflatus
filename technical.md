@@ -16,7 +16,8 @@
 - **⚠️ 关键坑（加新共享脚本前必读）**：给同一页面挂多个独立的 `<script type="module" src="...">` 标签，Vite 8 的自动 chunk 合并/去重**不可靠**——构建不报错，但某个脚本的代码可能在某些页面的产物里静默消失。正确做法**永远是**每页一个显式 `import` 链的入口文件（上面 `xxxEntry.js`/`xxxLibs.js` 的由来），走 Rollup 常规 import 图打包路径。
 - **导航与 Labs 下拉**：`src/lib/nav.js` 的 `SITE` 数组是唯一真源，渲染各页导航链接（`[data-afflatus-nav]` 占位）+ 循环推导 prev/next（写入 `body.dataset` 与翻页箭头 `href`）。给条目打 `group:'labs'` 会自动收进顶部 **Labs** 下拉菜单而不是顶层直链——目前 Games/Novels 是 labs 分组，未来季节性/实验性新页一律走这条路。下拉面板本身是 JS **portal 到 `<body>`**（`position:fixed` + 用 trigger 的 `getBoundingClientRect()` 定位，`z-index:99000`），不嵌套在触发按钮内——嵌套会被部分页面的 `clip-path`/低 `z-index` 祖先裁剪或遮挡。开关状态由 JS 的 `.open` class 驱动（hover/focus/click 开，Escape/outside-click/scroll/resize 关），而非纯 CSS `:hover`。下拉面板的字体/配色需要每页在 `page-turn.css`（5 个子页）或 `src/styles.css`（首页）里用 `--labs-*` CSS 变量按各自主题显式覆盖——面板不再是触发按钮的 DOM 后代，不会自动继承该页 `.nav a` 的样式。
 - **战斗视图**：默认 HUD 是 HMD v3（`src/ui/combatHmdV3.js` 的 `drawCleanCombatHmd`，贯穿起飞/降落/巡航/战斗）；SC 风格全息面板（`src/scene/combatHudSC.js`）与俯视战场（`src/scene/topdownCombat.js`）都降级为可选皮肤，分别用 `?combatview=sc` / `?combatview=topdown` 访问。**v1.5b 规划**：主战斗视图要换成事件驱动的相机导演系统（见 ROADMAP §4 V14）——**注意命名冲突**：`src/scene/cameraDirector.js` 这个文件名**已经被占用**（现有内容是起飞/降落的外部运镜，`drawExternalLaunch`/`drawExternalLanding`），V14 要做的武器事件相机状态机需要另起文件名（如 `weaponCameraDirector.js`），不要直接覆盖现有文件。
-- **数据**：`public/arena-news.json`（每日定时任务生成）、`public/games-data.json`（手动更新）、`public/signal-events.json`（宏观事件档案，见第 3 节）、`public/novels-data.json`（章节内容）、`public/leagues-data.json`（**已创建，2026-07-04**，MSI 竞猜，见下）。v1.5 规划新增但**尚未创建**：`arena-ledger.json`（Autopilot 账本）、`sectors-data.json`（对比矩阵 + 后内存专题）——详见 ROADMAP §7。
+- **数据**：`public/arena-news.json`（每日定时任务生成）、`public/games-data.json`（手动更新）、`public/signal-events.json`（宏观事件档案，见第 3 节）、`public/novels-data.json`（章节内容）、`public/leagues-data.json`（**已创建，2026-07-04**，MSI 竞猜）、`public/arena-ledger.json` + `public/arena-universe.json`（**已创建，2026-07-04**，Autopilot 账本 + 固定交易域，见下方 V3 说明）。v1.5 规划新增但**尚未创建**：`sectors-data.json`（对比矩阵 + 后内存专题）——详见 ROADMAP §7。
+- **Arena Autopilot 规则引擎（V3，2026-07-04）**：`src/lib/arenaRules.js`——纯函数集合，模型只提案 JSON 订单，这里的 `validateOrder`/`applyFill`/`checkStopLoss`/`checkDailyCircuitBreaker`/`checkSeasonReset`/`computeMetrics` 才是唯一有权改账本状态的代码。硬风控红线（单仓 20%/持仓 8 只/现金 5%/日熔断 3%/赛季重置 20%/信心门槛 0.65/Model A 周换手 20 笔/Model B 仅周二四开仓/分级滑点）全部是模块顶部 `LIMITS` 常量，不是提示词里的口头约定。单测见 `tests/arenaRules.test.js`。
 
 ### 新增页面 checklist（已由 V0 Leagues 完整走通并验证，2026-07-04）
 
@@ -107,7 +108,7 @@ npm run dev        # http://127.0.0.1:5173  （逐页检查）
 npm run build      # 产出 dist/（七个入口各自压缩打包，public/ 静态资源原样拷贝进去）
 npm run preview    # 预览打包结果
 ```
-> **测试（V3 起）**：Arena 规则引擎落地时引入 vitest（Vite 原生零配置），`npm run test` 跑规则引擎纯函数单测（订单校验/撮合/指标计算）。账本类代码不写测试不许上线。
+> **测试（已引入，2026-07-04，V3）**：`npm run test`（`vitest run`，Vite 原生零配置）跑 `tests/arenaRules.test.js`，44 条覆盖 `src/lib/arenaRules.js` 规则引擎全部纯函数（订单校验/模拟撮合/持仓变更加权成本/止损/日熔断/赛季重置/指标计算）。该模块刻意不依赖 DOM/fetch/`Date.now()`——调用方显式传入 `now`/`day`，保证可在 Node 定时任务与浏览器两侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
 
 ---
 
