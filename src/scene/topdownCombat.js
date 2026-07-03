@@ -20,6 +20,13 @@
  */
 import * as THREE from 'three';
 import { createNighthawk } from './nighthawk.js';
+import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
+
+// Opt-in flag (ROADMAP §4 V14): default behavior is the original hardcoded
+// camera sway, byte-for-byte unchanged, unless this is present in the URL.
+function cameraDirectorEnabled() {
+  try { return /[?&]combatcam=director\b/.test(location.search); } catch (e) { return false; }
+}
 
 function glowTexture() {
   const s = 128, c = document.createElement('canvas');
@@ -52,6 +59,69 @@ export function createTopdownCombat({ canvas }) {
   const CAM = new THREE.Vector3(0, 74, 30);
   camera.position.copy(CAM);
   camera.lookAt(0, 2, -2);
+
+  // ── camera director (V14, opt-in via ?combatcam=director) ───────────────
+  // Shot compute functions read live scene objects via closure (capital,
+  // comet, fighters are declared further below but are in scope by the time
+  // update()/loop() actually run each frame). `t` is seconds since the shot
+  // itself became active, not scene time.
+  const camDirectorOn = cameraDirectorEnabled();
+  let camDirector = null;
+  let missileLastPos = null, orbLastPos = null; // updated by launchMissile()/launchOrb() below
+  function initCameraDirector() {
+    const shots = {
+      tacticalTopdown: {
+        priority: 1,
+        blendInMs: 400,
+        compute(t) {
+          return {
+            pos: { x: CAM.x + Math.sin(t * 0.2) * 3, y: CAM.y, z: CAM.z + Math.cos(t * 0.16) * 2 },
+            look: { x: comet.position.x * 0.25, y: 2, z: -2 },
+          };
+        },
+      },
+      bridgeWide: {
+        priority: 1,
+        compute() {
+          return {
+            pos: { x: capital.position.x * 0.4, y: CAM.y * 1.55, z: CAM.z * 1.7 },
+            look: { x: capital.position.x, y: 1, z: capital.position.z * 0.3 },
+          };
+        },
+      },
+      mainGunAxis: {
+        priority: 3,
+        compute() {
+          const p = orbLastPos || capital.position;
+          return {
+            pos: { x: capital.position.x, y: 8, z: capital.position.z - 6 },
+            look: { x: p.x, y: p.y ?? 1.5, z: p.z },
+          };
+        },
+      },
+      missileTail: {
+        priority: 4,
+        compute() {
+          const p = missileLastPos || capital.position;
+          return {
+            pos: { x: p.x - 4, y: p.y + 6, z: p.z + 10 },
+            look: { x: p.x, y: p.y, z: p.z },
+          };
+        },
+      },
+      ciwsTurret: {
+        priority: 2,
+        compute() {
+          return {
+            pos: { x: capital.position.x + 6, y: 4, z: capital.position.z + 2 },
+            look: { x: comet.position.x, y: 1, z: comet.position.z },
+          };
+        },
+      },
+    };
+    camDirector = createWeaponCameraDirector({ camera, shots, home: 'tacticalTopdown' });
+    camDirector.requestShot('bridgeWide', { durationMs: 3200, blendInMs: 500 });
+  }
 
   // ── lighting ───────────────────────────────────────────────────────────
   scene.add(new THREE.AmbientLight(0x2a3850, 1.4));
@@ -168,6 +238,8 @@ export function createTopdownCombat({ canvas }) {
     scene.add(comet);
   }
 
+  if (camDirectorOn) initCameraDirector();
+
   // ── pools: tracers, missiles, explosions ─────────────────────────────────
   const tracerMat = new THREE.MeshBasicMaterial({ color: 0xbfeaff, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false });
   const tracerGeo = new THREE.CylinderGeometry(0.08, 0.08, 1, 6);
@@ -202,6 +274,8 @@ export function createTopdownCombat({ canvas }) {
     head.position.copy(start);
     scene.add(head);
     missiles.push({ head, t: 0, trail: [] });
+    missileLastPos = start;
+    if (camDirector) camDirector.requestShot('missileTail', { durationMs: 1900, blendInMs: 350 });
   }
 
   // sustained LASER beams (Nighthawk strafing runs) — bright thick green lances
@@ -220,7 +294,9 @@ export function createTopdownCombat({ canvas }) {
     const head = sprite(0x9fffe0, 5.5, 1); head.position.copy(muzzle); scene.add(head);
     const lt = new THREE.PointLight(0x6fffd0, 8, 30); lt.position.copy(muzzle); scene.add(lt);
     orbs.push({ head, lt, t: 0, trail: [] });
+    orbLastPos = muzzle;
     if (cannonOrbSprite) cannonOrbSprite.material.opacity = 0.2; // discharge flash
+    if (camDirector) camDirector.requestShot('mainGunAxis', { durationMs: 1500, blendInMs: 300 });
   }
 
   // ── animation loop ────────────────────────────────────────────────────────
@@ -299,6 +375,9 @@ export function createTopdownCombat({ canvas }) {
     if (alive && Math.random() > 0.93) {
       const from = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld); from.y = 2;
       fireTracer(from, cometPos.clone().add(tmp().set((Math.random() - 0.5) * 5, 0, (Math.random() - 0.5) * 5)), 0xff5c62);
+      // refresh (not restart) — CIWS fires roughly every ~15 frames on average,
+      // far more often than a shot's duration, so this just extends the window
+      if (camDirector) camDirector.requestShot('ciwsTurret', { durationMs: 1100, blendInMs: 300, refresh: true });
     }
     // Nighthawk sustained laser strafe
     if (alive && now - lastLaser > 620) {
@@ -325,6 +404,7 @@ export function createTopdownCombat({ canvas }) {
       const ob = orbs[i]; ob.t += 0.02;
       const p = ob.head.position.clone().lerp(cometPos, 0.05 + ob.t * 0.05);
       ob.head.position.copy(p); ob.lt.position.copy(p);
+      if (i === orbs.length - 1) orbLastPos = p;
       const sc = 5.5 + Math.sin(now * 0.02) * 0.6; ob.head.scale.set(sc, sc, 1);
       const tr = sprite(0x8fffd8, 3, 0.6); tr.position.copy(p); scene.add(tr);
       ob.trail.push({ s: tr, life: 1 });
@@ -348,6 +428,7 @@ export function createTopdownCombat({ canvas }) {
       const ms = missiles[i]; ms.t += 0.018;
       const p = ms.head.position.clone().lerp(cometPos, 0.06 + ms.t * 0.04);
       ms.head.position.copy(p);
+      if (i === missiles.length - 1) missileLastPos = p;
       const tr = sprite(0xffcaa0, 1.4, 0.7); tr.position.copy(p); scene.add(tr);
       ms.trail.push({ s: tr, life: 1 });
       ms.trail.forEach(o => { o.life -= 0.08; o.s.material.opacity = Math.max(0, o.life * 0.7); });
@@ -368,10 +449,15 @@ export function createTopdownCombat({ canvas }) {
       if (ex.life <= 0) { scene.remove(ex.s); scene.remove(ex.fl); ex.s.material.dispose(); explosions.splice(i, 1); }
     }
 
-    // gentle camera life
-    camera.position.x = CAM.x + Math.sin(t * 0.2) * 3;
-    camera.position.z = CAM.z + Math.cos(t * 0.16) * 2;
-    camera.lookAt(comet.position.x * 0.25, 2, -2);
+    // camera: director-driven shot state machine when ?combatcam=director is
+    // set (ROADMAP §4 V14); otherwise the original hardcoded sway, unchanged.
+    if (camDirector) {
+      camDirector.update(now);
+    } else {
+      camera.position.x = CAM.x + Math.sin(t * 0.2) * 3;
+      camera.position.z = CAM.z + Math.cos(t * 0.16) * 2;
+      camera.lookAt(comet.position.x * 0.25, 2, -2);
+    }
   }
 
   function loop(now) {

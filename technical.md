@@ -15,7 +15,8 @@
   - `public/` 现在只放**真正静态**的资源：`page-turn.css`（6 个子页共享翻页箭头/字体/Labs 下拉样式）、各页数据 JSON、`assets/`、`favicon.svg`。
 - **⚠️ 关键坑（加新共享脚本前必读）**：给同一页面挂多个独立的 `<script type="module" src="...">` 标签，Vite 8 的自动 chunk 合并/去重**不可靠**——构建不报错，但某个脚本的代码可能在某些页面的产物里静默消失。正确做法**永远是**每页一个显式 `import` 链的入口文件（上面 `xxxEntry.js`/`xxxLibs.js` 的由来），走 Rollup 常规 import 图打包路径。
 - **导航与 Labs 下拉**：`src/lib/nav.js` 的 `SITE` 数组是唯一真源，渲染各页导航链接（`[data-afflatus-nav]` 占位）+ 循环推导 prev/next（写入 `body.dataset` 与翻页箭头 `href`）。给条目打 `group:'labs'` 会自动收进顶部 **Labs** 下拉菜单而不是顶层直链——目前 Games/Novels 是 labs 分组，未来季节性/实验性新页一律走这条路。下拉面板本身是 JS **portal 到 `<body>`**（`position:fixed` + 用 trigger 的 `getBoundingClientRect()` 定位，`z-index:99000`），不嵌套在触发按钮内——嵌套会被部分页面的 `clip-path`/低 `z-index` 祖先裁剪或遮挡。开关状态由 JS 的 `.open` class 驱动（hover/focus/click 开，Escape/outside-click/scroll/resize 关），而非纯 CSS `:hover`。下拉面板的字体/配色需要每页在 `page-turn.css`（5 个子页）或 `src/styles.css`（首页）里用 `--labs-*` CSS 变量按各自主题显式覆盖——面板不再是触发按钮的 DOM 后代，不会自动继承该页 `.nav a` 的样式。
-- **战斗视图**：默认 HUD 是 HMD v3（`src/ui/combatHmdV3.js` 的 `drawCleanCombatHmd`，贯穿起飞/降落/巡航/战斗）；SC 风格全息面板（`src/scene/combatHudSC.js`）与俯视战场（`src/scene/topdownCombat.js`）都降级为可选皮肤，分别用 `?combatview=sc` / `?combatview=topdown` 访问。**v1.5b 规划**：主战斗视图要换成事件驱动的相机导演系统（见 ROADMAP §4 V14）——**注意命名冲突**：`src/scene/cameraDirector.js` 这个文件名**已经被占用**（现有内容是起飞/降落的外部运镜，`drawExternalLaunch`/`drawExternalLanding`），V14 要做的武器事件相机状态机需要另起文件名（如 `weaponCameraDirector.js`），不要直接覆盖现有文件。
+- **战斗视图**：默认 HUD 是 HMD v3（`src/ui/combatHmdV3.js` 的 `drawCleanCombatHmd`，贯穿起飞/降落/巡航/战斗）；SC 风格全息面板（`src/scene/combatHudSC.js`）与俯视战场（`src/scene/topdownCombat.js`）都降级为可选皮肤，分别用 `?combatview=sc` / `?combatview=topdown` 访问。**注意命名冲突**：`src/scene/cameraDirector.js` 这个文件名是起飞/降落的外部运镜（`drawExternalLaunch`/`drawExternalLanding`），与下面 V14 的武器事件相机状态机 `weaponCameraDirector.js` 是两个不同文件，不要混淆。
+- **相机导演系统（V14，2026-07-04，v1 切片）**：`src/combat/cameraMath.js`（纯函数：`smoothDamp`/`shouldPreempt`/`blendFactor`/`easeBlend`）+ `src/combat/weaponCameraDirector.js`（镜头状态机，`requestShot(id,{durationMs,blendInMs,refresh})`，高优先级立即抢占/同低优先级等到期，`refresh:true` 给高频事件续期不重启）。`topdownCombat.js` 内部委托它驱动相机，opt-in `?combatcam=director`——不带这个 flag 时行为与改动前字节级相同（仍是原硬编码摇摄，改名为 `tacticalTopdown` 镜头）。镜头库 v1 切片：`tacticalTopdown`/`bridgeWide`/`mainGunAxis`/`missileTail`/`ciwsTurret`，`impactOrbit` 与「空间深度四件套」视觉 polish 明确未做，见 ROADMAP §4 V14 条目下的范围边界说明。
 - **数据**：`public/arena-news.json`（每日定时任务生成）、`public/games-data.json`（手动更新）、`public/signal-events.json`（宏观事件档案，见第 3 节）、`public/novels-data.json`（章节内容）、`public/leagues-data.json`（**已创建，2026-07-04**，MSI 竞猜）、`public/arena-ledger.json` + `public/arena-universe.json`（**已创建，2026-07-04**，Autopilot 账本 + 固定交易域，见下方 V3 说明）。v1.5 规划新增但**尚未创建**：`sectors-data.json`（对比矩阵 + 后内存专题）——详见 ROADMAP §7。
 - **Arena Autopilot 规则引擎（V3，2026-07-04）**：`src/lib/arenaRules.js`——纯函数集合，模型只提案 JSON 订单，这里的 `validateOrder`/`applyFill`/`checkStopLoss`/`checkDailyCircuitBreaker`/`checkSeasonReset`/`computeMetrics` 才是唯一有权改账本状态的代码。硬风控红线（单仓 20%/持仓 8 只/现金 5%/日熔断 3%/赛季重置 20%/信心门槛 0.65/Model A 周换手 20 笔/Model B 仅周二四开仓/分级滑点）全部是模块顶部 `LIMITS` 常量，不是提示词里的口头约定。单测见 `tests/arenaRules.test.js`。
 - **武器单时钟（V16，2026-07-04）**：`src/combat/weaponClock.js`——权威时间线纯函数模块（`startTimeline`/`phaseFraction`/`activePhase`/`msUntilPhase`/`forceAdvance`），`{weapon, t0, phases:[{name,at}]}` 结构，V14 相机导演可直接订阅。已修正 `main.js` 里两处实测确认的独立计时器（核弹 T- 倒计时、主炮蓄力倒计时此前各自跑 `setInterval(...,40)`，与 rAF 主循环脱钩——已改为在 `updateCombatModule()` 里逐帧更新）+ 删除 `halley.ciwsLaserStart/ciwsLaserUntil` 死代码（从未被读取、`performance.now()` 口径与全局 `Date.now()` 口径不一致）。**范围边界**：`combatCine.js` 的导弹/核弹分镜与 `halley.destroyed` 提前触发的强制剪切审计后确认本来就是从 `pilotView.started/until` 派生的单一 `e` 驱动，未改动；CIWS/核弹/导弹完整分镜时序改造为具名 `weaponClock` phases 留给 V14（相机切换点本来就需要具名 phases，届时一起做）。
@@ -43,6 +44,8 @@ novels.html
 src/main.js (~3.4k 行)   首页主程序（HUD/场景/光标/导航装配，仍是拆分中的单体文件）
 src/scene/               首页 + 战斗场景模块（alphardForge / topdownCombat / combatHudSC /
                          combatCine / cameraDirector[起降运镜] / fighter3D / shipHologram / …）
+src/combat/              权威时间线 + 相机导演：weaponClock.js / cameraMath.js /
+                         weaponCameraDirector.js（V16/V14，均为可脱离 DOM 单测的纯逻辑层）
 src/ui/                  HUD 绘制模块（combatHmdV3 / battleFeed / marketDeck / viz 等）
 src/data/content.js      首页文案 + Top 10 持仓 PICKS_ZH/EN
 src/lib/                 七页共享库：nav.js（★ SITE 唯一真源）/ i18n.js / transition.js /
@@ -109,7 +112,7 @@ npm run dev        # http://127.0.0.1:5173  （逐页检查）
 npm run build      # 产出 dist/（七个入口各自压缩打包，public/ 静态资源原样拷贝进去）
 npm run preview    # 预览打包结果
 ```
-> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑两个文件共 64 条：`tests/arenaRules.test.js`（44 条，Arena 规则引擎）+ `tests/weaponClock.test.js`（20 条，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）。两个模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
+> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑四个文件共 82 条：`tests/arenaRules.test.js`（44 条，Arena 规则引擎）+ `tests/weaponClock.test.js`（20 条，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）+ `tests/cameraMath.test.js`（12 条，V14 临界阻尼弹簧/抢占规则/混合曲线）+ `tests/weaponCameraDirector.test.js`（6 条，V14 镜头状态机，用 mock 相机对象验证抢占/续期/自动回落/数值不发散，不依赖 WebGL）。所有模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
 
 ---
 
