@@ -170,4 +170,4 @@ git add -A && git commit -m "..." && git push origin main
 
 ---
 
-*This file + roadmap.md are the only two markdown docs in the repo, by design.*
+*Design docs: this file + roadmap.md（人读）。Machine-facing markdown: CLAUDE.md（跨会话工作守则，工具链自动加载）、prompts/（定时任务提示词库）——不算设计文档，不要合并。*
