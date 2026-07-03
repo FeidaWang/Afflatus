@@ -127,6 +127,14 @@ html.vt-suppress::view-transition-new(root){
   --labs-active-bg:#c9834a;--labs-active-border:#c9834a;--labs-active-ink:#1a1410;
 }
 
+.leagues-page .nav-labs__menu{--labs-bg:rgba(12,28,44,.96);--labs-border:rgba(200,170,110,.32)}
+.leagues-page .nav-labs__menu a{
+  --labs-font:'Cinzel',Georgia,serif;--labs-weight:700;--labs-tracking:.12em;
+  --labs-ink:#0ac8b9;--labs-line:rgba(10,200,185,.4);
+  --labs-hover-bg:#0ac8b9;--labs-hover-ink:#04120f;
+  --labs-active-bg:#c8aa6e;--labs-active-border:#c8aa6e;--labs-active-ink:#1a1204;
+}
+
 /* motion-sensitive visitors: kill page transitions & pulses */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{
@@ -184,6 +192,15 @@ html.vt-suppress::view-transition-new(root){
 }
 .novels-page .page-turn{box-shadow:0 0 0 3px rgba(201,131,74,.10),inset 0 0 20px rgba(79,214,196,.12)}
 .novels-page .page-turn:hover{box-shadow:0 0 0 3px rgba(201,131,74,.16),inset 0 0 24px rgba(79,214,196,.20)}
+/* Leagues · Hextech gold + teal */
+.leagues-page .page-turn-controls{
+  --turn-accent:#c8aa6e;
+  --turn-hover:#0ac8b9;
+  --turn-bg-a:rgba(10,20,32,.84);
+  --turn-bg-b:rgba(3,7,12,.97);
+}
+.leagues-page .page-turn{box-shadow:0 0 0 3px rgba(200,170,110,.08),inset 0 0 20px rgba(10,200,185,.12)}
+.leagues-page .page-turn:hover{box-shadow:0 0 0 3px rgba(200,170,110,.14),inset 0 0 24px rgba(10,200,185,.20)}
 .page-turn{
   width:46px;
   height:58px;

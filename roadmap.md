@@ -22,9 +22,9 @@
 > ⑩ **V14**（L）→ ⑪ **V15/V15b**（L/M）→ ⑫ **V8**（S）收版本 → 进入 P2。
 
 **P0 · 抢时效（本周内，硬截止 7/12）**
-- **V0.（M）Leagues 页面 v1**——`leagues.html` + `src/pages/leaguesEntry.js` + `public/leagues-data.json` + vite 多入口注册 + `nav.js` SITE 数组插入 `{path:'/leagues.html', group:'labs'}`（games 与 novels 之间；Labs 下拉与翻页循环自动收纳，机制零改动）。骨架克隆 games.html 模式（hero/战绩/对阵卡/赔率/免责声明），主题换海克斯金/蓝与 games 品红/青区分。初始数据以当日实际赛果落盘。规格见 **§7.4**。
-- **V1.（S）Leagues 定时任务**——MSI 期间每日一跑（每系列赛后更新剩余场次预测 + 已完场复盘计分），提示词 `prompts/leagues-msi.md`；7/12 决赛后收官一跑，页面转「战绩存档」模式（`mode:'archived'`）。
-- **V2.（S·随赛程持续）Games 世界杯收官跟进**——淘汰赛对阵确定后补 `games-data.json` 的 `home/away/result`（决赛 7/19 收官）；「夺冠路径」树状图不抢时效，见 B7。
+- ~~**V0.（M）Leagues 页面 v1**~~ ✅ **已上线（2026-07-04）**——`leagues.html` + `src/pages/leaguesEntry.js` + `src/pages/leagues.js` + `public/leagues-data.json` + vite 多入口注册 + `nav.js` SITE 数组插入（games 与 novels 之间）+ `page-turn.css` 的 `.leagues-page` 主题变量块（海克斯金 `#c8aa6e` / 蓝 `#0ac8b9`，字体 Cinzel + IBM Plex Mono，与 games 品红/青区分）。初始数据为核实过的真实 MSI 2026 Bracket Stage 战况（8 强、双败淘汰、全 Bo5、Fearless Draft）：已完场 HLE 3-0 TSW、G2 3-2 TES（逆转横扫），另 5 组对阵/待定含 BLG vs T1（GG.bet 真实赔率）与总决赛占位。构建已验证：`npm run build` 绿色，`dist/leagues.html` + `dist/assets/leagues-*.js` 抽查确认真实内容在产物内（非静默丢失），`vite preview` 全 7 入口 curl 200。**视觉未在沙盒验证，待你本地确认观感**。规格见 **§7.4**。
+- ~~**V1.（S）Leagues 定时任务**~~ ✅ **已搭建（2026-07-04）**——**实施路线偏离原计划**：未走 launchd + 本地 API 脚本，改用 Cowork 自带的 `scheduled-tasks`（任务名 `leagues-msi-daily`，每日 23:30 本地时间，提示词内联 `prompts/leagues-msi.md` 的纪律）——原因：这条自动化生命周期短（仅到 7/12）、且强依赖当天联网检索而非纯 API 调用，用 Cowork 会话原生的 WebSearch 能力比现写一个本地脚本更省事。**已知限制：Cowork 定时任务需要 App 处于打开状态才会触发**（关闭时错过的任务会在下次启动时补跑，语义上与 launchd 的"睡眠错过、唤醒补跑"类似，但触发条件是 App 而非系统唤醒）——如果你希望和 Arena/Signal/Sectors 一样做成纯本地 launchd 管线，需要你提供 API key 到 `~/.config/afflatus/env` 并另写调用脚本，届时告诉我。7/12 决赛后该任务会自动做收官一跑并转 `mode:"archived"`，之后需要手动禁用（任务已在提示词里写好自我提醒）。
+- **V2.（S·随赛程持续）Games 世界杯收官跟进**——2026-07-04 复核：`games-data.json` 现有 `fixtures[]` 的 `result:null` 均已核实为真实准确（对应比赛截至当前尚未开球/未结束，非遗漏）；无需本轮更新。淘汰赛继续推进后再补 `home/away/result`（决赛 7/19 收官）；「夺冠路径」树状图不抢时效，见 B7。
 
 **P1 · v1.5 核心（1–3 周，双轨并行）**
 
@@ -75,7 +75,7 @@
 | Sectors | `sectors.html` | AI + 航天个股研判 ＋ v1.5 中美 AI 对比矩阵、「后内存时代」专题（规划中，§7.2） | 酸性绿 + 故障艺术 | 顶层 |
 | Signal | `signal.html` | 美联储观察 = SCP O5 收容档案（板块研判：Fable 5）；v1.5 重构为 Warsh 时代（规划中，§7.3） | 机密文档 · 琥珀/绿 | 顶层 |
 | Games | `games.html` | 世界杯限时竞猜 vs Fable 5 | 赛博朋克 · 品红/青 | **Labs** |
-| Leagues | `leagues.html`（**V0 规划中**） | 2026 MSI 电竞竞猜 vs Fable 5 Max（Fearless Draft 分析；赛后转战绩存档，§7.4） | 海克斯 · 金/蓝（暂定） | **Labs** |
+| Leagues | `leagues.html`（**V0/V1 已上线**） | 2026 MSI 电竞竞猜 vs Fable 5 Max（Fearless Draft 分析；赛后转战绩存档，§7.4） | 海克斯 · 金/蓝 | **Labs** |
 | Novels | `novels.html` | 无限流·种田小说连载《万界种春》 | 复古未来主义 · 铜/青（纯中文，护眼阅读，含夜间/豆沙绿/米黄三种阅读模式、自动翻页、书签、章节速览） | **Labs** |
 
 **原则**：每页保留**独立的字体与美术身份**，但共享一套基础系统，避免重复造轮子。
