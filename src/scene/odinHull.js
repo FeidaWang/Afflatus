@@ -100,6 +100,13 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
     { z: BOW_ROOT, halfW: bowRootW / 2, halfH: bowRootH / 2 },            // narrow into the blade root
     { z: NOSE, halfW: 0.015, halfH: 0.015 },                              // taper to a point
   ]), M.hull, [0, 0, 0]);
+  // ===== layered/overlapping armor collar at the bow-to-midship joint =====
+  // (reference breakdown, category 1 "Layered Hull Construction": overlapping
+  // armor plates at the narrow-bow-to-wider-midship transition give a
+  // reinforced-depth read instead of one smooth uninterrupted taper). Two
+  // stacked plates straddling BOW_ROOT, each proud of the loft surface there.
+  add(new THREE.BoxGeometry(midW * 0.62, midH * 0.72, 0.3), M.arm, [0, 0, BOW_ROOT + 0.08]);
+  add(new THREE.BoxGeometry(midW * 0.72, midH * 0.52, 0.16), M.trim, [0, 0, BOW_ROOT - 0.14]);
   add(new THREE.BoxGeometry(1.5, HEIGHT * 0.13, BOW_LEN * 0.5), M.arm, [0, HEIGHT * 0.07, BOW_ROOT + BOW_LEN * 0.28]);
   for (let i = 0; i < 4; i++) add(new THREE.BoxGeometry(1.3 - i * 0.24, 0.03, 0.14), M.trim, [0, HEIGHT * 0.1, NOSE - 0.5 - i * (BOW_LEN * 0.2)]); // bow panel seams — kept in 'wire' too now the hull itself isn't a disconnected-boxes mess anymore, these read as detail rather than clutter
   // twin light rail cannons flush along the blade's upper edge (bow-forward fire)
@@ -146,9 +153,46 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
   for (let i = 0; i < TURRET_N; i++) {
     const z = turretZ0 + (turretZ1 - turretZ0) * (i / (TURRET_N - 1));
     const y = HEIGHT * 0.18; // verified flush against the midship hull top (HEIGHT*0.16): turret base sits 0.044 below it, no gap
-    add(new THREE.BoxGeometry(0.32, 0.16, 0.32), M.dark, [0, y, z]);
-    add(new THREE.CylinderGeometry(0.03, 0.04, 0.34, 8), M.trim, [0, y + 0.02, z + 0.2], [Math.PI / 2, 0, 0]);
+    add(new THREE.BoxGeometry(0.34, 0.17, 0.34), M.dark, [0, y, z]);
+    // twin barrels, not one — reference category 4 ("clear line of heavy
+    // MULTI-BARREL cannon turrets along the upper dorsal ridge") explicitly
+    // calls out multi-barrel, a single-cylinder turret undersells the
+    // "heavy battery" read.
+    for (const bx of [-0.075, 0.075]) add(new THREE.CylinderGeometry(0.026, 0.034, 0.36, 8), M.trim, [bx, y + 0.02, z + 0.2], [Math.PI / 2, 0, 0]);
     turretMounts.push({ x: 0, y, z });
+  }
+
+  // ===== lateral hull "modular bay" row — an explicit reference callout =====
+  // (category 2, "Mid-Section Modular Bays"): a repeating row of reinforced
+  // structural modules on the hull FLANKS (missile silo / hangar bay / shield
+  // generator read), described as a scale/detail "visual anchor" distinct
+  // from the dorsal turret row or belly pods — this project had neither a
+  // side-mounted accent row nor lateral weapons before this pass.
+  const sideBayMounts = [];
+  const BAY_N = 4, bayZ0 = STERN_ROOT + midLen * 0.15, bayZ1 = BOW_ROOT - midLen * 0.12;
+  for (const sx of [-1, 1]) {
+    for (let i = 0; i < BAY_N; i++) {
+      const z = bayZ0 + (bayZ1 - bayZ0) * (i / (BAY_N - 1));
+      add(new THREE.BoxGeometry(0.1, 0.34, 0.4), M.trim, [sx * 1.2, -0.02, z]);   // raised frame/rim, proud of the hull surface
+      add(new THREE.BoxGeometry(0.06, 0.26, 0.3), M.dark, [sx * 1.16, -0.02, z]); // recessed bay panel (silo/bay "window")
+      for (const gy of [-0.08, 0.08]) add(new THREE.BoxGeometry(0.03, 0.06, 0.06), M.glass, [sx * 1.23, -0.02 + gy, z]); // twin indicator lights
+      sideBayMounts.push({ x: sx * 1.2, y: -0.02, z, side: sx });
+    }
+  }
+
+  // ===== lateral point-defense turrets — reference category 4 explicitly ===
+  // calls for defenses on BOTH ventral (existing belly pods) AND lateral
+  // surfaces, "tactically balanced/functional distribution", not just top+bottom.
+  const lateralTurretMounts = [];
+  const LAT_N = 2;
+  for (const sx of [-1, 1]) {
+    for (let i = 0; i < LAT_N; i++) {
+      const z = STERN_ROOT + midLen * (0.24 + i * 0.5);
+      const lx = sx * 1.18, ly = HEIGHT * 0.05;
+      add(new THREE.BoxGeometry(0.2, 0.15, 0.2), M.dark, [lx, ly, z]);
+      add(new THREE.CylinderGeometry(0.024, 0.03, 0.24, 8), M.trim, [lx + sx * 0.12, ly, z], [0, 0, Math.PI / 2]);
+      lateralTurretMounts.push({ x: lx, y: ly, z, side: sx });
+    }
   }
 
   // ===== belly weapon pods with recessed gun ports (kept in both levels) ==
@@ -176,7 +220,14 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
     { x: -0.3, y: -0.02 }, { x: 0.3, y: -0.02 },
     { x: 0, y: 0.24 },
   ].map(m => ({ x: m.x, y: m.y, z: STERN + 0.35 }));
-  for (const em of engineMounts) add(new THREE.BoxGeometry(0.5, 0.4, 0.9), M.trim, [em.x, em.y, em.z + 0.45]); // housings (caller attaches glow/light/plume at em)
+  for (const em of engineMounts) {
+    add(new THREE.BoxGeometry(0.5, 0.4, 0.9), M.trim, [em.x, em.y, em.z + 0.45]); // housing (caller attaches glow/light/plume at em)
+    // armored cowling ring around the nozzle mouth — reference category 5
+    // ("Armored Cowlings" housing the main engines, giving the aft section
+    // hefty mechanical weight). TorusGeometry's default hole-axis is +Z, so
+    // it needs no rotation to face aft, same as the nozzle it wraps.
+    add(new THREE.TorusGeometry(0.26, 0.05, 6, 12), M.arm, [em.x, em.y, em.z + 0.05]);
+  }
 
   // outward radiator fin / truss boom arrays (both sides, angled back)
   for (const sx of [-1, 1]) {
@@ -219,5 +270,6 @@ export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
   return {
     length: LEN, height: HEIGHT, bowLen: BOW_LEN, bowRoot: BOW_ROOT,
     engineMounts, turretMounts, bellyPodMounts, mastTips, muzzleAnchor,
+    sideBayMounts, lateralTurretMounts,
   };
 }
