@@ -9,7 +9,7 @@
 
 > 本轮（2026-07-02）逐条核对了本文档与代码库的实际状态：已验证**完全完成**的任务从路线图中移除（不再需要跟踪），**做到一半或未开始**的任务保留并标注 ⚠️，同时发现了 3 项文档未记录的新情况，并按重要程度排序。**2026-07-03 更新：P0/P1/P2 均已完成**（P2 有两处范围缩减/延后，详情见下方对应小节）。剩余未做的工作已重新按优先级分组，见 **§0b**。
 >
-> **2026-07-04 更新：Afflatus v1.5「Fable 5 Max 五模块」重大功能版规划成立**——§0b 已整体重排为 v1.5 优先级总表（新任务 V 编号，v1.4 遗留 A/B/C 编号并入），模块规格见 **§5c**，定时任务提示词库见 **`prompts/`**。
+> **2026-07-04 更新：Afflatus v1.5「Fable 5 Max 五模块」重大功能版规划成立**——§0b 已整体重排为 v1.5 优先级总表（新任务 V 编号，v1.4 遗留 A/B/C 编号并入），模块规格见 **§5c**，定时任务提示词库见 **`prompts/`**。同日增补 **v1.5b 视觉工程轨**（V14–V16：相机导演 / Odin 全息重建 / 武器单时钟同步，规格见 **§4d**；原「俯视=主战斗视图」路线废弃），并完成 **V13 首页 Top 10 后内存换仓**（三大催化剂检索核实，依据见 **§5c-2**）。
 
 **P0 · 已全部完成（2026-07-03）**
 1. ✅ **HUD 双系统冲突**——判定 `drawCleanCombatHmd` v3（cockpit 座舱 + FPM 飞行路径标记 + 功率柱 + 目标血条 + 前置量 + 边缘威胁箭头）为 combat/standby 默认视图——这是用户最近一次明确列出的太空战 HUD 需求规格（准星前置量/目标状态/自机弧形条/机动矢量/物理化座舱等）唯一完整实现的版本。`drawCombatHudSC`（GIMBAL/GROUP 全息 + SCM/AB 竖直油门条风格）降级为 `?combatview=sc` 时的可选皮肤，代码与素材均保留、未删除。详见 **§4b**。
@@ -39,6 +39,7 @@
 - **V0. Leagues 页面 v1**——`leagues.html` + `src/pages/leaguesEntry.js` + `public/leagues-data.json` + vite 多入口注册 + `nav.js` SITE 数组插入 `{path:'/leagues.html', group:'labs'}`（games 与 novels 之间；Labs 下拉与翻页循环自动收纳，v1.4 机制零改动）。骨架克隆 games.html 模式（hero/战绩/对阵卡/赔率/免责声明），主题换海克斯金/蓝与 games 品红/青区分。初始数据以当日实际赛果落盘。规格见 **§5c-4**。
 - **V1. Leagues 定时任务**——MSI 期间每日一跑（每系列赛后更新剩余场次预测 + 已完场复盘计分），提示词 `prompts/leagues-msi.md`；7/12 决赛后收官一跑，页面转「战绩存档」模式（`mode:'archived'`）。
 - **V2. Games 世界杯收官跟进**——淘汰赛对阵确定后补 `games-data.json` 的 `home/away/result`（原 B7 的 Games 部分提前到 P0，决赛 7/19 收官）；「夺冠路径」树状图仍留 B7 不抢时效。
+- **V13. ✅ 首页 Top 10 后内存换仓（2026-07-04 已完成）**——`src/data/content.js` 的 `PICKS_ZH/EN` 整表替换为回调后杠铃配置：MU 18 / AVGO 15 / NVDA 14 / MRVL 9 / SNDK 8 / WDC 8 / TER 8 / RMBS 8 / ALAB 6 / PSTG 6（合计 100%）；撤出 TSM/AMD/ASML/LITE/NOK/FLKR。三大催化剂与来源见 **§5c-2 市场情势更新**；免责声明沿用 `footnote` 原文。
 
 **P1 · v1.5 核心（1–3 周）**
 - **V3. Arena Autopilot 账本 + 规则引擎**——`public/arena-ledger.json`（Model A/B 双账本各虚拟 $10,000）+ 模拟撮合（滑点/费用）+ 代码层硬风控（LLM 只提案、规则引擎收单，红线见 §5c-1）。这是 V4/V5 的地基，先行。
@@ -47,6 +48,11 @@
 - **V6. Signal「Warsh 时代」内容重构**——新主席 SCP 人事档案（O5 更替叙事；Warsh 5/13 参院确认、5/22 白宫宣誓，2026-07-04 检索核实）+ 五维信号矩阵（通胀/货币政策/财报指引/产业动向/地缘贸易）+ 无前瞻指引 ⇒ 数据发布日历权重提升 + 鹰鸽罗盘首版（吸收原 C1 一部分）。规格见 **§5c-3**。
 - **V7. Signal 定时任务升级**——事件驱动（CPI/PCE/NFP/FOMC 发布日）+ 每周例行研判，自动生成事件档案草稿（吸收原 C2 一部分）；提示词 `prompts/signal-warsh.md`。
 - **V8. v1.5 发布收尾**——版本号 v1.4→v1.5（index.html/package.json/lock）；全站 AI 人设文案「Fable 5」→「Fable 5 Max」（沿用 Opus→Fable 5 规则：只改用户可见文案，内部字段名/JS 属性/CSS class 不动）；ROADMAP 归档收尾。
+
+*以下为 v1.5b 视觉工程轨（2026-07-04 用户点名新增，与上方 Arena/Signal 轨并行推进；技术规格见 **§4d**）：*
+- **V14. 相机导演系统**——`src/scene/cameraDirector.js` 镜头状态机 + 首发镜头库（导弹尾随/撞击环绕/CIWS 炮塔位/主炮轴线/舰桥全景），由 V16 事件总线驱动；配套「空间深度四件套」解决导弹平面感。原 §4「俯视=主战斗视图终点」路线同日废弃（用户裁决：棋盘 Ludo 感），是对 Gemini 基线的直接覆写。
+- **V15. Odin 参考全息舰重建 + 战机保真度**——按用户提供的 Odin 舰 Blender 参考图重建 `shipHologram`/`capitalShip3D` 几何（程序化 blockout + 实例化 greeble 套件，全息着色器沿用）；V15b 给 fighter3D 战机加嵌板法线与 PBR-lite 材质。原 B4（核弹真模型渲染）并入本项资产复用。
+- **V16. 武器单时钟同步（CIWS/导弹/核弹/主炮）**——combatRuntime 发布权威时间线 `{t0, phases[]}`，DOM HUD 与 3D 场景全部改订阅制、按 `(now−t0)` 相位渲染，消灭两侧独立计时器；验收标准 = 两侧相位边界同一 rAF tick 翻转（0 帧差）。
 
 **P2 · v1.5 扩展（3–6 周）**
 - **V9. Sectors 中美 AI 对比矩阵**——4 厂商观察卡（美：Anthropic/OpenAI；中：智谱/阿里）× 映射标的篮子（定性关联标签，不伪造统计相关系数；真算 90 日价格相关性列为 stretch）。规格见 **§5c-2**。
@@ -57,9 +63,9 @@
 
 **P3 · 长线（v1.4 B/C 项顺延，编号不变）**
 - **B1. CSS Scroll-Driven Animations**——`animation-timeline: scroll()/view()` 替换 `alphardForge` 的 JS scroll-pin。详见 **§6.2**。
-- **B2. topdownCombat 后续**——真实 `halley.curX/curY` 驱动飞行路径；`?combatview=topdown` 转正评估；首页主战斗迁移（Phase 3）；three.js 动态 `import()`（Phase 4）。详见 **§4**。
+- **B2. topdownCombat 后续（v1.5b 已改向）**——「俯视转正/首页主战斗迁移」两个子项**废弃**（2026-07-04 用户裁决俯视=棋盘感，见 §4/§4d）；topdownCombat 降级为战术地图可选皮肤（`?combatview=topdown` 保留）；真实 `halley.curX/curY` 坐标驱动与 three.js 动态 `import()` 两个技术子项并入 V14 场景统一推进。
 - **B3. combatHudSC 机库跑道纵深透视**——先记录、不建议单独立项（当前代码路径不可达）。详见 **§4b**。
-- **B4. combatCine 核弹真实模型渲染**——Condor/夜鹰模型离屏渲染替代 2D 绘制。详见 **§4b**。
+- **B4. ~~combatCine 核弹真实模型渲染~~**——已并入 V15（模型资产）+ V14（真 3D 镜头），不再单列。
 - **B5. 首页背景 canvas 加 IntersectionObserver**——不可见时停渲染。详见 **§2**。
 - **B6. 首页 WebGL 收尾**——raw-GL context-restored 完整重建、shader 弱机自适应、渲染器常量统一（需真机 profiling）。详见 **§4c**。
 - **B7. 各页零散点子（剩余部分）**——Arena「模型 vs 你」历史胜率曲线 + Twelve Data 接入后 W/M/6M/Y/5Y 徽标转 `REAL`；Games「夺冠路径」树状图。（世界杯数据跟进已提前为 V2；Sectors↔Arena 打通已并入 V12。）详见 **§5**。
@@ -151,6 +157,8 @@
 ## 4. 战斗系统迁移：2.5D 上帝视角 WebGL / Top-down combat migration ★
 
 > 参考经典 Top-Down View（如 Nexon《破碎银河系》）用 three.js 重建俯视战场，替代 Canvas-2D 伪 3D 观感。
+>
+> **⚠️ 2026-07-04 路线改向（v1.5b）**：用户裁决——俯视视角读起来像棋盘上的棋子（Ludo 感），破坏空间沉浸；导弹冲向彗星毫无纵深。本节「俯视渲染成为主战斗视图」的最终目标**就此废弃**：topdownCombat 保留为战术地图可选皮肤（`?combatview=topdown`），主战斗视图的新方向是**真 3D 相机导演系统**（**§4d** V14–V16）。原 Phase 2 转正评估、Phase 3 首页主战斗迁移不再执行；Phase 2b 真实坐标驱动与 Phase 4 动态 `import()` 并入 §4d 统一推进。已完成的 Phase 1/2b 接口工作不白费——事件总线与状态快照正是 V16 的地基。
 
 **已完成**
 - ✅ Phase 1：`src/scene/topdownCombat.js` 自包含俯视场景（执法者母舰、夜鹰战机、彗星、曳光、激光、等离子光炮、导弹、爆炸 + 战术网格），`?combat=topdown` 全屏预览可用。
@@ -202,6 +210,37 @@
 - `saturnRenderer` 等 raw-GL 的**完整** context-restored 重建（目前仅 preventDefault 保活）。
 - 跃迁点 shader 弱机自适应（降 fbm 八度或分辨率）。
 - 统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量（目前分散在各文件里，数值不完全一致：1.75 vs 1.5）。
+
+---
+
+## 4d. v1.5b 视觉工程轨：相机导演 · Odin 全息重建 · 武器单时钟同步 ★
+
+> 2026-07-04 用户点名的三项体验升级（V14/V15/V16），美术基调不变：硬科幻、太空军事拟真（Star Citizen 系），**严禁卡通/街机/过度游戏化**。本节是技术规格；优先级排位见 §0b P1。
+
+### V14 相机导演系统 `src/scene/cameraDirector.js`
+
+**核心思想**：镜头是被事件驱动的「导演」，不是挂在场景上的固定视角。
+- **镜头状态机**：`shot = { id, priority, duration, blendIn, update(dt, ctx) }`；由武器事件总线（V16）触发，高优先级可抢占低优先级（核弹 > 导弹 > 主炮 > CIWS > 巡航全景），抢占用 0.3–0.5s 摄像机位姿插值缝合，不硬切。
+- **首发镜头库**：
+  - `missileTail` 导弹尾随（用户点名）：`camPos = missile.pos − v̂·dist + jitter`，`lookAt` 取导弹→目标连线 0.3 处插值点；点火瞬间 FOV 55→68 冲击后随速度回收；机动时 roll 随速度矢量侧倾（banking）。
+  - `impactOrbit` 末段撞击环绕：命中前 1.5s 切至绕撞击点低速环绕，可选 0.3× 慢放一拍。
+  - `ciwsTurret` 炮塔硬安装位：随炮塔转动 + 开火后坐抖动（弹幕武器的正确镜头语言是震感不是追踪）。
+  - `mainGunAxis` 主炮轴线纵深位：沿炮管视轴，充能辉光由远及近渐涨。
+  - `bridgeWide` 舰桥全景：默认待机/巡航镜头。
+- **跟随阻尼**：临界阻尼弹簧（smoothTime 参数化），**不用裸 lerp**（果冻感来源）；镜头对舰体/彗星做球形包围盒回退，永不穿模。
+- **空间深度四件套**（直接回应「导弹是平的」）：① GPU 实例化尾焰彩带轨迹（instanced quad ribbon）；② 速度拉伸粒子做伪运动模糊；③ 近景尘埃/碎屑参照层（速度感来自参照物流动，不来自目标本身）；④ 动态 FOV。真 DOF/运动模糊后期留给 C3 WebGPU 管线，本阶段用廉价近似。
+
+### V15 Odin 参考全息舰重建 + 战机保真度
+
+- **参考特征提取**（2026-07-04 用户提供 Blender 截图，Odin 舰侧视）：长高比 ≈5.5:1；刀锋舰艏占全长 35–40%、渐收成针；舯部阶梯式上层建筑 + 舰桥塔 + 天线桅杆簇（多根细长斜桅）；舰尾密集推进器组 + 外伸散热鳍/桁架阵列；背脊炮塔成列（方形炮座 + 细节窗）；腹部吊舱与下沉式炮位；greeble 密度梯度**尾 > 舯 > 艏**（艏部大面留白突出刀锋轮廓）。
+- **技术路径**：型线样条挤出程序化 blockout（先锁剪影再上细节，剪影错了细节全白费）→ 实例化 greeble 套件（炮塔/散热窗/天线/嵌板凹槽等 8–12 个基元 + 种子化布点规则，InstancedMesh 单 draw call）→ 全息着色器沿用 `shipHologram.js` 现有管线（fresnel 边缘光 + 扫描线 + additive），三角面预算 ≤50k。**同一几何体**喂 `capitalShip3D` 的侧视/尾视，一份资产两处用。
+- **V15b 战机保真度 pass**：`fighter3D.js` 的 F-47/夜鹰增加嵌板法线细节（贴图烘焙或程序化 panel-line）与 PBR-lite 材质（金属度/粗糙度双参数），脱离棋子感；轮廓保持现有辨识度不动。
+
+### V16 武器单时钟同步（CIWS / 导弹 / 核弹 / 主炮）
+
+- **工程答案不是「把两套计时器对齐」，而是只保留一个时钟**：`combatRuntime` 为每次武器事件发布权威时间线 `{ t0, weapon, phases: [{name, at}] }`（如导弹：lock→launch→boost→terminal→impact 的相对时刻表）；DOM HUD（倒计时、告警条、battle-feed）与 3D 场景（V14 镜头切换、特效相位）**全部订阅同一事件、按 `(now − t0)` 相位分数渲染**。任何一侧自设 `setTimeout`/自走动画时长都是 bug。
+- **迁移清单**：盘点 main.js/combatCine/battleFeed 里现存独立计时器（核弹 T- 倒计时、主炮 30s 冷却、CIWS 弹幕窗口、导弹分镜 elapsed）逐一改订阅制；`halley.destroyed` 提前触发时广播 `abort→impact` 强制剪切事件（沿用 2026-07-03 已做的 rising-edge 一次性闪光模式）。
+- **验收标准**：UI 指示器与 3D 相位边界在**同一 rAF tick**内翻转——两侧打点日志逐帧对比 0 帧差；这是可自动化断言的硬指标，不靠目测。
 
 ---
 
@@ -286,8 +325,15 @@
 
 - **对比矩阵**：4 厂商观察卡（美：Anthropic/OpenAI；中：智谱/阿里）——**每周更新**（产业格局以周为单位变化，日更是浪费）。每卡：当期版本与路线（开源权重 vs 闭源 API）、本周关键动态（带来源链接）、映射标的篮子。
 - **标的映射纪律**：定性关联标签（`direct` 直接受益 / `supplier` 上游供给 / `infra` 算力底座 / `competitor` 受压），**不给伪造的统计相关系数**；接 Twelve Data 历史真算 90 日价格相关性列为 stretch goal。
-- **后内存专题**：三主线（HBM 产能与定价权 / CXL 内存池化 / NAND KV-Cache 分层）+ Top 10 论点卡，每卡 `{ticker, moat, thesis, keyRisk, catalysts[], lastReviewed}`。报价复用现有报价管线；OTC ADR（SK Hynix/Samsung）报价源缺失时该卡降级为纯论点展示，不放假数据。
+- **后内存专题**：三主线（HBM 产能与定价权 / CXL 内存池化 / NAND KV-Cache 分层）+ Top 10 论点卡，每卡 `{ticker, moat, thesis, keyRisk, catalysts[], lastReviewed}`。报价复用现有报价管线；OTC ADR 报价源缺失时该卡降级为纯论点展示，不放假数据。
 - **数据文件** `public/sectors-data.json`：`{updated, version, modelWatch[], baskets[], postMemory[]}`，一次周跑同时产出三块。
+
+**2026-07-04 市场情势更新（V13 已执行；当日检索核实，来源见提交记录/聊天）**
+- **三大催化剂全部证实**：① 韩股半导体巨震——KOSPI 盘中一度暴跌约 10% 触发熔断，三星/SK 海力士单日跌幅一度达 9–15%；两者合计约占 KOSPI 半数权重，集中度风险 + 外资抛售 + 养老金再平衡；SK 海力士被报道放缓 HBM 扩产、转向常规 DRAM。② 美国 6 月非农 +5.7 万远逊预期 +11.5 万，前两月合计下修 7.4 万，参与率降至 61.5%（2021 年以来最低）——与 `signal-events.json` 首份档案同源。③ Meta 宣布「Meta Compute」出租过剩 AI 算力（2026 资本开支指引上调至约 $125–145B），Meta 单日 +6% 而 CoreWeave/Nebius 各约 -12%——改写算力供给格局，压的是 neocloud 租赁商。
+- **板块状态**：MU/SNDK/WDC 年内一度 +305%/+858%/+271% 后连续多日 -7%~-14% 深回调；SMH 单日 -5%（此前 Q2 +71%）；AVGO 高位回撤约 22%；NVDA 回踩关键支撑带；ALAB 估值仍在百倍量级；另有 MU/三星/海力士 DRAM 限产集体诉讼与 Warsh 鹰派立场压制估值。
+- **论点修正（对 Gemini 基线的直接覆写之二）**：从「追涨三主线龙头」改为**「回调后质量杠铃」**——47% 核心仓（MU/AVGO/NVDA：现金流与定价权在回调中未受损，回调主因是拥挤度与宏观而非论点破坏）+ 53% 卫星仓（三主线纯标的，涨幅透支者一律轻仓：ALAB/PSTG 各 6%）。三主线框架本身**仍然成立**——变的是入场价位与仓位纪律，不是论点。
+- **落位变更**：Top 10 权重快照**驻首页资产甲板**（`src/data/content.js` 的 `PICKS_ZH/EN`，V13 已换仓）；Sectors 专题（V10）承载深度论点卡与周度校验，两者共用 `postMemory[]` 数据。首页 PICKS 目前是编译期数据、变更走手动 commit；V12 评估外置 JSON 化以便定时任务直写。
+- **初始候选池调整**：剔除 SK Hynix/Samsung ADR（本轮震中 + OTC 报价不可靠，上轮已预警的双重问题一并解决）；纳入 NVDA（回调后的算力核心）与 WDC（AI 数据湖近线底座、回调周中相对强势）。最终十仓 = MU/AVGO/NVDA/MRVL/SNDK/WDC/TER/RMBS/ALAB/PSTG。
 
 ### 5c-3 Signal「Warsh 时代」重构（V6–V7）
 
