@@ -1,68 +1,68 @@
-# CLAUDE.md — Project Afflatus 工作守则
+# CLAUDE.md — Project Afflatus Working Notes
 
-> **会话结束协议**：每次会话收尾时，复盘本次的错误与修正过程、高价值技术决策、用户偏好，
-> 以「情境 → 指令 → 禁忌」格式增补本文件。宁缺毋滥：只收录会改变未来行为的条目，禁止空话套话。
-> 文档分工：`roadmap.md`（待办 + 规格）/ `technical.md`（操作手册）/ 本文件（跨会话经验，机器优先）。
-> 文件名保持大写 `CLAUDE.md`——这是工具链自动加载的约定名，不随 roadmap/technical 的小写惯例。
+> **End-of-session protocol**: at the end of every session, review this session's errors/fixes, high-value technical decisions, and user preferences,
+> and append to this file in an "Context → Instruction → Prohibition" format. Favor omission over noise: only record entries that will actually change future behavior, no filler.
+> Document division of labor: `roadmap.md` (todo + specs) / `technical.md` (operations manual) / this file (cross-session experience, machine-first).
+> Keep the filename uppercase `CLAUDE.md` — this is the toolchain's auto-load convention name, unlike the lowercase convention for roadmap/technical.
 
-## 项目硬事实（省去每次重新推导）
+## Project hard facts (skip re-deriving these every time)
 
-- 站点 feida.au；Vercel 部署，监听 GitHub `FeidaWang/Afflatus` 的 `main`，从源码构建——本地 `dist/` 与部署无关且已 gitignore。
-- 六个 Vite HTML 入口在项目根目录（index/arena/sectors/signal/games/novels），每页恰好一个 module 入口文件（`src/pages/*Entry.js`/`*Libs.js`）；`public/` 只放真静态资源与数据 JSON。
-- `src/scene/cameraDirector.js` 已被起降运镜占用——roadmap V14 的武器相机模块必须另起文件名。
-- 用户本机路径 `~/Documents/Codex/2026-05-26/<repo>`，文件夹可能改名为 `afflatus`；`scripts/` 内脚本的 `REPO` 变量硬编码该路径，改名必须同步。
-- games-data.json 等内部字段名仍叫 `opus*`——这是刻意保留的内部命名，永远不要"顺手统一"。
+- Site is feida.au; Vercel deployment, watches `main` on GitHub `FeidaWang/Afflatus`, builds from source — local `dist/` is irrelevant to deployment and already gitignored.
+- Six Vite HTML entries at the project root (index/arena/sectors/signal/games/novels), each page has exactly one module entry file (`src/pages/*Entry.js`/`*Libs.js`); `public/` only holds genuinely static assets and data JSON.
+- `src/scene/cameraDirector.js` is already taken by the takeoff/landing camera work — roadmap V14's weapon-camera module must use a different filename.
+- User's local path is `~/Documents/Codex/2026-05-26/<repo>`; the folder may get renamed to `afflatus`. The `REPO` variable in `scripts/` scripts hardcodes this path — a rename must be synced there too.
+- Internal field names like those in games-data.json are still called `opus*` — this is deliberately preserved internal naming, never "helpfully" unify it.
 
-## 构建与前端
+## Build & frontend
 
-- 新增共享脚本：只走「每页一个显式 import 链入口文件」，禁止同页多个独立 `<script type="module">`——Vite 8 会构建成功但让代码在部分页面产物里**静默消失**。构建后必须 grep `dist/` 抽查关键符号确实在产物里，绿色构建不等于正确产物。
-- grep `dist/` 时**不要假设产物文件名对应源文件名**：多页共享的库（nav.js/i18n.js/transition.js/page-turn.js）会被 Rollup 合并进某个共享 chunk，chunk 命名取决于打包顺序、不固定跟着某个源文件走（实测合并进了 `transition-*.js`）。验证新页接入 nav 时，grep 内容特征（如 SITE 数组里的新路径字符串），不要按文件名找。
-- `nav.js` 必须先于 `page-turn.js` 执行（后者在模块顶层同步读 `body.dataset.prev/next`）。
-- 元素被祖先 `clip-path` 或低 z-index 层叠上下文困住时：portal 到 `<body>` + `position:fixed` + JS 定位；只调大 z-index 永远无效。**portal 的代价是样式继承链断裂**——必须逐页用 CSS 变量显式还原字体/配色/hover/active，否则退回浏览器默认样式（紫色下划线衬线体事故）。
-- 全站文案改名：只改用户可见文案（HTML 文本、data-en/zh、模板字符串渲染内容），不动 JSON 字段/JS 属性/CSS class；每轮改完做大小写不敏感全库 re-grep——首轮必有遗漏，这是经验规律不是假设。
-- 视觉/CSS 改动在沙盒无法真实渲染验证：交付时明确区分「逻辑已验证 / 视觉未验证，待你本地确认」，不要声称视觉正确。本项目已两次由用户截图发现沙盒不可见的视觉 bug。
-- 已实测：沙盒装不了无头浏览器做视觉自证——`npm install puppeteer` 会因下载 Chromium 需要访问 `storage.googleapis.com`（不在网络白名单内）而失败，`EAI_AGAIN`。不要在类似任务上重新尝试这条路（省一轮无效等待），直接假设视觉验证只能交给用户本地做。对于纯几何/数值类模块（不碰 DOM/Canvas 的），改用「Node + mock `add()` 回调 + 真实 `THREE.Box3` 算包围盒」做比例断言（V15 `odinHull.js` 的做法）——这是重大 3D 视觉改动里唯一能在沙盒自证的部分，值得作为默认动作。
-- 高视觉风险改动（替换现有生产可见的核心视觉资产，如整艘战舰几何）比 V14 那种「新增可选镜头」风险更高，闸门要更保守：默认路径必须字节级不变，新内容一律走查询参数 opt-in（如 `?ship=odin`），不要因为用户说了「continue」就直接转正——「continue」通常只是「继续做下一项」的授权，不等于「跳过风险闸门直接上生产默认路径」的授权，这两者要分开判断。
-- **THREE.js 用 rotation+scale 组合做「压扁/拉伸」几何时的真实教训（V15 实测踩坑）**：`Object3D` 的 scale 在 rotation **之前**作用于局部坐标系（`matrix = T*R*S`），`rotation.x=PI/2` 会把局部 Y 轴映射到世界 Z 轴——意味着「压扁局部 Y」实际压缩的是旋转后的世界 Z（可能是长度轴而不是想压扁的厚度轴）。凭直觉写这类变换很容易「感觉应该对」但实际不对，且这类 bug 在只测「整体包围盒是否在合理范围」时测不出来（各分量凑巧还在粗粒度阈值内）。正确做法：改动前先在 Node 里对**这一个部件**单独跑 `new THREE.Box3().setFromObject(mesh)` 把三轴实际世界包围盒打印出来核对，而不是只信直觉或只测整艘船的总包围盒；写单测时也要针对新增部件本身的比例断言（长/高/宽比），不能只测总装的粗粒度范围。这类 bug 恰好是"沙盒不可见"最危险的一种——逻辑审查 + 构建通过 + 总包围盒测试全绿，仍然可能是用户截图里"完全不像参考图"的重灾区，唯一能提前抓到的方法就是对单个部件做实测包围盒断言。
-- **「像积木玩具」这类反馈往往是架构问题，不是数值调参能治好的**（V15 三次修复的教训）：用独立图元（box/cone）拼接船体，无论比例调多准，拼接缝隙永远读成"一堆方块"——真正的修法是换成连续 loft/挤出几何（站位+蒙皮），配件再挂载在连续壳体上。收到"没有细节/像玩具"这类反馈时，先判断是"数值比例错了"还是"架构本身撑不起这个观感"，别在错误的架构上反复调参数。
-- **手写 BufferGeometry 时三角形绕线方向不能凭直觉，要用 Node 实测**：法线朝内会导致 PBR 光照从内部照射的诡异效果。验证法：采样非轴向顶点，检查法线的径向点积（`(x*nx+y*ny)/r`）应为正；对于"封口"面（如船尾），检查平均法线朝向声明的朝外方向（如飞船尾部应 normal.z<0）。这两个检查都应该在写完手工 loft/挤出几何后立刻跑一遍，而不是等构建通过就当作正确。
-- **收到"越改越差"的反馈时，先检查是否上一轮"降噪/简化"矫枉过正**：为解决"太乱"砍掉的细节，在根本 bug 修好之后可能变成"太空"——根因变了，之前基于旧根因做的简化决策要重新评估，不能默认沿用。区分"结构性配件"（有意义的形状，该保留）和"随机散布细节"（真正的视觉噪音，可以按渲染风格调密度）是关键判断点。
+- New shared scripts: only go through "one explicit import-chain entry file per page," never multiple independent `<script type="module">` tags on the same page — Vite 8 will build successfully but silently drop the code from some pages' output. After building, always grep `dist/` to spot-check that key symbols actually made it into the output; a green build does not mean correct output.
+- When grepping `dist/`, **don't assume the output filename corresponds to the source filename**: libraries shared across multiple pages (nav.js/i18n.js/transition.js/page-turn.js) get merged by Rollup into some shared chunk, and the chunk naming depends on bundling order, not tied to any particular source file (in practice it ended up merged into `transition-*.js`). When verifying a new page is wired into nav, grep for a content fingerprint (e.g. the new path string in the SITE array), not by filename.
+- `nav.js` must execute before `page-turn.js` (the latter synchronously reads `body.dataset.prev/next` at module top level).
+- When an element is trapped by an ancestor's `clip-path` or a low z-index stacking context: portal it to `<body>` + `position:fixed` + JS positioning; just raising z-index never works. **The cost of a portal is a broken style-inheritance chain** — you must explicitly restore font/color/hover/active per page via CSS variables, or it falls back to default browser styling (the "purple underlined serif font" incident).
+- Site-wide copy renames: only change user-visible text (HTML text nodes, data-en/zh, template-string rendered content), never touch JSON field names/JS properties/CSS classes; after each pass, do a case-insensitive full-repo re-grep — the first pass always misses something, this is an empirical regularity, not an assumption.
+- Visual/CSS changes cannot be genuinely rendering-verified in the sandbox: when delivering, clearly distinguish "logic verified / visuals unverified, pending your local check" — never claim visual correctness. This project has already had the user's screenshots catch sandbox-invisible visual bugs twice.
+- Confirmed by testing: the sandbox cannot install a headless browser for visual self-verification — `npm install puppeteer` fails downloading Chromium because it needs `storage.googleapis.com` (not on the network allowlist), `EAI_AGAIN`. Don't retry this path on similar tasks (save a wasted round) — just assume visual verification can only be done by the user locally. For purely geometric/numeric modules (that don't touch DOM/Canvas), use "Node + a mock `add()` callback + a real `THREE.Box3` bounding-box computation" for proportion assertions (V15 `odinHull.js`'s approach) — this is the one part of a major 3D visual change that the sandbox CAN self-verify, and it's worth making a default move.
+- High-visual-risk changes (replacing a core visual asset that's currently visible in production, like the entire capital-ship geometry) carry higher risk than V14's kind of "add an optional camera" change, so the gate needs to be more conservative: the default path must stay byte-identical, and new content always goes behind a query-parameter opt-in (e.g. `?ship=odin`) — don't promote it to the default production path just because the user said "continue." "Continue" is usually just authorization to "move on to the next item," not authorization to "skip the risk gate and go straight to the production default path" — these two need to be judged separately.
+- **Real-world lesson on using THREE.js rotation+scale combinations to "flatten/stretch" geometry (hit this bug for real in V15)**: an `Object3D`'s scale is applied to the local coordinate system **before** rotation (`matrix = T*R*S`); `rotation.x = PI/2` maps the local Y axis onto the world Z axis — meaning "flattening local Y" actually compresses the post-rotation world Z (possibly the length axis rather than the thickness axis you meant to flatten). Writing this kind of transform by intuition can easily "feel right" while actually being wrong, and this class of bug won't show up if you only test "is the overall bounding box in a reasonable range" (individual components can coincidentally still land within coarse-grained thresholds). The correct approach: before making the change, run `new THREE.Box3().setFromObject(mesh)` in Node on **that one part** in isolation and print the actual world-space bounding box on all three axes, rather than trusting intuition or only testing the whole ship's aggregate bounding box; unit tests should also assert proportions (length/height/width ratios) for the newly added part itself, not just the coarse range of the full assembly. This class of bug is exactly the most dangerous kind of "sandbox-invisible" bug — logic review + a passing build + a green aggregate-bounding-box test can still be exactly the kind of thing that shows up in the user's screenshot as "doesn't look like the reference at all"; the only way to catch it ahead of time is to assert a measured bounding box on the individual part.
+- **Feedback like "looks like toy building blocks" is usually an architecture problem, not something numeric tuning can fix** (the lesson from V15's three fix rounds): when a hull is assembled from independent primitives (box/cone), no matter how precisely you tune the proportions, the seams between them will always read as "a pile of blocks" — the real fix is to switch to a continuous loft/extrusion geometry (stations + skin), with accessory parts then mounted onto that continuous shell. When you get feedback like "no detail/looks like a toy," first determine whether it's "the numeric proportions are wrong" or "the architecture itself can't support this look" — don't keep re-tuning parameters on top of the wrong architecture.
+- **When hand-writing a BufferGeometry, triangle winding direction can't be judged by intuition — verify it in Node**: inward-facing normals cause a weird effect where PBR lighting appears to shine from inside the object. Verification method: sample non-axial vertices and check that the normal's outward radial dot product (`(x*nx+y*ny)/r`) is positive; for "capping" faces (like a ship's stern), check that the averaged normal points in the declared outward direction (e.g. a ship's stern should have normal.z < 0). Both of these checks should be run immediately after writing a hand-built loft/extrusion geometry, not just assumed correct once the build passes.
+- **When you get "it got worse" feedback, first check whether the previous round's "denoise/simplify" pass overcorrected**: detail that was cut to fix "too cluttered" can turn into "too empty" once the root bug is actually fixed — the root cause changed, so simplification decisions made against the old root cause need to be re-evaluated, not carried forward by default. Distinguishing "structural accessory parts" (meaningful shapes, worth keeping) from "randomly scattered detail" (genuine visual noise, whose density can be tuned per render style) is the key judgment call here.
 
-## Git 与沙盒环境
+## Git & sandbox environment
 
-- 沙盒对 `.git` 锁文件 rm 会 EPERM：用 `mv` 挪走 `index.lock`/`HEAD.lock`；每次 git 写操作后可能再生成，**下一次 git 命令前先清锁**。
-- 沙盒只 commit 不 push；收尾报告 `git log origin/main..HEAD --oneline` 的未推送清单并提醒用户本地 `git pull --rebase origin main && git push origin main`。注意：用户 cron 的简报推送成功时会连带推走全部本地提交——本地 main 上不要留半成品 commit 过夜。
-- macOS 大小写不敏感文件系统：改文件名大小写必须 `git mv`，禁止 Finder 改名。
-- `git add` 被 .gitignore 覆盖的路径是静默无效操作。数据推送脚本的正确序列是「commit 先行 → `git pull --rebase --autostash` → push」；禁用「stash --keep-index → rebase」（rebase 拒绝脏暂存区，永远失败）。
-- `package-lock.json` 有两处 version 字段（顶层 + `packages[""]`），改版本号两处都要改。
-- bash 挂载路径每轮会话都变（`/sessions/<随机名>/mnt/...`）：先探测再 cd；Read/Write/Edit 一律用 macOS 原生路径。
+- Removing `.git` lock files with `rm` gets EPERM in the sandbox: use `mv` to relocate `index.lock`/`HEAD.lock`; they may regenerate after every git write operation, so **clear locks again before the next git command**.
+- The sandbox only commits, never pushes; at wrap-up, report the list of unpushed commits via `git log origin/main..HEAD --oneline` and remind the user to run `git pull --rebase origin main && git push origin main` locally. Note: when the user's cron-driven briefing push succeeds, it will also push along every local commit — don't leave half-finished commits sitting on local main overnight.
+- macOS's case-insensitive filesystem: renaming a file's case must use `git mv`, never rename via Finder.
+- A `git add` on a path covered by .gitignore is a silent no-op. The correct sequence for data-push scripts is "commit first → `git pull --rebase --autostash` → push"; never use "stash --keep-index → rebase" (rebase refuses to run with a dirty staging area, always fails).
+- `package-lock.json` has two version fields (top level + `packages[""]`) — changing the version number requires updating both.
+- The bash mount path changes every session (`/sessions/<random-name>/mnt/...`): probe it before `cd`-ing; Read/Write/Edit should always use native macOS paths.
 
-## 验证纪律
+## Verification discipline
 
-- 判断自动化管线是否健康，用**运行时证据**（日志尾部、`git log --grep`），不能只读代码——「从未生效但恰好没炸」类 bug（rebase 每天报错三年没人看）只有日志能暴露。
-- 时效性事实（赛程、人事任命、行情、产品版本）一律先 WebSearch 核实再写入计划或文案，并在文档里落「检索核实于 <日期>」；排期决策（硬截止）必须建立在核实过的日期上。
-- WebSearch 的自然语言摘要会在时间线含糊时**编造比分/结果**（实测发生过一次「BLG 3-0 胜 T1」的纯捏造，与结构化数据源矛盾）：凡是要写进数据 JSON 的赛果，优先信任结构化数据源（如 escorenews 的比赛页 JSON、gol.gg 的对局页）而不是搜索引擎的摘要转述，且至少交叉验证两个独立来源再落盘。
-- **调度器实际架构是 Cowork scheduled-tasks，不是文档曾规划的 launchd**（2026-07-04 用 `list_scheduled_tasks` 实测核实）：不只是短生命周期任务，`arena-news`/`games-worldcup`/`leagues-msi` 全部走这条路，launchd + 本地 API key 脚本从未真正建过一个。默认新定时任务也走 Cowork scheduled-tasks，不要重新提议 launchd 方案；仍要向用户说明限制是「App 处于打开状态才触发」（关闭时错过、下次启动补跑），与系统级唤醒不同。
-- 逻辑改动在沙盒用 Node + 手写 mock DOM 重放真实代码路径验证（jsdom 装不上）；构建后 `vite preview` + curl 全入口 200 冒烟。
-- 涉及账本/资金状态的代码必须带 vitest 单测才算完成——账本静默算错是本项目唯一不可原谅的 bug 类别；单测要覆盖跨日/同日多次运行、熔断、止损、赛季重置这类状态机边界，不能只测单笔订单校验。
-- **用户在聊天里直接贴 API key / 密钥要我用，一律不接**（2026-07-04 实测发生过一次）：无论用户多明确地说"用这个"，密钥类凭证禁止被我输入到任何文件/脚本/配置里，这是硬规则不是可协商的偏好——直接说明这条规则，并指出如果密钥是要配置到 Vercel 环境变量或 `~/.config/afflatus/env`，需要用户自己去对应位置填，同时看看当前需求是否其实已有现成方案不需要新 key（这次的例子：`/api/quote` 代理已经在跑，根本不需要新 Finnhub key）。
+- To judge whether an automation pipeline is healthy, use **runtime evidence** (tail of logs, `git log --grep`) — reading the code alone isn't enough. Bugs of the "never actually worked but happened to never blow up" class (the rebase that logged an error every day for three years with nobody noticing) can only be exposed by logs.
+- Time-sensitive facts (event schedules, personnel appointments, market prices, product versions) must always be WebSearch-verified before being written into a plan or copy, with "verified via search on <date>" noted in the doc; scheduling decisions (hard deadlines) must be built on verified dates.
+- WebSearch's natural-language summaries will **fabricate scores/results** when the timeline is ambiguous (this happened for real once — a pure fabrication of "BLG beat T1 3-0" that contradicted structured data sources): for any match result being written into a data JSON, prefer structured data sources (like escorenews's match-page JSON, or gol.gg's game pages) over a search engine's summarized paraphrase, and cross-verify against at least two independent sources before committing it to disk.
+- **The scheduler's actual architecture is Cowork scheduled-tasks, not the launchd plan the docs once described** (confirmed for real via `list_scheduled_tasks` on 2026-07-04): it's not just short-lived tasks — `arena-news`/`games-worldcup`/`leagues-msi` all go through this path; launchd + a local API-key script was never actually built, not even once. New scheduled tasks should also default to Cowork scheduled-tasks — don't re-propose the launchd approach. Still need to tell the user the limitation is "only fires while the App is open" (a missed run while closed catches up on next launch), unlike a system-level wake.
+- Logic changes are verified in the sandbox via Node + a hand-written mock DOM replaying the real code path (jsdom won't install); after building, smoke-test with `vite preview` + curl 200 across every entry.
+- Any code touching the ledger/funds state isn't done unless it ships with vitest unit tests — a silently miscalculated ledger is this project's one unforgivable bug class; the tests need to cover state-machine edge cases like same-day multiple runs, cross-day runs, circuit breakers, stop-losses, and season resets, not just single-order validation.
+- **If the user pastes an API key/secret directly in chat and asks me to use it, decline every time** (this happened for real on 2026-07-04): no matter how explicitly the user says "use this one," credential-type secrets are never allowed to be entered into any file/script/config by me — this is a hard rule, not a negotiable preference. State the rule directly, and point out that if the key needs to go into a Vercel environment variable or `~/.config/afflatus/env`, the user needs to fill it in themselves at the relevant location — and also check whether the current need actually already has an existing solution that doesn't require a new key (this session's example: the `/api/quote` proxy was already running, so no new Finnhub key was needed at all).
 
-## 设计与架构决策原则
+## Design & architecture decision principles
 
-- LLM 提案、确定性代码收单：风控红线、订单校验、概率归一等硬约束全部在代码层强制，提示词里写只是为了减少无效提案，**永远不依赖模型自觉**。
-- 定时任务的模型调用零会话记忆：状态外置到数据 JSON（唯一事实源），固定 system prompt + 变动 run payload 拆分吃 prompt caching——上下文膨胀要靠架构消灭，不靠省着用。
-- 双系统同步的正确解法是「只保留一个时钟」（权威事件时间线 + 双端相位渲染），不是对齐两套计时器。
-- 用户否决某方案时，先拆分「被否决的部分」和「可复用的资产」再动手——俯视视角被否 ≠ topdownCombat 场景资产报废，这一区分省了一周级工作量。
-- 排序铁律：时效硬截止 > 依赖顺序 > 价值密度。季节性内容（赛事页）晚一周上线等于白做，压倒一切排 P0。
-- 新功能先克隆现有同类页面快速上线（leagues 克隆 games），抽象统一放进后续专项任务（V12）——先 ship 后重构是本项目的既定方法论。
-- 评估类指标要诚实：样本不足时禁用年化（<30 交易日只看累计/回撤/胜率）；预测必须概率自洽（Σp=1）且公开记分含错时；收益必须带基准（SPY/SMH）。
+- LLM proposes, deterministic code settles: every hard constraint — risk-control red lines, order validation, probability normalization — is enforced at the code layer; writing it into the prompt is only to reduce the rate of useless proposals, **never rely on the model's own self-discipline**.
+- Scheduled tasks' model calls have zero session memory: state is externalized to data JSON (the single source of truth), with a fixed system prompt + a variable run payload split to take advantage of prompt caching — context bloat should be eliminated by architecture, not managed by being frugal.
+- The correct solution for keeping two systems in sync is "keep exactly one clock" (an authoritative event timeline + phase-rendering on both ends), not trying to align two separate timers.
+- When the user vetoes a proposal, first split "the part that was vetoed" from "the reusable assets" before doing anything — the top-down camera angle being vetoed did NOT mean the topdownCombat scene assets were wasted; this distinction saved a week-scale chunk of work.
+- The ironclad ordering rule: hard time-sensitive deadlines > dependency order > value density. Seasonal content (event pages) shipping a week late is equivalent to not shipping it at all — that overrides everything and goes to P0.
+- Ship new features by first cloning an existing page of the same kind (leagues cloned games), and push the unifying abstraction into a later dedicated task (V12) — "ship first, refactor later" is this project's established methodology.
+- Be honest about evaluation metrics: disable annualized figures when the sample is too small (fewer than 30 trading days — show only cumulative return/drawdown/hit rate); predictions must be probability-self-consistent (Σp=1) and any public scorecard must include the misses; returns must always be shown against a benchmark (SPY/SMH).
 
-## 用户偏好与协作方式
+## User preferences & collaboration style
 
-- 中文交流，回复精炼直接、少列表少加粗；站点内容中英成对（`data-en`/`data-zh`）。
-- 用户要批判性评审而非附和：发现方案结构性问题直接改并给理由（伪高频→双窗口、年化口径、场景复用均被采纳）；有明确授权（"给出你的最优解"）时直接决策，标注可回退点，不反问。
-- 大改动前用 AskUserQuestion 澄清真歧义（Labs 形态、改名范围曾问过且答案已沉淀进文档——已答过的不要再问）。
-- 任务用编号驱动（"做 V0"）：roadmap 里的任务编号一旦发出就保持稳定，撤销用删除线注明去向，不重排。
-- 美术红线：硬科幻/太空军事拟真（Star Citizen 系），严禁卡通/街机/过度游戏化；每页保留独立字体与配色身份，共享的只有基础系统。
-- 金融/竞猜内容永远带「模拟盘 / 非投资建议 / 非博彩建议」标注；具体事实性内容（模型参数、赛果、财务数据）不进文档，运行时用注入数据核实。
-- 文档洁癖：已完成项归档为 Release Notes 移出 roadmap，保持文档只含待办——这是用户主动要求的常设做法。
+- Communicate in Chinese, keep replies concise and direct, minimal lists/bold; site content is always bilingual in pairs (`data-en`/`data-zh`).
+- The user wants critical review, not agreement: when a proposal has a structural problem, fix it directly and explain why (pseudo-high-frequency → dual windows, annualization convention, scene-asset reuse were all adopted this way); when given explicit authorization ("give me your best solution"), decide directly, flag the reversible points, and don't ask clarifying questions back.
+- Use AskUserQuestion to clarify genuine ambiguity before a big change (Labs page format, rename scope — these have already been asked and the answers are already baked into the docs; don't re-ask something already answered).
+- Tasks are driven by number ("do V0"): once a task number is issued in the roadmap, it stays stable; if cancelled, mark it with strikethrough noting where it went, never renumber.
+- Art direction red line: hard sci-fi / military space realism (Star Citizen-style), strictly no cartoonish/arcade/over-gamified look; every page keeps its own independent font and color identity, only the base system is shared.
+- Financial/prediction content always carries a "paper-trading simulation / not investment advice / not betting advice" label; concrete factual content (model parameters, match results, financial figures) never goes into the docs — it gets verified at runtime with injected data.
+- Documentation hygiene: completed items are archived out of the roadmap as Release Notes, keeping the roadmap containing only pending work — this is a standing practice the user explicitly asked for.
