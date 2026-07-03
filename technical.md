@@ -18,6 +18,17 @@
 - **战斗视图**：默认 HUD 是 HMD v3（`src/ui/combatHmdV3.js` 的 `drawCleanCombatHmd`，贯穿起飞/降落/巡航/战斗）；SC 风格全息面板（`src/scene/combatHudSC.js`）与俯视战场（`src/scene/topdownCombat.js`）都降级为可选皮肤，分别用 `?combatview=sc` / `?combatview=topdown` 访问。**v1.5b 规划**：主战斗视图要换成事件驱动的相机导演系统（见 ROADMAP §4 V14）——**注意命名冲突**：`src/scene/cameraDirector.js` 这个文件名**已经被占用**（现有内容是起飞/降落的外部运镜，`drawExternalLaunch`/`drawExternalLanding`），V14 要做的武器事件相机状态机需要另起文件名（如 `weaponCameraDirector.js`），不要直接覆盖现有文件。
 - **数据**：`public/arena-news.json`（每日定时任务生成）、`public/games-data.json`（手动更新）、`public/signal-events.json`（宏观事件档案，见第 3 节）、`public/novels-data.json`（章节内容）。v1.5 规划新增但**尚未创建**：`arena-ledger.json`（Autopilot 账本）、`leagues-data.json`（MSI 竞猜）、`sectors-data.json`（对比矩阵 + 后内存专题）——详见 ROADMAP §7。
 
+### 新增页面 checklist（V0 Leagues 将首次走完整流程）
+
+1. `newpage.html` 放**项目根目录**（不是 `public/`）。
+2. `vite.config.js` → `build.rollupOptions.input` 加一行。
+3. 建 `src/pages/newpageEntry.js` 入口：按需 `import` `../lib/i18n.js`、`../lib/nav.js`、`../lib/audio.js`、`../lib/transition.js`、`../lib/page-turn.js`（顺序照抄现有 entry，**nav 必须在 page-turn 之前**）；HTML 只挂这一个 `<script type="module">`。
+4. `src/lib/nav.js` → `SITE` 数组插入条目（插入位置 = 翻页循环顺序；季节页打 `group:'labs'`）。
+5. `<body class="newpage-page" data-prev data-next>`（值会被 nav.js 覆写，占位即可）+ `<nav class="nav" data-afflatus-nav>` + 翻页箭头结构照抄 games.html。
+6. `public/page-turn.css`：加 `.newpage-page .page-turn-controls` 箭头配色变量 + `.newpage-page .nav-labs__menu`/`a` 的 `--labs-*` 主题覆盖（下拉面板不继承页面样式，不配就是默认黑玻璃）。
+7. 文案全部 `data-en`/`data-zh` 成对 + 页脚免责声明。
+8. `npm run build` 后抽查 `dist/`：新页 HTML 200、其引用的 chunk 里确实含 nav 代码（防上面那个 chunking 坑）。
+
 ### 首页渲染分层 / Home render layers
 - `#starfield`（背景星空，fixed z0，OffscreenCanvas + Worker 渲染，特性检测自动回退主线程）→ `#blackhole-gl`（黑洞 WebGL，z1）→ `#event-layer`（2D 战斗/彗星，z2）。
 - `.stardrive` 段（年化收益）自带一块 `#alphardForge` canvas，以顶/底渐隐 + `--bg` 调色融入页面背景；滚动进度写入 CSS 变量 `--forge`，驱动星体放大、台词逐字、数字点亮。
@@ -52,6 +63,7 @@ roadmap.md technical.md  仅有的两份文档
   - **⚠️ 务必轮换旧 key**：旧 key 曾明文存在于前端与 git 历史，已泄露——去 Finnhub / Twelve Data 后台**重置生成新 key**，新 key 只填进 Vercel 环境变量。
   - 本地 `npm run dev`（纯 Vite）不跑 `/api`，实时行情会 404 并**自动降级到简报快照**（`arena-news.json` 的 `prices`），属预期；线上 Vercel 才有实时。
 - **定时任务**：每个工作日美东开盘前约 1 小时（墨尔本约 22:30）跑一次，搜索当日 AI 相关新闻 + 我的个股预测，写入 `public/arena-news.json`（中英双语 + `aiPredictions`）。
+- **定时脚本的 key 管理（历史教训，红线）**：`scripts/` 目录已进 git 跟踪——**任何脚本不允许出现明文 API key**。需要 key 的脚本统一 `source ~/.config/afflatus/env`（仓库外）；能走线上代理（`/api/quote` 等）的一律走代理。旧 key 泄露过一次（见下），同样的错误不能犯第二次。
 
 ### 导航闭环 / Nav cycle
 `Home → Arena → Sectors → Signal → Games → Novels → Home`（Games/Novels 在顶部导航里收在 **Labs** 下拉，翻页顺序不受影响，仍按此顺序循环）。加新页只改 `src/lib/nav.js` 的 `SITE` 数组一处——prev/next、顶部链接/下拉分组会自动同步，不用像以前那样手改多个文件。未来 `leagues.html` 上线后会插在 games 与 novels 之间，同样打 `group:'labs'`。
@@ -76,8 +88,10 @@ roadmap.md technical.md  仅有的两份文档
 
 > 完整模块规格见 **roadmap.md §7**；这里只记工程约定。
 
-- **推送模式**：`scripts/push-arena-news.sh` 是现成的参考实现——cron 触发 → 写目标 JSON → `git add` 该文件 → 暂存其它未提交改动（`git stash --keep-index`）→ `git fetch` + `git rebase origin/main` → 提交并推送 → 恢复暂存。规划中的 `arena-ledger.json`/`leagues-data.json`/`sectors-data.json` 定时任务都应复用同一模式（V12 计划把脚本模板化成通用 `push-data.sh <file> <msg>`，目前还是各写各的独立脚本）。
-- **所有数据 JSON 顶层统一带 `{updated, version}`**，前端据此显示"数据龄"徽标。
+- **推送模式**：`scripts/push-arena-news.sh` 是现成的参考实现（**2026-07-04 修复版**）——触发 → 写目标 JSON → `git add` → **先 commit** → `git pull --rebase --autostash origin main` → `git push`。⚠️ 旧版的「`stash --keep-index` → rebase」组合**从未生效**（rebase 拒绝在暂存区有内容时运行，日志每次都报 `cannot rebase`，只因本地恰好从未落后于远端才没出事）；且旧版 `git add dist/arena-news.json` 被 `.gitignore` 的 `dist` 规则挡掉、一直是无效操作（`cp` 到 dist/ 保留，仅为本地 preview 一致性）。规划中的 `arena-ledger.json`/`leagues-data.json`/`sectors-data.json` 定时任务照修复版模式写（V12 计划模板化成通用 `push-data.sh <file> <msg>`）。
+- **调度器用 launchd 而非 crontab**（macOS）：cron 在合盖睡眠期间错过的任务直接跳过；launchd 的 `StartCalendarInterval` 在唤醒后会补跑一次。操作：`~/Library/LaunchAgents/au.feida.<task>.plist`（`ProgramArguments` 指向脚本、`StartCalendarInterval` 定时间）→ `launchctl load ~/Library/LaunchAgents/au.feida.<task>.plist`；改 plist 后先 `unload` 再 `load`。现有 crontab 条目迁移完就清掉，别双跑。
+- **日志不进版本库**：`scripts/*.log` 已加入 `.gitignore`；脚本本体（无密钥）进 git 跟踪，自动化本身也要有版本历史。
+- **所有数据 JSON 顶层统一带 `{updated, version}`**，前端据此显示"数据龄"徽标（V12 起扩展为统一溯源徽章，见 roadmap.md）。
 - **提示词库** `prompts/`：README 定五条硬规则（system/run 拆分吃 prompt caching、强制 JSON schema 输出、模型零会话记忆/状态外置、只认 payload 注入数据禁止凭训练记忆报事实、复盘限长）；`arena-autopilot.md`/`signal-warsh.md`/`sectors-watch.md`/`postmemory-top10.md`/`leagues-msi.md` 是五个模块各自的正式提示词文本（含 System Prompt 英文正本 + run payload 结构 + 中文对照）。新增任何定时任务前先读对应文件，不要另起炉灶。
 
 ---
@@ -90,6 +104,7 @@ npm run dev        # http://127.0.0.1:5173  （逐页检查）
 npm run build      # 产出 dist/（六个入口各自压缩打包，public/ 静态资源原样拷贝进去）
 npm run preview    # 预览打包结果
 ```
+> **测试（V3 起）**：Arena 规则引擎落地时引入 vitest（Vite 原生零配置），`npm run test` 跑规则引擎纯函数单测（订单校验/撮合/指标计算）。账本类代码不写测试不许上线。
 
 ---
 
