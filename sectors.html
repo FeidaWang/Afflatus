@@ -154,25 +154,12 @@ h1 span{color:var(--acid)}
 
   <footer class="foot" data-i18n-html data-en="Desk view only · no tips · no promotions · update this page by editing <b>public/sectors.html</b>" data-zh="仅为台面观点 · 不荐股 · 无推广 · 修改本页请编辑 <b>public/sectors.html</b>">Desk view only · no tips · no promotions · update this page by editing <b>public/sectors.html</b></footer>
 </main>
-<script>
-/* count-up on conviction-vector weights (re-runs gently on first paint) */
-(function () {
-  function run() {
-    document.querySelectorAll('.countup').forEach(function (el) {
-      var m = (el.textContent || '').match(/(-?\d+(?:\.\d+)?)/); if (!m) return;
-      var target = parseFloat(m[1]), suffix = el.textContent.replace(m[1], '').trim(), t0 = null, dur = 900;
-      function step(ts) { t0 = t0 || ts; var p = Math.min(1, (ts - t0) / dur); var v = (target * (1 - Math.pow(1 - p, 3))); el.textContent = (target % 1 === 0 ? Math.round(v) : v.toFixed(1)) + suffix; if (p < 1) requestAnimationFrame(step); }
-      requestAnimationFrame(step);
-    });
-  }
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (document.readyState !== 'loading') run(); else document.addEventListener('DOMContentLoaded', run);
-})();
+<script type="module">
+/* count-up on conviction-vector weights (re-runs gently on first paint) —
+   shared with the home page's stat counters via src/ui/viz.js (ROADMAP §0b A3) */
+import { runCountUpOnLoad } from '/src/ui/viz.js';
+runCountUpOnLoad();
 </script>
-<script src="/i18n.js" defer></script>
-<script src="/lib/nav.js" defer></script>
-<script src="/lib/audio.js" defer></script>
-<script src="/transition.js" defer></script>
-<script src="/page-turn.js" defer></script>
+<script type="module" src="/src/pages/sectorsLibs.js"></script>
 </body>
 </html>

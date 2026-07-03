@@ -1,5 +1,5 @@
 import { PERIOD_META, genCandles, movingAverage } from '../data/marketSeries.js';
-import { clamp, easeOut } from '../utils/math.js';
+import { animateCountUp } from './viz.js';
 
 export function initMarketDeck({
   getLang = () => 'en',
@@ -217,13 +217,11 @@ export function initMarketDeck({
     const target = parseFloat(el.dataset.counter);
     const suffix = el.dataset.suffix || '';
     const fixed = el.dataset.fixed !== undefined ? parseInt(el.dataset.fixed, 10) : null;
-    const start = performance.now();
-    (function tick(now) {
-      const t = clamp((now - start) / 1800, 0, 1);
-      const v = target * easeOut(t);
-      el.textContent = (fixed !== null ? v.toFixed(fixed) : v.toFixed(1)) + suffix;
-      if (t < 1) requestAnimationFrame(tick);
-    }(performance.now()));
+    animateCountUp(el, target, {
+      suffix,
+      duration: 1800,
+      format: v => (fixed !== null ? v.toFixed(fixed) : v.toFixed(1)),
+    });
   }
 
   function animatePick(el) {
@@ -234,12 +232,10 @@ export function initMarketDeck({
     setTimeout(() => {
       bar.style.width = `${(target / 15) * 100}%`;
     }, 100);
-    const start = performance.now();
-    (function tick(now) {
-      const t = clamp((now - start) / 2600, 0, 1);
-      num.childNodes[0].nodeValue = (target * easeOut(t)).toFixed(1);
-      if (t < 1) requestAnimationFrame(tick);
-    }(performance.now()));
+    animateCountUp(null, target, {
+      duration: 2600,
+      onFrame: v => { num.childNodes[0].nodeValue = v.toFixed(1); },
+    });
   }
 
   const observer = new IntersectionObserver(entries => {
