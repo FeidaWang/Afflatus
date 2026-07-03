@@ -1281,6 +1281,26 @@ nav{
 .nav-links a:hover{color:#dff9ff;text-shadow:0 0 14px rgba(116,240,255,.48)}
 .nav-links a.active{color:#8cf1ff;text-shadow:0 0 10px rgba(116,240,255,.6);position:relative}
 .nav-links a.active::after{content:'';position:absolute;left:8%;right:8%;bottom:1px;height:1px;background:rgba(140,241,255,.72)}
+/* "Labs" nav dropdown (Games/Novels today; future seasonal/experimental
+   pages join here — see src/lib/nav.js's SITE `group:'labs'` tag). The
+   trigger is a real .nav-links a element so the rules above already style
+   it for free; only the dropdown panel itself needs new CSS. */
+.nav-labs{position:relative;display:inline-flex}
+.nav-labs__trigger::after{content:'▾';display:inline-block;margin-left:5px;font-size:.85em;transform:translateY(1px)}
+.nav-labs__menu{
+  position:absolute;top:calc(100% + 10px);right:0;z-index:50;
+  display:flex;flex-direction:column;gap:8px;min-width:132px;padding:10px;
+  background:rgba(4,8,14,.94);border:1px solid rgba(140,241,255,.22);border-radius:2px;
+  box-shadow:0 14px 30px rgba(0,0,0,.55);
+  opacity:0;visibility:hidden;transform:translateY(-4px);
+  transition:opacity .18s ease,transform .18s ease,visibility .18s;
+}
+.nav-labs__menu a{white-space:nowrap}
+.nav-labs:hover .nav-labs__menu,
+.nav-labs.open .nav-labs__menu,
+.nav-labs:focus-within .nav-labs__menu{
+  opacity:1;visibility:visible;transform:translateY(0);
+}
 .top-telemetry{
   grid-template-columns:repeat(4,max-content);
   gap:4px 13px;
