@@ -27,31 +27,104 @@ html.vt-suppress::view-transition-new(root){
 }
 
 /* "Labs" nav dropdown (Games/Novels today; future seasonal/experimental
-   pages join here — see src/lib/nav.js's SITE `group:'labs'` tag). Purely
-   structural/positioning — colors are NOT set here on purpose: the trigger
-   is a real `.nav a` element, so each page's own existing `.nav a` /
-   `.nav a:hover` / `.nav a.active` rules already style it for free. The
-   dropdown panel itself uses a neutral dark-glass look that reads fine
-   against every page's theme without per-page overrides.
-   The panel (.nav-labs__menu) is portaled to a direct child of <body> by
+   pages join here — see src/lib/nav.js's SITE `group:'labs'` tag). The
+   trigger stays a real, in-place `.nav a` element, so each page's own
+   `.nav a` / `.nav a:hover` / `.nav a.active` rules already style it for
+   free. The PANEL, however, is portaled to a direct child of <body> by
    nav.js and positioned via JS (top/right set inline) rather than nested
    under .nav-labs — this page's header (.top) applies a decorative
-   clip-path that would otherwise slice the panel away. Open state is
-   driven entirely by the .open class (JS), not :hover/:focus-within,
-   since the panel is no longer a DOM descendant of the trigger. */
+   clip-path that would otherwise slice the panel away, and being outside
+   the header also means it never gets capped by the header's own z-index.
+   Because the panel is no longer a DOM descendant of `.nav`, it can't
+   inherit that page's `.nav a` look for free — every property below is
+   driven by `--labs-*` custom properties, defaulted here to a neutral
+   dark-glass look and overridden per page (by body class) further down
+   to exactly match each page's real nav link styling: font, tracking,
+   ink, border, hover and active treatment. Open state is driven entirely
+   by the .open class (JS), not :hover/:focus-within, since the panel is
+   no longer a DOM descendant of the trigger. */
 .nav-labs{position:relative;display:inline-flex}
 .nav-labs__trigger::after{content:'▾';display:inline-block;margin-left:6px;font-size:.85em;transform:translateY(1px)}
 .nav-labs__menu{
   position:fixed;z-index:99000;
-  display:flex;flex-direction:column;gap:6px;min-width:132px;padding:8px;
-  background:rgba(4,6,10,.94);border:1px solid rgba(255,255,255,.14);border-radius:2px;
+  display:flex;flex-direction:column;gap:6px;min-width:140px;padding:8px;
+  background:var(--labs-bg,rgba(4,6,10,.94));
+  border:1px solid var(--labs-border,rgba(255,255,255,.14));
+  border-radius:var(--labs-radius,0px);
   box-shadow:0 12px 28px rgba(0,0,0,.5);
   opacity:0;visibility:hidden;transform:translateY(-4px);pointer-events:none;
   transition:opacity .15s ease,transform .15s ease,visibility .15s;
 }
-.nav-labs__menu a{white-space:nowrap;text-align:left}
+.nav-labs__menu a{
+  display:block;white-space:nowrap;text-align:left;text-decoration:none;
+  font-family:var(--labs-font,'JetBrains Mono',monospace);
+  font-weight:var(--labs-weight,600);
+  font-size:var(--labs-size,11px);
+  line-height:1;
+  letter-spacing:var(--labs-tracking,.14em);
+  text-transform:uppercase;
+  color:var(--labs-ink,#cfd6e6);
+  background:var(--labs-a-bg,transparent);
+  border:1px solid var(--labs-line,rgba(255,255,255,.16));
+  border-radius:var(--labs-radius,0px);
+  padding:9px 10px;
+  transition:border-color .15s ease,color .15s ease,background-color .15s ease;
+}
+.nav-labs__menu a:hover{
+  background:var(--labs-hover-bg,transparent);
+  border-color:var(--labs-hover-border,var(--labs-line,rgba(255,255,255,.16)));
+  color:var(--labs-hover-ink,var(--labs-ink,#cfd6e6));
+}
+.nav-labs__menu a.active{
+  background:var(--labs-active-bg,transparent);
+  border-color:var(--labs-active-border,var(--labs-active-bg,var(--labs-line,rgba(255,255,255,.16))));
+  color:var(--labs-active-ink,var(--labs-ink,#cfd6e6));
+}
 .nav-labs__menu.open{
   opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;
+}
+
+/* per-page palettes — each block mirrors that page's own `.nav a` /
+   `.nav a:hover` / `.nav a.active` rule above, so the portaled panel
+   reads as part of the same nav bar instead of a generic popup. */
+.signal-page .nav-labs__menu{--labs-bg:rgba(35,35,39,.97);--labs-border:rgba(255,255,255,.12)}
+.signal-page .nav-labs__menu a{
+  --labs-font:'Oswald',Impact,system-ui,sans-serif;--labs-tracking:.14em;
+  --labs-ink:#cfcdc7;--labs-line:rgba(255,255,255,.12);
+  --labs-hover-border:#f5c400;--labs-hover-ink:#f5c400;
+  --labs-active-bg:#f5c400;--labs-active-ink:#1a1a1c;
+}
+
+.games-page .nav-labs__menu{--labs-bg:rgba(14,12,28,.96);--labs-border:rgba(255,43,214,.32)}
+.games-page .nav-labs__menu a{
+  --labs-font:'Chakra Petch',system-ui,sans-serif;--labs-tracking:.12em;
+  --labs-ink:#00efff;--labs-line:rgba(0,239,255,.4);
+  --labs-hover-bg:#00efff;--labs-hover-ink:#04060d;
+  --labs-active-bg:#ff2bd6;--labs-active-border:#ff2bd6;--labs-active-ink:#0a0410;
+}
+
+.arena-page .nav-labs__menu{--labs-bg:rgba(10,14,26,.96);--labs-border:rgba(58,91,255,.40)}
+.arena-page .nav-labs__menu a{
+  --labs-font:'Rajdhani','Orbitron',sans-serif;--labs-weight:700;--labs-tracking:.18em;
+  --labs-ink:#27e7ff;--labs-line:rgba(58,91,255,.40);
+  --labs-hover-border:#27e7ff;--labs-hover-ink:#fff;
+  --labs-active-bg:#3dff9a;--labs-active-border:#3dff9a;--labs-active-ink:#04060d;
+}
+
+.sectors-page .nav-labs__menu{--labs-bg:rgba(12,17,24,.96);--labs-border:rgba(202,255,0,.30)}
+.sectors-page .nav-labs__menu a{
+  --labs-font:"KH Interference","PP Fraktion Mono","JetBrains Mono",monospace;--labs-weight:800;--labs-tracking:.18em;
+  --labs-ink:#00e7ff;--labs-line:rgba(0,231,255,.38);
+  --labs-hover-border:#caff00;--labs-hover-ink:#caff00;
+  --labs-active-bg:#caff00;--labs-active-border:#caff00;--labs-active-ink:#05070b;
+}
+
+.novels-page .nav-labs__menu{--labs-bg:rgba(40,31,23,.97);--labs-border:rgba(201,131,74,.32);--labs-radius:2px}
+.novels-page .nav-labs__menu a{
+  --labs-font:'JetBrains Mono',monospace;--labs-size:10.5px;--labs-tracking:.1em;--labs-radius:2px;
+  --labs-ink:#a89a83;--labs-line:rgba(236,226,207,.14);
+  --labs-hover-border:#4fd6c4;--labs-hover-ink:#4fd6c4;
+  --labs-active-bg:#c9834a;--labs-active-border:#c9834a;--labs-active-ink:#1a1410;
 }
 
 /* motion-sensitive visitors: kill page transitions & pulses */
