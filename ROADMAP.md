@@ -56,22 +56,24 @@
 
 ## 1. 站点结构与各页身份 / Pages & identities
 
-| Page | File | 身份 / Identity | 主题 |
-| --- | --- | --- | --- |
-| Home | `index.html` + `src/` | 深空舰长日志 (Three.js) | Orbitron / 钢蓝 HUD |
-| Arena | `public/arena.html` | Human vs AI 交易竞技场 | Marathon · 霓虹绿/青 |
-| Sectors | `public/sectors.html` | AI + 航天个股研判 | 酸性绿 + 故障艺术 |
-| Signal | `public/signal.html` | 美联储观察 = SCP O5 收容档案 | 机密文档 · 琥珀/绿 |
-| Games | `public/games.html` | 世界杯限时竞猜 vs Opus | 赛博朋克 · 品红/青 |
-| Novels | `public/novels.html` | 无限流·种田小说连载《万界种春》 | 复古未来主义 · 铜/青（纯中文，护眼阅读，含夜间/豆沙绿/米黄三种阅读模式、自动翻页、书签、章节速览） |
+> **v1.4（2026-07-03）站点结构变化**：顶部导航新增 **Labs** 下拉分组——Games 和 Novels 从顶层链接收进 Labs 下拉菜单（Home/Arena/Sectors/Signal 仍是顶层直链）。**这是往后的常设规则**：任何新增的季节性内容（例如某届赛事限时页）或实验性/非核心玩法页面，一律加进 Labs，不再往顶层导航加新项——顶层只保留长期、核心的身份页。技术上只需在 `src/lib/nav.js` 的 `SITE` 数组给新条目打上 `group:'labs'`，下拉菜单会自动收纳，翻页 prev/next 循环顺序也自动包含新页，不用改渲染逻辑。全站涉及 AI 对手/研判身份的文案已从「Opus 4.8」统一改为「Fable 5」（Arena/Games/Sectors 的 AI 对手与 Signal 的板块研判）；内部数据字段名/JS 属性/CSS class（如 `games-data.json` 的 `opus`/`opusScore`/`opusOrder`）保持不变，纯粹是显示文案层面的更新。
 
-**原则**：每页保留**独立的字体与美术身份**，但共享一套基础系统，避免重复造轮子。Novels 页已按此原则上线并从第一天起接入统一导航，验证了该架构决策可以随加页扩展。
+| Page | File | 身份 / Identity | 主题 | 导航位置 |
+| --- | --- | --- | --- | --- |
+| Home | `index.html` + `src/` | 深空舰长日志 (Three.js) | Orbitron / 钢蓝 HUD | 顶层 |
+| Arena | `arena.html` | Human vs AI 交易竞技场（AI 对手：Fable 5） | Marathon · 霓虹绿/青 | 顶层 |
+| Sectors | `sectors.html` | AI + 航天个股研判 | 酸性绿 + 故障艺术 | 顶层 |
+| Signal | `signal.html` | 美联储观察 = SCP O5 收容档案（板块研判：Fable 5） | 机密文档 · 琥珀/绿 | 顶层 |
+| Games | `games.html` | 世界杯限时竞猜 vs Fable 5 | 赛博朋克 · 品红/青 | **Labs** |
+| Novels | `novels.html` | 无限流·种田小说连载《万界种春》 | 复古未来主义 · 铜/青（纯中文，护眼阅读，含夜间/豆沙绿/米黄三种阅读模式、自动翻页、书签、章节速览） | **Labs** |
+
+**原则**：每页保留**独立的字体与美术身份**，但共享一套基础系统，避免重复造轮子。顶层导航只放长期核心页；季节性/实验性内容进 Labs（见上方 v1.4 说明）。
 
 **共享系统 / Shared systems**
-- `page-turn.css` — 翻页箭头 + 自托管字体 + 全局按钮点击反馈（每页用 body class 切换箭头配色）。
-- `transition.js` — 进出页动画 + 音效；按目标页选择类型（warp / cannon / takeoff / control / cyber）。
-- `i18n.js` — 全局中英切换；任何带 `data-en` / `data-zh` 的元素自动翻译；右上角 `.lang-toggle`；切换时派发 `afflatus-lang` 事件供动态页面（arena/games/signal）重渲染。
-- `src/lib/nav.js` — 唯一的 `SITE` 数组渲染导航 + 翻页 prev/next；五个非首页（arena/sectors/signal/games/novels）均已接入（2026-07-03 从 `public/lib/` 移到 `src/lib/`，见 §0b A1）。
+- `page-turn.css` — 翻页箭头 + 自托管字体 + 全局按钮点击反馈（每页用 body class 切换箭头配色）+ Labs 下拉菜单结构样式（2026-07-03）。
+- `src/lib/transition.js` — 进出页动画 + 音效；按目标页选择类型（warp / cannon / takeoff / control / cyber）。
+- `src/lib/i18n.js` — 全局中英切换；任何带 `data-en` / `data-zh` 的元素自动翻译；右上角 `.lang-toggle`；切换时派发 `afflatus-lang` 事件供动态页面（arena/games/signal）重渲染。
+- `src/lib/nav.js` — 唯一的 `SITE` 数组渲染导航 + 翻页 prev/next + Labs 下拉分组（2026-07-03 新增，`group:'labs'` 标记）；五个非首页（arena/sectors/signal/games/novels）均已接入（2026-07-03 从 `public/lib/` 移到 `src/lib/`，见 §0b A1）。
 - `src/lib/clock.js` / `src/lib/audio.js` — 倒计时格式化、Web Audio 环境音共享库（arena/games/signal/transition.js 复用）。
 - `src/ui/viz.js` — count-up 动画共享库（sectors.html/marketDeck.js 复用，见 §0b A3）。
 - 数据文件：`arena-news.json`（每日定时任务）、`games-data.json`（手动更新）、`signal-events.json`（宏观事件档案，见 §5b）、`novels-data.json`（章节内容）。
