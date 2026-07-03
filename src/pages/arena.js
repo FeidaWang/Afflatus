@@ -2,7 +2,7 @@
    HUMAN vs AI TRADING ARENA · TRAXUS//CVKM build — vanilla JS
    - Live quotes: Finnhub (frequent polling)
    - Real history (W/M/6M/Y/5Y): Twelve Data (on-demand, cached/day)
-   - AI opponent: Opus 4.8 pre-open calls from the daily briefing
+   - AI opponent: Fable 5 pre-open calls from the daily briefing
    - Per-symbol rounds, pre/regular/after-hours sessions
    - Bilingual (EN/中) briefing + toggle
    For entertainment only — NOT investment advice.
@@ -73,7 +73,7 @@
     const raw = 0.55 * momentum + 0.2 * reversion + 0.25 * Math.max(-1, Math.min(1, sentiment));
     return { direction: raw >= 0 ? 'UP' : 'DOWN', confidence: Number((0.5 + Math.min(0.45, Math.abs(raw) * 0.6)).toFixed(2)), reason: momentum >= 0 ? 'Upward momentum.' : 'Downward momentum.' };
   }
-  // AI opponent: prefer my (Opus) stored pre-open call, else the algo model.
+  // AI opponent: prefer my (Fable) stored pre-open call, else the algo model.
   function aiCall(sym) {
     const p = state.news.aiPredictions && state.news.aiPredictions[sym];
     if (p && (p.direction === 'UP' || p.direction === 'DOWN')) { const reason = (state.lang === 'zh' ? p.rationale_zh : p.rationale_en) || p.rationale_en || ''; return { direction: p.direction, confidence: typeof p.confidence === 'number' ? p.confidence : 0.6, reason, opus: true }; }
@@ -278,7 +278,7 @@
 
   function callBox(who, dir, conf, resolved, correct, opus) {
     const cls = resolved ? (correct ? 'win' : 'lose') : (dir === 'UP' ? 'u' : 'd'), arrow = dir === 'UP' ? '▲' : '▼';
-    return `<div class="call ${cls}"><div class="call-hd"><span class="who">${who}</span>${opus ? '<span class="opus">OPUS 4.8</span>' : ''}</div><div class="dir"><span class="ar">${arrow}</span> ${dir}</div><div class="cf">${conf != null ? Math.round(conf * 100) + '% ' + T('conf', '信心') : '&nbsp;'}</div>${resolved ? `<span class="mk">${correct ? '✓' : '✗'}</span>` : ''}</div>`;
+    return `<div class="call ${cls}"><div class="call-hd"><span class="who">${who}</span>${opus ? '<span class="opus">FABLE 5</span>' : ''}</div><div class="dir"><span class="ar">${arrow}</span> ${dir}</div><div class="cf">${conf != null ? Math.round(conf * 100) + '% ' + T('conf', '信心') : '&nbsp;'}</div>${resolved ? `<span class="mk">${correct ? '✓' : '✗'}</span>` : ''}</div>`;
   }
   function renderPred() {
     $('pSym').textContent = state.selected;

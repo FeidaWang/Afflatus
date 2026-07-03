@@ -1,6 +1,6 @@
 /* ============================================================
-   GAMES — cyberpunk World Cup predictions by Opus 4.8.
-   Shows Opus's calls, real betting odds, and group standings.
+   GAMES — cyberpunk World Cup predictions by Fable 5.
+   Shows Fable's calls, real betting odds, and group standings.
    Scratch cards reveal the exact predicted scoreline.
    For entertainment — not betting advice.
    ============================================================ */
@@ -94,12 +94,12 @@
     const host = $('fixtures'); if (!host || !data) return;
     host.innerHTML = data.fixtures.map((f) => {
       const tbd = isTBD(f);
-      // Opus prediction (always visible once kickoff locked, or always show for upcoming)
-      const opusLine = (f.opus && !tbd) ? `<div class="opus">🤖 <b>Opus</b> · ${outcomeLabel(f, f.opus)} · ${Math.round(f.conf * 100)}%<span class="orsn">${T(f.reason_en, f.reason_zh)}</span></div>` : '';
+      // Fable prediction (always visible once kickoff locked, or always show for upcoming)
+      const opusLine = (f.opus && !tbd) ? `<div class="opus">🤖 <b>Fable</b> · ${outcomeLabel(f, f.opus)} · ${Math.round(f.conf * 100)}%<span class="orsn">${T(f.reason_en, f.reason_zh)}</span></div>` : '';
       // Odds
       const oddsHtml = !tbd ? renderOdds(f) : '';
       // Scratch to reveal exact score only
-      const opScore = (f.opusScore && !tbd) ? `<div class="scratch opscore" data-key="score:${f.id}"><div class="reveal">🤖 <span data-en="OPUS SCORE" data-zh="OPUS 比分">OPUS SCORE</span> · <b>${f.homeFlag} ${f.opusScore} ${f.awayFlag}</b></div></div>` : (tbd ? `<div class="tbdnote">${T('Opponents undecided', '对手未定')}</div>` : '');
+      const opScore = (f.opusScore && !tbd) ? `<div class="scratch opscore" data-key="score:${f.id}"><div class="reveal">🤖 <span data-en="FABLE SCORE" data-zh="FABLE 比分">FABLE SCORE</span> · <b>${f.homeFlag} ${f.opusScore} ${f.awayFlag}</b></div></div>` : (tbd ? `<div class="tbdnote">${T('Opponents undecided', '对手未定')}</div>` : '');
       // Teams — static display, no picks
       const homeTeam = `<div class="team-d"><span class="fl">${f.homeFlag || ''}</span><span class="nm">${teamName(f, 'home')}</span></div>`;
       const awayTeam = `<div class="team-d"><span class="fl">${f.awayFlag || ''}</span><span class="nm">${teamName(f, 'away')}</span></div>`;
@@ -140,7 +140,7 @@
         }).join('');
         tableHtml = `<table class="st-table"><thead>${hdr}</thead><tbody>${rows}</tbody></table>`;
       } else {
-        // fallback: show opus order list
+        // fallback: show Fable's predicted order list
         const order = (gp.opusOrder || []).map((nm, i) => {
           const t = (gp.teams || []).find((x) => x.name === nm) || { flag: '', name: nm, name_zh: nm };
           return `<span class="ord"><b>${i + 1}</b>${t.flag} ${lang === 'zh' ? t.name_zh : t.name}</span>`;
@@ -152,7 +152,7 @@
     if (window.AfflatusI18N) window.AfflatusI18N.apply();
   }
 
-  /* ---------- Opus track record — gold ⭐ for exact scores ---------- */
+  /* ---------- Fable track record — gold ⭐ for exact scores ---------- */
   function renderRecord() {
     const host = $('record'); if (!host) return;
     const r = data && data.record;
@@ -165,7 +165,7 @@
       return `<span class="rlog ${cls}" title="${T(e.pick_en, e.pick_zh)}">${icon} ${T(e.label_en, e.label_zh)}</span>`;
     }).join('');
     host.innerHTML =
-      `<div class="rec-h"><span class="rec-t">🤖 ${T('OPUS TRACK RECORD', 'OPUS 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${r.since || ''}</span></div>` +
+      `<div class="rec-h"><span class="rec-t">🤖 ${T('FABLE TRACK RECORD', 'FABLE 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${r.since || ''}</span></div>` +
       `<div class="rec-stats">` +
         `<div class="rec-big"><b>${rate}%</b><i>${T('outcome win rate', '胜负命中率')}</i></div>` +
         `<div class="rec-kv"><b>${r.correctOutcome || 0}/${r.resolved || 0}</b><i>${T('correct calls', '预测正确')}</i></div>` +
