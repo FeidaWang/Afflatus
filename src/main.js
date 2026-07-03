@@ -330,6 +330,26 @@ function localWeaponName(w){
 }
 function updateCombatModule(){
   tickService();
+  // 2026-07-04 (ROADMAP §4 V16 — single weapon clock): the nuke T-countdown
+  // and main-gun charge countdown used to each run their own setInterval(40)
+  // poll, independent of this rAF-driven update — two clocks for numbers
+  // that both ultimately come from the same Date.now()-based deadline
+  // variable. Both are now ticked right here, once per frame, reading the
+  // exact same nukeCountdownUntil/enforcerChargeUntil that updateTopTelemetry()
+  // already uses for the battle-log status line (see logBattle() calls
+  // there) — one clock, multiple consumers, always in lockstep.
+  if(nukeCountdownUntil>0){
+    const remain=Math.max(0,(nukeCountdownUntil-Date.now())/1000);
+    const nukeWarningEl=document.getElementById('nukeWarning');
+    if(nukeWarningEl){
+      nukeWarningEl.innerHTML=`<span class="rad-symbol">☢</span>${HC('fusion')}<br>LASER T-${remain.toFixed(2)}`;
+      if(remain<=0){nukeWarningEl.classList.remove('on');document.body.classList.remove('nuke-alert');}
+    }
+  }
+  if(enforcerChargeUntil>0){
+    const remain=Math.max(0,(enforcerChargeUntil-Date.now())/1000);
+    weaponWarning.innerHTML=`<b>${HC('enforcerWarn')}</b><span>${HC('brace')}${remain.toFixed(2)}</span>`;
+  }
   const rec=recommendedWeapon(), active=chooseWeapon(!!halley?.isGiant), manual=apAuto ? 'auto' : (weaponSelect?.value || 'auto');
   ensureKillMeter();
   const killCounter=document.getElementById('killCounter');
@@ -1850,8 +1870,6 @@ function firePhalanxIntercept(tx, ty) {
   if(halley?.attackStarted) return;
   halley.attackStarted=true;
   halley.phalanxSequence=true;
-  halley.ciwsLaserStart=performance.now();
-  halley.ciwsLaserUntil=halley.ciwsLaserStart+3000;
   logBattle(HC('logSmall'));
   pushBattleToast(currentLang==='zh'?'密集阵光学锁定 · 3秒激光照射':'CIWS OPTICAL LOCK · 3S LASER DESIGNATION');
   setPilotView('ciws',halley,9600);
@@ -1905,12 +1923,13 @@ function fireEscortWeapons(tx, ty, isGiant) {
     warning.innerHTML=`<span class="rad-symbol">☢</span>${HC('fusion')}<br>LASER T-3.00`;
     warning.classList.add('on');
     document.body.classList.add('nuke-alert');
+    // 2026-07-04 (ROADMAP §4 V16): T- countdown text used to be its own
+    // setInterval(40) poll, independent of the rAF loop driving everything
+    // else on screen (a second clock for the same 3s window). It's now
+    // ticked from updateCombatModule() every frame instead, reading the
+    // same nukeCountdownUntil deadline every other consumer already uses
+    // (see the logBattle() read of this same variable in updateTopTelemetry).
     nukeCountdownUntil=Date.now()+3000;
-    const ticker=setInterval(()=>{
-      const remain=Math.max(0,(nukeCountdownUntil-Date.now())/1000);
-      warning.innerHTML=`<span class="rad-symbol">☢</span>${HC('fusion')}<br>LASER T-${remain.toFixed(2)}`;
-      if(remain<=0){clearInterval(ticker);warning.classList.remove('on');document.body.classList.remove('nuke-alert');}
-    },40);
     let wing=escorts.filter(e=>e.type==='f47').slice(0,3);
     while(wing.length<3){
       const idx=wing.length;
@@ -1994,11 +2013,9 @@ function fireEnforcerMain(tx, ty){
   mainCannonFx={chargeStart:Date.now(),fireAt:0,tx,ty};
   weaponWarning.innerHTML=`<b>${HC('enforcerWarn')}</b><span>${HC('brace')}4.50</span>`;
   weaponWarning.classList.add('on');
-  const chargeTicker=setInterval(()=>{
-    const remain=Math.max(0,(enforcerChargeUntil-Date.now())/1000);
-    weaponWarning.innerHTML=`<b>${HC('enforcerWarn')}</b><span>${HC('brace')}${remain.toFixed(2)}</span>`;
-    if(remain<=0) clearInterval(chargeTicker);
-  },40);
+  // 2026-07-04 (ROADMAP §4 V16): same fix as the nuke ticker above — this
+  // used to be its own setInterval(40) poll; now ticked from
+  // updateCombatModule() every frame, same enforcerChargeUntil deadline.
   setTimeout(()=>{
     enforcerChargeUntil=0;
     weaponWarning.classList.remove('on');

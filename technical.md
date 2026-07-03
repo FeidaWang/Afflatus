@@ -18,6 +18,7 @@
 - **战斗视图**：默认 HUD 是 HMD v3（`src/ui/combatHmdV3.js` 的 `drawCleanCombatHmd`，贯穿起飞/降落/巡航/战斗）；SC 风格全息面板（`src/scene/combatHudSC.js`）与俯视战场（`src/scene/topdownCombat.js`）都降级为可选皮肤，分别用 `?combatview=sc` / `?combatview=topdown` 访问。**v1.5b 规划**：主战斗视图要换成事件驱动的相机导演系统（见 ROADMAP §4 V14）——**注意命名冲突**：`src/scene/cameraDirector.js` 这个文件名**已经被占用**（现有内容是起飞/降落的外部运镜，`drawExternalLaunch`/`drawExternalLanding`），V14 要做的武器事件相机状态机需要另起文件名（如 `weaponCameraDirector.js`），不要直接覆盖现有文件。
 - **数据**：`public/arena-news.json`（每日定时任务生成）、`public/games-data.json`（手动更新）、`public/signal-events.json`（宏观事件档案，见第 3 节）、`public/novels-data.json`（章节内容）、`public/leagues-data.json`（**已创建，2026-07-04**，MSI 竞猜）、`public/arena-ledger.json` + `public/arena-universe.json`（**已创建，2026-07-04**，Autopilot 账本 + 固定交易域，见下方 V3 说明）。v1.5 规划新增但**尚未创建**：`sectors-data.json`（对比矩阵 + 后内存专题）——详见 ROADMAP §7。
 - **Arena Autopilot 规则引擎（V3，2026-07-04）**：`src/lib/arenaRules.js`——纯函数集合，模型只提案 JSON 订单，这里的 `validateOrder`/`applyFill`/`checkStopLoss`/`checkDailyCircuitBreaker`/`checkSeasonReset`/`computeMetrics` 才是唯一有权改账本状态的代码。硬风控红线（单仓 20%/持仓 8 只/现金 5%/日熔断 3%/赛季重置 20%/信心门槛 0.65/Model A 周换手 20 笔/Model B 仅周二四开仓/分级滑点）全部是模块顶部 `LIMITS` 常量，不是提示词里的口头约定。单测见 `tests/arenaRules.test.js`。
+- **武器单时钟（V16，2026-07-04）**：`src/combat/weaponClock.js`——权威时间线纯函数模块（`startTimeline`/`phaseFraction`/`activePhase`/`msUntilPhase`/`forceAdvance`），`{weapon, t0, phases:[{name,at}]}` 结构，V14 相机导演可直接订阅。已修正 `main.js` 里两处实测确认的独立计时器（核弹 T- 倒计时、主炮蓄力倒计时此前各自跑 `setInterval(...,40)`，与 rAF 主循环脱钩——已改为在 `updateCombatModule()` 里逐帧更新）+ 删除 `halley.ciwsLaserStart/ciwsLaserUntil` 死代码（从未被读取、`performance.now()` 口径与全局 `Date.now()` 口径不一致）。**范围边界**：`combatCine.js` 的导弹/核弹分镜与 `halley.destroyed` 提前触发的强制剪切审计后确认本来就是从 `pilotView.started/until` 派生的单一 `e` 驱动，未改动；CIWS/核弹/导弹完整分镜时序改造为具名 `weaponClock` phases 留给 V14（相机切换点本来就需要具名 phases，届时一起做）。
 
 ### 新增页面 checklist（已由 V0 Leagues 完整走通并验证，2026-07-04）
 
@@ -108,7 +109,7 @@ npm run dev        # http://127.0.0.1:5173  （逐页检查）
 npm run build      # 产出 dist/（七个入口各自压缩打包，public/ 静态资源原样拷贝进去）
 npm run preview    # 预览打包结果
 ```
-> **测试（已引入，2026-07-04，V3）**：`npm run test`（`vitest run`，Vite 原生零配置）跑 `tests/arenaRules.test.js`，44 条覆盖 `src/lib/arenaRules.js` 规则引擎全部纯函数（订单校验/模拟撮合/持仓变更加权成本/止损/日熔断/赛季重置/指标计算）。该模块刻意不依赖 DOM/fetch/`Date.now()`——调用方显式传入 `now`/`day`，保证可在 Node 定时任务与浏览器两侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
+> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑两个文件共 64 条：`tests/arenaRules.test.js`（44 条，Arena 规则引擎）+ `tests/weaponClock.test.js`（20 条，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）。两个模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
 
 ---
 

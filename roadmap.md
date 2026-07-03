@@ -37,7 +37,12 @@
 - **V8.（S）v1.5 发布收尾**——版本号 v1.4→v1.5（index.html/package.json/lock）；全站 AI 人设文案「Fable 5」→「Fable 5 Max」（只改用户可见文案，内部字段名/JS 属性/CSS class 不动）；ROADMAP 归档收尾。
 
 *视觉轨（按序执行 V16 → V14 → V15/V15b，与产品轨并行；顺序修正理由见 §4 实施路线修正）：*
-- **V16.（M）武器单时钟同步（CIWS/导弹/核弹/主炮）**——**视觉轨的第一步而非收尾**：V14 的镜头切换全部由它的事件驱动，先立权威时间线、镜头系统才有东西可订阅，反序会造成返工。combatRuntime 发布权威时间线，HUD 与 3D 场景全部改订阅制渲染，消灭两侧独立计时器。规格见 **§4**。
+- ~~**V16.（M）武器单时钟同步（CIWS/导弹/核弹/主炮）**~~ ✅ **已上线（2026-07-04，范围见下方说明）**——**视觉轨的第一步而非收尾**：V14 的镜头切换全部由它的事件驱动，先立权威时间线、镜头系统才有东西可订阅，反序会造成返工。
+  - **新增基础设施**：`src/combat/weaponClock.js`——纯函数权威时间线模块（`startTimeline`/`phaseFraction`/`activePhase`/`msUntilPhase`/`forceAdvance` 等），`{weapon, t0, phases:[{name,at}]}` 结构，V14 的镜头状态机可直接订阅。`tests/weaponClock.test.js`（20 条）含验收标准要求的"两个消费者读同一时间线在同一 `t` 下必须逐帧零差异"断言（浏览器 rAF 循环沙盒内无法真实驱动，用纯函数等价性断言代替，见测试文件注释）。
+  - **实测审计发现，逐一修正**：`main.js` 的核弹 T- 倒计时（`#nukeWarning`）与主炮蓄力倒计时（`weaponWarning`）此前各自跑一个独立 `setInterval(...,40)` 轮询——与 rAF 主循环（`frame()`）完全脱钩的第二时钟，已删除，改为在既有的逐帧函数 `updateCombatModule()` 里更新，读的还是同一个 `nukeCountdownUntil`/`enforcerChargeUntil`（这两个变量本来就已被 `updateTopTelemetry()` 的战报文本读取，现在两处终于真正同源同频）。`halley.ciwsLaserStart/ciwsLaserUntil` 审计确认是**从未被读取的死代码**（`performance.now()` 口径且与其余 `Date.now()` 口径不一致）——已删除，而非误留的第二时钟。
+  - **审计确认无需改动**：导弹/核弹分镜（`combatCine.js`）与 `halley.destroyed` 提前触发的强制剪切，**本来就已经**是从 `pilotView.started/until` 派生的单一 `e`（elapsed 0..1）驱动，`missileKillFlashFrames`/`nukeKillFlashFrames` 的 rising-edge 一次性闪光模式也已存在——审计后确认这部分不是本次要修的 bug，故未改动，避免无意义地重写已经工作正常、且沙盒无法视觉回归验证的手工调优动画代码。
+  - **范围边界（诚实标注）**：本次未把 CIWS/核弹/导弹的完整分镜时序重构成 `weaponClock` 的具名 phases（那些 setTimeout 链是一次性状态迁移触发器，不是"需要逐帧从两处读取"的倒计时显示，风险/收益比不划算）——**这部分留给 V14**，届时相机导演系统本来就需要把这些时序表达成具名 phases 才能挂镜头切换点，那时候顺手做比现在单独做更省一次返工。
+  - **验证**：`npm run test` 64/64 绿（含新增 20 条）；`npm run build` 绿，7 页 curl 200，产物 JS 语法校验通过；`grep` 确认无残留的 `ciwsLaserStart`/`ticker`/`chargeTicker` 悬空引用。**`main.js` 属逻辑审查 + 静态验证，无法在沙盒里跑真实浏览器 rAF/canvas，视觉效果（尤其核弹与主炮蓄力倒计时文案的观感）未做真人验证，建议本地确认一次战斗序列观感与之前一致。**
 - **V14.（L）相机导演系统**——镜头状态机 + 首发镜头库（导弹尾随/撞击环绕/CIWS 炮塔位/主炮轴线/舰桥全景）+「空间深度四件套」解决导弹平面感。**实施路线已修正：复用 topdownCombat 现成场景资产**（舰船/导弹/彗星/爆炸全都建好了），废弃的只是固定俯视机位、不是场景本身。规格见 **§4**。
 - **V15.（L）Odin 参考全息舰重建** + **V15b.（M）战机保真度**——按参考图重建 `shipHologram`/`capitalShip3D` 几何（程序化 blockout + 实例化 greeble 套件）；战机加嵌板法线与 PBR-lite 材质。独立资产工作，可穿插进行。规格见 **§4**。
 
@@ -111,7 +116,7 @@
 
 **现状**：主战斗 HUD 默认使用 HMD v3（`src/ui/combatHmdV3.js` 的 `drawCleanCombatHmd`，贯穿起飞/降落/巡航/战斗全阶段）；SC 风格全息面板（`src/scene/combatHudSC.js`）保留为 `?combatview=sc` 可选皮肤；俯视战场（`src/scene/topdownCombat.js`）保留为 `?combatview=topdown` 战术地图可选皮肤。架构边界不变：`combatRuntime.js`（状态）→ 渲染层（纯函数）→ `#pilotFeed`。
 
-**⚠️ 2026-07-04 路线改向**：俯视视角读起来像棋盘上的棋子（Ludo 感），破坏空间沉浸；导弹冲向彗星毫无纵深。「俯视渲染成为主战斗视图」的目标**已废弃**，新方向是下方的**真 3D 相机导演系统**（V14–V16）。已完成的状态快照接口（`combatRuntime.getState()`/`getBattleSnapshot()`）不白费——它正是 V16 单时钟同步的地基。
+**⚠️ 2026-07-04 路线改向**：俯视视角读起来像棋盘上的棋子（Ludo 感），破坏空间沉浸；导弹冲向彗星毫无纵深。「俯视渲染成为主战斗视图」的目标**已废弃**，新方向是下方的**真 3D 相机导演系统**（V14–V16）。已完成的状态快照接口（`combatRuntime.getState()`/`getBattleSnapshot()`）不白费——它正是 V16 单时钟同步的地基。**V16 已上线（`src/combat/weaponClock.js`，见 §1）**，V14 的镜头状态机可直接订阅其 `{t0, phases}` 时间线。
 
 美术基调不变：硬科幻、太空军事拟真（Star Citizen 系），**严禁卡通/街机/过度游戏化**。
 
