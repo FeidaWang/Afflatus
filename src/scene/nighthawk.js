@@ -1,8 +1,9 @@
 /**
  * "Nighthawk" — light assault fighter, styled as a fighter-scale sibling of the
  * TC CONDOR / Enforcer capital ship (src/scene/capitalShip3D.js): gunmetal
- * armoured central fuselage with a raised command spine + bump-mapped panel
- * relief, a flat faceted wedge nose, TWO forward-protruding laser-cannon rods,
+ * armoured central fuselage with a raised command spine + normal-mapped panel
+ * relief (V15b fidelity pass — real tangent-space normal map, not a bump-map
+ * approximation), a flat faceted wedge nose, TWO forward-protruding laser-cannon rods,
  * short Su-47-style FORWARD-SWEPT side wings, and a rear cluster of TWIN
  * side-by-side turbine nozzles. Engine plasma follows the flight phase:
  * cruise orange · combat cyan · warp violet. Forward = +Z.
@@ -10,21 +11,58 @@
  *   const nh = createNighthawk(THREE, { glowTex });   // glowTex optional
  *   scene.add(nh.group); nh.setMode('combat'); nh.tick(seconds);
  */
+// height-field canvas → tangent-space normal map (V15b fidelity pass,
+// ROADMAP §4): a real normal map reacts to key/rim lighting far more
+// convincingly than the flat bumpMap approximation this used to ship with —
+// same panel-line/rivet *pattern*, just encoded so the GPU actually shades
+// the grooves instead of faking a height offset. Pure texture-space change:
+// no geometry/silhouette is touched, so this carries none of the visual risk
+// a hull rebuild would (worst case it looks mildly off, never "broken").
+function heightToNormalMap(THREE, heightCanvas, strength = 2.4) {
+  const w = heightCanvas.width, h = heightCanvas.height;
+  const src = heightCanvas.getContext('2d').getImageData(0, 0, w, h).data;
+  const at = (x, y) => src[(((y + h) % h) * w + ((x + w) % w)) * 4] / 255; // grayscale via R channel
+  const out = document.createElement('canvas'); out.width = w; out.height = h;
+  const octx = out.getContext('2d');
+  const img = octx.createImageData(w, h);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const l = at(x - 1, y), r = at(x + 1, y), u = at(x, y - 1), d = at(x, y + 1);
+      const nx = (l - r) * strength, ny = (u - d) * strength, nz = 1.0;
+      const len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+      const i = (y * w + x) * 4;
+      img.data[i] = Math.round((nx / len * 0.5 + 0.5) * 255);
+      img.data[i + 1] = Math.round((ny / len * 0.5 + 0.5) * 255);
+      img.data[i + 2] = Math.round((nz / len * 0.5 + 0.5) * 255);
+      img.data[i + 3] = 255;
+    }
+  }
+  octx.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(out); tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
 export function createNighthawk(THREE, opts = {}) {
   const glowTex = opts.glowTex || null;
   const group = new THREE.Group();
 
-  // ── procedural panel-line / rivet bump (the "metal armour tech" feel) ──
-  const bc = document.createElement('canvas'); bc.width = bc.height = 256;
+  // ── procedural panel-line / rivet height field (the "metal armour tech" feel) ──
+  const RES = 384; // up from 256 — crisper grooves once converted to a normal map
+  const bc = document.createElement('canvas'); bc.width = bc.height = RES;
   const bx = bc.getContext('2d');
-  bx.fillStyle = '#808080'; bx.fillRect(0, 0, 256, 256);
-  bx.strokeStyle = '#3a3a3a'; bx.lineWidth = 2;
-  for (let i = 0; i < 12; i++) { const a = Math.random() * 256, b = Math.random() * 256; bx.beginPath(); bx.moveTo(a, 0); bx.lineTo(a, 256); bx.moveTo(0, b); bx.lineTo(256, b); bx.stroke(); }
-  for (let i = 0; i < 26; i++) { bx.strokeStyle = Math.random() < 0.5 ? '#585858' : '#a2a2a2'; bx.strokeRect(Math.random() * 256, Math.random() * 256, 10 + Math.random() * 56, 10 + Math.random() * 56); }
-  for (let i = 0; i < 90; i++) { bx.fillStyle = Math.random() < 0.5 ? '#9a9a9a' : '#565656'; bx.beginPath(); bx.arc(Math.random() * 256, Math.random() * 256, 1.2, 0, 7); bx.fill(); }
-  const bump = new THREE.CanvasTexture(bc); bump.wrapS = bump.wrapT = THREE.RepeatWrapping; bump.repeat.set(2, 2);
+  bx.fillStyle = '#808080'; bx.fillRect(0, 0, RES, RES);
+  bx.strokeStyle = '#3a3a3a'; bx.lineWidth = 3;
+  for (let i = 0; i < 14; i++) { const a = Math.random() * RES, b = Math.random() * RES; bx.beginPath(); bx.moveTo(a, 0); bx.lineTo(a, RES); bx.moveTo(0, b); bx.lineTo(RES, b); bx.stroke(); }
+  bx.lineWidth = 2;
+  for (let i = 0; i < 40; i++) { bx.strokeStyle = Math.random() < 0.5 ? '#585858' : '#a2a2a2'; bx.strokeRect(Math.random() * RES, Math.random() * RES, 14 + Math.random() * 80, 14 + Math.random() * 80); }
+  for (let i = 0; i < 150; i++) { bx.fillStyle = Math.random() < 0.5 ? '#9a9a9a' : '#565656'; bx.beginPath(); bx.arc(Math.random() * RES, Math.random() * RES, 1.5, 0, 7); bx.fill(); }
+  const normalMap = heightToNormalMap(THREE, bc, 2.4); normalMap.repeat.set(2, 2);
 
-  const mk = (color, metalness, roughness) => { const m = new THREE.MeshStandardMaterial({ color, metalness, roughness }); m.bumpMap = bump; m.bumpScale = 0.012; return m; };
+  const mk = (color, metalness, roughness) => {
+    const m = new THREE.MeshStandardMaterial({ color, metalness, roughness });
+    m.normalMap = normalMap; m.normalScale = new THREE.Vector2(0.55, 0.55);
+    return m;
+  };
   const M = {
     hull:  mk(0x4a525c, 0.8, 0.55),
     arm:   mk(0x3a414a, 0.78, 0.62),
@@ -106,7 +144,12 @@ export function createNighthawk(THREE, opts = {}) {
   add(new THREE.BoxGeometry(0.5, 0.5, 0.06), M.arm, [0, 0.5, -3.0], [0.3, 0, 0]);          // vertical tail
   add(new THREE.CylinderGeometry(0.014, 0.024, 1.6, 6), M.trim, [0.12, 1.05, -1.6]);       // antenna mast
   add(new THREE.SphereGeometry(0.03, 6, 5), NAV.red, [0.12, 1.86, -1.6]);
-  for (let i = 0; i < 22; i++) { const x = (Math.random() - 0.5) * 1.3, z = -1.6 + Math.random() * 3.4; add(new THREE.BoxGeometry(0.06 + Math.random() * 0.14, 0.02, 0.08 + Math.random() * 0.22), Math.random() < 0.5 ? M.trim : M.dark, [x, 0.58, z]); } // dorsal greebles
+  // V15b fidelity pass: more dorsal greebles + new belly/side panel detail
+  // ("脱离棋子感") — small non-silhouette boxes only, geometry footprint
+  // unchanged so the recognizable outline stays exactly the same.
+  for (let i = 0; i < 34; i++) { const x = (Math.random() - 0.5) * 1.3, z = -1.6 + Math.random() * 3.4; add(new THREE.BoxGeometry(0.06 + Math.random() * 0.14, 0.02, 0.08 + Math.random() * 0.22), Math.random() < 0.5 ? M.trim : M.dark, [x, 0.58, z]); } // dorsal greebles
+  for (let i = 0; i < 14; i++) { const x = (Math.random() - 0.5) * 1.1, z = -1.2 + Math.random() * 3.0; add(new THREE.BoxGeometry(0.05 + Math.random() * 0.1, 0.018, 0.06 + Math.random() * 0.16), Math.random() < 0.5 ? M.trim : M.dark, [x, -0.36, z]); } // belly greebles
+  for (const sx of [-1, 1]) for (let i = 0; i < 5; i++) { const z = -0.6 + Math.random() * 2.4; add(new THREE.BoxGeometry(0.03, 0.1 + Math.random() * 0.14, 0.1 + Math.random() * 0.2), M.dark, [sx * 1.02, 0.1 + Math.random() * 0.3, z], [0, 0, sx * 0.42]); } // side-armour panel recesses
   for (const sx of [-1, 1]) { add(new THREE.BoxGeometry(0.16, 0.14, 0.16), NAV.white, [sx * 0.7, 0.34, 1.6]); } // forward RCS
 
   group.rotation.order = 'YXZ';

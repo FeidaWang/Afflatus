@@ -9,6 +9,14 @@
  * Fixed-size render buffer scaled by CSS so it never blanks on a 0-width canvas.
  */
 import * as THREE from 'three';
+import { createOdinHull } from './odinHull.js';
+
+// Opt-in flag (ROADMAP §4 V15): mirrors capitalShip3D.js's ?ship=odin gate —
+// same reasoning, same default-unchanged guarantee (see that file's header
+// comment for why this stays preview-only).
+function odinHullEnabled() {
+  try { return /[?&]ship=odin\b/.test(location.search); } catch (e) { return false; }
+}
 
 export function createShipHologram(canvas) {
   let renderer;
@@ -39,6 +47,34 @@ export function createShipHologram(canvas) {
     ship.add(g); return g;
   };
 
+  const beamMat = new THREE.MeshBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
+  const plumeMat = new THREE.MeshBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
+  const useOdin = odinHullEnabled();
+  let muzzle, beam, plumes = [];
+
+  if (useOdin) {
+    // ===== Odin-reference blade hull (V15, preview-only via ?ship=odin) =====
+    // 'wire' detail skips the fine greeble scatter — the hologram is meant to
+    // read as a clean silhouette, matching how this file already only ever
+    // built a sparse subset of capitalShip3D.js's full detail.
+    const info = createOdinHull(THREE, {
+      add: (geo, mat, t, r, s) => part(geo, t, s, r, mat), // odinHull.js signature is (t,r,s); part()'s is (t,s,r,mat)
+      mats: { hull: fillMat, arm: fillMat, dark: fillMat, trim: fillMat, glass: amberMat, red: glowMat, blue: glowMat },
+      detail: 'wire',
+    });
+    muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 9), glowMat.clone());
+    muzzle.position.set(info.muzzleAnchor.x, info.muzzleAnchor.y, info.muzzleAnchor.z); ship.add(muzzle);
+    beam = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.13, 3.4, 10), beamMat);
+    beam.rotation.x = Math.PI / 2; beam.position.set(info.muzzleAnchor.x, info.muzzleAnchor.y, info.muzzleAnchor.z + 1.7); beam.visible = false; ship.add(beam);
+    for (const em of info.engineMounts) {
+      const bell = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.24), glowMat);
+      bell.position.set(em.x, em.y, em.z - 0.56); bell.rotation.y = Math.PI; ship.add(bell);
+      const plume = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.85, 10), plumeMat.clone());
+      plume.rotation.x = -Math.PI / 2; plume.position.set(em.x, em.y, em.z - 1.0);
+      ship.add(plume); plumes.push(plume);
+    }
+  } else {
+
   // flat triangular wedge bow
   part(new THREE.ConeGeometry(1.05, 3.4, 4), [0, -0.02, 2.3], [1, 0.32, 1], [Math.PI / 2, 0, Math.PI / 4]);
   part(new THREE.BoxGeometry(1.5, 0.34, 1.6), [0, 0.04, 1.5]);
@@ -60,15 +96,12 @@ export function createShipHologram(canvas) {
   // spinal main gun + muzzle + beam
   part(new THREE.CylinderGeometry(0.12, 0.16, 2.6, 12), [0, -0.05, 2.0], null, [Math.PI / 2, 0, 0]);
   for (let i = 0; i < 4; i++) part(new THREE.TorusGeometry(0.18, 0.04, 6, 14), [0, -0.05, 1.2 + i * 0.5]);
-  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 9), glowMat.clone());
+  muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 9), glowMat.clone());
   muzzle.position.set(0, -0.05, 3.5); ship.add(muzzle);
-  const beamMat = new THREE.MeshBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
-  const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.13, 3.4, 10), beamMat);
+  beam = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.13, 3.4, 10), beamMat);
   beam.rotation.x = Math.PI / 2; beam.position.set(0, -0.05, 5.0); beam.visible = false; ship.add(beam);
 
   // multi-engine rear (rectangular pods) + plumes, fins, antenna mast
-  const plumeMat = new THREE.MeshBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
-  const plumes = [];
   for (const [ex, ey] of [[-0.62, 0.12], [0.62, 0.12], [-0.62, -0.3], [0.62, -0.3], [0, 0.42]]) {
     part(new THREE.BoxGeometry(0.5, 0.42, 1.0), [ex, ey, -2.1]);
     const bell = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.24), glowMat);
@@ -79,6 +112,8 @@ export function createShipHologram(canvas) {
   }
   for (const sx of [-1, 1]) part(new THREE.BoxGeometry(0.06, 0.7, 0.7), [sx * 0.9, 0.3, -2.0], null, [0.2, 0, sx * 0.4]);
   part(new THREE.CylinderGeometry(0.015, 0.02, 1.2, 6), [0.15, 0.9, -1.9]);   // antenna mast
+
+  } // end else (default wedge hull)
 
   ship.scale.setScalar(0.6);
   ship.rotation.x = 0.36;

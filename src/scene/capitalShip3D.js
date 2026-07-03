@@ -11,10 +11,19 @@
  * state follows the page: cruise orange · combat blue-green · warp violet.
  */
 import * as THREE from 'three';
+import { createOdinHull } from './odinHull.js';
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const easeInOut = t => (t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2);
+
+// Opt-in flag (ROADMAP §4 V15): default is the existing wedge-with-wings
+// hull, byte-for-byte unchanged, unless this is present in the URL — the
+// Odin-reference blade-hull rebuild has NOT been visually verified in a real
+// browser (sandbox has no WebGL), so it stays preview-only until confirmed.
+function odinHullEnabled() {
+  try { return /[?&]ship=odin\b/.test(location.search); } catch (e) { return false; }
+}
 
 export function createCapitalShip3D() {
   let renderer;
@@ -56,6 +65,34 @@ export function createCapitalShip3D() {
 
   const ship = new THREE.Group();
   const M = (geo, mat, t, s, r) => { const m = new THREE.Mesh(geo, mat); if (t) m.position.set(t[0], t[1], t[2]); if (s) m.scale.set(s[0], s[1], s[2]); if (r) m.rotation.set(r[0], r[1], r[2]); ship.add(m); return m; };
+  const useOdin = odinHullEnabled();
+  let engines = [], muzzle, muzzleLight, odinInfo = null;
+
+  if (useOdin) {
+    // ===== Odin-reference blade hull (V15, preview-only via ?ship=odin) =====
+    odinInfo = createOdinHull(THREE, {
+      add: (geo, mat, t, r, s) => M(geo, mat, t, s, r), // odinHull.js signature is (t,r,s); M's is (t,s,r)
+      mats: { hull: hullMat, arm: armMat, dark: darkMat, trim: trimMat, glass: glassMat, red: redMat, blue: blueMat },
+      detail: 'full',
+    });
+    for (const em of odinInfo.engineMounts) {
+      const grp = new THREE.Group();
+      const shield = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.1, 0.4), darkMat); shield.position.set(0, 0.24, -0.2); grp.add(shield);
+      const cavity = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.28, 0.16), darkMat); cavity.position.z = -0.5; grp.add(cavity);
+      const glow = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.24), engineMat); glow.position.z = -0.56; glow.rotation.y = Math.PI; grp.add(glow);
+      const light = new THREE.PointLight(0x4fb8ff, 3.5, 5); light.position.z = -0.85; grp.add(light);
+      const plume = new THREE.Mesh(new THREE.ConeGeometry(0.2, 2.3, 12), plumeMat.clone());
+      plume.rotation.x = -Math.PI / 2; plume.position.z = -1.7; grp.add(plume);
+      const halo = new THREE.Mesh(new THREE.ConeGeometry(0.38, 3.2, 12), plumeMat.clone()); halo.material.opacity = 0.16;
+      halo.rotation.x = -Math.PI / 2; halo.position.z = -2.1; grp.add(halo);
+      grp.position.set(em.x, em.y, em.z); grp.userData = { glow, light, plume, halo };
+      ship.add(grp); engines.push(grp);
+    }
+    muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.18, 14, 10), gunMat);
+    muzzle.position.set(odinInfo.muzzleAnchor.x, odinInfo.muzzleAnchor.y, odinInfo.muzzleAnchor.z); ship.add(muzzle);
+    muzzleLight = new THREE.PointLight(0x7fb8ff, 0, 7);
+    muzzleLight.position.set(odinInfo.muzzleAnchor.x, odinInfo.muzzleAnchor.y, odinInfo.muzzleAnchor.z + 0.3); ship.add(muzzleLight);
+  } else {
 
   // ===== flat triangular wedge bow (nose +Z) =====
   M(new THREE.ConeGeometry(1.05, 3.4, 4), hullMat, [0, -0.02, 2.3], [1, 0.32, 1], [Math.PI / 2, 0, Math.PI / 4]); // wide flat faceted nose
@@ -92,7 +129,6 @@ export function createCapitalShip3D() {
   }
 
   // ===== complex multi-engine rear + fins + antenna mast =====
-  const engines = [];
   for (const [ex, ey] of [[-0.62, 0.12], [0.62, 0.12], [-0.62, -0.3], [0.62, -0.3], [0, 0.42]]) {
     const grp = new THREE.Group();
     const housing = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.42, 1.0), trimMat); grp.add(housing);     // rectangular pod
@@ -129,8 +165,8 @@ export function createCapitalShip3D() {
   // ===== forward spinal main gun (fires through the bow channel) =====
   M(new THREE.CylinderGeometry(0.12, 0.16, 2.6, 14), trimMat, [0, -0.05, 2.0], null, [Math.PI / 2, 0, 0]);
   for (let i = 0; i < 4; i++) M(new THREE.TorusGeometry(0.18, 0.04, 6, 16), darkMat, [0, -0.05, 1.2 + i * 0.5]);
-  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.18, 14, 10), gunMat); muzzle.position.set(0, -0.05, 3.5); ship.add(muzzle);
-  const muzzleLight = new THREE.PointLight(0x7fb8ff, 0, 7); muzzleLight.position.set(0, -0.05, 3.8); ship.add(muzzleLight);
+  muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.18, 14, 10), gunMat); muzzle.position.set(0, -0.05, 3.5); ship.add(muzzle);
+  muzzleLight = new THREE.PointLight(0x7fb8ff, 0, 7); muzzleLight.position.set(0, -0.05, 3.8); ship.add(muzzleLight);
 
   // ===== dense hard-surface detail: panel strips, recessed panels, bolts =====
   for (let i = 0; i < 46; i++) {
@@ -165,6 +201,8 @@ export function createCapitalShip3D() {
   // denser recessed panel grooves (dorsal + wings)
   for (let i = 0; i < 18; i++) M(new THREE.BoxGeometry(0.02, 0.012, 0.3 + Math.random() * 0.4), darkMat, [(Math.random() - 0.5) * 1.6, 0.5, -1.6 + Math.random() * 3.6]);
   for (const sx of [-1, 1]) for (let i = 0; i < 6; i++) M(new THREE.BoxGeometry(0.3, 0.008, 0.02), darkMat, [sx * (1.0 + Math.random() * 0.9), 0.025, -0.9 + (Math.random() - 0.5) * 1.0], null, [0, sx * 0.18, 0]);
+
+  } // end else (default wedge hull)
 
   scene.add(ship);
 
@@ -205,7 +243,8 @@ export function createCapitalShip3D() {
 
     // locked 3/4 top-front showcase angle; the ship drifts across the frame (fly-by)
     const e = easeInOut(t);
-    camera.position.set(5.0, 5.3, 6.4); camera.lookAt(0, 0.1, -0.3);
+    if (useOdin) { camera.position.set(7.4, 7.0, 8.6); camera.lookAt(0, 0.1, -0.3); } // longer/taller hull → pull back proportionally
+    else { camera.position.set(5.0, 5.3, 6.4); camera.lookAt(0, 0.1, -0.3); }
     ship.position.set(lerp(-2.0, 2.0, e), 0, lerp(1.0, -1.4, e));
 
     renderer.render(scene, camera);
