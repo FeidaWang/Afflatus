@@ -93,6 +93,37 @@ a{color:inherit;text-decoration:none}
 .clock.tick{animation:cp .3s ease}@keyframes cp{0%{transform:scale(1)}40%{transform:scale(1.03);color:var(--amber)}100%{transform:scale(1)}}
 .review .when{font:400 12px/1.6 var(--mono);color:var(--dim)}.when b{color:var(--paper)}.when .bc{color:var(--amber)}
 
+/* hawk-dove compass (V6) */
+.compass{margin-top:16px;border:1px solid var(--line);background:var(--panel2);padding:14px 16px}
+.compass h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.compass h2 small{color:var(--dim);font:400 10px var(--mono);letter-spacing:.1em}
+.gaugeWrap{margin-top:14px}
+.gauge{position:relative;height:14px;border:1px solid var(--ink);background:linear-gradient(90deg,#2f6fb0 0%,#5b6b57 50%,#b3261e 100%)}
+.gauge .needle{position:absolute;top:-5px;left:50%;width:3px;height:24px;background:var(--paper);box-shadow:0 0 6px rgba(244,244,244,.8);transform:translateX(-50%);transition:left .6s cubic-bezier(.2,.8,.2,1)}
+.scaleLabels{display:flex;justify-content:space-between;margin-top:6px;font:700 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.hdReadout{margin-top:12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.hdReadout b{font:700 18px/1 var(--disp);color:var(--paper);letter-spacing:.02em}
+.hdReadout .score{font:400 13px/1 var(--mono);color:var(--amber)}
+.hdReadout .asof{margin-left:auto;font:400 10px/1 var(--mono);color:var(--dim);letter-spacing:.08em}
+.compass .rationale{margin:10px 0 0;font:400 13px/1.6 var(--mono);color:var(--mute)}
+.compass .method{margin:8px 0 0;font:400 11px/1.6 var(--mono);color:var(--dim);font-style:italic}
+
+/* five-pillar signal matrix (V6) */
+.pillars{margin-top:16px}
+.pillars h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;padding:13px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.pillars h2 small{color:var(--dim);font:400 10px var(--mono);letter-spacing:.1em}
+.pillarSummary{margin:12px 0;font:400 13px/1.6 var(--mono);color:var(--mute)}
+.pillarGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.pillar{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:5px 5px 0 rgba(0,0,0,.5);padding:12px;border-top:5px solid var(--dim)}
+.pillar.tone-green{border-top-color:var(--green)}.pillar.tone-amber{border-top-color:var(--amber)}.pillar.tone-red{border-top-color:var(--red)}
+.pillar h3{margin:0;font:700 12px/1.3 var(--disp);letter-spacing:.03em;text-transform:uppercase;display:flex;justify-content:space-between;gap:6px;color:#15140f}
+.pillar h3 .pid{color:var(--dim);font:400 10px var(--mono)}
+.pillar .status{margin-top:6px;font:700 11px/1.3 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:#4a463c}
+.pillar .read{margin:8px 0 0;font:400 12px/1.5 var(--mono);color:#26241d}
+.pillar .asof{margin-top:8px;font:400 9px/1 var(--mono);color:#7a7568;letter-spacing:.06em}
+@media(max-width:900px){.pillarGrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.pillarGrid{grid-template-columns:1fr}}
+
 /* dossier files */
 .files{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .file{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,.55)}
@@ -214,6 +245,23 @@ a{color:inherit;text-decoration:none}
     </div>
   </section>
 
+  <section class="compass" aria-label="Hawk-dove compass">
+    <h2><span data-en="HAWK-DOVE COMPASS — O5 BEHAVIORAL MODEL" data-zh="鹰鸽罗盘 — O5 行为模型">HAWK-DOVE COMPASS — O5 BEHAVIORAL MODEL</span><small data-en="v1 · manually scored · see method note" data-zh="v1 · 人工打分 · 详见方法说明">v1 · manually scored · see method note</small></h2>
+    <div class="gaugeWrap">
+      <div class="gauge"><i class="needle" id="hdNeedle" aria-hidden="true"></i></div>
+      <div class="scaleLabels"><span data-en="DOVE −2" data-zh="鸽派 −2">DOVE −2</span><span data-en="NEUTRAL 0" data-zh="中性 0">NEUTRAL 0</span><span data-en="HAWK +2" data-zh="鹰派 +2">HAWK +2</span></div>
+    </div>
+    <div class="hdReadout"><b id="hdLabel">—</b><span class="score">(<span id="hdScore">—</span>)</span><span class="asof" id="hdAsOf"></span></div>
+    <p class="rationale" id="hdRationale"></p>
+    <p class="method" id="hdMethod"></p>
+  </section>
+
+  <section class="pillars" aria-label="Five-pillar signal matrix">
+    <h2><span data-en="FIVE-PILLAR SIGNAL MATRIX" data-zh="五维信号矩阵">FIVE-PILLAR SIGNAL MATRIX</span><small data-en="no forward guidance = every data point moves the tape alone" data-zh="无前瞻指引 = 每个数据点独自左右市场">no forward guidance = every data point moves the tape alone</small></h2>
+    <p class="pillarSummary" id="pillarSummaryText"></p>
+    <div class="pillarGrid" id="pillarGrid"></div>
+  </section>
+
   <div class="files">
     <article class="file">
       <h2><span data-en="O5 DIRECTIVE — RATE DECISION" data-zh="O5 指令 — 利率决议">O5 DIRECTIVE — RATE DECISION</span><span class="c">01</span></h2>
@@ -225,12 +273,13 @@ a{color:inherit;text-decoration:none}
     </article>
 
     <article class="file">
-      <h2><span data-en="ETHICS COMMITTEE — OVERSIGHT" data-zh="伦理委员会 — 监督">ETHICS COMMITTEE — OVERSIGHT</span><span class="c">02</span></h2>
+      <h2><span data-en="PERSONNEL FILE — SITE DIRECTOR" data-zh="人事档案 — 站点主管">PERSONNEL FILE — SITE DIRECTOR</span><span class="c">02</span></h2>
       <div class="in"><div class="list">
-        <div class="li"><span class="k" data-en="CHAIR" data-zh="主席">CHAIR</span><span class="v" data-en="Warsh's SECOND meeting — first real collision between his hawkish tone and a visibly cracking labor print." data-zh="沃什的第二次会议——鹰派基调首次正面迎战明显走弱的就业数据。">Warsh's SECOND meeting — first real collision between his hawkish tone and a visibly cracking labor print.</span></div>
-        <div class="li"><span class="k" data-en="STATEMENT" data-zh="声明">STATEMENT</span><span class="v" data-i18n-html data-en="Watch if 'higher-for-longer' language survives; <span class='redact'>a soft hedge here would confirm Sept is live again</span>." data-zh="关注「更高更久」措辞是否保留；<span class='redact'>若出现软化对冲，将确认9月降息重新激活</span>。">Watch if 'higher-for-longer' language survives; <span class="redact">a soft hedge here would confirm Sept is live again</span>.</span></div>
-        <div class="li"><span class="k" data-en="WINDOW" data-zh="窗口">WINDOW</span><span class="v" data-en="No SEP at this meeting — the next dot plot isn't until September; until then, data prints do the talking." data-zh="本次会议无 SEP——下一次点阵图要等到 9 月；在此之前，一切由数据说话。">No SEP at this meeting — the next dot plot isn't until September; until then, data prints do the talking.</span></div>
-      </div><p class="note" data-en="A cracked labor print raises headline risk around every word; the 2:30 PM ET press conference is the breach window." data-zh="走弱的就业数据让每一个字都暗藏头条风险；美东下午 2:30 的发布会是“收容失效”窗口。">A cracked labor print raises headline risk around every word; the 2:30 PM ET press conference is the breach window.</p></div>
+        <div class="li"><span class="k" data-en="DESIGNATION" data-zh="任命">DESIGNATION</span><span class="v" data-en="Kevin Warsh — confirmed by the Senate May 13, 2026; sworn in May 22, 2026." data-zh="沃什（Kevin Warsh）——2026 年 5 月 13 日经参议院确认，5 月 22 日宣誓就职。">Kevin Warsh — confirmed by the Senate May 13, 2026; sworn in May 22, 2026.</span></div>
+        <div class="li"><span class="k" data-en="INFLATION STANCE" data-zh="通胀立场">INFLATION STANCE</span><span class="v" data-en="Says inflation remains 'too high'; sees no case to revisit the 2% target until the Fed re-establishes its ability to deliver it." data-zh="称通胀仍然「过高」；在美联储重新证明有能力实现该目标之前，看不出重新审视 2% 目标的理由。">Says inflation remains 'too high'; sees no case to revisit the 2% target until the Fed re-establishes its ability to deliver it.</span></div>
+        <div class="li"><span class="k" data-en="INDEPENDENCE" data-zh="独立性">INDEPENDENCE</span><span class="v" data-i18n-html data-en="Calls himself 'strictly independent'; <span class='redact'>has explicitly rejected White House pressure for rate cuts</span>." data-zh="自称「严格独立」；<span class='redact'>明确拒绝了白宫要求降息的压力</span>。">Calls himself 'strictly independent'; <span class="redact">has explicitly rejected White House pressure for rate cuts</span>.</span></div>
+        <div class="li"><span class="k" data-en="COMMUNICATION" data-zh="沟通方式">COMMUNICATION</span><span class="v" data-en="Vocally anti-forward-guidance — argues central banks have a 'spotty record' predicting the economy. Stood up 5 internal task forces, including one reviewing how the Fed communicates and one studying AI's impact on productivity." data-zh="公开反对前瞻指引——认为央行预测经济的记录「参差不齐」。已设立 5 个内部工作组，其中一个复核联储沟通方式，另一个研究 AI 对生产率的影响。">Vocally anti-forward-guidance — argues central banks have a 'spotty record' predicting the economy. Stood up 5 internal task forces, including one reviewing how the Fed communicates and one studying AI's impact on productivity.</span></div>
+      </div><p class="note" data-en="No SEP at the July meeting — the next dot plot isn't until September; until then, every data print does the talking, and a cracked labor report raises headline risk around every word at the 2:30 PM ET press conference." data-zh="7 月会议无 SEP——下一次点阵图要等到 9 月；在此之前一切由数据说话，走弱的就业数据也让美东下午 2:30 发布会上的每一个字都暗藏头条风险。">No SEP at the July meeting — the next dot plot isn't until September; until then, every data print does the talking, and a cracked labor report raises headline risk around every word at the 2:30 PM ET press conference.</p></div>
     </article>
 
     <article class="file">
@@ -413,8 +462,55 @@ a{color:inherit;text-decoration:none}
         + '</div></article>';
     }).join('');
   }
-  fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
+  fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d.events || []; render(); })
     .catch(function () { list.innerHTML = '<div class="empty">' + T('Incident log unavailable.', '事件簿暂不可用。') + '</div>'; });
+  addEventListener('afflatus-lang', render);
+})();
+
+/* five-pillar signal matrix + hawk-dove compass (V6, ROADMAP §7.3) — one
+   shared fetch, two renderers, re-rendered on lang toggle same as the
+   incident log above. */
+(function () {
+  var pillarGrid = document.getElementById('pillarGrid');
+  var hdNeedle = document.getElementById('hdNeedle'), hdScoreEl = document.getElementById('hdScore'),
+      hdLabel = document.getElementById('hdLabel'), hdRationale = document.getElementById('hdRationale'),
+      hdMethod = document.getElementById('hdMethod'), hdAsOf = document.getElementById('hdAsOf'),
+      pillarSummaryEl = document.getElementById('pillarSummaryText');
+  if (!pillarGrid && !hdNeedle) return;
+  var DATA = null;
+  function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
+  function T(en, zh) { return lang() === 'zh' ? zh : en; }
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+
+  function renderCompass() {
+    if (!DATA || !DATA.hawkDoveCompass || !hdNeedle) return;
+    var hd = DATA.hawkDoveCompass;
+    var pct = Math.max(0, Math.min(100, ((hd.score + 2) / 4) * 100)); // -2..+2 -> 0..100%
+    hdNeedle.style.left = pct + '%';
+    if (hdScoreEl) hdScoreEl.textContent = (hd.score > 0 ? '+' : '') + hd.score;
+    if (hdLabel) hdLabel.textContent = T(hd.label_en, hd.label_zh);
+    if (hdRationale) hdRationale.textContent = T(hd.rationale_en, hd.rationale_zh);
+    if (hdMethod) hdMethod.textContent = T(hd.method_en, hd.method_zh);
+    if (hdAsOf) hdAsOf.textContent = hd.asOf || '';
+  }
+
+  function renderPillars() {
+    if (!DATA || !pillarGrid) return;
+    if (pillarSummaryEl && DATA.pillarSummary) pillarSummaryEl.textContent = T(DATA.pillarSummary.en, DATA.pillarSummary.zh);
+    var pillars = DATA.pillars || [];
+    pillarGrid.innerHTML = pillars.map(function (p) {
+      return '<article class="pillar tone-' + esc(p.tone || 'amber') + '">'
+        + '<h3>' + esc(T(p.name_en, p.name_zh)) + '<span class="pid">' + String(p.id).padStart(2, '0') + '</span></h3>'
+        + '<div class="status">' + esc(T(p.status_en, p.status_zh)) + '</div>'
+        + '<p class="read">' + esc(T(p.read_en, p.read_zh)) + '</p>'
+        + '<div class="asof">' + esc(p.asOf || '') + '</div>'
+        + '</article>';
+    }).join('');
+  }
+
+  function render() { renderCompass(); renderPillars(); }
+  fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
+    .catch(function () {});
   addEventListener('afflatus-lang', render);
 })();
 
