@@ -7,7 +7,7 @@
 
 ## 0. 状态速览 + 优先级排序 / Status at a glance ★
 
-> 本轮（2026-07-02）逐条核对了本文档与代码库的实际状态：已验证**完全完成**的任务从路线图中移除（不再需要跟踪），**做到一半或未开始**的任务保留并标注 ⚠️，同时发现了 3 项文档未记录的新情况，并按重要程度排序。**2026-07-03 更新：P0/P1/P2 均已完成**（P2 有两处范围缩减/延后，详情见下方对应小节）；P3 为下一轮候选。
+> 本轮（2026-07-02）逐条核对了本文档与代码库的实际状态：已验证**完全完成**的任务从路线图中移除（不再需要跟踪），**做到一半或未开始**的任务保留并标注 ⚠️，同时发现了 3 项文档未记录的新情况，并按重要程度排序。**2026-07-03 更新：P0/P1/P2 均已完成**（P2 有两处范围缩减/延后，详情见下方对应小节）。剩余未做的工作已重新按优先级分组，见 **§0b**。
 
 **P0 · 已全部完成（2026-07-03）**
 1. ✅ **HUD 双系统冲突**——判定 `drawCleanCombatHmd` v3（cockpit 座舱 + FPM 飞行路径标记 + 功率柱 + 目标血条 + 前置量 + 边缘威胁箭头）为 combat/standby 默认视图——这是用户最近一次明确列出的太空战 HUD 需求规格（准星前置量/目标状态/自机弧形条/机动矢量/物理化座舱等）唯一完整实现的版本。`drawCombatHudSC`（GIMBAL/GROUP 全息 + SCM/AB 竖直油门条风格）降级为 `?combatview=sc` 时的可选皮肤，代码与素材均保留、未删除。详见 **§4b**。
@@ -25,12 +25,32 @@
 9. ✅ **OffscreenCanvas + Worker 化背景星空渲染**——新增 `src/scene/backgroundScene.worker.js`，`backgroundScene.js` 通过 `canvas.transferControlToOffscreen()` + module Worker 特性检测自动切换：支持时星空/warp-tunnel 绘制整体搬进 Worker（主线程每帧只发 pointer x/y + warpIntensity 三个数字），不支持时**完整回退到原主线程 Canvas2D 实现**（原函数体保留在同一文件里，零功能损失）。`resize()`/`draw()`/`width`/`height`/`dpr` 对外接口不变，main.js **零改动**。构建验证：`backgroundScene.worker-*.js` 被 Vite 正确识别为独立 chunk 并打包。**⚠️ 范围说明**：只做了首页星空这一个背景 canvas；combat/雷达/K 线仍在主线程（§6 原文本身也只点名"星空"是性价比最高的第一步）。真实设备下的帧率提升暂未验证（沙盒内 Claude-in-Chrome 无法访问沙盒本地服务器，与本轮其它前端改动的验证限制相同）。详见 **§6**。
 10. ✅ **View Transitions API 跨文档过渡**——`public/page-turn.css`（5 个子页共享）与 `src/styles.css`（首页）均新增 `@view-transition{navigation:auto}`，为所有页面开启浏览器原生跨文档淡入淡出。**未替代** `transition.js` 的自定义每页特效（warp/cannon/takeoff/control/cyber 音效+canvas 动画）——那套效果比原生 crossfade 丰富得多，仍是点击/键盘翻页的主效果；新增 `html.vt-suppress` class（`transition.js` 的 `run()` 在实际跳转前打上）+ CSS 规则关闭该 class 存在时的原生 crossfade 动画，避免两套效果叠加。净效果：**未被 `transition.js` 拦截的跳转**（地址栏输入、书签、前进/后退）从"整页刷新白屏一闪"变成原生淡入淡出；被拦截的点击/键盘翻页行为不变。详见 **§6**。
 
-**P3 · 长线 / 待触发条件成熟**
-11. Signal Phase 2–3（重定价仪表、鹰鸽罗盘、事件回放迷你图、自动化生成）——详见 **§5b**。
-12. three.js WebGPURenderer + compute 粒子 + Bloom/ACES 后期处理——详见 **§6**。
-13. `viz.js` 公共库抽取（count-up 逻辑目前在 `sectors.html` 与 `marketDeck.js` 各自重复实现）——详见 **§2**。
-14. topdownCombat Phase 3–4（首页主战斗迁移到俯视渲染、代码分割体积优化）——详见 **§4**。
-15. Astro 迁移（触发式：页面 ≥8 或 novels 章节 ≥20 时再评估，当前未到阈值）——详见 **§6**。
+---
+
+## 0b. 剩余工作优先级 / What's left, by priority ★
+
+> 2026-07-03 整理：P0/P1/P2 全部收尾后，把散落在 §2/§4/§4b/§4c/§5/§5b/§6 里的所有"⚠️ 待续"项汇总去重，按优先级重新分组。想接着做时可以直接说编号（比如"做 A1"），每条都带了详情小节的链接。
+
+**A · 下一轮优先——技术债 + 收尾（成本可控、价值明确）**
+- **A1. 经典脚本转 ES module**——完成 Vite MPA 的下半场：`nav.js`/`audio.js`/`clock.js`/`i18n.js`/`transition.js`/`page-turn.js`/各页专属 `.js`（约 10 个互相有加载顺序依赖的文件）从 `public/` 静态直通改成真正参与 Vite 打包（压缩 + 哈希 + 公共 chunk）。详见 **§6.2 / §6.3**。
+- **A2. main.js 继续拆分（Phase 3–5）**——各页内联 `<style>` 移到 `public/styles/<page>.css`；`state`（飞行状态机）/`cursor`/`nav`/`boot` 职责从 main.js 拆出；`styles.css` 做 `@layer` 分层。main.js 目前仍 3421 行、styles.css 仍 7038 行。详见 **§2**。
+- **A3. `viz.js` 公共库抽取**——`sectors.html`（约 158 行处）与 `src/ui/marketDeck.js`（约 309 行处）里重复实现的 count-up 动画逻辑，合并成一个共享库。详见 **§2**。
+
+**B · 体验与性能打磨——非阻塞，可按兴趣挑做**
+- **B1. CSS Scroll-Driven Animations**——`animation-timeline: scroll()/view()` 替换 `alphardForge` 现在的 JS scroll-pin 逻辑，把滚动动画搬到合成器线程。详见 **§6.2**。
+- **B2. topdownCombat 后续**——飞行路径改由真实 `halley.curX/curY` 屏幕坐标驱动（目前仍是自走正弦漂移，需要先解决俯视 3D 世界和屏幕 2D 坐标的映射问题）；`?combatview=topdown` opt-in 转正评估；首页主战斗（`event-layer`）迁移到同一俯视渲染（Phase 3）；three.js 静态引入改动态 `import()` 代码分割（Phase 4，首屏包体优化）。详见 **§4**。
+- **B3. combatHudSC 机库跑道纵深透视**——2026-07-03 审计已确认当前完全不可达（起降走的是 `drawPilotDeck` 另一条路径，`combatHudSC` 从未在起降时被调用），要做的话得先把 combatHudSC 接进起降渲染路径，是比"数据绑定修复"更大的独立工作，先记录、不建议单独立项。详见 **§4b** 第 4 条。
+- **B4. combatCine 核弹真实模型渲染**——把当前 2D 绘制的核弹序列换成真实 Condor/夜鹰模型离屏渲染。详见 **§4b**。
+- **B5. 首页背景 canvas 加 IntersectionObserver**——不可见时停止渲染；目前只做了 `prefers-reduced-motion` 静帧和 `visibilitychange` 暂停。详见 **§2**。
+- **B6. 首页 WebGL 收尾**（低优先，需真机 profiling）——`saturnRenderer` 等 raw-GL 的完整 context-restored 重建（目前仅 `preventDefault` 保活）；跃迁点 shader 弱机自适应（降 fbm 八度或分辨率）；统一所有渲染器的 `powerPreference` 与 dpr 上限到一处常量（目前 1.75 vs 1.5 不一致）。详见 **§4c**。
+- **B7. 各页零散点子**——Arena "模型 vs 你"历史胜率曲线 + 接 Twelve Data 后把 W/M/6M/Y/5Y 徽标改 `REAL`；Sectors 研判和 Arena 的 Opus 预测打通（同一数据源）；Games 决赛对阵确定后在 `games-data.json` 补 `home/away/result` + 加"夺冠路径"树状图。详见 **§5**。
+
+**C · 长线 / 待触发条件成熟**
+- **C1. Signal Phase 2 — 传导链可视化**——BREACH METER（降息/加息概率位移横条，位移幅度自动映射 SCP 收容等级，目前是人工评定）；鹰鸽罗盘（主席+理事讲话鹰鸽评分聚合指针，先手动打分）；事件回放迷你图（SPX 发布前后 ±2h 的 5 分钟 sparkline）。详见 **§5b**。
+- **C2. Signal Phase 3 — 自动化与联动**——定时任务自动生成事件档案草稿；与 Arena/Sectors 打通；FedWatch 概率自动刷新（若找到数据源）。详见 **§5b**。
+- **C3. three.js WebGPURenderer + TSL + Bloom/ACES**——compute shader 粒子（百万级星涡/爆炸碎片）+ 更低 draw call 开销；`UnrealBloomPass` + ACES tone mapping 替代 radial-gradient 假光晕。详见 **§6.2**。
+- **C4. TypeScript 渐进迁移**——main.js 拆分（A2）产出的新模块直接写 `.ts`，不强制回填旧文件，增量成本。详见 **§6.2**。
+- **C5. Astro 迁移**——触发条件：站内页面数 ≥8 或 novels 章节数 ≥20，当前均未到阈值，先不评估、不动。详见 **§6.2 / §5**。
 
 ---
 
