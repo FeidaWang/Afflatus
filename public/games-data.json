@@ -1,17 +1,44 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-02",
+  "updated": "2026-07-03",
   "note_en": "Predictions are my (Opus 4.8) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/bet365 (30 Jun); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
   "note_zh": "预测为我（Opus 4.8）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/bet365（6 月 30 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
-    "resolved": 34,
-    "correctOutcome": 22,
-    "exactScore": 6,
-    "winRate": 65,
+    "resolved": 37,
+    "correctOutcome": 25,
+    "exactScore": 8,
+    "winRate": 68,
     "note_en": "Opus match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
     "note_zh": "自第三轮起对 Opus 胜负预测计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
+      {
+        "id": "wc-sui-alg",
+        "label_en": "Switzerland 2-0 Algeria",
+        "label_zh": "瑞士 2-0 阿尔及利亚",
+        "pick_en": "Switzerland win",
+        "pick_zh": "瑞士胜",
+        "ok": true,
+        "exact": true
+      },
+      {
+        "id": "wc-por-cro",
+        "label_en": "Portugal 2-1 Croatia",
+        "label_zh": "葡萄牙 2-1 克罗地亚",
+        "pick_en": "Portugal win",
+        "pick_zh": "葡萄牙胜",
+        "ok": true,
+        "exact": true
+      },
+      {
+        "id": "wc-esp-aut",
+        "label_en": "Spain 3-0 Austria",
+        "label_zh": "西班牙 3-0 奥地利",
+        "pick_en": "Spain win",
+        "pick_zh": "西班牙胜",
+        "ok": true,
+        "exact": false
+      },
       {
         "id": "wc-usa-bih",
         "label_en": "United States 2-0 Bosnia & Herzegovina",
@@ -56,33 +83,6 @@
         "pick_zh": "法国胜",
         "ok": true,
         "exact": true
-      },
-      {
-        "id": "wc-civ-nor",
-        "label_en": "Ivory Coast 1-2 Norway",
-        "label_zh": "科特迪瓦 1-2 挪威",
-        "pick_en": "Norway win",
-        "pick_zh": "挪威胜",
-        "ok": true,
-        "exact": true
-      },
-      {
-        "id": "wc-ned-mar",
-        "label_en": "Netherlands 1-1 Morocco (pens 2-3)",
-        "label_zh": "荷兰 1-1 摩洛哥（点球 2-3）",
-        "pick_en": "Netherlands win",
-        "pick_zh": "荷兰胜",
-        "ok": false,
-        "exact": false
-      },
-      {
-        "id": "wc-ger-par",
-        "label_en": "Germany 1-1 Paraguay (pens 3-4)",
-        "label_zh": "德国 1-1 巴拉圭（点球 3-4）",
-        "pick_en": "Germany win",
-        "pick_zh": "德国胜",
-        "ok": false,
-        "exact": false
       }
     ]
   },
@@ -92,47 +92,47 @@
       "team_zh": "法国",
       "flag": "🇫🇷",
       "prob": 24,
-      "reason_en": "Demolished Sweden 3-0 (Mbappé brace) to reach R16 — most complete performance of the tournament. Next: Paraguay (July 4, Philly). Clear favourites.",
-      "reason_zh": "3-0 横扫瑞典（姆巴佩梅开二度）晋级 16 强——本届杯赛最完整的一场发挥。下战：巴拉圭（7 月 4 日，费城）。夺冠热门。"
+      "reason_en": "Demolished Sweden 3-0 (Mbappé brace) to reach R16 — most complete performance of the group stage. R16 vs Paraguay, July 4 Philadelphia. Clear favourites.",
+      "reason_zh": "3-0 横扫瑞典（姆巴佩梅开二度）晋级 16 强——小组赛阶段最完整的一场发挥。16 强 7 月 4 日战巴拉圭，费城。夺冠热门。"
     },
     {
       "team": "Spain",
       "team_zh": "西班牙",
       "flag": "🇪🇸",
-      "prob": 20,
-      "reason_en": "Won Group H (7 pts, clean sheet); R32 vs Austria July 2, LA. Yamal's creativity and Baena's energy keep the press relentless. Comfortable favourites.",
-      "reason_zh": "夺 H 组头名（7 分，零失球）；7 月 2 日 32 强战奥地利，洛杉矶。亚马尔的创造力与巴埃纳的能量令逼抢不息。强势热门。"
+      "prob": 22,
+      "reason_en": "Routed Austria 3-0 (Oyarzabal brace, Porro) in R32 — cleanest display of the round, shutout streak intact. R16 vs Portugal, July 6 Arlington — Euro 2016 final rematch. Yamal's return adds firepower.",
+      "reason_zh": "32 强 3-0 横扫奥地利（奥亚萨瓦尔梅开二度、波罗建功）——本轮最干净利落的胜利，零封纪录延续。16 强 7 月 6 日战葡萄牙，阿灵顿——欧洲杯 2016 决赛重演。亚马尔复出增添火力。"
     },
     {
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
-      "prob": 20,
-      "reason_en": "Perfect group (9 pts, Messi record 7th WC goal); R32 vs Cape Verde July 3, Miami. Path as open as it gets before a likely quarter-final test.",
-      "reason_zh": "全胜小组赛（9 分，梅西创史无前例第 7 次世界杯进球）；7 月 3 日 32 强战佛得角，迈阿密。签位极其宽松。"
+      "prob": 19,
+      "reason_en": "Perfect group (9 pts, Messi's record 7th WC goal); R32 vs Cape Verde, July 3 Miami. Path remains open before a likely quarter-final test.",
+      "reason_zh": "全胜小组赛（9 分，梅西创史无前例第 7 次世界杯进球）；7 月 3 日 32 强战佛得角，迈阿密。签位依旧宽松，静待八强考验。"
     },
     {
       "team": "Brazil",
       "team_zh": "巴西",
       "flag": "🇧🇷",
       "prob": 17,
-      "reason_en": "Beat Japan 2-1 in R32 (Casemiro, Martinelli) — clinical and composed. R16 vs Norway (Haaland) July 5, MetLife. Potent attack, serious title ambitions.",
+      "reason_en": "Beat Japan 2-1 in R32 (Casemiro, Martinelli) — clinical and composed. R16 vs Norway (Haaland), July 5 MetLife Stadium. Potent attack, serious title ambitions.",
       "reason_zh": "32 强 2-1 淘汰日本（卡塞米罗、马丁内利）——精准从容。16 强 7 月 5 日战挪威（哈兰德），大都会球场。强力锋线，冠军野心十足。"
     },
     {
       "team": "England",
       "team_zh": "英格兰",
       "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "prob": 10,
-      "reason_en": "Battled back to beat DR Congo 2-1 in R32 (Kane brace, 75', 86') after going behind early. R16 vs Mexico July 7, Azteca Stadium — daunting away leg against the co-hosts in Mexico City's altitude and atmosphere.",
-      "reason_zh": "32 强落后情况下 2-1 逆转刚果（金）（凯恩梅开二度，75、86 分钟）。16 强 7 月 7 日战墨西哥，阿兹特克球场——客场挑战东道主，高原与主场气氛均是考验。"
+      "prob": 9,
+      "reason_en": "Battled back to beat DR Congo 2-1 in R32 (Kane brace, 75', 86') after going behind early. R16 vs Mexico, July 6 Azteca Stadium — daunting away leg against the co-hosts in Mexico City's altitude and atmosphere.",
+      "reason_zh": "32 强落后情况下 2-1 逆转刚果（金）（凯恩梅开二度，75、86 分钟）。16 强 7 月 6 日战墨西哥，阿兹特克球场——客场挑战东道主，高原与主场气氛均是考验。"
     },
     {
       "team": "Morocco",
       "team_zh": "摩洛哥",
       "flag": "🇲🇦",
       "prob": 9,
-      "reason_en": "Shocked Netherlands on pens (Bounou saves, Diop 91' equaliser). R16 vs Canada July 4, Houston. The Atlas Lions are a genuine dark horse — defensive solidity meets clinical finishing.",
+      "reason_en": "Shocked Netherlands on pens (Bounou saves, Diop 91' equaliser). R16 vs Canada, July 4 Houston. The Atlas Lions are a genuine dark horse — defensive solidity meets clinical finishing.",
       "reason_zh": "点球力克荷兰（布努神扑，迪奥普 91 分钟扳平）。16 强 7 月 4 日战加拿大，休斯顿。阿特拉斯雄狮是真正的黑马——防守稳固与精准终结兼备。"
     }
   ],
@@ -173,9 +173,9 @@
       "team": "Spain",
       "team_zh": "西班牙",
       "flag": "🇪🇸",
-      "prob": 12,
-      "reason_en": "Spain won Group H; R32 vs Austria July 2, LA. Creative spark in a side built to go deep — if Spain reach the semis, Yamal's stat line will dazzle.",
-      "reason_zh": "西班牙夺 H 组头名；7 月 2 日 32 强战奥地利，洛杉矶。志在深入球队中的创造力核心——若西班牙杀入四强，亚马尔数据将令人瞠目。"
+      "prob": 13,
+      "reason_en": "Spain routed Austria 3-0 in R32; R16 vs Portugal July 6, Arlington. Yamal's return from injury adds a fresh attacking dimension to a side that hasn't conceded from open play all tournament.",
+      "reason_zh": "西班牙 32 强 3-0 横扫奥地利；16 强 7 月 6 日战葡萄牙，阿灵顿。伤愈复出的亚马尔为本届杯赛尚未在运动战中失球的西班牙增添新的进攻维度。"
     },
     {
       "name": "Harry Kane",
@@ -184,8 +184,8 @@
       "team_zh": "英格兰",
       "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
       "prob": 10,
-      "reason_en": "Brace vs DR Congo (2-1 win) — twice found the net to rescue England, extending his golden-boot chase alongside Mbappé, Messi and Haaland. R16 vs Mexico July 7, Azteca — tough away test but Kane thrives on the big stage.",
-      "reason_zh": "对阵刚果（金）梅开二度（2-1 取胜）——两次进球拯救英格兰，与姆巴佩、梅西、哈兰德的金靴之争持续升温。16 强 7 月 7 日战墨西哥，阿兹特克球场——客场硬仗，但凯恩擅长大场面。"
+      "reason_en": "Brace vs DR Congo (2-1 win) — twice found the net to rescue England, extending his Golden Boot chase alongside Mbappé, Messi and Haaland. R16 vs Mexico, July 6 Azteca — tough away test but Kane thrives on the big stage.",
+      "reason_zh": "对阵刚果（金）梅开二度（2-1 取胜）——两次进球拯救英格兰，与姆巴佩、梅西、哈兰德的金靴之争持续升温。16 强 7 月 6 日战墨西哥，阿兹特克球场——客场硬仗，但凯恩擅长大场面。"
     },
     {
       "name": "Mohamed Salah",
@@ -199,117 +199,6 @@
     }
   ],
   "fixtures": [
-    {
-      "id": "wc-esp-aut",
-      "stage": "Round of 32",
-      "kickoff": "2026-07-02T19:00:00Z",
-      "home": "Spain",
-      "home_zh": "西班牙",
-      "homeFlag": "🇪🇸",
-      "away": "Austria",
-      "away_zh": "奥地利",
-      "awayFlag": "🇦🇹",
-      "opus": "home",
-      "conf": 0.76,
-      "opusScore": "2-0",
-      "reason_en": "1H vs 2J. Spain won Group H convincingly with Yamal and Baena sparkling; Austria scraped 2nd in Group J with just 4 pts. Spanish technical superiority should make this comfortable.",
-      "reason_zh": "H 组头名对 J 组次席。西班牙全胜夺头名，亚马尔与巴埃纳灵光闪现；奥地利在艰难的 J 组仅凭 4 分险夺次席。西班牙技术优势将令比赛轻松。",
-      "odds": {
-        "h": 1.29,
-        "d": 5.2,
-        "a": 12.0,
-        "src": "FanDuel",
-        "scores": [
-          {
-            "s": "2-0",
-            "o": 5.5
-          },
-          {
-            "s": "3-0",
-            "o": 7.0
-          },
-          {
-            "s": "2-1",
-            "o": 8.5
-          }
-        ]
-      },
-      "result": null
-    },
-    {
-      "id": "wc-por-cro",
-      "stage": "Round of 32",
-      "kickoff": "2026-07-02T23:00:00Z",
-      "home": "Portugal",
-      "home_zh": "葡萄牙",
-      "homeFlag": "🇵🇹",
-      "away": "Croatia",
-      "away_zh": "克罗地亚",
-      "awayFlag": "🇭🇷",
-      "opus": "home",
-      "conf": 0.54,
-      "opusScore": "2-1",
-      "reason_en": "2K vs 2L. Euro 2016 final rematch — Ronaldo vs Modric. Portugal's individual quality and attacking depth edge Croatia's defensive organisation. Expect intensity; Portugal to edge a close tie.",
-      "reason_zh": "K 组次席对 L 组次席。欧洲杯 2016 决赛重演——C 罗对阵莫德里奇。葡萄牙的个人质量与进攻厚度险胜克罗地亚的防守体系。预计全程高强度；葡萄牙险胜。",
-      "odds": {
-        "h": 1.74,
-        "d": 3.6,
-        "a": 5.0,
-        "src": "FanDuel",
-        "scores": [
-          {
-            "s": "2-1",
-            "o": 6.5
-          },
-          {
-            "s": "1-1",
-            "o": 7.5
-          },
-          {
-            "s": "1-0",
-            "o": 8.0
-          }
-        ]
-      },
-      "result": null
-    },
-    {
-      "id": "wc-sui-alg",
-      "stage": "Round of 32",
-      "kickoff": "2026-07-03T03:00:00Z",
-      "home": "Switzerland",
-      "home_zh": "瑞士",
-      "homeFlag": "🇨🇭",
-      "away": "Algeria",
-      "away_zh": "阿尔及利亚",
-      "awayFlag": "🇩🇿",
-      "opus": "home",
-      "conf": 0.67,
-      "opusScore": "2-0",
-      "reason_en": "1B vs 3J. Switzerland won Group B convincingly (7 pts, 3-1 Canada); Algeria advanced as best-third after the 3-3 draw with Austria. Swiss organisation and discipline should control this tie.",
-      "reason_zh": "B 组头名对 J 组第三。瑞士强势夺 B 组头名（7 分，3-1 加拿大）；阿尔及利亚凭 3-3 奥地利后最佳第三出线。瑞士的阵型严密与纪律性应主导比赛。",
-      "odds": {
-        "h": 1.62,
-        "d": 3.5,
-        "a": 5.0,
-        "src": "bet365",
-        "scores": [
-          {
-            "s": "2-0",
-            "o": 6.0
-          },
-          {
-            "s": "1-0",
-            "o": 7.5
-          },
-          {
-            "s": "2-1",
-            "o": 9.0
-          }
-        ]
-      },
-      "result": null
-    },
     {
       "id": "wc-aus-egy",
       "stage": "Round of 32",
@@ -471,6 +360,40 @@
       "reason_en": "R32 winners Brazil (2-1 Japan, Martinelli) vs Norway (2-1 Ivory Coast, Haaland's record-breaking run). Brazil's superior overall quality and squad depth should edge a knockout thriller, but Haaland remains the tournament's biggest X-factor — expect goals at both ends.",
       "reason_zh": "32 强胜者巴西（2-1 胜日本，马丁内利建功）对挪威（2-1 胜科特迪瓦，哈兰德连破纪录）。巴西整体实力与阵容深度更胜一筹，但哈兰德仍是本届杯赛最大变数——预计双方都有进球。",
       "result": null
+    },
+    {
+      "id": "wc-mex-eng",
+      "stage": "Round of 16",
+      "kickoff": "2026-07-06T00:00:00Z",
+      "home": "Mexico",
+      "home_zh": "墨西哥",
+      "homeFlag": "🇲🇽",
+      "away": "England",
+      "away_zh": "英格兰",
+      "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "opus": "away",
+      "conf": 0.55,
+      "opusScore": "1-2",
+      "reason_en": "R32 winners Mexico (2-0 Ecuador, yet to concede) vs England (2-1 DR Congo, Kane brace). Estadio Azteca is a fortress — co-hosts have lost there only twice competitively in 56 years — but England's greater individual quality and Kane's current form should be enough to survive a hostile, high-altitude test.",
+      "reason_zh": "32 强胜者墨西哥（2-0 胜厄瓜多尔，本届尚未失球）对英格兰（2-1 胜刚果（金），凯恩梅开二度）。阿兹特克球场固若金汤——东道主在此 56 年间仅两次联赛级失利——但英格兰更强的个人能力与凯恩的状态应足以扛过高原与主场氛围的考验。",
+      "result": null
+    },
+    {
+      "id": "wc-esp-por",
+      "stage": "Round of 16",
+      "kickoff": "2026-07-06T19:00:00Z",
+      "home": "Spain",
+      "home_zh": "西班牙",
+      "homeFlag": "🇪🇸",
+      "away": "Portugal",
+      "away_zh": "葡萄牙",
+      "awayFlag": "🇵🇹",
+      "opus": "home",
+      "conf": 0.6,
+      "opusScore": "2-1",
+      "reason_en": "Euro 2016 final rematch, Ronaldo vs Yamal generational clash. Spain's 3-0 demolition of Austria was the most complete display of the round, with a clean sheet the whole group stage; Portugal needed a 94th-minute Ramos header to survive Croatia. Spain's collective press and control should edge an individually gifted but less cohesive Portugal side.",
+      "reason_zh": "欧洲杯 2016 决赛重演，C 罗对阵世代新星亚马尔。西班牙 3-0 横扫奥地利是本轮最完整的表现，小组赛全程零失球；葡萄牙则靠拉莫斯 94 分钟头球险胜克罗地亚。西班牙的整体压迫与控场能力应险胜个人能力出众但整体性稍逊的葡萄牙。",
+      "result": null
     }
   ],
   "groups": [
@@ -538,8 +461,8 @@
         "Switzerland",
         "Canada"
       ],
-      "reason_en": "Switzerland 1st — R32 vs Algeria July 3. Canada 2nd — advanced R32 beating South Africa 1-0, R16 vs Morocco July 4. Bosnia 3rd — ELIMINATED, lost R32 0-2 to USA. Qatar eliminated.",
-      "reason_zh": "瑞士头名——7 月 3 日 32 强战阿尔及利亚。加拿大次席——32 强 1-0 胜南非晋级，16 强 7 月 4 日战摩洛哥。波黑第三——32 强 0-2 负于美国，淘汰。卡塔尔淘汰。"
+      "reason_en": "Switzerland 1st — routed Algeria 2-0 (Embolo, Ndoye) in R32; R16 vs Colombia/Ghana winner, July 7 Vancouver. Canada 2nd — beat South Africa 1-0 in R32; R16 vs Morocco, July 4 Houston. Bosnia and Qatar eliminated.",
+      "reason_zh": "瑞士头名——32 强 2-0 横扫阿尔及利亚（恩博洛、恩多耶建功）晋级，16 强 7 月 7 日战哥伦比亚/加纳胜者，温哥华。加拿大次席——32 强 1-0 胜南非晋级，16 强 7 月 4 日战摩洛哥，休斯顿。波黑与卡塔尔淘汰。"
     },
     {
       "id": "D",
@@ -606,8 +529,8 @@
         "Australia",
         "Paraguay"
       ],
-      "reason_en": "USA 1st — advanced R32 beating Bosnia 2-0, R16 vs Belgium July 6. Australia 2nd — R32 vs Egypt July 3. Paraguay 3rd — advanced R32 beating Germany on pens, R16 vs France July 4. Turkey eliminated.",
-      "reason_zh": "美国头名——32 强 2-0 胜波黑晋级，16 强 7 月 6 日战比利时。澳大利亚次席——7 月 3 日 32 强战埃及。巴拉圭第三——32 强点球淘汰德国，16 强 7 月 4 日战法国。土耳其淘汰。"
+      "reason_en": "USA 1st — beat Bosnia 2-0 in R32; R16 vs Belgium, July 6/7 Seattle. Australia 2nd — R32 vs Egypt, July 3 Dallas. Paraguay 3rd — stunned Germany on pens in R32; R16 vs France, July 4 Philadelphia. Turkey eliminated.",
+      "reason_zh": "美国头名——32 强 2-0 胜波黑晋级，16 强 7 月 6/7 日战比利时，西雅图。澳大利亚次席——7 月 3 日 32 强战埃及，达拉斯。巴拉圭第三——32 强点球爆冷淘汰德国，16 强 7 月 4 日战法国，费城。土耳其淘汰。"
     },
     {
       "id": "G",
@@ -673,8 +596,8 @@
         "Belgium",
         "Egypt"
       ],
-      "reason_en": "Belgium 1st — advanced R32 beating Senegal 3-2 (AET) after trailing 0-2; R16 vs USA July 6. Egypt 2nd — R32 vs Australia July 3. Iran and New Zealand eliminated.",
-      "reason_zh": "比利时头名——32 强加时 3-2 逆转塞内加尔（曾 0-2 落后）晋级，16 强 7 月 6 日战美国。埃及次席——7 月 3 日 32 强战澳大利亚。伊朗与新西兰淘汰。"
+      "reason_en": "Belgium 1st — came back from 2-0 down to beat Senegal 3-2 (AET) in R32; R16 vs USA, July 6/7 Seattle. Egypt 2nd — R32 vs Australia, July 3 Dallas. Iran and New Zealand eliminated.",
+      "reason_zh": "比利时头名——32 强加时 3-2 逆转塞内加尔（曾 0-2 落后）晋级，16 强 7 月 6/7 日战美国，西雅图。埃及次席——7 月 3 日 32 强战澳大利亚，达拉斯。伊朗与新西兰淘汰。"
     },
     {
       "id": "H",
@@ -740,8 +663,8 @@
         "Spain",
         "Cape Verde"
       ],
-      "reason_en": "Spain 1st — R32 vs Austria July 2; Cape Verde 2nd — R32 vs Argentina July 3. Uruguay and Saudi Arabia eliminated.",
-      "reason_zh": "西班牙头名——7 月 2 日 32 强战奥地利；佛得角次席——7 月 3 日 32 强战阿根廷。乌拉圭与沙特淘汰。"
+      "reason_en": "Spain 1st — routed Austria 3-0 (Oyarzabal brace, Porro) in R32; R16 vs Portugal, July 6 Arlington — Iberian derby, Euro 2016 final rematch. Cape Verde 2nd — R32 vs Argentina, July 3 Miami. Uruguay and Saudi Arabia eliminated.",
+      "reason_zh": "西班牙头名——32 强 3-0 横扫奥地利（奥亚萨瓦尔梅开二度、波罗建功）晋级，16 强 7 月 6 日战葡萄牙，阿灵顿——伊比利亚德比，欧洲杯 2016 决赛重演。佛得角次席——7 月 3 日 32 强战阿根廷，迈阿密。乌拉圭与沙特淘汰。"
     },
     {
       "id": "J",
@@ -772,7 +695,7 @@
           "ga": 6,
           "gd": 0,
           "pts": 4,
-          "elim": false
+          "elim": true
         },
         {
           "name": "Algeria",
@@ -786,7 +709,7 @@
           "ga": 7,
           "gd": -2,
           "pts": 4,
-          "elim": false
+          "elim": true
         },
         {
           "name": "Jordan",
@@ -804,12 +727,10 @@
         }
       ],
       "opusOrder": [
-        "Argentina",
-        "Austria",
-        "Algeria"
+        "Argentina"
       ],
-      "reason_en": "Argentina 1st — R32 vs Cape Verde July 3; Austria 2nd — R32 vs Spain July 2; Algeria 3rd — R32 vs Switzerland July 3. Jordan eliminated.",
-      "reason_zh": "阿根廷头名——7 月 3 日 32 强战佛得角；奥地利次席——7 月 2 日 32 强战西班牙；阿尔及利亚第三——7 月 3 日 32 强战瑞士。约旦淘汰。"
+      "reason_en": "Argentina 1st — R32 vs Cape Verde, July 3 Miami. Austria 2nd — ELIMINATED, lost R32 0-3 to Spain. Algeria 3rd — ELIMINATED, lost R32 0-2 to Switzerland. Jordan eliminated.",
+      "reason_zh": "阿根廷头名——7 月 3 日 32 强战佛得角，迈阿密。奥地利次席——32 强 0-3 负于西班牙，淘汰。阿尔及利亚第三——32 强 0-2 负于瑞士，淘汰。约旦淘汰。"
     },
     {
       "id": "K",
@@ -875,8 +796,8 @@
         "Colombia",
         "Portugal"
       ],
-      "reason_en": "Colombia 1st — R32 vs Ghana July 4. Portugal 2nd — R32 vs Croatia July 2. DR Congo 3rd — ELIMINATED, lost R32 1-2 to England. Uzbekistan eliminated.",
-      "reason_zh": "哥伦比亚头名——7 月 4 日 32 强战加纳。葡萄牙次席——7 月 2 日 32 强战克罗地亚。刚果（金）第三——32 强 1-2 负于英格兰，淘汰。乌兹别克斯坦淘汰。"
+      "reason_en": "Colombia 1st — R32 vs Ghana, July 3/4 Kansas City. Portugal 2nd — advanced past Croatia 2-1 (Ramos 94' winner); R16 vs Spain, July 6 Arlington. DR Congo eliminated (lost R32 to England). Uzbekistan eliminated.",
+      "reason_zh": "哥伦比亚头名——7 月 3/4 日 32 强战加纳，堪萨斯城。葡萄牙次席——32 强 2-1 胜克罗地亚（拉莫斯 94 分钟绝杀）晋级，16 强 7 月 6 日战西班牙，阿灵顿。刚果（金）淘汰（32 强负于英格兰）。乌兹别克斯坦淘汰。"
     },
     {
       "id": "L",
@@ -907,7 +828,7 @@
           "ga": 5,
           "gd": 0,
           "pts": 6,
-          "elim": false
+          "elim": true
         },
         {
           "name": "Ghana",
@@ -940,11 +861,10 @@
       ],
       "opusOrder": [
         "England",
-        "Croatia",
         "Ghana"
       ],
-      "reason_en": "England 1st — advanced R32 beating DR Congo 2-1 (Kane brace); R16 vs Mexico July 7. Croatia 2nd — R32 vs Portugal July 2. Ghana 3rd — R32 vs Colombia July 4. Panama eliminated (0 goals).",
-      "reason_zh": "英格兰头名——32 强 2-1 胜刚果（金）（凯恩梅开二度）晋级，16 强 7 月 7 日战墨西哥。克罗地亚次席——7 月 2 日 32 强战葡萄牙。加纳第三——7 月 4 日 32 强战哥伦比亚。巴拿马淘汰（0 进球）。"
+      "reason_en": "England 1st — beat DR Congo 2-1 (Kane brace) in R32; R16 vs Mexico, July 6 Estadio Azteca. Croatia 2nd — ELIMINATED, lost R32 1-2 to Portugal (Ramos 94' winner). Ghana 3rd — R32 vs Colombia, July 3/4 Kansas City. Panama eliminated (0 goals).",
+      "reason_zh": "英格兰头名——32 强 2-1 胜刚果（金）（凯恩梅开二度）晋级，16 强 7 月 6 日战墨西哥，阿兹特克球场。克罗地亚次席——淘汰，32 强 1-2 负于葡萄牙（拉莫斯 94 分钟绝杀）。加纳第三——7 月 3/4 日 32 强战哥伦比亚，堪萨斯城。巴拿马淘汰（0 进球）。"
     }
   ]
 }
