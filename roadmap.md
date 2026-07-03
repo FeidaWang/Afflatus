@@ -10,34 +10,47 @@
 
 > **当前状态（2026-07-04）**：v1.4 全部收尾工作已完成并归档（见 Release Notes）。当前处于 **Afflatus v1.5「Fable 5 Max 五模块」** 规划执行期——源头是站主的系统架构规划报告，经评审优化后落地，完整五模块规格见 **§7**，定时任务提示词库见 `prompts/`。同期新增 **v1.5b 视觉工程轨**（§4：相机导演 / Odin 全息重建 / 武器单时钟同步）。
 >
-> **排序依据**：时效硬截止 > 依赖顺序 > 价值密度。两个硬截止：**MSI 2026 决赛 7 月 12 日**（大田，Bracket Stage 7/3–7/12）；**世界杯决赛 7 月 19 日**。想接着做时直接说编号（如「做 V0」）。
+> **排序依据**：时效硬截止 > 依赖顺序 > 价值密度。两个硬截止：**MSI 2026 决赛 7 月 12 日**（大田，Bracket Stage 7/3–7/12）；**世界杯决赛 7 月 19 日**。一个软截止：**7 月底 FOMC**——V6/V7（Signal Warsh 重构）最好在 Warsh 时代第一次议息前上线，那是这个页面的天然首秀事件。想接着做时直接说编号（如「做 V0」）。
+>
+> **NEXT UP · 建议执行队列（2026-07-04 评审版）**——按依赖与截止日期排好的顺序，标注工作量（S≈半天内 / M≈1–3 天 / L≈1 周级）：
+> ① **V0**（M）→ ② **V1**（S）——7/12 前的全部注意力；
+> ③ **V2**（S·随赛程持续）——世界杯每轮完赛后补数据；
+> ④ **V3**（M·含 vitest 测试地基）→ ⑤ **V4**（M）——旗舰功能的地基与上线；
+> ⑥ **V16**（M）——视觉轨第一步（先事件总线、后镜头，顺序修正见 §4）；
+> ⑦ **V5**（M）——账本积累 ≥3 个交易日数据后再做前端，否则净值曲线没内容可画；
+> ⑧ **V6**（M）→ ⑨ **V7**（S）——赶 7 月底 FOMC 前；
+> ⑩ **V14**（L）→ ⑪ **V15/V15b**（L/M）→ ⑫ **V8**（S）收版本 → 进入 P2。
 
 **P0 · 抢时效（本周内，硬截止 7/12）**
-- **V0. Leagues 页面 v1**——`leagues.html` + `src/pages/leaguesEntry.js` + `public/leagues-data.json` + vite 多入口注册 + `nav.js` SITE 数组插入 `{path:'/leagues.html', group:'labs'}`（games 与 novels 之间；Labs 下拉与翻页循环自动收纳，机制零改动）。骨架克隆 games.html 模式（hero/战绩/对阵卡/赔率/免责声明），主题换海克斯金/蓝与 games 品红/青区分。初始数据以当日实际赛果落盘。规格见 **§7.4**。
-- **V1. Leagues 定时任务**——MSI 期间每日一跑（每系列赛后更新剩余场次预测 + 已完场复盘计分），提示词 `prompts/leagues-msi.md`；7/12 决赛后收官一跑，页面转「战绩存档」模式（`mode:'archived'`）。
-- **V2. Games 世界杯收官跟进**——淘汰赛对阵确定后补 `games-data.json` 的 `home/away/result`（决赛 7/19 收官）；「夺冠路径」树状图不抢时效，见 B7。
+- **V0.（M）Leagues 页面 v1**——`leagues.html` + `src/pages/leaguesEntry.js` + `public/leagues-data.json` + vite 多入口注册 + `nav.js` SITE 数组插入 `{path:'/leagues.html', group:'labs'}`（games 与 novels 之间；Labs 下拉与翻页循环自动收纳，机制零改动）。骨架克隆 games.html 模式（hero/战绩/对阵卡/赔率/免责声明），主题换海克斯金/蓝与 games 品红/青区分。初始数据以当日实际赛果落盘。规格见 **§7.4**。
+- **V1.（S）Leagues 定时任务**——MSI 期间每日一跑（每系列赛后更新剩余场次预测 + 已完场复盘计分），提示词 `prompts/leagues-msi.md`；7/12 决赛后收官一跑，页面转「战绩存档」模式（`mode:'archived'`）。
+- **V2.（S·随赛程持续）Games 世界杯收官跟进**——淘汰赛对阵确定后补 `games-data.json` 的 `home/away/result`（决赛 7/19 收官）；「夺冠路径」树状图不抢时效，见 B7。
 
-**P1 · v1.5 核心（1–3 周）**
-- **V3. Arena Autopilot 账本 + 规则引擎**——`public/arena-ledger.json`（Model A/B 双账本各虚拟 $10,000）+ 模拟撮合（滑点/费用）+ 代码层硬风控（LLM 只提案、规则引擎收单，红线见 §7.1）。这是 V4/V5 的地基，先行。
-- **V4. Arena 双模型定时任务**——Model A 日内双窗口批处理（开盘后 + 尾盘各 1 次）+ Model B 盘后 1 次 + 周六深度复盘 1 次/周；所有任务先过交易日历守卫（周末/NYSE 假日 no-op）；提示词 `prompts/arena-autopilot.md`。调度与 token 预算表见 **§7.5**。
-- **V5. Arena 页 Autopilot 前端区块**——净值双曲线（A vs B）、持仓表、成交/拒单日志、每日复盘卡（中英）；沿用 arena.html 现有视觉，与「Human vs AI」游戏区并列。
-- **V6. Signal「Warsh 时代」内容重构**——新主席 SCP 人事档案 + 五维信号矩阵（通胀/货币政策/财报指引/产业动向/地缘贸易）+ 无前瞻指引 ⇒ 数据发布日历权重提升 + 鹰鸽罗盘首版。规格见 **§7.3**。
-- **V7. Signal 定时任务升级**——事件驱动（CPI/PCE/NFP/FOMC 发布日）+ 每周例行研判，自动生成事件档案草稿；提示词 `prompts/signal-warsh.md`。
-- **V8. v1.5 发布收尾**——版本号 v1.4→v1.5（index.html/package.json/lock）；全站 AI 人设文案「Fable 5」→「Fable 5 Max」（只改用户可见文案，内部字段名/JS 属性/CSS class 不动）；ROADMAP 归档收尾。
-- **V14. 相机导演系统**——镜头状态机 + 首发镜头库（导弹尾随/撞击环绕/CIWS 炮塔位/主炮轴线/舰桥全景）+「空间深度四件套」解决导弹平面感。规格见 **§4**。
-- **V15. Odin 参考全息舰重建 + 战机保真度**——按参考图重建 `shipHologram`/`capitalShip3D` 几何（程序化 blockout + 实例化 greeble 套件）；战机加嵌板法线与 PBR-lite 材质。规格见 **§4**。
-- **V16. 武器单时钟同步（CIWS/导弹/核弹/主炮）**——combatRuntime 发布权威时间线，HUD 与 3D 场景全部改订阅制渲染，消灭两侧独立计时器。规格见 **§4**。
+**P1 · v1.5 核心（1–3 周，双轨并行）**
+
+*产品轨（按序执行 V3 → V4 → V5 → V6 → V7 → V8）：*
+- **V3.（M）Arena Autopilot 账本 + 规则引擎**——`public/arena-ledger.json`（Model A/B 双账本各虚拟 $10,000）+ 模拟撮合（滑点/费用）+ 代码层硬风控（LLM 只提案、规则引擎收单，红线与 2026-07-04 策略增补见 §7.1）。**含测试地基**：引入 vitest（Vite 原生零配置），对规则引擎全部纯函数（订单校验/撮合/指标计算）写单测——这是全站唯一「账本状态被悄悄算错就全完」的模块，测试不是可选项。这是 V4/V5 的地基，先行。
+- **V4.（M）Arena 双模型定时任务**——Model A 日内双窗口批处理（开盘后 + 尾盘各 1 次）+ Model B 盘后 1 次 + 周六深度复盘 1 次/周；所有任务先过交易日历守卫（周末/NYSE 假日 no-op）；提示词 `prompts/arena-autopilot.md`。调度、数据获取与 key 管理见 **§7.5**（2026-07-04 增补：用 launchd 替代 crontab——睡眠错过的任务唤醒后补跑，cron 直接跳过）。
+- **V5.（M）Arena 页 Autopilot 前端区块**——净值双曲线（A vs B + SPY 基准线）、持仓表、成交/拒单日志、每日复盘卡（中英）；沿用 arena.html 现有视觉，与「Human vs AI」游戏区并列。**时机**：等账本积累 ≥3 个交易日再动工。
+- **V6.（M）Signal「Warsh 时代」内容重构**——新主席 SCP 人事档案 + 五维信号矩阵（通胀/货币政策/财报指引/产业动向/地缘贸易）+ 无前瞻指引 ⇒ 数据发布日历权重提升 + 鹰鸽罗盘首版。规格见 **§7.3**。**软截止：7 月底 FOMC 前上线**。
+- **V7.（S）Signal 定时任务升级**——事件驱动（CPI/PCE/NFP/FOMC 发布日）+ 每周例行研判，自动生成事件档案草稿；提示词 `prompts/signal-warsh.md`。
+- **V8.（S）v1.5 发布收尾**——版本号 v1.4→v1.5（index.html/package.json/lock）；全站 AI 人设文案「Fable 5」→「Fable 5 Max」（只改用户可见文案，内部字段名/JS 属性/CSS class 不动）；ROADMAP 归档收尾。
+
+*视觉轨（按序执行 V16 → V14 → V15/V15b，与产品轨并行；顺序修正理由见 §4 实施路线修正）：*
+- **V16.（M）武器单时钟同步（CIWS/导弹/核弹/主炮）**——**视觉轨的第一步而非收尾**：V14 的镜头切换全部由它的事件驱动，先立权威时间线、镜头系统才有东西可订阅，反序会造成返工。combatRuntime 发布权威时间线，HUD 与 3D 场景全部改订阅制渲染，消灭两侧独立计时器。规格见 **§4**。
+- **V14.（L）相机导演系统**——镜头状态机 + 首发镜头库（导弹尾随/撞击环绕/CIWS 炮塔位/主炮轴线/舰桥全景）+「空间深度四件套」解决导弹平面感。**实施路线已修正：复用 topdownCombat 现成场景资产**（舰船/导弹/彗星/爆炸全都建好了），废弃的只是固定俯视机位、不是场景本身。规格见 **§4**。
+- **V15.（L）Odin 参考全息舰重建** + **V15b.（M）战机保真度**——按参考图重建 `shipHologram`/`capitalShip3D` 几何（程序化 blockout + 实例化 greeble 套件）；战机加嵌板法线与 PBR-lite 材质。独立资产工作，可穿插进行。规格见 **§4**。
 
 **P2 · v1.5 扩展（3–6 周）**
-- **V9. Sectors 中美 AI 对比矩阵**——4 厂商观察卡（美：Anthropic/OpenAI；中：智谱/阿里）× 映射标的篮子（定性关联标签，不伪造统计相关系数）。规格见 **§7.2**。
-- **V10. Sectors「后内存时代」专题**——三主线（HBM 定价权 / CXL 内存池化 / NAND KV-Cache 分层）+ Top 10 论点卡 + 现有报价管线自动刷新；OTC ADR 报价源缺失时降级为纯论点卡。**结构决策：不单开新页，进 Sectors 专题区块**——理由见 §7.0。
-- **V11. sectors-data.json 每周定时任务**——V9+V10 共用一次周跑；提示词 `prompts/sectors-watch.md` + `prompts/postmemory-top10.md`。
-- **V12. 数据管线统一**——`scripts/push-arena-news.sh`（已在用）模板化为通用 `push-data.sh <file> <msg>`；所有数据 JSON 顶层统一 `{updated, version}`；前端共享「数据龄」徽标；预测类页面共享战绩组件（命中率 + Brier 分数，Games/Leagues/Signal 通用）；「Sectors 研判与 Arena 预测打通」并入本项评估。
-- **A2. main.js 继续拆分（Phase 3–5）**——各页内联 `<style>` 移到 `public/styles/<page>.css`；`state`/`cursor`/`nav`/`boot` 职责拆出；`styles.css` 做 `@layer` 分层。main.js 仍 3421 行、styles.css 仍 7038 行。详见 **§3**。
+- **V9.（M）Sectors 中美 AI 对比矩阵**——4 厂商观察卡（美：Anthropic/OpenAI；中：智谱/阿里）× 映射标的篮子（定性关联标签，不伪造统计相关系数）。规格见 **§7.2**。
+- **V10.（M）Sectors「后内存时代」专题**——三主线（HBM 定价权 / CXL 内存池化 / NAND KV-Cache 分层）+ Top 10 论点卡 + 现有报价管线自动刷新；OTC ADR 报价源缺失时降级为纯论点卡。**结构决策：不单开新页，进 Sectors 专题区块**——理由见 §7.0。
+- **V11.（S）sectors-data.json 每周定时任务**——V9+V10 共用一次周跑；提示词 `prompts/sectors-watch.md` + `prompts/postmemory-top10.md`。
+- **V12.（M）数据管线统一**——`scripts/push-arena-news.sh`（已在用，2026-07-04 修复过一个从未生效的 rebase bug，见 §7.5）模板化为通用 `push-data.sh <file> <msg>`；所有数据 JSON 顶层统一 `{updated, version}`；前端共享统一**溯源徽章**（`FABLE 5 MAX · 数据龄 · 来源数 · NOT ADVICE` 一体化小组件，全站 AI 内容页复用，数据龄 >36h 琥珀、>72h 红）；预测类页面共享战绩组件（命中率 + Brier 分数，Games/Leagues/Signal 通用），并纳入首页 Top 10 组合 vs SPY/SMH 的公开记分（见 §7.2 集中度声明）；「Sectors 研判与 Arena 预测打通」并入本项评估。
+- **A2.（L）main.js 继续拆分（Phase 3–5）**——各页内联 `<style>` 移到 `public/styles/<page>.css`；`state`/`cursor`/`nav`/`boot` 职责拆出；`styles.css` 做 `@layer` 分层。main.js 仍 3421 行、styles.css 仍 7038 行。详见 **§3**。
 
 **P3 · 长线**
 - **B1. CSS Scroll-Driven Animations**——`animation-timeline: scroll()/view()` 替换 `alphardForge` 的 JS scroll-pin。详见 **§8.2**。
-- **B2. topdownCombat 后续**——真实 `halley.curX/curY` 坐标驱动飞行路径与 three.js 动态 `import()` 两个技术子项并入 V14 场景统一推进；「俯视转正/首页主战斗迁移」目标已废弃，见 **§4**。
+- **B2. ~~topdownCombat 后续~~**——已整体并入 V14 实施路线（场景资产重构为相机无关的 `combatScene`，真实坐标驱动与动态 `import()` 一并在该轨解决，俯视降级为 `tacticalTopdown` 镜头预设），本条不再单独跟踪、仅存查。见 **§4 实施路线修正**。
 - **B3. combatHudSC 机库跑道纵深透视**——先记录、不建议单独立项：起降走 `drawPilotDeck` 另一条渲染路径，`combatHudSC` 从未在起降时被调用，要做透视意味着把它接入起降路径，是比数据绑定修复大得多的独立工作。
 - **B5. 首页背景 canvas 加 IntersectionObserver**——不可见时停渲染。详见 **§3**。
 - **B6. 首页 WebGL 收尾**——`saturnRenderer` 等 raw-GL 的完整 context-restored 重建（目前仅 `preventDefault` 保活）；跃迁点 shader 弱机自适应（降 fbm 八度或分辨率）；统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量（目前 1.75 vs 1.5 不一致）。需真机 profiling。
@@ -104,6 +117,11 @@
 
 **⚠️ 命名冲突提醒**：`src/scene/cameraDirector.js` 这个文件名**已经被占用**（现有内容是起飞/降落的外部运镜 `drawExternalLaunch`/`drawExternalLanding`）。V14 的武器事件相机状态机需要另起文件名（如 `weaponCameraDirector.js`），不要直接覆盖现有文件。
 
+**⚠️ 实施路线修正（2026-07-04 二次评审）**
+1. **执行顺序是 V16 → V14 → V15**：镜头导演由武器事件驱动——先把「唯一时钟」的事件总线立起来（V16），镜头系统才有东西可订阅；反过来做，镜头系统就得先自设一套临时计时、V16 落地后再返工一遍。
+2. **不要从零建 3D 战斗场景**：`topdownCombat.js` 里执法者母舰、夜鹰、彗星、曳光、导弹、爆炸、战术网格等场景资产**全部现成**——被裁决废弃的是固定俯视机位，不是这套场景。正确路线：把它重构为相机无关的 `combatScene`（场景图与状态消费不动，剥离内置相机），`weaponCameraDirector` 只负责驱动它的 camera；原俯视视角降级为镜头库里的 `tacticalTopdown` 预设（`?combatview=topdown` 继续可用，实现反而更干净）。这一修正把 V14 从「新建场景 + 新建镜头系统」缩水成「只建镜头系统」，省一周级工作量。
+3. **过渡用特性开关**：新镜头系统挂 `?combatcam=director` 灰度入口，2D combatCine 分镜保留为默认回退，逐武器达到观感对齐后再逐个切默认——任何时刻主站都有完整可用的战斗观感，不存在「改到一半」的窗口期。
+
 ### V14 相机导演系统
 
 **核心思想**：镜头是被事件驱动的「导演」，不是挂在场景上的固定视角。
@@ -128,6 +146,12 @@
 - **工程答案不是「把两套计时器对齐」，而是只保留一个时钟**：`combatRuntime` 为每次武器事件发布权威时间线 `{ t0, weapon, phases: [{name, at}] }`（如导弹：lock→launch→boost→terminal→impact 的相对时刻表）；DOM HUD（倒计时、告警条、battle-feed）与 3D 场景（V14 镜头切换、特效相位）**全部订阅同一事件、按 `(now − t0)` 相位分数渲染**。任何一侧自设 `setTimeout`/自走动画时长都是 bug。
 - **迁移清单**：盘点 main.js/combatCine/battleFeed 里现存独立计时器（核弹 T- 倒计时、主炮 30s 冷却、CIWS 弹幕窗口、导弹分镜 elapsed）逐一改订阅制；`halley.destroyed` 提前触发时广播 `abort→impact` 强制剪切事件（沿用已有的 rising-edge 一次性闪光模式）。
 - **验收标准**：UI 指示器与 3D 相位边界在**同一 rAF tick**内翻转——两侧打点日志逐帧对比 0 帧差；这是可自动化断言的硬指标，不靠目测。
+
+### 视觉验收清单（v1.5b 全部工作共用）
+
+- **风格红线**（硬科幻/太空军事拟真）：高饱和纯色只允许出现在小面积告警与推进器辉光；所有运动必须有质量感（加减速曲线，禁线性 tween）；镜头永不瞬移（切换必有 ≤0.5s 位姿插值或 whip-flash 转场语言）；每个发光特效都能说出光源是什么；文字一律用现有 HUD 字体体系。
+- **性能红线**：新增视觉不允许出现独立 rAF 循环（全部挂进现有主循环）；实例化资产（尾焰彩带/greeble/粒子）每类 ≤1 draw call；粒子全部对象池化；全息舰 ≤50k 三角面、单架战机 ≤8k。
+- **可达性**：`prefers-reduced-motion` 下镜头固定为 bridgeWide、禁抖动禁慢放；移动端（<560px）关镜头震动、尘埃参照层密度减半。
 
 ---
 
@@ -185,13 +209,24 @@
 3. **LLM 提案、规则引擎收单**：模型输出 JSON 订单 → 代码层校验 → 通过才入账；拒单原因写回 ledger，作为下次 run 的反馈信号。学习闭环是确定性的，不依赖模型自觉。
 4. **评估口径修正**：单日收益年化会得出荒谬数字。前 30 个交易日只看累计收益/最大回撤/胜率/敞口；≥30 交易日后启用 30 日滚动年化 + Sharpe（报告要的「年化对比」此时才有统计意义）。A/B 各 $10,000 独立账本，公平对比。
 
+**2026-07-04 二次评审增补（策略与实验设计，全部由规则引擎强制、不靠模型自觉）**
+
+5. **基准纪律**：账本每日同步记录 SPY 与 SMH 同期收益（各多取一个报价而已），所有展示以「超额收益 vs SPY」为主口径——没有基准的收益数字没有意义。
+6. **换手率上限**：Model A ≤20 笔/周，超出直接拒单——LLM 交易最常见的死法是过度活跃，被手续费加滑点磨死；Model B 只在周二/周四的运行里允许交易（其余日子照常评估，但只能因风控事件卖出），把「<25%/月换手」从目标变成机制。
+7. **信心门槛**：新开仓订单 `confidence < 0.65` 一律拒单；减仓/清仓不设门槛——风控动作永远放行。
+8. **仓位止损（代码层）**：A 账本单仓自成本 -8%、B 账本 -15%，触发即生成强制清仓单，不依赖模型「记得」割肉。
+9. **滑点分级**：A 账本 5bp（短线更贴近真实冲击成本）、B 账本 2bp；费用 0.5bp 不变。
+10. **赛季制与版本归因**：任一账本累计 -20% → 冻结、产出验尸复盘、提示词修订版号 +1、重置 $10,000 开新赛季；ledger 记录 `promptVersion` 与 `season`，业绩能归因到具体提示词版本——赛季验尸报告本身就是博客最好的内容素材。
+11. **固定交易域**：`public/arena-universe.json` 维护 ~30 支候选池（首页 Top 10 + 大盘科技 + SPY/QQQ/SMH），模型只能在域内下单，域外直接拒单；候选池每月人工审一次。
+
 **账本 schema 草案（`public/arena-ledger.json`）**
 ```json
 {
-  "updated": "2026-07-06T07:30:00Z", "version": 3, "day": 2,
+  "updated": "2026-07-06T07:30:00Z", "version": 3, "day": 2, "season": 1,
+  "bench": { "spyPct": 0.6, "smhPct": 1.1 },
   "models": {
     "A": {
-      "cash": 4200.5, "equity": 10180.2,
+      "promptVersion": "A-v1", "cash": 4200.5, "equity": 10180.2,
       "positions": [{ "sym": "XXX", "qty": 10, "avgPx": 100.1, "mkPx": 103.2 }],
       "trades":    [{ "ts": "...", "sym": "XXX", "side": "buy", "qty": 10, "px": 100.1, "fee": 0.05, "slipBps": 2 }],
       "rejections":[{ "ts": "...", "order": {}, "reason": "single-position cap 20%" }],
@@ -214,6 +249,7 @@
 - **后内存专题**：三主线（HBM 产能与定价权 / CXL 内存池化 / NAND KV-Cache 分层）+ Top 10 论点卡，每卡 `{ticker, moat, thesis, keyRisk, catalysts[], lastReviewed}`。报价复用现有报价管线；OTC ADR 报价源缺失时该卡降级为纯论点展示，不放假数据。
 - **数据文件** `public/sectors-data.json`：`{updated, version, modelWatch[], baskets[], postMemory[]}`，一次周跑同时产出三块。
 - **当前持仓**：首页 Top 10（`src/data/content.js`）已按回调后质量杠铃论点换仓（MU/AVGO/NVDA 核心仓 47% + 六支卫星仓），三大催化剂（韩股半导体巨震 / 6 月非农疲软 / Meta 出租算力）已检索核实，详见 Release Notes。三主线框架本身不变，V10 专题页沿用同一论点做深度展开。
+- **集中度声明（诚实纪律）**：Top 10 是**单一主题**（AI 硬件/内存墙）的主题组合，不是分散配置——高相关、同涨同跌，这是有意为之的博客立场，页面文案与专题卡需持续明示 + not advice；V12 起对该组合自 2026-07-04 换仓日相对 SPY/SMH 的表现做公开记分——**包括错的时候**，战绩组件的可信度就来自这里。
 
 ### 7.3 Signal「Warsh 时代」重构（V6–V7）
 
@@ -244,7 +280,14 @@
 | Sectors（含后内存） | — | 周日 10:00 | `0 10 * * 0` | 每周 |
 | Leagues（MSI 期间） | — | 23:30 | `30 23 * * *` | 每日，至 7/12 止 |
 
-所有任务入口先过**守卫**（周末/NYSE 假日/无比赛日直接 no-op），不产生任何 API 调用。冬令时切换（11 月）需整体校准一次 cron。
+所有任务入口先过**守卫**（周末/NYSE 假日/无比赛日直接 no-op），不产生任何 API 调用。冬令时切换（11 月）需整体校准一次调度时间。
+
+**运行环境增补（2026-07-04 评审）**
+- **launchd 优于 crontab**（macOS）：cron 在合盖睡眠期间错过的任务直接跳过；launchd 的 `StartCalendarInterval` 会在唤醒后补跑一次——对「笔记本合盖」场景这是本质区别，尤其 Arena 的 00:30/05:45 两个夜间窗口。迁移成本：每任务一个 plist + `launchctl load`（操作步骤记 technical.md §4）。
+- **数据获取与 key 红线**：定时脚本优先走线上代理（`https://feida.au/api/quote` 等，免本地管 key）；必须直连的（新闻检索等），key 一律放 `~/.config/afflatus/env`（仓库外，脚本 `source` 读取）——**scripts/ 目录现已进 git 跟踪，任何脚本里不允许再出现明文 key**（此前泄露过一次）。指标计算（均线/RSI/涨跌幅）全部在脚本里用 Node 算完再注入，模型只收结果。
+- **NYSE 假日守卫**：仓库放一份静态 `nyse-holidays-2026.json`（一年 10 个日期，每年更新一次），脚本启动先查表，不为这事调 API。
+- **部署频率**：每次数据推送触发一次 Vercel 重建（约 1 分钟）；满负荷调度 ≈4–5 次/天，远低于配额，不用优化。若未来数据推送频率上一个量级，再评估数据与代码分仓。
+- **推送脚本已知 bug（2026-07-04 已修复）**：旧版 `push-arena-news.sh` 的「stash --keep-index → rebase」组合**从未生效**——rebase 拒绝在暂存区有内容时运行，日志里每次都报 `cannot rebase`，只是因为本地恰好从未落后于远端才没出事；且 `git add dist/arena-news.json` 被 `.gitignore` 的 `dist` 规则挡掉，一直是无效操作。已改为「commit 先行 → `git pull --rebase --autostash` → push」的健壮序列。新管线脚本（V12）照此模式写，不要抄旧版。
 
 **token 预算（月度估算，实际以运行日志校准）**
 
