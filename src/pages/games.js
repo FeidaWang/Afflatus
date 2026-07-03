@@ -1,5 +1,5 @@
 /* ============================================================
-   GAMES — cyberpunk World Cup predictions by Fable 5.
+   GAMES — cyberpunk World Cup predictions by Fable 5 Max.
    Shows Fable's calls, real betting odds, and group standings.
    Scratch cards reveal the exact predicted scoreline.
    For entertainment — not betting advice.

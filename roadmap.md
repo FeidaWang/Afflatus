@@ -2,69 +2,32 @@
 
 > 全站设计建议、未来路线图，以及代码模块整理与优化方法。
 > 技术细节与 git 操作教程见 **technical.md**。
-> 本文档只保留仍需跟踪的未完成工作；已完成的历史记录已整理为 Release Notes，不再保留在此文档中。
+> 本文档只保留仍需跟踪的未完成工作；已完成的历史记录已整理为 **`RELEASE_NOTES.md`**，不再保留在此文档中。
 
 ---
 
 ## 1. v1.5 优先级总表 / Priority roadmap ★
 
-> **当前状态（2026-07-04）**：v1.4 全部收尾工作已完成并归档（见 Release Notes）。当前处于 **Afflatus v1.5「Fable 5 Max 五模块」** 规划执行期——源头是站主的系统架构规划报告，经评审优化后落地，完整五模块规格见 **§7**，定时任务提示词库见 `prompts/`。同期新增 **v1.5b 视觉工程轨**（§4：相机导演 / Odin 全息重建 / 武器单时钟同步）。
+> **当前状态（2026-07-04）**：v1.4 全部收尾工作与 v1.5b 视觉工程轨（相机导演/Odin 全息重建/武器单时钟同步，V14/V15/V15b/V15c/V16）已全部完成并归档，详见 `RELEASE_NOTES.md`。当前处于 **Afflatus v1.5「Fable 5 Max 五模块」** 产品轨执行期——源头是站主的系统架构规划报告，经评审优化后落地，完整五模块规格见 **§7**，定时任务提示词库见 `prompts/`。
 >
-> **排序依据**：时效硬截止 > 依赖顺序 > 价值密度。两个硬截止：**MSI 2026 决赛 7 月 12 日**（大田，Bracket Stage 7/3–7/12）；**世界杯决赛 7 月 19 日**。一个软截止：**7 月底 FOMC**——V6/V7（Signal Warsh 重构）最好在 Warsh 时代第一次议息前上线，那是这个页面的天然首秀事件。想接着做时直接说编号（如「做 V0」）。
+> **排序依据**：时效硬截止 > 依赖顺序 > 价值密度。两个硬截止：**MSI 2026 决赛 7 月 12 日**（大田，Bracket Stage 7/3–7/12）；**世界杯决赛 7 月 19 日**。一个软截止：**7 月底 FOMC**——V6/V7（Signal Warsh 重构）最好在 Warsh 时代第一次议息前上线，那是这个页面的天然首秀事件。想接着做时直接说编号（如「做 V4」）。
 >
 > **NEXT UP · 建议执行队列（2026-07-04 评审版）**——按依赖与截止日期排好的顺序，标注工作量（S≈半天内 / M≈1–3 天 / L≈1 周级）：
-> ① **V0**（M）→ ② **V1**（S）——7/12 前的全部注意力；
-> ③ **V2**（S·随赛程持续）——世界杯每轮完赛后补数据；
-> ④ **V3**（M·含 vitest 测试地基）→ ⑤ **V4**（M）——旗舰功能的地基与上线；
-> ⑥ **V16**（M）——视觉轨第一步（先事件总线、后镜头，顺序修正见 §4）；
-> ⑦ **V5**（M）——账本积累 ≥3 个交易日数据后再做前端，否则净值曲线没内容可画；
-> ⑧ **V6**（M）→ ⑨ **V7**（S）——赶 7 月底 FOMC 前；
-> ⑩ **V14**（L）→ ⑪ **V15/V15b**（L/M）→ ⑫ **V8**（S）收版本 → 进入 P2。
+> ① **V2**（S·随赛程持续）——世界杯每轮完赛后补数据；
+> ② **V4**（M）——旗舰功能上线；
+> ③ **V5**（M）——账本积累 ≥3 个交易日数据后再做前端，否则净值曲线没内容可画；
+> ④ **V6**（M）→ ⑤ **V7**（S）——赶 7 月底 FOMC 前 → 进入 P2。
 
 **P0 · 抢时效（本周内，硬截止 7/12）**
-- ~~**V0.（M）Leagues 页面 v1**~~ ✅ **已上线（2026-07-04）**——`leagues.html` + `src/pages/leaguesEntry.js` + `src/pages/leagues.js` + `public/leagues-data.json` + vite 多入口注册 + `nav.js` SITE 数组插入（games 与 novels 之间）+ `page-turn.css` 的 `.leagues-page` 主题变量块（海克斯金 `#c8aa6e` / 蓝 `#0ac8b9`，字体 Cinzel + IBM Plex Mono，与 games 品红/青区分）。初始数据为核实过的真实 MSI 2026 Bracket Stage 战况（8 强、双败淘汰、全 Bo5、Fearless Draft）：已完场 HLE 3-0 TSW、G2 3-2 TES（逆转横扫），另 5 组对阵/待定含 BLG vs T1（GG.bet 真实赔率）与总决赛占位。构建已验证：`npm run build` 绿色，`dist/leagues.html` + `dist/assets/leagues-*.js` 抽查确认真实内容在产物内（非静默丢失），`vite preview` 全 7 入口 curl 200。**视觉未在沙盒验证，待你本地确认观感**。规格见 **§7.4**。
-- ~~**V1.（S）Leagues 定时任务**~~ ✅ **已搭建（2026-07-04）**——**实施路线偏离原计划**：未走 launchd + 本地 API 脚本，改用 Cowork 自带的 `scheduled-tasks`（任务名 `leagues-msi-daily`，每日 23:30 本地时间，提示词内联 `prompts/leagues-msi.md` 的纪律）——原因：这条自动化生命周期短（仅到 7/12）、且强依赖当天联网检索而非纯 API 调用，用 Cowork 会话原生的 WebSearch 能力比现写一个本地脚本更省事。**已知限制：Cowork 定时任务需要 App 处于打开状态才会触发**（关闭时错过的任务会在下次启动时补跑，语义上与 launchd 的"睡眠错过、唤醒补跑"类似，但触发条件是 App 而非系统唤醒）——如果你希望和 Arena/Signal/Sectors 一样做成纯本地 launchd 管线，需要你提供 API key 到 `~/.config/afflatus/env` 并另写调用脚本，届时告诉我。7/12 决赛后该任务会自动做收官一跑并转 `mode:"archived"`，之后需要手动禁用（任务已在提示词里写好自我提醒）。
 - **V2.（S·随赛程持续）Games 世界杯收官跟进**——2026-07-04 复核：`games-data.json` 现有 `fixtures[]` 的 `result:null` 均已核实为真实准确（对应比赛截至当前尚未开球/未结束，非遗漏）；无需本轮更新。淘汰赛继续推进后再补 `home/away/result`（决赛 7/19 收官）；「夺冠路径」树状图不抢时效，见 B7。
 
-**P1 · v1.5 核心（1–3 周，双轨并行）**
+**P1 · v1.5 核心（1–3 周）**
 
-*产品轨（按序执行 V3 → V4 → V5 → V6 → V7 → V8）：*
-- ~~**V3.（M）Arena Autopilot 账本 + 规则引擎**~~ ✅ **已上线（2026-07-04）**——`src/lib/arenaRules.js`（纯函数规则引擎：`validateOrder`/`simulateFill`/`applyFill`/`checkStopLoss`/`checkDailyCircuitBreaker`/`checkSeasonReset`/`resetSeason`/`computeMetrics`，全部无副作用、无 DOM/fetch/Date.now 依赖）+ `public/arena-universe.json`（30 支固定候选池：14 支核心 AI 硬件 + 13 支大盘科技 + SPY/QQQ/SMH 三基准）+ `public/arena-ledger.json`（Model A/B 各 $10,000 初始账本，season 1 day 0，尚无持仓——等 V4 定时任务首次跑）。**测试地基已落地**：`npm install -D vitest` + `package.json` 加 `test` 脚本，`tests/arenaRules.test.js` 44 条单测覆盖全部硬风控分支（禁做空/固定域/信心门槛/换手率上限/Model B 交易日限制/单仓 20% 上限/持仓数上限/现金缓冲/加权成本/止损/日熔断/赛季重置/指标计算），`npm run test` 全绿；`npm run build` 复核未受影响（规则引擎尚未接入任何页面，V5 才会挂 UI）。**下一步 V4**：定时任务调用这套引擎（模型只提案 JSON 订单 → `validateOrder` 收单 → `applyFill`/`rejectOrder` 落盘），`arenaRules.js` 本身已经把"模型不可越过硬风控"这条焊死在代码层。
+*产品轨（按序执行 V4 → V5 → V6 → V7）：*
 - **V4.（M）Arena 双模型定时任务**——Model A 日内双窗口批处理（开盘后 + 尾盘各 1 次）+ Model B 盘后 1 次 + 周六深度复盘 1 次/周；所有任务先过交易日历守卫（周末/NYSE 假日 no-op）；提示词 `prompts/arena-autopilot.md`。调度、数据获取与 key 管理见 **§7.5**（2026-07-04 增补：用 launchd 替代 crontab——睡眠错过的任务唤醒后补跑，cron 直接跳过）。
 - **V5.（M）Arena 页 Autopilot 前端区块**——净值双曲线（A vs B + SPY 基准线）、持仓表、成交/拒单日志、每日复盘卡（中英）；沿用 arena.html 现有视觉，与「Human vs AI」游戏区并列。**时机**：等账本积累 ≥3 个交易日再动工。
 - **V6.（M）Signal「Warsh 时代」内容重构**——新主席 SCP 人事档案 + 五维信号矩阵（通胀/货币政策/财报指引/产业动向/地缘贸易）+ 无前瞻指引 ⇒ 数据发布日历权重提升 + 鹰鸽罗盘首版。规格见 **§7.3**。**软截止：7 月底 FOMC 前上线**。
 - **V7.（S）Signal 定时任务升级**——事件驱动（CPI/PCE/NFP/FOMC 发布日）+ 每周例行研判，自动生成事件档案草稿；提示词 `prompts/signal-warsh.md`。
-- **V8.（S）v1.5 发布收尾**——版本号 v1.4→v1.5（index.html/package.json/lock）；全站 AI 人设文案「Fable 5」→「Fable 5 Max」（只改用户可见文案，内部字段名/JS 属性/CSS class 不动）；ROADMAP 归档收尾。
-
-*视觉轨（按序执行 V16 → V14 → V15/V15b，与产品轨并行；顺序修正理由见 §4 实施路线修正）：*
-- ~~**V16.（M）武器单时钟同步（CIWS/导弹/核弹/主炮）**~~ ✅ **已上线（2026-07-04，范围见下方说明）**——**视觉轨的第一步而非收尾**：V14 的镜头切换全部由它的事件驱动，先立权威时间线、镜头系统才有东西可订阅，反序会造成返工。
-  - **新增基础设施**：`src/combat/weaponClock.js`——纯函数权威时间线模块（`startTimeline`/`phaseFraction`/`activePhase`/`msUntilPhase`/`forceAdvance` 等），`{weapon, t0, phases:[{name,at}]}` 结构，V14 的镜头状态机可直接订阅。`tests/weaponClock.test.js`（20 条）含验收标准要求的"两个消费者读同一时间线在同一 `t` 下必须逐帧零差异"断言（浏览器 rAF 循环沙盒内无法真实驱动，用纯函数等价性断言代替，见测试文件注释）。
-  - **实测审计发现，逐一修正**：`main.js` 的核弹 T- 倒计时（`#nukeWarning`）与主炮蓄力倒计时（`weaponWarning`）此前各自跑一个独立 `setInterval(...,40)` 轮询——与 rAF 主循环（`frame()`）完全脱钩的第二时钟，已删除，改为在既有的逐帧函数 `updateCombatModule()` 里更新，读的还是同一个 `nukeCountdownUntil`/`enforcerChargeUntil`（这两个变量本来就已被 `updateTopTelemetry()` 的战报文本读取，现在两处终于真正同源同频）。`halley.ciwsLaserStart/ciwsLaserUntil` 审计确认是**从未被读取的死代码**（`performance.now()` 口径且与其余 `Date.now()` 口径不一致）——已删除，而非误留的第二时钟。
-  - **审计确认无需改动**：导弹/核弹分镜（`combatCine.js`）与 `halley.destroyed` 提前触发的强制剪切，**本来就已经**是从 `pilotView.started/until` 派生的单一 `e`（elapsed 0..1）驱动，`missileKillFlashFrames`/`nukeKillFlashFrames` 的 rising-edge 一次性闪光模式也已存在——审计后确认这部分不是本次要修的 bug，故未改动，避免无意义地重写已经工作正常、且沙盒无法视觉回归验证的手工调优动画代码。
-  - **范围边界（诚实标注）**：本次未把 CIWS/核弹/导弹的完整分镜时序重构成 `weaponClock` 的具名 phases（那些 setTimeout 链是一次性状态迁移触发器，不是"需要逐帧从两处读取"的倒计时显示，风险/收益比不划算）——**这部分留给 V14**，届时相机导演系统本来就需要把这些时序表达成具名 phases 才能挂镜头切换点，那时候顺手做比现在单独做更省一次返工。
-  - **验证**：`npm run test` 64/64 绿（含新增 20 条）；`npm run build` 绿，7 页 curl 200，产物 JS 语法校验通过；`grep` 确认无残留的 `ciwsLaserStart`/`ticker`/`chargeTicker` 悬空引用。**`main.js` 属逻辑审查 + 静态验证，无法在沙盒里跑真实浏览器 rAF/canvas，视觉效果（尤其核弹与主炮蓄力倒计时文案的观感）未做真人验证，建议本地确认一次战斗序列观感与之前一致。**
-- ~~**V14.（L）相机导演系统**~~ ✅ **v1 切片已上线（2026-07-04，opt-in `?combatcam=director`，范围见下方说明）**——镜头状态机 + 首发镜头库（导弹尾随/CIWS 炮塔位/主炮轴线/舰桥建立镜头）。**实施路线已修正：复用 topdownCombat 现成场景资产**（舰船/导弹/彗星/爆炸全都建好了），废弃的只是固定俯视机位、不是场景本身。规格见 **§4**。
-  - **已交付**：`src/combat/cameraMath.js`（纯函数：`smoothDamp` 临界阻尼弹簧、`shouldPreempt` 优先级抢占规则、`blendFactor`/`easeBlend` 混合曲线，12 条单测）；`src/combat/weaponCameraDirector.js`（镜头状态机：`requestShot(id, {durationMs, blendInMs, refresh})`，抢占＝高优先级立即切入/同低优先级等当前镜头到期，`refresh:true` 支持 CIWS 这类高频事件"续期不重启"，6 条单测覆盖抢占/续期/自动回落/数值不发散）；`topdownCombat.js` 内部重构为委托 `weaponCameraDirector` 驱动相机，**默认行为（无 flag）字节级不变**——保留原有硬编码摇摄作为 `tacticalTopdown` 待机镜头。
-  - **镜头库（v1 切片，4/5）**：`tacticalTopdown`（待机/巡航，即原摇摄，优先级 1）、`bridgeWide`（开场建立镜头，一次性 3.2s，非规格里的"默认待机"——保守选择：保留已知观感良好的原摇摄作默认，`bridgeWide` 只做开场一次性远景，风险更低）、`mainGunAxis`（主炮轴线，优先级 3，随 `launchOrb()` 触发）、`missileTail`（导弹尾随，优先级 4，随 `launchMissile()` 触发）、`ciwsTurret`（CIWS 炮塔位，优先级 2，随 CIWS 随机开火触发、`refresh:true` 续期不重启）。
-  - **范围边界（诚实标注，明确推迟到后续）**：`impactOrbit`（末段撞击环绕）未实现；FOV 动态推拉/banking 侧倾细节未实现（当前镜头只做位姿+朝向的临界阻尼跟随）；「空间深度四件套」（实例化尾焰彩带/运动模糊粒子/近景尘埃视差层/动态 FOV）完全未动——这些都是纯视觉细节 polish，且本沙盒无法真机验证观感，贸然做了也测不出对不对，留到用户本地确认 v1 切片观感之后再决定要不要继续这批 polish。
-  - **验证**：`npm run test` 82/82 绿（新增 cameraMath 12 条 + weaponCameraDirector 6 条，均为纯逻辑/mock 相机单测，不依赖 WebGL）；`npm run build` 绿，`grep` 确认 `combatcam`/`tacticalTopdown`/`bridgeWide` 内容已进入构建产物（合并进 `main-*.js`，与 `topdownCombat.js` 被 `index.html` 静态引入的既有事实一致）；`vite preview` + 7 个入口 curl 200。**默认路径（无 `?combatcam=director`）逻辑审查确认与改动前字节级相同；`?combatcam=director` 分支属逻辑审查+构建验证，无法在沙盒里跑真实浏览器 WebGL 渲染，镜头切换的实际观感（抢占手感、混合是否顺滑、比例是否合适）未做真人验证，需要你本地打开 `?combatview=topdown&combatcam=director` 确认一次。**
-- ~~**V15.（L）Odin 参考全息舰重建** + **V15b.（M）战机保真度**~~ ✅ **v1 切片已上线（2026-07-04，`ship=odin` 预览门禁，范围见下方说明）**——按参考图重建 `shipHologram`/`capitalShip3D` 几何；战机加法线细节与更多表面 greeble。规格见 **§4**。
-  - **V15 已交付**：`src/scene/odinHull.js`——**DOM/WebGL 完全无关的纯函数**（`createOdinHull(THREE,{add,mats,detail})`），只调用调用方注入的 `add(geo,mat,t,r,s)`，因此 `capitalShip3D.js`（全 PBR 实体网格）与 `shipHologram.js`（网格+描边线框）可以喂同一份几何描述、各自渲染风格——精确对应 ROADMAP 原句"同一几何体喂 capitalShip3D 的侧视/尾视，一份资产两处用"。刀锋艏（占全长 37%）+ 舯部阶梯上层建筑/舰桥塔/4 根天线桅杆簇 + 背脊炮塔 row(5)+腹部吊舱(2)+尾部 7 联推进簇+外伸散热鳍桁架，greeble 密度尾>舯>艏。**移除了旧設計的机翼**（Odin 参考本就是无翼细长战舰剪影，不是战斗机式样）。
-  - **风险门禁（重要）**：这是本次会话里视觉风险最高的一次改动——直接替换主战舰几何，且沙盒完全无法渲染验证（尝试过 `npm install puppeteer` 拉无头 Chromium，因沙盒网络白名单不含 `storage.googleapis.com` 而失败，属已知沙盒限制的进一步确认）。因此**默认行为（不带 `?ship=odin`）逻辑审查确认与改动前字节级相同**，新舰体仅在显式加 URL 参数 `?ship=odin` 时生效——同一套"opt-in + 默认不变"纪律，风险等级比 V14 的 `?combatcam=director` 更高故更需要这道闸。
-  - **可验证的部分（诚实标注）**：`odinHull.js` 因为不碰 DOM/WebGL，是这次 3D 视觉工作里**唯一能在沙盒里真正跑起来验证的一层**——`tests/odinHull.test.js`（8 条）用 mock `add()` 记录所有 mesh 并算真实 `THREE.Box3`，断言长高比≈5.5:1、刀锋艏占 35–40%、7/5/2/4 个挂载点数量正确、`wire` 比 `full` mesh 数少（greeble 跳过）、无 NaN/Infinity。**验证不到的部分**：材质配色是否耐看、比例是否符合参考图的实际观感、镜头取景是否合适（`capitalShip3D.js` 的 `draw()` 相机距离按新舰体尺寸估算调整为 (7.4,7.0,8.6)，纯算术推算，未见过实际画面）——这些都需要你本地打开 `?ship=odin`（首页 Labs 场景 + 主炮蓄力镜头）看一眼再决定要不要转正。
-  - **已知简化（未做，留作后续）**：旧舰体的贴花（"TC CONDOR"/"01"/危险警示条）在新舰体上未重新定位，`?ship=odin` 分支暂时没有贴花；"实例化 greeble 套件"简化为现有代码库已经在用的非 InstancedMesh 逐个 box 循环方式（与现有 capitalShip3D.js 的既有 46+18 循环手法一致，性能量级不变，只是没有走 InstancedMesh 单 draw call 优化——鉴于无法视觉验证时优化 draw call 不是优先级，这是有意的降级）。
-  - **V15b 已交付**：`src/scene/nighthawk.js`——`heightToNormalMap()` 把原本的灰度 bumpMap 近似换成真正的切线空间法线贴图（Sobel 梯度编码），分辨率 256→384；新增腹部/侧甲板 greeble（+14/+10 处）+ 背部 greeble 22→34。**全程零几何/轮廓改动**（只碰材质贴图与非轮廓性 greeble box），风险远低于 V15 的舰体重建——法线贴图算法已逐行审查确认数学正确（归一化、环绕采样边界），但沙盒无 headless canvas 后端，无法真正执行 `document.createElement('canvas').getContext('2d')` 来生成真实贴图像素做视觉抽查，这一层同样是逻辑审查而非运行验证。
-  - **验证**：`npm run test` 90/90 绿（新增 odinHull 8 条）；`npm run build` 绿；`grep` 确认 `ship=odin`/`createOdinHull`/`heightToNormalMap` 都在对应产物 chunk 里；`vite preview` 7 页 curl 200。
-  - **2026-07-04 二次修复（用户截图发现，沙盒不可见类 bug 的又一实例）**：用户本地打开 `?ship=odin` 截图两次反馈"完全不像参考图，看起来是方块状的"。逐行核对 `THREE.ConeGeometry` 的旋转/缩放组合后，用 Node 直接算 `Box3` 实测确认舰艏锥体的真实世界坐标包围盒是 ~2.1×2.1×2.1（近似立方体），**不是**预期的 3.7 长 / 扁平薄的刀锋——根因：THREE 的 scale 在 rotation **之前**作用于局部坐标系，`rotation.x=PI/2` 把局部 Y（锥体的 height 参数）映射到世界 Z 轴，旧代码却对局部 Y 做"压扁"缩放，实际上是在压缩长度而不是压扁厚度，又叠加了一个多余的 45° Z 轴旋转把三个轴的包围盒进一步搅乱成接近立方体——这正是用户两次截图里"完全不像""方块状"的真实原因，不是相机取景或画布比例问题（之前的猜测）。修复：锥体改用 `rotation=[PI/2,0,0]`（去掉多余的 45° 项）+ `scale=[0.9,1,0.22]`（缩放局部 Z 而不是局部 Y），Node 实测确认包围盒变为 X1.8×Y0.44×Z3.7——长、扁、窄，符合刀锋艏的设计意图。顺带修了尾部推进器挂载点 Y 坐标越出机身尾段包围盒的问题（7 个挂载点里若干个会露出机身外形成"漂浮方块"），并给 `'wire'`（全息投影）细节级别单独砍掉炮塔 row/腹部吊舱/3 根天线（只留 1 根）以减少线框视觉噪音。新增 3 条针对性回归测试（`tests/odinHull.test.js`，锥体长宽高比例 + 推进器挂载点包围范围 + wire 简化验证），单测总数 90→93。**这次的教训**：`THREE.Object3D` 的 scale-before-rotation 组合规律不直观，凭直觉写变换容易在"看起来应该对"但实际不对的情况下漏掉——纯几何模块能被 Node 单测覆盖数值比例是好的，但光靠"整体包围盒在合理范围内"这类粗粒度断言测不出子部件自身形状扭曲这类 bug；后续任何用 `rotation`+`scale` 组合做"压扁/拉伸"效果的新增几何，都应该像这次一样单独对该部件的世界坐标包围盒做断言，而不只测整艘船的总包围盒。
-  - **2026-07-04 三次修复（架构级：改用连续 loft 船体）**：修好锥体比例后用户反馈"怎么能做的更好看一点而不是画的和积木玩具一样都是线条完全没有细节"——这次不是数值 bug，是**架构问题**：船体一直是三个独立图元（锥体艏 + 舯部 box + 尾部 box）拼接而成，中间没有共享表面，无论比例多准，拼接处的可见接缝都会读成"一堆方块堆在一起"而不是一艘连续的战舰。这正是最初规格里"型线样条挤出程序化 blockout"这条被简化成方块拼接时漏掉的部分。
-    - **修复**：新增 `buildHullLoftGeometry(THREE, stations)`——按"站位"（每站一个菱形截面：半宽/半高）手写 `BufferGeometry`，相邻站位用四边形（每边 2 个三角形）连接成连续蒙皮，艏部收敛到近似零截面的尖点，尾部用扇形面片封口。用 Node 实测验证了三角形绕线方向（法线朝外，不是"翻里朝外"导致 PBR 光照从内部照射的诡异效果）——采样每个非轴向顶点的法线径向点积，全部为正；尾部封口环的平均法线 Z 分量为负（朝后/朝外），两者都不是靠直觉假设，是逐条打印验证过的。船体的锥体+舯部 box+尾部 box 三个独立图元全部移除，替换成这一个连续 loft；炮塔/桅杆/吊舱/散热鳍/推进器舱等全部保留作为挂载在这个连续壳体上的独立配件（跟真实战舰模型"连续船体+离散细节件"的分层方式一致）。
-    - **顺带修正"越改越空"的问题**：上一轮为了给全息线框"减少视觉噪音"，把 `'wire'` 细节级别里的炮塔 row、3 根天线、腹部吊舱、精细面板缝全部砍掉了——但船体形状的根本 bug 修好之后，用户的反馈从"太乱"变成"太空/没细节"，说明砍掉这些**结构性**配件是过度修正。这轮把它们全部恢复到 `'wire'` 里（现在船体本身是连续的，这些配件会读成有意的细节而不是断裂感的一部分），只把**真随机**的精细 greeble 散布（52+30+8 个随机小方块）在 `'wire'` 下调到 40% 密度（而不是之前的直接砍掉）——区分"结构性配件"（该留）和"随机散布细节"（密度可以按渲染风格调）是这轮的关键判断。
-    - **验证**：新增 2 条回归测试——① 船体几何本身（`meshes[0]`）的包围盒应接近声明总长度的 95% 以上（不再是旧锥体那样只有艏部 37%），且宽度明显小于长度（细长而非团块）；② 采样非轴向顶点，法线径向点积应为正（绕线方向验证，带 -0.05 容差应对共享顶点法线平均化的边界情况）。单测 93→94（净增 1 条，因为同时移除了 1 条针对旧锥体的过时断言）。`npm run build` 绿，`grep` 确认产物含新代码，`vite preview` 7 页 curl 200。
-    - **仍未解决/诚实标注**：这依然是**沙盒无法真实渲染验证**的第三轮——连续 loft 的绕线/法线方向已经过 Node 实测校验，几何比例也有测试覆盖，但"好不好看"这个主观判断本质上需要真人在浏览器里看一眼，光靠数值断言无法穷尽。已经改了三轮，如果这轮观感仍不满意，值得考虑的下一步是：换一种验证路径（比如导出这个 loft 的顶点数据到一个独立 HTML/Three.js 可视化文件，用户在自己浏览器里打开，不依赖战斗场景/全站构建，缩短反馈循环），而不是继续在沙盒里盲改数值再等用户截图。
-  - **2026-07-04 四次追加（按参考图文字拆解补细节，非 bug 修复）**：用户没有再发截图，而是给了一段针对参考战舰（"图2"）的详细文字拆解，按 5 类分别列出（① 侵略性船体几何/剪影——刀锋艏、斜面装甲、层叠式船体结构；② 表面细节/规模感——面板缝/舱口等微细节 + **舯部两侧一排重复的"模块化舱段"**（导弹发射井/机库/护盾发生器观感，明确标注是建立旗舰规模感的"视觉锚点"）；③ 功能性上层建筑——阶梯指挥塔+纤细天线阵；④ 武器布置——背脊**多联装**重炮 row + **腹部与两侧**点防御武器；⑤ 推进——多喷口推进簇 + 装甲整流罩+稳定鳍）。逐条比对当前 `odinHull.js` 后确认有 5 处明确缺口：舯部无侧舷模块化舱段（②，被点名为"视觉锚点"，之前完全没有）、无侧舷点防御武器（④，之前只有腹部吊舱）、背脊炮塔是单管而非多联装（④）、艏-舯过渡是纯平滑收窄没有"层叠装甲"的视觉断点（①）、推进器裸露没有装甲整流罩（⑤）。
-    - **补充实现**（均为挂载在既有连续 loft 壳体上的离散配件，不改船体轮廓本身，风险等级与之前的炮塔/桅杆/吊舱同档）：艏-舯衔接处加两层交叠装甲收环板（`M.arm`+`M.trim`，卡在 `BOW_ROOT` 前后，制造"层叠装甲"的有意接缝，区别于之前"无缝渐变"的纯 loft 表面）；新增舯部两侧共 8 个模块化舱段（`sideBayMounts`，每侧 4 个，凸出边框+内凹面板+双指示灯，沿 z 轴均匀排布，左右镜像对称）；新增两侧共 4 个点防御炮塔（`lateralTurretMounts`，每侧 2 个）；背脊 5 座炮塔全部改为双联装（原单管炮改双管，间距 0.15）；7 个推进器挂载点各加一圈装甲整流罩（`TorusGeometry`，套在喷口外沿，默认朝向刚好朝后不需额外旋转）。
-    - **验证**：新增 4 条针对性测试——挂载点数量（8 侧舱段左右各 4、4 侧防炮塔左右各 2）、左右镜像对称性（同一 z 位置左右都有挂载点，容差 1e-6）、X 方向不越出散热鳍的既有挂载范围（|x|∈(0.9,1.6)，散热鳍在 1.7）、`'wire'` 细节级别同样保留这批新配件（延续上一轮"结构性配件两档一致，只有随机 greeble 密度不同"的原则，没有重犯"为减噪砍结构件"的错误）。单测 94→97（净增 3 条：新增 4 条，同时无删减）。`npm run test` 97/97 绿、`npm run build` 绿、`grep dist/assets/odinHull-*.js` 确认 `sideBayMounts`/`lateralTurretMounts` 在产物里、`vite preview` 7 页 curl 200。
-    - **仍未解决/诚实标注**：这轮补充是**纯几何数值 + 挂载逻辑**层面的比对与实现，不是视觉渲染验证——沙盒依旧无法打开浏览器看实际观感（新舱段/炮塔的比例、间距、材质在真实光照下是否真的读成"模块化舱段"而不是又一堆随机方块，这一判断本质上需要真人看一眼）。这是第四轮改动，如果观感仍不满意，"导出独立 HTML/Three.js 可视化文件缩短反馈循环"这个此前提出的备选验证路径值得认真考虑，而不是继续纯盲改。
 
 **P2 · v1.5 扩展（3–6 周）**
 - **V9.（M）Sectors 中美 AI 对比矩阵**——4 厂商观察卡（美：Anthropic/OpenAI；中：智谱/阿里）× 映射标的篮子（定性关联标签，不伪造统计相关系数）。规格见 **§7.2**。
@@ -76,6 +39,8 @@
 **P3 · 长线**
 - **B1. CSS Scroll-Driven Animations**——`animation-timeline: scroll()/view()` 替换 `alphardForge` 的 JS scroll-pin。详见 **§8.2**。
 - **B2. ~~topdownCombat 后续~~**——已整体并入 V14 实施路线（场景资产重构为相机无关的 `combatScene`，真实坐标驱动与动态 `import()` 一并在该轨解决，俯视降级为 `tacticalTopdown` 镜头预设），本条不再单独跟踪、仅存查。见 **§4 实施路线修正**。
+- **B8. V14 相机导演剩余 polish**——`impactOrbit`（末段撞击环绕镜头）未实现；FOV 动态推拉/banking 侧倾未实现；「空间深度四件套」（实例化尾焰彩带/运动模糊粒子/近景尘埃视差层/动态 FOV）完全未动。这些是纯视觉细节，且需要真人在浏览器里确认观感才知道值不值得做，v1 切片（`?combatcam=director`）验收后再排期。详见 `RELEASE_NOTES.md` V14 条目。
+- **B9. Odin 舰体（V15）收尾项**——旧舰体贴花（"TC CONDOR"/"01"/危险警示条）未在新舰体重新定位；greeble 未走 InstancedMesh 单 draw call 优化（现状与其余 capitalShip3D 逐 box 循环手法一致，性能量级不变）。待 `?ship=odin` 观感确认后再评估是否值得做。详见 `RELEASE_NOTES.md` V15 条目。
 - **B3. combatHudSC 机库跑道纵深透视**——先记录、不建议单独立项：起降走 `drawPilotDeck` 另一条渲染路径，`combatHudSC` 从未在起降时被调用，要做透视意味着把它接入起降路径，是比数据绑定修复大得多的独立工作。
 - **B5. 首页背景 canvas 加 IntersectionObserver**——不可见时停渲染。详见 **§3**。
 - **B6. 首页 WebGL 收尾**——`saturnRenderer` 等 raw-GL 的完整 context-restored 重建（目前仅 `preventDefault` 保活）；跃迁点 shader 弱机自适应（降 fbm 八度或分辨率）；统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量（目前 1.75 vs 1.5 不一致）。需真机 profiling。
@@ -91,15 +56,15 @@
 
 > **导航规则**：顶层导航只放长期核心页；季节性/实验性内容一律进 **Labs** 下拉分组——`src/lib/nav.js` 的 `SITE` 数组给条目打 `group:'labs'` 标记即可，下拉菜单与翻页循环顺序自动收纳，不用改渲染逻辑。
 >
-> **v1.5（规划中）**：Arena 增 Autopilot 双模型模拟盘区块（§7.1）、Sectors 增中美 AI 对比矩阵 +「后内存时代」选股专题（§7.2）、Signal 就地重构为 Warsh 时代内容（§7.3）、**Labs 新增 Leagues 页**（MSI 2026 限时竞猜，§7.4，7/12 决赛硬截止）；全站 AI 人设文案将随 V8 升级为「Fable 5 Max」。
+> **v1.5（规划中）**：Arena 增 Autopilot 双模型模拟盘区块（§7.1）、Sectors 增中美 AI 对比矩阵 +「后内存时代」选股专题（§7.2）、Signal 就地重构为 Warsh 时代内容（§7.3）、**Labs 新增 Leagues 页**（MSI 2026 限时竞猜，§7.4，7/12 决赛硬截止）。全站 AI 人设文案已随 V8 升级为「Fable 5 Max」（2026-07-04）。
 
 | Page | File | 身份 / Identity | 主题 | 导航位置 |
 | --- | --- | --- | --- | --- |
 | Home | `index.html` + `src/` | 深空舰长日志 (Three.js) | Orbitron / 钢蓝 HUD | 顶层 |
-| Arena | `arena.html` | Human vs AI 交易竞技场（AI 对手：Fable 5）＋ v1.5 Autopilot 双模型模拟盘（规划中，§7.1） | Marathon · 霓虹绿/青 | 顶层 |
+| Arena | `arena.html` | Human vs AI 交易竞技场（AI 对手：Fable 5 Max）＋ v1.5 Autopilot 双模型模拟盘（规划中，§7.1） | Marathon · 霓虹绿/青 | 顶层 |
 | Sectors | `sectors.html` | AI + 航天个股研判 ＋ v1.5 中美 AI 对比矩阵、「后内存时代」专题（规划中，§7.2） | 酸性绿 + 故障艺术 | 顶层 |
-| Signal | `signal.html` | 美联储观察 = SCP O5 收容档案（板块研判：Fable 5）；v1.5 重构为 Warsh 时代（规划中，§7.3） | 机密文档 · 琥珀/绿 | 顶层 |
-| Games | `games.html` | 世界杯限时竞猜 vs Fable 5 | 赛博朋克 · 品红/青 | **Labs** |
+| Signal | `signal.html` | 美联储观察 = SCP O5 收容档案（板块研判：Fable 5 Max）；v1.5 重构为 Warsh 时代（规划中，§7.3） | 机密文档 · 琥珀/绿 | 顶层 |
+| Games | `games.html` | 世界杯限时竞猜 vs Fable 5 Max | 赛博朋克 · 品红/青 | **Labs** |
 | Leagues | `leagues.html`（**V0/V1 已上线**） | 2026 MSI 电竞竞猜 vs Fable 5 Max（Fearless Draft 分析；赛后转战绩存档，§7.4） | 海克斯 · 金/蓝 | **Labs** |
 | Novels | `novels.html` | 无限流·种田小说连载《万界种春》 | 复古未来主义 · 铜/青（纯中文，护眼阅读，含夜间/豆沙绿/米黄三种阅读模式、自动翻页、书签、章节速览） | **Labs** |
 
