@@ -29,7 +29,7 @@
 **P1 · v1.5 核心（1–3 周，双轨并行）**
 
 *产品轨（按序执行 V3 → V4 → V5 → V6 → V7 → V8）：*
-- **V3.（M）Arena Autopilot 账本 + 规则引擎**——`public/arena-ledger.json`（Model A/B 双账本各虚拟 $10,000）+ 模拟撮合（滑点/费用）+ 代码层硬风控（LLM 只提案、规则引擎收单，红线与 2026-07-04 策略增补见 §7.1）。**含测试地基**：引入 vitest（Vite 原生零配置），对规则引擎全部纯函数（订单校验/撮合/指标计算）写单测——这是全站唯一「账本状态被悄悄算错就全完」的模块，测试不是可选项。这是 V4/V5 的地基，先行。
+- ~~**V3.（M）Arena Autopilot 账本 + 规则引擎**~~ ✅ **已上线（2026-07-04）**——`src/lib/arenaRules.js`（纯函数规则引擎：`validateOrder`/`simulateFill`/`applyFill`/`checkStopLoss`/`checkDailyCircuitBreaker`/`checkSeasonReset`/`resetSeason`/`computeMetrics`，全部无副作用、无 DOM/fetch/Date.now 依赖）+ `public/arena-universe.json`（30 支固定候选池：14 支核心 AI 硬件 + 13 支大盘科技 + SPY/QQQ/SMH 三基准）+ `public/arena-ledger.json`（Model A/B 各 $10,000 初始账本，season 1 day 0，尚无持仓——等 V4 定时任务首次跑）。**测试地基已落地**：`npm install -D vitest` + `package.json` 加 `test` 脚本，`tests/arenaRules.test.js` 44 条单测覆盖全部硬风控分支（禁做空/固定域/信心门槛/换手率上限/Model B 交易日限制/单仓 20% 上限/持仓数上限/现金缓冲/加权成本/止损/日熔断/赛季重置/指标计算），`npm run test` 全绿；`npm run build` 复核未受影响（规则引擎尚未接入任何页面，V5 才会挂 UI）。**下一步 V4**：定时任务调用这套引擎（模型只提案 JSON 订单 → `validateOrder` 收单 → `applyFill`/`rejectOrder` 落盘），`arenaRules.js` 本身已经把"模型不可越过硬风控"这条焊死在代码层。
 - **V4.（M）Arena 双模型定时任务**——Model A 日内双窗口批处理（开盘后 + 尾盘各 1 次）+ Model B 盘后 1 次 + 周六深度复盘 1 次/周；所有任务先过交易日历守卫（周末/NYSE 假日 no-op）；提示词 `prompts/arena-autopilot.md`。调度、数据获取与 key 管理见 **§7.5**（2026-07-04 增补：用 launchd 替代 crontab——睡眠错过的任务唤醒后补跑，cron 直接跳过）。
 - **V5.（M）Arena 页 Autopilot 前端区块**——净值双曲线（A vs B + SPY 基准线）、持仓表、成交/拒单日志、每日复盘卡（中英）；沿用 arena.html 现有视觉，与「Human vs AI」游戏区并列。**时机**：等账本积累 ≥3 个交易日再动工。
 - **V6.（M）Signal「Warsh 时代」内容重构**——新主席 SCP 人事档案 + 五维信号矩阵（通胀/货币政策/财报指引/产业动向/地缘贸易）+ 无前瞻指引 ⇒ 数据发布日历权重提升 + 鹰鸽罗盘首版。规格见 **§7.3**。**软截止：7 月底 FOMC 前上线**。
