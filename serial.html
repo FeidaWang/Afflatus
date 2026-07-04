@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF"></script>
 <script>
@@ -66,7 +67,8 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .seal b{font:400 15px/1.2 var(--disp);letter-spacing:.04em;color:var(--chrome);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .seal small{font:400 9.5px/1.5 var(--mono);letter-spacing:.12em;color:var(--copper-b);display:block;margin-top:3px;text-transform:uppercase}
 .nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.nav a{font:600 10.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--chrome-dim);border:1px solid rgba(236,226,207,.14);padding:8px 9px;border-radius:2px}
+.nav a{position:relative;font:600 10.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--chrome-dim);border:1px solid rgba(236,226,207,.14);padding:8px 9px;border-radius:2px}
+.nav a::before{content:'';position:absolute;top:-8px;bottom:-8px;left:-1px;right:-1px}
 .nav a:hover{border-color:var(--teal);color:var(--teal)}
 .nav a.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
 .lang-toggle{font:700 10.5px/1 var(--mono);letter-spacing:.08em;color:#1a1410;background:var(--copper-b);border:1px solid var(--copper-b);padding:8px 10px;border-radius:2px}

@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# Set the production domain, then uncomment:
-# Sitemap: https://YOUR-DOMAIN/sitemap.xml
+Sitemap: https://feida.au/sitemap.xml

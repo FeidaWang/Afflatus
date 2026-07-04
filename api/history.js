@@ -1,12 +1,26 @@
 /* Vercel serverless proxy for Twelve Data historical candles.
    Keeps the API key server-side (set TWELVE_KEY in Vercel env vars). The browser
    calls /api/history?symbol=NVDA&interval=1day&outputsize=120 — no key on client.
-   Returns the raw Twelve Data time_series JSON { status, values:[...] }. */
+   Returns the raw Twelve Data time_series JSON { status, values:[...] }.
+
+   D1 (2026-07-04): tightened the symbol shape to a real-ticker pattern (was an
+   open `.{1,12}` proxy) and added a per-IP rate limit — this endpoint has no
+   auth and the free-tier Twelve Data quota is shared across every site visitor.
+   V13 lets users load ANY US ticker (not just the Arena watchlist), so this is
+   deliberately NOT a fixed symbol whitelist — see ROADMAP §1 D1 for why. */
+import { checkRateLimit, clientIp } from '../src/lib/rateLimit.js';
+
+const SYMBOL_RE = /^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$/;
+const RATE_LIMIT = { limit: 20, windowMs: 60000 };
+const hits = new Map();
+
 export default async function handler(req, res) {
   const symbol = (req.query.symbol || '').toString().trim();
   const interval = (req.query.interval || '').toString().trim();
   const outputsize = Math.min(5000, parseInt(req.query.outputsize, 10) || 100);
-  if (!symbol || !/^[A-Za-z.\-]{1,12}$/.test(symbol) || !/^[0-9a-z]{1,6}$/.test(interval)) { res.status(400).json({ error: 'invalid params' }); return; }
+  if (!symbol || !SYMBOL_RE.test(symbol) || !/^[0-9a-z]{1,6}$/.test(interval)) { res.status(400).json({ error: 'invalid params' }); return; }
+  const rl = checkRateLimit(hits, clientIp(req), { ...RATE_LIMIT, now: Date.now() });
+  if (!rl.allowed) { res.setHeader('Retry-After', Math.ceil(rl.resetMs / 1000)); res.status(429).json({ error: 'rate limited' }); return; }
   const key = process.env.TWELVE_KEY;
   if (!key) { res.status(500).json({ error: 'TWELVE_KEY not configured' }); return; }
   try {
