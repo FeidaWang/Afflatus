@@ -153,36 +153,21 @@ a{color:inherit;text-decoration:none}
 .scratch.revealed .scratch-cv{display:none}
 .tbdnote{margin-top:10px;font:400 12px var(--mono);color:var(--dim)}
 
-/* group standings */
-.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.grp{border:1px solid var(--line);background:var(--panel2);padding:12px}
-.grp-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.grp-h h3{margin:0;font:700 15px/1 var(--disp);letter-spacing:.08em;color:var(--yellow)}
-.grp-opus-order{font:400 12px/1.6 var(--mono);color:var(--cyan);margin-top:8px}
-.grp-opus-order .ord{display:inline-block;margin:2px 8px 2px 0;color:#eafcff;font-size:12.5px}
-.grp-opus-order .ord b{display:inline-block;width:16px;color:var(--mag);font-weight:700}
-.grp-cmp{margin-top:8px;font:400 11px/1.5 var(--mono);color:var(--dim)}
-
-/* Group standings table */
-.st-table{width:100%;border-collapse:collapse;margin-top:8px;font:400 11px/1.3 var(--mono)}
-.st-table thead tr{border-bottom:1px solid rgba(255,43,214,.35)}
-.st-table th{color:var(--dim);font:400 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:3px 4px;text-align:right;white-space:nowrap}
-.st-table th:nth-child(1){text-align:center;width:18px}
-.st-table th:nth-child(2){text-align:left}
-.st-table td{padding:4px 4px;border-bottom:1px solid rgba(255,255,255,.04);text-align:right;white-space:nowrap}
-.st-table td:nth-child(1){text-align:center}
-.st-table td:nth-child(2){text-align:left;max-width:100px;overflow:hidden;text-overflow:ellipsis}
-.st-row.adv td{color:var(--ink)}
-.st-row.adv td:last-child{color:var(--cyan);font-weight:700}
-.st-row.third td{color:#b0aad4}
-.st-row.third td:last-child{color:var(--cyan);font-weight:600}
-.st-row.elim td{color:var(--dim);opacity:.5}
-.st-pos{color:var(--mag);font-weight:700}
-.st-gd{min-width:28px}
-.st-pts{min-width:22px}
-.st-name{display:flex;align-items:center;gap:3px}
-.st-x{color:var(--red);font-size:10px;font-weight:700;margin-left:2px;opacity:1 !important}
-@media(max-width:520px){.groups{grid-template-columns:1fr}}
+/* knockout bracket — R16 legs feeding each QF slot */
+.bracket{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.qf{border:1px solid var(--line);background:var(--panel2);padding:12px}
+.qf-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font:700 12px/1 var(--disp);letter-spacing:.1em;text-transform:uppercase;color:var(--yellow)}
+.qf-venue{color:var(--dim);font:400 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.qf-r16{margin-top:10px;padding-left:10px;border-left:2px solid rgba(255,43,214,.35);display:flex;flex-direction:column;gap:8px}
+.qf-leg{display:flex;align-items:center;gap:6px;font:600 12.5px/1.3 var(--disp);flex-wrap:wrap}
+.qf-team{color:var(--ink)}
+.qf-team.win{color:var(--cyan);font-weight:700}
+.qf-team.lose{color:var(--dim);text-decoration:line-through;opacity:.55}
+.qf-vs{color:var(--dim);font:400 10px/1 var(--mono);font-style:normal;text-transform:uppercase}
+.qf-arrow{margin:6px 0;color:var(--mag);font-size:11px;text-align:center;opacity:.8}
+.qf-slot{border-top:1px dashed rgba(255,43,214,.35);padding-top:8px;font:400 12.5px/1.4 var(--mono);color:var(--cyan)}
+.qf-slot b{color:var(--ink)}
+@media(max-width:520px){.bracket{grid-template-columns:1fr}}
 
 /* opus track record */
 .record{margin-top:16px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(0,239,255,.08),transparent 55%),var(--panel);padding:14px 16px;position:relative;clip-path:polygon(0 0,100% 0,100% 100%,18px 100%,0 calc(100% - 18px))}
@@ -250,8 +235,8 @@ a{color:inherit;text-decoration:none}
   <div class="sec-label" data-en="FIXTURES · ODDS &amp; PREDICTIONS" data-zh="赛程 · 赔率与预测">FIXTURES · ODDS &amp; PREDICTIONS</div>
   <div class="fxs" id="fixtures"><div class="empty">…</div></div>
 
-  <div class="sec-label" data-en="GROUP STANDINGS" data-zh="小组排名">GROUP STANDINGS</div>
-  <div class="groups" id="groups"><div class="empty">…</div></div>
+  <div class="sec-label" data-en="ROUND OF 16 → QUARTER-FINALS" data-zh="16强 → 8强对阵图">ROUND OF 16 → QUARTER-FINALS</div>
+  <div class="bracket" id="bracket"><div class="empty">…</div></div>
 
   <footer class="foot" data-i18n-html data-en="<b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · odds from FanDuel/bet365 · public/games-data.json" data-zh="<b>竞猜竞技场</b> · 仅供娱乐 · 非博彩建议 · 赔率来源 FanDuel/bet365 · public/games-data.json"><b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · odds from FanDuel/bet365 · public/games-data.json</footer>
 </main>

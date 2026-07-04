@@ -123,31 +123,21 @@
     });
   }
 
-  /* ---------- group standings — proper table with W/D/L/GF/GA/GD/Pts ---------- */
-  function renderGroups() {
-    const host = $('groups'); if (!host || !data || !data.groups) return;
-    host.innerHTML = data.groups.map((gp) => {
-      let tableHtml = '';
-      if (gp.standings && gp.standings.length) {
-        const hdr = `<tr><th>#</th><th>${T('Team','队伍')}</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th></tr>`;
-        const rows = gp.standings.map((t, i) => {
-          const pos = i + 1;
-          const nm = lang === 'zh' ? (t.name_zh || t.name) : t.name;
-          const gdStr = t.gd > 0 ? '+' + t.gd : String(t.gd);
-          const elimMark = t.elim ? '<span class="st-x">✕</span>' : '';
-          const rowCls = t.elim ? 'st-row elim' : (pos <= 2 ? 'st-row adv' : 'st-row third');
-          return `<tr class="${rowCls}"><td class="st-pos">${pos}</td><td class="st-name">${t.flag} ${nm}${elimMark}</td><td>${t.mp}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td><td>${t.gf}</td><td>${t.ga}</td><td class="st-gd">${gdStr}</td><td class="st-pts">${t.pts}</td></tr>`;
-        }).join('');
-        tableHtml = `<table class="st-table"><thead>${hdr}</thead><tbody>${rows}</tbody></table>`;
-      } else {
-        // fallback: show Fable's predicted order list
-        const order = (gp.opusOrder || []).map((nm, i) => {
-          const t = (gp.teams || []).find((x) => x.name === nm) || { flag: '', name: nm, name_zh: nm };
-          return `<span class="ord"><b>${i + 1}</b>${t.flag} ${lang === 'zh' ? t.name_zh : t.name}</span>`;
-        }).join('');
-        tableHtml = `<div class="grp-opus-order">🤖 ${order}</div>`;
-      }
-      return `<article class="grp" data-g="${gp.id}"><div class="grp-h"><h3>${T('GROUP', '小组')} ${gp.id}</h3></div>${tableHtml}<p class="grp-cmp">${T(gp.reason_en, gp.reason_zh)}</p></article>`;
+  /* ---------- knockout bracket — Round of 16 legs feeding each Quarter-final slot ---------- */
+  function renderBracket() {
+    const host = $('bracket'); if (!host || !data || !data.bracket) return;
+    const legName = (leg, side) => lang === 'zh' ? (leg[side + '_zh'] || leg[side]) : leg[side];
+    host.innerHTML = data.bracket.qf.map((qf) => {
+      const legsHtml = qf.legs.map((leg) => {
+        const hCls = leg.winner === 'home' ? ' win' : (leg.winner === 'away' ? ' lose' : '');
+        const aCls = leg.winner === 'away' ? ' win' : (leg.winner === 'home' ? ' lose' : '');
+        return `<div class="qf-leg"><span class="qf-team${hCls}">${leg.homeFlag || ''} ${legName(leg, 'home')}</span><i class="qf-vs">${T('vs', '对')}</i><span class="qf-team${aCls}">${leg.awayFlag || ''} ${legName(leg, 'away')}</span></div>`;
+      }).join('');
+      const decided = qf.legs.map((leg) => leg.winner ? legName(leg, leg.winner) + (leg.winner === 'home' ? (leg.homeFlag || '') : (leg.awayFlag || '')) : null);
+      const slotHtml = decided.every(Boolean)
+        ? `<b>${decided[0]}</b> <i class="qf-vs">${T('vs', '对')}</i> <b>${decided[1]}</b>`
+        : T('Winners TBD', '胜者未定');
+      return `<article class="qf" data-qf="${qf.id}"><div class="qf-h"><span class="qf-badge">${T('QF', '八强')} · ${qf.date}</span><span class="qf-venue">${T(qf.venue_en, qf.venue_zh)}</span></div><div class="qf-r16">${legsHtml}</div><div class="qf-arrow">▼</div><div class="qf-slot">${slotHtml}</div></article>`;
     }).join('');
     if (window.AfflatusI18N) window.AfflatusI18N.apply();
   }
@@ -180,7 +170,7 @@
     if ($('gnote')) $('gnote').textContent = T(data.note_en, data.note_zh);
   }
 
-  function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderPlayers(); renderFixtures(); renderGroups(); }
+  function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderPlayers(); renderFixtures(); renderBracket(); }
 
   fetch('/games-data.json', { cache: 'no-store' }).then((r) => r.json()).then((d) => { data = d; renderAll(); }).catch(() => { if ($('fixtures')) $('fixtures').innerHTML = `<div class="empty">${T('Fixtures unavailable.', '赛程暂不可用。')}</div>`; });
   setInterval(tickFixtures, 1000);

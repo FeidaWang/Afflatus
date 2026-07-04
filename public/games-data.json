@@ -336,234 +336,122 @@
       "result": null
     }
   ],
-  "groups": [
-    {
-      "id": "B",
-      "standings": [
-        {
-          "name": "Switzerland",
-          "name_zh": "瑞士",
-          "flag": "🇨🇭",
-          "mp": 3,
-          "w": 2,
-          "d": 1,
-          "l": 0,
-          "gf": 8,
-          "ga": 3,
-          "gd": 5,
-          "pts": 7,
-          "elim": false
-        },
-        {
-          "name": "Canada",
-          "name_zh": "加拿大",
-          "flag": "🇨🇦",
-          "mp": 3,
-          "w": 1,
-          "d": 1,
-          "l": 1,
-          "gf": 8,
-          "ga": 4,
-          "gd": 4,
-          "pts": 4,
-          "elim": false
-        }
-      ],
-      "opusOrder": [
-        "Switzerland",
-        "Canada"
-      ],
-      "reason_en": "Switzerland — R16 vs Colombia, July 7 Vancouver, for a QF spot against Argentina/Egypt. Canada — co-host R16 vs Morocco, July 4 Houston.",
-      "reason_zh": "瑞士——16强7月7日战哥伦比亚，温哥华，胜者将进入八强战阿根廷/埃及。加拿大——东道主16强7月4日战摩洛哥，休斯敦。"
-    },
-    {
-      "id": "D",
-      "standings": [
-        {
-          "name": "United States",
-          "name_zh": "美国",
-          "flag": "🇺🇸",
-          "mp": 3,
-          "w": 2,
-          "d": 0,
-          "l": 1,
-          "gf": 8,
-          "ga": 4,
-          "gd": 4,
-          "pts": 6,
-          "elim": false
-        },
-        {
-          "name": "Paraguay",
-          "name_zh": "巴拉圭",
-          "flag": "🇵🇾",
-          "mp": 3,
-          "w": 1,
-          "d": 1,
-          "l": 1,
-          "gf": 2,
-          "ga": 4,
-          "gd": -2,
-          "pts": 4,
-          "elim": false
-        }
-      ],
-      "opusOrder": [
-        "United States",
-        "Paraguay"
-      ],
-      "reason_en": "United States — co-host R16 vs Belgium, July 6 Seattle. Paraguay — stunned Germany on pens in R32; R16 vs France, July 4 Philadelphia. Australia eliminated on penalties by Egypt; Turkey eliminated in groups.",
-      "reason_zh": "美国——东道主16强7月6日战比利时，西雅图。巴拉圭——32强点球淘汰德国，16强7月4日战法国，费城。澳大利亚点球负于埃及淘汰；土耳其小组赛淘汰。"
-    },
-    {
-      "id": "G",
-      "standings": [
-        {
-          "name": "Belgium",
-          "name_zh": "比利时",
-          "flag": "🇧🇪",
-          "mp": 3,
-          "w": 1,
-          "d": 2,
-          "l": 0,
-          "gf": 6,
-          "ga": 2,
-          "gd": 4,
-          "pts": 5,
-          "elim": false
-        },
-        {
-          "name": "Egypt",
-          "name_zh": "埃及",
-          "flag": "🇪🇬",
-          "mp": 3,
-          "w": 1,
-          "d": 2,
-          "l": 0,
-          "gf": 5,
-          "ga": 3,
-          "gd": 2,
-          "pts": 5,
-          "elim": false
-        }
-      ],
-      "opusOrder": [
-        "Belgium",
-        "Egypt"
-      ],
-      "reason_en": "Belgium — R16 vs USA, July 6 Seattle. Egypt — historic run continues after a penalty shootout escape past Australia; R16 vs Argentina, July 7 Atlanta, first-ever meeting between the sides.",
-      "reason_zh": "比利时——16强7月6日战美国，西雅图。埃及——点球淘汰澳大利亚后历史性征程延续，16强7月7日战阿根廷，亚特兰大，两队世界杯历史首次交手。"
-    },
-    {
-      "id": "H",
-      "standings": [
-        {
-          "name": "Spain",
-          "name_zh": "西班牙",
-          "flag": "🇪🇸",
-          "mp": 3,
-          "w": 2,
-          "d": 1,
-          "l": 0,
-          "gf": 5,
-          "ga": 0,
-          "gd": 5,
-          "pts": 7,
-          "elim": false
-        }
-      ],
-      "opusOrder": [
-        "Spain"
-      ],
-      "reason_en": "Spain — R16 vs Portugal, July 6 Arlington, Euro 2016 final rematch. Cape Verde's historic World Cup debut run ended in extra time against Argentina (3-2); Uruguay and Saudi Arabia eliminated in groups.",
-      "reason_zh": "西班牙——16强7月6日战葡萄牙，阿灵顿，欧洲杯2016年决赛重演。佛得角历史性首秀之旅在加时赛输给阿根廷（3-2）后谢幕；乌拉圭与沙特小组赛淘汰。"
-    },
-    {
-      "id": "J",
-      "standings": [
-        {
-          "name": "Argentina",
-          "name_zh": "阿根廷",
-          "flag": "🇦🇷",
-          "mp": 3,
-          "w": 3,
-          "d": 0,
-          "l": 0,
-          "gf": 8,
-          "ga": 1,
-          "gd": 7,
-          "pts": 9,
-          "elim": false
-        }
-      ],
-      "opusOrder": [
-        "Argentina"
-      ],
-      "reason_en": "Argentina — survived a huge scare against Cape Verde (3-2 AET) in R32; R16 vs Egypt, July 7 Atlanta, first-ever meeting. Austria, Algeria and Jordan eliminated in the group stage.",
-      "reason_zh": "阿根廷——32强加时3-2惊险淘汰佛得角；16强7月7日战埃及，亚特兰大，两队历史首次交手。奥地利、阿尔及利亚与约旦小组赛淘汰。"
-    },
-    {
-      "id": "K",
-      "standings": [
-        {
-          "name": "Colombia",
-          "name_zh": "哥伦比亚",
-          "flag": "🇨🇴",
-          "mp": 3,
-          "w": 2,
-          "d": 1,
-          "l": 0,
-          "gf": 4,
-          "ga": 1,
-          "gd": 3,
-          "pts": 7,
-          "elim": false
-        },
-        {
-          "name": "Portugal",
-          "name_zh": "葡萄牙",
-          "flag": "🇵🇹",
-          "mp": 3,
-          "w": 1,
-          "d": 2,
-          "l": 0,
-          "gf": 6,
-          "ga": 1,
-          "gd": 5,
-          "pts": 5,
-          "elim": false
-        }
-      ],
-      "opusOrder": [
-        "Colombia",
-        "Portugal"
-      ],
-      "reason_en": "Colombia — edged Ghana 1-0 in R32 (Arias); R16 vs Switzerland, July 7 Vancouver. Portugal — needed a 94th-minute Ramos header to beat Croatia; R16 vs Spain, July 6 Arlington.",
-      "reason_zh": "哥伦比亚——32强1-0险胜加纳（阿里亚斯建功）；16强7月7日战瑞士，温哥华。葡萄牙——靠拉莫斯94分钟头球险胜克罗地亚；16强7月6日战西班牙，阿灵顿。"
-    },
-    {
-      "id": "L",
-      "standings": [
-        {
-          "name": "England",
-          "name_zh": "英格兰",
-          "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-          "mp": 3,
-          "w": 2,
-          "d": 1,
-          "l": 0,
-          "gf": 6,
-          "ga": 2,
-          "gd": 4,
-          "pts": 7,
-          "elim": false
-        }
-      ],
-      "opusOrder": [
-        "England"
-      ],
-      "reason_en": "England — beat DR Congo 2-1 (Kane brace) in R32; R16 vs Mexico, July 6 Estadio Azteca, a fierce away test at altitude. Ghana eliminated 1-0 by Colombia; Croatia and Panama eliminated in the group stage.",
-      "reason_zh": "英格兰——32强2-1胜刚果（金）（凯恩梅开二度）；16强7月6日战墨西哥，阿兹特克球场，高原客场硬仗。加纳0-1负于哥伦比亚淘汰；克罗地亚与巴拿马小组赛淘汰。"
-    }
-  ]
+  "bracket": {
+    "stageLabel_en": "Round of 16 → Quarter-finals",
+    "stageLabel_zh": "16强 → 8强",
+    "qf": [
+      {
+        "id": "qf1",
+        "date": "2026-07-09",
+        "venue_en": "Foxborough",
+        "venue_zh": "福克斯堡",
+        "legs": [
+          {
+            "r16Id": "wc-par-fra",
+            "home": "Paraguay",
+            "home_zh": "巴拉圭",
+            "homeFlag": "🇵🇾",
+            "away": "France",
+            "away_zh": "法国",
+            "awayFlag": "🇫🇷",
+            "winner": null
+          },
+          {
+            "r16Id": "wc-can-mar",
+            "home": "Canada",
+            "home_zh": "加拿大",
+            "homeFlag": "🇨🇦",
+            "away": "Morocco",
+            "away_zh": "摩洛哥",
+            "awayFlag": "🇲🇦",
+            "winner": null
+          }
+        ]
+      },
+      {
+        "id": "qf2",
+        "date": "2026-07-10",
+        "venue_en": "Los Angeles",
+        "venue_zh": "洛杉矶",
+        "legs": [
+          {
+            "r16Id": "wc-esp-por",
+            "home": "Spain",
+            "home_zh": "西班牙",
+            "homeFlag": "🇪🇸",
+            "away": "Portugal",
+            "away_zh": "葡萄牙",
+            "awayFlag": "🇵🇹",
+            "winner": null
+          },
+          {
+            "r16Id": "wc-usa-bel",
+            "home": "United States",
+            "home_zh": "美国",
+            "homeFlag": "🇺🇸",
+            "away": "Belgium",
+            "away_zh": "比利时",
+            "awayFlag": "🇧🇪",
+            "winner": null
+          }
+        ]
+      },
+      {
+        "id": "qf3",
+        "date": "2026-07-11",
+        "venue_en": "Miami",
+        "venue_zh": "迈阿密",
+        "legs": [
+          {
+            "r16Id": "wc-bra-nor",
+            "home": "Brazil",
+            "home_zh": "巴西",
+            "homeFlag": "🇧🇷",
+            "away": "Norway",
+            "away_zh": "挪威",
+            "awayFlag": "🇳🇴",
+            "winner": null
+          },
+          {
+            "r16Id": "wc-mex-eng",
+            "home": "Mexico",
+            "home_zh": "墨西哥",
+            "homeFlag": "🇲🇽",
+            "away": "England",
+            "away_zh": "英格兰",
+            "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+            "winner": null
+          }
+        ]
+      },
+      {
+        "id": "qf4",
+        "date": "2026-07-12",
+        "venue_en": "Kansas City",
+        "venue_zh": "堪萨斯城",
+        "legs": [
+          {
+            "r16Id": "wc-arg-egy",
+            "home": "Argentina",
+            "home_zh": "阿根廷",
+            "homeFlag": "🇦🇷",
+            "away": "Egypt",
+            "away_zh": "埃及",
+            "awayFlag": "🇪🇬",
+            "winner": null
+          },
+          {
+            "r16Id": "wc-sui-col",
+            "home": "Switzerland",
+            "home_zh": "瑞士",
+            "homeFlag": "🇨🇭",
+            "away": "Colombia",
+            "away_zh": "哥伦比亚",
+            "awayFlag": "🇨🇴",
+            "winner": null
+          }
+        ]
+      }
+    ]
+  }
 }
