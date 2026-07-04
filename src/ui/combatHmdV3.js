@@ -31,7 +31,7 @@ import {
    degree tape with numbered majors + centre caret & readout, and a dashed
    cross reticle with a bracket-dot secondary marker. Pure. */
 export function drawSCHeadingTape(ctx,w,h,heading){
-  const y0=h*.055, pxPerDeg=w*.008, halfSpan=30;
+  const y0=h*.10, pxPerDeg=w*.008, halfSpan=30;
   const fs=Math.max(7,Math.min(10,w*.018));
   ctx.save();
   ctx.strokeStyle='rgba(148,228,255,.62)';ctx.lineWidth=1;
@@ -77,8 +77,8 @@ export function drawSCReticle(ctx,cx,cy){
 }
 
 /* First-person cockpit frame for the pilot feed — SC-cockpit-style console
-   dashboard (button columns, twin power-management MFDs, centre radar dome)
-   in the language of the Star Citizen reference shot. The old A-frame canopy
+   dashboard (button columns, one centred power-management MFD, centre radar
+   dome) in the language of the Star Citizen reference shot. The old A-frame canopy
    struts (the triangular "porthole") were removed on user request (V17,
    2026-07-05): the centre glass now stays completely clear for the HMD.
 
@@ -170,13 +170,6 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1){
     ctx.font=mono(fs);ctx.fillStyle=rgba(.4);ctx.textAlign='left';
     ctx.fillText('0/0 OFFLINE',px+4,py+ph*.58);
     ctx.fillText('▤ BATTERY',px+4,py+ph*.58+fs*1.3);
-    // footer bar: ‹ POWER MANAGEMENT ›
-    const fy=py+ph-fs-6;
-    ctx.strokeStyle=rgba(.4);ctx.strokeRect(px+3,fy-2,pw-6,fs+6);
-    ctx.fillStyle=rgba(.7);ctx.textAlign='center';
-    ctx.fillText('POWER MANAGEMENT',px+pw/2,fy+1);
-    ctx.textAlign='left';ctx.fillText('‹',px+6,fy+1);
-    ctx.textAlign='right';ctx.fillText('›',px+pw-6,fy+1);
     // boot scanline sweeping down the screen while it warms up
     if(p<1){
       ctx.globalCompositeOperation='lighter';
@@ -185,9 +178,8 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1){
     }
     ctx.restore();
   };
-  const mw=w*.235, mh=h*.20, my=h*.775;
-  mfd(w*.095,my,mw,mh,2,st(.30,.52));
-  mfd(w*.905-mw,my,mw,mh,5,st(.36,.58));
+  const mw=w*.235, mh=h*.155, my=h*.775;
+  mfd(w*.5-mw/2,my,mw,mh,2,st(.30,.52));
 
   // --- centre radar dome ---
   const domeP=st(.50,.72);
@@ -444,8 +436,10 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
   /** Shield quadrant grid — ported from the SC reference-image strength noted
    *  in ROADMAP §4b item 3 (previously only sketched for the demoted
    *  combatHudSC skin, never implemented there or here). Four cells (FORE/AFT/
-   *  PORT/STBD) below the target bracket. The game only tracks one scalar
-   *  target HP, not real per-quadrant damage, so — same honesty level as
+   *  PORT/STBD), stacked directly below the health/armor bars (V17c: was
+   *  beside the bracket's own name/range labels, which collided at small
+   *  sizes — see ROADMAP note). The game only tracks one scalar target HP,
+   *  not real per-quadrant damage, so — same honesty level as
    *  drawTargetHealthBars' derived armor% — each quadrant fans that single
    *  real value out with a small deterministic per-quadrant offset (seeded by
    *  quadrant index + slow time drift) rather than inventing 4 independent
@@ -456,7 +450,9 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     const maxHp=200, hp=clamp(halley.hp||100,0,maxHp), base=hp/maxHp;
     const labels=['FORE','AFT','PORT','STBD'];
     const cellW=bracketS*1.05, cellH=bracketS*.62, gap=4;
-    const gx=cx+bracketS*1.35, gy=cy-cellH-gap*.5;
+    // below the health/armor bars (which end ~cy+1.38·bracketS+15), not
+    // beside the bracket's labels (which can extend to cx+1.5·bracketS+6+text)
+    const gx=cx-bracketS*1.1, gy=cy+bracketS*1.38+30;
     const fs=Math.max(6,Math.min(8,bracketS*.13));
     ctx.save();
     ctx.font=`${fs}px 'JetBrains Mono',monospace`;
