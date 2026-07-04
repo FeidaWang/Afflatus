@@ -15,6 +15,10 @@
 
 **验证**：`npm run test` 144/144 绿（新增 21 条）；`npm run build` 绿；`vite preview` 7 页 + `arena-universe.json` curl 200；dist 产物 grep 确认 `LEVEL LADDER`/`限价参考区`/`arena-universe.json` 指纹全部进 chunk；**另做了一次真实数据端到端验证**——抓取线上 `/api/history` 的真实 NVDA 日线，走与 arenaTech.js 完全一致的映射管线跑 `analyzeTicker`，逐项断言通过（PP/R1/S1 与手算一致；管线自动识别出 6/23 真实向下跳空缺口 [203.77–207.72] 且正确判定未回补；整数关口 $200 判 major；MA5/10 价下）。**视觉未验证**：标尺/卡片布局在沙盒无法渲染，需本地确认观感。i18n 全覆盖（data-en/zh + data-en-ph 占位符 + 动态 T()）。
 
+**V13 上线后热修：Level Ladder 标签重叠 bug**（用户反馈截图，同日）——用户上线后截图反馈价位标尺（Level Ladder）标签严重重叠遮挡（多处价格数字前后叠印无法辨认、缺口标签压在下方标签上、当前价框直接盖住紧邻下方的标签）。**根因**：原 `renderLadder` 只对右侧标签做了一个基于「高度百分比」的弱双列错位（阈值 3.4%，与真实文字像素尺寸无关），左侧价格数字、缺口标签、当前价标记完全没有防碰撞逻辑，密集时必然互相覆盖。**修复**：新增 `src/lib/ladderLayout.js`（纯函数，不碰 DOM，独立于 `technicals.js` 因为这是排版问题不是指标计算问题）——`declutter1D`（双向单调扫描防重叠算法：保证任意两个标签间距 ≥ minGap，保持原始相对顺序不交叉，绝不压缩标签只会增长容器）+ `fitExtent`（计算需要的额外偏移量/容器高度，避免裁切而不是让标签挤到看不清）。重写 `renderLadder`：所有标签（关键位行、缺口标签、当前价、盘后模式的日高/日低）现在进同一个防重叠池统一避让，而不是各自为政；同时把「真实价格位置」（价位线、色带——永远画在数学上正确的位置）和「标签显示位置」（防重叠后可能挪动的位置）分离，两者差距超过几像素时画一条引导虚线连接（参考真实交易软件价格轴的通用做法）。arena.html 对应 CSS 同步重写以匹配新的 DOM 结构（`.lad-lv` 纯线条 / `.lad-lab` 标签块 / `.lad-leader` 引导线 / `.lad-gaplab`/`.lad-px-line`/`.lad-px`/`.lad-sess-line`/`.lad-sess` 拆分），并移除 `.ta-ladder` 上会跟 JS 显式 `style.height`打架的 `flex:1`。
+
+**验证**：新增 `tests/ladderLayout.test.js`（8 条：已有间距不动、复现截图密集聚集场景断言全部间距达标、保序不交叉、全同值均匀展开、0/1 项边界、`fitExtent` 三种场景）；`npm run test` 152/152 绿；`npm run build` 绿；`vite preview` 7 页 curl 200；dist 产物 grep 确认新 CSS 类名（`lad-leader`/`lad-gaplab`）已进 `arena.html` 且旧类名（`.lad-lv.c1`/`.lad-lv u`/`.lad-lv em`）无残留。**本轮沙盒无网络出口**（`feida.au` DNS 解析失败），无法重复上次的真实 NVDA 数据端到端验证；改用确定性种子生成的合成日线数据（260 根，随机游走）走完整 `analyzeTicker` 管线产出 17 个真实关键位/当前价标签，喂给 `declutter1D`/`fitExtent`，确认零 NaN、任意两标签间距精确 ≥16px、容器高度按需增长——验证的是新防重叠算法与真实指标管线拼接后的整体行为，非声称使用了真实行情。**视觉仍未验证**：沙盒无法截图渲染，标签是否真正不再遮挡需本地打开 arena.html 确认。
+
 ---
 
 ### V7.（S）Signal 定时任务升级 — 2026-07-04
