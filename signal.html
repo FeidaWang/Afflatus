@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF"></script>
 <script>
@@ -63,7 +64,8 @@ a{color:inherit;text-decoration:none}
 .seal b{font:700 16px/1 var(--disp);letter-spacing:.06em;text-transform:uppercase;color:var(--paper);display:block}
 .seal small{font:400 10px/1.5 var(--mono);letter-spacing:.14em;color:var(--amber);display:block;margin-top:4px}
 .nav{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.nav a{font:600 11px/1 var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--mute);border:1px solid rgba(255,255,255,.12);padding:9px 10px}
+.nav a{position:relative;font:600 11px/1 var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--mute);border:1px solid rgba(255,255,255,.12);padding:9px 10px}
+.nav a::before{content:'';position:absolute;top:-8px;bottom:-8px;left:-2px;right:-2px}
 .nav a:hover{border-color:var(--amber);color:var(--amber)}
 .nav a.active{background:var(--amber);border-color:var(--amber);color:#1a1a1c}
 .lang-toggle{font:700 11px/1 var(--mono);letter-spacing:.1em;color:#1a1a1c;background:var(--amber);border:1px solid var(--amber);padding:9px 11px;cursor:pointer}

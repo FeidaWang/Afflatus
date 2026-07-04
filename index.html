@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF"></script>
 <script>
@@ -286,6 +287,12 @@
 <script type="module" src="/src/pages/homeLibs.js"></script>
 <script type="module" src="/src/main.js"></script>
 <script type="module" src="/src/scene/alphardForge.js"></script>
-<script type="module" src="/src/scene/topdownCombat.js"></script>
+<script type="module">
+  /* D3 (ROADMAP §1): topdownCombat.js's own harness only mounts when ?combat=topdown
+     is present, so gate the load itself rather than statically importing it on every
+     page view — this also fixes the vite INEFFECTIVE_DYNAMIC_IMPORT warning caused by
+     the module being both statically (here) and dynamically (main.js) imported. */
+  if (/[?&]combat=topdown\b/.test(location.search)) import('/src/scene/topdownCombat.js');
+</script>
 </body>
 </html>
