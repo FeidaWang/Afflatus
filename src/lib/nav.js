@@ -28,8 +28,8 @@
     { path: '/sectors.html', en: 'Sectors', zh: '板块' },
     { path: '/signal.html',  en: 'Signal',  zh: '信号' },
     { path: '/games.html',   en: 'Games',   zh: '竞猜',   group: 'labs' },
-    { path: '/leagues.html', en: 'Leagues', zh: '电竞',   group: 'labs' },
-    { path: '/novels.html',  en: 'Novels',  zh: '小说',   group: 'labs' }
+    { path: '/league.html',  en: 'Leagues', zh: '电竞',   group: 'labs' },
+    { path: '/serial.html',  en: 'Novels',  zh: '小说',   group: 'labs' }
   ];
   const LABS_LABEL = { en: 'Labs', zh: '实验室' };
   // Exposed read-only for consumers that can't use the full DOM-rendering

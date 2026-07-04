@@ -7,7 +7,7 @@
  * prev/next synchronously at module top-level).
  */
 import '../lib/clock.js';
-import './leagues.js';
+import './league.js';
 import '../lib/i18n.js';
 import '../lib/nav.js';
 import '../lib/audio.js';
