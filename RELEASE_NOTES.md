@@ -35,6 +35,20 @@
 
 ---
 
+### D1–D5. 站内架构/UX 审计快赢（用户指定最高优先级）— 2026-07-05
+
+**背景**：产品经理+架构师视角的一轮批判性复核，发现 5 项可在半天内解决的真实问题——逐条对照构建产物/API 代码/dist 抽查核实，不是猜测。核心结论：后端自动化纪律（状态外置/规则引擎/发布校验）比前端健康得多；前端最大问题是 `/api/quote` 无白名单+无限流的开放代理、简报强制门禁挡在工具类页面前面、`INEFFECTIVE_DYNAMIC_IMPORT` 构建警告、移动端触控目标不足、i18n 首帧闪烁+无 sitemap 拖累中文 SEO。
+
+- **D1.** `/api/quote`/`api/history.js` 的 symbol regex 从宽松的 `^[A-Za-z.\-]{1,12}$` 收紧到真实 ticker 形状 `^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$`（支持 `BRK.B`/`BRK-A` 后缀）。原计划的固定 30 支白名单方案与 V13 已上线的「搜索任意美股代码」功能冲突，经确认后改为不做硬白名单；新增基于 IP（`x-forwarded-for`）的每容器滑动窗口限流（纯函数 `src/lib/rateLimit.js` + 薄封装，quote 60 次/60s、history 20 次/60s，超限 429 + `Retry-After`）。非分布式限流（Vercel serverless 按实例隔离），配额吃紧再评估 Upstash/KV。
+- **D2.** `arena.js` 简报门禁降级——`bfEnter` 默认可点击直接关闭（原先 `disabled`，要滚动进度 ≥96% 才解锁）；`Skip` 与 `Enter` 视觉权重拉平（两者都 `flex:1` 对齐）。简报内容本身保留，只去掉「必须读完」的强制感——V13 上线后旧对战区已隐藏，这套仪式挡在一个日常工具页前面不合适。
+- **D3.** index.html 里 `topdownCombat.js` 的静态 `<script src>` 换成条件化内联 `<script type="module">`（复用 harness 自身 `?combat=topdown` 门槛后再 `import()`），消除 vite `INEFFECTIVE_DYNAMIC_IMPORT` 构建警告。**范围调整**：背景 canvas 的 `IntersectionObserver` 未做——核实后 `#starfield`/`#blackhole-gl` 是 `position:fixed` 全屏背景层，不存在「滚出视口」这个状态，对其做 IntersectionObserver 是死代码；切标签页挂起（`document.hidden`）在 `main.js` 的 `frame()` 里本来就已存在。原 P3 B5 一并标记不再单独跟踪。
+- **D4.** arena/sectors/signal/games/serial/league 六个入口页的 `.nav a`/`.hbtn`/`.tf-b`/`.ind-b`/`.ta-chip`/`.ta-mode` 加 `::before` 隐形热区扩展到 ≥44px（视觉大小不变）。**范围调整**：全站 9-10px 小字扫查涉及几十处装饰性小字，风险超出 S 量级快赢范围，未做；只把最初审计发现的 Arena 交易 HUD 密集标签（`.ta-chip i`/`.ta-mode i`/`.ta-sg i`）在 `@media(max-width:720px)` 下提到 11px。
+- **D5.** 新增 `public/sitemap.xml`（7 个入口页），`robots.txt` 指向它；7 个页面 `<head>` 最前面加同步内联脚本，按 localStorage 缓存语言提前设置 `<html lang>`（不等 `i18n.js` 作为 module script 跑完）。**范围调整**：首屏文案「先英后中」跳变未根治——首页 hero 标题/副标题走 `main.js` 独立内容管线（非 `i18n.js` 的 `data-en`/`data-zh` 机制），根治需服务端按 `Accept-Language` 分流，留给 C5 Astro 迁移一并解决。
+
+**验证**：158/158 测试通过（新增 `tests/rateLimit.test.js`）；`npm run build` 无 `INEFFECTIVE_DYNAMIC_IMPORT` 警告；7 个入口页 `vite preview` 均 200。
+
+---
+
 ### V13.（M）Arena 美股技术分析仪表盘（用户直接指定需求）— 2026-07-04
 
 **需求来源**：用户直接提出（非既有 roadmap 编号，占用空缺的 V13），把 arena.html 改造为个人日常盘前/盘后浏览用的美股技术分析面板；原 Human vs AI 对战区**暂时隐藏**（源码全保留，`.legacy-hidden{display:none}`，移除该 class 即可恢复）。
