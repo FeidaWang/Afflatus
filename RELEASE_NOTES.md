@@ -7,6 +7,18 @@
 
 ## v1.5 · Afflatus「Fable 5 Max 五模块」
 
+### V17.（M）战机视角 SC 座舱 HUD + TARGET LINK 开机序列（用户直接指定，参考星际公民截图）— 2026-07-05
+
+**需求**：按用户提供的星际公民座舱截图，把 SC 风格 MFD 座舱融入战机视角 combat view；起飞时系统在 TARGET LINK 中一键分阶段启动；彻底删除背景里的三角形舷窗。
+
+**关键发现（本轮最有价值的一条）**：旧「三角舷窗」之所以读成"背景里的鬼影"，根因是**绘制顺序 bug**——`drawPilotHmd` 内部的 `drawPilotSpace` 用 .92-.98 alpha 的近不透明星空**盖在**先画的座舱框架上，座舱只剩 ~5% 残影。删除三角支柱只治标；本轮同时把 standby/combat/launch/landing/topdown 五条分支的绘制顺序全部改为「星空（充当清屏）→ 座舱控制台 → HMD 线条层」，控制台第一次真正以前景形态可见。
+
+**交付**：`drawCockpitFrame` 重写（combatHmdV3.js，保持纯函数）——删除 A-frame 三角支柱/顶梁/舱盖弓；新 SC 控制台：左 PWR/WPN/THR/SHLD/COOL 按钮列（WPN 琥珀高亮）+ 右 RADR/PROX/HIT/MISL、双 MFD 电源管理屏（OUTPUT 5/16、三列分段电源块、OFFLINE/BATTERY、‹POWER MANAGEMENT›页脚）、中央雷达罩（conic 扫描线+光点+269°·2.8KM 读数，无 createConicGradient 时降级为线扫）、仪表台顶读数条。新增 `boot` 参数（0..1）驱动分阶段上电：台缘灯→按钮列逐个→MFD 扫描线暖屏→雷达罩转速爬升→读数条→中屏 PWR BUS/AVIONICS/WPN SAFETIES/SENSOR ARRAY/TARGET LINK 逐行 SYNC→OK→「TARGET LINK ESTABLISHED」加发光闪屏。`drawCleanCombatHmd` 新增 `drawSCChipStacks`（左 SCM/GUN+CPLD/ESP/LOCK+速度/弹药，LOCK 绑定真实锁定状态；右 DECOY 24/NOISE 2+VTOL/GEAR/GSAF；w<340 或 h<250 时整体跳过防糊）；底部遥测条上移到 h*.72（否则被加高的仪表台盖住）。main.js：`cockpitBootT()` 时间线——首次进入 standby/combat 跑完整 2.6s 序列（页面首屏也有开机秀），起飞交接后从 65% 续跑 1.5s 收尾（起飞滑跑过程中控制台已随 elapsed 分阶段点亮），HMD 线条层随 boot 淡入。
+
+**验证**：158/158 测试绿；构建绿，dist grep 指纹确认；**headless 绘制扫描**——Node mock ctx 全参数矩阵调用（boot 0→1 × landing × conic 有无 × 6 种模式 × 2 种尺寸 × 目标有无）零运行时错误。**视觉未验证**：沙盒无法渲染 canvas，控制台布局密度/开机节奏的实际观感需本地确认；绘制顺序修复对 launch/landing 的甲板残影观感也有连带影响（理论上更清晰，请一并看一眼）。水印未包含（本来也不会画参考图里的任何位图内容）。
+
+---
+
 ### V13.（M）Arena 美股技术分析仪表盘（用户直接指定需求）— 2026-07-04
 
 **需求来源**：用户直接提出（非既有 roadmap 编号，占用空缺的 V13），把 arena.html 改造为个人日常盘前/盘后浏览用的美股技术分析面板；原 Human vs AI 对战区**暂时隐藏**（源码全保留，`.legacy-hidden{display:none}`，移除该 class 即可恢复）。

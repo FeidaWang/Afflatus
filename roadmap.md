@@ -112,7 +112,7 @@
 
 ## 4. 战斗视图工程 / Combat view engineering ★
 
-**现状**：主战斗 HUD 默认使用 HMD v3（`src/ui/combatHmdV3.js` 的 `drawCleanCombatHmd`，贯穿起飞/降落/巡航/战斗全阶段）；SC 风格全息面板（`src/scene/combatHudSC.js`）保留为 `?combatview=sc` 可选皮肤；俯视战场（`src/scene/topdownCombat.js`）保留为 `?combatview=topdown` 战术地图可选皮肤。架构边界不变：`combatRuntime.js`（状态）→ 渲染层（纯函数）→ `#pilotFeed`。
+**现状**：主战斗 HUD 默认使用 HMD v3（`src/ui/combatHmdV3.js` 的 `drawCleanCombatHmd`，贯穿起飞/降落/巡航/战斗全阶段）；SC 风格全息面板（`src/scene/combatHudSC.js`）保留为 `?combatview=sc` 可选皮肤；俯视战场（`src/scene/topdownCombat.js`）保留为 `?combatview=topdown` 战术地图可选皮肤。架构边界不变：`combatRuntime.js`（状态）→ 渲染层（纯函数）→ `#pilotFeed`。**V17（2026-07-05，详见 RELEASE_NOTES）**：`drawCockpitFrame` 已重写为 SC 双 MFD 控制台（旧三角舱盖支柱删除），带 `boot` 参数分阶段开机序列；各分支绘制顺序已修正为「星空→控制台→HMD」——**新增任何 pilot feed 图层时注意：`drawPilotSpace` 是近不透明的清屏层，画在它之前的东西只剩残影**。
 
 **⚠️ 2026-07-04 路线改向**：俯视视角读起来像棋盘上的棋子（Ludo 感），破坏空间沉浸；导弹冲向彗星毫无纵深。「俯视渲染成为主战斗视图」的目标**已废弃**，新方向是下方的**真 3D 相机导演系统**（V14–V16）。已完成的状态快照接口（`combatRuntime.getState()`/`getBattleSnapshot()`）不白费——它正是 V16 单时钟同步的地基。**V16 已上线（`src/combat/weaponClock.js`，见 §1）**，V14 的镜头状态机可直接订阅其 `{t0, phases}` 时间线。
 

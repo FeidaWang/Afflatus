@@ -30,79 +30,211 @@ import {
   statusChip as hmdStatusChip,
 } from './hmdMinimal.js';
 
-/* First-person cockpit frame for the pilot feed — canopy struts + a console
-   dashboard with two glowing MFD panels, in the language of the Star Citizen
-   reference shots. Drawn on top of the scene so the centre glass stays clear
-   for the HMD/target; the dashboard also masks any stray bottom-edge HUD line.
+/* First-person cockpit frame for the pilot feed — SC-cockpit-style console
+   dashboard (button columns, twin power-management MFDs, centre radar dome)
+   in the language of the Star Citizen reference shot. The old A-frame canopy
+   struts (the triangular "porthole") were removed on user request (V17,
+   2026-07-05): the centre glass now stays completely clear for the HMD.
+
+   `boot` (0..1) drives the one-shot power-on sequence: dash rim → button
+   columns → MFD screens → radar dome → dash readouts → "TARGET LINK" sync
+   lines → ESTABLISHED flash. Pass 1 (default) for a fully-lit console.
    Fully pure: no combat-state reads. */
-export function drawCockpitFrame(ctx,w,h,now,landing=false){
+export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1){
   const ac=landing?[93,255,157]:[120,210,255];
   const [cr,cg,cb]=ac;
+  const rgba=(a)=>`rgba(${cr},${cg},${cb},${a})`;
+  const AMBER='rgba(255,214,102,';
+  const mono=(px)=>`${px}px 'JetBrains Mono',monospace`;
+  // staged reveal: element group k ∈ [0,1) turns on across its own window,
+  // with a bright strike right as it pops.
+  const st=(k0,k1)=>clamp((boot-k0)/Math.max(.0001,k1-k0),0,1);
+  const pop=(p)=>p<=0?0:p>=1?1:(p<.25?p*2.8:(.7+.3*p));      // overshoot-ish
+  const flick=(p,seed)=>p>0&&p<1?(Math.sin(now/26+seed*9)>-.2?1:.35):1;
   ctx.save();
-  // glass tint vignette at the canopy rim
+  // glass tint vignette at the rim (kept — subtle, not a structural frame)
   const vig=ctx.createRadialGradient(w*.5,h*.42,Math.min(w,h)*.28,w*.5,h*.5,Math.max(w,h)*.72);
   vig.addColorStop(0,'rgba(0,0,0,0)');
-  vig.addColorStop(1,`rgba(${cr},${cg},${cb},.05)`);
+  vig.addColorStop(1,rgba(.05));
   ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
-  // --- canopy struts (A-frame) ---
-  ctx.lineCap='round';
-  const strut=(x0,y0,x1,y1,wd)=>{
-    const grad=ctx.createLinearGradient(x0,y0,x1,y1);
-    grad.addColorStop(0,'rgba(20,26,34,.97)');
-    grad.addColorStop(.5,'rgba(44,54,66,.94)');
-    grad.addColorStop(1,'rgba(12,18,26,.97)');
-    ctx.strokeStyle=grad;ctx.lineWidth=wd;
-    ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
-    ctx.strokeStyle=`rgba(${cr},${cg},${cb},.16)`;ctx.lineWidth=Math.max(1,wd*.16);
-    ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
-  };
-  const sw=Math.max(11,w*.05);
-  strut(-w*.03,h*.70, w*.41,-h*.05, sw);   // left bar
-  strut(w*1.03,h*.70, w*.59,-h*.05, sw);   // right bar
-  strut(w*.5,-h*.06, w*.5,h*.085, Math.max(7,w*.028)); // top centre pillar
-  // upper canopy bow
-  ctx.strokeStyle='rgba(34,42,54,.92)';ctx.lineWidth=Math.max(8,w*.04);
-  ctx.beginPath();ctx.moveTo(w*.41,-h*.05);ctx.quadraticCurveTo(w*.5,h*.02,w*.59,-h*.05);ctx.stroke();
-  // --- dashboard / console ---
-  const dy=h*.74;
+
+  // --- dashboard silhouette (wing-shaped, slightly taller than before) ---
+  const dy=h*.70;
+  const dashA=st(0,.12);
   const dg=ctx.createLinearGradient(0,dy-h*.02,0,h);
   dg.addColorStop(0,'rgba(12,17,24,.45)');
-  dg.addColorStop(.28,'rgba(8,12,18,.97)');
+  dg.addColorStop(.24,'rgba(8,12,18,.97)');
   dg.addColorStop(1,'rgba(2,4,8,1)');
   ctx.fillStyle=dg;
   ctx.beginPath();
   ctx.moveTo(0,h);ctx.lineTo(0,dy+h*.05);
-  ctx.bezierCurveTo(w*.22,dy-h*.02, w*.36,dy+h*.06, w*.5,dy+h*.06);
-  ctx.bezierCurveTo(w*.64,dy+h*.06, w*.78,dy-h*.02, w,dy+h*.05);
+  ctx.bezierCurveTo(w*.22,dy-h*.02, w*.36,dy+h*.065, w*.5,dy+h*.065);
+  ctx.bezierCurveTo(w*.64,dy+h*.065, w*.78,dy-h*.02, w,dy+h*.05);
   ctx.lineTo(w,h);ctx.closePath();ctx.fill();
-  // rim light along the dash edge
-  ctx.strokeStyle=`rgba(${cr},${cg},${cb},.34)`;ctx.lineWidth=1.4;
+  // rim light along the dash edge (first thing to power on)
+  ctx.strokeStyle=rgba(.38*dashA*flick(dashA,1));ctx.lineWidth=1.4;
   ctx.beginPath();
   ctx.moveTo(0,dy+h*.05);
-  ctx.bezierCurveTo(w*.22,dy-h*.02, w*.36,dy+h*.06, w*.5,dy+h*.06);
-  ctx.bezierCurveTo(w*.64,dy+h*.06, w*.78,dy-h*.02, w,dy+h*.05);
+  ctx.bezierCurveTo(w*.22,dy-h*.02, w*.36,dy+h*.065, w*.5,dy+h*.065);
+  ctx.bezierCurveTo(w*.64,dy+h*.065, w*.78,dy-h*.02, w,dy+h*.05);
   ctx.stroke();
-  // two MFD panels
-  const mfd=(px,py,pw,ph,glow)=>{
-    ctx.fillStyle='rgba(6,12,18,.92)';
-    ctx.strokeStyle=`rgba(${cr},${cg},${cb},.5)`;ctx.lineWidth=1;
+
+  const fsBtn=Math.max(5.5,Math.min(8,w*.014));
+  const fsTiny=Math.max(5,Math.min(7,w*.012));
+
+  // --- side button columns (left: PWR/WPN/THR/SHLD/COOL · right: RADR/PROX/HIT/MISL) ---
+  const button=(bx,by,bw,bh,label,active,p,seed)=>{
+    if(p<=0) return;
+    const a=pop(p)*flick(p,seed);
+    ctx.globalAlpha=a;
+    ctx.fillStyle=active?`${AMBER}.16)`:'rgba(6,12,18,.9)';
+    ctx.strokeStyle=active?`${AMBER}.9)`:rgba(.42);
+    ctx.lineWidth=active?1.3:1;
+    ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.fill();ctx.stroke();
+    ctx.fillStyle=active?`${AMBER}.95)`:rgba(.78);
+    ctx.font=mono(fsBtn);ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(label,bx+bw/2,by+bh/2+.5);
+    ctx.globalAlpha=1;
+  };
+  const bw=Math.max(26,w*.058), bh=Math.max(11,h*.042), bgap=bh*.42;
+  const colY=h*.755;
+  ['PWR','WPN','THR','SHLD','COOL'].forEach((lb,i)=>
+    button(w*.015,colY+i*(bh+bgap),bw,bh,lb,lb==='WPN',st(.10+i*.045,.22+i*.045),i));
+  ['RADR','PROX','HIT','MISL'].forEach((lb,i)=>
+    button(w*.985-bw,colY+i*(bh+bgap),bw,bh,lb,false,st(.20+i*.045,.32+i*.045),i+5));
+
+  // --- twin MFD screens (power management, mirrored) ---
+  const mfd=(px,py,pw,ph,seed,p)=>{
+    if(p<=0) return;
+    const a=pop(p)*flick(p,seed);
+    ctx.save();ctx.globalAlpha=a;
+    ctx.fillStyle='rgba(5,10,16,.94)';
+    ctx.strokeStyle=rgba(.5);ctx.lineWidth=1;
     ctx.beginPath();ctx.rect(px,py,pw,ph);ctx.fill();ctx.stroke();
-    ctx.save();ctx.globalCompositeOperation='lighter';
-    for(let i=0;i<4;i++){
-      const bw=pw*(.3+.6*((Math.sin(now/520+i*1.7+glow)+1)/2));
-      ctx.fillStyle=`rgba(${cr},${cg},${cb},${.18+.12*((Math.sin(now/300+i)+1)/2)})`;
-      ctx.fillRect(px+5,py+5+i*(ph-10)/4,bw,Math.max(2,(ph-12)/6));
+    const fs=fsTiny;
+    ctx.font=mono(fs);ctx.textBaseline='top';
+    // header: OUTPUT 5/16
+    ctx.fillStyle=rgba(.55);ctx.textAlign='left';
+    ctx.fillText('OUTPUT',px+4,py+3);
+    ctx.fillStyle=rgba(.92);ctx.font=mono(fs*1.5);
+    ctx.fillText('5/16',px+4,py+3+fs*1.2);
+    // three columns of segmented power cells (some lit, like the reference)
+    const cols=3, segs=4, cw=pw*.16, cgap=pw*.06, ch=(ph*.52)/segs-2;
+    const gx0=px+pw*.42;
+    for(let c=0;c<cols;c++){
+      const litFrom=[3,2,1][c];   // column fill pattern echoing the screenshot
+      for(let s=0;s<segs;s++){
+        const x=gx0+c*(cw+cgap), y=py+4+s*(ch+2);
+        const lit=s>=litFrom;
+        ctx.fillStyle=lit?'rgba(120,170,255,.78)':'rgba(120,170,255,.10)';
+        ctx.strokeStyle=rgba(.22);
+        ctx.fillRect(x,y,cw,ch);ctx.strokeRect(x,y,cw,ch);
+      }
+    }
+    // OFFLINE / BATTERY row
+    ctx.font=mono(fs);ctx.fillStyle=rgba(.4);ctx.textAlign='left';
+    ctx.fillText('0/0 OFFLINE',px+4,py+ph*.58);
+    ctx.fillText('▤ BATTERY',px+4,py+ph*.58+fs*1.3);
+    // footer bar: ‹ POWER MANAGEMENT ›
+    const fy=py+ph-fs-6;
+    ctx.strokeStyle=rgba(.4);ctx.strokeRect(px+3,fy-2,pw-6,fs+6);
+    ctx.fillStyle=rgba(.7);ctx.textAlign='center';
+    ctx.fillText('POWER MANAGEMENT',px+pw/2,fy+1);
+    ctx.textAlign='left';ctx.fillText('‹',px+6,fy+1);
+    ctx.textAlign='right';ctx.fillText('›',px+pw-6,fy+1);
+    // boot scanline sweeping down the screen while it warms up
+    if(p<1){
+      ctx.globalCompositeOperation='lighter';
+      ctx.fillStyle=rgba(.30);
+      ctx.fillRect(px,py+ph*p-1,pw,2);
     }
     ctx.restore();
   };
-  const mw=w*.2, mh=h*.13, my=h*.82;
-  mfd(w*.07,my,mw,mh,0);
-  mfd(w*.73,my,mw,mh,2.4);
+  const mw=w*.235, mh=h*.20, my=h*.775;
+  mfd(w*.095,my,mw,mh,2,st(.30,.52));
+  mfd(w*.905-mw,my,mw,mh,5,st(.36,.58));
+
+  // --- centre radar dome ---
+  const domeP=st(.50,.72);
+  if(domeP>0){
+    const cx=w*.5, cyd=h*.905, R=Math.min(w*.075,h*.10);
+    const a=pop(domeP)*flick(domeP,3);
+    ctx.save();ctx.globalAlpha=a;
+    ctx.fillStyle='rgba(4,9,15,.94)';
+    ctx.beginPath();ctx.arc(cx,cyd,R+4,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=rgba(.5);ctx.lineWidth=1;
+    for(const rr of[R,R*.62,R*.28]){ctx.beginPath();ctx.arc(cx,cyd,rr,0,Math.PI*2);ctx.stroke();}
+    // rotating sweep (spins up with boot)
+    const sweep=now/900*(.25+.75*domeP);
+    const grd=ctx.createConicGradient?ctx.createConicGradient(sweep,cx,cyd):null;
+    if(grd){grd.addColorStop(0,rgba(.34));grd.addColorStop(.12,rgba(0));grd.addColorStop(1,rgba(0));
+      ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cyd,R,0,Math.PI*2);ctx.fill();}
+    else{ctx.strokeStyle=rgba(.5);ctx.beginPath();ctx.moveTo(cx,cyd);
+      ctx.lineTo(cx+Math.cos(sweep)*R,cyd+Math.sin(sweep)*R);ctx.stroke();}
+    // two blips
+    ctx.fillStyle=`${AMBER}${(.5+.4*Math.sin(now/300)).toFixed(2)})`;
+    ctx.fillRect(cx+R*.38,cyd-R*.30,2,2);
+    ctx.fillRect(cx-R*.22,cyd+R*.18,2,2);
+    // heading · range readout under the dome (echoes the reference's 269°)
+    const hdg=Math.round(269+Math.sin(now/3000)*6);
+    ctx.font=mono(fsTiny);ctx.fillStyle=rgba(.72);ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(`${String(hdg).padStart(3,'0')}°  ·  2.8 KM`,cx,cyd+R+6);
+    ctx.restore();
+  }
+
+  // --- dash-top readout strips (fuel/thermal pairs) + QTM chip ---
+  const roP=st(.60,.78);
+  if(roP>0&&w>=300){
+    ctx.save();ctx.globalAlpha=pop(roP);
+    ctx.font=mono(fsTiny);ctx.textBaseline='top';
+    ctx.fillStyle=rgba(.55);
+    ctx.textAlign='left';
+    ctx.fillText('≋ 2.8K 294.1   ⚡ 8.9K 0.0   ◇ 5.9K 0.0',w*.115,dy+h*.012);
+    ctx.textAlign='right';
+    ctx.fillText('≋ 2.8K 294.1   ⚡ 8.9K 0.0   QTM',w*.885,dy+h*.012);
+    ctx.restore();
+  }
+
+  // --- boot terminal + TARGET LINK flash (only while booting) ---
+  if(boot<1){
+    const lines=[
+      ['PWR BUS',.10],['AVIONICS',.30],['WPN SAFETIES',.50],['SENSOR ARRAY',.66],['TARGET LINK',.82],
+    ];
+    ctx.save();
+    ctx.font=mono(fsTiny);ctx.textAlign='left';ctx.textBaseline='top';
+    let row=0;
+    for(const [name,at] of lines){
+      const lp=st(at,at+.14);
+      if(lp<=0) continue;
+      const y=h*.53+row*fsTiny*1.55;
+      ctx.globalAlpha=lp;
+      ctx.fillStyle=rgba(.62);
+      ctx.fillText(name,w*.40,y);
+      ctx.fillStyle=lp>=1?'rgba(120,255,178,.85)':`${AMBER}.85)`;
+      ctx.fillText(lp>=1?'▸ OK':'▸ SYNC…',w*.40+fsTiny*9,y);
+      row++;
+    }
+    // ESTABLISHED flash: rises fast at .90, gone by 1
+    const fT=st(.90,1);
+    if(fT>0){
+      const bell=Math.sin(fT*Math.PI);
+      ctx.globalAlpha=bell;
+      ctx.globalCompositeOperation='lighter';
+      ctx.font=`${Math.max(9,w*.028)}px 'Orbitron',sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.shadowColor=rgba(.9);ctx.shadowBlur=18*bell;
+      ctx.fillStyle='rgba(226,246,255,.96)';
+      ctx.fillText('TARGET LINK ESTABLISHED',w*.5,h*.44);
+      ctx.shadowBlur=0;
+    }
+    ctx.restore();
+  }
+
   // central console glow
   ctx.save();ctx.globalCompositeOperation='lighter';
   const cc=ctx.createRadialGradient(w*.5,h*.96,2,w*.5,h*.96,w*.18);
-  cc.addColorStop(0,`rgba(${cr},${cg},${cb},.16)`);
-  cc.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
+  cc.addColorStop(0,rgba(.14*st(0,.2)));
+  cc.addColorStop(1,rgba(0));
   ctx.fillStyle=cc;ctx.beginPath();ctx.arc(w*.5,h*.96,w*.18,0,Math.PI*2);ctx.fill();
   ctx.restore();
   ctx.restore();
@@ -378,6 +510,44 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.restore();
   }
 
+  /** SC-cockpit side chip stacks (V17, from the Star Citizen reference shot):
+   *  left — fire-mode rows (SCM/GUN) + CPLD/ESP/LOCK avionics stack + speed/G;
+   *  right — countermeasure counts (DECOY/NOISE) + VTOL/GEAR/GSAF chips.
+   *  LOCK lights green when the HMD actually has a lock (real state); the rest
+   *  is cockpit dressing in line with this view's cosmetic speed/heading. */
+  function drawSCChipStacks(ctx,w,h,now,lockVisible,lockActive,speed){
+    if(w<340||h<250) return;   // too small — skip rather than turn to mush
+    const fs=Math.max(6,Math.min(8,w*.014));
+    const cyan='rgba(148,228,255,';
+    const row=(x,y,label,on,onColor)=>{
+      ctx.fillStyle=on?onColor:`${cyan}.34)`;
+      ctx.fillText(label,x,y);
+    };
+    ctx.save();
+    ctx.font=`${fs}px 'JetBrains Mono',monospace`;
+    ctx.textAlign='left';ctx.textBaseline='top';
+    // ── left stack (below the power pips, ends above the console dash) ──
+    const lx=w*.035, ly=h*.40, lh=fs*1.45;
+    row(lx,ly,      'SCM',false);
+    row(lx,ly+lh,   'GUN',true,`${cyan}.88)`);
+    row(lx,ly+lh*2.3,'CPLD',true,`${cyan}.70)`);
+    row(lx,ly+lh*3.3,'ESP', true,`${cyan}.70)`);
+    row(lx,ly+lh*4.3,'LOCK',lockVisible,lockActive?'rgba(120,255,178,.92)':'rgba(255,205,128,.85)');
+    ctx.fillStyle=`${cyan}.52)`;
+    ctx.fillText(`${speed} M/S`,lx,ly+lh*5.6);
+    ctx.fillText('63  63',lx,ly+lh*6.6);
+    // ── right stack (below the mission panel) ──
+    const rx=w*.965, ry=h*.30;
+    ctx.textAlign='right';
+    ctx.fillStyle=`${cyan}.66)`;
+    ctx.fillText('DECOY 24',rx,ry);
+    ctx.fillText('NOISE  2',rx,ry+lh);
+    row(rx,ry+lh*2.3,'VTOL',false);
+    row(rx,ry+lh*3.3,'GEAR',false);
+    row(rx,ry+lh*4.3,'GSAF',true,'rgba(120,255,178,.72)');
+    ctx.restore();
+  }
+
   /** Edge threat arrow: when the target is off-screen, draw a red chevron at the
    *  nearest panel edge pointing toward it. */
   function drawThreatEdgeArrow(ctx,w,h){
@@ -422,6 +592,9 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
 
     // ── ENG / WPN / SHD power distribution pips (upper-left margin) ────────
     drawPowerPips(ctx,w,h,now);
+
+    // ── SC-cockpit side chip stacks (SCM/GUN · CPLD/ESP/LOCK · DECOY/GEAR) ──
+    drawSCChipStacks(ctx,w,h,now,lock.visible,!!lock.locked,speed);
 
     // ── Flight-path marker (velocity vector) ────────────────────────────────
     drawVelocityVector(ctx,w,h,now);
@@ -468,8 +641,9 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
       hmdStatusChip(ctx,w,h,label||'TARGET LINK',HMD.cyanSoft,false,now);
     }
 
-    // ── Telemetry strip ──────────────────────────────────────────────────────
-    hmdTelemetry(ctx,w,h,
+    // ── Telemetry strip — lifted above the V17 console dash (its callers all
+    //    draw the cockpit console over the bottom ~30% now) ──────────────────
+    hmdTelemetry(ctx,w,h*.72,
       `VEL ${speed} · G ${(1.2+warpIntensity*.9).toFixed(1)}`,
       lock.visible?`TGT 1P/HALLEY · ${lock.locked?'LOCK':'TRACK'}`:'SCANNING');
     ctx.restore();

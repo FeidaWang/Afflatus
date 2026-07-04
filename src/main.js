@@ -3200,6 +3200,18 @@ function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
   ctx.restore();
 }
 
+// V17 cockpit boot sequence: the console powers on staged (drawCockpitFrame's
+// `boot` param). Full sequence on the first standby/combat frame ever (page
+// load), and re-armed from 65% whenever a launch hands over to TARGET LINK —
+// during the launch itself the console is already staging up with `elapsed`.
+let cockpitBootAt=0, cockpitBootFrom=0, lastPilotFeedMode='';
+function cockpitBootT(nowMs,mode){
+  if(mode!=='combat'&&mode!=='standby') return 1;
+  if(lastPilotFeedMode==='launch'){ cockpitBootAt=nowMs; cockpitBootFrom=.65; }
+  else if(!cockpitBootAt){ cockpitBootAt=nowMs; cockpitBootFrom=0; }
+  const dur=cockpitBootFrom>0?1500:2600;
+  return clamp(cockpitBootFrom+(1-cockpitBootFrom)*((nowMs-cockpitBootAt)/dur),0,1);
+}
 function drawPilotFeed(now){
   const feed=setupFeedCanvas(document.getElementById('pilotFeed'));
   if(!feed) return;
@@ -3208,6 +3220,8 @@ function drawPilotFeed(now){
   if(pilotView.until<nowMs && pilotView.mode!=='mosaic') pilotView.mode='standby';
   let mode=pilotModeFor(craft);
   if(mode==='mosaic' && pilotView.until<nowMs){pilotView.mode='standby';mode='standby';}
+  const cockpitBoot=cockpitBootT(nowMs,mode);
+  lastPilotFeedMode=mode;
   // Phase 2: top-down WebGL feed for the main combat/standby modes (opt-in).
   if((mode==='combat'||mode==='standby') && combatViewTopdown()){
     const td=getTopdownCV();
@@ -3220,7 +3234,7 @@ function drawPilotFeed(now){
       ctx.drawImage(topdownCanvas,0,0,w,h);
       ctx.restore();
       if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
-      else { drawCockpitFrame(ctx,w,h,now,false); drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat'); }
+      else { drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat'); drawCockpitFrame(ctx,w,h,now,false); /* V17: console after the HMD pass, same draw-order fix */ }
       return;
     }
   }
@@ -3267,9 +3281,13 @@ function drawPilotFeed(now){
       }else{
         drawPilotDeck(ctx,w,h,easeOut(elapsed),false);
         drawPilotF47Nose(ctx,w,h,elapsed);
-        drawCockpitFrame(ctx,w,h,now,false);
-        drawPilotSystemSequence(ctx,w,h,elapsed,false);
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'甲板起飞 · 12点方向':'DECK LAUNCH · 12 O CLOCK','launch');
+        // V17: console + boot checklist AFTER the HMD pass (drawPilotHmd's
+        // space repaint buried anything drawn earlier). The console stages up
+        // THROUGH the takeoff roll, finishing at 65% — TARGET LINK sync + the
+        // ESTABLISHED flash land after handover to standby.
+        drawCockpitFrame(ctx,w,h,now,false,.05+easeOut(elapsed)*.60);
+        drawPilotSystemSequence(ctx,w,h,elapsed,false);
       }
     }else if(mode==='landing'){
       if(extCam){
@@ -3277,9 +3295,11 @@ function drawPilotFeed(now){
       }else{
         drawPilotDeck(ctx,w,h,elapsed,true);
         drawPilotF47Nose(ctx,w,h,elapsed,true);
+        drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
+        // V17: console after the HMD pass (same draw-order fix as launch);
+        // landing keeps a fully-lit console (boot=1 default), green accent.
         drawCockpitFrame(ctx,w,h,now,true);
         drawPilotSystemSequence(ctx,w,h,elapsed,true);
-        drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
       }
     }else{
       // combat / standby: HMD v3 cockpit view is default; ?combatview=sc opts
@@ -3287,8 +3307,15 @@ function drawPilotFeed(now){
       if(combatViewScPanel()){
         drawCombatHudSC(ctx,w,h,now,combatHudState(mode));
       }else{
-        drawCockpitFrame(ctx,w,h,now,false);
-        drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
+        // V17 draw order fix: drawPilotSpace's near-opaque repaint used to sit
+        // ON TOP of the cockpit frame — that's why the old canopy struts read
+        // as a ghost "triangle in the background". Space (acts as the frame
+        // clear) → console → HMD, with the HMD fading in as the console boots.
+        drawPilotSpace(ctx,w,h,now,1.05);
+        drawCockpitFrame(ctx,w,h,now,false,cockpitBoot);
+        ctx.save();ctx.globalAlpha=clamp(cockpitBoot*1.6-.3,0,1);
+        combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
+        ctx.restore();
       }
     }
   }
