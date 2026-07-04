@@ -1,7 +1,7 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
   "updated": "2026-07-04",
-  "version": 3,
+  "version": 4,
   "mode": "live",
   "note_en": "Fable 5 Max's own reads on every MSI 2026 Bracket Stage series — for entertainment, not betting advice. Double-elimination, all series Bo5, Fearless Draft (each champion locks out for both teams once picked in the series). Odds shown only where a real book price was found (GG.bet); otherwise Fable states its own probability plainly as a call, not a market price.",
   "note_zh": "Fable 5 Max 对每场 MSI 2026 淘汰赛的个人研判——仅供娱乐，不构成博彩建议。双败淘汰赛制，全部系列赛 Bo5，赛制为 Fearless Draft（同一系列赛内任意一方选过的英雄，双方均不可再选）。仅在查到真实盘口（GG.bet）时展示赔率；其余情况 Fable 直接给出自己的概率研判，不冒充市场价格。",
@@ -116,6 +116,48 @@
       "prob": 4,
       "reason_en": "Swept 0-3 by HLE with a weak underlying statline. Faces TES in LB R1, July 5 03:00 UTC, in a must-win to stay alive.",
       "reason_zh": "被HLE 0-3横扫，数据表现平平。下位组首轮7月5日（UTC 03:00）战TES，输球即遭淘汰。"
+    }
+  ],
+  "mvp": [
+    {
+      "team": "Knight · BLG",
+      "team_zh": "Knight · BLG",
+      "flag": "🀄",
+      "prob": 24,
+      "reason_en": "Widely tipped as MSI 2026's best player. Central to BLG's five-game marquee win over T1, the round's biggest statement — BLG is now the tournament's title favorite (26% odds).",
+      "reason_zh": "赛前即被广泛看好为本届最佳选手。BLG五局苦战力克T1（本轮焦点战）的核心，目前是夺冠头号热门（26%）。"
+    },
+    {
+      "team": "Caps · G2",
+      "team_zh": "Caps · G2",
+      "flag": "🇪🇺",
+      "prob": 21,
+      "reason_en": "Powered G2's Game 5 comeback on his signature Mel — completing the first reverse sweep at an international event in three years, storming back from 0-2 down vs TES.",
+      "reason_zh": "G2第五局逆转的核心功臣，招牌英雄Mel——帮助球队从0-2落后完成近三年国际赛事首次逆转横扫TES。"
+    },
+    {
+      "team": "Delight · HLE",
+      "team_zh": "Delight · HLE",
+      "flag": "🇰🇷",
+      "prob": 20,
+      "reason_en": "Named series MVP of HLE's 3-0 sweep of TSW, averaging 2.3/2.3/11.3 KDA with a series-high 75.6% kill participation — the backbone of the only unbeaten team left.",
+      "reason_zh": "HLE 3-0横扫TSW的系列赛MVP，场均2.3/2.3/11.3，参团率75.6%全场最高——目前唯一不败战队的核心。"
+    },
+    {
+      "team": "Gumayusi · HLE",
+      "team_zh": "Gumayusi · HLE",
+      "flag": "🇰🇷",
+      "prob": 19,
+      "reason_en": "Reigning Worlds 2025 Final MVP and part of T1's three-peat, now anchoring HLE's bot lane on the tournament's only unbeaten roster — even as this series' MVP nod went to teammate Delight.",
+      "reason_zh": "世界赛2025总决赛MVP得主、T1三连冠成员，如今坐镇HLE下路——目前唯一不败战队核心之一，尽管本轮系列赛MVP花落队友Delight。"
+    },
+    {
+      "team": "Faker · T1",
+      "team_zh": "Faker · T1",
+      "flag": "🇰🇷",
+      "prob": 16,
+      "reason_en": "Fell to the lower bracket after BLG's five-game win, but the three-time World Champion's pedigree keeps him in the MVP conversation if T1 rattles off a deep run.",
+      "reason_zh": "五局苦战不敌BLG跌入下位组，但三届世界冠军底蕴仍在——若T1能在下位组打出连胜，仍会是MVP话题焦点。"
     }
   ],
   "fearless": [

@@ -66,6 +66,7 @@
     else host.querySelectorAll('.pval').forEach((el) => el.textContent = el.dataset.to + '%');
   }
   function renderChampions() { if ($('champs')) bar($('champs'), data.champion); }
+  function renderMvp() { if ($('mvp')) bar($('mvp'), data.mvp); }
 
   /* ---------- Fearless Draft pool panel — text cards, no fake probability bar ---------- */
   function renderFearless() {
@@ -154,7 +155,7 @@
     if ($('gnote')) $('gnote').textContent = T(data.note_en, data.note_zh);
   }
 
-  function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderFearless(); renderSeries(); }
+  function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderFearless(); renderMvp(); renderSeries(); }
 
   fetch('/leagues-data.json', { cache: 'no-store' }).then((r) => r.json()).then((d) => { data = d; renderAll(); }).catch(() => { if ($('series')) $('series').innerHTML = `<div class="empty">${T('Series data unavailable.', '赛程数据暂不可用。')}</div>`; });
   setInterval(tickSeries, 1000);
