@@ -7,6 +7,16 @@
 
 ## v1.5 · Afflatus「Fable 5 Max 五模块」
 
+### V13.（M）Arena 美股技术分析仪表盘（用户直接指定需求）— 2026-07-04
+
+**需求来源**：用户直接提出（非既有 roadmap 编号，占用空缺的 V13），把 arena.html 改造为个人日常盘前/盘后浏览用的美股技术分析面板；原 Human vs AI 对战区**暂时隐藏**（源码全保留，`.legacy-hidden{display:none}`，移除该 class 即可恢复）。
+
+**交付**：`src/lib/technicals.js`（纯函数指标库：MA5/10/20/60/200 快照含斜率与价上/价下、经典枢轴点 PP/R1-3/S1-3、分形摆动高低点支撑阻力（1.2% 聚类+触碰计数）、心理整数关口（分档大/小刻度，必含最近整百整五十）、缺口检测（未回补/部分/已回补三态）、20 根箱体放量突破检测（守住/失守状态）、`normalizeDaily` 剔除盘中未完成日K、`analyzeTicker` 总装）+ `tests/technicals.test.js`（21 条）+ `src/pages/arenaTech.js`（渲染层：自选股条（复用 `arena-universe.json` 30 只，按 bucket 着色）、搜索（列表模糊匹配+回车加载任意代码）、盘前 PRE（最近完整日K算下一交易日计划位）/盘后 POST（前一日计划位复盘最近交易日实际触碰）双视图（按美东时间自动默认）、垂直价格标尺 Level Ladder（全部关键位画上同一价格轴，支撑+整数关口带绿色 LIMIT ZONE 限价参考标记，缺口画色带，POST 模式叠加日高/日低标记，标签防碰撞双列错位）、四张卡（关键价位/均线/枢轴点/历史特殊点位）各带可折叠算法说明）+ arena.html 新增 `#taDash` 区块与全部配套 CSS。数据全真实：`/api/history` 日线 250 根（localStorage 按日缓存）+ `/api/quote` 实时价，无任何模拟数据。旧 arena.js 在检测到 `.grid.legacy-hidden` 时把报价轮询降频到 120s（隐藏 UI 不烧 Finnhub 配额）。
+
+**验证**：`npm run test` 144/144 绿（新增 21 条）；`npm run build` 绿；`vite preview` 7 页 + `arena-universe.json` curl 200；dist 产物 grep 确认 `LEVEL LADDER`/`限价参考区`/`arena-universe.json` 指纹全部进 chunk；**另做了一次真实数据端到端验证**——抓取线上 `/api/history` 的真实 NVDA 日线，走与 arenaTech.js 完全一致的映射管线跑 `analyzeTicker`，逐项断言通过（PP/R1/S1 与手算一致；管线自动识别出 6/23 真实向下跳空缺口 [203.77–207.72] 且正确判定未回补；整数关口 $200 判 major；MA5/10 价下）。**视觉未验证**：标尺/卡片布局在沙盒无法渲染，需本地确认观感。i18n 全覆盖（data-en/zh + data-en-ph 占位符 + 动态 T()）。
+
+---
+
 ### V7.（S）Signal 定时任务升级 — 2026-07-04
 
 架构同 V4：Cowork scheduled-tasks，不是 launchd。新建 `public/signal-release-dates-2026.json`（WebSearch+直接抓取核实的 2026 全年 CPI/NFP/PCE/FOMC 发布日历，来源 bls.gov/bea.gov/federalreserve.gov 官方页面，非搜索摘要转述）供任务做 no-op 门禁：命中发布日 → event 模式；否则周五 → weekly 模式；否则跳过不跑（多数日子应该什么都不做，这是预期行为不是 bug）。新增 `src/lib/validateSignalEvents.js`（v2 schema 纯校验函数，12 条 vitest 覆盖：真实 fixture 通过、分数越界/pillar 数量或 tone 非法/事件 id 重复/双语字段缺失/version 错误等全部拒绝）+ `scripts/validate-signal-events.mjs`（CLI 发布门禁——任务必须先跑这个再 commit，非零退出码就中止发布，不留半成品到线上）。**这个校验器是吸取 V6 教训后加的**：V6 手工编辑时曾因未转义引号打断 `JSON.parse`，无人值守的定时任务没有人工审查这一步，必须靠代码把关。调度任务 `signal-warsh-daily`（cron `0 7 * * 2-6`，AEST 07:00 周二至周六，映射 ET 周一至周五 17:00 收盘后 1 小时，与 V4 的 AEST↔ET 错位规律一致）已创建，提示词自含 STEP 0-5（判定模式→读取上下文→WebSearch→按 schema 撰写→跑校验器→仅校验通过才 git add/commit/push，且只碰 `signal-events.json` 一个文件）。
