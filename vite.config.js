@@ -24,8 +24,8 @@ export default defineConfig({
         sectors: resolve(__dirname, 'sectors.html'),
         signal: resolve(__dirname, 'signal.html'),
         games: resolve(__dirname, 'games.html'),
-        leagues: resolve(__dirname, 'leagues.html'),
-        novels: resolve(__dirname, 'novels.html')
+        league: resolve(__dirname, 'league.html'),
+        serial: resolve(__dirname, 'serial.html')
       }
     }
   }
