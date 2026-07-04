@@ -60,24 +60,24 @@
     host.innerHTML = items.map((it) => {
       const title = lang === 'zh' ? (it.team_zh || it.team) : it.team;
       const reason = T(it.reason_en, it.reason_zh);
-      return `<div class="prob"><div class="prow"><span class="pflag">${it.flag || ''}</span><span class="pname">${title}</span><b class="pval" data-to="${it.prob}">0%</b></div><div class="pbar"><i style="--w:${it.prob}%"></i></div><p class="preason">${reason}</p></div>`;
+      return `<div class="prob" data-team="${it.team}"><div class="prow"><span class="pflag">${it.flag || ''}</span><span class="pname">${title}</span><b class="pval" data-to="${it.prob}">0%</b></div><div class="pbar"><i style="--w:${it.prob}%"></i></div><p class="preason">${reason}</p></div>`;
     }).join('');
     if (!RM) host.querySelectorAll('.pval').forEach((el) => { const to = +el.dataset.to, t0 = performance.now(); (function s(ts) { const p = Math.min(1, (ts - t0) / 900); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + '%'; if (p < 1) requestAnimationFrame(s); })(performance.now()); });
     else host.querySelectorAll('.pval').forEach((el) => el.textContent = el.dataset.to + '%');
   }
-  function renderChampions() { if ($('champs')) bar($('champs'), data.champion); }
-  function renderMvp() { if ($('mvp')) bar($('mvp'), data.mvp); }
-
-  /* ---------- Fearless Draft pool panel — text cards, no fake probability bar ---------- */
-  function renderFearless() {
-    const host = $('fearless'); if (!host || !data || !data.fearless) return;
-    host.innerHTML = data.fearless.map((f) => {
-      const title = lang === 'zh' ? (f.team_zh || f.team) : f.team;
-      const depth = f.poolDepth != null ? `<b class="pval">${f.poolDepth}</b>` : `<b class="pval dim">—</b>`;
+  function renderChampions() {
+    if (!$('champs')) return;
+    bar($('champs'), data.champion);
+    const fmap = {};
+    (data.fearless || []).forEach((f) => { fmap[f.team] = f; });
+    $('champs').querySelectorAll('.prob').forEach((card) => {
+      const f = fmap[card.dataset.team]; if (!f) return;
+      const depth = f.poolDepth != null ? f.poolDepth : '—';
       const champs = (f.champs && f.champs.length) ? `<div class="pchamps">${f.champs.map((c) => `<img src="https://gol.gg/_img/champions_icon/${c.slug}.png" alt="${c.name}" title="${c.name}" loading="lazy">`).join('')}</div>` : '';
-      return `<div class="prob"><div class="prow"><span class="pflag">${f.flag || ''}</span><span class="pname">${title}</span>${depth}</div><p class="preason">${T(f.note_en, f.note_zh)}</p>${champs}</div>`;
-    }).join('');
+      card.insertAdjacentHTML('beforeend', `<div class="pfearless"><span class="odds-label">${T('FEARLESS POOL', 'FEARLESS 英雄池')} · <b>${depth}</b></span><p class="preason">${T(f.note_en, f.note_zh)}</p>${champs}</div>`);
+    });
   }
+  function renderMvp() { if ($('mvp')) bar($('mvp'), data.mvp); }
 
   function outcomeLabel(s, side) { return T(teamName(s, side) + ' win', teamName(s, side) + ' 胜'); }
 
@@ -97,7 +97,9 @@
   /* ---------- series (bracket cards) ---------- */
   function renderSeries() {
     const host = $('series'); if (!host || !data) return;
-    host.innerHTML = data.series.map((s) => {
+    const upcoming = data.series.filter((s) => !s.result);
+    if (!upcoming.length) { host.innerHTML = `<div class="empty">${T('All series in this stage are complete.', '本阶段赛事均已结束。')}</div>`; return; }
+    host.innerHTML = upcoming.map((s) => {
       const tbd = isTBD(s);
       const done = !!s.result;
       const opusLine = (s.opus && !tbd) ? `<div class="opus">🤖 <b>Fable</b> · ${outcomeLabel(s, s.opus)} · ${Math.round(s.conf * 100)}%<span class="orsn">${T(s.reason_en, s.reason_zh)}</span></div>` : (tbd ? '' : `<div class="opus dim">🤖 ${T('Call pending exact schedule confirmation', '待官方具体时间确认后给出研判')}</div>`);
@@ -155,7 +157,7 @@
     if ($('gnote')) $('gnote').textContent = T(data.note_en, data.note_zh);
   }
 
-  function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderFearless(); renderMvp(); renderSeries(); }
+  function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderMvp(); renderSeries(); }
 
   fetch('/leagues-data.json', { cache: 'no-store' }).then((r) => r.json()).then((d) => { data = d; renderAll(); }).catch(() => { if ($('series')) $('series').innerHTML = `<div class="empty">${T('Series data unavailable.', '赛程数据暂不可用。')}</div>`; });
   setInterval(tickSeries, 1000);

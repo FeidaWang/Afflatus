@@ -44,7 +44,8 @@ a{color:inherit;text-decoration:none}
 .cyb{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .cyb .grid{position:absolute;inset:-20%;background:linear-gradient(rgba(200,170,110,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(10,200,185,.05) 1px,transparent 1px);background-size:44px 44px;transform:perspective(500px) rotateX(58deg);transform-origin:50% 100%;animation:flow 8s linear infinite}
 @keyframes flow{to{background-position:0 44px}}
-.cyb .glow{position:absolute;inset:0;background:radial-gradient(60% 50% at 80% 0%,rgba(200,170,110,.14),transparent 60%),radial-gradient(50% 50% at 0% 100%,rgba(10,200,185,.10),transparent 60%)}
+.cyb .glow{position:absolute;inset:0;background:radial-gradient(60% 50% at 80% 0%,rgba(200,170,110,.18),transparent 60%),radial-gradient(50% 50% at 0% 100%,rgba(10,200,185,.12),transparent 60%)}
+.cyb .circuit{position:absolute;inset:0;opacity:.16;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23c8aa6e' stroke-width='1'%3E%3Cpath d='M0 24 H42 V64 H92'/%3E%3Cpath d='M120 96 H78 V44 H30'/%3E%3Ccircle cx='42' cy='64' r='2.6' fill='%23c8aa6e' stroke='none'/%3E%3Ccircle cx='78' cy='44' r='2.6' fill='%23c8aa6e' stroke='none'/%3E%3C/g%3E%3C/svg%3E");background-size:120px 120px}
 .cyb .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 2px,transparent 2px 4px);opacity:.3}
 .cyb .bar{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;animation:gl 6s steps(1) infinite}
 @keyframes gl{0%,93%,100%{opacity:0;top:20%}94%{opacity:.5;top:46%}96%{opacity:.25;top:70%}98%{opacity:.4;top:33%}}
@@ -54,11 +55,11 @@ a{color:inherit;text-decoration:none}
 
 /* header */
 .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
-  border:1px solid var(--line);background:linear-gradient(90deg,rgba(200,170,110,.1),transparent 60%),var(--panel);
+  border:1px solid var(--line);background:linear-gradient(90deg,rgba(200,170,110,.16),transparent 60%),var(--panel);
   padding:12px 16px;clip-path:polygon(0 0,100% 0,100% 70%,calc(100% - 18px) 100%,0 100%)}
 .brand{display:flex;align-items:center;gap:12px}
-.brand .mk{width:40px;height:40px;display:grid;place-items:center;border:2px solid var(--gold);color:var(--gold);font:700 18px var(--disp);box-shadow:0 0 14px rgba(200,170,110,.5);transform:skewX(-8deg)}
-.brand h1{font:700 19px/1 var(--disp);letter-spacing:.04em;text-transform:uppercase;margin:0}
+.brand .mk{width:40px;height:40px;display:grid;place-items:center;border:2px solid var(--gold);color:var(--gold);font:700 18px var(--disp);box-shadow:0 0 20px rgba(200,170,110,.65);transform:skewX(-8deg)}
+.brand h1{font:900 19px/1 var(--disp);letter-spacing:.06em;text-transform:uppercase;margin:0}
 .brand h1 span{color:var(--gold)}
 .brand p{margin:4px 0 0;color:var(--blue);font:400 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
 .nav{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
@@ -69,17 +70,16 @@ a{color:inherit;text-decoration:none}
 .lang-toggle:hover{background:var(--blue);border-color:var(--blue);color:#04120f}
 
 /* hero */
-.hero{margin-top:16px;border:1px solid var(--line);background:var(--panel);padding:clamp(18px,4vw,34px);position:relative;overflow:hidden}
+.hero{margin-top:16px;border:1px solid var(--line);background:var(--panel);padding:clamp(18px,4vw,34px);position:relative;overflow:hidden;box-shadow:0 0 30px rgba(200,170,110,.08)}
 .hero::before{content:"MSI";position:absolute;right:14px;top:-18px;font:700 120px/1 var(--disp);color:rgba(200,170,110,.06);letter-spacing:-.04em}
 .kicker{font:400 12px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase;color:var(--blue)}
-.hero h2{font:700 clamp(28px,6vw,54px)/.98 var(--disp);text-transform:uppercase;letter-spacing:.01em;margin:12px 0 10px;text-shadow:2px 0 var(--gold),-2px 0 var(--blue)}
+.hero h2{font:900 clamp(28px,6vw,54px)/.98 var(--disp);text-transform:uppercase;letter-spacing:.01em;margin:12px 0 10px;text-shadow:0 0 24px rgba(200,170,110,.5),2px 0 var(--gold),-2px 0 var(--blue)}
 .brief{max-width:70ch;color:#c9d3d8;font:500 14.5px/1.6 var(--disp)}
 .note{margin-top:12px;color:var(--dim);font:400 12px/1.5 var(--mono);border-left:2px solid var(--gold);padding-left:10px}
 .note b{color:var(--yellow)}
 
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-.fearless-panel{margin-top:16px}
-.panel{border:1px solid var(--line);background:var(--panel2);position:relative;clip-path:polygon(0 0,100% 0,100% 100%,18px 100%,0 calc(100% - 18px))}
+.panel-block{margin-top:16px}
+.panel{border:1px solid var(--line);background:var(--panel2);position:relative;clip-path:polygon(0 0,100% 0,100% 100%,18px 100%,0 calc(100% - 18px));box-shadow:0 0 26px rgba(200,170,110,.07)}
 .panel h3{font:700 13px/1 var(--disp);letter-spacing:.14em;text-transform:uppercase;margin:0;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--yellow);display:flex;justify-content:space-between}
 .panel h3 .sub{color:var(--dim);font:400 10px/1 var(--mono)}
 .panel .in{padding:12px 14px}
@@ -98,11 +98,13 @@ a{color:inherit;text-decoration:none}
 .preason{margin:0;color:#9aa8b0;font:400 12px/1.45 var(--mono)}
 .pchamps{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .pchamps img{width:24px;height:24px;border-radius:4px;border:1px solid var(--line);display:block}
+.pfearless{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(200,170,110,.3)}
+.pfearless .odds-label b{color:var(--blue);font:700 12px var(--disp)}
 @media (prefers-reduced-motion: reduce){.pbar i{animation:none;width:var(--w)}}
 
 /* series (bracket cards) */
 .sec-label{margin:18px 0 10px;font:700 12px/1 var(--disp);letter-spacing:.18em;text-transform:uppercase;color:var(--blue);display:flex;align-items:center;gap:10px}
-.sec-label::before{content:"";width:14px;height:14px;background:var(--gold);transform:skewX(-12deg);box-shadow:0 0 10px var(--gold)}
+.sec-label::before{content:"";width:14px;height:14px;background:var(--gold);transform:skewX(-12deg);box-shadow:0 0 16px var(--gold)}
 .fxs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .fx{border:1px solid var(--line);background:var(--panel2);padding:12px;position:relative}
 .fx.locked{opacity:.9}.fx.tbd{opacity:.55}
@@ -138,7 +140,7 @@ a{color:inherit;text-decoration:none}
 @media(max-width:520px){.fxs{grid-template-columns:1fr}}
 
 /* Fable track record */
-.record{margin-top:16px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(10,200,185,.08),transparent 55%),var(--panel);padding:14px 16px;position:relative;clip-path:polygon(0 0,100% 0,100% 100%,18px 100%,0 calc(100% - 18px))}
+.record{margin-top:16px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(10,200,185,.08),transparent 55%),var(--panel);padding:14px 16px;position:relative;clip-path:polygon(0 0,100% 0,100% 100%,18px 100%,0 calc(100% - 18px));box-shadow:0 0 26px rgba(200,170,110,.07)}
 .rec-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .rec-t{font:700 13px/1 var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--yellow)}
 .rec-since{font:400 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
@@ -155,11 +157,10 @@ a{color:inherit;text-decoration:none}
 
 .foot{margin-top:24px;border-top:1px solid var(--line);padding-top:14px;font:400 11px/1.6 var(--mono);letter-spacing:.04em;color:var(--dim);text-transform:uppercase}
 .foot b{color:var(--gold)}
-@media(max-width:820px){.cols{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="leagues-page" data-prev="/games.html" data-next="/novels.html">
-<div class="cyb" aria-hidden="true"><div class="glow"></div><div class="grid"></div><div class="scan"></div><div class="bar"></div></div>
+<div class="cyb" aria-hidden="true"><div class="glow"></div><div class="circuit"></div><div class="grid"></div><div class="scan"></div><div class="bar"></div></div>
 
 <nav class="page-turn-controls" aria-label="Page navigation">
   <a class="page-turn" href="/games.html" data-page-turn="prev" aria-label="Back to games">←</a>
@@ -189,20 +190,14 @@ a{color:inherit;text-decoration:none}
 
   <section class="record" id="record" aria-label="Fable track record"></section>
 
-  <div class="cols">
-    <section class="panel">
-      <h3 data-en="CHAMPION ODDS" data-zh="夺冠概率"><span class="sub" data-en="updated" data-zh="更新于">updated</span></h3>
-      <div class="in" id="champs"></div>
-    </section>
-    <section class="panel">
-      <h3 data-en="MVP RACE" data-zh="MVP 之争"><span class="sub" data-en="Fable's shortlist · not exhaustive" data-zh="Fable 候选名单 · 非全员穷举">Fable's shortlist · not exhaustive</span></h3>
-      <div class="in" id="mvp"></div>
-    </section>
-  </div>
+  <section class="panel panel-block">
+    <h3 data-en="CHAMPION ODDS · FEARLESS POOL" data-zh="夺冠概率 · FEARLESS 英雄池"><span class="sub" id="updated"></span></h3>
+    <div class="in" id="champs"></div>
+  </section>
 
-  <section class="panel fearless-panel">
-    <h3 data-en="FEARLESS DRAFT POOL" data-zh="FEARLESS 英雄池"><span class="sub" id="updated"></span></h3>
-    <div class="in" id="fearless"></div>
+  <section class="panel panel-block">
+    <h3 data-en="MVP RACE" data-zh="MVP 之争"><span class="sub" data-en="Fable's shortlist · not exhaustive" data-zh="Fable 候选名单 · 非全员穷举">Fable's shortlist · not exhaustive</span></h3>
+    <div class="in" id="mvp"></div>
   </section>
 
   <div class="sec-label" data-en="BRACKET STAGE · ODDS &amp; PREDICTIONS" data-zh="淘汰赛阶段 · 赔率与预测">BRACKET STAGE · ODDS &amp; PREDICTIONS</div>
