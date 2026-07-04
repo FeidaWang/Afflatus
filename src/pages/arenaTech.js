@@ -10,6 +10,7 @@
 import {
   analyzeTicker, normalizeDaily,
 } from '../lib/technicals.js';
+import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
 
 (() => {
   'use strict';
@@ -149,6 +150,20 @@ import {
     return rows.filter((r) => r.level != null && isFinite(r.level) && Math.abs(r.level - p) / p <= 0.15);
   }
 
+  // Level Ladder rendering. The screenshot bug (dense clusters of prices
+  // stacking their price-number + name-tag labels directly on top of each
+  // other, left axis AND right tags both) came from doing collision-avoidance
+  // only on the right-side tag (a weak 2-column alternation) with a threshold
+  // in % of container height that had nothing to do with real pixel text
+  // size. Fix: separate the TRUE price position (where the tick line and
+  // background bands live — always accurate) from the LABEL position (price
+  // number + name tag, decluttered in real px via declutter1D so no two
+  // labels can ever be closer than minGap); when a label's decluttered spot
+  // differs from its true line, a short leader dash connects them. The
+  // container height grows (via fitExtent) instead of compressing labels
+  // illegibly when many levels cluster close together.
+  const LAD_H0 = 560;       // nominal ladder height (px); grows if labels don't fit
+  const LAD_MIN_GAP = 16;   // px — enough for one line of label text + padding
   function renderLadder(analysis) {
     const p = analysis.price;
     const rows = levelRows(analysis);
@@ -156,26 +171,67 @@ import {
       .filter((g) => Math.abs((g.top + g.bottom) / 2 - p) / p <= 0.15);
     const lo = Math.min(p, ...rows.map((r) => r.level), ...gaps.map((g) => g.bottom)) * 0.995;
     const hi = Math.max(p, ...rows.map((r) => r.level), ...gaps.map((g) => g.top)) * 1.005;
-    const Y = (v) => ((hi - v) / (hi - lo)) * 100;
+    const Y = (v) => ((hi - v) / (hi - lo)) * LAD_H0;
 
-    // simple label de-collision: sort top→bottom, alternate column when tight
-    const sorted = [...rows].sort((a, b) => b.level - a.level);
-    let lastY = -10; let col = 0;
-    for (const r of sorted) {
-      const y = Y(r.level);
-      col = (y - lastY < 3.4) ? (col + 1) % 2 : 0;
-      r.y = y; r.col = col; lastY = y;
+    // ---- unified declutter pool: every row label + gap label + price label
+    // + (POST) day-H/day-L labels, all competing for vertical space together ----
+    const items = [];
+    rows.forEach((r) => items.push({ kind: 'row', ref: r, trueY: Y(r.level) }));
+    gaps.forEach((g) => items.push({ kind: 'gap', ref: g, trueY: Y(g.top) }));
+    items.push({ kind: 'price', trueY: Y(p) });
+    if (state.mode === 'post') {
+      items.push({ kind: 'sessH', trueY: Y(analysis.last.h) });
+      items.push({ kind: 'sessL', trueY: Y(analysis.last.l) });
     }
-    const gapBands = gaps.map((g) => `<div class="lad-gap ${g.dir}" style="top:${Y(g.top).toFixed(2)}%;height:${(Y(g.bottom) - Y(g.top)).toFixed(2)}%"><span>${T('gap', '缺口')} ${g.dir === 'up' ? '↑' : '↓'} ${g.status === 'partial' ? T('(partial)', '(部分回补)') : ''}</span></div>`).join('');
-    const zoneBands = sorted.filter((r) => r.limit).map((r) => `<div class="lad-zone" style="top:${r.y.toFixed(2)}%"></div>`).join('');
-    const lines = sorted.map((r) => `<div class="lad-lv ${r.cls} k-${r.kind} ${r.weight || ''} c${r.col}" style="top:${r.y.toFixed(2)}%"><em>${fmt(r.level)}</em><u></u><span>${r.name}${r.limit ? LIMIT_TAG() : ''}</span></div>`).join('');
-    const py = Y(p);
-    const sessionMarks = state.mode === 'post'
-      ? `<div class="lad-sess" style="top:${Y(analysis.last.h).toFixed(2)}%"><span>${T('DAY H', '日高')} ${fmt(analysis.last.h)}</span></div>
-         <div class="lad-sess lo" style="top:${Y(analysis.last.l).toFixed(2)}%"><span>${T('DAY L', '日低')} ${fmt(analysis.last.l)}</span></div>`
-      : '';
-    $('taLadder').innerHTML = `${gapBands}${zoneBands}${lines}${sessionMarks}
-      <div class="lad-px" style="top:${py.toFixed(2)}%"><i></i><b>$${fmt(p)}</b></div>`;
+    const declutteredYs = declutter1D(items.map((it) => it.trueY), { minGap: LAD_MIN_GAP });
+    items.forEach((it, i) => { it.y = declutteredYs[i]; });
+    const { offset, size } = fitExtent(declutteredYs, LAD_H0, { padTop: 10, padBottom: 14 });
+    const shift = (y) => y + offset;
+    const leader = (cls, trueY, labelY) => Math.abs(labelY - trueY) > 3
+      ? `<i class="lad-leader ${cls}" style="top:${Math.min(trueY, labelY).toFixed(1)}px;height:${Math.abs(labelY - trueY).toFixed(1)}px"></i>` : '';
+
+    // ---- background bands: always at the TRUE position, never decluttered ----
+    const gapBandsHtml = gaps.map((g) => {
+      const yTop = shift(Y(g.top)), yBot = shift(Y(g.bottom));
+      return `<div class="lad-gap ${g.dir}" style="top:${yTop.toFixed(1)}px;height:${Math.max(2, yBot - yTop).toFixed(1)}px"></div>`;
+    }).join('');
+    const zoneBandsHtml = rows.filter((r) => r.limit).map((r) => `<div class="lad-zone" style="top:${shift(Y(r.level)).toFixed(1)}px"></div>`).join('');
+
+    // ---- level lines (true position) + labels (decluttered position) ----
+    let rowsHtml = '';
+    items.filter((it) => it.kind === 'row').forEach((it) => {
+      const r = it.ref, trueY = shift(it.trueY), labelY = shift(it.y);
+      rowsHtml += `<div class="lad-lv ${r.cls} k-${r.kind} ${r.weight || ''}" style="top:${trueY.toFixed(1)}px"></div>`
+        + leader(r.cls, trueY, labelY)
+        + `<div class="lad-lab ${r.cls}" style="top:${labelY.toFixed(1)}px"><em>${fmt(r.level)}</em><span>${r.name}${r.limit ? LIMIT_TAG() : ''}</span></div>`;
+    });
+
+    // ---- gap text pills (decluttered, left-anchored) ----
+    let gapLabelsHtml = '';
+    items.filter((it) => it.kind === 'gap').forEach((it) => {
+      const g = it.ref, labelY = shift(it.y);
+      gapLabelsHtml += `<div class="lad-gaplab ${g.dir}" style="top:${labelY.toFixed(1)}px">${T('gap', '缺口')} ${g.dir === 'up' ? '↑' : '↓'} ${g.status === 'partial' ? T('(partial)', '(部分回补)') : ''}</div>`;
+    });
+
+    // ---- current price: true full-width line + decluttered tag ----
+    const priceItem = items.find((it) => it.kind === 'price');
+    const priceTrueY = shift(priceItem.trueY), priceLabelY = shift(priceItem.y);
+    const priceHtml = `<div class="lad-px-line" style="top:${priceTrueY.toFixed(1)}px"></div>`
+      + leader('price', priceTrueY, priceLabelY)
+      + `<div class="lad-px" style="top:${priceLabelY.toFixed(1)}px"><b>$${fmt(p)}</b></div>`;
+
+    // ---- POST mode: day high/low, same true-line + decluttered-label split ----
+    let sessHtml = '';
+    if (state.mode === 'post') {
+      const h = items.find((it) => it.kind === 'sessH'), l = items.find((it) => it.kind === 'sessL');
+      const hTrue = shift(h.trueY), hLab = shift(h.y), lTrue = shift(l.trueY), lLab = shift(l.y);
+      sessHtml += `<div class="lad-sess-line" style="top:${hTrue.toFixed(1)}px"></div>${leader('sess', hTrue, hLab)}<div class="lad-sess" style="top:${hLab.toFixed(1)}px">${T('DAY H', '日高')} ${fmt(analysis.last.h)}</div>`;
+      sessHtml += `<div class="lad-sess-line lo" style="top:${lTrue.toFixed(1)}px"></div>${leader('sess', lTrue, lLab)}<div class="lad-sess" style="top:${lLab.toFixed(1)}px">${T('DAY L', '日低')} ${fmt(analysis.last.l)}</div>`;
+    }
+
+    const ladder = $('taLadder');
+    ladder.style.height = size.toFixed(0) + 'px';
+    ladder.innerHTML = `${gapBandsHtml}${zoneBandsHtml}${rowsHtml}${gapLabelsHtml}${sessHtml}${priceHtml}`;
   }
 
   function keyLevelCard(a) {
