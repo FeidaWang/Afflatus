@@ -20,6 +20,8 @@
 - **Odin 参考舰体重建（V15/V15b，2026-07-04，v1 切片）**：`src/scene/odinHull.js`——**DOM/WebGL 完全无关的纯函数**（`createOdinHull(THREE,{add,mats,detail})`，只调用注入的 `add(geo,mat,t,r,s)` 回调，不自建 THREE.Group/材质/贴图），因此可以被 `capitalShip3D.js`（PBR 实体网格）与 `shipHologram.js`（网格+描边线框）两种渲染风格共用同一份几何，也因此是这批 3D 视觉工作里唯一能在沙盒里跑 `tests/odinHull.test.js` 头less 验证比例（长高比/艏占比/挂载点数量）的一层。两个消费文件都走 **opt-in `?ship=odin`**——这是本项目至今风险最高的可视化改动（直接换主战舰几何），沙盒完全无法渲染验证（`npm install puppeteer` 因网络白名单不含 `storage.googleapis.com` 失败），所以默认（无 flag）行为字节级不变，新舰体仅预览可见，范围边界见 ROADMAP §4 V15 条目。`src/scene/nighthawk.js` 做了 V15b 法线贴图升级（`heightToNormalMap()`，Sobel 梯度编码，取代原 bumpMap 近似）+ 增加非轮廓 greeble，零几何改动、默认生效（风险远低于 V15，可放行）。**2026-07-04 第四轮**（按用户详细文字拆解补齐参考图的 5 类细节缺口）：新增艏-舯衔接处交叠装甲收环板（层叠装甲视觉断点）、舯部两侧模块化舱段 `sideBayMounts`（8 个，每侧 4，导弹发射井/机库观感）、两侧点防御炮塔 `lateralTurretMounts`（4 个，每侧 2）、背脊炮塔改双联装、推进器加装甲整流罩——全部是挂载在既有连续 loft 壳体上的离散配件，不改船体轮廓，风险同炮塔/桅杆/吊舱那档。单测 94→97。
 - **数据**：`public/arena-news.json`（每日定时任务生成）、`public/games-data.json`（手动更新）、`public/signal-events.json`（宏观事件档案，见第 3 节）、`public/novels-data.json`（章节内容）、`public/leagues-data.json`（**已创建，2026-07-04**，MSI 竞猜）、`public/arena-ledger.json` + `public/arena-universe.json`（**已创建，2026-07-04**，Autopilot 账本 + 固定交易域，见下方 V3 说明）。v1.5 规划新增但**尚未创建**：`sectors-data.json`（对比矩阵 + 后内存专题）——详见 ROADMAP §7。
 - **Arena Autopilot 规则引擎（V3，2026-07-04）**：`src/lib/arenaRules.js`——纯函数集合，模型只提案 JSON 订单，这里的 `validateOrder`/`applyFill`/`checkStopLoss`/`checkDailyCircuitBreaker`/`checkSeasonReset`/`computeMetrics` 才是唯一有权改账本状态的代码。硬风控红线（单仓 20%/持仓 8 只/现金 5%/日熔断 3%/赛季重置 20%/信心门槛 0.65/Model A 周换手 20 笔/Model B 仅周二四开仓/分级滑点）全部是模块顶部 `LIMITS` 常量，不是提示词里的口头约定。单测见 `tests/arenaRules.test.js`。
+- **触控热区扩展模式（D4，2026-07-05）**：`.nav a`/`.hbtn`/`.tf-b`/`.ind-b` 等交互元素统一用 `position:relative` + `::before{position:absolute;inset:...}` 扩大可点击/可触摸范围到 ≥44px，**视觉大小完全不变**（水平方向按各自现有 gap 收窄扩展幅度，避免相邻按钮热区重叠）。新页面的交互元素照此模式加，不要改元素本身的 padding/尺寸。
+- **sitemap.xml + `<html lang>` 提前设置（D5，2026-07-05）**：`public/sitemap.xml` 静态列出 7 个入口页，`robots.txt` 指向它；新增页面时把该页 URL 加进 sitemap。每个页面 `<head>` 最前面（在任何 module script 之前）都有一行**同步、非 defer** 的内联脚本，按 localStorage 缓存的 `afflatus:lang` 提前把 `<html lang>` 设对，不等 `i18n.js` 作为 module script 跑完——新页面照抄这行内联脚本。**已知未根治的问题**：首页 hero 标题/副标题走 `main.js` 独立内容管线（非 `i18n.js` 的 `data-en`/`data-zh` 机制），仍会有一瞬间「先英后中」的文案跳变，根治需服务端按 `Accept-Language` 分流，留给 C5 Astro 迁移一并解决。
 - **武器单时钟（V16，2026-07-04）**：`src/combat/weaponClock.js`——权威时间线纯函数模块（`startTimeline`/`phaseFraction`/`activePhase`/`msUntilPhase`/`forceAdvance`），`{weapon, t0, phases:[{name,at}]}` 结构，V14 相机导演可直接订阅。已修正 `main.js` 里两处实测确认的独立计时器（核弹 T- 倒计时、主炮蓄力倒计时此前各自跑 `setInterval(...,40)`，与 rAF 主循环脱钩——已改为在 `updateCombatModule()` 里逐帧更新）+ 删除 `halley.ciwsLaserStart/ciwsLaserUntil` 死代码（从未被读取、`performance.now()` 口径与全局 `Date.now()` 口径不一致）。**范围边界**：`combatCine.js` 的导弹/核弹分镜与 `halley.destroyed` 提前触发的强制剪切审计后确认本来就是从 `pilotView.started/until` 派生的单一 `e` 驱动，未改动；CIWS/核弹/导弹完整分镜时序改造为具名 `weaponClock` phases 留给 V14（相机切换点本来就需要具名 phases，届时一起做）。
 
 ### 新增页面 checklist（已由 V0 Leagues 完整走通并验证，2026-07-04）
@@ -32,6 +34,8 @@
 6. `public/page-turn.css`：加 `.newpage-page .page-turn-controls` 箭头配色变量 + `.newpage-page .nav-labs__menu`/`a` 的 `--labs-*` 主题覆盖（下拉面板不继承页面样式，不配就是默认黑玻璃）。
 7. 文案全部 `data-en`/`data-zh` 成对 + 页脚免责声明。
 8. `npm run build` 后抽查 `dist/`：新页 HTML 200、其引用的 chunk 里确实含 nav 代码（防上面那个 chunking 坑）。**实测发现**：`nav.js`/`i18n.js`/`transition.js`/`page-turn.js` 这类被全部页面共享导入的库，Rollup 会把它们合并进一个共享 chunk（本次构建里合并进了 `transition-*.js`，命名取决于打包顺序不固定）——不要假设某个库一定在"自己名字" 的 chunk 里，**用内容 grep（如 SITE 数组里的新页面路径字符串）而不是按文件名 grep** 来验证代码是否真的在产物里。
+9. `<head>` 最前面（任何 module script 之前）加同步内联脚本，按 `afflatus:lang` 提前设置 `<html lang>`（D5 模式，照抄现有六个子页任意一个）；`public/sitemap.xml` 加一行新页 URL。
+10. 交互元素（导航链接/按钮/标签）如果视觉尺寸偏小，照 D4 模式用 `position:relative` + `::before` 扩展隐形热区到 ≥44px，不要直接改元素本身的 padding/字号。
 
 ### 首页渲染分层 / Home render layers
 - `#starfield`（背景星空，fixed z0，OffscreenCanvas + Worker 渲染，特性检测自动回退主线程）→ `#blackhole-gl`（黑洞 WebGL，z1）→ `#event-layer`（2D 战斗/彗星，z2）。
@@ -67,6 +71,7 @@ roadmap.md technical.md  仅有的两份设计文档（另见 CLAUDE.md、prompt
 
 - **Finnhub**（实时报价，免费档 ~60/min）：前端调 **`/api/quote?symbol=…`**（Vercel Serverless 代理 `api/quote.js`），key 在服务端 `FINNHUB_KEY`。自适应轮询。
 - **Twelve Data**（历史 K 线 W/M/6M/Y/5Y，免费 8/min·800/day）：前端调 **`/api/history?symbol=…&interval=…&outputsize=…`**（代理 `api/history.js`），key 在服务端 `TWELVE_KEY`；按需取、按天缓存到 localStorage。`D` 为实时日内。
+- **⚠️ `/api/quote` / `/api/history` 的 symbol 校验与限流（D1，2026-07-05）**：symbol 正则收紧到真实 ticker 形状 `^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$`（支持 `BRK.B`/`BRK-A` 后缀），不合规格式直接 400、不打上游。新增 `src/lib/rateLimit.js`——纯函数滑动窗口限流（无第三方依赖，Vercel serverless 按实例隔离，非分布式），按 `x-forwarded-for` 分桶，quote 60 次/60s、history 20 次/60s，超限返回 429 + `Retry-After`；配额吃紧再评估 Upstash/KV。单测见 `tests/rateLimit.test.js`。**不做固定 symbol 白名单**——与 V13 的「搜索任意美股代码」功能冲突，故意留开放。
 - ✅ **API key 已下沉到服务端**：`/api/*.js` 是 Vercel 根目录 Serverless 函数（与 Vite 静态构建并存，零配置自动部署），key 不再出现在前端包里。
   - **部署必做**：Vercel → Project → Settings → Environment Variables 添加 `FINNHUB_KEY` 与 `TWELVE_KEY`（值即原来的 key），重新部署。
   - **⚠️ 务必轮换旧 key**：旧 key 曾明文存在于前端与 git 历史，已泄露——去 Finnhub / Twelve Data 后台**重置生成新 key**，新 key 只填进 Vercel 环境变量。
@@ -118,7 +123,7 @@ npm run dev        # http://127.0.0.1:5173  （逐页检查）
 npm run build      # 产出 dist/（七个入口各自压缩打包，public/ 静态资源原样拷贝进去）
 npm run preview    # 预览打包结果
 ```
-> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑五个文件共 94 条：`tests/arenaRules.test.js`（44 条，Arena 规则引擎）+ `tests/weaponClock.test.js`（20 条，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）+ `tests/cameraMath.test.js`（12 条，V14 临界阻尼弹簧/抢占规则/混合曲线）+ `tests/weaponCameraDirector.test.js`（6 条，V14 镜头状态机，用 mock 相机对象验证抢占/续期/自动回落/数值不发散，不依赖 WebGL）+ `tests/odinHull.test.js`（8 条，V15 舰体比例：长高比/艏占比/挂载点数量/wire 少于 full/无 NaN，用 mock `add()` 记录 mesh 算真实 `THREE.Box3`，不依赖 WebGL/DOM）。所有模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
+> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑十个文件共 **158 条**（2026-07-05 复核）：`tests/arenaRules.test.js`（44，Arena 规则引擎）+ `tests/weaponClock.test.js`（20，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）+ `tests/cameraMath.test.js`（12，V14 临界阻尼弹簧/抢占规则/混合曲线）+ `tests/weaponCameraDirector.test.js`（6，V14 镜头状态机，mock 相机对象，不依赖 WebGL）+ `tests/odinHull.test.js`（15，V15 舰体比例/挂载点，mock `add()` 记录 mesh 算真实 `THREE.Box3`，不依赖 WebGL/DOM）+ `tests/arenaRun.test.js`（14，V4 Autopilot 结算管线）+ `tests/technicals.test.js`（21，V13 指标库）+ `tests/validateSignalEvents.test.js`（12，V7 Signal 事件 schema 校验）+ `tests/ladderLayout.test.js`（8，V13 Level Ladder 防重叠排版）+ `tests/rateLimit.test.js`（6，D1 API 限流）。所有模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
 
 ---
 
