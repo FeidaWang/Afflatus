@@ -68,8 +68,8 @@
 | Sectors | `sectors.html` | AI + 航天个股研判 ＋ v1.5 中美 AI 对比矩阵、「后内存时代」专题（规划中，§7.2） | 酸性绿 + 故障艺术 | 顶层 |
 | Signal | `signal.html` | 美联储观察 = SCP O5 收容档案（板块研判：Fable 5 Max）；v1.5 已重构为 Warsh 时代内容（§7.3） | 机密文档 · 琥珀/绿 | 顶层 |
 | Games | `games.html` | 世界杯限时竞猜 vs Fable 5 Max | 赛博朋克 · 品红/青 | **Labs** |
-| Leagues | `leagues.html`（**V0/V1 已上线**） | 2026 MSI 电竞竞猜 vs Fable 5 Max（Fearless Draft 分析；赛后转战绩存档，§7.4） | 海克斯 · 金/蓝 | **Labs** |
-| Novels | `novels.html` | 无限流·种田小说连载《万界种春》 | 复古未来主义 · 铜/青（纯中文，护眼阅读，含夜间/豆沙绿/米黄三种阅读模式、自动翻页、书签、章节速览） | **Labs** |
+| Leagues | `league.html`（**V0/V1 已上线**） | 2026 MSI 电竞竞猜 vs Fable 5 Max（Fearless Draft 分析；赛后转战绩存档，§7.4） | 海克斯 · 金/蓝 | **Labs** |
+| Novels | `serial.html` | 无限流小说连载书架：《万界种春》（种田）＋《长夜请柬》（悬疑推理），书架切换 | 复古未来主义 · 铜/青（纯中文，护眼阅读，含夜间/豆沙绿/米黄三种阅读模式、自动翻页、书签、瀑布流、章节速览） | **Labs** |
 
 **原则**：每页保留**独立的字体与美术身份**，但共享一套基础系统，避免重复造轮子。
 
@@ -191,7 +191,7 @@
 | Arena 双轨模拟盘 | `arena.html` 新增 AUTOPILOT 区块 | Arena 就是交易页身份，不裂页 |
 | Sectors 中美 AI 对比 | `sectors.html` 新增对比矩阵区块 | 同上 |
 | Signals（Warsh） | `signal.html` 就地内容重构 | 页面使命不变，换的是「馆藏」 |
-| Leagues（MSI） | **新页 `leagues.html`，进 Labs** | 季节性限时内容，常设规则的标准适用场景 |
+| Leagues（MSI） | **新页 `league.html`，进 Labs** | 季节性限时内容，常设规则的标准适用场景 |
 | 后内存时代选股库 | **不单开新页**，进 `sectors.html` 专题区块 | 核心投资内容而非实验性内容，不符合 Labs 定位；顶层导航保持克制。若专题日后长成独立身份再升格 |
 
 ### 7.1 Arena Autopilot（V3–V5）
