@@ -12,6 +12,7 @@
   const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
   let lang = (() => { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : (localStorage.getItem('afflatus:lang') === 'zh' ? 'zh' : 'en'); } catch { return 'en'; } })();
   const T = (en, zh) => lang === 'zh' ? zh : en;
+  const FABLE_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:-2px" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="7" width="18" height="14" rx="5" fill="#F2994A"/><rect x="10" y="2" width="4" height="5" rx="2" fill="#F2994A"/><circle cx="12" cy="2" r="1.6" fill="#F2994A"/><circle cx="9" cy="14" r="1.8" fill="#3A2410"/><circle cx="15" cy="14" r="1.8" fill="#3A2410"/><path d="M8.5 17.5 Q12 20.5 15.5 17.5" stroke="#3A2410" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
 
   const SCR_KEY = 'afflatus-leagues:scratch:v1';
   const ls = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
@@ -104,9 +105,9 @@
     host.innerHTML = upcoming.map((s) => {
       const tbd = isTBD(s);
       const done = !!s.result;
-      const opusLine = (s.opus && !tbd) ? `<div class="opus">🤖 <b>Fable</b> · ${outcomeLabel(s, s.opus)} · ${Math.round(s.conf * 100)}%<span class="orsn">${T(s.reason_en, s.reason_zh)}</span></div>` : (tbd ? '' : `<div class="opus dim">🤖 ${T('Call pending exact schedule confirmation', '待官方具体时间确认后给出研判')}</div>`);
+      const opusLine = (s.opus && !tbd) ? `<div class="opus">${FABLE_ICON} <b>Fable</b> · ${outcomeLabel(s, s.opus)} · ${Math.round(s.conf * 100)}%<span class="orsn">${T(s.reason_en, s.reason_zh)}</span></div>` : (tbd ? '' : `<div class="opus dim">${FABLE_ICON} ${T('Call pending exact schedule confirmation', '待官方具体时间确认后给出研判')}</div>`);
       const oddsHtml = !tbd && !done ? renderOdds(s) : '';
-      const opScore = (s.opusScore && !tbd && !done) ? `<div class="scratch opscore" data-key="score:${s.id}"><div class="reveal">🤖 <span data-en="FABLE SERIES SCORE" data-zh="FABLE 比分预测">FABLE SERIES SCORE</span> · <b>${teamLogo(s.home)} ${s.opusScore} ${teamLogo(s.away)}</b></div></div>` : '';
+      const opScore = (s.opusScore && !tbd && !done) ? `<div class="scratch opscore" data-key="score:${s.id}"><div class="reveal">${FABLE_ICON} <span data-en="FABLE SERIES SCORE" data-zh="FABLE 比分预测">FABLE SERIES SCORE</span> · <b>${teamLogo(s.home)} ${s.opusScore} ${teamLogo(s.away)}</b></div></div>` : '';
       const resultLine = done ? `<div class="resline">${T('FINAL', '终局')} · <b>${teamName(s, 'home')} ${s.result.home}–${s.result.away} ${teamName(s, 'away')}</b>${s.opus ? ` · ${T('Fable called', 'Fable 预测')} ${s.opus === (s.result.home > s.result.away ? 'home' : 'away') ? '✓' : '✗'}` : ''}</div>` : '';
       const homeTeam = `<div class="team-d">${teamLogo(s.home)}<span class="nm">${teamName(s, 'home')}</span></div>`;
       const awayTeam = `<div class="team-d">${teamLogo(s.away)}<span class="nm">${teamName(s, 'away')}</span></div>`;
@@ -144,7 +145,7 @@
       return `<span class="rlog ${cls}" title="${T(e.pick_en, e.pick_zh)}">${icon} ${T(e.label_en, e.label_zh)}</span>`;
     }).join('');
     host.innerHTML =
-      `<div class="rec-h"><span class="rec-t">🤖 ${T('FABLE TRACK RECORD', 'FABLE 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${r.since || ''}</span></div>` +
+      `<div class="rec-h"><span class="rec-t">${FABLE_ICON} ${T('FABLE TRACK RECORD', 'FABLE 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${r.since || ''}</span></div>` +
       `<div class="rec-stats">` +
         `<div class="rec-big"><b>${rate}%</b><i>${T('outcome win rate', '胜负命中率')}</i></div>` +
         `<div class="rec-kv"><b>${r.correctOutcome || 0}/${r.resolved || 0}</b><i>${T('correct calls', '预测正确')}</i></div>` +
