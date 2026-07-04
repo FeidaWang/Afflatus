@@ -21,14 +21,60 @@ import { clamp, lerp, rand } from '../utils/math.js';
 import {
   HMD,
   cornerFrame as hmdCornerFrame,
-  headingTape as hmdHeadingTape,
-  arcGauge as hmdArcGauge,
-  boresight as hmdBoresight,
   cometTarget as hmdComet,
   targetBracket as hmdBracket,
-  telemetryLine as hmdTelemetry,
   statusChip as hmdStatusChip,
 } from './hmdMinimal.js';
+
+/* ── SC-reference HUD primitives (V17b, per user screenshot 2) ─────────────
+   Replaces hmdMinimal's headingTape/boresight for THIS view only: a dense
+   degree tape with numbered majors + centre caret & readout, and a dashed
+   cross reticle with a bracket-dot secondary marker. Pure. */
+export function drawSCHeadingTape(ctx,w,h,heading){
+  const y0=h*.055, pxPerDeg=w*.008, halfSpan=30;
+  const fs=Math.max(7,Math.min(10,w*.018));
+  ctx.save();
+  ctx.strokeStyle='rgba(148,228,255,.62)';ctx.lineWidth=1;
+  ctx.font=`${fs}px 'JetBrains Mono',monospace`;
+  ctx.textAlign='center';ctx.textBaseline='bottom';
+  const from=Math.ceil((heading-halfSpan)/2)*2;
+  for(let deg=from;deg<=heading+halfSpan;deg+=2){
+    const x=w*.5+(deg-heading)*pxPerDeg;
+    if(x<w*.26||x>w*.67) continue;   // right cut clears the OBJECTIVE panel
+    const norm=((deg%360)+360)%360;
+    const major=norm%20===0, mid=norm%10===0;
+    const len=major?8:mid?5.5:3;
+    ctx.globalAlpha=major?1:mid?.75:.45;
+    ctx.beginPath();ctx.moveTo(x,y0);ctx.lineTo(x,y0+len);ctx.stroke();
+    if(major){
+      ctx.fillStyle='rgba(180,232,255,.85)';
+      ctx.fillText(String(norm),x,y0-2);
+    }
+  }
+  ctx.globalAlpha=1;
+  // centre caret pointing up + current heading below it (ref: ▲ over "269")
+  const cy=y0+13;
+  ctx.fillStyle='rgba(226,246,255,.92)';
+  ctx.beginPath();ctx.moveTo(w*.5,cy-4);ctx.lineTo(w*.5-4.5,cy+2);ctx.lineTo(w*.5+4.5,cy+2);ctx.closePath();ctx.fill();
+  ctx.textBaseline='top';
+  ctx.font=`${fs*1.15}px 'JetBrains Mono',monospace`;
+  ctx.fillText(String(((heading%360)+360)%360),w*.5,cy+4);
+  ctx.restore();
+}
+export function drawSCReticle(ctx,cx,cy){
+  ctx.save();
+  ctx.strokeStyle='rgba(226,246,255,.88)';ctx.lineWidth=1.2;
+  // four converging dashes with a gap at centre
+  const inR=5,outR=12;
+  for(const[dx,dy] of[[1,0],[-1,0],[0,1],[0,-1]]){
+    ctx.beginPath();
+    ctx.moveTo(cx+dx*inR,cy+dy*inR);ctx.lineTo(cx+dx*outR,cy+dy*outR);
+    ctx.stroke();
+  }
+  ctx.fillStyle='rgba(226,246,255,.95)';
+  ctx.beginPath();ctx.arc(cx,cy,1.3,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
 
 /* First-person cockpit frame for the pilot feed — SC-cockpit-style console
    dashboard (button columns, twin power-management MFDs, centre radar dome)
@@ -58,26 +104,15 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1){
   vig.addColorStop(1,rgba(.05));
   ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
 
-  // --- dashboard silhouette (wing-shaped, slightly taller than before) ---
+  // --- dashboard silhouette (V17b: flat top edge, no rim stroke — the curved
+  //     bezier rim read as a stray "wavy line" and was removed per user) ---
   const dy=h*.70;
-  const dashA=st(0,.12);
-  const dg=ctx.createLinearGradient(0,dy-h*.02,0,h);
-  dg.addColorStop(0,'rgba(12,17,24,.45)');
-  dg.addColorStop(.24,'rgba(8,12,18,.97)');
+  const dg=ctx.createLinearGradient(0,dy,0,h);
+  dg.addColorStop(0,'rgba(8,12,18,0)');
+  dg.addColorStop(.18,'rgba(8,12,18,.92)');
   dg.addColorStop(1,'rgba(2,4,8,1)');
   ctx.fillStyle=dg;
-  ctx.beginPath();
-  ctx.moveTo(0,h);ctx.lineTo(0,dy+h*.05);
-  ctx.bezierCurveTo(w*.22,dy-h*.02, w*.36,dy+h*.065, w*.5,dy+h*.065);
-  ctx.bezierCurveTo(w*.64,dy+h*.065, w*.78,dy-h*.02, w,dy+h*.05);
-  ctx.lineTo(w,h);ctx.closePath();ctx.fill();
-  // rim light along the dash edge (first thing to power on)
-  ctx.strokeStyle=rgba(.38*dashA*flick(dashA,1));ctx.lineWidth=1.4;
-  ctx.beginPath();
-  ctx.moveTo(0,dy+h*.05);
-  ctx.bezierCurveTo(w*.22,dy-h*.02, w*.36,dy+h*.065, w*.5,dy+h*.065);
-  ctx.bezierCurveTo(w*.64,dy+h*.065, w*.78,dy-h*.02, w,dy+h*.05);
-  ctx.stroke();
+  ctx.fillRect(0,dy,w,h-dy);
 
   const fsBtn=Math.max(5.5,Math.min(8,w*.014));
   const fsTiny=Math.max(5,Math.min(7,w*.012));
@@ -175,8 +210,9 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1){
     ctx.fillStyle=`${AMBER}${(.5+.4*Math.sin(now/300)).toFixed(2)})`;
     ctx.fillRect(cx+R*.38,cyd-R*.30,2,2);
     ctx.fillRect(cx-R*.22,cyd+R*.18,2,2);
-    // heading · range readout under the dome (echoes the reference's 269°)
-    const hdg=Math.round(269+Math.sin(now/3000)*6);
+    // heading · range readout under the dome (matches the HMD tape / the
+    // site's "BEARING 128°" lore, not two conflicting headings)
+    const hdg=Math.round(128+Math.sin(now/3600)*4);
     ctx.font=mono(fsTiny);ctx.fillStyle=rgba(.72);ctx.textAlign='center';ctx.textBaseline='top';
     ctx.fillText(`${String(hdg).padStart(3,'0')}°  ·  2.8 KM`,cx,cyd+R+6);
     ctx.restore();
@@ -332,65 +368,27 @@ export function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
  * @param {() => object|null} deps.getHalley - current comet state (or null)
  * @param {() => number} deps.getWarpIntensity
  * @param {() => number} deps.getShipRecoil
- * @param {(type:string) => number} deps.weaponRemaining - from combatRuntime
  * @param {(w:number,h:number,mode?:string) => object} deps.pilotTrackedPoint
  * @param {() => number} [deps.getKillCount] - real kill count (mission panel)
  * @param {() => number} [deps.getGiantKillCount] - real giant-class kill count
  */
-export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, weaponRemaining, pilotTrackedPoint, getKillCount, getGiantKillCount }){
+export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, pilotTrackedPoint, getKillCount, getGiantKillCount }){
 
-  /** Flight-path marker (velocity vector): a circle + three wing arms drifting
-   *  slightly from the boresight, showing where the ship is actually heading. */
+  /** Flight-path marker, SC style (V17b): a small bracket-dot secondary marker
+   *  ( ⌐ · ¬ ) drifting slightly off boresight — no ghost line, no circle. */
   function drawVelocityVector(ctx,w,h,now){
     const bx=w*.5, by=h*.46;
     const vvX=bx+Math.sin(now/2800)*w*.022+Math.sin(now/5100)*w*.008;
-    const vvY=by+Math.cos(now/3200)*h*.018+Math.cos(now/4700)*h*.008;
+    const vvY=by+Math.cos(now/3200)*h*.018+Math.cos(now/4700)*h*.008+h*.05;
     ctx.save();
-    // ghost dash from boresight to flight-path marker
-    ctx.strokeStyle='rgba(148,228,255,.18)';ctx.lineWidth=1;ctx.setLineDash([2,5]);
-    ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(vvX,vvY);ctx.stroke();ctx.setLineDash([]);
-    // FPM circle
-    ctx.strokeStyle='rgba(148,228,255,.70)';ctx.lineWidth=1;
-    ctx.beginPath();ctx.arc(vvX,vvY,7,0,Math.PI*2);ctx.stroke();
-    // three wing arms (top, lower-left, lower-right) — aircraft FPM symbol
-    for(const a of[-Math.PI/2, Math.PI/2+Math.PI/3, Math.PI/2-Math.PI/3]){
-      ctx.beginPath();
-      ctx.moveTo(vvX+Math.cos(a)*7,vvY+Math.sin(a)*7);
-      ctx.lineTo(vvX+Math.cos(a)*14,vvY+Math.sin(a)*14);
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  /** Three vertical power-distribution pips (ENG / WPN / SHD) in the upper-left
-   *  margin — style: thin bars like SC's power management column. */
-  function drawPowerPips(ctx,w,h,now){
-    const halley=getHalley(), warpIntensity=getWarpIntensity();
-    // ENG = throttle; WPN = weapon readiness; SHD = shield proxy (inverse risk)
-    const eng=clamp(.68+warpIntensity*.28,0,1);
-    const wpn=1-clamp(weaponRemaining('enforcer')/45000,0,1);
-    const shd=clamp(1-(halley?.collisionRisk||0)*.9,.12,1);
-    const vals=[eng,wpn,shd];
-    const labels=['ENG','WPN','SHD'];
-    const colors=['rgba(148,228,255,.72)','rgba(255,205,128,.72)','rgba(120,255,178,.72)'];
-    // position: just inside the left corner frame, above the arc gauge
-    const px=w*.075, py=h*.22, bw=5, bh=h*.14, gap=w*.028;
-    ctx.save();
-    ctx.font=`${Math.max(6,w*.014)}px 'JetBrains Mono',monospace`;
-    ctx.textAlign='center';ctx.textBaseline='top';
-    vals.forEach((v,i)=>{
-      const x=px+i*gap;
-      // track (empty)
-      ctx.fillStyle='rgba(148,228,255,.10)';
-      ctx.fillRect(x,py,bw,bh);
-      // fill from bottom
-      const filled=bh*clamp(v,0,1);
-      ctx.fillStyle=colors[i];
-      ctx.fillRect(x,py+bh-filled,bw,filled);
-      // label below
-      ctx.fillStyle='rgba(148,228,255,.38)';
-      ctx.fillText(labels[i],x+bw/2,py+bh+3);
-    });
+    ctx.strokeStyle='rgba(148,228,255,.72)';ctx.lineWidth=1.1;
+    const g=7, arm=3.5;   // bracket half-gap + arm length
+    ctx.beginPath();
+    ctx.moveTo(vvX-g,vvY-arm);ctx.lineTo(vvX-g,vvY+arm);   // left bracket
+    ctx.moveTo(vvX+g,vvY-arm);ctx.lineTo(vvX+g,vvY+arm);   // right bracket
+    ctx.stroke();
+    ctx.fillStyle='rgba(148,228,255,.85)';
+    ctx.beginPath();ctx.arc(vvX,vvY,1.1,0,Math.PI*2);ctx.fill();
     ctx.restore();
   }
 
@@ -582,16 +580,9 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     g.addColorStop(0,'rgba(8,26,42,.28)');g.addColorStop(.5,'rgba(0,5,12,.02)');g.addColorStop(1,'rgba(3,10,18,.40)');
     ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
 
-    // ── Frame + nav ────────────────────────────────────────────────────────
+    // ── Frame + nav (V17b: SC degree tape with numbered majors + caret) ────
     hmdCornerFrame(ctx,w,h);
-    hmdHeadingTape(ctx,w,h,heading);
-
-    // ── Self-status arcs (centred at ±31% from mid so they fit inward) ─────
-    hmdArcGauge(ctx,w,h,-1,clamp((.68+warpIntensity*.28),0,1),'THR',`${Math.round(68+warpIntensity*28)}%`);
-    hmdArcGauge(ctx,w,h, 1,clamp(speed/1200,0,1),'VEL',`${speed} M/S`);
-
-    // ── ENG / WPN / SHD power distribution pips (upper-left margin) ────────
-    drawPowerPips(ctx,w,h,now);
+    drawSCHeadingTape(ctx,w,h,heading);
 
     // ── SC-cockpit side chip stacks (SCM/GUN · CPLD/ESP/LOCK · DECOY/GEAR) ──
     drawSCChipStacks(ctx,w,h,now,lock.visible,!!lock.locked,speed);
@@ -599,8 +590,8 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     // ── Flight-path marker (velocity vector) ────────────────────────────────
     drawVelocityVector(ctx,w,h,now);
 
-    // ── Boresight ────────────────────────────────────────────────────────────
-    hmdBoresight(ctx,w,h);
+    // ── Boresight (V17b: SC dashed-cross reticle) ────────────────────────────
+    drawSCReticle(ctx,w*.5,h*.46);
 
     // ── Target: comet + bracket + health bars + lead indicator ─────────────
     const cx=lock.visible?lock.cx:w*.62;
@@ -641,11 +632,16 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
       hmdStatusChip(ctx,w,h,label||'TARGET LINK',HMD.cyanSoft,false,now);
     }
 
-    // ── Telemetry strip — lifted above the V17 console dash (its callers all
-    //    draw the cockpit console over the bottom ~30% now) ──────────────────
-    hmdTelemetry(ctx,w,h*.72,
-      `VEL ${speed} · G ${(1.2+warpIntensity*.9).toFixed(1)}`,
-      lock.visible?`TGT 1P/HALLEY · ${lock.locked?'LOCK':'TRACK'}`:'SCANNING');
+    // ── Telemetry — text only above the console dash (V17b: the full-width
+    //    underline read as a stray "line across the middle"; removed) ────────
+    ctx.save();
+    ctx.font=`${Math.max(7,Math.min(10,w*.020))}px 'JetBrains Mono',monospace`;
+    ctx.textBaseline='alphabetic';
+    ctx.fillStyle=HMD.cyan;ctx.textAlign='left';
+    ctx.fillText(`VEL ${speed} · G ${(1.2+warpIntensity*.9).toFixed(1)}`,w*.06,h*.66);
+    ctx.fillStyle=HMD.cyanSoft;ctx.textAlign='right';
+    ctx.fillText(lock.visible?`TGT 1P/HALLEY · ${lock.locked?'LOCK':'TRACK'}`:'SCANNING',w*.94,h*.66);
+    ctx.restore();
     ctx.restore();
   }
 

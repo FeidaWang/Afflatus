@@ -2763,7 +2763,6 @@ const combatHmdV3=createCombatHmdV3({
   getHalley:()=>halley,
   getWarpIntensity:()=>warpIntensity,
   getShipRecoil:()=>shipRecoil,
-  weaponRemaining,
   pilotTrackedPoint,
   getKillCount:()=>killCount,
   getGiantKillCount:()=>giantKillCount,
