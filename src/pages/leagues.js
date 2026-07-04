@@ -73,7 +73,8 @@
     host.innerHTML = data.fearless.map((f) => {
       const title = lang === 'zh' ? (f.team_zh || f.team) : f.team;
       const depth = f.poolDepth != null ? `<b class="pval">${f.poolDepth}</b>` : `<b class="pval dim">—</b>`;
-      return `<div class="prob"><div class="prow"><span class="pflag">${f.flag || ''}</span><span class="pname">${title}</span>${depth}</div><p class="preason">${T(f.note_en, f.note_zh)}</p></div>`;
+      const champs = (f.champs && f.champs.length) ? `<div class="pchamps">${f.champs.map((c) => `<img src="https://gol.gg/_img/champions_icon/${c.slug}.png" alt="${c.name}" title="${c.name}" loading="lazy">`).join('')}</div>` : '';
+      return `<div class="prob"><div class="prow"><span class="pflag">${f.flag || ''}</span><span class="pname">${title}</span>${depth}</div><p class="preason">${T(f.note_en, f.note_zh)}</p>${champs}</div>`;
     }).join('');
   }
 

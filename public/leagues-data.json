@@ -1,7 +1,7 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
   "updated": "2026-07-04",
-  "version": 2,
+  "version": 3,
   "mode": "live",
   "note_en": "Fable 5 Max's own reads on every MSI 2026 Bracket Stage series — for entertainment, not betting advice. Double-elimination, all series Bo5, Fearless Draft (each champion locks out for both teams once picked in the series). Odds shown only where a real book price was found (GG.bet); otherwise Fable states its own probability plainly as a call, not a market price.",
   "note_zh": "Fable 5 Max 对每场 MSI 2026 淘汰赛的个人研判——仅供娱乐，不构成博彩建议。双败淘汰赛制，全部系列赛 Bo5，赛制为 Fearless Draft（同一系列赛内任意一方选过的英雄，双方均不可再选）。仅在查到真实盘口（GG.bet）时展示赔率；其余情况 Fable 直接给出自己的概率研判，不冒充市场价格。",
@@ -123,65 +123,113 @@
       "team": "HLE",
       "team_zh": "HLE",
       "flag": "🇰🇷",
-      "poolDepth": 5,
-      "note_en": "Game 1 vs TSW: Jayce / Skarner / Cassiopeia / Ziggs / Shen — 5 unique picks, none repeated (Fearless Draft locks them out for Games 2-3 of the same series). Series-wide tally pending full VOD review.",
-      "note_zh": "对 TSW 第一局：贾克斯（Jayce）/ 斯卡纳 / 卡萨丁 / 吉格斯 / 慎，5 个不重复英雄（Fearless Draft 规则下本系列赛第 2-3 局不可再选）。全系列赛完整统计待补。"
+      "poolDepth": 15,
+      "note_en": "Full 3-game sweep of TSW: 15 unique champions across the series, none repeated — confirmed via gol.gg official match data.",
+      "note_zh": "3-0横扫TSW全系列共用15个不重复英雄——数据来自gol.gg官方赛事记录，已核实。",
+      "champs": [
+        { "name": "Jayce", "slug": "Jayce" }, { "name": "Skarner", "slug": "Skarner" }, { "name": "Cassiopeia", "slug": "Cassiopeia" }, { "name": "Ziggs", "slug": "Ziggs" }, { "name": "Shen", "slug": "Shen" },
+        { "name": "Camille", "slug": "Camille" }, { "name": "Qiyana", "slug": "Qiyana" }, { "name": "Mel", "slug": "Mel" }, { "name": "Ambessa", "slug": "Ambessa" }, { "name": "Ahri", "slug": "Ahri" },
+        { "name": "Bard", "slug": "Bard" }, { "name": "Miss Fortune", "slug": "MissFortune" }, { "name": "Nocturne", "slug": "Nocturne" }, { "name": "Dr. Mundo", "slug": "Dr.Mundo" }, { "name": "Viktor", "slug": "Viktor" }
+      ]
     },
     {
       "team": "TSW",
       "team_zh": "TSW",
       "flag": "🌏",
-      "poolDepth": 5,
-      "note_en": "Game 1 vs HLE: Sion / Lee Sin / Ryze / Ezreal / Rell — lost the game and the series 0-3. Full series pool tally pending VOD review.",
-      "note_zh": "对 HLE 第一局：赛恩 / 李青 / 瑞兹 / 伊泽瑞尔 / 蕾尔——本局及系列赛均告负（0-3）。全系列赛完整统计待补。"
+      "poolDepth": 15,
+      "note_en": "Lost the series 0-3 to HLE but still drew 15 unique picks across 3 games — confirmed via gol.gg official match data.",
+      "note_zh": "0-3不敌HLE，但全系列仍用了15个不重复英雄——数据来自gol.gg官方赛事记录，已核实。",
+      "champs": [
+        { "name": "Sion", "slug": "Sion" }, { "name": "Lee Sin", "slug": "LeeSin" }, { "name": "Ryze", "slug": "Ryze" }, { "name": "Ezreal", "slug": "Ezreal" }, { "name": "Rell", "slug": "Rell" },
+        { "name": "Jarvan IV", "slug": "JarvanIV" }, { "name": "Elise", "slug": "Elise" }, { "name": "Jhin", "slug": "Jhin" }, { "name": "Aurora", "slug": "Aurora" }, { "name": "Volibear", "slug": "Volibear" },
+        { "name": "Caitlyn", "slug": "Caitlyn" }, { "name": "Karma", "slug": "Karma" }, { "name": "Renekton", "slug": "Renekton" }, { "name": "Naafiri", "slug": "Naafiri" }, { "name": "Hwei", "slug": "Hwei" }
+      ]
     },
     {
       "team": "G2",
       "team_zh": "G2",
       "flag": "🇪🇺",
-      "poolDepth": null,
-      "note_en": "Reverse-swept TES 3-2 from 0-2 down — by definition drew on a wider champion pool across 5 games than a series-opener sweep would need. Exact pick list pending VOD review.",
-      "note_zh": "0-2 落后逆转 3-2 淘汰 TES——五局系列赛意味着调用了比首局横扫更深的英雄池。具体选用清单待补。"
+      "poolDepth": 25,
+      "note_en": "Reverse-swept TES 3-2 from 0-2 down — the full 5 games drew 25 unique champions, none repeated. Confirmed via gol.gg official match data.",
+      "note_zh": "0-2落后逆转3-2淘汰TES——五局系列赛共用25个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
+      "champs": [
+        { "name": "Rumble", "slug": "Rumble" }, { "name": "Olaf", "slug": "Olaf" }, { "name": "LeBlanc", "slug": "LeBlanc" }, { "name": "Ashe", "slug": "Ashe" }, { "name": "Braum", "slug": "Braum" },
+        { "name": "K'Sante", "slug": "KSante" }, { "name": "Xin Zhao", "slug": "XinZhao" }, { "name": "Ahri", "slug": "Ahri" }, { "name": "Yunara", "slug": "Yunara" }, { "name": "Lulu", "slug": "Lulu" },
+        { "name": "Kled", "slug": "Kled" }, { "name": "Skarner", "slug": "Skarner" }, { "name": "Syndra", "slug": "Syndra" }, { "name": "Xayah", "slug": "Xayah" }, { "name": "Rakan", "slug": "Rakan" },
+        { "name": "Gnar", "slug": "Gnar" }, { "name": "Vi", "slug": "Vi" }, { "name": "Twisted Fate", "slug": "TwistedFate" }, { "name": "Lucian", "slug": "Lucian" }, { "name": "Milio", "slug": "Milio" },
+        { "name": "Anivia", "slug": "Anivia" }, { "name": "Poppy", "slug": "Poppy" }, { "name": "Mel", "slug": "Mel" }, { "name": "Sivir", "slug": "Sivir" }, { "name": "Rell", "slug": "Rell" }
+      ]
     },
     {
       "team": "TES",
       "team_zh": "TES",
       "flag": "🀄",
-      "poolDepth": null,
-      "note_en": "Led G2 2-0 before losing 3 straight — pool depth data pending VOD review.",
-      "note_zh": "曾 2-0 领先 G2 后连丢三局——英雄池数据待补。"
+      "poolDepth": 25,
+      "note_en": "Led G2 2-0 before losing 3 straight — the full 5 games drew 25 unique champions, none repeated. Confirmed via gol.gg official match data.",
+      "note_zh": "曾2-0领先G2后连丢三局——五局系列赛共用25个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
+      "champs": [
+        { "name": "Ambessa", "slug": "Ambessa" }, { "name": "Naafiri", "slug": "Naafiri" }, { "name": "Cassiopeia", "slug": "Cassiopeia" }, { "name": "Varus", "slug": "Varus" }, { "name": "Nautilus", "slug": "Nautilus" },
+        { "name": "Renekton", "slug": "Renekton" }, { "name": "Jarvan IV", "slug": "JarvanIV" }, { "name": "Aurora", "slug": "Aurora" }, { "name": "Ezreal", "slug": "Ezreal" }, { "name": "Neeko", "slug": "Neeko" },
+        { "name": "Sion", "slug": "Sion" }, { "name": "Wukong", "slug": "Wukong" }, { "name": "Ryze", "slug": "Ryze" }, { "name": "Aphelios", "slug": "Aphelios" }, { "name": "Thresh", "slug": "Thresh" },
+        { "name": "Tristana", "slug": "Tristana" }, { "name": "Nocturne", "slug": "Nocturne" }, { "name": "Hwei", "slug": "Hwei" }, { "name": "Jhin", "slug": "Jhin" }, { "name": "Karma", "slug": "Karma" },
+        { "name": "Ornn", "slug": "Ornn" }, { "name": "Maokai", "slug": "Maokai" }, { "name": "Yone", "slug": "Yone" }, { "name": "Ziggs", "slug": "Ziggs" }, { "name": "Pantheon", "slug": "Pantheon" }
+      ]
     },
     {
       "team": "BLG",
       "team_zh": "BLG",
       "flag": "🀄",
-      "poolDepth": null,
-      "note_en": "Won a five-game war with T1 (3-2) — a full Bo5 by definition drew deeper into the pool than a sweep would. Exact pick list pending VOD review.",
-      "note_zh": "五局苦战3-2力克T1——打满Bo5意味着调用了比横扫更深的英雄池。具体选用清单待补。"
+      "poolDepth": 25,
+      "note_en": "Won a five-game war with T1 (3-2) — the full series drew 25 unique champions, none repeated. Confirmed via gol.gg official match data.",
+      "note_zh": "五局苦战3-2力克T1——全系列共用25个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
+      "champs": [
+        { "name": "Jayce", "slug": "Jayce" }, { "name": "Poppy", "slug": "Poppy" }, { "name": "Viktor", "slug": "Viktor" }, { "name": "Ziggs", "slug": "Ziggs" }, { "name": "Shen", "slug": "Shen" },
+        { "name": "Renekton", "slug": "Renekton" }, { "name": "Naafiri", "slug": "Naafiri" }, { "name": "Swain", "slug": "Swain" }, { "name": "Ezreal", "slug": "Ezreal" }, { "name": "Bard", "slug": "Bard" },
+        { "name": "Jax", "slug": "Jax" }, { "name": "Qiyana", "slug": "Qiyana" }, { "name": "Ryze", "slug": "Ryze" }, { "name": "Vel'Koz", "slug": "VelKoz" }, { "name": "Alistar", "slug": "Alistar" },
+        { "name": "Gwen", "slug": "Gwen" }, { "name": "Skarner", "slug": "Skarner" }, { "name": "Aurora", "slug": "Aurora" }, { "name": "Caitlyn", "slug": "Caitlyn" }, { "name": "Elise", "slug": "Elise" },
+        { "name": "Rumble", "slug": "Rumble" }, { "name": "Kindred", "slug": "Kindred" }, { "name": "Syndra", "slug": "Syndra" }, { "name": "Ashe", "slug": "Ashe" }, { "name": "Seraphine", "slug": "Seraphine" }
+      ]
     },
     {
       "team": "T1",
       "team_zh": "T1",
       "flag": "🇰🇷",
-      "poolDepth": null,
-      "note_en": "Pushed BLG to 5 games before losing 2-3 — pool depth data pending VOD review.",
-      "note_zh": "五局苦战2-3不敌BLG——英雄池数据待补。"
+      "poolDepth": 25,
+      "note_en": "Pushed BLG to 5 games before losing 2-3 — the full series drew 25 unique champions, none repeated. Confirmed via gol.gg official match data.",
+      "note_zh": "五局苦战2-3不敌BLG——全系列共用25个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
+      "champs": [
+        { "name": "Yorick", "slug": "Yorick" }, { "name": "Vi", "slug": "Vi" }, { "name": "Cassiopeia", "slug": "Cassiopeia" }, { "name": "Jhin", "slug": "Jhin" }, { "name": "Nautilus", "slug": "Nautilus" },
+        { "name": "Camille", "slug": "Camille" }, { "name": "Lee Sin", "slug": "LeeSin" }, { "name": "Galio", "slug": "Galio" }, { "name": "Kai'Sa", "slug": "Kaisa" }, { "name": "Ambessa", "slug": "Ambessa" },
+        { "name": "Zaahen", "slug": "Zaahen" }, { "name": "Wukong", "slug": "Wukong" }, { "name": "Annie", "slug": "Annie" }, { "name": "Senna", "slug": "Senna" }, { "name": "Leona", "slug": "Leona" },
+        { "name": "K'Sante", "slug": "KSante" }, { "name": "Jarvan IV", "slug": "JarvanIV" }, { "name": "Ahri", "slug": "Ahri" }, { "name": "Mel", "slug": "Mel" }, { "name": "Pyke", "slug": "Pyke" },
+        { "name": "Gnar", "slug": "Gnar" }, { "name": "Trundle", "slug": "Trundle" }, { "name": "Taliyah", "slug": "Taliyah" }, { "name": "Yunara", "slug": "Yunara" }, { "name": "Lulu", "slug": "Lulu" }
+      ]
     },
     {
       "team": "LYON",
       "team_zh": "LYON",
       "flag": "🇺🇸",
-      "poolDepth": null,
-      "note_en": "Swept FURIA 3-0 — like HLE's opener, needed only 3 games' worth of picks. Exact pick list pending VOD review.",
-      "note_zh": "3-0横扫FURIA——与HLE首战类似，仅用3局英雄池即取胜。具体选用清单待补。"
+      "poolDepth": 15,
+      "note_en": "Swept FURIA 3-0 — 15 unique champions across the 3 games, none repeated. Confirmed via gol.gg official match data.",
+      "note_zh": "3-0横扫FURIA——全系列共用15个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
+      "champs": [
+        { "name": "Jayce", "slug": "Jayce" }, { "name": "Jarvan IV", "slug": "JarvanIV" }, { "name": "Syndra", "slug": "Syndra" }, { "name": "Ezreal", "slug": "Ezreal" }, { "name": "Neeko", "slug": "Neeko" },
+        { "name": "Gnar", "slug": "Gnar" }, { "name": "Wukong", "slug": "Wukong" }, { "name": "Galio", "slug": "Galio" }, { "name": "Ziggs", "slug": "Ziggs" }, { "name": "Camille", "slug": "Camille" },
+        { "name": "Varus", "slug": "Varus" }, { "name": "Lee Sin", "slug": "LeeSin" }, { "name": "Viktor", "slug": "Viktor" }, { "name": "Kog'Maw", "slug": "KogMaw" }, { "name": "Lulu", "slug": "Lulu" }
+      ]
     },
     {
       "team": "FURIA",
       "team_zh": "FURIA",
       "flag": "🇧🇷",
-      "poolDepth": null,
-      "note_en": "Swept 0-3 by LYON — pick list pending VOD review.",
-      "note_zh": "被LYON 0-3横扫——选用清单待补。"
+      "poolDepth": 15,
+      "note_en": "Swept 0-3 by LYON — still drew 15 unique picks across the 3 games. Confirmed via gol.gg official match data.",
+      "note_zh": "被LYON 0-3横扫——全系列仍用了15个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
+      "champs": [
+        { "name": "Sion", "slug": "Sion" }, { "name": "Naafiri", "slug": "Naafiri" }, { "name": "Ryze", "slug": "Ryze" }, { "name": "Jhin", "slug": "Jhin" }, { "name": "Karma", "slug": "Karma" },
+        { "name": "Ambessa", "slug": "Ambessa" }, { "name": "Vi", "slug": "Vi" }, { "name": "Aurora", "slug": "Aurora" }, { "name": "Cassiopeia", "slug": "Cassiopeia" }, { "name": "Rell", "slug": "Rell" },
+        { "name": "Olaf", "slug": "Olaf" }, { "name": "Xin Zhao", "slug": "XinZhao" }, { "name": "Sylas", "slug": "Sylas" }, { "name": "Lucian", "slug": "Lucian" }, { "name": "Milio", "slug": "Milio" }
+      ]
     }
   ],
   "series": [
