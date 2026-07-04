@@ -362,8 +362,11 @@
   if (EMBED) { document.body.classList.add('embed'); window.addEventListener('resize', postHeight); setInterval(postHeight, 1200); }
   initCursor();
   renderAll(); renderNews(); renderCountdown();
-  // adaptive polling — concentrate API budget around the US open; idle when closed
-  function pollInterval() { const st = marketStatus(), n = nyNow(); if (st.state === 'open') return n.sec < OPEN_S + 3600 ? 9000 : 18000; if (st.state === 'pre') return 11000; if (st.state === 'post') return 20000; return 150000; }
+  // adaptive polling — concentrate API budget around the US open; idle when closed.
+  // When the game grid is hidden (V13 TA dashboard mode) the fast loop would burn
+  // Finnhub quota for an invisible UI, so throttle way down (hero chips only).
+  const LEGACY_HIDDEN = (() => { try { return !!document.querySelector('.grid.legacy-hidden'); } catch { return false; } })();
+  function pollInterval() { if (LEGACY_HIDDEN) return 120000; const st = marketStatus(), n = nyNow(); if (st.state === 'open') return n.sec < OPEN_S + 3600 ? 9000 : 18000; if (st.state === 'pre') return 11000; if (st.state === 'post') return 20000; return 150000; }
   (function loop() { poll().finally(() => { setTimeout(loop, pollInterval()); }); })();
   setInterval(renderStatus, 15000);
   setInterval(renderCountdown, 1000);

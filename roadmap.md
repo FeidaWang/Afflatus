@@ -45,6 +45,7 @@
 - **B5. 首页背景 canvas 加 IntersectionObserver**——不可见时停渲染。详见 **§3**。
 - **B6. 首页 WebGL 收尾**——`saturnRenderer` 等 raw-GL 的完整 context-restored 重建（目前仅 `preventDefault` 保活）；跃迁点 shader 弱机自适应（降 fbm 八度或分辨率）；统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量（目前 1.75 vs 1.5 不一致）。需真机 profiling。
 - **B7. 各页零散点子**——Arena「模型 vs 你」历史胜率曲线 + Twelve Data 接入后 W/M/6M/Y/5Y 徽标转 `REAL`；Games「夺冠路径」树状图。详见 **§5**。
+- **B10. Arena 旧 Human vs AI 对战区去留决定**——V13（2026-07-04）把对战区（旧名单/图表/预测面板/计分板整个 `.grid`）用 `.legacy-hidden` 暂时隐藏，源码全保留，arena.js 轮询已降频。待 TA 仪表盘用一段时间后决定：恢复共存（去掉 class 即可）、还是正式移除对战代码（届时 V5 的 Autopilot 前端区块布局也要重新考虑落点）。
 - **C1/C2. Signal 传导链可视化 + 自动化剩余部分**——BREACH METER 自动映射、事件回放 ±2h sparkline、FedWatch 概率自动刷新（鹰鸽罗盘与定时任务自动化已被 V6/V7 吸收）。详见 **§6**。
 - **C3. three.js WebGPURenderer + TSL + Bloom/ACES**——compute shader 粒子（百万级星涡/爆炸碎片）+ 更低 draw call 开销；`UnrealBloomPass` + ACES tone mapping 替代 radial-gradient 假光晕。详见 **§8.2**。
 - **C4. TypeScript 渐进迁移**——main.js 拆分（A2）产出的新模块直接写 `.ts`，不强制回填旧文件。详见 **§8.2**。
@@ -61,7 +62,7 @@
 | Page | File | 身份 / Identity | 主题 | 导航位置 |
 | --- | --- | --- | --- | --- |
 | Home | `index.html` + `src/` | 深空舰长日志 (Three.js) | Orbitron / 钢蓝 HUD | 顶层 |
-| Arena | `arena.html` | Human vs AI 交易竞技场（AI 对手：Fable 5 Max）＋ v1.5 Autopilot 双模型模拟盘（后端已上线，前端待数据积累，§7.1） | Marathon · 霓虹绿/青 | 顶层 |
+| Arena | `arena.html` | **美股技术分析仪表盘（V13，2026-07-04 上线）**：自选股+搜索+盘前/盘后关键位面板；原 Human vs AI 对战区暂时隐藏（源码保留，见 B10）＋ v1.5 Autopilot 双模型模拟盘（后端已上线，前端待数据积累，§7.1） | Marathon · 霓虹绿/青 | 顶层 |
 | Sectors | `sectors.html` | AI + 航天个股研判 ＋ v1.5 中美 AI 对比矩阵、「后内存时代」专题（规划中，§7.2） | 酸性绿 + 故障艺术 | 顶层 |
 | Signal | `signal.html` | 美联储观察 = SCP O5 收容档案（板块研判：Fable 5 Max）；v1.5 已重构为 Warsh 时代内容（§7.3） | 机密文档 · 琥珀/绿 | 顶层 |
 | Games | `games.html` | 世界杯限时竞猜 vs Fable 5 Max | 赛博朋克 · 品红/青 | **Labs** |
@@ -147,7 +148,7 @@
 
 ## 5. 各页设计备忘 & 未来点子 / Per-page notes & ideas
 
-- **Arena**：**v1.5 → Autopilot 双模型模拟盘（V3/V4 已完成，V5 前端待账本数据积累，§7.1）**。原有点子保留（B7）：「模型 vs 你」历史胜率曲线；接 Twelve Data 后把 W/M/6M/Y/5Y 徽标改 `REAL`。
+- **Arena**：**V13 美股技术分析仪表盘已上线（2026-07-04，用户直接指定，详见 `RELEASE_NOTES.md`）**——旧 Human vs AI 对战区暂时隐藏（去留见 B10，V5 动工时注意新落点）。**v1.5 → Autopilot 双模型模拟盘（V3/V4 已完成，V5 前端待账本数据积累，§7.1）**。原有点子保留（B7）：「模型 vs 你」历史胜率曲线；接 Twelve Data 后把 W/M/6M/Y/5Y 徽标改 `REAL`。
 - **Sectors**：**v1.5 → 中美 AI 对比矩阵 + 后内存专题（V9–V11，§7.2）**；「研判与 Arena 预测打通」并入 V12 评估。
 - **Signal**：**v1.5 → Warsh 时代重构已完成（V6–V7，§7.3，详见 `RELEASE_NOTES.md`）**；其余见 **§6**。
 - **Games**：世界杯收官跟进已排入 **V2（P0）**——淘汰赛对阵确定后补 `home/away/result`（决赛 7/19）；「夺冠路径」树状图留 B7。

@@ -12,3 +12,4 @@ import '../lib/nav.js';
 import '../lib/page-turn.js';
 import '../lib/clock.js';
 import './arena.js';
+import './arenaTech.js';
