@@ -43,8 +43,9 @@ Output exactly ONE JSON object, no markdown fences:
     "odds_implied": [1.61, 2.63],
     "factors_zh": ["<=40字 ×3，≥1条涉及无畏征召"], "factors_en": ["…"],
     "reasoning_zh": "<=120字", "reasoning_en": "<=50w", "confidence": 0-1 }],
+  "teamLogos": { "TEAM_CODE": "gol.gg team logo URL — add an entry whenever a new team enters the bracket (new year/tournament); never remove old entries" },
   "champion": [{ "team": "…", "p": 0.0-1.0 }],
-  "mvp": [{ "team": "Player · TEAM", "p": 0.0-1.0, "basis_zh": "<=40字，引用真实数据来源" }],
+  "mvp": [{ "team": "Player · TEAM", "teamCode": "TEAM_CODE", "p": 0.0-1.0, "basis_zh": "<=40字，引用真实数据来源" }],
   "fearless": [{ "team": "…", "poolDepth": 0-10, "basis_zh": "<=40字，引用实际pick数据" }],
   "daily_take_zh": "<=150字", "daily_take_en": "<=60w"
 }
