@@ -1,75 +1,121 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
   "updated": "2026-07-04",
-  "version": 1,
+  "version": 2,
   "mode": "live",
   "note_en": "Fable 5 Max's own reads on every MSI 2026 Bracket Stage series — for entertainment, not betting advice. Double-elimination, all series Bo5, Fearless Draft (each champion locks out for both teams once picked in the series). Odds shown only where a real book price was found (GG.bet); otherwise Fable states its own probability plainly as a call, not a market price.",
   "note_zh": "Fable 5 Max 对每场 MSI 2026 淘汰赛的个人研判——仅供娱乐，不构成博彩建议。双败淘汰赛制，全部系列赛 Bo5，赛制为 Fearless Draft（同一系列赛内任意一方选过的英雄，双方均不可再选）。仅在查到真实盘口（GG.bet）时展示赔率；其余情况 Fable 直接给出自己的概率研判，不冒充市场价格。",
-  "record": null,
+  "record": {
+    "since": "2026-07-03",
+    "resolved": 4,
+    "correctOutcome": 2,
+    "exactScore": 1,
+    "winRate": 50,
+    "note_en": "Fable series-outcome calls scored from Bracket Stage Round 1 onward, through the Grand Final. Updated daily. ⭐ = exact series score. ✓ = correct outcome.",
+    "note_zh": "自淘汰赛第一轮起对 Fable 系列赛胜负预测计分，并延续至总决赛，每日更新。⭐ = 比分全中，✓ = 结果正确。",
+    "log": [
+      {
+        "id": "msi-hle-tsw",
+        "label_en": "HLE 3-0 TSW",
+        "label_zh": "HLE 3-0 TSW",
+        "pick_en": "HLE win",
+        "pick_zh": "HLE 胜",
+        "ok": true,
+        "exact": true
+      },
+      {
+        "id": "msi-g2-tes",
+        "label_en": "G2 3-2 TES",
+        "label_zh": "G2 3-2 TES",
+        "pick_en": "TES win",
+        "pick_zh": "TES 胜",
+        "ok": false,
+        "exact": false
+      },
+      {
+        "id": "msi-furia-lyon",
+        "label_en": "FURIA 0-3 LYON",
+        "label_zh": "FURIA 0-3 LYON",
+        "pick_en": "LYON win",
+        "pick_zh": "LYON 胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "msi-blg-t1",
+        "label_en": "BLG 3-2 T1",
+        "label_zh": "BLG 3-2 T1",
+        "pick_en": "T1 win",
+        "pick_zh": "T1 胜",
+        "ok": false,
+        "exact": false
+      }
+    ]
+  },
   "champion": [
     {
       "team": "BLG",
       "team_zh": "BLG",
       "flag": "🀄",
-      "prob": 24,
-      "reason_en": "Bilibili Gaming — LPL 1st seed, won 2026 First Stand Tournament (earned the region's bonus direct bracket slot). Most-cited favorite in pre-bracket power rankings; Knight in career-best form. Bracket-stage match vs T1 not yet played.",
-      "reason_zh": "Bilibili Gaming——LPL 头号种子，夺得 2026 First Stand（为赛区赢得额外直通名额）。赛前实力榜头号热门，Knight 状态正处生涯高点。淘汰赛首战对阵 T1 尚未开打。"
+      "prob": 26,
+      "reason_en": "Survived a five-game war with T1, the round's marquee tie — a statement result that lifts BLG to tournament favorite. Advances to UB R2 vs LYON, fresh off a 3-0 sweep of FURIA.",
+      "reason_zh": "五局苦战力克T1（本轮焦点战），笑到最后——夺冠热门地位进一步巩固。晋级上位组第二轮，对手LYON刚3-0横扫FURIA。"
     },
     {
       "team": "HLE",
       "team_zh": "HLE",
       "flag": "🇰🇷",
-      "prob": 22,
-      "reason_en": "Hanwha Life Esports — LCK 1st seed, opened the Bracket Stage with a clean 3-0 sweep of Team Secret Whales. Zeus/Gumayusi headline a roster that looked in total control in Game 1. Faces G2 next (UB R2).",
-      "reason_zh": "Hanwha Life Esports——LCK 头号种子，淘汰赛开局 3-0 横扫 Team Secret Whales。Zeus、Gumayusi 领衔的阵容在第一局展现绝对控制力。下一战迎战 G2（上位组第二轮）。"
+      "prob": 23,
+      "reason_en": "Still unbeaten after a clean 3-0 sweep of TSW. Faces G2 in UB R2, July 5 08:00 UTC — G2's grueling 5-game path to get here is the key form signal ahead of the clash.",
+      "reason_zh": "3-0横扫TSW，仍保持不败。上位组第二轮7月5日（UTC 08:00）战G2——G2五局艰难晋级是赛前最大观察点。"
     },
     {
       "team": "T1",
       "team_zh": "T1",
       "flag": "🇰🇷",
-      "prob": 20,
-      "reason_en": "T1 — LCK, three-time reigning World Champion (Worlds 2025 first-ever three-peat), swept through Play-Ins 9-0 including two 3-0s over Team Liquid Alienware. The tournament's biggest X-factor in elimination formats; opens the Bracket Stage vs BLG.",
-      "reason_zh": "T1——LCK，卫冕三届世界冠军（2025 世界赛完成史上首次三连霸），Play-In 阶段 9 战全胜，两次 3-0 横扫 Team Liquid Alienware。淘汰赛赛制下最大的变数存在；淘汰赛首战对阵 BLG。"
+      "prob": 15,
+      "reason_en": "Dropped to lower bracket after a five-game classic vs BLG (2-3), but the three-time World Champion pedigree keeps them live. Faces FURIA in LB R1, July 6 03:00 UTC.",
+      "reason_zh": "五局经典战2-3不敌BLG，跌入下位组，但三届世界冠军底蕴仍在。下位组首轮7月6日（UTC 03:00）战FURIA。"
     },
     {
       "team": "G2",
       "team_zh": "G2",
       "flag": "🇪🇺",
-      "prob": 14,
-      "reason_en": "G2 Esports — LEC 1st seed. Reverse-swept Top Esports 3-2 from 0-2 down, the first international reverse sweep in three years — a genuine statement of draft/mental resilience. Dangerous dark horse into UB R2 vs HLE.",
-      "reason_zh": "G2 Esports——LEC 头号种子。曾 0-2 落后逆转 3-2 淘汰 Top Esports，是近三年首次国际赛事逆转横扫——充分展现了 BP 与心理层面的韧性。上位组第二轮战 HLE，是真正的黑马。"
+      "prob": 13,
+      "reason_en": "Advances after the reverse sweep of TES. Faces HLE, who looked untouchable in their own opener, in UB R2 on July 5, 08:00 UTC — a much tougher test.",
+      "reason_zh": "逆转淘汰TES后晋级，上位组第二轮迎战开局横扫TSW、状态更佳的HLE——7月5日（UTC 08:00），难度明显提升。"
+    },
+    {
+      "team": "LYON",
+      "team_zh": "LYON",
+      "flag": "🇺🇸",
+      "prob": 9,
+      "reason_en": "Swept FURIA 3-0 to reach UB R2 vs BLG (July 6, 08:00 UTC) — the region's best MSI result in recent cycles, though a heavy underdog next against a red-hot BLG.",
+      "reason_zh": "3-0横扫FURIA，晋级上位组第二轮战BLG（7月6日 UTC 08:00）——赛区近年最佳战绩，但下一战对阵状态火热的BLG仍属明显劣势。"
     },
     {
       "team": "TES",
       "team_zh": "TES",
       "flag": "🀄",
-      "prob": 8,
-      "reason_en": "Top Esports — LPL 2nd seed. Lost the opener to G2 after leading 2-0, now must run the full lower-bracket gauntlet starting vs Team Secret Whales. Still dangerous, but the margin for error is gone.",
-      "reason_zh": "Top Esports——LPL 二号种子。首轮曾 2-0 领先 G2 但被逆转，现在必须从下位组从头打起，首战 Team Secret Whales。实力仍在，但已无试错空间。"
+      "prob": 6,
+      "reason_en": "Dropped to lower bracket after blowing a 2-0 lead vs G2. Faces TSW in LB R1, July 5 03:00 UTC, in a match both sides need to survive.",
+      "reason_zh": "对G2 2-0领先被逆转后跌入下位组。下位组首轮7月5日（UTC 03:00）战TSW，双方都输不起。"
     },
     {
       "team": "FURIA",
       "team_zh": "FURIA",
       "flag": "🇧🇷",
       "prob": 4,
-      "reason_en": "FURIA — CBLOL 1st seed. Region historically the deepest underdog field at MSI; opens vs LYON with a real but long-shot path.",
-      "reason_zh": "FURIA——CBLOL 头号种子。该赛区历来是 MSI 中实力最悬殊的一档；首战对阵 LYON，理论有机会但胜算不大。"
-    },
-    {
-      "team": "LYON",
-      "team_zh": "LYON",
-      "flag": "🇺🇸",
-      "prob": 4,
-      "reason_en": "LYON — LCS 1st seed. Region's international results have lagged the other majors in recent cycles; opens vs FURIA in what both sides will see as their best shot at a bracket-stage win.",
-      "reason_zh": "LYON——LCS 头号种子。该赛区近几个周期的国际赛成绩落后于其余四大赛区；首战对阵 FURIA，双方都会把这场视为自己在淘汰赛阶段最现实的取胜机会。"
+      "reason_en": "Swept 0-3 by LYON, the round's most one-sided result. Faces T1 in LB R1 July 6 03:00 UTC — a brutal draw for a team that now needs everything to break right.",
+      "reason_zh": "被LYON 0-3横扫，本轮最一边倒的结果。下位组首轮7月6日（UTC 03:00）战T1——对手实力悬殊，局面异常艰难。"
     },
     {
       "team": "TSW",
       "team_zh": "TSW",
       "flag": "🌏",
       "prob": 4,
-      "reason_en": "Team Secret Whales — LCP 1st seed. Swept 3-0 by HLE in the opener with a low kill/tower count across the loss; now faces TES in the lower bracket with no room left for another sweep.",
-      "reason_zh": "Team Secret Whales——LCP 头号种子。首轮被 HLE 3-0 横扫，全程击杀与推塔数据落后明显；下位组迎战 TES，已无法再承受一次横扫。"
+      "reason_en": "Swept 0-3 by HLE with a weak underlying statline. Faces TES in LB R1, July 5 03:00 UTC, in a must-win to stay alive.",
+      "reason_zh": "被HLE 0-3横扫，数据表现平平。下位组首轮7月5日（UTC 03:00）战TES，输球即遭淘汰。"
     }
   ],
   "fearless": [
@@ -105,10 +151,38 @@
       "note_en": "Led G2 2-0 before losing 3 straight — pool depth data pending VOD review.",
       "note_zh": "曾 2-0 领先 G2 后连丢三局——英雄池数据待补。"
     },
-    { "team": "T1", "team_zh": "T1", "flag": "🇰🇷", "poolDepth": null, "note_en": "Bracket-stage series vs BLG not yet played.", "note_zh": "对阵 BLG 的淘汰赛首战尚未开打。" },
-    { "team": "BLG", "team_zh": "BLG", "flag": "🀄", "poolDepth": null, "note_en": "Bracket-stage series vs T1 not yet played.", "note_zh": "对阵 T1 的淘汰赛首战尚未开打。" },
-    { "team": "FURIA", "team_zh": "FURIA", "flag": "🇧🇷", "poolDepth": null, "note_en": "Bracket-stage series vs LYON not yet played.", "note_zh": "对阵 LYON 的首战尚未开打。" },
-    { "team": "LYON", "team_zh": "LYON", "flag": "🇺🇸", "poolDepth": null, "note_en": "Bracket-stage series vs FURIA not yet played.", "note_zh": "对阵 FURIA 的首战尚未开打。" }
+    {
+      "team": "BLG",
+      "team_zh": "BLG",
+      "flag": "🀄",
+      "poolDepth": null,
+      "note_en": "Won a five-game war with T1 (3-2) — a full Bo5 by definition drew deeper into the pool than a sweep would. Exact pick list pending VOD review.",
+      "note_zh": "五局苦战3-2力克T1——打满Bo5意味着调用了比横扫更深的英雄池。具体选用清单待补。"
+    },
+    {
+      "team": "T1",
+      "team_zh": "T1",
+      "flag": "🇰🇷",
+      "poolDepth": null,
+      "note_en": "Pushed BLG to 5 games before losing 2-3 — pool depth data pending VOD review.",
+      "note_zh": "五局苦战2-3不敌BLG——英雄池数据待补。"
+    },
+    {
+      "team": "LYON",
+      "team_zh": "LYON",
+      "flag": "🇺🇸",
+      "poolDepth": null,
+      "note_en": "Swept FURIA 3-0 — like HLE's opener, needed only 3 games' worth of picks. Exact pick list pending VOD review.",
+      "note_zh": "3-0横扫FURIA——与HLE首战类似，仅用3局英雄池即取胜。具体选用清单待补。"
+    },
+    {
+      "team": "FURIA",
+      "team_zh": "FURIA",
+      "flag": "🇧🇷",
+      "poolDepth": null,
+      "note_en": "Swept 0-3 by LYON — pick list pending VOD review.",
+      "note_zh": "被LYON 0-3横扫——选用清单待补。"
+    }
   ],
   "series": [
     {
@@ -166,10 +240,10 @@
       "opus": "away",
       "conf": 0.58,
       "opusScore": "1-3",
-      "reason_en": "CBLOL 1st seed vs LCS 1st seed — the tournament's two long-shot regions meet; LYON's recent international reps give a slight scouting edge over FURIA.",
-      "reason_zh": "CBLOL 头号种子对 LCS 头号种子——本届赛事两个胜算最低的赛区正面对决；LYON 近期的国际赛经验略占情报优势。",
+      "reason_en": "CBLOL 1st seed vs LCS 1st seed — the tournament's two long-shot regions meet; LYON's recent international reps give a slight scouting edge over FURIA. LYON swept 3-0, cleaner than called.",
+      "reason_zh": "CBLOL 头号种子对 LCS 头号种子——本届赛事两个胜算最低的赛区正面对决；LYON 近期的国际赛经验略占情报优势。结果 LYON 3-0 横扫，比原判更加干净利落。",
       "odds": null,
-      "result": null
+      "result": { "home": 0, "away": 3 }
     },
     {
       "id": "msi-blg-t1",
@@ -186,17 +260,17 @@
       "opus": "away",
       "conf": 0.55,
       "opusScore": "2-3",
-      "reason_en": "The marquee tie of the round: 2026 First Stand champions vs the three-time reigning World Champion. Fable leans T1 in a close one — elimination-format pedigree is the tiebreaker on an otherwise even sheet.",
-      "reason_zh": "本轮焦点战：2026 First Stand 冠军对阵卫冕三届世界冠军。双方纸面接近，Fable 略微倾向 T1——淘汰赛赛制下的经验是关键的加分项。",
+      "reason_en": "The marquee tie of the round: 2026 First Stand champions vs the three-time reigning World Champion. Fable leaned T1 in a close one; BLG won it 3-2 instead — the tiebreaker cut the other way.",
+      "reason_zh": "本轮焦点战：2026 First Stand 冠军对阵卫冕三届世界冠军。Fable 原判略微倾向 T1，结果 BLG 3-2 取胜——关键分歧点最终倒向了另一边。",
       "odds": { "h": 2.01, "a": 1.76, "src": "GG.bet" },
-      "result": null
+      "result": { "home": 3, "away": 2 }
     },
     {
       "id": "msi-hle-g2",
       "round": "Upper Bracket · R2",
       "round_zh": "上位组 · 第二轮",
       "bo": 5,
-      "kickoff": "2026-07-05T00:00:00Z",
+      "kickoff": "2026-07-05T08:00:00Z",
       "home": "HLE",
       "home_zh": "HLE",
       "homeFlag": "🇰🇷",
@@ -206,8 +280,8 @@
       "opus": "home",
       "conf": 0.68,
       "opusScore": "3-1",
-      "reason_en": "Winners of UB R1 meet for a spot in the Upper Bracket Final. HLE's clean 3-0 sweep looked more dominant than G2's 5-game escape from 0-2 down; leaning HLE, but G2's reverse-sweep run shows real depth. Exact match time not yet published — date confirmed July 5.",
-      "reason_zh": "上位组第一轮胜者会师，争夺上位组决赛席位。HLE 干净利落的 3-0 横扫，观感强于 G2 从 0-2 逆转的五局苦战；倾向 HLE，但 G2 的逆转过程也证明了阵容深度。具体开赛时间尚未公布——日期已确认为 7 月 5 日。",
+      "reason_en": "Winners of UB R1 meet for a spot in the Upper Bracket Final, July 5 08:00 UTC. HLE's clean 3-0 sweep looked more dominant than G2's 5-game escape from 0-2 down; leaning HLE, but G2's reverse-sweep run shows real depth.",
+      "reason_zh": "上位组第一轮胜者会师，争夺上位组决赛席位，7月5日（UTC 08:00）开战。HLE 干净利落的 3-0 横扫，观感强于 G2 从 0-2 逆转的五局苦战；倾向 HLE，但 G2 的逆转过程也证明了阵容深度。",
       "odds": null,
       "result": null
     },
@@ -216,7 +290,7 @@
       "round": "Lower Bracket · R1",
       "round_zh": "下位组 · 第一轮",
       "bo": 5,
-      "kickoff": "2026-07-06T00:00:00Z",
+      "kickoff": "2026-07-05T03:00:00Z",
       "home": "TES",
       "home_zh": "TES",
       "homeFlag": "🀄",
@@ -226,8 +300,48 @@
       "opus": "home",
       "conf": 0.66,
       "opusScore": "3-1",
-      "reason_en": "UB R1 losers' elimination match. TES led G2 2-0 before losing three straight — underlying form still reads stronger than TSW, who were swept 0-3 outright with a low kill/tower count. Leaning TES. Exact match time not yet published — date confirmed July 6.",
-      "reason_zh": "上位组第一轮败者的生死战。TES 曾 2-0 领先 G2 后连丢三局——底层实力仍强于被 HLE 直接 0-3 横扫、击杀推塔数据均落后的 TSW。倾向 TES。具体开赛时间尚未公布——日期已确认为 7 月 6 日。",
+      "reason_en": "UB R1 losers' elimination match, July 5 03:00 UTC. TES led G2 2-0 before losing three straight — underlying form still reads stronger than TSW, who were swept 0-3 outright with a low kill/tower count. Leaning TES.",
+      "reason_zh": "上位组第一轮败者的生死战，7月5日（UTC 03:00）开战。TES 曾 2-0 领先 G2 后连丢三局——底层实力仍强于被 HLE 直接 0-3 横扫、击杀推塔数据均落后的 TSW。倾向 TES。",
+      "odds": null,
+      "result": null
+    },
+    {
+      "id": "msi-t1-furia",
+      "round": "Lower Bracket · R1",
+      "round_zh": "下位组 · 第一轮",
+      "bo": 5,
+      "kickoff": "2026-07-06T03:00:00Z",
+      "home": "T1",
+      "home_zh": "T1",
+      "homeFlag": "🇰🇷",
+      "away": "FURIA",
+      "away_zh": "FURIA",
+      "awayFlag": "🇧🇷",
+      "opus": "home",
+      "conf": 0.85,
+      "opusScore": "3-0",
+      "reason_en": "Three-time reigning World Champion vs CBLOL's 1st seed, already swept 0-3 by LYON. A huge gulf on paper; T1 to cruise despite the lower-bracket setback vs BLG.",
+      "reason_zh": "卫冕三届世界冠军对阵 CBLOL 头号种子（已被 LYON 0-3 横扫）。纸面实力差距悬殊，尽管刚不敌 BLG 跌入下位组，T1 大概率轻取。",
+      "odds": null,
+      "result": null
+    },
+    {
+      "id": "msi-blg-lyon",
+      "round": "Upper Bracket · R2",
+      "round_zh": "上位组 · 第二轮",
+      "bo": 5,
+      "kickoff": "2026-07-06T08:00:00Z",
+      "home": "BLG",
+      "home_zh": "BLG",
+      "homeFlag": "🀄",
+      "away": "LYON",
+      "away_zh": "LYON",
+      "awayFlag": "🇺🇸",
+      "opus": "home",
+      "conf": 0.72,
+      "opusScore": "3-1",
+      "reason_en": "BLG's five-game survival vs T1 showed resolve; LYON's clean 3-0 over FURIA is the region's best MSI result in years but against a clearly lower tier of opponent. Leaning BLG.",
+      "reason_zh": "BLG 五局逆境求生力克 T1，展现韧性；LYON 3-0 横扫 FURIA 虽是赛区近年最佳战绩，但对手实力层级明显更低。倾向 BLG 晋级。",
       "odds": null,
       "result": null
     },
