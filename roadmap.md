@@ -8,15 +8,12 @@
 
 ## 1. v1.5 优先级总表 / Priority roadmap ★
 
-> **当前状态（2026-07-04）**：v1.4 全部收尾工作、v1.5b 视觉工程轨（V14/V15/V15b/V15c/V16）、v1.5 产品轨的 **V4/V6/V7 均已完成并归档**，以及站主直接指定的 **V13（Arena 美股技术分析仪表盘）已上线**，详见 `RELEASE_NOTES.md`。当前处于 **Afflatus v1.5「Fable 5 Max 五模块」** 产品轨执行期——源头是站主的系统架构规划报告，经评审优化后落地，完整五模块规格见 **§7**，定时任务提示词库见 `prompts/`。
+> **当前状态（2026-07-05）**：v1.4 全部收尾工作、v1.5b 视觉工程轨（V14/V15/V15b/V15c/V16/V17/V17b/V17c）、v1.5 产品轨的 **V4/V6/V7 均已完成并归档**，站主直接指定的 **V13（Arena 美股技术分析仪表盘）已上线**，以及**站内架构/UX 审计 D1–D5 全部完成**，详见 `RELEASE_NOTES.md`。当前处于 **Afflatus v1.5「Fable 5 Max 五模块」** 产品轨执行期——源头是站主的系统架构规划报告，经评审优化后落地，完整五模块规格见 **§7**，定时任务提示词库见 `prompts/`。
 >
-> **⚠️ 2026-07-04 站内架构/UX 审计（站主要求设为最高优先级，正在动工）**：产品经理+架构师视角的一轮批判性复核，发现 5 项可在半天内解决的真实问题（不是猜测，逐条对照构建产物/API 代码/dist 抽查核实过）——**D1–D5，见下方新增 P0★ 分组，插到队列最前面**。核心结论：后端自动化纪律（状态外置/规则引擎/发布校验）比前端健康得多；前端最大问题是 `/api/quote` 无白名单+无限流的开放代理（访客可打任意 symbol，配额全站共享）、简报强制门禁挡在工具类页面前面、`INEFFECTIVE_DYNAMIC_IMPORT` 构建警告一直没处理、移动端触控目标普遍不足、i18n 首帧闪烁+无 sitemap 拖累中文 SEO。
+> **排序依据**：依赖顺序 > 价值密度；V18 是站主直接点名的插队项。此前驱动排序的两个硬截止已转入自动化监控期（MSI 2026 决赛 7/12——Leagues 已上线+定时任务自跑；世界杯决赛 7/19——V2 持续监控），FOMC 软截止 7/28-29 前 Signal（V6/V7）也已就绪——**除 V18 外没有新的时效硬截止在驱动排序**。
 >
-> **排序依据**：D1–D5（用户明确指定最高优先级，正在做）> 依赖顺序 > 价值密度。此前驱动排序的两个硬截止已转入自动化监控期（MSI 2026 决赛 7/12——Leagues 已上线+定时任务自跑；世界杯决赛 7/19——V2 持续监控），FOMC 软截止 7/28-29 前 Signal（V6/V7）也已就绪——**除 D1-D5 外没有新的时效硬截止在驱动排序**。
->
-> **NEXT UP · 建议执行队列（2026-07-05 五次重排——V18 插入 D 队列之后）**——标注工作量（S≈半天内 / M≈1–3 天 / L≈1 周级）：
-> ⓪ **D2**（S，D 队列仅剩此项未完成）——简报强制门禁降级，见下方 P0★。
-> ⓪′ **V18**（M-L，**用户点名下次执行**，2026-07-05）——战斗视图「立体化」：从 2D 分镜的平面感（combatCine 精灵战机）升级为 SC 参考图的电影级追击视角（低机位追尾 + 引擎尾焰彩带 + 深度参照层）。**技术路线已定稿，见 §4「V18 实施路线」**；P3 的 B8 整体并入本项关闭。
+> **NEXT UP · 建议执行队列（2026-07-05 六次重排——D 队列全部完成，V18 升至队首）**——标注工作量（S≈半天内 / M≈1–3 天 / L≈1 周级）：
+> ⓪ **V18**（M-L，**用户点名下次执行**，2026-07-05）——战斗视图「立体化」：从 2D 分镜的平面感（combatCine 精灵战机）升级为 SC 参考图的电影级追击视角（低机位追尾 + 引擎尾焰彩带 + 深度参照层）。**技术路线已定稿，见 §4「V18 实施路线」**；P3 的 B8 整体并入本项关闭。
 > ① **V2**（S·随赛程持续）——世界杯每轮完赛后补数据；纯监控，不占主力时间。
 > ② **V5**（M）——**卡住，非排序问题**：`arena-autopilot-a-open` 尚未真正运行过一次（首次触发是本周二 AEST），账本要再攒够 ≥3 个交易日数据才有东西可画，物理上等不来就是不能动工。定期查一下账本 `day` 字段即可，不必天天惦记。**V13 上线后 V5 落地时多一件事要定**：旧 Human vs AI 对战区目前隐藏（见 B10），Autopilot 前端区块的具体落点要结合 V13 之后的去留决定一起看，不是各自独立的两块。
 > ③ **V9 → V10 → V11**（M+M+S）——Sectors 模块：先建对比矩阵 + 后内存专题两个前端区块与初始数据（V9/V10），再上定时任务自动化（V11）——路径与 Arena 的 V3→V4 同构（先有能跑的产品，再自动化）。
@@ -26,13 +23,6 @@
 > **本轮复核结论**：V13 与 D1-D5 都是站主直接指定、跳过既定队列插入的任务（不是按依赖/价值密度排出来的），完成后**②③④⑤的标准队列本身没有变化**——两者都不解锁 V5（跟账本数据无关），也不影响 Sectors 的依赖关系。D3 吸收了原 P3 的 B5（IntersectionObserver），不再单独跟踪。
 >
 > 想接着做时直接说编号（如「做 V9」），或说「查一下 V5 账本」看数据是否已攒够。
-
-**P0★ · 站内审计快赢（2026-07-04 指定，最高优先级，正在做）**
-- ~~D1.（S）`/api/quote` 加白名单 + per-IP 限流~~ **已完成（2026-07-04）**——现状：`api/quote.js`/`api/history.js` 只用宽松 regex 校验 symbol 格式（`^[A-Za-z.\-]{1,12}$`），任意字符串都能打上游；免费档限流是**全站访客共享**的，开盘时段两个并发访客就可能互相打出 429。**原计划的固定 30 支白名单方案与 V13 已上线的「搜索任意美股代码」功能冲突**（会砍掉合法的任意 ticker 搜索），经用户确认后改为：不做硬白名单，只把 symbol regex 收紧到真实 ticker 形状（`^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$`，支持 `BRK.B`/`BRK-A` 这类后缀），并新增基于 IP（`x-forwarded-for`）的每容器滑动窗口限流（纯函数 `src/lib/rateLimit.js` + 薄封装，quote 60 次/60s、history 20 次/60s，超限返回 429 + `Retry-After`）。非分布式限流（Vercel serverless 按实例隔离），配额吃紧再评估 Upstash/KV。
-- **D2.（S）简报强制门禁降级**——现状：`arena.js` 的 `openBriefing()` 默认自动弹出，主按钮（`bfEnter`）初始 `disabled`，要滚动到 96% 才解锁；V13 之后游戏区已隐藏（见 B10），这套仪式现在挡在一个**工具页**前面，每天要用的面板不该有门票。**方案**：`bfEnter` 默认可点击直接关闭（不再靠滚动比例解锁），`Skip` 提到与主按钮同等视觉权重；简报内容本身保留（对盘前浏览仍有用），只去掉"必须读完"的强制感。
-- ~~D3.（S）首页背景渲染修复——吸收 B5~~ **已完成（2026-07-04，范围有调整）**——现状：`vite build` 每次都报 `[INEFFECTIVE_DYNAMIC_IMPORT] src/scene/topdownCombat.js is dynamically imported by src/main.js but also statically imported by index.html`（index.html 的静态 `<script>` 是给 `?combat=topdown` 全屏演示 harness 用的，main.js 的动态 import 是给生产环境 `?combatview=topdown` 战斗视角用的，两条路径都合法但共用一个模块导致 Vite 没法代码分割）。**方案**：把 index.html 的静态 `<script src>` 换成一段内联 `<script type="module">`，复现 harness 自身已有的 `?combat=topdown` 门槛后再 `import()`，构建警告消失，且首页默认不再多拉一个 three.js 场景模块。**范围调整**：`IntersectionObserver` 挂起首页背景 canvas 的部分**没有做**——核实后发现 `#starfield`/`#blackhole-gl` 是 `position:fixed;inset:0` 的全屏背景层，`main`/各 section 都没有不透明背景遮住它，也就是说这层背景在任何滚动位置都可见，不存在"滚出视口"这个状态，对 fixed 全屏元素做 IntersectionObserver 是死代码。切标签页的挂起（`document.hidden`）在 `main.js` 的 `frame()` 里本来就已经存在（约第 3311 行），原 P3 **B5** 的诉求实际已被覆盖，一并标记不再单独跟踪。
-- ~~D4.（S）移动端触控目标 + 最小字号一轮 pass~~ **已完成（2026-07-04，范围有调整）**——现状：nav 链接实测约 30px 高、`.tf-b` 36px、`.ind-b` 22px、V13 新增的 `.ta-chip`/`.ta-mode` 更紧凑，均低于 44px 触控指南。**方案**：全站（arena/sectors/signal/games/serial/league 六个入口页，index.html 首页导航是动态生成的 `.nav-links`，不在这批 hardcoded `.nav a` 里）给 `.nav a`/`.hbtn`/`.tf-b`/`.ind-b`/`.ta-chip`/`.ta-mode` 加 `position:relative` + `::before{position:absolute;inset:...}` 的隐形热区扩展，视觉大小完全不变，只扩大可点击/可触摸范围到 ≥44px（水平方向按各自现有 gap 收窄扩展幅度，避免相邻按钮热区重叠）。**范围调整（字号部分）**：没有做"9px 系标签全站扫一遍提到 11px"——核实后发现这类 9-10px 小字遍布 5 个页面几十处，多数是时间戳/角标/赔率标签等装饰性小字，不是本条最初审计发现的对象（最初发现的是 Arena 交易 HUD 里 `.ta-chip i`/`.ta-mode i`/`.ta-sg i` 这几个 8.5-9px 的密集标签），把它扩大成全站字号重排是一次独立的视觉设计工作，风险和工作量都远超本条 S 量级快赢的范围，容易在无法截图核验的情况下引入换行/溢出回归。本条只按原始发现范围，把 Arena 那几个 HUD 标签在 `@media(max-width:720px)` 下提到 11px；全站字号扫查列为独立待办，不在本轮 D1-D5 里。
-- ~~D5.（S）sitemap.xml + i18n 首帧防闪~~ **已完成（2026-07-04，范围有调整）**——现状：`public/robots.txt` 存在但无 `sitemap.xml`；中文访客每次进页先看到英文原文再被 `i18n.js` 客户端替换成中文，且爬虫只抓到英文（中文内容对 SEO 不存在）。**方案**：生成静态 `public/sitemap.xml`（7 个入口页：`/`、arena/sectors/signal/games/serial/league）并在 `robots.txt` 里指向 `https://feida.au/sitemap.xml`；7 个页面 `<head>` 最前面都加一行同步（非 module，不 defer）内联脚本，提前按 localStorage 缓存的 `afflatus:lang` 把 `<html lang>` 设对，不用等 `i18n.js` 作为 module script 跑完。**范围调整（防闪部分）**：没有做"关键首屏文案避免整段先英后中跳变"——核实后发现首页的 hero 标题/副标题（`#heroTitle`/`#heroDesc`/`#heroNum`）根本不走 `i18n.js` 的 `data-en`/`data-zh` 机制，而是由 `main.js` 自己一套独立的内容管线在运行时写入（`c.heroTitle` 等），要不产生视觉跳变得先摸清并改这条独立管线，风险和工作量超出本条 S 量级快赢范围，容易在无法截图核验的情况下引入新 bug。`<html lang>` 的提前设置已经落地（对 SEO/无障碍有实际帮助）；视觉上的先英后中跳变本质是需要服务端按 `Accept-Language` 分流或首帧内容内联渲染才能根治的问题，按原计划留给 C5 Astro 迁移一并解决。
 
 **P0 · 抢时效（本周内，硬截止 7/12）**
 - **V2.（S·随赛程持续）Games 世界杯收官跟进**——2026-07-04 复核：`games-data.json` 现有 `fixtures[]` 的 `result:null` 均已核实为真实准确（对应比赛截至当前尚未开球/未结束，非遗漏）；无需本轮更新。淘汰赛继续推进后再补 `home/away/result`（决赛 7/19 收官）；「夺冠路径」树状图不抢时效，见 B7。
@@ -58,7 +48,7 @@
 - **B8. ~~V14 相机导演剩余 polish~~**——**已整体并入 V18（2026-07-05，见 §4 V18 实施路线）**：`impactOrbit`、FOV 动态推拉/banking、「空间深度四件套」正是 V18「立体化」的核心构件，不再单独跟踪、仅存查。
 - **B9. Odin 舰体（V15）收尾项**——旧舰体贴花（"TC CONDOR"/"01"/危险警示条）未在新舰体重新定位；greeble 未走 InstancedMesh 单 draw call 优化（现状与其余 capitalShip3D 逐 box 循环手法一致，性能量级不变）。待 `?ship=odin` 观感确认后再评估是否值得做。详见 `RELEASE_NOTES.md` V15 条目。
 - **B3. combatHudSC 机库跑道纵深透视**——先记录、不建议单独立项：起降走 `drawPilotDeck` 另一条渲染路径，`combatHudSC` 从未在起降时被调用，要做透视意味着把它接入起降路径，是比数据绑定修复大得多的独立工作。
-- **B5. ~~首页背景 canvas 加 IntersectionObserver~~**——已并入 **D3**（2026-07-04 站内审计，见上方 P0★），不再单独跟踪。
+- **B5. ~~首页背景 canvas 加 IntersectionObserver~~**——已并入 D3（2026-07-05 站内审计 D1–D5，详见 `RELEASE_NOTES.md`），不再单独跟踪。
 - **B6. 首页 WebGL 收尾**——`saturnRenderer` 等 raw-GL 的完整 context-restored 重建（目前仅 `preventDefault` 保活）；跃迁点 shader 弱机自适应（降 fbm 八度或分辨率）；统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量（目前 1.75 vs 1.5 不一致）。需真机 profiling。
 - **B7. 各页零散点子**——Arena「模型 vs 你」历史胜率曲线 + Twelve Data 接入后 W/M/6M/Y/5Y 徽标转 `REAL`；Games「夺冠路径」树状图。详见 **§5**。
 - **B10. Arena 旧 Human vs AI 对战区去留决定**——V13（2026-07-04）把对战区（旧名单/图表/预测面板/计分板整个 `.grid`）用 `.legacy-hidden` 暂时隐藏，源码全保留，arena.js 轮询已降频。待 TA 仪表盘用一段时间后决定：恢复共存（去掉 class 即可）、还是正式移除对战代码（届时 V5 的 Autopilot 前端区块布局也要重新考虑落点）。
@@ -110,7 +100,7 @@
 - **拆样式（Phase 3）**：各页 `<style>` 仍内联，未移到 `public/styles/<page>.css`。
 - **拆 main.js（Phase 4，剩余部分）**：`state`（飞行状态机）/`cursor`/`nav`/`boot` 职责拆分仍未开始。
 - **拆 styles.css（Phase 5）**：`@layer` 分层未开始。
-- **IntersectionObserver**：首页背景 canvas 不可见时停止渲染，尚未做（见 §1 D3，最高优先级正在做）。main.js 继续拆分见 §1 A2。
+- **IntersectionObserver**：首页背景 canvas 不可见时停止渲染——已核实为死代码需求，见 D3（`RELEASE_NOTES.md`）。main.js 继续拆分见 §1 A2。
 
 ---
 
