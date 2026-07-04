@@ -3,6 +3,16 @@
   "updated": "2026-07-04",
   "version": 4,
   "mode": "live",
+  "teamLogos": {
+    "BLG": "https://gol.gg/_img/teams_icon/Bilibili_Gaminglogo_profile.webp",
+    "HLE": "https://gol.gg/_img/teams_icon/Hanwha_Life_Esportslogo_profile.webp",
+    "T1": "https://gol.gg/_img/teams_icon/T1logo_profile.webp",
+    "G2": "https://gol.gg/_img/teams_icon/G2_Esportslogo_profile.webp",
+    "LYON": "https://gol.gg/_img/teams_icon/LYON_29logo_profile.webp",
+    "TES": "https://gol.gg/_img/teams_icon/Top_Esportslogo_profile.webp",
+    "FURIA": "https://gol.gg/_img/teams_icon/FURIAlogo_profile.webp",
+    "TSW": "https://gol.gg/_img/teams_icon/Team_Secret_Whaleslogo_profile.webp"
+  },
   "note_en": "Fable 5 Max's own reads on every MSI 2026 Bracket Stage series — for entertainment, not betting advice. Double-elimination, all series Bo5, Fearless Draft (each champion locks out for both teams once picked in the series). Odds shown only where a real book price was found (GG.bet); otherwise Fable states its own probability plainly as a call, not a market price.",
   "note_zh": "Fable 5 Max 对每场 MSI 2026 淘汰赛的个人研判——仅供娱乐，不构成博彩建议。双败淘汰赛制，全部系列赛 Bo5，赛制为 Fearless Draft（同一系列赛内任意一方选过的英雄，双方均不可再选）。仅在查到真实盘口（GG.bet）时展示赔率；其余情况 Fable 直接给出自己的概率研判，不冒充市场价格。",
   "record": {
@@ -56,7 +66,6 @@
     {
       "team": "BLG",
       "team_zh": "BLG",
-      "flag": "🀄",
       "prob": 26,
       "reason_en": "Survived a five-game war with T1, the round's marquee tie — a statement result that lifts BLG to tournament favorite. Advances to UB R2 vs LYON, fresh off a 3-0 sweep of FURIA.",
       "reason_zh": "五局苦战力克T1（本轮焦点战），笑到最后——夺冠热门地位进一步巩固。晋级上位组第二轮，对手LYON刚3-0横扫FURIA。"
@@ -64,7 +73,6 @@
     {
       "team": "HLE",
       "team_zh": "HLE",
-      "flag": "🇰🇷",
       "prob": 23,
       "reason_en": "Still unbeaten after a clean 3-0 sweep of TSW. Faces G2 in UB R2, July 5 08:00 UTC — G2's grueling 5-game path to get here is the key form signal ahead of the clash.",
       "reason_zh": "3-0横扫TSW，仍保持不败。上位组第二轮7月5日（UTC 08:00）战G2——G2五局艰难晋级是赛前最大观察点。"
@@ -72,7 +80,6 @@
     {
       "team": "T1",
       "team_zh": "T1",
-      "flag": "🇰🇷",
       "prob": 15,
       "reason_en": "Dropped to lower bracket after a five-game classic vs BLG (2-3), but the three-time World Champion pedigree keeps them live. Faces FURIA in LB R1, July 6 03:00 UTC.",
       "reason_zh": "五局经典战2-3不敌BLG，跌入下位组，但三届世界冠军底蕴仍在。下位组首轮7月6日（UTC 03:00）战FURIA。"
@@ -80,7 +87,6 @@
     {
       "team": "G2",
       "team_zh": "G2",
-      "flag": "🇪🇺",
       "prob": 13,
       "reason_en": "Advances after the reverse sweep of TES. Faces HLE, who looked untouchable in their own opener, in UB R2 on July 5, 08:00 UTC — a much tougher test.",
       "reason_zh": "逆转淘汰TES后晋级，上位组第二轮迎战开局横扫TSW、状态更佳的HLE——7月5日（UTC 08:00），难度明显提升。"
@@ -88,7 +94,6 @@
     {
       "team": "LYON",
       "team_zh": "LYON",
-      "flag": "🇺🇸",
       "prob": 9,
       "reason_en": "Swept FURIA 3-0 to reach UB R2 vs BLG (July 6, 08:00 UTC) — the region's best MSI result in recent cycles, though a heavy underdog next against a red-hot BLG.",
       "reason_zh": "3-0横扫FURIA，晋级上位组第二轮战BLG（7月6日 UTC 08:00）——赛区近年最佳战绩，但下一战对阵状态火热的BLG仍属明显劣势。"
@@ -96,7 +101,6 @@
     {
       "team": "TES",
       "team_zh": "TES",
-      "flag": "🀄",
       "prob": 6,
       "reason_en": "Dropped to lower bracket after blowing a 2-0 lead vs G2. Faces TSW in LB R1, July 5 03:00 UTC, in a match both sides need to survive.",
       "reason_zh": "对G2 2-0领先被逆转后跌入下位组。下位组首轮7月5日（UTC 03:00）战TSW，双方都输不起。"
@@ -104,7 +108,6 @@
     {
       "team": "FURIA",
       "team_zh": "FURIA",
-      "flag": "🇧🇷",
       "prob": 4,
       "reason_en": "Swept 0-3 by LYON, the round's most one-sided result. Faces T1 in LB R1 July 6 03:00 UTC — a brutal draw for a team that now needs everything to break right.",
       "reason_zh": "被LYON 0-3横扫，本轮最一边倒的结果。下位组首轮7月6日（UTC 03:00）战T1——对手实力悬殊，局面异常艰难。"
@@ -112,7 +115,6 @@
     {
       "team": "TSW",
       "team_zh": "TSW",
-      "flag": "🌏",
       "prob": 4,
       "reason_en": "Swept 0-3 by HLE with a weak underlying statline. Faces TES in LB R1, July 5 03:00 UTC, in a must-win to stay alive.",
       "reason_zh": "被HLE 0-3横扫，数据表现平平。下位组首轮7月5日（UTC 03:00）战TES，输球即遭淘汰。"
@@ -122,49 +124,48 @@
     {
       "team": "Knight · BLG",
       "team_zh": "Knight · BLG",
-      "flag": "🀄",
       "prob": 24,
       "reason_en": "Widely tipped as MSI 2026's best player. Central to BLG's five-game marquee win over T1, the round's biggest statement — BLG is now the tournament's title favorite (26% odds).",
-      "reason_zh": "赛前即被广泛看好为本届最佳选手。BLG五局苦战力克T1（本轮焦点战）的核心，目前是夺冠头号热门（26%）。"
+      "reason_zh": "赛前即被广泛看好为本届最佳选手。BLG五局苦战力克T1（本轮焦点战）的核心，目前是夺冠头号热门（26%）。",
+      "teamCode": "BLG"
     },
     {
       "team": "Caps · G2",
       "team_zh": "Caps · G2",
-      "flag": "🇪🇺",
       "prob": 21,
       "reason_en": "Powered G2's Game 5 comeback on his signature Mel — completing the first reverse sweep at an international event in three years, storming back from 0-2 down vs TES.",
-      "reason_zh": "G2第五局逆转的核心功臣，招牌英雄Mel——帮助球队从0-2落后完成近三年国际赛事首次逆转横扫TES。"
+      "reason_zh": "G2第五局逆转的核心功臣，招牌英雄Mel——帮助球队从0-2落后完成近三年国际赛事首次逆转横扫TES。",
+      "teamCode": "G2"
     },
     {
       "team": "Delight · HLE",
       "team_zh": "Delight · HLE",
-      "flag": "🇰🇷",
       "prob": 20,
       "reason_en": "Named series MVP of HLE's 3-0 sweep of TSW, averaging 2.3/2.3/11.3 KDA with a series-high 75.6% kill participation — the backbone of the only unbeaten team left.",
-      "reason_zh": "HLE 3-0横扫TSW的系列赛MVP，场均2.3/2.3/11.3，参团率75.6%全场最高——目前唯一不败战队的核心。"
+      "reason_zh": "HLE 3-0横扫TSW的系列赛MVP，场均2.3/2.3/11.3，参团率75.6%全场最高——目前唯一不败战队的核心。",
+      "teamCode": "HLE"
     },
     {
       "team": "Gumayusi · HLE",
       "team_zh": "Gumayusi · HLE",
-      "flag": "🇰🇷",
       "prob": 19,
       "reason_en": "Reigning Worlds 2025 Final MVP and part of T1's three-peat, now anchoring HLE's bot lane on the tournament's only unbeaten roster — even as this series' MVP nod went to teammate Delight.",
-      "reason_zh": "世界赛2025总决赛MVP得主、T1三连冠成员，如今坐镇HLE下路——目前唯一不败战队核心之一，尽管本轮系列赛MVP花落队友Delight。"
+      "reason_zh": "世界赛2025总决赛MVP得主、T1三连冠成员，如今坐镇HLE下路——目前唯一不败战队核心之一，尽管本轮系列赛MVP花落队友Delight。",
+      "teamCode": "HLE"
     },
     {
       "team": "Faker · T1",
       "team_zh": "Faker · T1",
-      "flag": "🇰🇷",
       "prob": 16,
       "reason_en": "Fell to the lower bracket after BLG's five-game win, but the three-time World Champion's pedigree keeps him in the MVP conversation if T1 rattles off a deep run.",
-      "reason_zh": "五局苦战不敌BLG跌入下位组，但三届世界冠军底蕴仍在——若T1能在下位组打出连胜，仍会是MVP话题焦点。"
+      "reason_zh": "五局苦战不敌BLG跌入下位组，但三届世界冠军底蕴仍在——若T1能在下位组打出连胜，仍会是MVP话题焦点。",
+      "teamCode": "T1"
     }
   ],
   "fearless": [
     {
       "team": "HLE",
       "team_zh": "HLE",
-      "flag": "🇰🇷",
       "poolDepth": 15,
       "note_en": "Full 3-game sweep of TSW: 15 unique champions across the series, none repeated — confirmed via gol.gg official match data.",
       "note_zh": "3-0横扫TSW全系列共用15个不重复英雄——数据来自gol.gg官方赛事记录，已核实。",
@@ -177,7 +178,6 @@
     {
       "team": "TSW",
       "team_zh": "TSW",
-      "flag": "🌏",
       "poolDepth": 15,
       "note_en": "Lost the series 0-3 to HLE but still drew 15 unique picks across 3 games — confirmed via gol.gg official match data.",
       "note_zh": "0-3不敌HLE，但全系列仍用了15个不重复英雄——数据来自gol.gg官方赛事记录，已核实。",
@@ -190,7 +190,6 @@
     {
       "team": "G2",
       "team_zh": "G2",
-      "flag": "🇪🇺",
       "poolDepth": 25,
       "note_en": "Reverse-swept TES 3-2 from 0-2 down — the full 5 games drew 25 unique champions, none repeated. Confirmed via gol.gg official match data.",
       "note_zh": "0-2落后逆转3-2淘汰TES——五局系列赛共用25个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
@@ -205,7 +204,6 @@
     {
       "team": "TES",
       "team_zh": "TES",
-      "flag": "🀄",
       "poolDepth": 25,
       "note_en": "Led G2 2-0 before losing 3 straight — the full 5 games drew 25 unique champions, none repeated. Confirmed via gol.gg official match data.",
       "note_zh": "曾2-0领先G2后连丢三局——五局系列赛共用25个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
@@ -220,7 +218,6 @@
     {
       "team": "BLG",
       "team_zh": "BLG",
-      "flag": "🀄",
       "poolDepth": 25,
       "note_en": "Won a five-game war with T1 (3-2) — the full series drew 25 unique champions, none repeated. Confirmed via gol.gg official match data.",
       "note_zh": "五局苦战3-2力克T1——全系列共用25个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
@@ -235,7 +232,6 @@
     {
       "team": "T1",
       "team_zh": "T1",
-      "flag": "🇰🇷",
       "poolDepth": 25,
       "note_en": "Pushed BLG to 5 games before losing 2-3 — the full series drew 25 unique champions, none repeated. Confirmed via gol.gg official match data.",
       "note_zh": "五局苦战2-3不敌BLG——全系列共用25个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
@@ -250,7 +246,6 @@
     {
       "team": "LYON",
       "team_zh": "LYON",
-      "flag": "🇺🇸",
       "poolDepth": 15,
       "note_en": "Swept FURIA 3-0 — 15 unique champions across the 3 games, none repeated. Confirmed via gol.gg official match data.",
       "note_zh": "3-0横扫FURIA——全系列共用15个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
@@ -263,7 +258,6 @@
     {
       "team": "FURIA",
       "team_zh": "FURIA",
-      "flag": "🇧🇷",
       "poolDepth": 15,
       "note_en": "Swept 0-3 by LYON — still drew 15 unique picks across the 3 games. Confirmed via gol.gg official match data.",
       "note_zh": "被LYON 0-3横扫——全系列仍用了15个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
@@ -283,10 +277,8 @@
       "kickoff": "2026-07-03T08:00:00Z",
       "home": "HLE",
       "home_zh": "HLE",
-      "homeFlag": "🇰🇷",
       "away": "TSW",
       "away_zh": "TSW",
-      "awayFlag": "🌏",
       "opus": "home",
       "conf": 0.72,
       "opusScore": "3-0",
@@ -303,10 +295,8 @@
       "kickoff": "2026-07-03T08:00:00Z",
       "home": "G2",
       "home_zh": "G2",
-      "homeFlag": "🇪🇺",
       "away": "TES",
       "away_zh": "TES",
-      "awayFlag": "🀄",
       "opus": "away",
       "conf": 0.63,
       "opusScore": "1-3",
@@ -323,10 +313,8 @@
       "kickoff": "2026-07-04T03:00:00Z",
       "home": "FURIA",
       "home_zh": "FURIA",
-      "homeFlag": "🇧🇷",
       "away": "LYON",
       "away_zh": "LYON",
-      "awayFlag": "🇺🇸",
       "opus": "away",
       "conf": 0.58,
       "opusScore": "1-3",
@@ -343,10 +331,8 @@
       "kickoff": "2026-07-04T08:00:00Z",
       "home": "BLG",
       "home_zh": "BLG",
-      "homeFlag": "🀄",
       "away": "T1",
       "away_zh": "T1",
-      "awayFlag": "🇰🇷",
       "opus": "away",
       "conf": 0.55,
       "opusScore": "2-3",
@@ -363,10 +349,8 @@
       "kickoff": "2026-07-05T08:00:00Z",
       "home": "HLE",
       "home_zh": "HLE",
-      "homeFlag": "🇰🇷",
       "away": "G2",
       "away_zh": "G2",
-      "awayFlag": "🇪🇺",
       "opus": "home",
       "conf": 0.68,
       "opusScore": "3-1",
@@ -383,10 +367,8 @@
       "kickoff": "2026-07-05T03:00:00Z",
       "home": "TES",
       "home_zh": "TES",
-      "homeFlag": "🀄",
       "away": "TSW",
       "away_zh": "TSW",
-      "awayFlag": "🌏",
       "opus": "home",
       "conf": 0.66,
       "opusScore": "3-1",
@@ -403,10 +385,8 @@
       "kickoff": "2026-07-06T03:00:00Z",
       "home": "T1",
       "home_zh": "T1",
-      "homeFlag": "🇰🇷",
       "away": "FURIA",
       "away_zh": "FURIA",
-      "awayFlag": "🇧🇷",
       "opus": "home",
       "conf": 0.85,
       "opusScore": "3-0",
@@ -423,10 +403,8 @@
       "kickoff": "2026-07-06T08:00:00Z",
       "home": "BLG",
       "home_zh": "BLG",
-      "homeFlag": "🀄",
       "away": "LYON",
       "away_zh": "LYON",
-      "awayFlag": "🇺🇸",
       "opus": "home",
       "conf": 0.72,
       "opusScore": "3-1",
@@ -443,10 +421,8 @@
       "kickoff": "2026-07-12T08:00:00Z",
       "home": "TBD",
       "home_zh": "待定",
-      "homeFlag": "🏆",
       "away": "TBD",
       "away_zh": "待定",
-      "awayFlag": "🏆",
       "opus": null,
       "conf": null,
       "opusScore": null,

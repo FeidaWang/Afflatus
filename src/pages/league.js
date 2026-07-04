@@ -23,6 +23,7 @@
   const fmtDur = (ms) => window.AfflatusClock.fmtDur(ms);
   const isTBD = (s) => s.home === 'TBD' || s.away === 'TBD';
   const teamName = (s, side) => lang === 'zh' ? (s[side + '_zh'] || s[side]) : s[side];
+  const teamLogo = (code) => { const url = data && data.teamLogos && data.teamLogos[code]; return url ? `<img class="team-logo" src="${url}" alt="${code}" loading="lazy">` : ''; };
 
   /* ---------- scratch-to-reveal (identical mechanic to games.js) ---------- */
   function mountScratch(wrap, key) {
@@ -60,7 +61,8 @@
     host.innerHTML = items.map((it) => {
       const title = lang === 'zh' ? (it.team_zh || it.team) : it.team;
       const reason = T(it.reason_en, it.reason_zh);
-      return `<div class="prob" data-team="${it.team}"><div class="prow"><span class="pflag">${it.flag || ''}</span><span class="pname">${title}</span><b class="pval" data-to="${it.prob}">0%</b></div><div class="pbar"><i style="--w:${it.prob}%"></i></div><p class="preason">${reason}</p></div>`;
+      const code = it.teamCode || it.team;
+      return `<div class="prob" data-team="${it.team}"><div class="prow">${teamLogo(code)}<span class="pname">${title}</span><b class="pval" data-to="${it.prob}">0%</b></div><div class="pbar"><i style="--w:${it.prob}%"></i></div><p class="preason">${reason}</p></div>`;
     }).join('');
     if (!RM) host.querySelectorAll('.pval').forEach((el) => { const to = +el.dataset.to, t0 = performance.now(); (function s(ts) { const p = Math.min(1, (ts - t0) / 900); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + '%'; if (p < 1) requestAnimationFrame(s); })(performance.now()); });
     else host.querySelectorAll('.pval').forEach((el) => el.textContent = el.dataset.to + '%');
@@ -87,8 +89,8 @@
     if (!o) return '';
     const hn = teamName(s, 'home'), an = teamName(s, 'away');
     const cells = [
-      { lbl: (s.homeFlag || '') + ' ' + hn, val: o.h },
-      { lbl: (s.awayFlag || '') + ' ' + an, val: o.a }
+      { lbl: teamLogo(s.home) + ' ' + hn, val: o.h },
+      { lbl: teamLogo(s.away) + ' ' + an, val: o.a }
     ].map((c) => `<div class="odds-cell"><div class="ol">${c.lbl}</div><div class="ov">${c.val.toFixed(2)}</div></div>`).join('');
     const src = o.src ? `<span class="odds-src">${T('Source', '来源')}: ${o.src} · ${T('for entertainment only', '仅供娱乐')}</span>` : '';
     return `<div class="odds"><div class="odds-label">${T('MONEYLINE · BOOK ODDS', '独赢盘 · 真实赔率')}</div><div class="odds-1x2">${cells}</div>${src}</div>`;
@@ -104,10 +106,10 @@
       const done = !!s.result;
       const opusLine = (s.opus && !tbd) ? `<div class="opus">🤖 <b>Fable</b> · ${outcomeLabel(s, s.opus)} · ${Math.round(s.conf * 100)}%<span class="orsn">${T(s.reason_en, s.reason_zh)}</span></div>` : (tbd ? '' : `<div class="opus dim">🤖 ${T('Call pending exact schedule confirmation', '待官方具体时间确认后给出研判')}</div>`);
       const oddsHtml = !tbd && !done ? renderOdds(s) : '';
-      const opScore = (s.opusScore && !tbd && !done) ? `<div class="scratch opscore" data-key="score:${s.id}"><div class="reveal">🤖 <span data-en="FABLE SERIES SCORE" data-zh="FABLE 比分预测">FABLE SERIES SCORE</span> · <b>${s.homeFlag} ${s.opusScore} ${s.awayFlag}</b></div></div>` : '';
+      const opScore = (s.opusScore && !tbd && !done) ? `<div class="scratch opscore" data-key="score:${s.id}"><div class="reveal">🤖 <span data-en="FABLE SERIES SCORE" data-zh="FABLE 比分预测">FABLE SERIES SCORE</span> · <b>${teamLogo(s.home)} ${s.opusScore} ${teamLogo(s.away)}</b></div></div>` : '';
       const resultLine = done ? `<div class="resline">${T('FINAL', '终局')} · <b>${teamName(s, 'home')} ${s.result.home}–${s.result.away} ${teamName(s, 'away')}</b>${s.opus ? ` · ${T('Fable called', 'Fable 预测')} ${s.opus === (s.result.home > s.result.away ? 'home' : 'away') ? '✓' : '✗'}` : ''}</div>` : '';
-      const homeTeam = `<div class="team-d"><span class="fl">${s.homeFlag || ''}</span><span class="nm">${teamName(s, 'home')}</span></div>`;
-      const awayTeam = `<div class="team-d"><span class="fl">${s.awayFlag || ''}</span><span class="nm">${teamName(s, 'away')}</span></div>`;
+      const homeTeam = `<div class="team-d">${teamLogo(s.home)}<span class="nm">${teamName(s, 'home')}</span></div>`;
+      const awayTeam = `<div class="team-d">${teamLogo(s.away)}<span class="nm">${teamName(s, 'away')}</span></div>`;
       const vsBlock = `<div class="team-vs"><b>VS</b></div>`;
       const roundLabel = T(s.round, s.round_zh);
       return `<article class="fx${tbd ? ' tbd' : ''}${done ? ' locked' : ''}" data-id="${s.id}" data-ko="${Date.parse(s.kickoff)}" data-tbd="${tbd ? 1 : 0}" data-done="${done ? 1 : 0}"><div class="fx-top"><span class="stage">${roundLabel} · BO${s.bo}</span><span class="cd"></span></div><div class="fx-teams">${homeTeam}${vsBlock}${awayTeam}</div>${opusLine}${oddsHtml}${opScore}${resultLine}</article>`;
