@@ -30,7 +30,7 @@
 <style>
 :root{
   --bg:#0a1428;--panel:#0c1c2c;--panel2:#0f2436;--ink:#f0e6d2;--dim:#7a92a3;--line:rgba(200,170,110,.32);
-  --gold:#c8aa6e;--blue:#0ac8b9;--yellow:#f3e2a9;--green:#3dff9a;--red:#ff4d5e;
+  --gold:#c8aa6e;--lolgold:#c79b3b;--blue:#0ac8b9;--yellow:#f3e2a9;--green:#3dff9a;--red:#ff4d5e;
   --disp:'Cinzel',Georgia,serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
 }
 *{box-sizing:border-box}
@@ -78,24 +78,26 @@ a{color:inherit;text-decoration:none}
 .note b{color:var(--yellow)}
 
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
-.mvp-panel{margin-top:16px}
+.fearless-panel{margin-top:16px}
 .panel{border:1px solid var(--line);background:var(--panel2);position:relative;clip-path:polygon(0 0,100% 0,100% 100%,18px 100%,0 calc(100% - 18px))}
 .panel h3{font:700 13px/1 var(--disp);letter-spacing:.14em;text-transform:uppercase;margin:0;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--yellow);display:flex;justify-content:space-between}
 .panel h3 .sub{color:var(--dim);font:400 10px/1 var(--mono)}
 .panel .in{padding:12px 14px}
-.prob{margin-bottom:13px}
-.prow{display:flex;align-items:center;gap:8px;font:600 13px/1 var(--disp)}
+.prob{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.prob:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.prow{display:flex;align-items:center;gap:8px;font:600 13px/1 var(--disp);margin-bottom:5px}
 .pflag{font-size:16px}
 .pname{flex:1}
 .pval{font:700 15px/1 var(--mono);color:var(--blue)}
 .pval.dim{color:var(--dim)}
+#champs .pval,#mvp .pval{color:var(--lolgold)}
 .pbar{height:8px;margin:6px 0 5px;background:#081018;border:1px solid rgba(255,255,255,.08);overflow:hidden}
 .pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--blue));background-size:200% 100%;animation:grow 1s cubic-bezier(.2,.8,.2,1) forwards,flowb 3s linear infinite}
 @keyframes grow{to{width:var(--w)}}
 @keyframes flowb{to{background-position:200% 0}}
 .preason{margin:0;color:#9aa8b0;font:400 12px/1.45 var(--mono)}
-.pchamps{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-.pchamps img{width:22px;height:22px;border-radius:3px;border:1px solid var(--line);display:block}
+.pchamps{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pchamps img{width:24px;height:24px;border-radius:4px;border:1px solid var(--line);display:block}
 @media (prefers-reduced-motion: reduce){.pbar i{animation:none;width:var(--w)}}
 
 /* series (bracket cards) */
@@ -193,14 +195,14 @@ a{color:inherit;text-decoration:none}
       <div class="in" id="champs"></div>
     </section>
     <section class="panel">
-      <h3 data-en="FEARLESS DRAFT POOL" data-zh="FEARLESS 英雄池"><span class="sub" id="updated"></span></h3>
-      <div class="in" id="fearless"></div>
+      <h3 data-en="MVP RACE" data-zh="MVP 之争"><span class="sub" data-en="Fable's shortlist · not exhaustive" data-zh="Fable 候选名单 · 非全员穷举">Fable's shortlist · not exhaustive</span></h3>
+      <div class="in" id="mvp"></div>
     </section>
   </div>
 
-  <section class="panel mvp-panel">
-    <h3 data-en="MVP RACE" data-zh="MVP 之争"><span class="sub" data-en="Fable's shortlist · not exhaustive" data-zh="Fable 候选名单 · 非全员穷举">Fable's shortlist · not exhaustive</span></h3>
-    <div class="in" id="mvp"></div>
+  <section class="panel fearless-panel">
+    <h3 data-en="FEARLESS DRAFT POOL" data-zh="FEARLESS 英雄池"><span class="sub" id="updated"></span></h3>
+    <div class="in" id="fearless"></div>
   </section>
 
   <div class="sec-label" data-en="BRACKET STAGE · ODDS &amp; PREDICTIONS" data-zh="淘汰赛阶段 · 赔率与预测">BRACKET STAGE · ODDS &amp; PREDICTIONS</div>
