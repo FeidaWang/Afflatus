@@ -278,11 +278,18 @@ export function initAlphardForge() {
   let mx = 0, my = 0, tmx = 0, tmy = 0;
   function onMove(e) { tmx = (e.clientX / innerWidth - 0.5); tmy = (e.clientY / innerHeight - 0.5); }
 
-  // scroll progress + JS pin
+  // scroll progress + pin. The pin itself (keeping the stage visually fixed
+  // while its 200vh wrapper scrolls past) is handled by a CSS scroll-driven
+  // animation (see styles.css "@supports (animation-timeline: view())") on
+  // browsers that support it — classList toggling + the scroll listener below
+  // are skipped there entirely. `p` (0..1) is still computed here either way:
+  // it feeds the WebGL uniforms (dolly/brightness) and tagline typing, which
+  // CSS can't drive on its own.
+  const cssPin = typeof CSS !== 'undefined' && !!CSS.supports && CSS.supports('animation-timeline', 'view()');
   function progress() {
     if (reduce) return 1;
     const rect = section.getBoundingClientRect(), vh = window.innerHeight;
-    if (stageEl) { const ended = rect.bottom < vh; stageEl.classList.toggle('pin-fixed', rect.top <= 0 && rect.bottom >= vh && !ended); stageEl.classList.toggle('pin-end', ended); }
+    if (stageEl && !cssPin) { const ended = rect.bottom < vh; stageEl.classList.toggle('pin-fixed', rect.top <= 0 && rect.bottom >= vh && !ended); stageEl.classList.toggle('pin-end', ended); }
     const travel = rect.height - vh; if (travel <= 0) return 0; return clamp(-rect.top / travel, 0, 1);
   }
 
@@ -322,13 +329,16 @@ export function initAlphardForge() {
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
   const io = new IntersectionObserver(es => { es.forEach(e => { e.isIntersecting ? start() : stop(); }); }, { threshold: 0 });
   io.observe(section);
+  // only needed to keep .pin-fixed/.pin-end in sync while the rAF loop isn't
+  // running — moot when cssPin is true, since progress() no longer touches
+  // those classes at all in that branch.
   const onScroll = () => { if (!running) progress(); };
-  addEventListener('scroll', onScroll, { passive: true });
+  if (!cssPin) addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', () => { size(); if (!running) render(performance.now()); }, { passive: true });
   addEventListener('pointermove', onMove, { passive: true });
   render(performance.now());
 
-  return { destroy() { stop(); io.disconnect(); removeEventListener('scroll', onScroll); removeEventListener('pointermove', onMove); renderer.dispose(); } };
+  return { destroy() { stop(); io.disconnect(); if (!cssPin) removeEventListener('scroll', onScroll); removeEventListener('pointermove', onMove); renderer.dispose(); } };
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAlphardForge, { once: true });

@@ -19,7 +19,7 @@
 1. **S0** SEO Phase 0 快赢——**✅ 已完成（2026-07-05）**：7 页 canonical + og:url、index.html 的 WebSite/Person JSON-LD、serial.html 的 Book×2 JSON-LD、`public/404.html`、`vercel.json`（www→apex + /api noindex）、`npm run linkcheck`（linkinator）。Phase 1（CWV：字体/JS 分包/gtag 延迟）范围已重新评估，比原设想复杂，待排期，详见 §9。
 2. **V12** 数据管线统一——**✅ 工程可做的部分已完成（2026-07-05）**：push-data.sh 通用脚本、溯源徽章（五页全部铺开）、命中率组件去重，详见 §7.5。Brier 分数与首页 Top10 vs SPY/SMH 记分需要新的数据管线（分别是"保留历史 confidence"和"从零建价格追踪"），不是现有数据能直接拼出来的，留待单独立项。6 个定时任务接 push-data.sh 站主决定跳过（读不到任务 prompt 全文，全文覆写风险大，且现状本就跑得好）。
 3. **A2** main.js 继续拆分（Phase 3–5）——无截止压力，详见 §3。
-4. **B1** CSS Scroll-Driven Animations——低风险、现成的性能收益，详见 §8.2。
+4. **B1** CSS Scroll-Driven Animations——**✅ 已完成（2026-07-05）**：alphardForge 的 JS 手动 pin（scroll 监听 + classList 切换 `.pin-fixed`/`.pin-end`）替换为 `@supports (animation-timeline: view())` 下的原生 view-timeline + transform 动画，JS 端 feature-detect 后跳过旧逻辑；不支持的浏览器完整回退到原 JS 路径，两者不会同时生效。驱动 WebGL uniform 的 `--forge` 数值计算不受影响（CSS 无法驱动 Three.js，仍需 JS）。详见 §8.2。
 5. **B6** 首页 WebGL 收尾——需真机 profiling，沙盒做不了，详见 §5「Home」。
 6. **C4** TypeScript 渐进迁移——随 A2 顺路做，不单独立项，详见 §8.2。
 7. **C3** three.js WebGPURenderer + Bloom/ACES——投入大，等有余力再评估，详见 §8.2。
@@ -273,13 +273,12 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 
 ### 8.2 技术选型建议
 
-**已采用**（不再需要评估）：Vite MPA 多入口、View Transitions API（跨文档，与 `transition.js` 共存不叠加）、OffscreenCanvas + Worker（目前只做了首页星空，combat/雷达/K 线仍在主线程）。
+**已采用**（不再需要评估）：Vite MPA 多入口、View Transitions API（跨文档，与 `transition.js` 共存不叠加）、OffscreenCanvas + Worker（目前只做了首页星空，combat/雷达/K 线仍在主线程）、CSS Scroll-Driven Animations（B1，2026-07-05，目前只用在 alphardForge 的 pin，`@supports` 渐进增强+JS 回退，见 §1）。
 
 **待评估 / 值得做**
 
 | 技术 | 解决什么 | 成本 |
 | --- | --- | --- |
-| **CSS Scroll-Driven Animations** | `animation-timeline: scroll()/view()` 把滚动动画搬到合成器线程，零 JS 不掉帧 | 中 |
 | **three.js WebGPURenderer + TSL** | compute shader 粒子（百万级星涡/爆炸碎片）+ 更低 draw call 开销 | 中-高 |
 | **Bloom/HDR 后期处理** | `UnrealBloomPass` + ACES tone mapping，真实辉光替代 radial-gradient 假光晕 | 中 |
 | **TypeScript（渐进）** | 拆 main.js 时新模块直接 `.ts` | 低（增量） |
@@ -289,7 +288,7 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 
 ### 8.3 落地顺序
 
-1. **短期**：scroll-driven animations 替换 alphardForge 的 JS pin 逻辑；main.js 拆分继续（§1 A2）；新模块用 TS。
+1. **短期**：~~scroll-driven animations 替换 alphardForge 的 JS pin 逻辑~~ ✅ 已完成（B1）；main.js 拆分继续（§1 A2）；新模块用 TS。
 2. **中期**：three.js WebGPURenderer 试点跃迁点星涡（compute 粒子 + bloom），A/B 对比帧率后再推广。
 3. **触发式**：页面/章节数量到阈值 → Astro 迁移。
 
