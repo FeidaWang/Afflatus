@@ -30,7 +30,7 @@
 2. **V19** Arena 自选股「预测差值」信号层——**Phase 1 已上线攒数据中（2026-07-05）**：预测 schema 扩展 + 收盘回填定时任务已建好，Phase 2（校准纯函数）/ Phase 3（信号卡 UI）待数据攒够后再做，详见 §7.7。
 3. **V9 → V10 → V11** Sectors 中美 AI 对比矩阵 + 后内存专题 + 定时任务——**三项已全部实现（2026-07-05）**：`sectors.html` 新增两个数据驱动区块（对比矩阵 4 厂商卡 + 后内存十强论点卡），`src/lib/validateSectorsData.js` 校验网关（16 条 vitest），新建定时任务 `sectors-watch-weekly`（周日 10:00，跑现成的 `sectors-watch.md`+`postmemory-top10.md` 两个提示词）。**数据仍是空种子**，真实内容等下周日首次运行才会出现，详见 §7.2。
 4. **V2** Games 世界杯收官跟进——被动监控，决赛 7/19，赛程推进后补 `home/away/result` 即可。
-5. **机会主义拾取**（无截止压力，不强制排期）：C1/C2 Signal 传导链可视化自动化（§6）> B7 各页零散点子（§5）> B9 Odin 舰体收尾（§4 V15）> B3 combatHudSC 纵深透视（记录在案，不建议单独立项）。
+5. **机会主义拾取**（无截止压力，不强制排期）：C1/C2 Signal 传导链可视化自动化（§6，卡点：BREACH METER 缺概率数值字段+无 FedWatch 数据源，事件回放迷你图需要分钟级盘中数据，现有 `/api/quote` 只有日线——暂不可行）> **B7 Games 夺冠之路树状图已实现（2026-07-05）**，详见 §5 > B9 Odin 舰体收尾（§4 V15，待 `?ship=odin` 观感确认）> B3 combatHudSC 纵深透视（记录在案，不建议单独立项）。
 
 ---
 
@@ -164,7 +164,7 @@
 - **Arena**：**V13 美股技术分析仪表盘 + V5 Autopilot 双模型模拟盘全部上线（2026-07-05，详见 `RELEASE_NOTES.md`）**——旧 Human vs AI 对战区已正式下线（B10 已关闭）。原有点子保留（B7）：「模型 vs 你」历史胜率曲线；接 Twelve Data 后把 W/M/6M/Y/5Y 徽标改 `REAL`。
 - **Sectors**：**v1.5 → 中美 AI 对比矩阵 + 后内存专题（V9–V11，§7.2）**；「研判与 Arena 预测打通」并入 V12 评估。
 - **Signal**：**v1.5 → Warsh 时代重构已完成（V6–V7，§7.3，详见 `RELEASE_NOTES.md`）**；其余见 **§6**。
-- **Games**：世界杯收官跟进已排入 **V2（P0）**——淘汰赛对阵确定后补 `home/away/result`（决赛 7/19）；「夺冠路径」树状图留 B7。
+- **Games**：世界杯收官跟进已排入 **V2（P0）**——淘汰赛对阵确定后补 `home/away/result`（决赛 7/19）；**「夺冠之路」树状图已实现（B7，2026-07-05）**：`src/pages/games.js` 的 `renderBracket()` 从原来只认 `bracket.qf` 改成通用多阶段渲染（`bracket.qf`/`bracket.sf`/`bracket.final` 任意存在即渲染，未来阶段自动接上不用再改代码），区块标题从写死的「ROUND OF 16 → QUARTER-FINALS」改成读 `bracket.stageLabel_en/zh`（此前这个字段写在数据里却从未被前端读取）；同步修改了 `games-worldcup-daily` 定时任务 prompt，要求 8 强出线后建 `bracket.sf`、4 强出线后建 `bracket.final`、每轮更新 `stageLabel_en/zh`，且明确 `bracket.*` 各阶段数组只增不删（与 `fixtures[]` 精简策略不同——路径本身就是这个功能的意义所在）。
 - **Leagues**（v1.5 新页，V0–V1）：MSI 2026 限时竞猜，7/12 决赛硬截止；赛后转战绩存档。规格见 **§7.4**。
 - **Novels**：暂无额外待办；Astro 阈值见 C5——**Leagues 上线后全站 7 页，逼近 ≥8 触发线**。
 

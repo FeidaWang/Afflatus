@@ -155,7 +155,12 @@ a{color:inherit;text-decoration:none}
 .scratch.revealed .scratch-cv{display:none}
 .tbdnote{margin-top:10px;font:400 12px var(--mono);color:var(--dim)}
 
-/* knockout bracket — R16 legs feeding each QF slot */
+/* knockout bracket — path-to-the-final tree: one titled sub-section per stage
+   (QF/SF/Final) that data.bracket actually contains so far, each stage reusing
+   the same leg/slot card markup */
+.bstage{margin-top:18px}
+.bstage:first-child{margin-top:0}
+.bstage-title{font:700 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
 .bracket{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .qf{border:1px solid var(--line);background:var(--panel2);padding:12px}
 .qf-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font:700 12px/1 var(--disp);letter-spacing:.1em;text-transform:uppercase;color:var(--yellow)}
@@ -237,8 +242,8 @@ a{color:inherit;text-decoration:none}
   <div class="sec-label" data-en="FIXTURES · ODDS &amp; PREDICTIONS" data-zh="赛程 · 赔率与预测">FIXTURES · ODDS &amp; PREDICTIONS</div>
   <div class="fxs" id="fixtures"><div class="empty">…</div></div>
 
-  <div class="sec-label" data-en="ROUND OF 16 → QUARTER-FINALS" data-zh="16强 → 8强对阵图">ROUND OF 16 → QUARTER-FINALS</div>
-  <div class="bracket" id="bracket"><div class="empty">…</div></div>
+  <div class="sec-label" id="bracketLabel" data-en="PATH TO THE FINAL" data-zh="夺冠之路">PATH TO THE FINAL</div>
+  <div id="bracket"><div class="empty">…</div></div>
 
   <footer class="foot" data-i18n-html data-en="<b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · odds from FanDuel/bet365 · public/games-data.json" data-zh="<b>竞猜竞技场</b> · 仅供娱乐 · 非博彩建议 · 赔率来源 FanDuel/bet365 · public/games-data.json"><b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · odds from FanDuel/bet365 · public/games-data.json</footer>
 </main>
