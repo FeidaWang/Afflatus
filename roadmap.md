@@ -28,7 +28,7 @@
 
 1. **V18** 战斗视图「立体化」——三个 Phase 代码已全部完成（2026-07-05），**待真人浏览器验收**（`?combatview=topdown&combatcam=director`），详见 §4「V18 实施路线」。
 2. **V19** Arena 自选股「预测差值」信号层——**Phase 1 已上线攒数据中（2026-07-05）**：预测 schema 扩展 + 收盘回填定时任务已建好，Phase 2（校准纯函数）/ Phase 3（信号卡 UI）待数据攒够后再做，详见 §7.7。
-3. **V9 → V10 → V11** Sectors 中美 AI 对比矩阵 + 后内存专题 + 定时任务——详见 §7.2。
+3. **V9 → V10 → V11** Sectors 中美 AI 对比矩阵 + 后内存专题 + 定时任务——**三项已全部实现（2026-07-05）**：`sectors.html` 新增两个数据驱动区块（对比矩阵 4 厂商卡 + 后内存十强论点卡），`src/lib/validateSectorsData.js` 校验网关（16 条 vitest），新建定时任务 `sectors-watch-weekly`（周日 10:00，跑现成的 `sectors-watch.md`+`postmemory-top10.md` 两个提示词）。**数据仍是空种子**，真实内容等下周日首次运行才会出现，详见 §7.2。
 4. **V2** Games 世界杯收官跟进——被动监控，决赛 7/19，赛程推进后补 `home/away/result` 即可。
 5. **机会主义拾取**（无截止压力，不强制排期）：C1/C2 Signal 传导链可视化自动化（§6）> B7 各页零散点子（§5）> B9 Odin 舰体收尾（§4 V15）> B3 combatHudSC 纵深透视（记录在案，不建议单独立项）。
 
@@ -246,7 +246,9 @@
 
 **前端（V5）**：净值双曲线（A vs B，SVG 折线 + viz.js 数字动画）、持仓表、成交/拒单日志、每日复盘卡（中英）。免责声明沿用全站规则（模拟盘、非投资建议）。
 
-### 7.2 Sectors 扩展（V9–V11）
+### 7.2 Sectors 扩展（V9–V11，2026-07-05 三项全部实现，数据仍是空种子）
+
+**已实现**：`src/lib/validateSectorsData.js`（纯校验函数，字段名与 `prompts/sectors-watch.md`/`prompts/postmemory-top10.md` 的输出 schema 逐字对应，16 条 vitest）+ `scripts/validate-sectors-data.mjs`（发布前校验 CLI，同 `validate-signal-events.mjs` 模式）；`public/sectors-data.json` 种子文件 `{updated:null, version:1}`；`sectors.html` 新增两个数据驱动区块——「US–CHINA AI WATCH」对比矩阵（4 厂商卡 + 标的映射篮子 + 本周综述）与「POST-MEMORY ERA」十强论点卡（三主线状态 + 逐票论点卡 + 换股提议），沿用 `signal.html` 既有的 inline IIFE fetch+render 模式（`T()`/`esc()`/`afflatus-lang` 重渲染），数据未填充时展示明确的「尚未填充」空状态而非假数据；新建定时任务 `sectors-watch-weekly`（周日 10:00 本机时间，同一次运行内先后跑 `sectors-watch.md` 与 `postmemory-top10.md` 两个已有提示词，月首周自动切 `monthly_deep` 深审模式，写回后跑校验 CLI，仅 `git add public/sectors-data.json`）。**真实数据要等下周日首次调度触发才开始出现**——前端 UI 与后端管线均已就绪，纯粹是时间等待，不同于 V18 那种需要人工介入的验收。
 
 - **对比矩阵**：4 厂商观察卡（美：Anthropic/OpenAI；中：智谱/阿里）——**每周更新**（产业格局以周为单位变化，日更是浪费）。每卡：当期版本与路线（开源权重 vs 闭源 API）、本周关键动态（带来源链接）、映射标的篮子。
 - **标的映射纪律**：定性关联标签（`direct` 直接受益 / `supplier` 上游供给 / `infra` 算力底座 / `competitor` 受压），**不给伪造的统计相关系数**；接 Twelve Data 历史真算 90 日价格相关性列为 stretch goal。
