@@ -16,13 +16,14 @@
 
 ### 队列 A · 性能与工程优先级 / Engineering & performance queue
 
-1. **V12** 数据管线统一——进行中（push-data.sh 通用脚本已完成，详见 §7.5；溯源徽章/战绩组件/Top10 记分待续）。
-2. **A2** main.js 继续拆分（Phase 3–5）——无截止压力，详见 §3。
-3. **B1** CSS Scroll-Driven Animations——低风险、现成的性能收益，详见 §8.2。
-4. **B6** 首页 WebGL 收尾——需真机 profiling，沙盒做不了，详见 §5「Home」。
-5. **C4** TypeScript 渐进迁移——随 A2 顺路做，不单独立项，详见 §8.2。
-6. **C3** three.js WebGPURenderer + Bloom/ACES——投入大，等有余力再评估，详见 §8.2。
-7. **C5** Astro 迁移——触发式（站内页面 ≥8 或 novels 章节 ≥20），当前 7 页逼近阈值，详见 §8.2。
+1. **S0** SEO Phase 0 快赢——**✅ 已完成（2026-07-05）**：7 页 canonical + og:url、index.html 的 WebSite/Person JSON-LD、serial.html 的 Book×2 JSON-LD、`public/404.html`、`vercel.json`（www→apex + /api noindex）、`npm run linkcheck`（linkinator）。Phase 1（CWV：字体/JS 分包/gtag 延迟）范围已重新评估，比原设想复杂，待排期，详见 §9。
+2. **V12** 数据管线统一——进行中（push-data.sh 通用脚本已完成，详见 §7.5；溯源徽章/战绩组件/Top10 记分待续）。
+3. **A2** main.js 继续拆分（Phase 3–5）——无截止压力，详见 §3。
+4. **B1** CSS Scroll-Driven Animations——低风险、现成的性能收益，详见 §8.2。
+5. **B6** 首页 WebGL 收尾——需真机 profiling，沙盒做不了，详见 §5「Home」。
+6. **C4** TypeScript 渐进迁移——随 A2 顺路做，不单独立项，详见 §8.2。
+7. **C3** three.js WebGPURenderer + Bloom/ACES——投入大，等有余力再评估，详见 §8.2。
+8. **C5** Astro 迁移——触发式（站内页面 ≥8 或 novels 章节 ≥20，**或** SEO 需要 SSG/SSR 时提前触发），当前 7 页；S0 Phase 0 已覆盖大部分静态 SEO 收益，暂不为 SEO 单独提前触发，详见 §8.2、§9。
 
 ### 队列 B · 功能性优先级 / Feature & product queue
 
@@ -288,6 +289,38 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 3. **触发式**：页面/章节数量到阈值 → Astro 迁移。
 
 **衡量标准**：Chrome DevTools Performance——主线程帧时间目标 <8ms、合成器帧率目标 120fps、子页 LCP <1.5s。
+
+---
+
+## 9. SEO 与个人品牌工程 / SEO & personal-brand engineering ★
+
+> 站主定位：US 个股仓位/研判 desk view + AI 竞猜实验 + 原创小说，读者群体分裂（美股读者 vs 小说读者），domain authority 从 0 起步。目标不是流量最大化，而是**让搜索引擎正确理解站点结构、内容可信度可被验证**。
+
+### Phase 0（S，无风险纯增量）✅ 已完成（2026-07-05）
+
+- 全站 7 页加 `<link rel="canonical">` + `<meta property="og:url">`（此前审计确认为 0）。
+- `index.html`：`WebSite` + `Person`（`name:"Feida Wang"`, `alternateName:"Bruce"`——沿用站内已公开的真实署名，未编造 `jobTitle`/`sameAs` 等未知字段）JSON-LD。
+- `serial.html`：两本小说的 `Book` JSON-LD（书名/作者笔名"槐酿"/简介/类型标签，均为页面已公开数据）。
+- `public/404.html`：静态兜底页，`noindex`，配色沿用首页基调。
+- `vercel.json`：新建——`www.feida.au` → apex 301（防子域名重复内容，域名是否已配置 www 未知，规则无副作用）；`/api/*` 加 `X-Robots-Tag: noindex`（两个纯 JSON 代理端点，无需被索引）。
+- `npm run linkcheck`：新增（`linkinator` + `vite build`），本地手动跑，检查内部相对链接/资源路径/第三方外链；`feida.au` 自身域名已加入 skip 名单（沙盒网络对生产域名请求会被拦截返回假 403，不代表真实死链，需在真机或部署后环境验证真实死链）。
+- **审计过程中确认无需动的项**：`public/robots.txt`、`public/sitemap.xml`（覆盖全部 7 页）**已存在且正确**，此前的审计遗漏了这两个文件。
+- **审计中发现的未修复小缺口**：`sectors.html` 唯独缺 `<link rel="icon">`（其余 6 页都有）——不在本次 SEO 改动范围内，记录于此，需要时单独修一行。
+
+### Phase 1（重新评估后比原计划复杂，待排期）
+
+原计划「统一自托管字体去重 Google Fonts」的前提有误——**7 页字体并非重复加载同一套**，而是每页有各自独立的字体身份（如 arena=Orbitron/Rajdhani，league=Cinzel/Spectral/Noto Serif SC 等 6 种字体，signal=Oswald/Space Mono……），只有 `page-turn.css` 里自托管的 Marathon Shapiro/PP Fraktion Mono/KH Interference 是另一套无关的自定义字体栈。真要自托管每页专属 Google Fonts 组合，需要逐页找对应 `.woff2` 授权文件、核实字重范围，工作量和风险比「去重」大得多。**待办**（排入 Phase 1，暂无一致方案）：
+- 评估：给每页 Google Fonts `<link>` 加 `<link rel="preload" as="style">` 是否已经拿到大部分收益（比全量自托管风险低很多）。
+- `main.js` 869KB 主 chunk 动态 import 拆分——独立于字体问题，收益更确定，可单独先做。
+- gtag 脚本 `defer`/延迟到 `requestIdleCallback`，避免阻塞首屏。
+
+### Phase 2（M-L，触发式）
+
+SSG/SSR（Astro）迁移——已并入 §1 C5 的触发条件，不单独立项。触发时机：页面数/章节数到阈值，**或** Phase 0+1 做完后仍有 SEO 硬瓶颈（如需要服务端渲染的结构化数据/动态 OG 图）时提前触发。
+
+### Phase 3（个人品牌工程，未排期）
+
+`Person` JSON-LD 目前只有 `name`/`alternateName`/`url`，`jobTitle`/`sameAs`（社交/职业主页）等字段需要站主提供真实信息，**未编造**——如需加强 E-E-A-T 信号可后续补充。独立 `/about` 页面（个人履历、免责声明整合）暂未排期。
 
 ---
 
