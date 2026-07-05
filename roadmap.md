@@ -17,7 +17,7 @@
 ### 队列 A · 性能与工程优先级 / Engineering & performance queue
 
 1. **S0** SEO Phase 0 快赢——**✅ 已完成（2026-07-05）**：7 页 canonical + og:url、index.html 的 WebSite/Person JSON-LD、serial.html 的 Book×2 JSON-LD、`public/404.html`、`vercel.json`（www→apex + /api noindex）、`npm run linkcheck`（linkinator）。Phase 1（CWV：字体/JS 分包/gtag 延迟）范围已重新评估，比原设想复杂，待排期，详见 §9。
-2. **V12** 数据管线统一——进行中（push-data.sh 通用脚本已完成，详见 §7.5；溯源徽章/战绩组件/Top10 记分待续）。
+2. **V12** 数据管线统一——**✅ 工程可做的部分已完成（2026-07-05）**：push-data.sh 通用脚本、溯源徽章（五页全部铺开）、命中率组件去重，详见 §7.5。Brier 分数与首页 Top10 vs SPY/SMH 记分需要新的数据管线（分别是"保留历史 confidence"和"从零建价格追踪"），不是现有数据能直接拼出来的，留待单独立项。6 个定时任务接 push-data.sh 站主决定跳过（读不到任务 prompt 全文，全文覆写风险大，且现状本就跑得好）。
 3. **A2** main.js 继续拆分（Phase 3–5）——无截止压力，详见 §3。
 4. **B1** CSS Scroll-Driven Animations——低风险、现成的性能收益，详见 §8.2。
 5. **B6** 首页 WebGL 收尾——需真机 profiling，沙盒做不了，详见 §5「Home」。
@@ -206,7 +206,7 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 合计 ≈ **2.5M 输入 / ~0.15M 输出每月**。三条纪律压住预算：① 固定 system prompt 吃 prompt caching；② 数据预消化（指标计算、新闻去重截断）用代码/便宜模型做，Fable 只做决策推理；③ 输出双段式（机器 JSON + 限长复盘）硬上限。
 
 **数据管线（V12，队列 A①）**
-- ✅ **已完成**：`scripts/push-data.sh <file> <msg>` 通用推送脚本（从 `push-arena-news.sh` 模板化），供 ledger/leagues/sectors/signal/predlog 等定时任务复用；沙盒内用临时 git 仓库验证了缺参数/文件不存在/无变更/正常提交推送/远端领先需 rebase 五种场景，均行为正确。`push-arena-news.sh` 本体未改动（仍单独可用）。**尚未做**：把现有 6 个定时任务的 prompt 改成调用这个脚本——这一步需要先读取各任务当前 prompt 全文（本会话没有那个目录的访问权限），且属于「修改常设定时任务」需逐项征得同意，留待下一步。
+- ✅ **已完成**：`scripts/push-data.sh <file> <msg>` 通用推送脚本（从 `push-arena-news.sh` 模板化），供 ledger/leagues/sectors/signal/predlog 等定时任务复用；沙盒内用临时 git 仓库验证了缺参数/文件不存在/无变更/正常提交推送/远端领先需 rebase 五种场景，均行为正确。`push-arena-news.sh` 本体未改动（仍单独可用）。**站主决定不接入现有 6 个定时任务**（2026-07-05）：本会话读不到 `/Users/feida/Claude/Scheduled/*/SKILL.md`（不在已连接文件夹），全文覆写有删掉任务里其他指令的风险；且各任务现在跑得好好的，不接也不影响功能。脚本留给未来新建任务用。
 - ✅ **已完成**：**溯源徽章** `src/lib/provenanceBadge.js`（纯函数：数据龄计算 + >36h 琥珀/>72h 红分级 + 双语文案，15 条 vitest），已铺开全部五页（sectors/arena 自选股+Autopilot/signal/games/league），每页复用自己现有调色板做分级色。`arena-news.json`（date/generatedAt，无 version）与 `games-data.json`（有 updated 无 version）两个文件 schema 跟其余三个不统一，组件做了适配层，未碰数据文件/定时任务。
 - ✅ **已完成**：**命中率组件统一**——`src/lib/trackRecord.js`（games.js/league.js 原本是字节级重复的 renderRecord() 实现，抽取为共享纯函数 + 模板，10 条 vitest，含一条与抽取前模板逐字节比对的回归测试）。
 - ⚠️ **卡住，未做**：**Brier 分数**——games/league 的 `record.log` 只存了 `ok`/`exact`，赛果确定后原始 confidence 就丢了，没有可评分的历史数据；要做的话需要改 2 个定时任务的 prompt（在赛果写回 log 时一并保留当时的 conf），且改完还要等新一批赛果真实结算才有数据可看，无法一次性做完。Signal 页目前完全没有战绩记录结构，做法需要另外设计。
