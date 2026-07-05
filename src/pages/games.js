@@ -5,6 +5,7 @@
    For entertainment — not betting advice.
    ============================================================ */
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
+import { renderTrackRecordHTML } from '../lib/trackRecord.js';
 
 (() => {
   'use strict';
@@ -168,27 +169,16 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
     if (window.AfflatusI18N) window.AfflatusI18N.apply();
   }
 
-  /* ---------- Fable track record — gold ⭐ for exact scores ---------- */
+  /* ---------- Fable track record — gold ⭐ for exact scores ----------
+     Shared with league.js via src/lib/trackRecord.js (ROADMAP §7.5 V12) —
+     the two pages used to carry byte-identical copies of this template. */
   function renderRecord() {
     const host = $('record'); if (!host) return;
     const r = data && data.record;
-    if (!r) { host.innerHTML = ''; host.style.display = 'none'; return; }
+    const html = renderTrackRecordHTML(r, { T, fableIcon: FABLE_ICON, exactLabel: { en: 'exact scorelines', zh: '比分全中' } });
+    if (!html) { host.innerHTML = ''; host.style.display = 'none'; return; }
     host.style.display = '';
-    const rate = r.winRate != null ? r.winRate : (r.resolved ? Math.round((r.correctOutcome / r.resolved) * 100) : 0);
-    const log = (r.log || []).slice(0, 8).map((e) => {
-      const cls = e.exact ? 'exact' : (e.ok ? 'ok' : 'no');
-      const icon = e.exact ? '⭐' : (e.ok ? '✓' : '✗');
-      return `<span class="rlog ${cls}" title="${T(e.pick_en, e.pick_zh)}">${icon} ${T(e.label_en, e.label_zh)}</span>`;
-    }).join('');
-    host.innerHTML =
-      `<div class="rec-h"><span class="rec-t">${FABLE_ICON} ${T('FABLE TRACK RECORD', 'FABLE 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${r.since || ''}</span></div>` +
-      `<div class="rec-stats">` +
-        `<div class="rec-big"><b>${rate}%</b><i>${T('outcome win rate', '胜负命中率')}</i></div>` +
-        `<div class="rec-kv"><b>${r.correctOutcome || 0}/${r.resolved || 0}</b><i>${T('correct calls', '预测正确')}</i></div>` +
-        `<div class="rec-kv"><b>${r.exactScore || 0} ⭐</b><i>${T('exact scorelines', '比分全中')}</i></div>` +
-      `</div>` +
-      (log ? `<div class="rec-log">${log}</div>` : '') +
-      `<p class="rec-note">${T(r.note_en, r.note_zh)}</p>`;
+    host.innerHTML = html;
   }
 
   function renderUpdated() {
