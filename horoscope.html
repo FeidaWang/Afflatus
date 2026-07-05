@@ -67,6 +67,15 @@
       <path d="M190,138 L188,122" stroke-width="2"/>
       <path d="M270,138 L268,122" stroke-width="2"/>
       <path d="M350,138 L348,122" stroke-width="2"/>
+      <!-- legs + 3-claw feet (same fix as the hero dragon: no legs = reads as a snake) -->
+      <path d="M148,152 C146,172 144,190 140,206" stroke-width="2"/>
+      <path d="M140,206 C136,211 132,215 129,220" stroke-width="1.5"/>
+      <path d="M140,206 C140,212 140,217 140,222" stroke-width="1.5"/>
+      <path d="M140,206 C144,211 148,215 151,220" stroke-width="1.5"/>
+      <path d="M308,152 C306,172 304,190 300,206" stroke-width="2"/>
+      <path d="M300,206 C296,211 292,215 289,220" stroke-width="1.5"/>
+      <path d="M300,206 C300,212 300,217 300,222" stroke-width="1.5"/>
+      <path d="M300,206 C304,211 308,215 311,220" stroke-width="1.5"/>
     </g>
     <g class="dcloud" stroke-width="2">
       <path d="M75,205 C75,199 80,196 84,198 C86,193 93,193 95,198 C100,197 104,201 102,206 C104,210 101,215 96,214 C94,218 87,218 85,214 C80,215 76,211 78,207 Z"/>
@@ -96,22 +105,38 @@
 
   <section class="hero" aria-label="Introduction">
     <svg class="hero-art" viewBox="0 0 560 240" aria-hidden="true">
-      <g fill="none" stroke="var(--dragon)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M40,175 C80,115 115,115 140,160 C165,205 195,205 220,160 C245,115 268,112 285,140"/>
+      <!-- dragon: sinuous body + 4-toe clawed legs (the feature that reads
+           "dragon" instead of "snake") + closed-silhouette head w/ horn+whisker -->
+      <g fill="none" stroke="var(--dragon)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M40,165 C75,110 108,110 132,150 C158,192 190,192 215,150 C238,110 262,108 280,132"/>
       </g>
-      <path fill="var(--dragon)" stroke="var(--dragon)" stroke-width="2" d="M280,148 C296,128 320,122 342,132 C328,152 302,158 282,150 Z"/>
-      <g fill="none" stroke="var(--dragon)" stroke-width="6" stroke-linecap="round">
-        <path d="M305,122 C305,106 310,92 320,80"/>
-        <path d="M284,152 C275,163 264,170 251,173"/>
+      <path fill="var(--dragon)" stroke="var(--dragon)" stroke-width="2" stroke-linejoin="round" d="M275,120 C292,98 318,88 344,94 C362,98 374,108 380,120 C368,136 344,146 320,144 C300,142 285,133 275,120 Z"/>
+      <path fill="none" stroke="var(--dragon)" stroke-width="7" stroke-linecap="round" d="M330,90 C328,74 332,58 342,44"/>
+      <path fill="none" stroke="var(--dragon)" stroke-width="5" stroke-linecap="round" d="M296,138 C284,146 270,151 256,152"/>
+      <path fill="none" stroke="var(--dragon)" stroke-width="9" stroke-linecap="round" d="M40,165 C26,146 24,124 34,108 C38,102 45,98 52,100"/>
+      <g fill="none" stroke="var(--dragon)" stroke-width="5" stroke-linecap="round">
+        <path d="M268,116 C263,104 259,95 253,88"/>
+        <path d="M282,108 C278,97 275,88 270,80"/>
       </g>
-      <path fill="none" stroke="var(--dragon)" stroke-width="10" stroke-linecap="round" d="M40,175 C28,155 26,133 36,117 C40,111 46,107 52,109"/>
       <g fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round">
-        <path d="M132,155 C136,147 142,147 146,155"/>
-        <path d="M212,155 C216,147 222,147 226,155"/>
+        <path d="M124,142 C128,134 134,134 138,142"/>
+        <path d="M205,142 C209,134 215,134 219,142"/>
+      </g>
+      <g fill="none" stroke="var(--dragon)" stroke-width="10" stroke-linecap="round">
+        <path d="M255,142 C258,165 258,188 253,208"/>
       </g>
       <g fill="none" stroke="var(--dragon)" stroke-width="5" stroke-linecap="round">
-        <path d="M290,125 C285,115 281,108 275,103"/>
-        <path d="M303,116 C299,106 296,98 292,92"/>
+        <path d="M253,208 C247,214 242,219 238,225"/>
+        <path d="M253,208 C253,215 253,221 253,228"/>
+        <path d="M253,208 C259,214 264,219 268,225"/>
+      </g>
+      <g fill="none" stroke="var(--dragon)" stroke-width="10" stroke-linecap="round">
+        <path d="M172,150 C170,172 168,193 162,212"/>
+      </g>
+      <g fill="none" stroke="var(--dragon)" stroke-width="5" stroke-linecap="round">
+        <path d="M162,212 C156,218 151,223 147,229"/>
+        <path d="M162,212 C162,219 162,225 162,232"/>
+        <path d="M162,212 C168,218 173,223 177,229"/>
       </g>
       <g transform="translate(560,86) scale(-0.44,0.44)" fill="none" stroke="var(--horse)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
         <path d="M318,20 L332,42"/>
