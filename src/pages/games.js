@@ -124,22 +124,45 @@
     });
   }
 
-  /* ---------- knockout bracket — Round of 16 legs feeding each Quarter-final slot ---------- */
-  function renderBracket() {
-    const host = $('bracket'); if (!host || !data || !data.bracket) return;
+  /* ---------- knockout bracket — full path-to-the-final tree ----------
+     Renders one titled sub-section per stage (QF/SF/Final) that data.bracket
+     actually contains so far — the tournament runs one round at a time, so
+     stages are added by the daily task as they're reached (bracket.qf first,
+     then bracket.sf once QF winners are known, then bracket.final). Every
+     stage shares the same leg/slot card markup; this used to be hardcoded to
+     bracket.qf only, which meant later rounds had nowhere to render. */
+  const BRACKET_STAGES = [
+    { key: 'qf', badge_en: 'QF', badge_zh: '八强' },
+    { key: 'sf', badge_en: 'SF', badge_zh: '四强' },
+    { key: 'final', badge_en: 'FINAL', badge_zh: '决赛' },
+  ];
+  function renderBracketStage(stage, entries) {
     const legName = (leg, side) => lang === 'zh' ? (leg[side + '_zh'] || leg[side]) : leg[side];
-    host.innerHTML = data.bracket.qf.map((qf) => {
-      const legsHtml = qf.legs.map((leg) => {
+    const cards = entries.map((slot) => {
+      const legsHtml = slot.legs.map((leg) => {
         const hCls = leg.winner === 'home' ? ' win' : (leg.winner === 'away' ? ' lose' : '');
         const aCls = leg.winner === 'away' ? ' win' : (leg.winner === 'home' ? ' lose' : '');
         return `<div class="qf-leg"><span class="qf-team${hCls}">${leg.homeFlag || ''} ${legName(leg, 'home')}</span><i class="qf-vs">${T('vs', '对')}</i><span class="qf-team${aCls}">${leg.awayFlag || ''} ${legName(leg, 'away')}</span></div>`;
       }).join('');
-      const decided = qf.legs.map((leg) => leg.winner ? legName(leg, leg.winner) + (leg.winner === 'home' ? (leg.homeFlag || '') : (leg.awayFlag || '')) : null);
+      const decided = slot.legs.map((leg) => leg.winner ? legName(leg, leg.winner) + (leg.winner === 'home' ? (leg.homeFlag || '') : (leg.awayFlag || '')) : null);
       const slotHtml = decided.every(Boolean)
-        ? `<b>${decided[0]}</b> <i class="qf-vs">${T('vs', '对')}</i> <b>${decided[1]}</b>`
+        ? (stage.key === 'final'
+          ? `🏆 <b>${decided[0]}</b> <i class="qf-vs">${T('vs', '对')}</i> <b>${decided[1]}</b>`
+          : `<b>${decided[0]}</b> <i class="qf-vs">${T('vs', '对')}</i> <b>${decided[1]}</b>`)
         : T('Winners TBD', '胜者未定');
-      return `<article class="qf" data-qf="${qf.id}"><div class="qf-h"><span class="qf-badge">${T('QF', '八强')} · ${qf.date}</span><span class="qf-venue">${T(qf.venue_en, qf.venue_zh)}</span></div><div class="qf-r16">${legsHtml}</div><div class="qf-arrow">▼</div><div class="qf-slot">${slotHtml}</div></article>`;
+      return `<article class="qf" data-qf="${slot.id}"><div class="qf-h"><span class="qf-badge">${T(stage.badge_en, stage.badge_zh)} · ${slot.date}</span><span class="qf-venue">${T(slot.venue_en, slot.venue_zh)}</span></div><div class="qf-r16">${legsHtml}</div><div class="qf-arrow">▼</div><div class="qf-slot">${slotHtml}</div></article>`;
     }).join('');
+    return `<div class="bstage" data-stage="${stage.key}"><div class="bstage-title">${T(stage.badge_en, stage.badge_zh)}</div><div class="bracket">${cards}</div></div>`;
+  }
+  function renderBracket() {
+    const host = $('bracket'); if (!host || !data || !data.bracket) return;
+    const label = $('bracketLabel');
+    if (label && data.bracket.stageLabel_en) { label.setAttribute('data-en', data.bracket.stageLabel_en); label.setAttribute('data-zh', data.bracket.stageLabel_zh || data.bracket.stageLabel_en); label.textContent = T(data.bracket.stageLabel_en, data.bracket.stageLabel_zh); }
+    const stagesHtml = BRACKET_STAGES
+      .filter((stage) => Array.isArray(data.bracket[stage.key]) && data.bracket[stage.key].length)
+      .map((stage) => renderBracketStage(stage, data.bracket[stage.key]))
+      .join('');
+    host.innerHTML = stagesHtml || `<div class="empty">${T('Bracket unavailable.', '对阵图暂不可用。')}</div>`;
     if (window.AfflatusI18N) window.AfflatusI18N.apply();
   }
 
