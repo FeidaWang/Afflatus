@@ -8,15 +8,21 @@
    documented anchors in tests/bazi.test.js (1949-10-01 = 甲子日,
    1970-01-01 = 辛巳日 — both widely published).
 
-   Honest approximations (documented, acceptable for an entertainment page,
-   labelled on the page itself):
-   - Year pillar boundary uses a fixed 立春 ≈ Feb 4 (true instant varies
-     ±1 day by year).
-   - Month pillar boundaries use fixed approximate solar-term dates
-     (true 节气 instants vary ±1 day).
+   Year/month pillar boundaries use REAL solar-term instants (立春 and the
+   other eleven 节), computed from the sun's apparent ecliptic longitude
+   (Meeus low-precision formula, ~0.01° / a few minutes accuracy — plenty
+   for day-level boundaries) instead of fixed calendar dates. Verified
+   against published 节气 times in tests/bazi.test.js, including 2025
+   (立春 fell on Feb 3, not the Feb-4 "usual" date) and 2026 (Feb 4).
+
+   Remaining honest approximations (labelled on the page itself):
    - Hour pillar: 23:00–00:59 is treated as 子时 of the SAME calendar day
      (the 晚子时 day-boundary debate is out of scope).
-   - No apparent-solar-time / longitude correction.
+   - Solar-term instants are converted to a China Standard Time (UTC+8)
+     calendar date; no birth-location/timezone input, so a birth
+     recorded in another timezone is treated as if it were a Beijing
+     civil-calendar date (same simplification the day/month/year pillars
+     already make).
    ============================================================ */
 
 export const STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
@@ -48,42 +54,106 @@ export function dayPillar(y, m, d) {
   return pillar(jdn(y, m, d) - DAY_ANCHOR_JDN);
 }
 
-// ---- year pillar (立春 ≈ Feb 4 boundary) ---------------------------------
+// ---- solar longitude (Meeus low-precision, ~0.01° accuracy) ---------------
+// JD (UTC, decimal) for a proleptic-Gregorian calendar date/time.
+function julianDayUTC(y, m, d, hourUTC) {
+  let yy = y, mm = m;
+  if (mm <= 2) { yy -= 1; mm += 12; }
+  const A = Math.floor(yy / 100), B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (yy + 4716)) + Math.floor(30.6001 * (mm + 1)) + d + hourUTC / 24 + B - 1524.5;
+}
+// Inverse: calendar {year, month, day(+fraction)} for a JD (UTC).
+function calendarFromJD(jd) {
+  const Z = Math.floor(jd + 0.5), F = jd + 0.5 - Z;
+  const alpha = Math.floor((Z - 1867216.25) / 36524.25);
+  const A = Z + 1 + alpha - Math.floor(alpha / 4);
+  const B = A + 1524, C = Math.floor((B - 122.1) / 365.25), D = Math.floor(365.25 * C);
+  const E = Math.floor((B - D) / 30.6001);
+  const day = B - D - Math.floor(30.6001 * E) + F;
+  const month = E < 14 ? E - 1 : E - 13;
+  const year = month > 2 ? C - 4716 : C - 4715;
+  return { year, month, day };
+}
+const DEG = Math.PI / 180;
+// Apparent geocentric ecliptic longitude of the sun, degrees [0,360).
+function sunApparentLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+  const M = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * DEG;
+  const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M)
+    + (0.019993 - 0.000101 * T) * Math.sin(2 * M)
+    + 0.000289 * Math.sin(3 * M);
+  const omega = (125.04 - 1934.136 * T) * DEG;
+  return mod(L0 + C - 0.00569 - 0.00478 * Math.sin(omega), 360);
+}
+// Signed shortest angular distance lon → target, in (-180, 180].
+const angleDelta = (lon, target) => { const a = mod(lon - target, 360); return a > 180 ? a - 360 : a; };
+// Find the JD (UTC) nearest approxJD where the sun's longitude == targetDeg.
+function findSolarTermJD(targetDeg, approxJD) {
+  let lo = approxJD - 4, hi = approxJD + 4;
+  for (let i = 0; i < 20 && angleDelta(sunApparentLongitude(lo), targetDeg) > 0; i++) lo -= 4;
+  for (let i = 0; i < 20 && angleDelta(sunApparentLongitude(hi), targetDeg) < 0; i++) hi += 4;
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    if (angleDelta(sunApparentLongitude(mid), targetDeg) < 0) lo = mid; else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+// Calendar {m, d} (China Standard Time, UTC+8) on which the sun's apparent
+// longitude reaches targetDeg in the given Gregorian year. approxMonth/Day
+// seed the search window (must be within ~4 days of the true date).
+export function solarTermDate(year, targetDeg, approxMonth, approxDay) {
+  const approxJD = julianDayUTC(year, approxMonth, approxDay, 12);
+  const jdUTC = findSolarTermJD(targetDeg, approxJD);
+  const cal = calendarFromJD(jdUTC + 8 / 24);
+  return { m: cal.month, d: Math.floor(cal.day) };
+}
+
+// ---- year pillar (real 立春 boundary) -------------------------------------
+const _termCache = new Map();
+function termDateInYear(year, term) {
+  const key = year * 1000 + term.lon;
+  if (!_termCache.has(key)) _termCache.set(key, solarTermDate(year, term.lon, term.m, term.d));
+  return _termCache.get(key);
+}
 export function baziYear(y, m, d) {
-  return (m < 2 || (m === 2 && d < 4)) ? y - 1 : y;
+  const lichun = termDateInYear(y, MONTH_TERMS[1]); // 立春, lon 315
+  const beforeLichun = m < lichun.m || (m === lichun.m && d < lichun.d);
+  return beforeLichun ? y - 1 : y;
 }
 export function yearPillar(y, m, d) {
   const by = baziYear(y, m, d);
   return { stem: mod(by - 4, 10), branch: mod(by - 4, 12), baziYear: by };
 }
 
-// ---- month pillar (approximate solar-term boundaries) --------------------
-// Each entry: from {m, d} (inclusive) the branch-month is `b`.
+// ---- month pillar (real solar-term boundaries) ----------------------------
+// Each entry: solar longitude `lon`, {m,d} seed the search window, branch `b`.
 const MONTH_TERMS = [
-  { m: 1, d: 6, b: 1 },   // 小寒 → 丑月
-  { m: 2, d: 4, b: 2 },   // 立春 → 寅月
-  { m: 3, d: 6, b: 3 },   // 惊蛰 → 卯月
-  { m: 4, d: 5, b: 4 },   // 清明 → 辰月
-  { m: 5, d: 6, b: 5 },   // 立夏 → 巳月
-  { m: 6, d: 6, b: 6 },   // 芒种 → 午月
-  { m: 7, d: 7, b: 7 },   // 小暑 → 未月
-  { m: 8, d: 8, b: 8 },   // 立秋 → 申月
-  { m: 9, d: 8, b: 9 },   // 白露 → 酉月
-  { m: 10, d: 8, b: 10 }, // 寒露 → 戌月
-  { m: 11, d: 7, b: 11 }, // 立冬 → 亥月
-  { m: 12, d: 7, b: 0 },  // 大雪 → 子月
+  { lon: 285, m: 1, d: 6, b: 1 },   // 小寒 → 丑月
+  { lon: 315, m: 2, d: 4, b: 2 },   // 立春 → 寅月
+  { lon: 345, m: 3, d: 6, b: 3 },   // 惊蛰 → 卯月
+  { lon: 15, m: 4, d: 5, b: 4 },    // 清明 → 辰月
+  { lon: 45, m: 5, d: 6, b: 5 },    // 立夏 → 巳月
+  { lon: 75, m: 6, d: 6, b: 6 },    // 芒种 → 午月
+  { lon: 105, m: 7, d: 7, b: 7 },   // 小暑 → 未月
+  { lon: 135, m: 8, d: 8, b: 8 },   // 立秋 → 申月
+  { lon: 165, m: 9, d: 8, b: 9 },   // 白露 → 酉月
+  { lon: 195, m: 10, d: 8, b: 10 }, // 寒露 → 戌月
+  { lon: 225, m: 11, d: 7, b: 11 }, // 立冬 → 亥月
+  { lon: 255, m: 12, d: 7, b: 0 },  // 大雪 → 子月
 ];
-export function monthBranch(m, d) {
-  let b = 0; // dates before Jan 6 fall in the 子月 that started the previous Dec 7
+export function monthBranch(y, m, d) {
+  let b = 0; // dates before 小寒 fall in the 子月 that started the previous 大雪
   for (const t of MONTH_TERMS) {
-    if (m > t.m || (m === t.m && d >= t.d)) b = t.b;
+    const td = termDateInYear(y, t);
+    if (m > td.m || (m === td.m && d >= td.d)) b = t.b;
   }
   return b;
 }
 // 五虎遁: the 寅-month stem starts from 丙 for 甲/己 years, advancing 2 per pair.
 export function monthPillar(y, m, d) {
   const yp = yearPillar(y, m, d);
-  const b = monthBranch(m, d);
+  const b = monthBranch(y, m, d);
   const startStem = mod((yp.stem % 5) * 2 + 2, 10);
   const offsetFromYin = mod(b - 2, 12);
   return { stem: mod(startStem + offsetFromYin, 10), branch: b };
