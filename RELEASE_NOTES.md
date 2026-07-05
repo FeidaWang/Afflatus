@@ -7,6 +7,24 @@
 
 ## v1.5 · Afflatus「Fable 5 Max 五模块」
 
+### V5.（M）Arena Autopilot 前端区块 + B10 旧 Human vs AI 代码正式下线 — 2026-07-05
+
+**背景**：V13（2026-07-04）已经把 Human vs AI 对战区用 `.legacy-hidden` 暂时隐藏、TA 技术分析仪表盘接管首屏；B10 一直悬而未决——恢复共存还是正式删除。本轮用户明确：TA 仪表盘就是 arena 页现在的正式内容，旧对战区正式关闭，Autopilot 区块紧接在 TA dashboard 下方。账本当时复核仍是 `day:0`/`lastRunDate:null`（V4 定时任务还没首次真正运行），用户明确选择「现在开工，UI 做好空状态优雅显示，真实数据一来自动填满」而不是等 ≥3 交易日。
+
+**B10 清理范围（比预想大得多）**——深入代码后发现 `arena.js`（原 375 行）几乎全部是旧游戏逻辑，不是一个可以简单删掉的隐藏 `<div>`：
+- 删除：名单轮询（`TICKERS`/`finnhubProvider`/`poll()`/`pollInterval`）、逐股图表 + MA/MACD/KDJ/VOL 技术指标绘制（`renderChart`/`moveCross`/`sma`/`emaSeries`/`macdCalc`/`kdjCalc`）、Twelve Data 历史缓存（`ensureHistory`/`fetchTD`/`tdCacheGet/Set`）、OPEN/CLOSE 预测下注（`placeBet`/`tryResolve`/`scoreRound`）、计分板（`renderScore`/`sideBox`）、种子化模拟序列生成器（`genSeries`/`mulberry32`）——`arena.js` 现在瘦身到 ~85 行，只保留页面通用外壳：简报弹窗、市场状态/倒计时 chip、情绪聚合、自定义 HUD 光标。
+- **附带发现**：hero 顶部的 DATA/UPDATED 两个 chip + Refresh 按钮专门反映旧名单的 Finnhub 轮询健康度，旧代码删除后这组指标失去意义——用户选择直接删除，只保留市场开盘状态与新闻情绪两个 chip。
+- **"今日信号"迷你新闻列表**（`#newsList`，和简报弹窗内容重复）虽然功能上独立于游戏本身，但 DOM 上恰好也在被隐藏的 `.grid.legacy-hidden` 容器里——用户选择保留，搬到 Autopilot 区块下方新位置，继续复用同一套 `.news`/`.empty` CSS。
+- **必须一并处理的连带问题**：`<title>`/meta description/og 标签、header 标语、hero 大标题与正文、footer 免责声明，全部是围绕"预测游戏"写的文案，旧代码一删就变成谎报页面功能的过期文案——本轮同步重写为准确描述「TA 仪表盘 + Autopilot 模拟盘」的新文案（中英对照），SVG logo 的 `aria-label` 从 "Human vs AI" 改为 "Arena"。CSS 侧同步删除所有只服务于旧游戏的选择器（`.watchlist*`/`.tk*`/`.chart-badge*`/`.tf*`/`.cgrid`/`.cma*`/`.xh-*`/`.ind*`/`.acq*`/`.pred*`/`.bet*`/`.pmode*`/`.sc*`/`.rd*` 等，约 250 行），保留仍被复用的通用原语（`.panel`/`.sec-label`/`.empty`/`.news`/`.chip`/`.foot`/`.bf-*`/`.fx-cursor`），修掉两处因此产生的孤儿引用（`body.has-cursor .tk` 选择器、`@media(max-width:1080px)` 里指向已删除 `.grid`/`.watchlist-wrap`/`.main`/`.side` 的响应式规则）。
+
+**V5 交付**：新文件 `src/pages/arenaAutopilot.js`（自包含 IIFE，架构上与 V13 的 `arenaTech.js` 同构——独立 fetch `arena-ledger.json`/`arena-universe.json`，只通过 `afflatus-lang` 事件和 `window.AfflatusI18N` 与页面外壳通信，不直接调用 arena.js 的函数）+ 新纯函数模块 `src/lib/arenaLedgerView.js`（`unrealizedPnl`/`benchmarkEndpoints`/`equityDomain`/`scalePoint`，13 条 vitest 覆盖，遵循本项目账本类代码必须可单测的纪律）。渲染内容：净值 SVG 折线图（Model A 酸绿、Model B 青色两条真实逐日曲线 + SPY 琥珀/SMH 品红两条基准参考线）、每个模型一张卡片（EQUITY/CASH/CUM%/MAXDD/HIT%/EXPOSURE 六个指标 chip + 中英复盘文案 + 持仓表 + 近期成交/拒单合并日志，均含空状态占位）。
+
+**⚠️ 基准线的诚实妥协**：`arena-ledger.json` 的 `bench.spyPct/smhPct` 只是最新一次运行的**累计百分比标量**，不是逐日历史序列，因此没有数据可以画一条真正的 SPY/SMH 历史净值曲线。`benchmarkEndpoints()` 老实地只画一条两点直线——「从模型账本第一天的起始净值，到最新一天按累计基准百分比换算后的终值」，本质是"从第 0 天起买入并持有 SPY/SMH 的参照线"，不是真实逐日行情，图例上与模型曲线用不同虚线样式区分，避免误导。这一限制目前无法解决（除非 V12 数据管线里给 bench 也加一份逐日历史，那是后续工程量，不在本轮范围内）。
+
+**验证**：171/171 测试通过（新增 `tests/arenaLedgerView.test.js` 13 条）；`npm run build` 干净（`arena-*.js` chunk grep 确认 `watchlist`/`scoreboard`/`predBody`/`srcChip`/`legacy-hidden` 等旧字符串全部清除，`apDash`/`apModelA`/`apChart`/`Autopilot`/`arenaLedgerView` 新字符串确认在产物里）；`vite preview` 起服务对 `arena.html` curl 200 且产物含 `apDash`；CSS `{`/`}` 配对数一致（353/353），排除误删/多删括号。**视觉未验证**：沙盒无法渲染 SVG/canvas，图表实际观感、模型卡片布局密度需本地打开 arena.html 确认；当前 `arena-ledger.json` 仍是 `day:0`/无成交的起始状态（V4 定时任务尚未真正跑过一次），页面上会看到两条平的 $10,000 起点和"尚未成交"占位文案，属预期——真实数据积累后会自动变丰富，不需要再改代码。
+
+---
+
 ### V17c.（S）combat view 遮挡/重叠排布修正（用户看到 V17b 实际效果后的第三轮反馈）— 2026-07-05
 
 按用户截图反馈处理三处布局问题：① 顶部航向刻度带数字上半被画布顶边裁切——`drawSCHeadingTape` 的基准线 `y0` 从 `h*.055` 下移到 `h*.10`，给数字留出完整高度；② 座舱控制台原有左右两块镜像 OUTPUT 5/16 MFD 屏，只保留一块并居中（`mfd()` 只调用一次，位置改为 `w*.5-mw/2`）；③ 该 MFD 屏底部原有的「‹ POWER MANAGEMENT ›」页脚文字与描边框整体删除（连带把屏高从 `h*.20` 收窄到 `h*.155`，去掉页脚腾出的空白）。第四处是目标锁定后 `SHIELD QUAD`（FORE/AFT/PORT/STBD）方格与目标框自带的 `1P/HALLEY`/`720.0 M` 名称·距离标签重叠——根因是方格原来画在目标框右侧、与名称标签同一侧同一高度，方格左边界常常落在标签文字还没画完的位置；改为把方格移到护盾/装甲血条正下方（`gx=cx-bracketS*1.1, gy=cy+bracketS*1.38+30`，与血条左对齐、留 30px 间距），与目标框标签（右上方）在空间上完全分离，不再依赖标签文字宽度这个不可控量。

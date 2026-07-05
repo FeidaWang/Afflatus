@@ -13,13 +13,13 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Human vs AI Trading Arena · Afflatus</title>
-<meta name="description" content="AI Stock Arena: read a daily pre-market briefing, then call the open-day direction of US AI-complex stocks against an explainable model. A game, not advice.">
+<title>Arena · US Stock TA + Autopilot — Afflatus</title>
+<meta name="description" content="Arena: self-serve US AI-complex stock technical analysis (key levels, MAs, pivots, pre/post-market) plus Autopilot — two rule-constrained LLM ledgers trading a fixed universe vs SPY/SMH. Not investment advice.">
 <meta name="theme-color" content="#05070e">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Afflatus">
-<meta property="og:title" content="Project Afflatus · AI Stock Arena">
-<meta property="og:description" content="Pre-market briefing + a you-vs-the-model direction game on US AI stocks. A game, not advice.">
+<meta property="og:title" content="Project Afflatus · Arena">
+<meta property="og:description" content="US stock TA dashboard + two simulated LLM trading ledgers (Autopilot) scored against SPY/SMH. Not investment advice.">
 <meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
@@ -114,159 +114,17 @@ a{color:inherit;text-decoration:none}
 .opencd.open::after{background:var(--up);box-shadow:0 0 14px var(--up)}
 .opencd.open .opencd-label,.opencd.open .opencd-clock{color:var(--up)}
 
-/* ===== grid ===== */
-.grid{display:grid;grid-template-columns:248px 1fr 320px;gap:14px;margin-top:14px;align-items:start}
+/* ===== shared section/panel primitives ===== */
 .sec-label{color:var(--muted);font:700 10px/1 var(--font-hud);letter-spacing:.24em;text-transform:uppercase;margin-bottom:11px;display:flex;justify-content:space-between;align-items:center}
 .sec-label::before{content:"▌";color:var(--acid);margin-right:6px}
-
-/* watchlist */
-.watchlist{display:flex;flex-direction:column;gap:8px}
-.tk{position:relative;text-align:left;cursor:pointer;color:var(--text);background:var(--panel-2);border:1px solid rgba(120,140,200,.16);padding:10px 11px 10px 14px;font-family:var(--font-mono);transition:border-color .15s,transform .15s}
-.tk:hover{transform:translateY(-1px);border-color:var(--line-b)}
-.tk--active{border-color:var(--acid);box-shadow:inset 0 0 0 1px var(--acid)}
-.tk-bracket{position:absolute;left:4px;top:8px;bottom:8px;width:4px;border-left:2px solid var(--blue);border-top:2px solid var(--blue);border-bottom:2px solid var(--blue)}
-.tk--active .tk-bracket{border-color:var(--acid)}
-.tk .r1{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.tk .sym{font:700 15px/1 var(--font-display);letter-spacing:.03em;display:flex;align-items:center;gap:6px}
-.tk-live{font:700 8px/1 var(--font-hud);letter-spacing:.1em;color:#04060d;background:var(--acid);padding:2px 4px}
-.tk-house{font:700 8px/1 var(--font-hud);letter-spacing:.1em;color:var(--bg);background:var(--magenta);padding:2px 4px}
-.tk .sector{font:600 9px/1 var(--font-hud);letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:4px}
-.tk svg{width:84px;height:26px}
-.tk .r2{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px}
-.tk .px{font:600 15px/1 var(--font-mono)}
-.tk .pct{font:700 12px/1 var(--font-hud)}
-.flash-u{animation:fu .6s ease} .flash-d{animation:fd .6s ease}
-@keyframes fu{0%{background:rgba(61,255,154,.25)}100%{background:transparent}}
-@keyframes fd{0%{background:rgba(255,84,112,.25)}100%{background:transparent}}
-
-/* main: chart + prediction */
-.main{display:flex;flex-direction:column;gap:14px}
 .panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(11,15,28,.95),rgba(5,7,14,.97));position:relative}
 .panel::before,.panel::after{content:"";position:absolute;width:12px;height:12px;border:2px solid var(--acid);opacity:.7}
 .panel::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
 .panel::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
-.chart .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(61,255,154,.16);flex-wrap:wrap}
-.chart-badge{font:700 10px/1 var(--font-hud);letter-spacing:.16em;color:#ffd166;border:1px solid rgba(255,209,102,.5);padding:4px 7px;text-transform:uppercase}
-.chart-badge.is-live{color:var(--up);border-color:var(--up)}
-.chart-badge.is-modeled{color:var(--blue);border-color:rgba(58,91,255,.6)}
-.tf{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid rgba(61,255,154,.12);flex-wrap:wrap}
-.tf-b{position:relative;cursor:pointer;background:var(--panel-2);border:1px solid rgba(120,140,200,.22);color:var(--muted);font:700 12px/1 var(--font-hud);letter-spacing:.08em;padding:7px 12px;min-width:36px}
-.tf-b::before{content:'';position:absolute;top:-8px;bottom:-8px;left:-1px;right:-1px}
-.tf-b:hover{border-color:var(--cyan);color:#fff}
-.tf-b.on{background:var(--acid);border-color:var(--acid);color:#04060d}
-.tk-sim{font:700 8px/1 var(--font-hud);letter-spacing:.1em;color:var(--bg);background:var(--magenta);padding:2px 4px}
-.chart .sym{font:900 28px/1 var(--font-display);letter-spacing:.03em}
-.chart .nm{color:var(--cyan);font:600 11px/1 var(--font-hud);letter-spacing:.14em;text-transform:uppercase;margin-top:6px}
-.chart .big{font:600 28px/1 var(--font-mono);margin-top:4px;display:flex;align-items:baseline;gap:10px}
-.chart .ch{font:700 14px/1 var(--font-hud)}
-.ohlc{display:flex;gap:13px;font:700 11px/1 var(--font-hud);letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
-.ohlc b{color:#fff;display:block;margin-top:5px;font-family:var(--font-mono)}
-.chart .body{position:relative;height:auto;min-height:240px;padding:6px 8px 8px}
-.chart svg.area{width:100%;height:240px;display:block;touch-action:none}
-.cgrid{stroke:rgba(120,150,210,.13);stroke-width:1}
-.cgrid--v{stroke:rgba(120,150,210,.06)}
-.caxis{fill:var(--muted);font:9px var(--font-mono)}
-.cpc{stroke:var(--magenta);stroke-dasharray:4 4;stroke-width:1;opacity:.65}
-.cpc-t{fill:var(--magenta);font:8px var(--font-hud);letter-spacing:.08em}
-.cline{stroke-width:2}
-.cnow{stroke:rgba(255,255,255,.16);stroke-dasharray:2 3}
-.cdot{animation:pdot 1.6s ease-in-out infinite}
-@keyframes pdot{0%,100%{opacity:1}50%{opacity:.4}}
-.ctagbg{fill:#0a0f1c;stroke:rgba(255,255,255,.25)}
-.ctag{font:700 10px var(--font-mono)}
-/* moving averages */
-.cma{stroke-width:1.4;opacity:.95;vector-effect:non-scaling-stroke}
-.cma7{stroke:#ffd166}.cma30{stroke:#36c5ff}
-.cma-lg{font:700 9px var(--font-hud);letter-spacing:.06em}
-.cma-lg .cma7{fill:#ffd166;stroke:none}.cma-lg .cma30{fill:#36c5ff;stroke:none}
-/* sub-panels (VOL / MACD / KDJ) */
-.cpanel{fill:rgba(10,16,28,.45);stroke:rgba(120,150,210,.16)}
-.cpanel-t{fill:var(--muted);font:700 8px var(--font-hud);letter-spacing:.1em}
-.czero{stroke:rgba(120,150,210,.28);stroke-dasharray:3 3;stroke-width:1}
-.cmh-up{fill:rgba(61,255,154,.7)}.cmh-dn{fill:rgba(255,84,112,.7)}
-.cdif{stroke:#ffd166;stroke-width:1.3;vector-effect:non-scaling-stroke}
-.cdea{stroke:#36c5ff;stroke-width:1.3;vector-effect:non-scaling-stroke}
-.ck{stroke:#ffd166;stroke-width:1.3;vector-effect:non-scaling-stroke}
-.cd2{stroke:#36c5ff;stroke-width:1.3;vector-effect:non-scaling-stroke}
-.cj{stroke:#ff6cc4;stroke-width:1.3;vector-effect:non-scaling-stroke}
-.cvol-up{fill:rgba(61,255,154,.5)}.cvol-dn{fill:rgba(255,84,112,.5)}
-.caxis-x{fill:var(--muted);font:8px var(--font-mono)}
-/* crosshair */
-.xh-l{stroke:rgba(255,255,255,.42);stroke-dasharray:3 3;stroke-width:1;vector-effect:non-scaling-stroke}
-.xh-dot{fill:#fff;stroke:#0a0f1c;stroke-width:1}
-.xh-tagbg{fill:#1a2740;stroke:rgba(255,255,255,.3)}
-.xh-tag{fill:#fff;font:700 9px var(--font-mono)}
-.xh-legbg{fill:rgba(8,12,22,.92);stroke:rgba(120,150,210,.3)}
-.xh-leg{fill:#cfe3ff;font:700 8.5px var(--font-mono);letter-spacing:.02em}
-/* indicator toggles */
-.indrow{display:flex;gap:6px;align-items:center;padding:2px 16px 0;flex-wrap:wrap}
-.ind-lbl{font:700 9px/1 var(--font-hud);letter-spacing:.12em;color:var(--muted);margin-right:2px}
-.ind-b{position:relative;cursor:pointer;background:var(--panel-2);border:1px solid rgba(120,140,200,.22);color:var(--muted);font:700 10px/1 var(--font-hud);letter-spacing:.06em;padding:5px 9px}
-.ind-b::before{content:'';position:absolute;top:-11px;bottom:-11px;left:-2px;right:-2px}
-.ind-b:hover{border-color:var(--cyan);color:#fff}
-.ind-b.on{background:rgba(54,197,255,.16);border-color:#36c5ff;color:#cfeeff}
-.chart .loading{position:absolute;inset:0;display:grid;place-items:center;flex-direction:column;color:var(--muted)}
-
-/* acquiring loader */
-.acq{position:relative;display:flex;flex-direction:column;align-items:center;padding:8px 18px}
-.acq-bars{position:relative;display:flex;align-items:flex-end;gap:4px;height:90px;filter:drop-shadow(0 0 6px rgba(39,231,255,.35))}
-.acq-bars i{width:7px;height:100%;transform-origin:bottom;transform:scaleY(.2);background:linear-gradient(180deg,var(--cyan),var(--acid));animation:acq 1.1s ease-in-out infinite}
-.acq-bars i:nth-child(odd){animation-duration:1.35s}.acq-bars i:nth-child(2n){animation-delay:-.22s}.acq-bars i:nth-child(3n){animation-delay:-.55s}.acq-bars i:nth-child(3n+1){animation-delay:-.85s}.acq-bars i:nth-child(5n){animation-delay:-.4s}.acq-bars i:nth-child(7n){animation-delay:-.7s}
-@keyframes acq{0%,100%{transform:scaleY(.18);opacity:.55}50%{transform:scaleY(1);opacity:1}}
-.acq-label{margin-top:14px;color:var(--cyan);font:700 11px/1 var(--font-hud);letter-spacing:.3em;text-transform:uppercase}
-@media (prefers-reduced-motion: reduce){.acq-bars i{animation:none;transform:scaleY(.6)}}
-
-/* prediction */
-.pred .hd{padding:14px 16px 0}
-.pred h2{font:900 15px/1 var(--font-hud);letter-spacing:.14em;text-transform:uppercase}
-.pred h2 span{color:var(--acid)}
-.pred .hint{color:var(--muted);font:500 12px/1.4 var(--font-mono);margin-top:6px}
-.betrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
-.bet{cursor:pointer;font:700 14px/1.1 var(--font-hud);letter-spacing:.08em;text-transform:uppercase;padding:16px 12px;background:var(--panel-2);color:var(--text);border:1px solid rgba(120,140,200,.22);transition:all .15s}
-.bet.up:hover{border-color:var(--up);color:var(--up);background:rgba(61,255,154,.1);transform:translateY(-2px)}
-.bet.down:hover{border-color:var(--down);color:var(--down);background:rgba(255,84,112,.1);transform:translateY(-2px)}
-.live-wrap{padding:16px}
-.cd{display:flex;align-items:center;gap:10px}
-.cd .bar{flex:1;height:8px;background:rgba(255,255,255,.07);overflow:hidden;border:1px solid rgba(61,255,154,.22)}
-.cd .fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--acid));transition:width .25s linear}
-.cd .s{font:700 13px/1 var(--font-mono);min-width:36px;text-align:right}
-.calls{display:flex;align-items:stretch;gap:10px;margin-top:14px}
-.vs{align-self:center;font:700 10px/1 var(--font-hud);color:var(--muted)}
-.call{flex:1;border:1px solid rgba(120,140,200,.2);background:var(--panel-2);padding:11px;position:relative}
-.call .who{font:600 9px/1 var(--font-hud);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.call .dir{font:900 17px/1.1 var(--font-display);margin-top:5px}
-.call .cf{font:600 10px/1 var(--font-hud);color:var(--muted);margin-top:5px;letter-spacing:.08em;text-transform:uppercase}
-.call .mk{position:absolute;top:9px;right:11px;font:900 16px/1 var(--font-display)}
-.call.u{border-color:rgba(61,255,154,.4)} .call.u .dir{color:var(--up)}
-.call.d{border-color:rgba(255,84,112,.4)} .call.d .dir{color:var(--down)}
-.call.win{border-color:var(--up);background:rgba(61,255,154,.1)} .call.win .mk{color:var(--up)}
-.call.lose{border-color:var(--down);background:rgba(255,84,112,.08)} .call.lose .mk{color:var(--down)}
-.reason{margin-top:10px;color:var(--muted);font:500 12px/1.45 var(--font-mono);font-style:italic}
-.pxs{display:flex;gap:22px;margin-top:12px;font:600 13px/1 var(--font-mono)}.pxs b{font-size:15px}
-.banner{font:900 15px/1.2 var(--font-hud);letter-spacing:.06em;text-transform:uppercase;text-align:center;padding:11px;border:1px solid rgba(120,140,200,.2)}
-.banner.player{background:rgba(61,255,154,.12);color:var(--up)}.banner.ai{background:rgba(58,91,255,.16);color:#9bb0ff}.banner.tie{background:var(--panel-2);color:var(--muted)}
-.detail{text-align:center;color:var(--muted);font:500 12px/1.4 var(--font-mono);margin:9px 0}
-.points{display:flex;justify-content:center;gap:26px;font:700 14px/1 var(--font-mono);margin-top:10px}
-.again{display:flex;gap:10px;align-items:center;margin-top:12px}.again .lbl{font:600 11px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.again .bet{flex:1;padding:10px;font-size:12px}
-
-/* side: score + news */
-.side{display:flex;flex-direction:column;gap:14px}
 .panel.pad{padding:14px 16px}
-.score-sides{display:flex;align-items:center;gap:8px}
-.sc{flex:1;text-align:center;border:1px solid rgba(120,140,200,.2);background:var(--panel-2);padding:12px 6px}
-.sc.lead{border-color:var(--acid);box-shadow:inset 0 0 0 1px rgba(61,255,154,.4)}
-.sc .nm{font:600 11px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.sc .n{font:700 30px/1 var(--font-mono);margin:5px 0}
-.sc .st{font:600 10px/1.3 var(--font-hud);letter-spacing:.05em;color:var(--muted);display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
-.sc-vs{font:700 10px/1 var(--font-hud);color:var(--muted)}
-.rounds{margin-top:14px;display:flex;flex-direction:column;gap:5px;max-height:210px;overflow:auto}
-.rd{display:grid;grid-template-columns:1fr 26px 16px 54px 54px;gap:7px;align-items:center;font:700 11px/1 var(--font-hud);padding:6px 8px;background:var(--panel-2);border:1px solid rgba(120,140,200,.12)}
-.rd-sym{justify-self:start;font-weight:800;letter-spacing:.02em}
-.rd-mode{justify-self:center;font:700 8.5px/1 var(--font-hud);color:var(--muted);border:1px solid rgba(120,140,200,.3);padding:2px 0;width:100%;text-align:center;letter-spacing:.02em}
-.rd-dir{justify-self:center;font:700 12px/1 var(--font-hud)}
-.rd .ch{font:700 10.5px/1 var(--font-hud);padding:3px 0;text-align:center;justify-self:stretch}
-.rd .ch.ok{background:rgba(61,255,154,.16);color:var(--up)}.rd .ch.bad{background:rgba(255,84,112,.14);color:var(--down)}
 .empty{color:var(--muted);font:500 12px/1.45 var(--font-mono);text-align:center;padding:14px 4px}.empty code{background:var(--panel-2);padding:1px 5px}
+
+/* today's signal (relocated mini news list, shares markup with the briefing modal's items) */
 .news a{display:block;border:1px solid rgba(120,140,200,.14);background:var(--panel-2);padding:10px 11px;margin-bottom:8px;transition:border-color .15s,transform .15s}
 .news a:hover{border-color:var(--line-b);transform:translateX(2px)}
 .news .t1{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:5px}
@@ -333,58 +191,13 @@ a{color:inherit;text-decoration:none}
 @media(max-width:560px){.brief-cta__sub{display:none}}
 @media (prefers-reduced-motion: reduce){.brief-cta::after{animation:none;display:none}}
 
-/* ===== dazzling UP/DOWN buttons ===== */
-.betwrap{padding:16px}
-.sessline{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.sess{font:700 10px/1 var(--font-hud);letter-spacing:.14em;text-transform:uppercase;padding:4px 8px;border:1px solid currentColor}
-.sess--open{color:var(--up)} .sess--pre,.sess--post{color:#ffd166} .sess--closed{color:var(--muted)}
-.sesssym{font:700 12px/1 var(--font-hud);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
-/* OPEN / CLOSE prediction-type selector (game-styled segmented control) */
-.pmode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 14px;padding:5px;background:rgba(8,12,22,.6);border:1px solid rgba(120,140,200,.2);border-radius:6px}
-.pmode-b{cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:50px;padding:8px 6px;background:transparent;color:var(--muted);border:1px solid transparent;border-radius:4px;transition:all .16s;position:relative;overflow:hidden}
-.pmode-b b{font:800 14px/1 var(--font-hud);letter-spacing:.14em;text-transform:uppercase}
-.pmode-b i{font:600 9px/1 var(--font-mono);letter-spacing:.04em;font-style:normal;opacity:.7}
-.pmode-b:hover{color:var(--text);border-color:rgba(120,140,200,.35);background:rgba(120,140,200,.06)}
-.pmode-b.on{color:#04060d;background:var(--acid);border-color:var(--acid);box-shadow:0 0 22px rgba(61,255,154,.35),inset 0 0 18px rgba(255,255,255,.12)}
-.pmode-b.on i{opacity:.85}
-.pmode-b:active{transform:scale(.98)}
-.pred .ask{font:600 13px/1.55 var(--font-mono);color:var(--text);margin:0 0 14px}
-.pred .ask b{display:block;margin-top:5px;color:var(--muted);font:700 11px/1 var(--font-hud);letter-spacing:.08em}
-.pending{display:flex;align-items:center;gap:9px;font:700 13px/1.3 var(--font-hud);letter-spacing:.04em;color:#ffd166;padding:11px 0;margin:6px 0 8px}
-.pulse{flex:none;width:9px;height:9px;border-radius:50%;background:#ffd166;box-shadow:0 0 10px #ffd166;animation:pulseA 1.3s ease-in-out infinite}
-@keyframes pulseA{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
-@media(max-width:1080px){.pmode-b{min-height:54px}.bet{padding:20px 12px}.bet b{font-size:34px}}
-@media (prefers-reduced-motion: reduce){.pulse{animation:none}}
-.betrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0}
-.bet{position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;
-  font:900 15px/1 var(--font-hud);letter-spacing:.12em;text-transform:uppercase;padding:20px 12px;color:var(--text);
-  background:var(--panel-2);border:2px solid rgba(120,140,200,.3);transition:transform .12s,box-shadow .18s,border-color .18s}
-.bet b{font:900 30px/1 var(--font-display)}
-.bet::before{content:"";position:absolute;inset:0;opacity:.18;background-size:200% 200%;animation:betflow 4s linear infinite}
-.bet::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:currentColor;transform:scaleX(.2);transform-origin:left;transition:transform .18s}
-@keyframes betflow{0%{background-position:0 0}100%{background-position:200% 200%}}
-.bet--up{color:var(--up)} .bet--up::before{background:linear-gradient(120deg,transparent,rgba(61,255,154,.5),transparent)}
-.bet--down{color:var(--down)} .bet--down::before{background:linear-gradient(120deg,transparent,rgba(255,84,112,.5),transparent)}
-.bet--up:hover{border-color:var(--up);box-shadow:0 0 26px rgba(61,255,154,.4),inset 0 0 26px rgba(61,255,154,.14);transform:translateY(-3px)}
-.bet--down:hover{border-color:var(--down);box-shadow:0 0 26px rgba(255,84,112,.4),inset 0 0 26px rgba(255,84,112,.14);transform:translateY(-3px)}
-.bet:hover::after{transform:scaleX(1)}
-.bet:active{transform:translateY(-1px) scale(.99)}
-.again{display:flex;gap:10px;align-items:center;margin-top:12px}.again .lbl{font:600 11px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.again .bet{flex:1;flex-direction:row;padding:11px;font-size:12px}.again .bet b{font-size:15px}
-@media (prefers-reduced-motion: reduce){.bet::before{animation:none}}
-.tk-round{color:var(--cyan);font-size:9px;margin-left:4px;animation:pdot 1.4s ease-in-out infinite}
-.chart-badge.is-real{color:var(--acid);border-color:var(--acid)}
-.chart .big.bump{animation:bigbump .5s ease}
-@keyframes bigbump{0%{transform:scale(1)}35%{transform:scale(1.045)}100%{transform:scale(1)}}
-.chart .big.bump-up{text-shadow:0 0 16px rgba(61,255,154,.55)}
-.chart .big.bump-dn{text-shadow:0 0 16px rgba(255,84,112,.55)}
-@media (prefers-reduced-motion: reduce){.chart .big.bump{animation:none}}
 .bf-lang{background:none;border:1px solid var(--cyan);color:var(--cyan);font:700 11px/1 var(--font-hud);letter-spacing:.08em;padding:6px 9px;cursor:pointer;margin-right:6px}
 .bf-lang:hover{background:var(--cyan);color:#04060d}
 .bf-note{color:var(--cyan);font:600 12px/1.5 var(--font-mono);border-left:2px solid var(--cyan);padding-left:10px;margin:0 0 14px}
 
 /* ===== custom HUD cursor ===== */
 body.has-cursor{cursor:none}
-body.has-cursor a,body.has-cursor button,body.has-cursor .tk{cursor:none}
+body.has-cursor a,body.has-cursor button{cursor:none}
 .fx-cursor{position:fixed;left:0;top:0;width:26px;height:26px;margin:-13px 0 0 -13px;z-index:2147483000;pointer-events:none;transition:width .12s,height .12s}
 .fx-cursor i{position:absolute;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
 .fx-cursor i:nth-child(1){left:50%;top:0;width:1.5px;height:8px;margin-left:-.75px}
@@ -403,13 +216,10 @@ body.embed .arena{padding-top:6px}
 body.embed .hero{border-top:2px solid var(--line)}
 
 /* ===== responsive ===== */
-/* below 1080px (incl. Mac split-screen) stack to a single clean column */
-@media(max-width:1080px){.grid{grid-template-columns:1fr}.watchlist-wrap{grid-column:auto}.main{grid-column:auto}.side{grid-column:auto}.watchlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}}
 @media(max-width:720px){.brand h1{font-size:17px}.hero h2{font-size:26px}.opencd-clock{font-size:24px}}
 .arena ::-webkit-scrollbar{width:8px;height:8px}.arena ::-webkit-scrollbar-thumb,.bf-body::-webkit-scrollbar-thumb{background:rgba(120,140,200,.3)}
 
 /* ===== V13 · TA dashboard ===== */
-.legacy-hidden{display:none !important}
 .ta{margin-top:14px}
 .ta-topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:10px}
 .ta-searchwrap{position:relative;flex:1;max-width:420px;min-width:240px}
@@ -513,10 +323,52 @@ body.embed .hero{border-top:2px solid var(--line)}
 @media(max-width:720px){.ta-cards{grid-template-columns:1fr}.ta-modes{margin-left:0}}
 /* D4 (ROADMAP §1): mobile-only bump for the tightest HUD micro-labels (was 8.5-9px, below readable floor) */
 @media(max-width:720px){.ta-chip i{font-size:11px}.ta-mode i{font-size:11px}.ta-sg i{font-size:11px}}
+
+/* ===== V5 · AUTOPILOT DASHBOARD ===== */
+.ap{margin-top:14px}
+.ap-topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.ap-meta{display:flex;gap:8px;flex-wrap:wrap}
+.ap-note{color:var(--muted);font:500 12px/1.5 var(--font-mono);margin:0 0 12px;max-width:900px}
+.ap-chartwrap{padding:14px 16px 8px}
+.ap-chart-hd{display:flex;justify-content:flex-end;margin-bottom:4px}
+.ap-legend{display:flex;gap:12px;flex-wrap:wrap;font:700 10px/1 var(--font-hud);letter-spacing:.08em;text-transform:uppercase}
+.ap-legend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
+.ap-legend i{width:14px;height:0;border-top:2px solid;display:inline-block}
+.ap-legend i.dash{border-top-style:dashed;border-top-width:1.5px}
+.ap-chart{width:100%;height:240px;display:block}
+.ap-grid{stroke:rgba(120,150,210,.13);stroke-width:1}
+.ap-axis{fill:var(--muted);font:9px var(--font-mono)}
+.ap-line{fill:none;stroke-width:2}
+.ap-line-a{stroke:var(--acid)}
+.ap-line-b{stroke:var(--cyan)}
+.ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.4}
+.ap-line-smh{stroke:var(--magenta);stroke-dasharray:2 4;stroke-width:1.4}
+.ap-dot{stroke:none}
+.ap-models{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.ap-mh{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.ap-mh b{font:900 16px/1 var(--font-display);letter-spacing:.03em}
+.ap-mh .chip{font-size:10px}
+.ap-metrics{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.ap-metric{display:flex;flex-direction:column;gap:2px;border:1px solid rgba(120,140,200,.2);background:rgba(8,12,22,.5);padding:6px 9px;min-width:72px}
+.ap-metric span{font:600 8.5px/1 var(--font-hud);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ap-metric b{font:700 13px/1.2 var(--font-mono)}
+.ap-review{color:#c6cfea;font:500 12px/1.5 var(--font-mono);font-style:italic;border-left:2px solid var(--blue);padding-left:10px;margin:0 0 10px}
+.ap-sub{font:700 9.5px/1 var(--font-hud);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:10px 0 5px}
+.ap-postbl{width:100%;border-collapse:collapse;font:500 12px var(--font-mono)}
+.ap-postbl th{color:var(--muted);font:700 9px/1 var(--font-hud);letter-spacing:.06em;text-transform:uppercase;padding:3px 4px;text-align:right}
+.ap-postbl th:first-child,.ap-postbl td:first-child{text-align:left}
+.ap-postbl td{text-align:right;padding:4px}
+.ap-postbl tbody tr{border-top:1px solid rgba(120,140,200,.12)}
+.ap-log{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow:auto}
+.ap-log-row{display:flex;justify-content:space-between;gap:8px;font:600 11px/1.3 var(--font-mono);padding:5px 7px;background:rgba(8,12,22,.5);border-left:3px solid transparent}
+.ap-log-row.buy{border-left-color:var(--up)}
+.ap-log-row.sell{border-left-color:var(--down)}
+.ap-log-row.rej{border-left-color:var(--muted);color:var(--muted);font-style:italic}
+@media(max-width:1080px){.ap-models{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="arena-page" data-prev="/" data-next="/sectors.html">
-<a class="skip" href="#predBody">Skip to the game</a>
+<a class="skip" href="#taSearch">Skip to the dashboard</a>
 
 <div class="bg" aria-hidden="true">
   <div class="bg-glow"></div>
@@ -532,7 +384,7 @@ body.embed .hero{border-top:2px solid var(--line)}
   <header class="hdr">
     <div class="brand">
       <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 64 64" width="32" height="32" role="img" aria-label="Human vs AI">
+        <svg viewBox="0 0 64 64" width="32" height="32" role="img" aria-label="Arena">
           <line x1="20" y1="14" x2="20" y2="50" stroke="#3dff9a" stroke-width="1.6"/><rect x="15" y="26" width="10" height="19" fill="#3dff9a"/><path d="M14 24l6-7 6 7" fill="none" stroke="#eafff4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           <line x1="44" y1="13" x2="44" y2="49" stroke="#ff3df0" stroke-width="1.6"/><rect x="39" y="20" width="10" height="19" fill="#ff3df0"/><path d="M38 41l6 7 6-7" fill="none" stroke="#ffe6fb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="32" cy="32" r="6.4" fill="#05070e" stroke="#27e7ff" stroke-width="1.8"/><circle cx="32" cy="32" r="1.7" fill="#27e7ff"/>
@@ -540,7 +392,7 @@ body.embed .hero{border-top:2px solid var(--line)}
       </div>
       <div>
         <h1>AFFLATUS<br><span>TRADING ARENA</span></h1>
-        <p data-en="Live US AI-complex · you vs. Fable 5 Max" data-zh="美股 AI 板块实时 · 你 vs. Fable 5 Max">Live US AI-complex · you vs. Fable 5 Max</p>
+        <p data-en="US AI-complex TA dashboard · Autopilot vs SPY/SMH" data-zh="美股 AI 板块技术面板 · Autopilot 对比大盘基准">US AI-complex TA dashboard · Autopilot vs SPY/SMH</p>
       </div>
     </div>
     <nav class="nav" aria-label="Primary" data-afflatus-nav>
@@ -550,8 +402,8 @@ body.embed .hero{border-top:2px solid var(--line)}
 
   <section class="hero" aria-label="Status">
     <div class="kicker" data-en="TRAXUS//CVKM · simulation deck" data-zh="TRAXUS//CVKM · 模拟终端">TRAXUS//CVKM · simulation deck</div>
-    <h2 data-i18n-html data-en="Call the bell before <b>the machine</b> does" data-zh="在<b>机器</b>之前，喊出今天的方向">Call the bell before <b>the machine</b> does</h2>
-    <p class="brief" data-en="Read today's pre-market briefing, then predict whether each US AI-complex name opens the day green or red. An explainable model calls it too — momentum, mean-reversion and news sentiment. A drill for conviction in the AI-bubble fog, not a recommendation." data-zh="先读今天的盘前简报，再预测每只美股 AI 标的当天开盘是涨还是跌。一个可解释的模型也会给出它的判断——动量、均值回归与新闻情绪。这是在 AI 泡沫迷雾里练习信念的工具，而非投资建议。">Read today's pre-market briefing, then predict whether each US AI-complex name opens the day green or red. An explainable model calls it too — momentum, mean-reversion and news sentiment. A drill for conviction in the AI-bubble fog, not a recommendation.</p>
+    <h2 data-i18n-html data-en="Read the levels. Let the <b>machines</b> trade." data-zh="看懂关键位，交给<b>机器</b>去交易。">Read the levels. Let the <b>machines</b> trade.</h2>
+    <p class="brief" data-en="Search any US ticker for a technical read — key levels, moving averages, pivot points, a pre/post-market view. Alongside it, two simulated LLM ledgers (Model A: intraday swing; Model B: end-of-day review) trade a fixed universe under hard-coded risk rules, scored against SPY/SMH. Not investment advice." data-zh="搜索任意美股代码查看技术面：关键价位、均线、枢轴点、盘前盘后视图。同时两个模拟 LLM 账本（Model A：日内 swing；Model B：盘后深度复盘）在固定交易域内按代码风控规则运作，对比 SPY/SMH 基准计分。非投资建议。">Search any US ticker for a technical read — key levels, moving averages, pivot points, a pre/post-market view. Alongside it, two simulated LLM ledgers (Model A: intraday swing; Model B: end-of-day review) trade a fixed universe under hard-coded risk rules, scored against SPY/SMH. Not investment advice.</p>
     <button class="brief-cta" id="openBriefBtn" type="button">
       <span class="brief-cta__tag" data-en="▣ TODAY" data-zh="▣ 今日">▣ TODAY</span>
       <span class="brief-cta__main" data-en="PRE-MARKET BRIEFING" data-zh="盘前简报">PRE-MARKET BRIEFING</span>
@@ -560,10 +412,7 @@ body.embed .hero{border-top:2px solid var(--line)}
     </button>
     <div class="strip">
       <span class="chip closed" id="statusChip"><span class="d"></span><span id="statusTxt">—</span></span>
-      <span class="chip src" id="srcChip"><span data-en="DATA" data-zh="数据">DATA</span> · <b id="srcTxt">…</b></span>
       <span class="chip flat" id="sentChip"><span data-en="NEWS" data-zh="情绪">NEWS</span> · <span id="sentTxt">—</span></span>
-      <span class="chip"><span class="clk" data-en="UPDATED" data-zh="更新">UPDATED</span> <b id="clkTxt">—</b></span>
-      <button class="btn lang-noop" id="refreshBtn" type="button" data-en="Refresh" data-zh="刷新">Refresh</button>
     </div>
     <div class="opencd" id="openCd">
       <span class="opencd-label" id="cdLabel">US MARKET OPENS IN</span>
@@ -588,81 +437,34 @@ body.embed .hero{border-top:2px solid var(--line)}
     <div class="ta-panelhost panel" id="taPanel"></div>
   </section>
 
-  <!-- Legacy human-vs-AI game (roster + chart + prediction + scoreboard).
-       Temporarily hidden per V13 — source kept intact; remove .legacy-hidden to restore.
-       arena.js detects the class and throttles its quote polling to spare API quota. -->
-  <div class="grid legacy-hidden">
-    <section class="watchlist-wrap" aria-label="Watchlist">
-      <div class="sec-label wl" data-en="Roster · 12 names" data-zh="名单 · 12 只">Roster · 12 names</div>
-      <div class="watchlist" id="watchlist" role="listbox" aria-label="AI stock roster"></div>
-    </section>
+  <!-- ===== V5 · ARENA AUTOPILOT (Model A/B simulated ledgers, ROADMAP §7.1) ===== -->
+  <section class="ap" id="apDash" aria-label="Arena Autopilot dashboard">
+    <div class="ap-topbar">
+      <div class="sec-label" style="margin-bottom:0"><span data-en="Autopilot" data-zh="自动交易">Autopilot</span></div>
+      <div class="ap-meta">
+        <span class="chip" id="apDayChip">—</span>
+        <span class="chip" id="apUpdChip">—</span>
+      </div>
+    </div>
+    <p class="ap-note" id="apNote"></p>
 
-    <section class="main" aria-label="Selected stock">
-      <div class="panel chart">
-        <div class="hd">
-          <div>
-            <div class="sym" id="cSym">—</div>
-            <div class="nm" id="cName">—</div>
-          </div>
-          <div style="text-align:right">
-            <span class="chart-badge" id="cBadge">PRE-MARKET TAPE</span>
-            <div class="big" id="cBig">—</div>
-            <div class="ohlc" id="cOhlc"></div>
-          </div>
-        </div>
-        <div class="tf" id="tfRow" role="group" aria-label="Chart timeframe">
-          <button class="tf-b on" data-tf="D" aria-pressed="true">D</button>
-          <button class="tf-b" data-tf="W" aria-pressed="false">W</button>
-          <button class="tf-b" data-tf="M" aria-pressed="false">M</button>
-          <button class="tf-b" data-tf="6M" aria-pressed="false">6M</button>
-          <button class="tf-b" data-tf="Y" aria-pressed="false">Y</button>
-          <button class="tf-b" data-tf="5Y" aria-pressed="false">5Y</button>
-        </div>
-        <div class="indrow" id="indRow" role="group" aria-label="Technical indicators">
-          <span class="ind-lbl" data-en="Indicators" data-zh="指标">Indicators</span>
-          <button class="ind-b on" id="indMA" data-ind="ma" aria-pressed="true">MA</button>
-          <button class="ind-b" id="indVOL" data-ind="vol" aria-pressed="false">VOL</button>
-          <button class="ind-b" id="indMACD" data-ind="macd" aria-pressed="false">MACD</button>
-          <button class="ind-b" id="indKDJ" data-ind="kdj" aria-pressed="false">KDJ</button>
-        </div>
-        <div class="body">
-          <svg class="area" id="cChart" preserveAspectRatio="none" viewBox="0 0 600 230" role="img" aria-label="Price history chart"></svg>
-          <div class="loading" id="cLoading" style="display:none">
-            <div class="acq">
-              <div class="acq-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-              <div class="acq-label">Acquiring market signal</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="ap-chartwrap panel">
+      <div class="ap-chart-hd"><div class="ap-legend" id="apLegend"></div></div>
+      <svg class="ap-chart" id="apChart" viewBox="0 0 600 240" preserveAspectRatio="none" role="img" aria-label="Model A vs Model B equity curves"></svg>
+    </div>
 
-      <div class="panel pred">
-        <div class="hd">
-          <h2><span data-en="Predict" data-zh="预测">Predict</span> <span id="pSym">—</span></h2>
-          <p class="hint" data-en="Pick OPEN or CLOSE, then call whether it lands up or down versus the prior close. The model reveals its own call once you lock yours in." data-zh="先选「开盘」或「收盘」，再猜它相对前收是涨还是跌。你锁定后，模型才会亮出它的判断。">Pick OPEN or CLOSE, then call whether it lands up or down versus the prior close. The model reveals its own call once you lock yours in.</p>
-        </div>
-        <div id="predBody"></div>
-      </div>
-    </section>
+    <div class="ap-models">
+      <div class="ap-model panel pad" id="apModelA"></div>
+      <div class="ap-model panel pad" id="apModelB"></div>
+    </div>
+  </section>
 
-    <aside class="side" aria-label="Score and news">
-      <div class="panel pad">
-        <div class="sec-label"><span data-en="Scoreboard" data-zh="计分板">Scoreboard</span> <button class="btn" id="resetBtn" type="button" data-en="Reset" data-zh="重置">Reset</button></div>
-        <div class="score-sides">
-          <div class="sc" id="scPlayer"><div class="nm" data-en="You" data-zh="你">You</div><div class="n">0</div><div class="st"></div></div>
-          <span class="sc-vs">VS</span>
-          <div class="sc" id="scAI"><div class="nm" data-en="AI model" data-zh="AI 模型">AI model</div><div class="n">0</div><div class="st"></div></div>
-        </div>
-        <div class="rounds" id="rounds"><div class="empty">—</div></div>
-      </div>
-      <div class="panel pad news">
-        <div class="sec-label"><span data-en="Today's Signal" data-zh="今日信号">Today's Signal</span> <span id="newsDate" style="color:var(--muted)"></span></div>
-        <div id="newsList"><div class="empty">…</div></div>
-      </div>
-    </aside>
+  <div class="panel pad news" aria-label="Today's Signal digest">
+    <div class="sec-label"><span data-en="Today's Signal" data-zh="今日信号">Today's Signal</span> <span id="newsDate" style="color:var(--muted)"></span></div>
+    <div id="newsList"><div class="empty">…</div></div>
   </div>
 
-  <footer class="foot" data-i18n-html data-en="For entertainment only — not investment advice. Live quotes via Finnhub (free tier); <b>D</b> is real intraday, <b>W / M / 6M / Y / 5Y</b> use Twelve Data (real where available, else modeled). Scores are stored on this device." data-zh="仅供娱乐——非投资建议。实时报价来自 Finnhub（免费档）；<b>D</b> 为真实日内，<b>W / M / 6M / Y / 5Y</b> 使用 Twelve Data（可用时为真实历史，否则为建模）。分数保存在本设备。">For entertainment only — not investment advice. Live quotes via Finnhub (free tier); <b>D</b> is real intraday, <b>W / M / 6M / Y / 5Y</b> use Twelve Data (real where available, else modeled). Scores are stored on this device.</footer>
+  <footer class="foot" data-i18n-html data-en="For entertainment only — not investment advice. Live quotes via Finnhub (free tier); daily history via Twelve Data (real where available, else modeled). Autopilot trades two simulated $10,000 ledgers under code-enforced risk rules — no real money, no real orders." data-zh="仅供娱乐——非投资建议。实时报价来自 Finnhub（免费档）；日线历史来自 Twelve Data（可用时为真实历史，否则为建模）。Autopilot 交易两本各 $10,000 的模拟账本，按代码强制风控规则运作——无真实资金，无真实下单。">For entertainment only — not investment advice. Live quotes via Finnhub (free tier); daily history via Twelve Data (real where available, else modeled). Autopilot trades two simulated $10,000 ledgers under code-enforced risk rules — no real money, no real orders.</footer>
 </main>
 
 <div id="briefing" hidden></div>
