@@ -30,10 +30,34 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
   // site's published output for a real 23:26 birth in tests/bazi.test.js),
   // while 早子 (hour=0) never shifts. Collapsing them into one option would
   // silently give half of all 子-hour users the wrong day pillar.
-  const SHICHEN = ['早子 00–1', '晚子 23–24', '丑 1–3', '寅 3–5', '卯 5–7', '辰 7–9', '巳 9–11', '午 11–13', '未 13–15', '申 15–17', '酉 17–19', '戌 19–21', '亥 21–23'];
-  const SHICHEN_HOUR = [0, 23, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21]; // representative hour per branch
+  // Listed in chronological order (00:00 -> 24:00, 晚子 last, not squeezed
+  // in second) with full HH:MM ranges and a pinyin EN label, so the option
+  // reads clearly in either language instead of a bare, oddly-ordered 干支.
+  const SHICHEN = [
+    [0, '早子 00:00–01:00', 'Zi · early 00:00–01:00'],
+    [1, '丑 01:00–03:00', 'Chou 01:00–03:00'],
+    [3, '寅 03:00–05:00', 'Yin 03:00–05:00'],
+    [5, '卯 05:00–07:00', 'Mao 05:00–07:00'],
+    [7, '辰 07:00–09:00', 'Chen 07:00–09:00'],
+    [9, '巳 09:00–11:00', 'Si 09:00–11:00'],
+    [11, '午 11:00–13:00', 'Wu 11:00–13:00'],
+    [13, '未 13:00–15:00', 'Wei 13:00–15:00'],
+    [15, '申 15:00–17:00', 'Shen 15:00–17:00'],
+    [17, '酉 17:00–19:00', 'You 17:00–19:00'],
+    [19, '戌 19:00–21:00', 'Xu 19:00–21:00'],
+    [21, '亥 21:00–23:00', 'Hai 21:00–23:00'],
+    [23, '晚子 23:00–24:00', 'Zi · late 23:00–24:00'],
+  ];
   for (const sel of [$('bHour'), $('sHour')]) {
-    SHICHEN.forEach((label, i) => { const o = document.createElement('option'); o.value = String(SHICHEN_HOUR[i]); o.textContent = label; sel.appendChild(o); });
+    if (!sel) continue;
+    SHICHEN.forEach(([hour, zh, en]) => {
+      const o = document.createElement('option');
+      // data-en/data-zh: the site's generic i18n.js already re-scans and
+      // relabels every [data-en] element on each language toggle, same
+      // mechanism the static "Unknown" option above relies on.
+      o.value = String(hour); o.dataset.en = en; o.dataset.zh = zh; o.textContent = T(en, zh);
+      sel.appendChild(o);
+    });
   }
 
   // ---- birth-timezone selects (optional accuracy correction) --------------
