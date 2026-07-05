@@ -7,7 +7,7 @@
 
 ## 1. 架构 / Architecture
 
-- **构建**：Vite MPA 多入口。七个 HTML 入口（`index.html` 首页 + `arena.html`/`sectors.html`/`signal.html`/`games.html`/`league.html`/`serial.html`）全部在项目**根目录**，注册在 `vite.config.js` 的 `build.rollupOptions.input` 里，参与真正的压缩/哈希/公共 chunk 拆分（**不再是** `public/*.html` 原样拷贝的旧架构）。加新页只需把 HTML 放根目录、在 `vite.config.js` 加一行 input、在 `nav.js` 的 `SITE` 加一条——`league.html`（2026-07-04，V0）是这条流程第一次被完整走通并验证的实例，见下方 checklist。
+- **构建**：Vite MPA 多入口。八个 HTML 入口（`index.html` 首页 + `arena.html`/`sectors.html`/`signal.html`/`games.html`/`league.html`/`horoscope.html`/`serial.html`）全部在项目**根目录**，注册在 `vite.config.js` 的 `build.rollupOptions.input` 里，参与真正的压缩/哈希/公共 chunk 拆分（**不再是** `public/*.html` 原样拷贝的旧架构）。加新页只需把 HTML 放根目录、在 `vite.config.js` 加一行 input、在 `nav.js` 的 `SITE` 加一条——`league.html`（2026-07-04，V0）首次走通此流程，`horoscope.html`（2026-07-05，V20）再次验证，见下方 checklist。
 - **JS 全部是 ES module**，按用途分三层目录：
   - `src/lib/` — 七页共享的基础库：`nav.js`（★ 唯一的 `SITE` 配置，见下）、`i18n.js`、`transition.js`、`page-turn.js`、`audio.js`、`clock.js`。
   - `src/pages/` — 各子页专属逻辑（`arena.js`/`arena-bg.js`/`games.js`/`league.js`）+ **每页一个入口文件**（`homeLibs.js`/`arenaEntry.js`/`sectorsLibs.js`/`signalLibs.js`/`gamesEntry.js`/`leagueEntry.js`/`serialLibs.js`），每个 HTML 只挂一个 `<script type="module" src="/src/pages/xxxEntry.js">`，入口文件内部用普通 `import` 按顺序声明该页真正依赖的库。
@@ -43,9 +43,9 @@
 
 ### 文件清单 / File map
 ```
-index.html arena.html sectors.html    七个 Vite 入口（根目录）
+index.html arena.html sectors.html    八个 Vite 入口（根目录）
 signal.html games.html league.html
-serial.html
+horoscope.html serial.html
 src/main.js (~3.4k 行)   首页主程序（HUD/场景/光标/导航装配，仍是拆分中的单体文件）
 src/scene/               首页 + 战斗场景模块（alphardForge / topdownCombat / combatHudSC /
                          combatCine / cameraDirector[起降运镜] / fighter3D / shipHologram / …）
@@ -54,16 +54,19 @@ src/combat/              权威时间线 + 相机导演：weaponClock.js / camer
 src/scene/odinHull.js    Odin 参考舰体共享几何布局（V15，同样可脱离 DOM 单测，见上）
 src/ui/                  HUD 绘制模块（combatHmdV3 / battleFeed / marketDeck / viz 等）
 src/data/content.js      首页文案 + Top 10 持仓 PICKS_ZH/EN
-src/lib/                 七页共享库：nav.js（★ SITE 唯一真源）/ i18n.js / transition.js /
+src/lib/                 八页共享库：nav.js（★ SITE 唯一真源）/ i18n.js / transition.js /
                          page-turn.js / audio.js / clock.js
+src/lib/bazi.js          V20 四柱干支历法数学（纯函数，双锚点单测，见 §5 测试）
+src/lib/horoscopeEngine.js  V20 日运/合盘/分享码引擎（纯函数+seeded 文案库，全本地无后端）
 src/pages/               各页专属逻辑 + 每页一个入口文件（见上方架构说明）
-public/page-turn.css     6 个子页共享：翻页箭头 + 自托管字体 + Labs 下拉结构样式
+public/page-turn.css     7 个子页共享：翻页箭头 + 自托管字体 + Labs 下拉结构样式
 public/*-data.json       games-data.json / signal-events.json / novels-data.json /
-                         arena-news.json / leagues-data.json
+                         arena-news.json / leagues-data.json / sectors-data.json
 scripts/push-arena-news.sh  cron 数据推送管线（写 JSON → stash/rebase/commit/push）
 prompts/                 v1.5 定时任务提示词库（README + 5 模块文件）
 roadmap.md technical.md  仅有的两份设计文档（另见 CLAUDE.md、prompts/，机器向）
 ```
+> **V20 观星台（horoscope.html，2026-07-05）架构要点**：整页零 fetch 零后端——四柱排盘/星座/日运/合盘全部在浏览器本地由上述两个纯函数库算出；生日只存 localStorage（`afflatus-horo:me`），签到 streak 同理；合盘分享 = 双方生日 base64url 编进 `?p=` 参数（`encodeShare`/`decodeShare`，有 vitest 覆盖的输入校验）。日运的「每天变化」来自真实干支历（今日日柱五行 vs 用户日主生克）+ seeded mulberry32 文案选择，确定性、可复现、无 API 成本。节气/立春边界为 ±1 天近似值，页脚已声明；全页挂「仅供娱乐」。
 
 ---
 
@@ -80,7 +83,7 @@ roadmap.md technical.md  仅有的两份设计文档（另见 CLAUDE.md、prompt
 - **定时脚本的 key 管理（历史教训，红线）**：`scripts/` 目录已进 git 跟踪——**任何脚本不允许出现明文 API key**。需要 key 的脚本统一 `source ~/.config/afflatus/env`（仓库外）；能走线上代理（`/api/quote` 等）的一律走代理。旧 key 泄露过一次（见下），同样的错误不能犯第二次。
 
 ### 导航闭环 / Nav cycle
-`Home → Arena → Sectors → Signal → Games → Novels → Home`（Games/Novels 在顶部导航里收在 **Labs** 下拉，翻页顺序不受影响，仍按此顺序循环）。加新页只改 `src/lib/nav.js` 的 `SITE` 数组一处——prev/next、顶部链接/下拉分组会自动同步，不用像以前那样手改多个文件。未来 `league.html` 上线后会插在 games 与 novels 之间，同样打 `group:'labs'`。
+`Home → Arena → Sectors → Signal → Games → Leagues → Horoscope → Novels → Home`（Games/Leagues/Horoscope/Novels 在顶部导航里收在 **Labs** 下拉，翻页顺序不受影响，仍按此顺序循环）。加新页只改 `src/lib/nav.js` 的 `SITE` 数组一处——prev/next、顶部链接/下拉分组会自动同步，不用像以前那样手改多个文件。
 
 ---
 
@@ -132,7 +135,7 @@ npm run dev        # http://127.0.0.1:5173  （逐页检查）
 npm run build      # 产出 dist/（七个入口各自压缩打包，public/ 静态资源原样拷贝进去）
 npm run preview    # 预览打包结果
 ```
-> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑十三个文件共 **219 条**（2026-07-05 复核，V9-V11 Sectors 新增 16 条）：`tests/validateSectorsData.test.js`（16，**V9-V11 Sectors**：`validateSectorsData` 的空种子状态放行、4 厂商卡数量/唯一性、开发动态数量上限、数值相关系数禁令、关系标签枚举、postMemory 卡片 tracks/唯一 ticker/置信度范围/换股提议可选性校验）+ `tests/arenaRules.test.js`（44，Arena 规则引擎）+ `tests/weaponClock.test.js`（20，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）+ `tests/cameraMath.test.js`（25，V14 临界阻尼弹簧/抢占规则/混合曲线 + **V18 chaseCam 的 `fovForAccel`/`bankAngle`/`bankedUpVector`/`chaseCamPose` 纯函数**）+ `tests/weaponCameraDirector.test.js`（9，V14 镜头状态机，mock 相机对象，不依赖 WebGL；**V18 新增 3 条覆盖可选 fov/roll 字段——含"不设置这两个字段的旧分支必须保持零改动"的向后兼容断言**）+ `tests/odinHull.test.js`（15，V15 舰体比例/挂载点，mock `add()` 记录 mesh 算真实 `THREE.Box3`，不依赖 WebGL/DOM）+ `tests/arenaRun.test.js`（14，V4 Autopilot 结算管线）+ `tests/technicals.test.js`（21，V13 指标库）+ `tests/validateSignalEvents.test.js`（12，V7 Signal 事件 schema 校验）+ `tests/ladderLayout.test.js`（8，V13 Level Ladder 防重叠排版）+ `tests/rateLimit.test.js`（6，D1 API 限流）+ `tests/arenaLedgerView.test.js`（13，V5 Autopilot 前端 P&L/基准线/图表缩放）+ `tests/predlogEntry.test.js`（16，**V19 预测差值 Phase 1**：`pctChange`/`directionHit`/`buildPredlogDay`/`appendPredlogDay`，覆盖零/负基数、非有限值、旧 schema 缺字段回退、日期幂等 upsert、滚动窗口裁剪）。所有模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
+> **测试（已引入，2026-07-04，V3 起）**：`npm run test`（`vitest run`，Vite 原生零配置）现跑十七个文件共 **273 条**（2026-07-05 复核；V20 观星台新增 `tests/bazi.test.js` 17 条——含 1949-10-01=甲子日、1970-01-01=辛巳日双独立锚点验证干支日柱数学——与 `tests/horoscopeEngine.test.js` 12 条：日运确定性/跨日变化/8..96 分数钳制/六合优于相冲/分享码 roundtrip 与垃圾输入拒绝；V12 另增 `tests/provenanceBadge.test.js` 与 `tests/trackRecord.test.js`）：`tests/validateSectorsData.test.js`（16，**V9-V11 Sectors**：`validateSectorsData` 的空种子状态放行、4 厂商卡数量/唯一性、开发动态数量上限、数值相关系数禁令、关系标签枚举、postMemory 卡片 tracks/唯一 ticker/置信度范围/换股提议可选性校验）+ `tests/arenaRules.test.js`（44，Arena 规则引擎）+ `tests/weaponClock.test.js`（20，武器单时钟，含"两消费者同时刻读同一时间线必须逐帧零差异"的 V16 验收断言）+ `tests/cameraMath.test.js`（25，V14 临界阻尼弹簧/抢占规则/混合曲线 + **V18 chaseCam 的 `fovForAccel`/`bankAngle`/`bankedUpVector`/`chaseCamPose` 纯函数**）+ `tests/weaponCameraDirector.test.js`（9，V14 镜头状态机，mock 相机对象，不依赖 WebGL；**V18 新增 3 条覆盖可选 fov/roll 字段——含"不设置这两个字段的旧分支必须保持零改动"的向后兼容断言**）+ `tests/odinHull.test.js`（15，V15 舰体比例/挂载点，mock `add()` 记录 mesh 算真实 `THREE.Box3`，不依赖 WebGL/DOM）+ `tests/arenaRun.test.js`（14，V4 Autopilot 结算管线）+ `tests/technicals.test.js`（21，V13 指标库）+ `tests/validateSignalEvents.test.js`（12，V7 Signal 事件 schema 校验）+ `tests/ladderLayout.test.js`（8，V13 Level Ladder 防重叠排版）+ `tests/rateLimit.test.js`（6，D1 API 限流）+ `tests/arenaLedgerView.test.js`（13，V5 Autopilot 前端 P&L/基准线/图表缩放）+ `tests/predlogEntry.test.js`（16，**V19 预测差值 Phase 1**：`pctChange`/`directionHit`/`buildPredlogDay`/`appendPredlogDay`，覆盖零/负基数、非有限值、旧 schema 缺字段回退、日期幂等 upsert、滚动窗口裁剪）。所有模块都刻意不依赖 DOM/fetch/`Date.now()` 默认值——调用方显式传入 `now`/`t`，保证可在 Node 定时任务、单测与浏览器三侧复用同一份逻辑。账本类代码不写测试不许上线，新增前先跑一遍确认没破坏现有分支。
 
 ---
 
