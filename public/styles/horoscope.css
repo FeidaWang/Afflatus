@@ -121,6 +121,27 @@ a{color:inherit;text-decoration:none}
 .elem i{width:9px;height:9px;border-radius:50%;font-style:normal}
 .elem i.e-0{background:var(--wood)} .elem i.e-1{background:var(--fire)} .elem i.e-2{background:var(--earth)} .elem i.e-3{background:var(--metal)} .elem i.e-4{background:var(--water)}
 
+/* ===== 生辰详批 (子平法 chart-detail table) ===== */
+.bz-table-wrap{margin-top:10px;overflow-x:auto;border:1px solid var(--line)}
+.bz-table{width:100%;border-collapse:collapse;font:400 12.5px/1.5 var(--serif);white-space:nowrap}
+.bz-table th,.bz-table td{border:1px solid var(--line);padding:7px 10px;text-align:center}
+.bz-table thead th,.bz-table tr th:first-child{background:var(--panel2);color:var(--dim);font:600 10.5px/1 var(--en);letter-spacing:.1em;text-transform:uppercase;white-space:normal}
+.bz-table tr th:first-child{text-align:left;position:sticky;left:0}
+.bz-table td small{display:block;color:var(--dim);font:400 9.5px/1 var(--en);margin-top:2px}
+.bz-table .dm{color:var(--gold)}
+.bz-rel{margin-top:10px;font:400 13px/1.7 var(--serif);color:#c9c2ae}
+.bz-rel-t{display:inline-block;min-width:64px;color:var(--dim);font:600 10.5px/1 var(--en);letter-spacing:.14em;text-transform:uppercase;margin-right:8px}
+.bz-season{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.bz-season span{border:1px solid var(--line);background:var(--panel2);padding:5px 10px;font:700 12px/1 var(--serif)}
+.bz-strength{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:14px;border:1px dashed rgba(239,191,4,.4);padding:12px 14px}
+.bz-score{flex:none;text-align:center;min-width:76px}
+.bz-score b{display:block;font:900 30px/1 var(--mono);color:var(--gold)}
+.bz-score span{display:block;margin-top:5px;font:600 9.5px/1.3 var(--en);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.bz-strength-text{flex:1;min-width:230px}
+.bz-strength-text p{margin:0 0 6px;font:400 13.5px/1.7 var(--serif);color:#d8d1bd}
+.bz-strength-text p:last-child{margin-bottom:0}
+.bz-caveat{margin:8px 0 0;color:var(--dim);font:400 11.5px/1.6 var(--serif)}
+
 /* ===== daily fortune ===== */
 .today-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
 .today-gz{font:900 22px/1 var(--serif);letter-spacing:.14em}
