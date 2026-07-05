@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import { createNighthawk } from './nighthawk.js';
 import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
 import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
+import { activePhase, msUntilPhase, msRemaining } from '../combat/weaponClock.js';
 
 // Opt-in flag (ROADMAP §4 V14): default behavior is the original hardcoded
 // camera sway, byte-for-byte unchanged, unless this is present in the URL.
@@ -497,6 +498,28 @@ export function createTopdownCombat({ canvas }) {
     if (running) raf = requestAnimationFrame(loop);
   }
 
+  // V18 Phase 1 item 2 (ROADMAP §4): drives the camera director off a
+  // weaponClock timeline (see main.js's missile-launch site, which builds
+  // one with drop/ignite/terminal/impact phases matching the real
+  // MISSILE_DROP_MS/MISSILE_IGNITE_MS thresholds) instead of a separate
+  // guessed duration — this is the first real consumer of weaponClock.js.
+  // No-op if the camera director isn't enabled (?combatcam=director) or no
+  // timeline was passed.
+  function driveMissileTimeline(timeline, nowMs) {
+    if (!camDirector || !timeline) return;
+    const phase = activePhase(timeline, nowMs);
+    if (phase === 'terminal' || phase === 'impact') {
+      camDirector.requestShot('chaseCam', { durationMs: Math.max(400, msRemaining(timeline, nowMs)), blendInMs: 350, refresh: true });
+    } else {
+      // missileTail (priority 4) outranks chaseCam (priority 3) — capping its
+      // duration to exactly the remaining drop+ignite window (instead of a
+      // fixed refresh) means it naturally expires right as the phase flips
+      // to 'terminal', so the chaseCam request above isn't blocked by
+      // shouldPreempt's "lower priority must wait" rule.
+      camDirector.requestShot('missileTail', { durationMs: Math.max(200, msUntilPhase(timeline, 'terminal', nowMs)), blendInMs: 300, refresh: true });
+    }
+  }
+
   return {
     start() { if (!running) { running = true; raf = requestAnimationFrame(loop); } },
     stop() { running = false; if (raf) cancelAnimationFrame(raf); },
@@ -505,6 +528,7 @@ export function createTopdownCombat({ canvas }) {
     // Consumed for kill flashes + comet visibility; full state-driven flight
     // path is a separate follow-up (ROADMAP §4 Phase 2b).
     renderOnce(now = performance.now(), state = null) { if (!t0) t0 = now; update(now, state); renderer.render(scene, camera); },
+    driveMissileTimeline,
     destroy() { this.stop(); renderer.dispose(); }
   };
 }
