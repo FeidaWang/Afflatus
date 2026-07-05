@@ -68,6 +68,21 @@ export function createCapitalShip3D() {
   const useOdin = odinHullEnabled();
   let engines = [], muzzle, muzzleLight, odinInfo = null;
 
+  // ===== CanvasTexture decal helpers (hull markings + caution stripes) =====
+  // Hoisted above the if/else so both the Odin branch and the default wedge
+  // branch below can place decals with the same helpers — previously these
+  // were defined only inside the wedge branch, which is the literal reason
+  // the Odin hull had zero decals (B9, ROADMAP §4 V15 "收尾项").
+  const mkTex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const tx = new THREE.CanvasTexture(c); tx.anisotropy = 4; return tx; };
+  const decal = (tex, p, s, r) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(s[0], s[1]), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })); m.position.set(p[0], p[1], p[2]); m.rotation.set(r ? r[0] : -Math.PI / 2, r ? r[1] : 0, r ? r[2] : 0); m.renderOrder = 2; ship.add(m); return m; };
+  const textTex = (txt, col, fs) => mkTex(256, 64, (x, w, h) => { x.clearRect(0, 0, w, h); x.fillStyle = col || 'rgba(198,208,216,.94)'; x.font = `bold ${fs || 44}px Arial`; x.textBaseline = 'middle'; x.textAlign = 'center'; x.fillText(txt, w / 2, h / 2 + 2); });
+  const dangerTex = () => mkTex(256, 80, (x, w, h) => {
+    x.clearRect(0, 0, w, h);
+    for (let i = -h; i < w; i += 16) { x.fillStyle = (Math.floor((i + h) / 16) % 2) ? '#f2c200' : '#111'; x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 8, 0); x.lineTo(i + 8 + 22, 22); x.lineTo(i + 22, 22); x.closePath(); x.fill(); }
+    x.fillStyle = 'rgba(10,10,10,.92)'; x.fillRect(0, 24, w, h - 24);
+    x.fillStyle = '#ffb000'; x.font = 'bold 22px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('DANGER EJECTION PORT', w / 2, 52);
+  });
+
   if (useOdin) {
     // ===== Odin-reference blade hull (V15, preview-only via ?ship=odin) =====
     odinInfo = createOdinHull(THREE, {
@@ -92,6 +107,32 @@ export function createCapitalShip3D() {
     muzzle.position.set(odinInfo.muzzleAnchor.x, odinInfo.muzzleAnchor.y, odinInfo.muzzleAnchor.z); ship.add(muzzle);
     muzzleLight = new THREE.PointLight(0x7fb8ff, 0, 7);
     muzzleLight.position.set(odinInfo.muzzleAnchor.x, odinInfo.muzzleAnchor.y, odinInfo.muzzleAnchor.z + 0.3); ship.add(muzzleLight);
+
+    // ===== hull decals repositioned onto the Odin hull (B9, ROADMAP §4 V15 =====
+    // "收尾项"): the wedge hull's decals never had an Odin-branch equivalent.
+    // Positions are derived from odinInfo's real returned numbers rather than
+    // guessed constants, and deliberately kept at z <= bowRoot — the reference
+    // spec calls for the bow to stay clean/blank so the blade silhouette reads
+    // (odinHull.js's own greeble-density comment: "bow: sparse, kept clean").
+    // nose/stern/sternRoot mirror odinHull.js's internal NOSE/STERN/STERN_ROOT
+    // formulas (NOSE = bowRoot + bowLen; STERN = NOSE - length; STERN_ROOT =
+    // STERN + 3.2) — keep these three lines in sync if that file's constants change.
+    const oNose = odinInfo.bowRoot + odinInfo.bowLen;
+    const oStern = oNose - odinInfo.length;
+    const oSternRoot = oStern + 3.2;
+    const oMidMid = (oSternRoot + odinInfo.bowRoot) / 2;
+    const oMidLen = odinInfo.bowRoot - oSternRoot;
+    const oDeckY = odinInfo.height * 0.17; // hull-top level, matches odinHull.js's turretMounts/scatter Y
+    decal(textTex('TC CONDOR'), [0.85, oDeckY, oMidMid + oMidLen * 0.15], [1.0, 0.24]);           // starboard flank, midship — hull name plate
+    decal(textTex('310106'), [-0.85, oDeckY, oMidMid - oMidLen * 0.1], [0.66, 0.19]);             // port flank, midship — registry number
+    const oForwardTurretZ = odinInfo.turretMounts[0].z; // frontmost dorsal turret, still inside the bowRoot limit (unlike muzzleAnchor, which is out on the bow-forward gun barrel)
+    decal(textTex('01', 'rgba(214,222,230,.95)', 52), [0.4, oDeckY, oForwardTurretZ - 0.15], [0.27, 0.22]); // frontmost-turret unit marking (Odin's analog of the old bow-turret "01" plate)
+    // y=0.3 (absolute, NOT height-scaled) stays inside the stern deck's own
+    // half-height envelope (odinHull.js keeps engine housings within
+    // +/-sternDeckH/2 ~= +/-0.45 for the same reason — sternDeckH = height*0.5);
+    // x=1.3 sits on the hull body itself, just inboard of the radiator fins at x=+/-1.7.
+    decal(dangerTex(), [1.3, 0.3, oStern + 1.1], [0.62, 0.2]);                                     // starboard engine-cluster caution stripe
+    decal(dangerTex(), [-1.3, 0.3, oStern + 1.1], [0.62, 0.2]);                                    // port engine-cluster caution stripe
   } else {
 
   // ===== flat triangular wedge bow (nose +Z) =====
@@ -182,16 +223,7 @@ export function createCapitalShip3D() {
   // recessed bow strips
   for (let i = 0; i < 5; i++) M(new THREE.BoxGeometry(0.9 - i * 0.12, 0.02, 0.05), darkMat, [0, 0.05, 2.4 - i * 0.4]);
 
-  // ===== CanvasTexture decals (hull markings + caution stripes) =====
-  const mkTex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const tx = new THREE.CanvasTexture(c); tx.anisotropy = 4; return tx; };
-  const decal = (tex, p, s, r) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(s[0], s[1]), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })); m.position.set(p[0], p[1], p[2]); m.rotation.set(r ? r[0] : -Math.PI / 2, r ? r[1] : 0, r ? r[2] : 0); m.renderOrder = 2; ship.add(m); return m; };
-  const textTex = (txt, col, fs) => mkTex(256, 64, (x, w, h) => { x.clearRect(0, 0, w, h); x.fillStyle = col || 'rgba(198,208,216,.94)'; x.font = `bold ${fs || 44}px Arial`; x.textBaseline = 'middle'; x.textAlign = 'center'; x.fillText(txt, w / 2, h / 2 + 2); });
-  const dangerTex = () => mkTex(256, 80, (x, w, h) => {
-    x.clearRect(0, 0, w, h);
-    for (let i = -h; i < w; i += 16) { x.fillStyle = (Math.floor((i + h) / 16) % 2) ? '#f2c200' : '#111'; x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 8, 0); x.lineTo(i + 8 + 22, 22); x.lineTo(i + 22, 22); x.closePath(); x.fill(); }
-    x.fillStyle = 'rgba(10,10,10,.92)'; x.fillRect(0, 24, w, h - 24);
-    x.fillStyle = '#ffb000'; x.font = 'bold 22px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('DANGER EJECTION PORT', w / 2, 52);
-  });
+  // ===== CanvasTexture decals (hull markings + caution stripes; helpers hoisted above) =====
   decal(textTex('TC CONDOR'), [0.45, 0.53, -0.5], [0.95, 0.22]);
   decal(textTex('310106'), [-0.4, 0.53, 0.5], [0.62, 0.18]);
   decal(textTex('01', 'rgba(214,222,230,.95)', 52), [-0.3, 0.625, 1.2], [0.26, 0.22]);
