@@ -23,8 +23,15 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
   const todayStr = () => { const d = new Date(); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
 
   // ---- 时辰 selects -------------------------------------------------------
-  const SHICHEN = ['子 23–1', '丑 1–3', '寅 3–5', '卯 5–7', '辰 7–9', '巳 9–11', '午 11–13', '未 13–15', '申 15–17', '酉 17–19', '戌 19–21', '亥 21–23'];
-  const SHICHEN_HOUR = [23, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21]; // representative hour per branch
+  // 子 (23:00-01:00) is split into 早子 (00:xx, same calendar day) and 晚子
+  // (23:xx) because they are NOT interchangeable: computeBazi() advances the
+  // day/month/year pillar to the next day for a 晚子 (hour=23) birth (the
+  // mainstream "late zi" convention — verified against a professional bazi
+  // site's published output for a real 23:26 birth in tests/bazi.test.js),
+  // while 早子 (hour=0) never shifts. Collapsing them into one option would
+  // silently give half of all 子-hour users the wrong day pillar.
+  const SHICHEN = ['早子 00–1', '晚子 23–24', '丑 1–3', '寅 3–5', '卯 5–7', '辰 7–9', '巳 9–11', '午 11–13', '未 13–15', '申 15–17', '酉 17–19', '戌 19–21', '亥 21–23'];
+  const SHICHEN_HOUR = [0, 23, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21]; // representative hour per branch
   for (const sel of [$('bHour'), $('sHour')]) {
     SHICHEN.forEach((label, i) => { const o = document.createElement('option'); o.value = String(SHICHEN_HOUR[i]); o.textContent = label; sel.appendChild(o); });
   }
