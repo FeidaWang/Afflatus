@@ -41,6 +41,7 @@ import { createSoftClockRenderer } from './ui/softClock.js';
 import { initTerminalStarMap } from './ui/terminalStarMap.js';
 import { applyDeviceBodyClasses, setText } from './utils/dom.js';
 import { clamp, easeOut, lerp, rand } from './utils/math.js';
+import { createCursor } from './ui/cursor.ts';
 
 let currentLang='en';
 try{const savedLang=localStorage.getItem('afflatus-lang');if(savedLang==='zh'||savedLang==='en')currentLang=savedLang;}catch(e){}
@@ -165,12 +166,12 @@ function smoothHeadingFromVelocity(obj,fallback=-Math.PI/2,rate=.18){
   return obj.angle;
 }
 /* ===== UI & HUD ===== */
-const cursor=document.getElementById('cursor');
+const cursorCtl=createCursor(document.getElementById('cursor'));
 let mx=innerWidth/2,my=innerHeight/2,pcx=mx,pcy=my; window.__mouseReady=false;
 addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;window.__mouseReady=true;});
 document.querySelectorAll('[data-hot],a,button').forEach(el=>{
-  el.addEventListener('mouseenter',()=>cursor.classList.add('hot'));
-  el.addEventListener('mouseleave',()=>cursor.classList.remove('hot'));
+  el.addEventListener('mouseenter',()=>cursorCtl.setHot(true));
+  el.addEventListener('mouseleave',()=>cursorCtl.setHot(false));
 });
 
 const combatHud=document.getElementById('combatHud');
@@ -426,7 +427,6 @@ function updateCursorTarget(){
   document.querySelectorAll('#cursorTarget').forEach((el,idx)=>{ if(idx>0) el.remove(); });
   const box=document.getElementById('cursorTarget');
   if(!box) return;
-  cursor.classList.remove('target-left','target-top','target-bottom');
   if(halley?.hover && !halley.destroyed){
     const h=HUD_COPY[currentLang]||HUD_COPY.zh;
     const threatIndex={small:0,medium:1,large:2,giant:3}[halley.sizeClass||'medium'];
@@ -442,12 +442,9 @@ function updateCursorTarget(){
     let boxAbove = vy<0;                       // moving up → tail below → box above
     if(my < innerHeight*.24) boxAbove=false;
     if(my > innerHeight*.72) boxAbove=true;
-    cursor.classList.toggle('target-left', boxLeft);
-    cursor.classList.toggle('target-top', boxAbove);
-    cursor.classList.toggle('target-bottom', !boxAbove);
-    cursor.classList.add('targeting');
+    cursorCtl.setTargeting({left:boxLeft, above:boxAbove});
   }else{
-    cursor.classList.remove('targeting');
+    cursorCtl.setTargeting(null);
   }
 }
 
@@ -3381,7 +3378,7 @@ function frame(now){
     const dt=Math.min(64,now-lastT);lastT=now;
     if(!window.__mouseReady){mx=innerWidth/2;my=innerHeight/2;}
     
-    cursor.style.transform=`translate(${mx}px,${my}px) translate(-50%,-50%) scale(${cursor.classList.contains('hot')?1.25:1})`;
+    cursorCtl.setPosition(mx,my);
     
     warpIntensity=lerp(warpIntensity,warpTarget,.05);
     backgroundScene.draw(now);
@@ -3431,7 +3428,7 @@ if(!REDUCED_MOTION){
 const marketDeck=initMarketDeck({
   getLang:()=>currentLang,
   getDpr:()=>DPR,
-  onPickHotChange:on=>cursor.classList.toggle('hot',on)
+  onPickHotChange:on=>cursorCtl.setHot(on)
 });
 function updateSignalDeckHud(){
   const deck=document.getElementById('signalDeck');
@@ -3481,13 +3478,13 @@ function setLang(lang){
 const langBtn=document.getElementById('langBtn');
 langBtn.addEventListener('mouseenter',()=>{
   warpTarget=.82;
-  cursor.classList.add('warp');
+  cursorCtl.setWarp(true);
   document.body.classList.add('warp-hover');
   const hudThrusters=document.getElementById('hudThrusters'); if(hudThrusters) hudThrusters.textContent=HC('ready');
 });
 langBtn.addEventListener('mouseleave',()=>{
   warpTarget=.18;
-  cursor.classList.remove('warp');
+  cursorCtl.setWarp(false);
   document.body.classList.remove('warp-hover');
   const hudThrusters=document.getElementById('hudThrusters'); if(hudThrusters) hudThrusters.textContent=HC('armed');
 });
