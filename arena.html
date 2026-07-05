@@ -104,6 +104,11 @@ a{color:inherit;text-decoration:none}
 .chip.bull{color:var(--up)} .chip.bear{color:var(--down)} .chip.flat{color:var(--muted)}
 .chip .clk{color:var(--muted)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+/* Provenance badge (ROADMAP §7.5 V12) — same class API as sectors.html */
+.prov-badge.prov-fresh{color:var(--acid)}
+.prov-badge.prov-amber{color:#ffb020}
+.prov-badge.prov-red{color:var(--down)}
+.prov-badge.prov-seed{color:var(--muted)}
 .btn{cursor:pointer;border:1px solid var(--line-b);background:transparent;color:var(--cyan);font:700 11px/1 var(--font-hud);letter-spacing:.14em;text-transform:uppercase;padding:7px 11px}
 .btn:hover{border-color:var(--acid);color:var(--acid)}
 
@@ -462,7 +467,7 @@ body.embed .hero{border-top:2px solid var(--line)}
   </section>
 
   <div class="panel pad news" aria-label="Today's Signal digest">
-    <div class="sec-label"><span data-en="Today's Signal" data-zh="今日信号">Today's Signal</span> <span id="newsDate" style="color:var(--muted)"></span></div>
+    <div class="sec-label"><span data-en="Today's Signal" data-zh="今日信号">Today's Signal</span> <span id="newsDate"></span></div>
     <div id="newsList"><div class="empty">…</div></div>
   </div>
 

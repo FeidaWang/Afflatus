@@ -14,6 +14,8 @@
    it as the page's actual content. See RELEASE_NOTES.md for the V5/B10 entry.
    For entertainment only — NOT investment advice.
    ============================================================ */
+import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
+
 (() => {
   'use strict';
 
@@ -49,7 +51,15 @@
 
   function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = st.label; const sl = sentLabel(state.sentiment); $('sentChip').className = `chip ${sl.tone}`; $('sentTxt').textContent = sl.label; }
   function renderCountdown() { const { wd, sec } = nyNow(), open = wd >= 1 && wd <= 5 && sec >= OPEN_S && sec < CLOSE_S; $('openCd').classList.toggle('open', open); $('cdLabel').textContent = open ? 'US MARKET CLOSES IN' : 'US MARKET OPENS IN'; $('cdClock').textContent = fmtDur(open ? CLOSE_S - sec : secsToNextOpen(wd, sec)); }
-  function renderNews() { const host = $('newsList'), n = state.news; $('newsDate').textContent = n.date ? '· ' + n.date : ''; if (n.loading) { host.innerHTML = `<div class="empty">${T('Loading digest…', '加载中…')}</div>`; return; } if (!n.items.length) { host.innerHTML = `<div class="empty">${T('No digest yet.', '暂无摘要。')}</div>`; return; } const icon = { financial: '◇', industrial: '▣', political: '⬡', tech: '⊞' }; host.innerHTML = n.items.map((it) => { const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`)); const title = T(it.title_en || it.title || '', it.title_zh || it.title_en || ''); return `<a href="${it.url || '#'}" target="_blank" rel="noreferrer noopener"><div class="t1"><span class="cat">${icon[it.category] || '•'} ${it.category || ''}</span><span class="sent ${s.tone}">${s.label}</span></div><div class="ti">${title}</div></a>`; }).join(''); }
+  function renderNews() {
+    const host = $('newsList'), n = state.news;
+    const dateEl = $('newsDate');
+    if (n.date) {
+      const badge = buildProvenanceBadge({ updatedAt: n.generatedAt || n.date, lang: state.lang });
+      dateEl.className = 'prov-badge prov-' + badge.tier;
+      dateEl.textContent = badge.text;
+    } else { dateEl.className = ''; dateEl.textContent = ''; }
+    if (n.loading) { host.innerHTML = `<div class="empty">${T('Loading digest…', '加载中…')}</div>`; return; } if (!n.items.length) { host.innerHTML = `<div class="empty">${T('No digest yet.', '暂无摘要。')}</div>`; return; } const icon = { financial: '◇', industrial: '▣', political: '⬡', tech: '⊞' }; host.innerHTML = n.items.map((it) => { const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`)); const title = T(it.title_en || it.title || '', it.title_zh || it.title_en || ''); return `<a href="${it.url || '#'}" target="_blank" rel="noreferrer noopener"><div class="t1"><span class="cat">${icon[it.category] || '•'} ${it.category || ''}</span><span class="sent ${s.tone}">${s.label}</span></div><div class="ti">${title}</div></a>`; }).join(''); }
 
   // ---- briefing (bilingual) -----------------------------------
   const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -92,7 +102,7 @@
   // ---- boot ---------------------------------------------------
   fetch(CONFIG.newsUrl, { cache: 'no-store' })
     .then((r) => r.ok ? r.json() : Promise.reject())
-    .then((data) => { const items = (data.items || []).map((it) => ({ ...it, sentiment: typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || it.title || ''} ${it.summary_en || it.summary || ''}`) })); state.news = { date: data.date || null, items, aiPredictions: data.aiPredictions || {}, disclaimer_en: data.disclaimer_en, disclaimer_zh: data.disclaimer_zh, predictionNote_en: data.predictionNote_en, predictionNote_zh: data.predictionNote_zh, loading: false }; state.sentiment = aggregateSentiment(items); state.lastUpdate = Date.now(); })
+    .then((data) => { const items = (data.items || []).map((it) => ({ ...it, sentiment: typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || it.title || ''} ${it.summary_en || it.summary || ''}`) })); state.news = { date: data.date || null, generatedAt: data.generatedAt || null, items, aiPredictions: data.aiPredictions || {}, disclaimer_en: data.disclaimer_en, disclaimer_zh: data.disclaimer_zh, predictionNote_en: data.predictionNote_en, predictionNote_zh: data.predictionNote_zh, loading: false }; state.sentiment = aggregateSentiment(items); state.lastUpdate = Date.now(); })
     .catch(() => { state.news = { date: null, items: [], aiPredictions: {}, loading: false }; })
     .finally(() => { renderNews(); renderStatus(); if (!EMBED && !briefingAcked()) openBriefing(); });
 

@@ -108,7 +108,12 @@ a{color:inherit;text-decoration:none}
 .hdReadout{margin-top:12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .hdReadout b{font:700 18px/1 var(--disp);color:var(--paper);letter-spacing:.02em}
 .hdReadout .score{font:400 13px/1 var(--mono);color:var(--amber)}
-.hdReadout .asof{margin-left:auto;font:400 10px/1 var(--mono);color:var(--dim);letter-spacing:.08em}
+.hdReadout .asof{margin-left:auto;font:400 10px/1 var(--mono);letter-spacing:.08em}
+/* Provenance badge (ROADMAP §7.5 V12) — same class API as sectors.html */
+.prov-badge.prov-fresh{color:var(--green)}
+.prov-badge.prov-amber{color:var(--amber)}
+.prov-badge.prov-red{color:var(--red)}
+.prov-badge.prov-seed{color:var(--dim)}
 .compass .rationale{margin:10px 0 0;font:400 13px/1.6 var(--mono);color:var(--mute)}
 .compass .method{margin:8px 0 0;font:400 11px/1.6 var(--mono);color:var(--dim);font-style:italic}
 
@@ -495,7 +500,11 @@ a{color:inherit;text-decoration:none}
     if (hdLabel) hdLabel.textContent = T(hd.label_en, hd.label_zh);
     if (hdRationale) hdRationale.textContent = T(hd.rationale_en, hd.rationale_zh);
     if (hdMethod) hdMethod.textContent = T(hd.method_en, hd.method_zh);
-    if (hdAsOf) hdAsOf.textContent = hd.asOf || '';
+    if (hdAsOf && window.AfflatusProvenance) {
+      var badge = window.AfflatusProvenance.buildProvenanceBadge({ updatedAt: DATA.updated, version: DATA.version, lang: lang() });
+      hdAsOf.className = 'asof prov-badge prov-' + badge.tier;
+      hdAsOf.textContent = badge.text;
+    }
   }
 
   function renderPillars() {
@@ -539,6 +548,14 @@ a{color:inherit;text-decoration:none}
   function stop() { on = false; clearInterval(timer); if (master) master.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.6); nodes.forEach(function (n) { try { n.stop && n.stop(ac.currentTime + 0.7); } catch (e) {} }); nodes = []; btn.textContent = lang() === 'zh' ? '▣ 站点环境音 — 收容低鸣' : '▣ SITE AMBIENCE — CONTAINMENT HUM'; btn.classList.add('off'); btn.setAttribute('aria-pressed', 'false'); dock.classList.remove('on'); msg.textContent = lang() === 'zh' ? '已暂停 · 点击聆听' : 'paused · tap to listen'; }
   btn.addEventListener('click', function () { on ? stop() : start(); });
 })();
+</script>
+<script type="module">
+/* Shared provenance badge (ROADMAP §7.5 V12) — pure logic lives in
+   src/lib/provenanceBadge.js; exposed on window since the render() blocks
+   below are plain (non-module) inline scripts, same bridge pattern as
+   sectors.html/AfflatusI18N. */
+import { buildProvenanceBadge } from '/src/lib/provenanceBadge.js';
+window.AfflatusProvenance = { buildProvenanceBadge };
 </script>
 <script type="module" src="/src/pages/signalLibs.js"></script>
 </body>
