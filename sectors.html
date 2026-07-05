@@ -91,7 +91,14 @@ h1 span{color:var(--acid)}
    data-driven, fetched from /sectors-data.json; empty until the weekly scheduled
    task (V11) first populates it. */
 .empty{padding:22px 20px;color:var(--muted);font:700 13px/1.6 var(--font-body)}
-.asof{padding:0 20px 14px;color:var(--muted);font:700 11px var(--font-hud);letter-spacing:.1em}
+.asof{padding:0 20px 14px}
+/* Provenance badge (ROADMAP §7.5 V12) — tier color mirrors the roadmap's
+   own >36h amber / >72h red rule; seed = no scheduled run has landed yet. */
+.prov-badge{display:inline-block;padding:5px 9px;border:1px solid currentColor;font:800 10px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase}
+.prov-badge.prov-fresh{color:var(--acid);background:rgba(202,255,0,.08)}
+.prov-badge.prov-amber{color:#ffb020;background:rgba(255,176,32,.08)}
+.prov-badge.prov-red{color:#ff5c5c;background:rgba(255,92,92,.08)}
+.prov-badge.prov-seed{color:var(--muted);background:rgba(116,130,144,.08)}
 .mwGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
 .mwCard{padding:16px;border-right:2px solid rgba(202,255,0,.30);border-bottom:1px solid rgba(202,255,0,.24)}
 .mwCard:last-child{border-right:0}
@@ -226,6 +233,13 @@ h1 span{color:var(--acid)}
 import { runCountUpOnLoad } from '/src/ui/viz.js';
 runCountUpOnLoad();
 </script>
+<script type="module">
+/* Shared provenance badge (ROADMAP §7.5 V12) — pure logic lives in
+   src/lib/provenanceBadge.js; exposed on window since the render() below
+   is a plain (non-module) inline script, same bridge pattern as AfflatusI18N. */
+import { buildProvenanceBadge } from '/src/lib/provenanceBadge.js';
+window.AfflatusProvenance = { buildProvenanceBadge };
+</script>
 <script type="module" src="/src/pages/sectorsLibs.js"></script>
 <script>
 /* US-China AI Watch matrix (V9) + post-memory thesis cards (V10), both fed by one
@@ -247,10 +261,30 @@ runCountUpOnLoad();
 
   function emptyMsg() { return T('Weekly matrix populates after the first scheduled run.', '每周对比矩阵将在首次定时任务运行后填充。'); }
 
+  // Provenance badge (ROADMAP §7.5 V12): one computation from the shared
+  // top-level updated/version, reused for both mwAsOf and pmAsOf since both
+  // sections come from the same weekly fetch. sourceCount = distinct citation
+  // URLs across modelWatch developments (the only field in this file that
+  // links to a source).
+  function renderProvBadge(el) {
+    if (!el || !window.AfflatusProvenance) return;
+    var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
+    var srcSet = {};
+    mw.forEach(function (card) { (card.developments || []).forEach(function (d) { if (d.src) srcSet[d.src] = true; }); });
+    var sourceCount = Object.keys(srcSet).length;
+    var badge = window.AfflatusProvenance.buildProvenanceBadge({
+      updatedAt: DATA ? DATA.updated : null,
+      version: DATA ? DATA.version : undefined,
+      sourceCount: sourceCount || undefined,
+      lang: lang(),
+    });
+    el.innerHTML = '<span class="prov-badge prov-' + badge.tier + '">' + esc(badge.text) + '</span>';
+  }
+
   function renderModelWatch() {
     if (!mwGrid) return;
+    renderProvBadge(mwAsOf);
     var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
-    if (mwAsOf) mwAsOf.textContent = DATA && DATA.as_of ? T('as of ', '截至 ') + DATA.as_of : '';
     if (!mw.length) { mwGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; if (mwBaskets) mwBaskets.innerHTML = ''; if (mwTake) mwTake.innerHTML = ''; return; }
     mwGrid.innerHTML = mw.map(function (card) {
       var devs = (card.developments || []).map(function (d) {
@@ -275,8 +309,8 @@ runCountUpOnLoad();
 
   function renderPostMemory() {
     if (!pmGrid) return;
+    renderProvBadge(pmAsOf);
     var pm = DATA && DATA.postMemory;
-    if (pmAsOf) pmAsOf.textContent = pm && pm.as_of ? T('as of ', '截至 ') + pm.as_of : '';
     if (!pm || !Array.isArray(pm.cards) || !pm.cards.length) {
       pmGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>';
       if (pmTracks) pmTracks.innerHTML = ''; if (pmSwap) pmSwap.innerHTML = ''; if (pmTake) pmTake.innerHTML = '';
