@@ -44,11 +44,19 @@ function glowTexture() {
   return t;
 }
 
+// V18 Phase 2 (ROADMAP §4 "空间深度四件套"): the dust/speed-streak layer is
+// gated by this, matching the project-wide convention (see arena.js/games.js/
+// league.js/transition.js/ui/viz.js) rather than inventing a new one.
+function reducedMotionPreferred() {
+  try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
+}
+
 export function createTopdownCombat({ canvas }) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   } catch (e) { return null; }
+  const REDUCED_MOTION = reducedMotionPreferred();
   renderer.setClearColor(0x04060a, 1);
   // context-loss resilience (home runs many WebGL contexts; recover instead of black-screening)
   renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false);
@@ -247,6 +255,139 @@ export function createTopdownCombat({ canvas }) {
     return nh.group;
   }
   const fighters = [makeFighter(), makeFighter(), makeFighter()];
+
+  // ── shared scratch objects for the two per-frame instanced systems below
+  // (trail ribbons + dust streaks) — both loop over dozens of instances every
+  // frame, so reusing one Matrix4/Vector3/Color set instead of allocating
+  // fresh ones per-instance-per-frame keeps this off the GC's hot path.
+  const _m4 = new THREE.Matrix4(), _zero4 = new THREE.Matrix4().makeScale(0, 0, 0);
+  const _mid = new THREE.Vector3(), _dir = new THREE.Vector3(), _toCam = new THREE.Vector3();
+  const _width = new THREE.Vector3(), _normal = new THREE.Vector3(), _scale3 = new THREE.Vector3();
+  const _col = new THREE.Color();
+  // Orients {_width, _normal} so a quad built from them always faces the
+  // camera regardless of shot angle — a fixed horizontal or vertical ribbon
+  // plane goes edge-on (and effectively disappears) depending on whether the
+  // active shot is near-top-down (tacticalTopdown) or near-horizontal
+  // (chaseCam); billboarding is the one orientation that reads in both.
+  function billboardBasis(dir, mid) {
+    _toCam.subVectors(camera.position, mid).normalize();
+    _width.crossVectors(dir, _toCam);
+    if (_width.lengthSq() < 1e-6) _width.set(1, 0, 0); else _width.normalize();
+    _normal.crossVectors(_width, dir).normalize();
+  }
+
+  // ── V18 Phase 2 item 1: engine trail ribbons ──────────────────────────────
+  // One InstancedMesh across ALL fighters — a single draw call for the whole
+  // trail system (comfortably inside the "≤1 draw call per instanced asset
+  // class" perf red line, §4 视觉验收清单). Each fighter samples its own tail
+  // point into a capped, age-pruned ring buffer; unused instance slots collapse
+  // to a zero-scale matrix (invisible) rather than being added/removed.
+  const TRAIL_LIFE_MS = 1200, TRAIL_SAMPLE_MS = 45, TRAIL_MAX_PTS = 18;
+  const TRAIL_SEG_CAP = TRAIL_MAX_PTS - 1;
+  const TRAIL_MID_COLOR = new THREE.Color(0x6fe0ff), TRAIL_TAIL_COLOR = new THREE.Color(0x3f72ff), TRAIL_WHITE = new THREE.Color(0xffffff);
+  const trailGeo = new THREE.PlaneGeometry(1, 1);
+  const trailMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const trailMesh = new THREE.InstancedMesh(trailGeo, trailMat, fighters.length * TRAIL_SEG_CAP);
+  trailMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  scene.add(trailMesh);
+  const fighterTrails = fighters.map(() => ({ pts: [], lastSample: 0 }));
+  const TRAIL_TAIL_LOCAL = new THREE.Vector3(0, 0.12, -3.8); // just behind the nighthawk's twin nozzles
+
+  function updateTrails(now) {
+    let idx = 0;
+    fighters.forEach((f, fi) => {
+      const st = fighterTrails[fi];
+      if (now - st.lastSample > TRAIL_SAMPLE_MS) {
+        st.lastSample = now;
+        const p = TRAIL_TAIL_LOCAL.clone(); f.localToWorld(p);
+        st.pts.push({ pos: p, t: now });
+        while (st.pts.length > TRAIL_MAX_PTS) st.pts.shift();
+      }
+      // age-prune independent of sample cadence, so a fighter that stops
+      // moving still fades its trail out instead of it freezing forever
+      while (st.pts.length && now - st.pts[0].t > TRAIL_LIFE_MS) st.pts.shift();
+
+      const pts = st.pts;
+      for (let j = 0; j < TRAIL_SEG_CAP; j++, idx++) {
+        if (j >= pts.length - 1) { trailMesh.setMatrixAt(idx, _zero4); continue; }
+        const a = pts[j].pos, b = pts[j + 1].pos;
+        _mid.addVectors(a, b).multiplyScalar(0.5);
+        _dir.subVectors(b, a);
+        const len = _dir.length();
+        if (len < 0.001) { trailMesh.setMatrixAt(idx, _zero4); continue; }
+        _dir.normalize();
+        billboardBasis(_dir, _mid);
+        const u = Math.max(0, Math.min(1, (now - pts[j].t) / TRAIL_LIFE_MS)); // age fraction, newest segment = 0
+        const width = 0.5 * (1 - u) + 0.05; // narrows with age
+        _scale3.set(width, Math.max(len, 0.01), 1);
+        _m4.makeBasis(_width, _dir, _normal); _m4.scale(_scale3); _m4.setPosition(_mid);
+        trailMesh.setMatrixAt(idx, _m4);
+        // white core → cyan → blue haze as it ages, additionally darkened
+        // toward black — with AdditiveBlending, darker reads as "more faded"
+        // since built-in materials don't expose per-instance alpha.
+        if (u < 0.35) _col.copy(TRAIL_WHITE).lerp(TRAIL_MID_COLOR, u / 0.35);
+        else _col.copy(TRAIL_MID_COLOR).lerp(TRAIL_TAIL_COLOR, (u - 0.35) / 0.65);
+        _col.multiplyScalar(1 - u);
+        trailMesh.setColorAt(idx, _col);
+      }
+    });
+    trailMesh.instanceMatrix.needsUpdate = true;
+    if (trailMesh.instanceColor) trailMesh.instanceColor.needsUpdate = true;
+  }
+
+  // ── V18 Phase 2 item 2: near-field dust parallax + speed-stretch streaks ──
+  // Fixed-size pool, one InstancedMesh (1 draw call) — respawning reuses the
+  // same slot instead of allocating. Positions are genuine world-space points
+  // near the camera, so ordinary parallax provides the "streaming past" read;
+  // streak length/orientation comes from frame-differenced camera velocity
+  // (unlike the fighters' analytic chaseCam math, the camera's own motion
+  // here is director-smoothed, not closed-form, so this genuinely needs
+  // differencing). `prefers-reduced-motion` halves the pool per ROADMAP §4.
+  const DUST_BASE_COUNT = 36;
+  const DUST_COUNT = REDUCED_MOTION ? Math.round(DUST_BASE_COUNT / 2) : DUST_BASE_COUNT;
+  const DUST_MIN_R = 2.5, DUST_MAX_R = 15;
+  const dustGeo = new THREE.PlaneGeometry(1, 1);
+  const dustMat = new THREE.MeshBasicMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const dustMesh = new THREE.InstancedMesh(dustGeo, dustMat, DUST_COUNT);
+  dustMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  scene.add(dustMesh);
+  function randomShellOffset(target) {
+    const r = DUST_MIN_R + Math.random() * (DUST_MAX_R - DUST_MIN_R);
+    const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+    target.set(Math.sin(ph) * Math.cos(th) * r, Math.cos(ph) * r * 0.4, Math.sin(ph) * Math.sin(th) * r);
+  }
+  const dustPts = Array.from({ length: DUST_COUNT }, () => {
+    const off = new THREE.Vector3(); randomShellOffset(off);
+    return camera.position.clone().add(off);
+  });
+  let camPrevPos = null, camPrevNow = 0;
+  const _camVel = new THREE.Vector3(), _dustOff = new THREE.Vector3();
+  function updateDust(now) {
+    if (camPrevPos) {
+      const dt = Math.max(0.001, (now - camPrevNow) / 1000);
+      _camVel.subVectors(camera.position, camPrevPos).divideScalar(dt);
+    } else { _camVel.set(0, 0, 0); }
+    if (!camPrevPos) camPrevPos = new THREE.Vector3();
+    camPrevPos.copy(camera.position); camPrevNow = now;
+
+    const speed = _camVel.length();
+    const dir = speed > 0.001 ? _dir.copy(_camVel).divideScalar(speed) : _dir.set(0, 0, 1);
+    const len = Math.max(0.12, Math.min(3.2, speed * 0.09));
+    const fade = Math.min(1, speed * 0.03); // near-idle camera → streaks fade to ~invisible, not just short
+
+    for (let i = 0; i < DUST_COUNT; i++) {
+      const p = dustPts[i];
+      if (p.distanceTo(camera.position) > DUST_MAX_R) { randomShellOffset(_dustOff); p.addVectors(camera.position, _dustOff); }
+      billboardBasis(dir, p);
+      _scale3.set(0.05, len, 1);
+      _m4.makeBasis(_width, dir, _normal); _m4.scale(_scale3); _m4.setPosition(p);
+      dustMesh.setMatrixAt(i, _m4);
+      _col.copy(dustMat.color).multiplyScalar(fade);
+      dustMesh.setColorAt(i, _col);
+    }
+    dustMesh.instanceMatrix.needsUpdate = true;
+    if (dustMesh.instanceColor) dustMesh.instanceColor.needsUpdate = true;
+  }
 
   // ── comet target (1P/HALLEY) drifting across the top ─────────────────────
   const comet = new THREE.Group();
@@ -489,6 +630,16 @@ export function createTopdownCombat({ canvas }) {
       camera.position.z = CAM.z + Math.cos(t * 0.16) * 2;
       camera.lookAt(comet.position.x * 0.25, 2, -2);
     }
+
+    // V18 Phase 2: run these after the camera update above so the dust
+    // streaks read this frame's freshly-moved camera.position rather than
+    // last frame's (the trail ribbons read fighters' matrixWorld, which
+    // three.js only refreshes during renderer.render() right after this
+    // function returns — same one-frame-lag characteristic the existing
+    // tracer/laser firing code above already has, kept consistent rather
+    // than special-cased).
+    updateTrails(now);
+    updateDust(now);
   }
 
   function loop(now) {
