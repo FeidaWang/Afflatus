@@ -159,6 +159,52 @@ export function monthPillar(y, m, d) {
   return { stem: mod(startStem + offsetFromYin, 10), branch: b };
 }
 
+// ---- birth-input timezone/DST correction (optional accuracy refinement) --
+// All the calendar math above assumes the input {y,m,d,hour} is already in
+// the China Standard Time (UTC+8) civil-calendar frame. If the birth
+// actually happened somewhere else (or during daylight saving), the clock
+// time on the birth certificate is NOT that frame, and the day/hour pillar
+// (and, near a boundary, the month/year pillar) can come out wrong.
+//
+// China itself briefly ran its own DST 1986-1991 (published start/end
+// dates below) — so even an "I don't know my timezone, just use China"
+// input needs this one correction applied automatically.
+const CN_DST_WINDOWS = {
+  1986: [5, 4, 9, 14], 1987: [4, 12, 9, 13], 1988: [4, 10, 9, 11],
+  1989: [4, 16, 9, 17], 1990: [4, 15, 9, 16], 1991: [4, 14, 9, 15],
+};
+function inCnDstWindow(y, m, d) {
+  const w = CN_DST_WINDOWS[y];
+  if (!w) return false;
+  const [sm, sd, em, ed] = w;
+  return (m > sm || (m === sm && d >= sd)) && (m < em || (m === em && d <= ed));
+}
+// Shift {y,m,d,hour} by deltaHours (possibly fractional, e.g. a half-hour
+// timezone), rolling the calendar date forward/back as needed. Uses Date's
+// UTC methods purely as calendar arithmetic (no host-timezone dependency).
+function shiftHours(y, m, d, hour, deltaHours) {
+  const dt = new Date(Date.UTC(y, m - 1, d, hour));
+  dt.setTime(dt.getTime() + deltaHours * 3600000);
+  return { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate(), hour: dt.getUTCHours() };
+}
+// Normalize a birth {y,m,d,hour} into the CST frame this module assumes.
+// tz is optional: { utcOffset, dst }. utcOffset is the birth location's
+// STANDARD (non-DST) UTC offset in hours (may be fractional, e.g. 5.5 for
+// India); dst means the local clock was on daylight saving at that moment.
+// If tz is omitted, the birth is assumed to already be China civil time,
+// with China's own 1986-1991 DST corrected automatically. hour == null
+// (unknown time) is returned unchanged — there's no clock reading to
+// correct, and the date alone is never far enough from a boundary for a
+// few hours' timezone difference to matter at day granularity in practice.
+export function normalizeBirthToCST({ y, m, d, hour }, tz) {
+  if (hour == null) return { y, m, d, hour: null };
+  if (!tz || tz.utcOffset == null) {
+    return inCnDstWindow(y, m, d) ? shiftHours(y, m, d, hour, -1) : { y, m, d, hour };
+  }
+  const delta = (tz.dst ? -1 : 0) + (8 - tz.utcOffset);
+  return delta === 0 ? { y, m, d, hour } : shiftHours(y, m, d, hour, delta);
+}
+
 // ---- hour pillar (五鼠遁) -------------------------------------------------
 export function hourBranchOf(hour) {
   return Math.floor(mod(hour + 1, 24) / 2);
