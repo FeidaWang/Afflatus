@@ -120,20 +120,20 @@
       "reason_zh": "32 强 2-1 淘汰日本（卡塞米罗、马丁内利）——精准从容。16 强 7 月 5 日战挪威（哈兰德），大都会球场。强力锋线，冠军野心十足。"
     },
     {
-      "team": "England",
-      "team_zh": "英格兰",
-      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "prob": 9,
-      "reason_en": "Battled back to beat DR Congo 2-1 in R32 (Kane brace, 75', 86') after going behind early. R16 vs Mexico, July 6 Azteca Stadium — daunting away leg against the co-hosts in Mexico City's altitude and atmosphere.",
-      "reason_zh": "32 强落后情况下 2-1 逆转刚果（金）（凯恩梅开二度，75、86 分钟）。16 强 7 月 6 日战墨西哥，阿兹特克球场——客场挑战东道主，高原与主场气氛均是考验。"
-    },
-    {
       "team": "Morocco",
       "team_zh": "摩洛哥",
       "flag": "🇲🇦",
       "prob": 12,
       "reason_en": "Thumped Canada 3-0 in R16 (Ounahi brace, Rahimi) — comfortable, statement win. QF vs France, July 9 Foxborough, second straight WC quarter-final. The Atlas Lions are a genuine dark horse.",
       "reason_zh": "16 强 3-0 大胜加拿大（乌纳希梅开二度、拉希米建功）——轻松取胜，极具说服力。八强 7 月 9 日战法国，福克斯堡，连续两届杀入八强。阿特拉斯雄狮是真正的黑马。"
+    },
+    {
+      "team": "England",
+      "team_zh": "英格兰",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "prob": 9,
+      "reason_en": "Battled back to beat DR Congo 2-1 in R32 (Kane brace, 75', 86') after going behind early. R16 vs Mexico, July 6 Azteca Stadium — daunting away leg against the co-hosts in Mexico City's altitude and atmosphere.",
+      "reason_zh": "32 强落后情况下 2-1 逆转刚果（金）（凯恩梅开二度，75、86 分钟）。16 强 7 月 6 日战墨西哥，阿兹特克球场——客场挑战东道主，高原与主场气氛均是考验。"
     }
   ],
   "players": [
@@ -178,16 +178,6 @@
       "reason_zh": "西班牙 32 强 3-0 横扫奥地利；16 强 7 月 6 日战葡萄牙，阿灵顿。伤愈复出的亚马尔为本届杯赛尚未在运动战中失球的西班牙增添新的进攻维度。"
     },
     {
-      "name": "Harry Kane",
-      "name_zh": "凯恩",
-      "team": "England",
-      "team_zh": "英格兰",
-      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "prob": 10,
-      "reason_en": "Brace vs DR Congo (2-1 win) — twice found the net to rescue England, extending his Golden Boot chase alongside Mbappé, Messi and Haaland. R16 vs Mexico, July 6 Azteca — tough away test but Kane thrives on the big stage.",
-      "reason_zh": "对阵刚果（金）梅开二度（2-1 取胜）——两次进球拯救英格兰，与姆巴佩、梅西、哈兰德的金靴之争持续升温。16 强 7 月 6 日战墨西哥，阿兹特克球场——客场硬仗，但凯恩擅长大场面。"
-    },
-    {
       "name": "Mohamed Salah",
       "name_zh": "萨拉赫",
       "team": "Egypt",
@@ -196,6 +186,16 @@
       "prob": 12,
       "reason_en": "Scored a cool Panenka in the shootout to send Egypt past Australia and into a first Round of 16 since 1934. R16 vs Argentina, July 7 Atlanta — a tough draw, but Salah is playing with total belief right now.",
       "reason_zh": "点球大战中以一记优雅的“熊猫式”点球帮助埃及淘汰澳大利亚，自1934年以来首次打入16强。16强7月7日战阿根廷，亚特兰大，对手很强，但萨拉赫现下信心十足。"
+    },
+    {
+      "name": "Harry Kane",
+      "name_zh": "凯恩",
+      "team": "England",
+      "team_zh": "英格兰",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "prob": 10,
+      "reason_en": "Brace vs DR Congo (2-1 win) — twice found the net to rescue England, extending his Golden Boot chase alongside Mbappé, Messi and Haaland. R16 vs Mexico, July 6 Azteca — tough away test but Kane thrives on the big stage.",
+      "reason_zh": "对阵刚果（金）梅开二度（2-1 取胜）——两次进球拯救英格兰，与姆巴佩、梅西、哈兰德的金靴之争持续升温。16 强 7 月 6 日战墨西哥，阿兹特克球场——客场硬仗，但凯恩擅长大场面。"
     }
   ],
   "fixtures": [
