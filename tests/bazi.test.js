@@ -112,6 +112,32 @@ describe('computeBazi', () => {
   });
 });
 
+describe('晚子时 day-boundary convention (23:00-23:59 advances the day)', () => {
+  // Cross-checked against a real chart from a professional bazi site
+  // (问真八字) for 1992-02-23 23:26 (乾造): published year/month/day/hour
+  // pillars are 壬申/壬寅/庚午/丙子. Before this fix, computeBazi used the
+  // "unified zi" convention (no day change at 23:00) and produced the
+  // wrong day/hour pillar (己巳/甲子) for this exact birth.
+  it('matches the published reference chart exactly for a real 23:26 birth', () => {
+    const c = computeBazi({ y: 1992, m: 2, d: 23, hour: 23 });
+    expect(pillarName(c.year)).toBe('壬申');
+    expect(pillarName(c.month)).toBe('壬寅');
+    expect(pillarName(c.day)).toBe('庚午');
+    expect(pillarName(c.hour)).toBe('丙子');
+  });
+  it('早子时 (hour 0, same calendar day) does NOT shift — day pillar as if no hour shift happened', () => {
+    const c = computeBazi({ y: 1992, m: 2, d: 23, hour: 0 });
+    expect(pillarName(c.day)).toBe('己巳');
+    expect(pillarName(c.hour)).toBe('甲子');
+  });
+  it('晚子时 shift rolls the month/year pillar too when the birth is right at a boundary', () => {
+    // Dec 31 23:xx of a year should roll into Jan 1 for day-pillar purposes;
+    // sanity check it does not throw and produces a valid pillar.
+    const c = computeBazi({ y: 1999, m: 12, d: 31, hour: 23 });
+    expect(pillarName(c.day)).toBe(pillarName(dayPillar(2000, 1, 1)));
+  });
+});
+
 describe('normalizeBirthToCST (timezone/DST accuracy correction)', () => {
   it('unknown hour passes through unchanged (nothing to correct)', () => {
     expect(normalizeBirthToCST({ y: 1990, m: 6, d: 15, hour: null })).toEqual({ y: 1990, m: 6, d: 15, hour: null });

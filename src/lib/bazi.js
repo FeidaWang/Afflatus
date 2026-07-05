@@ -15,9 +15,15 @@
    against published 节气 times in tests/bazi.test.js, including 2025
    (立春 fell on Feb 3, not the Feb-4 "usual" date) and 2026 (Feb 4).
 
+   computeBazi() implements the 晚子时 convention: a 23:00-23:59 birth
+   advances the year/month/day pillar to the next calendar day (mainstream
+   professional practice — verified against a real published chart from a
+   professional bazi site for a 23:26 birth, see tests/bazi.test.js). A
+   00:00-00:59 birth ("早子时") never shifts. horoscope.js's hour selector
+   offers these as two distinct options (早子/晚子) rather than one, since
+   they give different charts.
+
    Remaining honest approximations (labelled on the page itself):
-   - Hour pillar: 23:00–00:59 is treated as 子时 of the SAME calendar day
-     (the 晚子时 day-boundary debate is out of scope).
    - Solar-term instants are converted to a China Standard Time (UTC+8)
      calendar date; no birth-location/timezone input, so a birth
      recorded in another timezone is treated as if it were a Beijing
@@ -217,10 +223,21 @@ export function hourPillar(dayStemIdx, hour) {
 
 // ---- full chart -----------------------------------------------------------
 // hour: 0-23, or null/undefined for "hour unknown" (three-pillar chart).
+//
+// 晚子时 convention: a birth at 23:00-23:59 is treated as belonging to the
+// NEXT calendar day for year/month/day pillar purposes (the hour BRANCH is
+// still 子/0, but its stem — and the day/month/year pillars — are computed
+// from the following day). This is the mainstream convention used by most
+// professional bazi calculators (verified against 问真八字's published
+// output for a real 23:26 birth in tests/bazi.test.js); the alternative
+// "unified zi" convention (no day change at 23:00) also has practitioners,
+// but isn't what a serious cross-check would expect by default.
 export function computeBazi({ y, m, d, hour }) {
-  const yp = yearPillar(y, m, d);
-  const mp = monthPillar(y, m, d);
-  const dp = dayPillar(y, m, d);
+  let py = y, pm = m, pd = d;
+  if (hour === 23) { const s = shiftHours(y, m, d, 23, 1); py = s.y; pm = s.m; pd = s.d; }
+  const yp = yearPillar(py, pm, pd);
+  const mp = monthPillar(py, pm, pd);
+  const dp = dayPillar(py, pm, pd);
   const hp = (hour == null) ? null : hourPillar(dp.stem, hour);
   const pillars = [yp, mp, dp, ...(hp ? [hp] : [])];
   const elements = [0, 0, 0, 0, 0];
