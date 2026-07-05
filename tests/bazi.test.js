@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   jdn, dayPillar, yearPillar, monthBranch, monthPillar, hourPillar, hourBranchOf,
-  computeBazi, pillarName, zodiacIndex, solarTermDate, STEMS, BRANCHES,
+  computeBazi, pillarName, zodiacIndex, solarTermDate, normalizeBirthToCST, STEMS, BRANCHES,
 } from '../src/lib/bazi.js';
 
 describe('day pillar (sexagenary cycle)', () => {
@@ -109,6 +109,40 @@ describe('computeBazi', () => {
   });
   it('pillarName renders 干支 text', () => {
     expect(pillarName(dayPillar(1949, 10, 1))).toBe('甲子');
+  });
+});
+
+describe('normalizeBirthToCST (timezone/DST accuracy correction)', () => {
+  it('unknown hour passes through unchanged (nothing to correct)', () => {
+    expect(normalizeBirthToCST({ y: 1990, m: 6, d: 15, hour: null })).toEqual({ y: 1990, m: 6, d: 15, hour: null });
+  });
+  it('no tz given, outside China\'s historical DST window: unchanged', () => {
+    expect(normalizeBirthToCST({ y: 1990, m: 1, d: 1, hour: 10 })).toEqual({ y: 1990, m: 1, d: 1, hour: 10 });
+  });
+  it('no tz given, inside China\'s 1988 DST window: clock -1h auto-corrected', () => {
+    expect(normalizeBirthToCST({ y: 1988, m: 7, d: 1, hour: 10 })).toEqual({ y: 1988, m: 7, d: 1, hour: 9 });
+  });
+  it('China DST correction rolls the date back across midnight', () => {
+    expect(normalizeBirthToCST({ y: 1988, m: 7, d: 1, hour: 0 })).toEqual({ y: 1988, m: 6, d: 30, hour: 23 });
+  });
+  it('just outside the 1988 window (before start): unchanged', () => {
+    expect(normalizeBirthToCST({ y: 1988, m: 4, d: 9, hour: 10 })).toEqual({ y: 1988, m: 4, d: 9, hour: 10 });
+  });
+  it('explicit tz: US Eastern standard (UTC-5) converts to CST, rolling to the next day', () => {
+    expect(normalizeBirthToCST({ y: 2000, m: 1, d: 1, hour: 20 }, { utcOffset: -5, dst: false }))
+      .toEqual({ y: 2000, m: 1, d: 2, hour: 9 });
+  });
+  it('explicit tz with dst=true undoes the 1-hour clock jump before converting', () => {
+    expect(normalizeBirthToCST({ y: 2000, m: 1, d: 1, hour: 20 }, { utcOffset: -5, dst: true }))
+      .toEqual({ y: 2000, m: 1, d: 2, hour: 8 });
+  });
+  it('fractional offset (India, UTC+5:30) converts; sub-hour minutes are dropped (hour-bucket granularity)', () => {
+    expect(normalizeBirthToCST({ y: 2020, m: 6, d: 15, hour: 14 }, { utcOffset: 5.5, dst: false }))
+      .toEqual({ y: 2020, m: 6, d: 15, hour: 16 });
+  });
+  it('tz already CST (UTC+8, no dst): no-op', () => {
+    expect(normalizeBirthToCST({ y: 2020, m: 6, d: 15, hour: 14 }, { utcOffset: 8, dst: false }))
+      .toEqual({ y: 2020, m: 6, d: 15, hour: 14 });
   });
 });
 

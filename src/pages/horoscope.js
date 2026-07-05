@@ -5,7 +5,7 @@
    daily check-in streak), share-link codec plumbing and DOM rendering.
    ENTERTAINMENT ONLY — the page says so, loudly.
    ============================================================ */
-import { pillarName, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN, ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN } from '../lib/bazi.js';
+import { pillarName, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN, ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, normalizeBirthToCST } from '../lib/bazi.js';
 import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../lib/horoscopeEngine.js';
 
 (() => {
@@ -29,6 +29,40 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
     SHICHEN.forEach((label, i) => { const o = document.createElement('option'); o.value = String(SHICHEN_HOUR[i]); o.textContent = label; sel.appendChild(o); });
   }
 
+  // ---- birth-timezone selects (optional accuracy correction) --------------
+  // Value = the location's STANDARD (non-DST) UTC offset; hour hand math in
+  // bazi.js expects China Standard Time, so this is converted at intake via
+  // normalizeBirthToCST(). Leaving it unspecified assumes the birth is
+  // already China civil time (with China's own 1986-1991 DST auto-corrected).
+  const TZ_OPTIONS = [
+    [-12, 'UTC−12'], [-11, 'UTC−11 · Samoa 萨摩亚'], [-10, 'UTC−10 · Hawaii 夏威夷'],
+    [-9, 'UTC−9 · Alaska 阿拉斯加'], [-8, 'UTC−8 · US Pacific 美西'], [-7, 'UTC−7 · US Mountain 美国山地'],
+    [-6, 'UTC−6 · US Central 美中'], [-5, 'UTC−5 · US Eastern 美东'], [-4, 'UTC−4 · Atlantic 大西洋'],
+    [-3.5, 'UTC−3:30 · Newfoundland 纽芬兰'], [-3, 'UTC−3 · Brazil/Argentina 巴西/阿根廷'],
+    [-2, 'UTC−2'], [-1, 'UTC−1 · Azores 亚速尔'], [0, 'UTC±0 · London 伦敦'],
+    [1, 'UTC+1 · Berlin/Paris 柏林/巴黎'], [2, 'UTC+2 · Cairo/Athens 开罗/雅典'],
+    [3, 'UTC+3 · Moscow 莫斯科'], [3.5, 'UTC+3:30 · Iran 伊朗'], [4, 'UTC+4 · Dubai 迪拜'],
+    [4.5, 'UTC+4:30 · Afghanistan 阿富汗'], [5, 'UTC+5 · Pakistan 巴基斯坦'],
+    [5.5, 'UTC+5:30 · India 印度'], [5.75, 'UTC+5:45 · Nepal 尼泊尔'], [6, 'UTC+6 · Dhaka 达卡'],
+    [6.5, 'UTC+6:30 · Myanmar 缅甸'], [7, 'UTC+7 · Bangkok/Jakarta 曼谷/雅加达'],
+    [8, 'UTC+8 · China/Singapore/Perth 中国/新加坡/珀斯'], [9, 'UTC+9 · Japan/Korea 日本/韩国'],
+    [9.5, 'UTC+9:30 · Adelaide 阿德莱德'], [10, 'UTC+10 · Sydney/Melbourne 悉尼/墨尔本'],
+    [11, 'UTC+11 · Solomon Is. 所罗门群岛'], [12, 'UTC+12 · Auckland/Fiji 奥克兰/斐济'],
+    [13, 'UTC+13 · Tonga 汤加'], [14, 'UTC+14 · Kiribati 基里巴斯'],
+  ];
+  for (const sel of [$('bTz'), $('sTz')]) {
+    if (!sel) continue;
+    TZ_OPTIONS.forEach(([v, label]) => { const o = document.createElement('option'); o.value = String(v); o.textContent = label; sel.appendChild(o); });
+  }
+  for (const [tzSel, dstBox] of [[$('bTz'), $('bDst')], [$('sTz'), $('sDst')]]) {
+    if (!tzSel || !dstBox) continue;
+    tzSel.addEventListener('change', () => {
+      const known = tzSel.value !== '';
+      dstBox.disabled = !known;
+      if (!known) dstBox.checked = false;
+    });
+  }
+
   // ---- persistence ---------------------------------------------------------
   const loadProfile = () => { try { return JSON.parse(localStorage.getItem(PROFILE_KEY)); } catch { return null; } };
   const saveProfile = (p) => { try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch {} };
@@ -45,10 +79,12 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
     return s.n;
   }
 
-  const parseBirth = (dateVal, hourVal) => {
+  const parseBirth = (dateVal, hourVal, tzVal, dstVal) => {
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateVal || '');
     if (!m) return null;
-    return { y: +m[1], m: +m[2], d: +m[3], hour: hourVal === '' ? null : +hourVal };
+    const raw = { y: +m[1], m: +m[2], d: +m[3], hour: hourVal === '' ? null : +hourVal };
+    const tz = (tzVal == null || tzVal === '') ? null : { utcOffset: +tzVal, dst: !!dstVal };
+    return normalizeBirthToCST(raw, tz);
   };
 
   // ---- render: my daily reading -------------------------------------------
@@ -60,6 +96,20 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
     drains: ['your energy flows outward today', '日主之气外泄'],
     prize: ['your day master commands today', '日主克今日之气'],
     presses: ['today presses on your day master', '今日之气克日主'],
+  };
+
+  // Shared pillar-card markup (used by "my chart" and the synastry two-chart view).
+  function pillarCardsHTML(chart, sizeClass) {
+    const ps = [chart.year, chart.month, chart.day, chart.hour].filter(Boolean);
+    return ps.map((p, i) => {
+      const el = STEM_ELEMENT[p.stem];
+      return `<div class="pillar ${sizeClass || ''}"><div class="t">${T(...PILLAR_T[i])}</div><span class="gz e-${el}">${pillarName(p)}</span><div class="el">${T(ELEMENTS_EN[el], ELEMENTS_ZH[el])}</div></div>`;
+    }).join('') + (chart.hour ? '' : `<div class="pillar ${sizeClass || ''}"><div class="t">${T('HOUR', '时柱')}</div><span class="gz" style="color:var(--dim)">未知</span><div class="el">${T('unknown', '未填时辰')}</div></div>`);
+  }
+  const identityChipsHTML = (chart, m, d) => {
+    const zi = zodiacIndex(m, d);
+    return `<span class="elem">☾ ${T(ANIMALS_EN[chart.animal], '属' + ANIMALS_ZH[chart.animal])}</span>`
+      + `<span class="elem">✦ ${T(ZODIAC_EN[zi], ZODIAC_ZH[zi] + '座')}</span>`;
   };
 
   function renderMine() {
@@ -74,18 +124,12 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
     sc.textContent = T(`◆ ${n}-day streak`, `◆ 连续观星 ${n} 天`);
 
     // pillars
-    const ps = [f.chart.year, f.chart.month, f.chart.day, f.chart.hour].filter(Boolean);
-    $('pillarRow').innerHTML = ps.map((p, i) => {
-      const el = STEM_ELEMENT[p.stem];
-      return `<div class="pillar"><div class="t">${T(...PILLAR_T[i])}</div><span class="gz e-${el}">${pillarName(p)}</span><div class="el">${T(ELEMENTS_EN[el], ELEMENTS_ZH[el])}</div></div>`;
-    }).join('') + (f.chart.hour ? '' : `<div class="pillar"><div class="t">${T('HOUR', '时柱')}</div><span class="gz" style="color:var(--dim)">未知</span><div class="el">${T('unknown', '未填时辰')}</div></div>`);
+    $('pillarRow').innerHTML = pillarCardsHTML(f.chart);
 
     // element tally + identity chips
-    const zi = zodiacIndex(state.me.m, state.me.d);
     $('elemRow').innerHTML = f.chart.elements.map((n2, i) =>
       `<span class="elem"><i class="e-${i}"></i>${T(ELEMENTS_EN[i], ELEMENTS_ZH[i])} × ${n2}</span>`).join('')
-      + `<span class="elem">☾ ${T(ANIMALS_EN[f.chart.animal], '属' + ANIMALS_ZH[f.chart.animal])}</span>`
-      + `<span class="elem">✦ ${T(ZODIAC_EN[zi], ZODIAC_ZH[zi] + '座')}</span>`;
+      + identityChipsHTML(f.chart, state.me.m, state.me.d);
 
     // overall ring
     const C = 2 * Math.PI * 42;
@@ -124,6 +168,20 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
     $('synResult').hidden = false;
     $('synHint').hidden = true;
 
+    // two charts, side by side (left = me, right = them)
+    $('synCharts').innerHTML = `
+      <div class="syn-chart">
+        <div class="syn-chart-h">${T('ME', '我')}</div>
+        <div class="pillars pillars--sm">${pillarCardsHTML(s.chartA, 'pillar--sm')}</div>
+        <div class="elems">${identityChipsHTML(s.chartA, state.me.m, state.me.d)}</div>
+      </div>
+      <div class="syn-divider" aria-hidden="true">❖</div>
+      <div class="syn-chart">
+        <div class="syn-chart-h">${T('THEM', '对方')}</div>
+        <div class="pillars pillars--sm">${pillarCardsHTML(s.chartB, 'pillar--sm')}</div>
+        <div class="elems">${identityChipsHTML(s.chartB, state.other.m, state.other.d)}</div>
+      </div>`;
+
     const C = 2 * Math.PI * 58;
     const ring = $('sRing');
     ring.style.strokeDasharray = C.toFixed(1);
@@ -154,7 +212,7 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
   // ---- forms -------------------------------------------------------------------
   $('birthForm').addEventListener('submit', (e) => {
     e.preventDefault();
-    const b = parseBirth($('bDate').value, $('bHour').value);
+    const b = parseBirth($('bDate').value, $('bHour').value, $('bTz').value, $('bDst').checked);
     if (!b) return;
     state.me = b; saveProfile(b);
     renderMine(); renderSyn();
@@ -162,7 +220,7 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
   $('synForm').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!state.me) { $('synHint').textContent = T('Cast your own chart above first — synastry needs both.', '先在上方立好自己的盘——合盘需要两个人。'); return; }
-    const b = parseBirth($('sDate').value, $('sHour').value);
+    const b = parseBirth($('sDate').value, $('sHour').value, $('sTz').value, $('sDst').checked);
     if (!b) return;
     state.other = b;
     renderSyn();

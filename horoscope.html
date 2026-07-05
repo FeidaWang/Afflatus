@@ -37,8 +37,8 @@
   --paper:#ece5d3;       /* 宣纸 rice paper */
   --dim:#8d927f;
   --line:rgba(236,229,211,.16);
-  --seal:#c23b22;        /* 朱砂 vermilion seal */
-  --gold:#b98a3a;
+  --seal:#e8600c;        /* 爱马仕橙 Hermès orange (seal/accent) */
+  --gold:#c99a3d;        /* 泥金 gilt gold, brightened to pair with the orange */
   --wood:#7aa874;--fire:#c8553d;--earth:#c9a227;--metal:#d8d3c4;--water:#5b7d99;
   --serif:'Noto Serif SC','Spectral',Georgia,serif;
   --en:'Spectral','Noto Serif SC',Georgia,serif;
@@ -67,24 +67,31 @@ a{color:inherit;text-decoration:none}
 .bg-mist{position:absolute;inset:-10%;background:
   radial-gradient(52% 40% at 76% 14%,rgba(91,125,153,.10),transparent 65%),
   radial-gradient(46% 42% at 12% 86%,rgba(122,168,116,.08),transparent 65%),
-  radial-gradient(40% 36% at 50% 55%,rgba(185,138,58,.05),transparent 60%)}
+  radial-gradient(40% 36% at 50% 55%,rgba(201,154,61,.05),transparent 60%)}
 .bg-ring{position:absolute;right:-140px;top:-140px;width:460px;height:460px;border-radius:50%;
   border:1px solid rgba(236,229,211,.07);box-shadow:inset 0 0 0 34px rgba(236,229,211,.02),inset 0 0 0 70px rgba(236,229,211,.015)}
 .bg-ring::after{content:"";position:absolute;inset:60px;border-radius:50%;border:1px dashed rgba(236,229,211,.08);animation:slowspin 240s linear infinite}
 @keyframes slowspin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion: reduce){.bg-stars,.bg-ring::after{animation:none}}
+/* 龙马精神 2026 — ink-line galloping horse + dragon-among-clouds, faint brand-colour watermarks */
+.bg-horse{position:absolute;left:-18px;bottom:2%;width:min(48vw,360px);opacity:.09;animation:gallop 7s ease-in-out infinite}
+.bg-horse path{stroke:var(--seal)}
+.bg-dragon{position:absolute;right:-30px;top:6%;width:min(60vw,480px);opacity:.08;animation:drift 26s ease-in-out infinite}
+.bg-dragon .dgold{stroke:var(--gold)} .bg-dragon .dcloud{stroke:var(--dim)}
+@keyframes gallop{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes drift{0%,100%{transform:translateX(0) rotate(0deg)}50%{transform:translateX(12px) rotate(.6deg)}}
+@media (prefers-reduced-motion: reduce){.bg-stars,.bg-ring::after,.bg-horse,.bg-dragon{animation:none}}
 
 .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:18px clamp(10px,3vw,26px) 48px}
 
 /* ===== header ===== */
-.hdr{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:linear-gradient(120deg,rgba(185,138,58,.06),transparent 55%),var(--panel);padding:12px 16px;position:relative}
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:linear-gradient(120deg,rgba(201,154,61,.06),transparent 55%),var(--panel);padding:12px 16px;position:relative}
 .brand{display:flex;align-items:center;gap:13px}
-.seal{width:46px;height:46px;flex:none;display:grid;place-items:center;background:var(--seal);color:#f2e6d8;font:900 20px/1 var(--serif);border-radius:6px;box-shadow:inset 0 0 0 2px rgba(242,230,216,.35),0 2px 10px rgba(194,59,34,.35);writing-mode:vertical-rl;letter-spacing:.1em}
+.seal{width:46px;height:46px;flex:none;display:grid;place-items:center;background:var(--seal);color:#f2e6d8;font:900 20px/1 var(--serif);border-radius:6px;box-shadow:inset 0 0 0 2px rgba(242,230,216,.35),0 2px 10px rgba(232,96,12,.35);writing-mode:vertical-rl;letter-spacing:.1em}
 .brand h1{margin:0;font:900 19px/1.15 var(--serif);letter-spacing:.12em}
 .brand h1 span{color:var(--gold)}
 .brand p{margin:4px 0 0;color:var(--dim);font:500 11px/1 var(--en);letter-spacing:.28em;text-transform:uppercase}
 .nav{display:flex;gap:7px;flex-wrap:wrap}
-.nav a,.lang-toggle{position:relative;border:1px solid rgba(185,138,58,.4);background:rgba(185,138,58,.06);color:var(--gold);font:700 11px/1 var(--en);letter-spacing:.16em;text-transform:uppercase;padding:9px 11px;cursor:pointer}
+.nav a,.lang-toggle{position:relative;border:1px solid rgba(201,154,61,.4);background:rgba(201,154,61,.06);color:var(--gold);font:700 11px/1 var(--en);letter-spacing:.16em;text-transform:uppercase;padding:9px 11px;cursor:pointer}
 .nav a::before{content:'';position:absolute;top:-8px;bottom:-8px;left:-2px;right:-2px}
 .nav a:hover,.lang-toggle:hover{border-color:var(--paper);color:var(--paper)}
 .nav a.active{background:var(--gold);color:#141008;border-color:var(--gold)}
@@ -96,7 +103,7 @@ a{color:inherit;text-decoration:none}
 .hero h2{margin:10px 0 8px;font:900 clamp(26px,4.4vw,42px)/1.15 var(--serif);letter-spacing:.06em}
 .hero h2 b{color:var(--gold);font-weight:900}
 .hero .sub{max-width:720px;color:#c9c2ae;font:400 14.5px/1.75 var(--serif)}
-.ent-chip{display:inline-flex;align-items:center;gap:7px;margin-top:12px;border:1px solid rgba(194,59,34,.5);color:#e8b0a2;background:rgba(194,59,34,.08);padding:7px 11px;font:700 11px/1 var(--en);letter-spacing:.14em;text-transform:uppercase}
+.ent-chip{display:inline-flex;align-items:center;gap:7px;margin-top:12px;border:1px solid rgba(232,96,12,.5);color:#f4b97e;background:rgba(232,96,12,.08);padding:7px 11px;font:700 11px/1 var(--en);letter-spacing:.14em;text-transform:uppercase}
 
 /* ===== shared panel ===== */
 .panel{border:1px solid var(--line);background:linear-gradient(180deg,rgba(23,27,22,.96),rgba(16,19,16,.98));position:relative;padding:16px}
@@ -114,10 +121,14 @@ a{color:inherit;text-decoration:none}
 .fld label{font:600 10.5px/1 var(--en);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
 .fld input,.fld select{background:var(--panel2);border:1px solid rgba(236,229,211,.22);color:var(--paper);font:500 14px var(--mono);padding:9px 10px;min-width:120px}
 .fld input:focus,.fld select:focus{border-color:var(--gold);outline:none}
-.btn{position:relative;cursor:pointer;border:1px solid var(--gold);background:rgba(185,138,58,.12);color:var(--gold);font:700 12px/1 var(--en);letter-spacing:.16em;text-transform:uppercase;padding:11px 16px}
+.fld--check{flex-direction:row;align-items:center;gap:8px}
+.fld--check label{order:2;white-space:nowrap}
+.fld--check input{order:1;min-width:17px!important;width:17px;height:17px;padding:0;accent-color:var(--gold);cursor:pointer}
+.fld--check input:disabled{opacity:.35;cursor:not-allowed}
+.btn{position:relative;cursor:pointer;border:1px solid var(--gold);background:rgba(201,154,61,.12);color:var(--gold);font:700 12px/1 var(--en);letter-spacing:.16em;text-transform:uppercase;padding:11px 16px}
 .btn::before{content:'';position:absolute;top:-6px;bottom:-6px;left:-2px;right:-2px}
 .btn:hover{background:var(--gold);color:#141008}
-.btn--seal{border-color:var(--seal);background:rgba(194,59,34,.12);color:#e8b0a2}
+.btn--seal{border-color:var(--seal);background:rgba(232,96,12,.12);color:#f4b97e}
 .btn--seal:hover{background:var(--seal);color:#f2e6d8}
 .form-note{margin:9px 0 0;color:var(--dim);font:400 12px/1.6 var(--serif)}
 
@@ -137,7 +148,7 @@ a{color:inherit;text-decoration:none}
 .today-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
 .today-gz{font:900 22px/1 var(--serif);letter-spacing:.14em}
 .today-rel{color:var(--dim);font:400 13px var(--serif)}
-.streak{margin-left:auto;border:1px solid rgba(185,138,58,.45);color:var(--gold);padding:6px 10px;font:700 11px/1 var(--en);letter-spacing:.12em}
+.streak{margin-left:auto;border:1px solid rgba(201,154,61,.45);color:var(--gold);padding:6px 10px;font:700 11px/1 var(--en);letter-spacing:.12em}
 .overall{display:flex;gap:16px;align-items:center;margin-top:14px;flex-wrap:wrap}
 .oring{position:relative;width:96px;height:96px;flex:none}
 .oring svg{transform:rotate(-90deg)}
@@ -170,7 +181,15 @@ a{color:inherit;text-decoration:none}
 /* ===== synastry ===== */
 .syn-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px}
 .syn-result{margin-top:14px}
-.syn-top{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.syn-charts{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap}
+.syn-chart{flex:1;min-width:230px;border:1px solid var(--line);background:var(--panel2);padding:12px}
+.syn-chart-h{font:700 11px/1 var(--en);letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.pillars--sm{gap:6px}
+.pillar--sm{padding:7px 4px 9px;min-width:0}
+.pillar--sm .gz{font-size:20px}
+.syn-divider{flex:none;align-self:center;color:var(--seal);font-size:20px;opacity:.7}
+@media(max-width:640px){.syn-divider{display:none}}
+.syn-top{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:14px}
 .sring{position:relative;width:132px;height:132px;flex:none}
 .sring svg{transform:rotate(-90deg)}
 .sring .track{fill:none;stroke:rgba(236,229,211,.12);stroke-width:7}
@@ -186,7 +205,7 @@ a{color:inherit;text-decoration:none}
 .spil{border:1px solid var(--line);background:var(--panel2);text-align:center;padding:10px 6px}
 .spil .n{font:700 13px/1 var(--serif);letter-spacing:.3em}
 .spil .s{margin-top:7px;font:900 20px/1 var(--mono);color:var(--gold)}
-.pull{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px dashed rgba(185,138,58,.4);padding:10px 13px}
+.pull{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px dashed rgba(201,154,61,.4);padding:10px 13px}
 .pull b{font:900 19px var(--mono);color:var(--gold)}
 .pull span{font:400 13px var(--serif);color:#c9c2ae}
 .share-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
@@ -212,6 +231,40 @@ a{color:inherit;text-decoration:none}
   <div class="bg-mist"></div>
   <div class="bg-stars"></div>
   <div class="bg-ring"></div>
+  <svg class="bg-horse" viewBox="0 0 400 220" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M318,20 L332,42"/>
+    <path d="M250,65 C270,55 300,45 332,42 C352,46 370,58 385,88"/>
+    <path d="M385,88 C380,98 372,105 362,110 C345,116 320,120 295,122"/>
+    <path d="M250,65 C200,55 150,55 110,65 C100,68 95,72 95,75"/>
+    <path d="M95,75 C85,90 85,105 92,118"/>
+    <path d="M295,122 C265,110 230,106 200,110 C170,114 145,110 115,118"/>
+    <path d="M292,110 C305,130 322,150 340,168 C348,176 352,184 355,192"/>
+    <path d="M272,112 C270,135 267,158 264,178 C263,184 262,188 262,192"/>
+    <path d="M96,116 C80,132 62,150 48,168 C43,175 40,182 38,190"/>
+    <path d="M112,120 C116,142 120,162 124,180 C126,186 127,190 128,193"/>
+    <path d="M93,77 C65,82 42,98 33,118 C28,130 32,142 42,150"/>
+    <path d="M90,80 C68,90 50,105 44,125"/>
+    <path d="M300,48 C295,57 291,63 287,67" stroke-width="2"/>
+    <path d="M282,53 C278,61 274,67 270,71" stroke-width="2"/>
+    <path d="M264,59 C260,66 257,71 253,75" stroke-width="2"/>
+  </svg>
+  <svg class="bg-dragon" viewBox="0 0 500 260" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <g class="dgold">
+      <path d="M20,150 C55,90 85,90 110,140 C135,190 165,190 190,140 C215,90 245,90 270,140 C295,190 325,190 350,140 C365,115 375,102 388,96"/>
+      <path d="M388,96 C405,80 430,76 452,86 C438,104 412,108 392,100 C390,99 389,97 388,96 Z"/>
+      <path d="M420,80 C420,66 425,52 435,40"/>
+      <path d="M400,101 C392,110 382,116 370,118" stroke-width="2"/>
+      <path d="M20,150 C10,135 8,118 16,105 C20,98 28,94 34,98"/>
+      <path d="M110,138 L108,122" stroke-width="2"/>
+      <path d="M190,138 L188,122" stroke-width="2"/>
+      <path d="M270,138 L268,122" stroke-width="2"/>
+      <path d="M350,138 L348,122" stroke-width="2"/>
+    </g>
+    <g class="dcloud" stroke-width="2">
+      <path d="M75,205 C75,199 80,196 84,198 C86,193 93,193 95,198 C100,197 104,201 102,206 C104,210 101,215 96,214 C94,218 87,218 85,214 C80,215 76,211 78,207 Z"/>
+      <path d="M290,55 C290,50 294,47 298,49 C300,45 306,45 307,49 C311,48 314,52 312,56 C314,59 311,63 307,62 C305,65 300,65 298,62 C294,63 291,60 292,56 Z"/>
+    </g>
+  </svg>
 </div>
 
 <nav class="page-turn-controls" aria-label="Page navigation">
@@ -249,9 +302,13 @@ a{color:inherit;text-decoration:none}
           <input type="date" id="bDate" required min="1900-01-01" max="2100-12-31"></div>
         <div class="fld"><label for="bHour" data-en="Hour (optional)" data-zh="时辰（可不填）">Hour (optional)</label>
           <select id="bHour"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+        <div class="fld"><label for="bTz" data-en="Birth timezone (optional, more accurate)" data-zh="出生地时区（可不填，更精确）">Birth timezone (optional, more accurate)</label>
+          <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
+        <div class="fld fld--check"><label for="bDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
+          <input type="checkbox" id="bDst" disabled></div>
         <button class="btn" type="submit" data-en="Cast ◈" data-zh="起盘 ◈">Cast ◈</button>
       </form>
-      <p class="form-note" data-en="Saved on this device only — nothing is uploaded. Solar-term boundaries are computed from real sun-position astronomy (China Standard Time); hour unknown casts a three-pillar chart." data-zh="生日只保存在本机，不上传。节气边界按真实太阳黄经推算（以北京时间为准）；不填时辰则排三柱盘。">Saved on this device only — nothing is uploaded. Solar-term boundaries are computed from real sun-position astronomy (China Standard Time); hour unknown casts a three-pillar chart.</p>
+      <p class="form-note" data-en="Saved on this device only — nothing is uploaded. Solar-term boundaries are computed from real sun-position astronomy; hour unknown casts a three-pillar chart. Timezone/DST matter most for the hour pillar (and, near midnight or a solar-term date, the day/month pillar) — pick yours if you know it." data-zh="生日只保存在本机，不上传。节气边界按真实太阳黄经推算；不填时辰则排三柱盘。时区/夏令时主要影响时柱（若接近午夜或节气交接日，也会影响日柱/月柱）——知道的话建议选择。">Saved on this device only — nothing is uploaded. Solar-term boundaries are computed from real sun-position astronomy; hour unknown casts a three-pillar chart. Timezone/DST matter most for the hour pillar (and, near midnight or a solar-term date, the day/month pillar) — pick yours if you know it.</p>
     </div>
   </section>
 
@@ -294,11 +351,16 @@ a{color:inherit;text-decoration:none}
           <input type="date" id="sDate" required min="1900-01-01" max="2100-12-31"></div>
         <div class="fld"><label for="sHour" data-en="Their hour (optional)" data-zh="对方时辰（可不填）">Their hour (optional)</label>
           <select id="sHour"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+        <div class="fld"><label for="sTz" data-en="Their timezone (optional)" data-zh="对方时区（可不填）">Their timezone (optional)</label>
+          <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
+        <div class="fld fld--check"><label for="sDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
+          <input type="checkbox" id="sDst" disabled></div>
         <button class="btn btn--seal" type="submit" data-en="Interlock ❖" data-zh="合盘 ❖">Interlock ❖</button>
       </form>
       <p class="form-note" id="synHint" data-en="Cast your own chart above first — synastry needs both." data-zh="先在上方立好自己的盘——合盘需要两个人。">Cast your own chart above first — synastry needs both.</p>
 
       <div class="syn-result" id="synResult" hidden>
+        <div class="syn-charts" id="synCharts"></div>
         <div class="syn-top">
           <div class="sring" aria-hidden="true">
             <svg viewBox="0 0 132 132" width="132" height="132">
