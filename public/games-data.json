@@ -1,8 +1,8 @@
 {
   "tournament": "FIFA World Cup 2026",
   "updated": "2026-07-05",
-  "note_en": "Predictions are my (Fable 5 Max) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/bet365 (30 Jun); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5 Max）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/bet365（6 月 30 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "note_en": "Predictions are my (Fable 5 Max) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/bet365 (5 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Fable 5 Max）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/bet365（7 月 5 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
     "resolved": 42,
@@ -214,6 +214,17 @@
       "opusScore": "2-1",
       "reason_en": "R32 winners Brazil (2-1 Japan, Martinelli) vs Norway (2-1 Ivory Coast, Haaland's record-breaking run). Brazil's superior overall quality and squad depth should edge a knockout thriller, but Haaland remains the tournament's biggest X-factor — expect goals at both ends.",
       "reason_zh": "32 强胜者巴西（2-1 胜日本，马丁内利建功）对挪威（2-1 胜科特迪瓦，哈兰德连破纪录）。巴西整体实力与阵容深度更胜一筹，但哈兰德仍是本届杯赛最大变数——预计双方都有进球。",
+      "odds": {
+        "h": 1.8,
+        "d": 3.6,
+        "a": 4.6,
+        "src": "FanDuel",
+        "scores": [
+          { "s": "2-1", "o": 6.5 },
+          { "s": "1-0", "o": 7.5 },
+          { "s": "1-1", "o": 8.0 }
+        ]
+      },
       "result": null
     },
     {
@@ -231,6 +242,17 @@
       "opusScore": "1-2",
       "reason_en": "R32 winners Mexico (2-0 Ecuador, yet to concede) vs England (2-1 DR Congo, Kane brace). Estadio Azteca is a fortress — co-hosts have lost there only twice competitively in 56 years — but England's greater individual quality and Kane's current form should be enough to survive a hostile, high-altitude test.",
       "reason_zh": "32 强胜者墨西哥（2-0 胜厄瓜多尔，本届尚未失球）对英格兰（2-1 胜刚果（金），凯恩梅开二度）。阿兹特克球场固若金汤——东道主在此 56 年间仅两次联赛级失利——但英格兰更强的个人能力与凯恩的状态应足以扛过高原与主场氛围的考验。",
+      "odds": {
+        "h": 3.2,
+        "d": 3.1,
+        "a": 2.35,
+        "src": "FanDuel",
+        "scores": [
+          { "s": "1-1", "o": 6.0 },
+          { "s": "0-1", "o": 7.5 },
+          { "s": "1-2", "o": 9.0 }
+        ]
+      },
       "result": null
     },
     {
@@ -248,6 +270,17 @@
       "opusScore": "2-1",
       "reason_en": "Euro 2016 final rematch, Ronaldo vs Yamal generational clash. Spain's 3-0 demolition of Austria was the most complete display of the round, with a clean sheet the whole group stage; Portugal needed a 94th-minute Ramos header to survive Croatia. Spain's collective press and control should edge an individually gifted but less cohesive Portugal side.",
       "reason_zh": "欧洲杯 2016 决赛重演，C 罗对阵世代新星亚马尔。西班牙 3-0 横扫奥地利是本轮最完整的表现，小组赛全程零失球；葡萄牙则靠拉莫斯 94 分钟头球险胜克罗地亚。西班牙的整体压迫与控场能力应险胜个人能力出众但整体性稍逊的葡萄牙。",
+      "odds": {
+        "h": 1.9,
+        "d": 3.5,
+        "a": 4.0,
+        "src": "bet365",
+        "scores": [
+          { "s": "1-0", "o": 6.5 },
+          { "s": "1-1", "o": 6.0 },
+          { "s": "2-1", "o": 7.5 }
+        ]
+      },
       "result": null
     },
     {
@@ -265,6 +298,17 @@
       "opusScore": "1-2",
       "reason_en": "Second Round of 16 meeting between these sides in the last four World Cups — Belgium won 2-1 (AET) back in 2014. Belgium's front three and battle-tested spine carry a touch more individual quality than the USA's more direct approach, and they showed knockout resilience fighting back from 2-0 down against Senegal. Lumen Field's raucous crowd is the USA's best equalizer, but a slight edge to Belgium.",
       "reason_zh": "两队本届是近四届世界杯内第二次在16强相遇——2014年比利时加时2-1获胜。比利时锋线组合与历经考验的后防线在个人能力上略胜打法更直接的美国队，且淘汰赛展现韧性（逆转塞内加尔）。西雅图主场声浪是美国最大依仗，但整体而言比利时略占优势。",
+      "odds": {
+        "h": 2.55,
+        "d": 3.5,
+        "a": 2.65,
+        "src": "FanDuel",
+        "scores": [
+          { "s": "1-1", "o": 5.5 },
+          { "s": "1-0", "o": 7.0 },
+          { "s": "0-1", "o": 7.5 }
+        ]
+      },
       "result": null
     },
     {
@@ -282,6 +326,17 @@
       "opusScore": "2-0",
       "reason_en": "First-ever World Cup meeting between these sides. Argentina's group-stage dominance (9 pts, +7 GD) outweighs the extra-time scare against Cape Verde — Messi, in what he's signalled is his final World Cup, remains locked in with goals in every match. Egypt's historic run (first Round of 16 since 1934) leans on Salah's brilliance and defensive discipline, but the class gap with the reigning champions is significant. Argentina to progress toward a mouth-watering quarter-final with the Switzerland/Colombia winner.",
       "reason_zh": "两队世界杯历史首次交手。阿根廷小组赛的统治级表现（9分，净胜球+7）足以弥补对佛得角加时赛的惊魂一刻——梅西在自己宣布的谢幕之战中已场场进球，状态正佳。埃及历史性晋级16强（自1934年以来首次）将依靠萨拉赫的个人能力与防守纪律，但与卫冕冠军的实力差距明显。阿根廷有望晋级，八强将迎来瑞士/哥伦比亚胜者的诱人对决。",
+      "odds": {
+        "h": 1.33,
+        "d": 5.0,
+        "a": 8.5,
+        "src": "bet365",
+        "scores": [
+          { "s": "2-0", "o": 6.0 },
+          { "s": "1-0", "o": 6.5 },
+          { "s": "3-0", "o": 9.0 }
+        ]
+      },
       "result": null
     },
     {
@@ -296,9 +351,20 @@
       "awayFlag": "🇨🇴",
       "opus": "away",
       "conf": 0.56,
-      "opusScore": "2-1",
+      "opusScore": "1-2",
       "reason_en": "Only the second World Cup meeting ever between these sides. Both arrive unbeaten in 90 minutes this tournament — Switzerland edged Algeria 2-0, Colombia ground out Ghana 1-0. Díaz and Rodríguez give Colombia's attack a sharper cutting edge than Switzerland's efficient but less explosive setup. Winner gets a quarter-final against Argentina or Egypt.",
       "reason_zh": "两队世界杯历史上第二次交手。双方本届常规时间均未尝败绩——瑞士2-0胜阿尔及利亚，哥伦比亚1-0险胜加纳。迪亚斯与罗德里格斯让哥伦比亚的攻击线比高效但缺乏爆发力的瑞士更具威胁。胜者将晋级八强战阿根廷或埃及。",
+      "odds": {
+        "h": 3.5,
+        "d": 3.1,
+        "a": 2.25,
+        "src": "bet365",
+        "scores": [
+          { "s": "1-1", "o": 6.0 },
+          { "s": "0-1", "o": 6.5 },
+          { "s": "1-2", "o": 8.5 }
+        ]
+      },
       "result": null
     }
   ],
