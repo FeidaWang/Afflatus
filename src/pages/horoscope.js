@@ -5,8 +5,13 @@
    daily check-in streak), share-link codec plumbing and DOM rendering.
    ENTERTAINMENT ONLY — the page says so, loudly.
    ============================================================ */
-import { pillarName, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN, ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, normalizeBirthToCST } from '../lib/bazi.js';
+import { pillarName, STEMS, BRANCHES, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN, ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, normalizeBirthToCST } from '../lib/bazi.js';
 import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../lib/horoscopeEngine.js';
+import {
+  TEN_GOD_ZH, TEN_GOD_EN, tenGodOfStem, HIDDEN_STEMS, nayinOf, kongWangOf,
+  STAGE_ZH, STAGE_EN, twelveStage, SEASON_STAGE_ZH, SEASON_STAGE_EN, seasonalStrength,
+  stemRelations, branchRelations, computeShensha, SHENSHA_EN, ziPingAnalysis,
+} from '../lib/ziping.js';
 
 (() => {
   'use strict';
@@ -137,6 +142,82 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
       return `<div class="pillar ${sizeClass || ''}"><div class="t">${T(...PILLAR_T[i])}</div><span class="gz e-${el}">${pillarName(p)}</span><div class="el">${T(ELEMENTS_EN[el], ELEMENTS_ZH[el])}</div></div>`;
     }).join('') + (chart.hour ? '' : `<div class="pillar ${sizeClass || ''}"><div class="t">${T('HOUR', '时柱')}</div><span class="gz" style="color:var(--dim)">未知</span><div class="el">${T('unknown', '未填时辰')}</div></div>`);
   }
+  // ---- 生辰详批 (子平法): 十神/藏干/纳音/空亡/十二长生/旺相休囚死/神煞/刑冲合害 --
+  // Simplified read (see src/lib/ziping.js docblock for what's implemented
+  // vs. simplified vs. lower-confidence). Entertainment only, same as the
+  // rest of this page.
+  const ganzhiIndex = (stem, branch) => { for (let i = 0; i < 60; i++) if (i % 10 === stem && i % 12 === branch) return i; return -1; };
+  const STRENGTH_T = { strong: ['Strong', '身强'], weak: ['Weak', '身弱'], balanced: ['Balanced', '中和'] };
+  const ROW_T = [
+    ['DAY MASTER / TEN GOD', '干神'], ['STEM', '天干'], ['BRANCH', '地支'], ['HIDDEN STEMS', '藏干'],
+    ['BRANCH TEN GODS', '支神'], ['SOUND-ELEMENT', '纳音'], ['VOID', '空亡'], ['TERRAIN', '地势'],
+    ['SELF-SEAT', '自坐'], ['STARS', '神煞'],
+  ];
+  function baziDetailHTML(chart) {
+    const pillars = [chart.year, chart.month, chart.day, chart.hour].filter(Boolean);
+    const dayStem = chart.day.stem;
+    const shenshaTags = computeShensha(pillars);
+    const cols = pillars.map((p, i) => {
+      const idx = ganzhiIndex(p.stem, p.branch);
+      const hidden = HIDDEN_STEMS[p.branch];
+      const ny = nayinOf(idx);
+      const kw = kongWangOf(idx);
+      const ganShen = i === 2
+        ? `<b class="dm">${T('SELF', '男/女主')}</b>`
+        : `${T(TEN_GOD_EN[tenGodOfStem(dayStem, p.stem)], TEN_GOD_ZH[tenGodOfStem(dayStem, p.stem)])}`;
+      const zhiShen = hidden.map((hs) => T(TEN_GOD_EN[tenGodOfStem(dayStem, hs)], TEN_GOD_ZH[tenGodOfStem(dayStem, hs)])).join('<br>');
+      const cangGan = hidden.map((hs) => `${STEMS[hs]}·${T(ELEMENTS_EN[STEM_ELEMENT[hs]], ELEMENTS_ZH[STEM_ELEMENT[hs]])}`).join('<br>');
+      const diShi = twelveStage(dayStem, p.branch);
+      const ziZuo = twelveStage(p.stem, p.branch);
+      const stars = (shenshaTags[i] || []).map((zh) => T(SHENSHA_EN[zh] || zh, zh)).join('<br>') || '—';
+      return {
+        ganShen, tianGan: `<span class="e-${STEM_ELEMENT[p.stem]}">${STEMS[p.stem]}</span>`,
+        diZhi: `<span class="e-${BRANCH_ELEMENT[p.branch]}">${BRANCHES[p.branch]}</span>`,
+        cangGan, zhiShen,
+        nayin: `${ny.zh}<br><small>${T(ny.en, '')}</small>`,
+        kongWang: kw.map((b) => BRANCHES[b]).join(''),
+        diShi: T(STAGE_EN[diShi], STAGE_ZH[diShi]),
+        ziZuo: T(STAGE_EN[ziZuo], STAGE_ZH[ziZuo]),
+        stars,
+      };
+    });
+    const head = `<tr><th></th>${pillars.map((p, i) => `<th>${T(...PILLAR_T[i])}</th>`).join('')}</tr>`;
+    const rowKeys = ['ganShen', 'tianGan', 'diZhi', 'cangGan', 'zhiShen', 'nayin', 'kongWang', 'diShi', 'ziZuo', 'stars'];
+    const body = rowKeys.map((key, ri) => `<tr><th>${T(...ROW_T[ri])}</th>${cols.map((c) => `<td>${c[key]}</td>`).join('')}</tr>`).join('');
+
+    const stemRel = stemRelations(pillars.map((p) => p.stem));
+    const branchRel = branchRelations(pillars.map((p) => p.branch));
+    const relHTML = `
+      <div class="bz-rel"><span class="bz-rel-t">${T('STEMS', '天干')}</span>${stemRel.length ? stemRel.map((r) => r.text).join(' · ') : T('none', '无')}</div>
+      <div class="bz-rel"><span class="bz-rel-t">${T('BRANCHES', '地支')}</span>${branchRel.length ? branchRel.map((r) => r.text).join(' · ') : T('none', '无')}</div>`;
+
+    const season = seasonalStrength(chart.month.branch);
+    const seasonHTML = `<div class="bz-season">${[0, 1, 2, 3, 4].map((el) =>
+      `<span class="e-${el}">${T(ELEMENTS_EN[el], ELEMENTS_ZH[el])}${T(SEASON_STAGE_EN[season[el]], SEASON_STAGE_ZH[season[el]])}</span>`).join('')}</div>`;
+
+    const za = ziPingAnalysis(pillars);
+    const strengthHTML = `
+      <div class="bz-strength">
+        <div class="bz-score"><b>${za.score}</b><span>${T('BALANCE SCORE (simplified)', '五行平衡分（简化）')}</span></div>
+        <div class="bz-strength-text">
+          <p>${T(
+            `Day master ${STEMS[dayStem]} (${ELEMENTS_EN[STEM_ELEMENT[dayStem]]}) reads as <b>${T(...STRENGTH_T[za.strength])}</b>. Simplified pattern: <b>${za.pattern.en}</b>.`,
+            `日主${STEMS[dayStem]}（${ELEMENTS_ZH[STEM_ELEMENT[dayStem]]}），命局判断为<b>${T(...STRENGTH_T[za.strength])}</b>。简化格局：<b>${za.pattern.zh}</b>。`
+          )}</p>
+          <p>${T(
+            `Favorable elements (喜用神): ${za.favorable.map((e) => e.en).join(', ')}. Elements to watch (忌神): ${za.unfavorable.map((e) => e.en).join(', ')}.`,
+            `喜用神：${za.favorable.map((e) => e.zh).join('、')}。忌神：${za.unfavorable.map((e) => e.zh).join('、')}。`
+          )}</p>
+        </div>
+      </div>
+      <p class="bz-caveat">${T(
+        'Simplified 扶抑法 read (support-vs-drain), not a full professional 格局/用神 determination (which also weighs 调候/通关). The 0-100 score is an original at-a-glance simplification with no traditional basis. Entertainment only.',
+        '这是简化版「扶抑法」身强身弱判断，并非完整的专业格局/用神定法（未计入调候、通关等因素）。0-100 分是本站为方便一眼查看而设计的简化量化指标，非传统命理方法本身。仅供娱乐。'
+      )}</p>`;
+
+    return `<div class="bz-table-wrap"><table class="bz-table">${head}${body}</table></div>${relHTML}${seasonHTML}${strengthHTML}`;
+  }
+
   const identityChipsHTML = (chart, m, d) => {
     const zi = zodiacIndex(m, d);
     return `<span class="elem">☾ ${T(ANIMALS_EN[chart.animal], '属' + ANIMALS_ZH[chart.animal])}</span>`
@@ -161,6 +242,10 @@ import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../
     $('elemRow').innerHTML = f.chart.elements.map((n2, i) =>
       `<span class="elem"><i class="e-${i}"></i>${T(ELEMENTS_EN[i], ELEMENTS_ZH[i])} × ${n2}</span>`).join('')
       + identityChipsHTML(f.chart, state.me.m, state.me.d);
+
+    // 生辰详批 (子平法): ten gods, hidden stems, nayin, void, twelve stages,
+    // seasonal strength, relations, shensha, simplified strength/pattern read.
+    $('bzWrap').innerHTML = baziDetailHTML(f.chart);
 
     // overall ring
     const C = 2 * Math.PI * 42;
