@@ -311,12 +311,13 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 - **审计过程中确认无需动的项**：`public/robots.txt`、`public/sitemap.xml`（覆盖全部 7 页）**已存在且正确**，此前的审计遗漏了这两个文件。
 - **审计中发现的未修复小缺口**：`sectors.html` 唯独缺 `<link rel="icon">`（其余 6 页都有）——不在本次 SEO 改动范围内，记录于此，需要时单独修一行。
 
-### Phase 1（重新评估后比原计划复杂，待排期）
+### Phase 1（2026-07-05 评估 + 部分落地）
 
-原计划「统一自托管字体去重 Google Fonts」的前提有误——**7 页字体并非重复加载同一套**，而是每页有各自独立的字体身份（如 arena=Orbitron/Rajdhani，league=Cinzel/Spectral/Noto Serif SC 等 6 种字体，signal=Oswald/Space Mono……），只有 `page-turn.css` 里自托管的 Marathon Shapiro/PP Fraktion Mono/KH Interference 是另一套无关的自定义字体栈。真要自托管每页专属 Google Fonts 组合，需要逐页找对应 `.woff2` 授权文件、核实字重范围，工作量和风险比「去重」大得多。**待办**（排入 Phase 1，暂无一致方案）：
-- 评估：给每页 Google Fonts `<link>` 加 `<link rel="preload" as="style">` 是否已经拿到大部分收益（比全量自托管风险低很多）。
-- `main.js` 869KB 主 chunk 动态 import 拆分——独立于字体问题，收益更确定，可单独先做。
-- gtag 脚本 `defer`/延迟到 `requestIdleCallback`，避免阻塞首屏。
+原计划「统一自托管字体去重 Google Fonts」的前提有误——**7 页字体并非重复加载同一套**，而是每页有各自独立的字体身份（如 arena=Orbitron/Rajdhani，league=Cinzel/Spectral/Noto Serif SC 等 6 种字体，signal=Oswald/Space Mono……），只有 `page-turn.css` 里自托管的 Marathon Shapiro/PP Fraktion Mono/KH Interference 是另一套无关的自定义字体栈。真要自托管每页专属 Google Fonts 组合，需要逐页找对应 `.woff2` 授权文件、核实字重范围，工作量和风险比「去重」大得多，**仍未排期**。
+
+- ✅ **已完成**：**gtag 延迟到空闲**（全站 8 页）——`<script async src=googletagmanager...>` + 内联 `gtag('config',...)` 改为包在 `requestIdleCallback`（无该 API 的浏览器 `setTimeout` 2s 兜底，超时兜底 3s）里的函数，浏览器汇报空闲后才发起 gtag.js 请求+初始化，不再和首屏渲染抢主线程。**已知取舍**：把"记录 pageview"从"立即"推迟到最多 ~2–3 秒后，理论上有极小概率漏记"打开后 2 秒内就跳走"的这批访客——对没有广告/转化归因诉求的个人博客可接受，未额外征询站主确认就直接做了，如果分析数据的完整性比这点性能收益更重要，随时可以改回同步加载。
+- ❌ **评估后判定不值得做**：`<link rel="preload" as="style">` 包 Google Fonts CSS——现有写法（`preconnect` + 紧跟其后的 `<link rel="stylesheet">`）本来就在 `<head>` 顶部被浏览器的预加载扫描器早早发现，字体 CSS 已经是最高优先级的阻塞资源；再加一个指向同一 URL 的 `preload` 不会让它更早被发现，等于重复请求同一优先级的资源，是常见的「伪优化」反模式。没有照抄这一条。
+- ⚠️ **评估后判定风险过高，未做**：`main.js` 869KB 主 chunk 动态 import 拆分——查证过 three.js 本体已经不在这条链路上（只有已懒加载的 `capitalShip3D.js`/`fighter3D.js`/`topdownCombat.js` 才会拉 three.js），869KB 的重量来自 `combatRuntime`/`combatHudSC`/`combatCine`/`hmdMinimal`/`combatHmdV3`/`combatView`/`battleFeed`/`radarDeck` 等一批**目前都是同步 import**、且被主渲染循环 `frame()` 每帧直接调用的模块。这批模块理论上可以等首次战斗触发（彗星生成 7 秒延迟或点击 Command 按钮）后再动态加载，但把同步调用改成异步加载意味着要在渲染循环里处理"模块还没到"的过渡状态——和 A2 Phase 4 的 `state`/`nav`/`boot` 是同一类风险（深度耦合 combat/render 主循环，沙盒无法真机验证 WebGL/canvas 结果），不在没有真人浏览器验收的情况下强做。
 
 ### Phase 2（M-L，触发式）
 
