@@ -6,60 +6,31 @@
 
 ---
 
-## 1. v1.5 优先级总表 / Priority roadmap ★
+## 1. 执行优先级 / Priority queues ★
 
-> **当前状态（2026-07-05）**：v1.4 全部收尾工作、v1.5b 视觉工程轨（V14/V15/V15b/V15c/V16/V17/V17b/V17c）、v1.5 产品轨的 **V4/V6/V7 均已完成并归档**，站主直接指定的 **V13（Arena 美股技术分析仪表盘）已上线**，以及**站内架构/UX 审计 D1–D5 全部完成**，详见 `RELEASE_NOTES.md`。当前处于 **Afflatus v1.5「Fable 5 Max 五模块」** 产品轨执行期——源头是站主的系统架构规划报告，经评审优化后落地，完整五模块规格见 **§7**，定时任务提示词库见 `prompts/`。
->
-> **排序依据**：依赖顺序 > 价值密度；V18 是站主直接点名的插队项，做完之后默认接 Sectors（V9→V10→V11）——这是当前唯一「无阻塞、随时可开工」的 M 级产品轨工作。此前驱动排序的两个硬截止已转入自动化监控期（MSI 2026 决赛 7/12——Leagues 已上线+定时任务自跑；世界杯决赛 7/19——V2 持续监控），FOMC 软截止 7/28-29 前 Signal（V6/V7）也已就绪——**没有新的时效硬截止在驱动排序**。
->
-> **NEXT UP · 建议执行队列（2026-07-05 九次重排——V19 立项插入 V18 之后）**——标注工作量（S≈半天内 / M≈1–3 天 / L≈1 周级）：
->
-> **可执行队列（排位即优先级，做完一项直接接下一项）**
-> ① **V18**（M-L，**三个 Phase 全部完成，2026-07-05——待真人验收**）——战斗视图「立体化」：从 2D 分镜的平面感（combatCine 精灵战机）升级为 SC 参考图的电影级追击视角（低机位追尾 + 引擎尾焰彩带 + 深度参照层 + 太阳眩光）。**技术路线见 §4「V18 实施路线」**；P3 的 B8 整体并入本项关闭。Phase 3 的 item 9（山脊视差）按路线图原文「不强求」确认跳过，不是遗漏。**全部观感（chaseCam/导弹迁移/尾焰/尘埃/眩光）待真人在浏览器过目**（`?combatview=topdown&combatcam=director`）——沙盒全程无法渲染 WebGL，这是当前最大的未验证风险，下一步建议先做这个而不是急着接 Sectors。
-> ② **V19**（S+S+M 分三 Phase，**站主指定立项，2026-07-05**）——Arena 自选股「预测差值」信号层：把每票预测收窄为 LEAN LONG/NEUTRAL/LEAN SHORT 三态信号 + 公开命中率/Brier 战绩，卡片化替代默认展开的 V13 深度面板（深度面板收进第二层，点击展开）。**Phase 1（记分数据管线）可以现在就起跑攒数据，不占前端主力时间**；完整方案见 **§7.7**。
-> ③ **V9 → V10 → V11**（M+M+S）——Sectors 模块：先建对比矩阵 + 后内存专题两个前端区块与初始数据（V9/V10），再上定时任务自动化（V11）——路径与 Arena 的 V3→V4 同构（先有能跑的产品，再自动化）。
-> ④ **V12**（M，Sectors 落地后再做）——数据管线统一（`push-data.sh` 模板化、溯源徽章共享组件）：等 Sectors 数据管线跑起来，站上有两个模块的真实模式可供抽象，避免像 A2 那样过早封装。
-> ⑤ **A2**（L，纯技术债，无截止压力，排最后）——main.js 继续拆分；`C4`（TS 渐进迁移）顺路做，不单独立项。
->
-> **被动监控（不占队列位置，定期查一眼即可，条件满足会自动变为可执行）**
-> - **V2**——世界杯淘汰赛推进中（决赛 7/19），每轮完赛后补 `home/away/result` 即可，纯监控不占主力时间。
->
-> **P3 长线内部优先级参考**（无截止压力，机会主义拾取，不强制排期）：C1/C2（Signal 传导链自动化，长尾里内容价值最高）> B1（CSS Scroll-Driven Animations，低风险的现成性能收益）> B6（首页 WebGL 收尾，需真机 profiling，沙盒做不了）> B7/B9（各页视觉细节打磨）> C3（WebGPU/Bloom，投入大，等有余力再评估）> C5（Astro，纯触发式——**当前站内 7 页，逼近 ≥8 触发线，下次加新页前先做一次评估再动手**）。
->
-> 想接着做时直接说编号（如「做 V9」），或说「查一下 V5 账本」看数据是否已攒够。
+> **维护规则（永久有效，每次更新都要遵守）**：本节永远只保留两条队列的编号顺序 + 一句话摘要，不在这里展开方案——完整技术细节放在各自指向的章节（§3–§8）。任何一项做完就从队列里划掉；完整叙述转 `RELEASE_NOTES.md`，不留在本文档。
 
-**P0 · 抢时效（本周内，硬截止 7/12）**
-- **V2.（S·随赛程持续）Games 世界杯收官跟进**——2026-07-04 复核：`games-data.json` 现有 `fixtures[]` 的 `result:null` 均已核实为真实准确（对应比赛截至当前尚未开球/未结束，非遗漏）；无需本轮更新。淘汰赛继续推进后再补 `home/away/result`（决赛 7/19 收官）；「夺冠路径」树状图不抢时效，见 B7。
+**当前状态**：v1.5「Fable 5 Max 五模块」产品轨执行期，五模块规格见 **§7**。历史完成事项（v1.4 收尾、V4/V6/V7/V13、D1–D5 审计等）已全部归档，见 `RELEASE_NOTES.md`。当前没有硬性时效截止在驱动排序（MSI/世界杯已转入自动化监控，FOMC 前 Signal 已就绪）——两条队列都按依赖顺序排列，做完一项直接接下一项。
 
-**P1 · v1.5 核心（1–3 周）**
+想接着做时直接说编号（如「做 V9」），或说「查一下 V5 账本」看数据是否已攒够。
 
-*产品轨（V4/V5/V6/V7 已完成并归档，详见 `RELEASE_NOTES.md`）：*
-- **V19.（S+S+M 分三 Phase）Arena 自选股「预测差值」信号层**——**站主立项，2026-07-05**：三态信号（LEAN LONG/NEUTRAL/LEAN SHORT）+ 公开命中率/Brier 战绩，卡片化替代默认展开的 V13 深度面板。完整方案见 **§7.7**。
+### 队列 A · 性能与工程优先级 / Engineering & performance queue
 
-*视觉轨（V14/V15/V16/V17 已完成并归档；剩余项见下）：*
-- **V18.（M-L）战斗视图「立体化」**——**代码全部完成（三个 Phase，2026-07-05），待真人浏览器验收**：从 2D 分镜平面感升级为 SC 参考图的电影级追击视角（chaseCam 低机位追尾 + 导弹叙事迁 3D + 引擎尾焰彩带/近景尘埃 + 太阳眩光），B8 整体并入。全程挂 `?combatview=topdown&combatcam=director` 灰度，默认行为字节不变。完整技术路线见 **§4「V18 实施路线」**。
+1. **V12** 数据管线统一——等队列 B② Sectors 落地后再做，详见 §7.5。
+2. **A2** main.js 继续拆分（Phase 3–5）——无截止压力，详见 §3。
+3. **B1** CSS Scroll-Driven Animations——低风险、现成的性能收益，详见 §8.2。
+4. **B6** 首页 WebGL 收尾——需真机 profiling，沙盒做不了，详见 §5「Home」。
+5. **C4** TypeScript 渐进迁移——随 A2 顺路做，不单独立项，详见 §8.2。
+6. **C3** three.js WebGPURenderer + Bloom/ACES——投入大，等有余力再评估，详见 §8.2。
+7. **C5** Astro 迁移——触发式（站内页面 ≥8 或 novels 章节 ≥20），当前 7 页逼近阈值，详见 §8.2。
 
-**P2 · v1.5 扩展（3–6 周）**
-- **V9.（M）Sectors 中美 AI 对比矩阵**——4 厂商观察卡（美：Anthropic/OpenAI；中：智谱/阿里）× 映射标的篮子（定性关联标签，不伪造统计相关系数）。规格见 **§7.2**。
-- **V10.（M）Sectors「后内存时代」专题**——三主线（HBM 定价权 / CXL 内存池化 / NAND KV-Cache 分层）+ Top 10 论点卡 + 现有报价管线自动刷新；OTC ADR 报价源缺失时降级为纯论点卡。**结构决策：不单开新页，进 Sectors 专题区块**——理由见 §7.0。
-- **V11.（S）sectors-data.json 每周定时任务**——V9+V10 共用一次周跑；提示词 `prompts/sectors-watch.md` + `prompts/postmemory-top10.md`。
-- **V12.（M）数据管线统一**——`scripts/push-arena-news.sh`（已在用，2026-07-04 修复过一个从未生效的 rebase bug，见 §7.5）模板化为通用 `push-data.sh <file> <msg>`；所有数据 JSON 顶层统一 `{updated, version}`；前端共享统一**溯源徽章**（`FABLE 5 MAX · 数据龄 · 来源数 · NOT ADVICE` 一体化小组件，全站 AI 内容页复用，数据龄 >36h 琥珀、>72h 红）；预测类页面共享战绩组件（命中率 + Brier 分数，Games/Leagues/Signal 通用），并纳入首页 Top 10 组合 vs SPY/SMH 的公开记分（见 §7.2 集中度声明）；「Sectors 研判与 Arena 预测打通」并入本项评估。
-- **A2.（L）main.js 继续拆分（Phase 3–5）**——各页内联 `<style>` 移到 `public/styles/<page>.css`；`state`/`cursor`/`nav`/`boot` 职责拆出；`styles.css` 做 `@layer` 分层。main.js 仍 3483 行、styles.css 仍 7091 行（2026-07-05 复核）。详见 **§3**。
+### 队列 B · 功能性优先级 / Feature & product queue
 
-**P3 · 长线**
-- **B1. CSS Scroll-Driven Animations**——`animation-timeline: scroll()/view()` 替换 `alphardForge` 的 JS scroll-pin。详见 **§8.2**。
-- **B2. ~~topdownCombat 后续~~**——已整体并入 V14 实施路线（场景资产重构为相机无关的 `combatScene`，真实坐标驱动与动态 `import()` 一并在该轨解决，俯视降级为 `tacticalTopdown` 镜头预设），本条不再单独跟踪、仅存查。见 **§4 实施路线修正**。
-- **B8. ~~V14 相机导演剩余 polish~~**——**已整体并入 V18（2026-07-05，见 §4 V18 实施路线）**：`impactOrbit`、FOV 动态推拉/banking、「空间深度四件套」正是 V18「立体化」的核心构件，不再单独跟踪、仅存查。
-- **B9. Odin 舰体（V15）收尾项**——旧舰体贴花（"TC CONDOR"/"01"/危险警示条）未在新舰体重新定位；greeble 未走 InstancedMesh 单 draw call 优化（现状与其余 capitalShip3D 逐 box 循环手法一致，性能量级不变）。待 `?ship=odin` 观感确认后再评估是否值得做。详见 `RELEASE_NOTES.md` V15 条目。
-- **B3. combatHudSC 机库跑道纵深透视**——先记录、不建议单独立项：起降走 `drawPilotDeck` 另一条渲染路径，`combatHudSC` 从未在起降时被调用，要做透视意味着把它接入起降路径，是比数据绑定修复大得多的独立工作。
-- **B5. ~~首页背景 canvas 加 IntersectionObserver~~**——已并入 D3（2026-07-05 站内审计 D1–D5，详见 `RELEASE_NOTES.md`），不再单独跟踪。
-- **B6. 首页 WebGL 收尾**——`saturnRenderer` 等 raw-GL 的完整 context-restored 重建（目前仅 `preventDefault` 保活）；跃迁点 shader 弱机自适应（降 fbm 八度或分辨率）；统一所有渲染器 `powerPreference` 与 dpr 上限到一处常量（目前 1.75 vs 1.5 不一致）。需真机 profiling。
-- **B7. 各页零散点子**——Arena「模型 vs 你」历史胜率曲线 + Twelve Data 接入后 W/M/6M/Y/5Y 徽标转 `REAL`；Games「夺冠路径」树状图。详见 **§5**。
-- **B10. ~~Arena 旧 Human vs AI 对战区去留决定~~**——**已关闭（2026-07-05，随 V5 一并处理，详见 `RELEASE_NOTES.md`）**：站主确认 TA 仪表盘就是正式内容，旧对战区代码（~300 行，名单轮询/图表指标/预测下注/计分板）已从 `arena.js` 正式删除，不再是"暂时隐藏"，不再单独跟踪。
-- **C1/C2. Signal 传导链可视化 + 自动化剩余部分**——BREACH METER 自动映射、事件回放 ±2h sparkline、FedWatch 概率自动刷新（鹰鸽罗盘与定时任务自动化已被 V6/V7 吸收）。详见 **§6**。
-- **C3. three.js WebGPURenderer + TSL + Bloom/ACES**——compute shader 粒子（百万级星涡/爆炸碎片）+ 更低 draw call 开销；`UnrealBloomPass` + ACES tone mapping 替代 radial-gradient 假光晕。详见 **§8.2**。
-- **C4. TypeScript 渐进迁移**——main.js 拆分（A2）产出的新模块直接写 `.ts`，不强制回填旧文件。详见 **§8.2**。
-- **C5. Astro 迁移**——触发条件：站内页面数 ≥8 或 novels 章节数 ≥20，当前均未到阈值。**⚠️ 注意：Leagues 上线后全站 7 页，逼近阈值**——下次再加新页时先做 Astro 评估再动手。详见 **§8.2 / §5**。
+1. **V18** 战斗视图「立体化」——三个 Phase 代码已全部完成（2026-07-05），**待真人浏览器验收**（`?combatview=topdown&combatcam=director`），详见 §4「V18 实施路线」。
+2. **V19** Arena 自选股「预测差值」信号层——Phase 1（记分数据管线）可现在就起跑攒数据，详见 §7.7。
+3. **V9 → V10 → V11** Sectors 中美 AI 对比矩阵 + 后内存专题 + 定时任务——详见 §7.2。
+4. **V2** Games 世界杯收官跟进——被动监控，决赛 7/19，赛程推进后补 `home/away/result` 即可。
+5. **机会主义拾取**（无截止压力，不强制排期）：C1/C2 Signal 传导链可视化自动化（§6）> B7 各页零散点子（§5）> B9 Odin 舰体收尾（§4 V15）> B3 combatHudSC 纵深透视（记录在案，不建议单独立项）。
 
 ---
 
@@ -169,6 +140,7 @@
 - **参考特征提取**（用户提供 Blender 截图，Odin 舰侧视）：长高比 ≈5.5:1；刀锋舰艏占全长 35–40%、渐收成针；舯部阶梯式上层建筑 + 舰桥塔 + 天线桅杆簇（多根细长斜桅）；舰尾密集推进器组 + 外伸散热鳍/桁架阵列；背脊炮塔成列（方形炮座 + 细节窗）；腹部吊舱与下沉式炮位；greeble 密度梯度**尾 > 舯 > 艏**（艏部大面留白突出刀锋轮廓）。
 - **技术路径**：型线样条挤出程序化 blockout（先锁剪影再上细节，剪影错了细节全白费）→ 实例化 greeble 套件（炮塔/散热窗/天线/嵌板凹槽等 8–12 个基元 + 种子化布点规则，InstancedMesh 单 draw call）→ 全息着色器沿用 `shipHologram.js` 现有管线（fresnel 边缘光 + 扫描线 + additive），三角面预算 ≤50k。**同一几何体**喂 `capitalShip3D` 的侧视/尾视，一份资产两处用。
 - **V15b 战机保真度 pass**：`fighter3D.js` 的 F-47/夜鹰增加嵌板法线细节（贴图烘焙或程序化 panel-line）与 PBR-lite 材质（金属度/粗糙度双参数），脱离棋子感；轮廓保持现有辨识度不动。
+- **收尾项（队列 A B9，机会主义拾取）**：旧舰体贴花（"TC CONDOR"/"01"/危险警示条）未在新舰体重新定位；greeble 未走 InstancedMesh 单 draw call 优化（现状与其余 `capitalShip3D` 逐 box 循环手法一致，性能量级不变）。待 `?ship=odin` 观感确认后再评估是否值得做。
 
 ### V16 武器单时钟同步（CIWS / 导弹 / 核弹 / 主炮）
 
@@ -182,10 +154,13 @@
 - **性能红线**：新增视觉不允许出现独立 rAF 循环（全部挂进现有主循环）；实例化资产（尾焰彩带/greeble/粒子）每类 ≤1 draw call；粒子全部对象池化；全息舰 ≤50k 三角面、单架战机 ≤8k。
 - **可达性**：`prefers-reduced-motion` 下镜头固定为 bridgeWide、禁抖动禁慢放；移动端（<560px）关镜头震动、尘埃参照层密度减半。
 
+**记录在案，不建议单独立项（队列 B B3）**：`combatHudSC` 机库跑道纵深透视——起降走 `drawPilotDeck` 另一条渲染路径，`combatHudSC` 从未在起降时被调用，要做透视意味着把它接入起降路径，是比数据绑定修复大得多的独立工作。
+
 ---
 
 ## 5. 各页设计备忘 & 未来点子 / Per-page notes & ideas
 
+- **Home**（队列 A B6，首页 WebGL 收尾，需真机 profiling，沙盒做不了）：`saturnRenderer` 等 raw-GL 渲染器补完整的 context-restored 重建（目前仅 `preventDefault` 保活，没有真正重建资源）；跃迁点 shader 加弱机自适应（降 fbm 八度或分辨率）；统一所有渲染器的 `powerPreference` 与 dpr 上限到一处常量（目前 1.75 vs 1.5 不一致）。
 - **Arena**：**V13 美股技术分析仪表盘 + V5 Autopilot 双模型模拟盘全部上线（2026-07-05，详见 `RELEASE_NOTES.md`）**——旧 Human vs AI 对战区已正式下线（B10 已关闭）。原有点子保留（B7）：「模型 vs 你」历史胜率曲线；接 Twelve Data 后把 W/M/6M/Y/5Y 徽标改 `REAL`。
 - **Sectors**：**v1.5 → 中美 AI 对比矩阵 + 后内存专题（V9–V11，§7.2）**；「研判与 Arena 预测打通」并入 V12 评估。
 - **Signal**：**v1.5 → Warsh 时代重构已完成（V6–V7，§7.3，详见 `RELEASE_NOTES.md`）**；其余见 **§6**。
@@ -331,10 +306,11 @@
 
 合计 ≈ **2.5M 输入 / ~0.15M 输出每月**。三条纪律压住预算：① 固定 system prompt 吃 prompt caching；② 数据预消化（指标计算、新闻去重截断）用代码/便宜模型做，Fable 只做决策推理；③ 输出双段式（机器 JSON + 限长复盘）硬上限。
 
-**数据管线（V12）**
+**数据管线（V12，队列 A①，等 Sectors 落地后再做）**
 - `scripts/push-arena-news.sh` 已验证可用（cron → 写 JSON → 独立 stash/rebase/commit/push → 站点重部署），模板化为 `push-data.sh <file> <msg>` 供 ledger/leagues/sectors/signal 复用。
-- 所有数据 JSON 顶层统一 `{updated, version}`；前端共享「数据龄」徽标（>36h 琥珀、>72h 红）。
-- 预测类战绩组件统一（Games/Leagues/Signal）：命中率 + Brier 分数，一处实现三处用。
+- 所有数据 JSON 顶层统一 `{updated, version}`；前端共享统一**溯源徽章**（`FABLE 5 MAX · 数据龄 · 来源数 · NOT ADVICE` 一体化小组件，全站 AI 内容页复用，数据龄 >36h 琥珀、>72h 红）。
+- 预测类战绩组件统一（Games/Leagues/Signal）：命中率 + Brier 分数，一处实现三处用，并纳入首页 Top 10 组合 vs SPY/SMH 的公开记分（见 §7.2 集中度声明）。
+- 「Sectors 研判与 Arena 预测打通」并入本项一起评估。
 
 ### 7.6 提示词工程规范（全模块）
 
