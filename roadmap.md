@@ -30,7 +30,7 @@
 2. **V19** Arena 自选股「预测差值」信号层——**Phase 1 已上线攒数据中（2026-07-05）**：预测 schema 扩展 + 收盘回填定时任务已建好，Phase 2（校准纯函数）/ Phase 3（信号卡 UI）待数据攒够后再做，详见 §7.7。
 3. **V9 → V10 → V11** Sectors 中美 AI 对比矩阵 + 后内存专题 + 定时任务——**三项已全部实现（2026-07-05）**：`sectors.html` 新增两个数据驱动区块（对比矩阵 4 厂商卡 + 后内存十强论点卡），`src/lib/validateSectorsData.js` 校验网关（16 条 vitest），新建定时任务 `sectors-watch-weekly`（周日 10:00，跑现成的 `sectors-watch.md`+`postmemory-top10.md` 两个提示词）。**数据仍是空种子**，真实内容等下周日首次运行才会出现，详见 §7.2。
 4. **V2** Games 世界杯收官跟进——被动监控，决赛 7/19，赛程推进后补 `home/away/result` 即可。
-5. **机会主义拾取**（无截止压力，不强制排期）：C1/C2 Signal 传导链可视化自动化（§6，卡点：BREACH METER 缺概率数值字段+无 FedWatch 数据源，事件回放迷你图需要分钟级盘中数据，现有 `/api/quote` 只有日线——暂不可行）> **B7 Games 夺冠之路树状图已实现（2026-07-05）**，详见 §5 > B9 Odin 舰体收尾（§4 V15，待 `?ship=odin` 观感确认）> B3 combatHudSC 纵深透视（记录在案，不建议单独立项）。
+5. **机会主义拾取**（无截止压力，不强制排期）：C1/C2 Signal 传导链可视化自动化（§6，卡点：BREACH METER 缺概率数值字段+无 FedWatch 数据源，事件回放迷你图需要分钟级盘中数据，现有 `/api/quote` 只有日线——暂不可行）> **B7 Games 夺冠之路树状图已实现（2026-07-05）**，详见 §5 > **B9 Odin 贴花已重新定位（2026-07-05，观感待验收），greeble InstancedMesh 优化评估后判断不值得做**，详见 §4 V15 > B3 combatHudSC 纵深透视（记录在案，不建议单独立项）。
 
 ---
 
@@ -140,7 +140,9 @@
 - **参考特征提取**（用户提供 Blender 截图，Odin 舰侧视）：长高比 ≈5.5:1；刀锋舰艏占全长 35–40%、渐收成针；舯部阶梯式上层建筑 + 舰桥塔 + 天线桅杆簇（多根细长斜桅）；舰尾密集推进器组 + 外伸散热鳍/桁架阵列；背脊炮塔成列（方形炮座 + 细节窗）；腹部吊舱与下沉式炮位；greeble 密度梯度**尾 > 舯 > 艏**（艏部大面留白突出刀锋轮廓）。
 - **技术路径**：型线样条挤出程序化 blockout（先锁剪影再上细节，剪影错了细节全白费）→ 实例化 greeble 套件（炮塔/散热窗/天线/嵌板凹槽等 8–12 个基元 + 种子化布点规则，InstancedMesh 单 draw call）→ 全息着色器沿用 `shipHologram.js` 现有管线（fresnel 边缘光 + 扫描线 + additive），三角面预算 ≤50k。**同一几何体**喂 `capitalShip3D` 的侧视/尾视，一份资产两处用。
 - **V15b 战机保真度 pass**：`fighter3D.js` 的 F-47/夜鹰增加嵌板法线细节（贴图烘焙或程序化 panel-line）与 PBR-lite 材质（金属度/粗糙度双参数），脱离棋子感；轮廓保持现有辨识度不动。
-- **收尾项（队列 A B9，机会主义拾取）**：旧舰体贴花（"TC CONDOR"/"01"/危险警示条）未在新舰体重新定位；greeble 未走 InstancedMesh 单 draw call 优化（现状与其余 `capitalShip3D` 逐 box 循环手法一致，性能量级不变）。待 `?ship=odin` 观感确认后再评估是否值得做。
+- **收尾项（队列 B B9，机会主义拾取）**：
+  - ✅ **贴花已重新定位（2026-07-05）**：`capitalShip3D.js` 的贴花辅助函数（`mkTex`/`decal`/`textTex`/`dangerTex`）原来定义在旧舰体分支内部，是 Odin 分支从未有任何贴花的直接原因——现已提到 if/else 之上共用。Odin 分支新增 5 处贴花，坐标全部由 `odinInfo` 的真实返回值（`bowRoot`/`bowLen`/`length`/`height`/`turretMounts`）换算，不是拍脑袋数字：舰名牌"TC CONDOR"+编号"310106"放在舯部两舷（`oMidMid` 附近），"01"标牌放在最靠舰艏的炮塔旁（`turretMounts[0]`，z 仍 ≤ `bowRoot`），两枚危险警示条放在尾部推进器舱两侧——全部严格卡在 `z ≤ bowRoot` 之内，不侵入 V15 规格明确要求「留白」的刀锋舰艏。**观感仍需真人在浏览器过目**（沙盒无法渲染 WebGL）。
+  - ⏭️ **greeble InstancedMesh 优化——评估后判断不值得做**：`odinHull.js` 的贴花/结构体全部通过统一的 `add(geo, mat, t, r, s)` 回调交给调用方（`capitalShip3D.js` 用纯 Mesh、`shipHologram.js` 用 Mesh+EdgesGeometry 描边），greeble 散布的每个盒子还是不同随机尺寸的独立 `BoxGeometry`——要做成单 draw call 的 InstancedMesh，得把散布逻辑改成"共享单位立方体+非均匀缩放矩阵"，还得给 `odinHull.js` 加一个新的"可批处理 vs 结构件"回调区分（否则 `shipHologram.js` 的逐 greeble 线框描边效果会丢），改动面覆盖到已有 vitest 覆盖的纯函数契约。当前性能量级本来就和 `capitalShip3D.js` 其余部分一致（未劣化，只是未特别优化），投入产出比不划算，判断跳过，不是遗漏。
 
 ### V16 武器单时钟同步（CIWS / 导弹 / 核弹 / 主炮）
 
