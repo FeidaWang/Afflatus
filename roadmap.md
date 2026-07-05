@@ -18,10 +18,10 @@
 
 1. **S0** SEO Phase 0 快赢——**✅ 已完成（2026-07-05）**：7 页 canonical + og:url、index.html 的 WebSite/Person JSON-LD、serial.html 的 Book×2 JSON-LD、`public/404.html`、`vercel.json`（www→apex + /api noindex）、`npm run linkcheck`（linkinator）。Phase 1（CWV：字体/JS 分包/gtag 延迟）范围已重新评估，比原设想复杂，待排期，详见 §9。
 2. **V12** 数据管线统一——**✅ 工程可做的部分已完成（2026-07-05）**：push-data.sh 通用脚本、溯源徽章（五页全部铺开）、命中率组件去重，详见 §7.5。Brier 分数与首页 Top10 vs SPY/SMH 记分需要新的数据管线（分别是"保留历史 confidence"和"从零建价格追踪"），不是现有数据能直接拼出来的，留待单独立项。6 个定时任务接 push-data.sh 站主决定跳过（读不到任务 prompt 全文，全文覆写风险大，且现状本就跑得好）。
-3. **A2** main.js 继续拆分（Phase 3–5）——无截止压力，详见 §3。
+3. **A2** main.js 继续拆分（Phase 3–5）——**Phase 3 ✅ 已完成（2026-07-05）**：7 页内联 `<style>` 全部搬到 `public/styles/<page>.css`（机械提取，已用 build diff 验证 CSS 内容逐字节不变）。**Phase 4 部分完成**：仅抽出 `cursor`（`src/ui/cursor.ts`，纯 DOM classList 包装，无游戏/战斗状态，6 处调用点全部迁移，build 后 grep 确认相关 class 字符串均在）；`state`（飞行阶段机）/`nav`/`boot` **未做**——这三块和 combat/render 主循环里几十个模块级可变变量（`escorts`/`weapons`/`halley`/`warpIntensity`…）深度纠缠，贸然拆分且无法真机验证的风险，等同于站上已吃过三次教训的 WebGL 改动（见 V15 记录），不在沙盒里强做。**Phase 5（styles.css `@layer` 分层）未做**：层级顺序即层叠优先级，7110 行里给错层会产生看不见的视觉回归，同样需要真机验证才能安全做。详见 §3。
 4. **B1** CSS Scroll-Driven Animations——**✅ 已完成（2026-07-05）**：alphardForge 的 JS 手动 pin（scroll 监听 + classList 切换 `.pin-fixed`/`.pin-end`）替换为 `@supports (animation-timeline: view())` 下的原生 view-timeline + transform 动画，JS 端 feature-detect 后跳过旧逻辑；不支持的浏览器完整回退到原 JS 路径，两者不会同时生效。驱动 WebGL uniform 的 `--forge` 数值计算不受影响（CSS 无法驱动 Three.js，仍需 JS）。详见 §8.2。
 5. **B6** 首页 WebGL 收尾——需真机 profiling，沙盒做不了，详见 §5「Home」。
-6. **C4** TypeScript 渐进迁移——随 A2 顺路做，不单独立项，详见 §8.2。
+6. **C4** TypeScript 渐进迁移——**试点已完成（2026-07-05）**：新增 `tsconfig.json`（strict、noEmit）+ `typescript` devDependency + `npm run typecheck`；A2 Phase 4 新抽出的 `src/ui/cursor.ts` 是第一个 `.ts` 模块，`tsc --noEmit` 通过。继续原则不变：随 A2/其余拆分顺路给新模块用 `.ts`，不单独立项、不回头改存量 `.js`。详见 §8.2。
 7. **C3** three.js WebGPURenderer + Bloom/ACES——投入大，等有余力再评估，详见 §8.2。
 8. **C5** Astro 迁移——**⚠️ 触发线已达标（2026-07-05，V20 观星台上线后全站 8 页）**。S0 Phase 0 已覆盖大部分静态 SEO 收益，且 V20 是纯客户端计算页（无 SEO 内容诉求），不构成额外紧迫性——但按既定规则，**下次再加任何新页前必须先做 Astro 迁移评估，不允许再往 MPA 上叠第 9 页**。详见 §8.2、§9。
 
@@ -71,13 +71,13 @@
 ## 3. 代码整理与优化方法 / Refactor & optimisation method
 
 **现状痛点**
-- `src/main.js` **3483 行**、`src/styles.css` **7091 行**（2026-07-05 复核）——仍是单体文件，Phase 3–5 完整拆分未开始。
-- 主线程渲染压力大：星空已移出主线程（Worker 化），combat、雷达、K 线仍在主线程 Canvas 2D 绘制。
+- `src/main.js` **~3525 行**、`src/styles.css` **7110 行**（2026-07-05 复核）——仍是单体文件；主线程渲染压力大：星空已移出主线程（Worker 化），combat、雷达、K 线仍在主线程 Canvas 2D 绘制。
+
+**✅ Phase 3 已完成（2026-07-05）**：7 页（arena/sectors/signal/games/league/serial/horoscope）内联 `<style>` 全部搬到 `public/styles/<page>.css`，机械提取+build diff 验证内容不变。index.html 自己的 11 行内联块留着没动（太小，且它的主体样式本来就在 `src/styles.css` 里走 JS import，不构成"内联"问题）。
 
 **⚠️ 待续 / 未开始**
-- **拆样式（Phase 3）**：各页 `<style>` 仍内联，未移到 `public/styles/<page>.css`。
-- **拆 main.js（Phase 4，剩余部分）**：`state`（飞行状态机）/`cursor`/`nav`/`boot` 职责拆分仍未开始。
-- **拆 styles.css（Phase 5）**：`@layer` 分层未开始。
+- **拆 main.js（Phase 4，剩余部分）**：已抽出 `cursor`（`src/ui/cursor.ts`，见 §1 A2）。`state`（飞行状态机）/`nav`/`boot` 仍未做——这些和 combat/render 主循环共享几十个模块级可变变量，牵一发动全身，且沙盒无法真机验证 WebGL/canvas 视觉结果（同 V15/B6 的既定纪律），不建议在没有真人浏览器验收的情况下继续深挖，需要的话应该拆成能逐步真机验证的小步骤，而不是一次性大重构。
+- **拆 styles.css（Phase 5）**：`@layer` 分层未开始——层级顺序=层叠优先级，7110 行里分层分错会产生视觉回归且沙盒看不出来，同样需要真机验证，暂不做。
 - **IntersectionObserver**：首页背景 canvas 不可见时停止渲染——已核实为死代码需求，见 D3（`RELEASE_NOTES.md`）。main.js 继续拆分见 §1 A2。
 
 ---
@@ -281,7 +281,7 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 | --- | --- | --- |
 | **three.js WebGPURenderer + TSL** | compute shader 粒子（百万级星涡/爆炸碎片）+ 更低 draw call 开销 | 中-高 |
 | **Bloom/HDR 后期处理** | `UnrealBloomPass` + ACES tone mapping，真实辉光替代 radial-gradient 假光晕 | 中 |
-| **TypeScript（渐进）** | 拆 main.js 时新模块直接 `.ts` | 低（增量） |
+| **TypeScript（渐进）** | 拆 main.js 时新模块直接 `.ts`——试点已完成（`src/ui/cursor.ts` + `tsconfig.json` + `npm run typecheck`，见 §1 C4） | 低（增量） |
 | **Astro（触发式）** | 页面 ≥8 或 novels 章节 ≥20 时迁移，当前未到阈值 | 高（迁移） |
 
 **❌ 不要做**：React/Vue/Svelte 重写、Rust/WASM、全站 WebGPU-only、SSR/后端框架——站点是 canvas 动画 + 静态内容，加框架/后端只会增加体积与运维成本而无实际收益。
