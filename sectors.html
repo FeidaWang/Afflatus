@@ -85,6 +85,46 @@ h1 span{color:var(--acid)}
 @media (prefers-reduced-motion: reduce){.bar i{animation:none;width:var(--w)}}
 .foot{padding:14px 20px;color:#82919f;font:700 11px/1.6 var(--font-body);letter-spacing:.08em;border-top:1px solid rgba(202,255,0,.20)}
 @media(max-width:820px){.top{grid-template-columns:1fr}.nav{justify-content:flex-start}.macro,.cards{grid-template-columns:1fr}.macro div,.card{border-right:0;border-bottom:1px solid rgba(202,255,0,.24)}h1{font-size:46px}.brand{font-size:24px}}
+/* V9 · US-China AI Watch matrix + V10 · post-memory thesis cards (ROADMAP §7.2) —
+   data-driven, fetched from /sectors-data.json; empty until the weekly scheduled
+   task (V11) first populates it. */
+.empty{padding:22px 20px;color:var(--muted);font:700 13px/1.6 var(--font-body)}
+.asof{padding:0 20px 14px;color:var(--muted);font:700 11px var(--font-hud);letter-spacing:.1em}
+.mwGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.mwCard{padding:16px;border-right:2px solid rgba(202,255,0,.30);border-bottom:1px solid rgba(202,255,0,.24)}
+.mwCard:last-child{border-right:0}
+.mwHead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.mwVendor{color:#fff;font-family:var(--font-heading);font-size:22px;letter-spacing:.03em;text-transform:uppercase}
+.mwRoute{padding:4px 8px;font:900 10px/1 var(--font-hud);letter-spacing:.12em;text-transform:uppercase;background:var(--cyan);color:#05070b;white-space:nowrap}
+.mwRoute.open{background:var(--acid)}
+.mwLine{margin-top:8px;color:var(--cyan);font:800 11px var(--font-hud);letter-spacing:.06em}
+.mwDev{margin-top:10px;padding-top:8px;border-top:1px dashed rgba(0,231,255,.24);color:#d9e2e8;font:600 13px/1.45 var(--font-body)}
+.mwDev a{color:var(--acid);text-decoration:underline}
+.mwGap{margin-top:10px;color:var(--muted);font:600 12px/1.5 var(--font-body);font-style:italic}
+.basketRow{padding:10px 20px;border-bottom:1px solid rgba(202,255,0,.16);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.basketRow b{color:var(--cyan);font:900 11px var(--font-hud);letter-spacing:.14em;text-transform:uppercase;margin-right:6px}
+.basketTag{padding:5px 8px;border:1px solid rgba(0,231,255,.3);color:#eef7fb;font:700 11px var(--font-hud);letter-spacing:.04em}
+.basketTag i{color:var(--muted);font-style:normal;margin-left:5px;text-transform:lowercase}
+.take{padding:16px 20px;color:#d9e2e8;font:700 14px/1.6 var(--font-body);border-top:1px solid rgba(202,255,0,.20)}
+.pmTracks{display:grid;grid-template-columns:repeat(3,1fr)}
+.pmTrack{padding:12px 16px;border-right:2px solid rgba(202,255,0,.30);border-bottom:1px solid rgba(202,255,0,.24)}
+.pmTrack:last-child{border-right:0}
+.pmTrack b{display:block;color:var(--acid);font:900 11px var(--font-hud);letter-spacing:.14em}
+.pmTrack p{margin:6px 0 0;color:#bac8d5;font:600 12px/1.5 var(--font-body)}
+.pmGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.pmCard{padding:16px;border-right:2px solid rgba(202,255,0,.30);border-bottom:1px solid rgba(202,255,0,.24);display:flex;flex-direction:column}
+.pmCard:nth-child(4n){border-right:0}
+.pmTicker{color:#fff;font-family:var(--font-heading);font-size:26px;letter-spacing:.03em;display:flex;justify-content:space-between;align-items:baseline}
+.pmStatus{font:900 9px var(--font-hud);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pmStatus.updated{color:var(--acid)}
+.pmTags{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
+.pmTag{padding:3px 6px;background:rgba(0,231,255,.16);color:var(--cyan);font:900 9px var(--font-hud);letter-spacing:.08em}
+.pmField{margin-top:8px;color:#d9e2e8;font:600 12px/1.5 var(--font-body)}
+.pmField b{color:var(--cyan);text-transform:uppercase;font-size:9px;letter-spacing:.1em;display:block;margin-bottom:2px}
+.pmCat{margin-top:8px;padding-top:6px;border-top:1px dashed rgba(0,231,255,.2);color:var(--muted);font:600 11px/1.4 var(--font-body)}
+.pmSwap{padding:14px 20px;color:#bac8d5;font:600 12px/1.6 var(--font-body);border-top:1px solid rgba(202,255,0,.20)}
+@media(max-width:900px){.mwGrid,.pmGrid{grid-template-columns:repeat(2,1fr)}.pmCard:nth-child(4n){border-right:2px solid rgba(202,255,0,.30)}.pmCard:nth-child(2n){border-right:0}}
+@media(max-width:560px){.mwGrid,.pmGrid,.pmTracks{grid-template-columns:1fr}.mwCard,.pmCard,.pmTrack{border-right:0}}
 </style>
 </head>
 <body class="sectors-page" data-prev="/arena.html" data-next="/signal.html">
@@ -163,6 +203,19 @@ h1 span{color:var(--acid)}
     </article>
   </section>
 
+  <div class="band" data-i18n-html data-en="US–CHINA AI WATCH — <span>weekly comparison matrix</span>" data-zh="中美 AI 观察 — <span>每周对比矩阵</span>">US–CHINA AI WATCH — <span>weekly comparison matrix</span></div>
+  <div id="mwAsOf" class="asof"></div>
+  <div id="mwGrid" class="mwGrid"></div>
+  <div id="mwBaskets"></div>
+  <div id="mwTake" class="take"></div>
+
+  <div class="band" data-i18n-html data-en="POST-MEMORY ERA — <span>top-10 thesis cards</span>" data-zh="后内存时代 — <span>十强论点卡</span>">POST-MEMORY ERA — <span>top-10 thesis cards</span></div>
+  <div id="pmAsOf" class="asof"></div>
+  <div id="pmTracks" class="pmTracks"></div>
+  <div id="pmGrid" class="pmGrid"></div>
+  <div id="pmSwap"></div>
+  <div id="pmTake" class="take"></div>
+
   <footer class="foot" data-i18n-html data-en="Desk view only · no tips · no promotions · update this page by editing <b>public/sectors.html</b>" data-zh="仅为台面观点 · 不荐股 · 无推广 · 修改本页请编辑 <b>public/sectors.html</b>">Desk view only · no tips · no promotions · update this page by editing <b>public/sectors.html</b></footer>
 </main>
 <script type="module">
@@ -172,5 +225,87 @@ import { runCountUpOnLoad } from '/src/ui/viz.js';
 runCountUpOnLoad();
 </script>
 <script type="module" src="/src/pages/sectorsLibs.js"></script>
+<script>
+/* US-China AI Watch matrix (V9) + post-memory thesis cards (V10), both fed by one
+   fetch of /sectors-data.json (V11, ROADMAP §7.2). Same inline-IIFE + T()/esc()
+   pattern as signal.html's incident log / pillar matrix — one shared DATA object,
+   re-rendered on lang toggle, empty state when the weekly task hasn't run yet. */
+(function () {
+  var mwAsOf = document.getElementById('mwAsOf'), mwGrid = document.getElementById('mwGrid'),
+      mwBaskets = document.getElementById('mwBaskets'), mwTake = document.getElementById('mwTake'),
+      pmAsOf = document.getElementById('pmAsOf'), pmTracks = document.getElementById('pmTracks'),
+      pmGrid = document.getElementById('pmGrid'), pmSwap = document.getElementById('pmSwap'), pmTake = document.getElementById('pmTake');
+  if (!mwGrid && !pmGrid) return;
+  var DATA = null;
+  function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
+  function T(en, zh) { return lang() === 'zh' ? zh : en; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  var VENDOR_NAME = { anthropic: 'Anthropic', openai: 'OpenAI', zhipu: T('Zhipu', '智谱'), alibaba: T('Alibaba', '阿里') };
+  var RELATION_LABEL = { direct: T('direct', '直接受益'), supplier: T('supplier', '上游供给'), infra: T('infra', '算力底座'), competitor: T('competitor', '受压') };
+
+  function emptyMsg() { return T('Weekly matrix populates after the first scheduled run.', '每周对比矩阵将在首次定时任务运行后填充。'); }
+
+  function renderModelWatch() {
+    if (!mwGrid) return;
+    var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
+    if (mwAsOf) mwAsOf.textContent = DATA && DATA.as_of ? T('as of ', '截至 ') + DATA.as_of : '';
+    if (!mw.length) { mwGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; if (mwBaskets) mwBaskets.innerHTML = ''; if (mwTake) mwTake.innerHTML = ''; return; }
+    mwGrid.innerHTML = mw.map(function (card) {
+      var devs = (card.developments || []).map(function (d) {
+        return '<div class="mwDev"><a href="' + esc(d.src) + '" target="_blank" rel="noopener">' + esc(T(d.t_en, d.t_zh)) + '</a></div>';
+      }).join('');
+      return '<article class="mwCard">'
+        + '<div class="mwHead"><span class="mwVendor">' + esc(VENDOR_NAME[card.vendor] || card.vendor) + '</span>'
+        + '<span class="mwRoute ' + esc(card.route) + '">' + esc(card.route === 'open' ? T('open-weight', '开源权重') : T('closed API', '闭源 API')) + '</span></div>'
+        + '<div class="mwLine">' + esc(card.current_line) + '</div>' + devs
+        + '<div class="mwGap">' + esc(T(card.gap_note_en, card.gap_note_zh)) + '</div>'
+        + '</article>';
+    }).join('');
+    var baskets = Array.isArray(DATA.baskets) ? DATA.baskets : [];
+    if (mwBaskets) mwBaskets.innerHTML = baskets.map(function (b) {
+      var eqs = (b.equities || []).map(function (e) {
+        return '<span class="basketTag">' + esc(e.ticker) + '<i>' + esc(RELATION_LABEL[e.relation] || e.relation) + '</i></span>';
+      }).join('');
+      return '<div class="basketRow"><b>' + esc(VENDOR_NAME[b.vendor] || b.vendor) + ' · ' + esc(b.market) + '</b>' + eqs + '</div>';
+    }).join('');
+    if (mwTake) mwTake.innerHTML = DATA.weeklyTake ? esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) : '';
+  }
+
+  function renderPostMemory() {
+    if (!pmGrid) return;
+    var pm = DATA && DATA.postMemory;
+    if (pmAsOf) pmAsOf.textContent = pm && pm.as_of ? T('as of ', '截至 ') + pm.as_of : '';
+    if (!pm || !Array.isArray(pm.cards) || !pm.cards.length) {
+      pmGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>';
+      if (pmTracks) pmTracks.innerHTML = ''; if (pmSwap) pmSwap.innerHTML = ''; if (pmTake) pmTake.innerHTML = '';
+      return;
+    }
+    if (pmTracks) pmTracks.innerHTML = (pm.tracks || []).map(function (t) {
+      return '<div class="pmTrack"><b>' + esc(t.id) + '</b><p>' + esc(T(t.state_en, t.state_zh)) + '</p></div>';
+    }).join('');
+    pmGrid.innerHTML = pm.cards.map(function (c) {
+      var tags = (c.tracks || []).map(function (t) { return '<span class="pmTag">' + esc(t) + '</span>'; }).join('');
+      var cats = (c.catalysts || []).map(function (cat) { return esc(cat.what) + ' · ' + esc(cat.when); }).join(' · ');
+      return '<article class="pmCard">'
+        + '<div class="pmTicker">' + esc(c.ticker) + '<span class="pmStatus ' + esc(c.status) + '">' + esc(c.status) + '</span></div>'
+        + '<div class="pmTags">' + tags + '</div>'
+        + '<div class="pmField"><b>' + T('MOAT', '护城河') + '</b>' + esc(T(c.moat_en, c.moat_zh)) + '</div>'
+        + '<div class="pmField"><b>' + T('THESIS', '论点') + '</b>' + esc(T(c.thesis_en, c.thesis_zh)) + '</div>'
+        + '<div class="pmField"><b>' + T('KEY RISK', '关键风险') + '</b>' + esc(T(c.key_risk_en, c.key_risk_zh)) + '</div>'
+        + (cats ? '<div class="pmCat">' + cats + '</div>' : '')
+        + '</article>';
+    }).join('');
+    if (pmSwap) pmSwap.innerHTML = (pm.swap_proposals && pm.swap_proposals.length)
+      ? pm.swap_proposals.map(function (p) { return '<div>' + T('Proposed swap: ', '换股提议：') + esc(p.out) + ' → ' + esc(p.in) + ' — ' + esc(p.why_zh) + '</div>'; }).join('')
+      : '';
+    if (pmTake) pmTake.innerHTML = esc(T(pm.take_en, pm.take_zh));
+  }
+
+  function render() { renderModelWatch(); renderPostMemory(); }
+  fetch('/sectors-data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
+    .catch(function () { if (mwGrid) mwGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; if (pmGrid) pmGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; });
+  addEventListener('afflatus-lang', render);
+})();
+</script>
 </body>
 </html>
