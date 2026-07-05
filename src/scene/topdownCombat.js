@@ -389,6 +389,47 @@ export function createTopdownCombat({ canvas }) {
     if (dustMesh.instanceColor) dustMesh.instanceColor.needsUpdate = true;
   }
 
+  // ── V18 Phase 3 (ROADMAP §4, optional bonus item 8): sun glare + ghosts ──
+  // Cheap dot-product-gated glare — no real Bloom/ACES (that's C3) — plus a
+  // couple of mirrored "ghost" sprites using the standard cheap lens-flare
+  // trick: project the sun's NDC screen position, then mirror+scale it
+  // through screen center to place each ghost. Reuses the scene's existing
+  // `key` DirectionalLight as the "sun" instead of inventing a second light.
+  // Item 9 (ridge-silhouette parallax) is explicitly marked optional in the
+  // roadmap text itself ("不强求") since the comet/fleet already give this
+  // space scene equivalent depth cues — skipped, not forgotten.
+  const SUN_DIR = key.position.clone().normalize();
+  const glareSprite = sprite(0xfff4d8, 26, 0);
+  scene.add(glareSprite);
+  const ghostSprites = [0.35, 0.62].map((frac) => {
+    const s = sprite(0xbfe0ff, 3.2, 0);
+    s.userData.frac = frac;
+    scene.add(s);
+    return s;
+  });
+  const _sunFar = new THREE.Vector3(), _ndc = new THREE.Vector3(), _camFwd = new THREE.Vector3();
+  function updateSunGlare() {
+    camera.getWorldDirection(_camFwd);
+    const facing = Math.max(0, _camFwd.dot(SUN_DIR));
+    if (facing <= 0.001) {
+      glareSprite.material.opacity = 0;
+      ghostSprites.forEach((g) => { g.material.opacity = 0; });
+      return;
+    }
+    _sunFar.copy(camera.position).addScaledVector(SUN_DIR, 400);
+    _ndc.copy(_sunFar).project(camera);
+    const inFront = _ndc.z < 1; // behind the camera → NDC z > 1, hide entirely
+    const intensity = inFront ? facing * facing : 0;
+    glareSprite.position.copy(_sunFar);
+    glareSprite.material.opacity = intensity * 0.85;
+    ghostSprites.forEach((g) => {
+      if (!inFront) { g.material.opacity = 0; return; }
+      const gp = new THREE.Vector3(-_ndc.x * g.userData.frac, -_ndc.y * g.userData.frac, 0.5).unproject(camera);
+      g.position.copy(gp);
+      g.material.opacity = intensity * 0.35;
+    });
+  }
+
   // ── comet target (1P/HALLEY) drifting across the top ─────────────────────
   const comet = new THREE.Group();
   let cometHP = 1;
@@ -640,6 +681,7 @@ export function createTopdownCombat({ canvas }) {
     // than special-cased).
     updateTrails(now);
     updateDust(now);
+    updateSunGlare();
   }
 
   function loop(now) {
