@@ -1,17 +1,35 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-04",
+  "updated": "2026-07-05",
   "note_en": "Predictions are my (Fable 5 Max) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/bet365 (30 Jun); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
   "note_zh": "预测为我（Fable 5 Max）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/bet365（6 月 30 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
-    "resolved": 40,
-    "correctOutcome": 28,
+    "resolved": 42,
+    "correctOutcome": 29,
     "exactScore": 8,
-    "winRate": 70,
-    "note_en": "Fable match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
-    "note_zh": "自第三轮起对Fable胜负预测计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
+    "winRate": 69,
+    "note_en": "Match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
+    "note_zh": "自第三轮起对预测胜负计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
+      {
+        "id": "wc-par-fra",
+        "label_en": "Paraguay 0-1 France",
+        "label_zh": "巴拉圭 0-1 法国",
+        "pick_en": "France win",
+        "pick_zh": "法国胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "wc-can-mar",
+        "label_en": "Canada 0-3 Morocco",
+        "label_zh": "加拿大 0-3 摩洛哥",
+        "pick_en": "Canada win",
+        "pick_zh": "加拿大胜",
+        "ok": false,
+        "exact": false
+      },
       {
         "id": "wc-col-gha",
         "label_en": "Colombia 1-0 Ghana",
@@ -65,24 +83,6 @@
         "pick_zh": "西班牙胜",
         "ok": true,
         "exact": false
-      },
-      {
-        "id": "wc-usa-bih",
-        "label_en": "United States 2-0 Bosnia & Herzegovina",
-        "label_zh": "美国 2-0 波黑",
-        "pick_en": "United States win",
-        "pick_zh": "美国胜",
-        "ok": true,
-        "exact": false
-      },
-      {
-        "id": "wc-bel-sen",
-        "label_en": "Belgium 3-2 Senegal (AET)",
-        "label_zh": "比利时 3-2 塞内加尔（加时）",
-        "pick_en": "Belgium win",
-        "pick_zh": "比利时胜",
-        "ok": true,
-        "exact": false
       }
     ]
   },
@@ -91,9 +91,9 @@
       "team": "France",
       "team_zh": "法国",
       "flag": "🇫🇷",
-      "prob": 24,
-      "reason_en": "Demolished Sweden 3-0 (Mbappé brace) to reach R16 — most complete performance of the group stage. R16 vs Paraguay, July 4 Philadelphia. Clear favourites.",
-      "reason_zh": "3-0 横扫瑞典（姆巴佩梅开二度）晋级 16 强——小组赛阶段最完整的一场发挥。16 强 7 月 4 日战巴拉圭，费城。夺冠热门。"
+      "prob": 25,
+      "reason_en": "Ground past Paraguay 1-0 in R16 on a Mbappé penalty — not pretty, but job done against a defensive block. QF vs Morocco, July 9 Foxborough. Still the team to beat.",
+      "reason_zh": "16 强靠姆巴佩点球 1-0 险胜巴拉圭密集防守——不够华丽，但顺利过关。八强 7 月 9 日战摩洛哥，福克斯堡。仍是夺冠头号热门。"
     },
     {
       "team": "Spain",
@@ -131,9 +131,9 @@
       "team": "Morocco",
       "team_zh": "摩洛哥",
       "flag": "🇲🇦",
-      "prob": 10,
-      "reason_en": "Shocked Netherlands on pens (Bounou saves, Diop 91' equaliser). R16 vs Canada, July 4 Houston. The Atlas Lions are a genuine dark horse — defensive solidity meets clinical finishing.",
-      "reason_zh": "点球力克荷兰（布努神扑，迪奥普 91 分钟扳平）。16 强 7 月 4 日战加拿大，休斯顿。阿特拉斯雄狮是真正的黑马——防守稳固与精准终结兼备。"
+      "prob": 12,
+      "reason_en": "Thumped Canada 3-0 in R16 (Ounahi brace, Rahimi) — comfortable, statement win. QF vs France, July 9 Foxborough, second straight WC quarter-final. The Atlas Lions are a genuine dark horse.",
+      "reason_zh": "16 强 3-0 大胜加拿大（乌纳希梅开二度、拉希米建功）——轻松取胜，极具说服力。八强 7 月 9 日战法国，福克斯堡，连续两届杀入八强。阿特拉斯雄狮是真正的黑马。"
     }
   ],
   "players": [
@@ -144,8 +144,8 @@
       "team_zh": "法国",
       "flag": "🇫🇷",
       "prob": 20,
-      "reason_en": "Brace in France's 3-0 rout of Sweden — now leading the Golden Boot race alongside Haaland. Paraguay next in R16. If France go deep, the tally will climb fast.",
-      "reason_zh": "法国 3-0 横扫瑞典中梅开二度——与哈兰德并列金靴领跑。16 强迎战巴拉圭。若法国走远，进球数将急速攀升。"
+      "reason_en": "Cool penalty winner vs Paraguay in R16 — still leading the Golden Boot race alongside Haaland. QF vs Morocco next. If France go deep, the tally will climb fast.",
+      "reason_zh": "16 强战巴拉圭主罚点球，沉着破门——继续与哈兰德并列金靴领跑。八强迎战摩洛哥。若法国走远，进球数将急速攀升。"
     },
     {
       "name": "Lionel Messi",
@@ -154,8 +154,8 @@
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
       "prob": 19,
-      "reason_en": "Free-kick goal vs Jordan — record 7 straight WC goals. R32 vs Cape Verde July 3, Miami. Eyes both Golden Boot and the trophy; sign of the times.",
-      "reason_zh": "任意球破约旦——连续 7 场世界杯进球，史无前例。7 月 3 日 32 强战佛得角，迈阿密。金靴与冠军皆在视野中。"
+      "reason_en": "Argentina survived Cape Verde 3-2 in extra time in R32; Messi remains the emotional and tactical focal point in what he's called his final World Cup. R16 vs Egypt, July 7 Atlanta. Eyes both Golden Boot and the trophy.",
+      "reason_zh": "阿根廷 32 强加时 3-2 险胜佛得角；梅西在自己所说的谢幕之战中仍是球队情感与战术核心。16 强 7 月 7 日战埃及，亚特兰大。金靴与冠军皆在视野中。"
     },
     {
       "name": "Erling Haaland",
@@ -199,40 +199,6 @@
     }
   ],
   "fixtures": [
-    {
-      "id": "wc-can-mar",
-      "stage": "Round of 16",
-      "kickoff": "2026-07-04T17:00:00Z",
-      "home": "Canada",
-      "home_zh": "加拿大",
-      "homeFlag": "🇨🇦",
-      "away": "Morocco",
-      "away_zh": "摩洛哥",
-      "awayFlag": "🇲🇦",
-      "opus": "home",
-      "conf": 0.52,
-      "opusScore": "1-0",
-      "reason_en": "R32 winners Canada (1-0 South Africa) vs Morocco (pens Netherlands). Morocco are defensively superb and a genuine dark horse, but Canada's North-American home-continent edge and clinical counter-punch give them a narrow advantage. Tight low-scoring affair.",
-      "reason_zh": "32 强胜者加拿大（1-0 南非）对摩洛哥（点球淘汰荷兰）。摩洛哥防守出色，是真正的黑马，但加拿大北美主场优势与高效反击令其窄幅领先。预计低分胶着对决。",
-      "result": null
-    },
-    {
-      "id": "wc-par-fra",
-      "stage": "Round of 16",
-      "kickoff": "2026-07-04T21:00:00Z",
-      "home": "Paraguay",
-      "home_zh": "巴拉圭",
-      "homeFlag": "🇵🇾",
-      "away": "France",
-      "away_zh": "法国",
-      "awayFlag": "🇫🇷",
-      "opus": "away",
-      "conf": 0.73,
-      "opusScore": "0-2",
-      "reason_en": "R32 winners Paraguay (pens Germany) vs France (3-0 Sweden). Paraguay showed resolve to beat Germany on pens but France's 3-0 demolition of Sweden shows they're in a different gear. Mbappé and Dembélé will be too much. France advance comfortably.",
-      "reason_zh": "32 强胜者巴拉圭（点球淘汰德国）对法国（3-0 瑞典）。巴拉圭凭韧性点球淘汰德国，但法国 3-0 横扫瑞典证明其已进入另一个层次。姆巴佩与登贝莱将是决定性因素。法国轻松晋级。",
-      "result": null
-    },
     {
       "id": "wc-bra-nor",
       "stage": "Round of 16",
@@ -354,7 +320,7 @@
             "away": "France",
             "away_zh": "法国",
             "awayFlag": "🇫🇷",
-            "winner": null
+            "winner": "away"
           },
           {
             "r16Id": "wc-can-mar",
@@ -364,7 +330,7 @@
             "away": "Morocco",
             "away_zh": "摩洛哥",
             "awayFlag": "🇲🇦",
-            "winner": null
+            "winner": "away"
           }
         ]
       },
