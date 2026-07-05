@@ -207,9 +207,11 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 
 **数据管线（V12，队列 A①）**
 - ✅ **已完成**：`scripts/push-data.sh <file> <msg>` 通用推送脚本（从 `push-arena-news.sh` 模板化），供 ledger/leagues/sectors/signal/predlog 等定时任务复用；沙盒内用临时 git 仓库验证了缺参数/文件不存在/无变更/正常提交推送/远端领先需 rebase 五种场景，均行为正确。`push-arena-news.sh` 本体未改动（仍单独可用）。**尚未做**：把现有 6 个定时任务的 prompt 改成调用这个脚本——这一步需要先读取各任务当前 prompt 全文（本会话没有那个目录的访问权限），且属于「修改常设定时任务」需逐项征得同意，留待下一步。
-- **溯源徽章**——进行中：`src/lib/provenanceBadge.js`（纯函数：数据龄计算 + >36h 琥珀/>72h 红分级 + 双语文案，15 条 vitest）已完成，先在 **Sectors 一个页面**试点接入（`mwAsOf`/`pmAsOf`）验证效果，其余 arena/signal/games/league 四页待站主看过效果后再决定是否铺开。发现 `arena-news.json`（用 date/generatedAt，无 version）与 `games-data.json`（有 updated 无 version）两个数据文件 schema 跟 sectors/signal/leagues 的 `{updated, version}` 不统一——组件按站主决定做了适配层（不碰数据文件/定时任务）。
-- 预测类战绩组件统一（Games/Leagues/Signal）：命中率 + Brier 分数，一处实现三处用，并纳入首页 Top 10 组合 vs SPY/SMH 的公开记分（见 §7.2 集中度声明）。
-- 「Sectors 研判与 Arena 预测打通」并入本项一起评估。
+- ✅ **已完成**：**溯源徽章** `src/lib/provenanceBadge.js`（纯函数：数据龄计算 + >36h 琥珀/>72h 红分级 + 双语文案，15 条 vitest），已铺开全部五页（sectors/arena 自选股+Autopilot/signal/games/league），每页复用自己现有调色板做分级色。`arena-news.json`（date/generatedAt，无 version）与 `games-data.json`（有 updated 无 version）两个文件 schema 跟其余三个不统一，组件做了适配层，未碰数据文件/定时任务。
+- ✅ **已完成**：**命中率组件统一**——`src/lib/trackRecord.js`（games.js/league.js 原本是字节级重复的 renderRecord() 实现，抽取为共享纯函数 + 模板，10 条 vitest，含一条与抽取前模板逐字节比对的回归测试）。
+- ⚠️ **卡住，未做**：**Brier 分数**——games/league 的 `record.log` 只存了 `ok`/`exact`，赛果确定后原始 confidence 就丢了，没有可评分的历史数据；要做的话需要改 2 个定时任务的 prompt（在赛果写回 log 时一并保留当时的 conf），且改完还要等新一批赛果真实结算才有数据可看，无法一次性做完。Signal 页目前完全没有战绩记录结构，做法需要另外设计。
+- ⚠️ **卡住，未做**：**首页 Top 10 组合 vs SPY/SMH 记分**（§7.2 集中度声明的落地）——现在没有任何价格追踪管线或起始基准日，等于要从零建一条新的定时任务+数据文件，不是"接现有数据"的量级，需要单独立项讨论。
+- 「Sectors 研判与 Arena 预测打通」并入本项一起评估——未开始。
 
 ### 7.6 提示词工程规范（全模块）
 
