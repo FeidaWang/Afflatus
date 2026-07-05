@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { smoothDamp, shouldPreempt, blendFactor, easeBlend } from '../src/combat/cameraMath.js';
+import { smoothDamp, shouldPreempt, blendFactor, easeBlend, fovForAccel, bankAngle, bankedUpVector, chaseCamPose } from '../src/combat/cameraMath.js';
 
 describe('smoothDamp', () => {
   it('converges to the target over repeated frames without overshooting', () => {
@@ -73,5 +73,69 @@ describe('blendFactor / easeBlend', () => {
     expect(easeBlend(0.5)).toBeCloseTo(0.5, 5);
     // smoothstep is steeper in the middle than at the edges
     expect(easeBlend(0.1)).toBeLessThan(0.1 * 1.5);
+  });
+});
+
+describe('fovForAccel — V18 chaseCam dynamic FOV', () => {
+  it('returns cruiseFov at zero acceleration', () => {
+    expect(fovForAccel(0)).toBe(62);
+  });
+  it('returns boostFov once accel reaches accelScale', () => {
+    expect(fovForAccel(10, { accelScale: 10 })).toBe(70);
+  });
+  it('clamps beyond accelScale instead of extrapolating past boostFov', () => {
+    expect(fovForAccel(9999, { accelScale: 10, boostFov: 70 })).toBe(70);
+  });
+  it('interpolates linearly in between', () => {
+    expect(fovForAccel(5, { cruiseFov: 62, boostFov: 70, accelScale: 10 })).toBeCloseTo(66, 5);
+  });
+  it('treats negative accel magnitudes the same as positive (uses abs)', () => {
+    expect(fovForAccel(-5, { accelScale: 10 })).toBeCloseTo(fovForAccel(5, { accelScale: 10 }), 5);
+  });
+});
+
+describe('bankAngle — V18 chaseCam banking', () => {
+  it('is zero for zero lateral acceleration', () => {
+    expect(bankAngle(0)).toBe(0);
+  });
+  it('scales with lateral accel up to the clamp', () => {
+    expect(bankAngle(2, 0.35, 0.05)).toBeCloseTo(0.1, 5);
+  });
+  it('clamps to maxBank instead of exceeding it', () => {
+    expect(bankAngle(9999, 0.35, 0.05)).toBe(0.35);
+    expect(bankAngle(-9999, 0.35, 0.05)).toBe(-0.35);
+  });
+});
+
+describe('bankedUpVector', () => {
+  it('roll=0 reproduces the untouched default up vector (0,1,0)', () => {
+    expect(bankedUpVector(0)).toEqual({ x: 0, y: 1, z: 0 });
+  });
+  it('tilts x with positive roll while shrinking y', () => {
+    const u = bankedUpVector(0.3);
+    expect(u.x).toBeCloseTo(Math.sin(0.3), 10);
+    expect(u.y).toBeCloseTo(Math.cos(0.3), 10);
+  });
+});
+
+describe('chaseCamPose', () => {
+  it('places the camera directly behind the target when forward is -z', () => {
+    const pose = chaseCamPose({ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: -1 }, { back: 6, up: 2, side: 0, lookAhead: 10 });
+    // behind travel direction (-z) means +z in world space
+    expect(pose.pos.z).toBeCloseTo(6, 5);
+    expect(pose.pos.y).toBeCloseTo(2, 5);
+    expect(pose.pos.x).toBeCloseTo(0, 5);
+    // looks past the target, further into -z
+    expect(pose.look.z).toBeCloseTo(-10, 5);
+  });
+  it('offsets sideways along the right vector (forward × world-up)', () => {
+    const pose = chaseCamPose({ x: 0, y: 0, z: 0 }, { x: 0, y: 0, z: -1 }, { back: 0, up: 0, side: 3, lookAhead: 0 });
+    // right of travel direction -z (with up=+y) is +x
+    expect(pose.pos.x).toBeCloseTo(3, 5);
+  });
+  it('never produces NaN/Infinity even with a degenerate (zero) forward vector', () => {
+    const pose = chaseCamPose({ x: 1, y: 2, z: 3 }, { x: 0, y: 0, z: 0 });
+    expect(Number.isFinite(pose.pos.x) && Number.isFinite(pose.pos.y) && Number.isFinite(pose.pos.z)).toBe(true);
+    expect(Number.isFinite(pose.look.x) && Number.isFinite(pose.look.y) && Number.isFinite(pose.look.z)).toBe(true);
   });
 });

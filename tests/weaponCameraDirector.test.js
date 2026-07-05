@@ -14,6 +14,22 @@ function mockCamera() {
   };
 }
 
+// V18 Phase 1 (ROADMAP §4 chaseCam): a fuller mock exposing `up`/`fov`/
+// `updateProjectionMatrix`, mirroring THREE.PerspectiveCamera's surface, to
+// exercise the banking/dynamic-FOV path. The plain mockCamera() above
+// intentionally lacks these so the existing tests double as a guarantee
+// that shots without fov/roll fields never touch them (see weaponCameraDirector.js).
+function mockCameraWithFovAndUp(startFov = 34) {
+  return {
+    position: { x: 0, y: 0, z: 0, set(x, y, z) { this.x = x; this.y = y; this.z = z; } },
+    up: { x: 0, y: 1, z: 0, set(x, y, z) { this.x = x; this.y = y; this.z = z; } },
+    fov: startFov,
+    updateProjectionMatrix() {},
+    lookAtCalls: [],
+    lookAt(x, y, z) { this.lookAtCalls.push({ x, y, z }); },
+  };
+}
+
 function makeShots() {
   return {
     home: { priority: 1, compute: () => ({ pos: { x: 0, y: 10, z: 0 }, look: { x: 0, y: 0, z: 0 } }) },
@@ -95,5 +111,45 @@ describe('createWeaponCameraDirector', () => {
       const last = camera.lookAtCalls[camera.lookAtCalls.length - 1];
       expect(Number.isFinite(last.x) && Number.isFinite(last.y) && Number.isFinite(last.z)).toBe(true);
     }
+  });
+
+  it('a shot without fov/roll fields never touches camera.fov/up on a plain camera (backward compat)', () => {
+    const camera = mockCamera(); // no `up`/`fov` at all
+    const d = createWeaponCameraDirector({ camera, shots: makeShots(), home: 'home', smoothTime: 0.1 });
+    for (let i = 0; i < 30; i++) d.update(1000 + i * 16);
+    expect(camera.fov).toBeUndefined();
+    expect(camera.up).toBeUndefined();
+  });
+
+  it('leaves fov/up untouched (home default) when the active shot sets neither', () => {
+    const camera = mockCameraWithFovAndUp(34);
+    const d = createWeaponCameraDirector({ camera, shots: makeShots(), home: 'home', smoothTime: 0.05 });
+    for (let i = 0; i < 60; i++) d.update(1000 + i * 16);
+    expect(camera.fov).toBeCloseTo(34, 1);
+    expect(camera.up.x).toBeCloseTo(0, 5);
+    expect(camera.up.y).toBeCloseTo(1, 5);
+  });
+
+  it('a chaseCam-style shot with fov/roll widens FOV and tilts up, then relaxes back on the home shot', () => {
+    const camera = mockCameraWithFovAndUp(34);
+    const shots = makeShots();
+    shots.chase = {
+      priority: 3,
+      compute: () => ({ pos: { x: 1, y: 1, z: 1 }, look: { x: 0, y: 0, z: 0 }, fov: 70, roll: 0.3 }),
+    };
+    const d = createWeaponCameraDirector({ camera, shots, home: 'home', smoothTime: 0.05 });
+    let now = 1000;
+    d.update(now);
+    d.requestShot('chase', { durationMs: 1500, now }); // outlasts the 60-frame (~960ms) check below
+    for (let i = 0; i < 60; i++) { now += 16; d.update(now); }
+    expect(camera.fov).toBeCloseTo(70, 0);
+    expect(camera.up.y).toBeLessThan(1); // tilted away from the untouched default
+
+    // once the scripted shot expires, the director auto-returns home, and
+    // fov/up must relax back toward the untouched defaults (34, (0,1,0))
+    for (let i = 0; i < 200; i++) { now += 16; d.update(now); }
+    expect(d.currentShotId).toBe('home');
+    expect(camera.fov).toBeCloseTo(34, 0);
+    expect(camera.up.y).toBeCloseTo(1, 1);
   });
 });

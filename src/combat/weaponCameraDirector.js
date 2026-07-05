@@ -26,7 +26,7 @@
      the *target* pose jumps at a shot switch — the blend window then further
      crossfades the target pose itself for the first blendInMs.
    ============================================================ */
-import { smoothDamp, shouldPreempt, blendFactor, easeBlend } from './cameraMath.js';
+import { smoothDamp, shouldPreempt, blendFactor, easeBlend, bankedUpVector } from './cameraMath.js';
 
 function vel3() { return { x: { v: 0 }, y: { v: 0 }, z: { v: 0 } }; }
 
@@ -39,7 +39,16 @@ export function createWeaponCameraDirector({ camera, shots, home, smoothTime = 0
   let lastNow = 0;
   const posVel = vel3();
   const lookVel = vel3();
+  const fovVel = { v: 0 };
+  const rollVel = { v: 0 };
   let curPos = null, curLook = null; // smoothed render state, lazily seeded on first update
+  // fov/roll (V18 Phase 1, ROADMAP §4 chaseCam): optional per-shot fields, off
+  // by default. homeFov is captured once so shots that don't set `fov` relax
+  // back to it — existing shots never set fov/roll, so this is a no-op for
+  // them (curRoll stays 0 → bankedUpVector(0) = (0,1,0), the untouched default).
+  const homeFov = typeof camera.fov === 'number' ? camera.fov : null;
+  let curFov = homeFov;
+  let curRoll = 0;
 
   function requestShot(id, { durationMs = 1600, blendInMs = 350, refresh = false, now = Date.now() } = {}) {
     const def = shots[id];
@@ -100,7 +109,29 @@ export function createWeaponCameraDirector({ camera, shots, home, smoothTime = 0
     };
 
     camera.position.set(curPos.x, curPos.y, curPos.z);
+
+    // banking: tilt `up` before lookAt — must happen before lookAt() since
+    // lookAt derives orientation from the camera's current up vector.
+    // No maxSpeed clamp here: fov/roll ranges are inherently small (a few
+    // degrees / <0.35 rad), unlike world-unit position deltas — the clamp
+    // that protects against huge position jumps would just slow these down.
+    const targetRoll = typeof target.roll === 'number' ? target.roll : 0;
+    curRoll = smoothDamp(curRoll, targetRoll, rollVel, smoothTime, dt);
+    if (camera.up && typeof camera.up.set === 'function') {
+      const u = bankedUpVector(curRoll);
+      camera.up.set(u.x, u.y, u.z);
+    }
+
     camera.lookAt(curLook.x, curLook.y, curLook.z);
+
+    // dynamic FOV: only touched if the camera actually exposes one (guards
+    // the test-suite's plain mock camera, which has no `fov`/`updateProjectionMatrix`).
+    if (curFov !== null) {
+      const targetFov = typeof target.fov === 'number' ? target.fov : homeFov;
+      curFov = smoothDamp(curFov, targetFov, fovVel, smoothTime, dt);
+      camera.fov = curFov;
+      if (typeof camera.updateProjectionMatrix === 'function') camera.updateProjectionMatrix();
+    }
   }
 
   return {

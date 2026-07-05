@@ -21,6 +21,7 @@
 import * as THREE from 'three';
 import { createNighthawk } from './nighthawk.js';
 import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
+import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
 
 // Opt-in flag (ROADMAP §4 V14): default behavior is the original hardcoded
 // camera sway, byte-for-byte unchanged, unless this is present in the URL.
@@ -116,6 +117,29 @@ export function createTopdownCombat({ canvas }) {
             pos: { x: capital.position.x + 6, y: 4, z: capital.position.z + 2 },
             look: { x: comet.position.x, y: 1, z: comet.position.z },
           };
+        },
+      },
+      // V18 Phase 1 (ROADMAP §4 "V18 实施路线"): low, over-the-shoulder chase
+      // shot on the lead fighter — banking + dynamic FOV, both acceleration-
+      // driven off the fighter's own analytic flight path (ph, tagged onto
+      // fighters[0].userData by the strafe-formation loop below), not a
+      // separate frame-differenced tracker.
+      chaseCam: {
+        priority: 3,
+        blendInMs: 400,
+        compute() {
+          const f = fighters[0];
+          const p = new THREE.Vector3().setFromMatrixPosition(f.matrixWorld);
+          const ph = f.userData.ph || 0;
+          const w = 1.1; // angular rate, must match the strafe formation formula below
+          const vx = -Math.sin(ph) * 16 * w, vz = Math.cos(ph) * 9 * w, vy = Math.cos(ph * 2) * 1.2 * w;
+          const ax = -Math.cos(ph) * 16 * w * w, az = -Math.sin(ph) * 9 * w * w;
+          const accelMag = Math.hypot(ax, az);
+          const lateral = vz * ax - vx * az; // signed cross(v,a).y — turn direction
+          const fov = fovForAccel(accelMag, { cruiseFov: 62, boostFov: 70, accelScale: 30 });
+          const roll = bankAngle(lateral, 0.35, 0.01);
+          const pose = chaseCamPose({ x: p.x, y: p.y, z: p.z }, { x: vx, y: vy, z: vz }, { back: 6, up: 2.2, side: -2.5, lookAhead: 10 });
+          return { ...pose, fov, roll };
         },
       },
     };
@@ -300,7 +324,7 @@ export function createTopdownCombat({ canvas }) {
   }
 
   // ── animation loop ────────────────────────────────────────────────────────
-  let W = 1, H = 1, raf = 0, running = false, t0 = 0, lastFire = 0, lastMissile = 0, lastLaser = 0, lastOrb = 0;
+  let W = 1, H = 1, raf = 0, running = false, t0 = 0, lastFire = 0, lastMissile = 0, lastLaser = 0, lastOrb = 0, lastChase = 0;
   // Real-state hooks (Phase 2b, partial): renderOnce(now, state) can pass a
   // snapshot from main.js's getBattleSnapshot(). Consumed narrowly for now —
   // kill events trigger a real explosion flash, and the comet hides while the
@@ -355,6 +379,7 @@ export function createTopdownCombat({ canvas }) {
       const ringX = Math.cos(ph) * 16 + comet.position.x * 0.3;
       const ringZ = -2 + Math.sin(ph) * 9;
       f.position.set(ringX, 1.4 + Math.sin(ph * 2) * 0.6, ringZ);
+      f.userData.ph = ph; // read by the chaseCam shot (V18 Phase 1) to derive velocity/accel analytically
       // face travel direction
       const next = new THREE.Vector3(Math.cos(ph + 0.1) * 16 + comet.position.x * 0.3, f.position.y, -2 + Math.sin(ph + 0.1) * 9);
       f.lookAt(next);
@@ -392,6 +417,11 @@ export function createTopdownCombat({ canvas }) {
     if (alive && now - lastOrb > 3200) { lastOrb = now; launchOrb(); }
     // periodic missile + big explosion
     if (alive && now - lastMissile > 2600) { lastMissile = now; launchMissile(); }
+    // V18 Phase 1: periodic chaseCam pass on the lead fighter (independent of
+    // the missile/orb/ciws triggers above — this is the new preset itself,
+    // not yet wired into the missile narrative migration, which is a
+    // separate follow-up per ROADMAP §4 item 2)
+    if (alive && now - lastChase > 4400 && camDirector) { lastChase = now; camDirector.requestShot('chaseCam', { durationMs: 2200, blendInMs: 400 }); }
 
     // advance lasers (quick fade)
     for (let i = lasers.length - 1; i >= 0; i--) {

@@ -135,9 +135,9 @@
 - **图1 的平面感根源不在 3D 管线，在于导弹/核弹分镜走的还是 `combatCine.js` 的 2D canvas 路径**——立体化的本质是把这些分镜迁进 3D 场景 + 补齐深度构件。
 
 **Phase 1 · 追击相机 + 模型换装（先让画面立体起来）**
-1. `weaponCameraDirector` 新增 `chaseCam` 预设：机位在战机尾后约 1.5 机身长、偏侧上方（图2 构图——主体压在画面左 1/3，视线越过机身看向纵深），临界阻尼跟随（沿用 cameraMath.smoothDamp，禁裸 lerp）；**banking 侧倾 + 动态 FOV（巡航 62° → 加速/点火 70°）在本镜头先做**（B8 欠账），加速度驱动、非时间驱动。
-2. 导弹分镜迁移：`drawMissileCine` 的叙事节拍（锁定→点火→追击→命中）改由 3D 场景 + chaseCam/missileTail 镜头序列表达，时间轴接 `weaponClock` 的具名 phases（V16 预留的接口）；2D `combatCine.js` 保留为 `combatViewLegacy()` 回退，不删。
-3. 光照升级：场景加太阳方向 key light（强定向光）+ 冷色环境 fill + 战机 rim light——图2 的立体感一半来自逆光轮廓，V15b 的法线细节在现有平光下发挥不出来。
+1. ✅ **已实现（2026-07-05）** `weaponCameraDirector` 新增 `chaseCam` 预设：机位在战机尾后、偏侧上方（`cameraMath.chaseCamPose`，plain-vector 纯函数，13 条 vitest），临界阻尼跟随（沿用 `smoothDamp`，禁裸 lerp）；banking（`bankAngle`→`bankedUpVector`，`lookAt` 前设置 `camera.up`）+ 动态 FOV（`fovForAccel`，巡航 62°→加速 70°）**加速度驱动、非时间驱动**——直接对 `fighters[0]` 现成的解析飞行公式（`ph=t*1.1+i*2π/3`）求一二阶导数，不引入帧差分噪声。`weaponCameraDirector.js` 的 shot compute() 新增可选 `fov`/`roll` 字段，缺省时精确还原原行为（`roll=0`→`up=(0,1,0)`，`fov` 缺省回落 home 值），5 个旧镜头预设零改动；`topdownCombat.js` 内挂 ~4.4s 一次、持续 2.2s 的自触发用于观感验证（`?combatcam=director`）。**观感待真人在浏览器过目确认**——沙盒无法渲染 WebGL。详见 `technical.md` §4 相关条目。
+2. ⏳ 待做：导弹分镜迁移——`drawMissileCine` 的叙事节拍（锁定→点火→追击→命中）改由 3D 场景 + chaseCam/missileTail 镜头序列表达，时间轴接 `weaponClock` 的具名 phases（V16 预留的接口），需要改 `main.js` 的 `mode==='missile'` 分支；2D `combatCine.js` 保留为 `combatViewLegacy()` 回退，不删。
+3. ✅ 光照基本已具备：`topdownCombat.js` 场景已有 `AmbientLight`（冷色环境 fill）+ 太阳方向 `key` `DirectionalLight` + `rim` `DirectionalLight`，大致对应本条要求，本轮未改动；是否需要针对 chaseCam 视角单独加强逆光轮廓，等真人看过观感后再评估。
 
 **Phase 2 · 空间深度四件套（吸收 B8，图3 观感的核心）**
 4. 引擎尾焰彩带：InstancedMesh quad ribbon（每机 1 draw call），additive 蓝白渐变（白核→青→蓝晕三段），寿命 ~1.2s、宽度随机龄收窄——图3 的标志性拖尾。
