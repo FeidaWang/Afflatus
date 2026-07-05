@@ -207,7 +207,7 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 
 **数据管线（V12，队列 A①）**
 - ✅ **已完成**：`scripts/push-data.sh <file> <msg>` 通用推送脚本（从 `push-arena-news.sh` 模板化），供 ledger/leagues/sectors/signal/predlog 等定时任务复用；沙盒内用临时 git 仓库验证了缺参数/文件不存在/无变更/正常提交推送/远端领先需 rebase 五种场景，均行为正确。`push-arena-news.sh` 本体未改动（仍单独可用）。**尚未做**：把现有 6 个定时任务的 prompt 改成调用这个脚本——这一步需要先读取各任务当前 prompt 全文（本会话没有那个目录的访问权限），且属于「修改常设定时任务」需逐项征得同意，留待下一步。
-- 所有数据 JSON 顶层统一 `{updated, version}`；前端共享统一**溯源徽章**（`FABLE 5 MAX · 数据龄 · 来源数 · NOT ADVICE` 一体化小组件，全站 AI 内容页复用，数据龄 >36h 琥珀、>72h 红）。
+- **溯源徽章**——进行中：`src/lib/provenanceBadge.js`（纯函数：数据龄计算 + >36h 琥珀/>72h 红分级 + 双语文案，15 条 vitest）已完成，先在 **Sectors 一个页面**试点接入（`mwAsOf`/`pmAsOf`）验证效果，其余 arena/signal/games/league 四页待站主看过效果后再决定是否铺开。发现 `arena-news.json`（用 date/generatedAt，无 version）与 `games-data.json`（有 updated 无 version）两个数据文件 schema 跟 sectors/signal/leagues 的 `{updated, version}` 不统一——组件按站主决定做了适配层（不碰数据文件/定时任务）。
 - 预测类战绩组件统一（Games/Leagues/Signal）：命中率 + Brier 分数，一处实现三处用，并纳入首页 Top 10 组合 vs SPY/SMH 的公开记分（见 §7.2 集中度声明）。
 - 「Sectors 研判与 Arena 预测打通」并入本项一起评估。
 
