@@ -13,6 +13,7 @@
    fetches and renders.
    ============================================================ */
 import { unrealizedPnl, benchmarkEndpoints, equityDomain, scalePoint } from '../lib/arenaLedgerView.js';
+import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
 
 (() => {
   'use strict';
@@ -130,7 +131,9 @@ import { unrealizedPnl, benchmarkEndpoints, equityDomain, scalePoint } from '../
     const d = state.ledger; if (!d) return;
     const A = d.models.A, B = d.models.B;
     $('apDayChip').textContent = T(`DAY ${d.day} · SEASON ${d.season}`, `第 ${d.day} 日 · 赛季 ${d.season}`);
-    $('apUpdChip').textContent = T('UPDATED ', '更新 ') + (d.updated || '—');
+    const badge = buildProvenanceBadge({ updatedAt: d.updated, version: d.version, lang: state.lang });
+    $('apUpdChip').className = 'chip prov-badge prov-' + badge.tier;
+    $('apUpdChip').textContent = badge.text;
     $('apNote').textContent = T(d.note_en || '', d.note_zh || '');
     renderChart(A, B, d.bench || {});
     renderModel('apModelA', 'MODEL A', A);

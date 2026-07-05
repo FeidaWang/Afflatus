@@ -4,6 +4,8 @@
    Scratch cards reveal the exact predicted scoreline.
    For entertainment — not betting advice.
    ============================================================ */
+import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
+
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -190,7 +192,12 @@
   }
 
   function renderUpdated() {
-    if ($('updated')) $('updated').textContent = data.updated || '';
+    const el = $('updated');
+    if (el) {
+      const badge = buildProvenanceBadge({ updatedAt: data.updated, lang });
+      el.className = 'sub prov-badge prov-' + badge.tier;
+      el.textContent = badge.text;
+    }
     if ($('gnote')) $('gnote').textContent = T(data.note_en, data.note_zh);
   }
 
