@@ -27,7 +27,7 @@
 ### 队列 B · 功能性优先级 / Feature & product queue
 
 1. **V18** 战斗视图「立体化」——三个 Phase 代码已全部完成（2026-07-05），**待真人浏览器验收**（`?combatview=topdown&combatcam=director`），详见 §4「V18 实施路线」。
-2. **V19** Arena 自选股「预测差值」信号层——Phase 1（记分数据管线）可现在就起跑攒数据，详见 §7.7。
+2. **V19** Arena 自选股「预测差值」信号层——**Phase 1 已上线攒数据中（2026-07-05）**：预测 schema 扩展 + 收盘回填定时任务已建好，Phase 2（校准纯函数）/ Phase 3（信号卡 UI）待数据攒够后再做，详见 §7.7。
 3. **V9 → V10 → V11** Sectors 中美 AI 对比矩阵 + 后内存专题 + 定时任务——详见 §7.2。
 4. **V2** Games 世界杯收官跟进——被动监控，决赛 7/19，赛程推进后补 `home/away/result` 即可。
 5. **机会主义拾取**（无截止压力，不强制排期）：C1/C2 Signal 传导链可视化自动化（§6）> B7 各页零散点子（§5）> B9 Odin 舰体收尾（§4 V15）> B3 combatHudSC 纵深透视（记录在案，不建议单独立项）。
@@ -350,8 +350,8 @@
 - **第二层（点击展开）**：现有 V13 TA 面板（K线/MA/MACD/KDJ 等）保持不变，作为「查看详情」的下钻内容，不重新设计。
 
 **分期计划**
-- **Phase 1（S）**：`aiPredictions` schema 扩展 predOpenPct/predClosePct；新增收盘回填定时任务 + `arena-predlog.json`。可现在就起跑攒数据，不占前端主力时间。
-- **Phase 2（S-M）**：`src/lib/predCalibration.js` 纯函数 + vitest；接入 prompt payload 反馈注入。
+- **Phase 1（S）✅ 已实现（2026-07-05）**：`src/lib/predlogEntry.js`（`pctChange`/`directionHit`/`buildPredlogDay`/`appendPredlogDay`，16 条 vitest）+ `scripts/apply-arena-predlog.mjs`（纯计算 CLI，不做 git 操作）+ 种子文件 `public/arena-predlog.json`；定时任务 `ai-stock-arena-news-digest` 的 prompt 已加 `predOpenPct`/`predClosePct` 字段；新建定时任务 `arena-predlog-close-backfill`（`15 7 * * 2-6`，收盘后回填真实 O/C 到 `arena-predlog.json`）。已用合成数据端到端 smoke test 验证；真实数据要等两个定时任务各自的下一次执行才会开始攒。
+- **Phase 2（S-M）**：`src/lib/predCalibration.js` 纯函数 + vitest；接入 prompt payload 反馈注入。等 `arena-predlog.json` 攒够几天真实数据后再做。
 - **Phase 3（M）**：`.wl-grid`/`.wl-card` 信号卡 UI，替换默认展开面板，V13 面板降级为点击展开的第二层。
 
 ---
