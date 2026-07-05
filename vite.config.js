@@ -25,6 +25,7 @@ export default defineConfig({
         signal: resolve(__dirname, 'signal.html'),
         games: resolve(__dirname, 'games.html'),
         league: resolve(__dirname, 'league.html'),
+        horoscope: resolve(__dirname, 'horoscope.html'),
         serial: resolve(__dirname, 'serial.html')
       }
     }
