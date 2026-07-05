@@ -15,7 +15,7 @@
 > **NEXT UP · 建议执行队列（2026-07-05 九次重排——V19 立项插入 V18 之后）**——标注工作量（S≈半天内 / M≈1–3 天 / L≈1 周级）：
 >
 > **可执行队列（排位即优先级，做完一项直接接下一项）**
-> ① **V18**（M-L，**用户点名下次执行，正在做**，2026-07-05）——战斗视图「立体化」：从 2D 分镜的平面感（combatCine 精灵战机）升级为 SC 参考图的电影级追击视角（低机位追尾 + 引擎尾焰彩带 + 深度参照层）。**技术路线已定稿，见 §4「V18 实施路线」**；P3 的 B8 整体并入本项关闭；三个 Phase 各自可独立提交验收。
+> ① **V18**（M-L，**用户点名下次执行，正在做——Phase 1 三条已全部完成，2026-07-05**）——战斗视图「立体化」：从 2D 分镜的平面感（combatCine 精灵战机）升级为 SC 参考图的电影级追击视角（低机位追尾 + 引擎尾焰彩带 + 深度参照层）。**技术路线已定稿，见 §4「V18 实施路线」**；P3 的 B8 整体并入本项关闭；三个 Phase 各自可独立提交验收。**Phase 2（空间深度四件套）+ Phase 3（环境叙事层）待做**；Phase 1 观感待真人在浏览器过目（`?combatview=topdown&combatcam=director`）。
 > ② **V19**（S+S+M 分三 Phase，**站主指定立项，2026-07-05**）——Arena 自选股「预测差值」信号层：把每票预测收窄为 LEAN LONG/NEUTRAL/LEAN SHORT 三态信号 + 公开命中率/Brier 战绩，卡片化替代默认展开的 V13 深度面板（深度面板收进第二层，点击展开）。**Phase 1（记分数据管线）可以现在就起跑攒数据，不占前端主力时间**；完整方案见 **§7.7**。
 > ③ **V9 → V10 → V11**（M+M+S）——Sectors 模块：先建对比矩阵 + 后内存专题两个前端区块与初始数据（V9/V10），再上定时任务自动化（V11）——路径与 Arena 的 V3→V4 同构（先有能跑的产品，再自动化）。
 > ④ **V12**（M，Sectors 落地后再做）——数据管线统一（`push-data.sh` 模板化、溯源徽章共享组件）：等 Sectors 数据管线跑起来，站上有两个模块的真实模式可供抽象，避免像 A2 那样过早封装。
@@ -136,7 +136,7 @@
 
 **Phase 1 · 追击相机 + 模型换装（先让画面立体起来）**
 1. ✅ **已实现（2026-07-05）** `weaponCameraDirector` 新增 `chaseCam` 预设：机位在战机尾后、偏侧上方（`cameraMath.chaseCamPose`，plain-vector 纯函数，13 条 vitest），临界阻尼跟随（沿用 `smoothDamp`，禁裸 lerp）；banking（`bankAngle`→`bankedUpVector`，`lookAt` 前设置 `camera.up`）+ 动态 FOV（`fovForAccel`，巡航 62°→加速 70°）**加速度驱动、非时间驱动**——直接对 `fighters[0]` 现成的解析飞行公式（`ph=t*1.1+i*2π/3`）求一二阶导数，不引入帧差分噪声。`weaponCameraDirector.js` 的 shot compute() 新增可选 `fov`/`roll` 字段，缺省时精确还原原行为（`roll=0`→`up=(0,1,0)`，`fov` 缺省回落 home 值），5 个旧镜头预设零改动；`topdownCombat.js` 内挂 ~4.4s 一次、持续 2.2s 的自触发用于观感验证（`?combatcam=director`）。**观感待真人在浏览器过目确认**——沙盒无法渲染 WebGL。详见 `technical.md` §4 相关条目。
-2. ⏳ 待做：导弹分镜迁移——`drawMissileCine` 的叙事节拍（锁定→点火→追击→命中）改由 3D 场景 + chaseCam/missileTail 镜头序列表达，时间轴接 `weaponClock` 的具名 phases（V16 预留的接口），需要改 `main.js` 的 `mode==='missile'` 分支；2D `combatCine.js` 保留为 `combatViewLegacy()` 回退，不删。
+2. ✅ **已实现（2026-07-05）** 导弹分镜迁移：`main.js` 导弹发射处（护航僚机投放 missile 的调用点）新建 `startTimeline('missile', [drop@0, ignite@MISSILE_DROP_MS, terminal@MISSILE_IGNITE_MS, impact@7000])`——**这是 `weaponClock.js` 第一次被真正消费**（⚠️ 施工中发现：V16 当时只交付了纯函数模块 + 单测，从未被任何调用点 import 过，`roadmap.md` 原「V16 已上线」的表述对「接入」二字过于乐观，特此更正）；phase 边界直接复用驱动真实 `w.stage` 转换的同一组 `MISSILE_DROP_MS`/`MISSILE_IGNITE_MS` 常量，不是另起一套猜测时长。`topdownCombat.js` 新增 `driveMissileTimeline(timeline, nowMs)`：drop/ignite 阶段用 `missileTail`（时长封顶到刚好在 terminal 边界耗尽，让优先级更低的 `chaseCam` 能在 `shouldPreempt` 的「等当前镜头播完」规则下顺利接管，而不是卡在优先级墙上），terminal/impact 阶段切 `chaseCam`。`main.js` 的 `mode==='missile'` 分支新增第三条路径——**仅当 `?combatview=topdown` 与 `?combatcam=director` 同时开启**才渲染 3D 场景+HUD 标签（MISSILE DROP/IGNITION/TERMINAL TRACK/IMPACT IMMINENT），否则完全走原有 `combatViewLegacy()`/`drawMissileCine` 逻辑，字节不变。187/187 测试通过，生产构建干净。**观感待真人在浏览器过目确认**——沙盒无法渲染 WebGL，这是本条最大的未验证风险点。
 3. ✅ 光照基本已具备：`topdownCombat.js` 场景已有 `AmbientLight`（冷色环境 fill）+ 太阳方向 `key` `DirectionalLight` + `rim` `DirectionalLight`，大致对应本条要求，本轮未改动；是否需要针对 chaseCam 视角单独加强逆光轮廓，等真人看过观感后再评估。
 
 **Phase 2 · 空间深度四件套（吸收 B8，图3 观感的核心）**

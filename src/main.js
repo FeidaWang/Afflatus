@@ -20,6 +20,7 @@ import { createCameraDirector } from './scene/cameraDirector.js';
 import { createCapitalFlyby } from './scene/capitalFlyby.js';
 import { drawCombatHudSC } from './scene/combatHudSC.js';
 import { drawMissileCine, drawNukeCine } from './scene/combatCine.js';
+import { startTimeline, activePhase } from './combat/weaponClock.js';
 import { createBattleFeed } from './ui/battleFeed.js';
 import {
   HMD,
@@ -108,6 +109,14 @@ function getTopdownCV(){
 // unrelated missile/nuke POV-vs-cinematic toggles below.
 function combatViewLegacy(){ try{ return /[?&]combatview=legacy\b/.test(location.search); }catch(e){ return false; } }
 function combatViewScPanel(){ try{ return /[?&]combatview=sc\b/.test(location.search); }catch(e){ return false; } }
+// V18 Phase 1 item 2 (ROADMAP §4 "V18 实施路线"): ?combatcam=director opts the
+// 3D topdownCombat scene's camera director in (see that file's own
+// cameraDirectorEnabled()); reused here, ANDed with ?combatview=topdown, to
+// additionally gate the missile-mode 3D chase-cam path below. Both flags
+// must be on together — the default missile experience (drawMissileCine)
+// and the plain ?combatview=topdown combat/standby feed are both completely
+// unaffected by this addition.
+function combatCamDirector(){ try{ return /[?&]combatcam=director\b/.test(location.search); }catch(e){ return false; } }
 // 2026-07-03 data-binding audit (ROADMAP §4b item 1): combatHudState() is only
 // ever called from the combat/standby branches of drawPilotFeed (mode is
 // always 'combat' or 'standby' there — launch/landing render through
@@ -1985,6 +1994,21 @@ function fireEscortWeapons(tx, ty, isGiant) {
          const aimY=halley && !halley.destroyed ? halley.curY : ty;
          const missile={ type: 'missile', x: e.x, y: e.y + 16, tx: aimX, ty: aimY, vx: rand(-.45,.45)*DEFENSE_PROJECTILE_SPEED_SCALE, vy: 2.5*DEFENSE_PROJECTILE_SPEED_SCALE, trail: [], born: performance.now(), stage: 'drop' };
          weapons.push(missile);
+         // V18 Phase 1 item 2: one authoritative timeline for this missile's
+         // pilot-feed narrative (ROADMAP §4 "时间轴接 weaponClock 的具名
+         // phases") — phase boundaries match the SAME MISSILE_DROP_MS/
+         // MISSILE_IGNITE_MS thresholds that drive the real w.stage
+         // transitions above, so the 3D chase-cam (when enabled) switches
+         // shots on the real drop→ignite→terminal beats, not a separate
+         // guess. Only consumed when ?combatview=topdown+?combatcam=director
+         // are both on (see combatCamDirector()); the default 2D
+         // drawMissileCine narrative below never reads this.
+         missile.timeline = startTimeline('missile', [
+           { name: 'drop', at: 0 },
+           { name: 'ignite', at: MISSILE_DROP_MS },
+           { name: 'terminal', at: MISSILE_IGNITE_MS },
+           { name: 'impact', at: 7000 },
+         ], Date.now());
          setPilotView('missile',missile,7000);
        }, 2400 + i*420);
        setTimeout(()=>{
@@ -3248,7 +3272,25 @@ function drawPilotFeed(now){
   );
   ctx.save();ctx.translate(rand(-shake,shake),rand(-shake,shake));
   if(mode==='missile' && pilotView.weapon){
-    if(combatViewLegacy()) drawPilotMissilePOV(ctx,w,h,now,pilotView.weapon);
+    // V18 Phase 1 item 2: 3D chase-cam narrative, opt-in via BOTH
+    // ?combatview=topdown and ?combatcam=director. td3d is null (falls
+    // through to the existing legacy/cine branch below) whenever either
+    // flag is off, the module hasn't finished its async import yet, or
+    // WebGL is unavailable — same fallback shape as the combat/standby
+    // topdown branch above.
+    const td3d=(combatViewTopdown() && combatCamDirector()) ? getTopdownCV() : null;
+    if(td3d){
+      td3d.resize(w,h);
+      if(typeof td3d.driveMissileTimeline==='function') td3d.driveMissileTimeline(pilotView.weapon.timeline, nowMs);
+      td3d.renderOnce(now,getBattleSnapshot());
+      ctx.drawImage(topdownCanvas,0,0,w,h);
+      const phase=pilotView.weapon.timeline ? activePhase(pilotView.weapon.timeline, nowMs) : null;
+      const label=currentLang==='zh'
+        ? (phase==='ignite'?'导弹点火':phase==='terminal'?'终末追踪':phase==='impact'?'即将命中':'导弹投放')
+        : (phase==='ignite'?'MISSILE IGNITION':phase==='terminal'?'TERMINAL TRACK':phase==='impact'?'IMPACT IMMINENT':'MISSILE DROP');
+      drawPilotHmd(ctx,w,h,now,label,'missile');
+      drawCockpitFrame(ctx,w,h,now,false);
+    }else if(combatViewLegacy()) drawPilotMissilePOV(ctx,w,h,now,pilotView.weapon);
     else drawMissileCine(ctx,w,h,now,elapsed,{lang:currentLang,halley,killed:(!halley||halley.destroyed),locked:!!(halley&&halley.hover)});
   }else if(mode==='ciws'||mode==='offline'){
     drawCiwsCamera(ctx,w,h,now,mode,elapsed);
