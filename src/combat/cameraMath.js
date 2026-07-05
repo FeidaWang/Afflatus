@@ -54,3 +54,57 @@ export function easeBlend(f) {
   const c = Math.max(0, Math.min(1, f));
   return c * c * (3 - 2 * c);
 }
+
+// ── V18 Phase 1 (ROADMAP §4 "V18 实施路线") ──────────────────────────────
+// chaseCam preset math: dynamic FOV + banking, driven by acceleration (not
+// elapsed time), plus the plain-vector camera placement itself. No THREE.js
+// dependency, same rationale as the rest of this file.
+
+// Widens FOV as acceleration magnitude rises (cruise → boost/ignition feel).
+// accelScale is the magnitude at which FOV reaches boostFov; accelMag beyond
+// that is clamped, not extrapolated.
+export function fovForAccel(accelMag, { cruiseFov = 62, boostFov = 70, accelScale = 10 } = {}) {
+  const f = Math.max(0, Math.min(1, Math.abs(accelMag) / Math.max(0.0001, accelScale)));
+  return cruiseFov + (boostFov - cruiseFov) * f;
+}
+
+// Camera roll (radians), clamped to maxBank, driven by signed lateral
+// (turning) acceleration — a lean into the turn, not a free-spinning roll.
+export function bankAngle(lateralAccel, maxBank = 0.35, gain = 0.05) {
+  return Math.max(-maxBank, Math.min(maxBank, lateralAccel * gain));
+}
+
+// THREE.Camera.up substitute for a given roll: tilting `up` before lookAt()
+// is the standard way to bank a look-at camera. roll=0 reproduces the
+// untouched default up vector (0,1,0) exactly, so this is safe to apply
+// unconditionally ahead of every shot's lookAt, banking or not.
+export function bankedUpVector(roll) {
+  return { x: Math.sin(roll), y: Math.cos(roll), z: 0 };
+}
+
+// Chase-cam placement: camera sits `back` units behind the target along
+// -forward, `up` units above, and `side` units along the right vector
+// (forward × world-up), looking `lookAhead` units past the target so the
+// shot reads as chasing into the direction of travel rather than staring at
+// the target's tail. Plain {x,y,z} objects in, plain objects out — no THREE
+// dependency, so this is unit-testable without a WebGL context.
+export function chaseCamPose(targetPos, forward, { back = 6, up = 2.2, side = -2.5, lookAhead = 10 } = {}) {
+  const flen = Math.hypot(forward.x, forward.y, forward.z) || 1;
+  const fx = forward.x / flen, fy = forward.y / flen, fz = forward.z / flen;
+  // right = forward × worldUp(0,1,0)
+  let rx = -fz, ry = 0, rz = fx;
+  const rlen = Math.hypot(rx, ry, rz) || 1;
+  rx /= rlen; ry /= rlen; rz /= rlen;
+  return {
+    pos: {
+      x: targetPos.x - fx * back + rx * side,
+      y: targetPos.y - fy * back + up + ry * side,
+      z: targetPos.z - fz * back + rz * side,
+    },
+    look: {
+      x: targetPos.x + fx * lookAhead,
+      y: targetPos.y + fy * lookAhead,
+      z: targetPos.z + fz * lookAhead,
+    },
+  };
+}
