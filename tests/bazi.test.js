@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   jdn, dayPillar, yearPillar, monthBranch, monthPillar, hourPillar, hourBranchOf,
-  computeBazi, pillarName, zodiacIndex, STEMS, BRANCHES,
+  computeBazi, pillarName, zodiacIndex, solarTermDate, STEMS, BRANCHES,
 } from '../src/lib/bazi.js';
 
 describe('day pillar (sexagenary cycle)', () => {
@@ -23,7 +23,23 @@ describe('day pillar (sexagenary cycle)', () => {
   });
 });
 
-describe('year pillar (立春 boundary)', () => {
+describe('solar term dates (real astronomy, vs published 节气 times)', () => {
+  // Reference times are China Standard Time (UTC+8), from published sources.
+  it('立春 (lon 315): 2000-02-04 20:35 CST', () => {
+    expect(solarTermDate(2000, 315, 2, 4)).toEqual({ m: 2, d: 4 });
+  });
+  it('立春 (lon 315): 2025-02-03 22:10 CST — NOT the "usual" Feb 4', () => {
+    expect(solarTermDate(2025, 315, 2, 4)).toEqual({ m: 2, d: 3 });
+  });
+  it('立春 (lon 315): 2026-02-04 04:01 CST', () => {
+    expect(solarTermDate(2026, 315, 2, 4)).toEqual({ m: 2, d: 4 });
+  });
+  it('小寒 (lon 285): 2024-01-06 04:49 CST', () => {
+    expect(solarTermDate(2024, 285, 1, 6)).toEqual({ m: 1, d: 6 });
+  });
+});
+
+describe('year pillar (real 立春 boundary)', () => {
   it('2024 after 立春 is 甲辰', () => {
     const p = yearPillar(2024, 6, 1);
     expect(STEMS[p.stem] + BRANCHES[p.branch]).toBe('甲辰');
@@ -33,18 +49,26 @@ describe('year pillar (立春 boundary)', () => {
     expect(STEMS[p.stem] + BRANCHES[p.branch]).toBe('癸卯'); // 2023's pillar
     expect(p.baziYear).toBe(2023);
   });
-  it('Feb 4 flips the year', () => {
+  it('2024: Feb 4 flips the year (real 立春 that year was Feb 4)', () => {
     expect(yearPillar(2024, 2, 3).baziYear).toBe(2023);
     expect(yearPillar(2024, 2, 4).baziYear).toBe(2024);
+  });
+  it('2025: flips on Feb 3, not Feb 4 — the case a fixed-date rule gets wrong', () => {
+    expect(yearPillar(2025, 2, 3).baziYear).toBe(2025);
+    expect(yearPillar(2025, 2, 2).baziYear).toBe(2024);
   });
 });
 
 describe('month pillar', () => {
-  it('branch boundaries: 立春 opens 寅月, early Jan is 子月', () => {
-    expect(monthBranch(2, 4)).toBe(2);   // 寅
-    expect(monthBranch(1, 3)).toBe(0);   // 子 (started previous Dec 7)
-    expect(monthBranch(1, 6)).toBe(1);   // 丑 (小寒)
-    expect(monthBranch(12, 7)).toBe(0);  // 子 (大雪)
+  it('branch boundaries (2024): 立春 opens 寅月, early Jan is 子月', () => {
+    expect(monthBranch(2024, 2, 4)).toBe(2);   // 寅
+    expect(monthBranch(2024, 1, 3)).toBe(0);   // 子 (started previous Dec 7)
+    expect(monthBranch(2024, 1, 6)).toBe(1);   // 丑 (小寒, real date that year)
+    expect(monthBranch(2024, 12, 7)).toBe(0);  // 子 (大雪)
+  });
+  it('branch boundaries (2025): 立春 falls a day earlier than the fixed-date rule assumed', () => {
+    expect(monthBranch(2025, 2, 3)).toBe(2);   // 寅 (already flipped)
+    expect(monthBranch(2025, 2, 2)).toBe(1);   // 丑 (still last month)
   });
   it('五虎遁: 甲年寅月起丙寅', () => {
     const p = monthPillar(2024, 2, 10);  // 甲辰年寅月
