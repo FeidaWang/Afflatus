@@ -16,7 +16,7 @@
 
 ### 队列 A · 性能与工程优先级 / Engineering & performance queue
 
-1. **V12** 数据管线统一——等队列 B② Sectors 落地后再做，详见 §7.5。
+1. **V12** 数据管线统一——进行中（push-data.sh 通用脚本已完成，详见 §7.5；溯源徽章/战绩组件/Top10 记分待续）。
 2. **A2** main.js 继续拆分（Phase 3–5）——无截止压力，详见 §3。
 3. **B1** CSS Scroll-Driven Animations——低风险、现成的性能收益，详见 §8.2。
 4. **B6** 首页 WebGL 收尾——需真机 profiling，沙盒做不了，详见 §5「Home」。
@@ -204,8 +204,8 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 
 合计 ≈ **2.5M 输入 / ~0.15M 输出每月**。三条纪律压住预算：① 固定 system prompt 吃 prompt caching；② 数据预消化（指标计算、新闻去重截断）用代码/便宜模型做，Fable 只做决策推理；③ 输出双段式（机器 JSON + 限长复盘）硬上限。
 
-**数据管线（V12，队列 A①，等 Sectors 落地后再做）**
-- `scripts/push-arena-news.sh` 已验证可用（cron → 写 JSON → 独立 stash/rebase/commit/push → 站点重部署），模板化为 `push-data.sh <file> <msg>` 供 ledger/leagues/sectors/signal 复用。
+**数据管线（V12，队列 A①）**
+- ✅ **已完成**：`scripts/push-data.sh <file> <msg>` 通用推送脚本（从 `push-arena-news.sh` 模板化），供 ledger/leagues/sectors/signal/predlog 等定时任务复用；沙盒内用临时 git 仓库验证了缺参数/文件不存在/无变更/正常提交推送/远端领先需 rebase 五种场景，均行为正确。`push-arena-news.sh` 本体未改动（仍单独可用）。**尚未做**：把现有 6 个定时任务的 prompt 改成调用这个脚本——这一步需要先读取各任务当前 prompt 全文（本会话没有那个目录的访问权限），且属于「修改常设定时任务」需逐项征得同意，留待下一步。
 - 所有数据 JSON 顶层统一 `{updated, version}`；前端共享统一**溯源徽章**（`FABLE 5 MAX · 数据龄 · 来源数 · NOT ADVICE` 一体化小组件，全站 AI 内容页复用，数据龄 >36h 琥珀、>72h 红）。
 - 预测类战绩组件统一（Games/Leagues/Signal）：命中率 + Brier 分数，一处实现三处用，并纳入首页 Top 10 组合 vs SPY/SMH 的公开记分（见 §7.2 集中度声明）。
 - 「Sectors 研判与 Arena 预测打通」并入本项一起评估。
