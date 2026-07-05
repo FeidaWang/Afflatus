@@ -7019,6 +7019,25 @@ nav.route-arrows::after,
 .stardrive.is-live .stardrive-stage.pin-fixed{position:fixed;top:0}
 .stardrive.is-live .stardrive-stage.pin-end{position:absolute;top:auto;bottom:0}
 
+/* B1 (2026-07-05): where CSS Scroll-Driven Animations are supported, the pin
+   itself moves to the compositor — a view-timeline named on the 200vh wrapper
+   makes its "contain" phase equal exactly the 100vh of pin room, and a linear
+   transform animation over that phase keeps the (always position:absolute)
+   stage visually fixed without any scroll-listener/getBoundingClientRect work.
+   alphardForge.js feature-detects this (`CSS.supports('animation-timeline','view()')`)
+   and skips its .pin-fixed/.pin-end classList toggling + scroll listener entirely
+   when it's available, so the two mechanisms never fight — the JS fallback above
+   is untouched for browsers without support. The WebGL-driving --forge progress
+   number is unrelated to the pin and is still computed in the rAF loop either way. */
+@supports (animation-timeline: view()) {
+  .stardrive.is-live{view-timeline-name:--stardriveScroll;view-timeline-axis:block}
+  .stardrive.is-live .stardrive-stage{animation:stardrivePin linear both;animation-timeline:--stardriveScroll;animation-range:contain 0% contain 100%}
+  @keyframes stardrivePin{from{transform:translateY(0)}to{transform:translateY(100vh)}}
+  @media (prefers-reduced-motion: reduce){
+    .stardrive.is-live .stardrive-stage{animation:none}
+  }
+}
+
 #alphardForge{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 .stardrive-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 0%,transparent 46%,rgba(4,6,10,.5) 100%);opacity:calc(.28 + var(--forge)*.36)}
 /* melt the section into the page bg above (hero) and below (equity) so there is
