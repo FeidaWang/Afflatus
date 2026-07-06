@@ -135,12 +135,13 @@ html.vt-suppress::view-transition-new(root){
   --labs-active-bg:#c8aa6e;--labs-active-border:#c8aa6e;--labs-active-ink:#1a1204;
 }
 
-.horoscope-page .nav-labs__menu{--labs-bg:rgba(23,27,22,.97);--labs-border:rgba(185,138,58,.32)}
+/* Horoscope · V21 healing theme (warm cream / sage / terracotta) */
+.horoscope-page .nav-labs__menu{--labs-bg:rgba(255,251,242,.97);--labs-border:rgba(156,175,136,.5)}
 .horoscope-page .nav-labs__menu a{
   --labs-font:'Noto Serif SC','Spectral',Georgia,serif;--labs-weight:700;--labs-tracking:.14em;
-  --labs-ink:#b98a3a;--labs-line:rgba(236,229,211,.16);
-  --labs-hover-border:#ece5d3;--labs-hover-ink:#ece5d3;
-  --labs-active-bg:#c23b22;--labs-active-border:#c23b22;--labs-active-ink:#f2e6d8;
+  --labs-ink:#52693D;--labs-line:rgba(74,69,61,.15);
+  --labs-hover-border:#52693D;--labs-hover-ink:#4A453D;
+  --labs-active-bg:#9C4A2A;--labs-active-border:#9C4A2A;--labs-active-ink:#FFF6EA;
 }
 
 /* motion-sensitive visitors: kill page transitions & pulses */
@@ -209,15 +210,15 @@ html.vt-suppress::view-transition-new(root){
 }
 .leagues-page .page-turn{box-shadow:0 0 0 3px rgba(200,170,110,.08),inset 0 0 20px rgba(10,200,185,.12)}
 .leagues-page .page-turn:hover{box-shadow:0 0 0 3px rgba(200,170,110,.14),inset 0 0 24px rgba(10,200,185,.20)}
-/* Horoscope · ink night + vermilion seal + old gold */
+/* Horoscope · V21 healing theme (warm cream / sage / terracotta) */
 .horoscope-page .page-turn-controls{
-  --turn-accent:#b98a3a;
-  --turn-hover:#c23b22;
-  --turn-bg-a:rgba(23,27,22,.86);
-  --turn-bg-b:rgba(10,12,10,.97);
+  --turn-accent:#52693D;
+  --turn-hover:#9C4A2A;
+  --turn-bg-a:rgba(255,251,242,.9);
+  --turn-bg-b:rgba(241,231,212,.97);
 }
-.horoscope-page .page-turn{box-shadow:0 0 0 3px rgba(185,138,58,.08),inset 0 0 20px rgba(194,59,34,.10)}
-.horoscope-page .page-turn:hover{box-shadow:0 0 0 3px rgba(185,138,58,.14),inset 0 0 24px rgba(194,59,34,.18)}
+.horoscope-page .page-turn{box-shadow:0 0 0 3px rgba(156,175,136,.18),inset 0 0 20px rgba(201,111,74,.08)}
+.horoscope-page .page-turn:hover{box-shadow:0 0 0 3px rgba(156,175,136,.28),inset 0 0 24px rgba(201,111,74,.14)}
 .page-turn{
   width:46px;
   height:58px;
