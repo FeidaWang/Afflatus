@@ -194,6 +194,57 @@ function updateCommandButton(){
   if(!commandModeBtn) return;
   commandModeBtn.textContent=document.body.classList.contains('hud-off')?(currentLang==='zh'?'指挥模式':'Command'):(currentLang==='zh'?'巡航模式':'Cruise');
 }
+/* V22 §7.9 ③: mobile "reach any page" menu. index.html already shipped a
+   hamburger button (.nav-menu-btn) that was never wired to anything —
+   see styles.css's end-of-file note for why it was also invisible.
+   Reuses the shared page list nav.js exposes as window.AfflatusSite and
+   mirrors nav.js's own Labs-dropdown pattern: a panel portaled to a
+   direct child of <body> (this page's nav only reaches z-index:100
+   while several HUD layers sit at 900+, which would otherwise cover it),
+   positioned via JS off the button's own rect. */
+(function initNavSiteMenu(){
+  const btn=document.querySelector('.nav-menu-btn');
+  if(!btn) return;
+  const pages=(window.AfflatusSite&&window.AfflatusSite.length)?window.AfflatusSite:[
+    {path:'/',en:'Home',zh:'首页'},{path:'/arena.html',en:'Arena',zh:'竞技场'},
+    {path:'/sectors.html',en:'Sectors',zh:'板块'},{path:'/signal.html',en:'Signal',zh:'信号'},
+    {path:'/games.html',en:'Games',zh:'竞猜'},{path:'/league.html',en:'Leagues',zh:'电竞'},
+    {path:'/horoscope.html',en:'Horoscope',zh:'观星'},{path:'/serial.html',en:'Novels',zh:'小说'}
+  ];
+  const norm=(p)=>{p=(p||'/').replace(/index\.html$/,'');return p===''?'/':p;};
+  const here=norm(location.pathname);
+  let panel=null;
+  function buildPanel(){
+    if(!panel){
+      panel=document.createElement('div');
+      panel.className='nav-labs__menu nav-site-menu';
+      pages.forEach((p)=>{
+        const a=document.createElement('a');
+        a.href=p.path;
+        if(norm(p.path)===here) a.className='active';
+        panel.appendChild(a);
+      });
+      document.body.appendChild(panel);
+    }
+    panel.querySelectorAll('a').forEach((a,idx)=>{ a.textContent=currentLang==='zh'?pages[idx].zh:pages[idx].en; });
+    return panel;
+  }
+  function closePanel(){ if(panel) panel.classList.remove('open'); }
+  btn.addEventListener('click',(e)=>{
+    e.stopPropagation();
+    const p=buildPanel();
+    if(p.classList.contains('open')){ closePanel(); return; }
+    const r=btn.getBoundingClientRect();
+    p.style.top=Math.round(r.bottom+8)+'px';
+    p.style.right=Math.max(8,Math.round(innerWidth-r.right))+'px';
+    p.style.left='auto';
+    p.classList.add('open');
+  });
+  document.addEventListener('click',closePanel);
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closePanel(); });
+  addEventListener('scroll',closePanel,{passive:true});
+  addEventListener('resize',closePanel);
+})();
 function updateJumpButton(){
   if(!jumpToggle) return;
   const holdings=document.querySelector('.holdings');

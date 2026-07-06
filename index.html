@@ -51,13 +51,13 @@
 <style>
 /* Combat pilot panel — relative so the canvas fills the cell */
 .hud-pilot{position:relative}
-/* phone combat layout: hide radar + defense, give 2/3 to COMBAT VIEW and 1/3 to the STAR MAP */
-@media(max-width:560px){
-  #combatHud .hud-panels{grid-template-columns:2fr 1fr!important;grid-template-areas:"pilot right"!important}
-  #combatHud .hud-left,#combatHud .hud-center{display:none!important}
-  #combatHud .hud-pilot{grid-area:pilot!important;min-height:158px!important;height:auto!important;border-right:0!important}
-  #combatHud .hud-right{grid-area:right!important;min-height:158px!important;height:auto!important}
-}
+/* V22: the old phone combat layout that hid radar+defense and forced a
+   2-col "pilot right" grid has been removed — it's superseded by (and
+   was fighting with, via #combatHud's higher-specificity ID selector)
+   the newer 2-row 4-panel mobile layout in src/styles.css's
+   "2026-06-14 Mobile target-first HUD" block (@media max-width:860px).
+   The two conflicting grid-template-areas were producing the empty,
+   non-interactive HUD area reported on real devices. */
 </style>
 </head>
 <body class="hud-off" data-prev="/games.html" data-next="/arena.html">

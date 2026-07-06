@@ -79,7 +79,12 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 @media(min-width:640px){.hud{grid-template-columns:repeat(4,1fr)}}
 
 /* ---- toolbar ---- */
-.toolbar{position:sticky;top:8px;z-index:5;margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(6px);padding:9px 10px;border-radius:2px}
+/* V22: top:0 (was 8px) so the toolbar sits flush against the viewport
+   edge once stuck — .reader-progress below is offset by the toolbar's
+   *measured* height (--toolbar-h, set in JS), so the two sticky bars
+   always touch with zero gap regardless of how many rows the toolbar
+   wraps to. */
+.toolbar{position:sticky;top:0;z-index:5;margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(6px);padding:9px 10px;border-radius:2px}
 .tbtn{display:inline-flex;align-items:center;gap:6px;font:400 11.5px/1 var(--mono);letter-spacing:.03em;color:var(--chrome);border:1px solid rgba(236,226,207,.16);padding:9px 11px;border-radius:2px;min-height:38px}
 .tbtn:hover{border-color:var(--teal);color:var(--teal)}
 .tbtn.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
@@ -114,7 +119,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 
 /* ---- reader (eye-comfort palette lives here only) ---- */
 .reader{background:var(--read-bg);color:var(--read-ink);border:1px solid rgba(0,0,0,.15);box-shadow:0 8px 0 rgba(0,0,0,.35);border-radius:2px;position:relative;transition:background .25s ease,color .25s ease}
-.reader-progress{position:sticky;top:0;height:3px;background:var(--read-line);z-index:2}
+.reader-progress{position:sticky;top:var(--toolbar-h,58px);height:3px;background:var(--read-line);z-index:2}
 .reader-progress i{display:block;height:100%;width:0;background:var(--read-accent);transition:width .1s linear}
 .reader .pad{padding:clamp(18px,5vw,34px) clamp(16px,5vw,40px) clamp(24px,5vw,40px)}
 .reader h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px}
@@ -159,8 +164,18 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .foot b{color:var(--copper-b)}
 
 @media(max-width:640px){
-  .toolbar{gap:6px;top:4px}
-  .tbtn{padding:8px 9px;font-size:11px}
+  /* V22: collapse the two-row wrap into one scrollable row — icon-only
+     buttons (text labels hidden via .lbl) plus flex-wrap:nowrap so it
+     can never re-wrap; overflow-x:auto is a safety net if it's ever a
+     few px too wide rather than breaking back into 2 rows. */
+  .toolbar{gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .toolbar::-webkit-scrollbar{display:none}
+  .toolbar .lbl{display:none}
+  .tbtn{padding:8px 9px;font-size:11px;flex:0 0 auto}
+  .swatches,.fsize,.speedsel{flex:0 0 auto}
+  .fsize button{padding:8px 9px}
+  .speedsel button{padding:7px 8px}
+  .spacer{display:none}
   .hero .pad{padding-bottom:20px}
 }
 @media (prefers-reduced-motion: reduce){
