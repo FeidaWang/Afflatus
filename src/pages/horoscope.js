@@ -14,6 +14,12 @@ import {
   tenGodDistribution,
 } from '../lib/ziping.js';
 import { SHENSHA_RARITY } from '../lib/shenshaRarity.js';
+import { computeDayun, liunianPillar, taisuiRelation, pairRelations, TAISUI_ZH, TAISUI_EN } from '../lib/dayun.js';
+import { solarToLunar } from '../lib/lunar.js';
+import { dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL } from '../lib/xiu.js';
+import { PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, AXIS_LETTERS } from '../lib/persona.js';
+import { cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T } from '../lib/astro.js';
+import { computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH } from '../lib/ziwei.js';
 import { downloadShareCard } from '../lib/shareCard.js';
 
 (() => {
@@ -242,10 +248,135 @@ import { downloadShareCard } from '../lib/shareCard.js';
       )}</p>`;
   }
 
-  const identityChipsHTML = (chart, m, d) => {
+  // ---- 大运流年 (V21 Phase 2) ----------------------------------------------
+  // Gender decides the cycle direction, so the block renders only when the
+  // person has chosen one. Gender lives in the local profile ONLY — it is
+  // deliberately NOT part of the share-code schema (it doesn't affect the
+  // synastry pairing, and keeping it out avoids a schema version bump).
+  function dayunHTML(me) {
+    if (!me.gender) {
+      return `<p class="form-note">${T(
+        'Pick a gender above and re-cast to see luck cycles — the cycle direction (forward/backward) is defined by gender in the traditional method.',
+        '在上方选择性别并重新起盘即可排大运——大运顺行/逆行按传统方法由性别确定。'
+      )}</p>`;
+    }
+    const dy = computeDayun(me, me.gender);
+    if (!dy) return '';
+    const nowYear = new Date().getFullYear();
+    const natalBranches = [dy.chart.year, dy.chart.month, dy.chart.day, dy.chart.hour].filter(Boolean).map((p) => p.branch);
+
+    const startLine = `<p class="dy-start">${T(
+      `${dy.direction === 1 ? 'Forward' : 'Backward'} cycles · first luck pillar begins around age ${dy.startAge.years}y ${dy.startAge.months}m (≈${dy.startYear})${me.hour == null ? ' · hour unknown, start age is approximate' : ''}.`,
+      `${dy.direction === 1 ? '顺行' : '逆行'}排运 · 约 ${dy.startAge.years} 岁 ${dy.startAge.months} 个月起运（约 ${dy.startYear} 年）${me.hour == null ? '·未填时辰，起运岁数为近似值' : ''}。`
+    )}</p>`;
+
+    const tiles = `<div class="dy-row">${dy.pillars.map((p) => {
+      const cur = nowYear >= p.fromYear && nowYear <= p.toYear;
+      return `<div class="dy${cur ? ' dy-cur' : ''}"><span class="dy-age">${T(`${p.fromAge}`, `${p.fromAge}岁`)}</span><span class="dy-gz e-${STEM_ELEMENT[p.stem]}">${p.gz}</span><span class="dy-yr">${p.fromYear}</span></div>`;
+    }).join('')}</div>`;
+
+    const yearBlock = (yr) => {
+      const ln = liunianPillar(yr);
+      const ts = taisuiRelation(ln.branch, dy.chart.year.branch);
+      const rel = pairRelations(ln.branch, natalBranches);
+      const badges = ts.map((k) => `<span class="ta-badge">${T(TAISUI_EN[k], TAISUI_ZH[k])}</span>`).join('');
+      return `<div class="dy-ln${yr === nowYear ? ' dy-ln--now' : ''}">
+        <div class="dy-ln-h">${yr}${T('', ' 年')} · ${ln.gz} · ${T(ANIMALS_EN[ln.branch], ANIMALS_ZH[ln.branch] + '年')}${badges}</div>
+        <div class="dy-ln-b">${rel.length ? T('vs your chart: ', '与命局：') + rel.join(' · ') : T('no clash/combo with your chart branches', '与命局地支无明显刑冲合害')}</div>
+      </div>`;
+    };
+
+    return startLine + tiles + `<div class="dy-lns">${yearBlock(nowYear)}${yearBlock(nowYear + 1)}</div>`;
+  }
+
+  // ---- 日月升星盘 (V21 Phase 5) ---------------------------------------------
+  // Sun/Moon/Rising only (planets deferred — see src/lib/astro.js header).
+  // Lat/lon are local-profile-only fields like gender: they don't affect the
+  // synastry pairing, so they stay out of the share-code schema.
+  const signLabel = (lon) => {
+    const s = signOf(lon);
+    return `${T(ZODIAC_EN[s], ZODIAC_ZH[s] + '座')} ${Math.floor(degInSign(lon))}°`;
+  };
+  function astroHTML(me) {
+    const jd = cstToJD(me.y, me.m, me.d, me.hour);
+    const sun = sunLongitude(jd), moon = moonLongitude(jd);
+    const hourMissing = me.hour == null;
+    let risingHTML;
+    if (hourMissing) {
+      risingHTML = `<span class="as-miss">${T('needs birth hour', '需填时辰')}</span>`;
+    } else if (me.lat == null || me.lon == null) {
+      risingHTML = `<span class="as-miss">${T('needs birthplace lat/lon above', '需在上方填出生地经纬度')}</span>`;
+    } else {
+      risingHTML = signLabel(ascendant(jd, me.lat, me.lon));
+    }
+    return `<div class="as-row">
+        <div class="as-card"><span class="as-t">☉ ${T('SUN', '太阳')}</span><b>${signLabel(sun)}</b></div>
+        <div class="as-card"><span class="as-t">☾ ${T('MOON', '月亮')}</span><b>${signLabel(moon)}</b>${hourMissing ? `<small>${T('hour unknown — noon approximation; can be off if the moon changed signs that day', '未填时辰，按正午近似——当日月亮换座时可能有偏差')}</small>` : ''}</div>
+        <div class="as-card"><span class="as-t">↗ ${T('RISING', '上升')}</span><b>${risingHTML}</b></div>
+      </div>
+      <p class="bz-caveat">${T('Tropical zodiac, whole-sign display. Sun/moon/rising only — planetary placements are a planned follow-up.', '回归黄道、整宫制显示。当前仅日月升——行星落座为后续计划。')}</p>`;
+  }
+
+  // ---- 紫微斗数十二宫 (V21 Phase 6) ------------------------------------------
+  // 4×4 grid: the 12 palaces ring the outside (classical layout, 巳 at the
+  // top-left corner going clockwise), the 2×2 centre holds chart meta.
+  // Grid ring order (row-major positions 0-15; -1 = centre):
+  const ZW_GRID = [5, 6, 7, 8, 4, -1, -1, 9, 3, -1, -1, 10, 2, 1, 0, 11]; // branch idx per cell
+  const ZW_STAR_EN = ['Ziwei', 'Tianji', 'Sun', 'Wuqu', 'Tiantong', 'Lianzhen', 'Tianfu', 'Moon', 'Tanlang', 'Jumen', 'Tianxiang', 'Tianliang', 'Qisha', 'Pojun'];
+  function ziweiHTML(me) {
+    if (me.hour == null) {
+      return `<p class="form-note">${T(
+        'Ziwei needs the birth hour — the hour branch places the life palace. Pick your 时辰 above and re-cast.',
+        '紫微斗数需要时辰——时支决定命宫位置。在上方选择时辰后重新起盘即可。'
+      )}</p>`;
+    }
+    const z = computeZiwei(me);
+    if (!z) return '';
+    const cells = ZW_GRID.map((b, i) => {
+      if (b === -1) {
+        if (i !== 5) return ''; // centre spans via CSS grid-area on the first centre cell
+        return `<div class="zw-center">
+          <div class="zw-c-ju">${JU_ZH[z.ju]}</div>
+          <div class="zw-c-l">${T(`Lunar: month ${z.lunar.lMonth} day ${z.lunar.lDay}`, `农历 ${z.lunar.monthZh}${z.lunar.dayZh}`)}</div>
+          <div class="zw-c-l">${T('Life palace', '命宫')} · ${STEMS[z.mingStem]}${BRANCHES[z.ming]}</div>
+          <div class="zw-c-l">${T('Body palace', '身宫')} · ${BRANCHES[z.shen]}</div>
+        </div>`;
+      }
+      const p = z.palaces[b];
+      const isMing = b === z.ming;
+      const stars = p.stars.map((si) => `<span class="zw-star">${T(ZW_STAR_EN[si], ZW_STARS_ZH[si])}</span>`).join('') || `<span class="zw-empty">${T('—', '（空宫）')}</span>`;
+      return `<div class="zw-cell${isMing ? ' zw-ming' : ''}${b === z.shen ? ' zw-shen' : ''}">
+        <div class="zw-h"><span class="zw-p">${T(p.nameEn, p.name)}</span><span class="zw-b">${STEMS[p.stem]}${BRANCHES[b]}</span></div>
+        <div class="zw-stars">${stars}</div>
+      </div>`;
+    }).join('');
+    // life-palace major stars, one-line reads (borrowed palace note if empty)
+    const mingStars = z.palaces[z.ming].stars;
+    const readSrc = mingStars.length ? mingStars : z.palaces[mod2(z.ming + 6)].stars;
+    const borrowed = !mingStars.length;
+    const reads = readSrc.map((si) => `<div class="xiu-row"><b>${T(ZW_STAR_EN[si], ZW_STARS_ZH[si])}</b><span class="xiu-d">${T(ZW_STAR_READS[ZW_STARS_ZH[si]].en, ZW_STAR_READS[ZW_STARS_ZH[si]].zh)}</span></div>`).join('');
+    return `<div class="zw-grid">${cells}</div>
+      ${reads ? `<div class="xiu-h" style="margin-top:12px">${T(borrowed ? 'LIFE PALACE (borrowing the opposite palace) · 命宫主星' : 'LIFE-PALACE STARS · 命宫主星', borrowed ? '命宫主星（命宫无主星，借对宫看）' : '命宫主星')}</div>${reads}` : ''}
+      <p class="bz-caveat">${T(
+        '14 major stars only (entry-level chart) — minor stars and the four transformations are a planned follow-up. Year pillar follows the lunar-year convention; verified against an independent ziwei library over 400 charts.',
+        '入门版仅安十四主星——辅星与四化为后续计划。年柱按农历年惯例；实现与独立紫微库 400 盘对照一致。'
+      )}</p>`;
+  }
+  const mod2 = (n) => ((n % 12) + 12) % 12;
+
+  // Natal mansion (本命宿, V21 Phase 3) — needs the birth date's lunar form.
+  // A leap-month birth uses its host month number (documented convention in
+  // src/lib/xiu.js). Returns null outside the lunar table's 1900–2100 range.
+  const natalXiuOf = (y, m, d) => {
+    const l = solarToLunar(y, m, d);
+    return l ? natalXiu(l.lMonth, l.lDay) : null;
+  };
+  const identityChipsHTML = (chart, y, m, d) => {
     const zi = zodiacIndex(m, d);
+    const nx = natalXiuOf(y, m, d);
     return `<span class="elem">☾ ${T(ANIMALS_EN[chart.animal], '属' + ANIMALS_ZH[chart.animal])}</span>`
-      + `<span class="elem">✦ ${T(ZODIAC_EN[zi], ZODIAC_ZH[zi] + '座')}</span>`;
+      + `<span class="elem">✦ ${T(ZODIAC_EN[zi], ZODIAC_ZH[zi] + '座')}</span>`
+      + (nx == null ? '' : `<span class="elem">☘ ${T(`${XIU27_ZH[nx]} mansion`, '本命·' + XIU27_ZH[nx] + '宿')}</span>`);
   };
 
   function renderMine() {
@@ -255,7 +386,10 @@ import { downloadShareCard } from '../lib/shareCard.js';
     $('mineSec').hidden = false;
 
     $('todayGz').textContent = T('Today: ', '今日 ') + pillarName(f.todayPillar) + T(' day', '日');
-    $('todayRel').textContent = '· ' + T(...[REL_T[f.relation][0], REL_T[f.relation][1]]);
+    const [ty, tm, td] = todayStr().split('-').map(Number);
+    const tx = XIU28_ZH[dailyXiu(ty, tm, td)];
+    $('todayRel').textContent = '· ' + T(...[REL_T[f.relation][0], REL_T[f.relation][1]])
+      + ' · ' + T(`mansion of the day: ${tx}`, `值日宿：${tx}宿`);
     const n = bumpStreak();
     const sc = $('streakChip'); sc.hidden = false;
     sc.textContent = T(`◆ ${n}-day streak`, `◆ 连续观星 ${n} 天`);
@@ -266,11 +400,20 @@ import { downloadShareCard } from '../lib/shareCard.js';
     // element tally + identity chips
     $('elemRow').innerHTML = f.chart.elements.map((n2, i) =>
       `<span class="elem"><i class="e-${i}"></i>${T(ELEMENTS_EN[i], ELEMENTS_ZH[i])} × ${n2}</span>`).join('')
-      + identityChipsHTML(f.chart, state.me.m, state.me.d);
+      + identityChipsHTML(f.chart, state.me.y, state.me.m, state.me.d);
 
     // 生辰详批 (子平法): ten gods, hidden stems, nayin, void, twelve stages,
     // seasonal strength, relations, shensha, simplified strength/pattern read.
     $('bzWrap').innerHTML = baziDetailHTML(f.chart);
+
+    // 大运流年 (V21 Phase 2)
+    $('dyWrap').innerHTML = dayunHTML(state.me);
+
+    // 日月升 (V21 Phase 5)
+    $('astroWrap').innerHTML = astroHTML(state.me);
+
+    // 紫微斗数 (V21 Phase 6)
+    $('zwWrap').innerHTML = ziweiHTML(state.me);
 
     // overall ring
     const C = 2 * Math.PI * 42;
@@ -315,13 +458,13 @@ import { downloadShareCard } from '../lib/shareCard.js';
       <div class="syn-chart">
         <div class="syn-chart-h">${T('ME', '我')}</div>
         <div class="pillars pillars--sm">${pillarCardsHTML(s.chartA, 'pillar--sm')}</div>
-        <div class="elems">${identityChipsHTML(s.chartA, state.me.m, state.me.d)}</div>
+        <div class="elems">${identityChipsHTML(s.chartA, state.me.y, state.me.m, state.me.d)}</div>
       </div>
       <div class="syn-divider" aria-hidden="true">❖</div>
       <div class="syn-chart">
         <div class="syn-chart-h">${T('THEM', '对方')}</div>
         <div class="pillars pillars--sm">${pillarCardsHTML(s.chartB, 'pillar--sm')}</div>
-        <div class="elems">${identityChipsHTML(s.chartB, state.other.m, state.other.d)}</div>
+        <div class="elems">${identityChipsHTML(s.chartB, state.other.y, state.other.m, state.other.d)}</div>
       </div>`;
 
     const C = 2 * Math.PI * 58;
@@ -335,11 +478,104 @@ import { downloadShareCard } from '../lib/shareCard.js';
       `<div class="sp ${p.pts > 0 ? 'pos' : p.pts < 0 ? 'neg' : ''}"><span>${T(p.en, p.zh)}</span><b>${p.pts > 0 ? '+' : ''}${p.pts}</b></div>`).join('');
     $('synPillars').innerHTML = s.pillars.map((p) =>
       `<div class="spil"><div class="n">${T(...SYN_PILLAR_T[p.id])}</div><div class="s">${p.score}</div></div>`).join('');
+
+    // 双人宿曜关系 (V21 Phase 3): natal mansions + both directions of the
+    // 三九秘法 relation (it's directional by design).
+    const xa = natalXiuOf(state.me.y, state.me.m, state.me.d);
+    const xb = natalXiuOf(state.other.y, state.other.m, state.other.d);
+    if (xa != null && xb != null) {
+      const rab = XIU_REL[xiuRelation(xa, xb)], rba = XIU_REL[xiuRelation(xb, xa)];
+      $('synXiu').innerHTML = `
+        <div class="xiu-h">${T('LUNAR MANSIONS · 宿曜', '宿曜缘分 · 三九秘法')}</div>
+        <div class="xiu-row"><span class="xiu-n">${T('ME', '我')} · ${XIU27_ZH[xa]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rab.en, rab.zh)}</b><span class="xiu-d">${T(rab.descEn, rab.descZh)}</span></div>
+        <div class="xiu-row"><span class="xiu-n">${T('THEM', '对方')} · ${XIU27_ZH[xb]}${T('', '宿')}</span><span class="xiu-arrow">→</span><b>${T(rba.en, rba.zh)}</b><span class="xiu-d">${T(rba.descEn, rba.descZh)}</span></div>`;
+    } else {
+      $('synXiu').innerHTML = '';
+    }
+    // 日月相位 (V21 Phase 5): sun/moon cross-aspects between the two charts.
+    const jdA = cstToJD(state.me.y, state.me.m, state.me.d, state.me.hour);
+    const jdB = cstToJD(state.other.y, state.other.m, state.other.d, state.other.hour);
+    const bodies = [
+      ['☉', T('Sun', '太阳'), sunLongitude(jdA), sunLongitude(jdB)],
+    ];
+    const moonA = moonLongitude(jdA), moonB = moonLongitude(jdB);
+    const pairs = [
+      [T('Sun–Sun', '太阳–太阳'), bodies[0][2], bodies[0][3]],
+      [T('Sun–Moon', '太阳–月亮'), bodies[0][2], moonB],
+      [T('Moon–Sun', '月亮–太阳'), moonA, bodies[0][3]],
+      [T('Moon–Moon', '月亮–月亮'), moonA, moonB],
+    ];
+    const hourMissing = state.me.hour == null || state.other.hour == null;
+    const aspRows = pairs.map(([label, la, lb]) => {
+      const a = aspectBetween(la, lb);
+      if (!a) return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-d">${T('no major aspect', '无主要相位')}</span></div>`;
+      const t = ASPECT_T[a.key];
+      return `<div class="xiu-row"><span class="xiu-n">${label}</span><span class="xiu-arrow">∠</span><b>${T(t.en, t.zh)}</b><span class="xiu-d">${T(t.dEn, t.dZh)}</span></div>`;
+    }).join('');
+    $('synAstro').innerHTML = `
+      <div class="xiu-h">${T('SUN/MOON ASPECTS · 日月相位', '日月相位')}</div>${aspRows}
+      ${hourMissing ? `<p class="bz-caveat">${T('One or both hours unknown — moon positions use a noon approximation.', '有一方未填时辰——月亮位置按正午近似。')}</p>` : ''}`;
+
     $('pullScore').textContent = pull.score;
     $('pullTxt').textContent = T(
       `Today's pull — under a ${pull.todayElement.en}-day sky. Changes daily; come back tomorrow.`,
       `今日引力——${pull.todayElement.zh}气当令。每日一变，明日再来。`);
   }
+
+  // ---- sixteen-type quick quiz (V21 Phase 4) --------------------------------
+  // In-page section (C5-evaluated: no ninth page). Quiz progress lives in
+  // memory; only the RESULT persists (localStorage). Re-renders in place on
+  // language toggle because renderPersona() reads state.lang at call time.
+  const PERSONA_KEY = 'afflatus-horo:persona';
+  const quiz = { idx: -1, answers: [] }; // idx -1 = not started
+  const loadPersona = () => { try { return JSON.parse(localStorage.getItem(PERSONA_KEY)); } catch { return null; } };
+  function renderPersona() {
+    const wrap = $('personaWrap');
+    if (!wrap) return;
+    if (quiz.idx === -1) { // start screen (+ previous result, if any)
+      const prev = loadPersona();
+      const prevHTML = prev && PERSONA_TYPES[prev.type] ? `
+        <div class="pq-result">
+          <div class="pq-type">${prev.type}</div>
+          <div class="pq-name">${T(PERSONA_TYPES[prev.type].en, PERSONA_TYPES[prev.type].zh)}</div>
+          <p class="pq-desc">${T(PERSONA_TYPES[prev.type].dEn, PERSONA_TYPES[prev.type].dZh)}</p>
+          ${prev.axes ? `<div class="pq-axes">${prev.axes.map((ax, k) => `
+            <div class="pq-ax"><span>${AXIS_LETTERS[k][0]}</span><span class="pq-ax-bar"><i style="width:${Math.round(ax.a / (ax.a + ax.b) * 100)}%"></i></span><span>${AXIS_LETTERS[k][1]}</span></div>`).join('')}</div>` : ''}
+        </div>` : '';
+      wrap.innerHTML = `${prevHTML}
+        <div class="share-row">
+          <button class="btn" type="button" id="pqStart">${prev ? T('Retake the quiz', '重新测一次') : T('Start · 24 questions ≈ 3 min', '开始 · 24 题约 3 分钟')}</button>
+          ${prev ? `<span class="share-tip">${T('Your previous result is above — retaking replaces it.', '上方是你上次的结果——重测会覆盖。')}</span>` : ''}
+        </div>`;
+      $('pqStart').addEventListener('click', () => { quiz.idx = 0; quiz.answers = []; renderPersona(); });
+      return;
+    }
+    if (quiz.idx >= PERSONA_QUESTIONS.length) { // finished → score, persist, show
+      const r = scorePersona(quiz.answers);
+      if (r) { try { localStorage.setItem(PERSONA_KEY, JSON.stringify(r)); } catch {} }
+      quiz.idx = -1;
+      renderPersona();
+      return;
+    }
+    const q = PERSONA_QUESTIONS[quiz.idx];
+    wrap.innerHTML = `
+      <div class="pq-progress"><i style="width:${Math.round(quiz.idx / PERSONA_QUESTIONS.length * 100)}%"></i></div>
+      <div class="pq-count">${quiz.idx + 1} / ${PERSONA_QUESTIONS.length}</div>
+      <div class="pq-q">${T(q.q[0], q.q[1])}</div>
+      <div class="pq-opts">
+        <button class="pq-opt" type="button" data-v="a">${T(q.a[0], q.a[1])}</button>
+        <button class="pq-opt" type="button" data-v="b">${T(q.b[0], q.b[1])}</button>
+      </div>
+      <div class="share-row">${quiz.idx > 0 ? `<button class="btn" type="button" id="pqBack">${T('← Back', '← 上一题')}</button>` : ''}</div>`;
+    wrap.querySelectorAll('.pq-opt').forEach((btn) => btn.addEventListener('click', () => {
+      quiz.answers[quiz.idx] = btn.dataset.v;
+      quiz.idx++;
+      renderPersona();
+    }));
+    const back = $('pqBack');
+    if (back) back.addEventListener('click', () => { quiz.idx--; renderPersona(); });
+  }
+  renderPersona();
 
   // ---- share cards (V21 Phase 0: PNG download in the healing palette) --------
   const cardPillars = (chart, labels) =>
@@ -382,6 +618,9 @@ import { downloadShareCard } from '../lib/shareCard.js';
     e.preventDefault();
     const b = parseBirth($('bDate').value, $('bHour').value, $('bTz').value, $('bDst').checked);
     if (!b) return;
+    b.gender = $('bGender').value || null; // local profile only, never in share codes
+    b.lat = $('bLat').value === '' ? null : Math.max(-90, Math.min(90, +$('bLat').value));
+    b.lon = $('bLon').value === '' ? null : Math.max(-180, Math.min(180, +$('bLon').value));
     state.me = b; saveProfile(b);
     renderMine(); renderSyn();
   });
@@ -398,6 +637,8 @@ import { downloadShareCard } from '../lib/shareCard.js';
     const p = (x) => String(x).padStart(2, '0');
     $(prefix + 'Date').value = `${b.y}-${p(b.m)}-${p(b.d)}`;
     $(prefix + 'Hour').value = b.hour == null ? '' : String(b.hour);
+    if (prefix === 'b' && $('bGender')) $('bGender').value = b.gender || '';
+    if (prefix === 'b' && $('bLat')) { $('bLat').value = b.lat == null ? '' : String(b.lat); $('bLon').value = b.lon == null ? '' : String(b.lon); }
   };
 
   // ---- boot: shared link beats saved profile ------------------------------------
@@ -416,6 +657,6 @@ import { downloadShareCard } from '../lib/shareCard.js';
 
   window.addEventListener('afflatus-lang', (e) => {
     state.lang = e.detail === 'zh' ? 'zh' : 'en';
-    renderMine(); renderSyn();
+    renderMine(); renderSyn(); renderPersona();
   });
 })();

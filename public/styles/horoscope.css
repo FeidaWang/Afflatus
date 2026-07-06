@@ -154,6 +154,21 @@ a{color:inherit;text-decoration:none}
 .bz-strength-text p:last-child{margin-bottom:0}
 .bz-caveat{margin:8px 0 0;color:var(--dim);font:400 11.5px/1.6 var(--serif)}
 
+/* ===== 大运流年 (V21 Phase 2) ===== */
+.dy-start{margin:2px 0 10px;font:400 13.5px/1.7 var(--serif);color:var(--text)}
+.dy-row{display:flex;gap:8px;flex-wrap:wrap}
+.dy{flex:1;min-width:64px;text-align:center;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:8px 4px 9px}
+.dy-cur{border-color:var(--sage-deep);background:rgba(156,175,136,.16);box-shadow:0 0 0 1px var(--sage-deep) inset}
+.dy-age{display:block;font:600 10px/1 var(--en);letter-spacing:.08em;color:var(--dim)}
+.dy-gz{display:inline-block;margin-top:6px;writing-mode:vertical-rl;font:900 22px/1 var(--serif);letter-spacing:.14em}
+.dy-yr{display:block;margin-top:6px;font:600 10.5px/1 var(--mono);color:var(--dim)}
+.dy-lns{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:12px}
+.dy-ln{border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:10px 13px}
+.dy-ln--now{border-color:var(--gold-soft);background:rgba(217,184,124,.12)}
+.dy-ln-h{font:700 14px/1.5 var(--serif);color:var(--text)}
+.dy-ln-b{margin-top:5px;font:400 12.5px/1.7 var(--serif);color:var(--dim)}
+.ta-badge{display:inline-block;margin-left:7px;padding:2px 9px;border-radius:999px;background:rgba(201,111,74,.14);color:var(--terra-deep);font:600 10.5px/1.5 var(--serif);vertical-align:2px}
+
 /* ===== daily fortune ===== */
 .today-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
 .today-gz{font:900 22px/1 var(--serif);letter-spacing:.14em;color:var(--text)}
@@ -215,11 +230,62 @@ a{color:inherit;text-decoration:none}
 .spil{border:1px solid var(--line);background:var(--card2);border-radius:12px;text-align:center;padding:10px 6px}
 .spil .n{font:700 13px/1 var(--serif);letter-spacing:.3em;color:var(--text)}
 .spil .s{margin-top:7px;font:900 20px/1 var(--mono);color:var(--gold-deep)}
+.xiu-rel{margin-top:14px}
+.xiu-rel:empty{display:none}
+.xiu-h{color:var(--dim);font:700 10.5px/1 var(--en);letter-spacing:.22em;text-transform:uppercase;margin-bottom:8px}
+.xiu-row{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:9px 13px;margin-top:6px;font:400 13px/1.6 var(--serif)}
+.xiu-n{flex:none;font-weight:700;color:var(--text)}
+.xiu-arrow{color:var(--terra);font-weight:700}
+.xiu-row b{color:var(--terra-deep);font-size:15px}
+.xiu-d{color:var(--dim)}
 .pull{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px dashed var(--gold-soft);border-radius:12px;background:rgba(217,184,124,.10);padding:10px 13px}
 .pull b{font:900 19px var(--mono);color:var(--gold-deep)}
 .pull span{font:400 13px var(--serif);color:var(--text)}
 .share-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
 .share-tip{color:var(--dim);font:400 12.5px/1.6 var(--serif)}
+
+/* ===== 日月升 (V21 Phase 5) ===== */
+.as-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.as-card{border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:11px 14px}
+.as-t{display:block;font:600 10.5px/1 var(--en);letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.as-card b{display:block;margin-top:7px;font:700 17px/1.4 var(--serif);color:var(--text)}
+.as-card small{display:block;margin-top:5px;font:400 11px/1.5 var(--serif);color:var(--dim)}
+.as-miss{font:400 13px/1.4 var(--serif);color:var(--dim)}
+
+/* ===== 紫微十二宫 (V21 Phase 6) ===== */
+.zw-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(86px,auto);gap:6px}
+.zw-cell{border:1px solid var(--line);background:var(--card2);border-radius:10px;padding:8px 9px;display:flex;flex-direction:column;gap:6px}
+.zw-ming{border-color:var(--terra-deep);box-shadow:0 0 0 1px var(--terra-deep) inset;background:rgba(201,111,74,.10)}
+.zw-shen{background:rgba(217,184,124,.14)}
+.zw-ming.zw-shen{background:linear-gradient(135deg,rgba(201,111,74,.10),rgba(217,184,124,.14))}
+.zw-h{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+.zw-p{font:700 12px/1 var(--serif);color:var(--text);letter-spacing:.08em}
+.zw-ming .zw-p{color:var(--terra-deep)}
+.zw-b{font:600 10px/1 var(--mono);color:var(--dim)}
+.zw-stars{display:flex;flex-wrap:wrap;gap:4px}
+.zw-star{border:1px solid rgba(156,175,136,.6);background:rgba(156,175,136,.14);color:var(--sage-deep);font:700 11.5px/1.4 var(--serif);padding:2px 8px;border-radius:999px}
+.zw-empty{font:400 11px/1.4 var(--serif);color:var(--dim)}
+.zw-center{grid-column:2/4;grid-row:2/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px dashed var(--sage);border-radius:12px;background:rgba(156,175,136,.06)}
+.zw-c-ju{font:900 22px/1 var(--serif);color:var(--sage-deep);letter-spacing:.1em}
+.zw-c-l{font:500 12px/1.5 var(--serif);color:var(--dim)}
+@media(max-width:640px){.zw-p{font-size:10.5px}.zw-star{font-size:10px;padding:2px 6px}.zw-c-ju{font-size:17px}}
+
+/* ===== sixteen-type quiz (V21 Phase 4) ===== */
+.pq-progress{height:6px;background:rgba(74,69,61,.10);border-radius:3px;overflow:hidden}
+.pq-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--sage),var(--gold-soft));border-radius:3px;transition:width .3s ease}
+.pq-count{margin-top:8px;font:600 11px/1 var(--mono);color:var(--dim)}
+.pq-q{margin:14px 0 12px;font:700 clamp(17px,2.6vw,21px)/1.5 var(--serif);color:var(--text)}
+.pq-opts{display:flex;flex-direction:column;gap:10px;max-width:560px}
+.pq-opt{cursor:pointer;text-align:left;border:1px solid var(--line);background:var(--card2);color:var(--text);font:500 14.5px/1.6 var(--serif);padding:13px 16px;border-radius:12px}
+.pq-opt:hover{border-color:var(--sage-deep);background:rgba(156,175,136,.14)}
+.pq-result{border:1px dashed var(--sage);border-radius:12px;background:rgba(156,175,136,.08);padding:16px;margin-bottom:12px}
+.pq-type{font:900 34px/1 var(--en);letter-spacing:.12em;color:var(--sage-deep)}
+.pq-name{margin-top:6px;font:700 16px/1.4 var(--serif);color:var(--text)}
+.pq-desc{margin:8px 0 0;font:400 13.5px/1.8 var(--serif);color:var(--text);max-width:640px}
+.pq-axes{margin-top:12px;display:grid;gap:6px;max-width:420px}
+.pq-ax{display:flex;align-items:center;gap:10px;font:700 12px/1 var(--en);color:var(--dim)}
+.pq-ax-bar{flex:1;height:8px;background:rgba(201,111,74,.18);border-radius:4px;overflow:hidden}
+.pq-ax-bar i{display:block;height:100%;background:var(--sage);border-radius:4px 0 0 4px}
 
 .foot{margin-top:26px;text-align:center;color:var(--dim);font:500 11.5px/1.8 var(--en);letter-spacing:.06em}
 
