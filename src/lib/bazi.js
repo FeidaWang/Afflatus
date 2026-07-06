@@ -62,7 +62,8 @@ export function dayPillar(y, m, d) {
 
 // ---- solar longitude (Meeus low-precision, ~0.01° accuracy) ---------------
 // JD (UTC, decimal) for a proleptic-Gregorian calendar date/time.
-function julianDayUTC(y, m, d, hourUTC) {
+// (Exported since V21 Phase 5 — astro.js builds birth JDs with it.)
+export function julianDayUTC(y, m, d, hourUTC) {
   let yy = y, mm = m;
   if (mm <= 2) { yy -= 1; mm += 12; }
   const A = Math.floor(yy / 100), B = 2 - A + Math.floor(A / 4);
@@ -82,7 +83,8 @@ function calendarFromJD(jd) {
 }
 const DEG = Math.PI / 180;
 // Apparent geocentric ecliptic longitude of the sun, degrees [0,360).
-function sunApparentLongitude(jd) {
+// (Exported since V21 Phase 5 — astro.js reuses it for sun signs.)
+export function sunApparentLongitude(jd) {
   const T = (jd - 2451545.0) / 36525;
   const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
   const M = (357.52911 + 35999.05029 * T - 0.0001537 * T * T) * DEG;
@@ -163,6 +165,24 @@ export function monthPillar(y, m, d) {
   const startStem = mod((yp.stem % 5) * 2 + 2, 10);
   const offsetFromYin = mod(b - 2, 12);
   return { stem: mod(startStem + offsetFromYin, 10), branch: b };
+}
+
+// ---- adjacent solar terms (V21 Phase 2: 大运起运 needs exact instants) ----
+// For a birth given as a CST civil instant, return the birth JD (UTC) and
+// the JD of the nearest 节 (the 12 month-boundary terms) strictly before
+// and after it. Unknown hour falls back to noon — a ≤12h error shifts 起运
+// by ≤4 months' worth of day-count, the same graceful degradation as the
+// rest of the chart when the hour is unknown.
+export function adjacentSolarTerms(y, m, d, hour) {
+  const birthJD = julianDayUTC(y, m, d, (hour == null ? 12 : hour) - 8);
+  const cands = [];
+  for (const yy of [y - 1, y, y + 1]) {
+    for (const t of MONTH_TERMS) cands.push(findSolarTermJD(t.lon, julianDayUTC(yy, t.m, t.d, 12)));
+  }
+  cands.sort((a, b) => a - b);
+  let prevJD = null, nextJD = null;
+  for (const jd of cands) { if (jd <= birthJD) prevJD = jd; else { nextJD = jd; break; } }
+  return { birthJD, prevJD, nextJD };
 }
 
 // ---- birth-input timezone/DST correction (optional accuracy refinement) --

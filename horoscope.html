@@ -135,10 +135,20 @@
           <input type="date" id="bDate" required min="1900-01-01" max="2100-12-31"></div>
         <div class="fld"><label for="bHour" data-en="Hour (optional)" data-zh="时辰（可不填）">Hour (optional)</label>
           <select id="bHour"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+        <div class="fld"><label for="bGender" data-en="Gender (for luck cycles)" data-zh="性别（排大运用）">Gender (for luck cycles)</label>
+          <select id="bGender">
+            <option value="" data-en="Prefer not to say" data-zh="不填">Prefer not to say</option>
+            <option value="M" data-en="Male" data-zh="男">Male</option>
+            <option value="F" data-en="Female" data-zh="女">Female</option>
+          </select></div>
         <div class="fld"><label for="bTz" data-en="Birth timezone (optional, more accurate)" data-zh="出生地时区（可不填，更精确）">Birth timezone (optional, more accurate)</label>
           <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
         <div class="fld fld--check"><label for="bDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
           <input type="checkbox" id="bDst" disabled></div>
+        <div class="fld"><label for="bLat" data-en="Birthplace latitude (optional, rising sign)" data-zh="出生地纬度（可不填，升星座用）">Birthplace latitude (optional, rising sign)</label>
+          <input type="number" id="bLat" step="0.01" min="-90" max="90" placeholder="31.23"></div>
+        <div class="fld"><label for="bLon" data-en="Longitude (E+ / W−)" data-zh="经度（东正西负）">Longitude (E+ / W−)</label>
+          <input type="number" id="bLon" step="0.01" min="-180" max="180" placeholder="121.47"></div>
         <button class="btn" type="submit" data-en="Cast ◈" data-zh="起盘 ◈">Cast ◈</button>
       </form>
       <p class="form-note" data-en="Saved on this device only — nothing is uploaded. Solar-term boundaries are computed from real sun-position astronomy; hour unknown casts a three-pillar chart. Note: 早子 (00:xx) and 晚子 (23:xx) give different charts — a 23:xx birth rolls the day pillar to the next day. Timezone/DST matter most for the hour pillar (and, near midnight or a solar-term date, the day/month pillar) — pick yours if you know it." data-zh="生日只保存在本机，不上传。节气边界按真实太阳黄经推算；不填时辰则排三柱盘。注意：早子（00:xx）与晚子（23:xx）命盘不同——23 点出生的日柱要算到次日。时区/夏令时主要影响时柱（若接近午夜或节气交接日，也会影响日柱/月柱）——知道的话建议选择。">Saved on this device only — nothing is uploaded. Solar-term boundaries are computed from real sun-position astronomy; hour unknown casts a three-pillar chart. Note: 早子 (00:xx) and 晚子 (23:xx) give different charts — a 23:xx birth rolls the day pillar to the next day. Timezone/DST matter most for the hour pillar (and, near midnight or a solar-term date, the day/month pillar) — pick yours if you know it.</p>
@@ -159,6 +169,15 @@
 
       <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="CHART DETAIL · 子平法" data-zh="生辰详批 · 子平法">CHART DETAIL · 子平法</span></div>
       <div class="bz-wrap" id="bzWrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="LUCK CYCLES · 大运流年" data-zh="大运流年">LUCK CYCLES · 大运流年</span></div>
+      <div class="dy-wrap" id="dyWrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="SUN · MOON · RISING" data-zh="星盘 · 日月升">SUN · MOON · RISING</span></div>
+      <div class="as-wrap" id="astroWrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="ZIWEI · TWELVE PALACES" data-zh="紫微斗数 · 十二宫">ZIWEI · TWELVE PALACES</span></div>
+      <div class="zw-wrap" id="zwWrap"></div>
 
       <div class="overall">
         <div class="oring" aria-hidden="true">
@@ -214,6 +233,8 @@
           <div class="syn-parts" id="synParts"></div>
         </div>
         <div class="syn-pillars" id="synPillars"></div>
+        <div class="xiu-rel" id="synXiu"></div>
+        <div class="xiu-rel" id="synAstro"></div>
         <div class="pull"><b id="pullScore">—</b><span id="pullTxt"></span></div>
         <div class="share-row">
           <button class="btn" type="button" id="shareBtn" data-en="Copy share link ⎘" data-zh="复制合盘链接 ⎘">Copy share link ⎘</button>
@@ -221,6 +242,15 @@
           <span class="share-tip" id="shareTip" data-en="Send it — they'll open this exact pairing, no account needed." data-zh="发给对方——点开就是这一对的合盘，无需注册。">Send it — they'll open this exact pairing, no account needed.</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== sixteen-type quick quiz (V21 Phase 4) ===== -->
+  <section class="sec" id="personaSec" aria-label="Sixteen-type personality quiz">
+    <div class="sec-label"><span class="zh" data-en="SIXTEEN TYPES · QUICK QUIZ" data-zh="十六型人格速测">SIXTEEN TYPES · QUICK QUIZ</span></div>
+    <div class="panel">
+      <div id="personaWrap"></div>
+      <p class="form-note" data-en="An original 24-question quiz in the public four-axis tradition. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only." data-zh="按公开的四轴传统自编的 24 题速测，与 Myers-Briggs Type Indicator®（Myers & Briggs 基金会商标）及 16personalities 无任何关联。结果只保存在本机。仅供娱乐。">An original 24-question quiz in the public four-axis tradition. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only.</p>
     </div>
   </section>
 
