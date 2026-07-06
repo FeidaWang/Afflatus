@@ -99,7 +99,7 @@
   <section class="hud" id="hudPanel" aria-hidden="true"></section>
 
   <section class="toolbar" id="toolbar" aria-label="阅读工具">
-    <button class="tbtn" id="tocOpen" type="button">☰ 目录</button>
+    <button class="tbtn" id="tocOpen" type="button">☰<span class="lbl"> 目录</span></button>
     <div class="swatches" role="group" aria-label="阅读主题">
       <button class="swatch s-cream on" type="button" data-theme="cream" title="米黄纸感（默认护眼）" aria-label="米黄纸感"></button>
       <button class="swatch s-green" type="button" data-theme="green" title="豆沙绿护眼" aria-label="豆沙绿"></button>
@@ -111,14 +111,14 @@
       <button id="fsPlus" type="button" aria-label="增大字号">A+</button>
     </div>
     <div class="speedsel" role="group" aria-label="自动翻页速度">
-      <button class="tbtn" id="autoToggle" type="button">▶ 自动翻页</button>
+      <button class="tbtn" id="autoToggle" type="button">▶<span class="lbl"> 自动翻页</span></button>
       <button data-speed="1" type="button">慢</button>
       <button class="on" data-speed="2" type="button">中</button>
       <button data-speed="3" type="button">快</button>
     </div>
-    <button class="tbtn" id="waterfallToggle" type="button" title="开启后不停下滑即可连续阅读下一章，懒人专用">🌊 瀑布流阅读</button>
+    <button class="tbtn" id="waterfallToggle" type="button" title="开启后不停下滑即可连续阅读下一章，懒人专用">🌊<span class="lbl"> 瀑布流阅读</span></button>
     <div class="spacer"></div>
-    <button class="tbtn" id="bookmarkBtn" type="button">☆ 书签</button>
+    <button class="tbtn" id="bookmarkBtn" type="button">☆<span class="lbl"> 书签</span></button>
   </section>
 
   <section class="reader-shell">
@@ -167,6 +167,16 @@
   function nsKey(name) { return 'afflatus:novels:' + (state.novelId || 'default') + ':' + name; }
   var reader = document.getElementById('reader');
   var state = { data:null, novels:[], novelId:null, novelIdx:0, chapters:[], idx:0, autoTimer:0, autoSpeed:2, waterfall:false, wfIndex:0 };
+
+  /* V22 fix: the reader-progress bar and the toolbar are two independent
+     sticky elements; the toolbar's height varies (wraps to 2 rows on
+     some widths), so a hardcoded offset would drift and reopen the gap.
+     Measure it live and feed it to CSS via --toolbar-h instead. */
+  var toolbarEl = document.getElementById('toolbar');
+  function syncToolbarH() { document.documentElement.style.setProperty('--toolbar-h', toolbarEl.offsetHeight + 'px'); }
+  syncToolbarH();
+  window.addEventListener('resize', syncToolbarH);
+  if (window.ResizeObserver) new ResizeObserver(syncToolbarH).observe(toolbarEl);
 
   function toast(msg, ms) {
     var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
@@ -394,7 +404,7 @@
   var SPEED_PX = { 1: 0.4, 2: 0.9, 3: 1.7 };
   function startAuto() {
     stopAuto(false);
-    var btn = document.getElementById('autoToggle'); btn.textContent = '❚❚ 停止翻页'; btn.classList.add('active');
+    var btn = document.getElementById('autoToggle'); btn.innerHTML = '❚❚<span class="lbl"> 停止翻页</span>'; btn.classList.add('active');
     state.autoTimer = setInterval(function () {
       window.scrollBy(0, SPEED_PX[state.autoSpeed]);
       if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
@@ -405,7 +415,7 @@
   }
   function stopAuto() {
     clearInterval(state.autoTimer); state.autoTimer = 0;
-    var btn = document.getElementById('autoToggle'); btn.textContent = '▶ 自动翻页'; btn.classList.remove('active');
+    var btn = document.getElementById('autoToggle'); btn.innerHTML = '▶<span class="lbl"> 自动翻页</span>'; btn.classList.remove('active');
   }
   document.getElementById('autoToggle').addEventListener('click', function () { state.autoTimer ? stopAuto() : startAuto(); });
   document.querySelectorAll('.speedsel button[data-speed]').forEach(function (b) {

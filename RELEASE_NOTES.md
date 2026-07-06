@@ -7,6 +7,26 @@
 
 ## v1.5 · Afflatus「Fable 5 Max 五模块」
 
+### V22 移动端全局修复（站主实机截图驱动）— 2026-07-06
+
+**背景**：站主用 iPhone 16 Pro Max（Chrome）拍了 index / serial / horoscope 三页的真机截图——这是本工程第一次拿到真机移动端反馈，此前所有"视觉验收"都停留在桌面视口/沙盒静态推理。六个用户可见问题逐一定位并修复，详细规格见 `roadmap.md` §7.9（含验收标准表，真机复核前保留在 roadmap 里跟踪，不算彻底关闭）。
+
+**① 翻页箭头**：`public/page-turn.css` 的 `.page-turn-controls`（signal/arena/sectors/games/league/horoscope/serial 共用）在 `@media(max-width:760px)` 直接 `display:none`——覆盖导航已由顶部 nav 承担，箭头只会在窄屏遮挡内容。**首页是例外**：index.html 用的是完全独立的 `.route-arrows`/`.route-arrow` 实现（`src/styles.css`，因为要跟战斗 HUD 的位置数学联动），不吃 page-turn.css 的规则，另外单独在其 `@media(max-width:860px)` 块里把 `display` 从（此前一次"恢复移动端翻页"改动遗留的）`block!important` 改成 `none!important`。
+
+**② 首页 hero 溢出 + HUD 死区（真正的根因，非表面症状）**：
+- Hero 标题溢出：`content.js` 的中英文标题各硬编码 1–2 个 `<br>`，桌面宽容器下没问题，但移动端 clamp 字号下配合硬换行仍会在字内再次软换行（截图里 "I command the fleet" 撑爆）。修法：`@media(max-width:880px)` 新增 `.hero-title br{display:none}`，去掉硬换行交给自然换行接管。
+- **HUD 死区（真正的 bug，不是"加个 CSS 藏起来"能糊弄过去的）**：`index.html` `<head>` 里有一段内联 `<style>`（`@media(max-width:560px)`），用 `#combatHud .hud-left,#combatHud .hud-center{display:none!important}` + `#combatHud .hud-panels{grid-template-areas:"pilot right"!important}` 把移动端战斗 HUD 砍成两块。这段代码写于（推测）某次更早的移动适配尝试，后来 `src/styles.css` 里 2026-06-14 那次"Mobile target-first HUD"重写引入了更完整的 4 面板 2 行网格（`@media(max-width:860px)`），但**从未删除**旧的内联块——由于 `#combatHud .hud-panels` 的 ID 前缀选择器优先级天生高于纯类选择器 `.hud-panels`，旧块在所有手机宽度下持续"赢"，把雷达和防御模块强制隐藏、grid-template-areas 又跟新网格的行数对不上，产生的就是截图里那块"无显示无交互"的死区。**修法是删除**那段过时的内联 `<style>`（index.html head），不是新增遮盖层——两套系统曾经在打架，现在只留新的一套。
+
+**③ 移动端「去往其他页面」菜单**：`index.html` 早就有一个从未接线的 `.nav-menu-btn`（☰ 按钮 HTML 都写好了，`main.js` 里连事件监听都没有）；同时 `src/styles.css` 里有条更晚的 `@media(max-width:860px){.nav-menu-btn{display:none!important}}` 把它按下去了，二者叠加导致按钮实际从未出现过。修法：`main.js` 新增 `initNavSiteMenu()`，复用 `nav.js` 暴露的 `window.AfflatusSite` 页面表 + Labs 下拉同款"portal 到 body"弹层模式，构建一个列出全部 8 页的面板；`styles.css` 末尾追加最终覆盖把按钮在 ≤860px 显示出来。**只做了首页**——另外 7 个共用 `nav.js` 的页面本来就有随时可见的顶部链接 + 已工作的 Labs 下拉（点击触发，非纯 hover），风险评估后判断不需要再加同一个按钮；用户原话点名的是 "feida.au"（首页域名），首页也确实是唯一有死 UI 元素的地方。
+
+**④ 小说页进度条缝隙（桌面+移动同源同修）**：`public/styles/serial.css` 里 `.reader-progress` 独立 `sticky top:0`、`.toolbar` 独立 `sticky top:8px`，两个互不relate的 sticky 元素分别贴边，中间露出 5–8px 正文——这不是"加点 margin"能稳定修的，因为 `.toolbar` 的实际渲染高度会随内容换行/断点变化。改法：`.toolbar` 改 `top:0`；`serial.html` 新增一小段 JS（`ResizeObserver` + resize 监听），把工具栏的**实测**高度写入 CSS 变量 `--toolbar-h`，`.reader-progress` 的 `top` 直接读这个变量——两条 sticky 栏永远贴合，不管工具栏是几行。
+
+**⑤ 小说页工具栏移动端单行化**：目录/自动翻页/瀑布流/书签四个按钮的中文文字标签包进 `<span class="lbl">`，`≤640px` 隐藏 `.lbl`（图标独立可读：☰▶🌊☆），`autoToggle` 开关时的 `textContent` 改写全部换成 `innerHTML` 保留 span 结构；`.toolbar` 改 `flex-wrap:nowrap` + `overflow-x:auto`（隐藏滚动条）作保底——即使图标化后仍差几像素也不会摔回两行，改成可横向滑动。
+
+**⑥ 观星页移动端表单**：根因是 `.form-grid`/`.syn-form` 桌面端用 `flex-wrap`，每个字段只按自身内容撑宽——时区 `<select>` 默认选项文案较长（"不确定 · 按中国处理"），把控件撑出面板；两个表单字段数不同（8 个 vs 5 个）导致换行点不同，出生日期和对方生日视觉宽度因而不一致。改法：`@media(max-width:640px)` 把两个表单都改成 2 列 grid，所有 `input`/`select` 强制 `width:100%;max-width:100%;height:44px`；HTML 字段顺序本来就是"日期+时辰→性别→时区+夏令时→经纬度→提交"这个分组，只需要用 `:has(#bGender)` 和 `.btn` 选择器把"性别"和"提交按钮"两处强制 `grid-column:1/-1`（整行），其余字段靠 grid 自动排布成对，**没有改动 HTML 结构**。
+
+**验证**：392/392 单元测试通过（本次改动不触及任何被测的计算逻辑，纯 CSS/DOM/事件绑定）；`vite build` 干净（sandbox 内 `dist/.DS_Store` 的 EPERM 报错是环境权限问题，非本次改动引入，用真实 outDir 验证过产物正确）。**六项都只做了 CSS 推理级验证，真机复核仍是关闭标准**——尤其 ②的 HUD 死区诊断虽然有具体的选择器优先级证据支撑，但 combat-HUD 的 canvas 渲染本身仍属于沙盒不可验证的深水区（同 V15/B6 纪律）。
+
 ### V21 Phase 6.（XL→M 实际）紫微斗数入门版：十二宫 + 十四主星 — 2026-07-06
 
 **引擎 `src/lib/ziwei.js`**：完整安星流程——命宫/身宫（寅起正月顺数生月、生月宫起子逆数生时）、命宫天干（五虎遁）、五行局（命宫干支纳音）、紫微定位（局数×农历日：商 q=ceil(日/局)，余 r=q·局−日，r 奇退 r 步、偶进 r 步，寅起一位）、紫微系逆行五星（天机−1/太阳−3/武曲−4/天同−5/廉贞−8）、天府镜像（寅申轴对称 tf=4−zw）、天府系顺行七星（太阴+1…破军+10）、十二宫名自命宫逆布。

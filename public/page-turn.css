@@ -251,16 +251,13 @@ body.turn-prev main{
 body.turn-next main{transform:translateX(-34px)}
 body.turn-prev main{transform:translateX(34px)}
 @media(max-width:760px){
+  /* V22: top nav already covers page-to-page navigation on mobile; the
+     side arrows only ate into content and overlapped text on real
+     devices (iPhone 16 Pro Max Chrome screenshots), so they're hidden
+     here rather than shrunk. Desktop keeps them untouched. */
   .page-turn-controls{
-    inset:50% 6px auto;
+    display:none;
   }
-  .page-turn{
-    width:28px;
-    height:38px;
-    font-size:16px;
-    opacity:.7;
-  }
-  .page-turn:active,.page-turn:focus-visible{opacity:1}
 }
 
 /* ===== universal interaction feedback =====
