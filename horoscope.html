@@ -26,13 +26,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Project Afflatus · Horoscope — 观星台 · Bazi & Astrology</title>
-<meta name="description" content="观星台: an ink-wash Bazi (Four Pillars) + Western astrology playground — daily fortune from the real sexagenary calendar, two-person synastry with a shareable link. Entertainment only, not divination advice.">
-<meta name="theme-color" content="#101310">
+<meta name="description" content="观星台: a warm, botanical Bazi (Four Pillars) + Western astrology playground — daily fortune from the real sexagenary calendar, two-person synastry with a shareable link. Entertainment only, not divination advice.">
+<meta name="theme-color" content="#F6EFE3">
 <link rel="canonical" href="https://feida.au/horoscope.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Afflatus">
 <meta property="og:title" content="Project Afflatus · 观星台 Horoscope">
-<meta property="og:description" content="Daily Bazi + astrology readings and two-person synastry, drawn in ink. Entertainment only.">
+<meta property="og:description" content="Daily Bazi + astrology readings and two-person synastry, in warm botanical colors. Entertainment only.">
 <meta property="og:url" content="https://feida.au/horoscope.html">
 <meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -47,51 +47,46 @@
 <body class="horoscope-page" data-prev="/league.html" data-next="/serial.html">
 <a class="skip" href="#birthForm">Skip to the chart form</a>
 
+<!-- V21 healing theme: warm cream page with original hand-drawn botanical
+     sprigs (sage/eucalyptus line art) as corner decor. The former ink-night
+     board + dragon/horse art was removed per V21 Phase 0 (roadmap §7.8.1). -->
 <div class="bg" aria-hidden="true">
-  <div class="bg-mist"></div>
-  <div class="bg-stars"></div>
-  <div class="bg-ring"></div>
-  <svg class="bg-horse" viewBox="0 0 400 220" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M318,20 L332,42"/>
-    <path d="M250,65 C270,55 300,45 332,42 C352,46 370,58 385,88"/>
-    <path d="M385,88 C380,98 372,105 362,110 C345,116 320,120 295,122"/>
-    <path d="M250,65 C200,55 150,55 110,65 C100,68 95,72 95,75"/>
-    <path d="M95,75 C85,90 85,105 92,118"/>
-    <path d="M295,122 C265,110 230,106 200,110 C170,114 145,110 115,118"/>
-    <path d="M292,110 C305,130 322,150 340,168 C348,176 352,184 355,192"/>
-    <path d="M272,112 C270,135 267,158 264,178 C263,184 262,188 262,192"/>
-    <path d="M96,116 C80,132 62,150 48,168 C43,175 40,182 38,190"/>
-    <path d="M112,120 C116,142 120,162 124,180 C126,186 127,190 128,193"/>
-    <path d="M93,77 C65,82 42,98 33,118 C28,130 32,142 42,150"/>
-    <path d="M90,80 C68,90 50,105 44,125"/>
-    <path d="M300,48 C295,57 291,63 287,67" stroke-width="2"/>
-    <path d="M282,53 C278,61 274,67 270,71" stroke-width="2"/>
-    <path d="M264,59 C260,66 257,71 253,75" stroke-width="2"/>
-  </svg>
-  <svg class="bg-dragon" viewBox="0 0 500 260" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <g class="dgold">
-      <path d="M20,150 C55,90 85,90 110,140 C135,190 165,190 190,140 C215,90 245,90 270,140 C295,190 325,190 350,140 C365,115 375,102 388,96"/>
-      <path d="M388,96 C405,80 430,76 452,86 C438,104 412,108 392,100 C390,99 389,97 388,96 Z"/>
-      <path d="M420,80 C420,66 425,52 435,40"/>
-      <path d="M400,101 C392,110 382,116 370,118" stroke-width="2"/>
-      <path d="M20,150 C10,135 8,118 16,105 C20,98 28,94 34,98"/>
-      <path d="M110,138 L108,122" stroke-width="2"/>
-      <path d="M190,138 L188,122" stroke-width="2"/>
-      <path d="M270,138 L268,122" stroke-width="2"/>
-      <path d="M350,138 L348,122" stroke-width="2"/>
-      <!-- legs + 3-claw feet (same fix as the hero dragon: no legs = reads as a snake) -->
-      <path d="M148,152 C146,172 144,190 140,206" stroke-width="2"/>
-      <path d="M140,206 C136,211 132,215 129,220" stroke-width="1.5"/>
-      <path d="M140,206 C140,212 140,217 140,222" stroke-width="1.5"/>
-      <path d="M140,206 C144,211 148,215 151,220" stroke-width="1.5"/>
-      <path d="M308,152 C306,172 304,190 300,206" stroke-width="2"/>
-      <path d="M300,206 C296,211 292,215 289,220" stroke-width="1.5"/>
-      <path d="M300,206 C300,212 300,217 300,222" stroke-width="1.5"/>
-      <path d="M300,206 C304,211 308,215 311,220" stroke-width="1.5"/>
+  <svg class="bg-sprig bg-sprig--tr" viewBox="0 0 400 400" fill="none">
+    <path class="sp-stem" d="M340,370 C300,300 280,220 300,130 C308,95 322,65 345,40" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="sp-leaf">
+      <path d="M318,330 C295,325 275,310 268,290 C292,292 310,305 318,330 Z"/>
+      <path d="M330,300 C350,285 358,265 355,243 C338,257 328,277 330,300 Z"/>
+      <path d="M303,265 C280,258 264,242 259,222 C282,226 298,241 303,265 Z"/>
+      <path d="M310,232 C328,216 334,195 330,174 C314,189 306,210 310,232 Z"/>
+      <path d="M298,195 C276,187 262,170 258,150 C280,155 295,171 298,195 Z"/>
+      <path d="M312,160 C328,143 333,122 328,102 C313,118 306,139 312,160 Z"/>
+      <path d="M315,120 C295,111 283,94 280,74 C301,80 314,97 315,120 Z"/>
+      <path d="M330,85 C343,70 347,52 343,34 C330,48 324,67 330,85 Z"/>
     </g>
-    <g class="dcloud" stroke-width="2">
-      <path d="M75,205 C75,199 80,196 84,198 C86,193 93,193 95,198 C100,197 104,201 102,206 C104,210 101,215 96,214 C94,218 87,218 85,214 C80,215 76,211 78,207 Z"/>
-      <path d="M290,55 C290,50 294,47 298,49 C300,45 306,45 307,49 C311,48 314,52 312,56 C314,59 311,63 307,62 C305,65 300,65 298,62 C294,63 291,60 292,56 Z"/>
+    <g class="sp-berry">
+      <circle cx="285" cy="240" r="4"/>
+      <circle cx="292" cy="130" r="3.5"/>
+      <circle cx="336" cy="58" r="3"/>
+    </g>
+    <path class="sp-stem" d="M312,250 C280,235 255,210 245,180" stroke-width="2" stroke-linecap="round"/>
+    <g class="sp-leaf sp-leaf--lite">
+      <path d="M280,232 C262,230 247,220 240,206 C257,207 271,217 280,232 Z"/>
+      <path d="M258,205 C242,200 231,189 226,175 C242,178 253,189 258,205 Z"/>
+    </g>
+  </svg>
+  <svg class="bg-sprig bg-sprig--bl" viewBox="0 0 400 400" fill="none">
+    <path class="sp-stem" d="M340,370 C300,300 280,220 300,130 C308,95 322,65 345,40" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="sp-leaf">
+      <path d="M318,330 C295,325 275,310 268,290 C292,292 310,305 318,330 Z"/>
+      <path d="M330,300 C350,285 358,265 355,243 C338,257 328,277 330,300 Z"/>
+      <path d="M303,265 C280,258 264,242 259,222 C282,226 298,241 303,265 Z"/>
+      <path d="M310,232 C328,216 334,195 330,174 C314,189 306,210 310,232 Z"/>
+      <path d="M298,195 C276,187 262,170 258,150 C280,155 295,171 298,195 Z"/>
+      <path d="M312,160 C328,143 333,122 328,102 C313,118 306,139 312,160 Z"/>
+    </g>
+    <g class="sp-berry">
+      <circle cx="285" cy="240" r="4"/>
+      <circle cx="292" cy="130" r="3.5"/>
     </g>
   </svg>
 </div>
@@ -116,72 +111,14 @@
   </header>
 
   <section class="hero" aria-label="Introduction">
-    <svg class="hero-art" viewBox="0 0 560 240" aria-hidden="true">
-      <!-- dragon: redrawn (not traced) in a coiled/sitting pose after the
-           user's reference — 2 clawed front legs, curled tail, flame-tuft
-           neck mane, scale texture, flowing whisker streamers. Original
-           artwork remains Hermès' copyright; this is an independent redraw
-           using it only for proportions, not their file/pixels. -->
-      <g transform="translate(300,78) scale(0.44)">
-        <g fill="none" stroke="var(--dragon)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M70,330 C40,300 30,255 55,220 C40,195 45,160 75,140 C110,116 160,110 200,95 C235,82 265,70 285,55"/>
-        </g>
-        <g fill="none" stroke="var(--dragon)" stroke-width="15" stroke-linecap="round">
-          <path d="M70,330 C55,340 38,338 28,322 C18,306 20,286 34,275"/>
-        </g>
-        <g fill="none" stroke="var(--dragon)" stroke-width="19" stroke-linecap="round">
-          <path d="M130,235 C126,260 132,282 122,302"/>
-          <path d="M175,195 C172,222 180,246 168,268"/>
-        </g>
-        <g fill="none" stroke="var(--dragon)" stroke-width="8" stroke-linecap="round">
-          <path d="M122,302 C110,306 98,308 86,306"/>
-          <path d="M122,302 C118,312 114,321 108,329"/>
-          <path d="M122,302 C126,312 131,320 138,327"/>
-          <path d="M168,268 C156,272 144,274 132,272"/>
-          <path d="M168,268 C164,278 160,287 154,295"/>
-          <path d="M168,268 C172,278 177,286 184,293"/>
-        </g>
-        <!-- spine-ridge fins: the clearest visual cue that reads "dragon", not "worm" -->
-        <g fill="var(--dragon)">
-          <path d="M52,258 L40,240 L60,246 Z"/>
-          <path d="M46,198 L33,182 L54,186 Z"/>
-          <path d="M62,162 L52,143 L74,152 Z"/>
-          <path d="M100,122 L92,102 L114,112 Z"/>
-          <path d="M150,105 L146,84 L168,96 Z"/>
-          <path d="M200,88 L200,66 L220,80 Z"/>
-          <path d="M248,68 L253,47 L270,64 Z"/>
-        </g>
-        <path fill="var(--dragon)" stroke="var(--dragon)" stroke-width="2" stroke-linejoin="round" d="M278,45 C300,30 330,26 355,38 C372,46 382,60 380,76 C378,92 362,102 344,102 C320,102 296,90 280,68 C275,60 274,52 278,45 Z"/>
-        <path fill="none" stroke="var(--dragon)" stroke-width="6" stroke-linecap="round" d="M378,72 C384,76 386,82 383,88"/>
-        <circle cx="336" cy="62" r="4" fill="var(--gold)"/>
-        <g fill="none" stroke="var(--dragon)" stroke-width="6" stroke-linecap="round">
-          <path d="M300,42 C298,26 302,12 312,0"/>
-          <path d="M282,52 C276,38 276,22 284,8"/>
-          <path d="M266,66 C256,54 253,38 259,22"/>
-        </g>
-        <g fill="none" stroke="var(--seal)" stroke-width="5" stroke-linecap="round">
-          <path d="M300,72 C260,80 220,72 190,90 C160,108 150,140 165,165"/>
-          <path d="M292,80 C255,92 218,88 190,108 C165,126 158,155 172,178"/>
-        </g>
+    <svg class="hero-sprig" viewBox="0 0 200 120" aria-hidden="true" fill="none">
+      <path class="sp-stem" d="M20,110 C60,80 110,60 180,50" stroke-width="2" stroke-linecap="round"/>
+      <g class="sp-leaf">
+        <path d="M56,88 C48,74 48,60 56,48 C64,60 64,74 56,88 Z"/>
+        <path d="M96,70 C86,58 82,44 86,30 C96,40 100,55 96,70 Z"/>
+        <path d="M138,58 C130,46 128,32 132,20 C142,30 144,45 138,58 Z"/>
       </g>
-      <g transform="translate(552,150) scale(-0.22,0.22)" fill="none" stroke="var(--horse)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M318,20 L332,42"/>
-        <path d="M250,65 C270,55 300,45 332,42 C352,46 370,58 385,88"/>
-        <path d="M385,88 C380,98 372,105 362,110 C345,116 320,120 295,122"/>
-        <path d="M250,65 C200,55 150,55 110,65 C100,68 95,72 95,75"/>
-        <path d="M95,75 C85,90 85,105 92,118"/>
-        <path d="M295,122 C265,110 230,106 200,110 C170,114 145,110 115,118"/>
-        <path d="M292,110 C305,130 322,150 340,168 C348,176 352,184 355,192"/>
-        <path d="M272,112 C270,135 267,158 264,178 C263,184 262,188 262,192"/>
-        <path d="M96,116 C80,132 62,150 48,168 C43,175 40,182 38,190"/>
-        <path d="M112,120 C116,142 120,162 124,180 C126,186 127,190 128,193"/>
-        <path d="M93,77 C65,82 42,98 33,118 C28,130 32,142 42,150"/>
-        <path d="M90,80 C68,90 50,105 44,125"/>
-      </g>
-      <g transform="translate(552,150) scale(-0.22,0.22)" fill="none" stroke="var(--dragon)" stroke-width="5" stroke-linecap="round">
-        <path d="M300,48 C295,57 291,63 287,67"/>
-        <path d="M282,53 C278,61 274,67 270,71"/>
-      </g>
+      <g class="sp-berry"><circle cx="76" cy="72" r="3"/><circle cx="118" cy="58" r="2.5"/></g>
     </svg>
     <div class="kicker" data-en="HEAVEN & HUMANITY AS ONE · 天人合一" data-zh="天人合一 · 观象授时">HEAVEN & HUMANITY AS ONE · 天人合一</div>
     <h2 data-i18n-html data-en="Read the day the sky <b>wrote for you</b>" data-zh="读一读，今天的天象<b>为你写了什么</b>">Read the day the sky <b>wrote for you</b></h2>
@@ -239,6 +176,10 @@
         <div class="yj yi"><div class="t" data-en="DO" data-zh="宜">DO</div><p id="yiTxt">—</p></div>
         <div class="yj ji"><div class="t" data-en="AVOID" data-zh="忌">AVOID</div><p id="jiTxt">—</p></div>
       </div>
+      <div class="share-row">
+        <button class="btn" type="button" id="cardBtnMine" data-en="Save chart card ⤓" data-zh="保存生辰卡 ⤓">Save chart card ⤓</button>
+        <span class="share-tip" data-en="Downloads a PNG in this page's palette — nothing is uploaded." data-zh="生成本页配色的 PNG 图片保存到本机——不会上传任何数据。">Downloads a PNG in this page's palette — nothing is uploaded.</span>
+      </div>
     </div>
   </section>
 
@@ -276,6 +217,7 @@
         <div class="pull"><b id="pullScore">—</b><span id="pullTxt"></span></div>
         <div class="share-row">
           <button class="btn" type="button" id="shareBtn" data-en="Copy share link ⎘" data-zh="复制合盘链接 ⎘">Copy share link ⎘</button>
+          <button class="btn btn--seal" type="button" id="cardBtnSyn" data-en="Save synastry card ⤓" data-zh="保存合盘卡 ⤓">Save synastry card ⤓</button>
           <span class="share-tip" id="shareTip" data-en="Send it — they'll open this exact pairing, no account needed." data-zh="发给对方——点开就是这一对的合盘，无需注册。">Send it — they'll open this exact pairing, no account needed.</span>
         </div>
       </div>

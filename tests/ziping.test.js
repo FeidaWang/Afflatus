@@ -3,8 +3,9 @@ import { computeBazi } from '../src/lib/bazi.js';
 import {
   tenGodOfStem, HIDDEN_STEMS, nayinOf, kongWangOf, twelveStage, STAGE_ZH,
   seasonalStrength, SEASON_STAGE_ZH, stemRelations, branchRelations,
-  computeShensha, ziPingAnalysis,
+  computeShensha, ziPingAnalysis, tenGodDistribution, SHENSHA_EN, TEN_GOD_ZH,
 } from '../src/lib/ziping.js';
+import { SHENSHA_RARITY } from '../src/lib/shenshaRarity.js';
 
 // Real reference chart from a professional paishan app (测测), for a
 // 1992-02-23 23:26 birth: 壬申/壬寅/庚午/丙子. Every table in ziping.js was
@@ -136,6 +137,51 @@ describe('HIDDEN_STEMS (藏干) — vs published reference chart order', () => {
   it('寅 -> 甲丙戊 (month branch)', () => { expect(HIDDEN_STEMS[2]).toEqual([0, 2, 4]); });
   it('午 -> 丁己 (day branch)', () => { expect(HIDDEN_STEMS[6]).toEqual([3, 5]); });
   it('子 -> 癸 (hour branch)', () => { expect(HIDDEN_STEMS[0]).toEqual([9]); });
+});
+
+describe('tenGodDistribution (十神占比, V21 Phase 1)', () => {
+  const dist = tenGodDistribution(pillars);
+  it('fractions sum to 1', () => {
+    expect(dist.reduce((a, b) => a + b, 0)).toBeCloseTo(1, 10);
+  });
+  it('食神 is the largest share for the reference chart (two 壬 stems + hidden 壬)', () => {
+    const maxIdx = dist.indexOf(Math.max(...dist));
+    expect(TEN_GOD_ZH[maxIdx]).toBe('食神');
+  });
+  it('day master itself is excluded: 比肩 comes only from hidden 庚 in 申 (weight 1 of 9.1)', () => {
+    // stems 壬壬丙 = 3, hidden: 申1.8 寅1.8 午1.5 子1.0 = 6.1, total 9.1
+    expect(dist[0]).toBeCloseTo(1 / 9.1, 3);
+  });
+});
+
+describe('调候 (climate adjustment, V21 Phase 1)', () => {
+  it('寅 month (spring): no urgent adjustment', () => {
+    expect(ziPingAnalysis(pillars).tiaohou).toBeNull();
+  });
+  it('winter month (子月) wants fire', () => {
+    const c = computeBazi({ y: 1990, m: 12, d: 25, hour: 10 }); // mid-子月
+    const a = ziPingAnalysis([c.year, c.month, c.day, c.hour]);
+    expect(a.tiaohou && a.tiaohou.el).toBe(1);
+  });
+  it('summer month (午月) wants water', () => {
+    const c = computeBazi({ y: 1990, m: 6, d: 21, hour: 10 }); // mid-午月
+    const a = ziPingAnalysis([c.year, c.month, c.day, c.hour]);
+    expect(a.tiaohou && a.tiaohou.el).toBe(4);
+  });
+});
+
+describe('SHENSHA_RARITY (generated module, V21 Phase 1)', () => {
+  it('covers every shensha the engine can emit, freqs in (0,1)', () => {
+    for (const name of Object.keys(SHENSHA_EN)) {
+      expect(SHENSHA_RARITY[name], name).toBeTypeOf('number');
+      expect(SHENSHA_RARITY[name]).toBeGreaterThan(0);
+      expect(SHENSHA_RARITY[name]).toBeLessThan(1);
+    }
+  });
+  it('魁罡 frequency matches its theoretical rate (4 of 60 day pillars ≈ 6.7%)', () => {
+    expect(SHENSHA_RARITY['魁罡']).toBeGreaterThan(0.05);
+    expect(SHENSHA_RARITY['魁罡']).toBeLessThan(0.08);
+  });
 });
 
 describe('ziPingAnalysis (simplified 身强身弱/格局/用神 + score)', () => {

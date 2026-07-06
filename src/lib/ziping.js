@@ -282,6 +282,23 @@ export function computeShensha(pillars) {
   return tags;
 }
 
+// ---- 十神占比 (ten-god distribution) ---------------------------------------
+// Weighted share of each ten god across the chart: the three non-day-master
+// stems count 1.0 each; hidden stems count 1.0 (本气) / 0.5 (中气) / 0.3
+// (余气) — the standard "weighted canggan" convention paishan apps use for
+// their 十神占比 charts. Returns 10 fractions summing to 1 (TEN_GOD order).
+const HIDDEN_W = [1, 0.5, 0.3];
+export function tenGodDistribution(pillars) {
+  const dayStem = pillars[2].stem;
+  const w = new Array(10).fill(0);
+  pillars.forEach((p, i) => {
+    if (i !== 2) w[tenGodOfStem(dayStem, p.stem)] += 1; // day master itself is "self", not a ten god
+    HIDDEN_STEMS[p.branch].forEach((hs, k) => { w[tenGodOfStem(dayStem, hs)] += HIDDEN_W[k]; });
+  });
+  const total = w.reduce((a, b) => a + b, 0) || 1;
+  return w.map((x) => x / total);
+}
+
 // ---- simplified 身强身弱/格局/用神 (扶抑法) + entertainment balance score ---
 // This is a SIMPLIFIED "support vs. drain" (扶抑) read, the most basic of
 // several classical methods for judging 身强身弱 — it does not implement
@@ -332,10 +349,21 @@ export function ziPingAnalysis(pillars) {
 
   const score = Math.max(0, Math.min(100, Math.round(50 + net * 8)));
 
+  // 调候 (climate adjustment), simplified to the two unambiguous cases:
+  // winter charts (亥子丑月) are cold and welcome fire; summer charts
+  // (巳午未月) are hot/dry and welcome water. Spring/autumn are treated as
+  // climatically mild — no urgent adjustment (a full 调候 method has
+  // per-month-per-day-master tables; that depth is out of scope here and
+  // the page says so).
+  let tiaohou = null;
+  if ([11, 0, 1].includes(monthBranch)) tiaohou = { el: 1, zh: '生于冬月，命局偏寒，调候宜带火气', en: 'Born in a winter month — the chart runs cold; a touch of Fire warms it (climate adjustment)' };
+  else if ([5, 6, 7].includes(monthBranch)) tiaohou = { el: 4, zh: '生于夏月，命局偏燥热，调候宜带水气', en: 'Born in a summer month — the chart runs hot; a touch of Water tempers it (climate adjustment)' };
+
   return {
     strength, // 'strong' | 'weak' | 'balanced'
     net, score,
     pattern,
+    tiaohou, // null when no urgent seasonal adjustment
     favorable: favorable.map((e) => ({ el: e, zh: ELEMENTS_ZH[e], en: ELEMENTS_EN[e] })),
     unfavorable: unfavorable.map((e) => ({ el: e, zh: ELEMENTS_ZH[e], en: ELEMENTS_EN[e] })),
   };
