@@ -1,12 +1,15 @@
 {
-  "updated": "2026-07-04",
+  "updated": "2026-07-06",
   "version": 1,
-  "day": 0,
+  "day": 1,
   "season": 1,
-  "lastRunDate": null,
+  "lastRunDate": "2026-07-06",
   "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
   "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
-  "bench": { "spyPct": 0, "smhPct": 0 },
+  "bench": {
+    "spyPct": 0,
+    "smhPct": 0
+  },
   "models": {
     "A": {
       "promptVersion": "A-v1",
@@ -14,12 +17,29 @@
       "cash": 10000,
       "equity": 10000,
       "dayStartEquity": 10000,
-      "equityHistory": [{ "day": 0, "equity": 10000 }],
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        },
+        {
+          "day": 1,
+          "equity": 10000
+        }
+      ],
       "positions": [],
       "trades": [],
       "rejections": [],
-      "metrics": { "cumPct": 0, "maxDD": 0, "hitRate": null, "exposure": 0 },
-      "review": { "zh": "尚未开仓——V3 刚上线，等待 V4 定时任务首次运行。", "en": "No trades yet — V3 just shipped, awaiting V4's first scheduled run." }
+      "metrics": {
+        "cumPct": 0,
+        "maxDD": 0,
+        "hitRate": null,
+        "exposure": 0
+      },
+      "review": {
+        "zh": "第一次定时运行(Day 1)。本次尝试抓取 feida.au/api/quote 的 30 个标的报价全部失败——沙箱网络代理和 Chrome 扩展均不可用，无法获得任何有效 refPx。按规则不得编造报价，本次不下单，空仓观望。新闻面：芯片股今年上半年大涨(费城半导体指数年内+47%)后 6 月底至 7 月初获利回吐，英伟达/博通小幅走弱；美光 Q3 业绩超预期、市值一度超越 Meta；英伟达仍是全球市值龙头并规划万亿级 AI 基建需求。下一窗口将重试报价抓取。",
+        "en": "Day 1, first scheduled run. Price fetch to feida.au/api/quote failed for all 30 symbols — both the sandbox network proxy and Chrome extension were unreachable, so no valid refPx existed for any symbol. Per the hard rule against fabricating quotes, no orders proposed this run; staying in cash. News context: chip stocks up sharply YTD (Philly Semi Index +47%) but pulling back late June/early July on profit-taking; Micron's strong Q3 pushed its market cap past Meta; Nvidia remains the market-cap leader with large AI infrastructure buildout plans. Will retry price fetch next window."
+      }
     },
     "B": {
       "promptVersion": "B-v1",
@@ -27,12 +47,25 @@
       "cash": 10000,
       "equity": 10000,
       "dayStartEquity": 10000,
-      "equityHistory": [{ "day": 0, "equity": 10000 }],
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        }
+      ],
       "positions": [],
       "trades": [],
       "rejections": [],
-      "metrics": { "cumPct": 0, "maxDD": 0, "hitRate": null, "exposure": 0 },
-      "review": { "zh": "尚未开仓——V3 刚上线，等待 V4 定时任务首次运行。", "en": "No trades yet — V3 just shipped, awaiting V4's first scheduled run." }
+      "metrics": {
+        "cumPct": 0,
+        "maxDD": 0,
+        "hitRate": null,
+        "exposure": 0
+      },
+      "review": {
+        "zh": "尚未开仓——V3 刚上线，等待 V4 定时任务首次运行。",
+        "en": "No trades yet — V3 just shipped, awaiting V4's first scheduled run."
+      }
     }
   }
 }
