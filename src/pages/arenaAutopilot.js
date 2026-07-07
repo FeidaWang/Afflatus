@@ -65,13 +65,16 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
     const smh = benchmarkEndpoints(B.equityHistory, B.startEquity, bench.smhPct);
     const domain = equityDomain([A.equityHistory, B.equityHistory, spy, smh]);
     // horizontal gridlines (behind the data) + $ labels (drawn last, on top,
-    // so a benchmark/equity line crossing the same row never paints over the text)
+    // on an opaque backing plate — text alone has gaps between glyphs that a
+    // dashed benchmark line crossing the same row would otherwise show through)
     let grid = '', labels = '';
     for (let i = 0; i <= 3; i++) {
       const y = pad + (i / 3) * (H - pad * 2);
       const price = domain.maxEq - (i / 3) * (domain.maxEq - domain.minEq);
+      const txt = fmtUsd(price);
+      const tw = txt.length * 5.6 + 6;
       grid += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/>`;
-      labels += `<text x="${W - 4}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" class="ap-axis">${fmtUsd(price)}</text>`;
+      labels += `<rect x="${(W - 4 - tw).toFixed(1)}" y="${(y - 6.5).toFixed(1)}" width="${tw.toFixed(1)}" height="13" class="ap-axis-bg"/><text x="${W - 4}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" class="ap-axis">${txt}</text>`;
     }
     let s = grid;
     s += `<g class="ap-line-spy">${buildPath(spy, domain, W, H, pad)}</g>`;
