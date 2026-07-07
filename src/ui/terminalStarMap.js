@@ -4,13 +4,12 @@
  * field, nebulae, Earth->Alphard route pulse, radar sweep, glowing labels.
  * Login form and toggle behavior unchanged.
  *
- * 2026-07-08: the login-screen ship hologram used to be a WebGL model
- * (scene/shipHologram.js, dynamically imported so three stayed code-split
- * out of the main bundle). Replaced with a static wireframe image + a CSS
- * rotateY/rotateX oscillation (.afpc-holo-canvas keyframes in styles.css) —
- * no more three.js dependency for this panel. The animation is pure CSS and
- * pauses for free whenever `.notebook-login.starmap-hidden{display:none}`
- * takes the element out of the render tree, so no JS play/pause is needed.
+ * The login-screen ship hologram is a WebGL model (scene/shipHologram.js,
+ * dynamically imported so three stays code-split out of the main bundle).
+ * 2026-07-08: briefly swapped to a static image + CSS rotation, reverted
+ * back to WebGL per user request (see shipHologram.js / carrierHull.js for
+ * the current default hull, a hand-built approximation of the user's
+ * reference image).
  */
 import { createStarMapScene } from '../scene/starMapScene.js';
 
@@ -25,11 +24,29 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     if (active) return getLang() === 'zh' ? '登录' : 'LOGIN';
     return getLang() === 'zh' ? '星图' : 'STAR MAP';
   };
+
+  // Ship hologram: lazily loaded (code-split, three.js only fetched once the
+  // login panel is actually shown) and paused whenever the login panel isn't
+  // visible, so it never renders off-screen.
+  let holoCanvasRef = null, holoUnit = null, holoLoading = false;
   const setMode = active => {
     panel.classList.toggle('active', active);
     login?.classList.toggle('starmap-hidden', active);
     toggle.textContent = modeLabel(active);
     toggle.dataset.mode = active ? 'map' : 'login';
+    if (!active) {
+      if (holoUnit) holoUnit.setActive(true);
+      else if (holoCanvasRef && !holoLoading) {
+        holoLoading = true;
+        import('../scene/shipHologram.js').then(({ createShipHologram }) => {
+          holoLoading = false;
+          holoUnit = createShipHologram(holoCanvasRef);
+          holoUnit?.setActive(true);
+        });
+      }
+    } else {
+      holoUnit?.setActive(false);
+    }
   };
 
   // Build the PC once as a macOS-style window inside a fresh .afpc container
@@ -52,10 +69,9 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
 
     const body = make('div', 'afpc-body');
     const holo = make('div', 'afpc-holo');
-    const holoImg = make('img', 'afpc-holo-canvas');
-    holoImg.src = '/assets/hud/ship-hologram.jpeg';
-    holoImg.alt = 'Condor mothership wireframe hologram';
-    holo.appendChild(holoImg);
+    const holoCanvas = make('canvas', 'afpc-holo-canvas');
+    holoCanvasRef = holoCanvas;
+    holo.appendChild(holoCanvas);
     const holoLabel = make('div', 'afpc-holo-label');
     holoLabel.textContent = getLang() === 'zh' ? '执法者 · 母舰' : 'CONDOR · MOTHERSHIP';
     holo.appendChild(holoLabel);
