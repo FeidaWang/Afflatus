@@ -41,8 +41,8 @@
         "exposure": 0
       },
       "review": {
-        "zh": "第二次定时运行(Day 2)。feida.au/api/quote 再次被沙箱代理拒绝(blocked-by-allowlist)，Chrome 扩展也未连接，30 个标的均无有效 refPx，按规则不得编造报价，继续空仓观望，与上次(Day 1)决策一致。新闻面：费城半导体指数年内+47%，AI 芯片股本周回暖——AMD、Micron 涨势强劲(Micron 年内+240%)，英伟达维持5万亿美元市值龙头地位；标普与纳指周一走高，科技七雄多数上涨。下次窗口将再次尝试抓取报价，若持续失败需考虑是否需要人工检查该接口。",
-        "en": "Day 2 run. feida.au/api/quote was again blocked by the sandbox proxy (blocked-by-allowlist) and no Chrome browser was connected, so no valid refPx exists for any of the 30 symbols. Per the no-fabrication rule, proposing zero orders again, consistent with Day 1. Context: chip stocks rebounding this week (Micron +240% YTD, AMD near record highs), Nvidia still ~$5T market cap leader; S&P/Nasdaq rose Monday on broad megacap-tech strength. Will retry the quote fetch next window; recurring failure may need a manual endpoint check."
+        "zh": "第三次定时运行(Day 3)。feida.au/api/quote 连续第三次被沙箱代理拒绝(blocked-by-allowlist)，Chrome 扩展仍未连接，30 个标的依旧无有效 refPx，按不编造报价的红线继续空仓观望，与 Day 1、Day 2 一致。本次调整：与其反复空等，建议下次运行前人工核实该接口的允许清单配置，否则该策略窗口将持续无法产生任何实际决策。新闻面：AI 芯片股延续强势，Micron 年内涨约240%(近一年近7倍)，AMD 年内约+114%跑赢英伟达，英伟达仍占AI加速器约81%份额；7月6日周一三大指数齐涨（标普+0.72%、纳指+1.12%），科技板块领涨，但市场对估值泡沫的担忧仍存(Michael Burry等)。",
+        "en": "Day 3 run. feida.au/api/quote was blocked (blocked-by-allowlist) for a third consecutive run, and no Chrome browser is connected, so no valid refPx exists for any of the 30 symbols. Proposing zero orders again per the no-fabrication rule. One concrete adjustment: flagging that the quote endpoint's allowlist config needs a manual check, since this decision window has now produced no real trades three times running. Context: AI chip names remain strong (Micron +240% YTD), AMD +114% YTD outpacing Nvidia; S&P/Nasdaq both rose Monday July 6 on broad tech strength, though bubble concerns persist."
       }
     },
     "B": {
