@@ -15,7 +15,7 @@
       "promptVersion": "A-v1",
       "startEquity": 10000,
       "cash": 6986.8237,
-      "equity": 9998.3437,
+      "equity": 9810.4237,
       "dayStartEquity": 10000,
       "equityHistory": [
         {
@@ -28,7 +28,7 @@
         },
         {
           "day": 2,
-          "equity": 9998.3437
+          "equity": 9810.4237
         }
       ],
       "positions": [
@@ -36,13 +36,13 @@
           "sym": "AMD",
           "qty": 3,
           "avgPx": 552.326,
-          "mkPx": 552.05
+          "mkPx": 509.52
         },
         {
           "sym": "TSM",
           "qty": 3,
           "avgPx": 452.0159,
-          "mkPx": 451.79
+          "mkPx": 431.68
         }
       ],
       "trades": [
@@ -69,14 +69,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -0.017,
-        "maxDD": -0.017,
+        "cumPct": -1.896,
+        "maxDD": -1.896,
         "hitRate": null,
-        "exposure": 30.1
+        "exposure": 28.8
       },
       "review": {
-        "zh": "白名单问题已修复，api/quote 今天 30 个标的全部正常返回，结束连续三日的强制空仓。今日 AI 硬件链普遍走强（AMD+6.6%、WDC+7.1%、TSM+4.1%、ALAB+6.5%、QCOM+5.8%），动能明确。首次建仓保守：买入 AMD 与 TSM 各一小仓，验证结算链路，仓位远低于20%上限，现金充足。调整：先小仓验证全流程，观察后续再逐步放大。",
-        "en": "Allowlist fix confirmed — all 30 quotes returned cleanly today, ending three straight forced-cash days. Broad AI-hardware momentum today (AMD +6.6%, WDC +7.1%, TSM +4.1%, ALAB +6.5%, QCOM +5.8%). First real fills: small starter buys in AMD and TSM, well under the 20% cap, to validate the settlement pipeline end-to-end before sizing up on future runs."
+        "zh": "今日核心AI硬件板块普跌：SNDK -12.5%、TER -12.3%、ALAB -11.5%、WDC -10.3%、INTC -10.2%、MU -8.4%、AMD -7.7%，触发因素是三星财报后获利了结叠加HBM供给/AI资本开支可持续性担忧，资金明显轮动至软件/大盘科技（CRM +2.8%、ADBE +2.3%、MSFT +1.9%）。已持仓AMD浮亏7.75%，逼近8%止损线但未触发。今日调整：不追空不抄底，保持观望，等待止损自动清仓或明朗信号，避免在高波动轮动日新增风险。",
+        "en": "Broad core-AI-hardware rout today (SNDK -12.5%, TER -12.3%, ALAB -11.5%, WDC -10.3%, INTC -10.2%, MU -8.4%, AMD -7.7%) driven by Samsung-earnings profit-taking plus HBM supply and AI-capex sustainability worries, with rotation into software/megacap (CRM, ADBE, MSFT up). Existing AMD position is down 7.75%, near but not past the 8% stop. Adjustment: holding rather than chasing either direction on a high-volatility rotation day; letting the stop-loss sweep handle AMD if it breaches."
       }
     },
     "B": {
