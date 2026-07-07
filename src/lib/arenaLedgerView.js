@@ -46,12 +46,6 @@ export function equityDomain(seriesList) {
   if (!isFinite(minDay)) { minDay = 0; maxDay = 1; minEq = 0; maxEq = 1; }
   if (minDay === maxDay) maxDay = minDay + 1;
   if (minEq === maxEq) { minEq -= Math.max(1, Math.abs(minEq) * 0.02); maxEq += Math.max(1, Math.abs(maxEq) * 0.02); }
-  // Floor the visible range at ~1% of the midpoint value so ordinary
-  // fee/slippage-sized noise (a few dollars on a $10k book) doesn't get
-  // stretched into a dramatic-looking cliff by the auto-scale.
-  const mid = (minEq + maxEq) / 2;
-  const minRange = Math.max(1, Math.abs(mid) * 0.01);
-  if (maxEq - minEq < minRange) { minEq = mid - minRange / 2; maxEq = mid + minRange / 2; }
   return { minDay, maxDay, minEq, maxEq };
 }
 

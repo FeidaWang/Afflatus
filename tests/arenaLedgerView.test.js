@@ -48,13 +48,6 @@ describe('equityDomain', () => {
     expect(d.minEq).toBeLessThan(10000);
     expect(d.maxEq).toBeGreaterThan(10000);
   });
-  it('floors a tiny real fluctuation to a minimum visible range instead of exaggerating it', () => {
-    const a = [{ day: 0, equity: 10000 }, { day: 2, equity: 9998.34 }];
-    const d = equityDomain([a]);
-    expect(d.maxEq - d.minEq).toBeGreaterThanOrEqual(99);
-    expect(d.minEq).toBeLessThanOrEqual(9998.34);
-    expect(d.maxEq).toBeGreaterThanOrEqual(10000);
-  });
 });
 
 describe('scalePoint', () => {
