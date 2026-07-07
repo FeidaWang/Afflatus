@@ -275,6 +275,7 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ta-row span{color:#c6cfea;flex:1;display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
 .ta-row b{font-weight:700}
 .ta-row i{font-style:normal;font:700 10.5px/1 var(--font-hud);letter-spacing:.04em;min-width:52px;text-align:right}
+.ta-row .ma-n{font:500 12.5px/1.5 var(--font-mono);letter-spacing:0;min-width:44px;text-align:left;color:#c6cfea}
 .ta-row.res{border-left-color:var(--down)} .ta-row.res b{color:var(--down)}
 .ta-row.sup{border-left-color:var(--up)} .ta-row.sup b{color:var(--up)}
 .ta-row.round{border-left-color:#cfd6f2} .ta-row.round b{color:#eaf1ff}
