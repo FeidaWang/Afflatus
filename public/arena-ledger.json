@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-06",
+  "updated": "2026-07-07",
   "version": 1,
-  "day": 1,
+  "day": 2,
   "season": 1,
-  "lastRunDate": "2026-07-06",
+  "lastRunDate": "2026-07-07",
   "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
   "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
   "bench": {
@@ -25,6 +25,10 @@
         {
           "day": 1,
           "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 10000
         }
       ],
       "positions": [],
@@ -37,8 +41,8 @@
         "exposure": 0
       },
       "review": {
-        "zh": "第一次定时运行(Day 1)。本次尝试抓取 feida.au/api/quote 的 30 个标的报价全部失败——沙箱网络代理和 Chrome 扩展均不可用，无法获得任何有效 refPx。按规则不得编造报价，本次不下单，空仓观望。新闻面：芯片股今年上半年大涨(费城半导体指数年内+47%)后 6 月底至 7 月初获利回吐，英伟达/博通小幅走弱；美光 Q3 业绩超预期、市值一度超越 Meta；英伟达仍是全球市值龙头并规划万亿级 AI 基建需求。下一窗口将重试报价抓取。",
-        "en": "Day 1, first scheduled run. Price fetch to feida.au/api/quote failed for all 30 symbols — both the sandbox network proxy and Chrome extension were unreachable, so no valid refPx existed for any symbol. Per the hard rule against fabricating quotes, no orders proposed this run; staying in cash. News context: chip stocks up sharply YTD (Philly Semi Index +47%) but pulling back late June/early July on profit-taking; Micron's strong Q3 pushed its market cap past Meta; Nvidia remains the market-cap leader with large AI infrastructure buildout plans. Will retry price fetch next window."
+        "zh": "第二次定时运行(Day 2)。feida.au/api/quote 再次被沙箱代理拒绝(blocked-by-allowlist)，Chrome 扩展也未连接，30 个标的均无有效 refPx，按规则不得编造报价，继续空仓观望，与上次(Day 1)决策一致。新闻面：费城半导体指数年内+47%，AI 芯片股本周回暖——AMD、Micron 涨势强劲(Micron 年内+240%)，英伟达维持5万亿美元市值龙头地位；标普与纳指周一走高，科技七雄多数上涨。下次窗口将再次尝试抓取报价，若持续失败需考虑是否需要人工检查该接口。",
+        "en": "Day 2 run. feida.au/api/quote was again blocked by the sandbox proxy (blocked-by-allowlist) and no Chrome browser was connected, so no valid refPx exists for any of the 30 symbols. Per the no-fabrication rule, proposing zero orders again, consistent with Day 1. Context: chip stocks rebounding this week (Micron +240% YTD, AMD near record highs), Nvidia still ~$5T market cap leader; S&P/Nasdaq rose Monday on broad megacap-tech strength. Will retry the quote fetch next window; recurring failure may need a manual endpoint check."
       }
     },
     "B": {
