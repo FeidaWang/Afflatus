@@ -1,21 +1,29 @@
 /**
- * Three.js holographic projection of the wedge/stealth "Enforcer" — same shape
- * as the full PBR model (capitalShip3D): flat triangular wedge bow, raised
- * command spine + amber canopy, off-centre "01" bow turret, broad swept armoured
- * wings, and a multi-engine rear. Translucent cyan fills + bright wireframe
- * edges with always-on engine plumes; engines/beam follow the page state
- * (cruise / combat / warp / main-gun firing).
+ * Three.js holographic projection of the login-screen ship. Default hull is
+ * "Wraith" (carrierHull.js, 2026-07-08): a hand-built approximation of the
+ * user's reference wireframe image (assets/hud/ship-hologram.jpeg) — wide
+ * flat hull, forked twin-blade bow, stepped tower + spire, swept wings. The
+ * previous wedge/stealth "Enforcer" hull (flat triangular bow, amber canopy,
+ * multi-engine rear) is still available via ?ship=wedge for comparison/
+ * rollback. ?ship=odin keeps the earlier reference-rebuild blade hull.
+ * Translucent cyan fills + bright wireframe edges with always-on engine
+ * plumes; engines/beam follow the page state (cruise / combat / warp /
+ * main-gun firing) regardless of which hull is active.
  *
  * Fixed-size render buffer scaled by CSS so it never blanks on a 0-width canvas.
  */
 import * as THREE from 'three';
 import { createOdinHull } from './odinHull.js';
+import { createCarrierHull } from './carrierHull.js';
 
-// Opt-in flag (ROADMAP §4 V15): mirrors capitalShip3D.js's ?ship=odin gate —
-// same reasoning, same default-unchanged guarantee (see that file's header
-// comment for why this stays preview-only).
-function odinHullEnabled() {
-  try { return /[?&]ship=odin\b/.test(location.search); } catch (e) { return false; }
+// ?ship=odin / ?ship=wedge opt out of the new default "Wraith" carrier hull
+// (see file header). Same query-param convention as capitalShip3D.js's
+// pre-existing ?ship=odin gate.
+function shipVariant() {
+  try {
+    const m = /[?&]ship=(odin|wedge)\b/.exec(location.search);
+    return m ? m[1] : 'carrier';
+  } catch (e) { return 'carrier'; }
 }
 
 export function createShipHologram(canvas) {
@@ -49,19 +57,13 @@ export function createShipHologram(canvas) {
 
   const beamMat = new THREE.MeshBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
   const plumeMat = new THREE.MeshBasicMaterial({ color: 0x7fe0ff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
-  const useOdin = odinHullEnabled();
+  const variant = shipVariant();
   let muzzle, beam, plumes = [];
 
-  if (useOdin) {
-    // ===== Odin-reference blade hull (V15, preview-only via ?ship=odin) =====
-    // 'wire' detail skips the fine greeble scatter — the hologram is meant to
-    // read as a clean silhouette, matching how this file already only ever
-    // built a sparse subset of capitalShip3D.js's full detail.
-    const info = createOdinHull(THREE, {
-      add: (geo, mat, t, r, s) => part(geo, t, s, r, mat), // odinHull.js signature is (t,r,s); part()'s is (t,s,r,mat)
-      mats: { hull: fillMat, arm: fillMat, dark: fillMat, trim: fillMat, glass: amberMat, red: glowMat, blue: glowMat },
-      detail: 'wire',
-    });
+  // Shared attach logic for the two "loft hull" variants (odin, carrier) —
+  // both expose the same { muzzleAnchor, engineMounts } shape from their
+  // createXHull() info object.
+  function attachMuzzleBeamPlumes(info) {
     muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 9), glowMat.clone());
     muzzle.position.set(info.muzzleAnchor.x, info.muzzleAnchor.y, info.muzzleAnchor.z); ship.add(muzzle);
     beam = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.13, 3.4, 10), beamMat);
@@ -73,8 +75,31 @@ export function createShipHologram(canvas) {
       plume.rotation.x = -Math.PI / 2; plume.position.set(em.x, em.y, em.z - 1.0);
       ship.add(plume); plumes.push(plume);
     }
+  }
+
+  if (variant === 'odin') {
+    // ===== Odin-reference blade hull (V15, preview-only via ?ship=odin) =====
+    // 'wire' detail skips the fine greeble scatter — the hologram is meant to
+    // read as a clean silhouette, matching how this file already only ever
+    // built a sparse subset of capitalShip3D.js's full detail.
+    const info = createOdinHull(THREE, {
+      add: (geo, mat, t, r, s) => part(geo, t, s, r, mat), // odinHull.js signature is (t,r,s); part()'s is (t,s,r,mat)
+      mats: { hull: fillMat, arm: fillMat, dark: fillMat, trim: fillMat, glass: amberMat, red: glowMat, blue: glowMat },
+      detail: 'wire',
+    });
+    attachMuzzleBeamPlumes(info);
+  } else if (variant === 'carrier') {
+    // ===== "Wraith" carrier hull (default, 2026-07-08) — approximation of =====
+    // the reference wireframe image, see carrierHull.js header for scope notes.
+    const info = createCarrierHull(THREE, {
+      add: (geo, mat, t, r, s) => part(geo, t, s, r, mat), // carrierHull.js signature is (t,r,s); part()'s is (t,s,r,mat)
+      mats: { hull: fillMat, arm: fillMat, dark: fillMat, trim: fillMat, glass: amberMat, red: glowMat, blue: glowMat },
+      detail: 'wire',
+    });
+    attachMuzzleBeamPlumes(info);
   } else {
 
+  // ===== legacy wedge/stealth "Enforcer" hull (?ship=wedge) =====
   // flat triangular wedge bow
   part(new THREE.ConeGeometry(1.05, 3.4, 4), [0, -0.02, 2.3], [1, 0.32, 1], [Math.PI / 2, 0, Math.PI / 4]);
   part(new THREE.BoxGeometry(1.5, 0.34, 1.6), [0, 0.04, 1.5]);
@@ -113,7 +138,7 @@ export function createShipHologram(canvas) {
   for (const sx of [-1, 1]) part(new THREE.BoxGeometry(0.06, 0.7, 0.7), [sx * 0.9, 0.3, -2.0], null, [0.2, 0, sx * 0.4]);
   part(new THREE.CylinderGeometry(0.015, 0.02, 1.2, 6), [0.15, 0.9, -1.9]);   // antenna mast
 
-  } // end else (default wedge hull)
+  } // end else (?ship=wedge legacy hull)
 
   ship.scale.setScalar(0.6);
   ship.rotation.x = 0.36;
