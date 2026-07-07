@@ -312,6 +312,7 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-chart{width:100%;height:240px;display:block}
 .ap-grid{stroke:rgba(120,150,210,.13);stroke-width:1}
 .ap-axis{fill:var(--muted);font:9px var(--font-mono)}
+.ap-axis-bg{fill:var(--panel-2)}
 .ap-line{fill:none;stroke-width:2}
 .ap-line-a{stroke:var(--acid);color:var(--acid)}
 .ap-line-b{stroke:var(--cyan);color:var(--cyan)}
