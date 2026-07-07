@@ -64,17 +64,21 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
     const spy = benchmarkEndpoints(A.equityHistory, A.startEquity, bench.spyPct);
     const smh = benchmarkEndpoints(B.equityHistory, B.startEquity, bench.smhPct);
     const domain = equityDomain([A.equityHistory, B.equityHistory, spy, smh]);
-    let s = '';
-    // horizontal gridlines + $ labels
+    // horizontal gridlines (behind the data) + $ labels (drawn last, on top,
+    // so a benchmark/equity line crossing the same row never paints over the text)
+    let grid = '', labels = '';
     for (let i = 0; i <= 3; i++) {
       const y = pad + (i / 3) * (H - pad * 2);
       const price = domain.maxEq - (i / 3) * (domain.maxEq - domain.minEq);
-      s += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/><text x="${W - 4}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" class="ap-axis">${fmtUsd(price)}</text>`;
+      grid += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/>`;
+      labels += `<text x="${W - 4}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" class="ap-axis">${fmtUsd(price)}</text>`;
     }
+    let s = grid;
     s += `<g class="ap-line-spy">${buildPath(spy, domain, W, H, pad)}</g>`;
     s += `<g class="ap-line-smh">${buildPath(smh, domain, W, H, pad)}</g>`;
     s += `<g class="ap-line-b">${buildPath(B.equityHistory, domain, W, H, pad)}</g>`;
     s += `<g class="ap-line-a">${buildPath(A.equityHistory, domain, W, H, pad)}</g>`;
+    s += labels;
     $('apChart').setAttribute('viewBox', `0 0 ${W} ${H}`);
     $('apChart').innerHTML = s;
     $('apLegend').innerHTML = [
