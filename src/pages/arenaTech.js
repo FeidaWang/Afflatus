@@ -254,7 +254,7 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
       if (m.value == null) return `<div class="ta-row"><span>MA${m.n}</span><b>—</b><i class="mut">${T('not enough data', '数据不足')}</i></div>`;
       const pos = m.pricePos === 'above';
       const slope = m.slope === 'up' ? '↗' : m.slope === 'down' ? '↘' : '→';
-      return `<div class="ta-row ${pos ? 'sup' : 'res'}"><span>MA${m.n} <i class="mut">${T(...label[m.n])}</i></span><b>$${fmt(m.value)} ${slope}</b><i class="${pos ? 'up' : 'down'}">${pos ? T('above', '价上') : T('below', '价下')} ${fmt(Math.abs(m.distPct), 1)}%</i></div>`;
+      return `<div class="ta-row ${pos ? 'sup' : 'res'}"><span><i class="ma-n">MA${m.n}</i><i class="mut">${T(...label[m.n])}</i></span><b>$${fmt(m.value)} ${slope}</b><i class="${pos ? 'up' : 'down'}">${pos ? T('above', '价上') : T('below', '价下')} ${fmt(Math.abs(m.distPct), 1)}%</i></div>`;
     }).join('');
     const vals = a.ma.filter((m) => m.value != null);
     const stacked = vals.length >= 3 && vals.every((m, i) => i === 0 || m.value <= vals[i - 1].value * 1.0001);
