@@ -43,12 +43,19 @@ export function createShipHologram(canvas) {
   const amberMat = new THREE.MeshBasicMaterial({ color: 0xcc7a22, transparent: true, opacity: 0.32 });
   const edgeMat = new THREE.LineBasicMaterial({ color: 0x9af0ff, transparent: true, opacity: 0.85 });
   const glowMat = new THREE.MeshBasicMaterial({ color: 0xcdf6ff, transparent: true, opacity: 0.95 });
+  // Cheap bloom approximation (no postprocessing pipeline available/tested
+  // here): a second, slightly larger, faint additive copy of each part's
+  // edge lines bleeds outward from the crisp edge, reading as a soft glow.
+  const glowEdgeMat = new THREE.LineBasicMaterial({ color: 0xbdf6ff, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false });
 
   const ship = new THREE.Group();
   const part = (geo, t, s, r, mat) => {
     const g = new THREE.Group();
     g.add(new THREE.Mesh(geo, mat || fillMat));
     g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), edgeMat));
+    const halo = new THREE.LineSegments(new THREE.EdgesGeometry(geo), glowEdgeMat);
+    halo.scale.setScalar(1.09);
+    g.add(halo);
     if (t) g.position.set(t[0], t[1], t[2]);
     if (s) g.scale.set(s[0], s[1], s[2]);
     if (r) g.rotation.set(r[0], r[1], r[2]);

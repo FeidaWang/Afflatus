@@ -105,6 +105,23 @@ describe('createCarrierHull — reference silhouette (wide flat hull, forked bow
     expect(wire.info.prongTips.length).toBe(fullD.info.prongTips.length);
   });
 
+  it('exposes 8 turret mounts (3 multi-turreted platforms x2 + 2 single turrets) across the upper decks', () => {
+    const { info } = buildForBBox('full');
+    expect(info.turretMounts.length).toBe(8);
+    for (const t of info.turretMounts) {
+      expect(t.y).toBeGreaterThan(0); // sit on the dorsal (upper) deck, not the belly
+      expect(t.z).toBeGreaterThan(-6.5);
+      expect(t.z).toBeLessThan(3);
+    }
+  });
+
+  it('exposes a ventral bay mount below the hull centreline, distinct from the ventral cylinder', () => {
+    const { info } = buildForBBox('full');
+    expect(info.bayMount).toBeDefined();
+    expect(info.bayMount.y).toBeLessThan(0); // ventral (below the hull's own centreline)
+    expect(Number.isFinite(info.bayMount.x) && Number.isFinite(info.bayMount.z)).toBe(true);
+  });
+
   it('never produces NaN/Infinity coordinates', () => {
     const { box } = buildForBBox('full');
     for (const v of [box.min.x, box.min.y, box.min.z, box.max.x, box.max.y, box.max.z]) {
