@@ -69,7 +69,7 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
     for (let i = 0; i <= 3; i++) {
       const y = pad + (i / 3) * (H - pad * 2);
       const price = domain.maxEq - (i / 3) * (domain.maxEq - domain.minEq);
-      s += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/><text x="${(W - pad + 4)}" y="${(y + 3.5).toFixed(1)}" class="ap-axis">${fmtUsd(price)}</text>`;
+      s += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/><text x="${W - 4}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" class="ap-axis">${fmtUsd(price)}</text>`;
     }
     s += `<g class="ap-line-spy">${buildPath(spy, domain, W, H, pad)}</g>`;
     s += `<g class="ap-line-smh">${buildPath(smh, domain, W, H, pad)}</g>`;

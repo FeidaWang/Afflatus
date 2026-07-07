@@ -313,10 +313,10 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-grid{stroke:rgba(120,150,210,.13);stroke-width:1}
 .ap-axis{fill:var(--muted);font:9px var(--font-mono)}
 .ap-line{fill:none;stroke-width:2}
-.ap-line-a{stroke:var(--acid)}
-.ap-line-b{stroke:var(--cyan)}
-.ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.4}
-.ap-line-smh{stroke:var(--magenta);stroke-dasharray:2 4;stroke-width:1.4}
+.ap-line-a{stroke:var(--acid);color:var(--acid)}
+.ap-line-b{stroke:var(--cyan);color:var(--cyan)}
+.ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.4;color:#ffd166}
+.ap-line-smh{stroke:var(--magenta);stroke-dasharray:2 4;stroke-width:1.4;color:var(--magenta)}
 .ap-dot{stroke:none}
 .ap-models{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .ap-mh{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
