@@ -3,10 +3,16 @@
  * The map page is the enhanced Alphard star map (starMapScene): rotating
  * field, nebulae, Earth->Alphard route pulse, radar sweep, glowing labels.
  * Login form and toggle behavior unchanged.
+ *
+ * 2026-07-08: the login-screen ship hologram used to be a WebGL model
+ * (scene/shipHologram.js, dynamically imported so three stayed code-split
+ * out of the main bundle). Replaced with a static wireframe image + a CSS
+ * rotateY/rotateX oscillation (.afpc-holo-canvas keyframes in styles.css) —
+ * no more three.js dependency for this panel. The animation is pure CSS and
+ * pauses for free whenever `.notebook-login.starmap-hidden{display:none}`
+ * takes the element out of the render tree, so no JS play/pause is needed.
  */
 import { createStarMapScene } from '../scene/starMapScene.js';
-// shipHologram (three.js) is dynamically imported on first login-open so three
-// is code-split out of the main bundle.
 
 export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const panel = document.getElementById('terminalStarMapPanel');
@@ -15,7 +21,6 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const login = document.querySelector('.notebook-login');
   if (!panel || !canvas || !toggle) return null;
 
-  let holoUnit = null, holoCanvasRef = null, holoLoading = false;
   const modeLabel = active => {
     if (active) return getLang() === 'zh' ? '登录' : 'LOGIN';
     return getLang() === 'zh' ? '星图' : 'STAR MAP';
@@ -25,20 +30,12 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     login?.classList.toggle('starmap-hidden', active);
     toggle.textContent = modeLabel(active);
     toggle.dataset.mode = active ? 'map' : 'login';
-    if (holoUnit) {
-      holoUnit.setActive(!active);                 // hologram runs only on the login screen
-    } else if (!active && !holoLoading && holoCanvasRef) {
-      holoLoading = true;                          // first login-open → load three.js + ship hologram
-      import('../scene/shipHologram.js')
-        .then(m => { holoUnit = m.createShipHologram(holoCanvasRef); if (holoUnit) holoUnit.setActive(true); })
-        .catch(() => {});
-    }
   };
 
   // Build the PC once as a macOS-style window inside a fresh .afpc container
   // (unique class names, so no old .notebook-login rule can touch it). Title
-  // bar: × close (-> star map) at the left + window name. Body: WebGL Enforcer
-  // hologram (left) + credential fields (right). Thin border, no footer.
+  // bar: × close (-> star map) at the left + window name. Body: ship
+  // hologram image (left) + credential fields (right). Thin border, no footer.
   if (login && !login.querySelector('.afpc')) {
     const make = (tag, cls) => { const e = document.createElement(tag); if (cls) e.className = cls; return e; };
     const pc = make('div', 'afpc');
@@ -55,9 +52,10 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
 
     const body = make('div', 'afpc-body');
     const holo = make('div', 'afpc-holo');
-    const holoCanvas = make('canvas', 'afpc-holo-canvas');
-    holoCanvasRef = holoCanvas;          // WebGL hologram created lazily on first login-open
-    holo.appendChild(holoCanvas);
+    const holoImg = make('img', 'afpc-holo-canvas');
+    holoImg.src = '/assets/hud/ship-hologram.jpeg';
+    holoImg.alt = 'Condor mothership wireframe hologram';
+    holo.appendChild(holoImg);
     const holoLabel = make('div', 'afpc-holo-label');
     holoLabel.textContent = getLang() === 'zh' ? '执法者 · 母舰' : 'CONDOR · MOTHERSHIP';
     holo.appendChild(holoLabel);
