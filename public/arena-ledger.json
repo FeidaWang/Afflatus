@@ -14,8 +14,8 @@
     "A": {
       "promptVersion": "A-v1",
       "startEquity": 10000,
-      "cash": 10000,
-      "equity": 10000,
+      "cash": 6986.8237,
+      "equity": 9998.3437,
       "dayStartEquity": 10000,
       "equityHistory": [
         {
@@ -28,47 +28,119 @@
         },
         {
           "day": 2,
-          "equity": 10000
+          "equity": 9998.3437
         }
       ],
-      "positions": [],
-      "trades": [],
+      "positions": [
+        {
+          "sym": "AMD",
+          "qty": 3,
+          "avgPx": 552.326,
+          "mkPx": 552.05
+        },
+        {
+          "sym": "TSM",
+          "qty": 3,
+          "avgPx": 452.0159,
+          "mkPx": 451.79
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-07T13:15:00Z",
+          "sym": "AMD",
+          "side": "buy",
+          "qty": 3,
+          "px": 552.326,
+          "fee": 0.0828,
+          "slipBps": 5,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-07T13:15:00Z",
+          "sym": "TSM",
+          "side": "buy",
+          "qty": 3,
+          "px": 452.0159,
+          "fee": 0.0678,
+          "slipBps": 5,
+          "realizedPnl": null
+        }
+      ],
       "rejections": [],
       "metrics": {
-        "cumPct": 0,
-        "maxDD": 0,
+        "cumPct": -0.017,
+        "maxDD": -0.017,
         "hitRate": null,
-        "exposure": 0
+        "exposure": 30.1
       },
       "review": {
-        "zh": "第三次定时运行(Day 3)。feida.au/api/quote 连续第三次被沙箱代理拒绝(blocked-by-allowlist)，Chrome 扩展仍未连接，30 个标的依旧无有效 refPx，按不编造报价的红线继续空仓观望，与 Day 1、Day 2 一致。本次调整：与其反复空等，建议下次运行前人工核实该接口的允许清单配置，否则该策略窗口将持续无法产生任何实际决策。新闻面：AI 芯片股延续强势，Micron 年内涨约240%(近一年近7倍)，AMD 年内约+114%跑赢英伟达，英伟达仍占AI加速器约81%份额；7月6日周一三大指数齐涨（标普+0.72%、纳指+1.12%），科技板块领涨，但市场对估值泡沫的担忧仍存(Michael Burry等)。",
-        "en": "Day 3 run. feida.au/api/quote was blocked (blocked-by-allowlist) for a third consecutive run, and no Chrome browser is connected, so no valid refPx exists for any of the 30 symbols. Proposing zero orders again per the no-fabrication rule. One concrete adjustment: flagging that the quote endpoint's allowlist config needs a manual check, since this decision window has now produced no real trades three times running. Context: AI chip names remain strong (Micron +240% YTD), AMD +114% YTD outpacing Nvidia; S&P/Nasdaq both rose Monday July 6 on broad tech strength, though bubble concerns persist."
+        "zh": "白名单问题已修复，api/quote 今天 30 个标的全部正常返回，结束连续三日的强制空仓。今日 AI 硬件链普遍走强（AMD+6.6%、WDC+7.1%、TSM+4.1%、ALAB+6.5%、QCOM+5.8%），动能明确。首次建仓保守：买入 AMD 与 TSM 各一小仓，验证结算链路，仓位远低于20%上限，现金充足。调整：先小仓验证全流程，观察后续再逐步放大。",
+        "en": "Allowlist fix confirmed — all 30 quotes returned cleanly today, ending three straight forced-cash days. Broad AI-hardware momentum today (AMD +6.6%, WDC +7.1%, TSM +4.1%, ALAB +6.5%, QCOM +5.8%). First real fills: small starter buys in AMD and TSM, well under the 20% cap, to validate the settlement pipeline end-to-end before sizing up on future runs."
       }
     },
     "B": {
       "promptVersion": "B-v1",
       "startEquity": 10000,
-      "cash": 10000,
-      "equity": 10000,
+      "cash": 6233.0587,
+      "equity": 9999.0587,
       "dayStartEquity": 10000,
       "equityHistory": [
         {
           "day": 0,
           "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 9999.0587
         }
       ],
-      "positions": [],
-      "trades": [],
+      "positions": [
+        {
+          "sym": "MSFT",
+          "qty": 5,
+          "avgPx": 386.8173,
+          "mkPx": 386.74
+        },
+        {
+          "sym": "GOOGL",
+          "qty": 5,
+          "avgPx": 366.5333,
+          "mkPx": 366.46
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-07T13:20:00Z",
+          "sym": "MSFT",
+          "side": "buy",
+          "qty": 5,
+          "px": 386.8173,
+          "fee": 0.0967,
+          "slipBps": 2,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-07T13:20:00Z",
+          "sym": "GOOGL",
+          "side": "buy",
+          "qty": 5,
+          "px": 366.5333,
+          "fee": 0.0916,
+          "slipBps": 2,
+          "realizedPnl": null
+        }
+      ],
       "rejections": [],
       "metrics": {
-        "cumPct": 0,
-        "maxDD": 0,
+        "cumPct": -0.009,
+        "maxDD": -0.009,
         "hitRate": null,
-        "exposure": 0
+        "exposure": 37.7
       },
       "review": {
-        "zh": "尚未开仓——V3 刚上线，等待 V4 定时任务首次运行。",
-        "en": "No trades yet — V3 just shipped, awaiting V4's first scheduled run."
+        "zh": "首次运行——这是人工手动触发，并非真正盘后（美东现为盘前9点多），仅用于在白名单修复后让 Model B 开始建仓；后续将改为每日盘后自动运行。今日恰逢周二，符合 B 仅可在周二/周四开新仓的规则。选股偏保守：MSFT（今日小幅回调-1.0%，逢低介入优质龙头）、GOOGL（AI 护城河+基本面稳健，+1.8%），仓位均远低于20%上限，换手保持低位。",
+        "en": "First-ever run for Book B — a manual kickoff triggered mid-conversation, not a true post-market run (it's still pre-market ET); a daily automated post-market task is being set up to take over going forward. Today happens to be a Tuesday, one of B's two allowed open/add days. Conservative picks: MSFT (small -1.0% dip on a quality name) and GOOGL (AI moat, solid fundamentals, +1.8%), both well under the 20% position cap, keeping turnover low per Book B's mandate."
       }
     }
   }
