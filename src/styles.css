@@ -6738,10 +6738,20 @@ nav.route-arrows::after,
 .afpc .afpc-close:hover{border-color:#ff6a5a!important;background:rgba(255,70,60,.22)!important;color:#fff!important;box-shadow:0 0 10px rgba(255,90,80,.45)!important;}
 .afpc .afpc-title{font:700 9px/1.2 'Orbitron',sans-serif!important;letter-spacing:.14em!important;color:rgba(184,228,247,.9)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;min-width:0!important;}
 .afpc .afpc-body{position:absolute!important;top:44px!important;bottom:12px!important;left:12px!important;right:12px!important;display:grid!important;grid-template-columns:38% 1fr!important;gap:13px!important;align-items:center!important;min-height:0!important;overflow:hidden!important;}
-.afpc .afpc-holo{position:relative!important;align-self:stretch!important;height:100%!important;min-height:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(116,206,230,.18)!important;border-radius:2px!important;background:radial-gradient(62% 80% at 50% 44%,rgba(116,206,230,.12),transparent 72%)!important;overflow:hidden!important;}
-.afpc .afpc-holo-canvas{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;}
+.afpc .afpc-holo{position:relative!important;align-self:stretch!important;height:100%!important;min-height:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid rgba(116,206,230,.18)!important;border-radius:2px!important;background:radial-gradient(62% 80% at 50% 44%,rgba(116,206,230,.12),transparent 72%)!important;overflow:hidden!important;perspective:700px!important;}
+/* 2026-07-08: static wireframe image (was a WebGL hologram, see terminalStarMap.js
+   header comment) — mix-blend-mode:screen turns the image's black background
+   transparent against the panel's dark/teal backdrop so only the bright wireframe
+   lines read, matching the site's existing cyan-glow hologram look. The gentle
+   rotateY/rotateX oscillation (not a full 360, so the flat image never has to
+   show an edge-on/mirrored backface) stands in for the old model's spin. */
+.afpc .afpc-holo-canvas{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;object-fit:contain!important;mix-blend-mode:screen!important;filter:drop-shadow(0 0 8px rgba(116,206,230,.5))!important;animation:afpcHoloSpin 6.5s ease-in-out infinite!important;}
+@keyframes afpcHoloSpin{0%,100%{transform:rotateY(-20deg) rotateX(3deg)}50%{transform:rotateY(20deg) rotateX(3deg)}}
 .afpc .afpc-holo svg{height:94%!important;width:auto!important;max-width:92%!important;display:block!important;filter:drop-shadow(0 0 6px rgba(116,206,230,.55))!important;animation:afpcHoloFloat 4.6s ease-in-out infinite!important;}
 @keyframes afpcHoloFloat{0%,100%{transform:translateY(0);opacity:.9}50%{transform:translateY(-3px);opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  .afpc .afpc-holo-canvas{animation:none!important;transform:none!important;}
+}
 .afpc .afpc-holo-label{position:absolute!important;left:6px!important;bottom:5px!important;font:700 6px 'JetBrains Mono',monospace!important;letter-spacing:.12em!important;color:rgba(150,235,255,.82)!important;text-transform:uppercase!important;}
 .afpc .afpc-fields{align-self:center!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:4px!important;min-width:0!important;min-height:0!important;}
 .afpc .afpc-field{display:grid!important;gap:1px!important;min-width:0!important;margin:0!important;}
