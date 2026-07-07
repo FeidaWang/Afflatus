@@ -1,7 +1,7 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
-  "updated": "2026-07-06",
-  "version": 6,
+  "updated": "2026-07-07",
+  "version": 7,
   "mode": "live",
   "teamLogos": {
     "BLG": "https://gol.gg/_img/teams_icon/Bilibili_Gaminglogo_profile.webp",
@@ -147,8 +147,8 @@
       "team": "Knight · BLG",
       "team_zh": "Knight · BLG",
       "prob": 24,
-      "reason_en": "Remains undefeated on Orianna after BLG's Game 2 win over LYON (Cryptobriefing) — again central as BLG swept 3-0 into the Upper Bracket Final.",
-      "reason_zh": "在BLG拿下对LYON第二局的比赛中，奥莉安娜仍保持不败（据Cryptobriefing）——再次成为BLG 3-0晋级上位组决赛的核心。",
+      "reason_en": "Posted a 20/7/25 KDA (77.6% kill participation) in BLG's 3-0 sweep of LYON — the tournament's most dominant mid laner, now awaiting HLE in the July 9 Upper Bracket Final.",
+      "reason_zh": "对阵LYON系列赛KDA 20/7/25（击杀参与率77.6%），随BLG 3-0横扫晋级——本届最具统治力的中路，静候7月9日上位组决赛战HLE。",
       "teamCode": "BLG"
     },
     {
@@ -171,8 +171,8 @@
       "team": "Peyz · T1",
       "team_zh": "Peyz · T1",
       "prob": 14,
-      "reason_en": "Caitlyn carry in T1's 3-0 sweep of FURIA — a 14-7 kill-lead Game 2 as T1 overwhelmed the CBLOL side (GosuGamers). A new name in the mix as T1 regroups.",
-      "reason_zh": "T1 3-0横扫FURIA的凯特琳核心输出——第二局14-7击杀领先碾压对手（据GosuGamers）。T1下位组重整旗鼓中的新晋话题人选。",
+      "reason_en": "Named series MVP in T1's 3-0 sweep of FURIA, anchoring the bot lane alongside Keria through crucial Game 3 outplays that saved a wobbling map (per match recaps).",
+      "reason_zh": "T1 3-0横扫FURIA的系列赛MVP，与Keria联手在关键的第三局多次高光操作力挽狂澜（据赛后报道）。T1下位组重整旗鼓中的核心话题人选。",
       "teamCode": "T1"
     },
     {
@@ -466,7 +466,7 @@
       "round": "Lower Bracket · R2",
       "round_zh": "下位组 · 第二轮",
       "bo": 5,
-      "kickoff": "2026-07-08T03:00:00Z",
+      "kickoff": "2026-07-08T08:00:00Z",
       "home": "G2",
       "home_zh": "G2",
       "away": "T1",
@@ -484,7 +484,7 @@
       "round": "Lower Bracket · R2",
       "round_zh": "下位组 · 第二轮",
       "bo": 5,
-      "kickoff": "2026-07-08T08:00:00Z",
+      "kickoff": "2026-07-08T03:00:00Z",
       "home": "LYON",
       "home_zh": "LYON",
       "away": "TSW",
