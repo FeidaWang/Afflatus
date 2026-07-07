@@ -1,17 +1,35 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-06",
-  "note_en": "Predictions are my (Fable 5 Max) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/DraftKings/bet365 (6 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5 Max）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/DraftKings/bet365（7 月 6 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "updated": "2026-07-07",
+  "note_en": "Predictions are my (Fable 5 Max) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/DraftKings/bet365 (7 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Fable 5 Max）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/DraftKings/bet365（7 月 7 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
-    "resolved": 44,
-    "correctOutcome": 30,
+    "resolved": 46,
+    "correctOutcome": 32,
     "exactScore": 8,
-    "winRate": 68,
+    "winRate": 70,
     "note_en": "Match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
     "note_zh": "自第三轮起对预测胜负计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
+      {
+        "id": "wc-usa-bel",
+        "label_en": "United States 1-4 Belgium",
+        "label_zh": "美国 1-4 比利时",
+        "pick_en": "Belgium win",
+        "pick_zh": "比利时胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "wc-esp-por",
+        "label_en": "Spain 1-0 Portugal",
+        "label_zh": "西班牙 1-0 葡萄牙",
+        "pick_en": "Spain win",
+        "pick_zh": "西班牙胜",
+        "ok": true,
+        "exact": false
+      },
       {
         "id": "wc-mex-eng",
         "label_en": "Mexico 2-3 England",
@@ -65,24 +83,6 @@
         "pick_zh": "阿根廷胜",
         "ok": true,
         "exact": false
-      },
-      {
-        "id": "wc-aus-egy",
-        "label_en": "Australia 1-1 Egypt (Egypt win 4-2 on pens)",
-        "label_zh": "澳大利亚 1-1 埃及（点球 4-2）",
-        "pick_en": "Egypt win",
-        "pick_zh": "埃及胜",
-        "ok": true,
-        "exact": false
-      },
-      {
-        "id": "wc-sui-alg",
-        "label_en": "Switzerland 2-0 Algeria",
-        "label_zh": "瑞士 2-0 阿尔及利亚",
-        "pick_en": "Switzerland win",
-        "pick_zh": "瑞士胜",
-        "ok": true,
-        "exact": true
       }
     ]
   },
@@ -91,7 +91,7 @@
       "team": "France",
       "team_zh": "法国",
       "flag": "🇫🇷",
-      "prob": 26,
+      "prob": 24,
       "reason_en": "Ground past Paraguay 1-0 in R16 on a Mbappé penalty — not pretty, but job done against a defensive block. QF vs Morocco, July 9 Foxborough. Still the team to beat.",
       "reason_zh": "16 强靠姆巴佩点球 1-0 险胜巴拉圭密集防守——不够华丽，但顺利过关。八强 7 月 9 日战摩洛哥，福克斯堡。仍是夺冠头号热门。"
     },
@@ -99,15 +99,15 @@
       "team": "Spain",
       "team_zh": "西班牙",
       "flag": "🇪🇸",
-      "prob": 23,
-      "reason_en": "Routed Austria 3-0 (Oyarzabal brace, Porro) in R32 — cleanest display of the round, shutout streak intact. R16 vs Portugal, July 6 Arlington — Euro 2016 final rematch. Yamal's return adds firepower.",
-      "reason_zh": "32 强 3-0 横扫奥地利（奥亚萨瓦尔梅开二度、波罗建功）——本轮最干净利落的胜利，零封纪录延续。16 强 7 月 6 日战葡萄牙，阿灵顿——欧洲杯 2016 决赛重演。亚马尔复出增添火力。"
+      "prob": 20,
+      "reason_en": "Nipped past Portugal 1-0 in the R16 on a 91st-minute Mikel Merino winner, ending Ronaldo's international career — still yet to concede all tournament. QF vs Belgium, July 10 Los Angeles, after the Red Devils blitzed the USA 4-1.",
+      "reason_zh": "16 强靠梅里诺第 91 分钟绝杀 1-0 险胜葡萄牙，终结 C 罗的国家队生涯——本届赛事仍未失球。八强 7 月 10 日战比利时，洛杉矶，此前红魔 4-1 血洗美国。"
     },
     {
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
-      "prob": 19,
+      "prob": 18,
       "reason_en": "Survived a huge scare against Cape Verde, winning 3-2 in extra time via a deflected Romero effort, after being pegged back twice. Perfect group form (9 pts) still the headline, but the knockout nerves were visible. R16 vs Egypt, July 7 Atlanta — first-ever meeting, heavy favourites.",
       "reason_zh": "惊险过关，两度被佛得角追平后，靠罗梅罗一次射门经防守球员折射入网，加时3-2险胜。小组赛仍为全胜（9分），但淘汰赛的紧张感已显现。16强7月7日战埃及，亚特兰大，两队历史首次交手，阿根廷仍占大热。"
     },
@@ -115,15 +115,23 @@
       "team": "Morocco",
       "team_zh": "摩洛哥",
       "flag": "🇲🇦",
-      "prob": 13,
+      "prob": 11,
       "reason_en": "Thumped Canada 3-0 in R16 (Ounahi brace, Rahimi) — comfortable, statement win. QF vs France, July 9 Foxborough, second straight WC quarter-final. The Atlas Lions are a genuine dark horse.",
       "reason_zh": "16 强 3-0 大胜加拿大（乌纳希梅开二度、拉希米建功）——轻松取胜，极具说服力。八强 7 月 9 日战法国，福克斯堡，连续两届杀入八强。阿特拉斯雄狮是真正的黑马。"
+    },
+    {
+      "team": "Belgium",
+      "team_zh": "比利时",
+      "flag": "🇧🇪",
+      "prob": 10,
+      "reason_en": "Thrashed co-host USA 4-1 in a dominant R16 display — De Ketelaere's brace and a Lukaku stoppage-time strike showed real firepower. QF vs Spain, July 10 Los Angeles — a huge step up in class against the tournament's only side yet to concede.",
+      "reason_zh": "16 强 4-1 痛击东道主美国，德凯特莱雷梅开二度、卢卡库补时建功，锋线火力尽显。八强 7 月 10 日战西班牙，洛杉矶——对手是本届唯一尚未失球的球队，难度陡增。"
     },
     {
       "team": "Norway",
       "team_zh": "挪威",
       "flag": "🇳🇴",
-      "prob": 10,
+      "prob": 9,
       "reason_en": "Stunned five-time champions Brazil 2-1 in R16 on a Haaland brace, reaching the quarter-finals for the first time in 28 years. QF vs England, July 11 Miami. The tournament's biggest surprise package now has a real shot.",
       "reason_zh": "16 强靠哈兰德梅开二度 2-1 爆冷淘汰五届冠军巴西，28 年来首次挺进八强。八强 7 月 11 日战英格兰，迈阿密。本届杯赛最大黑马，如今真有一战之力。"
     },
@@ -131,7 +139,7 @@
       "team": "England",
       "team_zh": "英格兰",
       "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "prob": 9,
+      "prob": 8,
       "reason_en": "Survived Mexico 3-2 in a wild R16 (Bellingham brace, Kane penalty) despite playing 40+ minutes with ten men after a red card. QF vs Norway, July 11 Miami — Haaland looms as the biggest threat yet.",
       "reason_zh": "16 强 3-2 险胜墨西哥（贝林厄姆梅开二度、凯恩点球破门），红牌后十人应战超过 40 分钟仍挺住。八强 7 月 11 日战挪威，迈阿密——哈兰德将是迄今最大威胁。"
     }
@@ -174,8 +182,8 @@
       "team_zh": "西班牙",
       "flag": "🇪🇸",
       "prob": 13,
-      "reason_en": "Spain routed Austria 3-0 in R32; R16 vs Portugal July 6, Arlington. Yamal's return from injury adds a fresh attacking dimension to a side that hasn't conceded from open play all tournament.",
-      "reason_zh": "西班牙 32 强 3-0 横扫奥地利；16 强 7 月 6 日战葡萄牙，阿灵顿。伤愈复出的亚马尔为本届杯赛尚未在运动战中失球的西班牙增添新的进攻维度。"
+      "reason_en": "Spain squeezed past Portugal 1-0 in the R16 on a stoppage-time Merino winner; Yamal's dribbling out wide kept the pressure on all game. QF vs Belgium, July 10, Los Angeles — a much more direct, physical test than Portugal.",
+      "reason_zh": "西班牙 16 强靠补时阶段梅里诺绝杀 1-0 险胜葡萄牙，亚马尔边路突破持续制造威胁。八强 7 月 10 日战比利时，洛杉矶——对手风格更直接、更具身体对抗性，考验升级。"
     },
     {
       "name": "Mohamed Salah",
@@ -200,62 +208,6 @@
   ],
   "fixtures": [
     {
-      "id": "wc-esp-por",
-      "stage": "Round of 16",
-      "kickoff": "2026-07-06T19:00:00Z",
-      "home": "Spain",
-      "home_zh": "西班牙",
-      "homeFlag": "🇪🇸",
-      "away": "Portugal",
-      "away_zh": "葡萄牙",
-      "awayFlag": "🇵🇹",
-      "opus": "home",
-      "conf": 0.6,
-      "opusScore": "2-1",
-      "reason_en": "Euro 2016 final rematch, Ronaldo vs Yamal generational clash. Spain's 3-0 demolition of Austria was the most complete display of the round, with a clean sheet the whole group stage; Portugal needed a 94th-minute Ramos header to survive Croatia. Spain's collective press and control should edge an individually gifted but less cohesive Portugal side.",
-      "reason_zh": "欧洲杯 2016 决赛重演，C 罗对阵世代新星亚马尔。西班牙 3-0 横扫奥地利是本轮最完整的表现，小组赛全程零失球；葡萄牙则靠拉莫斯 94 分钟头球险胜克罗地亚。西班牙的整体压迫与控场能力应险胜个人能力出众但整体性稍逊的葡萄牙。",
-      "odds": {
-        "h": 1.87,
-        "d": 3.6,
-        "a": 4.1,
-        "src": "FanDuel",
-        "scores": [
-          { "s": "1-0", "o": 6.5 },
-          { "s": "1-1", "o": 6.0 },
-          { "s": "2-1", "o": 7.5 }
-        ]
-      },
-      "result": null
-    },
-    {
-      "id": "wc-usa-bel",
-      "stage": "Round of 16",
-      "kickoff": "2026-07-07T00:00:00Z",
-      "home": "United States",
-      "home_zh": "美国",
-      "homeFlag": "🇺🇸",
-      "away": "Belgium",
-      "away_zh": "比利时",
-      "awayFlag": "🇧🇪",
-      "opus": "away",
-      "conf": 0.53,
-      "opusScore": "1-2",
-      "reason_en": "Second Round of 16 meeting between these sides in the last four World Cups — Belgium won 2-1 (AET) back in 2014. Folarin Balogun's return has tightened the market and shifted some odds toward the hosts, but Belgium's front three and battle-tested spine still carry a touch more individual quality. Lumen Field's raucous crowd is the USA's best equalizer.",
-      "reason_zh": "两队本届是近四届世界杯内第二次在16强相遇——2014年比利时加时2-1获胜。巴洛贡伤愈回归令盘口收窄、部分赔率略偏向东道主，但比利时锋线组合与历经考验的后防线个人能力仍略胜一筹。西雅图主场声浪是美国最大依仗。",
-      "odds": {
-        "h": 2.7,
-        "d": 3.25,
-        "a": 2.6,
-        "src": "FanDuel",
-        "scores": [
-          { "s": "1-1", "o": 5.5 },
-          { "s": "1-0", "o": 7.0 },
-          { "s": "0-1", "o": 7.5 }
-        ]
-      },
-      "result": null
-    },
-    {
       "id": "wc-arg-egy",
       "stage": "Round of 16",
       "kickoff": "2026-07-07T16:00:00Z",
@@ -271,10 +223,10 @@
       "reason_en": "First-ever World Cup meeting between these sides. Argentina's group-stage dominance (9 pts, +7 GD) outweighs the extra-time scare against Cape Verde — Messi, in what he's signalled is his final World Cup, remains locked in with goals in every match. Egypt's historic run (first Round of 16 since 1934) leans on Salah's brilliance and defensive discipline, but the class gap with the reigning champions is significant. Argentina to progress toward a mouth-watering quarter-final with the Switzerland/Colombia winner.",
       "reason_zh": "两队世界杯历史首次交手。阿根廷小组赛的统治级表现（9分，净胜球+7）足以弥补对佛得角加时赛的惊魂一刻——梅西在自己宣布的谢幕之战中已场场进球，状态正佳。埃及历史性晋级16强（自1934年以来首次）将依靠萨拉赫的个人能力与防守纪律，但与卫冕冠军的实力差距明显。阿根廷有望晋级，八强将迎来瑞士/哥伦比亚胜者的诱人对决。",
       "odds": {
-        "h": 1.36,
+        "h": 1.37,
         "d": 4.7,
-        "a": 10.0,
-        "src": "FanDuel",
+        "a": 9.0,
+        "src": "DraftKings",
         "scores": [
           { "s": "2-0", "o": 6.0 },
           { "s": "1-0", "o": 6.5 },
@@ -330,11 +282,39 @@
         "h": 1.57,
         "d": 3.85,
         "a": 6.0,
-        "src": "DraftKings",
+        "src": "bet365",
         "scores": [
           { "s": "2-0", "o": 6.5 },
           { "s": "1-0", "o": 6.0 },
           { "s": "2-1", "o": 8.0 }
+        ]
+      },
+      "result": null
+    },
+    {
+      "id": "wc-esp-bel",
+      "stage": "Quarter-final",
+      "kickoff": "2026-07-10T19:00:00Z",
+      "home": "Spain",
+      "home_zh": "西班牙",
+      "homeFlag": "🇪🇸",
+      "away": "Belgium",
+      "away_zh": "比利时",
+      "awayFlag": "🇧🇪",
+      "opus": "home",
+      "conf": 0.62,
+      "opusScore": "2-0",
+      "reason_en": "Spain haven't conceded all tournament and needed a 91st-minute Merino winner to see off Portugal; Belgium arrive full of confidence after blitzing the USA 4-1 with De Ketelaere leading the line. Spain's control and Yamal's return give them the edge, but Belgium's cutting edge on the counter is the biggest threat to that clean sheet.",
+      "reason_zh": "西班牙本届赛事尚未失球，但也要靠梅里诺第 91 分钟绝杀才险胜葡萄牙；比利时以德凯特莱雷领衔 4-1 血洗美国，士气正盛。西班牙的控场能力与亚马尔的回归占优，但比利时的反击效率是零封纪录最大的威胁。",
+      "odds": {
+        "h": 1.65,
+        "d": 3.9,
+        "a": 5.2,
+        "src": "bet365",
+        "scores": [
+          { "s": "1-0", "o": 7.0 },
+          { "s": "2-0", "o": 7.5 },
+          { "s": "2-1", "o": 8.5 }
         ]
       },
       "result": null
@@ -386,7 +366,7 @@
             "away": "Portugal",
             "away_zh": "葡萄牙",
             "awayFlag": "🇵🇹",
-            "winner": null
+            "winner": "home"
           },
           {
             "r16Id": "wc-usa-bel",
@@ -396,7 +376,7 @@
             "away": "Belgium",
             "away_zh": "比利时",
             "awayFlag": "🇧🇪",
-            "winner": null
+            "winner": "away"
           }
         ]
       },
@@ -430,7 +410,7 @@
       },
       {
         "id": "qf4",
-        "date": "2026-07-12",
+        "date": "2026-07-11",
         "venue_en": "Kansas City",
         "venue_zh": "堪萨斯城",
         "legs": [
