@@ -31,6 +31,14 @@
  * and a larger open ventral spaceframe (grid of structural bars, not a
  * solid recessed box) with a slightly more detailed rounded-cab rover.
  *
+ * 2026-07-08 detail pass 3 (side-by-side comparison against the actual
+ * render vs. the reference): claw-like layered bow tip (intake vanes +
+ * 3-finger fan instead of a single cone), a comms antenna cluster + extra
+ * scattered radar dish, multi-faceted wings with truss cross-braces and a
+ * railed side-loading platform, an exposed longitudinal keel truss under
+ * the main hull, stern panel lines + rear-facing gun emplacements + a stern
+ * comms platform, and external piping runs + denser greeble.
+ *
  * Forward = +Z (matches odinHull.js / capitalShip3D.js / shipHologram.js).
  * mats: { hull, arm, dark, trim, glass, red, blue } — caller-owned materials.
  *
@@ -104,7 +112,20 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     const tipX = rootX + Math.sin(angle) * PRONG_LEN, tipZ = BOW_ROOT + Math.cos(angle) * PRONG_LEN;
     const midX = (rootX + tipX) / 2, midZ = (BOW_ROOT + tipZ) / 2;
     add(new THREE.BoxGeometry(0.44, HEIGHT * 0.2, PRONG_LEN), M.hull, [midX, 0, midZ], [0, angle, 0]);
-    add(new THREE.ConeGeometry(0.24, 0.7, 4), M.hull, [tipX, 0, tipZ + 0.3 * Math.cos(angle)], [Math.PI / 2, 0, Math.PI / 4]);
+    // layered intake vanes along the prong (perpendicular cross-section
+    // plates, tapering toward the tip) — "articulated claw-like engine
+    // component" detail instead of a plain smooth blade.
+    for (let k = 1; k <= 3; k++) {
+      const tt = k / 4, sc = 1 - tt * 0.35;
+      const px = rootX + Math.sin(angle) * PRONG_LEN * tt, pz = BOW_ROOT + Math.cos(angle) * PRONG_LEN * tt;
+      add(new THREE.BoxGeometry(0.5 * sc, HEIGHT * 0.26 * sc, 0.035), M.trim, [px, 0, pz], [0, angle, 0]);
+    }
+    // claw-like 3-finger tip fanning out from the same tip point (replaces a
+    // single smooth cone) — all three share the tip's position, only their
+    // own yaw differs, so the fan reads correctly without extra position math.
+    for (const fa of [-0.24, 0, 0.24]) {
+      add(new THREE.ConeGeometry(0.09, 0.55, 4), M.hull, [tipX, 0, tipZ + 0.3 * Math.cos(angle)], [Math.PI / 2, angle + fa, Math.PI / 4]);
+    }
     prongTips.push({ x: tipX, y: 0, z: tipZ });
     // thin fin under each prong (reference shows a secondary blade edge below the main prong)
     add(new THREE.BoxGeometry(0.06, HEIGHT * 0.5, PRONG_LEN * 0.75), M.arm, [midX * 0.9, -HEIGHT * 0.15, BOW_ROOT + PRONG_LEN * 0.35], [0, angle, sx * 0.08]);
@@ -132,6 +153,16 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
   }
   for (let i = -3; i <= 3; i++) add(new THREE.BoxGeometry(0.12, 0.05, 0.02), M.dark, [i * 0.2, HEIGHT * 0.62, towerZ + 0.96]); // bridge window strip
 
+  // comms antenna cluster around the spire base (varying-height thin rods +
+  // beacon tips) and one extra scattered radar dish on the aft upper deck,
+  // distinct from the bridge's own radar drum.
+  for (const [ax, az, ah] of [[0.22, 0.15, 0.5], [-0.15, 0.22, 0.35], [0.1, -0.22, 0.42]]) {
+    add(new THREE.CylinderGeometry(0.012, 0.012, ah, 4), M.trim, [ax, HEIGHT * 2.2 + ah / 2, towerZ + 0.05 + az]);
+    add(new THREE.SphereGeometry(0.025, 5, 4), M.red, [ax, HEIGHT * 2.2 + ah, towerZ + 0.05 + az]);
+  }
+  add(new THREE.CylinderGeometry(0.22, 0.22, 0.05, 10), M.dark, [-1.1, HEIGHT * 0.3, STERN + LEN_MAIN * 0.5]);
+  add(new THREE.CylinderGeometry(0.02, 0.02, 0.3, 4), M.arm, [-1.1, HEIGHT * 0.3 + 0.15, STERN + LEN_MAIN * 0.5]);
+
   // ===== exposed lattice/girder sensor mast beside the tower — visible open =====
   // truss framework (two verticals + diagonal cross-braces), distinct from
   // the solid tower tiers, reads as "internal girder structure" in wireframe.
@@ -146,12 +177,23 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     add(new THREE.SphereGeometry(0.045, 6, 5), M.red, [latX, latH + 0.04, latZ]); // lattice mast tip beacon
   }
 
-  // ===== swept hammerhead wings (both flanks, aft of the tower) =====
+  // ===== multi-faceted swept hammerhead wings (both flanks, aft of the =====
+  // tower), with truss cross-braces and a railed side-loading platform.
   const wingMounts = [];
   for (const sx of [-1, 1]) {
     const wx = sx * (WIDTH * 0.5 + 0.75), wz = STERN + LEN_MAIN * 0.62;
     add(new THREE.BoxGeometry(1.9, HEIGHT * 0.2, 1.5), M.arm, [wx, HEIGHT * 0.12, wz], [0, 0, sx * 0.16]);
     add(new THREE.BoxGeometry(0.5, HEIGHT * 0.16, 0.9), M.trim, [wx + sx * 0.9, HEIGHT * 0.12, wz - 0.3], [0, 0, sx * 0.1]); // outer tip fin
+    add(new THREE.BoxGeometry(0.9, HEIGHT * 0.14, 1.1), M.hull, [wx - sx * 0.4, HEIGHT * 0.22, wz + 0.35], [0, 0, sx * 0.24]); // upper facet panel, different tilt
+    // truss cross-braces under the wing
+    for (let k = 0; k < 3; k++) {
+      add(new THREE.CylinderGeometry(0.014, 0.014, 0.6, 4), M.arm, [wx + sx * (0.2 + k * 0.5), -HEIGHT * 0.02, wz - 0.6 + k * 0.1], [0, 0, sx * (0.5 + k * 0.15)]);
+    }
+    // side-loading platform with railing
+    const platX = sx * (WIDTH * 0.5 + 0.15), platZ = wz + 0.9;
+    add(new THREE.BoxGeometry(0.5, 0.03, 0.6), M.trim, [platX, -HEIGHT * 0.02, platZ]); // platform deck
+    for (const rz of [-0.28, 0, 0.28]) add(new THREE.CylinderGeometry(0.012, 0.012, 0.14, 4), M.arm, [platX + sx * 0.24, HEIGHT * 0.06, platZ + rz]); // railing posts
+    add(new THREE.BoxGeometry(0.02, 0.02, 0.58), M.trim, [platX + sx * 0.24, HEIGHT * 0.12, platZ]); // top rail bar
     wingMounts.push({ x: wx, y: HEIGHT * 0.12, z: wz, side: sx });
   }
 
@@ -224,9 +266,36 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
   }
   const bayMount = { x: bayX, y: bayY, z: bayZ };
 
+  // ===== exposed longitudinal keel truss under the main hull — a second, =====
+  // broader truss network (distinct from the ventral spaceframe bay above)
+  // running most of the belly length, per "intricate exposed truss work
+  // under the main hull".
+  {
+    const keelY = -HEIGHT * 0.38;
+    add(new THREE.BoxGeometry(0.05, 0.05, LEN_MAIN * 0.7), M.arm, [0, keelY, STERN + LEN_MAIN * 0.5]); // longitudinal keel beam
+    for (let k = 0; k < 6; k++) {
+      const kz = STERN + LEN_MAIN * (0.15 + k * 0.12);
+      for (const sx of [-1, 1]) add(new THREE.CylinderGeometry(0.012, 0.012, 0.5, 4), M.trim, [sx * 0.22, keelY, kz], [0, 0, sx * 0.5]);
+    }
+  }
+
+  // ===== rear-section detail: stern panel lines, rear-facing gun =====
+  // emplacements, and a stern comms array platform.
+  for (let i = -2; i <= 2; i++) add(new THREE.BoxGeometry(0.02, HEIGHT * 0.5, 0.02), M.trim, [i * (WIDTH * 0.14), -HEIGHT * 0.05, STERN + 0.02]); // panel-line ribs
+  for (const sx of [-1, 1]) {
+    const gx = sx * WIDTH * 0.32, gz = STERN + 0.05;
+    add(new THREE.CylinderGeometry(0.12, 0.14, HEIGHT * 0.16, 8), M.trim, [gx, HEIGHT * 0.35, gz]); // rear turret dome
+    add(new THREE.CylinderGeometry(0.016, 0.02, 0.3, 6), M.arm, [gx, HEIGHT * 0.38, gz - 0.15], [Math.PI / 2, 0, 0]); // rear-facing barrel
+  }
+  add(new THREE.BoxGeometry(0.3, 0.04, 0.3), M.trim, [0, HEIGHT * 0.4, STERN + 0.2]);                                    // comms platform deck
+  add(new THREE.CylinderGeometry(0.012, 0.012, 0.35, 4), M.arm, [0, HEIGHT * 0.58, STERN + 0.2]);                       // comms mast
+  add(new THREE.CylinderGeometry(0.1, 0.02, 0.08, 8), M.trim, [0, HEIGHT * 0.76, STERN + 0.2], [Math.PI / 2, 0, 0]);    // comms dish
+
   // ===== dorsal panel-seam lines + hull greeble (denser than odinHull's — =====
-  // the reference is an unusually busy cutaway-style render)
+  // the reference is an unusually busy cutaway-style render), plus external
+  // piping runs along the hull surface.
   for (let i = 0; i < 5; i++) add(new THREE.BoxGeometry(WIDTH * 0.7, 0.03, 0.2), M.trim, [0, HEIGHT * 0.22, STERN + LEN_MAIN * (0.15 + i * 0.16)]);
+  for (const px of [-1.6, -0.9, 0.9, 1.6]) add(new THREE.CylinderGeometry(0.02, 0.02, LEN_MAIN * 0.55, 6), M.arm, [px, HEIGHT * 0.2, STERN + LEN_MAIN * 0.55], [Math.PI / 2, 0, 0]);
   {
     const density = full ? 1 : 0.45;
     const scatter = (n, zMin, zMax, xSpread, y) => {
@@ -239,8 +308,8 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
         add(geo, r < 0.5 ? M.trim : M.dark, [x, y, z]);
       }
     };
-    scatter(Math.round(90 * density), STERN + LEN_MAIN * 0.1, BOW_ROOT - LEN_MAIN * 0.1, WIDTH * 0.75, HEIGHT * 0.24);
-    scatter(Math.round(44 * density), STERN, STERN + LEN_MAIN * 0.3, WIDTH * 0.55, HEIGHT * 0.1);
+    scatter(Math.round(110 * density), STERN + LEN_MAIN * 0.1, BOW_ROOT - LEN_MAIN * 0.1, WIDTH * 0.75, HEIGHT * 0.24);
+    scatter(Math.round(55 * density), STERN, STERN + LEN_MAIN * 0.3, WIDTH * 0.55, HEIGHT * 0.1);
   }
 
   // ===== stern engine mounts: ribbed nozzle bells (flat row across the =====
