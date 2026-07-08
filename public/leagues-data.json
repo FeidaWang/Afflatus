@@ -1,7 +1,7 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
-  "updated": "2026-07-07",
-  "version": 7,
+  "updated": "2026-07-08",
+  "version": 8,
   "mode": "live",
   "teamLogos": {
     "BLG": "https://gol.gg/_img/teams_icon/Bilibili_Gaminglogo_profile.webp",
@@ -17,31 +17,13 @@
   "note_zh": "Fable 5 Max 对每场 MSI 2026 淘汰赛的个人研判——仅供娱乐，不构成博彩建议。双败淘汰赛制，全部系列赛 Bo5，赛制为 Fearless Draft（同一系列赛内任意一方选过的英雄，双方均不可再选）。仅在查到真实盘口（GG.bet）时展示赔率；其余情况 Fable 直接给出自己的概率研判，不冒充市场价格。",
   "record": {
     "since": "2026-07-03",
-    "resolved": 8,
-    "correctOutcome": 5,
+    "resolved": 10,
+    "correctOutcome": 6,
     "exactScore": 2,
-    "winRate": 63,
+    "winRate": 60,
     "note_en": "Fable series-outcome calls scored from Bracket Stage Round 1 onward, through the Grand Final. Updated daily. ⭐ = exact series score. ✓ = correct outcome.",
     "note_zh": "自淘汰赛第一轮起对 Fable 系列赛胜负预测计分，并延续至总决赛，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
-      {
-        "id": "msi-hle-tsw",
-        "label_en": "HLE 3-0 TSW",
-        "label_zh": "HLE 3-0 TSW",
-        "pick_en": "HLE win",
-        "pick_zh": "HLE 胜",
-        "ok": true,
-        "exact": true
-      },
-      {
-        "id": "msi-g2-tes",
-        "label_en": "G2 3-2 TES",
-        "label_zh": "G2 3-2 TES",
-        "pick_en": "TES win",
-        "pick_zh": "TES 胜",
-        "ok": false,
-        "exact": false
-      },
       {
         "id": "msi-furia-lyon",
         "label_en": "FURIA 0-3 LYON",
@@ -95,6 +77,24 @@
         "pick_zh": "BLG 胜",
         "ok": true,
         "exact": false
+      },
+      {
+        "id": "msi-lb-r2-g2",
+        "label_en": "G2 3-1 T1",
+        "label_zh": "G2 3-1 T1",
+        "pick_en": "T1 win",
+        "pick_zh": "T1 胜",
+        "ok": false,
+        "exact": false
+      },
+      {
+        "id": "msi-lb-r2-tsw",
+        "label_en": "LYON 3-0 TSW",
+        "label_zh": "LYON 3-0 TSW",
+        "pick_en": "LYON win",
+        "pick_zh": "LYON 胜",
+        "ok": true,
+        "exact": false
       }
     ]
   },
@@ -102,94 +102,72 @@
     {
       "team": "HLE",
       "team_zh": "HLE",
-      "prob": 36,
-      "reason_en": "Still MSI's only unbeaten team (6-0 in maps). Idle this round while awaiting BLG, who swept LYON 3-0, in the Upper Bracket Final on July 9.",
-      "reason_zh": "仍是本届赛事唯一不败战队（map战绩6-0）。本轮轮空，7月9日上位组决赛迎战3-0横扫LYON的BLG。"
+      "prob": 38,
+      "reason_en": "Still MSI's only unbeaten team (6-0 in maps). Idle since July 5, now rested for the Upper Bracket Final vs BLG, July 9 08:00 UTC.",
+      "reason_zh": "仍是本届赛事唯一不败战队（map战绩6-0）。自7月5日起轮空休整，7月9日（UTC 08:00）上位组决赛战BLG。"
     },
     {
       "team": "BLG",
       "team_zh": "BLG",
-      "prob": 28,
-      "reason_en": "Swept LYON 3-0 in UB R2 (12-11, 31-18, a 39-min Dragon Soul decider) to reach the Upper Bracket Final vs HLE, July 9 08:00 UTC.",
-      "reason_zh": "上位组第二轮3-0横扫LYON（12-11、31-18，第三局靠龙魂团31分钟收官），晋级上位组决赛战HLE，7月9日（UTC 08:00）。"
-    },
-    {
-      "team": "T1",
-      "team_zh": "T1",
-      "prob": 14,
-      "reason_en": "Bounced back from the BLG loss with a clean 3-0 sweep of FURIA (Peyz's Caitlyn a standout in Game 2). Faces G2 in Lower Bracket R2, July 8.",
-      "reason_zh": "输给BLG后迅速反弹，3-0横扫FURIA（第二局Peyz的凯特琳表现亮眼）。下位组第二轮7月8日战G2。"
-    },
-    {
-      "team": "TSW",
-      "team_zh": "TSW",
-      "prob": 9,
-      "reason_en": "Idle this round after upsetting TES. Awaits LYON in Lower Bracket R2, July 8 — a win keeps the Cinderella run alive, a loss ends it.",
-      "reason_zh": "爆冷淘汰TES后本轮轮空。下位组第二轮7月8日战LYON——胜则黑马之旅延续，负则出局。"
-    },
-    {
-      "team": "LYON",
-      "team_zh": "LYON",
-      "prob": 7,
-      "reason_en": "Pushed BLG in every game (12-11, 31-18, a 39-min G3) before falling 0-3 in UB R2. Drops to Lower Bracket R2 vs TSW, July 8 — one loss from elimination.",
-      "reason_zh": "上位组第二轮0-3不敌BLG，但每局都缠斗到底（12-11、31-18、第三局39分钟）。跌入下位组第二轮战TSW，7月8日——再负即出局。"
+      "prob": 30,
+      "reason_en": "Won back-to-back series (5-game war with T1, 3-0 sweep of LYON) to reach the Upper Bracket Final vs HLE, July 9 08:00 UTC.",
+      "reason_zh": "连胜两轮晋级（五局力克T1，再3-0横扫LYON），7月9日（UTC 08:00）上位组决赛战HLE。"
     },
     {
       "team": "G2",
       "team_zh": "G2",
-      "prob": 6,
-      "reason_en": "Swept 0-3 by HLE in UB R2, dropping to the lower bracket. Faces T1 in Lower Bracket R2, July 8 — a tough draw against the reigning World Champions.",
-      "reason_zh": "上位组第二轮被HLE 0-3横扫，跌入下位组。下位组第二轮7月8日战T1——对阵卫冕世界冠军，局面艰难。"
+      "prob": 18,
+      "reason_en": "Eliminated three-time reigning World Champion T1 3-1 in Lower Bracket R2 (BrokenBlade series MVP) — the tournament's biggest upset. Faces LYON in Lower Bracket R3, July 10.",
+      "reason_zh": "下位组第二轮3-1淘汰卫冕三届世界冠军T1（BrokenBlade当选系列赛MVP）——本届最大冷门。下位组第三轮7月10日战LYON。"
+    },
+    {
+      "team": "LYON",
+      "team_zh": "LYON",
+      "prob": 14,
+      "reason_en": "Swept TSW 3-0 to continue the region's Cinderella run. Faces G2 in Lower Bracket R3, July 10 — one win from a Lower Bracket Final berth.",
+      "reason_zh": "3-0横扫TSW，赛区黑马故事延续。下位组第三轮7月10日战G2——再胜一场即可晋级下位组决赛。"
     }
   ],
   "mvp": [
     {
+      "team": "Zeka · HLE",
+      "team_zh": "Zeka · HLE",
+      "prob": 24,
+      "reason_en": "HLE idle since July 5. Still the tournament's premier mid-lane form case after his series-MVP sweep of G2, awaiting the July 9 Upper Bracket Final vs BLG.",
+      "reason_zh": "HLE自7月5日起轮空。此前横扫G2的系列赛MVP表现仍是本届最佳中路状态代表，静候7月9日上位组决赛战BLG。",
+      "teamCode": "HLE"
+    },
+    {
       "team": "Knight · BLG",
       "team_zh": "Knight · BLG",
-      "prob": 24,
+      "prob": 22,
       "reason_en": "Posted a 20/7/25 KDA (77.6% kill participation) in BLG's 3-0 sweep of LYON — the tournament's most dominant mid laner, now awaiting HLE in the July 9 Upper Bracket Final.",
       "reason_zh": "对阵LYON系列赛KDA 20/7/25（击杀参与率77.6%），随BLG 3-0横扫晋级——本届最具统治力的中路，静候7月9日上位组决赛战HLE。",
       "teamCode": "BLG"
     },
     {
-      "team": "Zeka · HLE",
-      "team_zh": "Zeka · HLE",
-      "prob": 22,
-      "reason_en": "HLE idle this round. Still the tournament's premier mid-lane form case after his series-MVP sweep of G2, awaiting the July 9 Upper Bracket Final vs BLG.",
-      "reason_zh": "HLE本轮轮空。此前横扫G2的系列赛MVP表现仍是本届最佳中路状态代表，静候7月9日上位组决赛战BLG。",
-      "teamCode": "HLE"
+      "team": "BrokenBlade · G2",
+      "team_zh": "BrokenBlade · G2",
+      "prob": 20,
+      "reason_en": "Series MVP in G2's 3-1 upset of three-time World Champion T1 — a 7/5/9 Vayne in Game 1, then a dominant 5/0/6 Cho'Gath in Game 2 (gol.gg). The signature performance of MSI's biggest upset.",
+      "reason_zh": "G2 3-1爆冷淘汰卫冕三届世界冠军T1的系列赛MVP——第一局薇恩7/5/9，第二局科加斯5/0/6统治全场（数据来自gol.gg）。本届最大冷门的标志性表演。",
+      "teamCode": "G2"
+    },
+    {
+      "team": "Berserker · LYON",
+      "team_zh": "Berserker · LYON",
+      "prob": 18,
+      "reason_en": "Posted a series-best 19/3/13 KDA (10.7 rating, 772 DPM) across LYON's 3-0 sweep of TSW — the standout carry performance of the series (gol.gg).",
+      "reason_zh": "LYON 3-0横扫TSW全系列KDA 19/3/13（评分10.7，DPM 772）——系列赛最佳输出表现（数据来自gol.gg）。",
+      "teamCode": "LYON"
     },
     {
       "team": "Delight · HLE",
       "team_zh": "Delight · HLE",
       "prob": 16,
-      "reason_en": "HLE idle this round; still the backbone of the tournament's only unbeaten roster, awaiting the July 9 Upper Bracket Final.",
-      "reason_zh": "HLE本轮轮空；仍是全场唯一不败战队的核心，静候7月9日上位组决赛。",
+      "reason_en": "HLE idle since July 5; still the backbone of the tournament's only unbeaten roster, awaiting the July 9 Upper Bracket Final.",
+      "reason_zh": "HLE自7月5日起轮空；仍是全场唯一不败战队的核心，静候7月9日上位组决赛。",
       "teamCode": "HLE"
-    },
-    {
-      "team": "Peyz · T1",
-      "team_zh": "Peyz · T1",
-      "prob": 14,
-      "reason_en": "Named series MVP in T1's 3-0 sweep of FURIA, anchoring the bot lane alongside Keria through crucial Game 3 outplays that saved a wobbling map (per match recaps).",
-      "reason_zh": "T1 3-0横扫FURIA的系列赛MVP，与Keria联手在关键的第三局多次高光操作力挽狂澜（据赛后报道）。T1下位组重整旗鼓中的核心话题人选。",
-      "teamCode": "T1"
-    },
-    {
-      "team": "Faker · T1",
-      "team_zh": "Faker · T1",
-      "prob": 12,
-      "reason_en": "T1 bounced back from the BLG loss with a clean 3-0 sweep of FURIA. Faces G2 next in Lower Bracket R2 — pedigree keeps him live if T1 runs the table.",
-      "reason_zh": "T1输给BLG后迅速反弹，3-0横扫FURIA。下位组第二轮将战G2——若T1能连胜到底，其底蕴仍是MVP话题焦点。",
-      "teamCode": "T1"
-    },
-    {
-      "team": "Hizto · TSW",
-      "team_zh": "Hizto · TSW",
-      "prob": 12,
-      "reason_en": "Idle this round. Still TSW's Cinderella-story core ahead of a Lower Bracket R2 elimination match vs LYON, July 8.",
-      "reason_zh": "本轮轮空。仍是TSW黑马故事的核心，7月8日下位组第二轮迎战LYON的生死战在即。",
-      "teamCode": "TSW"
     }
   ],
   "fearless": [
@@ -209,12 +187,12 @@
       "team": "TSW",
       "team_zh": "TSW",
       "poolDepth": 15,
-      "note_en": "Lost the series 0-3 to HLE but still drew 15 unique picks across 3 games — confirmed via gol.gg official match data.",
-      "note_zh": "0-3不敌HLE，但全系列仍用了15个不重复英雄——数据来自gol.gg官方赛事记录，已核实。",
+      "note_en": "Eliminated 0-3 by LYON in Lower Bracket R2, but still drew 15 unique picks across the 3 games — confirmed via gol.gg official match data. TSW's MSI run ends here.",
+      "note_zh": "下位组第二轮0-3不敌LYON惨遭淘汰，但全系列仍用了15个不重复英雄——数据来自gol.gg官方赛事记录，已核实。TSW本届MSI征程就此结束。",
       "champs": [
-        { "name": "Sion", "slug": "Sion" }, { "name": "Lee Sin", "slug": "LeeSin" }, { "name": "Ryze", "slug": "Ryze" }, { "name": "Ezreal", "slug": "Ezreal" }, { "name": "Rell", "slug": "Rell" },
-        { "name": "Jarvan IV", "slug": "JarvanIV" }, { "name": "Elise", "slug": "Elise" }, { "name": "Jhin", "slug": "Jhin" }, { "name": "Aurora", "slug": "Aurora" }, { "name": "Volibear", "slug": "Volibear" },
-        { "name": "Caitlyn", "slug": "Caitlyn" }, { "name": "Karma", "slug": "Karma" }, { "name": "Renekton", "slug": "Renekton" }, { "name": "Naafiri", "slug": "Naafiri" }, { "name": "Hwei", "slug": "Hwei" }
+        { "name": "Nautilus", "slug": "Nautilus" }, { "name": "Lee Sin", "slug": "LeeSin" }, { "name": "Sylas", "slug": "Sylas" }, { "name": "Kai'Sa", "slug": "Kaisa" }, { "name": "Volibear", "slug": "Volibear" },
+        { "name": "Xin Zhao", "slug": "XinZhao" }, { "name": "Sivir", "slug": "Sivir" }, { "name": "Orianna", "slug": "Orianna" }, { "name": "Bard", "slug": "Bard" }, { "name": "Jax", "slug": "Jax" },
+        { "name": "Caitlyn", "slug": "Caitlyn" }, { "name": "Elise", "slug": "Elise" }, { "name": "Sion", "slug": "Sion" }, { "name": "Naafiri", "slug": "Naafiri" }, { "name": "Vex", "slug": "Vex" }
       ]
     },
     {
@@ -277,12 +255,12 @@
       "team": "LYON",
       "team_zh": "LYON",
       "poolDepth": 15,
-      "note_en": "Swept FURIA 3-0 — 15 unique champions across the 3 games, none repeated. Confirmed via gol.gg official match data.",
-      "note_zh": "3-0横扫FURIA——全系列共用15个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
+      "note_en": "Swept TSW 3-0 in Lower Bracket R2 — 15 unique champions across the 3 games, none repeated. Confirmed via gol.gg official match data.",
+      "note_zh": "下位组第二轮3-0横扫TSW——全系列共用15个不重复英雄。数据来自gol.gg官方赛事记录，已核实。",
       "champs": [
-        { "name": "Jayce", "slug": "Jayce" }, { "name": "Jarvan IV", "slug": "JarvanIV" }, { "name": "Syndra", "slug": "Syndra" }, { "name": "Ezreal", "slug": "Ezreal" }, { "name": "Neeko", "slug": "Neeko" },
-        { "name": "Gnar", "slug": "Gnar" }, { "name": "Wukong", "slug": "Wukong" }, { "name": "Galio", "slug": "Galio" }, { "name": "Ziggs", "slug": "Ziggs" }, { "name": "Camille", "slug": "Camille" },
-        { "name": "Varus", "slug": "Varus" }, { "name": "Lee Sin", "slug": "LeeSin" }, { "name": "Viktor", "slug": "Viktor" }, { "name": "Kog'Maw", "slug": "KogMaw" }, { "name": "Lulu", "slug": "Lulu" }
+        { "name": "Ezreal", "slug": "Ezreal" }, { "name": "Alistar", "slug": "Alistar" }, { "name": "Trundle", "slug": "Trundle" }, { "name": "Renekton", "slug": "Renekton" }, { "name": "Taliyah", "slug": "Taliyah" },
+        { "name": "Varus", "slug": "Varus" }, { "name": "Viktor", "slug": "Viktor" }, { "name": "Jarvan IV", "slug": "JarvanIV" }, { "name": "Camille", "slug": "Camille" }, { "name": "Gnar", "slug": "Gnar" },
+        { "name": "Nocturne", "slug": "Nocturne" }, { "name": "Ziggs", "slug": "Ziggs" }, { "name": "Jayce", "slug": "Jayce" }, { "name": "Ahri", "slug": "Ahri" }, { "name": "Rell", "slug": "Rell" }
       ]
     },
     {
@@ -477,7 +455,7 @@
       "reason_en": "G2 arrive off a demoralizing 0-3 sweep by HLE, while T1 just swept FURIA 3-0 to steady themselves. Three-time World Champion pedigree and form both favor T1.",
       "reason_zh": "G2 刚被 HLE 0-3 横扫，士气受挫；T1 则3-0横扫FURIA重新找回状态。无论底蕴还是近况均更看好 T1。",
       "odds": null,
-      "result": null
+      "result": { "home": 3, "away": 1 }
     },
     {
       "id": "msi-lb-r2-tsw",
@@ -494,6 +472,24 @@
       "opusScore": "3-2",
       "reason_en": "Elimination match between two survivors: LYON fought BLG close in every game before falling 0-3; TSW enter off a 3-1 upset of TES. A genuine toss-up, leaning LYON.",
       "reason_zh": "两支幸存者的生死战：LYON 虽0-3不敌BLG，但每局都缠斗到底；TSW 则带着3-1爆冷TES的士气而来。基本势均力敌，略微倾向LYON。",
+      "odds": null,
+      "result": { "home": 3, "away": 0 }
+    },
+    {
+      "id": "msi-lb-r3",
+      "round": "Lower Bracket · R3",
+      "round_zh": "下位组 · 第三轮",
+      "bo": 5,
+      "kickoff": "2026-07-10T08:00:00Z",
+      "home": "G2",
+      "home_zh": "G2",
+      "away": "LYON",
+      "away_zh": "LYON",
+      "opus": "home",
+      "conf": 0.58,
+      "opusScore": "3-2",
+      "reason_en": "Both enter red-hot: G2 just eliminated three-time World Champion T1 3-1, LYON swept TSW 3-0. G2's win came against tougher competition; leaning G2 in a close one.",
+      "reason_zh": "双方都手感火热：G2 刚3-1淘汰卫冕三届世界冠军T1，LYON 则3-0横扫TSW。G2 此胜含金量更高（对手更强），倾向G2小胜，但预计过程胶着。",
       "odds": null,
       "result": null
     },
