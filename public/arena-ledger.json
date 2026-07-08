@@ -83,7 +83,7 @@
       "promptVersion": "B-v1",
       "startEquity": 10000,
       "cash": 6233.0587,
-      "equity": 9999.0587,
+      "equity": 10012.4087,
       "dayStartEquity": 10000,
       "equityHistory": [
         {
@@ -92,7 +92,7 @@
         },
         {
           "day": 2,
-          "equity": 9999.0587
+          "equity": 10012.4087
         }
       ],
       "positions": [
@@ -100,13 +100,13 @@
           "sym": "MSFT",
           "qty": 5,
           "avgPx": 386.8173,
-          "mkPx": 386.74
+          "mkPx": 388.84
         },
         {
           "sym": "GOOGL",
           "qty": 5,
           "avgPx": 366.5333,
-          "mkPx": 366.46
+          "mkPx": 367.03
         }
       ],
       "trades": [
@@ -133,14 +133,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -0.009,
-        "maxDD": -0.009,
+        "cumPct": 0.124,
+        "maxDD": 0,
         "hitRate": null,
         "exposure": 37.7
       },
       "review": {
-        "zh": "首次运行——这是人工手动触发，并非真正盘后（美东现为盘前9点多），仅用于在白名单修复后让 Model B 开始建仓；后续将改为每日盘后自动运行。今日恰逢周二，符合 B 仅可在周二/周四开新仓的规则。选股偏保守：MSFT（今日小幅回调-1.0%，逢低介入优质龙头）、GOOGL（AI 护城河+基本面稳健，+1.8%），仓位均远低于20%上限，换手保持低位。",
-        "en": "First-ever run for Book B — a manual kickoff triggered mid-conversation, not a true post-market run (it's still pre-market ET); a daily automated post-market task is being set up to take over going forward. Today happens to be a Tuesday, one of B's two allowed open/add days. Conservative picks: MSFT (small -1.0% dip on a quality name) and GOOGL (AI moat, solid fundamentals, +1.8%), both well under the 20% position cap, keeping turnover low per Book B's mandate."
+        "zh": "今日半导体板块剧烈调整：三星财报超预期却引发获利了结，SK海力士放缓HBM扩产触发内存供给过剩担忧，叠加美联储鹰派立场，MU/INTC/TER/ALAB单日跌6%-11.5%。MSFT/GOOGL等软件权重股逆势收红。Book B今早已在周二窗口建仓MSFT、GOOGL，现金充裕。这是估值驱动的单日波动而非基本面破位，保守策略不追跌接刀，本次不加仓，维持观察，换手率保持低位。",
+        "en": "Sharp semis selloff today: Samsung's beat triggered profit-taking, SK Hynix HBM capex slowdown revived memory-oversupply fears, plus a hawkish new Fed chair - MU, INTC, TER, ALAB down 6-11.5%. Software-leaning megacaps (MSFT, GOOGL) held up. Book B already opened MSFT/GOOGL this morning's Tuesday window. This is a valuation reset, not a fundamental break, so no reason to chase the dip same-day. Standing pat keeps turnover low."
       }
     }
   }
