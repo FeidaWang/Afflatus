@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-07",
+  "updated": "2026-07-08",
   "version": 1,
-  "day": 2,
+  "day": 3,
   "season": 1,
-  "lastRunDate": "2026-07-07",
+  "lastRunDate": "2026-07-08",
   "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
   "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
   "bench": {
@@ -15,8 +15,8 @@
       "promptVersion": "A-v1",
       "startEquity": 10000,
       "cash": 6986.8237,
-      "equity": 9810.4237,
-      "dayStartEquity": 10000,
+      "equity": 9848.7037,
+      "dayStartEquity": 9848.7037,
       "equityHistory": [
         {
           "day": 0,
@@ -29,6 +29,10 @@
         {
           "day": 2,
           "equity": 9810.4237
+        },
+        {
+          "day": 3,
+          "equity": 9848.7037
         }
       ],
       "positions": [
@@ -36,13 +40,13 @@
           "sym": "AMD",
           "qty": 3,
           "avgPx": 552.326,
-          "mkPx": 509.52
+          "mkPx": 517.65
         },
         {
           "sym": "TSM",
           "qty": 3,
           "avgPx": 452.0159,
-          "mkPx": 431.68
+          "mkPx": 436.31
         }
       ],
       "trades": [
@@ -69,14 +73,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -1.896,
+        "cumPct": -1.513,
         "maxDD": -1.896,
         "hitRate": null,
-        "exposure": 28.8
+        "exposure": 29.1
       },
       "review": {
-        "zh": "今日核心AI硬件板块普跌：SNDK -12.5%、TER -12.3%、ALAB -11.5%、WDC -10.3%、INTC -10.2%、MU -8.4%、AMD -7.7%，触发因素是三星财报后获利了结叠加HBM供给/AI资本开支可持续性担忧，资金明显轮动至软件/大盘科技（CRM +2.8%、ADBE +2.3%、MSFT +1.9%）。已持仓AMD浮亏7.75%，逼近8%止损线但未触发。今日调整：不追空不抄底，保持观望，等待止损自动清仓或明朗信号，避免在高波动轮动日新增风险。",
-        "en": "Broad core-AI-hardware rout today (SNDK -12.5%, TER -12.3%, ALAB -11.5%, WDC -10.3%, INTC -10.2%, MU -8.4%, AMD -7.7%) driven by Samsung-earnings profit-taking plus HBM supply and AI-capex sustainability worries, with rotation into software/megacap (CRM, ADBE, MSFT up). Existing AMD position is down 7.75%, near but not past the 8% stop. Adjustment: holding rather than chasing either direction on a high-volatility rotation day; letting the stop-loss sweep handle AMD if it breaches."
+        "zh": "今日核心AI硬件股全面反弹（SNDK、WDC、AVGO、ALAB、PSTG、AMD、TSM均涨），软件/平台系AAPL、MSFT、GOOGL、META、CRM、PLTR、TSLA普跌，原因是特朗普宣布伊朗停火\"已结束\"引发地缘风险偏好下降，叠加原油走高。持仓AMD、TSM随板块反弹回撤收窄（AMD约-6.3%，TSM约-3.5%），距止损线更远。鉴于今日驱动是宏观headline而非个股基本面，反弹刚开始尚待确认，本次不追加、不减仓，维持观察，避免在headline驱动的高波动日新增风险敞口。",
+        "en": "Core AI-hardware names (SNDK, WDC, AVGO, ALAB, PSTG, AMD, TSM) bounced today after yesterday's overdone rout, while megacap software/platform names (AAPL, MSFT, GOOGL, META, CRM, PLTR, TSLA) sold off as Trump declared the Iran ceasefire over and oil spiked. Existing AMD/TSM positions recovered (AMD ~-6.3%, TSM ~-3.5%), moving further from stop-loss. Since today's driver is a macro headline rather than stock fundamentals and the bounce is unconfirmed, holding steady rather than adding or trimming - avoiding fresh risk on a headline-driven volatile session."
       }
     },
     "B": {
