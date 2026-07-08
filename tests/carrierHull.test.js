@@ -6,8 +6,8 @@ import { createCarrierHull } from '../src/scene/carrierHull.js';
 // file's header comment): carrierHull.js is DOM/WebGL-free, only calling the
 // injected `add(geo, mat, t, r, s)`, so proportions/mount layout can be
 // checked with a real THREE.Box3 without a renderer — even though the actual
-// visual match to the reference image (assets/hud/ship-hologram.jpeg) can't
-// be checked in this sandbox.
+// visual match to the reference (Anvil Odin's real spec, see carrierHull.js
+// header) can't be checked in this sandbox.
 function buildForBBox(detail) {
   const group = new THREE.Group();
   const mats = { hull: {}, arm: {}, dark: {}, trim: {}, glass: {}, red: {}, blue: {} };
@@ -28,16 +28,16 @@ function buildForBBox(detail) {
   return { info, box, meshCount: meshes.length, meshes };
 }
 
-describe('createCarrierHull — reference silhouette (wide flat hull, forked bow)', () => {
-  it('is wide and flat, not slender like the Odin blade hull (width:height >> odin\'s ~1:1)', () => {
+describe('createCarrierHull — Anvil Odin spec proportions (752m x 222m x 213m)', () => {
+  it('declares a length:height ratio of ~3.53:1 (752/213)', () => {
     const { info } = buildForBBox('full');
-    expect(info.width / info.height).toBeGreaterThan(3);
+    expect(info.length / info.height).toBeCloseTo(3.53, 1);
   });
 
-  it('declares a length:height ratio in the 8-10:1 range (low profile carrier, not a tall ship)', () => {
+  it('declares a width:height ratio of ~1.04:1 (222/213) — a chunky near-square block, not a flat pancake', () => {
     const { info } = buildForBBox('full');
-    expect(info.length / info.height).toBeGreaterThan(7);
-    expect(info.length / info.height).toBeLessThan(11);
+    expect(info.width / info.height).toBeGreaterThan(0.9);
+    expect(info.width / info.height).toBeLessThan(1.2);
   });
 
   it('the rendered bounding box spans roughly the declared length along Z', () => {
@@ -56,22 +56,26 @@ describe('createCarrierHull — reference silhouette (wide flat hull, forked bow
   it('the tower + spire rise above the main hull without being a runaway multiple', () => {
     const { info, box } = buildForBBox('full');
     const spanY = box.max.y - box.min.y;
-    expect(spanY).toBeGreaterThan(info.height * 2); // spire clears the flat hull by design
-    expect(spanY).toBeLessThan(info.height * 5);     // but isn't blown out of proportion
+    expect(spanY).toBeGreaterThan(info.height * 1.5); // spire clears the hull by design
+    expect(spanY).toBeLessThan(info.height * 4);       // but isn't blown out of proportion
   });
 
-  it('exposes 2 forked bow prong tips, mirrored left/right of the centreline', () => {
+  it('exposes a 12-emitter ring at the bow ("terminates in twelve emitters around the nose")', () => {
     const { info } = buildForBBox('full');
-    expect(info.prongTips.length).toBe(2);
-    const [a, b] = info.prongTips;
-    expect(a.x).toBeCloseTo(-b.x, 5);
-    expect(a.z).toBeCloseTo(b.z, 5);
-    expect(Math.abs(a.x)).toBeGreaterThan(0.5); // genuinely splayed apart, not touching
+    expect(info.emitterMounts.length).toBe(12);
+    // all emitters sit at the same z (the nose tip) and radiate around a small ring
+    const zs = new Set(info.emitterMounts.map(m => Math.round(m.z * 1000)));
+    expect(zs.size).toBe(1);
+    for (const m of info.emitterMounts) {
+      const r = Math.hypot(m.x, m.y);
+      expect(r).toBeGreaterThan(0.05);
+      expect(r).toBeLessThan(0.3);
+    }
   });
 
-  it('the prong tips sit ahead of the main hull\'s bow root (forward of the loft body)', () => {
+  it('the nose (bow beam housing) sits ahead of the main hull\'s bow root', () => {
     const { info } = buildForBBox('full');
-    for (const tip of info.prongTips) expect(tip.z).toBeGreaterThan(2.0);
+    for (const m of info.emitterMounts) expect(m.z).toBeGreaterThan(3.9);
   });
 
   it('exposes 2 swept wing mounts, mirrored left/right, outboard of the hull width', () => {
@@ -90,10 +94,10 @@ describe('createCarrierHull — reference silhouette (wide flat hull, forked bow
     for (let i = 0; i < xs.length; i++) expect(xs[i]).toBeCloseTo(-xs[xs.length - 1 - i], 5);
   });
 
-  it('the muzzle anchor sits between the two bow prongs, ahead of the main hull', () => {
+  it('the muzzle anchor sits at the beam-emitter nose tip, ahead of the main hull', () => {
     const { info } = buildForBBox('full');
     expect(info.muzzleAnchor.x).toBeCloseTo(0, 5);
-    expect(info.muzzleAnchor.z).toBeGreaterThan(2.0);
+    expect(info.muzzleAnchor.z).toBeGreaterThan(4.0);
   });
 
   it('"wire" detail has a thinner greeble scatter than "full" but keeps the same declared proportions', () => {
@@ -102,17 +106,22 @@ describe('createCarrierHull — reference silhouette (wide flat hull, forked bow
     expect(wire.meshCount).toBeLessThan(fullD.meshCount);
     expect(wire.info.length).toBe(fullD.info.length);
     expect(wire.info.width).toBe(fullD.info.width);
-    expect(wire.info.prongTips.length).toBe(fullD.info.prongTips.length);
+    expect(wire.info.emitterMounts.length).toBe(fullD.info.emitterMounts.length);
   });
 
-  it('exposes 16 turret mounts (13 dorsal + a bow main turret + 2 flanking secondaries)', () => {
+  it('exposes 16 turret mounts (13 dorsal + a bow main turret + 2 flanking secondaries) well aft of the beam nose', () => {
     const { info } = buildForBBox('full');
     expect(info.turretMounts.length).toBe(16);
     for (const t of info.turretMounts) {
       expect(t.y).toBeGreaterThan(0); // sit on deck, not the belly
-      expect(t.z).toBeGreaterThan(-6.5);
-      expect(t.z).toBeLessThan(3);
+      expect(t.z).toBeLessThan(3.9);  // clear of the beam-nose housing
     }
+  });
+
+  it('exposes 20 VLS tube mounts ("twenty tubes... size 12 torpedoes") in a 4x5 grid', () => {
+    const { info } = buildForBBox('full');
+    expect(info.vlsMounts.length).toBe(20);
+    for (const v of info.vlsMounts) expect(v.y).toBeGreaterThan(0);
   });
 
   it('exposes a ventral bay mount below the hull centreline, distinct from the ventral cylinder', () => {
@@ -136,8 +145,8 @@ describe('createCarrierHull — reference silhouette (wide flat hull, forked bow
     geo.computeBoundingBox();
     const b = geo.boundingBox;
     const spanX = b.max.x - b.min.x, spanZ = b.max.z - b.min.z;
-    expect(spanX).toBeGreaterThan(1.5);   // reaches midship's full width somewhere along its length
-    expect(spanZ).toBeGreaterThan(6);     // spans most of the main hull (stern -> bow root), prongs are separate parts
+    expect(spanX).toBeGreaterThan(1.0);   // reaches midship's full width somewhere along its length
+    expect(spanZ).toBeGreaterThan(6);     // spans most of the main hull (stern -> bow root)
     const pos = geo.attributes.position;
     for (let i = 0; i < pos.count; i++) {
       expect(Number.isFinite(pos.getX(i)) && Number.isFinite(pos.getY(i)) && Number.isFinite(pos.getZ(i))).toBe(true);
