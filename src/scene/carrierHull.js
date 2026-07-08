@@ -39,6 +39,14 @@
  * the main hull, stern panel lines + rear-facing gun emplacements + a stern
  * comms platform, and external piping runs + denser greeble.
  *
+ * 2026-07-08 detail pass 4 (another side-by-side comparison, "structural
+ * changes only"): tiered stepped sub-decks + a panel-line grid on the wings,
+ * a bow main turret + 2 flanking secondary turrets + a forward sensor dish
+ * cluster + fairing plates around the nozzle cluster, diagonal cross-braces
+ * and a second lattice patch in the ventral engineering bay, a longitudinal
+ * panel-line grid crossing the existing lateral seams, 2 more scattered
+ * radar dishes, and greeble bumped again.
+ *
  * Forward = +Z (matches odinHull.js / capitalShip3D.js / shipHologram.js).
  * mats: { hull, arm, dark, trim, glass, red, blue } — caller-owned materials.
  *
@@ -185,6 +193,13 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     add(new THREE.BoxGeometry(1.9, HEIGHT * 0.2, 1.5), M.arm, [wx, HEIGHT * 0.12, wz], [0, 0, sx * 0.16]);
     add(new THREE.BoxGeometry(0.5, HEIGHT * 0.16, 0.9), M.trim, [wx + sx * 0.9, HEIGHT * 0.12, wz - 0.3], [0, 0, sx * 0.1]); // outer tip fin
     add(new THREE.BoxGeometry(0.9, HEIGHT * 0.14, 1.1), M.hull, [wx - sx * 0.4, HEIGHT * 0.22, wz + 0.35], [0, 0, sx * 0.24]); // upper facet panel, different tilt
+    // tiered stepped sub-decks stacked on the wing root (decreasing size)
+    for (let t = 0; t < 2; t++) {
+      const sc = 1 - t * 0.35;
+      add(new THREE.BoxGeometry(1.1 * sc, HEIGHT * 0.1, 0.8 * sc), M.trim, [wx - sx * 0.1, HEIGHT * (0.28 + t * 0.12), wz + 0.1], [0, 0, sx * 0.1]);
+    }
+    // fine panel-line grid across the main wing panel
+    for (let gi = -2; gi <= 2; gi++) add(new THREE.BoxGeometry(0.02, 0.02, 1.3), M.trim, [wx + gi * 0.32, HEIGHT * 0.13, wz], [0, 0, sx * 0.16]);
     // truss cross-braces under the wing
     for (let k = 0; k < 3; k++) {
       add(new THREE.CylinderGeometry(0.014, 0.014, 0.6, 4), M.arm, [wx + sx * (0.2 + k * 0.5), -HEIGHT * 0.02, wz - 0.6 + k * 0.1], [0, 0, sx * (0.5 + k * 0.15)]);
@@ -226,11 +241,29 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
   }
 
   // ===== faceted forward nozzle cluster (fore-hull detail, distinct from =====
-  // the stern propulsion cluster below)
+  // the stern propulsion cluster below), with weapon fairing plates around it.
   const noseNozzleZ = BOW_ROOT - LEN_MAIN * 0.06;
   for (const x of [-0.7, 0, 0.7]) {
     add(new THREE.CylinderGeometry(0.09, 0.14, 0.3, 6), M.dark, [x, -HEIGHT * 0.1, noseNozzleZ], [Math.PI / 2, 0, 0]); // faceted (6-sided) nozzle body
     add(new THREE.CylinderGeometry(0.1, 0.1, 0.03, 6), M.trim, [x, -HEIGHT * 0.1, noseNozzleZ - 0.16]);                // nozzle rim
+    add(new THREE.BoxGeometry(0.28, HEIGHT * 0.22, 0.4), M.arm, [x, -HEIGHT * 0.08, noseNozzleZ + 0.18]);              // weapon fairing housing
+  }
+
+  // ===== bow main turret + 2 flanking secondary turrets + forward sensor =====
+  // dish cluster ("articulated weapon fairings, main/secondary turrets, and
+  // precise sensor arrays" on the fore hull).
+  const bowTurretZ = BOW_ROOT - LEN_MAIN * 0.02;
+  add(new THREE.CylinderGeometry(0.22, 0.26, HEIGHT * 0.24, 10), M.trim, [0, HEIGHT * 0.35, bowTurretZ]);              // main turret dome
+  add(new THREE.CylinderGeometry(0.03, 0.035, 0.6, 6), M.arm, [0, HEIGHT * 0.42, bowTurretZ + 0.3], [Math.PI / 2, 0, 0]); // main barrel
+  turretMounts.push({ x: 0, y: HEIGHT * 0.35, z: bowTurretZ });
+  for (const sx of [-1, 1]) {
+    add(new THREE.CylinderGeometry(0.14, 0.17, HEIGHT * 0.18, 8), M.trim, [sx * 0.55, HEIGHT * 0.28, bowTurretZ - 0.15]); // secondary turret dome
+    for (const bx of [-0.05, 0.05]) add(new THREE.CylinderGeometry(0.02, 0.024, 0.32, 6), M.arm, [sx * 0.55 + bx, HEIGHT * 0.33, bowTurretZ], [Math.PI / 2, 0, 0]); // secondary barrels
+    turretMounts.push({ x: sx * 0.55, y: HEIGHT * 0.28, z: bowTurretZ - 0.15 });
+  }
+  for (const [sax, saz] of [[-0.9, -0.3], [0.9, -0.3], [0, -0.5]]) {
+    add(new THREE.CylinderGeometry(0.09, 0.09, 0.03, 8), M.dark, [sax, HEIGHT * 0.15, bowTurretZ + saz]);              // sensor dish base
+    add(new THREE.CylinderGeometry(0.008, 0.008, 0.12, 4), M.arm, [sax, HEIGHT * 0.15 + 0.06, bowTurretZ + saz]);      // sensor stalk
   }
 
   // ===== large ventral cylinder (docking tube / main engine housing, the =====
@@ -257,6 +290,20 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
   }
   for (const cx of [-bayW / 2, bayW / 2]) for (const cz of [-bayD / 2, bayD / 2]) {
     add(new THREE.CylinderGeometry(0.02, 0.02, bayDepth, 5), M.arm, [bayX + cx, bayY - bayDepth / 2, bayZ + cz]); // corner support post
+  }
+  // diagonal cross-bracing (X pattern) — "support trusses" reinforcing the
+  // open grid, not just a flat set of perpendicular bars.
+  {
+    const braceLen = Math.hypot(bayW, bayD), braceAngle = Math.atan2(bayD, bayW);
+    add(new THREE.BoxGeometry(braceLen, 0.02, 0.02), M.arm, [bayX, bayY - bayDepth, bayZ], [0, braceAngle, 0]);
+    add(new THREE.BoxGeometry(braceLen, 0.02, 0.02), M.arm, [bayX, bayY - bayDepth, bayZ], [0, -braceAngle, 0]);
+  }
+  // second, smaller engineering-bay patch aft of the cylinder — broadens the
+  // exposed undercarriage lattice beyond the single bay above.
+  {
+    const bay2X = -0.9, bay2Z = cylZ - 0.9, bay2W = 0.9, bay2D = 0.7, bay2Depth = bayDepth * 0.75;
+    for (let i = 0; i <= 2; i++) { const x = bay2X - bay2W / 2 + (bay2W / 2) * i; add(new THREE.BoxGeometry(0.018, bay2Depth, bay2D), M.trim, [x, bayY - bay2Depth / 2, bay2Z]); }
+    for (let i = 0; i <= 2; i++) { const z = bay2Z - bay2D / 2 + (bay2D / 2) * i; add(new THREE.BoxGeometry(bay2W, bay2Depth, 0.018), M.trim, [bay2X, bayY - bay2Depth / 2, z]); }
   }
   const roverY = bayY - bayDepth + 0.06;
   add(new THREE.BoxGeometry(0.18, 0.07, 0.11), M.glass, [bayX, roverY, bayZ]);                                          // rover body
@@ -295,7 +342,13 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
   // the reference is an unusually busy cutaway-style render), plus external
   // piping runs along the hull surface.
   for (let i = 0; i < 5; i++) add(new THREE.BoxGeometry(WIDTH * 0.7, 0.03, 0.2), M.trim, [0, HEIGHT * 0.22, STERN + LEN_MAIN * (0.15 + i * 0.16)]);
+  for (const lx of [-1.5, -0.75, 0, 0.75, 1.5]) add(new THREE.BoxGeometry(0.025, 0.025, LEN_MAIN * 0.75), M.trim, [lx, HEIGHT * 0.22, STERN + LEN_MAIN * 0.52]); // longitudinal lines crossing the lateral seams above -> panel-line grid
   for (const px of [-1.6, -0.9, 0.9, 1.6]) add(new THREE.CylinderGeometry(0.02, 0.02, LEN_MAIN * 0.55, 6), M.arm, [px, HEIGHT * 0.2, STERN + LEN_MAIN * 0.55], [Math.PI / 2, 0, 0]);
+  // 2 more scattered radar dishes (structured accents, distinct from the random greeble below)
+  add(new THREE.CylinderGeometry(0.16, 0.16, 0.04, 8), M.dark, [1.3, HEIGHT * 0.28, STERN + LEN_MAIN * 0.2]);
+  add(new THREE.CylinderGeometry(0.015, 0.015, 0.22, 4), M.arm, [1.3, HEIGHT * 0.28 + 0.11, STERN + LEN_MAIN * 0.2]);
+  add(new THREE.CylinderGeometry(0.14, 0.14, 0.035, 8), M.dark, [0.6, HEIGHT * 0.3, BOW_ROOT - LEN_MAIN * 0.2]);
+  add(new THREE.CylinderGeometry(0.013, 0.013, 0.2, 4), M.arm, [0.6, HEIGHT * 0.3 + 0.1, BOW_ROOT - LEN_MAIN * 0.2]);
   {
     const density = full ? 1 : 0.45;
     const scatter = (n, zMin, zMax, xSpread, y) => {
@@ -308,8 +361,8 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
         add(geo, r < 0.5 ? M.trim : M.dark, [x, y, z]);
       }
     };
-    scatter(Math.round(110 * density), STERN + LEN_MAIN * 0.1, BOW_ROOT - LEN_MAIN * 0.1, WIDTH * 0.75, HEIGHT * 0.24);
-    scatter(Math.round(55 * density), STERN, STERN + LEN_MAIN * 0.3, WIDTH * 0.55, HEIGHT * 0.1);
+    scatter(Math.round(140 * density), STERN + LEN_MAIN * 0.1, BOW_ROOT - LEN_MAIN * 0.1, WIDTH * 0.75, HEIGHT * 0.24);
+    scatter(Math.round(70 * density), STERN, STERN + LEN_MAIN * 0.3, WIDTH * 0.55, HEIGHT * 0.1);
   }
 
   // ===== stern engine mounts: ribbed nozzle bells (flat row across the =====
