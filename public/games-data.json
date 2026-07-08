@@ -1,17 +1,35 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-07",
-  "note_en": "Predictions are my (Fable 5 Max) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/DraftKings/bet365 (7 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5 Max）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/DraftKings/bet365（7 月 7 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "updated": "2026-07-08",
+  "note_en": "Predictions are my (Fable 5 Max) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/DraftKings/bet365 (8 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Fable 5 Max）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/DraftKings/bet365（7 月 8 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
-    "resolved": 46,
-    "correctOutcome": 32,
+    "resolved": 48,
+    "correctOutcome": 33,
     "exactScore": 8,
-    "winRate": 70,
+    "winRate": 69,
     "note_en": "Match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
     "note_zh": "自第三轮起对预测胜负计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
+      {
+        "id": "wc-sui-col",
+        "label_en": "Switzerland 0-0 Colombia (Switzerland win 4-3 pens)",
+        "label_zh": "瑞士 0-0 哥伦比亚（点球 4-3 瑞士胜）",
+        "pick_en": "Colombia win",
+        "pick_zh": "哥伦比亚胜",
+        "ok": false,
+        "exact": false
+      },
+      {
+        "id": "wc-arg-egy",
+        "label_en": "Argentina 3-2 Egypt",
+        "label_zh": "阿根廷 3-2 埃及",
+        "pick_en": "Argentina win",
+        "pick_zh": "阿根廷胜",
+        "ok": true,
+        "exact": false
+      },
       {
         "id": "wc-usa-bel",
         "label_en": "United States 1-4 Belgium",
@@ -65,24 +83,6 @@
         "pick_zh": "加拿大胜",
         "ok": false,
         "exact": false
-      },
-      {
-        "id": "wc-col-gha",
-        "label_en": "Colombia 1-0 Ghana",
-        "label_zh": "哥伦比亚 1-0 加纳",
-        "pick_en": "Colombia win",
-        "pick_zh": "哥伦比亚胜",
-        "ok": true,
-        "exact": false
-      },
-      {
-        "id": "wc-arg-cpv",
-        "label_en": "Argentina 3-2 Cape Verde (AET)",
-        "label_zh": "阿根廷 3-2 佛得角（加时）",
-        "pick_en": "Argentina win",
-        "pick_zh": "阿根廷胜",
-        "ok": true,
-        "exact": false
       }
     ]
   },
@@ -107,9 +107,9 @@
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
-      "prob": 18,
-      "reason_en": "Survived a huge scare against Cape Verde, winning 3-2 in extra time via a deflected Romero effort, after being pegged back twice. Perfect group form (9 pts) still the headline, but the knockout nerves were visible. R16 vs Egypt, July 7 Atlanta — first-ever meeting, heavy favourites.",
-      "reason_zh": "惊险过关，两度被佛得角追平后，靠罗梅罗一次射门经防守球员折射入网，加时3-2险胜。小组赛仍为全胜（9分），但淘汰赛的紧张感已显现。16强7月7日战埃及，亚特兰大，两队历史首次交手，阿根廷仍占大热。"
+      "prob": 17,
+      "reason_en": "Pulled off a stunning R16 comeback, trailing Egypt 2-0 before Romero, Messi and Enzo Fernández struck in the final 11 minutes to win 3-2 — Messi's 21st World Cup goal extended his own record. QF vs Switzerland, July 11 Kansas City. Still favourites, but the defensive wobbles against Egypt are a real concern.",
+      "reason_zh": "16 强上演惊天逆转，一度0-2落后埃及，末段11分钟内靠罗梅罗、梅西和恩佐·费尔南德斯连入三球，3-2取胜——梅西世界杯进球数刷新至21球，续写个人纪录。八强7月11日战瑞士，堪萨斯城。仍是热门，但对阵埃及暴露的防守漏洞值得警惕。"
     },
     {
       "team": "Morocco",
@@ -132,8 +132,8 @@
       "team_zh": "挪威",
       "flag": "🇳🇴",
       "prob": 9,
-      "reason_en": "Stunned five-time champions Brazil 2-1 in R16 on a Haaland brace, reaching the quarter-finals for the first time in 28 years. QF vs England, July 11 Miami. The tournament's biggest surprise package now has a real shot.",
-      "reason_zh": "16 强靠哈兰德梅开二度 2-1 爆冷淘汰五届冠军巴西，28 年来首次挺进八强。八强 7 月 11 日战英格兰，迈阿密。本届杯赛最大黑马，如今真有一战之力。"
+      "reason_en": "Stunned five-time champions Brazil 2-1 in R16 on a Haaland brace, reaching the quarter-finals for the first time in their history. QF vs England, July 11 Miami. The tournament's biggest surprise package now has a real shot.",
+      "reason_zh": "16 强靠哈兰德梅开二度 2-1 爆冷淘汰五届冠军巴西，历史上首次挺进八强。八强 7 月 11 日战英格兰，迈阿密。本届杯赛最大黑马，如今真有一战之力。"
     },
     {
       "team": "England",
@@ -142,6 +142,14 @@
       "prob": 8,
       "reason_en": "Survived Mexico 3-2 in a wild R16 (Bellingham brace, Kane penalty) despite playing 40+ minutes with ten men after a red card. QF vs Norway, July 11 Miami — Haaland looms as the biggest threat yet.",
       "reason_zh": "16 强 3-2 险胜墨西哥（贝林厄姆梅开二度、凯恩点球破门），红牌后十人应战超过 40 分钟仍挺住。八强 7 月 11 日战挪威，迈阿密——哈兰德将是迄今最大威胁。"
+    },
+    {
+      "team": "Switzerland",
+      "team_zh": "瑞士",
+      "flag": "🇨🇭",
+      "prob": 4,
+      "reason_en": "Ground through 120 goalless minutes against Colombia and won 4-3 on penalties, with Rubén Vargas burying the decisive spot-kick and Sommer huge in the shootout. QF vs Argentina, July 11 Kansas City — a massive step up against Messi, but the Swiss haven't lost in normal time all tournament.",
+      "reason_zh": "120 分钟鏖战哥伦比亚未尝进球，点球大战 4-3 险胜，瓦尔加斯罚入制胜点球，索梅尔扑救神勇。八强 7 月 11 日战阿根廷，堪萨斯城——对阵梅西是巨大考验，但瑞士本届常规时间尚未尝败绩。"
     }
   ],
   "players": [
@@ -151,7 +159,7 @@
       "team": "France",
       "team_zh": "法国",
       "flag": "🇫🇷",
-      "prob": 20,
+      "prob": 22,
       "reason_en": "Cool penalty winner vs Paraguay in R16 — still leading the Golden Boot race alongside Haaland. QF vs Morocco next. If France go deep, the tally will climb fast.",
       "reason_zh": "16 强战巴拉圭主罚点球，沉着破门——继续与哈兰德并列金靴领跑。八强迎战摩洛哥。若法国走远，进球数将急速攀升。"
     },
@@ -161,9 +169,9 @@
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
-      "prob": 19,
-      "reason_en": "Argentina survived Cape Verde 3-2 in extra time in R32; Messi remains the emotional and tactical focal point in what he's called his final World Cup. R16 vs Egypt, July 7 Atlanta. Eyes both Golden Boot and the trophy.",
-      "reason_zh": "阿根廷 32 强加时 3-2 险胜佛得角；梅西在自己所说的谢幕之战中仍是球队情感与战术核心。16 强 7 月 7 日战埃及，亚特兰大。金靴与冠军皆在视野中。"
+      "prob": 21,
+      "reason_en": "Scored the equaliser in Argentina's stunning 3-2 comeback over Egypt, his 21st World Cup finals goal — a new all-time record. QF vs Switzerland, July 11 Kansas City, in what he's called his final World Cup. Eyes both Golden Boot and the trophy.",
+      "reason_zh": "在阿根廷3-2逆转埃及一役中打入扳平球，个人世界杯正赛进球数达到21球——刷新历史纪录。八强7月11日战瑞士，堪萨斯城，这是他所说的谢幕之战。金靴与冠军皆在视野中。"
     },
     {
       "name": "Erling Haaland",
@@ -171,7 +179,7 @@
       "team": "Norway",
       "team_zh": "挪威",
       "flag": "🇳🇴",
-      "prob": 16,
+      "prob": 18,
       "reason_en": "Brace in Norway's 2-1 R16 shock over Brazil — 7 goals this tournament, tied for the Golden Boot lead. QF vs England, July 11 Miami. The form player of the knockouts.",
       "reason_zh": "16 强 2-1 爆冷淘汰巴西中梅开二度——本届合计 7 球，并列金靴榜首。八强 7 月 11 日战英格兰，迈阿密。淘汰赛阶段状态最佳的球员。"
     },
@@ -181,19 +189,9 @@
       "team": "Spain",
       "team_zh": "西班牙",
       "flag": "🇪🇸",
-      "prob": 13,
+      "prob": 14,
       "reason_en": "Spain squeezed past Portugal 1-0 in the R16 on a stoppage-time Merino winner; Yamal's dribbling out wide kept the pressure on all game. QF vs Belgium, July 10, Los Angeles — a much more direct, physical test than Portugal.",
       "reason_zh": "西班牙 16 强靠补时阶段梅里诺绝杀 1-0 险胜葡萄牙，亚马尔边路突破持续制造威胁。八强 7 月 10 日战比利时，洛杉矶——对手风格更直接、更具身体对抗性，考验升级。"
-    },
-    {
-      "name": "Mohamed Salah",
-      "name_zh": "萨拉赫",
-      "team": "Egypt",
-      "team_zh": "埃及",
-      "flag": "🇪🇬",
-      "prob": 12,
-      "reason_en": "Scored a cool Panenka in the shootout to send Egypt past Australia and into a first Round of 16 since 1934. R16 vs Argentina, July 7 Atlanta — a tough draw, but Salah is playing with total belief right now.",
-      "reason_zh": "点球大战中以一记优雅的“熊猫式”点球帮助埃及淘汰澳大利亚，自1934年以来首次打入16强。16强7月7日战阿根廷，亚特兰大，对手很强，但萨拉赫现下信心十足。"
     },
     {
       "name": "Harry Kane",
@@ -201,72 +199,16 @@
       "team": "England",
       "team_zh": "英格兰",
       "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "prob": 11,
+      "prob": 12,
       "reason_en": "Penalty in England's 3-2 R16 win over Mexico, played through 40+ minutes down to ten men — keeps his Golden Boot chase alive alongside Mbappé, Messi and Haaland. QF vs Norway, July 11 Miami.",
       "reason_zh": "16 强 3-2 险胜墨西哥中主罚点球破门，十人应战超过 40 分钟——金靴之争与姆巴佩、梅西、哈兰德持续升温。八强 7 月 11 日战挪威，迈阿密。"
     }
   ],
   "fixtures": [
     {
-      "id": "wc-arg-egy",
-      "stage": "Round of 16",
-      "kickoff": "2026-07-07T16:00:00Z",
-      "home": "Argentina",
-      "home_zh": "阿根廷",
-      "homeFlag": "🇦🇷",
-      "away": "Egypt",
-      "away_zh": "埃及",
-      "awayFlag": "🇪🇬",
-      "opus": "home",
-      "conf": 0.8,
-      "opusScore": "2-0",
-      "reason_en": "First-ever World Cup meeting between these sides. Argentina's group-stage dominance (9 pts, +7 GD) outweighs the extra-time scare against Cape Verde — Messi, in what he's signalled is his final World Cup, remains locked in with goals in every match. Egypt's historic run (first Round of 16 since 1934) leans on Salah's brilliance and defensive discipline, but the class gap with the reigning champions is significant. Argentina to progress toward a mouth-watering quarter-final with the Switzerland/Colombia winner.",
-      "reason_zh": "两队世界杯历史首次交手。阿根廷小组赛的统治级表现（9分，净胜球+7）足以弥补对佛得角加时赛的惊魂一刻——梅西在自己宣布的谢幕之战中已场场进球，状态正佳。埃及历史性晋级16强（自1934年以来首次）将依靠萨拉赫的个人能力与防守纪律，但与卫冕冠军的实力差距明显。阿根廷有望晋级，八强将迎来瑞士/哥伦比亚胜者的诱人对决。",
-      "odds": {
-        "h": 1.37,
-        "d": 4.7,
-        "a": 9.0,
-        "src": "DraftKings",
-        "scores": [
-          { "s": "2-0", "o": 6.0 },
-          { "s": "1-0", "o": 6.5 },
-          { "s": "3-0", "o": 9.0 }
-        ]
-      },
-      "result": null
-    },
-    {
-      "id": "wc-sui-col",
-      "stage": "Round of 16",
-      "kickoff": "2026-07-07T20:00:00Z",
-      "home": "Switzerland",
-      "home_zh": "瑞士",
-      "homeFlag": "🇨🇭",
-      "away": "Colombia",
-      "away_zh": "哥伦比亚",
-      "awayFlag": "🇨🇴",
-      "opus": "away",
-      "conf": 0.56,
-      "opusScore": "1-2",
-      "reason_en": "Only the second World Cup meeting ever between these sides. Both arrive unbeaten in 90 minutes this tournament — Switzerland edged Algeria 2-0, Colombia ground out Ghana 1-0. Díaz and Rodríguez give Colombia's attack a sharper cutting edge than Switzerland's efficient but less explosive setup. Winner gets a quarter-final against Argentina or Egypt.",
-      "reason_zh": "两队世界杯历史上第二次交手。双方本届常规时间均未尝败绩——瑞士2-0胜阿尔及利亚，哥伦比亚1-0险胜加纳。迪亚斯与罗德里格斯让哥伦比亚的攻击线比高效但缺乏爆发力的瑞士更具威胁。胜者将晋级八强战阿根廷或埃及。",
-      "odds": {
-        "h": 3.5,
-        "d": 3.0,
-        "a": 2.25,
-        "src": "FanDuel",
-        "scores": [
-          { "s": "1-1", "o": 6.0 },
-          { "s": "0-1", "o": 6.5 },
-          { "s": "1-2", "o": 8.5 }
-        ]
-      },
-      "result": null
-    },
-    {
       "id": "wc-fra-mar",
       "stage": "Quarter-final",
-      "kickoff": "2026-07-09T23:00:00Z",
+      "kickoff": "2026-07-09T20:00:00Z",
       "home": "France",
       "home_zh": "法国",
       "homeFlag": "🇫🇷",
@@ -280,9 +222,9 @@
       "reason_zh": "首场八强战。法国靠姆巴佩点球 1-0 险胜巴拉圭，摩洛哥则 3-0 大胜加拿大，连续两届杀入八强。法国阵容深度与淘汰赛经验更胜一筹，稳居热门，但摩洛哥防守纪律严明且延续黑马之势，此役绝非轻松过关。",
       "odds": {
         "h": 1.57,
-        "d": 3.85,
-        "a": 6.0,
-        "src": "bet365",
+        "d": 3.9,
+        "a": 6.5,
+        "src": "FanDuel",
         "scores": [
           { "s": "2-0", "o": 6.5 },
           { "s": "1-0", "o": 6.0 },
@@ -307,14 +249,70 @@
       "reason_en": "Spain haven't conceded all tournament and needed a 91st-minute Merino winner to see off Portugal; Belgium arrive full of confidence after blitzing the USA 4-1 with De Ketelaere leading the line. Spain's control and Yamal's return give them the edge, but Belgium's cutting edge on the counter is the biggest threat to that clean sheet.",
       "reason_zh": "西班牙本届赛事尚未失球，但也要靠梅里诺第 91 分钟绝杀才险胜葡萄牙；比利时以德凯特莱雷领衔 4-1 血洗美国，士气正盛。西班牙的控场能力与亚马尔的回归占优，但比利时的反击效率是零封纪录最大的威胁。",
       "odds": {
-        "h": 1.65,
-        "d": 3.9,
-        "a": 5.2,
-        "src": "bet365",
+        "h": 1.63,
+        "d": 4.0,
+        "a": 5.4,
+        "src": "FanDuel",
         "scores": [
           { "s": "1-0", "o": 7.0 },
           { "s": "2-0", "o": 7.5 },
           { "s": "2-1", "o": 8.5 }
+        ]
+      },
+      "result": null
+    },
+    {
+      "id": "wc-nor-eng",
+      "stage": "Quarter-final",
+      "kickoff": "2026-07-11T21:00:00Z",
+      "home": "Norway",
+      "home_zh": "挪威",
+      "homeFlag": "🇳🇴",
+      "away": "England",
+      "away_zh": "英格兰",
+      "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "opus": "away",
+      "conf": 0.54,
+      "opusScore": "1-2",
+      "reason_en": "First-ever World Cup meeting between these sides. England needed 40+ minutes with ten men to see off Mexico 3-2, while Norway are into their first-ever World Cup quarter-final off the back of Haaland's brace against Brazil. Haaland's electric form (7 goals, level for the Golden Boot) is the standout threat, but England's greater squad depth and knockout pedigree — an 11th all-time WC quarter-final — should just get them through in a close one. Winner meets the Argentina/Switzerland victor in the semi-final.",
+      "reason_zh": "两队世界杯历史首次交手。英格兰十人应战超过40分钟才3-2险胜墨西哥，挪威则靠哈兰德梅开二度爆冷淘汰巴西，历史上首次杀入世界杯八强。哈兰德状态火热（7球，并列金靴榜首）是最大威胁，但英格兰更深厚的阵容与淘汰赛经验（历史第11次杀入八强）应能助其惊险过关。胜者将在四强战阿根廷/瑞士的胜者。",
+      "odds": {
+        "h": 3.5,
+        "d": 3.6,
+        "a": 2.0,
+        "src": "bet365",
+        "scores": [
+          { "s": "1-1", "o": 6.0 },
+          { "s": "2-1", "o": 7.0 },
+          { "s": "1-2", "o": 7.5 }
+        ]
+      },
+      "result": null
+    },
+    {
+      "id": "wc-arg-sui",
+      "stage": "Quarter-final",
+      "kickoff": "2026-07-12T01:00:00Z",
+      "home": "Argentina",
+      "home_zh": "阿根廷",
+      "homeFlag": "🇦🇷",
+      "away": "Switzerland",
+      "away_zh": "瑞士",
+      "awayFlag": "🇨🇭",
+      "opus": "home",
+      "conf": 0.63,
+      "opusScore": "2-1",
+      "reason_en": "Argentina reached the quarters via a stunning comeback over Egypt (3-2, having trailed 2-0 with 11 minutes left), while Switzerland ousted Colombia 4-3 on penalties after a goalless 120 minutes. Switzerland's disciplined, hard-to-break-down defence will test an Argentina back line that wobbled badly against Egypt — but Messi's brilliance and the champions' bigger attacking threat should be enough against a side yet to win in normal time this tournament.",
+      "reason_zh": "阿根廷靠惊天逆转过关，一度0-2落后埃及，末段11分钟连入三球3-2取胜；瑞士则在120分钟鏖战哥伦比亚未有进球后，点球4-3淘汰对手。瑞士纪律严明、难以攻破的防线将考验阿根廷在埃及一役暴露的防守漏洞——但梅西的个人能力与卫冕冠军更强的进攻火力，应足以击败这支本届常规时间尚未取胜的对手。",
+      "odds": {
+        "h": 1.69,
+        "d": 3.8,
+        "a": 5.4,
+        "src": "FanDuel",
+        "scores": [
+          { "s": "2-0", "o": 6.5 },
+          { "s": "1-0", "o": 6.0 },
+          { "s": "2-1", "o": 8.0 }
         ]
       },
       "result": null
@@ -422,7 +420,7 @@
             "away": "Egypt",
             "away_zh": "埃及",
             "awayFlag": "🇪🇬",
-            "winner": null
+            "winner": "home"
           },
           {
             "r16Id": "wc-sui-col",
@@ -432,7 +430,7 @@
             "away": "Colombia",
             "away_zh": "哥伦比亚",
             "awayFlag": "🇨🇴",
-            "winner": null
+            "winner": "home"
           }
         ]
       }
