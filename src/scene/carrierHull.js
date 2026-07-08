@@ -90,52 +90,55 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
   const full = detail === 'full';
   const M = mats;
 
-  // ---- proportions: real Odin length:width:height = 752:222:213, i.e.
-  // length:height ~3.53:1, width:height ~1.04:1 — a chunky near-square
-  // cross-section block, not a wide flat pancake. ----
-  const STERN = -4.6, BOW_ROOT = 4.0;              // main-hull loft span
-  const LEN_MAIN = BOW_ROOT - STERN;                // 8.6
+  // ---- proportions: real Odin length:width:height = 752:222:213 (length:
+  // height ~3.53:1, width:height ~1.04:1), AND (per the official top-down
+  // plan view, 2026-07-08 pass 7) a dagger/kite planform from above — a
+  // very long, thin needle bow spike (~30-45% of total length), a matching
+  // pointed stern taper (NOT a blunt flat face), and a wide "kite" main
+  // body around the 22-55% length fraction. Both the bow spike and the
+  // stern taper are now part of the SAME continuous hull loft (no separate
+  // bolt-on nose block like the previous pass used). ----
+  const STERN = -4.8, BOW_ROOT = 4.8;               // main-hull loft span (both ends are now sharp tips)
+  const LEN_MAIN = BOW_ROOT - STERN;                 // 9.6
   const HEIGHT = 2.6;
-  const WIDTH = 2.7;                                // WIDTH/HEIGHT ~= 1.04
-  const NOSE_LEN = 0.6;                             // beam-housing length past BOW_ROOT
-  const LENGTH = LEN_MAIN + NOSE_LEN;                // 9.2 -> LENGTH/HEIGHT ~= 3.54
+  const WIDTH = 2.7;                                 // WIDTH/HEIGHT ~= 1.04
+  const LENGTH = LEN_MAIN;                           // 9.6 -> LENGTH/HEIGHT ~= 3.69 (close to spec's 3.53)
 
-  // ===== main hull: one continuous lofted skin, stern -> midship -> bow root =====
+  // ===== main hull: one continuous lofted skin, stern tip -> kite body -> =====
+  // bow spike -> bow tip (per the top-down reference silhouette).
   add(buildHullLoftGeometry(THREE, [
-    { z: STERN, halfW: WIDTH * 0.34, halfH: HEIGHT * 0.36 },
-    { z: STERN + LEN_MAIN * 0.15, halfW: WIDTH * 0.46, halfH: HEIGHT * 0.46 },
-    { z: STERN + LEN_MAIN * 0.5, halfW: WIDTH * 0.5, halfH: HEIGHT * 0.5 },   // widest/tallest point, midship
-    { z: BOW_ROOT - LEN_MAIN * 0.12, halfW: WIDTH * 0.42, halfH: HEIGHT * 0.44 },
-    { z: BOW_ROOT, halfW: WIDTH * 0.24, halfH: HEIGHT * 0.3 },
+    { z: STERN, halfW: WIDTH * 0.02, halfH: HEIGHT * 0.06 },                          // stern tip (needle point)
+    { z: STERN + LEN_MAIN * 0.08, halfW: WIDTH * 0.14, halfH: HEIGHT * 0.22 },        // tail widening
+    { z: STERN + LEN_MAIN * 0.22, halfW: WIDTH * 0.36, halfH: HEIGHT * 0.42 },        // main hull body begins
+    { z: STERN + LEN_MAIN * 0.38, halfW: WIDTH * 0.5, halfH: HEIGHT * 0.5 },          // widest point, "kite" body
+    { z: STERN + LEN_MAIN * 0.55, halfW: WIDTH * 0.38, halfH: HEIGHT * 0.42 },        // narrowing into the bow spike
+    { z: STERN + LEN_MAIN * 0.7, halfW: WIDTH * 0.22, halfH: HEIGHT * 0.3 },          // spike continues
+    { z: STERN + LEN_MAIN * 0.86, halfW: WIDTH * 0.08, halfH: HEIGHT * 0.14 },        // well into the spike
+    { z: BOW_ROOT, halfW: WIDTH * 0.015, halfH: HEIGHT * 0.045 },                     // bow tip (needle point)
   ]), M.hull, [0, 0, 0]);
 
-  // ===== bow beam-cannon housing: "the entire front section is dedicated =====
-  // to a fixed beam weapon" — a sleek, multi-layered, beak-like prow (3
-  // stacked tapering plates converging to a point, per the reference side
-  // profile) instead of a plain cone, two large flanking radiator fin
-  // panels, and a ring of 12 emitters around the tip.
-  const noseZ = BOW_ROOT + NOSE_LEN;
-  for (let L = 0; L < 3; L++) {
-    const t = L / 2;
-    add(new THREE.BoxGeometry(WIDTH * (0.4 - t * 0.12), HEIGHT * (0.46 - t * 0.14), NOSE_LEN * (0.9 - t * 0.15)), M.hull, [0, HEIGHT * (0.02 + t * 0.06), BOW_ROOT + NOSE_LEN * (0.42 + t * 0.1)]);
-  }
-  add(new THREE.ConeGeometry(0.13, 0.36, 4), M.hull, [0, HEIGHT * 0.1, noseZ - 0.1], [Math.PI / 2, 0, Math.PI / 4]); // pointed beak tip
-  for (const sx of [-1, 1]) {
-    add(new THREE.BoxGeometry(0.05, HEIGHT * 0.6, NOSE_LEN * 1.4), M.arm, [sx * (WIDTH * 0.3), 0, BOW_ROOT + NOSE_LEN * 0.35]); // radiator fin panel
-    for (let f = 0; f < 4; f++) add(new THREE.BoxGeometry(0.32, 0.025, 0.025), M.trim, [sx * (WIDTH * 0.3 + 0.16), -HEIGHT * 0.22 + f * (HEIGHT * 0.15), BOW_ROOT + NOSE_LEN * 0.35]); // radiator fin ridges
-  }
+  // ===== bow beam-cannon tip: "the entire front section is dedicated to a =====
+  // fixed beam weapon... terminates in twelve emitters around the nose" —
+  // the needle taper itself now comes from the hull loft above, so this is
+  // just the emitter ring, flanking radiators, and forward armor plating,
+  // sized to fit the now much narrower spike (not a separate bolt-on cone).
+  const noseZ = BOW_ROOT - 0.05;
   const emitterMounts = [];
   for (let i = 0; i < 12; i++) {
-    const a = (i / 12) * Math.PI * 2, ex = Math.cos(a) * 0.13, ey = Math.sin(a) * 0.13;
-    add(new THREE.CylinderGeometry(0.028, 0.032, 0.14, 6), M.dark, [ex, ey, noseZ], [Math.PI / 2, 0, 0]); // emitter nozzle
+    const a = (i / 12) * Math.PI * 2, ex = Math.cos(a) * 0.05, ey = Math.sin(a) * 0.05;
+    add(new THREE.CylinderGeometry(0.012, 0.014, 0.06, 6), M.dark, [ex, ey, noseZ], [Math.PI / 2, 0, 0]); // emitter nozzle
     emitterMounts.push({ x: ex, y: ey, z: noseZ });
   }
-  // dense forward armor plating (panel lines across the layered beak plates)
-  // and 2 small point-defense turrets flanking the beak root.
-  for (let pi = 0; pi < 3; pi++) add(new THREE.BoxGeometry(WIDTH * 0.32, 0.015, 0.015), M.trim, [0, HEIGHT * (0.05 + pi * 0.1), BOW_ROOT + NOSE_LEN * 0.5]);
   for (const sx of [-1, 1]) {
-    add(new THREE.CylinderGeometry(0.06, 0.07, HEIGHT * 0.1, 6), M.trim, [sx * (WIDTH * 0.28), HEIGHT * 0.06, BOW_ROOT + NOSE_LEN * 0.15]);
-    add(new THREE.CylinderGeometry(0.009, 0.011, 0.16, 5), M.arm, [sx * (WIDTH * 0.28), HEIGHT * 0.1, BOW_ROOT + NOSE_LEN * 0.15 + 0.08], [Math.PI / 2, 0, 0]);
+    add(new THREE.BoxGeometry(0.03, HEIGHT * 0.22, 0.5), M.arm, [sx * (WIDTH * 0.1), 0, BOW_ROOT - 0.7]); // radiator fin panel, along the spike
+    for (let f = 0; f < 3; f++) add(new THREE.BoxGeometry(0.14, 0.014, 0.014), M.trim, [sx * (WIDTH * 0.1 + 0.06), -HEIGHT * 0.08 + f * (HEIGHT * 0.08), BOW_ROOT - 0.7]); // radiator fin ridges
+  }
+  // dense forward armor plating (panel lines along the spike) and 2 small
+  // point-defense turrets where the spike is wide enough to carry them.
+  for (let pi = 0; pi < 3; pi++) add(new THREE.BoxGeometry(WIDTH * 0.14, 0.012, 0.012), M.trim, [0, HEIGHT * (0.04 + pi * 0.06), BOW_ROOT - 1.1]);
+  for (const sx of [-1, 1]) {
+    add(new THREE.CylinderGeometry(0.05, 0.06, HEIGHT * 0.08, 6), M.trim, [sx * (WIDTH * 0.16), HEIGHT * 0.04, STERN + LEN_MAIN * 0.62]);
+    add(new THREE.CylinderGeometry(0.008, 0.01, 0.13, 5), M.arm, [sx * (WIDTH * 0.16), HEIGHT * 0.07, STERN + LEN_MAIN * 0.62 + 0.07], [Math.PI / 2, 0, 0]);
   }
 
   // ===== central stepped tower: wide base -> narrower tiers -> spire + =====
@@ -265,7 +268,7 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     { z: STERN + LEN_MAIN * 0.60, n: 2 },
     { z: STERN + LEN_MAIN * 0.74, n: 1 },
     { z: STERN + LEN_MAIN * 0.86, n: 2 },
-    { z: BOW_ROOT - LEN_MAIN * 0.06, n: 1 },
+    { z: STERN + LEN_MAIN * 0.80, n: 1 },
   ];
   for (const p of turretPlatforms) {
     const n = p.n;
@@ -279,19 +282,20 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     }
   }
 
-  // ===== bow turret battery (STS/ASA representative) — positioned well aft =====
-  // of the beam-cannon nose ("the entire front section is dedicated to the
-  // beam weapon"), not at the very tip.
-  const bowTurretZ = BOW_ROOT - LEN_MAIN * 0.1;
+  // ===== bow turret battery (STS/ASA representative) — positioned in the =====
+  // wide "kite" body, well aft of the beam-cannon nose ("the entire front
+  // section is dedicated to the beam weapon") and well clear of the now
+  // much narrower bow spike (which can no longer carry a turret spread).
+  const bowTurretZ = STERN + LEN_MAIN * 0.5;
   add(new THREE.CylinderGeometry(0.2, 0.24, HEIGHT * 0.22, 10), M.trim, [0, HEIGHT * 0.34, bowTurretZ]);               // main turret dome
   add(new THREE.CylinderGeometry(0.028, 0.032, 0.5, 6), M.arm, [0, HEIGHT * 0.4, bowTurretZ + 0.26], [Math.PI / 2, 0, 0]); // main barrel
   turretMounts.push({ x: 0, y: HEIGHT * 0.34, z: bowTurretZ });
   for (const sx of [-1, 1]) {
-    add(new THREE.CylinderGeometry(0.13, 0.16, HEIGHT * 0.17, 8), M.trim, [sx * 0.5, HEIGHT * 0.27, bowTurretZ - 0.14]); // secondary turret dome
-    for (const bx of [-0.045, 0.045]) add(new THREE.CylinderGeometry(0.018, 0.022, 0.28, 6), M.arm, [sx * 0.5 + bx, HEIGHT * 0.32, bowTurretZ], [Math.PI / 2, 0, 0]); // secondary barrels
-    turretMounts.push({ x: sx * 0.5, y: HEIGHT * 0.27, z: bowTurretZ - 0.14 });
+    add(new THREE.CylinderGeometry(0.13, 0.16, HEIGHT * 0.17, 8), M.trim, [sx * 0.45, HEIGHT * 0.27, bowTurretZ - 0.14]); // secondary turret dome
+    for (const bx of [-0.045, 0.045]) add(new THREE.CylinderGeometry(0.018, 0.022, 0.28, 6), M.arm, [sx * 0.45 + bx, HEIGHT * 0.32, bowTurretZ], [Math.PI / 2, 0, 0]); // secondary barrels
+    turretMounts.push({ x: sx * 0.45, y: HEIGHT * 0.27, z: bowTurretZ - 0.14 });
   }
-  for (const [sax, saz] of [[-0.75, -0.26], [0.75, -0.26], [0, -0.42]]) {
+  for (const [sax, saz] of [[-0.65, -0.26], [0.65, -0.26], [0, -0.42]]) {
     add(new THREE.CylinderGeometry(0.08, 0.08, 0.026, 8), M.dark, [sax, HEIGHT * 0.14, bowTurretZ + saz]);             // sensor dish base
     add(new THREE.CylinderGeometry(0.007, 0.007, 0.1, 4), M.arm, [sax, HEIGHT * 0.14 + 0.05, bowTurretZ + saz]);       // sensor stalk
   }
@@ -376,28 +380,26 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     }
   }
 
-  // ===== rear-section detail: stern panel lines, rear-facing gun =====
-  // emplacements, and a stern comms array platform.
-  for (let i = -2; i <= 2; i++) add(new THREE.BoxGeometry(0.018, HEIGHT * 0.5, 0.018), M.trim, [i * (WIDTH * 0.14), -HEIGHT * 0.05, STERN + 0.02]); // panel-line ribs
-  for (const sx of [-1, 1]) {
-    const rgx = sx * WIDTH * 0.32, rgz = STERN + 0.05;
-    add(new THREE.CylinderGeometry(0.1, 0.12, HEIGHT * 0.15, 8), M.trim, [rgx, HEIGHT * 0.34, rgz]); // rear turret dome
-    add(new THREE.CylinderGeometry(0.014, 0.018, 0.26, 6), M.arm, [rgx, HEIGHT * 0.37, rgz - 0.13], [Math.PI / 2, 0, 0]); // rear-facing barrel
-  }
-  add(new THREE.BoxGeometry(0.26, 0.035, 0.26), M.trim, [0, HEIGHT * 0.38, STERN + 0.18]);                                // comms platform deck
-  add(new THREE.CylinderGeometry(0.011, 0.011, 0.3, 4), M.arm, [0, HEIGHT * 0.54, STERN + 0.18]);                        // comms mast
-  add(new THREE.CylinderGeometry(0.09, 0.018, 0.07, 8), M.trim, [0, HEIGHT * 0.7, STERN + 0.18], [Math.PI / 2, 0, 0]);   // comms dish
+  // ===== rear-section detail: stern panel lines + a stern comms array =====
+  // platform, sized to fit the now much narrower pointed stern taper. The
+  // rear-facing gun emplacements this block used to add are superseded by
+  // the tiered weapon-battery platforms near the engine cluster below.
+  for (let i = -2; i <= 2; i++) add(new THREE.BoxGeometry(0.012, HEIGHT * 0.16, 0.012), M.trim, [i * (WIDTH * 0.03), -HEIGHT * 0.05, STERN + LEN_MAIN * 0.03]); // panel-line ribs
+  add(new THREE.BoxGeometry(0.16, 0.022, 0.16), M.trim, [0, HEIGHT * 0.16, STERN + LEN_MAIN * 0.1]);                       // comms platform deck
+  add(new THREE.CylinderGeometry(0.007, 0.007, 0.2, 4), M.arm, [0, HEIGHT * 0.27, STERN + LEN_MAIN * 0.1]);               // comms mast
+  add(new THREE.CylinderGeometry(0.06, 0.012, 0.045, 8), M.trim, [0, HEIGHT * 0.38, STERN + LEN_MAIN * 0.1], [Math.PI / 2, 0, 0]); // comms dish
 
   // ===== dorsal panel-seam lines + hull greeble, plus external piping runs =====
-  // along the hull surface.
-  for (let i = 0; i < 5; i++) add(new THREE.BoxGeometry(WIDTH * 0.7, 0.03, 0.2), M.trim, [0, HEIGHT * 0.22, STERN + LEN_MAIN * (0.15 + i * 0.16)]);
-  for (const lx of [-0.9, -0.45, 0, 0.45, 0.9]) add(new THREE.BoxGeometry(0.02, 0.02, LEN_MAIN * 0.75), M.trim, [lx, HEIGHT * 0.22, STERN + LEN_MAIN * 0.52]); // longitudinal lines crossing the lateral seams above -> panel-line grid
-  for (const px of [-1.0, -0.55, 0.55, 1.0]) add(new THREE.CylinderGeometry(0.016, 0.016, LEN_MAIN * 0.55, 6), M.arm, [px, HEIGHT * 0.2, STERN + LEN_MAIN * 0.55], [Math.PI / 2, 0, 0]);
+  // along the hull surface — widths/spans kept inside the wide "kite" body
+  // region so they don't float past the now much narrower bow/stern spikes.
+  for (let i = 0; i < 4; i++) add(new THREE.BoxGeometry(WIDTH * 0.5, 0.025, 0.16), M.trim, [0, HEIGHT * 0.22, STERN + LEN_MAIN * (0.22 + i * 0.09)]);
+  for (const lx of [-0.7, -0.35, 0, 0.35, 0.7]) add(new THREE.BoxGeometry(0.018, 0.018, LEN_MAIN * 0.4), M.trim, [lx, HEIGHT * 0.22, STERN + LEN_MAIN * 0.36]); // longitudinal lines crossing the lateral seams above -> panel-line grid
+  for (const px of [-0.65, -0.32, 0.32, 0.65]) add(new THREE.CylinderGeometry(0.014, 0.014, LEN_MAIN * 0.32, 6), M.arm, [px, HEIGHT * 0.2, STERN + LEN_MAIN * 0.32], [Math.PI / 2, 0, 0]);
   // 2 more scattered radar dishes (structured accents, distinct from the random greeble below)
-  add(new THREE.CylinderGeometry(0.13, 0.13, 0.032, 8), M.dark, [0.9, HEIGHT * 0.27, STERN + LEN_MAIN * 0.2]);
-  add(new THREE.CylinderGeometry(0.012, 0.012, 0.18, 4), M.arm, [0.9, HEIGHT * 0.27 + 0.09, STERN + LEN_MAIN * 0.2]);
-  add(new THREE.CylinderGeometry(0.11, 0.11, 0.028, 8), M.dark, [0.5, HEIGHT * 0.29, BOW_ROOT - LEN_MAIN * 0.24]);
-  add(new THREE.CylinderGeometry(0.01, 0.01, 0.16, 4), M.arm, [0.5, HEIGHT * 0.29 + 0.08, BOW_ROOT - LEN_MAIN * 0.24]);
+  add(new THREE.CylinderGeometry(0.13, 0.13, 0.032, 8), M.dark, [0.8, HEIGHT * 0.27, STERN + LEN_MAIN * 0.24]);
+  add(new THREE.CylinderGeometry(0.012, 0.012, 0.18, 4), M.arm, [0.8, HEIGHT * 0.27 + 0.09, STERN + LEN_MAIN * 0.24]);
+  add(new THREE.CylinderGeometry(0.09, 0.09, 0.024, 8), M.dark, [0.4, HEIGHT * 0.29, STERN + LEN_MAIN * 0.68]);
+  add(new THREE.CylinderGeometry(0.008, 0.008, 0.13, 4), M.arm, [0.4, HEIGHT * 0.29 + 0.065, STERN + LEN_MAIN * 0.68]);
   {
     const density = full ? 1 : 0.45;
     const scatter = (n, zMin, zMax, xSpread, y) => {
@@ -410,48 +412,54 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
         add(geo, r < 0.5 ? M.trim : M.dark, [x, y, z]);
       }
     };
-    scatter(Math.round(140 * density), STERN + LEN_MAIN * 0.1, BOW_ROOT - LEN_MAIN * 0.06, WIDTH * 0.78, HEIGHT * 0.24);
-    scatter(Math.round(70 * density), STERN, STERN + LEN_MAIN * 0.3, WIDTH * 0.6, HEIGHT * 0.1);
+    // graduated x-spread matching the taper: wide across the kite body,
+    // progressively narrower out along the bow spike and the stern taper.
+    scatter(Math.round(80 * density), STERN + LEN_MAIN * 0.2, STERN + LEN_MAIN * 0.55, WIDTH * 0.85, HEIGHT * 0.24);
+    scatter(Math.round(35 * density), STERN + LEN_MAIN * 0.55, STERN + LEN_MAIN * 0.78, WIDTH * 0.4, HEIGHT * 0.16);
+    scatter(Math.round(12 * density), STERN + LEN_MAIN * 0.78, BOW_ROOT - 0.3, WIDTH * 0.15, HEIGHT * 0.08);
+    scatter(Math.round(22 * density), STERN + LEN_MAIN * 0.03, STERN + LEN_MAIN * 0.2, WIDTH * 0.32, HEIGHT * 0.1);
   }
 
   // ===== stern engine cluster: one large central bell surrounded by 2 large =====
   // flanking bells and 6 small ports, per the reference rear view — replaces
-  // the earlier flat row of evenly-spaced identical nozzles (and the blocky
-  // housing boxes around them, removed per the reference's "no large flat
-  // tail stabilizer" note).
+  // the earlier flat row of evenly-spaced identical nozzles. Mounted at a
+  // point where the now-pointed stern taper has widened enough to carry the
+  // cluster (not literally at the needle tip).
+  const engineZ = STERN + LEN_MAIN * 0.15;
   const engineMounts = [];
   const engineCluster = [
-    { x: 0, r: 0.34, big: true },
-    { x: -0.9, r: 0.27, big: true }, { x: 0.9, r: 0.27, big: true },
-    { x: -0.4, r: 0.13, big: false }, { x: -0.55, r: 0.1, big: false }, { x: -0.68, r: 0.085, big: false },
-    { x: 0.4, r: 0.13, big: false }, { x: 0.55, r: 0.1, big: false }, { x: 0.68, r: 0.085, big: false },
+    { x: 0, r: 0.28, big: true },
+    { x: -0.6, r: 0.2, big: true }, { x: 0.6, r: 0.2, big: true },
+    { x: -0.27, r: 0.1, big: false }, { x: -0.38, r: 0.08, big: false }, { x: -0.48, r: 0.065, big: false },
+    { x: 0.27, r: 0.1, big: false }, { x: 0.38, r: 0.08, big: false }, { x: 0.48, r: 0.065, big: false },
   ];
   for (const c of engineCluster) {
-    const len = c.big ? 0.4 : 0.24;
-    add(new THREE.CylinderGeometry(c.r * 0.82, c.r, len, c.big ? 14 : 10), M.dark, [c.x, -HEIGHT * 0.05, STERN - 0.02], [Math.PI / 2, 0, 0]); // nozzle bell
+    const len = c.big ? 0.36 : 0.2;
+    add(new THREE.CylinderGeometry(c.r * 0.82, c.r, len, c.big ? 14 : 10), M.dark, [c.x, -HEIGHT * 0.05, engineZ], [Math.PI / 2, 0, 0]); // nozzle bell
     const ribs = c.big ? 4 : 2;
     for (let j = 0; j < ribs; j++) {
       const t = ribs > 1 ? j / (ribs - 1) : 0, r = c.r * 0.9 + t * c.r * 0.35;
-      add(new THREE.TorusGeometry(r, c.big ? 0.013 : 0.009, 5, 12), M.arm, [c.x, -HEIGHT * 0.05, STERN - 0.02 - t * (c.big ? 0.32 : 0.18)]); // rib
+      add(new THREE.TorusGeometry(r, c.big ? 0.012 : 0.008, 5, 12), M.arm, [c.x, -HEIGHT * 0.05, engineZ - t * (c.big ? 0.28 : 0.15)]); // rib
     }
-    engineMounts.push({ x: c.x, y: -HEIGHT * 0.05, z: STERN });
+    engineMounts.push({ x: c.x, y: -HEIGHT * 0.05, z: engineZ });
   }
 
   // ===== side keels/stabilizers — sleek, downward-swept fins on the lower =====
-  // tail (per the reference), replacing the earlier blocky tail shape.
+  // tail (per the reference), sized/positioned to fit inside the pointed
+  // stern taper rather than the earlier blocky tail shape.
   for (const sx of [-1, 1]) {
-    add(new THREE.BoxGeometry(0.045, HEIGHT * 0.55, 0.85), M.arm, [sx * (WIDTH * 0.4), -HEIGHT * 0.35, STERN + 0.45], [0.15, 0, sx * 0.06]);
-    add(new THREE.ConeGeometry(0.04, 0.3, 4), M.trim, [sx * (WIDTH * 0.4), -HEIGHT * 0.62, STERN + 0.12], [Math.PI, 0, 0]); // downward-pointing tip
+    add(new THREE.BoxGeometry(0.035, HEIGHT * 0.45, 0.65), M.arm, [sx * (WIDTH * 0.26), -HEIGHT * 0.3, STERN + LEN_MAIN * 0.18], [0.15, 0, sx * 0.06]);
+    add(new THREE.ConeGeometry(0.03, 0.24, 4), M.trim, [sx * (WIDTH * 0.26), -HEIGHT * 0.52, STERN + LEN_MAIN * 0.08], [Math.PI, 0, 0]); // downward-pointing tip
   }
 
   // ===== tiered weapon battery platforms stepping up forward of the engine =====
-  // cluster (per the reference rear view).
+  // cluster (per the reference rear view), sized to fit the taper.
   for (let s = 0; s < 3; s++) {
-    const sz = STERN + 0.35 + s * 0.3, sy = HEIGHT * (0.06 + s * 0.09);
-    add(new THREE.BoxGeometry(1.5 - s * 0.3, HEIGHT * 0.09, 0.28), M.arm, [0, sy, sz]);
+    const sz = STERN + LEN_MAIN * (0.2 + s * 0.05), sy = HEIGHT * (0.06 + s * 0.09);
+    add(new THREE.BoxGeometry(1.0 - s * 0.15, HEIGHT * 0.09, 0.24), M.arm, [0, sy, sz]);
     for (const sx of [-1, 1]) {
-      add(new THREE.CylinderGeometry(0.08, 0.1, HEIGHT * 0.11, 8), M.trim, [sx * (0.4 - s * 0.05), sy + HEIGHT * 0.08, sz]);
-      add(new THREE.CylinderGeometry(0.013, 0.016, 0.2, 6), M.arm, [sx * (0.4 - s * 0.05), sy + HEIGHT * 0.1, sz + 0.1], [Math.PI / 2, 0, 0]);
+      add(new THREE.CylinderGeometry(0.07, 0.09, HEIGHT * 0.1, 8), M.trim, [sx * (0.32 - s * 0.04), sy + HEIGHT * 0.07, sz]);
+      add(new THREE.CylinderGeometry(0.011, 0.014, 0.17, 6), M.arm, [sx * (0.32 - s * 0.04), sy + HEIGHT * 0.09, sz + 0.09], [Math.PI / 2, 0, 0]);
     }
   }
 

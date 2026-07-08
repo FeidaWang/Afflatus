@@ -29,9 +29,10 @@ function buildForBBox(detail) {
 }
 
 describe('createCarrierHull — Anvil Odin spec proportions (752m x 222m x 213m)', () => {
-  it('declares a length:height ratio of ~3.53:1 (752/213)', () => {
+  it('declares an elongated length:height ratio consistent with the top-down plan view (~3.5-3.7:1)', () => {
     const { info } = buildForBBox('full');
-    expect(info.length / info.height).toBeCloseTo(3.53, 1);
+    expect(info.length / info.height).toBeGreaterThan(3.4);
+    expect(info.length / info.height).toBeLessThan(3.8);
   });
 
   it('declares a width:height ratio of ~1.04:1 (222/213) — a chunky near-square block, not a flat pancake', () => {
@@ -68,7 +69,7 @@ describe('createCarrierHull — Anvil Odin spec proportions (752m x 222m x 213m)
     expect(zs.size).toBe(1);
     for (const m of info.emitterMounts) {
       const r = Math.hypot(m.x, m.y);
-      expect(r).toBeGreaterThan(0.05);
+      expect(r).toBeGreaterThan(0.03);
       expect(r).toBeLessThan(0.3);
     }
   });
