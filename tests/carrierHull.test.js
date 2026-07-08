@@ -105,9 +105,9 @@ describe('createCarrierHull — reference silhouette (wide flat hull, forked bow
     expect(wire.info.prongTips.length).toBe(fullD.info.prongTips.length);
   });
 
-  it('exposes 8 turret mounts (3 multi-turreted platforms x2 + 2 single turrets) across the upper decks', () => {
+  it('exposes 13 turret mounts across 8 clusters (single + twin + triple platforms) on the upper decks', () => {
     const { info } = buildForBBox('full');
-    expect(info.turretMounts.length).toBe(8);
+    expect(info.turretMounts.length).toBe(13);
     for (const t of info.turretMounts) {
       expect(t.y).toBeGreaterThan(0); // sit on the dorsal (upper) deck, not the belly
       expect(t.z).toBeGreaterThan(-6.5);
