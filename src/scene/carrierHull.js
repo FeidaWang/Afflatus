@@ -110,10 +110,16 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
   ]), M.hull, [0, 0, 0]);
 
   // ===== bow beam-cannon housing: "the entire front section is dedicated =====
-  // to a fixed beam weapon" — a tapering nose block, two large flanking
-  // radiator fin panels, and a ring of 12 emitters around the tip.
+  // to a fixed beam weapon" — a sleek, multi-layered, beak-like prow (3
+  // stacked tapering plates converging to a point, per the reference side
+  // profile) instead of a plain cone, two large flanking radiator fin
+  // panels, and a ring of 12 emitters around the tip.
   const noseZ = BOW_ROOT + NOSE_LEN;
-  add(new THREE.CylinderGeometry(0.1, WIDTH * 0.24, NOSE_LEN, 12), M.hull, [0, 0, BOW_ROOT + NOSE_LEN / 2], [Math.PI / 2, 0, 0]); // tapering nose block
+  for (let L = 0; L < 3; L++) {
+    const t = L / 2;
+    add(new THREE.BoxGeometry(WIDTH * (0.4 - t * 0.12), HEIGHT * (0.46 - t * 0.14), NOSE_LEN * (0.9 - t * 0.15)), M.hull, [0, HEIGHT * (0.02 + t * 0.06), BOW_ROOT + NOSE_LEN * (0.42 + t * 0.1)]);
+  }
+  add(new THREE.ConeGeometry(0.13, 0.36, 4), M.hull, [0, HEIGHT * 0.1, noseZ - 0.1], [Math.PI / 2, 0, Math.PI / 4]); // pointed beak tip
   for (const sx of [-1, 1]) {
     add(new THREE.BoxGeometry(0.05, HEIGHT * 0.6, NOSE_LEN * 1.4), M.arm, [sx * (WIDTH * 0.3), 0, BOW_ROOT + NOSE_LEN * 0.35]); // radiator fin panel
     for (let f = 0; f < 4; f++) add(new THREE.BoxGeometry(0.32, 0.025, 0.025), M.trim, [sx * (WIDTH * 0.3 + 0.16), -HEIGHT * 0.22 + f * (HEIGHT * 0.15), BOW_ROOT + NOSE_LEN * 0.35]); // radiator fin ridges
@@ -124,18 +130,49 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     add(new THREE.CylinderGeometry(0.028, 0.032, 0.14, 6), M.dark, [ex, ey, noseZ], [Math.PI / 2, 0, 0]); // emitter nozzle
     emitterMounts.push({ x: ex, y: ey, z: noseZ });
   }
+  // dense forward armor plating (panel lines across the layered beak plates)
+  // and 2 small point-defense turrets flanking the beak root.
+  for (let pi = 0; pi < 3; pi++) add(new THREE.BoxGeometry(WIDTH * 0.32, 0.015, 0.015), M.trim, [0, HEIGHT * (0.05 + pi * 0.1), BOW_ROOT + NOSE_LEN * 0.5]);
+  for (const sx of [-1, 1]) {
+    add(new THREE.CylinderGeometry(0.06, 0.07, HEIGHT * 0.1, 6), M.trim, [sx * (WIDTH * 0.28), HEIGHT * 0.06, BOW_ROOT + NOSE_LEN * 0.15]);
+    add(new THREE.CylinderGeometry(0.009, 0.011, 0.16, 5), M.arm, [sx * (WIDTH * 0.28), HEIGHT * 0.1, BOW_ROOT + NOSE_LEN * 0.15 + 0.08], [Math.PI / 2, 0, 0]);
+  }
 
   // ===== central stepped tower: wide base -> narrower tiers -> spire + =====
   // secondary mast
   const towerZ = STERN + LEN_MAIN * 0.42;
   add(new THREE.BoxGeometry(1.1, HEIGHT * 0.5, 1.25), M.arm, [0, HEIGHT * 0.62, towerZ]);
   add(new THREE.BoxGeometry(0.8, HEIGHT * 0.5, 0.9), M.hull, [0, HEIGHT * 1.02, towerZ + 0.03]);
-  add(new THREE.BoxGeometry(0.5, HEIGHT * 0.4, 0.6), M.trim, [0, HEIGHT * 1.36, towerZ + 0.07]);
-  add(new THREE.BoxGeometry(0.28, HEIGHT * 0.26, 0.34), M.dark, [0, HEIGHT * 1.62, towerZ + 0.07]);
-  add(new THREE.ConeGeometry(0.19, HEIGHT * 0.75, 6), M.trim, [0, HEIGHT * 1.95, towerZ + 0.03]);     // main spire
-  add(new THREE.CylinderGeometry(0.03, 0.055, HEIGHT * 0.55, 6), M.trim, [0.24, HEIGHT * 1.45, towerZ - 0.16]); // secondary mast
-  add(new THREE.SphereGeometry(0.035, 6, 5), M.red, [0.24, HEIGHT * 1.45 + HEIGHT * 0.28, towerZ - 0.16]);      // mast tip beacon
-  const towerTip = { x: 0, y: HEIGHT * 1.95 + HEIGHT * 0.38, z: towerZ + 0.03 };
+  add(new THREE.BoxGeometry(0.62, HEIGHT * 0.32, 0.72), M.trim, [0, HEIGHT * 1.32, towerZ + 0.05]); // extra tier (multi-tiered bridge)
+  add(new THREE.BoxGeometry(0.5, HEIGHT * 0.4, 0.6), M.trim, [0, HEIGHT * 1.6, towerZ + 0.07]);
+  add(new THREE.BoxGeometry(0.28, HEIGHT * 0.26, 0.34), M.dark, [0, HEIGHT * 1.86, towerZ + 0.07]);
+  add(new THREE.ConeGeometry(0.19, HEIGHT * 0.75, 6), M.trim, [0, HEIGHT * 2.19, towerZ + 0.03]);     // main spire
+  add(new THREE.CylinderGeometry(0.03, 0.055, HEIGHT * 0.55, 6), M.trim, [0.24, HEIGHT * 1.68, towerZ - 0.16]); // secondary mast
+  add(new THREE.SphereGeometry(0.035, 6, 5), M.red, [0.24, HEIGHT * 1.68 + HEIGHT * 0.28, towerZ - 0.16]);      // mast tip beacon
+  const towerTip = { x: 0, y: HEIGHT * 2.19 + HEIGHT * 0.38, z: towerZ + 0.03 };
+
+  // spherical sensor domes (replacing/augmenting the earlier flat radar
+  // drum with actual sphere radomes, per the reference command spire).
+  add(new THREE.SphereGeometry(0.2, 10, 8), M.dark, [0, HEIGHT * 1.98, towerZ - 0.06]);              // main sensor sphere, below the spire
+  add(new THREE.SphereGeometry(0.11, 8, 6), M.trim, [0.3, HEIGHT * 1.1, towerZ + 0.32]);              // secondary dome
+
+  // lattice cage wrapping the upper tower tiers — open truss framework
+  // reading as "complex latticework" around the bridge/spire.
+  {
+    const lw = 0.34, lz0 = towerZ + 0.05, ly0 = HEIGHT * 1.28, ly1 = HEIGHT * 1.82;
+    for (const cx of [-lw / 2, lw / 2]) for (const cz of [-lw / 2, lw / 2]) add(new THREE.CylinderGeometry(0.011, 0.011, ly1 - ly0, 4), M.arm, [cx, (ly0 + ly1) / 2, lz0 + cz]);
+    for (let i = 0; i < 3; i++) {
+      const yA = ly0 + (i * (ly1 - ly0)) / 3, yB = ly0 + ((i + 1) * (ly1 - ly0)) / 3;
+      add(new THREE.BoxGeometry(lw * 1.3, 0.011, 0.011), M.trim, [0, (yA + yB) / 2, lz0 - lw / 2], [0, 0, 0.3]);
+    }
+  }
+
+  // "77" glowing hull marking on the tower's forward side panel (two
+  // simplified strokes per digit — a top bar + a diagonal downstroke).
+  for (const dx of [-0.16, 0.16]) {
+    add(new THREE.BoxGeometry(0.14, 0.018, 0.012), M.red, [dx, HEIGHT * 1.14, towerZ + 0.47]);
+    add(new THREE.BoxGeometry(0.018, 0.24, 0.012), M.red, [dx + 0.03, HEIGHT * 1.0, towerZ + 0.47], [0, 0, -0.3]);
+  }
 
   // ===== bridge detail: radar drum, forward sensor dish arms, window strip =====
   add(new THREE.CylinderGeometry(0.4, 0.4, 0.11, 10), M.dark, [0, HEIGHT * 0.88, towerZ - 0.1]);           // radar drum
@@ -150,8 +187,8 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
   // comms antenna cluster around the spire base (varying-height thin rods +
   // beacon tips) and one extra scattered radar dish on the aft upper deck.
   for (const [ax, az, ah] of [[0.16, 0.1, 0.4], [-0.11, 0.16, 0.28], [0.07, -0.16, 0.34]]) {
-    add(new THREE.CylinderGeometry(0.009, 0.009, ah, 4), M.trim, [ax, HEIGHT * 1.95 + ah / 2, towerZ + 0.03 + az]);
-    add(new THREE.SphereGeometry(0.02, 5, 4), M.red, [ax, HEIGHT * 1.95 + ah, towerZ + 0.03 + az]);
+    add(new THREE.CylinderGeometry(0.009, 0.009, ah, 4), M.trim, [ax, HEIGHT * 2.19 + ah / 2, towerZ + 0.03 + az]);
+    add(new THREE.SphereGeometry(0.02, 5, 4), M.red, [ax, HEIGHT * 2.19 + ah, towerZ + 0.03 + az]);
   }
   add(new THREE.CylinderGeometry(0.15, 0.15, 0.035, 10), M.dark, [-0.75, HEIGHT * 0.24, STERN + LEN_MAIN * 0.5]);
   add(new THREE.CylinderGeometry(0.014, 0.014, 0.22, 4), M.arm, [-0.75, HEIGHT * 0.24 + 0.11, STERN + LEN_MAIN * 0.5]);
@@ -198,6 +235,22 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     for (const rz of [-0.2, 0, 0.2]) add(new THREE.CylinderGeometry(0.009, 0.009, 0.1, 4), M.arm, [platX + sx * 0.17, HEIGHT * 0.04, platZ + rz]); // railing posts
     add(new THREE.BoxGeometry(0.015, 0.015, 0.4), M.trim, [platX + sx * 0.17, HEIGHT * 0.09, platZ]); // top rail bar
     wingMounts.push({ x: wx, y: HEIGHT * 0.1, z: wz, side: sx });
+  }
+
+  // ===== side-mounted hangar bay + weapon array on the lower hull flanks =====
+  // (distinct from the ventral engineering bay below) — an open hangar-door
+  // frame plus a turret cluster beside it, mounted at the hull's max width
+  // on both sides, per the reference's lower-hull side detail.
+  for (const sx of [-1, 1]) {
+    const shX = sx * (WIDTH * 0.52), shZ = STERN + LEN_MAIN * 0.42, shY = -HEIGHT * 0.02;
+    add(new THREE.BoxGeometry(0.018, HEIGHT * 0.32, 0.018), M.trim, [shX, shY, shZ - 0.3]); // hangar frame: aft post
+    add(new THREE.BoxGeometry(0.018, HEIGHT * 0.32, 0.018), M.trim, [shX, shY, shZ + 0.3]); // hangar frame: fwd post
+    add(new THREE.BoxGeometry(0.018, 0.018, 0.62), M.trim, [shX, shY + HEIGHT * 0.16, shZ]); // hangar frame: top rail
+    add(new THREE.BoxGeometry(0.018, 0.018, 0.62), M.trim, [shX, shY - HEIGHT * 0.16, shZ]); // hangar frame: bottom rail
+    add(new THREE.BoxGeometry(0.05, HEIGHT * 0.18, 0.4), M.dark, [shX, shY, shZ]); // recessed bay interior
+    // weapon cluster beside the hangar
+    add(new THREE.CylinderGeometry(0.1, 0.12, HEIGHT * 0.14, 8), M.trim, [shX, shY + HEIGHT * 0.28, shZ + 0.55]);
+    for (const bx of [-0.045, 0.045]) add(new THREE.CylinderGeometry(0.015, 0.018, 0.26, 6), M.arm, [shX, shY + HEIGHT * 0.32, shZ + 0.55 + 0.13 + bx * 0], [Math.PI / 2, 0, 0]);
   }
 
   // ===== dorsal turret row: representative sample of the real ship's dense =====
@@ -361,20 +414,45 @@ export function createCarrierHull(THREE, { add, mats, detail = 'full' }) {
     scatter(Math.round(70 * density), STERN, STERN + LEN_MAIN * 0.3, WIDTH * 0.6, HEIGHT * 0.1);
   }
 
-  // ===== stern engine mounts: ribbed nozzle bells (flat row across the =====
-  // stern face) — representative sample of the spec's 13 main + 13 retro +
-  // 32 maneuvering thrusters.
+  // ===== stern engine cluster: one large central bell surrounded by 2 large =====
+  // flanking bells and 6 small ports, per the reference rear view — replaces
+  // the earlier flat row of evenly-spaced identical nozzles (and the blocky
+  // housing boxes around them, removed per the reference's "no large flat
+  // tail stabilizer" note).
   const engineMounts = [];
-  const EN_N = 6;
-  for (let i = 0; i < EN_N; i++) {
-    const x = (i - (EN_N - 1) / 2) * (WIDTH * 0.16);
-    add(new THREE.BoxGeometry(0.32, HEIGHT * 0.26, 0.46), M.trim, [x, -HEIGHT * 0.05, STERN + 0.24]); // housing
-    add(new THREE.CylinderGeometry(0.15, 0.19, 0.34, 10), M.dark, [x, -HEIGHT * 0.05, STERN - 0.02], [Math.PI / 2, 0, 0]); // nozzle bell
-    for (let j = 0; j < 4; j++) {
-      const t = j / 3, r = 0.14 + t * 0.06;
-      add(new THREE.TorusGeometry(r, 0.012, 5, 12), M.arm, [x, -HEIGHT * 0.05, STERN - 0.02 - t * 0.3]); // rib
+  const engineCluster = [
+    { x: 0, r: 0.34, big: true },
+    { x: -0.9, r: 0.27, big: true }, { x: 0.9, r: 0.27, big: true },
+    { x: -0.4, r: 0.13, big: false }, { x: -0.55, r: 0.1, big: false }, { x: -0.68, r: 0.085, big: false },
+    { x: 0.4, r: 0.13, big: false }, { x: 0.55, r: 0.1, big: false }, { x: 0.68, r: 0.085, big: false },
+  ];
+  for (const c of engineCluster) {
+    const len = c.big ? 0.4 : 0.24;
+    add(new THREE.CylinderGeometry(c.r * 0.82, c.r, len, c.big ? 14 : 10), M.dark, [c.x, -HEIGHT * 0.05, STERN - 0.02], [Math.PI / 2, 0, 0]); // nozzle bell
+    const ribs = c.big ? 4 : 2;
+    for (let j = 0; j < ribs; j++) {
+      const t = ribs > 1 ? j / (ribs - 1) : 0, r = c.r * 0.9 + t * c.r * 0.35;
+      add(new THREE.TorusGeometry(r, c.big ? 0.013 : 0.009, 5, 12), M.arm, [c.x, -HEIGHT * 0.05, STERN - 0.02 - t * (c.big ? 0.32 : 0.18)]); // rib
     }
-    engineMounts.push({ x, y: -HEIGHT * 0.05, z: STERN });
+    engineMounts.push({ x: c.x, y: -HEIGHT * 0.05, z: STERN });
+  }
+
+  // ===== side keels/stabilizers — sleek, downward-swept fins on the lower =====
+  // tail (per the reference), replacing the earlier blocky tail shape.
+  for (const sx of [-1, 1]) {
+    add(new THREE.BoxGeometry(0.045, HEIGHT * 0.55, 0.85), M.arm, [sx * (WIDTH * 0.4), -HEIGHT * 0.35, STERN + 0.45], [0.15, 0, sx * 0.06]);
+    add(new THREE.ConeGeometry(0.04, 0.3, 4), M.trim, [sx * (WIDTH * 0.4), -HEIGHT * 0.62, STERN + 0.12], [Math.PI, 0, 0]); // downward-pointing tip
+  }
+
+  // ===== tiered weapon battery platforms stepping up forward of the engine =====
+  // cluster (per the reference rear view).
+  for (let s = 0; s < 3; s++) {
+    const sz = STERN + 0.35 + s * 0.3, sy = HEIGHT * (0.06 + s * 0.09);
+    add(new THREE.BoxGeometry(1.5 - s * 0.3, HEIGHT * 0.09, 0.28), M.arm, [0, sy, sz]);
+    for (const sx of [-1, 1]) {
+      add(new THREE.CylinderGeometry(0.08, 0.1, HEIGHT * 0.11, 8), M.trim, [sx * (0.4 - s * 0.05), sy + HEIGHT * 0.08, sz]);
+      add(new THREE.CylinderGeometry(0.013, 0.016, 0.2, 6), M.arm, [sx * (0.4 - s * 0.05), sy + HEIGHT * 0.1, sz + 0.1], [Math.PI / 2, 0, 0]);
+    }
   }
 
   // ===== bow-centre muzzle: the twelve-emitter beam's focal point, at the =====

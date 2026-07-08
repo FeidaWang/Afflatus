@@ -87,9 +87,9 @@ describe('createCarrierHull — Anvil Odin spec proportions (752m x 222m x 213m)
     expect(Math.abs(a.x)).toBeGreaterThan(info.width / 2); // clears the hull's own half-width
   });
 
-  it('exposes 6 stern engine mounts, symmetric about the centreline', () => {
+  it('exposes 9 stern engine mounts (1 centre + 2 flanking + 6 small, clustered), symmetric about the centreline', () => {
     const { info } = buildForBBox('full');
-    expect(info.engineMounts.length).toBe(6);
+    expect(info.engineMounts.length).toBe(9);
     const xs = info.engineMounts.map(m => m.x).sort((a, b) => a - b);
     for (let i = 0; i < xs.length; i++) expect(xs[i]).toBeCloseTo(-xs[xs.length - 1 - i], 5);
   });
