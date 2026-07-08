@@ -273,7 +273,7 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ta-card h3 small{font:600 9px/1.4 var(--font-mono);letter-spacing:.02em;color:var(--muted);text-transform:none}
 .ta-row{display:flex;align-items:baseline;gap:8px;font:500 12.5px/1.5 var(--font-mono);padding:5px 6px;border-left:3px solid transparent;margin-bottom:2px;background:rgba(8,12,22,.5)}
 .ta-row span{color:#c6cfea;flex:1;display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
-.ta-row b{font-weight:700}
+.ta-row b{font-weight:700;min-width:74px;text-align:right}
 .ta-row i{font-style:normal;font:700 10.5px/1 var(--font-hud);letter-spacing:.04em;min-width:52px;text-align:right}
 .ta-row .ma-n{font:500 12.5px/1.5 var(--font-mono);letter-spacing:0;min-width:44px;text-align:left;color:#c6cfea}
 .ta-row span .mut{min-width:0;text-align:left}
