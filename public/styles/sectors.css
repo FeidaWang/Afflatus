@@ -1,5 +1,5 @@
 /* @font-face declarations live in /page-turn.css (self-hosted woff2 + local()) */
-:root{--bg:#05070b;--panel:#0c1118;--acid:#caff00;--cyan:#00e7ff;--blue:#4268ff;--line:rgba(202,255,0,.52);--muted:#748290;--font-heading:"Marathon Shapiro 65","Shapiro 65",Impact,Haettenschweiler,"Arial Narrow","Arial Black",Arial,sans-serif;--font-body:"PP Fraktion Mono","IBM Plex Mono","JetBrains Mono",ui-monospace,SFMono-Regular,monospace;--font-hud:"KH Interference","PP Fraktion Mono","IBM Plex Mono","JetBrains Mono",ui-monospace,monospace}
+:root{--bg:#05070b;--panel:#0c1118;--acid:#caff00;--cyan:#00e7ff;--blue:#4268ff;--hazard:#ff6f1f;--line:rgba(202,255,0,.52);--muted:#748290;--font-heading:"Marathon Shapiro 65","Shapiro 65",Impact,Haettenschweiler,"Arial Narrow","Arial Black",Arial,sans-serif;--font-body:"PP Fraktion Mono","IBM Plex Mono","JetBrains Mono",ui-monospace,SFMono-Regular,monospace;--font-hud:"KH Interference","PP Fraktion Mono","IBM Plex Mono","JetBrains Mono",ui-monospace,monospace}
 .lang-toggle{font-family:var(--font-hud);font-weight:700;font-size:12px;color:#05070b;background:var(--acid);border:1px solid var(--acid);padding:9px 12px;cursor:pointer;letter-spacing:.12em;text-transform:uppercase}
 .lang-toggle:hover{background:var(--cyan);border-color:var(--cyan)}
 /* glitch-art dynamic background (acid Marathon) */
@@ -41,6 +41,8 @@ h1 span{color:var(--acid)}
 .band{padding:16px 20px;border-top:2px solid rgba(202,255,0,.30);background:linear-gradient(90deg,rgba(0,231,255,.10),transparent 50%);color:var(--acid);font-family:var(--font-hud);font-weight:800;font-size:12px;letter-spacing:.24em;text-transform:uppercase}
 .band span{color:var(--cyan)}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.cards-2{grid-template-columns:repeat(2,1fr)}
+.cards-4{grid-template-columns:repeat(4,1fr)}
 .card{min-height:360px;padding:18px;border-right:2px solid rgba(202,255,0,.30);position:relative;display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(0,231,255,.045),transparent 42%)}
 .card:last-child{border-right:0}
 .card::before{content:"";position:absolute;left:18px;right:18px;top:18px;height:8px;background:repeating-linear-gradient(90deg,var(--acid) 0 18px,transparent 18px 28px)}
@@ -57,7 +59,39 @@ h1 span{color:var(--acid)}
 .tag{align-self:flex-start;margin-top:16px;padding:8px 10px;background:var(--acid);color:#05070b;font:900 11px/1 var(--font-hud);letter-spacing:.16em;text-transform:uppercase}
 @media (prefers-reduced-motion: reduce){.bar i{animation:none;width:var(--w)}}
 .foot{padding:14px 20px;color:#82919f;font:700 11px/1.6 var(--font-body);letter-spacing:.08em;border-top:1px solid rgba(202,255,0,.20)}
-@media(max-width:820px){.top{grid-template-columns:1fr}.nav{justify-content:flex-start}.macro,.cards{grid-template-columns:1fr}.macro div,.card{border-right:0;border-bottom:1px solid rgba(202,255,0,.24)}h1{font-size:46px}.brand{font-size:24px}}
+@media(max-width:820px){.top{grid-template-columns:1fr}.nav{justify-content:flex-start}.macro,.cards,.cards-2,.cards-4{grid-template-columns:1fr}.macro div,.card{border-right:0;border-bottom:1px solid rgba(202,255,0,.24)}h1{font-size:46px}.brand{font-size:24px}}
+
+/* ===== SK Hynix (SKHY) Nasdaq ADR debut — energy-block countdown =====
+   Graphic retro-futurism / Y2K HUD treatment (Marathon-style chamfered
+   "energy block" panels, hazard-stripe fills, halftone overlay), layered
+   on the page's existing acid/cyan design system via the new --hazard
+   accent. Countdown target + live tick logic live in sectors.html's
+   inline script; these rules only style the digit blocks it fills. */
+.skhy{padding:22px 20px 24px;border-bottom:2px solid rgba(202,255,0,.30);position:relative;overflow:hidden;background:radial-gradient(circle at 88% 6%,rgba(255,111,31,.14),transparent 42%)}
+.skhy::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,111,31,.4) 1px,transparent 1.6px);background-size:14px 14px;opacity:.14;pointer-events:none}
+.skhy-top{display:flex;flex-wrap:wrap;gap:22px;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.skhy-lede{max-width:520px;color:#d9e2e8;font:700 15px/1.55 var(--font-body);margin:0}
+.skhy-lede b{color:var(--hazard)}
+.cd-wrap{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.cd-grid{display:flex;gap:8px}
+.cd-block{position:relative;min-width:64px;padding:10px 6px;text-align:center;background:linear-gradient(160deg,rgba(255,111,31,.24),rgba(0,231,255,.14));border:2px solid var(--hazard);clip-path:polygon(0 8px,8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%);animation:cdPulse 1.6s ease-in-out infinite}
+.cd-block b{display:block;font:900 30px/1 var(--font-heading);color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(255,111,31,.7)}
+.cd-block span{display:block;margin-top:4px;color:var(--muted);font:800 9px var(--font-hud);letter-spacing:.18em;text-transform:uppercase}
+@keyframes cdPulse{0%,100%{box-shadow:0 0 0 rgba(255,111,31,0)}50%{box-shadow:0 0 16px rgba(255,111,31,.55)}}
+.cd-target{color:var(--muted);font:700 10px var(--font-hud);letter-spacing:.1em;text-transform:uppercase}
+.skhy-facts{margin-top:20px;display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid rgba(255,111,31,.32);border-bottom:1px solid rgba(255,111,31,.32);position:relative;z-index:1}
+.skhy-facts div{padding:12px 10px;border-right:1px solid rgba(255,111,31,.24)}
+.skhy-facts div:last-child{border-right:0}
+.skhy-facts span{display:block;color:var(--muted);font:800 9px/1 var(--font-hud);letter-spacing:.14em;text-transform:uppercase}
+.skhy-facts b{display:block;margin-top:6px;color:#fff;font:900 17px/1 var(--font-heading)}
+.skhy-timeline{margin-top:18px;display:flex;flex-wrap:wrap;gap:0;position:relative;z-index:1}
+.tl-item{flex:1;min-width:150px;padding:10px 14px;border-left:3px solid var(--hazard);background:repeating-linear-gradient(-45deg,rgba(255,111,31,.06) 0 8px,transparent 8px 16px)}
+.tl-item b{display:block;color:var(--hazard);font:900 12px var(--font-hud);letter-spacing:.06em}
+.tl-item span{display:block;margin-top:4px;color:#bac8d5;font:600 11px/1.4 var(--font-body)}
+.skhy-guide{margin-top:18px;padding:14px 16px;border:1px solid rgba(0,231,255,.3);background:rgba(0,231,255,.05);color:#d9e2e8;font:600 13px/1.6 var(--font-body);position:relative;z-index:1}
+.skhy-guide b{color:var(--cyan)}
+@media(prefers-reduced-motion: reduce){.cd-block{animation:none}}
+@media(max-width:820px){.skhy-facts{grid-template-columns:repeat(2,1fr)}.skhy-facts div{border-right:0;border-bottom:1px solid rgba(255,111,31,.24)}.cd-block{min-width:52px}.cd-block b{font-size:22px}.skhy-top{justify-content:flex-start}.cd-wrap{align-items:flex-start}}
 /* V9 · US-China AI Watch matrix + V10 · post-memory thesis cards (ROADMAP §7.2) —
    data-driven, fetched from /sectors-data.json; empty until the weekly scheduled
    task (V11) first populates it. */
