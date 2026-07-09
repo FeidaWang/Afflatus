@@ -20,7 +20,8 @@ import { dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL } from '..
 import { PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, AXIS_LETTERS } from '../lib/persona.js';
 import { cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T } from '../lib/astro.js';
 import { personalityTags, dimensionScores } from '../lib/astroReadings.js';
-import { renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH } from '../lib/astroChart.js';
+import { renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH } from '../lib/astroChart.js';
+import { crossAspects, relationshipTitle, resonanceScore, attractionLines, redFlagLines, davisonReading } from '../lib/synastryAstro.js';
 import { computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH } from '../lib/ziwei.js';
 import { downloadShareCard } from '../lib/shareCard.js';
 
@@ -31,6 +32,14 @@ import { downloadShareCard } from '../lib/shareCard.js';
 
   const PROFILE_KEY = 'afflatus-horo:me';
   const STREAK_KEY = 'afflatus-horo:streak';
+  // V23 Phase 2: 关系册 — named "other" profiles saved locally, so a return
+  // visit is one click instead of retyping a birthday. Scope decision (see
+  // roadmap.md): every book entry pairs against 'me' — this single-page tool
+  // has always been a me-vs-other flow (no third-party account picker), so
+  // "select two from the book" would need a whole new UI concept; saving +
+  // quick-reloading "the other person" covers the actual retention need
+  // (re-visiting a synastry you've already cast) without that added surface.
+  const BOOK_KEY = 'afflatus-horo:book';
   const state = {
     lang: (window.AfflatusI18N && window.AfflatusI18N.get && window.AfflatusI18N.get()) || 'en',
     me: null, other: null,
@@ -124,6 +133,47 @@ import { downloadShareCard } from '../lib/shareCard.js';
     s = { last: today, n: s.last === yStr ? s.n + 1 : 1 };
     try { localStorage.setItem(STREAK_KEY, JSON.stringify(s)); } catch {}
     return s.n;
+  }
+
+  // ---- 关系册 (V23 Phase 2) --------------------------------------------------
+  const loadBook = () => { try { return JSON.parse(localStorage.getItem(BOOK_KEY)) || []; } catch { return []; } };
+  const saveBook = (list) => { try { localStorage.setItem(BOOK_KEY, JSON.stringify(list.slice(0, 20))); } catch {} };
+  // upsert by (y,m,d,hour) identity — re-saving the same birthday just renames/updates it
+  function upsertBook(name, other) {
+    if (!name) return;
+    const list = loadBook();
+    const sameBirth = (e) => e.y === other.y && e.m === other.m && e.d === other.d && e.hour === other.hour;
+    const idx = list.findIndex(sameBirth);
+    const entry = { name: String(name).slice(0, 12), y: other.y, m: other.m, d: other.d, hour: other.hour };
+    if (idx >= 0) list[idx] = entry; else list.unshift(entry);
+    saveBook(list);
+    renderBook();
+  }
+  function removeFromBook(i) {
+    const list = loadBook();
+    list.splice(i, 1);
+    saveBook(list);
+    renderBook();
+  }
+  function renderBook() {
+    const wrap = $('synBook');
+    if (!wrap) return;
+    const list = loadBook();
+    if (!list.length) { wrap.hidden = true; wrap.innerHTML = ''; return; }
+    wrap.hidden = false;
+    wrap.innerHTML = `<div class="syn-book-h">${T('SAVED · TAP TO RE-CAST', '关系册 · 点击重新出盘')}</div>` +
+      list.map((e, i) => {
+        const label = e.hour == null ? `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')}` : `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')} · ${e.hour}h`;
+        return `<span class="syn-book-chip"><button type="button" class="syn-book-load" data-i="${i}">${e.name}<small>${label}</small></button><button type="button" class="syn-book-del" data-i="${i}" aria-label="${T('remove', '删除')}">×</button></span>`;
+      }).join('');
+    wrap.querySelectorAll('.syn-book-load').forEach((btn) => btn.addEventListener('click', () => {
+      const e = list[+btn.dataset.i];
+      if (!e) return;
+      fillForm('s', e);
+      $('sName').value = e.name;
+      castSynastry({ y: e.y, m: e.m, d: e.d, hour: e.hour });
+    }));
+    wrap.querySelectorAll('.syn-book-del').forEach((btn) => btn.addEventListener('click', () => removeFromBook(+btn.dataset.i)));
   }
 
   const parseBirth = (dateVal, hourVal, tzVal, dstVal) => {
@@ -504,6 +554,57 @@ import { downloadShareCard } from '../lib/shareCard.js';
   // ---- render: synastry -----------------------------------------------------
   const SYN_PILLAR_T = { romance: ['ROMANCE', '情缘'], marriage: ['MARRIAGE', '婚嫁'], career: ['CAREER', '事业'], wealth: ['WEALTH', '财帛'], health: ['HEALTH', '康健'] };
 
+  // Mercury/Venus/Mars come from the dynamically-imported astroPlanets.ts;
+  // Sun/Moon reuse the existing light astro.js calc — see the module-level
+  // dynamic-import discipline note in astroPlanets.ts.
+  async function computeSynAstroLayer(me, other, baziBase) {
+    const { planetReading } = await import('../lib/astroPlanets.ts');
+    const jdMe = cstToJD(me.y, me.m, me.d, me.hour);
+    const jdThem = cstToJD(other.y, other.m, other.d, other.hour);
+    const meLons = { Sun: sunLongitude(jdMe), Moon: moonLongitude(jdMe) };
+    const themLons = { Sun: sunLongitude(jdThem), Moon: moonLongitude(jdThem) };
+    for (const body of ['Mercury', 'Venus', 'Mars']) {
+      meLons[body] = planetReading(body, jdMe).lonDeg;
+      themLons[body] = planetReading(body, jdThem).lonDeg;
+    }
+    const aspects = crossAspects(themLons, meLons);
+    const jdMid = (jdMe + jdThem) / 2;
+    return {
+      title: relationshipTitle(aspects),
+      score: resonanceScore(baziBase, aspects),
+      attraction: attractionLines(aspects),
+      flags: redFlagLines(aspects),
+      davison: davisonReading(sunLongitude(jdMid), moonLongitude(jdMid)),
+    };
+  }
+
+  function renderSynAstroSections(data) {
+    state.synAstroCard = data; // kept for the share-card button
+    $('synTitle').innerHTML = `<b>${T(data.title.en, data.title.zh)}</b>`;
+    const C = 2 * Math.PI * 58;
+    $('sRing').style.strokeDashoffset = (C * (1 - data.score / 100)).toFixed(1);
+    $('sScore').textContent = data.score;
+
+    const attractWrap = $('synAttractWrap');
+    if (data.attraction.length) {
+      attractWrap.hidden = false;
+      $('synAttract').innerHTML = data.attraction.map((l) => `<p class="syn-line syn-line--pos">${T(l.en, l.zh)}</p>`).join('');
+    } else attractWrap.hidden = true;
+
+    const flagsWrap = $('synFlagsWrap');
+    if (data.flags.length) {
+      flagsWrap.hidden = false;
+      $('synFlags').innerHTML = data.flags.map((l) => `<p class="syn-line syn-line--neg">${T(l.en, l.zh)}</p>`).join('');
+    } else flagsWrap.hidden = true;
+
+    $('synDavisonSec').hidden = false;
+    $('synDavisonBody').innerHTML = `<p>${T(data.davison.text.en, data.davison.text.zh)}</p>
+      <p class="bz-caveat">${T(
+        'Composite from the time-midpoint of both birth moments (Sun/Moon only — a location midpoint/houses may follow). Entertainment only.',
+        '取两人出生时刻的时间中点计算（仅日月——地点中点/宫位为可能的后续功能）。仅供娱乐。'
+      )}</p>`;
+  }
+
   function renderSyn() {
     if (!state.me || !state.other) return;
     const s = synastry(state.me, state.other);
@@ -532,6 +633,26 @@ import { downloadShareCard } from '../lib/shareCard.js';
     ring.style.strokeDashoffset = C.toFixed(1);
     requestAnimationFrame(() => requestAnimationFrame(() => { ring.style.strokeDashoffset = (C * (1 - s.base / 100)).toFixed(1); }));
     $('sScore').textContent = s.base;
+
+    // V23 Phase 2: astro synastry layer — title/resonance/attraction/red-flags/
+    // composite. Dynamically imports astroPlanets.ts only now, when a synastry
+    // is actually cast (same lazy-load discipline as the L3 PRO natal chart).
+    // Cached per (me,other) pair so a language toggle just re-paints instead
+    // of re-fetching the ephemeris.
+    const pairKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}`;
+    if (state.synAstro && state.synAstro.key === pairKey) {
+      renderSynAstroSections(state.synAstro.data);
+    } else {
+      $('synTitle').textContent = T('Reading the sky…', '正在解读星盘……');
+      $('synAttractWrap').hidden = true;
+      $('synFlagsWrap').hidden = true;
+      $('synDavisonSec').hidden = true;
+      computeSynAstroLayer(state.me, state.other, s.base).then((data) => {
+        state.synAstro = { key: pairKey, data };
+        const curKey = state.me && state.other ? `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}` : null;
+        if (curKey === pairKey) renderSynAstroSections(data);
+      }).catch(() => { $('synTitle').textContent = T('Could not read the sky — the base bond score above still applies.', '星盘解读失败——上方底盘缘分分数仍然有效。'); });
+    }
 
     $('synParts').innerHTML = s.parts.map((p) =>
       `<div class="sp ${p.pts > 0 ? 'pos' : p.pts < 0 ? 'neg' : ''}"><span>${T(p.en, p.zh)}</span><b>${p.pts > 0 ? '+' : ''}${p.pts}</b></div>`).join('');
@@ -654,11 +775,21 @@ import { downloadShareCard } from '../lib/shareCard.js';
   $('cardBtnSyn') && $('cardBtnSyn').addEventListener('click', () => {
     if (!state.synData) return;
     const labels = PILLAR_T.map((t) => T(...t));
+    const ziA = ZODIAC_GLYPH[zodiacIndex(state.me.m, state.me.d)];
+    const ziB = ZODIAC_GLYPH[zodiacIndex(state.other.m, state.other.d)];
+    // V23 Phase 2: prefer the astro layer's title/score/top line once it has
+    // resolved; falls back to the bazi-only base score (frame()/renderShareCard
+    // both handle title/hookLine being absent), so the button works even if
+    // the ephemeris import failed or hasn't finished yet.
+    const card = state.synAstroCard;
+    const topLine = card && (card.attraction[0] || card.flags[0]);
     downloadShareCard('syn', {
       lang: state.lang,
-      score: state.synData.base,
-      a: { h: T('ME', '我'), pillars: cardPillars(state.synData.chartA, labels) },
-      b: { h: T('THEM', '对方'), pillars: cardPillars(state.synData.chartB, labels) },
+      score: card ? card.score : state.synData.base,
+      title: card ? T(card.title.en, card.title.zh) : undefined,
+      hookLine: topLine ? T(topLine.en, topLine.zh) : undefined,
+      a: { h: T('ME', '我'), pillars: cardPillars(state.synData.chartA, labels), zodiacGlyph: ziA },
+      b: { h: T('THEM', '对方'), pillars: cardPillars(state.synData.chartB, labels), zodiacGlyph: ziB },
     }, 'afflatus-synastry-card.png');
   });
 
@@ -686,6 +817,20 @@ import { downloadShareCard } from '../lib/shareCard.js';
     }, { threshold: 0.2 });
     io.observe(l2Wrap);
   } else if (l2Wrap) { l2Wrap.classList.add('in-view'); }
+
+  // V23 Phase 2: synastry PRO toggles (Davison composite, full bazi/chart
+  // breakdown) — plain expand/collapse, content is already rendered by
+  // renderSyn()/renderSynAstroSections(), no dynamic import needed here.
+  for (const id of ['synDavisonToggle', 'synDetailToggle']) {
+    const btn = $(id);
+    if (!btn) continue;
+    btn.addEventListener('click', () => {
+      const body = $(btn.getAttribute('aria-controls'));
+      const willOpen = !body.classList.contains('open');
+      btn.setAttribute('aria-expanded', String(willOpen));
+      body.classList.toggle('open', willOpen);
+    });
+  }
 
   let l3Loading = false;
   const l3Toggle = $('l3Toggle'), l3Body = $('l3Body');
@@ -717,13 +862,19 @@ import { downloadShareCard } from '../lib/shareCard.js';
     state.me = b; saveProfile(b);
     renderMine(); renderSyn();
   });
+  // Shared by the form-submit path and the relationship-book quick-load path.
+  function castSynastry(b) {
+    state.other = b;
+    renderSyn();
+  }
   $('synForm').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!state.me) { $('synHint').textContent = T('Cast your own chart above first — synastry needs both.', '先在上方立好自己的盘——合盘需要两个人。'); return; }
     const b = parseBirth($('sDate').value, $('sHour').value, $('sTz').value, $('sDst').checked);
     if (!b) return;
-    state.other = b;
-    renderSyn();
+    const name = $('sName').value.trim();
+    if (name) upsertBook(name, b);
+    castSynastry(b);
   });
 
   const fillForm = (prefix, b) => {
@@ -735,6 +886,7 @@ import { downloadShareCard } from '../lib/shareCard.js';
   };
 
   // ---- boot: shared link beats saved profile ------------------------------------
+  renderBook();
   const shared = (() => { try { return decodeShare(new URLSearchParams(location.search).get('p') || ''); } catch { return null; } })();
   if (shared) {
     state.me = shared.a; state.other = shared.b;
@@ -750,6 +902,6 @@ import { downloadShareCard } from '../lib/shareCard.js';
 
   window.addEventListener('afflatus-lang', (e) => {
     state.lang = e.detail === 'zh' ? 'zh' : 'en';
-    renderMine(); renderSyn(); renderPersona();
+    renderMine(); renderSyn(); renderPersona(); renderBook();
   });
 })();

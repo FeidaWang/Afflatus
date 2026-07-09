@@ -242,6 +242,24 @@ a{color:inherit;text-decoration:none}
 .pull b{font:900 19px var(--mono);color:var(--gold-deep)}
 .pull span{font:400 13px var(--serif);color:var(--text)}
 .share-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+
+/* ===== relationship book (V23 Phase 2) ===== */
+.syn-book{margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.syn-book-h{width:100%;color:var(--dim);font:700 10.5px/1 var(--en);letter-spacing:.22em;text-transform:uppercase;margin-bottom:2px}
+.syn-book-chip{display:inline-flex;align-items:stretch;border:1px solid var(--line);background:var(--card2);border-radius:999px;overflow:hidden}
+.syn-book-load{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:none;background:none;cursor:pointer;padding:7px 12px;font:700 13px/1.2 var(--serif);color:var(--text)}
+.syn-book-load small{font:400 10px/1 var(--en);letter-spacing:.04em;color:var(--dim)}
+.syn-book-del{border:none;background:none;cursor:pointer;padding:0 12px;color:var(--dim);font:400 16px/1 var(--serif)}
+.syn-book-del:hover{color:var(--terra-deep)}
+
+/* ===== synastry four-section result (V23 Phase 2) ===== */
+.syn-hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.syn-title{flex:1;min-width:200px;font:700 21px/1.35 var(--serif);color:var(--terra-deep)}
+.syn-sec{margin-top:16px}
+.syn-line{margin:0 0 8px;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:10px 13px 10px 12px;font:400 13.5px/1.7 var(--serif);color:var(--text)}
+.syn-line--pos{border-left:3px solid var(--sage)}
+.syn-line--neg{border-left:3px solid var(--terra)}
+.syn-result .l3{margin-top:16px}
 .share-tip{color:var(--dim);font:400 12.5px/1.6 var(--serif)}
 
 /* ===== V23 Phase 1 (roadmap §7.10): single-chart three-layer disclosure ===

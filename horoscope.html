@@ -218,7 +218,11 @@
   <section class="sec" id="synSec" aria-label="Two-person synastry">
     <div class="sec-label"><span class="zh" data-en="SYNASTRY · TWO CHARTS" data-zh="合　盘">SYNASTRY · TWO CHARTS</span></div>
     <div class="panel">
+      <div class="syn-book" id="synBook" hidden></div>
+
       <form class="syn-form" id="synForm">
+        <div class="fld"><label for="sName" data-en="Their name (optional, saved on this device only)" data-zh="对方称呼（可不填，仅存本机）">Their name (optional, saved on this device only)</label>
+          <input type="text" id="sName" maxlength="12" placeholder="TA"></div>
         <div class="fld"><label for="sDate" data-en="Their birth date" data-zh="对方出生日期">Their birth date</label>
           <input type="date" id="sDate" required min="1900-01-01" max="2100-12-31"></div>
         <div class="fld"><label for="sHour" data-en="Their hour (optional)" data-zh="对方时辰（可不填）">Their hour (optional)</label>
@@ -232,21 +236,55 @@
       <p class="form-note" id="synHint" data-en="Cast your own chart above first — synastry needs both." data-zh="先在上方立好自己的盘——合盘需要两个人。">Cast your own chart above first — synastry needs both.</p>
 
       <div class="syn-result" id="synResult" hidden>
-        <div class="syn-charts" id="synCharts"></div>
-        <div class="syn-top">
+        <!-- §1 resonance score + relationship title -->
+        <div class="syn-hero" id="synHero">
           <div class="sring" aria-hidden="true">
             <svg viewBox="0 0 132 132" width="132" height="132">
               <circle class="track" cx="66" cy="66" r="58"/>
               <circle class="val" id="sRing" cx="66" cy="66" r="58"/>
             </svg>
             <b id="sScore">—</b>
-            <em data-en="BASE BOND" data-zh="底盘缘分">BASE BOND</em>
+            <em data-en="RESONANCE" data-zh="共鸣指数">RESONANCE</em>
           </div>
-          <div class="syn-parts" id="synParts"></div>
+          <div class="syn-title" id="synTitle" data-en="Reading the sky…" data-zh="正在解读星盘……">Reading the sky…</div>
         </div>
-        <div class="syn-pillars" id="synPillars"></div>
-        <div class="xiu-rel" id="synXiu"></div>
-        <div class="xiu-rel" id="synAstro"></div>
+
+        <!-- §2 what draws you together -->
+        <div class="syn-sec" id="synAttractWrap" hidden>
+          <div class="xiu-h" data-en="WHAT DRAWS YOU TOGETHER" data-zh="互相吸引">WHAT DRAWS YOU TOGETHER</div>
+          <div id="synAttract"></div>
+        </div>
+
+        <!-- §3 worth watching (red flags, advice-shaped) -->
+        <div class="syn-sec" id="synFlagsWrap" hidden>
+          <div class="xiu-h" data-en="WORTH WATCHING" data-zh="红旗提示">WORTH WATCHING</div>
+          <div id="synFlags"></div>
+        </div>
+
+        <!-- §4 Davison composite — this relationship's own chart -->
+        <div class="l3" id="synDavisonSec" hidden>
+          <button type="button" class="l3-toggle" id="synDavisonToggle" aria-expanded="false" aria-controls="synDavisonBody">
+            <span data-en="PRO ▾ this relationship's own chart" data-zh="PRO ▾ 你们这段关系的组合盘">PRO ▾ this relationship's own chart</span>
+            <span class="car" aria-hidden="true">▾</span>
+          </button>
+          <div class="l3-body" id="synDavisonBody"></div>
+        </div>
+
+        <!-- full bazi + chart breakdown (V20/V21 content), demoted to PRO detail -->
+        <div class="l3">
+          <button type="button" class="l3-toggle" id="synDetailToggle" aria-expanded="false" aria-controls="synDetailBody">
+            <span data-en="PRO ▾ full breakdown (bazi + charts)" data-zh="PRO ▾ 完整命理拆解（八字＋星盘）">PRO ▾ full breakdown (bazi + charts)</span>
+            <span class="car" aria-hidden="true">▾</span>
+          </button>
+          <div class="l3-body" id="synDetailBody">
+            <div class="syn-charts" id="synCharts"></div>
+            <div class="syn-parts" id="synParts"></div>
+            <div class="syn-pillars" id="synPillars"></div>
+            <div class="xiu-rel" id="synXiu"></div>
+            <div class="xiu-rel" id="synAstro"></div>
+          </div>
+        </div>
+
         <div class="pull"><b id="pullScore">—</b><span id="pullTxt"></span></div>
         <div class="share-row">
           <button class="btn" type="button" id="shareBtn" data-en="Copy share link ⎘" data-zh="复制合盘链接 ⎘">Copy share link ⎘</button>
