@@ -19,6 +19,8 @@ import { solarToLunar } from '../lib/lunar.js';
 import { dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL } from '../lib/xiu.js';
 import { PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, AXIS_LETTERS } from '../lib/persona.js';
 import { cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T } from '../lib/astro.js';
+import { personalityTags, dimensionScores } from '../lib/astroReadings.js';
+import { renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH } from '../lib/astroChart.js';
 import { computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH } from '../lib/ziwei.js';
 import { downloadShareCard } from '../lib/shareCard.js';
 
@@ -297,24 +299,71 @@ import { downloadShareCard } from '../lib/shareCard.js';
     const s = signOf(lon);
     return `${T(ZODIAC_EN[s], ZODIAC_ZH[s] + '座')} ${Math.floor(degInSign(lon))}°`;
   };
-  function astroHTML(me) {
-    const jd = cstToJD(me.y, me.m, me.d, me.hour);
-    const sun = sunLongitude(jd), moon = moonLongitude(jd);
+  // ---- V23 Phase 1 (roadmap §7.10): single-chart L1/L2/L3 progressive
+  // disclosure. L1/L2 use only the existing light Sun/Moon/Ascendant calc
+  // (astro.js) + the bazi element tally — zero jargon, zero ephemeris
+  // dependency. L3 is gated behind an explicit PRO toggle that dynamically
+  // imports astroPlanets.ts (and with it astronomy-engine) only on first
+  // expand, per the roadmap's dynamic-import discipline.
+  const PLANET_ZH = { Sun: '太阳', Moon: '月亮', Mercury: '水星', Venus: '金星', Mars: '火星', Jupiter: '木星', Saturn: '土星', Uranus: '天王星', Neptune: '海王星', Pluto: '冥王星' };
+
+  function l1HTML(me, sun, moon, ascDeg) {
     const hourMissing = me.hour == null;
     let risingHTML;
     if (hourMissing) {
-      risingHTML = `<span class="as-miss">${T('needs birth hour', '需填时辰')}</span>`;
-    } else if (me.lat == null || me.lon == null) {
-      risingHTML = `<span class="as-miss">${T('needs birthplace lat/lon above', '需在上方填出生地经纬度')}</span>`;
+      risingHTML = `<span class="l1-miss">${T('needs birth hour', '需填时辰')}</span>`;
+    } else if (ascDeg == null) {
+      risingHTML = `<span class="l1-miss">${T('needs birthplace lat/lon above', '需在上方填出生地经纬度')}</span>`;
     } else {
-      risingHTML = signLabel(ascendant(jd, me.lat, me.lon));
+      risingHTML = signLabel(ascDeg);
     }
-    return `<div class="as-row">
-        <div class="as-card"><span class="as-t">☉ ${T('SUN', '太阳')}</span><b>${signLabel(sun)}</b></div>
-        <div class="as-card"><span class="as-t">☾ ${T('MOON', '月亮')}</span><b>${signLabel(moon)}</b>${hourMissing ? `<small>${T('hour unknown — noon approximation; can be off if the moon changed signs that day', '未填时辰，按正午近似——当日月亮换座时可能有偏差')}</small>` : ''}</div>
-        <div class="as-card"><span class="as-t">↗ ${T('RISING', '上升')}</span><b>${risingHTML}</b></div>
+    const tags = personalityTags({
+      sunSign: signOf(sun), moonSign: signOf(moon),
+      ascSign: ascDeg == null ? null : signOf(ascDeg),
+      elements: state.mineChart ? state.mineChart.elements : null,
+    });
+    return `<div class="l1-big3">
+        <div class="l1-card"><span class="t">☉ ${T('SUN', '太阳')}</span><b>${signLabel(sun)}</b></div>
+        <div class="l1-card"><span class="t">☾ ${T('MOON', '月亮')}</span><b>${signLabel(moon)}</b>${hourMissing ? `<small>${T('hour unknown — noon approximation; can be off if the moon changed signs that day', '未填时辰，按正午近似——当日月亮换座时可能有偏差')}</small>` : ''}</div>
+        <div class="l1-card"><span class="t">↗ ${T('RISING', '上升')}</span><b>${risingHTML}</b></div>
       </div>
-      <p class="bz-caveat">${T('Tropical zodiac, whole-sign display. Sun/moon/rising only — planetary placements are a planned follow-up.', '回归黄道、整宫制显示。当前仅日月升——行星落座为后续计划。')}</p>`;
+      <div class="l1-tags">${tags.map((t) => `<span class="l1-tag">${T(t.en, t.zh)}</span>`).join('')}</div>
+      <p class="bz-caveat">${T('Tropical zodiac, whole-sign display — entertainment read from Sun/Moon/Rising. Tap PRO below for the full planetary chart.', '回归黄道、整宫制显示——基于日月升的娱乐向解读。完整行星星盘见下方 PRO 展开。')}</p>`;
+  }
+
+  function l2HTML(sun, moon, ascDeg) {
+    const dims = dimensionScores({
+      sunSign: signOf(sun), moonSign: signOf(moon),
+      ascSign: ascDeg == null ? null : signOf(ascDeg),
+      elements: state.mineChart ? state.mineChart.elements : null,
+    });
+    const radar = renderRadar(dims.map((d) => ({ key: d.key, label: T(d.label.en, d.label.zh), value: d.value })));
+    const rows = dims.map((d) => `<div class="l2-dim" data-dim="${d.key}"><div class="dh"><span class="dn">${T(d.label.en, d.label.zh)}</span><span class="dv">${d.value}</span></div><p>${T(d.text.en, d.text.zh)}</p></div>`).join('');
+    return `<div class="l2-radar-wrap"><div class="l2-radar">${radar}</div><div class="l2-detail">${rows}</div></div>`;
+  }
+
+  // combined Sun/Moon (from astro.js, always available) + Mercury..Pluto
+  // (from the dynamically-loaded astroPlanets.ts, cached in state.l3)
+  function l3AllPlanets() {
+    return [{ body: 'Sun', lonDeg: state.l1Sun, retro: false }, { body: 'Moon', lonDeg: state.l1Moon, retro: false }, ...(state.l3 ? state.l3.planets : [])];
+  }
+
+  function renderL3Body() {
+    if (!state.l3 || !state.l3.planets) return;
+    const ascDeg = state.l3.ascDeg;
+    const all = l3AllPlanets();
+    const legend = all.map((p) => `<span>${PLANET_GLYPH[p.body] || p.body[0]} ${T(p.body, PLANET_ZH[p.body] || p.body)}</span>`).join('');
+    const seen = new Set(); const terms = [];
+    for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) {
+      const a = aspectBetween(all[i].lonDeg, all[j].lonDeg);
+      if (a && !seen.has(a.key)) { seen.add(a.key); terms.push(a.key); }
+    }
+    const termsHTML = terms.map((k) => `<div class="l3-term"><b>${T(ASPECT_T[k].en, ASPECT_T[k].zh)}</b> — ${T(ASPECT_T[k].dEn, ASPECT_T[k].dZh)}</div>`).join('')
+      || `<div class="l3-term">${T('No major aspects within orb right now.', '当前无明显相位。')}</div>`;
+    $('l3Body').innerHTML = `<div class="l3-wheel-card">${renderWheel({ ascDeg: ascDeg == null ? 0 : ascDeg, planets: all })}<div class="l3-legend">${legend}</div></div>`
+      + (ascDeg == null ? `<p class="bz-caveat">${T('Ascendant unknown (need birth hour + lat/lon above) — houses shown from 0° Aries.', '上升未知（需时辰+经纬度）——宫位按白羊 0° 起算。')}</p>` : '')
+      + `<div class="l3-grid-wrap">${renderAspectGrid(all)}</div>`
+      + `<div class="l3-terms">${termsHTML}</div>`;
   }
 
   // ---- 紫微斗数十二宫 (V21 Phase 6) ------------------------------------------
@@ -409,8 +458,18 @@ import { downloadShareCard } from '../lib/shareCard.js';
     // 大运流年 (V21 Phase 2)
     $('dyWrap').innerHTML = dayunHTML(state.me);
 
-    // 日月升 (V21 Phase 5)
-    $('astroWrap').innerHTML = astroHTML(state.me);
+    // V23 Phase 1: single-chart L1/L2/L3 progressive disclosure
+    {
+      const jd = cstToJD(state.me.y, state.me.m, state.me.d, state.me.hour);
+      const sun = sunLongitude(jd), moon = moonLongitude(jd);
+      const ascDeg = (state.me.hour == null || state.me.lat == null || state.me.lon == null) ? null : ascendant(jd, state.me.lat, state.me.lon);
+      state.l1Sun = sun; state.l1Moon = moon;
+      $('l1Wrap').innerHTML = l1HTML(state.me, sun, moon, ascDeg);
+      $('l2Wrap').innerHTML = l2HTML(sun, moon, ascDeg);
+      if (state.l3 && state.l3.jd !== jd) { state.l3 = null; $('l3Body').innerHTML = ''; $('l3Body').classList.remove('open'); $('l3Toggle').setAttribute('aria-expanded', 'false'); }
+      state.l3JD = jd; state.l3AscDeg = ascDeg;
+      if (state.l3 && state.l3.planets) renderL3Body();
+    }
 
     // 紫微斗数 (V21 Phase 6)
     $('zwWrap').innerHTML = ziweiHTML(state.me);
@@ -611,6 +670,40 @@ import { downloadShareCard } from '../lib/shareCard.js';
     try { await navigator.clipboard.writeText(url); ok = true; } catch {}
     if (!ok) { try { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); ok = true; } catch {} }
     $('shareTip').textContent = ok ? T('Copied — send it to them.', '已复制——发给对方吧。') : url;
+  });
+
+  // ---- V23 Phase 1: L2 radar/list interaction + L3 PRO toggle (dynamic import) --
+  const l2Wrap = $('l2Wrap');
+  if (l2Wrap) l2Wrap.addEventListener('click', (e) => {
+    const target = e.target.closest('[data-dim]');
+    if (!target) return;
+    const row = l2Wrap.querySelector(`.l2-dim[data-dim="${target.dataset.dim}"]`);
+    if (row) row.classList.toggle('open');
+  });
+  if (l2Wrap && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { if (en.isIntersecting) { l2Wrap.classList.add('in-view'); io.unobserve(l2Wrap); } });
+    }, { threshold: 0.2 });
+    io.observe(l2Wrap);
+  } else if (l2Wrap) { l2Wrap.classList.add('in-view'); }
+
+  let l3Loading = false;
+  const l3Toggle = $('l3Toggle'), l3Body = $('l3Body');
+  if (l3Toggle) l3Toggle.addEventListener('click', async () => {
+    const willOpen = !l3Body.classList.contains('open');
+    l3Toggle.setAttribute('aria-expanded', String(willOpen));
+    l3Body.classList.toggle('open', willOpen);
+    if (!willOpen || l3Loading) return;
+    if (state.l3 && state.l3.jd === state.l3JD && state.l3.planets) { renderL3Body(); return; }
+    l3Loading = true;
+    l3Body.innerHTML = `<p class="l3-loading">${T('Loading the professional ephemeris…', '正在加载专业星历……')}</p>`;
+    try {
+      const { allPlanets } = await import('../lib/astroPlanets.ts');
+      state.l3 = { jd: state.l3JD, planets: allPlanets(state.l3JD), ascDeg: state.l3AscDeg };
+      renderL3Body();
+    } catch {
+      l3Body.innerHTML = `<p class="l3-loading">${T('Could not load the ephemeris — try again.', '星历加载失败——请重试。')}</p>`;
+    } finally { l3Loading = false; }
   });
 
   // ---- forms -------------------------------------------------------------------

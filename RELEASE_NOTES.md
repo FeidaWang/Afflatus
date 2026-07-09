@@ -7,9 +7,26 @@
 
 ## v1.5 · Afflatus「Fable 5 Max 五模块」
 
+### V23 Phase 1 · 观星台「单盘三层披露」改造 + astronomy-engine 接入 — 2026-07-09
+
+**背景**：V23 白皮书（roadmap §7.10）把观星页从"一次性平铺全部信息"改造为 L1/L2/L3 三层渐进披露，同时裁决了 V21 遗留的行星星座技术选型（手写系数 vs 引星历库）。
+
+**技术选型**：选用 `astronomy-engine`（npm，MIT，纯 JS，`^2.1.19`）而非手写 VSOP87 系数表——`src/lib/astro.js` 原有的 Sun/Moon 计算是手写系数，但为 8 颗行星（Mercury..Pluto）手打系数表属于"无法自证正确性的数据录入"，超出本项目一贯的验证纪律，故引入库。**关键坑**：`Astronomy.EclipticLongitude(body, date)` 返回的是**日心**黄经（读 `astronomy-engine` 源码确认，内部调用 `HelioVector`），对命盘毫无意义；正确调用是 `Astronomy.Ecliptic(Astronomy.GeoVector(body, date, true)).elon`（地心视黄经）。此坑通过一次全年 2026 扫描发现（初版实现显示水星偏离太阳最大达 178°，物理上不可能超过 ~28°），修正后写入 `astroPlanets.ts` 头部注释并做成永久回归测试（水星/金星最大距角断言）。
+
+**三层结构**（`horoscope.html` / `src/pages/horoscope.js` / `public/styles/horoscope.css`）：
+- **L1**（`l1HTML`，始终可见）：日月升大三 + 3-5 条双语人格标签，来自新文件 `src/lib/astroReadings.js` 的 `personalityTags()`（太阳特质/月亮需求/上升第一印象/五行风味短语库 + 三方组合"统一"标签）。
+- **L2**（`l2HTML`，滚动进入视口后展开）：爱情/事业/沟通/能量/成长五维雷达图（`astroChart.js` 的 `renderRadar()` 纯函数 SVG 渲染），数值来自 `dimensionScores()`（基础分 50 + 三方星座加权 + 八字五行加成，clamp 到 [5,96]，三档文案）。用 `IntersectionObserver` 触发首次展开动画。
+- **L3**（`renderL3Body` + `l3-toggle` 按钮，默认折叠）：PRO 专业星盘——轮盘（`renderWheel()`，整宫制，从上升星座起排，相位连线）+ 相位格网（`renderAspectGrid()`）。**`astronomy-engine` 仅在用户点击展开 L3 时才动态 `import('../lib/astroPlanets.ts')`**，不进首屏；已用生产构建验证：`astroPlanets-*.js`（约 46.7KB，含真实星历常量）是独立 chunk，未被主 `horoscope-*.js`（89KB）或全站共享 `main-*.js` 引入。
+
+**已知未做项**（不阻塞本 Phase，记录在案）：L1 标签的"长按生成贴纸"交互；L3 术语区目前是静态术语列表，未做 hover tooltip。
+
+**新增文件**：`src/lib/astroPlanets.ts`（首个非 cursor.ts 的 `.ts` 模块，因 `tsconfig` 的 `allowJs:false` 需要配套 `src/lib/astro.d.ts` 最小环境声明）、`src/lib/astroChart.js`（纯函数 SVG 渲染器，按白皮书要求保持 `.js`）、`src/lib/astroReadings.js`。
+
+**验证**：435/435 vitest（新增 astroPlanets/astroChart/astroReadings 三个测试文件共 27 个用例，含水星距角物理不变量、轮盘上升点位置、相位格网对称性等结构性断言，非快照测试）；`tsc --noEmit` 干净；scratch `vite build` 确认动态 import 分包隔离。**视觉（L1/L2/L3 实际观感、雷达图/轮盘绘制效果）待真人浏览器验收**——沙盒仅能验证 DOM 结构与数值逻辑。
+
 ### V22 移动端全局修复（站主实机截图驱动）— 2026-07-06
 
-**背景**：站主用 iPhone 16 Pro Max（Chrome）拍了 index / serial / horoscope 三页的真机截图——这是本工程第一次拿到真机移动端反馈，此前所有"视觉验收"都停留在桌面视口/沙盒静态推理。六个用户可见问题逐一定位并修复，详细规格见 `roadmap.md` §7.9（含验收标准表，真机复核前保留在 roadmap 里跟踪，不算彻底关闭）。
+**背景**：站主用 iPhone 16 Pro Max（Chrome）拍了 index / serial / horoscope 三页的真机截图——这是本工程第一次拿到真机移动端反馈，此前所有"视觉验收"都停留在桌面视口/沙盒静态推理。六个用户可见问题逐一定位并修复。
 
 **① 翻页箭头**：`public/page-turn.css` 的 `.page-turn-controls`（signal/arena/sectors/games/league/horoscope/serial 共用）在 `@media(max-width:760px)` 直接 `display:none`——覆盖导航已由顶部 nav 承担，箭头只会在窄屏遮挡内容。**首页是例外**：index.html 用的是完全独立的 `.route-arrows`/`.route-arrow` 实现（`src/styles.css`，因为要跟战斗 HUD 的位置数学联动），不吃 page-turn.css 的规则，另外单独在其 `@media(max-width:860px)` 块里把 `display` 从（此前一次"恢复移动端翻页"改动遗留的）`block!important` 改成 `none!important`。
 
@@ -26,6 +43,43 @@
 **⑥ 观星页移动端表单**：根因是 `.form-grid`/`.syn-form` 桌面端用 `flex-wrap`，每个字段只按自身内容撑宽——时区 `<select>` 默认选项文案较长（"不确定 · 按中国处理"），把控件撑出面板；两个表单字段数不同（8 个 vs 5 个）导致换行点不同，出生日期和对方生日视觉宽度因而不一致。改法：`@media(max-width:640px)` 把两个表单都改成 2 列 grid，所有 `input`/`select` 强制 `width:100%;max-width:100%;height:44px`；HTML 字段顺序本来就是"日期+时辰→性别→时区+夏令时→经纬度→提交"这个分组，只需要用 `:has(#bGender)` 和 `.btn` 选择器把"性别"和"提交按钮"两处强制 `grid-column:1/-1`（整行），其余字段靠 grid 自动排布成对，**没有改动 HTML 结构**。
 
 **验证**：392/392 单元测试通过（本次改动不触及任何被测的计算逻辑，纯 CSS/DOM/事件绑定）；`vite build` 干净（sandbox 内 `dist/.DS_Store` 的 EPERM 报错是环境权限问题，非本次改动引入，用真实 outDir 验证过产物正确）。**六项都只做了 CSS 推理级验证，真机复核仍是关闭标准**——尤其 ②的 HUD 死区诊断虽然有具体的选择器优先级证据支撑，但 combat-HUD 的 canvas 渲染本身仍属于沙盒不可验证的深水区（同 V15/B6 纪律）。
+
+**验收标准（站主真机截图复核用）**：
+
+| 项 | 验收 |
+| --- | --- |
+| ① 箭头 | 390px 视口三页均无两侧箭头；桌面端仍在 |
+| ② 首页 | hero 文字不溢出视口；HUD 下无整屏空黑区 |
+| ③ 菜单 | 移动端任一页可两击内到达其余任一页 |
+| ④ 缝隙 | 滚动时进度条与工具栏之间无正文漏出（桌面+移动） |
+| ⑤ 工具栏 | ≤640px 单行不换行，全部功能可达 |
+| ⑥ 观星表单 | 无水平溢出；同列字段同宽同高；起盘/合盘按钮全宽独立行 |
+
+### V21.（评审）观星台治愈系改版 + 运势娱乐功能矩阵——立项评审与分期总表 — 2026-07-06
+
+**立项背景**：站主对照测测 App 的运势/娱乐功能提出扩展清单 + 界面全面转向「治愈温暖」风格。以下是产品/设计/架构三视角评审后的落地版；下方各 Phase 条目是实施记录，本条是先行的评审与分期设计。
+
+**功能搬运评审：搬什么、不搬什么**（按「现有引擎复用度 × 分享传播价值 ÷ 工程成本」排序）
+
+| 功能 | 可行性 | 量级 | 落地 Phase |
+| --- | --- | --- | --- |
+| 十神占比 | `ziping.js` 已有全部原料（藏干+十神），按本气/中气/余气加权求百分比即可 | XS | Phase 1 |
+| 八字喜用深化 | V20.8 已有简化扶抑法，补「调候」提示（按月令寒热燥湿给次要建议）即可到测测展示深度 | S | Phase 1 |
+| 神煞稀有度 | 测测没有的差异化点：脚本枚举 1950–2010 均匀出生样本，预计算每个神煞出现频率→常见/少见/罕见/稀有四档静态 JSON | S | Phase 1 |
+| 大运流年 | 纯历法数学：阳男阴女顺排/阴女阳男逆排、出生到邻近节气的天数÷3=起运岁数、十年一柱+流年干支与命局的刑冲合害 | M | Phase 2 |
+| 生肖流年 | 流年支 vs 年支/日支的合冲刑害 + 犯太岁判定，`ziping.js` 的关系引擎直接复用 | S | Phase 2（并入大运流年） |
+| 本命/值日星宿 + 双人星宿关系 | 值日宿=简单 28 日循环锚定；本命宿按宿曜经用农历月+日查表；双人关系（命业胎/荣衰安危成坏友亲）是查表；共同依赖农历转换模块 | M | Phase 3 |
+| 十六型人格测试 | 纯前端问卷+计分+结果页，零后端。法律红线：MBTI® 是注册商标——自编题库、页脚声明与 Myers-Briggs 无关联 | M | Phase 4 |
+| 个人星盘 + 双人合盘星盘 | Meeus 低精度日月黄经（~1° 精度对星座级展示足够）；宫位首版只做整宫制+上升星座；双人合盘=相位表 | L | Phase 5 |
+| 紫微斗数 | 确定性查表安星，可用真实命盘反推验证；依赖 Phase 3 的农历模块 | XL | Phase 6 |
+
+**明确不搬（评审否决）**：付费解锁/会员（违反「仅供娱乐」红线，静态站无支付基础设施）；"前任会想我吗"式焦虑钩子/AI 追问付费问答（黑模式）；AI 聊天式解读（静态站无后端，每次调用式 LLM 成本不可控，继续用已有的确定性 seeded 文案库路线）；Web Push 每日提醒（L 成本 DAU 未证明）。
+
+**架构决策**：全站已 8 页，C5 规定加第 9 页前必须先做 Astro 评估——默认策略是 Phase 1–3、5–6 全部作为 `horoscope.html` 页内分区/标签页扩展（不加页）；Phase 4（人格测试）内容身份独立、最适合单开页，评估后仍决定不开新页（见 Phase 4 条目）。模块延续 `bazi.js`/`ziping.js` 的纯函数+vitest 纪律，每个模块落地前先找真实参考盘反推验证（同 V20.8 方法论）。神煞稀有度用一次性生成脚本产出进 git 的静态模块，不在浏览器里实时枚举。表单新增字段（性别、经纬度）— 每加一个字段都要评估是否进 `encodeShare`/`decodeShare` 分享码 schema。
+
+**Phase 0–6 全部完成 ✅（2026-07-06，实施记录见下方各条目）**。仅存后续决策项：行星星座（引真实星历库 vs 手写系数的取舍——手打 VSOP87 表不安全、引库加 ~350KB bundle，两难未决）、紫微辅星/四化（入门版明确未做）。
+
+---
 
 ### V21 Phase 6.（XL→M 实际）紫微斗数入门版：十二宫 + 十四主星 — 2026-07-06
 
@@ -381,6 +435,18 @@
 - **D5.** 新增 `public/sitemap.xml`（7 个入口页），`robots.txt` 指向它；7 个页面 `<head>` 最前面加同步内联脚本，按 localStorage 缓存语言提前设置 `<html lang>`（不等 `i18n.js` 作为 module script 跑完）。**范围调整**：首屏文案「先英后中」跳变未根治——首页 hero 标题/副标题走 `main.js` 独立内容管线（非 `i18n.js` 的 `data-en`/`data-zh` 机制），根治需服务端按 `Accept-Language` 分流，留给 C5 Astro 迁移一并解决。
 
 **验证**：158/158 测试通过（新增 `tests/rateLimit.test.js`）；`npm run build` 无 `INEFFECTIVE_DYNAMIC_IMPORT` 警告；7 个入口页 `vite preview` 均 200。
+
+---
+
+### S0.（S，无风险纯增量）SEO Phase 0 快赢 — 2026-07-05
+
+**背景**：站主定位是 US 个股仓位/研判 desk view + AI 竞猜实验 + 原创小说，domain authority 从 0 起步，目标不是流量最大化而是让搜索引擎正确理解站点结构、内容可信度可被验证。
+
+**改动**：全站 7 页加 `<link rel="canonical">` + `<meta property="og:url">`（此前审计确认为 0）；`index.html` 加 `WebSite` + `Person`（`name:"Feida Wang"`, `alternateName:"Bruce"`——沿用站内已公开的真实署名，未编造 `jobTitle`/`sameAs` 等未知字段）JSON-LD；`serial.html` 加两本小说的 `Book` JSON-LD（书名/作者笔名"槐酿"/简介/类型标签，均为页面已公开数据）；新增 `public/404.html` 静态兜底页（`noindex`，配色沿用首页基调）；新增 `vercel.json`（`www.feida.au` → apex 301 防子域名重复内容；`/api/*` 加 `X-Robots-Tag: noindex`）；新增 `npm run linkcheck`（`linkinator` + `vite build`，本地手动跑，`feida.au` 自身域名加入 skip 名单——沙盒网络对生产域名请求会被拦截返回假 403，需在真机/部署后环境验证真实死链）。
+
+**审计过程中确认无需动的项**：`public/robots.txt`、`public/sitemap.xml`（覆盖全部 7 页）此前已存在且正确，早前的审计遗漏了这两个文件。
+
+**审计中发现的未修复小缺口（留待需要时单独处理）**：`sectors.html` 唯独缺 `<link rel="icon">`（其余 6 页都有）。
 
 ---
 
