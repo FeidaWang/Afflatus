@@ -22,6 +22,8 @@ import { cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, asp
 import { personalityTags, dimensionScores } from '../lib/astroReadings.js';
 import { renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH } from '../lib/astroChart.js';
 import { crossAspects, relationshipTitle, resonanceScore, attractionLines, redFlagLines, davisonReading } from '../lib/synastryAstro.js';
+import { dailyCoupleWeather } from '../lib/dailyTransits.js';
+import { dailyDraw } from '../lib/starDraw.js';
 import { computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH } from '../lib/ziwei.js';
 import { downloadShareCard } from '../lib/shareCard.js';
 
@@ -46,6 +48,14 @@ import { downloadShareCard } from '../lib/shareCard.js';
   };
   const T = (en, zh) => (state.lang === 'zh' ? zh : en);
   const todayStr = () => { const d = new Date(); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
+  const dateStrPlus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
+
+  // ---- transits-daily.json (V23 Phase 3) ------------------------------------
+  // Fetched once, cached for the whole session — it's a <2KB static JSON
+  // (scripts/gen-transits-daily.mjs, refreshed by a daily scheduled task),
+  // not an ephemeris library, so this carries no bundle-weight concern.
+  let transitsPromise = null;
+  const ensureTransits = () => transitsPromise || (transitsPromise = fetch('/transits-daily.json').then((r) => (r.ok ? r.json() : null)).catch(() => null));
 
   // ---- 时辰 selects -------------------------------------------------------
   // 子 (23:00-01:00) is split into 早子 (00:xx, same calendar day) and 晚子
@@ -493,6 +503,18 @@ import { downloadShareCard } from '../lib/shareCard.js';
     const sc = $('streakChip'); sc.hidden = false;
     sc.textContent = T(`◆ ${n}-day streak`, `◆ 连续观星 ${n} 天`);
 
+    // 每日星语签 (V23 Phase 3): deterministic daily card draw, reuses the
+    // streak counter above (7+ days unlocks a shot at the hidden pool).
+    const birthKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour ?? 'x'}`;
+    const draw = dailyDraw({ dateStr: todayStr(), birthKey, streak: n });
+    $('starDrawWrap').innerHTML = `<div class="sd-card${draw.hidden ? ' sd-hidden' : ''}">
+      <span class="sd-glyph" aria-hidden="true">${draw.card.glyph}</span>
+      <div class="sd-body">
+        <div class="sd-name">${T(draw.card.en, draw.card.zh)}${draw.hidden ? `<em class="sd-badge">${T('HIDDEN', '隐藏签')}</em>` : ''}</div>
+        <p class="sd-advice">${T(draw.advice.en, draw.advice.zh)}</p>
+      </div>
+    </div>`;
+
     // pillars
     $('pillarRow').innerHTML = pillarCardsHTML(f.chart);
 
@@ -605,6 +627,30 @@ import { downloadShareCard } from '../lib/shareCard.js';
       )}</p>`;
   }
 
+  // 7-day fate calendar (V23 Phase 3, roadmap module 2 point 3): reuses the
+  // existing dailyPull() seeded score (horoscopeEngine.js) for 7 dates —
+  // today/tomorrow show the real number, days 3-7 are time-locked (not a
+  // paywall — the roadmap is explicit: "只做时间解锁") so the page gives a
+  // reason to come back rather than dumping the whole week at once.
+  function renderSynCalendar() {
+    if (!state.me || !state.other) return;
+    const cells = [];
+    for (let i = 0; i < 7; i++) {
+      const dateStr = dateStrPlus(i);
+      const pull = dailyPull(state.me, state.other, dateStr);
+      const locked = i >= 2;
+      const dayLabel = i === 0 ? T('TODAY', '今天') : i === 1 ? T('TMRW', '明天') : `+${i}${T('d', '天')}`;
+      cells.push(`<div class="syn-cal-cell${locked ? ' locked' : ''}">
+        <span class="scc-d">${dayLabel}</span>
+        ${locked
+          ? `<span class="scc-v scc-v--locked">···</span><span class="scc-hint">${T(`unlocks in ${i - 1}d`, `${i - 1}天后解锁`)}</span>`
+          : `<span class="scc-v">${pull.score}</span>`}
+      </div>`);
+    }
+    $('synCal').innerHTML = cells.join('');
+    $('synCalWrap').hidden = false;
+  }
+
   function renderSyn() {
     if (!state.me || !state.other) return;
     const s = synastry(state.me, state.other);
@@ -700,6 +746,24 @@ import { downloadShareCard } from '../lib/shareCard.js';
     $('pullTxt').textContent = T(
       `Today's pull — under a ${pull.todayElement.en}-day sky. Changes daily; come back tomorrow.`,
       `今日引力——${pull.todayElement.zh}气当令。每日一变，明日再来。`);
+
+    // V23 Phase 3: today's real transit-to-natal weather (module 2 point 1)
+    // + 7-day fate calendar (module 2 point 3). The calendar is cheap and
+    // synchronous (reuses dailyPull, no fetch); the weather needs the
+    // precomputed transits JSON, fetched once and cached.
+    renderSynCalendar();
+    const weatherPairKey = pairKey;
+    ensureTransits().then((transits) => {
+      if (!transits || !state.me || !state.other) return;
+      const curKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}`;
+      if (curKey !== weatherPairKey) return; // pair changed while the fetch was in flight
+      const weather = dailyCoupleWeather(transits.planets, { Sun: bodies[0][2], Moon: moonA }, { Sun: bodies[0][3], Moon: moonB });
+      const wWrap = $('synWeatherWrap');
+      if (weather.lines.length) {
+        wWrap.hidden = false;
+        $('synWeather').innerHTML = weather.lines.map((l) => `<p class="syn-line syn-line--pos">${T(l.en, l.zh)}</p>`).join('');
+      } else wWrap.hidden = true;
+    });
   }
 
   // ---- sixteen-type quick quiz (V21 Phase 4) --------------------------------

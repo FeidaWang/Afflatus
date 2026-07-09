@@ -164,6 +164,8 @@
         <span class="today-rel" id="todayRel"></span>
         <span class="streak" id="streakChip" hidden></span>
       </div>
+      <div class="star-draw" id="starDrawWrap"></div>
+
       <div class="pillars" id="pillarRow" style="margin-top:14px"></div>
       <div class="elems" id="elemRow"></div>
 
@@ -286,6 +288,14 @@
         </div>
 
         <div class="pull"><b id="pullScore">—</b><span id="pullTxt"></span></div>
+        <div class="syn-sec" id="synWeatherWrap" hidden>
+          <div class="xiu-h" data-en="TODAY'S WEATHER" data-zh="今日天象">TODAY'S WEATHER</div>
+          <div id="synWeather"></div>
+        </div>
+        <div class="syn-sec" id="synCalWrap" hidden>
+          <div class="xiu-h" data-en="7-DAY OUTLOOK · TAP TOMORROW AGAIN" data-zh="缘分日历 · 明天再来看后面">7-DAY OUTLOOK · TAP TOMORROW AGAIN</div>
+          <div class="syn-cal" id="synCal"></div>
+        </div>
         <div class="share-row">
           <button class="btn" type="button" id="shareBtn" data-en="Copy share link ⎘" data-zh="复制合盘链接 ⎘">Copy share link ⎘</button>
           <button class="btn btn--seal" type="button" id="cardBtnSyn" data-en="Save synastry card ⤓" data-zh="保存合盘卡 ⤓">Save synastry card ⤓</button>
