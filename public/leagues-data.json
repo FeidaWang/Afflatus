@@ -1,7 +1,7 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
-  "updated": "2026-07-08",
-  "version": 8,
+  "updated": "2026-07-09",
+  "version": 9,
   "mode": "live",
   "teamLogos": {
     "BLG": "https://gol.gg/_img/teams_icon/Bilibili_Gaminglogo_profile.webp",
@@ -436,7 +436,7 @@
       "opusScore": "3-2",
       "reason_en": "HLE remain unbeaten (6-0 in maps) and idle since July 5; BLG arrive off back-to-back series (a five-game war with T1, then a 3-0 sweep of LYON). Leaning HLE, but expecting it close.",
       "reason_zh": "HLE 仍保持不败（map战绩6-0）且自7月5日起轮空休整；BLG 则连战两轮（五局力克T1，再3-0横扫LYON）。倾向 HLE 晋级，但预计过程胶着。",
-      "odds": null,
+      "odds": { "h": 2.28, "a": 1.6, "src": "GG.bet" },
       "result": null
     },
     {
@@ -490,7 +490,7 @@
       "opusScore": "3-2",
       "reason_en": "Both enter red-hot: G2 just eliminated three-time World Champion T1 3-1, LYON swept TSW 3-0. G2's win came against tougher competition; leaning G2 in a close one.",
       "reason_zh": "双方都手感火热：G2 刚3-1淘汰卫冕三届世界冠军T1，LYON 则3-0横扫TSW。G2 此胜含金量更高（对手更强），倾向G2小胜，但预计过程胶着。",
-      "odds": null,
+      "odds": { "h": 1.28, "a": 3.55, "src": "GG.bet" },
       "result": null
     },
     {
