@@ -14,8 +14,8 @@
     "A": {
       "promptVersion": "A-v1",
       "startEquity": 10000,
-      "cash": 8497.8121,
-      "equity": 9792.0421,
+      "cash": 6986.8237,
+      "equity": 9848.7037,
       "dayStartEquity": 9848.7037,
       "equityHistory": [
         {
@@ -32,15 +32,21 @@
         },
         {
           "day": 3,
-          "equity": 9792.0421
+          "equity": 9848.7037
         }
       ],
       "positions": [
         {
+          "sym": "AMD",
+          "qty": 3,
+          "avgPx": 552.326,
+          "mkPx": 517.65
+        },
+        {
           "sym": "TSM",
           "qty": 3,
           "avgPx": 452.0159,
-          "mkPx": 431.41
+          "mkPx": 436.31
         }
       ],
       "trades": [
@@ -63,28 +69,18 @@
           "fee": 0.0678,
           "slipBps": 5,
           "realizedPnl": null
-        },
-        {
-          "ts": "2026-07-09T11:02:01.641Z",
-          "sym": "AMD",
-          "side": "sell",
-          "qty": 3,
-          "px": 503.688,
-          "fee": 0.0756,
-          "slipBps": 5,
-          "realizedPnl": -145.9896
         }
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -2.08,
-        "maxDD": -2.08,
-        "hitRate": 0,
-        "exposure": 13.2
+        "cumPct": -1.513,
+        "maxDD": -1.896,
+        "hitRate": null,
+        "exposure": 29.1
       },
       "review": {
-        "zh": "AMD较成本价跌8.8%，已触及8%止损线，预计被引擎自动平仓——延续昨日不追高的谨慎判断（今日反弹已回落，验证正确）。板块抛售扩大：AI资本回报存疑、Warsh鹰派、SK海力士HBM放缓、DeepSeek自研芯片，估值泡沫担忧加重。AVGO因苹果300亿美元订单涨近4%，AAPL、QCOM同步走强，但涨幅已被price in，追涨性价比低。TSM(-4.6%)维持不动，本次不新增订单。",
-        "en": "AMD is down 8.8% from cost, at/through Book A's 8% stop — expect the engine's automatic sweep to close it, consistent with yesterday's cautious hold (today's reversal confirms that call). Sector selloff is broadening: AI-capex ROI doubts, hawkish Fed under Warsh, SK Hynix HBM slowdown, DeepSeek's own chip. AVGO/AAPL/QCOM diverge on Apple's $30B deal but are already up 2-4% intraday — chasing now is poor risk/reward. Holding TSM (-4.6%) unchanged. No new orders."
+        "zh": "今日核心AI硬件股全面反弹（SNDK、WDC、AVGO、ALAB、PSTG、AMD、TSM均涨），软件/平台系AAPL、MSFT、GOOGL、META、CRM、PLTR、TSLA普跌，原因是特朗普宣布伊朗停火\"已结束\"引发地缘风险偏好下降，叠加原油走高。持仓AMD、TSM随板块反弹回撤收窄（AMD约-6.3%，TSM约-3.5%），距止损线更远。鉴于今日驱动是宏观headline而非个股基本面，反弹刚开始尚待确认，本次不追加、不减仓，维持观察，避免在headline驱动的高波动日新增风险敞口。",
+        "en": "Core AI-hardware names (SNDK, WDC, AVGO, ALAB, PSTG, AMD, TSM) bounced today after yesterday's overdone rout, while megacap software/platform names (AAPL, MSFT, GOOGL, META, CRM, PLTR, TSLA) sold off as Trump declared the Iran ceasefire over and oil spiked. Existing AMD/TSM positions recovered (AMD ~-6.3%, TSM ~-3.5%), moving further from stop-loss. Since today's driver is a macro headline rather than stock fundamentals and the bounce is unconfirmed, holding steady rather than adding or trimming - avoiding fresh risk on a headline-driven volatile session."
       }
     },
     "B": {
