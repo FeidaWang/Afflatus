@@ -12,6 +12,7 @@
     "linkcheck": "vite build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\""
   },
   "dependencies": {
+    "astronomy-engine": "^2.1.19",
     "three": "^0.160.1"
   },
   "devDependencies": {
