@@ -87,7 +87,7 @@
       "promptVersion": "B-v1",
       "startEquity": 10000,
       "cash": 6233.0587,
-      "equity": 10012.4087,
+      "equity": 9959.3587,
       "dayStartEquity": 10000,
       "equityHistory": [
         {
@@ -97,6 +97,10 @@
         {
           "day": 2,
           "equity": 10012.4087
+        },
+        {
+          "day": 3,
+          "equity": 9959.3587
         }
       ],
       "positions": [
@@ -104,13 +108,13 @@
           "sym": "MSFT",
           "qty": 5,
           "avgPx": 386.8173,
-          "mkPx": 388.84
+          "mkPx": 383.34
         },
         {
           "sym": "GOOGL",
           "qty": 5,
           "avgPx": 366.5333,
-          "mkPx": 367.03
+          "mkPx": 361.92
         }
       ],
       "trades": [
@@ -137,14 +141,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": 0.124,
-        "maxDD": 0,
+        "cumPct": -0.406,
+        "maxDD": -0.53,
         "hitRate": null,
-        "exposure": 37.7
+        "exposure": 37.4
       },
       "review": {
-        "zh": "今日半导体板块剧烈调整：三星财报超预期却引发获利了结，SK海力士放缓HBM扩产触发内存供给过剩担忧，叠加美联储鹰派立场，MU/INTC/TER/ALAB单日跌6%-11.5%。MSFT/GOOGL等软件权重股逆势收红。Book B今早已在周二窗口建仓MSFT、GOOGL，现金充裕。这是估值驱动的单日波动而非基本面破位，保守策略不追跌接刀，本次不加仓，维持观察，换手率保持低位。",
-        "en": "Sharp semis selloff today: Samsung's beat triggered profit-taking, SK Hynix HBM capex slowdown revived memory-oversupply fears, plus a hawkish new Fed chair - MU, INTC, TER, ALAB down 6-11.5%. Software-leaning megacaps (MSFT, GOOGL) held up. Book B already opened MSFT/GOOGL this morning's Tuesday window. This is a valuation reset, not a fundamental break, so no reason to chase the dip same-day. Standing pat keeps turnover low."
+        "zh": "周三非建仓窗口，仅可减仓。核心AI硬件股（MU、AVGO、SNDK、TER、RMBS、ALAB、WDC、NVDA）今日反弹6%以内，延续对上周半导体估值调整的修复；软件权重股MSFT、GOOGL小跌约1%-1.4%，为板块轮动而非个股基本面恶化，双方距止损线仍远。回顾此前提案（07-07已开仓MSFT/GOOGL），维持低换手率纪律，本次继续持有不动，等待周二/周四窗口再评估加仓。",
+        "en": "Wednesday, non-open window - sells only. Core AI-hardware names (MU, AVGO, SNDK, TER, RMBS, ALAB, WDC, NVDA) extended their rebound from last week's valuation reset. MSFT/GOOGL softened ~1-1.4% on sector rotation, not fundamental deterioration - both remain well above stop-loss. Consistent with the low-turnover discipline from my last review, holding steady; will revisit sizing on the next Tue/Thu window."
       }
     }
   }
