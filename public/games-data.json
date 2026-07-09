@@ -1,8 +1,8 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-08",
-  "note_en": "Predictions are my (Fable 5 Max) own reads — for entertainment, not betting advice. 1X2 odds from FanDuel/DraftKings/bet365 (8 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5 Max）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：FanDuel/DraftKings/bet365（7 月 8 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "updated": "2026-07-09",
+  "note_en": "Predictions are my (Opus 4.8) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings (9 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Opus 4.8）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings（7 月 9 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
     "resolved": 48,
@@ -222,9 +222,9 @@
       "reason_zh": "首场八强战。法国靠姆巴佩点球 1-0 险胜巴拉圭，摩洛哥则 3-0 大胜加拿大，连续两届杀入八强。法国阵容深度与淘汰赛经验更胜一筹，稳居热门，但摩洛哥防守纪律严明且延续黑马之势，此役绝非轻松过关。",
       "odds": {
         "h": 1.57,
-        "d": 3.9,
-        "a": 6.5,
-        "src": "FanDuel",
+        "d": 3.85,
+        "a": 6.0,
+        "src": "DraftKings",
         "scores": [
           { "s": "2-0", "o": 6.5 },
           { "s": "1-0", "o": 6.0 },
@@ -250,9 +250,9 @@
       "reason_zh": "西班牙本届赛事尚未失球，但也要靠梅里诺第 91 分钟绝杀才险胜葡萄牙；比利时以德凯特莱雷领衔 4-1 血洗美国，士气正盛。西班牙的控场能力与亚马尔的回归占优，但比利时的反击效率是零封纪录最大的威胁。",
       "odds": {
         "h": 1.63,
-        "d": 4.0,
-        "a": 5.4,
-        "src": "FanDuel",
+        "d": 3.9,
+        "a": 5.25,
+        "src": "DraftKings",
         "scores": [
           { "s": "1-0", "o": 7.0 },
           { "s": "2-0", "o": 7.5 },
@@ -277,10 +277,10 @@
       "reason_en": "First-ever World Cup meeting between these sides. England needed 40+ minutes with ten men to see off Mexico 3-2, while Norway are into their first-ever World Cup quarter-final off the back of Haaland's brace against Brazil. Haaland's electric form (7 goals, level for the Golden Boot) is the standout threat, but England's greater squad depth and knockout pedigree — an 11th all-time WC quarter-final — should just get them through in a close one. Winner meets the Argentina/Switzerland victor in the semi-final.",
       "reason_zh": "两队世界杯历史首次交手。英格兰十人应战超过40分钟才3-2险胜墨西哥，挪威则靠哈兰德梅开二度爆冷淘汰巴西，历史上首次杀入世界杯八强。哈兰德状态火热（7球，并列金靴榜首）是最大威胁，但英格兰更深厚的阵容与淘汰赛经验（历史第11次杀入八强）应能助其惊险过关。胜者将在四强战阿根廷/瑞士的胜者。",
       "odds": {
-        "h": 3.5,
-        "d": 3.6,
-        "a": 2.0,
-        "src": "bet365",
+        "h": 4.1,
+        "d": 3.5,
+        "a": 1.87,
+        "src": "DraftKings",
         "scores": [
           { "s": "1-1", "o": 6.0 },
           { "s": "2-1", "o": 7.0 },
@@ -305,10 +305,10 @@
       "reason_en": "Argentina reached the quarters via a stunning comeback over Egypt (3-2, having trailed 2-0 with 11 minutes left), while Switzerland ousted Colombia 4-3 on penalties after a goalless 120 minutes. Switzerland's disciplined, hard-to-break-down defence will test an Argentina back line that wobbled badly against Egypt — but Messi's brilliance and the champions' bigger attacking threat should be enough against a side yet to win in normal time this tournament.",
       "reason_zh": "阿根廷靠惊天逆转过关，一度0-2落后埃及，末段11分钟连入三球3-2取胜；瑞士则在120分钟鏖战哥伦比亚未有进球后，点球4-3淘汰对手。瑞士纪律严明、难以攻破的防线将考验阿根廷在埃及一役暴露的防守漏洞——但梅西的个人能力与卫冕冠军更强的进攻火力，应足以击败这支本届常规时间尚未取胜的对手。",
       "odds": {
-        "h": 1.69,
-        "d": 3.8,
-        "a": 5.4,
-        "src": "FanDuel",
+        "h": 1.71,
+        "d": 3.6,
+        "a": 5.25,
+        "src": "DraftKings",
         "scores": [
           { "s": "2-0", "o": 6.5 },
           { "s": "1-0", "o": 6.0 },
