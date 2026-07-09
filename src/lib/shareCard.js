@@ -54,7 +54,10 @@ function sprig(ctx, x, y, s, mirror) {
   ctx.restore();
 }
 
-function frame(ctx, titleZh, titleEn, lang) {
+// titleOverride: a plain, already-language-resolved string (e.g. a generated
+// relationship title) drawn instead of titleZh/titleEn — shrinks the font a
+// touch for longer generated strings so it still fits the card width.
+function frame(ctx, titleZh, titleEn, lang, titleOverride) {
   ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
   sprig(ctx, W - 90, 300, 1.15, false);
   sprig(ctx, 95, H - 60, 0.9, true);
@@ -67,14 +70,41 @@ function frame(ctx, titleZh, titleEn, lang) {
   ctx.textAlign = 'center';
   ctx.fillText(lang === 'zh' ? '观 星 台' : 'STAR TERRACE', W / 2, 170);
   ctx.fillStyle = C.text;
-  ctx.font = '900 56px "Noto Serif SC",serif';
-  ctx.fillText(lang === 'zh' ? titleZh : titleEn, W / 2, 245);
+  const big = titleOverride || (lang === 'zh' ? titleZh : titleEn);
+  ctx.font = `900 ${titleOverride && big.length > 8 ? 40 : titleOverride ? 48 : 56}px "Noto Serif SC",serif`;
+  ctx.fillText(big, W / 2, 245);
   // footer
   ctx.fillStyle = C.dim;
   ctx.font = '500 24px "Spectral","Noto Serif SC",serif';
   ctx.fillText('feida.au/horoscope.html', W / 2, H - 60);
   ctx.font = '500 20px "Noto Serif SC",serif';
   ctx.fillText(lang === 'zh' ? '仅供娱乐 · 不构成任何建议' : 'Entertainment only · not advice', W / 2, H - 28);
+}
+
+// Greedy character-wrap (no spaces assumed — fine for CJK/short EN hooks),
+// centered, max `maxLines` lines with an ellipsis if the text doesn't fit.
+function wrapCentered(ctx, text, cx, y, maxWidth, lineHeight, maxLines) {
+  const lines = [];
+  let line = '';
+  let consumed = 0;
+  for (const ch of text) {
+    const test = line + ch;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      if (lines.length === maxLines) break;
+      line = ch;
+    } else line = test;
+    consumed++;
+  }
+  const truncated = consumed < text.length;
+  if (lines.length < maxLines && line) { lines.push(line); }
+  if (truncated) {
+    let last = lines[lines.length - 1];
+    while (ctx.measureText(last + '…').width > maxWidth && last.length > 1) last = last.slice(0, -1);
+    lines[lines.length - 1] = last + '…';
+  }
+  lines.forEach((l, i) => ctx.fillText(l, cx, y + i * lineHeight));
+  return lines.length;
 }
 
 // pillars: [{gz, el, label}] — gz is the two-char 干支, el 0-4, label like 年柱.
@@ -97,7 +127,9 @@ function drawPillarTiles(ctx, pillars, cx, y, tileW, tileH, gap) {
 }
 
 // payload (type 'mine'): { lang, pillars:[{gz,el,label}], chips:[str], dateStr }
-// payload (type 'syn'):  { lang, score, a:{h,pillars}, b:{h,pillars}, dateStr }
+// payload (type 'syn'):  { lang, score, a:{h,pillars,zodiacGlyph?}, b:{h,pillars,zodiacGlyph?},
+//   title?: string (V23 Phase 2, pre-resolved relationship title),
+//   hookLine?: string (V23 Phase 2, pre-resolved top attraction/red-flag line) }
 export function renderShareCard(canvas, type, payload) {
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
@@ -120,14 +152,18 @@ export function renderShareCard(canvas, type, payload) {
     ctx.font = '400 30px "Noto Serif SC",serif';
     ctx.fillText(lang === 'zh' ? '扫历法而出，非随机数。' : 'Cast from the real sexagenary calendar.', W / 2, 990);
   } else {
-    frame(ctx, '双人合盘', 'SYNASTRY', lang);
+    // payload.title (V23 Phase 2): plain, already-language-resolved string —
+    // the generated relationship title, e.g. "月亮贴贴型灵魂搭子". Falls
+    // back to the generic "双人合盘"/"SYNASTRY" header when absent so old
+    // callers (or a mid-flight astro-layer failure) still render fine.
+    frame(ctx, '双人合盘', 'SYNASTRY', lang, payload.title);
     drawPillarTiles(ctx, payload.a.pillars, W / 2, 310, 120, 260, 14);
     drawPillarTiles(ctx, payload.b.pillars, W / 2, 830, 120, 260, 14);
     ctx.fillStyle = C.dim;
     ctx.font = '600 26px "Noto Serif SC",serif';
     ctx.textAlign = 'center';
-    ctx.fillText(payload.a.h, W / 2 - 380, 340);
-    ctx.fillText(payload.b.h, W / 2 - 380, 860);
+    ctx.fillText(payload.a.h + (payload.a.zodiacGlyph ? ' ' + payload.a.zodiacGlyph : ''), W / 2 - 380, 340);
+    ctx.fillText(payload.b.h + (payload.b.zodiacGlyph ? ' ' + payload.b.zodiacGlyph : ''), W / 2 - 380, 860);
     // score ring between the two chart rows
     const cy = 700, r = 88;
     ctx.beginPath(); ctx.arc(W / 2, cy, r, 0, Math.PI * 2);
@@ -139,7 +175,16 @@ export function renderShareCard(canvas, type, payload) {
     ctx.fillText(String(payload.score), W / 2, cy + 26);
     ctx.fillStyle = C.dim;
     ctx.font = '600 22px "Spectral",serif';
-    ctx.fillText(lang === 'zh' ? '底盘缘分' : 'BASE BOND', W / 2, cy + 60);
+    ctx.fillText(lang === 'zh' ? (payload.title ? '共鸣指数' : '底盘缘分') : (payload.title ? 'RESONANCE' : 'BASE BOND'), W / 2, cy + 60);
+    // hookLine (V23 Phase 2): plain, already-language-resolved — the single
+    // most-shareable attraction/red-flag line, drawn in the gap below the
+    // second chart row and above the footer.
+    if (payload.hookLine) {
+      ctx.fillStyle = C.terraDeep;
+      ctx.font = '600 27px "Noto Serif SC",serif';
+      ctx.textAlign = 'center';
+      wrapCentered(ctx, payload.hookLine, W / 2, 1140, W - 280, 38, 2);
+    }
   }
 }
 
