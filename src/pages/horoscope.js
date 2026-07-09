@@ -50,6 +50,12 @@ import { downloadShareCard } from '../lib/shareCard.js';
   const todayStr = () => { const d = new Date(); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
   const dateStrPlus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
 
+  // ---- GA event tracking (V23 Phase 4, roadmap module 2 "北极星指标"/"护栏指标") --
+  // window.gtag is defined synchronously by the idle-deferred snippet in
+  // <head> (ROADMAP §9 SEO Phase 1) even before the GA script itself has
+  // loaded — calling it here just queues into dataLayer, safe at any time.
+  const track = (name, params) => { try { window.gtag && window.gtag('event', name, params || {}); } catch {} };
+
   // ---- transits-daily.json (V23 Phase 3) ------------------------------------
   // Fetched once, cached for the whole session — it's a <2KB static JSON
   // (scripts/gen-transits-daily.mjs, refreshed by a daily scheduled task),
@@ -500,6 +506,7 @@ import { downloadShareCard } from '../lib/shareCard.js';
     $('todayRel').textContent = '· ' + T(...[REL_T[f.relation][0], REL_T[f.relation][1]])
       + ' · ' + T(`mansion of the day: ${tx}`, `值日宿：${tx}宿`);
     const n = bumpStreak();
+    track('streak_day', { streak: n }); // guardrail metric: streak>=3 share (roadmap module 2)
     const sc = $('streakChip'); sc.hidden = false;
     sc.textContent = T(`◆ ${n}-day streak`, `◆ 连续观星 ${n} 天`);
 
@@ -507,11 +514,19 @@ import { downloadShareCard } from '../lib/shareCard.js';
     // streak counter above (7+ days unlocks a shot at the hidden pool).
     const birthKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour ?? 'x'}`;
     const draw = dailyDraw({ dateStr: todayStr(), birthKey, streak: n });
+    // V23 Phase 4: streak loss-aversion microcopy (roadmap Tier 0 recall) —
+    // only shown while it's still true (a real countdown, not evergreen
+    // nagging): counts down to the hidden-card unlock at streak 7.
+    const streakHint = draw.hidden
+      ? '' : n < 7
+        ? `<p class="sd-streak-hint">${T(`${n}-day streak — ${7 - n} more to unlock a hidden card`, `连续 ${n} 天，还差 ${7 - n} 天解锁隐藏签面`)}</p>`
+        : `<p class="sd-streak-hint">${T('Hidden cards unlocked — keep the streak for another shot', '隐藏签面已解锁——继续保持连续签到，还有机会再抽到')}</p>`;
     $('starDrawWrap').innerHTML = `<div class="sd-card${draw.hidden ? ' sd-hidden' : ''}">
       <span class="sd-glyph" aria-hidden="true">${draw.card.glyph}</span>
       <div class="sd-body">
         <div class="sd-name">${T(draw.card.en, draw.card.zh)}${draw.hidden ? `<em class="sd-badge">${T('HIDDEN', '隐藏签')}</em>` : ''}</div>
         <p class="sd-advice">${T(draw.advice.en, draw.advice.zh)}</p>
+        ${streakHint}
       </div>
     </div>`;
 
@@ -651,6 +666,55 @@ import { downloadShareCard } from '../lib/shareCard.js';
     $('synCalWrap').hidden = false;
   }
 
+  // Best day this week (V23 Phase 4, feeds the ICS button below) — just the
+  // argmax of the same dailyPull() sweep renderSynCalendar() already does;
+  // no new scoring logic.
+  function bestDayThisWeek(me, other) {
+    let best = null;
+    for (let i = 0; i < 7; i++) {
+      const dateStr = dateStrPlus(i);
+      const score = dailyPull(me, other, dateStr).score;
+      if (!best || score > best.score) best = { dateStr, score };
+    }
+    return best;
+  }
+
+  // Tier 0 recall (V23 Phase 4, roadmap module 2): a client-only .ics file
+  // download — no backend, no push notifications. The user's own calendar
+  // app is what reminds them; we just hand over one all-day VEVENT.
+  function downloadICS(dateStr, summary, description) {
+    const ymd = dateStr.replace(/-/g, '');
+    const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate() + 1);
+    const p = (x) => String(x).padStart(2, '0');
+    const nextDay = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`;
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const uid = `afflatus-${ymd}-${Math.random().toString(36).slice(2)}@feida.au`;
+    const esc = (s) => String(s).replace(/([,;])/g, '\\$1');
+    const ics = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Afflatus//Horoscope//EN',
+      'BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${ymd}`, `DTEND;VALUE=DATE:${nextDay}`,
+      `SUMMARY:${esc(summary)}`, `DESCRIPTION:${esc(description)}`,
+      'END:VEVENT', 'END:VCALENDAR',
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'afflatus-best-day.ics';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+  $('icsBtn') && $('icsBtn').addEventListener('click', () => {
+    if (!state.me || !state.other) return;
+    const best = bestDayThisWeek(state.me, state.other);
+    track('ics_subscribed'); // Tier 0 recall guardrail (roadmap module 2)
+    downloadICS(
+      best.dateStr,
+      T('Your best day together — Afflatus', '你们的最佳共处日 · 观星台'),
+      T('Generated by feida.au/horoscope.html — entertainment only, not advice.', '由 feida.au/horoscope.html 生成——仅供娱乐，不构成任何建议。')
+    );
+  });
+
   function renderSyn() {
     if (!state.me || !state.other) return;
     const s = synastry(state.me, state.other);
@@ -697,6 +761,7 @@ import { downloadShareCard } from '../lib/shareCard.js';
         state.synAstro = { key: pairKey, data };
         const curKey = state.me && state.other ? `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}` : null;
         if (curKey === pairKey) renderSynAstroSections(data);
+        track('synastry_cast', { score: data.score }); // north-star metric (roadmap module 2)
       }).catch(() => { $('synTitle').textContent = T('Could not read the sky — the base bond score above still applies.', '星盘解读失败——上方底盘缘分分数仍然有效。'); });
     }
 
@@ -827,6 +892,7 @@ import { downloadShareCard } from '../lib/shareCard.js';
       .map((p, i) => ({ gz: pillarName(p), el: STEM_ELEMENT[p.stem], label: labels[i] }));
   $('cardBtnMine') && $('cardBtnMine').addEventListener('click', () => {
     if (!state.mineChart || !state.me) return;
+    track('share_card_generated', { type: 'mine' }); // guardrail metric (roadmap module 2)
     const labels = PILLAR_T.map((t) => T(...t));
     const zi = zodiacIndex(state.me.m, state.me.d);
     downloadShareCard('mine', {
@@ -838,6 +904,7 @@ import { downloadShareCard } from '../lib/shareCard.js';
   });
   $('cardBtnSyn') && $('cardBtnSyn').addEventListener('click', () => {
     if (!state.synData) return;
+    track('share_card_generated', { type: 'synastry' }); // guardrail metric (roadmap module 2)
     const labels = PILLAR_T.map((t) => T(...t));
     const ziA = ZODIAC_GLYPH[zodiacIndex(state.me.m, state.me.d)];
     const ziB = ZODIAC_GLYPH[zodiacIndex(state.other.m, state.other.d)];
