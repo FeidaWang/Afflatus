@@ -1,9 +1,10 @@
 /* ============================================================
    SHARE CARD (V21 Phase 0) — canvas renderer for a downloadable PNG in
    the horoscope page's healing palette (warm cream / sage / terracotta /
-   soft gold + botanical sprig). Two card types:
-     - 'mine': four-pillar chart card
-     - 'syn':  two-person synastry score card
+   soft gold + botanical sprig). Card types:
+     - 'mine':    four-pillar chart card
+     - 'syn':     two-person synastry score card
+     - 'persona': sixteen-type quiz result card (V23 MBTI-expansion follow-up)
    DOM-coupled render code (canvas), no vitest by site convention — same
    discipline as other pure-visual modules; verified by build + human eye.
    Fonts are the ones the page already loads (Noto Serif SC / IBM Plex Mono).
@@ -126,16 +127,45 @@ function drawPillarTiles(ctx, pillars, cx, y, tileW, tileH, gap) {
   }
 }
 
-// payload (type 'mine'): { lang, pillars:[{gz,el,label}], chips:[str], dateStr }
-// payload (type 'syn'):  { lang, score, a:{h,pillars,zodiacGlyph?}, b:{h,pillars,zodiacGlyph?},
+// payload (type 'mine'):    { lang, pillars:[{gz,el,label}], chips:[str], dateStr }
+// payload (type 'syn'):     { lang, score, a:{h,pillars,zodiacGlyph?}, b:{h,pillars,zodiacGlyph?},
 //   title?: string (V23 Phase 2, pre-resolved relationship title),
 //   hookLine?: string (V23 Phase 2, pre-resolved top attraction/red-flag line) }
+// payload (type 'persona'): { lang, type: 'INTJ' etc, name: pre-resolved
+//   display name, axes:[{a,b,letter}] (4, same shape as persona.js's
+//   scorePersona() output), axisLetters: AXIS_LETTERS }
 export function renderShareCard(canvas, type, payload) {
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
   const lang = payload.lang === 'zh' ? 'zh' : 'en';
 
-  if (type === 'mine') {
+  if (type === 'persona') {
+    frame(ctx, '十六型人格', 'SIXTEEN TYPES', lang, payload.type);
+    ctx.fillStyle = C.sageDeep;
+    ctx.font = '700 40px "Noto Serif SC",serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(payload.name, W / 2, 340);
+    // four axis bars, stacked
+    const barW = 640, barX = W / 2 - barW / 2, barTop = 460, gap = 130;
+    payload.axes.forEach((ax, k) => {
+      const y = barTop + k * gap;
+      const pct = ax.a / (ax.a + ax.b);
+      ctx.fillStyle = C.dim;
+      ctx.font = '700 26px "IBM Plex Mono",monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(payload.axisLetters[k][0], barX, y - 16);
+      ctx.textAlign = 'right';
+      ctx.fillText(payload.axisLetters[k][1], barX + barW, y - 16);
+      ctx.fillStyle = 'rgba(74,69,61,.10)';
+      roundRect(ctx, barX, y, barW, 16, 8); ctx.fill();
+      ctx.fillStyle = C.sage;
+      roundRect(ctx, barX, y, Math.max(16, barW * pct), 16, 8); ctx.fill();
+    });
+    ctx.fillStyle = C.text;
+    ctx.font = '400 28px "Noto Serif SC",serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(lang === 'zh' ? '原创速测 · 与官方 MBTI 无关联' : 'Original quiz · not affiliated with MBTI®', W / 2, barTop + 4 * gap + 20);
+  } else if (type === 'mine') {
     frame(ctx, '我的四柱命盘', 'MY FOUR PILLARS', lang);
     drawPillarTiles(ctx, payload.pillars, W / 2, 330, 190, 420, 24);
     // identity chips
