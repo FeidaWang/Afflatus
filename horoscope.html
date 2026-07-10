@@ -124,6 +124,10 @@
     <h2 data-i18n-html data-en="Read the day the sky <b>wrote for you</b>" data-zh="读一读，今天的天象<b>为你写了什么</b>">Read the day the sky <b>wrote for you</b></h2>
     <p class="sub" data-en="Cast your Four Pillars from the real sexagenary calendar, read a daily fortune drawn from today's actual day-pillar element, and lay two charts side by side to see how they interlock. The daily reading truly changes every day — it follows the calendar, not a random number." data-zh="以真实干支历排出你的四柱，用今日真实日柱的五行生克读一份日运；再把两个人的命盘并置，看地支如何相合相冲。日运每天真实变化——它跟着历法走，不是随机数。">Cast your Four Pillars from the real sexagenary calendar, read a daily fortune drawn from today's actual day-pillar element, and lay two charts side by side to see how they interlock. The daily reading truly changes every day — it follows the calendar, not a random number.</p>
     <span class="ent-chip" data-en="⚠ ENTERTAINMENT ONLY · NOT ADVICE" data-zh="⚠ 仅供娱乐 · 不构成任何建议">⚠ ENTERTAINMENT ONLY · NOT ADVICE</span>
+    <div class="privacy-clear">
+      <button type="button" class="privacy-clear-btn" id="clearDataBtn" data-en="⌫ Clear all my data on this device" data-zh="⌫ 清空本机保存的全部数据">⌫ Clear all my data on this device</button>
+      <span class="privacy-clear-note" data-en="Wipes your chart, streak, quiz results and saved contacts from this browser. Cannot be undone." data-zh="清除本机保存的命盘、连续签到、测试结果与关系册——不可恢复。">Wipes your chart, streak, quiz results and saved contacts from this browser. Cannot be undone.</span>
+    </div>
   </section>
 
   <!-- ===== birth input ===== -->
@@ -146,7 +150,6 @@
           <input type="text" id="bCityInput" list="cityOptions" autocomplete="off" placeholder="北京 / Tokyo / New York"></div>
         <div class="fld fld--check"><label for="bDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
           <input type="checkbox" id="bDst" disabled></div>
-        <button type="button" class="fld-manual-toggle" id="bManualToggle" data-en="Can't find your city? Enter manually ▾" data-zh="找不到城市？手动填写 ▾">Can't find your city? Enter manually ▾</button>
         <div class="fld-manual" id="bManualWrap" hidden>
           <div class="fld"><label for="bTz" data-en="Birth timezone (optional, more accurate)" data-zh="出生地时区（可不填，更精确）">Birth timezone (optional, more accurate)</label>
             <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
@@ -239,7 +242,6 @@
           <input type="text" id="sCityInput" list="cityOptions" autocomplete="off" placeholder="北京 / Tokyo / New York"></div>
         <div class="fld fld--check"><label for="sDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
           <input type="checkbox" id="sDst" disabled></div>
-        <button type="button" class="fld-manual-toggle" id="sManualToggle" data-en="Can't find their city? Enter manually ▾" data-zh="找不到城市？手动填写 ▾">Can't find their city? Enter manually ▾</button>
         <div class="fld-manual" id="sManualWrap" hidden>
           <div class="fld"><label for="sTz" data-en="Their timezone (optional)" data-zh="对方时区（可不填）">Their timezone (optional)</label>
             <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
@@ -320,12 +322,30 @@
     </div>
   </section>
 
-  <!-- ===== sixteen-type quick quiz (V21 Phase 4) ===== -->
+  <!-- ===== sixteen-type quick quiz (V21 Phase 4, expanded) ===== -->
   <section class="sec" id="personaSec" aria-label="Sixteen-type personality quiz">
     <div class="sec-label"><span class="zh" data-en="SIXTEEN TYPES · QUICK QUIZ" data-zh="十六型人格速测">SIXTEEN TYPES · QUICK QUIZ</span></div>
     <div class="panel">
       <div id="personaWrap"></div>
-      <p class="form-note" data-en="An original 24-question quiz in the public four-axis tradition. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only." data-zh="按公开的四轴传统自编的 24 题速测，与 Myers-Briggs Type Indicator®（Myers & Briggs 基金会商标）及 16personalities 无任何关联。结果只保存在本机。仅供娱乐。">An original 24-question quiz in the public four-axis tradition. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only.</p>
+      <p class="form-note" data-en="An original 32-question quiz in the public four-axis tradition, with playful compatibility notes. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only." data-zh="按公开的四轴传统自编的 32 题速测，附带娱乐性的合拍/易摩擦提示。与 Myers-Briggs Type Indicator®（Myers & Briggs 基金会商标）及 16personalities 无任何关联。结果只保存在本机。仅供娱乐。">An original 32-question quiz in the public four-axis tradition, with playful compatibility notes. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only.</p>
+    </div>
+  </section>
+
+  <!-- ===== logic quiz (IQ-style, entertainment only) ===== -->
+  <section class="sec" id="logicSec" aria-label="Logic puzzle quiz">
+    <div class="sec-label"><span class="zh" data-en="LOGIC & PATTERNS · QUICK QUIZ" data-zh="逻辑速测">LOGIC & PATTERNS · QUICK QUIZ</span></div>
+    <div class="panel">
+      <div id="logicWrap"></div>
+      <p class="form-note" data-en="An original 16-question puzzle set (sequences, analogies, odd-one-out, short logic). A fun brain-teaser, not a clinically validated or norm-referenced IQ test — no such claim is made here. Result stays on this device. Entertainment only." data-zh="原创 16 题趣味谜题（数列、类比、找不同、简单逻辑）。是好玩的脑力小测，不是经过临床验证或常模校准的智商测试，本页也不作此宣称。结果只保存在本机。仅供娱乐。">An original 16-question puzzle set (sequences, analogies, odd-one-out, short logic). A fun brain-teaser, not a clinically validated or norm-referenced IQ test — no such claim is made here. Result stays on this device. Entertainment only.</p>
+    </div>
+  </section>
+
+  <!-- ===== EQ scenario quiz (entertainment only) ===== -->
+  <section class="sec" id="eqSec" aria-label="Emotional intelligence scenario quiz">
+    <div class="sec-label"><span class="zh" data-en="EQ · SCENARIO QUIZ" data-zh="情商速测">EQ · SCENARIO QUIZ</span></div>
+    <div class="panel">
+      <div id="eqWrap"></div>
+      <p class="form-note" data-en="15 original everyday scenarios across five widely-discussed EQ dimensions (self-awareness, self-regulation, motivation, empathy, social skills). A reflective, entertainment-only quiz — not a validated psychometric instrument. Result stays on this device." data-zh="15 道原创生活情境题，覆盖五个常被讨论的情商维度（自我觉察、自我调节、内驱力、共情力、社交技巧）。是一次自我反思的娱乐小测，不是经过验证的心理测评工具。结果只保存在本机。">15 original everyday scenarios across five widely-discussed EQ dimensions (self-awareness, self-regulation, motivation, empathy, social skills). A reflective, entertainment-only quiz — not a validated psychometric instrument. Result stays on this device.</p>
     </div>
   </section>
 

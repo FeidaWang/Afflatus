@@ -17,7 +17,9 @@ import { SHENSHA_RARITY } from '../lib/shenshaRarity.js';
 import { computeDayun, liunianPillar, taisuiRelation, pairRelations, TAISUI_ZH, TAISUI_EN } from '../lib/dayun.js';
 import { solarToLunar } from '../lib/lunar.js';
 import { dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL } from '../lib/xiu.js';
-import { PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, AXIS_LETTERS } from '../lib/persona.js';
+import { PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, AXIS_LETTERS } from '../lib/persona.js';
+import { LOGIC_QUESTIONS, scoreLogic } from '../lib/logicQuiz.js';
+import { EQ_QUESTIONS, scoreEQ } from '../lib/eqQuiz.js';
 import { cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T } from '../lib/astro.js';
 import { personalityTags, dimensionScores } from '../lib/astroReadings.js';
 import { renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH } from '../lib/astroChart.js';
@@ -176,14 +178,13 @@ import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
   }
   wireCityInput('bCityInput', 'bTz', 'bLat', 'bLon');
   wireCityInput('sCityInput', 'sTz', null, null);
-
-  // "Can't find your city? Enter manually" — reveals the original
-  // tz-select(+lat/lon) fields the city picker replaced as the default UI.
-  for (const [toggleId, wrapId] of [['bManualToggle', 'bManualWrap'], ['sManualToggle', 'sManualWrap']]) {
-    const toggle = $(toggleId), wrap = $(wrapId);
-    if (!toggle || !wrap) continue;
-    toggle.addEventListener('click', () => { wrap.hidden = !wrap.hidden; });
-  }
+  // The underlying tz-select/lat/lon fields (#bManualWrap/#sManualWrap) stay
+  // in the DOM — permanently hidden, no UI to reveal them — purely so the
+  // city picker above still has somewhere to write its result into without
+  // touching parseBirth()/normalizeBirthToCST(). Removed per an explicit
+  // follow-up request to keep the input page as compact as possible; the
+  // fields themselves were never load-bearing for anything a user typed
+  // directly (only for what the city picker fills in).
 
   // ---- persistence ---------------------------------------------------------
   const loadProfile = () => { try { return JSON.parse(localStorage.getItem(PROFILE_KEY)); } catch { return null; } };
@@ -893,6 +894,7 @@ import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
     if (!wrap) return;
     if (quiz.idx === -1) { // start screen (+ previous result, if any)
       const prev = loadPersona();
+      const match = prev && PERSONA_MATCH[prev.type];
       const prevHTML = prev && PERSONA_TYPES[prev.type] ? `
         <div class="pq-result">
           <div class="pq-type">${prev.type}</div>
@@ -900,13 +902,29 @@ import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
           <p class="pq-desc">${T(PERSONA_TYPES[prev.type].dEn, PERSONA_TYPES[prev.type].dZh)}</p>
           ${prev.axes ? `<div class="pq-axes">${prev.axes.map((ax, k) => `
             <div class="pq-ax"><span>${AXIS_LETTERS[k][0]}</span><span class="pq-ax-bar"><i style="width:${Math.round(ax.a / (ax.a + ax.b) * 100)}%"></i></span><span>${AXIS_LETTERS[k][1]}</span></div>`).join('')}</div>` : ''}
+          ${match ? `<div class="pq-compat">
+            <span class="pq-compat-good">${T('Vibes well with', '合得来')} <b>${match.match.join(' · ')}</b></span>
+            <span class="pq-compat-friction">${T('Tends to friction with', '容易碰摩擦')} <b>${match.friction}</b></span>
+          </div>` : ''}
         </div>` : '';
       wrap.innerHTML = `${prevHTML}
         <div class="share-row">
-          <button class="btn" type="button" id="pqStart">${prev ? T('Retake the quiz', '重新测一次') : T('Start · 24 questions ≈ 3 min', '开始 · 24 题约 3 分钟')}</button>
+          <button class="btn" type="button" id="pqStart">${prev ? T('Retake the quiz', '重新测一次') : T(`Start · ${PERSONA_QUESTIONS.length} questions ≈ 4 min`, `开始 · ${PERSONA_QUESTIONS.length} 题约 4 分钟`)}</button>
+          ${prev ? `<button class="btn btn--seal" type="button" id="cardBtnPersona">${T('Save result card ⤓', '保存结果卡 ⤓')}</button>` : ''}
           ${prev ? `<span class="share-tip">${T('Your previous result is above — retaking replaces it.', '上方是你上次的结果——重测会覆盖。')}</span>` : ''}
         </div>`;
       $('pqStart').addEventListener('click', () => { quiz.idx = 0; quiz.answers = []; renderPersona(); });
+      const cardBtn = $('cardBtnPersona');
+      if (cardBtn) cardBtn.addEventListener('click', () => {
+        track('share_card_generated', { type: 'persona' });
+        downloadShareCard('persona', {
+          lang: state.lang,
+          type: prev.type,
+          name: T(PERSONA_TYPES[prev.type].en, PERSONA_TYPES[prev.type].zh),
+          axes: prev.axes,
+          axisLetters: AXIS_LETTERS,
+        }, 'afflatus-persona-card.png');
+      });
       return;
     }
     if (quiz.idx >= PERSONA_QUESTIONS.length) { // finished → score, persist, show
@@ -935,6 +953,76 @@ import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
     if (back) back.addEventListener('click', () => { quiz.idx--; renderPersona(); });
   }
   renderPersona();
+
+  // ---- logic & EQ quizzes (V23 MBTI-expansion follow-up) --------------------
+  // Same in-page, result-only-persists shape as the MBTI quiz above, but both
+  // questions offer index-based options rather than persona's fixed a/b, so
+  // they share one small generic runner instead of duplicating the state
+  // machine twice more.
+  function makeIndexQuiz({ wrapId, storageKey, questions, score, startLabel, renderResult }) {
+    const st = { idx: -1, answers: [] };
+    const load = () => { try { return JSON.parse(localStorage.getItem(storageKey)); } catch { return null; } };
+    function render() {
+      const wrap = $(wrapId);
+      if (!wrap) return;
+      if (st.idx === -1) {
+        const prev = load();
+        wrap.innerHTML = `${prev ? renderResult(prev) : ''}
+          <div class="share-row">
+            <button class="btn" type="button" id="${wrapId}Start">${prev ? T('Retake the quiz', '重新测一次') : startLabel()}</button>
+            ${prev ? `<span class="share-tip">${T('Your previous result is above — retaking replaces it.', '上方是你上次的结果——重测会覆盖。')}</span>` : ''}
+          </div>`;
+        $(`${wrapId}Start`).addEventListener('click', () => { st.idx = 0; st.answers = []; render(); });
+        return;
+      }
+      if (st.idx >= questions.length) {
+        const r = score(st.answers);
+        if (r) { try { localStorage.setItem(storageKey, JSON.stringify(r)); } catch {} }
+        st.idx = -1;
+        render();
+        return;
+      }
+      const q = questions[st.idx];
+      wrap.innerHTML = `
+        <div class="pq-progress"><i style="width:${Math.round(st.idx / questions.length * 100)}%"></i></div>
+        <div class="pq-count">${st.idx + 1} / ${questions.length}</div>
+        <div class="pq-q">${T(q.q[0], q.q[1])}</div>
+        <div class="pq-opts">${q.opts.map((o, i) => `<button class="pq-opt" type="button" data-v="${i}">${T(o[0], o[1])}</button>`).join('')}</div>
+        <div class="share-row">${st.idx > 0 ? `<button class="btn" type="button" id="${wrapId}Back">${T('← Back', '← 上一题')}</button>` : ''}</div>`;
+      wrap.querySelectorAll('.pq-opt').forEach((btn) => btn.addEventListener('click', () => {
+        st.answers[st.idx] = Number(btn.dataset.v);
+        st.idx++;
+        render();
+      }));
+      const back = $(`${wrapId}Back`);
+      if (back) back.addEventListener('click', () => { st.idx--; render(); });
+    }
+    render();
+    return render;
+  }
+
+  const renderLogicQuiz = makeIndexQuiz({
+    wrapId: 'logicWrap', storageKey: 'afflatus-horo:logic', questions: LOGIC_QUESTIONS, score: scoreLogic,
+    startLabel: () => T(`Start · ${LOGIC_QUESTIONS.length} questions ≈ 5 min`, `开始 · ${LOGIC_QUESTIONS.length} 题约 5 分钟`),
+    renderResult: (r) => `
+      <div class="pq-result">
+        <div class="pq-type">${r.correct}/${r.total}</div>
+        <div class="pq-name">${T(r.band.en, r.band.zh)}</div>
+        <p class="pq-desc">${T(r.band.dEn, r.band.dZh)}</p>
+        <p class="pq-desc">${T(`For-fun score: ${r.funScore} — a playful number, not a real IQ score.`, `娱乐分数：${r.funScore}——纯属好玩，不是真实智商分数。`)}</p>
+      </div>`,
+  });
+
+  const renderEqQuiz = makeIndexQuiz({
+    wrapId: 'eqWrap', storageKey: 'afflatus-horo:eq', questions: EQ_QUESTIONS, score: scoreEQ,
+    startLabel: () => T(`Start · ${EQ_QUESTIONS.length} questions ≈ 5 min`, `开始 · ${EQ_QUESTIONS.length} 题约 5 分钟`),
+    renderResult: (r) => `
+      <div class="pq-result">
+        <div class="pq-type">${r.overall}</div>
+        <div class="pq-name">${T('Overall EQ-style score', '综合情商风格分')}</div>
+        <div class="l2-radar">${renderRadar(r.dims.map((d) => ({ key: d.key, label: T(d.en, d.zh), value: d.value })))}</div>
+      </div>`,
+  });
 
   // ---- share cards (V21 Phase 0: PNG download in the healing palette) --------
   const cardPillars = (chart, labels) =>
@@ -1032,6 +1120,21 @@ import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
     } finally { l3Loading = false; }
   });
 
+  // ---- privacy: one-click clear (covers both "me"/"them" charts + all
+  // quiz results — everything this page ever writes to localStorage uses
+  // the 'afflatus-horo:' prefix, so wiping by prefix stays correct
+  // automatically as new quiz keys are added, no per-key list to maintain).
+  const clearBtn = $('clearDataBtn');
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    const ok = window.confirm(T(
+      'Clear everything this page has saved on your device (chart, streak, quiz results, saved contacts)? This cannot be undone.',
+      '清空本页在本机保存的全部数据（命盘、连续签到、测试结果、关系册）？此操作无法撤销。'
+    ));
+    if (!ok) return;
+    try { Object.keys(localStorage).filter((k) => k.startsWith('afflatus-horo:')).forEach((k) => localStorage.removeItem(k)); } catch {}
+    location.href = location.pathname; // full reload, also drops any ?p= shared-link query
+  });
+
   // ---- forms -------------------------------------------------------------------
   $('birthForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1083,6 +1186,6 @@ import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
 
   window.addEventListener('afflatus-lang', (e) => {
     state.lang = e.detail === 'zh' ? 'zh' : 'en';
-    renderMine(); renderSyn(); renderPersona(); renderBook();
+    renderMine(); renderSyn(); renderPersona(); renderBook(); renderLogicQuiz(); renderEqQuiz();
   });
 })();
