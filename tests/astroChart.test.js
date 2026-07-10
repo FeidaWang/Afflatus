@@ -12,7 +12,7 @@ describe('renderWheel — house-cusp geometry', () => {
   it('draws exactly 12 cusp spokes and 12 sign glyphs', () => {
     const svg = renderWheel({ ascDeg: 15, planets: [] });
     expect(count(svg, /class="aw-cusp( aw-asc)?"/g)).toBe(12);
-    expect(count(svg, /class="aw-sign"/g)).toBe(12);
+    expect(count(svg, /class="aw-sign aw-el-\d"/g)).toBe(12);
   });
   it('the ascendant cusp (index 0) sits at the 9-o\'clock screen position (left of center, same y as center)', () => {
     // ascDeg=15 (mid-Aries): cusp 0 is the ascendant's own sign boundary,
@@ -29,7 +29,7 @@ describe('renderWheel — house-cusp geometry', () => {
   it('sign glyph order starts from the ascendant\'s own sign and proceeds through all 12', () => {
     const ascDeg = 40; // Taurus (sign index 1)
     const svg = renderWheel({ ascDeg, planets: [] });
-    const glyphs = [...svg.matchAll(/class="aw-sign"[^>]*>([^<]+)</g)].map((m) => m[1]);
+    const glyphs = [...svg.matchAll(/class="aw-sign aw-el-\d"[^>]*>([^<]+)</g)].map((m) => m[1]);
     expect(glyphs.length).toBe(12);
     expect(glyphs[0]).toBe(ZODIAC_GLYPH[1]); // Taurus first
     expect(new Set(glyphs).size).toBe(12); // all 12 signs present, no repeats
@@ -71,6 +71,45 @@ describe('renderAspectGrid — NxN symmetry', () => {
     const planets = bodies.map((body, i) => ({ body, lonDeg: i * 37 }));
     const svg = renderAspectGrid(planets);
     expect(count(svg, /class="ag-diag"/g)).toBe(10);
+  });
+});
+
+describe('glyph text-presentation (U+FE0E) — the anti-emoji fix', () => {
+  it('every zodiac and planet glyph carries the FE0E variation selector', () => {
+    for (const g of ZODIAC_GLYPH) expect(g.endsWith('︎')).toBe(true);
+    for (const g of Object.values(PLANET_GLYPH)) expect(g.endsWith('︎')).toBe(true);
+  });
+});
+
+describe('renderWheel — density layers (U1 redesign)', () => {
+  it('draws 12 element-tinted sign-band sectors + degree ticks + per-planet pointers/degree labels', () => {
+    const svg = renderWheel({ ascDeg: 0, planets: [{ body: 'Sun', lonDeg: 100 }] });
+    expect(count(svg, /class="aw-band"/g)).toBe(12);
+    // 360/5 = 72 tick slots minus 12 on 30° boundaries (cusp spokes) = 60
+    expect(count(svg, /class="aw-tick( aw-tick10)?"/g)).toBe(60);
+    expect(count(svg, /class="aw-pointer"/g)).toBe(1);
+    expect(svg).toContain('class="aw-deg"');
+    expect(svg).toContain('>10°<'); // 100° = 10° into Cancer
+  });
+  it('de-collides a 3-planet stellium onto distinct radii while keeping true longitudes in data-lon', () => {
+    const planets = [{ body: 'Mars', lonDeg: 100 }, { body: 'Saturn', lonDeg: 103 }, { body: 'Neptune', lonDeg: 106 }];
+    const svg = renderWheel({ ascDeg: 0, planets });
+    const cys = [...svg.matchAll(/class="aw-planet-bg"[^>]*/g)];
+    const circles = [...svg.matchAll(/<circle cx="([\d.]+)" cy="([\d.]+)" r="11" class="aw-planet-bg"\/>/g)]
+      .map((m) => Math.hypot(+m[1] - 200, +m[2] - 200));
+    expect(circles.length).toBe(3);
+    // all three distances from center differ (fanned inward), none identical
+    expect(new Set(circles.map((r) => Math.round(r))).size).toBe(3);
+    expect(svg).toContain('data-lon="103.00"'); // true longitude untouched
+  });
+});
+
+describe('renderAspectGrid — full lattice (U1 redesign)', () => {
+  it('draws a bordered cell for every off-diagonal pair, aspect or not', () => {
+    const planets = [{ body: 'Sun', lonDeg: 10 }, { body: 'Moon', lonDeg: 12 }, { body: 'Mars', lonDeg: 100 }];
+    const svg = renderAspectGrid(planets);
+    expect(count(svg, /class="ag-cell"/g)).toBe(6); // 3x3 minus 3 diagonal
+    expect(count(svg, /class="ag-glyph"/g)).toBe(6); // header row (3) + header column (3)
   });
 });
 

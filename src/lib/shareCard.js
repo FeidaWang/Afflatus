@@ -161,10 +161,47 @@ export function renderShareCard(canvas, type, payload) {
       ctx.fillStyle = C.sage;
       roundRect(ctx, barX, y, Math.max(16, barW * pct), 16, 8); ctx.fill();
     });
+    // U3: population-share line ("~2.1% of people"), pre-resolved string
+    if (payload.freqLine) {
+      ctx.fillStyle = C.terraDeep;
+      ctx.font = '700 32px "Noto Serif SC",serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(payload.freqLine, W / 2, 405);
+    }
     ctx.fillStyle = C.text;
     ctx.font = '400 28px "Noto Serif SC",serif';
     ctx.textAlign = 'center';
     ctx.fillText(lang === 'zh' ? '原创速测 · 与官方 MBTI 无关联' : 'Original quiz · not affiliated with MBTI®', W / 2, barTop + 4 * gap + 20);
+  } else if (type === 'quiz') {
+    // U3: logic/EQ quiz result card — big score ring + percentile + band
+    // name + a pre-resolved caveat line. payload: { lang, headZh, headEn,
+    // score, scoreLabel, band, pctLine, caveat }
+    frame(ctx, payload.headZh, payload.headEn, lang);
+    const cy = 560, r = 150;
+    ctx.beginPath(); ctx.arc(W / 2, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(74,69,61,.12)'; ctx.lineWidth = 20; ctx.stroke();
+    ctx.beginPath(); ctx.arc(W / 2, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.max(0.02, Math.min(1, payload.ringFrac ?? 0.5)));
+    ctx.strokeStyle = C.terra; ctx.lineCap = 'round'; ctx.stroke();
+    ctx.fillStyle = C.text;
+    ctx.font = '900 110px "IBM Plex Mono",monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(payload.score), W / 2, cy + 36);
+    ctx.fillStyle = C.dim;
+    ctx.font = '600 26px "Spectral","Noto Serif SC",serif';
+    ctx.fillText(payload.scoreLabel, W / 2, cy + 78);
+    ctx.fillStyle = C.sageDeep;
+    ctx.font = '700 46px "Noto Serif SC",serif';
+    ctx.fillText(payload.band, W / 2, 830);
+    if (payload.pctLine) {
+      ctx.fillStyle = C.terraDeep;
+      ctx.font = '700 36px "Noto Serif SC",serif';
+      ctx.fillText(payload.pctLine, W / 2, 910);
+    }
+    if (payload.caveat) {
+      ctx.fillStyle = C.text;
+      ctx.font = '400 26px "Noto Serif SC",serif';
+      wrapCentered(ctx, payload.caveat, W / 2, 1000, W - 260, 36, 2);
+    }
   } else if (type === 'mine') {
     frame(ctx, '我的四柱命盘', 'MY FOUR PILLARS', lang);
     drawPillarTiles(ctx, payload.pillars, W / 2, 330, 190, 420, 24);
@@ -178,9 +215,15 @@ export function renderShareCard(canvas, type, payload) {
       ctx.font = '500 30px "IBM Plex Mono",monospace';
       ctx.fillText(payload.dateStr, W / 2, 910);
     }
+    // U5: chart-rank line (命造总分 + 样本百分位), pre-resolved string
+    if (payload.rankLine) {
+      ctx.fillStyle = C.terraDeep;
+      ctx.font = '700 34px "Noto Serif SC",serif';
+      ctx.fillText(payload.rankLine, W / 2, 970);
+    }
     ctx.fillStyle = C.text;
     ctx.font = '400 30px "Noto Serif SC",serif';
-    ctx.fillText(lang === 'zh' ? '扫历法而出，非随机数。' : 'Cast from the real sexagenary calendar.', W / 2, 990);
+    ctx.fillText(lang === 'zh' ? '扫历法而出，非随机数。' : 'Cast from the real sexagenary calendar.', W / 2, payload.rankLine ? 1040 : 990);
   } else {
     // payload.title (V23 Phase 2): plain, already-language-resolved string —
     // the generated relationship title, e.g. "月亮贴贴型灵魂搭子". Falls
