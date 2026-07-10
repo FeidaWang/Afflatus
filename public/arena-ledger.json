@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-09",
+  "updated": "2026-07-10",
   "version": 1,
-  "day": 4,
+  "day": 5,
   "season": 1,
-  "lastRunDate": "2026-07-09",
+  "lastRunDate": "2026-07-10",
   "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
   "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
   "bench": {
@@ -14,9 +14,9 @@
     "A": {
       "promptVersion": "A-v1",
       "startEquity": 10000,
-      "cash": 5971.7958,
-      "equity": 9986.3258,
-      "dayStartEquity": 9986.8837,
+      "cash": 6444.0921,
+      "equity": 9894.0621,
+      "dayStartEquity": 9895.2358,
       "equityHistory": [
         {
           "day": 0,
@@ -37,6 +37,10 @@
         {
           "day": 4,
           "equity": 9986.3258
+        },
+        {
+          "day": 5,
+          "equity": 9894.0621
         }
       ],
       "positions": [
@@ -44,19 +48,19 @@
           "sym": "AMD",
           "qty": 3,
           "avgPx": 552.326,
-          "mkPx": 557.93
-        },
-        {
-          "sym": "TSM",
-          "qty": 3,
-          "avgPx": 452.0159,
-          "mkPx": 442.09
+          "mkPx": 548.07
         },
         {
           "sym": "MU",
           "qty": 1,
           "avgPx": 1014.9772,
-          "mkPx": 1014.47
+          "mkPx": 975.64
+        },
+        {
+          "sym": "NVDA",
+          "qty": 4,
+          "avgPx": 207.6338,
+          "mkPx": 207.53
         }
       ],
       "trades": [
@@ -89,18 +93,38 @@
           "fee": 0.0507,
           "slipBps": 5,
           "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-10T14:38:03.704Z",
+          "sym": "TSM",
+          "side": "sell",
+          "qty": 3,
+          "px": 434.3127,
+          "fee": 0.0651,
+          "slipBps": 5,
+          "realizedPnl": -53.1747
+        },
+        {
+          "ts": "2026-07-10T14:38:03.704Z",
+          "sym": "NVDA",
+          "side": "buy",
+          "qty": 4,
+          "px": 207.6338,
+          "fee": 0.0415,
+          "slipBps": 5,
+          "realizedPnl": null
         }
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -0.137,
+        "cumPct": -1.059,
         "maxDD": -1.896,
-        "hitRate": null,
-        "exposure": 40.2
+        "hitRate": 0,
+        "exposure": 34.9
       },
       "review": {
-        "zh": "昨日判断反弹属headline驱动、按兵不动；今日基本面催化落地：UBS上调DRAM合约价预期（Q3环比+32%）、美银重申MU买入（目标$1550）、SK海力士美股IPO超额认购，存储板块全线大涨（MU/SNDK/WDC约+7%，LITE+10.8%）。确认后小仓介入：买1股MU（约10%仓位），不顶格追高。AMD重回成本上方、TSM企稳，均持有。软件/平台系（PLTR、CRM、GOOGL）走弱，暂不碰。",
-        "en": "Yesterday I held off on an unconfirmed headline bounce; today the memory re-rating confirmed with hard catalysts: UBS raised Q3 DRAM contract-price forecasts (+32% QoQ), BofA reiterated MU Buy ($1,550 target), SK Hynix US IPO oversubscribed. Storage complex up 7-11%. Adjustment: act on confirmation but size small — 1 MU share (~10% of equity), not a max position. Holding AMD (back above cost) and TSM. Avoiding weak software names (PLTR, CRM, GOOGL)."
+        "zh": "SK海力士今日纳斯达克上市，存储板块获利回吐（MU-1.6%、MRVL-3.3%、RMBS-3.8%），属sell-the-news而非基本面转坏，昨日小仓买入的MU继续持有。调整：不再让弱势仓位漂移——TSM入场三日无催化、跌近4%，短swing账本应止损换强，卖出换入今日唯一逆势走强的硬件龙头NVDA（+2.3%，数据中心营收+92%），小仓4股不顶格。AMD守住成本线，持有。PSTG报价时间戳陈旧，本轮不可交易。",
+        "en": "SK Hynix's Nasdaq debut triggered profit-taking across memory (MU -1.6%, MRVL -3.3%) - sell-the-news, not thesis failure, so holding yesterday's small MU entry. Concrete adjustment: stop letting laggards drift - TSM sat -4% for three days with no catalyst, so I cut it and rotated into NVDA (+2.3%, the only strong hardware name today, DC revenue +92%), sized small at 4 shares. Holding AMD. PSTG quote stale, untradeable this run."
       }
     },
     "B": {
