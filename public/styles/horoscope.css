@@ -140,11 +140,15 @@ a{color:inherit;text-decoration:none}
 .bz-table td small{display:block;color:var(--dim);font:400 9.5px/1 var(--en);margin-top:2px}
 .bz-table .dm{color:var(--terra-deep)}
 /* shensha rarity badges (V21 Phase 1) */
-.rar{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font:600 9px/1.5 var(--en);letter-spacing:.08em;vertical-align:1px}
-.rar-0{background:rgba(107,99,84,.10);color:var(--dim)}
-.rar-1{background:rgba(156,175,136,.18);color:var(--sage-deep)}
-.rar-2{background:rgba(217,184,124,.22);color:var(--gold-deep)}
-.rar-3{background:rgba(201,111,74,.16);color:var(--terra-deep)}
+/* Shensha rarity badges — tier palette is an homage to Diablo II item
+   rarity: 0 common=normal white, 1 frequent=magic blue, 2 uncommon=rare
+   yellow, 3 rare=unique gold. Dark chip base so the D2 hues read like item
+   text on an inventory background, at AA-viable contrast. */
+.rar{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:4px;font:600 9px/1.6 var(--en);letter-spacing:.08em;vertical-align:1px;background:#2b2620}
+.rar-0{color:#e8e6e1}
+.rar-1{color:#8a8aff}
+.rar-2{color:#ffff64}
+.rar-3{color:#c7a256}
 /* ten-god distribution bars (V21 Phase 1) */
 .bz-gods-h{margin-top:14px;color:var(--dim);font:700 10.5px/1 var(--en);letter-spacing:.22em;text-transform:uppercase}
 .bz-gods{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 22px;margin-top:8px}
@@ -152,6 +156,20 @@ a{color:inherit;text-decoration:none}
 .bzg-n{flex:none;width:56px;font:600 12.5px/1 var(--serif);color:var(--text)}
 .bzg-bar{flex:1;height:8px;background:rgba(74,69,61,.10);border-radius:4px;overflow:hidden}
 .bzg-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sage),var(--gold-soft));border-radius:4px}
+/* U5: 命造评级 four-axis rank card */
+.mz-card{border:1px solid var(--line);background:var(--card2);border-radius:14px;padding:14px 16px}
+.mz-head{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.mz-score{display:flex;flex-direction:column;align-items:center}
+.mz-score b{font:800 34px/1 var(--mono);color:var(--terra-deep)}
+.mz-score span{font:600 9.5px/1.6 var(--en);letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.mz-pct{flex:1;min-width:180px;font:700 13.5px/1.5 var(--serif);color:var(--sage-deep)}
+.mz-axes{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.mz-ax{display:flex;align-items:center;gap:10px}
+.mz-ax-n{flex:0 0 92px;font:600 10.5px/1.3 var(--en);letter-spacing:.04em;color:var(--dim);text-transform:uppercase}
+.mz-ax-bar{flex:1;height:8px;background:rgba(74,69,61,.10);border-radius:4px;overflow:hidden}
+.mz-ax-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sage),var(--terra));border-radius:4px}
+.mz-ax-v{font:700 13px/1 var(--mono);color:var(--text);min-width:26px;text-align:right}
+.mz-ax-na{font:400 11px/1.4 var(--serif);color:var(--dim);font-style:italic}
 .bzg-v{flex:none;min-width:46px;text-align:right;font:600 11.5px/1 var(--mono);color:var(--dim)}
 .bz-rel{margin-top:10px;font:400 13px/1.7 var(--serif);color:var(--text)}
 .bz-rel-t{display:inline-block;min-width:64px;color:var(--dim);font:600 10.5px/1 var(--en);letter-spacing:.14em;text-transform:uppercase;margin-right:8px}
@@ -245,6 +263,15 @@ a{color:inherit;text-decoration:none}
 .sring b{position:absolute;inset:0;display:grid;place-items:center;font:900 34px/1 var(--mono);color:var(--text)}
 .sring em{position:absolute;left:0;right:0;bottom:16px;text-align:center;font:600 9px/1 var(--en);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-style:normal}
 .syn-parts{flex:1;min-width:250px;display:flex;flex-direction:column;gap:6px}
+/* U2: five relationship-lens scores (朋友/同事/暧昧/情侣/夫妻) */
+.syn-mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:8px}
+.syn-mode{border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:10px 12px}
+.syn-mode .sm-h{display:flex;justify-content:space-between;align-items:baseline}
+.syn-mode .sm-n{font:700 12.5px/1.2 var(--serif);color:var(--text)}
+.syn-mode .sm-v{font:800 18px/1 var(--mono);color:var(--terra-deep)}
+.syn-mode .sm-bar{margin-top:6px;height:7px;background:rgba(74,69,61,.10);border-radius:4px;overflow:hidden}
+.syn-mode .sm-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sage),var(--terra));border-radius:4px}
+.syn-mode .sm-line{margin:7px 0 0;font:400 11.5px/1.5 var(--serif);color:var(--dim)}
 .sp{display:flex;justify-content:space-between;gap:10px;font:400 13px/1.5 var(--serif);border-left:3px solid var(--line);padding:3px 0 3px 10px;color:var(--text)}
 .sp b{font:700 12.5px var(--mono);flex:none}
 .sp.pos{border-left-color:var(--sage)} .sp.pos b{color:var(--sage-deep)}
@@ -348,21 +375,33 @@ a{color:inherit;text-decoration:none}
 .l3-wheel-card{border-radius:16px;background:radial-gradient(120% 90% at 20% 0%,rgba(224,193,90,.12),transparent 60%),var(--ink-blue);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .l3-wheel-card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
   background-image:radial-gradient(1px 1px at 12% 22%,var(--star-gold) 0,transparent 60%),radial-gradient(1px 1px at 68% 12%,var(--star-gold) 0,transparent 60%),radial-gradient(1px 1px at 40% 78%,var(--star-gold) 0,transparent 60%),radial-gradient(1px 1px at 84% 64%,var(--star-gold) 0,transparent 60%),radial-gradient(1px 1px at 25% 55%,var(--star-gold) 0,transparent 60%),radial-gradient(1px 1px at 92% 30%,var(--star-gold) 0,transparent 60%)}
-.astro-wheel{position:relative;z-index:1;width:min(340px,100%);display:block;margin:0 auto}
-.aw-bg{fill:transparent}
-.aw-ring{fill:none;stroke:rgba(224,193,90,.35);stroke-width:1}
-.aw-inner{fill:none;stroke:rgba(224,193,90,.2);stroke-width:1}
-.aw-cusp{stroke:rgba(224,193,90,.4);stroke-width:1}
+.astro-wheel{position:relative;z-index:1;width:min(380px,100%);display:block;margin:0 auto;
+  /* explicit non-emoji symbol font stack: together with the U+FE0E text-
+     presentation selectors baked into the glyph strings (astroChart.js),
+     this kills the purple emoji squares iOS substitutes for ♈–♓/♀/♂ */
+  font-family:"Noto Sans Symbols","Segoe UI Symbol","Apple Symbols","DejaVu Sans",serif}
+.aw-bg{fill:rgba(10,16,38,.35);stroke:rgba(224,193,90,.5);stroke-width:1.4}
+.aw-band{stroke:none}
+.aw-ring{fill:none;stroke:rgba(224,193,90,.45);stroke-width:1}
+.aw-inner{fill:none;stroke:rgba(224,193,90,.22);stroke-width:1}
+.aw-tick{stroke:rgba(255,246,234,.28);stroke-width:.7}
+.aw-tick10{stroke:rgba(255,246,234,.45);stroke-width:1}
+.aw-cusp{stroke:rgba(224,193,90,.22);stroke-width:.8}
 .aw-cusp.aw-asc{stroke:var(--star-gold);stroke-width:2}
-.aw-sign{fill:var(--star-gold);font-size:15px}
-.aw-planet-bg{fill:var(--ink-blue);stroke:var(--star-gold);stroke-width:1}
-.aw-planet-glyph{fill:#FFF6EA;font-size:12px}
+.aw-sign{font-size:16px}
+.aw-el-0{fill:#e8927a}.aw-el-1{fill:#e6c87a}.aw-el-2{fill:#b3d9b3}.aw-el-3{fill:#93bede}
+.aw-pointer{stroke:rgba(255,246,234,.3);stroke-width:.7}
+.aw-planet-bg{fill:#131b3d;stroke:var(--star-gold);stroke-width:1.1}
+.aw-planet-glyph{fill:#FFF6EA;font-size:13px}
+.aw-deg{fill:rgba(255,246,234,.6);font-size:8.5px}
 .l3-legend{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px;justify-content:center;position:relative;z-index:1}
 .l3-legend span{color:#cdd6ef;font:400 10.5px/1 var(--en);letter-spacing:.04em}
 .l3-grid-wrap{margin-top:16px;text-align:center}
-.astro-aspect-grid{width:min(320px,100%);display:block;margin:10px auto 0}
-.ag-diag{fill:rgba(255,255,255,.06)}
+.astro-aspect-grid{width:min(360px,100%);display:block;margin:10px auto 0;font-family:"Noto Sans Symbols","Segoe UI Symbol","Apple Symbols","DejaVu Sans",serif}
+.ag-diag{fill:rgba(224,193,90,.16)}
+.ag-cell{stroke:rgba(255,246,234,.14);stroke-width:.6}
 .ag-glyph{fill:var(--star-gold);font-size:13px}
+.ag-asp{fill:#0d1330;font-size:11px}
 .l3-terms{margin-top:14px;display:flex;flex-direction:column;gap:6px}
 .l3-term{border:1px solid var(--line);background:var(--card2);border-radius:10px;padding:8px 12px;font:400 12.5px/1.6 var(--serif);color:var(--text)}
 .l3-term b{color:var(--terra-deep)}
@@ -389,6 +428,12 @@ a{color:inherit;text-decoration:none}
 .pq-progress{height:6px;background:rgba(74,69,61,.10);border-radius:3px;overflow:hidden}
 .pq-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--sage),var(--gold-soft));border-radius:3px;transition:width .3s ease}
 .pq-count{margin-top:8px;font:600 11px/1 var(--mono);color:var(--dim)}
+/* U3: timed-quiz countdown */
+.pq-clock{margin-left:10px;font:700 12px/1 var(--mono);color:var(--gold-deep)}
+.pq-clock--low{color:var(--terra-deep)}
+.pq-timebar{margin-top:6px;height:4px;background:rgba(74,69,61,.10);border-radius:2px;overflow:hidden}
+.pq-timebar i{display:block;height:100%;background:var(--terra);border-radius:2px;transition:width .25s linear}
+.pq-freq{color:var(--terra-deep);font-weight:700}
 .pq-q{margin:14px 0 12px;font:700 clamp(17px,2.6vw,21px)/1.5 var(--serif);color:var(--text)}
 .pq-opts{display:flex;flex-direction:column;gap:10px;max-width:560px}
 .pq-opt{cursor:pointer;text-align:left;border:1px solid var(--line);background:var(--card2);color:var(--text);font:500 14.5px/1.6 var(--serif);padding:13px 16px;border-radius:12px}

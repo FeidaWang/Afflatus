@@ -99,6 +99,16 @@ export const PERSONA_TYPES = {
   ESFP: { zh: '氛围的点灯人', en: 'The Room Brightener', dZh: '你一进门，房间的亮度先升一档。快乐在你这里是即时的、大方的、会分享的。偶尔的安静也值得体验。', dEn: 'The room brightens a notch when you walk in. Joy, for you, is immediate, generous, shared. The occasional quiet is worth tasting too.' },
 };
 
+// Approximate share of each type in the general population (percent) —
+// the commonly cited US estimates published by the Myers-Briggs
+// Foundation's frequency tables (rounded). Used only for the playful
+// "rarity" line on the result card; the page labels them as estimates.
+export const PERSONA_FREQ = {
+  ISFJ: 13.8, ESFJ: 12.3, ISTJ: 11.6, ISFP: 8.8, ESTJ: 8.7, ESFP: 8.5,
+  ENFP: 8.1, ISTP: 5.4, INFP: 4.4, ESTP: 4.3, INTP: 3.3, ENTP: 3.2,
+  ENFJ: 2.5, INTJ: 2.1, ENTJ: 1.8, INFJ: 1.5,
+};
+
 // Pop-culture MBTI-compatibility folklore (not a validated instrument —
 // same entertainment-only posture as the rest of this quiz). match: two
 // types that tend to click; friction: the one that tends to spark.
