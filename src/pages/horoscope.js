@@ -26,6 +26,7 @@ import { dailyCoupleWeather } from '../lib/dailyTransits.js';
 import { dailyDraw } from '../lib/starDraw.js';
 import { computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH } from '../lib/ziwei.js';
 import { downloadShareCard } from '../lib/shareCard.js';
+import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
 
 (() => {
   'use strict';
@@ -133,6 +134,55 @@ import { downloadShareCard } from '../lib/shareCard.js';
       dstBox.disabled = !known;
       if (!known) dstBox.checked = false;
     });
+  }
+
+  // ---- birth-city picker (replaces manual timezone+lat/lon as the default
+  // path) ------------------------------------------------------------------
+  // Selecting a city fills the EXISTING hidden bTz/bLat/bLon (or sTz) form
+  // fields and dispatches a real 'change' event on the tz <select> so the
+  // dst-enable/disable listener above still runs — this file's parseBirth()
+  // and normalizeBirthToCST() (bazi.js) are completely unchanged, the
+  // picker is purely a friendlier way to fill the same fields.
+  //
+  // China cities deliberately do NOT set bTz to '8' — leaving it at ''
+  // ("unspecified · treat as China") keeps normalizeBirthToCST() on the
+  // path that auto-corrects China's own 1986-1991 DST window (see
+  // cities.js's header and bazi.js's CN_DST_WINDOWS); hand-setting
+  // {utcOffset:8, dst:false} would silently skip that correction for
+  // anyone born in it.
+  const cityOptions = allCityOptions();
+  const cityDatalist = $('cityOptions');
+  if (cityDatalist) {
+    const frag = document.createDocumentFragment();
+    cityOptions.forEach((c) => { const o = document.createElement('option'); o.value = c.label; frag.appendChild(o); });
+    cityDatalist.appendChild(frag);
+  }
+  function wireCityInput(inputId, tzSelId, latId, lonId) {
+    const input = $(inputId), tzSel = $(tzSelId);
+    if (!input || !tzSel) return;
+    const apply = () => {
+      const city = findCityByLabel(input.value, cityOptions);
+      if (!city) return; // free text that doesn't (yet) match a listed city — leave existing fields alone
+      if (latId && $(latId)) $(latId).value = String(city.lat);
+      if (lonId && $(lonId)) $(lonId).value = String(city.lon);
+      tzSel.value = city.isChina ? '' : String(city.utcOffset);
+      tzSel.dispatchEvent(new Event('change'));
+    };
+    // 'input' fires immediately when a datalist suggestion is picked (some
+    // browsers don't fire 'change' until blur); listening to both is cheap
+    // since apply() is a no-op unless the typed text is a full exact match.
+    input.addEventListener('input', apply);
+    input.addEventListener('change', apply);
+  }
+  wireCityInput('bCityInput', 'bTz', 'bLat', 'bLon');
+  wireCityInput('sCityInput', 'sTz', null, null);
+
+  // "Can't find your city? Enter manually" — reveals the original
+  // tz-select(+lat/lon) fields the city picker replaced as the default UI.
+  for (const [toggleId, wrapId] of [['bManualToggle', 'bManualWrap'], ['sManualToggle', 'sManualWrap']]) {
+    const toggle = $(toggleId), wrap = $(wrapId);
+    if (!toggle || !wrap) continue;
+    toggle.addEventListener('click', () => { wrap.hidden = !wrap.hidden; });
   }
 
   // ---- persistence ---------------------------------------------------------
