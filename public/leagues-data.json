@@ -1,7 +1,7 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
-  "updated": "2026-07-09",
-  "version": 9,
+  "updated": "2026-07-10",
+  "version": 10,
   "mode": "live",
   "teamLogos": {
     "BLG": "https://gol.gg/_img/teams_icon/Bilibili_Gaminglogo_profile.webp",
@@ -17,31 +17,13 @@
   "note_zh": "Fable 5 Max 对每场 MSI 2026 淘汰赛的个人研判——仅供娱乐，不构成博彩建议。双败淘汰赛制，全部系列赛 Bo5，赛制为 Fearless Draft（同一系列赛内任意一方选过的英雄，双方均不可再选）。仅在查到真实盘口（GG.bet）时展示赔率；其余情况 Fable 直接给出自己的概率研判，不冒充市场价格。",
   "record": {
     "since": "2026-07-03",
-    "resolved": 10,
+    "resolved": 12,
     "correctOutcome": 6,
     "exactScore": 2,
-    "winRate": 60,
+    "winRate": 50,
     "note_en": "Fable series-outcome calls scored from Bracket Stage Round 1 onward, through the Grand Final. Updated daily. ⭐ = exact series score. ✓ = correct outcome.",
     "note_zh": "自淘汰赛第一轮起对 Fable 系列赛胜负预测计分，并延续至总决赛，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
-      {
-        "id": "msi-furia-lyon",
-        "label_en": "FURIA 0-3 LYON",
-        "label_zh": "FURIA 0-3 LYON",
-        "pick_en": "LYON win",
-        "pick_zh": "LYON 胜",
-        "ok": true,
-        "exact": false
-      },
-      {
-        "id": "msi-blg-t1",
-        "label_en": "BLG 3-2 T1",
-        "label_zh": "BLG 3-2 T1",
-        "pick_en": "T1 win",
-        "pick_zh": "T1 胜",
-        "ok": false,
-        "exact": false
-      },
       {
         "id": "msi-tes-tsw",
         "label_en": "TES 1-3 TSW",
@@ -95,78 +77,81 @@
         "pick_zh": "LYON 胜",
         "ok": true,
         "exact": false
+      },
+      {
+        "id": "msi-ub-final",
+        "label_en": "BLG 3-1 HLE",
+        "label_zh": "BLG 3-1 HLE",
+        "pick_en": "HLE win",
+        "pick_zh": "HLE 胜",
+        "ok": false,
+        "exact": false
+      },
+      {
+        "id": "msi-lb-r3",
+        "label_en": "G2 0-3 LYON",
+        "label_zh": "G2 0-3 LYON",
+        "pick_en": "G2 win",
+        "pick_zh": "G2 胜",
+        "ok": false,
+        "exact": false
       }
     ]
   },
   "champion": [
     {
-      "team": "HLE",
-      "team_zh": "HLE",
-      "prob": 38,
-      "reason_en": "Still MSI's only unbeaten team (6-0 in maps). Idle since July 5, now rested for the Upper Bracket Final vs BLG, July 9 08:00 UTC.",
-      "reason_zh": "仍是本届赛事唯一不败战队（map战绩6-0）。自7月5日起轮空休整，7月9日（UTC 08:00）上位组决赛战BLG。"
-    },
-    {
       "team": "BLG",
       "team_zh": "BLG",
-      "prob": 30,
-      "reason_en": "Won back-to-back series (5-game war with T1, 3-0 sweep of LYON) to reach the Upper Bracket Final vs HLE, July 9 08:00 UTC.",
-      "reason_zh": "连胜两轮晋级（五局力克T1，再3-0横扫LYON），7月9日（UTC 08:00）上位组决赛战HLE。"
+      "prob": 58,
+      "reason_en": "First Grand Finalist after dismantling previously-unbeaten HLE 3-1 (Knight series MVP). Unbeaten in series all tournament, now rested until July 12.",
+      "reason_zh": "3-1击溃此前不败的HLE（Knight获系列赛MVP），率先锁定总决赛席位。系列赛保持全胜，休整至7月12日。"
     },
     {
-      "team": "G2",
-      "team_zh": "G2",
-      "prob": 18,
-      "reason_en": "Eliminated three-time reigning World Champion T1 3-1 in Lower Bracket R2 (BrokenBlade series MVP) — the tournament's biggest upset. Faces LYON in Lower Bracket R3, July 10.",
-      "reason_zh": "下位组第二轮3-1淘汰卫冕三届世界冠军T1（BrokenBlade当选系列赛MVP）——本届最大冷门。下位组第三轮7月10日战LYON。"
+      "team": "HLE",
+      "team_zh": "HLE",
+      "prob": 30,
+      "reason_en": "First series loss of the tournament (1-3 to BLG) drops them to the Lower Bracket Final vs LYON, July 11 — still the on-paper favorite there, with a rematch vs BLG the prize.",
+      "reason_zh": "1-3不敌BLG遭遇本届首败，跌入7月11日下位组决赛战LYON——纸面仍占优，赢下即可与BLG再战一场。"
     },
     {
       "team": "LYON",
       "team_zh": "LYON",
-      "prob": 14,
-      "reason_en": "Swept TSW 3-0 to continue the region's Cinderella run. Faces G2 in Lower Bracket R3, July 10 — one win from a Lower Bracket Final berth.",
-      "reason_zh": "3-0横扫TSW，赛区黑马故事延续。下位组第三轮7月10日战G2——再胜一场即可晋级下位组决赛。"
+      "prob": 12,
+      "reason_en": "Swept G2 3-0 — first LCS top-3 international finish since 2019 (GosuGamers). Back-to-back sweeps, but must now beat HLE and then BLG.",
+      "reason_zh": "3-0横扫G2——LCS自2019年来首次闯入国际赛前三（GosuGamers）。连续两轮横扫，但仍需连过HLE与BLG两关。"
     }
   ],
   "mvp": [
     {
-      "team": "Zeka · HLE",
-      "team_zh": "Zeka · HLE",
-      "prob": 24,
-      "reason_en": "HLE idle since July 5. Still the tournament's premier mid-lane form case after his series-MVP sweep of G2, awaiting the July 9 Upper Bracket Final vs BLG.",
-      "reason_zh": "HLE自7月5日起轮空。此前横扫G2的系列赛MVP表现仍是本届最佳中路状态代表，静候7月9日上位组决赛战BLG。",
-      "teamCode": "HLE"
-    },
-    {
       "team": "Knight · BLG",
       "team_zh": "Knight · BLG",
-      "prob": 22,
-      "reason_en": "Posted a 20/7/25 KDA (77.6% kill participation) in BLG's 3-0 sweep of LYON — the tournament's most dominant mid laner, now awaiting HLE in the July 9 Upper Bracket Final.",
-      "reason_zh": "对阵LYON系列赛KDA 20/7/25（击杀参与率77.6%），随BLG 3-0横扫晋级——本届最具统治力的中路，静候7月9日上位组决赛战HLE。",
+      "prob": 38,
+      "reason_en": "Series MVP of the Upper Bracket Final as BLG beat HLE 3-1 (egamersworld) — on top of his 20/7/25 sweep of LYON. The clear frontrunner with BLG in the Grand Final.",
+      "reason_zh": "上位组决赛3-1击败HLE当选系列赛MVP（egamersworld），此前横扫LYON时KDA 20/7/25。BLG已进总决赛，他是最大热门。",
       "teamCode": "BLG"
-    },
-    {
-      "team": "BrokenBlade · G2",
-      "team_zh": "BrokenBlade · G2",
-      "prob": 20,
-      "reason_en": "Series MVP in G2's 3-1 upset of three-time World Champion T1 — a 7/5/9 Vayne in Game 1, then a dominant 5/0/6 Cho'Gath in Game 2 (gol.gg). The signature performance of MSI's biggest upset.",
-      "reason_zh": "G2 3-1爆冷淘汰卫冕三届世界冠军T1的系列赛MVP——第一局薇恩7/5/9，第二局科加斯5/0/6统治全场（数据来自gol.gg）。本届最大冷门的标志性表演。",
-      "teamCode": "G2"
     },
     {
       "team": "Berserker · LYON",
       "team_zh": "Berserker · LYON",
-      "prob": 18,
-      "reason_en": "Posted a series-best 19/3/13 KDA (10.7 rating, 772 DPM) across LYON's 3-0 sweep of TSW — the standout carry performance of the series (gol.gg).",
-      "reason_zh": "LYON 3-0横扫TSW全系列KDA 19/3/13（评分10.7，DPM 772）——系列赛最佳输出表现（数据来自gol.gg）。",
+      "prob": 26,
+      "reason_en": "Anchored back-to-back 3-0 sweeps of TSW and G2. Among MSI ADCs he ranks 2nd in KDA and 3rd in damage share and CSPM (TrackDIFF) — the engine of the LCS Cinderella run.",
+      "reason_zh": "连续3-0横扫TSW与G2的核心输出。MSI下路中KDA第2、伤害占比与分均补刀第3（TrackDIFF）——LCS黑马之旅的引擎。",
       "teamCode": "LYON"
+    },
+    {
+      "team": "Zeka · HLE",
+      "team_zh": "Zeka · HLE",
+      "prob": 20,
+      "reason_en": "The 1-3 Upper Bracket Final loss to BLG dents the case, but his series-MVP sweep of G2 still stands — a Lower Bracket Final win over LYON would put him right back in it.",
+      "reason_zh": "上位组决赛1-3不敌BLG使声势受挫，但横扫G2的系列赛MVP表现仍在——若下位组决赛击败LYON即可重回竞争。",
+      "teamCode": "HLE"
     },
     {
       "team": "Delight · HLE",
       "team_zh": "Delight · HLE",
       "prob": 16,
-      "reason_en": "HLE idle since July 5; still the backbone of the tournament's only unbeaten roster, awaiting the July 9 Upper Bracket Final.",
-      "reason_zh": "HLE自7月5日起轮空；仍是全场唯一不败战队的核心，静候7月9日上位组决赛。",
+      "reason_en": "HLE's first series loss (1-3 to BLG) ends the unbeaten run, but he remains the backbone of a team still one win from the Grand Final.",
+      "reason_zh": "HLE 1-3不敌BLG终结不败，但他仍是这支距总决赛仅一胜之遥队伍的核心。",
       "teamCode": "HLE"
     }
   ],
@@ -437,7 +422,7 @@
       "reason_en": "HLE remain unbeaten (6-0 in maps) and idle since July 5; BLG arrive off back-to-back series (a five-game war with T1, then a 3-0 sweep of LYON). Leaning HLE, but expecting it close.",
       "reason_zh": "HLE 仍保持不败（map战绩6-0）且自7月5日起轮空休整；BLG 则连战两轮（五局力克T1，再3-0横扫LYON）。倾向 HLE 晋级，但预计过程胶着。",
       "odds": { "h": 2.28, "a": 1.6, "src": "GG.bet" },
-      "result": null
+      "result": { "home": 3, "away": 1 }
     },
     {
       "id": "msi-lb-r2-g2",
@@ -491,6 +476,24 @@
       "reason_en": "Both enter red-hot: G2 just eliminated three-time World Champion T1 3-1, LYON swept TSW 3-0. G2's win came against tougher competition; leaning G2 in a close one.",
       "reason_zh": "双方都手感火热：G2 刚3-1淘汰卫冕三届世界冠军T1，LYON 则3-0横扫TSW。G2 此胜含金量更高（对手更强），倾向G2小胜，但预计过程胶着。",
       "odds": { "h": 1.28, "a": 3.55, "src": "GG.bet" },
+      "result": { "home": 0, "away": 3 }
+    },
+    {
+      "id": "msi-lb-final",
+      "round": "Lower Bracket · Final",
+      "round_zh": "下位组 · 决赛",
+      "bo": 5,
+      "kickoff": "2026-07-11T08:00:00Z",
+      "home": "HLE",
+      "home_zh": "HLE",
+      "away": "LYON",
+      "away_zh": "LYON",
+      "opus": "home",
+      "conf": 0.7,
+      "opusScore": "3-1",
+      "reason_en": "HLE's only loss all tournament came against BLG; LYON arrive off back-to-back 3-0 sweeps but haven't yet beaten a top-tier LCK/LPL side here (0-3 vs BLG). Class edge to HLE, though LYON's form demands respect.",
+      "reason_zh": "HLE本届唯一败绩来自BLG；LYON虽连续两轮3-0横扫，但尚未在此击败过LCK/LPL顶级强队（0-3不敌BLG）。实力层级倾向HLE，但LYON状态不容小觑。",
+      "odds": null,
       "result": null
     },
     {
@@ -499,15 +502,15 @@
       "round_zh": "总决赛",
       "bo": 5,
       "kickoff": "2026-07-12T08:00:00Z",
-      "home": "TBD",
-      "home_zh": "待定",
+      "home": "BLG",
+      "home_zh": "BLG",
       "away": "TBD",
       "away_zh": "待定",
       "opus": null,
       "conf": null,
       "opusScore": null,
-      "reason_en": "Bracket not yet resolved — matchup TBD.",
-      "reason_zh": "对阵尚未产生。",
+      "reason_en": "BLG locked their Grand Final berth by beating HLE 3-1. Opponent TBD — winner of HLE vs LYON, July 11.",
+      "reason_zh": "BLG 3-1击败HLE率先晋级总决赛。对手待定——7月11日HLE对LYON的胜者。",
       "odds": null,
       "result": null
     }
