@@ -104,10 +104,13 @@ a{color:inherit;text-decoration:none}
 .fld--check input{order:1;min-width:17px!important;width:17px;height:17px;padding:0;accent-color:var(--sage-deep);cursor:pointer}
 .fld--check input:disabled{opacity:.35;cursor:not-allowed}
 
-/* ===== birth-city picker (replaces manual timezone+lat/lon by default) === */
+/* ===== birth-city picker (region -> city cascade, replaces manual
+   timezone+lat/lon by default) ============================================= */
 .fld--city{flex:1 1 220px}
-.fld--city input{width:100%}
+.fld--city input,.fld--city select{width:100%}
+.fld--city select:disabled{opacity:.5;cursor:not-allowed}
 .fld-manual{display:flex;gap:10px;flex-wrap:wrap;width:100%}
+.fld-manual[hidden]{display:none}
 .btn{position:relative;cursor:pointer;border:1px solid var(--sage-deep);background:rgba(156,175,136,.16);color:var(--sage-deep);font:700 12px/1 var(--en);letter-spacing:.16em;text-transform:uppercase;padding:11px 18px;border-radius:999px}
 .btn::before{content:'';position:absolute;top:-6px;bottom:-6px;left:-2px;right:-2px}
 .btn:hover{background:var(--sage-deep);color:#FFFBF2}
