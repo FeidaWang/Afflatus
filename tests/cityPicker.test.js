@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { CHINA_CITIES, GLOBAL_CITIES } from '../src/lib/cities.js';
-import { allCityOptions, findCityByLabel } from '../src/lib/cityPicker.js';
+import { allRegions, citiesInRegion, findCityInRegion } from '../src/lib/cityPicker.js';
 
 describe('cities.js data integrity', () => {
   it('CHINA_CITIES: every entry has a name and lat/lon inside China\'s bounding box, no duplicate names or coordinates', () => {
@@ -54,40 +54,51 @@ describe('cities.js data integrity', () => {
       expect(names).not.toContain(banned);
     }
   });
+  it('every CHINA_CITIES entry has a non-empty province, every GLOBAL_CITIES entry has a non-empty country+countryZh', () => {
+    for (const c of CHINA_CITIES) expect(c.province, c.zh).toBeTruthy();
+    for (const c of GLOBAL_CITIES) { expect(c.country, c.en).toBeTruthy(); expect(c.countryZh, c.en).toBeTruthy(); }
+  });
+  it('China has exactly the 34 real province-level divisions', () => {
+    expect(new Set(CHINA_CITIES.map((c) => c.province)).size).toBe(34);
+  });
 });
 
-describe('allCityOptions / findCityByLabel', () => {
-  it('returns the combined list with the right length and shape', () => {
-    const opts = allCityOptions();
-    expect(opts.length).toBe(CHINA_CITIES.length + GLOBAL_CITIES.length);
-    for (const o of opts) {
-      expect(o.label.length).toBeGreaterThan(0);
-      expect(typeof o.lat).toBe('number');
-      expect(typeof o.lon).toBe('number');
-      if (o.isChina) expect(o.utcOffset).toBeUndefined();
-      else expect(typeof o.utcOffset).toBe('number');
-    }
+describe('allRegions', () => {
+  it('provinces: every CHINA_CITIES province appears exactly once, all isChina:true', () => {
+    const { provinces } = allRegions();
+    expect(provinces.length).toBe(new Set(CHINA_CITIES.map((c) => c.province)).size);
+    for (const p of provinces) expect(p.isChina).toBe(true);
+    expect(new Set(provinces.map((p) => p.key)).size).toBe(provinces.length);
   });
-  it('finds a China city by its exact zh label', () => {
-    const hit = findCityByLabel('北京');
-    expect(hit).toBeTruthy();
-    expect(hit.isChina).toBe(true);
-    expect(hit.lat).toBeCloseTo(39.9, 0);
+  it('countries: every GLOBAL_CITIES country appears exactly once, all isChina:false, carries zh+en', () => {
+    const { countries } = allRegions();
+    expect(countries.length).toBe(new Set(GLOBAL_CITIES.map((c) => c.country)).size);
+    for (const c of countries) { expect(c.isChina).toBe(false); expect(c.zh).toBeTruthy(); expect(c.en).toBeTruthy(); }
+    expect(new Set(countries.map((c) => c.key)).size).toBe(countries.length);
   });
-  it('finds a global city by its combined "zh en" label', () => {
-    const hit = findCityByLabel('东京 Tokyo');
-    expect(hit).toBeTruthy();
-    expect(hit.isChina).toBe(false);
-    expect(hit.utcOffset).toBe(9);
+});
+
+describe('citiesInRegion / findCityInRegion', () => {
+  it('a China province returns only that province\'s cities, isChina:true, no utcOffset', () => {
+    const list = citiesInRegion('上海市', true);
+    expect(list.length).toBe(1);
+    expect(list[0].zh).toBe('上海');
+    expect(list[0].isChina).toBe(true);
+    expect(list[0].utcOffset).toBeUndefined();
   });
-  it('finds a global city by English name alone (case-insensitive)', () => {
-    const hit = findCityByLabel('tokyo');
+  it('a country returns only that country\'s cities, isChina:false, with utcOffset', () => {
+    const list = citiesInRegion('Japan', false);
+    expect(list.map((c) => c.en).sort()).toEqual(['Osaka', 'Tokyo']);
+    for (const c of list) { expect(c.isChina).toBe(false); expect(typeof c.utcOffset).toBe('number'); }
+  });
+  it('findCityInRegion looks up one city by zh name inside a resolved region', () => {
+    const hit = findCityInRegion('Japan', false, '东京');
     expect(hit).toBeTruthy();
     expect(hit.en).toBe('Tokyo');
+    expect(hit.utcOffset).toBe(9);
   });
-  it('returns null for unknown/empty input', () => {
-    expect(findCityByLabel('Atlantis')).toBeNull();
-    expect(findCityByLabel('')).toBeNull();
-    expect(findCityByLabel(null)).toBeNull();
+  it('returns null/empty for unknown region or city', () => {
+    expect(citiesInRegion('Atlantis', false)).toEqual([]);
+    expect(findCityInRegion('Japan', false, 'Nowhere')).toBeNull();
   });
 });

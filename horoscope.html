@@ -134,7 +134,6 @@
   <section class="sec" aria-label="Birth details">
     <div class="sec-label"><span class="zh" data-en="CAST YOUR CHART" data-zh="立　盘">CAST YOUR CHART</span></div>
     <div class="panel">
-      <datalist id="cityOptions"></datalist>
       <form class="form-grid" id="birthForm">
         <div class="fld"><label for="bDate" data-en="Birth date" data-zh="出生日期">Birth date</label>
           <input type="date" id="bDate" required min="1900-01-01" max="2100-12-31"></div>
@@ -146,8 +145,10 @@
             <option value="M" data-en="Male" data-zh="男">Male</option>
             <option value="F" data-en="Female" data-zh="女">Female</option>
           </select></div>
-        <div class="fld fld--city"><label for="bCityInput" data-en="Birth city (optional, more accurate)" data-zh="出生城市（可不填，更精确）">Birth city (optional, more accurate)</label>
-          <input type="text" id="bCityInput" list="cityOptions" autocomplete="off" placeholder="北京 / Tokyo / New York"></div>
+        <div class="fld fld--city"><label for="bRegionSel" data-en="Birth region (optional, more accurate)" data-zh="出生地区（可不填，更精确）">Birth region (optional, more accurate)</label>
+          <select id="bRegionSel"><option value="" data-en="Unspecified" data-zh="不填">Unspecified</option></select></div>
+        <div class="fld fld--city"><label for="bCitySel" data-en="Birth city" data-zh="出生城市">Birth city</label>
+          <select id="bCitySel" disabled></select></div>
         <div class="fld fld--check"><label for="bDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
           <input type="checkbox" id="bDst" disabled></div>
         <div class="fld-manual" id="bManualWrap" hidden>
@@ -238,8 +239,10 @@
           <input type="date" id="sDate" required min="1900-01-01" max="2100-12-31"></div>
         <div class="fld"><label for="sHour" data-en="Their hour (optional)" data-zh="对方时辰（可不填）">Their hour (optional)</label>
           <select id="sHour"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
-        <div class="fld fld--city"><label for="sCityInput" data-en="Their birth city (optional)" data-zh="对方出生城市（可不填）">Their birth city (optional)</label>
-          <input type="text" id="sCityInput" list="cityOptions" autocomplete="off" placeholder="北京 / Tokyo / New York"></div>
+        <div class="fld fld--city"><label for="sRegionSel" data-en="Their birth region (optional)" data-zh="对方出生地区（可不填）">Their birth region (optional)</label>
+          <select id="sRegionSel"><option value="" data-en="Unspecified" data-zh="不填">Unspecified</option></select></div>
+        <div class="fld fld--city"><label for="sCitySel" data-en="Their birth city" data-zh="对方出生城市">Their birth city</label>
+          <select id="sCitySel" disabled></select></div>
         <div class="fld fld--check"><label for="sDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
           <input type="checkbox" id="sDst" disabled></div>
         <div class="fld-manual" id="sManualWrap" hidden>

@@ -3,6 +3,13 @@
    separate from cities.js (raw data) so the data file can be regenerated
    without touching logic, and so this file stays small/testable.
 
+   2026-07-10: switched from a single flat searchable list (526 options in
+   one <datalist>, too long to browse) to a two-step region → city picker:
+   allRegions() returns China's 34 provinces + every country present in
+   GLOBAL_CITIES, in each list's natural (roughly geographic) order;
+   citiesInRegion() returns just the handful of cities inside one chosen
+   region.
+
    A "picked city" always carries {zh, lat, lon} plus either isChina:true
    (no utcOffset — see cities.js header for why) or a numeric utcOffset
    for a global city. horoscope.js is responsible for mapping that into
@@ -12,31 +19,42 @@
 import { CHINA_CITIES, GLOBAL_CITIES } from './cities.js';
 
 /**
- * Combined, search-ready city list. Each entry's `label` is what a
- * <datalist> option should show/match against — Chinese-only for China
- * cities (matches this site's existing convention of showing Chinese
- * proper nouns regardless of language toggle, e.g. ganzhi pillar names),
- * "zh en" for global cities so typing either language matches.
- * @returns {Array<{label:string, zh:string, en?:string, lat:number, lon:number, isChina:boolean, utcOffset?:number}>}
+ * @returns {{provinces:Array<{key:string,zh:string,isChina:true}>,
+ *            countries:Array<{key:string,zh:string,en:string,isChina:false}>}}
  */
-export function allCityOptions() {
-  const china = CHINA_CITIES.map((c) => ({ label: c.zh, zh: c.zh, lat: c.lat, lon: c.lon, isChina: true }));
-  const global = GLOBAL_CITIES.map((c) => ({ label: `${c.zh} ${c.en}`, zh: c.zh, en: c.en, lat: c.lat, lon: c.lon, isChina: false, utcOffset: c.utcOffset }));
-  return [...china, ...global];
+export function allRegions() {
+  const provinces = [];
+  const seenP = new Set();
+  for (const c of CHINA_CITIES) {
+    if (seenP.has(c.province)) continue;
+    seenP.add(c.province);
+    provinces.push({ key: c.province, zh: c.province, isChina: true });
+  }
+  const countries = [];
+  const seenC = new Set();
+  for (const c of GLOBAL_CITIES) {
+    if (seenC.has(c.country)) continue;
+    seenC.add(c.country);
+    countries.push({ key: c.country, zh: c.countryZh, en: c.country, isChina: false });
+  }
+  return { provinces, countries };
 }
 
 /**
- * Exact-match lookup by the datalist `label` string (case/space-insensitive
- * fallback included since a user's typed text may not match the label's
- * exact casing). Returns null if nothing matches.
+ * Cities inside one chosen region (a province key from the `provinces`
+ * list, or a country key from the `countries` list above).
+ * @returns {Array<{label:string, zh:string, en?:string, lat:number, lon:number, isChina:boolean, utcOffset?:number}>}
  */
-export function findCityByLabel(label, options) {
-  const opts = options || allCityOptions();
-  const needle = String(label || '').trim();
-  if (!needle) return null;
-  let hit = opts.find((o) => o.label === needle);
-  if (hit) return hit;
-  const lower = needle.toLowerCase();
-  hit = opts.find((o) => o.label.toLowerCase() === lower || o.zh === needle || (o.en && o.en.toLowerCase() === lower));
-  return hit || null;
+export function citiesInRegion(regionKey, isChina) {
+  if (isChina) {
+    return CHINA_CITIES.filter((c) => c.province === regionKey)
+      .map((c) => ({ label: c.zh, zh: c.zh, lat: c.lat, lon: c.lon, isChina: true }));
+  }
+  return GLOBAL_CITIES.filter((c) => c.country === regionKey)
+    .map((c) => ({ label: `${c.zh} ${c.en}`, zh: c.zh, en: c.en, lat: c.lat, lon: c.lon, isChina: false, utcOffset: c.utcOffset }));
+}
+
+/** Look up one city by its zh name inside an already-resolved region's city list. */
+export function findCityInRegion(regionKey, isChina, cityZh) {
+  return citiesInRegion(regionKey, isChina).find((c) => c.zh === cityZh) || null;
 }

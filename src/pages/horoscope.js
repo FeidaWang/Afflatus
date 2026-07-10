@@ -28,7 +28,7 @@ import { dailyCoupleWeather } from '../lib/dailyTransits.js';
 import { dailyDraw } from '../lib/starDraw.js';
 import { computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH } from '../lib/ziwei.js';
 import { downloadShareCard } from '../lib/shareCard.js';
-import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
+import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.js';
 
 (() => {
   'use strict';
@@ -140,6 +140,16 @@ import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
 
   // ---- birth-city picker (replaces manual timezone+lat/lon as the default
   // path) ------------------------------------------------------------------
+  // 2026-07-10: switched from one flat searchable list (526 cities in a
+  // single <datalist>, too long to browse once province/country metadata
+  // made "just group them" the obvious ask) to a two-step region -> city
+  // cascade: pick a province/country first, then a city from that short
+  // list. Option labels are baked bilingual (zh only for China provinces —
+  // matches this site's existing convention of showing Chinese proper
+  // nouns regardless of language toggle — "zh en" for everything else),
+  // same fixed-string approach TZ_OPTIONS above already uses, so nothing
+  // here needs to re-render on language toggle.
+  //
   // Selecting a city fills the EXISTING hidden bTz/bLat/bLon (or sTz) form
   // fields and dispatches a real 'change' event on the tz <select> so the
   // dst-enable/disable listener above still runs — this file's parseBirth()
@@ -152,32 +162,48 @@ import { allCityOptions, findCityByLabel } from '../lib/cityPicker.js';
   // cities.js's header and bazi.js's CN_DST_WINDOWS); hand-setting
   // {utcOffset:8, dst:false} would silently skip that correction for
   // anyone born in it.
-  const cityOptions = allCityOptions();
-  const cityDatalist = $('cityOptions');
-  if (cityDatalist) {
-    const frag = document.createDocumentFragment();
-    cityOptions.forEach((c) => { const o = document.createElement('option'); o.value = c.label; frag.appendChild(o); });
-    cityDatalist.appendChild(frag);
-  }
-  function wireCityInput(inputId, tzSelId, latId, lonId) {
-    const input = $(inputId), tzSel = $(tzSelId);
-    if (!input || !tzSel) return;
-    const apply = () => {
-      const city = findCityByLabel(input.value, cityOptions);
-      if (!city) return; // free text that doesn't (yet) match a listed city — leave existing fields alone
+  const { provinces, countries } = allRegions();
+  const provinceKeys = new Set(provinces.map((p) => p.key));
+  function wireRegionCityPicker(regionSelId, citySelId, tzSelId, latId, lonId) {
+    const regionSel = $(regionSelId), citySel = $(citySelId), tzSel = $(tzSelId);
+    if (!regionSel || !citySel || !tzSel) return;
+    const addOpt = (parent, value, label) => {
+      const o = document.createElement('option');
+      o.value = value; o.textContent = label;
+      parent.appendChild(o);
+    };
+    const chinaGroup = document.createElement('optgroup');
+    chinaGroup.label = '中国 · CHINA';
+    provinces.forEach((p) => addOpt(chinaGroup, p.key, p.zh));
+    const overseasGroup = document.createElement('optgroup');
+    overseasGroup.label = '海外 · OVERSEAS';
+    countries.forEach((c) => addOpt(overseasGroup, c.key, `${c.zh} ${c.en}`));
+    regionSel.appendChild(chinaGroup);
+    regionSel.appendChild(overseasGroup);
+
+    regionSel.addEventListener('change', () => {
+      citySel.innerHTML = '';
+      const region = regionSel.value;
+      if (!region) { citySel.disabled = true; return; }
+      const isChina = provinceKeys.has(region);
+      citiesInRegion(region, isChina).forEach((c) => addOpt(citySel, c.zh, c.isChina ? c.zh : `${c.zh} ${c.en}`));
+      citySel.disabled = false;
+      citySel.dispatchEvent(new Event('change'));
+    });
+    citySel.addEventListener('change', () => {
+      const region = regionSel.value;
+      if (!region || !citySel.value) return;
+      const isChina = provinceKeys.has(region);
+      const city = findCityInRegion(region, isChina, citySel.value);
+      if (!city) return;
       if (latId && $(latId)) $(latId).value = String(city.lat);
       if (lonId && $(lonId)) $(lonId).value = String(city.lon);
       tzSel.value = city.isChina ? '' : String(city.utcOffset);
       tzSel.dispatchEvent(new Event('change'));
-    };
-    // 'input' fires immediately when a datalist suggestion is picked (some
-    // browsers don't fire 'change' until blur); listening to both is cheap
-    // since apply() is a no-op unless the typed text is a full exact match.
-    input.addEventListener('input', apply);
-    input.addEventListener('change', apply);
+    });
   }
-  wireCityInput('bCityInput', 'bTz', 'bLat', 'bLon');
-  wireCityInput('sCityInput', 'sTz', null, null);
+  wireRegionCityPicker('bRegionSel', 'bCitySel', 'bTz', 'bLat', 'bLon');
+  wireRegionCityPicker('sRegionSel', 'sCitySel', 'sTz', null, null);
   // The underlying tz-select/lat/lon fields (#bManualWrap/#sManualWrap) stay
   // in the DOM — permanently hidden, no UI to reveal them — purely so the
   // city picker above still has somewhere to write its result into without
