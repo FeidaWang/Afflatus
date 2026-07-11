@@ -1,6 +1,6 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
-> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。**U14（防御模块竖能量条 + Combat View 座舱清理与真实数据化）代码已完成**（见其小节，518/518 vitest 通过、`npx vite build --outDir=...` 干净——沙盒 `dist/` 目录权限受限，同 U13 已知问题，用 `--outDir` 验证过构建产物本身没问题，main chunk 864.72 kB）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。**U15（serial.html 阅读器工具栏移动端精简 + 护眼配色降白点）代码已完成并已推送**（2026-07-12，commit `475bab9`），518/518 vitest 通过、`npx vite build --outDir=/tmp/u15check` 干净，15d 按单书签最小方案实施（未见站主反向裁决）——**视觉验收（沙盒无法渲染）仍是唯一悬而未决项**。
+> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。**U14（防御模块竖能量条 + Combat View 座舱清理与真实数据化）代码已完成**（见其小节，518/518 vitest 通过、`npx vite build --outDir=...` 干净——沙盒 `dist/` 目录权限受限，同 U13 已知问题，用 `--outDir` 验证过构建产物本身没问题，main chunk 864.72 kB）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。**U15（serial.html 阅读器工具栏移动端精简 + 护眼配色降白点）代码已完成并已推送**（2026-07-12，commit `475bab9`），518/518 vitest 通过、`npx vite build --outDir=/tmp/u15check` 干净，15d 按单书签最小方案实施（未见站主反向裁决）——**视觉验收（沙盒无法渲染）仍是唯一悬而未决项**。**U16（serial.html 删左右箭头导航 + 修停止翻页失效 + 移动端书签显示章节号）代码已完成**（2026-07-12，见其小节），518/518 vitest 通过、`npx vite build --outDir=/tmp/u16check` 干净——视觉/真机验收待站主。
 
 > 规则：本文件只放**当前最需要修改的问题**；每项处理完就从这里划掉，完整实施记录转 `RELEASE_NOTES.md`。全部清空后本文件可删。
 > 红线不变（roadmap §7.10）：仅供娱乐、不做付费解锁/焦虑营销、康健只说作息；沙盒无法真机渲染，所有视觉改动需站主真机验收。
@@ -134,6 +134,16 @@
 - [x] **15d · 书签详细化（按最小方案实施，站主未在裁决前给出反向指示）**：`setBookmark()` 新增 `chapterTitle` 字段；新增 `updateBookmarkBtn()`，工具栏书签按钮实时显示「★ 已存·〈章节名，截断 12 字〉」（`title` 属性给出完整章节名的 hover 提示），无书签时保持原「☆ 书签」外观；接入 `renderToc()` 统一刷新，避免多处重复读 localStorage。**注意**：仍是单书签（每本小说各自一条，按 `nsKey` 命名空间隔离），不是多书签列表——如果实际需要的是列表，需另立项。
 - [x] **15e · 浅色主题降白点**：实测算过对比度后定案——cream `#f2e8d2→#e8dcc4`（bg2 `#ece0c4→#e2d4b6`，白点亮度降 ~11%，正文对比度 9.57:1，meta 文字对比度 4.77:1）；green `#cfe6d1→#c8dfcb`（bg2 `#c1dcc4→#bad5be`，白点降 ~7%，正文 9.50:1，meta 文字 4.65:1）——两套的 meta/次要文字对比度均 ≥4.5:1 WCAG AA 硬标准（green 若按最初设想降 14% 会跌到 4.3:1 不达标，已收窄到安全区间）。swatch 色块同步换色；night 主题未动。
 - [x] **验收**：vitest 518/518 通过；`npx vite build --outDir=/tmp/u15check` 干净；HTML parser 校验标签闭合无误、无遗留 `fsVal`/`speedsel`/`data-speed` 孤儿引用。**视觉验收（唯一悬而未决项，既有纪律）**：站主 iPhone/浏览器复核工具栏单行布局、按钮触达面积、书签按钮长章节名截断观感、两套新配色的实际夜读感受。
+
+## U16 · serial.html 沉浸阅读三项修复（2026-07-12 立项，代码已完成）
+
+**目的**：① 删除页面左右两侧跳转到别的网页的箭头导航，增强小说阅读沉浸感；② 修复自动翻页开启后按「停止翻页」无法停止、只能靠手动滑动的 bug；③ 移动端书签按钮在工具栏上显示第几章（文字不超出工具栏）。
+
+- [x] **16a · 删左右箭头导航**：serial.html 删除 `<nav class="page-turn-controls">` 整块与 body 上的 `data-prev`/`data-next`；`serialLibs.js` 去掉 `page-turn.js` import。**范围延伸（沉浸感的必然推论，站主可否决）**：`transition.js` 的全局 ←/→ 键盘监听读取的是 `body.dataset.prev/next`，而 `nav.js` 每页运行时都会把它们写回去——只删可见箭头的话，读者阅读中误按方向键仍会被跳到别的页面。因此 body 加 `data-no-page-turn` 标记 + `nav.js` 对带此标记的页面跳过 dataset/箭头 href 写入（共享代码改动仅此一处 if 包裹，其余 8 页行为不变）。`public/page-turn.css` 顺手删掉本次改动孤儿化的 3 条 `.novels-page .page-turn*` 规则（该文件其余内容——字体/View Transitions/Labs 下拉/通用按钮反馈——serial 页仍在用，`<link>` 保留）。
+- [x] **16b · 停止翻页失效修复**：根因是 window 级 `touchstart` 监听——手指点「停止翻页」按钮时它先触发 `stopAuto()`（还弹「检测到手动滑动」toast），随后按钮自己的 `click` 处理器看到 `autoTimer===0` 又执行 `startAuto()`，按钮永远停不下来（桌面鼠标点击不经过 touchstart 所以没复现）。修复：`touchstart`/`wheel` 监听忽略事件源在 `#autoToggle` 上的事件，按钮点击交还给 click 处理器。
+- [x] **16c · 移动端书签显示章节号**：移动端 `.lbl` 被 V22 规则隐藏（图标化工具栏），书签保存状态在手机上不可见。`updateBookmarkBtn()` 新增 `.bk-ch` 短标签（「第N章」，由 `bm.chapterId` 反查章节序号，兼容已存的旧书签），CSS 默认隐藏、`≤640px` 显示（桌面 `.lbl` 已显示截断章节标题，两者同显冗余）。几个字宽 + 工具栏本身 `nowrap+overflow-x:auto`，不会超出工具栏。
+- [x] **验收**：vitest 518/518 通过；`npx vite build --outDir=/tmp/u16check` 干净（main chunk 864.72 kB，沙盒 `dist/` 权限受限用 `--outDir` 验证，已知问题）；grep 确认 serial.html 无遗留 `data-page-turn`/`data-prev`/`data-next` 引用。
+- [ ] **视觉/真机验收（站主）**：箭头消失且 ←/→ 不再跳页、其余 8 页箭头/键盘翻页不受影响、手机上点「停止翻页」能真正停、书签按钮「★ 第N章」显示与不溢出——沙盒无法渲染，既有纪律。
 
 ## U7 · Claude 会话卡顿 + Scheduled 任务统筹管理（2026-07-10 立项）
 

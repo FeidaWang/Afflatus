@@ -51,13 +51,12 @@
 ]}
 </script>
 </head>
-<body class="novels-page retro" data-prev="/horoscope.html" data-next="/">
+<!-- U16a: data-no-page-turn opts this page out of the site-wide prev/next
+     page-turn system (edge arrows removed below, and nav.js skips writing
+     body.dataset.prev/next so transition.js's ArrowLeft/Right keyboard
+     turns can't yank a reader to another page mid-chapter). -->
+<body class="novels-page retro" data-no-page-turn>
 <div class="crt-bg" aria-hidden="true"><canvas id="retroCanvas"></canvas><div class="scan"></div><div class="vig"></div></div>
-
-<nav class="page-turn-controls" aria-label="Page navigation">
-  <a class="page-turn" href="/horoscope.html" data-page-turn="prev" aria-label="Back to horoscope">←</a>
-  <a class="page-turn" href="/" data-page-turn="next" aria-label="Next to home">→</a>
-</nav>
 
 <div class="toc-backdrop" id="tocBackdrop"></div>
 <aside class="toc-drawer" id="tocDrawer" aria-label="章节目录">
@@ -233,7 +232,13 @@
   function updateBookmarkBtn(bm) {
     var btn = document.getElementById('bookmarkBtn');
     if (bm && bm.chapterTitle) {
-      btn.innerHTML = '★<span class="lbl"> ' + escapeHtml(truncateTitle(bm.chapterTitle, 12)) + '</span>';
+      /* U16c: mobile hides .lbl (icon-only toolbar), so the saved-bookmark
+         state was invisible there. Add a compact "第N章" chip (.bk-ch,
+         shown ≤640px only — desktop keeps the truncated title) so the
+         toolbar shows which chapter is bookmarked without overflowing. */
+      var ci = state.chapters.findIndex(function (c) { return c.id === bm.chapterId; });
+      var chip = ci >= 0 ? '<span class="bk-ch"> 第' + (ci + 1) + '章</span>' : '';
+      btn.innerHTML = '★' + chip + '<span class="lbl"> ' + escapeHtml(truncateTitle(bm.chapterTitle, 12)) + '</span>';
       btn.title = '已保存书签：' + bm.chapterTitle;
     } else {
       btn.innerHTML = '☆<span class="lbl"> 书签</span>';
@@ -430,8 +435,18 @@
     var btn = document.getElementById('autoToggle'); btn.innerHTML = '▶<span class="lbl"> 自动翻页</span>'; btn.classList.remove('active');
   }
   document.getElementById('autoToggle').addEventListener('click', function () { state.autoTimer ? stopAuto() : startAuto(); });
+  /* U16b fix: on touch devices, tapping the 停止翻页 button fired this
+     window-level touchstart FIRST (stopAuto + "检测到手动滑动" toast), so the
+     button's own click handler then saw autoTimer===0 and RESTARTED the
+     scroll — the button could never stop it. Ignore touches/wheel events
+     that originate on the toggle itself; the click handler owns those. */
   ['touchstart','wheel'].forEach(function (ev) {
-    window.addEventListener(ev, function () { if (state.autoTimer) { stopAuto(); toast('检测到手动滑动，已暂停自动翻页'); } }, { passive: true });
+    window.addEventListener(ev, function (e) {
+      if (!state.autoTimer) return;
+      var t = e.target;
+      if (t && t.closest && t.closest('#autoToggle')) return;
+      stopAuto(); toast('检测到手动滑动，已暂停自动翻页');
+    }, { passive: true });
   });
 
   /* ---------- FAB ---------- */

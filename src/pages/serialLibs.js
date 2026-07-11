@@ -6,4 +6,5 @@
 import '../lib/i18n.js';
 import '../lib/nav.js';
 import '../lib/transition.js';
-import '../lib/page-turn.js';
+/* U16a: page-turn.js no longer imported — serial.html removed its edge
+   arrows and opts out of prev/next turns via body[data-no-page-turn]. */

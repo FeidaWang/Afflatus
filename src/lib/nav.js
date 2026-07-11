@@ -49,11 +49,18 @@
   const next = SITE[(i + 1) % n].path;
 
   function run() {
-    // prev/next: keyboard (body.dataset, read by page-turn.js) + arrow clicks
-    document.body.dataset.prev = prev;
-    document.body.dataset.next = next;
-    document.querySelectorAll('[data-page-turn="prev"]').forEach((a) => a.setAttribute('href', prev));
-    document.querySelectorAll('[data-page-turn="next"]').forEach((a) => a.setAttribute('href', next));
+    // prev/next: keyboard (body.dataset, read by page-turn.js AND
+    // transition.js's own ArrowLeft/Right listener) + arrow clicks.
+    // U16a: a page can opt out with <body data-no-page-turn> (serial.html —
+    // reading immersion: no edge arrows, and arrow keys must not navigate
+    // away mid-chapter). Skipping the dataset write here is what actually
+    // disables the keyboard turns, since both key listeners read it live.
+    if (!('noPageTurn' in document.body.dataset)) {
+      document.body.dataset.prev = prev;
+      document.body.dataset.next = next;
+      document.querySelectorAll('[data-page-turn="prev"]').forEach((a) => a.setAttribute('href', prev));
+      document.querySelectorAll('[data-page-turn="next"]').forEach((a) => a.setAttribute('href', next));
+    }
 
     // render the primary nav links from SITE (active = current page),
     // inserted BEFORE any existing children (e.g. the page's .lang-toggle).
