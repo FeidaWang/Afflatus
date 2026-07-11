@@ -86,9 +86,6 @@
           <button class="weapon-choice" data-weapon="nuke" data-hot><span class="wpn-icon">☢</span><span class="wpn-info"><b data-hud="wNuke">核打击</b><small>战术核击</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
           <button class="weapon-choice" data-weapon="enforcer" data-hot><span class="wpn-icon">✦</span><span class="wpn-info"><b data-hud="wEnforcer">主炮</b><small>蓄力主炮</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
         </div>
-        <div class="battle-feed defense-command-log" id="battleFeed">
-          <output class="combat-kill-meter" aria-label="Confirmed kills"><b id="killCounter">0</b></output>
-        </div>
         <form class="mobile-weapon-form weapon-form-hidden" id="weaponForm">
           <label for="weaponSelect">彗星截击裁决</label>
           <select id="weaponSelect">
@@ -107,49 +104,76 @@
       <canvas class="pilot-feed" id="pilotFeed"></canvas>
       <!-- U13b (2026-07-11): radar merged in from the deleted hud-left panel
            (see main.js drawRadar() comment) — small dock, no label (redundant
-           under "COMBAT VIEW"), overlaid so it doesn't steal pilotFeed's rect. -->
+           under "COMBAT VIEW"), overlaid so it doesn't steal pilotFeed's rect.
+           U14b (2026-07-12): re-docked bottom-center + shrunk further, see
+           the .pilot-radar-dock override at the end of styles.css. -->
       <div class="pilot-radar-dock" aria-hidden="true"><canvas id="radarCanvas"></canvas></div>
-    </aside>
-    <aside class="hud-panel hud-right">
-      <div class="hud-label" data-hud="hangarTitle">COMMANDER TERMINAL</div>
-      <div class="signal-deck fleet-status-deck" id="signalDeck">
-        <div class="captain-terminal private-notebook" id="captainTerminal">
-          <div class="notebook-shell">
-            <div class="log-boot" id="voyageLogBoot" aria-hidden="true">
-              <b class="log-boot-line" style="--i:0"><i class="seq">SEQ 01</i><span>CIPHER HANDSHAKE</span><em>OK</em></b>
-              <b class="log-boot-line" style="--i:1"><i class="seq">SEQ 02</i><span>VOYAGE LOG INTEGRITY</span><em>VERIFIED</em></b>
-              <b class="log-boot-line" style="--i:2"><i class="seq">SEQ 03</i><span>DECRYPTING PRIVATE CHANNEL</span><em>...</em></b>
-              <b class="log-boot-line" style="--i:3"><i class="seq">SEQ 04</i><span>ACCESS</span><em class="granted">GRANTED</em></b>
-            </div>
-            <div class="notebook-status">
-              <span class="terminal-led"></span>
-              <b>Commander Terminal</b>
-              <button class="starmap-toggle" id="starmapToggle" type="button" data-hot>LOGIN</button>
-              <em class="terminal-lock" aria-label="Locked"></em>
-            </div>
-            <div class="terminal-starmap active" id="terminalStarMapPanel" aria-label="Alphard galactic map">
-              <canvas id="terminalStarMap"></canvas>
-              <div class="starmap-readout">
-                <b>ALPHARD</b>
-                <span id="starmapDistance">2738 days from Earth</span>
+      <!-- U14b (2026-07-12): battle broadcast feed revived from its U10
+           display:none — moved here (was inside .combat-module) as a
+           compact top-right ticker instead of a Defense Module header
+           row. Same #battleFeed id/children, main.js's createBattleFeed
+           still finds it by getElementById, zero JS changes needed. -->
+      <div class="battle-feed defense-command-log" id="battleFeed">
+        <output class="combat-kill-meter" aria-label="Confirmed kills"><b id="killCounter">0</b></output>
+      </div>
+      <!-- U14d (2026-07-12): Commander Terminal moved onto the Combat View
+           screen itself — was its own permanent "hud-right" column showing
+           the star-map wallpaper at all times; now it's a hidden overlay
+           inside .hud-pilot that only appears once you click Combat View
+           (terminalStarMap.js toggles body.terminal-open), defaulting
+           straight to the Private Voyage Log (login form) instead of the
+           star map. Keeps the "hud-panel hud-right" classes on this wrapper
+           (even though it's no longer its own grid column) because ~15
+           historical `.hud-right .signal-deck`/`.hud-right .captain-terminal`
+           rules elsewhere in styles.css size and style this panel's guts via
+           that ancestor selector — dropping the classes would silently
+           strip all of that. .pilot-terminal-overlay is the new hook that
+           actually repositions the whole thing (see styles.css); it wins
+           over the old (non-!important) hud-right/hud-panel base rules by
+           being !important, not by replacing them. The standalone
+           "COMMANDER TERMINAL" label the old hud-right aside had is
+           dropped — .notebook-status inside already shows that title once
+           the overlay is open, so a second copy was pure duplication. -->
+      <div class="hud-panel hud-right pilot-terminal-overlay" id="commanderTerminalDock">
+        <div class="signal-deck fleet-status-deck" id="signalDeck">
+          <div class="captain-terminal private-notebook" id="captainTerminal">
+            <div class="notebook-shell">
+              <div class="log-boot" id="voyageLogBoot" aria-hidden="true">
+                <b class="log-boot-line" style="--i:0"><i class="seq">SEQ 01</i><span>CIPHER HANDSHAKE</span><em>OK</em></b>
+                <b class="log-boot-line" style="--i:1"><i class="seq">SEQ 02</i><span>VOYAGE LOG INTEGRITY</span><em>VERIFIED</em></b>
+                <b class="log-boot-line" style="--i:2"><i class="seq">SEQ 03</i><span>DECRYPTING PRIVATE CHANNEL</span><em>...</em></b>
+                <b class="log-boot-line" style="--i:3"><i class="seq">SEQ 04</i><span>ACCESS</span><em class="granted">GRANTED</em></b>
               </div>
-              <div class="voyage-pulse" id="voyagePulse" aria-live="polite">
-                <b>EARTH -> ALPHARD</b>
-                <span>2738 DAYS · BEARING 128° · COURSE LOCKED</span>
-                <i></i>
+              <div class="notebook-status">
+                <span class="terminal-led"></span>
+                <b>Commander Terminal</b>
+                <button class="starmap-toggle" id="starmapToggle" type="button" data-hot>LOGIN</button>
+                <em class="terminal-lock" aria-label="Locked"></em>
               </div>
+              <div class="terminal-starmap active" id="terminalStarMapPanel" aria-label="Alphard galactic map">
+                <canvas id="terminalStarMap"></canvas>
+                <div class="starmap-readout">
+                  <b>ALPHARD</b>
+                  <span id="starmapDistance">2738 days from Earth</span>
+                </div>
+                <div class="voyage-pulse" id="voyagePulse" aria-live="polite">
+                  <b>EARTH -> ALPHARD</b>
+                  <span>2738 DAYS · BEARING 128° · COURSE LOCKED</span>
+                  <i></i>
+                </div>
+              </div>
+              <form class="notebook-login" autocomplete="off">
+                <label>
+                  <span>ACCOUNT</span>
+                  <input type="text" name="commander-account" placeholder="BRUCE.WANG" inputmode="email" aria-label="Commander account">
+                </label>
+                <label>
+                  <span>PASSWORD</span>
+                  <input type="password" name="commander-password" placeholder="••••••••" aria-label="Commander password">
+                </label>
+                <button id="terminalLoginBtn" type="button" data-hot>LOGIN</button>
+              </form>
             </div>
-            <form class="notebook-login" autocomplete="off">
-              <label>
-                <span>ACCOUNT</span>
-                <input type="text" name="commander-account" placeholder="BRUCE.WANG" inputmode="email" aria-label="Commander account">
-              </label>
-              <label>
-                <span>PASSWORD</span>
-                <input type="password" name="commander-password" placeholder="••••••••" aria-label="Commander password">
-              </label>
-              <button id="terminalLoginBtn" type="button" data-hot>LOGIN</button>
-            </form>
           </div>
         </div>
       </div>

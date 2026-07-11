@@ -2704,6 +2704,21 @@ function drawPilotHmd(ctx,w,h,now,label,mode){
   drawPilotSpace(ctx,w,h,now,missileLike?1.55:1.05);
   combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,label,mode);
 }
+// U14c (2026-07-12): snapshot passed into drawCockpitFrame's PWR/WPN/THR
+// pip readouts — WPN's colour + fill come from the same chooseWeapon()/
+// weaponCooldownRatio() the Defense Module buttons already use (no second
+// notion of "current weapon"), warpIntensity is the existing throttle
+// value, warpHover mirrors the real `body.warp-hover` class the "以中文
+//入梦" button already drives (see its mouseenter/mouseleave below).
+function cockpitDash(){
+  const weapon=chooseWeapon(!!halley?.isGiant);
+  return {
+    weapon,
+    cdRatio: combatRuntime.weaponCooldownRatio(weapon),
+    warpIntensity,
+    warpHover: document.body.classList.contains('warp-hover'),
+  };
+}
 function drawPilotDeck(ctx,w,h,phase,landing=false){
   const horizon=h*(landing ? .48 : .42), center=w*.5;
   ctx.save();
@@ -3165,7 +3180,7 @@ function drawPilotFeed(now){
       ctx.drawImage(topdownCanvas,0,0,w,h);
       ctx.restore();
       if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
-      else { drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat'); drawCockpitFrame(ctx,w,h,now,false); /* V17: console after the HMD pass, same draw-order fix */ }
+      else { drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat'); drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash()); /* V17: console after the HMD pass, same draw-order fix */ }
       return;
     }
   }
@@ -3197,7 +3212,7 @@ function drawPilotFeed(now){
         ? (phase==='ignite'?'导弹点火':phase==='terminal'?'终末追踪':phase==='impact'?'即将命中':'导弹投放')
         : (phase==='ignite'?'MISSILE IGNITION':phase==='terminal'?'TERMINAL TRACK':phase==='impact'?'IMPACT IMMINENT':'MISSILE DROP');
       drawPilotHmd(ctx,w,h,now,label,'missile');
-      drawCockpitFrame(ctx,w,h,now,false);
+      drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash());
     }else if(combatViewLegacy()) drawPilotMissilePOV(ctx,w,h,now,pilotView.weapon);
     else drawMissileCine(ctx,w,h,now,elapsed,{lang:currentLang,halley,killed:(!halley||halley.destroyed),locked:!!(halley&&halley.hover)});
   }else if(mode==='ciws'||mode==='offline'){
@@ -3235,7 +3250,7 @@ function drawPilotFeed(now){
         // space repaint buried anything drawn earlier). The console stages up
         // THROUGH the takeoff roll, finishing at 65% — TARGET LINK sync + the
         // ESTABLISHED flash land after handover to standby.
-        drawCockpitFrame(ctx,w,h,now,false,.05+easeOut(elapsed)*.60);
+        drawCockpitFrame(ctx,w,h,now,false,.05+easeOut(elapsed)*.60,cockpitDash());
         drawPilotSystemSequence(ctx,w,h,elapsed,false);
       }
     }else if(mode==='landing'){
@@ -3247,7 +3262,7 @@ function drawPilotFeed(now){
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
         // V17: console after the HMD pass (same draw-order fix as launch);
         // landing keeps a fully-lit console (boot=1 default), green accent.
-        drawCockpitFrame(ctx,w,h,now,true);
+        drawCockpitFrame(ctx,w,h,now,true,1,cockpitDash());
         drawPilotSystemSequence(ctx,w,h,elapsed,true);
       }
     }else{
@@ -3261,7 +3276,7 @@ function drawPilotFeed(now){
         // as a ghost "triangle in the background". Space (acts as the frame
         // clear) → console → HMD, with the HMD fading in as the console boots.
         drawPilotSpace(ctx,w,h,now,1.05);
-        drawCockpitFrame(ctx,w,h,now,false,cockpitBoot);
+        drawCockpitFrame(ctx,w,h,now,false,cockpitBoot,cockpitDash());
         ctx.save();ctx.globalAlpha=clamp(cockpitBoot*1.6-.3,0,1);
         combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
         ctx.restore();

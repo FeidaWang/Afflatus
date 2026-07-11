@@ -7604,3 +7604,185 @@ html.vt-suppress::view-transition-new(root){
   }
   body:not(.hud-off) .hud-center{display:none!important}
 }
+
+/* ============================================================
+   U14a (2026-07-12) · Defense Module: four horizontal stacked bars ->
+   four vertical energy columns ("weapon rack"), and reclaim the empty
+   band that used to sit above them. That empty band was real and not
+   just a visual illusion: .combat-module's grid-template-rows was
+   "30px minmax(0,1fr)" reserved for #battleFeed's header row, but
+   #battleFeed has been `display:none` since U10 (see the rule earlier
+   in this file) — display:none removes a grid item from layout
+   entirely, so that 30px track stayed allocated with nothing in it.
+   Collapsing to a single row (below) gives weapon-matrix the full
+   height. Same "one comprehensive !important block, don't hunt every
+   historical fragment" convention as U9-U13 above — this file has ~15
+   overlapping partial `.weapon-choice`/`.defense-command-log` fragments
+   from before the vertical-rack idea existed; rather than editing each,
+   this block is deliberately last-in-file and self-sufficient. */
+.hud-center .combat-module,.combat-module{
+  grid-template-rows:minmax(0,1fr)!important;
+}
+.weapon-matrix{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  grid-column:1/-1!important;grid-row:1!important;
+  gap:7px!important;height:100%!important;
+}
+.weapon-choice{
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:flex-end!important;
+  height:100%!important;min-height:0!important;width:auto!important;
+  padding:9px 3px 8px!important;gap:0!important;
+  position:relative!important;overflow:hidden!important;
+  text-align:center!important;
+}
+/* Vertical energy tube: fills the WHOLE column from the bottom (a
+   "thermometer", not a thin bar) so the charge level reads at a
+   glance even before you look at the numbers — var(--cool) is 0 just
+   after firing, 1 when ready, exactly as it already was for the old
+   horizontal bar (U10), just re-mapped from width to height. */
+.weapon-choice::after{
+  content:''!important;position:absolute!important;z-index:0!important;
+  left:0!important;right:0!important;bottom:0!important;top:auto!important;
+  width:100%!important;
+  height:calc(var(--cool,1) * 100%)!important;
+  background:linear-gradient(0deg,var(--weapon-a,rgba(154,229,255,.30)) 0%,transparent 100%)!important;
+  box-shadow:inset 0 1px 0 var(--weapon-glow,rgba(154,229,255,.3))!important;
+  opacity:.85!important;border-radius:0!important;
+  transition:height .3s ease!important;
+}
+.weapon-choice.cooling::after,.weapon-choice.ready-gun::after{width:100%!important}
+.weapon-choice .wpn-icon{
+  order:1!important;position:relative!important;z-index:1!important;
+  font-size:19px!important;line-height:1!important;flex:0 0 auto!important;
+  margin-bottom:auto!important;
+}
+.weapon-choice::before{
+  content:attr(data-status)!important;order:2!important;
+  position:relative!important;z-index:1!important;
+  display:block!important;margin-top:6px!important;
+  font:600 6.6px/1 'JetBrains Mono',monospace!important;letter-spacing:.06em!important;
+  color:rgba(232,179,128,.9)!important;
+}
+.weapon-choice.ready::before{color:rgba(93,255,157,.95)!important}
+.weapon-choice .wpn-rec{
+  position:absolute!important;top:4px!important;left:2px!important;right:2px!important;
+  z-index:1!important;text-align:center!important;
+  font:600 5px/1 'JetBrains Mono',monospace!important;letter-spacing:.1em!important;
+  color:rgba(93,255,157,.9)!important;opacity:0!important;
+}
+.weapon-choice.recommended .wpn-rec{opacity:1!important}
+.weapon-choice .wpn-info{
+  order:3!important;position:relative!important;z-index:1!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  gap:1px!important;margin-top:6px!important;width:100%!important;
+}
+.weapon-choice .wpn-info b{font-size:8.2px!important;letter-spacing:.04em!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
+.weapon-choice .wpn-info small{display:block!important;font-size:5.6px!important;letter-spacing:.03em!important;color:rgba(180,205,220,.55)!important;text-align:center!important}
+.weapon-choice.recommended{border-color:rgba(93,255,157,.6)!important;box-shadow:0 0 16px rgba(93,255,157,.14)!important}
+.weapon-choice.selected{
+  border-color:var(--weapon-b,rgba(154,229,255,.7))!important;
+  border-bottom-width:3px!important;
+  background:linear-gradient(0deg,rgba(154,229,255,.10),rgba(4,6,10,.55) 55%)!important;
+  box-shadow:0 0 16px rgba(0,0,0,.35)!important;
+}
+.weapon-choice.locked{animation:wpnLockedFlash .6s ease-in-out infinite!important}
+
+@media(max-width:860px){
+  .weapon-choice{padding:6px 2px 6px!important}
+  .weapon-choice .wpn-icon{font-size:15px!important}
+  .weapon-choice::before{font-size:5.6px!important;margin-top:4px!important}
+  .weapon-choice .wpn-info{margin-top:4px!important}
+  .weapon-choice .wpn-info b{font-size:6.8px!important}
+  .weapon-choice .wpn-info small{font-size:4.8px!important}
+}
+@media(max-width:480px){
+  .weapon-choice .wpn-info small{display:none!important}
+  .weapon-matrix{gap:4px!important}
+}
+
+/* ============================================================
+   U14b (2026-07-12) · Combat View follow-up: radar re-docked to
+   bottom-center (was bottom-left, U13b) and shrunk further to stay a
+   pure accent; battle feed revived as a compact top-right ticker
+   (was hidden entirely by U10's `#battleFeed{display:none!important}`
+   rule earlier in this file — this block's `.hud-pilot #battleFeed`
+   selector has higher specificity so it wins regardless of source
+   order, no need to touch that rule). */
+.pilot-radar-dock{
+  left:50%!important;right:auto!important;bottom:8px!important;
+  transform:translateX(-50%)!important;
+  width:64px!important;height:46px!important;
+}
+@media(max-width:860px){
+  .pilot-radar-dock{width:52px!important;height:38px!important}
+}
+.hud-pilot #battleFeed{
+  display:block!important;
+  position:absolute!important;top:8px!important;right:10px!important;left:auto!important;bottom:auto!important;
+  width:min(230px,42%)!important;height:auto!important;min-height:0!important;max-height:none!important;
+  padding:0!important;margin:0!important;background:none!important;border:0!important;
+  pointer-events:none!important;z-index:3!important;overflow:visible!important;
+}
+.hud-pilot #battleFeed .combat-kill-meter{display:none!important} /* already shown via #hudKillCount in the Defense Module header */
+.hud-pilot #battleFeed::before,.hud-pilot #battleFeed::after{display:none!important}
+.hud-pilot #battleFeed .feed-line{display:none!important} /* superseded by the stacked lines below */
+.hud-pilot #battleFeed .toast{
+  display:block!important;width:auto!important;text-align:right!important;
+  font:600 8px/1.4 'JetBrains Mono',monospace!important;letter-spacing:.02em!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  text-shadow:0 0 8px rgba(0,0,0,.75)!important;margin:0 0 3px!important;
+  animation:none!important;transform:none!important;position:static!important;
+}
+.hud-pilot #battleFeed .toast .sev-dot{display:none!important}
+.hud-pilot #battleFeed .toast:nth-of-type(n+4){display:none!important}
+.hud-pilot #battleFeed .toast:nth-of-type(1){opacity:.94!important}
+.hud-pilot #battleFeed .toast:nth-of-type(2){opacity:.62!important}
+.hud-pilot #battleFeed .toast:nth-of-type(3){opacity:.36!important}
+.hud-pilot #battleFeed .toast.sev-critical{color:#ff8f85!important}
+.hud-pilot #battleFeed .toast.sev-warning{color:#ffd17a!important}
+.hud-pilot #battleFeed .toast.sev-success{color:#8ff5b3!important}
+.hud-pilot #battleFeed .toast.sev-info{color:#cfe0ee!important}
+@media(max-width:860px){
+  /* mobile Combat View is precious real-estate (U13c: Command mode shows
+     ONLY Combat View) — keep the ticker desktop-only. */
+  .hud-pilot #battleFeed{display:none!important}
+}
+
+/* ============================================================
+   U14d (2026-07-12) · Commander Terminal moves onto the Combat View
+   screen. The old hud-right aside is gone from index.html entirely (its
+   #signalDeck child moved into .hud-pilot) — --hud-cols collapses from
+   3 tracks to 2 (Defense Module + Combat View), same final-override
+   convention as U13b's own comment describes ("deliberately the last
+   one"): adding one more :root block after it wins by source order
+   without editing that block's explanatory comment in place.
+
+   Desktop: overlay is absolutely positioned, filling .hud-pilot, hidden
+   (opacity 0 + pointer-events none) until body.terminal-open is set by
+   terminalStarMap.js's #pilotFeed click handler. */
+:root{
+  --hud-cols: minmax(320px,.30fr) minmax(760px,.70fr) !important;
+}
+/* .pilot-terminal-overlay is layered onto the existing .hud-panel.hud-right
+   classes (kept on this element for the ~15 historical `.hud-right ...`
+   sizing rules, see the index.html comment) — this is purely the new
+   "dock it inside Combat View, hidden until opened" behavior, desktop
+   only. Mobile (≤860px) needs NO extra rule here: the pre-existing
+   `.hud-right{width:0;height:0;visibility:hidden;...}` block further up
+   this file already zero-sizes and hides it there (it was written for
+   exactly this "invisible but let #captainTerminal punch through"
+   purpose back in U12d), and terminalStarMap.js's click-to-open handler
+   is itself gated to skip on mobile — so the two mechanisms never touch. */
+@media(min-width:861px){
+  .pilot-terminal-overlay{
+    position:absolute!important;inset:0!important;height:100%!important;z-index:6;
+    opacity:0;pointer-events:none;
+    transition:opacity .22s ease;
+  }
+  body.terminal-open .pilot-terminal-overlay{
+    opacity:1;pointer-events:auto;
+  }
+}

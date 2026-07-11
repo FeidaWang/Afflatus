@@ -1,8 +1,12 @@
 /**
- * Commander Terminal panel: STAR MAP <-> LOGIN.
+ * Commander Terminal panel: STAR MAP <-> LOGIN, internally — but since
+ * U14d (2026-07-12) the whole panel is a hidden overlay docked inside
+ * Combat View (.pilot-terminal-overlay), not a permanent HUD column.
+ * Click Combat View to open straight into the Private Voyage Log (login
+ * form); the ✕ closes the overlay entirely (see closeOverlay() below).
  * The map page is the enhanced Alphard star map (starMapScene): rotating
- * field, nebulae, Earth->Alphard route pulse, radar sweep, glowing labels.
- * Login form and toggle behavior unchanged.
+ * field, nebulae, Earth->Alphard route pulse, radar sweep, glowing labels
+ * — still reachable via the STAR MAP toggle while the overlay is open.
  *
  * The login-screen ship hologram is a WebGL model (scene/shipHologram.js,
  * dynamically imported so three stays code-split out of the main bundle).
@@ -61,8 +65,13 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     const close = make('button', 'afpc-close');
     close.type = 'button';
     close.textContent = '✕';
-    close.setAttribute('aria-label', getLang() === 'zh' ? '关闭 · 返回星图' : 'Close · Star Map');
-    close.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
+    close.setAttribute('aria-label', getLang() === 'zh' ? '关闭 · 返回战斗视角' : 'Close · Back to Combat View');
+    // U14d: closes the whole overlay (not just "switch to star-map while
+    // staying open" as before) — closeOverlay is declared further down in
+    // this same function, but since this only runs on a future click (long
+    // after initTerminalStarMap has finished executing top-to-bottom), the
+    // const is already assigned by the time anyone actually clicks ✕.
+    close.addEventListener('click', e => { e.stopPropagation(); closeOverlay(); });
     const title = make('span', 'afpc-title');
     title.textContent = 'Private Voyage Log';
     head.append(close, title);
@@ -94,15 +103,37 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     login.appendChild(pc);
   }
 
-  setMode(true);   // default: the star-map wallpaper
+  setMode(true);   // default internal state: star-map wallpaper (paused/hidden until opened)
+
+  // U14d (2026-07-12): the terminal used to be a permanent "hud-right"
+  // column, always on screen, flipping between star-map wallpaper and
+  // login form. It's now an overlay docked inside Combat View
+  // (.pilot-terminal-overlay, see styles.css) that's hidden by default —
+  // clicking Combat View opens it AND jumps straight to the Private
+  // Voyage Log (login form), matching what the user actually asked for
+  // ("show the log, not the map, behind Combat View"). body.terminal-open
+  // is the single source of truth for open/closed, same pattern as the
+  // existing body.warp-hover/body.hud-off global toggles.
+  const closeOverlay = () => {
+    document.body.classList.remove('terminal-open');
+    setMode(true);   // reset to star-map (pauses the ship hologram) for next open
+  };
   // U13b (2026-07-11): trigger moved from "click the star map" to "click
   // Combat View" (#pilotFeed, a different panel entirely now that the
   // radar has merged into it) — the star map itself no longer opens the
-  // terminal on click, only the toggle button (✕ / STAR MAP) closes it.
+  // terminal on click, only the ✕ close button (below) closes it.
   const pilotFeed = document.getElementById('pilotFeed');
   if (pilotFeed) {
     pilotFeed.style.cursor = 'pointer';
-    pilotFeed.addEventListener('click', () => setMode(false));
+    pilotFeed.addEventListener('click', () => {
+      // Mobile has its own independent entry point (U12d's Defense Module
+      // "LOG" toggle -> body.mobile-log-open) — this click-to-open path is
+      // desktop-only so the two toggle mechanisms never fight over the
+      // same #captainTerminal/body-class state.
+      if (matchMedia('(max-width:860px)').matches) return;
+      document.body.classList.add('terminal-open');
+      setMode(false);   // land on the Private Voyage Log, not the star-map wallpaper
+    });
   }
   toggle.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
 
