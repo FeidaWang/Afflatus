@@ -175,7 +175,7 @@ import { renderTrackRecordHTML } from '../lib/trackRecord.js';
   function renderRecord() {
     const host = $('record'); if (!host) return;
     const r = data && data.record;
-    const html = renderTrackRecordHTML(r, { T, fableIcon: FABLE_ICON, exactLabel: { en: 'exact scorelines', zh: '比分全中' } });
+    const html = renderTrackRecordHTML(r, { T, fableIcon: FABLE_ICON, exactLabel: { en: 'exact scorelines', zh: '比分全中' }, title: { en: 'FABLE HISTORICAL RECORD', zh: 'FABLE 历史战绩' } });
     if (!html) { host.innerHTML = ''; host.style.display = 'none'; return; }
     host.style.display = '';
     host.innerHTML = html;
