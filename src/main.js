@@ -209,7 +209,8 @@ function updateCommandButton(){
     {path:'/',en:'Home',zh:'首页'},{path:'/arena.html',en:'Arena',zh:'竞技场'},
     {path:'/sectors.html',en:'Sectors',zh:'板块'},{path:'/signal.html',en:'Signal',zh:'信号'},
     {path:'/games.html',en:'Games',zh:'竞猜'},{path:'/league.html',en:'Leagues',zh:'电竞'},
-    {path:'/horoscope.html',en:'Horoscope',zh:'观星'},{path:'/serial.html',en:'Novels',zh:'小说'}
+    {path:'/horoscope.html',en:'Horoscope',zh:'观星'},{path:'/serial.html',en:'Novels',zh:'小说'},
+    {path:'/course.html',en:'Course',zh:'课程'}
   ];
   const norm=(p)=>{p=(p||'/').replace(/index\.html$/,'');return p===''?'/':p;};
   const here=norm(location.pathname);
@@ -417,6 +418,8 @@ function updateCombatModule(){
   if(killCounter) killCounter.textContent=String(killCount);
   const battleFeed=document.getElementById('battleFeed');
   if(battleFeed) battleFeed.dataset.kills=String(killCount);
+  const hudKillCount=document.getElementById('hudKillCount');
+  if(hudKillCount) hudKillCount.textContent=String(killCount);
   const airborneFighters=escorts.filter(e=>e.type!=='b2'&&e.state!=='return'&&e.state!=='returnBoost').length;
   const airborneBombers=escorts.filter(e=>e.type==='b2'&&e.state!=='return'&&e.state!=='returnBoost').length;
   const fighterStock=document.getElementById('fighterStock');
@@ -640,166 +643,82 @@ function drawRadar(){
     document.body.classList.remove('radar-sweeping');
   }
   const sweepA=radarState.phase;
-  const dialR=min*.488, radarR=min*.350, headingTextR=min*.454, hourR=min*.320;
-  const gear=(gx,gy,r,teeth,rot,alpha)=>{
-    rctx.save();
-    rctx.translate(gx,gy);rctx.rotate(rot);rctx.globalAlpha=alpha;
-    rctx.strokeStyle='rgba(217,169,86,.62)';rctx.lineWidth=.75;
-    rctx.beginPath();
-    for(let i=0;i<teeth*2;i++){
-      const a=i*Math.PI/teeth, rr=i%2?r*.9:r;
-      const x=Math.cos(a)*rr,y=Math.sin(a)*rr;
-      if(!i) rctx.moveTo(x,y); else rctx.lineTo(x,y);
-    }
-    rctx.closePath();rctx.stroke();
-    rctx.strokeStyle='rgba(230,236,226,.32)';
-    rctx.beginPath();rctx.arc(0,0,r*.58,0,Math.PI*2);rctx.stroke();
-    for(let i=0;i<6;i++){const a=i*Math.PI/3;rctx.beginPath();rctx.moveTo(Math.cos(a)*r*.2,Math.sin(a)*r*.2);rctx.lineTo(Math.cos(a)*r*.52,Math.sin(a)*r*.52);rctx.stroke();}
-    rctx.restore();
-  };
+  // U9 (2026-07-11): "左侧雷达换全息扫描盘" — the brass pocket-watch dial
+  // (gears/case/hour numerals/date windows/PATEK PHILIPPE branding, ~160
+  // lines) is replaced with a borderless holographic scan disc (station
+  // screenshot reference): an elliptically-squashed perspective disc
+  // (concentric rings + sweep wedge + rim points + amber primary-target
+  // flame/pin/beam), all additive-blended, no hard rim/case anywhere.
+  // Scope note: the player-ship silhouette + cannon fx + the three analog
+  // gauges (IAS/CORE/ATT) further below in this same function are a
+  // separate feature (not the "机械齿轮" the screenshot complained about)
+  // and are intentionally left untouched — they now float over the new
+  // disc instead of the old brass case. `radarR` is kept as the shared
+  // variable name the contact-blip loop below already reads (its value +
+  // the loop's y-coordinate are the only two edits needed there to match
+  // the new ellipse — see the `*ELLIPSE` added at that loop).
+  const ELLIPSE=.42, radarR=min*.46;
   rctx.save();
-  rctx.globalCompositeOperation='screen';
-  gear(-min*.16,-min*.03,min*.155,28,now/4800,.20);
-  gear(min*.13,min*.11,min*.115,22,-now/3900,.16);
-  gear(min*.02,-min*.19,min*.085,18,now/3400,.14);
-  rctx.restore();
-
-  const caseGrad=rctx.createRadialGradient(0,0,min*.20,0,0,min*.505);
-  caseGrad.addColorStop(0,'rgba(8,13,18,.46)');
-  caseGrad.addColorStop(.56,'rgba(220,226,214,.035)');
-  caseGrad.addColorStop(.78,'rgba(232,179,128,.13)');
-  caseGrad.addColorStop(1,'rgba(64,42,22,.26)');
-  rctx.fillStyle=caseGrad;rctx.beginPath();rctx.arc(0,0,min*.502,0,Math.PI*2);rctx.fill();
-  rctx.strokeStyle='rgba(232,179,128,.62)';rctx.lineWidth=1.15;rctx.beginPath();rctx.arc(0,0,dialR,0,Math.PI*2);rctx.stroke();
-  rctx.strokeStyle='rgba(238,231,210,.40)';rctx.lineWidth=.75;rctx.beginPath();rctx.arc(0,0,min*.406,0,Math.PI*2);rctx.stroke();
-  rctx.strokeStyle='rgba(232,179,128,.28)';rctx.lineWidth=.65;rctx.beginPath();rctx.arc(0,0,min*.366,0,Math.PI*2);rctx.stroke();
-  const rimGlow=clamp((radarState.glowUntil-now)/980,0,1);
-  if(rimGlow>0){
-    rctx.save();
-    rctx.globalCompositeOperation='lighter';
-    rctx.shadowBlur=18*rimGlow;
-    rctx.shadowColor='rgba(176,232,255,.9)';
-    rctx.strokeStyle=`rgba(170,232,255,${.08+.42*rimGlow})`;
-    rctx.lineWidth=2.6*rimGlow;
-    rctx.beginPath();rctx.arc(0,0,min*.462,0,Math.PI*2);rctx.stroke();
-    rctx.strokeStyle=`rgba(232,179,128,${.10+.28*rimGlow})`;
-    rctx.lineWidth=1.2;
-    rctx.beginPath();rctx.arc(0,0,min*.490,0,Math.PI*2);rctx.stroke();
-    rctx.restore();
-  }
-
-  for(let deg=0;deg<360;deg+=5){
-    const a=(deg-90)*Math.PI/180, major=deg%30===0, mid=deg%10===0;
-    const r1=min*(major ? .456 : mid ? .466 : .474), r2=min*.488;
-    rctx.strokeStyle=major?'rgba(238,231,210,.64)':mid?'rgba(232,179,128,.42)':'rgba(238,231,210,.22)';
-    rctx.lineWidth=major ? .9 : .42;
-    rctx.beginPath();rctx.moveTo(Math.cos(a)*r1,Math.sin(a)*r1);rctx.lineTo(Math.cos(a)*r2,Math.sin(a)*r2);rctx.stroke();
-  }
-  rctx.save();
-  rctx.textAlign='center';rctx.textBaseline='middle';
-  rctx.fillStyle='rgba(238,231,210,.70)';
-  rctx.font=`600 ${Math.max(4.5,min*.014)}px 'JetBrains Mono',monospace`;
-  for(let deg=0;deg<360;deg+=30){
-    const a=(deg-90)*Math.PI/180;
-    if(radarScanning && Math.abs(angleDelta(sweepA,a))<.10){
-      rctx.save();rctx.globalCompositeOperation='lighter';rctx.shadowBlur=8;rctx.shadowColor='rgba(154,229,255,.75)';
-      rctx.fillStyle='rgba(214,248,255,.90)';rctx.fillText(String(deg).padStart(3,'0'),Math.cos(a)*headingTextR,Math.sin(a)*headingTextR);rctx.restore();
-    }
-    rctx.fillText(String(deg).padStart(3,'0'),Math.cos(a)*headingTextR,Math.sin(a)*headingTextR);
-  }
-  rctx.restore();
-  for(let sec=0;sec<60;sec++){
-    const a=sec*Math.PI/30-Math.PI/2, major=sec%5===0;
-    const r1=min*(major ? .384 : .393), r2=min*.404;
-    rctx.strokeStyle=major?'rgba(232,179,128,.52)':'rgba(238,231,210,.20)';
-    rctx.lineWidth=major ? .65 : .34;
-    rctx.beginPath();rctx.moveTo(Math.cos(a)*r1,Math.sin(a)*r1);rctx.lineTo(Math.cos(a)*r2,Math.sin(a)*r2);rctx.stroke();
-  }
-  rctx.save();
-  rctx.textAlign='center';rctx.textBaseline='middle';
-  rctx.fillStyle='rgba(232,179,128,.52)';
-  rctx.font=`500 ${Math.max(3.8,min*.012)}px 'JetBrains Mono',monospace`;
-  [0,10,20,30,40,50].forEach(sec=>{
-    const a=sec*Math.PI/30-Math.PI/2, label=sec===0?'60':String(sec);
-    rctx.fillText(label,Math.cos(a)*min*.375,Math.sin(a)*min*.375);
-  });
-  rctx.restore();
-  rctx.save();
-  rctx.fillStyle='rgba(245,230,198,.88)';
-  rctx.shadowBlur=5;
-  rctx.shadowColor='rgba(232,179,128,.32)';
-  rctx.font=`700 ${Math.max(10,min*.052)}px Georgia, 'Times New Roman', serif`;
-  rctx.textAlign='center';rctx.textBaseline='middle';
-  [
-    ['12',12],['1',1],['2',2],['4',4],['8',8],['10',10],['11',11]
-  ].forEach(([txt,hour])=>{
-    const normalized=hour===12?0:hour;
-    const a=normalized/12*Math.PI*2-Math.PI/2;
-    if(radarScanning && Math.abs(angleDelta(sweepA,a))<.11){
-      rctx.save();
-      rctx.globalCompositeOperation='lighter';
-      rctx.shadowBlur=14;
-      rctx.shadowColor='rgba(196,244,255,.92)';
-      rctx.fillStyle='rgba(232,250,255,.96)';
-      rctx.fillText(txt,Math.cos(a)*hourR,Math.sin(a)*hourR);
-      rctx.restore();
-    }
-    rctx.fillText(txt,Math.cos(a)*hourR,Math.sin(a)*hourR);
-  });
-  rctx.restore();
-  const headingRad=((parseFloat(navDeg)||128)-90)*Math.PI/180;
-  rctx.save();rctx.rotate(headingRad);
-  rctx.strokeStyle='rgba(154,229,255,.86)';rctx.lineWidth=1.6;
-  rctx.beginPath();rctx.moveTo(0,-min*.448);rctx.lineTo(0,-min*.386);rctx.stroke();
-  rctx.restore();
-
-  rctx.save();
-  rctx.textAlign='center';rctx.textBaseline='middle';
-  rctx.fillStyle='rgba(238,231,210,.072)';rctx.strokeStyle='rgba(232,179,128,.45)';rctx.lineWidth=1;
-  const winW=min*.104, winH=min*.050, winY=-min*.205;
-  [['SAT',-winW*.58],['NOV',winW*.58]].forEach(([txt,wx])=>{
-    rctx.fillRect(wx-winW/2,winY-winH/2,winW,winH);
-    rctx.strokeRect(wx-winW/2,winY-winH/2,winW,winH);
-    rctx.fillStyle='rgba(250,238,214,.90)';
-    rctx.font=`700 ${Math.max(5.6,min*.026)}px Georgia, 'Times New Roman', serif`;
-    rctx.fillText(txt,wx,winY);
-    rctx.fillStyle='rgba(238,231,210,.072)';
-  });
-  rctx.fillStyle='rgba(250,238,214,.86)';
-  rctx.shadowBlur=4;
-  rctx.shadowColor='rgba(232,179,128,.28)';
-  rctx.font=`700 ${Math.max(4.8,min*.021)}px Georgia, 'Times New Roman', serif`;
-  rctx.fillText('PATEK PHILIPPE & CO',0,-min*.150,min*.245);
-  rctx.font=`600 ${Math.max(4.2,min*.017)}px Georgia, 'Times New Roman', serif`;
-  rctx.fillText('GENEVE',0,-min*.128,min*.160);
-  rctx.restore();
-
-  rctx.strokeStyle='rgba(141,180,192,.13)'; rctx.lineWidth=.85;
-  for(let i=1;i<=4;i++){ rctx.beginPath();rctx.arc(0,0,(radarR*.23)*i,0,Math.PI*2);rctx.stroke(); }
-  rctx.strokeStyle='rgba(141,180,192,.12)';rctx.lineWidth=.8;
-  [[0,-1],[0,1],[-1,0],[1,0]].forEach(([dx,dy])=>{
-    rctx.beginPath();rctx.moveTo(0,0);rctx.lineTo(dx*radarR*.82,dy*radarR*.82);rctx.stroke();
-  });
-  rctx.strokeStyle='rgba(232,179,128,.68)'; rctx.beginPath();rctx.arc(0,0,radarR,0,Math.PI*2);rctx.stroke();
+  rctx.scale(1,ELLIPSE);
+  const body=rctx.createRadialGradient(0,0,radarR*.1,0,0,radarR);
+  body.addColorStop(0,'rgba(80,220,200,.10)');
+  body.addColorStop(.7,'rgba(60,200,190,.05)');
+  body.addColorStop(1,'rgba(60,200,190,0)');
+  rctx.fillStyle=body;rctx.beginPath();rctx.arc(0,0,radarR,0,Math.PI*2);rctx.fill();
+  rctx.strokeStyle='rgba(120,230,215,.22)';rctx.lineWidth=1;
+  for(let i=1;i<=4;i++){rctx.beginPath();rctx.arc(0,0,radarR*i/4,0,Math.PI*2);rctx.stroke();}
   if(radarScanning){
-    rctx.save();
-    rctx.globalCompositeOperation='lighter';
-    rctx.strokeStyle='rgba(176,232,255,.76)'; rctx.lineWidth=1.7;
-    rctx.beginPath(); rctx.moveTo(0,0); rctx.lineTo(Math.cos(sweepA)*radarR,Math.sin(sweepA)*radarR); rctx.stroke();
-    const sweep = rctx.createRadialGradient(0,0,0,0,0,radarR);
-    sweep.addColorStop(0,'rgba(141,180,192,.015)'); sweep.addColorStop(.72,'rgba(141,180,192,.025)'); sweep.addColorStop(1,'rgba(154,229,255,.16)');
-    rctx.fillStyle=sweep; rctx.beginPath(); rctx.moveTo(0,0); rctx.arc(0,0,radarR,sweepA-0.052,sweepA+0.052); rctx.closePath(); rctx.fill();
-    const tipX=Math.cos(sweepA)*radarR, tipY=Math.sin(sweepA)*radarR;
-    const tip=rctx.createRadialGradient(tipX,tipY,0,tipX,tipY,min*.045);
-    tip.addColorStop(0,'rgba(232,250,255,.72)');tip.addColorStop(1,'rgba(154,229,255,0)');
-    rctx.fillStyle=tip;rctx.beginPath();rctx.arc(tipX,tipY,min*.045,0,Math.PI*2);rctx.fill();
+    rctx.save();rctx.globalCompositeOperation='lighter';
+    const wedge=rctx.createRadialGradient(0,0,0,0,0,radarR);
+    wedge.addColorStop(0,'rgba(140,255,230,.30)');wedge.addColorStop(1,'rgba(140,255,230,0)');
+    rctx.fillStyle=wedge;
+    rctx.beginPath();rctx.moveTo(0,0);rctx.arc(0,0,radarR,sweepA-.5,sweepA+.02);rctx.closePath();rctx.fill();
     rctx.restore();
-  }else{
+  }
+  rctx.fillStyle='rgba(232,250,255,.7)';
+  for(let i=0;i<14;i++){
+    const a=i*(Math.PI*2/14)+Math.sin(i*3.1)*.12;
+    const r=radarR*(.72+((i*53)%17)/60);
+    rctx.globalAlpha=.35+.5*((i*29)%10)/10;
+    rctx.beginPath();rctx.arc(Math.cos(a)*r,Math.sin(a)*r,1.1,0,Math.PI*2);rctx.fill();
+  }
+  rctx.globalAlpha=1;
+  rctx.restore();   // undo the ELLIPSE squash before drawing anything non-elliptical
+
+  if(halley&&!halley.destroyed){
+    const dx=(halley.curX-innerWidth/2)/innerWidth, dy=(halley.curY-innerHeight/2)/innerHeight;
+    const tAng=Math.atan2(dy,dx), tDist=clamp(Math.hypot(dx,dy)*1.8,.08,.92);
+    const bx=Math.cos(tAng)*radarR*tDist, by=Math.sin(tAng)*radarR*tDist*ELLIPSE;
+    rctx.save();rctx.globalCompositeOperation='lighter';
+    const flame=rctx.createRadialGradient(bx,by,0,bx,by,min*.05);
+    flame.addColorStop(0,'rgba(255,205,128,.9)');flame.addColorStop(1,'rgba(255,140,60,0)');
+    rctx.fillStyle=flame;rctx.beginPath();rctx.arc(bx,by,min*.05,0,Math.PI*2);rctx.fill();
+    const beam=rctx.createLinearGradient(bx,by,bx,radarR*ELLIPSE*1.3);
+    beam.addColorStop(0,'rgba(154,229,255,.5)');beam.addColorStop(1,'rgba(154,229,255,0)');
+    rctx.strokeStyle=beam;rctx.lineWidth=1.2;
+    rctx.beginPath();rctx.moveTo(bx,by);rctx.lineTo(bx,radarR*ELLIPSE*1.3);rctx.stroke();
+    rctx.restore();
+    rctx.strokeStyle='rgba(255,255,255,.85)';rctx.lineWidth=1;
+    rctx.beginPath();rctx.moveTo(bx,by-min*.045);rctx.lineTo(bx,by-min*.018);rctx.stroke();
+  }
+
+  const navDegNum=Math.round(parseFloat(navDeg)||128);
+  const primaryKm=halley&&!halley.destroyed?(Math.hypot(halley.curX-innerWidth/2,halley.curY-innerHeight/2)/Math.min(innerWidth,innerHeight)*9).toFixed(1):'--';
+  rctx.save();
+  rctx.textAlign='center';rctx.textBaseline='middle';
+  rctx.font=`${Math.max(7,min*.024)}px 'JetBrains Mono',monospace`;
+  rctx.fillStyle='rgba(200,245,235,.72)';
+  rctx.fillText(`${navDegNum}度`,-radarR*.26,radarR*ELLIPSE+16);
+  rctx.fillStyle='rgba(200,245,235,.55)';
+  rctx.fillText(`${primaryKm}km`,radarR*.30,radarR*ELLIPSE+16);
+  rctx.restore();
+
+  if(!radarScanning){
     rctx.save();
-    rctx.fillStyle='rgba(232,179,128,.52)';
+    rctx.fillStyle='rgba(120,230,215,.5)';
     rctx.font=`${Math.max(4.2,min*.016)}px 'JetBrains Mono',monospace`;
     rctx.textAlign='center';rctx.textBaseline='middle';
-    rctx.fillText(currentLang==='zh'?'静默守望':'SILENT WATCH',0,min*.105);
+    rctx.fillText(currentLang==='zh'?'静默守望':'SILENT WATCH',0,0);
     rctx.restore();
   }
 
@@ -952,8 +871,9 @@ function drawRadar(){
   });
   for(const [id,c] of [...radarState.contacts.entries()]){
     if(c.seen<performance.now()){radarState.contacts.delete(id);continue;}
+    if(c.kind==='comet') continue;   // U9: comet gets its own amber flame+pin+beam marker above, not a second blip
     const fade=clamp((c.seen-performance.now())/2200,0,1);
-    const rr=radarR*c.dist, x=Math.cos(c.ang)*rr, y=Math.sin(c.ang)*rr;
+    const rr=radarR*c.dist, x=Math.cos(c.ang)*rr, y=Math.sin(c.ang)*rr*ELLIPSE;   // U9: squashed to match the elliptical disc
     const palette={
       comet:['rgba(255,45,62,', '#ff2d3e'],
       ally:['rgba(93,255,157,', '#5dff9d'],
@@ -2838,6 +2758,7 @@ const combatHmdV3=createCombatHmdV3({
   pilotTrackedPoint,
   getKillCount:()=>killCount,
   getGiantKillCount:()=>giantKillCount,
+  getEscorts:()=>escorts,
 });
 function drawPilotHmd(ctx,w,h,now,label,mode){
   const missileLike=mode==='missile'||mode==='nukeAuth'||mode==='nemp';
@@ -3500,6 +3421,7 @@ function updateSignalDeckHud(){
 /* ===== LANGUAGE SWITCH (修复动画重置 Bug) ===== */
 function setLang(lang){
   currentLang=lang; try{localStorage.setItem('afflatus-lang',lang);}catch(e){}
+  const langMini=document.getElementById('langMiniToggle'); if(langMini) langMini.dataset.active=lang;
   const c=COPY[lang]; document.title=c.title; document.documentElement.lang=c.lang; document.getElementById('langBtn').textContent=c.langBtn;
   updateCommandButton(); updateJumpButton();
   document.getElementById('heroNum').innerHTML=c.heroNum; document.getElementById('heroTitle').innerHTML=c.heroTitle; document.getElementById('heroDesc').textContent=c.heroDesc; document.getElementById('coord').textContent=c.coord; document.getElementById('scrollHint').textContent=c.scrollHint;
@@ -3554,8 +3476,36 @@ langBtn.addEventListener('click',event=>{
   langSetTimer=setTimeout(()=>setLang(nextLang),140);
   langFoldTimer=setTimeout(()=>{document.body.classList.remove('folding'); if(!langBtn.matches(':hover')) warpTarget=.18;},540);
 });
+// U12c (2026-07-11): mobile top-bar EN/CN mini toggle — no separate language
+// state, just forwards to the same langBtn click handler above so setLang()
+// stays the single source of truth (storage key, full-page text swap, warp
+// fold transition all reused as-is).
+document.getElementById('langMiniToggle')?.addEventListener('click',event=>{
+  event.preventDefault();
+  langBtn.click();
+});
 setLang(currentLang);
-initTerminalStarMap({getLang:()=>currentLang});
+const terminalStarMapCtl=initTerminalStarMap({getLang:()=>currentLang});
+// U12d (2026-07-11): mobile drops the star-map "upper layer" entirely (perf —
+// its rAF draw loop only runs while .terminal-starmap has the 'active' class,
+// see terminalStarMap.js) and folds the Private Voyage Log into the Defense
+// Module behind a single toggle instead. Deactivating the map on boot (mobile
+// only; desktop keeps its default star-map-first behaviour untouched) stops
+// that draw loop before it ever starts, not just hides it visually.
+if(matchMedia('(max-width:860px)').matches) terminalStarMapCtl?.setMode(false);
+const voyageLogToggle=document.getElementById('voyageLogToggle');
+voyageLogToggle?.addEventListener('click',(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  const opening=!document.body.classList.contains('mobile-log-open');
+  document.body.classList.toggle('mobile-log-open',opening);
+  const boot=document.getElementById('voyageLogBoot');
+  if(opening && boot){
+    boot.classList.remove('play');
+    void boot.offsetWidth;
+    boot.classList.add('play');
+  }
+});
 function pulseVoyageIndicator(){
   const el=document.getElementById('voyagePulse');
   if(!el) return;

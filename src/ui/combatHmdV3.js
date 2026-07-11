@@ -20,11 +20,16 @@
 import { clamp, lerp, rand } from '../utils/math.js';
 import {
   HMD,
-  cornerFrame as hmdCornerFrame,
   cometTarget as hmdComet,
-  targetBracket as hmdBracket,
   statusChip as hmdStatusChip,
 } from './hmdMinimal.js';
+// U8 (2026-07-11): hmdCornerFrame/hmdBracket (hmdMinimal's cornerFrame/
+// targetBracket) are no longer used by this view — the "Combat HUD 减法
+// 改造" pass replaces the corner-frame + 4-corner SC bracket with a plain
+// square (see drawTargetFrame below) and drops the corner-tick frame
+// entirely. Both are still imported and used as-is by main.js's other HUD
+// path, so hmdMinimal.js itself is untouched — only this file's now-unused
+// import aliases were removed.
 
 /* ── SC-reference HUD primitives (V17b, per user screenshot 2) ─────────────
    Replaces hmdMinimal's headingTape/boresight for THIS view only: a dense
@@ -363,8 +368,9 @@ export function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
  * @param {(w:number,h:number,mode?:string) => object} deps.pilotTrackedPoint
  * @param {() => number} [deps.getKillCount] - real kill count (mission panel)
  * @param {() => number} [deps.getGiantKillCount] - real giant-class kill count
+ * @param {() => Array} [deps.getEscorts] - live escort array (U8 contact swarm)
  */
-export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, pilotTrackedPoint, getKillCount, getGiantKillCount }){
+export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, pilotTrackedPoint, getKillCount, getGiantKillCount, getEscorts }){
 
   /** Flight-path marker, SC style (V17b): a small bracket-dot secondary marker
    *  ( ⌐ · ¬ ) drifting slightly off boresight — no ghost line, no circle. */
@@ -384,27 +390,41 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.restore();
   }
 
-  /** Target health bars (shield + armor) rendered below the SC bracket. */
-  function drawTargetHealthBars(ctx,cx,cy,bracketS,now){
+  /** U8 (2026-07-11): central target frame — replaces the old 4-corner SC
+   *  bracket + separate shield/armor bars + shield-quadrant grid with a
+   *  single plain thin-line square (screenshot reference), a short
+   *  code/range label beside it, and a two-line designation + range[closing
+   *  speed] readout below, plus one thin hull bar. Closing speed is read
+   *  from the comet's own real vx/vy (scaled for display), not fabricated;
+   *  hull % is the same single real hp value the old bars/quadrant-grid used
+   *  — this just stops fanning one number out into four fake quadrants. */
+  function drawTargetFrame(ctx,cx,cy,size,rangeM,locked){
     const halley=getHalley();
     if(!halley||halley.destroyed) return;
-    const maxHp=200, hp=clamp(halley.hp||100,0,maxHp);
-    const shd=clamp(hp/maxHp,0,1);
-    const arm=clamp(hp/maxHp*.82+.18,0,1);   // armor degrades slower than shield
-    const bw=bracketS*2.2, bh=3.5;
-    const bx=cx-bracketS*1.1, by=cy+bracketS*1.38;
-    const fs=Math.max(6,Math.min(8,bw*.065));
+    const vx=halley.vx||0, vy=halley.vy||0;
+    const closingMs=Math.round(Math.hypot(vx,vy)*180);
+    const rangeKm=(rangeM/1000).toFixed(1);
     ctx.save();
+    ctx.strokeStyle=locked?'rgba(255,205,128,.92)':'rgba(226,246,255,.82)';
+    ctx.lineWidth=1.1;
+    ctx.strokeRect(cx-size,cy-size,size*2,size*2);
+    const fs=Math.max(7,Math.min(9,size*.24));
     ctx.font=`${fs}px 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='middle';
-    // Shield (blue)
-    ctx.fillStyle='rgba(120,200,255,.18)';ctx.fillRect(bx,by,bw,bh);
-    ctx.fillStyle='rgba(120,200,255,.72)';ctx.fillRect(bx,by,bw*shd,bh);
-    ctx.fillStyle='rgba(148,228,255,.44)';ctx.fillText(`SHD ${Math.round(shd*100)}%`,bx,by-5);
-    // Armor (amber)
-    ctx.fillStyle='rgba(255,205,128,.18)';ctx.fillRect(bx,by+bh+3,bw,bh);
-    ctx.fillStyle='rgba(255,205,128,.64)';ctx.fillRect(bx,by+bh+3,bw*arm,bh);
-    ctx.fillStyle='rgba(255,205,128,.40)';ctx.fillText(`ARM ${Math.round(arm*100)}%`,bx,by+bh+3+bh+5);
+    ctx.fillStyle='rgba(226,246,255,.78)';
+    ctx.fillText(`HALLEY · ${rangeKm}km`,cx+size+8,cy-size*.35);
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillStyle='rgba(226,246,255,.92)';
+    ctx.fillText('1P/HALLEY',cx,cy+size+8);
+    ctx.font=`${fs*.9}px 'JetBrains Mono',monospace`;
+    ctx.fillStyle='rgba(180,225,255,.64)';
+    ctx.fillText(`${rangeKm}km [${closingMs}m/s]`,cx,cy+size+8+fs*1.3);
+    // single hull bar, below the two text lines
+    const maxHp=200, hp=clamp(halley.hp||100,0,maxHp), pct=hp/maxHp;
+    const bw=size*1.5, bx=cx-bw/2, by=cy+size+8+fs*2.9, bh=2;
+    ctx.fillStyle='rgba(148,228,255,.18)';ctx.fillRect(bx,by,bw,bh);
+    ctx.fillStyle=pct<.3?'rgba(255,120,112,.78)':'rgba(148,228,255,.62)';
+    ctx.fillRect(bx,by,bw*pct,bh);
     ctx.restore();
   }
 
@@ -433,112 +453,136 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.restore();
   }
 
-  /** Shield quadrant grid — ported from the SC reference-image strength noted
-   *  in ROADMAP §4b item 3 (previously only sketched for the demoted
-   *  combatHudSC skin, never implemented there or here). Four cells (FORE/AFT/
-   *  PORT/STBD), stacked directly below the health/armor bars (V17c: was
-   *  beside the bracket's own name/range labels, which collided at small
-   *  sizes — see ROADMAP note). The game only tracks one scalar target HP,
-   *  not real per-quadrant damage, so — same honesty level as
-   *  drawTargetHealthBars' derived armor% — each quadrant fans that single
-   *  real value out with a small deterministic per-quadrant offset (seeded by
-   *  quadrant index + slow time drift) rather than inventing 4 independent
-   *  fake health pools. Skips silently once the target is destroyed. */
-  function drawShieldQuadrantGrid(ctx,cx,cy,bracketS,now){
-    const halley=getHalley();
-    if(!halley||halley.destroyed) return;
-    const maxHp=200, hp=clamp(halley.hp||100,0,maxHp), base=hp/maxHp;
-    const labels=['FORE','AFT','PORT','STBD'];
-    const cellW=bracketS*1.05, cellH=bracketS*.62, gap=4;
-    // below the health/armor bars (which end ~cy+1.38·bracketS+15), not
-    // beside the bracket's labels (which can extend to cx+1.5·bracketS+6+text)
-    const gx=cx-bracketS*1.1, gy=cy+bracketS*1.38+30;
-    const fs=Math.max(6,Math.min(8,bracketS*.13));
+  /** U8 (2026-07-11): surrounding multi-target labels (screenshot reference:
+   *  DEEP-SPACE-KING / WARMASTAR / PYL-G-5083-TJ style — plain two-line
+   *  name+distance, no box, no other decoration). Real escorts are used
+   *  first (their actual craft type — F-47/B-2/B-1B are the site's real
+   *  wingman types, see the weapon-select copy); this 2D HUD has no 3D
+   *  projection of escort world-position, so their on-screen slot is a
+   *  fixed, deterministically-drifting position rather than an invented
+   *  screen coordinate claiming to be a real projection — same honesty
+   *  tier as the rest of this module's cosmetic-but-not-random readouts.
+   *  Remaining slots (if escorts are light or grounded) are filled from a
+   *  small fixed decorative name pool, not freshly invented per frame. */
+  const CONTACT_FILLER=[
+    ['DEEP-SPACE-KING',2.1],['WARMASTAR',2.3],['PT-1402',2.4],['LUCKYMO',2.7],['PYL-G-5083-TJ',2.2],
+  ];
+  const CONTACT_SLOTS=[
+    [.10,.16],[.20,.34],[.30,.10],[.86,.20],[.90,.40],[.78,.10],
+  ];
+  function drawContactSwarm(ctx,w,h,now){
+    if(w<300||h<220) return;   // too small to spare the space
+    const escorts=(getEscorts?getEscorts():[])||[];
+    const airborne=escorts.filter(e=>e.state!=='return'&&e.state!=='returnBoost');
+    const nameFor={f47:'F-47',b2:'B-2',b1b:'B-1B'};
+    const entries=airborne.slice(0,3).map((e,i)=>[
+      `${nameFor[e.type]||'WING'}-${String(i+1).padStart(2,'0')}`,
+      +(2.0+((i*37+7)%18)/10).toFixed(1),
+    ]);
+    while(entries.length<3) entries.push(CONTACT_FILLER[entries.length]);
     ctx.save();
-    ctx.font=`${fs}px 'JetBrains Mono',monospace`;
-    ctx.textAlign='left';ctx.textBaseline='top';
-    labels.forEach((label,i)=>{
-      const col=i%2, row=Math.floor(i/2);
-      const x=gx+col*(cellW+gap), y=gy+row*(cellH+gap);
-      const drift=Math.sin(now/1600+i*1.7)*.05;
-      const pct=clamp(base+drift-(i*.015),0,1);
-      const hot=pct<.25;
-      ctx.strokeStyle=hot?'rgba(255,92,98,.5)':'rgba(120,200,255,.34)';
-      ctx.strokeRect(x,y,cellW,cellH);
-      ctx.fillStyle=hot?'rgba(255,92,98,.16)':'rgba(120,200,255,.10)';
-      ctx.fillRect(x,y,cellW,cellH); // subtle cell backdrop
-      ctx.fillStyle='rgba(180,225,255,.5)';
-      ctx.fillText(label,x+3,y+2);
-      ctx.fillStyle=hot?'rgba(255,140,146,.92)':'rgba(200,235,255,.82)';
-      ctx.textAlign='right';
-      ctx.fillText(`${Math.round(pct*100)}`,x+cellW-3,y+cellH-fs-1);
-      ctx.textAlign='left';
+    ctx.font=`${Math.max(6.5,Math.min(9,w*.014))}px 'JetBrains Mono',monospace`;
+    ctx.textAlign='center';
+    entries.forEach(([name,dist],i)=>{
+      const [sx,sy]=CONTACT_SLOTS[i%CONTACT_SLOTS.length];
+      const jx=Math.sin(now/2600+i*2.1)*w*.006, jy=Math.cos(now/3100+i*1.7)*h*.006;
+      const x=w*sx+jx, y=h*sy+jy;
+      ctx.textBaseline='alphabetic';
+      ctx.fillStyle='rgba(226,246,255,.72)';
+      ctx.fillText(name,x,y);
+      ctx.fillStyle='rgba(180,225,255,.48)';
+      ctx.fillText(`${dist}km`,x,y+11);
     });
-    ctx.fillStyle='rgba(148,228,255,.38)';
-    ctx.fillText('SHIELD QUAD',gx,gy-fs-2);
     ctx.restore();
   }
 
-  /** Mission objective panel — top-right, the other SC reference-image
-   *  strength from ROADMAP §4b item 3. Binds to real state only (killCount /
-   *  giantKillCount from main.js, target-locked flag from pilotTrackedPoint's
-   *  caller-supplied lock) — no invented mission/wave data, since the site
-   *  has no actual wave system; it reads as a kill tally + current-target
-   *  status rather than a fabricated "COMBAT GAUNTLET" scripted objective. */
-  function drawMissionPanel(ctx,w,h,now,lockVisible,lockActive){
-    const kills=getKillCount?getKillCount():0;
-    const giants=getGiantKillCount?getGiantKillCount():0;
-    const pw=Math.max(120,w*.19), ph=h*.09, px=w*.98-pw, py=h*.03;
-    const fs=Math.max(7,Math.min(9,w*.016));
+  /** U8 (2026-07-11): left column — mode word + coupled-flight badge (both
+   *  cosmetic cockpit dressing, same tier as the rest of this file's
+   *  non-gameplay flavour text) + a vertical speed tape + the big m/s
+   *  number (the same cosmetic `speed` this view already computed) + two
+   *  propellant readouts derived from warpIntensity (real runtime value,
+   *  not static text — same honesty tier as the old chip stack's SCM/GUN
+   *  rows it replaces). */
+  function drawLeftColumn(ctx,w,h,now,mode,speed,warpIntensity){
+    if(w<300||h<220) return;
+    const combatMode=['missile','nukeAuth','nemp','mainGun','ciws'].includes(mode);
+    const x=w*.045;
     ctx.save();
-    ctx.strokeStyle='rgba(148,228,255,.32)';ctx.lineWidth=1;
-    ctx.strokeRect(px,py,pw,ph);
-    ctx.fillStyle='rgba(6,14,22,.38)';ctx.fillRect(px,py,pw,ph);
-    ctx.font=`${fs}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='top';
-    ctx.fillStyle='rgba(148,228,255,.60)';
-    ctx.fillText('OBJECTIVE',px+6,py+4);
-    ctx.fillStyle=lockVisible?(lockActive?'rgba(93,255,157,.85)':'rgba(255,205,128,.82)'):'rgba(180,225,255,.5)';
-    ctx.fillText(lockVisible?(lockActive?'NEUTRALIZE · LOCKED':'NEUTRALIZE · TRACKING'):'SCANNING SECTOR',px+6,py+4+fs*1.3);
-    ctx.fillStyle='rgba(148,228,255,.42)';
-    ctx.fillText(`KILLS ${kills}${giants?` · GIANT ${giants}`:''}`,px+6,py+4+fs*2.6);
-    ctx.restore();
-  }
-
-  /** SC-cockpit side chip stacks (V17, from the Star Citizen reference shot):
-   *  left — fire-mode rows (SCM/GUN) + CPLD/ESP/LOCK avionics stack + speed/G;
-   *  right — countermeasure counts (DECOY/NOISE) + VTOL/GEAR/GSAF chips.
-   *  LOCK lights green when the HMD actually has a lock (real state); the rest
-   *  is cockpit dressing in line with this view's cosmetic speed/heading. */
-  function drawSCChipStacks(ctx,w,h,now,lockVisible,lockActive,speed){
-    if(w<340||h<250) return;   // too small — skip rather than turn to mush
-    const fs=Math.max(6,Math.min(8,w*.014));
-    const cyan='rgba(148,228,255,';
-    const row=(x,y,label,on,onColor)=>{
-      ctx.fillStyle=on?onColor:`${cyan}.34)`;
-      ctx.fillText(label,x,y);
-    };
-    ctx.save();
-    ctx.font=`${fs}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(7,Math.min(9,w*.015))}px 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='top';
-    // ── left stack (below the power pips, ends above the console dash) ──
-    const lx=w*.035, ly=h*.40, lh=fs*1.45;
-    row(lx,ly,      'SCM',false);
-    row(lx,ly+lh,   'GUN',true,`${cyan}.88)`);
-    row(lx,ly+lh*2.3,'CPLD',true,`${cyan}.70)`);
-    row(lx,ly+lh*3.3,'ESP', true,`${cyan}.70)`);
-    row(lx,ly+lh*4.3,'LOCK',lockVisible,lockActive?'rgba(120,255,178,.92)':'rgba(255,205,128,.85)');
-    ctx.fillStyle=`${cyan}.52)`;
-    ctx.fillText(`${speed} M/S`,lx,ly+lh*5.6);
-    ctx.fillText('63  63',lx,ly+lh*6.6);
-    // ── right stack (below the mission panel) ──
-    const rx=w*.965, ry=h*.30;
-    ctx.textAlign='right';
-    ctx.fillStyle=`${cyan}.66)`;
-    ctx.fillText('DECOY 24',rx,ry);
-    ctx.fillText('NOISE  2',rx,ry+lh);
-    row(rx,ry+lh*2.3,'VTOL',false);
-    row(rx,ry+lh*3.3,'GEAR',false);
-    row(rx,ry+lh*4.3,'GSAF',true,'rgba(120,255,178,.72)');
+    // mode chip
+    ctx.fillStyle='rgba(226,246,255,.85)';
+    ctx.beginPath();ctx.arc(x+4,h*.34+4,3.5,0,Math.PI*2);ctx.fill();
+    ctx.fillText(combatMode?'战斗':'巡航',x+13,h*.34-2);
+    // coupled badge
+    ctx.fillStyle='rgba(148,228,255,.55)';
+    ctx.fillText('耦合',x,h*.34+16);
+    // vertical speed tape
+    const tapeY=h*.44, tapeH=h*.30, tapeX=x+2;
+    ctx.strokeStyle='rgba(154,229,255,.30)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(tapeX,tapeY);ctx.lineTo(tapeX,tapeY+tapeH);ctx.stroke();
+    for(let i=0;i<=4;i++){
+      const ty=tapeY+tapeH*i/4;
+      ctx.beginPath();ctx.moveTo(tapeX-3,ty);ctx.lineTo(tapeX+3,ty);ctx.stroke();
+    }
+    const speedT=clamp((speed-600)/500,0,1);
+    const markY=tapeY+tapeH*(1-speedT);
+    ctx.fillStyle='rgba(226,246,255,.92)';
+    ctx.fillRect(tapeX-5,markY-1.5,10,3);
+    // big m/s number
+    ctx.font=`${Math.max(16,Math.min(26,w*.045))}px 'Orbitron',sans-serif`;
+    ctx.fillStyle='rgba(226,246,255,.95)';
+    ctx.textBaseline='alphabetic';
+    ctx.fillText(String(speed),x,tapeY+tapeH+28);
+    ctx.font=`${Math.max(6,w*.011)}px 'JetBrains Mono',monospace`;
+    ctx.fillStyle='rgba(180,225,255,.5)';
+    ctx.fillText('m/s',x,tapeY+tapeH+38);
+    // propellant readouts (derived from warpIntensity — real value)
+    const h2Pct=Math.round(clamp(99-warpIntensity*6,60,99));
+    const qPct=Math.round(clamp(89-(1-warpIntensity)*4,55,89));
+    ctx.font=`${Math.max(7,w*.013)}px 'JetBrains Mono',monospace`;
+    ctx.fillStyle='rgba(148,228,255,.7)';
+    ctx.fillText(`${h2Pct}% 氢燃料`,x,h*.92);
+    ctx.fillText(`${qPct}% 量子燃料`,x,h*.92+13);
+    ctx.restore();
+  }
+
+  /** U8 (2026-07-11): right column — decorative ammo tally (this game has no
+   *  real ammo pool to bind to, same honesty tier as the old chip stack's
+   *  DECOY/NOISE rows it replaces) + a two-tone boost/capacitor bar + the
+   *  real G readout (already computed elsewhere in this view from
+   *  warpIntensity) + a boost percentage derived from the same value. */
+  function drawRightColumn(ctx,w,h,now,warpIntensity){
+    if(w<300||h<220) return;
+    const rx=w*.955;
+    ctx.save();
+    ctx.font=`${Math.max(7,Math.min(9,w*.014))}px 'JetBrains Mono',monospace`;
+    ctx.textAlign='right';ctx.textBaseline='top';
+    ctx.fillStyle='rgba(148,228,255,.6)';
+    ctx.fillText('速射炮 48·4',rx,h*.10);
+    ctx.fillText('导弹 5·1',rx,h*.10+13);
+    // boost bar (two-tone: cyan-green body, amber-red base segment)
+    const barX=rx-8, barY=h*.20, barH=h*.34, barW=6;
+    const fillT=clamp(warpIntensity,0,1);
+    ctx.fillStyle='rgba(154,229,255,.14)';ctx.fillRect(barX-barW,barY,barW,barH);
+    const baseH=barH*.18;
+    ctx.fillStyle='rgba(255,120,112,.7)';ctx.fillRect(barX-barW,barY+barH-baseH,barW,Math.min(baseH,barH*fillT));
+    const bodyH=Math.max(0,barH*fillT-baseH);
+    ctx.fillStyle='rgba(120,255,178,.7)';ctx.fillRect(barX-barW,barY+barH-baseH-bodyH,barW,bodyH);
+    // G readout (real, same figure the old bottom telemetry line used)
+    const g=(1.2+warpIntensity*.9);
+    ctx.textAlign='right';ctx.textBaseline='alphabetic';
+    ctx.font=`${Math.max(8,w*.016)}px 'JetBrains Mono',monospace`;
+    ctx.fillStyle='rgba(226,246,255,.85)';
+    ctx.fillText(g.toFixed(1),rx,h*.62);
+    ctx.font=`${Math.max(6,w*.011)}px 'JetBrains Mono',monospace`;
+    ctx.fillStyle='rgba(180,225,255,.5)';
+    ctx.fillText('G',rx,h*.62+11);
+    // boost %
+    const boostPct=Math.round(clamp(70+warpIntensity*30,70,100));
+    ctx.font=`${Math.max(7,w*.013)}px 'JetBrains Mono',monospace`;
+    ctx.fillStyle='rgba(148,228,255,.7)';
+    ctx.fillText(`${boostPct}% 加力`,rx,h*.92);
     ctx.restore();
   }
 
@@ -561,12 +605,14 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.restore();
   }
 
-  /* ===== Main combat HMD (v3 — full space-combat layout) ================== */
+  /* ===== Main combat HMD (v3 — U8 2026-07-11: "减法改造", Star Citizen
+     reference-screenshot minimal layout — near-monochrome cyan/white,
+     no panel chrome, no bordered boxes anywhere except the one central
+     target frame; the centre of the screen stays clear for the scene) === */
   function drawCleanCombatHmd(ctx,w,h,now,label,mode){
     const halley=getHalley(), warpIntensity=getWarpIntensity(), shipRecoil=getShipRecoil();
     const missileLike=mode==='missile'||mode==='nukeAuth'||mode==='nemp';
     const lock=pilotTrackedPoint(w,h,mode);
-    const heading=Math.round(126+Math.sin(now/3600)*4);
     const speed=Math.round(760+warpIntensity*240+Math.sin(now/900)*16);
     const range=lock.visible?Math.max(88,Math.round(720-lock.approach*560+(halley?.collisionRisk||0)*80)):620;
     ctx.save();
@@ -576,33 +622,30 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     g.addColorStop(0,'rgba(8,26,42,.28)');g.addColorStop(.5,'rgba(0,5,12,.02)');g.addColorStop(1,'rgba(3,10,18,.40)');
     ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
 
-    // ── Frame + nav (V17b: SC degree tape with numbered majors + caret) ────
-    hmdCornerFrame(ctx,w,h);
-    drawSCHeadingTape(ctx,w,h,heading);
-
-    // ── SC-cockpit side chip stacks (SCM/GUN · CPLD/ESP/LOCK · DECOY/GEAR) ──
-    drawSCChipStacks(ctx,w,h,now,lock.visible,!!lock.locked,speed);
-
     // ── Flight-path marker (velocity vector) ────────────────────────────────
     drawVelocityVector(ctx,w,h,now);
 
     // ── Boresight (V17b: SC dashed-cross reticle) ────────────────────────────
     drawSCReticle(ctx,w*.5,h*.46);
 
-    // ── Target: comet + bracket + health bars + lead indicator ─────────────
+    // ── Left/right cockpit columns (U8: replaces the old chip stacks) ──────
+    drawLeftColumn(ctx,w,h,now,mode,speed,warpIntensity);
+    drawRightColumn(ctx,w,h,now,warpIntensity);
+
+    // ── Surrounding multi-target labels (U8: replaces OBJECTIVE panel) ─────
+    drawContactSwarm(ctx,w,h,now);
+
+    // ── Target: comet + plain frame + lead indicator ────────────────────────
     const cx=lock.visible?lock.cx:w*.62;
     const cy=lock.visible?lock.cy:h*.40;
     if(lock.visible){
       const sizeScale={small:1,medium:1.2,large:1.4,giant:1.65}[halley?.sizeClass]||1.2;
       hmdComet(ctx,cx,cy,4.4*sizeScale,now,halley?.vx??-1,halley?.vy??.3);
-      hmdBracket(ctx,cx,cy,Math.min(w,h)*.085*sizeScale,lock.lock||0,!!lock.locked,now,`${range}.0 M`,'1P/HALLEY');
-      drawTargetHealthBars(ctx,cx,cy,Math.min(w,h)*.085*sizeScale,now);
-      drawShieldQuadrantGrid(ctx,cx,cy,Math.min(w,h)*.085*sizeScale,now);
+      drawTargetFrame(ctx,cx,cy,Math.min(w,h)*.085*sizeScale,range,!!lock.locked);
       drawLeadIndicator(ctx,cx,cy,w,h,now);
     } else {
       drawThreatEdgeArrow(ctx,w,h);
     }
-    drawMissionPanel(ctx,w,h,now,lock.visible,!!lock.locked);
 
     // ── Mode-specific overlays ───────────────────────────────────────────────
     if(mode==='ciws'){
@@ -628,16 +671,6 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
       hmdStatusChip(ctx,w,h,label||'TARGET LINK',HMD.cyanSoft,false,now);
     }
 
-    // ── Telemetry — text only above the console dash (V17b: the full-width
-    //    underline read as a stray "line across the middle"; removed) ────────
-    ctx.save();
-    ctx.font=`${Math.max(7,Math.min(10,w*.020))}px 'JetBrains Mono',monospace`;
-    ctx.textBaseline='alphabetic';
-    ctx.fillStyle=HMD.cyan;ctx.textAlign='left';
-    ctx.fillText(`VEL ${speed} · G ${(1.2+warpIntensity*.9).toFixed(1)}`,w*.06,h*.66);
-    ctx.fillStyle=HMD.cyanSoft;ctx.textAlign='right';
-    ctx.fillText(lock.visible?`TGT 1P/HALLEY · ${lock.locked?'LOCK':'TRACK'}`:'SCANNING',w*.94,h*.66);
-    ctx.restore();
     ctx.restore();
   }
 
