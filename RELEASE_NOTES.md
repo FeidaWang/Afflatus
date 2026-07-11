@@ -5,6 +5,28 @@
 
 ---
 
+## v1.6 · 战斗 HUD 沉浸感改造（星际公民风格）+ 移动/桌面分治 + 全站体检 — 2026-07-11
+
+**背景**：站主陆续提供星际公民战斗截图与全息雷达截图反馈"combat view 元素太多太杂乱"，随后追加"防御模块 UI 竖置武器架+游戏化"、"底部 HUD 露缝"、以及一份完整的移动端改造角色指令（iPhone 16 Pro Max Chrome 截图）。执行顺序按站主指令：U11 → U12c/12d 骨架 → U10 → U8/U9 → 12a 体检，全部在同一批次内完成。
+
+**U11 · 底部 HUD 露缝修复**：完整 cascade 追踪发现真正生效点不是文件顶部 `:root` 也不是旧移动端断点，而是 `styles.css:5574`一段无 `@media` 包裹、全局生效的"2026-06-08 command-deck recovery clamp"收尾块，把 `--hud-bottom` 用 `!important` 定死成 `10px`——这才是缝的来源。侧边缝已被同一块的 `left:0;right:0` 清零，只有底部留了空隙。修复：改这一处 `10px → 0px`，面板贴死视口底边；依赖该变量的堆叠元素（weapon-warning/nuke-warning/jump-toggle）自动跟着收紧，堆叠关系不变。
+
+**U12c · 移动端顶栏重做**（≤860px）：单行极简布局——左侧 logo/商标压缩；中间复用既有 `#commandModeBtn`（Command/Cruise 切换，改 `position:static` 纳入单行流）；新增 `#langMiniToggle`（EN/CN 迷你切换，点击直接转发 `langBtn.click()`，不建第二套语言状态；核实首页实际用的是 `afflatus-lang` 而非立项时以为的 `afflatus:lang`，按实际 key 走）；`.nav-menu-btn` 文案从 ☰ 改为 `DECK`；`.nav-clock` 移动端隐藏。追加在 styles.css 文件最末尾的覆盖块（沿用本仓库既有的"追加到文件尾靠 source order + `!important` 赢"手法，未动历史规则本体）。
+
+**U12d · 移动端底部 HUD 重做**（≤860px）：删除星图层（`.hud-right` 从 grid-template-areas 摘除，`.terminal-starmap{display:none!important}`，且 main.js 移动端启动时调用 `terminalStarMapCtl.setMode(false)` 让星图 rAF 循环真正不启动，不是只藏起来仍在后台画）；只保留防御模块+Combat View 两格；私人航行日志改为防御模块面板头新增 `#voyageLogToggle`（LOG 按钮），点击切 `body.mobile-log-open` 让 `#captainTerminal` 以 `position:fixed` 悬浮层现身（复用其全部登录/全息舰体逻辑，`terminalStarMap.js` 未改一行），`.hud-right` 用 `visibility:hidden`+零尺寸而非 `display:none`（visibility 允许后代自己覆盖回 `visibility:visible`，display:none 不行）；新增 `#voyageLogBoot` 四行"解密序列"开机动画（stagger 淡入，~1.3s 自动隐去，`prefers-reduced-motion` 降级为瞬时显示，内容为风格化系统提示语，不冒充真实时间戳）。
+
+**U10 · 防御模块竖置武器架**：`#weaponMatrix` 四个横排按钮改纵向插槽（图形符号+名称+定位小字+状态区）；`--cool`（`weaponCooldownRatio`）改为插槽边缘 conic-gradient 冷却环（`padding+mask` 技巧），就绪瞬间白色闪光一次（利用 `classList.toggle` 到已是值不重触发的 DOM 特性，天然只播一次，不用 JS 做边缘检测）；推荐位角括号呼吸脉冲、选中左缘亮条、锁定琥珀闪烁三态视觉重做；面板标题改「防御模块 + 呼吸绿点 + 确认击毁 N 徽标」；`#battleFeed` 播报流整体隐藏（`display:none!important`，DOM 与逻辑保留，"暂时"移除，随时可恢复）；`#killCounter` 迁为面板头徽标。**踩坑记录**：初版把 `#voyageLogToggle` 塞进了 `[data-hud="battleTitle"]` 内部，而 `applyHudLanguage()` 对该选择器直接 `textContent=...` 赋值，每次切语言会连带清空这个子按钮——动手中途发现并修复，把 `data-hud="battleTitle"` 移到专门的兄弟 `<span>` 上。
+
+**U8 · Combat HUD 减法改造**：对齐站主提供的星际公民战斗截图——摘除 `hmdCornerFrame`/`drawSCHeadingTape`/`drawSCChipStacks`/`drawMissionPanel`/`drawShieldQuadrantGrid` 调用与底部遥测文本行（后三者是本文件内私有闭包，未被导出，直接删除函数体；`hmdCornerFrame` 来自 `hmdMinimal.js`，main.js 另一条 HUD 路径仍在用，只删本文件内的调用/未用 import）；新增 `drawTargetFrame()`（细线方框+代号距离+HULL 细血条，接近速度直接读彗星真实 `vx/vy`）、`drawLeftColumn()`（模式字+耦合徽标+速度带+燃料两行）、`drawRightColumn()`（弹药计数+双色加力条+真实 G 值+加力百分比）、`drawContactSwarm()`（多目标浮动标签，main.js 新增 `getEscorts` 依赖注入，优先用真实护航机型号，不足时补固定装饰 contact 名池，非每帧新造）。
+
+**U9 · 左侧雷达换全息扫描盘**：动手前完整读了 `drawRadar()`（~390 行）才发现同一函数里捆了三样立项时没看到的东西——指针表冠品牌字/日期窗、随航向旋转的玩家舰船剪影（含主炮开火特效）、三个模拟仪表盘（IAS/CORE/ATT）。**范围裁决**：只替换机械表盘部分（截图诉求的对象），舰船剪影+仪表盘保留原样，现悬浮在新全息盘之上。删除铜壳+齿轮+度数环+品牌字约 160 行，新增 `rctx.scale(1,.42)` 压扁的全息圆盘（径向体积辉光+扇形 sweep+14 点确定性外缘光点，`lighter` 混合无描边）；接触点沿用既有 `contacts` 数据管线，只加两处小改（blip y 坐标补乘椭圆系数、彗星从通用循环里跳过改由专属主目标标记画）；主目标标记为彗星专属琥珀火焰高亮+白色竖杆 pin+青色光柱，随 `halley&&!halley.destroyed` 显隐；底部读数（方位角/距离）读真实 `window.__navDeg` 与主目标屏幕坐标换算值，无目标显示「--km」不编造。
+
+**12a · 全站体检报告**（体检范围为发现的 9 个页面——roadmap.md 记录的 8 页 + 未入档的 `course.html`）：`main.js`（首页）868.29 kB/241.54 kB gzip 为全站最大分片，`main.css` 219.71 kB/39.95 kB gzip 同样最大；首页 `<canvas>` 数 8（其余页面 0–1），U12d 让移动端星图画布真正停止 rAF 是唯一已落地的移动端性能优化，其余 7 个画布仍常驻，**移动端合并/按需暂停未做，留作下一轮性能项第一候选**；`styles.css` 内 `backdrop-filter` 共 48 处，移动端降级未做。`styles.css` 总行数 7444、`main.js` 3523 行，各页独立样式表 11–37 kB 不等；历史选择器多处断点反复覆写的问题维持现状（只记录不顺手重构，超出本轮授权）。战斗动画/3D 场景（topdownCombat/shipHologram/capitalShip3D）在移动端的实际帧率分级**沙盒无法测（无 WebGL 渲染能力），留待站主真机实测**。
+
+**意外发现（体检副产品，未处理，留给站主决策）**：`course.html`（"Vibe Coding 101"）是一个功能齐全但**从未提交到 git** 的第 9 个页面，已注册进 `src/lib/nav.js` 的 SITE 数组，与 roadmap.md §1/C5「站点现有 8 页，加第 9 页前必须先做 Astro 迁移评估」的规则冲突；同一工作区内还有一批与本轮任务无关的未提交改动（`public/page-turn.css`、`public/sitemap.xml`、`vite.config.js`、三张 HUD 图被删+一张新图未跟踪），疑似同一批"新增 Course 页"工作的一部分，本次审计未触碰/未提交/未回退，原样保留。
+
+**验证**：516/516 vitest 全程通过；`npm run build` 全程干净（main chunk 从改造前到 U10 后 868→872 kB 区间正常增长）。**视觉观感（U8/U9/U10/U11/U12c/U12d 全部 6 项）统一悬而未决**：沙盒无法渲染 Canvas/WebGL，需站主在真机/浏览器逐项截图复核；U9 额外请确认"保留舰船剪影+三仪表盘"的范围裁决是否符合预期。
+
 ## v1.5 · Afflatus「Fable 5 Max 五模块」
 
 ### 观星台立盘：修复时区/经纬度未真正隐藏的老 bug + 城市选择器改为「省份/国家 → 城市」两级下拉 — 2026-07-10

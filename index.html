@@ -82,13 +82,13 @@
       <canvas id="radarCanvas"></canvas>
     </aside>
     <aside class="hud-panel hud-center">
-      <div class="hud-label" data-hud="battleTitle">防御模块</div>
+      <div class="hud-label hud-label-row"><span data-hud="battleTitle">防御模块</span><b class="hud-kill-badge" id="hudKillBadge" data-hud-tpl="killsLabel"><span data-hud="killsLabel">确认击毁</span> <i id="hudKillCount">0</i></b><button class="voyage-log-toggle" id="voyageLogToggle" type="button" data-hot aria-label="Toggle private voyage log">LOG</button></div>
       <div class="combat-module">
         <div class="weapon-matrix" id="weaponMatrix">
-          <button class="weapon-choice" data-weapon="cannon" data-hot><span>▥</span><b data-hud="wCannon">密集阵</b></button>
-          <button class="weapon-choice" data-weapon="missile" data-hot><span>↗</span><b data-hud="wMissile">导弹</b></button>
-          <button class="weapon-choice" data-weapon="nuke" data-hot><span>☢</span><b data-hud="wNuke">核打击</b></button>
-          <button class="weapon-choice" data-weapon="enforcer" data-hot><span>✦</span><b data-hud="wEnforcer">主炮</b></button>
+          <button class="weapon-choice" data-weapon="cannon" data-hot><span class="wpn-icon">▥</span><span class="wpn-info"><b data-hud="wCannon">密集阵</b><small>近防弹幕</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
+          <button class="weapon-choice" data-weapon="missile" data-hot><span class="wpn-icon">↗</span><span class="wpn-info"><b data-hud="wMissile">导弹</b><small>自主制导</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
+          <button class="weapon-choice" data-weapon="nuke" data-hot><span class="wpn-icon">☢</span><span class="wpn-info"><b data-hud="wNuke">核打击</b><small>战术核击</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
+          <button class="weapon-choice" data-weapon="enforcer" data-hot><span class="wpn-icon">✦</span><span class="wpn-info"><b data-hud="wEnforcer">主炮</b><small>蓄力主炮</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
         </div>
         <div class="battle-feed defense-command-log" id="battleFeed">
           <output class="combat-kill-meter" aria-label="Confirmed kills"><b id="killCounter">0</b></output>
@@ -115,6 +115,12 @@
       <div class="signal-deck fleet-status-deck" id="signalDeck">
         <div class="captain-terminal private-notebook" id="captainTerminal">
           <div class="notebook-shell">
+            <div class="log-boot" id="voyageLogBoot" aria-hidden="true">
+              <b class="log-boot-line" style="--i:0"><i class="seq">SEQ 01</i><span>CIPHER HANDSHAKE</span><em>OK</em></b>
+              <b class="log-boot-line" style="--i:1"><i class="seq">SEQ 02</i><span>VOYAGE LOG INTEGRITY</span><em>VERIFIED</em></b>
+              <b class="log-boot-line" style="--i:2"><i class="seq">SEQ 03</i><span>DECRYPTING PRIVATE CHANNEL</span><em>...</em></b>
+              <b class="log-boot-line" style="--i:3"><i class="seq">SEQ 04</i><span>ACCESS</span><em class="granted">GRANTED</em></b>
+            </div>
             <div class="notebook-status">
               <span class="terminal-led"></span>
               <b>Commander Terminal</b>
@@ -200,7 +206,8 @@
   </div>
   <div class="nav-right">
     <button class="control-btn" id="commandModeBtn" data-hot>Command</button>
-    <button class="nav-menu-btn" type="button" data-hot aria-label="Open navigation">☰</button>
+    <button class="lang-mini-toggle" id="langMiniToggle" type="button" data-hot aria-label="Toggle language" data-active="en"><span data-mini="en">EN</span><span class="mini-sep">/</span><span data-mini="zh">中</span></button>
+    <button class="nav-menu-btn" type="button" data-hot aria-label="Open deck menu">DECK</button>
     <div class="nav-clock">
       <span id="clockZone" aria-hidden="true"></span>
       <b id="melDateTime">---</b>

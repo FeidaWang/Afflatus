@@ -8,6 +8,14 @@ body{font-family:'Rajdhani','Noto Sans SC',sans-serif;font-weight:300;min-height
 
 .attitudeCanvas{width:100%;height:54px;display:block;border:1px solid rgba(141,180,192,.14);background:rgba(3,5,9,.22)}
 .nav-right{display:flex;align-items:center;gap:18px;position:relative;z-index:999;}
+/* U12c (2026-07-11): EN/CN mini toggle — mobile-only affordance, desktop
+   keeps the single #langBtn warp control. Base rule hides it everywhere;
+   the ≤860px block at the end of this file turns it on. */
+.lang-mini-toggle{display:none;cursor:none;}
+.lang-mini-toggle span{opacity:.42;transition:opacity .18s ease,text-shadow .18s ease}
+.lang-mini-toggle .mini-sep{opacity:.3}
+.lang-mini-toggle[data-active="en"] span[data-mini="en"],
+.lang-mini-toggle[data-active="zh"] span[data-mini="zh"]{opacity:1;text-shadow:0 0 6px rgba(154,229,255,.5)}
 .nav-clock{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.16em;}
 .nav-clock span{font-size:9px;color:var(--dim)}
 .nav-clock b{font-size:11px;color:var(--ink);font-weight:500}
@@ -79,6 +87,38 @@ body.combat-mode .hud-warning,body.combat-mode .hud-subwarning{display:none}
 .hud-center::after{left:0;bottom:0;border-bottom:2px solid currentColor;border-left:2px solid currentColor}
 .hud-left::before,.hud-right::before{border-color:rgba(232,179,128,.14)}
 .hud-label{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.22em;color:#dce5f7;text-transform:uppercase;margin-bottom:8px;}
+/* U12d (2026-07-11): "LOG" toggle folds the Private Voyage Log into the
+   Defense Module header — mobile-only affordance (desktop keeps the
+   Commander Terminal panel as its own independent aside, unchanged).
+   Hidden by default; the ≤860px block at file end turns it on. */
+.voyage-log-toggle{display:none;float:right;cursor:none;font-family:'JetBrains Mono',monospace;text-transform:uppercase;}
+/* Decryption-sequence boot overlay shown once each time the log opens (see
+   #voyageLogBoot in index.html + the .play trigger in main.js). Hidden by
+   default everywhere; mobile block at file end wires up size/position, this
+   rule only owns the reveal animation so it isn't duplicated per breakpoint. */
+.log-boot{display:none}
+.log-boot-line{
+  display:flex;align-items:baseline;gap:8px;
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.05em;
+  padding:5px 0;border-bottom:1px solid rgba(154,229,255,.14);
+  opacity:0;transform:translateY(4px);
+  color:rgba(200,230,245,.82);
+}
+.log-boot-line .seq{font-style:normal;color:rgba(232,179,128,.78);min-width:44px}
+.log-boot-line span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.log-boot-line em{font-style:normal;color:rgba(154,229,255,.7)}
+.log-boot-line em.granted{color:#8cffb0;text-shadow:0 0 8px rgba(140,255,176,.5)}
+.log-boot.play .log-boot-line{animation:logBootReveal .42s ease-out forwards}
+.log-boot.play .log-boot-line[style*="--i:1"]{animation-delay:.22s}
+.log-boot.play .log-boot-line[style*="--i:2"]{animation-delay:.44s}
+.log-boot.play .log-boot-line[style*="--i:3"]{animation-delay:.66s}
+.log-boot.play{animation:logBootHide .4s ease-in 1.3s forwards}
+@keyframes logBootReveal{to{opacity:1;transform:translateY(0)}}
+@keyframes logBootHide{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion: reduce){
+  .log-boot-line{animation:none!important;opacity:1!important;transform:none!important}
+  .log-boot.play{animation:logBootHide .01s linear 1s forwards!important}
+}
 .hud-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:4px}
 .hud-row span:first-child{font-family:'JetBrains Mono',monospace;font-size:7.8px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
 .hud-row b{font-family:'JetBrains Mono',monospace;font-size:9.8px;color:#eef3ff;font-weight:500;letter-spacing:.1em}
@@ -5571,7 +5611,7 @@ body.hud-off .jump-toggle {
    This intentionally sits last: previous experimental HUD passes left conflicting
    geometry behind, so the readable four-screen deck is pinned here. */
 :root {
-  --hud-bottom: 10px !important;
+  --hud-bottom: 0px !important;
   --hud-combat-h: clamp(188px, 19vh, 218px) !important;
   --hud-cols: minmax(150px, .58fr) minmax(360px, 1.30fr) minmax(414px, 1.50fr) minmax(260px, .96fr) !important;
 }
@@ -7131,3 +7171,274 @@ html.vt-suppress::view-transition-new(root){
 /* .nav-site-menu reuses .nav-labs__menu's existing hardcoded dark/cyan
    look as-is (this file's .nav-labs__menu isn't variable-driven like
    public/page-turn.css's copy) — no extra styling needed. */
+
+/* ============================================================
+   U12c (2026-07-11) · mobile top bar consolidation, single row.
+   Deliberately placed last (same "final override" convention as the
+   hud-panels recovery clamp and the .nav-menu-btn restore directly
+   above) so it wins over every earlier stacked mobile-nav pass in this
+   file without having to hunt down and edit each one — that hunt is
+   exactly what turned the .nav-menu-btn visibility into a multi-round
+   bug (see comment above). Scope: ≤860px only, desktop nav untouched.
+   Layout: brand (scaled) — Command/Cruise — EN/CN — DECK, one row,
+   nav-clock and the old nav-links/top-telemetry center block hidden. */
+@media(max-width:860px){
+  nav:not(.route-arrows){
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    height:44px!important;
+    min-height:44px!important;
+    padding:0 8px!important;
+    gap:6px!important;
+  }
+  .brand{
+    font-size:11px!important;
+    gap:5px!important;
+    letter-spacing:.07em!important;
+    flex:0 1 auto!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    white-space:nowrap!important;
+    text-overflow:ellipsis!important;
+  }
+  .brand-mark{width:20px!important;height:12px!important;flex-basis:20px!important}
+  .brand-sep,.brand-version{display:none!important}
+  .nav-center{display:none!important}
+  .nav-clock{display:none!important}
+  .nav-right{
+    display:flex!important;
+    flex:0 0 auto!important;
+    align-items:center!important;
+    gap:6px!important;
+  }
+  #commandModeBtn{
+    position:static!important;
+    left:auto!important;top:auto!important;
+    transform:none!important;
+    min-width:0!important;height:26px!important;
+    padding:0 9px!important;font-size:7px!important;
+    letter-spacing:.09em!important;
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  }
+  .lang-mini-toggle{
+    display:inline-flex!important;
+    align-items:center!important;height:26px!important;
+    padding:0 7px!important;gap:4px!important;
+    border:1px solid rgba(141,180,192,.32)!important;
+    background:rgba(2,6,10,.6)!important;
+    font:500 8px/1 'JetBrains Mono',monospace!important;
+    letter-spacing:.05em!important;color:rgba(180,205,220,.62)!important;
+  }
+  .nav-menu-btn{
+    width:auto!important;height:26px!important;
+    padding:0 10px!important;
+    font:500 8px/1 'Orbitron',sans-serif!important;
+    letter-spacing:.16em!important;
+    display:inline-flex!important;place-items:center!important;
+    border-color:rgba(154,229,255,.34)!important;
+  }
+}
+
+/* ============================================================
+   U12d (2026-07-11) · mobile bottom HUD: drop the star-map "upper
+   layer" (.hud-right), keep only Defense Module + Combat View, and
+   fold the Private Voyage Log into the Defense Module behind the
+   .voyage-log-toggle "LOG" button added to its header. Same
+   final-override convention as U12c directly above: ≤860px only,
+   last in cascade, desktop's independent Commander Terminal aside is
+   completely untouched.
+
+   .hud-right itself is kept out of `grid-template-areas` (so the grid
+   reflows to just "left/center" + "pilot pilot", no leftover gap) but
+   is NOT display:none — display:none would also erase its descendant
+   #captainTerminal, which is exactly the panel this feature needs to
+   still show (as a fixed-position overlay) once toggled open.
+   `grid-area:unset` + zero size + visibility:hidden removes it from
+   view and from grid flow without killing descendant rendering;
+   #captainTerminal explicitly re-asserts visibility:visible so it can
+   still appear (visibility, unlike display, is overridable by a
+   descendant even when an ancestor sets it to hidden). */
+@media(max-width:860px){
+  .hud-panels{
+    grid-template-areas:"left center" "pilot pilot"!important;
+    grid-template-columns:minmax(64px,.72fr) minmax(220px,2.3fr)!important;
+    grid-template-rows:minmax(0,1fr) minmax(0,1fr)!important;
+    grid-auto-rows:0px!important;
+    grid-auto-columns:0px!important;
+  }
+  .hud-right{
+    grid-area:unset!important;
+    width:0!important;height:0!important;min-width:0!important;min-height:0!important;
+    padding:0!important;border:0!important;overflow:visible!important;
+    visibility:hidden!important;pointer-events:none!important;
+  }
+  .voyage-log-toggle{
+    display:inline-block!important;
+    font-size:6.5px!important;letter-spacing:.14em!important;
+    padding:2px 6px!important;margin-left:6px!important;
+    border:1px solid rgba(154,229,255,.34)!important;
+    background:rgba(2,6,10,.5)!important;color:rgba(200,230,245,.75)!important;
+  }
+  body.mobile-log-open .voyage-log-toggle{
+    border-color:rgba(93,255,157,.6)!important;color:#b9ffd4!important;
+  }
+  .terminal-starmap{display:none!important}
+  .afpc-close{display:none!important}
+  .notebook-login{display:none!important}
+  body.mobile-log-open #captainTerminal{
+    visibility:visible!important;pointer-events:auto!important;
+    position:fixed!important;
+    left:5vw!important;right:5vw!important;
+    top:9vh!important;
+    bottom:calc(var(--hud-combat-h) + 14px)!important;
+    z-index:1400!important;
+    background:linear-gradient(180deg,rgba(8,14,22,.96),rgba(1,3,7,.98))!important;
+    border:1px solid rgba(154,229,255,.34)!important;
+    box-shadow:0 0 32px rgba(0,0,0,.6),0 0 18px rgba(93,180,220,.14)!important;
+    padding:10px!important;
+    overflow:auto!important;
+  }
+  body.mobile-log-open .notebook-shell{height:auto!important;min-height:100%!important}
+  body.mobile-log-open .log-boot{
+    display:block!important;
+    padding:4px 2px 8px!important;
+    border-bottom:1px solid rgba(154,229,255,.18)!important;margin-bottom:8px!important;
+  }
+  body.mobile-log-open .notebook-login{
+    display:block!important;
+  }
+  body.mobile-log-open .afpc{
+    position:static!important;width:100%!important;height:auto!important;
+  }
+  body.mobile-log-open .afpc-body{
+    grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;
+  }
+}
+
+/* ============================================================
+   U10 (2026-07-11) · Defense Module → vertical weapon rack.
+   Same final-override convention as U12c/U12d above (appended last,
+   !important, unconditional so it applies at every viewport — this
+   redesign is not mobile-only, unlike U12c/d): `.weapon-matrix` /
+   `.weapon-choice` have 10+ historical fragments scattered through
+   this file (desktop "unified command wall" variant, several mobile
+   passes, etc.); rather than hand-edit every one and risk missing a
+   fragment that silently wins later (exactly what happened to
+   .nav-menu-btn, see the V22 comment above), this block fully
+   re-asserts the rack's layout/visuals from scratch. main.js's
+   class/dataset driven interface (--cool custom property, .cooling/
+   .ready-gun/.ready/.recommended/.selected/.locked classes,
+   data-status attribute) is untouched — this is visual+layout only. */
+
+/* Panel header: title + "确认击毁 N" badge + LOG toggle, one row. */
+.hud-label-row{display:flex;align-items:center;gap:8px}
+.hud-label-row [data-hud="battleTitle"]{flex:0 0 auto;display:flex;align-items:center;gap:6px}
+.hud-label-row [data-hud="battleTitle"]::before{
+  content:'';display:inline-block;width:5px;height:5px;border-radius:50%;
+  background:#5dff9d;box-shadow:0 0 7px #5dff9d;
+  animation:hudTitlePulse 2.2s ease-in-out infinite;
+}
+@keyframes hudTitlePulse{0%,100%{opacity:.5}50%{opacity:1}}
+.hud-kill-badge{
+  margin-left:auto;display:inline-flex;align-items:baseline;gap:4px;
+  font-family:'JetBrains Mono',monospace;font-weight:400;font-size:6.5px;
+  letter-spacing:.08em;color:rgba(154,229,255,.55);white-space:nowrap;
+}
+.hud-kill-badge i{font-style:normal;font-size:9px;color:#dff5ff}
+
+/* Rack: 4 vertical slots, energy-conduit spine running behind the icons. */
+.weapon-matrix{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:repeat(4,minmax(0,1fr))!important;
+  gap:6px!important;
+  position:relative!important;
+}
+.weapon-matrix::before{
+  content:'';position:absolute;left:19px;top:6px;bottom:6px;width:1px;
+  background:linear-gradient(180deg,transparent,rgba(154,229,255,.28) 12%,rgba(154,229,255,.28) 88%,transparent);
+  pointer-events:none;z-index:0;
+}
+.weapon-choice{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:28px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:9px!important;
+  padding:5px 10px!important;
+  text-align:left!important;
+  border:1px solid rgba(141,180,192,.18)!important;
+  background:rgba(4,6,10,.55)!important;
+  min-height:0!important;height:100%!important;
+}
+.weapon-choice .wpn-icon{font-size:19px;line-height:1;justify-self:center;position:relative;z-index:1}
+.weapon-choice .wpn-info{display:flex;flex-direction:column;gap:1px;min-width:0}
+.weapon-choice .wpn-info b{font-size:9px;letter-spacing:.09em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.weapon-choice .wpn-info small{font-size:6.2px;letter-spacing:.05em;color:rgba(180,205,220,.55);text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.weapon-choice .wpn-rec{
+  position:absolute;top:3px;right:8px;font-style:normal;
+  font-family:'JetBrains Mono',monospace;font-size:5.6px;letter-spacing:.1em;
+  color:rgba(154,229,255,.85);opacity:0;pointer-events:none;text-transform:uppercase;
+}
+.weapon-choice.recommended .wpn-rec{opacity:.85;animation:wpnRecBreathe 1.8s ease-in-out infinite}
+@keyframes wpnRecBreathe{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* Cooldown ring (::before, replaces the old bottom progress bar) — thin
+   conic-gradient border that fills clockwise as --cool goes 0 -> 1, with a
+   one-shot brightness flash exactly when .ready-gun is first added (a class
+   toggled to an already-present value is a DOM no-op, so this animation
+   naturally plays once on the ready transition, not every frame). */
+.weapon-choice::before{
+  content:'';position:absolute;inset:0;padding:1.5px;border-radius:1px;
+  background:conic-gradient(var(--weapon-b,#9ae5ff) calc(var(--cool,1)*360deg),rgba(255,255,255,.08) 0);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  pointer-events:none;opacity:.8;z-index:1;
+  transition:opacity .15s ease;
+}
+.weapon-choice.ready-gun::before{animation:wpnReadyFlash .5s ease-out}
+@keyframes wpnReadyFlash{0%{opacity:1;filter:brightness(2.4) saturate(1.5)}100%{opacity:.8;filter:none}}
+
+/* Status text (::after, replaces the old bottom-bar content) — READY / Ns /
+   °C, same data-status attribute main.js already writes every frame. */
+.weapon-choice::after{
+  content:attr(data-status);position:absolute;right:8px;bottom:4px;
+  font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.08em;
+  color:rgba(232,179,128,.85);pointer-events:none;z-index:1;
+}
+.weapon-choice.ready-gun::after{color:rgba(154,229,255,.9)}
+
+.weapon-choice[data-weapon="cannon"]{--weapon-a:rgba(154,229,255,.36);--weapon-b:rgba(154,229,255,.92)}
+.weapon-choice[data-weapon="missile"]{--weapon-a:rgba(232,179,128,.34);--weapon-b:rgba(255,205,128,.92)}
+.weapon-choice[data-weapon="nuke"]{--weapon-a:rgba(255,77,91,.30);--weapon-b:rgba(255,120,112,.92)}
+.weapon-choice[data-weapon="enforcer"]{--weapon-a:rgba(255,94,205,.30);--weapon-b:rgba(255,150,222,.92)}
+
+.weapon-choice.selected{
+  border-left:3px solid var(--weapon-b,#9ae5ff)!important;
+  background:linear-gradient(90deg,rgba(154,229,255,.10),rgba(4,6,10,.55) 45%)!important;
+  box-shadow:0 0 14px rgba(0,0,0,.35)!important;
+}
+.weapon-choice.locked{animation:wpnLockedFlash .6s ease-in-out infinite}
+@keyframes wpnLockedFlash{
+  0%,100%{box-shadow:0 0 6px rgba(232,179,128,.22)}
+  50%{box-shadow:0 0 18px rgba(232,179,128,.62)}
+}
+
+/* Battle broadcast feed — removed for now (spec: keep the code/DOM hook,
+   just stop rendering it). #killCounter inside it keeps getting its
+   textContent updated by the existing loop in main.js; it's simply
+   invisible now that the header badge (#hudKillCount) shows the same
+   number. */
+#battleFeed{display:none!important}
+
+@media(max-width:480px){
+  .weapon-choice{padding:3px 7px!important;gap:6px!important}
+  .weapon-choice .wpn-icon{font-size:15px!important}
+  .weapon-choice .wpn-info b{font-size:8px!important}
+  .weapon-choice .wpn-info small{display:none!important}
+  .weapon-choice .wpn-rec{font-size:5px!important;top:2px!important;right:5px!important}
+  .weapon-choice::after{font-size:5.6px!important;bottom:2px!important;right:6px!important}
+  .hud-kill-badge{font-size:5.6px!important}
+}
