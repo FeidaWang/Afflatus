@@ -82,26 +82,76 @@ export function drawSCReticle(ctx,cx,cy){
 }
 
 /* First-person cockpit frame for the pilot feed — SC-cockpit-style console
-   dashboard (button columns, one centred power-management MFD, centre radar
-   dome) in the language of the Star Citizen reference shot. The old A-frame canopy
-   struts (the triangular "porthole") were removed on user request (V17,
-   2026-07-05): the centre glass now stays completely clear for the HMD.
+   dashboard in the language of the Star Citizen reference shot. The old
+   A-frame canopy struts (the triangular "porthole") were removed on user
+   request (V17, 2026-07-05): the centre glass now stays completely clear
+   for the HMD.
+
+   U14b (2026-07-12): the OUTPUT/BATTERY power-management MFD, the centre
+   radar dome (redundant with the real holographic radar dock merged into
+   Combat View by U9/U13), the twin dash-top readout number strips, and
+   the entire right-hand RADR/PROX/HIT/MISL button column were all static
+   decoration on top of an already-busy console — deleted outright rather
+   than kept "just in case" (see roadmap discipline: minimum code that
+   solves the problem). Only the left PWR/WPN/THR/SHLD/COOL button column
+   survives, and it's no longer purely decorative: `dash` (U14c) drives
+   WPN's colour from the currently active weapon and adds live energy-pip
+   readouts beside PWR/THR/WPN.
 
    `boot` (0..1) drives the one-shot power-on sequence: dash rim → button
-   columns → MFD screens → radar dome → dash readouts → "TARGET LINK" sync
-   lines → ESTABLISHED flash. Pass 1 (default) for a fully-lit console.
-   Fully pure: no combat-state reads. */
-export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1){
+   column → "TARGET LINK" sync lines → ESTABLISHED flash. Pass 1 (default)
+   for a fully-lit console. Still fully pure otherwise: `dash` is a plain
+   snapshot object passed in by the caller (main.js), never a live
+   reference into its module state — same discipline as createCombatHmdV3's
+   getter pattern, just a plain object since this one function is called
+   directly rather than through a factory.
+   @param {object} [dash]
+   @param {string} [dash.weapon] - currently active weapon type (cannon/missile/nuke/enforcer)
+   @param {number} [dash.cdRatio] - that weapon's cooldown ratio (0 just fired .. 1 ready)
+   @param {number} [dash.warpIntensity] - real warp/throttle value (0..~1.3)
+   @param {boolean} [dash.warpHover] - true while the user hovers the "入梦" warp button
+*/
+const WPN_COLOR_BASE={cannon:'rgba(154,229,255,',missile:'rgba(232,179,128,',nuke:'rgba(255,77,91,',enforcer:'rgba(255,94,205,'};
+export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
   const ac=landing?[93,255,157]:[120,210,255];
   const [cr,cg,cb]=ac;
   const rgba=(a)=>`rgba(${cr},${cg},${cb},${a})`;
   const AMBER='rgba(255,214,102,';
   const mono=(px)=>`${px}px 'JetBrains Mono',monospace`;
+  const wpnColorBase=WPN_COLOR_BASE[dash.weapon]||AMBER;
+  const warpIntensity=clamp(dash.warpIntensity||0,0,1.4);
+  const cdRatio=clamp(dash.cdRatio??1,0,1);
+  const hoverMul=dash.warpHover?3.2:1;
   // staged reveal: element group k ∈ [0,1) turns on across its own window,
   // with a bright strike right as it pops.
   const st=(k0,k1)=>clamp((boot-k0)/Math.max(.0001,k1-k0),0,1);
   const pop=(p)=>p<=0?0:p>=1?1:(p<.25?p*2.8:(.7+.3*p));      // overshoot-ish
   const flick=(p,seed)=>p>0&&p<1?(Math.sin(now/26+seed*9)>-.2?1:.35):1;
+  // Flowing energy pips beside PWR/THR: a short lit segment "chases" along
+  // the strip, speeding up on warp-hover (real global state, not invented) —
+  // PWR/THR have no discrete real value to bind to (this game has no power
+  // budget model), so a moving flow reads honestly as "cosmetic dressing
+  // that is at least alive", same tier as the old chip stack it replaces.
+  // WPN's strip instead fills left-to-right from cdRatio (a real value).
+  const flowPips=(px,py,pw,ph,segs,speed,colorBase)=>{
+    const period=1600/Math.max(.3,speed);
+    const head=((now%period)/period)*segs;
+    const segGap=1.5, segW=(pw-(segs-1)*segGap)/segs;
+    for(let i=0;i<segs;i++){
+      const d=Math.min((head-i+segs)%segs,(i-head+segs)%segs);
+      const b=clamp(1-d/1.35,0,1);
+      ctx.fillStyle=`${colorBase}${(0.10+0.72*b).toFixed(2)})`;
+      ctx.fillRect(px+i*(segW+segGap),py,segW,ph);
+    }
+  };
+  const fillPips=(px,py,pw,ph,segs,t,colorBase)=>{
+    const segGap=1.5, segW=(pw-(segs-1)*segGap)/segs;
+    const lit=Math.round(clamp(t,0,1)*segs);
+    for(let i=0;i<segs;i++){
+      ctx.fillStyle=i<lit?`${colorBase}.82)`:`${colorBase}.12)`;
+      ctx.fillRect(px+i*(segW+segGap),py,segW,ph);
+    }
+  };
   ctx.save();
   // glass tint vignette at the rim (kept — subtle, not a structural frame)
   const vig=ctx.createRadialGradient(w*.5,h*.42,Math.min(w,h)*.28,w*.5,h*.5,Math.max(w,h)*.72);
@@ -122,111 +172,39 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1){
   const fsBtn=Math.max(5.5,Math.min(8,w*.014));
   const fsTiny=Math.max(5,Math.min(7,w*.012));
 
-  // --- side button columns (left: PWR/WPN/THR/SHLD/COOL · right: RADR/PROX/HIT/MISL) ---
-  const button=(bx,by,bw,bh,label,active,p,seed)=>{
+  // --- side button column (PWR/WPN/THR/SHLD/COOL — U14b dropped the
+  //     mirrored RADR/PROX/HIT/MISL column on the right entirely) ---
+  const button=(bx,by,bw,bh,label,active,p,seed,colorBase)=>{
     if(p<=0) return;
+    const base=colorBase||AMBER;
     const a=pop(p)*flick(p,seed);
     ctx.globalAlpha=a;
-    ctx.fillStyle=active?`${AMBER}.16)`:'rgba(6,12,18,.9)';
-    ctx.strokeStyle=active?`${AMBER}.9)`:rgba(.42);
+    ctx.fillStyle=active?`${base}.16)`:'rgba(6,12,18,.9)';
+    ctx.strokeStyle=active?`${base}.9)`:rgba(.42);
     ctx.lineWidth=active?1.3:1;
     ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.fill();ctx.stroke();
-    ctx.fillStyle=active?`${AMBER}.95)`:rgba(.78);
+    ctx.fillStyle=active?`${base}.95)`:rgba(.78);
     ctx.font=mono(fsBtn);ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(label,bx+bw/2,by+bh/2+.5);
     ctx.globalAlpha=1;
   };
   const bw=Math.max(26,w*.058), bh=Math.max(11,h*.042), bgap=bh*.42;
   const colY=h*.755;
-  ['PWR','WPN','THR','SHLD','COOL'].forEach((lb,i)=>
-    button(w*.015,colY+i*(bh+bgap),bw,bh,lb,lb==='WPN',st(.10+i*.045,.22+i*.045),i));
-  ['RADR','PROX','HIT','MISL'].forEach((lb,i)=>
-    button(w*.985-bw,colY+i*(bh+bgap),bw,bh,lb,false,st(.20+i*.045,.32+i*.045),i+5));
-
-  // --- twin MFD screens (power management, mirrored) ---
-  const mfd=(px,py,pw,ph,seed,p)=>{
-    if(p<=0) return;
-    const a=pop(p)*flick(p,seed);
-    ctx.save();ctx.globalAlpha=a;
-    ctx.fillStyle='rgba(5,10,16,.94)';
-    ctx.strokeStyle=rgba(.5);ctx.lineWidth=1;
-    ctx.beginPath();ctx.rect(px,py,pw,ph);ctx.fill();ctx.stroke();
-    const fs=fsTiny;
-    ctx.font=mono(fs);ctx.textBaseline='top';
-    // header: OUTPUT 5/16
-    ctx.fillStyle=rgba(.55);ctx.textAlign='left';
-    ctx.fillText('OUTPUT',px+4,py+3);
-    ctx.fillStyle=rgba(.92);ctx.font=mono(fs*1.5);
-    ctx.fillText('5/16',px+4,py+3+fs*1.2);
-    // three columns of segmented power cells (some lit, like the reference)
-    const cols=3, segs=4, cw=pw*.16, cgap=pw*.06, ch=(ph*.52)/segs-2;
-    const gx0=px+pw*.42;
-    for(let c=0;c<cols;c++){
-      const litFrom=[3,2,1][c];   // column fill pattern echoing the screenshot
-      for(let s=0;s<segs;s++){
-        const x=gx0+c*(cw+cgap), y=py+4+s*(ch+2);
-        const lit=s>=litFrom;
-        ctx.fillStyle=lit?'rgba(120,170,255,.78)':'rgba(120,170,255,.10)';
-        ctx.strokeStyle=rgba(.22);
-        ctx.fillRect(x,y,cw,ch);ctx.strokeRect(x,y,cw,ch);
+  const pipX=w*.015+bw+7, pipW=Math.max(30,w*.05);
+  ['PWR','WPN','THR','SHLD','COOL'].forEach((lb,i)=>{
+    const by=colY+i*(bh+bgap);
+    const p=st(.10+i*.045,.22+i*.045);
+    if(lb==='WPN'){
+      button(w*.015,by,bw,bh,lb,true,p,i,wpnColorBase);
+      if(p>=1) fillPips(pipX,by+bh*.18,pipW,bh*.64,5,cdRatio,wpnColorBase);
+    }else{
+      button(w*.015,by,bw,bh,lb,false,p,i);
+      if(p>=1){
+        if(lb==='PWR') flowPips(pipX,by+bh*.18,pipW,bh*.64,5,hoverMul,'rgba(148,228,255,');
+        if(lb==='THR') flowPips(pipX,by+bh*.18,pipW,bh*.64,5,hoverMul*(.6+warpIntensity*.8),'rgba(148,228,255,');
       }
     }
-    // OFFLINE / BATTERY row
-    ctx.font=mono(fs);ctx.fillStyle=rgba(.4);ctx.textAlign='left';
-    ctx.fillText('0/0 OFFLINE',px+4,py+ph*.58);
-    ctx.fillText('▤ BATTERY',px+4,py+ph*.58+fs*1.3);
-    // boot scanline sweeping down the screen while it warms up
-    if(p<1){
-      ctx.globalCompositeOperation='lighter';
-      ctx.fillStyle=rgba(.30);
-      ctx.fillRect(px,py+ph*p-1,pw,2);
-    }
-    ctx.restore();
-  };
-  const mw=w*.235, mh=h*.155, my=h*.775;
-  mfd(w*.5-mw/2,my,mw,mh,2,st(.30,.52));
-
-  // --- centre radar dome ---
-  const domeP=st(.50,.72);
-  if(domeP>0){
-    const cx=w*.5, cyd=h*.905, R=Math.min(w*.075,h*.10);
-    const a=pop(domeP)*flick(domeP,3);
-    ctx.save();ctx.globalAlpha=a;
-    ctx.fillStyle='rgba(4,9,15,.94)';
-    ctx.beginPath();ctx.arc(cx,cyd,R+4,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle=rgba(.5);ctx.lineWidth=1;
-    for(const rr of[R,R*.62,R*.28]){ctx.beginPath();ctx.arc(cx,cyd,rr,0,Math.PI*2);ctx.stroke();}
-    // rotating sweep (spins up with boot)
-    const sweep=now/900*(.25+.75*domeP);
-    const grd=ctx.createConicGradient?ctx.createConicGradient(sweep,cx,cyd):null;
-    if(grd){grd.addColorStop(0,rgba(.34));grd.addColorStop(.12,rgba(0));grd.addColorStop(1,rgba(0));
-      ctx.fillStyle=grd;ctx.beginPath();ctx.arc(cx,cyd,R,0,Math.PI*2);ctx.fill();}
-    else{ctx.strokeStyle=rgba(.5);ctx.beginPath();ctx.moveTo(cx,cyd);
-      ctx.lineTo(cx+Math.cos(sweep)*R,cyd+Math.sin(sweep)*R);ctx.stroke();}
-    // two blips
-    ctx.fillStyle=`${AMBER}${(.5+.4*Math.sin(now/300)).toFixed(2)})`;
-    ctx.fillRect(cx+R*.38,cyd-R*.30,2,2);
-    ctx.fillRect(cx-R*.22,cyd+R*.18,2,2);
-    // heading · range readout under the dome (matches the HMD tape / the
-    // site's "BEARING 128°" lore, not two conflicting headings)
-    const hdg=Math.round(128+Math.sin(now/3600)*4);
-    ctx.font=mono(fsTiny);ctx.fillStyle=rgba(.72);ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText(`${String(hdg).padStart(3,'0')}°  ·  2.8 KM`,cx,cyd+R+6);
-    ctx.restore();
-  }
-
-  // --- dash-top readout strips (fuel/thermal pairs) + QTM chip ---
-  const roP=st(.60,.78);
-  if(roP>0&&w>=300){
-    ctx.save();ctx.globalAlpha=pop(roP);
-    ctx.font=mono(fsTiny);ctx.textBaseline='top';
-    ctx.fillStyle=rgba(.55);
-    ctx.textAlign='left';
-    ctx.fillText('≋ 2.8K 294.1   ⚡ 8.9K 0.0   ◇ 5.9K 0.0',w*.115,dy+h*.012);
-    ctx.textAlign='right';
-    ctx.fillText('≋ 2.8K 294.1   ⚡ 8.9K 0.0   QTM',w*.885,dy+h*.012);
-    ctx.restore();
-  }
+  });
 
   // --- boot terminal + TARGET LINK flash (only while booting) ---
   if(boot<1){
@@ -371,6 +349,12 @@ export function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
  * @param {() => Array} [deps.getEscorts] - live escort array (U8 contact swarm)
  */
 export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, pilotTrackedPoint, getKillCount, getGiantKillCount, getEscorts }){
+  // U14e (2026-07-12): servo-lag state for the target frame — persists across
+  // frames in this factory's own closure (createCombatHmdV3 is instantiated
+  // once at boot, not per-frame), reset to null whenever the target isn't
+  // visible so the next lock snaps in fresh instead of easing in from a
+  // stale off-screen position.
+  let trackCx=null, trackCy=null;
 
   /** Flight-path marker, SC style (V17b): a small bracket-dot secondary marker
    *  ( ⌐ · ¬ ) drifting slightly off boresight — no ghost line, no circle. */
@@ -397,7 +381,16 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
    *  speed] readout below, plus one thin hull bar. Closing speed is read
    *  from the comet's own real vx/vy (scaled for display), not fabricated;
    *  hull % is the same single real hp value the old bars/quadrant-grid used
-   *  — this just stops fanning one number out into four fake quadrants. */
+   *  — this just stops fanning one number out into four fake quadrants.
+   *
+   *  U14e (2026-07-12): the full stroked square read as too big/blunt next
+   *  to the SC reference's slim tracking brackets — swapped for four short
+   *  corner ticks (smaller footprint, thinner line) that read as "actively
+   *  tracking" rather than "static box drawn around a point". The caller
+   *  (drawCleanCombatHmd) now feeds this a servo-smoothed cx/cy instead of
+   *  the raw locked-point coordinate, so the frame visibly eases toward a
+   *  moving target frame-to-frame instead of snapping — same idea as a
+   *  real targeting servo, implemented as a plain lerp, no new dependency. */
   function drawTargetFrame(ctx,cx,cy,size,rangeM,locked){
     const halley=getHalley();
     if(!halley||halley.destroyed) return;
@@ -406,8 +399,14 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     const rangeKm=(rangeM/1000).toFixed(1);
     ctx.save();
     ctx.strokeStyle=locked?'rgba(255,205,128,.92)':'rgba(226,246,255,.82)';
-    ctx.lineWidth=1.1;
-    ctx.strokeRect(cx-size,cy-size,size*2,size*2);
+    ctx.lineWidth=0.9;
+    const arm=size*.5;
+    [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([qx,qy])=>{
+      const bx=cx+qx*size, by=cy+qy*size;
+      ctx.beginPath();
+      ctx.moveTo(bx-qx*arm,by);ctx.lineTo(bx,by);ctx.lineTo(bx,by-qy*arm);
+      ctx.stroke();
+    });
     const fs=Math.max(7,Math.min(9,size*.24));
     ctx.font=`${fs}px 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='middle';
@@ -463,7 +462,15 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
    *  screen coordinate claiming to be a real projection — same honesty
    *  tier as the rest of this module's cosmetic-but-not-random readouts.
    *  Remaining slots (if escorts are light or grounded) are filled from a
-   *  small fixed decorative name pool, not freshly invented per frame. */
+   *  small fixed decorative name pool, not freshly invented per frame.
+   *
+   *  U14e (2026-07-12): the distance numbers used to be computed once from
+   *  `i` alone (no `now` term) — same output every frame, i.e. frozen
+   *  the instant the panel first drew. Added a small `now`-driven drift so
+   *  every on-screen number is at least visibly alive, matching the "closing
+   *  in / drifting off" read of the reference screenshot's contact list —
+   *  still cosmetic (this HUD has no real 3D projection for these), just no
+   *  longer literally static. */
   const CONTACT_FILLER=[
     ['DEEP-SPACE-KING',2.1],['WARMASTAR',2.3],['PT-1402',2.4],['LUCKYMO',2.7],['PYL-G-5083-TJ',2.2],
   ];
@@ -477,16 +484,17 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     const nameFor={f47:'F-47',b2:'B-2',b1b:'B-1B'};
     const entries=airborne.slice(0,3).map((e,i)=>[
       `${nameFor[e.type]||'WING'}-${String(i+1).padStart(2,'0')}`,
-      +(2.0+((i*37+7)%18)/10).toFixed(1),
+      2.0+((i*37+7)%18)/10,
     ]);
     while(entries.length<3) entries.push(CONTACT_FILLER[entries.length]);
     ctx.save();
     ctx.font=`${Math.max(6.5,Math.min(9,w*.014))}px 'JetBrains Mono',monospace`;
     ctx.textAlign='center';
-    entries.forEach(([name,dist],i)=>{
+    entries.forEach(([name,baseDist],i)=>{
       const [sx,sy]=CONTACT_SLOTS[i%CONTACT_SLOTS.length];
       const jx=Math.sin(now/2600+i*2.1)*w*.006, jy=Math.cos(now/3100+i*1.7)*h*.006;
       const x=w*sx+jx, y=h*sy+jy;
+      const dist=(baseDist+Math.sin(now/5200+i*3.3)*.18).toFixed(1);
       ctx.textBaseline='alphabetic';
       ctx.fillStyle='rgba(226,246,255,.72)';
       ctx.fillText(name,x,y);
@@ -547,20 +555,31 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.restore();
   }
 
-  /** U8 (2026-07-11): right column — decorative ammo tally (this game has no
-   *  real ammo pool to bind to, same honesty tier as the old chip stack's
-   *  DECOY/NOISE rows it replaces) + a two-tone boost/capacitor bar + the
-   *  real G readout (already computed elsewhere in this view from
-   *  warpIntensity) + a boost percentage derived from the same value. */
+  /** U8 (2026-07-11): right column — ammo tally + a two-tone boost/capacitor
+   *  bar + the real G readout (already computed elsewhere in this view from
+   *  warpIntensity) + a boost percentage derived from the same value.
+   *  U14e (2026-07-12): the tally used to be two hard-coded strings ("速射炮
+   *  48·4"/"导弹 5·1") that never changed for the entire session — the
+   *  leading count now actually depletes with the real kill count (same
+   *  honesty tier as the rest of this view: a real number, just applied
+   *  with a plausible-not-invented depletion rate since the game doesn't
+   *  track literal rounds-per-kill); the trailing "current burst" digit is
+   *  still cosmetic dressing, but now visibly cycles instead of being
+   *  frozen at its first-paint value. */
   function drawRightColumn(ctx,w,h,now,warpIntensity){
     if(w<300||h<220) return;
     const rx=w*.955;
+    const kills=getKillCount?getKillCount():0;
+    const cannonLeft=Math.max(6,48-kills*2);
+    const missileLeft=Math.max(0,5-Math.floor(kills/2));
+    const burstA=1+Math.floor((now/1300)%4);
+    const burstB=1+Math.floor((now/1700)%2);
     ctx.save();
     ctx.font=`${Math.max(7,Math.min(9,w*.014))}px 'JetBrains Mono',monospace`;
     ctx.textAlign='right';ctx.textBaseline='top';
     ctx.fillStyle='rgba(148,228,255,.6)';
-    ctx.fillText('速射炮 48·4',rx,h*.10);
-    ctx.fillText('导弹 5·1',rx,h*.10+13);
+    ctx.fillText(`速射炮 ${cannonLeft}·${burstA}`,rx,h*.10);
+    ctx.fillText(`导弹 ${missileLeft}·${burstB}`,rx,h*.10+13);
     // boost bar (two-tone: cyan-green body, amber-red base segment)
     const barX=rx-8, barY=h*.20, barH=h*.34, barW=6;
     const fillT=clamp(warpIntensity,0,1);
@@ -641,9 +660,16 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     if(lock.visible){
       const sizeScale={small:1,medium:1.2,large:1.4,giant:1.65}[halley?.sizeClass]||1.2;
       hmdComet(ctx,cx,cy,4.4*sizeScale,now,halley?.vx??-1,halley?.vy??.3);
-      drawTargetFrame(ctx,cx,cy,Math.min(w,h)*.085*sizeScale,range,!!lock.locked);
-      drawLeadIndicator(ctx,cx,cy,w,h,now);
+      // U14e: the tracking frame eases toward the real point instead of
+      // snapping to it — a plain per-frame lerp (no dt weighting; this
+      // canvas already assumes a steady rAF cadence elsewhere, e.g. the
+      // sine-driven drifts above) reads as a servo with a little inertia.
+      if(trackCx==null){trackCx=cx;trackCy=cy;}
+      else{trackCx+=(cx-trackCx)*.16;trackCy+=(cy-trackCy)*.16;}
+      drawTargetFrame(ctx,trackCx,trackCy,Math.min(w,h)*.062*sizeScale,range,!!lock.locked);
+      drawLeadIndicator(ctx,trackCx,trackCy,w,h,now);
     } else {
+      trackCx=null;trackCy=null;
       drawThreatEdgeArrow(ctx,w,h);
     }
 

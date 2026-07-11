@@ -1,6 +1,6 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
-> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
+> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。**U14（防御模块竖能量条 + Combat View 座舱清理与真实数据化）代码已完成**（见其小节，518/518 vitest 通过、`npx vite build --outDir=...` 干净——沙盒 `dist/` 目录权限受限，同 U13 已知问题，用 `--outDir` 验证过构建产物本身没问题，main chunk 864.72 kB）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
 > 规则：本文件只放**当前最需要修改的问题**；每项处理完就从这里划掉，完整实施记录转 `RELEASE_NOTES.md`。全部清空后本文件可删。
 > 红线不变（roadmap §7.10）：仅供娱乐、不做付费解锁/焦虑营销、康健只说作息；沙盒无法真机渲染，所有视觉改动需站主真机验收。
@@ -83,6 +83,38 @@
 **验收**：vitest 517/517 通过（516 + 1，多出的 1 条与本次改动无关——`trackRecord.test.js`/`src/lib/trackRecord.js` 在同一工作区已是**站主自己**改动过的未提交状态，本次未触碰这两个文件，见下方「无关改动」提示）；`npm run build` 干净（沙盒里 `dist/` 目录本身权限受限、连 `rm` 都被拒，用 `--outDir /tmp/...` 验证过构建产物本身没问题，main chunk 865.41 kB，比改动前略小——删掉的 drawGauge 函数体现在体积里）。**唯一悬而未决项**：全部视觉改动（顶栏单行、HUD 三面板新布局、移动 Command 专注模式、首页四处滚动衔接）需站主真机/浏览器复核——沙盒无法渲染 WebGL/实际布局，既有纪律。
 
 **顺带发现（未处理，仅记录）**：`git status` 显示 `src/lib/trackRecord.js` / `tests/trackRecord.test.js` 处于已 `git add` 但未 commit 的状态，与本次改动无关，本次完全没碰这两个文件——连同 U12b 小节已经记录的 `course.html`/其他未提交改动，一并留给站主自己决定要不要提交。
+
+## U14 · 防御模块竖能量条 + Combat View 座舱清理与真实数据化（2026-07-12 立项，站主两张截图，代码已完成）
+
+> 性质：U13 上线后第二轮真机复查。截图 1 = 当前 HUD 实况（左防御模块 + 右 TOP-DOWN·TACTICAL 战斗视角）；截图 2 = 星际公民参考图（元素清单已转写在 RELEASE_NOTES.md v1.6 的 U8 条目，本项不重抄，直接引用）。
+
+### 14a · 防御模块：改四根竖能量条 ✅
+
+- [x] `.weapon-matrix`/`.weapon-choice` 改为 4 列 1 行的竖直能量柱（styles.css 末尾新增最终覆盖块，同 U9–U13 的「只加最后一块 `!important` 覆盖，不逐条改历史碎片」写法）：图标顶部、`::after` 改为**从底部往上填充的整柱能量条**（`height:calc(var(--cool)*100%)`，比原计划的「柱内细管」更简单也更好认）、状态字/名称底部堆叠。`.combat-module` 的 `grid-template-rows` 顺手改回单行——原来的 `30px` 表头轨道是留给已被 U10 `display:none` 的 `#battleFeed` 的，从未被清理过，是「面板上方大块空白」的真正成因。
+- [x] 保持 `<button.weapon-choice data-weapon>` 与 main.js 的 class/dataset 接口零改动（U10 红线）；推荐位/选中态/锁定闪烁改用新柱状视觉但沿用同一批 class 名。
+
+### 14b · Combat View 座舱装饰清理（减法）✅
+
+- [x] `src/ui/combatHmdV3.js` 的 `drawCockpitFrame` 删除 OUTPUT/battery MFD 块、centre 雷达装饰、两侧假数字读数条、右侧 RADR/PROX/HIT/MISL 整个按钮列——只保留左侧 PWR/WPN/THR/SHLD/COOL。
+- [x] **战斗通报迁位**：`#battleFeed`（U10 时 `display:none` 隐藏）DOM 节点整体从防御模块搬进 `.hud-pilot`，styles.css 用更高特异度选择器 `.hud-pilot #battleFeed{display:block!important;...}` 盖过旧的隐藏规则（不用动那条规则本身），改造成右上角 3 行 stacked ticker（越新越亮），`createBattleFeed`/`#killCounter` 零 JS 改动（照样靠 `getElementById('battleFeed')` 找到它）。移动端保持隐藏（Combat View 是稀缺空间）。
+- [x] **全息雷达迁位**：`.pilot-radar-dock` 从左下角改到 **Combat View 下方居中**（`left:50%;transform:translateX(-50%)`），进一步缩小到 64×46px（移动端 52×38px）。
+
+### 14c · PWR/WPN/THR 三 chip 真实数据化 ✅
+
+- [x] `drawCockpitFrame` 新增 `dash` 参数（`{weapon, cdRatio, warpIntensity, warpHover}`，main.js 新增 `cockpitDash()` 组装并传入全部 5 处调用点）。PWR/THR 右侧新增「流动」能量格（`flowPips`，一段亮点沿格子跑动，速度受 `warpHover`——即 `body.warp-hover`，与「以中文入梦」hover 特效同一个全局类——和 THR 额外叠加 warpIntensity 加速）；WPN 右侧改「静态填充」能量格（`fillPips`，绑 `weaponCooldownRatio`，冷却中逐格恢复满格即就绪）。
+- [x] **WPN 跟色**：新增 `WPN_COLOR_BASE` 映射（cannon 青/missile 琥珀/nuke 红/enforcer 品红），WPN 按钮与其能量格都用 `chooseWeapon()` 返回的当前实际武器上色——与防御模块按钮的配色体系一致。
+
+### 14d · Commander Terminal 迁入 Combat View ✅
+
+- [x] index.html：整个 `#signalDeck`（含 `#captainTerminal`）从独立的 `hud-right` 栏搬进 `.hud-pilot` 内部，包装元素**保留 `hud-panel hud-right` 两个 class**（不是纯装饰——styles.css 里有 ~15 条 `.hud-right .signal-deck`/`.hud-right .captain-terminal` 历史规则靠这两个 class 撑起内部尺寸/布局，删掉会让终端整体失去大半样式），新增 `.pilot-terminal-overlay` 作为新覆盖层的定位钩子（`position:absolute;inset:0`，`opacity`/`pointer-events` 随 `body.terminal-open` 切换），desktop-only（`@media(min-width:861px)`，移动端沿用 U12d 既有的 `.hud-right{width:0;height:0;visibility:hidden}` + `#captainTerminal` 自身 `visibility:visible!important` 的穿透写法，两套机制互不打架）。`--hud-cols` 收窄成 2 列（防御模块+Combat View），Combat View 再次扩大。
+- [x] `src/ui/terminalStarMap.js`：点击 Combat View（`#pilotFeed`，U13 已改的触发源）现在**同时**打开覆盖层（`body.terminal-open`）**并**直接落地到 Private Voyage Log（`setMode(false)`），不再默认停在星图壁纸；✕ 关闭按钮改调用新 `closeOverlay()`（移除 `terminal-open` + `setMode(true)` 暂停全息模型），移动端跳过整段逻辑（`matchMedia('(max-width:860px)')` 早退出，避免和 U12d 的 `mobile-log-open` 互相打架）。
+
+### 14e · SC 细节回归：数字全动态 + 目标框精修 ✅
+
+- [x] **目标框重做**：`drawTargetFrame` 从整框描边改成四角短线式 bracket（更小更精致，尺寸系数从 `.085` 收到 `.062`）；`createCombatHmdV3` 工厂闭包新增 `trackCx/trackCy` 状态，目标框/引导指示器改用对真实锁定点做逐帧 `lerp(.16)` 缓动后的坐标，读起来像伺服追踪而非瞬间贴合（彗星本体渲染仍用真实坐标，只有「跟踪框」这个概念上应该有迟滞的元素加了缓动）。
+- [x] **周边多目标标签**：距离数字原本只由循环下标算出（同一帧永远同一个值，实际上首次绘制后就冻结），加了基于 `now` 的小幅漂移，视觉上「持续在动」但仍诚实标注为装饰性投影。
+- [x] **右侧弹药计数**：原本是两行永不改变的写死字符串，主计数现在随真实 `killCount` 消耗（数值有真实含义，只是消耗速率是设计取舍非实测），副计数（当前弹匣）改为基于 `now` 的循环数字，不再冻结。
+- [x] **验收**：vitest 518/518 通过；`npx vite build --outDir=/tmp/u14build2` 干净（main chunk 864.72 kB，沙盒 `dist/` 目录权限受限是已知问题，同 U13）。**视觉验收（唯一悬而未决项）**：四竖柱撑满无空白、座舱死数字清零、WPN 跟色正确、入梦 hover 能量格加速、点击 Combat View 出日志且样式完整（重点核对 `.hud-right` 历史规则是否如预期继续生效）、目标框贴身跟踪且明显变小——均需站主真机/浏览器复核（沙盒无法渲染 WebGL/实际布局——既有纪律）。
 
 ## U7 · Claude 会话卡顿 + Scheduled 任务统筹管理（2026-07-10 立项）
 
