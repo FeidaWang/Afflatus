@@ -30,7 +30,8 @@
     { path: '/games.html',     en: 'Games',     zh: '竞猜', group: 'labs' },
     { path: '/league.html',    en: 'Leagues',   zh: '电竞', group: 'labs' },
     { path: '/horoscope.html', en: 'Horoscope', zh: '观星', group: 'labs' },
-    { path: '/serial.html',    en: 'Novels',    zh: '小说', group: 'labs' }
+    { path: '/serial.html',    en: 'Novels',    zh: '小说', group: 'labs' },
+    { path: '/course.html',    en: 'Course',    zh: '课程', group: 'labs' }
   ];
   const LABS_LABEL = { en: 'Labs', zh: '实验室' };
   // Exposed read-only for consumers that can't use the full DOM-rendering
@@ -64,6 +65,15 @@
       let labsMenu = null;
       let labsTrigger = null;
       SITE.forEach((s, idx) => {
+        // U12b (2026-07-11): the home page's own nav no longer renders a
+        // link to itself — it's redundant there (you're already on it) and
+        // was the 5th button cluttering the home hero's top bar. Every other
+        // page keeps its Home link exactly as before (most of them have no
+        // other one-click way back to "/" — their header brand isn't a link
+        // and the page-turn prev/next arrow only reaches home if it's
+        // adjacent in the SITE order), so this only skips rendering when
+        // `here` (the current page) IS home.
+        if (s.path === '/' && here === '/') return;
         const a = document.createElement('a');
         a.setAttribute('href', s.path);
         a.setAttribute('data-en', s.en);
