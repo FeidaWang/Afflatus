@@ -794,6 +794,13 @@ html[lang="en"] .hero-title{font-size:clamp(36px,5.1vw,78px);max-width:980px}
 .strip-foot{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.1em}
 
 section{padding:140px 96px 80px;position:relative}
+/* U13d (2026-07-11): .equity is a plain <section>, so it inherited the
+   generic 140px top padding above — stacked on top of .stardrive's own
+   already-tuned pin-exit spacing (bottom fade + pin-end anchoring), that
+   read as an awkward extra gap before "02 Equity Curve". .stardrive
+   itself overrides this to 0 already (it manages its own spacing
+   internally); this just brings .equity's entry down to match. */
+.equity{padding-top:64px}
 main{position:relative;z-index:5}
 .sec-num{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.22em;color:var(--dim);margin-bottom:22px}
 .sec-num span{color:var(--cyan)}
@@ -4239,6 +4246,16 @@ body::after{
 }
 .hero{
   padding-top:calc(clamp(60px,7vh,86px) + 1cm)!important;
+  /* U13d (2026-07-11): min-height:96vh (set two fragments up, still the
+     last word for that property) was sized for a since-abandoned centered
+     layout — this same fragment already flipped .hero to
+     justify-content:flex-start, so that reserved height no longer centers
+     anything, it's just dead space below the top-anchored content before
+     .stardrive begins ("massive gap" complaint). Content (title+desc+cta)
+     already runs ~550-650px on typical viewports, so 60vh is a floor for
+     short viewports, not a forced empty block on normal ones. */
+  min-height:60vh!important;
+  padding-bottom:6vh!important;
 }
 .brand{
   display:flex!important;
@@ -7088,13 +7105,23 @@ nav.route-arrows::after,
   }
 }
 
-#alphardForge{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+/* U13d (2026-07-11): dim the vortex render itself — "beautiful but
+   overblown", and it was fighting the caption/tagline text (z-index 3,
+   sits above it) for contrast. Pure CSS filter, WebGL draw logic in
+   alphardForge.js untouched. */
+#alphardForge{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;filter:brightness(.8)}
 .stardrive-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 0%,transparent 46%,rgba(4,6,10,.5) 100%);opacity:calc(.28 + var(--forge)*.36)}
 /* melt the section into the page bg above (hero) and below (equity) so there is
    no hard seam — fades use the page --bg and sit above the canvas but below
    the strip/tagline */
 .stardrive-stage::before,.stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:20vh;z-index:1;pointer-events:none}
-.stardrive-stage::before{top:0;background:linear-gradient(180deg,var(--bg) 0%,rgba(4,6,10,.55) 45%,rgba(4,6,10,0) 100%)}
+/* U13d: the entry fade (universe starfield -> jump point) went straight
+   from solid --bg to a still-fairly-opaque .55 stop at 45% before
+   dropping to transparent — read as a flat color block rather than a
+   blend against the busier starfield behind it. Added a mid-stop so it
+   steps down more gradually; exit fade (::after, toward equity)
+   untouched, not part of this complaint. */
+.stardrive-stage::before{top:0;background:linear-gradient(180deg,var(--bg) 0%,rgba(4,6,10,.60) 28%,rgba(4,6,10,.20) 64%,rgba(4,6,10,0) 100%)}
 .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
 
 .stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
@@ -7111,7 +7138,7 @@ nav.route-arrows::after,
 @keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
 
 /* the metrics row as a telemetry band pinned near the bottom of the stage */
-.stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(6,9,15,.40),rgba(6,9,15,.14));backdrop-filter:blur(6px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
+.stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(6,9,15,.40),rgba(6,9,15,.14));backdrop-filter:blur(6px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
 .stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
 /* supporting metrics recede so the annualised return leads the eye */
 .stardrive .strip-cell:not(.hero-metric){opacity:calc(.55 + (1 - var(--forge))*.45)}
@@ -7463,4 +7490,117 @@ html.vt-suppress::view-transition-new(root){
      Chinese-only "以中文入梦" button too would duplicate the control and
      doesn't fit the single-row mobile top bar anyway. */
   .nav-right #langBtn{display:none}
+}
+
+/* U13a (2026-07-11): desktop nav-right was wrapping to a second row.
+   Root cause: the unconditional "2026-06-08 repair pass" grid (~line 5009)
+   defines only 2 explicit column tracks (`auto minmax(112px,auto)`) — sized
+   back when nav-right held just commandModeBtn + nav-clock. U12b's #langBtn
+   addition made it a 3rd visible item, and default grid-auto-flow:row wraps
+   any item past the last explicit column into a new row instead of a new
+   column, which is exactly the ugly second row in the screenshot. Fix:
+   force column auto-flow (extra item gets an implicit column, stays on one
+   row) and reorder #langBtn between commandModeBtn and the clock via
+   `order` — no DOM move needed, so the hover warp-transition (bound purely
+   by #id per the U12b comment above) is untouched. Mobile is unaffected:
+   U12c already overrides nav-right to display:flex (grid-auto-flow is a
+   no-op there) and both #langBtn/.nav-clock are display:none on mobile, so
+   `order` on them never renders. */
+.nav-right{grid-auto-flow:column}
+.nav-right #langBtn{order:1}
+.nav-right .nav-clock{order:2}
+
+/* U13a (2026-07-11): mobile Command / EN·CN / Deck buttons were three
+   unrelated styles fighting for the same row — Command + lang used
+   JetBrains Mono, Deck used Orbitron; three different border hues; three
+   different letter-spacings/backgrounds. Height (26px) was already
+   consistent, left alone. Unify all three onto the Deck button's look —
+   it's the most deliberately "sci-fi" of the three per U12c's own design
+   intent — so the row reads as one cohesive control cluster. */
+@media(max-width:860px){
+  #commandModeBtn,.lang-mini-toggle,.nav-menu-btn{
+    font-family:'Orbitron',sans-serif!important;
+    font-size:8px!important;
+    letter-spacing:.16em!important;
+    text-transform:uppercase!important;
+    border:1px solid rgba(154,229,255,.34)!important;
+    background:rgba(2,6,10,.70)!important;
+    color:#e9f5ff!important;
+    padding:0 10px!important;
+  }
+}
+
+/* ============================================================
+   U13b (2026-07-11) · Bottom HUD reorder (Web). The hud-left aside
+   (radar) is deleted from index.html — its content merged into a small
+   dock inside hud-pilot (Combat View), directly under #pilotFeed. DOM
+   order is now hud-center(Defense) → hud-pilot(Combat View+radar) →
+   hud-right(Terminal), so hud-center is already the leftmost grid item
+   with zero extra CSS — no `order` trick needed, unlike U13a's nav-right.
+   Same "append final override, don't hunt every historical fragment"
+   convention as U9/U10/U11/U12c/U12d above: --hud-cols has ~9 desktop-
+   affecting historical redefinitions scattered through this file (was a
+   4-track value); this is deliberately the last one, so it wins at every
+   viewport >860px regardless of which narrower in-between breakpoint
+   (1260/1180/1060px) also matches. The ~40 legacy `.hud-left`/
+   `.hud-left #radarCanvas` fragments elsewhere in this file are now
+   inert (no `.hud-left` element exists to match) — left alone rather
+   than hunted down, same call as U10's comment on `.weapon-matrix`. */
+:root{
+  --hud-cols: minmax(300px,.24fr) minmax(660px,.51fr) minmax(370px,.25fr) !important;
+}
+
+/* Combat View becomes clickable (opens Commander Terminal, see
+   terminalStarMap.js) — #combatHud is pointer-events:none at the root,
+   .hud-center/.hud-right already punch their own holes for this reason,
+   .hud-pilot didn't need one before since nothing in it was interactive. */
+#pilotFeed{pointer-events:auto!important;cursor:pointer!important}
+#pilotFeed:hover{filter:brightness(1.08) drop-shadow(0 0 10px rgba(93,255,157,.16))}
+
+/* Radar dock: small, overlaid on Combat View's bottom-left corner rather
+   than claiming its own row, so #pilotFeed's rect (read by several combat
+   HUD draw functions) is untouched. main.js's drawRadar() already skips
+   the degree/km + "SILENT WATCH" text below a size threshold (see its
+   `compact` comment) — the disc/sweep/blips/flame stay, which is the
+   "subtle dynamic sci-fi animation" this dock needed; nothing new to add. */
+.pilot-radar-dock{
+  position:absolute;left:10px;bottom:10px;z-index:2;
+  width:96px;height:70px;pointer-events:none;opacity:.92;
+}
+#radarCanvas{width:100%!important;height:100%!important;display:block!important;filter:drop-shadow(0 0 8px rgba(120,230,215,.14))!important}
+
+@media(max-width:860px){
+  /* hud-left no longer exists — collapse the mobile top row from
+     "left center" to just "center" instead of leaving a phantom empty
+     grid track. .hud-right stays handled by U12d's block above. */
+  .hud-panels{
+    grid-template-areas:"center" "pilot"!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:minmax(0,1fr) minmax(0,1fr)!important;
+  }
+  .hud-center{grid-area:center!important}
+  .hud-pilot{grid-area:pilot!important}
+  .pilot-radar-dock{width:76px;height:56px}
+}
+
+/* ============================================================
+   U13c (2026-07-11) · mobile Command focus mode. #commandModeBtn's click
+   handler (main.js) toggles body.hud-off off when the user presses
+   Command (default page state has hud-off ON = cruise); "combat-mode" is
+   a narrower, separate flag only set once a target is actually being
+   fought (main.js ~line 3300) so it's the wrong hook here — this keys
+   off hud-off directly, matching "when the user presses Command" exactly.
+   Real perf win, not just a visual one: Defense Module has no canvas of
+   its own (weaponMatrix/battleFeed/battleLog are plain DOM+CSS, checked
+   against main.js — nothing to pause), so `display:none` alone removes
+   it from layout/paint entirely; Combat View (kept visible) is the one
+   with canvases (#pilotFeed, #radarCanvas) and both stay running exactly
+   as before, unaffected. */
+@media(max-width:860px){
+  body:not(.hud-off) .hud-panels{
+    grid-template-areas:"pilot"!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:minmax(0,1fr)!important;
+  }
+  body:not(.hud-off) .hud-center{display:none!important}
 }

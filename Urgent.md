@@ -1,6 +1,6 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
-> **状态（2026-07-11）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 现已代码完成**（首页顶栏砍 Home、langBtn 迁移到 nav-right，其余 8 页 Home 链接保留不变——立项前提有偏差，已与站主确认改成「只砍首页」）：待推送+移入 RELEASE_NOTES.md。7 项视觉改动统一仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
+> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
 > 规则：本文件只放**当前最需要修改的问题**；每项处理完就从这里划掉，完整实施记录转 `RELEASE_NOTES.md`。全部清空后本文件可删。
 > 红线不变（roadmap §7.10）：仅供娱乐、不做付费解锁/焦虑营销、康健只说作息；沙盒无法真机渲染，所有视觉改动需站主真机验收。
@@ -52,6 +52,37 @@
 - [ ] **视觉验收**：站主真机/浏览器复核首页顶栏 4 项无 Home、`langBtn` 在最右侧位置/尺寸协调、hover 跃迁特效仍触发正常——沙盒无法渲染，既有纪律，唯一悬而未决项。
 
 **待站主决策项（12a 体检副产品，未处理，与本项无关）**：`course.html`（"Vibe Coding 101"）是一个从未提交到 git 的第 9 个页面，已注册进 `nav.js` 的 SITE 数组，与 roadmap.md §1/C5「加第 9 页前必须先做 Astro 迁移评估」的规则冲突；同一工作区还有一批与本轮任务无关的未提交改动（`page-turn.css`/`sitemap.xml`/`vite.config.js`/HUD 图片增删）。详见 RELEASE_NOTES.md v1.6「意外发现」，本次未做任何处理，是否提交/评估/丢弃待站主决定。
+
+## U13 · 顶栏断行 + HUD 重排 + 移动端 Command 专注模式 + 首页滚动衔接（2026-07-11 深夜立项，站主两张截图，代码已完成）
+
+### 13a · 顶部导航修复（Web + Mobile）✅
+
+- [x] **Web 断行修复**：根因是 `.nav-right`（styles.css 5009 起，"2026-06-08 repair pass" 遗留、无 `@media` 包裹、全宽度生效）只定义了 2 条显式 grid 列（`auto minmax(112px,auto)`），U12b 把 `#langBtn` 加成第 3 个可见项后，默认 `grid-auto-flow:row` 把它挤到第二行——这才是截图里的断行。修复（styles.css 文末新增块，紧跟 U12b 的 `#langBtn` 覆盖之后）：`.nav-right{grid-auto-flow:column}` 让多出的项拿一个隐式列而不是换行；再用 `order`（`#langBtn{order:1}` / `.nav-clock{order:2}`）把语言钮排到 Command 与时间之间——不挪 DOM，`body.warp-hover` 跃迁效果绑定不受影响。移动端不受影响：U12c 已把 `.nav-right` 覆盖成 `display:flex`（grid-auto-flow 对 flex 容器是空操作），且 `#langBtn`/`.nav-clock` 在移动端本来就是 `display:none`。
+- [x] **Mobile 三钮风格统一**：Command / EN·中 / Deck 三个按钮字体（JetBrains Mono vs Orbitron）、边框色、字距、背景各自为政。统一为 Deck 按钮的风格基准（Orbitron、`rgba(154,229,255,.34)` 边框、`rgba(2,6,10,.70)` 背景、`.16em` 字距）——高度本来就一致（26px），未动。
+
+### 13b · 底部 HUD 重排（Web）✅
+
+- [x] **删三只小表盘**：`main.js` `drawRadar()` 内的 `drawGauge` 及其 IAS/CORE/ATT 三次调用（U9 引入的机械表盘周边元素，非 U9 主体全息盘）整体删除；船身剪影+主炮特效原样保留（不是截图投诉的对象）。
+- [x] **雷达迁位缩小**：`index.html` 删除整个 `.hud-left` aside，雷达 canvas 移进 `.hud-pilot`（Combat View）内、`#pilotFeed` 下方，包一层 `.pilot-radar-dock`（96×70px，移动端 76×56px）用绝对定位悬浮在左下角，不占用 `#pilotFeed` 的矩形（多处 HUD 绘制函数依赖它的 rect）。`drawRadar()` 新增 `compact`（`min<220`）判定，小尺寸下跳过度数/公里读数与「静默守望」文字（会糊成一团），保留圆盘/扫描楔/光点/火焰标记——原有动画本身就是「细腻科幻动态」，未另加新效果。
+- [x] **最左列 = 防御模块**：`.hud-left` 从 DOM 删掉后，`.hud-center`（防御模块）自然成为第一个可见 grid 项，零额外 CSS。四武器纵向排列其实 U10 已经做了（`weapon-matrix` 的 `grid-template-rows:repeat(4,...)`，全局生效，本次复核确认无需重做）。桌面 `--hud-cols` 从 4 列改 3 列（`minmax(300px,.24fr) minmax(660px,.51fr) minmax(370px,.25fr)`），沿用 U11/U9 那套「在文件末尾追加最终覆盖，不逐个改历史碎片」的写法——`--hud-cols` 历史上有 9 处桌面生效的重复定义，新覆盖天然是最后一条，对所有 >860px 宽度生效；约 40 处 `.hud-left`/`.hud-left #radarCanvas` 历史碎片因为找不到匹配元素而自然失效，未逐条清理（同 U10 对 `.weapon-matrix` 的处理原则）。移动端同步把 `grid-template-areas` 从 `"left center"/"pilot pilot"` 收成 `"center"/"pilot"` 单列，避免空的幽灵格。
+- [x] **Combat View 扩大**：随雷达列释放宽度，`--hud-cols` 给 pilot 列 `.51fr`（原 `.38fr`）+ `660px` 最小宽（原 `500px`）。
+- [x] **Commander Terminal 交互改道**：`src/ui/terminalStarMap.js` 把开启终端的点击监听从 `#terminalStarMapPanel`（星图本身）移到 `#pilotFeed`（Combat View）；`#pilotFeed{pointer-events:auto;cursor:pointer}`（`#combatHud` 根节点是 `pointer-events:none`，之前只有 hud-center/hud-right 单独开洞，hud-pilot 之前没有交互需求所以没开）+ hover 微光提示可点。星图/LOGIN 按钮的关闭逻辑（`toggle` 点击回到星图）不变。
+
+### 13c · 移动端 Command 专注模式 ✅
+
+- [x] `#commandModeBtn` 的点击处理器（main.js）切的是 `body.hud-off`（默认页面就是 hud-off=巡航模式）——「按下 Command」精确对应 `hud-off` 被移除，不是更窄的 `body.combat-mode`（后者要有实际锁定目标才会加，语义不对）。新增 `@media(max-width:860px){ body:not(.hud-off) .hud-panels{grid-template-areas:"pilot"} body:not(.hud-off) .hud-center{display:none} }`：按下 Command 后底部 HUD 只剩 Combat View。**性能核实**：防御模块（weaponMatrix/battleFeed/battleLog）查过 main.js，全是纯 DOM+CSS，没有自己的 canvas/rAF 循环可暂停——`display:none` 本身就把它整个移出布局/绘制，已经是完整的性能收益，未画蛇添足加暂停钩子。Combat View 保留的两个 canvas（pilotFeed/radarCanvas）不受影响，继续正常绘制。
+
+### 13d · 首页沉浸滚动修复（Web + Mobile）✅
+
+- [x] **hero → Alphard Jump Point 的「近一屏空白」**：追查发现 `.hero` 最终生效值是 `justify-content:flex-start`（styles.css 3890 一条早期覆盖，早于本次改动就已把布局从「居中」改成「顶部对齐」）+ `min-height:96vh`——后者是「居中」时代的遗留值，flex-start 之下它不再服务任何对齐目的，纯粹变成内容下方的空白（这就是「近一屏空白」）。收窄为 `min-height:60vh`（内容自身约 550–650px，大多数屏幕下这条只是下限，不强制留白）+ `padding-bottom:6vh` 收尾呼吸感。
+- [x] **「刺眼分隔线」**：`.stardrive .strip`（年化收益等 4 项指标条）继承了通用 `.strip{border-top/border-bottom}` 的实线——加 `border-top:none;border-bottom:none` 去掉；四格之间的竖向分隔线（`.strip-cell{border-right}`）不是投诉对象，未动。
+- [x] **宇宙背景 → Alphard Jump Point 的生硬过渡**：`.stardrive-stage::before` 渐变原本只有 2 级（实色→透明），在 45% 处还相当不透明，读起来像一块色块而不是融合。加一级中间点（`60% → 28% → 20%@64% → 0`）做更渐进的多级淡出；出场渐变（`::after`，朝 equity 方向）不在本次投诉范围内，未动。
+- [x] **中心图案过曝**：`#alphardForge{filter:brightness(.8)}`——只调整最终合成亮度，不碰 WebGL 渲染逻辑本身；同时改善其上下文字（caption/tagline，z-index 更高）的可读性，一次改动服务两个诉求。
+- [x] **Alphard Jump Point → 02 Equity Curve 的尴尬空隙**：`.equity` 是普通 `<section>`，继承通用 `section{padding:140px...}` 顶部内边距，叠加在 `.stardrive` 自己已调好的退场间距（底部渐变+ pin-end 贴底）之上。新增 `.equity{padding-top:64px}`（class 选择器天然盖过通用 `section` 元素选择器，各宽度断点下都生效，不需要在移动端断点里额外处理）。
+
+**验收**：vitest 517/517 通过（516 + 1，多出的 1 条与本次改动无关——`trackRecord.test.js`/`src/lib/trackRecord.js` 在同一工作区已是**站主自己**改动过的未提交状态，本次未触碰这两个文件，见下方「无关改动」提示）；`npm run build` 干净（沙盒里 `dist/` 目录本身权限受限、连 `rm` 都被拒，用 `--outDir /tmp/...` 验证过构建产物本身没问题，main chunk 865.41 kB，比改动前略小——删掉的 drawGauge 函数体现在体积里）。**唯一悬而未决项**：全部视觉改动（顶栏单行、HUD 三面板新布局、移动 Command 专注模式、首页四处滚动衔接）需站主真机/浏览器复核——沙盒无法渲染 WebGL/实际布局，既有纪律。
+
+**顺带发现（未处理，仅记录）**：`git status` 显示 `src/lib/trackRecord.js` / `tests/trackRecord.test.js` 处于已 `git add` 但未 commit 的状态，与本次改动无关，本次完全没碰这两个文件——连同 U12b 小节已经记录的 `course.html`/其他未提交改动，一并留给站主自己决定要不要提交。
 
 ## U7 · Claude 会话卡顿 + Scheduled 任务统筹管理（2026-07-10 立项）
 

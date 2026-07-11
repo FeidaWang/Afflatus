@@ -506,7 +506,6 @@ function applyHudLanguage(){
   const h=HUD_COPY[currentLang]||HUD_COPY.zh;
   setText('.hud-warning',h.wake);
   setText('.hud-subwarning',h.sub);
-  setText('[data-hud="radarTitle"]',h.radarTitle);
   setText('[data-hud="battleTitle"]',h.battleTitle);
   setText('[data-hud="pilotTitle"]',h.pilotTitle);
   setText('[data-hud="systemsTitle"]',h.systemsTitle);
@@ -658,6 +657,12 @@ function drawRadar(){
   // the loop's y-coordinate are the only two edits needed there to match
   // the new ellipse — see the `*ELLIPSE` added at that loop).
   const ELLIPSE=.42, radarR=min*.46;
+  // U13b (2026-07-11): radar moved into a small dock under Combat View —
+  // at that size the degree/km readout and "SILENT WATCH" text would be
+  // illegible clutter, so skip text (keep disc/sweep/blips/flame, which
+  // still read fine as color+motion small) below this threshold, same
+  // "skip rather than turn to mush" pattern combatHmdV3.js already uses.
+  const compact=min<220;
   rctx.save();
   rctx.scale(1,ELLIPSE);
   const body=rctx.createRadialGradient(0,0,radarR*.1,0,0,radarR);
@@ -704,16 +709,18 @@ function drawRadar(){
 
   const navDegNum=Math.round(parseFloat(navDeg)||128);
   const primaryKm=halley&&!halley.destroyed?(Math.hypot(halley.curX-innerWidth/2,halley.curY-innerHeight/2)/Math.min(innerWidth,innerHeight)*9).toFixed(1):'--';
-  rctx.save();
-  rctx.textAlign='center';rctx.textBaseline='middle';
-  rctx.font=`${Math.max(7,min*.024)}px 'JetBrains Mono',monospace`;
-  rctx.fillStyle='rgba(200,245,235,.72)';
-  rctx.fillText(`${navDegNum}度`,-radarR*.26,radarR*ELLIPSE+16);
-  rctx.fillStyle='rgba(200,245,235,.55)';
-  rctx.fillText(`${primaryKm}km`,radarR*.30,radarR*ELLIPSE+16);
-  rctx.restore();
+  if(!compact){
+    rctx.save();
+    rctx.textAlign='center';rctx.textBaseline='middle';
+    rctx.font=`${Math.max(7,min*.024)}px 'JetBrains Mono',monospace`;
+    rctx.fillStyle='rgba(200,245,235,.72)';
+    rctx.fillText(`${navDegNum}度`,-radarR*.26,radarR*ELLIPSE+16);
+    rctx.fillStyle='rgba(200,245,235,.55)';
+    rctx.fillText(`${primaryKm}km`,radarR*.30,radarR*ELLIPSE+16);
+    rctx.restore();
+  }
 
-  if(!radarScanning){
+  if(!radarScanning && !compact){
     rctx.save();
     rctx.fillStyle='rgba(120,230,215,.5)';
     rctx.font=`${Math.max(4.2,min*.016)}px 'JetBrains Mono',monospace`;
@@ -791,79 +798,11 @@ function drawRadar(){
     rctx.restore();
   }
   rctx.restore();
-  rctx.save();
-  const drawGauge=(gx,gy,r,label,value,arcColor,kind='arc')=>{
-    rctx.save();
-    rctx.textAlign='center';
-    rctx.textBaseline='middle';
-    const gaugeR=r;
-    const dial=rctx.createRadialGradient(gx,gy,gaugeR*.15,gx,gy,gaugeR*1.15);
-    dial.addColorStop(0,'rgba(238,231,210,.065)');
-    dial.addColorStop(1,'rgba(4,7,12,.62)');
-    rctx.fillStyle=dial;rctx.beginPath();rctx.arc(gx,gy,gaugeR*1.08,0,Math.PI*2);rctx.fill();
-    rctx.strokeStyle='rgba(232,179,128,.52)';rctx.lineWidth=1.05;
-    rctx.beginPath();rctx.arc(gx,gy,gaugeR*1.08,0,Math.PI*2);rctx.stroke();
-    for(let k=0;k<30;k++){
-      const a=Math.PI*.74+Math.PI*1.52*k/29;
-      const major=k%5===0;
-      rctx.strokeStyle=major?'rgba(250,238,214,.56)':'rgba(238,231,210,.25)';rctx.lineWidth=major ? .75 : .45;
-      rctx.beginPath();rctx.moveTo(gx+Math.cos(a)*gaugeR*(major ? .76 : .84),gy+Math.sin(a)*gaugeR*(major ? .76 : .84));rctx.lineTo(gx+Math.cos(a)*gaugeR*.98,gy+Math.sin(a)*gaugeR*.98);rctx.stroke();
-    }
-    if(kind==='attitude'){
-      const roll=Math.sin(now/2600)*.22, pitch=Math.sin(now/3100)*gaugeR*.14;
-      rctx.save();
-      rctx.beginPath();rctx.arc(gx,gy,gaugeR*.78,0,Math.PI*2);rctx.clip();
-      rctx.translate(gx,gy+pitch);rctx.rotate(roll);
-      rctx.fillStyle='rgba(24,51,70,.42)';rctx.fillRect(-gaugeR,-gaugeR,gaugeR*2,gaugeR);
-      rctx.fillStyle='rgba(121,83,47,.45)';rctx.fillRect(-gaugeR,0,gaugeR*2,gaugeR);
-      rctx.strokeStyle='rgba(250,246,235,.66)';rctx.lineWidth=1;
-      rctx.beginPath();rctx.moveTo(-gaugeR*.92,0);rctx.lineTo(gaugeR*.92,0);rctx.stroke();
-      rctx.strokeStyle='rgba(250,238,214,.28)';rctx.lineWidth=.65;
-      [-.42,-.24,.24,.42].forEach(y=>{
-        rctx.beginPath();rctx.moveTo(-gaugeR*.30,y*gaugeR);rctx.lineTo(gaugeR*.30,y*gaugeR);rctx.stroke();
-      });
-      rctx.restore();
-      rctx.strokeStyle='rgba(93,255,157,.56)';rctx.lineWidth=1;
-      rctx.beginPath();
-      rctx.moveTo(gx-gaugeR*.72,gy);rctx.lineTo(gx-gaugeR*.22,gy);
-      rctx.moveTo(gx+gaugeR*.22,gy);rctx.lineTo(gx+gaugeR*.72,gy);
-      rctx.moveTo(gx,gy-gaugeR*.15);rctx.lineTo(gx,gy+gaugeR*.15);
-      rctx.stroke();
-      rctx.fillStyle='rgba(250,238,214,.86)';
-      rctx.beginPath();
-      rctx.moveTo(gx,gy-gaugeR*.20);rctx.lineTo(gx+gaugeR*.10,gy+gaugeR*.04);rctx.lineTo(gx-gaugeR*.10,gy+gaugeR*.04);
-      rctx.closePath();rctx.fill();
-    }
-    rctx.strokeStyle='rgba(141,180,192,.20)';rctx.lineWidth=1;
-    rctx.beginPath();rctx.arc(gx,gy,gaugeR,Math.PI*.74,Math.PI*2.26);rctx.stroke();
-    rctx.strokeStyle=arcColor;rctx.beginPath();rctx.arc(gx,gy,gaugeR,Math.PI*.74,Math.PI*.74+Math.PI*1.52*value);rctx.stroke();
-    const a=Math.PI*.74+Math.PI*1.52*value;
-    if(radarScanning && Math.abs(angleDelta(sweepA,a))<.12){
-      rctx.save();
-      rctx.globalCompositeOperation='lighter';
-      rctx.shadowBlur=10;
-      rctx.shadowColor=arcColor;
-      rctx.strokeStyle=arcColor;
-      rctx.lineWidth=2.2;
-      rctx.beginPath();rctx.arc(gx,gy,gaugeR*.94,Math.PI*.74,Math.PI*2.26);rctx.stroke();
-      rctx.restore();
-    }
-    rctx.strokeStyle='rgba(250,246,235,.80)';rctx.lineWidth=1.1;
-    rctx.beginPath();rctx.moveTo(gx,gy);rctx.lineTo(gx+Math.cos(a)*gaugeR*.76,gy+Math.sin(a)*gaugeR*.76);rctx.stroke();
-    rctx.fillStyle='rgba(250,238,214,.88)';
-    rctx.shadowBlur=3;
-    rctx.shadowColor='rgba(232,179,128,.28)';
-    rctx.font=`700 ${Math.max(5,min*.019)}px Georgia, 'Times New Roman', serif`;
-    rctx.fillText(label,gx,kind==='attitude'?gy+gaugeR*.53:gy+gaugeR*.45);
-    rctx.fillStyle='rgba(154,229,255,.78)';
-    rctx.font=`600 ${Math.max(4.4,min*.016)}px 'JetBrains Mono',monospace`;
-    if(kind!=='attitude') rctx.fillText(`${Math.round(value*100)}`,gx,gy+gaugeR*.68);
-    rctx.restore();
-  };
-  drawGauge(-min*.318,min*.060,min*.066,currentLang==='zh'?'空速':'IAS',clamp((window.__warpPower||41)/100,0,1),'rgba(232,179,128,.74)');
-  drawGauge(min*.318,min*.060,min*.066,currentLang==='zh'?'堆温':'CORE',clamp(.66+Math.sin(now/2400)*.1,0,1),'rgba(255,52,72,.66)');
-  drawGauge(0,min*.300,min*.078,currentLang==='zh'?'姿态':'ATT',clamp(.5+Math.sin(now/1800)*.18,0,1),'rgba(93,255,157,.66)','attitude');
-  rctx.restore();
+  // U13b (2026-07-11): the three analog gauges (IAS/CORE/ATT) that used to
+  // float here — deleted per station reference ("delete the three small
+  // dials entirely"); the ship silhouette + cannon fx directly above are
+  // untouched, they were never the complaint. `drawGauge` and its 3 calls
+  // fully removed (this was their only caller).
   contacts.forEach(c=>{
     const dx=(c.x-innerWidth/2)/innerWidth, dy=(c.y-innerHeight/2)/innerHeight;
     const ang=Math.atan2(dy,dx), dist=clamp(Math.hypot(dx,dy)*1.8,.08,.92);
