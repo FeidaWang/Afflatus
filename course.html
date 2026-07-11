@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
+     fetch + init only runs once the browser reports idle time (or after a
+     3s/2s fallback timeout for browsers without requestIdleCallback), so it
+     doesn't compete with render-critical work during first paint. Same
+     dataLayer/gtag('config',...) calls as before, just deferred. -->
+<script>
+(function(){
+  function loadGtag(){
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', 'G-M078NTBWRF');
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
+    document.head.appendChild(s);
+  }
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
+  else setTimeout(loadGtag, 2000);
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Afflatus · Course — Vibe Coding 101</title>
+<meta name="description" content="Free, open-source path from zero to AI-assisted developer: the vibe-coding mindset (Claude Code + Fable 5 + Sonnet 5), CS/math fundamentals, a non-grindy Codeforces plan, and a 2026 data-analyst playbook. 从零到 AI 协作开发者的免费开源路径。">
+<meta name="theme-color" content="#05060a">
+<link rel="canonical" href="https://feida.au/course.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Afflatus">
+<meta property="og:title" content="Project Afflatus · Course — Vibe Coding 101">
+<meta property="og:description" content="Free, open-source path from zero to AI-assisted developer and data analyst.">
+<meta property="og:url" content="https://feida.au/course.html">
+<meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/page-turn.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- JetBrains Mono is already self-hosted via page-turn.css (@font-face,
+     shared by every sub-page) — only the two fonts not covered there are
+     pulled from Google Fonts, to keep this "performance" course honest
+     about its own network cost. -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles/course.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"Course","name":"Vibe Coding 101","description":"A free, open-source path from zero to AI-assisted developer and data analyst — mindset, tooling, CS/math fundamentals, algorithmic practice and a 2026 data-analyst playbook.","provider":{"@type":"Organization","name":"Project Afflatus","sameAs":"https://feida.au/"},"inLanguage":["en","zh-CN"],"isAccessibleForFree":true,"url":"https://feida.au/course.html"}]}
+</script>
+</head>
+<body class="course-page" data-prev="/serial.html" data-next="/">
+<div class="cbg" aria-hidden="true"><div class="grid"></div><div class="glow"></div></div>
+
+<nav class="page-turn-controls" aria-label="Page navigation">
+  <a class="page-turn" href="/serial.html" data-page-turn="prev" aria-label="Back to novels">←</a>
+  <a class="page-turn" href="/" data-page-turn="next" aria-label="Next to home">→</a>
+</nav>
+
+<div class="progress-rail" aria-hidden="true"><i id="courseProgress"></i></div>
+
+<main class="shell">
+  <header class="top">
+    <a class="brand" href="/">AFFLATUS<small data-en="COURSE · OPEN SOURCE" data-zh="课程 · 开源">COURSE · OPEN SOURCE</small></a>
+    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+      <button class="lang-toggle" type="button">中文</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="kicker" data-en="Free · open-source · zero to AI-assisted developer" data-zh="免费 · 开源 · 从零到 AI 协作开发者">Free · open-source · zero to AI-assisted developer</div>
+    <h1 data-en="Vibe coding is a conversation you learn to steer." data-zh="Vibe coding，是一场你要学会引导的对话。">Vibe coding is a conversation you learn to steer.</h1>
+    <p class="sub" data-en="One idea per screen. Try something in the first two minutes. Everything else here is optional depth." data-zh="一屏一个概念，头两分钟就要动手试一次。其余的一切，都是可选的深度。">One idea per screen. Try something in the first two minutes. Everything else here is optional depth.</p>
+    <div class="hero-cta">
+      <a class="btn-primary" href="#act1" data-en="Start — 12 minutes" data-zh="开始 — 12 分钟">Start — 12 minutes</a>
+      <span class="hero-note" data-en="No signup. No paid tier. State lives in your files, not an account." data-zh="无需注册，无付费层级。状态存在你的文件里，不在账号里。">No signup. No paid tier. State lives in your files, not an account.</span>
+    </div>
+  </section>
+
+  <!-- ===== 3-act scroll narrative ===== -->
+  <section class="acts">
+    <article class="act" id="act1">
+      <div class="act-num">01</div>
+      <h2 data-en="You say" data-zh="你说">You say</h2>
+      <p class="act-lede" data-en="Describe the outcome, not the steps. The &lt;span class=&quot;term-chip&quot; data-term=&quot;agent&quot;&gt;agent&lt;/span&gt; fills the file in front of you." data-zh="描述结果，不描述步骤。&lt;span class=&quot;term-chip&quot; data-term=&quot;agent&quot;&gt;Agent&lt;/span&gt; 会在你面前把文件逐渐填满。" data-i18n-html>Describe the outcome, not the steps. The <span class="term-chip" data-term="agent">agent</span> fills the file in front of you.</p>
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><span data-en="claude" data-zh="claude">claude</span></div>
+        <div class="term-body">
+<span class="t-you" data-en="&gt; Build a login page. Friendly error when the password is wrong." data-zh="&gt; 做一个登录页。密码错的时候给个友好提示。">&gt; Build a login page. Friendly error when the password is wrong.</span>
+<span class="t-ai" data-en="Reading your project… creating LoginForm.tsx… wiring validation… ✓ done, dev server running at :5173" data-zh="正在读取项目结构… 创建 LoginForm.tsx… 接入校验逻辑… ✓ 完成，开发服务器已在 :5173 运行">Reading your project… creating LoginForm.tsx… wiring validation… ✓ done, dev server running at :5173</span>
+        </div>
+      </div>
+      <div class="task">
+        <span class="task-lb" data-en="Try it now" data-zh="现在就试">Try it now</span>
+        <code class="task-prompt" data-en="Build a small page that greets me by name from a text input." data-zh="做一个小页面，从文本框读我的名字并问候我。">Build a small page that greets me by name from a text input.</code>
+        <button class="copy-btn" type="button" data-copy-target="prev" data-en="Copy prompt" data-zh="复制 prompt">Copy prompt</button>
+      </div>
+    </article>
+
+    <article class="act" id="act2">
+      <div class="act-num">02</div>
+      <h2 data-en="You review" data-zh="你审查">You review</h2>
+      <p class="act-lede" data-en="You don't read every line. You ask three questions and make the AI answer them." data-zh="你不必逐行读代码。问三个问题，让 AI 来回答。">You don't read every line. You ask three questions and make the AI answer them.</p>
+      <ol class="review-qs">
+        <li><b data-en="Does it work?" data-zh="行为对吗？">Does it work?</b><span data-en="Run it. Click the thing." data-zh="跑一遍，点一下试试。">Run it. Click the thing.</span></li>
+        <li><b data-en="What breaks it?" data-zh="边界呢？">What breaks it?</b><span data-en="Empty input, huge input, double-click." data-zh="空输入、超大输入、连点两下。">Empty input, huge input, double-click.</span></li>
+        <li><b data-en="Can I explain this diff?" data-zh="我能解释这次改动吗？">Can I explain this diff?</b><span data-en="If not, ask the AI to explain it back — then decide." data-zh="解释不了就让 AI 讲给你听，再决定要不要。">If not, ask the AI to explain it back — then decide.</span></li>
+      </ol>
+      <p class="rule" data-en="The one law of this course: never merge code you can't explain." data-zh="本课程唯一的铁律：不合并自己解释不了的代码。">The one law of this course: never merge code you can't explain.</p>
+    </article>
+
+    <article class="act" id="act3">
+      <div class="act-num">03</div>
+      <h2 data-en="You ship" data-zh="你发布">You ship</h2>
+      <p class="act-lede" data-en="Every session ends at a real URL, and the next session starts by reading a file — not by re-explaining yourself." data-zh="每一轮都以一个真实网址收尾；下一轮开工靠读文件接力，不用你重新解释一遍。">Every session ends at a real URL, and the next session starts by reading a file — not by re-explaining yourself.</p>
+      <div class="ship-steps">
+        <div><b>TODO.md</b><span data-en="write the unfinished state before you close the chat" data-zh="关闭对话前把未完成状态写进去">write the unfinished state before you close the chat</span></div>
+        <div><b>git commit</b><span data-en="small, often — cheap to throw away, cheap to redo" data-zh="小步常提交——扔掉便宜，重来也便宜">small, often — cheap to throw away, cheap to redo</span></div>
+        <div><b>deploy</b><span data-en="one command to a public URL, every time" data-zh="一条命令到公网地址，每次都要做">one command to a public URL, every time</span></div>
+      </div>
+      <p class="act-foot" data-en="Discard the conversation freely — the file is what persists." data-zh="对话可以随时丢弃——真正留下来的是文件。">Discard the conversation freely — the file is what persists.</p>
+    </article>
+  </section>
+
+  <!-- ===== toolchain triangle ===== -->
+  <section class="toolchain">
+    <div class="band" data-en="THE 2026 TRIANGLE — <span>who does what</span>" data-zh="2026 三角工作流 — <span>谁干什么</span>" data-i18n-html>THE 2026 TRIANGLE — <span>who does what</span></div>
+    <div class="roles">
+      <div class="role">
+        <div class="role-tag" data-en="executor" data-zh="执行体">executor</div>
+        <h3>Claude Code</h3>
+        <p data-en="Runs on your machine. Reads/writes files, runs tests, git, deploy." data-zh="跑在你自己的机器上。读写文件、跑测试、git、部署。">Runs on your machine. Reads/writes files, runs tests, git, deploy.</p>
+      </div>
+      <div class="role">
+        <div class="role-tag" data-en="mentor" data-zh="导师">mentor</div>
+        <h3>Fable 5</h3>
+        <p data-en="Asks before it answers. Designs, reviews, rescues you when stuck." data-zh="先问清楚再回答。负责设计、审查，卡壳时来救场。">Asks before it answers. Designs, reviews, rescues you when stuck.</p>
+      </div>
+      <div class="role">
+        <div class="role-tag" data-en="coder" data-zh="编码器">coder</div>
+        <h3>Sonnet 5</h3>
+        <p data-en="Fast, high-volume implementation once the plan is clear." data-zh="方案定了之后，负责高速大批量实现。">Fast, high-volume implementation once the plan is clear.</p>
+      </div>
+    </div>
+    <p class="swap-note" data-en="The three slots are roles, not brands — swap models by editing one config line. Each agent's own &lt;span class=&quot;term-chip&quot; data-term=&quot;context&quot;&gt;context&lt;/span&gt; is what it currently knows; long chat history bloats it, files don't." data-zh="三个槽位是角色，不是品牌——换模型只改配置文件里的一行。每个 agent 自己的&lt;span class=&quot;term-chip&quot; data-term=&quot;context&quot;&gt;context&lt;/span&gt;是它当下知道的一切；对话历史越长越膨胀，文件不会。" data-i18n-html>The three slots are roles, not brands — swap models by editing one config line. Each agent's own <span class="term-chip" data-term="context">context</span> is what it currently knows; long chat history bloats it, files don't.</p>
+    <pre class="swap-code"><code>agents:
+  mentor:   <span class="hl">fable-5</span>      <span class="cm" data-en="# swap for any model" data-zh="# 换成任意模型都行"># swap for any model</span>
+  coder:    <span class="hl">sonnet-5</span>
+  executor: claude-code</code></pre>
+  </section>
+
+  <!-- ===== depth capsules — core vibe ===== -->
+  <section class="vibe">
+    <div class="band" data-en="CORE VIBE — <span>the mindset, not the syntax</span>" data-zh="核心心法 — <span>是心法，不是语法</span>" data-i18n-html>CORE VIBE — <span>the mindset, not the syntax</span></div>
+    <div class="vibe-cards">
+      <div class="vcard">
+        <h3 data-en="Delegate" data-zh="委托">Delegate</h3>
+        <p data-en="Say the result, not the steps." data-zh="说结果，不说步骤。">Say the result, not the steps.</p>
+        <div class="pair"><span class="bad">✕ <i data-en="Add a try/catch on line 47" data-zh="在第 47 行加个 try/catch">Add a try/catch on line 47</i></span><span class="good">✓ <i data-en="Wrong passwords should feel friendly, not scary" data-zh="密码错的时候要友好，不要吓人">Wrong passwords should feel friendly, not scary</i></span></div>
+      </div>
+      <div class="vcard">
+        <h3 data-en="Review" data-zh="审查">Review</h3>
+        <p data-en="Three questions, not a line-by-line read." data-zh="三个问题，不是逐行阅读。">Three questions, not a line-by-line read.</p>
+        <div class="pair"><span class="bad">✕ <i data-en="Trust the green checkmark alone" data-zh="只信一个绿色对勾">Trust the green checkmark alone</i></span><span class="good">✓ <i data-en="Works? Breaks? Can I explain the &lt;span class=&quot;term-chip&quot; data-term=&quot;diff&quot;&gt;diff&lt;/span&gt;?" data-zh="行不行？会不会崩？我能解释这个&lt;span class=&quot;term-chip&quot; data-term=&quot;diff&quot;&gt;diff&lt;/span&gt;吗？" data-i18n-html>Works? Breaks? Can I explain the <span class="term-chip" data-term="diff">diff</span>?</i></span></div>
+      </div>
+      <div class="vcard">
+        <h3 data-en="Iterate" data-zh="迭代">Iterate</h3>
+        <p data-en="Small batches. Discard without guilt." data-zh="小批量。丢弃不必有负担。">Small batches. Discard without guilt.</p>
+        <div class="pair"><span class="bad">✕ <i data-en="One giant session until it's perfect" data-zh="死磕一个超长会话直到完美">One giant session until it's perfect</i></span><span class="good">✓ <i data-en="Feels slow? Write state to a file, start fresh" data-zh="感觉卡了？把状态写进文件，开个新的">Feels slow? Write state to a file, start fresh</i></span></div>
+      </div>
+    </div>
+    <p class="capsule-hint" data-en="Underlined terms are click-to-expand — no jargon left unexplained." data-zh="带下划线的词点开即有解释——不留一个没解释的术语。">Underlined terms are click-to-expand — no jargon left unexplained.</p>
+  </section>
+
+  <!-- ===== curriculum map: Modules 2-4, condensed ===== -->
+  <section class="curriculum">
+    <div class="band" data-en="WHERE TO GO NEXT — <span>the rest of the map</span>" data-zh="接下来去哪 — <span>地图的其余部分</span>" data-i18n-html>WHERE TO GO NEXT — <span>the rest of the map</span></div>
+    <div class="cur-cards">
+      <details class="cur-card">
+        <summary>
+          <span class="cur-num">02</span>
+          <span class="cur-title" data-en="AI, Math &amp; CS Fundamentals" data-zh="AI / 数学 / CS 基础">AI, Math &amp; CS Fundamentals</span>
+          <span class="cur-teaser" data-en="Judgment for when AI's output is wrong — not just the ability to prompt." data-zh="判断 AI 产出好坏的能力——不只是会写 prompt。">Judgment for when AI's output is wrong — not just the ability to prompt.</span>
+        </summary>
+        <ul>
+          <li data-en="Curated, not authored: Anthropic, OpenAI, 3Blue1Brown, MIT Missing Semester, Stanford/MIT CS." data-zh="精选而非自撰：Anthropic、OpenAI、3Blue1Brown、MIT Missing Semester、斯坦福/MIT CS 课程。">Curated, not authored: Anthropic, OpenAI, 3Blue1Brown, MIT Missing Semester, Stanford/MIT CS.</li>
+          <li data-en="Every lesson ends with &quot;So you can tell the AI…&quot; — theory converted into a sharper instruction." data-zh="每课收尾「所以你可以这样跟 AI 说……」——把理论换算成更专业的指令。">Every lesson ends with "So you can tell the AI…" — theory converted into a sharper instruction.</li>
+          <li data-en="UI/UX taste as a graded skill: hierarchy, spacing, contrast, restraint." data-zh="把 UI/UX 品味当一门可评分的技能：层级、间距、对比度、克制。">UI/UX taste as a graded skill: hierarchy, spacing, contrast, restraint.</li>
+        </ul>
+      </details>
+      <details class="cur-card">
+        <summary>
+          <span class="cur-num">03</span>
+          <span class="cur-title" data-en="Codeforces &amp; Career Prep" data-zh="Codeforces 与求职准备">Codeforces &amp; Career Prep</span>
+          <span class="cur-teaser" data-en="3 problems a week. Learn to think, not to paste answers." data-zh="每周 3 题。学会思考，而不是粘贴答案。">3 problems a week. Learn to think, not to paste answers.</span>
+        </summary>
+        <ul>
+          <li data-en="Non-grindy ladder: 800 → 1600+, ~4 phases, one virtual contest a month." data-zh="不硬刷的阶梯：800 → 1600+，约四个阶段，每月一场 virtual contest。">Non-grindy ladder: 800 → 1600+, ~4 phases, one virtual contest a month.</li>
+          <li data-en="SPAR framework: Solve alone → Probe (hints only) → Analyze → Riff (new variant)." data-zh="SPAR 框架：独立解题 → 阶梯提示 → 复盘 → 变体再练。">SPAR framework: Solve alone → Probe (hints only) → Analyze → Riff (new variant).</li>
+          <li data-en="2026 interviews reward AI-collaboration and code-review rounds as much as raw algorithms." data-zh="2026 年的面试对「AI 协作轮」和「code review 轮」的重视，不亚于纯算法。">2026 interviews reward AI-collaboration and code-review rounds as much as raw algorithms.</li>
+        </ul>
+      </details>
+      <details class="cur-card">
+        <summary>
+          <span class="cur-num">04</span>
+          <span class="cur-title" data-en="Data Analyst 2026 Playbook" data-zh="2026 数据分析师 Playbook">Data Analyst 2026 Playbook</span>
+          <span class="cur-teaser" data-en="AI writes the pandas/SQL. You own the business logic and the story." data-zh="pandas/SQL 交给 AI 写，你负责业务逻辑和叙事。">AI writes the pandas/SQL. You own the business logic and the story.</span>
+        </summary>
+        <ul>
+          <li data-en="Three case studies: churn prediction, real-time BI dashboard, unstructured-data parsing." data-zh="三个实战案例：流失预测、实时 BI 看板、非结构化数据解析。">Three case studies: churn prediction, real-time BI dashboard, unstructured-data parsing.</li>
+          <li data-en="Core skill: build the ground-truth set that grades the AI's own extraction quality." data-zh="核心技能：建一份评测集，给 AI 自己的抽取质量打分。">Core skill: build the ground-truth set that grades the AI's own extraction quality.</li>
+          <li data-en="12-week path, business framing first — a week of translation practice before any code." data-zh="12 周路径，业务框架先行——动手写代码前先练一周「需求翻译」。">12-week path, business framing first — a week of translation practice before any code.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== platform consensus / red lines ===== -->
+  <section class="consensus">
+    <div class="band" data-en="PLATFORM RED LINES" data-zh="平台红线" >PLATFORM RED LINES</div>
+    <div class="lines">
+      <div><b data-en="Open source" data-zh="开源">Open source</b><span data-en="MIT / CC-BY. Every page is a file; every fix is a PR." data-zh="MIT / CC-BY 双许可。每一页都是文件，每一次修正都是一次 PR。">MIT / CC-BY. Every page is a file; every fix is a PR.</span></div>
+      <div><b data-en="No leaderboards" data-zh="不设排行榜">No leaderboards</b><span data-en="No paid acceleration, no 30-day-miracle marketing. Compare only to your own past." data-zh="不卖加速包，不做「30 天速成」话术。只跟自己的过去比。">No paid acceleration, no 30-day-miracle marketing. Compare only to your own past.</span></div>
+      <div><b data-en="Bilingual by construction" data-zh="双语同源">Bilingual by construction</b><span data-en="One file, two data attributes — never two documents drifting apart." data-zh="一个文件，两个属性——永远不是两份会失同步的文档。">One file, two data attributes — never two documents drifting apart.</span></div>
+    </div>
+  </section>
+
+  <footer class="foot" data-en="This page is itself the first UI/UX example — critique it the same way Module 2 teaches. Edit source: course.md · course.html" data-zh="这个页面本身就是第一个 UI/UX 范例——用第二模块教的方法批判它。源文件：course.md · course.html">This page is itself the first UI/UX example — critique it the same way Module 2 teaches. Edit source: course.md · course.html</footer>
+</main>
+
+<div class="term-popover" id="termPopover" role="tooltip" hidden></div>
+<div class="toast" id="courseToast"></div>
+
+<script type="module" src="/src/pages/courseEntry.js"></script>
+</body>
+</html>

@@ -26,7 +26,8 @@ export default defineConfig({
         games: resolve(__dirname, 'games.html'),
         league: resolve(__dirname, 'league.html'),
         horoscope: resolve(__dirname, 'horoscope.html'),
-        serial: resolve(__dirname, 'serial.html')
+        serial: resolve(__dirname, 'serial.html'),
+        course: resolve(__dirname, 'course.html')
       }
     }
   }

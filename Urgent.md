@@ -51,7 +51,7 @@
 - [x] **验收**：vitest 516/516 通过；`npm run build` 干净（main chunk 868.29 kB，纯 DOM 位置调整无 JS 逻辑变化，体积不变）；Node 沙盒模拟验证了 Home 跳过逻辑在 `here==='/'` 与 `here==='/arena.html'` 两种输入下均按预期渲染。
 - [ ] **视觉验收**：站主真机/浏览器复核首页顶栏 4 项无 Home、`langBtn` 在最右侧位置/尺寸协调、hover 跃迁特效仍触发正常——沙盒无法渲染，既有纪律，唯一悬而未决项。
 
-**待站主决策项（12a 体检副产品，未处理，与本项无关）**：`course.html`（"Vibe Coding 101"）是一个从未提交到 git 的第 9 个页面，已注册进 `nav.js` 的 SITE 数组，与 roadmap.md §1/C5「加第 9 页前必须先做 Astro 迁移评估」的规则冲突；同一工作区还有一批与本轮任务无关的未提交改动（`page-turn.css`/`sitemap.xml`/`vite.config.js`/HUD 图片增删）。详见 RELEASE_NOTES.md v1.6「意外发现」，本次未做任何处理，是否提交/评估/丢弃待站主决定。
+**C5 评估已完成（2026-07-12）**：`course.html`（"Vibe Coding 101"）撞上的 roadmap.md §1/C5「加第 9 页前必须先做 Astro 迁移评估」规则已正式评审，结论「暂不做全站 Astro 迁移，course.html 按现有架构直接加为第 9 页」，完整依据见 roadmap.md §8.4。**仍待站主决定**：是否现在就动手把 `course.html`/`public/styles/course.css`/`src/pages/course.js`/`src/pages/courseEntry.js` 这四个文件正式加入构建（`vite.config.js` 新增入口）并提交推送——评估只回答了「能不能加」，尚未执行「加」这一步，需站主一句话确认后再动手。同一工作区还有一批与本轮任务无关的未提交改动（`page-turn.css`/`sitemap.xml`/`vite.config.js`/HUD 图片增删），详见 RELEASE_NOTES.md v1.6「意外发现」，本次未做任何处理。
 
 ## U13 · 顶栏断行 + HUD 重排 + 移动端 Command 专注模式 + 首页滚动衔接（2026-07-11 深夜立项，站主两张截图，代码已完成）
 

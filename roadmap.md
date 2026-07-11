@@ -23,7 +23,7 @@
 5. **B6** 首页 WebGL 收尾——需真机 profiling，沙盒做不了，详见 §5「Home」。
 6. **C4** TypeScript 渐进迁移——**试点已完成（2026-07-05）**：新增 `tsconfig.json`（strict、noEmit）+ `typescript` devDependency + `npm run typecheck`；A2 Phase 4 新抽出的 `src/ui/cursor.ts` 是第一个 `.ts` 模块，`tsc --noEmit` 通过。继续原则不变：随 A2/其余拆分顺路给新模块用 `.ts`，不单独立项、不回头改存量 `.js`。详见 §8.2。
 7. **C3** three.js WebGPURenderer + Bloom/ACES——投入大，等有余力再评估，详见 §8.2。
-8. **C5** Astro 迁移——**⚠️ 触发线已达标（2026-07-05，V20 观星台上线后全站 8 页）**。S0 Phase 0 已覆盖大部分静态 SEO 收益，且 V20 是纯客户端计算页（无 SEO 内容诉求），不构成额外紧迫性——但按既定规则，**下次再加任何新页前必须先做 Astro 迁移评估，不允许再往 MPA 上叠第 9 页**。详见 §8.2、§9。
+8. **C5** Astro 迁移——**评估已完成（2026-07-12，course.html 待加为第 9 页触发）：结论「暂不做全站迁移」**，完整评审见 §8.4。摘要：两条触发线其实都已越线（页面数 9、`serial.html` 章节数 45→150），但真实重复代码量小（约 25 行/页 × 9 页头部样板，非"高"），且这套框架唯一有真实增量收益的地方是 `serial.html`（一个 URL 塞 296KB 全量章节 JSON、零单章 SEO 面），其余页面都是重交互 canvas/游戏页，Astro 的"少发 JS"卖点用不上。**决定**：course.html 按现有架构直接加为第 9 页（内容页、非战斗 HUD，加页成本低）；头部样板重复改用一个轻量构建脚本合并（不上框架）；`serial.html` 单独记一条候选项，留给章节数继续涨或需要单章 SEO 时再评估。详见 §8.2、§8.4、§9。
 
 ### 队列 B · 功能性优先级 / Feature & product queue
 
@@ -355,9 +355,36 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 | **three.js WebGPURenderer + TSL** | compute shader 粒子（百万级星涡/爆炸碎片）+ 更低 draw call 开销 | 中-高 |
 | **Bloom/HDR 后期处理** | `UnrealBloomPass` + ACES tone mapping，真实辉光替代 radial-gradient 假光晕 | 中 |
 | **TypeScript（渐进）** | 拆 main.js 时新模块直接 `.ts`——试点已完成（`src/ui/cursor.ts` + `tsconfig.json` + `npm run typecheck`，见 §1 C4） | 低（增量） |
-| **Astro（触发式）** | 页面 ≥8 或 novels 章节 ≥20 时迁移，当前未到阈值 | 高（迁移） |
+| **Astro** | ~~页面 ≥8 或 novels 章节 ≥20 时迁移~~——**两条触发线均已越线，评估已完成（2026-07-12），结论：暂不做，详见 §8.4** | 高（迁移，且收益集中在单一页面，性价比低） |
 
 **❌ 不要做**：React/Vue/Svelte 重写、Rust/WASM、全站 WebGPU-only、SSR/后端框架——站点是 canvas 动画 + 静态内容，加框架/后端只会增加体积与运维成本而无实际收益。
+
+### 8.4 Astro 迁移评估（2026-07-12，C5 触发后的正式评审）
+
+**触发原因**：course.html 待加为第 9 页，撞上 C5「加第 9 页前必须先做 Astro 评估」的规则。以下是实测数据 + 结论，评估到此为止，不是迁移执行计划。
+
+**触发线核实（两条都已越线，不只一条）**：
+- 页面数：`vite.config.js` 的 `rollupOptions.input` 现有 8 个入口（main/arena/sectors/signal/games/league/horoscope/serial），course.html 会是第 9 个——页面数触发线（≥8）已经在 V20 上线时就越过，本次只是「终于被迫认真评估」而不是「刚好达标」。
+- 章节数：`public/novels-data.json` 实测三部小说 `wanjie-zhongchun` 15 章、`changye-qingjian` 10 章、`yuxi-gongci` **45 章**（`prompts/yuxi-150-script.md` 的既定目标是 150 章）——章节数触发线（≥20）早已越过且还在涨。
+
+**重复代码量实测（结论：真实但不「高」）**：
+- 8 个页面的 `<head>` 前 24 行逐字节 diff：`arena.html` vs `games.html`、`signal.html` vs `league.html` **完全零差异**；`index.html` vs `sectors.html`、`horoscope.html` vs `serial.html` 仅 4 行差异（多一段首页专属 JSON-LD）。这段内容是 gtag 延迟加载脚本 + `lang` 探测脚本 + charset/viewport meta——纯样板，逐页复制粘贴。
+- 换算：约 24–30 行 × 9 页 ≈ 250 行纯重复样板。这是「维护税」，但量级上远够不上「高」——不是「每页几百行独立逻辑重复」，是一段固定模板贴 9 次。
+- **对照组**：nav 链接本身早就不重复——`src/lib/nav.js` 的 `SITE` 数组是单一数据源，各页 `<nav data-afflatus-nav>` 只是一个空容器，脚本负责渲染，这部分「共享布局」的收益已经用远比 Astro 便宜的方式吃到了。真正没被吃到的只剩 `<head>` 样板 + 各页独立的字体 `<link>`（这个天然没法共享，8 页字体各不相同，是设计选择不是重复）。
+
+**Astro 真实收益点在哪：只有一个页面，不是全站**：
+- `serial.html`：所有章节共享**一个 URL**，`public/novels-data.json`（296KB）整包在该页面客户端一次性拉取，45 章（未来 150 章）没有任何一章有独立可索引的页面——这是唯一一个「框架能解决真问题」的地方：Astro 的 content collections 能把每章编译成独立静态页（单章 payload 从"296KB 的 1/45"变成真正只加载那一章，且每章有自己的 URL/meta/结构化数据，单章可被搜索引擎收录）。这个收益是具体、可量化的，而且**只对这一个页面成立**。
+- 其余 8 页（首页 3D 战斗 HUD、arena 技术分析看板、horoscope 八字/占星计算器等）本质是**重交互 canvas/计算应用**，不是「内容页」——Astro 的核心卖点「默认零 JS，交互组件按需加载」在这些页面上几乎不生效：这些页面的 JS 本来就是必需品（战斗渲染循环、three.js 场景、图表计算），迁移到 Astro 之后该发的 JS 一分不会少，唯一省下来的只有前面那 ~250 行 `<head>` 样板。
+
+**成本与风险（这才是「高」的真正来源）**：
+- 全站迁移意味着把现有 Vite MPA 构建换成 Astro 的构建流水线，9 个页面全部要过一遍「视觉/交互零回归」验收——而本仓库反复验证过的纪律是：canvas/WebGL 改动**沙盒无法真机渲染**，只能靠站主一页页截图复核（本次会话之前 U8–U14、V18、V20–V23 等每一轮视觉改动都卡在这条纪律上）。9 个页面里有 6 个是重 canvas/three.js 页面，一次性全部过一遍框架迁移 + 真机验收，风险和工作量远大于「省 250 行样板」能换回来的价值。
+- 对比：一个不换框架、只加一个构建期小脚本（读一份共享 `_head.html` 片段、按页替换 title/description/canonical 等变量后拼进各页面）就能吃掉 90% 的样板重复收益，且零框架迁移风险、零跨页视觉回归面——这是同一个问题的低成本替代方案，之前评估里没被单独列出来，本次一并记录。
+
+**结论与决定（2026-07-12）**：
+1. **不做全站 Astro 迁移**——收益集中在一个页面，成本摊在九个页面，性价比不成立。
+2. **course.html 直接按现有架构加为第 9 页**——它是内容/课程页，不是战斗 HUD，加页成本和其余「轻页面」（如 sectors/signal）同量级，没有理由为了等一个用不上的框架迁移而卡住它。C5 规则的本意是「评估过再加」，评估已经做完，可以放行。
+3. **`<head>` 样板重复**：留作机会主义小任务（构建期脚本合并，非框架），不单独立项排期，顺手做即可。
+4. **`serial.html` 的 Astro 候选资格单独记录、不与页面数量绑定**：真正等它章节数继续涨（150 章目标）或站主明确想要单章 SEO/独立分享链接时再评估——是否只对这一个页面局部引入 Astro（或更轻量的静态章节生成方案），留到那时再判断，不在本次结论范围内。
 
 ### 8.3 落地顺序
 
