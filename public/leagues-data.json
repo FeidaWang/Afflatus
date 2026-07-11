@@ -1,7 +1,7 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
-  "updated": "2026-07-10",
-  "version": 10,
+  "updated": "2026-07-11",
+  "version": 11,
   "mode": "live",
   "teamLogos": {
     "BLG": "https://gol.gg/_img/teams_icon/Bilibili_Gaminglogo_profile.webp",
@@ -493,7 +493,7 @@
       "opusScore": "3-1",
       "reason_en": "HLE's only loss all tournament came against BLG; LYON arrive off back-to-back 3-0 sweeps but haven't yet beaten a top-tier LCK/LPL side here (0-3 vs BLG). Class edge to HLE, though LYON's form demands respect.",
       "reason_zh": "HLE本届唯一败绩来自BLG；LYON虽连续两轮3-0横扫，但尚未在此击败过LCK/LPL顶级强队（0-3不敌BLG）。实力层级倾向HLE，但LYON状态不容小觑。",
-      "odds": null,
+      "odds": { "h": 1.09, "a": 6.81, "src": "GG.bet" },
       "result": null
     },
     {
