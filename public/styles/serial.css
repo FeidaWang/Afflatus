@@ -9,9 +9,13 @@
   --safe-l:env(safe-area-inset-left,0px);--safe-r:env(safe-area-inset-right,0px);
   --read-fs:18px;
 }
-/* ---- reading-mode palettes (low-blue, long-read friendly) ---- */
-.reader{--read-bg:#f2e8d2;--read-bg2:#ece0c4;--read-ink:#3b2f22;--read-ink-dim:#6b5c46;--read-accent:#8a5a2b;--read-line:rgba(59,47,34,.14);}
-.reader[data-theme="green"]{--read-bg:#cfe6d1;--read-bg2:#c1dcc4;--read-ink:#213325;--read-ink-dim:#4b6350;--read-accent:#2f6b46;--read-line:rgba(33,51,37,.14);}
+/* ---- reading-mode palettes (low-blue, long-read friendly) ----
+   U15e: cream/green white points lowered (~10-11% luminance cut) to ease
+   OLED/LED night-reading glare; --read-ink/--read-ink-dim contrast against
+   the new backgrounds verified >=4.6:1 (WCAG AA floor is 4.5:1). Night
+   theme is already dark and untouched. */
+.reader{--read-bg:#e8dcc4;--read-bg2:#e2d4b6;--read-ink:#3b2f22;--read-ink-dim:#6b5c46;--read-accent:#8a5a2b;--read-line:rgba(59,47,34,.14);}
+.reader[data-theme="green"]{--read-bg:#c8dfcb;--read-bg2:#bad5be;--read-ink:#213325;--read-ink-dim:#4b6350;--read-accent:#2f6b46;--read-line:rgba(33,51,37,.14);}
 .reader[data-theme="night"]{--read-bg:#211a12;--read-bg2:#291f15;--read-ink:#e8c98a;--read-ink-dim:#b8945f;--read-accent:#e8c98a;--read-line:rgba(232,201,138,.14);}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -91,14 +95,10 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .swatches{display:flex;gap:6px}
 .swatch{width:26px;height:26px;border-radius:50%;border:2px solid rgba(236,226,207,.25);cursor:pointer;padding:0}
 .swatch.on{border-color:var(--teal);box-shadow:0 0 0 2px rgba(79,214,196,.25)}
-.swatch.s-cream{background:#f2e8d2}.swatch.s-green{background:#cfe6d1}.swatch.s-night{background:#2a2015}
+.swatch.s-cream{background:#e8dcc4}.swatch.s-green{background:#c8dfcb}.swatch.s-night{background:#2a2015}
 .fsize{display:flex;align-items:center;gap:2px;border:1px solid rgba(236,226,207,.16);border-radius:2px}
 .fsize button{padding:9px 12px;min-height:38px;font:700 13px/1 var(--mono)}
 .fsize button:hover{color:var(--teal)}
-.fsize .val{font:400 10.5px/1 var(--mono);color:var(--chrome-dim);padding:0 6px;min-width:28px;text-align:center}
-.speedsel{display:flex;gap:4px}
-.speedsel button{font:400 10.5px/1 var(--mono);padding:8px 9px;border:1px solid rgba(236,226,207,.14);border-radius:2px;min-height:34px}
-.speedsel button.on{border-color:var(--teal);color:var(--teal)}
 .spacer{flex:1 1 auto}
 
 /* ---- reader shell / TOC drawer ---- */
@@ -172,9 +172,8 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
   .toolbar::-webkit-scrollbar{display:none}
   .toolbar .lbl{display:none}
   .tbtn{padding:8px 9px;font-size:11px;flex:0 0 auto}
-  .swatches,.fsize,.speedsel{flex:0 0 auto}
+  .swatches,.fsize{flex:0 0 auto}
   .fsize button{padding:8px 9px}
-  .speedsel button{padding:7px 8px}
   .spacer{display:none}
   .hero .pad{padding-bottom:20px}
 }

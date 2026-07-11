@@ -106,17 +106,11 @@
       <button class="swatch s-night" type="button" data-theme="night" title="夜间琥珀（低蓝光）" aria-label="夜间模式"></button>
     </div>
     <div class="fsize">
-      <button id="fsMinus" type="button" aria-label="减小字号">A-</button>
-      <span class="val" id="fsVal">18</span>
-      <button id="fsPlus" type="button" aria-label="增大字号">A+</button>
+      <button id="fsMinus" type="button" aria-label="减小字号">小</button>
+      <button id="fsPlus" type="button" aria-label="增大字号">大</button>
     </div>
-    <div class="speedsel" role="group" aria-label="自动翻页速度">
-      <button class="tbtn" id="autoToggle" type="button">▶<span class="lbl"> 自动翻页</span></button>
-      <button data-speed="1" type="button">慢</button>
-      <button class="on" data-speed="2" type="button">中</button>
-      <button data-speed="3" type="button">快</button>
-    </div>
-    <button class="tbtn" id="waterfallToggle" type="button" title="开启后不停下滑即可连续阅读下一章，懒人专用">🌊<span class="lbl"> 瀑布流阅读</span></button>
+    <button class="tbtn" id="autoToggle" type="button">▶<span class="lbl"> 自动翻页</span></button>
+    <button class="tbtn" id="waterfallToggle" type="button" title="开启后不停下滑即可连续阅读下一章，懒人专用">♾️<span class="lbl"> 无限流</span></button>
     <div class="spacer"></div>
     <button class="tbtn" id="bookmarkBtn" type="button">☆<span class="lbl"> 书签</span></button>
   </section>
@@ -166,7 +160,7 @@
   var LS = { theme:'afflatus:novels:theme', fs:'afflatus:novels:fs', waterfall:'afflatus:novels:waterfall', lastNovel:'afflatus:novels:lastNovel' };
   function nsKey(name) { return 'afflatus:novels:' + (state.novelId || 'default') + ':' + name; }
   var reader = document.getElementById('reader');
-  var state = { data:null, novels:[], novelId:null, novelIdx:0, chapters:[], idx:0, autoTimer:0, autoSpeed:2, waterfall:false, wfIndex:0 };
+  var state = { data:null, novels:[], novelId:null, novelIdx:0, chapters:[], idx:0, autoTimer:0, waterfall:false, wfIndex:0 };
 
   /* V22 fix: the reader-progress bar and the toolbar are two independent
      sticky elements; the toolbar's height varies (wraps to 2 rows on
@@ -195,7 +189,6 @@
   function applyFs(px) {
     px = Math.max(15, Math.min(24, px));
     document.documentElement.style.setProperty('--read-fs', px + 'px');
-    document.getElementById('fsVal').textContent = px;
     try { localStorage.setItem(LS.fs, String(px)); } catch (e) {}
     return px;
   }
@@ -221,6 +214,7 @@
     document.getElementById('tocNote').textContent = '共 ' + state.chapters.length + ' 章 · ' + ((curNovel && curNovel.novel.updateNote) || '每日更新');
     var visited = visitedSet();
     var bm = getBookmark();
+    updateBookmarkBtn(bm);
     state.chapters.forEach(function (c, i) {
       var b = document.createElement('button');
       b.className = 'toc-item' + (i === state.idx ? ' current' : '');
@@ -230,12 +224,27 @@
     });
   }
 
-  /* ---------- bookmark ---------- */
+  /* ---------- bookmark ----------
+     U15d: bookmark now records the chapter title so the toolbar button
+     itself shows what's saved (station-master's minimal-scope call: one
+     bookmark per novel, not a managed list). */
   function getBookmark() { try { return JSON.parse(localStorage.getItem(nsKey('bookmark')) || 'null'); } catch (e) { return null; } }
+  function truncateTitle(s, n) { return s && s.length > n ? s.slice(0, n) + '…' : (s || ''); }
+  function updateBookmarkBtn(bm) {
+    var btn = document.getElementById('bookmarkBtn');
+    if (bm && bm.chapterTitle) {
+      btn.innerHTML = '★<span class="lbl"> ' + escapeHtml(truncateTitle(bm.chapterTitle, 12)) + '</span>';
+      btn.title = '已保存书签：' + bm.chapterTitle;
+    } else {
+      btn.innerHTML = '☆<span class="lbl"> 书签</span>';
+      btn.removeAttribute('title');
+    }
+  }
   function setBookmark() {
-    var bm = { chapterId: state.chapters[state.idx].id, scrollY: window.scrollY, ts: Date.now() };
+    var c = state.chapters[state.idx];
+    var bm = { chapterId: c.id, chapterTitle: c.title, scrollY: window.scrollY, ts: Date.now() };
     try { localStorage.setItem(nsKey('bookmark'), JSON.stringify(bm)); } catch (e) {}
-    toast('已在本章加入书签');
+    toast('已保存书签：' + c.title);
     renderToc();
   }
   function goBookmark() {
@@ -387,7 +396,7 @@
     if (!wfHeaderObserver) setupWfObservers();
     resetWaterfallFrom(state.idx, false);
     try { localStorage.setItem(LS.waterfall, '1'); } catch (e) {}
-    toast('瀑布流已开启，一直下滑即可连续阅读～');
+    toast('无限流已开启，一直下滑即可连续阅读～');
   }
   function disableWaterfall() {
     state.waterfall = false;
@@ -400,13 +409,16 @@
   }
   document.getElementById('waterfallToggle').addEventListener('click', function () { state.waterfall ? disableWaterfall() : enableWaterfall(); });
 
-  /* ---------- auto-scroll ("自动翻页") ---------- */
-  var SPEED_PX = { 1: 0.4, 2: 0.9, 3: 1.7 };
+  /* ---------- auto-scroll ("自动翻页") ----------
+     U15b: single fixed speed — half-way between the old "慢"(0.4) and
+     "中"(0.9) presets, per station-master decision to drop the 3-speed
+     picker for a shorter mobile-friendly toolbar. */
+  var AUTO_SPEED_PX = 0.65;
   function startAuto() {
     stopAuto(false);
     var btn = document.getElementById('autoToggle'); btn.innerHTML = '❚❚<span class="lbl"> 停止翻页</span>'; btn.classList.add('active');
     state.autoTimer = setInterval(function () {
-      window.scrollBy(0, SPEED_PX[state.autoSpeed]);
+      window.scrollBy(0, AUTO_SPEED_PX);
       if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
         if (state.waterfall) { if (wfDone) { stopAuto(); toast('已经是最新一章啦，明天再来吧～'); } }
         else if (state.idx < state.chapters.length - 1) { loadChapter(state.idx + 1, true); } else { stopAuto(); toast('已经是最新一章啦，明天再来吧～'); }
@@ -418,12 +430,6 @@
     var btn = document.getElementById('autoToggle'); btn.innerHTML = '▶<span class="lbl"> 自动翻页</span>'; btn.classList.remove('active');
   }
   document.getElementById('autoToggle').addEventListener('click', function () { state.autoTimer ? stopAuto() : startAuto(); });
-  document.querySelectorAll('.speedsel button[data-speed]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      state.autoSpeed = Number(b.dataset.speed);
-      document.querySelectorAll('.speedsel button[data-speed]').forEach(function (x) { x.classList.toggle('on', x === b); });
-    });
-  });
   ['touchstart','wheel'].forEach(function (ev) {
     window.addEventListener(ev, function () { if (state.autoTimer) { stopAuto(); toast('检测到手动滑动，已暂停自动翻页'); } }, { passive: true });
   });
