@@ -26,7 +26,7 @@ export function trackRecordWinRate(record) {
 export function renderTrackRecordHTML(record, { T, fableIcon, exactLabel, logLimit = 8, title } = {}) {
   if (!record) return null;
   const rate = trackRecordWinRate(record);
-  const log = (record.log || []).slice(-logLimit).map((e) => {
+  const log = (record.log || []).slice(-logLimit).reverse().map((e) => {
     const cls = e.exact ? 'exact' : (e.ok ? 'ok' : 'no');
     const icon = e.exact ? '⭐' : (e.ok ? '✓' : '✗');
     return `<span class="rlog ${cls}" title="${T(e.pick_en, e.pick_zh)}">${icon} ${T(e.label_en, e.label_zh)}</span>`;
