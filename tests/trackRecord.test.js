@@ -5,11 +5,13 @@ const T = (en) => en; // English-only for these tests; bilingual behavior is jus
 const FABLE_ICON = '<svg>ICON</svg>';
 const EXACT_LABEL_GAMES = { en: 'exact scorelines', zh: '比分全中' };
 
-// Faithful copy of the ORIGINAL games.js renderRecord() template (pre-extraction),
-// used to prove the shared module produces byte-identical output.
+// Reference template used to prove the shared module's output. Originally a
+// faithful copy of the pre-extraction games.js renderRecord() (slice(0, 8),
+// oldest-first); now updated to match the intentional 2026-07-12 change to
+// show the most recent entries with the newest match first.
 function originalGamesTemplate(r, T) {
   const rate = r.winRate != null ? r.winRate : (r.resolved ? Math.round((r.correctOutcome / r.resolved) * 100) : 0);
-  const log = (r.log || []).slice(0, 8).map((e) => {
+  const log = (r.log || []).slice(-8).reverse().map((e) => {
     const cls = e.exact ? 'exact' : (e.ok ? 'ok' : 'no');
     const icon = e.exact ? '⭐' : (e.ok ? '✓' : '✗');
     return `<span class="rlog ${cls}" title="${T(e.pick_en, e.pick_zh)}">${icon} ${T(e.label_en, e.label_zh)}</span>`;
@@ -83,6 +85,14 @@ describe('renderTrackRecordHTML', () => {
     const html = renderTrackRecordHTML({ ...SAMPLE_RECORD, log: bigLog }, { T, fableIcon: FABLE_ICON, exactLabel: EXACT_LABEL_GAMES });
     expect(html).toContain('L11'); // newest entry (appended last) must be visible
     expect(html).not.toContain('>L0<'); // oldest entry should be the one dropped, not the newest
+  });
+
+  it('orders the log newest match first (record.log is chronological, display is reverse-chronological)', () => {
+    const bigLog = Array.from({ length: 12 }, (_, i) => ({ id: 'x' + i, label_en: 'L' + i, label_zh: 'L' + i, pick_en: 'P' + i, pick_zh: 'P' + i, ok: true, exact: false }));
+    const html = renderTrackRecordHTML({ ...SAMPLE_RECORD, log: bigLog }, { T, fableIcon: FABLE_ICON, exactLabel: EXACT_LABEL_GAMES });
+    // Displayed order should be L11, L10, ..., L4 — newest (last appended) first.
+    expect(html.indexOf('L11')).toBeLessThan(html.indexOf('L10'));
+    expect(html.indexOf('L10')).toBeLessThan(html.indexOf('L4'));
   });
 
   it('omits the log block entirely when log is empty', () => {
