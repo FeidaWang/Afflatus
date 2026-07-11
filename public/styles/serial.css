@@ -92,6 +92,9 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .tbtn{display:inline-flex;align-items:center;gap:6px;font:400 11.5px/1 var(--mono);letter-spacing:.03em;color:var(--chrome);border:1px solid rgba(236,226,207,.16);padding:9px 11px;border-radius:2px;min-height:38px}
 .tbtn:hover{border-color:var(--teal);color:var(--teal)}
 .tbtn.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
+/* U16c: compact "第N章" bookmark chip — mobile-only (desktop's .lbl already
+   shows the truncated chapter title, showing both would be redundant). */
+.tbtn .bk-ch{display:none;white-space:nowrap}
 .swatches{display:flex;gap:6px}
 .swatch{width:26px;height:26px;border-radius:50%;border:2px solid rgba(236,226,207,.25);cursor:pointer;padding:0}
 .swatch.on{border-color:var(--teal);box-shadow:0 0 0 2px rgba(79,214,196,.25)}
@@ -171,6 +174,11 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
   .toolbar{gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .toolbar::-webkit-scrollbar{display:none}
   .toolbar .lbl{display:none}
+  /* U16c: with .lbl hidden, keep a short "第N章" chip on the bookmark
+     button so mobile still shows which chapter is saved; a few characters
+     wide, and the toolbar is nowrap + overflow-x:auto anyway, so it can
+     never spill outside the bar. */
+  .toolbar .bk-ch{display:inline}
   .tbtn{padding:8px 9px;font-size:11px;flex:0 0 auto}
   .swatches,.fsize{flex:0 0 auto}
   .fsize button{padding:8px 9px}

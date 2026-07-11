@@ -192,15 +192,8 @@ html.vt-suppress::view-transition-new(root){
   --turn-bg-a:rgba(10,14,6,.80);
   --turn-bg-b:rgba(3,5,2,.96);
 }
-/* Novels · retro-futurism copper + teal */
-.novels-page .page-turn-controls{
-  --turn-accent:#e8ad6f;
-  --turn-hover:#4fd6c4;
-  --turn-bg-a:rgba(21,18,15,.85);
-  --turn-bg-b:rgba(10,8,6,.97);
-}
-.novels-page .page-turn{box-shadow:0 0 0 3px rgba(201,131,74,.10),inset 0 0 20px rgba(79,214,196,.12)}
-.novels-page .page-turn:hover{box-shadow:0 0 0 3px rgba(201,131,74,.16),inset 0 0 24px rgba(79,214,196,.20)}
+/* Novels theme rules removed (U16a): serial.html no longer renders the
+   edge arrows — reading immersion; see body[data-no-page-turn] there. */
 /* Leagues · Hextech gold + teal */
 .leagues-page .page-turn-controls{
   --turn-accent:#c8aa6e;
