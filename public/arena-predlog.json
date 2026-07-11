@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-08T21:59:02.557Z",
+  "updated": "2026-07-11T11:27:10.792Z",
   "version": 1,
   "days": [
     {
@@ -73,6 +73,81 @@
           "predClosePct": -1.2,
           "actualOpenPct": -4.794,
           "actualClosePct": -1.87,
+          "dirHit": true
+        }
+      }
+    },
+    {
+      "date": "2026-07-09",
+      "entries": {
+        "NVDA": {
+          "predOpenPct": 0.5,
+          "predClosePct": 1.2,
+          "actualOpenPct": null,
+          "actualClosePct": -0.656,
+          "dirHit": false
+        },
+        "MU": {
+          "predOpenPct": 2,
+          "predClosePct": 2.8,
+          "actualOpenPct": null,
+          "actualClosePct": 4.515,
+          "dirHit": true
+        },
+        "ASML": {
+          "predOpenPct": 1.5,
+          "predClosePct": 1,
+          "actualOpenPct": null,
+          "actualClosePct": 2.013,
+          "dirHit": true
+        },
+        "AVGO": {
+          "predOpenPct": 1,
+          "predClosePct": 1.8,
+          "actualOpenPct": null,
+          "actualClosePct": 3.195,
+          "dirHit": true
+        },
+        "TSM": {
+          "predOpenPct": 1,
+          "predClosePct": 1.5,
+          "actualOpenPct": null,
+          "actualClosePct": -0.005,
+          "dirHit": false
+        },
+        "MRVL": {
+          "predOpenPct": 0.3,
+          "predClosePct": -1,
+          "actualOpenPct": null,
+          "actualClosePct": 4.989,
+          "dirHit": false
+        },
+        "LITE": {
+          "predOpenPct": 0.5,
+          "predClosePct": 0.8,
+          "actualOpenPct": null,
+          "actualClosePct": 12.428,
+          "dirHit": true
+        },
+        "SNDK": {
+          "predOpenPct": 2.5,
+          "predClosePct": 2,
+          "actualOpenPct": null,
+          "actualClosePct": 12.855,
+          "dirHit": true
+        },
+        "AMD": {
+          "predOpenPct": 2.5,
+          "predClosePct": 2,
+          "actualOpenPct": null,
+          "actualClosePct": 5.665,
+          "dirHit": true
+        },
+        "SMH": {
+          "predOpenPct": 1,
+          "predClosePct": 1.3,
+          "actualOpenPct": null,
+          "actualClosePct": 4.52,
           "dirHit": true
         }
       }
