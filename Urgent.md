@@ -1,6 +1,6 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
-> **状态（2026-07-11）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）；6 项视觉改动统一仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律，详见 RELEASE_NOTES.md）。剩 **U12b**（桌面导航合并+按钮迁移）未动工，及 12a 体检发现的 `course.html`/未提交改动待站主决策——两项均见下方 U12b 小节。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
+> **状态（2026-07-11）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 现已代码完成**（首页顶栏砍 Home、langBtn 迁移到 nav-right，其余 8 页 Home 链接保留不变——立项前提有偏差，已与站主确认改成「只砍首页」）：待推送+移入 RELEASE_NOTES.md。7 项视觉改动统一仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
 > 规则：本文件只放**当前最需要修改的问题**；每项处理完就从这里划掉，完整实施记录转 `RELEASE_NOTES.md`。全部清空后本文件可删。
 > 红线不变（roadmap §7.10）：仅供娱乐、不做付费解锁/焦虑营销、康健只说作息；沙盒无法真机渲染，所有视觉改动需站主真机验收。
@@ -39,14 +39,19 @@
 - [x] 星盘/格网/紫微 4×4 宫格/大运条的窄屏布局核查与修复（横向滚动或降列）。
 - [ ] 真机验收（站主 iPhone 截图复核）——沙盒无法代做。
 
-## U12b · 全局与主页结构调整（规划中，未动工）
+## U12b · 全局与主页结构调整 ✅ 代码已完成（2026-07-11）
 
-> U8/U9/U10/U11/U12c/U12d/12a 已全部完成并移入 `RELEASE_NOTES.md`（见 v1.6 条目），完整技术细节/踩坑记录查那边。本条是唯一仍未动工的规划项，留在这里等待授权。
+> U8/U9/U10/U11/U12c/U12d/12a 已全部完成并移入 `RELEASE_NOTES.md`（见 v1.6 条目）。
 
-- [ ] **顶部导航 5 按钮评估**：现状 = nav.js SITE 渲染的 Home/Arena/Sectors/Signal 四链接 + Labs 下拉（Games/Leagues/Horoscope/Novels）。**结论：桌面砍 Home**（logo 本身回首页，五钮变四钮 Arena/Sectors/Signal/Labs，认知负荷立减）；**移动端全部收进「Deck」抽屉**（已实现），顶栏不再平铺任何页面链接。改动点只在 `src/lib/nav.js` SITE 渲染逻辑 + 各页 nav 容器，单一源头纪律不破坏。
-- [ ] **「以中文入梦」按钮迁移**：`index.html` hero-cta 里的 `#langBtn`（.warp-btn.verse-switch）移出正文，挂到顶栏 nav-right 最右侧。**红线：hover 跃迁效果必须原样保留**——效果本体是 `body.warp-hover` 全局类（main.js:3533 hover 加 / 3539 移除，驱动引擎喷焰 flameBoost、HUD 变绿等联动），与按钮位置无关，迁移时把事件绑定跟着按钮走即可，CSS 的 `.verse-switch` hover 样式一并迁移；迁移后 hero-cta 区域剩余元素（coord/scroll-hint）重新对齐。
+**实施中发现并与站主确认的偏差**：动手前发现 `src/lib/nav.js` 的 `SITE` 是全站 9 个页面共用的单一数据源，顶栏渲染逻辑不止在首页生效——「logo 本身回首页」这个原立项前提只在 `sectors.html`/`course.html` 成立（它们的 `.brand` 已经是 `<a href="/">`），`arena`/`games`/`league`/`horoscope`/`signal`/`serial` 这 6 个页面顶部的 `.brand` 目前是不可点击的纯装饰 div，直接从共享 `SITE` 里砍掉 Home 会让这 6 个页面失去顶栏回首页的入口。**已与站主确认：只砍首页自己的 Home**，其余 8 个页面顶栏保留 Home 链接不变。
 
-**待站主决策项（12a 体检副产品，未处理）**：`course.html`（"Vibe Coding 101"）是一个从未提交到 git 的第 9 个页面，已注册进 `nav.js` 的 SITE 数组，与 roadmap.md §1/C5「加第 9 页前必须先做 Astro 迁移评估」的规则冲突；同一工作区还有一批与本轮任务无关的未提交改动（`page-turn.css`/`sitemap.xml`/`vite.config.js`/HUD 图片增删）。详见 RELEASE_NOTES.md v1.6「意外发现」，本次未做任何处理，是否提交/评估/丢弃待站主决定。
+- [x] **顶部导航 Home 按钮**：`src/lib/nav.js` 的 `run()` 渲染循环加一行 `if (s.path === '/' && here === '/') return;`——只在「当前页就是首页」时跳过渲染 Home 这一条链接（首页显示自己是多余的），`SITE` 数组本身不动，其余 8 个页面（含 prev/next 翻页箭头依赖的 flat cycle）逻辑完全不受影响。首页顶栏从 5 项（Home/Arena/Sectors/Signal/Labs）变 4 项（Arena/Sectors/Signal/Labs），其余页面仍是原来的 5 项。
+- [x] **「以中文入梦」按钮迁移**：`#langBtn`（`.warp-btn.verse-switch`）从 `index.html` 的 `hero-cta` 移到顶栏 `nav-right` 末尾（最右侧，`nav-clock` 之后）。**红线核实**：hover 跃迁效果（`body.warp-hover` 全局类、main.js `#langBtn` 的 `mouseenter`/`mouseleave`/`click` 监听）全部通过 `getElementById('langBtn')` 绑定，与 DOM 位置无关，main.js 零改动，效果原样保留。桌面新增 `.nav-right #langBtn` 尺寸覆盖（从 hero 按钮的 214px/56px 缩到贴合其余 nav-right 控件的尺寸），移动端 `≤860px` 隐藏——移动端已有 U12c 的 `#langMiniToggle` 转发同一个点击处理器，两个控件同时显示是重复且单行顶栏放不下。
+- [x] **`hero-cta` 布局重排**：按钮移走后网格从 `"button coord" "hint coord"` 两列改单列 `"hint" "coord"`；移动端断点同步去掉 `"button"` 区域，孤立的 `.warp-btn{width:min(100%,260px)}` 移动端规则一并清理（我的改动导致的孤儿，非无关历史死代码）。
+- [x] **验收**：vitest 516/516 通过；`npm run build` 干净（main chunk 868.29 kB，纯 DOM 位置调整无 JS 逻辑变化，体积不变）；Node 沙盒模拟验证了 Home 跳过逻辑在 `here==='/'` 与 `here==='/arena.html'` 两种输入下均按预期渲染。
+- [ ] **视觉验收**：站主真机/浏览器复核首页顶栏 4 项无 Home、`langBtn` 在最右侧位置/尺寸协调、hover 跃迁特效仍触发正常——沙盒无法渲染，既有纪律，唯一悬而未决项。
+
+**待站主决策项（12a 体检副产品，未处理，与本项无关）**：`course.html`（"Vibe Coding 101"）是一个从未提交到 git 的第 9 个页面，已注册进 `nav.js` 的 SITE 数组，与 roadmap.md §1/C5「加第 9 页前必须先做 Astro 迁移评估」的规则冲突；同一工作区还有一批与本轮任务无关的未提交改动（`page-turn.css`/`sitemap.xml`/`vite.config.js`/HUD 图片增删）。详见 RELEASE_NOTES.md v1.6「意外发现」，本次未做任何处理，是否提交/评估/丢弃待站主决定。
 
 ## U7 · Claude 会话卡顿 + Scheduled 任务统筹管理（2026-07-10 立项）
 

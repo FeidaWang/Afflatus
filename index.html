@@ -212,6 +212,12 @@
       <span id="clockZone" aria-hidden="true"></span>
       <b id="melDateTime">---</b>
     </div>
+    <!-- U12b (2026-07-11): moved here from hero-cta so it no longer competes
+         with the hero headline for visual weight; hover warp-transition
+         effect (body.warp-hover, main.js) is bound purely by #id, unaffected
+         by DOM position. Desktop-only — mobile already has #langMiniToggle
+         forwarding to this same button's click handler (see U12c). -->
+    <button class="warp-btn verse-switch" id="langBtn" data-hot>以中文入梦</button>
   </div>
 </nav>
 <button class="jump-toggle" id="jumpToggle" data-hot>Assets</button>
@@ -222,7 +228,6 @@
     <h1 class="hero-title" id="heroTitle">At the glowline of Alphard<br>I command the fleet<br>and route <em>capital</em> into the dark</h1>
     <p class="hero-desc" id="heroDesc">Feida's private investment captain log. No tips, promotions, or prophecies. Just a lone commander disclosing 2026-06-01 positions, allocation logic, and the discipline that keeps the fleet alive.</p>
     <div class="hero-cta">
-      <button class="warp-btn verse-switch" id="langBtn" data-hot>以中文入梦</button>
       <span class="coord" id="coord">bearing · singular throne</span>
       <div class="scroll-hint" id="scrollHint">descend to asset deck</div>
     </div>
