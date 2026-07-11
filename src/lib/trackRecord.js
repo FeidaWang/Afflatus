@@ -23,7 +23,7 @@ export function trackRecordWinRate(record) {
 // actually differed between games.js ("exact scorelines") and league.js
 // ("exact series score") — { en, zh }. Returns null when there's no record
 // yet (caller hides/clears the host element).
-export function renderTrackRecordHTML(record, { T, fableIcon, exactLabel, logLimit = 8 } = {}) {
+export function renderTrackRecordHTML(record, { T, fableIcon, exactLabel, logLimit = 8, title } = {}) {
   if (!record) return null;
   const rate = trackRecordWinRate(record);
   const log = (record.log || []).slice(0, logLimit).map((e) => {
@@ -31,8 +31,9 @@ export function renderTrackRecordHTML(record, { T, fableIcon, exactLabel, logLim
     const icon = e.exact ? '⭐' : (e.ok ? '✓' : '✗');
     return `<span class="rlog ${cls}" title="${T(e.pick_en, e.pick_zh)}">${icon} ${T(e.label_en, e.label_zh)}</span>`;
   }).join('');
+  const titleText = title || { en: 'FABLE TRACK RECORD', zh: 'FABLE 历史战绩' };
   return (
-    `<div class="rec-h"><span class="rec-t">${fableIcon} ${T('FABLE TRACK RECORD', 'FABLE 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${record.since || ''}</span></div>` +
+    `<div class="rec-h"><span class="rec-t">${fableIcon} ${T(titleText.en, titleText.zh)}</span><span class="rec-since">${T('since', '自')} ${record.since || ''}</span></div>` +
     `<div class="rec-stats">` +
       `<div class="rec-big"><b>${rate}%</b><i>${T('outcome win rate', '胜负命中率')}</i></div>` +
       `<div class="rec-kv"><b>${record.correctOutcome || 0}/${record.resolved || 0}</b><i>${T('correct calls', '预测正确')}</i></div>` +
