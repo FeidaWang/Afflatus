@@ -95,8 +95,15 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   }
 
   setMode(true);   // default: the star-map wallpaper
-  panel.style.cursor = 'pointer';
-  panel.addEventListener('click', () => setMode(false));   // click anywhere on the map -> computer
+  // U13b (2026-07-11): trigger moved from "click the star map" to "click
+  // Combat View" (#pilotFeed, a different panel entirely now that the
+  // radar has merged into it) — the star map itself no longer opens the
+  // terminal on click, only the toggle button (✕ / STAR MAP) closes it.
+  const pilotFeed = document.getElementById('pilotFeed');
+  if (pilotFeed) {
+    pilotFeed.style.cursor = 'pointer';
+    pilotFeed.addEventListener('click', () => setMode(false));
+  }
   toggle.addEventListener('click', e => { e.stopPropagation(); setMode(true); });
 
   const scene = createStarMapScene();

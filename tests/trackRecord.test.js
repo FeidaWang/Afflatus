@@ -78,6 +78,13 @@ describe('renderTrackRecordHTML', () => {
     expect(count).toBe(8);
   });
 
+  it('shows the most recent logLimit entries, not the oldest (newest match must not drop off)', () => {
+    const bigLog = Array.from({ length: 12 }, (_, i) => ({ id: 'x' + i, label_en: 'L' + i, label_zh: 'L' + i, pick_en: 'P' + i, pick_zh: 'P' + i, ok: true, exact: false }));
+    const html = renderTrackRecordHTML({ ...SAMPLE_RECORD, log: bigLog }, { T, fableIcon: FABLE_ICON, exactLabel: EXACT_LABEL_GAMES });
+    expect(html).toContain('L11'); // newest entry (appended last) must be visible
+    expect(html).not.toContain('>L0<'); // oldest entry should be the one dropped, not the newest
+  });
+
   it('omits the log block entirely when log is empty', () => {
     const html = renderTrackRecordHTML({ ...SAMPLE_RECORD, log: [] }, { T, fableIcon: FABLE_ICON, exactLabel: EXACT_LABEL_GAMES });
     expect(html).not.toContain('rec-log');
