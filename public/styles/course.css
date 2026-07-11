@@ -2,10 +2,15 @@
    (mentor/architect) + mint (coder/executor), distinct from every other
    sub-page's palette (see page-turn.css's per-page --labs-* blocks).
    font-face for JetBrains Mono lives in /page-turn.css (shared); Space
-   Grotesk / Inter are pulled once via course.html's own Google Fonts link. */
+   Grotesk / Inter are pulled once via course.html's own Google Fonts link.
+   v2.1 rewrite (2026-07-12): content changed from a public "Vibe Coding 101"
+   landing narrative to Bruce's personal, data-driven playbook (course.md
+   Ch01-05 + appendix) — component set below is table/card/steps-heavy
+   rather than 3-act-story-heavy; palette and shell/header/hero/band/foot
+   scaffolding is unchanged from v1 for site-wide visual consistency. */
 :root{
   --bg:#05060a;--panel:#0c0e16;--panel-2:#0f1220;
-  --violet:#8b7dff;--mint:#3dffc4;--amber:#ffb454;
+  --violet:#8b7dff;--mint:#3dffc4;--amber:#ffb454;--red:#ff6a6a;
   --ink:#e8ebf5;--muted:#8790a6;--line:rgba(139,125,255,.22);
   --font-heading:'Space Grotesk',system-ui,sans-serif;
   --font-body:'Inter',system-ui,sans-serif;
@@ -26,7 +31,7 @@ a{color:inherit;text-decoration:none}
 .progress-rail{position:fixed;left:0;top:0;bottom:0;width:3px;z-index:50;background:rgba(255,255,255,.04)}
 .progress-rail i{display:block;width:100%;height:0%;background:linear-gradient(180deg,var(--mint),var(--violet));transition:height .08s linear}
 
-.shell{position:relative;z-index:1;width:min(880px,calc(100% - 32px));margin:0 auto}
+.shell{position:relative;z-index:1;width:min(920px,calc(100% - 32px));margin:0 auto}
 
 /* ---- header ---- */
 .top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;flex-wrap:wrap}
@@ -37,111 +42,143 @@ a{color:inherit;text-decoration:none}
 .nav a.active{background:var(--violet);color:#05060a;border-color:var(--violet)}
 
 /* ---- hero ---- */
-.hero{padding:36px 0 30px}
+.hero{padding:36px 0 24px}
 .kicker{color:var(--mint);font:700 11px/1.3 var(--font-mono);letter-spacing:.2em;text-transform:uppercase}
-h1{margin:16px 0 12px;font-family:var(--font-heading);font-size:clamp(30px,5.4vw,50px);font-weight:700;line-height:1.12;letter-spacing:-.01em;color:#fff}
-.sub{max-width:60ch;margin:0;color:var(--muted);font:500 16px/1.6 var(--font-body)}
-.hero-cta{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+h1{margin:16px 0 12px;font-family:var(--font-heading);font-size:clamp(28px,5vw,46px);font-weight:700;line-height:1.14;letter-spacing:-.01em;color:#fff}
+.sub{max-width:66ch;margin:0 0 10px;color:var(--muted);font:500 15.5px/1.65 var(--font-body)}
+.disclosure{margin-top:14px;padding:12px 14px;border-left:3px solid var(--violet);background:rgba(139,125,255,.06);color:#cfd3e8;font:500 13px/1.6 var(--font-body)}
+.disclosure b{color:#fff}
+.hero-cta{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:16px}
 .btn-primary{display:inline-block;padding:13px 22px;background:linear-gradient(90deg,var(--mint),var(--violet));color:#05060a;font:700 13px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;border-radius:4px}
-.hero-note{color:var(--muted);font:500 12.5px/1.5 var(--font-body);max-width:36ch}
+.hero-note{color:var(--muted);font:500 12.5px/1.5 var(--font-body);max-width:38ch}
+
+/* ---- sticky chapter nav ---- */
+.chapnav{position:sticky;top:0;z-index:40;display:flex;gap:6px;flex-wrap:wrap;padding:10px 0;margin:8px 0 0;background:linear-gradient(180deg,var(--bg) 70%,transparent);backdrop-filter:blur(6px)}
+.chapnav a{border:1px solid var(--line);padding:7px 10px;border-radius:20px;color:#c7cbe0;font:700 10px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.chapnav a:hover{border-color:var(--mint);color:var(--mint)}
 
 /* ---- band section headers (shared rhythm with the rest of the site's sub-pages) ---- */
-.band{margin-top:38px;padding:12px 0;border-top:1px solid var(--line);color:var(--violet);font-family:var(--font-mono);font-weight:700;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase}
+.band{margin-top:40px;padding:12px 0;border-top:1px solid var(--line);color:var(--violet);font-family:var(--font-mono);font-weight:700;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase}
 .band span{color:var(--mint)}
+.chap-note{margin:6px 0 18px;color:var(--muted);font:500 13.5px/1.65 var(--font-body);max-width:74ch}
+.chap-note b{color:#dfe3f2}
 
-/* ---- 3-act narrative ---- */
-.acts{display:flex;flex-direction:column;gap:30px;margin-top:8px}
-.act{padding-top:26px;border-top:1px solid var(--line)}
-.act-num{color:var(--muted);font:700 12px var(--font-mono);letter-spacing:.14em}
-.act h2{margin:8px 0 6px;font-family:var(--font-heading);font-size:26px;font-weight:700;color:#fff}
-.act-lede{margin:0 0 16px;color:var(--muted);font:500 15px/1.6 var(--font-body);max-width:58ch}
+/* ---- generic data table (snapshot / changelog / ladders / scorecards) ---- */
+.dtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table.dtable{width:100%;border-collapse:collapse;font:500 12.5px/1.55 var(--font-body);min-width:520px}
+table.dtable th,table.dtable td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+table.dtable th{background:var(--panel-2);color:var(--mint);font:700 10px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+table.dtable td{background:var(--panel);color:#c7cbe0}
+table.dtable tr:last-child td{border-bottom:none}
+table.dtable td b, table.dtable td strong{color:#fff}
+table.dtable td.num, table.dtable th.num{text-align:center;white-space:nowrap}
 
-.term{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--panel)}
-.term-bar{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--panel-2);border-bottom:1px solid var(--line)}
-.term-bar i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
-.term-bar i:nth-child(1){background:#ff6a6a}.term-bar i:nth-child(2){background:var(--amber)}.term-bar i:nth-child(3){background:var(--mint)}
-.term-bar span{margin-left:8px;color:var(--muted);font:600 11px var(--font-mono)}
-.term-body{padding:14px 16px;display:flex;flex-direction:column;gap:8px;font:500 13.5px/1.6 var(--font-mono)}
-.term-body .t-you{color:var(--mint)}
-.term-body .t-ai{color:#b7bfd6}
+/* ---- generic card grid (S/W, lessons, pillars, cases, rounds) ---- */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:14px}
+.card-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.info-card{padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.info-card .tag{display:inline-block;margin-bottom:8px;padding:2px 8px;border-radius:20px;font:700 10px var(--font-mono);letter-spacing:.08em}
+.tag.s{background:rgba(61,255,196,.12);color:var(--mint)}
+.tag.w{background:rgba(255,106,106,.12);color:#ffb3b3}
+.tag.p{background:rgba(139,125,255,.14);color:var(--violet)}
+.tag.o{background:rgba(255,180,84,.12);color:var(--amber)}
+.info-card h3{margin:0 0 8px;font-family:var(--font-heading);font-size:16px;color:#fff;line-height:1.3}
+.info-card p{margin:0;color:#c7cbe0;font:500 13px/1.6 var(--font-body)}
+.info-card .fix{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);color:var(--muted);font:600 12px/1.5 var(--font-body)}
+.info-card .fix b{color:var(--amber)}
 
-.task{margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 14px;border:1px dashed var(--line);border-radius:6px;background:rgba(139,125,255,.045)}
-.task-lb{color:var(--amber);font:700 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase}
+/* ---- playbook rules (R1-R6) ---- */
+.rule-list{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.rule-list li{padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--violet);border-radius:6px;color:#c7cbe0;font:500 13px/1.6 var(--font-body)}
+.rule-list li b{color:#fff}
+
+/* ---- philosophy callout ---- */
+.callout{margin-top:16px;padding:16px 18px;border-radius:8px;background:rgba(139,125,255,.06);border:1px solid var(--line);color:#dfe3f2;font:500 14px/1.65 var(--font-body)}
+.callout b{color:var(--mint)}
+
+/* ---- "So you can tell AI this" copyable prompt block ---- */
+.task{margin-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 14px;border:1px dashed var(--line);border-radius:6px;background:rgba(139,125,255,.045)}
+.task-lb{color:var(--amber);font:700 10.5px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;flex:1 1 100%}
 .task-prompt{flex:1 1 260px;color:#dfe3f2;font:500 13px/1.5 var(--font-mono)}
 .copy-btn{border:1px solid var(--mint);color:var(--mint);background:transparent;padding:7px 11px;font:700 10.5px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;border-radius:4px;cursor:pointer;white-space:nowrap}
 .copy-btn:hover{background:var(--mint);color:#05060a}
 .copy-btn.copied{border-color:var(--violet);color:var(--violet)}
 .copy-btn.copied:hover{background:var(--violet);color:#05060a}
 
-.review-qs{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
-.review-qs li{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
-.review-qs b{color:#fff;font:700 14px var(--font-heading)}
-.review-qs span{color:var(--muted);font:500 13px/1.5 var(--font-body)}
-.rule{margin-top:16px;padding:12px 14px;border-left:3px solid var(--amber);background:rgba(255,180,84,.06);color:#f2e6d3;font:600 14px/1.5 var(--font-body)}
+/* ---- lesson cards (Ch02) ---- */
+.lesson-card{padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-top:12px}
+.lesson-card h3{margin:0 0 10px;font-family:var(--font-heading);font-size:17px;color:#fff}
+.lesson-card .src{margin:0 0 8px;color:var(--muted);font:500 12.5px/1.5 var(--font-body)}
+.lesson-card .src b{color:var(--mint);font-weight:600}
+.lesson-card .watch,.lesson-card .check{margin:0 0 8px;color:#c7cbe0;font:500 12.5px/1.5 var(--font-body)}
+.lesson-card .watch b,.lesson-card .check b{color:var(--amber);font-weight:600}
 
-.ship-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.ship-steps div{padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
-.ship-steps b{display:block;color:var(--mint);font:700 14px var(--font-mono);margin-bottom:6px}
-.ship-steps span{color:var(--muted);font:500 12.5px/1.5 var(--font-body)}
-.act-foot{margin-top:14px;color:var(--muted);font:500 13.5px/1.6 var(--font-body)}
+/* ---- 2.8 UI/UX taste table uses .dtable; training note ---- */
+.taste-note{margin-top:12px;padding:10px 12px;border-left:3px solid var(--amber);background:rgba(255,180,84,.06);color:#f2e6d3;font:500 12.5px/1.5 var(--font-body)}
 
-/* ---- toolchain triangle ---- */
-.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-.role{padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;position:relative}
-.role-tag{color:var(--muted);font:700 9.5px var(--font-mono);letter-spacing:.2em;text-transform:uppercase}
-.role h3{margin:8px 0 6px;font-family:var(--font-heading);font-size:19px;color:#fff}
-.role p{margin:0;color:var(--muted);font:500 13px/1.5 var(--font-body)}
-.role:nth-child(1){border-top:2px solid var(--mint)}
-.role:nth-child(2){border-top:2px solid var(--violet)}
-.role:nth-child(3){border-top:2px solid var(--amber)}
-.swap-note{margin:16px 0 10px;color:var(--muted);font:500 13px/1.5 var(--font-body)}
-.swap-code{margin:0;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow-x:auto;font:500 13px/1.7 var(--font-mono);color:#c3c9de}
-.swap-code .hl{color:var(--mint);font-weight:600}
-.swap-code .cm{color:var(--muted)}
+/* ---- numbered steps (SPAR / Eval Set / assessment loop) ---- */
+.steps{margin:14px 0 0;padding:0;list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:12px}
+.steps li{position:relative;padding:14px 16px 14px 50px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.steps li::before{counter-increment:step;content:counter(step);position:absolute;left:14px;top:14px;width:24px;height:24px;border-radius:50%;background:var(--violet);color:#05060a;font:700 12px var(--font-mono);display:flex;align-items:center;justify-content:center}
+.steps b{color:#fff}
+.steps p{margin:6px 0 0;color:#c7cbe0;font:500 13px/1.6 var(--font-body)}
+.steps blockquote{margin:8px 0 0;padding:10px 12px;background:var(--panel-2);border-left:3px solid var(--mint);color:#dfe3f2;font:500 12.5px/1.55 var(--font-mono);border-radius:0 6px 6px 0}
 
-/* ---- core vibe cards + depth-capsule term chips ---- */
-.vibe-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-.vcard{padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
-.vcard h3{margin:0 0 6px;font-family:var(--font-heading);font-size:17px;color:#fff}
-.vcard>p{margin:0 0 12px;color:var(--muted);font:500 12.5px/1.5 var(--font-body)}
-.pair{display:flex;flex-direction:column;gap:8px}
-.pair span{display:flex;gap:6px;padding:8px 10px;border-radius:5px;font:500 12.5px/1.45 var(--font-body)}
-.pair .bad{background:rgba(255,106,106,.08);color:#ffb3b3}
-.pair .good{background:rgba(61,255,196,.08);color:#bdf7e4}
-.pair i{font-style:normal}
-.term-chip{border-bottom:1px dashed currentColor;cursor:help;font-weight:700}
-.capsule-hint{margin-top:14px;color:var(--muted);font:500 12.5px/1.5 var(--font-body)}
-.term-popover{position:fixed;z-index:200;max-width:260px;padding:10px 12px;background:var(--panel-2);border:1px solid var(--violet);border-radius:6px;color:#e8ebf5;font:500 12.5px/1.5 var(--font-body);box-shadow:0 12px 28px rgba(0,0,0,.5)}
-.term-popover[hidden]{display:none}
+/* ---- interview round / case-study split cards ---- */
+.split-card{padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-top:12px}
+.split-card h3{margin:0 0 10px;font-family:var(--font-heading);font-size:16px;color:#fff}
+.split-row{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin-bottom:6px;align-items:baseline}
+.split-row b{color:var(--mint);font:700 10.5px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.split-row span{color:#c7cbe0;font:500 13px/1.55 var(--font-body)}
 
-/* ---- curriculum accordion ---- */
-.cur-cards{display:flex;flex-direction:column;gap:10px;margin-top:14px}
-.cur-card{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.cur-card summary{list-style:none;cursor:pointer;padding:16px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}
-.cur-card summary::-webkit-details-marker{display:none}
-.cur-card summary::after{content:'+';margin-left:auto;color:var(--mint);font:700 16px var(--font-mono)}
-.cur-card[open] summary::after{content:'−'}
-.cur-num{color:var(--muted);font:700 11px var(--font-mono);letter-spacing:.1em}
-.cur-title{color:#fff;font:700 15px var(--font-heading)}
-.cur-teaser{flex:1 1 100%;color:var(--muted);font:500 12.5px/1.4 var(--font-body)}
-.cur-card ul{margin:0;padding:0 16px 16px 32px;color:#c7cbe0;font:500 13px/1.6 var(--font-body)}
-.cur-card li{margin-bottom:6px}
-
-/* ---- red lines ---- */
-.lines{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+/* ---- red lines / prohibitions ---- */
+.lines{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
 .lines div{padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:6px}
 .lines b{display:block;color:var(--amber);font:700 13px var(--font-mono);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
 .lines span{color:var(--muted);font:500 12.5px/1.5 var(--font-body)}
 
+/* ---- two-gates strategic comparison (Ch05 §5.0) ---- */
+.gate-compare{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.gate{padding:18px;border-radius:8px;background:var(--panel);border:1px solid var(--line)}
+.gate.closed{border-color:rgba(255,106,106,.4)}
+.gate.open{border-color:rgba(61,255,196,.5)}
+.gate h4{margin:0 0 8px;font-family:var(--font-heading);font-size:15px}
+.gate.closed h4{color:#ffb3b3}
+.gate.open h4{color:var(--mint)}
+.gate p{margin:0;color:#c7cbe0;font:500 13px/1.6 var(--font-body)}
+.gate .verdict{display:inline-block;margin-top:10px;padding:3px 9px;border-radius:20px;font:700 10px var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.gate.closed .verdict{background:rgba(255,106,106,.14);color:#ffb3b3}
+.gate.open .verdict{background:rgba(61,255,196,.14);color:var(--mint)}
+
+/* ---- score badges + scorecard ---- */
+.score-badge{display:inline-flex;align-items:baseline;gap:3px;font:700 13px var(--font-mono)}
+.score-badge .now{color:#fff}
+.score-badge .max{color:var(--muted);font-size:11px}
+.score-arrow{color:var(--muted);margin:0 6px;font-size:11px}
+.score-target{color:var(--mint)}
+
+/* ---- pillar weight bar ---- */
+.weight-bar{display:flex;align-items:center;gap:8px;margin-top:8px}
+.weight-bar .track{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden}
+.weight-bar .fill{height:100%;background:linear-gradient(90deg,var(--mint),var(--violet))}
+.weight-bar .pct{color:var(--muted);font:700 11px var(--font-mono);white-space:nowrap}
+
 .foot{margin:44px 0 30px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font:500 12px/1.6 var(--font-body)}
+.foot b{color:#c7cbe0}
 
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(12px);padding:10px 16px;background:var(--panel-2);border:1px solid var(--mint);border-radius:6px;color:#e8ebf5;font:600 12.5px var(--font-body);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:210}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ---- term chips + popover (jargon glossary: MTS/RFC/SLO/Eval Set/SPAR/prompt caching) ---- */
+.term-chip{border-bottom:1px dashed currentColor;cursor:help;font-weight:700}
+.term-popover{position:fixed;z-index:200;max-width:280px;padding:10px 12px;background:var(--panel-2);border:1px solid var(--violet);border-radius:6px;color:#e8ebf5;font:500 12.5px/1.5 var(--font-body);box-shadow:0 12px 28px rgba(0,0,0,.5)}
+.term-popover[hidden]{display:none}
+
 @media(max-width:760px){
   .shell{width:min(640px,calc(100% - 24px))}
-  .ship-steps,.roles,.vibe-cards,.lines{grid-template-columns:1fr}
-  h1{font-size:clamp(26px,7vw,36px)}
+  .card-grid.cols-2,.gate-compare{grid-template-columns:1fr}
+  h1{font-size:clamp(24px,7vw,34px)}
   .top{padding:16px 0}
   .progress-rail{width:2px}
+  table.dtable{min-width:460px}
 }

@@ -1,8 +1,10 @@
 /**
  * course.html page logic — three small, independent features:
  *   1. scroll progress rail (left edge)
- *   2. copy-prompt buttons (Module 1's "try it now" tasks)
- *   3. depth-capsule term chips (click → short bilingual definition popover)
+ *   2. copy-prompt buttons (the "So you can tell AI this…" quotes)
+ *   3. term chips (click → short bilingual definition popover) — Ch05 jargon
+ *      (MTS / RFC / SLO) that a general reader landing on this personal page
+ *      may not know.
  * No frameworks, no persisted state beyond what i18n.js already owns.
  */
 (() => {
@@ -58,11 +60,11 @@
     });
   });
 
-  /* ---------- depth-capsule term chips ---------- */
+  /* ---------- term chips ---------- */
   const GLOSSARY = {
-    agent: { en: 'A program that can read/write files, run commands and call tools on its own — not just answer in a chat box.', zh: '能自己读写文件、执行命令、调用工具的程序——不只是在聊天框里回答问题。' },
-    diff: { en: "The exact lines an AI change adds or removes. Reviewing means judging the diff's behavior, not reading every character.", zh: '一次 AI 改动具体新增/删除了哪些行。审查审的是这次改动的行为，不是逐字阅读。' },
-    context: { en: "Everything a model currently has loaded — your files, this conversation, any attached docs. It has a limit; long chats crowd out useful file content.", zh: '模型当下加载的一切——你的文件、这段对话、附带的文档。它有上限；对话太长会挤占有用的文件内容。' },
+    mts: { en: 'Member of Technical Staff — the flat, senior-by-default engineering title used at labs like Anthropic; expects high autonomy and end-to-end ownership rather than a rigid ladder of levels.', zh: 'Member of Technical Staff——Anthropic 这类实验室使用的扁平、默认资深的工程师头衔；要求高度自治与端到端所有权，而非严格的层级晋升。' },
+    rfc: { en: 'A one-page document written before a non-trivial change: problem, plan, alternatives, risk, rollback. Forces the thinking to happen before the code.', zh: '在做非小改动前先写的一页文档：问题、方案、备选、风险、回滚。逼着思考在写代码之前发生。' },
+    slo: { en: 'Service-Level Objective — a target you commit to for a system you run (e.g. uptime, page-load time), checked on a schedule rather than only noticed after it breaks.', zh: 'Service-Level Objective（服务水平目标）——你为自己运营的系统定的目标（如可用性、加载时间），按周期检查，而不是等它坏了才发现。' },
   };
   const popover = document.getElementById('termPopover');
   let openChip = null;
