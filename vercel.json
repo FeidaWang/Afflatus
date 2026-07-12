@@ -5,6 +5,11 @@
       "has": [{ "type": "host", "value": "www.feida.au" }],
       "destination": "https://feida.au/:path*",
       "permanent": true
+    },
+    {
+      "source": "/league.html",
+      "destination": "/stats.html",
+      "permanent": false
     }
   ],
   "headers": [

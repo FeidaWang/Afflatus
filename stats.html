@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<!-- Google tag (gtag.js) — deferred to idle, same pattern as every sub-page. -->
+<script>
+(function(){
+  function loadGtag(){
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', 'G-M078NTBWRF');
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
+    document.head.appendChild(s);
+  }
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
+  else setTimeout(loadGtag, 2000);
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Afflatus · Stats — 竞猜战绩存档</title>
+<meta name="description" content="Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 全部预测的命中率、置信度校准与冠军押注图表，数据全部可回溯。FIFA 世界杯 2026 决赛后归档。">
+<meta name="theme-color" content="#070a12">
+<link rel="canonical" href="https://feida.au/stats.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Afflatus">
+<meta property="og:title" content="Project Afflatus · Stats — 竞猜战绩存档">
+<meta property="og:description" content="MSI 2026 预测战绩全量图表：命中率曲线、置信度校准、冠军押注复盘。仅供娱乐。">
+<meta property="og:url" content="https://feida.au/stats.html">
+<meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/page-turn.css">
+<style>
+:root{--bg:#070a12;--panel:#0d1220;--line:rgba(154,229,255,.16);--ink:#dce8f2;--dim:#8fa3b8;--teal:#4fd6c4;--gold:#e8ad6f;--red:#e0596b;--green:#57c98a;--mono:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--mono);min-height:100vh}
+.wrap{max-width:1020px;margin:0 auto;padding:28px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+.brand{display:flex;flex-direction:column;color:var(--ink);text-decoration:none}
+.brand b{letter-spacing:.28em;font-size:15px}
+.brand small{color:var(--dim);font-size:10px;letter-spacing:.18em}
+.nav{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.nav a{color:var(--dim);text-decoration:none;font-size:12px;letter-spacing:.08em}
+.nav a:hover,.nav a.active{color:var(--teal)}
+.lang-toggle{background:none;border:1px solid var(--line);color:var(--dim);font:600 11px/1 var(--mono);padding:7px 10px;cursor:pointer;border-radius:2px}
+.hero h1{font-size:clamp(22px,4vw,34px);letter-spacing:.04em;line-height:1.25}
+.hero .sub{color:var(--dim);font-size:13px;margin-top:10px;max-width:760px}
+.band{margin:44px 0 18px;padding:10px 14px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(79,214,196,.10),transparent);letter-spacing:.14em;font-size:13px}
+.band span{color:var(--teal)}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0 8px}
+.stat{border:1px solid var(--line);background:var(--panel);padding:14px 14px 12px;border-radius:2px}
+.stat b{display:block;font-size:26px;color:var(--teal)}
+.stat.gold b{color:var(--gold)}
+.stat small{color:var(--dim);font-size:10.5px;letter-spacing:.08em}
+.chart-card{border:1px solid var(--line);background:var(--panel);padding:16px;border-radius:2px;margin-top:14px}
+.chart-card h3{font-size:13px;letter-spacing:.1em;margin-bottom:4px}
+.chart-card .note{color:var(--dim);font-size:11px;margin-bottom:10px}
+.chart-card svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;color:var(--dim);font-size:11px}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:1px;vertical-align:-1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.pick-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(154,229,255,.10);font-size:12.5px}
+.pick-row:last-child{border-bottom:none}
+.pick-row .bar{flex:1;height:10px;background:rgba(154,229,255,.08);border-radius:1px;overflow:hidden}
+.pick-row .bar i{display:block;height:100%;background:var(--teal)}
+.pick-row .pct{width:44px;text-align:right;color:var(--dim)}
+.pick-row .who{width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick-row.won .who{color:var(--green)}
+.pick-row.lost .who{color:var(--dim);text-decoration:line-through}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.tbl th,.tbl td{border:1px solid rgba(154,229,255,.10);padding:7px 9px;text-align:left}
+.tbl th{color:var(--dim);font-weight:600;letter-spacing:.06em;background:rgba(154,229,255,.04)}
+.ok{color:var(--green)} .bad{color:var(--red)} .star{color:var(--gold)}
+.tbl-wrap{overflow-x:auto}
+.placeholder{border:1px dashed rgba(232,173,111,.4);background:rgba(232,173,111,.05);padding:22px;border-radius:2px;color:var(--dim);font-size:13px;margin-top:14px}
+.placeholder b{color:var(--gold)}
+.foot{margin-top:60px;color:var(--dim);font-size:11px;letter-spacing:.1em}
+.disclaim{margin-top:10px;color:var(--dim);font-size:11px}
+</style>
+</head>
+<body class="stats-page" data-prev="/games.html" data-next="/horoscope.html">
+
+<nav class="page-turn-controls" aria-label="Page navigation">
+  <a class="page-turn" href="/games.html" data-page-turn="prev" aria-label="Back to games">←</a>
+  <a class="page-turn" href="/horoscope.html" data-page-turn="next" aria-label="Continue to horoscope">→</a>
+</nav>
+
+<main class="wrap">
+  <header class="top">
+    <a class="brand" href="/"><b>AFFLATUS</b><small data-en="STATS · PREDICTION ARCHIVE" data-zh="战绩 · 竞猜存档">STATS · PREDICTION ARCHIVE</small></a>
+    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+      <button class="lang-toggle" type="button">中文</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1 data-en="Prediction Track Record — every call, on the record." data-zh="竞猜战绩存档——每一次预测，都留痕可查。">Prediction Track Record — every call, on the record.</h1>
+    <p class="sub" data-en="Full archives of Fable 5's tournament predictions: hit rates, confidence calibration and title bets, computed live from the same public JSON the event pages used. Entertainment only — never betting advice." data-zh="Fable 5 赛事预测的完整存档：命中率、置信度校准、冠军押注，全部由赛事页同一份公开 JSON 实时计算。仅供娱乐，不构成博彩建议。">Full archives of Fable 5's tournament predictions: hit rates, confidence calibration and title bets, computed live from the same public JSON the event pages used. Entertainment only — never betting advice.</p>
+  </section>
+
+  <!-- ================= MSI 2026 ================= -->
+  <section id="msi">
+    <div class="band" data-i18n-html data-en="LEAGUE OF LEGENDS — <span>MSI 2026 · archived</span>" data-zh="英雄联盟 — <span>MSI 2026 · 已归档</span>">LEAGUE OF LEGENDS — <span>MSI 2026 · archived</span></div>
+
+    <div class="strip" id="msiStrip"></div>
+
+    <div class="chart-card">
+      <h3 data-en="Per-series calls: confidence vs. outcome" data-zh="逐场预测：置信度与结果">Per-series calls: confidence vs. outcome</h3>
+      <p class="note" data-en="Each bar is one series; height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline." data-zh="每根柱是一场系列赛；高度 = 预测时给出的置信度。绿 = 胜负判对，红 = 判错，金 ★ = 比分全中。">Each bar is one series; height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline.</p>
+      <div id="msiBars"></div>
+      <div class="legend"><span><i style="background:var(--green)"></i><span data-en="correct" data-zh="判对">correct</span></span><span><i style="background:var(--red)"></i><span data-en="wrong" data-zh="判错">wrong</span></span><span><i style="background:var(--gold)"></i><span data-en="exact score" data-zh="比分全中">exact score</span></span></div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Cumulative hit rate" data-zh="累计命中率曲线">Cumulative hit rate</h3>
+        <p class="note" data-en="Running outcome accuracy after each resolved series, vs. the 50% coin-flip line." data-zh="每判定一场后的累计胜负命中率，对照 50% 抛硬币基线。">Running outcome accuracy after each resolved series, vs. the 50% coin-flip line.</p>
+        <div id="msiCurve"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="Confidence calibration" data-zh="置信度校准">Confidence calibration</h3>
+        <p class="note" data-en="Grouped by stated confidence: did higher conviction actually hit more often? Hollow = avg stated confidence, solid = actual hit rate." data-zh="按预测置信度分组：更笃定的预测是否真的更准？空心 = 组内平均置信度，实心 = 实际命中率。">Grouped by stated confidence: did higher conviction actually hit more often? Hollow = avg stated confidence, solid = actual hit rate.</p>
+        <div id="msiCalib"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Champion bets (pre-final odds board)" data-zh="冠军押注（决赛前概率盘）">Champion bets (pre-final odds board)</h3>
+        <p class="note" id="msiChampNote" data-en="Stated probabilities before the Grand Final." data-zh="总决赛开打前给出的概率。">Stated probabilities before the Grand Final.</p>
+        <div id="msiChamps"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="Finals MVP board" data-zh="决赛 MVP 概率盘">Finals MVP board</h3>
+        <p class="note" data-en="Stated probabilities; scored against the official Finals MVP." data-zh="预测概率，与官方决赛 MVP 对照。">Stated probabilities; scored against the official Finals MVP.</p>
+        <div id="msiMvps"></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3 data-en="Full series log" data-zh="全部系列赛判定记录">Full series log</h3>
+      <div class="tbl-wrap"><table class="tbl" id="msiLog"></table></div>
+    </div>
+  </section>
+
+  <!-- ================= World Cup 2026 (archived after the final) ================= -->
+  <section id="wc">
+    <div class="band" data-i18n-html data-en="FOOTBALL — <span>FIFA World Cup 2026 · pending</span>" data-zh="足球 — <span>FIFA 世界杯 2026 · 待归档</span>">FOOTBALL — <span>FIFA World Cup 2026 · pending</span></div>
+    <div class="placeholder" data-i18n-html data-en="<b>Archives after the Final.</b> Once the champion and the Golden Boot are settled, the World Cup prediction record (52+ scored calls, 71% outcome rate at the quarter-final stage) gets the same treatment here: per-match charts, calibration, and the title/Golden Boot boards. Until then the live page keeps running." data-zh="<b>决赛后归档。</b>待冠军与金靴尘埃落定，世界杯竞猜记录（截至八强已判定 52+ 场、胜负命中率 71%）将在此获得同样处理：逐场图表、置信度校准、冠军与金靴押注盘。在那之前，直播页照常运行。"><b>Archives after the Final.</b> Once the champion and the Golden Boot are settled, the World Cup prediction record (52+ scored calls, 71% outcome rate at the quarter-final stage) gets the same treatment here: per-match charts, calibration, and the title/Golden Boot boards. Until then the live page keeps running.</div>
+  </section>
+
+  <footer class="foot">
+    <b data-en="EVERY CALL ON THE RECORD" data-zh="每一次预测都留痕">EVERY CALL ON THE RECORD</b> — stats.html
+    <p class="disclaim" data-en="Data: /leagues-data.json (and /games-data.json after the WC final) — the exact files the live pages rendered from; nothing is re-scored after the fact. For entertainment only." data-zh="数据源：/leagues-data.json（世界杯决赛后加 /games-data.json）——与直播页同一份文件，事后不重打分。仅供娱乐。">Data: /leagues-data.json (and /games-data.json after the WC final) — the exact files the live pages rendered from; nothing is re-scored after the fact. For entertainment only.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var C = { green:'#57c98a', red:'#e0596b', gold:'#e8ad6f', teal:'#4fd6c4', dim:'#8fa3b8', line:'rgba(154,229,255,.16)' };
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function bi(node, en, zh) { node.setAttribute('data-en', en); node.setAttribute('data-zh', zh); node.textContent = (document.documentElement.lang || '').indexOf('zh') === 0 ? zh : en; return node; }
+  function applyI18N() { try { if (window.AfflatusI18N) window.AfflatusI18N.apply(); } catch (e) {} }
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  fetch('/leagues-data.json').then(function (r) { return r.json(); }).then(render).catch(function () {
+    document.getElementById('msiStrip').appendChild(el('div','stat','<b>—</b><small>data unavailable / 数据暂不可用</small>'));
+  });
+
+  function render(d) {
+    var resolved = (d.series || []).filter(function (s) { return s.result; });
+    var scored = resolved.map(function (s) {
+      var actualHome = s.result.home > s.result.away;
+      var pickHome = s.opus === 'home';
+      var ok = actualHome === pickHome;
+      /* exact requires ok: a raw string match with the outcome called wrong
+         (e.g. picked T1 "3-1", actual G2 3-1) is a coincidence, not a hit —
+         this keeps the computed count identical to record.exactScore. */
+      var exact = ok && s.opusScore === (s.result.home + '-' + s.result.away);
+      return { s: s, ok: ok, exact: exact };
+    });
+    var n = scored.length, okN = scored.filter(function (x) { return x.ok; }).length, exN = scored.filter(function (x) { return x.exact; }).length;
+
+    /* ---- stat strip ---- */
+    var strip = document.getElementById('msiStrip');
+    function stat(v, en, zh, gold) { var s = el('div', 'stat' + (gold ? ' gold' : '')); s.appendChild(el('b', null, esc(v))); s.appendChild(bi(el('small'), en, zh)); strip.appendChild(s); }
+    stat(n, 'series resolved', '已判定系列赛');
+    stat(okN + ' / ' + n, 'outcomes correct', '胜负判对');
+    stat(exN, 'exact scorelines', '比分全中', true);
+    stat(Math.round(okN / Math.max(n, 1) * 100) + '%', 'outcome hit rate', '胜负命中率');
+
+    /* ---- chart 1: per-series confidence bars ---- */
+    var W = 720, H = 240, padL = 34, padB = 46, bw = (W - padL - 10) / scored.length;
+    var svg1 = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    [0.5, 0.75, 1].forEach(function (g) {
+      var y = (H - padB) - g * (H - padB - 14);
+      svg1 += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - 6) + '" y2="' + y + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+              '<text x="4" y="' + (y + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
+    });
+    scored.forEach(function (x, i) {
+      var h = x.s.conf * (H - padB - 14), xpos = padL + i * bw + bw * 0.18, y = (H - padB) - h;
+      svg1 += '<rect x="' + xpos + '" y="' + y + '" width="' + bw * 0.64 + '" height="' + h + '" rx="1.5" fill="' + (x.ok ? C.green : C.red) + '" fill-opacity="0.85"/>';
+      if (x.exact) svg1 += '<text x="' + (xpos + bw * 0.32) + '" y="' + (y - 6) + '" fill="' + C.gold + '" font-size="12" text-anchor="middle">★</text>';
+      var lbl = x.s.home + '·' + x.s.away;
+      svg1 += '<text x="' + (xpos + bw * 0.32) + '" y="' + (H - padB + 12) + '" fill="' + C.dim + '" font-size="8.5" font-family="monospace" text-anchor="end" transform="rotate(-38 ' + (xpos + bw * 0.32) + ' ' + (H - padB + 12) + ')">' + esc(lbl) + '</text>';
+    });
+    svg1 += '</svg>';
+    document.getElementById('msiBars').innerHTML = svg1;
+
+    /* ---- chart 2: cumulative hit rate ---- */
+    var W2 = 360, H2 = 200, pl = 34, pb = 24, pw = (W2 - pl - 10) / Math.max(n - 1, 1);
+    var pts = [], hit = 0;
+    scored.forEach(function (x, i) { if (x.ok) hit++; pts.push({ x: pl + i * pw, y: (H2 - pb) - (hit / (i + 1)) * (H2 - pb - 14) }); });
+    var base = (H2 - pb) - 0.5 * (H2 - pb - 14);
+    var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    [0, 0.5, 1].forEach(function (g) {
+      var y = (H2 - pb) - g * (H2 - pb - 14);
+      svg2 += '<line x1="' + pl + '" y1="' + y + '" x2="' + (W2 - 6) + '" y2="' + y + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+              '<text x="4" y="' + (y + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
+    });
+    svg2 += '<line x1="' + pl + '" y1="' + base + '" x2="' + (W2 - 6) + '" y2="' + base + '" stroke="' + C.gold + '" stroke-opacity=".45" stroke-dasharray="6 4"/>';
+    svg2 += '<polyline fill="none" stroke="' + C.teal + '" stroke-width="2" points="' + pts.map(function (p) { return p.x + ',' + p.y; }).join(' ') + '"/>';
+    pts.forEach(function (p) { svg2 += '<circle cx="' + p.x + '" cy="' + p.y + '" r="2.6" fill="' + C.teal + '"/>'; });
+    svg2 += '</svg>';
+    document.getElementById('msiCurve').innerHTML = svg2;
+
+    /* ---- chart 3: calibration bins ---- */
+    var bins = [ { lo: 0.5, hi: 0.65, en: '50–65%', zh: '50–65%' }, { lo: 0.65, hi: 0.75, en: '65–75%', zh: '65–75%' }, { lo: 0.75, hi: 1.01, en: '75%+', zh: '75%+' } ];
+    var W3 = 360, H3 = 200, pl3 = 34, pb3 = 30, gw = (W3 - pl3 - 10) / bins.length;
+    var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    [0, 0.5, 1].forEach(function (g) {
+      var y = (H3 - pb3) - g * (H3 - pb3 - 14);
+      svg3 += '<line x1="' + pl3 + '" y1="' + y + '" x2="' + (W3 - 6) + '" y2="' + y + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+              '<text x="4" y="' + (y + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
+    });
+    bins.forEach(function (b, i) {
+      var xs = scored.filter(function (x) { return x.s.conf >= b.lo && x.s.conf < b.hi; });
+      var cx = pl3 + i * gw;
+      if (xs.length) {
+        var avgC = xs.reduce(function (a, x) { return a + x.s.conf; }, 0) / xs.length;
+        var hr = xs.filter(function (x) { return x.ok; }).length / xs.length;
+        var hC = avgC * (H3 - pb3 - 14), hH = hr * (H3 - pb3 - 14);
+        svg3 += '<rect x="' + (cx + gw * 0.16) + '" y="' + ((H3 - pb3) - hC) + '" width="' + gw * 0.26 + '" height="' + hC + '" fill="none" stroke="' + C.teal + '" stroke-width="1.5"/>';
+        svg3 += '<rect x="' + (cx + gw * 0.5) + '" y="' + ((H3 - pb3) - hH) + '" width="' + gw * 0.26 + '" height="' + hH + '" fill="' + (hr >= avgC ? C.green : C.red) + '" fill-opacity=".85"/>';
+        svg3 += '<text x="' + (cx + gw * 0.46) + '" y="' + (H3 - pb3 + 22) + '" fill="' + C.dim + '" font-size="9" font-family="monospace" text-anchor="middle">n=' + xs.length + '</text>';
+      }
+      svg3 += '<text x="' + (cx + gw * 0.46) + '" y="' + (H3 - pb3 + 12) + '" fill="' + C.dim + '" font-size="9.5" font-family="monospace" text-anchor="middle">' + b.en + '</text>';
+    });
+    svg3 += '</svg>';
+    document.getElementById('msiCalib').innerHTML = svg3;
+
+    /* ---- champion / mvp boards ---- */
+    var gf = (d.series || []).find(function (s) { return s.id === 'msi-grand-final'; });
+    var actualChamp = gf && gf.result ? (gf.result.home > gf.result.away ? gf.home : gf.away) : null;
+    var champs = document.getElementById('msiChamps');
+    (d.champion || []).forEach(function (c) {
+      var row = el('div', 'pick-row' + (actualChamp ? (c.team === actualChamp ? ' won' : ' lost') : ''));
+      row.appendChild(el('span', 'who', esc(c.team) + (actualChamp && c.team === actualChamp ? ' 🏆' : '')));
+      row.appendChild(el('div', 'bar', '<i style="width:' + c.prob + '%"></i>'));
+      row.appendChild(el('span', 'pct', c.prob + '%'));
+      champs.appendChild(row);
+    });
+    if (actualChamp) bi(document.getElementById('msiChampNote'), 'Stated before the Grand Final. Actual champion: ' + actualChamp + '.', '总决赛开打前给出的概率。实际冠军：' + actualChamp + '。');
+    var mvps = document.getElementById('msiMvps');
+    var actualMvp = d.finalsMvp || null; // populated by the data task once official
+    (d.mvp || []).forEach(function (m) {
+      var row = el('div', 'pick-row' + (actualMvp ? (m.team === actualMvp ? ' won' : ' lost') : ''));
+      row.appendChild(el('span', 'who', esc(m.team) + (actualMvp && m.team === actualMvp ? ' ✓' : '')));
+      row.appendChild(el('div', 'bar', '<i style="width:' + m.prob + '%"></i>'));
+      row.appendChild(el('span', 'pct', m.prob + '%'));
+      mvps.appendChild(row);
+    });
+    if (!actualMvp) mvps.appendChild(bi(el('p', 'note'), 'Official Finals MVP pending in the data file.', '官方决赛 MVP 待数据文件更新。'));
+
+    /* ---- full log table ---- */
+    var zh = (document.documentElement.lang || '').indexOf('zh') === 0;
+    var tbl = document.getElementById('msiLog');
+    var head = '<tr><th data-en="Round" data-zh="轮次">' + (zh ? '轮次' : 'Round') + '</th><th data-en="Series" data-zh="对阵">' + (zh ? '对阵' : 'Series') + '</th><th data-en="Call" data-zh="预测">' + (zh ? '预测' : 'Call') + '</th><th data-en="Conf." data-zh="置信度">' + (zh ? '置信度' : 'Conf.') + '</th><th data-en="Result" data-zh="结果">' + (zh ? '结果' : 'Result') + '</th><th></th></tr>';
+    tbl.innerHTML = head + scored.map(function (x) {
+      var s = x.s;
+      var pickTeam = s.opus === 'home' ? s.home : s.away;
+      var mark = x.ok ? (x.exact ? '<span class="star">⭐</span>' : '<span class="ok">✓</span>') : '<span class="bad">✗</span>';
+      return '<tr><td>' + esc(zh ? (s.round_zh || s.round) : s.round) + '</td><td>' + esc(s.home + ' vs ' + s.away) + '</td><td>' + esc(pickTeam + ' ' + (s.opusScore || '')) + '</td><td>' + Math.round(s.conf * 100) + '%</td><td>' + s.result.home + '-' + s.result.away + '</td><td>' + mark + '</td></tr>';
+    }).join('');
+
+    applyI18N();
+  }
+})();
+</script>
+<script type="module" src="/src/pages/statsLibs.js"></script>
+</body>
+</html>
