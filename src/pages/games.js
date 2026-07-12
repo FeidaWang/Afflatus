@@ -147,7 +147,7 @@ import { renderTrackRecordHTML } from '../lib/trackRecord.js';
         const aCls = leg.winner === 'away' ? ' win' : (leg.winner === 'home' ? ' lose' : '');
         return `<div class="qf-leg"><span class="qf-team${hCls}">${leg.homeFlag || ''} ${legName(leg, 'home')}</span><i class="qf-vs">${T('vs', '对')}</i><span class="qf-team${aCls}">${leg.awayFlag || ''} ${legName(leg, 'away')}</span></div>`;
       }).join('');
-      const decided = slot.legs.map((leg) => leg.winner ? legName(leg, leg.winner) + (leg.winner === 'home' ? (leg.homeFlag || '') : (leg.awayFlag || '')) : null);
+      const decided = slot.legs.map((leg) => leg.winner ? (leg.winner === 'home' ? (leg.homeFlag || '') : (leg.awayFlag || '')) + ' ' + legName(leg, leg.winner) : null);
       const slotHtml = decided.every(Boolean)
         ? (stage.key === 'final'
           ? `🏆 <b>${decided[0]}</b> <i class="qf-vs">${T('vs', '对')}</i> <b>${decided[1]}</b>`

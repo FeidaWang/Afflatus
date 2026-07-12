@@ -169,6 +169,16 @@
       "reason_zh": "在加时 3-1 淘汰瑞士一役中未有进球入账，但仍以8球与姆巴佩并列金靴榜首，其世界杯正赛生涯进球数21球的历史纪录保持不变。半决赛 7 月 15 日亚特兰大战英格兰，这是他所说的谢幕之战——金球奖最具情怀色彩的人选。"
     },
     {
+      "name": "Lamine Yamal",
+      "name_zh": "拉明·亚马尔",
+      "team": "Spain",
+      "team_zh": "西班牙",
+      "flag": "🇪🇸",
+      "prob": 20,
+      "reason_en": "Spain beat Belgium 2-1 in the QF — Fabián Ruiz and substitute Merino scored, with Yamal again occupying defenders out wide all game, before conceding for the first time this tournament. Semi-final vs favourites France, July 14 in Arlington — a huge test for Spain's most dangerous attacker.",
+      "reason_zh": "西班牙八强 2-1 击败比利时——法比安·鲁伊斯与替补登场的梅里诺建功，亚马尔边路持续牵制对方防线，球队本届首次失球。半决赛 7 月 14 日阿灵顿战头号热门法国——对西班牙最具威胁的攻击手而言是巨大考验。"
+    },
+    {
       "name": "Jude Bellingham",
       "name_zh": "贝林厄姆",
       "team": "England",
@@ -187,16 +197,6 @@
       "prob": 15,
       "reason_en": "Norway's run ended in the QF, losing 2-1 (AET) to England despite an early Schjelderup goal and a second Haaland effort disallowed on VAR review. Still sits on 7 goals, one behind Mbappé and Messi — with no games left to add to it, his Golden Boot hopes now depend on the leaders going quiet.",
       "reason_zh": "挪威止步八强，加时 1-2 不敌英格兰，尽管舍尔德鲁普先拔头筹，哈兰德本人还有一球经VAR回看判罚无效。本届仍以7球落后姆巴佩、梅西一球——已无比赛可踢，金靴归属只能寄望于领先者后续颗粒无收。"
-    },
-    {
-      "name": "Lamine Yamal",
-      "name_zh": "拉明·亚马尔",
-      "team": "Spain",
-      "team_zh": "西班牙",
-      "flag": "🇪🇸",
-      "prob": 20,
-      "reason_en": "Spain beat Belgium 2-1 in the QF — Fabián Ruiz and substitute Merino scored, with Yamal again occupying defenders out wide all game, before conceding for the first time this tournament. Semi-final vs favourites France, July 14 in Arlington — a huge test for Spain's most dangerous attacker.",
-      "reason_zh": "西班牙八强 2-1 击败比利时——法比安·鲁伊斯与替补登场的梅里诺建功，亚马尔边路持续牵制对方防线，球队本届首次失球。半决赛 7 月 14 日阿灵顿战头号热门法国——对西班牙最具威胁的攻击手而言是巨大考验。"
     }
   ],
   "fixtures": [
