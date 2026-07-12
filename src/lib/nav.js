@@ -28,7 +28,11 @@
     { path: '/sectors.html', en: 'Sectors', zh: '板块' },
     { path: '/signal.html',  en: 'Signal',  zh: '信号' },
     { path: '/games.html',     en: 'Games',     zh: '竞猜', group: 'labs' },
-    { path: '/league.html',    en: 'Leagues',   zh: '电竞', group: 'labs' },
+    // U18b (2026-07-12): league.html (MSI 2026) taken offline after the
+    // tournament ended — replaced in nav & the prev/next cycle by the
+    // stats.html archive; vercel.json 302s the old URL there. games.html
+    // gets the same treatment after the World Cup final (see Urgent.md U18c).
+    { path: '/stats.html',     en: 'Stats',     zh: '战绩', group: 'labs' },
     { path: '/horoscope.html', en: 'Horoscope', zh: '观星', group: 'labs' },
     { path: '/serial.html',    en: 'Novels',    zh: '小说', group: 'labs' },
     { path: '/course.html',    en: 'Course',    zh: '课程', group: 'labs' }
