@@ -22,13 +22,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Project Afflatus · Stats — 竞猜战绩存档</title>
-<meta name="description" content="Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 全部预测的命中率、置信度校准与冠军押注图表，数据全部可回溯。FIFA 世界杯 2026 决赛后归档。">
+<meta name="description" content="Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 全部预测的命中率、Wilson 置信区间、Brier 评分、可靠性校准图与 bootstrap 重采样，数据全部可回溯。FIFA 世界杯 2026 决赛后归档。">
 <meta name="theme-color" content="#070a12">
 <link rel="canonical" href="https://feida.au/stats.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Afflatus">
 <meta property="og:title" content="Project Afflatus · Stats — 竞猜战绩存档">
-<meta property="og:description" content="MSI 2026 预测战绩全量图表：命中率曲线、置信度校准、冠军押注复盘。仅供娱乐。">
+<meta property="og:description" content="MSI 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。">
 <meta property="og:url" content="https://feida.au/stats.html">
 <meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -50,14 +50,18 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 .lang-toggle{background:none;border:1px solid var(--line);color:var(--dim);font:600 11px/1 var(--mono);padding:7px 10px;cursor:pointer;border-radius:2px}
 .hero h1{font-size:clamp(22px,4vw,34px);letter-spacing:.04em;line-height:1.25}
 .hero .sub{color:var(--dim);font-size:13px;margin-top:10px;max-width:760px}
-.band{margin:44px 0 18px;padding:10px 14px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(79,214,196,.10),transparent);letter-spacing:.14em;font-size:13px}
+.band{margin:44px 0 18px;padding:10px 14px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(79,214,196,.10),transparent);letter-spacing:.14em;font-size:13px;position:relative;overflow:hidden}
+.band::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(79,214,196,.08) 50%,transparent 70%);transform:translateX(-100%);animation:sweep 5s ease-in-out infinite}
+@keyframes sweep{0%,60%{transform:translateX(-100%)}90%,100%{transform:translateX(100%)}}
 .band span{color:var(--teal)}
-.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:16px 0 8px}
-.stat{border:1px solid var(--line);background:var(--panel);padding:14px 14px 12px;border-radius:2px}
-.stat b{display:block;font-size:26px;color:var(--teal)}
-.stat.gold b{color:var(--gold)}
-.stat small{color:var(--dim);font-size:10.5px;letter-spacing:.08em}
-.chart-card{border:1px solid var(--line);background:var(--panel);padding:16px;border-radius:2px;margin-top:14px}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0 8px}
+.stat{border:1px solid var(--line);background:var(--panel);padding:14px 14px 12px;border-radius:2px;transition:border-color .2s,box-shadow .2s}
+.stat:hover{border-color:rgba(79,214,196,.5);box-shadow:0 0 18px rgba(79,214,196,.10)}
+.stat b{display:block;font-size:24px;color:var(--teal)}
+.stat.gold b{color:var(--gold)} .stat.warn b{color:var(--red)}
+.stat small{color:var(--dim);font-size:10.5px;letter-spacing:.06em;display:block;line-height:1.5}
+.chart-card{border:1px solid var(--line);background:var(--panel);padding:16px;border-radius:2px;margin-top:14px;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.chart-card.in{opacity:1;transform:none}
 .chart-card h3{font-size:13px;letter-spacing:.1em;margin-bottom:4px}
 .chart-card .note{color:var(--dim);font-size:11px;margin-bottom:10px}
 .chart-card svg{width:100%;height:auto;display:block}
@@ -65,10 +69,28 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 .legend i{display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:1px;vertical-align:-1px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.bar-hit{cursor:pointer;transition:filter .15s}
+.bar-hit:hover{filter:brightness(1.35) drop-shadow(0 0 6px rgba(154,229,255,.45))}
+.tooltip{position:fixed;z-index:60;pointer-events:none;background:rgba(4,8,14,.96);border:1px solid rgba(154,229,255,.35);padding:9px 11px;font-size:11.5px;line-height:1.6;border-radius:2px;max-width:280px;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;transition:opacity .12s}
+.tooltip.show{opacity:1}
+.tooltip b{color:var(--teal)}
+.drawer{margin-top:10px;border:1px dashed rgba(154,229,255,.25);background:rgba(154,229,255,.04);padding:12px 14px;font-size:12.5px;display:none}
+.drawer.show{display:block}
+.drawer .hd{color:var(--teal);letter-spacing:.06em;margin-bottom:4px;font-size:12px}
+.drawer .rsn{color:var(--dim)}
+.ctl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 4px;font-size:12px}
+.ctl input[type=range]{flex:1;min-width:140px;accent-color:var(--teal)}
+.ctl .val{color:var(--gold);min-width:44px;text-align:right}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
+.readout div{border:1px solid rgba(154,229,255,.10);padding:8px 10px;font-size:11px;color:var(--dim)}
+.readout b{display:block;font-size:16px;color:var(--ink)}
+.btn{background:none;border:1px solid rgba(79,214,196,.45);color:var(--teal);font:600 11px/1 var(--mono);letter-spacing:.1em;padding:9px 14px;cursor:pointer;border-radius:2px;transition:background .15s,box-shadow .15s}
+.btn:hover{background:rgba(79,214,196,.12);box-shadow:0 0 14px rgba(79,214,196,.2)}
+.btn:disabled{opacity:.45;cursor:default}
 .pick-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(154,229,255,.10);font-size:12.5px}
 .pick-row:last-child{border-bottom:none}
 .pick-row .bar{flex:1;height:10px;background:rgba(154,229,255,.08);border-radius:1px;overflow:hidden}
-.pick-row .bar i{display:block;height:100%;background:var(--teal)}
+.pick-row .bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
 .pick-row .pct{width:44px;text-align:right;color:var(--dim)}
 .pick-row .who{width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pick-row.won .who{color:var(--green)}
@@ -76,12 +98,22 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 .tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
 .tbl th,.tbl td{border:1px solid rgba(154,229,255,.10);padding:7px 9px;text-align:left}
 .tbl th{color:var(--dim);font-weight:600;letter-spacing:.06em;background:rgba(154,229,255,.04)}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:rgba(79,214,196,.06)}
 .ok{color:var(--green)} .bad{color:var(--red)} .star{color:var(--gold)}
 .tbl-wrap{overflow-x:auto}
+.method{margin-top:14px;border:1px solid rgba(154,229,255,.10);background:rgba(154,229,255,.03);padding:14px 16px;font-size:11.5px;color:var(--dim)}
+.method b{color:var(--ink)}
+.method li{margin:4px 0 4px 18px}
 .placeholder{border:1px dashed rgba(232,173,111,.4);background:rgba(232,173,111,.05);padding:22px;border-radius:2px;color:var(--dim);font-size:13px;margin-top:14px}
 .placeholder b{color:var(--gold)}
 .foot{margin-top:60px;color:var(--dim);font-size:11px;letter-spacing:.1em}
 .disclaim{margin-top:10px;color:var(--dim);font-size:11px}
+@media (prefers-reduced-motion: reduce){
+  .band::after{animation:none}
+  .chart-card{opacity:1;transform:none;transition:none}
+  .pick-row .bar i{transition:none}
+}
 </style>
 </head>
 <body class="stats-page" data-prev="/games.html" data-next="/horoscope.html">
@@ -101,7 +133,7 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 
   <section class="hero">
     <h1 data-en="Prediction Track Record — every call, on the record." data-zh="竞猜战绩存档——每一次预测，都留痕可查。">Prediction Track Record — every call, on the record.</h1>
-    <p class="sub" data-en="Full archives of Fable 5's tournament predictions: hit rates, confidence calibration and title bets, computed live from the same public JSON the event pages used. Entertainment only — never betting advice." data-zh="Fable 5 赛事预测的完整存档：命中率、置信度校准、冠军押注，全部由赛事页同一份公开 JSON 实时计算。仅供娱乐，不构成博彩建议。">Full archives of Fable 5's tournament predictions: hit rates, confidence calibration and title bets, computed live from the same public JSON the event pages used. Entertainment only — never betting advice.</p>
+    <p class="sub" data-en="Full archives of Fable 5's tournament predictions, scored with proper statistics: Wilson intervals, exact binomial tests, Brier scores, reliability diagrams and bootstrap resampling — computed live from the same public JSON the event pages used. Entertainment only, never betting advice." data-zh="Fable 5 赛事预测的完整存档，用正经统计方法打分：Wilson 置信区间、精确二项检验、Brier 评分、可靠性校准图、bootstrap 重采样——全部由赛事页同一份公开 JSON 实时计算。仅供娱乐，不构成博彩建议。">Full archives of Fable 5's tournament predictions, scored with proper statistics: Wilson intervals, exact binomial tests, Brier scores, reliability diagrams and bootstrap resampling — computed live from the same public JSON the event pages used. Entertainment only, never betting advice.</p>
   </section>
 
   <!-- ================= MSI 2026 ================= -->
@@ -112,21 +144,37 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 
     <div class="chart-card">
       <h3 data-en="Per-series calls: confidence vs. outcome" data-zh="逐场预测：置信度与结果">Per-series calls: confidence vs. outcome</h3>
-      <p class="note" data-en="Each bar is one series; height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline." data-zh="每根柱是一场系列赛；高度 = 预测时给出的置信度。绿 = 胜负判对，红 = 判错，金 ★ = 比分全中。">Each bar is one series; height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline.</p>
+      <p class="note" data-en="Each bar is one series; height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline. Hover for detail, click (or tap a table row below) to read the original reasoning." data-zh="每根柱是一场系列赛；高度 = 预测时给出的置信度。绿 = 胜负判对，红 = 判错，金 ★ = 比分全中。悬停看详情，点击柱子（或下方表格行）展开当时的判断依据。">Each bar is one series; height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline. Hover for detail, click (or tap a table row below) to read the original reasoning.</p>
       <div id="msiBars"></div>
       <div class="legend"><span><i style="background:var(--green)"></i><span data-en="correct" data-zh="判对">correct</span></span><span><i style="background:var(--red)"></i><span data-en="wrong" data-zh="判错">wrong</span></span><span><i style="background:var(--gold)"></i><span data-en="exact score" data-zh="比分全中">exact score</span></span></div>
+      <div class="drawer" id="msiDrawer"></div>
     </div>
 
     <div class="grid2">
       <div class="chart-card">
-        <h3 data-en="Cumulative hit rate" data-zh="累计命中率曲线">Cumulative hit rate</h3>
-        <p class="note" data-en="Running outcome accuracy after each resolved series, vs. the 50% coin-flip line." data-zh="每判定一场后的累计胜负命中率，对照 50% 抛硬币基线。">Running outcome accuracy after each resolved series, vs. the 50% coin-flip line.</p>
+        <h3 data-en="Cumulative hit rate · Wilson 95% band" data-zh="累计命中率 · Wilson 95% 置信带">Cumulative hit rate · Wilson 95% band</h3>
+        <p class="note" data-en="Running outcome accuracy after each resolved series. The shaded band is the Wilson 95% interval — with n this small it stays wide, and that width is the honest headline." data-zh="每判定一场后的累计胜负命中率。阴影带是 Wilson 95% 置信区间——样本这么小时它注定很宽，这个宽度本身就是最诚实的结论。">Running outcome accuracy after each resolved series. The shaded band is the Wilson 95% interval — with n this small it stays wide, and that width is the honest headline.</p>
         <div id="msiCurve"></div>
       </div>
       <div class="chart-card">
-        <h3 data-en="Confidence calibration" data-zh="置信度校准">Confidence calibration</h3>
-        <p class="note" data-en="Grouped by stated confidence: did higher conviction actually hit more often? Hollow = avg stated confidence, solid = actual hit rate." data-zh="按预测置信度分组：更笃定的预测是否真的更准？空心 = 组内平均置信度，实心 = 实际命中率。">Grouped by stated confidence: did higher conviction actually hit more often? Hollow = avg stated confidence, solid = actual hit rate.</p>
+        <h3 data-en="Reliability diagram (calibration)" data-zh="可靠性校准图">Reliability diagram (calibration)</h3>
+        <p class="note" data-en="Stated confidence (x) vs. observed hit rate (y), grouped in bins. Perfect calibration sits on the diagonal; whiskers are per-bin Wilson 95% intervals; point size = bin count." data-zh="预测置信度（横轴）对实际命中率（纵轴），分组统计。完美校准落在对角线上；须线为组内 Wilson 95% 区间；点的大小 = 组内场次。">Stated confidence (x) vs. observed hit rate (y), grouped in bins. Perfect calibration sits on the diagonal; whiskers are per-bin Wilson 95% intervals; point size = bin count.</p>
         <div id="msiCalib"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Confidence-threshold explorer" data-zh="置信度阈值探索器">Confidence-threshold explorer</h3>
+        <p class="note" data-en="&quot;Would only betting the high-conviction calls have done better?&quot; Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live. A demo of selection effects — shrinking n widens the interval faster than the rate improves." data-zh="「只押高置信度的预测会不会更准？」拖动阈值，n、命中率、Wilson 区间与 Brier 评分实时重算。这是一个选择效应演示——n 缩小让区间变宽的速度，比命中率提升的速度更快。">"Would only betting the high-conviction calls have done better?" Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live. A demo of selection effects — shrinking n widens the interval faster than the rate improves.</p>
+        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="thSlider" min="50" max="80" step="1" value="50"><span class="val" id="thVal">50%</span></div>
+        <div class="readout" id="thReadout"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="Bootstrap resampling" data-zh="Bootstrap 重采样">Bootstrap resampling</h3>
+        <p class="note" data-en="2,000 resamples (with replacement) of the resolved calls: the distribution of hit rates you'd see if this exact skill level replayed the tournament. Gold lines mark the 2.5% / 97.5% percentiles." data-zh="对已判定的预测做 2000 次有放回重采样：同一水平重打一遍比赛，命中率会落在什么分布。金线为 2.5% / 97.5% 分位。">2,000 resamples (with replacement) of the resolved calls: the distribution of hit rates you'd see if this exact skill level replayed the tournament. Gold lines mark the 2.5% / 97.5% percentiles.</p>
+        <button class="btn" id="bootBtn" data-en="RUN ×2000" data-zh="重采样 ×2000">RUN ×2000</button>
+        <div id="bootHist"></div>
       </div>
     </div>
 
@@ -147,6 +195,17 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
       <h3 data-en="Full series log" data-zh="全部系列赛判定记录">Full series log</h3>
       <div class="tbl-wrap"><table class="tbl" id="msiLog"></table></div>
     </div>
+
+    <div class="method">
+      <b data-en="Methodology (honest small print)" data-zh="方法论（诚实的小字）">Methodology (honest small print)</b>
+      <ul>
+        <li data-en="Wilson score interval instead of the normal approximation — the standard choice for small-n binomial proportions." data-zh="用 Wilson 得分区间而非正态近似——小样本二项比例的标准做法。">Wilson score interval instead of the normal approximation — the standard choice for small-n binomial proportions.</li>
+        <li data-en="Exact two-sided binomial test against p=0.5: with n this small, &quot;beats a coin flip&quot; is a claim the data cannot yet support either way." data-zh="对 p=0.5 做精确双侧二项检验：样本这么小，「优于抛硬币」这个命题目前正反都无法成立。">Exact two-sided binomial test against p=0.5: with n this small, "beats a coin flip" is a claim the data cannot yet support either way.</li>
+        <li data-en="Brier score = mean (stated probability − outcome)²; lower is better. Skill score BSS = 1 − BS/0.25 compares against an always-50% forecaster." data-zh="Brier 评分 = (预测概率 − 结果)² 的均值，越低越好。技能分 BSS = 1 − BS/0.25，基线是永远给 50% 的预测者。">Brier score = mean (stated probability − outcome)²; lower is better. Skill score BSS = 1 − BS/0.25 compares against an always-50% forecaster.</li>
+        <li data-en="Exact-scoreline hits require the outcome to be correct first — a string coincidence with the winner called wrong does not count." data-zh="比分全中必须以胜负判对为前提——赢家判错、比分字符串巧合相等的不算。">Exact-scoreline hits require the outcome to be correct first — a string coincidence with the winner called wrong does not count.</li>
+        <li data-en="Nothing is re-scored after the fact: this page reads the same public JSON the live pages rendered from." data-zh="事后不重打分：本页读取的就是直播页当时渲染用的同一份公开 JSON。">Nothing is re-scored after the fact: this page reads the same public JSON the live pages rendered from.</li>
+      </ul>
+    </div>
   </section>
 
   <!-- ================= World Cup 2026 (archived after the final) ================= -->
@@ -161,14 +220,72 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
   </footer>
 </main>
 
+<div class="tooltip" id="tip" role="tooltip" aria-hidden="true"></div>
+
 <script>
 (function () {
   'use strict';
   var C = { green:'#57c98a', red:'#e0596b', gold:'#e8ad6f', teal:'#4fd6c4', dim:'#8fa3b8', line:'rgba(154,229,255,.16)' };
+  var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+  function zh() { return (document.documentElement.lang || '').indexOf('zh') === 0; }
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
-  function bi(node, en, zh) { node.setAttribute('data-en', en); node.setAttribute('data-zh', zh); node.textContent = (document.documentElement.lang || '').indexOf('zh') === 0 ? zh : en; return node; }
+  function bi(node, en, zhs) { node.setAttribute('data-en', en); node.setAttribute('data-zh', zhs); node.textContent = zh() ? zhs : en; return node; }
   function applyI18N() { try { if (window.AfflatusI18N) window.AfflatusI18N.apply(); } catch (e) {} }
   function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  /* ---------- statistics toolkit ---------- */
+  function wilson(k, n, z) {
+    if (!n) return [0, 0];
+    z = z || 1.96;
+    var p = k / n, d = 1 + z * z / n, c = p + z * z / (2 * n);
+    var m = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n));
+    return [Math.max(0, (c - m) / d), Math.min(1, (c + m) / d)];
+  }
+  function binomPmf(n, i) { // C(n,i) * 0.5^n via log to stay stable
+    var r = 0; for (var j = 0; j < i; j++) r += Math.log((n - j) / (j + 1));
+    return Math.exp(r + n * Math.log(0.5));
+  }
+  function binomTwoSided(k, n) { // exact two-sided vs p=0.5 (sum of all outcomes as or less likely)
+    var pk = binomPmf(n, k), s = 0;
+    for (var i = 0; i <= n; i++) { var pi = binomPmf(n, i); if (pi <= pk + 1e-12) s += pi; }
+    return Math.min(1, s);
+  }
+  function brier(xs) { // xs: [{conf, ok}] where conf = prob assigned to the picked side
+    if (!xs.length) return null;
+    return xs.reduce(function (a, x) { var o = x.ok ? 1 : 0; return a + (x.conf - o) * (x.conf - o); }, 0) / xs.length;
+  }
+  function fmtPct(v, dp) { return (v * 100).toFixed(dp == null ? 0 : dp) + '%'; }
+
+  /* ---------- shared tooltip ---------- */
+  var tip = document.getElementById('tip');
+  function showTip(html, ev) {
+    tip.innerHTML = html; tip.classList.add('show');
+    var x = Math.min(ev.clientX + 14, innerWidth - 300), y = Math.min(ev.clientY + 14, innerHeight - 120);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.classList.remove('show'); }
+
+  /* ---------- count-up ---------- */
+  function countUp(node, target, suffix, dp) {
+    if (RM) { node.textContent = (dp != null ? target.toFixed(dp) : target) + (suffix || ''); return; }
+    var t0 = performance.now(), dur = 850;
+    (function frame(t) {
+      var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      var v = target * e;
+      node.textContent = (dp != null ? v.toFixed(dp) : Math.round(v)) + (suffix || '');
+      if (k < 1) requestAnimationFrame(frame);
+    })(t0);
+  }
+
+  /* ---------- reveal-on-scroll ---------- */
+  function reveal() {
+    var cards = document.querySelectorAll('.chart-card');
+    if (RM || !('IntersectionObserver' in window)) { cards.forEach(function (c) { c.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    cards.forEach(function (c) { io.observe(c); });
+  }
 
   fetch('/leagues-data.json').then(function (r) { return r.json(); }).then(render).catch(function () {
     document.getElementById('msiStrip').appendChild(el('div','stat','<b>—</b><small>data unavailable / 数据暂不可用</small>'));
@@ -182,79 +299,217 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
       var ok = actualHome === pickHome;
       /* exact requires ok: a raw string match with the outcome called wrong
          (e.g. picked T1 "3-1", actual G2 3-1) is a coincidence, not a hit —
-         this keeps the computed count identical to record.exactScore. */
+         keeps the computed count identical to record.exactScore. */
       var exact = ok && s.opusScore === (s.result.home + '-' + s.result.away);
-      return { s: s, ok: ok, exact: exact };
+      return { s: s, ok: ok, exact: exact, conf: s.conf };
     });
     var n = scored.length, okN = scored.filter(function (x) { return x.ok; }).length, exN = scored.filter(function (x) { return x.exact; }).length;
+    var ci = wilson(okN, n), pval = binomTwoSided(okN, n), bs = brier(scored), bss = 1 - bs / 0.25;
 
-    /* ---- stat strip ---- */
+    /* ---- stat strip (count-up + honest stats) ---- */
     var strip = document.getElementById('msiStrip');
-    function stat(v, en, zh, gold) { var s = el('div', 'stat' + (gold ? ' gold' : '')); s.appendChild(el('b', null, esc(v))); s.appendChild(bi(el('small'), en, zh)); strip.appendChild(s); }
-    stat(n, 'series resolved', '已判定系列赛');
-    stat(okN + ' / ' + n, 'outcomes correct', '胜负判对');
-    stat(exN, 'exact scorelines', '比分全中', true);
-    stat(Math.round(okN / Math.max(n, 1) * 100) + '%', 'outcome hit rate', '胜负命中率');
+    function stat(build, en, zhs, cls) {
+      var s = el('div', 'stat' + (cls ? ' ' + cls : ''));
+      var b = el('b'); s.appendChild(b); s.appendChild(bi(el('small'), en, zhs)); strip.appendChild(s); build(b);
+    }
+    stat(function (b) { countUp(b, n); }, 'series resolved', '已判定系列赛');
+    stat(function (b) { countUp(b, Math.round(okN / Math.max(n,1) * 100), '%'); },
+      'outcome hit rate — ' + okN + '/' + n + ' · Wilson 95%: ' + fmtPct(ci[0]) + '–' + fmtPct(ci[1]),
+      '胜负命中率 — ' + okN + '/' + n + ' · Wilson 95%：' + fmtPct(ci[0]) + '–' + fmtPct(ci[1]));
+    stat(function (b) { countUp(b, exN); }, 'exact scorelines', '比分全中', 'gold');
+    stat(function (b) { countUp(b, bs, '', 3); },
+      'Brier score (0.25 = coin flip) · skill ' + (bss >= 0 ? '+' : '') + fmtPct(bss),
+      'Brier 评分（0.25 = 抛硬币）· 技能分 ' + (bss >= 0 ? '+' : '') + fmtPct(bss), bss < 0 ? 'warn' : undefined);
+    stat(function (b) { countUp(b, pval, '', 2); },
+      'exact binomial p vs. coin flip — not significant; n is far too small to claim skill',
+      '对抛硬币的精确二项检验 p 值——不显著；n 太小，尚不能声称「有技术含量」', 'warn');
 
-    /* ---- chart 1: per-series confidence bars ---- */
-    var W = 720, H = 240, padL = 34, padB = 46, bw = (W - padL - 10) / scored.length;
-    var svg1 = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    /* ---- chart 1: per-series confidence bars (interactive) ---- */
+    var W = 720, H = 240, padL = 34, padB = 46, bw = (W - padL - 10) / Math.max(scored.length, 1);
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg1 = document.createElementNS(NS, 'svg');
+    svg1.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg1.setAttribute('role', 'img');
     [0.5, 0.75, 1].forEach(function (g) {
       var y = (H - padB) - g * (H - padB - 14);
-      svg1 += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - 6) + '" y2="' + y + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
-              '<text x="4" y="' + (y + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
+      var ln = document.createElementNS(NS, 'line');
+      ln.setAttribute('x1', padL); ln.setAttribute('y1', y); ln.setAttribute('x2', W - 6); ln.setAttribute('y2', y);
+      ln.setAttribute('stroke', C.line); ln.setAttribute('stroke-dasharray', '3 4'); svg1.appendChild(ln);
+      var tx = document.createElementNS(NS, 'text');
+      tx.setAttribute('x', 4); tx.setAttribute('y', y + 4); tx.setAttribute('fill', C.dim); tx.setAttribute('font-size', '10'); tx.setAttribute('font-family', 'monospace');
+      tx.textContent = Math.round(g * 100) + '%'; svg1.appendChild(tx);
     });
+    var drawer = document.getElementById('msiDrawer');
+    function openDrawer(x) {
+      var s = x.s;
+      var pickTeam = s.opus === 'home' ? s.home : s.away;
+      var rsn = zh() ? (s.reason_zh || s.reason_en || '') : (s.reason_en || s.reason_zh || '');
+      drawer.innerHTML = '<div class="hd">' + esc(zh() ? (s.round_zh || s.round) : s.round) + ' — ' + esc(s.home + ' vs ' + s.away) +
+        ' · ' + (zh() ? '预测' : 'call') + ': ' + esc(pickTeam + ' ' + (s.opusScore || '')) + ' @ ' + Math.round(s.conf * 100) + '%' +
+        ' · ' + (zh() ? '结果' : 'result') + ': ' + s.result.home + '-' + s.result.away + ' ' + (x.ok ? (x.exact ? '⭐' : '✓') : '✗') + '</div>' +
+        '<div class="rsn">' + esc(rsn) + '</div>';
+      drawer.classList.add('show');
+      drawer.scrollIntoView({ block: 'nearest', behavior: RM ? 'auto' : 'smooth' });
+    }
     scored.forEach(function (x, i) {
-      var h = x.s.conf * (H - padB - 14), xpos = padL + i * bw + bw * 0.18, y = (H - padB) - h;
-      svg1 += '<rect x="' + xpos + '" y="' + y + '" width="' + bw * 0.64 + '" height="' + h + '" rx="1.5" fill="' + (x.ok ? C.green : C.red) + '" fill-opacity="0.85"/>';
-      if (x.exact) svg1 += '<text x="' + (xpos + bw * 0.32) + '" y="' + (y - 6) + '" fill="' + C.gold + '" font-size="12" text-anchor="middle">★</text>';
-      var lbl = x.s.home + '·' + x.s.away;
-      svg1 += '<text x="' + (xpos + bw * 0.32) + '" y="' + (H - padB + 12) + '" fill="' + C.dim + '" font-size="8.5" font-family="monospace" text-anchor="end" transform="rotate(-38 ' + (xpos + bw * 0.32) + ' ' + (H - padB + 12) + ')">' + esc(lbl) + '</text>';
+      var hTarget = x.s.conf * (H - padB - 14), xpos = padL + i * bw + bw * 0.18, yBase = H - padB;
+      var r = document.createElementNS(NS, 'rect');
+      r.setAttribute('x', xpos); r.setAttribute('width', bw * 0.64); r.setAttribute('rx', 1.5);
+      r.setAttribute('fill', x.ok ? C.green : C.red); r.setAttribute('fill-opacity', '0.85');
+      r.setAttribute('class', 'bar-hit');
+      if (RM) { r.setAttribute('y', yBase - hTarget); r.setAttribute('height', hTarget); }
+      else {
+        r.setAttribute('y', yBase); r.setAttribute('height', 0);
+        setTimeout(function () {
+          var t0 = performance.now(), dur = 700;
+          (function fr(t) {
+            var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+            r.setAttribute('height', hTarget * e); r.setAttribute('y', yBase - hTarget * e);
+            if (k < 1) requestAnimationFrame(fr);
+          })(t0);
+        }, 60 * i);
+      }
+      var tipHtml = '<b>' + esc(x.s.home + ' vs ' + x.s.away) + '</b><br>' +
+        (zh() ? '预测' : 'call') + ': ' + esc((x.s.opus === 'home' ? x.s.home : x.s.away) + ' ' + (x.s.opusScore || '')) + ' @ ' + Math.round(x.s.conf * 100) + '%<br>' +
+        (zh() ? '结果' : 'result') + ': ' + x.s.result.home + '-' + x.s.result.away + ' ' + (x.ok ? (x.exact ? '⭐' : '✓') : '✗') + '<br>' +
+        '<span style="color:' + C.dim + '">' + (zh() ? '点击看当时判断依据' : 'click for the original reasoning') + '</span>';
+      r.addEventListener('mousemove', function (ev) { showTip(tipHtml, ev); });
+      r.addEventListener('mouseleave', hideTip);
+      r.addEventListener('click', function () { hideTip(); openDrawer(x); });
+      svg1.appendChild(r);
+      if (x.exact) {
+        var st = document.createElementNS(NS, 'text');
+        st.setAttribute('x', xpos + bw * 0.32); st.setAttribute('y', yBase - hTarget - 6);
+        st.setAttribute('fill', C.gold); st.setAttribute('font-size', '12'); st.setAttribute('text-anchor', 'middle');
+        st.textContent = '★'; svg1.appendChild(st);
+      }
+      var lb = document.createElementNS(NS, 'text');
+      lb.setAttribute('x', xpos + bw * 0.32); lb.setAttribute('y', H - padB + 12);
+      lb.setAttribute('fill', C.dim); lb.setAttribute('font-size', '8.5'); lb.setAttribute('font-family', 'monospace'); lb.setAttribute('text-anchor', 'end');
+      lb.setAttribute('transform', 'rotate(-38 ' + (xpos + bw * 0.32) + ' ' + (H - padB + 12) + ')');
+      lb.textContent = x.s.home + '·' + x.s.away; svg1.appendChild(lb);
     });
-    svg1 += '</svg>';
-    document.getElementById('msiBars').innerHTML = svg1;
+    document.getElementById('msiBars').appendChild(svg1);
 
-    /* ---- chart 2: cumulative hit rate ---- */
+    /* ---- chart 2: cumulative hit rate with Wilson band + animated draw ---- */
     var W2 = 360, H2 = 200, pl = 34, pb = 24, pw = (W2 - pl - 10) / Math.max(n - 1, 1);
-    var pts = [], hit = 0;
-    scored.forEach(function (x, i) { if (x.ok) hit++; pts.push({ x: pl + i * pw, y: (H2 - pb) - (hit / (i + 1)) * (H2 - pb - 14) }); });
-    var base = (H2 - pb) - 0.5 * (H2 - pb - 14);
+    function y2(v) { return (H2 - pb) - v * (H2 - pb - 14); }
+    var pts = [], lo = [], hi = [], hit = 0;
+    scored.forEach(function (x, i) {
+      if (x.ok) hit++;
+      var w = wilson(hit, i + 1);
+      pts.push([pl + i * pw, y2(hit / (i + 1))]); lo.push([pl + i * pw, y2(w[0])]); hi.push([pl + i * pw, y2(w[1])]);
+    });
     var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
     [0, 0.5, 1].forEach(function (g) {
-      var y = (H2 - pb) - g * (H2 - pb - 14);
-      svg2 += '<line x1="' + pl + '" y1="' + y + '" x2="' + (W2 - 6) + '" y2="' + y + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
-              '<text x="4" y="' + (y + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
+      svg2 += '<line x1="' + pl + '" y1="' + y2(g) + '" x2="' + (W2 - 6) + '" y2="' + y2(g) + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+              '<text x="4" y="' + (y2(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
     });
-    svg2 += '<line x1="' + pl + '" y1="' + base + '" x2="' + (W2 - 6) + '" y2="' + base + '" stroke="' + C.gold + '" stroke-opacity=".45" stroke-dasharray="6 4"/>';
-    svg2 += '<polyline fill="none" stroke="' + C.teal + '" stroke-width="2" points="' + pts.map(function (p) { return p.x + ',' + p.y; }).join(' ') + '"/>';
-    pts.forEach(function (p) { svg2 += '<circle cx="' + p.x + '" cy="' + p.y + '" r="2.6" fill="' + C.teal + '"/>'; });
+    svg2 += '<polygon fill="rgba(79,214,196,.12)" points="' + hi.map(function (p) { return p.join(','); }).join(' ') + ' ' + lo.slice().reverse().map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    svg2 += '<line x1="' + pl + '" y1="' + y2(0.5) + '" x2="' + (W2 - 6) + '" y2="' + y2(0.5) + '" stroke="' + C.gold + '" stroke-opacity=".45" stroke-dasharray="6 4"/>';
+    svg2 += '<polyline id="curvePath" fill="none" stroke="' + C.teal + '" stroke-width="2" points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    pts.forEach(function (p) { svg2 += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2.6" fill="' + C.teal + '"/>'; });
     svg2 += '</svg>';
     document.getElementById('msiCurve').innerHTML = svg2;
+    if (!RM) {
+      var path = document.getElementById('curvePath');
+      try {
+        var len = path.getTotalLength ? path.getTotalLength() : 600;
+        path.style.strokeDasharray = len; path.style.strokeDashoffset = len;
+        path.style.transition = 'stroke-dashoffset 1.4s ease .2s';
+        requestAnimationFrame(function () { requestAnimationFrame(function () { path.style.strokeDashoffset = 0; }); });
+      } catch (e) {}
+    }
 
-    /* ---- chart 3: calibration bins ---- */
-    var bins = [ { lo: 0.5, hi: 0.65, en: '50–65%', zh: '50–65%' }, { lo: 0.65, hi: 0.75, en: '65–75%', zh: '65–75%' }, { lo: 0.75, hi: 1.01, en: '75%+', zh: '75%+' } ];
-    var W3 = 360, H3 = 200, pl3 = 34, pb3 = 30, gw = (W3 - pl3 - 10) / bins.length;
+    /* ---- chart 3: reliability diagram with Wilson whiskers ---- */
+    var bins = [ { lo: 0.5, hi: 0.65 }, { lo: 0.65, hi: 0.75 }, { lo: 0.75, hi: 1.01 } ];
+    var W3 = 360, H3 = 210, pl3 = 36, pb3 = 26;
+    function x3(v) { return pl3 + (v - 0.4) / 0.6 * (W3 - pl3 - 12); }
+    function y3(v) { return (H3 - pb3) - v * (H3 - pb3 - 14); }
     var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
     [0, 0.5, 1].forEach(function (g) {
-      var y = (H3 - pb3) - g * (H3 - pb3 - 14);
-      svg3 += '<line x1="' + pl3 + '" y1="' + y + '" x2="' + (W3 - 6) + '" y2="' + y + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
-              '<text x="4" y="' + (y + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
+      svg3 += '<line x1="' + pl3 + '" y1="' + y3(g) + '" x2="' + (W3 - 6) + '" y2="' + y3(g) + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+              '<text x="4" y="' + (y3(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
     });
-    bins.forEach(function (b, i) {
-      var xs = scored.filter(function (x) { return x.s.conf >= b.lo && x.s.conf < b.hi; });
-      var cx = pl3 + i * gw;
-      if (xs.length) {
-        var avgC = xs.reduce(function (a, x) { return a + x.s.conf; }, 0) / xs.length;
-        var hr = xs.filter(function (x) { return x.ok; }).length / xs.length;
-        var hC = avgC * (H3 - pb3 - 14), hH = hr * (H3 - pb3 - 14);
-        svg3 += '<rect x="' + (cx + gw * 0.16) + '" y="' + ((H3 - pb3) - hC) + '" width="' + gw * 0.26 + '" height="' + hC + '" fill="none" stroke="' + C.teal + '" stroke-width="1.5"/>';
-        svg3 += '<rect x="' + (cx + gw * 0.5) + '" y="' + ((H3 - pb3) - hH) + '" width="' + gw * 0.26 + '" height="' + hH + '" fill="' + (hr >= avgC ? C.green : C.red) + '" fill-opacity=".85"/>';
-        svg3 += '<text x="' + (cx + gw * 0.46) + '" y="' + (H3 - pb3 + 22) + '" fill="' + C.dim + '" font-size="9" font-family="monospace" text-anchor="middle">n=' + xs.length + '</text>';
-      }
-      svg3 += '<text x="' + (cx + gw * 0.46) + '" y="' + (H3 - pb3 + 12) + '" fill="' + C.dim + '" font-size="9.5" font-family="monospace" text-anchor="middle">' + b.en + '</text>';
+    [0.5, 0.7, 0.9].forEach(function (g) {
+      svg3 += '<text x="' + x3(g) + '" y="' + (H3 - pb3 + 14) + '" fill="' + C.dim + '" font-size="9.5" font-family="monospace" text-anchor="middle">' + Math.round(g * 100) + '%</text>';
+    });
+    svg3 += '<line x1="' + x3(0.4) + '" y1="' + y3(0.4) + '" x2="' + x3(1) + '" y2="' + y3(1) + '" stroke="' + C.gold + '" stroke-opacity=".5" stroke-dasharray="6 4"/>';
+    bins.forEach(function (b) {
+      var xs = scored.filter(function (x) { return x.conf >= b.lo && x.conf < b.hi; });
+      if (!xs.length) return;
+      var avgC = xs.reduce(function (a, x) { return a + x.conf; }, 0) / xs.length;
+      var k = xs.filter(function (x) { return x.ok; }).length, hr = k / xs.length;
+      var w = wilson(k, xs.length);
+      var cx = x3(avgC), cy = y3(hr);
+      svg3 += '<line x1="' + cx + '" y1="' + y3(w[0]) + '" x2="' + cx + '" y2="' + y3(w[1]) + '" stroke="' + C.teal + '" stroke-opacity=".55" stroke-width="1.5"/>';
+      svg3 += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (3 + xs.length) + '" fill="' + (hr >= avgC ? C.green : C.red) + '" fill-opacity=".8" stroke="rgba(255,255,255,.35)"/>';
+      svg3 += '<text x="' + (cx + 8) + '" y="' + (cy - 8) + '" fill="' + C.dim + '" font-size="9" font-family="monospace">n=' + xs.length + '</text>';
     });
     svg3 += '</svg>';
     document.getElementById('msiCalib').innerHTML = svg3;
+
+    /* ---- threshold explorer ---- */
+    var slider = document.getElementById('thSlider'), thVal = document.getElementById('thVal'), ro = document.getElementById('thReadout');
+    function renderThreshold() {
+      var t = Number(slider.value) / 100;
+      thVal.textContent = slider.value + '%';
+      var xs = scored.filter(function (x) { return x.conf >= t; });
+      var k = xs.filter(function (x) { return x.ok; }).length;
+      var w = wilson(k, xs.length), b = brier(xs);
+      ro.innerHTML = '';
+      function cell(v, en, zhs) { var d = el('div'); d.appendChild(el('b', null, v)); d.appendChild(bi(el('span'), en, zhs)); ro.appendChild(d); }
+      cell(xs.length, 'calls kept (n)', '保留场次 (n)');
+      cell(xs.length ? Math.round(k / xs.length * 100) + '%' : '—', 'hit rate', '命中率');
+      cell(xs.length ? fmtPct(w[0]) + '–' + fmtPct(w[1]) : '—', 'Wilson 95%', 'Wilson 95%');
+      cell(b == null ? '—' : b.toFixed(3), 'Brier (↓ better)', 'Brier（越低越好）');
+      applyI18N();
+    }
+    slider.addEventListener('input', renderThreshold);
+    renderThreshold();
+
+    /* ---- bootstrap panel ---- */
+    var bootBtn = document.getElementById('bootBtn'), bootBox = document.getElementById('bootHist');
+    bootBtn.addEventListener('click', function () {
+      bootBtn.disabled = true;
+      var TOTAL = 2000, done = 0, counts = new Array(n + 1).fill(0);
+      var Wb = 360, Hb = 190, plb = 30, pbb = 26;
+      function draw() {
+        var mx = Math.max.apply(null, counts) || 1;
+        var bwb = (Wb - plb - 10) / (n + 1);
+        var samples = [];
+        counts.forEach(function (c, k) { for (var j = 0; j < c; j++) samples.push(k); });
+        samples.sort(function (a, b2) { return a - b2; });
+        var p025 = samples.length ? samples[Math.floor(samples.length * 0.025)] / n : 0;
+        var p975 = samples.length ? samples[Math.min(samples.length - 1, Math.floor(samples.length * 0.975))] / n : 0;
+        var s = '<svg viewBox="0 0 ' + Wb + ' ' + Hb + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+        counts.forEach(function (c, k) {
+          var h = c / mx * (Hb - pbb - 16);
+          s += '<rect x="' + (plb + k * bwb + 1) + '" y="' + ((Hb - pbb) - h) + '" width="' + (bwb - 2) + '" height="' + h + '" fill="' + C.teal + '" fill-opacity=".8"/>';
+        });
+        [p025, p975].forEach(function (p) {
+          var x = plb + p * n * bwb + bwb / 2;
+          s += '<line x1="' + x + '" y1="14" x2="' + x + '" y2="' + (Hb - pbb) + '" stroke="' + C.gold + '" stroke-dasharray="5 4"/>';
+        });
+        [0, 0.5, 1].forEach(function (g) {
+          s += '<text x="' + (plb + g * n * bwb + bwb / 2) + '" y="' + (Hb - pbb + 14) + '" fill="' + C.dim + '" font-size="9.5" font-family="monospace" text-anchor="middle">' + Math.round(g * 100) + '%</text>';
+        });
+        s += '<text x="' + plb + '" y="10" fill="' + C.dim + '" font-size="9.5" font-family="monospace">' + done + ' / ' + TOTAL +
+             (done === TOTAL ? ' · 95% CI ' + fmtPct(p025) + '–' + fmtPct(p975) : '') + '</text>';
+        s += '</svg>';
+        bootBox.innerHTML = s;
+      }
+      function chunk() {
+        var step = RM ? TOTAL : 100;
+        for (var r = 0; r < step && done < TOTAL; r++, done++) {
+          var k = 0;
+          for (var i = 0; i < n; i++) { if (scored[Math.floor(Math.random() * n)].ok) k++; }
+          counts[k]++;
+        }
+        draw();
+        if (done < TOTAL) requestAnimationFrame(chunk); else bootBtn.disabled = false;
+      }
+      chunk();
+    });
 
     /* ---- champion / mvp boards ---- */
     var gf = (d.series || []).find(function (s) { return s.id === 'msi-grand-final'; });
@@ -263,9 +518,11 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
     (d.champion || []).forEach(function (c) {
       var row = el('div', 'pick-row' + (actualChamp ? (c.team === actualChamp ? ' won' : ' lost') : ''));
       row.appendChild(el('span', 'who', esc(c.team) + (actualChamp && c.team === actualChamp ? ' 🏆' : '')));
-      row.appendChild(el('div', 'bar', '<i style="width:' + c.prob + '%"></i>'));
+      var bar = el('div', 'bar', '<i></i>');
+      row.appendChild(bar);
       row.appendChild(el('span', 'pct', c.prob + '%'));
       champs.appendChild(row);
+      requestAnimationFrame(function () { bar.firstChild.style.width = c.prob + '%'; });
     });
     if (actualChamp) bi(document.getElementById('msiChampNote'), 'Stated before the Grand Final. Actual champion: ' + actualChamp + '.', '总决赛开打前给出的概率。实际冠军：' + actualChamp + '。');
     var mvps = document.getElementById('msiMvps');
@@ -273,23 +530,30 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
     (d.mvp || []).forEach(function (m) {
       var row = el('div', 'pick-row' + (actualMvp ? (m.team === actualMvp ? ' won' : ' lost') : ''));
       row.appendChild(el('span', 'who', esc(m.team) + (actualMvp && m.team === actualMvp ? ' ✓' : '')));
-      row.appendChild(el('div', 'bar', '<i style="width:' + m.prob + '%"></i>'));
+      var bar = el('div', 'bar', '<i></i>');
+      row.appendChild(bar);
       row.appendChild(el('span', 'pct', m.prob + '%'));
       mvps.appendChild(row);
+      requestAnimationFrame(function () { bar.firstChild.style.width = m.prob + '%'; });
     });
     if (!actualMvp) mvps.appendChild(bi(el('p', 'note'), 'Official Finals MVP pending in the data file.', '官方决赛 MVP 待数据文件更新。'));
 
-    /* ---- full log table ---- */
-    var zh = (document.documentElement.lang || '').indexOf('zh') === 0;
+    /* ---- full log table (rows open the reasoning drawer too) ---- */
     var tbl = document.getElementById('msiLog');
-    var head = '<tr><th data-en="Round" data-zh="轮次">' + (zh ? '轮次' : 'Round') + '</th><th data-en="Series" data-zh="对阵">' + (zh ? '对阵' : 'Series') + '</th><th data-en="Call" data-zh="预测">' + (zh ? '预测' : 'Call') + '</th><th data-en="Conf." data-zh="置信度">' + (zh ? '置信度' : 'Conf.') + '</th><th data-en="Result" data-zh="结果">' + (zh ? '结果' : 'Result') + '</th><th></th></tr>';
-    tbl.innerHTML = head + scored.map(function (x) {
+    var zhNow = zh();
+    tbl.innerHTML = '<tr><th data-en="Round" data-zh="轮次">' + (zhNow ? '轮次' : 'Round') + '</th><th data-en="Series" data-zh="对阵">' + (zhNow ? '对阵' : 'Series') + '</th><th data-en="Call" data-zh="预测">' + (zhNow ? '预测' : 'Call') + '</th><th data-en="Conf." data-zh="置信度">' + (zhNow ? '置信度' : 'Conf.') + '</th><th data-en="Result" data-zh="结果">' + (zhNow ? '结果' : 'Result') + '</th><th></th></tr>';
+    var tb = document.createElement('tbody');
+    scored.forEach(function (x) {
       var s = x.s;
       var pickTeam = s.opus === 'home' ? s.home : s.away;
       var mark = x.ok ? (x.exact ? '<span class="star">⭐</span>' : '<span class="ok">✓</span>') : '<span class="bad">✗</span>';
-      return '<tr><td>' + esc(zh ? (s.round_zh || s.round) : s.round) + '</td><td>' + esc(s.home + ' vs ' + s.away) + '</td><td>' + esc(pickTeam + ' ' + (s.opusScore || '')) + '</td><td>' + Math.round(s.conf * 100) + '%</td><td>' + s.result.home + '-' + s.result.away + '</td><td>' + mark + '</td></tr>';
-    }).join('');
+      var tr = el('tr', null, '<td>' + esc(zhNow ? (s.round_zh || s.round) : s.round) + '</td><td>' + esc(s.home + ' vs ' + s.away) + '</td><td>' + esc(pickTeam + ' ' + (s.opusScore || '')) + '</td><td>' + Math.round(s.conf * 100) + '%</td><td>' + s.result.home + '-' + s.result.away + '</td><td>' + mark + '</td>');
+      tr.addEventListener('click', function () { openDrawer(x); });
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);
 
+    reveal();
     applyI18N();
   }
 })();
