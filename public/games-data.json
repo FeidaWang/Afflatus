@@ -1,14 +1,14 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-11",
-  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365 (11 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365（7 月 11 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "updated": "2026-07-12",
+  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365 (12 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365（7 月 12 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
-    "resolved": 50,
-    "correctOutcome": 35,
-    "exactScore": 9,
-    "winRate": 70,
+    "resolved": 52,
+    "correctOutcome": 37,
+    "exactScore": 10,
+    "winRate": 71,
     "note_en": "Match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
     "note_zh": "自第三轮起对预测胜负计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
@@ -92,6 +92,24 @@
         "pick_zh": "西班牙胜",
         "ok": true,
         "exact": false
+      },
+      {
+        "id": "wc-nor-eng",
+        "label_en": "Norway 1-2 England (AET)",
+        "label_zh": "挪威 1-2 英格兰（加时）",
+        "pick_en": "England win",
+        "pick_zh": "英格兰胜",
+        "ok": true,
+        "exact": true
+      },
+      {
+        "id": "wc-arg-sui",
+        "label_en": "Argentina 3-1 Switzerland (AET)",
+        "label_zh": "阿根廷 3-1 瑞士（加时）",
+        "pick_en": "Argentina win",
+        "pick_zh": "阿根廷胜",
+        "ok": true,
+        "exact": false
       }
     ]
   },
@@ -100,49 +118,33 @@
       "team": "France",
       "team_zh": "法国",
       "flag": "🇫🇷",
-      "prob": 30,
-      "reason_en": "First team into the semi-finals — beat Morocco 2-0 in the QF, Mbappé scoring one (after a missed first-half penalty) and setting up Dembélé. Semi-final opponent is now confirmed: Spain, July 14 in Arlington — the tournament's only team yet to concede. Still the favourites, but a genuinely tough test.",
-      "reason_zh": "首支晋级四强的球队——八强 2-0 击败摩洛哥，姆巴佩上半场失点后仍打入一球并助攻登贝莱。半决赛对手已确定：西班牙，7 月 14 日阿灵顿——本届唯一尚未失球的球队。仍是头号热门，但这将是真正的硬仗。"
-    },
-    {
-      "team": "Spain",
-      "team_zh": "西班牙",
-      "flag": "🇪🇸",
-      "prob": 26,
-      "reason_en": "Beat Belgium 2-1 in the QF — Fabián Ruiz opened the scoring, De Ketelaere equalised, before substitute Mikel Merino struck the winner just 1:57 after coming on, his second clutch goal of the knockouts. Still yet to concede all tournament. Semi-final vs France, July 14 in Arlington.",
-      "reason_zh": "八强 2-1 击败比利时——法比安·鲁伊斯先拔头筹，德凯特莱雷扳平，替补登场的梅里诺仅用1分57秒就打入制胜球，这是他淘汰赛阶段第二个关键进球。本届赛事仍未失球。半决赛对阵法国，7 月 14 日阿灵顿。"
+      "prob": 36,
+      "reason_en": "Beat Morocco 2-0 in the QF and remain unbeaten all tournament. Semi-final vs Spain, July 14 in Arlington — a rematch of two European heavyweights. Devigged market odds (+155 FanDuel, 11 Jul) make France the clear favourites, with Mbappé's Golden Boot-leading form adding to the aura.",
+      "reason_zh": "八强 2-0 击败摩洛哥，本届赛事仍保持不败。半决赛 7 月 14 日阿灵顿战西班牙——两支欧洲豪门的对决。市场赔率（FanDuel +155，7 月 11 日，去水后）显示法国仍是头号热门，姆巴佩领跑金靴的状态更添底气。"
     },
     {
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
-      "prob": 20,
-      "reason_en": "Pulled off a stunning R16 comeback, trailing Egypt 2-0 before Romero, Messi and Enzo Fernández struck in the final 11 minutes to win 3-2 — Messi's 21st World Cup goal extended his own record. QF vs Switzerland, July 11 Kansas City. Still favourites, but the defensive wobbles against Egypt are a real concern.",
-      "reason_zh": "16 强上演惊天逆转，一度0-2落后埃及，末段11分钟内靠罗梅罗、梅西和恩佐·费尔南德斯连入三球，3-2取胜——梅西世界杯进球数刷新至21球，续写个人纪录。八强7月11日战瑞士，堪萨斯城。仍是热门，但对阵埃及暴露的防守漏洞值得警惕。"
+      "prob": 23,
+      "reason_en": "Needed extra time to beat Switzerland 3-1 — Mac Allister opened the scoring, Ndoye levelled after the hour, before Álvarez and Lautaro Martínez struck in extra time against ten men. Messi was quiet without a goal. Semi-final vs England, July 15 in Atlanta — devigged market odds (+300 FanDuel) put them second favourites to reach the final.",
+      "reason_zh": "加时苦战 3-1 淘汰瑞士——麦卡利斯特先拔头筹，恩多耶第60分钟后扳平，随后阿尔瓦雷斯与劳塔罗·马丁内斯在加时段连入两球，对手仅剩十人。梅西本场并无进球入账。半决赛 7 月 15 日亚特兰大战英格兰——市场赔率（FanDuel +300，去水后）显示阿根廷是晋级决赛的次热门。"
     },
     {
-      "team": "Norway",
-      "team_zh": "挪威",
-      "flag": "🇳🇴",
-      "prob": 9,
-      "reason_en": "Stunned five-time champions Brazil 2-1 in R16 on a Haaland brace, reaching the quarter-finals for the first time in their history. QF vs England, July 11 Miami. The tournament's biggest surprise package now has a real shot.",
-      "reason_zh": "16 强靠哈兰德梅开二度 2-1 爆冷淘汰五届冠军巴西，历史上首次挺进八强。八强 7 月 11 日战英格兰，迈阿密。本届杯赛最大黑马，如今真有一战之力。"
+      "team": "Spain",
+      "team_zh": "西班牙",
+      "flag": "🇪🇸",
+      "prob": 21,
+      "reason_en": "Beat Belgium 2-1 in the QF — Fabián Ruiz opened the scoring, De Ketelaere equalised (Spain's first goal conceded all tournament), before substitute Mikel Merino struck the winner just 1:57 after coming on. Semi-final vs favourites France, July 14 in Arlington — devigged market odds (+330 FanDuel) give them roughly a one-in-five shot at the final.",
+      "reason_zh": "八强 2-1 击败比利时——法比安·鲁伊斯先拔头筹，德凯特莱雷扳平（本届首次失球），替补登场的梅里诺仅用1分57秒打入制胜球。半决赛 7 月 14 日阿灵顿战头号热门法国——市场赔率（FanDuel +330，去水后）显示晋级决赛的概率约为五分之一。"
     },
     {
       "team": "England",
       "team_zh": "英格兰",
       "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "prob": 9,
-      "reason_en": "Survived Mexico 3-2 in a wild R16 (Bellingham brace, Kane penalty) despite playing 40+ minutes with ten men after a red card. QF vs Norway, July 11 Miami — Haaland looms as the biggest threat yet.",
-      "reason_zh": "16 强 3-2 险胜墨西哥（贝林厄姆梅开二度、凯恩点球破门），红牌后十人应战超过 40 分钟仍挺住。八强 7 月 11 日战挪威，迈阿密——哈兰德将是迄今最大威胁。"
-    },
-    {
-      "team": "Switzerland",
-      "team_zh": "瑞士",
-      "flag": "🇨🇭",
-      "prob": 6,
-      "reason_en": "Ground through 120 goalless minutes against Colombia and won 4-3 on penalties, with Rubén Vargas burying the decisive spot-kick and Sommer huge in the shootout. QF vs Argentina, July 11 Kansas City — a massive step up against Messi, but the Swiss haven't lost in normal time all tournament.",
-      "reason_zh": "120 分钟鏖战哥伦比亚未尝进球，点球大战 4-3 险胜，瓦尔加斯罚入制胜点球，索梅尔扑救神勇。八强 7 月 11 日战阿根廷，堪萨斯城——对阵梅西是巨大考验，但瑞士本届常规时间尚未尝败绩。"
+      "prob": 20,
+      "reason_en": "Bellingham's extra-time brace overturned Haaland's Norway 2-1 (AET) despite trailing for most of the second half. Bellingham is now level with Kane on six goals apiece. Semi-final vs Argentina, July 15 in Atlanta — a big step up in class, with devigged market odds (+350 FanDuel) making them the narrowest outsiders of the four.",
+      "reason_zh": "加时赛贝林厄姆梅开二度，2-1（加时）逆转哈兰德领衔的挪威，此前下半场大部分时间落后。贝林厄姆本届进球数追平凯恩，同为6球。半决赛 7 月 15 日亚特兰大战阿根廷——对手实力显著更强，市场赔率（FanDuel +350，去水后）显示英格兰是四强中晋级概率最低的一队。"
     }
   ],
   "players": [
@@ -152,9 +154,9 @@
       "team": "France",
       "team_zh": "法国",
       "flag": "🇫🇷",
-      "prob": 25,
-      "reason_en": "Goal and an assist for Dembélé in the 2-0 QF win over Morocco (despite a missed first-half penalty) — now tied with Messi atop the Golden Boot on 8 goals, ahead on the assists tiebreaker. France are the first semi-finalists, confirmed to face Spain July 14 in Arlington.",
-      "reason_zh": "八强 2-0 淘汰摩洛哥一役进球并助攻登贝莱（上半场曾失点）——以 8 球与梅西并列金靴榜首，助攻数占先。法国率先晋级四强，半决赛 7 月 14 日阿灵顿战西班牙。"
+      "prob": 26,
+      "reason_en": "Still leads the Golden Boot on 8 goals, and now holds the tiebreaker over Messi outright with 3 assists to Messi's 1. France are into the semi-final vs Spain, July 14 in Arlington, unbeaten all tournament — the strongest overall package left in the field.",
+      "reason_zh": "以8球继续领跑金靴榜，且以3次助攻力压梅西的1次助攻，在并列情况下占据决胜优势。法国晋级半决赛，7 月 14 日阿灵顿战西班牙，本届仍保持不败——是留在赛场上综合实力最强的球员。"
     },
     {
       "name": "Lionel Messi",
@@ -162,9 +164,19 @@
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
-      "prob": 22,
-      "reason_en": "Scored the equaliser in Argentina's stunning 3-2 comeback over Egypt — now tied with Mbappé atop the Golden Boot on 8 goals this tournament, and his 21st World Cup finals goal overall is an all-time record. QF vs Switzerland, July 11 Kansas City, in what he's called his final World Cup.",
-      "reason_zh": "在阿根廷3-2逆转埃及一役中打入扳平球——本届赛事以8球与姆巴佩并列金靴榜首，其世界杯正赛生涯进球数也达到21球，刷新历史纪录。八强7月11日战瑞士，堪萨斯城，这是他所说的谢幕之战。"
+      "prob": 20,
+      "reason_en": "Went quiet without a goal in the 3-1 (AET) QF win over Switzerland, but still sits on 8 goals (level with Mbappé) and his all-time record 21 World Cup finals goals. Semi-final vs England, July 15 in Atlanta, in what he's called his final World Cup — the sentimental favourite for the Golden Ball.",
+      "reason_zh": "在加时 3-1 淘汰瑞士一役中未有进球入账，但仍以8球与姆巴佩并列金靴榜首，其世界杯正赛生涯进球数21球的历史纪录保持不变。半决赛 7 月 15 日亚特兰大战英格兰，这是他所说的谢幕之战——金球奖最具情怀色彩的人选。"
+    },
+    {
+      "name": "Jude Bellingham",
+      "name_zh": "贝林厄姆",
+      "team": "England",
+      "team_zh": "英格兰",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "prob": 19,
+      "reason_en": "A second knockout-round brace — levelling in first-half stoppage time then winning it in extra time — sent Norway out 2-1 (AET) and lifted him level with Kane on 6 goals. Two match-defining performances in as many knockout games make him a genuine Golden Ball dark horse. Semi-final vs Argentina, July 15 in Atlanta.",
+      "reason_zh": "淘汰赛阶段第二次梅开二度——上半场补时扳平，加时赛再入制胜球，2-1（加时）淘汰挪威——本届进球数追平凯恩，达到6球。连续两场淘汰赛比赛中都有决定性发挥，是金球奖的有力黑马。半决赛 7 月 15 日亚特兰大战阿根廷。"
     },
     {
       "name": "Erling Haaland",
@@ -172,9 +184,9 @@
       "team": "Norway",
       "team_zh": "挪威",
       "flag": "🇳🇴",
-      "prob": 19,
-      "reason_en": "Brace in Norway's 2-1 R16 shock over Brazil — 7 goals this tournament, one behind the Mbappé-Messi tie atop the Golden Boot. QF vs England, July 11 Miami, where England's defence returns Rice and Guéhi from injury/illness. The form player of the knockouts.",
-      "reason_zh": "16 强 2-1 爆冷淘汰巴西中梅开二度——本届合计 7 球，落后姆巴佩、梅西并列的金靴榜首一球。八强 7 月 11 日战英格兰，迈阿密，英格兰后防线赖斯、格伊伤愈复出。淘汰赛阶段状态最佳的球员。"
+      "prob": 15,
+      "reason_en": "Norway's run ended in the QF, losing 2-1 (AET) to England despite an early Schjelderup goal and a second Haaland effort disallowed on VAR review. Still sits on 7 goals, one behind Mbappé and Messi — with no games left to add to it, his Golden Boot hopes now depend on the leaders going quiet.",
+      "reason_zh": "挪威止步八强，加时 1-2 不敌英格兰，尽管舍尔德鲁普先拔头筹，哈兰德本人还有一球经VAR回看判罚无效。本届仍以7球落后姆巴佩、梅西一球——已无比赛可踢，金靴归属只能寄望于领先者后续颗粒无收。"
     },
     {
       "name": "Lamine Yamal",
@@ -182,100 +194,15 @@
       "team": "Spain",
       "team_zh": "西班牙",
       "flag": "🇪🇸",
-      "prob": 12,
-      "reason_en": "Spain beat Belgium 2-1 in the QF — Fabián Ruiz and substitute Merino got the goals, with Yamal's dribbling out wide again occupying defenders all game. Semi-final vs France confirmed, July 14 in Arlington — a huge step up against the tournament's only team yet to concede.",
-      "reason_zh": "西班牙八强 2-1 击败比利时——法比安·鲁伊斯与替补登场的梅里诺建功，亚马尔边路持续牵制对方防线。半决赛对阵法国已确定，7 月 14 日阿灵顿——对手是本届唯一尚未失球的球队，难度陡增。"
-    },
-    {
-      "name": "Harry Kane",
-      "name_zh": "凯恩",
-      "team": "England",
-      "team_zh": "英格兰",
-      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "prob": 10,
-      "reason_en": "Penalty in England's 3-2 R16 win over Mexico keeps him on 6 goals, three behind the Mbappé-Messi tie atop the Golden Boot. England go into the QF vs Norway (July 11, Miami) with Rice and Guéhi both back from injury/illness, though Quansah is suspended.",
-      "reason_zh": "16 强 3-2 险胜墨西哥中主罚点球破门，本届进球数达 6 球，落后姆巴佩、梅西并列的金靴榜首三球。英格兰迎战挪威的八强战（7 月 11 日，迈阿密）赖斯与格伊双双伤愈复出，但昆萨停赛一场。"
+      "prob": 20,
+      "reason_en": "Spain beat Belgium 2-1 in the QF — Fabián Ruiz and substitute Merino scored, with Yamal again occupying defenders out wide all game, before conceding for the first time this tournament. Semi-final vs favourites France, July 14 in Arlington — a huge test for Spain's most dangerous attacker.",
+      "reason_zh": "西班牙八强 2-1 击败比利时——法比安·鲁伊斯与替补登场的梅里诺建功，亚马尔边路持续牵制对方防线，球队本届首次失球。半决赛 7 月 14 日阿灵顿战头号热门法国——对西班牙最具威胁的攻击手而言是巨大考验。"
     }
   ],
-  "fixtures": [
-    {
-      "id": "wc-nor-eng",
-      "stage": "Quarter-final",
-      "kickoff": "2026-07-11T21:00:00Z",
-      "home": "Norway",
-      "home_zh": "挪威",
-      "homeFlag": "🇳🇴",
-      "away": "England",
-      "away_zh": "英格兰",
-      "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "opus": "away",
-      "conf": 0.55,
-      "opusScore": "1-2",
-      "reason_en": "England have their spine back — Rice recovered from illness and Guéhi from a hamstring strain to start, though Quansah is suspended after his R16 red card and Henderson is out for the tournament with a broken wrist. Norway say a stomach bug that hit the squad this week has cleared. Market (DraftKings) has England -110 to win outright, roughly a coin flip with the draw. Haaland's pace (7 goals, tied for the Golden Boot lead) makes this the toughest defensive test England have faced, but their squad depth should be enough in a tight one.",
-      "reason_zh": "英格兰核心回归——赖斯病愈复出，格伊也从16强战腿筋拉伤中伤愈回归首发，但昆萨16强红牌停赛一场，亨德森因腕骨骨折缺席本届余下赛事。挪威方面称本周困扰球队的肠胃疾病已痊愈。市场（DraftKings）英格兰主胜赔率-110，与战平几乎五五开。哈兰德的速度（7球，并列金靴榜首）将是英格兰本届遇到的最强攻击考验，但阵容深度应能助其惊险取胜。",
-      "odds": {
-        "h": 4.0,
-        "d": 3.65,
-        "a": 1.91,
-        "src": "DraftKings",
-        "scores": [
-          {
-            "s": "1-1",
-            "o": 6.0
-          },
-          {
-            "s": "2-1",
-            "o": 7.0
-          },
-          {
-            "s": "1-2",
-            "o": 7.5
-          }
-        ]
-      },
-      "result": null
-    },
-    {
-      "id": "wc-arg-sui",
-      "stage": "Quarter-final",
-      "kickoff": "2026-07-12T01:00:00Z",
-      "home": "Argentina",
-      "home_zh": "阿根廷",
-      "homeFlag": "🇦🇷",
-      "away": "Switzerland",
-      "away_zh": "瑞士",
-      "awayFlag": "🇨🇭",
-      "opus": "home",
-      "conf": 0.66,
-      "opusScore": "2-1",
-      "reason_en": "Argentina go in fully fit — Scaloni has no fresh injury concerns, and Romero (calf scare vs Egypt) has been passed fit to start. Switzerland are further weakened after already grinding through 120 goalless minutes against Colombia: Johan Manzambi is out with a training-ground knee injury, and midfielder Michel Aebischer and defender Luca Jaquez are also unavailable. DraftKings has Argentina -145 (roughly 56% implied) to win outright. With Messi in the form of his life and Switzerland's options thinning, the champions should have enough.",
-      "reason_zh": "阿根廷阵容齐整——斯卡洛尼没有新增伤病，罗梅罗（对阵埃及一战曾有小腿伤情）已通过体检确认可以首发。瑞士方面雪上加霜，此前已与哥伦比亚鏖战120分钟未进球：曼赞比因训练中膝伤缺席，中场艾比舍尔和后卫哈克斯同样无法出战。DraftKings赔率阿根廷主胜-145（隐含胜率约56%）。梅西状态正佳，瑞士可用之兵日渐稀薄，卫冕冠军应有足够把握过关。",
-      "odds": {
-        "h": 1.69,
-        "d": 3.55,
-        "a": 5.5,
-        "src": "DraftKings",
-        "scores": [
-          {
-            "s": "2-0",
-            "o": 6.5
-          },
-          {
-            "s": "1-0",
-            "o": 6.0
-          },
-          {
-            "s": "2-1",
-            "o": 8.0
-          }
-        ]
-      },
-      "result": null
-    }
-  ],
+  "fixtures": [],
   "bracket": {
-    "stageLabel_en": "Quarter-finals → Semi-finals",
-    "stageLabel_zh": "八强 → 四强",
+    "stageLabel_en": "Semi-finals → Final",
+    "stageLabel_zh": "四强 → 决赛",
     "qf": [
       {
         "id": "qf1",
@@ -415,6 +342,34 @@
             "away": "Belgium",
             "away_zh": "比利时",
             "awayFlag": "🇧🇪",
+            "winner": "home"
+          }
+        ]
+      },
+      {
+        "id": "sf2",
+        "date": "2026-07-15",
+        "venue_en": "Atlanta",
+        "venue_zh": "亚特兰大",
+        "legs": [
+          {
+            "qfId": "wc-nor-eng",
+            "home": "Norway",
+            "home_zh": "挪威",
+            "homeFlag": "🇳🇴",
+            "away": "England",
+            "away_zh": "英格兰",
+            "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+            "winner": "away"
+          },
+          {
+            "qfId": "wc-arg-sui",
+            "home": "Argentina",
+            "home_zh": "阿根廷",
+            "homeFlag": "🇦🇷",
+            "away": "Switzerland",
+            "away_zh": "瑞士",
+            "awayFlag": "🇨🇭",
             "winner": "home"
           }
         ]
