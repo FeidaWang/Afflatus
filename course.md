@@ -1,8 +1,66 @@
-# course.md — Bruce 的个人 AI 协作成长课程（v2.1 · 2026-07-12）
+# course.md — Bruce 的个人 AI 协作成长课程（v3.0 · 2026-07-12）
 
 > **定位**：这不是面向大众的课程，是 Fable 5 基于 Bruce 的真实 Claude Code 历史、git 记录与工作流文档量身定制的个人学习蓝图。
 > **维护规则**：本文是活文档（living document）。每完成一个里程碑或工作流发生变化，更新对应章节并在 Ch01 的「Playbook 更新日志」加一行。旧结论不删除，划掉并注明日期——错误的自我认知也是数据。
 > **分析基础（诚实声明）**：Ch01 的画像基于以下可核查证据——本仓库 310 次 commit（2026-06-03 至今）、`Urgent.md` / `roadmap.md` / `RELEASE_NOTES.md` 三份工作流文档、`prompts/` 提示词库、36 个 vitest 测试文件、近期 60 个 Claude 会话记录（含定时任务）。逐 token 的账单级用量日志不在本工作区内，token 效率结论从 `prompts/README.md` 的设计规范与会话模式**推断**得出，非直接计量。
+
+---
+
+## Chapter 00 · AI Engineer Tech Tree（v3.0 新增，2026-07-12）
+
+> **定位**：全课程的地图。一段共用主干（Trunk）+ 三条可选分支（Branch A/B/C）。主赛道未裁决前（见 §0.4）每周预算只投主干节点与 Ch06 测评，不点分支。
+> **情报基线（2026-07-12 巡检）**：Anthropic Academy 现有 20 门公开课（anthropic.skilljar.com，2026-03 上线后持续扩容）；官方工程博客「context engineering 三部曲」；Agent SDK / Agent Skills / MCP 官方文档均已成体系。本章外链沿用 Ch02 策展纪律：不自编教材、每季巡检。
+
+```
+                          ┌── Branch A · Applied LLM Engineering（agent / 上下文 / 评估工程，§0.2）
+  Trunk 主干（§0.1）──────┼── Branch B · AI Infrastructure / MTS（= Ch05 全章，长线 12–18 月）
+   T1→T2→T3→T4/T5         └── Branch C · Data Synthesis & Analytics（= Ch04 升级，短线 12 周）
+```
+
+### 0.1 主干 Trunk（任何分支都必修，按序点亮）
+
+| 节点 | 内容 | 源 | 出口标准（可验） |
+| --- | --- | --- | --- |
+| T1 ✅ 已点亮 | 状态外置 / token 工程 / 范围裁决 | 你自己的 S1–S3（Ch01） | 已有证据，无需重修 |
+| T2 · Evals 工程 | 给 AI 产出建考卷——**全树最高优先节点**，A/B/C 三支全部依赖它 | Lesson 2.2 + Claude Cookbook 的 eval/context-engineering 篇目 | 为自己任一 AI 产出环节建 10 条黄金集并跑通一次回归 |
+| T3 · Context Engineering | prompt engineering 的正式继承者：上下文预算、compaction、工具清理、多轮状态 | Anthropic 工程博客三部曲：《Effective context engineering for AI agents》《Writing effective tools for AI agents》《Code execution with MCP》 | 为自己任一条定时任务画出「上下文预算表」（system/tools/history/data 各占多少、削减策略是什么） |
+| T4 · 统计判断 | 显著性、分布、「好到可疑」 | Lesson 2.3（不变） | 同 2.3 |
+| T5 · Big-O 审查语言 | review 时闻出复杂度问题 | Lesson 2.5（不变） | 同 2.5 |
+
+### 0.2 Branch A · Applied LLM Engineering（v3.0 新增分支）
+
+> **为什么这条分支存在**：你的 S2（token 工程）已是半专业水平，但全部是野路子自学——这条分支把它转正为 2026 年市场认可的「AI Engineer」技能栈，且与 Anthropic 官方课程完全对齐，是三条分支里变现最快的。预计 12 周 @ 5h/周。
+
+| 节点 | 内容与源 | 产出物（必须真实存在） | 依赖 |
+| --- | --- | --- | --- |
+| A1 · Claude API 系统课 | Academy《Building with the Claude API》——tool use / streaming / prompt caching / batch / citations 全谱系。你已在生产用 caching，此课把野路子转正 | 课程证书 + 一页「我的 prompts/README.md 五条硬规则 vs 官方最佳实践」差异笔记 | T2 T3 |
+| A2 · MCP 双课 | Academy《Introduction to MCP》+《MCP: Advanced Topics》（Python 从零建 server/client；进阶含 sampling/notifications/transports） | 给 feida.au 数据管线写一个真实 MCP server（如 arena 账本查询），本地接入 Claude Code 可用 | A1 |
+| A3 · Agent Skills | Academy《Introduction to agent skills》+ 官方 skill authoring best practices 文档 | 把你的 Urgent.md 三层工作流做成一个可分发 skill（skill-creator 可辅助），自己日常真用 | A1（与 A2 可并行） |
+| A4 · Subagents & Agent SDK | Academy《Introduction to subagents》+ Agent SDK 官方文档（Claude Code 同源框架） | 用 Agent SDK 重写一条现有定时任务（候选：arena-autopilot），行为与旧版等价 | A2 A3 |
+| A5 · 工具设计与生产评估 | 《Writing effective tools for AI agents》精读——自包含、不重叠、参数显式 | 为 A2 的 MCP server 建 20 条黄金集 + 及格线，重构一次工具描述使通过率上升并记录前后数据 | A4 |
+| A6 · Capstone | 综合应用 | arena/sectors 管线完整 agent 化：RFC 先行（O1）→ Agent SDK 实现 → eval harness 守门 → 对外工程博客一篇（O3） | A5 |
+
+### 0.3 Branch B / C（指针，不重复正文）
+
+- **Branch B · AI Infrastructure / MTS** = Ch05 全章不变（DDIA → CMU 15-445 → MIT 6.824 → 集群 infra，三支柱评分卡照旧）。**2026-07 补丁**：I4 阶段的资料清单加「Anthropic/各大厂公开训练 infra 工程博客」为固定巡检源。
+- **Branch C · Data Synthesis & Analytics** = Ch04 全章不变（12 周 DA Playbook）。**2026-07 补丁**：新增节点 **C+ · 合成数据工程**——用 LLM 生成训练/测试数据的质检（分布检查、污染检测、黄金集验收即 4.3 方法平移）。诚实标注：此节点暂无单一权威官方课，材料弱，按季巡检补。
+
+### 0.4 主赛道裁决记录
+
+| 日期 | 裁决 | 依据 |
+| --- | --- | --- |
+| 2026-07-12 | **待定**——先做 Ch06 定向测评（三维摸底），用测评数据裁决 | Bruce 选「先测评后定向」 |
+
+待定期间预算：每周 ≤10h 只投 T2/T3 主干 + Ch06 测评题，分支节点一律不开。
+
+### 0.5 官方材料清单（2026-07 巡检版，季度更新）
+
+- Anthropic Academy 全目录：https://anthropic.skilljar.com/ （全部免费，完课有证书）
+- 工程博客三部曲：https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents 及同站《Writing effective tools for AI agents》《Code execution with MCP》
+- Agent Skills 概览与 authoring best practices：https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview
+- Agent SDK 文档：https://docs.claude.com/en/docs/agent-sdk/
+- Claude Cookbook（evals / context engineering 实操篇）：https://platform.claude.com/cookbook
+- 求真背景读物：《Equipping agents for the real world with Agent Skills》（anthropic.com/engineering）
 
 ---
 
@@ -56,6 +114,7 @@
 | --- | --- | --- |
 | 2026-07-12 | v2.0 初版：从平台蓝图改为个人课程；确立 R1–R6 | 本次全量分析 |
 | 2026-07-12 | v2.1 新增 Ch05「AI Infrastructure & MTS Track」+ 每 4 周 gap-analysis 循环（定时任务 `mts-gap-analysis`）；Ch04/Ch05 赛道分岔见 §5.5 | 用户立项（Anthropic 团队画像数据） |
+| 2026-07-12 | v3.0 新增 Ch00「AI Engineer Tech Tree」（Trunk + 三分支；Branch A Applied LLM Engineering 为全新内容）与 Ch06「互动导师制与三维评估循环」；主赛道由 Ch05 默认改为**待定向测评**（§0.4）；官方材料对齐 2026-07 的 Anthropic Academy（20 门课）与工程博客三部曲 | 用户立项 + Academy/docs 巡检 |
 
 ---
 
@@ -294,7 +353,7 @@ Anthropic 工程团队的已验证画像（本章的设计输入）：
 ### 5.5 与 Ch03/Ch04 的关系（必须直面的赛道分岔）
 
 - **Ch03**：被本章吸收为 Pillar 2 的前置（P1–P4 → P5–P6 连续阶梯），SPAR 与每月 VC 完全沿用。无冲突。
-- **Ch04（DA Playbook）与 Ch05（MTS Track）是两条职业赛道，在每周 ≤10 小时预算下不可并行。** 这是数据结论不是态度：Ch04 要 12 周全预算，Ch05 的 I1–I4 要 12–18 个月全预算。我的建议：以 MTS 为主赛道时，Ch04 降级为「已具备的对冲选项」——其 W1–2 业务框架和 4.3 Eval Set 方法论已被 Ch02/你的 prompts 规范覆盖大半，真需要 DA offer 时可以 12 周内快速兑现。**这个分岔由你裁决，写进下一次 §1.6 日志；在你裁决前，4 周循环按 Ch05 主赛道运行。**
+- **Ch04（DA Playbook）与 Ch05（MTS Track）是两条职业赛道，在每周 ≤10 小时预算下不可并行。** 这是数据结论不是态度：Ch04 要 12 周全预算，Ch05 的 I1–I4 要 12–18 个月全预算。我的建议：以 MTS 为主赛道时，Ch04 降级为「已具备的对冲选项」——其 W1–2 业务框架和 4.3 Eval Set 方法论已被 Ch02/你的 prompts 规范覆盖大半，真需要 DA offer 时可以 12 周内快速兑现。**这个分岔由你裁决，写进下一次 §1.6 日志；~~在你裁决前，4 周循环按 Ch05 主赛道运行~~（2026-07-12 v3.0 划掉：主赛道改为「待 Ch06 定向测评后裁决」，见 §0.4——测评数据出来前不预设任何分支为默认）。**
 - **时间预算重分配（Ch05 主赛道下）**：每周 ≤10 小时 = Pillar 1 约 5h + Pillar 2 约 3h（3 题含量化题）+ Pillar 3 约 2h（RFC/复盘/写作）。附录的节奏总控条款同步更新。
 
 ### 5.6 · 4 周自动评估循环（The Assessment Loop）
@@ -309,8 +368,46 @@ Anthropic 工程团队的已验证画像（本章的设计输入）：
 
 ---
 
+## Chapter 06 · Interactive Mentorship & Assessment Loop（v3.0 新增）
+
+> **性质变更声明**：从 v3.0 起，Fable 在课程范围内不再是「答案供应商」，是导师。这不是语气偏好，是训练机制——W3 的成因就是「AI 代写 + 行为验收」跳过了你自己的思考回路。
+
+### 6.1 导师制协议（即时生效）
+
+- **双模式边界**：站点生产工程（修 bug、推送、定时任务）照旧执行模式，不受本协议影响。**凡落在 Ch00 技术树节点范围内的提问，默认导师模式**。
+- **导师模式规则（SPAR-P 全局化）**：不给完整答案。第一层只指出你思路里最关键的一个漏洞或给一个反问；你说「下一层」才继续；每层 ≤2 句；三层后仍卡，给方向性伪码，仍不给成品代码。
+- **豁免条款**：说「直接给答案」可豁免单次——但豁免会记入 §6.5 备注列。豁免频率本身是评估数据（频繁豁免 = 该节点难度超前，降节点而不是降纪律）。
+- **反哺**：每次导师式问答后，若暴露了新弱点，在对应维度扣分理由里引用该对话，不凭印象。
+
+### 6.2 三维评分卡（0–10，评分必须引用证据）
+
+| 维度 | 覆盖范围 | 度量信号 |
+| --- | --- | --- |
+| **D1 · Programming Mastery** | 架构判断、UI/UX 实现（对接 Lesson 2.8 四维）、整洁代码 | 微测得分；R6 周架构审视记录；「AI 产出 review 时抓到的真问题数」 |
+| **D2 · Math Logic & Algorithms** | 复杂度直觉、CF 式解题、量化谜题 | SPAR 记录；VC 曲线（与 §5.4 共享数据）；量化题周正确率 |
+| **D3 · AI/LLM Intuition** | prompt/上下文工程、输出评估、eval 设计、Claude 上下文窗口的实际运用 | 黄金集质量；上下文预算表；微测；豁免频率（反向指标） |
+
+### 6.3 测评节奏
+
+- **微测**：每周 1 次，≤30 分钟，三维轮换。由互动会话出题（编码小题 / CF 式题 / 架构思想实验 / eval 设计题），结果当场评分写入 §6.5。
+- **月度汇总**：并入每月 12 日 `course-ch01-monthly-review`——回顾三维曲线，识别停滞维度。
+- **架构思想实验**：每月至少 1 道无代码纯裁决题（如「styles.css 7444 行，给三个重构方案和你不做哪个」），专攻 W1。
+- **熔断**：连续两周微测缺席 → 下调当周其他课程负载而不是补测（W4 铁律：课程适应人）。
+
+### 6.4 定向测评 #1（placement · 2026-07-12 已发）
+
+三部分各对应一维，题面见当日会话记录。规则：D2 部分独立完成（25 分钟计时、无 AI，SPAR-S 纪律）；D1/D3 可查资料不可让 AI 代答；提交后按 §6.2 评分，主赛道裁决写入 §0.4。
+
+### 6.5 评分历史
+
+| 日期 | D1 | D2 | D3 | 事件 | 备注 |
+| --- | --- | --- | --- | --- | --- |
+| 2026-07-12 | – | – | – | 定向测评 #1 已发 | 待提交；基线未定 |
+
+---
+
 ## 附 · 课程运行机制
 
-- **节奏总控**：Ch05 主赛道下按 §5.5 分配（Pillar 1 ≈5h / Pillar 2 ≈3h / Pillar 3 ≈2h）；Ch02 按课嵌在空档，每周至多 1 课。总时长预算每周 ≤10 小时——按 W4 的证据，超过这个数的计划都会以崩溃结束。~~Ch03 与 Ch04 并行~~（2026-07-12 起 Ch03 并入 Pillar 2，Ch04 状态待 §5.5 赛道裁决）。
+- **节奏总控**：~~Ch05 主赛道下按 §5.5 分配（Pillar 1 ≈5h / Pillar 2 ≈3h / Pillar 3 ≈2h）~~（2026-07-12 v3.0：主赛道待定期间按 §0.4——主干 T2/T3 + Ch06 测评，裁决后按所选分支的配比恢复）；Ch02 按课嵌在空档，每周至多 1 课；Ch06 微测每周 ≤30 分钟计入总预算。总时长预算每周 ≤10 小时——按 W4 的证据，超过这个数的计划都会以崩溃结束。~~Ch03 与 Ch04 并行~~（2026-07-12 起 Ch03 并入 Pillar 2，Ch04 状态待 §5.5 赛道裁决）。
 - **复盘周期（双周自省节奏）**：每月 12 日 `course-ch01-monthly-review` 重跑 Ch01 画像（习惯与纪律）；每月 26 日 `mts-gap-analysis` 跑 Ch05 评分卡（技能与差距）。画像必须跟着数据走，不跟着感觉走。
 - **红线沿用**：不设排行榜、不搞 30 天速成、进度只和自己的历史比。

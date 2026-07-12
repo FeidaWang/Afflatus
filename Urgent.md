@@ -1,6 +1,6 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
-> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。**U14（防御模块竖能量条 + Combat View 座舱清理与真实数据化）代码已完成**（见其小节，518/518 vitest 通过、`npx vite build --outDir=...` 干净——沙盒 `dist/` 目录权限受限，同 U13 已知问题，用 `--outDir` 验证过构建产物本身没问题，main chunk 864.72 kB）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。**U15（serial.html 阅读器工具栏移动端精简 + 护眼配色降白点）代码已完成并已推送**（2026-07-12，commit `475bab9`），518/518 vitest 通过、`npx vite build --outDir=/tmp/u15check` 干净，15d 按单书签最小方案实施（未见站主反向裁决）——**视觉验收（沙盒无法渲染）仍是唯一悬而未决项**。**U16（serial.html 删左右箭头导航 + 修停止翻页失效 + 移动端书签显示章节号）代码已完成并已推送**（2026-07-12，commit `7a153cc`，见其小节），518/518 vitest 通过、`npx vite build --outDir=/tmp/u16check` 干净——视觉/真机验收待站主。
+> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。**U14（防御模块竖能量条 + Combat View 座舱清理与真实数据化）代码已完成**（见其小节，518/518 vitest 通过、`npx vite build --outDir=...` 干净——沙盒 `dist/` 目录权限受限，同 U13 已知问题，用 `--outDir` 验证过构建产物本身没问题，main chunk 864.72 kB）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。**U15（serial.html 阅读器工具栏移动端精简 + 护眼配色降白点）代码已完成并已推送**（2026-07-12，commit `475bab9`），518/518 vitest 通过、`npx vite build --outDir=/tmp/u15check` 干净，15d 按单书签最小方案实施（未见站主反向裁决）——**视觉验收（沙盒无法渲染）仍是唯一悬而未决项**。**U16（serial.html 删左右箭头导航 + 修停止翻页失效 + 移动端书签显示章节号）代码已完成并已推送**（2026-07-12，commit `7a153cc`，见其小节），518/518 vitest 通过、`npx vite build --outDir=/tmp/u16check` 干净——视觉/真机验收待站主。**U17（course.html v3.0：Ch00 技术树 + Ch06 互动测评 + Weekly Review + 每周一 20:00 定时任务 `course-weekly-review`）代码已完成**（2026-07-12，见其小节），course.md 同步升至 v3.0（Ch00/Ch06 新章）。
 
 > 规则：本文件只放**当前最需要修改的问题**；每项处理完就从这里划掉，完整实施记录转 `RELEASE_NOTES.md`。全部清空后本文件可删。
 > 红线不变（roadmap §7.10）：仅供娱乐、不做付费解锁/焦虑营销、康健只说作息；沙盒无法真机渲染，所有视觉改动需站主真机验收。
@@ -144,6 +144,16 @@
 - [x] **16c · 移动端书签显示章节号**：移动端 `.lbl` 被 V22 规则隐藏（图标化工具栏），书签保存状态在手机上不可见。`updateBookmarkBtn()` 新增 `.bk-ch` 短标签（「第N章」，由 `bm.chapterId` 反查章节序号，兼容已存的旧书签），CSS 默认隐藏、`≤640px` 显示（桌面 `.lbl` 已显示截断章节标题，两者同显冗余）。几个字宽 + 工具栏本身 `nowrap+overflow-x:auto`，不会超出工具栏。
 - [x] **验收**：vitest 518/518 通过；`npx vite build --outDir=/tmp/u16check` 干净（main chunk 864.72 kB，沙盒 `dist/` 权限受限用 `--outDir` 验证，已知问题）；grep 确认 serial.html 无遗留 `data-page-turn`/`data-prev`/`data-next` 引用。
 - [ ] **视觉/真机验收（站主）**：箭头消失且 ←/→ 不再跳页、其余 8 页箭头/键盘翻页不受影响、手机上点「停止翻页」能真正停、书签按钮「★ 第N章」显示与不溢出——沙盒无法渲染，既有纪律。
+
+## U17 · course.html 承载课程 v3.0 全部内容 + 每周一自动测评（2026-07-12 立项，代码已完成）
+
+**目的**：① 把 course.md v3.0 的全部新内容（Ch00 技术树 + Ch06 互动测评）设计成网页课程内容上线到 https://feida.au/course.html，外部课程/文档全部一键直达链接；② 每周一 20:00 自动更新本周数据分析、与历史对比、客观 vibe coding 三维测评。
+
+- [x] **17a · course.html v2.1 → v3.0**：新增 Ch00「AI Engineer Tech Tree」区（主干 T1–T5 表 + Branch A Applied LLM Engineering 六节点表含 Anthropic Academy/docs 一键外链 + B/C 指针卡 + §0.4 主赛道待定裁决记录 + §0.5 官方材料 hub）；新增 Ch06「互动导师制与评估循环」区（6.1 导师协议 / 6.2 三维评分卡 / 6.3 节奏 / 6.4 定向测评 #1 三道题全文 / 6.5 评分历史表，含 `DIM-SCORE:INSERT-POINT` 注释锚点）；新增 Weekly Review 区（`WEEKLY-REPORT:INSERT-POINT` 锚点 + 首期占位）；chapnav 加 00/06/Weekly 三项；1.6 变更表加 v3.0 行；§5.5 旧默认主赛道句按活文档规则标注更替；附录复盘周期加每周一任务；顶栏版本号 v3.0。全部沿用页面既有 data-en/data-zh 双语三份格式。
+- [x] **17b · 构建与发现性**：vite.config.js 早已含 course 入口（U12b 悬空批次已入库，无需再改）；`public/sitemap.xml` 缺 course.html 条目，本次补上。nav.js SITE 已含 `/course.html`（Labs 组），无需改。
+- [x] **17c · 定时任务 `course-weekly-review`**：cron `0 20 * * 1`（本地时间每周一 20:00，配合套餐周一刷新）。任务无状态：历史周报就存在 course.html 页面里（周环比直接读上期块），评分同步追加 course.md §6.5；只许改 course.html/course.md 两文件，vitest+build 干净才 push；熔断条款内置（发现冲刺超预算必须建议降负载）。已在 U7b 表之外新增，无到期日（长期任务）。
+- [x] **验收**：vitest 518/518 通过；`npx vite build --outDir=/tmp/u17check` 干净（course.html 161.48 kB / gzip 50.33 kB）；HTML 标签平衡校验（section/div/table/tr/ul/li/a 全部配对）通过。
+- [ ] **视觉/真机验收（站主）**：Ch00 两张大表在移动端的横向滚动、外链 ↗ 可点、Ch06 三道测评题排版、Weekly 占位样式——沙盒无法渲染，既有纪律。首期周报 2026-07-13（周一）20:00 自动生成，站主次日核一眼格式。
 
 ## U7 · Claude 会话卡顿 + Scheduled 任务统筹管理（2026-07-10 立项）
 
