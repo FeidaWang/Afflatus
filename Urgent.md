@@ -1,6 +1,24 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
-> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。**U14（防御模块竖能量条 + Combat View 座舱清理与真实数据化）代码已完成**（见其小节，518/518 vitest 通过、`npx vite build --outDir=...` 干净——沙盒 `dist/` 目录权限受限，同 U13 已知问题，用 `--outDir` 验证过构建产物本身没问题，main chunk 864.72 kB）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。**U15（serial.html 阅读器工具栏移动端精简 + 护眼配色降白点）代码已完成并已推送**（2026-07-12，commit `475bab9`），518/518 vitest 通过、`npx vite build --outDir=/tmp/u15check` 干净，15d 按单书签最小方案实施（未见站主反向裁决）——**视觉验收（沙盒无法渲染）仍是唯一悬而未决项**。**U16（serial.html 删左右箭头导航 + 修停止翻页失效 + 移动端书签显示章节号）代码已完成并已推送**（2026-07-12，commit `7a153cc`，见其小节），518/518 vitest 通过、`npx vite build --outDir=/tmp/u16check` 干净——视觉/真机验收待站主。**U17（course.html v3.0：Ch00 技术树 + Ch06 互动测评 + Weekly Review + 每周一 20:00 定时任务 `course-weekly-review`）代码已完成**（2026-07-12，见其小节），course.md 同步升至 v3.0（Ch00/Ch06 新章）。**U18（stats.html 竞猜战绩存档 + league.html 暂时下线 + 世界杯赛后一次性任务 `urgent-u18c-wc-archive`）代码已完成并已推送**（2026-07-12，commit `6078d96`）。**U19（stats.html 互动化 + Wilson/二项检验/Brier/可靠性图/bootstrap 统计升级）代码已完成并已推送**（commit `63b3380`）。**U20（Scheduled 任务治理：11→10，收盘双合一 + 杂项归并 + 任务台账）已执行并推送**（commit `c8379e4`）。**U21 Phase 1（技术栈评估 + 数据结构审计）已完成**（2026-07-12，产出 `rfcs/2026-07-12-u21-phase1-tech-audit.md`）。**U21 Phase 1 实施（站主指令「RFC 全部内容按重要性做完」：CI + schema 校验 + `@layer` 渐进接管 + vendor chunk 拆分 + novels 索引/分片拆分 + leaguesPick/i18n 数据兼容层）代码已完成**（2026-07-12，见其小节），535/535 vitest 通过、typecheck/`validate-data.mjs`/`check-no-new-important.mjs`/`vite build`/`check-bundle-budget.mjs` 全部干净。**U21 Phase 3（UI 现代化与 UX）RFC 已产出**（2026-07-13，`rfcs/2026-07-13-u21-phase3-ui-ux.md`，Lesson 2.8 四维代理打分 67/100，低于 70 分上线门槛，未动代码，待站主裁决是否发「按重要性做完」指令）。Phase 2（性能真机基线）仍待新会话开工。
+> **状态速览（2026-07-13 收编：原状态长段落压缩为下表，无信息损失；KNOWLEDGE.md 立项时整理）**
+>
+> | 项 | 状态 | 悬而未决 |
+> | --- | --- | --- |
+> | U1–U6 | 代码完成 | 题库难度标定 + 真机验收待站主 |
+> | U8–U12a/c/d | ✅ 已移入 RELEASE_NOTES v1.6，已推送 | — |
+> | U12b | 代码完成 | 待移入 RELEASE_NOTES；视觉验收 |
+> | U13 / U14 | 代码完成（vitest 全过；沙盒 dist/ 权限受限用 --outDir 验证是已知事项） | 视觉待站主真机复核 |
+> | U15 | 已推送 `475bab9`（15d 按单书签最小方案） | 视觉验收 |
+> | U16 | 已推送 `7a153cc` | 真机验收 |
+> | U17 | 已推送（course v3.0 + course-weekly-review 周报任务） | 视觉验收；首期周报 2026-07-13 20:00 |
+> | U18 | 已推送 `6078d96` | 视觉验收 + /league.html 302 部署后验证 |
+> | U19 | 已推送 `63b3380` | 动效/移动端真机验收 |
+> | U20 | 已执行并推送 `c8379e4`（任务 11→10） | leagues-msi-daily 待决赛结果落库后站主手动删 |
+> | U21 Phase 1 | RFC + 实施全部完成（535/535 vitest；CI/@layer/schema 校验/vendor 拆分/novels 分片/兼容层全落地，typecheck 与各校验器干净） | — |
+> | U21 Phase 3 | RFC 已产出（`rfcs/2026-07-13-u21-phase3-ui-ux.md`，Lesson 2.8 代理分 67/100 < 70 上线门槛），未动码 | 站主裁决是否发「按重要性做完」指令 |
+> | U21 Phase 2 | 未开工 | 新会话 + 真机 Lighthouse/CrUX 基线先行 |
+>
+> 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
 > 规则：本文件只放**当前最需要修改的问题**；每项处理完就从这里划掉，完整实施记录转 `RELEASE_NOTES.md`。全部清空后本文件可删。
 > 红线不变（roadmap §7.10）：仅供娱乐、不做付费解锁/焦虑营销、康健只说作息；沙盒无法真机渲染，所有视觉改动需站主真机验收。
