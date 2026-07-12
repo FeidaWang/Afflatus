@@ -490,7 +490,7 @@
       b.innerHTML = '<span class="bk-badge">正在阅读</span>' +
         '<h3>' + escapeHtml(n.novel.title) + '</h3>' +
         '<p class="bk-sub">' + escapeHtml(n.novel.subtitle || '') + '</p>' +
-        '<p class="bk-meta">共 ' + n.chapters.length + ' 章 · ' + escapeHtml(n.novel.author || '') + '</p>';
+        '<p class="bk-meta">共 ' + n.chapterCount + ' 章 · ' + escapeHtml(n.novel.author || '') + '</p>';
       b.addEventListener('click', function () { if (i !== state.novelIdx) selectNovel(i, true); });
       shelf.appendChild(b);
     });
@@ -509,6 +509,16 @@
   /* ---------- select / switch novel ---------- */
   function selectNovel(idx, scrollToShelf) {
     var n = state.novels[idx]; if (!n) return;
+    if (!n.chapters) {
+      fetch('/novels/' + n.id + '.json').then(function (r) { return r.json(); }).then(function (data) {
+        n.chapters = data.chapters;
+        selectNovel(idx, scrollToShelf);
+      }).catch(function () {
+        document.getElementById('chapterTitle').textContent = '内容加载失败';
+        document.getElementById('chapterBody').innerHTML = '<p>暂时无法读取小说数据，请刷新页面重试。</p>';
+      });
+      return;
+    }
     state.novelIdx = idx;
     state.novelId = n.id;
     state.chapters = n.chapters;
@@ -565,9 +575,8 @@
     var savedFs = 18; try { savedFs = Number(localStorage.getItem(LS.fs)) || 18; } catch (e) {}
     curFs = applyFs(savedFs);
 
-    fetch('/novels-data.json').then(function (r) { return r.json(); }).then(function (data) {
-      state.data = data;
-      state.novels = data.novels || (data.novel ? [{ id: 'default', novel: data.novel, chapters: data.chapters }] : []);
+    fetch('/novels-index.json').then(function (r) { return r.json(); }).then(function (data) {
+      state.novels = data.novels || [];
       if (!state.novels.length) throw new Error('no novels');
 
       var startIdx = 0;
