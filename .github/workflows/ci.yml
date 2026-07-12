@@ -1,0 +1,48 @@
+name: CI
+
+# U21 Phase 1 (rfcs/2026-07-12-u21-phase1-tech-audit.md, D2): the site had
+# zero merge/push gate — 518 vitest tests only ever ran locally or inside an
+# agent session, never enforced. This workflow is that gate: install, run
+# the full test suite, build every page, validate the data files against
+# their schemas, and fail if the main chunk grows past budget.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Unit tests (vitest)
+        run: npm test
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Data schema validation
+        run: node scripts/validate-data.mjs
+
+      - name: No new !important (D1 @layer discipline)
+        run: node scripts/check-no-new-important.mjs
+
+      - name: Build
+        run: npm run build
+
+      - name: Bundle size budget
+        # D3: the main chunk (864.72 kB as of 2026-07-12) has grown for
+        # months with nothing to notice. 900 kB is a deliberate small
+        # headroom above today's measured size, not a target to grow into —
+        # lower it as Phase 2 chunk-splitting work lands.
+        run: node scripts/check-bundle-budget.mjs
