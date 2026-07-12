@@ -174,6 +174,34 @@
 - [x] **验收**：vitest 518/518 通过；`npx vite build --outDir=/tmp/u19check` 干净（stats.html 42.83 kB / gzip 14.08 kB）；HTML 标签平衡校验通过；统计函数 node 对照参考值抽验通过。
 - [ ] **视觉/真机验收（站主）**：tooltip 在移动端的触点行为（tap=click 出抽屉，无 hover 是预期降级）、bootstrap 动画帧率、滑杆触达面积、双语切换后动态文本正确——沙盒无法渲染，既有纪律。
 
+## U20 · Scheduled 任务分类治理 + 收盘链合并（2026-07-12 立项，已执行）
+
+**目的**：任务数失控（11 个）→ 分类管理 + 合并题材相似的推送。经站主逐项确认后执行（U7「不擅动存量任务」约定履行完毕）。
+
+**已执行（站主勾选）**：
+- [x] **收盘双合一**：`arena-predlog-close-backfill` 并入 `arena-autopilot-b-post`（07:50 交易日）——两段原 prompt 原文拼接为 Phase 1/2，各自守卫互不阻断、各自 commit，删除原 backfill 任务（SKILL.md 留档可恢复）。U7b 的合并候选就此落地。
+- [x] **世界杯清理归并**：`worldcup-games-daily` 描述所指的 `worldcup-games-cleanup` 从未存在——清理职责并入一次性任务 `urgent-u18c-wc-archive`（归档成功后顺手删除该日更任务，数据未落定则不删）。
+- [x] **课程月度归并**：course.md 引用的 `course-ch01-monthly-review` 实际不存在（文档漂移）——其职责并入 `course-weekly-review`：每月第二个周一（8–14 号）附加 30 天窗口的 Ch01 画像重跑。`mts-gap-analysis` 同样不存在，按 v3.0 主赛道待定的现状，**裁决为 Branch B 后再建**，course.md 附录已同步修正。
+
+**站主未选（保持现状，记录在案）**：收盘三合一（signal-warsh-daily 保持独立）；MSI 收尾——`leagues-msi-daily` 已过 through-date（7/12）但总决赛结果/finalsMvp 尚未写入 JSON（stats.html 在等），且 U7 所建 `urgent-u7-delete-leagues-msi` 不在当前任务列表（疑未建成或已被清理）——**该任务暂时继续日更，结果落库后需站主手动删除**。
+
+### 任务台账（2026-07-12 治理后 · 10 个 · 每月 1 号例行审计对照本表）
+
+| 分类 | 任务 | 时间（本地） | 到期日 | 备注 |
+| --- | --- | --- | --- | --- |
+| 市场 | ai-stock-arena-news-digest | 交易日 22:00 | 无 | arena-news.json |
+| 市场 | arena-autopilot-a-open | 交易日 00:30 | 无 | ledger（Model A）|
+| 市场 | **arena-autopilot-b-post**（U20 合并后） | 交易日 07:50 | 无 | Phase1 predlog 回填 + Phase2 Model B 决策 |
+| 市场 | signal-warsh-daily | 交易日 07:00 | 无 | 站主决定保持独立 |
+| 市场 | sectors-watch-weekly | 周日 10:00 | 无 | |
+| 赛事 | leagues-msi-daily | 每日 22:00 | **已过期（7/12）** | 待决赛结果落库后站主手动删 |
+| 赛事 | worldcup-games-daily | 每日 14:00 | 2026-07-20 | 由 u18c 归档后自动删除 |
+| 课程 | course-weekly-review | 周一 20:00 | 无 | 每月第二个周一附加 Ch01 月度画像 |
+| 一次性 | urgent-u18c-wc-archive | 2026-07-20 20:00 | 触发即停 | 世界杯归档 + games 下线 + 删日更任务 |
+| 一次性 | （无其他） | | | |
+
+长期纪律沿用 U7：限时任务必带到期日；任务无状态；每月 1 号审计对照本台账（旧 U7b 表就此废止，以本表为准）。
+
 ## U7 · Claude 会话卡顿 + Scheduled 任务统筹管理（2026-07-10 立项）
 
 **诊断**：卡顿有两个独立来源——① 单个对话历史太长（上下文越长每轮响应越慢，这是模型工作方式决定的，不会自愈）；② Scheduled 任务已积累 8 个，每个每天/每周产生新的运行会话记录，进一步堆积。
@@ -208,8 +236,8 @@
 | horoscope-transits-daily | 每日 06:30 | 保留 |
 
 处置清单（2026-07-11 核对：8 个任务与上表逐条对得上，无遗漏无新增）：
-- [x] **7/13 删 leagues-msi-daily**——已建自动一次性任务 `urgent-u7-delete-leagues-msi`（2026-07-13 09:00 本地时间触发，只做「删 leagues-msi-daily + 勾掉这一行」两件事，不碰其他存量任务），到期自动执行，不需要人再记着手动删。
-- [ ] **评估合并** arena-predlog-close-backfill → arena-autopilot-b-post：两者都是收盘后跑、只差 35 分钟，合成一个「收盘后批处理」可少一个任务的会话开销。⚠️ 需人工操作：本沙盒读不到 `/Users/feida/Claude/Scheduled/*/SKILL.md` 全文，改任务 prompt 有覆盖其他指令的风险（V12 已有先例，站主当时决定不让 Claude 碰存量任务），建议站主自己把 backfill 的 prompt 追加到 b-post 末尾后删除前者。
+- [x] **7/13 删 leagues-msi-daily**——已建自动一次性任务 `urgent-u7-delete-leagues-msi`（2026-07-13 09:00 本地时间触发，只做「删 leagues-msi-daily + 勾掉这一行」两件事，不碰其他存量任务），到期自动执行，不需要人再记着手动删。**⚠️ 2026-07-12 U20 审计：该一次性任务不在当前任务列表（疑未建成），且总决赛结果尚未写入 leagues-data.json——leagues-msi-daily 暂保留继续日更，结果落库后站主手动删（见 U20 台账）。**
+- [x] **评估合并** arena-predlog-close-backfill → arena-autopilot-b-post：~~本沙盒读不到 SKILL.md 全文~~（2026-07-12 已可直读任务文件）——经站主确认后于 U20 执行完毕：原文拼接为两 Phase，删除 backfill 任务。
 - [ ] **定期清理任务运行会话**：Scheduled 每次运行产生一条会话记录，按周/按月批量删除已成功运行的旧记录（数据结果都已 commit 进 git，运行记录本身无保留价值）。这是 Cowork 界面操作，沙盒没有对应工具，需站主自己在侧边栏清理。
 
 长期纪律（写入日常习惯，不是一次性动作）：
