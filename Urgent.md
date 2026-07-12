@@ -1,6 +1,6 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
-> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。**U14（防御模块竖能量条 + Combat View 座舱清理与真实数据化）代码已完成**（见其小节，518/518 vitest 通过、`npx vite build --outDir=...` 干净——沙盒 `dist/` 目录权限受限，同 U13 已知问题，用 `--outDir` 验证过构建产物本身没问题，main chunk 864.72 kB）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。**U15（serial.html 阅读器工具栏移动端精简 + 护眼配色降白点）代码已完成并已推送**（2026-07-12，commit `475bab9`），518/518 vitest 通过、`npx vite build --outDir=/tmp/u15check` 干净，15d 按单书签最小方案实施（未见站主反向裁决）——**视觉验收（沙盒无法渲染）仍是唯一悬而未决项**。**U16（serial.html 删左右箭头导航 + 修停止翻页失效 + 移动端书签显示章节号）代码已完成并已推送**（2026-07-12，commit `7a153cc`，见其小节），518/518 vitest 通过、`npx vite build --outDir=/tmp/u16check` 干净——视觉/真机验收待站主。**U17（course.html v3.0：Ch00 技术树 + Ch06 互动测评 + Weekly Review + 每周一 20:00 定时任务 `course-weekly-review`）代码已完成**（2026-07-12，见其小节），course.md 同步升至 v3.0（Ch00/Ch06 新章）。**U18（stats.html 竞猜战绩存档 + league.html 暂时下线 + 世界杯赛后一次性任务 `urgent-u18c-wc-archive`）代码已完成并已推送**（2026-07-12，commit `6078d96`）。**U19（stats.html 互动化 + Wilson/二项检验/Brier/可靠性图/bootstrap 统计升级）代码已完成**（2026-07-12，见其小节）。
+> **状态（2026-07-11 深夜）**：U1–U6 见原状态（题库难度标定+真机验收两项待站主）。**U8/U9/U10/U11/U12c/U12d/12a 已代码完成并移入 RELEASE_NOTES.md v1.6**（516/516 vitest 通过，`npm run build` 干净，已推送）。**U12b 代码已完成**（见其小节）：待推送+移入 RELEASE_NOTES.md。**U13（本次新增：顶栏断行修复 + HUD 雷达/防御模块/战斗视角重排 + 移动端 Command 专注模式 + 首页滚动衔接修复）代码已完成**，见新增小节——517/517 vitest 通过、`npm run build` 干净（沙盒 `dist/` 目录权限受限用 `--outDir` 验证，非代码问题）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。12a 体检发现的 `course.html`/未提交改动仍待站主决策，见 U12b 小节末尾。**U14（防御模块竖能量条 + Combat View 座舱清理与真实数据化）代码已完成**（见其小节，518/518 vitest 通过、`npx vite build --outDir=...` 干净——沙盒 `dist/` 目录权限受限，同 U13 已知问题，用 `--outDir` 验证过构建产物本身没问题，main chunk 864.72 kB）。全部视觉改动仍待站主真机/浏览器复核（沙盒无法渲染，既有纪律）。全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。**U15（serial.html 阅读器工具栏移动端精简 + 护眼配色降白点）代码已完成并已推送**（2026-07-12，commit `475bab9`），518/518 vitest 通过、`npx vite build --outDir=/tmp/u15check` 干净，15d 按单书签最小方案实施（未见站主反向裁决）——**视觉验收（沙盒无法渲染）仍是唯一悬而未决项**。**U16（serial.html 删左右箭头导航 + 修停止翻页失效 + 移动端书签显示章节号）代码已完成并已推送**（2026-07-12，commit `7a153cc`，见其小节），518/518 vitest 通过、`npx vite build --outDir=/tmp/u16check` 干净——视觉/真机验收待站主。**U17（course.html v3.0：Ch00 技术树 + Ch06 互动测评 + Weekly Review + 每周一 20:00 定时任务 `course-weekly-review`）代码已完成**（2026-07-12，见其小节），course.md 同步升至 v3.0（Ch00/Ch06 新章）。**U18（stats.html 竞猜战绩存档 + league.html 暂时下线 + 世界杯赛后一次性任务 `urgent-u18c-wc-archive`）代码已完成并已推送**（2026-07-12，commit `6078d96`）。**U19（stats.html 互动化 + Wilson/二项检验/Brier/可靠性图/bootstrap 统计升级）代码已完成并已推送**（commit `63b3380`）。**U20（Scheduled 任务治理：11→10，收盘双合一 + 杂项归并 + 任务台账）已执行并推送**（commit `c8379e4`）。**U21 Phase 1（技术栈评估 + 数据结构审计）已完成**（2026-07-12，产出 `rfcs/2026-07-12-u21-phase1-tech-audit.md`，Phase 2/3 已排队待新会话开工）。
 
 > 规则：本文件只放**当前最需要修改的问题**；每项处理完就从这里划掉，完整实施记录转 `RELEASE_NOTES.md`。全部清空后本文件可删。
 > 红线不变（roadmap §7.10）：仅供娱乐、不做付费解锁/焦虑营销、康健只说作息；沙盒无法真机渲染，所有视觉改动需站主真机验收。
@@ -201,6 +201,23 @@
 | 一次性 | （无其他） | | | |
 
 长期纪律沿用 U7：限时任务必带到期日；任务无状态；每月 1 号审计对照本台账（旧 U7b 表就此废止，以本表为准）。
+
+## U21 · feida.au 三阶段架构升级（2026-07-12 立项 · Phase 1 已完成）
+
+**性质**：站主发起的整站评估-优化项目，三阶段各开一个会话（一事一会话，U7a 纪律），每阶段产出先 RFC 后动码（课程 O1 制度）。
+
+### Phase 1 · 技术栈评估 + 数据结构审计 ✅（2026-07-12，本会话）
+
+- [x] 产出 **`rfcs/2026-07-12-u21-phase1-tech-audit.md`**（rfcs/ 目录首篇，O1 制度落地）。要点：① 无框架 MPA + git-as-database 被裁定为**优势而非落后**（附重估触发条件）；② 六项真实债 D1–D6 按 ROI 排序（styles.css 层叠债 → `@layer` 渐进接管方案、无 CI、主 chunk 864 kB 无预算、novels-data 485 kB 全量下载、three 版本钉死、main.js 单体）；③ 数据层审计出 4 个反模式并给出重构示例（双语字段两套约定并存、opusScore 方向歧义——U18 真 bug 佐证、派生聚合漂移——record.log 8 条 vs series 13 场实证、finalsMvp 字符串匹配实体），2 个达标项点名（predlog 的「只许经脚本改」模式应推广）；④ 裁决表：立即做 CI+schema 校验骨架 / Phase 2-3 分工 / 明确不做框架迁移+Tailwind 全站+数据库。
+- [ ] **站主阅读 RFC 并裁决「立即做」两项**（CI workflow + schemas/ 校验骨架）是否本周动手——RFC 只评估不实施，动码另起会话。
+
+### Phase 2 · Web 性能优化（待开工——新会话开头读本条 + RFC §1.2/§3）
+
+角色：Web Performance Expert。范围：Core Web Vitals 达标清单——资产分发（D3 主 chunk 拆分：three 动态 import + manualChunks；D4 novels 分片见 RFC §2.5）、缓存策略（Vercel headers/immutable assets）、CSS 优化（D1 @layer 落地 + 48 处 backdrop-filter 的移动端 GPU 账，对接 course Lesson 2.7）、渲染瓶颈（rAF 循环成本、hydration 不适用——无框架，如实跳过）。**先真机 Lighthouse/CrUX 拿基线数字再动手，无基线不许改**（验证要客观，S4）。
+
+### Phase 3 · UI 现代化与 UX（待开工——Phase 2 之后，新会话读本条 + RFC §1.5/§3）
+
+角色：Lead UX/UI Designer。范围：微交互/自适应布局/暗色模式的系统化（现状已是深色科幻主题，重点是 tokens 化而非风格翻新）、a11y 审计（WCAG AA，course Lesson 2.8 四维打分制上线）、`@layer tokens` 设计令牌落地（RFC 已裁决不引 Tailwind，用 tokens 达到同等一致性）、组件结构与直觉导航重排。红线：Lesson 2.8 的克制维度——删元素优先于加特效。
 
 ## U7 · Claude 会话卡顿 + Scheduled 任务统筹管理（2026-07-10 立项）
 
