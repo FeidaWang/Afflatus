@@ -199,7 +199,64 @@
       "reason_zh": "西班牙八强 2-1 击败比利时——法比安·鲁伊斯与替补登场的梅里诺建功，亚马尔边路持续牵制对方防线，球队本届首次失球。半决赛 7 月 14 日阿灵顿战头号热门法国——对西班牙最具威胁的攻击手而言是巨大考验。"
     }
   ],
-  "fixtures": [],
+  "fixtures": [
+    {
+      "id": "wc-fra-esp",
+      "stage": "Semi-final",
+      "kickoff": "2026-07-14T19:00:00Z",
+      "home": "France",
+      "home_zh": "法国",
+      "homeFlag": "🇫🇷",
+      "away": "Spain",
+      "away_zh": "西班牙",
+      "awayFlag": "🇪🇸",
+      "opus": "home",
+      "conf": 0.56,
+      "opusScore": "2-1",
+      "reason_en": "DraftKings has France favourites on the 90-minute line (+135) and to advance outright (-145, ~56% fair after devig), with bet365 in line (+130). Mbappé arrives in career-best form, leading the Golden Boot on 8 goals with the tiebreaking edge in assists, while Spain conceded for the first time all tournament in the QF win over Belgium. Yamal's dribbling against France's back line is the game's must-watch duel.",
+      "reason_zh": "DraftKings法国90分钟盘口+135、晋级盘-145（去水后约56%胜率）领先，bet365同样看好法国（+130）。姆巴佩状态正佳，以8球领跑金靴且助攻数占先；西班牙则在八强战对比利时一役中本届首次失球。亚马尔对法国防线的单挑是本场焦点看点。",
+      "odds": {
+        "h": 2.35,
+        "d": 3.25,
+        "a": 3.15,
+        "src": "DraftKings",
+        "scores": [
+          { "s": "1-1", "o": 7.0 },
+          { "s": "2-1", "o": 7.5 },
+          { "s": "1-0", "o": 6.5 }
+        ]
+      },
+      "result": null
+    },
+    {
+      "id": "wc-arg-eng",
+      "stage": "Semi-final",
+      "kickoff": "2026-07-15T19:00:00Z",
+      "home": "Argentina",
+      "home_zh": "阿根廷",
+      "homeFlag": "🇦🇷",
+      "away": "England",
+      "away_zh": "英格兰",
+      "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "opus": "away",
+      "conf": 0.52,
+      "opusScore": "1-2",
+      "reason_en": "Markets have tightened to a near coin-flip: DraftKings' advance line moved from England -135/Argentina +110 to England -120/Argentina -105 as money came in on Argentina, with the 90-minute line now England +165, Argentina +190, draw +200. Both sides needed extra time in the QFs — Argentina beat Switzerland 3-1 with Messi held scoreless, England edged Norway 2-1 (AET) on a Bellingham brace that pulled him level with Kane on 6 goals.",
+      "reason_zh": "盘口已收窄至接近五五开：DraftKings晋级盘口从英格兰-135/阿根廷+110收窄至英格兰-120/阿根廷-105，资金明显流向阿根廷；90分钟盘口英格兰+165、阿根廷+190、平局+200。两队在八强战均战至加时——阿根廷加时3-1淘汰瑞士（梅西本场未进球），英格兰凭贝林厄姆梅开二度加时2-1淘汰挪威，追平凯恩的6球。",
+      "odds": {
+        "h": 2.90,
+        "d": 3.00,
+        "a": 2.65,
+        "src": "DraftKings",
+        "scores": [
+          { "s": "1-1", "o": 6.5 },
+          { "s": "1-2", "o": 7.0 },
+          { "s": "0-1", "o": 7.5 }
+        ]
+      },
+      "result": null
+    }
+  ],
   "bracket": {
     "stageLabel_en": "Semi-finals → Final",
     "stageLabel_zh": "四强 → 决赛",

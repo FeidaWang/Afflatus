@@ -222,7 +222,15 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 
 <div class="tooltip" id="tip" role="tooltip" aria-hidden="true"></div>
 
-<script>
+<script type="module">
+/* U21 Phase 1 §2.1: pick() replaces the ad-hoc `zh() ? x.foo_zh : x.foo_en`
+   ternaries scattered below with the shared suffix-convention helper —
+   see src/lib/i18nData.js for why two conventions exist and the plan for
+   the other one. This tag is type="module" (Vite processes it since
+   stats.html is a build entry) purely so this import works; nothing else
+   about the IIFE below changed. */
+import { pick } from '/src/lib/i18nData.js';
+import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leaguesPick.js';
 (function () {
   'use strict';
   var C = { green:'#57c98a', red:'#e0596b', gold:'#e8ad6f', teal:'#4fd6c4', dim:'#8fa3b8', line:'rgba(154,229,255,.16)' };
@@ -294,14 +302,11 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
   function render(d) {
     var resolved = (d.series || []).filter(function (s) { return s.result; });
     var scored = resolved.map(function (s) {
-      var actualHome = s.result.home > s.result.away;
-      var pickHome = s.opus === 'home';
-      var ok = actualHome === pickHome;
-      /* exact requires ok: a raw string match with the outcome called wrong
-         (e.g. picked T1 "3-1", actual G2 3-1) is a coincidence, not a hit —
-         keeps the computed count identical to record.exactScore. */
-      var exact = ok && s.opusScore === (s.result.home + '-' + s.result.away);
-      return { s: s, ok: ok, exact: exact, conf: s.conf };
+      // §2.2: pickCorrect/pickExact centralize this in src/lib/leaguesPick.js
+      // (exact requires the outcome to be correct first — a string
+      // coincidence with the winner called wrong is not a hit; keeps the
+      // computed count identical to record.exactScore).
+      return { s: s, ok: pickCorrect(s), exact: pickExact(s), conf: s.conf };
     });
     var n = scored.length, okN = scored.filter(function (x) { return x.ok; }).length, exN = scored.filter(function (x) { return x.exact; }).length;
     var ci = wilson(okN, n), pval = binomTwoSided(okN, n), bs = brier(scored), bss = 1 - bs / 0.25;
@@ -341,9 +346,9 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
     var drawer = document.getElementById('msiDrawer');
     function openDrawer(x) {
       var s = x.s;
-      var pickTeam = s.opus === 'home' ? s.home : s.away;
-      var rsn = zh() ? (s.reason_zh || s.reason_en || '') : (s.reason_en || s.reason_zh || '');
-      drawer.innerHTML = '<div class="hd">' + esc(zh() ? (s.round_zh || s.round) : s.round) + ' — ' + esc(s.home + ' vs ' + s.away) +
+      var pickTeam = pickedTeam(s);
+      var rsn = pick(s, 'reason', zh() ? 'zh' : 'en') || '';
+      drawer.innerHTML = '<div class="hd">' + esc(pick(s, 'round', zh() ? 'zh' : 'en')) + ' — ' + esc(s.home + ' vs ' + s.away) +
         ' · ' + (zh() ? '预测' : 'call') + ': ' + esc(pickTeam + ' ' + (s.opusScore || '')) + ' @ ' + Math.round(s.conf * 100) + '%' +
         ' · ' + (zh() ? '结果' : 'result') + ': ' + s.result.home + '-' + s.result.away + ' ' + (x.ok ? (x.exact ? '⭐' : '✓') : '✗') + '</div>' +
         '<div class="rsn">' + esc(rsn) + '</div>';
@@ -369,7 +374,7 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
         }, 60 * i);
       }
       var tipHtml = '<b>' + esc(x.s.home + ' vs ' + x.s.away) + '</b><br>' +
-        (zh() ? '预测' : 'call') + ': ' + esc((x.s.opus === 'home' ? x.s.home : x.s.away) + ' ' + (x.s.opusScore || '')) + ' @ ' + Math.round(x.s.conf * 100) + '%<br>' +
+        (zh() ? '预测' : 'call') + ': ' + esc(pickedTeam(x.s) + ' ' + (x.s.opusScore || '')) + ' @ ' + Math.round(x.s.conf * 100) + '%<br>' +
         (zh() ? '结果' : 'result') + ': ' + x.s.result.home + '-' + x.s.result.away + ' ' + (x.ok ? (x.exact ? '⭐' : '✓') : '✗') + '<br>' +
         '<span style="color:' + C.dim + '">' + (zh() ? '点击看当时判断依据' : 'click for the original reasoning') + '</span>';
       r.addEventListener('mousemove', function (ev) { showTip(tipHtml, ev); });
@@ -528,8 +533,12 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
     var mvps = document.getElementById('msiMvps');
     var actualMvp = d.finalsMvp || null; // populated by the data task once official
     (d.mvp || []).forEach(function (m) {
-      var row = el('div', 'pick-row' + (actualMvp ? (m.team === actualMvp ? ' won' : ' lost') : ''));
-      row.appendChild(el('span', 'who', esc(m.team) + (actualMvp && m.team === actualMvp ? ' ✓' : '')));
+      // §2.4: matchesMvp() (src/lib/leaguesPick.js) normalizes separators/
+      // whitespace instead of requiring exact string equality against
+      // finalsMvp, which is fragile against display-string drift.
+      var isMvp = actualMvp && matchesMvp(m, actualMvp);
+      var row = el('div', 'pick-row' + (actualMvp ? (isMvp ? ' won' : ' lost') : ''));
+      row.appendChild(el('span', 'who', esc(m.team) + (isMvp ? ' ✓' : '')));
       var bar = el('div', 'bar', '<i></i>');
       row.appendChild(bar);
       row.appendChild(el('span', 'pct', m.prob + '%'));
@@ -545,9 +554,9 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
     var tb = document.createElement('tbody');
     scored.forEach(function (x) {
       var s = x.s;
-      var pickTeam = s.opus === 'home' ? s.home : s.away;
+      var pickTeam = pickedTeam(s);
       var mark = x.ok ? (x.exact ? '<span class="star">⭐</span>' : '<span class="ok">✓</span>') : '<span class="bad">✗</span>';
-      var tr = el('tr', null, '<td>' + esc(zhNow ? (s.round_zh || s.round) : s.round) + '</td><td>' + esc(s.home + ' vs ' + s.away) + '</td><td>' + esc(pickTeam + ' ' + (s.opusScore || '')) + '</td><td>' + Math.round(s.conf * 100) + '%</td><td>' + s.result.home + '-' + s.result.away + '</td><td>' + mark + '</td>');
+      var tr = el('tr', null, '<td>' + esc(pick(s, 'round', zhNow ? 'zh' : 'en')) + '</td><td>' + esc(s.home + ' vs ' + s.away) + '</td><td>' + esc(pickTeam + ' ' + (s.opusScore || '')) + '</td><td>' + Math.round(s.conf * 100) + '%</td><td>' + s.result.home + '-' + s.result.away + '</td><td>' + mark + '</td>');
       tr.addEventListener('click', function () { openDrawer(x); });
       tb.appendChild(tr);
     });

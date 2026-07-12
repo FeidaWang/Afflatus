@@ -49,6 +49,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+/* U21 Phase 1 D1: wrapped in @layer overrides now that src/styles.css is
+   @layer legacy — this block's own comment already says its job is to
+   WIN against styles.css's mobile HUD rules, so `overrides` (which always
+   beats `legacy` regardless of specificity) makes that explicit instead of
+   relying on being unlayered + source order, which is exactly the pattern
+   the rest of this migration exists to retire. No rule content changed. */
+@layer overrides {
 /* Combat pilot panel — relative so the canvas fills the cell */
 .hud-pilot{position:relative}
 /* V22: the old phone combat layout that hid radar+defense and forced a
@@ -58,6 +65,7 @@
    "2026-06-14 Mobile target-first HUD" block (@media max-width:860px).
    The two conflicting grid-template-areas were producing the empty,
    non-interactive HUD area reported on real devices. */
+}
 </style>
 </head>
 <body class="hud-off" data-prev="/games.html" data-next="/arena.html">
