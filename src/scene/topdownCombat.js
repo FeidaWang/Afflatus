@@ -23,6 +23,7 @@ import { createNighthawk } from './nighthawk.js';
 import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
 import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
 import { activePhase, msUntilPhase, msRemaining } from '../combat/weaponClock.js';
+import { createLaunchPath, createLandingPath } from '../combat/flightPath.js';
 
 // U23 M1 (2026-07-13): the camera director rig is now the DEFAULT (was
 // opt-in via ?combatcam=director since V14). ?combatcam=tactical opts back
@@ -79,6 +80,26 @@ export function createTopdownCombat({ canvas }) {
   const camDirectorOn = cameraDirectorEnabled();
   let camDirector = null;
   let missileLastPos = null, orbLastPos = null; // updated by launchMissile()/launchOrb() below
+
+  // ── U24 flight event state (launch/landing lifecycle for fighters[0]) ──
+  // flightLastPos/Vel are the shot-compute feeds (missileLastPos pattern);
+  // accel is derived from consecutive analytic velocities, only consumed by
+  // chaseLaunch's FOV/banking so light smoothing needs are already covered
+  // by the director's own smoothDamp.
+  let flightEvent = null, pendingFlightKind = null;
+  let flightLastPos = null, flightLastVel = null, flightPrevVel = null, flightPrevT = 0;
+  let flightAccelV = { x: 0, y: 0, z: 0 };
+  let flybyAnchor = null;
+
+  // keep any camera pedestal outside the capital's hull (U24 防穿模)
+  function clampOutsideHull(pos, R = 5.4) {
+    const c = capital.position;
+    const dx = pos.x - c.x, dy = pos.y - c.y, dz = pos.z - c.z;
+    const d = Math.hypot(dx, dy, dz);
+    if (d >= R || d === 0) return pos;
+    const k = R / d;
+    return { x: c.x + dx * k, y: c.y + dy * k, z: c.z + dz * k };
+  }
   function initCameraDirector() {
     const shots = {
       tacticalTopdown: {
@@ -150,6 +171,50 @@ export function createTopdownCombat({ canvas }) {
           const roll = bankAngle(lateral, 0.35, 0.01);
           const pose = chaseCamPose({ x: p.x, y: p.y, z: p.z }, { x: vx, y: vy, z: vz }, { back: 6, up: 2.2, side: -2.5, lookAhead: 10 });
           return { ...pose, fov, roll };
+        },
+      },
+      // ── U24 (24b) flight-event shots. All four read flightLastPos/Vel
+      //    (fed by the update() flight sampler) via closure — the same
+      //    live-object pattern as missileTail/mainGunAxis above. ──────────
+      deckCam: {           // deck-edge pedestal watching the catapult run / touchdown
+        priority: 4,
+        blendInMs: 250,
+        compute() {
+          const dp = capital.position;
+          const f = flightLastPos || { x: dp.x, y: 3, z: dp.z - 4 };
+          const pos = clampOutsideHull({ x: dp.x + 4.6, y: 3.8, z: dp.z - 1.5 });
+          return { pos, look: { x: f.x, y: f.y, z: f.z }, fov: 52 };
+        },
+      },
+      chaseLaunch: {       // tail-chase on the launching fighter — FOV/bank from real accel
+        priority: 4,
+        blendInMs: 350,
+        compute() {
+          const p = flightLastPos || capital.position;
+          const v = flightLastVel || { x: 0, y: 0, z: -6 };
+          const a = flightAccelV;
+          const fov = fovForAccel(Math.hypot(a.x, a.z), { cruiseFov: 60, boostFov: 72, accelScale: 14 });
+          const roll = bankAngle(v.z * a.x - v.x * a.z, 0.3, 0.02);
+          const pose = chaseCamPose({ x: p.x, y: p.y, z: p.z }, v, { back: 7, up: 2.4, side: 2.2, lookAhead: 12 });
+          return { ...pose, fov, roll };
+        },
+      },
+      towerCam: {          // LSO/tower long lens tracking the approach
+        priority: 4,
+        blendInMs: 300,
+        compute() {
+          const dp = capital.position;
+          const f = flightLastPos || { x: dp.x, y: 3, z: dp.z + 10 };
+          return { pos: { x: dp.x + 1.2, y: 7.4, z: dp.z + 4.2 }, look: { x: f.x, y: f.y, z: f.z }, fov: 38 };
+        },
+      },
+      flybyCam: {          // fixed point the fighter sweeps past (classic flyby)
+        priority: 4,
+        blendInMs: 250,
+        compute() {
+          const f = flightLastPos || capital.position;
+          const anchor = flybyAnchor || { x: f.x + 5, y: f.y + 1.2, z: f.z + 2 };
+          return { pos: anchor, look: { x: f.x, y: f.y, z: f.z }, fov: 58 };
         },
       },
     };
@@ -526,8 +591,95 @@ export function createTopdownCombat({ canvas }) {
 
   function tmp() { return new THREE.Vector3(); }
 
+  // ── U24 flight lifecycle plumbing ─────────────────────────────────────
+  // The analytic world, expressed as the closures flightPath.js expects.
+  // These formulas MUST stay in lockstep with update()'s own comet/capital/
+  // fighter math below — they are the same equations, packaged with their
+  // analytic derivatives (units/second), so a launch joins the live
+  // formation exactly and a landing tracks the moving deck exactly.
+  function formationFnFor(i) {
+    const w = 1.1, TWO3 = Math.PI * 2 / 3;
+    return (tMs) => {
+      const t = (tMs - t0) / 1000;
+      const ph = t * w + i * TWO3;
+      const cometX = -26 + ((t * 4) % 52), cometVX = 4; // wrap seam ignored (quasi-static)
+      return {
+        pos: { x: Math.cos(ph) * 16 + cometX * 0.3, y: 1.4 + Math.sin(ph * 2) * 0.6, z: -2 + Math.sin(ph) * 9 },
+        vel: { x: -Math.sin(ph) * 16 * w + cometVX * 0.3, y: Math.cos(ph * 2) * 1.2 * w, z: Math.cos(ph) * 9 * w },
+      };
+    };
+  }
+  function deckFn(tMs) {
+    const t = (tMs - t0) / 1000;
+    return {
+      pos: { x: -2 + Math.sin(t * 0.25) * 6, y: 3.0, z: 17 },  // matches capital patrol; y = deck height
+      vel: { x: Math.cos(t * 0.25) * 1.5, y: 0, z: 0 },
+    };
+  }
+  const DECK_DIR = { x: 0, y: 0, z: -1 }; // carrier front = -Z
+
+  function startFlight(kind, nowMs) {
+    const mk = kind === 'landing' ? createLandingPath : createLaunchPath;
+    const path = mk({ deck: deckFn, deckDir: DECK_DIR, formation: formationFnFor(0), t0: nowMs });
+    if (kind === 'landing') {
+      const mid = path.sample(nowMs + 2900); // mid-approach → flyby pedestal beside the glide slope
+      flybyAnchor = { x: mid.pos.x + 5, y: mid.pos.y + 1.2, z: mid.pos.z + 2 };
+    }
+    const cues = kind === 'landing'
+      ? [{ at: 0, shot: 'towerCam', dur: 2400 }, { at: 1600, shot: 'flybyCam', dur: 1800 }, { at: 4200, shot: 'deckCam', dur: 1800 }]
+      : [{ at: 0, shot: 'deckCam', dur: 2600 }, { at: 2600, shot: 'chaseLaunch', dur: 3200 }];
+    flightEvent = { kind, path, cues, fired: new Set(), t0: nowMs };
+    flightPrevVel = null;
+  }
+
+  // Drives fighters[0] while a flight event is live. Returns true if the
+  // caller (the formation loop) should SKIP its analytic placement.
+  // 24d: only one fighter ever leaves the formation; a finished launch
+  // hands straight back to the analytic loop (exact join guaranteed by
+  // flightPath), a finished landing dwells on deck then auto-relaunches.
+  function driveFlightFighter(f, nowMs, t) {
+    if (!flightEvent) return false;
+    const smp = flightEvent.path.sample(nowMs);
+    if (flightEvent.kind === 'launch' && smp.done) { flightEvent = null; return false; }
+    if (flightEvent.kind === 'landing' && smp.done && nowMs > flightEvent.path.downAtMs + 2200) {
+      startFlight('launch', nowMs); // lifecycle loops: DOCKED → CATAPULT → …
+      return driveFlightFighter(f, nowMs, t);
+    }
+    // camera cues (phase-scheduled, fired once each)
+    if (camDirector) {
+      for (const c of flightEvent.cues) {
+        const key = c.shot + c.at;
+        if (!flightEvent.fired.has(key) && nowMs >= flightEvent.t0 + c.at) {
+          flightEvent.fired.add(key);
+          camDirector.requestShot(c.shot, { durationMs: c.dur, blendInMs: 300 });
+        }
+      }
+    }
+    // shot feeds + analytic accel (from consecutive analytic velocities)
+    flightLastPos = smp.pos; flightLastVel = smp.vel;
+    if (flightPrevVel) {
+      const dt = Math.max(0.001, (nowMs - flightPrevT) / 1000);
+      flightAccelV = {
+        x: (smp.vel.x - flightPrevVel.x) / dt,
+        y: (smp.vel.y - flightPrevVel.y) / dt,
+        z: (smp.vel.z - flightPrevVel.z) / dt,
+      };
+    }
+    flightPrevVel = smp.vel; flightPrevT = nowMs;
+    // place + orient the fighter (same lookAt/rotateX convention as the loop)
+    f.position.set(smp.pos.x, smp.pos.y, smp.pos.z);
+    const sp = Math.hypot(smp.vel.x, smp.vel.y, smp.vel.z);
+    if (sp > 0.15) {
+      f.lookAt(smp.pos.x + smp.vel.x, smp.pos.y + smp.vel.y, smp.pos.z + smp.vel.z);
+      f.rotateX(Math.PI / 2);
+    }
+    if (f.userData.nh) f.userData.nh.tick(t);
+    return true;
+  }
+
   function update(now, state) {
     const t = (now - t0) / 1000;
+    if (pendingFlightKind) { startFlight(pendingFlightKind, now); pendingFlightKind = null; }
     const alive = !state || !state.halley || !state.halley.destroyed;
 
     // comet drifts left→right and bobs; respawns after crossing
@@ -558,7 +710,10 @@ export function createTopdownCombat({ canvas }) {
     capital.position.x = -2 + Math.sin(t * 0.25) * 6;
 
     // fighters strafe in formation between capital and comet, firing tracers
+    // (U24: fighters[0] is taken over by the flight lifecycle while a
+    // launch/landing event is live — the other two never leave formation)
     fighters.forEach((f, i) => {
+      if (i === 0 && driveFlightFighter(f, now, t)) return;
       const ph = t * 1.1 + i * (Math.PI * 2 / 3);
       const ringX = Math.cos(ph) * 16 + comet.position.x * 0.3;
       const ringZ = -2 + Math.sin(ph) * 9;
@@ -605,7 +760,7 @@ export function createTopdownCombat({ canvas }) {
     // the missile/orb/ciws triggers above — this is the new preset itself,
     // not yet wired into the missile narrative migration, which is a
     // separate follow-up per ROADMAP §4 item 2)
-    if (alive && now - lastChase > 4400 && camDirector) { lastChase = now; camDirector.requestShot('chaseCam', { durationMs: 2200, blendInMs: 400 }); }
+    if (alive && !flightEvent && now - lastChase > 4400 && camDirector) { lastChase = now; camDirector.requestShot('chaseCam', { durationMs: 2200, blendInMs: 400 }); }
 
     // advance lasers (quick fade)
     for (let i = lasers.length - 1; i >= 0; i--) {
@@ -723,6 +878,17 @@ export function createTopdownCombat({ canvas }) {
     // path is a separate follow-up (ROADMAP §4 Phase 2b).
     renderOnce(now = performance.now(), state = null) { if (!t0) t0 = now; update(now, state); renderer.render(scene, camera); },
     driveMissileTimeline,
+    // U24 (24c consumes this): start a launch or landing lifecycle on the
+    // lead fighter. Ignored (returns false) while another event is live —
+    // at most one fighter is ever off-formation (24d). Safe to call before
+    // the first frame (deferred until the scene clock exists).
+    requestFlightEvent(kind) {
+      if (kind !== 'launch' && kind !== 'landing') return false;
+      if (flightEvent || pendingFlightKind) return false;
+      if (!t0) { pendingFlightKind = kind; return true; }
+      startFlight(kind, performance.now());
+      return true;
+    },
     destroy() { this.stop(); renderer.dispose(); }
   };
 }

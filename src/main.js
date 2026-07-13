@@ -85,6 +85,7 @@ function getFighter3D(){
 // opt out with ?combatview=2d (persists), re-enable with ?combatview=topdown.
 // Falls back to the existing 2D cockpit if WebGL/the module is unavailable.
 let topdownCV=null, topdownTried=false, topdownCanvas=null;
+let tdFlightStamp=0; // U24 (24c): last pilotView.started that triggered a flight event — one event per mode entry
 function combatViewTopdown(){
   try{
     const q=location.search;
@@ -3166,10 +3167,20 @@ function drawPilotFeed(now){
   if(mode==='mosaic' && pilotView.until<nowMs){pilotView.mode='standby';mode='standby';}
   const cockpitBoot=cockpitBootT(nowMs,mode);
   lastPilotFeedMode=mode;
-  // Phase 2: top-down WebGL feed for the main combat/standby modes (opt-in).
-  if((mode==='combat'||mode==='standby') && combatViewTopdown()){
+  // Phase 2 → U24 (24c): top-down WebGL feed for combat/standby AND, since
+  // U24, launch/landing — entering those modes fires the scene's flight
+  // lifecycle (deckCam/chaseLaunch/towerCam/flybyCam cuts happen inside the
+  // scene, driven by the flightPath phase table). The flight timeline is
+  // scene-autonomous: it runs to completion even if pilotView's shorter
+  // mode window (2200ms) ends first — U24 风险小节的既定裁决。
+  // ?combatview=2d still restores the whole legacy 2D path in one flag.
+  if((mode==='combat'||mode==='standby'||mode==='launch'||mode==='landing') && combatViewTopdown()){
     const td=getTopdownCV();
     if(td){
+      if((mode==='launch'||mode==='landing') && pilotView.started!==tdFlightStamp){
+        tdFlightStamp=pilotView.started;
+        td.requestFlightEvent(mode); // ignored if a lifecycle is already live (24d)
+      }
       td.resize(w,h);
       td.renderOnce(now,getBattleSnapshot());
       ctx.save();
@@ -3177,8 +3188,11 @@ function drawPilotFeed(now){
       if(j) ctx.translate(rand(-j,j),rand(-j,j));
       ctx.drawImage(topdownCanvas,0,0,w,h);
       ctx.restore();
+      const hmdLabel=mode==='launch'?(currentLang==='zh'?'弹射起飞 · 甲板机位':'LAUNCH · DECK CAM')
+        :mode==='landing'?(currentLang==='zh'?'进近回收 · 塔台机位':'RECOVERY · TOWER CAM')
+        :(currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL');
       if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
-      else { drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL','combat'); drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash()); /* V17: console after the HMD pass, same draw-order fix */ }
+      else { drawPilotHmd(ctx,w,h,now,hmdLabel,'combat'); drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash()); /* V17: console after the HMD pass, same draw-order fix */ }
       return;
     }
   }
