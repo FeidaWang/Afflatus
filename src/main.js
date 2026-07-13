@@ -79,10 +79,10 @@ function getFighter3D(){
   return fighter3D;
 }
 
-// ── Top-down WebGL combat view (Phase 2 of the combat migration; opt-in) ──
+// ── Top-down WebGL combat view (U23 M1, 2026-07-13: now the DEFAULT) ──
 // Renders the 2.5D god's-eye scene (src/scene/topdownCombat.js) offscreen and
-// blits it into #pilotFeed for the main combat/standby modes. Off by default;
-// enable with ?combatview=topdown (persists), revert with ?combatview=2d.
+// blits it into #pilotFeed for the main combat/standby modes. ON by default;
+// opt out with ?combatview=2d (persists), re-enable with ?combatview=topdown.
 // Falls back to the existing 2D cockpit if WebGL/the module is unavailable.
 let topdownCV=null, topdownTried=false, topdownCanvas=null;
 function combatViewTopdown(){
@@ -90,8 +90,8 @@ function combatViewTopdown(){
     const q=location.search;
     if(/[?&]combatview=topdown\b/.test(q)) localStorage.setItem('afflatus-combatview','topdown');
     else if(/[?&]combatview=2d\b/.test(q)) localStorage.setItem('afflatus-combatview','2d');
-    return localStorage.getItem('afflatus-combatview')==='topdown';
-  }catch(e){ return /[?&]combatview=topdown\b/.test(location.search); }
+    return localStorage.getItem('afflatus-combatview')!=='2d';
+  }catch(e){ return !/[?&]combatview=2d\b/.test(location.search); }
 }
 function getTopdownCV(){
   if(!topdownTried){
@@ -110,14 +110,12 @@ function getTopdownCV(){
 // unrelated missile/nuke POV-vs-cinematic toggles below.
 function combatViewLegacy(){ try{ return /[?&]combatview=legacy\b/.test(location.search); }catch(e){ return false; } }
 function combatViewScPanel(){ try{ return /[?&]combatview=sc\b/.test(location.search); }catch(e){ return false; } }
-// V18 Phase 1 item 2 (ROADMAP §4 "V18 实施路线"): ?combatcam=director opts the
-// 3D topdownCombat scene's camera director in (see that file's own
-// cameraDirectorEnabled()); reused here, ANDed with ?combatview=topdown, to
-// additionally gate the missile-mode 3D chase-cam path below. Both flags
-// must be on together — the default missile experience (drawMissileCine)
-// and the plain ?combatview=topdown combat/standby feed are both completely
-// unaffected by this addition.
-function combatCamDirector(){ try{ return /[?&]combatcam=director\b/.test(location.search); }catch(e){ return false; } }
+// V18 Phase 1 item 2 → U23 M1 (2026-07-13): the camera director is now ON by
+// default (matches the scene's own cameraDirectorEnabled()); opt out with
+// ?combatcam=tactical. Still ANDed with combatViewTopdown() to gate the
+// missile-mode 3D chase-cam path below — ?combatview=2d therefore restores
+// the full legacy experience (drawMissileCine included) in one flag.
+function combatCamDirector(){ try{ return !/[?&]combatcam=tactical\b/.test(location.search); }catch(e){ return true; } }
 // 2026-07-03 data-binding audit (ROADMAP §4b item 1): combatHudState() is only
 // ever called from the combat/standby branches of drawPilotFeed (mode is
 // always 'combat' or 'standby' there — launch/landing render through
