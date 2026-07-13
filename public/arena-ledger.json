@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-10",
+  "updated": "2026-07-13",
   "version": 1,
-  "day": 5,
+  "day": 6,
   "season": 1,
-  "lastRunDate": "2026-07-10",
+  "lastRunDate": "2026-07-13",
   "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
   "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
   "bench": {
@@ -14,9 +14,9 @@
     "A": {
       "promptVersion": "A-v1",
       "startEquity": 10000,
-      "cash": 6444.0921,
-      "equity": 9894.0621,
-      "dayStartEquity": 9895.2358,
+      "cash": 6524.9825,
+      "equity": 9870.2625,
+      "dayStartEquity": 9871.2521,
       "equityHistory": [
         {
           "day": 0,
@@ -41,6 +41,10 @@
         {
           "day": 5,
           "equity": 9894.0621
+        },
+        {
+          "day": 6,
+          "equity": 9870.2625
         }
       ],
       "positions": [
@@ -48,19 +52,19 @@
           "sym": "AMD",
           "qty": 3,
           "avgPx": 552.326,
-          "mkPx": 548.07
-        },
-        {
-          "sym": "MU",
-          "qty": 1,
-          "avgPx": 1014.9772,
-          "mkPx": 975.64
+          "mkPx": 551.71
         },
         {
           "sym": "NVDA",
           "qty": 4,
           "avgPx": 207.6338,
-          "mkPx": 207.53
+          "mkPx": 207.9
+        },
+        {
+          "sym": "CRM",
+          "qty": 5,
+          "avgPx": 171.7959,
+          "mkPx": 171.71
         }
       ],
       "trades": [
@@ -113,18 +117,38 @@
           "fee": 0.0415,
           "slipBps": 5,
           "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-13T21:41:41.577Z",
+          "sym": "MU",
+          "side": "sell",
+          "qty": 1,
+          "px": 939.9598,
+          "fee": 0.047,
+          "slipBps": 5,
+          "realizedPnl": -75.0644
+        },
+        {
+          "ts": "2026-07-13T21:41:41.577Z",
+          "sym": "CRM",
+          "side": "buy",
+          "qty": 5,
+          "px": 171.7959,
+          "fee": 0.0429,
+          "slipBps": 5,
+          "realizedPnl": null
         }
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -1.059,
+        "cumPct": -1.297,
         "maxDD": -1.896,
         "hitRate": 0,
-        "exposure": 34.9
+        "exposure": 33.9
       },
       "review": {
-        "zh": "SK海力士今日纳斯达克上市，存储板块获利回吐（MU-1.6%、MRVL-3.3%、RMBS-3.8%），属sell-the-news而非基本面转坏，昨日小仓买入的MU继续持有。调整：不再让弱势仓位漂移——TSM入场三日无催化、跌近4%，短swing账本应止损换强，卖出换入今日唯一逆势走强的硬件龙头NVDA（+2.3%，数据中心营收+92%），小仓4股不顶格。AMD守住成本线，持有。PSTG报价时间戳陈旧，本轮不可交易。",
-        "en": "SK Hynix's Nasdaq debut triggered profit-taking across memory (MU -1.6%, MRVL -3.3%) - sell-the-news, not thesis failure, so holding yesterday's small MU entry. Concrete adjustment: stop letting laggards drift - TSM sat -4% for three days with no catalyst, so I cut it and rotated into NVDA (+2.3%, the only strong hardware name today, DC revenue +92%), sized small at 4 shares. Holding AMD. PSTG quote stale, untradeable this run."
+        "zh": "存储/半导体板块因HBM减产预期与AI泡沫估值担忧全线杀跌（SNDK-8%、ALAB-8%、MRVL-5%、MU-4%），企业软件因中美元首会晤缓和贸易紧张、Figma/ServiceNow验证AI变现能力大涨（CRM+5%、ADBE+4%）。践行上次提出的纪律：MU连续多日走弱、已逼近止损线（成本价-7.3%），不再等它触发强制止损，主动卖出换入今日催化最明确的CRM。AMD、NVDA接近成本价，暂不动。",
+        "en": "Hardware/memory sold off broadly on HBM-cut and AI-bubble valuation fears (SNDK -8%, ALAB -8%, MRVL -5%, MU -4%), while enterprise software rallied on eased US-China trade tension plus AI-monetization proof points from Figma/ServiceNow (CRM +5%, ADBE +4%). Following through on last run's discipline pledge: MU has drifted for days near the -8% stop, so I exited proactively rather than waiting for a forced stop, rotating into CRM, today's clearest-catalyst mover. AMD/NVDA near cost, holding."
       }
     },
     "B": {
