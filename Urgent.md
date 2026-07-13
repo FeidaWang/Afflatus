@@ -19,6 +19,7 @@
 > | U21 Phase 2 | 未开工 | 新会话 + 真机 Lighthouse/CrUX 基线先行（建议与 U22 首页 3D 决策合并测一次） |
 > | U22 | **RFC 已产出**（`rfcs/2026-07-13-u22-homepage-3d-combat.md`），未动码 | 站主裁决六条宪章 + 「默认视图是否换 3D」→ 已由 U23 承接 |
 > | U23 | **RFC 已产出**（`rfcs/2026-07-13-u23-default-3d-scene.md`：默认视图换 3D 的架构裁决，B→A 两步走 + M0–M4 里程碑），未动码 | 站主裁决路线（§7 裁决表三问）；通过后 M1 可直接开工，M2 起依赖 M0 真机基线 |
+> | U24 | 新立项（2026-07-13）：3D 战场起飞/降落多视角——飞行生命周期状态机 + 镜头库扩展 + launch/landing 模式桥接 | 未动工；24a（纯函数+测试）可直接开工，视觉验收照旧 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
@@ -302,6 +303,21 @@
 - [ ] RFC §4 裁决表里「可代码验证、下一会话可直接做」三项（DPR 统一/座舱静态装饰清理/PWR·WPN·THR 能量格绑定）与 U14b/U14c 范围重合，建议下一批直接按 U14 施工，无需再单独立项。
 - [ ] 裁决通过的 UIUX 条目并入 U21 Phase 3 实施清单；性能条目 + 首页默认视图决策并入 Phase 2（依赖真机 Lighthouse/CrUX 基线，RFC 建议 U21 与 U22 的真机测量合并一次做）。
 - [ ] 宪章定稿后摘要写入 roadmap（长期规范归 roadmap，本文件只留裁决过程）。
+
+## U24 · 3D 战场起飞/降落多视角（2026-07-13 立项，站主反馈「战机只有俯视角」）
+
+**问题与根因**：M1 上线后 3D 战场成为默认，但**只有 combat/standby 两个模式走 3D**（main.js:3172 的 blit 分支），launch/landing 仍落在旧 2D 路径（drawPilotDeck/drawExternalLaunch 线）；且 3D 场景里三架战机是解析编队环飞（`ph = t*1.1 + i*2π/3`），**没有起飞/降落的飞行生命周期**——镜头库有 chaseCam/bridgeWide 等 6 个预设但没有对应的飞行事件可拍。所以「不能像游戏那样切起飞/降落视角」不是镜头问题，是**没有可拍的飞行叙事**。
+
+**解决架构**（全部沿既有模式扩展，不新发明系统）：
+
+- **24a · 飞行生命周期状态机（纯函数，先行）**：新建 `src/combat/flightPath.js`——单机生命周期 `DOCKED → CATAPULT → CLIMB → CRUISE(入编队) → BREAK → APPROACH → TOUCHDOWN → DOCKED`，每段参数化样条（时间驱动，非逐帧物理），段间位置/速度 C1 连续；速度/加速度走解析求导（chaseCam 既有先例，零帧差分噪声）。相位表复用 `weaponClock.startTimeline` 结构（`catapult@0 → rotate@1200 → climb@2600 → …`），相机切换点直接吃具名 phase。**vitest 覆盖**：段边界连续性 ε 断言、全程无 NaN、CRUISE 出入口与解析编队解的混合（smoothstep ~1.5s）收敛。
+- **24b · 镜头库扩四个 shot**（`topdownCombat.js` shots 表，照抄现有 compute() 闭包模式）：`deckCam`（甲板固定位盯弹射，微仰角）、`chaseLaunch`（尾追起飞机，`fovForAccel` 拉 FOV + `bankedUpVector` 压坡度——数学件全部现成）、`towerCam`（塔台/LSO 视角看进近，长焦小 FOV）、`flybyCam`（固定点让战机贴身掠过——游戏运镜经典款，机位取自航线切线偏移）。全部走 `weaponCameraDirector` 既有优先级/抢占/到期规则，不加新相机系统。**防穿模**：shot 机位对舰体包围球做 clamp（mainGunAxis 已有同类处理可参照）。
+- **24c · 模式桥接（main.js）**：blit 分支从 `(mode==='combat'||mode==='standby')` 扩为含 `launch`/`landing`；进入 launch 时调用场景新增的 `td.requestFlightEvent('launch')`（内部起 24a 时间线 + 按 phase 依次请求 deckCam→chaseLaunch→归位 tacticalTopdown），landing 同构（towerCam→flybyCam 可选→touchdown）。触发源就是现有 `setPilotView('launch',…)` 调用点（:1858/:1891/:2069），零新事件系统；`?combatview=2d` 整体退回旧 2D 路径的保证不变。
+- **24d · 编队完整性**：起飞/降落机离开编队期间，其余两机保持解析环飞不动；回归时用 24a 的混合段无缝入列。同屏最多一架处于非 CRUISE 状态（新事件抢占旧事件，直接跳到混合段收尾），避免三机同时脱轨的镜头混乱。
+
+**里程碑**：24a（纯函数+测试，可立即开工，沙盒可完整验证）→ 24b+24d（场景内，构建验证）→ 24c（main.js 桥接，改动面最小但在最脆的文件里，单独一批）→ 站主真机验收（起飞/降落各触发一次，四个新镜头逐个过目；帧率照 U23 M1 的关注点）。
+
+**风险**：主要在 24c——main.js 的 pilotView 时序（launch 2200ms 窗口 vs 飞行时间线更长）需要决定「模式结束但飞行未完」的行为：**裁决建议**＝飞行时间线独立于 pilotView 跑完（场景自治），pilotView 只负责把画面留在 3D 分支；若站主想要模式严格同步，24a 时间线整体缩放到模式时长即可（参数化设计已预留）。
 
 ## U23 · 首页默认视图换 3D 场景 — 架构裁决（2026-07-13 立项，RFC 已产出，未动码）
 
