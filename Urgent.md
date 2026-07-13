@@ -16,7 +16,9 @@
 > | U20 | 已执行并推送 `c8379e4`（任务 11→10） | leagues-msi-daily 待决赛结果落库后站主手动删 |
 > | U21 Phase 1 | RFC + 实施全部完成（535/535 vitest；CI/@layer/schema 校验/vendor 拆分/novels 分片/兼容层全落地，typecheck 与各校验器干净） | — |
 > | U21 Phase 3 | RFC 已产出（`rfcs/2026-07-13-u21-phase3-ui-ux.md`，Lesson 2.8 代理分 67/100 < 70 上线门槛），未动码 | 站主裁决是否发「按重要性做完」指令 |
-> | U21 Phase 2 | 未开工 | 新会话 + 真机 Lighthouse/CrUX 基线先行 |
+> | U21 Phase 2 | 未开工 | 新会话 + 真机 Lighthouse/CrUX 基线先行（建议与 U22 首页 3D 决策合并测一次） |
+> | U22 | **RFC 已产出**（`rfcs/2026-07-13-u22-homepage-3d-combat.md`），未动码 | 站主裁决六条宪章 + 「默认视图是否换 3D」→ 已由 U23 承接 |
+> | U23 | **RFC 已产出**（`rfcs/2026-07-13-u23-default-3d-scene.md`：默认视图换 3D 的架构裁决，B→A 两步走 + M0–M4 里程碑），未动码 | 站主裁决路线（§7 裁决表三问）；通过后 M1 可直接开工，M2 起依赖 M0 真机基线 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
@@ -255,6 +257,80 @@
 - [ ] **站主看过 RFC 后决定是否照 Phase 1 的先例发「按重要性做完」指令**——本次只产出评估文档，未动任何代码。
 
 **验证**：本次仅新增一个 rfcs/*.md 文档，未改动任何代码文件，不影响既有 535/535 vitest / build 状态。
+
+## U22 · 太空战斗视觉宪章 + 3D 技术栈裁决 + 跨页 UIUX 准则（2026-07-13 立项，RFC 已产出）
+
+**性质**：设计宪章，非施工单。参照星际公民/精英危险/家园系列/群星四作提炼首页战斗效果与全站设计准则；目标是首页达到尽可能接近 3D 网页游戏的战斗与建模效果。条目经站主裁决后分流：视觉施工进 roadmap，性能项并入 U21 Phase 2，tokens/UX 项并入 U21 Phase 3；首页 3D 战斗升级须先出独立 RFC（O1 制度）再动码。
+
+**RFC 已产出**：`rfcs/2026-07-13-u22-homepage-3d-combat.md`（六条宪章代码审计打分 + 22b 技术栈现状复核 + 22c 与 U21 Phase 3 的分工裁决）。核心发现三条：① 六条宪章代理总分 72/100，欠账最多是「②每个读数绑真实状态」（12/20，U14e 已知未完成项）与「④剪影先于细节」（8/15，全仓库零 LOD 机制，无法真机验证）；② **bloom/ACES 管线与 OffscreenCanvas+Worker 模式在仓库里都已生产验证**（`alphardForge.js`/`backgroundScene.js`），22b 原表「评估引入」应降级为「复用推广」，技术风险比立项预估低；③ **关键事实**——首页默认 Combat View 是 Canvas 2D HUD（`combatHmdV3.js`），3D 俯视战场 `topdownCombat.js` 目前只在 `?combatview=topdown&combatcam=director` 双 query flag 下才渲染，普通访客默认看不到——「首页像 3D 网页游戏」的真正决策点是**要不要把默认视图换成/叠加 3D 场景**，这是仓库近期最大的架构级视觉决策，RFC 建议单独开会话+独立 RFC 裁决，不塞进本轮执行阶段。RFC §4 裁决表已把可直接做 / 需真机基线 / 需站主裁决 / 不做四类分好。
+
+### 22a · 四作设计语言提炼 → 六条宪章
+
+各取所长（每作只取一件当家本领，不做缝合怪）：
+
+- **星际公民 → 剧情化（diegetic）UI**：一切界面都是「舰内真实存在的设备」——HUD 悬浮在场景里而非贴在网页上（U8/U14 已在走这条路，升格为全站准则：新 UI 元素先问「它是舰上哪台设备」）。
+- **精英危险 → 功能极简 + 双色温**：每个 HUD 元素必须对应一个真实状态，装饰性读数一律不留（U14「死数字清零」的准则化）；配色学它的「自己=暖色 / 世界=冷色」二分——本站现有青白（世界/数据）+ 琥珀（自身/警示）已暗合，写死为 token 规则。3D 椭圆雷达盘（U9）就是精英危险的招牌，保持。
+- **家园系列 → 弹道芭蕾 + 剪影可读性**：尾迹/弹道/爆闪本身就是信息载体（V18 彩带系统的理论依据）；所有舰船在最远镜头下必须靠**轮廓剪影**可辨识（建模验收标准：涂黑看剪影）；背景星云用水彩式低饱和色带，克制分级，永不抢主体。
+- **群星 → 数据渐进披露**：默认只给图标+一个数字，hover/点按才展开完整卡片；帝国级信息密度靠层级而不是靠字数——这是「精简内容替代长文字」的实现机制。
+
+六条宪章（全站裁决标准）：① 每个 UI 元素是一台舰载设备；② 每个读数绑一个真实状态；③ 运动即信息，无信息不运动；④ 剪影先于细节；⑤ 双色温纪律（冷=世界，暖=自身/警示，武器四色为唯一例外域）；⑥ 渐进披露，默认一层，展开两层，禁止第三层。
+
+### 22b · 3D 战斗技术栈裁决表（尊重 U21 RFC 既有裁决：不迁框架、three 不无故升级）
+
+| 层 | 裁决 | 说明 |
+| --- | --- | --- |
+| 渲染器 | 保持 THREE.js（已 vendor 分包）；**评估** WebGPURenderer+TSL 双路径，WebGL2 兜底 | 2026 主流浏览器 WebGPU 已可用，但须 Phase 2 真机基线后再裁决，无基线不动（S4） |
+| 后处理 | bloom + ACES tone mapping + 轻量 AA，桌面开、移动关 | roadmap C3 既有挂名项，是「像游戏」观感的单一最大杠杆 |
+| 资产管线 | glTF + Draco/meshopt 压缩、KTX2 纹理、LOD 三档（近/中/剪影） | 现全部程序化建模（carrierHull 等），新增复杂模型才引入，不返工存量 |
+| 特效 | InstancedMesh GPU 粒子（已有）+ shader 星云背景板 + 命中闪白/屏震 | 全部走既有单 draw call 纪律 |
+| 线程 | 主场景评估 OffscreenCanvas + Worker；动态分辨率缩放 + DPR 封顶 | 移动端帧率地板的关键路径 |
+| 帧率预算 | **桌面 60fps / 移动 40fps 地板**，低于地板自动降级特效档位 | 与 bundle 预算同级的 CI 外准则，真机测 |
+| 现代 CSS | scroll-driven animations 替代 JS 滚动监听、View Transitions API 做页间跃迁转场、container queries、`:has()` | 全部渐进增强、无 polyfill；顺带瘦身 styles.css（@layer 已就位） |
+
+### 22c · 跨页 UIUX / 人机交互准则（Web + Mobile）
+
+- **统一舰桥外壳**：9 页共享顶栏/翻页/boot 序列/三态信号（加载=SCANNING、空态=NO CONTACT、错误=OFFLINE，全部舰载化措辞），tokens 落地走 U21 Phase 3。
+- **数据直观性**：长表一律降维为「卡片 + sparkline + 对比锚点」（数字必须带趋势方向和参照系，如现有 vs SPX 模式推广到 arena/sectors/stats 全部数字）；每页首屏必须给出一句话结论，细节渐进披露（宪章⑥）。
+- **精简代长文**：horoscope/serial 等长文本页折叠为「结论行 + 展开」；解释性文字改图标+tooltip；双语 microcopy 单行封顶——用 22a 的披露机制系统性替代篇幅。
+- **移动可用性**：触控目标 ≥44px（Phase 3 RFC 已点名 2 处欠账）、核心操作收进拇指区、手势翻页与 `prefers-reduced-motion` 全覆盖、hover 依赖零容忍（所有 hover 信息必须有点按等价物）。
+- **反馈完整性**：一切可点元素配 hover/active/`:focus-visible` 三态（接 Phase 3 RFC 键盘可达性欠账），任何操作 200ms 内给可见反馈。
+
+### 22d · 落地路径
+
+- [ ] 站主逐条裁决 22a–22c（勾选/划掉即裁决记录）。
+- [x] **首页 3D 战斗升级 RFC 已产出**：`rfcs/2026-07-13-u22-homepage-3d-combat.md`（六条宪章打分 + 22b 技术栈现状复核 + 22c/Phase3 分工裁决），未动码。**该 RFC 明确「默认视图是否换 3D」这一核心决策仍需另开会话+独立 RFC，本篇只是前置审计**，不算最终裁决完成。
+- [ ] RFC §4 裁决表里「可代码验证、下一会话可直接做」三项（DPR 统一/座舱静态装饰清理/PWR·WPN·THR 能量格绑定）与 U14b/U14c 范围重合，建议下一批直接按 U14 施工，无需再单独立项。
+- [ ] 裁决通过的 UIUX 条目并入 U21 Phase 3 实施清单；性能条目 + 首页默认视图决策并入 Phase 2（依赖真机 Lighthouse/CrUX 基线，RFC 建议 U21 与 U22 的真机测量合并一次做）。
+- [ ] 宪章定稿后摘要写入 roadmap（长期规范归 roadmap，本文件只留裁决过程）。
+
+## U23 · 首页默认视图换 3D 场景 — 架构裁决（2026-07-13 立项，RFC 已产出，未动码）
+
+**性质**：U22 RFC 点名的「仓库近期最大架构级视觉决策」的正式裁决文档。全文见 **`rfcs/2026-07-13-u23-default-3d-scene.md`**，本节只留裁决摘要与开工指针。
+
+**RFC 核心结论**：
+
+- **路线裁决：B → A 两步走，C 永久否决**。B = Combat View 默认 3D 化（撤 `?combatview=topdown&combatcam=director` 双 flag 门槛，topdownCombat 转正，2D HMD 降级为 `?combatview=2d` 皮肤）——≤1 个会话、改的是已存在已测路径，是「所有访客立刻看到 3D 战斗」的最短路径。A = 单 renderer 3D 舞台化（blackhole 背景 pass 并入、滚动驱动 weaponCameraDirector 运镜、内容 DOM 悬浮）——「像 3D 网页游戏」的主要来源。C = 全游戏化 boot 因摧毁投资日志的内容属性/SEO/单人维护性被永久否决。
+- **资产盘点**：不缺技术件缺编排——OffscreenCanvas+Worker（backgroundScene）、UnrealBloom 合成器（alphardForge）、相机导演状态机、InstancedMesh 特效全部已生产验证，新代码只集中在 stage 编排/设备探针/帧率 governor 三处。
+- **性能守门**：T0–T3 四档设备分级（探针定档存 localStorage，`?view=classic` 逃生门）、帧率 governor 自动降档（桌面 60/移动 40 地板）、draw call/三角形/纹理预算表（M0 基线后定稿）、不可见不画的 rAF 治理、context-loss 舰载化恢复、three 懒加载与 U21 Phase 2 合并施工。
+- **里程碑**：M0 真机基线（与 U21 Phase 2 合测）→ M1 3D 战斗默认化（**唯一可立即开工项**）→ M2 统一舞台（桌面先行）→ M3 bloom/ACES 冲顶+boot 序列 → M4 WebGPU 按触发条件评估。
+
+**待站主裁决（RFC §7 三问）**：
+
+- [ ] ① B→A 路线是否通过；
+- [ ] ② 移动端 M2 默认档位（RFC 建议 T1 起步，凭 GA4 fps 数据升 T2）；
+- [ ] ③ starfield Worker 线是否保留为 T1 兜底（RFC 建议保留）。
+- [ ] 裁决通过后：新会话「读 Urgent.md U23 + RFC，开工 M1」。
+
+### U23-C · 方案 C 原型试做 ✅ 代码已完成（2026-07-13，站主指令「试试看全游戏化 boot」）
+
+RFC 否决的是「C 替换默认首页」；站主要求**体验一下 C**，故按可抛弃原型实施，生产路径零改动：
+
+- [x] 新增独立原型页 **`/boot.html`**（vite 新 entry；`noindex,nofollow`；**不进 nav SITE**——对 roadmap C5「第 N 页先评估」规则的豁免理由：一次性试验品，体验后要么删除、要么转正时再走 C5 评估）。
+- [x] 体验流：舰载 OS 开机自检打字序列（进度条+双语日志，`prefers-reduced-motion` 直出）→「点击进入舰桥」→ 全屏 3D 战场（**复用 `createTopdownCombat`，零新场景代码**；three 在打字动画期间并行 `import()`，加载被叙事遮住）→ 剧情化舰桥坞站（ASSET DECK/ARENA/SECTORS/SIGNAL/LOG 五站 + CAM 运镜切换 + EXIT SIM，全部真实链接）。
+- [x] 纪律照走：右上遥测只放真数据（时钟+实测 FPS+相机模式，宪章②）；`document.hidden` 停画（不可见不画）；WebGL 不可用 → 「SIGNAL LOST」舰载化兜底；CAM 站在 `?combatcam=director` 与默认战术相机间切换（复用既有 query 机制）。
+- [x] 验证：535/535 vitest、`vite build --outDir dist_boot_check` 干净（boot 独立 chunk 2.5 kB 级，vendor-three 复用既有分包）、`!important` 基线未动、体积预算全过。
+- [ ] **站主真机体验 `feida.au/boot.html`（部署后）**：普通模式 + `?combatcam=director` 运镜模式各走一遍——这次体验就是「C 是否值得转正」的裁决输入；结论记回本节（转正 = 重开 RFC 推翻 §2 否决；不转正 = 删 boot.html+entry 两处即净）。
+- ⚠️ 顺手发现：`public/games-data.json` 有一处未提交改动（疑似 worldcup-games-daily 任务写入后 commit 步骤未跑完），本次未处理，站主核对后提交或让任务下轮补跑。
 
 ## U7 · Claude 会话卡顿 + Scheduled 任务统筹管理（2026-07-10 立项）
 
