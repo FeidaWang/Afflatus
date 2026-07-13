@@ -1,13 +1,17 @@
-/* U23 option-C prototype — full game boot (boot.html).
+/* U23 option-C prototype — refactored per the U22 four-game charter.
  *
- * Disposable experiment: boots like a ship OS, then hands the whole viewport
- * to the existing self-contained 3D battle scene (topdownCombat). Zero code
- * shared INTO production paths — this file only consumes existing modules.
- * The scene module (and three.js vendor chunk) is imported in parallel with
- * the boot animation so the wait is hidden behind the typing sequence.
+ * Star Citizen  → diegetic: the boot log and dock are shipboard devices.
+ * Elite         → charter ②: every readout is a REAL state. The boot
+ *                 sequence is gated on real async work (scene import + data
+ *                 uplinks); each OK prints when its promise actually settles.
+ *                 Failures print an honest warm OFFLINE, never a fake OK.
+ * Homeworld     → cinematic camera director is the DEFAULT (tactical is the
+ *                 opt-out), via the scene's existing ?combatcam= query.
+ * Stellaris     → progressive disclosure: stations show one live number;
+ *                 hover/focus opens a 2-line detail. Never a third layer.
  *
- * Camera: topdownCombat reads ?combatcam=director from location.search on its
- * own; the CAM station just reloads with the query toggled.
+ * Still disposable: no production module is modified — data comes from the
+ * same public/*.json the real pages read.
  */
 
 const log = document.getElementById('bootLog');
@@ -19,36 +23,94 @@ const glFail = document.getElementById('glFail');
 const canvas = document.getElementById('bridgeCanvas');
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const DIRECTOR = /[?&]combatcam=director\b/.test(location.search);
+// Homeworld default: director ON unless explicitly ?combatcam=tactical.
+const TACTICAL = /[?&]combatcam=tactical\b/.test(location.search);
 
-const LINES = [
-  ['AFFLATUS OS v1.5 — DEEP-SPACE CAPITAL FLEET', 'b'],
-  ['BIOS: singular-throne · bearing locked', ''],
-  ['mount /dev/alphard .......................... OK', 'ok'],
-  ['loading hull geometry (carrier · escorts) ... OK', 'ok'],
-  ['spinning up reactor ......................... 100%', 'ok'],
-  ['calibrating weapon clocks ................... OK', 'ok'],
-  ['uplink: fleet telemetry ..................... SYNCED', 'ok'],
-  ['星图引擎在线 · 防御矩阵待命', 'warm'],
-  ['ALL SYSTEMS NOMINAL', 'b'],
+const $ = (id) => document.getElementById(id);
+const fmtUsd = (n) => '$' + Math.round(n).toLocaleString('en-US');
+
+// ── real boot tasks (charter ②: the log is gated on these promises) ─────
+const scenePromise = import('../scene/topdownCombat.js');
+const j = (p) => fetch(p).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+
+const TASKS = [
+  { line: 'BIOS: singular-throne · bearing locked', cls: 'b', run: () => Promise.resolve() },
+  { line: 'loading hull geometry (carrier · escorts)', cls: '', run: () => scenePromise },
+  {
+    line: 'ledger uplink /arena', cls: '', run: () => j('/arena-ledger.json').then((d) => {
+      const A = d.models?.A, B = d.models?.B;
+      if (A) { $('bArena').textContent = `A ${fmtUsd(A.equity)}`; $('bArena').classList.remove('off'); }
+      if (A && B) $('dArena').innerHTML =
+        `B ${fmtUsd(B.equity)} · day ${d.day} S${d.season}<br>start $10,000 ×2 · sim ledgers`;
+      return `A ${A ? fmtUsd(A.equity) : '?'}`;
+    })
+  },
+  {
+    line: 'basket matrix /sectors', cls: '', run: () => j('/sectors-data.json').then((d) => {
+      $('bSectors').textContent = `${d.baskets.length} BASKETS`; $('bSectors').classList.remove('off');
+      $('dSectors').innerHTML = `US–CN AI watch · ${d.modelWatch.length} models<br>as of ${d.as_of}`;
+      return `${d.baskets.length} baskets`;
+    })
+  },
+  {
+    line: 'macro compass /signal', cls: '', run: () => j('/signal-events.json').then((d) => {
+      const c = d.hawkDoveCompass;
+      $('bSignal').textContent = `${c.label_en} ${c.score > 0 ? '+' : ''}${c.score}`;
+      $('bSignal').classList.remove('off');
+      $('dSignal').innerHTML = `${(d.events || []).length} incidents logged<br>as of ${d.as_of}`;
+      return c.label_en;
+    })
+  },
+  {
+    line: 'prediction record /intel', cls: '', run: () => j('/games-data.json').then((d) => {
+      $('bIntel').textContent = `${d.record.winRate}% · ${d.record.resolved}`;
+      $('bIntel').classList.remove('off');
+      $('dIntel').innerHTML = `${d.record.exactScore} exact scores ⭐<br>${d.tournament}`;
+      return `${d.record.winRate}% WR`;
+    })
+  },
+  {
+    line: 'archive index /log', cls: '', run: () => j('/novels-index.json').then((d) => {
+      const ch = d.novels.reduce((s, n) => s + (n.chapterCount || 0), 0);
+      $('bLog').textContent = `${d.novels.length} BOOKS`; $('bLog').classList.remove('off');
+      $('dLog').innerHTML = `${ch} chapters on file<br>长夜清减 · 万界种春 · 御西宫词`;
+      return `${d.novels.length} books`;
+    })
+  },
+  { line: 'typeface cache', cls: '', run: () => (document.fonts ? document.fonts.ready : Promise.resolve()) },
 ];
 
-// ── kick off the heavy import immediately (hidden behind the boot log) ──
-const scenePromise = import('../scene/topdownCombat.js');
-
-// ── boot log typing ──────────────────────────────────────────────────────
-let li = 0;
-function typeLines() {
-  if (li >= LINES.length) { armEnter(); return; }
-  const [text, cls] = LINES[li];
+// ── boot log: each line prints when its real task settles ───────────────
+async function boot() {
+  print('AFFLATUS OS v1.5 — DEEP-SPACE CAPITAL FLEET', 'b');
+  let done = 0;
+  for (const t of TASKS) {
+    const el = print(`${t.line} ...`, t.cls);
+    const t0 = performance.now();
+    try {
+      const info = await t.run();
+      if (!REDUCED) await pause(Math.max(0, 120 - (performance.now() - t0)));
+      el.textContent = `${t.line} ${dots(t.line)} OK${typeof info === 'string' ? ' · ' + info : ''}`;
+      el.className = 'ok';
+    } catch (e) {
+      el.textContent = `${t.line} ${dots(t.line)} OFFLINE`;
+      el.className = 'warm'; // honest failure — never a fake OK
+    }
+    done++;
+    bar.style.width = `${Math.round((done / TASKS.length) * 100)}%`;
+  }
+  print('ALL STATIONS REPORTING · 各站就位', 'warm');
+  armEnter();
+}
+function print(text, cls) {
   const el = document.createElement('div');
   if (cls) el.className = cls;
   el.textContent = text;
   log.appendChild(el);
-  li++;
-  bar.style.width = `${Math.round((li / LINES.length) * 100)}%`;
-  setTimeout(typeLines, REDUCED ? 0 : 140 + Math.random() * 220);
+  return el;
 }
+const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+const dots = (s) => '.'.repeat(Math.max(2, 44 - s.length));
 
 function armEnter() {
   enter.classList.add('on');
@@ -62,6 +124,11 @@ async function takeBridge() {
   overlay.classList.add('gone');
   bridge.classList.add('on');
   bridge.removeAttribute('aria-hidden');
+  // Homeworld default: inject the director query (read by the scene at
+  // create time) unless the visitor opted out with ?combatcam=tactical.
+  if (!TACTICAL && !/combatcam=director/.test(location.search)) {
+    history.replaceState(null, '', '?combatcam=director');
+  }
   let mod = null;
   try { mod = await scenePromise; } catch (e) { mod = null; }
   td = mod && mod.createTopdownCombat ? mod.createTopdownCombat({ canvas }) : null;
@@ -78,35 +145,33 @@ function sizeCanvas() {
 }
 addEventListener('resize', sizeCanvas);
 
-// pause when tab hidden — no rendering you can't see (U23 rAF discipline)
+// not visible → not rendered (U23 rAF discipline)
 document.addEventListener('visibilitychange', () => {
   if (!td) return;
   if (document.hidden) td.stop(); else td.start();
 });
 
-// ── live telemetry (real data only: clock + measured fps) ───────────────
+// ── self-ship telemetry (warm): clock + measured fps + cam rig ──────────
 function startTelemetry() {
-  const tClock = document.getElementById('tClock');
-  const tFps = document.getElementById('tFps');
-  const tCam = document.getElementById('tCam');
-  tCam.textContent = DIRECTOR ? 'DIRECTOR' : 'TACTICAL';
+  const tClock = $('tClock'), tFps = $('tFps'), tCam = $('tCam');
+  const rig = TACTICAL ? 'TACTICAL' : 'DIRECTOR';
+  tCam.textContent = rig;
+  $('camLabel').textContent = TACTICAL ? '→ DIRECTOR' : '→ TACTICAL';
   let frames = 0, last = performance.now();
-  function tick(now) {
+  (function tick(now) {
     frames++;
     if (now - last >= 1000) {
       tFps.textContent = String(frames);
-      frames = 0; last = now;
-      const d = new Date();
-      tClock.textContent = d.toTimeString().slice(0, 8);
+      frames = 0; last = now || performance.now();
+      tClock.textContent = new Date().toTimeString().slice(0, 8);
     }
     requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
+  })(performance.now());
 }
 
-// ── CAM station: toggle the existing camera-director query and reload ───
-document.getElementById('camToggle').addEventListener('click', () => {
-  location.search = DIRECTOR ? '' : '?combatcam=director';
+// CAM station: flip rig via the scene's existing query mechanism.
+$('camToggle').addEventListener('click', () => {
+  location.search = TACTICAL ? '?combatcam=director' : '?combatcam=tactical';
 });
 
-typeLines();
+boot();

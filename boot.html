@@ -4,8 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AFFLATUS OS — Bridge Simulation (Prototype)</title>
-<!-- U23 option-C prototype: full game boot. Disposable experiment — not in
-     nav SITE, noindex, zero impact on the production homepage. -->
+<!-- U23 option-C prototype, refactored per the U22 four-game charter:
+     SC = diegetic (every element is a shipboard device) · ED = real-state
+     readouts + dual colour temperature (cool=world, warm=self/warning) ·
+     Homeworld = cinematic camera default · Stellaris = progressive
+     disclosure (badge → hover detail). Disposable — noindex, not in SITE. -->
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#04060a">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -13,9 +16,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--teal:#9ae5ff;--teal-soft:rgba(154,229,255,.62);--warm:#e8b380;--bg:#04060a}
+  /* charter ⑤ — dual colour temperature tokens: cool = the world/data,
+     warm = own ship & warnings. Nothing may use other hues. */
+  :root{
+    --cool:#9ae5ff; --cool-soft:rgba(154,229,255,.60); --cool-line:rgba(154,229,255,.28);
+    --warm:#e8b380; --warm-soft:rgba(232,179,128,.55);
+    --ok:#5dff9d; --bg:#04060a;
+  }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%;background:var(--bg);color:var(--teal);overflow:hidden;
+  html,body{height:100%;background:var(--bg);color:var(--cool);overflow:hidden;
     font-family:'JetBrains Mono',monospace}
   canvas#bridgeCanvas{position:fixed;inset:0;width:100vw;height:100vh;display:block}
 
@@ -25,50 +34,60 @@
     transition:opacity .9s ease}
   #bootOverlay.gone{opacity:0;pointer-events:none}
   #bootLog{font-size:clamp(10px,1.4vw,13px);line-height:1.9;letter-spacing:.06em;
-    color:var(--teal-soft);white-space:pre-wrap;min-height:14em}
-  #bootLog b{color:var(--teal);font-weight:400}
-  #bootLog .ok{color:#5dff9d}
+    color:var(--cool-soft);white-space:pre-wrap;min-height:16em}
+  #bootLog b{color:var(--cool);font-weight:400}
+  #bootLog .ok{color:var(--ok)}
   #bootLog .warm{color:var(--warm)}
   #bootBar{margin-top:3vh;height:2px;width:min(420px,70vw);background:rgba(154,229,255,.14)}
-  #bootBar i{display:block;height:100%;width:0%;background:var(--teal);
-    box-shadow:0 0 12px rgba(154,229,255,.6);transition:width .12s linear}
+  #bootBar i{display:block;height:100%;width:0%;background:var(--cool);
+    box-shadow:0 0 12px rgba(154,229,255,.6);transition:width .2s linear}
   #bootEnter{margin-top:5vh;font-size:clamp(11px,1.6vw,14px);letter-spacing:.28em;
     color:var(--warm);opacity:0;transition:opacity .5s ease;cursor:pointer;
-    animation:none;background:none;border:none;font-family:inherit;text-align:left}
+    background:none;border:none;font-family:inherit;text-align:left}
   #bootEnter.on{opacity:1;animation:pulse 1.6s ease-in-out infinite}
   @keyframes pulse{50%{opacity:.35}}
 
-  /* ── bridge HUD chrome (DOM overlay on the 3D scene) ──────────── */
+  /* ── bridge chrome ────────────────────────────────────────────── */
   #bridge{position:fixed;inset:0;z-index:10;opacity:0;transition:opacity 1.2s ease;
     pointer-events:none}
   #bridge.on{opacity:1}
-  .corner{position:fixed;width:26px;height:26px;border:1px solid rgba(154,229,255,.4)}
+  .corner{position:fixed;width:26px;height:26px;border:1px solid var(--cool-line)}
   .corner.tl{top:10px;left:10px;border-right:0;border-bottom:0}
   .corner.tr{top:10px;right:10px;border-left:0;border-bottom:0}
   .corner.bl{bottom:10px;left:10px;border-right:0;border-top:0}
   .corner.br{bottom:10px;right:10px;border-left:0;border-top:0}
   #osTag{position:fixed;top:18px;left:26px;font-size:10px;letter-spacing:.3em;
-    color:var(--teal-soft)}
+    color:var(--cool-soft)}
   #osTag b{color:var(--warm);font-weight:400}
+  /* self-ship telemetry = warm (charter ⑤) */
   #telemetry{position:fixed;top:18px;right:26px;font-size:10px;letter-spacing:.14em;
-    color:var(--teal-soft);text-align:right;line-height:1.8}
-  #telemetry b{color:var(--teal);font-weight:400}
+    color:var(--warm-soft);text-align:right;line-height:1.8}
+  #telemetry b{color:var(--warm);font-weight:400}
 
-  /* diegetic console dock */
+  /* ── diegetic console dock · Stellaris progressive disclosure ──── */
   #dock{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
-    display:flex;gap:10px;pointer-events:auto;flex-wrap:wrap;justify-content:center;
-    max-width:94vw}
-  .station{display:block;padding:9px 16px;border:1px solid rgba(154,229,255,.30);
-    background:rgba(4,10,16,.55);color:var(--teal);text-decoration:none;
-    font-size:10px;letter-spacing:.22em;font-family:inherit;cursor:pointer;
-    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-    transition:border-color .18s,box-shadow .18s,color .18s}
-  .station small{display:block;margin-top:3px;font-size:9px;color:var(--teal-soft);
-    letter-spacing:.1em}
-  .station:hover,.station:focus-visible{border-color:var(--teal);color:#eaffff;
+    display:flex;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:center;
+    max-width:96vw;align-items:flex-end}
+  .station{display:block;min-width:96px;padding:8px 12px;border:1px solid var(--cool-line);
+    background:rgba(4,10,16,.55);color:var(--cool);text-decoration:none;
+    font-size:10px;letter-spacing:.18em;font-family:inherit;cursor:pointer;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-align:left;
+    transition:border-color .18s,box-shadow .18s}
+  .station .badge{display:block;margin-top:3px;font-size:11px;letter-spacing:.08em;
+    color:var(--cool);font-weight:500}
+  .station .badge.off{color:var(--warm-soft)}
+  /* disclosure level 2 — collapsed by default, opens on hover/focus */
+  .station .detail{display:block;overflow:hidden;max-height:0;opacity:0;
+    font-size:9px;letter-spacing:.08em;line-height:1.7;color:var(--cool-soft);
+    transition:max-height .22s ease,opacity .22s ease,margin-top .22s ease}
+  .station:hover .detail,.station:focus-visible .detail,.station:focus .detail{
+    max-height:3.6em;opacity:1;margin-top:4px}
+  .station:hover,.station:focus-visible{border-color:var(--cool);
     box-shadow:0 0 18px rgba(154,229,255,.22);outline:none}
-  .station.exit{border-color:rgba(232,179,128,.4);color:var(--warm)}
-  .station.exit:hover{border-color:var(--warm);box-shadow:0 0 18px rgba(232,179,128,.25)}
+  .station.self{border-color:rgba(232,179,128,.38);color:var(--warm)}
+  .station.self .badge{color:var(--warm)}
+  .station.self:hover,.station.self:focus-visible{border-color:var(--warm);
+    box-shadow:0 0 18px rgba(232,179,128,.25)}
 
   #glFail{position:fixed;inset:0;z-index:5;display:none;align-items:center;
     justify-content:center;color:var(--warm);font-size:12px;letter-spacing:.3em}
@@ -76,10 +95,11 @@
 
   @media (prefers-reduced-motion: reduce){
     #bootEnter.on{animation:none}
+    .station .detail{transition:none}
   }
   @media (max-width:640px){
-    #dock{gap:6px;bottom:max(14px,env(safe-area-inset-bottom))}
-    .station{padding:8px 10px;font-size:9px;letter-spacing:.14em}
+    #dock{gap:5px;bottom:max(12px,env(safe-area-inset-bottom))}
+    .station{min-width:72px;padding:7px 9px;font-size:9px;letter-spacing:.1em}
     #telemetry{display:none}
   }
 </style>
@@ -93,15 +113,32 @@
   <span class="corner tl"></span><span class="corner tr"></span>
   <span class="corner bl"></span><span class="corner br"></span>
   <div id="osTag">AFFLATUS OS <b>v1.5</b> · BRIDGE SIM · 舰桥模拟</div>
-  <div id="telemetry"><b id="tClock">--:--:--</b><br>FPS <b id="tFps">--</b> · CAM <b id="tCam">TACTICAL</b></div>
+  <div id="telemetry"><b id="tClock">--:--:--</b><br>FPS <b id="tFps">--</b> · CAM <b id="tCam">--</b></div>
   <nav id="dock" aria-label="Bridge stations">
-    <a class="station" href="/">ASSET DECK<small>资产甲板</small></a>
-    <a class="station" href="/arena.html">ARENA<small>竞技场</small></a>
-    <a class="station" href="/sectors.html">SECTORS<small>板块</small></a>
-    <a class="station" href="/signal.html">SIGNAL<small>信号</small></a>
-    <a class="station" href="/serial.html">LOG<small>舰长日志</small></a>
-    <button class="station" id="camToggle" type="button">CAM<small id="camLabel">切运镜</small></button>
-    <a class="station exit" href="/">EXIT SIM<small>退出模拟</small></a>
+    <a class="station" href="/">ASSET DECK
+      <b class="badge">资产甲板</b>
+      <span class="detail">captain log · positions & discipline<br>舰长日志 · 持仓与纪律</span></a>
+    <a class="station" href="/arena.html" id="stArena">ARENA
+      <b class="badge off" id="bArena">—</b>
+      <span class="detail" id="dArena">ledger uplink pending</span></a>
+    <a class="station" href="/sectors.html" id="stSectors">SECTORS
+      <b class="badge off" id="bSectors">—</b>
+      <span class="detail" id="dSectors">basket matrix pending</span></a>
+    <a class="station" href="/signal.html" id="stSignal">SIGNAL
+      <b class="badge off" id="bSignal">—</b>
+      <span class="detail" id="dSignal">macro compass pending</span></a>
+    <a class="station" href="/games.html" id="stIntel">INTEL
+      <b class="badge off" id="bIntel">—</b>
+      <span class="detail" id="dIntel">prediction record pending</span></a>
+    <a class="station" href="/serial.html" id="stLog">LOG
+      <b class="badge off" id="bLog">—</b>
+      <span class="detail" id="dLog">archive index pending</span></a>
+    <button class="station self" id="camToggle" type="button">CAM
+      <b class="badge" id="camLabel">--</b>
+      <span class="detail">switch camera rig · 切换运镜<br>director ↔ tactical</span></button>
+    <a class="station self" href="/">EXIT SIM
+      <b class="badge">退出模拟</b>
+      <span class="detail">return to classic homepage<br>回到常规首页</span></a>
   </nav>
 </div>
 
