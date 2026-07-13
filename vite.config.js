@@ -28,7 +28,9 @@ export default defineConfig({
         horoscope: resolve(__dirname, 'horoscope.html'),
         serial: resolve(__dirname, 'serial.html'),
         course: resolve(__dirname, 'course.html'),
-        stats: resolve(__dirname, 'stats.html')
+        stats: resolve(__dirname, 'stats.html'),
+        // U23 option-C prototype (disposable, noindex, not in nav SITE)
+        boot: resolve(__dirname, 'boot.html')
       },
       output: {
         // U21 Phase 1 D3 (rfcs/2026-07-12-u21-tech-audit.md §1.2/§1.4): the
