@@ -20,7 +20,7 @@
 > | U22 | **RFC 已产出**（`rfcs/2026-07-13-u22-homepage-3d-combat.md`），未动码 | 站主裁决六条宪章 + 「默认视图是否换 3D」→ 已由 U23 承接 |
 > | U23 | **RFC 已产出**（`rfcs/2026-07-13-u23-default-3d-scene.md`：默认视图换 3D 的架构裁决，B→A 两步走 + M0–M4 里程碑），未动码 | 站主裁决路线（§7 裁决表三问）；通过后 M1 可直接开工，M2 起依赖 M0 真机基线 |
 > | U24 | ✅ 代码已完成，已推送 `e6367ef`（546/546 vitest） | 起飞/降落镜头链真机验收 |
-> | U25 | ✅ 代码已完成，已推送 `4b262f5`（550/550 vitest）：战斗效果冲顶 + 真投影 HUD 信息层 | 桌面 bloom 观感/帧率 + 目标框投影真机验收 |
+> | U25 | **同日站主要求退回，已 revert 并推送 `643d1cb`**（546/546 vitest，回到 U24 状态） | 真机确认 Combat View 已回到 U24 前的样子 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
@@ -326,14 +326,22 @@
 
 **风险**：主要在 24c——main.js 的 pilotView 时序（launch 2200ms 窗口 vs 飞行时间线更长）需要决定「模式结束但飞行未完」的行为：**裁决建议**＝飞行时间线独立于 pilotView 跑完（场景自治），pilotView 只负责把画面留在 3D 分支；若站主想要模式严格同步，24a 时间线整体缩放到模式时长即可（参数化设计已预留）。
 
-## U25 · 首页 HUD/战斗效果/UI 整体改造（2026-07-13 立项并完成，站主指令「按主流太空模拟游戏理解改造」，已推送 `4b262f5`）
+## U25 · 首页 HUD/战斗效果/UI 整体改造（2026-07-13 立项并完成，已推送 `4b262f5`；**同日站主要求退回，已 revert，见下**）
 
 **站主裁决**：范围=战斗效果+HUD 信息层两者都要；bloom 性能策略=桌面开、移动关（≤860px / deviceMemory≤4 / reduced-motion 直接走原渲染路径，零移动端风险）。
 
 - [x] **U25a 战斗效果冲顶**（topdownCombat.js）：ACES tone mapping + UnrealBloom 合成器（复用 alphardForge 生产管线，阈值 0.55 只让光效泛光）；确认击毁 = bloom 脉冲一次；大爆炸 = 冲击波环（面向相机 billboard 扩散）+ 6–12 枚径向碎片火花 + 相机冲击抖动（render 前加 render 后减，不污染导演阻尼状态）；曳光弹配炮口闪光（纯 sprite 无新增光源——曳光 9 发/秒，加灯是帧率陷阱）。
 - [x] **U25b 真投影 HUD 信息层**（新 `src/ui/tacticalOverlay.js` + 场景 `getHudFeeds()`）：目标框第一次画在**真实 3D 投影**上（彗星 project 到屏幕坐标，框随距离缩放显深度；锁定=琥珀色+脉冲环；血条绑真 hp，<35% 转琥珀）；目标出屏/在身后 = 边缘追踪箭头（真实方位）；三架僚机小菱形标记（飞行事件机带 CAT/CLB/APP 相位标签，接 U24）；底部 CAM 读数显示当前 shot 名+真实 FOV。3D 分支的合成 HMD pass 就此退役（`drawPilotHmd` 仍服务导弹/核弹模式与 `?combatview=2d` 全路径，未删）。
 - [x] 验证：550/550 vitest（tacticalOverlay 纯函数 4 例新增）、tsc 干净、构建干净（topdownCombat 分片 29.6→31.8 kB 预算内）、`!important` 基线未动。
-- [ ] **站主真机验收**：桌面看 bloom 观感与帧率（这是无 M0 基线的裁决，若掉帧回报本节直接降阈值/关脉冲）、击毁时的冲击波+屏震+泛光三连、目标框是否贴住彗星、出屏箭头方位、僚机相位标签随起降变化；移动端确认无任何变化（POST_FX 关闭路径）。
+
+### U25 · Revert ✅（2026-07-13 同日，已推送 `643d1cb`）
+
+**站主指令**：「把 combat view 改成之前的效果」。澄清后确认范围＝退回 U25（保留 U23/U24：3D 默认、导演运镜、起降生命周期全部不动，只撤本项的 bloom/冲击波/真投影 HUD）。
+
+- [x] **`git revert 4b262f5 --no-commit`**：先核对 U25 之后的三次定时任务提交（Arena/course 周报/yuxi 小说更新）均未触碰 `src/main.js`/`src/scene/topdownCombat.js`/`src/ui/tacticalOverlay.js`/`tests/tacticalOverlay.test.js` 这四个文件，revert 可干净应用（无冲突）。`tacticalOverlay.js` + 其测试文件整体删除，`main.js`/`topdownCombat.js` 精确回退到 U25 之前的字节状态。
+- [x] 验证：546/546 vitest（与 U24 完成时的计数逐位吻合，确认回到 U24 状态而非过度回退）、tsc 干净、构建干净（topdownCombat 分片回落到 29.61 kB，与 U24 完成记录的「24.5→29.6 kB」终值一致）、`!important` 基线未动。
+- [x] 提交推送 `643d1cb`。
+- [ ] **站主真机复核**：Combat View 应回到 U24 完成时的样子——3D 战场默认开启、导演运镜/起降镜头链都在，但没有 bloom 泛光、没有冲击波/碎片/炮口闪光，目标框是原来的合成 HMD 面板（非真投影）。
 
 ## U23 · 首页默认视图换 3D 场景 — 架构裁决（2026-07-13 立项，RFC 已产出，未动码）
 
