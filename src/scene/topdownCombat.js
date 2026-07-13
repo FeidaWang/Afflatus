@@ -24,10 +24,11 @@ import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
 import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
 import { activePhase, msUntilPhase, msRemaining } from '../combat/weaponClock.js';
 
-// Opt-in flag (ROADMAP §4 V14): default behavior is the original hardcoded
-// camera sway, byte-for-byte unchanged, unless this is present in the URL.
+// U23 M1 (2026-07-13): the camera director rig is now the DEFAULT (was
+// opt-in via ?combatcam=director since V14). ?combatcam=tactical opts back
+// into the original hardcoded camera sway.
 function cameraDirectorEnabled() {
-  try { return /[?&]combatcam=director\b/.test(location.search); } catch (e) { return false; }
+  try { return !/[?&]combatcam=tactical\b/.test(location.search); } catch (e) { return true; }
 }
 
 function glowTexture() {

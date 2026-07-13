@@ -41,11 +41,6 @@
   #bootBar{margin-top:3vh;height:2px;width:min(420px,70vw);background:rgba(154,229,255,.14)}
   #bootBar i{display:block;height:100%;width:0%;background:var(--cool);
     box-shadow:0 0 12px rgba(154,229,255,.6);transition:width .2s linear}
-  #bootEnter{margin-top:5vh;font-size:clamp(11px,1.6vw,14px);letter-spacing:.28em;
-    color:var(--warm);opacity:0;transition:opacity .5s ease;cursor:pointer;
-    background:none;border:none;font-family:inherit;text-align:left}
-  #bootEnter.on{opacity:1;animation:pulse 1.6s ease-in-out infinite}
-  @keyframes pulse{50%{opacity:.35}}
 
   /* ── bridge chrome ────────────────────────────────────────────── */
   #bridge{position:fixed;inset:0;z-index:10;opacity:0;transition:opacity 1.2s ease;
@@ -94,7 +89,6 @@
   #glFail.on{display:flex}
 
   @media (prefers-reduced-motion: reduce){
-    #bootEnter.on{animation:none}
     .station .detail{transition:none}
   }
   @media (max-width:640px){
@@ -145,7 +139,6 @@
 <div id="bootOverlay">
   <div id="bootLog" aria-live="polite"></div>
   <div id="bootBar"><i></i></div>
-  <button id="bootEnter" type="button">■ TAP TO TAKE THE BRIDGE · 点击进入舰桥</button>
 </div>
 
 <script type="module" src="/src/pages/boot.js"></script>

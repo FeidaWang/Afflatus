@@ -16,7 +16,6 @@
 
 const log = document.getElementById('bootLog');
 const bar = document.querySelector('#bootBar i');
-const enter = document.getElementById('bootEnter');
 const overlay = document.getElementById('bootOverlay');
 const bridge = document.getElementById('bridge');
 const glFail = document.getElementById('glFail');
@@ -99,8 +98,11 @@ async function boot() {
     done++;
     bar.style.width = `${Math.round((done / TASKS.length) * 100)}%`;
   }
-  print('ALL STATIONS REPORTING · 各站就位', 'warm');
-  armEnter();
+  print('ALL STATIONS REPORTING · 各站就位 — TAKING THE BRIDGE', 'warm');
+  // auto-handover: no click gate (owner directive 2026-07-13); the progress
+  // bar above is real (task-gated), so arrival here means everything loaded.
+  await pause(REDUCED ? 0 : 700);
+  takeBridge();
 }
 function print(text, cls) {
   const el = document.createElement('div');
@@ -112,23 +114,14 @@ function print(text, cls) {
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 const dots = (s) => '.'.repeat(Math.max(2, 44 - s.length));
 
-function armEnter() {
-  enter.classList.add('on');
-  enter.addEventListener('click', takeBridge, { once: true });
-  addEventListener('keydown', takeBridge, { once: true });
-}
-
 // ── bridge handover ──────────────────────────────────────────────────────
+// (Director rig is the scene default since U23 M1 — no query injection
+// needed; ?combatcam=tactical still opts out.)
 let td = null;
 async function takeBridge() {
   overlay.classList.add('gone');
   bridge.classList.add('on');
   bridge.removeAttribute('aria-hidden');
-  // Homeworld default: inject the director query (read by the scene at
-  // create time) unless the visitor opted out with ?combatcam=tactical.
-  if (!TACTICAL && !/combatcam=director/.test(location.search)) {
-    history.replaceState(null, '', '?combatcam=director');
-  }
   let mod = null;
   try { mod = await scenePromise; } catch (e) { mod = null; }
   td = mod && mod.createTopdownCombat ? mod.createTopdownCombat({ canvas }) : null;
