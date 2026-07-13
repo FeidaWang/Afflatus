@@ -1,7 +1,7 @@
 {
-  "updated": "2026-07-11T11:24:44Z",
+  "updated": "2026-07-13T08:37:57Z",
   "version": 1,
-  "as_of": "2026-07-11",
+  "as_of": "2026-07-12",
   "modelWatch": [
     {
       "vendor": "anthropic",
@@ -9,26 +9,26 @@
       "current_line": "Claude Fable 5 / Mythos 5",
       "developments": [
         {
-          "t_zh": "推出 Reflect 使用仪表盘（beta）：追踪 AI 使用习惯、月度回顾与专注设置",
-          "t_en": "Launched Reflect, a beta dashboard tracking Claude usage habits with monthly recaps and focus settings",
-          "src": "https://techcrunch.com/2026/07/09/anthropics-new-claude-feature-is-quietly-selling-you-on-ai/",
+          "t_zh": "出口管制解除后 Fable 5 于7月1日起全球重新上线，Pro/Max/Team 计划至7月7日可用至周限额50%，其后转用量额度",
+          "t_en": "Fable 5 redeployed globally from July 1 after export controls lifted; included up to 50% of weekly limits on paid plans through July 7, then via usage credits",
+          "src": "https://www.anthropic.com/news/redeploying-fable-5",
           "confidence": 0.9
         },
         {
-          "t_zh": "宣布提高用量上限，并与 SpaceX 达成算力合作",
-          "t_en": "Announced higher usage limits for Claude alongside a compute deal with SpaceX",
-          "src": "https://www.anthropic.com/news/higher-limits-spacex",
-          "confidence": 0.75
+          "t_zh": "宣布 Claude Cowork 上云：多设备可用、设备离线也能跑任务，并将 Chat 与 Cowork 统一到同一空间",
+          "t_en": "Announced Claude Cowork is moving to the cloud — accessible from multiple devices, running tasks even when devices are offline, with chat and Cowork unified",
+          "src": "https://www.nbcnews.com/tech/tech-news/anthropic-will-make-claude-cowork-available-users-cloud-rcna353218",
+          "confidence": 0.85
         },
         {
-          "t_zh": "美方解除对 Fable 5 / Mythos 5 的出口管制（6月底），政策摆动仍是变量",
-          "t_en": "US administration lifted export controls on Claude Fable 5 and Mythos 5 in late June; policy swings remain a live variable",
-          "src": "https://www.cnbc.com/2026/06/30/anthropic-says-trump-admin-has-lifted-export-controls-on-claude-fable-5-and-mythos-5.html",
+          "t_zh": "推出 Reflect 使用仪表盘（beta）：追踪 AI 使用习惯、月度回顾与专注设置",
+          "t_en": "Launched Reflect, a beta dashboard tracking Claude usage habits with monthly recaps and focus settings",
+          "src": "https://techcrunch.com/2026/07/09/anthropics-new-claude-feature-is-quietly-selling-you-on-ai/",
           "confidence": 0.85
         }
       ],
-      "gap_note_zh": "闭源前沿仍领先，但出口政策反复给了中国开源窗口期；CNBC 报道智谱正借此收窄差距，代差护城河的政策敏感度上升",
-      "gap_note_en": "Closed frontier still leads, but export-policy whiplash handed Chinese open-weight labs a window; the capability gap is increasingly policy-sensitive rather than purely technical"
+      "gap_note_zh": "闭源前沿全面复线，产品面转向分发与使用层；但北京同期酝酿对中国前沿模型的出口限制，开闭源代差正被两国政策共同定价",
+      "gap_note_en": "Closed frontier fully back online with product focus shifting to distribution; with Beijing now weighing its own export curbs, the open/closed gap is being priced by two governments at once"
     },
     {
       "vendor": "openai",
@@ -42,20 +42,20 @@
           "confidence": 0.9
         },
         {
+          "t_zh": "同步推出 ChatGPT Work；官方称 Sol 编码任务 token 效率提升54%，为其「最强网络安全模型」",
+          "t_en": "ChatGPT Work launched alongside; company claims Sol is 54% more token-efficient on coding and its strongest cybersecurity model yet",
+          "src": "https://www.axios.com/2026/07/09/ai-openai-gpt-release",
+          "confidence": 0.8
+        },
+        {
           "t_zh": "7月8日发布 GPT-Live 全双工语音模型，边听边说",
           "t_en": "Launched GPT-Live on July 8, full-duplex voice models that listen and speak simultaneously",
           "src": "https://openai.com/index/introducing-gpt-live/",
           "confidence": 0.85
-        },
-        {
-          "t_zh": "GPT-5.6 接入 Microsoft 365 Copilot 成为首选模型，并推出 ChatGPT Work",
-          "t_en": "GPT-5.6 became the preferred model in Microsoft 365 Copilot; ChatGPT Work launched for enterprise workflows",
-          "src": "https://releasebot.io/updates/openai",
-          "confidence": 0.7
         }
       ],
-      "gap_note_zh": "GPT-5.6 走「政府附加测试后放行」流程，闭源迭代节奏本身已被政策中介化；对巨头 capex 传导（微软链）依旧最直接",
-      "gap_note_en": "GPT-5.6 shipped via a government-testing gate — closed-source cadence is now policy-mediated; capex transmission to the Microsoft chain remains the most direct channel"
+      "gap_note_zh": "GPT-5.6 走「政府附加测试后放行」流程，闭源迭代节奏已被政策中介化；Work/企业分发与效率叙事指向商业化变现加速",
+      "gap_note_en": "GPT-5.6 shipped via a government-testing gate — closed cadence is policy-mediated; the Work launch and token-efficiency pitch point at accelerating enterprise monetization"
     },
     {
       "vendor": "zhipu",
@@ -63,26 +63,26 @@
       "current_line": "GLM-5.2 (open weights, MIT license)",
       "developments": [
         {
-          "t_zh": "发布 GLM-5.2 配套 agent/编码 harness，直接对标 Anthropic 的工具链",
-          "t_en": "Released a coding/agent harness for GLM-5.2, explicitly taking aim at Anthropic's tooling stack",
+          "t_zh": "7月2日发布 GLM-5.2 配套 harness「ZCode」，新用户送500万 token、订阅配额+50%，直接对标 Anthropic 工具链",
+          "t_en": "Released ZCode on July 2, an agent harness for GLM-5.2 with 5M free tokens for new users and 50% bigger quotas, aimed squarely at Anthropic's tooling",
           "src": "https://www.scmp.com/tech/tech-trends/article/3359170/zhipu-ai-releases-harness-glm-52-model-chinese-firm-takes-aim-anthropic",
-          "confidence": 0.8
+          "confidence": 0.85
         },
         {
-          "t_zh": "GLM-5.2 权重以 MIT 协议开放：MoE 架构、1M 上下文，长程编码基准接近闭源前沿而成本约1/6",
-          "t_en": "GLM-5.2 weights open under MIT: MoE architecture, 1M context, near-frontier long-horizon coding benchmarks at roughly one-sixth the cost",
-          "src": "https://www.eigent.ai/blog/glm-5-2",
+          "t_zh": "GLM 需求激增+美国出口管制挤压算力，智谱据报正评估自研 AI 芯片",
+          "t_en": "With GLM demand surging and US export controls squeezing compute, Zhipu is reportedly weighing designing its own AI chip",
+          "src": "https://www.theinformation.com/articles/chinas-ai-lab-ziphu-weighs-custom-chip-demand-glm-model-soars",
           "confidence": 0.7
         },
         {
-          "t_zh": "CNBC：在美国厂商受政策掣肘期间，智谱正逼近美国顶级模型",
-          "t_en": "CNBC: Zhipu is closing in on top US models while American vendors are held back by policy constraints",
-          "src": "https://www.cnbc.com/2026/06/26/china-zhipu-z-ai-open-source-anthropic-openai.html",
+          "t_zh": "创始人唐杰内部信主张前沿 AI 应向所有人开放：真正的安全来自广泛参与、共享与监督",
+          "t_en": "Founder Tang Jie argued in a staff memo that frontier AI should stay open to all — genuine security comes from broad participation, sharing and oversight",
+          "src": "https://www.bloomberg.com/news/articles/2026-07-12/zhipu-s-chinese-founder-says-frontier-ai-should-stay-open-to-all",
           "confidence": 0.75
         }
       ],
-      "gap_note_zh": "开源线首次「够用且便宜」到构成对闭源前沿的实质论证；若持续，应用层边际成本下降利好端侧/垂直软件的框架假设获得本周证据支持",
-      "gap_note_en": "The open-weight line is now cheap-and-good-enough to be a real argument against the closed frontier — this week's evidence supports the app-layer-cost-collapse hypothesis"
+      "gap_note_zh": "开源线的「便宜且够用」论证正面临自己的政策闸门：北京与阿里/字节/智谱磋商限制前沿模型出境，创始人公开信像是对内的反向游说",
+      "gap_note_en": "The cheap-and-good-enough open-weight argument now faces its own policy gate: Beijing is consulting Alibaba/ByteDance/Z.ai on curbing overseas access, and the founder's open letter reads like counter-lobbying from inside"
     },
     {
       "vendor": "alibaba",
@@ -90,26 +90,20 @@
       "current_line": "Qwen3.7 (Max flagship / Plus multimodal, proprietary API)",
       "developments": [
         {
-          "t_zh": "盘前业绩更新：云收入同比+38%（AI 驱动），AI 产品三位数增长，本周股价大涨约11%",
-          "t_en": "Pre-earnings update showed cloud revenue up 38% on AI demand with triple-digit AI product growth; shares jumped ~11% this week",
-          "src": "https://finance.yahoo.com/markets/stocks/articles/alibaba-shares-gaining-ai-optimism-191443125.html",
+          "t_zh": "7月8日 BABA 单日+11%（十个月最佳）：云智能收入+38%、外部云+40%、AI 云产品收入89.7亿元、云 EBITA+57%",
+          "t_en": "BABA jumped 11% on July 8, its best day in ten months: Cloud Intelligence revenue +38%, external cloud +40%, AI cloud product revenue RMB8.97B, cloud EBITA +57%",
+          "src": "https://finance.yahoo.com/markets/stocks/articles/why-alibaba-stock-popped-today-131628225.html",
+          "confidence": 0.8
+        },
+        {
+          "t_zh": "商务部过去一月约谈阿里/字节/智谱，酝酿限制海外访问最先进模型（含 Qwen 及未发布版本），尚无定论",
+          "t_en": "China's Commerce Ministry held month-long talks with Alibaba, ByteDance and Z.ai on restricting foreign access to their most advanced models including Qwen; nothing decided yet",
+          "src": "https://time.com/article/2026/07/07/china-ai-models-alibaba-bytedance/",
           "confidence": 0.75
-        },
-        {
-          "t_zh": "新 AI/数据安全规则下，内部禁用 Anthropic 工具、收缩 Qwen 陪伴类产品，员工转用自研 Qoder",
-          "t_en": "Under new AI/data-security rules, Alibaba banned Anthropic tools in-house, trimmed Qwen companion products, and steered staff to its own Qoder assistant",
-          "src": "https://stockstotrade.com/news/alibaba-group-holding-limited-baba-news-2026_07_08-3/",
-          "confidence": 0.6
-        },
-        {
-          "t_zh": "Qwen3.7-Plus 上线百炼平台：视觉、深度推理、工具调用与自主迭代（6月初）",
-          "t_en": "Qwen3.7-Plus went live on Bailian in early June with vision, deep reasoning, tool invocation and autonomous iteration",
-          "src": "https://www.marktechpost.com/2026/06/02/alibabas-qwen-team-launches-qwen3-7-plus-adding-vision-deep-reasoning-tool-invocation-and-autonomous-iteration-on-the-bailian-platform/",
-          "confidence": 0.7
         }
       ],
-      "gap_note_zh": "API 独占的价值集中于云所有者假设本周被验证：Qwen3.7 独占 → 阿里云 AI 收入+38%；但监管收紧同时在修剪其产品面",
-      "gap_note_en": "The proprietary-API-concentrates-value-at-the-cloud-owner hypothesis got direct confirmation: Qwen3.7 exclusivity → 38% cloud growth; regulation is simultaneously pruning the product surface"
+      "gap_note_zh": "API 独占→云所有者集中价值的假设再获验证（+38% 云收入直接引爆股价）；但若出境限制落地，Qwen 国际 API 业务反成政策人质",
+      "gap_note_en": "API-exclusivity-concentrates-value got another confirmation — the 38% cloud print detonated the stock; but if overseas-access curbs land, Qwen's international API business becomes the policy hostage"
     }
   ],
   "baskets": [
@@ -150,7 +144,7 @@
         {
           "ticker": "MSFT",
           "relation": "infra",
-          "correlation_note_zh": "GPT-5.6 成为 M365 Copilot 首选模型，OpenAI 迭代最直接传导微软产品线",
+          "correlation_note_zh": "GPT-5.6 成为 M365 Copilot 首选模型并推出 ChatGPT Work，OpenAI 迭代最直接传导微软产品线",
           "confidence": 0.8
         },
         {
@@ -180,7 +174,7 @@
         {
           "ticker": "688256.SS",
           "relation": "infra",
-          "correlation_note_zh": "寒武纪：国产开源模型普及扩大本土推理算力需求的映射标的",
+          "correlation_note_zh": "寒武纪：国产开源模型普及+智谱评估自研芯片，均指向本土推理算力需求扩张",
           "confidence": 0.5
         },
         {
@@ -198,7 +192,7 @@
         {
           "ticker": "9988.HK",
           "relation": "direct",
-          "correlation_note_zh": "Qwen3.7 API 独占直接沉淀为阿里云收入，本周盘前更新已验证",
+          "correlation_note_zh": "Qwen3.7 API 独占直接沉淀为阿里云收入，7月8日+38%云收入引爆股价已验证",
           "confidence": 0.85
         },
         {
@@ -211,27 +205,27 @@
     }
   ],
   "weeklyTake": {
-    "zh": "一周内 GPT-5.6 公发与 GLM-5.2 开源 harness 相继落地，开闭源代差进一步收窄且日益由政策而非纯技术决定。框架假设两头都拿到证据：闭源迭代→巨头链（AVGO 与苹果续约+OpenAI 芯片双催化大涨、MU 绑定 Anthropic）；API 独占→云所有者（阿里云 AI 收入+38%）。本周新变量是 SK 海力士以 265 亿美元创纪录规模登陆纳斯达克，把内存主线直接摆到美国投资者面前。",
-    "en": "GPT-5.6's public launch and Zhipu's GLM-5.2 harness landed within days — the open/closed gap keeps narrowing and is increasingly policy-set. Both transmission hypotheses got evidence: closed iterations moved the hyperscaler chain (AVGO's Apple+OpenAI double catalyst, MU's Anthropic tie-up), and API exclusivity showed up in Alibaba's 38% cloud growth. New variable: SK Hynix's record $26.5B Nasdaq debut puts the memory trade squarely in front of US investors."
+    "zh": "本周主线是「政策对称化」：华盛顿经 CAISI 附加测试放行 GPT-5.6 公发、Fable 5 全球复线的同时，北京与阿里/字节/智谱磋商限制最先进模型（含开源权重）出境——开闭源代差首次同时被两国政府定价。资本市场端：阿里云+38%单日引爆 BABA +11%，验证 API 独占→云所有者集中价值；SK 海力士登陆纳斯达克首日+13%把内存主线搬进美股，但周五 MU/SNDK 大幅回吐提醒高位波动。",
+    "en": "This week's theme is policy symmetry: as Washington cleared GPT-5.6's public launch through CAISI testing and Fable 5 redeployed globally, Beijing consulted Alibaba, ByteDance and Z.ai on restricting overseas access to frontier models including open weights — the open/closed gap is now priced by both governments. In markets, Alibaba's 38% cloud print detonated an 11% single-day move, confirming the API-exclusivity channel; SK Hynix's +13% Nasdaq debut brought the memory trade onshore, though Friday's sharp MU/SNDK giveback flags elevated volatility."
   },
   "postMemory": {
-    "as_of": "2026-07-11",
+    "as_of": "2026-07-12",
     "mode": "weekly",
     "tracks": [
       {
         "id": "T1",
-        "state_zh": "HBM 售罄至2027，HBM3E 报价上调约20%；HBM4 节奏分化：三星上量、海力士推迟至3Q26；SKHY 登陆纳斯达克",
-        "state_en": "HBM sold out through 2027, HBM3E prices up ~20%; HBM4 ramps diverge (Samsung up, SK Hynix pushed to 3Q26); SKHY listed on Nasdaq"
+        "state_zh": "HBM 供给持续紧张（HBM3E 交期20-26周）；SKHY 纳斯达克首日+13%收168.01美元；板块周内先跌入技术熊市又反弹再回吐，波动加剧",
+        "state_en": "HBM supply still tight (HBM3E lead times 20-26 weeks); SKHY debuted +13% at $168.01; the group whipsawed through a bear-market dip, rebound and Friday giveback"
       },
       {
         "id": "T2",
-        "state_zh": "CXL 池化仍处商业化早期，但互连层整体（CXL/NVLink Fusion/UALink）随 AI 集群扩张高速放量，ALAB 收入同比+93%",
-        "state_en": "CXL pooling still early-commercial, but the interconnect layer (CXL/NVLink Fusion/UALink) is scaling fast with AI clusters; ALAB revenue +93% YoY"
+        "state_zh": "CXL 池化仍处商业化早期，本周无新增专线证据；互连层整体（CXL/NVLink Fusion/UALink）随 AI 集群扩张的判断维持",
+        "state_en": "CXL pooling still early-commercial with no new track-specific evidence this week; the interconnect-scales-with-clusters view carries forward"
       },
       {
         "id": "T3",
-        "state_zh": "本周最强主线：NVIDIA ICMS/Rubin 官方化 KV-cache 下沉 NAND，NAND 合约价飙升，HBF 预计2H26送样",
-        "state_en": "Strongest track this week: NVIDIA's ICMS/Rubin formalized KV-cache offload to NAND, NAND contract prices surging, HBF sampling expected 2H26"
+        "state_zh": "NAND 合约价预计3Q26环比再涨10-15%，月度内存销售额创746亿美元纪录；但消费端承受力见顶，SNDK 周五-7%显示高估值对供给反转恐惧极敏感",
+        "state_en": "NAND contract prices projected +10-15% QoQ into 3Q26 and monthly memory sales hit a record $74.6B; but consumer affordability is capping the surge and SNDK's -7% Friday shows the fear-sensitivity of rich valuations"
       }
     ],
     "cards": [
@@ -240,11 +234,11 @@
         "tracks": ["T1", "T3"],
         "status": "updated",
         "moat_zh": "美国唯一 HBM 本土产能+政策红利；HBM 售罄至2027，16份不可撤销合同锁定超220亿美元 HBM 收入",
-        "thesis_zh": "FQ3 创纪录营收，宣布至2035年2500亿美元美国制造投入；成为 Anthropic 首选内存伙伴并共研 HBM/存储，T1 定价权与 T3 数据中心 NAND 双轮驱动",
-        "key_risk_zh": "HBM4 竞争中份额仍居第三；估值已计入超级周期，扩产潮或致2027后供给反转",
+        "thesis_zh": "FQ3 爆表后周四见顶约1214美元，周五-7%至约1130美元回吐（近月+35%）；获利了结而非论点破坏，Anthropic 首选内存伙伴关系与 T1 定价权、T3 数据中心 NAND 双轮未变",
+        "key_risk_zh": "HBM4 竞争中份额仍居第三；估值已计入超级周期，板块对供给反转恐惧高度敏感",
         "moat_en": "Only US-based HBM maker with policy tailwind; HBM sold out through 2027 with $22B+ in non-cancelable contracts",
-        "thesis_en": "Record FQ3 revenue, $250B US manufacturing commitment through 2035, and first-choice memory partner to Anthropic co-developing HBM and storage — riding both T1 pricing power and T3 datacenter NAND",
-        "key_risk_en": "Still #3 in HBM4 share; supercycle priced in, capacity additions could flip supply after 2027",
+        "thesis_en": "Peaked near $1,214 Thursday after the blowout FQ3, then gave back 7% to ~$1,130 Friday (+35% on the month) — profit-taking, not thesis damage; the Anthropic first-choice memory partnership and T1 pricing power plus T3 datacenter NAND both stand",
+        "key_risk_en": "Still #3 in HBM4 share; supercycle priced in and the group is acutely sensitive to oversupply fear",
         "catalysts": [
           {
             "what": "FQ4 2026 earnings, HBM4 ramp commentary",
@@ -253,23 +247,23 @@
           }
         ],
         "confidence": 0.75,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "SKHY",
         "tracks": ["T1", "T3"],
         "status": "updated",
-        "moat_zh": "HBM 市占约50-55%居首，为 NVIDIA HBM4 供应约三分之二；7月10日以265亿美元创外企纪录登陆纳斯达克",
-        "thesis_zh": "上市募资投向新厂与设备，HBM4E 样品提前至6-7月送样；美股流动性改善后，T1 定价权最纯粹的载体",
+        "moat_zh": "HBM 市占约50-55%居首，为 NVIDIA HBM4 供应约三分之二；265亿美元创纪录 ADR 发行获逾7倍超额认购",
+        "thesis_zh": "7月10日首日+13%收168.01美元（发行价149），验证美股对内存主线的承接力；募资投向新厂与设备，董事长称「需求巨大」；T1 定价权最纯粹的美股载体",
         "key_risk_zh": "HBM4 量产节奏推迟至3Q26，三星在 HBM4/4E 上抢跑；新股波动与解禁压力",
-        "moat_en": "HBM leader at ~50-55% share, supplying roughly two-thirds of NVIDIA's HBM4; listed on Nasdaq July 10 via a record $26.5B foreign ADS offering (ticker SKHY)",
-        "thesis_en": "IPO proceeds fund new fabs and equipment, HBM4E samples pulled forward to Jun-Jul; now the purest US-tradable vehicle for T1 pricing power with real liquidity",
+        "moat_en": "HBM leader at ~50-55% share supplying roughly two-thirds of NVIDIA's HBM4; the record $26.5B ADR offering was 7x+ oversubscribed",
+        "thesis_en": "Debuted +13% July 10, closing $168.01 vs the $149 pricing — proof of US appetite for the memory trade; proceeds fund new fabs and equipment with the chairman calling demand 'enormous'; the purest US-tradable T1 vehicle",
         "key_risk_en": "HBM4 volume ramp slipped to 3Q26 while Samsung accelerates; new-listing volatility and lockup overhang",
         "catalysts": [
           {
-            "what": "Symbol change to SKHY and regular-way Nasdaq trading",
-            "when": "2026-07-13",
-            "src": "https://www.nasdaqtrader.com/TraderNews.aspx?id=DTN2026-11"
+            "what": "Ticker switches from interim SKHYV to SKHY for regular-way Nasdaq trading",
+            "when": "2026-07-14",
+            "src": "https://www.cnbc.com/2026/07/10/sk-hynix-skhy-stock-nasdaq.html"
           },
           {
             "what": "HBM4 volume ramp",
@@ -278,12 +272,12 @@
           }
         ],
         "confidence": 0.7,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "SSNLF",
         "tracks": ["T1", "T3"],
-        "status": "updated",
+        "status": "unchanged",
         "moat_zh": "内存+代工+终端垂直一体，HBM 市占约35-40%；HBM4 销售额据报已破10亿美元，5月底率先向 NVIDIA 交付 HBM4E 样品",
         "thesis_zh": "HBM4 世代三星节奏反超（全年出货量预期上调），若持续将改写 T1 双寡头格局；NAND 端同样受益 KV-cache 需求",
         "key_risk_zh": "OTC ADR 流动性极差，美股敞口工具性弱；HBM 良率与客户认证仍是执行风险",
@@ -298,12 +292,12 @@
           }
         ],
         "confidence": 0.6,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "ALAB",
         "tracks": ["T2"],
-        "status": "updated",
+        "status": "unchanged",
         "moat_zh": "智能互连平台横跨 CXL/PCIe/Ethernet/NVLink Fusion/UALink + COSMOS 软件栈，AI 集群扩张的连接层收税人",
         "thesis_zh": "收入同比+93%创纪录，7月初随板块反弹大涨；CXL 池化商业化的最直接上市标的，且不押注单一协议",
         "key_risk_zh": "估值极高；互连协议路线之争（NVLink 私有生态 vs 开放 CXL/UALink）可能重排份额",
@@ -318,12 +312,12 @@
           }
         ],
         "confidence": 0.7,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "MRVL",
         "tracks": ["T2"],
-        "status": "updated",
+        "status": "unchanged",
         "moat_zh": "定制 AI 硅+互连双线：获 NVIDIA 20亿美元投资并纳入 NVLink 生态，数据中心占收入76%",
         "thesis_zh": "50+定制 AI 设计机会、FY29 定制芯片收入目标超100亿美元；3nm XPU 今年量产，内存墙时代互连与近内存定制逻辑的关键卖铲人",
         "key_risk_zh": "7月初涨后显疲态；定制芯片项目集中度高，单客户流失冲击大",
@@ -338,12 +332,12 @@
           }
         ],
         "confidence": 0.65,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "PSTG",
         "tracks": ["T3"],
-        "status": "updated",
+        "status": "unchanged",
         "moat_zh": "已更名 Everpure（2026-02-23 生效，NYSE 代码 PSTG 不变）：全闪存平台转向企业 AI 数据管理，并购 1touch，单季营收首破10亿美元",
         "thesis_zh": "KV-cache 下沉与推理数据分层利好高性能全闪存阵列；更名标志从存储商转向 AI 数据基础设施定位",
         "key_risk_zh": "超大规模客户自建存储侵蚀高端需求；转型叙事需要收入结构证实",
@@ -358,18 +352,18 @@
           }
         ],
         "confidence": 0.6,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "SNDK",
         "tracks": ["T3"],
         "status": "updated",
         "moat_zh": "NAND 纯度最高标的之一：营收同比+251%至60亿美元，毛利率78.4%；5份长约覆盖 FY27 约1/3产能，Stargate QLC SSD 商用",
-        "thesis_zh": "KV-cache 使 NAND 成为 AI 数据中心最大增量需求，2026年数据中心将成 NAND 第一大终端；HBF（高带宽闪存）2H26送样打开 T1 邻接空间",
-        "key_risk_zh": "6月暴涨后深度回调，市场质疑高毛利在新产能投放下的持续性",
+        "thesis_zh": "周五-7%至约2176美元（近月仍+47%）：合约价3Q26预计再涨10-15%的基本面与获利了结的股价背离；KV-cache 使数据中心2026年成 NAND 第一大终端的论点未变",
+        "key_risk_zh": "消费端承受力见顶或使涨价周期提前降温；高毛利在新产能投放下的持续性存疑",
         "moat_en": "One of the purest NAND plays: revenue +251% YoY to $6.0B at 78.4% gross margin; five LTAs covering ~1/3 of FY27 bits, Stargate QLC SSDs shipping",
-        "thesis_en": "KV-cache offload makes NAND the AI datacenter's biggest incremental demand — datacenters become NAND's #1 end market in 2026; HBF sampling in 2H26 opens an HBM-adjacent lane",
-        "key_risk_en": "Sharp post-rally selloff; market questions whether record margins survive new capacity additions",
+        "thesis_en": "Fell 7% Friday to ~$2,176 (still +47% on the month) — price action diverging from fundamentals as NAND contract prices are projected up another 10-15% QoQ in 3Q26; the KV-cache-makes-datacenter-NAND's-#1-market thesis stands",
+        "key_risk_en": "Consumer affordability hitting its ceiling could cool the pricing cycle early; record margins under new capacity remain in question",
         "catalysts": [
           {
             "what": "High Bandwidth Flash (HBF) sampling",
@@ -378,17 +372,17 @@
           }
         ],
         "confidence": 0.65,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "AVGO",
         "tracks": ["T2"],
-        "status": "updated",
+        "status": "unchanged",
         "moat_zh": "定制 ASIC + 交换/互连双垄断位：六大定制芯片客户（含 OpenAI/Anthropic/Meta/谷歌），下季 AI 收入指引约160亿美元（同比+200%+）",
-        "thesis_zh": "本周双催化：与苹果续约至2031、与 OpenAI 共研推理芯片 Jalapeño 年底上架；内存池化所需的 PCIe/CXL 交换与光互连是其腹地",
+        "thesis_zh": "上周双催化：与苹果续约至2031、与 OpenAI 共研推理芯片 Jalapeño 年底上架；内存池化所需的 PCIe/CXL 交换与光互连是其腹地",
         "key_risk_zh": "AI 收入集中于少数超大客户；客户自研芯片能力内化是长期反噬风险",
         "moat_en": "Dual lock on custom ASICs and switching/interconnect: six custom-chip customers including OpenAI, Anthropic, Meta and Google; ~$16B next-quarter AI revenue guide (+200% YoY)",
-        "thesis_en": "Double catalyst this week: Apple partnership extended through 2031 and the OpenAI co-developed Jalapeño inference chip racks deploying late this year; PCIe/CXL switching and optical interconnect for pooled memory is home turf",
+        "thesis_en": "Last week's double catalyst: Apple partnership extended through 2031 and the OpenAI co-developed Jalapeño inference chip racks deploying late this year; PCIe/CXL switching and optical interconnect for pooled memory is home turf",
         "key_risk_en": "AI revenue concentrated in a handful of hyperscalers; customers internalizing design capability is the long-term counter-risk",
         "catalysts": [
           {
@@ -398,12 +392,12 @@
           }
         ],
         "confidence": 0.75,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "TER",
         "tracks": ["T1"],
-        "status": "updated",
+        "status": "unchanged",
         "moat_zh": "HBM 堆叠使 DRAM 测试强度倍增，测试机是 T1 扩产的隐性受益人；2026年内股价已翻倍有余",
         "thesis_zh": "美光创纪录季度后 HBM 测试订单预期升温（Cantor 目标价550）；7月2日单日-13.6%的板块恐慌显示高贝塔属性，论点未变但波动加剧",
         "key_risk_zh": "无业绩支撑的估值扩张；内存资本开支若因供给过剩担忧收缩，订单弹性反噬",
@@ -418,17 +412,17 @@
           }
         ],
         "confidence": 0.6,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       },
       {
         "ticker": "RMBS",
         "tracks": ["T1", "T2"],
-        "status": "updated",
+        "status": "unchanged",
         "moat_zh": "内存接口芯片+IP 授权双引擎；新发布 SOCAMM2 芯片组把 LPDDR5X 引入 AI 服务器内存模组，卡位低功耗高带宽新形态",
-        "thesis_zh": "DDR5 9600 RDIMM 与 LPDDR 服务器模组家族使其在 DRAM 代际升级和 CXL 控制器两条线均有敞口；本周波动大（7/7 -6.3%、7/8 +3.5%）",
+        "thesis_zh": "DDR5 9600 RDIMM 与 LPDDR 服务器模组家族使其在 DRAM 代际升级和 CXL 控制器两条线均有敞口；上周波动大（7/7 -6.3%、7/8 +3.5%）",
         "key_risk_zh": "多家估值模型提示高估约30%；接口芯片竞争（澜起等）与授权收入周期性",
         "moat_en": "Memory interface chips plus IP licensing; the new SOCAMM2 chipset brings LPDDR5X into AI-server memory modules, staking out the low-power high-bandwidth form factor",
-        "thesis_en": "DDR5 9600 RDIMM chipsets and the LPDDR server-module family give exposure to both DRAM generation upgrades and CXL controllers; choppy week (-6.3% Jul 7, +3.5% Jul 8)",
+        "thesis_en": "DDR5 9600 RDIMM chipsets and the LPDDR server-module family give exposure to both DRAM generation upgrades and CXL controllers; choppy prior week (-6.3% Jul 7, +3.5% Jul 8)",
         "key_risk_en": "Multiple valuation models flag ~30% overvaluation; interface-chip competition (Montage et al.) and licensing cyclicality",
         "catalysts": [
           {
@@ -438,10 +432,10 @@
           }
         ],
         "confidence": 0.6,
-        "last_reviewed": "2026-07-11"
+        "last_reviewed": "2026-07-12"
       }
     ],
-    "take_zh": "内存墙叙事本周三线共振：T1 端 HBM 售罄+提价、SKHY 以创纪录 IPO 把主线搬进美股；T3 端 NVIDIA 官方化 KV-cache 下沉 NAND，成为增长最快主线；T2 互连层随集群扩张放量。但7月初板块单日两位数暴跌提醒：供给反转恐惧与高估值使该主题波动显著放大。首次建卡，全部标的以本周证据初始化。",
-    "take_en": "The memory-wall thesis fired on all three tracks this week: T1's sold-out HBM and price hikes plus SKHY's record IPO bringing the trade onshore; T3 becoming the fastest-moving track as NVIDIA formalized KV-cache-to-NAND; T2 interconnect scaling with clusters. Early-July's double-digit single-day drawdowns are the caveat — oversupply fear plus rich valuations mean elevated volatility. First full card build; all names initialized from this week's evidence."
+    "take_zh": "SKHY 首日+13%完成内存主线的美股「登陆战」，但周内板块两度大幅回吐（MU/SNDK 周五各-7%）确认了新常态：基本面（HBM 交期20-26周、NAND 合约价3Q26再涨10-15%、月度销售额创纪录）与股价波动脱钩，获利了结与供给反转恐惧主导短线。十张论点卡三张因价格证据更新（MU/SKHY/SNDK），其余未变；无换股提议。",
+    "take_en": "SKHY's +13% debut completed the memory trade's US landing, but two sharp intra-week givebacks (MU and SNDK both -7% Friday) confirm the new regime: fundamentals (20-26 week HBM lead times, NAND contracts up another 10-15% into 3Q26, record monthly sales) are decoupling from price action as profit-taking and oversupply fear drive the tape. Three of ten cards updated on price evidence (MU/SKHY/SNDK), the rest unchanged; no swap proposals."
   }
 }
