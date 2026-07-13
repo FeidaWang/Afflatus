@@ -24,6 +24,9 @@ import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
 import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
 import { activePhase, msUntilPhase, msRemaining } from '../combat/weaponClock.js';
 import { createLaunchPath, createLandingPath } from '../combat/flightPath.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 // U23 M1 (2026-07-13): the camera director rig is now the DEFAULT (was
 // opt-in via ?combatcam=director since V14). ?combatcam=tactical opts back
@@ -72,6 +75,48 @@ export function createTopdownCombat({ canvas }) {
   camera.position.copy(CAM);
   camera.lookAt(0, 2, -2);
 
+  // ── U25a post-processing (owner adjudication 2026-07-13: desktop on,
+  //    mobile off — no M0 baseline yet, so ≤860px / low-memory devices keep
+  //    the plain render path untouched). Pattern lifted from alphardForge's
+  //    production-proven composer; ACES tone mapping + UnrealBloom only,
+  //    no film grain (this canvas sits under a 2D HUD blit already). ──────
+  const POST_FX = (() => {
+    try {
+      if (REDUCED_MOTION) return false;
+      if (matchMedia('(max-width: 860px)').matches) return false;
+      if (navigator.deviceMemory !== undefined && navigator.deviceMemory <= 4) return false;
+      return true;
+    } catch (e) { return false; }
+  })();
+  let composer = null, bloomPass = null, bloomPulse = 0;
+  if (POST_FX) {
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.06;
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.6, 0.55); // strength, radius, threshold
+    composer.addPass(bloomPass);
+  }
+  // camera impact shake: impulse fed by big booms, applied around render only
+  let shakeMag = 0;
+  const shakeOffset = new THREE.Vector3();
+  function applyShake() {
+    if (shakeMag < 0.01) { shakeMag = 0; shakeOffset.set(0, 0, 0); return; }
+    shakeOffset.set((Math.random() - 0.5) * shakeMag, (Math.random() - 0.5) * shakeMag * 0.6, (Math.random() - 0.5) * shakeMag);
+    camera.position.add(shakeOffset);
+    shakeMag *= 0.86;
+  }
+  function renderFrame() {
+    applyShake();
+    if (composer) {
+      if (bloomPass) { bloomPass.strength = 0.55 + bloomPulse * 0.75; bloomPulse *= 0.9; }
+      composer.render();
+    } else {
+      renderer.render(scene, camera);
+    }
+    camera.position.sub(shakeOffset); // undo — don't feed jitter into the director's damping
+  }
+
   // ── camera director (V14, opt-in via ?combatcam=director) ───────────────
   // Shot compute functions read live scene objects via closure (capital,
   // comet, fighters are declared further below but are in scope by the time
@@ -86,7 +131,7 @@ export function createTopdownCombat({ canvas }) {
   // accel is derived from consecutive analytic velocities, only consumed by
   // chaseLaunch's FOV/banking so light smoothing needs are already covered
   // by the director's own smoothDamp.
-  let flightEvent = null, pendingFlightKind = null;
+  let flightEvent = null, pendingFlightKind = null, flightLastPhase = null;
   let flightLastPos = null, flightLastVel = null, flightPrevVel = null, flightPrevT = 0;
   let flightAccelV = { x: 0, y: 0, z: 0 };
   let flybyAnchor = null;
@@ -523,6 +568,9 @@ export function createTopdownCombat({ canvas }) {
     scene.add(m);
     tracers.push({ m, life: 1, from: from.clone(), to: to.clone() });
     orient(m, from, to);
+    // U25a: muzzle flash — sprite only (no light: tracers fire ~9x/second)
+    const mf = sprite(color, 1.6, 0.9); mf.position.copy(from); scene.add(mf);
+    flashes.push({ s: mf, life: 1 });
   }
   function orient(m, a, b) {
     const mid = a.clone().add(b).multiplyScalar(0.5);
@@ -533,10 +581,32 @@ export function createTopdownCombat({ canvas }) {
   }
 
   const explosions = [];
+  // U25a: shockwave rings + debris sparks + muzzle flashes (cheap pools, no
+  // extra lights — the existing per-boom PointLight already carries the glow)
+  const rings = [], sparks = [], flashes = [];
+  const ringGeo = new THREE.RingGeometry(0.86, 1.0, 40);
   function boom(pos, scale = 1, color = 0xffd9a0) {
     const s = sprite(color, 4 * scale, 1); s.position.copy(pos); scene.add(s);
     const fl = new THREE.PointLight(color, 12, 40); fl.position.copy(pos); scene.add(fl);
     explosions.push({ s, fl, life: 1, scale });
+    if (scale >= 1.5) {
+      // expanding shockwave ring (billboarded toward the camera each frame)
+      const rm = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({
+        color, transparent: true, opacity: 0.85, side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending, depthWrite: false,
+      }));
+      rm.position.copy(pos); scene.add(rm);
+      rings.push({ m: rm, life: 1, scale });
+      // debris sparks: radial burst, decaying velocity
+      const n = 6 + (scale >= 3 ? 6 : 0);
+      for (let k = 0; k < n; k++) {
+        const sp = sprite(0xffe9c4, 0.9, 1); sp.position.copy(pos); scene.add(sp);
+        const th = Math.random() * Math.PI * 2, up = (Math.random() - 0.35) * 0.8;
+        const spd = (0.28 + Math.random() * 0.34) * scale;
+        sparks.push({ s: sp, v: new THREE.Vector3(Math.cos(th) * spd, up * spd, Math.sin(th) * spd), life: 1 });
+      }
+    }
+    if (scale >= 2.5) shakeMag = Math.min(0.9, shakeMag + scale * 0.16); // impact kick
   }
 
   const missiles = [];
@@ -586,6 +656,7 @@ export function createTopdownCombat({ canvas }) {
     const dpr = Math.min(1.75, window.devicePixelRatio || 1); // cap for retina GPU load
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
+    if (composer) { composer.setPixelRatio(dpr); composer.setSize(W, H); if (bloomPass) bloomPass.setSize(W * dpr, H * dpr); }
     camera.aspect = W / H; camera.updateProjectionMatrix();
   }
 
@@ -656,7 +727,7 @@ export function createTopdownCombat({ canvas }) {
       }
     }
     // shot feeds + analytic accel (from consecutive analytic velocities)
-    flightLastPos = smp.pos; flightLastVel = smp.vel;
+    flightLastPos = smp.pos; flightLastVel = smp.vel; flightLastPhase = smp.phase;
     if (flightPrevVel) {
       const dt = Math.max(0.001, (nowMs - flightPrevT) / 1000);
       flightAccelV = {
@@ -697,6 +768,7 @@ export function createTopdownCombat({ canvas }) {
       else if (state.killCount > lastKillSeen) {
         lastKillSeen = state.killCount;
         boom(cometPos.clone(), 4, 0xffe6b0);
+        bloomPulse = 1; // U25a: confirmed kill = one bloom surge (desktop FX path)
       }
     }
     // real-destroyed tie-in: hide the comet while the real halley is down,
@@ -817,6 +889,28 @@ export function createTopdownCombat({ canvas }) {
       ex.fl.intensity = Math.max(0, ex.life * 12);
       if (ex.life <= 0) { scene.remove(ex.s); scene.remove(ex.fl); ex.s.material.dispose(); explosions.splice(i, 1); }
     }
+    // U25a: shockwave rings (billboard + expand + fade)
+    for (let i = rings.length - 1; i >= 0; i--) {
+      const rg = rings[i]; rg.life -= 0.045;
+      const sc = (1 - rg.life) * 10 * rg.scale + 1.5;
+      rg.m.scale.set(sc, sc, 1);
+      rg.m.lookAt(camera.position);
+      rg.m.material.opacity = Math.max(0, rg.life * 0.85);
+      if (rg.life <= 0) { scene.remove(rg.m); rg.m.material.dispose(); rings.splice(i, 1); }
+    }
+    // U25a: debris sparks (radial drift, decaying)
+    for (let i = sparks.length - 1; i >= 0; i--) {
+      const sk = sparks[i]; sk.life -= 0.04;
+      sk.s.position.add(sk.v); sk.v.multiplyScalar(0.93);
+      sk.s.material.opacity = Math.max(0, sk.life);
+      if (sk.life <= 0) { scene.remove(sk.s); sk.s.material.dispose(); sparks.splice(i, 1); }
+    }
+    // U25a: muzzle flashes (two-三帧即灭)
+    for (let i = flashes.length - 1; i >= 0; i--) {
+      const fx = flashes[i]; fx.life -= 0.34;
+      fx.s.material.opacity = Math.max(0, fx.life * 0.9);
+      if (fx.life <= 0) { scene.remove(fx.s); fx.s.material.dispose(); flashes.splice(i, 1); }
+    }
 
     // camera: director-driven shot state machine when ?combatcam=director is
     // set (ROADMAP §4 V14); otherwise the original hardcoded sway, unchanged.
@@ -843,7 +937,7 @@ export function createTopdownCombat({ canvas }) {
   function loop(now) {
     if (!t0) t0 = now;
     update(now);
-    renderer.render(scene, camera);
+    renderFrame();
     if (running) raf = requestAnimationFrame(loop);
   }
 
@@ -876,7 +970,7 @@ export function createTopdownCombat({ canvas }) {
     // state: optional real-battle snapshot (see main.js getBattleSnapshot()).
     // Consumed for kill flashes + comet visibility; full state-driven flight
     // path is a separate follow-up (ROADMAP §4 Phase 2b).
-    renderOnce(now = performance.now(), state = null) { if (!t0) t0 = now; update(now, state); renderer.render(scene, camera); },
+    renderOnce(now = performance.now(), state = null) { if (!t0) t0 = now; update(now, state); renderFrame(); },
     driveMissileTimeline,
     // U24 (24c consumes this): start a launch or landing lifecycle on the
     // lead fighter. Ignored (returns false) while another event is live —
@@ -888,6 +982,31 @@ export function createTopdownCombat({ canvas }) {
       if (!t0) { pendingFlightKind = kind; return true; }
       startFlight(kind, performance.now());
       return true;
+    },
+    // U25b: real 3D→screen projections for the 2D HUD info layer. Every
+    // number here is derived from live scene objects — the overlay draws
+    // brackets ON the actual target instead of a synthetic track point.
+    getHudFeeds() {
+      const _v = new THREE.Vector3();
+      const project = (obj) => {
+        _v.setFromMatrixPosition(obj.matrixWorld);
+        const dist = camera.position.distanceTo(_v);
+        _v.project(camera);
+        const behind = _v.z > 1;
+        return {
+          x: _v.x * 0.5 + 0.5, y: -_v.y * 0.5 + 0.5, dist, behind,
+          on: !behind && _v.x > -1.02 && _v.x < 1.02 && _v.y > -1.02 && _v.y < 1.02,
+        };
+      };
+      return {
+        target: comet.visible ? project(comet) : null,
+        fighters: fighters.map((f, i) => ({
+          ...project(f), id: i + 1,
+          flight: (flightEvent && i === 0) ? flightLastPhase : null,
+        })),
+        fov: Math.round(camera.fov),
+        shot: camDirector ? camDirector.currentShotId : 'tactical',
+      };
     },
     destroy() { this.stop(); renderer.dispose(); }
   };
