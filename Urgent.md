@@ -321,6 +321,13 @@
 - [ ] ③ starfield Worker 线是否保留为 T1 兜底（RFC 建议保留）。
 - [ ] 裁决通过后：新会话「读 Urgent.md U23 + RFC，开工 M1」。
 
+### U23 M1 · 首页战斗场景默认 3D 化 ✅ 代码已完成（2026-07-13，站主指令「首页太空战斗转 3D，开始向新页面风格迁移」，已推送 `5a855ac`）
+
+- [x] **默认值翻转**（RFC M1 原样施工）：`combatViewTopdown()` 改为默认 true（`?combatview=2d` 持久化退路，`localStorage afflatus-combatview` 机制沿用）；`combatCamDirector()`（main.js）与 `cameraDirectorEnabled()`（topdownCombat.js）同步改为默认 true，`?combatcam=tactical` 退回固定战术相机。一个 `?combatview=2d` flag 即可整体还原旧体验（导弹 drawMissileCine 分支含在内）。2D HMD/SC 皮肤代码零删除，只降级为退路。
+- [x] **boot.html 自动进舰桥**：删「点击进入舰桥」按钮，自检序列完成（进度条是真任务门控，走完即全部就绪）后 700ms 自动移交舰桥（`prefers-reduced-motion` 直接进）；boot.js 的 director 注入随 M1 默认化删除（本次改动产生的孤儿）。
+- [x] 验证：535/535 vitest、构建干净、`!important` 基线未动。
+- [ ] **站主真机复核**：首页 Command 模式 Combat View 应直接出 3D 俯视战场+导演运镜；`?combatview=2d` 应完整回到旧 2D HMD；boot.html 应无按钮自动进入。低端设备帧率关注一下——M1 是 T 档探针（M2/M0）落地前的先行军，如有卡顿反馈记回本节。
+
 ### U23-C · 方案 C 原型试做 ✅ 代码已完成（2026-07-13，站主指令「试试看全游戏化 boot」）
 
 RFC 否决的是「C 替换默认首页」；站主要求**体验一下 C**，故按可抛弃原型实施，生产路径零改动：
