@@ -33,7 +33,6 @@ import {
   impactSparks as hmdSparks,
 } from './ui/hmdMinimal.js';
 import { createCombatHmdV3, drawCockpitFrame, drawSCZoomScope } from './ui/combatHmdV3.js';
-import { drawTacticalOverlay } from './ui/tacticalOverlay.js';
 import { createCombatViewState } from './ui/combatView.js';
 import { initMarketDeck } from './ui/marketDeck.js';
 import { createPageTurnController } from './ui/pageTurn.js';
@@ -3183,8 +3182,7 @@ function drawPilotFeed(now){
         td.requestFlightEvent(mode); // ignored if a lifecycle is already live (24d)
       }
       td.resize(w,h);
-      const snap=getBattleSnapshot();
-      td.renderOnce(now,snap);
+      td.renderOnce(now,getBattleSnapshot());
       ctx.save();
       const j=mode==='combat'?0.6:0;
       if(j) ctx.translate(rand(-j,j),rand(-j,j));
@@ -3194,14 +3192,7 @@ function drawPilotFeed(now){
         :mode==='landing'?(currentLang==='zh'?'进近回收 · 塔台机位':'RECOVERY · TOWER CAM')
         :(currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL');
       if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
-      else {
-        // U25b: real-projection info layer replaces the synthetic HMD pass in
-        // the 3D branch — brackets sit on actual scene objects (charter ②).
-        // The 2D HMD (drawPilotHmd) still owns every non-topdown mode and the
-        // full ?combatview=2d path, unchanged.
-        drawTacticalOverlay(ctx,w,h,now,td.getHudFeeds?td.getHudFeeds():null,snap,hmdLabel);
-        drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash()); /* V17: console after the HMD pass, same draw-order fix */
-      }
+      else { drawPilotHmd(ctx,w,h,now,hmdLabel,'combat'); drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash()); /* V17: console after the HMD pass, same draw-order fix */ }
       return;
     }
   }
