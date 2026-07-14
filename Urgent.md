@@ -1,5 +1,20 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U26 · `.git` 锁文件残留链式故障 — 已根治（2026-07-14，站主报告「commit/reset/stash/pull 间歇性全部失败」）
+
+**根因确诊**：本仓库挂载在 FUSE 层（`mount` 确认 `type fuse`）。Git 每次写 `HEAD`/`index`/`ORIG_HEAD` 等文件前会先创建同名 `.lock` 文件占位，正常操作完成后自己 `rename()` 回原名并删除锁。但在这层 FUSE 挂载上，`.lock` 文件一旦被**另一个并发进程**（本仓库有 8 个 Scheduled 任务，经常在几分钟内先后触发同一 repo 的 git 操作）持有，unlink 会报 `Operation not permitted`（不是 `Permission denied`——是 FUSE 转发层对跨会话/跨进程句柄的锁语义问题，不是常规 Unix 权限）。**过去多轮会话遇到这个报错时，一律用 `mv .git/xxx.lock .git/xxx.lock.bak_<timestamp/后缀>` 绕过**，而不是真正解除锁——这是止血但不断根的做法，每次都在 `.git/` 里留下一具尸体，日积月累变成本次发现的规模。
+- **top-level**：287 个 `HEAD.lock.*`/`index.lock.*`/`ORIG_HEAD.lock.*`/`REBASE_HEAD.lock.*`/`packed-refs.lock.*` 变体（`.bak_数字`/`.pre_数字`/`.stale`/`.orphan`/`.cleared_数字`/`.retry_数字`……命名花样能看出是不同轮次、不同即兴脚本各自发明的绕过写法）。
+- **`.git/objects/` 深处**：1033 个 `tmp_obj_XXXXXX.bak_*`（`mv` 绕过殃及池鱼）+ 451 个裸 `tmp_obj_XXXXXX`（git 自己写对象时被同一 FUSE 锁问题打断、从未清理，`git count-objects -v` 能直接看到 `garbage:` 计数）。
+- 唯一一个非空文件 `index.lock.bak_1783332885`（17KB，`git index version 2, 182 entries`）经核实是某次 `mv` 保下来的历史索引快照，不是当前 `.git/index`（当前 index 完好、`git status`/`git log` 全程正常），确认可删。
+
+**本次处置**：
+- [x] 定位并清除全部 287（top-level）+ 1033（`.bak` 变体）+ 451（裸 `tmp_obj`）= **共 1771 个残留文件**，`.git/objects` 的 `garbage` 计数由 451 清零至 0。
+- [x] `git fsck` 全程复核：无 `missing`/`corrupt`，仅剩历史 amend/rebase 产生的正常 `dangling commit/tree`（无害，`git gc` 会自然回收，不影响任何操作）。
+- [x] 清理后跑 `git status`/`git log`/一次 `touch+rm` 锁文件冒烟测试，确认 commit/push 链路未受影响（同会话内已用于 U25 revert 提交，`643d1cb`/`fb222b4` 均正常推送）。
+- [x] **真正的根治手段**：Cowork 环境内置 `mcp__cowork__allow_cowork_file_delete` 工具——遇到 FUSE `Operation not permitted` 时调用它请求该文件夹的删除权限，随后 `rm -f` 就能正常删除锁文件，不需要 `mv` 绕过。本会话已验证生效（清理全过程零报错）。
+- [ ] **需要写进 Scheduled 任务的纪律（沙盒读不到 `/Users/feida/Claude/Scheduled/*/SKILL.md`，需站主自己改）**：任务 prompt 里如果有「git 操作失败时 `mv` 锁文件绕过」这类兜底逻辑，**改成遇锁等待重试**（`.lock` 是另一进程正在写的信号，等它写完文件会自己消失）或**明确失败后跳过本轮**，禁止再用 `mv` 重命名锁文件——这是过去两周残留物的唯一制造源头，本次清理不堵住这个口子还会再堆起来。
+- [ ] 站主决策：是否要偶尔跑一次 `git gc` 收拢历史 dangling 对象（`.git` 当前 56MB，`gc` 前）——非必需，纯优化项，本次不动。
+
 > **状态速览（2026-07-13 收编：原状态长段落压缩为下表，无信息损失；KNOWLEDGE.md 立项时整理）**
 >
 > | 项 | 状态 | 悬而未决 |
