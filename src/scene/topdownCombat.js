@@ -25,6 +25,35 @@ import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
 import { activePhase, msUntilPhase, msRemaining } from '../combat/weaponClock.js';
 import { createLaunchPath, createLandingPath } from '../combat/flightPath.js';
 
+// ── U27 (27b-3): Stellaris-style atmospheric nebula backdrop ────────────
+// A single low-poly (icosahedron, subdiv 2 = 320 tris) BackSide dome, one
+// draw call, no post-processing dependency (works with POST_FX on or off).
+// Self-contained GLSL (not shared with alphardForge's vortex shader — that
+// one is a different composition, a foreground centerpiece, not a distant
+// backdrop; duplicating a few lines of hash/fbm here is cheaper than
+// coupling two unrelated visual systems). Colour is deliberately
+// low-saturation per charter §22a (Homeworld: background never competes
+// with the battle) — this reads at the edges of tacticalTopdown and fills
+// more of the frame in the near-horizontal chaseCam/flybyCam shots.
+const NEB_DOME_VERT = `varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`;
+const NEB_DOME_FRAG = `
+precision mediump float;
+varying vec3 vDir;
+uniform float uTime;
+float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
+float noise(vec2 p){ vec2 i=floor(p),f=fract(p); float a=hash(i),b=hash(i+vec2(1.,0.)),c=hash(i+vec2(0.,1.)),d=hash(i+vec2(1.,1.)); vec2 u=f*f*(3.-2.*f); return mix(mix(a,b,u.x),mix(c,d,u.x),u.y); }
+float fbm(vec2 p){ float v=0.,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }
+void main(){
+  vec2 uv = vec2(atan(vDir.z, vDir.x), vDir.y) * vec2(1.1, 1.6);
+  float band = fbm(uv * 1.4 + vec2(uTime * 0.004, 0.0));
+  float wisp = fbm(uv * 3.1 - vec2(0.0, uTime * 0.003));
+  float horizon = smoothstep(0.55, -0.15, vDir.y); // denser near the "horizon", thin overhead
+  vec3 deep = vec3(0.02, 0.035, 0.07), teal = vec3(0.06, 0.12, 0.16), violet = vec3(0.08, 0.05, 0.12);
+  vec3 col = mix(deep, teal, smoothstep(0.2, 0.75, band) * horizon);
+  col = mix(col, violet, smoothstep(0.4, 0.9, wisp) * horizon * 0.5);
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
 // U23 M1 (2026-07-13): the camera director rig is now the DEFAULT (was
 // opt-in via ?combatcam=director since V14). ?combatcam=tactical opts back
 // into the original hardcoded camera sway.
@@ -223,6 +252,19 @@ export function createTopdownCombat({ canvas }) {
   }
 
   // ── lighting ───────────────────────────────────────────────────────────
+  // U27 (27b-3): opt-in via ?nebula=1 — cheap enough (1 draw call, 320 tris,
+  // no lights/shadows) to allow on both desktop and mobile, unlike POST_FX.
+  const NEBULA_ON = (() => { try { return /[?&]nebula=1\b/.test(location.search); } catch (e) { return false; } })();
+  const nebUniforms = { uTime: { value: 0 } };
+  if (NEBULA_ON) {
+    const dome = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(220, 2),
+      new THREE.ShaderMaterial({ vertexShader: NEB_DOME_VERT, fragmentShader: NEB_DOME_FRAG, uniforms: nebUniforms, side: THREE.BackSide, depthWrite: false, fog: false })
+    );
+    dome.renderOrder = -10;
+    scene.add(dome);
+  }
+
   scene.add(new THREE.AmbientLight(0x2a3850, 1.4));
   const key = new THREE.DirectionalLight(0xbcd4ff, 1.5); key.position.set(20, 60, 30); scene.add(key);
   const rim = new THREE.DirectionalLight(0x4d7bd6, 0.8); rim.position.set(-30, 20, -30); scene.add(rim);
@@ -321,6 +363,32 @@ export function createTopdownCombat({ canvas }) {
     return nh.group;
   }
   const fighters = [makeFighter(), makeFighter(), makeFighter()];
+
+  // ── U27 (27b-2): Homeworld-style tactical lines — opt-in via ?tacticalines=1
+  // (owner adjudication 2026-07-14: flag-gated, default off, no verification-
+  // backlog exposure per R3 exception). Two LineSegments pools, one draw call
+  // each: formation lines (wingman → wingman → capital, so the ring reads as
+  // a formation instead of three independent orbits) and a target-lock lead
+  // line (capital → comet) only while a real lock is active. Thin, dim,
+  // additive — information, not decoration (charter③ 运动即信息).
+  const TACTICAL_LINES = (() => {
+    try { return /[?&]tacticalines=1\b/.test(location.search); } catch (e) { return false; }
+  })();
+  let formationLines = null, lockLine = null;
+  if (TACTICAL_LINES) {
+    const flMat = new THREE.LineBasicMaterial({ color: 0x6fb8d8, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false });
+    const flGeo = new THREE.BufferGeometry();
+    flGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array((fighters.length + 1) * 2 * 3), 3));
+    formationLines = new THREE.LineSegments(flGeo, flMat);
+    formationLines.frustumCulled = false;
+    scene.add(formationLines);
+    const lkMat = new THREE.LineDashedMaterial({ color: 0xffcf8a, transparent: true, opacity: 0.4, dashSize: 1.4, gapSize: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
+    const lkGeo = new THREE.BufferGeometry();
+    lkGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(2 * 3), 3));
+    lockLine = new THREE.Line(lkGeo, lkMat);
+    lockLine.visible = false;
+    scene.add(lockLine);
+  }
 
   // ── shared scratch objects for the two per-frame instanced systems below
   // (trail ribbons + dust streaks) — both loop over dozens of instances every
@@ -679,6 +747,7 @@ export function createTopdownCombat({ canvas }) {
 
   function update(now, state) {
     const t = (now - t0) / 1000;
+    if (NEBULA_ON) nebUniforms.uTime.value = now;
     if (pendingFlightKind) { startFlight(pendingFlightKind, now); pendingFlightKind = null; }
     const alive = !state || !state.halley || !state.halley.destroyed;
 
@@ -725,6 +794,34 @@ export function createTopdownCombat({ canvas }) {
       f.rotateX(Math.PI / 2);
       if (f.userData.nh) f.userData.nh.tick(t);
     });
+
+    // U27 (27b-2): update tactical line vertex buffers from the REAL
+    // (post-movement) fighter/capital/comet positions computed just above —
+    // reads live objects, invents nothing (charter②).
+    if (TACTICAL_LINES) {
+      const pos = formationLines.geometry.attributes.position.array;
+      let o = 0;
+      for (let i = 0; i < fighters.length; i++) {
+        const a = fighters[i].position, b = fighters[(i + 1) % fighters.length].position;
+        pos[o++] = a.x; pos[o++] = a.y; pos[o++] = a.z;
+        pos[o++] = b.x; pos[o++] = b.y; pos[o++] = b.z;
+      }
+      const cp = capital.position;
+      pos[o++] = cp.x; pos[o++] = cp.y + 1; pos[o++] = cp.z;
+      pos[o++] = fighters[0].position.x; pos[o++] = fighters[0].position.y; pos[o++] = fighters[0].position.z;
+      formationLines.geometry.attributes.position.needsUpdate = true;
+
+      const locked = alive && !!(state && state.halley && state.halley.hover);
+      lockLine.visible = locked;
+      if (locked) {
+        const lp = lockLine.geometry.attributes.position.array;
+        const cp2 = capital.position;
+        lp[0] = cp2.x; lp[1] = cp2.y + 2; lp[2] = cp2.z;
+        lp[3] = cometPos.x; lp[4] = cometPos.y; lp[5] = cometPos.z;
+        lockLine.geometry.attributes.position.needsUpdate = true;
+        lockLine.computeLineDistances();
+      }
+    }
 
     // tracer cadence — only aim new fire at the comet while it's alive
     if (alive && now - lastFire > 110) {
