@@ -51,6 +51,8 @@
 - **技术移交（两阶段）**：**Phase 1（现在可做）**——首页顶栏加「BRIDGE SIM」入口 → 跨文档 View Transitions（全站 @view-transition 已启用）滑入 boot.html；boot 自检完成自动进舰桥（已实现）；EXIT SIM 同路返回。boot.html 转正需同步办三件事：去 noindex、进 sitemap、按 roadmap C5 规则补第 N 页评估（现在是豁免的一次性原型）。**Phase 2（并入 U23 M2）**——boot 的 3D 场景与首页 Combat View 本就是同一个 `createTopdownCombat`，M2 单 renderer 舞台落地后，移交从「页面跳转」升级为「同 canvas 相机 shot 切换」，boot 变成首页的一个状态而非独立页面。
 - **无缝细节**：转场动画用跃迁语言（白闪+星线拉伸，CSS view-transition 关键帧）；进度条已是真任务门控（无假等待）；`localStorage` 记「已看过自检」→ 回访跳过打字动画 1s 直入（尊重老访客时间，宪章⑥）。
 
+**27c Phase 1 施工记录（2026-07-14，已推送 `86e55a0`）**：首页 DECK 下拉菜单（`src/main.js` `initNavSiteMenu()`）追加一条「BRIDGE SIM」条目 → `/boot.html`，只挂在这个下拉自身的 `pages` 数组上（不进 `nav.js` 的站点级 `SITE` 数组，避免其他七个页面也长出这个入口——course.html 也加载 `main.js` 但没有 `.nav-menu-btn` 元素，经 grep 确认不受影响）。转场效果零新代码：`transition.js` 本就拦截站内 `<a>` 点击，`boot.html` 路径不命中 arena/sectors/signal/games 任一专属正则，落到默认的 `warp` 类型，观感恰好契合「进入舰桥模拟」。boot.html 侧的自检自动进舰桥、EXIT SIM 返回首页均是既有实现，未改动。**未做**（按本节原文，需站主裁决后才做）：去 `noindex`、进 sitemap、按 roadmap C5 补第 N 页评估——boot.html 仍是豁免的一次性原型。验证：546/546 vitest、tsc 干净、构建干净、`!important`/bundle-budget 校验器全过。
+
 ### 27d · 全站 UI/UX 一致性策略
 
 **分层模型「同一艘舰的不同甲板」**：
@@ -101,7 +103,7 @@
 > | U23 | **RFC 已产出**（`rfcs/2026-07-13-u23-default-3d-scene.md`：默认视图换 3D 的架构裁决，B→A 两步走 + M0–M4 里程碑），未动码 | 站主裁决路线（§7 裁决表三问）；通过后 M1 可直接开工，M2 起依赖 M0 真机基线 |
 > | U24 | ✅ 代码已完成，已推送 `e6367ef`（546/546 vitest） | 起飞/降落镜头链真机验收 |
 > | U25 | **同日站主要求退回，已 revert 并推送 `643d1cb`**（546/546 vitest，回到 U24 状态） | 真机确认 Combat View 已回到 U24 前的样子 |
-> | U27 | 评估完成 + **27b 三切片已开工并推送 `a4cfd45`**（1 项发现已生产上线免做，2 项以 flag 落地：`?tacticalines=1`/`?nebula=1`） | 站主 flag 试看两项 → 裁决转默认/保持 opt-in；27c/27d 未开工 |
+> | U27 | 27b 三切片（`a4cfd45`）+ **27c Phase 1（BRIDGE SIM 入口，`86e55a0`）已推送**；27d 纯评估已关闭，五件套并入 U21 Phase 3 | 站主 flag 试看 27b 两项 → 裁决转默认/保持 opt-in；27c「转正」（去 noindex/进 sitemap/C5 评估）待站主裁决，暂不做 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
