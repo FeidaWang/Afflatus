@@ -27,16 +27,23 @@
 | 自发光材质+泛光光照 | 星际公民 | ACES+UnrealBloom（alphardForge 管线复用） | ⚠️ **已试→同日退回**（U25a）；同上，重做走 `?fx=bloom` flag |
 | 3D 椭圆全息雷达盘 | 精英危险 | U9 全息扫描盘 | ✅ 已做 |
 | 目标面板 shield/hull 分层读数 | 精英危险 | HMD 血条（合成版保留） | ✅ 已做（U8） |
-| 超空间跃迁转场 | 精英危险 | 「入梦」warp-hover 已有雏形 → 升级为页间 View Transitions 星线拉伸转场（@view-transition 全站已启用） | ☐ 待做，低风险高辨识度，**推荐下一批** |
+| 超空间跃迁转场 | 精英危险 | ~~「入梦」warp-hover 已有雏形 → 升级为页间 View Transitions 星线拉伸转场~~ | ✅ **评估失误已订正（2026-07-14）**：`src/lib/transition.js` 早已是全站生产系统——去首页即播「WARP JUMP」超空间星线收束+白闪+程序化音效（每页一种叙事类型：arena=能量炮/sectors=起飞/signal=CRT/games=赛博），全部页面通过 `*Libs.js`/`*Entry.js` 已加载，不是待办 |
 | 尺度感（vast scale） | 精英危险 | FogExp2 + 远景剪影 + 视差尘埃（V18） | ✅ 部分已做；剩余=背景星云板（见下） |
 | 电影化运镜 | 家园 | 相机导演 + U24 起降镜头链 | ✅ 已做 |
-| 战术 UI 线（编队连线/航迹投影线） | 家园 | topdown 场景地面网格上画僚机编队连线与目标航迹线（LineSegments，单 draw call） | ☐ 待做，与俯视视角天然契合 |
+| 战术 UI 线（编队连线/航迹投影线） | 家园 | topdown 场景僚机编队连线+目标锁定线（LineSegments/LineDashedMaterial，两个 draw call） | ✅ **已做**（`?tacticalines=1` opt-in，2026-07-14，见下） |
 | 深空极简美学/剪影可读性 | 家园 | 宪章④，涂黑验剪影 + LOD | ☐ 待做（U22 RFC 已评 8/15 最弱项） |
 | 银河图可视化 | 群星 | Commander Terminal 星图（starMapScene） | ✅ 已做 |
 | 大战略渐进披露 | 群星 | 宪章⑥；boot.html 坞站徽章→hover 详情 | ✅ boot 已做；全站推广并入 U21 Phase 3 |
-| 氛围星云背景 | 群星 | alphardForge shader 星云已有；topdown 战场加低饱和星云板（单面片 shader，水彩分级） | ☐ 待做，家园/群星共同基因 |
+| 氛围星云背景 | 群星 | topdown 战场加低饱和 icosahedron dome shader（自包含 GLSL，不复用 alphardForge 的漩涡 shader——构图不同：那个是前景主体特效，这个是背景） | ✅ **已做**（`?nebula=1` opt-in，2026-07-14，见下） |
 
-**下一批建议切片（按 ROI）**：① ED 跃迁页间转场；② 家园战术连线；③ 星云背景板。每片一个 flag、一个会话、真机先看后转默认——U25 的教训制度化。
+**27b 施工记录（2026-07-14，已推送 `a4cfd45`）**：
+
+- **① ED 跃迁转场**：动手前发现已是全站生产系统（见上表订正），未写新代码，节省一个切片的工期。
+- **② 家园战术连线**（`?tacticalines=1`）：`topdownCombat.js` 新增两组线——僚机三角编队连线（环形连接三机+连回母舰，随每帧真实位置更新，`LineSegments` 单 draw call）+ 目标锁定虚线（母舰→彗星，仅在 `state.halley.hover` 为真时显示，`LineDashedMaterial` 复用 `computeLineDistances`）。全部读真实位置，不发明坐标。
+- **③ 群星星云背景**（`?nebula=1`）：320 三角面的 icosahedron dome（`BackSide` 渲染），自包含 fbm 噪声 shader，低饱和青/紫水彩色带，`fog:false` 避免被场景雾气吃掉；成本极低（1 draw call 无光照），裁决为**桌面+移动均可**（不同于 U25 bloom 的移动端关闭策略）。
+- **course.md R3 例外**：新增一行——默认关闭的 flag 隔离视觉改动不计入「待真机验收」WIP 上限（详见 course.md §1.5 R3）。
+- **验证**：546/546 vitest、tsc 干净、构建干净（topdownCombat 分片 29.6→32.2 kB）、`!important` 基线未动。均为 opt-in，默认访问不受影响，零新增验收债（R3 例外条款覆盖）。
+- [ ] **站主试看**（均需加 query 参数，默认不开）：`/?combatview=topdown&tacticalines=1` 看战术连线、`/?combatview=topdown&nebula=1` 看星云背景（可叠加 `&combatcam=director` 看运镜下的效果）；满意后回本节裁决是否转默认开启（转默认 = 删 flag 判断，直接跑；不转 = 保持 opt-in 或删除）。
 
 ### 27c · boot.html 收编计划
 
@@ -94,7 +101,7 @@
 > | U23 | **RFC 已产出**（`rfcs/2026-07-13-u23-default-3d-scene.md`：默认视图换 3D 的架构裁决，B→A 两步走 + M0–M4 里程碑），未动码 | 站主裁决路线（§7 裁决表三问）；通过后 M1 可直接开工，M2 起依赖 M0 真机基线 |
 > | U24 | ✅ 代码已完成，已推送 `e6367ef`（546/546 vitest） | 起飞/降落镜头链真机验收 |
 > | U25 | **同日站主要求退回，已 revert 并推送 `643d1cb`**（546/546 vitest，回到 U24 状态） | 真机确认 Combat View 已回到 U24 前的样子 |
-> | U27 | ✅ 评估完成（Babylon 不换/四作提取矩阵/boot 收编两阶段/一致性令牌级五件套），纯文档 | 站主裁决：27b 三切片是否开工、boot 是否转正 |
+> | U27 | 评估完成 + **27b 三切片已开工并推送 `a4cfd45`**（1 项发现已生产上线免做，2 项以 flag 落地：`?tacticalines=1`/`?nebula=1`） | 站主 flag 试看两项 → 裁决转默认/保持 opt-in；27c/27d 未开工 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
