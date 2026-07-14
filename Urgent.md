@@ -1,5 +1,63 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U27 · 3D 太空战斗模拟器：架构与设计方向综合评估（2026-07-14 立项，纯评估文档，不动码）
+
+> 站主命题四问：Babylon.js 适配性 / 四作设计元素提取 / boot.html 收编 / 全站一致性。评估把 **U25 当日被退回**作为一手品味证据纳入——本文所有「待做」项都因此默认「小切片 + flag 隔离 + 先看后并」。
+
+### 27a · Babylon.js 适配性评估 → **裁决：不换，THREE.js 续任**
+
+| 维度 | Babylon.js | 本仓库现状（three r160） | 判定 |
+| --- | --- | --- | --- |
+| 太空场景渲染性能 | 与 three 同级——两者都是 WebGL/WebGPU 薄封装，光照/粒子瓶颈在场景设计不在引擎 | InstancedMesh 单 draw call 纪律、尾迹彩带、bloom 管线全部生产验证 | 平手，切换零观感收益 |
+| 粒子/碰撞/物理 | 内建 GPUParticleSystem、Havok 物理集成是真优势 | 场景无真物理需求（解析飞行公式 + 伪碰撞判距），粒子自研池已够用 | Babylon 优势用不上 |
+| DOM 集成 | canvas + DOM overlay，与 three 完全等价；Babylon GUI（画布内 UI）与宪章①「DOM/2D-canvas HUD」路线重复 | 现行 blit + DOM 面板模式成熟 | 平手 |
+| 包体积 | @babylonjs/core tree-shake 后仍普遍 > three 同场景用量 | vendor-three 674 kB（gzip 171 kB）已有 CI 预算管着 | three 略优 |
+| 迁移成本 | 20+ 场景模块、相机导演状态机、46 条相机/飞行数学测试全量重写 | —— | **一票否决级** |
+
+**vs React Three Fiber（首页语境）**：R3F 前提是 React——U21 Phase 1 已裁决「无框架 MPA 是相对优势，不迁框架」。首页是内容型页面（SEO/LCP 红线），引入 React runtime + reconciler + hydration 是纯负资产；R3F 的声明式组件复用优势只在「已经是 React 应用」的前提下成立。**结论：R3F 不适用，除非全站先推翻 U21 裁决迁 React（无此计划）。**
+
+**Babylon 重估触发条件（写死，防止反复议）**：① 出现真物理需求（刚体碰撞/舰体损毁解体，Havok 是决定性优势）；② WebGPU compute 成为硬需求且 three 侧成熟度掉队；③ three 停止维护。三者其一发生，开独立 RFC 重议。
+
+### 27b · 四作设计元素提取矩阵（可执行清单）
+
+| 元素 | 来源 | 落地方式 | 状态 |
+| --- | --- | --- | --- |
+| 剧情化舰载 UI（一切界面是舰上设备） | 星际公民 | 宪章①，HUD 面板/坞站全线 | ✅ 已做（U8–U14/boot） |
+| 高保真 UI overlay / 真投影目标框 | 星际公民 | tacticalOverlay + getHudFeeds | ⚠️ **已试→同日退回**（U25b）；重做条件=站主真机先看 `?hud=projected` flag 版再裁决是否默认 |
+| 自发光材质+泛光光照 | 星际公民 | ACES+UnrealBloom（alphardForge 管线复用） | ⚠️ **已试→同日退回**（U25a）；同上，重做走 `?fx=bloom` flag |
+| 3D 椭圆全息雷达盘 | 精英危险 | U9 全息扫描盘 | ✅ 已做 |
+| 目标面板 shield/hull 分层读数 | 精英危险 | HMD 血条（合成版保留） | ✅ 已做（U8） |
+| 超空间跃迁转场 | 精英危险 | 「入梦」warp-hover 已有雏形 → 升级为页间 View Transitions 星线拉伸转场（@view-transition 全站已启用） | ☐ 待做，低风险高辨识度，**推荐下一批** |
+| 尺度感（vast scale） | 精英危险 | FogExp2 + 远景剪影 + 视差尘埃（V18） | ✅ 部分已做；剩余=背景星云板（见下） |
+| 电影化运镜 | 家园 | 相机导演 + U24 起降镜头链 | ✅ 已做 |
+| 战术 UI 线（编队连线/航迹投影线） | 家园 | topdown 场景地面网格上画僚机编队连线与目标航迹线（LineSegments，单 draw call） | ☐ 待做，与俯视视角天然契合 |
+| 深空极简美学/剪影可读性 | 家园 | 宪章④，涂黑验剪影 + LOD | ☐ 待做（U22 RFC 已评 8/15 最弱项） |
+| 银河图可视化 | 群星 | Commander Terminal 星图（starMapScene） | ✅ 已做 |
+| 大战略渐进披露 | 群星 | 宪章⑥；boot.html 坞站徽章→hover 详情 | ✅ boot 已做；全站推广并入 U21 Phase 3 |
+| 氛围星云背景 | 群星 | alphardForge shader 星云已有；topdown 战场加低饱和星云板（单面片 shader，水彩分级） | ☐ 待做，家园/群星共同基因 |
+
+**下一批建议切片（按 ROI）**：① ED 跃迁页间转场；② 家园战术连线；③ 星云背景板。每片一个 flag、一个会话、真机先看后转默认——U25 的教训制度化。
+
+### 27c · boot.html 收编计划
+
+- **角色裁决**：三候选（loading 屏 / 预检序列 / 宇宙初始化）中定为**「预检序列」＝首页的可选沉浸入口**。不做强制 loading 屏——首页是投资日志（内容型身份 + SEO/LCP 红线，U23 RFC §2 对方案 C 的否决理由全部适用于「强制拦截」）。
+- **技术移交（两阶段）**：**Phase 1（现在可做）**——首页顶栏加「BRIDGE SIM」入口 → 跨文档 View Transitions（全站 @view-transition 已启用）滑入 boot.html；boot 自检完成自动进舰桥（已实现）；EXIT SIM 同路返回。boot.html 转正需同步办三件事：去 noindex、进 sitemap、按 roadmap C5 规则补第 N 页评估（现在是豁免的一次性原型）。**Phase 2（并入 U23 M2）**——boot 的 3D 场景与首页 Combat View 本就是同一个 `createTopdownCombat`，M2 单 renderer 舞台落地后，移交从「页面跳转」升级为「同 canvas 相机 shot 切换」，boot 变成首页的一个状态而非独立页面。
+- **无缝细节**：转场动画用跃迁语言（白闪+星线拉伸，CSS view-transition 关键帧）；进度条已是真任务门控（无假等待）；`localStorage` 记「已看过自检」→ 回访跳过打字动画 1s 直入（尊重老访客时间，宪章⑥）。
+
+### 27d · 全站 UI/UX 一致性策略
+
+**分层模型「同一艘舰的不同甲板」**：
+
+| 层 | 页面 | 沉浸度 | 允许的元素 |
+| --- | --- | --- | --- |
+| 舰桥 | 首页（+boot） | 全沉浸 | 3D canvas、粒子、HUD 全家桶 |
+| 作战情报室 | arena / sectors / signal / stats / games | 中 | HUD 面板语言、数据卡、sparkline、三态信号；**无 3D、无粒子** |
+| 军官舱 | serial / course / horoscope | 低 | 阅读优先；只保留 token 级主题 |
+
+**核心问题的答案：标准页反映科幻主题到「令牌级」，永不到「场景级」**——内容页穿制服不穿盔甲。品牌整体感来自五件共享资产：① 双色温色板（青白=世界/琥珀=自身，进 `@layer tokens`，走 U21 Phase 3 既定路径）；② 字体三件套（Orbitron/Rajdhani/JetBrains Mono，现已全站一致）；③ 三态信号措辞（加载=SCANNING、空态=NO CONTACT、错误=OFFLINE）；④ hover/active/`:focus-visible` 三态统一（Phase 3 RFC 键盘可达性欠账一并清）；⑤ 页间转场统一跃迁语言（View Transitions）。**交互音效：裁决暂不做**——浏览器自动播放限制 + 现站零音频系统 + 移动端体验风险，收益配不上成本；若未来做，仅限用户主动点击的 opt-in 反馈音。
+
+**落地去向**：27b 三个待做切片各开一批；27c Phase 1 待站主裁决 boot 是否转正；27d 的 token 五件套并入 U21 Phase 3 实施清单。本项自身到此关闭（纯评估，无代码）。
+
 ## U26 · `.git` 锁文件残留链式故障 — 已根治（2026-07-14，站主报告「commit/reset/stash/pull 间歇性全部失败」）
 
 **根因确诊**：本仓库挂载在 FUSE 层（`mount` 确认 `type fuse`）。Git 每次写 `HEAD`/`index`/`ORIG_HEAD` 等文件前会先创建同名 `.lock` 文件占位，正常操作完成后自己 `rename()` 回原名并删除锁。但在这层 FUSE 挂载上，`.lock` 文件一旦被**另一个并发进程**（本仓库有 8 个 Scheduled 任务，经常在几分钟内先后触发同一 repo 的 git 操作）持有，unlink 会报 `Operation not permitted`（不是 `Permission denied`——是 FUSE 转发层对跨会话/跨进程句柄的锁语义问题，不是常规 Unix 权限）。**过去多轮会话遇到这个报错时，一律用 `mv .git/xxx.lock .git/xxx.lock.bak_<timestamp/后缀>` 绕过**，而不是真正解除锁——这是止血但不断根的做法，每次都在 `.git/` 里留下一具尸体，日积月累变成本次发现的规模。
@@ -36,6 +94,7 @@
 > | U23 | **RFC 已产出**（`rfcs/2026-07-13-u23-default-3d-scene.md`：默认视图换 3D 的架构裁决，B→A 两步走 + M0–M4 里程碑），未动码 | 站主裁决路线（§7 裁决表三问）；通过后 M1 可直接开工，M2 起依赖 M0 真机基线 |
 > | U24 | ✅ 代码已完成，已推送 `e6367ef`（546/546 vitest） | 起飞/降落镜头链真机验收 |
 > | U25 | **同日站主要求退回，已 revert 并推送 `643d1cb`**（546/546 vitest，回到 U24 状态） | 真机确认 Combat View 已回到 U24 前的样子 |
+> | U27 | ✅ 评估完成（Babylon 不换/四作提取矩阵/boot 收编两阶段/一致性令牌级五件套），纯文档 | 站主裁决：27b 三切片是否开工、boot 是否转正 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
