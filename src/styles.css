@@ -7127,6 +7127,14 @@
      sits above it) for contrast. Pure CSS filter, WebGL draw logic in
      alphardForge.js untouched. */
   #alphardForge{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;filter:brightness(.8)}
+  /* U28 28b (2026-07-14): owner's real-device screenshot still showed a hard
+     edge where the cyan nebula meets the black starfield above it — the
+     ::before veil below only paints an overlay on top of the canvas, so an
+     overexposed/bloom-heavy render (see 28c) can still punch through past
+     its fade zone. Mask the canvas's own pixels directly so the top of the
+     render is guaranteed to dissolve to nothing regardless of how bright
+     the WebGL draw gets. */
+  #alphardForge{mask-image:linear-gradient(180deg,transparent 0,#000 32vh);-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 32vh)}
   .stardrive-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 0%,transparent 46%,rgba(4,6,10,.5) 100%);opacity:calc(.28 + var(--forge)*.36)}
   /* melt the section into the page bg above (hero) and below (equity) so there is
      no hard seam — fades use the page --bg and sit above the canvas but below
@@ -7138,7 +7146,11 @@
      blend against the busier starfield behind it. Added a mid-stop so it
      steps down more gradually; exit fade (::after, toward equity)
      untouched, not part of this complaint. */
-  .stardrive-stage::before{top:0;background:linear-gradient(180deg,var(--bg) 0%,rgba(4,6,10,.60) 28%,rgba(4,6,10,.20) 64%,rgba(4,6,10,0) 100%)}
+  /* U28 28b: taller (20vh→32vh) + re-tinted to a near-black teal (#021418,
+     matching the nebula's own hue) instead of the neutral page --bg, so the
+     entrance reads as a continuous cyan dissolve rather than a black→cyan
+     seam. Works together with the #alphardForge mask-image above. */
+  .stardrive-stage::before{top:0;height:32vh;background:linear-gradient(180deg,#021418 0%,rgba(2,20,24,.62) 30%,rgba(4,10,16,.22) 68%,rgba(4,10,16,0) 100%)}
   .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
 
   .stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
@@ -7804,6 +7816,20 @@
     }
   }
 
+  /* U28 28b (2026-07-14): re-audited the .hero padding/min-height cascade
+     per owner's fresh screenshot — U13d's 60vh cap (line ~4264) got
+     re-claimed by later HUD-clearance min-height patches (same :root
+     re-override trap U11 hit), each sizing .hero to fill the full viewport
+     above the fixed combat HUD bar regardless of how short the actual
+     title/desc/CTA content is. That reserved-but-unfilled space is the
+     "莫名的长空距" before alphardForge begins. Deliberately the last .hero
+     rule in this layer (wins by source order): keep the HUD-clearance floor
+     (so content never sits under the HUD) but cap the *ceiling* with min()
+     so tall viewports don't reserve far more room than the content needs,
+     and drop the trailing bottom padding to let the stardrive fade (above)
+     do the visual transition instead of blank space. */
+  .hero{min-height:min(calc(100svh - var(--hud-combat-h) - 24px),64vh)!important;padding-bottom:0!important}
+
 } /* end @layer legacy */
 
 @layer tokens {
@@ -7821,6 +7847,21 @@
 
 @layer overrides {
   /* U21 Phase 1: "this must win" overrides land here going forward —
-     this is what retires !important as a cascade-fighting tool. Empty
-     today. */
+     this is what retires !important as a cascade-fighting tool. */
+
+  /* U28 28g (2026-07-14): one-shot screen-wide ripple on warp-hover entry —
+     a brand-new selector (nothing else touches body.warp-pulse), so plain
+     normal-priority declarations are enough here even though the sustained
+     warp-hover rules it sits alongside (src/main.js's langBtn mouseenter
+     handler) live in the legacy layer. ≤400ms, JS removes the class after —
+     not a persistent effect. */
+  @keyframes warpPulse{
+    0%{filter:brightness(1) contrast(1)}
+    35%{filter:brightness(1.22) contrast(1.16)}
+    100%{filter:brightness(1) contrast(1)}
+  }
+  body.warp-pulse{animation:warpPulse .38s ease-out}
+  @media (prefers-reduced-motion: reduce){
+    body.warp-pulse{animation:none}
+  }
 }

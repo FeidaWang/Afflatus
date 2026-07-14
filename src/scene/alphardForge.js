@@ -26,7 +26,7 @@ const NEB_VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = project
 const NEB_FRAG = `
 precision highp float;
 varying vec2 vUv;
-uniform float uTime, uForge, uGain, uPulse; uniform vec2 uRes;
+uniform float uTime, uForge, uGain, uPulse, uScroll; uniform vec2 uRes;
 float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
 float noise(vec2 p){ vec2 i=floor(p),f=fract(p); float a=hash(i),b=hash(i+vec2(1.,0.)),c=hash(i+vec2(0.,1.)),d=hash(i+vec2(1.,1.)); vec2 u=f*f*(3.-2.*f); return mix(mix(a,b,u.x),mix(c,d,u.x),u.y); }
 float fbm(vec2 p){ float v=0.,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.02; a*=0.5; } return v; }
@@ -44,24 +44,33 @@ void main(){
   vec2 w4 = rot(uTime*0.018)*uv;  float n4 = fbm(w4*0.9 + 9.0); // outer fog
   float clouds = smoothstep(0.15,1.05,n2)*0.6 + smoothstep(0.2,1.0,n3)*0.3 + smoothstep(0.1,1.0,n4)*0.25;
   float vig = smoothstep(1.5,0.2,r);
-  vec3 cCore=vec3(0.941,0.973,1.0), cCyan=vec3(0.05,0.95,1.0), cAzure=vec3(0.0,0.42,0.85), cNavy=vec3(0.02,0.07,0.18), cViolet=vec3(0.10,0.07,0.24);
+  // U28 28c: owner-specified two-tone field — #99FAFF for the inner ring
+  // (was a near-pure-white core that blew out to a flat white disc), #00F0FF
+  // for everything outside it (was a slightly-off cyan). Both toned down in
+  // intensity below so bloom no longer clips the center to solid white.
+  vec3 cInner=vec3(0.600,0.980,1.0), cCyan=vec3(0.0,0.941,1.0), cAzure=vec3(0.0,0.42,0.85), cNavy=vec3(0.02,0.07,0.18), cViolet=vec3(0.10,0.07,0.24);
   vec3 col=mix(cCyan,cAzure,smoothstep(0.12,0.55,r));
   col=mix(col,cNavy,smoothstep(0.55,1.1,r));
   col=mix(col,cViolet,smoothstep(1.0,1.5,r)*0.5);
   col*=(0.30+0.95*clouds);
   col += vec3(0.0,0.26,0.17)*clouds*smoothstep(0.95,0.3,r)*0.14;     // green wisp
-  // pulsing core + bloom seed
+  // pulsing core + bloom seed — U28: multiplier cut 1.6→1.0 so the center
+  // reads as a bright inner ring instead of an overexposed white blob.
   float pulse = 1.0 + 0.18*uPulse;
   float core=smoothstep(0.24*pulse,0.0,r);
   float glow=pow(smoothstep(0.95,0.0,r),2.2);
-  col += cCore*core*1.6*pulse;
-  col += cCyan*glow*(0.45+0.5*uForge);
-  // electric ring (continuous around the circle)
+  col += cInner*core*1.0*pulse;
+  col += cCyan*glow*(0.45+0.5*uForge)*(1.0+uScroll*0.55);
+  // electric ring (continuous around the circle) — U28: scroll-driven flare.
+  // uScroll (0..1, rAF-sampled + lerped scroll speed, see alphardForge.js)
+  // pumps the arc turbulence and ring brightness so faster page scrolling
+  // reads as a stronger stellar-flare pulse; settles to the resting uPulse
+  // breathing cycle when the page is still.
   float ang=atan(uv.y,uv.x);
-  float rn=fbm(vec2(cos(ang),sin(ang))*4.0+uTime*0.6);
-  float arc=fbm(vec2(cos(ang),sin(ang))*12.0-uTime*1.1);
+  float rn=fbm(vec2(cos(ang),sin(ang))*4.0+uTime*(0.6+uScroll*0.8));
+  float arc=fbm(vec2(cos(ang),sin(ang))*12.0-uTime*(1.1+uScroll*1.4));
   float ring=smoothstep(0.05,0.0,abs(r-0.24*pulse-(rn-0.5)*0.05-(arc-0.5)*0.02));
-  col += vec3(0.85,0.97,1.0)*ring*(1.0+0.4*arc);
+  col += cInner*ring*(1.0+0.4*arc)*(1.0+uScroll*0.9);
   col*=vig;
   col*=(0.7+0.5*uForge)*uGain;
   gl_FragColor=vec4(col,1.0);
@@ -162,7 +171,7 @@ export function initAlphardForge() {
   const keyL = new THREE.DirectionalLight(0x9fd8ff, 1.0); keyL.position.set(0, 0, 200); scene.add(keyL);
 
   // nebula plane locked to the camera (far background, always fills the view)
-  const nebUniforms = { uTime: { value: 0 }, uForge: { value: 0 }, uGain: { value: uGain }, uPulse: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } };
+  const nebUniforms = { uTime: { value: 0 }, uForge: { value: 0 }, uGain: { value: uGain }, uPulse: { value: 0 }, uScroll: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } };
   const nebPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),
     new THREE.ShaderMaterial({ vertexShader: NEB_VERT, fragmentShader: NEB_FRAG, uniforms: nebUniforms, depthTest: false, depthWrite: false, fog: false }));
   nebPlane.position.z = -1200; nebPlane.renderOrder = -10; camera.add(nebPlane);
@@ -254,7 +263,9 @@ export function initAlphardForge() {
   // ── post-processing ──
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.9, 0.7, 0.2); // strength, radius, threshold
+  // U28 28c: threshold raised 0.2→0.32 and strength trimmed 0.9→0.72 so the
+  // (now dimmer, see NEB_FRAG) core stops blooming out to a flat white disc.
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.72, 0.7, 0.32); // strength, radius, threshold
   composer.addPass(bloom);
   const finalPass = new ShaderPass(FINAL); finalPass.renderToScreen = true; composer.addPass(finalPass);
 
@@ -278,6 +289,11 @@ export function initAlphardForge() {
   let mx = 0, my = 0, tmx = 0, tmy = 0;
   function onMove(e) { tmx = (e.clientX / innerWidth - 0.5); tmy = (e.clientY / innerHeight - 0.5); }
 
+  // U28 28c: scroll-linked flare + slow nebula rotation. Both are sampled
+  // inside the rAF loop (render()), never inside a scroll listener — only
+  // raw position reads happen there, all smoothing/derivatives are rAF-timed.
+  let lastScrollY = window.scrollY || 0, scrollVel = 0, lastT = 0;
+
   // scroll progress + pin. The pin itself (keeping the stage visually fixed
   // while its 200vh wrapper scrolls past) is handled by a CSS scroll-driven
   // animation (see styles.css "@supports (animation-timeline: view())") on
@@ -298,9 +314,20 @@ export function initAlphardForge() {
     section.style.setProperty('--forge', p.toFixed(4));
     renderTagline(p);
     const tm = t * 0.001;
-    nebUniforms.uTime.value = tm; nebUniforms.uForge.value = p;
+    const dt = lastT ? clamp((t - lastT) / 1000, 0, 0.1) : 0; lastT = t;
+    // scroll speed (rAF-sampled delta, lerped) → flare intensity; decays back
+    // to the resting uPulse breathing cycle when scrolling stops.
+    const sy = window.scrollY || window.pageYOffset || 0;
+    const rawVel = Math.min(Math.abs(sy - lastScrollY), 80); lastScrollY = sy;
+    scrollVel += (rawVel - scrollVel) * 0.15;
+    const uScroll = clamp(scrollVel / 26, 0, 1);
+    nebUniforms.uTime.value = tm; nebUniforms.uForge.value = p; nebUniforms.uScroll.value = uScroll;
     nebUniforms.uPulse.value = 0.5 + 0.5 * Math.sin(tm * (Math.PI * 2 / 5)); // ~5s pulse
     ptUniforms.uTime.value = tm; finalPass.uniforms.uTime.value = t;
+    // nebula/magnetic-field layer: slow majestic clockwise rotation (~0.5deg/s
+    // = 0.008727 rad/s), separate from the shader's own faster inner warp
+    // layers so the whole field still reads as one massive, stately body.
+    nebPlane.rotation.z -= 0.008727 * dt;
     // layered rotation (particles slower than inner shader layers → depth)
     particles.rotation.z = tm * 0.06;
     stationGroup.rotation.z = 0; // stations fixed at edges

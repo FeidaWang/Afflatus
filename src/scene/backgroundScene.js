@@ -154,8 +154,11 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
 
     ctx.save();
     ctx.scale(dpr, dpr);
+    // U28 28g: stretch factors roughly doubled (6.5→13 speed, 18→34 tail
+    // length) so warp-hover reads as a genuine high-speed stargate jump
+    // instead of a mild drift. Keep this in sync with backgroundScene.worker.js.
     for (const s of warpStars) {
-      s.r += s.speed * (0.6 + 6.5 * intensity);
+      s.r += s.speed * (0.6 + 13 * intensity);
       if (s.r > maxR) {
         s.r = eventR + rand(2, 25);
         s.ang = Math.random() * Math.PI * 2;
@@ -164,7 +167,7 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
       const x = cxw + Math.cos(s.ang) * s.r;
       const y = cyw + Math.sin(s.ang) * s.r;
       const closeness = clamp(s.r / maxR, 0, 1);
-      const tail = (0.5 + 18 * intensity) * s.z * closeness;
+      const tail = (0.5 + 34 * intensity) * s.z * closeness;
       const alpha = (0.12 + 0.55 * closeness * s.z) * (0.6 + 0.4 * intensity);
       const tx = cxw + Math.cos(s.ang) * (s.r + tail);
       const ty = cyw + Math.sin(s.ang) * (s.r + tail);

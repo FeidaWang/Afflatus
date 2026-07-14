@@ -1132,7 +1132,7 @@ function drawCapitalFeed(feed,now,contacts,cannonFx){
     ctx.globalAlpha=.7*pulse;ctx.fillStyle='rgba(255,218,160,.55)';ctx.beginPath();ctx.arc(tx,ty,u*.08*(1+cannonFx.t),0,Math.PI*2);ctx.fill();
   }
   ctx.restore();
-  const flameBoost=(document.body.classList.contains('warp-hover')?1.42:1)*(1+Math.sin(now/260)*.08);
+  const flameBoost=(document.body.classList.contains('warp-hover')?1.85:1)*(1+Math.sin(now/260)*.08); // U28 28g: 1.42→1.85
   const engines=[
     [.365,.84,u*.038], [.5,.84,u*.052], [.635,.84,u*.038],
     [.43,.74,u*.023], [.57,.74,u*.023], [.43,.93,u*.019], [.57,.93,u*.019]
@@ -1264,7 +1264,7 @@ function drawCapitalFeedV2(feed,now,contacts,cannonFx){
   ctx.restore();
 
   const recoil=cannonFx?.mode==='fire' ? (1-cannonFx.t)*u*.032 : 0;
-  const flameBoost=(document.body.classList.contains('warp-hover')?1.45:1)*(1+Math.sin(now/240)*.07);
+  const flameBoost=(document.body.classList.contains('warp-hover')?1.9:1)*(1+Math.sin(now/240)*.07); // U28 28g: 1.45→1.9
   ctx.save();ctx.translate(recoil,0);
   const hullPath=()=>{
     ctx.beginPath();
@@ -2700,7 +2700,6 @@ const combatHmdV3=createCombatHmdV3({
   pilotTrackedPoint,
   getKillCount:()=>killCount,
   getGiantKillCount:()=>giantKillCount,
-  getEscorts:()=>escorts,
 });
 function drawPilotHmd(ctx,w,h,now,label,mode){
   const missileLike=mode==='missile'||mode==='nukeAuth'||mode==='nemp';
@@ -2720,6 +2719,14 @@ function cockpitDash(){
     cdRatio: combatRuntime.weaponCooldownRatio(weapon),
     warpIntensity,
     warpHover: document.body.classList.contains('warp-hover'),
+    // U28 28f: real values for the PWR/SHLD vertical telemetry bars —
+    // ammoLevel (0-100, drains on weapon use / recovers over time) is the
+    // closest existing tracked resource to "mothership remaining energy";
+    // deckReadiness (0-100, real fluctuating systems-readiness pool) stands
+    // in for shield status, same honesty tier as this file's other derived
+    // (not invented) cockpit readouts.
+    pwr: combatRuntime.getAmmoLevel()/100,
+    shield: combatRuntime.getDeckReadiness()/100,
   };
 }
 function drawPilotDeck(ctx,w,h,phase,landing=false){
@@ -3322,7 +3329,10 @@ function frame(now){
     
     cursorCtl.setPosition(mx,my);
     
-    warpIntensity=lerp(warpIntensity,warpTarget,.05);
+    // U28 28g: ramp-in speed 0.05→0.16 — the old rate took the better part
+    // of a second to visibly arrive, reading as sluggish rather than a
+    // stargate-jump snap. Still lerped (not instant) so it doesn't pop.
+    warpIntensity=lerp(warpIntensity,warpTarget,.16);
     backgroundScene.draw(now);
     saturnRenderer?.draw(now*.001,warpIntensity);
     
@@ -3423,6 +3433,13 @@ langBtn.addEventListener('mouseenter',()=>{
   warpTarget=.82;
   cursorCtl.setWarp(true);
   document.body.classList.add('warp-hover');
+  // U28 28g: one-shot screen-wide ripple pulse on jump entry (≤400ms, not
+  // persistent) — reinforces the "wave" sensation the station master asked
+  // for, on top of the faster ramp/stretch above. Same add-then-timeout-
+  // remove idiom as the existing body.shake hit-flash elsewhere in this file.
+  document.body.classList.remove('warp-pulse'); void document.body.offsetWidth;
+  document.body.classList.add('warp-pulse');
+  setTimeout(()=>document.body.classList.remove('warp-pulse'),400);
   const hudThrusters=document.getElementById('hudThrusters'); if(hudThrusters) hudThrusters.textContent=HC('ready');
 });
 langBtn.addEventListener('mouseleave',()=>{
