@@ -211,6 +211,10 @@ function updateCommandButton(){
     {path:'/horoscope.html',en:'Horoscope',zh:'观星'},{path:'/serial.html',en:'Novels',zh:'小说'},
     {path:'/course.html',en:'Course',zh:'课程'}
   ];
+  // U27 27c: BRIDGE SIM entry — home-page-only (this dropdown only exists on
+  // index.html; boot.html is a deliberately non-indexed prototype, so it's
+  // appended here rather than added to nav.js's site-wide SITE array).
+  pages.push({path:'/boot.html',en:'Bridge Sim',zh:'舰桥模拟'});
   const norm=(p)=>{p=(p||'/').replace(/index\.html$/,'');return p===''?'/':p;};
   const here=norm(location.pathname);
   let panel=null;
