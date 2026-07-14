@@ -75,19 +75,11 @@ function glowTexture() {
   return t;
 }
 
-// V18 Phase 2 (ROADMAP §4 "空间深度四件套"): the dust/speed-streak layer is
-// gated by this, matching the project-wide convention (see arena.js/games.js/
-// league.js/transition.js/ui/viz.js) rather than inventing a new one.
-function reducedMotionPreferred() {
-  try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
-}
-
 export function createTopdownCombat({ canvas }) {
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   } catch (e) { return null; }
-  const REDUCED_MOTION = reducedMotionPreferred();
   renderer.setClearColor(0x04060a, 1);
   // context-loss resilience (home runs many WebGL contexts; recover instead of black-screening)
   renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false);
@@ -390,10 +382,11 @@ export function createTopdownCombat({ canvas }) {
     scene.add(lockLine);
   }
 
-  // ── shared scratch objects for the two per-frame instanced systems below
-  // (trail ribbons + dust streaks) — both loop over dozens of instances every
-  // frame, so reusing one Matrix4/Vector3/Color set instead of allocating
-  // fresh ones per-instance-per-frame keeps this off the GC's hot path.
+  // ── shared scratch objects for the per-frame instanced trail-ribbon system
+  // below — it loops over dozens of instances every frame, so reusing one
+  // Matrix4/Vector3/Color set instead of allocating fresh ones
+  // per-instance-per-frame keeps this off the GC's hot path. (U28 28d: the
+  // dust-streak system that used to share this pool was deleted.)
   const _m4 = new THREE.Matrix4(), _zero4 = new THREE.Matrix4().makeScale(0, 0, 0);
   const _mid = new THREE.Vector3(), _dir = new THREE.Vector3(), _toCam = new THREE.Vector3();
   const _width = new THREE.Vector3(), _normal = new THREE.Vector3(), _scale3 = new THREE.Vector3();
@@ -467,101 +460,6 @@ export function createTopdownCombat({ canvas }) {
     });
     trailMesh.instanceMatrix.needsUpdate = true;
     if (trailMesh.instanceColor) trailMesh.instanceColor.needsUpdate = true;
-  }
-
-  // ── V18 Phase 2 item 2: near-field dust parallax + speed-stretch streaks ──
-  // Fixed-size pool, one InstancedMesh (1 draw call) — respawning reuses the
-  // same slot instead of allocating. Positions are genuine world-space points
-  // near the camera, so ordinary parallax provides the "streaming past" read;
-  // streak length/orientation comes from frame-differenced camera velocity
-  // (unlike the fighters' analytic chaseCam math, the camera's own motion
-  // here is director-smoothed, not closed-form, so this genuinely needs
-  // differencing). `prefers-reduced-motion` halves the pool per ROADMAP §4.
-  const DUST_BASE_COUNT = 36;
-  const DUST_COUNT = REDUCED_MOTION ? Math.round(DUST_BASE_COUNT / 2) : DUST_BASE_COUNT;
-  const DUST_MIN_R = 2.5, DUST_MAX_R = 15;
-  const dustGeo = new THREE.PlaneGeometry(1, 1);
-  const dustMat = new THREE.MeshBasicMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-  const dustMesh = new THREE.InstancedMesh(dustGeo, dustMat, DUST_COUNT);
-  dustMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  scene.add(dustMesh);
-  function randomShellOffset(target) {
-    const r = DUST_MIN_R + Math.random() * (DUST_MAX_R - DUST_MIN_R);
-    const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
-    target.set(Math.sin(ph) * Math.cos(th) * r, Math.cos(ph) * r * 0.4, Math.sin(ph) * Math.sin(th) * r);
-  }
-  const dustPts = Array.from({ length: DUST_COUNT }, () => {
-    const off = new THREE.Vector3(); randomShellOffset(off);
-    return camera.position.clone().add(off);
-  });
-  let camPrevPos = null, camPrevNow = 0;
-  const _camVel = new THREE.Vector3(), _dustOff = new THREE.Vector3();
-  function updateDust(now) {
-    if (camPrevPos) {
-      const dt = Math.max(0.001, (now - camPrevNow) / 1000);
-      _camVel.subVectors(camera.position, camPrevPos).divideScalar(dt);
-    } else { _camVel.set(0, 0, 0); }
-    if (!camPrevPos) camPrevPos = new THREE.Vector3();
-    camPrevPos.copy(camera.position); camPrevNow = now;
-
-    const speed = _camVel.length();
-    const dir = speed > 0.001 ? _dir.copy(_camVel).divideScalar(speed) : _dir.set(0, 0, 1);
-    const len = Math.max(0.12, Math.min(3.2, speed * 0.09));
-    const fade = Math.min(1, speed * 0.03); // near-idle camera → streaks fade to ~invisible, not just short
-
-    for (let i = 0; i < DUST_COUNT; i++) {
-      const p = dustPts[i];
-      if (p.distanceTo(camera.position) > DUST_MAX_R) { randomShellOffset(_dustOff); p.addVectors(camera.position, _dustOff); }
-      billboardBasis(dir, p);
-      _scale3.set(0.05, len, 1);
-      _m4.makeBasis(_width, dir, _normal); _m4.scale(_scale3); _m4.setPosition(p);
-      dustMesh.setMatrixAt(i, _m4);
-      _col.copy(dustMat.color).multiplyScalar(fade);
-      dustMesh.setColorAt(i, _col);
-    }
-    dustMesh.instanceMatrix.needsUpdate = true;
-    if (dustMesh.instanceColor) dustMesh.instanceColor.needsUpdate = true;
-  }
-
-  // ── V18 Phase 3 (ROADMAP §4, optional bonus item 8): sun glare + ghosts ──
-  // Cheap dot-product-gated glare — no real Bloom/ACES (that's C3) — plus a
-  // couple of mirrored "ghost" sprites using the standard cheap lens-flare
-  // trick: project the sun's NDC screen position, then mirror+scale it
-  // through screen center to place each ghost. Reuses the scene's existing
-  // `key` DirectionalLight as the "sun" instead of inventing a second light.
-  // Item 9 (ridge-silhouette parallax) is explicitly marked optional in the
-  // roadmap text itself ("不强求") since the comet/fleet already give this
-  // space scene equivalent depth cues — skipped, not forgotten.
-  const SUN_DIR = key.position.clone().normalize();
-  const glareSprite = sprite(0xfff4d8, 26, 0);
-  scene.add(glareSprite);
-  const ghostSprites = [0.35, 0.62].map((frac) => {
-    const s = sprite(0xbfe0ff, 3.2, 0);
-    s.userData.frac = frac;
-    scene.add(s);
-    return s;
-  });
-  const _sunFar = new THREE.Vector3(), _ndc = new THREE.Vector3(), _camFwd = new THREE.Vector3();
-  function updateSunGlare() {
-    camera.getWorldDirection(_camFwd);
-    const facing = Math.max(0, _camFwd.dot(SUN_DIR));
-    if (facing <= 0.001) {
-      glareSprite.material.opacity = 0;
-      ghostSprites.forEach((g) => { g.material.opacity = 0; });
-      return;
-    }
-    _sunFar.copy(camera.position).addScaledVector(SUN_DIR, 400);
-    _ndc.copy(_sunFar).project(camera);
-    const inFront = _ndc.z < 1; // behind the camera → NDC z > 1, hide entirely
-    const intensity = inFront ? facing * facing : 0;
-    glareSprite.position.copy(_sunFar);
-    glareSprite.material.opacity = intensity * 0.85;
-    ghostSprites.forEach((g) => {
-      if (!inFront) { g.material.opacity = 0; return; }
-      const gp = new THREE.Vector3(-_ndc.x * g.userData.frac, -_ndc.y * g.userData.frac, 0.5).unproject(camera);
-      g.position.copy(gp);
-      g.material.opacity = intensity * 0.35;
-    });
   }
 
   // ── comet target (1P/HALLEY) drifting across the top ─────────────────────
@@ -925,16 +823,18 @@ export function createTopdownCombat({ canvas }) {
       camera.lookAt(comet.position.x * 0.25, 2, -2);
     }
 
-    // V18 Phase 2: run these after the camera update above so the dust
-    // streaks read this frame's freshly-moved camera.position rather than
-    // last frame's (the trail ribbons read fighters' matrixWorld, which
-    // three.js only refreshes during renderer.render() right after this
-    // function returns — same one-frame-lag characteristic the existing
-    // tracer/laser firing code above already has, kept consistent rather
-    // than special-cased).
+    // V18 Phase 2: run after the camera update above so the trail ribbons
+    // read this frame's freshly-moved camera.position rather than last
+    // frame's (they read fighters' matrixWorld, which three.js only
+    // refreshes during renderer.render() right after this function returns —
+    // same one-frame-lag characteristic the existing tracer/laser firing
+    // code above already has, kept consistent rather than special-cased).
+    // U28 28d (2026-07-14): the near-field dust-parallax streaks and the
+    // sun-glare/lens-ghost sprites (former V18 Phase 2 item 2 / Phase 3)
+    // were the stray floating semi-transparent elements visible drifting
+    // behind Combat View in the owner's screenshot — deleted outright, not
+    // flag-gated ("station master: these should never have existed").
     updateTrails(now);
-    updateDust(now);
-    updateSunGlare();
   }
 
   function loop(now) {

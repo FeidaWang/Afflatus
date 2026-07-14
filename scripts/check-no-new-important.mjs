@@ -16,7 +16,15 @@
 import { readFileSync } from 'node:fs';
 
 const BASELINES = {
-  'src/styles.css': 2958,
+  // U28 28b (2026-07-14): +2 for a new `.hero{min-height,padding-bottom}`
+  // override that closes the hero->stardrive gap. It has to live (and use
+  // !important) inside @layer legacy, not @layer overrides: per the CSS
+  // cascade-layers spec, importance reverses layer order, so a later-
+  // declared layer's !important (overrides) actually loses to an earlier
+  // layer's !important (legacy) — @layer overrides can only beat legacy's
+  // *normal* declarations, never its existing !important ones. Fighting an
+  // existing legacy !important on the same property has no other option.
+  'src/styles.css': 2960,
   'index.html': 2,
 };
 

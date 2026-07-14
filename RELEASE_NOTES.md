@@ -5,6 +5,30 @@
 
 ---
 
+## v1.7 · serial 皇木主题 + 首页断层/星门/HUD 修复批（U28）— 2026-07-14
+
+> **归档说明**：站点顶栏版本号语义（`index.html` brand-version）与本文件的归档段号是两套独立编号——顶栏这次从 v1.5 直接升到 **v1.6**，但 RELEASE_NOTES 的「v1.6」段已被 U8–U12 占用在先，所以这批工作的归档段号顺延为「v1.7」。两处不冲突，仅作说明。
+
+**背景**：站主提供四张截图（serial 移动端阅读器、首页移动端 HUD、alphardForge 星门渲染、星际公民参考 HUD），详细列出 12 项问题，Urgent.md U28 立项拆成两批：批一 28a（serial 独立）、批二 28b–28h（首页）。全部在同一批次内完成。
+
+**28a · serial.html 阅读器**：删除米黄纸感默认主题，新增「皇木」主题——小叶紫檀深栗紫渐变底色（`#2b1a16→#231411`）、金丝楠纹理（`repeating-linear-gradient` 细金线交叉，无图片资产）、海南黄花梨暖金黄字色（`#e3c287`，WCAG AA 内建满足）、金丝高光强调色（`#d9a956`），四色进 `--read-tex`/`--read-bg`/`--read-ink`/`--read-accent` 变量组，与既有 green/night 主题并列（`.reader` 基础规则即默认皇木主题，无需额外 `[data-theme]` 选择器，沿用原 cream 主题的挂载方式）；`meta theme-color` 同步为 `#231411`。移动端 ▶ 自动翻页/♾️ 无限流两钮宽度加倍（`min-width:72px`），顺带补 44px 触控目标（22c 欠账一并清）。
+
+**28b · 首页 hero→星门断层修复**：re-audit 发现 `.hero{min-height,padding-bottom}` 的 cascade 里 U13d 当时收敛的 60vh 早已被后续多轮 HUD-clearance 专用的 `calc(100svh - var(--hud-combat-h) - Npx)` 覆盖掉（同 U11 的 `:root` 再接管陷阱）——加一条位于 `@layer legacy` 末尾（source-order 最终赢）的 `.hero{min-height:min(calc(...),64vh)!important;padding-bottom:0!important}`，保留 HUD 净空下限的同时给顶置一个 ceiling，砍掉内容与星门之间说不出理由的大段空白。`#alphardForge` 画布加 `mask-image` 顶部渐隐（32vh），`.stardrive-stage::before` 遮罩高度 20vh→32vh 并把起点色从中性 `--bg` 改成青黑色 `#021418`，让青色星云从星空里无缝浮现而不是硬边。`!important` 基线相应从 2958→2960（`scripts/check-no-new-important.mjs`，理由：与既有 legacy 层内 `!important` 属性打对台，`@layer overrides` 按 cascade-layers 重要性反转规则赢不了它，只能同层同属性用更后的 `!important` 压过去）。
+
+**28c · alphardForge 星门渲染**：核心过曝修复——内圈色改 `#99FAFF`、外圈改 `#00F0FF`（站主指定色值），核心亮度倍数 1.6→1.0，bloom threshold 0.2→0.32、strength 0.9→0.72，星门结构与两侧塔柱剪影恢复可读。新增 `uScroll` uniform：rAF 内采样 `window.scrollY` 差分并 lerp 平滑（不在 scroll 监听里算），驱动电场/耀斑脉冲强度随滚动速度实时起伏，静止时回落到既有的 5 秒呼吸态。星云层（`nebPlane`）新增独立于内部 fbm warp 层速度的整体旋转，`rotation.z` 每秒 -0.008727 rad（约 0.5°/s，顺时针，缓慢庄重）。
+
+**28d · Combat View 背后漂浮元素清除**：`topdownCombat.js` 删除 V18 Phase 2 的近景尘埃/速度拉伸粒子层（`dustMesh`/`updateDust` 全套）与 Phase 3 的日晕+镜头鬼影双件套（`glareSprite`/`ghostSprites`/`updateSunGlare` 全套）——站主原话「本身就不应该存在」，整体删除而非 flag 隔离。连带清理因此变成孤儿的 `reducedMotionPreferred()`/`REDUCED_MOTION`。引擎尾迹丝带（V18 Phase 2 item 1）未受影响，保留。
+
+**28e · HUD 标尺对称 + 假目标清除**：`combatHmdV3.js` 左侧「耦合」速度带与右侧加力/电容条统一到同一组 `y=h*.20`/`height=h*.34`/宽 6px 常量，左带新增同宽度的低透明度背景轨道，两侧真正镜像对称。彻底删除 `drawContactSwarm()` 连同 `CONTACT_FILLER`（DEEP-SPACE-KING/WARMASTAR 等五枚假目标）、`CONTACT_SLOTS` 常量、及其调用——站主原话「从来就不应该存在」；连带这条路径专属的 `getEscorts` 依赖注入（工厂签名 + `main.js` 调用点）一并移除（`createCombatRuntime` 那条独立的 `getEscorts` 用途不受影响）。
+
+**28f · 左下按钮列重做**：`['PWR','WPN','THR','SHLD','COOL']` 删 COOL，剩四钮四色——PWR 青白（绑 `combatRuntime.getAmmoLevel()`，母舰资源池实时值）、WPN 沿用武器动态色（绑既有 `weaponCooldownRatio`）、THR 蓝绿（绑 `warpIntensity`，入梦 hover 时可见跳升）、SHLD 紫青（绑 `combatRuntime.getDeckReadiness()`，系统就绪度实时值）。取消旧的 `flowPips`/`fillPips` 横向滚动动画，换成统一的 `vBar()`——从下至上填充的竖柱，叠加小幅 rAF 实时抖动使其读起来像真遥测数据而非静态值。
+
+**28g · 「以中文入梦」跃迁效果加码**：warp 强度 ramp-in 的 lerp 系数 0.05→0.16（进入手感从「拖沓」变「起速快」）；`backgroundScene.js`/`backgroundScene.worker.js`（两份需保持同步的实现）星线拉伸速度因子 6.5→13、拖尾长度因子 18→34；引擎喷焰 `flameBoost` 两处 1.42→1.85、1.45→1.9；新增 `body.warp-pulse` 一次性画面波动脉冲（`filter:brightness/contrast` 关键帧，380ms，`@layer overrides` 内新选择器不需要 `!important`），入梦 hover 触发时加一次，`prefers-reduced-motion` 降级为无动画。
+
+**28h · 版本迭代**：`index.html` 顶栏 `brand-version` v1.5→v1.6。
+
+**验证**：`node scripts/check-no-new-important.mjs` 通过（2960，基线已同步更新并写明理由）；vitest/构建/bundle-budget 校验详见下方 U28 完整验证记录。**视觉（全部 8 项：皇木主题质感、两钮加长、断层消失、星门双色不过曝+滚动耀斑+旋转、战场背景纯净、标尺对称、四竖柱波动、跃迁加码手感）沙盒无法渲染 Canvas/WebGL，统一待站主真机复核。**
+
 ## v1.6 · 战斗 HUD 沉浸感改造（星际公民风格）+ 移动/桌面分治 + 全站体检 — 2026-07-11
 
 **背景**：站主陆续提供星际公民战斗截图与全息雷达截图反馈"combat view 元素太多太杂乱"，随后追加"防御模块 UI 竖置武器架+游戏化"、"底部 HUD 露缝"、以及一份完整的移动端改造角色指令（iPhone 16 Pro Max Chrome 截图）。执行顺序按站主指令：U11 → U12c/12d 骨架 → U10 → U8/U9 → 12a 体检，全部在同一批次内完成。

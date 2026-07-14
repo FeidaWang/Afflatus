@@ -93,10 +93,12 @@ export function drawSCReticle(ctx,cx,cy){
    the entire right-hand RADR/PROX/HIT/MISL button column were all static
    decoration on top of an already-busy console — deleted outright rather
    than kept "just in case" (see roadmap discipline: minimum code that
-   solves the problem). Only the left PWR/WPN/THR/SHLD/COOL button column
-   survives, and it's no longer purely decorative: `dash` (U14c) drives
-   WPN's colour from the currently active weapon and adds live energy-pip
-   readouts beside PWR/THR/WPN.
+   solves the problem). Only the left button column survives, and it's no
+   longer purely decorative: `dash` (U14c) drives WPN's colour from the
+   currently active weapon and adds live energy readouts beside every
+   button. U28 28f (2026-07-14) dropped COOL (PWR/WPN/THR/SHLD only) and
+   replaced the old scrolling energy-pip strips with one real-state-bound
+   vertical bar per button — see drawCockpitFrame below.
 
    `boot` (0..1) drives the one-shot power-on sequence: dash rim → button
    column → "TARGET LINK" sync lines → ESTABLISHED flash. Pass 1 (default)
@@ -110,6 +112,8 @@ export function drawSCReticle(ctx,cx,cy){
    @param {number} [dash.cdRatio] - that weapon's cooldown ratio (0 just fired .. 1 ready)
    @param {number} [dash.warpIntensity] - real warp/throttle value (0..~1.3)
    @param {boolean} [dash.warpHover] - true while the user hovers the "入梦" warp button
+   @param {number} [dash.pwr] - mothership remaining energy, 0..1 (U28 28f)
+   @param {number} [dash.shield] - shield status, 0..1 (U28 28f)
 */
 const WPN_COLOR_BASE={cannon:'rgba(154,229,255,',missile:'rgba(232,179,128,',nuke:'rgba(255,77,91,',enforcer:'rgba(255,94,205,'};
 export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
@@ -127,30 +131,26 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
   const st=(k0,k1)=>clamp((boot-k0)/Math.max(.0001,k1-k0),0,1);
   const pop=(p)=>p<=0?0:p>=1?1:(p<.25?p*2.8:(.7+.3*p));      // overshoot-ish
   const flick=(p,seed)=>p>0&&p<1?(Math.sin(now/26+seed*9)>-.2?1:.35):1;
-  // Flowing energy pips beside PWR/THR: a short lit segment "chases" along
-  // the strip, speeding up on warp-hover (real global state, not invented) —
-  // PWR/THR have no discrete real value to bind to (this game has no power
-  // budget model), so a moving flow reads honestly as "cosmetic dressing
-  // that is at least alive", same tier as the old chip stack it replaces.
-  // WPN's strip instead fills left-to-right from cdRatio (a real value).
-  const flowPips=(px,py,pw,ph,segs,speed,colorBase)=>{
-    const period=1600/Math.max(.3,speed);
-    const head=((now%period)/period)*segs;
-    const segGap=1.5, segW=(pw-(segs-1)*segGap)/segs;
-    for(let i=0;i<segs;i++){
-      const d=Math.min((head-i+segs)%segs,(i-head+segs)%segs);
-      const b=clamp(1-d/1.35,0,1);
-      ctx.fillStyle=`${colorBase}${(0.10+0.72*b).toFixed(2)})`;
-      ctx.fillRect(px+i*(segW+segGap),py,segW,ph);
-    }
-  };
-  const fillPips=(px,py,pw,ph,segs,t,colorBase)=>{
-    const segGap=1.5, segW=(pw-(segs-1)*segGap)/segs;
-    const lit=Math.round(clamp(t,0,1)*segs);
-    for(let i=0;i<segs;i++){
-      ctx.fillStyle=i<lit?`${colorBase}.82)`:`${colorBase}.12)`;
-      ctx.fillRect(px+i*(segW+segGap),py,segW,ph);
-    }
+  // U28 28f: the old flowPips/fillPips scrolling-segment animation is gone
+  // (station master: "取消 PWR/THR 现有的能量条滚动动画"). Replaced by one
+  // vertical telemetry bar per button, all bound to real state: PWR reads
+  // dash.pwr (mothership energy reserve), WPN keeps cdRatio, THR reads
+  // warpIntensity (with a visible jump on warp-hover, same hoverMul this
+  // file already tracked), SHLD reads dash.shield. A small live jitter is
+  // layered on top of each real ratio so the bars visibly breathe
+  // frame-to-frame like real telemetry instead of only moving when the
+  // underlying value changes.
+  const pwrRatio=clamp(dash.pwr??1,0,1);
+  const shieldRatio=clamp(dash.shield??1,0,1);
+  const thrRatio=clamp(clamp(warpIntensity/1.4,0,1)*hoverMul,0,1);
+  const vBar=(bx,by,bw,bh,ratio,colorBase,seed)=>{
+    const jitter=Math.sin(now/220+seed*7)*0.02;
+    const t=clamp(ratio+jitter,0,1);
+    ctx.fillStyle=`${colorBase}.12)`;
+    ctx.fillRect(bx,by,bw,bh);
+    const fillH=bh*t;
+    ctx.fillStyle=`${colorBase}.85)`;
+    ctx.fillRect(bx,by+bh-fillH,bw,fillH);
   };
   ctx.save();
   // glass tint vignette at the rim (kept — subtle, not a structural frame)
@@ -172,8 +172,9 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
   const fsBtn=Math.max(5.5,Math.min(8,w*.014));
   const fsTiny=Math.max(5,Math.min(7,w*.012));
 
-  // --- side button column (PWR/WPN/THR/SHLD/COOL — U14b dropped the
-  //     mirrored RADR/PROX/HIT/MISL column on the right entirely) ---
+  // --- side button column (PWR/WPN/THR/SHLD — U14b dropped the mirrored
+  //     RADR/PROX/HIT/MISL column on the right entirely; U28 28f dropped
+  //     COOL from this column too) ---
   const button=(bx,by,bw,bh,label,active,p,seed,colorBase)=>{
     if(p<=0) return;
     const base=colorBase||AMBER;
@@ -190,20 +191,19 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
   };
   const bw=Math.max(26,w*.058), bh=Math.max(11,h*.042), bgap=bh*.42;
   const colY=h*.755;
-  const pipX=w*.015+bw+7, pipW=Math.max(30,w*.05);
-  ['PWR','WPN','THR','SHLD','COOL'].forEach((lb,i)=>{
+  const pipX=w*.015+bw+7, barW=Math.max(6,w*.012);
+  // U28 28f: PWR/WPN/THR/SHLD only (COOL dropped) — four visually distinct
+  // colours (low-saturation, within the dual color-temperature discipline):
+  // PWR cyan-white (mothership energy), WPN the already-dynamic per-weapon
+  // colour, THR blue-green (power/thrust gear), SHLD violet-cyan (shield).
+  const BTN_COLOR={PWR:'rgba(210,245,255,',THR:'rgba(110,230,180,',SHLD:'rgba(190,140,255,'};
+  const BTN_RATIO={PWR:pwrRatio,WPN:cdRatio,THR:thrRatio,SHLD:shieldRatio};
+  ['PWR','WPN','THR','SHLD'].forEach((lb,i)=>{
     const by=colY+i*(bh+bgap);
     const p=st(.10+i*.045,.22+i*.045);
-    if(lb==='WPN'){
-      button(w*.015,by,bw,bh,lb,true,p,i,wpnColorBase);
-      if(p>=1) fillPips(pipX,by+bh*.18,pipW,bh*.64,5,cdRatio,wpnColorBase);
-    }else{
-      button(w*.015,by,bw,bh,lb,false,p,i);
-      if(p>=1){
-        if(lb==='PWR') flowPips(pipX,by+bh*.18,pipW,bh*.64,5,hoverMul,'rgba(148,228,255,');
-        if(lb==='THR') flowPips(pipX,by+bh*.18,pipW,bh*.64,5,hoverMul*(.6+warpIntensity*.8),'rgba(148,228,255,');
-      }
-    }
+    const colorBase=lb==='WPN'?wpnColorBase:BTN_COLOR[lb];
+    button(w*.015,by,bw,bh,lb,lb==='WPN',p,i,colorBase);
+    if(p>=1) vBar(pipX,by,barW,bh,BTN_RATIO[lb],colorBase,i);
   });
 
   // --- boot terminal + TARGET LINK flash (only while booting) ---
@@ -346,9 +346,8 @@ export function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
  * @param {(w:number,h:number,mode?:string) => object} deps.pilotTrackedPoint
  * @param {() => number} [deps.getKillCount] - real kill count (mission panel)
  * @param {() => number} [deps.getGiantKillCount] - real giant-class kill count
- * @param {() => Array} [deps.getEscorts] - live escort array (U8 contact swarm)
  */
-export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, pilotTrackedPoint, getKillCount, getGiantKillCount, getEscorts }){
+export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, pilotTrackedPoint, getKillCount, getGiantKillCount }){
   // U14e (2026-07-12): servo-lag state for the target frame — persists across
   // frames in this factory's own closure (createCombatHmdV3 is instantiated
   // once at boot, not per-frame), reset to null whenever the target isn't
@@ -452,58 +451,6 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.restore();
   }
 
-  /** U8 (2026-07-11): surrounding multi-target labels (screenshot reference:
-   *  DEEP-SPACE-KING / WARMASTAR / PYL-G-5083-TJ style — plain two-line
-   *  name+distance, no box, no other decoration). Real escorts are used
-   *  first (their actual craft type — F-47/B-2/B-1B are the site's real
-   *  wingman types, see the weapon-select copy); this 2D HUD has no 3D
-   *  projection of escort world-position, so their on-screen slot is a
-   *  fixed, deterministically-drifting position rather than an invented
-   *  screen coordinate claiming to be a real projection — same honesty
-   *  tier as the rest of this module's cosmetic-but-not-random readouts.
-   *  Remaining slots (if escorts are light or grounded) are filled from a
-   *  small fixed decorative name pool, not freshly invented per frame.
-   *
-   *  U14e (2026-07-12): the distance numbers used to be computed once from
-   *  `i` alone (no `now` term) — same output every frame, i.e. frozen
-   *  the instant the panel first drew. Added a small `now`-driven drift so
-   *  every on-screen number is at least visibly alive, matching the "closing
-   *  in / drifting off" read of the reference screenshot's contact list —
-   *  still cosmetic (this HUD has no real 3D projection for these), just no
-   *  longer literally static. */
-  const CONTACT_FILLER=[
-    ['DEEP-SPACE-KING',2.1],['WARMASTAR',2.3],['PT-1402',2.4],['LUCKYMO',2.7],['PYL-G-5083-TJ',2.2],
-  ];
-  const CONTACT_SLOTS=[
-    [.10,.16],[.20,.34],[.30,.10],[.86,.20],[.90,.40],[.78,.10],
-  ];
-  function drawContactSwarm(ctx,w,h,now){
-    if(w<300||h<220) return;   // too small to spare the space
-    const escorts=(getEscorts?getEscorts():[])||[];
-    const airborne=escorts.filter(e=>e.state!=='return'&&e.state!=='returnBoost');
-    const nameFor={f47:'F-47',b2:'B-2',b1b:'B-1B'};
-    const entries=airborne.slice(0,3).map((e,i)=>[
-      `${nameFor[e.type]||'WING'}-${String(i+1).padStart(2,'0')}`,
-      2.0+((i*37+7)%18)/10,
-    ]);
-    while(entries.length<3) entries.push(CONTACT_FILLER[entries.length]);
-    ctx.save();
-    ctx.font=`${Math.max(6.5,Math.min(9,w*.014))}px 'JetBrains Mono',monospace`;
-    ctx.textAlign='center';
-    entries.forEach(([name,baseDist],i)=>{
-      const [sx,sy]=CONTACT_SLOTS[i%CONTACT_SLOTS.length];
-      const jx=Math.sin(now/2600+i*2.1)*w*.006, jy=Math.cos(now/3100+i*1.7)*h*.006;
-      const x=w*sx+jx, y=h*sy+jy;
-      const dist=(baseDist+Math.sin(now/5200+i*3.3)*.18).toFixed(1);
-      ctx.textBaseline='alphabetic';
-      ctx.fillStyle='rgba(226,246,255,.72)';
-      ctx.fillText(name,x,y);
-      ctx.fillStyle='rgba(180,225,255,.48)';
-      ctx.fillText(`${dist}km`,x,y+11);
-    });
-    ctx.restore();
-  }
-
   /** U8 (2026-07-11): left column — mode word + coupled-flight badge (both
    *  cosmetic cockpit dressing, same tier as the rest of this file's
    *  non-gameplay flavour text) + a vertical speed tape + the big m/s
@@ -525,8 +472,13 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     // coupled badge
     ctx.fillStyle='rgba(148,228,255,.55)';
     ctx.fillText('耦合',x,h*.34+16);
-    // vertical speed tape
-    const tapeY=h*.44, tapeH=h*.30, tapeX=x+2;
+    // vertical speed tape — U28 28e: same y-start/height/width as the right
+    // column's boost/capacitor bar (RULER_Y/RULER_H/RULER_W below) so the
+    // two rulers read as a mirrored pair instead of sitting at different
+    // heights, per station master's "标尺左右平行对称" call.
+    const RULER_Y=h*.20, RULER_H=h*.34, RULER_W=6;
+    const tapeY=RULER_Y, tapeH=RULER_H, tapeX=x+2;
+    ctx.fillStyle='rgba(154,229,255,.10)';ctx.fillRect(tapeX-RULER_W/2,tapeY,RULER_W,tapeH);
     ctx.strokeStyle='rgba(154,229,255,.30)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(tapeX,tapeY);ctx.lineTo(tapeX,tapeY+tapeH);ctx.stroke();
     for(let i=0;i<=4;i++){
@@ -580,7 +532,9 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.fillStyle='rgba(148,228,255,.6)';
     ctx.fillText(`速射炮 ${cannonLeft}·${burstA}`,rx,h*.10);
     ctx.fillText(`导弹 ${missileLeft}·${burstB}`,rx,h*.10+13);
-    // boost bar (two-tone: cyan-green body, amber-red base segment)
+    // boost bar (two-tone: cyan-green body, amber-red base segment) — U28
+    // 28e: y/height/width (h*.20/h*.34/6) mirror drawLeftColumn's RULER_Y/
+    // RULER_H/RULER_W exactly, keeping the two side rulers symmetric.
     const barX=rx-8, barY=h*.20, barH=h*.34, barW=6;
     const fillT=clamp(warpIntensity,0,1);
     ctx.fillStyle='rgba(154,229,255,.14)';ctx.fillRect(barX-barW,barY,barW,barH);
@@ -651,8 +605,11 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     drawLeftColumn(ctx,w,h,now,mode,speed,warpIntensity);
     drawRightColumn(ctx,w,h,now,warpIntensity);
 
-    // ── Surrounding multi-target labels (U8: replaces OBJECTIVE panel) ─────
-    drawContactSwarm(ctx,w,h,now);
+    // U28 28e (2026-07-14): the fixed-position decorative contact labels
+    // (DEEP-SPACE-KING/WARMASTAR/etc + the real-escort branch that fed them)
+    // were deleted outright — station master: they never should have
+    // existed. Any future on-HUD contact list must come from a real 3D
+    // entity projection, not an invented 2D screen slot.
 
     // ── Target: comet + plain frame + lead indicator ────────────────────────
     const cx=lock.visible?lock.cx:w*.62;
