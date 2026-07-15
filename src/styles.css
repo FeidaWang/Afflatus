@@ -65,18 +65,23 @@
     background:radial-gradient(circle at center, rgba(7,10,16,0) 0%, rgba(7,10,16,.14) 58%, rgba(7,10,16,.42) 100%),
                linear-gradient(180deg, rgba(255,80,80,.05), rgba(255,255,255,0) 18%, rgba(255,80,80,.03));
   }
-  .hud-grid{
-    position:absolute;inset:0;
-    background-image:linear-gradient(rgba(141,180,192,.05) 1px, transparent 1px),linear-gradient(90deg, rgba(141,180,192,.05) 1px, transparent 1px);
-    background-size: 120px 120px, 120px 120px;opacity:.16;
-    mask-image: radial-gradient(circle at center, black 0%, black 52%, transparent 82%);
-  }
-  .hud-scan-line{
-    position:absolute;left:calc(var(--oracle-sweep-x,50%) - 9vw);top:0;width:18vw;height:100%;
-    background:linear-gradient(90deg, transparent 0%, rgba(141,180,192,.08) 34%, rgba(255,255,255,.18) 50%, rgba(232,179,128,.08) 66%, transparent 100%);
-    filter:blur(2px);opacity:0;transform:none;
-  }
-  body.radar-sweeping .hud-scan-line{opacity:var(--oracle-sweep-alpha,0);}
+  /* U28 follow-up (2026-07-14, real-device recheck after 28d): .hud-grid
+     and .hud-scan-line were full-#combatHud children (inset:0, z-index 110
+     — above the entire scene, including the open Combat View centre that
+     U8's "clear centre for the scene" principle is supposed to protect).
+     Both are exactly duplicated by properly-scoped, already-shipped
+     equivalents confined to .hud-panels itself: .hud-panels::after (the
+     repeating-linear-gradient grid texture a few lines below) does .hud-
+     grid's job; .hud-panels::before (the --hud-sweep-x-driven perimeter-
+     masked sweep) does .hud-scan-line's job — same sweepPct/sweepAlpha
+     values from drawRadar() in main.js, just properly masked to the HUD
+     bar's own edges instead of washing a full-viewport translucent band
+     over the 3D scene. These were leftover legacy duplicates from before
+     .hud-panels::before/::after existed — deleted outright (station
+     master: still floating after 28d's WebGL cleanup, this was the CSS
+     source), not flag-gated. Their HTML divs (index.html) and the
+     --oracle-sweep-x/--oracle-sweep-alpha writes (main.js drawRadar())
+     are removed too — nothing else read those two variables. */
   .hud-warning{
     position:absolute;top:92px;left:50%;transform:translateX(-50%);
     font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:.34em;

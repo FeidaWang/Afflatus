@@ -17,7 +17,7 @@
 
 **28c · alphardForge 星门渲染**：核心过曝修复——内圈色改 `#99FAFF`、外圈改 `#00F0FF`（站主指定色值），核心亮度倍数 1.6→1.0，bloom threshold 0.2→0.32、strength 0.9→0.72，星门结构与两侧塔柱剪影恢复可读。新增 `uScroll` uniform：rAF 内采样 `window.scrollY` 差分并 lerp 平滑（不在 scroll 监听里算），驱动电场/耀斑脉冲强度随滚动速度实时起伏，静止时回落到既有的 5 秒呼吸态。星云层（`nebPlane`）新增独立于内部 fbm warp 层速度的整体旋转，`rotation.z` 每秒 -0.008727 rad（约 0.5°/s，顺时针，缓慢庄重）。
 
-**28d · Combat View 背后漂浮元素清除**：`topdownCombat.js` 删除 V18 Phase 2 的近景尘埃/速度拉伸粒子层（`dustMesh`/`updateDust` 全套）与 Phase 3 的日晕+镜头鬼影双件套（`glareSprite`/`ghostSprites`/`updateSunGlare` 全套）——站主原话「本身就不应该存在」，整体删除而非 flag 隔离。连带清理因此变成孤儿的 `reducedMotionPreferred()`/`REDUCED_MOTION`。引擎尾迹丝带（V18 Phase 2 item 1）未受影响，保留。
+**28d · Combat View 背后漂浮元素清除**：`topdownCombat.js` 删除 V18 Phase 2 的近景尘埃/速度拉伸粒子层（`dustMesh`/`updateDust` 全套）与 Phase 3 的日晕+镜头鬼影双件套（`glareSprite`/`ghostSprites`/`updateSunGlare` 全套）——站主原话「本身就不应该存在」，整体删除而非 flag 隔离。连带清理因此变成孤儿的 `reducedMotionPreferred()`/`REDUCED_MOTION`。引擎尾迹丝带（V18 Phase 2 item 1）未受影响，保留。**同日真机复核追加**：站主反馈清完 WebGL 层后仍有漂浮物，根因其实是 CSS——`.hud-grid`/`.hud-scan-line` 是 `#combatHud`（`inset:0`，z-index 110，盖过整个场景含中央视野）的直接子元素，且都有一份已经正确限定在 `.hud-panels` 范围内、后来做的等价替代（`.hud-panels::after` 网格纹理、`.hud-panels::before` 透视扫光，读同一套 `drawRadar()` 算出的 `sweepPct`/`sweepAlpha`），是清理时忘删的旧版重复实现——两条规则+两个 HTML div+`main.js` 里的 `--oracle-sweep-x`/`--oracle-sweep-alpha` 写入一并删除，`--hud-sweep-x`/`--hud-sweep-alpha`（`.hud-panels::before` 仍在用）不受影响。
 
 **28e · HUD 标尺对称 + 假目标清除**：`combatHmdV3.js` 左侧「耦合」速度带与右侧加力/电容条统一到同一组 `y=h*.20`/`height=h*.34`/宽 6px 常量，左带新增同宽度的低透明度背景轨道，两侧真正镜像对称。彻底删除 `drawContactSwarm()` 连同 `CONTACT_FILLER`（DEEP-SPACE-KING/WARMASTAR 等五枚假目标）、`CONTACT_SLOTS` 常量、及其调用——站主原话「从来就不应该存在」；连带这条路径专属的 `getEscorts` 依赖注入（工厂签名 + `main.js` 调用点）一并移除（`createCombatRuntime` 那条独立的 `getEscorts` 用途不受影响）。
 
