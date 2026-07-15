@@ -19,7 +19,7 @@
 
 - [ ] **P0 · RFC + 双 spike**：`rfcs/2026-07-1x-u29-boot-engine.md`（模块边界/数据流/预算表）+ COOP/COEP 头验证 + WebGPU 可用性探针（真机数据决定 P5 命运）。
 - [x] **P1 · 仿真核（纯逻辑，沙盒可全验）**（2026-07-15 完成，先于 P0 开工——站主明确指定，无阻塞）：`src/bootengine/` TS 模块——PID 控制器、6DOF 刚体、HBT（意图选择→机动库→样条轨迹生成）、确定性种子；黄金集 vitest（同种子同轨迹逐帧一致、PID 阶跃响应无发散、HBT 意图切换覆盖）。Worker 壳 + 主线程消费接口。
-- [ ] **P2 · 渲染器 v1**：WebGL2 前向 + instanced 粒子系统（爆炸/推进器/碎片三池，顶点着色器仿真）、程序化 kitbash 舰队（复用既有部件模块拆件重组）、发光激光与装甲灼痕（动态 emissive/roughness 遮罩，RNM 降档为程序化细节法线）。**第一切片已完成（2026-07-15，见下方施工记录）：程序化细节法线+灼痕材质 + 独立 demo 场景，`?p2demo=armor` flag 预览；instanced 粒子系统/kitbash 舰队复用/激光武器特效仍未开工。**
+- [x] **P2 · 渲染器 v1**：WebGL2 前向 + instanced 粒子系统（爆炸/推进器/碎片三池，顶点着色器仿真）、程序化 kitbash 舰队（复用既有部件模块拆件重组）、发光激光与装甲灼痕（动态 emissive/roughness 遮罩，RNM 降档为程序化细节法线）。**两个切片均已完成（见下方施工记录）：切片一（2026-07-15）程序化细节法线+灼痕材质，`?p2demo=armor`；切片二（2026-07-15 同日）instanced 粒子池三组 + kitbash 舰队复用 + 发光激光光束，`?p2demo=fleet`。两条 demo 场景独立并存，均待真机复核（沙盒无 WebGL）。视觉打磨（相机/编队节奏/命中反馈强度等）留作后续迭代，站主已确认「效果不错，之后可以继续打磨」。
 - [ ] **P3 · 电影导演 v2**：滞后 G 力相机（复用 cameraMath smoothDamp 族）、Catmull-Rom 镜头轨、「演出优先」评分器（AI 机动选择时给镜头可看性加权——这就是「像表演不像计算」的实现机制）。
 - [ ] **P4 · 后处理栈**：色差/胶片颗粒/暗角常驻，核爆屏幕空间折射冲击波、EMP UI 故障闪（HUD 画布 glitch pass）按事件触发。
 - [ ] **P5 · WebGPU/Deferred 评估门**：P0 探针数据 + P2 帧率基线在手后，按 U27 触发条件裁决是否开 WebGPU 分支（TSL/compute 粒子 100k→500k 的想象空间在这扇门后面）。
@@ -48,6 +48,20 @@
 - **新依赖**：`@types/three@0.160.0`（devDependency，precise 版本匹配已安装的 `three@0.160.1`）——P1 的纯逻辑模块不需要 three 类型，P2 一旦碰渲染就需要，这是第一次。
 - **验证**：`tsc --noEmit` 干净、`vite build` 干净（`armorDemoScene` 被拆成独立动态导入 chunk，4.75 kB，只在 flag 命中时才加载；`vendor-three`/`topdownCombat` chunk 字节数与改动前完全一致，证明共享场景模块确实零接触）；vitest 保持 617/617（本切片是渲染/shader 代码，沙盒无 WebGL 上下文，vitest 层面无新增测试，走这个项目一贯的「沙盒不能渲染 → 待真机打开验收」路径）。
 - **预览**：`https://feida.au/boot.html?p2demo=armor`（部署后）。**本地未部署 push——23:00 后触发 R4「深夜只写不并」，代码已完成但尚未推送**，见下方施工记录后的说明。
+
+**P2 第二切片施工记录（2026-07-15/16 跨夜，粒子池 + 舰队 + 激光光束，补完 P2 剩余范围）**：
+
+- **新增**：
+  - `src/bootengine/render/particles.ts` — 共享 GPU 粒子池引擎（`THREE.Points` + `onBeforeCompile` 之外的独立 `ShaderMaterial`，顶点着色器直接从 `aSpawnTime`/`aVelocity`/`position`(=出生点) + `uTime` 算当前位置，零 JS 逐粒子 update 循环）+ 环形缓冲区 spawn（第 N 次 spawn 覆盖第 `N mod poolSize` 槽，满了自动回收最旧粒子，同 `topdownCombat.js` 的 `trailMesh` 回收惯例）。导出三组预设 `createExplosionPool`/`createThrusterPool`/`createDebrisPool`（共用一份 shader，只调生命周期/颜色/重力/尺寸曲线）。`nextSlot`/`lifePhase`/`isAlive` 三个纯函数独立导出，供 vitest 直接验证环形索引与生命周期数学（沙盒无 WebGL，这是「能验证的那一部分」，同 `odinHull.test.js` 验证比例数字而非像素的思路）。
+  - `src/bootengine/render/kitbashFleet.ts` — 复用**既有** `src/scene/carrierHull.js`/`odinHull.js`（两者本来就是 DOM/WebGL-free 的纯部件生成函数，THREE 由调用方传入，零内部 import，确认可安全从 `bootengine/render/` 复用而不牵连 `topdownCombat.js`/`main.js`）。一艘 `createCarrierHull` 旗舰 + N 艘缩小版 `createOdinHull` 护卫舰，编队槽位由 `computeFormation(rng, escortCount)` 纯函数决定（同种子同编队，vitest 验证）；护卫舰内部的铆钉/panel 散布仍是两个 hull 文件自己的裸 `Math.random()`，本模块**没有**去改那两个既有文件强改成确定性——如实记录为已知不完整确定性，不是疏漏。挂载点（引擎/主炮）以子 `Object3D` marker 形式挂在每艘船的 Group 下，`getWorldPosition()`/`getWorldQuaternion()` 随船体变换实时取值。
+  - `src/bootengine/render/laserBeam.ts` — 独立于 `armorMaterial.ts` 灼痕遮罩的光束本体（那是命中后的伤痕，这是飞行中的光束本身）：定制 `ShaderMaterial`，圆柱 UV.x 到中线的距离当「面向摄像机程度」的廉价代理（核心亮、轮廓暗），UV.y 驱动沿光束长度的能量脉冲流动，`fire(t,from,to)` 一次性定向缩放+触发淡出计时。与 `topdownCombat.js` 现有 `fireLaser`（拉伸圆柱 + `MeshBasicMaterial` 平涂）并存，不替换、不接触该文件。
+  - `src/bootengine/render/p2FleetDemoScene.ts` — 整合三者的独立 demo 场景：种子化舰队（固定种子 `afflatus:p2demo:fleet`）+ 每艘船引擎挂载点持续喷推进器粒子（逐帧节流一半，避免 600 槽粒子池被 30+ 挂载点的全量喷发过度回收）+ 周期性随机两船互射（3 组并发光束循环复用）+ 命中点触发爆炸/碎片两池齐射，三组粒子池在一个场景里全部被真实驱动到。程序化天空环境反射代码与 `armorDemoScene.ts` 同款但独立复制一份（两文件都很小、自包含，为了不去动已验收过的装甲 demo 而故意不抽公共模块）。
+  - `src/scene/carrierHull.d.ts`、`src/scene/odinHull.d.ts` — 两个纯新增的 ambient 类型声明文件（项目 `tsconfig.json` 全局 `allowJs:false`，TS 侧引用既有 `.js` 模块必须有 sidecar `.d.ts` 才能过 `strict` 检查；只声明本次实际用到的形状，非该模块的完整类型面）。
+- **接线**：`src/pages/boot.js` 新增 `?p2demo=fleet` opt-in flag，`runFleetDemo()` 与既有 `runArmorDemo()` 同款写法（跳过 boot 序列/dock/telemetry，直接挂载到 `#bridgeCanvas`）；`if (P2_ARMOR_DEMO) {...} else if (P2_FLEET_DEMO) {...} else { boot(); }`——默认路径（两个 flag 都不命中）逐字节未变。
+- **构建图谱的诚实说明（不是「零接触」，是「零编辑」）**：`kitbashFleet.ts` 复用 `carrierHull.js`/`odinHull.js` 是本次唯一让构建产物字节数出现变化的地方——这两个文件本来只被 `capitalShip3D.js`/`shipHologram.js` 引用，现在多了 `kitbashFleet.ts` 这第三个引用方，Rollup 因此把 `carrierHull.js` 拆成一个独立共享 chunk（`carrierHull-*.js`，11.19 kB）而不是继续内联进每个消费者——这是构建工具对「同一依赖被更多入口共享」的正常分包决策，不是这两个文件的源码被改了（`git diff --stat` 确认：本次唯一改动的既有文件是 `src/pages/boot.js`，`carrierHull.js`/`odinHull.js`/`capitalShip3D.js`/`shipHologram.js`/`topdownCombat.js`/`main.js` 全部零编辑）。连带效应：`vendor-three` chunk 字节数从 674.51 kB 微调到 674.53 kB（多一个 `three` 的消费者，Rollup 的模块拼接顺序/压缩变量命名跟着微调，属已知的、无害的构建期副作用，不是 three 本身代码变了）；`topdownCombat-*.js` 自身字节数确认不变（30.39 kB，逐次构建一致）。
+- **新依赖**：无（复用已有 `@types/three`）。
+- **验证**：新增 16 个测试（`nextSlot`/`lifePhase`/`isAlive` 10 个 + `computeFormation` 6 个，含黄金集式「同种子同编队」用例），全站 vitest **633/633**（617 基线 + 16 新增）、`tsc --noEmit` 干净、`vite build` 干净（`p2FleetDemoScene` 独立动态导入 chunk，10.01 kB，只在 flag 命中时加载）。渲染/shader 部分本身仍是沙盒无 WebGL 上下文验证不到的那一半，走这个项目一贯的「代码正确性能证明，像素清晰度/节奏手感待真机复核」路径。
+- **预览**：`https://feida.au/boot.html?p2demo=fleet`（部署后）。**本地未 push——R4「深夜只写不并」，跨过 23:00 后继续写但不推送**，与切片一的说明同理。
 
 ## U28 · serial 皇家木色重做 + 首页断层/星门/HUD 修复批 → v1.6（2026-07-14 立项，站主四张截图）
 
@@ -202,7 +216,7 @@
 > | U25 | **同日站主要求退回，已 revert 并推送 `643d1cb`**（546/546 vitest，回到 U24 状态） | 真机确认 Combat View 已回到 U24 前的样子 |
 > | U27 | 27b 三切片（`a4cfd45`）+ **27c Phase 1（BRIDGE SIM 入口，`86e55a0`）已推送**；27d 纯评估已关闭，五件套并入 U21 Phase 3 | 站主 flag 试看 27b 两项 → 裁决转默认/保持 opt-in；27c「转正」（去 noindex/进 sitemap/C5 评估）待站主裁决，暂不做 |
 > | U28 | 已完成（2026-07-14，同会话批一+批二）：serial 皇木主题 + 首页断层/星门配色/HUD 假目标清除/四竖柱按钮/跃迁加码 → v1.6；546/546 vitest + 构建 + `!important` 基线全绿 | 视觉全部 8 项待站主真机复核 |
-> | U29 | **P1 已完成**（2026-07-15，先于 P0 开工，站主指定）：`src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线；617/617 vitest（71 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；P2 渲染器 v1 为下一个自然阶段 |
+> | U29 | **P1 + P2 已完成**（2026-07-15/16，P1 先于 P0 开工，站主指定）：P1 = `src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线。P2 = 两切片，`?p2demo=armor`（程序化细节法线+灼痕材质）与 `?p2demo=fleet`（GPU 粒子池三组+kitbash 舰队复用+发光激光光束）。633/633 vitest（87 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；两条 P2 demo 待站主真机复核；P2 视觉打磨（相机/节奏/命中反馈）与 P3 电影导演 v2 为下一个自然阶段 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
