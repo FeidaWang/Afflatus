@@ -18,12 +18,28 @@
 **分期（每期一个会话，全部只动 boot.html + src/bootengine/，主站零接触）**：
 
 - [ ] **P0 · RFC + 双 spike**：`rfcs/2026-07-1x-u29-boot-engine.md`（模块边界/数据流/预算表）+ COOP/COEP 头验证 + WebGPU 可用性探针（真机数据决定 P5 命运）。
-- [ ] **P1 · 仿真核（纯逻辑，沙盒可全验）**：`src/bootengine/` TS 模块——PID 控制器、6DOF 刚体、HBT（意图选择→机动库→样条轨迹生成）、确定性种子；黄金集 vitest（同种子同轨迹逐帧一致、PID 阶跃响应无发散、HBT 意图切换覆盖）。Worker 壳 + 主线程消费接口。
+- [x] **P1 · 仿真核（纯逻辑，沙盒可全验）**（2026-07-15 完成，先于 P0 开工——站主明确指定，无阻塞）：`src/bootengine/` TS 模块——PID 控制器、6DOF 刚体、HBT（意图选择→机动库→样条轨迹生成）、确定性种子；黄金集 vitest（同种子同轨迹逐帧一致、PID 阶跃响应无发散、HBT 意图切换覆盖）。Worker 壳 + 主线程消费接口。
 - [ ] **P2 · 渲染器 v1**：WebGL2 前向 + instanced 粒子系统（爆炸/推进器/碎片三池，顶点着色器仿真）、程序化 kitbash 舰队（复用既有部件模块拆件重组）、发光激光与装甲灼痕（动态 emissive/roughness 遮罩，RNM 降档为程序化细节法线）。
 - [ ] **P3 · 电影导演 v2**：滞后 G 力相机（复用 cameraMath smoothDamp 族）、Catmull-Rom 镜头轨、「演出优先」评分器（AI 机动选择时给镜头可看性加权——这就是「像表演不像计算」的实现机制）。
 - [ ] **P4 · 后处理栈**：色差/胶片颗粒/暗角常驻，核爆屏幕空间折射冲击波、EMP UI 故障闪（HUD 画布 glitch pass）按事件触发。
 - [ ] **P5 · WebGPU/Deferred 评估门**：P0 探针数据 + P2 帧率基线在手后，按 U27 触发条件裁决是否开 WebGPU 分支（TSL/compute 粒子 100k→500k 的想象空间在这扇门后面）。
 - [ ] **验收纪律**：每期 vitest+构建全绿；视觉真机复核；boot.html 本就 noindex 原型——R3 flag 例外天然适用，随做随部署随看。
+
+**P1 施工记录（2026-07-15）**：全部纯逻辑，零渲染、零 DOM，boot.html/main.js/主站零接触（严格只加文件，没碰任何既有文件）。新增 9 个模块 + 9 个测试文件：
+
+| 模块 | 职责 | 关键设计取舍 |
+| --- | --- | --- |
+| `seed.ts` | 确定性种子（FNV-1a hash）+ Base62 编解码 + mulberry32 PRNG | 全引擎唯一随机源，机动库的方向抉择等全部经它，是「同种子同轨迹」成立的前提 |
+| `pid.ts` | 单轴 PID，调用方持有状态（同 cameraMath.js 的 smoothDamp 惯例） | 积分器按 `integralLimit` 钳制防饱和，而非只钳输出——否则误差反向时会硬甩 |
+| `rigidBody6dof.ts` | 6DOF 刚体半隐式欧拉积分 + 四元数姿态 + `rotateVectorByQuat` | 惯性张量简化为对角（忽略耦合项）——够用且可验证，满张量在无真实机体数据前无法验证 |
+| `catmullRom.ts` | 样条轨迹生成，`sample(u)` 返回位置+切线（对 u 求导，非对时间求导） | 刻意不含时间模型——机动和运镜（P3）的节奏不同，由调用方乘以自己的 1/duration |
+| `hbt.ts` | 通用行为树组合子（selector/sequence/condition/action）+ 固定优先级战术树 | 优先级：脱离(能量危急) > 剪刀(被咬近距) > 甩尾(被咬远距) > 追击(有射击位) > 归队(太远) > 保持编队 |
+| `maneuvers.ts` | 意图→路点，六种意图各一个规划函数 | 路点第一点严格等于当前位置（样条保证精确过点），航向随机（甩尾左/右）走注入的 rng |
+| `simCore.ts` | `stepSimFrame` 单帧纯函数，串联 HBT→机动库→样条→PID→6DOF | 状态字段全部是可序列化纯数据（路点数组而非样条对象）——专为 Worker postMessage 设计 |
+| `worker/simWorker.ts` | Worker 壳，~40 行 | 本地声明 `self` 类型避免与 tsconfig 现有 `dom` lib 冲突，不拆分 tsconfig |
+| `index.ts` | `createSimClient()` 主线程消费接口 | 有 `Worker` 全局+ `workerUrl` 才走 worker 路径，否则内联 fallback；两路径行为对等 |
+
+**验证**：71 个新测试（含黄金集：跨两次独立 run 逐帧 `toEqual`、PID 阶跃响应收敛不发散、HBT 六分支全覆盖、`structuredClone` 往返不丢数据），全站 vitest **617/617**（546 基线 + 71 新增）、`tsc --noEmit` 干净、`vite build` 干净（`src/bootengine/` 未被任何入口引用，构建产物零变化，符合「本期只验证不接线」的范围）。P0（RFC 文档 + COOP/COEP 头 spike + WebGPU 探针）尚未开工，不阻塞 P1——已记录为下一可选阶段。
 
 ## U28 · serial 皇家木色重做 + 首页断层/星门/HUD 修复批 → v1.6（2026-07-14 立项，站主四张截图）
 
@@ -178,7 +194,7 @@
 > | U25 | **同日站主要求退回，已 revert 并推送 `643d1cb`**（546/546 vitest，回到 U24 状态） | 真机确认 Combat View 已回到 U24 前的样子 |
 > | U27 | 27b 三切片（`a4cfd45`）+ **27c Phase 1（BRIDGE SIM 入口，`86e55a0`）已推送**；27d 纯评估已关闭，五件套并入 U21 Phase 3 | 站主 flag 试看 27b 两项 → 裁决转默认/保持 opt-in；27c「转正」（去 noindex/进 sitemap/C5 评估）待站主裁决，暂不做 |
 > | U28 | 已完成（2026-07-14，同会话批一+批二）：serial 皇木主题 + 首页断层/星门配色/HUD 假目标清除/四竖柱按钮/跃迁加码 → v1.6；546/546 vitest + 构建 + `!important` 基线全绿 | 视觉全部 8 项待站主真机复核 |
-> | U29 | 新立项（2026-07-14，站主 AAA 框架确认）：boot.html 重构为影院级空战引擎，P0–P5 六期（HBT+PID 6DOF 仿真核/WebGL2 粒子渲染器/导演相机/后处理栈/WebGPU 评估门），四处降档裁决见正文表 | 未动工；P0 spike 或 P1 仿真核可任选先开（P1 沙盒可全验证） |
+> | U29 | **P1 已完成**（2026-07-15，先于 P0 开工，站主指定）：`src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线；617/617 vitest（71 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；P2 渲染器 v1 为下一个自然阶段 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
