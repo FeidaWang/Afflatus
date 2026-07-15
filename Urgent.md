@@ -1,5 +1,30 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
+
+**愿景（站主原文转译）**：电影级高强度狗斗模拟器，用户是导演——系统自主演出高保真太空战争，强调「工业暴力」美学、物理化飞行行为、大片级视觉反馈。设计哲学：一切服务「演出感 vs 美学」，AI 行为要**像表演，不像计算**。
+
+**框架确认 + 本仓库落地裁决**（Lead Technical Director 角色下的诚实转换——boot.html 是 noindex 原型页，无 SEO/内容红线，是全站唯一可以放开手的沙盒；但以下四处按仓库既有裁决降档，其余照单全收）：
+
+| 站主框架 | 落地裁决 | 理由 |
+| --- | --- | --- |
+| WebGPU + Deferred + Compute 粒子 | **P2 先 WebGL2 前向渲染 + instanced GPU 粒子（桌面 100k/移动 30k），WebGPU 作为 P5 评估门** | three 钉在 r160（U21 裁决），其 WebGPU 线当时未熟；U27 已写死 WebGPU 重估触发条件，boot 原型是测它的正确场地，但先让内容跑起来 |
+| SharedArrayBuffer 零拷贝 | **P0 先做 COOP/COEP 头 spike**（vercel.json headers 仅对 /boot.html 加 `Cross-Origin-Opener-Policy: same-origin` + `Cross-Origin-Embedder-Policy: require-corp`），成了用 SAB，不成回退 postMessage+Transferable | SAB 需要 crossOriginIsolated；COEP 会波及 Google Fonts 等跨域资源加载方式，必须先在这一页隔离验证 |
+| Zero DOM / SDF UI | **HUD 全画布化接受；导航坞站保留 DOM** | 可达性红线：链接必须可聚焦可点按（22c hover 依赖零容忍同源）；HUD 读数进 canvas 不损失任何东西 |
+| Draco/Meshopt + Kitbashing/Trim Sheet | **程序化 kitbash 优先**（carrierHull/odinHull 模块化部件库已有基础），Draco 仅在引入外部 glTF 时启用 | 现站零外部资产管线，这是优势不是欠缺（离线零依赖、体积可控） |
+
+**照单全收项**：HBT 分层行为树（战术意图层：甩尾/剪刀/编队机动）、Catmull-Rom 样条弹道、PID 6DOF 电传飞控（惯性/动量/推力响应）、Worker 仿真线程、确定性种子生成（Base62 hash 存配置）、滞后相机模拟 G 力体重感、屏幕空间折射核爆冲击波/色差/胶片颗粒/EMP UI 故障闪、新引擎模块用 **TypeScript**（`src/bootengine/`，vite 原生支持，与现有 checkJs 并存）。
+
+**分期（每期一个会话，全部只动 boot.html + src/bootengine/，主站零接触）**：
+
+- [ ] **P0 · RFC + 双 spike**：`rfcs/2026-07-1x-u29-boot-engine.md`（模块边界/数据流/预算表）+ COOP/COEP 头验证 + WebGPU 可用性探针（真机数据决定 P5 命运）。
+- [ ] **P1 · 仿真核（纯逻辑，沙盒可全验）**：`src/bootengine/` TS 模块——PID 控制器、6DOF 刚体、HBT（意图选择→机动库→样条轨迹生成）、确定性种子；黄金集 vitest（同种子同轨迹逐帧一致、PID 阶跃响应无发散、HBT 意图切换覆盖）。Worker 壳 + 主线程消费接口。
+- [ ] **P2 · 渲染器 v1**：WebGL2 前向 + instanced 粒子系统（爆炸/推进器/碎片三池，顶点着色器仿真）、程序化 kitbash 舰队（复用既有部件模块拆件重组）、发光激光与装甲灼痕（动态 emissive/roughness 遮罩，RNM 降档为程序化细节法线）。
+- [ ] **P3 · 电影导演 v2**：滞后 G 力相机（复用 cameraMath smoothDamp 族）、Catmull-Rom 镜头轨、「演出优先」评分器（AI 机动选择时给镜头可看性加权——这就是「像表演不像计算」的实现机制）。
+- [ ] **P4 · 后处理栈**：色差/胶片颗粒/暗角常驻，核爆屏幕空间折射冲击波、EMP UI 故障闪（HUD 画布 glitch pass）按事件触发。
+- [ ] **P5 · WebGPU/Deferred 评估门**：P0 探针数据 + P2 帧率基线在手后，按 U27 触发条件裁决是否开 WebGPU 分支（TSL/compute 粒子 100k→500k 的想象空间在这扇门后面）。
+- [ ] **验收纪律**：每期 vitest+构建全绿；视觉真机复核；boot.html 本就 noindex 原型——R3 flag 例外天然适用，随做随部署随看。
+
 ## U28 · serial 皇家木色重做 + 首页断层/星门/HUD 修复批 → v1.6（2026-07-14 立项，站主四张截图）
 
 > 八个子项，两批施工：**批一 = 28a**（serial.html 独立，互不影响）；**批二 = 28b–28h**（首页，做完版本号升 v1.6）。截图不入库，下述文字即实施依据。**2026-07-14 两批全部实施完成，代码/测试/构建侧已验证，详见下方施工记录——视觉观感待站主真机复核。**
@@ -153,6 +178,7 @@
 > | U25 | **同日站主要求退回，已 revert 并推送 `643d1cb`**（546/546 vitest，回到 U24 状态） | 真机确认 Combat View 已回到 U24 前的样子 |
 > | U27 | 27b 三切片（`a4cfd45`）+ **27c Phase 1（BRIDGE SIM 入口，`86e55a0`）已推送**；27d 纯评估已关闭，五件套并入 U21 Phase 3 | 站主 flag 试看 27b 两项 → 裁决转默认/保持 opt-in；27c「转正」（去 noindex/进 sitemap/C5 评估）待站主裁决，暂不做 |
 > | U28 | 已完成（2026-07-14，同会话批一+批二）：serial 皇木主题 + 首页断层/星门配色/HUD 假目标清除/四竖柱按钮/跃迁加码 → v1.6；546/546 vitest + 构建 + `!important` 基线全绿 | 视觉全部 8 项待站主真机复核 |
+> | U29 | 新立项（2026-07-14，站主 AAA 框架确认）：boot.html 重构为影院级空战引擎，P0–P5 六期（HBT+PID 6DOF 仿真核/WebGL2 粒子渲染器/导演相机/后处理栈/WebGPU 评估门），四处降档裁决见正文表 | 未动工；P0 spike 或 P1 仿真核可任选先开（P1 沙盒可全验证） |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
