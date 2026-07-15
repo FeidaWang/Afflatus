@@ -9,12 +9,31 @@
    ============================================================ */
 
 import * as THREE from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { createKitbashFleet } from './kitbashFleet';
 import { createExplosionPool, createThrusterPool, createDebrisPool } from './particles';
 import type { ParticlePool } from './particles';
 import { createLaserBeam } from './laserBeam';
 import type { LaserBeam } from './laserBeam';
 import { rngFromString } from '../seed';
+
+// U29 P2 "cinematic light contrast" pass (owner-supplied AAA guide, 2026-
+// 07-16): the guide's WebGPU/deferred/G-Buffer/POM/SSR ask is a different
+// render architecture than this project's WebGL2-forward pipeline and is
+// explicitly out of scope here (see Urgent.md's U29 downscope table — WebGPU
+// is a P5 evaluation gate that hasn't even had its P0 device-probe spike
+// run yet; a from-scratch WebGPU renderer isn't a same-session, no-visual-
+// feedback-safe undertaking). What IS adopted from that guide, because it's
+// achievable in the CURRENT WebGL2/three.js pipeline with real, verifiable
+// effect: ACES filmic tonemapping (three ships this built-in) + a real
+// bloom pass (three's own bundled EffectComposer/UnrealBloomPass, not a
+// hand-rolled approximation) + a repositioned/stronger rim light for edge
+// contrast. This is the "近似效果" half of that decision — the owner asked
+// for this half now and the WebGPU rewrite to be logged separately for a
+// dedicated future session (see Urgent.md).
 
 export interface FleetDemoScene {
   start(): void;
@@ -68,6 +87,13 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   }
   renderer.setClearColor(0x03050a, 1);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  // ACES filmic tonemapping — deeper shadows, more contrast in the highlights
+  // (engine glow / windows / shield rim) instead of the flat/washed default
+  // linear response. Exposure tuned down slightly from 1.0 since ACES's own
+  // curve already brightens mids; 1.0 read a touch hot with the new engine
+  // glow's emissiveIntensity 4.5.
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.95;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x03050a, 0.012);
@@ -86,8 +112,12 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   const keyLight = new THREE.DirectionalLight(0xf3f6fa, 1.5);
   keyLight.position.set(10, 12, 8);
   scene.add(keyLight);
-  const rimLight = new THREE.DirectionalLight(0xe8b380, 0.5);
-  rimLight.position.set(-8, -3, -6);
+  // Rim light pushed further to a low grazing angle and boosted (0.5 -> 0.95)
+  // — the guide's "metal edges/corners should keep a sharp highlight" ask,
+  // done with light placement rather than a per-material Fresnel shader
+  // (that's a real next increment, not included this pass — see chat).
+  const rimLight = new THREE.DirectionalLight(0xe8b380, 0.95);
+  rimLight.position.set(-16, -5, -15);
   scene.add(rimLight);
 
   // Fixed demo seed — same fleet layout every load, matching P1's own
@@ -111,6 +141,21 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     scene.add(beam.mesh);
     beams.push(beam);
   }
+
+  // Real bloom (three's own EffectComposer/UnrealBloomPass), not a hand-
+  // rolled bright-pass hack — this is what actually sells "engine glow /
+  // window lights / shield rim are the brightest things on the model"
+  // (guide: "this is the key to giving the model a sense of light").
+  // threshold ~0.82 catches the high-emissiveIntensity parts (engine glow
+  // material is 4.5, easily >1.0 post-tonemap-linear) without blooming the
+  // plain gray hull. OutputPass applies renderer.toneMapping/outputColorSpace
+  // at the very end of the chain — required when using EffectComposer,
+  // since intermediate passes render to off-screen linear targets.
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.9, 0.4, 0.82);
+  composer.addPass(bloomPass);
+  composer.addPass(new OutputPass());
 
   const tmpFrom = new THREE.Vector3();
   const tmpTo = new THREE.Vector3();
@@ -181,7 +226,7 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     debrisPool.update(elapsed);
     for (const beam of beams) beam.update(elapsed);
 
-    renderer.render(scene, camera);
+    composer.render();
     if (running) raf = requestAnimationFrame(loop);
   }
 
@@ -193,6 +238,9 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
+    composer.setPixelRatio(dpr);
+    composer.setSize(W, H);
+    bloomPass.setSize(W, H);
   }
 
   return {
