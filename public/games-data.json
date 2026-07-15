@@ -1,14 +1,14 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-14",
-  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365 (14 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365（7 月 14 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "updated": "2026-07-15",
+  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365 (15 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365（7 月 15 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
-    "resolved": 52,
+    "resolved": 53,
     "correctOutcome": 37,
     "exactScore": 10,
-    "winRate": 71,
+    "winRate": 70,
     "note_en": "Match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
     "note_zh": "自第三轮起对预测胜负计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
@@ -110,63 +110,64 @@
         "pick_zh": "阿根廷胜",
         "ok": true,
         "exact": false
+      },
+      {
+        "id": "wc-fra-esp",
+        "label_en": "France 0-2 Spain",
+        "label_zh": "法国 0-2 西班牙",
+        "pick_en": "France win",
+        "pick_zh": "法国胜",
+        "ok": false,
+        "exact": false
       }
     ]
   },
   "champions": [
     {
-      "team": "France",
-      "team_zh": "法国",
-      "flag": "🇫🇷",
-      "prob": 37,
-      "reason_en": "Unbeaten all tournament, outscoring opponents 16-2, and into a semi-final vs Spain (July 14, Dallas). Devigged title odds (DraftKings +150, 13 Jul) make France clear favourites, with Mbappé's Golden Boot-leading form driving the confidence. Tchouaméni (thigh) has progressed well in training and is now considered likely to start, while Thuram (calf) remains doubtful and is out of the projected XI.",
-      "reason_zh": "本届赛事至今保持不败，净胜球16-2，晋级半决赛（7 月 14 日，达拉斯战西班牙）。夺冠赔率（DraftKings +150，7 月 13 日，去水后）显示法国仍是头号热门，姆巴佩领跑金靴的状态支撑信心。特查梅尼（大腿伤）训练恢复顺利，目前有望首发；图拉姆（小腿伤）仍存疑，不在首发名单内。"
+      "team": "Spain",
+      "team_zh": "西班牙",
+      "flag": "🇪🇸",
+      "prob": 56,
+      "reason_en": "Booked their final spot with a 2-0 win over France (Oyarzabal penalty, Porro), a result Mbappé called a tactical and technical breakdown by the French. Spain have outscored opponents 13-1 across the tournament. Devigged title odds (DraftKings/FanDuel -155/-156, bet365 4/6, 14 Jul) make Spain clear favourites heading into the final on July 19, whichever semi-final winner they face.",
+      "reason_zh": "凭借2-0击败法国（奥亚萨瓦尔点球破门、波尔特罗建功）率先锁定决赛席位，姆巴佩赛后将失利归咎于战术与技术层面的失误。西班牙本届净胜球达13-1。夺冠赔率（DraftKings/FanDuel -155/-156，bet365 4/6，7 月 14 日，去水后）显示西班牙已是头号夺冠热门，无论7 月 19 日决赛对手是谁。"
+    },
+    {
+      "team": "England",
+      "team_zh": "英格兰",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "prob": 24,
+      "reason_en": "Semi-final vs Argentina (July 15, Atlanta) — DraftKings has England -120 to advance vs Argentina +100, a tighter line than earlier in the week. Devigged title odds (FanDuel +290, bet365 11/4) put England second-favourite for the trophy. Declan Rice has been managing a sickness bug plus neural pain in his hamstring/back and a calf issue but is expected to play; Jordan Henderson is out for the tournament after arm surgery.",
+      "reason_zh": "半决赛 7 月 15 日亚特兰大战阿根廷——DraftKings晋级盘口英格兰-120，阿根廷+100，较周初有所收窄。夺冠赔率（FanDuel +290，bet365 11/4，去水后）显示英格兰是夺冠第二热门。赖斯正带伤作战（肠胃不适、腿筋/背部神经性疼痛及小腿问题），但预计可以出战；亨德森因手臂手术已提前告别本届赛事。"
     },
     {
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
       "prob": 20,
-      "reason_en": "Needed extra time to beat Switzerland 3-1, with Messi held scoreless but still level with Mbappé on 8 Golden Boot goals. Semi-final vs England (July 15, Atlanta) — DraftKings has now moved England ahead on the 90-minute line (+155 vs Argentina +205) and to advance outright (-135 vs +110, ~55% fair after devig for England).",
-      "reason_zh": "加时 3-1 淘汰瑞士，梅西本场未进球但仍以8球与姆巴佩并列金靴榜首。半决赛 7 月 15 日亚特兰大战英格兰——DraftKings 现已将90分钟盘口热门转向英格兰（+155，阿根廷+205），晋级盘口同样看好英格兰（-135 对 +110，去水后英格兰公平胜率约55%）。"
-    },
-    {
-      "team": "Spain",
-      "team_zh": "西班牙",
-      "flag": "🇪🇸",
-      "prob": 22,
-      "reason_en": "Beat Belgium 2-1 in the QF, outscoring opponents 11-1 overall, but conceded for the first time all tournament. Semi-final vs favourites France (July 14, Dallas) — devigged title odds (DraftKings +320, 13 Jul) put their title odds at roughly one-in-five, with Yamal reportedly back to full fitness after a minor knock.",
-      "reason_zh": "八强战 2-1 击败比利时，净胜球11-1，但本届首次失球。半决赛 7 月 14 日达拉斯战头号热门法国——夺冠赔率（DraftKings +320，7 月 13 日，去水后）显示夺冠概率约五分之一，亚马尔据悉已从轻伤中恢复，重返最佳状态。"
-    },
-    {
-      "team": "England",
-      "team_zh": "英格兰",
-      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "prob": 21,
-      "reason_en": "Bellingham's extra-time brace saw off Norway 2-1 (AET), lifting him level with Kane on 6 goals; England have conceded just 6 in 6 matches, the tournament's stingiest defence. Semi-final vs Argentina (July 15, Atlanta) — DraftKings now favours England on both the 90-minute line (+155 vs Argentina +205) and to advance outright (-135, ~55% fair after devig).",
-      "reason_zh": "贝林厄姆加时梅开二度助英格兰 2-1（加时）淘汰挪威，进球数追平凯恩的6球；6场仅失6球，是本届防线最稳固的球队。半决赛 7 月 15 日亚特兰大战阿根廷——DraftKings 现同时在90分钟盘口（+155，阿根廷+205）与晋级盘口（-135，去水后公平胜率约55%）中看好英格兰。"
+      "reason_en": "Semi-final vs England (July 15, Atlanta) — slight underdogs on DraftKings' advance market (+100 vs England -120). Messi took a facial knock from Xhaka in the QF win over Switzerland but played all 120 minutes and is fit to start; Cristian Romero, subbed at half-time of extra time, says it was fatigue/heat management rather than injury. Devigged title odds (FanDuel +370, bet365 4/1) make Argentina third-favourite.",
+      "reason_zh": "半决赛 7 月 15 日亚特兰大战英格兰——DraftKings晋级盘口阿根廷+100略处下风（英格兰-120）。梅西在八强战对瑞士一役中被哈萨遇触碰面部但仍打满120分钟，出战无碍；罗梅罗在加时赛中场被换下，本人表示是体能及高温管理而非伤病。夺冠赔率（FanDuel +370，bet365 4/1，去水后）显示阿根廷是夺冠第三热门。"
     }
   ],
   "players": [
-    {
-      "name": "Kylian Mbappé",
-      "name_zh": "姆巴佩",
-      "team": "France",
-      "team_zh": "法国",
-      "flag": "🇫🇷",
-      "prob": 26,
-      "reason_en": "Still leads the Golden Boot on 8 goals, and now holds the tiebreaker over Messi outright with 3 assists to Messi's 1. France are into the semi-final vs Spain, July 14 in Arlington, unbeaten all tournament — the strongest overall package left in the field.",
-      "reason_zh": "以8球继续领跑金靴榜，且以3次助攻力压梅西的1次助攻，在并列情况下占据决胜优势。法国晋级半决赛，7 月 14 日阿灵顿战西班牙，本届仍保持不败——是留在赛场上综合实力最强的球员。"
-    },
     {
       "name": "Lionel Messi",
       "name_zh": "梅西",
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
+      "prob": 24,
+      "reason_en": "Level with Mbappé on 8 Golden Boot goals but leads on 2 assists to Mbappé's now-frozen 3 (France are out). Took a facial knock in the QF vs Switzerland but played all 120 minutes and is fit for the semi-final vs England, July 15 in Atlanta — his self-declared final World Cup, and still the sentimental Golden Ball favourite with two more games to add to his tally.",
+      "reason_zh": "以8球与姆巴佩并列金靴榜首，助攻数2次落后姆巴佩（法国出局后定格于3次）。八强战对瑞士时面部遭碰撞，仍打满120分钟，可正常出战半决赛（7 月 15 日亚特兰大战英格兰）——这是他所说的谢幕之战，仍是金球奖最具情怀色彩的人选，且还有至多两场比赛可以继续填数据。"
+    },
+    {
+      "name": "Kylian Mbappé",
+      "name_zh": "姆巴佩",
+      "team": "France",
+      "team_zh": "法国",
+      "flag": "🇫🇷",
       "prob": 20,
-      "reason_en": "Went quiet without a goal in the 3-1 (AET) QF win over Switzerland, but still sits on 8 goals (level with Mbappé) and his all-time record 21 World Cup finals goals. Semi-final vs England, July 15 in Atlanta, in what he's called his final World Cup — the sentimental favourite for the Golden Ball.",
-      "reason_zh": "在加时 3-1 淘汰瑞士一役中未有进球入账，但仍以8球与姆巴佩并列金靴榜首，其世界杯正赛生涯进球数21球的历史纪录保持不变。半决赛 7 月 15 日亚特兰大战英格兰，这是他所说的谢幕之战——金球奖最具情怀色彩的人选。"
+      "reason_en": "Frozen on 8 goals and 3 assists — still tied for the Golden Boot lead on the assist tiebreak — after France's run ended 0-2 to Spain in the semi-final (Oyarzabal pen, Porro). Mbappé cited technical and tactical errors for the loss and had an uncharacteristically quiet game. With no matches left, his Golden Boot hopes now depend on Messi, Bellingham and Kane not overtaking him; Golden Ball chances have faded with elimination.",
+      "reason_zh": "半决赛法国0-2不敌西班牙（奥亚萨瓦尔点球、波尔特罗建功）后，姆巴佩数据定格在8球3助攻——凭助攻数仍并列金靴榜首。他将失利归咎于技术与战术层面的失误，本场表现罕见低迷。已无比赛可踢，金靴归属只能寄望于梅西、贝林厄姆、凯恩不再反超；随着球队出局，金球奖希望明显减弱。"
     },
     {
       "name": "Lamine Yamal",
@@ -174,9 +175,9 @@
       "team": "Spain",
       "team_zh": "西班牙",
       "flag": "🇪🇸",
-      "prob": 20,
-      "reason_en": "Spain beat Belgium 2-1 in the QF — Fabián Ruiz and substitute Merino scored, with Yamal again occupying defenders out wide all game, before conceding for the first time this tournament. Semi-final vs favourites France, July 14 in Arlington — a huge test for Spain's most dangerous attacker.",
-      "reason_zh": "西班牙八强 2-1 击败比利时——法比安·鲁伊斯与替补登场的梅里诺建功，亚马尔边路持续牵制对方防线，球队本届首次失球。半决赛 7 月 14 日阿灵顿战头号热门法国——对西班牙最具威胁的攻击手而言是巨大考验。"
+      "prob": 22,
+      "reason_en": "Spain reached the final with a 2-0 win over France — Oyarzabal converted a penalty won by Yamal being fouled by Digne, then Porro doubled the lead. Yamal's direct running again destabilised a top-tier back line. With Spain now the title favourites (DraftKings -155, 14 Jul) and two games left, he's a live Golden Ball contender if Spain lift the trophy.",
+      "reason_zh": "西班牙2-0击败法国晋级决赛——亚马尔在禁区内被迪涅犯规为球队赢得点球，奥亚萨瓦尔操刀命中，波尔特罗随后再入一球扩大优势。亚马尔持续用直插式突破冲击顶级后防线。随着西班牙已成夺冠头号热门（DraftKings -155，7 月 14 日）且仍有两场比赛可踢，若西班牙最终夺冠，他是金球奖的有力竞争者。"
     },
     {
       "name": "Jude Bellingham",
@@ -185,49 +186,21 @@
       "team_zh": "英格兰",
       "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
       "prob": 19,
-      "reason_en": "A second knockout-round brace — levelling in first-half stoppage time then winning it in extra time — sent Norway out 2-1 (AET) and lifted him level with Kane on 6 goals. Two match-defining performances in as many knockout games make him a genuine Golden Ball dark horse. Semi-final vs Argentina, July 15 in Atlanta.",
-      "reason_zh": "淘汰赛阶段第二次梅开二度——上半场补时扳平，加时赛再入制胜球，2-1（加时）淘汰挪威——本届进球数追平凯恩，达到6球。连续两场淘汰赛比赛中都有决定性发挥，是金球奖的有力黑马。半决赛 7 月 15 日亚特兰大战阿根廷。"
+      "reason_en": "Level with Kane on 6 goals after his extra-time brace eliminated Norway. Semi-final vs Argentina, July 15 in Atlanta, with DraftKings now favouring England to advance (-120 vs Argentina +100). Declan Rice's fitness (sickness bug, hamstring/back pain, calf issue) is one to watch but he's expected to start — England's stingiest-defence tournament run keeps Bellingham's Golden Ball case alive.",
+      "reason_zh": "加时梅开二度淘汰挪威后，进球数追平凯恩的6球。半决赛 7 月 15 日亚特兰大战阿根廷，DraftKings晋级盘口现看好英格兰（-120，阿根廷+100）。赖斯的状态（肠胃不适、腿筋/背部疼痛、小腿问题）值得关注，但预计可以首发——英格兰本届防线最稳固的战绩继续支撑贝林厄姆的金球奖竞争力。"
     },
     {
-      "name": "Erling Haaland",
-      "name_zh": "哈兰德",
-      "team": "Norway",
-      "team_zh": "挪威",
-      "flag": "🇳🇴",
+      "name": "Mikel Oyarzabal",
+      "name_zh": "奥亚萨瓦尔",
+      "team": "Spain",
+      "team_zh": "西班牙",
+      "flag": "🇪🇸",
       "prob": 15,
-      "reason_en": "Norway's run ended in the QF, losing 2-1 (AET) to England despite an early Schjelderup goal and a second Haaland effort disallowed on VAR review. Still sits on 7 goals, one behind Mbappé and Messi — with no games left to add to it, his Golden Boot hopes now depend on the leaders going quiet.",
-      "reason_zh": "挪威止步八强，加时 1-2 不敌英格兰，尽管舍尔德鲁普先拔头筹，哈兰德本人还有一球经VAR回看判罚无效。本届仍以7球落后姆巴佩、梅西一球——已无比赛可踢，金靴归属只能寄望于领先者后续颗粒无收。"
+      "reason_en": "Scored the opening penalty in Spain's 2-0 semi-final win over France, taking him to 5 goals for the tournament. With Spain into the final as clear title favourites and two more potential games, a strong final could put him firmly into Golden Boot and Golden Ball conversations behind the current leaders.",
+      "reason_zh": "在西班牙2-0淘汰法国的半决赛中主罚点球首开纪录，本届进球数升至5球。随着西班牙晋级决赛并成为夺冠头号热门，若决赛表现出色，他有望在金靴与金球奖的讨论中紧追当前领跑者。"
     }
   ],
   "fixtures": [
-    {
-      "id": "wc-fra-esp",
-      "stage": "Semi-final",
-      "kickoff": "2026-07-14T19:00:00Z",
-      "home": "France",
-      "home_zh": "法国",
-      "homeFlag": "🇫🇷",
-      "away": "Spain",
-      "away_zh": "西班牙",
-      "awayFlag": "🇪🇸",
-      "opus": "home",
-      "conf": 0.56,
-      "opusScore": "2-1",
-      "reason_en": "DraftKings has France favourites on the 90-minute line (+135) and to advance outright (-145, ~56% fair after devig), with bet365 in line (+130). Aurélien Tchouaméni (thigh) has recovered well in training and now looks likely to start, while Marcus Thuram (calf) remains doubtful and isn't in the projected XI. Mbappé arrives in career-best form, leading the Golden Boot on 8 goals with the tiebreaking edge in assists. Spain conceded for the first time all tournament in the QF win over Belgium, though Yamal is reportedly back to full fitness after a minor knock — his dribbling against France's back line remains the must-watch duel.",
-      "reason_zh": "DraftKings法国90分钟盘口+135、晋级盘-145（去水后约56%胜率）继续领先，bet365同样力挺法国（+130）。特查梅尼（大腿伤）训练恢复顺利，目前有望首发；图拉姆（小腿伤）仍存疑，不在首发名单内。姆巴佩状态正佳，以8球领跑金靴且助攻数占先。西班牙在八强战对比利时一役中本届首次失球，亚马尔据悉已从轻伤中恢复并重返最佳状态，他对法国防线的单挑仍是本场焦点看点。",
-      "odds": {
-        "h": 2.35,
-        "d": 3.25,
-        "a": 3.15,
-        "src": "DraftKings",
-        "scores": [
-          { "s": "1-1", "o": 7.0 },
-          { "s": "2-1", "o": 7.5 },
-          { "s": "1-0", "o": 6.5 }
-        ]
-      },
-      "result": null
-    },
     {
       "id": "wc-arg-eng",
       "stage": "Semi-final",
@@ -239,14 +212,14 @@
       "away_zh": "英格兰",
       "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
       "opus": "away",
-      "conf": 0.55,
+      "conf": 0.54,
       "opusScore": "1-2",
-      "reason_en": "Odds have shifted since the QFs: DraftKings' 3-way moneyline (13 Jul) now has England favourites at +155, Argentina +205 and the draw +200, with England also favoured to advance outright (-135, Argentina +110, ~55% fair after devig). Both sides needed extra time in the QFs — Argentina beat Switzerland 3-1 with Messi held scoreless, England edged Norway 2-1 (AET) on a Bellingham brace that pulled him level with Kane on 6 goals. England have conceded just 6 goals in 6 matches; the market's Under 2.5 line (-155) points to another tight, low-scoring affair.",
-      "reason_zh": "半决赛盘口已生变：DraftKings 三项全胜盘口（7 月 13 日）转为英格兰热门+155，阿根廷+205，平局+200；晋级盘口同样看好英格兰（-135，阿根廷+110，去水后公平胜率约55%）。两队在八强战均战至加时——阿根廷加时3-1淘汰瑞士（梅西本场未进球），英格兰凭贝林厄姆梅开二度加时2-1淘汰挪威，追平凯恩的6球。英格兰6场仅失6球，大小球盘口看好小于2.5球（-155），预示又是一场胶着的低比分较量。",
+      "reason_en": "Spain await in the final after beating France 2-0, raising the stakes further. DraftKings' advance market (14 Jul) has tightened to England -120, Argentina +100 (~54% fair after devig), versus a wider gap earlier in the week. Messi took a facial knock vs Switzerland but played all 120 minutes and starts; Cristian Romero (subbed at half-time of ET) says it was heat/fatigue management, not injury. England's Declan Rice is managing a sickness bug plus hamstring/back and calf niggles but is expected to start; Jordan Henderson is out for the tournament. England's meanest-in-the-field defence (6 conceded in 6) edges a tight, low-scoring semi.",
+      "reason_zh": "西班牙已2-0击败法国率先晋级决赛，令本场胜负更为关键。DraftKings晋级盘口（7 月 14 日）已收窄至英格兰-120，阿根廷+100（去水后公平胜率约54%），较周初的差距明显缩小。梅西在对瑞士一役中面部遭碰撞，但打满120分钟且将首发；罗梅罗（加时中场被换下）表示是高温体能管理而非伤病。英格兰赖斯正带伤作战（肠胃不适、腿筋/背部及小腿问题），预计仍将首发；亨德森因手术缺席本届剩余赛事。英格兰本届防线最稳固（6场仅失6球），料将在一场胶着低分战中占优。",
       "odds": {
-        "h": 3.05,
+        "h": 2.95,
         "d": 3.00,
-        "a": 2.55,
+        "a": 2.60,
         "src": "DraftKings",
         "scores": [
           { "s": "1-1", "o": 6.5 },

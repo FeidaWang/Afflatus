@@ -1,23 +1,23 @@
 {
-  "updated": "2026-07-10",
+  "updated": "2026-07-14",
   "version": 2,
-  "as_of": "2026-07-09",
+  "as_of": "2026-07-14",
   "note_en": "Schema v2 (V6, 2026-07-04): top-level object with hawkDoveCompass + pillars + events (was a bare array in v1 — the frontend's incident-log renderer now reads .events). Matches the shape prompts/signal-warsh.md's V7 scheduled task will produce, so future automated runs land on the same structure without another migration.",
   "note_zh": "Schema v2（V6，2026-07-04）：顶层改为对象，含 hawkDoveCompass + pillars + events（v1 是裸数组——前端事件簿渲染现在读 .events）。与 prompts/signal-warsh.md 里 V7 定时任务未来会产出的结构对齐，后续自动化运行不用再迁移一次。",
   "hawkDoveCompass": {
-    "score": 1.2,
+    "score": 1.5,
     "scale": "-2 (dovish) .. +2 (hawkish)",
     "label_en": "HAWKISH",
     "label_zh": "鹰派",
-    "rationale_en": "Warsh's Sintra line (\"prices are too high\", no comfort with inflation above 2%) still anchors the hawkish read, and the June dot plot's 3.8% year-end median hasn't been walked back. But the margin moved the other way this week: Waller (Jul 6, Rome) publicly defended forward guidance as \"valuable\" when used flexibly — the first visible internal pushback against the chair's signature anti-guidance doctrine — and post-NFP pricing has July as a dead meeting (~7% odds of a move) with roughly 55–65% odds of one 25bp cut by year-end, Sept/Oct favored. Hawkish chair, slightly less hawkish committee-plus-market mix.",
-    "rationale_zh": "沃什在辛特拉的原话（「物价太高」、绝不容忍通胀高于 2%）仍是鹰派研判的锚，6 月点阵图 3.8% 的年底中位数也没有被收回。但本周边际上出现反向信号：沃勒 7 月 6 日在罗马公开为前瞻指引辩护，称其在灵活使用时「有价值」——这是委员会内部对主席标志性反指引立场的首次公开异议；且非农后的市场定价把 7 月会议视为「死会」（变动概率约 7%），年底前降息一次 25 个基点的概率约在 55–65%，以 9/10 月为主。主席仍鹰，委员会与市场的合成读数略微降温。",
-    "asOf": "2026-07-09",
+    "rationale_en": "Warsh's Jul 14 congressional testimony — cooling inflation 'isn't mission accomplished,' 'no tolerance for persistently elevated inflation' — held the hawkish line on the same day a cooler-than-expected CPI print might have argued for easing up. Markets are pricing it that way too: July hike odds collapsed to 17% on the data, but September odds firmed to a combined ~70% chance of a hike, reversing the cut-by-year-end pricing this desk carried on Jul 9. Layered on top is the Hormuz crisis — an active US-Iran military exchange with Brent spiking ~9.6% intraday — a fresh upside inflation risk landing on the exact assumption (stable energy) behind today's cool print. Hawkish chair, and for the first time this cycle, a market pricing hikes rather than cuts.",
+    "rationale_zh": "沃什7月14日的国会证词——降温「不等于任务完成」、对「持续偏高通胀」零容忍——在一份本可以成为鸽派理由的偏冷CPI公布当天，依然守住了鹰派基调。市场也是这么定价的：数据公布后7月加息概率骤降至17%，但9月加息概率却走高至合计约70%，正好逆转了本案7月9日记录的「年底前降息」定价。叠加其上的是霍尔木兹危机——一场正在进行的美伊军事交火，布伦特原油盘中一度暴涨约9.6%——这是直接冲击今天这份温和数据背后「能源价格稳定」假设的新增上行通胀风险。主席鹰派，且这是本轮周期以来市场首次转为定价加息而非降息。",
+    "asOf": "2026-07-14",
     "method_en": "Manual v1 score (human-scored from public statements + market-implied odds on the page). Automation (per-event hawk_dove tagging feeding an aggregate) is planned for V7 — see ROADMAP §7.3.",
     "method_zh": "人工 v1 打分（依据公开表态 + 页面上的市场隐含概率）。按事件打分再聚合的自动化留给 V7——见 ROADMAP §7.3。"
   },
   "pillarSummary": {
-    "en": "Quiet data week ahead of two loud ones: June CPI lands Jul 14 and TSMC reports Jul 16. Initial claims stayed low (215K) while continuing claims crept up — \"cooling, not cracking\" survives for now. Waller publicly defended forward guidance, the first visible daylight between the chair and his committee. Semis led the tape into the weekend, Micron pledged up to $3B to the US supply chain, and the trade-enforcement regime held steady with no new escalation.",
-    "zh": "两场大戏前的安静一周：6 月 CPI 将于 7 月 14 日公布，台积电 7 月 16 日发财报。初请失业金维持低位（21.5 万），续请人数则继续爬升——「降温而不失速」的叙事暂时成立。沃勒公开为前瞻指引辩护，是主席与委员会之间首次可见的分歧。半导体板块领涨收官，美光承诺最高 30 亿美元投入美国供应链，贸易执法框架维持原状、未见新升级。"
+    "en": "CPI delivered the year's cleanest disinflation surprise — headline to 3.5%, core to 2.6%, the softest since 2021 — driven by an energy plunge that's already reversing. Iran-US strikes and a floated Hormuz blockade sent Brent up ~9.6% the same day, and Warsh told Congress cooling inflation 'isn't mission accomplished.' Markets cut July hike odds to 17% but pushed September hike odds toward ~70%. TSMC reports Thursday into a noisier, more hawkish backdrop than a week ago.",
+    "zh": "6月CPI交出年内最干净的降温意外——整体降至3.5%，核心降至2.6%，为2021年以来最低——但推动力是正在反转的能源下跌。美伊在霍尔木兹海峡的军事冲突与一度提出的封锁/过路费同日把布伦特原油推高约9.6%，沃什同日对国会表示降温「不等于任务完成」。市场把7月加息概率砍到17%，却把9月加息概率推向约70%。台积电周四发财报，面对的是比一周前更嘈杂、更鹰派的背景。"
   },
   "pillars": [
     {
@@ -25,60 +25,60 @@
       "key": "inflation_data",
       "name_en": "Inflation Data",
       "name_zh": "通胀数据",
-      "status_en": "HOT, CPI TEST JUL 14",
-      "status_zh": "偏热，7/14 CPI 大考",
-      "tone": "red",
-      "read_en": "Core inflation remains sticky above target and the Committee's own \"too high\" language stands. Labor follow-through so far supports \"cooling, not cracking\": initial claims fell to 215K (week to Jul 4), though continuing claims keep edging up. June CPI on Jul 14 is the first print that can ratify — or break — the post-NFP goldilocks repricing.",
-      "read_zh": "核心通胀仍高于目标、粘性未退，委员会自己「仍然过高」的措辞依然有效。就业后续数据暂时支持「降温而不失速」：初请失业金降至 21.5 万（截至 7 月 4 日当周），但续请人数持续小幅上行。7 月 14 日的 6 月 CPI 是第一份能够确认——或击碎——非农后「金发姑娘」式重定价的数据。",
-      "asOf": "2026-07-09"
+      "status_en": "COOLED TO 3.5%, BUT ENERGY REVERSAL ALREADY LIVE",
+      "status_zh": "已降至3.5%，但能源反转已经发生",
+      "tone": "amber",
+      "read_en": "June CPI surprised firmly to the downside — headline to 3.5% y/y (vs. 3.8% consensus, 4.2% prior) on the sharpest energy drop since April 2020, core to 2.6% y/y, the softest since 2021. That's the clearest confirmation yet of the post-NFP 'cooling, not cracking' case. But the driver was a temporary energy plunge that's already reversing: the same-day Hormuz escalation spiked Brent ~9.6% intraday, meaning the July CPI (due Aug 12) could show energy adding back rather than subtracting.",
+      "read_zh": "6月CPI大幅低于预期——同比降至3.5%（预期3.8%，前值4.2%），得益于2020年4月以来最大的能源单月跌幅；核心同比降至2.6%，为2021年以来最低。这是非农之后「降温而不失速」叙事迄今为止最清晰的确认。但驱动力只是一次性的能源价格下跌，且当天就已开始反转：同日爆发的霍尔木兹危机让布伦特原油盘中一度暴涨约9.6%，意味着8月12日公布的7月CPI可能反过来由能源分项拉高，而非拉低。",
+      "asOf": "2026-07-14"
     },
     {
       "id": 2,
       "key": "fed_policy",
       "name_en": "Fed Policy",
       "name_zh": "货币政策",
-      "status_en": "HAWKISH CHAIR, DISSENTING EDGES",
-      "status_zh": "主席鹰派，边缘现异声",
-      "tone": "amber",
-      "read_en": "July 29 is priced as a dead meeting (~7% odds of a move; funds at 3.50–3.75%); markets put ~55–65% odds on one 25bp cut by year-end, Sept/Oct favored. Waller's Rome speech (Jul 6) defending flexible forward guidance is the first public daylight with Warsh's anti-guidance doctrine — watch whether the July statement reads like a committee compromise.",
-      "read_zh": "7 月 29 日已被定价为「死会」（变动概率约 7%；联邦基金利率维持 3.50–3.75%）；市场给年底前降息一次 25 个基点约 55–65% 的概率，时点偏向 9/10 月。沃勒 7 月 6 日在罗马为「灵活的前瞻指引」辩护，是对沃什反指引教义的首次公开分歧——关注 7 月声明的措辞是否读起来像一份委员会的折中产物。",
-      "asOf": "2026-07-09"
+      "status_en": "HAWKISH TESTIMONY, SEPT HIKE BACK IN THE PRICING",
+      "status_zh": "国会证词偏鹰，9月加息重新计入定价",
+      "tone": "red",
+      "read_en": "Warsh told Congress the same day CPI printed that cooling inflation 'isn't mission accomplished' and that the Fed has 'no tolerance for persistently elevated inflation' — no dovish pivot on a soft print. Markets moved with him more than against him: July hike odds fell to 17% (from 42%) on the CPI beat, but September odds firmed to a combined ~70% chance of a hike, the mirror image of the cut-by-year-end pricing this desk noted Jul 9. Under a chair who's abolished forward guidance, every data point is repricing the path from scratch.",
+      "read_zh": "沃什在CPI公布当天对国会表示，降温「不等于任务完成」，美联储对「持续偏高的通胀」零容忍——一份偏软的数据并未换来鸽派转向。市场也更多是跟随而非对抗这一立场：7月加息概率因CPI回落至17%（此前42%），但9月加息概率却走高至合计约70%，与本案7月9日记录的「年底前降息」定价正好相反。在一位已废除前瞻指引的主席治下，每一份数据都在从零开始重新定价利率路径。",
+      "asOf": "2026-07-14"
     },
     {
       "id": 3,
       "key": "earnings_guidance",
       "name_en": "Earnings Guidance",
       "name_zh": "财报指引",
-      "status_en": "SUPER-CYCLE, TSMC JUL 16 CHECKPOINT",
-      "status_zh": "超级周期，7/16 台积电检验点",
+      "status_en": "SUPER-CYCLE, TSMC REPORTS THURSDAY",
+      "status_zh": "超级周期，台积电周四发财报",
       "tone": "green",
-      "read_en": "TSMC reports Q2 on Jul 16 — consensus near $40B revenue (+~32% y/y), with 2026 capex guidance already lifted to $52–56B and street models putting 2026 tech-sector profit growth near 52%. Micron's super-cycle read stands (stock +4.5% Thursday within a 2.5% semi-ETF rally). Jul 16 is the next confirm-or-fade checkpoint.",
-      "read_zh": "台积电 7 月 16 日发布二季报——市场共识营收约 400 亿美元（同比约 +32%），2026 年资本开支指引已上调至 520–560 亿美元，卖方模型给 2026 年科技板块约 52% 的利润增速。美光的超级周期研判依然成立（周四在半导体 ETF 上涨 2.5% 的行情中个股 +4.5%）。7 月 16 日是下一个「确认或衰减」的检验点。",
-      "asOf": "2026-07-09"
+      "read_en": "TSMC reports Q2 on Jul 16 (two days out) — consensus near $40B revenue (+~32% y/y, within TSMC's own $39.0-40.2B guide), 2026 capex guidance already at $52-56B, with CoWoS advanced packaging still the binding constraint. The report now lands against a noisier macro backdrop than a week ago (hawkish testimony, Hormuz oil shock), raising the bar for guidance to keep the AI-capex story intact.",
+      "read_zh": "台积电将于7月16日（两天后）发布二季报——市场共识营收约400亿美元（同比+约32%，落在公司自身390-402亿美元指引区间内），2026年资本开支指引已达520-560亿美元，CoWoS先进封装依旧是最紧的约束。相比一周前，这份财报面对的宏观背景更嘈杂（鹰派证词、霍尔木兹能源冲击），对指引维持AI资本开支叙事提出了更高要求。",
+      "asOf": "2026-07-14"
     },
     {
       "id": 4,
       "key": "industry_tech",
       "name_en": "Industry & Big-Tech Moves",
       "name_zh": "产业与巨头动向",
-      "status_en": "CAPEX FLOWING TO CHOKEPOINTS",
-      "status_zh": "资本开支涌向瓶颈环节",
+      "status_en": "CAPEX FLOWING TO CHOKEPOINTS, SEMIS LED CPI-DAY RALLY",
+      "status_zh": "资本开支涌向瓶颈环节，半导体领涨CPI公布当日行情",
       "tone": "green",
-      "read_en": "Capex keeps concentrating on chokepoints: TSMC's $52–56B 2026 budget with CoWoS advanced packaging still the binding constraint, plus Micron's up-to-$3B US supply-chain investment announced this week. TSMC's monthly sales running +26% y/y say the demand side hasn't blinked; semis led the broader tape into the weekend.",
-      "read_zh": "资本开支仍在向瓶颈环节集中：台积电 520–560 亿美元的 2026 年预算之下，CoWoS 先进封装依旧是最紧的约束；美光本周宣布最高 30 亿美元的美国供应链投资。台积电月度营收同比 +26% 说明需求端没有眨眼；半导体板块领涨大盘收官。",
-      "asOf": "2026-07-09"
+      "read_en": "Capex keeps concentrating on chokepoints: TSMC's $52-56B 2026 budget with CoWoS still the binding constraint, plus Micron's up-to-$3B US supply-chain investment from last week. Semis and mega-cap tech led the Nasdaq 100's ~0.7% gain on CPI day, with rate-sensitive growth names catching the clearest bid from the cooler print.",
+      "read_zh": "资本开支仍在向瓶颈环节集中：台积电520-560亿美元的2026年预算下CoWoS依旧是最紧约束，加上美光上周宣布的最高30亿美元美国供应链投资。CPI公布当天，半导体与大盘科技股带动纳指100上涨约0.7%，对利率敏感的成长股从更温和的数据中获益最明显。",
+      "asOf": "2026-07-14"
     },
     {
       "id": 5,
       "key": "geopolitics_trade",
       "name_en": "Geopolitics & Trade",
       "name_zh": "地缘与贸易",
-      "status_en": "REGIME HOLDING, NO NEW ESCALATION",
-      "status_zh": "框架维持，本周无新升级",
-      "tone": "amber",
-      "read_en": "No fresh moves this week — the standing regime holds: H200-class China sales allowed under a 50% volume cap plus a 25% Section 232 tariff, the offshore-subsidiary licensing loophole closed (June), USTR's tariff action on Chinese legacy chips parked at 0% until mid-2027, and Beijing's Jun 22 entity-list additions still in force. A quiet lane, but a loaded one.",
-      "read_zh": "本周没有新动作——既有框架维持原状：H200 级芯片对华销售在 50% 数量上限加 25% 的 232 条款关税下放行，境外子公司许可漏洞已于 6 月关闭，USTR 对中国成熟制程芯片的关税行动暂停在 0%、2027 年年中起上调，北京 6 月 22 日的管制清单新增仍然有效。这条赛道安静，但弹簧上着劲。",
-      "asOf": "2026-07-09"
+      "status_en": "HORMUZ CRISIS: US-IRAN STRIKES, BLOCKADE, OIL SPIKE",
+      "status_zh": "霍尔木兹危机：美伊交火、封锁、油价飙升",
+      "tone": "red",
+      "read_en": "The quiet week this desk described on Jul 9 is over: US-Iran strikes ran three consecutive nights, Trump announced a renewed Hormuz blockade plus a floated (then reportedly dropped) 20% cargo toll, and Hormuz crossings fell more than half week-over-week as Brent spiked ~9.6% intraday. The standing China trade/export-control regime (H200 volume cap, Section 232 tariff, closed subsidiary loophole) is unchanged, but it's now the second-order story next to a live Middle East energy-security shock.",
+      "read_zh": "本案7月9日描述的「安静一周」已经结束：美伊连续三晚交火，特朗普宣布恢复对霍尔木兹的封锁并一度提出（后据报道撤回）20%的货物通行费，海峡通行量周环比骤降过半，布伦特原油盘中一度暴涨约9.6%。既有的对华贸易/出口管制框架（H200数量上限、232条款关税、已关闭的子公司许可漏洞）本身没有变化，但相比这场正在发生的中东能源安全冲击，已退居次要位置。",
+      "asOf": "2026-07-14"
     }
   ],
   "events": [
@@ -176,6 +176,70 @@
       "verdict": {
         "en": "Same weak print, two possible regimes: if follow-through data (initial claims, JOLTS, July CPI) confirms cooling without cracking, this is a clean 'goldilocks' repricing — bullish for duration-sensitive growth. If participation keeps falling and wages don't hold, the same number turns into a growth-scare tell. Containment status: EUCLID — anomalous but currently within modeled bounds. Not advice.",
         "zh": "同一份疲软数据，可能走向两种情境：若后续数据（初请、JOLTS、7 月 CPI）确认「降温而不失速」，这是一次干净的「金发姑娘」式重定价——利好久期敏感型成长股；若参与率持续下滑且薪资撑不住，同一个数字就会变成增长担忧的信号。收容状态：Euclid 级——异常但目前仍在可建模范围内。非投资建议。"
+      }
+    },
+    {
+      "id": "INCIDENT-2026-CPI-01",
+      "date": "2026-07-14",
+      "type": "CPI",
+      "pillar": 1,
+      "class": "euclid",
+      "hawkDove": null,
+      "name": {
+        "en": "June CPI",
+        "zh": "六月CPI数据"
+      },
+      "before": {
+        "en": "Dow Jones consensus looked for headline CPI to slow only modestly to 3.8% y/y (a 0.2% m/m decline) after May's 4.2%, with core seen holding near 2.9% y/y (+0.2% m/m) — a 'still-sticky' base case that would have left the post-NFP goldilocks read unconfirmed.",
+        "zh": "彭博/道琼斯调查的一致预期是整体CPI仅温和降至3.8%（环比-0.2%），核心维持在2.9%附近（环比+0.2%）——若如此，将只是「粘性未退」的基准情形，无法真正确认非农之后的「金发姑娘」式重定价。"
+      },
+      "print": {
+        "en": "Headline CPI fell 0.4% m/m — the biggest monthly drop since April 2020 — pulling the y/y rate down to 3.5%. Core CPI was flat (0.0% m/m), with the y/y rate cooling to 2.6%, the softest core reading since 2021. The move was almost entirely energy: the energy index sank 5.7% m/m (also the steepest drop since April 2020), even though it's still up 15.7% y/y on a 26.7% y/y gasoline gain.",
+        "zh": "整体CPI环比下降0.4%——为2020年4月以来最大单月跌幅——同比降至3.5%。核心CPI环比持平（0.0%），同比降至2.6%，为2021年以来最低核心读数。这次下行几乎全部来自能源：能源分项环比暴跌5.7%（同样是2020年4月以来最大跌幅），尽管其同比仍上涨15.7%（汽油同比+26.7%）。"
+      },
+      "repricing": {
+        "en": "CME FedWatch odds of a July 29 hike collapsed to 17% (from 42% the day before), effectively killing near-term hike talk. But September odds moved the other way — to roughly a combined ~70% chance of a hike (≈51% for 25bp, ≈20% for 50bp) — the mirror image of the cut-by-year-end pricing this desk flagged on Jul 9. The 10-year yield eased ~2bp to 4.583%; the more policy-sensitive 2-year fell ~7bp to 4.185%.",
+        "zh": "CME FedWatch的7月29日加息概率骤降至17%（前一日为42%），近期加息预期基本熄火。但9月的概率却反向走高——25个基点加息概率约51%、50个基点约20%，合计约70%——与本案7月9日记录的「年底前降息」定价正好相反。10年期美债收益率小幅回落约2个基点至4.583%，对政策更敏感的2年期回落约7个基点至4.185%。"
+      },
+      "equityReaction": {
+        "en": "S&P 500 edged up, the Nasdaq 100 gained about 0.7% as rate-sensitive mega-cap tech and growth caught a bid, and the Dow pared an earlier loss to close green — a soft-landing-friendly tape, with IBM's post-earnings slide the main drag.",
+        "zh": "标普500小幅上涨，纳指100在利率敏感的大盘科技/成长股带动下涨约0.7%，道指收复早盘跌幅转涨——整体是一份「软着陆友好」的成绩单，主要拖累是IBM财报后股价下跌。"
+      },
+      "verdict": {
+        "en": "The print itself is the cleanest disinflation data of the cycle, but the driver — a temporary energy plunge — was already reversing the same day on the Hormuz escalation (see companion incident), and Warsh's same-day testimony that cooling 'isn't mission accomplished' signals the Fed isn't ready to treat one print as confirmation. Containment status: EUCLID — anomalously benign, but the modeling assumption behind it (stable energy prices) is now under direct, live stress. Not advice.",
+        "zh": "这份数据本身是本轮周期中最干净的降温证据，但其驱动力——一次性能源价格下跌——就在同一天因霍尔木兹危机（见配套事件）开始反转，沃什同日在国会作证时也强调降温「不等于任务完成」，暗示美联储并不打算把一份数据当作确认。收容状态：Euclid 级——异常地温和，但支撑它的建模假设（能源价格稳定）眼下正受到真实、实时的冲击测试。非投资建议。"
+      }
+    },
+    {
+      "id": "INCIDENT-2026-HORMUZ-01",
+      "date": "2026-07-14",
+      "type": "GEOPOLITICS",
+      "pillar": 5,
+      "class": "keter",
+      "hawkDove": null,
+      "name": {
+        "en": "Strait of Hormuz Crisis: US-Iran Strikes, Blockade, Oil Spike",
+        "zh": "霍尔木兹海峡危机：美伊交火、封锁、油价飙升"
+      },
+      "before": {
+        "en": "Heading into this week, this desk's Jul 9 read on geopolitics/trade was 'regime holding, no new escalation' — export-control and tariff settings on China unchanged, no live Middle East energy-supply disruption priced into the desk's pillar.",
+        "zh": "本周之前，本案7月9日对地缘/贸易维度的判断是「框架维持，无新升级」——对华出口管制与关税设置未变，地缘维度也未定价任何正在发生的中东能源供应中断风险。"
+      },
+      "print": {
+        "en": "Iran struck a commercial tanker in the Strait of Hormuz on Jul 11; the US retaliated with strikes on Iranian military, drone and missile assets across three consecutive nights (through Jul 13), and Iran hit back at targets in Jordan, Qatar, Kuwait and Oman. Trump announced a renewed US naval blockade of Iranian ports (effective 4pm ET Jul 14) and floated a 20% toll on cargo transiting the Strait — a fee proposal that was reportedly dropped within hours. Hormuz crossings fell more than half week-over-week; Brent spiked as much as ~9.6% intraday to ~$83.30, its highest settle since Jun 12.",
+        "zh": "伊朗于7月11日在霍尔木兹海峡袭击一艘商船；美国随即连续三晚（至7月13日）对伊朗军事、无人机与导弹设施发动打击，伊朗则回击约旦、卡塔尔、科威特与阿曼境内目标。特朗普宣布美国恢复对伊朗港口的海上封锁（7月14日美东下午4点生效），并一度提出对过境该海峡的货物征收20%通行费——该提议据报道数小时后即被撤回。霍尔木兹海峡通行量周环比骤降过半；布伦特原油盘中一度暴涨约9.6%至约83.30美元，为6月12日以来最高收盘水平。"
+      },
+      "repricing": {
+        "en": "Because June CPI predates this escalation, the shock hasn't hit a print yet — it lands in the July CPI report due Aug 12, after the Jul 29 FOMC decision. That timing means the Fed will vote on Jul 29 without knowing whether the energy spike sticks, while markets are already nudging September hike odds higher (see companion CPI incident) partly on this risk.",
+        "zh": "由于6月CPI的统计区间早于此次升级，这次冲击尚未反映在任何一份数据中——它要等到8月12日公布的7月CPI（在7月29日FOMC决议之后）才会体现。这意味着美联储将在不知道能源价格上冲能否持续的情况下投票7月决议，而市场已经在把9月加息概率往上推（见配套CPI事件），部分正是出于这一风险。"
+      },
+      "equityReaction": {
+        "en": "Oil led the reaction — Brent's intraday spike partly reversed by the close — while broader equities still finished the day higher, as the CPI cooling and the scrapped toll proposal outweighed the strike headlines; energy-sensitive and defense names outperformed within an otherwise calm tape.",
+        "zh": "原油是反应最直接的品种——布伦特盘中涨幅收盘前部分回吐——但整体股市当日仍收涨，因CPI降温与被撤回的过路费提议抵消了空袭消息带来的冲击；能源与防务相关个股在整体平静的盘面中表现更强。"
+      },
+      "verdict": {
+        "en": "An active, multi-night US-Iran exchange with a floated toll on a chokepoint carrying a meaningful share of global seaborne oil is a tail-risk energy shock landing directly on top of the Fed's first clean disinflation print. If the blockade or any toll holds into late July, the August CPI print could reverse this week's story before the Fed's September meeting — the difference between a soft landing and a stagflation scare. Containment status: KETER — high-variance, fast-moving, and not yet resolved. Not advice.",
+        "zh": "一场持续多晚的美伊军事交火，叠加针对全球海运原油重要咽喉要道一度提出的通行费，是一次直接叠加在美联储首份「干净」降温数据之上的尾部能源冲击风险。若封锁或任何形式的通行费持续到7月末，8月的CPI读数可能在美联储9月议息会议前就推翻本周的降温叙事——这将是「软着陆」与「滞胀恐慌」之间的分野。收容状态：Keter 级——高方差、快速演变、尚未落定。非投资建议。"
       }
     }
   ]
