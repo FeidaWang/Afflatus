@@ -80,14 +80,29 @@ function buildMats(): HullMats {
   // Same "space gray" family as armorMaterial.ts's darkened FS 595C
   // direction (#4e5257) — keeps this P2 slice visually consistent with the
   // armor material slice instead of introducing a third unrelated palette.
+  //
+  // BUG FIX (owner: "只能看到一片亮光" — just a patch of bright light):
+  // every material here left envMapIntensity at MeshStandardMaterial's
+  // default (1.0) with metalness up to 0.6, reflecting p2FleetDemoScene.ts's
+  // procedural sky (a bright, near-white zenith) at full strength across
+  // the ENTIRE hull surface — armorMaterial.ts hit this exact class of
+  // problem earlier this session and fixed it by dialing envMapIntensity
+  // down to 0.5; these materials never got the same treatment. Combined
+  // with the newly-added bloom pass (which blurs anything above its
+  // brightness threshold), a large, mostly-uniform over-bright reflective
+  // surface reads as one blown-out bright mass instead of a shaded,
+  // detailed ship. envMapIntensity 0.4 here — slightly more conservative
+  // than armorMaterial.ts's 0.5 since this hull has many more distinct
+  // reflective parts (hull/arm/dark/trim all metallic) all catching the
+  // same sky at once, not one plate.
   return {
-    hull: new THREE.MeshStandardMaterial({ color: 0x4e5257, metalness: 0.5, roughness: 0.55 }),
-    arm: new THREE.MeshStandardMaterial({ color: 0x3c4045, metalness: 0.5, roughness: 0.6 }),
-    dark: new THREE.MeshStandardMaterial({ color: 0x22262a, metalness: 0.55, roughness: 0.6 }),
-    trim: new THREE.MeshStandardMaterial({ color: 0x8a939c, metalness: 0.6, roughness: 0.4 }),
-    glass: new THREE.MeshStandardMaterial({ color: 0x1a1410, metalness: 0.3, roughness: 0.2, emissive: 0xcc7a22, emissiveIntensity: 0.6 }),
-    red: new THREE.MeshStandardMaterial({ color: 0xff4030, emissive: 0xff2010, emissiveIntensity: 0.6 }),
-    blue: new THREE.MeshStandardMaterial({ color: 0x60c0ff, emissive: 0x3090ff, emissiveIntensity: 0.6 }),
+    hull: new THREE.MeshStandardMaterial({ color: 0x4e5257, metalness: 0.5, roughness: 0.55, envMapIntensity: 0.4 }),
+    arm: new THREE.MeshStandardMaterial({ color: 0x3c4045, metalness: 0.5, roughness: 0.6, envMapIntensity: 0.4 }),
+    dark: new THREE.MeshStandardMaterial({ color: 0x22262a, metalness: 0.55, roughness: 0.6, envMapIntensity: 0.4 }),
+    trim: new THREE.MeshStandardMaterial({ color: 0x8a939c, metalness: 0.6, roughness: 0.4, envMapIntensity: 0.4 }),
+    glass: new THREE.MeshStandardMaterial({ color: 0x1a1410, metalness: 0.3, roughness: 0.2, envMapIntensity: 0.4, emissive: 0xcc7a22, emissiveIntensity: 0.6 }),
+    red: new THREE.MeshStandardMaterial({ color: 0xff4030, envMapIntensity: 0.4, emissive: 0xff2010, emissiveIntensity: 0.6 }),
+    blue: new THREE.MeshStandardMaterial({ color: 0x60c0ff, envMapIntensity: 0.4, emissive: 0x3090ff, emissiveIntensity: 0.6 }),
   };
 }
 

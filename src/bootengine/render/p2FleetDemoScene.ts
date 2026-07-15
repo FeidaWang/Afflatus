@@ -89,11 +89,14 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   // ACES filmic tonemapping — deeper shadows, more contrast in the highlights
   // (engine glow / windows / shield rim) instead of the flat/washed default
-  // linear response. Exposure tuned down slightly from 1.0 since ACES's own
-  // curve already brightens mids; 1.0 read a touch hot with the new engine
-  // glow's emissiveIntensity 4.5.
+  // linear response. Exposure dropped further (0.95 -> 0.8) alongside the
+  // envMapIntensity fix in kitbashFleet.ts — see that file's buildMats()
+  // for the root cause of "只能看到一片亮光" (just a patch of bright
+  // light): unbounded env-map reflection across the whole hull, blown out
+  // further by bloom. Extra exposure headroom here in case any part is
+  // still over-bright once that fix lands.
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.95;
+  renderer.toneMappingExposure = 0.8;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x03050a, 0.012);
@@ -146,9 +149,15 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   // rolled bright-pass hack — this is what actually sells "engine glow /
   // window lights / shield rim are the brightest things on the model"
   // (guide: "this is the key to giving the model a sense of light").
-  // threshold ~0.82 catches the high-emissiveIntensity parts (engine glow
-  // material is 4.5, easily >1.0 post-tonemap-linear) without blooming the
-  // plain gray hull. OutputPass applies renderer.toneMapping/outputColorSpace
+  // threshold raised (0.82 -> 0.92) and strength lowered (0.9 -> 0.55) from
+  // the first pass — with the whole hull over-reflecting the sky at full
+  // envMapIntensity (see kitbashFleet.ts's buildMats() fix), a wide swath
+  // of the surface was clearing 0.82, and the bloom blur radius merged all
+  // of it into one undifferentiated bright mass instead of isolated glows
+  // around the engines/windows/shield. Tighter threshold + weaker strength
+  // now that the reflection itself is also tamed, so only genuinely
+  // emissive parts (engine glow @4.5, window lights @2.2, shield rim) still
+  // clear it. OutputPass applies renderer.toneMapping/outputColorSpace
   // at the very end of the chain — required when using EffectComposer,
   // since intermediate passes render to off-screen linear targets.
   //
@@ -165,7 +174,7 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   try {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.9, 0.4, 0.82);
+    bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.4, 0.92);
     composer.addPass(bloomPass);
     composer.addPass(new OutputPass());
   } catch (e) {
