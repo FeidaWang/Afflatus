@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-14T07:44:30.005Z",
+  "updated": "2026-07-15T11:08:50.513Z",
   "version": 1,
   "days": [
     {
@@ -158,7 +158,7 @@
         "NVDA": {
           "predOpenPct": -1.2,
           "predClosePct": -0.7,
-          "actualOpenPct": -1.147,
+          "actualOpenPct": null,
           "actualClosePct": -3.522,
           "dirHit": true
         },
