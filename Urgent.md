@@ -19,7 +19,7 @@
 
 - [ ] **P0 · RFC + 双 spike**：`rfcs/2026-07-1x-u29-boot-engine.md`（模块边界/数据流/预算表）+ COOP/COEP 头验证 + WebGPU 可用性探针（真机数据决定 P5 命运）。
 - [x] **P1 · 仿真核（纯逻辑，沙盒可全验）**（2026-07-15 完成，先于 P0 开工——站主明确指定，无阻塞）：`src/bootengine/` TS 模块——PID 控制器、6DOF 刚体、HBT（意图选择→机动库→样条轨迹生成）、确定性种子；黄金集 vitest（同种子同轨迹逐帧一致、PID 阶跃响应无发散、HBT 意图切换覆盖）。Worker 壳 + 主线程消费接口。
-- [ ] **P2 · 渲染器 v1**：WebGL2 前向 + instanced 粒子系统（爆炸/推进器/碎片三池，顶点着色器仿真）、程序化 kitbash 舰队（复用既有部件模块拆件重组）、发光激光与装甲灼痕（动态 emissive/roughness 遮罩，RNM 降档为程序化细节法线）。
+- [ ] **P2 · 渲染器 v1**：WebGL2 前向 + instanced 粒子系统（爆炸/推进器/碎片三池，顶点着色器仿真）、程序化 kitbash 舰队（复用既有部件模块拆件重组）、发光激光与装甲灼痕（动态 emissive/roughness 遮罩，RNM 降档为程序化细节法线）。**第一切片已完成（2026-07-15，见下方施工记录）：程序化细节法线+灼痕材质 + 独立 demo 场景，`?p2demo=armor` flag 预览；instanced 粒子系统/kitbash 舰队复用/激光武器特效仍未开工。**
 - [ ] **P3 · 电影导演 v2**：滞后 G 力相机（复用 cameraMath smoothDamp 族）、Catmull-Rom 镜头轨、「演出优先」评分器（AI 机动选择时给镜头可看性加权——这就是「像表演不像计算」的实现机制）。
 - [ ] **P4 · 后处理栈**：色差/胶片颗粒/暗角常驻，核爆屏幕空间折射冲击波、EMP UI 故障闪（HUD 画布 glitch pass）按事件触发。
 - [ ] **P5 · WebGPU/Deferred 评估门**：P0 探针数据 + P2 帧率基线在手后，按 U27 触发条件裁决是否开 WebGPU 分支（TSL/compute 粒子 100k→500k 的想象空间在这扇门后面）。
@@ -40,6 +40,14 @@
 | `index.ts` | `createSimClient()` 主线程消费接口 | 有 `Worker` 全局+ `workerUrl` 才走 worker 路径，否则内联 fallback；两路径行为对等 |
 
 **验证**：71 个新测试（含黄金集：跨两次独立 run 逐帧 `toEqual`、PID 阶跃响应收敛不发散、HBT 六分支全覆盖、`structuredClone` 往返不丢数据），全站 vitest **617/617**（546 基线 + 71 新增）、`tsc --noEmit` 干净、`vite build` 干净（`src/bootengine/` 未被任何入口引用，构建产物零变化，符合「本期只验证不接线」的范围）。P0（RFC 文档 + COOP/COEP 头 spike + WebGPU 探针）尚未开工，不阻塞 P1——已记录为下一可选阶段。
+
+**P2 第一切片施工记录（2026-07-15，材质技术验证，非完整 P2）**：
+
+- **新增**：`src/bootengine/render/armorMaterial.ts`（`MeshStandardMaterial.onBeforeCompile` 注入——surface-gradient 程序化细节法线（Mikkelsen 方法，靠 world-space `dFdx`/`dFdy`，不需要 UV/切线基，WebGL2 原生支持）+ 灼痕遮罩驱动 diffuse 变暗/roughness 上升/emissive 裂纹发光脉冲）、`src/bootengine/render/armorDemoScene.ts`（独立 THREE 场景，一个细分 IcosahedronGeometry + 双色温布光，`{start,stop,resize}` 接口对齐 `createTopdownCombat`，方便未来互换）。
+- **接线**：`src/pages/boot.js` 新增 `?p2demo=armor` opt-in flag——命中时 `runArmorDemo()` 跳过正常 boot 序列直接挂载 demo 场景到既有 `#bridgeCanvas`（复用现有 `sizeCanvas`/resize/visibilitychange 逻辑，因为两个场景工厂函数返回同型接口），不命中则完全走原有 `boot()` 流程——**默认行为零改动**。`topdownCombat.js`/`main.js` 未碰。
+- **新依赖**：`@types/three@0.160.0`（devDependency，precise 版本匹配已安装的 `three@0.160.1`）——P1 的纯逻辑模块不需要 three 类型，P2 一旦碰渲染就需要，这是第一次。
+- **验证**：`tsc --noEmit` 干净、`vite build` 干净（`armorDemoScene` 被拆成独立动态导入 chunk，4.75 kB，只在 flag 命中时才加载；`vendor-three`/`topdownCombat` chunk 字节数与改动前完全一致，证明共享场景模块确实零接触）；vitest 保持 617/617（本切片是渲染/shader 代码，沙盒无 WebGL 上下文，vitest 层面无新增测试，走这个项目一贯的「沙盒不能渲染 → 待真机打开验收」路径）。
+- **预览**：`https://feida.au/boot.html?p2demo=armor`（部署后）。**本地未部署 push——23:00 后触发 R4「深夜只写不并」，代码已完成但尚未推送**，见下方施工记录后的说明。
 
 ## U28 · serial 皇家木色重做 + 首页断层/星门/HUD 修复批 → v1.6（2026-07-14 立项，站主四张截图）
 

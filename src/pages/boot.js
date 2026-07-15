@@ -24,6 +24,9 @@ const canvas = document.getElementById('bridgeCanvas');
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Homeworld default: director ON unless explicitly ?combatcam=tactical.
 const TACTICAL = /[?&]combatcam=tactical\b/.test(location.search);
+// U29 P2 first slice — armorMaterial.ts materials sanity check, opt-in only
+// (R3 flag exception: default boot behaviour below is completely unchanged).
+const P2_ARMOR_DEMO = /[?&]p2demo=armor\b/.test(location.search);
 
 const $ = (id) => document.getElementById(id);
 const fmtUsd = (n) => '$' + Math.round(n).toLocaleString('en-US');
@@ -131,6 +134,24 @@ async function takeBridge() {
   startTelemetry();
 }
 
+// U29 P2 first slice (?p2demo=armor): swaps the real bridge scene for the
+// armorMaterial.ts sanity-check scene. Deliberately NOT merged into
+// takeBridge() above — this skips the boot log, the bridge dock chrome
+// (#bridge never gets `.on`), and telemetry, none of which make sense for
+// a materials preview. `td` is still reused so the existing resize/
+// visibilitychange plumbing below (sizeCanvas/pause-when-hidden) works
+// unmodified — createArmorDemoScene() matches createTopdownCombat()'s
+// { start, stop, resize } shape on purpose.
+async function runArmorDemo() {
+  overlay.classList.add('gone');
+  let mod = null;
+  try { mod = await import('../bootengine/render/armorDemoScene'); } catch (e) { mod = null; }
+  td = mod && mod.createArmorDemoScene ? mod.createArmorDemoScene({ canvas }) : null;
+  if (!td) { glFail.classList.add('on'); return; }
+  sizeCanvas();
+  td.start();
+}
+
 function sizeCanvas() {
   canvas.style.width = '100vw';
   canvas.style.height = '100vh';
@@ -167,4 +188,4 @@ $('camToggle').addEventListener('click', () => {
   location.search = TACTICAL ? '?combatcam=director' : '?combatcam=tactical';
 });
 
-boot();
+if (P2_ARMOR_DEMO) { runArmorDemo(); } else { boot(); }
