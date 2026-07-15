@@ -63,6 +63,21 @@
 - **验证**：新增 16 个测试（`nextSlot`/`lifePhase`/`isAlive` 10 个 + `computeFormation` 6 个，含黄金集式「同种子同编队」用例），全站 vitest **633/633**（617 基线 + 16 新增）、`tsc --noEmit` 干净、`vite build` 干净（`p2FleetDemoScene` 独立动态导入 chunk，10.01 kB，只在 flag 命中时加载）。渲染/shader 部分本身仍是沙盒无 WebGL 上下文验证不到的那一半，走这个项目一贯的「代码正确性能证明，像素清晰度/节奏手感待真机复核」路径。
 - **预览**：`https://feida.au/boot.html?p2demo=fleet`（部署后）。**本地未 push——R4「深夜只写不并」，跨过 23:00 后继续写但不推送**，与切片一的说明同理。
 
+**P2 舰船外观返工（2026-07-16 夜，两轮，站主反馈「所有战舰都画的太丑了」）**：
+
+- **v1（首轮）**：`src/scene/wedgeCruiserHull.js`（+ `.d.ts`）——新船体生成函数，与 `carrierHull.js`/`odinHull.js` 同款 DOM/WebGL-free `add()` 回调契约。宽平甲板六边形截面 loft、尾部收窄成尖头、背脊双塔舰桥、中线沟槽（当时还是装饰性暗色贴条，非真实几何）、贯穿全宽的尾部引擎排——歼星舰那类楔形廓形的原创执行，比例/细节/命名均为本文件原创，非复刻任何具体工作室资产。`kitbashFleet.ts` 旗舰与护卫舰统一换装这艘新船（两种缩放），不再混用三种船型。新增 `tests/wedgeCruiserHull.test.js`（9 用例，同 `odinHull.test.js` 的无头验证思路：轮廓比例、挂载点数量与镜像、卷绕法线）。
+- **v2（次轮，按站主提供的 AAA 硬表面管线指南重做）**：指南本身提出四条技术路线（CAD/Plasticity 建模、外购 kitbash 素材包、Trim Sheet+法线烘焙、WebGPU+Deferred+POM）。逐条可行性判断记录如下——**CAD 工具**（Plasticity/MoI3D）是桌面 GUI 软件，沙盒无法启动，只能站主本机操作后导出 glTF 再接入；**外购素材包**（ArtStation/Gumroad）无法代为购买，且引入外部贴图/UV 资产管线与本项目「零外部资产依赖」的既定架构相悖；**Trim Sheet 法线烘焙**（Substance Painter）同样是桌面软件且需要 UV 管线，本项目从 P2 装甲材质那次起就是刻意选择程序化 surface-gradient bump 绕开 UV 需求，这条路径方向相反；**WebGPU+Deferred+POM** 是与当前 WebGL2 前向渲染完全不同的渲染路径，且 WebGPU 本就是 U29 P5 的评估门，尚未开工，不在这次范围内。**唯一在当前沙盒里真正可执行、且被指南明确列为具体技术项的**：InstancedMesh 降低重复部件的 draw call——这条被采纳并落地。同时把指南里"翻译得动"的其余要求（结构性中央沟槽、分层甲板、双护盾发生器 Fresnel 边缘光、引擎发光对比度）用本项目已有的程序化手法实现，指南里依赖外部工具的部分（真实倒角、Trim Sheet、法线烘焙、AO 贴图磨损、POM）明确未做，注释里写清楚了为什么。
+  - 中央沟槽从贴条改成真实几何凹陷（下沉地板 + 两侧凸起护栏），沟槽深度按 `stations` taper 表验证过全程都在对应站位的甲板高度之下，不会露出悬空。
+  - 分层甲板：两层叠放平台（`tier1`/`tier2`），模拟"boolean 分层"的台阶感。
+  - 双护盾发生器：两颗小球，`createShieldDomeMaterial` 是一个新的小型自定义 `ShaderMaterial`（`pow(1-N·V, k)` 菲涅尔边缘光，加色混合），球体内层用暗色材质垫底让边缘光有东西可"衬"。
+  - 引擎发光：独立的高强度 `engineGlowMat`（emissiveIntensity 4.5，不再共用调用方的中等强度 `mats.glass`/`mats.blue`），机舱做了向前凹陷处理，制造"最亮点"的对比度。
+  - 舷窗散点：新增，`PlaneGeometry` 小片沿船体两舷散布（220/full，80/wire），按 `stations` taper 实时插值贴合船体宽度，不会浮空或陷进船体——指南里"看到窗户才会觉得这是一座城市"那条最低成本的等价实现（没有 light map/顶点色烘焙）。
+  - 炮塔（12 座塔身+24 根炮管）、船体铆钉散布、舷窗全部改用 `addInstanced(geo, mat, transforms)` 走 `THREE.InstancedMesh`——这是本文件新增的第二个回调（`add`/`odinHull.js`/`carrierHull.js` 的既有契约只有 `add`，这次为了真正做到"重复部件不逐个 draw call"扩展了一个专用回调，`kitbashFleet.ts` 里新增 `makeAddInstanced` 实现它）。5 次 `addInstanced` 调用承载 100+ 个实例化部件，`full`/`wire` 只改变每次调用内的实例密度，不改变调用次数——测试里专门断言了这一点。
+  - 陡边高光：无法在手写 `BufferGeometry` 上做真正的 CAD 变半径倒角，退而求其次沿船体两条肩线分段加装凸起装饰条，起同样"接受高光、暗示体量"的作用。
+- **测试更新**：`tests/wedgeCruiserHull.test.js` 从 9 条扩到 11 条，测试 harness 新增 `addInstanced` 桩实现（真建 `THREE.InstancedMesh` 并 `setMatrixAt`），新断言覆盖 `shieldMounts` 镜像、`wire`/`full` 的"总部件数变但 draw call 数不变"。
+- **验证**：`tsc --noEmit` 干净、`vite build` 干净（`p2FleetDemoScene` chunk 14.96 kB，`vendor-three`/`topdownCombat`/`capitalShip3D`/`shipHologram` 字节数与上一次构建一致，`git diff --stat` 确认本轮只改了 `wedgeCruiserHull.js`/`.d.ts`/`kitbashFleet.ts`/其测试文件）、vitest **644/644**（642 基线 + 2 新增）。
+- **预览**：同上，`?p2demo=fleet`。本地已提交，未 push（R4）。
+
 ## U28 · serial 皇家木色重做 + 首页断层/星门/HUD 修复批 → v1.6（2026-07-14 立项，站主四张截图）
 
 > 八个子项，两批施工：**批一 = 28a**（serial.html 独立，互不影响）；**批二 = 28b–28h**（首页，做完版本号升 v1.6）。截图不入库，下述文字即实施依据。**2026-07-14 两批全部实施完成，代码/测试/构建侧已验证，详见下方施工记录——视觉观感待站主真机复核。**
