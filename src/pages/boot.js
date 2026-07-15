@@ -27,6 +27,9 @@ const TACTICAL = /[?&]combatcam=tactical\b/.test(location.search);
 // U29 P2 first slice — armorMaterial.ts materials sanity check, opt-in only
 // (R3 flag exception: default boot behaviour below is completely unchanged).
 const P2_ARMOR_DEMO = /[?&]p2demo=armor\b/.test(location.search);
+// U29 P2 second slice — particle pools + kitbash fleet + laser beam VFX
+// sanity check, same opt-in-only posture as the armor demo above.
+const P2_FLEET_DEMO = /[?&]p2demo=fleet\b/.test(location.search);
 
 const $ = (id) => document.getElementById(id);
 const fmtUsd = (n) => '$' + Math.round(n).toLocaleString('en-US');
@@ -152,6 +155,19 @@ async function runArmorDemo() {
   td.start();
 }
 
+// U29 P2 second slice (?p2demo=fleet): same posture as runArmorDemo() above
+// — skips the boot log/dock/telemetry, mounts p2FleetDemoScene.ts (kitbash
+// fleet + particle pools + laser beam VFX) onto the existing #bridgeCanvas.
+async function runFleetDemo() {
+  overlay.classList.add('gone');
+  let mod = null;
+  try { mod = await import('../bootengine/render/p2FleetDemoScene'); } catch (e) { mod = null; }
+  td = mod && mod.createFleetDemoScene ? mod.createFleetDemoScene({ canvas }) : null;
+  if (!td) { glFail.classList.add('on'); return; }
+  sizeCanvas();
+  td.start();
+}
+
 function sizeCanvas() {
   canvas.style.width = '100vw';
   canvas.style.height = '100vh';
@@ -188,4 +204,4 @@ $('camToggle').addEventListener('click', () => {
   location.search = TACTICAL ? '?combatcam=director' : '?combatcam=tactical';
 });
 
-if (P2_ARMOR_DEMO) { runArmorDemo(); } else { boot(); }
+if (P2_ARMOR_DEMO) { runArmorDemo(); } else if (P2_FLEET_DEMO) { runFleetDemo(); } else { boot(); }
