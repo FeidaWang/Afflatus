@@ -9,10 +9,6 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { createKitbashFleet } from './kitbashFleet';
 import { createExplosionPool, createThrusterPool, createDebrisPool } from './particles';
 import type { ParticlePool } from './particles';
@@ -28,12 +24,21 @@ import { rngFromString } from '../seed';
 // run yet; a from-scratch WebGPU renderer isn't a same-session, no-visual-
 // feedback-safe undertaking). What IS adopted from that guide, because it's
 // achievable in the CURRENT WebGL2/three.js pipeline with real, verifiable
-// effect: ACES filmic tonemapping (three ships this built-in) + a real
-// bloom pass (three's own bundled EffectComposer/UnrealBloomPass, not a
-// hand-rolled approximation) + a repositioned/stronger rim light for edge
-// contrast. This is the "近似效果" half of that decision — the owner asked
-// for this half now and the WebGPU rewrite to be logged separately for a
-// dedicated future session (see Urgent.md).
+// effect: ACES filmic tonemapping (three ships this built-in) + a
+// repositioned/stronger rim light for edge contrast. This is the "近似效果"
+// half of that decision — the owner asked for this half now and the WebGPU
+// rewrite to be logged separately for a dedicated future session (see
+// Urgent.md).
+//
+// A real bloom pass (EffectComposer/UnrealBloomPass) was tried and then
+// REMOVED (2026-07-16, this session): this sandbox has no launchable
+// browser, so that postprocessing chain was never actually exercised
+// against real WebGL, and two rounds of blind parameter tuning on it both
+// still produced a totally featureless blown-out image (no hard edges
+// anywhere — the signature of a render-target sizing problem, not a
+// brightness one). Dropped back to plain renderer.render() rather than
+// keep guessing at a pipeline with no visual feedback loop. Revisit bloom
+// only once real browser verification is possible.
 
 export interface FleetDemoScene {
   start(): void;
@@ -89,14 +94,22 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   // ACES filmic tonemapping — deeper shadows, more contrast in the highlights
   // (engine glow / windows / shield rim) instead of the flat/washed default
-  // linear response. Exposure dropped further (0.95 -> 0.8) alongside the
-  // envMapIntensity fix in kitbashFleet.ts — see that file's buildMats()
-  // for the root cause of "只能看到一片亮光" (just a patch of bright
-  // light): unbounded env-map reflection across the whole hull, blown out
-  // further by bloom. Extra exposure headroom here in case any part is
-  // still over-bright once that fix lands.
+  // linear response. Low-risk on its own: a single renderer property, no
+  // extra render targets or multi-pass pipeline.
+  //
+  // BLOOM REMOVED (owner: screenshot still showed a totally featureless
+  // blown-out blob after two rounds of envMapIntensity/threshold/strength
+  // tuning — no hard edges anywhere, not even in the background gradient,
+  // which is the signature of a render-target size problem, not a
+  // brightness problem). This sandbox has no launchable browser (confirmed
+  // this session), so the EffectComposer/UnrealBloomPass chain was never
+  // actually exercised against real WebGL and two blind tuning passes on it
+  // both failed. Rather than keep guessing at an unverifiable pipeline,
+  // dropped it back to the plain renderer.render() path that was working
+  // before bloom was introduced. ACES tonemapping + the envMapIntensity fix
+  // in kitbashFleet.ts (both real, low-risk, independent fixes) stay.
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.8;
+  renderer.toneMappingExposure = 0.95;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x03050a, 0.012);
@@ -143,43 +156,6 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     const beam = createLaserBeam({ coreColor: 0xffffff, glowColor: 0x66ffe8 });
     scene.add(beam.mesh);
     beams.push(beam);
-  }
-
-  // Real bloom (three's own EffectComposer/UnrealBloomPass), not a hand-
-  // rolled bright-pass hack — this is what actually sells "engine glow /
-  // window lights / shield rim are the brightest things on the model"
-  // (guide: "this is the key to giving the model a sense of light").
-  // threshold raised (0.82 -> 0.92) and strength lowered (0.9 -> 0.55) from
-  // the first pass — with the whole hull over-reflecting the sky at full
-  // envMapIntensity (see kitbashFleet.ts's buildMats() fix), a wide swath
-  // of the surface was clearing 0.82, and the bloom blur radius merged all
-  // of it into one undifferentiated bright mass instead of isolated glows
-  // around the engines/windows/shield. Tighter threshold + weaker strength
-  // now that the reflection itself is also tamed, so only genuinely
-  // emissive parts (engine glow @4.5, window lights @2.2, shield rim) still
-  // clear it. OutputPass applies renderer.toneMapping/outputColorSpace
-  // at the very end of the chain — required when using EffectComposer,
-  // since intermediate passes render to off-screen linear targets.
-  //
-  // Defensive on purpose: this sandbox has no launchable browser (checked —
-  // no GPU, and Playwright can't get a real WebGL context here either, so
-  // this postprocessing chain has never actually been exercised against a
-  // real GPU). UnrealBloomPass's internal blur targets need half-float
-  // render-target support; if that (or anything else in this chain) throws
-  // during setup or a frame, fall back to a plain renderer.render() instead
-  // of taking the whole demo down with it — a missing bloom effect is a
-  // minor regression, a black canvas is a total one.
-  let composer: EffectComposer | null = null;
-  let bloomPass: UnrealBloomPass | null = null;
-  try {
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.4, 0.92);
-    composer.addPass(bloomPass);
-    composer.addPass(new OutputPass());
-  } catch (e) {
-    composer = null;
-    bloomPass = null;
   }
 
   const tmpFrom = new THREE.Vector3();
@@ -251,20 +227,7 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     debrisPool.update(elapsed);
     for (const beam of beams) beam.update(elapsed);
 
-    if (composer) {
-      try {
-        composer.render();
-      } catch (e) {
-        // Same defensive posture as construction above: if the bloom chain
-        // breaks mid-session on some GPU/driver this sandbox can't test
-        // against, drop it permanently rather than black-screening every
-        // subsequent frame.
-        composer = null;
-        renderer.render(scene, camera);
-      }
-    } else {
-      renderer.render(scene, camera);
-    }
+    renderer.render(scene, camera);
     if (running) raf = requestAnimationFrame(loop);
   }
 
@@ -276,11 +239,6 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
-    if (composer && bloomPass) {
-      composer.setPixelRatio(dpr);
-      composer.setSize(W, H);
-      bloomPass.setSize(W, H);
-    }
   }
 
   return {
