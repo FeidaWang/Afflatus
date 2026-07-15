@@ -93,6 +93,8 @@ function buildMats(): HullMats {
 
 type Mount = { x: number; y: number; z: number };
 type AddFn = (geo: THREE.BufferGeometry, mat: THREE.Material, t?: number[], r?: number[], s?: number[]) => THREE.Mesh;
+type InstanceTransform = { t: number[]; r?: number[]; s?: number[] };
+type AddInstancedFn = (geo: THREE.BufferGeometry, mat: THREE.Material, transforms: InstanceTransform[]) => THREE.InstancedMesh;
 
 function makeAdd(ship: THREE.Group): AddFn {
   return (geo, mat, t, r, s) => {
@@ -100,6 +102,30 @@ function makeAdd(ship: THREE.Group): AddFn {
     if (t) mesh.position.set(t[0], t[1], t[2]);
     if (r) mesh.rotation.set(r[0], r[1], r[2]);
     if (s) mesh.scale.set(s[0], s[1], s[2]);
+    ship.add(mesh);
+    return mesh;
+  };
+}
+
+// wedgeCruiserHull.js's second callback (see that file's header for why):
+// batches repeated small parts (turrets/panel greeble/window lights) into
+// one InstancedMesh draw call each, instead of one Mesh per part.
+function makeAddInstanced(ship: THREE.Group): AddInstancedFn {
+  const tmpPos = new THREE.Vector3();
+  const tmpQuat = new THREE.Quaternion();
+  const tmpEuler = new THREE.Euler();
+  const tmpScale = new THREE.Vector3(1, 1, 1);
+  const tmpMat = new THREE.Matrix4();
+  return (geo, mat, transforms) => {
+    const mesh = new THREE.InstancedMesh(geo, mat, transforms.length);
+    transforms.forEach((tr, i) => {
+      tmpPos.set(tr.t[0], tr.t[1], tr.t[2]);
+      if (tr.r) { tmpEuler.set(tr.r[0], tr.r[1], tr.r[2]); tmpQuat.setFromEuler(tmpEuler); } else { tmpQuat.identity(); }
+      if (tr.s) tmpScale.set(tr.s[0], tr.s[1], tr.s[2]); else tmpScale.set(1, 1, 1);
+      tmpMat.compose(tmpPos, tmpQuat, tmpScale);
+      mesh.setMatrixAt(i, tmpMat);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
     ship.add(mesh);
     return mesh;
   };
@@ -123,7 +149,7 @@ export function createKitbashFleet(opts: { rng: () => number; escortCount?: numb
 
   // ---- flagship: the fleet's centerpiece, stationary at the formation origin ----
   const flagship = new THREE.Group();
-  const flagshipInfo = createWedgeCruiserHull(THREE, { add: makeAdd(flagship), mats: buildMats(), detail: 'full' });
+  const flagshipInfo = createWedgeCruiserHull(THREE, { add: makeAdd(flagship), addInstanced: makeAddInstanced(flagship), mats: buildMats(), detail: 'full' });
   group.add(flagship);
   addMarkers(flagship, flagshipInfo.engineMounts, engineMarkers);
   const flagshipMuzzle = new THREE.Object3D();
@@ -137,7 +163,7 @@ export function createKitbashFleet(opts: { rng: () => number; escortCount?: numb
   const formation = computeFormation(rng, escortCount);
   for (const slot of formation) {
     const escortShip = new THREE.Group();
-    const escortInfo = createWedgeCruiserHull(THREE, { add: makeAdd(escortShip), mats: buildMats(), detail: 'full' });
+    const escortInfo = createWedgeCruiserHull(THREE, { add: makeAdd(escortShip), addInstanced: makeAddInstanced(escortShip), mats: buildMats(), detail: 'full' });
     escortShip.scale.setScalar(0.42); // escorts read as smaller hulls of the same class next to the flagship
     escortShip.position.set(slot.x, slot.y, slot.z);
     escortShip.rotation.y = slot.yaw; // same +Z forward heading as the flagship, formation-flying
