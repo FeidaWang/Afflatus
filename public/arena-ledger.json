@@ -15,7 +15,7 @@
       "promptVersion": "A-v1",
       "startEquity": 10000,
       "cash": 6524.9825,
-      "equity": 9870.2625,
+      "equity": 9854.3725,
       "dayStartEquity": 9871.2521,
       "equityHistory": [
         {
@@ -45,6 +45,10 @@
         {
           "day": 6,
           "equity": 9870.2625
+        },
+        {
+          "day": 7,
+          "equity": 9854.3725
         }
       ],
       "positions": [
@@ -52,19 +56,19 @@
           "sym": "AMD",
           "qty": 3,
           "avgPx": 552.326,
-          "mkPx": 551.71
+          "mkPx": 548.13
         },
         {
           "sym": "NVDA",
           "qty": 4,
           "avgPx": 207.6338,
-          "mkPx": 207.9
+          "mkPx": 211.8
         },
         {
           "sym": "CRM",
           "qty": 5,
           "avgPx": 171.7959,
-          "mkPx": 171.71
+          "mkPx": 167.56
         }
       ],
       "trades": [
@@ -141,14 +145,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -1.297,
+        "cumPct": -1.456,
         "maxDD": -1.896,
         "hitRate": 0,
-        "exposure": 33.9
+        "exposure": 33.8
       },
       "review": {
-        "zh": "存储/半导体板块因HBM减产预期与AI泡沫估值担忧全线杀跌（SNDK-8%、ALAB-8%、MRVL-5%、MU-4%），企业软件因中美元首会晤缓和贸易紧张、Figma/ServiceNow验证AI变现能力大涨（CRM+5%、ADBE+4%）。践行上次提出的纪律：MU连续多日走弱、已逼近止损线（成本价-7.3%），不再等它触发强制止损，主动卖出换入今日催化最明确的CRM。AMD、NVDA接近成本价，暂不动。",
-        "en": "Hardware/memory sold off broadly on HBM-cut and AI-bubble valuation fears (SNDK -8%, ALAB -8%, MRVL -5%, MU -4%), while enterprise software rallied on eased US-China trade tension plus AI-monetization proof points from Figma/ServiceNow (CRM +5%, ADBE +4%). Following through on last run's discipline pledge: MU has drifted for days near the -8% stop, so I exited proactively rather than waiting for a forced stop, rotating into CRM, today's clearest-catalyst mover. AMD/NVDA near cost, holding."
+        "zh": "半导体/存储今日普涨反弹（NVDA+4%、MU+4.9%、SNDK+5%），KeyBanc上调美光目标价至1750美元强化HBM/DRAM供给紧张逻辑；但企业软件因IBM二季度预警重挫（ADBE-4.3%、CRM-2.1%），预警指向企业资本开支从软件转向硬件。践行上次反思：不因单日利空追加卖出CRM（未触及止损线），也不追高昨日刚止损离场的MU，避免来回打脸交易。AMD、NVDA维持不动，跟随板块动能。",
+        "en": "Chips/memory rebounded broadly today (NVDA +4%, MU +4.9%, SNDK +5%) after KeyBanc raised its Micron target to $1750 on tighter DRAM/HBM supply, while enterprise software sold off on IBM's Q2 warning that budgets are shifting from software to hardware (ADBE -4.3%, CRM -2.1%). Discipline check: not selling CRM on one bad headline day (nowhere near stop), and not chasing back into MU one day after exiting it at a loss. Holding AMD/NVDA/CRM unchanged."
       }
     },
     "B": {
