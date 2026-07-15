@@ -78,6 +78,19 @@
 - **验证**：`tsc --noEmit` 干净、`vite build` 干净（`p2FleetDemoScene` chunk 14.96 kB，`vendor-three`/`topdownCombat`/`capitalShip3D`/`shipHologram` 字节数与上一次构建一致，`git diff --stat` 确认本轮只改了 `wedgeCruiserHull.js`/`.d.ts`/`kitbashFleet.ts`/其测试文件）、vitest **644/644**（642 基线 + 2 新增）。
 - **预览**：同上，`?p2demo=fleet`。本地已提交，未 push（R4）。
 
+**P2 光影质感返工（2026-07-16 夜，第三轮，站主提供第二份指南：真·WebGPU + 延迟渲染 + G-Buffer + POM + SSR）**：
+
+- **裁决过程**：这份指南和上一份（AAA 硬表面建模指南）性质不同——上一份是"给现有 WebGL2/GLSL 管线加技法"，这份要求的是完全不同的渲染架构（WebGPU、G-Buffer 延迟渲染、真 POM 光线步进、SSR、WGSL）。在动手前先用 `AskUserQuestion` 把这个规模差异摊开给站主：真做 WebGPU 重写不是调参数，是重写整个渲染管线；`Urgent.md` 里 U29 自己的规划早就把 WebGPU 列为「P5 评估门」，明确要先跑完 P0 真机探针数据才能决定要不要开，现在 P0 还没开工；加上沙盒没有 GPU/显示能力，这种量级的重写没法边写边验证，风险高。**站主选择"两者都要，先做近似效果再讨论 WebGPU"**——于是这一轮只做 WebGL2 管线内能落地、有真实效果、风险可控的部分，WebGPU 立项单独记录在下面，留给专门的会话处理。
+- **本轮落地（`src/bootengine/render/p2FleetDemoScene.ts`）**：
+  - **ACES Filmic 色调映射**：`renderer.toneMapping = THREE.ACESFilmicToneMapping`（three 内置，不是手写近似），`toneMappingExposure = 0.95`。指南要求的"阴影更深邃、亮部更有质感"，这条最省成本地兑现了。
+  - **真实 Bloom 泛光**：接入 three 自带的 `EffectComposer`/`RenderPass`/`UnrealBloomPass`/`OutputPass`（不是手写的伪泛光），阈值 0.82（卡住引擎发光/护盾菲涅尔/舷窗这些高 `emissiveIntensity` 部件，不误伤灰色船体），`resize()` 里同步 `composer.setSize`/`bloomPass.setSize`。这是指南"引擎光/舷窗才是全船最亮点"这条视觉逻辑真正生效的关键一步。
+  - **边缘轮廓光重新布置**：`rimLight` 强度 0.5→0.95，位置推到更低的掠射角——用灯光角度而非逐材质菲涅尔 shader 兑现"金属转角要有一圈锐利高光"，成本低、效果真实，但不如全船菲涅尔 shader 精细（那个留作下一步可选增量，未做）。
+  - **明确未做**（超出这轮范围，如实记录，不是漏掉）：全船 Fresnel 菲涅尔 shader（目前只有护盾罩有）、舷窗按时间闪烁（目前是静态散点）、G-Buffer 延迟渲染、真 POM 光线步进、SSR 屏幕空间反射、WGSL/WebGPU 渲染器本体。
+- **构建影响的诚实说明**：`three/examples/jsm/postprocessing/*`（`EffectComposer`/`RenderPass`/`UnrealBloomPass`/`OutputPass`）被 Rollup 并进了 `vendor-three` 共享 chunk（而不是单独进 `p2FleetDemoScene` 的动态导入 chunk），因为 vite 的默认分包策略按 npm 包名分组，这几个模块虽然只有 `p2FleetDemoScene.ts` 一处引用，但物理上仍属于 `three` 包。影响：`vendor-three` 从 674.53 kB 涨到 677.14 kB（gzip 171.28→171.79 kB，约 +0.5 kB gzip），这个 chunk 是跨页面共享的，意味着即使是不用 fleet demo 的页面，只要用到 `vendor-three` 也会多下载这几百字节——量级很小，但如实记录而不是含糊带过。`topdownCombat`/`capitalShip3D`/`shipHologram`/`odinHull` 字节数不变，`git diff --stat` 确认这轮唯一改动的既有文件是 `p2FleetDemoScene.ts`。
+- **验证**：`tsc --noEmit` 干净、`vite build` 干净、vitest **644/644**（本轮是纯渲染管线配置代码，无新增可无头验证的纯函数，同 P2 第一/二切片的验证边界）。
+- **WebGPU 重写 —— 单独立项，未开工**：站主明确希望后续讨论。落地前置条件按 U29 自己的规划走：先做 P0（RFC 文档 + COOP/COEP spike + WebGPU 可用性探针，真机数据），拿到探针结果后再按 U27 触发条件裁决 P5 是否真的切 WebGPU 分支。真做的话范围也不小：G-Buffer 多目标渲染 + 延迟光照 pass、POM 光线步进 shader（需要高度图，本项目零贴图管线，得先决定这张图怎么来）、SSR（依赖延迟渲染的深度/法线缓冲）、WGSL 重写现有材质。这些都需要真机反复调参验证，不适合在沙盒里盲写。
+- **预览**：同上，`?p2demo=fleet`。本地已提交，未 push（R4）。
+
 ## U28 · serial 皇家木色重做 + 首页断层/星门/HUD 修复批 → v1.6（2026-07-14 立项，站主四张截图）
 
 > 八个子项，两批施工：**批一 = 28a**（serial.html 独立，互不影响）；**批二 = 28b–28h**（首页，做完版本号升 v1.6）。截图不入库，下述文字即实施依据。**2026-07-14 两批全部实施完成，代码/测试/构建侧已验证，详见下方施工记录——视觉观感待站主真机复核。**
@@ -231,7 +244,7 @@
 > | U25 | **同日站主要求退回，已 revert 并推送 `643d1cb`**（546/546 vitest，回到 U24 状态） | 真机确认 Combat View 已回到 U24 前的样子 |
 > | U27 | 27b 三切片（`a4cfd45`）+ **27c Phase 1（BRIDGE SIM 入口，`86e55a0`）已推送**；27d 纯评估已关闭，五件套并入 U21 Phase 3 | 站主 flag 试看 27b 两项 → 裁决转默认/保持 opt-in；27c「转正」（去 noindex/进 sitemap/C5 评估）待站主裁决，暂不做 |
 > | U28 | 已完成（2026-07-14，同会话批一+批二）：serial 皇木主题 + 首页断层/星门配色/HUD 假目标清除/四竖柱按钮/跃迁加码 → v1.6；546/546 vitest + 构建 + `!important` 基线全绿 | 视觉全部 8 项待站主真机复核 |
-> | U29 | **P1 + P2 已完成**（2026-07-15/16，P1 先于 P0 开工，站主指定）：P1 = `src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线。P2 = 两切片，`?p2demo=armor`（程序化细节法线+灼痕材质）与 `?p2demo=fleet`（GPU 粒子池三组+kitbash 舰队复用+发光激光光束）。633/633 vitest（87 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；两条 P2 demo 待站主真机复核；P2 视觉打磨（相机/节奏/命中反馈）与 P3 电影导演 v2 为下一个自然阶段 |
+> | U29 | **P1 + P2 已完成**（2026-07-15/16，P1 先于 P0 开工，站主指定）：P1 = `src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线。P2 = `?p2demo=armor`（程序化细节法线+灼痕材质）与 `?p2demo=fleet`（GPU 粒子池三组+wedgeCruiserHull 旗舰/护卫舰船体（InstancedMesh 炮塔/舷窗/铆钉）+发光激光光束+ACES 色调映射/Bloom 泛光/边缘轮廓光）。644/644 vitest（98 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；WebGPU+延迟渲染+G-Buffer+POM+SSR 已按站主要求单独立项、待 P0 完成后再评估（不是 P2 范围）；两条 P2 demo 待站主真机复核；P2 剩余视觉打磨（全船菲涅尔/舷窗闪烁）与 P3 电影导演 v2 为下一个自然阶段 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
