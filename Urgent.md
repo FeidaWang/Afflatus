@@ -23,6 +23,7 @@
 ### 28d · Combat View 背后漂浮透明元素清除（图2，网页+移动）
 
 - [x] 3D 战场背后可见多余的滚动/漂浮半透明元素——站主裁定**本就不应存在，全部删除**。第一嫌疑：V18 Phase 2 的近景尘埃+速度拉伸粒子层与 Phase 3 的 lens ghost 双鬼影（`topdownCombat.js`）；删后真机复核若仍有漂浮物，排查 `.hud-grid`/`.hud-scan-line` CSS 层在 pilot 面板区的透出。
+- [x] **真机复核追加发现（2026-07-14 同日，站主二次报告仍有漂浮物）**：真正根因是 `.hud-grid`/`.hud-scan-line`——两者是 `#combatHud`（`inset:0`，z-index 110，盖过整个场景包括 U8 明确要留空的中央视野）的直接子元素，且各自都有一份后来才做、正确限定在 `.hud-panels` 自己范围内的等价替代（`.hud-panels::after` 的网格纹理、`.hud-panels::before` 的透视扫光，同一套 `sweepPct`/`sweepAlpha` 数值）——是清理 `.hud-panels::before/::after` 时忘了删的旧版重复实现。`index.html` 两个 div、`styles.css` 三条规则、`main.js` `drawRadar()` 里的 `--oracle-sweep-x`/`--oracle-sweep-alpha` 写入，全部整体删除（`--hud-sweep-x`/`--hud-sweep-alpha` 不受影响，`.hud-panels::before` 仍照常用）。
 
 ### 28e · HUD 标尺与假目标（图2）
 

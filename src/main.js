@@ -639,8 +639,11 @@ function drawRadar(){
     document.body.classList.add('radar-sweeping');
     document.body.style.setProperty('--hud-sweep-x',`${sweepPct.toFixed(2)}%`);
     document.body.style.setProperty('--hud-sweep-alpha',`${(sweepAlpha*.96).toFixed(3)}`);
-    document.body.style.setProperty('--oracle-sweep-x',`${sweepPct.toFixed(2)}%`);
-    document.body.style.setProperty('--oracle-sweep-alpha',`${(sweepAlpha*.92).toFixed(3)}`);
+    // U28 follow-up (2026-07-14): --oracle-sweep-x/--oracle-sweep-alpha
+    // writes removed along with .hud-scan-line (src/styles.css) — that was
+    // a full-viewport duplicate of the .hud-panels::before sweep these two
+    // --hud-sweep-* vars still drive, and it was the actual source of the
+    // "floating elements over Combat View" real-device report.
   }else{
     document.body.classList.remove('radar-sweeping');
   }
