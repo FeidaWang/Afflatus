@@ -1,32 +1,42 @@
 /* ============================================================
    KITBASH FLEET — U29 P2: procedural fleet assembly reusing the EXISTING
-   carrierHull.js / odinHull.js part-generator library (main site's capital-
-   ship kitbash geometry — see src/scene/carrierHull.js / odinHull.js).
-   Per the U29 downscope table: "程序化 kitbash 优先...模块化部件库已有基础"
-   — the two hull generators ARE the modular part library; this module is
-   the piece that was still missing, assembling several hull instances into
-   one seeded fleet formation and exposing their mount points as live
-   Object3D markers (children of each ship, so .getWorldPosition() tracks
-   them correctly if a ship ever moves/rotates) for the render pieces
-   (thruster particles, laser beams) to attach to.
+   hull part-generator library (main site's capital-ship kitbash geometry —
+   see src/scene/carrierHull.js / odinHull.js / wedgeCruiserHull.js). Per
+   the U29 downscope table: "程序化 kitbash 优先...模块化部件库已有基础" —
+   these hull generators ARE the modular part library; this module is the
+   piece that was still missing, assembling several hull instances into one
+   seeded fleet formation and exposing their mount points as live Object3D
+   markers (children of each ship, so .getWorldPosition() tracks them
+   correctly if a ship ever moves/rotates) for the render pieces (thruster
+   particles, laser beams) to attach to.
 
-   Both createCarrierHull/createOdinHull are already DOM/WebGL-free part
-   generators — THREE is passed in as a parameter, they import nothing
-   themselves — confirmed zero coupling back onto topdownCombat.js/main.js,
-   so reusing them from src/bootengine/render/ pulls in only `three` itself.
+   Owner feedback (2026-07-16): the original mixed carrierHull+odinHull
+   fleet "all looked ugly" — swapped the whole fleet (flagship AND escorts)
+   to wedgeCruiserHull.js, a new broad flat-decked "dagger" silhouette hull
+   (twin command towers, dorsal trench, wide stern engine row) built
+   specifically to read as a striking capital-ship silhouette at a glance,
+   at two scales (full-size flagship + smaller escorts of the same class —
+   a real fleet composition, not three unrelated hull styles competing for
+   attention in one shot). carrierHull.js/odinHull.js are untouched and
+   still used by capitalShip3D.js/shipHologram.js elsewhere on the site;
+   this file just no longer imports them.
+
+   All three hull generators are already DOM/WebGL-free part generators —
+   THREE is passed in as a parameter, they import nothing themselves —
+   confirmed zero coupling back onto topdownCombat.js/main.js, so reusing
+   them from src/bootengine/render/ pulls in only `three` itself.
 
    Determinism is PARTIAL, and that's a real tradeoff, not an oversight:
    fleet COMPOSITION (escort count/formation slot) flows through the seeded
    rng below, so the same seed always produces the same layout. Each hull's
    own internal greeble scatter (rivets/panel clutter) does NOT —
-   carrierHull.js/odinHull.js call bare Math.random() internally, and this
-   module deliberately does not modify those existing files (surgical-
-   changes discipline) to force it through.
+   wedgeCruiserHull.js calls bare Math.random() internally (same as its two
+   siblings), and this module deliberately does not modify that file
+   (surgical-changes discipline) to force it through.
    ============================================================ */
 
 import * as THREE from 'three';
-import { createCarrierHull } from '../../scene/carrierHull.js';
-import { createOdinHull } from '../../scene/odinHull.js';
+import { createWedgeCruiserHull } from '../../scene/wedgeCruiserHull.js';
 import type { HullMats } from '../../scene/carrierHull';
 
 export interface FormationSlot {
@@ -47,8 +57,12 @@ export function computeFormation(rng: () => number, escortCount: number): Format
   for (let i = 0; i < escortCount; i++) {
     const side = i % 2 === 0 ? 1 : -1;
     const rank = Math.floor(i / 2);
-    const x = side * (5.5 + rank * 2.2 + (rng() - 0.5) * 1.2);
-    const z = -6 - rank * 3.4 + (rng() - 0.5) * 2.0;
+    // Base offset pushed out from -6 to -9.5 (wedgeCruiserHull.js's own
+    // hull already extends back to local z=-7, so escorts need more
+    // clearance behind the flagship's stern than the old, shorter carrier
+    // hull did — otherwise the formation reads as overlapping hulls).
+    const x = side * (6.5 + rank * 2.6 + (rng() - 0.5) * 1.2);
+    const z = -9.5 - rank * 3.8 + (rng() - 0.5) * 2.0;
     const y = (rng() - 0.5) * 1.2;
     const yaw = (rng() - 0.5) * 0.3;
     slots.push({ x, y, z, yaw });
@@ -107,24 +121,26 @@ export function createKitbashFleet(opts: { rng: () => number; escortCount?: numb
   const engineMarkers: THREE.Object3D[] = [];
   const muzzleMarkers: THREE.Object3D[] = [];
 
-  // ---- carrier: the fleet's centerpiece, stationary at the formation origin ----
-  const carrierShip = new THREE.Group();
-  const carrierInfo = createCarrierHull(THREE, { add: makeAdd(carrierShip), mats: buildMats(), detail: 'full' });
-  group.add(carrierShip);
-  addMarkers(carrierShip, carrierInfo.engineMounts, engineMarkers);
-  const carrierMuzzle = new THREE.Object3D();
-  carrierMuzzle.position.set(carrierInfo.muzzleAnchor.x, carrierInfo.muzzleAnchor.y, carrierInfo.muzzleAnchor.z);
-  carrierShip.add(carrierMuzzle);
-  muzzleMarkers.push(carrierMuzzle);
+  // ---- flagship: the fleet's centerpiece, stationary at the formation origin ----
+  const flagship = new THREE.Group();
+  const flagshipInfo = createWedgeCruiserHull(THREE, { add: makeAdd(flagship), mats: buildMats(), detail: 'full' });
+  group.add(flagship);
+  addMarkers(flagship, flagshipInfo.engineMounts, engineMarkers);
+  const flagshipMuzzle = new THREE.Object3D();
+  flagshipMuzzle.position.set(flagshipInfo.muzzleAnchor.x, flagshipInfo.muzzleAnchor.y, flagshipInfo.muzzleAnchor.z);
+  flagship.add(flagshipMuzzle);
+  muzzleMarkers.push(flagshipMuzzle);
 
-  // ---- escorts: seeded formation, reusing the slimmer Odin hull ----
+  // ---- escorts: seeded formation, same hull class at a smaller scale —
+  // a real fleet composition (one striking silhouette at two sizes) rather
+  // than mixing unrelated hull styles in one shot. ----
   const formation = computeFormation(rng, escortCount);
   for (const slot of formation) {
     const escortShip = new THREE.Group();
-    const escortInfo = createOdinHull(THREE, { add: makeAdd(escortShip), mats: buildMats(), detail: 'full' });
-    escortShip.scale.setScalar(0.4); // escorts read as smaller hulls next to the carrier
+    const escortInfo = createWedgeCruiserHull(THREE, { add: makeAdd(escortShip), mats: buildMats(), detail: 'full' });
+    escortShip.scale.setScalar(0.42); // escorts read as smaller hulls of the same class next to the flagship
     escortShip.position.set(slot.x, slot.y, slot.z);
-    escortShip.rotation.y = slot.yaw; // same +Z forward heading as the carrier, formation-flying
+    escortShip.rotation.y = slot.yaw; // same +Z forward heading as the flagship, formation-flying
     group.add(escortShip);
     addMarkers(escortShip, escortInfo.engineMounts, engineMarkers);
     const muzzle = new THREE.Object3D();

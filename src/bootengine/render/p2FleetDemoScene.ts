@@ -73,9 +73,14 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   scene.fog = new THREE.FogExp2(0x03050a, 0.012);
   scene.environment = buildEnvironment(renderer);
 
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
-  camera.position.set(14, 9, 20);
-  camera.lookAt(0, 0, -4);
+  // Pulled back + widened from the first pass: the fleet swapped to
+  // wedgeCruiserHull.js (flagship length 14.4 / width 8.0, vs. the old
+  // carrier's 9.6/8.3-ish), and escort formation slots moved further aft
+  // to clear the new, longer flagship's stern — the old framing cropped
+  // both.
+  const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 220);
+  camera.position.set(20, 13, 27);
+  camera.lookAt(0, 0, -7);
 
   scene.add(new THREE.AmbientLight(0x9098a0, 1.2));
   const keyLight = new THREE.DirectionalLight(0xf3f6fa, 1.5);
