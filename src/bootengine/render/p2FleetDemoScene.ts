@@ -151,11 +151,27 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   // plain gray hull. OutputPass applies renderer.toneMapping/outputColorSpace
   // at the very end of the chain — required when using EffectComposer,
   // since intermediate passes render to off-screen linear targets.
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  const bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.9, 0.4, 0.82);
-  composer.addPass(bloomPass);
-  composer.addPass(new OutputPass());
+  //
+  // Defensive on purpose: this sandbox has no launchable browser (checked —
+  // no GPU, and Playwright can't get a real WebGL context here either, so
+  // this postprocessing chain has never actually been exercised against a
+  // real GPU). UnrealBloomPass's internal blur targets need half-float
+  // render-target support; if that (or anything else in this chain) throws
+  // during setup or a frame, fall back to a plain renderer.render() instead
+  // of taking the whole demo down with it — a missing bloom effect is a
+  // minor regression, a black canvas is a total one.
+  let composer: EffectComposer | null = null;
+  let bloomPass: UnrealBloomPass | null = null;
+  try {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.9, 0.4, 0.82);
+    composer.addPass(bloomPass);
+    composer.addPass(new OutputPass());
+  } catch (e) {
+    composer = null;
+    bloomPass = null;
+  }
 
   const tmpFrom = new THREE.Vector3();
   const tmpTo = new THREE.Vector3();
@@ -226,7 +242,20 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     debrisPool.update(elapsed);
     for (const beam of beams) beam.update(elapsed);
 
-    composer.render();
+    if (composer) {
+      try {
+        composer.render();
+      } catch (e) {
+        // Same defensive posture as construction above: if the bloom chain
+        // breaks mid-session on some GPU/driver this sandbox can't test
+        // against, drop it permanently rather than black-screening every
+        // subsequent frame.
+        composer = null;
+        renderer.render(scene, camera);
+      }
+    } else {
+      renderer.render(scene, camera);
+    }
     if (running) raf = requestAnimationFrame(loop);
   }
 
@@ -238,9 +267,11 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
-    composer.setPixelRatio(dpr);
-    composer.setSize(W, H);
-    bloomPass.setSize(W, H);
+    if (composer && bloomPass) {
+      composer.setPixelRatio(dpr);
+      composer.setSize(W, H);
+      bloomPass.setSize(W, H);
+    }
   }
 
   return {
