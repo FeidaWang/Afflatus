@@ -103,6 +103,13 @@
 
 **P2 排障续（2026-07-16 夜，站主反馈"只能看到一片亮光"）**：上一条修复生效了一半——不再是黑屏（说明渲染循环确实在跑），但整艘船糊成一片过曝的亮团，认不出形状。根因：`kitbashFleet.ts` 的 `buildMats()` 从没给任何材质设过 `envMapIntensity`，全部吃默认值 1.0，配合最高到 0.6 的金属度，把 `p2FleetDemoScene.ts` 那张偏亮/近白的天顶天空环境贴图整面反射到全船——这正是 `armorMaterial.ts` 本次会话早些时候撞过并修过的同一类问题（那次调到了 0.5），`kitbashFleet.ts` 的材质当时没有跟着一起改。叠加上一轮刚加的 Bloom，大片过曝表面一起超过泛光阈值，糊成一整块光斑而不是船体细节+局部发光点。**修复**：`buildMats()` 全部材质加 `envMapIntensity: 0.4`；Bloom 阈值 0.82→0.92、强度 0.9→0.55（收紧到只有真正的发光部件——引擎/舷窗/护盾——还能触发）；`toneMappingExposure` 0.95→0.8 留更多余量。验证：tsc/build/vitest 全绿（644/644，chunk 字节数不变），`git diff --stat` 确认只改了 `kitbashFleet.ts`/`p2FleetDemoScene.ts` 两个文件。本地已提交，未 push（R4）。
 
+**P2 排障第三轮（2026-07-16 夜，站主发截图 + 反问"你觉得我能看到战舰的轮廓吗"）**：上一条修复也不够——截图显示画面**完全没有任何硬边缘**（连背景天空渐变的过渡带都是糊的），只有一个圆形亮核心 + 一道横向亮拖尾，是一整张软糊图，不是"船体过曝但还有轮廓"。这个特征和单纯的亮度/曝光问题不是一回事：如果是曝光过高，至少船体边缘、天空渐变带这些高频细节还会在，只是偏亮；**全图无差别地糊，是渲染目标分辨率不对（太小的 buffer 被拉伸铺满画布）的典型特征**，不是调阈值/强度/曝光能解决的量级问题。
+- **诊断而非再猜**：这条链（`EffectComposer`/`UnrealBloomPass`/`RenderPass`/`OutputPass`）从写下第一行代码起就从没在真实 WebGL 上下文里跑过一帧——沙盒物理上起不了浏览器（上上一轮已确认），过去两轮的调参（阈值/强度/曝光）全部是盲改，且都失败了。继续在一个零反馈通道上猜参数不是负责任的工程方式；正确做法是**把这块不可验证、复杂度最高的拼图整个拿掉**，退回到"改动前已验证能工作"的基线，而不是继续叠加猜测。
+- **修复**：`p2FleetDemoScene.ts` 里彻底移除 `EffectComposer`/`RenderPass`/`UnrealBloomPass`/`OutputPass` 的 import、构造（含之前两轮加的 try/catch 防御）、每帧 `composer.render()` 调用、`resize()` 里的 `composer.setSize`/`bloomPass.setSize`——渲染循环和 resize 都退回纯 `renderer.render(scene, camera)` / `renderer.setSize()`。保留两处独立、低风险、且已知有效的修复：ACES Filmic 色调映射（three 内置单一属性赋值，无额外渲染目标，风险类别和 Bloom 完全不同）、`kitbashFleet.ts` 的 `envMapIntensity` 修复。`toneMappingExposure` 从 0.8 恢复到 0.95——0.8 是专门为补偿 Bloom 叠加放大而调低的，Bloom 已移除，该补偿不再需要。
+- **构建影响**：`vendor-three` chunk 应会因为不再打包 `three/examples/jsm/postprocessing/*` 而缩小（上一轮记录过它曾从 674.53 kB 涨到 677.14 kB），本轮构建已确认 `p2FleetDemoScene` 自身 chunk 变小。
+- **验证**：`tsc --noEmit` 干净、vitest 51 文件/644 测试全绿、`npm run build` 干净。`git diff --stat` 确认只改了 `p2FleetDemoScene.ts` 一个文件。本地已提交（`62a93a4`），未 push（R4）。
+- **如实说明**：这是"减法"修复——去掉了一个从未验证过的风险源，回到已知能工作的渲染路径，但**没有独立证据证明退回后的画面本身是完美的**（同样受限于沙盒无 GPU/浏览器，无法看真实像素）。如果退回纯 `renderer.render()` 后仍然过曝或异常，下一步该检查的是：舷窗/引擎发光材质的 `emissiveIntensity`（引擎盘 4.5、舷窗 2.2 是否本身就偏高）、三条环境光（Ambient 1.2 + Key 1.5 + Rim 0.95）叠加总量、以及 `laserBeam.ts` 纯白 `0xffffff` 核心颜色——但这些只有在排除了 Bloom 这个最大不确定性变量之后才值得逐个排查，而不是继续在同一条不可验证的链上打转。Bloom 若要重新引入，应等这个环境具备真实浏览器验证能力之后再做。
+
 ## U28 · serial 皇家木色重做 + 首页断层/星门/HUD 修复批 → v1.6（2026-07-14 立项，站主四张截图）
 
 > 八个子项，两批施工：**批一 = 28a**（serial.html 独立，互不影响）；**批二 = 28b–28h**（首页，做完版本号升 v1.6）。截图不入库，下述文字即实施依据。**2026-07-14 两批全部实施完成，代码/测试/构建侧已验证，详见下方施工记录——视觉观感待站主真机复核。**
