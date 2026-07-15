@@ -91,6 +91,16 @@
 - **WebGPU 重写 —— 单独立项，未开工**：站主明确希望后续讨论。落地前置条件按 U29 自己的规划走：先做 P0（RFC 文档 + COOP/COEP spike + WebGPU 可用性探针，真机数据），拿到探针结果后再按 U27 触发条件裁决 P5 是否真的切 WebGPU 分支。真做的话范围也不小：G-Buffer 多目标渲染 + 延迟光照 pass、POM 光线步进 shader（需要高度图，本项目零贴图管线，得先决定这张图怎么来）、SSR（依赖延迟渲染的深度/法线缓冲）、WGSL 重写现有材质。这些都需要真机反复调参验证，不适合在沙盒里盲写。
 - **预览**：同上，`?p2demo=fleet`。本地已提交，未 push（R4）。
 
+**P2 排障（2026-07-16 夜，站主反馈"没有看到页面上有战舰"）**：
+
+- **先尝试真的起一个浏览器去看**：装了 Playwright + Chromium headless shell，`launch()` 报缺系统依赖（`libxdamage1` 等），`sudo npx playwright install-deps` 因沙盒禁止提权（no new privileges + 容器限制）打不了补丁——确认了这个沙盒**物理上无法起真实浏览器**，不是不愿意做，是做不了。
+- **退而求其次，直接跑真实构建代码而非猜**：写了两个临时 vitest 诊断脚本（跑完即删，未提交）——① 直接调用 `createKitbashFleet()`，遍历整棵场景图统计真实网格数：270 个常规 Mesh + 25 个 InstancedMesh、约 11905 个三角形，世界包围盒 `x:[-11.1,10.5] y:[-1.05,2.99] z:[-16.98,7.4]`——**几何体本身是好的，没有抛异常、没有退化成空几何**。② 用 `p2FleetDemoScene.ts` 里完全一致的相机参数（位置/朝向/FOV）构造真实 `THREE.PerspectiveCamera` + `THREE.Frustum`，把舰队包围盒的 8 个角点 + 中心投影到 NDC 坐标——9/9 个点全部落在屏幕内，`frustum.intersectsBox()` 也是 `true`——**相机取景也是对的**。这两项排除了"几何体是空的/抛错了"和"镜头没对准"这两个最大嫌疑。
+- **锁定嫌疑到最新加的 Bloom 后处理链**：剩下没法验证的就是真正需要 GPU 的部分——`EffectComposer`/`UnrealBloomPass` 这条链从写完到现在从没在真实 WebGL 上下文里跑过一次。`UnrealBloomPass` 内部用半精度浮点纹理做模糊缓冲，如果某些 GPU/驱动不支持会在运行时抛错；而 `runFleetDemo()`（`boot.js`）当时的 `try/catch` 只包住了 `import()` 那一行，没包住 `createFleetDemoScene()` 的调用和之后的渲染循环——一旦 `composer.render()` 在某一帧里抛错，`requestAnimationFrame` 链会静默断掉（那一帧连 `if (running) raf = requestAnimationFrame(loop)` 都不会执行到），画布就永远停在初始的纯色背景（`0x03050a`，深藏青近黑）上——**这和"看起来像什么都没有"完全吻合**。
+- **修复**：给 `composer` 的构造和每帧的 `composer.render()` 都包了 try/catch——失败就把 `composer` 置空，永久回退成 `renderer.render(scene, camera)` 直接渲染（用的是同一套已经验证过是对的 scene/camera/灯光/材质），不会因为泛光链出问题就把整个 demo 拖黑。ACES 色调映射本身风险很低（three 内置的单一属性赋值），继续保留。
+- **验证**：`tsc --noEmit` 干净、`vite build` 干净（chunk 字节数与上一版一致）、vitest 644/644。`git diff --stat` 确认只改了 `p2FleetDemoScene.ts`。
+- **仍然如实说明**：这个修复能保证"不会因为泛光链的问题导致整个画面消失"，但**没法确认之前具体是不是这个原因**——沙盒没有可用的 GPU/浏览器，这次的排查已经是这个环境下能做到的极限（跑真实构建代码而非猜测），像素级别的最终确认还是要站主真机看。
+- **预览**：同上，`?p2demo=fleet`。本地已提交，未 push（R4）。
+
 ## U28 · serial 皇家木色重做 + 首页断层/星门/HUD 修复批 → v1.6（2026-07-14 立项，站主四张截图）
 
 > 八个子项，两批施工：**批一 = 28a**（serial.html 独立，互不影响）；**批二 = 28b–28h**（首页，做完版本号升 v1.6）。截图不入库，下述文字即实施依据。**2026-07-14 两批全部实施完成，代码/测试/构建侧已验证，详见下方施工记录——视觉观感待站主真机复核。**
