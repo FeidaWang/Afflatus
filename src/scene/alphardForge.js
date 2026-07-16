@@ -306,11 +306,26 @@ export function initAlphardForge() {
   // it feeds the WebGL uniforms (dolly/brightness) and tagline typing, which
   // CSS can't drive on its own.
   const cssPin = typeof CSS !== 'undefined' && !!CSS.supports && CSS.supports('animation-timeline', 'view()');
+  // 2026-07-16 (station-master, live-inspected via devtools): the stage is
+  // exactly 100vh tall, same as the viewport, so it starts appearing at the
+  // very first pixel of scroll (its top is always vh below the wrapper's
+  // top) and is ALREADY ~95%+ on-screen by the time the wrapper's own top
+  // reaches the viewport top -- which is the old `-rect.top` zero point.
+  // Forge stayed clamped at 0 for that whole entrance (a full hero-height
+  // of scroll, since hero and the wrapper are the same height here), so the
+  // user was looking at an almost-fully-visible but still fully-dim stage
+  // for a stretch that reads as "empty background, nothing happening" --
+  // exactly the reported gap. Old formula only counted the post-entrance
+  // dwell (rect.top: 0 -> -100vh). New formula counts the whole journey a
+  // 100vh-tall stage makes through a 100vh viewport (rect.top: vh -> -vh,
+  // a 200vh span that equals the wrapper's own full height), so forge
+  // starts leaving 0 as soon as the stage is visible at all, not once
+  // it's already nearly filled the screen.
   function progress() {
     if (reduce) return 1;
     const rect = section.getBoundingClientRect(), vh = window.innerHeight;
     if (stageEl && !cssPin) { const ended = rect.bottom < vh; stageEl.classList.toggle('pin-fixed', rect.top <= 0 && rect.bottom >= vh && !ended); stageEl.classList.toggle('pin-end', ended); }
-    const travel = rect.height - vh; if (travel <= 0) return 0; return clamp(-rect.top / travel, 0, 1);
+    if (rect.height <= 0) return 0; return clamp((vh - rect.top) / rect.height, 0, 1);
   }
 
   function render(t) {
