@@ -283,6 +283,10 @@
     ['equityReaction', 'EQUITY REACTION', '股市反应']
   ];
   var CLASS_LABEL = { euclid: ['EUCLID', 'Euclid 级'], keter: ['KETER', 'Keter 级'], safe: ['SAFE', 'Safe 级'] };
+  // U30 R1: cards render collapsed (id/date/class only) and expand to the
+  // full dossier on click — which incidents are open survives re-render
+  // (lang toggle) since it's tracked here, not read off the DOM.
+  var OPEN = new Set();
   function render() {
     if (!DATA) return;
     if (!DATA.length) { list.innerHTML = '<div class="empty">' + T('Incident log unavailable.', '事件簿暂不可用。') + '</div>'; return; }
@@ -294,15 +298,33 @@
       var clsPair = CLASS_LABEL[ev['class']] || [ev['class'], ev['class']];
       var clsLabel = T(clsPair[0], clsPair[1]);
       var verdict = ev.verdict || {};
-      return '<article class="incident">'
-        + '<div class="ihead"><span class="iid">' + esc(ev.id) + '</span><span class="idate">' + fmtDate(ev.date) + ' · ' + esc(ev.type) + '</span><span class="cls ' + esc(ev['class']) + '">' + clsLabel + '</span></div>'
-        + '<div class="ibody">'
+      var open = OPEN.has(ev.id);
+      var bodyId = 'ibody-' + esc(ev.id);
+      return '<article class="incident' + (open ? ' open' : '') + '" data-id="' + esc(ev.id) + '">'
+        + '<div class="ihead" role="button" tabindex="0" aria-expanded="' + open + '" aria-controls="' + bodyId + '"><span class="iid">' + esc(ev.id) + '</span><span class="idate">' + fmtDate(ev.date) + ' · ' + esc(ev.type) + '</span><span class="cls ' + esc(ev['class']) + '">' + clsLabel + '</span></div>'
+        + '<div class="ibody" id="' + bodyId + '">'
         + '<div class="iname">' + esc(T((ev.name || {}).en || '', (ev.name || {}).zh || '')) + '</div>'
         + rows
         + '<p class="verdict"><b>' + T('VERDICT', '裁定') + ':</b> ' + esc(T(verdict.en || '', verdict.zh || '')) + '</p>'
         + '</div></article>';
     }).join('');
   }
+  var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+  function toggle(id) {
+    if (OPEN.has(id)) OPEN.delete(id); else OPEN.add(id);
+    if (!RM && document.startViewTransition) document.startViewTransition(render);
+    else render();
+  }
+  list.addEventListener('click', function (e) {
+    var head = e.target.closest('.ihead'); if (!head) return;
+    toggle(head.closest('.incident').dataset.id);
+  });
+  list.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var head = e.target.closest('.ihead'); if (!head) return;
+    e.preventDefault();
+    toggle(head.closest('.incident').dataset.id);
+  });
   fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d.events || []; render(); })
     .catch(function () { list.innerHTML = '<div class="empty">' + T('Incident log unavailable.', '事件簿暂不可用。') + '</div>'; });
   addEventListener('afflatus-lang', render);

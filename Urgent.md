@@ -33,6 +33,17 @@
 - [ ] 站主裁决：路线图顺序是否通过；R1 三个落点（serial 转场/signal 展开卡/手风琴）是否照单；手风琴用在 sectors 篮子还是首页持仓（本文建议：**两处都上，sectors 先行**——4 篮子天然适配，首页持仓等 R2 一起动）。
 - [ ] 通过后开工指令：「读 Urgent.md U30 R1 开工」。
 
+### 30d · R1 已实现（2026-07-16，同日开工同日完工）
+
+三个落点全部落地，644/644 测试通过，`!important` 基线不变（styles.css 2960 / index.html 2，均未触碰），bundle 预算无变化（三处改动都是页面内联脚本+CSS，零新增 JS chunk）。
+
+- **serial.html**：`selectNovel()` 里书架→英雄区的视觉更新拆成 `paintHero()`，用户点击切书时用 `document.startViewTransition()` 包裹——点击的书封临时获得 `view-transition-name:novelMorph`，回调里转移到 `.hero .pad`，原生 morph 出「封面飞展为详情」的效果，转场结束后清空 name 避免残留；初次加载（`scrollToShelf===false`）跳过转场。`prefers-reduced-motion` 下动画关闭（`::view-transition-group(novelMorph)` 归零）。
+- **signal.html**：事件簿卡片默认折叠（只显示编号/日期/分级），点击或键盘 Enter/Space 展开完整 dossier（before/print/repricing/reaction/verdict），展开状态存在闭包 `OPEN` 集合里（语言切换重渲染不丢状态）；切换动作用 `document.startViewTransition` 包裹（`prefers-reduced-motion` 时直接跳过，走既有 RM 判断惯例）。
+- **sectors.html**：手风琴落在 **cards-4**（MU/SKHY/TSM/ASML 四张论点卡），而不是原计划的 baskets 篮子行——篮子只是 ticker 标签列表，没有能撑手风琴的长文本；cards-4 的 `.thesis` 天然是一段完整论点，`-webkit-line-clamp:2` 收起，hover/`:focus-within`（4 张卡补了 `tabindex="0"`）展开到 `flex:3` 并放开 clamp。**仅限 `hover:hover and pointer:fine`**——触屏没有 hover，保留现有的网格常显堆叠，不强迫手风琴。无图片可用，`object-fit:cover` 未采用（如实记录偏离站主原稿）。首页资产甲板的 5 卡手风琴按计划推到 R2 与星门舞台一起动（未在本次改动）。
+
+待真机验收（计入 R3 WIP 上限，非 flag 隔离）：以上三项 UI 交互变化。
+
+
 ## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
 
 ## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
@@ -299,7 +310,7 @@
 > | U27 | 27b 三切片（`a4cfd45`）+ **27c Phase 1（BRIDGE SIM 入口，`86e55a0`）已推送**；27d 纯评估已关闭，五件套并入 U21 Phase 3 | 站主 flag 试看 27b 两项 → 裁决转默认/保持 opt-in；27c「转正」（去 noindex/进 sitemap/C5 评估）待站主裁决，暂不做 |
 > | U28 | 已完成（2026-07-14，同会话批一+批二）：serial 皇木主题 + 首页断层/星门配色/HUD 假目标清除/四竖柱按钮/跃迁加码 → v1.6；546/546 vitest + 构建 + `!important` 基线全绿 | 视觉全部 8 项待站主真机复核 |
 > | U29 | **P1 + P2 已完成**（2026-07-15/16，P1 先于 P0 开工，站主指定）：P1 = `src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线。P2 = `?p2demo=armor`（程序化细节法线+灼痕材质）与 `?p2demo=fleet`（GPU 粒子池三组+wedgeCruiserHull 旗舰/护卫舰船体（InstancedMesh 炮塔/舷窗/铆钉）+发光激光光束+ACES 色调映射/Bloom 泛光/边缘轮廓光）。644/644 vitest（98 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；WebGPU+延迟渲染+G-Buffer+POM+SSR 已按站主要求单独立项、待 P0 完成后再评估（不是 P2 范围）；两条 P2 demo 待站主真机复核；P2 剩余视觉打磨（全船菲涅尔/舷窗闪烁）与 P3 电影导演 v2 为下一个自然阶段 |
-> | U30 | 新立项（2026-07-16）：三页重设计（首页星门 sticky 舞台/sectors 力导向图/signal 视差时间轴+共享元素转场）+ R0–R4 路线图与重构线；三库全部不引（原生 scroll-timeline/自研弹簧物理/原生 View Transitions） | 站主裁决路线图顺序与 R1 落点；通过后「读 U30 R1 开工」 |
+> | U30 | **R1 已完成**（2026-07-16 同日开工同日完工）：serial 书架→英雄区共享元素转场、signal 事件卡折叠/展开、sectors cards-4 论点卡手风琴（`hover/pointer:fine` 限定，篮子改论点卡，无图片故未用 object-fit:cover）；三库全部不引，644/644 测试绿，`!important`/bundle 基线不变 | R2（首页星门舞台）/R3（sectors 力导向图）/R4（signal 视差时间轴）未开工；三项 R1 交互变化待真机验收（计入 R3 WIP 上限） |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 

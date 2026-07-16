@@ -199,4 +199,6 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 }
 @media (prefers-reduced-motion: reduce){
   .toc-drawer,.toc-backdrop,.fab-menu,.reader-progress i,.toast{transition:none}
+  /* U30 R1: kill the shelf→hero morph animation, keep the instant swap */
+  ::view-transition-group(novelMorph),::view-transition-old(novelMorph),::view-transition-new(novelMorph){animation:none!important}
 }

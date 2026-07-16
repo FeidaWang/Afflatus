@@ -524,18 +524,43 @@
     state.chapters = n.chapters;
     state.waterfall = false;
 
-    document.getElementById('novelKicker').textContent = (n.novel.tags || []).slice(0, 4).join(' · ') || '无限流 · 连载中';
-    document.getElementById('novelTitle').textContent = n.novel.title;
-    document.getElementById('novelSub').textContent = n.novel.subtitle || '';
-    document.getElementById('novelIntro').textContent = n.novel.intro;
-    document.getElementById('novelAuthor').textContent = n.novel.author;
-    document.getElementById('novelUpdateNote').textContent = n.novel.updateNote;
-    document.getElementById('novelStart').textContent = n.novel.startDate;
-    var tagsEl = document.getElementById('novelTags'); tagsEl.innerHTML = '';
-    (n.novel.tags || []).forEach(function (tg) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = tg; tagsEl.appendChild(s); });
-    renderHud(n.novel.hud);
-    renderShelf();
-    document.title = 'Project Afflatus · Novels — ' + n.novel.title;
+    function paintHero() {
+      document.getElementById('novelKicker').textContent = (n.novel.tags || []).slice(0, 4).join(' · ') || '无限流 · 连载中';
+      document.getElementById('novelTitle').textContent = n.novel.title;
+      document.getElementById('novelSub').textContent = n.novel.subtitle || '';
+      document.getElementById('novelIntro').textContent = n.novel.intro;
+      document.getElementById('novelAuthor').textContent = n.novel.author;
+      document.getElementById('novelUpdateNote').textContent = n.novel.updateNote;
+      document.getElementById('novelStart').textContent = n.novel.startDate;
+      var tagsEl = document.getElementById('novelTags'); tagsEl.innerHTML = '';
+      (n.novel.tags || []).forEach(function (tg) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = tg; tagsEl.appendChild(s); });
+      renderHud(n.novel.hud);
+      renderShelf();
+      document.title = 'Project Afflatus · Novels — ' + n.novel.title;
+    }
+
+    /* U30 R1: clicked book cover morphs into the hero pad via a native
+       same-document View Transition instead of the content just snapping —
+       no library. Skipped on initial boot paint (scrollToShelf is false
+       there) since there's no prior visual to morph from. */
+    if (scrollToShelf && document.startViewTransition) {
+      try {
+        var shelfEl = document.getElementById('shelf');
+        var clickedBtn = shelfEl && shelfEl.children[idx];
+        if (clickedBtn) clickedBtn.style.viewTransitionName = 'novelMorph';
+        var vt = document.startViewTransition(function () {
+          paintHero();
+          var heroPad = document.querySelector('.hero .pad');
+          if (heroPad) heroPad.style.viewTransitionName = 'novelMorph';
+        });
+        vt.finished.catch(function () {}).then(function () {
+          var heroPad = document.querySelector('.hero .pad');
+          if (heroPad) heroPad.style.viewTransitionName = '';
+        });
+      } catch (e) { paintHero(); }
+    } else {
+      paintHero();
+    }
 
     try { localStorage.setItem(LS.lastNovel, n.id); } catch (e) {}
 

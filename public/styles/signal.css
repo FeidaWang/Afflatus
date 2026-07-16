@@ -131,12 +131,17 @@ a{color:inherit;text-decoration:none}
 .incidentList{display:flex;flex-direction:column;gap:16px;margin-top:16px}
 .incidentList .empty{padding:14px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--dim);font:400 12px var(--mono)}
 .incident{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,.55)}
-.incident .ihead{padding:11px 14px;background:var(--ink);color:var(--doc);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.incident .ihead{padding:11px 14px;background:var(--ink);color:var(--doc);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer}
 .incident .ihead .iid{font:700 13px/1 var(--disp);letter-spacing:.06em;text-transform:uppercase}
+.incident .ihead .iid::before{content:'+ ';color:var(--amber)}
+.incident.open .ihead .iid::before{content:'− '}
 .incident .ihead .idate{font:400 11px/1 var(--mono);color:var(--dim);flex:1}
 .incident .cls{font:700 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid currentColor}
 .incident .cls.euclid{color:var(--amber)}.incident .cls.keter{color:var(--red)}.incident .cls.safe{color:var(--green)}
-.incident .ibody{padding:14px}
+/* U30 R1: dossier body is collapsed by default, expands on click/Enter —
+   native View Transition (see incident-log script) handles the morph. */
+.incident .ibody{display:none;padding:14px}
+.incident.open .ibody{display:block}
 .incident .iname{font:700 15px/1.3 var(--disp);text-transform:uppercase;letter-spacing:.02em;margin:0 0 8px;color:#15140f}
 .incident .irow{display:grid;grid-template-columns:130px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed rgba(21,20,15,.25)}
 .incident .irow:last-of-type{border-bottom:0}
