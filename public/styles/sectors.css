@@ -61,6 +61,20 @@ h1 span{color:var(--acid)}
 .foot{padding:14px 20px;color:#82919f;font:700 11px/1.6 var(--font-body);letter-spacing:.08em;border-top:1px solid rgba(202,255,0,.20)}
 @media(max-width:820px){.top{grid-template-columns:1fr}.nav{justify-content:flex-start}.macro,.cards,.cards-2,.cards-4{grid-template-columns:1fr}.macro div,.card{border-right:0;border-bottom:1px solid rgba(202,255,0,.24)}h1{font-size:46px}.brand{font-size:24px}}
 
+/* U30 R1: memory/foundry row becomes a flex accordion on hover-capable
+   desktop only (touch has no hover, so mobile keeps the always-open grid
+   stack above) — default flex:1, one card widens to flex:3 and reveals its
+   full thesis on hover/keyboard focus. tabindex="0" on the .card elements
+   (sectors.html) makes :focus-within reachable by keyboard. */
+@media (hover:hover) and (pointer:fine){
+  .cards-4{display:flex}
+  .cards-4 .card{transition:flex .5s ease-in-out}
+  .cards-4 .thesis{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+  .cards-4 .card:hover,.cards-4 .card:focus-within{flex:3}
+  .cards-4 .card:hover .thesis,.cards-4 .card:focus-within .thesis{-webkit-line-clamp:14}
+}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion: reduce){.cards-4 .card{transition:none}}
+
 /* ===== SK Hynix (SKHY) Nasdaq ADR debut — energy-block countdown =====
    Graphic retro-futurism / Y2K HUD treatment (Marathon-style chamfered
    "energy block" panels, hazard-stripe fills, halftone overlay), layered
