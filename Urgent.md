@@ -43,6 +43,20 @@
 
 待真机验收（计入 R3 WIP 上限，非 flag 隔离）：以上三项 UI 交互变化。
 
+### 30e · R2 已实现（2026-07-16，`?fx=stage` 起步，默认关闭）
+
+星门 sticky 缩放舞台落地，**且不是另起炉灶**——U28b 已经把 `.stardrive` 做成了一套成熟的 pin+`--forge`(0→1) 进度系统（原生 `animation-timeline:view()` 优先、JS `pin-fixed/pin-end` 兜底，`--forge` 由 `alphardForge.js` 的 rAF 逐帧写入，驱动标语/指标条/光晕），且**已经是默认上线行为**（`section.classList.add('is-live')` 无条件执行，不是 R2 的假设"从零到有"）。R2 要加的只是"容器本身可见缩放"这一层：
+
+- **`.stardrive-scale`**：新增的内层包裹 div（`index.html`，包住 canvas/veil/caption/tagline/strip），`position:absolute;inset:0` 打底（无 flag 时是纯透传，零视觉变化）。
+- **`.stardrive.fx-stage .stardrive-scale`**：`transform:scale(calc(.8 + var(--forge)*.2))` + `border-radius:calc((1 - var(--forge)) * 32px)` + `overflow:hidden`——直接复用已经存在的 `--forge`，**零新增 JS、零新增 scroll 监听**（U30 30c 重构线①②两条硬规则天然满足，因为压根没写新的滚动驱动代码，是蹭 U28b 的现成基建）。
+- **多向视差**：caption/tagline/strip 三层各自叠加了不同的 translateX/rotate（同样 keyed off `--forge`，同样只在 `.fx-stage` 下生效），营造"分层微悬浮"而非死板的单轴缩放。
+- **`prefers-reduced-motion`**：不需要额外代码——U28b 原有的 reduced-motion 规则已经把 `--forge` 钉死在 1，calc 出来正好是 scale(1)/radius 0，即"直接呈现终态"，全站唯一一条新 CSS 都不用加。
+- **flag 开关**：`alphardForge.js` 里 `?fx=stage` 时才 `classList.add('fx-stage')`；默认（无 flag）行为与 R1 完成时完全一致，已验证 644/644 测试、`!important` 基线、bundle 预算三项均无变化。
+
+访问 `https://feida.au/?fx=stage` 可看效果；真机看过、站主确认观感后再考虑转默认（同 U25 教训——先 flag 后转正，不要一次做完就默认上线）。**不计入 R3 WIP 上限**（默认关闭，flag 隔离，R3 例外条款适用）。
+
+- [ ] 站主真机看过 `?fx=stage` 后裁决：转默认，还是继续调整（缩放幅度/圆角大小/视差强度）。
+
 
 ## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
 
@@ -310,7 +324,7 @@
 > | U27 | 27b 三切片（`a4cfd45`）+ **27c Phase 1（BRIDGE SIM 入口，`86e55a0`）已推送**；27d 纯评估已关闭，五件套并入 U21 Phase 3 | 站主 flag 试看 27b 两项 → 裁决转默认/保持 opt-in；27c「转正」（去 noindex/进 sitemap/C5 评估）待站主裁决，暂不做 |
 > | U28 | 已完成（2026-07-14，同会话批一+批二）：serial 皇木主题 + 首页断层/星门配色/HUD 假目标清除/四竖柱按钮/跃迁加码 → v1.6；546/546 vitest + 构建 + `!important` 基线全绿 | 视觉全部 8 项待站主真机复核 |
 > | U29 | **P1 + P2 已完成**（2026-07-15/16，P1 先于 P0 开工，站主指定）：P1 = `src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线。P2 = `?p2demo=armor`（程序化细节法线+灼痕材质）与 `?p2demo=fleet`（GPU 粒子池三组+wedgeCruiserHull 旗舰/护卫舰船体（InstancedMesh 炮塔/舷窗/铆钉）+发光激光光束+ACES 色调映射/Bloom 泛光/边缘轮廓光）。644/644 vitest（98 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；WebGPU+延迟渲染+G-Buffer+POM+SSR 已按站主要求单独立项、待 P0 完成后再评估（不是 P2 范围）；两条 P2 demo 待站主真机复核；P2 剩余视觉打磨（全船菲涅尔/舷窗闪烁）与 P3 电影导演 v2 为下一个自然阶段 |
-> | U30 | **R1 已完成**（2026-07-16 同日开工同日完工）：serial 书架→英雄区共享元素转场、signal 事件卡折叠/展开、sectors cards-4 论点卡手风琴（`hover/pointer:fine` 限定，篮子改论点卡，无图片故未用 object-fit:cover）；三库全部不引，644/644 测试绿，`!important`/bundle 基线不变 | R2（首页星门舞台）/R3（sectors 力导向图）/R4（signal 视差时间轴）未开工；三项 R1 交互变化待真机验收（计入 R3 WIP 上限） |
+> | U30 | **R1+R2 已完成**（2026-07-16）：R1 = serial 共享元素转场/signal 事件卡展开/sectors cards-4 手风琴；R2 = 首页星门 sticky 缩放舞台，`?fx=stage` 起步、默认关闭，复用 U28b 既有 `--forge` 基建零新增 JS。三库全部不引，644/644 测试绿，`!important`/bundle 基线不变 | R3（sectors 力导向图）/R4（signal 视差时间轴）未开工；R1 三项交互变化待真机验收（计入 R3 WIP 上限）；R2 flag 隔离不计入上限，待站主 `?fx=stage` 真机裁决转默认与否 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
