@@ -7139,16 +7139,23 @@
      its fade zone. Mask the canvas's own pixels directly so the top of the
      render is guaranteed to dissolve to nothing regardless of how bright
      the WebGL draw gets. */
-  /* 2026-07-16: widened 32vh->44vh and given its own mid-stop (was a flat
-     linear ramp) so the canvas itself eases in slowly near the top instead
-     of gaining opacity at a constant rate — a slower start reads as a softer
-     dissolve, matching the widened overlay gradient below. */
-  #alphardForge{mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 24vh,#000 44vh);-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 24vh,#000 44vh)}
+  /* 2026-07-16 round 3: round 2 widened this to 44vh for a smoother blend,
+     but that traded "smooth" for "a third of the screen is just background,
+     nothing happening" (owner's next report) — smoothness should come from
+     the eased mid-stop, not from sheer scroll distance. Settled on 26vh
+     (tighter than even the original 32vh) with the same easing shape. */
+  #alphardForge{mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 14vh,#000 26vh);-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 14vh,#000 26vh)}
   .stardrive-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 0%,transparent 46%,rgba(4,6,10,.5) 100%);opacity:calc(.28 + var(--forge)*.36)}
   /* melt the section into the page bg above (hero) and below (equity) so there is
      no hard seam — fades use the page --bg and sit above the canvas but below
      the strip/tagline */
-  .stardrive-stage::before,.stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:20vh;z-index:1;pointer-events:none}
+  .stardrive-stage::before{content:"";position:absolute;left:0;right:0;z-index:1;pointer-events:none}
+  /* 2026-07-16: exit fade split off from the shared 20vh with the entry —
+     owner separately reported "1/4 screen of just background" between the
+     stargate and 02 Equity Curve, i.e. this fade itself reading as dead
+     air rather than a transition. Shrunk so equity's own heading arrives
+     sooner; still enough room to avoid a hard cut into --bg. */
+  .stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:12vh;z-index:1;pointer-events:none}
   /* U13d: the entry fade (universe starfield -> jump point) went straight
      from solid --bg to a still-fairly-opaque .55 stop at 45% before
      dropping to transparent — read as a flat color block rather than a
@@ -7169,13 +7176,19 @@
      actually above, then still reaches #021418 within the first ~3vh so the
      rest of the dissolve into the nebula is unchanged.
      2026-07-16 round 2 (station-master: still wants it smoother/more
-     seamless): widened the whole band 32vh->44vh and stretched every stop
-     proportionally, so the same color journey now unfolds over ~40% more
-     scroll distance — a slower dissolve reads as more seamless even though
-     the palette itself is unchanged. Kept in step with the widened
-     #alphardForge mask above so the overlay and the canvas's own fade
-     finish together. */
-  .stardrive-stage::before{top:0;height:44vh;background:linear-gradient(180deg,var(--bg) 0%,#021418 14%,rgba(2,20,24,.62) 46%,rgba(4,10,16,.22) 78%,rgba(4,10,16,0) 100%)}
+     seamless): widened the whole band 32vh->44vh — round 3 below reverses
+     most of this once it became "1/3 of the screen is empty" instead.
+     2026-07-16 round 3 (station-master: now reporting dead scroll space
+     between hero and the stargate): round 2's extra width was exactly the
+     wrong lever — a slower dissolve over more scroll distance reads as MORE
+     empty space, not less. Settled on 26vh, tighter than even the original
+     32vh; smoothness now comes entirely from the eased mid-stops, not from
+     sheer distance. Kept in step with the #alphardForge mask above so the
+     overlay and the canvas's own fade finish together. The other half of
+     the "empty space" report was .hero's own min-height ceiling (see the
+     `min(...,64vh)` rule further down) reserving more room than the hero
+     copy needs on tall viewports — fixed separately there. */
+  .stardrive-stage::before{top:0;height:26vh;background:linear-gradient(180deg,var(--bg) 0%,#021418 16%,rgba(2,20,24,.62) 42%,rgba(4,10,16,.22) 72%,rgba(4,10,16,0) 100%)}
   .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
 
   .stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
@@ -7906,8 +7919,17 @@
      (so content never sits under the HUD) but cap the *ceiling* with min()
      so tall viewports don't reserve far more room than the content needs,
      and drop the trailing bottom padding to let the stardrive fade (above)
-     do the visual transition instead of blank space. */
-  .hero{min-height:min(calc(100svh - var(--hud-combat-h) - 24px),64vh)!important;padding-bottom:0!important}
+     do the visual transition instead of blank space.
+     2026-07-16 follow-up (station-master: "1/3 screen gap" between the hero
+     copy and the stargate, still present): the 64vh ceiling is itself
+     viewport-relative, so on a tall desktop window (e.g. 1440px) it still
+     evaluates to ~920px — content (title+desc+cta, this same comment
+     estimated ~550-650px) than has 250-370px of empty space below it before
+     stardrive begins, since content is top-anchored (flex-start, set
+     earlier) not centered. Added a third, absolute term to the min() so the
+     box can never outgrow what the copy actually needs regardless of window
+     height. */
+  .hero{min-height:min(calc(100svh - var(--hud-combat-h) - 24px),64vh,660px)!important;padding-bottom:0!important}
 
 } /* end @layer legacy */
 
