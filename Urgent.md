@@ -79,6 +79,14 @@
 
 **出场缝隙 + 本轮收尾（`b44a2b5`）**：① `progress()` 外层再包一层 `easeOutCubic`，起止锚点不变（0→1），但滚动过半之前就能到 0.8+，视觉"到位感"比线性提前很多，缓解 48bb83c 修完后仍偏慢的观感；② 出场渐变（`.stardrive-stage::after`，星门→equity 方向）12vh→20vh 并加一级 `.15@70%` 中间档——之前只有两个真实档位（45%/100%），画布最亮的顶端直接从"零遮罩"跳到 45% 档，读起来像一条硬缝而不是渐隐，加档后顶端先经过一段"若有若无"的过渡再进入主渐变。真机复核（Chrome DevTools 截图 + 滚动扫描，`?fx=stage`）：hero→星门段星图/星轨在滚动约 500px（视口高 827px 的 60%）处已清晰可见、指标条四项文字全部清晰可辨；星门→equity 段肉眼未见硬缝或虚线。644/644 测试通过，`!important`/bundle 基线不变。
 
+### 30h · 诊断方法论翻车 + 版本回滚链 + 空隙终局修复（2026-07-16/17，站主连续追查）
+
+**关键教训（写死，往后必须遵守）**：用 Chrome DevTools MCP 的 `javascript_tool` 执行 `window.scrollTo()` 来测试原生 CSS `animation-timeline:view()` 完全不可靠——这个环境里程序化 scroll 不会真正触发合成帧，`ViewTimeline.currentTime` 永远卡 `null`、`transform` 永远读 `"none"`，据此误判"原生 pin 在生产环境已死"。据此做的 `cssPin=false` 实验（`dabc6a5`）上真机滚轮一测，JS 回退的 `position:fixed` 和其实一直在跑的原生 CSS 动画同时生效、`transform` 叠加把舞台推出屏幕 600px，比原问题更糟，当场回滚。**规则**：任何跟 scroll-timeline/rAF 挂钩的验证，只能用 `computer` 工具的真实滚轮 `scroll` 动作，禁止 `window.scrollTo()`。
+
+**连环回滚（站主逐条报错→逐条精确指定版本）**：quartic 缓动改动（`d3317ac`，未经充分验证的猜测性修改）导致效果异常，`git revert`→`a058d8b`；随后站主报告"滚动联动的文字渐显/星门缩放特效完全消失"（Chrome 端）+ 移动端排版新问题，我误判为缓存问题并顶嘴，被站主指出错误后，因为无法在沙盒里区分 Chrome/Safari 差异，一次性把 stardrive 相关文件全部revert 回 R2 之前（`0e23631`）——站主纠正"5e9c096 版本才是对的"，说明整体回滚过火；随后站主又连续两次给出精确 commit 指令"回到 b44a2b5"、"回到 48bb83c"，均用 `git diff <hash> HEAD --stat` 锁定实际有差异的文件、`git checkout <hash> -- <files>` 精确回填、跑 644 测试 + budget 脚本后提交推送。**移动端排版问题始终未被诊断**（两次追问具体页面无回音，站主已转向别的指令）。
+
+**空隙终局修复（`d8a56ea`）**：回到 `48bb83c` 状态后，站主给出最终精确指令"把星门移至首页文字航向·奇点王座的正下方"。分析确认 `.hero-cta`（含"航向·奇点王座"）是 `.hero` 最后一个子元素，`</section>` 后 `.stardrive` 立即开始，DOM 层面零间隙——唯一杠杆是 `.hero` 的 CSS 盒高是否超出内容实际高度。级联分析（Python 括号深度脚本核实）锁定 `styles.css` 里最后一条无 `@media` 包裹的顶层 `.hero{min-height:...}` 规则（这条赢过前面 `min-height:96vh!important` 等规则）为实际生效规则，把它的 `min-height` 从 `min(calc(100svh - var(--hud-combat-h) - 24px),64vh,660px)` 改成 `0`（不是删除——删除会让级联回退到更差的 `96vh!important` 规则）。真机滚轮复核（`?fx=stage`）：`getBoundingClientRect()` 读出 `stardriveTop - heroBottom === 0`，滚动联动的文字渐显+星门缩放特效在真实滚轮下运作正常，无回归。644/644 测试通过，`!important` 基线不变（2960/2960, 2/2），部署 READY，commit `d8a56ea`。
+
 ## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
 
 **愿景（站主原文转译）**：电影级高强度狗斗模拟器，用户是导演——系统自主演出高保真太空战争，强调「工业暴力」美学、物理化飞行行为、大片级视觉反馈。设计哲学：一切服务「演出感 vs 美学」，AI 行为要**像表演，不像计算**。
