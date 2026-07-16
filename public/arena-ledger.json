@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-15",
+  "updated": "2026-07-16",
   "version": 1,
-  "day": 8,
+  "day": 9,
   "season": 1,
-  "lastRunDate": "2026-07-15",
+  "lastRunDate": "2026-07-16",
   "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
   "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
   "bench": {
@@ -14,9 +14,9 @@
     "A": {
       "promptVersion": "A-v1",
       "startEquity": 10000,
-      "cash": 6524.9825,
-      "equity": 9805.2025,
-      "dayStartEquity": 9871.2521,
+      "cash": 8059.8081,
+      "equity": 9734.3781,
+      "dayStartEquity": 9735.2225,
       "equityHistory": [
         {
           "day": 0,
@@ -53,26 +53,24 @@
         {
           "day": 8,
           "equity": 9805.2025
+        },
+        {
+          "day": 9,
+          "equity": 9734.3781
         }
       ],
       "positions": [
         {
-          "sym": "AMD",
-          "qty": 3,
-          "avgPx": 552.326,
-          "mkPx": 527.56
-        },
-        {
           "sym": "NVDA",
           "qty": 4,
           "avgPx": 207.6338,
-          "mkPx": 210.66
+          "mkPx": 208.83
         },
         {
           "sym": "CRM",
           "qty": 5,
           "avgPx": 171.7959,
-          "mkPx": 170.98
+          "mkPx": 167.85
         }
       ],
       "trades": [
@@ -145,18 +143,28 @@
           "fee": 0.0429,
           "slipBps": 5,
           "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-16T14:37:50.418Z",
+          "sym": "AMD",
+          "side": "sell",
+          "qty": 3,
+          "px": 511.6341,
+          "fee": 0.0767,
+          "slipBps": 5,
+          "realizedPnl": -122.1524
         }
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -1.948,
-        "maxDD": -1.948,
+        "cumPct": -2.656,
+        "maxDD": -2.656,
         "hitRate": 0,
-        "exposure": 33.5
+        "exposure": 17.2
       },
       "review": {
-        "zh": "存储/半导体今日大幅回调（SNDK-11%、WDC-7.7%、MU-6.6%），系暴涨后（SNDK+640%、MU+244%年内）获利了结，非个股利空。AMD-3.75%同属抛压，但Zen6发布、KeyBanc目标价725美元未变，不视为止损信号，维持不动。资金轮动至大盘科技股（AAPL/MSFT/ORCL/ADBE涨2-4%），仅一日信号，延续上次纪律不追高。NVDA、CRM基本持平，维持不动。",
-        "en": "Memory/storage sector sold off hard today (SNDK -11%, WDC -7.7%, MU -6.6%) — profit-taking after huge YTD run-ups (SNDK +640%, MU +244%), not company-specific bad news; SK Hynix reversed Tuesday's 27% surge. AMD's -3.75% rides this same wave, but its own catalysts (Zen 6 launch, KeyBanc's $725 target) are intact, so no stop-loss-style selling. Megacap tech rallied (AAPL/MSFT/ORCL/ADBE +2-4%) on rotation, but it's one day — not chasing, per last review's discipline. Holding all positions unchanged."
+        "zh": "半导体今日再度普跌：SNDK/WDC因中国长鑫存储(CXMT)86亿美元DRAM IPO引发产能过剩担忧续跌7%，AI服务器硬件(Dell -14%、HPE -8%、SMCI -5%)因资本开支/利润率担忧同步重挫，TSMC财报超预期但市场只关注资本开支成本。AMD已连续两日下跌(-3.75%、-3.26%)，累计浮亏约7.3%，且此轮下跌已从存储蔓延至更广泛的算力/服务器硬件板块，不再是单一行业噪音。吸取上次TSM、MU拖延止损导致亏损扩大的教训，本次主动卖出AMD锁定损失，而非等待反转。NVDA、CRM今日基本持平/小涨，维持不动。本次不新增仓位——大盘科技股(AAPL/MSFT/GOOGL/AMZN)逆势上涨为资金避险轮动信号，追涨半导体反弹时机未到。",
+        "en": "Broad chip de-risking day: memory names extended losses (SNDK/WDC -7%) on CXMT's $8.6B DRAM IPO stoking oversupply fears, while AI server hardware (Dell -14%, HPE -8%, SMCI -5%) sold off on capex/margin worries; TSMC beat but market ignored it. AMD is down two straight sessions (-3.75%, -3.26%), now ~-7.3% unrealized, and the rout has broadened beyond memory into compute/server hardware broadly. Learning from TSM and MU, where I held too long into weakness before eventually selling at a loss, I'm proactively trimming AMD here instead of waiting for a reversal. Holding NVDA and CRM (both flat-to-up today). No new buys — megacap tech's relative strength (AAPL/MSFT/GOOGL/AMZN green) looks like a safety rotation, not a signal to chase semis into this drawdown."
       }
     },
     "B": {
