@@ -305,21 +305,6 @@ export function initAlphardForge() {
   // are skipped there entirely. `p` (0..1) is still computed here either way:
   // it feeds the WebGL uniforms (dolly/brightness) and tagline typing, which
   // CSS can't drive on its own.
-  //
-  // 2026-07-16: briefly forced this to `false`, suspecting the native path
-  // was dead (a devtools check via synthetic `window.scrollTo()` showed
-  // `timeline.currentTime` stuck at `null` and `transform` stuck at `none`
-  // across a wide scrollY sweep). That forced-fallback build was live-tested
-  // with a *real* mouse-wheel scroll and made things worse: `.pin-fixed`
-  // (position:fixed) and the native `stardrivePin` animation both ended up
-  // applying to the same element at once (`transform:matrix(1,0,0,1,0,612.8)`
-  // stacked on top of `position:fixed;top:0`), pushing the whole stage ~600px
-  // down off its pinned position. That proved the native timeline was never
-  // actually dead — `window.scrollTo()` doesn't drive real scroll/compositor
-  // frames in this environment, so it never ticks a view-timeline; a real
-  // scroll gesture does, and does here too. Reverted to feature detection.
-  // The gap/overlap the owner is still seeing needs re-diagnosis under real
-  // scroll input, not synthetic scrollTo() sampling.
   const cssPin = typeof CSS !== 'undefined' && !!CSS.supports && CSS.supports('animation-timeline', 'view()');
   // 2026-07-16 (station-master, live-inspected via devtools): the stage is
   // exactly 100vh tall, same as the viewport, so it starts appearing at the
