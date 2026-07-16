@@ -7098,13 +7098,13 @@
      frame (--forge:1) so the numbers still read.
      ============================================================ */
   .stardrive{position:relative;padding:0;margin:0;--forge:1}
-  .stardrive-stage{position:relative;width:100%;height:100vh;overflow:hidden}
+  .stardrive-stage{position:relative;width:100%;height:100svh;overflow:hidden}
   /* live mode (JS confirmed motion ok): tall section gives scroll-room; the stage
      is pinned by JS via position:fixed — NOT position:sticky, which is broken on
      this page by html/body{overflow-x:hidden} (computes overflow-y:auto). The JS
      toggles .pin-fixed (during the pin range) and .pin-end (after). */
-  .stardrive.is-live{height:200vh;--forge:0}
-  .stardrive.is-live .stardrive-stage{position:absolute;top:0;left:0;right:0;height:100vh}
+  .stardrive.is-live{height:200svh;--forge:0}
+  .stardrive.is-live .stardrive-stage{position:absolute;top:0;left:0;right:0;height:100svh}
   .stardrive.is-live .stardrive-stage.pin-fixed{position:fixed;top:0}
   .stardrive.is-live .stardrive-stage.pin-end{position:absolute;top:auto;bottom:0}
 
@@ -7117,11 +7117,27 @@
      and skips its .pin-fixed/.pin-end classList toggling + scroll listener entirely
      when it's available, so the two mechanisms never fight — the JS fallback above
      is untouched for browsers without support. The WebGL-driving --forge progress
-     number is unrelated to the pin and is still computed in the rAF loop either way. */
+     number is unrelated to the pin and is still computed in the rAF loop either way.
+     2026-07-17 (station-master real-device mobile Chrome screenshots: a huge
+     dead-background stretch before the stargate's text ever appears, AND the
+     metrics strip crowding into "02 equity curve" right below it): both wrapper
+     and stage were sized in plain `vh`, which on mobile Chrome always equals the
+     LARGEST viewport (address bar hidden) — but the page loads/settles with the
+     address bar visible, i.e. a SMALLER real viewport. That mismatch means the
+     laid-out boxes are taller than what's actually on screen at rest, so (a)
+     reaching the stage's own content needs extra scroll distance beyond what
+     the pin math assumes (the "empty stretch"), and (b) the pin-end anchor and
+     the strip's `bottom:*vh` offset (below) land using the wrong reference
+     height, pushing the strip closer to (or into) .equity than intended (the
+     "overlap"). Switched every height/keyframe value that defines the pin's own
+     geometry to `svh` (small viewport height — pinned to the address-bar-visible
+     case, never jumps as the bar hides/shows), matching the fix already used on
+     .hero's own mobile min-height. Desktop is unaffected (svh==vh there, no
+     address bar to hide). */
   @supports (animation-timeline: view()) {
     .stardrive.is-live{view-timeline-name:--stardriveScroll;view-timeline-axis:block}
     .stardrive.is-live .stardrive-stage{animation:stardrivePin linear both;animation-timeline:--stardriveScroll;animation-range:contain 0% contain 100%}
-    @keyframes stardrivePin{from{transform:translateY(0)}to{transform:translateY(100vh)}}
+    @keyframes stardrivePin{from{transform:translateY(0)}to{transform:translateY(100svh)}}
     @media (prefers-reduced-motion: reduce){
       .stardrive.is-live .stardrive-stage{animation:none}
     }
@@ -7205,7 +7221,7 @@
   @keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
 
   /* the metrics row as a telemetry band pinned near the bottom of the stage */
-  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(3,5,9,.88),rgba(3,5,9,.72));backdrop-filter:blur(11px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
+  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6svh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(3,5,9,.88),rgba(3,5,9,.72));backdrop-filter:blur(11px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
   .stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
   /* 2026-07-16 (station-master feedback, round 3): rounds 1-2 (hue swap,
      then a dark contact-shadow) still read as too faint — the remaining
@@ -7245,8 +7261,8 @@
   .stardrive .hero-metric .strip-label{color:#bfe2ff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
 
   @media (max-width:640px){
-    .stardrive.is-live{height:170vh}
-    .stardrive .strip{left:20px;right:20px;bottom:5vh}
+    .stardrive.is-live{height:170svh}
+    .stardrive .strip{left:20px;right:20px;bottom:5svh}
     .stardrive .hero-metric .strip-value{transform:scale(calc(1 + var(--forge)*0.16))}
     .forge-tagline{top:40%}
     .fc-sub{font-size:11px;letter-spacing:.22em}
