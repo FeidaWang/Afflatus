@@ -213,6 +213,12 @@ window.AfflatusProvenance = { buildProvenanceBadge };
    plain (non-module) inline script. */
 import { initSectorsGraph } from '/src/lib/sectorsGraphView.js';
 window.AfflatusSectorsGraph = { initSectorsGraph };
+// This module is deferred (loads after the nested forceGraph.js import
+// resolves), so it can genuinely finish AFTER the classic inline script
+// below has already called renderGraph() and bailed out on the
+// !window.AfflatusSectorsGraph guard. Fire a ready event so that call
+// gets retried instead of silently staying blank forever.
+dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
 </script>
 <script type="module" src="/src/pages/sectorsLibs.js"></script>
 <script>
@@ -372,6 +378,9 @@ window.AfflatusSectorsGraph = { initSectorsGraph };
       if (mwGraph) mwGraph.hidden = true; if (mwEmpty) { mwEmpty.hidden = false; mwEmpty.textContent = emptyMsg(); }
     });
   addEventListener('afflatus-lang', render);
+  // Retry if the bridge module (see U30 R3 comment above) finishes loading
+  // after renderGraph() already bailed on !window.AfflatusSectorsGraph.
+  addEventListener('afflatus-sectorsgraph-ready', renderGraph);
 })();
 </script>
 </body>
