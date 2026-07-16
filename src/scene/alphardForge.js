@@ -345,18 +345,13 @@ export function initAlphardForge() {
   // end, but crosses 0.8+ well before the halfway point of the scroll
   // distance, so the scene reads as "arrived" much sooner without changing
   // where the journey starts or ends.
-  // 2026-07-16 round 2 (owner: still a large dim/empty stretch on a real
-  // laptop before the gate reads as "there"): went one step further than
-  // cubic -- quartic front-loads even harder (same 0->1 anchors, but clears
-  // 0.8 well before cubic did), shrinking the sparse-looking opening stretch
-  // without touching where the pin itself starts or ends.
-  function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
   function progress() {
     if (reduce) return 1;
     const rect = section.getBoundingClientRect(), vh = window.innerHeight;
     if (stageEl && !cssPin) { const ended = rect.bottom < vh; stageEl.classList.toggle('pin-fixed', rect.top <= 0 && rect.bottom >= vh && !ended); stageEl.classList.toggle('pin-end', ended); }
     if (rect.height <= 0) return 0;
-    return easeOutQuart(clamp((vh - rect.top) / rect.height, 0, 1));
+    return easeOutCubic(clamp((vh - rect.top) / rect.height, 0, 1));
   }
 
   function render(t) {
