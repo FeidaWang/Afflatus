@@ -1,5 +1,40 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U30 · 首页/sectors/signal 三页重设计 + 重构路线图（2026-07-16 立项，站主三技术框架，取长补短裁决）
+
+**总裁决：三个效果全部收，三个库一个不引。** 站主框架的价值在交互模式（sticky 缩放舞台/力导向图/共享元素转场/手风琴卡），不在指定库——本仓库零运行时依赖（three/astronomy 除外）是 U21 认定的架构资产，三个效果都有原生或自研路径，且全部符合课程 R2/宪章纪律。
+
+### 30a · 技术裁决表（效果照收，实现改道）
+
+| 站主指定 | 裁决 | 理由与重估条件 |
+| --- | --- | --- |
+| GSAP + ScrollTrigger | **不引**——sticky pin 用 `position:sticky` + 原生 **CSS scroll-driven animations**（`animation-timeline: scroll()/view()`，U22b 既定路线首次落地）；JS 需要时只在 rAF 内 lerp 滚动进度（既有纪律） | 省 ~70KB 依赖与更新债；效果对不支持的浏览器**渐进降级为静态布局**（内容零损失）。重估条件：真机验收裁定「必须全平台动效一致」且原生覆盖不足，届时再议引库 |
+| D3 / PixiJS / Three（力导向图） | **Canvas 2D + 自研弹簧物理**（`src/lib/forceGraph.js` 纯函数：引力/斥力/弹簧/阻尼积分器 + vitest 黄金集——本仓库最强路径，flightPath/cameraMath 同款打法） | 节点规模 <100，Canvas 2D 60fps 绰绰有余；D3 只为力仿真引全家桶不值。pan/zoom 用单个 2D 变换矩阵（滚轮/双指捏合/按钮三入口） |
+| View Transitions API | **原生直用**——`@view-transition` 全站已启用（styles.css:7206），只欠共享元素命名 | 零成本，纯增量 |
+| Flexbox 手风琴 | **纯 CSS 照做**（`flex:1→3` + `transition:flex .5s ease-in-out` + `object-fit:cover`） | 无任何裁决必要；补键盘焦点展开（:focus-within，Phase 3 可达性同线） |
+
+### 30b · 三页应用设计
+
+- **首页 `/`**：**星门 sticky 缩放舞台**——stardrive 段改为 pin 容器：进入时暗色容器 `scale(.8)`+圆角可见，滚动进度驱动至 `scale(1)`/圆角 0 满屏（正好把 U28b 修过的断层升格为「星门迎面展开」的叙事时刻，倒滚平滑回缩）；容器内星门/双侧塔柱/标语/指标条分层多向视差（各异 translateX/Y+rotate+opacity，营造 3D 悬浮），驱动全走 CSS scroll-timeline，`prefers-reduced-motion` 直出静态。**资产甲板顶部持仓高亮**改 5 卡横向手风琴（hover/点击 `flex:3` 展开显示持仓论点一句话，键盘可达）。
+- **sectors.html**：**力导向图成为页面主角**——US/CN 双主题引力极，modelWatch 模型节点 + baskets 篮子节点按阵营受引力、彼此斥力、关联细线连接（数据源就是现有 sectors-data.json，零新数据）；加载呼吸浮动、拖拽回弹、pan/zoom；点击节点 = 展开该模型/篮子详情卡。现有矩阵表降级为图下方的可折叠数据视图（渐进披露宪章⑥）。移动端：节点数封顶、拖拽改点按、双指缩放。
+- **signal.html**：**事件时间轴视差 + 共享元素展开**——鹰鸽罗盘置顶 pin，宏观事件流做纵向视差时间轴（事件卡错速浮入）；点击事件卡原生 View Transitions 共享元素展开为详情（卡片飞展为 hero，不跳页刷新）。**serial.html 顺带受益**：书架封面 → 阅读器头图的跨文档共享元素转场（`view-transition-name` 按书 id），是全站最贴合「gallery→article」范式的一条，一并纳入。
+
+### 30c · 路线图（轻重缓急，每期一会话）
+
+| 期 | 内容 | 风险/依赖 | 优先级依据 |
+| --- | --- | --- | --- |
+| **R0 · 清欠先行** | 真机验收积压清账（状态表 10+ 项）+ U21 Phase 2 的 Lighthouse/CrUX 基线 | 无 | R3 规则红线；R2/R3 期的滚动动效没有基线不许上默认 |
+| **R1 · 快赢：转场与手风琴** | serial 书架共享元素转场 + signal 事件卡展开 + sectors/home 手风琴卡 | 极低（原生 API+纯 CSS，零依赖零 JS 动画） | 感知提升/成本比最高，先建立「新设计语言」的基调 |
+| **R2 · 首页星门舞台** | sticky 缩放容器 + 内部视差（`?fx=stage` flag 起步，真机看过转默认） | 中：sticky pin 在 iOS 的滚动橡皮筋、CLS；scroll-timeline Safari 覆盖需真机确认 | 首页是门面，但动效风险须 flag 隔离（U25 教训制度化） |
+| **R3 · sectors 力导向图** | forceGraph.js 纯函数+vitest → Canvas 渲染层 → 交互（pan/zoom/拖拽/点击详情） | 中高：工作量最大；移动端交互需专门设计 | 三页里改动最深，放在设计语言稳定之后 |
+| **R4 · signal 视差时间轴** | 罗盘 pin + 事件错速时间轴 | 低中：复用 R2 的 scroll-timeline 基建 | 吃 R2 现成基建，边际成本低 |
+| **重构线（与 R1–R4 并行推进）** | ① `@layer tokens` 五件套落地（U21 Phase 3 清单，R1 的新组件**只许**写进 tokens/components 层，不许再进 legacy）；② 新动效一律零 scroll 监听（scroll-timeline 或 rAF lerp）；③ 每期结束跑 R6 架构审视防 styles.css 继续膨胀（现 7826 行是 W1 靶子） | — | 重设计是把 CSS 债就地转新层的唯一窗口期，错过再还要贵一倍 |
+
+- [ ] 站主裁决：路线图顺序是否通过；R1 三个落点（serial 转场/signal 展开卡/手风琴）是否照单；手风琴用在 sectors 篮子还是首页持仓（本文建议：**两处都上，sectors 先行**——4 篮子天然适配，首页持仓等 R2 一起动）。
+- [ ] 通过后开工指令：「读 Urgent.md U30 R1 开工」。
+
+## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
+
 ## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
 
 **愿景（站主原文转译）**：电影级高强度狗斗模拟器，用户是导演——系统自主演出高保真太空战争，强调「工业暴力」美学、物理化飞行行为、大片级视觉反馈。设计哲学：一切服务「演出感 vs 美学」，AI 行为要**像表演，不像计算**。
@@ -264,6 +299,7 @@
 > | U27 | 27b 三切片（`a4cfd45`）+ **27c Phase 1（BRIDGE SIM 入口，`86e55a0`）已推送**；27d 纯评估已关闭，五件套并入 U21 Phase 3 | 站主 flag 试看 27b 两项 → 裁决转默认/保持 opt-in；27c「转正」（去 noindex/进 sitemap/C5 评估）待站主裁决，暂不做 |
 > | U28 | 已完成（2026-07-14，同会话批一+批二）：serial 皇木主题 + 首页断层/星门配色/HUD 假目标清除/四竖柱按钮/跃迁加码 → v1.6；546/546 vitest + 构建 + `!important` 基线全绿 | 视觉全部 8 项待站主真机复核 |
 > | U29 | **P1 + P2 已完成**（2026-07-15/16，P1 先于 P0 开工，站主指定）：P1 = `src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线。P2 = `?p2demo=armor`（程序化细节法线+灼痕材质）与 `?p2demo=fleet`（GPU 粒子池三组+wedgeCruiserHull 旗舰/护卫舰船体（InstancedMesh 炮塔/舷窗/铆钉）+发光激光光束+ACES 色调映射/Bloom 泛光/边缘轮廓光）。644/644 vitest（98 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；WebGPU+延迟渲染+G-Buffer+POM+SSR 已按站主要求单独立项、待 P0 完成后再评估（不是 P2 范围）；两条 P2 demo 待站主真机复核；P2 剩余视觉打磨（全船菲涅尔/舷窗闪烁）与 P3 电影导演 v2 为下一个自然阶段 |
+> | U30 | 新立项（2026-07-16）：三页重设计（首页星门 sticky 舞台/sectors 力导向图/signal 视差时间轴+共享元素转场）+ R0–R4 路线图与重构线；三库全部不引（原生 scroll-timeline/自研弹簧物理/原生 View Transitions） | 站主裁决路线图顺序与 R1 落点；通过后「读 U30 R1 开工」 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
