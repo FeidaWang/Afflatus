@@ -116,8 +116,9 @@ export function createForceSim(graphData, opts = {}) {
       repulsion: opts.repulsion ?? 0.045,
       springLength: opts.springLength ?? 0.42,
       springStrength: opts.springStrength ?? 0.03,
-      poleStrength: opts.poleStrength ?? 0.01,
+      poleStrength: opts.poleStrength ?? 0.1,
       poleRestLength: opts.poleRestLength ?? (opts.springLength ?? 0.42) * 1.4,
+      pressureRestLength: opts.pressureRestLength ?? (opts.springLength ?? 0.42) * 2.2,
       damping: opts.damping ?? 0.82,
       minDist: opts.minDist ?? 0.06,
     },
@@ -153,10 +154,19 @@ export function stepForceSim(state, dt = 1) {
     const d = Math.max(Math.sqrt(dx0 * dx0 + dy0 * dy0), 1e-4);
     const ux = dx0 / d, uy = dy0 / d;
     if (l.kind === 'pole') {
+      // Pole links point FROM the (pinned) pole TO the vendor, i.e. l.a is the
+      // pole and l.b is the vendor. Pinned nodes skip force integration
+      // entirely (see the fx!=null branch below), so applying this force to
+      // l.a like every other link kind does was a no-op — poleStrength never
+      // actually pulled any vendor toward its market pole. Apply it to l.b.
       const f = (d - opts.poleRestLength) * opts.poleStrength;
-      fx[l.a] += ux * f; fy[l.a] += uy * f;
+      fx[l.b] -= ux * f; fy[l.b] -= uy * f;
     } else if (l.kind === 'pressure') {
-      const f = -Math.abs(l.weight ?? 1) * opts.springStrength;
+      // A "competitor" link still needs to be a proper spring (rest length just
+      // longer than an affinity link's), not a constant push: a distance-independent
+      // force never weakens, so a node whose only strong link is a pressure link has
+      // no restoring force and drifts outward forever instead of settling.
+      const f = (d - opts.pressureRestLength) * opts.springStrength * Math.abs(l.weight ?? 1);
       fx[l.a] += ux * f; fy[l.a] += uy * f;
       fx[l.b] -= ux * f; fy[l.b] -= uy * f;
     } else {
