@@ -125,6 +125,10 @@ export function initAlphardForge() {
   if (!section || !canvas) return null;
   const stageEl = section.querySelector('.stardrive-stage');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // U30 R2, default off (R3 WIP exception — flag-gated visual work doesn't
+  // count against the real-device review backlog): ?fx=stage turns on the
+  // sticky-scale "stargate" wrapper (styles.css .stardrive.fx-stage rules).
+  try { if (/[?&]fx=stage\b/.test(location.search)) section.classList.add('fx-stage'); } catch (e) {}
 
   // ── bilingual tagline typed out by the scroll ──
   const tagEl = document.getElementById('forgeTagline');

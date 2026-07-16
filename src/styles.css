@@ -7199,6 +7199,28 @@
     .fc-sub{font-size:11px;letter-spacing:.22em}
   }
 
+  /* U30 R2 (2026-07-16), ?fx=stage only — see index.html comment on
+     .stardrive-scale and the classList.add('fx-stage') in alphardForge.js.
+     Reuses --forge (already computed every frame for the existing pin/
+     tagline/metrics, U28) instead of adding a second scroll-driven number —
+     no new JS, no new scroll listener. Wrapper is a no-op (scale 1, radius 0)
+     whenever the flag is absent, so default homepage behaviour is untouched.
+     Under prefers-reduced-motion, --forge is pinned to 1 by the existing
+     rule below, which already resolves this to the fully-arrived static
+     state — no separate reduced-motion override needed here. */
+  .stardrive-scale{position:absolute;inset:0}
+  .stardrive.fx-stage .stardrive-scale{
+    transform:scale(calc(.8 + var(--forge)*.2));
+    border-radius:calc((1 - var(--forge)) * 32px);
+    overflow:hidden;
+  }
+  /* multidirectional parallax on the three existing text/data layers —
+     each drifts and tilts back to rest (0/0deg) at --forge:1, on top of
+     the scale/opacity/typing they already do */
+  .stardrive.fx-stage .stardrive-caption{transform:translateX(calc((1 - var(--forge)) * -18px)) rotate(calc((1 - var(--forge)) * -1.1deg))}
+  .stardrive.fx-stage .forge-tagline{transform:translateY(-50%) scale(calc(.72 + var(--forge)*.46)) translateX(calc((1 - var(--forge)) * 22px))}
+  .stardrive.fx-stage .strip{transform:translateY(calc((1 - var(--forge))*26px)) translateX(calc((1 - var(--forge)) * -14px)) rotate(calc((1 - var(--forge)) * .5deg))}
+
   /* Cross-document View Transitions — same opt-in as public/page-turn.css
      (see that file for the full rationale). index.html's own click/keyboard
      nav is intercepted by transition.js too and sets html.vt-suppress before
