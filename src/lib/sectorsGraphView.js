@@ -63,7 +63,12 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     W = Math.max(1, r.width); H = Math.max(1, r.height);
     dpr = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = W * dpr; canvas.height = H * dpr;
-    camScale = Math.min(W, H) / 3.2; // fit the ~[-1.6,1.6] settled graph inside the canvas
+    // Fit the actual settled extent of the current sim, not a fixed guess:
+    // real modelWatch/basket data (more nodes than the small dev fixtures)
+    // settles to a noticeably larger radius, and a hardcoded assumption left
+    // the graph rendering as a tiny cluster in the middle of the canvas.
+    const maxRadius = sim.nodes.reduce((m, n) => Math.max(m, Math.hypot(n.x, n.y)), 0.1);
+    camScale = Math.min(W, H) / (maxRadius * 2.4);
   }
 
   function worldToScreen(x, y) { return [W / 2 + camX + x * camScale, H / 2 + camY + y * camScale]; }
