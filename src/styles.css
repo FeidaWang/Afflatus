@@ -7139,7 +7139,11 @@
      its fade zone. Mask the canvas's own pixels directly so the top of the
      render is guaranteed to dissolve to nothing regardless of how bright
      the WebGL draw gets. */
-  #alphardForge{mask-image:linear-gradient(180deg,transparent 0,#000 32vh);-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 32vh)}
+  /* 2026-07-16: widened 32vh->44vh and given its own mid-stop (was a flat
+     linear ramp) so the canvas itself eases in slowly near the top instead
+     of gaining opacity at a constant rate — a slower start reads as a softer
+     dissolve, matching the widened overlay gradient below. */
+  #alphardForge{mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 24vh,#000 44vh);-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 24vh,#000 44vh)}
   .stardrive-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 0%,transparent 46%,rgba(4,6,10,.5) 100%);opacity:calc(.28 + var(--forge)*.36)}
   /* melt the section into the page bg above (hero) and below (equity) so there is
      no hard seam — fades use the page --bg and sit above the canvas but below
@@ -7163,8 +7167,15 @@
      just moved up by one boundary (starfield→veil instead of veil→canvas).
      Anchoring the true 0% stop at var(--bg) restores continuity with what's
      actually above, then still reaches #021418 within the first ~3vh so the
-     rest of the dissolve into the nebula is unchanged. */
-  .stardrive-stage::before{top:0;height:32vh;background:linear-gradient(180deg,var(--bg) 0%,#021418 10%,rgba(2,20,24,.62) 34%,rgba(4,10,16,.22) 68%,rgba(4,10,16,0) 100%)}
+     rest of the dissolve into the nebula is unchanged.
+     2026-07-16 round 2 (station-master: still wants it smoother/more
+     seamless): widened the whole band 32vh->44vh and stretched every stop
+     proportionally, so the same color journey now unfolds over ~40% more
+     scroll distance — a slower dissolve reads as more seamless even though
+     the palette itself is unchanged. Kept in step with the widened
+     #alphardForge mask above so the overlay and the canvas's own fade
+     finish together. */
+  .stardrive-stage::before{top:0;height:44vh;background:linear-gradient(180deg,var(--bg) 0%,#021418 14%,rgba(2,20,24,.62) 46%,rgba(4,10,16,.22) 78%,rgba(4,10,16,0) 100%)}
   .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
 
   .stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
@@ -7181,29 +7192,26 @@
   @keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
 
   /* the metrics row as a telemetry band pinned near the bottom of the stage */
-  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(4,7,12,.68),rgba(4,7,12,.46));backdrop-filter:blur(9px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
+  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(3,5,9,.88),rgba(3,5,9,.72));backdrop-filter:blur(11px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
   .stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
-  /* 2026-07-16 (station-master feedback, round 2): recoloring alone (round 1,
-     below) wasn't enough — a light pale-blue against a light/bright patch of
-     nebula is just as illegible as --dim was against a dark one, since a
-     translucent glass panel's effective contrast rides on whatever
-     brightness the WebGL canvas happens to be at underneath it at that
-     moment. Two real fixes instead of a hue swap: (a) the panel itself is
-     now darker and less translucent (opacity raised, blur 6px->9px, see
-     .stardrive .strip above) so it reliably reads as a dark backing
-     regardless of the canvas behind it; (b) every strip text node gets a
-     tight dark contact-shadow (not a glow) that acts like a hard outline,
-     guaranteeing separation from the backdrop the same way subtitles stay
-     legible over any video frame. Colors below are the pale-blue family
-     from round 1, kept for the "lit from within" feel once contrast no
-     longer depends on it. */
-  .stardrive .strip-label{color:rgba(191,226,255,.8);text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
-  .stardrive .strip-value{color:#eaf4ff;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65)}
-  .stardrive .strip-foot{color:rgba(191,226,255,.62);text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
-  /* supporting metrics still recede so the annualised return leads the eye,
-     but the floor is raised (.55->.72) so "receded" stops short of
-     "illegible" once the nebula behind the glass brightens near --forge:1 */
-  .stardrive .strip-cell:not(.hero-metric){opacity:calc(.72 + (1 - var(--forge))*.28)}
+  /* 2026-07-16 (station-master feedback, round 3): rounds 1-2 (hue swap,
+     then a dark contact-shadow) still read as too faint — the remaining
+     culprit is that every color here was still alpha-blended (rgba(...,.6
+     to .8)), which softens a color's punch no matter how dark a backing or
+     shadow sits behind it. Gone fully solid instead: panel background raised
+     again (blur 9px->11px, opacity ~.7/.46 -> ~.88/.72 — reads as a lit
+     console pane, not a hint of tint), and every strip text color below is
+     now a flat, fully-opaque value (no more rgba alpha) so nothing here can
+     wash out regardless of what's moving behind the glass. */
+  .stardrive .strip-label{color:#bfe2ff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
+  .stardrive .strip-value{color:#f4faff;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65)}
+  .stardrive .strip-foot{color:#a9cbe8;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
+  /* this opacity multiplies the whole cell (text included), which was
+     quietly re-introducing the same translucency the solid colors above
+     were just fixed to avoid — floor raised again (.72->.85). Hierarchy
+     (hero leads the eye) now leans on the hero row's own scale+glow
+     treatment rather than dimming the other three toward illegible. */
+  .stardrive .strip-cell:not(.hero-metric){opacity:calc(.85 + (1 - var(--forge))*.15)}
 
   /* the Annualised Return igniting in the jump-point's blue light */
   .stardrive .hero-metric{position:relative}
