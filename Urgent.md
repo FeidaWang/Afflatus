@@ -87,6 +87,16 @@
 
 **空隙终局修复（`d8a56ea`）**：回到 `48bb83c` 状态后，站主给出最终精确指令"把星门移至首页文字航向·奇点王座的正下方"。分析确认 `.hero-cta`（含"航向·奇点王座"）是 `.hero` 最后一个子元素，`</section>` 后 `.stardrive` 立即开始，DOM 层面零间隙——唯一杠杆是 `.hero` 的 CSS 盒高是否超出内容实际高度。级联分析（Python 括号深度脚本核实）锁定 `styles.css` 里最后一条无 `@media` 包裹的顶层 `.hero{min-height:...}` 规则（这条赢过前面 `min-height:96vh!important` 等规则）为实际生效规则，把它的 `min-height` 从 `min(calc(100svh - var(--hud-combat-h) - 24px),64vh,660px)` 改成 `0`（不是删除——删除会让级联回退到更差的 `96vh!important` 规则）。真机滚轮复核（`?fx=stage`）：`getBoundingClientRect()` 读出 `stardriveTop - heroBottom === 0`，滚动联动的文字渐显+星门缩放特效在真实滚轮下运作正常，无回归。644/644 测试通过，`!important` 基线不变（2960/2960, 2/2），部署 READY，commit `d8a56ea`。
 
+### 30i · 移动端专属 bug：vh→svh 修正星门"死滚动"+ 指标条挤压（2026-07-17，站主真机 Chrome 截图，硬刷新排除缓存后确认）
+
+站主发来两张移动端 Chrome 真机截图：① hero"航向·奇点王座"之后是一大段纯宇宙背景，星门文字要滚很久才出现；② 指标条紧贴甚至挤进"02·equity curve"。这两张截图是在硬刷新/无痕模式下拍的，排除了 CDN/缓存未更新的可能——是真实的、桌面端复现不了的移动端专属 bug。
+
+**沙盒工具限制（如实记录）**：这次没能像验证桌面那样自己截图复核——`resize_window` 在本环境里调用"成功"但 `window.innerWidth` 实际不变（早前已知的沙盒限制），Chrome 内 `Ctrl+=` 页面缩放快捷键也没能改变 `matchMedia` 的断点判定；尝试用 Playwright 在沙盒里起一个移动视口的无头 Chromium 直接复核，下载到浏览器后卡在 `libXdamage.so.1` 缺失且沙盒无 root/apt 权限装不了系统依赖，也没有网络权限拉 `.deb`。三条路都堵死，只能靠代码/级联的纯静态推导定位根因，并向站主坦白这个限制（没有假装验证过就蒙混过关）。
+
+**根因（`.hero` 侧级联手工验证 + `--forge` 数学核对后排除，最终定位到 `.stardrive` 自身）**：`.hero` 在 ≤880px 时的 padding/min-height 经 30h 的改动后计算下来是 padding-top≈110px、padding-bottom 和 min-height 都被清零，和桌面同款；`--forge` 的线性公式（`(vh-rect.top)/rect.height`）在移动端和桌面端是同一套数学，没有平台专属分支。真正的问题在 `.stardrive-stage`/`.stardrive.is-live` 用的是纯 `vh` 单位——移动端 Chrome 的 `vh` 恒等于地址栏隐藏时的最大视口，但页面实际渲染（尤其刚加载/滚动停止时）地址栏是展开的，真实可视区比 `100vh` 矮一截。于是：① 星门舞台的 200vh/170vh 外层容器和 100vh 内层舞台都比屏幕上实际能看到的还高，多出来的部分只能靠多滚动才能"够到"，这就是"一大段纯背景"；② `.strip`（指标条）的 `bottom:6vh/5vh` 偏移量、以及 pin-end 状态下舞台自身的落点，都是按这个偏大的高度计算的，真实视口下会比设计意图更靠下，挤向紧跟其后的 `.equity`，这就是"重叠"。这个诊断是纯 CSS/JS 静态推导所得，逻辑上能同时解释两个症状，但受限于上述工具限制，没有像桌面那样用真实设备截图复核。
+
+**修复**：把决定 pin 几何形状的高度值从 `vh` 换成 `svh`（small viewport height——固定按地址栏展开的最小视口计算，不会随地址栏收放而跳动）：`.stardrive-stage`/`.stardrive.is-live` 的 `height`（含 640px 断点的 170vh）、原生 `@keyframes stardrivePin` 的 `translateY(100vh)`、以及 `.strip` 的 `bottom:6vh/5vh` 偏移，全部改为 `svh`，和 `.hero` 早先移动端用 `min-height:100svh` 的思路一致。纯装饰性的进场/出场渐变高度（`::before`/`::after`、canvas 的 mask-image）保持 `vh` 不动，未在改动范围内。桌面端 `svh` 等于 `vh`（无地址栏可收起），理论上零视觉变化；真机复核（`?fx=stage`，Chrome DevTools 真实滚轮）确认桌面端 gap 依旧是 0、`--forge` 正常推进，无回归。644/644 测试通过，`!important` 基线不变（2960/2960, 2/2），部署 READY，commit `493eea7`。**移动端本身的效果尚待站主真机确认**——这是本轮修复中唯一没能由我自己验证到底的部分，如实告知。
+
 ## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
 
 **愿景（站主原文转译）**：电影级高强度狗斗模拟器，用户是导演——系统自主演出高保真太空战争，强调「工业暴力」美学、物理化飞行行为、大片级视觉反馈。设计哲学：一切服务「演出感 vs 美学」，AI 行为要**像表演，不像计算**。
