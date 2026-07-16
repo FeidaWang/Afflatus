@@ -7139,31 +7139,12 @@
      its fade zone. Mask the canvas's own pixels directly so the top of the
      render is guaranteed to dissolve to nothing regardless of how bright
      the WebGL draw gets. */
-  /* 2026-07-16 round 3: round 2 widened this to 44vh for a smoother blend,
-     but that traded "smooth" for "a third of the screen is just background,
-     nothing happening" (owner's next report) — smoothness should come from
-     the eased mid-stop, not from sheer scroll distance. Settled on 26vh
-     (tighter than even the original 32vh) with the same easing shape. */
-  #alphardForge{mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 14vh,#000 26vh);-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 14vh,#000 26vh)}
+  #alphardForge{mask-image:linear-gradient(180deg,transparent 0,#000 32vh);-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 32vh)}
   .stardrive-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 0%,transparent 46%,rgba(4,6,10,.5) 100%);opacity:calc(.28 + var(--forge)*.36)}
   /* melt the section into the page bg above (hero) and below (equity) so there is
      no hard seam — fades use the page --bg and sit above the canvas but below
      the strip/tagline */
-  .stardrive-stage::before{content:"";position:absolute;left:0;right:0;z-index:1;pointer-events:none}
-  /* 2026-07-16: exit fade split off from the shared 20vh with the entry —
-     owner separately reported "1/4 screen of just background" between the
-     stargate and 02 Equity Curve, i.e. this fade itself reading as dead
-     air rather than a transition. Shrunk so equity's own heading arrives
-     sooner; still enough room to avoid a hard cut into --bg.
-     2026-07-16 round 2 (owner: teal dashed-looking seam right where this
-     zone starts): 12vh with only two real stops meant the canvas — at its
-     brightest and most bloomed right as forge:1 approaches — went from
-     "zero overlay at all" to "some overlay" in one step at this zone's own
-     top edge, reading as a seam rather than a fade. Widened to 20vh and
-     given a long, barely-there lead-in (15% opacity at the 70% mark) so
-     bright canvas content starts getting a light touch well before the
-     overlay ramps up in earnest, same easing idea as the entry fade above. */
-  .stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:20vh;z-index:1;pointer-events:none}
+  .stardrive-stage::before,.stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:20vh;z-index:1;pointer-events:none}
   /* U13d: the entry fade (universe starfield -> jump point) went straight
      from solid --bg to a still-fairly-opaque .55 stop at 45% before
      dropping to transparent — read as a flat color block rather than a
@@ -7173,31 +7154,9 @@
   /* U28 28b: taller (20vh→32vh) + re-tinted to a near-black teal (#021418,
      matching the nebula's own hue) instead of the neutral page --bg, so the
      entrance reads as a continuous cyan dissolve rather than a black→cyan
-     seam. Works together with the #alphardForge mask-image above.
-     U30 R2 fix (2026-07-16, real-device screenshot): 28b's retint started
-     the gradient AT #021418 0% — but the actual pixels sitting above this
-     pseudo-element are the fixed #starfield layer, which is var(--bg)
-     (#04060a), a different color. Jumping straight to #021418 with zero
-     transition recreated the exact hard seam 28b was trying to remove,
-     just moved up by one boundary (starfield→veil instead of veil→canvas).
-     Anchoring the true 0% stop at var(--bg) restores continuity with what's
-     actually above, then still reaches #021418 within the first ~3vh so the
-     rest of the dissolve into the nebula is unchanged.
-     2026-07-16 round 2 (station-master: still wants it smoother/more
-     seamless): widened the whole band 32vh->44vh — round 3 below reverses
-     most of this once it became "1/3 of the screen is empty" instead.
-     2026-07-16 round 3 (station-master: now reporting dead scroll space
-     between hero and the stargate): round 2's extra width was exactly the
-     wrong lever — a slower dissolve over more scroll distance reads as MORE
-     empty space, not less. Settled on 26vh, tighter than even the original
-     32vh; smoothness now comes entirely from the eased mid-stops, not from
-     sheer distance. Kept in step with the #alphardForge mask above so the
-     overlay and the canvas's own fade finish together. The other half of
-     the "empty space" report was .hero's own min-height ceiling (see the
-     `min(...,64vh)` rule further down) reserving more room than the hero
-     copy needs on tall viewports — fixed separately there. */
-  .stardrive-stage::before{top:0;height:26vh;background:linear-gradient(180deg,var(--bg) 0%,#021418 16%,rgba(2,20,24,.62) 42%,rgba(4,10,16,.22) 72%,rgba(4,10,16,0) 100%)}
-  .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,.15) 70%,rgba(4,6,10,0) 100%)}
+     seam. Works together with the #alphardForge mask-image above. */
+  .stardrive-stage::before{top:0;height:32vh;background:linear-gradient(180deg,#021418 0%,rgba(2,20,24,.62) 30%,rgba(4,10,16,.22) 68%,rgba(4,10,16,0) 100%)}
+  .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
 
   .stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
   .fc-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.42em;color:#aee0ff;text-shadow:0 0 calc(8px + var(--forge)*22px) rgba(110,180,255,.7)}
@@ -7213,26 +7172,10 @@
   @keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
 
   /* the metrics row as a telemetry band pinned near the bottom of the stage */
-  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(3,5,9,.88),rgba(3,5,9,.72));backdrop-filter:blur(11px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
+  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(6,9,15,.40),rgba(6,9,15,.14));backdrop-filter:blur(6px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
   .stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
-  /* 2026-07-16 (station-master feedback, round 3): rounds 1-2 (hue swap,
-     then a dark contact-shadow) still read as too faint — the remaining
-     culprit is that every color here was still alpha-blended (rgba(...,.6
-     to .8)), which softens a color's punch no matter how dark a backing or
-     shadow sits behind it. Gone fully solid instead: panel background raised
-     again (blur 9px->11px, opacity ~.7/.46 -> ~.88/.72 — reads as a lit
-     console pane, not a hint of tint), and every strip text color below is
-     now a flat, fully-opaque value (no more rgba alpha) so nothing here can
-     wash out regardless of what's moving behind the glass. */
-  .stardrive .strip-label{color:#bfe2ff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
-  .stardrive .strip-value{color:#f4faff;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65)}
-  .stardrive .strip-foot{color:#a9cbe8;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
-  /* this opacity multiplies the whole cell (text included), which was
-     quietly re-introducing the same translucency the solid colors above
-     were just fixed to avoid — floor raised again (.72->.85). Hierarchy
-     (hero leads the eye) now leans on the hero row's own scale+glow
-     treatment rather than dimming the other three toward illegible. */
-  .stardrive .strip-cell:not(.hero-metric){opacity:calc(.85 + (1 - var(--forge))*.15)}
+  /* supporting metrics recede so the annualised return leads the eye */
+  .stardrive .strip-cell:not(.hero-metric){opacity:calc(.55 + (1 - var(--forge))*.45)}
 
   /* the Annualised Return igniting in the jump-point's blue light */
   .stardrive .hero-metric{position:relative}
@@ -7241,16 +7184,12 @@
     transform:scale(calc(1 + var(--forge)*0.30));
     transform-origin:left center;
     text-shadow:
-      0 1px 4px rgba(0,0,0,.9),
       0 0 calc(var(--forge)*10px) rgba(255,255,255,calc(var(--forge)*.95)),
       0 0 calc(var(--forge)*34px) rgba(150,210,255,calc(var(--forge)*.95)),
       0 0 calc(var(--forge)*72px) rgba(80,150,255,calc(var(--forge)*.7));
     will-change:transform;
   }
-  /* dark contact-shadow (same reasoning as the three secondary metrics
-     above) so the label under the glow still separates from a bright patch
-     of nebula, not just a dark one */
-  .stardrive .hero-metric .strip-label{color:#bfe2ff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
+  .stardrive .hero-metric .strip-label{color:#bfe2ff}
 
   @media (max-width:640px){
     .stardrive.is-live{height:170vh}
@@ -7259,40 +7198,6 @@
     .forge-tagline{top:40%}
     .fc-sub{font-size:11px;letter-spacing:.22em}
   }
-
-  /* U30 R2 (2026-07-16), ?fx=stage only — see index.html comment on
-     .stardrive-scale and the classList.add('fx-stage') in alphardForge.js.
-     Reuses --forge (already computed every frame for the existing pin/
-     tagline/metrics, U28) instead of adding a second scroll-driven number —
-     no new JS, no new scroll listener. Wrapper is a no-op (scale 1, radius 0)
-     whenever the flag is absent, so default homepage behaviour is untouched.
-     Under prefers-reduced-motion, --forge is pinned to 1 by the existing
-     rule below, which already resolves this to the fully-arrived static
-     state — no separate reduced-motion override needed here. */
-  .stardrive-scale{position:absolute;inset:0}
-  .stardrive.fx-stage .stardrive-scale{
-    transform:scale(calc(.8 + var(--forge)*.2));
-    border-radius:calc((1 - var(--forge)) * 32px);
-    overflow:hidden;
-    /* 2026-07-16 fix (station-master screenshot #2): overflow:hidden alone
-       just crops the canvas at a bare rectangle — the "hard seam" that
-       persisted after the entry-gradient fix above was actually THIS clip
-       edge, since the ::before/::after fades live on the outer (unscaled)
-       .stardrive-stage and no longer line up with the now-smaller inner
-       box. Framing the crop with a glow + drop shadow (both fading to 0 at
-       --forge:1, same as the radius) turns "picture gets cut off" into "a
-       lit viewport panel" — reads as intentional, matches the diegetic-UI
-       framing used everywhere else on this page (U22 charter). */
-    box-shadow:
-      0 0 calc((1 - var(--forge)) * 48px) rgba(0,0,0,.35),
-      0 0 0 calc((1 - var(--forge)) * 1px) rgba(140,196,255,.2);
-  }
-  /* multidirectional parallax on the three existing text/data layers —
-     each drifts and tilts back to rest (0/0deg) at --forge:1, on top of
-     the scale/opacity/typing they already do */
-  .stardrive.fx-stage .stardrive-caption{transform:translateX(calc((1 - var(--forge)) * -18px)) rotate(calc((1 - var(--forge)) * -1.1deg))}
-  .stardrive.fx-stage .forge-tagline{transform:translateY(-50%) scale(calc(.72 + var(--forge)*.46)) translateX(calc((1 - var(--forge)) * 22px))}
-  .stardrive.fx-stage .strip{transform:translateY(calc((1 - var(--forge))*26px)) translateX(calc((1 - var(--forge)) * -14px)) rotate(calc((1 - var(--forge)) * .5deg))}
 
   /* Cross-document View Transitions — same opt-in as public/page-turn.css
      (see that file for the full rationale). index.html's own click/keyboard
@@ -7927,17 +7832,8 @@
      (so content never sits under the HUD) but cap the *ceiling* with min()
      so tall viewports don't reserve far more room than the content needs,
      and drop the trailing bottom padding to let the stardrive fade (above)
-     do the visual transition instead of blank space.
-     2026-07-16 follow-up (station-master: "1/3 screen gap" between the hero
-     copy and the stargate, still present): the 64vh ceiling is itself
-     viewport-relative, so on a tall desktop window (e.g. 1440px) it still
-     evaluates to ~920px — content (title+desc+cta, this same comment
-     estimated ~550-650px) than has 250-370px of empty space below it before
-     stardrive begins, since content is top-anchored (flex-start, set
-     earlier) not centered. Added a third, absolute term to the min() so the
-     box can never outgrow what the copy actually needs regardless of window
-     height. */
-  .hero{min-height:min(calc(100svh - var(--hud-combat-h) - 24px),64vh,660px)!important;padding-bottom:0!important}
+     do the visual transition instead of blank space. */
+  .hero{min-height:min(calc(100svh - var(--hud-combat-h) - 24px),64vh)!important;padding-bottom:0!important}
 
 } /* end @layer legacy */
 
