@@ -7154,8 +7154,17 @@
   /* U28 28b: taller (20vh→32vh) + re-tinted to a near-black teal (#021418,
      matching the nebula's own hue) instead of the neutral page --bg, so the
      entrance reads as a continuous cyan dissolve rather than a black→cyan
-     seam. Works together with the #alphardForge mask-image above. */
-  .stardrive-stage::before{top:0;height:32vh;background:linear-gradient(180deg,#021418 0%,rgba(2,20,24,.62) 30%,rgba(4,10,16,.22) 68%,rgba(4,10,16,0) 100%)}
+     seam. Works together with the #alphardForge mask-image above.
+     U30 R2 fix (2026-07-16, real-device screenshot): 28b's retint started
+     the gradient AT #021418 0% — but the actual pixels sitting above this
+     pseudo-element are the fixed #starfield layer, which is var(--bg)
+     (#04060a), a different color. Jumping straight to #021418 with zero
+     transition recreated the exact hard seam 28b was trying to remove,
+     just moved up by one boundary (starfield→veil instead of veil→canvas).
+     Anchoring the true 0% stop at var(--bg) restores continuity with what's
+     actually above, then still reaches #021418 within the first ~3vh so the
+     rest of the dissolve into the nebula is unchanged. */
+  .stardrive-stage::before{top:0;height:32vh;background:linear-gradient(180deg,var(--bg) 0%,#021418 10%,rgba(2,20,24,.62) 34%,rgba(4,10,16,.22) 68%,rgba(4,10,16,0) 100%)}
   .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
 
   .stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
