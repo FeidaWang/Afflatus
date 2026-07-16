@@ -97,6 +97,16 @@
 
 **修复**：把决定 pin 几何形状的高度值从 `vh` 换成 `svh`（small viewport height——固定按地址栏展开的最小视口计算，不会随地址栏收放而跳动）：`.stardrive-stage`/`.stardrive.is-live` 的 `height`（含 640px 断点的 170vh）、原生 `@keyframes stardrivePin` 的 `translateY(100vh)`、以及 `.strip` 的 `bottom:6vh/5vh` 偏移，全部改为 `svh`，和 `.hero` 早先移动端用 `min-height:100svh` 的思路一致。纯装饰性的进场/出场渐变高度（`::before`/`::after`、canvas 的 mask-image）保持 `vh` 不动，未在改动范围内。桌面端 `svh` 等于 `vh`（无地址栏可收起），理论上零视觉变化；真机复核（`?fx=stage`，Chrome DevTools 真实滚轮）确认桌面端 gap 依旧是 0、`--forge` 正常推进，无回归。644/644 测试通过，`!important` 基线不变（2960/2960, 2/2），部署 READY，commit `493eea7`。**移动端本身的效果尚待站主真机确认**——这是本轮修复中唯一没能由我自己验证到底的部分，如实告知。
 
+### 30j · R3（sectors 力导向图）+ R4（signal 视差时间轴）+ 重构线收尾（2026-07-17，站主指令「30c 剩下的全做完」，一次性 R3+R4+重构线全上，明确跳过 R0）
+
+站主在 30i 之后追加指令，明确要求把 30c 路线图剩余项一次做完；经问询确认范围——跳过 R0（真机验收/Lighthouse 基线，沙盒做不到），R3+R4+重构线一次性全上。
+
+**R3 · sectors.html 力导向图**：新增 `src/lib/forceGraph.js`（纯函数物理引擎——两两斥力 + Hookean 弹簧连线 + 弱引力锚点，固定步长 Euler 积分器，同 flightPath/cameraMath 一脉的自研打法，U30 30a 裁决"D3 全家桶不值"的具体兑现）+ `tests/forceGraph.test.js`（12 项黄金集：节点/连线去重计数、AVGO 跨 vendor 去重成 1 个节点 2 条连线、competitor 关系记为斥力连线、US/CN 极点固定不动、稳定后两大阵营按 x 轴分离、competitor 节点比 direct 节点离 vendor 更远、稳定后任意两点最小间距>0、空数据/空图不抛错、同 seed 确定性复现）。`src/lib/sectorsGraphView.js` 是 DOM/canvas 那一半（不写测试——同 alphardForge.js 先例，DOM/canvas 触达的视觉层在本仓库一律靠真机复核而非 vitest）：Canvas 2D 渲染、IntersectionObserver 门控的 rAF 循环（不可见时不烧 CPU）、鼠标/触摸的 pan（拖空白区）/zoom（滚轮/双指）/拖拽节点（拖起时钉住 fx/fy，松手回弹）/点击开详情卡，移动端按置信度截断每个 basket 最多 8 个 equity 节点。`sectors.html` 把原本直出的 `#mwGrid`/`#mwBaskets`（矩阵表）让位给新的 `<canvas id="mwGraph">` + 详情卡 `#mwDetail`，旧矩阵表原样保留，收进一个 `<details class="mwMatrix">` 折叠区（渐进披露，未删除任何既有内容/文案）。`public/styles/sectors.css` 追加 `.graphWrap`/`.mwGraph`/`.mwDetail`/`.mwMatrix` 等新规则，复用页面已有的 acid/cyan 调色板变量，不引入新的层级架构（见下方重构线①的说明）。
+
+**R4 · signal.html 视差时间轴**：`.compass`（鹰鸽罗盘）改 `position:sticky`——这页的 html/body 没有设置 `overflow-x:hidden`（首页那个 bug 是首页专属），所以原生 sticky 直接能用，不需要 R2 那套 JS pin-fixed 兜底。为了让"罗盘置顶、其余内容在它下方滚动"只在合理范围内生效（而不是黏到页尾），把 `.compass`→`.pillars`→`.files`→`.incidents`→`.watch`（原本就是连续的兄弟节点，零重排）包进新增的 `.signalScroll` 包裹层，sticky 的停止边界就是这个包裹层的底部。事件簿卡片（`.incident`）用 `animation-timeline:view()`（R2 引入的同一浏览器原生特性，此处按卡复用，零新增 JS/scroll 监听）各自独立触发入场动画——同一个 keyframe 但 `nth-child(even)` 换一条 `animation-range`更宽、位移方向相反的变体，让相邻卡片入场速度/方向明显不同（"错速浮入"），而不是所有卡片同步淡入。`prefers-reduced-motion` 汇入该文件既有的单个聚合媒体查询里关闭动画，与本文件既定写法一致。R1 已经做好的点击展开/收起（`document.startViewTransition`）完全未受影响——两套机制互不冲突。
+
+**重构线**：①`@layer tokens` 五件套——本轮对 `src/styles.css` 零改动（R3/R4 完全在 sectors.css/signal.css 两个独立文件里，本来就不用首页那套 legacy/tokens/components/overrides 层级），该规则字面上无新增违规可修；R2 遗留在 `@layer legacy` 里的 `.stardrive-scale`/`.fx-stage` 规则本可以顺手挪进 `components`，但那正是今天来回回滚过好几轮、刚刚稳定下来的同一片区域——纯架构收益、零用户可见影响、却有实打实的回归风险，权衡后**没有动它**，如实记录而非悄悄跳过。②新动效零 scroll 监听——`sectorsGraphView.js` 的 rAF 循环不是 scroll 监听（同 alphardForge.js 一样由 IntersectionObserver 门控可见性），R4 的 sticky/`animation-timeline:view()` 也是零 JS。③ R6 架构审视——`src/styles.css` 本轮停留在 7991 行，未增长（因为压根没碰）；`sectors.css`（+45行→175行）/`signal.css`（+18行→212行）的增量都是新加的独立小节，不是回填进旧规则堆。644/656（新增 12 项 forceGraph 黄金集测试）全绿，`!important` 基线不变（2960/2960, 2/2），`vite build` 干净通过。
+
 ## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
 
 **愿景（站主原文转译）**：电影级高强度狗斗模拟器，用户是导演——系统自主演出高保真太空战争，强调「工业暴力」美学、物理化飞行行为、大片级视觉反馈。设计哲学：一切服务「演出感 vs 美学」，AI 行为要**像表演，不像计算**。

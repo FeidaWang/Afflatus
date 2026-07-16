@@ -148,11 +148,20 @@
     </article>
   </section>
 
-  <div class="band" data-i18n-html data-en="US–CHINA AI WATCH — <span>weekly comparison matrix</span>" data-zh="中美 AI 观察 — <span>每周对比矩阵</span>">US–CHINA AI WATCH — <span>weekly comparison matrix</span></div>
+  <div class="band" data-i18n-html data-en="US–CHINA AI WATCH — <span>gravity map</span>" data-zh="中美 AI 观察 — <span>引力图</span>">US–CHINA AI WATCH — <span>gravity map</span></div>
   <div id="mwAsOf" class="asof"></div>
-  <div id="mwGrid" class="mwGrid"></div>
-  <div id="mwBaskets"></div>
+  <p class="graphHint" data-en="Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure)." data-zh="拖动节点可重新摆放，滚轮/双指可缩放，点击节点查看详情。美股模型偏左，中国模型偏右——线条样式表示每只个股与模型的关系（实线=受益，虚线=承压）。">Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure).</p>
+  <div class="graphWrap">
+    <canvas id="mwGraph" class="mwGraph" aria-label="US–China AI model and equity gravity map"></canvas>
+    <div id="mwDetail" class="mwDetail" hidden></div>
+    <div id="mwEmpty" class="empty" hidden></div>
+  </div>
   <div id="mwTake" class="take"></div>
+  <details class="mwMatrix">
+    <summary data-en="Data view: full comparison matrix" data-zh="数据视图：完整对比矩阵">Data view: full comparison matrix</summary>
+    <div id="mwGrid" class="mwGrid"></div>
+    <div id="mwBaskets"></div>
+  </details>
 
   <div class="band" data-i18n-html data-en="POST-MEMORY ERA — <span>top-10 thesis cards</span>" data-zh="后内存时代 — <span>十强论点卡</span>">POST-MEMORY ERA — <span>top-10 thesis cards</span></div>
   <div id="pmAsOf" class="asof"></div>
@@ -196,6 +205,15 @@ runCountUpOnLoad();
 import { buildProvenanceBadge } from '/src/lib/provenanceBadge.js';
 window.AfflatusProvenance = { buildProvenanceBadge };
 </script>
+<script type="module">
+/* U30 R3 — force-directed "US–CN AI watch" gravity map. Physics lives in
+   src/lib/forceGraph.js (pure, vitest-covered); src/lib/sectorsGraphView.js
+   owns the canvas/pointer glue. Same window-bridge pattern as
+   AfflatusProvenance above, since the actual render() call site below is a
+   plain (non-module) inline script. */
+import { initSectorsGraph } from '/src/lib/sectorsGraphView.js';
+window.AfflatusSectorsGraph = { initSectorsGraph };
+</script>
 <script type="module" src="/src/pages/sectorsLibs.js"></script>
 <script>
 /* US-China AI Watch matrix (V9) + post-memory thesis cards (V10), both fed by one
@@ -205,10 +223,12 @@ window.AfflatusProvenance = { buildProvenanceBadge };
 (function () {
   var mwAsOf = document.getElementById('mwAsOf'), mwGrid = document.getElementById('mwGrid'),
       mwBaskets = document.getElementById('mwBaskets'), mwTake = document.getElementById('mwTake'),
+      mwGraph = document.getElementById('mwGraph'), mwDetail = document.getElementById('mwDetail'), mwEmpty = document.getElementById('mwEmpty'),
       pmAsOf = document.getElementById('pmAsOf'), pmTracks = document.getElementById('pmTracks'),
       pmGrid = document.getElementById('pmGrid'), pmSwap = document.getElementById('pmSwap'), pmTake = document.getElementById('pmTake');
   if (!mwGrid && !pmGrid) return;
   var DATA = null;
+  var graphHandle = null;
   function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
   function T(en, zh) { return lang() === 'zh' ? zh : en; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
@@ -216,6 +236,58 @@ window.AfflatusProvenance = { buildProvenanceBadge };
   var RELATION_LABEL = { direct: T('direct', '直接受益'), supplier: T('supplier', '上游供给'), infra: T('infra', '算力底座'), competitor: T('competitor', '受压') };
 
   function emptyMsg() { return T('Weekly matrix populates after the first scheduled run.', '每周对比矩阵将在首次定时任务运行后填充。'); }
+
+  // U30 R3: gravity-map node → display label / click-through detail card.
+  // Kept in this same closure so it shares DATA/T()/esc()/VENDOR_NAME/RELATION_LABEL
+  // with the matrix rendering below rather than re-deriving any of it.
+  function graphLabelFor(node) { return node.kind === 'vendor' ? (VENDOR_NAME[node.vendor] || node.vendor) : node.label; }
+
+  function renderNodeDetail(node) {
+    if (!mwDetail) return;
+    var closeBtn = '<button type="button" class="mwDetailClose" aria-label="' + esc(T('close', '关闭')) + '">&times;</button>';
+    if (node.kind === 'vendor') {
+      var card = (DATA && DATA.modelWatch || []).filter(function (c) { return c.vendor === node.vendor; })[0];
+      if (!card) { mwDetail.hidden = true; return; }
+      var devs = (card.developments || []).map(function (d) {
+        return '<div class="mwDev"><a href="' + esc(d.src) + '" target="_blank" rel="noopener">' + esc(T(d.t_en, d.t_zh)) + '</a></div>';
+      }).join('');
+      mwDetail.innerHTML = closeBtn
+        + '<div class="mwHead"><span class="mwVendor">' + esc(VENDOR_NAME[card.vendor] || card.vendor) + '</span>'
+        + '<span class="mwRoute ' + esc(card.route) + '">' + esc(card.route === 'open' ? T('open-weight', '开源权重') : T('closed API', '闭源 API')) + '</span></div>'
+        + '<div class="mwLine">' + esc(card.current_line) + '</div>' + devs
+        + '<div class="mwGap">' + esc(T(card.gap_note_en, card.gap_note_zh)) + '</div>';
+    } else {
+      var refs = [];
+      (DATA && DATA.baskets || []).forEach(function (b) {
+        (b.equities || []).forEach(function (e) { if (e.ticker === node.label) refs.push({ vendor: b.vendor, relation: e.relation, note: e.correlation_note_zh }); });
+      });
+      if (!refs.length) { mwDetail.hidden = true; return; }
+      var rows = refs.map(function (r) {
+        return '<div class="mwDev"><b>' + esc(VENDOR_NAME[r.vendor] || r.vendor) + '</b> · <span class="basketTag">' + esc(RELATION_LABEL[r.relation] || r.relation) + '</span>'
+          + (r.note ? '<div class="mwGap">' + esc(r.note) + '</div>' : '') + '</div>';
+      }).join('');
+      mwDetail.innerHTML = closeBtn + '<div class="mwHead"><span class="mwVendor">' + esc(node.label) + '</span></div>' + rows;
+    }
+    mwDetail.hidden = false;
+    var btn = mwDetail.querySelector('.mwDetailClose');
+    if (btn) btn.addEventListener('click', function () { mwDetail.hidden = true; });
+  }
+
+  function renderGraph() {
+    if (!mwGraph || !window.AfflatusSectorsGraph) return;
+    var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
+    if (!mw.length) {
+      mwGraph.hidden = true; if (mwDetail) mwDetail.hidden = true;
+      if (mwEmpty) { mwEmpty.hidden = false; mwEmpty.textContent = emptyMsg(); }
+      return;
+    }
+    mwGraph.hidden = false; if (mwEmpty) mwEmpty.hidden = true;
+    if (!graphHandle) {
+      graphHandle = window.AfflatusSectorsGraph.initSectorsGraph(mwGraph, DATA, { onSelect: renderNodeDetail, labelFor: graphLabelFor });
+    } else {
+      graphHandle.update(DATA);
+    }
+  }
 
   // Provenance badge (ROADMAP §7.5 V12): one computation from the shared
   // top-level updated/version, reused for both mwAsOf and pmAsOf since both
@@ -293,9 +365,12 @@ window.AfflatusProvenance = { buildProvenanceBadge };
     if (pmTake) pmTake.innerHTML = esc(T(pm.take_en, pm.take_zh));
   }
 
-  function render() { renderModelWatch(); renderPostMemory(); }
+  function render() { renderModelWatch(); renderGraph(); renderPostMemory(); }
   fetch('/sectors-data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
-    .catch(function () { if (mwGrid) mwGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; if (pmGrid) pmGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; });
+    .catch(function () {
+      if (mwGrid) mwGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; if (pmGrid) pmGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>';
+      if (mwGraph) mwGraph.hidden = true; if (mwEmpty) { mwEmpty.hidden = false; mwEmpty.textContent = emptyMsg(); }
+    });
   addEventListener('afflatus-lang', render);
 })();
 </script>
