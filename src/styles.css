@@ -7181,19 +7181,25 @@
   @keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
 
   /* the metrics row as a telemetry band pinned near the bottom of the stage */
-  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(6,9,15,.40),rgba(6,9,15,.14));backdrop-filter:blur(6px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
+  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(4,7,12,.68),rgba(4,7,12,.46));backdrop-filter:blur(9px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
   .stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
-  /* 2026-07-16 (station-master feedback): the base .strip-label/.strip-value/
-     .strip-foot colors (var(--dim) #69748c, var(--ink) #e4e8f0) are tuned for
-     the page's plain dark background — against the glass panel here, lit
-     from behind by the nebula's brightening glow, --dim in particular loses
-     almost all contrast. Give the three non-hero metrics the same cool pale-
-     blue family the hero row already earns via its glow (bfe2ff/eef7ff),
-     just dimmer, so the whole strip reads as one calm, legible palette
-     instead of one bright row + three washed-out ones. */
-  .stardrive .strip-label{color:rgba(191,226,255,.75)}
-  .stardrive .strip-value{color:#eaf4ff}
-  .stardrive .strip-foot{color:rgba(191,226,255,.58)}
+  /* 2026-07-16 (station-master feedback, round 2): recoloring alone (round 1,
+     below) wasn't enough — a light pale-blue against a light/bright patch of
+     nebula is just as illegible as --dim was against a dark one, since a
+     translucent glass panel's effective contrast rides on whatever
+     brightness the WebGL canvas happens to be at underneath it at that
+     moment. Two real fixes instead of a hue swap: (a) the panel itself is
+     now darker and less translucent (opacity raised, blur 6px->9px, see
+     .stardrive .strip above) so it reliably reads as a dark backing
+     regardless of the canvas behind it; (b) every strip text node gets a
+     tight dark contact-shadow (not a glow) that acts like a hard outline,
+     guaranteeing separation from the backdrop the same way subtitles stay
+     legible over any video frame. Colors below are the pale-blue family
+     from round 1, kept for the "lit from within" feel once contrast no
+     longer depends on it. */
+  .stardrive .strip-label{color:rgba(191,226,255,.8);text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
+  .stardrive .strip-value{color:#eaf4ff;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65)}
+  .stardrive .strip-foot{color:rgba(191,226,255,.62);text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
   /* supporting metrics still recede so the annualised return leads the eye,
      but the floor is raised (.55->.72) so "receded" stops short of
      "illegible" once the nebula behind the glass brightens near --forge:1 */
@@ -7206,12 +7212,16 @@
     transform:scale(calc(1 + var(--forge)*0.30));
     transform-origin:left center;
     text-shadow:
+      0 1px 4px rgba(0,0,0,.9),
       0 0 calc(var(--forge)*10px) rgba(255,255,255,calc(var(--forge)*.95)),
       0 0 calc(var(--forge)*34px) rgba(150,210,255,calc(var(--forge)*.95)),
       0 0 calc(var(--forge)*72px) rgba(80,150,255,calc(var(--forge)*.7));
     will-change:transform;
   }
-  .stardrive .hero-metric .strip-label{color:#bfe2ff}
+  /* dark contact-shadow (same reasoning as the three secondary metrics
+     above) so the label under the glow still separates from a bright patch
+     of nebula, not just a dark one */
+  .stardrive .hero-metric .strip-label{color:#bfe2ff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
 
   @media (max-width:640px){
     .stardrive.is-live{height:170vh}
