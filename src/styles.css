@@ -7928,8 +7928,15 @@
      stardrive begins, since content is top-anchored (flex-start, set
      earlier) not centered. Added a third, absolute term to the min() so the
      box can never outgrow what the copy actually needs regardless of window
-     height. */
-  .hero{min-height:min(calc(100svh - var(--hud-combat-h) - 24px),64vh,660px)!important;padding-bottom:0!important}
+     height.
+     2026-07-16 final (station-master: put the stargate directly under the
+     "bearing · singular throne" link, no gap at all): any min-height floor
+     still reserves room the copy doesn't use, since content is top-anchored.
+     Dropped to 0 -- .hero is flex column/flex-start with real padding on
+     every side (see base rule above), so the box now sizes to exactly its
+     content + padding, and .stardrive (zero margin between the two
+     sections) starts the instant the hero copy ends. */
+  .hero{min-height:0!important;padding-bottom:0!important}
 
 } /* end @layer legacy */
 

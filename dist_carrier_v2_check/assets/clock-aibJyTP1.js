@@ -1,0 +1,1 @@
+(function(){function e(e){let t=Math.max(0,Math.floor(e/1e3)),n=Math.floor(t/86400);t-=n*86400;let r=Math.floor(t/3600);t-=r*3600;let i=Math.floor(t/60);t-=i*60;let a=e=>String(e).padStart(2,`0`);return(n>0?n+`d `:``)+a(r)+`:`+a(i)+`:`+a(t)}window.AfflatusClock={fmtDur:e,fmtDurSec:t=>e(t*1e3)}})();

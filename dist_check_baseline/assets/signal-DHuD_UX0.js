@@ -1,0 +1,1 @@
+import"./modulepreload-polyfill-Dezn_h7o.js";import"./audio-Bf-hWNJ5.js";import"./transition-DEDkLhMz.js";import"./i18n-CxvRu0Lw.js";import"./page-turn-CHiOPqIZ.js";import{t as e}from"./provenanceBadge-Bivbtrl4.js";window.AfflatusProvenance={buildProvenanceBadge:e};
