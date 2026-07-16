@@ -7154,16 +7154,8 @@
      owner separately reported "1/4 screen of just background" between the
      stargate and 02 Equity Curve, i.e. this fade itself reading as dead
      air rather than a transition. Shrunk so equity's own heading arrives
-     sooner; still enough room to avoid a hard cut into --bg.
-     2026-07-16 round 2 (owner: teal dashed-looking seam right where this
-     zone starts): 12vh with only two real stops meant the canvas — at its
-     brightest and most bloomed right as forge:1 approaches — went from
-     "zero overlay at all" to "some overlay" in one step at this zone's own
-     top edge, reading as a seam rather than a fade. Widened to 20vh and
-     given a long, barely-there lead-in (15% opacity at the 70% mark) so
-     bright canvas content starts getting a light touch well before the
-     overlay ramps up in earnest, same easing idea as the entry fade above. */
-  .stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:20vh;z-index:1;pointer-events:none}
+     sooner; still enough room to avoid a hard cut into --bg. */
+  .stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:12vh;z-index:1;pointer-events:none}
   /* U13d: the entry fade (universe starfield -> jump point) went straight
      from solid --bg to a still-fairly-opaque .55 stop at 45% before
      dropping to transparent — read as a flat color block rather than a
@@ -7197,7 +7189,7 @@
      `min(...,64vh)` rule further down) reserving more room than the hero
      copy needs on tall viewports — fixed separately there. */
   .stardrive-stage::before{top:0;height:26vh;background:linear-gradient(180deg,var(--bg) 0%,#021418 16%,rgba(2,20,24,.62) 42%,rgba(4,10,16,.22) 72%,rgba(4,10,16,0) 100%)}
-  .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,.15) 70%,rgba(4,6,10,0) 100%)}
+  .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
 
   .stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
   .fc-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.42em;color:#aee0ff;text-shadow:0 0 calc(8px + var(--forge)*22px) rgba(110,180,255,.7)}
