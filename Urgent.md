@@ -107,6 +107,17 @@
 
 **重构线**：①`@layer tokens` 五件套——本轮对 `src/styles.css` 零改动（R3/R4 完全在 sectors.css/signal.css 两个独立文件里，本来就不用首页那套 legacy/tokens/components/overrides 层级），该规则字面上无新增违规可修；R2 遗留在 `@layer legacy` 里的 `.stardrive-scale`/`.fx-stage` 规则本可以顺手挪进 `components`，但那正是今天来回回滚过好几轮、刚刚稳定下来的同一片区域——纯架构收益、零用户可见影响、却有实打实的回归风险，权衡后**没有动它**，如实记录而非悄悄跳过。②新动效零 scroll 监听——`sectorsGraphView.js` 的 rAF 循环不是 scroll 监听（同 alphardForge.js 一样由 IntersectionObserver 门控可见性），R4 的 sticky/`animation-timeline:view()` 也是零 JS。③ R6 架构审视——`src/styles.css` 本轮停留在 7991 行，未增长（因为压根没碰）；`sectors.css`（+45行→175行）/`signal.css`（+18行→212行）的增量都是新加的独立小节，不是回填进旧规则堆。644/656（新增 12 项 forceGraph 黄金集测试）全绿，`!important` 基线不变（2960/2960, 2/2），`vite build` 干净通过。
 
+**部署后追加的两轮修复（同日，真机浏览器复核时发现）**：初次部署（`4f2a982`）后用 Claude-in-Chrome 打开生产站 `feida.au/sectors.html` 复核，发现 `#mwGraph` 画布几乎空白，只有一条散落的橙色虚线。定位到两个独立问题，均已修复并重新部署：
+
+1. **加载时序 bug**（`ffb5760`）：`window.AfflatusSectorsGraph` 由一个 `type="module"` 桥接脚本挂载，模块脚本默认延迟到解析完成后才执行；而调用 `renderGraph()` 的经典内联 IIFE 在解析时就同步跑，立刻发起 `fetch('/sectors-data.json')`。生产网络下这个小 JSON 请求总是比"桥接模块→`sectorsGraphView.js`→`forceGraph.js`"这条嵌套 import 链更快返回，于是 `renderGraph()` 第一次（也是唯一一次）执行时 `window.AfflatusSectorsGraph` 还不存在，命中静默 return 的守卫，canvas 缓冲区从此停在浏览器默认的 300×150，且没有任何报错或重试。修复：桥接模块挂载完 `window.AfflatusSectorsGraph` 后立刻 `dispatchEvent(new Event('afflatus-sectorsgraph-ready'))`，主 IIFE 监听这个事件重新调用一次 `renderGraph()`。
+
+2. **物理引擎 bug**（`a90ceb3`，vitest 12 项黄金集未覆盖，因为夹具节点数太小没暴露出来）：
+   - `pressure`（competitor）连线用的是**恒定大小的力**，不随距离衰减——真实数据（17 个节点）里任何仅靠一条 pressure 连线维系的 equity 节点（如 002230.SZ、9888.HK）完全没有回复力，会无限漂移（实测：结算半径从 220 次迭代的 32 一路长到 800 次迭代的 87+，从不收敛）。改成一个 rest length 更长（`springLength` 的 2.2 倍）的正规 Hookean 弹簧，保留"比 affinity 连线离得更远"的视觉意图，但有稳定平衡点。
+   - `pole` 连线的锚定力施加在 `l.a`（被钉住的极点自己）身上，而不是 `l.b`（真正该被拉向极点的 vendor）——被钉住的节点在积分步里直接跳过受力（`fx`/`fy` 已设定时 continue），等于这股力从没起过作用（实测：`poleStrength` 从 0.01 加到 10，结算结果逐位一致）。改成施加在 `l.b` 上；`poleStrength` 默认值从 0.01 提到 0.1（旧默认值本来就是一个从未真正生效过的空摆设，现在它真的在起作用后需要重新配一个数量级，见下方验证数据）。
+   - 连带把 `sectorsGraphView.js` 的 `camScale` 从写死的"假设图形稳定在半径 ~1.6 以内"改成读取当前 sim 实际结算出的最大半径来定— 真实数据稳定半径在 ~5.5 左右，写死假设会让图形挤在画布正中间一小团。
+
+   用 `public/sectors-data.json` 直接验证：结算半径 5.56（220 次迭代内收敛，1000 次几乎不再变化）、`avgUSx=-2.87` / `avgCNx=2.69`（阵营正确分离）、无 NaN/Infinity。656/656 测试全绿（黄金集夹具太小，两个 bug 都没被现有断言覆盖，但也没被这次改动破坏），`!important` 基线不变（2960/2960, 2/2）。之后用 Claude-in-Chrome 在生产站实测：画布正确渲染出节点+连线+标签，点击节点弹出详情卡正常；signal.html 的 `.compass` sticky 效果也复核确认——置顶效果在 `.pillars`→`.watch` 整个滚动区间内正确生效（因页面在 `.signalScroll` 之后剩余内容不够长，实际观察到的现象是罗盘一直贴到页面滚动到底，属于无害的边界情况，不是重叠或断裂）。
+
 ## U29 · boot.html 重构为影院级太空空战引擎「AFFLATUS ENGINE」（2026-07-14 立项，站主 AAA 框架已确认接受）
 
 **愿景（站主原文转译）**：电影级高强度狗斗模拟器，用户是导演——系统自主演出高保真太空战争，强调「工业暴力」美学、物理化飞行行为、大片级视觉反馈。设计哲学：一切服务「演出感 vs 美学」，AI 行为要**像表演，不像计算**。
