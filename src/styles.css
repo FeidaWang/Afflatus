@@ -7222,6 +7222,18 @@
     transform:scale(calc(.8 + var(--forge)*.2));
     border-radius:calc((1 - var(--forge)) * 32px);
     overflow:hidden;
+    /* 2026-07-16 fix (station-master screenshot #2): overflow:hidden alone
+       just crops the canvas at a bare rectangle — the "hard seam" that
+       persisted after the entry-gradient fix above was actually THIS clip
+       edge, since the ::before/::after fades live on the outer (unscaled)
+       .stardrive-stage and no longer line up with the now-smaller inner
+       box. Framing the crop with a glow + drop shadow (both fading to 0 at
+       --forge:1, same as the radius) turns "picture gets cut off" into "a
+       lit viewport panel" — reads as intentional, matches the diegetic-UI
+       framing used everywhere else on this page (U22 charter). */
+    box-shadow:
+      0 0 calc((1 - var(--forge)) * 64px) rgba(0,0,0,.65),
+      0 0 0 calc((1 - var(--forge)) * 1.5px) rgba(140,196,255,.4);
   }
   /* multidirectional parallax on the three existing text/data layers —
      each drifts and tilts back to rest (0/0deg) at --forge:1, on top of
