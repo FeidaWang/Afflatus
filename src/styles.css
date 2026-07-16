@@ -7183,8 +7183,21 @@
   /* the metrics row as a telemetry band pinned near the bottom of the stage */
   .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6vh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(6,9,15,.40),rgba(6,9,15,.14));backdrop-filter:blur(6px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
   .stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
-  /* supporting metrics recede so the annualised return leads the eye */
-  .stardrive .strip-cell:not(.hero-metric){opacity:calc(.55 + (1 - var(--forge))*.45)}
+  /* 2026-07-16 (station-master feedback): the base .strip-label/.strip-value/
+     .strip-foot colors (var(--dim) #69748c, var(--ink) #e4e8f0) are tuned for
+     the page's plain dark background — against the glass panel here, lit
+     from behind by the nebula's brightening glow, --dim in particular loses
+     almost all contrast. Give the three non-hero metrics the same cool pale-
+     blue family the hero row already earns via its glow (bfe2ff/eef7ff),
+     just dimmer, so the whole strip reads as one calm, legible palette
+     instead of one bright row + three washed-out ones. */
+  .stardrive .strip-label{color:rgba(191,226,255,.75)}
+  .stardrive .strip-value{color:#eaf4ff}
+  .stardrive .strip-foot{color:rgba(191,226,255,.58)}
+  /* supporting metrics still recede so the annualised return leads the eye,
+     but the floor is raised (.55->.72) so "receded" stops short of
+     "illegible" once the nebula behind the glass brightens near --forge:1 */
+  .stardrive .strip-cell:not(.hero-metric){opacity:calc(.72 + (1 - var(--forge))*.28)}
 
   /* the Annualised Return igniting in the jump-point's blue light */
   .stardrive .hero-metric{position:relative}
