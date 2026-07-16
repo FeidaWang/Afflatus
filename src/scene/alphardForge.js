@@ -299,33 +299,28 @@ export function initAlphardForge() {
   let lastScrollY = window.scrollY || 0, scrollVel = 0, lastT = 0;
 
   // scroll progress + pin. The pin itself (keeping the stage visually fixed
-  // while its 200vh wrapper scrolls past) was meant to be handled by a CSS
-  // scroll-driven animation (see styles.css "@supports (animation-timeline:
-  // view())") on browsers that support it, falling back to JS position:fixed
-  // toggling otherwise.
+  // while its 200vh wrapper scrolls past) is handled by a CSS scroll-driven
+  // animation (see styles.css "@supports (animation-timeline: view())") on
+  // browsers that support it — classList toggling + the scroll listener below
+  // are skipped there entirely. `p` (0..1) is still computed here either way:
+  // it feeds the WebGL uniforms (dolly/brightness) and tagline typing, which
+  // CSS can't drive on its own.
   //
-  // 2026-07-16 (station-master screenshots, live-inspected via devtools):
-  // that native path is dead in production. `CSS.supports('animation-timeline',
-  // 'view()')` only checks syntax support, not whether the timeline actually
-  // *works* in this page's DOM -- and it doesn't: `stage.getAnimations()[0]`
-  // reports `playState:'running'` but `timeline.currentTime` is permanently
-  // `null`, and the stage's computed `transform` stays `"none"` across the
-  // entire scroll range instead of animating translateY. Root cause: `body`
-  // has `overflow-x:hidden;overflow-y:auto` (see `styles.css`), which makes
-  // it a CSS "scroll container" even though it never actually scrolls
-  // (document.scrollingElement is `<html>`, body.scrollTop stays 0) -- this
-  // is the *exact same* interaction this file already called out as breaking
-  // `position:sticky` for the tagline above, just not previously connected to
-  // the stage's own pin. With the native timeline silently inert, the stage
-  // was never pinned at all: it just scrolled past like ordinary content,
-  // which is what produced both the "huge dead corner of background" and the
-  // "metrics strip overlapping the next section's heading" screenshots --
-  // not a fade/gradient problem, an *unpinned stage* problem. Forcing this to
-  // `false` makes every browser use the JS `pin-fixed`/`pin-end` fallback
-  // below (plain `position:fixed`, unaffected by the overflow-x quirk since
-  // it doesn't depend on a scroll-container/timeline lookup at all) -- this
-  // is the same mechanism the tagline already relies on successfully.
-  const cssPin = false;
+  // 2026-07-16: briefly forced this to `false`, suspecting the native path
+  // was dead (a devtools check via synthetic `window.scrollTo()` showed
+  // `timeline.currentTime` stuck at `null` and `transform` stuck at `none`
+  // across a wide scrollY sweep). That forced-fallback build was live-tested
+  // with a *real* mouse-wheel scroll and made things worse: `.pin-fixed`
+  // (position:fixed) and the native `stardrivePin` animation both ended up
+  // applying to the same element at once (`transform:matrix(1,0,0,1,0,612.8)`
+  // stacked on top of `position:fixed;top:0`), pushing the whole stage ~600px
+  // down off its pinned position. That proved the native timeline was never
+  // actually dead — `window.scrollTo()` doesn't drive real scroll/compositor
+  // frames in this environment, so it never ticks a view-timeline; a real
+  // scroll gesture does, and does here too. Reverted to feature detection.
+  // The gap/overlap the owner is still seeing needs re-diagnosis under real
+  // scroll input, not synthetic scrollTo() sampling.
+  const cssPin = typeof CSS !== 'undefined' && !!CSS.supports && CSS.supports('animation-timeline', 'view()');
   // 2026-07-16 (station-master, live-inspected via devtools): the stage is
   // exactly 100vh tall, same as the viewport, so it starts appearing at the
   // very first pixel of scroll (its top is always vh below the wrapper's
