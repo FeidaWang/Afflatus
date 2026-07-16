@@ -321,11 +321,22 @@ export function initAlphardForge() {
   // a 200vh span that equals the wrapper's own full height), so forge
   // starts leaving 0 as soon as the stage is visible at all, not once
   // it's already nearly filled the screen.
+  // 2026-07-16 follow-up: fixing the clamp above stopped forge from being
+  // stuck at exactly 0, but a *linear* ramp across the full 200vh journey
+  // still spends its first half (an entire hero-height of scrolling) below
+  // forge=0.5 -- veil/caption/tagline opacities are mostly linear in forge,
+  // so that whole stretch still reads as "barely arrived". Ease-out (cubic)
+  // front-loads the ramp: same 0 at the start and exactly 1 at the same
+  // end, but crosses 0.8+ well before the halfway point of the scroll
+  // distance, so the scene reads as "arrived" much sooner without changing
+  // where the journey starts or ends.
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
   function progress() {
     if (reduce) return 1;
     const rect = section.getBoundingClientRect(), vh = window.innerHeight;
     if (stageEl && !cssPin) { const ended = rect.bottom < vh; stageEl.classList.toggle('pin-fixed', rect.top <= 0 && rect.bottom >= vh && !ended); stageEl.classList.toggle('pin-end', ended); }
-    if (rect.height <= 0) return 0; return clamp((vh - rect.top) / rect.height, 0, 1);
+    if (rect.height <= 0) return 0;
+    return easeOutCubic(clamp((vh - rect.top) / rect.height, 0, 1));
   }
 
   function render(t) {
