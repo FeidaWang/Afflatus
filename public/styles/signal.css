@@ -66,7 +66,14 @@ a{color:inherit;text-decoration:none}
 .review .when{font:400 12px/1.6 var(--mono);color:var(--dim)}.when b{color:var(--paper)}.when .bc{color:var(--amber)}
 
 /* hawk-dove compass (V6) */
-.compass{margin-top:16px;border:1px solid var(--line);background:var(--panel2);padding:14px 16px}
+/* U30 R4 (2026-07-17): compass stays visible while the reader scrolls through
+   the data-heavy middle of the page (pillars/files/incidents/watch — see the
+   .signalScroll wrapper in signal.html, all four already sat as consecutive
+   siblings after .compass so no reordering was needed). Plain position:sticky
+   works here (unlike the homepage's stardrive pin) because this page never
+   sets overflow-x:hidden on html/body — no JS, no scroll listener. */
+.signalScroll{position:relative}
+.compass{position:sticky;top:10px;z-index:5;margin-top:16px;border:1px solid var(--line);background:var(--panel2);padding:14px 16px}
 .compass h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .compass h2 small{color:var(--dim);font:400 10px var(--mono);letter-spacing:.1em}
 .gaugeWrap{margin-top:14px}
@@ -131,6 +138,21 @@ a{color:inherit;text-decoration:none}
 .incidentList{display:flex;flex-direction:column;gap:16px;margin-top:16px}
 .incidentList .empty{padding:14px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--dim);font:400 12px var(--mono)}
 .incident{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,.55)}
+/* U30 R4: "event cards float in at staggered speeds" — one CSS scroll-driven
+   animation per card (animation-timeline:view(), same primitive R2 introduced
+   on the homepage stardrive, reused here with zero JS/scroll-listener), each
+   card's own view-timeline is keyed to ITS OWN position so they naturally
+   reveal one after another as they individually enter the viewport; alternating
+   nth-child gets a slightly wider animation-range (finishes its reveal later
+   into the scroll) plus an opposite horizontal drift, so neighbouring cards
+   arrive at visibly different rates/directions instead of one flat cadence. */
+@supports (animation-timeline: view()) {
+  .incident{animation:incidentReveal linear both;animation-timeline:view();animation-range:entry 0% cover 35%}
+  .incident:nth-child(even){animation-range:entry 0% cover 55%}
+  @keyframes incidentReveal{from{opacity:0;transform:translate(-18px,42px)}to{opacity:1;transform:translate(0,0)}}
+  .incident:nth-child(even){animation-name:incidentRevealAlt}
+  @keyframes incidentRevealAlt{from{opacity:0;transform:translate(18px,42px)}to{opacity:1;transform:translate(0,0)}}
+}
 .incident .ihead{padding:11px 14px;background:var(--ink);color:var(--doc);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer}
 .incident .ihead .iid{font:700 13px/1 var(--disp);letter-spacing:.06em;text-transform:uppercase}
 .incident .ihead .iid::before{content:'+ ';color:var(--amber)}
@@ -187,4 +209,4 @@ a{color:inherit;text-decoration:none}
 .foot b{color:var(--amber)}
 
 @media(max-width:760px){.files,.mtf,.watch .grid2{grid-template-columns:1fr}.review{grid-template-columns:1fr}.review .tag{writing-mode:horizontal-tb;transform:none}.asset{border-right:0}}
-@media (prefers-reduced-motion: reduce){.bar i{animation:none;width:var(--w)}.bar i::after{animation:none}.redact{background:transparent;color:inherit}.review .row1 .live::before,.dock.on .eq i{animation:none}.hz{animation:none}.gauge .needle{animation:none}}
+@media (prefers-reduced-motion: reduce){.bar i{animation:none;width:var(--w)}.bar i::after{animation:none}.redact{background:transparent;color:inherit}.review .row1 .live::before,.dock.on .eq i{animation:none}.hz{animation:none}.gauge .needle{animation:none}.incident{animation:none;opacity:1;transform:none}}
