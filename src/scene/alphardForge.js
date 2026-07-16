@@ -125,6 +125,10 @@ export function initAlphardForge() {
   if (!section || !canvas) return null;
   const stageEl = section.querySelector('.stardrive-stage');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // U30 R2, default off (R3 WIP exception — flag-gated visual work doesn't
+  // count against the real-device review backlog): ?fx=stage turns on the
+  // sticky-scale "stargate" wrapper (styles.css .stardrive.fx-stage rules).
+  try { if (/[?&]fx=stage\b/.test(location.search)) section.classList.add('fx-stage'); } catch (e) {}
 
   // ── bilingual tagline typed out by the scroll ──
   const tagEl = document.getElementById('forgeTagline');
@@ -301,12 +305,53 @@ export function initAlphardForge() {
   // are skipped there entirely. `p` (0..1) is still computed here either way:
   // it feeds the WebGL uniforms (dolly/brightness) and tagline typing, which
   // CSS can't drive on its own.
+  //
+  // 2026-07-16: briefly forced this to `false`, suspecting the native path
+  // was dead (a devtools check via synthetic `window.scrollTo()` showed
+  // `timeline.currentTime` stuck at `null` and `transform` stuck at `none`
+  // across a wide scrollY sweep). That forced-fallback build was live-tested
+  // with a *real* mouse-wheel scroll and made things worse: `.pin-fixed`
+  // (position:fixed) and the native `stardrivePin` animation both ended up
+  // applying to the same element at once (`transform:matrix(1,0,0,1,0,612.8)`
+  // stacked on top of `position:fixed;top:0`), pushing the whole stage ~600px
+  // down off its pinned position. That proved the native timeline was never
+  // actually dead — `window.scrollTo()` doesn't drive real scroll/compositor
+  // frames in this environment, so it never ticks a view-timeline; a real
+  // scroll gesture does, and does here too. Reverted to feature detection.
+  // The gap/overlap the owner is still seeing needs re-diagnosis under real
+  // scroll input, not synthetic scrollTo() sampling.
   const cssPin = typeof CSS !== 'undefined' && !!CSS.supports && CSS.supports('animation-timeline', 'view()');
+  // 2026-07-16 (station-master, live-inspected via devtools): the stage is
+  // exactly 100vh tall, same as the viewport, so it starts appearing at the
+  // very first pixel of scroll (its top is always vh below the wrapper's
+  // top) and is ALREADY ~95%+ on-screen by the time the wrapper's own top
+  // reaches the viewport top -- which is the old `-rect.top` zero point.
+  // Forge stayed clamped at 0 for that whole entrance (a full hero-height
+  // of scroll, since hero and the wrapper are the same height here), so the
+  // user was looking at an almost-fully-visible but still fully-dim stage
+  // for a stretch that reads as "empty background, nothing happening" --
+  // exactly the reported gap. Old formula only counted the post-entrance
+  // dwell (rect.top: 0 -> -100vh). New formula counts the whole journey a
+  // 100vh-tall stage makes through a 100vh viewport (rect.top: vh -> -vh,
+  // a 200vh span that equals the wrapper's own full height), so forge
+  // starts leaving 0 as soon as the stage is visible at all, not once
+  // it's already nearly filled the screen.
+  // 2026-07-16 follow-up: fixing the clamp above stopped forge from being
+  // stuck at exactly 0, but a *linear* ramp across the full 200vh journey
+  // still spends its first half (an entire hero-height of scrolling) below
+  // forge=0.5 -- veil/caption/tagline opacities are mostly linear in forge,
+  // so that whole stretch still reads as "barely arrived". Ease-out (cubic)
+  // front-loads the ramp: same 0 at the start and exactly 1 at the same
+  // end, but crosses 0.8+ well before the halfway point of the scroll
+  // distance, so the scene reads as "arrived" much sooner without changing
+  // where the journey starts or ends.
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
   function progress() {
     if (reduce) return 1;
     const rect = section.getBoundingClientRect(), vh = window.innerHeight;
     if (stageEl && !cssPin) { const ended = rect.bottom < vh; stageEl.classList.toggle('pin-fixed', rect.top <= 0 && rect.bottom >= vh && !ended); stageEl.classList.toggle('pin-end', ended); }
-    const travel = rect.height - vh; if (travel <= 0) return 0; return clamp(-rect.top / travel, 0, 1);
+    if (rect.height <= 0) return 0;
+    return easeOutCubic(clamp((vh - rect.top) / rect.height, 0, 1));
   }
 
   function render(t) {
