@@ -1,0 +1,182 @@
+{
+  "updated": "2026-07-10",
+  "version": 2,
+  "as_of": "2026-07-09",
+  "note_en": "Schema v2 (V6, 2026-07-04): top-level object with hawkDoveCompass + pillars + events (was a bare array in v1 — the frontend's incident-log renderer now reads .events). Matches the shape prompts/signal-warsh.md's V7 scheduled task will produce, so future automated runs land on the same structure without another migration.",
+  "note_zh": "Schema v2（V6，2026-07-04）：顶层改为对象，含 hawkDoveCompass + pillars + events（v1 是裸数组——前端事件簿渲染现在读 .events）。与 prompts/signal-warsh.md 里 V7 定时任务未来会产出的结构对齐，后续自动化运行不用再迁移一次。",
+  "hawkDoveCompass": {
+    "score": 1.2,
+    "scale": "-2 (dovish) .. +2 (hawkish)",
+    "label_en": "HAWKISH",
+    "label_zh": "鹰派",
+    "rationale_en": "Warsh's Sintra line (\"prices are too high\", no comfort with inflation above 2%) still anchors the hawkish read, and the June dot plot's 3.8% year-end median hasn't been walked back. But the margin moved the other way this week: Waller (Jul 6, Rome) publicly defended forward guidance as \"valuable\" when used flexibly — the first visible internal pushback against the chair's signature anti-guidance doctrine — and post-NFP pricing has July as a dead meeting (~7% odds of a move) with roughly 55–65% odds of one 25bp cut by year-end, Sept/Oct favored. Hawkish chair, slightly less hawkish committee-plus-market mix.",
+    "rationale_zh": "沃什在辛特拉的原话（「物价太高」、绝不容忍通胀高于 2%）仍是鹰派研判的锚，6 月点阵图 3.8% 的年底中位数也没有被收回。但本周边际上出现反向信号：沃勒 7 月 6 日在罗马公开为前瞻指引辩护，称其在灵活使用时「有价值」——这是委员会内部对主席标志性反指引立场的首次公开异议；且非农后的市场定价把 7 月会议视为「死会」（变动概率约 7%），年底前降息一次 25 个基点的概率约在 55–65%，以 9/10 月为主。主席仍鹰，委员会与市场的合成读数略微降温。",
+    "asOf": "2026-07-09",
+    "method_en": "Manual v1 score (human-scored from public statements + market-implied odds on the page). Automation (per-event hawk_dove tagging feeding an aggregate) is planned for V7 — see ROADMAP §7.3.",
+    "method_zh": "人工 v1 打分（依据公开表态 + 页面上的市场隐含概率）。按事件打分再聚合的自动化留给 V7——见 ROADMAP §7.3。"
+  },
+  "pillarSummary": {
+    "en": "Quiet data week ahead of two loud ones: June CPI lands Jul 14 and TSMC reports Jul 16. Initial claims stayed low (215K) while continuing claims crept up — \"cooling, not cracking\" survives for now. Waller publicly defended forward guidance, the first visible daylight between the chair and his committee. Semis led the tape into the weekend, Micron pledged up to $3B to the US supply chain, and the trade-enforcement regime held steady with no new escalation.",
+    "zh": "两场大戏前的安静一周：6 月 CPI 将于 7 月 14 日公布，台积电 7 月 16 日发财报。初请失业金维持低位（21.5 万），续请人数则继续爬升——「降温而不失速」的叙事暂时成立。沃勒公开为前瞻指引辩护，是主席与委员会之间首次可见的分歧。半导体板块领涨收官，美光承诺最高 30 亿美元投入美国供应链，贸易执法框架维持原状、未见新升级。"
+  },
+  "pillars": [
+    {
+      "id": 1,
+      "key": "inflation_data",
+      "name_en": "Inflation Data",
+      "name_zh": "通胀数据",
+      "status_en": "HOT, CPI TEST JUL 14",
+      "status_zh": "偏热，7/14 CPI 大考",
+      "tone": "red",
+      "read_en": "Core inflation remains sticky above target and the Committee's own \"too high\" language stands. Labor follow-through so far supports \"cooling, not cracking\": initial claims fell to 215K (week to Jul 4), though continuing claims keep edging up. June CPI on Jul 14 is the first print that can ratify — or break — the post-NFP goldilocks repricing.",
+      "read_zh": "核心通胀仍高于目标、粘性未退，委员会自己「仍然过高」的措辞依然有效。就业后续数据暂时支持「降温而不失速」：初请失业金降至 21.5 万（截至 7 月 4 日当周），但续请人数持续小幅上行。7 月 14 日的 6 月 CPI 是第一份能够确认——或击碎——非农后「金发姑娘」式重定价的数据。",
+      "asOf": "2026-07-09"
+    },
+    {
+      "id": 2,
+      "key": "fed_policy",
+      "name_en": "Fed Policy",
+      "name_zh": "货币政策",
+      "status_en": "HAWKISH CHAIR, DISSENTING EDGES",
+      "status_zh": "主席鹰派，边缘现异声",
+      "tone": "amber",
+      "read_en": "July 29 is priced as a dead meeting (~7% odds of a move; funds at 3.50–3.75%); markets put ~55–65% odds on one 25bp cut by year-end, Sept/Oct favored. Waller's Rome speech (Jul 6) defending flexible forward guidance is the first public daylight with Warsh's anti-guidance doctrine — watch whether the July statement reads like a committee compromise.",
+      "read_zh": "7 月 29 日已被定价为「死会」（变动概率约 7%；联邦基金利率维持 3.50–3.75%）；市场给年底前降息一次 25 个基点约 55–65% 的概率，时点偏向 9/10 月。沃勒 7 月 6 日在罗马为「灵活的前瞻指引」辩护，是对沃什反指引教义的首次公开分歧——关注 7 月声明的措辞是否读起来像一份委员会的折中产物。",
+      "asOf": "2026-07-09"
+    },
+    {
+      "id": 3,
+      "key": "earnings_guidance",
+      "name_en": "Earnings Guidance",
+      "name_zh": "财报指引",
+      "status_en": "SUPER-CYCLE, TSMC JUL 16 CHECKPOINT",
+      "status_zh": "超级周期，7/16 台积电检验点",
+      "tone": "green",
+      "read_en": "TSMC reports Q2 on Jul 16 — consensus near $40B revenue (+~32% y/y), with 2026 capex guidance already lifted to $52–56B and street models putting 2026 tech-sector profit growth near 52%. Micron's super-cycle read stands (stock +4.5% Thursday within a 2.5% semi-ETF rally). Jul 16 is the next confirm-or-fade checkpoint.",
+      "read_zh": "台积电 7 月 16 日发布二季报——市场共识营收约 400 亿美元（同比约 +32%），2026 年资本开支指引已上调至 520–560 亿美元，卖方模型给 2026 年科技板块约 52% 的利润增速。美光的超级周期研判依然成立（周四在半导体 ETF 上涨 2.5% 的行情中个股 +4.5%）。7 月 16 日是下一个「确认或衰减」的检验点。",
+      "asOf": "2026-07-09"
+    },
+    {
+      "id": 4,
+      "key": "industry_tech",
+      "name_en": "Industry & Big-Tech Moves",
+      "name_zh": "产业与巨头动向",
+      "status_en": "CAPEX FLOWING TO CHOKEPOINTS",
+      "status_zh": "资本开支涌向瓶颈环节",
+      "tone": "green",
+      "read_en": "Capex keeps concentrating on chokepoints: TSMC's $52–56B 2026 budget with CoWoS advanced packaging still the binding constraint, plus Micron's up-to-$3B US supply-chain investment announced this week. TSMC's monthly sales running +26% y/y say the demand side hasn't blinked; semis led the broader tape into the weekend.",
+      "read_zh": "资本开支仍在向瓶颈环节集中：台积电 520–560 亿美元的 2026 年预算之下，CoWoS 先进封装依旧是最紧的约束；美光本周宣布最高 30 亿美元的美国供应链投资。台积电月度营收同比 +26% 说明需求端没有眨眼；半导体板块领涨大盘收官。",
+      "asOf": "2026-07-09"
+    },
+    {
+      "id": 5,
+      "key": "geopolitics_trade",
+      "name_en": "Geopolitics & Trade",
+      "name_zh": "地缘与贸易",
+      "status_en": "REGIME HOLDING, NO NEW ESCALATION",
+      "status_zh": "框架维持，本周无新升级",
+      "tone": "amber",
+      "read_en": "No fresh moves this week — the standing regime holds: H200-class China sales allowed under a 50% volume cap plus a 25% Section 232 tariff, the offshore-subsidiary licensing loophole closed (June), USTR's tariff action on Chinese legacy chips parked at 0% until mid-2027, and Beijing's Jun 22 entity-list additions still in force. A quiet lane, but a loaded one.",
+      "read_zh": "本周没有新动作——既有框架维持原状：H200 级芯片对华销售在 50% 数量上限加 25% 的 232 条款关税下放行，境外子公司许可漏洞已于 6 月关闭，USTR 对中国成熟制程芯片的关税行动暂停在 0%、2027 年年中起上调，北京 6 月 22 日的管制清单新增仍然有效。这条赛道安静，但弹簧上着劲。",
+      "asOf": "2026-07-09"
+    }
+  ],
+  "events": [
+    {
+      "id": "INCIDENT-2026-FED-CHAIR-01",
+      "date": "2026-05-22",
+      "type": "FED_POLICY",
+      "pillar": 2,
+      "class": "keter",
+      "hawkDove": 2,
+      "name": {
+        "en": "Kevin Warsh Sworn In as Federal Reserve Chair",
+        "zh": "沃什宣誓就任美联储主席"
+      },
+      "before": {
+        "en": "Confirmed by the Senate May 13, 2026; markets had already priced a leadership transition toward a more hawkish, anti-forward-guidance regime given Warsh's public record as a Fed governor and vocal Fed critic.",
+        "zh": "2026 年 5 月 13 日经参议院确认；鉴于沃什此前担任美联储理事期间的公开记录及其对美联储的公开批评，市场此前已price in一次转向更鹰派、反前瞻指引风格的领导层交接。"
+      },
+      "print": {
+        "en": "Sworn in May 22, 2026, formally beginning the O5 Site Director handover. Early signals: five internal task forces stood up, including one reviewing how the Fed communicates policy and one studying AI's impact on productivity and potential rate implications.",
+        "zh": "2026 年 5 月 22 日正式宣誓就职，O5 站点主管交接程序正式启动。早期信号：内部设立五个工作组，其中一个复核美联储的政策沟通方式，另一个研究 AI 对生产率的影响及其对利率的潜在含义。"
+      },
+      "repricing": {
+        "en": "No immediate rate-path repricing (the handover itself changes nothing mechanically), but the market began pricing a structurally different reaction function: less pre-committed guidance, more meeting-by-meeting data dependency.",
+        "zh": "交接本身不直接改变利率路径的机械定价，但市场开始为一套结构性不同的反应函数重新定价：更少的预先承诺指引，更强的逐次会议、依数据决策的风格。"
+      },
+      "equityReaction": {
+        "en": "Muted on the day — a scheduled, well-telegraphed transition, not a surprise. The real market test came later, at his first press conference and ECB Forum remarks (see following incidents).",
+        "zh": "当日市场反应平淡——这是一次早有预期、按计划进行的交接，而非意外事件。真正的市场检验出现在之后——他首次新闻发布会与 ECB 论坛发言时（见后续事件）。"
+      },
+      "verdict": {
+        "en": "Containment status: KETER — a leadership change at the top of a KETER-class anomaly is inherently high-variance until his reaction function is tested by real data surprises. Not advice.",
+        "zh": "收容状态：Keter 级——在一个 Keter 级异常体的最高层发生人事更替，在其反应函数被真实数据意外检验之前，本身就属于高方差事件。非投资建议。"
+      }
+    },
+    {
+      "id": "INCIDENT-2026-ECB-FORUM-01",
+      "date": "2026-07-01",
+      "type": "FED_POLICY",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": 2,
+      "name": {
+        "en": "Chair Warsh's International Debut at the ECB Forum",
+        "zh": "沃什主席 ECB 论坛国际首秀"
+      },
+      "before": {
+        "en": "First appearance on the global central-banking stage since taking office; watched closely for tone toward the 2% target, independence from White House pressure for cuts, and his long-standing anti-forward-guidance position.",
+        "zh": "就任以来首次登上全球央行舞台的公开场合；市场密切关注他对 2% 目标的态度、面对白宫降息压力时的独立性，以及他一贯的反前瞻指引立场。"
+      },
+      "print": {
+        "en": "Declined to hint at the July rate decision, but said inflation remains \"too high\" and stated he sees no reason to revisit the 2% objective until the Fed re-establishes its ability to deliver it. Explicitly called himself \"strictly independent,\" rejecting pressure for cuts. Reiterated opposition to forward guidance, saying central banks have a \"spotty record\" predicting the economy.",
+        "zh": "拒绝暗示 7 月利率决议方向，但表示通胀仍然「过高」，并称在美联储重新证明自己有能力实现 2% 目标之前，看不出重新审视这一目标的理由。明确自称「严格独立」，拒绝降息压力。重申反对前瞻指引，称央行预测经济的记录「参差不齐」。"
+      },
+      "repricing": {
+        "en": "Reinforced the market's existing hawkish-lean pricing for July (hold, ~91%) without adding fresh hike/cut probability shifts — a confirmation event more than a repricing catalyst.",
+        "zh": "强化了市场原本对 7 月「维持利率（约91%）」的鹰派定价倾向，未带来新的加息/降息概率位移——与其说是重定价催化剂，不如说是一次确认事件。"
+      },
+      "equityReaction": {
+        "en": "Received internationally as a reform-focused, credibility-building debut (per contemporaneous coverage) rather than a market shock — consistent with a confirmation event, not a surprise.",
+        "zh": "据同期报道，这次首秀被国际市场解读为聚焦改革、建立信誉的亮相，而非市场冲击——符合「确认事件」而非「意外事件」的定性。"
+      },
+      "verdict": {
+        "en": "Containment status: EUCLID — behavior matches the modeled hawkish/independent/anti-forward-guidance profile exactly; no anomalous deviation detected. Not advice.",
+        "zh": "收容状态：Euclid 级——行为与建模中的鹰派/独立/反前瞻指引画像完全吻合，未检测到异常偏离。非投资建议。"
+      }
+    },
+    {
+      "id": "INCIDENT-2026-NFP-06",
+      "date": "2026-07-02",
+      "type": "NFP",
+      "pillar": 1,
+      "class": "euclid",
+      "hawkDove": null,
+      "name": {
+        "en": "June Nonfarm Payrolls",
+        "zh": "六月非农就业数据"
+      },
+      "before": {
+        "en": "Consensus (Bloomberg) looked for +113K following May's blowout +172K print; futures priced better-than-even odds of a 2026 hike by September as a string of strong data pushed the 'higher-for-longer' narrative toward 'higher-for-even-longer.'",
+        "zh": "彭博一致预期为 +11.3 万，此前 5 月非农爆表至 +17.2 万；受连续强劲数据推动，期货市场一度押注 9 月前加息概率过半，「更高更久」叙事正滑向「更高更更久」。"
+      },
+      "print": {
+        "en": "Payrolls +57K, well below consensus; Apr/May revised down a combined -74K. Unemployment fell to 4.2% (1yr low) but labor-force participation slipped to 61.5% — the drop is a shrinking denominator, not stronger demand. Leisure & hospitality -61K after carrying May's beat; gains concentrated in professional/business services, social assistance and (slowing) healthcare.",
+        "zh": "非农新增 +5.7 万，远低于预期；4/5 月合计下修 -7.4 万。失业率降至 4.2%（一年新低），但劳动参与率同步跌至 61.5%——下降源于分母收缩，而非需求走强。休闲酒店业 -6.1 万（此前正是 5 月爆表的主贡献项）；增量集中在专业商务服务、社会救助与增速放缓的医疗业。"
+      },
+      "repricing": {
+        "en": "September hike bets unwind sharply; a month priced as a coin-flip cut/hold reverts to 'live cut candidate.' The Jul 29 FOMC becomes the first real test of Warsh's hawkish tone against a visibly cracking labor print — does the statement keep 'higher-for-longer,' or start hedging?",
+        "zh": "9 月加息押注大幅瓦解；此前被定价为降息/维持五五开的月份重新变回「活的降息候选」。7 月 29 日 FOMC 成为沃什鹰派基调首次正面迎战走弱就业数据的关键测试——声明会继续坚持「更高更久」，还是开始留后手？"
+      },
+      "equityReaction": {
+        "en": "Classic bad-news-is-good-news morning: S&P futures +0.4%, Nasdaq futures +0.5%, Dow futures +0.5%, VIX -3.7% to sub-16, gold +1.3% on lower real-rate expectations. Rate-sensitive growth/AI names led premarket strength; cyclicals were more mixed given the underlying growth-scare read.",
+        "zh": "典型的「坏消息=好消息」早盘：标普期货 +0.4%，纳指期货 +0.5%，道指期货 +0.5%，VIX 跌破 16（-3.7%），黄金因实际利率预期下移上涨 1.3%。对利率敏感的成长/AI 股盘前领涨；周期股表现相对分化，因数据本身也带有增长担忧的底色。"
+      },
+      "verdict": {
+        "en": "Same weak print, two possible regimes: if follow-through data (initial claims, JOLTS, July CPI) confirms cooling without cracking, this is a clean 'goldilocks' repricing — bullish for duration-sensitive growth. If participation keeps falling and wages don't hold, the same number turns into a growth-scare tell. Containment status: EUCLID — anomalous but currently within modeled bounds. Not advice.",
+        "zh": "同一份疲软数据，可能走向两种情境：若后续数据（初请、JOLTS、7 月 CPI）确认「降温而不失速」，这是一次干净的「金发姑娘」式重定价——利好久期敏感型成长股；若参与率持续下滑且薪资撑不住，同一个数字就会变成增长担忧的信号。收容状态：Euclid 级——异常但目前仍在可建模范围内。非投资建议。"
+      }
+    }
+  ]
+}

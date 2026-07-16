@@ -1,0 +1,21 @@
+{
+  "updated": "2026-07-04",
+  "note_en": "NYSE/Nasdaq full-closure dates for 2026 (verified via WebSearch, see ROADMAP §7.5). Scheduled tasks check today's US/Eastern date against this list before running Arena Autopilot — a match means no-op, no API calls wasted. Re-verify and update once a year.",
+  "note_zh": "2026 年 NYSE/Nasdaq 全休市日期（已 WebSearch 核实，见 ROADMAP §7.5）。定时任务跑 Arena Autopilot 前先核对今日美东日期是否在此列表——命中则直接 no-op，不浪费任何调用。每年更新核实一次。",
+  "holidays": [
+    { "date": "2026-01-01", "name": "New Year's Day" },
+    { "date": "2026-01-19", "name": "Martin Luther King, Jr. Day" },
+    { "date": "2026-02-16", "name": "Washington's Birthday (Presidents Day)" },
+    { "date": "2026-04-03", "name": "Good Friday" },
+    { "date": "2026-05-25", "name": "Memorial Day" },
+    { "date": "2026-06-19", "name": "Juneteenth" },
+    { "date": "2026-07-03", "name": "Independence Day (observed — July 4 falls on Saturday)" },
+    { "date": "2026-09-07", "name": "Labor Day" },
+    { "date": "2026-11-26", "name": "Thanksgiving Day" },
+    { "date": "2026-12-25", "name": "Christmas Day" }
+  ],
+  "earlyClose_1pmET": [
+    { "date": "2026-11-27", "name": "Day after Thanksgiving" },
+    { "date": "2026-12-24", "name": "Christmas Eve" }
+  ]
+}

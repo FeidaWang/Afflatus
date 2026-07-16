@@ -1,0 +1,436 @@
+{
+  "tournament": "FIFA World Cup 2026",
+  "updated": "2026-07-13",
+  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365 (13 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365（7 月 13 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "record": {
+    "since": "2026-06-24",
+    "resolved": 52,
+    "correctOutcome": 37,
+    "exactScore": 10,
+    "winRate": 71,
+    "note_en": "Match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
+    "note_zh": "自第三轮起对预测胜负计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
+    "log": [
+      {
+        "id": "wc-fra-mar",
+        "label_en": "France 2-0 Morocco",
+        "label_zh": "法国 2-0 摩洛哥",
+        "pick_en": "France win",
+        "pick_zh": "法国胜",
+        "ok": true,
+        "exact": true
+      },
+      {
+        "id": "wc-sui-col",
+        "label_en": "Switzerland 0-0 Colombia (Switzerland win 4-3 pens)",
+        "label_zh": "瑞士 0-0 哥伦比亚（点球 4-3 瑞士胜）",
+        "pick_en": "Colombia win",
+        "pick_zh": "哥伦比亚胜",
+        "ok": false,
+        "exact": false
+      },
+      {
+        "id": "wc-arg-egy",
+        "label_en": "Argentina 3-2 Egypt",
+        "label_zh": "阿根廷 3-2 埃及",
+        "pick_en": "Argentina win",
+        "pick_zh": "阿根廷胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "wc-usa-bel",
+        "label_en": "United States 1-4 Belgium",
+        "label_zh": "美国 1-4 比利时",
+        "pick_en": "Belgium win",
+        "pick_zh": "比利时胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "wc-esp-por",
+        "label_en": "Spain 1-0 Portugal",
+        "label_zh": "西班牙 1-0 葡萄牙",
+        "pick_en": "Spain win",
+        "pick_zh": "西班牙胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "wc-mex-eng",
+        "label_en": "Mexico 2-3 England",
+        "label_zh": "墨西哥 2-3 英格兰",
+        "pick_en": "England win",
+        "pick_zh": "英格兰胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "wc-bra-nor",
+        "label_en": "Brazil 1-2 Norway",
+        "label_zh": "巴西 1-2 挪威",
+        "pick_en": "Brazil win",
+        "pick_zh": "巴西胜",
+        "ok": false,
+        "exact": false
+      },
+      {
+        "id": "wc-par-fra",
+        "label_en": "Paraguay 0-1 France",
+        "label_zh": "巴拉圭 0-1 法国",
+        "pick_en": "France win",
+        "pick_zh": "法国胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "wc-esp-bel",
+        "label_en": "Spain 2-1 Belgium",
+        "label_zh": "西班牙 2-1 比利时",
+        "pick_en": "Spain win",
+        "pick_zh": "西班牙胜",
+        "ok": true,
+        "exact": false
+      },
+      {
+        "id": "wc-nor-eng",
+        "label_en": "Norway 1-2 England (AET)",
+        "label_zh": "挪威 1-2 英格兰（加时）",
+        "pick_en": "England win",
+        "pick_zh": "英格兰胜",
+        "ok": true,
+        "exact": true
+      },
+      {
+        "id": "wc-arg-sui",
+        "label_en": "Argentina 3-1 Switzerland (AET)",
+        "label_zh": "阿根廷 3-1 瑞士（加时）",
+        "pick_en": "Argentina win",
+        "pick_zh": "阿根廷胜",
+        "ok": true,
+        "exact": false
+      }
+    ]
+  },
+  "champions": [
+    {
+      "team": "France",
+      "team_zh": "法国",
+      "flag": "🇫🇷",
+      "prob": 38,
+      "reason_en": "Unbeaten all tournament, outscoring opponents 16-2, and into a semi-final vs Spain (July 14, Dallas). Devigged title odds (FanDuel +140, 12 Jul) make France clear favourites, with Mbappé's Golden Boot-leading form driving the confidence — though Tchouaméni (thigh) is a game-time call and Thuram (calf) is out of the projected XI.",
+      "reason_zh": "本届赛事至今保持不败，净胜球16-2，晋级半决赛（7 月 14 日，达拉斯战西班牙）。夺冠赔率（FanDuel +140，7 月 12 日，去水后）显示法国仍是头号热门，姆巴佩领跑金靴的状态支撑信心——但特查梅尼（大腿伤）将赛前才决定能否出场，图拉姆（小腿伤）缺席首发名单。"
+    },
+    {
+      "team": "Argentina",
+      "team_zh": "阿根廷",
+      "flag": "🇦🇷",
+      "prob": 20,
+      "reason_en": "Needed extra time to beat Switzerland 3-1, with Messi held scoreless but still level with Mbappé on 8 Golden Boot goals. Semi-final vs England (July 15, Atlanta) — DraftKings' 90-minute line makes Argentina the narrow favourite (+175), though offshore books favour England to advance outright (-130 vs +106).",
+      "reason_zh": "加时 3-1 淘汰瑞士，梅西本场未进球但仍以8球与姆巴佩并列金靴榜首。半决赛 7 月 15 日亚特兰大战英格兰——DraftKings 90分钟盘口阿根廷为微弱热门（+175），但海外博彩公司的晋级盘口更看好英格兰（-130 对 +106）。"
+    },
+    {
+      "team": "Spain",
+      "team_zh": "西班牙",
+      "flag": "🇪🇸",
+      "prob": 21,
+      "reason_en": "Beat Belgium 2-1 in the QF, outscoring opponents 11-1 overall, but conceded for the first time all tournament. Semi-final vs favourites France (July 14, Dallas) — devigged title odds (FanDuel +330, 12 Jul) put their final odds at roughly one-in-five, with Yamal reportedly returning to full fitness after a minor knock.",
+      "reason_zh": "八强战 2-1 击败比利时，净胜球11-1，但本届首次失球。半决赛 7 月 14 日达拉斯战头号热门法国——夺冠赔率（FanDuel +330，7 月 12 日，去水后）显示晋级决赛概率约五分之一，亚马尔据悉正从轻伤中恢复，逐渐找回最佳状态。"
+    },
+    {
+      "team": "England",
+      "team_zh": "英格兰",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "prob": 21,
+      "reason_en": "Bellingham's extra-time brace saw off Norway 2-1 (AET), lifting him level with Kane on 6 goals; England have conceded just 6 in 6 matches, the tournament's stingiest defence. Semi-final vs Argentina (July 15, Atlanta) — markets now favour England to advance (-130, ~54% fair after devig), even as DraftKings' 90-minute line has Argentina as the narrow favourite (+175 vs +180).",
+      "reason_zh": "贝林厄姆加时梅开二度助英格兰 2-1（加时）淘汰挪威，进球数追平凯恩的6球；6场仅失6球，是本届防线最稳固的球队。半决赛 7 月 15 日亚特兰大战阿根廷——晋级盘口目前看好英格兰（-130，去水后公平胜率约54%），尽管DraftKings 90分钟盘口阿根廷仍是微弱热门（+175 对 +180）。"
+    }
+  ],
+  "players": [
+    {
+      "name": "Kylian Mbappé",
+      "name_zh": "姆巴佩",
+      "team": "France",
+      "team_zh": "法国",
+      "flag": "🇫🇷",
+      "prob": 26,
+      "reason_en": "Still leads the Golden Boot on 8 goals, and now holds the tiebreaker over Messi outright with 3 assists to Messi's 1. France are into the semi-final vs Spain, July 14 in Arlington, unbeaten all tournament — the strongest overall package left in the field.",
+      "reason_zh": "以8球继续领跑金靴榜，且以3次助攻力压梅西的1次助攻，在并列情况下占据决胜优势。法国晋级半决赛，7 月 14 日阿灵顿战西班牙，本届仍保持不败——是留在赛场上综合实力最强的球员。"
+    },
+    {
+      "name": "Lionel Messi",
+      "name_zh": "梅西",
+      "team": "Argentina",
+      "team_zh": "阿根廷",
+      "flag": "🇦🇷",
+      "prob": 20,
+      "reason_en": "Went quiet without a goal in the 3-1 (AET) QF win over Switzerland, but still sits on 8 goals (level with Mbappé) and his all-time record 21 World Cup finals goals. Semi-final vs England, July 15 in Atlanta, in what he's called his final World Cup — the sentimental favourite for the Golden Ball.",
+      "reason_zh": "在加时 3-1 淘汰瑞士一役中未有进球入账，但仍以8球与姆巴佩并列金靴榜首，其世界杯正赛生涯进球数21球的历史纪录保持不变。半决赛 7 月 15 日亚特兰大战英格兰，这是他所说的谢幕之战——金球奖最具情怀色彩的人选。"
+    },
+    {
+      "name": "Lamine Yamal",
+      "name_zh": "拉明·亚马尔",
+      "team": "Spain",
+      "team_zh": "西班牙",
+      "flag": "🇪🇸",
+      "prob": 20,
+      "reason_en": "Spain beat Belgium 2-1 in the QF — Fabián Ruiz and substitute Merino scored, with Yamal again occupying defenders out wide all game, before conceding for the first time this tournament. Semi-final vs favourites France, July 14 in Arlington — a huge test for Spain's most dangerous attacker.",
+      "reason_zh": "西班牙八强 2-1 击败比利时——法比安·鲁伊斯与替补登场的梅里诺建功，亚马尔边路持续牵制对方防线，球队本届首次失球。半决赛 7 月 14 日阿灵顿战头号热门法国——对西班牙最具威胁的攻击手而言是巨大考验。"
+    },
+    {
+      "name": "Jude Bellingham",
+      "name_zh": "贝林厄姆",
+      "team": "England",
+      "team_zh": "英格兰",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "prob": 19,
+      "reason_en": "A second knockout-round brace — levelling in first-half stoppage time then winning it in extra time — sent Norway out 2-1 (AET) and lifted him level with Kane on 6 goals. Two match-defining performances in as many knockout games make him a genuine Golden Ball dark horse. Semi-final vs Argentina, July 15 in Atlanta.",
+      "reason_zh": "淘汰赛阶段第二次梅开二度——上半场补时扳平，加时赛再入制胜球，2-1（加时）淘汰挪威——本届进球数追平凯恩，达到6球。连续两场淘汰赛比赛中都有决定性发挥，是金球奖的有力黑马。半决赛 7 月 15 日亚特兰大战阿根廷。"
+    },
+    {
+      "name": "Erling Haaland",
+      "name_zh": "哈兰德",
+      "team": "Norway",
+      "team_zh": "挪威",
+      "flag": "🇳🇴",
+      "prob": 15,
+      "reason_en": "Norway's run ended in the QF, losing 2-1 (AET) to England despite an early Schjelderup goal and a second Haaland effort disallowed on VAR review. Still sits on 7 goals, one behind Mbappé and Messi — with no games left to add to it, his Golden Boot hopes now depend on the leaders going quiet.",
+      "reason_zh": "挪威止步八强，加时 1-2 不敌英格兰，尽管舍尔德鲁普先拔头筹，哈兰德本人还有一球经VAR回看判罚无效。本届仍以7球落后姆巴佩、梅西一球——已无比赛可踢，金靴归属只能寄望于领先者后续颗粒无收。"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "wc-fra-esp",
+      "stage": "Semi-final",
+      "kickoff": "2026-07-14T19:00:00Z",
+      "home": "France",
+      "home_zh": "法国",
+      "homeFlag": "🇫🇷",
+      "away": "Spain",
+      "away_zh": "西班牙",
+      "awayFlag": "🇪🇸",
+      "opus": "home",
+      "conf": 0.56,
+      "opusScore": "2-1",
+      "reason_en": "DraftKings has France favourites on the 90-minute line (+135) and to advance outright (-145, ~56% fair after devig), with bet365 in line (+130). Aurélien Tchouaméni (thigh) is a game-time call, and Marcus Thuram (calf) isn't in the projected XI. Mbappé arrives in career-best form, leading the Golden Boot on 8 goals with the tiebreaking edge in assists. Spain conceded for the first time all tournament in the QF win over Belgium, though Yamal is reportedly getting back to full fitness after a minor knock — his dribbling against France's back line remains the must-watch duel.",
+      "reason_zh": "DraftKings法国90分钟盘口+135、晋级盘-145（去水后约56%胜率）继续领先，bet365同样力挺法国（+130）。特查梅尼（大腿伤）将赛前才决定能否出场，图拉姆（小腿伤）不在首发名单内。姆巴佩状态正佳，以8球领跑金靴且助攻数占先。西班牙在八强战对比利时一役中本届首次失球，亚马尔据悉正从轻伤中恢复并逐渐找回最佳状态，他对法国防线的单挑仍是本场焦点看点。",
+      "odds": {
+        "h": 2.35,
+        "d": 3.25,
+        "a": 3.15,
+        "src": "DraftKings",
+        "scores": [
+          { "s": "1-1", "o": 7.0 },
+          { "s": "2-1", "o": 7.5 },
+          { "s": "1-0", "o": 6.5 }
+        ]
+      },
+      "result": null
+    },
+    {
+      "id": "wc-arg-eng",
+      "stage": "Semi-final",
+      "kickoff": "2026-07-15T19:00:00Z",
+      "home": "Argentina",
+      "home_zh": "阿根廷",
+      "homeFlag": "🇦🇷",
+      "away": "England",
+      "away_zh": "英格兰",
+      "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "opus": "away",
+      "conf": 0.54,
+      "opusScore": "1-2",
+      "reason_en": "Markets have shifted since the QFs: DraftKings' 90-minute line (12 Jul) now has Argentina favourites at +175, with England +180 and the draw +205, while offshore books have England favoured to advance at -130 (Argentina +106, ~54% fair after devig). Both sides needed extra time in the QFs — Argentina beat Switzerland 3-1 with Messi held scoreless, England edged Norway 2-1 (AET) on a Bellingham brace that pulled him level with Kane on 6 goals. England have conceded just 6 goals in 6 matches; markets favour Under 2.5 goals, pointing to another tight, low-scoring affair.",
+      "reason_zh": "半决赛盘口已生变：DraftKings 90分钟盘口（7 月 12 日）阿根廷转为热门+175，英格兰+180，平局+205；而海外博彩公司晋级盘口显示英格兰领先-130（阿根廷+106，去水后公平胜率约54%）。两队在八强战均战至加时——阿根廷加时3-1淘汰瑞士（梅西本场未进球），英格兰凭贝林厄姆梅开二度加时2-1淘汰挪威，追平凯恩的6球。英格兰6场仅失6球，盘口看好小于2.5球，预示又是一场胶着的低比分较量。",
+      "odds": {
+        "h": 2.75,
+        "d": 3.05,
+        "a": 2.80,
+        "src": "DraftKings",
+        "scores": [
+          { "s": "1-1", "o": 6.5 },
+          { "s": "1-2", "o": 7.0 },
+          { "s": "0-1", "o": 7.5 }
+        ]
+      },
+      "result": null
+    }
+  ],
+  "bracket": {
+    "stageLabel_en": "Semi-finals → Final",
+    "stageLabel_zh": "四强 → 决赛",
+    "qf": [
+      {
+        "id": "qf1",
+        "date": "2026-07-09",
+        "venue_en": "Foxborough",
+        "venue_zh": "福克斯堡",
+        "legs": [
+          {
+            "r16Id": "wc-par-fra",
+            "home": "Paraguay",
+            "home_zh": "巴拉圭",
+            "homeFlag": "🇵🇾",
+            "away": "France",
+            "away_zh": "法国",
+            "awayFlag": "🇫🇷",
+            "winner": "away"
+          },
+          {
+            "r16Id": "wc-can-mar",
+            "home": "Canada",
+            "home_zh": "加拿大",
+            "homeFlag": "🇨🇦",
+            "away": "Morocco",
+            "away_zh": "摩洛哥",
+            "awayFlag": "🇲🇦",
+            "winner": "away"
+          }
+        ]
+      },
+      {
+        "id": "qf2",
+        "date": "2026-07-10",
+        "venue_en": "Los Angeles",
+        "venue_zh": "洛杉矶",
+        "legs": [
+          {
+            "r16Id": "wc-esp-por",
+            "home": "Spain",
+            "home_zh": "西班牙",
+            "homeFlag": "🇪🇸",
+            "away": "Portugal",
+            "away_zh": "葡萄牙",
+            "awayFlag": "🇵🇹",
+            "winner": "home"
+          },
+          {
+            "r16Id": "wc-usa-bel",
+            "home": "United States",
+            "home_zh": "美国",
+            "homeFlag": "🇺🇸",
+            "away": "Belgium",
+            "away_zh": "比利时",
+            "awayFlag": "🇧🇪",
+            "winner": "away"
+          }
+        ]
+      },
+      {
+        "id": "qf3",
+        "date": "2026-07-11",
+        "venue_en": "Miami",
+        "venue_zh": "迈阿密",
+        "legs": [
+          {
+            "r16Id": "wc-bra-nor",
+            "home": "Brazil",
+            "home_zh": "巴西",
+            "homeFlag": "🇧🇷",
+            "away": "Norway",
+            "away_zh": "挪威",
+            "awayFlag": "🇳🇴",
+            "winner": "away"
+          },
+          {
+            "r16Id": "wc-mex-eng",
+            "home": "Mexico",
+            "home_zh": "墨西哥",
+            "homeFlag": "🇲🇽",
+            "away": "England",
+            "away_zh": "英格兰",
+            "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+            "winner": "away"
+          }
+        ]
+      },
+      {
+        "id": "qf4",
+        "date": "2026-07-11",
+        "venue_en": "Kansas City",
+        "venue_zh": "堪萨斯城",
+        "legs": [
+          {
+            "r16Id": "wc-arg-egy",
+            "home": "Argentina",
+            "home_zh": "阿根廷",
+            "homeFlag": "🇦🇷",
+            "away": "Egypt",
+            "away_zh": "埃及",
+            "awayFlag": "🇪🇬",
+            "winner": "home"
+          },
+          {
+            "r16Id": "wc-sui-col",
+            "home": "Switzerland",
+            "home_zh": "瑞士",
+            "homeFlag": "🇨🇭",
+            "away": "Colombia",
+            "away_zh": "哥伦比亚",
+            "awayFlag": "🇨🇴",
+            "winner": "home"
+          }
+        ]
+      }
+    ],
+    "sf": [
+      {
+        "id": "sf1",
+        "date": "2026-07-14",
+        "venue_en": "Arlington",
+        "venue_zh": "阿灵顿",
+        "legs": [
+          {
+            "qfId": "wc-fra-mar",
+            "home": "France",
+            "home_zh": "法国",
+            "homeFlag": "🇫🇷",
+            "away": "Morocco",
+            "away_zh": "摩洛哥",
+            "awayFlag": "🇲🇦",
+            "winner": "home"
+          },
+          {
+            "qfId": "wc-esp-bel",
+            "home": "Spain",
+            "home_zh": "西班牙",
+            "homeFlag": "🇪🇸",
+            "away": "Belgium",
+            "away_zh": "比利时",
+            "awayFlag": "🇧🇪",
+            "winner": "home"
+          }
+        ]
+      },
+      {
+        "id": "sf2",
+        "date": "2026-07-15",
+        "venue_en": "Atlanta",
+        "venue_zh": "亚特兰大",
+        "legs": [
+          {
+            "qfId": "wc-nor-eng",
+            "home": "Norway",
+            "home_zh": "挪威",
+            "homeFlag": "🇳🇴",
+            "away": "England",
+            "away_zh": "英格兰",
+            "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+            "winner": "away"
+          },
+          {
+            "qfId": "wc-arg-sui",
+            "home": "Argentina",
+            "home_zh": "阿根廷",
+            "homeFlag": "🇦🇷",
+            "away": "Switzerland",
+            "away_zh": "瑞士",
+            "awayFlag": "🇨🇭",
+            "winner": "home"
+          }
+        ]
+      }
+    ]
+  }
+}

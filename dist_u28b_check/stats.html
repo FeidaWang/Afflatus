@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<!-- Google tag (gtag.js) — deferred to idle, same pattern as every sub-page. -->
+<script>
+(function(){
+  function loadGtag(){
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', 'G-M078NTBWRF');
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
+    document.head.appendChild(s);
+  }
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
+  else setTimeout(loadGtag, 2000);
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Afflatus · Stats — 竞猜战绩存档</title>
+<meta name="description" content="Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 全部预测的命中率、Wilson 置信区间、Brier 评分、可靠性校准图与 bootstrap 重采样，数据全部可回溯。FIFA 世界杯 2026 决赛后归档。">
+<meta name="theme-color" content="#070a12">
+<link rel="canonical" href="https://feida.au/stats.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Afflatus">
+<meta property="og:title" content="Project Afflatus · Stats — 竞猜战绩存档">
+<meta property="og:description" content="MSI 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。">
+<meta property="og:url" content="https://feida.au/stats.html">
+<meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/page-turn.css">
+<style>
+:root{--bg:#070a12;--panel:#0d1220;--line:rgba(154,229,255,.16);--ink:#dce8f2;--dim:#8fa3b8;--teal:#4fd6c4;--gold:#e8ad6f;--red:#e0596b;--green:#57c98a;--mono:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--mono);min-height:100vh}
+.wrap{max-width:1020px;margin:0 auto;padding:28px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+.brand{display:flex;flex-direction:column;color:var(--ink);text-decoration:none}
+.brand b{letter-spacing:.28em;font-size:15px}
+.brand small{color:var(--dim);font-size:10px;letter-spacing:.18em}
+.nav{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.nav a{color:var(--dim);text-decoration:none;font-size:12px;letter-spacing:.08em}
+.nav a:hover,.nav a.active{color:var(--teal)}
+.lang-toggle{background:none;border:1px solid var(--line);color:var(--dim);font:600 11px/1 var(--mono);padding:7px 10px;cursor:pointer;border-radius:2px}
+.hero h1{font-size:clamp(22px,4vw,34px);letter-spacing:.04em;line-height:1.25}
+.hero .sub{color:var(--dim);font-size:13px;margin-top:10px;max-width:760px}
+.band{margin:44px 0 18px;padding:10px 14px;border:1px solid var(--line);background:linear-gradient(90deg,rgba(79,214,196,.10),transparent);letter-spacing:.14em;font-size:13px;position:relative;overflow:hidden}
+.band::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(79,214,196,.08) 50%,transparent 70%);transform:translateX(-100%);animation:sweep 5s ease-in-out infinite}
+@keyframes sweep{0%,60%{transform:translateX(-100%)}90%,100%{transform:translateX(100%)}}
+.band span{color:var(--teal)}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0 8px}
+.stat{border:1px solid var(--line);background:var(--panel);padding:14px 14px 12px;border-radius:2px;transition:border-color .2s,box-shadow .2s}
+.stat:hover{border-color:rgba(79,214,196,.5);box-shadow:0 0 18px rgba(79,214,196,.10)}
+.stat b{display:block;font-size:24px;color:var(--teal)}
+.stat.gold b{color:var(--gold)} .stat.warn b{color:var(--red)}
+.stat small{color:var(--dim);font-size:10.5px;letter-spacing:.06em;display:block;line-height:1.5}
+.chart-card{border:1px solid var(--line);background:var(--panel);padding:16px;border-radius:2px;margin-top:14px;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.chart-card.in{opacity:1;transform:none}
+.chart-card h3{font-size:13px;letter-spacing:.1em;margin-bottom:4px}
+.chart-card .note{color:var(--dim);font-size:11px;margin-bottom:10px}
+.chart-card svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;color:var(--dim);font-size:11px}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:1px;vertical-align:-1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.bar-hit{cursor:pointer;transition:filter .15s}
+.bar-hit:hover{filter:brightness(1.35) drop-shadow(0 0 6px rgba(154,229,255,.45))}
+.tooltip{position:fixed;z-index:60;pointer-events:none;background:rgba(4,8,14,.96);border:1px solid rgba(154,229,255,.35);padding:9px 11px;font-size:11.5px;line-height:1.6;border-radius:2px;max-width:280px;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;transition:opacity .12s}
+.tooltip.show{opacity:1}
+.tooltip b{color:var(--teal)}
+.drawer{margin-top:10px;border:1px dashed rgba(154,229,255,.25);background:rgba(154,229,255,.04);padding:12px 14px;font-size:12.5px;display:none}
+.drawer.show{display:block}
+.drawer .hd{color:var(--teal);letter-spacing:.06em;margin-bottom:4px;font-size:12px}
+.drawer .rsn{color:var(--dim)}
+.ctl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 4px;font-size:12px}
+.ctl input[type=range]{flex:1;min-width:140px;accent-color:var(--teal)}
+.ctl .val{color:var(--gold);min-width:44px;text-align:right}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
+.readout div{border:1px solid rgba(154,229,255,.10);padding:8px 10px;font-size:11px;color:var(--dim)}
+.readout b{display:block;font-size:16px;color:var(--ink)}
+.btn{background:none;border:1px solid rgba(79,214,196,.45);color:var(--teal);font:600 11px/1 var(--mono);letter-spacing:.1em;padding:9px 14px;cursor:pointer;border-radius:2px;transition:background .15s,box-shadow .15s}
+.btn:hover{background:rgba(79,214,196,.12);box-shadow:0 0 14px rgba(79,214,196,.2)}
+.btn:disabled{opacity:.45;cursor:default}
+.pick-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(154,229,255,.10);font-size:12.5px}
+.pick-row:last-child{border-bottom:none}
+.pick-row .bar{flex:1;height:10px;background:rgba(154,229,255,.08);border-radius:1px;overflow:hidden}
+.pick-row .bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.pick-row .pct{width:44px;text-align:right;color:var(--dim)}
+.pick-row .who{width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick-row.won .who{color:var(--green)}
+.pick-row.lost .who{color:var(--dim);text-decoration:line-through}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.tbl th,.tbl td{border:1px solid rgba(154,229,255,.10);padding:7px 9px;text-align:left}
+.tbl th{color:var(--dim);font-weight:600;letter-spacing:.06em;background:rgba(154,229,255,.04)}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:rgba(79,214,196,.06)}
+.ok{color:var(--green)} .bad{color:var(--red)} .star{color:var(--gold)}
+.tbl-wrap{overflow-x:auto}
+.method{margin-top:14px;border:1px solid rgba(154,229,255,.10);background:rgba(154,229,255,.03);padding:14px 16px;font-size:11.5px;color:var(--dim)}
+.method b{color:var(--ink)}
+.method li{margin:4px 0 4px 18px}
+.placeholder{border:1px dashed rgba(232,173,111,.4);background:rgba(232,173,111,.05);padding:22px;border-radius:2px;color:var(--dim);font-size:13px;margin-top:14px}
+.placeholder b{color:var(--gold)}
+.foot{margin-top:60px;color:var(--dim);font-size:11px;letter-spacing:.1em}
+.disclaim{margin-top:10px;color:var(--dim);font-size:11px}
+@media (prefers-reduced-motion: reduce){
+  .band::after{animation:none}
+  .chart-card{opacity:1;transform:none;transition:none}
+  .pick-row .bar i{transition:none}
+}
+</style>
+  <script type="module" crossorigin src="/assets/stats-BN_wOcy1.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-Dezn_h7o.js">
+  <link rel="modulepreload" crossorigin href="/assets/i18n-CxvRu0Lw.js">
+  <link rel="modulepreload" crossorigin href="/assets/transition-DEDkLhMz.js">
+  <link rel="modulepreload" crossorigin href="/assets/page-turn-CHiOPqIZ.js">
+</head>
+<body class="stats-page" data-prev="/games.html" data-next="/horoscope.html">
+
+<nav class="page-turn-controls" aria-label="Page navigation">
+  <a class="page-turn" href="/games.html" data-page-turn="prev" aria-label="Back to games">←</a>
+  <a class="page-turn" href="/horoscope.html" data-page-turn="next" aria-label="Continue to horoscope">→</a>
+</nav>
+
+<main class="wrap">
+  <header class="top">
+    <a class="brand" href="/"><b>AFFLATUS</b><small data-en="STATS · PREDICTION ARCHIVE" data-zh="战绩 · 竞猜存档">STATS · PREDICTION ARCHIVE</small></a>
+    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+      <button class="lang-toggle" type="button">中文</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1 data-en="Prediction Track Record — every call, on the record." data-zh="竞猜战绩存档——每一次预测，都留痕可查。">Prediction Track Record — every call, on the record.</h1>
+    <p class="sub" data-en="Full archives of Fable 5's tournament predictions, scored with proper statistics: Wilson intervals, exact binomial tests, Brier scores, reliability diagrams and bootstrap resampling — computed live from the same public JSON the event pages used. Entertainment only, never betting advice." data-zh="Fable 5 赛事预测的完整存档，用正经统计方法打分：Wilson 置信区间、精确二项检验、Brier 评分、可靠性校准图、bootstrap 重采样——全部由赛事页同一份公开 JSON 实时计算。仅供娱乐，不构成博彩建议。">Full archives of Fable 5's tournament predictions, scored with proper statistics: Wilson intervals, exact binomial tests, Brier scores, reliability diagrams and bootstrap resampling — computed live from the same public JSON the event pages used. Entertainment only, never betting advice.</p>
+  </section>
+
+  <!-- ================= MSI 2026 ================= -->
+  <section id="msi">
+    <div class="band" data-i18n-html data-en="LEAGUE OF LEGENDS — <span>MSI 2026 · archived</span>" data-zh="英雄联盟 — <span>MSI 2026 · 已归档</span>">LEAGUE OF LEGENDS — <span>MSI 2026 · archived</span></div>
+
+    <div class="strip" id="msiStrip"></div>
+
+    <div class="chart-card">
+      <h3 data-en="Per-series calls: confidence vs. outcome" data-zh="逐场预测：置信度与结果">Per-series calls: confidence vs. outcome</h3>
+      <p class="note" data-en="Each bar is one series; height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline. Hover for detail, click (or tap a table row below) to read the original reasoning." data-zh="每根柱是一场系列赛；高度 = 预测时给出的置信度。绿 = 胜负判对，红 = 判错，金 ★ = 比分全中。悬停看详情，点击柱子（或下方表格行）展开当时的判断依据。">Each bar is one series; height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline. Hover for detail, click (or tap a table row below) to read the original reasoning.</p>
+      <div id="msiBars"></div>
+      <div class="legend"><span><i style="background:var(--green)"></i><span data-en="correct" data-zh="判对">correct</span></span><span><i style="background:var(--red)"></i><span data-en="wrong" data-zh="判错">wrong</span></span><span><i style="background:var(--gold)"></i><span data-en="exact score" data-zh="比分全中">exact score</span></span></div>
+      <div class="drawer" id="msiDrawer"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Cumulative hit rate · Wilson 95% band" data-zh="累计命中率 · Wilson 95% 置信带">Cumulative hit rate · Wilson 95% band</h3>
+        <p class="note" data-en="Running outcome accuracy after each resolved series. The shaded band is the Wilson 95% interval — with n this small it stays wide, and that width is the honest headline." data-zh="每判定一场后的累计胜负命中率。阴影带是 Wilson 95% 置信区间——样本这么小时它注定很宽，这个宽度本身就是最诚实的结论。">Running outcome accuracy after each resolved series. The shaded band is the Wilson 95% interval — with n this small it stays wide, and that width is the honest headline.</p>
+        <div id="msiCurve"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="Reliability diagram (calibration)" data-zh="可靠性校准图">Reliability diagram (calibration)</h3>
+        <p class="note" data-en="Stated confidence (x) vs. observed hit rate (y), grouped in bins. Perfect calibration sits on the diagonal; whiskers are per-bin Wilson 95% intervals; point size = bin count." data-zh="预测置信度（横轴）对实际命中率（纵轴），分组统计。完美校准落在对角线上；须线为组内 Wilson 95% 区间；点的大小 = 组内场次。">Stated confidence (x) vs. observed hit rate (y), grouped in bins. Perfect calibration sits on the diagonal; whiskers are per-bin Wilson 95% intervals; point size = bin count.</p>
+        <div id="msiCalib"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Confidence-threshold explorer" data-zh="置信度阈值探索器">Confidence-threshold explorer</h3>
+        <p class="note" data-en="&quot;Would only betting the high-conviction calls have done better?&quot; Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live. A demo of selection effects — shrinking n widens the interval faster than the rate improves." data-zh="「只押高置信度的预测会不会更准？」拖动阈值，n、命中率、Wilson 区间与 Brier 评分实时重算。这是一个选择效应演示——n 缩小让区间变宽的速度，比命中率提升的速度更快。">"Would only betting the high-conviction calls have done better?" Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live. A demo of selection effects — shrinking n widens the interval faster than the rate improves.</p>
+        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="thSlider" min="50" max="80" step="1" value="50"><span class="val" id="thVal">50%</span></div>
+        <div class="readout" id="thReadout"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="Bootstrap resampling" data-zh="Bootstrap 重采样">Bootstrap resampling</h3>
+        <p class="note" data-en="2,000 resamples (with replacement) of the resolved calls: the distribution of hit rates you'd see if this exact skill level replayed the tournament. Gold lines mark the 2.5% / 97.5% percentiles." data-zh="对已判定的预测做 2000 次有放回重采样：同一水平重打一遍比赛，命中率会落在什么分布。金线为 2.5% / 97.5% 分位。">2,000 resamples (with replacement) of the resolved calls: the distribution of hit rates you'd see if this exact skill level replayed the tournament. Gold lines mark the 2.5% / 97.5% percentiles.</p>
+        <button class="btn" id="bootBtn" data-en="RUN ×2000" data-zh="重采样 ×2000">RUN ×2000</button>
+        <div id="bootHist"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Champion bets (pre-final odds board)" data-zh="冠军押注（决赛前概率盘）">Champion bets (pre-final odds board)</h3>
+        <p class="note" id="msiChampNote" data-en="Stated probabilities before the Grand Final." data-zh="总决赛开打前给出的概率。">Stated probabilities before the Grand Final.</p>
+        <div id="msiChamps"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="Finals MVP board" data-zh="决赛 MVP 概率盘">Finals MVP board</h3>
+        <p class="note" data-en="Stated probabilities; scored against the official Finals MVP." data-zh="预测概率，与官方决赛 MVP 对照。">Stated probabilities; scored against the official Finals MVP.</p>
+        <div id="msiMvps"></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3 data-en="Full series log" data-zh="全部系列赛判定记录">Full series log</h3>
+      <div class="tbl-wrap"><table class="tbl" id="msiLog"></table></div>
+    </div>
+
+    <div class="method">
+      <b data-en="Methodology (honest small print)" data-zh="方法论（诚实的小字）">Methodology (honest small print)</b>
+      <ul>
+        <li data-en="Wilson score interval instead of the normal approximation — the standard choice for small-n binomial proportions." data-zh="用 Wilson 得分区间而非正态近似——小样本二项比例的标准做法。">Wilson score interval instead of the normal approximation — the standard choice for small-n binomial proportions.</li>
+        <li data-en="Exact two-sided binomial test against p=0.5: with n this small, &quot;beats a coin flip&quot; is a claim the data cannot yet support either way." data-zh="对 p=0.5 做精确双侧二项检验：样本这么小，「优于抛硬币」这个命题目前正反都无法成立。">Exact two-sided binomial test against p=0.5: with n this small, "beats a coin flip" is a claim the data cannot yet support either way.</li>
+        <li data-en="Brier score = mean (stated probability − outcome)²; lower is better. Skill score BSS = 1 − BS/0.25 compares against an always-50% forecaster." data-zh="Brier 评分 = (预测概率 − 结果)² 的均值，越低越好。技能分 BSS = 1 − BS/0.25，基线是永远给 50% 的预测者。">Brier score = mean (stated probability − outcome)²; lower is better. Skill score BSS = 1 − BS/0.25 compares against an always-50% forecaster.</li>
+        <li data-en="Exact-scoreline hits require the outcome to be correct first — a string coincidence with the winner called wrong does not count." data-zh="比分全中必须以胜负判对为前提——赢家判错、比分字符串巧合相等的不算。">Exact-scoreline hits require the outcome to be correct first — a string coincidence with the winner called wrong does not count.</li>
+        <li data-en="Nothing is re-scored after the fact: this page reads the same public JSON the live pages rendered from." data-zh="事后不重打分：本页读取的就是直播页当时渲染用的同一份公开 JSON。">Nothing is re-scored after the fact: this page reads the same public JSON the live pages rendered from.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= World Cup 2026 (archived after the final) ================= -->
+  <section id="wc">
+    <div class="band" data-i18n-html data-en="FOOTBALL — <span>FIFA World Cup 2026 · pending</span>" data-zh="足球 — <span>FIFA 世界杯 2026 · 待归档</span>">FOOTBALL — <span>FIFA World Cup 2026 · pending</span></div>
+    <div class="placeholder" data-i18n-html data-en="<b>Archives after the Final.</b> Once the champion and the Golden Boot are settled, the World Cup prediction record (52+ scored calls, 71% outcome rate at the quarter-final stage) gets the same treatment here: per-match charts, calibration, and the title/Golden Boot boards. Until then the live page keeps running." data-zh="<b>决赛后归档。</b>待冠军与金靴尘埃落定，世界杯竞猜记录（截至八强已判定 52+ 场、胜负命中率 71%）将在此获得同样处理：逐场图表、置信度校准、冠军与金靴押注盘。在那之前，直播页照常运行。"><b>Archives after the Final.</b> Once the champion and the Golden Boot are settled, the World Cup prediction record (52+ scored calls, 71% outcome rate at the quarter-final stage) gets the same treatment here: per-match charts, calibration, and the title/Golden Boot boards. Until then the live page keeps running.</div>
+  </section>
+
+  <footer class="foot">
+    <b data-en="EVERY CALL ON THE RECORD" data-zh="每一次预测都留痕">EVERY CALL ON THE RECORD</b> — stats.html
+    <p class="disclaim" data-en="Data: /leagues-data.json (and /games-data.json after the WC final) — the exact files the live pages rendered from; nothing is re-scored after the fact. For entertainment only." data-zh="数据源：/leagues-data.json（世界杯决赛后加 /games-data.json）——与直播页同一份文件，事后不重打分。仅供娱乐。">Data: /leagues-data.json (and /games-data.json after the WC final) — the exact files the live pages rendered from; nothing is re-scored after the fact. For entertainment only.</p>
+  </footer>
+</main>
+
+<div class="tooltip" id="tip" role="tooltip" aria-hidden="true"></div>
+
+</body>
+</html>

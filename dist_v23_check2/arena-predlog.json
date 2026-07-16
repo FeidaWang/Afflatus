@@ -1,0 +1,81 @@
+{
+  "updated": "2026-07-08T21:59:02.557Z",
+  "version": 1,
+  "days": [
+    {
+      "date": "2026-07-07",
+      "entries": {
+        "NVDA": {
+          "predOpenPct": -1.8,
+          "predClosePct": -1.2,
+          "actualOpenPct": -0.189,
+          "actualClosePct": 4.383,
+          "dirHit": false
+        },
+        "MU": {
+          "predOpenPct": -5.5,
+          "predClosePct": -3.5,
+          "actualOpenPct": -8.338,
+          "actualClosePct": -3.651,
+          "dirHit": true
+        },
+        "ASML": {
+          "predOpenPct": -3,
+          "predClosePct": -1.8,
+          "actualOpenPct": -5.007,
+          "actualClosePct": -3.091,
+          "dirHit": true
+        },
+        "AVGO": {
+          "predOpenPct": -1.8,
+          "predClosePct": -1,
+          "actualOpenPct": 0.968,
+          "actualClosePct": 3.956,
+          "dirHit": false
+        },
+        "TSM": {
+          "predOpenPct": -1.5,
+          "predClosePct": -0.7,
+          "actualOpenPct": -5.044,
+          "actualClosePct": -3.278,
+          "dirHit": true
+        },
+        "MRVL": {
+          "predOpenPct": -3.8,
+          "predClosePct": -2.5,
+          "actualOpenPct": -9.672,
+          "actualClosePct": -7.045,
+          "dirHit": true
+        },
+        "LITE": {
+          "predOpenPct": -3.2,
+          "predClosePct": -1.8,
+          "actualOpenPct": -5.791,
+          "actualClosePct": -3.303,
+          "dirHit": true
+        },
+        "SNDK": {
+          "predOpenPct": -6,
+          "predClosePct": -4,
+          "actualOpenPct": -8.75,
+          "actualClosePct": -0.989,
+          "dirHit": true
+        },
+        "AMD": {
+          "predOpenPct": -3.5,
+          "predClosePct": -1.5,
+          "actualOpenPct": -8.558,
+          "actualClosePct": -6.276,
+          "dirHit": true
+        },
+        "SMH": {
+          "predOpenPct": -2,
+          "predClosePct": -1.2,
+          "actualOpenPct": -4.794,
+          "actualClosePct": -1.87,
+          "dirHit": true
+        }
+      }
+    }
+  ]
+}

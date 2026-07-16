@@ -1,0 +1,147 @@
+{
+  "updated": "2026-07-07",
+  "version": 1,
+  "day": 2,
+  "season": 1,
+  "lastRunDate": "2026-07-07",
+  "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
+  "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
+  "bench": {
+    "spyPct": 0,
+    "smhPct": 0
+  },
+  "models": {
+    "A": {
+      "promptVersion": "A-v1",
+      "startEquity": 10000,
+      "cash": 6986.8237,
+      "equity": 9810.4237,
+      "dayStartEquity": 10000,
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        },
+        {
+          "day": 1,
+          "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 9810.4237
+        }
+      ],
+      "positions": [
+        {
+          "sym": "AMD",
+          "qty": 3,
+          "avgPx": 552.326,
+          "mkPx": 509.52
+        },
+        {
+          "sym": "TSM",
+          "qty": 3,
+          "avgPx": 452.0159,
+          "mkPx": 431.68
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-07T13:15:00Z",
+          "sym": "AMD",
+          "side": "buy",
+          "qty": 3,
+          "px": 552.326,
+          "fee": 0.0828,
+          "slipBps": 5,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-07T13:15:00Z",
+          "sym": "TSM",
+          "side": "buy",
+          "qty": 3,
+          "px": 452.0159,
+          "fee": 0.0678,
+          "slipBps": 5,
+          "realizedPnl": null
+        }
+      ],
+      "rejections": [],
+      "metrics": {
+        "cumPct": -1.896,
+        "maxDD": -1.896,
+        "hitRate": null,
+        "exposure": 28.8
+      },
+      "review": {
+        "zh": "今日核心AI硬件板块普跌：SNDK -12.5%、TER -12.3%、ALAB -11.5%、WDC -10.3%、INTC -10.2%、MU -8.4%、AMD -7.7%，触发因素是三星财报后获利了结叠加HBM供给/AI资本开支可持续性担忧，资金明显轮动至软件/大盘科技（CRM +2.8%、ADBE +2.3%、MSFT +1.9%）。已持仓AMD浮亏7.75%，逼近8%止损线但未触发。今日调整：不追空不抄底，保持观望，等待止损自动清仓或明朗信号，避免在高波动轮动日新增风险。",
+        "en": "Broad core-AI-hardware rout today (SNDK -12.5%, TER -12.3%, ALAB -11.5%, WDC -10.3%, INTC -10.2%, MU -8.4%, AMD -7.7%) driven by Samsung-earnings profit-taking plus HBM supply and AI-capex sustainability worries, with rotation into software/megacap (CRM, ADBE, MSFT up). Existing AMD position is down 7.75%, near but not past the 8% stop. Adjustment: holding rather than chasing either direction on a high-volatility rotation day; letting the stop-loss sweep handle AMD if it breaches."
+      }
+    },
+    "B": {
+      "promptVersion": "B-v1",
+      "startEquity": 10000,
+      "cash": 6233.0587,
+      "equity": 10012.4087,
+      "dayStartEquity": 10000,
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 10012.4087
+        }
+      ],
+      "positions": [
+        {
+          "sym": "MSFT",
+          "qty": 5,
+          "avgPx": 386.8173,
+          "mkPx": 388.84
+        },
+        {
+          "sym": "GOOGL",
+          "qty": 5,
+          "avgPx": 366.5333,
+          "mkPx": 367.03
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-07T13:20:00Z",
+          "sym": "MSFT",
+          "side": "buy",
+          "qty": 5,
+          "px": 386.8173,
+          "fee": 0.0967,
+          "slipBps": 2,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-07T13:20:00Z",
+          "sym": "GOOGL",
+          "side": "buy",
+          "qty": 5,
+          "px": 366.5333,
+          "fee": 0.0916,
+          "slipBps": 2,
+          "realizedPnl": null
+        }
+      ],
+      "rejections": [],
+      "metrics": {
+        "cumPct": 0.124,
+        "maxDD": 0,
+        "hitRate": null,
+        "exposure": 37.7
+      },
+      "review": {
+        "zh": "今日半导体板块剧烈调整：三星财报超预期却引发获利了结，SK海力士放缓HBM扩产触发内存供给过剩担忧，叠加美联储鹰派立场，MU/INTC/TER/ALAB单日跌6%-11.5%。MSFT/GOOGL等软件权重股逆势收红。Book B今早已在周二窗口建仓MSFT、GOOGL，现金充裕。这是估值驱动的单日波动而非基本面破位，保守策略不追跌接刀，本次不加仓，维持观察，换手率保持低位。",
+        "en": "Sharp semis selloff today: Samsung's beat triggered profit-taking, SK Hynix HBM capex slowdown revived memory-oversupply fears, plus a hawkish new Fed chair - MU, INTC, TER, ALAB down 6-11.5%. Software-leaning megacaps (MSFT, GOOGL) held up. Book B already opened MSFT/GOOGL this morning's Tuesday window. This is a valuation reset, not a fundamental break, so no reason to chase the dip same-day. Standing pat keeps turnover low."
+      }
+    }
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "updated": "2026-07-14",
+  "version": 1,
+  "day": 7,
+  "season": 1,
+  "lastRunDate": "2026-07-14",
+  "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
+  "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
+  "bench": {
+    "spyPct": 0,
+    "smhPct": 0
+  },
+  "models": {
+    "A": {
+      "promptVersion": "A-v1",
+      "startEquity": 10000,
+      "cash": 6524.9825,
+      "equity": 9870.2625,
+      "dayStartEquity": 9871.2521,
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        },
+        {
+          "day": 1,
+          "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 9810.4237
+        },
+        {
+          "day": 3,
+          "equity": 9848.7037
+        },
+        {
+          "day": 4,
+          "equity": 9986.3258
+        },
+        {
+          "day": 5,
+          "equity": 9894.0621
+        },
+        {
+          "day": 6,
+          "equity": 9870.2625
+        }
+      ],
+      "positions": [
+        {
+          "sym": "AMD",
+          "qty": 3,
+          "avgPx": 552.326,
+          "mkPx": 551.71
+        },
+        {
+          "sym": "NVDA",
+          "qty": 4,
+          "avgPx": 207.6338,
+          "mkPx": 207.9
+        },
+        {
+          "sym": "CRM",
+          "qty": 5,
+          "avgPx": 171.7959,
+          "mkPx": 171.71
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-07T13:15:00Z",
+          "sym": "AMD",
+          "side": "buy",
+          "qty": 3,
+          "px": 552.326,
+          "fee": 0.0828,
+          "slipBps": 5,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-07T13:15:00Z",
+          "sym": "TSM",
+          "side": "buy",
+          "qty": 3,
+          "px": 452.0159,
+          "fee": 0.0678,
+          "slipBps": 5,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-09T21:41:10.498Z",
+          "sym": "MU",
+          "side": "buy",
+          "qty": 1,
+          "px": 1014.9772,
+          "fee": 0.0507,
+          "slipBps": 5,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-10T14:38:03.704Z",
+          "sym": "TSM",
+          "side": "sell",
+          "qty": 3,
+          "px": 434.3127,
+          "fee": 0.0651,
+          "slipBps": 5,
+          "realizedPnl": -53.1747
+        },
+        {
+          "ts": "2026-07-10T14:38:03.704Z",
+          "sym": "NVDA",
+          "side": "buy",
+          "qty": 4,
+          "px": 207.6338,
+          "fee": 0.0415,
+          "slipBps": 5,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-13T21:41:41.577Z",
+          "sym": "MU",
+          "side": "sell",
+          "qty": 1,
+          "px": 939.9598,
+          "fee": 0.047,
+          "slipBps": 5,
+          "realizedPnl": -75.0644
+        },
+        {
+          "ts": "2026-07-13T21:41:41.577Z",
+          "sym": "CRM",
+          "side": "buy",
+          "qty": 5,
+          "px": 171.7959,
+          "fee": 0.0429,
+          "slipBps": 5,
+          "realizedPnl": null
+        }
+      ],
+      "rejections": [],
+      "metrics": {
+        "cumPct": -1.297,
+        "maxDD": -1.896,
+        "hitRate": 0,
+        "exposure": 33.9
+      },
+      "review": {
+        "zh": "存储/半导体板块因HBM减产预期与AI泡沫估值担忧全线杀跌（SNDK-8%、ALAB-8%、MRVL-5%、MU-4%），企业软件因中美元首会晤缓和贸易紧张、Figma/ServiceNow验证AI变现能力大涨（CRM+5%、ADBE+4%）。践行上次提出的纪律：MU连续多日走弱、已逼近止损线（成本价-7.3%），不再等它触发强制止损，主动卖出换入今日催化最明确的CRM。AMD、NVDA接近成本价，暂不动。",
+        "en": "Hardware/memory sold off broadly on HBM-cut and AI-bubble valuation fears (SNDK -8%, ALAB -8%, MRVL -5%, MU -4%), while enterprise software rallied on eased US-China trade tension plus AI-monetization proof points from Figma/ServiceNow (CRM +5%, ADBE +4%). Following through on last run's discipline pledge: MU has drifted for days near the -8% stop, so I exited proactively rather than waiting for a forced stop, rotating into CRM, today's clearest-catalyst mover. AMD/NVDA near cost, holding."
+      }
+    },
+    "B": {
+      "promptVersion": "B-v1",
+      "startEquity": 10000,
+      "cash": 6233.0587,
+      "equity": 9959.3587,
+      "dayStartEquity": 9959.3587,
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 10012.4087
+        },
+        {
+          "day": 3,
+          "equity": 9959.3587
+        },
+        {
+          "day": 7,
+          "equity": 9959.3587
+        }
+      ],
+      "positions": [
+        {
+          "sym": "MSFT",
+          "qty": 5,
+          "avgPx": 386.8173,
+          "mkPx": 383.34
+        },
+        {
+          "sym": "GOOGL",
+          "qty": 5,
+          "avgPx": 366.5333,
+          "mkPx": 361.92
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-07T13:20:00Z",
+          "sym": "MSFT",
+          "side": "buy",
+          "qty": 5,
+          "px": 386.8173,
+          "fee": 0.0967,
+          "slipBps": 2,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-07T13:20:00Z",
+          "sym": "GOOGL",
+          "side": "buy",
+          "qty": 5,
+          "px": 366.5333,
+          "fee": 0.0916,
+          "slipBps": 2,
+          "realizedPnl": null
+        }
+      ],
+      "rejections": [],
+      "metrics": {
+        "cumPct": -0.406,
+        "maxDD": -0.53,
+        "hitRate": null,
+        "exposure": 37.4
+      },
+      "review": {
+        "zh": "本次运行遇到报价接口配置问题：仅10/30标的（核心AI硬件+SMH）成功取得报价，持仓中的MSFT、GOOGL及其余大盘科技/基准标的均无法取价，需人工核查报价工具配置。缺乏持仓现价，无法做出可靠的减仓判断；即便今日是可开仓窗口（周二），also缺乏对大盘科技板块的有效报价支持新建仓提案。新闻面：AI硬件板块本周大幅下挫（半导体指数年内仍+47%但短期修正逾万亿美元市值），微软下财年资本开支上调至1900亿美元引发自由现金流担忧，Alphabet同步上调指引至1800-1900亿美元且获市场正面反馈。数据缺口下选择空仓不动，维持低换手率纪律，等待下次报价恢复正常后再评估。",
+        "en": "This run hit a quote-fetch config issue: only 10/30 universe symbols (core AI-hardware + SMH) returned prices; MSFT and GOOGL, both current holdings, plus the rest of megacap-tech/benchmarks, could not be priced — needs a manual check on the quote tool config. Without current position prices I can't make a reliable sell call, and even though today is a valid Tue open-window, I lack price coverage to justify a new buy. Context: AI-hardware sold off sharply this week despite +47% YTD; Microsoft raised FY26 capex guidance to $190B (raising FCF concerns) while Alphabet raised its own capex guide to $180-190B and was rewarded by the market. Given the data gap, doing nothing and preserving low-turnover discipline until pricing is restored."
+      }
+    }
+  }
+}

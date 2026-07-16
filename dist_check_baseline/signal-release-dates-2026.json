@@ -1,0 +1,37 @@
+{
+  "updated": "2026-07-04",
+  "version": 1,
+  "note_en": "WebSearch/fetch-verified 2026 US macro release calendar, used by the signal-warsh scheduled task as a no-op guard: only run in 'event' mode on a date listed below (plus the day after FOMC decisions, for reaction/repricing follow-through), otherwise fall back to 'weekly' mode on Fridays or skip. Verified 2026-07-04 directly against the official schedule pages (not a search-summary paraphrase) — see verifiedVia. Re-verify before reusing past 2026-12-31.",
+  "note_zh": "WebSearch/直接抓取核实的 2026 年美国宏观数据发布日历，供 signal-warsh 定时任务作 no-op 门禁：只有命中下列日期（含 FOMC 决议后一天，用于捕捉后续repricing）才跑 event 模式，否则周五走 weekly 模式，其余日期跳过。2026-07-04 直接核对官方发布日程页面（不是搜索引擎摘要转述）——来源见 verifiedVia。2026-12-31 之后复用前需重新核实。",
+  "verifiedVia": [
+    "https://www.bls.gov/schedule/news_release/cpi.htm",
+    "https://www.bls.gov/schedule/news_release/empsit.htm",
+    "https://www.bea.gov/news/schedule",
+    "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+  ],
+  "cpi": [
+    "2026-01-13", "2026-02-13", "2026-03-11", "2026-04-10", "2026-05-12", "2026-06-10",
+    "2026-07-14", "2026-08-12", "2026-09-11", "2026-10-14", "2026-11-10", "2026-12-10"
+  ],
+  "nfp": [
+    "2026-01-09", "2026-02-11", "2026-03-06", "2026-04-03", "2026-05-08", "2026-06-05", "2026-07-02",
+    "2026-08-07", "2026-09-04", "2026-10-02", "2026-11-06", "2026-12-04"
+  ],
+  "pce": [
+    "2026-07-30", "2026-08-26", "2026-09-30", "2026-10-29", "2026-11-25", "2026-12-23"
+  ],
+  "pce_note_en": "Only Jul-Dec 2026 populated (dates before today's WebSearch-verification date, 2026-07-04, are irrelevant to the forward-looking guard and weren't independently re-confirmed).",
+  "pce_note_zh": "只填了 7-12 月（核实日 2026-07-04 之前的日期对前瞻性门禁没有意义，未单独复核）。",
+  "fomc": [
+    { "meetingDates": "2026-01-27/28", "decisionDate": "2026-01-28", "sep": false },
+    { "meetingDates": "2026-03-17/18", "decisionDate": "2026-03-18", "sep": true },
+    { "meetingDates": "2026-04-28/29", "decisionDate": "2026-04-29", "sep": false },
+    { "meetingDates": "2026-06-16/17", "decisionDate": "2026-06-17", "sep": true },
+    { "meetingDates": "2026-07-28/29", "decisionDate": "2026-07-29", "sep": false },
+    { "meetingDates": "2026-09-15/16", "decisionDate": "2026-09-16", "sep": true },
+    { "meetingDates": "2026-10-27/28", "decisionDate": "2026-10-28", "sep": false },
+    { "meetingDates": "2026-12-08/09", "decisionDate": "2026-12-09", "sep": true }
+  ],
+  "fomc_note_en": "sep=true meetings carry a Summary of Economic Projections (dot plot) + are typically the higher-weight ones for the hawk-dove compass. Every meeting (sep or not) has a 2:00 PM ET statement + 2:30 PM ET press conference.",
+  "fomc_note_zh": "sep=true 的会议带点阵图(SEP)，对鹰鸽罗盘权重通常更高。无论是否 sep，每次会议都在美东下午 2:00 发声明 + 2:30 开新闻发布会。"
+}

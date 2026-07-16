@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
+     fetch + init only runs once the browser reports idle time (or after a
+     3s/2s fallback timeout for browsers without requestIdleCallback), so it
+     doesn't compete with render-critical work during first paint. Same
+     dataLayer/gtag('config',...) calls as before, just deferred. -->
+<script>
+(function(){
+  function loadGtag(){
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', 'G-M078NTBWRF');
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
+    document.head.appendChild(s);
+  }
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
+  else setTimeout(loadGtag, 2000);
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Afflatus · Games — World Cup Prediction Arena</title>
+<meta name="description" content="A cyberpunk World Cup 2026 prediction arena: pick match winners before kickoff against Fable 5 Max, with daily champion and best-player probabilities. For fun, not betting advice.">
+<meta name="theme-color" content="#07060f">
+<link rel="canonical" href="https://feida.au/games.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Afflatus">
+<meta property="og:title" content="Project Afflatus · Games — World Cup Prediction">
+<meta property="og:description" content="Cyberpunk World Cup 2026 prediction vs Fable 5 Max + daily champion / best-player odds. For fun, not betting advice.">
+<meta property="og:url" content="https://feida.au/games.html">
+<meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/page-turn.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles/games.css">
+  <script type="module" crossorigin src="/assets/games-CcxuGmbP.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/transition-DwfPyu3z.js">
+  <link rel="modulepreload" crossorigin href="/assets/audio-Bf-hWNJ5.js">
+  <link rel="modulepreload" crossorigin href="/assets/clock-aibJyTP1.js">
+  <link rel="modulepreload" crossorigin href="/assets/page-turn-3vyCtCce.js">
+  <link rel="modulepreload" crossorigin href="/assets/provenanceBadge-Bivbtrl4.js">
+  <link rel="modulepreload" crossorigin href="/assets/trackRecord-42i8x9R7.js">
+</head>
+<body class="games-page" data-prev="/signal.html" data-next="/league.html">
+<div class="cyb" aria-hidden="true"><div class="glow"></div><div class="grid"></div><div class="scan"></div><div class="bar"></div></div>
+
+<nav class="page-turn-controls" aria-label="Page navigation">
+  <a class="page-turn" href="/signal.html" data-page-turn="prev" aria-label="Back to signal">←</a>
+  <a class="page-turn" href="/league.html" data-page-turn="next" aria-label="Continue to leagues">→</a>
+</nav>
+
+<main class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="mk" aria-hidden="true">⚽</div>
+      <div>
+        <h1><span>WORLD CUP</span> PREDICTION ARENA</h1>
+        <p data-en="FIFA 2026 · Fable 5 Max Predictions &amp; Odds" data-zh="2026 世界杯 · Fable 5 Max 预测与赔率">FIFA 2026 · Fable 5 Max Predictions &amp; Odds</p>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+      <button class="lang-toggle" type="button">中文</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="kicker" data-en="// FABLE 5 MAX PREDICTIONS · UPDATED DAILY" data-zh="// FABLE 5 MAX 预测 · 每日更新">// FABLE 5 MAX PREDICTIONS · UPDATED DAILY</div>
+    <h2 data-en="CALL THE CUP" data-zh="预言冠军之路">CALL THE CUP</h2>
+    <p class="brief" data-en="Fable 5 Max's live predictions for every World Cup 2026 knockout match — win/draw/loss calls with reasoning, real betting odds, and a scratch card hiding the exact predicted scoreline. Champion and best-player probabilities refreshed daily." data-zh="Fable 5 Max 对每场 2026 世界杯淘汰赛的实时预测——胜平负研判附推理，真实赔率，以及隐藏精准比分预测的刮刮卡。夺冠与最佳球员概率每日更新。">Fable 5 Max's live predictions for every World Cup 2026 knockout match — win/draw/loss calls with reasoning, real betting odds, and a scratch card hiding the exact predicted scoreline. Champion and best-player probabilities refreshed daily.</p>
+    <p class="note"><b>⚠</b> <span id="gnote">…</span></p>
+  </section>
+
+  <section class="record" id="record" aria-label="Fable track record"></section>
+
+  <div class="cols">
+    <section class="panel">
+      <h3 data-en="CHAMPION ODDS" data-zh="夺冠概率"><span class="sub" data-en="updated" data-zh="更新于">updated</span></h3>
+      <div class="in" id="champs"></div>
+    </section>
+    <section class="panel">
+      <h3 data-en="BEST PLAYER / GOLDEN BOOT" data-zh="最佳球员 / 金靴"><span class="sub" id="updated"></span></h3>
+      <div class="in" id="players"></div>
+    </section>
+  </div>
+
+  <div class="sec-label" data-en="FIXTURES · ODDS &amp; PREDICTIONS" data-zh="赛程 · 赔率与预测">FIXTURES · ODDS &amp; PREDICTIONS</div>
+  <div class="fxs" id="fixtures"><div class="empty">…</div></div>
+
+  <div class="sec-label" id="bracketLabel" data-en="PATH TO THE FINAL" data-zh="夺冠之路">PATH TO THE FINAL</div>
+  <div id="bracket"><div class="empty">…</div></div>
+
+  <footer class="foot" data-i18n-html data-en="<b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · odds from FanDuel/bet365 · public/games-data.json" data-zh="<b>竞猜竞技场</b> · 仅供娱乐 · 非博彩建议 · 赔率来源 FanDuel/bet365 · public/games-data.json"><b>PREDICTION ARENA</b> · FOR ENTERTAINMENT ONLY · NOT BETTING ADVICE · odds from FanDuel/bet365 · public/games-data.json</footer>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,269 @@
+/* ===== self-hosted fonts (OFL), shared by all sub-pages =====
+   Visitors without the commercial fonts get Anton / JetBrains Mono
+   instead of Impact / Courier fallbacks. local() stays first so
+   machines that own the real fonts keep using them. */
+@font-face{font-family:"Marathon Shapiro 65";src:local("Marathon Shapiro 65"),local("Shapiro 65"),local("Shapiro 65 Heavy"),url("/assets/fonts/anton-latin-400-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 749;font-display:swap}
+@font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-800-normal.woff2") format("woff2");font-weight:750 950;font-display:swap}
+@font-face{font-family:"KH Interference";src:local("KH Interference"),local("Interference"),url("/assets/fonts/jetbrains-mono-latin-800-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:local("JetBrains Mono"),url("/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 950;font-display:swap}
+
+/* Cross-document View Transitions (native browser crossfade) — opt in on
+   every page so navigations NOT intercepted by transition.js (typed URL,
+   bookmarks, back/forward, middle-click-then-switch-back) get a smooth
+   fade instead of an instant white flash. Navigations transition.js DOES
+   intercept already play their own richer per-destination canvas+audio FX
+   (see public/transition.js) and set html.vt-suppress right before the
+   real navigation fires, so the two effects don't stack. Support is
+   feature-detected by browsers that don't understand @view-transition
+   (it's simply ignored) — no fallback needed. */
+@view-transition{navigation:auto}
+html.vt-suppress::view-transition-old(root),
+html.vt-suppress::view-transition-new(root){
+  animation:none!important;
+  mix-blend-mode:normal!important;
+}
+
+/* "Labs" nav dropdown (Games/Novels today; future seasonal/experimental
+   pages join here — see src/lib/nav.js's SITE `group:'labs'` tag). The
+   trigger stays a real, in-place `.nav a` element, so each page's own
+   `.nav a` / `.nav a:hover` / `.nav a.active` rules already style it for
+   free. The PANEL, however, is portaled to a direct child of <body> by
+   nav.js and positioned via JS (top/right set inline) rather than nested
+   under .nav-labs — this page's header (.top) applies a decorative
+   clip-path that would otherwise slice the panel away, and being outside
+   the header also means it never gets capped by the header's own z-index.
+   Because the panel is no longer a DOM descendant of `.nav`, it can't
+   inherit that page's `.nav a` look for free — every property below is
+   driven by `--labs-*` custom properties, defaulted here to a neutral
+   dark-glass look and overridden per page (by body class) further down
+   to exactly match each page's real nav link styling: font, tracking,
+   ink, border, hover and active treatment. Open state is driven entirely
+   by the .open class (JS), not :hover/:focus-within, since the panel is
+   no longer a DOM descendant of the trigger. */
+.nav-labs{position:relative;display:inline-flex}
+.nav-labs__trigger::after{content:'▾';display:inline-block;margin-left:6px;font-size:.85em;transform:translateY(1px)}
+.nav-labs__menu{
+  position:fixed;z-index:99000;
+  display:flex;flex-direction:column;gap:6px;min-width:140px;padding:8px;
+  background:var(--labs-bg,rgba(4,6,10,.94));
+  border:1px solid var(--labs-border,rgba(255,255,255,.14));
+  border-radius:var(--labs-radius,0px);
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
+  opacity:0;visibility:hidden;transform:translateY(-4px);pointer-events:none;
+  transition:opacity .15s ease,transform .15s ease,visibility .15s;
+}
+.nav-labs__menu a{
+  display:block;white-space:nowrap;text-align:left;text-decoration:none;
+  font-family:var(--labs-font,'JetBrains Mono',monospace);
+  font-weight:var(--labs-weight,600);
+  font-size:var(--labs-size,11px);
+  line-height:1;
+  letter-spacing:var(--labs-tracking,.14em);
+  text-transform:uppercase;
+  color:var(--labs-ink,#cfd6e6);
+  background:var(--labs-a-bg,transparent);
+  border:1px solid var(--labs-line,rgba(255,255,255,.16));
+  border-radius:var(--labs-radius,0px);
+  padding:9px 10px;
+  transition:border-color .15s ease,color .15s ease,background-color .15s ease;
+}
+.nav-labs__menu a:hover{
+  background:var(--labs-hover-bg,transparent);
+  border-color:var(--labs-hover-border,var(--labs-line,rgba(255,255,255,.16)));
+  color:var(--labs-hover-ink,var(--labs-ink,#cfd6e6));
+}
+.nav-labs__menu a.active{
+  background:var(--labs-active-bg,transparent);
+  border-color:var(--labs-active-border,var(--labs-active-bg,var(--labs-line,rgba(255,255,255,.16))));
+  color:var(--labs-active-ink,var(--labs-ink,#cfd6e6));
+}
+.nav-labs__menu.open{
+  opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto;
+}
+
+/* per-page palettes — each block mirrors that page's own `.nav a` /
+   `.nav a:hover` / `.nav a.active` rule above, so the portaled panel
+   reads as part of the same nav bar instead of a generic popup. */
+.signal-page .nav-labs__menu{--labs-bg:rgba(35,35,39,.97);--labs-border:rgba(255,255,255,.12)}
+.signal-page .nav-labs__menu a{
+  --labs-font:'Oswald',Impact,system-ui,sans-serif;--labs-tracking:.14em;
+  --labs-ink:#cfcdc7;--labs-line:rgba(255,255,255,.12);
+  --labs-hover-border:#f5c400;--labs-hover-ink:#f5c400;
+  --labs-active-bg:#f5c400;--labs-active-ink:#1a1a1c;
+}
+
+.games-page .nav-labs__menu{--labs-bg:rgba(14,12,28,.96);--labs-border:rgba(255,43,214,.32)}
+.games-page .nav-labs__menu a{
+  --labs-font:'Chakra Petch',system-ui,sans-serif;--labs-tracking:.12em;
+  --labs-ink:#00efff;--labs-line:rgba(0,239,255,.4);
+  --labs-hover-bg:#00efff;--labs-hover-ink:#04060d;
+  --labs-active-bg:#ff2bd6;--labs-active-border:#ff2bd6;--labs-active-ink:#0a0410;
+}
+
+.arena-page .nav-labs__menu{--labs-bg:rgba(10,14,26,.96);--labs-border:rgba(58,91,255,.40)}
+.arena-page .nav-labs__menu a{
+  --labs-font:'Rajdhani','Orbitron',sans-serif;--labs-weight:700;--labs-tracking:.18em;
+  --labs-ink:#27e7ff;--labs-line:rgba(58,91,255,.40);
+  --labs-hover-border:#27e7ff;--labs-hover-ink:#fff;
+  --labs-active-bg:#3dff9a;--labs-active-border:#3dff9a;--labs-active-ink:#04060d;
+}
+
+.sectors-page .nav-labs__menu{--labs-bg:rgba(12,17,24,.96);--labs-border:rgba(202,255,0,.30)}
+.sectors-page .nav-labs__menu a{
+  --labs-font:"KH Interference","PP Fraktion Mono","JetBrains Mono",monospace;--labs-weight:800;--labs-tracking:.18em;
+  --labs-ink:#00e7ff;--labs-line:rgba(0,231,255,.38);
+  --labs-hover-border:#caff00;--labs-hover-ink:#caff00;
+  --labs-active-bg:#caff00;--labs-active-border:#caff00;--labs-active-ink:#05070b;
+}
+
+.novels-page .nav-labs__menu{--labs-bg:rgba(40,31,23,.97);--labs-border:rgba(201,131,74,.32);--labs-radius:2px}
+.novels-page .nav-labs__menu a{
+  --labs-font:'JetBrains Mono',monospace;--labs-size:10.5px;--labs-tracking:.1em;--labs-radius:2px;
+  --labs-ink:#a89a83;--labs-line:rgba(236,226,207,.14);
+  --labs-hover-border:#4fd6c4;--labs-hover-ink:#4fd6c4;
+  --labs-active-bg:#c9834a;--labs-active-border:#c9834a;--labs-active-ink:#1a1410;
+}
+
+.leagues-page .nav-labs__menu{--labs-bg:rgba(12,28,44,.96);--labs-border:rgba(200,170,110,.32)}
+.leagues-page .nav-labs__menu a{
+  --labs-font:'Cinzel',Georgia,serif;--labs-weight:700;--labs-tracking:.12em;
+  --labs-ink:#0ac8b9;--labs-line:rgba(10,200,185,.4);
+  --labs-hover-bg:#0ac8b9;--labs-hover-ink:#04120f;
+  --labs-active-bg:#c8aa6e;--labs-active-border:#c8aa6e;--labs-active-ink:#1a1204;
+}
+
+/* Horoscope · V21 healing theme (warm cream / sage / terracotta) */
+.horoscope-page .nav-labs__menu{--labs-bg:rgba(255,251,242,.97);--labs-border:rgba(156,175,136,.5)}
+.horoscope-page .nav-labs__menu a{
+  --labs-font:'Noto Serif SC','Spectral',Georgia,serif;--labs-weight:700;--labs-tracking:.14em;
+  --labs-ink:#52693D;--labs-line:rgba(74,69,61,.15);
+  --labs-hover-border:#52693D;--labs-hover-ink:#4A453D;
+  --labs-active-bg:#9C4A2A;--labs-active-border:#9C4A2A;--labs-active-ink:#FFF6EA;
+}
+
+/* motion-sensitive visitors: kill page transitions & pulses */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
+
+.page-turn-controls{
+  position:fixed;
+  inset:50% 18px auto;
+  z-index:20;
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+  --turn-accent:#caff00;
+  --turn-hover:#00e7ff;
+  --turn-bg-a:rgba(8,12,18,.72);
+  --turn-bg-b:rgba(1,3,7,.94);
+}
+.fleet-log-page .page-turn-controls{
+  --turn-accent:#e9bd78;
+  --turn-hover:#9be7ff;
+  --turn-bg-a:rgba(9,14,21,.84);
+  --turn-bg-b:rgba(1,3,7,.96);
+}
+.signal-page .page-turn-controls{
+  --turn-accent:#5fd08a;
+  --turn-hover:#f0b429;
+  --turn-bg-a:rgba(16,18,12,.95);
+  --turn-bg-b:rgba(6,8,5,.98);
+}
+/* Arena · Marathon neon-green + cyan, magenta glow */
+.arena-page .page-turn-controls{
+  --turn-accent:#3dff9a;
+  --turn-hover:#27e7ff;
+  --turn-bg-a:rgba(8,12,24,.84);
+  --turn-bg-b:rgba(3,5,12,.96);
+}
+/* Sectors · acid HUD green + cyan */
+.sectors-page .page-turn-controls{
+  --turn-accent:#caff00;
+  --turn-hover:#00e7ff;
+  --turn-bg-a:rgba(10,14,6,.80);
+  --turn-bg-b:rgba(3,5,2,.96);
+}
+/* Novels theme rules removed (U16a): serial.html no longer renders the
+   edge arrows — reading immersion; see body[data-no-page-turn] there. */
+/* Leagues · Hextech gold + teal */
+.leagues-page .page-turn-controls{
+  --turn-accent:#c8aa6e;
+  --turn-hover:#0ac8b9;
+  --turn-bg-a:rgba(10,20,32,.84);
+  --turn-bg-b:rgba(3,7,12,.97);
+}
+.leagues-page .page-turn{box-shadow:0 0 0 3px rgba(200,170,110,.08),inset 0 0 20px rgba(10,200,185,.12)}
+.leagues-page .page-turn:hover{box-shadow:0 0 0 3px rgba(200,170,110,.14),inset 0 0 24px rgba(10,200,185,.20)}
+/* Horoscope · V21 healing theme (warm cream / sage / terracotta) */
+.horoscope-page .page-turn-controls{
+  --turn-accent:#52693D;
+  --turn-hover:#9C4A2A;
+  --turn-bg-a:rgba(255,251,242,.9);
+  --turn-bg-b:rgba(241,231,212,.97);
+}
+.horoscope-page .page-turn{box-shadow:0 0 0 3px rgba(156,175,136,.18),inset 0 0 20px rgba(201,111,74,.08)}
+.horoscope-page .page-turn:hover{box-shadow:0 0 0 3px rgba(156,175,136,.28),inset 0 0 24px rgba(201,111,74,.14)}
+.page-turn{
+  width:46px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  pointer-events:auto;
+  border:2px solid color-mix(in srgb,var(--turn-accent) 54%,transparent);
+  background:linear-gradient(180deg,var(--turn-bg-a),var(--turn-bg-b));
+  color:color-mix(in srgb,var(--turn-accent) 92%,white 8%);
+  font:900 28px/1 var(--font-hud,"JetBrains Mono",monospace);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--turn-accent) 5%,transparent),inset 0 0 24px color-mix(in srgb,var(--turn-hover) 9%,transparent);
+  transition:transform .18s ease,background .18s ease,border-color .18s ease;
+}
+.page-turn:hover{
+  transform:translateY(-2px);
+  border-color:color-mix(in srgb,var(--turn-hover) 85%,white 15%);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--turn-accent) 18%,transparent),var(--turn-bg-b));
+}
+/* per-page silhouette accents — distinct feel, shared behaviour */
+.arena-page .page-turn{box-shadow:0 0 0 3px rgba(61,255,154,.06),0 0 16px rgba(255,61,240,.18),inset 0 0 22px rgba(39,231,255,.10)}
+.arena-page .page-turn:hover{box-shadow:0 0 0 3px rgba(61,255,154,.10),0 0 22px rgba(255,61,240,.30),inset 0 0 26px rgba(39,231,255,.16)}
+.sectors-page .page-turn{box-shadow:0 0 0 3px rgba(202,255,0,.06),inset 0 0 22px rgba(0,231,255,.08)}
+.signal-page .page-turn{border-radius:0;box-shadow:0 0 0 3px rgba(95,208,138,.12),inset 0 0 18px rgba(95,208,138,.16)}
+body.turn-next main,
+body.turn-prev main{
+  transition:transform .24s ease,opacity .24s ease,filter .24s ease;
+  opacity:.22;
+  filter:blur(5px);
+}
+body.turn-next main{transform:translateX(-34px)}
+body.turn-prev main{transform:translateX(34px)}
+@media(max-width:760px){
+  /* V22: top nav already covers page-to-page navigation on mobile; the
+     side arrows only ate into content and overlapped text on real
+     devices (iPhone 16 Pro Max Chrome screenshots), so they're hidden
+     here rather than shrunk. Desktop keeps them untouched. */
+  .page-turn-controls{
+    display:none;
+  }
+}
+
+/* ===== universal interaction feedback =====
+   every button / hot link visibly reacts on hover and presses in on click,
+   so a tap always reads as registered. Page-specific styles still win. */
+button:not(.page-turn):not(:disabled),a[data-hot],[role="button"]{
+  transition:transform .09s ease, filter .16s ease, box-shadow .16s ease;
+}
+button:not(.page-turn):not(:disabled):hover,a[data-hot]:hover,[role="button"]:hover{
+  filter:brightness(1.08);
+}
+button:not(.page-turn):not(:disabled):active,a[data-hot]:active,[role="button"]:active{
+  transform:translateY(1px) scale(.985);
+  filter:brightness(1.18);
+}
+button:not(.page-turn):focus-visible{outline:2px solid currentColor;outline-offset:2px}

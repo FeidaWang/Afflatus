@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
+     fetch + init only runs once the browser reports idle time (or after a
+     3s/2s fallback timeout for browsers without requestIdleCallback), so it
+     doesn't compete with render-critical work during first paint. Same
+     dataLayer/gtag('config',...) calls as before, just deferred. -->
+<script>
+(function(){
+  function loadGtag(){
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', 'G-M078NTBWRF');
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
+    document.head.appendChild(s);
+  }
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
+  else setTimeout(loadGtag, 2000);
+})();
+</script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Project Afflatus - Deep-Space Captain Log</title>
+<meta name="description" content="Bruce's deep-space captain log: a lone commander disclosing his US-equity positions, allocation logic and risk discipline. 深空舰长日志 · 个人美股持仓与纪律公开。No ads, no tips, no promises.">
+<meta name="theme-color" content="#05070b">
+<link rel="canonical" href="https://feida.au/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Project Afflatus">
+<meta property="og:title" content="Project Afflatus · Deep-Space Captain Log">
+<meta property="og:description" content="A lone commander's US-equity captain log: positions, allocation logic, discipline. No ads, no tips, no promises.">
+<meta property="og:url" content="https://feida.au/">
+<meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Project Afflatus · Deep-Space Captain Log">
+<meta name="twitter:description" content="A lone commander's US-equity captain log: positions, allocation logic, discipline.">
+<meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"Project Afflatus","url":"https://feida.au/","description":"Bruce's deep-space captain log: a lone commander disclosing his US-equity positions, allocation logic and risk discipline.","inLanguage":["en","zh-CN"]},{"@type":"Person","name":"Feida Wang","alternateName":"Bruce","url":"https://feida.au/"}]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Combat pilot panel — relative so the canvas fills the cell */
+.hud-pilot{position:relative}
+/* V22: the old phone combat layout that hid radar+defense and forced a
+   2-col "pilot right" grid has been removed — it's superseded by (and
+   was fighting with, via #combatHud's higher-specificity ID selector)
+   the newer 2-row 4-panel mobile layout in src/styles.css's
+   "2026-06-14 Mobile target-first HUD" block (@media max-width:860px).
+   The two conflicting grid-template-areas were producing the empty,
+   non-interactive HUD area reported on real devices. */
+</style>
+  <script type="module" crossorigin src="/assets/main-CjSpo1wz.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/transition-DwfPyu3z.js">
+  <link rel="modulepreload" crossorigin href="/assets/audio-Bf-hWNJ5.js">
+  <link rel="modulepreload" crossorigin href="/assets/viz-DCHjGR4q.js">
+  <link rel="stylesheet" crossorigin href="/assets/main-l1-4WcB8.css">
+</head>
+<body class="hud-off" data-prev="/games.html" data-next="/arena.html">
+
+<canvas id="starfield"></canvas>
+<canvas id="blackhole-gl" aria-hidden="true"></canvas>
+<canvas id="event-layer"></canvas>
+
+<div class="nuke-warning" id="nukeWarning">CRITICAL: NUCLEAR LAUNCH DETECTED<br>RADIATION HAZARD</div>
+<div class="weapon-warning" id="weaponWarning"><b>ENFORCER MAIN CANNON</b><span>charging particle spine · stand by</span></div>
+<div class="bridge-callout" id="bridgeCallout">Cruising mode on</div>
+
+<div id="combatHud" aria-hidden="true">
+  <div class="hud-vignette"></div>
+  <div class="hud-grid"></div>
+  <div class="hud-scan-line"></div>
+  <div class="hud-warning">战术尾迹 · 引力井前方</div>
+  <div class="hud-subwarning">舰桥锁定 · 目标神谕 · 信号帷幕</div>
+  <div class="hud-panels">
+    <aside class="hud-panel hud-left">
+      <div class="hud-label" data-hud="radarTitle">雷达</div>
+      <canvas id="radarCanvas"></canvas>
+    </aside>
+    <aside class="hud-panel hud-center">
+      <div class="hud-label" data-hud="battleTitle">防御模块</div>
+      <div class="combat-module">
+        <div class="weapon-matrix" id="weaponMatrix">
+          <button class="weapon-choice" data-weapon="cannon" data-hot><span>▥</span><b data-hud="wCannon">密集阵</b></button>
+          <button class="weapon-choice" data-weapon="missile" data-hot><span>↗</span><b data-hud="wMissile">导弹</b></button>
+          <button class="weapon-choice" data-weapon="nuke" data-hot><span>☢</span><b data-hud="wNuke">核打击</b></button>
+          <button class="weapon-choice" data-weapon="enforcer" data-hot><span>✦</span><b data-hud="wEnforcer">主炮</b></button>
+        </div>
+        <div class="battle-feed defense-command-log" id="battleFeed">
+          <output class="combat-kill-meter" aria-label="Confirmed kills"><b id="killCounter">0</b></output>
+        </div>
+        <form class="mobile-weapon-form weapon-form-hidden" id="weaponForm">
+          <label for="weaponSelect">彗星截击裁决</label>
+          <select id="weaponSelect">
+            <option value="auto">自动 · 舰长裁决火力</option>
+            <option value="cannon">密集阵 · 左右舷近防弹幕</option>
+            <option value="missile">F-47 · 自主制导导弹</option>
+            <option value="nuke">B2 · 战术核打击护航</option>
+            <option value="enforcer">执法者主炮 · 冷却30秒</option>
+          </select>
+        </form>
+        <div class="battle-log wide" id="battleLog">战术甲板待命 · 入梦按钮预热跃迁</div>
+      </div>
+    </aside>
+    <aside class="hud-panel hud-pilot">
+      <div class="hud-label" data-hud="pilotTitle">COMBAT VIEW</div>
+      <canvas class="pilot-feed" id="pilotFeed"></canvas>
+    </aside>
+    <aside class="hud-panel hud-right">
+      <div class="hud-label" data-hud="hangarTitle">COMMANDER TERMINAL</div>
+      <div class="signal-deck fleet-status-deck" id="signalDeck">
+        <div class="captain-terminal private-notebook" id="captainTerminal">
+          <div class="notebook-shell">
+            <div class="notebook-status">
+              <span class="terminal-led"></span>
+              <b>Commander Terminal</b>
+              <button class="starmap-toggle" id="starmapToggle" type="button" data-hot>LOGIN</button>
+              <em class="terminal-lock" aria-label="Locked"></em>
+            </div>
+            <div class="terminal-starmap active" id="terminalStarMapPanel" aria-label="Alphard galactic map">
+              <canvas id="terminalStarMap"></canvas>
+              <div class="starmap-readout">
+                <b>ALPHARD</b>
+                <span id="starmapDistance">2738 days from Earth</span>
+              </div>
+              <div class="voyage-pulse" id="voyagePulse" aria-live="polite">
+                <b>EARTH -> ALPHARD</b>
+                <span>2738 DAYS · BEARING 128° · COURSE LOCKED</span>
+                <i></i>
+              </div>
+            </div>
+            <form class="notebook-login" autocomplete="off">
+              <label>
+                <span>ACCOUNT</span>
+                <input type="text" name="commander-account" placeholder="BRUCE.WANG" inputmode="email" aria-label="Commander account">
+              </label>
+              <label>
+                <span>PASSWORD</span>
+                <input type="password" name="commander-password" placeholder="••••••••" aria-label="Commander password">
+              </label>
+              <button id="terminalLoginBtn" type="button" data-hot>LOGIN</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div id="cursor">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="49" y="49" width="2" height="2" fill="#9ae5ff" />
+    <line x1="50" y1="10" x2="50" y2="40" stroke="#9ae5ff" stroke-width="1" opacity="0.8"/>
+    <line x1="50" y1="90" x2="50" y2="60" stroke="#9ae5ff" stroke-width="1" opacity="0.8"/>
+    <line x1="10" y1="50" x2="40" y2="50" stroke="#9ae5ff" stroke-width="1" opacity="0.8"/>
+    <line x1="90" y1="50" x2="60" y2="50" stroke="#9ae5ff" stroke-width="1" opacity="0.8"/>
+    <circle cx="50" cy="50" r="16" fill="none" stroke="rgba(232,179,128,0.5)" stroke-width="0.5" stroke-dasharray="2 4" />
+    <g class="spin-ring">
+      <path d="M 30 20 L 20 20 L 20 30" fill="none" stroke="rgba(154,229,255,0.7)" stroke-width="1.2" />
+      <path d="M 70 20 L 80 20 L 80 30" fill="none" stroke="rgba(154,229,255,0.7)" stroke-width="1.2" />
+      <path d="M 30 80 L 20 80 L 20 70" fill="none" stroke="rgba(154,229,255,0.7)" stroke-width="1.2" />
+      <path d="M 70 80 L 80 80 L 80 70" fill="none" stroke="rgba(154,229,255,0.7)" stroke-width="1.2" />
+    </g>
+  </svg>
+  <div class="cursor-target" id="cursorTarget">--</div>
+</div>
+
+<div class="captain-watermark" id="captainWatermark">
+  <b>Feida "Bruce" Wang · confirmed kill</b>
+  <span>personal command watermark · sponsor constellation</span>
+  <div class="sponsor-logos">
+    <i>in</i><i>Vercel</i><i>GitHub</i><i>Anthropic</i><i>OpenAI</i>
+  </div>
+</div>
+
+<nav class="route-arrows" aria-label="Page turn navigation">
+  <a class="route-arrow prev" href="/serial.html" data-turn="prev" data-page-turn="prev" data-hot aria-label="Previous page">‹</a>
+  <a class="route-arrow next" href="/arena.html" data-turn="next" data-page-turn="next" data-hot aria-label="Next page">›</a>
+</nav>
+
+<nav>
+  <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-word">AFFLATUS</span><span class="brand-sep" aria-hidden="true">|</span><span class="brand-version">v1.5</span></div>
+  <div class="nav-center">
+    <!-- Links rendered by /lib/nav.js from the shared SITE list (same source
+         as arena/sectors/signal/games/novels) -- see ROADMAP §2. Home doesn't
+         use i18n.js's data-en/data-zh swap (it has its own bilingual system),
+         so labels stay English-only here, matching prior behaviour. -->
+    <div class="nav-links" aria-label="Primary navigation" data-afflatus-nav></div>
+    <div class="top-telemetry" id="topTelemetry">
+      <div class="top-stat primary"><span class="sys-dot"></span><span data-top="uplink">FLEET TELEMETRY</span><b id="topUplink">ACTIVE</b></div>
+      <div class="top-stat"><span data-top="trajectory">VOID TRACK</span><b id="topTrajectory">L1 · stable</b></div>
+      <div class="top-stat"><span id="earthDistLabel" data-top="origin">DAYS FROM EARTH</span><b id="earthDistance">2738 DAYS</b></div>
+      <div class="top-stat"><span data-top="target">TARGET ORACLE</span><b id="topLock">IDLE</b></div>
+      <div class="top-stat mobile-hide top-energy"><span data-top="warp">WARP POWER</span><b class="energy-bar" id="throttleState" style="--energy:41%"><i></i><em>41%</em></b></div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="control-btn" id="commandModeBtn" data-hot>Command</button>
+    <button class="nav-menu-btn" type="button" data-hot aria-label="Open navigation">☰</button>
+    <div class="nav-clock">
+      <span id="clockZone" aria-hidden="true"></span>
+      <b id="melDateTime">---</b>
+    </div>
+  </div>
+</nav>
+<button class="jump-toggle" id="jumpToggle" data-hot>Assets</button>
+
+<main id="mainContent">
+  <section class="hero" style="padding-bottom:0">
+    <div class="hero-num" id="heroNum">Captain log · <span>034</span> · deep-space capital fleet</div>
+    <h1 class="hero-title" id="heroTitle">At the glowline of Alphard<br>I command the fleet<br>and route <em>capital</em> into the dark</h1>
+    <p class="hero-desc" id="heroDesc">Feida's private investment captain log. No tips, promotions, or prophecies. Just a lone commander disclosing 2026-06-01 positions, allocation logic, and the discipline that keeps the fleet alive.</p>
+    <div class="hero-cta">
+      <button class="warp-btn verse-switch" id="langBtn" data-hot>以中文入梦</button>
+      <span class="coord" id="coord">bearing · singular throne</span>
+      <div class="scroll-hint" id="scrollHint">descend to asset deck</div>
+    </div>
+  </section>
+
+  <section class="stardrive" id="stardrive" aria-label="Annualised return — approach to Alphard">
+    <div class="stardrive-stage">
+      <canvas id="alphardForge" aria-hidden="true"></canvas>
+      <div class="stardrive-veil" aria-hidden="true"></div>
+      <div class="stardrive-caption" aria-hidden="true">
+        <span class="fc-kicker">ALPHARD JUMP POINT · APPROACH VECTOR</span>
+        <span class="fc-sub">limit of charted space</span>
+      </div>
+      <div class="forge-tagline" id="forgeTagline">
+        <b data-en="Every return is a jump through the dark." data-zh="每一份回报，都是一次穿越深空的跃迁。">Every return is a jump through the dark.</b>
+      </div>
+      <div class="strip" id="strip">
+        <div class="strip-cell hero-metric">
+          <div class="strip-label" id="sl0">Annualized Return</div>
+          <div class="strip-value pos" data-counter="38.66" data-suffix="%" id="sv0">0.0%</div>
+          <div class="strip-foot" id="sf0">vs SPX +9.4 · vs QQQ +14.1</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label" id="sl1">Sharpe · 1Y</div>
+          <div class="strip-value" data-counter="1.72" data-suffix="" data-fixed="2" id="sv1">0.00</div>
+          <div class="strip-foot" id="sf1">rf @ AU 10y · 4.18%</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label" id="sl2">Max Drawdown</div>
+          <div class="strip-value" data-counter="-13.04" data-suffix="%" id="sv2">0.0%</div>
+          <div class="strip-foot" id="sf2">2026-06-05 · risk reset</div>
+        </div>
+        <div class="strip-cell">
+          <div class="strip-label" id="sl3">Beta</div>
+          <div class="strip-value" data-counter="1.31" data-suffix="" data-fixed="2" id="sv3">0.00</div>
+          <div class="strip-foot" id="sf3">portfolio vs SPX · 2026 YTD</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="equity">
+    <div class="sec-num" id="s2num">02 · <span>equity curve</span></div>
+    <h2 class="sec-title" id="s2title">每一根 K 线，都是穿过<em>虚空</em>的一秒。</h2>
+    <p class="sec-desc" id="s2desc">年初至今我个人组合的日 K 走势。蜡烛与均线都收敛在同一色调里 —— 不为涨喝彩，不为跌叹气，只看船身是否还在朝奇点的方向。</p>
+    <div class="chart-frame" id="chartFrame">
+      <div class="chart-head">
+        <div class="chart-left">
+          <div class="chart-ticker">$BRUCE.VOY <span id="chartSub">private · daily · 2026 ytd</span></div>
+        </div>
+        <div class="period-tabs" id="periodTabs">
+          <button class="active" data-period="1D" data-hot>日</button>
+          <button data-period="1W" data-hot>周</button>
+          <button data-period="1M" data-hot>月</button>
+          <button data-period="6M" data-hot>半年</button>
+          <button data-period="1Y" data-hot>一年</button>
+          <button data-period="5Y" data-hot>五年</button>
+        </div>
+        <div class="chart-last"><div class="v" id="chartValue">138.66</div><div class="d" id="chartReturn">+38.66%</div></div>
+      </div>
+      <canvas id="kchart"></canvas>
+      <div class="chart-foot">
+        <span id="chartStartLabel">2026·01·02 · 100.00</span>
+        <span id="barsLabel">bars · <b id="barCount">0</b></span>
+        <span id="chartEndLabel">2026·06·05 · 138.66</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="holdings">
+    <div class="sec-num" id="s3num">03 · <span>top 10 allocations · usa</span></div>
+    <h2 class="sec-title" id="s3title">我把船舱切成<em>十块</em>，每一块都装着一段未来。</h2>
+    <p class="sec-desc" id="s3desc">2026-05-26 我个人认为最值得长期持有的 10 支美股，以及我会分给它们的权重。比例条会在你看到它的瞬间开始向目标爬升。</p>
+    <div class="pick-grid" id="pickGrid"></div>
+    <p class="footnote" id="footnoteEl">上述权重为本人在当日的主观判断，不构成投资建议。任何标的都可能在你按下买入键的下一秒变成黑洞 —— 做你自己的研究，对你自己的舱位负责。</p>
+  </section>
+</main>
+
+<footer id="footerEl">
+  <div id="f1">afflatus · Bruce 的孤航日志 · MMXXVI</div>
+  <div id="f2">no ads · no tips · no promises</div>
+  <div id="f3">signal origin · local stardate</div>
+</footer>
+
+</body>
+</html>

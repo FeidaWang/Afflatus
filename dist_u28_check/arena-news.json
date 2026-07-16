@@ -1,0 +1,207 @@
+{
+  "date": "2026-07-13",
+  "generatedAt": "2026-07-13T12:13:48Z",
+  "lang_default": "en",
+  "priceNote_en": "Real market data: prevClose is the official July 10, 2026 close; price is the latest available quote (July 13, 2026 pre-market, ~7:30–7:50 AM ET, via stockanalysis.com/CBOE). LITE shows the July 10 after-hours print as no July 13 pre-market quote was available.",
+  "priceNote_zh": "真实市场数据:prevClose 为2026年7月10日官方收盘价;price 为最新可得报价(2026年7月13日盘前,约美东时间7:30–7:50,数据来自 stockanalysis.com/CBOE)。LITE 因暂无7月13日盘前报价,显示7月10日盘后价格。",
+  "disclaimer_en": "This briefing is generated for the AI Stock Arena game for entertainment and educational purposes only. It is not investment advice or a recommendation to buy or sell any security.",
+  "disclaimer_zh": "本简报为「AI股票竞技场」游戏自动生成,仅供娱乐和学习参考,不构成投资建议,亦非任何证券的买卖推荐。",
+  "predictionNote_en": "aiPredictions are the game AI's own pre-open estimates: predOpenPct is the expected % gap of today's open vs prevClose, predClosePct is the expected % change of today's close vs prevClose. They feed the rolling prediction-accuracy log and are genuine estimates, not advice.",
+  "predictionNote_zh": "aiPredictions 为游戏AI在开盘前做出的自主预测:predOpenPct 为预计今日开盘价相对昨收的百分比缺口,predClosePct 为预计今日收盘价相对昨收的百分比变动。该数据用于滚动预测准确率记录,仅为真实估计,不构成建议。",
+  "prices": {
+    "NVDA": { "price": 208.45, "prevClose": 210.96 },
+    "MU":   { "price": 935.41, "prevClose": 979.30 },
+    "ASML": { "price": 1775.00, "prevClose": 1797.32 },
+    "AVGO": { "price": 394.60, "prevClose": 399.97 },
+    "TSM":  { "price": 434.91, "prevClose": 434.11 },
+    "MRVL": { "price": 230.12, "prevClose": 235.81 },
+    "LITE": { "price": 805.00, "prevClose": 802.01 },
+    "SNDK": { "price": 1790.98, "prevClose": 1915.92 },
+    "AMD":  { "price": 546.47, "prevClose": 557.89 },
+    "SMH":  { "price": 600.80, "prevClose": 611.03 }
+  },
+  "items": [
+    {
+      "category": "financial",
+      "title_en": "Chip stocks slide pre-market as AI spending fears resurface",
+      "title_zh": "AI支出担忧再起,芯片股周一盘前普跌",
+      "summary_en": "Nvidia, AMD, Micron, SanDisk and other chip names traded lower in Monday's pre-market as investors questioned how much longer Big Tech can sustain its aggressive AI spending plans, extending last week's volatility across the semiconductor complex.",
+      "summary_zh": "英伟达、AMD、美光、闪迪等芯片股周一盘前集体走低。投资者质疑科技巨头激进的AI资本支出还能持续多久,上周席卷半导体板块的波动行情得以延续。",
+      "source": "TipRanks",
+      "url": "https://www.tipranks.com/news/why-are-semiconductor-stocks-nvda-amd-intc-micron-and-sndk-falling-in-pre-market-today-7-13-26",
+      "tickers": ["NVDA", "AMD", "MU", "SNDK", "SMH"]
+    },
+    {
+      "category": "financial",
+      "title_en": "TSMC Q2 revenue jumps 36% to a record, beating expectations ahead of Thursday's earnings",
+      "title_zh": "台积电第二季度营收大增36%创纪录,超预期,周四公布完整财报",
+      "summary_en": "TSMC reported Q2 revenue of NT$1.27 trillion (about $39.6 billion), up 36% year-on-year and above market expectations, with June revenue surging 68% from a year earlier — a record month. Taiwan also confirmed two new advanced packaging plants in Chiayi. Full Q2 results, margins and capex guidance land Thursday, July 16.",
+      "summary_zh": "台积电第二季度营收达新台币1.27万亿元(约396亿美元),同比增长36%,超出市场预期;6月营收同比激增68%,创单月纪录。台湾方面还确认将在嘉义科学园区增建两座先进封装厂。完整的二季度业绩、毛利率及资本支出指引将于7月16日(周四)公布。",
+      "source": "Reuters",
+      "url": "https://www.reuters.com/world/asia-pacific/tsmc-q2-revenue-jumps-36-year-earlier-beating-market-expectations-2026-07-13/",
+      "tickers": ["TSM", "NVDA", "AMD", "SMH"]
+    },
+    {
+      "category": "financial",
+      "title_en": "ASML reports Q2 on Wednesday as chip earnings season kicks off; analysts keep raising targets",
+      "title_zh": "ASML周三公布二季报,芯片财报季开启;分析师持续上调目标价",
+      "summary_en": "ASML kicks off big-cap chip earnings on July 15, followed by TSMC on July 16, whose capex commentary will directly test ASML's second-half assumptions. Deutsche Bank just raised its target to EUR 1,800 and Bernstein to $2,623, with the stock up roughly 70% year-to-date on AI-driven EUV lithography demand.",
+      "summary_zh": "ASML将于7月15日率先公布大型芯片股财报,台积电紧随其后于16日发布,其资本支出表态将直接检验ASML对下半年的假设。德意志银行刚将目标价上调至1800欧元,伯恩斯坦上调至2623美元。受AI驱动的EUV光刻需求推动,该股年初至今已上涨约70%。",
+      "source": "Barron's",
+      "url": "https://www.barrons.com/articles/inflation-bank-of-america-wells-fargo-goldman-asml-j-j-and-more-to-watch-this-week-71bddc40",
+      "tickers": ["ASML", "TSM", "SMH"]
+    },
+    {
+      "category": "financial",
+      "title_en": "Micron slips as SK Hynix's surging spending plans stoke memory supply fears",
+      "title_zh": "SK海力士激进扩产计划引发供给担忧,美光承压下挫",
+      "summary_en": "Fresh off SK Hynix's blockbuster Nasdaq ADR debut (ticker SKHY) on Friday, the Korean rival's surging capex plans revived worries that memory-industry spending could eventually loosen today's tight DRAM/NAND supply. Micron fell 1.24% Friday and extended losses pre-market, though UBS still sees DRAM undersupplied until at least mid-2028 and TD Cowen carries a $1,600 target.",
+      "summary_zh": "SK海力士上周五以ADR形式(代码SKHY)高调登陆纳斯达克后,其大幅攀升的资本支出计划重新点燃了市场对存储行业扩产最终松动当前DRAM/NAND紧张供给的担忧。美光周五下跌1.24%,周一盘前跌幅扩大。不过瑞银仍认为DRAM至少到2028年中期都将供不应求,TD Cowen维持1600美元目标价。",
+      "source": "Barron's",
+      "url": "https://www.barrons.com/articles/micron-stock-price-memory-chips-f343ffbb",
+      "tickers": ["MU", "SNDK"]
+    },
+    {
+      "category": "industrial",
+      "title_en": "Micron lifts planned US investment to $250B+ through 2035, pours first concrete at New York mega-fab",
+      "title_zh": "美光将赴美投资计划提高至2500亿美元以上,纽约超级晶圆厂浇筑首方混凝土",
+      "summary_en": "Micron raised its planned US investment to more than $250 billion through 2035 and celebrated a construction milestone at what will be the largest semiconductor manufacturing site in US history. It also announced up to $3 billion in supply-chain investments, including $500 million to support GlobalWafers' US wafer expansion — news that sent the stock up 7% last Thursday.",
+      "summary_zh": "美光将其到2035年的赴美投资计划提高至2500亿美元以上,并为将成为美国史上最大半导体制造基地的纽约工厂举行了动工里程碑仪式。公司还宣布最高30亿美元的供应链投资,其中5亿美元用于支持环球晶圆在美扩产。该消息上周四推动股价大涨7%。",
+      "source": "Reuters",
+      "url": "https://www.reuters.com/business/micron-invest-up-3-billion-us-chip-supply-chain-2026-07-09/",
+      "tickers": ["MU"]
+    },
+    {
+      "category": "tech",
+      "title_en": "Nvidia jumped 4% Friday on Morgan Stanley's four new AI growth drivers; Meta's in-house chip looms",
+      "title_zh": "摩根士丹利点出四大AI新增长引擎,英伟达周五大涨4%;Meta自研芯片隐忧浮现",
+      "summary_en": "Nvidia closed Friday at $210.96 (+4.03%) after Morgan Stanley's Joseph Moore reaffirmed an Overweight rating and $288 target following meetings with CEO Jensen Huang. Separately, Meta reportedly plans to start manufacturing a new in-house AI chip from September — a reminder of customer-concentration risk even as executives tell CNBC that AI demand remains 'almost unlimited'.",
+      "summary_zh": "摩根士丹利分析师Joseph Moore在与CEO黄仁勋会谈后重申增持评级和288美元目标价,英伟达周五收于210.96美元,大涨4.03%。另一方面,据报道Meta计划自9月起投产新款自研AI芯片,提示了客户集中度风险——尽管多位高管向CNBC表示AI需求仍然「近乎无限」。",
+      "source": "TipRanks",
+      "url": "https://www.tipranks.com/news/nvidia-stock-gains-as-morgan-stanley-highlights-4-new-ai-growth-drivers",
+      "tickers": ["NVDA", "MRVL", "AVGO"]
+    },
+    {
+      "category": "political",
+      "title_en": "Wells Fargo: Nvidia's China H200 comeback likely limited under strict export conditions",
+      "title_zh": "富国银行:出口条件严苛,英伟达H200重返中国市场空间有限",
+      "summary_en": "Even if Beijing lets top Chinese AI firms buy H200 GPUs, Wells Fargo argues the opportunity is modest given the US approval framework — a 50% volume cap, a 25% tariff on advanced computing chips and mandatory third-party security testing. Nvidia's share of China's AI-chip market has already slipped to roughly 50% as Huawei's Ascend line gains ground.",
+      "summary_zh": "富国银行认为,即便北京允许头部中国AI企业采购H200 GPU,在美国审批框架下机会依然有限——包括50%的数量上限、对先进计算芯片征收25%的关税以及强制第三方安全检测。随着华为昇腾系列攻城略地,英伟达在中国AI芯片市场的份额已降至约50%。",
+      "source": "TipRanks",
+      "url": "https://www.tipranks.com/news/nvidia-nvda-stock-slips-after-wells-fargo-says-china-comeback-may-be-limited",
+      "tickers": ["NVDA", "AMD"]
+    },
+    {
+      "category": "financial",
+      "title_en": "Stifel lifts AMD target 41% to $635, expects a Q2 'beat-and-raise'",
+      "title_zh": "Stifel将AMD目标价上调41%至635美元,预计二季报「超预期并上调指引」",
+      "summary_en": "Stifel's Ruben Roy raised his AMD target from $450 to $635, calling the chipmaker a 'credible number-two' in AI. AMD is up roughly 160% year-to-date on strong AI CPU/GPU demand, with the MI400 series launching in H2 2026 and the first 1-gigawatt tranche of OpenAI's MI450 deployments beginning in the second half. Earnings land August 4.",
+      "summary_zh": "Stifel分析师Ruben Roy将AMD目标价从450美元上调至635美元,称其已是AI领域「可信的第二名」。受AI CPU/GPU强劲需求推动,AMD年初至今上涨约160%;MI400系列将于2026年下半年发布,OpenAI首批1吉瓦MI450部署也将在下半年启动。财报定于8月4日公布。",
+      "source": "TipRanks",
+      "url": "https://www.tipranks.com/news/stifel-raises-amd-stock-price-target-by-41-expects-a-q2-beat-and-raise",
+      "tickers": ["AMD", "NVDA"]
+    },
+    {
+      "category": "tech",
+      "title_en": "Wedbush sees a big SanDisk earnings beat on surging NAND prices; stock swings continue",
+      "title_zh": "NAND涨价凶猛,Wedbush预计闪迪财报将大超预期;股价剧烈波动仍在继续",
+      "summary_en": "Wedbush raised its SanDisk target ahead of the August 5 report, citing high double-digit NAND price increases and relentless AI storage demand — UBS models NAND up 30% in Q3 and 12% in Q4. SNDK, still up nearly 700% year-to-date, sank 6.5% in Monday's pre-market after Friday's 3.1% gain; Kioxia and SanDisk have begun BiCS10 3D NAND production at the Kitakami Fab2 plant.",
+      "summary_zh": "Wedbush在8月5日财报发布前上调闪迪目标价,理由是NAND价格高双位数上涨及AI存储需求旺盛——瑞银预计NAND价格三季度上涨30%、四季度再涨12%。SNDK年初至今仍累涨近700%,但在周五上涨3.1%后,周一盘前重挫6.5%;铠侠与闪迪已在北上Fab2工厂启动BiCS10 3D NAND量产。",
+      "source": "TipRanks",
+      "url": "https://www.tipranks.com/news/sandisk-earnings-insights-wedbush-sees-a-big-earnings-beat-raises-price-target-on-nand-pricing-gains",
+      "tickers": ["SNDK", "MU"]
+    },
+    {
+      "category": "tech",
+      "title_en": "Optical AI trade cools even as top analysts stay bullish on Marvell for the long haul",
+      "title_zh": "光互联AI行情降温,但顶级分析师仍长线看多迈威尔",
+      "summary_en": "Marvell fell 3.1% Friday and slipped further pre-market as the optical/interconnect leg of the AI trade cooled, but CNBC's roundup of top-rated analysts still names MRVL a long-haul pick after Jensen Huang's 'next trillion-dollar chip company' praise. Partner Lumentum — which demoed optical circuit switching with Marvell for AI scale-up fabrics — bucked Friday's weakness with a 2.1% gain and carries a Street-high $1,200 target.",
+      "summary_zh": "随着AI行情中的光模块/互连板块降温,迈威尔周五下跌3.1%,周一盘前继续走低。但CNBC汇总的顶级分析师仍将MRVL列为长线首选——此前黄仁勋盛赞其「可能成为下一家万亿美元芯片公司」。其合作伙伴Lumentum(曾与迈威尔联合演示面向AI扩展架构的光路交换)周五逆势上涨2.1%,并获华尔街最高1200美元目标价。",
+      "source": "CNBC",
+      "url": "https://www.cnbc.com/2026/07/12/top-analysts-are-confident-about-these-3-stocks-for-the-long-haul.html",
+      "tickers": ["MRVL", "LITE", "NVDA"]
+    }
+  ],
+  "aiPredictions": {
+    "NVDA": {
+      "direction": "DOWN",
+      "confidence": 0.58,
+      "predOpenPct": -1.2,
+      "predClosePct": -0.7,
+      "rationale_en": "Pre-market -1.2% on sector-wide AI-spending jitters and the Meta in-house chip report, but Friday's Morgan Stanley-driven momentum and TSMC's revenue beat should cushion the close above the open.",
+      "rationale_zh": "受板块性AI支出担忧及Meta自研芯片消息影响,盘前跌1.2%;但上周五大摩看多带来的动能和台积电营收超预期应能使收盘跌幅收窄。"
+    },
+    "MU": {
+      "direction": "DOWN",
+      "confidence": 0.70,
+      "predOpenPct": -4.3,
+      "predClosePct": -3.0,
+      "rationale_en": "Hit hardest pre-market (-4.5%) as SK Hynix capex fears dominate; expect dip-buyers given Strong Buy consensus and tight supply, but the gap is too large to fully recover in one session.",
+      "rationale_zh": "SK海力士扩产担忧主导市场,盘前重挫4.5%;鉴于强烈买入共识和紧张供给,预计有资金逢低买入,但缺口过大,单日难以完全收复。"
+    },
+    "ASML": {
+      "direction": "DOWN",
+      "confidence": 0.56,
+      "predOpenPct": -1.2,
+      "predClosePct": -0.6,
+      "rationale_en": "Tracking the sector lower pre-market, but positioning ahead of Wednesday's Q2 report plus fresh target hikes and TSMC's record June should limit downside by the close.",
+      "rationale_zh": "盘前随板块走低,但周三二季报前的仓位布局、多家上调目标价及台积电6月创纪录营收应能在收盘前限制跌幅。"
+    },
+    "AVGO": {
+      "direction": "DOWN",
+      "confidence": 0.60,
+      "predOpenPct": -1.3,
+      "predClosePct": -1.0,
+      "rationale_en": "Down with the group pre-market; the $30B Apple deal is already priced in from last week and insider-sale headlines add mild pressure, so expect it to roughly track SMH.",
+      "rationale_zh": "盘前随大盘走低;300亿美元苹果订单上周已被消化,内部人减持消息带来轻微压力,预计走势与SMH大致同步。"
+    },
+    "TSM": {
+      "direction": "UP",
+      "confidence": 0.66,
+      "predOpenPct": 0.3,
+      "predClosePct": 1.1,
+      "rationale_en": "The only name green pre-market: record Q2 revenue (+36% YoY, beat) and a 68% June surge give it a company-specific catalyst strong enough to fight the sector selloff into Thursday's earnings.",
+      "rationale_zh": "盘前唯一翻红的标的:二季度营收创纪录(同比+36%,超预期)、6月营收激增68%,公司层面的催化剂足以对抗板块抛压,并延续至周四财报。"
+    },
+    "MRVL": {
+      "direction": "DOWN",
+      "confidence": 0.62,
+      "predOpenPct": -2.3,
+      "predClosePct": -1.6,
+      "rationale_en": "Second straight down session pre-market (-2.4%) as the optical trade cools and its ex-dividend momentum fades; long-haul analyst support should slow but not stop the slide today.",
+      "rationale_zh": "光互联行情降温,盘前再跌2.4%,连续第二日走弱;分析师的长线支持能减缓但难以扭转今日跌势。"
+    },
+    "LITE": {
+      "direction": "DOWN",
+      "confidence": 0.52,
+      "predOpenPct": -1.0,
+      "predClosePct": -0.5,
+      "rationale_en": "No pre-market print, but with SMH gapping -1.7% Lumentum likely opens lower despite Friday's 2.1% gain; its OCS/NVIDIA narrative and $1,200 Street-high target argue for a shallower decline than peers.",
+      "rationale_zh": "暂无盘前报价,但SMH低开1.7%的背景下,尽管上周五上涨2.1%,Lumentum大概率低开;其光路交换/英伟达叙事及1200美元华尔街最高目标价支持其跌幅小于同行。"
+    },
+    "SNDK": {
+      "direction": "DOWN",
+      "confidence": 0.72,
+      "predOpenPct": -6.0,
+      "predClosePct": -4.5,
+      "rationale_en": "Worst pre-market gap in the lineup (-6.5%) as the memory trade unwinds hardest in its highest-beta name; Wedbush's bullish earnings preview should draw some dip-buying but not close the gap.",
+      "rationale_zh": "作为组合中弹性最大的存储标的,盘前跳空6.5%领跌;Wedbush看多的财报前瞻会吸引部分抄底资金,但难以填补缺口。"
+    },
+    "AMD": {
+      "direction": "DOWN",
+      "confidence": 0.60,
+      "predOpenPct": -2.0,
+      "predClosePct": -1.3,
+      "rationale_en": "Giving back part of Friday's 2% gain pre-market amid the AI-spending scare; Stifel's $635 target and the OpenAI/MI400 pipeline should attract buyers into weakness by the close.",
+      "rationale_zh": "AI支出担忧下,盘前回吐上周五2%涨幅的一部分;Stifel的635美元目标价及OpenAI/MI400产品线应能在尾盘吸引逢低买盘。"
+    },
+    "SMH": {
+      "direction": "DOWN",
+      "confidence": 0.64,
+      "predOpenPct": -1.6,
+      "predClosePct": -1.1,
+      "rationale_en": "Diversified basket gaps -1.7% with nearly every holding lower; TSMC's beat (9.4% weight) and likely intraday dip-buying trim the loss, but memory-heavy weakness keeps the day red.",
+      "rationale_zh": "成分股几乎全线走低,ETF盘前跳空1.7%;台积电超预期(权重9.4%)及盘中可能的逢低买盘会收窄跌幅,但存储股疲软令全日难以翻红。"
+    }
+  }
+}

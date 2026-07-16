@@ -1,0 +1,175 @@
+{
+  "updated": "2026-07-09",
+  "version": 1,
+  "day": 4,
+  "season": 1,
+  "lastRunDate": "2026-07-09",
+  "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
+  "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
+  "bench": {
+    "spyPct": 0,
+    "smhPct": 0
+  },
+  "models": {
+    "A": {
+      "promptVersion": "A-v1",
+      "startEquity": 10000,
+      "cash": 5971.7958,
+      "equity": 9986.3258,
+      "dayStartEquity": 9986.8837,
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        },
+        {
+          "day": 1,
+          "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 9810.4237
+        },
+        {
+          "day": 3,
+          "equity": 9848.7037
+        },
+        {
+          "day": 4,
+          "equity": 9986.3258
+        }
+      ],
+      "positions": [
+        {
+          "sym": "AMD",
+          "qty": 3,
+          "avgPx": 552.326,
+          "mkPx": 557.93
+        },
+        {
+          "sym": "TSM",
+          "qty": 3,
+          "avgPx": 452.0159,
+          "mkPx": 442.09
+        },
+        {
+          "sym": "MU",
+          "qty": 1,
+          "avgPx": 1014.9772,
+          "mkPx": 1014.47
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-07T13:15:00Z",
+          "sym": "AMD",
+          "side": "buy",
+          "qty": 3,
+          "px": 552.326,
+          "fee": 0.0828,
+          "slipBps": 5,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-07T13:15:00Z",
+          "sym": "TSM",
+          "side": "buy",
+          "qty": 3,
+          "px": 452.0159,
+          "fee": 0.0678,
+          "slipBps": 5,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-09T21:41:10.498Z",
+          "sym": "MU",
+          "side": "buy",
+          "qty": 1,
+          "px": 1014.9772,
+          "fee": 0.0507,
+          "slipBps": 5,
+          "realizedPnl": null
+        }
+      ],
+      "rejections": [],
+      "metrics": {
+        "cumPct": -0.137,
+        "maxDD": -1.896,
+        "hitRate": null,
+        "exposure": 40.2
+      },
+      "review": {
+        "zh": "昨日判断反弹属headline驱动、按兵不动；今日基本面催化落地：UBS上调DRAM合约价预期（Q3环比+32%）、美银重申MU买入（目标$1550）、SK海力士美股IPO超额认购，存储板块全线大涨（MU/SNDK/WDC约+7%，LITE+10.8%）。确认后小仓介入：买1股MU（约10%仓位），不顶格追高。AMD重回成本上方、TSM企稳，均持有。软件/平台系（PLTR、CRM、GOOGL）走弱，暂不碰。",
+        "en": "Yesterday I held off on an unconfirmed headline bounce; today the memory re-rating confirmed with hard catalysts: UBS raised Q3 DRAM contract-price forecasts (+32% QoQ), BofA reiterated MU Buy ($1,550 target), SK Hynix US IPO oversubscribed. Storage complex up 7-11%. Adjustment: act on confirmation but size small — 1 MU share (~10% of equity), not a max position. Holding AMD (back above cost) and TSM. Avoiding weak software names (PLTR, CRM, GOOGL)."
+      }
+    },
+    "B": {
+      "promptVersion": "B-v1",
+      "startEquity": 10000,
+      "cash": 6233.0587,
+      "equity": 9959.3587,
+      "dayStartEquity": 10000,
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 10012.4087
+        },
+        {
+          "day": 3,
+          "equity": 9959.3587
+        }
+      ],
+      "positions": [
+        {
+          "sym": "MSFT",
+          "qty": 5,
+          "avgPx": 386.8173,
+          "mkPx": 383.34
+        },
+        {
+          "sym": "GOOGL",
+          "qty": 5,
+          "avgPx": 366.5333,
+          "mkPx": 361.92
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-07T13:20:00Z",
+          "sym": "MSFT",
+          "side": "buy",
+          "qty": 5,
+          "px": 386.8173,
+          "fee": 0.0967,
+          "slipBps": 2,
+          "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-07T13:20:00Z",
+          "sym": "GOOGL",
+          "side": "buy",
+          "qty": 5,
+          "px": 366.5333,
+          "fee": 0.0916,
+          "slipBps": 2,
+          "realizedPnl": null
+        }
+      ],
+      "rejections": [],
+      "metrics": {
+        "cumPct": -0.406,
+        "maxDD": -0.53,
+        "hitRate": null,
+        "exposure": 37.4
+      },
+      "review": {
+        "zh": "周三非建仓窗口，仅可减仓。核心AI硬件股（MU、AVGO、SNDK、TER、RMBS、ALAB、WDC、NVDA）今日反弹6%以内，延续对上周半导体估值调整的修复；软件权重股MSFT、GOOGL小跌约1%-1.4%，为板块轮动而非个股基本面恶化，双方距止损线仍远。回顾此前提案（07-07已开仓MSFT/GOOGL），维持低换手率纪律，本次继续持有不动，等待周二/周四窗口再评估加仓。",
+        "en": "Wednesday, non-open window - sells only. Core AI-hardware names (MU, AVGO, SNDK, TER, RMBS, ALAB, WDC, NVDA) extended their rebound from last week's valuation reset. MSFT/GOOGL softened ~1-1.4% on sector rotation, not fundamental deterioration - both remain well above stop-loss. Consistent with the low-turnover discipline from my last review, holding steady; will revisit sizing on the next Tue/Thu window."
+      }
+    }
+  }
+}
