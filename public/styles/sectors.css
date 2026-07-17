@@ -1,34 +1,37 @@
 /* @font-face declarations live in /page-turn.css (self-hosted woff2 + local()) */
 
 /* ============================================================
-   sectors.html — 2026-07-18 full reconstruction.
-   Station owner's brief: reference openai.com's CURRENT color/module
-   language (light, near-white background, black ink, teal accent,
-   large rounded "art card" modules with abstract generative art, square
-   thumbnail news grids, horizontal Stories/Research card rows, a mega
-   multi-column footer) and rebuild this page around it — a deliberate,
-   confirmed break from the rest of the site's dark acid/cyan HUD identity
-   (this one page trades consistency for fidelity to the reference; every
-   other page keeps the HUD look untouched).
-   Prior rounds' horizontal rail carousel and the red/blue "faction VS
-   scoreboard" are retired per direct instruction ("推倒重做") — the rail
-   *mechanism* (scroll-snap + arrows + drag) survives because it's also
-   exactly how openai.com's own Stories/Research rows scroll, but the
-   dark-HUD skin, the media-dimming focus effect and the VS bar are gone.
-   No licensed OpenAI photography/illustration exists for this site to use,
-   so every "art card" thumbnail below is generated CSS gradient art (six
-   fixed variants, cycled by index) standing in for a photo — never a
-   fabricated stock image.
+   sectors.html — 2026-07-18 full reconstruction, 2026-07-18 recolor pass.
+   Station owner's brief: reference openai.com's module language (large
+   rounded "art card" thumbnails, square news grids, horizontal Stories/
+   Research card rows, mega multi-column footer) — but with a black
+   background and white-first text (not openai.com's own light theme),
+   and every company's thumbnail should carry ITS OWN brand color + a
+   schematic icon of its actual product line, not a generic rainbow
+   gradient. This is a deliberate, confirmed one-page break from the rest
+   of the site's dark acid/cyan HUD identity (this page keeps a black bg
+   like the rest of the site, but swaps the HUD's neon greens/cyans for
+   each mentioned company's real identity color + openai.com's card/grid
+   layout language).
+   Brand colors are sourced from public brand-color references (see
+   Urgent.md U36 for the list + which few are "representative" because no
+   official hex could be confirmed — never presented as more certain than
+   they are). No licensed company photography/logos are reproduced —
+   each thumbnail is the real brand color plus a small schematic line-icon
+   of the product category (GPU/chip, memory stack, wafer, lens, storage
+   array, or an abstract AI-lab mark), built in src/pages/sectorsLibs.js-
+   adjacent inline script (see sectors.html's AfflatusBrand registry).
    ============================================================ */
 :root{
-  --bg:#ffffff;--bg-soft:#f7f7f8;--card-bg:#ffffff;
-  --ink:#0d0d0d;--ink-soft:#59595f;--ink-faint:#8b8b93;
-  --line:#e7e7ea;--line-soft:#f0f0f2;
+  --bg:#000000;--bg-soft:#101012;--card-bg:#111113;
+  --ink:#f5f5f7;--ink-soft:#aeaeb6;--ink-faint:#78787f;
+  --line:#232326;--line-soft:#1b1b1d;
   --accent:#10a37f;--accent-ink:#ffffff;
-  --faction-us:#2f6bff;--faction-cn:#e5484d;
+  --chip-bg:#f2f2f3;--chip-ink:#0a0a0b;
+  --faction-us:#5b8dff;--faction-cn:#ff6161;
   --radius-lg:28px;--radius:18px;--radius-sm:10px;
-  --shadow-sm:0 1px 2px rgba(13,13,13,.04),0 6px 16px rgba(13,13,13,.05);
-  --shadow-md:0 4px 10px rgba(13,13,13,.06),0 16px 32px rgba(13,13,13,.08);
+  --shadow-sm:0 0 0 1px rgba(255,255,255,.04),0 6px 16px rgba(0,0,0,.5);
+  --shadow-md:0 0 0 1px rgba(255,255,255,.06),0 20px 40px rgba(0,0,0,.65);
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --font-mono:ui-monospace,SFMono-Regular,Menlo,"JetBrains Mono",monospace;
 }
@@ -44,22 +47,22 @@ a{color:inherit;text-decoration:none}
 .nav{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .nav a{position:relative;padding:9px 13px;border-radius:999px;color:var(--ink-soft);font-size:14px;font-weight:600}
 .nav a:hover{background:var(--bg-soft);color:var(--ink)}
-.nav a.active{background:var(--ink);color:#fff}
-.lang-toggle{font:700 13px var(--font);color:#fff;background:var(--ink);border:1px solid var(--ink);border-radius:999px;padding:9px 16px;cursor:pointer}
-.lang-toggle:hover{background:var(--accent);border-color:var(--accent)}
+.nav a.active{background:var(--chip-bg);color:var(--chip-ink)}
+.lang-toggle{font:700 13px var(--font);color:var(--chip-ink);background:var(--chip-bg);border:1px solid var(--chip-bg);border-radius:999px;padding:9px 16px;cursor:pointer}
+.lang-toggle:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 
 /* ── hero art card (poster style — GPT-5.6-poster reference) ──────────── */
 .heroCard{position:relative;margin:28px 0;border-radius:var(--radius-lg);overflow:hidden;min-height:440px;display:flex;align-items:flex-end;box-shadow:var(--shadow-md)}
-.heroArt{position:absolute;inset:0}
-.heroScrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,.42) 46%,rgba(0,0,0,.05) 78%)}
+.heroArt{position:absolute;inset:0;background:radial-gradient(130% 140% at 30% 15%,color-mix(in srgb,var(--accent) 32%,transparent) 0%,transparent 60%),#0a0a0c}
+.heroScrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.86) 0%,rgba(0,0,0,.5) 46%,rgba(0,0,0,.08) 78%)}
 .heroCopy{position:relative;z-index:1;padding:40px 44px 40px;max-width:760px;color:#fff}
 .kicker{color:rgba(255,255,255,.78);font:700 12px/1.2 var(--font);letter-spacing:.1em;text-transform:uppercase}
-h1{max-width:720px;margin:14px 0 14px;font-size:clamp(30px,4.4vw,50px);font-weight:800;line-height:1.08;letter-spacing:-.01em}
+h1{max-width:720px;margin:14px 0 14px;font-size:clamp(30px,4.4vw,50px);font-weight:800;line-height:1.08;letter-spacing:-.01em;color:#fff}
 h1 span{color:#8ff0d7}
 .brief{max-width:640px;color:rgba(255,255,255,.86);font:500 16px/1.6 var(--font)}
 @media(max-width:760px){.heroCard{min-height:360px}.heroCopy{padding:28px 22px 28px}}
 
-/* ── ticker: light pill marquee (double-clone technique unchanged) ────── */
+/* ── ticker: pill marquee (double-clone technique unchanged) ──────────── */
 .tickerBand{position:relative;overflow:hidden;border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:8px}
 .tickerTrackWrap{display:flex;width:max-content;animation:tickerScroll 52s linear infinite}
 .tickerTrack{display:flex;gap:10px;padding-right:10px}
@@ -88,15 +91,15 @@ h1 span{color:#8ff0d7}
 .asof{margin:-6px 0 14px}
 .prov-badge{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid var(--line);font:700 11px var(--font);color:var(--ink-soft)}
 .prov-badge.prov-fresh{color:var(--accent);border-color:var(--accent)}
-.prov-badge.prov-amber{color:#b45309;border-color:#fcd9a8}
-.prov-badge.prov-red{color:#c0392b;border-color:#f3c2bd}
+.prov-badge.prov-amber{color:#f5b754;border-color:rgba(245,183,84,.4)}
+.prov-badge.prov-red{color:#ff6b6b;border-color:rgba(255,107,107,.4)}
 
 /* ── horizontal card rail (Stories/Research row) — mechanism kept, dark
    HUD skin + focus-dimming retired. flex scroll-snap track + arrows +
    pointer drag; touch gets native swipe. ─────────────────────────────── */
 .storyRail{display:flex;align-items:stretch;gap:10px}
-.railArrow{flex:0 0 auto;width:38px;align-self:center;height:38px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:18px;line-height:1;cursor:pointer;box-shadow:var(--shadow-sm)}
-.railArrow:hover{border-color:var(--ink);background:var(--ink);color:#fff}
+.railArrow{flex:0 0 auto;width:38px;align-self:center;height:38px;border-radius:999px;border:1px solid var(--line);background:var(--card-bg);color:var(--ink);font-size:18px;line-height:1;cursor:pointer;box-shadow:var(--shadow-sm)}
+.railArrow:hover{border-color:var(--accent);background:var(--accent);color:#fff}
 .railTrack{flex:1;min-width:0;display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;padding:4px 4px 14px;cursor:grab}
 .railTrack:active{cursor:grabbing}
 .railTrack::-webkit-scrollbar{height:6px}
@@ -107,8 +110,10 @@ h1 span{color:#8ff0d7}
 /* research card (stock conviction cards) */
 .rCard{flex:0 0 auto;width:min(300px,76vw);scroll-snap-align:start;border:1px solid var(--line);border-radius:var(--radius);background:var(--card-bg);overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .2s ease,transform .2s ease}
 .rCard:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.rArt{position:relative;aspect-ratio:4/3;display:flex;align-items:flex-end;padding:16px;color:#fff}
-.rArt b{font:800 26px var(--font);letter-spacing:-.02em;text-shadow:0 1px 8px rgba(0,0,0,.25)}
+.rArt{position:relative;aspect-ratio:4/3;display:flex;align-items:flex-end;padding:16px;color:#fff;overflow:hidden;--brand:var(--accent);background:radial-gradient(130% 140% at 50% 18%,color-mix(in srgb,var(--brand) 38%,transparent) 0%,transparent 62%),#0d0d10}
+.rArt b{position:relative;z-index:1;font:800 26px var(--font);letter-spacing:-.02em;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.bIcon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.85;pointer-events:none}
+.bIcon svg{width:38%;height:38%;color:var(--brand)}
 .rBody{padding:16px 18px 18px}
 .rName{font:700 13px/1.3 var(--font);color:var(--ink-soft)}
 .rWeight{margin:10px 0}
@@ -140,8 +145,8 @@ h1 span{color:#8ff0d7}
 .nCard:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .nCard .rArt{aspect-ratio:1/1;align-items:flex-start;flex-direction:column;justify-content:space-between}
 .nCard .rArt b{font-size:15px;letter-spacing:0}
-.nTags{display:flex;gap:6px;flex-wrap:wrap}
-.nTag{padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.9);color:#111;font:800 9.5px var(--font-mono);letter-spacing:.04em}
+.nTags{position:relative;z-index:1;display:flex;gap:6px;flex-wrap:wrap}
+.nTag{padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.92);color:#111;font:800 9.5px var(--font-mono);letter-spacing:.04em}
 .nTag.us{color:var(--faction-us)}
 .nTag.cn{color:var(--faction-cn)}
 .nBody{padding:14px 16px 16px}
@@ -158,15 +163,14 @@ h1 span{color:#8ff0d7}
 @media(max-width:980px){.newsGrid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.newsGrid{grid-template-columns:1fr}}
 
-/* ── star-map (canvas graph) — kept as a secondary "view as map" panel,
-   deliberately staying a dark data-console card inside the light page
-   (a contained contrast panel, not a re-theme of the untouched canvas
-   drawing code in sectorsGraphView.js). ───────────────────────────────── */
+/* ── star-map (canvas graph) — kept as a secondary "view as map" panel;
+   canvas drawing code in sectorsGraphView.js is untouched, this only
+   styles the surrounding frame. ───────────────────────────────────────── */
 .graphHint{max-width:640px;color:var(--ink-soft);font:500 13px/1.6 var(--font);margin-bottom:12px}
-.graphWrap{position:relative;border-radius:var(--radius-lg);overflow:hidden;background:#05070b;box-shadow:var(--shadow-md)}
+.graphWrap{position:relative;border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-soft);border:1px solid var(--line);box-shadow:var(--shadow-md)}
 .mwGraph{display:block;width:100%;height:440px;touch-action:none;cursor:grab}
 .mwGraph:active{cursor:grabbing}
-.mwDetail{position:absolute;right:14px;top:14px;bottom:14px;width:min(280px,80%);overflow-y:auto;padding:16px;border-radius:var(--radius-sm);background:rgba(10,12,18,.94);color:#eef2f6;backdrop-filter:blur(6px)}
+.mwDetail{position:absolute;right:14px;top:14px;bottom:14px;width:min(280px,80%);overflow-y:auto;padding:16px;border-radius:var(--radius-sm);background:rgba(24,26,32,.96);color:#eef2f6;backdrop-filter:blur(6px)}
 .mwDetailClose{position:absolute;right:8px;top:6px;width:26px;height:26px;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:transparent;color:#eef2f6;font-size:16px;line-height:1;cursor:pointer}
 .mwDetailClose:hover{border-color:var(--accent);color:var(--accent)}
 .empty{padding:22px;color:var(--ink-faint);font:500 13px/1.6 var(--font)}
@@ -177,8 +181,8 @@ h1 span{color:#8ff0d7}
 .mwCard{padding:14px;border:1px solid var(--line);border-radius:var(--radius-sm)}
 .mwHead{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .mwVendor{font:800 15px var(--font);color:var(--ink)}
-.mwRoute{padding:3px 8px;border-radius:999px;font:800 10px var(--font);color:#fff;background:var(--ink);white-space:nowrap}
-.mwRoute.open{background:var(--accent)}
+.mwRoute{padding:3px 8px;border-radius:999px;font:800 10px var(--font);color:var(--chip-ink);background:var(--chip-bg);white-space:nowrap}
+.mwRoute.open{background:var(--accent);color:#fff}
 .mwLine{margin-top:6px;color:var(--ink-soft);font:700 12px var(--font)}
 .mwDev{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);color:var(--ink-soft);font:500 12.5px/1.45 var(--font)}
 .mwDev a{color:var(--accent);text-decoration:underline}
@@ -209,15 +213,5 @@ h1 span{color:#8ff0d7}
 .megaFootBottom{border-top:1px solid var(--line);margin-top:24px;padding-top:16px;color:var(--ink-faint);font:600 12px var(--font)}
 @media(max-width:760px){.megaFoot{grid-template-columns:1fr 1fr}.megaFoot>div:first-child{grid-column:1/-1}}
 @media(max-width:480px){.megaFoot{grid-template-columns:1fr}}
-
-/* generated "art card" gradients — six fixed abstract variants cycled by
-   index; no real photography exists for these vendors/tickers so this
-   stands in for it (never a fabricated stock photo). */
-.art-0{background:radial-gradient(120% 140% at 15% 20%,#22d3ee 0%,transparent 55%),radial-gradient(120% 140% at 85% 80%,#f472b6 0%,transparent 55%),#0d9488}
-.art-1{background:radial-gradient(120% 140% at 20% 80%,#fb923c 0%,transparent 55%),radial-gradient(120% 140% at 80% 20%,#a78bfa 0%,transparent 55%),#111827}
-.art-2{background:radial-gradient(120% 140% at 80% 15%,#34d399 0%,transparent 55%),radial-gradient(120% 140% at 15% 85%,#60a5fa 0%,transparent 55%),#0f172a}
-.art-3{background:radial-gradient(120% 140% at 25% 25%,#f87171 0%,transparent 55%),radial-gradient(120% 140% at 80% 75%,#fbbf24 0%,transparent 55%),#1e1b4b}
-.art-4{background:radial-gradient(120% 140% at 75% 25%,#c084fc 0%,transparent 55%),radial-gradient(120% 140% at 20% 75%,#38bdf8 0%,transparent 55%),#0c0a1a}
-.art-5{background:radial-gradient(120% 140% at 30% 70%,#2dd4bf 0%,transparent 55%),radial-gradient(120% 140% at 75% 25%,#fb7185 0%,transparent 55%),#111}
 
 .foot{padding:0}

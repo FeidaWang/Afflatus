@@ -111,15 +111,18 @@ html.vt-suppress::view-transition-new(root){
   --labs-active-bg:#3dff9a;--labs-active-border:#3dff9a;--labs-active-ink:#04060d;
 }
 
-/* 2026-07-18: sectors.html reconstructed as a light openai.com-style page
-   (see public/styles/sectors.css header comment) — Labs dropdown and page-turn
-   arrows re-themed to match that light system instead of the dark acid/cyan HUD. */
-.sectors-page .nav-labs__menu{--labs-bg:rgba(255,255,255,.98);--labs-border:#e7e7ea}
+/* 2026-07-18: sectors.html reconstructed around openai.com's card/grid
+   module language (see public/styles/sectors.css header comment), then
+   recolored same-day to a black background + white-first text instead of
+   openai.com's own light theme — Labs dropdown and page-turn arrows
+   re-themed to match: neutral white/near-black instead of the old
+   acid-green/cyan HUD, teal accent on hover. */
+.sectors-page .nav-labs__menu{--labs-bg:rgba(10,10,11,.97);--labs-border:#232326}
 .sectors-page .nav-labs__menu a{
   --labs-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--labs-weight:700;--labs-tracking:0;
-  --labs-ink:#0d0d0d;--labs-line:#e7e7ea;
+  --labs-ink:#f5f5f7;--labs-line:#232326;
   --labs-hover-border:#10a37f;--labs-hover-ink:#10a37f;
-  --labs-active-bg:#0d0d0d;--labs-active-border:#0d0d0d;--labs-active-ink:#fff;
+  --labs-active-bg:#f5f5f7;--labs-active-border:#f5f5f7;--labs-active-ink:#0a0a0b;
 }
 
 .novels-page .nav-labs__menu{--labs-bg:rgba(40,31,23,.97);--labs-border:rgba(201,131,74,.32);--labs-radius:2px}
@@ -188,12 +191,12 @@ html.vt-suppress::view-transition-new(root){
   --turn-bg-a:rgba(8,12,24,.84);
   --turn-bg-b:rgba(3,5,12,.96);
 }
-/* Sectors · light openai.com-style reskin (2026-07-18) */
+/* Sectors · black bg + white ink, teal accent (2026-07-18) */
 .sectors-page .page-turn-controls{
-  --turn-accent:#0d0d0d;
+  --turn-accent:#f5f5f7;
   --turn-hover:#10a37f;
-  --turn-bg-a:rgba(255,255,255,.86);
-  --turn-bg-b:rgba(247,247,248,.96);
+  --turn-bg-a:rgba(17,17,19,.86);
+  --turn-bg-b:rgba(5,5,6,.97);
 }
 /* Novels theme rules removed (U16a): serial.html no longer renders the
    edge arrows — reading immersion; see body[data-no-page-turn] there. */
@@ -236,7 +239,7 @@ html.vt-suppress::view-transition-new(root){
 /* per-page silhouette accents — distinct feel, shared behaviour */
 .arena-page .page-turn{box-shadow:0 0 0 3px rgba(61,255,154,.06),0 0 16px rgba(255,61,240,.18),inset 0 0 22px rgba(39,231,255,.10)}
 .arena-page .page-turn:hover{box-shadow:0 0 0 3px rgba(61,255,154,.10),0 0 22px rgba(255,61,240,.30),inset 0 0 26px rgba(39,231,255,.16)}
-.sectors-page .page-turn{box-shadow:0 1px 2px rgba(13,13,13,.04),0 6px 16px rgba(13,13,13,.08)}
+.sectors-page .page-turn{box-shadow:0 0 0 1px rgba(255,255,255,.06),0 8px 24px rgba(0,0,0,.6)}
 .signal-page .page-turn{border-radius:0;box-shadow:0 0 0 3px rgba(95,208,138,.12),inset 0 0 18px rgba(95,208,138,.16)}
 body.turn-next main,
 body.turn-prev main{
