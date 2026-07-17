@@ -180,6 +180,8 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 
 **双指/触控板缩放层（U39 落成，2026-07-18）**：在阶段滑杆之上加了一层语义缩放——`src/lib/pinchZoom.js`（纯函数，9 条 vitest）提供总览/轮次/单场三档状态机，games.js `wirePinchOnce` 把触摸双指间距与桌面 ctrl+wheel 都接到同一状态机上，`+/−` 按钮做无手势兜底。这层同样与赛事数据形状无关，只消费 `bracketModel.js` 的通用阶段模型——EWC/Season 16 接上 U38 的 adapter 后，缩放手势不需要任何改动即可直接工作。
 
+**季军赛（3rd-place）阶段支持（U40 落成，2026-07-18）**：`bracketModel.js` 新增 `bracket.third` → `third` 阶段（+2 vitest）。与 QF/SF/F 不同，季军赛不是「上一轮胜者晋级」推导出来的，是直接一场比赛（双 SF 败者对阵），所以建模时直接吃 leg 同款字段而非从 legs 数组的胜者推导——为未来任何有「三四名决赛/败者组决赛」性质环节的赛事（暂不确定 LoL 系列是否需要）预留了同一套模式。games.html 的配色改版（藏青 #1B2766 / 金 #9F7D23 / 白字，见 `RELEASE_NOTES.md`「U40」）目前只作用于 games.html 一页，未套用到 league.html 或其他页面——如站主之后要求统一视觉，需要单独立项。
+
 ### 7.5 调度、token 预算与数据管线（V12 + 全模块共用）
 
 **调度表**（用户本机 cron，AEST；美股 7 月为 EDT=UTC-4，AEST=UTC+10）
