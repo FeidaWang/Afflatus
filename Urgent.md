@@ -1,5 +1,21 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U37 · 公司卡片撤掉 SVG 图标，换真实 logo + 真实新闻室照片 + 选中变色摆动（2026-07-18，站主指令，参考 OpenAI Business 卡片截图，已完成）
+
+**站主指令**：把 U36 里我画的 9 种示意 SVG 图标全部删除，改成每家公司真实的 logo（保留该公司自己的字体/字型，文字统一为白色），默认状态卡片是该公司官方的高质量业务场景照片，点选其中一张时该卡保持彩色并向左右摆动一下（模拟从照片堆里抽出一张的物理感），未选中的卡变黑白。参考图是 openai.com/zh-Hans-CN/business/ 的 Cisco/Morgan Stanley/BNY/Moderna/Uber 卡片带。
+
+**先说清楚我做不到的部分，再说做了什么**：截图默认状态暗示"每家公司专属高质量业务场景照片"，但我没有任何公司的独家照片素材库，用生成模型编一张假装是 Anthropic/OpenAI 办公室的照片、给一个正在分析真实上市公司的页面用，属于编造内容，这个我明确不会做（这也是本次改动前用 AskUserQuestion 向站主确认的点）。站主选择的处理方式是"尝试抓官方新闻室照片，抓不到就纯色兜底"——于是这轮的照片来源是**真实存在的公开图片**，不是生成的。
+
+**素材调研**：起了一个 general-purpose 子代理去逐个核实这 17 家公司（六张股票卡 NVDA/AVGO/MU/SKHY/TSM/ASML + 四张中美 AI 观察卡 anthropic/openai/zhipu/alibaba +十张后内存论点卡里另外七个 SSNLF/ALAB/MRVL/PSTG/SNDK/TER/RMBS）的真实 logo 文件与官方新闻室照片，要求：logo 优先用 Wikimedia Commons 的 `Special:FilePath` 直链（这是 Commons 官方设计给"引用识别用途"的稳定重定向服务，不是我去追踪/重画商标）；照片必须来自该公司自己的官方 newsroom/press-kit/media 页面，抓不到就如实回报"NOT FOUND"，不许猜/编 URL。结果：**16/17 家找到可用 logo**（仅 Astera Labs 官网是纯 JS 渲染、Wikimedia 也没有收录，退化为纯文字 wordmark），**6/17 家找到官方照片**（NVIDIA/Broadcom/Micron/SK hynix/TSMC/Samsung，均来自各自 newsroom 的真实图片直链），其余 11 家（含 ASML——子代理原本给了一个"低置信度"的媒体库首图链接，我判断置信度不够，主动归入"未找到"而不是赌一个不确定的图）退化为纯品牌色卡片背景。这个 6/17 的比例如实反映了真实约束（很多公司的媒体资料包是 JS 门禁的 Brandfolder 相册，抓取工具进不去），不是偷懒。
+
+**实现**：`AfflatusBrand` 注册表从"BRAND_ICON/ICON_PATH 生成 SVG"整个换成"LOGO_URL/PHOTO_URL/DISPLAY_NAME 三张真实资源表 + `artHTML(key, extraHtml)`"——`artHTML` 拼出 `.rArt` 完整内容：有照片就是 `<img class="rPhoto">`（真实图，`object-fit:cover`）+ 一层深色渐变 `.rScrim`（保证叠加的白色 logo 在任意照片内容上都可读）+ 真实 `<img class="rLogo">`；logo 无论源文件本身是什么颜色，统一套 `filter:brightness(0) invert(1)` 强制变成纯白（**只改颜色，不改该 logo 自己的字形/字体形状**，这正是站主要求的"logo保持该公司自己的字体，文字为白色"）；没找到照片的公司加 `.noPhoto` 类退化回之前那套品牌色径向光晕背景；没找到 logo 的公司（仅 ALAB）退化成 `.rLogoFallback` 纯文字。因为这些图全部是外链到 Wikimedia/各公司官网 CDN（沙盒环境的出站网络有白名单代理，我这边验证不了每一条链接在真实浏览器里 100% 能打开），新增了一个挂在 `document` 上的捕获阶段 `error` 监听（`img` 的 `error` 事件不冒泡，所以监听器必须挂在捕获阶段而不是普通冒泡阶段）——任何一张图挂了/被防盗链拦截，会自动优雅退化成同一套"纯色/纯文字"兜底，而不是显示浏览器默认的图裂图标；这个监听器本身也是"如果某条外链后来失效了"的长期保险丝，不只是应对我这边验证不了的问题。
+
+**选中变色+摆动效果**：`.rArt` 新增 `--tilt` 变量，按 `nth-child(4n±...)` 给卡片轮换基线小角度（-2°/1.5°/-1°/1.8°循环），模拟"随手散放的照片堆"静态观感；点击某张卡的照片区域会给它加 `.selected`——摆正角度、放大 1.06 倍、抬高阴影，并播放一个 `cardPull` 关键帧动画（先甩向一侧再回正，模拟"从堆里抽出来"的物理甩动，而非线性摆正），同时用 CSS `:has()` 选择器（`.railTrack:has(.rCard.selected) .rCard:not(.selected) .rArt` / `.newsGrid:has(.nCard.selected) ...`）让同一个 rail/grid 里其余未选中卡的照片变黑白——不需要额外 JS 去遍历"其余卡"手动加 class，选择器自己处理。六张股票卡（rail）的选中范围各自独立在 `#cardsA`/`#cardsB` 两条 rail 内；US-CN 观察卡与后内存论点卡的选中状态复用了它们已有的"点击展开详情"点击事件（`wireNewsCards()` 里在切换 `.open` 的同时联动切换 `.selected`，同一网格内只保留一个 selected），没有另开一套独立的点击监听。`prefers-reduced-motion` 下摆动关键帧动画关闭，只保留一次性缩放+去彩色的静态过渡。
+
+**清理**：删除了 U36 引入的 `BRAND_ICON`/`ICON_PATH`/`iconHTML()`/`.bIcon` 整套 SVG 图标系统（CSS 与 JS 两边都删干净，`grep bIcon` 确认零残留），`newsCard()` 不再需要 `opts.glyph`（logo 图片本身即身份标识，两处调用点的 `glyph:` 字段一并删除）。
+
+**验收**：`npx vitest run` 656/656 通过；`npx vite build` 干净通过（`sectors.html` 产物 53.05kB，course.html 既有 parse5 提示与本次无关）；`!important` 基线 `sectors.css` 保持 0；脚本化交叉核对确认新 HTML 里的 class 均能在 `sectors.css`/`page-turn.css` 里找到定义，且 `bIcon`/`ICON_PATH` 无残留引用。**真机复核是站主待办，且这次特别重要**：本次改动引用的全部是外部真实图片直链（Wikimedia Commons + 六家公司官网 CDN），我所在的沙盒环境出站网络有白名单代理、无法直接验证这些链接在真实浏览器里能否打开／是否会被防盗链拦截——已经加了错误退化处理兜底，但仍强烈建议上线后过一遍真机看看：16 个真实 logo 是否都正常显示（尤其 SVG 是否被强制变白后清晰可辨）、6 张真实照片是否加载成功、11 个"纯色兜底"卡是否观感协调、选中摆动+黑白切换的物理感是否符合预期。
+
 ## U36 · sectors.html 改黑底白字 + 全部提及公司换真实品牌色与产品图标（2026-07-18，站主指令，已完成）
 
 **站主指令**：U35 上线的 openai.com 式浅色极简改版，站主反馈两点修正：① 背景和主体改回黑色、文字以白色为主（U35 当时选的是浅色极简整页方案，这次是同一天的直接反向指令，非新的模糊点，无需再用 AskUserQuestion 确认）；② 页面上提到的所有公司（六张持仓股票卡 NVDA/AVGO/MU/SKHY/TSM/ASML、四张中美 AI 观察卡 anthropic/openai/zhipu/alibaba、十张后内存论点卡 MU/SKHY/SSNLF/ALAB/MRVL/PSTG/SNDK/AVGO/TER/RMBS），缩略图要换成该公司的 logo 主题色 + 相关产品图形，而不是 U35 那套与公司身份无关的六种固定彩虹渐变（`.art-0`~`.art-5` 循环分配，谁分到哪个纯属数组下标，色彩与内容无关联）。
