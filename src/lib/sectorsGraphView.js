@@ -13,7 +13,12 @@
    ============================================================ */
 import { buildForceGraphData, createForceSim, stepForceSim, settleForceSim } from './forceGraph.js';
 
-const MARKET_COLOR = { US: '#00e7ff', CN: '#caff00' };
+// Red (CN) vs blue (US) faction colors — matches the sectors.css
+// --faction-us/--faction-cn tokens used everywhere else US/CN is tagged on
+// this page (story-card badges, rail media, factionBar). Kept as literal
+// hex here since this canvas-drawing module has no access to CSS custom
+// properties without a getComputedStyle round-trip per frame.
+const MARKET_COLOR = { US: '#4268ff', CN: '#ff2d55' };
 const KIND_RADIUS = { pole: 0, vendor: 15, equity: 9 };
 const MOBILE_MAX_EQUITIES = 8; // per-basket cap so small screens don't drown in nodes (30b mobile rule)
 

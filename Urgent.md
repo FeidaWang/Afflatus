@@ -1,5 +1,17 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U34 · 上市公司股票卡改 rail + 红蓝阵营对抗设计（2026-07-17，站主指令，已完成）
+
+**站主指令**：借鉴 OpenAI Business 页的公司故事版和滚动横幅，把 `NVDA/AVGO/MU/SKHY/TSM/ASML` 六张持仓论点卡也改造，并且中美 AI 对比要做成红蓝两大阵营对抗的设计。经 AskUserQuestion 确认三点范围：① 六张股票卡改横向 rail（不并入 vendor 故事 rail，分栏保留）；② 红蓝配色覆盖站内所有 US/CN 标记（含新股票卡）；③「对抗」既要有具象的 VS 分栏计分条，也要给星图两大引力阵营加红蓝辨识度——两者都做。
+
+**31a/31b rail 复用到股票卡**：`cards-2`（NVDA/AVGO）、`cards-4`（MU/SKHY/TSM/ASML）从 CSS Grid 改为与 U33 vendor 故事卡同款的 `.storyRail`（横向 scroll-snap + 左右箭头 + 鼠标拖拽，触屏走原生滑动），各自独立成一条 rail、保留原有两个板块标题分组（不合并成一条大 rail，内容分组语义不变）。**没有加 `.railMedia` 媒体条**——这六张卡本来就有 54px 大字 `.ticker` 作为视觉身份标记，再加一层生成图形是重复劳动，比 vendor 故事卡（厂商名没有天然大字识别）更没必要；居中卡片改用透明度（`.railCard{opacity:.68}` → `.is-active{opacity:1}`）做焦点提示，而不是 `filter`，同样靠 `IntersectionObserver({root, threshold:.6})` 判定，零 scroll 监听。三条 rail（新增两条 + U33 既有一条）的滚动/拖拽/居中判定全部收拢进一组通用函数（`scrollRailEl`/`wireRailDragFor`/`wireRailActiveFor`，接收目标元素而非写死 `storyBaskets`），避免三份几乎相同的代码。
+
+**红蓝阵营配色**：新增 `--faction-us:var(--blue)`（复用此前体检发现的死代码 `--blue:#4268ff`，废物利用而非新增变量）、`--faction-cn:#ff2d55`。覆盖范围：`.storyMarket` 徽标（US/CN 底色+白字，替换原 cyan/acid）、故事卡 `.railFill` 渐变（蓝/红两种市场基调，替换原 cyan/acid）、六张股票卡的 `.card::before` 顶部装饰条（默认蓝——六张全部是 US 上市/挂牌标的，`[data-market="CN"]` 分支留作以后扩展的钩子，目前未触发）、`src/lib/sectorsGraphView.js` 的 `MARKET_COLOR`（星图节点颜色 US 蓝/CN 红，取代原 cyan/acid）。星图的连线颜色（关联实线/受压虚线）是独立维度，不属于市场配色，未改动。
+
+**VS 对抗计分条**：新增 `.factionBar`——US CAMP / VS / CN CAMP 三段横条，US/CN 两侧宽度按真实数据比例撑开（`renderFactionBar()` 用 `DATA.baskets` 算出两边桌数+关联标的数，写入 `--us-w` CSS 变量），不是装饰性的固定 50/50——延续本仓库「每个读数绑定真实状态」的宪章惯例。位置：US-CHINA AI WATCH 板块标题正下方，故事卡/星图切换按钮之上。板块标题本身也改写为「red camp vs blue camp / 红蓝阵营对抗」呼应设计主题。
+
+**验收**：656/656 vitest 不变，`vite build` 干净通过，`!important` 基线不变（`sectors.css` 仍是 0，唯一命中是注释文本）。真机待复核：三条 rail 的拖拽/箭头/居中焦点效果、红蓝配色在深色 HUD 底色上的可读性、`.factionBar` 比例条在移动端换行降级（`≤560px` 改上下堆叠）是否观感正常。
+
 ## U33 · 修正 U31：故事卡改为真正的横向滚动 rail（2026-07-17，站主贴出 OpenAI Business 参考稿 DOM inspect 指出遗漏，已完成）
 
 **问题**：U31 把「BNY/Moderna 案例卡」这个交互图案理解成了「非对称网格 + 滚动渐现」，但站主贴出的实际 DOM（`img.size-full.scale-102.object-cover...transition-[filter] duration-260 ease-[cubic-bezier(0.22,1,0.36,1)]`，配一串响应式 `srcset`）证明参考稿的真实机制是**横向可滚动的卡片轨道**（scroll-snap 卡片带，图片常驻 `scale-102` 常量缩放、只有 `filter` 会过渡——即"居中卡片全亮度、其余卡片变暗"，随横向滚动切换焦点），不是竖直网格。上一版完全遗漏了"横向滚动"这个定义性交互，是理解偏差，不是实现细节问题。
