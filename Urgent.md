@@ -1,5 +1,13 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U33 · 修正 U31：故事卡改为真正的横向滚动 rail（2026-07-17，站主贴出 OpenAI Business 参考稿 DOM inspect 指出遗漏，已完成）
+
+**问题**：U31 把「BNY/Moderna 案例卡」这个交互图案理解成了「非对称网格 + 滚动渐现」，但站主贴出的实际 DOM（`img.size-full.scale-102.object-cover...transition-[filter] duration-260 ease-[cubic-bezier(0.22,1,0.36,1)]`，配一串响应式 `srcset`）证明参考稿的真实机制是**横向可滚动的卡片轨道**（scroll-snap 卡片带，图片常驻 `scale-102` 常量缩放、只有 `filter` 会过渡——即"居中卡片全亮度、其余卡片变暗"，随横向滚动切换焦点），不是竖直网格。上一版完全遗漏了"横向滚动"这个定义性交互，是理解偏差，不是实现细节问题。
+
+**修复**：`storyBaskets`（4 张 vendor 案例卡）的容器从 12 列非对称 CSS Grid 改为 `.storyRail`（`.railTrack{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}` + 左右 `.railArrow` 按钮 + 鼠标 `pointerdown/move/up` 拖拽滚动，触屏走原生 swipe）。每张卡新增 `.railMedia`——**没有这些厂商的正版实拍图可用，伪造 Anthropic/OpenAI/智谱/阿里的"实景照片"是编造内容，因此用生成式图形身份替代**（vendor 首字母大字 + 按市场着色的径向渐变，US 偏 cyan/CN 偏 acid），而不是塞一张假照片；`filter` 的明暗切换、`.26s cubic-bezier(.22,1,.36,1)` 缓动、`scale-102`（`transform:scale(1.02)`）三个数值/曲线**直接照抄参考稿 DOM 里的真实值**，居中判定用 `IntersectionObserver({root: storyBaskets, threshold:.6})` 而非监听 `scroll` 事件手算偏移（延续本仓库"零 scroll 监听"纪律）。点击展开详情、hover 悬停微交互、ticker chip 点击滚动定位——这些 U31 已有的交互原样保留，容器结构变了但行为契约不变。
+
+**验收**：656/656 vitest 不变（改动全部是 HTML 结构 + CSS + 同一批既有内联脚本的扩展，无新增可测试的纯函数逻辑），`vite build` 干净通过，`!important` 基线不变（唯一命中仍是注释文本）。真机待复核：横向拖拽/箭头/触屏滑动是否顺手、居中卡片调焦（变亮/其余变暗）过渡是否如预期、`prefers-reduced-motion` 下 `scroll-behavior:auto` 是否生效。
+
 ## U32 · sectors.html 修复：cards-4 文字重叠/结构波动 + 移除过期的 SKHY 上市信息（2026-07-17，站主真机反馈，已完成）
 
 **问题 1（视觉 bug）**：「存储、晶圆代工与设备制造商」下方四张卡（MU/SKHY/TSM/ASML）出现文字重叠、结构波动，影响观感。**根因定位到两处真实存在的动效**，而非站主转述诊断里猜测的字距/多语种问题：① `.bar i` 的信念权重进度条挂了 `barFlow 3s linear infinite` 一个永不停止的渐变横向平移动画，四张卡进度条宽度不同、相位不同步，色彩持续水平滑动，紧贴文字造成"晃动"观感；② U30 R1 给 `.cards-4` 加的 hover 手风琴（`flex:1→3` + `-webkit-line-clamp:2→14`）在 `flex` 过渡期间叠加 `-webkit-line-clamp` 重新计算，浏览器在过渡帧之间会出现文字重排/重叠的渲染瑕疵，且 hover 触发条件在滚动/触控板误触时可能意外抖动，导致整行结构无预期地重排。

@@ -129,7 +129,11 @@
   </div>
   <div id="storyCards" class="storyCards">
     <article id="storyTake" class="storyFeatured"></article>
-    <div id="storyBaskets" class="storyGrid"></div>
+    <div class="storyRail">
+      <button type="button" class="railArrow railPrev" aria-label="Scroll left">‹</button>
+      <div id="storyBaskets" class="railTrack"></div>
+      <button type="button" class="railArrow railNext" aria-label="Scroll right">›</button>
+    </div>
     <div id="storyModels" class="storyModels"></div>
   </div>
   <div id="storyGraphSection" hidden>
@@ -314,11 +318,14 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
         return '<div class="mwDev"><b>' + esc(e.ticker) + '</b> · ' + esc(RELATION_LABEL[e.relation] || e.relation)
           + (e.correlation_note_zh ? '<div class="mwGap">' + esc(e.correlation_note_zh) + '</div>' : '') + '</div>';
       }).join('');
-      return '<article class="storyCard" tabindex="0" role="button" aria-expanded="false" id="vendorCard-' + esc(b.vendor) + '">'
+      var initial = esc((VENDOR_NAME[b.vendor] || b.vendor).charAt(0));
+      return '<article class="storyCard" tabindex="0" role="button" aria-expanded="false" data-market="' + esc(b.market) + '" id="vendorCard-' + esc(b.vendor) + '">'
+        + '<div class="railMedia" aria-hidden="true"><div class="railFill"></div><span class="railGlyph">' + initial + '</span></div>'
+        + '<div class="storyBody">'
         + '<div class="mwHead"><span class="mwVendor">' + esc(VENDOR_NAME[b.vendor] || b.vendor) + '</span><span class="storyMarket ' + esc(b.market) + '">' + esc(b.market) + '</span></div>'
         + lede + '<div class="storyChips">' + chips + '</div>'
         + '<div class="storyDetail">' + detail + '</div>'
-        + '</article>';
+        + '</div></article>';
     }).join('');
     var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
     if (storyModels) storyModels.innerHTML = mw.map(function (card) {
@@ -330,7 +337,57 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
     }).join('');
     wireStoryCards();
     observeReveal();
+    wireRailActive();
   }
+
+  // Rail (31a revision) — horizontal scroll-snap carousel replacing the
+  // earlier vertical asymmetric grid, matching the actual OpenAI Business
+  // "BNY/Moderna" card mechanism the reference DOM showed (scroll-snap track,
+  // centered card at full brightness, others dimmed — toggled here via
+  // IntersectionObserver against the track as root rather than scroll-offset
+  // math). No stock photography exists for these vendors, so .railMedia is a
+  // generated graphic identity (vendor initial + market-tinted gradient)
+  // instead of a fabricated photo.
+  var activeIO = null;
+  function wireRailActive() {
+    var cards = storyBaskets ? storyBaskets.querySelectorAll('.storyCard') : [];
+    if (!cards.length) return;
+    if (!('IntersectionObserver' in window)) { cards.forEach(function (c) { c.classList.add('is-active'); }); return; }
+    if (activeIO) activeIO.disconnect();
+    activeIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { entry.target.classList.toggle('is-active', entry.isIntersecting); });
+    }, { root: storyBaskets, threshold: 0.6 });
+    cards.forEach(function (c) { activeIO.observe(c); });
+  }
+
+  function scrollRail(dir) {
+    if (!storyBaskets) return;
+    var card = storyBaskets.querySelector('.storyCard');
+    var step = card ? card.getBoundingClientRect().width + 16 : 320;
+    storyBaskets.scrollBy({ left: dir * step, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+  var railPrev = document.querySelector('.railPrev'), railNext = document.querySelector('.railNext');
+  if (railPrev) railPrev.addEventListener('click', function () { scrollRail(-1); });
+  if (railNext) railNext.addEventListener('click', function () { scrollRail(1); });
+
+  // Mouse drag-to-scroll (touch already gets native swipe from overflow-x
+  // scroll-snap; this only wires up pointerType !== 'touch').
+  (function wireRailDrag() {
+    if (!storyBaskets) return;
+    var dragging = false, startX = 0, startScroll = 0;
+    storyBaskets.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') return;
+      dragging = true; startX = e.clientX; startScroll = storyBaskets.scrollLeft;
+      storyBaskets.setPointerCapture(e.pointerId);
+    });
+    storyBaskets.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      storyBaskets.scrollLeft = startScroll - (e.clientX - startX);
+    });
+    var stopDrag = function () { dragging = false; };
+    storyBaskets.addEventListener('pointerup', stopDrag);
+    storyBaskets.addEventListener('pointercancel', stopDrag);
+  })();
 
   function wireStoryCards() {
     document.querySelectorAll('.storyCard').forEach(function (card) {
