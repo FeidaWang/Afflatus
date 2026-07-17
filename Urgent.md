@@ -1,5 +1,15 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U32 · sectors.html 修复：cards-4 文字重叠/结构波动 + 移除过期的 SKHY 上市信息（2026-07-17，站主真机反馈，已完成）
+
+**问题 1（视觉 bug）**：「存储、晶圆代工与设备制造商」下方四张卡（MU/SKHY/TSM/ASML）出现文字重叠、结构波动，影响观感。**根因定位到两处真实存在的动效**，而非站主转述诊断里猜测的字距/多语种问题：① `.bar i` 的信念权重进度条挂了 `barFlow 3s linear infinite` 一个永不停止的渐变横向平移动画，四张卡进度条宽度不同、相位不同步，色彩持续水平滑动，紧贴文字造成"晃动"观感；② U30 R1 给 `.cards-4` 加的 hover 手风琴（`flex:1→3` + `-webkit-line-clamp:2→14`）在 `flex` 过渡期间叠加 `-webkit-line-clamp` 重新计算，浏览器在过渡帧之间会出现文字重排/重叠的渲染瑕疵，且 hover 触发条件在滚动/触控板误触时可能意外抖动，导致整行结构无预期地重排。
+
+**修复**：① `.bar i` 去掉 `barFlow`，只保留一次性 `barGrow` 填充动画，填满后静止，同时删除已无引用的 `@keyframes barFlow`；② 撤回 `.cards-4` 的 hover 手风琴机制（`@media(hover:hover) and (pointer:fine)` 那两条规则整体移除），改为固定 `-webkit-line-clamp:3`（不随 hover 切换）——四卡高度稳定一致，`.tag` 因 `.card{flex-direction:column}` + `.thesis{flex:1}` 天然钉在同一水平线，不再需要動態手风琴来"对齐"；同步移除 4 张卡上为手风琴 `:focus-within` 而加的 `tabindex="0"`（功能撤回后这是纯粹的多余 tab 停靠点，可达性上应去掉）。
+
+**问题 2（内容过期）**：SK Hynix 纳斯达克上市倒计时/时间线/条款整块内容已经过期（首秀是 7 月 10 日，今天 7 月 17 日，已经过去一周，倒计时目标日期已过，继续展示等于展示一个卡在 00:00:00:00 或者语义上无意义的"倒计时"）。**移除范围**：`SK HYNIX (SKHY) NASDAQ DEBUT` band + 整个 `.skhy` section（lede、倒计时数字块、六项发行数据、五步时间线、指引段落）+ 专属的倒计时 `setInterval` 内联脚本 + `sectors.css` 里对应的 `.skhy*`/`.cd-*`/`.tl-item` 规则块（连带清理因此变成孤儿的 `@keyframes cdPulse` 和 `--hazard` 根变量——都只在被删的这块里用到）；hero 区 kicker/brief 里"SK Hynix debut Jul 10 / 见下方倒计时"的措辞相应改写（brief 改为过去式陈述、不再指向已删除的区块，kicker 去掉这一分句）；meta description 里的"SKHY Nasdaq ADR debut countdown"分句一并删除，避免描述一个已不存在的页面功能。**保留未动**：cards-4 里 SKHY 那张持仓论点卡（讨论的是 HBM 份额/SOX 纳入/仓位这些持续有效的投资论点，不是"上市信息"本身）与 POST-MEMORY 十强论点卡里的 SKHY 条目——两者都是仍在追踪的持仓判断，不属于站主要求删除的范围。
+
+**验收**：656/656 vitest 不变（本次改动零 JS 逻辑改动，纯 HTML 内容删除 + CSS 规则调整），`vite build` 干净通过，`sectors.html` 产物体积从 46.99kB 降到 39.09kB（符合预期——删掉了一整块内容），`!important` 基线不变（`sectors.css` 仍是 0，唯一字面命中是注释文本）。真机复核仍是站主待办：四卡是否不再有重叠/波动感、SKHY 倒计时区块确认已从页面消失。
+
 ## U31 · sectors.html 重构：OpenAI Business 式故事块 + 无限 Ticker 条（2026-07-16 立项，站主参考稿）
 
 **总裁决（延续 U30「效果照收，栈不引」）**：故事块与 marquee 两个交互图案全部采纳；参考稿里的技术栈全部改道——Next.js/SSR 不迁（U21 裁决：静态 MPA 首屏与 SEO 收益等价且零框架债）、Tailwind 不引（`@layer tokens` 是既定替代）、Framer Motion/GSAP 不引（IntersectionObserver + 原生 CSS transition 就是参考稿自己描述的底层实现）。**新样式只许写进 `@layer tokens/components`**（U30 重构线硬规则）。
