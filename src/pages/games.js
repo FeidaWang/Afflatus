@@ -7,6 +7,7 @@
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
 import { renderTrackRecordHTML } from '../lib/trackRecord.js';
 import { buildWcStages } from '../lib/bracketModel.js';
+import { ZOOM_TREE, ZOOM_STAGE, ZOOM_MATCH, pointDistance, nextZoomLevel, wheelScaleDelta } from '../lib/pinchZoom.js';
 
 (() => {
   'use strict';
@@ -166,9 +167,21 @@ import { buildWcStages } from '../lib/bracketModel.js';
      stacked per-stage markup (renderBracketStage) remains the no-model
      fallback. Model comes from src/lib/bracketModel.js — leagues events
      (EWC / Season 16) will reuse the same model+slider via their own
-     adapter (roadmap §7.4). */
+     adapter (roadmap §7.4).
+
+     ---------- U39: pinch/wheel semantic zoom on top of the slider ----------
+     Three levels (src/lib/pinchZoom.js): ZOOM_TREE (pinch in → compact
+     all-rounds overview, "show more matches at once"), ZOOM_STAGE (the
+     U38 slider, default), ZOOM_MATCH (pinch out / tap a card → one
+     match's full detail, "show this specific match"). Touch pinch (two
+     pointers) and desktop trackpad pinch (ctrl+wheel) both drive the
+     same nextZoomLevel() state machine; a +/− zoom bar is the
+     non-gesture fallback for mouse/keyboard users. */
   let koStage = -1; // -1 = uninitialised → default to latest stage
-  function renderKoCard(m) {
+  let koZoom = ZOOM_STAGE;
+  let koFocusId = null; // which match ZOOM_MATCH is showing
+  function renderKoCard(m, opts = {}) {
+    const big = !!opts.big;
     const nm = (t) => lang === 'zh' ? t.name_zh : t.name_en;
     const row = (side) => {
       const t = m[side];
@@ -178,7 +191,73 @@ import { buildWcStages } from '../lib/bracketModel.js';
     };
     const head = m.date ? `<div class="ko-date">${m.date}${m.venue_en ? ' · ' + T(m.venue_en, m.venue_zh) : ''}${m.score ? ' · ' + T('Final', '完场') : ''}</div>` : (m.score ? `<div class="ko-date">${T('Final', '完场')}${m.score.extra ? ' ' + m.score.extra : ''}</div>` : '');
     const extra = (m.score && m.score.extra && m.date) ? `<div class="ko-extra">${m.score.extra}</div>` : '';
-    return `<article class="ko-card${m.isFinal ? ' ko-final' : ''}">${head}${row('home')}${row('away')}${extra}</article>`;
+    return `<article class="ko-card${m.isFinal ? ' ko-final' : ''}${big ? ' big' : ''}" data-mid="${m.id || ''}">${head}${row('home')}${row('away')}${extra}</article>`;
+  }
+  // ZOOM_TREE: every stage as a compact column of one-line match chips —
+  // tapping a chip jumps straight to that match's ZOOM_MATCH detail.
+  function renderKoTree(stages) {
+    const cols = stages.map((s) => {
+      const rows = s.matches.map((m) => {
+        const side = (t, key) => `<span class="ko-tree-row${m.winner === key ? ' win' : (m.winner ? ' lose' : '')}"><i>${t.flag}</i>${t.code}<b>${m.score ? m.score[key === 'home' ? 'h' : 'a'] : ''}</b></span>`;
+        return `<button class="ko-tree-m" type="button" data-mid="${m.id || ''}" data-stage="${s.key}">${side(m.home, 'home')}${side(m.away, 'away')}</button>`;
+      }).join('');
+      return `<div class="ko-tree-col"><div class="ko-tree-h">${T(s.label_en, s.label_zh)}</div>${rows}</div>`;
+    }).join('');
+    return `<div class="ko-tree">${cols}</div>`;
+  }
+  function zoomBar() {
+    const labels_en = ['Overview', 'Rounds', 'Match'], labels_zh = ['总览', '轮次', '单场'];
+    return `<div class="ko-zoombar">
+      <button class="ko-zbtn" type="button" data-zoom="-1" aria-label="${T('Zoom out — show more matches', '缩小 — 显示更多场次')}"${koZoom <= ZOOM_TREE ? ' disabled' : ''}>−</button>
+      <span class="ko-zlabel">${T(labels_en[koZoom], labels_zh[koZoom])}</span>
+      <button class="ko-zbtn" type="button" data-zoom="1" aria-label="${T('Zoom in — show match detail', '放大 — 显示场次详情')}"${koZoom >= ZOOM_MATCH ? ' disabled' : ''}>+</button>
+    </div>`;
+  }
+  function setZoom(z, focusId, stageIdx) {
+    koZoom = Math.max(ZOOM_TREE, Math.min(ZOOM_MATCH, z));
+    if (focusId !== undefined) koFocusId = focusId;
+    if (stageIdx !== undefined && stageIdx >= 0) koStage = stageIdx;
+    renderBracket();
+  }
+  function wireZoomBar(host, stages) {
+    host.querySelectorAll('.ko-zbtn').forEach((b) => b.addEventListener('click', () => setZoom(koZoom + (+b.dataset.zoom))));
+    host.querySelectorAll('.ko-tree-m').forEach((b) => b.addEventListener('click', () => {
+      const idx = stages.findIndex((s) => s.key === b.dataset.stage);
+      setZoom(ZOOM_MATCH, b.dataset.mid || null, idx);
+    }));
+    const matchCard = host.querySelector('.ko-zoom-match .ko-card');
+    if (matchCard) matchCard.addEventListener('click', () => setZoom(ZOOM_STAGE));
+  }
+  // Two-finger pinch (touch) + ctrl+wheel (trackpad) → zoom level. Wired
+  // once on the stable #bracket host (innerHTML swaps its children every
+  // render, but the host element itself persists across renders).
+  function wirePinchOnce(host) {
+    if (host.dataset.pinchWired) return;
+    host.dataset.pinchWired = '1';
+    const pts = new Map();
+    let startDist = null;
+    host.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'touch') return;
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pts.size === 2) startDist = pointDistance(...pts.values());
+    });
+    host.addEventListener('pointermove', (e) => {
+      if (!pts.has(e.pointerId)) return;
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pts.size === 2 && startDist != null) {
+        const d = pointDistance(...pts.values());
+        const next = nextZoomLevel(koZoom, d - startDist, 46);
+        if (next !== koZoom) { e.preventDefault(); koZoom = next; startDist = d; renderBracket(); }
+      }
+    });
+    const clear = (e) => { pts.delete(e.pointerId); if (pts.size < 2) startDist = null; };
+    host.addEventListener('pointerup', clear);
+    host.addEventListener('pointercancel', clear);
+    host.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey) return;
+      const next = nextZoomLevel(koZoom, wheelScaleDelta(e.deltaY), 22);
+      if (next !== koZoom) { e.preventDefault(); koZoom = next; renderBracket(); }
+    }, { passive: false });
   }
   function renderBracket() {
     const host = $('bracket'); if (!host || !data || !data.bracket) return;
@@ -195,11 +274,29 @@ import { buildWcStages } from '../lib/bracketModel.js';
       return;
     }
     if (koStage < 0 || koStage >= stages.length) koStage = stages.length - 1; // land on the latest round
+    wirePinchOnce(host);
+
+    if (koZoom === ZOOM_TREE) {
+      host.innerHTML = `<div class="ko ko-zoom-tree">${zoomBar()}${renderKoTree(stages)}</div>`;
+      wireZoomBar(host, stages);
+      if (window.AfflatusI18N) window.AfflatusI18N.apply();
+      return;
+    }
+    if (koZoom === ZOOM_MATCH) {
+      const all = stages.flatMap((s) => s.matches);
+      let m = all.find((x) => x.id && x.id === koFocusId);
+      if (!m) { m = stages[koStage].matches[0]; koFocusId = m && m.id; }
+      host.innerHTML = `<div class="ko ko-zoom-match">${zoomBar()}${m ? renderKoCard(m, { big: true }) : ''}</div>`;
+      wireZoomBar(host, stages);
+      if (window.AfflatusI18N) window.AfflatusI18N.apply();
+      return;
+    }
+
     const rail = stages.map((s, i) =>
       `<button class="ko-tab" role="tab" id="koTab${i}" aria-selected="${i === koStage}" aria-controls="koPane${i}" data-i="${i}">${T(s.label_en, s.label_zh)}</button>`).join('');
     const panes = stages.map((s, i) =>
-      `<section class="ko-pane" role="tabpanel" id="koPane${i}" aria-labelledby="koTab${i}">${s.matches.map(renderKoCard).join('')}</section>`).join('');
-    host.innerHTML = `<div class="ko"><div class="ko-rail" role="tablist" aria-label="${T('Knockout rounds', '淘汰赛轮次')}"><i class="ko-thumb" aria-hidden="true"></i>${rail}</div><div class="ko-view"><div class="ko-panes">${panes}</div></div></div>`;
+      `<section class="ko-pane" role="tabpanel" id="koPane${i}" aria-labelledby="koTab${i}">${s.matches.map((m) => renderKoCard(m)).join('')}</section>`).join('');
+    host.innerHTML = `<div class="ko">${zoomBar()}<div class="ko-rail" role="tablist" aria-label="${T('Knockout rounds', '淘汰赛轮次')}"><i class="ko-thumb" aria-hidden="true"></i>${rail}</div><div class="ko-view"><div class="ko-panes">${panes}</div></div></div>`;
 
     const railEl = host.querySelector('.ko-rail'), thumb = host.querySelector('.ko-thumb');
     const view = host.querySelector('.ko-view'), panesEl = host.querySelector('.ko-panes');
@@ -222,6 +319,11 @@ import { buildWcStages } from '../lib/bracketModel.js';
       if (e.key === 'ArrowRight') { setStage(koStage + 1, true); e.preventDefault(); }
       if (e.key === 'ArrowLeft') { setStage(koStage - 1, true); e.preventDefault(); }
     });
+    // tap a card → zoom to its match detail
+    panesEl.addEventListener('click', (e) => {
+      const card = e.target.closest('.ko-card');
+      if (card && card.dataset.mid) setZoom(ZOOM_MATCH, card.dataset.mid);
+    });
     // touch swipe on the panes
     let sx = null;
     view.addEventListener('pointerdown', (e) => { sx = e.clientX; }, { passive: true });
@@ -232,6 +334,7 @@ import { buildWcStages } from '../lib/bracketModel.js';
     }, { passive: true });
     addEventListener('resize', () => setStage(koStage), { passive: true });
     setStage(koStage);
+    wireZoomBar(host, stages);
     if (window.AfflatusI18N) window.AfflatusI18N.apply();
   }
 

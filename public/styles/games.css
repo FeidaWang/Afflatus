@@ -218,3 +218,39 @@ a{color:inherit;text-decoration:none}
 @media(prefers-reduced-motion:reduce){
   .ko-thumb,.ko-panes,.ko-pane,.ko-tab{transition:none}
 }
+
+/* ═══ U39 · pinch/wheel semantic zoom (tree ↔ stage ↔ match) ═══
+   touch-action:pan-y lets one-finger vertical scroll pass through while
+   keeping the two-finger gesture free for our own pinch handler instead
+   of the browser's native page-zoom. */
+.ko{touch-action:pan-y}
+.ko-zoombar{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 12px}
+.ko-zbtn{appearance:none;border:1px solid rgba(255,255,255,.18);background:#0a0818;color:var(--ink);
+  width:26px;height:26px;border-radius:50%;font:700 15px/1 var(--mono);cursor:pointer}
+.ko-zbtn:disabled{opacity:.3;cursor:default}
+.ko-zbtn:focus-visible{outline:1px solid var(--cyan);outline-offset:2px}
+.ko-zlabel{font:700 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);min-width:60px;text-align:center}
+
+.ko-tree{display:flex;gap:10px;overflow-x:auto;padding:0 2px 4px;-webkit-overflow-scrolling:touch}
+.ko-tree-col{flex:0 0 auto;min-width:132px}
+.ko-tree-h{font:700 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+  margin-bottom:6px;text-align:center}
+.ko-tree-m{display:block;width:100%;appearance:none;border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  background:#0c0a1c;color:#cfcaf0;padding:6px 8px;margin-bottom:6px;cursor:pointer;font:400 11px/1.5 var(--mono);
+  text-align:left}
+.ko-tree-m:focus-visible{outline:1px solid var(--cyan);outline-offset:1px}
+.ko-tree-row{display:flex;align-items:center;gap:5px}
+.ko-tree-row i{font-style:normal}
+.ko-tree-row b{margin-left:auto;font-weight:400}
+.ko-tree-row.win{color:var(--ink);font-weight:700}
+.ko-tree-row.win b{font-weight:700}
+.ko-tree-row.lose{opacity:.5}
+
+.ko-zoom-match .ko-card{max-width:420px;margin:0 auto;cursor:pointer}
+.ko-card.big{padding:16px 18px}
+.ko-card.big .ko-row{font-size:17px;padding:9px 0}
+.ko-card.big .ko-date{font-size:11px;margin-bottom:12px}
+
+@media(max-width:640px){
+  .ko-tree-col{min-width:112px}
+}

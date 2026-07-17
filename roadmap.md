@@ -178,6 +178,8 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 
 **阶段滑杆通用化（U38 落成，2026-07-17）**：games.html 的 Apple Sports 式淘汰赛阶段滑杆已把数据层做成赛事无关的通用模型（`src/lib/bracketModel.js`：阶段列表 + 比分解析 + 主客重排，9 条 vitest）与独立 UI 组件（games.js `.ko-*`：滑动 thumb 分段轨 + 平移缩放面板 + 触摸/键盘/RM 降级）。**后续英雄联盟赛事直接复用**：Esports World Cup、2026 competitive season（Season 16 各站）上线时只需写一个「赛事数据 → 阶段模型」adapter（BO3/BO5 的 legs 结构天然兼容 legs 数组，比分 label 换成局分即可），滑杆 UI 零改动；届时把 `.ko-*` 样式与渲染函数提为共享模块（games/leagues 双页引用），沿用 V12「共享库替代字节复制」的既定纪律。
 
+**双指/触控板缩放层（U39 落成，2026-07-18）**：在阶段滑杆之上加了一层语义缩放——`src/lib/pinchZoom.js`（纯函数，9 条 vitest）提供总览/轮次/单场三档状态机，games.js `wirePinchOnce` 把触摸双指间距与桌面 ctrl+wheel 都接到同一状态机上，`+/−` 按钮做无手势兜底。这层同样与赛事数据形状无关，只消费 `bracketModel.js` 的通用阶段模型——EWC/Season 16 接上 U38 的 adapter 后，缩放手势不需要任何改动即可直接工作。
+
 ### 7.5 调度、token 预算与数据管线（V12 + 全模块共用）
 
 **调度表**（用户本机 cron，AEST；美股 7 月为 EDT=UTC-4，AEST=UTC+10）
