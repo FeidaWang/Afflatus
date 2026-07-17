@@ -6,6 +6,7 @@
    ============================================================ */
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
 import { renderTrackRecordHTML } from '../lib/trackRecord.js';
+import { buildWcStages } from '../lib/bracketModel.js';
 
 (() => {
   'use strict';
@@ -157,15 +158,80 @@ import { renderTrackRecordHTML } from '../lib/trackRecord.js';
     }).join('');
     return `<div class="bstage" data-stage="${stage.key}"><div class="bstage-title">${T(stage.badge_en, stage.badge_zh)}</div><div class="bracket">${cards}</div></div>`;
   }
+  /* ---------- U38: Apple-Sports-style stage slider ----------
+     Segmented stage rail with a sliding thumb + horizontally translating
+     stage panes (active pane scales to 1/full opacity, neighbours sit at
+     .94/.45 — the "zoom between rounds" feel). Swipe on touch, arrow keys
+     on the rail, reduced-motion drops all transitions via CSS. The old
+     stacked per-stage markup (renderBracketStage) remains the no-model
+     fallback. Model comes from src/lib/bracketModel.js — leagues events
+     (EWC / Season 16) will reuse the same model+slider via their own
+     adapter (roadmap §7.4). */
+  let koStage = -1; // -1 = uninitialised → default to latest stage
+  function renderKoCard(m) {
+    const nm = (t) => lang === 'zh' ? t.name_zh : t.name_en;
+    const row = (side) => {
+      const t = m[side];
+      const w = m.winner === side, l = m.winner && m.winner !== side;
+      const sc = m.score ? `<b class="ko-sc">${m.score[side === 'home' ? 'h' : 'a']}</b>` : '';
+      return `<div class="ko-row${w ? ' win' : ''}${l ? ' lose' : ''}"><span class="ko-fl">${t.flag}</span><span class="ko-nm">${nm(t)}</span><span class="ko-code">${t.code}</span>${sc}</div>`;
+    };
+    const head = m.date ? `<div class="ko-date">${m.date}${m.venue_en ? ' · ' + T(m.venue_en, m.venue_zh) : ''}${m.score ? ' · ' + T('Final', '完场') : ''}</div>` : (m.score ? `<div class="ko-date">${T('Final', '完场')}${m.score.extra ? ' ' + m.score.extra : ''}</div>` : '');
+    const extra = (m.score && m.score.extra && m.date) ? `<div class="ko-extra">${m.score.extra}</div>` : '';
+    return `<article class="ko-card${m.isFinal ? ' ko-final' : ''}">${head}${row('home')}${row('away')}${extra}</article>`;
+  }
   function renderBracket() {
     const host = $('bracket'); if (!host || !data || !data.bracket) return;
     const label = $('bracketLabel');
     if (label && data.bracket.stageLabel_en) { label.setAttribute('data-en', data.bracket.stageLabel_en); label.setAttribute('data-zh', data.bracket.stageLabel_zh || data.bracket.stageLabel_en); label.textContent = T(data.bracket.stageLabel_en, data.bracket.stageLabel_zh); }
-    const stagesHtml = BRACKET_STAGES
-      .filter((stage) => Array.isArray(data.bracket[stage.key]) && data.bracket[stage.key].length)
-      .map((stage) => renderBracketStage(stage, data.bracket[stage.key]))
-      .join('');
-    host.innerHTML = stagesHtml || `<div class="empty">${T('Bracket unavailable.', '对阵图暂不可用。')}</div>`;
+    const stages = buildWcStages(data.bracket, data.record && data.record.log);
+    if (!stages.length) { // fallback: legacy stacked view
+      const stagesHtml = BRACKET_STAGES
+        .filter((stage) => Array.isArray(data.bracket[stage.key]) && data.bracket[stage.key].length)
+        .map((stage) => renderBracketStage(stage, data.bracket[stage.key]))
+        .join('');
+      host.innerHTML = stagesHtml || `<div class="empty">${T('Bracket unavailable.', '对阵图暂不可用。')}</div>`;
+      if (window.AfflatusI18N) window.AfflatusI18N.apply();
+      return;
+    }
+    if (koStage < 0 || koStage >= stages.length) koStage = stages.length - 1; // land on the latest round
+    const rail = stages.map((s, i) =>
+      `<button class="ko-tab" role="tab" id="koTab${i}" aria-selected="${i === koStage}" aria-controls="koPane${i}" data-i="${i}">${T(s.label_en, s.label_zh)}</button>`).join('');
+    const panes = stages.map((s, i) =>
+      `<section class="ko-pane" role="tabpanel" id="koPane${i}" aria-labelledby="koTab${i}">${s.matches.map(renderKoCard).join('')}</section>`).join('');
+    host.innerHTML = `<div class="ko"><div class="ko-rail" role="tablist" aria-label="${T('Knockout rounds', '淘汰赛轮次')}"><i class="ko-thumb" aria-hidden="true"></i>${rail}</div><div class="ko-view"><div class="ko-panes">${panes}</div></div></div>`;
+
+    const railEl = host.querySelector('.ko-rail'), thumb = host.querySelector('.ko-thumb');
+    const view = host.querySelector('.ko-view'), panesEl = host.querySelector('.ko-panes');
+    const tabs = [...host.querySelectorAll('.ko-tab')];
+    const paneEls = [...host.querySelectorAll('.ko-pane')];
+    function setStage(i, focus) {
+      koStage = Math.max(0, Math.min(stages.length - 1, i));
+      const tab = tabs[koStage];
+      thumb.style.width = tab.offsetWidth + 'px';
+      thumb.style.transform = `translateX(${tab.offsetLeft}px)`;
+      tabs.forEach((b, j) => b.setAttribute('aria-selected', String(j === koStage)));
+      const pane = paneEls[koStage];
+      const x = pane.offsetLeft - (view.clientWidth - pane.clientWidth) / 2;
+      panesEl.style.transform = `translateX(${-x}px)`;
+      paneEls.forEach((p, j) => p.classList.toggle('on', j === koStage));
+      if (focus) tab.focus();
+    }
+    tabs.forEach((b) => b.addEventListener('click', () => setStage(+b.dataset.i)));
+    railEl.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { setStage(koStage + 1, true); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { setStage(koStage - 1, true); e.preventDefault(); }
+    });
+    // touch swipe on the panes
+    let sx = null;
+    view.addEventListener('pointerdown', (e) => { sx = e.clientX; }, { passive: true });
+    view.addEventListener('pointerup', (e) => {
+      if (sx == null) return;
+      const dx = e.clientX - sx; sx = null;
+      if (Math.abs(dx) > 42) setStage(koStage + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+    addEventListener('resize', () => setStage(koStage), { passive: true });
+    setStage(koStage);
     if (window.AfflatusI18N) window.AfflatusI18N.apply();
   }
 

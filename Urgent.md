@@ -1,5 +1,16 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U38 · games.html 淘汰赛阶段滑杆（Apple Sports 式）✅ 代码已完成（2026-07-17，站主五张截图参考）
+
+**参考机制转译**：Apple Sports 世界杯页的 GS→F 分段滑杆 = 「滑动 thumb 的阶段轨 + 水平平移/缩放的阶段面板」。本站落地（网页+移动端同一套）：
+
+- [x] **纯函数层** `src/lib/bracketModel.js`（+9 vitest）：games-data 的「每轮比赛藏在下一轮槽位 legs」结构 → 通用阶段模型（R16/QF/SF/F）；比分从 record.log 的 label 解析（含点球 `0-0 (4-3 pens)` 与 `(AET)` 标注，自动按主客方向重排）；决赛对阵由 final 槽 leg 胜者推导；数据只到 QF 时自动只出已有轮次。**模型刻意做成赛事无关**——leagues 未来赛事写个 adapter 即可复用。
+- [x] **滑杆 UI**（games.js `renderBracket` 重写 + games.css `.ko-*` 组件）：分段轨 `role=tablist` + 滑动 thumb（transform/width 过渡，`cubic-bezier(.32,.72,.28,1)` 苹果手感）；阶段面板水平平移居中，激活面板 `scale(1)/opacity 1`、邻位 `.94/.45` 半透出——「轮次间缩放」的核心观感；比分卡 = 旗帜+队名+3 字码+右对齐比分，胜者加粗败者减淡，点球/加时小字标注，决赛卡金边。默认落在最新轮次。
+- [x] **实用功能**：触摸滑动切轮（42px 阈值）、方向键+focus-visible 键盘可达、resize 重定位、`prefers-reduced-motion` 全静态、双语即时切换；旧堆叠视图保留为模型为空时的兜底。全部动画只用 transform/opacity（合成器友好，宪章③）。
+- [x] 验证：665/665 vitest（+9）、tsc 干净、构建干净（games 分片 13.96 kB）、`!important`/预算基线不动。⚠️ 顺手发现（非本项引入）：构建期两条 parse5 HTML 属性警告来自 `cbef9ed`（U37 sectors 改动）；repo 根多了未跟踪的 `arena-a-open-2026-07-17.json`（疑似定时任务落错位置）——均未处理，待对应会话/站主收拾。
+- [ ] **站主真机验收**：iPhone 滑动换轮手感、thumb 过渡、邻位面板半透出、点球比分显示、EN/中切换。
+- [x] **roadmap 已记录**：§7.4 追加「阶段滑杆通用化——EWC / 2026 Season 16 复用」条目。
+
 ## U37 · 公司卡片撤掉 SVG 图标，换真实 logo + 真实新闻室照片 + 选中变色摆动（2026-07-18，站主指令，参考 OpenAI Business 卡片截图，已完成）
 
 **站主指令**：把 U36 里我画的 9 种示意 SVG 图标全部删除，改成每家公司真实的 logo（保留该公司自己的字体/字型，文字统一为白色），默认状态卡片是该公司官方的高质量业务场景照片，点选其中一张时该卡保持彩色并向左右摆动一下（模拟从照片堆里抽出一张的物理感），未选中的卡变黑白。参考图是 openai.com/zh-Hans-CN/business/ 的 Cisco/Morgan Stanley/BNY/Moderna/Uber 卡片带。
@@ -476,6 +487,7 @@
 > | U29 | **P1 + P2 已完成**（2026-07-15/16，P1 先于 P0 开工，站主指定）：P1 = `src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线。P2 = `?p2demo=armor`（程序化细节法线+灼痕材质）与 `?p2demo=fleet`（GPU 粒子池三组+wedgeCruiserHull 旗舰/护卫舰船体（InstancedMesh 炮塔/舷窗/铆钉）+发光激光光束+ACES 色调映射/Bloom 泛光/边缘轮廓光）。644/644 vitest（98 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；WebGPU+延迟渲染+G-Buffer+POM+SSR 已按站主要求单独立项、待 P0 完成后再评估（不是 P2 范围）；两条 P2 demo 待站主真机复核；P2 剩余视觉打磨（全船菲涅尔/舷窗闪烁）与 P3 电影导演 v2 为下一个自然阶段 |
 > | U30 | **R1+R2 已完成**（2026-07-16）：R1 = serial 共享元素转场/signal 事件卡展开/sectors cards-4 手风琴；R2 = 首页星门 sticky 缩放舞台，`?fx=stage` 起步、默认关闭，复用 U28b 既有 `--forge` 基建零新增 JS。R2 后续站主真机连续截图追查，30g 三轮修完：指标条文字可读性（半透明→不透明纯色根治）、hero→星门/星门→equity 排版空隙（DevTools 现场量出 `progress()` 计算基准错误，非 CSS 距离问题）、出场缝隙（ease-out + 出场渐变多档位）。真机截图复核（`?fx=stage`）确认空隙与硬缝均已消除。三库全部不引，644/644 测试绿，`!important`/bundle 基线不变 | R3（sectors 力导向图）/R4（signal 视差时间轴）未开工；R1 三项交互变化待真机验收（计入 R3 WIP 上限）；R2 flag 隔离不计入上限，待站主 `?fx=stage` 真机裁决转默认与否 |
 > | U31 | **已完成**（2026-07-17，同日开工同日完工）：sectors.html 故事块（非对称 12 列网格+IO 渐现+悬停微交互，数据全来自 sectors-data.json）+ 无限 Ticker 条（双倍克隆纯 CSS marquee，内容=arena-universe **29**（原「40+」估计有误，如实更正）个标的 chips，点击滚动高亮对应案例卡）；R3 力导向图移入惰性初始化的 `#storyGraphSection`，`.storyToggle` 切换「Story cards / Star-map view」；656/656 vitest、build、`!important` 基线全绿 | 全部待站主真机复核：网格错落感/渐现节奏/marquee 循环与可暂停/hover 微交互/移动端单列/**尤其是 Star-map 切换后画布定形**（沙盒验证不到 canvas resize 时机） |
+> | U38 | ✅ 代码完成（2026-07-17）：games.html Apple Sports 式淘汰赛阶段滑杆（bracketModel 纯函数+9 测试 / thumb 分段轨 / 平移缩放面板 / 触摸+键盘+RM），665/665 全绿 | 真机验收滑动手感；EWC/S16 复用见 roadmap §7.4 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 

@@ -176,6 +176,8 @@ V16（武器单时钟）→ V14（镜头状态机，五个预设：missileTail/c
 
 完整规格详见 `RELEASE_NOTES.md`「MSI 2026 Leagues」分组。
 
+**阶段滑杆通用化（U38 落成，2026-07-17）**：games.html 的 Apple Sports 式淘汰赛阶段滑杆已把数据层做成赛事无关的通用模型（`src/lib/bracketModel.js`：阶段列表 + 比分解析 + 主客重排，9 条 vitest）与独立 UI 组件（games.js `.ko-*`：滑动 thumb 分段轨 + 平移缩放面板 + 触摸/键盘/RM 降级）。**后续英雄联盟赛事直接复用**：Esports World Cup、2026 competitive season（Season 16 各站）上线时只需写一个「赛事数据 → 阶段模型」adapter（BO3/BO5 的 legs 结构天然兼容 legs 数组，比分 label 换成局分即可），滑杆 UI 零改动；届时把 `.ko-*` 样式与渲染函数提为共享模块（games/leagues 双页引用），沿用 V12「共享库替代字节复制」的既定纪律。
+
 ### 7.5 调度、token 预算与数据管线（V12 + 全模块共用）
 
 **调度表**（用户本机 cron，AEST；美股 7 月为 EDT=UTC-4，AEST=UTC+10）
