@@ -27,6 +27,56 @@ a{color:inherit;text-decoration:none}
 
 .dossier{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:18px clamp(10px,3vw,26px) 50px}
 
+/* ── U41 (2026-07-18): editorial reconstruction, borrowing Accenture's
+   layout skeleton — huge flat chapter headlines, chapter-scale whitespace,
+   scroll narrative (reveal/count-up/sticky chapter rail/reading-progress
+   bar) — while keeping this page's own dark SCP dossier color tokens
+   (Accenture's black/white paper look is a separable layer the station
+   owner can request later; see Urgent.md U41 for the swap cost). ────── */
+
+/* reading-progress bar: CSS scroll-timeline (same primitive this file
+   already uses for .incident's per-card reveal below), no scroll listener.
+   Hidden entirely on browsers without scroll() timeline support rather
+   than faked with JS — progressive enhancement, not a required affordance. */
+.readProgress{position:fixed;top:0;left:0;right:0;height:3px;z-index:20;background:var(--amber);transform-origin:0 50%;transform:scaleX(0);pointer-events:none}
+@supports (animation-timeline: scroll()) {
+  .readProgress{animation:readProgressGrow linear;animation-timeline:scroll(root);animation-range:0% 100%}
+  @keyframes readProgressGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+}
+@media (prefers-reduced-motion: reduce){.readProgress{display:none}}
+
+/* sticky left chapter rail — 01..04, current chapter highlighted via IO
+   (chapterRail.js block in signal.html), click = smooth-scroll to section.
+   Hidden below 1180px (no room beside the 1040px dossier column) rather
+   than collapsed into a hamburger — this is a wayfinding aid, not required
+   navigation, so it's fine for it to simply not exist on narrower viewports. */
+.chapterRail{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:18px}
+.chapterRail a{display:flex;align-items:baseline;gap:8px;font:700 11px/1 var(--mono);letter-spacing:.1em;color:var(--dim);opacity:.55;transition:opacity .25s ease,color .25s ease}
+.chapterRail a b{font:700 15px/1 var(--disp);color:inherit}
+.chapterRail a span{text-transform:uppercase;max-width:0;overflow:hidden;white-space:nowrap;opacity:0;transition:max-width .3s ease,opacity .2s ease}
+.chapterRail a:hover,.chapterRail a:hover span{opacity:1}
+.chapterRail a:hover span{max-width:140px}
+.chapterRail a.active{color:var(--amber);opacity:1}
+.chapterRail a.active span{max-width:140px;opacity:1}
+@media(max-width:1180px){.chapterRail{display:none}}
+
+/* chapter shell: huge flat kicker+headline, generous chapter-scale spacing
+   ("节距加倍" — chapters get roughly double the vertical rhythm of the
+   dossier cards living inside them) */
+.chapter{margin-top:88px}
+.chapter:first-of-type{margin-top:56px}
+.chapterHead{margin-bottom:28px}
+.chapterHead .kicker{font:700 12px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--amber)}
+.chapterHead h2{margin:10px 0 0;font:700 clamp(2.4rem,7vw,5.5rem)/.98 var(--disp);letter-spacing:0;text-transform:uppercase;color:var(--paper);text-shadow:none;-webkit-text-stroke:0}
+.chapterHead .dek{margin:14px 0 0;max-width:68ch;font:400 17px/1.6 var(--mono);color:var(--mute)}
+
+/* scroll-reveal fade-up — same IO-once/threshold-.2/staggered-delay recipe
+   as sectors.html's storyCard reveal (U31), reused verbatim rather than a
+   third bespoke implementation. */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .5s ease,transform .5s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion: reduce){.reveal{opacity:1;transform:none;transition:none}}
+
 /* top bar */
 .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:linear-gradient(90deg,rgba(245,196,0,.08),transparent 60%),var(--panel);padding:12px 16px}
 .seal{display:flex;align-items:center;gap:12px}
@@ -47,69 +97,88 @@ a{color:inherit;text-decoration:none}
 .hero .pad{padding:clamp(16px,3.5vw,30px)}
 .meta{display:flex;flex-wrap:wrap;gap:10px 26px;font:700 12px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid rgba(21,20,15,.25);padding-bottom:12px}
 .meta span{color:#4a463c}.meta b{color:var(--red)}
-.hero h1{font:700 clamp(26px,5vw,46px)/1 var(--disp);text-transform:uppercase;letter-spacing:.01em;margin:14px 0 10px}
+.hero h1{font:700 clamp(2rem,6.5vw,4.8rem)/1.02 var(--disp);text-transform:uppercase;letter-spacing:0;text-shadow:none;margin:14px 0 10px}
 .hero h1 .x{background:#15140f;color:transparent;padding:0 8px;user-select:none}
-.lead{max-width:64ch;color:#2a271f;font:400 14.5px/1.65 var(--mono)}
+.lead{max-width:68ch;color:#2a271f;font:400 17px/1.65 var(--mono)}
 .stamp{position:absolute;top:22px;right:14px;transform:rotate(9deg);border:3px solid var(--red);color:var(--red);font:700 12px/1.3 var(--disp);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;text-align:center;opacity:.9}
 .stamp span{display:block;font:400 8px var(--mono);color:#7a1c18}
 
-/* containment review countdown */
-.review{margin-top:16px;display:grid;grid-template-columns:auto 1fr;border:1px solid var(--line);background:var(--panel2)}
-.review .tag{background:var(--amber);color:#1a1a1c;font:700 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:14px;display:flex;align-items:center;writing-mode:vertical-rl;transform:rotate(180deg)}
-.review .b{padding:16px}
-.review .row1{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:400 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-.review .row1 .live{color:var(--amber)}.review .row1 .live::before{content:"◉ ";animation:bl 1.1s steps(1) infinite}
+/* U41: hero absorbs the compass's current reading as its "one-line
+   conclusion" subtitle (same DATA.hawkDoveCompass, no new fetch — see
+   renderCompass() in the inline script) and the containment countdown,
+   which used to be its own boxed .review section below hero, is now a
+   single slim row inside it. */
+.heroRead{margin:16px 0 0;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.heroRead b{font:700 clamp(1.5rem,3.4vw,2.4rem)/1 var(--disp);text-transform:uppercase;color:var(--red)}
+.heroRead span{font:400 13px/1 var(--mono);color:#4a463c}
+.heroCountdown{margin-top:18px;padding-top:14px;border-top:2px solid rgba(21,20,15,.25);display:flex;align-items:baseline;gap:9px 16px;flex-wrap:wrap;font:400 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#4a463c}
+.heroCountdown .tag{font:700 10px/1 var(--mono);letter-spacing:.14em;color:var(--red)}
+.heroCountdown .bias{color:var(--mood);border:1px solid var(--mood);padding:3px 8px;font:700 10px/1 var(--mono);letter-spacing:.1em;box-shadow:0 0 10px color-mix(in srgb,var(--mood) 35%,transparent)}
+.heroCountdown .live{color:var(--red)}
+.heroCountdown .live::before{content:"◉ ";animation:bl 1.1s steps(1) infinite}
 @keyframes bl{50%{opacity:0}}
-.bias{color:var(--mood);border:1px solid var(--mood);padding:3px 8px;font:700 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;align-self:center;box-shadow:0 0 10px color-mix(in srgb,var(--mood) 35%,transparent)}
-.clock{font:700 clamp(28px,6vw,52px)/1 var(--disp);color:var(--paper);margin:10px 0 6px;letter-spacing:.02em}
-.clock.tick{animation:cp .3s ease}@keyframes cp{0%{transform:scale(1)}40%{transform:scale(1.03);color:var(--amber)}100%{transform:scale(1)}}
-.review .when{font:400 12px/1.6 var(--mono);color:var(--dim)}.when b{color:var(--paper)}.when .bc{color:var(--amber)}
+.heroCountdown .clock{font:700 22px/1 var(--disp);color:var(--red);letter-spacing:.02em}
+.heroCountdown .clock.tick{animation:cp .3s ease}
+@keyframes cp{0%{transform:scale(1)}40%{transform:scale(1.03);color:var(--red)}100%{transform:scale(1)}}
+.heroCountdown .when{color:#4a463c;text-transform:none;letter-spacing:.02em;font-size:12px}
+.heroCountdown .when b{color:#15140f}
+.heroCountdown .when .bc{color:var(--red)}
 
 /* hawk-dove compass (V6) */
-/* U30 R4 (2026-07-17): compass stays visible while the reader scrolls through
-   the data-heavy middle of the page (pillars/files/incidents/watch — see the
-   .signalScroll wrapper in signal.html, all four already sat as consecutive
-   siblings after .compass so no reordering was needed). Plain position:sticky
-   works here (unlike the homepage's stardrive pin) because this page never
-   sets overflow-x:hidden on html/body — no JS, no scroll listener. */
-.signalScroll{position:relative}
-.compass{position:sticky;top:10px;z-index:5;margin-top:16px;border:1px solid var(--line);background:var(--panel2);padding:14px 16px}
-.compass h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.compass h2 small{color:var(--dim);font:400 10px var(--mono);letter-spacing:.1em}
-.gaugeWrap{margin-top:14px}
-.gauge{position:relative;height:14px;border:1px solid var(--ink);background:linear-gradient(90deg,#2f6fb0 0%,#5b6b57 50%,#b3261e 100%)}
-.gauge .needle{position:absolute;top:-5px;left:50%;width:3px;height:24px;background:var(--paper);box-shadow:0 0 6px rgba(244,244,244,.8);transform:translateX(-50%);transition:left .6s cubic-bezier(.2,.8,.2,1);animation:needlePulse 3.2s ease-in-out infinite}
+/* U41 (2026-07-18): compass used to pin itself with position:sticky while
+   pillars/files/incidents/watch scrolled past beneath it (U30 R4) — that
+   "gauge stays put, everything else moves" trick doesn't fit an editorial
+   chapter structure where each of these is now its own full chapter in
+   sequence, so the sticky pin is dropped in favor of the left .chapterRail
+   giving the reader their "where am I" anchor instead. Compass is now a
+   plain chapter body; its header lives in the shared .chapterHead markup
+   in signal.html, not a bespoke <h2> here. */
+.chapters{position:relative}
+.compass{border:1px solid var(--line);background:var(--panel2);padding:24px clamp(18px,3vw,32px)}
+.gaugeWrap{margin-top:20px}
+/* U41: gauge enlarged into the chapter's full-width protagonist ("放大为
+   全宽章节主角"); needle starts pinned at the DOVE end (left:0%) and only
+   moves once JS applies the real pct — see the sweep gate in the compass
+   script (window.__signalSweepNeedle / 'signal-needle-sweep'). */
+.gauge{position:relative;height:22px;border:1px solid var(--ink);background:linear-gradient(90deg,#2f6fb0 0%,#5b6b57 50%,#b3261e 100%)}
+.gauge .needle{position:absolute;top:-7px;left:0%;width:4px;height:36px;background:var(--paper);box-shadow:0 0 6px rgba(244,244,244,.8);transform:translateX(-50%);transition:left 1.1s cubic-bezier(.2,.8,.2,1);animation:needlePulse 3.2s ease-in-out infinite}
 @keyframes needlePulse{0%,100%{box-shadow:0 0 6px rgba(244,244,244,.75)}50%{box-shadow:0 0 12px rgba(244,244,244,1),0 0 5px var(--amber)}}
-.scaleLabels{display:flex;justify-content:space-between;margin-top:6px;font:700 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
-.hdReadout{margin-top:12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.hdReadout b{font:700 18px/1 var(--disp);color:var(--paper);letter-spacing:.02em}
-.hdReadout .score{font:400 13px/1 var(--mono);color:var(--amber)}
+.scaleLabels{display:flex;justify-content:space-between;margin-top:8px;font:700 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.hdReadout{margin-top:20px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hdReadout b{font:700 clamp(2.2rem,6vw,4rem)/1 var(--disp);color:var(--paper);letter-spacing:.02em}
+.hdReadout .score{font:700 clamp(1.2rem,3vw,2rem)/1 var(--mono);color:var(--amber)}
 .hdReadout .asof{margin-left:auto;font:400 10px/1 var(--mono);letter-spacing:.08em}
 /* Provenance badge (ROADMAP §7.5 V12) — same class API as sectors.html */
 .prov-badge.prov-fresh{color:var(--green)}
 .prov-badge.prov-amber{color:var(--amber)}
 .prov-badge.prov-red{color:var(--red)}
 .prov-badge.prov-seed{color:var(--dim)}
-.compass .rationale{margin:10px 0 0;font:400 13px/1.6 var(--mono);color:var(--mute)}
+.compass .rationale{margin:10px 0 0;font:400 17px/1.6 var(--mono);color:var(--mute)}
 .compass .method{margin:8px 0 0;font:400 11px/1.6 var(--mono);color:var(--dim);font-style:italic}
 
-/* five-pillar signal matrix (V6) */
-.pillars{margin-top:16px}
-.pillars h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;padding:13px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.pillars h2 small{color:var(--dim);font:400 10px var(--mono);letter-spacing:.1em}
-.pillarSummary{margin:12px 0;font:400 13px/1.6 var(--mono);color:var(--mute)}
-.pillarGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.pillar{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:5px 5px 0 rgba(0,0,0,.5);padding:12px;border-top:5px solid var(--dim)}
+/* five-pillar signal matrix (V6) — chapter header is .chapterHead in HTML */
+.pillarSummary{margin:12px 0;font:400 17px/1.6 var(--mono);color:var(--mute)}
+.pillarGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pillar{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:5px 5px 0 rgba(0,0,0,.5);padding:16px;border-top:5px solid var(--dim);cursor:pointer}
 .pillar.tone-green{border-top-color:var(--green)}.pillar.tone-amber{border-top-color:var(--amber)}.pillar.tone-red{border-top-color:var(--red)}
 .pillar h3{margin:0;font:700 12px/1.3 var(--disp);letter-spacing:.03em;text-transform:uppercase;display:flex;justify-content:space-between;gap:6px;color:#15140f}
 .pillar h3 .pid{color:var(--dim);font:400 10px var(--mono)}
 .pillar .status{margin-top:6px;font:700 11px/1.3 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:#4a463c}
-.pillar .read{margin:8px 0 0;font:400 12px/1.5 var(--mono);color:#26241d}
+/* Charter ⑥ progressive disclosure — default layer is name+status+tone dot
+   only; hover exposes the detail for pointer users, .open (click/Enter)
+   gives touch and keyboard the same result (22c: no hover-only info). */
+.pillar .detail{max-height:0;opacity:0;overflow:hidden;transition:max-height .35s ease,opacity .3s ease}
+.pillar:hover .detail,.pillar.open .detail,.pillar:focus-visible .detail{max-height:220px;opacity:1;margin-top:8px}
+.pillar .read{margin:0;font:400 17px/1.5 var(--mono);color:#26241d}
 .pillar .asof{margin-top:8px;font:400 9px/1 var(--mono);color:#7a7568;letter-spacing:.06em}
 @media(max-width:900px){.pillarGrid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.pillarGrid{grid-template-columns:1fr}}
 
-/* dossier files */
+/* dossier files — "supporting files" continuation within the Signal
+   Matrix chapter (Ch.02); sub-heading is a plain .subhead, smaller than
+   .chapterHead since it's inside the chapter, not starting a new one. */
+.subhead{margin:40px 0 16px;font:700 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:12px}
+.subhead::after{content:"";flex:1;height:1px;background:var(--line)}
 .files{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .file{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,.55)}
 .file h2{font:700 13px/1 var(--disp);letter-spacing:.1em;text-transform:uppercase;margin:0;padding:11px 14px;background:var(--ink);color:var(--doc);display:flex;justify-content:space-between}
@@ -125,16 +194,20 @@ a{color:inherit;text-decoration:none}
 @keyframes sheen{0%{background-position:180% 0}100%{background-position:-80% 0}}
 .bar.g i{background:var(--green)}.bar.a i{background:var(--amber)}.bar.r i{background:var(--red)}.bar.k i{background:#5b6b57}
 .row b{text-align:right;font:700 13px var(--disp)}
-.note{margin:12px 0 0;color:#322f28;font:400 13px/1.55 var(--mono)}
+.note{margin:12px 0 0;color:#322f28;font:400 17px/1.55 var(--mono)}
 .list .li{display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px dashed rgba(21,20,15,.25)}
-.list .li:last-child{border-bottom:0}.list .k{font:700 12px/1.65 var(--mono);letter-spacing:.04em;color:var(--red);text-transform:uppercase}.list .v{font:400 13.5px/1.65 var(--mono);color:#26241d}
+.list .li:last-child{border-bottom:0}.list .k{font:700 12px/1.65 var(--mono);letter-spacing:.04em;color:var(--red);text-transform:uppercase}.list .v{font:400 17px/1.65 var(--mono);color:#26241d}
 .redact{background:#15140f;color:transparent;padding:0 4px;animation:rv 11s steps(1) infinite}
 @keyframes rv{0%,92%,100%{background:#15140f;color:transparent}94%{background:transparent;color:inherit}}
 
-/* incident log — real macro-event dossiers, before→print→repricing→reaction */
+/* incident log — real macro-event dossiers, before→print→repricing→reaction.
+   Chapter header is .chapterHead in HTML; filter chips are new (U41). */
 .incidents{margin-top:16px}
-.incidents>h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;padding:13px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.incidents>h2 small{color:var(--dim);font:400 10px var(--mono);letter-spacing:.1em}
+.filterChips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.filterChips button{font:700 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);background:transparent;border:1px solid var(--line);padding:8px 12px;cursor:pointer;transition:color .2s ease,border-color .2s ease,background .2s ease}
+.filterChips button:hover{border-color:var(--amber);color:var(--amber)}
+.filterChips button.active{background:var(--amber);border-color:var(--amber);color:#1a1a1c}
+.filterChips .sep{width:1px;align-self:stretch;background:var(--line);margin:0 4px}
 .incidentList{display:flex;flex-direction:column;gap:16px;margin-top:16px}
 .incidentList .empty{padding:14px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--dim);font:400 12px var(--mono)}
 .incident{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,.55)}
@@ -168,17 +241,15 @@ a{color:inherit;text-decoration:none}
 .incident .irow{display:grid;grid-template-columns:130px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed rgba(21,20,15,.25)}
 .incident .irow:last-of-type{border-bottom:0}
 .incident .irow .k{font:700 11px/1.6 var(--mono);letter-spacing:.06em;color:var(--red);text-transform:uppercase}
-.incident .irow .v{font:400 13px/1.6 var(--mono);color:#26241d}
-.incident .verdict{margin:12px 0 0;padding-top:12px;border-top:2px solid rgba(21,20,15,.25);font:400 13px/1.6 var(--mono);color:#26241d}
+.incident .irow .v{font:400 17px/1.6 var(--mono);color:#26241d}
+.incident .verdict{margin:12px 0 0;padding-top:12px;border-top:2px solid rgba(21,20,15,.25);font:400 17px/1.6 var(--mono);color:#26241d}
 .incident .verdict b{color:var(--red)}
 @media(max-width:760px){.incident .irow{grid-template-columns:1fr;gap:4px}}
 
-/* sector asset watch (Fable calls) */
+/* sector asset watch (Fable calls) — chapter header is .chapterHead in HTML */
 .watch{margin-top:16px;border:1px solid var(--line);background:var(--panel2)}
-.watch h2{font:700 14px/1 var(--disp);letter-spacing:.12em;text-transform:uppercase;margin:0;padding:13px 16px;border-bottom:1px solid var(--line);color:var(--amber);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.watch h2 small{color:var(--dim);font:400 10px var(--mono);letter-spacing:.1em}
 .watch .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.asset{padding:14px 16px;border-right:1px solid rgba(245,196,0,.14);border-bottom:1px solid rgba(245,196,0,.14)}
+.asset{padding:18px 20px;border-right:1px solid rgba(245,196,0,.14);border-bottom:1px solid rgba(245,196,0,.14)}
 .asset:nth-child(2n){border-right:0}
 .asset .hd{display:flex;align-items:center;gap:10px}
 .asset .dir{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center}
@@ -187,7 +258,7 @@ a{color:inherit;text-decoration:none}
 .asset .nm{flex:1;font:600 14px/1.1 var(--disp);letter-spacing:.04em;text-transform:uppercase;color:var(--paper)}
 .asset .cf{font:400 11px/1 var(--mono);color:var(--dim)}
 .asset .tks{margin:6px 0 0;font:400 11px/1 var(--mono);color:var(--green);letter-spacing:.06em}
-.asset .rs{margin:8px 0 0;font:400 12.5px/1.5 var(--mono);color:var(--mute)}
+.asset .rs{margin:8px 0 0;font:400 17px/1.5 var(--mono);color:var(--mute)}
 
 /* MTF deployment strip */
 .mtf{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -195,7 +266,7 @@ a{color:inherit;text-decoration:none}
 .unit .hz{position:absolute;left:0;top:0;bottom:0;width:6px}
 .unit h3{font:700 14px/1.1 var(--disp);letter-spacing:.06em;text-transform:uppercase;margin:0 0 4px;color:var(--paper);padding-left:10px}
 .unit .cs{font:400 11px/1 var(--mono);letter-spacing:.1em;color:var(--amber);padding-left:10px}
-.unit p{margin:10px 0 0;padding-left:10px;font:400 12.5px/1.55 var(--mono);color:var(--mute)}
+.unit p{margin:10px 0 0;padding-left:10px;font:400 17px/1.55 var(--mono);color:var(--mute)}
 
 /* ambient dock */
 .dock{margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);padding:13px 16px}
@@ -208,5 +279,5 @@ a{color:inherit;text-decoration:none}
 .foot{margin-top:22px;border-top:1px solid var(--line);padding-top:14px;font:400 11px/1.7 var(--mono);letter-spacing:.05em;color:var(--dim);text-transform:uppercase}
 .foot b{color:var(--amber)}
 
-@media(max-width:760px){.files,.mtf,.watch .grid2{grid-template-columns:1fr}.review{grid-template-columns:1fr}.review .tag{writing-mode:horizontal-tb;transform:none}.asset{border-right:0}}
-@media (prefers-reduced-motion: reduce){.bar i{animation:none;width:var(--w)}.bar i::after{animation:none}.redact{background:transparent;color:inherit}.review .row1 .live::before,.dock.on .eq i{animation:none}.hz{animation:none}.gauge .needle{animation:none}.incident{animation:none;opacity:1;transform:none}}
+@media(max-width:760px){.files,.mtf,.watch .grid2{grid-template-columns:1fr}.asset{border-right:0}}
+@media (prefers-reduced-motion: reduce){.bar i{animation:none;width:var(--w)}.bar i::after{animation:none}.redact{background:transparent;color:inherit}.heroCountdown .live::before,.dock.on .eq i{animation:none}.hz{animation:none}.gauge .needle{animation:none;transition:none}.incident{animation:none;opacity:1;transform:none}.pillar .detail{transition:none}}

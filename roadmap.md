@@ -51,7 +51,7 @@
 | Home | `index.html` + `src/` | 深空舰长日志 (Three.js) | Orbitron / 钢蓝 HUD | 顶层 |
 | Arena | `arena.html` | **美股技术分析仪表盘（V13）+ Autopilot 双模型模拟盘（V5，2026-07-05 全部上线）**：自选股+搜索+盘前/盘后关键位面板，下接净值曲线/持仓/成交日志/复盘卡；旧 Human vs AI 对战区已正式下线（B10 已关闭，详见 `RELEASE_NOTES.md`） | Marathon · 霓虹绿/青 | 顶层 |
 | Sectors | `sectors.html` | AI + 航天个股研判 ＋ v1.5 中美 AI 对比矩阵、「后内存时代」专题（已上线，数据待攒，§7.2） | **2026-07-18 起改版**：借鉴 openai.com 的卡片/网格模块语言，但黑底白字+青色强调（非 openai.com 自己的浅色主题）；页面提及的每家公司缩略图使用其真实品牌色+产品示意图标，而非通用渐变（详见 `Urgent.md` U35/U36） | 顶层 |
-| Signal | `signal.html` | 美联储观察 = SCP O5 收容档案（板块研判：Fable 5 Max）；v1.5 已重构为 Warsh 时代内容（§7.3） | 机密文档 · 琥珀/绿 | 顶层 |
+| Signal | `signal.html` | 美联储观察 = SCP O5 收容档案（板块研判：Fable 5 Max）；v1.5 已重构为 Warsh 时代内容（§7.3） | 机密文档 · 琥珀/绿；**2026-07-18 起编辑部式版式重构**：借鉴 Accenture 版式骨架（超大扁平标题/章节化/滚动叙事），配色令牌不变（详见 `Urgent.md` U41） | 顶层 |
 | Games | `games.html` | 世界杯限时竞猜 vs Fable 5 Max | 赛博朋克 · 品红/青 | **Labs** |
 | Leagues | `league.html`（**V0/V1 已上线**） | 2026 MSI 电竞竞猜 vs Fable 5 Max（Fearless Draft 分析；赛后转战绩存档，§7.4） | 海克斯 · 金/蓝 | **Labs** |
 | Horoscope | `horoscope.html`（**V20，2026-07-05 上线**） | 观星台：八字四柱（真干支历）× 西方占星——每日运程（事业/情缘/财帛/康健+宜忌+幸运物）、双人合盘（六合/三合/相冲+五行互补+星座三方）、URL 分享码、签到 streak；全本地计算零后端，仅供娱乐 | 天人合一 · 水墨松烟/宣纸/朱砂印（**V21 将全面改为治愈系暖奶油/鼠尾草绿/赤陶橙/淡金+植物插画，§7.8**） | **Labs** |
