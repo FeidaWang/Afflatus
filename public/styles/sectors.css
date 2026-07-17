@@ -178,14 +178,37 @@ h1 span{color:var(--acid)}
 .storyFeatured{margin-bottom:16px;padding:16px 18px;border:1px solid rgba(0,231,255,.32);background:linear-gradient(90deg,rgba(0,231,255,.08),transparent 60%);color:#eef7fb;font:700 14px/1.6 var(--font-body)}
 .storyFeatured b{color:var(--cyan);text-transform:uppercase;font-size:10px;letter-spacing:.16em;display:block;margin-bottom:6px}
 
-.storyGrid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
-.storyCard{grid-column:span 7;padding:16px 18px;border:1px solid rgba(202,255,0,.28);background:rgba(6,9,14,.6);cursor:pointer;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;opacity:0;transform:translateY(24px)}
+/* Rail (2026-07-17 revision) — horizontal scroll-snap carousel, replacing
+   the original vertical asymmetric grid. The station owner pointed out the
+   first pass missed the actual OpenAI Business "BNY/Moderna" mechanism
+   entirely: it's a horizontally scrolling card track (scroll-snap, drag,
+   arrows), not a static vertical grid. Corrected here — track scrolls,
+   cards snap, the centered card is full brightness and the rest dim
+   (toggled by IntersectionObserver against the track as root, matching the
+   reference DOM's filter-only transition on scale-102 media). No licensed
+   photography exists for these vendors, so .railMedia substitutes a
+   generated graphic identity (vendor initial + market-tinted gradient)
+   rather than a fabricated photo — see sectors.html's render comment. */
+.storyRail{display:flex;align-items:center;gap:8px}
+.railArrow{flex:0 0 auto;width:34px;height:34px;border:1px solid rgba(0,231,255,.32);background:rgba(5,7,11,.85);color:var(--cyan);font-size:18px;line-height:1;cursor:pointer}
+.railArrow:hover{border-color:var(--acid);color:var(--acid)}
+.railTrack{flex:1;min-width:0;display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;padding:2px 2px 10px;cursor:grab}
+.railTrack:active{cursor:grabbing}
+.railTrack::-webkit-scrollbar{height:6px}
+.railTrack::-webkit-scrollbar-thumb{background:rgba(0,231,255,.3)}
+
+.storyCard{flex:0 0 auto;width:min(400px,78vw);scroll-snap-align:start;border:1px solid rgba(202,255,0,.28);background:rgba(6,9,14,.6);cursor:pointer;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;opacity:0;transform:translateY(24px)}
 .storyCard.in{opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s ease}
-.storyCard:nth-child(2){grid-column:span 5}
-.storyCard:nth-child(3){grid-column:span 5;margin-top:26px}
-.storyCard:nth-child(4){grid-column:span 7;margin-top:26px}
 .storyCard:hover,.storyCard:focus-within{transform:scale(1.02);box-shadow:0 0 0 1px rgba(0,231,255,.3),0 18px 34px rgba(0,0,0,.4);border-color:var(--cyan)}
 .storyCard.flash{border-color:var(--acid);box-shadow:0 0 0 2px var(--acid),0 0 24px rgba(202,255,0,.4)}
+.storyBody{padding:14px 16px 16px}
+
+.railMedia{position:relative;aspect-ratio:16/9;overflow:hidden;filter:brightness(.55) saturate(.7);transition:filter .26s cubic-bezier(.22,1,.36,1)}
+.storyCard.is-active .railMedia{filter:brightness(1) saturate(1)}
+.railFill{position:absolute;inset:0;transform:scale(1.02);background:radial-gradient(120% 140% at 20% 0%,rgba(0,231,255,.24),transparent 60%),linear-gradient(135deg,rgba(202,255,0,.10),rgba(4,6,10,.94))}
+.storyCard[data-market="CN"] .railFill{background:radial-gradient(120% 140% at 80% 0%,rgba(202,255,0,.24),transparent 60%),linear-gradient(135deg,rgba(0,231,255,.10),rgba(4,6,10,.94))}
+.railGlyph{position:absolute;right:-8px;bottom:-30px;font:900 132px/1 var(--font-heading);color:rgba(255,255,255,.08);letter-spacing:-.02em}
+
 .storyMarket{padding:4px 8px;font:900 10px/1 var(--font-hud);letter-spacing:.12em;text-transform:uppercase;background:var(--cyan);color:#05070b;white-space:nowrap}
 .storyMarket.CN{background:var(--acid)}
 .storyThesis{margin-top:8px;color:#d9e2e8;font:600 13px/1.5 var(--font-body)}
@@ -205,9 +228,9 @@ h1 span{color:var(--acid)}
 /* Belt-and-suspenders only — observeReveal() already adds .in synchronously
    under reduced motion before first paint, so .storyCard.in's higher
    specificity already wins here without needing !important. */
-@media(prefers-reduced-motion:reduce){.storyCard,.storyModelCard{transition:none}}
+@media(prefers-reduced-motion:reduce){.storyCard,.storyModelCard,.railMedia{transition:none}.railTrack{scroll-behavior:auto}}
 @media(max-width:860px){
-  .storyGrid{grid-template-columns:1fr}
-  .storyCard,.storyCard:nth-child(2),.storyCard:nth-child(3),.storyCard:nth-child(4){grid-column:1;margin-top:0}
+  .storyCard{width:82vw}
+  .railArrow{display:none}
   .storyModels{grid-template-columns:1fr 1fr}
 }
