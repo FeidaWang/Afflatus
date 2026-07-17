@@ -58,6 +58,11 @@
     <h1 data-i18n-html data-en="One frontier I will pay up for: the full <span>AI-infrastructure</span> stack — from compute to the <span>toolmakers</span>" data-zh="一条我愿意溢价买入的前线：完整的 <span>AI 基础设施</span> 栈——从算力到 <span>设备制造商</span>">One frontier I will pay up for: the full <span>AI-infrastructure</span> stack — from compute to the <span>toolmakers</span></h1>
     <p class="brief" data-en="A captain's watchlist, not a public recommendation. After Micron's record print and ~$50B Q4 guide confirmed the memory super-cycle, I'm concentrating on the picks-and-shovels of the AI build-out — compute, custom silicon, memory, foundry and lithography — companies whose order books are bound to physics, capex and multi-year customer agreements, not to a perfect interest-rate path. SK Hynix's Jul 10 Nasdaq ADR debut is the newest data point on that same thesis — see the countdown below." data-zh="这是一份船长的观察清单，不是公开推荐。在美光创纪录的财报与约 500 亿美元的第四季度指引确认了存储超级周期之后，我把仓位集中在 AI 建设的「卖铲人」——算力、定制芯片、存储、晶圆代工与光刻——这些公司的订单簿绑定在物理、资本开支与多年期客户协议上，而非完美的利率路径。SK 海力士 7 月 10 日的纳斯达克 ADR 首秀，是同一论点上最新的数据点——见下方倒计时。">A captain's watchlist, not a public recommendation. After Micron's record print and ~$50B Q4 guide confirmed the memory super-cycle, I'm concentrating on the picks-and-shovels of the AI build-out — compute, custom silicon, memory, foundry and lithography — companies whose order books are bound to physics, capex and multi-year customer agreements, not to a perfect interest-rate path. SK Hynix's Jul 10 Nasdaq ADR debut is the newest data point on that same thesis — see the countdown below.</p>
   </section>
+  <div class="tickerBand" aria-label="Tracked universe ticker">
+    <div class="tickerTrackWrap" id="tickerTrackWrap">
+      <div class="tickerTrack" id="tickerTrack"></div>
+    </div>
+  </div>
   <section class="macro">
     <div><span data-en="AI capex cycle" data-zh="AI 资本开支周期">AI capex cycle</span><b data-en="still expanding" data-zh="仍在扩张">still expanding</b></div>
     <div><span data-en="MU FQ3 revenue YoY" data-zh="美光第三财季营收同比">MU FQ3 revenue YoY</span><b>+346%</b></div>
@@ -100,14 +105,14 @@
 
   <div class="band" data-i18n-html data-en="AI COMPUTE &amp; CUSTOM SILICON — <span>the gravity well</span>" data-zh="AI 算力与定制芯片 — <span>引力井</span>">AI COMPUTE &amp; CUSTOM SILICON — <span>the gravity well</span></div>
   <section class="cards cards-2">
-    <article class="card">
+    <article class="card" id="card-NVDA">
       <div class="ticker">NVDA</div>
       <div class="name" data-en="NVIDIA · accelerated compute" data-zh="英伟达 · 加速计算">NVIDIA · accelerated compute</div>
       <div class="weight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">24%</b></label><div class="bar"><i style="--w:24%"></i></div></div>
       <p class="thesis" data-i18n-html data-en="&lt;b&gt;My read (Jun '26):&lt;/b&gt; still the core lock. Data-center demand is intact, the CUDA + networking moat holds, and BioNeMo / Halos push the platform beyond GPUs. The trade is crowded and headline-sensitive — own it, don't chase green days into the Fed." data-zh="&lt;b&gt;我的研判（26年6月）：&lt;/b&gt;仍是核心持仓。数据中心需求稳固，CUDA + 网络护城河仍在，BioNeMo / Halos 把平台拓展到 GPU 之外。交易拥挤、对消息敏感——可以持有，但别在联储前追高。"><b>My read (Jun '26):</b> still the core lock. Data-center demand is intact, the CUDA + networking moat holds, and BioNeMo / Halos push the platform beyond GPUs. The trade is crowded and headline-sensitive — own it, don't chase green days into the Fed.</p>
       <span class="tag" data-en="core lock" data-zh="核心持仓">core lock</span>
     </article>
-    <article class="card">
+    <article class="card" id="card-AVGO">
       <div class="ticker">AVGO</div>
       <div class="name" data-en="Broadcom · custom AI ASIC + networking" data-zh="博通 · 定制 AI ASIC + 网络">Broadcom · custom AI ASIC + networking</div>
       <div class="weight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">18%</b></label><div class="bar"><i style="--w:18%"></i></div></div>
@@ -118,28 +123,28 @@
 
   <div class="band" data-i18n-html data-en="MEMORY, FOUNDRY &amp; THE TOOLMAKERS — <span>the chokepoints</span>" data-zh="存储、晶圆代工与设备制造商 — <span>咽喉环节</span>">MEMORY, FOUNDRY &amp; THE TOOLMAKERS — <span>the chokepoints</span></div>
   <section class="cards cards-4">
-    <article class="card" tabindex="0">
+    <article class="card" tabindex="0" id="card-MU">
       <div class="ticker">MU</div>
       <div class="name" data-en="Micron · HBM &amp; DRAM memory" data-zh="美光 · HBM 与 DRAM 存储">Micron · HBM &amp; DRAM memory</div>
       <div class="weight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">18%</b></label><div class="bar"><i style="--w:18%"></i></div></div>
       <p class="thesis" data-i18n-html data-en="&lt;b&gt;My read:&lt;/b&gt; the super-cycle is now confirmed, not hoped-for. Record FQ3 ($41.5B rev, 85% gross margin), a ~$50B Q4 guide and multi-year Strategic Customer Agreements that lock pricing and make earnings durable. HBM4 is shipping in volume. Samsung's Jul 7 Q2 guide — op. profit ~₩89.4T, ~19x YoY, on 40–60% memory price gains and its first quarter of commercial HBM4 shipments — is independent, cross-vendor confirmation of the same cycle, not just a Micron story. Highest torque in the stack — expect sharp two-way swings." data-zh="&lt;b&gt;我的研判：&lt;/b&gt;超级周期已被确认，而非停留在期待。创纪录的第三财季（营收 415 亿美元、毛利率 85%）、约 500 亿美元的第四季度指引，以及锁定价格、使盈利持续的多年期「战略客户协议」。HBM4 已大批量出货。三星 7/7 公布的第二季度指引——营业利润约 89.4 万亿韩元，同比约 19 倍，受 40%–60% 存储涨价与本季度首次 HBM4 商用出货驱动——是来自另一家厂商的独立佐证，不再只是美光一家的故事。栈中弹性最大——预期剧烈双向波动。"><b>My read:</b> the super-cycle is now confirmed, not hoped-for. Record FQ3 ($41.5B rev, 85% gross margin), a ~$50B Q4 guide and multi-year Strategic Customer Agreements that lock pricing and make earnings durable. HBM4 is shipping in volume. Samsung's Jul 7 Q2 guide — op. profit ~₩89.4T, ~19x YoY, on 40–60% memory price gains and its first quarter of commercial HBM4 shipments — is independent, cross-vendor confirmation of the same cycle, not just a Micron story. Highest torque in the stack — expect sharp two-way swings.</p>
       <span class="tag" data-en="memory super-cycle" data-zh="存储超级周期">memory super-cycle</span>
     </article>
-    <article class="card" tabindex="0">
+    <article class="card" tabindex="0" id="card-SKHY">
       <div class="ticker">SKHY</div>
       <div class="name" data-en="SK Hynix · HBM leader, new Nasdaq ADR" data-zh="SK 海力士 · HBM 龙头，纳斯达克新 ADR">SK Hynix · HBM leader, new Nasdaq ADR</div>
       <div class="weight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">12%</b></label><div class="bar"><i style="--w:12%"></i></div></div>
       <p class="thesis" data-i18n-html data-en="&lt;b&gt;My read (Jul '26):&lt;/b&gt; the HBM chokepoint becomes directly ownable. SK Hynix commands ~50–70% of global HBM share — feeding NVIDIA's GPUs — and its Jul 10 Nasdaq ADR debut (ticker SKHY, 10:1 vs KRX:000660) ends the old &quot;Korea discount.&quot; Late-Jul SOX index inclusion forces passive buying; the ~30% pre-listing pullback and ~2.44% dilution are the entry cost. Adding it, not replacing Micron — different balance sheet, different FX/ADR-structure risk. Swapped in for Marvell this cycle: more differentiated exposure, a real re-rating catalyst." data-zh="&lt;b&gt;我的研判（26年7月）：&lt;/b&gt;HBM 咽喉环节第一次可以直接持有。SK 海力士掌握全球约 50%–70% 的 HBM 份额，直供英伟达 GPU；7 月 10 日纳斯达克 ADR 首秀（代码 SKHY，与 KRX:000660 按 10:1 兑换）终结了旧有的「韩国折价」。7 月底纳入 SOX 指数将触发被动资金强制买入；上市前约 30% 的回调与约 2.44% 的新股稀释是进场成本。是新增仓位，不是替代美光——资产负债表与汇率/ADR 结构风险都不同。本轮换下了 Marvell：敞口更具差异化，且有真实的重估催化剂。"><b>My read (Jul '26):</b> the HBM chokepoint becomes directly ownable. SK Hynix commands ~50–70% of global HBM share — feeding NVIDIA's GPUs — and its Jul 10 Nasdaq ADR debut (ticker SKHY, 10:1 vs KRX:000660) ends the old "Korea discount." Late-Jul SOX index inclusion forces passive buying; the ~30% pre-listing pullback and ~2.44% dilution are the entry cost. Adding it, not replacing Micron — different balance sheet, different FX/ADR-structure risk. Swapped in for Marvell this cycle: more differentiated exposure, a real re-rating catalyst.</p>
       <span class="tag" data-en="hbm gatekeeper" data-zh="HBM 守门人">hbm gatekeeper</span>
     </article>
-    <article class="card" tabindex="0">
+    <article class="card" tabindex="0" id="card-TSM">
       <div class="ticker">TSM</div>
       <div class="name" data-en="TSMC · foundry &amp; CoWoS packaging" data-zh="台积电 · 晶圆代工与 CoWoS 封装">TSMC · foundry &amp; CoWoS packaging</div>
       <div class="weight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">14%</b></label><div class="bar"><i style="--w:14%"></i></div></div>
       <p class="thesis" data-i18n-html data-en="&lt;b&gt;My read:&lt;/b&gt; the company that physically makes the AI era. Every GPU and custom ASIC routes through its leading-edge nodes, and CoWoS advanced packaging is now a tighter constraint than fabrication itself. The lowest-drama way to own the whole build-out." data-zh="&lt;b&gt;我的研判：&lt;/b&gt;真正在物理层面制造 AI 时代的公司。每一颗 GPU 和定制 ASIC 都要经过它的先进制程，而 CoWoS 先进封装如今比制造本身更紧。这是持有整个建设浪潮最少波折的方式。"><b>My read:</b> the company that physically makes the AI era. Every GPU and custom ASIC routes through its leading-edge nodes, and CoWoS advanced packaging is now a tighter constraint than fabrication itself. The lowest-drama way to own the whole build-out.</p>
       <span class="tag" data-en="the chokepoint" data-zh="咽喉环节">the chokepoint</span>
     </article>
-    <article class="card" tabindex="0">
+    <article class="card" tabindex="0" id="card-ASML">
       <div class="ticker">ASML</div>
       <div class="name" data-en="ASML · EUV lithography" data-zh="ASML · EUV 光刻">ASML · EUV lithography</div>
       <div class="weight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">14%</b></label><div class="bar"><i style="--w:14%"></i></div></div>
@@ -148,15 +153,26 @@
     </article>
   </section>
 
-  <div class="band" data-i18n-html data-en="US–CHINA AI WATCH — <span>gravity map</span>" data-zh="中美 AI 观察 — <span>引力图</span>">US–CHINA AI WATCH — <span>gravity map</span></div>
+  <div class="band" data-i18n-html data-en="US–CHINA AI WATCH — <span>story view</span>" data-zh="中美 AI 观察 — <span>故事视图</span>">US–CHINA AI WATCH — <span>story view</span></div>
   <div id="mwAsOf" class="asof"></div>
-  <p class="graphHint" data-en="Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure)." data-zh="拖动节点可重新摆放，滚轮/双指可缩放，点击节点查看详情。美股模型偏左，中国模型偏右——线条样式表示每只个股与模型的关系（实线=受益，虚线=承压）。">Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure).</p>
-  <div class="graphWrap">
-    <canvas id="mwGraph" class="mwGraph" aria-label="US–China AI model and equity gravity map"></canvas>
-    <div id="mwDetail" class="mwDetail" hidden></div>
-    <div id="mwEmpty" class="empty" hidden></div>
+  <div class="storyToggle" role="tablist" aria-label="US-China AI watch view">
+    <button type="button" data-view="cards" class="active" aria-pressed="true" data-en="Story cards" data-zh="故事卡">Story cards</button>
+    <button type="button" data-view="graph" aria-pressed="false" data-en="Star-map view" data-zh="星图视图">Star-map view</button>
   </div>
-  <div id="mwTake" class="take"></div>
+  <div id="storyCards" class="storyCards">
+    <article id="storyTake" class="storyFeatured"></article>
+    <div id="storyBaskets" class="storyGrid"></div>
+    <div id="storyModels" class="storyModels"></div>
+  </div>
+  <div id="storyGraphSection" hidden>
+    <p class="graphHint" data-en="Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure)." data-zh="拖动节点可重新摆放，滚轮/双指可缩放，点击节点查看详情。美股模型偏左，中国模型偏右——线条样式表示每只个股与模型的关系（实线=受益，虚线=承压）。">Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure).</p>
+    <div class="graphWrap">
+      <canvas id="mwGraph" class="mwGraph" aria-label="US–China AI model and equity gravity map"></canvas>
+      <div id="mwDetail" class="mwDetail" hidden></div>
+      <div id="mwEmpty" class="empty" hidden></div>
+    </div>
+    <div id="mwTake" class="take"></div>
+  </div>
   <details class="mwMatrix">
     <summary data-en="Data view: full comparison matrix" data-zh="数据视图：完整对比矩阵">Data view: full comparison matrix</summary>
     <div id="mwGrid" class="mwGrid"></div>
@@ -190,6 +206,48 @@
   }
   tick();
   setInterval(tick, 1000);
+})();
+</script>
+<script>
+/* U31 31b — infinite ticker marquee. Content is arena-universe.json's
+   tracked-symbol universe (not company logos — no licensed brand assets to
+   use, and this is the site's real "tracked universe" already). Double-clone
+   technique straight from the OpenAI Business reference: one real track,
+   one aria-hidden clone appended beside it, animate the wrapper -50%. Click
+   a chip -> scroll to whichever case card mentions that ticker (the six
+   hand-written cards above, else a matching U31 story card) and flash it. */
+(function () {
+  var wrap = document.getElementById('tickerTrackWrap');
+  var track = document.getElementById('tickerTrack');
+  if (!wrap || !track) return;
+  var BUCKET_COLOR = { 'core-ai-hardware': '#00e7ff', 'megacap-tech': '#caff00', 'benchmark': '#ff6f1f' };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  function scrollToTicker(sym) {
+    var el = document.getElementById('card-' + sym);
+    if (!el) { var chip = document.querySelector('.storyChip[data-ticker="' + sym + '"]'); if (chip) el = chip.closest('.storyCard'); }
+    if (!el) return;
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    el.classList.add('flash');
+    setTimeout(function () { el.classList.remove('flash'); }, 1400);
+  }
+  fetch('/arena-universe.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+    var syms = Array.isArray(d.symbols) ? d.symbols : [];
+    if (!syms.length) return;
+    track.innerHTML = syms.map(function (s) {
+      var c = BUCKET_COLOR[s.bucket] || '#eef7fb';
+      return '<button type="button" class="tickerChip" style="--tc:' + c + '" data-ticker="' + esc(s.sym) + '"><b>' + esc(s.sym) + '</b>' + esc(s.name) + '</button>';
+    }).join('');
+    var clone = track.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.classList.add('clone');
+    clone.setAttribute('aria-hidden', 'true');
+    wrap.appendChild(clone);
+    wrap.addEventListener('click', function (e) {
+      var btn = e.target.closest('.tickerChip'); if (!btn) return;
+      scrollToTicker(btn.dataset.ticker);
+    });
+  }).catch(function () {});
 })();
 </script>
 <script type="module">
@@ -231,10 +289,15 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
       mwBaskets = document.getElementById('mwBaskets'), mwTake = document.getElementById('mwTake'),
       mwGraph = document.getElementById('mwGraph'), mwDetail = document.getElementById('mwDetail'), mwEmpty = document.getElementById('mwEmpty'),
       pmAsOf = document.getElementById('pmAsOf'), pmTracks = document.getElementById('pmTracks'),
-      pmGrid = document.getElementById('pmGrid'), pmSwap = document.getElementById('pmSwap'), pmTake = document.getElementById('pmTake');
+      pmGrid = document.getElementById('pmGrid'), pmSwap = document.getElementById('pmSwap'), pmTake = document.getElementById('pmTake'),
+      storyToggle = document.querySelector('.storyToggle'), storyCardsEl = document.getElementById('storyCards'),
+      storyGraphEl = document.getElementById('storyGraphSection'), storyTake = document.getElementById('storyTake'),
+      storyBaskets = document.getElementById('storyBaskets'), storyModels = document.getElementById('storyModels');
   if (!mwGrid && !pmGrid) return;
   var DATA = null;
   var graphHandle = null;
+  var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealIO = null;
   function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
   function T(en, zh) { return lang() === 'zh' ? zh : en; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
@@ -278,6 +341,93 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
     var btn = mwDetail.querySelector('.mwDetailClose');
     if (btn) btn.addEventListener('click', function () { mwDetail.hidden = true; });
   }
+
+  // U31 31a — story blocks: same DATA.baskets/modelWatch/weeklyTake as the
+  // matrix rendering below, laid out as case cards instead of a table.
+  function pct(n) { return Math.round((n || 0) * 100) + '%'; }
+
+  function renderStoryCards() {
+    if (!storyBaskets) return;
+    if (storyTake) storyTake.innerHTML = DATA && DATA.weeklyTake
+      ? '<b>' + T('WEEKLY TAKE', '本周主线') + '</b>' + esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) : '';
+    var baskets = DATA && Array.isArray(DATA.baskets) ? DATA.baskets : [];
+    storyBaskets.innerHTML = baskets.map(function (b) {
+      var eqs = b.equities || [];
+      var lead = eqs[0];
+      var chips = eqs.map(function (e) {
+        return '<span class="storyChip" data-ticker="' + esc(e.ticker) + '">' + esc(e.ticker) + ' · ' + esc(RELATION_LABEL[e.relation] || e.relation) + '</span>';
+      }).join('');
+      // correlation_note only exists in zh in the source data (same field the
+      // existing mwDetail click-through already surfaces regardless of lang —
+      // not a new gap, matching that precedent rather than inventing an
+      // English paraphrase that isn't in sectors-data.json.
+      var lede = lead ? '<div class="storyThesis">' + esc(lead.correlation_note_zh) + '</div><span class="storyConf">' + esc(T('confidence', '置信度')) + ' ' + pct(lead.confidence) + '</span>' : '';
+      var detail = eqs.map(function (e) {
+        return '<div class="mwDev"><b>' + esc(e.ticker) + '</b> · ' + esc(RELATION_LABEL[e.relation] || e.relation)
+          + (e.correlation_note_zh ? '<div class="mwGap">' + esc(e.correlation_note_zh) + '</div>' : '') + '</div>';
+      }).join('');
+      return '<article class="storyCard" tabindex="0" role="button" aria-expanded="false" id="vendorCard-' + esc(b.vendor) + '">'
+        + '<div class="mwHead"><span class="mwVendor">' + esc(VENDOR_NAME[b.vendor] || b.vendor) + '</span><span class="storyMarket ' + esc(b.market) + '">' + esc(b.market) + '</span></div>'
+        + lede + '<div class="storyChips">' + chips + '</div>'
+        + '<div class="storyDetail">' + detail + '</div>'
+        + '</article>';
+    }).join('');
+    var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
+    if (storyModels) storyModels.innerHTML = mw.map(function (card) {
+      return '<div class="storyModelCard">'
+        + '<div class="mwHead"><span class="mwVendor">' + esc(VENDOR_NAME[card.vendor] || card.vendor) + '</span>'
+        + '<span class="mwRoute ' + esc(card.route) + '">' + esc(card.route === 'open' ? T('open-weight', '开源权重') : T('closed API', '闭源 API')) + '</span></div>'
+        + '<div class="mwLine">' + esc(card.current_line) + '</div>'
+        + '</div>';
+    }).join('');
+    wireStoryCards();
+    observeReveal();
+  }
+
+  function wireStoryCards() {
+    document.querySelectorAll('.storyCard').forEach(function (card) {
+      function toggle() {
+        var open = function () {
+          card.classList.toggle('open');
+          card.setAttribute('aria-expanded', card.classList.contains('open') ? 'true' : 'false');
+        };
+        if (!reduceMotion && document.startViewTransition) document.startViewTransition(open); else open();
+      }
+      card.addEventListener('click', toggle);
+      card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+    });
+  }
+
+  // IntersectionObserver scroll-reveal (once, ~0.2 threshold, 80ms cascade
+  // per same-screen card) — skipped entirely under reduced motion.
+  function observeReveal() {
+    var els = document.querySelectorAll('.storyCard:not(.in), .storyModelCard:not(.in)');
+    if (!els.length) return;
+    if (reduceMotion || !('IntersectionObserver' in window)) { els.forEach(function (el) { el.classList.add('in'); }); return; }
+    if (!revealIO) revealIO = new IntersectionObserver(function (entries) {
+      var i = 0;
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.style.transitionDelay = (i++ * 80) + 'ms';
+        entry.target.classList.add('in');
+        revealIO.unobserve(entry.target);
+      });
+    }, { threshold: 0.2 });
+    els.forEach(function (el) { revealIO.observe(el); });
+  }
+
+  if (storyToggle) storyToggle.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-view]'); if (!btn) return;
+    storyToggle.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b === btn); b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+    if (btn.dataset.view === 'graph') {
+      if (storyCardsEl) storyCardsEl.hidden = true;
+      if (storyGraphEl) storyGraphEl.hidden = false;
+      renderGraph(); // lazy: first click is when the canvas is actually sized (30j pattern, no changes to sectorsGraphView.js needed)
+    } else {
+      if (storyGraphEl) storyGraphEl.hidden = true;
+      if (storyCardsEl) storyCardsEl.hidden = false;
+    }
+  });
 
   function renderGraph() {
     if (!mwGraph || !window.AfflatusSectorsGraph) return;
@@ -371,7 +521,15 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
     if (pmTake) pmTake.innerHTML = esc(T(pm.take_en, pm.take_zh));
   }
 
-  function render() { renderModelWatch(); renderGraph(); renderPostMemory(); }
+  function render() {
+    renderModelWatch(); renderStoryCards(); renderPostMemory();
+    // Graph is lazily initialized on first toggle-to-star-map click (see
+    // storyToggle listener above); only re-render it here if the user has
+    // already opened it at least once (graphHandle set) or it's currently
+    // the visible view, so a lang toggle keeps it in sync without forcing
+    // an eager canvas init while hidden (which would size to 0).
+    if (graphHandle || (storyGraphEl && !storyGraphEl.hidden)) renderGraph();
+  }
   fetch('/sectors-data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
     .catch(function () {
       if (mwGrid) mwGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; if (pmGrid) pmGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>';

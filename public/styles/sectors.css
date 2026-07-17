@@ -173,3 +173,73 @@ h1 span{color:var(--acid)}
 .mwMatrix[open] summary{border-bottom:1px solid rgba(202,255,0,.24)}
 @media(max-width:820px){.mwGraph{height:360px}.mwDetail{left:14px;right:14px;width:auto;bottom:auto;max-height:70%}}
 @media(prefers-reduced-motion:reduce){.mwGraph{cursor:default}}
+
+/* U31 (2026-07-17) — OpenAI-Business-style story blocks (31a) + infinite
+   ticker marquee (31b). All content is derived from sectors-data.json
+   (baskets/modelWatch/weeklyTake, already fetched above) and
+   arena-universe.json (ticker chips) — zero new data. Patterns adopted from
+   the reference page; stack rejected per U31 total decision (no Next.js/
+   Tailwind/Framer Motion — IntersectionObserver + native CSS transitions is
+   what the reference stack itself reduces to). The R3 force graph becomes
+   the togglable "star-map view" alongside these cards (31c). */
+
+/* 31b — infinite ticker (double-clone technique, hero band) */
+.tickerBand{position:relative;overflow:hidden;border-top:2px solid rgba(202,255,0,.28);border-bottom:2px solid rgba(202,255,0,.28);background:rgba(0,231,255,.03);padding:10px 0}
+.tickerTrackWrap{display:flex;width:max-content;animation:tickerScroll 48s linear infinite;will-change:transform}
+.tickerTrack{display:flex;gap:10px;padding-right:10px}
+@keyframes tickerScroll{to{transform:translateX(-50%)}}
+.tickerBand:hover .tickerTrackWrap,.tickerBand:focus-within .tickerTrackWrap{animation-play-state:paused}
+.tickerChip{flex:0 0 auto;padding:7px 12px;border:1px solid var(--tc,rgba(0,231,255,.35));background:rgba(255,255,255,.02);color:#eef7fb;font:800 11px var(--font-hud);letter-spacing:.06em;cursor:pointer}
+.tickerChip b{color:var(--tc,var(--cyan));margin-right:4px}
+.tickerChip:hover,.tickerChip:focus-visible{background:var(--tc,var(--cyan));color:#05070b}
+.tickerChip:hover b,.tickerChip:focus-visible b{color:#05070b}
+@media(prefers-reduced-motion:reduce){
+  .tickerTrackWrap{animation:none;width:auto}
+  .tickerTrack{flex-wrap:wrap}
+  .tickerTrack.clone{display:none}
+}
+
+/* 31a — story blocks */
+.storyToggle{display:flex;border-top:1px dashed rgba(202,255,0,.24)}
+.storyToggle button{flex:1;padding:10px;background:transparent;border:0;border-right:1px solid rgba(202,255,0,.2);color:var(--muted);font:800 11px var(--font-hud);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.storyToggle button:last-child{border-right:0}
+.storyToggle button.active{color:var(--acid);background:rgba(202,255,0,.06)}
+.storyToggle button:hover{color:var(--cyan)}
+
+.storyCards{padding:6px 20px 8px}
+.storyFeatured{margin-bottom:16px;padding:16px 18px;border:1px solid rgba(0,231,255,.32);background:linear-gradient(90deg,rgba(0,231,255,.08),transparent 60%);color:#eef7fb;font:700 14px/1.6 var(--font-body)}
+.storyFeatured b{color:var(--cyan);text-transform:uppercase;font-size:10px;letter-spacing:.16em;display:block;margin-bottom:6px}
+
+.storyGrid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.storyCard{grid-column:span 7;padding:16px 18px;border:1px solid rgba(202,255,0,.28);background:rgba(6,9,14,.6);cursor:pointer;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;opacity:0;transform:translateY(24px)}
+.storyCard.in{opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s ease}
+.storyCard:nth-child(2){grid-column:span 5}
+.storyCard:nth-child(3){grid-column:span 5;margin-top:26px}
+.storyCard:nth-child(4){grid-column:span 7;margin-top:26px}
+.storyCard:hover,.storyCard:focus-within{transform:scale(1.02);box-shadow:0 0 0 1px rgba(0,231,255,.3),0 18px 34px rgba(0,0,0,.4);border-color:var(--cyan)}
+.storyCard.flash{border-color:var(--acid);box-shadow:0 0 0 2px var(--acid),0 0 24px rgba(202,255,0,.4)}
+.storyMarket{padding:4px 8px;font:900 10px/1 var(--font-hud);letter-spacing:.12em;text-transform:uppercase;background:var(--cyan);color:#05070b;white-space:nowrap}
+.storyMarket.CN{background:var(--acid)}
+.storyThesis{margin-top:8px;color:#d9e2e8;font:600 13px/1.5 var(--font-body)}
+.storyConf{display:inline-block;margin-top:6px;padding:3px 7px;border:1px solid rgba(0,231,255,.3);color:var(--cyan);font:800 10px var(--font-hud)}
+.storyChips{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.storyChip{padding:4px 7px;border:1px solid rgba(0,231,255,.28);color:#eef7fb;font:700 10px var(--font-hud);transition:border-color .2s ease,color .2s ease}
+.storyChip:hover{border-color:var(--acid);color:var(--acid)}
+.storyDetail{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(0,231,255,.24)}
+.storyCard.open .storyDetail{display:block}
+
+.storyModels{margin-top:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.storyModelCard{padding:12px 14px;border:1px solid rgba(202,255,0,.22);background:rgba(0,0,0,.2);opacity:0;transform:translateY(24px);transition:transform .3s ease,box-shadow .3s ease}
+.storyModelCard.in{opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s ease}
+.storyModelCard:hover{box-shadow:0 0 0 1px rgba(0,231,255,.24)}
+.storyModelCard .mwVendor{font-size:16px}
+
+/* Belt-and-suspenders only — observeReveal() already adds .in synchronously
+   under reduced motion before first paint, so .storyCard.in's higher
+   specificity already wins here without needing !important. */
+@media(prefers-reduced-motion:reduce){.storyCard,.storyModelCard{transition:none}}
+@media(max-width:860px){
+  .storyGrid{grid-template-columns:1fr}
+  .storyCard,.storyCard:nth-child(2),.storyCard:nth-child(3),.storyCard:nth-child(4){grid-column:1;margin-top:0}
+  .storyModels{grid-template-columns:1fr 1fr}
+}
