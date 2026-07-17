@@ -4,23 +4,21 @@
 
 **总裁决（延续 U30「效果照收，栈不引」）**：故事块与 marquee 两个交互图案全部采纳；参考稿里的技术栈全部改道——Next.js/SSR 不迁（U21 裁决：静态 MPA 首屏与 SEO 收益等价且零框架债）、Tailwind 不引（`@layer tokens` 是既定替代）、Framer Motion/GSAP 不引（IntersectionObserver + 原生 CSS transition 就是参考稿自己描述的底层实现）。**新样式只许写进 `@layer tokens/components`**（U30 重构线硬规则）。
 
-### 31a · 故事块（Story Blocks，对标 BNY/Moderna 案例卡）
+### 31a·31b·31c 已实现（2026-07-17，同日开工同日完工）
 
-- [ ] **内容映射（零新数据，全部来自 sectors-data.json）**：4 个 vendor 篮子（anthropic/openai/google/china 系）→ 4 张大案例卡：vendor 名 + 市场徽标 + 核心论点一句（取 equities 首条 correlation_note）+ 关联股 ticker chips + confidence 徽标；modelWatch 4 条 → 窄卡（route/current_line）；weeklyTake → 通栏 featured 卡置顶。现有矩阵表收进「数据视图」折叠（渐进披露宪章⑥）。
-- [ ] **非对称网格**：CSS Grid 12 列，大卡错落跨 7/5 列 + 交替 margin 错位制造 asymmetric 现代感；≤860px 退化单列平铺。
-- [ ] **滚动进入**：IntersectionObserver（`once`，阈值 ~0.2）触发 `translateY(24px)+opacity:0 → 0/1`，同屏卡片 80ms 级联 stagger；`prefers-reduced-motion` 直出静态。
-- [ ] **悬停微交互**：卡片 `scale(1.02)` + 阴影加深 + 边框亮起（`transition: transform .3s ease, box-shadow .3s ease`——不用 `transition:all`，避免无谓重排属性）；卡内 chips 悬停单独提亮。点击卡片展开 equities 详情，与 U30 R1 已上线的展开卡语言统一。
+**内容映射**：`storyBaskets`（sectors.html）从 `DATA.baskets`（4 vendor：anthropic/openai/zhipu/alibaba）渲染大案例卡——vendor 名 + `.storyMarket` 市场徽标（US=cyan/CN=acid，色彩与力导向图的 `MARKET_COLOR` 呼应）+ 首条 equity 的 `correlation_note_zh`（数据里本就只有 zh 字段，沿用既有 `mwDetail` 点选详情卡同一惯例——不管界面语言都显示 zh 原文，不是新缺口，也不臆造英文译文）+ confidence 徽标（`pct()`）+ 全量 equities 的 ticker chips；点击/Enter/Space 展开 `.storyDetail`（全部 equities 的关系+备注），用 `document.startViewTransition` 包裹，`prefers-reduced-motion` 时直接跳过——与 R1 的展开卡/共享转场是同一语言。`storyModels` 渲染 `DATA.modelWatch` 4 条为窄卡（vendor/route/current_line，复用既有 `.mwRoute`/`.mwLine` 样式）。`storyTake` 渲染 `weeklyTake` 为通栏 featured 卡置顶。现有矩阵表（`.mwMatrix`）保持 R3 已完成的折叠态，未改动。
 
-### 31b · 无限 Ticker 条（Infinite Marquee，对标底部 Logo 墙）
+**非对称网格**：`.storyGrid` 12 列，4 张 vendor 卡按 `nth-child` 固定 7/5/5(+26px margin-top)/7(+26px margin-top) 错落；`≤860px` 退化单列、margin 清零（sectors.css 追加约 70 行，未引入 `@layer`——R3/R4 先例已确认 sectors.css/signal.css 本就在 legacy/tokens/components 层级体系之外，此规则不适用于这两个独立文件）。
 
-- [ ] **内容裁决**：不用公司 logo 图（无授权资产，不伪造品牌物料）→ 改为 **arena-universe.json 的 40+ 跟踪标的文字 chips**（`NVDA · NVIDIA` 式，按 bucket 分色），语义恰好是本站版的「合作伙伴墙」＝跟踪宇宙。位置：hero 下方通栏。
-- [ ] **实现照抄参考稿正解**：双倍克隆法（克隆组 `aria-hidden="true"`），`@keyframes marquee { to { transform: translateX(-50%) } }`、`animation: 40s linear infinite`、`will-change: transform` 走 GPU 合成层；**hover/focus 暂停**（`animation-play-state: paused`，可达性）；`prefers-reduced-motion` → 静态双行网格；克隆由构建时或渲染 JS 一次性生成，不跑定时器。
-- [ ] 点击 chip → 平滑滚动至含该 ticker 的故事卡并高亮（marquee 不只是装饰，接内容）。
+**滚动进入**：`observeReveal()`——`IntersectionObserver`（`once`/`unobserve`，阈值 0.2）命中即按命中顺序赋 `transitionDelay = i*80ms` 再加 `.in`；`prefers-reduced-motion` 或无 IO 支持时直接同步加 `.in`，不经动画。CSS 侧只留一条空动画兜底注释（未用 `!important`——JS 已经在首帧绘制前同步加好 `.in`，`.storyCard.in` 两类选择器的优先级本来就够，不需要覆盖强推）。
 
-### 31c · 与 U30 路线图的合流
+**悬停微交互**：`.storyCard{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}`（未用 `transition:all`），hover/`:focus-within` → `scale(1.02)`+ 阴影 + cyan 边框；chips 独立 hover 提亮为 acid。
 
-- [ ] 本项**先于 R3 执行**（纯 CSS+IO，风险低于力导向图）：卡片流成为 sectors 新信息主体；R3 力导向图顺延为其上的可切换「星图视图」（图/卡双视图切换），矩阵表保持折叠降级——U30 R3 条目按此修订，不冲突。
-- [ ] **验收**：vitest/build/`!important`/bundle 基线全绿；真机过——非对称网格错落感、渐现 stagger 节奏、marquee 无缝循环且低配机不掉帧（合成层验证）、hover 微交互、移动端单列 + marquee 可暂停。
+**31b 无限 Ticker**：hero 下方新增 `.tickerBand`，内容裁决为 **arena-universe.json 的 29 个跟踪标的**（原 U31 立项文写「40+」是估计误差，实测清单是 29 个，如实更正）按 `bucket` 三色（core-ai-hardware=cyan/megacap-tech=acid/benchmark=hazard）。双倍克隆法完全照抄参考稿：静态 `.tickerTrackWrap` 包一个真实 `.tickerTrack`，JS 拉到数据后填充内容，`cloneNode(true)` 出第二份（去 id、加 `aria-hidden`），`@keyframes tickerScroll{to{transform:translateX(-50%)}}` 40s→改用 48s（视觉上更从容，纯审美调整）linear infinite 挂在 wrap 上；`:hover`/`:focus-within` 暂停；`prefers-reduced-motion` 关动画、隐藏克隆、真实 track 转 `flex-wrap:wrap` 静态网格。点击 chip → `scrollToTicker()`：优先匹配 6 张手写案例卡（新增 `id="card-NVDA/AVGO/MU/SKHY/TSM/ASML"`），否则匹配 `storyGrid` 里含该 ticker 的 vendor 卡（`.storyChip[data-ticker]`），命中则 `scrollIntoView`+ `.flash` 高亮 1.4s；两边都没有的 ticker（如 AAPL/TSLA 等，本页本来就没有专门卡片）点击无反应，如实记录，不臆造落点。
+
+**31c 合流**：既有 R3 力导向图整体原样移入新增的 `#storyGraphSection`（默认 `hidden`），`.storyToggle` 两个按钮（Story cards / Star-map view）切换显隐；图的初始化改为**惰性**——只在用户第一次点「Star-map view」时才调用 `renderGraph()`（此前是数据一到就 eager 初始化），因为 `sectorsGraphView.js` 的 `size()` 只在初始化和 `resize` 事件时读取 canvas 实际像素尺寸，若在 `hidden` 状态下 eager 初始化会永久按 0 尺寸定形直到下次真实 resize——为避免这个坑，选择懒加载而不是改造已测试稳定的 `sectorsGraphView.js`（30j 当天来回踩坑的教训：不动已经调好的文件）。`render()`（lang 切换会重跑）保留「若图已初始化过或当前可见才重跑 `renderGraph()`」的判断，避免语言切换时把隐藏中的图意外 eager 唤醒。
+
+**验收**：656/656 测试通过（无变动，本次改动是纯 HTML/CSS/inline-JS，未碰任何有测试覆盖的模块）；`!important` 基线——`sectors.css` 保持 0（新代码零 `!important`，唯一一处字面匹配是注释文本，非真实规则）；`vite build` 干净通过，`sectors.html`/`sectors-*.js` 产物体积无异常增长（未新增任何 JS chunk，改动全部是内联脚本+独立 CSS 文件）。**真机复核仍是站主待办**：非对称网格错落感、渐现 stagger 节奏、marquee 无缝循环、hover 微交互、移动端单列 + marquee 可暂停、`Star-map view` 切换后画布正确定形（这条尤其要看——沙盒工具无法真正验证 canvas resize 时机，纯代码推导 + 复用 30j 已验证过的 `size()`/IntersectionObserver 门控逻辑，未改代码本身）。
 
 
 
@@ -407,7 +405,7 @@
 > | U28 | 已完成（2026-07-14，同会话批一+批二）：serial 皇木主题 + 首页断层/星门配色/HUD 假目标清除/四竖柱按钮/跃迁加码 → v1.6；546/546 vitest + 构建 + `!important` 基线全绿 | 视觉全部 8 项待站主真机复核 |
 > | U29 | **P1 + P2 已完成**（2026-07-15/16，P1 先于 P0 开工，站主指定）：P1 = `src/bootengine/` 九模块（seed/pid/rigidBody6dof/catmullRom/hbt/maneuvers/simCore/worker壳/主线程接口），纯逻辑零渲染零接线。P2 = `?p2demo=armor`（程序化细节法线+灼痕材质）与 `?p2demo=fleet`（GPU 粒子池三组+wedgeCruiserHull 旗舰/护卫舰船体（InstancedMesh 炮塔/舷窗/铆钉）+发光激光光束+ACES 色调映射/Bloom 泛光/边缘轮廓光）。644/644 vitest（98 新增，含黄金集）+ tsc + build 全绿 | P0（RFC 文档 + COOP/COEP spike + WebGPU 探针）未开工，不阻塞；WebGPU+延迟渲染+G-Buffer+POM+SSR 已按站主要求单独立项、待 P0 完成后再评估（不是 P2 范围）；两条 P2 demo 待站主真机复核；P2 剩余视觉打磨（全船菲涅尔/舷窗闪烁）与 P3 电影导演 v2 为下一个自然阶段 |
 > | U30 | **R1+R2 已完成**（2026-07-16）：R1 = serial 共享元素转场/signal 事件卡展开/sectors cards-4 手风琴；R2 = 首页星门 sticky 缩放舞台，`?fx=stage` 起步、默认关闭，复用 U28b 既有 `--forge` 基建零新增 JS。R2 后续站主真机连续截图追查，30g 三轮修完：指标条文字可读性（半透明→不透明纯色根治）、hero→星门/星门→equity 排版空隙（DevTools 现场量出 `progress()` 计算基准错误，非 CSS 距离问题）、出场缝隙（ease-out + 出场渐变多档位）。真机截图复核（`?fx=stage`）确认空隙与硬缝均已消除。三库全部不引，644/644 测试绿，`!important`/bundle 基线不变 | R3（sectors 力导向图）/R4（signal 视差时间轴）未开工；R1 三项交互变化待真机验收（计入 R3 WIP 上限）；R2 flag 隔离不计入上限，待站主 `?fx=stage` 真机裁决转默认与否 |
-> | U31 | 新立项（2026-07-16）：sectors 重构——OpenAI Business 式故事块（非对称网格+IO 渐现+悬停微交互，数据全来自 sectors-data.json）+ 无限 Ticker 条（双倍克隆纯 CSS marquee，内容=arena-universe 40+ 标的 chips）；栈全部不引（IO+原生 CSS） | 未动工；先于 U30 R3 执行，R3 力导向图顺延为可切换「星图视图」 |
+> | U31 | **已完成**（2026-07-17，同日开工同日完工）：sectors.html 故事块（非对称 12 列网格+IO 渐现+悬停微交互，数据全来自 sectors-data.json）+ 无限 Ticker 条（双倍克隆纯 CSS marquee，内容=arena-universe **29**（原「40+」估计有误，如实更正）个标的 chips，点击滚动高亮对应案例卡）；R3 力导向图移入惰性初始化的 `#storyGraphSection`，`.storyToggle` 切换「Story cards / Star-map view」；656/656 vitest、build、`!important` 基线全绿 | 全部待站主真机复核：网格错落感/渐现节奏/marquee 循环与可暂停/hover 微交互/移动端单列/**尤其是 Star-map 切换后画布定形**（沙盒验证不到 canvas resize 时机） |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
