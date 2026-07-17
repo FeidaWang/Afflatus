@@ -46,10 +46,18 @@
 </head>
 <body class="signal-page scp mood-bull" data-prev="/sectors.html" data-next="/games.html">
 <div class="scpbg" aria-hidden="true"><canvas id="scpCanvas"></canvas><div class="wm"><b>CLASSIFIED</b></div></div>
+<div class="readProgress" aria-hidden="true"></div>
 
 <nav class="page-turn-controls" aria-label="Page navigation">
   <a class="page-turn" href="/sectors.html" data-page-turn="prev" aria-label="Back to sectors">←</a>
   <a class="page-turn" href="/games.html" data-page-turn="next" aria-label="Next to games">→</a>
+</nav>
+
+<nav class="chapterRail" aria-label="Chapter navigation">
+  <a href="#ch01" data-chapter="ch01"><b>01</b><span data-en="Compass" data-zh="罗盘">Compass</span></a>
+  <a href="#ch02" data-chapter="ch02"><b>02</b><span data-en="Signal Matrix" data-zh="信号矩阵">Signal Matrix</span></a>
+  <a href="#ch03" data-chapter="ch03"><b>03</b><span data-en="Incident Archive" data-zh="事件档案">Incident Archive</span></a>
+  <a href="#ch04" data-chapter="ch04"><b>04</b><span data-en="Sector Calls" data-zh="板块研判">Sector Calls</span></a>
 </nav>
 
 <main class="dossier">
@@ -74,21 +82,27 @@
       </div>
       <h1 data-i18n-html data-en="ONE HAND CONTAINS THE <span class='x'>██████</span> MARKET" data-zh="一只手收容着 <span class='x'>██████</span> 市场">ONE HAND CONTAINS THE <span class="x">██████</span> MARKET</h1>
       <p class="lead" data-en="Designation FED-26 exerts global influence over price stability and the cost of money. Containment is procedural: the target range is held at 3.50–3.75% across a leadership handover. Per O5 directive, the higher-for-longer protocol remains active until the data — not sentiment — forces revision. The Foundation does not predict the anomaly; it contains it." data-zh="编号 FED-26 对价格稳定与货币成本施加全球性影响。收容为程序化操作：在领导层交接期间，目标利率区间维持于 3.50–3.75%。依 O5 指令，“更高更久”协议保持启用，直至数据（而非情绪）迫使修订。基金会不预测异常体，只负责收容。">Designation FED-26 exerts global influence over price stability and the cost of money. Containment is procedural: the target range is held at 3.50–3.75% across a leadership handover. Per O5 directive, the higher-for-longer protocol remains active until the data — not sentiment — forces revision. The Foundation does not predict the anomaly; it contains it.</p>
+      <div class="heroRead" id="heroRead" aria-label="Current hawk-dove reading">
+        <b id="heroHdLabel">—</b><span id="heroHdScore">(—)</span>
+      </div>
+      <div class="heroCountdown" aria-label="Next containment test">
+        <span class="tag" data-en="CONTAINMENT REVIEW" data-zh="收容复核">CONTAINMENT REVIEW</span>
+        <span id="eventTypeLabel" data-en="NEXT CONTAINMENT TEST" data-zh="下一次收容测试">NEXT CONTAINMENT TEST</span>
+        <span class="bias" data-en="TAPE BIAS · BULLISH" data-zh="盘面倾向 · 看涨">TAPE BIAS · BULLISH</span>
+        <span class="live" data-en="MONITORING · LIVE" data-zh="监控中 · 实时">MONITORING · LIVE</span>
+        <span class="clock" id="fomcClock" aria-live="off">--d --:--:--</span>
+        <span class="when"><span id="eventWhenLabel" data-en="REVIEW" data-zh="复核">REVIEW</span> <b id="fomcDate">—</b> · <span id="eventTime">2:00 PM ET</span> — <span id="eventDirectiveLabel" data-en="DIRECTIVE" data-zh="指令">DIRECTIVE</span> <span class="bc" id="eventDirective" data-en="HOLD 3.50–3.75% · WATCH THE DOTS" data-zh="维持 3.50–3.75% · 紧盯点阵图">HOLD 3.50–3.75% · WATCH THE DOTS</span></span>
+      </div>
     </div>
   </section>
 
-  <section class="review" aria-label="Next containment test">
-    <div class="tag" data-en="CONTAINMENT REVIEW" data-zh="收容复核">CONTAINMENT REVIEW</div>
-    <div class="b">
-      <div class="row1"><span id="eventTypeLabel" data-en="NEXT CONTAINMENT TEST" data-zh="下一次收容测试">NEXT CONTAINMENT TEST</span><span class="bias" data-en="TAPE BIAS · BULLISH" data-zh="盘面倾向 · 看涨">TAPE BIAS · BULLISH</span><span class="live" data-en="MONITORING · LIVE" data-zh="监控中 · 实时">MONITORING · LIVE</span></div>
-      <div class="clock" id="fomcClock" aria-live="off">--d --:--:--</div>
-      <div class="when"><span id="eventWhenLabel" data-en="REVIEW" data-zh="复核">REVIEW</span> <b id="fomcDate">—</b> · <span id="eventTime">2:00 PM ET</span> — <span id="eventDirectiveLabel" data-en="DIRECTIVE" data-zh="指令">DIRECTIVE</span> <span class="bc" id="eventDirective" data-en="HOLD 3.50–3.75% · WATCH THE DOTS" data-zh="维持 3.50–3.75% · 紧盯点阵图">HOLD 3.50–3.75% · WATCH THE DOTS</span></div>
+  <div class="chapters">
+  <section class="chapter compass" id="ch01" aria-label="Hawk-dove compass">
+    <div class="chapterHead reveal">
+      <div class="kicker" data-en="CHAPTER 01 · O5 BEHAVIORAL MODEL" data-zh="第一章 · O5 行为模型">CHAPTER 01 · O5 BEHAVIORAL MODEL</div>
+      <h2 data-en="Hawk-Dove Compass" data-zh="鹰鸽罗盘">Hawk-Dove Compass</h2>
+      <p class="dek" data-en="v1 · manually scored · see method note below" data-zh="v1 · 人工打分 · 详见下方方法说明">v1 · manually scored · see method note below</p>
     </div>
-  </section>
-
-  <div class="signalScroll">
-  <section class="compass" aria-label="Hawk-dove compass">
-    <h2><span data-en="HAWK-DOVE COMPASS — O5 BEHAVIORAL MODEL" data-zh="鹰鸽罗盘 — O5 行为模型">HAWK-DOVE COMPASS — O5 BEHAVIORAL MODEL</span><small data-en="v1 · manually scored · see method note" data-zh="v1 · 人工打分 · 详见方法说明">v1 · manually scored · see method note</small></h2>
     <div class="gaugeWrap">
       <div class="gauge"><i class="needle" id="hdNeedle" aria-hidden="true"></i></div>
       <div class="scaleLabels"><span data-en="DOVE −2" data-zh="鸽派 −2">DOVE −2</span><span data-en="NEUTRAL 0" data-zh="中性 0">NEUTRAL 0</span><span data-en="HAWK +2" data-zh="鹰派 +2">HAWK +2</span></div>
@@ -98,23 +112,27 @@
     <p class="method" id="hdMethod"></p>
   </section>
 
-  <section class="pillars" aria-label="Five-pillar signal matrix">
-    <h2><span data-en="FIVE-PILLAR SIGNAL MATRIX" data-zh="五维信号矩阵">FIVE-PILLAR SIGNAL MATRIX</span><small data-en="no forward guidance = every data point moves the tape alone" data-zh="无前瞻指引 = 每个数据点独自左右市场">no forward guidance = every data point moves the tape alone</small></h2>
+  <section class="chapter pillars" id="ch02" aria-label="Five-pillar signal matrix">
+    <div class="chapterHead reveal">
+      <div class="kicker" data-en="CHAPTER 02 · CURRENT STATE" data-zh="第二章 · 当前态势">CHAPTER 02 · CURRENT STATE</div>
+      <h2 data-en="Five-Pillar Signal Matrix" data-zh="五维信号矩阵">Five-Pillar Signal Matrix</h2>
+      <p class="dek" data-en="No forward guidance = every data point moves the tape alone" data-zh="无前瞻指引 = 每个数据点独自左右市场">No forward guidance = every data point moves the tape alone</p>
+    </div>
     <p class="pillarSummary" id="pillarSummaryText"></p>
     <div class="pillarGrid" id="pillarGrid"></div>
-  </section>
 
-  <div class="files">
-    <article class="file">
+    <div class="subhead" data-en="Supporting Files" data-zh="支持文件">Supporting Files</div>
+    <div class="files">
+    <article class="file reveal">
       <h2><span data-en="O5 DIRECTIVE — RATE DECISION" data-zh="O5 指令 — 利率决议">O5 DIRECTIVE — RATE DECISION</span><span class="c">01</span></h2>
       <div class="in"><div class="bars">
-        <div class="row"><span data-en="Hold 3.50–3.75%" data-zh="维持 3.50–3.75%">Hold 3.50–3.75%</span><b>91%</b><div class="bar g"><i style="--w:91%"></i></div></div>
-        <div class="row"><span data-en="Cut 25bp" data-zh="降息 25bp">Cut 25bp</span><b>7%</b><div class="bar a"><i style="--w:7%"></i></div></div>
-        <div class="row"><span data-en="Hike 25bp" data-zh="加息 25bp">Hike 25bp</span><b>2%</b><div class="bar r"><i style="--w:2%"></i></div></div>
+        <div class="row"><span data-en="Hold 3.50–3.75%" data-zh="维持 3.50–3.75%">Hold 3.50–3.75%</span><b class="countup">91%</b><div class="bar g"><i style="--w:91%"></i></div></div>
+        <div class="row"><span data-en="Cut 25bp" data-zh="降息 25bp">Cut 25bp</span><b class="countup">7%</b><div class="bar a"><i style="--w:7%"></i></div></div>
+        <div class="row"><span data-en="Hike 25bp" data-zh="加息 25bp">Hike 25bp</span><b class="countup">2%</b><div class="bar r"><i style="--w:2%"></i></div></div>
       </div><p class="note" data-en="Post-NFP repricing: the 57K miss unwound most of the September hike premium; CME FedWatch still calls July a hold (~91%), but the tail has moved toward cuts, not hikes." data-zh="非农后重定价：5.7万的疲软数据抹去了大部分9月加息溢价；CME FedWatch 仍显示7月按兵不动概率最高（约91%），但尾部风险已转向降息，而非加息。">Post-NFP repricing: the 57K miss unwound most of the September hike premium; CME FedWatch still calls July a hold (~91%), but the tail has moved toward cuts, not hikes.</p></div>
     </article>
 
-    <article class="file">
+    <article class="file reveal">
       <h2><span data-en="PERSONNEL FILE — SITE DIRECTOR" data-zh="人事档案 — 站点主管">PERSONNEL FILE — SITE DIRECTOR</span><span class="c">02</span></h2>
       <div class="in"><div class="list">
         <div class="li"><span class="k" data-en="DESIGNATION" data-zh="任命">DESIGNATION</span><span class="v" data-en="Kevin Warsh — confirmed by the Senate May 13, 2026; sworn in May 22, 2026." data-zh="沃什（Kevin Warsh）——2026 年 5 月 13 日经参议院确认，5 月 22 日宣誓就职。">Kevin Warsh — confirmed by the Senate May 13, 2026; sworn in May 22, 2026.</span></div>
@@ -124,17 +142,17 @@
       </div><p class="note" data-en="No SEP at the July meeting — the next dot plot isn't until September; until then, every data print does the talking, and a cracked labor report raises headline risk around every word at the 2:30 PM ET press conference." data-zh="7 月会议无 SEP——下一次点阵图要等到 9 月；在此之前一切由数据说话，走弱的就业数据也让美东下午 2:30 发布会上的每一个字都暗藏头条风险。">No SEP at the July meeting — the next dot plot isn't until September; until then, every data print does the talking, and a cracked labor report raises headline risk around every word at the 2:30 PM ET press conference.</p></div>
     </article>
 
-    <article class="file">
+    <article class="file reveal">
       <h2><span data-en="SEPTEMBER CUT TRACKER" data-zh="9 月降息概率追踪">SEPTEMBER CUT TRACKER</span><span class="c">03</span></h2>
       <div class="in"><div class="bars">
-        <div class="row"><span data-en="Sept cut now live again" data-zh="9 月降息重新激活">Sept cut now live again</span><b>61%</b><div class="bar g"><i style="--w:61%"></i></div></div>
-        <div class="row"><span data-en="2026 hike still on the table" data-zh="2026 加息仍未出局">2026 hike still on the table</span><b>15%</b><div class="bar r"><i style="--w:15%"></i></div></div>
-        <div class="row"><span data-en="Participation keeps falling" data-zh="参与率持续下滑">Participation keeps falling</span><b>44%</b><div class="bar a"><i style="--w:44%"></i></div></div>
-        <div class="row"><span data-en="Next SEP confirms cut (Sept 16)" data-zh="下次 SEP 确认降息（9/16）">Next SEP confirms cut (Sept 16)</span><b>48%</b><div class="bar g"><i style="--w:48%"></i></div></div>
+        <div class="row"><span data-en="Sept cut now live again" data-zh="9 月降息重新激活">Sept cut now live again</span><b class="countup">61%</b><div class="bar g"><i style="--w:61%"></i></div></div>
+        <div class="row"><span data-en="2026 hike still on the table" data-zh="2026 加息仍未出局">2026 hike still on the table</span><b class="countup">15%</b><div class="bar r"><i style="--w:15%"></i></div></div>
+        <div class="row"><span data-en="Participation keeps falling" data-zh="参与率持续下滑">Participation keeps falling</span><b class="countup">44%</b><div class="bar a"><i style="--w:44%"></i></div></div>
+        <div class="row"><span data-en="Next SEP confirms cut (Sept 16)" data-zh="下次 SEP 确认降息（9/16）">Next SEP confirms cut (Sept 16)</span><b class="countup">48%</b><div class="bar g"><i style="--w:48%"></i></div></div>
       </div><p class="note" data-en="No dot plot in July — this meeting is data-only. The next SEP (Sept 16) is the real decision point; between now and then, every CPI and claims print re-prices the September odds shown above." data-zh="7 月无点阵图——本次会议只看数据。下一次 SEP（9 月 16 日）才是真正的决策节点；在此之前，每一份 CPI 与初请数据都会重新定价上方的 9 月降息概率。">No dot plot in July — this meeting is data-only. The next SEP (Sept 16) is the real decision point; between now and then, every CPI and claims print re-prices the September odds shown above.</p></div>
     </article>
 
-    <article class="file">
+    <article class="file reveal">
       <h2><span data-en="MTF THREAT BOARD" data-zh="机动特遣队 · 威胁面板">MTF THREAT BOARD</span><span class="c">04</span></h2>
       <div class="in"><div class="bars">
         <div class="row"><span data-en="core PCE" data-zh="核心 PCE">core PCE</span><b class="red" data-en="HOT" data-zh="偏热">HOT</b><div class="bar r"><i style="--w:62%"></i></div></div>
@@ -145,21 +163,31 @@
       </div><p class="note" data-en="Re-containment triggers: a sticky core PCE print reasserting itself, wage growth failing to cool alongside falling participation (stagflation tell), the pace of runoff, and any loosening of financial conditions the Council must lean against." data-zh="触发“再收容”的因素：核心 PCE 重新走热、薪资增速在参与率下滑的同时未能降温（滞胀信号）、缩表节奏，以及任何议会必须出手对抗的金融条件松动。">Re-containment triggers: a sticky core PCE print reasserting itself, wage growth failing to cool alongside falling participation (stagflation tell), the pace of runoff, and any loosening of financial conditions the Council must lean against.</p></div>
     </article>
   </div>
+  </section>
 
-  <section class="incidents" aria-label="Incident log">
-    <h2><span data-en="INCIDENT LOG — CONTAINMENT BREACHES" data-zh="收容事件簿 — 收容失效记录">INCIDENT LOG — CONTAINMENT BREACHES</span><small data-en="Real macro prints, traced from pre-release pricing to equity reaction · not advice" data-zh="真实宏观数据，从发布前定价到股市反应的完整追踪 · 非投资建议">Real macro prints, traced from pre-release pricing to equity reaction · not advice</small></h2>
+  <section class="chapter incidents" id="ch03" aria-label="Incident log">
+    <div class="chapterHead reveal">
+      <div class="kicker" data-en="CHAPTER 03 · CONTAINMENT BREACHES" data-zh="第三章 · 收容失效记录">CHAPTER 03 · CONTAINMENT BREACHES</div>
+      <h2 data-en="Incident Archive" data-zh="事件档案">Incident Archive</h2>
+      <p class="dek" data-en="Real macro prints, traced from pre-release pricing to equity reaction · not advice" data-zh="真实宏观数据，从发布前定价到股市反应的完整追踪 · 非投资建议">Real macro prints, traced from pre-release pricing to equity reaction · not advice</p>
+    </div>
+    <div class="filterChips" id="incidentFilters" role="group" aria-label="Filter incidents"></div>
     <div class="incidentList" id="incidentList"></div>
   </section>
 
-  <section class="watch" aria-label="Fable sector calls">
-    <h2><span data-en="ANOMALOUS ASSET WATCH — O5 PROJECTION" data-zh="异常资产监控 — O5 推演">ANOMALOUS ASSET WATCH — O5 PROJECTION</span><small data-en="Fable 5 Max · today's directional read · not advice" data-zh="Fable 5 Max · 今日方向研判 · 非投资建议">Fable 5 Max · today's directional read · not advice</small></h2>
+  <section class="chapter watch" id="ch04" aria-label="Fable sector calls">
+    <div class="chapterHead reveal">
+      <div class="kicker" data-en="CHAPTER 04 · O5 PROJECTION" data-zh="第四章 · O5 推演">CHAPTER 04 · O5 PROJECTION</div>
+      <h2 data-en="Anomalous Asset Watch" data-zh="异常资产监控">Anomalous Asset Watch</h2>
+      <p class="dek" data-en="Fable 5 Max · today's directional read · not advice" data-zh="Fable 5 Max · 今日方向研判 · 非投资建议">Fable 5 Max · today's directional read · not advice</p>
+    </div>
     <div class="grid2">
-      <div class="asset"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="AI Compute" data-zh="AI 算力">AI Compute</span><span class="cf">UP · 58%</span></div><div class="tks">NVDA · AMD · SMH</div><p class="rs" data-en="Micron's blowout validates AI demand and should support a risk-on bounce in the compute leaders; a hawkish Fed caps the upside." data-zh="美光超预期验证 AI 需求，应支撑算力龙头的风险偏好反弹；鹰派联储限制上行空间。">Micron's blowout validates AI demand and should support a risk-on bounce in the compute leaders; a hawkish Fed caps the upside.</p></div>
-      <div class="asset"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="Custom Silicon" data-zh="定制芯片">Custom Silicon</span><span class="cf">UP · 62%</span></div><div class="tks">AVGO · MRVL</div><p class="rs" data-en="Strongest structural setup: Broadcom's 10GW OpenAI ASIC deal + ~$73B backlog; hyperscaler capex flows straight through it." data-zh="结构最强：博通 10 吉瓦 OpenAI ASIC 协议 + 约 730 亿美元订单储备；超大规模厂商资本开支直接流经。">Strongest structural setup: Broadcom's 10GW OpenAI ASIC deal + ~$73B backlog; hyperscaler capex flows straight through it.</p></div>
-      <div class="asset"><div class="hd"><span class="dir flat"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13 L8.5 8.5 L12 14.5 L15.5 8.5 L20 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="13" r="1.3" fill="currentColor"/><circle cx="20" cy="13" r="1.3" fill="currentColor"/></svg></span><span class="nm" data-en="Memory / Storage" data-zh="存储 / 内存">Memory / Storage</span><span class="cf">MIXED · 55%</span></div><div class="tks">MU · SNDK</div><p class="rs" data-en="Super-cycle confirmed (record FQ3, ~$50B Q4 guide), but classic sell-the-news after a huge run — pops are getting faded near-term." data-zh="超级周期已确认（创纪录第三财季、约 500 亿第四季度指引），但大涨后典型「兑现利好」——短期内冲高回落。">Super-cycle confirmed (record FQ3, ~$50B Q4 guide), but classic sell-the-news after a huge run — pops are getting faded near-term.</p></div>
-      <div class="asset"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="Foundry &amp; Packaging" data-zh="晶圆代工与封装">Foundry &amp; Packaging</span><span class="cf">UP · 60%</span></div><div class="tks">TSM</div><p class="rs" data-en="CoWoS advanced packaging is now the binding AI constraint; Micron's HBM ramp adds to the pull on TSMC's chokepoint capacity." data-zh="CoWoS 先进封装已成 AI 瓶颈；美光 HBM 放量进一步拉动台积电咽喉产能。">CoWoS advanced packaging is now the binding AI constraint; Micron's HBM ramp adds to the pull on TSMC's chokepoint capacity.</p></div>
-      <div class="asset"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="Equipment &amp; Optics" data-zh="设备与光学">Equipment &amp; Optics</span><span class="cf">UP · 55%</span></div><div class="tks">ASML · LITE</div><p class="rs" data-en="Record memory capex reinforces equipment demand; high-NA EUV powers the next decade and optical interconnect firms as clusters scale." data-zh="创纪录的存储资本开支强化设备需求；高数值孔径 EUV 支撑下一个十年，集群扩张带动光互连走强。">Record memory capex reinforces equipment demand; high-NA EUV powers the next decade and optical interconnect firms as clusters scale.</p></div>
-      <div class="asset"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="Read of the day" data-zh="今日总判">Read of the day</span><span class="cf">RISK-ON, CAPPED</span></div><div class="tks">O5 · NET BIAS</div><p class="rs" data-en="Micron confirms the super-cycle — lean long the chokepoints (TSM/ASML) and custom silicon (AVGO), fade the memory sell-the-news, respect the Fed tail. Not advice." data-zh="美光确认超级周期——偏多咽喉环节（TSM/ASML）与定制芯片（AVGO），淡化存储的兑现利好，尊重联储尾部风险。非投资建议。">Micron confirms the super-cycle — lean long the chokepoints (TSM/ASML) and custom silicon (AVGO), fade the memory sell-the-news, respect the Fed tail. Not advice.</p></div>
+      <div class="asset reveal"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="AI Compute" data-zh="AI 算力">AI Compute</span><span class="cf">UP · 58%</span></div><div class="tks">NVDA · AMD · SMH</div><p class="rs" data-en="Micron's blowout validates AI demand and should support a risk-on bounce in the compute leaders; a hawkish Fed caps the upside." data-zh="美光超预期验证 AI 需求，应支撑算力龙头的风险偏好反弹；鹰派联储限制上行空间。">Micron's blowout validates AI demand and should support a risk-on bounce in the compute leaders; a hawkish Fed caps the upside.</p></div>
+      <div class="asset reveal"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="Custom Silicon" data-zh="定制芯片">Custom Silicon</span><span class="cf">UP · 62%</span></div><div class="tks">AVGO · MRVL</div><p class="rs" data-en="Strongest structural setup: Broadcom's 10GW OpenAI ASIC deal + ~$73B backlog; hyperscaler capex flows straight through it." data-zh="结构最强：博通 10 吉瓦 OpenAI ASIC 协议 + 约 730 亿美元订单储备；超大规模厂商资本开支直接流经。">Strongest structural setup: Broadcom's 10GW OpenAI ASIC deal + ~$73B backlog; hyperscaler capex flows straight through it.</p></div>
+      <div class="asset reveal"><div class="hd"><span class="dir flat"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13 L8.5 8.5 L12 14.5 L15.5 8.5 L20 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="13" r="1.3" fill="currentColor"/><circle cx="20" cy="13" r="1.3" fill="currentColor"/></svg></span><span class="nm" data-en="Memory / Storage" data-zh="存储 / 内存">Memory / Storage</span><span class="cf">MIXED · 55%</span></div><div class="tks">MU · SNDK</div><p class="rs" data-en="Super-cycle confirmed (record FQ3, ~$50B Q4 guide), but classic sell-the-news after a huge run — pops are getting faded near-term." data-zh="超级周期已确认（创纪录第三财季、约 500 亿第四季度指引），但大涨后典型「兑现利好」——短期内冲高回落。">Super-cycle confirmed (record FQ3, ~$50B Q4 guide), but classic sell-the-news after a huge run — pops are getting faded near-term.</p></div>
+      <div class="asset reveal"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="Foundry &amp; Packaging" data-zh="晶圆代工与封装">Foundry &amp; Packaging</span><span class="cf">UP · 60%</span></div><div class="tks">TSM</div><p class="rs" data-en="CoWoS advanced packaging is now the binding AI constraint; Micron's HBM ramp adds to the pull on TSMC's chokepoint capacity." data-zh="CoWoS 先进封装已成 AI 瓶颈；美光 HBM 放量进一步拉动台积电咽喉产能。">CoWoS advanced packaging is now the binding AI constraint; Micron's HBM ramp adds to the pull on TSMC's chokepoint capacity.</p></div>
+      <div class="asset reveal"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="Equipment &amp; Optics" data-zh="设备与光学">Equipment &amp; Optics</span><span class="cf">UP · 55%</span></div><div class="tks">ASML · LITE</div><p class="rs" data-en="Record memory capex reinforces equipment demand; high-NA EUV powers the next decade and optical interconnect firms as clusters scale." data-zh="创纪录的存储资本开支强化设备需求；高数值孔径 EUV 支撑下一个十年，集群扩张带动光互连走强。">Record memory capex reinforces equipment demand; high-NA EUV powers the next decade and optical interconnect firms as clusters scale.</p></div>
+      <div class="asset reveal"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="Read of the day" data-zh="今日总判">Read of the day</span><span class="cf">RISK-ON, CAPPED</span></div><div class="tks">O5 · NET BIAS</div><p class="rs" data-en="Micron confirms the super-cycle — lean long the chokepoints (TSM/ASML) and custom silicon (AVGO), fade the memory sell-the-news, respect the Fed tail. Not advice." data-zh="美光确认超级周期——偏多咽喉环节（TSM/ASML）与定制芯片（AVGO），淡化存储的兑现利好，尊重联储尾部风险。非投资建议。">Micron confirms the super-cycle — lean long the chokepoints (TSM/ASML) and custom silicon (AVGO), fade the memory sell-the-news, respect the Fed tail. Not advice.</p></div>
     </div>
   </section>
   </div>
@@ -268,7 +296,12 @@
 /* incident log — fetched dossiers, before→print→repricing→reaction, re-rendered on lang toggle */
 (function () {
   var list = document.getElementById('incidentList'); if (!list) return;
-  var DATA = null;
+  var filterBox = document.getElementById('incidentFilters');
+  var DATA = null, PILLARS = [];
+  // U41: single-select filter, either by pillar or by severity class — chip
+  // labels come from the same fetch's pillars[] (no new data), CLASS_LABEL
+  // below already existed for the per-card badge and is reused verbatim.
+  var activeFilter = { type: 'all', value: null };
   function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
   function T(en, zh) { return lang() === 'zh' ? zh : en; }
   function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
@@ -289,10 +322,28 @@
   // full dossier on click — which incidents are open survives re-render
   // (lang toggle) since it's tracked here, not read off the DOM.
   var OPEN = new Set();
+  function renderFilters() {
+    if (!filterBox) return;
+    var chips = [{ type: 'all', value: null, en: 'ALL', zh: '全部' }];
+    PILLARS.forEach(function (p) { chips.push({ type: 'pillar', value: p.id, en: p.name_en, zh: p.name_zh }); });
+    Object.keys(CLASS_LABEL).forEach(function (c) { chips.push({ type: 'class', value: c, en: CLASS_LABEL[c][0], zh: CLASS_LABEL[c][1] }); });
+    filterBox.innerHTML = chips.map(function (c, i) {
+      var active = activeFilter.type === c.type && activeFilter.value === c.value;
+      var sep = i === 1 + PILLARS.length ? '<span class="sep" aria-hidden="true"></span>' : '';
+      return sep + '<button type="button" data-type="' + c.type + '" data-value="' + (c.value == null ? '' : esc(c.value)) + '"'
+        + ' class="' + (active ? 'active' : '') + '" aria-pressed="' + active + '">' + esc(T(c.en, c.zh)) + '</button>';
+    }).join('');
+  }
   function render() {
     if (!DATA) return;
     if (!DATA.length) { list.innerHTML = '<div class="empty">' + T('Incident log unavailable.', '事件簿暂不可用。') + '</div>'; return; }
-    list.innerHTML = DATA.map(function (ev) {
+    var filtered = DATA.filter(function (ev) {
+      if (activeFilter.type === 'pillar') return ev.pillar === activeFilter.value;
+      if (activeFilter.type === 'class') return ev['class'] === activeFilter.value;
+      return true;
+    });
+    if (!filtered.length) { list.innerHTML = '<div class="empty">' + T('No incidents match this filter.', '没有符合该筛选条件的事件。') + '</div>'; return; }
+    list.innerHTML = filtered.map(function (ev) {
       var rows = ROW_KEYS.map(function (rk) {
         var field = ev[rk[0]] || {}; var k = T(rk[1], rk[2]); var v = esc(T(field.en || '', field.zh || ''));
         return '<div class="irow"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
@@ -327,9 +378,17 @@
     e.preventDefault();
     toggle(head.closest('.incident').dataset.id);
   });
-  fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d.events || []; render(); })
+  if (filterBox) {
+    filterBox.addEventListener('click', function (e) {
+      var btn = e.target.closest('button'); if (!btn) return;
+      var type = btn.dataset.type, value = btn.dataset.value;
+      activeFilter = type === 'all' ? { type: 'all', value: null } : { type: type, value: type === 'pillar' ? Number(value) : value };
+      renderFilters(); render();
+    });
+  }
+  fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d.events || []; PILLARS = d.pillars || []; renderFilters(); render(); })
     .catch(function () { list.innerHTML = '<div class="empty">' + T('Incident log unavailable.', '事件簿暂不可用。') + '</div>'; });
-  addEventListener('afflatus-lang', render);
+  addEventListener('afflatus-lang', function () { renderFilters(); render(); });
 })();
 
 /* five-pillar signal matrix + hawk-dove compass (V6, ROADMAP §7.3) — one
@@ -340,9 +399,18 @@
   var hdNeedle = document.getElementById('hdNeedle'), hdScoreEl = document.getElementById('hdScore'),
       hdLabel = document.getElementById('hdLabel'), hdRationale = document.getElementById('hdRationale'),
       hdMethod = document.getElementById('hdMethod'), hdAsOf = document.getElementById('hdAsOf'),
-      pillarSummaryEl = document.getElementById('pillarSummaryText');
+      pillarSummaryEl = document.getElementById('pillarSummaryText'),
+      heroHdLabel = document.getElementById('heroHdLabel'), heroHdScore = document.getElementById('heroHdScore');
   if (!pillarGrid && !hdNeedle) return;
   var DATA = null;
+  // U41 Ch.01: needle sweeps 0 -> true reading once #ch01 scrolls into view
+  // (IO wired in the chapter-rail/reveal script below, via window.__signalSweepNeedle
+  // + a 'signal-needle-sweep' event) instead of jumping straight to position
+  // on data load; RM sets the flag true up front so it's a plain instant paint.
+  var hdPct = null;
+  function applyNeedle() { if (hdPct != null && window.__signalSweepNeedle) hdNeedle.style.left = hdPct + '%'; }
+  addEventListener('signal-needle-sweep', applyNeedle);
+  var OPEN_PILLARS = new Set();
   function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
   function T(en, zh) { return lang() === 'zh' ? zh : en; }
   function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
@@ -350,9 +418,10 @@
   function renderCompass() {
     if (!DATA || !DATA.hawkDoveCompass || !hdNeedle) return;
     var hd = DATA.hawkDoveCompass;
-    var pct = Math.max(0, Math.min(100, ((hd.score + 2) / 4) * 100)); // -2..+2 -> 0..100%
-    hdNeedle.style.left = pct + '%';
-    if (hdScoreEl) hdScoreEl.textContent = (hd.score > 0 ? '+' : '') + hd.score;
+    hdPct = Math.max(0, Math.min(100, ((hd.score + 2) / 4) * 100)); // -2..+2 -> 0..100%
+    applyNeedle();
+    var scoreText = (hd.score > 0 ? '+' : '') + hd.score;
+    if (hdScoreEl) hdScoreEl.textContent = scoreText;
     if (hdLabel) hdLabel.textContent = T(hd.label_en, hd.label_zh);
     if (hdRationale) hdRationale.textContent = T(hd.rationale_en, hd.rationale_zh);
     if (hdMethod) hdMethod.textContent = T(hd.method_en, hd.method_zh);
@@ -361,6 +430,10 @@
       hdAsOf.className = 'asof prov-badge prov-' + badge.tier;
       hdAsOf.textContent = badge.text;
     }
+    // U41 hero: the compass reading doubles as the hero's one-line conclusion
+    // (same DATA.hawkDoveCompass, no second fetch).
+    if (heroHdLabel) heroHdLabel.textContent = T(hd.label_en, hd.label_zh);
+    if (heroHdScore) heroHdScore.textContent = '(' + scoreText + ')';
   }
 
   function renderPillars() {
@@ -368,13 +441,30 @@
     if (pillarSummaryEl && DATA.pillarSummary) pillarSummaryEl.textContent = T(DATA.pillarSummary.en, DATA.pillarSummary.zh);
     var pillars = DATA.pillars || [];
     pillarGrid.innerHTML = pillars.map(function (p) {
-      return '<article class="pillar tone-' + esc(p.tone || 'amber') + '">'
+      var open = OPEN_PILLARS.has(p.id);
+      return '<article class="pillar tone-' + esc(p.tone || 'amber') + (open ? ' open' : '') + '" tabindex="0" role="button" aria-expanded="' + open + '" data-id="' + p.id + '">'
         + '<h3>' + esc(T(p.name_en, p.name_zh)) + '<span class="pid">' + String(p.id).padStart(2, '0') + '</span></h3>'
         + '<div class="status">' + esc(T(p.status_en, p.status_zh)) + '</div>'
-        + '<p class="read">' + esc(T(p.read_en, p.read_zh)) + '</p>'
-        + '<div class="asof">' + esc(p.asOf || '') + '</div>'
+        + '<div class="detail"><p class="read">' + esc(T(p.read_en, p.read_zh)) + '</p><div class="asof">' + esc(p.asOf || '') + '</div></div>'
         + '</article>';
     }).join('');
+  }
+  // U41 Ch.02 (Charter ⑥ progressive disclosure): pillars default to
+  // name/status only; hover reveals detail for pointer users, click/Enter
+  // toggles it open so touch and keyboard get the same affordance (22c: no
+  // hover-only information).
+  if (pillarGrid) {
+    var togglePillar = function (card) {
+      var id = Number(card.dataset.id);
+      if (OPEN_PILLARS.has(id)) OPEN_PILLARS.delete(id); else OPEN_PILLARS.add(id);
+      renderPillars();
+    };
+    pillarGrid.addEventListener('click', function (e) { var c = e.target.closest('.pillar'); if (c) togglePillar(c); });
+    pillarGrid.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var c = e.target.closest('.pillar'); if (!c) return;
+      e.preventDefault(); togglePillar(c);
+    });
   }
 
   function render() { renderCompass(); renderPillars(); }
@@ -404,6 +494,59 @@
   function stop() { on = false; clearInterval(timer); if (master) master.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.6); nodes.forEach(function (n) { try { n.stop && n.stop(ac.currentTime + 0.7); } catch (e) {} }); nodes = []; btn.textContent = lang() === 'zh' ? '▣ 站点环境音 — 收容低鸣' : '▣ SITE AMBIENCE — CONTAINMENT HUM'; btn.classList.add('off'); btn.setAttribute('aria-pressed', 'false'); dock.classList.remove('on'); msg.textContent = lang() === 'zh' ? '已暂停 · 点击聆听' : 'paused · tap to listen'; }
   btn.addEventListener('click', function () { on ? stop() : start(); });
 })();
+
+/* U41: chapter rail active-highlight + smooth scroll, scroll-reveal fade-up
+   for .reveal elements, and the compass needle's one-time sweep trigger —
+   all IntersectionObserver-driven, zero scroll listeners (repo-wide rule). */
+(function () {
+  var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+
+  var rail = document.querySelector('.chapterRail');
+  var chapters = document.querySelectorAll('.chapter[id]');
+  if (rail && chapters.length && 'IntersectionObserver' in window) {
+    var links = {};
+    rail.querySelectorAll('a[data-chapter]').forEach(function (a) { links[a.dataset.chapter] = a; });
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var link = links[e.target.id]; if (!link || !e.isIntersecting) return;
+        rail.querySelectorAll('a.active').forEach(function (a) { a.classList.remove('active'); });
+        link.classList.add('active');
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    chapters.forEach(function (c) { cio.observe(c); });
+    rail.addEventListener('click', function (e) {
+      var a = e.target.closest('a[data-chapter]'); if (!a) return;
+      var target = document.getElementById(a.dataset.chapter); if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' });
+    });
+  }
+
+  var reveals = document.querySelectorAll('.reveal');
+  if (reveals.length) {
+    if (RM || !('IntersectionObserver' in window)) { reveals.forEach(function (r) { r.classList.add('in'); }); }
+    else {
+      var rio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); rio.unobserve(e.target); } });
+      }, { threshold: 0.2 });
+      reveals.forEach(function (r, i) { r.style.transitionDelay = (i % 6) * 70 + 'ms'; rio.observe(r); });
+    }
+  }
+
+  window.__signalSweepNeedle = RM;
+  var ch01 = document.getElementById('ch01');
+  if (ch01 && !RM && 'IntersectionObserver' in window) {
+    var nio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        window.__signalSweepNeedle = true;
+        dispatchEvent(new Event('signal-needle-sweep'));
+        nio.unobserve(ch01);
+      });
+    }, { threshold: 0.3 });
+    nio.observe(ch01);
+  }
+})();
 </script>
 <script type="module">
 /* Shared provenance badge (ROADMAP §7.5 V12) — pure logic lives in
@@ -412,6 +555,19 @@
    sectors.html/AfflatusI18N. */
 import { buildProvenanceBadge } from '/src/lib/provenanceBadge.js';
 window.AfflatusProvenance = { buildProvenanceBadge };
+</script>
+<script type="module">
+/* U41: file-card percentages count up once, the first time each number
+   scrolls into view — reuses the shared tween (ROADMAP §0b A3) rather than
+   hand-rolling a third copy of it. */
+import { animateCountUpFromText } from '/src/ui/viz.js';
+var nums = document.querySelectorAll('.file .countup');
+if (nums.length && 'IntersectionObserver' in window) {
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { animateCountUpFromText(e.target); io.unobserve(e.target); } });
+  }, { threshold: 0.4 });
+  nums.forEach(function (n) { io.observe(n); });
+}
 </script>
 <script type="module" src="/src/pages/signalLibs.js"></script>
 </body>

@@ -24,8 +24,25 @@
 ### 41c · 可读性与纪律
 
 - 正文最小字号 17px、标题层级 ≤3、对比度 AA 复核（U21 Phase 3 同线）；全部动效只用 transform/opacity + `prefers-reduced-motion` 静态；新样式只进 `@layer tokens/components`（U30 硬规则）；`!important`/bundle 基线不动。
-- [ ] 施工（一个会话）：41b 重排 → 41a 动效 → 41c 复核；vitest/build 全绿后推送。
+- [x] 施工（一个会话）：41b 重排 → 41a 动效 → 41c 复核；vitest/build 全绿后推送。✅ 代码已完成（2026-07-18）
 - [ ] 站主真机验收：大标题气场、章节轨手感、指针摆动、筛选 chips、移动端单列排版。
+
+**实现记录**：
+
+- **`@layer` 例外**：`signal.css` 是独立于 `src/styles.css` 主级联层体系之外的单页样式表（与 `sectors.css` 同一架构，早前会话已就 sectors 确认过这一豁免），本项新样式沿用同一先例，不套 `@layer`。
+- **41b 重排（DOM，数据零改动）**：`.signalScroll` 拆成 `.chapters` 容器 + 四个 `<section class="chapter" id="ch01..04">`；`.review`（倒计时独立分区）整块折入 hero 的 `.heroCountdown` 一行，鹰鸽罗盘读数新增 `.heroRead`（`#heroHdLabel`/`#heroHdScore`）做首屏一句话结论。**`.files` 归属判断**：计划文本未点名它归哪一章，按"原作者已经把它放进 `.signalScroll` 叙事容器里、和 pillars/incidents/watch 同级"的既有边界，把它折进 Ch.02 作为「Supporting Files」子区（`.subhead` 组件），`.mtf`/`.dock`/`.foot` 维持原样留在 `.chapters` 外（页面收尾 chrome，原本就不在叙事容器内）。
+- **U30 R4 拆除**：罗盘的 `position:sticky` 钉住机制（旧版"指针固定、其余内容从下面滚过"）与章节化叙事互斥——每章现在都要完整滚过一屏，删除 sticky，改用左侧 `.chapterRail` 做"我在哪一章"的替代锚点。
+- **41a 动效**（IO + 原生 CSS，零新依赖）：
+  - `.reveal` 渐现：四个 `.chapterHead` + 四张 `.file` + 六张 `.asset`（静态卡）挂 `.reveal`，共享一个 IntersectionObserver（once+unobserve，threshold .2，`transitionDelay=(i%6)*70ms` 错速）。**`.pillar` 卡未挂 `.reveal`**——它是 `renderPillars()` 每次 fetch/切语言都会整体重绘的动态卡，若也接渐现需要在每次重绘后重新挂观察器，复杂度换不来明显收益，按「Simplicity First」跳过。
+  - 顶部阅读进度条 `.readProgress`：`@supports (animation-timeline: scroll())` 原生 CSS scroll-timeline，不支持的浏览器直接不显示（渐进增强，不用 JS 兜底假造）。
+  - 左侧 `.chapterRail`：一个 IntersectionObserver 观察四个 `.chapter`，`rootMargin:'-40% 0px -55% 0px'` 让"当前章"在视口中段时才判定为活跃；点击链接 `scrollIntoView`，`prefers-reduced-motion` 时退化成 `behavior:'auto'`。
+  - 罗盘指针扫入：`.needle` 默认钉在 `left:0%`（DOVE 端），`#ch01` 的 IO 首次进入视口时置 `window.__signalSweepNeedle=true` 并广播 `signal-needle-sweep` 事件，`renderCompass()` 只有这个旗标为真才把 `left` 写成真实百分比（CSS `transition:left 1.1s` 顺势画出"从 0 摆到真值"）；`prefers-reduced-motion` 直接把旗标置真，摆动退化成瞬间到位。gauge/`.hdReadout` 数字同步放大（`clamp(2.2rem,6vw,4rem)`）呼应"全宽章节主角"。
+  - 文件卡百分比数字滚动计数：复用既有 `src/ui/viz.js` 的 `animateCountUpFromText`（新增一个 `<script type="module">`，构建后与 sectors.html 共享同一个 `viz-*.js` chunk，零重复代码/零新依赖），7 个百分比 `<b class="countup">`（O5 DIRECTIVE 3 个 + SEPTEMBER CUT TRACKER 4 个）各自挂一个 IO，滚入视口即算一次，`animateCountUpFromText` 自带 `prefers-reduced-motion` 直出。MTF THREAT BOARD 卡的 `<b>` 是文字状态词（HOT/CRACKING 等），不是数字，未加此类。
+  - **Ch.02 两层披露（宪章⑥，计划文本明确要求）**：`renderPillars()` 模板新增 `.detail`（包着 `.read`/`.asof`）默认 `max-height:0;opacity:0`；`:hover`/`.open`/`:focus-visible` 展开。点击/Enter 切换 `.open`（`OPEN_PILLARS` Set，写法与既有事件卡 `OPEN` Set 同一模式），确保触屏和键盘用户拿到与鼠标 hover 相同的信息（22c 铁律：hover 专属信息零容忍）。
+  - **Ch.03 筛选 chips**：`#incidentFilters` 渲染 ALL + 5 个支柱 chip + 3 个等级 chip（euclid/keter/safe，复用既有 `CLASS_LABEL`），单选，点击重渲染 `#incidentList`（沿用既有 `OPEN` 展开状态，不受筛选影响）；筛选数据零新增——`signal-events.json` 的 `events[].pillar`/`events[].class` 字段本就存在（已用 `python3` 核实：5 条事件用了 pillar 1/2/5、class euclid/keter，暂无 safe，但渲染/筛选逻辑同样支持，为将来自动化流水线新增的 safe 级事件预留）。
+- **标题层级**：全站仅 h1（hero）/h2（章节标题 + `.file h2` 卡头）/h3（`.pillar h3`/`.unit h3`），核实符合"≤3"要求，未改动。
+- **对比度**：本项未改任何颜色令牌，对比度基线沿用既有已验证结果，未重新走一遍审计。
+- **验证**：676/676 vitest（无回归，本项未新增/修改任何 `.test.js`）；`vite build` 干净（`signal.html` 52.07 kB/gzip 17.36 kB；`viz-*.js` 共享 chunk 命中，未产生重复代码；已知的 course.html parse5 警告与本项无关，未见新增警告）；`grep -c '!important' public/styles/signal.css` = 0，与改动前一致；跑了一遍脚本核对新增标签用到的每个 class 在 `signal.css`/共享样式里都有落地，且确认 `.review`/`.signalScroll`/旧版裸 `<h2>` 选择器（`.compass h2`/`.pillars h2`/`.incidents>h2`/`.watch h2`）已全部清除，无残留死代码。
 
 ## U40 · games.html 补决赛/季军赛数据 + 改 WC26 官方配色 ✅ 代码已完成（2026-07-18，站主指令）
 
