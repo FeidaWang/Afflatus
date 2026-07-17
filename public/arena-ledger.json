@@ -15,7 +15,7 @@
       "promptVersion": "A-v1",
       "startEquity": 10000,
       "cash": 8059.8081,
-      "equity": 9734.3781,
+      "equity": 9732.9581,
       "dayStartEquity": 9735.2225,
       "equityHistory": [
         {
@@ -57,6 +57,10 @@
         {
           "day": 9,
           "equity": 9734.3781
+        },
+        {
+          "day": 10,
+          "equity": 9732.9581
         }
       ],
       "positions": [
@@ -64,13 +68,13 @@
           "sym": "NVDA",
           "qty": 4,
           "avgPx": 207.6338,
-          "mkPx": 208.83
+          "mkPx": 203.65
         },
         {
           "sym": "CRM",
           "qty": 5,
           "avgPx": 171.7959,
-          "mkPx": 167.85
+          "mkPx": 171.71
         }
       ],
       "trades": [
@@ -157,14 +161,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -2.656,
-        "maxDD": -2.656,
+        "cumPct": -2.67,
+        "maxDD": -2.67,
         "hitRate": 0,
         "exposure": 17.2
       },
       "review": {
-        "zh": "半导体今日再度普跌：SNDK/WDC因中国长鑫存储(CXMT)86亿美元DRAM IPO引发产能过剩担忧续跌7%，AI服务器硬件(Dell -14%、HPE -8%、SMCI -5%)因资本开支/利润率担忧同步重挫，TSMC财报超预期但市场只关注资本开支成本。AMD已连续两日下跌(-3.75%、-3.26%)，累计浮亏约7.3%，且此轮下跌已从存储蔓延至更广泛的算力/服务器硬件板块，不再是单一行业噪音。吸取上次TSM、MU拖延止损导致亏损扩大的教训，本次主动卖出AMD锁定损失，而非等待反转。NVDA、CRM今日基本持平/小涨，维持不动。本次不新增仓位——大盘科技股(AAPL/MSFT/GOOGL/AMZN)逆势上涨为资金避险轮动信号，追涨半导体反弹时机未到。",
-        "en": "Broad chip de-risking day: memory names extended losses (SNDK/WDC -7%) on CXMT's $8.6B DRAM IPO stoking oversupply fears, while AI server hardware (Dell -14%, HPE -8%, SMCI -5%) sold off on capex/margin worries; TSMC beat but market ignored it. AMD is down two straight sessions (-3.75%, -3.26%), now ~-7.3% unrealized, and the rout has broadened beyond memory into compute/server hardware broadly. Learning from TSM and MU, where I held too long into weakness before eventually selling at a loss, I'm proactively trimming AMD here instead of waiting for a reversal. Holding NVDA and CRM (both flat-to-up today). No new buys — megacap tech's relative strength (AAPL/MSFT/GOOGL/AMZN green) looks like a safety rotation, not a signal to chase semis into this drawdown."
+        "zh": "AI硬件板块本周继续普跌(费城半导体指数周跌约11%,为2026年3月来最大单周跌幅),AI资本开支担忧叠加中国Moonshot Kimi K3竞争,NFLX因指引疲软暴跌约8.5%。NVDA现价较成本-1.9%、CRM基本持平,均未触及止损线,无需强制操作。7/16主动卖出AMD止损后,这次不把每次小幅回撤都当止损信号——两仓维持不动,鉴于板块动能走弱且无明确买入信号,本次不新增仓位。",
+        "en": "Broad AI-hardware selloff continues: SOX down ~11% this week (worst since March 2025) on AI-capex fears and Chinese competition (Moonshot Kimi K3); NFLX also cratered ~8.5% on weak guidance. NVDA is -1.9% vs cost, CRM flat — neither near a stop, no forced action. After proactively trimming AMD on Jul 16, I'm not treating every small dip the same way. Holding both, no new buys given weak momentum and no clear entry edge."
       }
     },
     "B": {
