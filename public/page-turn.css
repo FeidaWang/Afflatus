@@ -111,12 +111,15 @@ html.vt-suppress::view-transition-new(root){
   --labs-active-bg:#3dff9a;--labs-active-border:#3dff9a;--labs-active-ink:#04060d;
 }
 
-.sectors-page .nav-labs__menu{--labs-bg:rgba(12,17,24,.96);--labs-border:rgba(202,255,0,.30)}
+/* 2026-07-18: sectors.html reconstructed as a light openai.com-style page
+   (see public/styles/sectors.css header comment) — Labs dropdown and page-turn
+   arrows re-themed to match that light system instead of the dark acid/cyan HUD. */
+.sectors-page .nav-labs__menu{--labs-bg:rgba(255,255,255,.98);--labs-border:#e7e7ea}
 .sectors-page .nav-labs__menu a{
-  --labs-font:"KH Interference","PP Fraktion Mono","JetBrains Mono",monospace;--labs-weight:800;--labs-tracking:.18em;
-  --labs-ink:#00e7ff;--labs-line:rgba(0,231,255,.38);
-  --labs-hover-border:#caff00;--labs-hover-ink:#caff00;
-  --labs-active-bg:#caff00;--labs-active-border:#caff00;--labs-active-ink:#05070b;
+  --labs-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--labs-weight:700;--labs-tracking:0;
+  --labs-ink:#0d0d0d;--labs-line:#e7e7ea;
+  --labs-hover-border:#10a37f;--labs-hover-ink:#10a37f;
+  --labs-active-bg:#0d0d0d;--labs-active-border:#0d0d0d;--labs-active-ink:#fff;
 }
 
 .novels-page .nav-labs__menu{--labs-bg:rgba(40,31,23,.97);--labs-border:rgba(201,131,74,.32);--labs-radius:2px}
@@ -185,12 +188,12 @@ html.vt-suppress::view-transition-new(root){
   --turn-bg-a:rgba(8,12,24,.84);
   --turn-bg-b:rgba(3,5,12,.96);
 }
-/* Sectors · acid HUD green + cyan */
+/* Sectors · light openai.com-style reskin (2026-07-18) */
 .sectors-page .page-turn-controls{
-  --turn-accent:#caff00;
-  --turn-hover:#00e7ff;
-  --turn-bg-a:rgba(10,14,6,.80);
-  --turn-bg-b:rgba(3,5,2,.96);
+  --turn-accent:#0d0d0d;
+  --turn-hover:#10a37f;
+  --turn-bg-a:rgba(255,255,255,.86);
+  --turn-bg-b:rgba(247,247,248,.96);
 }
 /* Novels theme rules removed (U16a): serial.html no longer renders the
    edge arrows — reading immersion; see body[data-no-page-turn] there. */
@@ -233,7 +236,7 @@ html.vt-suppress::view-transition-new(root){
 /* per-page silhouette accents — distinct feel, shared behaviour */
 .arena-page .page-turn{box-shadow:0 0 0 3px rgba(61,255,154,.06),0 0 16px rgba(255,61,240,.18),inset 0 0 22px rgba(39,231,255,.10)}
 .arena-page .page-turn:hover{box-shadow:0 0 0 3px rgba(61,255,154,.10),0 0 22px rgba(255,61,240,.30),inset 0 0 26px rgba(39,231,255,.16)}
-.sectors-page .page-turn{box-shadow:0 0 0 3px rgba(202,255,0,.06),inset 0 0 22px rgba(0,231,255,.08)}
+.sectors-page .page-turn{box-shadow:0 1px 2px rgba(13,13,13,.04),0 6px 16px rgba(13,13,13,.08)}
 .signal-page .page-turn{border-radius:0;box-shadow:0 0 0 3px rgba(95,208,138,.12),inset 0 0 18px rgba(95,208,138,.16)}
 body.turn-next main,
 body.turn-prev main{
