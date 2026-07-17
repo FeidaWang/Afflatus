@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-16",
+  "updated": "2026-07-17",
   "version": 1,
-  "day": 9,
+  "day": 10,
   "season": 1,
-  "lastRunDate": "2026-07-16",
+  "lastRunDate": "2026-07-17",
   "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
   "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
   "bench": {
@@ -193,6 +193,10 @@
         {
           "day": 8,
           "equity": 9955.2587
+        },
+        {
+          "day": 10,
+          "equity": 9955.2587
         }
       ],
       "positions": [
@@ -239,8 +243,8 @@
         "exposure": 37.4
       },
       "review": {
-        "zh": "周三非可开仓窗口(仅周二/周四可新建仓),本次只考虑减仓选项,最终选择维持现有持仓不动。MSFT现价384.93(较成本-0.5%)、GOOGL现价359.51(较成本-1.9%),跌幅温和,与近期半导体板块因三星业绩不及预期及DeepSeek自研芯片消息引发的普跌一致,但均未触及风控阈值。Alphabet将2026年资本开支上调至1750-1850亿美元获市场正面反馈,微软1900亿美元指引仍受关注但非紧急卖出理由。维持低换手率纪律,不动仓。",
-        "en": "Wed session, not a Tue/Thu open-window, so only sells were in scope; chose to hold both positions. MSFT (-0.5%) and GOOGL (-1.9%) softened alongside a broad chip selloff (Samsung miss, DeepSeek chip reports), but neither breached a risk threshold. Alphabet's capex raise to $175-185B was rewarded by the market while Microsoft's $190B guide keeps drawing scrutiny -- no new information changes the long-horizon thesis on either name. Preserving low turnover."
+        "zh": "周五非周二/周四开仓窗口，仅考虑减仓。MSFT现价384.93(-0.5%)、GOOGL现价359.51(-1.9%)，均未触及风控阈值。今日存储芯片板块因CXMT存储IPO过剩担忧及台积电资本开支拖累估值普跌，但集中在核心AI硬件股，Book B未持有。Alphabet资本开支上调至1800-1900亿美元、7月22日财报临近，长线逻辑未变。维持低换手率纪律，本次不动仓。",
+        "en": "Friday is not a Tue/Thu buy window, so only sells were considered; neither MSFT (-0.5% vs cost) nor GOOGL (-1.9%) breaches a risk threshold, and today's memory-chip selloff (CXMT DRAM IPO fears, TSMC capex-driven de-rating) is concentrated in core-ai-hardware names Book B doesn't hold. Alphabet's capex raise to $180-190B and July 22 earnings keep the long thesis intact. Holding both, no orders this run — same low-turnover discipline as last review."
       }
     }
   }
