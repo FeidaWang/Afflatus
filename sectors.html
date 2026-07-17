@@ -289,18 +289,24 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
 </script>
 <script type="module" src="/src/pages/sectorsLibs.js"></script>
 <script>
-/* Brand-color registry (2026-07-18 recolor pass) — every company named on
-   this page gets its own real brand color + a small schematic line-icon of
-   its actual product category (GPU/chip, memory stack, wafer, lithography
-   lens, storage array, or an abstract AI-lab mark) instead of a generic
-   rainbow gradient. Colors are sourced from public brand-color references
-   (see Urgent.md U36); ALAB/MRVL/TER have no confirmed official hex online
-   so they use a representative sector-appropriate color, flagged here
-   rather than passed off as confirmed. No company logo/photo is
-   reproduced — this is color + a generic schematic icon only.
-   Exposed on window so both the static stock-rail cards below and the
-   data-driven news-grid renderer further down can share one source of
-   truth instead of hardcoding colors twice. */
+/* Brand registry (2026-07-18 photo/logo pass) — every company named on this
+   page gets its own real brand color, its own real logo, and — where an
+   official newsroom/press-kit photo could actually be found — its own real
+   photo, styled after the openai.com Business-page card carousel (photo
+   background, logo centered on top forced to solid white via CSS filter so
+   it reads regardless of the logo's source colors, real lettering/shape
+   kept intact). No SVG icons, no fabricated photography, no redrawn logos:
+   logo files are real company logos (mostly Wikimedia Commons, which hosts
+   them specifically for this kind of identification use); photos are real
+   images pulled from each company's own official newsroom/press/media page
+   (see Urgent.md U37 for the source list — 6 of 17 companies had a findable
+   official photo; the rest fall back to a plain brand-color card, and
+   Astera Labs additionally has no findable logo file so it falls back to a
+   plain text wordmark). Since these are hotlinked to external domains,
+   there's a delegated `error` listener below so a dead/blocked image
+   degrades to the same graceful fallback rather than a broken-image icon.
+   Exposed on window so both the six static stock-rail cards below and the
+   data-driven news-grid renderer further down share one source of truth. */
 (function () {
   var BRAND_COLOR = {
     NVDA: '#76B900', AVGO: '#CC092F', MU: '#0077C8', SKHY: '#FF7A00', TSM: '#E7000A', ASML: '#0F238C',
@@ -310,38 +316,107 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
     TER: '#2E4A7A' /* representative — no confirmed official hex */,
     anthropic: '#D97757', openai: '#10A37F', zhipu: '#2F6BFF' /* representative — no confirmed official hex */, alibaba: '#FF6A00',
   };
-  var BRAND_ICON = {
-    NVDA: 'chip', AVGO: 'asic', MU: 'stack', SKHY: 'stack', TSM: 'wafer', ASML: 'lens',
-    SSNLF: 'stack', ALAB: 'asic', MRVL: 'asic', PSTG: 'drive', SNDK: 'stack', TER: 'stack', RMBS: 'stack',
-    anthropic: 'spark', openai: 'knot', zhipu: 'dots', alibaba: 'cloud',
+  var DISPLAY_NAME = {
+    NVDA: 'NVIDIA', AVGO: 'Broadcom', MU: 'Micron', SKHY: 'SK hynix', TSM: 'TSMC', ASML: 'ASML',
+    SSNLF: 'Samsung', ALAB: 'Astera Labs', MRVL: 'Marvell', PSTG: 'Pure Storage', SNDK: 'SanDisk', TER: 'Teradyne', RMBS: 'Rambus',
+    anthropic: 'Anthropic', openai: 'OpenAI', zhipu: 'Zhipu AI', alibaba: 'Alibaba',
   };
-  var ICON_PATH = {
-    chip: '<rect x="14" y="14" width="20" height="20" rx="2"/><path d="M14 20H8M14 28H8M34 20h6M34 28h6M20 14V8M28 14V8M20 34v6M28 34v6"/>',
-    asic: '<rect x="12" y="16" width="16" height="16" rx="2"/><circle cx="37" cy="12" r="3"/><circle cx="37" cy="24" r="3"/><circle cx="37" cy="36" r="3"/><path d="M28 19l6-5M28 24h6M28 29l6 5"/>',
-    stack: '<rect x="12" y="9" width="24" height="7" rx="1.5"/><rect x="12" y="20.5" width="24" height="7" rx="1.5"/><rect x="12" y="32" width="24" height="7" rx="1.5"/><path d="M8 12.5h4M8 24h4M8 35.5h4M36 12.5h4M36 24h4M36 35.5h4"/>',
-    wafer: '<circle cx="24" cy="24" r="15"/><path d="M9 24h30M24 9v30M13.4 13.4l21.2 21.2M13.4 34.6l21.2-21.2"/>',
-    lens: '<circle cx="24" cy="19" r="11"/><circle cx="24" cy="19" r="5"/><path d="M24 30v12M17 42h14"/>',
-    drive: '<rect x="9" y="14" width="30" height="20" rx="3"/><path d="M9 24h30"/><circle cx="32" cy="19" r="1.6" fill="currentColor" stroke="none"/><circle cx="32" cy="29" r="1.6" fill="currentColor" stroke="none"/>',
-    spark: '<path d="M24 6v36M7 15l34 18M7 33l34-18"/>',
-    knot: '<circle cx="19" cy="19" r="10"/><circle cx="29" cy="29" r="10"/>',
-    dots: '<circle cx="24" cy="24" r="3.2" fill="currentColor" stroke="none"/><circle cx="24" cy="10" r="2.4" fill="currentColor" stroke="none"/><circle cx="24" cy="38" r="2.4" fill="currentColor" stroke="none"/><circle cx="10" cy="24" r="2.4" fill="currentColor" stroke="none"/><circle cx="38" cy="24" r="2.4" fill="currentColor" stroke="none"/><circle cx="14" cy="14" r="2" fill="currentColor" stroke="none"/><circle cx="34" cy="14" r="2" fill="currentColor" stroke="none"/><circle cx="14" cy="34" r="2" fill="currentColor" stroke="none"/><circle cx="34" cy="34" r="2" fill="currentColor" stroke="none"/>',
-    cloud: '<path d="M16.5 33h17.5a6 6 0 0 0 1.2-11.9 8.5 8.5 0 0 0-16.2-3.3A6.8 6.8 0 0 0 11 24.8 5.8 5.8 0 0 0 16.5 33z"/>',
+  // Real logo files — Wikimedia Commons' Special:FilePath is a stable
+  // redirect-to-raw-file service meant for exactly this kind of hotlink.
+  var LOGO_URL = {
+    NVDA: 'https://commons.wikimedia.org/wiki/Special:FilePath/NVIDIA_logo_white.svg',
+    AVGO: 'https://commons.wikimedia.org/wiki/Special:FilePath/Broadcom_logo_(2016-present).svg',
+    MU: 'https://commons.wikimedia.org/wiki/Special:FilePath/Micron_Technology_logo_2024.svg',
+    SKHY: 'https://commons.wikimedia.org/wiki/Special:FilePath/SK_Hynix.svg',
+    TSM: 'https://commons.wikimedia.org/wiki/Special:FilePath/TSMC_wordmark.svg',
+    ASML: 'https://commons.wikimedia.org/wiki/Special:FilePath/ASML_Holding_N.V._logo.svg',
+    anthropic: 'https://commons.wikimedia.org/wiki/Special:FilePath/Anthropic_logo.svg',
+    openai: 'https://commons.wikimedia.org/wiki/Special:FilePath/OpenAI_logo_2025_(symbol).svg',
+    zhipu: 'https://commons.wikimedia.org/wiki/Special:FilePath/Z.ai_(company_logo).svg',
+    alibaba: 'https://commons.wikimedia.org/wiki/Special:FilePath/Alibaba_en_logo.svg',
+    SSNLF: 'https://commons.wikimedia.org/wiki/Special:FilePath/Samsung_Electronics_logo_(english).svg',
+    MRVL: 'https://commons.wikimedia.org/wiki/Special:FilePath/Marvell_Logo.svg',
+    PSTG: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pure-storage-vector-logo.svg',
+    SNDK: 'https://commons.wikimedia.org/wiki/Special:FilePath/SanDisk_2024_logo.svg',
+    TER: 'https://www.teradyne.com/wp-content/uploads/2025/07/Teradyne-logo-white.svg',
+    RMBS: 'https://commons.wikimedia.org/wiki/Special:FilePath/Rambus_logo.svg',
+    // ALAB: no usable logo file found on Wikimedia Commons or Astera Labs'
+    // own (JS-rendered) site — falls back to .rLogoFallback text.
+  };
+  // Real photos from each company's own official newsroom/press/media page
+  // — only where one could actually be found and confirmed (see Urgent.md
+  // U37). Everyone else falls back to a plain brand-color card (.noPhoto).
+  var PHOTO_URL = {
+    NVDA: 'https://nvidianews.nvidia.com/file?fid=62993f2db3aed3337e54cd27',
+    AVGO: 'https://news-editor.broadcom.com/wp-content/uploads/2025/07/5-Broadcom-Palo-Alto-Campus-Entrance-2025.jpg',
+    MU: 'https://www.micron.com/content/dam/micron/connectedassets/micron/global/locations/location-boise-idaho-site-03.jpg',
+    SKHY: 'https://d36ae2cxtn9mcr.cloudfront.net/wp-content/uploads/2025/06/09030625/01_Korea-%E2%80%93-Icheon-Campus.png',
+    TSM: 'https://pr.tsmc.com/sites/pr/multimedia-gallery/407A9160_0.jpg',
+    SSNLF: 'https://news.samsungsemiconductor.com/global/wp-content/uploads/2025/08/KakaoTalk_20250924_094825149_01.jpg',
   };
   function colorFor(key) { return BRAND_COLOR[key]; }
-  function iconHTML(key) {
-    var path = ICON_PATH[BRAND_ICON[key]];
-    if (!path) return '';
-    return '<div class="bIcon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg></div>';
+  function escAttr(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  // Builds the whole .rArt thumbnail for one company. `extraHtml` (the
+  // US/CN + open/closed tag pills) is injected between the photo and the
+  // logo so it shares this one thumbnail markup with the plain rCard use.
+  function artHTML(key, extraHtml) {
+    var color = colorFor(key);
+    var photo = PHOTO_URL[key];
+    var logo = LOGO_URL[key];
+    var name = DISPLAY_NAME[key] || key;
+    var style = color ? ' style="--brand:' + color + '"' : '';
+    var photoHtml = photo ? '<img class="rPhoto" src="' + photo + '" alt="" loading="lazy" referrerpolicy="no-referrer"><div class="rScrim"></div>' : '';
+    var logoHtml = logo
+      ? '<img class="rLogo" src="' + logo + '" alt="' + escAttr(name) + '" loading="lazy" referrerpolicy="no-referrer">'
+      : '<span class="rLogoFallback">' + escAttr(name) + '</span>';
+    return '<div class="rArt' + (photo ? '' : ' noPhoto') + '"' + style + '>' + photoHtml + (extraHtml || '') + logoHtml + '</div>';
   }
-  window.AfflatusBrand = { colorFor: colorFor, iconHTML: iconHTML };
-  // Wire the six static stock-rail cards (their ticker <b> label is
-  // already in the HTML; this only adds the brand-color glow + icon).
+  window.AfflatusBrand = { colorFor: colorFor, artHTML: artHTML };
+  // Hotlinked images can 404 or hit hotlink protection over time; `error`
+  // doesn't bubble, so one capture-phase listener on the document catches
+  // every card's <img> and degrades it to the same fallback a missing
+  // asset would use, instead of a broken-image glyph.
+  document.addEventListener('error', function (e) {
+    var el = e.target;
+    if (!el || !el.classList) return;
+    if (el.classList.contains('rPhoto')) {
+      var art = el.parentElement;
+      el.remove();
+      if (art) art.classList.add('noPhoto');
+    } else if (el.classList.contains('rLogo')) {
+      var span = document.createElement('span');
+      span.className = 'rLogoFallback';
+      span.textContent = el.alt || '';
+      el.replaceWith(span);
+    }
+  }, true);
+  // Wire the six static stock-rail cards: their .rArt placeholder only
+  // carries a data-brand key in the HTML, this fills in the real artHTML().
   document.querySelectorAll('.rArt[data-brand]').forEach(function (el) {
-    var key = el.dataset.brand;
-    var c = colorFor(key);
-    if (c) el.style.setProperty('--brand', c);
-    el.insertAdjacentHTML('afterbegin', iconHTML(key));
+    el.outerHTML = artHTML(el.dataset.brand);
   });
+  // "Pull a card from the stack": clicking a stock card's art selects it
+  // (stays in color, straightens + lifts) while siblings in the same rail
+  // desaturate — CSS does the desaturation via :has(), this just toggles
+  // .selected exclusively within one rail.
+  function wireRailSelect(trackEl) {
+    if (!trackEl) return;
+    trackEl.querySelectorAll('.rCard').forEach(function (card) {
+      var art = card.querySelector('.rArt');
+      if (!art) return;
+      art.setAttribute('tabindex', '0');
+      art.setAttribute('role', 'button');
+      var select = function () {
+        var was = card.classList.contains('selected');
+        trackEl.querySelectorAll('.rCard.selected').forEach(function (c) { c.classList.remove('selected'); });
+        if (!was) card.classList.add('selected');
+      };
+      art.addEventListener('click', select);
+      art.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); } });
+    });
+  }
+  wireRailSelect(document.getElementById('cardsA'));
+  wireRailSelect(document.getElementById('cardsB'));
 })();
 </script>
 <script>
@@ -428,14 +503,14 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
   // "Recent news" square-thumbnail grid card — shared component for the
   // US-CN vendor cards below and the post-memory cards further down, so
   // both sections read as the same openai.com "Recent news" module rather
-  // than two different card designs. `art` is the art-N gradient index.
+  // than two different card designs. The thumbnail itself (real photo +
+  // real logo, or the brand-color/text fallback) comes from the shared
+  // AfflatusBrand registry defined in the script above.
   function newsCard(opts) {
     var AB = window.AfflatusBrand;
-    var brandColor = AB && AB.colorFor(opts.brand);
-    var artStyle = brandColor ? ' style="--brand:' + brandColor + '"' : '';
-    var iconHtml = AB ? AB.iconHTML(opts.brand) : '';
+    var artHtml = AB ? AB.artHTML(opts.brand, '<div class="nTags">' + (opts.tags || '') + '</div>') : '<div class="rArt noPhoto"><div class="nTags">' + (opts.tags || '') + '</div></div>';
     return '<article class="nCard" tabindex="0" role="button" aria-expanded="false"' + (opts.id ? ' id="' + esc(opts.id) + '"' : '') + '>'
-      + '<div class="rArt"' + artStyle + '>' + iconHtml + '<div class="nTags">' + (opts.tags || '') + '</div><b>' + esc(opts.glyph) + '</b></div>'
+      + artHtml
       + '<div class="nBody"><div class="nHead"><span class="nTitle">' + esc(opts.title) + '</span>' + (opts.meta ? '<span class="nMeta">' + esc(opts.meta) + '</span>' : '') + '</div>'
       + '<div class="nExcerpt">' + esc(opts.excerpt || '') + '</div>'
       + (opts.chips ? '<div class="nChips">' + opts.chips + '</div>' : '')
@@ -446,7 +521,7 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
   function renderNewsGrid() {
     if (!newsGrid) return;
     if (storyTake) storyTake.innerHTML = DATA && DATA.weeklyTake
-      ? '<div class="rArt"></div><div class="featuredBody"><b>' + esc(T('WEEKLY TAKE', '本周主线')) + '</b><p>' + esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) + '</p></div>'
+      ? '<div class="rArt noPhoto"></div><div class="featuredBody"><b>' + esc(T('WEEKLY TAKE', '本周主线')) + '</b><p>' + esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) + '</p></div>'
       : '';
     var baskets = DATA && Array.isArray(DATA.baskets) ? DATA.baskets : [];
     var mwByVendor = {};
@@ -469,7 +544,6 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
       var excerpt = mw ? T(mw.gap_note_en, mw.gap_note_zh) : (eqs[0] ? eqs[0].correlation_note_zh : '');
       return newsCard({
         id: 'vendorCard-' + b.vendor, brand: b.vendor,
-        glyph: (VENDOR_NAME[b.vendor] || b.vendor).charAt(0),
         tags: tags,
         title: VENDOR_NAME[b.vendor] || b.vendor,
         meta: mw ? mw.current_line : '',
@@ -510,6 +584,11 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
   wireRailDragFor(document.getElementById('cardsA'));
   wireRailDragFor(document.getElementById('cardsB'));
 
+  // Clicking a card both expands its thesis text (.open, existing behavior)
+  // and "selects" it in the openai.com Business-page sense: it stays in
+  // color while any other selected card in the same grid desaturates
+  // (.selected, CSS-driven via :has() in sectors.css). Only one card per
+  // grid is ever .selected — opening a second card demotes the first.
   function wireNewsCards(container) {
     if (!container) return;
     container.querySelectorAll('.nCard').forEach(function (card) {
@@ -517,6 +596,9 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
         var open = function () {
           card.classList.toggle('open');
           card.setAttribute('aria-expanded', card.classList.contains('open') ? 'true' : 'false');
+          var willSelect = card.classList.contains('open');
+          container.querySelectorAll('.nCard.selected').forEach(function (c) { if (c !== card) c.classList.remove('selected'); });
+          card.classList.toggle('selected', willSelect);
         };
         if (!reduceMotion && document.startViewTransition) document.startViewTransition(open); else open();
       }
@@ -613,7 +695,7 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
       var detail = '<div class="mwGap"><b>' + T('MOAT', '护城河') + '</b> ' + esc(T(c.moat_en, c.moat_zh)) + '</div>'
         + '<div class="mwGap"><b>' + T('KEY RISK', '关键风险') + '</b> ' + esc(T(c.key_risk_en, c.key_risk_zh)) + '</div>'
         + (cats ? '<div class="mwGap">' + cats + '</div>' : '');
-      return newsCard({ id: 'pmCard-' + c.ticker, brand: c.ticker, glyph: c.ticker, tags: tags, title: c.ticker, excerpt: T(c.thesis_en, c.thesis_zh), chips: chips, detail: detail });
+      return newsCard({ id: 'pmCard-' + c.ticker, brand: c.ticker, tags: tags, title: c.ticker, excerpt: T(c.thesis_en, c.thesis_zh), chips: chips, detail: detail });
     }).join('');
     wireNewsCards(pmGrid);
     if (pmSwap) pmSwap.innerHTML = (pm.swap_proposals && pm.swap_proposals.length)

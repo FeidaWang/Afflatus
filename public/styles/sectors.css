@@ -108,12 +108,44 @@ h1 span{color:#8ff0d7}
 @media(max-width:820px){.railArrow{display:none}}
 
 /* research card (stock conviction cards) */
-.rCard{flex:0 0 auto;width:min(300px,76vw);scroll-snap-align:start;border:1px solid var(--line);border-radius:var(--radius);background:var(--card-bg);overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .2s ease,transform .2s ease}
+.rCard{position:relative;flex:0 0 auto;width:min(300px,76vw);scroll-snap-align:start;border:1px solid var(--line);border-radius:var(--radius);background:var(--card-bg);overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .2s ease,transform .2s ease}
 .rCard:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.rArt{position:relative;aspect-ratio:4/3;display:flex;align-items:flex-end;padding:16px;color:#fff;overflow:hidden;--brand:var(--accent);background:radial-gradient(130% 140% at 50% 18%,color-mix(in srgb,var(--brand) 38%,transparent) 0%,transparent 62%),#0d0d10}
-.rArt b{position:relative;z-index:1;font:800 26px var(--font);letter-spacing:-.02em;text-shadow:0 1px 8px rgba(0,0,0,.45)}
-.bIcon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:.85;pointer-events:none}
-.bIcon svg{width:38%;height:38%;color:var(--brand)}
+.rCard.selected{z-index:3}
+
+/* card art: real company photo (from an official newsroom/press-kit — see
+   Urgent.md U37 for the per-company source list) with the real company logo
+   centered on top, forced to solid white via filter so it always reads
+   against the photo regardless of the logo's own source colors, while
+   keeping the logo's own lettering/shape intact. Companies with no usable
+   official photo fall back to a plain brand-color card (--brand, .noPhoto);
+   companies with no usable logo file fall back to a plain text wordmark
+   (.rLogoFallback) — never a fabricated photo or a redrawn logo. */
+.rArt{position:relative;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden;--brand:var(--accent);--tilt:0deg;background:#0d0d10;cursor:pointer;transform:rotate(var(--tilt));transform-origin:50% 65%;transition:transform .45s cubic-bezier(.34,1.56,.64,1),filter .3s ease,box-shadow .3s ease}
+.rArt.noPhoto{background:radial-gradient(130% 140% at 50% 18%,color-mix(in srgb,var(--brand) 40%,transparent) 0%,transparent 62%),#0d0d10}
+.rPhoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.rScrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.35) 60%,rgba(0,0,0,.6) 100%)}
+.rLogo{position:relative;z-index:1;max-width:60%;max-height:44%;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+.rLogoFallback{position:relative;z-index:1;color:#fff;font:800 19px var(--font);letter-spacing:-.01em;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.nCard .rLogoFallback{font-size:15px}
+.rCard:nth-child(4n+1) .rArt,.nCard:nth-child(4n+1) .rArt{--tilt:-2deg}
+.rCard:nth-child(4n+2) .rArt,.nCard:nth-child(4n+2) .rArt{--tilt:1.5deg}
+.rCard:nth-child(4n+3) .rArt,.nCard:nth-child(4n+3) .rArt{--tilt:-1deg}
+.rCard:nth-child(4n) .rArt,.nCard:nth-child(4n) .rArt{--tilt:1.8deg}
+/* selecting a card "pulls it from the stack": it straightens, lifts and
+   stays in color; siblings in the same rail/grid desaturate. */
+.rCard.selected .rArt,.nCard.selected .rArt{transform:rotate(0deg) scale(1.06);box-shadow:0 14px 30px rgba(0,0,0,.55),0 0 0 2px var(--brand);animation:cardPull .5s cubic-bezier(.22,1,.36,1)}
+@keyframes cardPull{
+  0%{transform:rotate(var(--tilt)) scale(1)}
+  40%{transform:rotate(calc(var(--tilt) - 7deg)) scale(1.08)}
+  70%{transform:rotate(calc((var(--tilt) * -1) + 2deg)) scale(1.04)}
+  100%{transform:rotate(0deg) scale(1.06)}
+}
+.railTrack:has(.rCard.selected) .rCard:not(.selected) .rArt,
+.newsGrid:has(.nCard.selected) .nCard:not(.selected) .rArt{filter:grayscale(1) brightness(.65)}
+@media(prefers-reduced-motion:reduce){
+  .rArt{transition:filter .2s ease}
+  .rCard.selected .rArt,.nCard.selected .rArt{animation:none;transform:rotate(0deg) scale(1.04)}
+}
 .rBody{padding:16px 18px 18px}
 .rName{font:700 13px/1.3 var(--font);color:var(--ink-soft)}
 .rWeight{margin:10px 0}
@@ -141,11 +173,11 @@ h1 span{color:#8ff0d7}
 @media(max-width:760px){.featured{flex-direction:column}.featured .rArt{flex:none;aspect-ratio:16/9}}
 
 .newsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.nCard{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card-bg);box-shadow:var(--shadow-sm);transition:box-shadow .2s ease,transform .2s ease;cursor:pointer}
+.nCard{position:relative;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--card-bg);box-shadow:var(--shadow-sm);transition:box-shadow .2s ease,transform .2s ease;cursor:pointer}
 .nCard:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.nCard .rArt{aspect-ratio:1/1;align-items:flex-start;flex-direction:column;justify-content:space-between}
-.nCard .rArt b{font-size:15px;letter-spacing:0}
-.nTags{position:relative;z-index:1;display:flex;gap:6px;flex-wrap:wrap}
+.nCard.selected{z-index:3}
+.nCard .rArt{aspect-ratio:1/1}
+.nTags{position:absolute;z-index:1;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap}
 .nTag{padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.92);color:#111;font:800 9.5px var(--font-mono);letter-spacing:.04em}
 .nTag.us{color:var(--faction-us)}
 .nTag.cn{color:var(--faction-cn)}
