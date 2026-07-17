@@ -27,7 +27,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Project Afflatus · Sectors</title>
 <meta name="description" content="Sector analysis from the Afflatus captain log: US-equity convictions across the AI-infrastructure stack — NVDA, AVGO, MU, SKHY, TSM, ASML. Desk view, not advice.">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#000000">
 <link rel="canonical" href="https://feida.au/sectors.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Afflatus">
@@ -54,7 +54,7 @@
   </header>
 
   <section class="heroCard">
-    <div class="heroArt art-0" aria-hidden="true"></div>
+    <div class="heroArt" aria-hidden="true"></div>
     <div class="heroScrim" aria-hidden="true"></div>
     <div class="heroCopy">
       <div class="kicker" data-en="Operator Bruce · equity division · 2026 desk scenario" data-zh="操作员 Bruce · 股票部 · 2026 台面情景">Operator Bruce · equity division · 2026 desk scenario</div>
@@ -82,7 +82,7 @@
     <button type="button" class="railArrow" data-target="cardsA" data-dir="-1" aria-label="Scroll left">‹</button>
     <div class="railTrack" id="cardsA">
       <article class="rCard" id="card-NVDA">
-        <div class="rArt art-0"><b>NVDA</b></div>
+        <div class="rArt" data-brand="NVDA"><b>NVDA</b></div>
         <div class="rBody">
           <div class="rName" data-en="NVIDIA · accelerated compute" data-zh="英伟达 · 加速计算">NVIDIA · accelerated compute</div>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">24%</b></label><div class="rBar"><i style="--w:24%"></i></div></div>
@@ -92,7 +92,7 @@
         </div>
       </article>
       <article class="rCard" id="card-AVGO">
-        <div class="rArt art-1"><b>AVGO</b></div>
+        <div class="rArt" data-brand="AVGO"><b>AVGO</b></div>
         <div class="rBody">
           <div class="rName" data-en="Broadcom · custom AI ASIC + networking" data-zh="博通 · 定制 AI ASIC + 网络">Broadcom · custom AI ASIC + networking</div>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">18%</b></label><div class="rBar"><i style="--w:18%"></i></div></div>
@@ -110,7 +110,7 @@
     <button type="button" class="railArrow" data-target="cardsB" data-dir="-1" aria-label="Scroll left">‹</button>
     <div class="railTrack" id="cardsB">
       <article class="rCard" id="card-MU">
-        <div class="rArt art-2"><b>MU</b></div>
+        <div class="rArt" data-brand="MU"><b>MU</b></div>
         <div class="rBody">
           <div class="rName" data-en="Micron · HBM &amp; DRAM memory" data-zh="美光 · HBM 与 DRAM 存储">Micron · HBM &amp; DRAM memory</div>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">18%</b></label><div class="rBar"><i style="--w:18%"></i></div></div>
@@ -120,7 +120,7 @@
         </div>
       </article>
       <article class="rCard" id="card-SKHY">
-        <div class="rArt art-3"><b>SKHY</b></div>
+        <div class="rArt" data-brand="SKHY"><b>SKHY</b></div>
         <div class="rBody">
           <div class="rName" data-en="SK Hynix · HBM leader, new Nasdaq ADR" data-zh="SK 海力士 · HBM 龙头，纳斯达克新 ADR">SK Hynix · HBM leader, new Nasdaq ADR</div>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">12%</b></label><div class="rBar"><i style="--w:12%"></i></div></div>
@@ -130,7 +130,7 @@
         </div>
       </article>
       <article class="rCard" id="card-TSM">
-        <div class="rArt art-4"><b>TSM</b></div>
+        <div class="rArt" data-brand="TSM"><b>TSM</b></div>
         <div class="rBody">
           <div class="rName" data-en="TSMC · foundry &amp; CoWoS packaging" data-zh="台积电 · 晶圆代工与 CoWoS 封装">TSMC · foundry &amp; CoWoS packaging</div>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">14%</b></label><div class="rBar"><i style="--w:14%"></i></div></div>
@@ -140,7 +140,7 @@
         </div>
       </article>
       <article class="rCard" id="card-ASML">
-        <div class="rArt art-5"><b>ASML</b></div>
+        <div class="rArt" data-brand="ASML"><b>ASML</b></div>
         <div class="rBody">
           <div class="rName" data-en="ASML · EUV lithography" data-zh="ASML · EUV 光刻">ASML · EUV lithography</div>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">14%</b></label><div class="rBar"><i style="--w:14%"></i></div></div>
@@ -289,6 +289,62 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
 </script>
 <script type="module" src="/src/pages/sectorsLibs.js"></script>
 <script>
+/* Brand-color registry (2026-07-18 recolor pass) — every company named on
+   this page gets its own real brand color + a small schematic line-icon of
+   its actual product category (GPU/chip, memory stack, wafer, lithography
+   lens, storage array, or an abstract AI-lab mark) instead of a generic
+   rainbow gradient. Colors are sourced from public brand-color references
+   (see Urgent.md U36); ALAB/MRVL/TER have no confirmed official hex online
+   so they use a representative sector-appropriate color, flagged here
+   rather than passed off as confirmed. No company logo/photo is
+   reproduced — this is color + a generic schematic icon only.
+   Exposed on window so both the static stock-rail cards below and the
+   data-driven news-grid renderer further down can share one source of
+   truth instead of hardcoding colors twice. */
+(function () {
+  var BRAND_COLOR = {
+    NVDA: '#76B900', AVGO: '#CC092F', MU: '#0077C8', SKHY: '#FF7A00', TSM: '#E7000A', ASML: '#0F238C',
+    SSNLF: '#1428A0', PSTG: '#FE5000', SNDK: '#E10600', RMBS: '#4764AC',
+    ALAB: '#7C5CBF' /* representative — no confirmed official hex */,
+    MRVL: '#6E2585' /* representative — no confirmed official hex */,
+    TER: '#2E4A7A' /* representative — no confirmed official hex */,
+    anthropic: '#D97757', openai: '#10A37F', zhipu: '#2F6BFF' /* representative — no confirmed official hex */, alibaba: '#FF6A00',
+  };
+  var BRAND_ICON = {
+    NVDA: 'chip', AVGO: 'asic', MU: 'stack', SKHY: 'stack', TSM: 'wafer', ASML: 'lens',
+    SSNLF: 'stack', ALAB: 'asic', MRVL: 'asic', PSTG: 'drive', SNDK: 'stack', TER: 'stack', RMBS: 'stack',
+    anthropic: 'spark', openai: 'knot', zhipu: 'dots', alibaba: 'cloud',
+  };
+  var ICON_PATH = {
+    chip: '<rect x="14" y="14" width="20" height="20" rx="2"/><path d="M14 20H8M14 28H8M34 20h6M34 28h6M20 14V8M28 14V8M20 34v6M28 34v6"/>',
+    asic: '<rect x="12" y="16" width="16" height="16" rx="2"/><circle cx="37" cy="12" r="3"/><circle cx="37" cy="24" r="3"/><circle cx="37" cy="36" r="3"/><path d="M28 19l6-5M28 24h6M28 29l6 5"/>',
+    stack: '<rect x="12" y="9" width="24" height="7" rx="1.5"/><rect x="12" y="20.5" width="24" height="7" rx="1.5"/><rect x="12" y="32" width="24" height="7" rx="1.5"/><path d="M8 12.5h4M8 24h4M8 35.5h4M36 12.5h4M36 24h4M36 35.5h4"/>',
+    wafer: '<circle cx="24" cy="24" r="15"/><path d="M9 24h30M24 9v30M13.4 13.4l21.2 21.2M13.4 34.6l21.2-21.2"/>',
+    lens: '<circle cx="24" cy="19" r="11"/><circle cx="24" cy="19" r="5"/><path d="M24 30v12M17 42h14"/>',
+    drive: '<rect x="9" y="14" width="30" height="20" rx="3"/><path d="M9 24h30"/><circle cx="32" cy="19" r="1.6" fill="currentColor" stroke="none"/><circle cx="32" cy="29" r="1.6" fill="currentColor" stroke="none"/>',
+    spark: '<path d="M24 6v36M7 15l34 18M7 33l34-18"/>',
+    knot: '<circle cx="19" cy="19" r="10"/><circle cx="29" cy="29" r="10"/>',
+    dots: '<circle cx="24" cy="24" r="3.2" fill="currentColor" stroke="none"/><circle cx="24" cy="10" r="2.4" fill="currentColor" stroke="none"/><circle cx="24" cy="38" r="2.4" fill="currentColor" stroke="none"/><circle cx="10" cy="24" r="2.4" fill="currentColor" stroke="none"/><circle cx="38" cy="24" r="2.4" fill="currentColor" stroke="none"/><circle cx="14" cy="14" r="2" fill="currentColor" stroke="none"/><circle cx="34" cy="14" r="2" fill="currentColor" stroke="none"/><circle cx="14" cy="34" r="2" fill="currentColor" stroke="none"/><circle cx="34" cy="34" r="2" fill="currentColor" stroke="none"/>',
+    cloud: '<path d="M16.5 33h17.5a6 6 0 0 0 1.2-11.9 8.5 8.5 0 0 0-16.2-3.3A6.8 6.8 0 0 0 11 24.8 5.8 5.8 0 0 0 16.5 33z"/>',
+  };
+  function colorFor(key) { return BRAND_COLOR[key]; }
+  function iconHTML(key) {
+    var path = ICON_PATH[BRAND_ICON[key]];
+    if (!path) return '';
+    return '<div class="bIcon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg></div>';
+  }
+  window.AfflatusBrand = { colorFor: colorFor, iconHTML: iconHTML };
+  // Wire the six static stock-rail cards (their ticker <b> label is
+  // already in the HTML; this only adds the brand-color glow + icon).
+  document.querySelectorAll('.rArt[data-brand]').forEach(function (el) {
+    var key = el.dataset.brand;
+    var c = colorFor(key);
+    if (c) el.style.setProperty('--brand', c);
+    el.insertAdjacentHTML('afterbegin', iconHTML(key));
+  });
+})();
+</script>
+<script>
 /* Stock-row (rCard) "Read full thesis" expand — static markup, wired once
    at load, independent of the /sectors-data.json fetch below. */
 (function () {
@@ -374,8 +430,12 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
   // both sections read as the same openai.com "Recent news" module rather
   // than two different card designs. `art` is the art-N gradient index.
   function newsCard(opts) {
+    var AB = window.AfflatusBrand;
+    var brandColor = AB && AB.colorFor(opts.brand);
+    var artStyle = brandColor ? ' style="--brand:' + brandColor + '"' : '';
+    var iconHtml = AB ? AB.iconHTML(opts.brand) : '';
     return '<article class="nCard" tabindex="0" role="button" aria-expanded="false"' + (opts.id ? ' id="' + esc(opts.id) + '"' : '') + '>'
-      + '<div class="rArt art-' + (opts.art % 6) + '"><div class="nTags">' + (opts.tags || '') + '</div><b>' + esc(opts.glyph) + '</b></div>'
+      + '<div class="rArt"' + artStyle + '>' + iconHtml + '<div class="nTags">' + (opts.tags || '') + '</div><b>' + esc(opts.glyph) + '</b></div>'
       + '<div class="nBody"><div class="nHead"><span class="nTitle">' + esc(opts.title) + '</span>' + (opts.meta ? '<span class="nMeta">' + esc(opts.meta) + '</span>' : '') + '</div>'
       + '<div class="nExcerpt">' + esc(opts.excerpt || '') + '</div>'
       + (opts.chips ? '<div class="nChips">' + opts.chips + '</div>' : '')
@@ -386,12 +446,12 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
   function renderNewsGrid() {
     if (!newsGrid) return;
     if (storyTake) storyTake.innerHTML = DATA && DATA.weeklyTake
-      ? '<div class="rArt art-0"></div><div class="featuredBody"><b>' + esc(T('WEEKLY TAKE', '本周主线')) + '</b><p>' + esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) + '</p></div>'
+      ? '<div class="rArt"></div><div class="featuredBody"><b>' + esc(T('WEEKLY TAKE', '本周主线')) + '</b><p>' + esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) + '</p></div>'
       : '';
     var baskets = DATA && Array.isArray(DATA.baskets) ? DATA.baskets : [];
     var mwByVendor = {};
     (DATA && DATA.modelWatch || []).forEach(function (c) { mwByVendor[c.vendor] = c; });
-    newsGrid.innerHTML = baskets.map(function (b, i) {
+    newsGrid.innerHTML = baskets.map(function (b) {
       var mw = mwByVendor[b.vendor];
       var eqs = b.equities || [];
       var chips = eqs.map(function (e) {
@@ -408,7 +468,7 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
       }).join('');
       var excerpt = mw ? T(mw.gap_note_en, mw.gap_note_zh) : (eqs[0] ? eqs[0].correlation_note_zh : '');
       return newsCard({
-        id: 'vendorCard-' + b.vendor, art: i,
+        id: 'vendorCard-' + b.vendor, brand: b.vendor,
         glyph: (VENDOR_NAME[b.vendor] || b.vendor).charAt(0),
         tags: tags,
         title: VENDOR_NAME[b.vendor] || b.vendor,
@@ -546,14 +606,14 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
     if (pmTracks) pmTracks.innerHTML = (pm.tracks || []).map(function (t) {
       return '<div class="pmTrack"><b>' + esc(t.id) + '</b><p>' + esc(T(t.state_en, t.state_zh)) + '</p></div>';
     }).join('');
-    pmGrid.innerHTML = pm.cards.map(function (c, i) {
+    pmGrid.innerHTML = pm.cards.map(function (c) {
       var tags = '<span class="nTag">' + esc(c.status) + '</span>';
       var chips = (c.tracks || []).map(function (t) { return '<span class="nChip">' + esc(t) + '</span>'; }).join('');
       var cats = (c.catalysts || []).map(function (cat) { return esc(cat.what) + ' · ' + esc(cat.when); }).join(' · ');
       var detail = '<div class="mwGap"><b>' + T('MOAT', '护城河') + '</b> ' + esc(T(c.moat_en, c.moat_zh)) + '</div>'
         + '<div class="mwGap"><b>' + T('KEY RISK', '关键风险') + '</b> ' + esc(T(c.key_risk_en, c.key_risk_zh)) + '</div>'
         + (cats ? '<div class="mwGap">' + cats + '</div>' : '');
-      return newsCard({ id: 'pmCard-' + c.ticker, art: i, glyph: c.ticker, tags: tags, title: c.ticker, excerpt: T(c.thesis_en, c.thesis_zh), chips: chips, detail: detail });
+      return newsCard({ id: 'pmCard-' + c.ticker, brand: c.ticker, glyph: c.ticker, tags: tags, title: c.ticker, excerpt: T(c.thesis_en, c.thesis_zh), chips: chips, detail: detail });
     }).join('');
     wireNewsCards(pmGrid);
     if (pmSwap) pmSwap.innerHTML = (pm.swap_proposals && pm.swap_proposals.length)
