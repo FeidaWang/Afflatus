@@ -1,8 +1,8 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-16",
-  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365 (16 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365（7 月 16 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "updated": "2026-07-18",
+  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365/FanDuel (16-18 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365/FanDuel（7 月 16-18 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
     "resolved": 54,
@@ -201,7 +201,62 @@
       "reason_zh": "姆巴佩本届8球3助攻，梅西在半决赛送出两次助攻后，他在金靴助攻数排名上已被反超。他仍有一次追分机会：法国将于7 月 18 日在迈阿密与英格兰争夺季军，该场进球同样计入金靴榜。随着法国半决赛出局，金球奖赔率已明显走高。"
     }
   ],
-  "fixtures": [],
+  "fixtures": [
+    {
+      "id": "wc-third",
+      "stage": "3RD PLACE",
+      "kickoff": "2026-07-18T17:00:00-04:00",
+      "home": "France",
+      "home_zh": "法国",
+      "homeFlag": "🇫🇷",
+      "away": "England",
+      "away_zh": "英格兰",
+      "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "opus": "home",
+      "conf": 0.56,
+      "reason_en": "France go in as -110 favourites (implied ~53%) after their 0-2 semi-final loss to Spain. Mbappé sits level with Messi on 8 Golden Boot goals with Messi playing Sunday's final instead — this is Mbappé's last chance to pull clear, which should keep France's attack sharp even in a dead-rubber fixture.",
+      "reason_zh": "法国半决赛0-2不敌西班牙后，在季军战中以-110赔率（隐含概率约53%）领先。姆巴佩金靴榜8球与梅西持平，而梅西周日出战决赛无缘再进球——这是姆巴佩反超的最后机会，即便是荣誉之战，法国的攻击线预计仍会保持锐利。",
+      "opusScore": "3-1",
+      "odds": {
+        "h": 1.91,
+        "d": 3.80,
+        "a": 3.80,
+        "scores": [
+          { "s": "2-1", "o": 7.5 },
+          { "s": "1-1", "o": 6.0 },
+          { "s": "3-1", "o": 9.0 }
+        ],
+        "src": "FanDuel/bet365 (18 Jul)"
+      }
+    },
+    {
+      "id": "wc-final",
+      "stage": "FINAL",
+      "kickoff": "2026-07-19T15:00:00-04:00",
+      "home": "Spain",
+      "home_zh": "西班牙",
+      "homeFlag": "🇪🇸",
+      "away": "Argentina",
+      "away_zh": "阿根廷",
+      "awayFlag": "🇦🇷",
+      "opus": "home",
+      "conf": 0.58,
+      "reason_en": "Spain are +125 favourites (DraftKings, 15-16 Jul) after a composed 2-0 semi-final win over France, with Yamal and Rodri both in career-best form. Argentina reached the final on a dramatic late comeback over England and carry Messi's farewell-World-Cup motivation, but Spain's midfield control makes them the side to beat on 19 July.",
+      "reason_zh": "西班牙2-0淘汰法国晋级决赛，表现从容，亚马尔与罗德里均正处于生涯最佳状态，DraftKings（7 月 15-16 日）赔率+125领先。阿根廷凭借对英格兰的绝地反击晋级决赛，梅西的谢幕世界杯将是巨大动力，但西班牙的中场控制力使其成为 7 月 19 日决赛的头号热门。",
+      "opusScore": "2-1",
+      "odds": {
+        "h": 2.25,
+        "d": 3.00,
+        "a": 3.60,
+        "scores": [
+          { "s": "2-1", "o": 8.0 },
+          { "s": "1-0", "o": 8.5 },
+          { "s": "1-1", "o": 6.5 }
+        ],
+        "src": "DraftKings (16-18 Jul)"
+      }
+    }
+  ],
   "bracket": {
     "stageLabel_en": "Final",
     "stageLabel_zh": "决赛",
@@ -375,6 +430,21 @@
             "winner": "home"
           }
         ]
+      }
+    ],
+    "third": [
+      {
+        "id": "wc-third",
+        "date": "2026-07-18",
+        "venue_en": "Miami",
+        "venue_zh": "迈阿密",
+        "home": "France",
+        "home_zh": "法国",
+        "homeFlag": "🇫🇷",
+        "away": "England",
+        "away_zh": "英格兰",
+        "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+        "winner": null
       }
     ],
     "final": [

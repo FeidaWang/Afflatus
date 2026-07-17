@@ -16,6 +16,12 @@
          winner: 'home'|'away'|null,
          score: { h, a, extra } | null      // extra: '(AET)'/'(… pens)' text
      }]}]
+
+   bracket.third (optional) is the 3rd-place play-off — unlike qf/sf/final
+   it isn't derived from a previous round's leg winners, so its slot
+   carries the match directly (home/away/winner, same shape as a "leg").
+   Stage order is r16 → qf → sf → third → final (bronze kicks off before
+   the final in the real calendar).
    ============================================================ */
 
 // 3-letter display codes (Apple Sports style). Fallback = first 3 letters.
@@ -91,6 +97,24 @@ export function buildWcStages(bracket, recordLog = []) {
 
   const sf = flat(bracket.final, 'sfId');
   if (sf.length) stages.push({ key: 'sf', label_en: 'SF', label_zh: '4强', matches: sf });
+
+  // 3rd-place play-off — a direct match (SF losers), not derived from legs
+  const thirdSlot = (bracket.third || [])[0];
+  if (thirdSlot) {
+    const id = thirdSlot.id || 'wc-third';
+    const e = logById.get(id);
+    const p = e ? parseScoreLabel(e.label_en) : null;
+    const home = team(thirdSlot, 'home'), away = team(thirdSlot, 'away');
+    let score = null, winner = thirdSlot.winner || null;
+    if (p) {
+      score = p.left === away.name_en ? { h: p.a, a: p.h, extra: p.extra } : { h: p.h, a: p.a, extra: p.extra };
+      if (!winner && score.h !== score.a) winner = score.h > score.a ? 'home' : 'away';
+    }
+    stages.push({
+      key: 'third', label_en: '3RD', label_zh: '季军赛',
+      matches: [{ id, date: thirdSlot.date, venue_en: thirdSlot.venue_en, venue_zh: thirdSlot.venue_zh, home, away, winner, score }],
+    });
+  }
 
   // the final itself = pairing of the final slot's leg winners
   const fslot = (bracket.final || [])[0];

@@ -21,6 +21,8 @@ const BRACKET = {
   sf: [{ id: 'sf1', date: '2026-07-14', legs: [
     leg({ key: 'qfId', val: 'wc-nor-eng' }, 'Norway', 'England', 'away'),
   ] }],
+  third: [{ id: 'wc-third', date: '2026-07-18', venue_en: 'Miami', venue_zh: '迈阿密',
+    home: 'France', home_zh: '法国', homeFlag: '🏳️', away: 'England', away_zh: '英格兰', awayFlag: '🏳️', winner: null }],
   final: [{ id: 'final', date: '2026-07-19', venue_en: 'East Rutherford', venue_zh: '东卢瑟福', legs: [
     leg({ key: 'sfId', val: 'wc-fra-esp' }, 'France', 'Spain', 'away'),
     leg({ key: 'sfId', val: 'wc-arg-eng' }, 'Argentina', 'England', 'home'),
@@ -45,11 +47,26 @@ describe('parseScoreLabel', () => {
 describe('buildWcStages', () => {
   const stages = buildWcStages(BRACKET, LOG);
 
-  it('derives R16/QF/SF/F, each stage from the next slot\'s legs', () => {
-    expect(stages.map((s) => s.key)).toEqual(['r16', 'qf', 'sf', 'f']);
+  it('derives R16/QF/SF/third/F, each stage from the next slot\'s legs', () => {
+    expect(stages.map((s) => s.key)).toEqual(['r16', 'qf', 'sf', 'third', 'f']);
     expect(stages[0].matches).toHaveLength(2);
     expect(stages[1].matches).toHaveLength(1);
     expect(stages[2].matches).toHaveLength(2);
+  });
+
+  it('renders an unplayed 3rd-place match with no score/winner', () => {
+    const third = stages[3].matches[0];
+    expect(third.home.name_en).toBe('France');
+    expect(third.away.name_en).toBe('England');
+    expect(third.score).toBeNull();
+    expect(third.winner).toBeNull();
+  });
+
+  it('derives the 3rd-place score/winner once the log has a result', () => {
+    const played = buildWcStages(BRACKET, [...LOG, { id: 'wc-third', label_en: 'France 3-1 England' }]);
+    const third = played.find((s) => s.key === 'third').matches[0];
+    expect(third.score).toEqual({ h: 3, a: 1, extra: '' });
+    expect(third.winner).toBe('home');
   });
 
   it('attaches oriented scores from the log', () => {
@@ -61,7 +78,7 @@ describe('buildWcStages', () => {
   });
 
   it('builds the final pairing from the final slot leg winners (ESP vs ARG)', () => {
-    const f = stages[3].matches[0];
+    const f = stages[4].matches[0];
     expect(f.home.name_en).toBe('Spain');
     expect(f.away.name_en).toBe('Argentina');
     expect(f.date).toBe('2026-07-19');
