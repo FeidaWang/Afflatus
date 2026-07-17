@@ -1,5 +1,18 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U39 · games.html 淘汰赛滑杆加苹果多点触控双指缩放 ✅ 代码已完成（2026-07-18，站主指令：双指放大展示具体场次/缩小展示更多场次）
+
+**站主指令转译**：「手指放大自动延展展示具体场次，缩小扩大展示更多场次」= 在 U38 的阶段滑杆之上加一层语义缩放（semantic zoom）：双指外张 = 放大看单场详情，双指内收 = 缩小看全部轮次概览（更多场次同屏）。三档：总览（ZOOM_TREE，缩小）↔ 轮次（ZOOM_STAGE，U38 默认滑杆）↔ 单场（ZOOM_MATCH，放大）。
+
+- [x] **纯函数层** `src/lib/pinchZoom.js`（+9 vitest）：`pointDistance`（两指间距）、`nextZoomLevel(level, scaleDelta, threshold)`（带阈值防抖的三档状态机，正=张开=放大，负=捏合=缩小，两端夹紧）、`wheelScaleDelta`（桌面触控板 ctrl+wheel 的 deltaY 符号归一化，与触摸同一套状态机）。
+- [x] **总览档**（新增 `renderKoTree`/`.ko-tree-*`）：全部轮次横向并列，每轮一列紧凑单行比分 chip（旗帜+3 字码+比分），一屏看到 R16→QF→SF→F 所有已进行场次；点一个 chip 直接跳到该场的单场详情档。
+- [x] **单场档**（`renderKoCard` 加 `big` 选项 + `.ko-card.big`）：卡片放大居中，字号加大，日期/球场/加时点球标注常显；点卡片返回轮次档。
+- [x] **手势接入**（`wirePinchOnce`，挂在 `#bracket` 容器上、跨重渲染只挂一次）：触摸双指追踪两指间距变化驱动缩放；桌面触控板 ctrl+wheel 同一状态机（网页端双指缩放同样生效）；`.ko{touch-action:pan-y}` 让单指滚动穿透、双指手势不被浏览器原生页面缩放抢走。
+- [x] **无手势兜底**：轮次档/总览档/单场档顶部都有 `−`/`+` 圆钮 + 档位文字（总览/轮次/单场），鼠标点击、键盘 Tab 均可用，满足桌面无触控板用户与可访问性。
+- [x] 验证：674/674 vitest（+9）、tsc 干净、构建干净（games 分片 13.96→16.87 kB / gzip 6.05→7.01 kB）、`!important`/bundle 预算基线不动。构建期两条 parse5 属性警告与上次一致（来自 U37 sectors 改动，非本项引入，已核实）。
+- [ ] **站主真机验收**：iPhone/iPad 双指捏合缩放手感、三档切换是否符合预期方向（张开→详情，捏合→总览）、+/− 按钮桌面触控板 ctrl+滚轮是否顺手。
+- [x] **复用性**：与 U38 共用 `bracketModel.js` 的通用阶段数据；`pinchZoom.js` 也是纯函数、不依赖比赛数据形状——未来 EWC/Season 16 页面接上 U38 的 adapter 后，这层缩放手势零改动直接复用（roadmap §7.4 已有记录，无需新增）。
+
 ## U38 · games.html 淘汰赛阶段滑杆（Apple Sports 式）✅ 代码已完成（2026-07-17，站主五张截图参考）
 
 **参考机制转译**：Apple Sports 世界杯页的 GS→F 分段滑杆 = 「滑动 thumb 的阶段轨 + 水平平移/缩放的阶段面板」。本站落地（网页+移动端同一套）：
@@ -488,6 +501,7 @@
 > | U30 | **R1+R2 已完成**（2026-07-16）：R1 = serial 共享元素转场/signal 事件卡展开/sectors cards-4 手风琴；R2 = 首页星门 sticky 缩放舞台，`?fx=stage` 起步、默认关闭，复用 U28b 既有 `--forge` 基建零新增 JS。R2 后续站主真机连续截图追查，30g 三轮修完：指标条文字可读性（半透明→不透明纯色根治）、hero→星门/星门→equity 排版空隙（DevTools 现场量出 `progress()` 计算基准错误，非 CSS 距离问题）、出场缝隙（ease-out + 出场渐变多档位）。真机截图复核（`?fx=stage`）确认空隙与硬缝均已消除。三库全部不引，644/644 测试绿，`!important`/bundle 基线不变 | R3（sectors 力导向图）/R4（signal 视差时间轴）未开工；R1 三项交互变化待真机验收（计入 R3 WIP 上限）；R2 flag 隔离不计入上限，待站主 `?fx=stage` 真机裁决转默认与否 |
 > | U31 | **已完成**（2026-07-17，同日开工同日完工）：sectors.html 故事块（非对称 12 列网格+IO 渐现+悬停微交互，数据全来自 sectors-data.json）+ 无限 Ticker 条（双倍克隆纯 CSS marquee，内容=arena-universe **29**（原「40+」估计有误，如实更正）个标的 chips，点击滚动高亮对应案例卡）；R3 力导向图移入惰性初始化的 `#storyGraphSection`，`.storyToggle` 切换「Story cards / Star-map view」；656/656 vitest、build、`!important` 基线全绿 | 全部待站主真机复核：网格错落感/渐现节奏/marquee 循环与可暂停/hover 微交互/移动端单列/**尤其是 Star-map 切换后画布定形**（沙盒验证不到 canvas resize 时机） |
 > | U38 | ✅ 代码完成（2026-07-17）：games.html Apple Sports 式淘汰赛阶段滑杆（bracketModel 纯函数+9 测试 / thumb 分段轨 / 平移缩放面板 / 触摸+键盘+RM），665/665 全绿 | 真机验收滑动手感；EWC/S16 复用见 roadmap §7.4 |
+> | U39 | ✅ 代码完成（2026-07-18）：games.html 加双指/触控板捏合缩放（pinchZoom 纯函数+9 测试 / 总览-轮次-单场三档 / +/− 无手势兜底），674/674 全绿 | 真机验收双指手感与档位方向 |
 >
 > 备注：12a 体检发现的 course.html 未提交漂移已随 U17 入库解决。U 项全部关闭后本文件内容转 RELEASE_NOTES.md 并删除本文件。
 
