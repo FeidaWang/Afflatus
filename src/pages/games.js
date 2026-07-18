@@ -7,7 +7,8 @@
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
 import { renderTrackRecordHTML } from '../lib/trackRecord.js';
 import { buildWcStages } from '../lib/bracketModel.js';
-import { ZOOM_TREE, ZOOM_STAGE, ZOOM_MATCH, pointDistance, nextZoomLevel, wheelScaleDelta } from '../lib/pinchZoom.js';
+import { wheelScaleDelta } from '../lib/pinchZoom.js';
+import { panRange, resizeLeft, resizeRight, zoomRange, densityFor } from '../lib/stageRange.js';
 
 (() => {
   'use strict';
@@ -159,27 +160,24 @@ import { ZOOM_TREE, ZOOM_STAGE, ZOOM_MATCH, pointDistance, nextZoomLevel, wheelS
     }).join('');
     return `<div class="bstage" data-stage="${stage.key}"><div class="bstage-title">${T(stage.badge_en, stage.badge_zh)}</div><div class="bracket">${cards}</div></div>`;
   }
-  /* ---------- U38: Apple-Sports-style stage slider ----------
-     Segmented stage rail with a sliding thumb + horizontally translating
-     stage panes (active pane scales to 1/full opacity, neighbours sit at
-     .94/.45 — the "zoom between rounds" feel). Swipe on touch, arrow keys
-     on the rail, reduced-motion drops all transitions via CSS. The old
-     stacked per-stage markup (renderBracketStage) remains the no-model
-     fallback. Model comes from src/lib/bracketModel.js — leagues events
-     (EWC / Season 16) will reuse the same model+slider via their own
-     adapter (roadmap §7.4).
-
-     ---------- U39: pinch/wheel semantic zoom on top of the slider ----------
-     Three levels (src/lib/pinchZoom.js): ZOOM_TREE (pinch in → compact
-     all-rounds overview, "show more matches at once"), ZOOM_STAGE (the
-     U38 slider, default), ZOOM_MATCH (pinch out / tap a card → one
-     match's full detail, "show this specific match"). Touch pinch (two
-     pointers) and desktop trackpad pinch (ctrl+wheel) both drive the
-     same nextZoomLevel() state machine; a +/− zoom bar is the
-     non-gesture fallback for mouse/keyboard users. */
-  let koStage = -1; // -1 = uninitialised → default to latest stage
-  let koZoom = ZOOM_STAGE;
-  let koFocusId = null; // which match ZOOM_MATCH is showing
+  /* ---------- U43: Apple-Sports-style range scrubber ----------
+     Replaces U38's single-select thumb slider and U39's 3-level pinch-
+     zoom state machine with one active window [start, end] over the
+     real stages (src/lib/stageRange.js, pure + vitest-covered). Window
+     width picks the render density — U39's three levels are now
+     width-derived (densityFor) instead of a separate state machine:
+     1 stage = detail cards, 2-3 = mid cards, 4+ = compact chips
+     (renderKoTree, kept from U39). pinchZoom.js's wheelScaleDelta is
+     still reused for the desktop wheel fallback; pinchZoom's own
+     pointDistance/nextZoomLevel state machine is retired along with
+     ZOOM_TREE/STAGE/MATCH (dropped: tapping a card no longer jumps to
+     a single-match zoom — resize the window to 1 stage for that, via
+     drag, a stage label, or Home). The old stacked per-stage markup
+     (renderBracketStage) remains the no-model fallback. Model comes
+     from src/lib/bracketModel.js — leagues events (EWC / Season 16)
+     will reuse the same model+scrubber via their own adapter
+     (roadmap §7.4). */
+  let koRange = null; // [start, end] inclusive; null = uninitialised → full range on first render
   function renderKoCard(m, opts = {}) {
     const big = !!opts.big;
     const nm = (t) => lang === 'zh' ? t.name_zh : t.name_en;
@@ -193,8 +191,8 @@ import { ZOOM_TREE, ZOOM_STAGE, ZOOM_MATCH, pointDistance, nextZoomLevel, wheelS
     const extra = (m.score && m.score.extra && m.date) ? `<div class="ko-extra">${m.score.extra}</div>` : '';
     return `<article class="ko-card${m.isFinal ? ' ko-final' : ''}${big ? ' big' : ''}" data-mid="${m.id || ''}">${head}${row('home')}${row('away')}${extra}</article>`;
   }
-  // ZOOM_TREE: every stage as a compact column of one-line match chips —
-  // tapping a chip jumps straight to that match's ZOOM_MATCH detail.
+  // "chips" density (4+ stage window): every stage as a compact column
+  // of one-line match rows.
   function renderKoTree(stages) {
     const cols = stages.map((s) => {
       const rows = s.matches.map((m) => {
@@ -205,59 +203,15 @@ import { ZOOM_TREE, ZOOM_STAGE, ZOOM_MATCH, pointDistance, nextZoomLevel, wheelS
     }).join('');
     return `<div class="ko-tree">${cols}</div>`;
   }
-  function zoomBar() {
-    const labels_en = ['Overview', 'Rounds', 'Match'], labels_zh = ['总览', '轮次', '单场'];
-    return `<div class="ko-zoombar">
-      <button class="ko-zbtn" type="button" data-zoom="-1" aria-label="${T('Zoom out — show more matches', '缩小 — 显示更多场次')}"${koZoom <= ZOOM_TREE ? ' disabled' : ''}>−</button>
-      <span class="ko-zlabel">${T(labels_en[koZoom], labels_zh[koZoom])}</span>
-      <button class="ko-zbtn" type="button" data-zoom="1" aria-label="${T('Zoom in — show match detail', '放大 — 显示场次详情')}"${koZoom >= ZOOM_MATCH ? ' disabled' : ''}>+</button>
-    </div>`;
+  const SCRUB_ICON_BY_KEY = { r16: '≣', qf: '≡', sf: '=', third: '−', f: '🏆' };
+  function renderStageColumn(s) {
+    return `<section class="koCol" data-stage="${s.key}"><div class="koColH">${T(s.label_en, s.label_zh)}</div>${s.matches.map((m) => renderKoCard(m)).join('')}</section>`;
   }
-  function setZoom(z, focusId, stageIdx) {
-    koZoom = Math.max(ZOOM_TREE, Math.min(ZOOM_MATCH, z));
-    if (focusId !== undefined) koFocusId = focusId;
-    if (stageIdx !== undefined && stageIdx >= 0) koStage = stageIdx;
-    renderBracket();
-  }
-  function wireZoomBar(host, stages) {
-    host.querySelectorAll('.ko-zbtn').forEach((b) => b.addEventListener('click', () => setZoom(koZoom + (+b.dataset.zoom))));
-    host.querySelectorAll('.ko-tree-m').forEach((b) => b.addEventListener('click', () => {
-      const idx = stages.findIndex((s) => s.key === b.dataset.stage);
-      setZoom(ZOOM_MATCH, b.dataset.mid || null, idx);
-    }));
-    const matchCard = host.querySelector('.ko-zoom-match .ko-card');
-    if (matchCard) matchCard.addEventListener('click', () => setZoom(ZOOM_STAGE));
-  }
-  // Two-finger pinch (touch) + ctrl+wheel (trackpad) → zoom level. Wired
-  // once on the stable #bracket host (innerHTML swaps its children every
-  // render, but the host element itself persists across renders).
-  function wirePinchOnce(host) {
-    if (host.dataset.pinchWired) return;
-    host.dataset.pinchWired = '1';
-    const pts = new Map();
-    let startDist = null;
-    host.addEventListener('pointerdown', (e) => {
-      if (e.pointerType !== 'touch') return;
-      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      if (pts.size === 2) startDist = pointDistance(...pts.values());
-    });
-    host.addEventListener('pointermove', (e) => {
-      if (!pts.has(e.pointerId)) return;
-      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      if (pts.size === 2 && startDist != null) {
-        const d = pointDistance(...pts.values());
-        const next = nextZoomLevel(koZoom, d - startDist, 46);
-        if (next !== koZoom) { e.preventDefault(); koZoom = next; startDist = d; renderBracket(); }
-      }
-    });
-    const clear = (e) => { pts.delete(e.pointerId); if (pts.size < 2) startDist = null; };
-    host.addEventListener('pointerup', clear);
-    host.addEventListener('pointercancel', clear);
-    host.addEventListener('wheel', (e) => {
-      if (!e.ctrlKey) return;
-      const next = nextZoomLevel(koZoom, wheelScaleDelta(e.deltaY), 22);
-      if (next !== koZoom) { e.preventDefault(); koZoom = next; renderBracket(); }
-    }, { passive: false });
+  // density: 'detail'/'cards' = one koCol per windowed stage (renderKoCard);
+  // 'chips' (4+ stages) reuses renderKoTree's compact columns.
+  function renderColumns(stages, range, density) {
+    const windowed = stages.slice(range[0], range[1] + 1);
+    return density === 'chips' ? renderKoTree(windowed) : windowed.map(renderStageColumn).join('');
   }
   function renderBracket() {
     const host = $('bracket'); if (!host || !data || !data.bracket) return;
@@ -273,69 +227,101 @@ import { ZOOM_TREE, ZOOM_STAGE, ZOOM_MATCH, pointDistance, nextZoomLevel, wheelS
       if (window.AfflatusI18N) window.AfflatusI18N.apply();
       return;
     }
-    if (koStage < 0 || koStage >= stages.length) koStage = stages.length - 1; // land on the latest round
-    wirePinchOnce(host);
+    const n = stages.length;
+    if (!koRange || koRange[0] >= n || koRange[1] >= n) koRange = [0, n - 1]; // (re)init to the full range
 
-    if (koZoom === ZOOM_TREE) {
-      host.innerHTML = `<div class="ko ko-zoom-tree">${zoomBar()}${renderKoTree(stages)}</div>`;
-      wireZoomBar(host, stages);
-      if (window.AfflatusI18N) window.AfflatusI18N.apply();
-      return;
-    }
-    if (koZoom === ZOOM_MATCH) {
-      const all = stages.flatMap((s) => s.matches);
-      let m = all.find((x) => x.id && x.id === koFocusId);
-      if (!m) { m = stages[koStage].matches[0]; koFocusId = m && m.id; }
-      host.innerHTML = `<div class="ko ko-zoom-match">${zoomBar()}${m ? renderKoCard(m, { big: true }) : ''}</div>`;
-      wireZoomBar(host, stages);
-      if (window.AfflatusI18N) window.AfflatusI18N.apply();
-      return;
+    const gridCols = `repeat(${n},1fr)`;
+    const labelsHtml = stages.map((s, i) => `<span data-i="${i}">${T(s.label_en, s.label_zh)}</span>`).join('');
+    const cellsHtml = stages.map((s, i) => `<span class="scrubCell" data-i="${i}">${SCRUB_ICON_BY_KEY[s.key] || '•'}</span>`).join('');
+    host.innerHTML = `<div class="ko">
+      <div class="scrub">
+        <div class="scrubLabels" style="grid-template-columns:${gridCols}" aria-hidden="true">${labelsHtml}</div>
+        <div class="scrubTrack" style="grid-template-columns:${gridCols}" role="slider" tabindex="0" aria-label="${T('Stage range', '轮次区间')}" aria-valuemin="0" aria-valuemax="${n - 1}">
+          ${cellsHtml}<div class="scrubWin"><b class="scrubHandle hL" aria-hidden="true">‹</b><b class="scrubHandle hR" aria-hidden="true">›</b></div>
+        </div>
+      </div>
+      <div class="koViewport"><div class="koColumns" id="koColumns"></div></div>
+    </div>`;
+
+    const track = host.querySelector('.scrubTrack'), win = host.querySelector('.scrubWin');
+    const columnsEl = host.querySelector('#koColumns');
+    const labelSpans = [...host.querySelectorAll('.scrubLabels span')];
+    let lastColRange = null;
+    function paint() {
+      const [s, e] = koRange;
+      win.style.setProperty('--l', (s / n * 100) + '%');
+      win.style.setProperty('--w', ((e - s + 1) / n * 100) + '%');
+      track.setAttribute('aria-valuenow', String(s));
+      const sLbl = T(stages[s].label_en, stages[s].label_zh), eLbl = T(stages[e].label_en, stages[e].label_zh);
+      track.setAttribute('aria-valuetext', s === e ? sLbl : `${sLbl}–${eLbl}`);
+      labelSpans.forEach((el, i) => el.classList.toggle('on', i >= s && i <= e));
+      if (!lastColRange || lastColRange[0] !== s || lastColRange[1] !== e) { // rebuild content only on integer range change
+        columnsEl.innerHTML = renderColumns(stages, koRange, densityFor(e - s));
+        if (window.AfflatusI18N) window.AfflatusI18N.apply();
+        lastColRange = [s, e];
+      }
     }
 
-    const rail = stages.map((s, i) =>
-      `<button class="ko-tab" role="tab" id="koTab${i}" aria-selected="${i === koStage}" aria-controls="koPane${i}" data-i="${i}">${T(s.label_en, s.label_zh)}</button>`).join('');
-    const panes = stages.map((s, i) =>
-      `<section class="ko-pane" role="tabpanel" id="koPane${i}" aria-labelledby="koTab${i}">${s.matches.map((m) => renderKoCard(m)).join('')}</section>`).join('');
-    host.innerHTML = `<div class="ko">${zoomBar()}<div class="ko-rail" role="tablist" aria-label="${T('Knockout rounds', '淘汰赛轮次')}"><i class="ko-thumb" aria-hidden="true"></i>${rail}</div><div class="ko-view"><div class="ko-panes">${panes}</div></div></div>`;
+    // click a stage label → jump straight to that single stage
+    labelSpans.forEach((el, i) => el.addEventListener('click', () => { koRange = [i, i]; paint(); }));
 
-    const railEl = host.querySelector('.ko-rail'), thumb = host.querySelector('.ko-thumb');
-    const view = host.querySelector('.ko-view'), panesEl = host.querySelector('.ko-panes');
-    const tabs = [...host.querySelectorAll('.ko-tab')];
-    const paneEls = [...host.querySelectorAll('.ko-pane')];
-    function setStage(i, focus) {
-      koStage = Math.max(0, Math.min(stages.length - 1, i));
-      const tab = tabs[koStage];
-      thumb.style.width = tab.offsetWidth + 'px';
-      thumb.style.transform = `translateX(${tab.offsetLeft}px)`;
-      tabs.forEach((b, j) => b.setAttribute('aria-selected', String(j === koStage)));
-      const pane = paneEls[koStage];
-      const x = pane.offsetLeft - (view.clientWidth - pane.clientWidth) / 2;
-      panesEl.style.transform = `translateX(${-x}px)`;
-      paneEls.forEach((p, j) => p.classList.toggle('on', j === koStage));
-      if (focus) tab.focus();
-    }
-    tabs.forEach((b) => b.addEventListener('click', () => setStage(+b.dataset.i)));
-    railEl.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') { setStage(koStage + 1, true); e.preventDefault(); }
-      if (e.key === 'ArrowLeft') { setStage(koStage - 1, true); e.preventDefault(); }
+    // pointer drag: left/right handle resize, middle pan, 2-pointer pinch zoom
+    const pointers = new Map();
+    let pinch0 = null, pinchR0 = null;
+    const cellW = () => track.getBoundingClientRect().width / n;
+    const dxToCells = (px) => Math.round(px / cellW());
+    const roleAt = (e) => e.target.closest('.hL') ? 'L' : e.target.closest('.hR') ? 'R' : (e.target.closest('.scrubWin') ? 'PAN' : null);
+    track.addEventListener('pointerdown', (e) => {
+      const role = roleAt(e); if (!role) return;
+      track.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId, { x: e.clientX, x0: e.clientX, role, r0: [...koRange] });
+      win.classList.add('drag');
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        pinch0 = Math.abs(a.x - b.x); pinchR0 = [...koRange];
+      }
     });
-    // tap a card → zoom to its match detail
-    panesEl.addEventListener('click', (e) => {
-      const card = e.target.closest('.ko-card');
-      if (card && card.dataset.mid) setZoom(ZOOM_MATCH, card.dataset.mid);
+    track.addEventListener('pointermove', (e) => {
+      const p = pointers.get(e.pointerId); if (!p) return;
+      p.x = e.clientX;
+      if (pointers.size >= 2) {
+        const [a, b] = [...pointers.values()];
+        const d = dxToCells((Math.abs(a.x - b.x) - pinch0) / 2);
+        koRange = zoomRange(pinchR0, d, n);
+      } else {
+        const d = dxToCells(e.clientX - p.x0);
+        if (p.role === 'L') koRange = resizeLeft(p.r0, d, n);
+        else if (p.role === 'R') koRange = resizeRight(p.r0, d, n);
+        else koRange = panRange(p.r0, d, n);
+      }
+      paint();
     });
-    // touch swipe on the panes
-    let sx = null;
-    view.addEventListener('pointerdown', (e) => { sx = e.clientX; }, { passive: true });
-    view.addEventListener('pointerup', (e) => {
-      if (sx == null) return;
-      const dx = e.clientX - sx; sx = null;
-      if (Math.abs(dx) > 42) setStage(koStage + (dx < 0 ? 1 : -1));
-    }, { passive: true });
-    addEventListener('resize', () => setStage(koStage), { passive: true });
-    setStage(koStage);
-    wireZoomBar(host, stages);
-    if (window.AfflatusI18N) window.AfflatusI18N.apply();
+    ['pointerup', 'pointercancel'].forEach((t) => track.addEventListener(t, (e) => {
+      pointers.delete(e.pointerId);
+      if (!pointers.size) win.classList.remove('drag');
+      paint();
+    }));
+
+    // desktop wheel / trackpad scroll → symmetric zoom, throttled to one step/120ms
+    let wheelT = 0;
+    track.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const now = performance.now();
+      if (now - wheelT < 120) return;
+      wheelT = now;
+      koRange = zoomRange(koRange, wheelScaleDelta(e.deltaY) > 0 ? 1 : -1, n);
+      paint();
+    }, { passive: false });
+
+    // keyboard: arrows pan, shift+arrows resize the right edge, Home/End jump
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { koRange = e.shiftKey ? resizeRight(koRange, 1, n) : panRange(koRange, 1, n); paint(); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { koRange = e.shiftKey ? resizeRight(koRange, -1, n) : panRange(koRange, -1, n); paint(); e.preventDefault(); }
+      else if (e.key === 'Home') { koRange = [0, 0]; paint(); e.preventDefault(); }
+      else if (e.key === 'End') { koRange = [0, n - 1]; paint(); e.preventDefault(); }
+    });
+
+    paint();
   }
 
   /* ---------- Fable track record — gold ⭐ for exact scores ----------

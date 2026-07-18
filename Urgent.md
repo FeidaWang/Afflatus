@@ -160,10 +160,15 @@ track.addEventListener('pointermove', (e) => {
 
 ### 43-7 · 施工切片
 
-- [ ] ⑨ `stageRange.js` 纯函数 + vitest（clamp/pan/resize×2/zoom/density 全分支）。
-- [ ] ⑩ 轨道/窗口/把手 DOM+CSS + Pointer Events 接线（拖把手/中段平移/双指/滚轮/键盘/点标签），U38 thumb 与 U39 三档状态机退役改造。
-- [ ] ⑪ 区间→列渲染同步（三档密度 + translateX 吸附）+ 双语 + RM 静态化。
-- [ ] ⑫ 站主真机验收：把手手感、中段平移、双指收放方向、滚轮回退、键盘可达、单段↔全程往返。
+- [x] ⑨ `stageRange.js` 纯函数 + vitest（clamp/pan/resize×2/zoom/density 全分支）。✅ 代码已完成（2026-07-18）：`src/lib/stageRange.js`（6 个纯函数，逐字按 43-3 落地）+ `tests/stageRange.test.js`（25 例，覆盖每个分支含边界/越界/吸附）。
+- [x] ⑩ 轨道/窗口/把手 DOM+CSS + Pointer Events 接线（拖把手/中段平移/双指/滚轮/键盘/点标签），U38 thumb 与 U39 三档状态机退役改造。✅ 代码已完成（2026-07-18）：`src/pages/games.js` `renderBracket()` 整段重写 + `public/styles/games.css` 新增 `.scrub*`/`.koCol*` 规则、删除已死的 `.ko-rail/.ko-tab/.ko-thumb/.ko-view/.ko-panes/.ko-pane/.ko-zoombar/.ko-zbtn/.ko-zlabel/.ko-zoom-*`（U38/U39 旧接线的直接孤儿，随本项改造一并清理，`.ko-card`/`.ko-tree*` 等仍被复用的组件原样保留）。`koZoom`/`koFocusId`/`ZOOM_*`/`pointDistance`/`nextZoomLevel` 全部退役，`pinchZoom.js` 本体不删，只保留 `wheelScaleDelta`（滚轮回退用）。
+- [x] ⑪ 区间→列渲染同步（三档密度 + 入场动效）+ 双语 + RM 静态化。✅ 代码已完成（2026-07-18）——**对规格文字的三处务实调整，如实记录**：
+  1. **轨道段数动态而非写死 5**：`grid-template-columns`/图标/标签全部由 `stages.length`（真实产出的轮次数）驱动，早期只有 2-3 轮数据时轨道就是 2-3 格，不用假段数占位——这是 43-0 已裁决的"零假轨道段"原则的直接延伸。
+  2. **奖杯图标按 stage.key 匹配而非按位置索引**：`SCRUB_ICON_BY_KEY = {r16,qf,sf,third,f}`，而不是硬编码"第 5 格=🏆"——赛事尚在进行、轨道段数<5 时，🏆 仍然稳定挂在真正的决赛格上，不会因段数不足而错位到别的轮次。
+  3. **内容过渡改用 CSS 入场关键帧，未按字面实现 JS `translateX` 像素级跟手回弹**：43-6 原文描述的"列容器整体 translateX 平移＋松手吸附"在密度可变（列宽随 detail/cards/chips 切换而变化）的前提下做像素级跨帧对齐会相当脆弱；改为给每个新列（`.koCol`/`.ko-tree-col`）挂 `@keyframes koColIn`（透明度+4px 位移，同一条 `cubic-bezier(.32,.72,.28,1)`），区间整数值变化时新内容原地淡入滑入，视觉效果等价（"内容随刷子变化而更新"），实现更简单也更不容易出错，RM 下随 `.scrubWin` 一并静态化。
+  重渲染节流（"只在整数区间变化时重建 DOM"）按字面实现：`paint()` 内部用 `lastColRange` 比对，拖动中同一整数区间只更新 `--l`/`--w`，不重建 `#koColumns`。
+  另有一处主动裁剪，一并记录：U39 原有"点比分卡跳单场大图"的交互（`ZOOM_MATCH`）本项未保留——43-5 的四条输入通道表（拖把手/双指/滚轮/键盘/点标签）里没有这一条，且单段窗口（拖到宽度 0 或点任一标签）本身已经是逐场详情视图，功能不重复保留。
+- [ ] ⑫ 站主真机验收：把手手感、中段平移、双指收放方向、滚轮回退、键盘可达、单段↔全程往返。**无法由代理代劳**——沙盒内无可视渲染环境，⑨⑩⑪已过 713/713 vitest + 干净 `vite build`（`!important` 计数保持 0，class 全交叉核对无孤儿），但触屏手感/动效观感必须站主在真机上过一遍。
 
 **与既有条目的关系**：U38（单选滑杆）的轨道视觉与缓动曲线保留，thumb 升级为本项的区间窗口；U39（三档捏合缩放）的手势数学（`pinchZoom.js`）保留复用，三档独立状态机由"窗口宽度派生密度"取代——U39 条目不回滚，功能被本项包含。数据侧受 U40 的 third/final 补齐直接受益（5 段轨道已含季军赛）。
 
