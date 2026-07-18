@@ -211,10 +211,10 @@ function applyDpad(dt) {
 
 ### 42-6 · 施工切片 V2（在 V1 已上线代码上迭代，不推倒 dataToSpace/接线层）
 
-- [ ] ⑤ 视觉重做：实心圆点片元 + NormalBlending + 纯黑底 + 参考站三色 + 尘埃 12k + Manhattan 连线层 + fog 常数组（42-4 全部）。
-- [ ] ⑥ 全屏舞台 + HUD：`.sfStage` 遮罩、播放/暂停、漏斗筛选（真实字段）、X 退出、D-pad 平移运动学（42-2 + 42-5）。
-- [ ] ⑦ 信息弹窗：点击粒子 → 飞向 + `.sfModal`（复用 `renderNodeDetail` 的内容构建，套新壳），Esc 分层返回。
-- [ ] ⑧ 站主真机复验（全景态/聚焦态/移动端），通过后裁决转默认 or 保持 opt-in，并回填 U30 R3 条目。
+- [x] ⑤ 视觉重做：实心圆点片元 + NormalBlending + 纯黑底 + 参考站三色 + 尘埃 12k/6k + Manhattan 连线层 + fog 常数组（42-4 全部）。`src/scene/sectorsStarfield.js` 整体重写，`dataToSpace.js` 零改动。
+- [x] ⑥ 全屏舞台 + HUD：`.sfStage` 遮罩（模块 mount 时注入 `document.body`，非 flag 访问者零 DOM 成本）、播放/暂停（接管 idle 漫游，替换 V1 的 15s 计时器）、漏斗筛选（market/bucket 真实字段两组单选，只重建数据层 `aMatch` 属性）、X 退出、D-pad 平移运动学（`applyDpad` 沿相机 right/up 向量、`smoothDamp` 免费获得惯性），CSS 按 42-2 像素值落地 `public/styles/sectors.css`。
+- [x] ⑦ 信息弹窗：`sectors.html` 把 `renderNodeDetail` 拆成纯函数 `buildDetail(node)`（返回 `{title, tag?, tagClass?, bodyHtml}`），2D 图的 `#mwDetail` 与新 `.sfModal` 共用同一份内容构建逻辑，只是外壳不同；点击数据粒子飞向 + 弹窗，Esc/双击空白按「弹窗→筛选面板→退出全屏」分层返回。`showGraph()` 在 `?fx=starfield3d` 下改为直接调用新的 `openStarfield()`，不再经过 `storyGraphSection`；V1 的 `#mwGraph3d`/`#mwGraphTip` 及对应 CSS 已随之移除。验证：`npx vitest run` 688/688、`npx vite build` 干净（`sectorsStarfield-*.js` 独立懒加载分包确认生成）、`sectors.css` `!important` 计数仍为 0。
+- [ ] ⑧ 站主真机复验（全景态/聚焦态/移动端/筛选/弹窗/D-pad），通过后裁决转默认 or 保持 opt-in，并回填 U30 R3 条目。**这一步需要站主本人真机操作，我无法代为完成。**
 
 ### 42-历史（V1 记录，压缩存档）
 

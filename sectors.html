@@ -166,8 +166,6 @@
     <p class="graphHint" data-en="Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure)." data-zh="拖动节点可重新摆放，滚轮/双指可缩放，点击节点查看详情。美股模型偏左，中国模型偏右——线条样式表示每只个股与模型的关系（实线=受益，虚线=承压）。">Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure).</p>
     <div class="graphWrap">
       <canvas id="mwGraph" class="mwGraph" aria-label="US–China AI model and equity gravity map"></canvas>
-      <canvas id="mwGraph3d" class="mwGraph" aria-label="US–China AI data starfield" hidden></canvas>
-      <div id="mwGraphTip" class="mwGraphTip" hidden></div>
       <div id="mwDetail" class="mwDetail" hidden></div>
       <div id="mwEmpty" class="empty" hidden></div>
     </div>
@@ -462,28 +460,25 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
 (function () {
   var mwAsOf = document.getElementById('mwAsOf'), mwGrid = document.getElementById('mwGrid'),
       mwBaskets = document.getElementById('mwBaskets'), mwTake = document.getElementById('mwTake'),
-      mwGraph = document.getElementById('mwGraph'), mwGraph3d = document.getElementById('mwGraph3d'),
-      mwGraphTip = document.getElementById('mwGraphTip'),
+      mwGraph = document.getElementById('mwGraph'),
       mwDetail = document.getElementById('mwDetail'), mwEmpty = document.getElementById('mwEmpty'),
       pmAsOf = document.getElementById('pmAsOf'), pmTracks = document.getElementById('pmTracks'),
       pmGrid = document.getElementById('pmGrid'), pmSwap = document.getElementById('pmSwap'), pmTake = document.getElementById('pmTake'),
       toggleMap = document.getElementById('toggleMap'), toggleCards = document.getElementById('toggleCards'),
       storyCardsEl = document.getElementById('storyCards'), storyGraphEl = document.getElementById('storyGraphSection'),
-      storyTake = document.getElementById('storyTake'), newsGrid = document.getElementById('newsGrid'),
-      graphHint = document.querySelector('.graphHint');
+      storyTake = document.getElementById('storyTake'), newsGrid = document.getElementById('newsGrid');
   if (!mwGrid && !pmGrid) return;
   var DATA = null;
   var graphHandle = null;
-  // U42 (2026-07-18): 3D data-starfield alternative to the 2D graph above,
-  // opt-in via ?fx=starfield3d (same flag-gate convention as alphardForge.js's
-  // ?fx=stage) — the 2D graph stays the shipped default until the station
-  // owner's real-device call (Urgent.md U42 42c slice ④).
+  // U42 V2 (2026-07-18): full-screen "data starfield" alternative to the 2D
+  // graph above, opt-in via ?fx=starfield3d (same flag-gate convention as
+  // alphardForge.js's ?fx=stage). Unlike the 2D graph it doesn't live inside
+  // storyGraphSection/graphWrap — sectorsStarfield.js injects its own
+  // full-screen overlay into <body> on open and tears it down on exit,
+  // leaving the card view untouched underneath. Still opt-in only pending
+  // the station owner's real-device call (Urgent.md U42 slice ⑧).
   var is3D = (function () { try { return /[?&]fx=starfield3d\b/.test(location.search); } catch (e) { return false; } })();
   var starfieldHandle = null, universeData = null;
-  if (is3D && graphHint) {
-    graphHint.setAttribute('data-en', 'Drag to orbit, scroll/pinch to dolly, click a particle for detail (double-click empty space or Esc to return). US names glow cyan-white, China names glow amber.');
-    graphHint.setAttribute('data-zh', '拖动可环绕视角，滚轮/双指可推拉镜头，点击粒子查看详情（双击空白处或按 Esc 返回全景）。美股节点为青白色辉光，中国节点为琥珀色辉光。');
-  }
   var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
   function T(en, zh) { return lang() === 'zh' ? zh : en; }
@@ -496,47 +491,56 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
 
   function graphLabelFor(node) { return node.kind === 'vendor' ? (VENDOR_NAME[node.vendor] || node.vendor) : node.label; }
 
-  function renderNodeDetail(node) {
-    if (!mwDetail) return;
-    var closeBtn = '<button type="button" class="mwDetailClose" aria-label="' + esc(T('close', '关闭')) + '">&times;</button>';
+  // Pure content builder shared by the 2D graph's #mwDetail panel and the
+  // U42 V2 starfield's .sfModal (Urgent.md 42-5 "内容/外壳分离") — returns
+  // structured {title, tag?, tagClass?, bodyHtml} or null (no card), so
+  // each renderer owns only its own shell/close-button chrome.
+  function buildDetail(node) {
     if (node.kind === 'vendor') {
       var card = (DATA && DATA.modelWatch || []).filter(function (c) { return c.vendor === node.vendor; })[0];
-      if (!card) { mwDetail.hidden = true; return; }
+      if (!card) return null;
       var devs = (card.developments || []).map(function (d) {
         return '<div class="mwDev"><a href="' + esc(d.src) + '" target="_blank" rel="noopener">' + esc(T(d.t_en, d.t_zh)) + '</a></div>';
       }).join('');
-      mwDetail.innerHTML = closeBtn
-        + '<div class="mwHead"><span class="mwVendor">' + esc(VENDOR_NAME[card.vendor] || card.vendor) + '</span>'
-        + '<span class="mwRoute ' + esc(card.route) + '">' + esc(card.route === 'open' ? T('open-weight', '开源权重') : T('closed API', '闭源 API')) + '</span></div>'
-        + '<div class="mwLine">' + esc(card.current_line) + '</div>' + devs
-        + '<div class="mwGap">' + esc(T(card.gap_note_en, card.gap_note_zh)) + '</div>';
-    } else {
-      var refs = [];
-      (DATA && DATA.baskets || []).forEach(function (b) {
-        (b.equities || []).forEach(function (e) { if (e.ticker === node.label) refs.push({ vendor: b.vendor, relation: e.relation, note: e.correlation_note_zh }); });
-      });
-      if (!refs.length) {
-        // U42: the 3D starfield's data layer also includes plain arena-universe
-        // filler tickers (benchmarks/megacaps with no vendor correlation call)
-        // to round the particle count out — say so honestly rather than a
-        // silent no-op click, which the 2D graph never needed since it only
-        // ever contained basket-referenced equities.
-        if (node.kind === 'universe') {
-          mwDetail.innerHTML = closeBtn + '<div class="mwHead"><span class="mwVendor">' + esc(node.label) + '</span></div>'
-            + '<div class="mwGap">' + esc(T('On the Arena trading universe list — no vendor-correlation thesis on file for this ticker.', '在 Arena 交易域清单内——该股暂无厂商关联研判。')) + '</div>';
-          mwDetail.hidden = false;
-          var closeUni = mwDetail.querySelector('.mwDetailClose');
-          if (closeUni) closeUni.addEventListener('click', function () { mwDetail.hidden = true; });
-          return;
-        }
-        mwDetail.hidden = true; return;
-      }
-      var rows = refs.map(function (r) {
-        return '<div class="mwDev"><b>' + esc(VENDOR_NAME[r.vendor] || r.vendor) + '</b> · <span class="basketTag">' + esc(RELATION_LABEL[r.relation] || r.relation) + '</span>'
-          + (r.note ? '<div class="mwGap">' + esc(r.note) + '</div>' : '') + '</div>';
-      }).join('');
-      mwDetail.innerHTML = closeBtn + '<div class="mwHead"><span class="mwVendor">' + esc(node.label) + '</span></div>' + rows;
+      return {
+        title: VENDOR_NAME[card.vendor] || card.vendor,
+        tag: card.route === 'open' ? T('open-weight', '开源权重') : T('closed API', '闭源 API'),
+        tagClass: card.route,
+        bodyHtml: '<div class="mwLine">' + esc(card.current_line) + '</div>' + devs
+          + '<div class="mwGap">' + esc(T(card.gap_note_en, card.gap_note_zh)) + '</div>',
+      };
     }
+    var refs = [];
+    (DATA && DATA.baskets || []).forEach(function (b) {
+      (b.equities || []).forEach(function (e) { if (e.ticker === node.label) refs.push({ vendor: b.vendor, relation: e.relation, note: e.correlation_note_zh }); });
+    });
+    if (!refs.length) {
+      // U42: the starfield's data layer also includes plain arena-universe
+      // filler tickers (benchmarks/megacaps with no vendor correlation call)
+      // to round the particle count out — say so honestly rather than a
+      // silent no-op click, which the 2D graph never needed since it only
+      // ever contained basket-referenced equities.
+      if (node.kind === 'universe') {
+        return { title: node.label, bodyHtml: '<div class="mwGap">' + esc(T('On the Arena trading universe list — no vendor-correlation thesis on file for this ticker.', '在 Arena 交易域清单内——该股暂无厂商关联研判。')) + '</div>' };
+      }
+      return null;
+    }
+    var rows = refs.map(function (r) {
+      return '<div class="mwDev"><b>' + esc(VENDOR_NAME[r.vendor] || r.vendor) + '</b> · <span class="basketTag">' + esc(RELATION_LABEL[r.relation] || r.relation) + '</span>'
+        + (r.note ? '<div class="mwGap">' + esc(r.note) + '</div>' : '') + '</div>';
+    }).join('');
+    return { title: node.label, bodyHtml: rows };
+  }
+
+  function renderNodeDetail(node) {
+    if (!mwDetail) return;
+    var d = buildDetail(node);
+    if (!d) { mwDetail.hidden = true; return; }
+    var closeBtn = '<button type="button" class="mwDetailClose" aria-label="' + esc(T('close', '关闭')) + '">&times;</button>';
+    mwDetail.innerHTML = closeBtn
+      + '<div class="mwHead"><span class="mwVendor">' + esc(d.title) + '</span>'
+      + (d.tag ? '<span class="mwRoute ' + esc(d.tagClass || '') + '">' + esc(d.tag) + '</span>' : '') + '</div>'
+      + d.bodyHtml;
     mwDetail.hidden = false;
     var btn = mwDetail.querySelector('.mwDetailClose');
     if (btn) btn.addEventListener('click', function () { mwDetail.hidden = true; });
@@ -649,7 +653,34 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     });
   }
 
+  // U42 V2: "view as interactive map" launches the full-screen starfield
+  // directly and leaves the card view untouched underneath (its own X
+  // button tears the overlay down) — it never uses storyGraphSection,
+  // which is now 2D-graph-only territory.
+  function openStarfield() {
+    var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
+    if (!mw.length) return;
+    if (starfieldHandle) { starfieldHandle.update({ sectorsData: DATA, universeData: universeData }); return; }
+    var mount = function () {
+      if (!window.AfflatusSectorsStarfield) return;
+      window.AfflatusSectorsStarfield.load().then(function (mod) {
+        starfieldHandle = mod.initSectorsStarfield({ sectorsData: DATA, universeData: universeData }, {
+          buildDetail: buildDetail,
+          onExit: function () { starfieldHandle = null; },
+        });
+      });
+    };
+    if (!universeData) {
+      fetch('/arena-universe.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+        .then(function (d) { universeData = d; mount(); })
+        .catch(function () { universeData = {}; mount(); });
+    } else {
+      mount();
+    }
+  }
+
   function showGraph() {
+    if (is3D) { openStarfield(); return; }
     if (storyCardsEl) storyCardsEl.hidden = true;
     if (storyGraphEl) storyGraphEl.hidden = false;
     renderGraph(); // lazy: first click is when the canvas is actually sized
@@ -661,55 +692,16 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
   if (toggleMap) toggleMap.addEventListener('click', showGraph);
   if (toggleCards) toggleCards.addEventListener('click', showCards);
 
-  function hideGraphTip() { if (mwGraphTip) mwGraphTip.hidden = true; }
-  function showGraphTip(node, x, y) {
-    if (!mwGraphTip) return;
-    if (!node) { hideGraphTip(); return; }
-    mwGraphTip.textContent = graphLabelFor(node);
-    mwGraphTip.style.left = x + 'px'; mwGraphTip.style.top = y + 'px';
-    mwGraphTip.hidden = false;
-  }
-
   function renderGraph() {
     var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
     if (!mw.length) {
-      if (mwGraph) mwGraph.hidden = true; if (mwGraph3d) mwGraph3d.hidden = true;
-      if (mwDetail) mwDetail.hidden = true; hideGraphTip();
+      if (mwGraph) mwGraph.hidden = true;
+      if (mwDetail) mwDetail.hidden = true;
       if (mwEmpty) { mwEmpty.hidden = false; mwEmpty.textContent = emptyMsg(); }
       return;
     }
     if (mwEmpty) mwEmpty.hidden = true;
 
-    if (is3D) {
-      if (mwGraph) mwGraph.hidden = true;
-      if (mwGraph3d) mwGraph3d.hidden = false;
-      if (starfieldHandle) { starfieldHandle.update({ sectorsData: DATA, universeData: universeData }); return; }
-      var mountStarfield = function () {
-        if (!window.AfflatusSectorsStarfield) return;
-        window.AfflatusSectorsStarfield.load().then(function (mod) {
-          if (!mwGraph3d) return;
-          starfieldHandle = mod.initSectorsStarfield(mwGraph3d, { sectorsData: DATA, universeData: universeData }, {
-            // starfield calls onSelect(null) on deselect (ESC/dblclick-empty/
-            // fly-back-to-overview) — renderNodeDetail only knows real nodes.
-            onSelect: function (node) { if (node) renderNodeDetail(node); else if (mwDetail) mwDetail.hidden = true; },
-            // fixed corner placement — simpler/cheaper than projecting the
-            // hovered particle's world position to screen space every frame
-            // for what's just a "what am I looking at" readout.
-            onHover: function (node) { showGraphTip(node, 12, 12); },
-          });
-        });
-      };
-      if (!universeData) {
-        fetch('/arena-universe.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
-          .then(function (d) { universeData = d; mountStarfield(); })
-          .catch(function () { universeData = {}; mountStarfield(); });
-      } else {
-        mountStarfield();
-      }
-      return;
-    }
-
-    if (mwGraph3d) mwGraph3d.hidden = true;
     if (!mwGraph || !window.AfflatusSectorsGraph) return;
     mwGraph.hidden = false;
     if (!graphHandle) {
