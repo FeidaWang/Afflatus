@@ -7965,8 +7965,42 @@
 }
 
 @layer components {
-  /* U21 Phase 1: ordinary new component styles land here going forward.
-     Empty today. */
+  /* U21 Phase 1: ordinary new component styles land here going forward. */
+
+  /* U44 44-2: pick-card two-layer hover/tap reveal. .pcCover (ticker/name/bar,
+     current default) swaps for .pcDetail (thesis + real sectors.html CTA) on
+     hover, .open (tap), or :focus-visible (keyboard) — three equivalent
+     entry points per the repo's 22c no-hover-only-info rule. */
+  .pick-card { min-height: 216px; contain: layout paint; box-shadow: 0 1px 4px rgba(0,0,0,.4); transition: box-shadow .3s ease; }
+  .pcCover, .pcDetail { transition: transform .32s ease, opacity .32s ease; }
+  .pcDetail { position: absolute; inset: 0; padding: 18px 16px 16px; display: flex; flex-direction: column; opacity: 0; transform: translateY(14px); pointer-events: none; }
+  .pcDetail .pick-thesis { flex: 1; margin-bottom: 12px; }
+  .pcCta { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .1em; color: var(--warm); text-decoration: none; }
+  .pcCta:hover, .pcCta:focus-visible { text-decoration: underline; }
+  @media (hover: hover) {
+    .pcCover, .pcDetail { will-change: transform, opacity; }
+    .pick-card:hover, .pick-card:focus-visible, .pick-card.open { box-shadow: 0 14px 34px rgba(0,0,0,.55); }
+    .pick-card:hover .pcCover, .pick-card:focus-visible .pcCover { transform: translateY(-12px); opacity: 0; }
+    .pick-card:hover .pcDetail, .pick-card:focus-visible .pcDetail { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  }
+  .pick-card.open .pcCover { transform: translateY(-12px); opacity: 0; }
+  .pick-card.open .pcDetail { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  @media (prefers-reduced-motion: reduce) {
+    .pcCover, .pcDetail, .pick-card { transition: none; }
+  }
+
+  /* U44 44-4: holdings split-screen — desktop-only sticky context rail, synced
+     to the card in the viewport midline via IO. Below 1100px .holdSticky stays
+     display:none, i.e. today's single-column layout at zero extra cost. */
+  .holdSticky { display: none; }
+  @media (min-width: 1100px) {
+    .holdings-split { display: grid; grid-template-columns: minmax(300px, 1fr) 2fr; gap: 36px; align-items: start; }
+    .holdSticky { display: block; position: sticky; top: 88px; }
+    .holdSticky .hsTicker { font-family: 'Orbitron', sans-serif; font-size: clamp(2.2rem, 3.5vw, 3.4rem); line-height: 1; color: var(--ink); }
+    .holdSticky .hsWeight { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--warm); margin-top: 8px; }
+    .holdSticky .hsThesis { max-width: 34ch; opacity: .72; margin-top: 14px; font-size: 13px; line-height: 1.5; color: var(--ink); }
+    .holdings-split #pickGrid { grid-template-columns: 1fr; }
+  }
 }
 
 @layer overrides {

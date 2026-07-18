@@ -148,7 +148,12 @@ document.querySelectorAll('.pick-card').forEach((c) => io.observe(c));
 
 ### 44-6 · 施工切片
 
-- [ ] ⑭ 特性②+④（同一个区块，一次会话）：pick-card 模板双层化 + 委托切换 + holdings 分栏 + IO 语境栏；vitest/build/`!important` 基线全绿。
+- [x] ⑭ 特性②+④（同一个区块，一次会话）：pick-card 模板双层化 + 委托切换 + holdings 分栏 + IO 语境栏；vitest/build/`!important` 基线全绿。✅ 代码已完成（2026-07-18）：
+  - `src/ui/marketDeck.js`：`renderPicks()` 模板改双层——`.pcCover`（ticker/rank/name/权重条，现状内容原样搬入）+ `.pcDetail`（论点段落 `.pick-thesis` 原样搬入 + 新增 `.pcCta` 真实链接），卡片根节点由 `<div class="pick">` 改 `<article class="pick pick-card" tabindex="0" role="button" aria-expanded="false">`（`.pick` 类保留不删，原有 IO 揭示动画/hot-hover 回调零改动）。`initPickGridToggle()` 在 `#pickGrid` 上做事件委托（click + Enter/Space），切 `.open` 并同步 `aria-expanded`，命中 `.pcCta` 时放行不拦截（否则键盘 Enter 激活链接会被误判成切换）。
+  - **CTA 链接的诚实处理（对规格文字的一处必要修正）**：44-2 原文示例写的是 `href="/sectors.html#card-NVDA"`，实测 `sectors.html` 目前只给 NVDA/AVGO/MU 三支挂了 `id="card-<TICKER>"` 锚点，其余 7 支（MRVL/SNDK/WDC/TER/RMBS/ALAB/PSTG）虽然在 sectors.html 的供应链数据里出现，但没有可跳转的锚点——**没有锚点就不编造锚点**（宪章②同款红线）。改为按 `SECTORS_ANCHORS` 白名单裁决：3 支有锚点的用 `#card-<TICKER>` 深链，其余 7 支落到 `/sectors.html` 纯页面链接，均为真实可达地址。
+  - holdings 分栏：`index.html` 的 `.holdings` 内新增 `.holdings-split` 包裹层，装 `.holdSticky`（左，`hsTicker`/`hsWeight`/`hsThesis` 三占位）与 `#pickGrid`（右，原节点不变）；`.holdSticky` 默认 `display:none`，仅 `@media(min-width:1100px)` 内才 `display:block` 转 sticky——窄屏零回退成本，与规格一致。`renderPicks()` 里同时挂一个 `IntersectionObserver`（`rootMargin:-45% 0px -45% 0px`，视口中线判定），命中即调 `paintSticky()`，只写 3 个 `textContent`（ticker、"公司名 · 权重%"、去掉 `<em>` 标签的纯文本论点）——内容全部取自渲染卡片自带的 `_pickData` 闭包引用，零新数据源，零 `getBoundingClientRect` 强制同步布局。语言切换时 `renderPicks()` 会整体重跑（`setLang()` 既有行为），旧 observer 先 `disconnect()` 再重建，不留孤儿。
+  - `src/styles.css`：新规则全部落在 `@layer components`（U30 硬规则，首页在主级联层体系内）；`will-change` 只在 `@media(hover:hover)` 内挂 `.pcCover`/`.pcDetail` 两类节点；`.pick-card` 补 `contain:layout paint` + `box-shadow` 低频过渡；`prefers-reduced-motion:reduce` 关掉双层过渡动画。
+  - 验证：713/713 vitest（marketDeck.js 是渲染胶水层，本仓库既定测试边界不覆盖，符合"数据/数学层测试，渲染胶水层不测"惯例）；`vite build` 146 模块正常转译打包（沙盒挂载目录 `dist/.DS_Store` 因宿主 FUSE 层拒绝 unlink 导致清空 outDir 步骤报错，与本次代码改动无关——改用临时 `--outDir` 验证过打包产物干净，`main-*.js`/`sectorsStarfield-*.js` 等既有 chunk 均正常生成）；`!important` 计数 2504→2504，新样式零新增。
 - [ ] ⑮ 特性①：stardrive exit 段收缩 + 字幕交棒（与既有 pin keyframes 合并核对，真机重点看 pin→shrink 交界帧）。
 - [ ] ⑯ 特性③：CSS 变量视差环（与 alphardForge 相机视差方向核对）。
 - [ ] ⑰ 站主真机验收：收缩过渡交界、卡片 hover/点按双态、视差幅度、分栏联动换字手感、窄屏回退、RM 全静态。
