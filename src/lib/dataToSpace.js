@@ -68,13 +68,15 @@ export function buildSpaceData(data = {}, opts = {}) {
     return groupOffset.get(key);
   }
 
-  function place({ id, kind, label, market, bucket, confidence }) {
+  function place({ id, kind, label, market, bucket, confidence, vendor }) {
     const hasConfidence = typeof confidence === 'number';
     const go = offsetFor(market + '|' + bucket);
     const x = (MARKET_X[market] ?? 0) + go.ox + (rand() - 0.5) * 0.22;
     const y = (hasConfidence ? confidence : NEUTRAL_CONFIDENCE) + (rand() - 0.5) * 0.05;
     const z = bucketZ(bucket) + go.oz + (rand() - 0.5) * 0.22;
-    return { id, kind, label, market, bucket, confidence: hasConfidence ? confidence : null, hasConfidence, x, y, z };
+    const node = { id, kind, label, market, bucket, confidence: hasConfidence ? confidence : null, hasConfidence, x, y, z };
+    if (vendor) node.vendor = vendor; // lets callers reuse a vendor-keyed detail lookup (e.g. sectors.html's renderNodeDetail) without a shape-specific adapter
+    return node;
   }
 
   const nodes = [];
@@ -86,7 +88,7 @@ export function buildSpaceData(data = {}, opts = {}) {
     const basket = baskets.find((b) => b.vendor === card.vendor);
     const market = basket ? basket.market : (card.vendor === 'anthropic' || card.vendor === 'openai' ? 'US' : 'CN');
     const id = 'vendor:' + card.vendor;
-    nodes.push(place({ id, kind: 'vendor', label: card.vendor, market, bucket: 'model-vendor', confidence: null }));
+    nodes.push(place({ id, kind: 'vendor', label: card.vendor, market, bucket: 'model-vendor', confidence: null, vendor: card.vendor }));
     seen.add(id);
   }
 

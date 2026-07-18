@@ -166,6 +166,8 @@
     <p class="graphHint" data-en="Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure)." data-zh="拖动节点可重新摆放，滚轮/双指可缩放，点击节点查看详情。美股模型偏左，中国模型偏右——线条样式表示每只个股与模型的关系（实线=受益，虚线=承压）。">Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure).</p>
     <div class="graphWrap">
       <canvas id="mwGraph" class="mwGraph" aria-label="US–China AI model and equity gravity map"></canvas>
+      <canvas id="mwGraph3d" class="mwGraph" aria-label="US–China AI data starfield" hidden></canvas>
+      <div id="mwGraphTip" class="mwGraphTip" hidden></div>
       <div id="mwDetail" class="mwDetail" hidden></div>
       <div id="mwEmpty" class="empty" hidden></div>
     </div>
@@ -286,6 +288,18 @@ window.AfflatusProvenance = { buildProvenanceBadge };
 import { initSectorsGraph } from '/src/lib/sectorsGraphView.js';
 window.AfflatusSectorsGraph = { initSectorsGraph };
 dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
+</script>
+<script type="module">
+/* U42 (2026-07-18): 3D data-starfield, opt-in via ?fx=starfield3d. Unlike
+   the 2D graph bridge above this is a LAZY dynamic import, not a static
+   one — its three.js dependency (vendor-three, already shared with
+   games/boot/home) must never load for the vast majority of visits that
+   don't pass the flag. A classic (non-module) inline <script> can't have
+   its dynamic import() bundled/rewritten by Vite's build (only type=module
+   sources are scanned), so the actual import lives here and is exposed on
+   window for the classic renderGraph() IIFE to call — same window-bridge
+   convention as AfflatusSectorsGraph/AfflatusProvenance just above. */
+window.AfflatusSectorsStarfield = { load: function () { return import('/src/scene/sectorsStarfield.js'); } };
 </script>
 <script type="module" src="/src/pages/sectorsLibs.js"></script>
 <script>
@@ -448,15 +462,28 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
 (function () {
   var mwAsOf = document.getElementById('mwAsOf'), mwGrid = document.getElementById('mwGrid'),
       mwBaskets = document.getElementById('mwBaskets'), mwTake = document.getElementById('mwTake'),
-      mwGraph = document.getElementById('mwGraph'), mwDetail = document.getElementById('mwDetail'), mwEmpty = document.getElementById('mwEmpty'),
+      mwGraph = document.getElementById('mwGraph'), mwGraph3d = document.getElementById('mwGraph3d'),
+      mwGraphTip = document.getElementById('mwGraphTip'),
+      mwDetail = document.getElementById('mwDetail'), mwEmpty = document.getElementById('mwEmpty'),
       pmAsOf = document.getElementById('pmAsOf'), pmTracks = document.getElementById('pmTracks'),
       pmGrid = document.getElementById('pmGrid'), pmSwap = document.getElementById('pmSwap'), pmTake = document.getElementById('pmTake'),
       toggleMap = document.getElementById('toggleMap'), toggleCards = document.getElementById('toggleCards'),
       storyCardsEl = document.getElementById('storyCards'), storyGraphEl = document.getElementById('storyGraphSection'),
-      storyTake = document.getElementById('storyTake'), newsGrid = document.getElementById('newsGrid');
+      storyTake = document.getElementById('storyTake'), newsGrid = document.getElementById('newsGrid'),
+      graphHint = document.querySelector('.graphHint');
   if (!mwGrid && !pmGrid) return;
   var DATA = null;
   var graphHandle = null;
+  // U42 (2026-07-18): 3D data-starfield alternative to the 2D graph above,
+  // opt-in via ?fx=starfield3d (same flag-gate convention as alphardForge.js's
+  // ?fx=stage) — the 2D graph stays the shipped default until the station
+  // owner's real-device call (Urgent.md U42 42c slice ④).
+  var is3D = (function () { try { return /[?&]fx=starfield3d\b/.test(location.search); } catch (e) { return false; } })();
+  var starfieldHandle = null, universeData = null;
+  if (is3D && graphHint) {
+    graphHint.setAttribute('data-en', 'Drag to orbit, scroll/pinch to dolly, click a particle for detail (double-click empty space or Esc to return). US names glow cyan-white, China names glow amber.');
+    graphHint.setAttribute('data-zh', '拖动可环绕视角，滚轮/双指可推拉镜头，点击粒子查看详情（双击空白处或按 Esc 返回全景）。美股节点为青白色辉光，中国节点为琥珀色辉光。');
+  }
   var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
   function T(en, zh) { return lang() === 'zh' ? zh : en; }
@@ -488,7 +515,22 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
       (DATA && DATA.baskets || []).forEach(function (b) {
         (b.equities || []).forEach(function (e) { if (e.ticker === node.label) refs.push({ vendor: b.vendor, relation: e.relation, note: e.correlation_note_zh }); });
       });
-      if (!refs.length) { mwDetail.hidden = true; return; }
+      if (!refs.length) {
+        // U42: the 3D starfield's data layer also includes plain arena-universe
+        // filler tickers (benchmarks/megacaps with no vendor correlation call)
+        // to round the particle count out — say so honestly rather than a
+        // silent no-op click, which the 2D graph never needed since it only
+        // ever contained basket-referenced equities.
+        if (node.kind === 'universe') {
+          mwDetail.innerHTML = closeBtn + '<div class="mwHead"><span class="mwVendor">' + esc(node.label) + '</span></div>'
+            + '<div class="mwGap">' + esc(T('On the Arena trading universe list — no vendor-correlation thesis on file for this ticker.', '在 Arena 交易域清单内——该股暂无厂商关联研判。')) + '</div>';
+          mwDetail.hidden = false;
+          var closeUni = mwDetail.querySelector('.mwDetailClose');
+          if (closeUni) closeUni.addEventListener('click', function () { mwDetail.hidden = true; });
+          return;
+        }
+        mwDetail.hidden = true; return;
+      }
       var rows = refs.map(function (r) {
         return '<div class="mwDev"><b>' + esc(VENDOR_NAME[r.vendor] || r.vendor) + '</b> · <span class="basketTag">' + esc(RELATION_LABEL[r.relation] || r.relation) + '</span>'
           + (r.note ? '<div class="mwGap">' + esc(r.note) + '</div>' : '') + '</div>';
@@ -619,15 +661,57 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
   if (toggleMap) toggleMap.addEventListener('click', showGraph);
   if (toggleCards) toggleCards.addEventListener('click', showCards);
 
+  function hideGraphTip() { if (mwGraphTip) mwGraphTip.hidden = true; }
+  function showGraphTip(node, x, y) {
+    if (!mwGraphTip) return;
+    if (!node) { hideGraphTip(); return; }
+    mwGraphTip.textContent = graphLabelFor(node);
+    mwGraphTip.style.left = x + 'px'; mwGraphTip.style.top = y + 'px';
+    mwGraphTip.hidden = false;
+  }
+
   function renderGraph() {
-    if (!mwGraph || !window.AfflatusSectorsGraph) return;
     var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
     if (!mw.length) {
-      mwGraph.hidden = true; if (mwDetail) mwDetail.hidden = true;
+      if (mwGraph) mwGraph.hidden = true; if (mwGraph3d) mwGraph3d.hidden = true;
+      if (mwDetail) mwDetail.hidden = true; hideGraphTip();
       if (mwEmpty) { mwEmpty.hidden = false; mwEmpty.textContent = emptyMsg(); }
       return;
     }
-    mwGraph.hidden = false; if (mwEmpty) mwEmpty.hidden = true;
+    if (mwEmpty) mwEmpty.hidden = true;
+
+    if (is3D) {
+      if (mwGraph) mwGraph.hidden = true;
+      if (mwGraph3d) mwGraph3d.hidden = false;
+      if (starfieldHandle) { starfieldHandle.update({ sectorsData: DATA, universeData: universeData }); return; }
+      var mountStarfield = function () {
+        if (!window.AfflatusSectorsStarfield) return;
+        window.AfflatusSectorsStarfield.load().then(function (mod) {
+          if (!mwGraph3d) return;
+          starfieldHandle = mod.initSectorsStarfield(mwGraph3d, { sectorsData: DATA, universeData: universeData }, {
+            // starfield calls onSelect(null) on deselect (ESC/dblclick-empty/
+            // fly-back-to-overview) — renderNodeDetail only knows real nodes.
+            onSelect: function (node) { if (node) renderNodeDetail(node); else if (mwDetail) mwDetail.hidden = true; },
+            // fixed corner placement — simpler/cheaper than projecting the
+            // hovered particle's world position to screen space every frame
+            // for what's just a "what am I looking at" readout.
+            onHover: function (node) { showGraphTip(node, 12, 12); },
+          });
+        });
+      };
+      if (!universeData) {
+        fetch('/arena-universe.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+          .then(function (d) { universeData = d; mountStarfield(); })
+          .catch(function () { universeData = {}; mountStarfield(); });
+      } else {
+        mountStarfield();
+      }
+      return;
+    }
+
+    if (mwGraph3d) mwGraph3d.hidden = true;
+    if (!mwGraph || !window.AfflatusSectorsGraph) return;
+    mwGraph.hidden = false;
     if (!graphHandle) {
       graphHandle = window.AfflatusSectorsGraph.initSectorsGraph(mwGraph, DATA, { onSelect: renderNodeDetail, labelFor: graphLabelFor });
     } else {
