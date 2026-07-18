@@ -68,7 +68,14 @@
 
 ### 45-4 · 施工切片
 
-- [ ] ⑱ 施工（一次会话）：45-3 两处 CSS + caption 让位 + 移动端 936 行段核对；vitest/build/`!important` 计数（原地改值不新增）全绿后推送。
+- [x] ⑱ 施工（一次会话）：45-3 两处 CSS + caption 让位 + 移动端 936 行段核对；vitest/build/`!important` 计数（原地改值不新增）全绿后推送。✅ 代码已完成（2026-07-18）：
+  - `.stardrive .strip`（`styles.css:7236`）：`bottom:6svh` → `top:clamp(72px, 12svh, 128px); bottom:auto`，原地改值，选择器/其余属性不动。
+  - `.stardrive-caption`（原 `top:7%`）改 `bottom:14svh`，为顶锚后的 strip 让位——不这么改的话新 strip 会落在 caption 原来的位置上正面重叠。数值按粗略几何估算（stage 高度按 100svh 估约 800px 时，strip 占约 72–268px、caption 占约 568–628px 区间，中间 `.forge-tagline`（top:43%≈344px）夹在两者之间不冲突），**精确像素仍待真机核实，已列入 ⑲**。
+  - **移动端联动核对结论**：`styles.css:936` 的 `.strip{margin:40px 32px 0}` 对 margin 属性从未真正生效过——`.strip` 在当前 DOM 里只出现在 `.stardrive-scale` 内部，选择器优先级更高的 `.stardrive .strip{margin:0}` 一直赢——功能上是个哑代码，本次改动不影响它的（无）效果，如实记录、不顺手删（不是本次改动引入的孤儿，CLAUDE.md 规则不清不动）。真正需要联动的是 `@media(max-width:640px)` 里另一条 `.stardrive .strip{...bottom:5svh}`（`styles.css:7277` 附近）——这条会在窄屏下把 strip 拉回底锚，跟桌面顶锚不一致，已同步改成 `bottom:auto;top:clamp(56px, 10svh, 96px)`（略小的顶部留白，给窄屏省空间）。
+  - `.hero` 移动端（`@media(max-width:860px)`）`!important` 修复段内的 `padding-bottom:6vh!important` 原地改 `2vh`——该行本就在既有 `!important` 段落内，全站计数不受影响。
+  - 相关历史注释（styles.css:7121 一带解释 svh 修复的长注释）补了一段 2026-07-18 附注，说明锚点从 bottom 翻到 top，不改写原有历史叙述本身。
+  - **与 U44 ⑮（stardrive exit 收缩）的交互核对**：`stageShrink` 只在 exit 阶段（pin 结束后）对整个 `.stardrive-stage` 加 `clip-path:inset(6% 44% 10% 4%...)+scale(.94)`，此时 strip 早已在滚动时间线上"过去"了（strip 现在贴 stage 顶部=进入 pin 早期就可见，shrink 发生在 pin 结束后的 exit 阶段）——两者在时间上错开，不构成同屏冲突，逻辑上与 U44 ⑮ 记录里"caption 与 exit 阶段错开"是同一个道理。
+  - 713/713 vitest，`vite build` 干净（沙盒 `dist/.DS_Store` 环境问题同前，临时 `--outDir` 验证），`!important` 计数 2504→2504 不变（全部原地改值，无新增）。
 - [ ] ⑲ 站主真机验收：标题→面板的视觉衔接（桌面 + 移动端地址栏可见态）、星门滚动叙事在面板上移后的完整性、`?fx=stage` flag 态不回归。
 
 ## U44 · 首页 Accenture 式四件套交互升级（2026-07-18 立项，站主参考 accenture.com/au-en + 技术规范 prompt，生产级实施规格）

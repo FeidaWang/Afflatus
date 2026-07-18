@@ -4277,7 +4277,9 @@
        already runs ~550-650px on typical viewports, so 60vh is a floor for
        short viewports, not a forced empty block on normal ones. */
     min-height:60vh!important;
-    padding-bottom:6vh!important;
+    padding-bottom:2vh!important;   /* U45 (2026-07-18): was 6vh — strip panel
+      moved to the top of .stardrive-stage (above), so less pre-pin dead air
+      is needed between the hero title and the stage engaging. */
   }
   .brand{
     display:flex!important;
@@ -7133,7 +7135,13 @@
      geometry to `svh` (small viewport height — pinned to the address-bar-visible
      case, never jumps as the bar hides/shows), matching the fix already used on
      .hero's own mobile min-height. Desktop is unaffected (svh==vh there, no
-     address bar to hide). */
+     address bar to hide).
+     2026-07-18 (U45): the strip's anchor flipped from `bottom:*svh` to
+     `top:clamp(...)` (station-owner layout request — panel now sits right
+     under the hero title instead of at the foot of the 200svh scroll-through).
+     The svh-vs-vh lesson above still applies (that's why the new top offset
+     is also unitless-safe/clamp-bounded, not a bare vh value), it's just the
+     offset's *edge* that changed, not the underlying reasoning. */
   @supports (animation-timeline: view()) {
     .stardrive.is-live{view-timeline-name:--stardriveScroll;view-timeline-axis:block}
     .stardrive.is-live .stardrive-stage{animation:stardrivePin linear both,stageShrink linear both;animation-timeline:--stardriveScroll,--stardriveScroll;animation-range:contain 0% contain 100%,exit 0% exit 100%}
@@ -7219,7 +7227,12 @@
   .stardrive-stage::before{top:0;height:26vh;background:linear-gradient(180deg,var(--bg) 0%,#021418 16%,rgba(2,20,24,.62) 42%,rgba(4,10,16,.22) 72%,rgba(4,10,16,0) 100%)}
   .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
 
-  .stardrive-caption{position:absolute;left:0;right:0;top:7%;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
+  /* U45 (2026-07-18): was top:7% — the strip panel now anchors near the
+     stage top instead of the bottom (above), so the caption yields its old
+     spot and moves to the bottom edge instead. Value picked to clear both
+     the strip above and .forge-tagline (top:43%) in the middle; real-device
+     fine-tuning is U45 slice 19. */
+  .stardrive-caption{position:absolute;left:0;right:0;bottom:14svh;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
   .fc-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.42em;color:#aee0ff;text-shadow:0 0 calc(8px + var(--forge)*22px) rgba(110,180,255,.7)}
   .fc-sub{font-family:'Orbitron',sans-serif;font-weight:300;font-size:13px;letter-spacing:.34em;color:rgba(200,228,255,.78);text-transform:uppercase}
 
@@ -7233,7 +7246,7 @@
   @keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
 
   /* the metrics row as a telemetry band pinned near the bottom of the stage */
-  .stardrive .strip{position:absolute;left:96px;right:96px;bottom:6svh;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(3,5,9,.88),rgba(3,5,9,.72));backdrop-filter:blur(11px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
+  .stardrive .strip{position:absolute;left:96px;right:96px;top:clamp(72px, 12svh, 128px);bottom:auto;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(3,5,9,.88),rgba(3,5,9,.72));backdrop-filter:blur(11px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
   .stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
   /* 2026-07-16 (station-master feedback, round 3): rounds 1-2 (hue swap,
      then a dark contact-shadow) still read as too faint — the remaining
@@ -7274,7 +7287,7 @@
 
   @media (max-width:640px){
     .stardrive.is-live{height:170svh}
-    .stardrive .strip{left:20px;right:20px;bottom:5svh}
+    .stardrive .strip{left:20px;right:20px;bottom:auto;top:clamp(56px, 10svh, 96px)}
     .stardrive .hero-metric .strip-value{transform:scale(calc(1 + var(--forge)*0.16))}
     .forge-tagline{top:40%}
     .fc-sub{font-size:11px;letter-spacing:.22em}
