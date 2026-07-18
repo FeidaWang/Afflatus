@@ -436,7 +436,7 @@ const off = sphericalOffset(azimuth + parallaxAz, elevation + parallaxEl, distan
 
 **守则**：`prefers-reduced-motion` = 视差整体关闭（wantAz/wantEl 恒 0，不是降幅）；暂停态（播放/暂停钮）同样冻结视差回中；`PARALLAX_*` 上限刻意小于拖拽环绕一次典型行程的 1/10——视差是氛围，不能让用户误以为"页面自己在转"。
 
-- [ ] ⑬ 施工：上述 ~20 行并入 `sectorsStarfield.js` render 环 + CSS 契约两行落地；vitest/build 全绿后推送，随 ⑧ 一并真机验收（光标横扫屏幕看视差幅度与回中手感）。
+- [x] ⑬ 施工完成：`sectorsStarfield.js` 新增 `parallaxAz/parallaxEl`（`smoothDamp` 驱动，独立于既有 orbit 状态的附加偏移），`.sfStage` 上挂 `pointermove`（`pointerType!=='mouse'` 或 `pointers.size` 非空即跳过——复用既有拖拽判定），`render()` 内 `sphericalOffset(azimuth+parallaxAz, elevation+parallaxEl, distance)`；`sectors.css` 落地 `.sfCanvas{z-index:0}` / HUD 元素 `{z-index:1}` 契约两行。713/713 vitest 绿，vite build 干净（`sectorsStarfield-*.js` 独立分包，14.58kB gzip 6.00kB）。随 ⑧ 一并真机验收（光标横扫屏幕看视差幅度与回中手感）——**这一步需要站主本人真机操作**。
 
 ### 42-历史（V1 记录，压缩存档）
 
