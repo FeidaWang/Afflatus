@@ -14,6 +14,13 @@ export function initMarketDeck({
   let activePeriod = '1Y';
   let candles = genCandles(activePeriod);
   let ma20 = movingAverage(candles, 20);
+  // U44 44-2/44-4: tickers that actually have a real #card-<TICKER> anchor on
+  // sectors.html today (verified 2026-07-18). The other picks share the AI
+  // hardware supply-chain space sectors.html covers but aren't individually
+  // anchored there yet — their CTA links to the page only, never a fabricated
+  // anchor.
+  const SECTORS_ANCHORS = new Set(['NVDA', 'AVGO', 'MU']);
+  let splitIO = null;
 
   function langKey() {
     return getLang() === 'zh' ? 'zh' : 'en';
@@ -258,20 +265,63 @@ export function initMarketDeck({
     observer.observe(el);
   }
 
+  function paintSticky(p) {
+    const rail = document.querySelector('.holdSticky');
+    if (!rail || !p) return;
+    rail.querySelector('.hsTicker').textContent = p.tk;
+    rail.querySelector('.hsWeight').textContent = `${p.name} · ${p.pct.toFixed(1)}%`;
+    rail.querySelector('.hsThesis').textContent = p.why.replace(/<\/?em>/g, '');
+  }
+
   function renderPicks(picks = []) {
     const grid = document.getElementById('pickGrid');
     if (!grid) return;
     grid.innerHTML = '';
+    const ctaLabel = langKey() === 'zh' ? '去 sectors 看研判 →' : 'FULL THESIS →';
     picks.forEach((p, i) => {
-      const el = document.createElement('div');
-      el.className = 'pick';
-      el.innerHTML = `<div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${String(i + 1).padStart(2, '0')} / 10</div></div><div class="pick-name">${p.name}</div><div class="pick-thesis">${p.why}</div><div class="alloc-row"><div class="alloc-bar"><i data-target="${p.pct}"></i></div><div class="alloc-num">0.0<span>%</span></div></div>`;
+      const el = document.createElement('article');
+      el.className = 'pick pick-card';
+      el.tabIndex = 0;
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-expanded', 'false');
+      const href = SECTORS_ANCHORS.has(p.tk) ? `/sectors.html#card-${p.tk}` : '/sectors.html';
+      el.innerHTML = `<div class="pcCover"><div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${String(i + 1).padStart(2, '0')} / 10</div></div><div class="pick-name">${p.name}</div><div class="alloc-row"><div class="alloc-bar"><i data-target="${p.pct}"></i></div><div class="alloc-num">0.0<span>%</span></div></div></div><div class="pcDetail"><p class="pick-thesis">${p.why}</p><a class="pcCta" href="${href}">${ctaLabel}</a></div>`;
+      el._pickData = p;
       grid.appendChild(el);
       observePick(el);
+    });
+    if (splitIO) splitIO.disconnect();
+    splitIO = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) paintSticky(e.target._pickData); });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    grid.querySelectorAll('.pick-card').forEach((c) => splitIO.observe(c));
+    if (picks[0]) paintSticky(picks[0]);
+  }
+
+  function togglePickOpen(el) {
+    const open = el.classList.toggle('open');
+    el.setAttribute('aria-expanded', String(open));
+  }
+
+  function initPickGridToggle() {
+    const grid = document.getElementById('pickGrid');
+    if (!grid) return;
+    grid.addEventListener('click', (e) => {
+      const card = e.target.closest('.pick-card');
+      if (!card || e.target.closest('.pcCta')) return;
+      togglePickOpen(card);
+    });
+    grid.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const card = e.target.closest('.pick-card');
+      if (!card || e.target.closest('.pcCta')) return;
+      e.preventDefault();
+      togglePickOpen(card);
     });
   }
 
   function init() {
+    initPickGridToggle();
     if (kc) {
       addEventListener('resize', sizeK);
       const periodTabs = document.getElementById('periodTabs');
