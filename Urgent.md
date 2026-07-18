@@ -1,5 +1,158 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U44 · 首页 Accenture 式四件套交互升级（2026-07-18 立项，站主参考 accenture.com/au-en + 技术规范 prompt，生产级实施规格）
+
+**立项裁决**：四个效果全收，但按仓库既有纪律全部改道到零依赖原生实现——**GSAP/ScrollTrigger 不引入**（prompt 每次都给"GSAP 或原生"二选一，本仓库三次裁决都是原生：lerp/smoothDamp 自有、CSS scroll-timeline 基建已在 `.stardrive`/signal 进度条生产验证）。落点全部绑定首页**真实内容**：没有"办公室照片"就不编造照片——收缩英雄图 = 现有 stardrive 3D 舞台画布；卡片 = holdings 十强持仓卡（真数据真论点）；视差文字 = hero 舰长日志标题；分栏联动 = holdings 重排。**红线**：首页是内容型身份（U23，SEO/LCP 不可破），四件全是渐进增强——`@supports` 门控 + 无 JS/旧浏览器/RM 下回退为现状静态排版；不新增任何 WebGL context（U23 M2 前禁令）；新样式只进 `src/styles.css` 的 `@layer components`（U30 硬规则，首页在主级联层体系内，与 sectors/signal 的独立样式表豁免不同）。
+
+### 44-0 · 关键裁决
+
+| prompt 要求 | 裁决 | 理由 |
+| --- | --- | --- |
+| GSAP + ScrollTrigger 或 CSS scroll-timeline | **CSS `animation-timeline: view()/scroll()`**，JS 零滚动监听 | 仓库零依赖红线；该基建已有两处生产实例（`.stardrive` pin、signal `.readProgress`） |
+| 动态 Grid/Flex 权重过渡布局 | **拒绝动画化 grid 列宽**——只动 `clip-path` + `transform`（合成器通道），真实布局静态 | 动画 grid-template-columns 每帧触发 layout（prompt 自己的"防 layout thrashing"条目与此自相矛盾，按性能优先裁决）；宪章③ transform/opacity-only |
+| `mousemove` 直绑 | `pointermove`（passive）+ 自停 rAF lerp 环 + **CSS 变量出口** | 仓库 Pointer Events 统一约定（U42/U43 同款）；CSS 变量方案 prompt 原样采纳（DOM 写入交给 CSS 引擎） |
+| `will-change: transform, opacity` | 采纳但**限定范围**：只挂在十张卡的两层子元素上（~20 节点），且只在 `@media(hover:hover)` 内生效 | will-change 是显存预算不是免费加速；触屏设备无高频 hover，不付这份内存 |
+| 卡片 hover 盖层→文案切换 | 采纳 + **触屏/键盘等价物**（点按/Enter 切 `.open`，`:focus-visible` 同态） | 22c 铁律：hover 专属信息零容忍 |
+| 分栏 sticky + IO 联动 | 采纳，桌面 ≥1100px 增强，窄屏回退现有单列 | 移动端塞双栏必然牺牲卡片可读性；IO 是仓库标准滚动检测件 |
+
+### 44-1 · 特性① 滚动收缩过渡（stardrive 舞台全屏 → 左对齐小窗，交棒 equity 章节）
+
+现有 `.stardrive-stage` 已用 `animation-timeline: view()` 做 pin（U30 R2）；本特性在**同一条时间线**上追加第二段动画（逗号并列，不同 `animation-range`），零新监听：
+
+```css
+@layer components {
+  @supports (animation-timeline: view()) {
+    .stardrive-stage {
+      /* 既有 pin 动画保持，追加 exit 段收缩（施工时与现有 keyframes 合并核对） */
+      animation: stardrivePin linear both, stageShrink linear both;
+      animation-timeline: view(), view();
+      animation-range: cover 0% cover 100%, exit 0% exit 100%;
+      transform-origin: left center;
+    }
+    @keyframes stageShrink {
+      to { clip-path: inset(6% 44% 10% 4% round 16px); transform: scale(.94); }
+    }
+    /* 舞台内字幕同步淡出，为下一章标题让位 */
+    .stardrive-caption { animation: capFade linear both; animation-timeline: view(); animation-range: exit 0% exit 60%; }
+    @keyframes capFade { to { opacity: 0; transform: translateY(-12px); } }
+  }
+}
+```
+
+不支持 scroll-timeline 的浏览器：无收缩，舞台按现状滚出视口——**不用 JS 兜底假造**（signal `.readProgress` 同一条渐进增强哲学）。
+
+### 44-2 · 特性② 持仓卡双层微交互（盖层 → 论点+CTA，elevation 抬升）
+
+落点 `#pickGrid` 十张卡（main.js 动态渲染，**改模板函数而非静态 HTML**）。每卡两层：`.pcCover`（现状：ticker+权重条）与 `.pcDetail`（论点摘要 + 「去 sectors 看研判 →」真实链接）：
+
+```html
+<article class="pick-card" tabindex="0" role="button" aria-expanded="false">
+  <div class="pcCover"> …现有 ticker/权重条内容原样搬入… </div>
+  <div class="pcDetail"> <p>…该股 thesis 一句话（真数据字段）…</p>
+    <a class="pcCta" href="/sectors.html#card-NVDA">FULL THESIS →</a> </div>
+</article>
+```
+
+```css
+@layer components {
+  .pick-card { position: relative; contain: layout paint;
+    box-shadow: 0 1px 4px rgba(0,0,0,.4); transition: box-shadow .3s ease; }
+  .pcCover, .pcDetail { transition: transform .32s ease, opacity .32s ease; }
+  .pcDetail { position: absolute; inset: 0; padding: 14px; opacity: 0; transform: translateY(14px); pointer-events: none; }
+  @media (hover: hover) {
+    .pcCover, .pcDetail { will-change: transform, opacity; }   /* 仅 hover 设备付这份显存 */
+    .pick-card:hover, .pick-card:focus-visible, .pick-card.open { box-shadow: 0 14px 34px rgba(0,0,0,.55); } /* elevation 抬升 */
+    .pick-card:hover .pcCover { transform: translateY(-12px); opacity: 0; }
+    .pick-card:hover .pcDetail { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  }
+  /* 触屏/键盘等价态：点按或 Enter 切 .open，状态与 hover 完全同款 */
+  .pick-card.open .pcCover { transform: translateY(-12px); opacity: 0; }
+  .pick-card.open .pcDetail { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  @media (prefers-reduced-motion: reduce) { .pcCover, .pcDetail, .pick-card { transition: none; } }
+}
+```
+
+JS 只加一个事件委托（挂 `#pickGrid`，click + Enter/Space 切 `.open`、同步 `aria-expanded`，与 sectors `.nCard` 完全同套路，~10 行）。
+
+### 44-3 · 特性③ 鼠标视差（hero 舰长日志文字的伪 3D 呼吸）
+
+一个 passive `pointermove` + **自停 rAF lerp 环**写两个 CSS 变量，DOM 位移全部交给 CSS `calc()`（prompt 方案原样落地）；触屏指针不触发；hero 滚出视口即由 IO 停环：
+
+```js
+/* main.js 追加，~25 行。RM / 非鼠标指针 / hero 离屏 三种情况下环不启动 */
+const root = document.documentElement;
+let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0, heroOn = true;
+addEventListener('pointermove', (e) => {
+  if (e.pointerType !== 'mouse' || RM || !heroOn) return;
+  tx = (e.clientX / innerWidth) * 2 - 1;
+  ty = (e.clientY / innerHeight) * 2 - 1;
+  if (!raf) raf = requestAnimationFrame(frame);
+}, { passive: true });
+function frame() {
+  cx += (tx - cx) * 0.06;  cy += (ty - cy) * 0.06;          // lerp 惯性（prompt 参考逻辑）
+  root.style.setProperty('--mx', cx.toFixed(4));
+  root.style.setProperty('--my', cy.toFixed(4));
+  raf = (Math.abs(tx - cx) + Math.abs(ty - cy) > 0.002) ? requestAnimationFrame(frame) : 0;  // 收敛即自停，静止零开销
+}
+new IntersectionObserver((es) => { heroOn = es[0].isIntersecting; }).observe(document.querySelector('.hero'));
+```
+
+```css
+@layer components {
+  .hero-title  { transform: translate(calc(var(--mx, 0) * -10px), calc(var(--my, 0) * -6px)); }
+  .hero-num    { transform: translate(calc(var(--mx, 0) *  -4px), calc(var(--my, 0) * -2px)); }
+  .hero-desc   { transform: translate(calc(var(--mx, 0) *  -6px), calc(var(--my, 0) * -4px)); }
+  /* 三层位移系数不同 = 深度差；负号 = 反向漂移（镜头感）。幅度 ≤10px：呼吸，不是晃动 */
+  @media (prefers-reduced-motion: reduce), (hover: none) {
+    .hero-title, .hero-num, .hero-desc { transform: none; }
+  }
+}
+```
+
+注意与 alphardForge 画布自带的指针视差是**两个独立小环**（那个动相机、这个动 DOM 文字），方向系数须同号核对一次，避免文字与星空反向漂移打架。
+
+### 44-4 · 特性④ holdings 分栏联动（左 sticky 语境栏 + 右滚卡片流，IO 驱动）
+
+桌面 ≥1100px 时 `.holdings` 升级为双栏 grid；左栏 sticky 显示"当前视口中卡"的大号读数（ticker/权重/一句话论点，内容全部来自已渲染卡片的数据，零新数据源）；右栏就是现有 `#pickGrid`（改单列纵向流）。窄屏媒体查询整段不生效 = 现状单列，零回退成本：
+
+```css
+@layer components {
+  @media (min-width: 1100px) {
+    .holdings-split { display: grid; grid-template-columns: minmax(300px, 1fr) 2fr; gap: 36px; align-items: start; }
+    .holdSticky { position: sticky; top: 88px; }
+    .holdSticky .hsTicker { font: 700 clamp(2.2rem, 3.5vw, 3.4rem)/1 var(--disp); }
+    .holdSticky .hsWeight { color: var(--accent); font: 700 1.4rem/1 var(--mono); }
+    .holdSticky .hsThesis { max-width: 34ch; opacity: .8; }
+    .holdings-split #pickGrid { grid-template-columns: 1fr; }   /* 右栏改单列，卡片更大更编辑部 */
+  }
+}
+```
+
+```js
+/* IO 中线判定：哪张卡过视口中带，左栏就换谁的语境（textContent 写入，零布局抖动） */
+const io = new IntersectionObserver((es) => {
+  es.forEach((e) => { if (e.isIntersecting) paintSticky(cardData(e.target)); });
+}, { rootMargin: '-45% 0px -45% 0px' });
+document.querySelectorAll('.pick-card').forEach((c) => io.observe(c));
+/* paintSticky 只写 textContent + 一次 class 切换（淡入），不动结构 */
+```
+
+### 44-5 · 性能守则（Reflow/Repaint 最小化，prompt 交付项 4）
+
+- **全程合成器属性**：四件套只动 `transform/opacity/clip-path/box-shadow`，唯一例外 box-shadow（paint 层）用时长 .3s 的低频过渡，不进高频路径。
+- **零滚动监听**：特性①纯 CSS 时间线；③④的滚动感知全走 IO。全站现有纪律不破。
+- **写入通道单一化**：③只写 2 个 CSS 变量（每帧 2 次 setProperty，收敛自停）；④只写 textContent；②纯 CSS 态切换。无逐帧 style 拼接、无强制同步布局读取（`getBoundingClientRect` 只在 IO 回调外零使用）。
+- **`will-change` 预算**：全站新增仅 `.pcCover/.pcDetail` 两类 ~20 节点，且 hover 设备限定；不挂 body/section 级大节点。
+- **`contain: layout paint`** 上卡片：hover 态切换的 paint 影响面锁死在卡内。
+- **LCP/CLS**：hero 文字不被 JS 首帧改写（变量默认 0，transform 恒等）；`.pcDetail` 绝对定位不参与流式布局，展开零 CLS；分栏只在桌面媒体查询内改布局，加载后不再变。
+
+### 44-6 · 施工切片
+
+- [ ] ⑭ 特性②+④（同一个区块，一次会话）：pick-card 模板双层化 + 委托切换 + holdings 分栏 + IO 语境栏；vitest/build/`!important` 基线全绿。
+- [ ] ⑮ 特性①：stardrive exit 段收缩 + 字幕交棒（与既有 pin keyframes 合并核对，真机重点看 pin→shrink 交界帧）。
+- [ ] ⑯ 特性③：CSS 变量视差环（与 alphardForge 相机视差方向核对）。
+- [ ] ⑰ 站主真机验收：收缩过渡交界、卡片 hover/点按双态、视差幅度、分栏联动换字手感、窄屏回退、RM 全静态。
+
 ## U43 · games.html 淘汰赛「区间刷子」重做（Apple Sports 世界杯分段滑杆 V2，2026-07-18 立项，站主五张 iOS 实拍截图 + 完整规格 prompt）
 
 **立项裁决**：U38 做的是"单选滑杆"（thumb 停在一个轮次上，一屏一轮）；参考截图里 Apple Sports 的真身是**区间刷子（range scrubber）**——active window 可以同时罩住 GS+R32 两段（左右并排两列内容）、也可以拉满 GS→F 全程（整棵树），窗口左右缘是可拖的把手，中段可整体平移，双指捏合/张开直接改窗口宽度。**U39 的三档语义缩放被本项吸收取代**：窗口宽度就是缩放档位（宽=1 轮 → 详情卡；2–3 轮 → 中密度卡；≥4 轮 → 紧凑 chips），三档状态机退役，`pinchZoom.js` 的纯函数手势数学保留复用。本节为**生产级实施规格**，结构/CSS/事件处理/桌面回退全部落到代码。
