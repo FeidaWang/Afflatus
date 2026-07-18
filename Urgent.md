@@ -1,5 +1,172 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U43 · games.html 淘汰赛「区间刷子」重做（Apple Sports 世界杯分段滑杆 V2，2026-07-18 立项，站主五张 iOS 实拍截图 + 完整规格 prompt）
+
+**立项裁决**：U38 做的是"单选滑杆"（thumb 停在一个轮次上，一屏一轮）；参考截图里 Apple Sports 的真身是**区间刷子（range scrubber）**——active window 可以同时罩住 GS+R32 两段（左右并排两列内容）、也可以拉满 GS→F 全程（整棵树），窗口左右缘是可拖的把手，中段可整体平移，双指捏合/张开直接改窗口宽度。**U39 的三档语义缩放被本项吸收取代**：窗口宽度就是缩放档位（宽=1 轮 → 详情卡；2–3 轮 → 中密度卡；≥4 轮 → 紧凑 chips），三档状态机退役，`pinchZoom.js` 的纯函数手势数学保留复用。本节为**生产级实施规格**，结构/CSS/事件处理/桌面回退全部落到代码。
+
+### 43-0 · 关键裁决（先定死）
+
+| 议题 | 裁决 | 理由 |
+| --- | --- | --- |
+| 阶段轨内容 | **只放真实存在的轮次：R16 / QF / SF / 季军赛 / F（5 段）** | 参考截图有 GS/R32，但 `games-data.json` 的 bracket 只有 qf/sf/third/final 槽（R16 藏在 qf legs，U38 已建模）——**没有小组赛/32 强数据，不给假轨道段**（宪章②）。轨道段数由 `bracketModel` 实际产出的 stages 驱动，未来若补数据自动多出段，零改码 |
+| 区间状态 | 一对整数索引 `[start, end]`（含端点），`0 ≤ start ≤ end < stages.length` | 一切手势（拖把手/平移/捏合/滚轮/键盘）最终都归结为对这对索引的纯函数变换，可 vitest 全覆盖 |
+| 密度三档 | 窗口宽 1 段=详情卡（U38 面板复用）；2–3 段=中密度比分卡；≥4 段=紧凑 chips（U39 renderKoTree 复用） | 参考截图行为：窗口越宽内容越浓缩。U39 的 ZOOM_TREE/STAGE/MATCH 三档正好一一对应，改由宽度派生而非独立状态 |
+| 手势库 | **零新依赖**：Pointer Events 一套走完（鼠标/触屏统一），双指用两个 pointer 距离，滚轮 `wheel` | 复用 `src/lib/pinchZoom.js` 已测数学件（`pointDistance`/`wheelScaleDelta`），新增区间纯函数进 `src/lib/stageRange.js` + vitest |
+| 动画 | 窗口/内容平移全走 `transform` + 既有苹果手感缓动 `cubic-bezier(.32,.72,.28,1)`；不引弹簧库 | U38 thumb 已验证该缓动"native 感"；宪章③ transform/opacity-only；`prefers-reduced-motion` 全静态直切 |
+| 配色 | U40 已落地的 WC26 令牌：藏青 `#1B2766` 底 + 冠军金 `#9F7D23`/`#D4AF37` + 主白文字 | 参考截图本来就是深蓝主题，令牌现成，零新色 |
+| 可访问性 | 轨道整体 `role="slider"` + `aria-valuetext="R16–QF"`；把手可 Tab；←→ 平移、Shift+←→ 调宽 | 触控把手视觉窄，键盘等价物必须有（22c 铁律） |
+
+### 43-1 · 组件结构（HTML）
+
+```html
+<div class="scrub" id="koScrub">
+  <!-- 阶段标签行（点击任一标签 = 窗口跳成只罩该段） -->
+  <div class="scrubLabels" aria-hidden="true">
+    <span data-i="0">R16</span><span data-i="1">QF</span><span data-i="2">SF</span>
+    <span data-i="3" data-en="3RD" data-zh="季军">3RD</span><span data-i="4">F</span>
+  </div>
+  <!-- 轨道：每段一个图标格（线数递减，决赛=奖杯，对齐参考截图） -->
+  <div class="scrubTrack" role="slider" tabindex="0" aria-label="Stage range"
+       aria-valuemin="0" aria-valuemax="4" aria-valuetext="R16–F">
+    <span class="scrubCell" data-i="0">≣</span>
+    <span class="scrubCell" data-i="1">≡</span>
+    <span class="scrubCell" data-i="2">=</span>
+    <span class="scrubCell" data-i="3">−</span>
+    <span class="scrubCell" data-i="4">🏆</span>
+    <!-- 活动窗口：左右把手 + 可拖中段，绝对定位罩在轨道上 -->
+    <div class="scrubWin">
+      <b class="scrubHandle hL" aria-hidden="true">‹</b>
+      <b class="scrubHandle hR" aria-hidden="true">›</b>
+    </div>
+  </div>
+</div>
+<div class="koViewport"><div class="koColumns" id="koColumns"><!-- [start,end] 各轮一列 --></div></div>
+```
+
+### 43-2 · CSS（把手/窗口叠层，U40 令牌）
+
+```css
+.scrub{margin:14px 0 18px}
+.scrubLabels{display:grid;grid-template-columns:repeat(5,1fr);text-align:center;
+  font:700 12px/1 var(--mono);letter-spacing:.08em;color:var(--dim);margin-bottom:8px}
+.scrubTrack{position:relative;height:56px;border-radius:14px;background:rgba(255,255,255,.07);
+  display:grid;grid-template-columns:repeat(5,1fr)}
+.scrubCell{display:grid;place-items:center;font-size:18px;color:rgba(255,255,255,.55)}
+/* 活动窗口：left/width 由 JS 按 [start,end] 折算成百分比写入 --l/--w */
+.scrubWin{position:absolute;top:0;bottom:0;left:var(--l);width:var(--w);
+  background:rgba(255,255,255,.22);border-radius:14px;
+  transition:left .3s cubic-bezier(.32,.72,.28,1),width .3s cubic-bezier(.32,.72,.28,1);
+  touch-action:none;cursor:grab}
+.scrubWin:active{cursor:grabbing}
+.scrubWin.drag{transition:none}                 /* 拖动中零延迟跟手，松手才回到缓动 */
+.scrubHandle{position:absolute;top:0;bottom:0;width:26px;display:grid;place-items:center;
+  color:#fff;font:700 18px/1 var(--mono);cursor:ew-resize;touch-action:none}
+.scrubHandle.hL{left:-4px;border-radius:14px 0 0 14px}
+.scrubHandle.hR{right:-4px;border-radius:0 14px 14px 0}
+/* 把手命中区扩到 44px（视觉 26px，触控达标） */
+.scrubHandle::before{content:"";position:absolute;inset:0 -9px}
+.koViewport{overflow:hidden}
+.koColumns{display:flex;gap:14px;transition:transform .3s cubic-bezier(.32,.72,.28,1)}
+.koColumns>section{flex:1 0 0;min-width:0}
+@media (prefers-reduced-motion: reduce){.scrubWin,.koColumns{transition:none}}
+```
+
+### 43-3 · 纯函数层 `src/lib/stageRange.js`（新，+vitest，本仓库标准打法）
+
+所有手势最终调这五个纯函数，DOM 层只负责把像素换算成"段数增量"：
+
+```js
+export const clampRange = (s, e, n) => {           // 万能收口：s≤e、双端夹紧
+  s = Math.max(0, Math.min(n - 1, Math.round(s)));
+  e = Math.max(0, Math.min(n - 1, Math.round(e)));
+  return s <= e ? [s, e] : [e, s];
+};
+export const panRange    = ([s, e], d, n) => {     // 中段拖动：整体平移，宽度不变
+  const w = e - s, s2 = Math.max(0, Math.min(n - 1 - w, s + d));
+  return [s2, s2 + w];
+};
+export const resizeLeft  = ([s, e], d, n) => clampRange(Math.min(s + d, e), e, n);
+export const resizeRight = ([s, e], d, n) => clampRange(s, Math.max(e + d, s), n);
+export const zoomRange   = ([s, e], d, n) => {     // 捏合/滚轮：对称收放（d>0 放宽）
+  let [s2, e2] = [s - d, e + d];
+  if (d < 0 && e2 < s2) { const m = Math.round((s + e) / 2); s2 = e2 = m; }  // 收到 1 段为止
+  return clampRange(s2, e2, n);
+};
+export const densityFor  = (w) => (w <= 0 ? 'detail' : w <= 2 ? 'cards' : 'chips'); // w = e-s
+```
+
+### 43-4 · 事件处理（Pointer Events 一套覆盖鼠标+触屏）
+
+像素→段数换算与三种拖拽模式（把手/中段/双指），全部 `setPointerCapture` 走独占跟踪：
+
+```js
+const track = $('.scrubTrack'), win = $('.scrubWin');
+const pointers = new Map();                        // pointerId -> {x, role}
+let range = [0, stages.length - 1];               // 初始 = 全程（参考截图默认态）
+const cellW = () => track.getBoundingClientRect().width / stages.length;
+const dxToCells = (px) => Math.round(px / cellW());
+
+function roleAt(e) {                               // 命中判定：左把手 / 右把手 / 中段
+  if (e.target.closest('.hL')) return 'L';
+  if (e.target.closest('.hR')) return 'R';
+  return e.target.closest('.scrubWin') ? 'PAN' : null;
+}
+track.addEventListener('pointerdown', (e) => {
+  const role = roleAt(e); if (!role) return;
+  track.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, x0: e.clientX, role, r0: [...range] });
+  win.classList.add('drag');
+  if (pointers.size === 2) {                       // 双指落定 → 切捏合模式
+    const [a, b] = [...pointers.values()];
+    pinch0 = Math.abs(a.x - b.x); pinchR0 = [...range];
+  }
+});
+track.addEventListener('pointermove', (e) => {
+  const p = pointers.get(e.pointerId); if (!p) return;
+  p.x = e.clientX;
+  if (pointers.size >= 2) {                        // 捏合/张开：双指水平距离差 → 对称收放
+    const [a, b] = [...pointers.values()];
+    const d = dxToCells((Math.abs(a.x - b.x) - pinch0) / 2);
+    range = zoomRange(pinchR0, d, stages.length);
+  } else {
+    const d = dxToCells(e.clientX - p.x0);         // 相对按下点的累计位移，避免漂移
+    if (p.role === 'L')   range = resizeLeft(p.r0, d, stages.length);
+    if (p.role === 'R')   range = resizeRight(p.r0, d, stages.length);
+    if (p.role === 'PAN') range = panRange(p.r0, d, stages.length);
+  }
+  paint();                                         // 拖动中实时写 --l/--w + 重排列
+});
+['pointerup','pointercancel'].forEach((t) => track.addEventListener(t, (e) => {
+  pointers.delete(e.pointerId);
+  if (!pointers.size) win.classList.remove('drag'); // 松手 → 恢复缓动，窗口吸附到整数段
+  paint();
+}));
+```
+
+### 43-5 · 桌面 vs 移动的缩放通道（明确分工）
+
+| 输入 | 通道 | 实现 |
+| --- | --- | --- |
+| 触屏双指内收/外张 | 捏合缩放 | 上面的双 pointer 距离差 → `zoomRange`（`touch-action:none` 防浏览器抢手势） |
+| 桌面滚轮 / 触控板双指滚 | **对称收放回退** | 轨道上 `wheel`（`preventDefault`）：`zoomRange(range, wheelScaleDelta(e.deltaY) > 0 ? 1 : -1, n)`，节流 120ms 一步——复用 `pinchZoom.js` 已测的 `wheelScaleDelta` 符号归一 |
+| 键盘 | 平移/收放等价物 | `←/→` = `panRange ±1`；`Shift+←/→` = `resizeRight ±1`；`Home/End` = 单段/全程 |
+| 点标签 | 直达 | 点 `scrubLabels` 任一段 = `range=[i,i]`（单段详情档） |
+
+### 43-6 · 内容同步（区间 → 列渲染 + 平移吸附）
+
+- `paint()` 做三件事：① `--l = start/n*100%`、`--w = (end-start+1)/n*100%` 写给 `.scrubWin`；② `aria-valuetext` 更新为 `"R16–QF"` 式区间文案；③ 按 `densityFor(end-start)` 选层重渲 `#koColumns`——`detail` 复用 U38 单轮面板、`cards` 用中密度比分卡（旗帜+3 字码+比分）、`chips` 复用 U39 `renderKoTree` 的紧凑列。列容器整体 `transform:translateX` 平移到区间起点，松手后跟窗口同一条缓动曲线吸附（"内容跟着刷子走"的参考站核心观感）。
+- 重渲染只在**区间整数值变化**时发生（拖动中同一区间只动 transform，不重建 DOM）。
+- 数据零改动：列内容全部来自 `bracketModel.js` 既有 stages 产出；季军赛/决赛的金边卡、点球标注等 U38/U40 已有组件原样复用。
+
+### 43-7 · 施工切片
+
+- [ ] ⑨ `stageRange.js` 纯函数 + vitest（clamp/pan/resize×2/zoom/density 全分支）。
+- [ ] ⑩ 轨道/窗口/把手 DOM+CSS + Pointer Events 接线（拖把手/中段平移/双指/滚轮/键盘/点标签），U38 thumb 与 U39 三档状态机退役改造。
+- [ ] ⑪ 区间→列渲染同步（三档密度 + translateX 吸附）+ 双语 + RM 静态化。
+- [ ] ⑫ 站主真机验收：把手手感、中段平移、双指收放方向、滚轮回退、键盘可达、单段↔全程往返。
+
+**与既有条目的关系**：U38（单选滑杆）的轨道视觉与缓动曲线保留，thumb 升级为本项的区间窗口；U39（三档捏合缩放）的手势数学（`pinchZoom.js`）保留复用，三档独立状态机由"窗口宽度派生密度"取代——U39 条目不回滚，功能被本项包含。数据侧受 U40 的 third/final 补齐直接受益（5 段轨道已含季军赛）。
+
 ## U42 · Two Sigma 式交互数据星域（2026-07-17 立项 · 2026-07-18 V2 规格全面重写）
 
 **V2 重写背景**：①–③ 第一版上线后站主两轮真机反馈（第一轮"太暗太远"已修常数；第二轮直接给出 Two Sigma 原站三张实拍截图 + 完整规格 prompt），裁定第一版方向性不足——参考站的观感核心不是"稀疏发光粒子"，而是**高密度实心圆点 + 正交连线矩阵 + 极简线框 HUD + 信息弹窗**四件套。本节从"设计笔记"升格为**生产级实施规格**：结构、CSS、Three.js 初始化、GLSL、运动学全部落到可直接施工的代码。V1 的数据语义层（`dataToSpace.js`，宪章②）**保留不动**，重写的是渲染与交互外壳。
