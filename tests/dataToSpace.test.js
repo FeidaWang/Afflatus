@@ -47,6 +47,11 @@ describe('buildSpaceData', () => {
     expect(nodes.filter((n) => n.kind === 'equity')).toHaveLength(5);
   });
 
+  it('tags vendor nodes with a plain `vendor` slug so callers can reuse a vendor-keyed detail lookup unmodified', () => {
+    const { nodes } = buildSpaceData({ sectorsData: fixtureSectors(), universeData: fixtureUniverse() });
+    expect(nodes.find((n) => n.id === 'vendor:zhipu').vendor).toBe('zhipu');
+  });
+
   it('dedupes a ticker referenced by two baskets into one node with averaged confidence', () => {
     const { nodes } = buildSpaceData({ sectorsData: fixtureSectors(), universeData: fixtureUniverse() });
     const avgo = nodes.filter((n) => n.id === 'equity:AVGO');

@@ -20,9 +20,9 @@
 ### 42c · 施工切片（每片一会话）
 
 - [x] ① `dataToSpace.js` 纯函数 + vitest（映射/聚类/归一化，沙盒全验证）。✅ 代码已完成（2026-07-18）
-- [ ] ② Points 双层渲染 + 着色器 + idle 漂移（flag 下真机看氛围）。
-- [ ] ③ 交互三件套（orbit/dolly/fly-to+详情卡）+ 射线拾取标签。
-- [ ] ④ 站主真机裁决转默认 or 保持 opt-in；通过后回填 U30 R3 条目为「已由 U42 取代」。
+- [x] ② Points 双层渲染 + 着色器 + idle 漂移（flag 下真机看氛围）。✅ 代码已完成（2026-07-18，站主指令一并做完②③）
+- [x] ③ 交互三件套（orbit/dolly/fly-to+详情卡）+ 射线拾取标签。✅ 代码已完成（2026-07-18，同上）
+- [ ] ④ 站主真机裁决转默认 or 保持 opt-in；通过后回填 U30 R3 条目为「已由 U42 取代」。**这一步无法由代理代劳**——需要站主自己开 `sectors.html?fx=starfield3d` 用真机走一遍，本条目继续留空等验收。
 
 **① 实现记录**（`src/lib/dataToSpace.js` + `tests/dataToSpace.test.js`，11 条 vitest，零 DOM/THREE 依赖，与 `forceGraph.js`/`flightPath.js` 同一"纯函数先行"打法）：
 
@@ -31,7 +31,19 @@
 - **聚类不用等物理模拟**：42a 提到"同 bucket 粒子微弹簧聚拢"，但本切片只做纯数据映射，没有时间步进——用同一个 `(market,bucket)` 组合共享一个种子化偏移量（`offsetFor`）实现"看得出分组"的聚类效果，真正的弹簧/斥力积分器留给②按需另加（如果视觉上还需要）。
 - **坐标符号延续 R3**：x 轴 US=-1/CN=+1 与 `forceGraph.js` 的 `MARKET_ANCHOR` 同号，万一未来两个图并排对比不会反直觉。
 - **验证**：687/687 vitest（+11，无回归），`vite build` 干净（本文件目前零调用方，不出现在任何 bundle 里，符合"纯函数先行、渲染层未接入"的切片范围）。
-- **⚠️ 分期提醒**：42c 的 checklist 原文写明"每片一会话"——本次只做①，②（Points 渲染+着色器+idle 漂移）/③（orbit/dolly/fly-to 交互）/④（真机裁决）按计划留到后续会话，不在本次一次性做完，避免把 3D 场景/着色器/相机交互这种真机反馈依赖极重的活儿在没有中间验证点的情况下一口气堆完。
+- **⚠️ 分期提醒**：42c 的 checklist 原文写明"每片一会话"——上一轮只做了①；本轮站主明确指令"做完"，于是②③在同一会话内一并完成（见下）。④（真机裁决）性质上不是代码任务，无法在本会话内完成，留给站主。
+
+**②③ 实现记录**（`src/scene/sectorsStarfield.js` 新文件 + `sectors.html`/`sectors.css` 接线 + `dataToSpace.js` 小补丁，零新 vitest——这层是 WebGL 渲染/交互胶水，本仓库对这类模块的既定测试边界是"数据/数学层测试，渲染胶水层不测"，`dataToSpace.js`/`cameraMath.js` 两侧的纯函数已经覆盖）：
+
+- **落点**：sectors.html 现有「切换为交互星图」面板（`#storyGraphSection`）新增同尺寸的 `#mwGraph3d` 画布作为 `#mwGraph`（2D 力导向图）的同级兄弟，`hidden` 属性互斥切换——`?fx=starfield3d` 出现时才隐藏 2D 画布、显示 3D 画布并挂载星域场景；不带 flag 时页面行为与 U42 立项前完全一致（2D 力导向图仍是默认，`sectorsGraphView.js`/`forceGraph.js` 一行未动）。
+- **懒加载纪律**：`src/scene/sectorsStarfield.js`（连带 three.js）只在用户点开地图视图**且**带 flag 时才用动态 `import()` 拉取，不带 flag 的访问者零字节成本。踩过一个坑：动态 `import()` 直接写在经典（非 `type="module"`）内联 `<script>` 里，vite build 不会扫描/改写它（vite 只分析 `type="module"` 脚本的模块图），构建产物里该 import 会照抄成一个生产环境不存在的裸源码路径——改成沿用本文件 `AfflatusSectorsGraph`/`AfflatusProvenance` 已有的"window 桥"套路：真正的 `import()` 挪进一个新的 `type="module"` 块里，经典脚本只调用挂在 `window.AfflatusSectorsStarfield.load()` 上的桥函数。修完后确认构建产物里出现独立的 `sectorsStarfield-*.js` 懒加载分片（8.87 kB / gzip 3.78 kB），`cameraMath.js` 也析出为独立共享 chunk（与 3D 战斗镜头逻辑共用，零重复代码），`vendor-three` 仍是同一个共享分包。
+- **两层 Points**：背景尘埃层（桌面 3000 / 移动 1500，纯氛围不可拾取）与数据层（`dataToSpace.js` 的 ~40-50 节点）各自一个 `THREE.Points` + 一份 `ShaderMaterial`，顶点着色器沿用 `alphardForge.js` 已生产验证的"`gl_PointSize = aSize*(k/max(1,-mv.z))`"透视衰减公式族（同一套写法，非重新发明）；尘埃片元着色器按视深混出"近亮远暗"；数据层片元着色器软圆点+加性辉光，亮度绑 `node.hasConfidence?confidence:0.35`（无真实置信度的节点渲染更暗，不是拿假亮度冒充真读数，宪章②）；颜色按计划文本明确要求走"青白=US / 琥珀=CN"（`#8fe9ff`/`#f5c400`），刻意不同于 2D 图的蓝/红阵营色，因为这是"这条真实读数更靠哪一派"的语义色而非力导向图那种扁平极点归属色。
+- **相机**：3 轴阻尼环绕（方位角/仰角/距离），全部通过 `src/combat/cameraMath.js` 现成的 `smoothDamp`（3D 战斗摄像机同一个函数，非另写一个 lerp）；"点击粒子飞向它"落地为把环绕的焦点从数据云质心动画过渡到该节点世界坐标、同时把环绕距离收近，而不是去算一条真实的相机位置+lookAt 路径插值——效果读起来同样是"飞过去围着它转"，但实现简单得多（焦点+距离两个数字过渡即可，仍然复用同一个 smoothDamp，无新数学）。ESC 或双击空白处把焦点/距离飞回全景默认值。无操作 15s 后方位角目标持续极慢自增（`IDLE_OMEGA=0.05rad/s`），任何指针/键盘交互立即打断（重置计时器，不产生跳变——因为只是不再继续推进目标值，当前朝向原地保留）。
+- **交互输入**：全部走 Pointer Events（单一事件模型覆盖鼠标+触屏单指拖拽=环绕），双指捏合额外监听两个 pointer 的距离比算 dolly 缩放；`.mwGraph` 既有的 `touch-action:none` CSS 对两块画布共享，浏览器原生捏合/滑动手势不会抢先决。移动端 `isMobile()` 判定复用 `sectorsGraphView.js` 同款 640px 阈值，DPR 封顶 1.5（桌面 2）。
+- **详情卡复用**：把 `dataToSpace.js` 的 vendor 节点补一个 `vendor` 字段（新增，非破坏性——现有断言按字段取值，加字段不影响），这样 sectors.html 现成的 `renderNodeDetail()` 不用为 3D 写第二套实现就能原样复用；额外处理了一种 2D 图从未遇到的情况——3D 数据层里混入了纯 arena-universe 填充节点（SPY 等 benchmark，没有任何篮子引用），点击这类节点原样调用 `renderNodeDetail` 会因为 `refs.length===0` 静默隐藏详情卡（点了却像没反应），补了一段小分支明确提示"在 Arena 交易域清单内，暂无厂商关联研判"而不是假装有研判。
+- **Hover 提示**：拾取用 `THREE.Raycaster` 只打数据层（尘埃层不可拾取），命中显示 ticker——用固定角标 DOM 提示（`#mwGraphTip`）而非把节点世界坐标逐帧投影到屏幕跟随光标，对 ~50 个标签这是更简单也更省的做法（Simplicity First），不是偷工。
+- **`prefers-reduced-motion`**：idle 自动漂移与尘埃/数据层的呼吸抖动整体跳过；相机过渡（点击飞向/ESC 飞回）不是砍掉，而是把 `smoothTime` 收到接近 0，一帧内到位——拖拽/点击/悬浮这些用户直接触发的操作在 RM 下依然完整可用，只是不再有自发的持续动效，和 `sectorsGraphView.js`（2D 图）已经定下的同一条界线一致。
+- **验证**：688/688 vitest（+1，`dataToSpace.js` 新增的 `vendor` 字段断言，无回归）；`vite build` 干净（`sectorsStarfield-*.js` 独立懒加载分片、`cameraMath-*.js` 独立共享分片，均已确认不重复打包）；`!important` 基线不变（`sectors.css` 仍是 0）；未带 flag 的默认路径与本项开工前逐行确认一致（2D 图/`sectorsGraphView.js`/`forceGraph.js` 零改动）。
 
 ## U41 · signal.html 编辑部式重构（借鉴 Accenture，2026-07-17 立项）
 
