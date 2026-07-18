@@ -3511,3 +3511,31 @@ function pulseVoyageIndicator(){
 }
 setTimeout(pulseVoyageIndicator,1800);
 setInterval(pulseVoyageIndicator,60000);
+
+/* U44 44-3: hero mouse-parallax. Passive pointermove writes two CSS custom
+   properties (--mx/--my) via a self-stopping rAF lerp loop; DOM position math
+   stays in CSS calc() (src/styles.css .hero-title/.hero-num/.hero-desc).
+   Mouse-only (touch never fires this), off while .hero is scrolled out of
+   view (IO-gated) or under prefers-reduced-motion. Same tmx/tmy centering
+   convention as alphardForge.js's own canvas parallax (clientX/innerWidth -
+   0.5) for a consistent feel, though the two never share the screen at once
+   — .hero and .stardrive are sequential sections, not stacked. */
+(function heroParallax(){
+  const heroEl=document.querySelector('.hero');
+  if(!heroEl||REDUCED_MOTION) return;
+  const root=document.documentElement;
+  let tx=0,ty=0,cx=0,cy=0,raf=0,heroOn=true;
+  addEventListener('pointermove',(e)=>{
+    if(e.pointerType!=='mouse'||!heroOn) return;
+    tx=(e.clientX/innerWidth)*2-1;
+    ty=(e.clientY/innerHeight)*2-1;
+    if(!raf) raf=requestAnimationFrame(frame);
+  },{passive:true});
+  function frame(){
+    cx+=(tx-cx)*0.06; cy+=(ty-cy)*0.06;
+    root.style.setProperty('--mx',cx.toFixed(4));
+    root.style.setProperty('--my',cy.toFixed(4));
+    raf=(Math.abs(tx-cx)+Math.abs(ty-cy)>0.002)?requestAnimationFrame(frame):0;
+  }
+  new IntersectionObserver((es)=>{heroOn=es[0].isIntersecting;}).observe(heroEl);
+})();
