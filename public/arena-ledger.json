@@ -247,8 +247,8 @@
         "exposure": 37.4
       },
       "review": {
-        "zh": "周五非周二/周四开仓窗口，仅考虑减仓。MSFT现价384.93(-0.5%)、GOOGL现价359.51(-1.9%)，均未触及风控阈值。今日存储芯片板块因CXMT存储IPO过剩担忧及台积电资本开支拖累估值普跌，但集中在核心AI硬件股，Book B未持有。Alphabet资本开支上调至1800-1900亿美元、7月22日财报临近，长线逻辑未变。维持低换手率纪律，本次不动仓。",
-        "en": "Friday is not a Tue/Thu buy window, so only sells were considered; neither MSFT (-0.5% vs cost) nor GOOGL (-1.9%) breaches a risk threshold, and today's memory-chip selloff (CXMT DRAM IPO fears, TSMC capex-driven de-rating) is concentrated in core-ai-hardware names Book B doesn't hold. Alphabet's capex raise to $180-190B and July 22 earnings keep the long thesis intact. Holding both, no orders this run — same low-turnover discipline as last review."
+        "zh": "周五非Tue/Thu开仓窗口，仅可减仓，本次不新开仓。持仓MSFT现价384.93(较成本-0.49%)、GOOGL现价359.51(-1.92%)，均未触及风控阈值。今日半导体板块延续抛售：SMH -4.2%，费城半导体指数本周累跌约11%，SK海力士HBM扩产放缓、美联储鹰派立场(10年期收益率升至4.48%)及英伟达远期市盈率约43倍的估值担忧是主因，但抛压集中在核心AI硬件股，Book B未持有该篮子。GOOGL将于7月22日公布财报(资本开支指引上看1850亿美元)，MSFT定于7月29日，长线逻辑维持不变。继续保持低换手率纪律，本次维持现有两个仓位不动。",
+        "en": "Friday is not a Tue/Thu buy window, so only risk-reducing sells were in scope; neither MSFT (-0.49% vs cost) nor GOOGL (-1.92%) breaches a stop-loss threshold. Today's semiconductor rout continues (SMH -4.2%, Philly Semi Index down ~11% this week on SK Hynix HBM capex pullback, a hawkish Fed with 10Y yields at 4.48%, and stretched ~43x forward P/E on NVDA), but that selloff is concentrated in core-ai-hardware names Book B doesn't hold. GOOGL reports July 22 (capex guide up to $185B) and MSFT July 29; long-horizon thesis intact. Holding both, no orders this run, same low-turnover discipline as the prior review."
       }
     }
   }
