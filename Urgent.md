@@ -388,6 +388,56 @@ function applyDpad(dt) {
 - [x] ⑦ 信息弹窗：`sectors.html` 把 `renderNodeDetail` 拆成纯函数 `buildDetail(node)`（返回 `{title, tag?, tagClass?, bodyHtml}`），2D 图的 `#mwDetail` 与新 `.sfModal` 共用同一份内容构建逻辑，只是外壳不同；点击数据粒子飞向 + 弹窗，Esc/双击空白按「弹窗→筛选面板→退出全屏」分层返回。`showGraph()` 在 `?fx=starfield3d` 下改为直接调用新的 `openStarfield()`，不再经过 `storyGraphSection`；V1 的 `#mwGraph3d`/`#mwGraphTip` 及对应 CSS 已随之移除。验证：`npx vitest run` 688/688、`npx vite build` 干净（`sectorsStarfield-*.js` 独立懒加载分包确认生成）、`sectors.css` `!important` 计数仍为 0。
 - [ ] ⑧ 站主真机复验（全景态/聚焦态/移动端/筛选/弹窗/D-pad），通过后裁决转默认 or 保持 opt-in，并回填 U30 R3 条目。**这一步需要站主本人真机操作，我无法代为完成。**
 
+### 42-7 · 鼠标跟随视角联动 + 画布背景层契约（2026-07-18 追加规格，站主参考 twosigma.com/about-us 首屏实拍 + 技术规范 prompt）
+
+**功能**：不点击、不拖拽，光标在屏幕上移动即让相机轻微转动视角——星域粒子产生 3D 纵深视差（参考站首屏的核心"活感"）。同时把「画布 = 持久背景层，文字/UI 永远压在其上」写成显式分层契约。
+
+**裁决（沿用仓库现成件，prompt 参考逻辑按现有架构改道落地）**：
+
+| prompt 原文要求 | 本站落地 | 差异理由 |
+| --- | --- | --- |
+| `mousemove` 监听 | **`pointermove`**（passive，挂 `.sfStage`） | 仓库统一 Pointer Events（U42/U43 已定），一套模型覆盖鼠标/触控笔；触屏无 hover 指针 → 视差自然不触发，不做假陀螺仪 |
+| `camera.rotation.y += (t-c)*0.05` 式 lerp | **不新增第二条缓动通道**——视差偏移并入既有 `smoothDamp` 环绕相机（临界阻尼，无抖动无过冲，`cameraMath.js` 已测） | prompt 的 0.05 系数 lerp 是"简版 smoothDamp"；现场景相机是 orbit rig（方位角/仰角/距离），直接写 `camera.rotation` 会和 orbit 打架 |
+| 直接旋转相机 | 视差做成**叠加项**：`renderAz = azimuth + parallaxAz`，不写回 `azimuthTarget` | 视差若污染目标值，会跟拖拽环绕/idle 漫游互相拉扯；叠加项各走各的，拖拽中/暂停态随时清零 |
+| canvas z-index 背景层 | `.sfStage` 内已成立（canvas `z:0`，HUD/弹窗 `z:1+`），本节把它写成**显式契约**并补 `pointer-events` 规则 | 全屏舞台内 HUD/弹窗就是"文字与 UI"，参考站的分层关系一致 |
+
+**实现代码（并入 `sectorsStarfield.js`，量级 ~20 行）**：
+
+```js
+// ── 42-7 鼠标视差：归一化坐标 → 相机小角度偏移（叠加项，不碰 target） ──
+const PARALLAX_AZ = 0.10, PARALLAX_EL = 0.06;    // 弧度上限：轻微"环顾"，不是转头
+let pTX = 0, pTY = 0;                            // 归一化目标（-1..1）
+const pAz = { v: 0 }, pEl = { v: 0 };            // smoothDamp 速度盒
+let parallaxAz = 0, parallaxEl = 0;
+
+stage.addEventListener('pointermove', (e) => {
+  if (e.pointerType !== 'mouse' || pointers.size) return;  // 触屏不做假视差；拖拽中挂起
+  pTX =  (e.clientX / innerWidth)  * 2 - 1;      // 坐标归一化（prompt 参考逻辑原样）
+  pTY = -(e.clientY / innerHeight) * 2 + 1;
+}, { passive: true });
+
+// render() 内，算完 azimuth/elevation 之后：
+const wantAz = (reduce || paused || pointers.size) ? 0 : pTX * PARALLAX_AZ;
+const wantEl = (reduce || paused || pointers.size) ? 0 : pTY * PARALLAX_EL;
+parallaxAz = smoothDamp(parallaxAz, wantAz, pAz, 0.6, dt);   // 惯性延迟感（prompt 第 4 条）
+parallaxEl = smoothDamp(parallaxEl, wantEl, pEl, 0.6, dt);
+const off = sphericalOffset(azimuth + parallaxAz, elevation + parallaxEl, distance);
+```
+
+**背景层契约（CSS，写进 sectors.css 的 .sf* 段）**：
+
+```css
+.sfStage{...}                                   /* 已有：fixed 全屏、纯黑 */
+.sfCanvas{position:absolute;inset:0;z-index:0}  /* 画布=最底层，永远在文字/UI 之下 */
+.sfPlay,.sfTools,.sfFilters,.sfDpad,.sfModal{z-index:1}  /* 全部 UI 显式压在画布上 */
+/* 视差监听挂 .sfStage 而非 canvas：光标悬在 HUD/弹窗上时视差不断流（参考站同款），
+   但 pointers.size 判定保证任何拖拽手势期间视差挂起，两套输入互不打架 */
+```
+
+**守则**：`prefers-reduced-motion` = 视差整体关闭（wantAz/wantEl 恒 0，不是降幅）；暂停态（播放/暂停钮）同样冻结视差回中；`PARALLAX_*` 上限刻意小于拖拽环绕一次典型行程的 1/10——视差是氛围，不能让用户误以为"页面自己在转"。
+
+- [ ] ⑬ 施工：上述 ~20 行并入 `sectorsStarfield.js` render 环 + CSS 契约两行落地；vitest/build 全绿后推送，随 ⑧ 一并真机验收（光标横扫屏幕看视差幅度与回中手感）。
+
 ### 42-历史（V1 记录，压缩存档）
 
 - **①**（已上线，`313efff`）：`dataToSpace.js` 纯函数 + 12 vitest——三数据源合并（modelWatch/baskets 去重均值/arena-universe 交叉核对 bucket，港股退化 supply-chain，SPY 等填充为 universe 节点）；无 confidence 不编造（`hasConfidence:false` 显式标记）；坐标语义 x=阵营/y=置信度/z=bucket 层。**V2 继续沿用，零改动。**
