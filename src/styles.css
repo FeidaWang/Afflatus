@@ -8001,19 +8001,6 @@
     .pcCover, .pcDetail, .pick-card { transition: none; }
   }
 
-  /* U44 44-4: holdings split-screen — desktop-only sticky context rail, synced
-     to the card in the viewport midline via IO. Below 1100px .holdSticky stays
-     display:none, i.e. today's single-column layout at zero extra cost. */
-  .holdSticky { display: none; }
-  @media (min-width: 1100px) {
-    .holdings-split { display: grid; grid-template-columns: minmax(300px, 1fr) 2fr; gap: 36px; align-items: start; }
-    .holdSticky { display: block; position: sticky; top: 88px; }
-    .holdSticky .hsTicker { font-family: 'Orbitron', sans-serif; font-size: clamp(2.2rem, 3.5vw, 3.4rem); line-height: 1; color: var(--ink); }
-    .holdSticky .hsWeight { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--warm); margin-top: 8px; }
-    .holdSticky .hsThesis { max-width: 34ch; opacity: .72; margin-top: 14px; font-size: 13px; line-height: 1.5; color: var(--ink); }
-    .holdings-split #pickGrid { grid-template-columns: 1fr; }
-  }
-
   /* U44 44-3: hero mouse parallax — pure CSS calc() reading --mx/--my (written
      by src/main.js's heroParallax rAF loop). Coefficients differ per element
      for depth layering; negative sign = drifts opposite the cursor. Defaults
