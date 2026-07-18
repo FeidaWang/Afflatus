@@ -7136,8 +7136,20 @@
      address bar to hide). */
   @supports (animation-timeline: view()) {
     .stardrive.is-live{view-timeline-name:--stardriveScroll;view-timeline-axis:block}
-    .stardrive.is-live .stardrive-stage{animation:stardrivePin linear both;animation-timeline:--stardriveScroll;animation-range:contain 0% contain 100%}
+    .stardrive.is-live .stardrive-stage{animation:stardrivePin linear both,stageShrink linear both;animation-timeline:--stardriveScroll,--stardriveScroll;animation-range:contain 0% contain 100%,exit 0% exit 100%}
     @keyframes stardrivePin{from{transform:translateY(0)}to{transform:translateY(100svh)}}
+    /* U44 44-1: the exit phase (~100svh of scroll after the pin's contain
+       phase ends, previously inert — stage just rides out pinned at its
+       translateY(100svh) end value) now shrinks the stage into a rounded
+       corner window as it leaves, handing off to 02 · equity curve below.
+       `from` restates stardrivePin's forward-filled end value: two animations
+       both touching `transform` on the same element resolve to whichever is
+       later in the list once active, so omitting it here would jump the
+       stage back to translateY(0) the instant exit phase starts. */
+    @keyframes stageShrink{
+      from{transform:translateY(100svh)}
+      to{clip-path:inset(6% 44% 10% 4% round 16px);transform:translateY(100svh) scale(.94)}
+    }
     @media (prefers-reduced-motion: reduce){
       .stardrive.is-live .stardrive-stage{animation:none}
     }
@@ -8000,6 +8012,20 @@
     .holdSticky .hsWeight { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--warm); margin-top: 8px; }
     .holdSticky .hsThesis { max-width: 34ch; opacity: .72; margin-top: 14px; font-size: 13px; line-height: 1.5; color: var(--ink); }
     .holdings-split #pickGrid { grid-template-columns: 1fr; }
+  }
+
+  /* U44 44-3: hero mouse parallax — pure CSS calc() reading --mx/--my (written
+     by src/main.js's heroParallax rAF loop). Coefficients differ per element
+     for depth layering; negative sign = drifts opposite the cursor. Defaults
+     to 0 so first paint (before any pointermove) is untouched — no LCP/CLS
+     cost. Mouse+hover only; off under RM or on touch devices. */
+  @media (hover: hover) {
+    .hero-title { transform: translate(calc(var(--mx, 0) * -10px), calc(var(--my, 0) * -6px)); }
+    .hero-num   { transform: translate(calc(var(--mx, 0) *  -4px), calc(var(--my, 0) * -2px)); }
+    .hero-desc  { transform: translate(calc(var(--mx, 0) *  -6px), calc(var(--my, 0) * -4px)); }
+  }
+  @media (prefers-reduced-motion: reduce), (hover: none) {
+    .hero-title, .hero-num, .hero-desc { transform: none; }
   }
 }
 
