@@ -43,11 +43,24 @@ const COLOR_CN = new THREE.Color(0xf5c400); // amber
 const WORLD_SCALE = 60; // data-space unit -> world unit
 const DUST_N_DESKTOP = 3000, DUST_N_MOBILE = 1500;
 const IDLE_MS = 15000, IDLE_OMEGA = 0.05; // rad/s, "极慢自动漂移"
-const OVERVIEW_DISTANCE = 260, FOCUS_DISTANCE = 90;
+const OVERVIEW_DISTANCE = 200, FOCUS_DISTANCE = 55;
 const SMOOTH_TIME = 0.5; // seconds, camera orbit/fly-to ease
 
 /* ── vertex/fragment shaders (same gl_PointSize-by-view-depth family as
    alphardForge.js's PT_VERT, just parameterized per-layer) ─────────────── */
+// 2026-07-18 real-device pass: the first cut used alphardForge.js's own
+// size/distance constants verbatim, but that scene's camera sits ~150 units
+// from a tightly-packed swirl of particles, while this one orbits a much
+// sparser ~200-unit-wide data cloud at 55-320 units — same constants there
+// made the dust field (spawned out to +-1300/900) fall almost entirely
+// outside the size formula's effective range (near-invisible sub-pixel
+// dots) and left data points as tiny 2-6px specks, reading as "empty and
+// far away" exactly as reported. Fixed by re-deriving both from this
+// scene's actual camera-distance range instead of reusing the other
+// scene's tuning: dust field shrunk to roughly 2-3x the overview distance
+// (so it's never far outside the size falloff's visible range), and both
+// size constants raised ~3-4x with an explicit gl_PointSize cap so a
+// close-up fly-to doesn't blow a point up past a sane on-screen size.
 const DUST_VERT = `
 attribute float aSize; attribute float aSeed;
 uniform float uTime;
@@ -57,17 +70,17 @@ void main(){
   p.x += sin(uTime*0.02 + aSeed)*3.0;
   p.y += cos(uTime*0.017 + aSeed*1.3)*3.0;
   vec4 mv = modelViewMatrix * vec4(p,1.0);
-  gl_PointSize = aSize * (240.0 / max(1.0,-mv.z));
+  gl_PointSize = min(46.0, aSize * (900.0 / max(1.0,-mv.z)));
   gl_Position = projectionMatrix * mv;
-  vDepth = clamp((-mv.z - 40.0) / 900.0, 0.0, 1.0); // 0 near -> 1 far
+  vDepth = clamp((-mv.z - 30.0) / 550.0, 0.0, 1.0); // 0 near -> 1 far
 }`;
 const DUST_FRAG = `
 precision mediump float; varying float vDepth;
 void main(){
   float d = length(gl_PointCoord - 0.5);
   float a = smoothstep(0.5, 0.0, d);
-  float bright = mix(0.85, 0.12, vDepth); // near bright, far dark
-  gl_FragColor = vec4(vec3(0.75,0.86,1.0) * bright, a * bright * 0.55);
+  float bright = mix(0.95, 0.28, vDepth); // near bright, far dark (never fully invisible)
+  gl_FragColor = vec4(vec3(0.75,0.86,1.0) * bright, a * bright * 0.7);
 }`;
 const DATA_VERT = `
 attribute float aSize; attribute float aBright; attribute vec3 aColor;
@@ -78,7 +91,7 @@ void main(){
   p.x += sin(uTime*0.35 + aSize)*0.6;
   p.z += cos(uTime*0.3 + aSize*1.7)*0.6;
   vec4 mv = modelViewMatrix * vec4(p,1.0);
-  gl_PointSize = aSize * (320.0 / max(1.0,-mv.z));
+  gl_PointSize = min(130.0, aSize * (1100.0 / max(1.0,-mv.z)));
   gl_Position = projectionMatrix * mv;
   vBright = aBright; vColor = aColor;
 }`;
@@ -88,8 +101,8 @@ void main(){
   float d = length(gl_PointCoord - 0.5);
   float core = smoothstep(0.5, 0.05, d);
   float glow = pow(smoothstep(0.5, 0.0, d), 2.2);
-  vec3 c = vColor * (0.6 + 0.6 * vBright);
-  gl_FragColor = vec4(c, (core * 0.9 + glow * 0.4) * (0.55 + 0.45 * vBright));
+  vec3 c = vColor * (0.75 + 0.55 * vBright);
+  gl_FragColor = vec4(c, (core * 0.95 + glow * 0.5) * (0.7 + 0.3 * vBright));
 }`;
 
 function sphericalOffset(azimuth, elevation, distance) {
@@ -136,10 +149,14 @@ export function initSectorsStarfield(canvas, data, opts = {}) {
     const n = isMobile() ? DUST_N_MOBILE : DUST_N_DESKTOP;
     const pos = new Float32Array(n * 3), siz = new Float32Array(n), sed = new Float32Array(n);
     for (let i = 0; i < n; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 2600;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 1800;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 2600;
-      siz[i] = 1.0 + Math.random() * 2.2;
+      // field sized to roughly 3x the overview distance in each axis (not
+      // this scene's own arbitrary constant) so dust always sits within the
+      // camera's actual operating range instead of mostly off in the
+      // size-formula's invisible far field — see the shader comment above.
+      pos[i * 3] = (Math.random() - 0.5) * 700;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 500;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 700;
+      siz[i] = 1.4 + Math.random() * 2.6;
       sed[i] = Math.random() * 100;
     }
     dustGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -171,7 +188,7 @@ export function initSectorsStarfield(canvas, data, opts = {}) {
     nodes.forEach((node, i) => {
       const wx = node.x * WORLD_SCALE, wy = (node.y - 0.5) * WORLD_SCALE * 1.4, wz = node.z * WORLD_SCALE;
       pos[i * 3] = wx; pos[i * 3 + 1] = wy; pos[i * 3 + 2] = wz;
-      siz[i] = node.kind === 'vendor' ? 3.2 : 1.9;
+      siz[i] = node.kind === 'vendor' ? 10.0 : 6.0;
       bri[i] = node.hasConfidence ? node.confidence : 0.35; // unscored nodes render dimmer, not a faked confident glow
       const c = node.market === 'CN' ? COLOR_CN : COLOR_US;
       col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
@@ -185,7 +202,10 @@ export function initSectorsStarfield(canvas, data, opts = {}) {
     dataGeo.setAttribute('aBright', new THREE.BufferAttribute(bri, 1));
     dataGeo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
     focusDefault = { x: cx, y: cy, z: cz };
-    overviewDistance = Math.max(140, maxR * 2.6);
+    // tighter framing than the first cut (was maxR*2.6/floor 140) — with the
+    // bigger point sizes above this still comfortably fits the cloud without
+    // reading as a small distant clump.
+    overviewDistance = Math.max(110, maxR * 1.9);
   }
   buildDataLayer(data);
 
@@ -214,7 +234,7 @@ export function initSectorsStarfield(canvas, data, opts = {}) {
   // ── interaction: pointer orbit-drag, wheel/pinch dolly, click select,
   // hover ray-pick, idle auto-drift, ESC/dblclick-empty = deselect ──
   const raycaster = new THREE.Raycaster();
-  raycaster.params.Points = { threshold: 6 };
+  raycaster.params.Points = { threshold: 9 };
   const ndc = new THREE.Vector2();
   let lastInteractAt = performance.now();
   function markActive() { lastInteractAt = performance.now(); }
