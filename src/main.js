@@ -14,6 +14,7 @@ import {
   createInitialFleetHp,
 } from './config/combatConfig.js';
 import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
+import { mountTermGlossary } from './lib/termGlossary.js';
 import { createBackgroundScene } from './scene/backgroundScene.js';
 import { createSpriteCraft } from './scene/spriteCraft.js';
 import { createCameraDirector } from './scene/cameraDirector.js';
@@ -44,6 +45,10 @@ import { clamp, easeOut, lerp, rand } from './utils/math.js';
 import { createCursor } from './ui/cursor.ts';
 
 let currentLang='en';
+// U46 46-乙-①: hero strip labels sl1(Sharpe)/sl2(Max Drawdown)/sl3(Beta) get a
+// term-glossary button; sl0(Annualized Return) is plain English, no term.
+const STRIP_TERMS=[null,'sharpe','drawdown','beta'];
+const termGlossaryCtl=mountTermGlossary({getLang:()=>currentLang});
 try{const savedLang=localStorage.getItem('afflatus-lang');if(savedLang==='zh'||savedLang==='en')currentLang=savedLang;}catch(e){}
 const REDUCED_MOTION=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -3408,7 +3413,13 @@ function setLang(lang){
   const c=COPY[lang]; document.title=c.title; document.documentElement.lang=c.lang; document.getElementById('langBtn').textContent=c.langBtn;
   updateCommandButton(); updateJumpButton();
   document.getElementById('heroNum').innerHTML=c.heroNum; document.getElementById('heroTitle').innerHTML=c.heroTitle; document.getElementById('heroDesc').textContent=c.heroDesc; document.getElementById('coord').textContent=c.coord; document.getElementById('scrollHint').textContent=c.scrollHint;
-  c.sl.forEach((t,i)=>document.getElementById('sl'+i).textContent=t); c.sf.forEach((t,i)=>document.getElementById('sf'+i).textContent=t);
+  c.sl.forEach((t,i)=>{
+    const el=document.getElementById('sl'+i); if(!el) return;
+    const term=STRIP_TERMS[i];
+    el.innerHTML=term?`<button type="button" class="term" data-term="${term}">${t}</button>`:t;
+  });
+  termGlossaryCtl.close();
+  c.sf.forEach((t,i)=>document.getElementById('sf'+i).textContent=t);
   document.getElementById('s2num').innerHTML=c.s2num; document.getElementById('s2title').innerHTML=c.s2title; document.getElementById('s2desc').textContent=c.s2desc; document.getElementById('chartSub').textContent=c.chartSub;
   marketDeck.updatePeriodUI();
   document.getElementById('s3num').innerHTML=c.s3num; document.getElementById('s3title').innerHTML=c.s3title; document.getElementById('s3desc').textContent=c.s3desc; document.getElementById('footnoteEl').textContent=c.footnote;

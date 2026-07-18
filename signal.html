@@ -77,7 +77,7 @@
       <div class="stamp" aria-hidden="true">LEVEL 5<span data-en="EYES ONLY" data-zh="仅限阅">EYES ONLY</span></div>
       <div class="meta">
         <span data-en="ITEM #:&nbsp;<b>FED-26</b>" data-zh="项目编号：&nbsp;<b>FED-26</b>" data-i18n-html>ITEM #:&nbsp;<b>FED-26</b></span>
-        <span data-en="OBJECT CLASS:&nbsp;<b>KETER (ECONOMIC)</b>" data-zh="项目等级：&nbsp;<b>Keter（经济）</b>" data-i18n-html>OBJECT CLASS:&nbsp;<b>KETER (ECONOMIC)</b></span>
+        <span data-en="OBJECT CLASS:&nbsp;<b><button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;keter&quot;>KETER (ECONOMIC)</button></b>" data-zh="项目等级：&nbsp;<b><button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;keter&quot;>Keter（经济）</button></b>" data-i18n-html>OBJECT CLASS:&nbsp;<b><button type="button" class="term" data-term="keter">KETER (ECONOMIC)</button></b></span>
         <span data-en="ASSIGNED MTF:&nbsp;ALPHA-1 / EPSILON-11" data-zh="指派机动特遣队：Alpha-1 / Epsilon-11">ASSIGNED MTF:&nbsp;ALPHA-1 / EPSILON-11</span>
       </div>
       <h1 data-i18n-html data-en="ONE HAND CONTAINS THE <span class='x'>██████</span> MARKET" data-zh="一只手收容着 <span class='x'>██████</span> 市场">ONE HAND CONTAINS THE <span class="x">██████</span> MARKET</h1>
@@ -148,7 +148,7 @@
         <div class="row"><span data-en="Sept cut now live again" data-zh="9 月降息重新激活">Sept cut now live again</span><b class="countup">61%</b><div class="bar g"><i style="--w:61%"></i></div></div>
         <div class="row"><span data-en="2026 hike still on the table" data-zh="2026 加息仍未出局">2026 hike still on the table</span><b class="countup">15%</b><div class="bar r"><i style="--w:15%"></i></div></div>
         <div class="row"><span data-en="Participation keeps falling" data-zh="参与率持续下滑">Participation keeps falling</span><b class="countup">44%</b><div class="bar a"><i style="--w:44%"></i></div></div>
-        <div class="row"><span data-en="Next SEP confirms cut (Sept 16)" data-zh="下次 SEP 确认降息（9/16）">Next SEP confirms cut (Sept 16)</span><b class="countup">48%</b><div class="bar g"><i style="--w:48%"></i></div></div>
+        <div class="row"><span data-en="Next &lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;sep&quot;&gt;SEP&lt;/button&gt; confirms cut (Sept 16)" data-zh="下次 &lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;sep&quot;&gt;SEP&lt;/button&gt; 确认降息（9/16）" data-i18n-html>Next <button type="button" class="term" data-term="sep">SEP</button> confirms cut (Sept 16)</span><b class="countup">48%</b><div class="bar g"><i style="--w:48%"></i></div></div>
       </div><p class="note" data-en="No dot plot in July — this meeting is data-only. The next SEP (Sept 16) is the real decision point; between now and then, every CPI and claims print re-prices the September odds shown above." data-zh="7 月无点阵图——本次会议只看数据。下一次 SEP（9 月 16 日）才是真正的决策节点；在此之前，每一份 CPI 与初请数据都会重新定价上方的 9 月降息概率。">No dot plot in July — this meeting is data-only. The next SEP (Sept 16) is the real decision point; between now and then, every CPI and claims print re-prices the September odds shown above.</p></div>
     </article>
 
@@ -555,6 +555,14 @@
    sectors.html/AfflatusI18N. */
 import { buildProvenanceBadge } from '/src/lib/provenanceBadge.js';
 window.AfflatusProvenance = { buildProvenanceBadge };
+</script>
+<script type="module">
+/* U46 46-乙-①: term-glossary tooltip (Keter/SEP). i18n.js (signalLibs.js)
+   owns lang state; refresh() on 'afflatus-lang' so an open popover updates
+   if the reader toggles language mid-read (same pattern as course.js). */
+import { mountTermGlossary } from '/src/lib/termGlossary.js';
+var termGlossaryCtl = mountTermGlossary({ getLang: function () { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } });
+window.addEventListener('afflatus-lang', function () { termGlossaryCtl.refresh(); });
 </script>
 <script type="module">
 /* U41: file-card percentages count up once, the first time each number
