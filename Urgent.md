@@ -1,5 +1,76 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U45 · 首页「年化回报面板 + 星云背景」上移至「航向 · 奇点王座」正下方（2026-07-18 立项，站主布局优化 prompt，生产级实施规格）
+
+**现状核查（读码定位，规格建立在真实 DOM/CSS 上）**：
+
+- 标题「航向 · 奇点王座」= `.hero-cta` 内的 `#coord`（`index.html:261`），是 `.hero` 区块**最后一个可见元素**（`.hero-cta` 是 grid，`scroll-hint` 在上、`coord` 在下）。
+- 「年化回报数据面板」= `.strip`（`index.html:283-303`，四格：38.66% 年化 / Sharpe 1.72 / 回撤 -13.04% / Beta 1.31）。
+- 「动态星云背景」= `#alphardForge` canvas（Alphard 跃迁点 WebGL 场景）。
+- **prompt 第 1 步要求的"统一包装容器"已经是既有架构**：`.stardrive-scale` 就是那个 wrapper——canvas 绝对定位铺底，`.strip` 以 `position:absolute; bottom:6svh; z-index:2`（`styles.css:7236`）叠在星云之上，玻璃底+发光文字的分层契约全部上线。**无需新建任何 div。**
+- 真正的间距来源：`.stardrive` 是 200svh 的钉住滚动叙事（U30 R2/B1），`.strip` 锚在舞台**底部**——从标题滚到面板要先穿过整段星门叙事。「面板直接落在标题正下方」= 把 strip 的锚点从舞台底部改到顶部 + 收紧 hero→stardrive 接缝，**纯 CSS 两处改动**。
+
+### 45-1 · 三方案评估（prompt 交付项 1：架构论证）
+
+| 方案 | 评估 | 裁决 |
+| --- | --- | --- |
+| A · React/Vue 组件重排 | 本站是**零框架静态 HTML + 原生 ES 模块**（U21 认定的架构资产），不存在 JSX/Template | 不适用，如实排除 |
+| B · Flexbox/Grid `order` 重排 | hero 与 stardrive 是 `<main>` 下的兄弟 section，无共享 flex/grid 父级；强行给 main 上 flex 只为 order 是为手段找问题。且 `order` 会造成 **DOM 顺序 ≠ 视觉顺序**（读屏/Tab 序错乱），仓库可访问性纪律不允许 | 原味 order 否决；**但其"零 DOM 移动"的精神被采纳**——舞台内的层叠子元素本来就靠锚点定位排布，改锚点=改视觉顺序，同样零 DOM 移动 |
+| C · JS `insertBefore` 运行时搬移 | 我们**拥有静态源码**，运行时搬 DOM 徒增 CLS（面板先在下、JS 跑完跳到上）+ 首帧闪动，是给"改不了源码的第三方页面"准备的兜底 | 否决 |
+| **✓ 选定：CSS 锚点重排（B 的诚实变体）** | `.strip` 已是舞台内绝对定位层，把 `bottom:6svh` 改为 `top` 锚（+ hero 接缝收紧），面板即出现在标题正下方的首屏星云上；DOM 一行不动，语义顺序天然正确（hero 标题 → stardrive[面板…]） | **两处 CSS，零 JS，零新元素** |
+
+### 45-2 · 布局结构（prompt 交付项 2——展示的是"已存在"的结构，不是新建）
+
+```html
+<section class="hero">…
+  <div class="hero-cta">
+    <div class="scroll-hint">…</div>
+    <span class="coord" id="coord">航向 · 奇点王座</span>   <!-- 标题：hero 收尾 -->
+  </div>
+</section>
+<section class="stardrive">                                <!-- 紧随 hero 的下一个兄弟 -->
+  <div class="stardrive-stage">
+    <div class="stardrive-scale">                          <!-- ✓ 即 prompt 要的统一 wrapper -->
+      <canvas id="alphardForge"></canvas>                  <!-- 星云：绝对定位铺底 -->
+      <div class="stardrive-caption">…</div>
+      <div class="forge-tagline">…</div>
+      <div class="strip">…38.66% 四格面板…</div>            <!-- 本项唯一动的层：底锚 → 顶锚 -->
+    </div>
+  </div>
+</section>
+```
+
+**z-index 契约说明**（prompt 建议 canvas `z-index:-1`——**不采纳**，负 z 会把 canvas 压到舞台自身背景/出入场渐隐层（`.stardrive-stage::before`，z:1）之后，破坏已上线的接缝淡出。既有契约本来就正确且更精细）：canvas z:auto 铺底 → 渐隐层 z:1 → strip/tagline z:2。
+
+### 45-3 · CSS（prompt 交付项 3，全部改动就这两块，进 `@layer components`）
+
+```css
+/* ① strip：舞台底锚 → 顶锚（styles.css:7236 原地改，不新增选择器） */
+.stardrive .strip{
+  position:absolute; left:96px; right:96px;
+  top:clamp(72px, 12svh, 128px);   /* was: bottom:6svh —— 面板上移到首屏星云带 */
+  bottom:auto;
+  /* z-index:2、玻璃底、发光文字、--forge 入场位移全部保持不动 */
+}
+/* 让位核对：.stardrive-caption 原在舞台上缘，与顶锚 strip 相撞则下移让位 */
+.stardrive-caption{ top:auto; bottom:14svh; }   /* 施工时按真机取值微调 */
+
+/* ② hero→stardrive 接缝收紧：标题与面板之间只留一口气 */
+.hero{ padding-bottom:2vh !important; }   /* was 6vh —— 该行本就在 !important 修复段内，
+                                             原地改值，全站 !important 计数不变（基线纪律） */
+/* prompt 的 negative margin 备选：若真机看仍有缝，.stardrive{margin-top:-4svh}
+   一行即可叠入，但先不上——负 margin 与 200svh 钉住区间的数学有耦合，能不碰就不碰 */
+```
+
+**移动端联动核对（施工必查）**：`styles.css:936` 的 `.strip` 窄屏双列覆盖段、以及 2026-07-17 那轮 svh 修复注释里点名的"strip `bottom:*svh` 参照高度"逻辑——底锚改顶锚后该段注释要同步改写，钉住数学本身不受影响（strip 不参与 pin 几何）。
+
+**与既有动效的交界**：`--forge` 驱动的 `translateY(calc((1-var(--forge))*26px))` 入场漂移保留——顶锚后它的语义从"从下方浮入"变成"轻微下坠入场"，方向感依然正确；U44 ⑮（stardrive exit 收缩）作用于整个 stage，strip 随层收缩，无冲突。
+
+### 45-4 · 施工切片
+
+- [ ] ⑱ 施工（一次会话）：45-3 两处 CSS + caption 让位 + 移动端 936 行段核对；vitest/build/`!important` 计数（原地改值不新增）全绿后推送。
+- [ ] ⑲ 站主真机验收：标题→面板的视觉衔接（桌面 + 移动端地址栏可见态）、星门滚动叙事在面板上移后的完整性、`?fx=stage` flag 态不回归。
+
 ## U44 · 首页 Accenture 式四件套交互升级（2026-07-18 立项，站主参考 accenture.com/au-en + 技术规范 prompt，生产级实施规格）
 
 **立项裁决**：四个效果全收，但按仓库既有纪律全部改道到零依赖原生实现——**GSAP/ScrollTrigger 不引入**（prompt 每次都给"GSAP 或原生"二选一，本仓库三次裁决都是原生：lerp/smoothDamp 自有、CSS scroll-timeline 基建已在 `.stardrive`/signal 进度条生产验证）。落点全部绑定首页**真实内容**：没有"办公室照片"就不编造照片——收缩英雄图 = 现有 stardrive 3D 舞台画布；卡片 = holdings 十强持仓卡（真数据真论点）；视差文字 = hero 舰长日志标题；分栏联动 = holdings 重排。**红线**：首页是内容型身份（U23，SEO/LCP 不可破），四件全是渐进增强——`@supports` 门控 + 无 JS/旧浏览器/RM 下回退为现状静态排版；不新增任何 WebGL context（U23 M2 前禁令）；新样式只进 `src/styles.css` 的 `@layer components`（U30 硬规则，首页在主级联层体系内，与 sectors/signal 的独立样式表豁免不同）。
