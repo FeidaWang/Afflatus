@@ -19,10 +19,19 @@
 
 ### 42c · 施工切片（每片一会话）
 
-- [ ] ① `dataToSpace.js` 纯函数 + vitest（映射/聚类/归一化，沙盒全验证）。
+- [x] ① `dataToSpace.js` 纯函数 + vitest（映射/聚类/归一化，沙盒全验证）。✅ 代码已完成（2026-07-18）
 - [ ] ② Points 双层渲染 + 着色器 + idle 漂移（flag 下真机看氛围）。
 - [ ] ③ 交互三件套（orbit/dolly/fly-to+详情卡）+ 射线拾取标签。
 - [ ] ④ 站主真机裁决转默认 or 保持 opt-in；通过后回填 U30 R3 条目为「已由 U42 取代」。
+
+**① 实现记录**（`src/lib/dataToSpace.js` + `tests/dataToSpace.test.js`，11 条 vitest，零 DOM/THREE 依赖，与 `forceGraph.js`/`flightPath.js` 同一"纯函数先行"打法）：
+
+- **三数据源的真实合并裁决**（计划文本"arena-universe 40+ 标的 + sectors 四篮子 equities"需要落到具体字段，以下是核实后的裁决，非编造）：`modelWatch`（4 家 vendor）→ z 轴 `model-vendor` 层；`baskets[].equities`（按 ticker 去重，同票多篮子引用取 confidence 均值，如 AVGO 现为 0.7/0.9 均值 0.8）→ bucket 优先真实交叉核对 `arena-universe.json` 的 `symbols[].bucket`（MU/AVGO 等确实同时在两份数据里，核实过不是巧合），核对不到（如 `0700.HK`/`9988.HK` 等港股，Arena 交易域本就是纯美股清单）才退化到通用 `supply-chain` 层；`arena-universe.json` 里未被任何篮子引用的剩余标的（如 SPY/QQQ 等）作为补量的第三类 `universe` 节点直接并入，凑够计划要的 ~50 粒数据层。
+- **`confidence` 缺失时不编造**：`arena-universe`-only 节点没有厂商关联度评分（它是 Autopilot 的固定交易域清单，不是研判打分），y 轴退化到 `NEUTRAL_CONFIDENCE=0.5` 占位并显式标 `hasConfidence:false`，供②的渲染层区分处理（调暗/降辉光），不是拿假数字冒充真读数（宪章②）。
+- **聚类不用等物理模拟**：42a 提到"同 bucket 粒子微弹簧聚拢"，但本切片只做纯数据映射，没有时间步进——用同一个 `(market,bucket)` 组合共享一个种子化偏移量（`offsetFor`）实现"看得出分组"的聚类效果，真正的弹簧/斥力积分器留给②按需另加（如果视觉上还需要）。
+- **坐标符号延续 R3**：x 轴 US=-1/CN=+1 与 `forceGraph.js` 的 `MARKET_ANCHOR` 同号，万一未来两个图并排对比不会反直觉。
+- **验证**：687/687 vitest（+11，无回归），`vite build` 干净（本文件目前零调用方，不出现在任何 bundle 里，符合"纯函数先行、渲染层未接入"的切片范围）。
+- **⚠️ 分期提醒**：42c 的 checklist 原文写明"每片一会话"——本次只做①，②（Points 渲染+着色器+idle 漂移）/③（orbit/dolly/fly-to 交互）/④（真机裁决）按计划留到后续会话，不在本次一次性做完，避免把 3D 场景/着色器/相机交互这种真机反馈依赖极重的活儿在没有中间验证点的情况下一口气堆完。
 
 ## U41 · signal.html 编辑部式重构（借鉴 Accenture，2026-07-17 立项）
 
