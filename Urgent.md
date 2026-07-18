@@ -1,51 +1,227 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
-## U42 · Two Sigma 式交互数据星域（2026-07-17 立项，站主参考 twosigma.com/about-us「Uncover what we're thinking」）
+## U42 · Two Sigma 式交互数据星域（2026-07-17 立项 · 2026-07-18 V2 规格全面重写）
 
-**核心裁决（资深全栈视角）**：参考站的技术拆解（WebGL 粒子 + 矩阵变换 + GLSL 着色器 + 相机 lerp）本仓库**一件不缺**——three 已在 vendor 分包、`smoothDamp`/lerp 数学件在 `cameraMath.js` 已测试、GLSL 管线在 alphardForge 已生产验证，GSAP 照例不引（lerp 自有）。真正值钱的不是「再加一层星空装饰」，而是 Two Sigma 那个隐喻的本站版：**粒子即数据**。首页已有 starfield/黑洞/3D 战场三层视觉（再加纯装饰粒子 = 噪音，且 U23 M2 单 renderer 合并未落地前不许再添 context）；因此主战场定为 **sectors.html「个股观察」**——它是全站唯一「多维数据 + 个股」齐备的页面，粒子坐标可以全部有含义（宪章②在 3D 空间的执法）。
+**V2 重写背景**：①–③ 第一版上线后站主两轮真机反馈（第一轮"太暗太远"已修常数；第二轮直接给出 Two Sigma 原站三张实拍截图 + 完整规格 prompt），裁定第一版方向性不足——参考站的观感核心不是"稀疏发光粒子"，而是**高密度实心圆点 + 正交连线矩阵 + 极简线框 HUD + 信息弹窗**四件套。本节从"设计笔记"升格为**生产级实施规格**：结构、CSS、Three.js 初始化、GLSL、运动学全部落到可直接施工的代码。V1 的数据语义层（`dataToSpace.js`，宪章②）**保留不动**，重写的是渲染与交互外壳。
 
-### 42a · 数据星域设计（sectors 个股观察 = 主落点）
+### 42-0 · 关键裁决（先定死，施工不再摇摆）
 
-- **粒子分层**：① 背景尘埃层 ~3000 粒（纯氛围，`THREE.Points` 单 draw call，顶点着色器做透视衰减+远暗近亮——参考稿第 3 条的标准实现）；② **数据层 ~50 粒** = arena-universe 40+ 标的 + sectors 四篮子 equities，粒径更大、带辉光，hover 射线拾取出 ticker 标签。
-- **坐标即语义**（与参考站「多维数据网格」对齐，且比它诚实）：x 轴 = 阵营聚类（US ↔ CN，vendor 引力中心），y 轴 = 关联置信度（`confidence` 0–1 实值），z 轴 = bucket 类别分层（core-ai-hardware / 模型厂 / 应用层…）；同 bucket 粒子微弹簧聚拢（复用 U30 R3 的弹簧积分器思路，但坐标基准是真实数据不是随机布局）。**数据→空间映射做成纯函数 `src/lib/dataToSpace.js` + vitest**（本仓库标准打法）。
-- **交互（参考站四件套全采）**：拖拽环绕（阻尼 orbit，`smoothDamp` 三轴）；滚轮/双指捏合 dolly 缩放（lerp 平滑）；点击粒子 = 相机飞向它（lerp fly-to）+ 侧滑出该股详情卡（复用 U31 故事卡披露层）；无操作 15s 后极慢自动漂移（Two Sigma 的 idle 态）。ESC/双击空白回全景。
-- **着色器**：顶点 = 尺寸随距离衰减 + 数据层粒子按 `confidence` 调亮度；片元 = 软圆点 + 加性辉光 + 远景淡出。青白=US 系、琥珀=CN 系（双色温纪律的语义化用法）。
+| 议题 | 裁决 | 理由 |
+| --- | --- | --- |
+| GSAP | **不引入**，运动学全走 `cameraMath.js` 现成 `smoothDamp` + lerp | 规格 prompt 原文"GSAP **或** 自写 Lerp"，仓库零运行时依赖是 U21 认定的架构资产，且 smoothDamp 有测试覆盖 |
+| 粒子观感 | **实心圆点（flat disc）+ 轻抗锯齿边缘，法线混合** | 参考站截图逐张核对：粒子是干净实心圆，**没有**辉光/加性泛光——V1 的 additive glow 是方向性错误，整体撤掉 |
+| 调色板 | 青 `#00C3D7` / 金 `#F5D76E` / 纯白 `#FFFFFF`，背景纯黑 `#000` | 按参考站取色；语义映射：**青=US 系、金=CN 系、白=无研判的 universe 填充票**（白点"无色"恰好诚实表达"无立场读数"，宪章②） |
+| 密度 | 桌面尘埃 12000 粒 + 连线锚点对 ~400（1200 段）；移动端减半、DPR 封顶 1.5 | 单 draw call `THREE.Points` + 单 draw call `LineSegments`，1.3 万顶点量级对 60fps 毫无压力（首页 alphardForge 6000 粒 + bloom 后处理都稳） |
+| 展示形态 | flag 下点「切换为交互星图」= **进入全屏 fixed 遮罩舞台**，右上 X 退出回卡片视图 | 参考站是全屏体验；440px 小窗里塞不下这个密度的场景（第一轮"感觉很空"一部分就是小窗视角裁剪） |
+| 弹窗 banner | **程序化装饰条（CSS 渐变 + 细线纹理），不用假照片** | 参考站 banner 是它自家的品牌素材；我们没有对应素材，用生成图冒充实拍是编造，程序化纹理是诚实等价物 |
+| 默认路径 | 继续 `?fx=starfield3d` opt-in，2D 力导向图仍是默认 | 切片 ⑧（站主真机裁决）通过前不转正，U30 R3 条目届时再回填 |
 
-### 42b · 与既有规划的合流裁决
+### 42-1 · 架构与依赖图
 
-- **取代 U30 R3 的 2D 力导向图**成为 sectors「星图视图」的正身：力导向弹簧物理保留为聚拢微调，但主坐标系换成真实数据维度——散点的位置有含义，弹簧图的位置只是美学，个股观察要前者。R3 条目按此改写，不再单独实施。
-- **首页「立体选股」= 可选二期**：组件做成挂载点无关（`createDataStarfield({canvas, data, dims})`），若星域在 sectors 验收后站主想要，首页资产甲板可挂同组件换持仓数据——但必须等 U23 M2（单 renderer 舞台）落地，首页不再新增独立 WebGL context（红线）。
-- **性能**：`?fx=starfield3d` flag 起步（R3 例外条款适用）；three 懒加载（IO 进入个股观察区才 import）；移动端尘埃减半 + DPR 封顶 1.5 + 拖拽改单指、捏合缩放；`prefers-reduced-motion` = 静态定帧渲染一次。
+```
+sectors.html?fx=starfield3d
+ └─ 点击「切换为交互星图」 → window.AfflatusSectorsStarfield.load()   (type=module 桥，已上线)
+     └─ src/scene/sectorsStarfield.js        ← 本项全面重写（渲染+HUD+运动学都在这一个模块）
+         ├─ import * as THREE from 'three'                  → vendor-three 共享分包（已有，零新增）
+         ├─ import { smoothDamp } from '../combat/cameraMath.js'   → cameraMath 共享 chunk（已有）
+         └─ import { buildSpaceData } from '../lib/dataToSpace.js' → 数据语义层（已有，11+1 vitest）
+ 数据源：/sectors-data.json + /arena-universe.json（fetch 接线已上线，不动）
+ 样式：public/styles/sectors.css 追加 .sf* 组件段（HUD/弹窗/全屏舞台）
+ HUD DOM：由模块 mount 时动态注入 body（flag 体验的 DOM 不进静态 HTML，不带 flag 的访问者零 DOM 成本）
+```
 
-### 42c · 施工切片（每片一会话）
+### 42-2 · HTML/CSS（HUD 线框 + 弹窗，像素级对齐截图）
 
-- [x] ① `dataToSpace.js` 纯函数 + vitest（映射/聚类/归一化，沙盒全验证）。✅ 代码已完成（2026-07-18）
-- [x] ② Points 双层渲染 + 着色器 + idle 漂移（flag 下真机看氛围）。✅ 代码已完成（2026-07-18，站主指令一并做完②③）
-- [x] ③ 交互三件套（orbit/dolly/fly-to+详情卡）+ 射线拾取标签。✅ 代码已完成（2026-07-18，同上）
-- [ ] ④ 站主真机裁决转默认 or 保持 opt-in；通过后回填 U30 R3 条目为「已由 U42 取代」。**这一步无法由代理代劳**——需要站主自己开 `sectors.html?fx=starfield3d` 用真机走一遍，本条目继续留空等验收。
+模块注入的 DOM 骨架（双语文案走既有 `data-en/data-zh` + `AfflatusI18N`）：
 
-**②③ 真机反馈第一轮（2026-07-18，站主截图：「做得很差并且距离太远」，画面是大片纯黑空间里几个几乎看不见的暗淡小光点挤在角落）**——根因排查（读代码定位，非猜测）：着色器的 `gl_PointSize` 距离衰减公式和尘埃场的空间范围，是从 `alphardForge.js` 现成的星云粒子参数直接照抄的常数，但那个场景的相机只在离粒子群约 150 单位处工作，本场景相机实际工作范围是 55–320 单位、尘埃却撒在 ±1300/900 的范围——绝大多数尘埃因此落在尺寸衰减公式的"实质不可见"区间外，数据层粒子在近焦距离下算出来也只有几像素，两者叠加就是"一片空黑+挤在角落的暗点"。**已修（同会话内）**：尘埃场范围收窄到 ±700/500（约为新版全景距离的 2–3 倍，确保尘埃始终落在可见衰减区间内）；数据层粒子基础尺寸 vendor 3.2→10、equity/universe 1.9→6，尺寸衰减常数两层都上调约 3–4 倍并加了 `gl_PointSize` 硬上限（避免贴近聚焦时糊成一团）；全景距离系数从 `maxR*2.6`（下限 140）收紧到 `maxR*1.9`（下限 110），聚焦距离从 90 收到 55，两者都让画面读起来更"贴近"而不是"遥远的一小撮"。截图里挤在角落这件事本身：详情卡显示的是 PLTR（一支纯 arena-universe 填充票，没有厂商关联），说明截图是**点击某个具体节点、相机已飞向它之后**的画面——飞向单个节点后，其余粒子自然是围绕这一个点稀疏散落而非围绕整体质心，这是设计上的预期行为（"贴近单个节点"本来就该只看到它附近稀疏的邻居），双击空白处或按 Esc 能飞回全景看到完整对称分布。但即便如此，原尺寸设定下即使全景状态本身也偏暗偏小，所以是真实的调参问题，不是只有截图这一种状态触发。**验证**：688/688 vitest 不变（这轮只动了渲染常数，没碰纯函数层），`vite build` 干净。⚠️ **仍待站主重新用真机确认**——本次调整基于读代码逐项核对着色器数学得出，我这边没有可视化渲染环境能截图自证效果，需要站主再走一遍全景态和点击聚焦态两种视角确认观感是否达标。
+```html
+<div class="sfStage" id="sfStage">
+  <canvas class="sfCanvas" id="sfCanvas"></canvas>
+  <!-- 左上：青色圆形 播放/暂停 -->
+  <button class="sfPlay" type="button" aria-pressed="true" aria-label="Pause ambient motion">
+    <svg viewBox="0 0 24 24"><path class="ic-pause" d="M8 6h3v12H8zM13 6h3v12h-3z"/><path class="ic-play" d="M8 5l12 7-12 7z"/></svg>
+  </button>
+  <!-- 右上：漏斗 + 关闭，细白方框 -->
+  <div class="sfTools">
+    <button class="sfBtn sfFilterBtn" type="button" aria-expanded="false" aria-label="Filter">
+      <svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4-2v-4z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+    <button class="sfBtn sfExit" type="button" aria-label="Exit star field">
+      <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+  </div>
+  <!-- 漏斗展开的筛选面板（真实字段：market / bucket） -->
+  <div class="sfFilters" hidden></div>
+  <!-- 右下：方向键盘 -->
+  <div class="sfDpad" role="group" aria-label="Pan camera">
+    <button data-dir="up"    aria-label="Pan up">↑</button>
+    <button data-dir="left"  aria-label="Pan left">←</button>
+    <button data-dir="right" aria-label="Pan right">→</button>
+    <button data-dir="down"  aria-label="Pan down">↓</button>
+  </div>
+  <!-- 信息弹窗（点击数据粒子后飞向 + 弹出） -->
+  <aside class="sfModal" hidden aria-modal="false" role="dialog">
+    <button class="sfModalClose" type="button" aria-label="Close">×</button>
+    <h2 class="sfModalTitle"></h2>
+    <span class="sfModalTag"></span>
+    <div class="sfModalBanner" aria-hidden="true"></div>
+    <div class="sfModalBody"></div>
+  </aside>
+</div>
+```
 
-**① 实现记录**（`src/lib/dataToSpace.js` + `tests/dataToSpace.test.js`，11 条 vitest，零 DOM/THREE 依赖，与 `forceGraph.js`/`flightPath.js` 同一"纯函数先行"打法）：
+`sectors.css` 追加段（关键值全部按截图测量，注释标出对应截图元素）：
 
-- **三数据源的真实合并裁决**（计划文本"arena-universe 40+ 标的 + sectors 四篮子 equities"需要落到具体字段，以下是核实后的裁决，非编造）：`modelWatch`（4 家 vendor）→ z 轴 `model-vendor` 层；`baskets[].equities`（按 ticker 去重，同票多篮子引用取 confidence 均值，如 AVGO 现为 0.7/0.9 均值 0.8）→ bucket 优先真实交叉核对 `arena-universe.json` 的 `symbols[].bucket`（MU/AVGO 等确实同时在两份数据里，核实过不是巧合），核对不到（如 `0700.HK`/`9988.HK` 等港股，Arena 交易域本就是纯美股清单）才退化到通用 `supply-chain` 层；`arena-universe.json` 里未被任何篮子引用的剩余标的（如 SPY/QQQ 等）作为补量的第三类 `universe` 节点直接并入，凑够计划要的 ~50 粒数据层。
-- **`confidence` 缺失时不编造**：`arena-universe`-only 节点没有厂商关联度评分（它是 Autopilot 的固定交易域清单，不是研判打分），y 轴退化到 `NEUTRAL_CONFIDENCE=0.5` 占位并显式标 `hasConfidence:false`，供②的渲染层区分处理（调暗/降辉光），不是拿假数字冒充真读数（宪章②）。
-- **聚类不用等物理模拟**：42a 提到"同 bucket 粒子微弹簧聚拢"，但本切片只做纯数据映射，没有时间步进——用同一个 `(market,bucket)` 组合共享一个种子化偏移量（`offsetFor`）实现"看得出分组"的聚类效果，真正的弹簧/斥力积分器留给②按需另加（如果视觉上还需要）。
-- **坐标符号延续 R3**：x 轴 US=-1/CN=+1 与 `forceGraph.js` 的 `MARKET_ANCHOR` 同号，万一未来两个图并排对比不会反直觉。
-- **验证**：687/687 vitest（+11，无回归），`vite build` 干净（本文件目前零调用方，不出现在任何 bundle 里，符合"纯函数先行、渲染层未接入"的切片范围）。
-- **⚠️ 分期提醒**：42c 的 checklist 原文写明"每片一会话"——上一轮只做了①；本轮站主明确指令"做完"，于是②③在同一会话内一并完成（见下）。④（真机裁决）性质上不是代码任务，无法在本会话内完成，留给站主。
+```css
+/* ── U42 V2: 全屏数据星域舞台 + 线框 HUD ── */
+.sfStage{position:fixed;inset:0;z-index:60;background:#000}
+.sfCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.sfCanvas:active{cursor:grabbing}
+/* 左上青色圆钮（截图1/3 左上角） */
+.sfPlay{position:absolute;left:28px;top:28px;width:44px;height:44px;border-radius:50%;border:0;background:#00C3D7;color:#000;cursor:pointer;display:grid;place-items:center}
+.sfPlay svg{width:20px;height:20px;fill:currentColor}
+.sfPlay .ic-play{display:none}
+.sfPlay[aria-pressed="false"] .ic-pause{display:none}
+.sfPlay[aria-pressed="false"] .ic-play{display:block}
+/* 右上工具组：两个细白描边方块并排（截图1 右上） */
+.sfTools{position:absolute;right:28px;top:28px;display:flex}
+.sfBtn{width:88px;height:88px;background:transparent;border:1px solid #fff;color:#fff;cursor:pointer;display:grid;place-items:center}
+.sfBtn+.sfBtn{border-left:0}
+.sfBtn svg{width:34px;height:34px}
+.sfBtn:hover,.sfBtn[aria-expanded="true"]{color:#00C3D7}
+/* 筛选面板（漏斗展开） */
+.sfFilters{position:absolute;right:28px;top:124px;display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid #fff;background:rgba(0,0,0,.88)}
+.sfFilters button{font:700 12px/1 var(--font);letter-spacing:.06em;text-transform:uppercase;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.35);padding:9px 12px;cursor:pointer;text-align:left}
+.sfFilters button.active{border-color:#00C3D7;color:#00C3D7}
+/* 右下方向键（截图1/2 右下：外框方、四钮十字排布、激活态描边高亮） */
+.sfDpad{position:absolute;right:28px;bottom:28px;width:200px;height:200px;border:1px solid #fff;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);place-items:center}
+.sfDpad button{grid-area:2/2;width:56px;height:56px;background:transparent;border:1px solid transparent;color:#fff;font-size:24px;cursor:pointer}
+.sfDpad [data-dir="up"]{grid-area:1/2}.sfDpad [data-dir="left"]{grid-area:2/1}
+.sfDpad [data-dir="right"]{grid-area:2/3}.sfDpad [data-dir="down"]{grid-area:3/2}
+.sfDpad button:active,.sfDpad button.held{border-color:#00C3D7;color:#00C3D7}  /* 截图2 的按下高亮态 */
+/* 信息弹窗（截图2 "Data Sourcing"） */
+.sfModal{position:absolute;left:clamp(24px,8vw,120px);top:50%;transform:translateY(-50%);width:min(640px,calc(100vw - 48px));border:1px solid #fff;background:#050505;color:#fff;padding:clamp(24px,4vw,48px)}
+.sfModalClose{position:absolute;right:18px;top:18px;width:36px;height:36px;background:transparent;border:0;color:#fff;font-size:26px;cursor:pointer}
+.sfModalTitle{margin:0 0 18px;font:700 clamp(30px,4.5vw,54px)/1.05 var(--font)}
+.sfModalTag{display:inline-block;border:1px solid #fff;padding:8px 14px;font:500 14px/1 var(--font);margin-bottom:22px}
+.sfModalBanner{height:150px;margin-bottom:22px;background:
+  repeating-linear-gradient(90deg,rgba(0,195,215,.5) 0 1px,transparent 1px 7px),
+  linear-gradient(180deg,#03181c 0%,#0a5666 55%,#9fe8f2 100%)}  /* 程序化"数据流"装饰条，非照片 */
+.sfModalBody{font:400 17px/1.65 var(--font);color:#e8ecef;max-width:60ch}
+@media(max-width:640px){
+  .sfBtn{width:64px;height:64px}.sfDpad{width:150px;height:150px}
+  .sfDpad button{width:44px;height:44px}.sfModal{top:auto;bottom:16px;transform:none}
+}
+```
 
-**②③ 实现记录**（`src/scene/sectorsStarfield.js` 新文件 + `sectors.html`/`sectors.css` 接线 + `dataToSpace.js` 小补丁，零新 vitest——这层是 WebGL 渲染/交互胶水，本仓库对这类模块的既定测试边界是"数据/数学层测试，渲染胶水层不测"，`dataToSpace.js`/`cameraMath.js` 两侧的纯函数已经覆盖）：
+### 42-3 · Three.js 初始化（boilerplate，模块 mount 段）
 
-- **落点**：sectors.html 现有「切换为交互星图」面板（`#storyGraphSection`）新增同尺寸的 `#mwGraph3d` 画布作为 `#mwGraph`（2D 力导向图）的同级兄弟，`hidden` 属性互斥切换——`?fx=starfield3d` 出现时才隐藏 2D 画布、显示 3D 画布并挂载星域场景；不带 flag 时页面行为与 U42 立项前完全一致（2D 力导向图仍是默认，`sectorsGraphView.js`/`forceGraph.js` 一行未动）。
-- **懒加载纪律**：`src/scene/sectorsStarfield.js`（连带 three.js）只在用户点开地图视图**且**带 flag 时才用动态 `import()` 拉取，不带 flag 的访问者零字节成本。踩过一个坑：动态 `import()` 直接写在经典（非 `type="module"`）内联 `<script>` 里，vite build 不会扫描/改写它（vite 只分析 `type="module"` 脚本的模块图），构建产物里该 import 会照抄成一个生产环境不存在的裸源码路径——改成沿用本文件 `AfflatusSectorsGraph`/`AfflatusProvenance` 已有的"window 桥"套路：真正的 `import()` 挪进一个新的 `type="module"` 块里，经典脚本只调用挂在 `window.AfflatusSectorsStarfield.load()` 上的桥函数。修完后确认构建产物里出现独立的 `sectorsStarfield-*.js` 懒加载分片（8.87 kB / gzip 3.78 kB），`cameraMath.js` 也析出为独立共享 chunk（与 3D 战斗镜头逻辑共用，零重复代码），`vendor-three` 仍是同一个共享分包。
-- **两层 Points**：背景尘埃层（桌面 3000 / 移动 1500，纯氛围不可拾取）与数据层（`dataToSpace.js` 的 ~40-50 节点）各自一个 `THREE.Points` + 一份 `ShaderMaterial`，顶点着色器沿用 `alphardForge.js` 已生产验证的"`gl_PointSize = aSize*(k/max(1,-mv.z))`"透视衰减公式族（同一套写法，非重新发明）；尘埃片元着色器按视深混出"近亮远暗"；数据层片元着色器软圆点+加性辉光，亮度绑 `node.hasConfidence?confidence:0.35`（无真实置信度的节点渲染更暗，不是拿假亮度冒充真读数，宪章②）；颜色按计划文本明确要求走"青白=US / 琥珀=CN"（`#8fe9ff`/`#f5c400`），刻意不同于 2D 图的蓝/红阵营色，因为这是"这条真实读数更靠哪一派"的语义色而非力导向图那种扁平极点归属色。
-- **相机**：3 轴阻尼环绕（方位角/仰角/距离），全部通过 `src/combat/cameraMath.js` 现成的 `smoothDamp`（3D 战斗摄像机同一个函数，非另写一个 lerp）；"点击粒子飞向它"落地为把环绕的焦点从数据云质心动画过渡到该节点世界坐标、同时把环绕距离收近，而不是去算一条真实的相机位置+lookAt 路径插值——效果读起来同样是"飞过去围着它转"，但实现简单得多（焦点+距离两个数字过渡即可，仍然复用同一个 smoothDamp，无新数学）。ESC 或双击空白处把焦点/距离飞回全景默认值。无操作 15s 后方位角目标持续极慢自增（`IDLE_OMEGA=0.05rad/s`），任何指针/键盘交互立即打断（重置计时器，不产生跳变——因为只是不再继续推进目标值，当前朝向原地保留）。
-- **交互输入**：全部走 Pointer Events（单一事件模型覆盖鼠标+触屏单指拖拽=环绕），双指捏合额外监听两个 pointer 的距离比算 dolly 缩放；`.mwGraph` 既有的 `touch-action:none` CSS 对两块画布共享，浏览器原生捏合/滑动手势不会抢先决。移动端 `isMobile()` 判定复用 `sectorsGraphView.js` 同款 640px 阈值，DPR 封顶 1.5（桌面 2）。
-- **详情卡复用**：把 `dataToSpace.js` 的 vendor 节点补一个 `vendor` 字段（新增，非破坏性——现有断言按字段取值，加字段不影响），这样 sectors.html 现成的 `renderNodeDetail()` 不用为 3D 写第二套实现就能原样复用；额外处理了一种 2D 图从未遇到的情况——3D 数据层里混入了纯 arena-universe 填充节点（SPY 等 benchmark，没有任何篮子引用），点击这类节点原样调用 `renderNodeDetail` 会因为 `refs.length===0` 静默隐藏详情卡（点了却像没反应），补了一段小分支明确提示"在 Arena 交易域清单内，暂无厂商关联研判"而不是假装有研判。
-- **Hover 提示**：拾取用 `THREE.Raycaster` 只打数据层（尘埃层不可拾取），命中显示 ticker——用固定角标 DOM 提示（`#mwGraphTip`）而非把节点世界坐标逐帧投影到屏幕跟随光标，对 ~50 个标签这是更简单也更省的做法（Simplicity First），不是偷工。
-- **`prefers-reduced-motion`**：idle 自动漂移与尘埃/数据层的呼吸抖动整体跳过；相机过渡（点击飞向/ESC 飞回）不是砍掉，而是把 `smoothTime` 收到接近 0，一帧内到位——拖拽/点击/悬浮这些用户直接触发的操作在 RM 下依然完整可用，只是不再有自发的持续动效，和 `sectorsGraphView.js`（2D 图）已经定下的同一条界线一致。
-- **验证**：688/688 vitest（+1，`dataToSpace.js` 新增的 `vendor` 字段断言，无回归）；`vite build` 干净（`sectorsStarfield-*.js` 独立懒加载分片、`cameraMath-*.js` 独立共享分片，均已确认不重复打包）；`!important` 基线不变（`sectors.css` 仍是 0）；未带 flag 的默认路径与本项开工前逐行确认一致（2D 图/`sectorsGraphView.js`/`forceGraph.js` 零改动）。
+```js
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+renderer.setClearColor(0x000000, 1);                       // 参考站是纯黑，不是深蓝
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, FOG_NEAR, FOG_FAR);    // 连线层的深度淡出直接吃 fog；粒子层在自定义着色器里等价实现
+const camera = new THREE.PerspectiveCamera(55, 1, 1, FOG_FAR * 1.4);
+// 尺寸/DPR：沿用现行 size() 模式，移动端 DPR 封顶 1.5、桌面 2；resize 重投影
+// rAF 循环：沿用现行 IntersectionObserver 门控 + document.hidden 停画
+```
+
+常数（第一轮"抄 alphardForge 常数翻车"的教训，这次全部从**本场景**的相机工作范围推导）：
+
+```js
+const FIELD   = 900;                  // 尘埃/连线分布半径（正方体 ±FIELD/2）
+const FOG_NEAR = 120, FOG_FAR = 1100; // 深度淡出窗口 ≈ 相机工作距离的 0.4–3.5 倍
+const OVERVIEW_DISTANCE = 320;        // 全景：置身场内，四面八方都有粒子（不是站在场外看一小撮）
+const FOCUS_DISTANCE = 70;
+const DUST_N = mobile ? 6000 : 12000;
+const GRID_PAIRS = mobile ? 200 : 400; // Manhattan 连线锚点对
+```
+
+### 42-4 · GLSL（粒子顶点/片元，两层共用一套、常数走 uniform）
+
+```glsl
+/* PT_VERT —— 位置漂移 + 透视尺寸衰减 + 深度雾因子 */
+attribute float aSize; attribute vec3 aColor; attribute float aPhase;
+uniform float uTime, uSizeK, uSizeMax, uPixelRatio, uFogNear, uFogFar;
+varying vec3 vColor; varying float vFog;
+void main(){
+  vec3 p = position;
+  p.x += sin(uTime * 0.05 + aPhase) * 2.4;        /* 慢漂移；暂停/RM 时 uTime 冻结即静止 */
+  p.y += cos(uTime * 0.04 + aPhase * 1.3) * 2.4;
+  vec4 mv = modelViewMatrix * vec4(p, 1.0);
+  float dist = -mv.z;
+  gl_PointSize = min(uSizeMax, aSize * uPixelRatio * (uSizeK / max(1.0, dist)));
+  gl_Position = projectionMatrix * mv;
+  vColor = aColor;
+  vFog = clamp((dist - uFogNear) / (uFogFar - uFogNear), 0.0, 1.0);
+}
+```
+
+```glsl
+/* PT_FRAG —— 实心圆点 + 轻抗锯齿 + 远暗淡出（无辉光、法线混合，对齐参考站） */
+precision mediump float;
+varying vec3 vColor; varying float vFog;
+void main(){
+  vec2 uv = gl_PointCoord - 0.5;
+  float d = length(uv);
+  if (d > 0.5) discard;
+  float edge = smoothstep(0.5, 0.44, d);            /* 干净圆边，不是光晕 */
+  vec3 c = mix(vColor, vColor * 0.25, vFog);        /* 远处变暗（雾） */
+  gl_FragColor = vec4(c, edge * (1.0 - vFog * 0.85));
+}
+```
+
+材质：`transparent:true, depthWrite:false, blending:THREE.NormalBlending`（**不是** Additive——这就是 V1 与参考站观感差异的另一半来源）。
+
+**连线矩阵层**（截图1 的正交"迷宫"骨架）：从尘埃中取 GRID_PAIRS 对近邻锚点，每对之间走**轴对齐三段折线**（先 x、再 y、后 z），产出 `LineSegments` 单 draw call：
+
+```js
+function manhattanSegments(a, b, out) {           // a,b: THREE.Vector3, out: number[]
+  out.push(a.x,a.y,a.z,  b.x,a.y,a.z);            // x 段
+  out.push(b.x,a.y,a.z,  b.x,b.y,a.z);            // y 段
+  out.push(b.x,b.y,a.z,  b.x,b.y,b.z);            // z 段
+}
+const gridMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.13, fog: true });
+```
+
+数据层（~50 真实节点）：沿用 `dataToSpace.js` 输出，`aSize` = vendor 14 / equity 9 / universe 7，`aColor` = US 青 / CN 金 / universe 白，仍只有数据层可被 Raycaster 拾取。
+
+### 42-5 · 相机运动学（D-pad / 拖拽 / 自动漫游 → 同一套 smoothDamp）
+
+状态量不变（方位角/仰角/距离/焦点，各带 `{v}` 速度盒）；**新增 D-pad 平移**——按住方向键 = 焦点沿**相机平面**的 right/up 向量持续推进，松手后由 smoothDamp 自然减速（惯性/缓动免费获得，无需 GSAP）：
+
+```js
+const held = new Set();                            // 当前按住的方向
+function applyDpad(dt) {
+  if (!held.size) return;
+  const e = camera.matrix.elements;                // 相机世界矩阵：右向量 e[0..2]，上向量 e[4..6]
+  const step = distance * 0.55 * dt;               // 速度随景深缩放：近处细腻、远处大步
+  let dx = 0, dy = 0;
+  if (held.has('left')) dx -= 1; if (held.has('right')) dx += 1;
+  if (held.has('down')) dy -= 1; if (held.has('up'))    dy += 1;
+  focusTarget.x += (dx*e[0] + dy*e[4]) * step;
+  focusTarget.y += (dx*e[1] + dy*e[5]) * step;
+  focusTarget.z += (dx*e[2] + dy*e[6]) * step;
+}
+// 接线：pointerdown/up + keydown/up(方向键) 维护 held 集合与 .held 高亮类；
+// rAF 每帧先 applyDpad(dt)，再照常对 azimuth/elevation/distance/focus 逐轴 smoothDamp。
+```
+
+其余交互沿用已上线实现并按 V2 调整：拖拽=环绕、滚轮/双指=dolly、点击数据粒子=飞向+弹窗、双击空白/Esc=逐层返回（弹窗开着先关弹窗 → 筛选面板开着关面板 → 否则退出全屏）。**播放/暂停钮**接管 idle 漫游：播放态=相机方位角持续极慢推进 + 粒子漂移（`uTime` 走表）；暂停态=两者冻结（`uTime` 停走，目标值不再推进）；`prefers-reduced-motion` 默认进暂停态。**筛选面板**：market（US/CN）+ bucket（五档）两组单选 chips，筛选只重建数据层 50 节点的 attribute（尘埃/连线不参与筛选），选中组合实时高亮/淡出非命中节点。
+
+### 42-6 · 施工切片 V2（在 V1 已上线代码上迭代，不推倒 dataToSpace/接线层）
+
+- [ ] ⑤ 视觉重做：实心圆点片元 + NormalBlending + 纯黑底 + 参考站三色 + 尘埃 12k + Manhattan 连线层 + fog 常数组（42-4 全部）。
+- [ ] ⑥ 全屏舞台 + HUD：`.sfStage` 遮罩、播放/暂停、漏斗筛选（真实字段）、X 退出、D-pad 平移运动学（42-2 + 42-5）。
+- [ ] ⑦ 信息弹窗：点击粒子 → 飞向 + `.sfModal`（复用 `renderNodeDetail` 的内容构建，套新壳），Esc 分层返回。
+- [ ] ⑧ 站主真机复验（全景态/聚焦态/移动端），通过后裁决转默认 or 保持 opt-in，并回填 U30 R3 条目。
+
+### 42-历史（V1 记录，压缩存档）
+
+- **①**（已上线，`313efff`）：`dataToSpace.js` 纯函数 + 12 vitest——三数据源合并（modelWatch/baskets 去重均值/arena-universe 交叉核对 bucket，港股退化 supply-chain，SPY 等填充为 universe 节点）；无 confidence 不编造（`hasConfidence:false` 显式标记）；坐标语义 x=阵营/y=置信度/z=bucket 层。**V2 继续沿用，零改动。**
+- **②③ V1**（已上线，`ea7b744`）：两层 Points + 加性辉光着色器 + 3 轴 smoothDamp 环绕/dolly/fly-to + Raycaster 拾取 + `#mwDetail` 复用 + 懒加载 window 桥（经典 script 里裸写动态 import 会被 build 原样照抄的坑已修）。
+- **真机反馈第一轮**（已修，`a24c05f`）：抄 alphardForge 尺寸常数导致"太暗太远"——尘埃场收窄至 ±700/500、粒径 3–4 倍上调 + 硬上限、全景/聚焦距离收紧。
+- **真机反馈第二轮**（本次 V2 立项）：站主给出参考站实拍截图，裁定 V1 的辉光雾点观感与参考站的"实心圆点+连线矩阵+HUD"不符，据此产出本规格。V1 着色器/HUD 缺失部分按 42-4/42-2 整体替换。
 
 ## U41 · signal.html 编辑部式重构（借鉴 Accenture，2026-07-17 立项）
 
