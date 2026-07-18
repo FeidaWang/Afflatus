@@ -111,7 +111,15 @@ new IntersectionObserver((es) => { heroOn = es[0].isIntersecting; }).observe(doc
 
 注意与 alphardForge 画布自带的指针视差是**两个独立小环**（那个动相机、这个动 DOM 文字），方向系数须同号核对一次，避免文字与星空反向漂移打架。
 
-### 44-4 · 特性④ holdings 分栏联动（左 sticky 语境栏 + 右滚卡片流，IO 驱动）
+### 44-4 · 特性④ holdings 分栏联动（左 sticky 语境栏 + 右滚卡片流，IO 驱动）—— **已于 2026-07-18 撤回，见下方"撤回记录"**
+
+**撤回记录（2026-07-18，站主真机/桌面实测反馈）**：分栏上线后站主反馈——桌面（≥1100px，绝大多数访问场景）右栏被压成单列纵向流，`#pickGrid` 十张卡变成 1 列 10 排，"很浪费空间也不好看"。这是 44-4 CSS 里 `.holdings-split #pickGrid{grid-template-columns:1fr}` 的直接后果，跟站主想要的"5 张一排、铺满 2 排"正面冲突——分栏布局的左窄栏占掉横向空间，右栏没法再摆下 5 列。当面问过站主"语境栏要不要保留、卡片挤成 4 列"，站主选择**整栏砍掉，卡片区恢复满宽 5×2 网格**（比"挤 4 列凑合"更简单、更符合"卡片密度优先"的直觉）。已撤回内容：
+- `index.html`：`.holdings-split`/`.holdSticky` 包裹层删除，`#pickGrid` 直接回到 `.holdings` 下（回到 44-4 上线前的结构）。
+- `src/styles.css`：`.holdSticky`/`.holdings-split`/`.holdings-split #pickGrid` 整块规则删除；`.pick-grid{grid-template-columns:repeat(5,minmax(0,1fr))}`（U44 之前就有的基础规则，未受影响）重新在所有桌面宽度下生效，5×2 满宽网格。
+- `src/ui/marketDeck.js`：`paintSticky()`、`splitIO`（IntersectionObserver 实例）、`el._pickData`（仅供 splitIO 读取，随之变成孤儿）一并删除。特性②（卡片双层 hover/点按揭示）不受影响，原样保留。
+- 713/713 vitest、build 干净、`!important` 计数不变（2504）。
+
+以下 44-4 原始规格文字保留存档，仅供追溯设计意图，**不再是当前实现**：
 
 桌面 ≥1100px 时 `.holdings` 升级为双栏 grid；左栏 sticky 显示"当前视口中卡"的大号读数（ticker/权重/一句话论点，内容全部来自已渲染卡片的数据，零新数据源）；右栏就是现有 `#pickGrid`（改单列纵向流）。窄屏媒体查询整段不生效 = 现状单列，零回退成本：
 
@@ -148,7 +156,7 @@ document.querySelectorAll('.pick-card').forEach((c) => io.observe(c));
 
 ### 44-6 · 施工切片
 
-- [x] ⑭ 特性②+④（同一个区块，一次会话）：pick-card 模板双层化 + 委托切换 + holdings 分栏 + IO 语境栏；vitest/build/`!important` 基线全绿。✅ 代码已完成（2026-07-18）：
+- [x] ⑭ 特性②+④（同一个区块，一次会话）：pick-card 模板双层化 + 委托切换 + holdings 分栏 + IO 语境栏；vitest/build/`!important` 基线全绿。✅ 代码已完成（2026-07-18），**特性④（holdings 分栏）已于同日撤回，详见 44-4 撤回记录**——特性②（卡片双层）保留：
   - `src/ui/marketDeck.js`：`renderPicks()` 模板改双层——`.pcCover`（ticker/rank/name/权重条，现状内容原样搬入）+ `.pcDetail`（论点段落 `.pick-thesis` 原样搬入 + 新增 `.pcCta` 真实链接），卡片根节点由 `<div class="pick">` 改 `<article class="pick pick-card" tabindex="0" role="button" aria-expanded="false">`（`.pick` 类保留不删，原有 IO 揭示动画/hot-hover 回调零改动）。`initPickGridToggle()` 在 `#pickGrid` 上做事件委托（click + Enter/Space），切 `.open` 并同步 `aria-expanded`，命中 `.pcCta` 时放行不拦截（否则键盘 Enter 激活链接会被误判成切换）。
   - **CTA 链接的诚实处理（对规格文字的一处必要修正）**：44-2 原文示例写的是 `href="/sectors.html#card-NVDA"`，实测 `sectors.html` 目前只给 NVDA/AVGO/MU 三支挂了 `id="card-<TICKER>"` 锚点，其余 7 支（MRVL/SNDK/WDC/TER/RMBS/ALAB/PSTG）虽然在 sectors.html 的供应链数据里出现，但没有可跳转的锚点——**没有锚点就不编造锚点**（宪章②同款红线）。改为按 `SECTORS_ANCHORS` 白名单裁决：3 支有锚点的用 `#card-<TICKER>` 深链，其余 7 支落到 `/sectors.html` 纯页面链接，均为真实可达地址。
   - holdings 分栏：`index.html` 的 `.holdings` 内新增 `.holdings-split` 包裹层，装 `.holdSticky`（左，`hsTicker`/`hsWeight`/`hsThesis` 三占位）与 `#pickGrid`（右，原节点不变）；`.holdSticky` 默认 `display:none`，仅 `@media(min-width:1100px)` 内才 `display:block` 转 sticky——窄屏零回退成本，与规格一致。`renderPicks()` 里同时挂一个 `IntersectionObserver`（`rootMargin:-45% 0px -45% 0px`，视口中线判定），命中即调 `paintSticky()`，只写 3 个 `textContent`（ticker、"公司名 · 权重%"、去掉 `<em>` 标签的纯文本论点）——内容全部取自渲染卡片自带的 `_pickData` 闭包引用，零新数据源，零 `getBoundingClientRect` 强制同步布局。语言切换时 `renderPicks()` 会整体重跑（`setLang()` 既有行为），旧 observer 先 `disconnect()` 再重建，不留孤儿。
