@@ -60,6 +60,8 @@ const GRID_PAIRS_DESKTOP = 400, GRID_PAIRS_MOBILE = 200;
 const MAX_LINK_DIST = 260;      // Manhattan connectors only join reasonably-nearby dust, not the whole field diagonally
 const SMOOTH_TIME = 0.5;        // seconds, camera orbit/fly-to/D-pad ease
 const IDLE_OMEGA = 0.045;       // rad/s, ambient azimuth drift while "playing"
+const PARALLAX_AZ = 0.10, PARALLAX_EL = 0.06; // rad, max additive camera offset from mouse position (U42 42-7)
+const PARALLAX_SMOOTH = 0.6;    // seconds — deliberately looser than SMOOTH_TIME so parallax reads as a slow drift, not a snap
 
 const BUCKET_ORDER = ['model-vendor', 'core-ai-hardware', 'megacap-tech', 'benchmark', 'supply-chain'];
 const BUCKET_LABEL = {
@@ -296,6 +298,18 @@ export function initSectorsStarfield(data, opts = {}) {
   let playing = !reduce;
   let focused = null;
 
+  // ── mouse parallax: additive camera offset on top of the orbit above,
+  // not a second lerp channel — suspended under reduced-motion, pause, or
+  // an active drag/pinch (`pointers.size`), same gating as ambient drift. ──
+  let parallaxTX = 0, parallaxTY = 0;
+  let parallaxAz = 0, parallaxEl = 0;
+  const parallaxAzVel = { v: 0 }, parallaxElVel = { v: 0 };
+  function onStagePointerMove(e) {
+    if (e.pointerType !== 'mouse' || pointers.size) return;
+    parallaxTX = (e.clientX / innerWidth) * 2 - 1;
+    parallaxTY = -(e.clientY / innerHeight) * 2 + 1;
+  }
+
   function openModal(node) {
     const d = buildDetail(node);
     if (!d) { modalEl.hidden = true; return; }
@@ -443,6 +457,7 @@ export function initSectorsStarfield(data, opts = {}) {
   canvas.addEventListener('pointerdown', onPointerDown);
   addEventListener('pointermove', onPointerMove, { passive: true });
   addEventListener('pointerup', onPointerUp, { passive: true });
+  stage.addEventListener('pointermove', onStagePointerMove, { passive: true });
   canvas.addEventListener('wheel', onWheel, { passive: false });
   canvas.addEventListener('dblclick', onDblClick);
   addEventListener('keydown', onKeyDown);
@@ -485,7 +500,10 @@ export function initSectorsStarfield(data, opts = {}) {
     focus.x = smoothDamp(focus.x, focusTarget.x, focusVel.x, st, dt);
     focus.y = smoothDamp(focus.y, focusTarget.y, focusVel.y, st, dt);
     focus.z = smoothDamp(focus.z, focusTarget.z, focusVel.z, st, dt);
-    const off = sphericalOffset(azimuth, elevation, distance);
+    const wantParallax = !(reduce || !playing || pointers.size);
+    parallaxAz = smoothDamp(parallaxAz, wantParallax ? parallaxTX * PARALLAX_AZ : 0, parallaxAzVel, PARALLAX_SMOOTH, dt);
+    parallaxEl = smoothDamp(parallaxEl, wantParallax ? parallaxTY * PARALLAX_EL : 0, parallaxElVel, PARALLAX_SMOOTH, dt);
+    const off = sphericalOffset(azimuth + parallaxAz, elevation + parallaxEl, distance);
     camera.position.set(focus.x + off.x, focus.y + off.y, focus.z + off.z);
     camera.lookAt(focus.x, focus.y, focus.z);
     renderer.render(scene, camera);
@@ -509,6 +527,7 @@ export function initSectorsStarfield(data, opts = {}) {
     canvas.removeEventListener('pointerdown', onPointerDown);
     removeEventListener('pointermove', onPointerMove);
     removeEventListener('pointerup', onPointerUp);
+    stage.removeEventListener('pointermove', onStagePointerMove);
     canvas.removeEventListener('wheel', onWheel);
     canvas.removeEventListener('dblclick', onDblClick);
     removeEventListener('keydown', onKeyDown);
