@@ -137,6 +137,10 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .reader .pad{padding:clamp(18px,5vw,34px) clamp(16px,5vw,40px) clamp(24px,5vw,40px)}
 .reader h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px}
 .reader .meta{font:400 11px/1.6 var(--mono);color:var(--read-ink-dim);letter-spacing:.04em;margin:0 0 20px;text-transform:uppercase}
+/* U46 46-乙-③: cap the reading column at 68ch (same rule U41 set on
+   signal.html) — line-height was already 1.95 (well past the 1.7 floor),
+   but nothing capped line length, so at the 900px .wrap it ran ~90+ char. */
+.reader .body{max-width:68ch}
 .reader .body p{font:400 var(--read-fs)/1.95 var(--serif);color:var(--read-ink);margin:0 0 1.35em;text-indent:2em;letter-spacing:.02em}
 .reader .body .sys{font:400 calc(var(--read-fs) - 3px)/1.7 var(--mono);color:var(--read-ink);background:color-mix(in srgb,var(--read-ink) 6%,transparent);border:1px dashed var(--read-ink-dim);padding:11px 14px;margin:0 0 1.35em;border-radius:2px;text-indent:0;white-space:pre-wrap}
 .chapter-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:26px;padding-top:16px;border-top:1px dashed var(--read-line)}
