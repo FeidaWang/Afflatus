@@ -1,5 +1,91 @@
 # Urgent — horoscope.html 紧急改造清单（2026-07-10 立项）
 
+## U46 · 全站产品化体检：设计叙事准则 + UX 整改清单（2026-07-18 立项，站主全模块 UX/UI 诊断 prompt，规格 + 裁决）
+
+**定调**：诊断的目标是「极客审美」与「大众可用性」兼得——**叙事外壳一件不拆，可用性欠账逐项还**。甲部把已被验证的设计哲学固化成产品化期间的不可回退准则；乙部对四项缺陷逐个裁决：两项立项施工、一项按仓库既有路线改道、一项经核查**已于 2026-07-10 修复**（prompt 的诊断快照过期）。
+
+### 46-甲 · 设计与叙事准则（Design & Narrative Guidelines，产品化不可回退项）
+
+1. **沉浸式主题叙事（narrative shell）**：干数据必须包裹在世界观里——金融市场=赛博竞技场（arena）、美联储=SCP 机密档案（signal）、电竞数据=AI 预测日志（games/league）、传统命理=RPG 稀有度体系（horoscope）。**执行标准已有法条**：宪章①「每个 UI 元素是一台舰载设备」+ U27d 分层（每页一个人格，不做缝合怪）。产品化新增功能一律先回答"它在这个页面的世界观里是什么设备"，答不出就不上。
+2. **排版驱动 UI（终端/仪表盘美学）**：布局重于图形——深底高对比、Monospace 字族、ASCII 装饰（`[ ]`/`//`/`---`）、霓虹点缀。**约束升级为纪律**：装饰性 ASCII 不得进入语义流（一律 `aria-hidden`）；霓虹色只做点缀不做正文色（对比度红线见乙-③）；新页面先用字重/字距/留白解题，图形是最后手段。
+3. **Jamstack + Local-First**：静态构建 + 本地 JSON 数据文件（`games-data.json` 等）+ 浏览器端完成敏感计算（排盘/紫微全在本地，生辰数据零上传）。**裁决：原则照写，Next.js/Astro 不迁**——零框架静态 HTML + Vite 是 U21 认定的架构资产，roadmap「重复代码量实测」一节已量化过共享布局收益（约 250 行样板贴 9 次，nav 已由 `nav.js` 单源渲染），够不上整站迁移的动刀标准。Local-First 隐私承诺写进各命理页页脚措辞（乙部外顺手项）。
+
+### 46-乙 · 技术与 UX 整改（Technical & UX Remediation Steps）
+
+**① 认知过载 → 术语渐进披露（立项施工）**
+
+全站行话（Brier score / Sharpe / Keter 级 / SEP / smoothDamp 级黑话不在此列——只管**用户可见**术语）统一走一个共享术语组件：点状下划线 + 简明白话浮层。**hover 专属信息零容忍（22c）→ 必须是可聚焦按钮，点按/Enter 同效**：
+
+```html
+<button type="button" class="term" aria-describedby="tip-sharpe"
+        data-term="sharpe">Sharpe · 1Y</button>
+<!-- 浮层单例，内容来自 src/lib/termGlossary.js 的双语注册表 -->
+```
+```css
+@layer components {
+  .term{all:unset;cursor:help;border-bottom:1px dotted var(--dim);}
+  .term:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .termTip{position:fixed;z-index:80;max-width:34ch;padding:10px 12px;
+    font:400 13px/1.6 var(--mono);background:var(--panel);border:1px solid var(--line)}
+}
+```
+```js
+// src/lib/termGlossary.js：纯数据注册表（vitest 校验双语齐全 + key 唯一）
+export const TERMS = {
+  sharpe: { en: 'Return earned per unit of risk taken; above 1 is solid.',
+            zh: '每承担一份风险换到的回报；大于 1 算不错。' },
+  brier:  { en: 'Prediction accuracy score, 0 (perfect) to 1 (worst).',
+            zh: '预测准确度评分，0 最好 1 最差。' },
+  keter:  { en: 'SCP-speak for "hardest to contain" — here: highest market impact.',
+            zh: 'SCP 用语「最难收容」——在本站指对市场冲击最大的一档。' },
+  // …每页立项时增补，宁缺毋滥：解释必须一句白话，写不短说明术语本身该换
+};
+// 浮层挂载：click/focus 显示、Esc/失焦关闭，单例复用，~40 行进 shared lib
+```
+
+**② 移动端响应式灾难 → 审计 + 强制降级（立项施工，审计先行）**
+
+诊断方向对，但"<768px 全部单列"不能一刀切立法——多数页已有窄屏媒体查询（sectors/signal/games 本轮均带 560–900px 降级段）。施工形态是**逐页审计清单**：真机过一遍 9 页，凡多列网格/横向标尺在 768px 以下破版的，补单列瀑布降级；复杂图表（games 淘汰赛树、stats Bootstrap 重采样分布）加「横屏查看」提示组件：
+
+```css
+@layer components {
+  .rotateHint{display:none}
+  @media (max-width:768px) and (orientation:portrait) {
+    .rotateHint{display:flex;gap:8px;align-items:center;padding:10px 12px;
+      font:400 12px/1.5 var(--mono);color:var(--dim);border:1px dashed var(--line)}
+  }
+}
+```
+提示是建议不是拦截（内容照常可滚动查看），可点× 关闭并记 localStorage——不做「强制横屏」遮罩（拦截式 UX 与内容型站身份冲突，U23 同源裁决）。
+
+**③ 暗色眩光 → 阅读模式（立项施工，落点 serial.html 长文）**
+
+长文页（novels/serial、研究长文）加可切换阅读模式：暗（现状）/ 纸白 / 护眼米黄三档，`localStorage` 持久化；正文 `line-height` 提到 1.7、行长 ≤68ch（U41 已在 signal 立过同规）；三档全部过 WCAG AA 对比度校验后才准上线：
+
+```css
+@layer tokens {
+  .reading-light{--r-bg:#f6f4ef;--r-ink:#1d1c1a;--r-dim:#5c584f}
+  .reading-sepia{--r-bg:#f3ecd9;--r-ink:#2a2418;--r-dim:#6b5f47}
+}
+@layer components {
+  .prose{font-size:17px;line-height:1.7;max-width:68ch}
+  [class*="reading-"] .prose{background:var(--r-bg);color:var(--r-ink)}
+}
+```
+切换钮进阅读器工具条（serial 已有书架→阅读器结构），SCP/终端人格页（signal/arena）**不提供**亮色档——作战情报室开日光灯是人格破坏，长文可读性问题在那些页通过字号/行高/对比度解决（U41 已做 17px/1.6 一轮）。
+
+**④ 技术债与表单交互（一半改道、一半已修）**
+
+- **Tailwind 迁移：不采纳**。8051 行 `styles.css` 的体量是事实，但"作用域污染"的病根已由 `@layer tokens/components` 级联层纪律（U30 硬规则）+ `!important` 计数基线 + CI 体积预算控制住；per-page 独立样式表（sectors/signal/games…共 ~2200 行）已在逐步分摊单体。Tailwind 等于全站样式重写 + 引入构建期依赖生态，风险/收益比过不了 U21 的动刀标准。**采纳其目标、沿用自有路径**：产品化期间继续执行「新样式必须进 @layer、每季度一次死代码清扫（grep 无引用选择器）」。
+- **地点选择扁平下拉：经核查已于 2026-07-10 修复**（诊断快照过期）——horoscope 出生城市选择器早已从"526 城单条 `<datalist>`"重构为**省/国 → 城市二级级联**（`src/lib/cityPicker.js`，horoscope.js:146 起有完整实现注释），选城自动回填时区/经纬/DST。本项不重复立项，仅在产品化审计时复核移动端触感。
+
+### 46-丙 · 施工切片
+
+- [ ] ⑳ 术语渐进披露：`termGlossary.js` 注册表 + vitest（双语齐全/key 唯一）+ 浮层组件；首批覆盖 signal（Keter/SEP/点阵图）、arena（Sharpe/Beta/回撤）、stats（Brier/Bootstrap）。
+- [ ] ㉑ 移动端审计：9 页真机截图过版清单 → 破版处补单列降级 + 「横屏查看」提示组件落 games 淘汰赛树、stats 分布图两处。
+- [ ] ㉒ serial.html 阅读模式三档 + `.prose` 排版规格 + AA 对比度校验记录。
+- [ ] ㉓ 站主真机验收：术语浮层触屏手感、阅读模式三档观感、横屏提示不烦人、各页人格未被整改稀释。
+
 ## U45 · 首页「年化回报面板 + 星云背景」上移至「航向 · 奇点王座」正下方（2026-07-18 立项，站主布局优化 prompt，生产级实施规格）
 
 **现状核查（读码定位，规格建立在真实 DOM/CSS 上）**：
