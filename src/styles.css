@@ -8027,6 +8027,19 @@
   @media (prefers-reduced-motion: reduce), (hover: none) {
     .hero-title, .hero-num, .hero-desc { transform: none; }
   }
+
+  /* U46 46-乙-①: term-glossary tooltip. .term is a real <button> (click
+     and Enter/Space both work natively — 22c, no hover-only info). Shared
+     singleton #termPopover positioned in JS by src/lib/termGlossary.js. */
+  .term { all: unset; cursor: help; border-bottom: 1px dotted var(--dim); }
+  .term:focus-visible { outline: 2px solid var(--warm); outline-offset: 2px; }
+  .termTip {
+    position: fixed; z-index: 90; max-width: 34ch; padding: 10px 12px;
+    font: 400 13px/1.6 'JetBrains Mono', monospace; color: var(--ink);
+    background: #0a0e16; border: 1px solid var(--line); border-radius: 4px;
+    box-shadow: 0 12px 28px rgba(0,0,0,.5);
+  }
+  .termTip[hidden] { display: none; }
 }
 
 @layer overrides {

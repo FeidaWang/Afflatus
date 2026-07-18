@@ -280,4 +280,11 @@ a{color:inherit;text-decoration:none}
 .foot b{color:var(--amber)}
 
 @media(max-width:760px){.files,.mtf,.watch .grid2{grid-template-columns:1fr}.asset{border-right:0}}
+
+/* U46 46-乙-①: term-glossary tooltip button (Keter/SEP). Real <button> —
+   click and Enter/Space both work natively, no hover-only info (22c). */
+.term{all:unset;cursor:help;border-bottom:1px dotted var(--dim)}
+.term:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.termTip{position:fixed;z-index:90;max-width:34ch;padding:10px 12px;font:400 13px/1.6 var(--mono);color:var(--paper);background:var(--panel2);border:1px solid var(--line);box-shadow:0 12px 28px rgba(0,0,0,.5)}
+.termTip[hidden]{display:none}
 @media (prefers-reduced-motion: reduce){.bar i{animation:none;width:var(--w)}.bar i::after{animation:none}.redact{background:transparent;color:inherit}.heroCountdown .live::before,.dock.on .eq i{animation:none}.hz{animation:none}.gauge .needle{animation:none;transition:none}.incident{animation:none;opacity:1;transform:none}.pillar .detail{transition:none}}

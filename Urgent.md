@@ -81,7 +81,7 @@ export const TERMS = {
 
 ### 46-丙 · 施工切片
 
-- [ ] ⑳ 术语渐进披露：`termGlossary.js` 注册表 + vitest（双语齐全/key 唯一）+ 浮层组件；首批覆盖 signal（Keter/SEP/点阵图）、arena（Sharpe/Beta/回撤）、stats（Brier/Bootstrap）。
+- [x] ⑳ 术语渐进披露 ✅ 已完成（2026-07-18）：`src/lib/termGlossary.js` 双语注册表（`TERMS`：sharpe/drawdown/beta/keter/sep/brier/bootstrap）+ `mountTermGlossary()` 共享单例浮层（真实 `<button>`，点按/Enter 同效，Esc/滚动/点击外部关闭），`tests/termGlossary.test.js` 4 例（双语齐全/key 唯一/纯文本无标签/首批术语覆盖）。**范围核查修正**：prompt 原文写"arena（Sharpe/Beta/回撤）"，但这三个词实际不在 arena.html 上——经核查它们在**首页 stardrive 年化回报面板**（`#sl1`/`#sl2`/`#sl3`，U45 刚上移到 hero 正下方那个面板）。已按实际落点接入：① 首页 `src/main.js` `setLang()` 把 `sl1`(Sharpe)/`sl2`(Max Drawdown)/`sl3`(Beta) 三个 label 渲染成 `.term` 按钮（`sl0` 年化收益率是大白话不设术语），CSS 进 `src/styles.css` `@layer components`；② signal.html 接入 Keter（`.meta` 项目等级行）+ SEP（"Next SEP confirms cut"行），CSS 进 `public/styles/signal.css`；③ stats.html 接入 Bootstrap（h3 标题）+ Brier（方法论列表项），CSS 进 stats.html 内联 `<style>`。三页均复用各自已有的 i18n 机制（signal/stats 走共享 `i18n.js` 的 `afflatus-lang` 事件刷新浮层；首页走自有 `setLang()`，每次切语言重建按钮后浮层直接关闭，不残留旧引用）。717 vitest 全绿；`vite build --outDir=/tmp/…`（沙盘 `dist/` 权限绕行的既有约定）产出正常 `termGlossary-*.js` chunk，无新增报错。
 - [ ] ㉑ 移动端审计：9 页真机截图过版清单 → 破版处补单列降级 + 「横屏查看」提示组件落 games 淘汰赛树、stats 分布图两处。
 - [ ] ㉒ serial.html 阅读模式三档 + `.prose` 排版规格 + AA 对比度校验记录。
 - [ ] ㉓ 站主真机验收：术语浮层触屏手感、阅读模式三档观感、横屏提示不烦人、各页人格未被整改稀释。

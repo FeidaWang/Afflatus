@@ -114,6 +114,12 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
   .chart-card{opacity:1;transform:none;transition:none}
   .pick-row .bar i{transition:none}
 }
+/* U46 46-乙-①: term-glossary tooltip button (Brier/Bootstrap). Real
+   <button> — click and Enter/Space both work natively (22c). */
+.term{all:unset;cursor:help;border-bottom:1px dotted var(--dim)}
+.term:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.termTip{position:fixed;z-index:90;max-width:34ch;padding:10px 12px;font:400 13px/1.6 var(--mono);color:var(--ink);background:var(--panel);border:1px solid var(--line);box-shadow:0 12px 28px rgba(0,0,0,.5)}
+.termTip[hidden]{display:none}
 </style>
 </head>
 <body class="stats-page" data-prev="/games.html" data-next="/horoscope.html">
@@ -171,7 +177,7 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
         <div class="readout" id="thReadout"></div>
       </div>
       <div class="chart-card">
-        <h3 data-en="Bootstrap resampling" data-zh="Bootstrap 重采样">Bootstrap resampling</h3>
+        <h3 data-en="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;bootstrap&quot;&gt;Bootstrap&lt;/button&gt; resampling" data-zh="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;bootstrap&quot;&gt;Bootstrap&lt;/button&gt; 重采样" data-i18n-html><button type="button" class="term" data-term="bootstrap">Bootstrap</button> resampling</h3>
         <p class="note" data-en="2,000 resamples (with replacement) of the resolved calls: the distribution of hit rates you'd see if this exact skill level replayed the tournament. Gold lines mark the 2.5% / 97.5% percentiles." data-zh="对已判定的预测做 2000 次有放回重采样：同一水平重打一遍比赛，命中率会落在什么分布。金线为 2.5% / 97.5% 分位。">2,000 resamples (with replacement) of the resolved calls: the distribution of hit rates you'd see if this exact skill level replayed the tournament. Gold lines mark the 2.5% / 97.5% percentiles.</p>
         <button class="btn" id="bootBtn" data-en="RUN ×2000" data-zh="重采样 ×2000">RUN ×2000</button>
         <div id="bootHist"></div>
@@ -201,7 +207,7 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
       <ul>
         <li data-en="Wilson score interval instead of the normal approximation — the standard choice for small-n binomial proportions." data-zh="用 Wilson 得分区间而非正态近似——小样本二项比例的标准做法。">Wilson score interval instead of the normal approximation — the standard choice for small-n binomial proportions.</li>
         <li data-en="Exact two-sided binomial test against p=0.5: with n this small, &quot;beats a coin flip&quot; is a claim the data cannot yet support either way." data-zh="对 p=0.5 做精确双侧二项检验：样本这么小，「优于抛硬币」这个命题目前正反都无法成立。">Exact two-sided binomial test against p=0.5: with n this small, "beats a coin flip" is a claim the data cannot yet support either way.</li>
-        <li data-en="Brier score = mean (stated probability − outcome)²; lower is better. Skill score BSS = 1 − BS/0.25 compares against an always-50% forecaster." data-zh="Brier 评分 = (预测概率 − 结果)² 的均值，越低越好。技能分 BSS = 1 − BS/0.25，基线是永远给 50% 的预测者。">Brier score = mean (stated probability − outcome)²; lower is better. Skill score BSS = 1 − BS/0.25 compares against an always-50% forecaster.</li>
+        <li data-en="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;brier&quot;&gt;Brier score&lt;/button&gt; = mean (stated probability − outcome)²; lower is better. Skill score BSS = 1 − BS/0.25 compares against an always-50% forecaster." data-zh="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;brier&quot;&gt;Brier 评分&lt;/button&gt; = (预测概率 − 结果)² 的均值，越低越好。技能分 BSS = 1 − BS/0.25，基线是永远给 50% 的预测者。" data-i18n-html><button type="button" class="term" data-term="brier">Brier score</button> = mean (stated probability − outcome)²; lower is better. Skill score BSS = 1 − BS/0.25 compares against an always-50% forecaster.</li>
         <li data-en="Exact-scoreline hits require the outcome to be correct first — a string coincidence with the winner called wrong does not count." data-zh="比分全中必须以胜负判对为前提——赢家判错、比分字符串巧合相等的不算。">Exact-scoreline hits require the outcome to be correct first — a string coincidence with the winner called wrong does not count.</li>
         <li data-en="Nothing is re-scored after the fact: this page reads the same public JSON the live pages rendered from." data-zh="事后不重打分：本页读取的就是直播页当时渲染用的同一份公开 JSON。">Nothing is re-scored after the fact: this page reads the same public JSON the live pages rendered from.</li>
       </ul>
@@ -222,6 +228,14 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 
 <div class="tooltip" id="tip" role="tooltip" aria-hidden="true"></div>
 
+<script type="module">
+/* U46 46-乙-①: term-glossary tooltip (Brier/Bootstrap). i18n.js
+   (statsLibs.js) owns lang state; refresh() on 'afflatus-lang' so an open
+   popover updates if the reader toggles language mid-read. */
+import { mountTermGlossary } from '/src/lib/termGlossary.js';
+var termGlossaryCtl = mountTermGlossary({ getLang: function () { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } });
+window.addEventListener('afflatus-lang', function () { termGlossaryCtl.refresh(); });
+</script>
 <script type="module">
 /* U21 Phase 1 §2.1: pick() replaces the ad-hoc `zh() ? x.foo_zh : x.foo_en`
    ternaries scattered below with the shared suffix-convention helper —
