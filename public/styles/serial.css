@@ -14,23 +14,24 @@
    OLED/LED night-reading glare; --read-ink/--read-ink-dim contrast against
    the new backgrounds verified >=4.6:1 (WCAG AA floor is 4.5:1). Night
    theme is already dark and untouched.
-   U28: default theme replaced cream with "皇木" (imperial wood) — four
-   Ming-dynasty tribute-wood colors: 小叶紫檀 (zitan, deep chestnut-purple
-   base) → 金丝楠 (jinsi nanmu, warm brown + gold-thread texture) →
-   海南黄花梨 (huanghuali, warm gold ink) → 皇木/深山巨楠 (huangmu,
-   near-black divider). --read-bg/--read-bg2 form the zitan→nanmu gradient;
-   --read-tex layers thin gold repeating-linear-gradients (no image assets)
-   for the "金丝" thread grain. */
+   U-toolbar-redo: retired the third ("皇木" imperial-wood) reading theme —
+   it duplicated the page's own dark chrome (see body{} below) rather than
+   giving readers a distinct option. Only two eye-care choices remain: this
+   base rule *is* day/green now (no separate [data-theme="green"] override
+   needed since it's the default), with night as the sole variant. */
 .reader{
-  --read-bg:#2b1a16;--read-bg2:#231411;--read-ink:#e3c287;--read-ink-dim:#c2a06e;--read-accent:#d9a956;--read-line:#150c09;
-  --read-tex:repeating-linear-gradient(115deg,rgba(217,169,86,.05) 0 2px,transparent 2px 34px),repeating-linear-gradient(25deg,rgba(217,169,86,.035) 0 1px,transparent 1px 46px);
+  --read-bg:#c8dfcb;--read-bg2:#bad5be;--read-ink:#213325;--read-ink-dim:#4b6350;--read-accent:#2f6b46;--read-line:rgba(33,51,37,.14);--read-tex:none;
 }
-.reader[data-theme="green"]{--read-bg:#c8dfcb;--read-bg2:#bad5be;--read-ink:#213325;--read-ink-dim:#4b6350;--read-accent:#2f6b46;--read-line:rgba(33,51,37,.14);--read-tex:none;}
 .reader[data-theme="night"]{--read-bg:#211a12;--read-bg2:#291f15;--read-ink:#e8c98a;--read-ink-dim:#b8945f;--read-accent:#e8c98a;--read-line:rgba(232,201,138,.14);--read-tex:none;}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%}
-body{background:var(--chassis);color:var(--chrome);font-family:var(--mono);font-size:14px;line-height:1.6;overflow-x:hidden}
+/* U-toolbar-redo: the "皇木"(imperial wood) zitan→nanmu gradient used to
+   live as a selectable *reading* theme (.reader[data-theme="imperial"]);
+   it duplicated the site's own dark chrome and read as a no-op background
+   swap. Retired as a reading option and re-homed here as the actual page
+   background instead — moved, not deleted. */
+body{background:linear-gradient(160deg,#2b1a16 0%,#231411 100%);color:var(--chrome);font-family:var(--mono);font-size:14px;line-height:1.6;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--teal);outline-offset:2px}
@@ -108,7 +109,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .swatches{display:flex;gap:6px}
 .swatch{width:26px;height:26px;border-radius:50%;border:2px solid rgba(236,226,207,.25);cursor:pointer;padding:0}
 .swatch.on{border-color:var(--teal);box-shadow:0 0 0 2px rgba(79,214,196,.25)}
-.swatch.s-imperial{background:linear-gradient(135deg,#2b1a16 40%,#d9a956 100%)}.swatch.s-green{background:#c8dfcb}.swatch.s-night{background:#2a2015}
+.swatch.s-green{background:#c8dfcb}.swatch.s-night{background:#2a2015}
 .fsize{display:flex;align-items:center;gap:2px;border:1px solid rgba(236,226,207,.16);border-radius:2px}
 .fsize button{padding:9px 12px;min-height:38px;font:700 13px/1 var(--mono)}
 .fsize button:hover{color:var(--teal)}
@@ -150,7 +151,6 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .chapter-nav .ind{font:400 11px/1 var(--mono);color:var(--read-ink-dim)}
 
 /* ---- waterfall / infinite-scroll reading ---- */
-#waterfallToggle.active{background:var(--teal);border-color:var(--teal);color:#0d211f}
 .wf-chapter{margin-bottom:8px}
 .wf-chapter h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px}
 .wf-chapter .meta{font:400 11px/1.6 var(--mono);color:var(--read-ink-dim);letter-spacing:.04em;margin:0 0 20px;text-transform:uppercase}
@@ -194,8 +194,8 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
      never spill outside the bar. */
   .toolbar .bk-ch{display:inline}
   .tbtn{padding:8px 9px;font-size:11px;flex:0 0 auto}
-  /* U28: 自动翻页/无限流两钮加长一倍 + 顺带补 44px 触控目标（22c 欠账） */
-  #autoToggle,#waterfallToggle{min-width:72px;min-height:44px}
+  /* U28: 自动翻页加长一倍 + 顺带补 44px 触控目标（22c 欠账） */
+  #autoToggle{min-width:72px;min-height:44px}
   .swatches,.fsize{flex:0 0 auto}
   .fsize button{padding:8px 9px}
   .spacer{display:none}
