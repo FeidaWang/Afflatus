@@ -56,7 +56,7 @@
 | games | WC26 官方配色：藏青 `#1B2766` / 金 `#9F7D23` / 白（U40） | 品红/青赛博残留仅点缀 | mono 系 |
 | stats | `--bg:#070a12` `--panel:#0d1220` `--ink:#dce8f2` | `--teal:#4fd6c4` `--gold:#e8ad6f` `--red:#e0596b` `--green:#57c98a` | JetBrains Mono |
 | horoscope | 治愈系：暖奶油/鼠尾草绿/赤陶橙/淡金（V21 定调，逃离「深紫神棍风」）；星盘/夜间模块唯一允许深色=墨水蓝 `#1a2440`+淡金星点（「星图手账」非「水晶球」） | 文字一律深色变体，逐一过 WCAG AA | 中文衬线 + 几何无衬线 |
-| serial | 皇家木色三主题（`.reader[data-theme]`）：imperial `#2b1a16`/`#e3c287` · green `#c8dfcb`/`#213325` · night `#211a12`/`#e8c98a`（实测对比度 8.5–10.8:1 全过 AA） | `--read-accent` 随主题 | 中文衬线（正文）+ mono（工具条） |
+| serial | 阅读区双主题（`.reader[data-theme]`，U-toolbar-redo 起）：green（默认·日间护眼）`#c8dfcb`/`#213325` · night（夜间琥珀·低蓝光）`#211a12`/`#e8c98a`（实测对比度 8.5–10.8:1 全过 AA）；退役的第三主题「皇木」`#2b1a16→#231411` 移作全站页面背景（`body{background}`），不再是可选阅读主题 | `--read-accent` 随主题 | 中文衬线（正文）+ mono（工具条） |
 | course/league | violet 系 / 海克斯金蓝 | — | 各自独立 |
 
 ### 2.3 暗色模式纪律
@@ -93,7 +93,7 @@
 
 ### 4.3 阅读疲劳与暗色眩光（U46-乙-③）
 
-- 长文页（serial）**三档阅读模式已存在**（imperial 暖深 / green 纸感浅 / night 琥珀夜读），工具条切换 + localStorage 持久化 + AA 全过——重构时保留，勿当新需求重做。
+- 长文页（serial）**双档阅读模式**（green 日间护眼 / night 琥珀夜读，U-toolbar-redo 起，原第三档 imperial 已退役为页面背景），工具条切换 + localStorage 持久化 + AA 全过——重构时保留，勿当新需求重做。
 - 排版规格：正文 `line-height ≥1.7`（serial 实为 1.95）、行长 `max-width:68ch`、字号 17px 档。
 - **SCP/终端人格页（signal/arena）不提供亮色档**——作战情报室开日光灯是人格破坏；那些页的可读性靠字号/行高/对比度解决（U41 已做 17px/1.6 一轮）。
 

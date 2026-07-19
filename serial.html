@@ -99,23 +99,21 @@
 
   <section class="toolbar" id="toolbar" aria-label="阅读工具">
     <button class="tbtn" id="tocOpen" type="button">☰<span class="lbl"> 目录</span></button>
-    <div class="swatches" role="group" aria-label="阅读主题">
-      <button class="swatch s-imperial on" type="button" data-theme="imperial" title="皇木（默认·高贵护眼）" aria-label="皇木主题"></button>
-      <button class="swatch s-green" type="button" data-theme="green" title="豆沙绿护眼" aria-label="豆沙绿"></button>
-      <button class="swatch s-night" type="button" data-theme="night" title="夜间琥珀（低蓝光）" aria-label="夜间模式"></button>
+    <div class="swatches" role="group" aria-label="阅读主题（日间／夜间护眼）">
+      <button class="swatch s-green on" type="button" data-theme="green" title="日间护眼（长时间阅读）" aria-label="日间护眼主题"></button>
+      <button class="swatch s-night" type="button" data-theme="night" title="夜间琥珀·低蓝光（长时间阅读）" aria-label="夜间护眼主题"></button>
     </div>
     <div class="fsize">
       <button id="fsMinus" type="button" aria-label="减小字号">小</button>
       <button id="fsPlus" type="button" aria-label="增大字号">大</button>
     </div>
     <button class="tbtn" id="autoToggle" type="button">▶<span class="lbl"> 自动翻页</span></button>
-    <button class="tbtn" id="waterfallToggle" type="button" title="开启后不停下滑即可连续阅读下一章，懒人专用">♾️<span class="lbl"> 无限流</span></button>
     <div class="spacer"></div>
     <button class="tbtn" id="bookmarkBtn" type="button">☆<span class="lbl"> 书签</span></button>
   </section>
 
   <section class="reader-shell">
-    <article class="reader" id="reader" data-theme="imperial">
+    <article class="reader" id="reader" data-theme="green">
       <div class="reader-progress"><i id="progressBar"></i></div>
       <div class="pad" id="readerNormal">
         <h2 id="chapterTitle">加载中…</h2>
@@ -156,7 +154,7 @@
 <script>
 (function () {
   'use strict';
-  var LS = { theme:'afflatus:novels:theme', fs:'afflatus:novels:fs', waterfall:'afflatus:novels:waterfall', lastNovel:'afflatus:novels:lastNovel' };
+  var LS = { theme:'afflatus:novels:theme', fs:'afflatus:novels:fs', lastNovel:'afflatus:novels:lastNovel' };
   function nsKey(name) { return 'afflatus:novels:' + (state.novelId || 'default') + ':' + name; }
   var reader = document.getElementById('reader');
   var state = { data:null, novels:[], novelId:null, novelIdx:0, chapters:[], idx:0, autoTimer:0, waterfall:false, wfIndex:0 };
@@ -392,27 +390,18 @@
     if (scrollToTop !== false) window.scrollTo({ top: reader.offsetTop - 10, behavior: 'smooth' });
   }
 
-  function enableWaterfall() {
+  /* U-toolbar-redo: infinite-scroll ("无限流") is now the only reading
+     mode — on by default, no toggle button (station-owner call: fewer
+     toolbar controls). initWaterfall() replaces the old enable/disable
+     pair; there is no "turn it off" path anymore. */
+  function initWaterfall(fromIdx, scrollToTop) {
     state.waterfall = true;
     document.getElementById('readerNormal').hidden = true;
     document.getElementById('readerWaterfall').hidden = false;
     wfChip.classList.add('show');
-    document.getElementById('waterfallToggle').classList.add('active');
     if (!wfHeaderObserver) setupWfObservers();
-    resetWaterfallFrom(state.idx, false);
-    try { localStorage.setItem(LS.waterfall, '1'); } catch (e) {}
-    toast('无限流已开启，一直下滑即可连续阅读～');
+    resetWaterfallFrom(fromIdx, scrollToTop);
   }
-  function disableWaterfall() {
-    state.waterfall = false;
-    document.getElementById('readerNormal').hidden = false;
-    document.getElementById('readerWaterfall').hidden = true;
-    wfChip.classList.remove('show');
-    document.getElementById('waterfallToggle').classList.remove('active');
-    loadChapter(state.idx, false);
-    try { localStorage.setItem(LS.waterfall, '0'); } catch (e) {}
-  }
-  document.getElementById('waterfallToggle').addEventListener('click', function () { state.waterfall ? disableWaterfall() : enableWaterfall(); });
 
   /* ---------- auto-scroll ("自动翻页") ----------
      U15b: single fixed speed — half-way between the old "慢"(0.4) and
@@ -454,8 +443,8 @@
   fabToggle.addEventListener('click', function () { fabMenu.classList.toggle('open'); });
   document.getElementById('fabTop').addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); fabMenu.classList.remove('open'); });
   document.getElementById('fabTheme').addEventListener('click', function () {
-    var order = ['imperial','green','night']; var cur = reader.getAttribute('data-theme'); var next = order[(order.indexOf(cur) + 1) % order.length];
-    applyTheme(next); fabMenu.classList.remove('open'); toast('已切换到' + ({imperial:'皇木（尊贵护眼）',green:'豆沙绿护眼',night:'夜间琥珀（低蓝光）'})[next]);
+    var order = ['green','night']; var cur = reader.getAttribute('data-theme'); var next = order[(order.indexOf(cur) + 1) % order.length];
+    applyTheme(next); fabMenu.classList.remove('open'); toast('已切换到' + ({green:'日间护眼',night:'夜间琥珀（低蓝光）'})[next]);
   });
 
   /* ---------- retro backdrop canvas ---------- */
@@ -564,38 +553,21 @@
 
     try { localStorage.setItem(LS.lastNovel, n.id); } catch (e) {}
 
-    var resumeIdx = 0, resumeScroll = null;
+    var resumeIdx = 0;
     try {
       var prog = JSON.parse(localStorage.getItem(nsKey('progress')) || 'null');
-      if (prog) { var i = state.chapters.findIndex(function (c) { return c.id === prog.chapterId; }); if (i >= 0) { resumeIdx = i; resumeScroll = prog.scrollY; } }
+      if (prog) { var i = state.chapters.findIndex(function (c) { return c.id === prog.chapterId; }); if (i >= 0) { resumeIdx = i; } }
     } catch (e) {}
 
-    document.getElementById('readerNormal').hidden = false;
-    document.getElementById('readerWaterfall').hidden = true;
-    wfChip.classList.remove('show');
-    document.getElementById('waterfallToggle').classList.remove('active');
-
-    var wantWaterfall = false; try { wantWaterfall = localStorage.getItem(LS.waterfall) === '1'; } catch (e) {}
-    if (wantWaterfall) {
-      setupWfObservers();
-      state.waterfall = true;
-      document.getElementById('readerNormal').hidden = true;
-      document.getElementById('readerWaterfall').hidden = false;
-      wfChip.classList.add('show');
-      document.getElementById('waterfallToggle').classList.add('active');
-      resetWaterfallFrom(resumeIdx, true);
-      if (resumeIdx > 0) toast('已为你恢复到上次的阅读位置（瀑布流模式）');
-    } else {
-      loadChapter(resumeIdx, true, function () {
-        if (resumeScroll != null) { window.scrollTo({ top: resumeScroll }); if (resumeIdx > 0 || resumeScroll > 40) toast('已为你恢复到上次的阅读位置'); }
-      });
-    }
+    initWaterfall(resumeIdx, true);
+    if (resumeIdx > 0) toast('已为你恢复到上次的阅读位置');
     if (scrollToShelf) toast('已切换到《' + n.novel.title + '》');
   }
 
   /* ---------- boot ---------- */
   function boot() {
-    var savedTheme = 'imperial'; try { savedTheme = localStorage.getItem(LS.theme) || 'imperial'; } catch (e) {}
+    var savedTheme = 'green'; try { savedTheme = localStorage.getItem(LS.theme) || 'green'; } catch (e) {}
+    if (savedTheme !== 'green' && savedTheme !== 'night') savedTheme = 'green'; // guard: drop retired "imperial" theme from old localStorage
     applyTheme(savedTheme);
     var savedFs = 18; try { savedFs = Number(localStorage.getItem(LS.fs)) || 18; } catch (e) {}
     curFs = applyFs(savedFs);
