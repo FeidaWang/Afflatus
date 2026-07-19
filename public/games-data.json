@@ -1,14 +1,14 @@
 {
   "tournament": "FIFA World Cup 2026",
-  "updated": "2026-07-18",
-  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365/FanDuel (16-18 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365/FanDuel（7 月 16-18 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "updated": "2026-07-19",
+  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365/FanDuel (16-19 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
+  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365/FanDuel（7 月 16-19 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
   "record": {
     "since": "2026-06-24",
-    "resolved": 54,
+    "resolved": 55,
     "correctOutcome": 37,
     "exactScore": 10,
-    "winRate": 69,
+    "winRate": 67,
     "note_en": "Match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
     "note_zh": "自第三轮起对预测胜负计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
@@ -128,6 +128,15 @@
         "pick_zh": "英格兰胜",
         "ok": false,
         "exact": false
+      },
+      {
+        "id": "wc-third",
+        "label_en": "France 4-6 England",
+        "label_zh": "法国 4-6 英格兰",
+        "pick_en": "France win",
+        "pick_zh": "法国胜",
+        "ok": false,
+        "exact": false
       }
     ]
   },
@@ -156,7 +165,7 @@
       "team": "Argentina",
       "team_zh": "阿根廷",
       "flag": "🇦🇷",
-      "prob": 52,
+      "prob": 54,
       "reason_en": "Set up both Argentina goals in the 2-1 semi-final comeback over England (assists for Enzo Fernández and Lautaro Martínez), moving to 8 goals and 4 assists — overtaking Mbappé on the Golden Boot assist tiebreak. Golden Ball odds shortened sharply to around -250 after the display. One game left, his self-declared final World Cup, in the final vs Spain on July 19.",
       "reason_zh": "在2-1逆转英格兰的半决赛中为阿根廷两粒进球均送出助攻（分别助攻恩佐·费尔南德斯和劳塔罗·马丁内斯），个人数据升至8球4助攻——凭助攻数反超姆巴佩登顶金靴榜。此役过后金球奖赔率大幅收窄至约-250。他所说的谢幕之战只剩7 月 19 日对阵西班牙的决赛。"
     },
@@ -187,8 +196,8 @@
       "team_zh": "英格兰",
       "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
       "prob": 9,
-      "reason_en": "Still on 6 goals, level with Kane, after England's 2-1 semi-final loss to Argentina. Out of the title race but England's third-place play-off vs France (July 18, Miami) is a live Golden Boot chance since bronze-match goals count. Golden Ball odds have drifted (around +3500) with England's trophy exit.",
-      "reason_zh": "英格兰半决赛2-1不敌阿根廷后，贝林厄姆进球数仍为6球，与凯恩持平。夺冠希望已破灭，但7 月 18 日迈阿密对阵法国的三、四名决赛仍是金靴争夺的机会，因为季军战进球同样计入金靴榜。随着英格兰出局，金球奖赔率已明显走高（约+3500）。"
+      "reason_en": "Scored the 90+8' winner as a substitute in England's wild 6-4 bronze-medal win over France, taking his tournament tally to 7 — a new record for the most goals by an England player at a major tournament. Out of the title race with England already eliminated, so Golden Ball odds remain long (around +3500) despite the milestone.",
+      "reason_zh": "在英格兰6-4逆转法国的疯狂季军战中，贝林厄姆第90+8分钟替补建功锁定胜局，个人本届进球数升至7球——创下英格兰球员在大赛中的历史进球纪录。由于英格兰已无缘冠军，金球奖赔率虽创纪录仍维持较高（约+3500）。"
     },
     {
       "name": "Kylian Mbappé",
@@ -196,39 +205,12 @@
       "team": "France",
       "team_zh": "法国",
       "flag": "🇫🇷",
-      "prob": 8,
-      "reason_en": "On 8 goals and 3 assists, now trailing Messi on the Golden Boot assist tiebreak after Messi's 2-assist semi-final. Still has one more chance to add to his tally: France play England in the third-place play-off July 18 in Miami, where goals do count toward the Golden Boot. Golden Ball odds have drifted since France's semi-final exit.",
-      "reason_zh": "姆巴佩本届8球3助攻，梅西在半决赛送出两次助攻后，他在金靴助攻数排名上已被反超。他仍有一次追分机会：法国将于7 月 18 日在迈阿密与英格兰争夺季军，该场进球同样计入金靴榜。随着法国半决赛出局，金球奖赔率已明显走高。"
+      "prob": 6,
+      "reason_en": "Scored twice (48', 66') in France's 4-6 bronze-medal loss to England, moving to 10 Golden Boot goals — two clear of Messi (8) with his tournament now over — and becoming the World Cup's all-time leading scorer with 22 career goals. The Golden Boot milestone is huge, but Golden Ball odds remain long since France finished outside the final.",
+      "reason_zh": "姆巴佩在法国4-6不敌英格兰的季军战中梅开二度（第48、66分钟），本届进球数升至10球——以两球优势领先梅西（8球），且个人本届赛事已结束；同时他以生涯22球超越历史纪录，成为世界杯历史射手王。金靴里程碑意义重大，但由于法国无缘决赛，金球奖赔率仍然偏高。"
     }
   ],
   "fixtures": [
-    {
-      "id": "wc-third",
-      "stage": "3RD PLACE",
-      "kickoff": "2026-07-18T17:00:00-04:00",
-      "home": "France",
-      "home_zh": "法国",
-      "homeFlag": "🇫🇷",
-      "away": "England",
-      "away_zh": "英格兰",
-      "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      "opus": "home",
-      "conf": 0.56,
-      "reason_en": "France go in as -110 favourites (implied ~53%) after their 0-2 semi-final loss to Spain. Mbappé sits level with Messi on 8 Golden Boot goals with Messi playing Sunday's final instead — this is Mbappé's last chance to pull clear, which should keep France's attack sharp even in a dead-rubber fixture.",
-      "reason_zh": "法国半决赛0-2不敌西班牙后，在季军战中以-110赔率（隐含概率约53%）领先。姆巴佩金靴榜8球与梅西持平，而梅西周日出战决赛无缘再进球——这是姆巴佩反超的最后机会，即便是荣誉之战，法国的攻击线预计仍会保持锐利。",
-      "opusScore": "3-1",
-      "odds": {
-        "h": 1.91,
-        "d": 3.80,
-        "a": 3.80,
-        "scores": [
-          { "s": "2-1", "o": 7.5 },
-          { "s": "1-1", "o": 6.0 },
-          { "s": "3-1", "o": 9.0 }
-        ],
-        "src": "FanDuel/bet365 (18 Jul)"
-      }
-    },
     {
       "id": "wc-final",
       "stage": "FINAL",
@@ -241,8 +223,8 @@
       "awayFlag": "🇦🇷",
       "opus": "home",
       "conf": 0.58,
-      "reason_en": "Spain are +125 favourites (DraftKings, 15-16 Jul) after a composed 2-0 semi-final win over France, with Yamal and Rodri both in career-best form. Argentina reached the final on a dramatic late comeback over England and carry Messi's farewell-World-Cup motivation, but Spain's midfield control makes them the side to beat on 19 July.",
-      "reason_zh": "西班牙2-0淘汰法国晋级决赛，表现从容，亚马尔与罗德里均正处于生涯最佳状态，DraftKings（7 月 15-16 日）赔率+125领先。阿根廷凭借对英格兰的绝地反击晋级决赛，梅西的谢幕世界杯将是巨大动力，但西班牙的中场控制力使其成为 7 月 19 日决赛的头号热门。",
+      "reason_en": "Spain are +125 favourites (FanDuel/DraftKings, 18-19 Jul; Kalshi has them at 58%) riding a 37-match unbeaten streak, with Yamal and Rodri both in career-best form after shutting down Mbappé, Olise and Dembélé in the semi. Argentina have trailed or been level after 90 minutes in all four knockout games yet won every one — 12 of their 19 goals have come after the 75th minute — so a late twist is live. Golden Boot subplot: Mbappé finished on 10 after a brace in the bronze match, so Messi (8) needs multiple goals today to catch him.",
+      "reason_zh": "西班牙以37场不败战绩为依托，FanDuel/DraftKings（7 月 18-19 日）赔率+125领先，Kalshi预测胜率58%；亚马尔与罗德里正处于生涯最佳状态，半决赛联手锁死姆巴佩、奥利塞与登贝莱。阿根廷本届淘汰赛四场比赛90分钟内均落后或战平，却全部逆转取胜——19粒进球中有12粒发生在第75分钟之后，因此决赛仍有爆冷可能。金靴悬念：姆巴佩在季军战梅开二度后以10球收官，梅西（8球）今日需梅开多球才能追平。",
       "opusScore": "2-1",
       "odds": {
         "h": 2.25,
@@ -253,7 +235,7 @@
           { "s": "1-0", "o": 8.5 },
           { "s": "1-1", "o": 6.5 }
         ],
-        "src": "DraftKings (16-18 Jul)"
+        "src": "FanDuel/DraftKings/Kalshi (18-19 Jul)"
       }
     }
   ],
@@ -444,7 +426,7 @@
         "away": "England",
         "away_zh": "英格兰",
         "awayFlag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-        "winner": null
+        "winner": "away"
       }
     ],
     "final": [
