@@ -6,7 +6,9 @@
    intentionally match the two prompts' own JSON schemas verbatim (see prompts/), since
    those are the literal output contract the model is instructed to produce. */
 
-const VENDORS = ['anthropic', 'openai', 'zhipu', 'alibaba'];
+// 11 tracked vendors (V12 expansion): US — anthropic/openai/google/xai/meta/cohere;
+// CN — deepseek/alibaba/zhipu/moonshot (Kimi)/minimax. Order here is display-agnostic.
+const VENDORS = ['anthropic', 'openai', 'google', 'xai', 'meta', 'cohere', 'deepseek', 'alibaba', 'zhipu', 'moonshot', 'minimax'];
 const ROUTES = ['closed', 'open'];
 const MARKETS = ['US', 'CN'];
 const RELATIONS = ['direct', 'supplier', 'infra', 'competitor'];
@@ -165,8 +167,8 @@ export function validateSectorsData(data) {
   if (!isNonEmptyString(data.updated)) errors.push('updated: missing or empty');
   if (!isNonEmptyString(data.as_of)) errors.push('as_of: missing or empty');
   validateModelWatch(data.modelWatch, errors);
-  if (Array.isArray(data.modelWatch) && data.modelWatch.length > 0 && data.modelWatch.length !== 4) {
-    errors.push(`modelWatch: expected 4 vendor cards when populated, got ${data.modelWatch.length}`);
+  if (Array.isArray(data.modelWatch) && data.modelWatch.length > 0 && data.modelWatch.length !== 4 && data.modelWatch.length !== 11) {
+    errors.push(`modelWatch: expected 11 vendor cards when populated (4 accepted for legacy data), got ${data.modelWatch.length}`);
   }
   validateBaskets(data.baskets, errors);
   if (data.weeklyTake != null) {

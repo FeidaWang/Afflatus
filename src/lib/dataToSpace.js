@@ -25,6 +25,10 @@
    ============================================================ */
 
 const MARKET_X = { US: -1, CN: 1 };
+// V12 11-vendor roster: US-camp vendors; anything else tracked falls to CN.
+// Used only as the fallback when a vendor has no basket to read market from
+// (private labs — deepseek/moonshot/minimax/xai — never carry baskets).
+const US_VENDORS = new Set(['anthropic', 'openai', 'google', 'xai', 'meta', 'cohere']);
 const BUCKET_Z = {
   'model-vendor': -1.5,
   'core-ai-hardware': -0.5,
@@ -86,7 +90,7 @@ export function buildSpaceData(data = {}, opts = {}) {
   for (const card of modelWatch) {
     if (!card?.vendor) continue;
     const basket = baskets.find((b) => b.vendor === card.vendor);
-    const market = basket ? basket.market : (card.vendor === 'anthropic' || card.vendor === 'openai' ? 'US' : 'CN');
+    const market = basket ? basket.market : (US_VENDORS.has(card.vendor) ? 'US' : 'CN');
     const id = 'vendor:' + card.vendor;
     nodes.push(place({ id, kind: 'vendor', label: card.vendor, market, bucket: 'model-vendor', confidence: null, vendor: card.vendor }));
     seen.add(id);

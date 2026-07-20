@@ -61,16 +61,24 @@ describe('validateSectorsData — populated state', () => {
     expect(validateSectorsData([]).ok).toBe(false);
   });
 
-  it('requires exactly 4 modelWatch vendor cards when populated', () => {
+  it('requires exactly 11 modelWatch vendor cards when populated (4 accepted for legacy data)', () => {
     const data = basePopulated({ modelWatch: [baseModelWatchCard('anthropic')] });
     const { ok, errors } = validateSectorsData(data);
     expect(ok).toBe(false);
-    expect(errors.join(' ')).toMatch(/expected 4 vendor cards/);
+    expect(errors.join(' ')).toMatch(/expected 11 vendor cards/);
+  });
+
+  it('accepts an 11-card modelWatch roster (V12 expansion)', () => {
+    const all = ['anthropic', 'openai', 'google', 'xai', 'meta', 'cohere', 'deepseek', 'alibaba', 'zhipu', 'moonshot', 'minimax'];
+    const data = basePopulated({ modelWatch: all.map(baseModelWatchCard) });
+    const { ok, errors } = validateSectorsData(data);
+    expect(errors).toEqual([]);
+    expect(ok).toBe(true);
   });
 
   it('rejects an unrecognized vendor', () => {
     const data = basePopulated();
-    data.modelWatch[0] = baseModelWatchCard('meta');
+    data.modelWatch[0] = baseModelWatchCard('mistral');
     const { ok, errors } = validateSectorsData(data);
     expect(ok).toBe(false);
     expect(errors.join(' ')).toMatch(/vendor: must be one of/);

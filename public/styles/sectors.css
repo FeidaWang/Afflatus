@@ -289,3 +289,14 @@ h1 span{color:#8ff0d7}
 @media(max-width:480px){.megaFoot{grid-template-columns:1fr}}
 
 .foot{padding:0}
+
+/* V12 (2026-07-19): two-column US/China layout for the 11-vendor AI-watch
+   news grid. #newsGrid keeps its .newsGrid class for legacy selectors
+   (:has(.nCard.selected) dimming), so the wrapper spans the full row and the
+   real card grids live one level down inside each column. */
+.newsGrid>.mwColWrap{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.mwColWrap .mwCol{min-width:0}
+.mwColHead{font:700 12px/1 var(--font);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.mwCol .newsGrid{grid-template-columns:repeat(2,1fr)}
+@media(max-width:980px){.newsGrid>.mwColWrap{grid-template-columns:1fr}}
+@media(max-width:560px){.mwCol .newsGrid{grid-template-columns:1fr}}

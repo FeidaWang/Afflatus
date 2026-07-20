@@ -327,11 +327,17 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     MRVL: '#6E2585' /* representative — no confirmed official hex */,
     TER: '#2E4A7A' /* representative — no confirmed official hex */,
     anthropic: '#D97757', openai: '#10A37F', zhipu: '#2F6BFF' /* representative — no confirmed official hex */, alibaba: '#FF6A00',
+    /* V12 vendor expansion — all representative hexes, no confirmed official brand colors */
+    google: '#4285F4', xai: '#1A1A1A', meta: '#0866FF', cohere: '#39594D',
+    deepseek: '#4D6BFE', moonshot: '#11131A', minimax: '#F23F5D',
   };
   var DISPLAY_NAME = {
     NVDA: 'NVIDIA', AVGO: 'Broadcom', MU: 'Micron', SKHY: 'SK hynix', TSM: 'TSMC', ASML: 'ASML',
     SSNLF: 'Samsung', ALAB: 'Astera Labs', MRVL: 'Marvell', PSTG: 'Pure Storage', SNDK: 'SanDisk', TER: 'Teradyne', RMBS: 'Rambus',
     anthropic: 'Anthropic', openai: 'OpenAI', zhipu: 'Zhipu AI', alibaba: 'Alibaba',
+    google: 'Google Gemini', xai: 'xAI Grok', meta: 'Meta', cohere: 'Cohere',
+    deepseek: 'DeepSeek', moonshot: 'Moonshot Kimi', minimax: 'MiniMax',
+    /* V12 vendors: no verified Wikimedia logo files yet — text wordmark fallback by design */
   };
   // Real logo files — Wikimedia Commons' Special:FilePath is a stable
   // redirect-to-raw-file service meant for exactly this kind of hotlink.
@@ -484,7 +490,17 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
   function T(en, zh) { return lang() === 'zh' ? zh : en; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
   function pct(n) { return Math.round((n || 0) * 100) + '%'; }
-  var VENDOR_NAME = { anthropic: 'Anthropic', openai: 'OpenAI', zhipu: T('Zhipu', '智谱'), alibaba: T('Alibaba', '阿里') };
+  var VENDOR_NAME = {
+    anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google Gemini', xai: 'xAI Grok', meta: 'Meta', cohere: 'Cohere',
+    deepseek: T('DeepSeek', '深度求索'), alibaba: T('Alibaba Qwen', '阿里 Qwen'), zhipu: T('Zhipu GLM', '智谱 GLM'),
+    moonshot: T('Moonshot Kimi', '月之暗面 Kimi'), minimax: 'MiniMax',
+  };
+  // Column assignment for the two-column US/CN layout; also the fallback when
+  // a vendor has no basket (private labs carry no equity basket by design).
+  var VENDOR_MARKET = {
+    anthropic: 'US', openai: 'US', google: 'US', xai: 'US', meta: 'US', cohere: 'US',
+    deepseek: 'CN', alibaba: 'CN', zhipu: 'CN', moonshot: 'CN', minimax: 'CN',
+  };
   var RELATION_LABEL = { direct: T('direct', '直接受益'), supplier: T('supplier', '上游供给'), infra: T('infra', '算力底座'), competitor: T('competitor', '受压') };
 
   function emptyMsg() { return T('Weekly matrix populates after the first scheduled run.', '每周对比矩阵将在首次定时任务运行后填充。'); }
@@ -569,16 +585,26 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     if (storyTake) storyTake.innerHTML = DATA && DATA.weeklyTake
       ? '<div class="rArt noPhoto"></div><div class="featuredBody"><b>' + esc(T('WEEKLY TAKE', '本周主线')) + '</b><p>' + esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) + '</p></div>'
       : '';
+    // V12: the roster comes from modelWatch (11 vendor cards), not baskets —
+    // private labs (deepseek/moonshot/minimax/xai) carry no basket by design
+    // and would otherwise never render. Baskets are joined per vendor where
+    // they exist; a defensive pass appends any basket-only vendor (legacy).
     var baskets = DATA && Array.isArray(DATA.baskets) ? DATA.baskets : [];
+    var basketByVendor = {};
+    baskets.forEach(function (b) { basketByVendor[b.vendor] = b; });
+    var mwCards = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
     var mwByVendor = {};
-    (DATA && DATA.modelWatch || []).forEach(function (c) { mwByVendor[c.vendor] = c; });
-    newsGrid.innerHTML = baskets.map(function (b) {
-      var mw = mwByVendor[b.vendor];
-      var eqs = b.equities || [];
+    mwCards.forEach(function (c) { mwByVendor[c.vendor] = c; });
+    var order = mwCards.map(function (c) { return c.vendor; });
+    baskets.forEach(function (b) { if (order.indexOf(b.vendor) < 0) order.push(b.vendor); });
+    function vendorCardHTML(v) {
+      var mw = mwByVendor[v], b = basketByVendor[v];
+      var eqs = (b && b.equities) || [];
+      var market = (b && b.market) || VENDOR_MARKET[v] || 'US';
       var chips = eqs.map(function (e) {
         return '<span class="nChip" data-ticker="' + esc(e.ticker) + '">' + esc(e.ticker) + '</span>';
       }).join('');
-      var tags = '<span class="nTag ' + (b.market === 'CN' ? 'cn' : 'us') + '">' + esc(b.market) + '</span>'
+      var tags = '<span class="nTag ' + (market === 'CN' ? 'cn' : 'us') + '">' + esc(market) + '</span>'
         + (mw ? '<span class="nTag">' + esc(mw.route === 'open' ? T('OPEN', '开源') : T('CLOSED', '闭源')) + '</span>' : '');
       var devs = mw ? (mw.developments || []).map(function (d) {
         return '<div class="mwDev"><a href="' + esc(d.src) + '" target="_blank" rel="noopener">' + esc(T(d.t_en, d.t_zh)) + '</a></div>';
@@ -589,15 +615,28 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
       }).join('');
       var excerpt = mw ? T(mw.gap_note_en, mw.gap_note_zh) : (eqs[0] ? eqs[0].correlation_note_zh : '');
       return newsCard({
-        id: 'vendorCard-' + b.vendor, brand: b.vendor,
+        id: 'vendorCard-' + v, brand: v,
         tags: tags,
-        title: VENDOR_NAME[b.vendor] || b.vendor,
+        title: VENDOR_NAME[v] || v,
         meta: mw ? mw.current_line : '',
         excerpt: excerpt,
         chips: chips,
         detail: devs + eqRows,
       });
-    }).join('');
+    }
+    function marketOf(v) {
+      var b = basketByVendor[v];
+      return (b && b.market) || VENDOR_MARKET[v] || 'US';
+    }
+    function colHTML(market) {
+      return order.filter(function (v) { return marketOf(v) === market; }).map(vendorCardHTML).join('');
+    }
+    newsGrid.innerHTML = order.length
+      ? '<div class="mwColWrap">'
+        + '<section class="mwCol"><h3 class="mwColHead">' + esc(T('US frontier labs', '美国前沿实验室')) + '</h3><div class="newsGrid">' + colHTML('US') + '</div></section>'
+        + '<section class="mwCol"><h3 class="mwColHead">' + esc(T('China frontier labs', '中国前沿实验室')) + '</h3><div class="newsGrid">' + colHTML('CN') + '</div></section>'
+        + '</div>'
+      : '';
     wireNewsCards(newsGrid);
   }
 
