@@ -143,7 +143,25 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
    but nothing capped line length, so at the 900px .wrap it ran ~90+ char. */
 .reader .body{max-width:68ch}
 .reader .body p{font:400 var(--read-fs)/1.95 var(--serif);color:var(--read-ink);margin:0 0 1.35em;text-indent:2em;letter-spacing:.02em}
-.reader .body .sys{font:400 calc(var(--read-fs) - 3px)/1.7 var(--mono);color:var(--read-ink);background:color-mix(in srgb,var(--read-ink) 6%,transparent);border:1px dashed var(--read-ink-dim);padding:11px 14px;margin:0 0 1.35em;border-radius:2px;text-indent:0;white-space:pre-wrap}
+/* ---- U-sys-panel: SYS blocks = cross-world game terminal ----
+   The novel's system prompts (技能升级/结算面板/规则卡) now render as a
+   sci-fi "screen" instead of an inline quote box: cool low-blue teal
+   terminal against the warm serif prose, mono type, scanlines, corner
+   status bar + pulsing link-dot ("同契终端"). Distinction is the point —
+   readers should feel a device switched on mid-page. Eye-care kept:
+   muted duotone (no pure white/black, no saturated glow), body ink vs
+   panel bg measured ≥7:1 in both reading themes; pulse animation is
+   opacity-only and disabled under prefers-reduced-motion. */
+.reader{--sys-bg:#223230;--sys-bg2:#1a2826;--sys-ink:#bde5da;--sys-dim:#83bbaf;--sys-accent:#59cfba;--sys-line:rgba(89,207,186,.35)}
+.reader[data-theme="night"]{--sys-bg:#101b1d;--sys-bg2:#0c1618;--sys-ink:#a9ddd3;--sys-dim:#6fa89e;--sys-accent:#4fd6c4;--sys-line:rgba(79,214,196,.3)}
+.reader .body .sys{position:relative;margin:0 0 1.6em;text-indent:0;border:1px solid var(--sys-line);border-radius:6px;background:linear-gradient(165deg,var(--sys-bg),var(--sys-bg2));box-shadow:0 0 0 3px color-mix(in srgb,var(--sys-accent) 8%,transparent),inset 0 0 26px rgba(0,0,0,.28);overflow:hidden}
+.reader .body .sys::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,color-mix(in srgb,var(--sys-accent) 6%,transparent) 0 1px,transparent 1px 3px);opacity:.45}
+.reader .body .sys::after{content:"";position:absolute;inset:5px;pointer-events:none;border:1px dashed color-mix(in srgb,var(--sys-accent) 22%,transparent);border-radius:4px}
+.sys-head{display:flex;align-items:center;gap:8px;padding:9px 13px;font:600 10.5px/1.4 var(--mono);letter-spacing:.16em;color:var(--sys-accent);border-bottom:1px solid var(--sys-line);background:color-mix(in srgb,var(--sys-accent) 7%,transparent);position:relative;z-index:1}
+.sys-head .sys-tag{margin-left:auto;font-weight:400;font-size:9.5px;color:var(--sys-dim);letter-spacing:.12em;white-space:nowrap}
+.sys-dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--sys-accent);box-shadow:0 0 6px var(--sys-accent);animation:sysPulse 2.2s ease-in-out infinite}
+@keyframes sysPulse{0%,100%{opacity:1}50%{opacity:.3}}
+.reader .body .sys .sys-body{font:400 calc(var(--read-fs) - 3px)/1.85 var(--mono);color:var(--sys-ink);padding:12px 14px 14px;white-space:pre-wrap;position:relative;z-index:1;letter-spacing:.01em}
 .chapter-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:26px;padding-top:16px;border-top:1px dashed var(--read-line)}
 .chapter-nav button{font:400 12px/1 var(--mono);color:var(--read-ink);border:1px solid var(--read-ink-dim);padding:11px 14px;border-radius:2px;min-height:44px}
 .chapter-nav button:disabled{opacity:.35;cursor:default}
@@ -203,6 +221,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 }
 @media (prefers-reduced-motion: reduce){
   .toc-drawer,.toc-backdrop,.fab-menu,.reader-progress i,.toast{transition:none}
+  .sys-dot{animation:none}
   /* U30 R1: kill the shelf→hero morph animation, keep the instant swap */
   ::view-transition-group(novelMorph),::view-transition-old(novelMorph),::view-transition-new(novelMorph){animation:none!important}
 }

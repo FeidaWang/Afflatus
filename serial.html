@@ -281,9 +281,17 @@
   }
 
   /* ---------- chapter rendering ---------- */
+  /* U-sys-panel: sys blocks render as a "cross-world terminal" card —
+     leading 【…】 in the text becomes the panel's title chip, the rest is
+     the screen body. Styling lives in serial.css (.sys / .sys-head). */
   function renderBlocks(blocks) {
     return blocks.map(function (b) {
-      if (b.type === 'sys') return '<div class="sys">' + escapeHtml(b.text) + '</div>';
+      if (b.type === 'sys') {
+        var t = b.text, head = '幕间讯号';
+        var m = t.match(/^【([^】]+)】\s*/);
+        if (m) { head = m[1]; t = t.slice(m[0].length); }
+        return '<div class="sys"><div class="sys-head"><i class="sys-dot" aria-hidden="true"></i><span>SYS ⟨ ' + escapeHtml(head) + ' ⟩</span><span class="sys-tag">同契终端 · 明幕</span></div><div class="sys-body">' + escapeHtml(t) + '</div></div>';
+      }
       return '<p>' + escapeHtml(b.text) + '</p>';
     }).join('');
   }
