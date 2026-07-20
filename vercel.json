@@ -10,6 +10,11 @@
       "source": "/league.html",
       "destination": "/stats.html",
       "permanent": false
+    },
+    {
+      "source": "/games.html",
+      "destination": "/stats.html",
+      "permanent": false
     }
   ],
   "headers": [
