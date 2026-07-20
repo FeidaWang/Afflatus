@@ -22,13 +22,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Project Afflatus · Stats — 竞猜战绩存档</title>
-<meta name="description" content="Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 全部预测的命中率、Wilson 置信区间、Brier 评分、可靠性校准图与 bootstrap 重采样，数据全部可回溯。FIFA 世界杯 2026 决赛后归档。">
+<meta name="description" content="Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 与 FIFA 世界杯 2026 全部预测的命中率、Wilson 置信区间、Brier 评分、可靠性校准图与 bootstrap 重采样，数据全部可回溯。">
 <meta name="theme-color" content="#070a12">
 <link rel="canonical" href="https://feida.au/stats.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Afflatus">
 <meta property="og:title" content="Project Afflatus · Stats — 竞猜战绩存档">
-<meta property="og:description" content="MSI 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。">
+<meta property="og:description" content="MSI 2026 与世界杯 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。">
 <meta property="og:url" content="https://feida.au/stats.html">
 <meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -122,10 +122,10 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 .termTip[hidden]{display:none}
 </style>
 </head>
-<body class="stats-page" data-prev="/games.html" data-next="/horoscope.html">
+<body class="stats-page" data-prev="/signal.html" data-next="/horoscope.html">
 
 <nav class="page-turn-controls" aria-label="Page navigation">
-  <a class="page-turn" href="/games.html" data-page-turn="prev" aria-label="Back to games">←</a>
+  <a class="page-turn" href="/signal.html" data-page-turn="prev" aria-label="Back to signal">←</a>
   <a class="page-turn" href="/horoscope.html" data-page-turn="next" aria-label="Continue to horoscope">→</a>
 </nav>
 
@@ -216,13 +216,79 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 
   <!-- ================= World Cup 2026 (archived after the final) ================= -->
   <section id="wc">
-    <div class="band" data-i18n-html data-en="FOOTBALL — <span>FIFA World Cup 2026 · pending</span>" data-zh="足球 — <span>FIFA 世界杯 2026 · 待归档</span>">FOOTBALL — <span>FIFA World Cup 2026 · pending</span></div>
-    <div class="placeholder" data-i18n-html data-en="<b>Archives after the Final.</b> Once the champion and the Golden Boot are settled, the World Cup prediction record (52+ scored calls, 71% outcome rate at the quarter-final stage) gets the same treatment here: per-match charts, calibration, and the title/Golden Boot boards. Until then the live page keeps running." data-zh="<b>决赛后归档。</b>待冠军与金靴尘埃落定，世界杯竞猜记录（截至八强已判定 52+ 场、胜负命中率 71%）将在此获得同样处理：逐场图表、置信度校准、冠军与金靴押注盘。在那之前，直播页照常运行。"><b>Archives after the Final.</b> Once the champion and the Golden Boot are settled, the World Cup prediction record (52+ scored calls, 71% outcome rate at the quarter-final stage) gets the same treatment here: per-match charts, calibration, and the title/Golden Boot boards. Until then the live page keeps running.</div>
+    <div class="band" data-i18n-html data-en="FOOTBALL — <span>FIFA World Cup 2026 · archived</span>" data-zh="足球 — <span>FIFA 世界杯 2026 · 已归档</span>">FOOTBALL — <span>FIFA World Cup 2026 · archived</span></div>
+
+    <div class="strip" id="wcStrip"></div>
+    <p class="note" data-en="Headline numbers cover the full tournament (Matchday 3 onward). Per-match charts and the log below cover the Round of 16 through the Final (16 matches) — the only stage where each match's stated confidence and original reasoning survived in the data file; the other 40 resolved matches (group stage) were only ever folded into the totals above, never logged individually, so re-scoring them now from memory or a fresh search would break this page's own no-re-scoring rule." data-zh="顶部总计覆盖整届赛事（自第三轮起）。下方逐场图表与记录表只覆盖 16 强到决赛（16 场）——数据文件里只有这个阶段完整保留了每场的预测置信度与理由；另外 40 场已判定的小组赛只被计入了上面的总计数，从未逐场记录，现在凭记忆或重新搜索给它们打分会违反本页自己「事后不重打分」的原则。">Headline numbers cover the full tournament (Matchday 3 onward). Per-match charts and the log below cover the Round of 16 through the Final (16 matches) — the only stage where each match's stated confidence and original reasoning survived in the data file; the other 40 resolved matches (group stage) were only ever folded into the totals above, never logged individually, so re-scoring them now from memory or a fresh search would break this page's own no-re-scoring rule.</p>
+
+    <div class="chart-card">
+      <h3 data-en="Per-match calls: confidence vs. outcome (knockout stage)" data-zh="逐场预测：置信度与结果（淘汰赛阶段）">Per-match calls: confidence vs. outcome (knockout stage)</h3>
+      <p class="note" data-en="Each bar is one match, Round of 16 through the Final. Height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline. Hover for detail, click (or tap a table row below) to read the original reasoning." data-zh="每根柱是一场比赛，16 强到决赛。高度 = 预测时给出的置信度。绿 = 胜负判对，红 = 判错，金 ★ = 比分全中。悬停看详情，点击柱子（或下方表格行）展开当时的判断依据。">Each bar is one match, Round of 16 through the Final. Height = stated confidence. Green = outcome correct, red = wrong, gold ★ = exact scoreline. Hover for detail, click (or tap a table row below) to read the original reasoning.</p>
+      <div id="wcBars"></div>
+      <div class="legend"><span><i style="background:var(--green)"></i><span data-en="correct" data-zh="判对">correct</span></span><span><i style="background:var(--red)"></i><span data-en="wrong" data-zh="判错">wrong</span></span><span><i style="background:var(--gold)"></i><span data-en="exact score" data-zh="比分全中">exact score</span></span></div>
+      <div class="drawer" id="wcDrawer"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Cumulative hit rate · Wilson 95% band" data-zh="累计命中率 · Wilson 95% 置信带">Cumulative hit rate · Wilson 95% band</h3>
+        <p class="note" data-en="Running outcome accuracy after each resolved knockout-stage match." data-zh="每判定一场淘汰赛后的累计胜负命中率。">Running outcome accuracy after each resolved knockout-stage match.</p>
+        <div id="wcCurve"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="Reliability diagram (calibration)" data-zh="可靠性校准图">Reliability diagram (calibration)</h3>
+        <p class="note" data-en="Stated confidence (x) vs. observed hit rate (y). n=16 is small — read the whiskers, not the dots." data-zh="预测置信度（横轴）对实际命中率（纵轴）。n=16 很小——请看须线宽度，别只看点的位置。">Stated confidence (x) vs. observed hit rate (y). n=16 is small — read the whiskers, not the dots.</p>
+        <div id="wcCalib"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Confidence-threshold explorer" data-zh="置信度阈值探索器">Confidence-threshold explorer</h3>
+        <p class="note" data-en="Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live over the 16 knockout-stage calls." data-zh="拖动阈值，n、命中率、Wilson 区间与 Brier 评分基于 16 场淘汰赛预测实时重算。">Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live over the 16 knockout-stage calls.</p>
+        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="wcThSlider" min="50" max="80" step="1" value="50"><span class="val" id="wcThVal">50%</span></div>
+        <div class="readout" id="wcThReadout"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;bootstrap&quot;&gt;Bootstrap&lt;/button&gt; resampling" data-zh="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;bootstrap&quot;&gt;Bootstrap&lt;/button&gt; 重采样" data-i18n-html><button type="button" class="term" data-term="bootstrap">Bootstrap</button> resampling</h3>
+        <p class="note" data-en="2,000 resamples of the 16 resolved knockout calls. Gold lines mark the 2.5% / 97.5% percentiles." data-zh="对 16 场已判定的淘汰赛预测做 2000 次有放回重采样。金线为 2.5% / 97.5% 分位。">2,000 resamples of the 16 resolved knockout calls. Gold lines mark the 2.5% / 97.5% percentiles.</p>
+        <button class="btn" id="wcBootBtn" data-en="RUN ×2000" data-zh="重采样 ×2000">RUN ×2000</button>
+        <div id="wcBootHist"></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-card">
+        <h3 data-en="Champion bets (stated before the Final)" data-zh="冠军押注（决赛前概率盘）">Champion bets (stated before the Final)</h3>
+        <p class="note" id="wcChampNote">Stated probabilities before the Final.</p>
+        <div id="wcChamps"></div>
+      </div>
+      <div class="chart-card">
+        <h3 data-en="Golden Ball board (stated before the Final)" data-zh="金球奖概率盘（决赛前）">Golden Ball board (stated before the Final)</h3>
+        <p class="note" id="wcMvpNote">Stated probabilities; scored against the official Golden Ball winner.</p>
+        <div id="wcMvps"></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3 data-en="Knockout-stage match log" data-zh="淘汰赛逐场记录">Knockout-stage match log</h3>
+      <div class="tbl-wrap"><table class="tbl" id="wcLog"></table></div>
+    </div>
+
+    <div class="method">
+      <b data-en="Scope of this archive" data-zh="本存档的覆盖范围">Scope of this archive</b>
+      <ul>
+        <li data-en="Headline resolved/hit-rate/exact-score counts are the full-tournament totals from the live page's own running tally — never recomputed, just read." data-zh="顶部的已判定/命中率/比分全中总数，就是直播页当时自己滚动累计的数字——不重新计算，原样读取。">Headline resolved/hit-rate/exact-score counts are the full-tournament totals from the live page's own running tally — never recomputed, just read.</li>
+        <li data-en="Per-match charts, Brier score, calibration and the log table are limited to the Round of 16 through the Final (16 matches) — the only matches whose stated confidence and reasoning text survived in the data file." data-zh="逐场图表、Brier 评分、校准图与记录表仅限 16 强到决赛（16 场）——只有这个阶段的置信度与预测理由文本还留在数据文件里。">Per-match charts, Brier score, calibration and the log table are limited to the Round of 16 through the Final (16 matches) — the only matches whose stated confidence and reasoning text survived in the data file.</li>
+        <li data-en="One knockout match (Canada 0-3 Morocco, R16) had no exact-score record on file; the scoreline shown is a factual lookup of the already-decided public result, not a fresh judgment call — the outcome pick was already known wrong from the bracket." data-zh="有一场淘汰赛（加拿大 0-3 摩洛哥，16 强）数据文件里没有留存具体比分；这里显示的比分是对已成定局的公开结果做的事实核对，不是重新下判断——胜负判对判错早已从赛程树里可知。">One knockout match (Canada 0-3 Morocco, R16) had no exact-score record on file; the scoreline shown is a factual lookup of the already-decided public result, not a fresh judgment call — the outcome pick was already known wrong from the bracket.</li>
+        <li data-en="Champion and Golden Ball boards show the probabilities stated before the Final, scored against the actual winners — the same treatment as the MSI section above." data-zh="冠军与金球奖概率盘展示的是决赛开打前给出的概率，与实际得主对照评分——与上方 MSI 区块的处理方式一致。">Champion and Golden Ball boards show the probabilities stated before the Final, scored against the actual winners — the same treatment as the MSI section above.</li>
+      </ul>
+    </div>
   </section>
 
   <footer class="foot">
     <b data-en="EVERY CALL ON THE RECORD" data-zh="每一次预测都留痕">EVERY CALL ON THE RECORD</b> — stats.html
-    <p class="disclaim" data-en="Data: /leagues-data.json (and /games-data.json after the WC final) — the exact files the live pages rendered from; nothing is re-scored after the fact. For entertainment only." data-zh="数据源：/leagues-data.json（世界杯决赛后加 /games-data.json）——与直播页同一份文件，事后不重打分。仅供娱乐。">Data: /leagues-data.json (and /games-data.json after the WC final) — the exact files the live pages rendered from; nothing is re-scored after the fact. For entertainment only.</p>
+    <p class="disclaim" data-en="Data: /leagues-data.json and /games-data.json — the exact files the live pages rendered from; nothing is re-scored after the fact. For entertainment only." data-zh="数据源：/leagues-data.json 与 /games-data.json——与直播页同一份文件，事后不重打分。仅供娱乐。">Data: /leagues-data.json and /games-data.json — the exact files the live pages rendered from; nothing is re-scored after the fact. For entertainment only.</p>
   </footer>
 </main>
 
@@ -575,6 +641,287 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       tb.appendChild(tr);
     });
     tbl.appendChild(tb);
+
+    reveal();
+    applyI18N();
+  }
+
+  /* ---------- World Cup 2026 archive (knockout-stage detail + full-season
+     headline). See src/pages/games.js / worldcup-games-daily task: record.log
+     only ever kept a partial sample (R16 through Final, 16 matches) — the
+     other 40 resolved group-stage matches were folded into record{} totals
+     but never logged individually, so there is no per-match conf/reasoning
+     to chart for them. Headline strip reads record{} (whole tournament,
+     never recomputed); every other chart below is scoped to the 16
+     knockout-stage matches that have full detail on file. */
+  fetch('/games-data.json').then(function (r) { return r.json(); }).then(renderWC).catch(function () {
+    var s = document.getElementById('wcStrip');
+    if (s) s.appendChild(el('div','stat','<b>—</b><small>data unavailable / 数据暂不可用</small>'));
+  });
+
+  function normName(v) { return String(v || '').toLowerCase().replace(/[·•|/]/g, ' ').replace(/\s+/g, ' ').trim(); }
+
+  function renderWC(d) {
+    var lang = zh() ? 'zh' : 'en';
+    var matches = d.matches || [];
+    var scored = matches.map(function (m) { return { s: m, ok: m.ok, exact: m.exact, conf: m.conf }; });
+    var n = scored.length;
+    var rec = d.record || {};
+    var nFull = rec.resolved || 0, okFull = rec.correctOutcome || 0, exFull = rec.exactScore || 0;
+    var ciFull = wilson(okFull, nFull), pvalFull = binomTwoSided(okFull, nFull);
+    var bs = brier(scored), bss = 1 - bs / 0.25;
+
+    /* ---- stat strip: full-tournament headline + KO-stage Brier ---- */
+    var strip = document.getElementById('wcStrip');
+    function stat(build, en, zhs, cls) {
+      var s2 = el('div', 'stat' + (cls ? ' ' + cls : ''));
+      var b = el('b'); s2.appendChild(b); s2.appendChild(bi(el('small'), en, zhs)); strip.appendChild(s2); build(b);
+    }
+    stat(function (b) { countUp(b, nFull); }, 'matches resolved — full tournament', '已判定 — 整届赛事');
+    stat(function (b) { countUp(b, Math.round(okFull / Math.max(nFull,1) * 100), '%'); },
+      'outcome hit rate — ' + okFull + '/' + nFull + ' · Wilson 95%: ' + fmtPct(ciFull[0]) + '–' + fmtPct(ciFull[1]),
+      '胜负命中率 — ' + okFull + '/' + nFull + ' · Wilson 95%：' + fmtPct(ciFull[0]) + '–' + fmtPct(ciFull[1]));
+    stat(function (b) { countUp(b, exFull); }, 'exact scorelines — full tournament', '比分全中 — 整届赛事', 'gold');
+    stat(function (b) { countUp(b, bs, '', 3); },
+      'Brier score, knockout stage only (n=' + n + ') · skill ' + (bss >= 0 ? '+' : '') + fmtPct(bss),
+      'Brier 评分，仅淘汰赛阶段 (n=' + n + ')· 技能分 ' + (bss >= 0 ? '+' : '') + fmtPct(bss), bss < 0 ? 'warn' : undefined);
+    stat(function (b) { countUp(b, pvalFull, '', 2); },
+      'exact binomial p vs. coin flip, full tournament',
+      '对抛硬币的精确二项检验 p 值，整届赛事', 'warn');
+
+    /* ---- chart 1: per-match confidence bars (interactive) ---- */
+    var W = 720, H = 240, padL = 34, padB = 46, bw = (W - padL - 10) / Math.max(scored.length, 1);
+    var NS = 'http://www.w3.org/2000/svg';
+    var svg1 = document.createElementNS(NS, 'svg');
+    svg1.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg1.setAttribute('role', 'img');
+    [0.5, 0.75, 1].forEach(function (g) {
+      var y = (H - padB) - g * (H - padB - 14);
+      var ln = document.createElementNS(NS, 'line');
+      ln.setAttribute('x1', padL); ln.setAttribute('y1', y); ln.setAttribute('x2', W - 6); ln.setAttribute('y2', y);
+      ln.setAttribute('stroke', C.line); ln.setAttribute('stroke-dasharray', '3 4'); svg1.appendChild(ln);
+      var tx = document.createElementNS(NS, 'text');
+      tx.setAttribute('x', 4); tx.setAttribute('y', y + 4); tx.setAttribute('fill', C.dim); tx.setAttribute('font-size', '10'); tx.setAttribute('font-family', 'monospace');
+      tx.textContent = Math.round(g * 100) + '%'; svg1.appendChild(tx);
+    });
+    var drawer = document.getElementById('wcDrawer');
+    function resultStr(m) { return m.result.home + '-' + m.result.away + (m.extra ? ' ' + m.extra : ''); }
+    function openDrawerWC(x) {
+      var m = x.s;
+      var pickTeam = pick(m, m.opus === 'home' ? 'home' : 'away', lang);
+      var rsn = pick(m, 'reason', lang) || '';
+      drawer.innerHTML = '<div class="hd">' + esc(pick(m, 'round', lang)) + ' — ' + esc(pick(m, 'home', lang) + ' vs ' + pick(m, 'away', lang)) +
+        ' · ' + (zh() ? '预测' : 'call') + ': ' + esc(pickTeam + ' ' + (m.opusScore || '')) + ' @ ' + Math.round(m.conf * 100) + '%' +
+        ' · ' + (zh() ? '结果' : 'result') + ': ' + resultStr(m) + ' ' + (x.ok ? (x.exact ? '⭐' : '✓') : '✗') + '</div>' +
+        '<div class="rsn">' + esc(rsn) + '</div>';
+      drawer.classList.add('show');
+      drawer.scrollIntoView({ block: 'nearest', behavior: RM ? 'auto' : 'smooth' });
+    }
+    scored.forEach(function (x, i) {
+      var hTarget = x.s.conf * (H - padB - 14), xpos = padL + i * bw + bw * 0.18, yBase = H - padB;
+      var r = document.createElementNS(NS, 'rect');
+      r.setAttribute('x', xpos); r.setAttribute('width', bw * 0.64); r.setAttribute('rx', 1.5);
+      r.setAttribute('fill', x.ok ? C.green : C.red); r.setAttribute('fill-opacity', '0.85');
+      r.setAttribute('class', 'bar-hit');
+      if (RM) { r.setAttribute('y', yBase - hTarget); r.setAttribute('height', hTarget); }
+      else {
+        r.setAttribute('y', yBase); r.setAttribute('height', 0);
+        setTimeout(function () {
+          var t0 = performance.now(), dur = 700;
+          (function fr(t) {
+            var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+            r.setAttribute('height', hTarget * e); r.setAttribute('y', yBase - hTarget * e);
+            if (k < 1) requestAnimationFrame(fr);
+          })(t0);
+        }, 60 * i);
+      }
+      var tipHtml = '<b>' + esc(x.s.home + ' vs ' + x.s.away) + '</b><br>' +
+        (zh() ? '预测' : 'call') + ': ' + esc(pick(x.s, x.s.opus === 'home' ? 'home' : 'away', lang) + ' ' + (x.s.opusScore || '')) + ' @ ' + Math.round(x.s.conf * 100) + '%<br>' +
+        (zh() ? '结果' : 'result') + ': ' + resultStr(x.s) + ' ' + (x.ok ? (x.exact ? '⭐' : '✓') : '✗') + '<br>' +
+        '<span style="color:' + C.dim + '">' + (zh() ? '点击看当时判断依据' : 'click for the original reasoning') + '</span>';
+      r.addEventListener('mousemove', function (ev) { showTip(tipHtml, ev); });
+      r.addEventListener('mouseleave', hideTip);
+      r.addEventListener('click', function () { hideTip(); openDrawerWC(x); });
+      svg1.appendChild(r);
+      if (x.exact) {
+        var st = document.createElementNS(NS, 'text');
+        st.setAttribute('x', xpos + bw * 0.32); st.setAttribute('y', yBase - hTarget - 6);
+        st.setAttribute('fill', C.gold); st.setAttribute('font-size', '12'); st.setAttribute('text-anchor', 'middle');
+        st.textContent = '★'; svg1.appendChild(st);
+      }
+      var lb = document.createElementNS(NS, 'text');
+      lb.setAttribute('x', xpos + bw * 0.32); lb.setAttribute('y', H - padB + 12);
+      lb.setAttribute('fill', C.dim); lb.setAttribute('font-size', '8.5'); lb.setAttribute('font-family', 'monospace'); lb.setAttribute('text-anchor', 'end');
+      lb.setAttribute('transform', 'rotate(-38 ' + (xpos + bw * 0.32) + ' ' + (H - padB + 12) + ')');
+      lb.textContent = x.s.home + '·' + x.s.away; svg1.appendChild(lb);
+    });
+    document.getElementById('wcBars').appendChild(svg1);
+
+    /* ---- chart 2: cumulative hit rate with Wilson band + animated draw ---- */
+    var W2 = 360, H2 = 200, pl = 34, pb = 24, pw = (W2 - pl - 10) / Math.max(n - 1, 1);
+    function y2(v) { return (H2 - pb) - v * (H2 - pb - 14); }
+    var pts = [], lo = [], hi = [], hit = 0;
+    scored.forEach(function (x, i) {
+      if (x.ok) hit++;
+      var w = wilson(hit, i + 1);
+      pts.push([pl + i * pw, y2(hit / (i + 1))]); lo.push([pl + i * pw, y2(w[0])]); hi.push([pl + i * pw, y2(w[1])]);
+    });
+    var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    [0, 0.5, 1].forEach(function (g) {
+      svg2 += '<line x1="' + pl + '" y1="' + y2(g) + '" x2="' + (W2 - 6) + '" y2="' + y2(g) + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+              '<text x="4" y="' + (y2(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
+    });
+    svg2 += '<polygon fill="rgba(79,214,196,.12)" points="' + hi.map(function (p) { return p.join(','); }).join(' ') + ' ' + lo.slice().reverse().map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    svg2 += '<line x1="' + pl + '" y1="' + y2(0.5) + '" x2="' + (W2 - 6) + '" y2="' + y2(0.5) + '" stroke="' + C.gold + '" stroke-opacity=".45" stroke-dasharray="6 4"/>';
+    svg2 += '<polyline id="wcCurvePath" fill="none" stroke="' + C.teal + '" stroke-width="2" points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    pts.forEach(function (p) { svg2 += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2.6" fill="' + C.teal + '"/>'; });
+    svg2 += '</svg>';
+    document.getElementById('wcCurve').innerHTML = svg2;
+    if (!RM) {
+      var path2 = document.getElementById('wcCurvePath');
+      try {
+        var len2 = path2.getTotalLength ? path2.getTotalLength() : 600;
+        path2.style.strokeDasharray = len2; path2.style.strokeDashoffset = len2;
+        path2.style.transition = 'stroke-dashoffset 1.4s ease .2s';
+        requestAnimationFrame(function () { requestAnimationFrame(function () { path2.style.strokeDashoffset = 0; }); });
+      } catch (e) {}
+    }
+
+    /* ---- chart 3: reliability diagram with Wilson whiskers ---- */
+    var bins = [ { lo: 0.5, hi: 0.65 }, { lo: 0.65, hi: 0.75 }, { lo: 0.75, hi: 1.01 } ];
+    var W3 = 360, H3 = 210, pl3 = 36, pb3 = 26;
+    function x3(v) { return pl3 + (v - 0.4) / 0.6 * (W3 - pl3 - 12); }
+    function y3(v) { return (H3 - pb3) - v * (H3 - pb3 - 14); }
+    var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    [0, 0.5, 1].forEach(function (g) {
+      svg3 += '<line x1="' + pl3 + '" y1="' + y3(g) + '" x2="' + (W3 - 6) + '" y2="' + y3(g) + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+              '<text x="4" y="' + (y3(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
+    });
+    [0.5, 0.7, 0.9].forEach(function (g) {
+      svg3 += '<text x="' + x3(g) + '" y="' + (H3 - pb3 + 14) + '" fill="' + C.dim + '" font-size="9.5" font-family="monospace" text-anchor="middle">' + Math.round(g * 100) + '%</text>';
+    });
+    svg3 += '<line x1="' + x3(0.4) + '" y1="' + y3(0.4) + '" x2="' + x3(1) + '" y2="' + y3(1) + '" stroke="' + C.gold + '" stroke-opacity=".5" stroke-dasharray="6 4"/>';
+    bins.forEach(function (b) {
+      var xs = scored.filter(function (x) { return x.conf >= b.lo && x.conf < b.hi; });
+      if (!xs.length) return;
+      var avgC = xs.reduce(function (a, x) { return a + x.conf; }, 0) / xs.length;
+      var k = xs.filter(function (x) { return x.ok; }).length, hr = k / xs.length;
+      var w = wilson(k, xs.length);
+      var cx = x3(avgC), cy = y3(hr);
+      svg3 += '<line x1="' + cx + '" y1="' + y3(w[0]) + '" x2="' + cx + '" y2="' + y3(w[1]) + '" stroke="' + C.teal + '" stroke-opacity=".55" stroke-width="1.5"/>';
+      svg3 += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (3 + xs.length) + '" fill="' + (hr >= avgC ? C.green : C.red) + '" fill-opacity=".8" stroke="rgba(255,255,255,.35)"/>';
+      svg3 += '<text x="' + (cx + 8) + '" y="' + (cy - 8) + '" fill="' + C.dim + '" font-size="9" font-family="monospace">n=' + xs.length + '</text>';
+    });
+    svg3 += '</svg>';
+    document.getElementById('wcCalib').innerHTML = svg3;
+
+    /* ---- threshold explorer ---- */
+    var slider2 = document.getElementById('wcThSlider'), thVal2 = document.getElementById('wcThVal'), ro2 = document.getElementById('wcThReadout');
+    function renderThreshold2() {
+      var t = Number(slider2.value) / 100;
+      thVal2.textContent = slider2.value + '%';
+      var xs = scored.filter(function (x) { return x.conf >= t; });
+      var k = xs.filter(function (x) { return x.ok; }).length;
+      var w = wilson(k, xs.length), b = brier(xs);
+      ro2.innerHTML = '';
+      function cell(v, en, zhs) { var d2 = el('div'); d2.appendChild(el('b', null, v)); d2.appendChild(bi(el('span'), en, zhs)); ro2.appendChild(d2); }
+      cell(xs.length, 'calls kept (n)', '保留场次 (n)');
+      cell(xs.length ? Math.round(k / xs.length * 100) + '%' : '—', 'hit rate', '命中率');
+      cell(xs.length ? fmtPct(w[0]) + '–' + fmtPct(w[1]) : '—', 'Wilson 95%', 'Wilson 95%');
+      cell(b == null ? '—' : b.toFixed(3), 'Brier (↓ better)', 'Brier（越低越好）');
+      applyI18N();
+    }
+    slider2.addEventListener('input', renderThreshold2);
+    renderThreshold2();
+
+    /* ---- bootstrap panel ---- */
+    var bootBtn2 = document.getElementById('wcBootBtn'), bootBox2 = document.getElementById('wcBootHist');
+    bootBtn2.addEventListener('click', function () {
+      bootBtn2.disabled = true;
+      var TOTAL = 2000, done = 0, counts = new Array(n + 1).fill(0);
+      var Wb = 360, Hb = 190, plb = 30, pbb = 26;
+      function draw() {
+        var mx = Math.max.apply(null, counts) || 1;
+        var bwb = (Wb - plb - 10) / (n + 1);
+        var samples = [];
+        counts.forEach(function (c, k) { for (var j = 0; j < c; j++) samples.push(k); });
+        samples.sort(function (a, b2) { return a - b2; });
+        var p025 = samples.length ? samples[Math.floor(samples.length * 0.025)] / n : 0;
+        var p975 = samples.length ? samples[Math.min(samples.length - 1, Math.floor(samples.length * 0.975))] / n : 0;
+        var s = '<svg viewBox="0 0 ' + Wb + ' ' + Hb + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+        counts.forEach(function (c, k) {
+          var h = c / mx * (Hb - pbb - 16);
+          s += '<rect x="' + (plb + k * bwb + 1) + '" y="' + ((Hb - pbb) - h) + '" width="' + (bwb - 2) + '" height="' + h + '" fill="' + C.teal + '" fill-opacity=".8"/>';
+        });
+        [p025, p975].forEach(function (p) {
+          var x = plb + p * n * bwb + bwb / 2;
+          s += '<line x1="' + x + '" y1="14" x2="' + x + '" y2="' + (Hb - pbb) + '" stroke="' + C.gold + '" stroke-dasharray="5 4"/>';
+        });
+        [0, 0.5, 1].forEach(function (g) {
+          s += '<text x="' + (plb + g * n * bwb + bwb / 2) + '" y="' + (Hb - pbb + 14) + '" fill="' + C.dim + '" font-size="9.5" font-family="monospace" text-anchor="middle">' + Math.round(g * 100) + '%</text>';
+        });
+        s += '<text x="' + plb + '" y="10" fill="' + C.dim + '" font-size="9.5" font-family="monospace">' + done + ' / ' + TOTAL +
+             (done === TOTAL ? ' · 95% CI ' + fmtPct(p025) + '–' + fmtPct(p975) : '') + '</text>';
+        s += '</svg>';
+        bootBox2.innerHTML = s;
+      }
+      function chunk() {
+        var step = RM ? TOTAL : 100;
+        for (var r = 0; r < step && done < TOTAL; r++, done++) {
+          var k = 0;
+          for (var i = 0; i < n; i++) { if (scored[Math.floor(Math.random() * n)].ok) k++; }
+          counts[k]++;
+        }
+        draw();
+        if (done < TOTAL) requestAnimationFrame(chunk); else bootBtn2.disabled = false;
+      }
+      chunk();
+    });
+
+    /* ---- champion / Golden Ball boards (stated before the Final) ---- */
+    var actualChamp = (d.champions && d.champions[0]) ? d.champions[0].team : null;
+    var champs2 = document.getElementById('wcChamps');
+    (d.championsPreFinal || []).forEach(function (c) {
+      var row = el('div', 'pick-row' + (actualChamp ? (c.team === actualChamp ? ' won' : ' lost') : ''));
+      row.appendChild(el('span', 'who', esc(pick(c, 'team', lang)) + (actualChamp && c.team === actualChamp ? ' 🏆' : '')));
+      var bar = el('div', 'bar', '<i></i>');
+      row.appendChild(bar);
+      row.appendChild(el('span', 'pct', c.prob + '%'));
+      champs2.appendChild(row);
+      requestAnimationFrame(function () { bar.firstChild.style.width = c.prob + '%'; });
+    });
+    if (actualChamp) bi(document.getElementById('wcChampNote'), 'Stated before the Final. Actual champion: ' + actualChamp + '.', '决赛开打前给出的概率。实际冠军：' + actualChamp + '。');
+    var mvps2 = document.getElementById('wcMvps');
+    var actualBall = d.goldenBall || null;
+    (d.playersPreFinal || []).forEach(function (m) {
+      var isWinner = actualBall && normName(m.name) === normName(actualBall);
+      var row = el('div', 'pick-row' + (actualBall ? (isWinner ? ' won' : ' lost') : ''));
+      row.appendChild(el('span', 'who', esc(pick(m, 'name', lang)) + (isWinner ? ' 🏆' : '')));
+      var bar = el('div', 'bar', '<i></i>');
+      row.appendChild(bar);
+      row.appendChild(el('span', 'pct', m.prob + '%'));
+      mvps2.appendChild(row);
+      requestAnimationFrame(function () { bar.firstChild.style.width = m.prob + '%'; });
+    });
+    if (actualBall) {
+      var noteEn = 'Stated before the Final. Actual Golden Ball: ' + actualBall + '.' + (d.goldenBoot ? ' (Golden Boot — a separate award — went to ' + d.goldenBoot + ', not tracked on this board.)' : '');
+      var noteZh = '决赛开打前给出的概率。实际金球奖得主：' + actualBall + '。' + (d.goldenBoot ? '（金靴奖是另一个奖项，得主是 ' + d.goldenBoot + '，本盘未追踪。）' : '');
+      bi(document.getElementById('wcMvpNote'), noteEn, noteZh);
+    }
+
+    /* ---- knockout-stage log table (rows open the reasoning drawer too) ---- */
+    var tbl2 = document.getElementById('wcLog');
+    var zhNow2 = zh();
+    tbl2.innerHTML = '<tr><th data-en="Round" data-zh="轮次">' + (zhNow2 ? '轮次' : 'Round') + '</th><th data-en="Match" data-zh="对阵">' + (zhNow2 ? '对阵' : 'Match') + '</th><th data-en="Call" data-zh="预测">' + (zhNow2 ? '预测' : 'Call') + '</th><th data-en="Conf." data-zh="置信度">' + (zhNow2 ? '置信度' : 'Conf.') + '</th><th data-en="Result" data-zh="结果">' + (zhNow2 ? '结果' : 'Result') + '</th><th></th></tr>';
+    var tb2 = document.createElement('tbody');
+    scored.forEach(function (x) {
+      var m = x.s;
+      var pickTeam = pick(m, m.opus === 'home' ? 'home' : 'away', lang);
+      var mark = x.ok ? (x.exact ? '<span class="star">⭐</span>' : '<span class="ok">✓</span>') : '<span class="bad">✗</span>';
+      var tr = el('tr', null, '<td>' + esc(pick(m, 'round', lang)) + '</td><td>' + esc(pick(m, 'home', lang) + ' vs ' + pick(m, 'away', lang)) + '</td><td>' + esc(pickTeam + ' ' + (m.opusScore || '')) + '</td><td>' + Math.round(m.conf * 100) + '%</td><td>' + resultStr(m) + '</td><td>' + mark + '</td>');
+      tr.addEventListener('click', function () { openDrawerWC(x); });
+      tb2.appendChild(tr);
+    });
+    tbl2.appendChild(tb2);
 
     reveal();
     applyI18N();
