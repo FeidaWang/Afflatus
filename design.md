@@ -94,6 +94,7 @@
 ### 4.3 阅读疲劳与暗色眩光（U46-乙-③）
 
 - 长文页（serial）**双档阅读模式**（green 日间护眼 / night 琥珀夜读，U-toolbar-redo 起，原第三档 imperial 已退役为页面背景），工具条切换 + localStorage 持久化 + AA 全过——重构时保留，勿当新需求重做。
+- **SYS 面板（U-sys-panel）**：小说内系统提示（`type:"sys"` 块）渲染为「跨界游戏终端」卡片——冷青绿低蓝光「屏幕」对暖色衬线正文，mono 字体 + 扫描线 + 虚线内框 + 标题芯片（正文首个`【…】`解析为面板标题）+ 呼吸态链接点（`prefers-reduced-motion` 下停用）。护眼实测：日间 ink/bg 9.8:1、accent 7.1:1；夜间 11.7:1 / 9.8:1。色值随 `.reader[data-theme]` 走 `--sys-*` token，重构时整体保留。
 - 排版规格：正文 `line-height ≥1.7`（serial 实为 1.95）、行长 `max-width:68ch`、字号 17px 档。
 - **SCP/终端人格页（signal/arena）不提供亮色档**——作战情报室开日光灯是人格破坏；那些页的可读性靠字号/行高/对比度解决（U41 已做 17px/1.6 一轮）。
 
