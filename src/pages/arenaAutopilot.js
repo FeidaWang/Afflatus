@@ -53,11 +53,55 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
   }
 
   // ---- chart -------------------------------------------------------
+  let chartCtx = null, tipEl = null, tipBound = false;
+  function nearestByDay(series, day) {
+    if (!series || !series.length) return null;
+    let best = series[0], bestDist = Math.abs(series[0].day - day);
+    for (const pt of series) { const dist = Math.abs(pt.day - day); if (dist < bestDist) { best = pt; bestDist = dist; } }
+    return best;
+  }
+  function interpTwoPoint(series, day) {
+    if (!series || !series.length) return null;
+    if (series.length === 1) return series[0].equity;
+    const [p0, p1] = series;
+    if (p1.day === p0.day) return p0.equity;
+    const k = Math.min(1, Math.max(0, (day - p0.day) / (p1.day - p0.day)));
+    return p0.equity + (p1.equity - p0.equity) * k;
+  }
+  function showChartTip(clientX, clientY, day, A, B, spy, smh) {
+    if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'viz-tip'; document.body.appendChild(tipEl); }
+    const a = nearestByDay(A, day), b = nearestByDay(B, day);
+    tipEl.innerHTML = `<b>${T('DAY', '第')} ${a ? a.day : '—'}${state.lang === 'zh' ? '日' : ''}</b>` +
+      `Model A: ${fmtUsd(a ? a.equity : null)}<br>Model B: ${fmtUsd(b ? b.equity : null)}<br>` +
+      `SPY: ${fmtUsd(interpTwoPoint(spy, day))}<br>SMH: ${fmtUsd(interpTwoPoint(smh, day))}`;
+    tipEl.style.left = (clientX + 14) + 'px';
+    tipEl.style.top = (clientY + 14) + 'px';
+    tipEl.classList.add('show');
+  }
+  function hideChartTip() { if (tipEl) tipEl.classList.remove('show'); }
+  function bindChartTooltip() {
+    if (tipBound) return;
+    tipBound = true;
+    const svg = $('apChart');
+    svg.addEventListener('pointermove', (ev) => {
+      if (!chartCtx) return;
+      const { A, B, spy, smh, domain, W, pad } = chartCtx;
+      const rect = svg.getBoundingClientRect();
+      if (!rect.width) return;
+      const localX = (ev.clientX - rect.left) * (W / rect.width);
+      const dayRange = domain.maxDay - domain.minDay || 1;
+      const day = domain.minDay + Math.min(1, Math.max(0, (localX - pad) / (W - pad * 2))) * dayRange;
+      showChartTip(ev.clientX, ev.clientY, day, A.equityHistory, B.equityHistory, spy, smh);
+    });
+    svg.addEventListener('pointerleave', hideChartTip);
+  }
   function buildPath(series, domain, w, h, pad) {
     if (!series.length) return '';
     if (series.length === 1) { const p = scalePoint(series[0], domain, w, h, pad); return `<circle class="ap-dot" cx="${p.x}" cy="${p.y}" r="3.4" fill="currentColor"/>`; }
-    const d = series.map((pt, i) => { const p = scalePoint(pt, domain, w, h, pad); return `${i ? 'L' : 'M'}${p.x},${p.y}`; }).join(' ');
-    return `<path class="ap-line" d="${d}"/>`;
+    const pts = series.map((pt) => scalePoint(pt, domain, w, h, pad));
+    const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p.x},${p.y}`).join(' ');
+    const end = pts[pts.length - 1];
+    return `<path class="ap-line" d="${d}"/><circle class="ap-end-dot" cx="${end.x}" cy="${end.y}" r="3" fill="currentColor"/>`;
   }
   function renderChart(A, B, bench) {
     const W = 600, H = 240, pad = 30;
@@ -73,7 +117,7 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
       const price = domain.maxEq - (i / 3) * (domain.maxEq - domain.minEq);
       const txt = fmtUsd(price);
       const tw = txt.length * 5.6 + 6;
-      grid += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/>`;
+      if (i === 0 || i === 3) grid += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/>`;
       labels += `<rect x="${(W - 4 - tw).toFixed(1)}" y="${(y - 6.5).toFixed(1)}" width="${tw.toFixed(1)}" height="13" class="ap-axis-bg"/><text x="${W - 4}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" class="ap-axis">${txt}</text>`;
     }
     let s = grid;
@@ -90,6 +134,8 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
       ['ap-line-spy dash', 'SPY'],
       ['ap-line-smh dash', 'SMH'],
     ].map(([cls, label]) => `<span><i class="${cls}"></i>${label}</span>`).join('');
+    chartCtx = { A, B, spy, smh, domain, W, pad };
+    bindChartTooltip();
   }
 
   // ---- per-model card -----------------------------------------------
