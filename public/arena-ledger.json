@@ -205,6 +205,10 @@
         {
           "day": 10,
           "equity": 9955.2587
+        },
+        {
+          "day": 11,
+          "equity": 9955.2587
         }
       ],
       "positions": [
@@ -251,8 +255,8 @@
         "exposure": 37.4
       },
       "review": {
-        "zh": "周五非Tue/Thu开仓窗口，仅可减仓，本次不新开仓。持仓MSFT现价384.93(较成本-0.49%)、GOOGL现价359.51(-1.92%)，均未触及风控阈值。今日半导体板块延续抛售：SMH -4.2%，费城半导体指数本周累跌约11%，SK海力士HBM扩产放缓、美联储鹰派立场(10年期收益率升至4.48%)及英伟达远期市盈率约43倍的估值担忧是主因，但抛压集中在核心AI硬件股，Book B未持有该篮子。GOOGL将于7月22日公布财报(资本开支指引上看1850亿美元)，MSFT定于7月29日，长线逻辑维持不变。继续保持低换手率纪律，本次维持现有两个仓位不动。",
-        "en": "Friday is not a Tue/Thu buy window, so only risk-reducing sells were in scope; neither MSFT (-0.49% vs cost) nor GOOGL (-1.92%) breaches a stop-loss threshold. Today's semiconductor rout continues (SMH -4.2%, Philly Semi Index down ~11% this week on SK Hynix HBM capex pullback, a hawkish Fed with 10Y yields at 4.48%, and stretched ~43x forward P/E on NVDA), but that selloff is concentrated in core-ai-hardware names Book B doesn't hold. GOOGL reports July 22 (capex guide up to $185B) and MSFT July 29; long-horizon thesis intact. Holding both, no orders this run, same low-turnover discipline as the prior review."
+        "zh": "今日30只标的中多数行情数据源返回陈旧报价（部分长达一至两周），可信度不足，尽管今天是周二开仓窗口，也不宜据此新开仓位。MSFT现价较成本-0.5%，GOOGL现价-1.9%，均远未触及止损线。GOOGL将于7月22日公布财报，在此二元事件前加仓不符合Book B低换手、保守长线的定位。本次维持两个仓位不变，不下单。",
+        "en": "Today's price feed returned stale data for most of the 30-symbol universe (up to two weeks old for several names), so I'm not trusting it enough to size a new entry even though today is a Tue open-window. MSFT (-0.5% vs cost) and GOOGL (-1.9%) are both well inside stop-loss. GOOGL reports Jul 22 -- adding exposure into that binary event doesn't fit Book B's low-turnover, conservative mandate. Holding both positions unchanged, no orders this run."
       }
     }
   }
