@@ -288,6 +288,13 @@ window.AfflatusSectorsGraph = { initSectorsGraph };
 dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
 </script>
 <script type="module">
+/* Anthropic-style scroll-linked card reveal (urgent.md Part 2 §9). Physics
+   lives in src/lib/scrollReveal.js (pure, vitest-covered); scrollRevealView.js
+   owns the DOM/rAF glue. Self-initializing, sectors.html-only. */
+import { initScrollReveal } from '/src/lib/scrollRevealView.js';
+initScrollReveal();
+</script>
+<script type="module">
 /* U42 (2026-07-18): 3D data-starfield, opt-in via ?fx=starfield3d. Unlike
    the 2D graph bridge above this is a LAZY dynamic import, not a static
    one — its three.js dependency (vendor-three, already shared with
