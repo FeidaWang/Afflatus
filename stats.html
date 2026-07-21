@@ -36,7 +36,9 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/page-turn.css">
 <style>
-:root{--bg:#070a12;--panel:#0d1220;--line:rgba(154,229,255,.16);--ink:#dce8f2;--dim:#8fa3b8;--teal:#4fd6c4;--gold:#e8ad6f;--red:#e0596b;--green:#57c98a;--mono:'JetBrains Mono',ui-monospace,monospace}
+:root{--bg:#070a12;--panel:#0d1220;--line:rgba(154,229,255,.16);--ink:#dce8f2;--dim:#8fa3b8;--teal:#4fd6c4;--gold:#e8ad6f;--red:#e0596b;--green:#57c98a;--mono:'JetBrains Mono',ui-monospace,monospace;
+  --viz-axis:rgba(220,232,242,.28);--viz-grid:rgba(220,232,242,.07);--viz-tick:var(--dim);
+  --viz-line-w:1.5px;--viz-marker-r:3;--viz-tip-bg:rgba(7,10,18,.96);--viz-tip-line:rgba(220,232,242,.14);--viz-tip-radius:8px}
 *{box-sizing:border-box;margin:0;padding:0}
 body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--mono);min-height:100vh}
 .wrap{max-width:1020px;margin:0 auto;padding:28px 20px 80px}
@@ -56,11 +58,11 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 .band span{color:var(--teal)}
 .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0 8px}
 .stat{border:1px solid var(--line);background:var(--panel);padding:14px 14px 12px;border-radius:2px;transition:border-color .2s,box-shadow .2s}
-.stat:hover{border-color:rgba(79,214,196,.5);box-shadow:0 0 18px rgba(79,214,196,.10)}
+.stat:hover{border-color:rgba(79,214,196,.5)}
 .stat b{display:block;font-size:24px;color:var(--teal)}
 .stat.gold b{color:var(--gold)} .stat.warn b{color:var(--red)}
 .stat small{color:var(--dim);font-size:10.5px;letter-spacing:.06em;display:block;line-height:1.5}
-.chart-card{border:1px solid var(--line);background:var(--panel);padding:16px;border-radius:2px;margin-top:14px;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.chart-card{border:1px solid var(--line);background:var(--panel);padding:16px;border-radius:2px;margin-top:14px;opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
 .chart-card.in{opacity:1;transform:none}
 .chart-card h3{font-size:13px;letter-spacing:.1em;margin-bottom:4px}
 .chart-card .note{color:var(--dim);font-size:11px;margin-bottom:10px}
@@ -69,10 +71,10 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 .legend i{display:inline-block;width:10px;height:10px;margin-right:5px;border-radius:1px;vertical-align:-1px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:760px){.grid2{grid-template-columns:1fr}}
-.bar-hit{cursor:pointer;transition:filter .15s}
-.bar-hit:hover{filter:brightness(1.35) drop-shadow(0 0 6px rgba(154,229,255,.45))}
-.tooltip{position:fixed;z-index:60;pointer-events:none;background:rgba(4,8,14,.96);border:1px solid rgba(154,229,255,.35);padding:9px 11px;font-size:11.5px;line-height:1.6;border-radius:2px;max-width:280px;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;transition:opacity .12s}
-.tooltip.show{opacity:1}
+.bar-hit{cursor:pointer;transition:opacity .15s}
+svg:hover .bar-hit:not(:hover){opacity:.45}
+.tooltip{position:fixed;z-index:60;pointer-events:none;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);padding:10px 12px;font-size:11.5px;line-height:1.6;border-radius:var(--viz-tip-radius);max-width:280px;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
+.tooltip.show{opacity:1;transform:none}
 .tooltip b{color:var(--teal)}
 .drawer{margin-top:10px;border:1px dashed rgba(154,229,255,.25);background:rgba(154,229,255,.04);padding:12px 14px;font-size:12.5px;display:none}
 .drawer.show{display:block}
@@ -90,7 +92,7 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 .pick-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(154,229,255,.10);font-size:12.5px}
 .pick-row:last-child{border-bottom:none}
 .pick-row .bar{flex:1;height:10px;background:rgba(154,229,255,.08);border-radius:1px;overflow:hidden}
-.pick-row .bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.pick-row .bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .6s cubic-bezier(.2,.7,.2,1)}
 .pick-row .pct{width:44px;text-align:right;color:var(--dim)}
 .pick-row .who{width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pick-row.won .who{color:var(--green)}
@@ -313,7 +315,7 @@ import { pick } from '/src/lib/i18nData.js';
 import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leaguesPick.js';
 (function () {
   'use strict';
-  var C = { green:'#57c98a', red:'#e0596b', gold:'#e8ad6f', teal:'#4fd6c4', dim:'#8fa3b8', line:'rgba(154,229,255,.16)' };
+  var C = { green:'#57c98a', red:'#e0596b', gold:'#e8ad6f', teal:'#4fd6c4', dim:'#8fa3b8', axis:'rgba(220,232,242,.28)', grid:'rgba(220,232,242,.07)' };
   var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
   function zh() { return (document.documentElement.lang || '').indexOf('zh') === 0; }
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
@@ -414,11 +416,11 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     var NS = 'http://www.w3.org/2000/svg';
     var svg1 = document.createElementNS(NS, 'svg');
     svg1.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg1.setAttribute('role', 'img');
-    [0.5, 0.75, 1].forEach(function (g) {
+    [0, 1].forEach(function (g) {
       var y = (H - padB) - g * (H - padB - 14);
       var ln = document.createElementNS(NS, 'line');
       ln.setAttribute('x1', padL); ln.setAttribute('y1', y); ln.setAttribute('x2', W - 6); ln.setAttribute('y2', y);
-      ln.setAttribute('stroke', C.line); ln.setAttribute('stroke-dasharray', '3 4'); svg1.appendChild(ln);
+      ln.setAttribute('stroke', g === 0 ? C.axis : C.grid); svg1.appendChild(ln);
       var tx = document.createElementNS(NS, 'text');
       tx.setAttribute('x', 4); tx.setAttribute('y', y + 4); tx.setAttribute('fill', C.dim); tx.setAttribute('font-size', '10'); tx.setAttribute('font-family', 'monospace');
       tx.textContent = Math.round(g * 100) + '%'; svg1.appendChild(tx);
@@ -439,7 +441,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       var hTarget = x.s.conf * (H - padB - 14), xpos = padL + i * bw + bw * 0.18, yBase = H - padB;
       var r = document.createElementNS(NS, 'rect');
       r.setAttribute('x', xpos); r.setAttribute('width', bw * 0.64); r.setAttribute('rx', 1.5);
-      r.setAttribute('fill', x.ok ? C.green : C.red); r.setAttribute('fill-opacity', '0.85');
+      r.setAttribute('fill', x.ok ? C.green : C.red); r.setAttribute('fill-opacity', '0.9');
       r.setAttribute('class', 'bar-hit');
       if (RM) { r.setAttribute('y', yBase - hTarget); r.setAttribute('height', hTarget); }
       else {
@@ -451,7 +453,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
             r.setAttribute('height', hTarget * e); r.setAttribute('y', yBase - hTarget * e);
             if (k < 1) requestAnimationFrame(fr);
           })(t0);
-        }, 60 * i);
+        }, 40 * i);
       }
       var tipHtml = '<b>' + esc(x.s.home + ' vs ' + x.s.away) + '</b><br>' +
         (zh() ? '预测' : 'call') + ': ' + esc(pickedTeam(x.s) + ' ' + (x.s.opusScore || '')) + ' @ ' + Math.round(x.s.conf * 100) + '%<br>' +
@@ -469,7 +471,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       }
       var lb = document.createElementNS(NS, 'text');
       lb.setAttribute('x', xpos + bw * 0.32); lb.setAttribute('y', H - padB + 12);
-      lb.setAttribute('fill', C.dim); lb.setAttribute('font-size', '8.5'); lb.setAttribute('font-family', 'monospace'); lb.setAttribute('text-anchor', 'end');
+      lb.setAttribute('fill', C.dim); lb.setAttribute('font-size', '10'); lb.setAttribute('font-family', 'monospace'); lb.setAttribute('text-anchor', 'end');
       lb.setAttribute('transform', 'rotate(-38 ' + (xpos + bw * 0.32) + ' ' + (H - padB + 12) + ')');
       lb.textContent = x.s.home + '·' + x.s.away; svg1.appendChild(lb);
     });
@@ -485,14 +487,15 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       pts.push([pl + i * pw, y2(hit / (i + 1))]); lo.push([pl + i * pw, y2(w[0])]); hi.push([pl + i * pw, y2(w[1])]);
     });
     var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
-    [0, 0.5, 1].forEach(function (g) {
-      svg2 += '<line x1="' + pl + '" y1="' + y2(g) + '" x2="' + (W2 - 6) + '" y2="' + y2(g) + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+    svg2 += '<defs><linearGradient id="wilsonGradMsi" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + C.teal + '" stop-opacity=".16"/><stop offset="100%" stop-color="' + C.teal + '" stop-opacity="0"/></linearGradient></defs>';
+    [0, 1].forEach(function (g) {
+      svg2 += '<line x1="' + pl + '" y1="' + y2(g) + '" x2="' + (W2 - 6) + '" y2="' + y2(g) + '" stroke="' + (g === 0 ? C.axis : C.grid) + '"/>' +
               '<text x="4" y="' + (y2(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
     });
-    svg2 += '<polygon fill="rgba(79,214,196,.12)" points="' + hi.map(function (p) { return p.join(','); }).join(' ') + ' ' + lo.slice().reverse().map(function (p) { return p.join(','); }).join(' ') + '"/>';
-    svg2 += '<line x1="' + pl + '" y1="' + y2(0.5) + '" x2="' + (W2 - 6) + '" y2="' + y2(0.5) + '" stroke="' + C.gold + '" stroke-opacity=".45" stroke-dasharray="6 4"/>';
-    svg2 += '<polyline id="curvePath" fill="none" stroke="' + C.teal + '" stroke-width="2" points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '"/>';
-    pts.forEach(function (p) { svg2 += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2.6" fill="' + C.teal + '"/>'; });
+    svg2 += '<polygon fill="url(#wilsonGradMsi)" points="' + hi.map(function (p) { return p.join(','); }).join(' ') + ' ' + lo.slice().reverse().map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    svg2 += '<line x1="' + pl + '" y1="' + y2(0.5) + '" x2="' + (W2 - 6) + '" y2="' + y2(0.5) + '" stroke="' + C.gold + '" stroke-opacity=".3"/>';
+    svg2 += '<polyline id="curvePath" fill="none" stroke="' + C.teal + '" stroke-width="1.5" points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    pts.forEach(function (p) { svg2 += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3" fill="' + C.teal + '"/>'; });
     svg2 += '</svg>';
     document.getElementById('msiCurve').innerHTML = svg2;
     if (!RM) {
@@ -500,7 +503,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       try {
         var len = path.getTotalLength ? path.getTotalLength() : 600;
         path.style.strokeDasharray = len; path.style.strokeDashoffset = len;
-        path.style.transition = 'stroke-dashoffset 1.4s ease .2s';
+        path.style.transition = 'stroke-dashoffset 1s ease .2s';
         requestAnimationFrame(function () { requestAnimationFrame(function () { path.style.strokeDashoffset = 0; }); });
       } catch (e) {}
     }
@@ -511,14 +514,14 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     function x3(v) { return pl3 + (v - 0.4) / 0.6 * (W3 - pl3 - 12); }
     function y3(v) { return (H3 - pb3) - v * (H3 - pb3 - 14); }
     var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
-    [0, 0.5, 1].forEach(function (g) {
-      svg3 += '<line x1="' + pl3 + '" y1="' + y3(g) + '" x2="' + (W3 - 6) + '" y2="' + y3(g) + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+    [0, 1].forEach(function (g) {
+      svg3 += '<line x1="' + pl3 + '" y1="' + y3(g) + '" x2="' + (W3 - 6) + '" y2="' + y3(g) + '" stroke="' + (g === 0 ? C.axis : C.grid) + '"/>' +
               '<text x="4" y="' + (y3(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
     });
     [0.5, 0.7, 0.9].forEach(function (g) {
-      svg3 += '<text x="' + x3(g) + '" y="' + (H3 - pb3 + 14) + '" fill="' + C.dim + '" font-size="9.5" font-family="monospace" text-anchor="middle">' + Math.round(g * 100) + '%</text>';
+      svg3 += '<text x="' + x3(g) + '" y="' + (H3 - pb3 + 14) + '" fill="' + C.dim + '" font-size="10" font-family="monospace" text-anchor="middle">' + Math.round(g * 100) + '%</text>';
     });
-    svg3 += '<line x1="' + x3(0.4) + '" y1="' + y3(0.4) + '" x2="' + x3(1) + '" y2="' + y3(1) + '" stroke="' + C.gold + '" stroke-opacity=".5" stroke-dasharray="6 4"/>';
+    svg3 += '<line x1="' + x3(0.4) + '" y1="' + y3(0.4) + '" x2="' + x3(1) + '" y2="' + y3(1) + '" stroke="' + C.gold + '" stroke-opacity=".3"/>';
     bins.forEach(function (b) {
       var xs = scored.filter(function (x) { return x.conf >= b.lo && x.conf < b.hi; });
       if (!xs.length) return;
@@ -569,7 +572,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
         var s = '<svg viewBox="0 0 ' + Wb + ' ' + Hb + '" xmlns="http://www.w3.org/2000/svg" role="img">';
         counts.forEach(function (c, k) {
           var h = c / mx * (Hb - pbb - 16);
-          s += '<rect x="' + (plb + k * bwb + 1) + '" y="' + ((Hb - pbb) - h) + '" width="' + (bwb - 2) + '" height="' + h + '" fill="' + C.teal + '" fill-opacity=".8"/>';
+          s += '<rect x="' + (plb + k * bwb + 0.5) + '" y="' + ((Hb - pbb) - h) + '" width="' + (bwb - 1) + '" height="' + h + '" fill="' + C.teal + '" fill-opacity=".8"/>';
         });
         [p025, p975].forEach(function (p) {
           var x = plb + p * n * bwb + bwb / 2;
@@ -694,11 +697,11 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     var NS = 'http://www.w3.org/2000/svg';
     var svg1 = document.createElementNS(NS, 'svg');
     svg1.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg1.setAttribute('role', 'img');
-    [0.5, 0.75, 1].forEach(function (g) {
+    [0, 1].forEach(function (g) {
       var y = (H - padB) - g * (H - padB - 14);
       var ln = document.createElementNS(NS, 'line');
       ln.setAttribute('x1', padL); ln.setAttribute('y1', y); ln.setAttribute('x2', W - 6); ln.setAttribute('y2', y);
-      ln.setAttribute('stroke', C.line); ln.setAttribute('stroke-dasharray', '3 4'); svg1.appendChild(ln);
+      ln.setAttribute('stroke', g === 0 ? C.axis : C.grid); svg1.appendChild(ln);
       var tx = document.createElementNS(NS, 'text');
       tx.setAttribute('x', 4); tx.setAttribute('y', y + 4); tx.setAttribute('fill', C.dim); tx.setAttribute('font-size', '10'); tx.setAttribute('font-family', 'monospace');
       tx.textContent = Math.round(g * 100) + '%'; svg1.appendChild(tx);
@@ -720,7 +723,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       var hTarget = x.s.conf * (H - padB - 14), xpos = padL + i * bw + bw * 0.18, yBase = H - padB;
       var r = document.createElementNS(NS, 'rect');
       r.setAttribute('x', xpos); r.setAttribute('width', bw * 0.64); r.setAttribute('rx', 1.5);
-      r.setAttribute('fill', x.ok ? C.green : C.red); r.setAttribute('fill-opacity', '0.85');
+      r.setAttribute('fill', x.ok ? C.green : C.red); r.setAttribute('fill-opacity', '0.9');
       r.setAttribute('class', 'bar-hit');
       if (RM) { r.setAttribute('y', yBase - hTarget); r.setAttribute('height', hTarget); }
       else {
@@ -732,7 +735,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
             r.setAttribute('height', hTarget * e); r.setAttribute('y', yBase - hTarget * e);
             if (k < 1) requestAnimationFrame(fr);
           })(t0);
-        }, 60 * i);
+        }, 40 * i);
       }
       var tipHtml = '<b>' + esc(x.s.home + ' vs ' + x.s.away) + '</b><br>' +
         (zh() ? '预测' : 'call') + ': ' + esc(pick(x.s, x.s.opus === 'home' ? 'home' : 'away', lang) + ' ' + (x.s.opusScore || '')) + ' @ ' + Math.round(x.s.conf * 100) + '%<br>' +
@@ -750,7 +753,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       }
       var lb = document.createElementNS(NS, 'text');
       lb.setAttribute('x', xpos + bw * 0.32); lb.setAttribute('y', H - padB + 12);
-      lb.setAttribute('fill', C.dim); lb.setAttribute('font-size', '8.5'); lb.setAttribute('font-family', 'monospace'); lb.setAttribute('text-anchor', 'end');
+      lb.setAttribute('fill', C.dim); lb.setAttribute('font-size', '10'); lb.setAttribute('font-family', 'monospace'); lb.setAttribute('text-anchor', 'end');
       lb.setAttribute('transform', 'rotate(-38 ' + (xpos + bw * 0.32) + ' ' + (H - padB + 12) + ')');
       lb.textContent = x.s.home + '·' + x.s.away; svg1.appendChild(lb);
     });
@@ -766,14 +769,15 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       pts.push([pl + i * pw, y2(hit / (i + 1))]); lo.push([pl + i * pw, y2(w[0])]); hi.push([pl + i * pw, y2(w[1])]);
     });
     var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
-    [0, 0.5, 1].forEach(function (g) {
-      svg2 += '<line x1="' + pl + '" y1="' + y2(g) + '" x2="' + (W2 - 6) + '" y2="' + y2(g) + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+    svg2 += '<defs><linearGradient id="wilsonGradWc" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + C.teal + '" stop-opacity=".16"/><stop offset="100%" stop-color="' + C.teal + '" stop-opacity="0"/></linearGradient></defs>';
+    [0, 1].forEach(function (g) {
+      svg2 += '<line x1="' + pl + '" y1="' + y2(g) + '" x2="' + (W2 - 6) + '" y2="' + y2(g) + '" stroke="' + (g === 0 ? C.axis : C.grid) + '"/>' +
               '<text x="4" y="' + (y2(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
     });
-    svg2 += '<polygon fill="rgba(79,214,196,.12)" points="' + hi.map(function (p) { return p.join(','); }).join(' ') + ' ' + lo.slice().reverse().map(function (p) { return p.join(','); }).join(' ') + '"/>';
-    svg2 += '<line x1="' + pl + '" y1="' + y2(0.5) + '" x2="' + (W2 - 6) + '" y2="' + y2(0.5) + '" stroke="' + C.gold + '" stroke-opacity=".45" stroke-dasharray="6 4"/>';
-    svg2 += '<polyline id="wcCurvePath" fill="none" stroke="' + C.teal + '" stroke-width="2" points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '"/>';
-    pts.forEach(function (p) { svg2 += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2.6" fill="' + C.teal + '"/>'; });
+    svg2 += '<polygon fill="url(#wilsonGradWc)" points="' + hi.map(function (p) { return p.join(','); }).join(' ') + ' ' + lo.slice().reverse().map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    svg2 += '<line x1="' + pl + '" y1="' + y2(0.5) + '" x2="' + (W2 - 6) + '" y2="' + y2(0.5) + '" stroke="' + C.gold + '" stroke-opacity=".3"/>';
+    svg2 += '<polyline id="wcCurvePath" fill="none" stroke="' + C.teal + '" stroke-width="1.5" points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    pts.forEach(function (p) { svg2 += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3" fill="' + C.teal + '"/>'; });
     svg2 += '</svg>';
     document.getElementById('wcCurve').innerHTML = svg2;
     if (!RM) {
@@ -781,7 +785,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       try {
         var len2 = path2.getTotalLength ? path2.getTotalLength() : 600;
         path2.style.strokeDasharray = len2; path2.style.strokeDashoffset = len2;
-        path2.style.transition = 'stroke-dashoffset 1.4s ease .2s';
+        path2.style.transition = 'stroke-dashoffset 1s ease .2s';
         requestAnimationFrame(function () { requestAnimationFrame(function () { path2.style.strokeDashoffset = 0; }); });
       } catch (e) {}
     }
@@ -792,14 +796,14 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     function x3(v) { return pl3 + (v - 0.4) / 0.6 * (W3 - pl3 - 12); }
     function y3(v) { return (H3 - pb3) - v * (H3 - pb3 - 14); }
     var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
-    [0, 0.5, 1].forEach(function (g) {
-      svg3 += '<line x1="' + pl3 + '" y1="' + y3(g) + '" x2="' + (W3 - 6) + '" y2="' + y3(g) + '" stroke="' + C.line + '" stroke-dasharray="3 4"/>' +
+    [0, 1].forEach(function (g) {
+      svg3 += '<line x1="' + pl3 + '" y1="' + y3(g) + '" x2="' + (W3 - 6) + '" y2="' + y3(g) + '" stroke="' + (g === 0 ? C.axis : C.grid) + '"/>' +
               '<text x="4" y="' + (y3(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
     });
     [0.5, 0.7, 0.9].forEach(function (g) {
-      svg3 += '<text x="' + x3(g) + '" y="' + (H3 - pb3 + 14) + '" fill="' + C.dim + '" font-size="9.5" font-family="monospace" text-anchor="middle">' + Math.round(g * 100) + '%</text>';
+      svg3 += '<text x="' + x3(g) + '" y="' + (H3 - pb3 + 14) + '" fill="' + C.dim + '" font-size="10" font-family="monospace" text-anchor="middle">' + Math.round(g * 100) + '%</text>';
     });
-    svg3 += '<line x1="' + x3(0.4) + '" y1="' + y3(0.4) + '" x2="' + x3(1) + '" y2="' + y3(1) + '" stroke="' + C.gold + '" stroke-opacity=".5" stroke-dasharray="6 4"/>';
+    svg3 += '<line x1="' + x3(0.4) + '" y1="' + y3(0.4) + '" x2="' + x3(1) + '" y2="' + y3(1) + '" stroke="' + C.gold + '" stroke-opacity=".3"/>';
     bins.forEach(function (b) {
       var xs = scored.filter(function (x) { return x.conf >= b.lo && x.conf < b.hi; });
       if (!xs.length) return;
@@ -850,7 +854,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
         var s = '<svg viewBox="0 0 ' + Wb + ' ' + Hb + '" xmlns="http://www.w3.org/2000/svg" role="img">';
         counts.forEach(function (c, k) {
           var h = c / mx * (Hb - pbb - 16);
-          s += '<rect x="' + (plb + k * bwb + 1) + '" y="' + ((Hb - pbb) - h) + '" width="' + (bwb - 2) + '" height="' + h + '" fill="' + C.teal + '" fill-opacity=".8"/>';
+          s += '<rect x="' + (plb + k * bwb + 0.5) + '" y="' + ((Hb - pbb) - h) + '" width="' + (bwb - 1) + '" height="' + h + '" fill="' + C.teal + '" fill-opacity=".8"/>';
         });
         [p025, p975].forEach(function (p) {
           var x = plb + p * n * bwb + bwb / 2;

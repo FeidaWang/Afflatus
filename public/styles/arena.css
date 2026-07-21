@@ -7,6 +7,8 @@
   --font-hud:'Rajdhani','Orbitron',sans-serif;
   --font-mono:'JetBrains Mono','PP Fraktion Mono',ui-monospace,monospace;
   --radius:4px;
+  --viz-axis:rgba(234,241,255,.26);--viz-grid:rgba(234,241,255,.07);--viz-tick:var(--muted);
+  --viz-line-w:1.5px;--viz-marker-r:3;--viz-tip-bg:rgba(5,7,14,.96);--viz-tip-line:rgba(234,241,255,.14);--viz-tip-radius:8px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -238,7 +240,7 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ta-mode.on{background:var(--acid);border-color:var(--acid);color:#04060d}
 .ta-body{display:grid;grid-template-columns:260px 1fr;gap:16px;padding:16px}
 .ta-ladwrap{display:flex;flex-direction:column}
-.ta-ladder{position:relative;min-height:560px;border:1px solid rgba(120,140,200,.2);background:linear-gradient(180deg,rgba(10,14,26,.7),rgba(5,7,14,.9));overflow:hidden}
+.ta-ladder{position:relative;min-height:560px;border:1px solid var(--viz-grid);background:var(--panel-2);overflow:hidden}
 /* level tick line — always the TRUE price position, never moved to avoid overlap */
 .lad-lv{position:absolute;left:48px;right:6px;height:0;border-top:1px solid;opacity:.6}
 .lad-lv.res{color:var(--down)} .lad-lv.sup{color:var(--up)} .lad-lv.pp{color:#ffd166} .lad-lv.ma{color:#36c5ff} .lad-lv.round{color:#cfd6f2}
@@ -247,7 +249,7 @@ body.embed .hero{border-top:2px solid var(--line)}
 .lad-lv.k-breakout{border-top-width:2px}
 /* level label (price number + name tag) — decluttered position, may differ from the line above */
 .lad-lab{position:absolute;left:0;right:0;height:0;z-index:2}
-.lad-lab em{position:absolute;left:4px;top:-6px;font:600 9.5px/1 var(--font-mono);font-style:normal;color:var(--muted)}
+.lad-lab em{position:absolute;left:4px;top:-6px;font:600 10px/1 var(--font-mono);font-style:normal;color:var(--viz-tick)}
 .lad-lab span{position:absolute;right:8px;top:-9px;font:700 8.5px/1 var(--font-hud);letter-spacing:.06em;text-transform:uppercase;background:rgba(6,9,17,.94);padding:2px 5px;border:1px solid;display:inline-flex;gap:5px;align-items:center;white-space:nowrap}
 .lad-lab.res span{color:var(--down);border-color:var(--down)} .lad-lab.sup span{color:var(--up);border-color:var(--up)}
 .lad-lab.pp span{color:#ffd166;border-color:#ffd166} .lad-lab.ma span{color:#36c5ff;border-color:#36c5ff} .lad-lab.round span{color:#cfd6f2;border-color:rgba(207,214,242,.5)}
@@ -311,16 +313,20 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-legend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
 .ap-legend i{width:14px;height:0;border-top:2px solid;display:inline-block}
 .ap-legend i.dash{border-top-style:dashed;border-top-width:1.5px}
-.ap-chart{width:100%;height:240px;display:block}
-.ap-grid{stroke:rgba(120,150,210,.13);stroke-width:1}
-.ap-axis{fill:var(--muted);font:9px var(--font-mono)}
+.ap-chart{width:100%;height:240px;display:block;cursor:crosshair}
+.viz-tip{position:fixed;z-index:60;pointer-events:none;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);border-radius:var(--viz-tip-radius);padding:9px 11px;font:12px/1.6 var(--font-mono);color:var(--text);box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
+.viz-tip.show{opacity:1;transform:none}
+.viz-tip b{display:block;color:var(--muted);font:700 9.5px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.ap-grid{stroke:var(--viz-grid);stroke-width:1}
+.ap-axis{fill:var(--muted);font:10px var(--font-mono)}
 .ap-axis-bg{fill:var(--panel-2)}
-.ap-line{fill:none;stroke-width:2}
+.ap-line{fill:none;stroke-width:var(--viz-line-w)}
 .ap-line-a{stroke:var(--acid);color:var(--acid)}
 .ap-line-b{stroke:var(--cyan);color:var(--cyan)}
-.ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.4;color:#ffd166}
-.ap-line-smh{stroke:var(--magenta);stroke-dasharray:2 4;stroke-width:1.4;color:var(--magenta)}
+.ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.2;stroke-opacity:.8;color:#ffd166}
+.ap-line-smh{stroke:var(--magenta);stroke-dasharray:2 4;stroke-width:1.2;stroke-opacity:.8;color:var(--magenta)}
 .ap-dot{stroke:none}
+.ap-end-dot{stroke:none}
 .ap-models{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .ap-mh{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .ap-mh b{font:900 16px/1 var(--font-display);letter-spacing:.03em}
