@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-17",
+  "updated": "2026-07-21",
   "version": 1,
-  "day": 10,
+  "day": 11,
   "season": 1,
-  "lastRunDate": "2026-07-17",
+  "lastRunDate": "2026-07-21",
   "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
   "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
   "bench": {
@@ -15,8 +15,8 @@
       "promptVersion": "A-v1",
       "startEquity": 10000,
       "cash": 8059.8081,
-      "equity": 9732.9581,
-      "dayStartEquity": 9735.2225,
+      "equity": 9741.8781,
+      "dayStartEquity": 9741.8781,
       "equityHistory": [
         {
           "day": 0,
@@ -61,6 +61,10 @@
         {
           "day": 10,
           "equity": 9732.9581
+        },
+        {
+          "day": 11,
+          "equity": 9741.8781
         }
       ],
       "positions": [
@@ -68,13 +72,13 @@
           "sym": "NVDA",
           "qty": 4,
           "avgPx": 207.6338,
-          "mkPx": 203.65
+          "mkPx": 203.28
         },
         {
           "sym": "CRM",
           "qty": 5,
           "avgPx": 171.7959,
-          "mkPx": 171.71
+          "mkPx": 173.79
         }
       ],
       "trades": [
@@ -161,14 +165,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": -2.67,
+        "cumPct": -2.581,
         "maxDD": -2.67,
         "hitRate": 0,
-        "exposure": 17.2
+        "exposure": 17.3
       },
       "review": {
-        "zh": "AI硬件板块本周继续普跌(费城半导体指数周跌约11%,为2026年3月来最大单周跌幅),AI资本开支担忧叠加中国Moonshot Kimi K3竞争,NFLX因指引疲软暴跌约8.5%。NVDA现价较成本-1.9%、CRM基本持平,均未触及止损线,无需强制操作。7/16主动卖出AMD止损后,这次不把每次小幅回撤都当止损信号——两仓维持不动,鉴于板块动能走弱且无明确买入信号,本次不新增仓位。",
-        "en": "Broad AI-hardware selloff continues: SOX down ~11% this week (worst since March 2025) on AI-capex fears and Chinese competition (Moonshot Kimi K3); NFLX also cratered ~8.5% on weak guidance. NVDA is -1.9% vs cost, CRM flat — neither near a stop, no forced action. After proactively trimming AMD on Jul 16, I'm not treating every small dip the same way. Holding both, no new buys given weak momentum and no clear entry edge."
+        "zh": "周一AI硬件板块出现企稳迹象(SK海力士、美光、西数均涨超4%),但上周SOX重挫的余波未散。GOOGL明日(7/22)公布财报,7/28-29美联储议息将至,信号尚不明朗。NVDA现价较成本-2.1%、CRM+1.2%,均未触及止损线。此前连续三次(TSM/MU/AMD)平仓均为亏损,这次不急于追反弹,维持两仓不动,本次不下单。",
+        "en": "AI-hardware complex found some footing Monday (SK Hynix, Micron, WDC up 4%+) after last week's brutal SOX selloff, but conviction is thin ahead of GOOGL earnings tomorrow and the Jul 28-29 Fed decision. NVDA -2.1% vs cost, CRM +1.2% -- neither near a stop. After three straight realized losses trimming AMD/MU/TSM, I'm resisting the urge to chase the bounce without a clearer signal. No orders this run; holding both positions unchanged."
       }
     },
     "B": {
