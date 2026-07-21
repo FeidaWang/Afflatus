@@ -123,12 +123,20 @@ h1 span{color:#8ff0d7}
    official photo fall back to a plain brand-color card (--brand, .noPhoto);
    companies with no usable logo file fall back to a plain text wordmark
    (.rLogoFallback) — never a fabricated photo or a redrawn logo. */
-.rArt{position:relative;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden;--brand:var(--accent);--tilt:0deg;background:#0d0d10;cursor:pointer;transform:rotate(var(--tilt));transform-origin:50% 65%;transition:transform .45s cubic-bezier(.34,1.56,.64,1),filter .3s ease,box-shadow .3s ease}
+/* .rArt v2 — grid-stacked card art: all layers share one cell; logo/fallback
+   dead-centered by construction (place-items), photo/scrim stretch to fill. */
+.rArt{position:relative;aspect-ratio:4/3;display:grid;place-items:center;padding:14px;overflow:hidden;--brand:var(--accent);--tilt:0deg;background:#0d0d10;cursor:pointer;transform:rotate(var(--tilt));transform-origin:50% 65%;transition:transform .45s cubic-bezier(.34,1.56,.64,1),filter .3s ease,box-shadow .3s ease}
 .rArt.noPhoto{background:radial-gradient(130% 140% at 50% 18%,color-mix(in srgb,var(--brand) 40%,transparent) 0%,transparent 62%),#0d0d10}
-.rPhoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.rScrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.35) 60%,rgba(0,0,0,.6) 100%)}
-.rLogo{position:relative;z-index:1;max-width:60%;max-height:44%;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 10px rgba(0,0,0,.5))}
-.rLogoFallback{position:relative;z-index:1;color:#fff;font:800 19px var(--font);letter-spacing:-.01em;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.rArt>*{grid-area:1/1}
+.rPhoto{width:100%;height:100%;object-fit:cover;align-self:stretch;justify-self:stretch;opacity:0;transition:opacity .4s ease}
+.rPhoto.loaded{opacity:1}
+.rScrim{width:100%;height:100%;align-self:stretch;justify-self:stretch;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.35) 60%,rgba(0,0,0,.6) 100%)}
+.rLogo{z-index:1;max-width:56%;max-height:38%;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+.rArt.is-mark .rLogo{max-width:30%;max-height:34%}
+.rLogoFallback{z-index:1;color:#fff;font:800 19px var(--font);letter-spacing:-.01em;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+/* --tilt option (b): keep the card-stack tilt as page identity, but hold
+   logos screen-level so they read symmetric within their (rotated) cards. */
+.rArt .rLogo{transform:rotate(calc(var(--tilt) * -1))}
 .nCard .rLogoFallback{font-size:15px}
 .rCard:nth-child(4n+1) .rArt,.nCard:nth-child(4n+1) .rArt{--tilt:-2deg}
 .rCard:nth-child(4n+2) .rArt,.nCard:nth-child(4n+2) .rArt{--tilt:1.5deg}
@@ -180,7 +188,7 @@ h1 span{color:#8ff0d7}
 .nCard:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
 .nCard.selected{z-index:3}
 .nCard .rArt{aspect-ratio:1/1}
-.nTags{position:absolute;z-index:1;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap}
+.nTags{place-self:start start;position:static;z-index:1;padding:12px;display:flex;gap:6px;flex-wrap:wrap}
 .nTag{padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.92);color:#111;font:800 9.5px var(--font-mono);letter-spacing:.04em}
 .nTag.us{color:var(--faction-us)}
 .nTag.cn{color:var(--faction-cn)}
