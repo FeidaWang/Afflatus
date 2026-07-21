@@ -372,12 +372,17 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
   // — only where one could actually be found and confirmed (see Urgent.md
   // U37). Everyone else falls back to a plain brand-color card (.noPhoto).
   var PHOTO_URL = {
-    NVDA: 'https://nvidianews.nvidia.com/file?fid=62993f2db3aed3337e54cd27',
+    // never use nvidianews.nvidia.com/file?fid=… — hotlink-blocked; use the
+    // iprsoftwaremedia.com CDN form from the press-kit page instead.
+    NVDA: 'https://iprsoftwaremedia.com/219/files/202603/nvidia-vera-rubin-family.jpeg',
     AVGO: 'https://news-editor.broadcom.com/wp-content/uploads/2025/07/5-Broadcom-Palo-Alto-Campus-Entrance-2025.jpg',
     MU: 'https://www.micron.com/content/dam/micron/connectedassets/micron/global/locations/location-boise-idaho-site-03.jpg',
-    SKHY: 'https://d36ae2cxtn9mcr.cloudfront.net/wp-content/uploads/2025/06/09030625/01_Korea-%E2%80%93-Icheon-Campus.png',
+    SKHY: 'https://d36ae2cxtn9mcr.cloudfront.net/wp-content/uploads/2026/01/05223845/SK-hynix-CES-2026-showcase-products-2.jpg',
     TSM: 'https://pr.tsmc.com/sites/pr/multimedia-gallery/407A9160_0.jpg',
-    SSNLF: 'https://news.samsungsemiconductor.com/global/wp-content/uploads/2025/08/KakaoTalk_20250924_094825149_01.jpg',
+    SSNLF: 'https://news.samsungsemiconductor.com/global/wp-content/uploads/2026/02/Image-1.-Samsung-Electronics-HBM4-2-1024x731.jpg',
+    ASML: 'https://edge.sitecorecloud.io/asmlnetherlaaea-asmlcom-prd-5369/media/project/asmlcom/asmlcom/asml/images/products/euv-lithography-systems/twinscan-exe5200b.png?h=608&iar=0&w=1080',
+    anthropic: 'https://cdn.sanity.io/images/4zrzovbb/website/b7055119423427c40a0e4d84054aed17682b50a2-2880x1620.png?w=1200&auto=format',
+    openai: 'https://images.ctfassets.net/kftzwdyauwt9/3T0kxQLJk1VcXVxMwXF97J/4345df401f2b08ed6a1eef88c9588d2e/OAI_ChatGPTWork_ModelBlog_OpenGraph_16x9_1200x630.png?w=1600&h=900&fit=fill',
   };
   function colorFor(key) { return BRAND_COLOR[key]; }
   function escAttr(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -390,9 +395,9 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     var logo = LOGO_URL[key];
     var name = DISPLAY_NAME[key] || key;
     var style = color ? ' style="--brand:' + color + '"' : '';
-    var photoHtml = photo ? '<img class="rPhoto" src="' + photo + '" alt="" loading="lazy" referrerpolicy="no-referrer"><div class="rScrim"></div>' : '';
+    var photoHtml = photo ? '<img class="rPhoto" src="' + photo + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div class="rScrim"></div>' : '';
     var logoHtml = logo
-      ? '<img class="rLogo" src="' + logo + '" alt="' + escAttr(name) + '" loading="lazy" referrerpolicy="no-referrer">'
+      ? '<img class="rLogo" src="' + logo + '" alt="' + escAttr(name) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
       : '<span class="rLogoFallback">' + escAttr(name) + '</span>';
     return '<div class="rArt' + (photo ? '' : ' noPhoto') + '"' + style + '>' + photoHtml + (extraHtml || '') + logoHtml + '</div>';
   }
@@ -413,6 +418,21 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
       span.className = 'rLogoFallback';
       span.textContent = el.alt || '';
       el.replaceWith(span);
+    }
+  }, true);
+  // Fade photos in on load instead of popping in once the (often multi-MB)
+  // hotlinked original decodes.
+  document.addEventListener('load', function (e) {
+    if (e.target && e.target.classList && e.target.classList.contains('rPhoto')) e.target.classList.add('loaded');
+  }, true);
+  // Tag near-square logo marks so CSS can normalize their optical weight
+  // against wide wordmarks (both rendered at the same max-height otherwise
+  // read as different sizes even though they're geometrically centered).
+  document.addEventListener('load', function (e) {
+    var el = e.target;
+    if (el && el.classList && el.classList.contains('rLogo') && el.naturalWidth / el.naturalHeight < 1.4) {
+      var art = el.closest('.rArt');
+      if (art) art.classList.add('is-mark');
     }
   }, true);
   // Wire the six static stock-rail cards: their .rArt placeholder only

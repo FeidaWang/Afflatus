@@ -221,3 +221,103 @@ New pure module `src/lib/graphCamera.js` + surgical edits in `sectorsGraphView.j
 ## Done (Part 2) =
 
 sectors.html sections reveal with Anthropic's damped-scrub card-expand feel (charter-compliant clip-path implementation), and the 交互星图 gains path-to-hope's camera language — bloom entrance, cursor-anchored zoom, inertial pan, focus-fly on select, hover dimming — all inside the existing dependency-free Canvas 2D renderer with the physics in pure, tested modules.
+
+---
+---
+
+# PART 3 — sectors.html Vendor Cards: Asset Refresh + Logo Layout Hardening
+
+> Audit performed live on `feida.au/sectors.html` (2026-07-22, Chrome DOM inspection + per-URL image probes). Targets: the `AfflatusBrand` registry (inline script in `sectors.html`, `PHOTO_URL`/`LOGO_URL`/`artHTML()`) and the `.rArt` card CSS in `public/styles/sectors.css` (lines ~125–150). Registry convention (U37) stays in force: **real photos from official newsroom/press pages only, real logos only, honest brand-color fallback where nothing verifiable exists.**
+
+## 12. Live audit — what's actually wrong (measured, not guessed)
+
+1. **The NVDA photo is dead.** `nvidianews.nvidia.com/file?fid=…` errors on hotlink (probed: `error`; the `file?fid=` redirect pattern rejects external referrers — NVIDIA's newsroom CDN `iprsoftwaremedia.com` is the hotlinkable form). The delegated error-listener correctly degrades the card to `.noPhoto`, so the flagship NVIDIA card renders as a near-black box.
+2. **12 of 18 art keys have no photo at all** (only NVDA/AVGO/MU/SKHY/TSM/SSNLF ever had one), so most cards are dark brand-tint fallbacks — this is the "outdated and visually unappealing" impression, compounded by multi-second pop-in of the lazy hotlinked images (several are 2000px+ originals).
+3. **The logos are already geometrically centered.** Probed every `.rArt`: logo center vs card center offset = `0.0px / 0.0px` in both axes, every card — `.rArt` is `display:flex;align-items:center;justify-content:center` and the only in-flow child is the logo (photo/scrim/tags are absolute). What *reads* as misalignment is: (a) the intentional `--tilt` rotation (±1–2°, the "card stack" aesthetic), (b) mixed logo aspect ratios (wide wordmarks vs near-square marks at the same `max-height:44%` render at wildly different visual weights), (c) SVGs with baked-in whitespace, and (d) logos/photos that simply hadn't loaded yet. §14 hardens the layout so centering is guaranteed by construction and optically normalized — but does not pretend to "fix" an offset that doesn't exist.
+
+## 13. Task 1 — updated image assets (every URL probed OK from a real browser, 2026-07-22)
+
+Replace/extend `PHOTO_URL` in the `AfflatusBrand` registry:
+
+| Key | New URL (verified) | What it is / source page |
+| --- | --- | --- |
+| `NVDA` | `https://iprsoftwaremedia.com/219/files/202603/nvidia-vera-rubin-family.jpeg` | **1600×900** Vera Rubin platform product shot, GTC 2026 press kit (`nvidianews.nvidia.com/news/nvidia-vera-rubin-platform`). Replaces the dead `file?fid=` URL with the same asset's hotlinkable CDN form |
+| `SKHY` | `https://d36ae2cxtn9mcr.cloudfront.net/wp-content/uploads/2026/01/05223845/SK-hynix-CES-2026-showcase-products-2.jpg` | **1000×657** CES 2026 product showcase (HBM4/SOCAMM2/LPDDR6), SK hynix newsroom. Replaces the 3.6MB Icheon-campus PNG — newer, product-focused, ~10× lighter |
+| `SSNLF` | `https://news.samsungsemiconductor.com/global/wp-content/uploads/2026/02/Image-1.-Samsung-Electronics-HBM4-2-1024x731.jpg` | **1024×731** HBM4 commercial-shipment product shot (Feb 2026), Samsung Semiconductor newsroom. Replaces the KakaoTalk event photo |
+| `ASML` **(new)** | `https://edge.sitecorecloud.io/asmlnetherlaaea-asmlcom-prd-5369/media/project/asmlcom/asmlcom/asml/images/products/euv-lithography-systems/twinscan-exe5200b.png?h=608&iar=0&w=1080` | **1080×608** TWINSCAN EXE:5200B High-NA EUV system, official asml.com product page. ASML previously had no photo |
+| `anthropic` **(new)** | `https://cdn.sanity.io/images/4zrzovbb/website/b7055119423427c40a0e4d84054aed17682b50a2-2880x1620.png?w=1200&auto=format` | **1200×675** Claude Fable 5 launch key art (Jun 2026), anthropic.com news CDN (their own og:image asset) |
+| `openai` **(new)** | `https://images.ctfassets.net/kftzwdyauwt9/3T0kxQLJk1VcXVxMwXF97J/4345df401f2b08ed6a1eef88c9588d2e/OAI_ChatGPTWork_ModelBlog_OpenGraph_16x9_1200x630.png?w=1600&h=900&fit=fill` | **1600×900** GPT-5.6 launch key art (Jul 2026), openai.com's own og:image CDN |
+| `MU` *(optional)* | `https://assets.micron.com/adobe/assets/urn:aaid:aem:4d518d2d-07b9-4d1b-afde-1fcda9842089/as/hbm4-carousel-Sampling-HBM4-16H.jpg` | HBM4 16H product shot from micron.com/products/memory/hbm/hbm4 — **but source is only 267×267**; fine for the 1:1 news-grid thumbs, soft if upscaled into the 4:3 rail. Recommendation: keep the current Boise photo for the rail (verified working) unless a larger Micron press asset turns up |
+| `AVGO` | *keep current* (`news-editor.broadcom.com/...Palo-Alto-Campus...jpg`, probed OK at 2048px) | Broadcom's newsroom is JS-rendered; the only extractable press og:image is a generic logo card (`broadcom.com/media/.../brcm_preview_image@72ppi.jpg`, probed OK, 1200×627) — a real campus photo beats a logo placard. Swap only if a Tomahawk-6 product still becomes linkable |
+| `TSM` | *keep current* (`pr.tsmc.com/sites/pr/multimedia-gallery/407A9160_0.jpg`, probed OK) | Still the best hotlinkable official TSMC gallery asset found |
+
+**Honest fallbacks (unchanged, by U37 convention)**: `google`, `xai`, `meta`, `cohere`, `deepseek`, `alibaba`, `zhipu`, `moonshot`, `minimax`, `MRVL`, `PSTG`, `SNDK`, `TER`, `RMBS`, `ALAB` — no verifiable, hotlinkable official press asset found in this pass; they keep the brand-color card. Do NOT fill these with stock photos or search-engine images (breaks the "no fabricated photography" red line).
+
+- [x] 13.1 Update `PHOTO_URL` with the six new/replaced entries above. **(done)**
+- [x] 13.2 Delete the dead NVDA `file?fid=` URL; add a registry comment: *never use `nvidianews.nvidia.com/file?fid=` — hotlink-blocked; use the `iprsoftwaremedia.com` CDN form from the press-kit page instead.* **(done)**
+- [x] 13.3 All new `<img>` gain `decoding="async"` alongside the existing `loading="lazy" referrerpolicy="no-referrer"` (registry `artHTML()`). **(done — applied to both `.rPhoto` and `.rLogo` `<img>` templates)**
+
+## 14. Task 2 — logo layout: guaranteed central symmetry + optical normalization
+
+Replace the `.rArt` layout block in `public/styles/sectors.css` (~lines 126–131). Grid-stacking: every layer occupies the same cell, the logo is centered by `place-items` — centering holds no matter how many layers exist or load, rather than depending on "the logo happens to be the only in-flow flex child":
+
+```css
+/* .rArt v2 — grid-stacked card art: all layers share one cell; logo/fallback
+   dead-centered by construction (place-items), photo/scrim stretch to fill. */
+.rArt{position:relative;aspect-ratio:4/3;display:grid;place-items:center;padding:14px;overflow:hidden;
+  --brand:var(--accent);--tilt:0deg;background:#0d0d10;cursor:pointer;
+  transform:rotate(var(--tilt));transform-origin:50% 65%;
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1),filter .3s ease,box-shadow .3s ease}
+.rArt>*{grid-area:1/1}                              /* stack every layer in the same cell */
+.rPhoto{width:100%;height:100%;object-fit:cover;align-self:stretch;justify-self:stretch;
+  opacity:0;transition:opacity .4s ease}            /* fade in on load — kills the pop-in */
+.rPhoto.loaded{opacity:1}
+.rScrim{width:100%;height:100%;align-self:stretch;justify-self:stretch;
+  background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.35) 60%,rgba(0,0,0,.6) 100%)}
+.nTags{place-self:start start;padding:12px;z-index:1;position:static}  /* pills pin top-left via grid, not abs */
+.rLogo{z-index:1;max-width:56%;max-height:38%;object-fit:contain;
+  filter:brightness(0) invert(1) drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+.rArt.is-mark .rLogo{max-width:30%;max-height:34%}  /* near-square symbol marks: cap width so they match wordmark visual weight */
+.rLogoFallback{z-index:1;color:#fff;font:800 19px var(--font);letter-spacing:-.01em;text-align:center;
+  text-shadow:0 2px 10px rgba(0,0,0,.5)}
+```
+
+Notes / deltas from current:
+- `position:absolute` on `.rPhoto`/`.rScrim` and `.nTags` goes away — the grid stack replaces it (remove the old `.rPhoto{position:absolute;inset:0}` line 128, `.rScrim` line 129, and `.nTags{position:absolute;top:12px;left:12px}` line 183's positioning; keep its flex/gap).
+- Logo cap tightened `60%/44% → 56%/38%` and a `.is-mark` variant added — this is the *optical* symmetry fix: a near-square mark (OpenAI symbol, Anthropic logomark) at 44% height carries ~3× the ink of a wide wordmark at the same cap; capping marks at 30% width equalizes perceived size so the row of cards reads symmetric.
+- **`--tilt` decision needed from you**: the ±1–2° card-stack tilt (lines 133–136) is deliberate design.md identity, but it is also the single biggest reason logos "look" off-axis. Options: (a) keep as is; (b) keep tilt on the card but counter-rotate the logo `.rArt .rLogo{transform:rotate(calc(var(--tilt) * -1))}` so logos stay screen-level while cards stay playful; (c) zero the tilt. **Recommended: (b)** — keeps the identity, fixes the perception.
+
+JS deltas (registry script in `sectors.html`):
+
+```js
+// in the delegated listener block — mark photos loaded (mirrors the error listener)
+document.addEventListener('load', function (e) {
+  if (e.target && e.target.classList && e.target.classList.contains('rPhoto')) e.target.classList.add('loaded');
+}, true);
+// tag near-square logos so CSS can normalize their optical weight
+document.addEventListener('load', function (e) {
+  var el = e.target;
+  if (el && el.classList && el.classList.contains('rLogo') && el.naturalWidth / el.naturalHeight < 1.4) {
+    el.closest('.rArt').classList.add('is-mark');
+  }
+}, true);
+```
+
+- [x] 14.1 Apply the CSS block (surgical: only the listed selectors; `.rArt.noPhoto`, hover/selected/tilt rules, `.featured .rArt`, `.nCard .rArt{aspect-ratio:1/1}` all untouched and compatible with the grid stack). **(done — `.nTags` line 183 also merged to `place-self:start start;position:static` per the note, keeping its `display:flex;gap:6px;flex-wrap:wrap`)**
+- [x] 14.2 Add the two delegated `load` listeners next to the existing `error` listener. **(done)**
+- [x] 14.3 Decide the `--tilt` option (a/b/c above); if (b), add the one counter-rotate rule. **(went with recommended (b) — `.rArt .rLogo{transform:rotate(calc(var(--tilt) * -1))}` added)**
+
+## 15. Verification (Part 3 — blocking)
+
+- [x] Every URL in §13 re-probed (`new Image()`, `referrerPolicy:'no-referrer'` matching the real `<img>` config) — all six new/replaced URLs load OK at expected dimensions (NVDA 1600×900, SKHY 1000×657, SSNLF 1024×731, ASML 1080×608, anthropic 1200×675, openai 1600×900). Re-probed 2026-07-22 same session as implementation; the existing error-listener remains the safety net for future rot.
+- [x] `npx vitest run` — 753/753 passing (no regressions; no JS modules touched by this pass). **(done)**
+- [x] `npm run build` clean (via alt-outDir workaround for the pre-existing sandbox `EPERM`/parse5 issues noted in Part 1 — unrelated to this change); `check-no-new-important.mjs` still at baseline (2960/2). **(done)**
+- [x] Grep gates: old `.rPhoto{position:absolute...}` rule gone; dead `file?fid=` URL only remains as a "never use" comment; `.is-mark` CSS present; both new `load` listeners present. **(done)**
+- [ ] NVDA card shows the Vera Rubin shot (not a black box); ASML/Anthropic/OpenAI cards show photos for the first time — not yet visually confirmed live (code not deployed yet; same file://+localhost limitation as Parts 1–2). Please check `/sectors.html` after this ships.
+- [ ] Logo centering / `is-mark` visual spot-check — not yet visually confirmed live, same reason as above.
+- [ ] No layout shift on photo load (grid cell is sized by `aspect-ratio`, photo fades into it); Lighthouse CLS for the rails ≈ 0. **(not measured — needs your DevTools)**
+- [x] U37 convention intact: zero non-official, zero fabricated imagery introduced; fallback list unchanged from §13. **(done)**
+
+## Done (Part 3) =
+
+Every card with a verifiable official press asset shows a current keynote/product image (GTC 2026 Vera Rubin, CES 2026 SK hynix, Feb-2026 Samsung HBM4, High-NA EUV, Fable 5 / GPT-5.6 launch art), photos fade in instead of popping, the one dead URL is gone, and logo centering is guaranteed by grid construction with optical size normalization — while every company without a legitimate asset keeps its honest brand-color card.
