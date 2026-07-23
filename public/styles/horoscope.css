@@ -205,6 +205,23 @@ a{color:inherit;text-decoration:none}
 .today-rel{color:var(--dim);font:400 13px var(--serif)}
 .streak{margin-left:auto;border:1px solid var(--gold-soft);background:rgba(217,184,124,.15);color:var(--gold-deep);padding:6px 12px;font:700 11px/1 var(--en);letter-spacing:.12em;border-radius:999px}
 
+/* Beta badge — reuses the page's own sage/terra tokens (design.md: no
+   new palette), same pill shape as .streak so it reads as one family. */
+.beta-badge{display:inline-flex;align-items:center;border:1px solid var(--sage);background:rgba(156,175,136,.16);color:var(--sage-deep);padding:2px 9px;font:700 10px/1.6 var(--en);letter-spacing:.16em;border-radius:999px;text-transform:uppercase}
+
+/* ===== today detail (V25 Part 5 §23.3): real day-pillar card + ten-god
+   chip + branch-event "why" strip. harmony reads sage, friction reads
+   terracotta — the page's own existing polarity colors, nothing new. ===== */
+.today-detail{margin-top:12px}
+.today-detail-inner{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.today-detail-inner .pillar{flex:none}
+.today-detail-body{flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px}
+.tengod-chip{align-self:flex-start;border:1px solid var(--gold-soft);background:rgba(217,184,124,.12);color:var(--gold-deep);padding:5px 11px;font:700 12px/1.3 var(--serif);border-radius:999px}
+.today-why{display:flex;flex-direction:column;gap:5px}
+.today-why-row{font:400 13px/1.5 var(--serif);color:var(--dim)}
+.today-why-row.up{color:var(--sage-deep)}
+.today-why-row.down{color:var(--terra-deep)}
+
 /* ===== 每日星语签 daily draw (V23 Phase 3) ===== */
 .star-draw{margin-top:14px}
 .sd-card{display:flex;gap:13px;align-items:center;border:1px solid var(--gold-soft);background:rgba(217,184,124,.10);border-radius:14px;padding:12px 15px}
@@ -283,6 +300,25 @@ a{color:inherit;text-decoration:none}
 .xiu-rel{margin-top:14px}
 .xiu-rel:empty{display:none}
 .xiu-h{color:var(--dim);font:700 10.5px/1 var(--en);letter-spacing:.22em;text-transform:uppercase;margin-bottom:8px}
+
+/* ===== 合盘 branch matrix (V25 Part 5 §24.2) — dual charts reuse the
+   existing .syn-charts/.syn-chart/.pillar--sm classes verbatim; only the
+   matrix grid + SVG connector overlay are new. Harmony=sage, clash=terra
+   — the page's own existing polarity colors, no new palette. ===== */
+.synbm-inner{position:relative;margin-top:6px}
+.synbm-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.synbm-grid{position:relative;z-index:1;margin-top:14px;display:grid;gap:4px;align-items:stretch}
+.synbm-corner{background:transparent}
+.synbm-colhead,.synbm-rowhead{display:flex;align-items:center;justify-content:center;font:700 10px/1 var(--en);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.synbm-cell{border:1px solid var(--line);background:var(--card2);border-radius:8px;min-height:40px;font:700 15px/1 var(--serif);color:var(--dim);cursor:pointer;transition:transform .12s ease}
+.synbm-cell.harmony{border-color:var(--sage);background:rgba(156,175,136,.16);color:var(--sage-deep)}
+.synbm-cell.clash{border-color:var(--terra);background:rgba(201,111,74,.14);color:var(--terra-deep)}
+.synbm-cell.active{transform:scale(1.08);box-shadow:0 2px 8px rgba(74,69,61,.18)}
+.synbm-cell:disabled{cursor:default}
+.synbm-line{stroke-width:2;fill:none}
+.synbm-line.harmony{stroke:var(--sage-deep)}
+.synbm-line.clash{stroke:var(--terra-deep)}
+@media(max-width:480px){.synbm-cell{font-size:12px;min-height:34px}.synbm-colhead,.synbm-rowhead{font-size:8.5px}}
 .xiu-row{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:9px 13px;margin-top:6px;font:400 13px/1.6 var(--serif)}
 .xiu-n{flex:none;font-weight:700;color:var(--text)}
 .xiu-arrow{color:var(--terra);font-weight:700}
@@ -423,6 +459,46 @@ a{color:inherit;text-decoration:none}
 .zw-c-ju{font:900 22px/1 var(--serif);color:var(--sage-deep);letter-spacing:.1em}
 .zw-c-l{font:500 12px/1.5 var(--serif);color:var(--dim)}
 @media(max-width:640px){.zw-p{font-size:10.5px}.zw-star{font-size:10px;padding:2px 6px}.zw-c-ju{font-size:17px}}
+
+/* ===== ZWDS deep layer (V25 Part 5 §25.6) — reuses the entry-level
+   grid's spatial layout/tokens; only adds click state, 四化 superscripts,
+   化忌 warning border, and the synthesis cards. ===== */
+.zwd-inner{position:relative}
+.zwd-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.zwd-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(92px,auto);gap:6px}
+.zwd-cell{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);background:var(--card2);border-radius:10px;padding:8px 9px;display:flex;flex-direction:column;gap:6px;transition:box-shadow .15s ease}
+.zwd-cell:focus-visible{outline:2px solid var(--terra-deep);outline-offset:2px}
+.zwd-cell.zwd-jihit{border-color:var(--terra-deep);box-shadow:0 0 0 1px var(--terra-deep) inset;background:rgba(201,111,74,.10)}
+.zwd-cell.zwd-active{box-shadow:0 0 0 2px var(--sage-deep) inset}
+.zwd-cell.zwd-linked{box-shadow:0 0 0 2px var(--terra) inset}
+.zwd-stars{display:flex;flex-wrap:wrap;gap:4px}
+.zwd-star{border:1px solid rgba(156,175,136,.6);background:rgba(156,175,136,.14);color:var(--sage-deep);font:700 11px/1.4 var(--serif);padding:2px 7px;border-radius:999px;display:inline-flex;align-items:center;gap:3px}
+.zwd-star--lucky{border-color:rgba(217,184,124,.7);background:rgba(217,184,124,.16);color:var(--gold-deep)}
+.zwd-star--sha{border-color:rgba(201,111,74,.6);background:rgba(201,111,74,.10);color:var(--terra-deep)}
+.zwd-bright{font:600 9px/1 var(--en);opacity:.75;font-style:normal}
+.zwd-hua{font:900 10px/1 var(--serif);border-radius:999px;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;background:rgba(74,69,61,.08)}
+.zwd-hua.lu,.zwd-hua.quan,.zwd-hua.ke{color:var(--sage-deep)}
+.zwd-hua.ji{color:var(--terra-deep);background:rgba(201,111,74,.16)}
+.zwd-age{font:600 9.5px/1 var(--mono);color:var(--dim)}
+.zwd-center{grid-column:2/4;grid-row:2/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px dashed var(--sage);border-radius:12px;background:rgba(156,175,136,.06);text-align:center;padding:8px}
+.zwd-line{stroke:var(--terra-deep);stroke-width:1.5;fill:none;opacity:.7}
+.zwd-detail{margin-top:12px;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:12px 14px}
+.zwd-score{font:900 20px/1 var(--mono);color:var(--gold-deep);margin:4px 0 6px}
+.zwd-score b{font-size:26px}
+.zwd-breakdown{display:flex;gap:12px;flex-wrap:wrap;font:600 12px/1.5 var(--serif)}
+.zwd-breakdown .up{color:var(--sage-deep)}
+.zwd-breakdown .down{color:var(--terra-deep)}
+.zwd-card{margin-top:14px;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:12px 14px}
+.zwd-card p{margin:0;font:400 13px/1.6 var(--serif);color:var(--text)}
+.zwd-card--note{border-color:var(--terra);background:rgba(201,111,74,.08)}
+.zwd-synth-card{margin-top:10px;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:12px 14px}
+.zwd-synth--reinforced{border-left:3px solid var(--sage-deep)}
+.zwd-synth--crosscurrent{border-left:3px solid var(--terra-deep)}
+.zwd-synth-v{font:700 10px/1 var(--en);letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.zwd-synth-card p{margin:0 0 8px;font:400 13px/1.6 var(--serif);color:var(--text)}
+.zwd-receipts{display:flex;gap:8px;flex-wrap:wrap}
+.zwd-receipts span{font:500 11px/1.4 var(--serif);color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
+@media(max-width:640px){.zwd-star{font-size:9.5px;padding:2px 6px}}
 
 /* ===== sixteen-type quiz (V21 Phase 4) ===== */
 .pq-progress{height:6px;background:rgba(74,69,61,.10);border-radius:3px;overflow:hidden}

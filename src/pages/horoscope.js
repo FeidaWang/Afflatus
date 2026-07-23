@@ -24,9 +24,12 @@ import { cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, asp
 import { personalityTags, dimensionScores } from '../lib/astroReadings.js';
 import { renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH } from '../lib/astroChart.js';
 import { crossAspects, relationshipTitle, resonanceScore, attractionLines, redFlagLines, davisonReading } from '../lib/synastryAstro.js';
+import { crossBranchMatrix } from '../lib/synastryBazi.js';
 import { dailyCoupleWeather } from '../lib/dailyTransits.js';
 import { dailyDraw } from '../lib/starDraw.js';
 import { computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH } from '../lib/ziwei.js';
+import { computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace } from '../lib/ziweiDeep.js';
+import { synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5 } from '../lib/deepSynthesis.js';
 import { relationshipScores, synastryZiwei } from '../lib/synastryModes.js';
 import { mingzaoRank, percentileOf } from '../lib/mingzao.js';
 import { MINGZAO_DIST } from '../lib/mingzaoDist.js';
@@ -293,6 +296,23 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
   };
 
   // Shared pillar-card markup (used by "my chart" and the synastry two-chart view).
+  // ---- today detail (V25 Part 5 §23.3): real day-pillar card, ten-god
+  // chip, and the branch-event "why" strip (the receipts behind the
+  // score, not just a number). f = dailyFortune() v2 output.
+  function todayDetailHTML(f) {
+    const el = STEM_ELEMENT[f.todayPillar.stem];
+    const card = `<div class="pillar"><div class="t">${T('TODAY', '今日')}</div><span class="gz e-${el}">${pillarName(f.todayPillar)}</span><div class="el">${T(ELEMENTS_EN[el], ELEMENTS_ZH[el])}</div></div>`;
+    const why = f.branchEvents.length
+      ? f.branchEvents.map((e) => `<div class="today-why-row ${(e.type === 'liuhe' || e.type === 'banhe') ? 'up' : 'down'}">${T(e.en, e.zh)}</div>`).join('')
+      : `<div class="today-why-row">${T('No strong branch event today — an ordinary day.', '今日地支与命局无明显合冲刑害——平常之日。')}</div>`;
+    return `<div class="today-detail-inner">${card}
+      <div class="today-detail-body">
+        <span class="tengod-chip">${T(f.tenGod.en, f.tenGod.zh)}</span>
+        <div class="today-why">${why}</div>
+      </div>
+    </div>`;
+  }
+
   function pillarCardsHTML(chart, sizeClass) {
     const ps = [chart.year, chart.month, chart.day, chart.hour].filter(Boolean);
     return ps.map((p, i) => {
@@ -630,6 +650,7 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
     const tx = XIU28_ZH[dailyXiu(ty, tm, td)];
     $('todayRel').textContent = '· ' + T(...[REL_T[f.relation][0], REL_T[f.relation][1]])
       + ' · ' + T(`mansion of the day: ${tx}`, `值日宿：${tx}宿`);
+    $('todayDetailWrap').innerHTML = todayDetailHTML(f);
     const n = bumpStreak();
     track('streak_day', { streak: n }); // guardrail metric: streak>=3 share (roadmap module 2)
     const sc = $('streakChip'); sc.hidden = false;
@@ -689,6 +710,10 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
     // 紫微斗数 (V21 Phase 6)
     $('zwWrap').innerHTML = ziweiHTML(state.me);
 
+    // ZWDS deep layer (V25 Part 5 §25.6): 四化/aux-sha/大限 grid + R1-R5 synthesis
+    $('zwdWrap').innerHTML = ziweiDeepHTML(state.me, f);
+    if (currentZWDeep) { wireZiweiDeepGrid(); renderZWDSynthesis(); }
+
     // overall ring
     const C = 2 * Math.PI * 42;
     const ring = $('oRing');
@@ -714,6 +739,158 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
     ].join('');
     $('yiTxt').textContent = f.yi.map((x) => T(x.en, x.zh)).join(T(' · ', '　'));
     $('jiTxt').textContent = f.ji.map((x) => T(x.en, x.zh)).join(T(' · ', '　'));
+  }
+
+  // ---- ZWDS deep layer (V25 Part 5 §25.6): 四化/aux-sha/大限 grid, click-
+  // through 三方四正 (Three-Square-Four-Orthogonal) breakdown, sibling-
+  // palace partnership card, and R1-R5 Bazi×ZWDS synthesis panel. Reuses
+  // the entry-level grid's spatial layout (ZW_GRID) so the two boards line
+  // up visually. Needs the birth hour (same guard as ziweiHTML above); the
+  // R3 decade-agreement rule additionally needs gender.
+  const AUX_SHA_EN = { 禄存: 'Lucun', 擎羊: 'Qingyang', 陀罗: 'Tuoluo', 天马: 'Tianma', 左辅: 'Zuofu', 右弼: 'Youbi', 文昌: 'Wenchang', 文曲: 'Wenqu', 火星: 'Huoxing', 铃星: 'Lingxing', 地空: 'Dikong', 地劫: 'Dijie' };
+  const ZW_STAR_EN_BY_ZH = Object.fromEntries(ZW_STARS_ZH.map((zh, i) => [zh, ZW_STAR_EN[i]]));
+  const HUA_CLASS = { 禄: 'lu', 权: 'quan', 科: 'ke', 忌: 'ji' };
+  let currentZWDeep = null; // { z, deep, me, f } — kept for the grid's click handler
+
+  function zwdStarHTML(s) {
+    const en = ZW_STAR_EN_BY_ZH[s.name] || AUX_SHA_EN[s.name] || s.name;
+    const huaChar = s.transformation !== 'None' ? s.transformation[1] : '';
+    const hua = huaChar ? `<b class="zwd-hua ${HUA_CLASS[huaChar]}">${huaChar}</b>` : '';
+    const bright = s.brightness ? `<i class="zwd-bright">${s.brightness}</i>` : '';
+    return `<span class="zwd-star zwd-star--${s.level.toLowerCase()}">${T(en, s.name)}${bright}${hua}</span>`;
+  }
+
+  function ziweiDeepHTML(me, f) {
+    if (me.hour == null) { currentZWDeep = null; return ''; }
+    const z = computeZiwei(me);
+    if (!z) { currentZWDeep = null; return ''; }
+    const deep = computeZiweiDeep(z, me.gender);
+    currentZWDeep = { z, deep, me, f };
+
+    const cells = ZW_GRID.map((b, i) => {
+      if (b === -1) {
+        if (i !== 5) return '';
+        return `<div class="zwd-center">
+          <div class="zw-c-ju">${JU_ZH[z.ju]}</div>
+          <div class="zw-c-l">${T('Life palace', '命宫')} · ${STEMS[z.mingStem]}${BRANCHES[z.ming]}</div>
+          ${me.gender ? '' : `<div class="zw-c-l" style="font-size:10.5px">${T('pick a gender above for 大限 ages', '选择性别以显示大限年龄')}</div>`}
+        </div>`;
+      }
+      const p = deep.palaces[b];
+      const hasJi = p.stars.some((s) => s.transformation === '化忌');
+      const starRow = p.stars.length ? p.stars.map(zwdStarHTML).join('') : `<span class="zw-empty">${T('—', '（空宫）')}</span>`;
+      const ageRow = p.startAge != null ? `<div class="zwd-age">${p.startAge}–${p.endAge}${T('y', '岁')}</div>` : '';
+      return `<button type="button" class="zwd-cell${b === z.ming ? ' zw-ming' : ''}${b === z.shen ? ' zw-shen' : ''}${hasJi ? ' zwd-jihit' : ''}" data-branch="${b}">
+        <div class="zw-h"><span class="zw-p">${T(p.nameEn, p.name)}</span><span class="zw-b">${STEMS[p.stem]}${BRANCHES[b]}</span></div>
+        <div class="zwd-stars">${starRow}</div>
+        ${ageRow}
+      </button>`;
+    }).join('');
+
+    // sibling-palace partnership card (always visible, no click needed)
+    const pr = partnershipRead(deep.palaces);
+    const prCard = `<div class="zwd-card${pr.permitted ? '' : ' zwd-card--note'}">
+      <div class="xiu-h">${T('SIBLING PALACE · PARTNERSHIP PATTERN', '兄弟宫 · 合伙模式')}</div>
+      <p>${pr.permitted
+        ? T('No structural strain in the sibling palace — shared ventures read no more friction than usual.', '兄弟宫结构未见明显破损——合伙、共享责任这件事，没有额外的摩擦信号。')
+        : T('This chart pattern favors running things solo — shared ownership reads as higher friction here.', '此命局更偏向独立运作——共同持有、合伙分利这件事，摩擦信号偏高。')}</p>
+    </div>`;
+
+    return `<div class="zwd-inner"><svg class="zwd-svg" id="zwdSvg"></svg><div class="zwd-grid">${cells}</div></div>
+      <div class="zwd-detail" id="zwdDetail" hidden></div>
+      ${prCard}
+      <div id="zwdSynthesis"></div>
+      <p class="bz-caveat">${T(
+        'Tap a palace to see its 三方四正 (Three-Square-Four-Orthogonal) scan — the opposite palace + two trine palaces every serious reading cross-references. Entertainment only.',
+        '点击任意宫位可查看其三方四正扫描——命理判读向来不会只看单宫，而是对宫加两个三合宫一起看。仅供娱乐。'
+      )}</p>`;
+  }
+
+  function wireZiweiDeepGrid() {
+    const inner = document.querySelector('#zwdWrap .zwd-inner');
+    if (!inner || !currentZWDeep) return;
+    const { deep } = currentZWDeep;
+    const svg = inner.querySelector('#zwdSvg');
+    const detail = $('zwdDetail');
+    inner.querySelectorAll('.zwd-cell').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const wasActive = btn.classList.contains('zwd-active');
+        inner.querySelectorAll('.zwd-cell').forEach((b) => b.classList.remove('zwd-active', 'zwd-linked'));
+        svg.innerHTML = '';
+        if (wasActive) { detail.hidden = true; return; }
+        const target = Number(btn.dataset.branch);
+        const s = sanFangSiZheng(deep.palaces, target);
+        btn.classList.add('zwd-active');
+        const box = inner.getBoundingClientRect();
+        const pt = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top }; };
+        const tPt = pt(btn);
+        const lines = [];
+        for (const idx of [s.opposing, s.trine1, s.trine2]) {
+          const cell = inner.querySelector(`.zwd-cell[data-branch="${idx}"]`);
+          if (!cell) continue;
+          cell.classList.add('zwd-linked');
+          const cPt = pt(cell);
+          lines.push(`<line x1="${tPt.x}" y1="${tPt.y}" x2="${cPt.x}" y2="${cPt.y}" class="zwd-line"/>`);
+        }
+        svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+        svg.innerHTML = lines.join('');
+        detail.hidden = false;
+        detail.innerHTML = `<div class="xiu-h">${T('THREE-SQUARE-FOUR-ORTHOGONAL SCAN', '三方四正扫描')} · ${T(deep.palaces[target].nameEn, deep.palaces[target].name)}</div>
+          <div class="zwd-score">${T('Score', '评分')} <b>${s.score}</b>/100</div>
+          <div class="zwd-breakdown">
+            <span class="up">${T('favorable', '吉')} +${s.favorableStars.toFixed(1)}</span>
+            <span class="down">${T('clashing', '煞/忌')} −${s.clashingStars.toFixed(1)}</span>
+            ${s.huaJiActive ? `<span class="down">${T('化忌 clashes in from the opposing palace', '对宫化忌冲入')}</span>` : ''}
+          </div>`;
+      });
+    });
+  }
+
+  // ---- R1-R5 Bazi×ZWDS synthesis panel (§25.5). Renders only when hour +
+  // gender are both known (大限/大运 need gender; 紫微 itself needs hour).
+  function renderZWDSynthesis() {
+    if (!currentZWDeep) return;
+    const wrap = $('zwdSynthesis');
+    if (!wrap) return;
+    const { z, deep, me, f } = currentZWDeep;
+    const pillars = [f.chart.year, f.chart.month, f.chart.day, ...(f.chart.hour ? [f.chart.hour] : [])];
+    const zp = ziPingAnalysis(pillars);
+    const mingGongScore = sanFangSiZheng(deep.palaces, z.ming).score;
+    let mingGongWuXing = deep.palaces[z.ming].stars.filter((s) => s.level === 'Major').map((s) => s.wuXing);
+    if (!mingGongWuXing.length) mingGongWuXing = deep.palaces[mod2(z.ming + 6)].stars.filter((s) => s.level === 'Major').map((s) => s.wuXing);
+
+    const r1 = synthesizeR1(zp, mingGongScore);
+    const r2 = synthesizeR2(zp, mingGongWuXing);
+
+    const currentYear = new Date().getFullYear();
+    const currentAge = currentYear - me.y;
+    const cards = [r1, r2];
+
+    if (me.gender) {
+      const dy = computeDayun(me, me.gender);
+      const dayunNow = dy.pillars.find((p) => currentAge >= p.fromAge && currentAge <= p.toAge) || dy.pillars[0];
+      const dx = daXianAges(z, me.gender);
+      const daXianBranch = Object.keys(dx.ages).map(Number).find((b) => currentAge >= dx.ages[b].startAge && currentAge <= dx.ages[b].endAge);
+      if (daXianBranch != null) {
+        const daXianScore = sanFangSiZheng(deep.palaces, daXianBranch).score;
+        cards.push(synthesizeR3(f.chart.dayMasterElement, BRANCH_ELEMENT[dayunNow.branch], daXianScore));
+      }
+    }
+
+    const liunian = liunianZiweiPalace(deep, currentYear);
+    const taisuiTags = taisuiRelation(liunianPillar(currentYear).branch, f.chart.year.branch);
+    cards.push(synthesizeR4(taisuiTags, liunian.score, liunian.huaJiActive));
+
+    const todayGong = sanFangSiZheng(deep.palaces, f.todayPillar.branch).score;
+    cards.push(synthesizeR5(f.relation, todayGong));
+
+    wrap.innerHTML = `<div class="xiu-h">${T('BAZI × ZWDS SYNTHESIS', '八字×紫微 深度综合')}</div>
+      ${cards.map((c) => `<div class="zwd-synth-card zwd-synth--${c.verdict}">
+        <div class="zwd-synth-v">${T(c.verdict === 'reinforced' ? 'REINFORCED' : 'CROSSCURRENT', c.verdict === 'reinforced' ? '互相印证' : '两说不一')}</div>
+        <p>${T(c.en, c.zh)}</p>
+        <div class="zwd-receipts">${c.receipts.map((r) => `<span>${T(r.en, r.zh)}</span>`).join('')}</div>
+      </div>`).join('')}
+      <p class="bz-caveat">${T('Both systems read the same birth instant; agreement sharpens a reading, disagreement just means it\'s worth weighing more than one signal. Entertainment only.', '两套系统读的是同一个出生时刻；相合则读法更笃定，不合也只是提醒该多看一层信号，而非定论。仅供娱乐。')}</p>`;
   }
 
   // ---- render: synastry -----------------------------------------------------
@@ -881,6 +1058,68 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
     );
   });
 
+  // ---- 合盘 branch matrix (V25 Part 5 §24.2): dual full charts + the
+  // exact 4×4 (or smaller, hour-unknown) Earthly-Branch combination/clash
+  // matrix from synastryBazi.js. Reuses .syn-chart/.pillar--sm verbatim
+  // for the dual columns; only the matrix grid + click-to-connect SVG
+  // overlay are new.
+  const BM_GLYPH = { liuhe: '合', banhe: '半合', sanhe: '合', chong: '冲', xing: '刑', hai: '害', po: '破' };
+  const BM_PLABEL = { year: ['YR', '年'], month: ['MO', '月'], day: ['DAY', '日'], hour: ['HR', '时'] };
+  const bmCellClass = (types) => (!types.length ? 'neutral' : types.some((t) => t === 'liuhe' || t === 'banhe' || t === 'sanhe') ? 'harmony' : 'clash');
+
+  function synBaziMatrixHTML(chartA, chartB) {
+    const m = crossBranchMatrix(chartA, chartB);
+    const pillarCard = (chart, id, side) => {
+      const p = chart[id]; const el = STEM_ELEMENT[p.stem];
+      return `<div class="pillar pillar--sm" data-side="${side}" data-pid="${id}"><div class="t">${T(...BM_PLABEL[id])}</div><span class="gz e-${el}">${pillarName(p)}</span></div>`;
+    };
+    const dual = `<div class="syn-charts">
+      <div class="syn-chart"><div class="syn-chart-h">${T('ME', '我')}</div><div class="pillars pillars--sm">${m.idsA.map((id) => pillarCard(chartA, id, 'a')).join('')}</div></div>
+      <div class="syn-divider" aria-hidden="true">❖</div>
+      <div class="syn-chart"><div class="syn-chart-h">${T('THEM', '对方')}</div><div class="pillars pillars--sm">${m.idsB.map((id) => pillarCard(chartB, id, 'b')).join('')}</div></div>
+    </div>`;
+    const grid = `<div class="synbm-grid" style="grid-template-columns:auto repeat(${m.idsA.length},1fr)">
+      <div class="synbm-corner"></div>
+      ${m.idsA.map((id) => `<div class="synbm-colhead">${T(...BM_PLABEL[id])}</div>`).join('')}
+      ${m.idsB.map((ib) => `<div class="synbm-rowhead">${T(...BM_PLABEL[ib])}</div>${m.idsA.map((ia) => {
+        const cell = m.cells.find((c) => c.pa === ia && c.pb === ib);
+        const cls = bmCellClass(cell.relations);
+        const label = cell.relations.length ? [...new Set(cell.relations.map((t) => BM_GLYPH[t]))].join('') : '·';
+        return `<button type="button" class="synbm-cell ${cls}" data-pa="${ia}" data-pb="${ib}" title="${cell.texts.join(' / ') || T('no relation', '无明显关系')}">${label}</button>`;
+      }).join('')}`).join('')}
+    </div>`;
+    const caveat = `<p class="bz-caveat">${T(
+      `${m.combos.length} combination${m.combos.length === 1 ? '' : 's'} · ${m.clashes.length} clash${m.clashes.length === 1 ? '' : 'es'} found across both charts' branches — tap a highlighted cell to see which pillars connect. Overall branch score ${m.score}/100.`,
+      `双方地支之间共找到 ${m.combos.length} 组合 · ${m.clashes.length} 组冲刑害破——点击高亮格可看具体是哪两柱相连。地支综合分 ${m.score}/100。`
+    )}</p>`;
+    return `<div class="synbm-inner"><svg class="synbm-svg" id="synbmSvg"></svg>${dual}${grid}${caveat}</div>`;
+  }
+
+  function wireSynBaziMatrix() {
+    const inner = document.querySelector('#synbmWrap .synbm-inner');
+    if (!inner) return;
+    const svg = inner.querySelector('#synbmSvg');
+    inner.querySelectorAll('.synbm-cell').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const wasActive = btn.classList.contains('active');
+        inner.querySelectorAll('.synbm-cell.active').forEach((b) => b.classList.remove('active'));
+        svg.innerHTML = '';
+        if (wasActive || btn.classList.contains('neutral')) return;
+        btn.classList.add('active');
+        const aCard = inner.querySelector(`[data-side="a"][data-pid="${btn.dataset.pa}"]`);
+        const bCard = inner.querySelector(`[data-side="b"][data-pid="${btn.dataset.pb}"]`);
+        if (!aCard || !bCard) return;
+        const box = inner.getBoundingClientRect();
+        const rA = aCard.getBoundingClientRect(), rB = bCard.getBoundingClientRect(), rC = btn.getBoundingClientRect();
+        const pt = (r) => ({ x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top });
+        const a = pt(rA), b = pt(rB), c = pt(rC);
+        svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+        const tone = btn.classList.contains('harmony') ? 'harmony' : 'clash';
+        svg.innerHTML = `<line x1="${a.x}" y1="${a.y}" x2="${c.x}" y2="${c.y}" class="synbm-line ${tone}"/><line x1="${c.x}" y1="${c.y}" x2="${b.x}" y2="${b.y}" class="synbm-line ${tone}"/>`;
+      });
+    });
+  }
+
   function renderSyn() {
     if (!state.me || !state.other) return;
     const s = synastry(state.me, state.other);
@@ -902,6 +1141,11 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
         <div class="pillars pillars--sm">${pillarCardsHTML(s.chartB, 'pillar--sm')}</div>
         <div class="elems">${identityChipsHTML(s.chartB, state.other.y, state.other.m, state.other.d)}</div>
       </div>`;
+
+    // 合盘 branch matrix (V25 Part 5 §24.2) — dual charts + 4×4 combo/clash grid
+    $('synBaziMatrixWrap').hidden = false;
+    $('synbmWrap').innerHTML = synBaziMatrixHTML(s.chartA, s.chartB);
+    wireSynBaziMatrix();
 
     const C = 2 * Math.PI * 58;
     const ring = $('sRing');

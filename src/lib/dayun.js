@@ -28,7 +28,9 @@ const mod = (n, m) => ((n % m) + m) % m;
 const ganzhiIndex = (stem, branch) => { for (let i = 0; i < 60; i++) if (i % 10 === stem && i % 12 === branch) return i; return -1; };
 
 // 六破 pairs (子酉 卯午 辰丑 未戌 寅亥 巳申) — only used for 破太岁.
-const LIUPO = [[0, 9], [3, 6], [4, 1], [7, 10], [2, 11], [5, 8]];
+// Exported (V25 Part 5 §24.1): synastryBazi.js's cross-chart branch matrix
+// needs 破 too (ziping.js doesn't track it, see header) — export-only.
+export const LIUPO = [[0, 9], [3, 6], [4, 1], [7, 10], [2, 11], [5, 8]];
 const LIUCHONG = [[0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11]];
 const LIUHAI = [[0, 7], [1, 6], [2, 5], [3, 4], [8, 11], [9, 10]];
 const XING_PAIRS = [[2, 5], [5, 8], [8, 2], [1, 10], [10, 7], [7, 1], [0, 3], [3, 0]];
