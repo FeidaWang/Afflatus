@@ -8,7 +8,7 @@
   --font-mono:'JetBrains Mono','PP Fraktion Mono',ui-monospace,monospace;
   --radius:4px;
   --viz-axis:rgba(234,241,255,.26);--viz-grid:rgba(234,241,255,.07);--viz-tick:var(--muted);
-  --viz-line-w:1.5px;--viz-marker-r:3;--viz-tip-bg:rgba(5,7,14,.96);--viz-tip-line:rgba(234,241,255,.14);--viz-tip-radius:8px;
+  --viz-line-w:2.4px;--viz-marker-r:3;--viz-tip-bg:rgba(5,7,14,.96);--viz-tip-line:rgba(234,241,255,.14);--viz-tip-radius:8px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -335,22 +335,22 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-chart-hd{display:flex;justify-content:flex-end;margin-bottom:4px}
 .ap-legend{display:flex;gap:12px;flex-wrap:wrap;font:700 10px/1 var(--font-hud);letter-spacing:.08em;text-transform:uppercase}
 .ap-legend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
-.ap-legend i{width:14px;height:0;border-top:2px solid;display:inline-block}
+.ap-legend i{width:16px;height:0;border-top:3px solid;display:inline-block}
 .ap-legend i.dash{border-top-style:dashed;border-top-width:1.5px}
-.ap-chart{width:100%;height:240px;display:block;cursor:crosshair}
+.ap-chart{width:100%;height:260px;display:block;cursor:crosshair}
 .viz-tip{position:fixed;z-index:60;pointer-events:none;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);border-radius:var(--viz-tip-radius);padding:9px 11px;font:12px/1.6 var(--font-mono);color:var(--text);box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
 .viz-tip.show{opacity:1;transform:none}
 .viz-tip b{display:block;color:var(--muted);font:700 9.5px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
 .ap-grid{stroke:var(--viz-grid);stroke-width:1}
-.ap-axis{fill:var(--muted);font:10px var(--font-mono)}
-.ap-axis-bg{fill:var(--panel-2)}
-.ap-line{fill:none;stroke-width:var(--viz-line-w)}
+.ap-line{fill:none;stroke-width:var(--viz-line-w);stroke-linecap:round;stroke-linejoin:round}
 .ap-line-a{stroke:var(--acid);color:var(--acid)}
 .ap-line-b{stroke:var(--cyan);color:var(--cyan)}
 .ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.2;stroke-opacity:.8;color:#ffd166}
 .ap-line-smh{stroke:var(--magenta);stroke-dasharray:2 4;stroke-width:1.2;stroke-opacity:.8;color:var(--magenta)}
 .ap-dot{stroke:none}
 .ap-end-dot{stroke:none}
+.ap-end-leader{stroke-width:1;stroke-dasharray:1.5 2;opacity:.5}
+.ap-end-label{font:700 11px/1 var(--font-mono);letter-spacing:.01em}
 /* auto-fit/minmax (not a hardcoded 1fr 1fr) so this works whether the
    ledger has 2 (Season 1, A/B) or 3+ (Season 2, S/P/T) models — see
    arenaAutopilot.js's renderModels(), Part 4 §18.2.3 */

@@ -16,6 +16,7 @@
    ============================================================ */
 import { unrealizedPnl, benchmarkEndpoints, equityDomain, scalePoint } from '../lib/arenaLedgerView.js';
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
+import { declutter1D } from '../lib/ladderLayout.js';
 
 (() => {
   'use strict';
@@ -97,12 +98,16 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
     const svg = $('apChart');
     svg.addEventListener('pointermove', (ev) => {
       if (!chartCtx) return;
-      const { modelSeries, spy, smh, domain, W, pad } = chartCtx;
+      const { modelSeries, spy, smh, domain, viewW, plotW, pad } = chartCtx;
       const rect = svg.getBoundingClientRect();
       if (!rect.width) return;
-      const localX = (ev.clientX - rect.left) * (W / rect.width);
+      // viewW (full viewBox, includes the end-label margin) converts the
+      // mouse pixel to local SVG units; plotW (data area only) is what the
+      // day fraction is actually measured against -- these differ now that
+      // the chart reserves a right-hand strip for end-of-line value chips.
+      const localX = (ev.clientX - rect.left) * (viewW / rect.width);
       const dayRange = domain.maxDay - domain.minDay || 1;
-      const day = domain.minDay + Math.min(1, Math.max(0, (localX - pad) / (W - pad * 2))) * dayRange;
+      const day = domain.minDay + Math.min(1, Math.max(0, (localX - pad) / (plotW - pad * 2))) * dayRange;
       showChartTip(ev.clientX, ev.clientY, day, modelSeries, spy, smh);
     });
     svg.addEventListener('pointerleave', hideChartTip);
@@ -116,32 +121,57 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
     return `<path class="ap-line" style="stroke:${color}" d="${d}"/><circle class="ap-end-dot" cx="${end.x}" cy="${end.y}" r="3" fill="${color}"/>`;
   }
   function renderChart(models, bench) {
-    const W = 600, H = 240, pad = 30;
+    // PLOT_W is the data area (unchanged math from before); a reserved
+    // right-hand strip (LABEL_MARGIN) is added on top for end-of-line value
+    // chips, replacing the old shared $ axis -- each series' own current
+    // value is now legible directly off its line end instead of a second
+    // read against a generic price scale.
+    const PLOT_W = 600, H = 240, pad = 30, LABEL_MARGIN = 96;
+    const W = PLOT_W + LABEL_MARGIN;
     const keys = Object.keys(models);
     const first = models[keys[0]];
     const spy = benchmarkEndpoints(first.equityHistory, first.startEquity, bench.spyPct);
     const smh = benchmarkEndpoints(first.equityHistory, first.startEquity, bench.smhPct);
     const modelSeries = keys.map((k) => ({ key: k, series: models[k].equityHistory }));
     const domain = equityDomain([...modelSeries.map((m) => m.series), spy, smh]);
-    // horizontal gridlines (behind the data) + $ labels (drawn last, on top,
-    // on an opaque backing plate — text alone has gaps between glyphs that a
-    // dashed benchmark line crossing the same row would otherwise show through)
-    let grid = '', labels = '';
+
+    // four evenly-spaced gridlines (was top/bottom only) for rhythm, no text.
+    let grid = '';
     for (let i = 0; i <= 3; i++) {
       const y = pad + (i / 3) * (H - pad * 2);
-      const price = domain.maxEq - (i / 3) * (domain.maxEq - domain.minEq);
-      const txt = fmtUsd(price);
-      const tw = txt.length * 5.6 + 6;
-      if (i === 0 || i === 3) grid += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/>`;
-      labels += `<rect x="${(W - 4 - tw).toFixed(1)}" y="${(y - 6.5).toFixed(1)}" width="${tw.toFixed(1)}" height="13" class="ap-axis-bg"/><text x="${W - 4}" y="${(y + 3.5).toFixed(1)}" text-anchor="end" class="ap-axis">${txt}</text>`;
+      grid += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${PLOT_W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/>`;
     }
     let s = grid;
-    s += `<g class="ap-line-spy">${buildPath(spy, domain, W, H, pad, '#ffd166')}</g>`;
-    s += `<g class="ap-line-smh">${buildPath(smh, domain, W, H, pad, 'var(--magenta)')}</g>`;
+    s += `<g class="ap-line-spy">${buildPath(spy, domain, PLOT_W, H, pad, '#ffd166')}</g>`;
+    s += `<g class="ap-line-smh">${buildPath(smh, domain, PLOT_W, H, pad, 'var(--magenta)')}</g>`;
     modelSeries.forEach(({ key, series }, i) => {
-      s += `<g class="ap-line-model">${buildPath(series, domain, W, H, pad, colorFor(key, i))}</g>`;
+      s += `<g class="ap-line-model">${buildPath(series, domain, PLOT_W, H, pad, colorFor(key, i))}</g>`;
     });
-    s += labels;
+
+    // end-of-line value chips: one per model + SPY/SMH, at their true final
+    // Y position, decluttered (same 1D declutter the TA Level Ladder uses)
+    // so converged values -- e.g. day 1, everyone still near $10,000 --
+    // never overlap. A short leader connects a nudged label back to its
+    // true line-end when they diverge.
+    const endItems = [
+      ...modelSeries.map(({ key, series }, i) => ({ color: colorFor(key, i), pt: series[series.length - 1] })),
+      { color: '#ffd166', pt: spy[spy.length - 1] },
+      { color: 'var(--magenta)', pt: smh[smh.length - 1] },
+    ].filter((it) => it.pt);
+    const trueYs = endItems.map((it) => scalePoint(it.pt, domain, PLOT_W, H, pad).y);
+    const labelYs = declutter1D(trueYs, { minGap: 13 });
+    let endLabelsHtml = '';
+    endItems.forEach((it, i) => {
+      const trueY = trueYs[i], labelY = labelYs[i];
+      const lineX = PLOT_W - pad + 2;
+      if (Math.abs(labelY - trueY) > 2) {
+        endLabelsHtml += `<line x1="${lineX.toFixed(1)}" y1="${trueY.toFixed(1)}" x2="${lineX.toFixed(1)}" y2="${labelY.toFixed(1)}" class="ap-end-leader" style="stroke:${it.color}"/>`;
+      }
+      endLabelsHtml += `<circle cx="${(PLOT_W - pad).toFixed(1)}" cy="${trueY.toFixed(1)}" r="2.2" fill="${it.color}"/>`
+        + `<text x="${(PLOT_W - pad + 8).toFixed(1)}" y="${(labelY + 3.4).toFixed(1)}" class="ap-end-label" style="fill:${it.color}">${fmtUsd(it.pt.equity)}</text>`;
+    });
+    s += endLabelsHtml;
+
     $('apChart').setAttribute('viewBox', `0 0 ${W} ${H}`);
     $('apChart').innerHTML = s;
     $('apLegend').innerHTML = [
@@ -149,7 +179,7 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
       ['#ffd166', 'SPY', true],
       ['var(--magenta)', 'SMH', true],
     ].map(([color, label, dash]) => `<span><i style="border-top-color:${color}${dash ? ';border-top-style:dashed' : ''}"></i>${label}</span>`).join('');
-    chartCtx = { modelSeries, spy, smh, domain, W, pad };
+    chartCtx = { modelSeries, spy, smh, domain, viewW: W, plotW: PLOT_W, pad };
     bindChartTooltip();
   }
 
