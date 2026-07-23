@@ -1,6 +1,6 @@
 {
   "date": "2026-07-23",
-  "generatedAt": "2026-07-23T12:57:45Z",
+  "generatedAt": "2026-07-23T13:25:00Z",
   "lang_default": "en",
   "priceNote_en": "Prices are the latest available snapshot gathered via web search ahead of today's open (pre-market where available) with the prior session's close shown as prevClose. The Arena no longer simulates prices internally.",
   "priceNote_zh": "价格为开盘前通过网络搜索获取的最新快照(如有盘前数据则采用盘前价),prevClose 为上一交易日收盘价。竞技场不再内部模拟价格。",
@@ -191,6 +191,46 @@
         "AVGO",
         "SMH"
       ]
+    },
+    {
+      "category": "Earnings",
+      "title_en": "Wabtec beats Q2 estimates and raises FY2026 guidance, shares jump ~10%",
+      "title_zh": "Wabtec 二季度业绩超预期并上调2026全年指引,股价上涨约10%",
+      "summary_en": "Wabtec posted Q2 adjusted EPS of $2.76 (vs $2.63 est) and revenue of $3.18B (+17.5% YoY, vs $3.08B est), then raised FY2026 adjusted EPS guidance to $10.60-$10.90 from $10.25-$10.65 and revenue guidance to $12.30-$12.60B. Backlog rose 11.3% to $9.14B. Shares gained roughly 9.6-10% on Jul 22 on strong volume.",
+      "summary_zh": "Wabtec 二季度调整后每股收益2.76美元(预期2.63美元),营收31.8亿美元(同比+17.5%,预期30.8亿美元),随后将2026全年调整后每股收益指引上调至10.60-10.90美元,营收指引上调至123-126亿美元。积压订单增长11.3%至91.4亿美元。股价7/22放量上涨约9.6%-10%。",
+      "source": "Yahoo Finance / Seeking Alpha",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/wabtec-q2-earnings-revenues-beat-170700422.html",
+      "tickers": ["WAB"]
+    },
+    {
+      "category": "Corporate",
+      "title_en": "Super Micro discloses $60B+ in new orders, nearly doubles margin guide on SpaceX/xAI datacenter tie-in",
+      "title_zh": "Super Micro 披露新增订单超600亿美元,毛利率指引近乎翻倍,与SpaceX/xAI数据中心项目相关",
+      "summary_en": "Super Micro Computer said it received over $60 billion in new orders in its fiscal Q4, pushing backlog to a record, and raised its just-completed quarter's gross margin guide to 15-17% from a prior 8.2-8.4% range. CEO Charles Liang cited a new AI datacenter project alongside SpaceX and xAI (\"SpaceXAI\"), though SpaceX has not confirmed it is the customer. Shares gapped up and ran as much as +26.6% intraday on Jul 22 on heavy volume, extending into further premarket gains Jul 23.",
+      "summary_zh": "Super Micro Computer 表示在2026财年第四季度获得超600亿美元新订单,积压订单创纪录,并将刚结束季度的毛利率指引从8.2%-8.4%上调至15%-17%。首席执行官梁见后提到与SpaceX、xAI合作的新AI数据中心项目(\"SpaceXAI\"),但SpaceX尚未证实自己是该订单客户。股价7/22跳空高开,盘中一度暴涨26.6%,成交量放大,7/23盘前进一步上涨。",
+      "source": "CNBC / 24/7 Wall St.",
+      "url": "https://www.cnbc.com/2026/07/21/super-micro-stock-spacex-announcement.html",
+      "tickers": ["SMCI"]
+    },
+    {
+      "category": "Earnings",
+      "title_en": "AT&T beats on subscribers and EPS, raises 2026 buyback target to ~$10B",
+      "title_zh": "AT&T 用户与每股收益均超预期,2026年回购目标上调至约100亿美元",
+      "summary_en": "AT&T reported Q2 adjusted EPS of $0.65 (vs $0.59 est) with 432,000 postpaid phone net adds (vs ~338,500 est) and record combined fiber/fixed-wireless internet adds, though revenue of $31.56B came in slightly below the $31.80B consensus. Management raised the 2026 share-repurchase target to about $10B from a prior $8B, citing undervaluation, with buybacks plus dividends totaling roughly $18B this year (~100% of expected free cash flow). Shares rose as much as 4.3% premarket and closed Jul 22 up 1.4-4%.",
+      "summary_zh": "AT&T 二季度调整后每股收益0.65美元(预期0.59美元),后付费用户净增43.2万(预期约33.85万),光纤与固定无线宽带合计新增用户创纪录,但营收315.6亿美元略低于预期的318亿美元。管理层将2026年股票回购目标从80亿美元上调至约100亿美元,称股价被低估,今年回购加分红合计约180亿美元(约为预期自由现金流的100%)。股价盘前一度上涨4.3%,7/22收盘上涨1.4%-4%。",
+      "source": "Benzinga / TradingKey",
+      "url": "https://www.benzinga.com/markets/earnings/26/07/60604626/att-surprises-wall-street-with-strong-subscriber-growth",
+      "tickers": ["T"]
+    },
+    {
+      "category": "Corporate",
+      "title_en": "Morgan Stanley pairs record Q2 with new $20B buyback authorization",
+      "title_zh": "摩根士丹利公布创纪录二季度业绩,同时批准新的200亿美元回购额度",
+      "summary_en": "Morgan Stanley posted record Q2 net revenue of $21.3B and a 62% EPS surge, then announced a new $20B multiyear buyback authorization alongside a dividend hike after clearing the Fed's 2026 stress test. Shares rose over 3%, though Oppenheimer downgraded the stock to Underperform on Jun 30 citing valuation, and the stock trades near consensus price targets -- a mixed enough setup that it was not screened into today's picks.",
+      "summary_zh": "摩根士丹利公布创纪录的二季度净收入213亿美元,每股收益激增62%,在通过美联储2026年压力测试后宣布新的200亿美元多年期回购授权并上调分红。股价上涨逾3%,但奥本海默6月30日以估值为由将评级下调至跑输大盘,且股价已接近分析师一致目标价——信号较为混杂,因此未被今日选入交易池。",
+      "source": "Yahoo Finance / The Motley Fool",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/morgan-stanleys-20b-buyback-raises-183300092.html",
+      "tickers": ["MS"]
     }
   ],
   "aiPredictions": {
