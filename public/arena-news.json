@@ -1,207 +1,278 @@
 {
-  "date": "2026-07-21",
-  "generatedAt": "2026-07-21T12:04:25Z",
+  "date": "2026-07-23",
+  "generatedAt": "2026-07-23T12:57:45Z",
   "lang_default": "en",
-  "priceNote_en": "Prices reflect the most recent trade and previous close available at time of writing (pre-market on July 21, 2026, using July 20 closes as current price and July 17 closes as previous close where the ticker did not trade over the weekend). Actual open/close may differ.",
-  "priceNote_zh": "价格为撰写本简报时可获得的最新成交价与前收盘价（2026年7月21日盘前，若周末未交易，则以7月20日收盘价为最新价、7月17日收盘价为前收盘价）。实际开盘/收盘价可能有所不同。",
-  "disclaimer_en": "This briefing is generated for the AI Stock Arena game on feida.au and is for entertainment and educational purposes only. It is not investment advice. Prices, predictions, and news summaries may contain errors or become outdated; verify with a live market data source before making any financial decision.",
-  "disclaimer_zh": "本简报为 feida.au 上的“AI Stock Arena”游戏生成，仅供娱乐与学习参考，不构成投资建议。价格、预测和新闻摘要可能存在错误或已过时，做出任何财务决策前请以实时行情数据源为准。",
-  "predictionNote_en": "aiPredictions are the game AI's own pre-open calls for today, generated from the news and price context below. predOpenPct/predClosePct are the AI's estimated % moves of today's open/close versus the prevClose listed in prices; they are not currently displayed on the site but feed a rolling accuracy log.",
-  "predictionNote_zh": "aiPredictions 是游戏AI基于以下新闻与价格背景，对今日走势做出的盘前独立预测。predOpenPct/predClosePct 是AI对今日开盘价/收盘价相对于 prices 中 prevClose 的预估涨跌幅；这两项目前未在网站上展示，但会用于滚动预测准确率记录。",
+  "priceNote_en": "Prices are the latest available snapshot gathered via web search ahead of today's open (pre-market where available) with the prior session's close shown as prevClose. The Arena no longer simulates prices internally.",
+  "priceNote_zh": "价格为开盘前通过网络搜索获取的最新快照(如有盘前数据则采用盘前价),prevClose 为上一交易日收盘价。竞技场不再内部模拟价格。",
+  "disclaimer_en": "This briefing is generated for entertainment and educational purposes only as part of the AI Stock Arena game. It is not investment advice. Prices and predictions may be inaccurate or stale; verify with a live market data source before making any financial decision.",
+  "disclaimer_zh": "本简报仅作为 AI Stock Arena 游戏的娱乐和教育内容生成,不构成投资建议。价格和预测可能不准确或已过时,做出任何财务决策前请以实时市场数据为准。",
+  "predictionNote_en": "aiPredictions reflect the game AI's own pre-open calls for direction, predicted open gap vs. prevClose, and predicted full-day close vs. prevClose. They are estimates, not guarantees, and feed a rolling accuracy log.",
+  "predictionNote_zh": "aiPredictions 是游戏 AI 在开盘前对涨跌方向、开盘缺口(相对 prevClose)和全天收盘表现(相对 prevClose)的预测,仅为估计值,非保证,用于滚动准确率记录。",
   "prices": {
-    "NVDA": { "price": 205.50, "prevClose": 202.81 },
-    "MU": { "price": 882.75, "prevClose": 848.95 },
-    "ASML": { "price": 1799.64, "prevClose": 1739.02 },
-    "AVGO": { "price": 378.16, "prevClose": 370.82 },
-    "TSM": { "price": 402.30, "prevClose": 398.37 },
-    "MRVL": { "price": 194.49, "prevClose": 188.68 },
-    "LITE": { "price": 765.55, "prevClose": 732.82 },
-    "SNDK": { "price": 1354.82, "prevClose": 1411.08 },
-    "AMD": { "price": 513.21, "prevClose": 495.76 },
-    "SMH": { "price": 556.53, "prevClose": 556.28 }
+    "NVDA": {
+      "price": 211.26,
+      "prevClose": 202.81
+    },
+    "MU": {
+      "price": 959.48,
+      "prevClose": 970.82
+    },
+    "ASML": {
+      "price": 1801.86,
+      "prevClose": 1801.5
+    },
+    "AVGO": {
+      "price": 396.81,
+      "prevClose": 386.5
+    },
+    "TSM": {
+      "price": 421.21,
+      "prevClose": 424.61
+    },
+    "MRVL": {
+      "price": 210.99,
+      "prevClose": 207.94
+    },
+    "LITE": {
+      "price": 867.66,
+      "prevClose": 875.52
+    },
+    "SNDK": {
+      "price": 1610.63,
+      "prevClose": 1600.72
+    },
+    "AMD": {
+      "price": 544.43,
+      "prevClose": 543.1
+    },
+    "SMH": {
+      "price": 586.89,
+      "prevClose": 584.38
+    }
   },
   "items": [
     {
-      "category": "Industry",
-      "title_en": "Moonshot AI's Kimi K3 wipes $3.3T off global chip stocks, pushes sector into bear market",
-      "title_zh": "月之暗面 Kimi K3 抹去全球芯片股3.3万亿美元市值，板块跌入技术性熊市",
-      "summary_en": "Chinese startup Moonshot AI's 2.8-trillion-parameter open model Kimi K3, unveiled July 16 at Shanghai's WAIC, has erased over $3.3 trillion in global semiconductor market value in days, driving the Philadelphia Semiconductor Index more than 20% below its June peak. Investors are questioning whether cheap, near-frontier open models reduce the need for massive AI infrastructure spending; Moonshot is now pursuing a Hong Kong IPO within six months.",
-      "summary_zh": "中国初创公司月之暗面（Moonshot AI）7月16日在上海WAIC发布的2.8万亿参数开源模型Kimi K3，短短几天内抹去全球半导体市值逾3.3万亿美元，费城半导体指数较6月高点回落超20%，进入技术性熊市。投资者开始质疑：低成本、接近前沿水平的开源模型是否会削弱对大规模AI基础设施投入的需求；月之暗面目前正推进六个月内在香港上市。",
-      "source": "Tech Times / KuCoin",
-      "url": "https://www.techtimes.com/articles/321066/20260720/kimi-k3-wipes-33t-chip-stocks-moonshot-moves-toward-hong-kong-ipo.htm",
-      "tickers": ["NVDA", "MU", "ASML", "AVGO", "TSM", "MRVL", "LITE", "SNDK", "AMD", "SMH"]
+      "category": "Policy",
+      "title_en": "US confirms 'very few' Nvidia H200 chips have reached China under new licenses",
+      "title_zh": "美方证实新许可下运往中国的英伟达 H200 芯片数量“极少”",
+      "summary_en": "A senior US Commerce official told Congress that only a trivial number of licensed Nvidia H200 AI chips have actually shipped to China so far, even as the approved buyer list widens. Nvidia has also tightened its own compliance 'white list' of eligible Asian customers, underscoring that Washington's export framework remains a swing factor for NVDA's China revenue outlook.",
+      "summary_zh": "美国商务部一位高级官员向国会证实,尽管获批买家名单在扩大,但目前实际运往中国的持证英伟达 H200 芯片数量微乎其微。英伟达自身也收紧了合规“白名单”上的亚洲客户资格,表明华盛顿的出口框架仍是影响 NVDA 中国营收前景的关键变量。",
+      "source": "CNBC",
+      "url": "https://www.cnbc.com/2026/07/14/nvidia-h200-ai-chips-china.html",
+      "tickers": [
+        "NVDA",
+        "AMD"
+      ]
     },
     {
-      "category": "Political",
-      "title_en": "China weighs tighter export controls on its own AI models and chips",
-      "title_zh": "中国考虑对本国AI模型与芯片实施更严格的出口管制",
-      "summary_en": "The Financial Times and Reuters report Beijing is considering restrictions on overseas access to China's most advanced AI models, including unreleased ones, mirroring Washington's approach of treating frontier AI as a controlled national asset. The move comes as the US's 25% tariff on advanced computing chips and a 10% global tariff surcharge (Section 122) are both live issues, with Section 122 set to expire July 24 absent renewal.",
-      "summary_zh": "英国《金融时报》与路透社报道，北京正考虑限制境外获取中国最先进的AI模型（包括未发布型号），做法与华盛顿将前沿AI视为受控国家资产的思路相呼应。与此同时，美国对先进计算芯片征收25%关税、并对全球加征10%附加关税（第122条）仍是焦点议题，第122条关税如未续期将于7月24日到期。",
-      "source": "Yahoo Finance / Financial Times",
-      "url": "https://finance.yahoo.com/technology/ai/articles/china-considers-tighter-export-controls-041139427.html",
-      "tickers": ["NVDA", "TSM", "AMD"]
-    },
-    {
-      "category": "Financial",
-      "title_en": "TSMC posts Q2 beat, lifts 2026 growth outlook, and reportedly plans 5-10% price hike for 2027",
-      "title_zh": "台积电第二季业绩超预期，上调2026年增长展望，据报2027年拟涨价5%-10%",
-      "summary_en": "TSMC's Q2 revenue hit $40.2B, topping guidance, with gross margin at 67.7%. The company raised 2026 revenue growth guidance to above 40% and lifted capex guidance to $18.75-20B, plus an added $100B Arizona investment (total $265B). Bloomberg, citing Nikkei, reports TSMC plans to raise chip manufacturing prices 5-10% in 2027, boosting shares in premarket trading.",
-      "summary_zh": "台积电第二季营收达402亿美元，超出指引，毛利率67.7%。公司将2026年营收增长指引上调至40%以上，资本支出指引上调至187.5亿至200亿美元，并追加100亿美元亚利桑那州投资（累计达2650亿美元）。彭博援引日经报道称，台积电计划2027年将晶圆代工价格上调5%-10%，消息推动股价盘前上涨。",
-      "source": "Benzinga",
-      "url": "https://www.benzinga.com/markets/tech/26/07/60571554/brace-for-pricier-chips-taiwan-semiconductor-reportedly-plans-up-to-10-price-hike",
-      "tickers": ["TSM"]
-    },
-    {
-      "category": "Financial",
-      "title_en": "ASML raises 2026 sales forecast for second time this year on AI chip demand",
-      "title_zh": "ASML因AI芯片需求年内第二次上调2026年销售预测",
-      "summary_en": "ASML reported Q2 net sales of €9.3B versus €8.8B expected and net profit of €2.9B versus €2.6B expected, then raised full-year 2026 sales guidance to €43-45B from €36-40B. CEO Christophe Fouquet said EUV supply 'will not meet demand for the foreseeable future' and memory customers are sold out for 2026; the company plans to add 30% more low-NA EUV and DUV capacity this year.",
-      "summary_zh": "ASML第二季净销售额93亿欧元，超出预期的88亿欧元，净利润29亿欧元，超出预期的26亿欧元；公司随后将2026全年销售指引由360-400亿欧元上调至430-450亿欧元。CEO Christophe Fouquet表示，EUV设备供给“在可预见的未来都无法满足需求”，存储客户2026年产能已售罄；公司计划今年将低数值孔径EUV及DUV浸没式产能各提升30%。",
+      "category": "Earnings",
+      "title_en": "ASML raises 2026 sales guidance for the second time this year on AI-linked demand",
+      "title_zh": "ASML 因人工智能相关需求今年第二次上调2026年销售指引",
+      "summary_en": "ASML posted Q2 net sales of €9.3 billion and lifted full-year guidance to €43-45 billion from €36-40 billion, shipping 86 new lithography systems versus 67 in Q1. Management called first-half order strength 'extremely strong' as chipmaker customers accelerate capacity expansion, though shares dipped slightly on valuation concerns after the run-up.",
+      "summary_zh": "ASML第二季度净销售额达93亿欧元,并将全年指引从360-400亿欧元上调至430-450亿欧元,当季新出货86台光刻系统,高于第一季度的67台。管理层称上半年订单“极为强劲”,反映芯片制造商客户正加速扩产,不过股价在此前大涨后因估值担忧小幅回落。",
       "source": "CNBC",
       "url": "https://www.cnbc.com/2026/07/15/asml-2q-earnings-ai-chips-orders.html",
-      "tickers": ["ASML"]
+      "tickers": [
+        "ASML",
+        "TSM",
+        "NVDA"
+      ]
     },
     {
-      "category": "Financial",
-      "title_en": "Micron says HBM sold out through 2027, memory supply to stay tight",
-      "title_zh": "美光称HBM产能已售罄至2027年，存储器供应将持续紧张",
-      "summary_en": "Micron says it is sold out on HBM production volumes for both 2026 and 2027, with fiscal Q3 revenue of $10.85B (+37% YoY) and data-center revenue more than doubling year over year. Shares rebounded 4.3% Monday after a sharp pullback; KeyBanc, Citi, Daiwa and President Capital have Buy/Overweight ratings with targets between $1,400 and $1,750.",
-      "summary_zh": "美光表示其HBM（高带宽存储）2026及2027年产能均已售罄，第三财季营收108.5亿美元，同比增长37%，数据中心营收同比增长超一倍。股价周一（7月20日）在经历大幅回调后反弹4.3%；KeyBanc、花旗、大和及President Capital均给予买入/增持评级，目标价介于1400至1750美元。",
+      "category": "Earnings",
+      "title_en": "TSMC hikes 2026 capex to $60-64 billion as AI demand outpaces capacity",
+      "title_zh": "台积电将2026年资本支出上调至600-640亿美元,人工智能需求超越产能",
+      "summary_en": "TSMC reported Q2 revenue of $40.2 billion, up 33.7% year over year, with ADR earnings surging roughly 74%. The foundry giant raised its 2026 capex forecast to $60-64 billion from $52-56 billion, about a 15% increase, saying AI chip orders continue to outstrip available capacity.",
+      "summary_zh": "台积电第二季度营收达402亿美元,同比增长33.7%,ADR每股盈利大增约74%。这家晶圆代工巨头将2026年资本支出预测从520-560亿美元上调至600-640亿美元,增幅约15%,称人工智能芯片订单持续超出现有产能。",
+      "source": "TheStreet",
+      "url": "https://www.thestreet.com/investing/stocks/tsmc-hikes-2026-guidance-ai-demand",
+      "tickers": [
+        "TSM",
+        "NVDA",
+        "AMD",
+        "AVGO"
+      ]
+    },
+    {
+      "category": "Corporate",
+      "title_en": "AMD's Advancing AI 2026 event lands alongside Microsoft Azure Helios deal",
+      "title_zh": "AMD“Advancing AI 2026”大会举行,同时宣布微软Azure Helios合作",
+      "summary_en": "AMD shares jumped after Microsoft said it will deploy AMD's Helios rack-scale AI infrastructure across Azure. The July 22 Advancing AI event also previewed the Zen 6 'Venice' CPU and an MI455X GPU roadmap update, reinforcing AMD's push to grab a larger share of hyperscaler AI-server spending from Nvidia.",
+      "summary_zh": "在微软宣布将在Azure部署AMD的Helios机架级人工智能基础设施后,AMD股价大涨。7月22日的“Advancing AI”大会还预告了Zen 6架构“Venice”处理器以及MI455X GPU路线图更新,凸显AMD正努力从英伟达手中争夺更多超大规模云厂商的人工智能服务器支出份额。",
       "source": "The Motley Fool",
-      "url": "https://www.fool.com/investing/2026/07/20/micron-says-memory-chip-supply-will-remain-tight-b/",
-      "tickers": ["MU"]
-    },
-    {
-      "category": "Financial",
-      "title_en": "Broadcom-Apple chip deal extended through 2031 in $30B+ agreement",
-      "title_zh": "博通与苹果续签芯片供应协议至2031年，规模超300亿美元",
-      "summary_en": "Apple and Broadcom announced a renewed multi-year chip supply agreement worth more than $30B through 2031, covering wireless components like FBAR filters and custom AI-related chips. Broadcom's Q2 FY2026 revenue was $22.19B (+47.9% YoY), with AI semiconductor revenue at $10.8B (+143% YoY); Q3 guidance calls for $29.4B in revenue and over $16B in AI silicon.",
-      "summary_zh": "苹果与博通宣布续签为期至2031年、规模超300亿美元的多年期芯片供应协议，涵盖FBAR滤波器等无线元件及AI相关定制芯片。博通2026财年第二季度营收221.9亿美元，同比增长47.9%，其中AI半导体营收108亿美元，同比增长143%；第三季度指引为营收294亿美元，AI芯片营收超160亿美元。",
-      "source": "FX Leaders",
-      "url": "https://www.fxleaders.com/news/2026/07/14/broadcom-avgo-stock-falls-despite-strong-ai-chip-demand-and-record-revenue/",
-      "tickers": ["AVGO"]
+      "url": "https://www.fool.com/investing/2026/07/23/massive-news-for-amd-stock-investors/",
+      "tickers": [
+        "AMD",
+        "NVDA"
+      ]
     },
     {
       "category": "Industry",
-      "title_en": "AMD's Advancing AI event (July 22-23) to unveil Zen 6 'Venice' and next-gen Helios platform",
-      "title_zh": "AMD“Advancing AI”大会（7月22-23日）将发布Zen 6“Venice”及新一代Helios平台",
-      "summary_en": "AMD holds its Advancing AI event July 22-23, expected to unveil Zen 6 'Venice' server processors and updates to its Helios AI platform positioned against Nvidia's Vera Rubin. Goldman Sachs raised its price target to $640 from $450 on agentic-AI-driven CPU demand; Citigroup upgraded to Buy at $575 and TD Cowen lifted its target to $675. Q2 earnings are set for August 4 with guided revenue near $11.2B (+46% YoY).",
-      "summary_zh": "AMD将于7月22-23日举办“Advancing AI”大会，预计发布Zen 6“Venice”服务器处理器，并更新对标英伟达Vera Rubin平台的新一代Helios AI平台。高盛将目标价从450美元上调至640美元，理由是代理式AI（agentic AI）驱动的CPU需求；花旗上调评级至买入，目标价575美元，TD Cowen目标价上调至675美元。第二季度财报将于8月4日发布，指引营收约112亿美元，同比增长46%。",
-      "source": "TradingKey",
-      "url": "https://www.tradingkey.com/analysis/stocks/us-stocks/262025935-amd-stock-forecast-july-2026-zen-6-venice-advancing-ai-helios-tradingkey",
-      "tickers": ["AMD", "NVDA"]
+      "title_en": "Micron's HBM4 ramp for Nvidia's Vera Rubin platform running ahead of schedule",
+      "title_zh": "美光为英伟达Vera Rubin平台供应的HBM4爬坡进度超预期",
+      "summary_en": "Micron said HBM4 shipments for Nvidia's next-generation Vera Rubin platform, which began in March, are ramping at roughly twice the pace of the prior HBM3E generation with better-than-expected yields. Industry supply of HBM, DRAM and NAND is expected to stay tight through 2027, keeping pricing power with memory makers even as some investors fret about a cyclical top.",
+      "summary_zh": "美光表示,为英伟达下一代Vera Rubin平台供应的HBM4芯片自3月开始出货以来,爬坡速度约为上一代HBM3E的两倍,良率也优于预期。业内预计HBM、DRAM和NAND供应将持续紧张至2027年,存储芯片厂商议价能力得以维持,但部分投资者仍担忧行业周期见顶风险。",
+      "source": "IG International",
+      "url": "https://www.ig.com/en/news-and-trade-ideas/micron-q3-fy2026-earnings-preview-260623",
+      "tickers": [
+        "MU",
+        "NVDA",
+        "SNDK"
+      ]
     },
     {
-      "category": "Financial",
-      "title_en": "SanDisk price targets triple as NAND boom collides with wild volatility",
-      "title_zh": "SanDisk目标价被大幅上调，NAND热潮与剧烈波动并存",
-      "summary_en": "Bernstein hiked its SNDK target to $3,000 from $1,700, Wedbush to $2,000 from $1,200, and Goldman Sachs to $2,200 from $1,200, citing tight NAND supply. Q2 revenue was $5.95B (+97% sequentially, +251% YoY) with data-center revenue up 645% YoY. But the stock fell 24.5% from July 13-17 before rebounding 5.6% Monday, reflecting extreme swings after a 12-month gain of over 3,000%.",
-      "summary_zh": "Bernstein将SanDisk目标价从1700美元大幅上调至3000美元，Wedbush从1200美元上调至2000美元，高盛从1200美元上调至2200美元，理由是NAND供应紧张。第二季度营收59.5亿美元，环比增长97%，同比增长251%，数据中心营收同比增长645%。但股价在7月13日至17日间下跌24.5%，随后周一反弹5.6%，波动剧烈——此前该股过去12个月涨幅已超3000%。",
+      "category": "Corporate",
+      "title_en": "SanDisk price targets keep climbing as Meta AI-memory supply role expands",
+      "title_zh": "SanDisk目标价持续上调,其作为Meta人工智能存储供应商的角色扩大",
+      "summary_en": "Goldman Sachs lifted its 12-month SanDisk target to $2,200 from $1,200 and Bernstein raised its call to $3,000, citing SanDisk's growing role supplying Meta's in-house AI chip ecosystem and broader NAND tightness. The stock is up over 500% in 2026 but has also swung sharply, briefly dropping toward $1,328 before rebounding, underscoring elevated volatility in the name.",
+      "summary_zh": "高盛将SanDisk的12个月目标价从1200美元上调至2200美元,伯恩斯坦更是上调至3000美元,理由是SanDisk在Meta自研人工智能芯片生态中的供应角色不断扩大,以及NAND供应持续紧张。该股2026年以来累计上涨超过500%,但期间也出现剧烈波动,一度跌至1328美元附近后反弹,凸显该股波动性较高。",
       "source": "TheStreet",
       "url": "https://www.thestreet.com/investing/stocks/sndk-sandisk-stock-price-target-goldman-sachs-july-2026-nand-supply",
-      "tickers": ["SNDK"]
+      "tickers": [
+        "SNDK",
+        "MU"
+      ]
     },
     {
-      "category": "Financial",
-      "title_en": "Marvell gets split analyst calls as AI capex fears whipsaw the stock",
-      "title_zh": "AI资本支出担忧令Marvell股价剧烈波动，分析师评级分歧加大",
-      "summary_en": "Marvell shares have swung sharply — down as much as 8.7% on AI-capex fears, then up 6.4% and 3.1% on subsequent days. KeyBanc raised its target to $400 from $385 (Buy), while Erste Group downgraded the stock to Hold on July 14. Consensus among 28 analysts remains Buy as of July 16, with a $0.06/share dividend payable July 30 (ex-date July 10).",
-      "summary_zh": "Marvell股价剧烈波动，一度因AI资本支出担忧下跌8.7%，随后又连续两日反弹6.4%和3.1%。KeyBanc将目标价从385美元上调至400美元并维持买入评级，而Erste Group于7月14日将评级下调至持有。截至7月16日，28位分析师的共识评级仍为买入；公司将于7月30日派发每股0.06美元股息（除息日7月10日）。",
-      "source": "MarketBeat / TradingKey",
-      "url": "https://www.marketbeat.com/instant-alerts/marvell-technology-nasdaqmrvl-shares-up-64-whats-next-2026-07-20/",
-      "tickers": ["MRVL"]
+      "category": "Corporate",
+      "title_en": "Marvell cools off after Jensen Huang 'next trillion-dollar company' comment fades",
+      "title_zh": "在黄仁勋“下一个万亿美元公司”言论效应消退后,Marvell股价降温",
+      "summary_en": "Marvell shares have pulled back roughly 20% over the past month from their June all-time high, which was fueled by Nvidia CEO Jensen Huang's Computex remark calling Marvell a future trillion-dollar company. KeyBanc still raised its price target to $400 from $385 on continued AI networking demand, even as some contrarian analysts flag the stock as overvalued.",
+      "summary_zh": "Marvell股价过去一个月从6月创下的历史高点回落约20%,此前该股受益于英伟达首席执行官黄仁勋在Computex大会上称其“未来将成为万亿美元公司”的言论而大涨。尽管如此,KeyBanc仍将目标价从385美元上调至400美元,理由是人工智能网络需求持续强劲,不过也有逆势分析师认为该股估值过高。",
+      "source": "Tickeron",
+      "url": "https://tickeron.com/ticker/MRVL/",
+      "tickers": [
+        "MRVL",
+        "NVDA"
+      ]
     },
     {
-      "category": "Industry",
-      "title_en": "Nvidia commits $2B to Lumentum to build out US optical-component manufacturing",
-      "title_zh": "英伟达向Lumentum投资20亿美元，助力其在美国扩建光学元件产能",
-      "summary_en": "Nvidia is investing $2 billion in Lumentum to support R&D and new US-based manufacturing capacity as AI data-center demand for optical connectivity outpaces supply by over 30%. Lumentum shares are up roughly 115% year-to-date; JPMorgan views a recent ~20% pullback from June highs as a buying opportunity and reiterated an Overweight rating.",
-      "summary_zh": "英伟达向光学元件厂商Lumentum投资20亿美元，用于支持研发及在美国新建产能，原因是AI数据中心对光互连产品的需求已超出供给逾30%。Lumentum股价年内累计上涨约115%；摩根大通将该股近期自6月高点约20%的回调视为买入机会，并重申增持评级。",
-      "source": "TECHi",
-      "url": "https://www.techi.com/lumentum-stock-lite-ai-optics-2026/",
-      "tickers": ["LITE", "NVDA"]
+      "category": "Corporate",
+      "title_en": "Lumentum upgraded by Barclays as optical AI-datacenter demand story builds",
+      "title_zh": "巴克莱上调Lumentum评级,光学人工智能数据中心需求故事持续发酵",
+      "summary_en": "Barclays upgraded Lumentum to 'Overweight' with a $1,000 price target, about 36% above recent levels, citing accelerating optical component demand tied to AI datacenter buildouts. Citi also placed the stock on a 90-day upside catalyst watch ahead of Lumentum's August 11 fiscal Q4 earnings, though TD Cowen trimmed its target to $800 on valuation caution.",
+      "summary_zh": "巴克莱将Lumentum评级上调至“增持”,目标价1000美元,较近期水平高出约36%,理由是与人工智能数据中心建设相关的光学元件需求加速增长。花旗也将该股列入90天上行催化剂观察名单,聚焦其8月11日公布的2026财年第四季度财报,不过TD Cowen出于估值考量将目标价下调至800美元。",
+      "source": "StocksToTrade",
+      "url": "https://stockstotrade.com/news/lumentum-holdings-inc-lite-news-2026_07_20-3/",
+      "tickers": [
+        "LITE"
+      ]
+    },
+    {
+      "category": "Macro",
+      "title_en": "Fed's July 29 rate decision looms as AI capex feeds into inflation debate",
+      "title_zh": "美联储7月29日利率决议临近,人工智能资本支出成为通胀辩论焦点",
+      "summary_en": "With the federal funds rate held at 3.50-3.75% for four straight meetings, Fed officials are increasingly linking the AI datacenter buildout to inflation dynamics, noting roughly 90% of AI hardware is imported from East Asia. A separate Tier-1 cloud provider memo suggested proposed tariffs on Nvidia's H200 and upcoming Rubin chips may be absorbed by hyperscalers rather than passed to customers, a swing factor for chip-buyer demand into year-end.",
+      "summary_zh": "在联邦基金利率连续四次会议维持在3.50%-3.75%不变的背景下,美联储官员越来越多地将人工智能数据中心建设与通胀动态联系起来,并指出约90%的人工智能硬件依赖从东亚进口。另有一份大型云服务商的内部备忘录显示,拟议中对英伟达H200及即将推出的Rubin芯片征收的关税可能由超大规模云厂商自行消化,而非转嫁给客户,这将成为影响年底前芯片采购需求的关键变量。",
+      "source": "Intellectia.ai",
+      "url": "https://intellectia.ai/blog/fed-interest-rate-decision-july-2026-market-impact",
+      "tickers": [
+        "NVDA",
+        "AMD",
+        "AVGO",
+        "TSM",
+        "MU",
+        "ASML",
+        "MRVL",
+        "LITE",
+        "SNDK",
+        "SMH"
+      ]
+    },
+    {
+      "category": "Corporate",
+      "title_en": "Broadcom extends three-day rally on Apple chip-deal optimism despite sector selloff",
+      "title_zh": "尽管板块整体遭遇抛售,博通仍受苹果芯片合作利好推动连涨三日",
+      "summary_en": "Broadcom shares rose 2.67% to $396.81, their third straight gain, as investors continued to digest reports of a roughly $30 billion Apple chip-supply deal running through 2031. The move came even as the broader chip complex had its worst month since 2008 by some ETF measures, highlighting how company-specific AI catalysts are currently overriding sector-wide weakness.",
+      "summary_zh": "博通股价上涨2.67%至396.81美元,连续第三个交易日上涨,投资者持续消化有关其与苹果达成约300亿美元、期限至2031年的芯片供应协议的报道。尽管以部分ETF指标衡量,整个芯片板块正经历自2008年以来最差的一个月,博通个股的人工智能利好仍推动股价逆势走高,凸显个股催化剂当前正压过板块整体疲软。",
+      "source": "Benzinga",
+      "url": "https://www.benzinga.com/markets/tech/26/07/60605013/whats-going-on-with-broadcom-stock-wednesday-6",
+      "tickers": [
+        "AVGO",
+        "SMH"
+      ]
     }
   ],
   "aiPredictions": {
     "NVDA": {
       "direction": "UP",
-      "confidence": 0.58,
-      "predOpenPct": 0.4,
-      "predClosePct": 1.1,
-      "rationale_en": "Nasdaq-100 futures up ~1.3% on a broad chip-sector revival, and the $2B Lumentum optics investment plus the Vera Rubin Japan AI-factory deal support sentiment. Kimi K3 competition fears and the technical bear market keep the move measured near $200-207 support.",
-      "rationale_zh": "纳斯达克100指数期货上涨约1.3%，芯片板块整体回暖，叠加对Lumentum的20亿美元光学投资及Vera Rubin日本AI工厂协议提振情绪。但Kimi K3带来的竞争担忧及技术性熊市格局，令股价在200-207美元支撑位附近的反弹幅度有限。"
+      "confidence": 0.66,
+      "predOpenPct": 2.3,
+      "predClosePct": 2.8,
+      "rationale_en": "Premarket strength already visible after AMD's Microsoft Azure win and steady, if slow, progress on China H200 licensing keep sentiment constructive; expect the gap to hold and extend modestly into the close.",
+      "rationale_zh": "在AMD拿下微软Azure订单以及中国H200许可稳步(虽缓慢)推进的背景下,盘前已显强势,预计涨幅将保持并在收盘前小幅扩大。"
     },
     "MU": {
       "direction": "UP",
-      "confidence": 0.62,
-      "predOpenPct": 0.5,
-      "predClosePct": 1.4,
-      "rationale_en": "HBM sold out through 2027 and tight DRAM/NAND supply keep the bullish thesis intact after Monday's 4.3% rebound; analyst targets as high as $1,750 support continued buying into pre-market strength.",
-      "rationale_zh": "HBM产能已售罄至2027年，DRAM/NAND供应持续紧张，周一4.3%反弹后看涨逻辑未变；分析师目标价最高达1750美元，支撑盘前买盘延续。"
+      "confidence": 0.6,
+      "predOpenPct": 0.8,
+      "predClosePct": 1.6,
+      "rationale_en": "After two soft sessions, 'buy the dip' calls from Morgan Stanley and BofA plus the strong HBM4 ramp narrative should support a modest rebound at the open that builds through the day.",
+      "rationale_zh": "在连续两个交易日走弱后,摩根士丹利和美银发出的“逢低买入”呼吁,加上HBM4强劲爬坡的叙事,应支撑开盘小幅反弹并在盘中延续。"
     },
     "ASML": {
       "direction": "UP",
-      "confidence": 0.60,
-      "predOpenPct": 0.6,
-      "predClosePct": 1.3,
-      "rationale_en": "Momentum from the second guidance raise this year and an EUV-monopoly, sold-out-for-2026 backdrop should extend the post-earnings drift higher, tempered by broader semiconductor bear-market caution.",
-      "rationale_zh": "年内第二次上调指引带来的动能，以及EUV垄断地位与2026年产能售罄的背景，应能延续财报后的上行趋势，但整体半导体熊市情绪会抑制涨幅。"
+      "confidence": 0.58,
+      "predOpenPct": 0.3,
+      "predClosePct": 0.9,
+      "rationale_en": "Guidance was already raised and largely priced in, so expect only a modest continuation higher as order strength commentary keeps filtering through analyst notes.",
+      "rationale_zh": "指引上调已基本被市场消化,预计随着强劲订单评论持续在分析师报告中发酵,股价仅温和延续上行。"
     },
     "AVGO": {
       "direction": "UP",
-      "confidence": 0.55,
-      "predOpenPct": 0.3,
-      "predClosePct": 0.9,
-      "rationale_en": "The renewed $30B+ Apple supply deal and 143% AI-revenue growth are constructive, but shares remain about 24% below their 52-week high, suggesting only a modest recovery move today.",
-      "rationale_zh": "苹果续签逾300亿美元供应协议及AI营收增长143%均属利好，但股价仍较52周高点低约24%，预计今日仅有温和修复性上涨。"
+      "confidence": 0.62,
+      "predOpenPct": 0.6,
+      "predClosePct": 1.3,
+      "rationale_en": "Three-day win streak on Apple deal optimism should carry into today's open, though broader semiconductor sector weakness caps the size of the follow-through.",
+      "rationale_zh": "受苹果合作利好推动的三连涨势头有望延续至今日开盘,但半导体板块整体疲软将限制涨幅的进一步扩大。"
     },
     "TSM": {
       "direction": "UP",
-      "confidence": 0.63,
-      "predOpenPct": 0.8,
-      "predClosePct": 1.8,
-      "rationale_en": "Reported plans for a 5-10% 2027 price hike land on top of a Q2 beat, raised 2026 guidance, and an added $100B Arizona commitment — a strong combination that premarket reports already show pushing shares higher.",
-      "rationale_zh": "据报2027年拟涨价5%-10%，叠加第二季业绩超预期、2026年指引上调以及新增100亿美元亚利桑那州投资承诺，多重利好共振，盘前报道已显示股价走高。"
+      "confidence": 0.57,
+      "predOpenPct": 0.4,
+      "predClosePct": 1.0,
+      "rationale_en": "Blowout Q2 results and a 15% capex raise argue for a rebound after two down sessions, though profit-taking in the broader sector limits the open-gap size.",
+      "rationale_zh": "第二季度业绩亮眼且资本支出上调15%,支持在连续两日下跌后出现反弹,但板块整体获利了结情绪将限制开盘缺口的幅度。"
     },
     "MRVL": {
-      "direction": "DOWN",
-      "confidence": 0.52,
-      "predOpenPct": -0.3,
-      "predClosePct": -0.6,
-      "rationale_en": "Split analyst calls (Erste's Hold downgrade vs. KeyBanc's Buy) and lingering AI-capex scrutiny after a volatile week make the stock likely to give back part of its recent bounce.",
-      "rationale_zh": "分析师评级分歧明显（Erste下调至持有 vs KeyBanc维持买入），加上AI资本支出担忧挥之不去、近期波动剧烈，预计股价将回吐部分近期涨幅。"
+      "direction": "UP",
+      "confidence": 0.55,
+      "predOpenPct": 0.5,
+      "predClosePct": 1.1,
+      "rationale_en": "KeyBanc's target hike and a second straight up session suggest stabilization after the post-Huang-comment pullback, though the wide analyst target dispersion argues for only modest confidence.",
+      "rationale_zh": "KeyBanc上调目标价及连续第二日收涨,显示该股在黄仁勋言论效应消退后的回调正趋于企稳,但分析师目标价分歧较大,因此信心程度仅为中等。"
     },
     "LITE": {
       "direction": "UP",
-      "confidence": 0.57,
-      "predOpenPct": 0.7,
-      "predClosePct": 1.6,
-      "rationale_en": "Nvidia's $2B strategic investment and JPMorgan's buy-the-dip call on a >30% supply-demand gap in optical connectivity should support a bounce, though the stock remains volatile after its recent pullback.",
-      "rationale_zh": "英伟达20亿美元战略投资，加上摩根大通就光互连供需缺口超30%发出的逢低买入建议，应能支撑股价反弹，但近期回调后波动性依然较大。"
+      "confidence": 0.56,
+      "predOpenPct": 0.6,
+      "predClosePct": 1.4,
+      "rationale_en": "Fresh Barclays Overweight upgrade and a 90-day catalyst watch ahead of August earnings should outweigh yesterday's small pullback, supporting a rebound.",
+      "rationale_zh": "巴克莱新近给予“增持”评级上调,加上8月财报前的90天催化剂观察期利好,应能抵消昨日的小幅回调,支撑股价反弹。"
     },
     "SNDK": {
       "direction": "DOWN",
-      "confidence": 0.53,
-      "predOpenPct": -0.6,
-      "predClosePct": -1.2,
-      "rationale_en": "After a 24.5% five-day plunge and only a partial Monday rebound, profit-taking risk remains elevated even as analysts triple price targets — extreme volatility argues for another pullback before stabilizing.",
-      "rationale_zh": "在五日内暴跌24.5%、周一仅部分反弹后，尽管分析师大幅上调目标价，获利了结压力依然较大——剧烈波动意味着股价可能再度回调后才趋于稳定。"
+      "confidence": 0.54,
+      "predOpenPct": -0.9,
+      "predClosePct": -1.7,
+      "rationale_en": "After a 500%+ 2026 run and repeated whiplash between 'tumbling' and 'still climbing' headlines, the stock looks stretched and due for a pause or pullback even with bullish long-term targets intact.",
+      "rationale_zh": "在2026年累计上涨超过500%,且“暴跌”与“持续上涨”的新闻反复交替出现后,该股估值已显拉伸,即便长期目标价仍偏乐观,短期也可能出现停顿或回调。"
     },
     "AMD": {
       "direction": "UP",
-      "confidence": 0.60,
-      "predOpenPct": 0.5,
-      "predClosePct": 1.3,
-      "rationale_en": "Anticipation ahead of the July 22-23 Advancing AI event (Zen 6 Venice, Helios update) and fresh Goldman/TD Cowen price-target hikes should lift shares into the announcement.",
-      "rationale_zh": "市场对7月22-23日Advancing AI大会（Zen 6 Venice、Helios平台更新）的期待，叠加高盛、TD Cowen近期上调目标价，预计将推动股价在发布会前走高。"
+      "confidence": 0.64,
+      "predOpenPct": 1.0,
+      "predClosePct": 2.0,
+      "rationale_en": "The Microsoft Azure Helios deal and Advancing AI product roadmap give AMD fresh, durable catalysts that should extend Tuesday's surge into another positive session.",
+      "rationale_zh": "微软Azure Helios合作及“Advancing AI”产品路线图为AMD带来了新的持续性利好,预计将推动周二的涨势延续至新一个交易日。"
     },
     "SMH": {
       "direction": "UP",
-      "confidence": 0.56,
-      "predOpenPct": 0.3,
-      "predClosePct": 0.7,
-      "rationale_en": "Broad premarket chip-sector revival (Nasdaq-100 futures +1.3%) should lift the ETF modestly, though the index remains in a technical bear market after the Kimi K3 shock, capping the size of the move.",
-      "rationale_zh": "芯片板块盘前整体回暖（纳斯达克100期货上涨1.3%）应能带动该ETF小幅上涨，但受Kimi K3冲击影响，板块指数仍处于技术性熊市，涨幅有限。"
+      "confidence": 0.58,
+      "predOpenPct": 0.4,
+      "predClosePct": 0.8,
+      "rationale_en": "As a broad basket, SMH should track its heavyweight AI-infrastructure holdings (NVDA, AMD, AVGO, TSM) modestly higher, tempered by ongoing sector volatility.",
+      "rationale_zh": "作为一篮子ETF,SMH的走势预计将温和跟随其权重最高的人工智能基础设施成分股(NVDA、AMD、AVGO、TSM)上行,但板块持续波动将抑制涨幅。"
     }
   }
 }
