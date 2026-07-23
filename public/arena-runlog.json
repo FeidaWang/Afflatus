@@ -22,19 +22,19 @@
       "date": "2026-07-23",
       "window": "open-window",
       "model": "S",
-      "status": "queued",
+      "status": "done",
       "ordersProposed": 1,
-      "ordersFilled": 0,
-      "note": "Proposal recorded in arena-picks.json; NOT settled against a live ledger yet (Season 2 ledger flip is Phase 4)."
+      "ordersFilled": 1,
+      "note": "settled via apply-arena-run.mjs — 1 filled, 0 rejected."
     },
     {
       "date": "2026-07-23",
       "window": "open-window",
       "model": "P",
-      "status": "queued",
+      "status": "done",
       "ordersProposed": 1,
-      "ordersFilled": 0,
-      "note": "Proposal recorded in arena-picks.json; NOT settled against a live ledger yet (Season 2 ledger flip is Phase 4)."
+      "ordersFilled": 1,
+      "note": "settled via apply-arena-run.mjs — 1 filled, 0 rejected."
     },
     {
       "date": "2026-07-23",
