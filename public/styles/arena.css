@@ -346,11 +346,18 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-line-a{stroke:var(--acid);color:var(--acid)}
 .ap-line-b{stroke:var(--cyan);color:var(--cyan)}
 .ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.2;stroke-opacity:.8;color:#ffd166}
-.ap-line-smh{stroke:var(--magenta);stroke-dasharray:2 4;stroke-width:1.2;stroke-opacity:.8;color:var(--magenta)}
+.ap-line-smh{stroke:var(--blue);stroke-dasharray:2 4;stroke-width:1.2;stroke-opacity:.8;color:var(--blue)}
 .ap-dot{stroke:none}
-.ap-end-dot{stroke:none}
-.ap-end-leader{stroke-width:1;stroke-dasharray:1.5 2;opacity:.5}
-.ap-end-label{font:700 11px/1 var(--font-mono);letter-spacing:.01em}
+/* end-of-line HUD readouts: a glowing pill (dark backing + currentColor
+   border/text) fed by the series' own color, plus a glowing marker dot at
+   the true line-end and a dashed leader when decluttering had to nudge the
+   label away from it -- same "neon terminal readout" language as the Level
+   Ladder's .lad-px/.lad-lab chips, not a bare color:text label. */
+.ap-end-chip{filter:drop-shadow(0 0 4px currentColor)}
+.ap-end-leader{stroke:currentColor;stroke-width:1;stroke-dasharray:1.5 2;opacity:.6}
+.ap-end-chip-dot{fill:currentColor}
+.ap-end-chip-bg{fill:rgba(6,9,17,.92);stroke:currentColor;stroke-width:1}
+.ap-end-chip-text{fill:currentColor;font:800 11px/1 var(--font-mono);letter-spacing:.02em}
 /* auto-fit/minmax (not a hardcoded 1fr 1fr) so this works whether the
    ledger has 2 (Season 1, A/B) or 3+ (Season 2, S/P/T) models — see
    arenaAutopilot.js's renderModels(), Part 4 §18.2.3 */

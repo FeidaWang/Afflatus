@@ -141,34 +141,45 @@ import { declutter1D } from '../lib/ladderLayout.js';
       const y = pad + (i / 3) * (H - pad * 2);
       grid += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${PLOT_W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/>`;
     }
+    // SMH used to share T·ATLAS's magenta -- five series need five
+    // distinguishable colors, so the benchmark pair now takes the two
+    // palette hues no model uses: gold for SPY, blue for SMH.
+    const SPY_COLOR = '#ffd166', SMH_COLOR = 'var(--blue)';
     let s = grid;
-    s += `<g class="ap-line-spy">${buildPath(spy, domain, PLOT_W, H, pad, '#ffd166')}</g>`;
-    s += `<g class="ap-line-smh">${buildPath(smh, domain, PLOT_W, H, pad, 'var(--magenta)')}</g>`;
+    s += `<g class="ap-line-spy">${buildPath(spy, domain, PLOT_W, H, pad, SPY_COLOR)}</g>`;
+    s += `<g class="ap-line-smh">${buildPath(smh, domain, PLOT_W, H, pad, SMH_COLOR)}</g>`;
     modelSeries.forEach(({ key, series }, i) => {
       s += `<g class="ap-line-model">${buildPath(series, domain, PLOT_W, H, pad, colorFor(key, i))}</g>`;
     });
 
-    // end-of-line value chips: one per model + SPY/SMH, at their true final
-    // Y position, decluttered (same 1D declutter the TA Level Ladder uses)
-    // so converged values -- e.g. day 1, everyone still near $10,000 --
-    // never overlap. A short leader connects a nudged label back to its
-    // true line-end when they diverge.
+    // end-of-line HUD readouts: one glowing pill per model + SPY/SMH, at
+    // their true final Y position, decluttered (same 1D declutter the TA
+    // Level Ladder uses) so converged values -- e.g. day 1, everyone still
+    // near $10,000 -- never overlap. A short leader connects a nudged pill
+    // back to its true line-end when they diverge.
     const endItems = [
       ...modelSeries.map(({ key, series }, i) => ({ color: colorFor(key, i), pt: series[series.length - 1] })),
-      { color: '#ffd166', pt: spy[spy.length - 1] },
-      { color: 'var(--magenta)', pt: smh[smh.length - 1] },
+      { color: SPY_COLOR, pt: spy[spy.length - 1] },
+      { color: SMH_COLOR, pt: smh[smh.length - 1] },
     ].filter((it) => it.pt);
     const trueYs = endItems.map((it) => scalePoint(it.pt, domain, PLOT_W, H, pad).y);
-    const labelYs = declutter1D(trueYs, { minGap: 13 });
+    const labelYs = declutter1D(trueYs, { minGap: 18 });
     let endLabelsHtml = '';
     endItems.forEach((it, i) => {
       const trueY = trueYs[i], labelY = labelYs[i];
       const lineX = PLOT_W - pad + 2;
+      const txt = fmtUsd(it.pt.equity);
+      const tw = txt.length * 6.6 + 12;
+      const chipX = PLOT_W - pad + 8;
+      let g = `<g class="ap-end-chip" style="color:${it.color}">`;
       if (Math.abs(labelY - trueY) > 2) {
-        endLabelsHtml += `<line x1="${lineX.toFixed(1)}" y1="${trueY.toFixed(1)}" x2="${lineX.toFixed(1)}" y2="${labelY.toFixed(1)}" class="ap-end-leader" style="stroke:${it.color}"/>`;
+        g += `<line x1="${lineX.toFixed(1)}" y1="${trueY.toFixed(1)}" x2="${lineX.toFixed(1)}" y2="${labelY.toFixed(1)}" class="ap-end-leader"/>`;
       }
-      endLabelsHtml += `<circle cx="${(PLOT_W - pad).toFixed(1)}" cy="${trueY.toFixed(1)}" r="2.2" fill="${it.color}"/>`
-        + `<text x="${(PLOT_W - pad + 8).toFixed(1)}" y="${(labelY + 3.4).toFixed(1)}" class="ap-end-label" style="fill:${it.color}">${fmtUsd(it.pt.equity)}</text>`;
+      g += `<circle cx="${(PLOT_W - pad).toFixed(1)}" cy="${trueY.toFixed(1)}" r="2.4" class="ap-end-chip-dot"/>`;
+      g += `<rect x="${chipX.toFixed(1)}" y="${(labelY - 8.5).toFixed(1)}" width="${tw.toFixed(1)}" height="17" rx="3" class="ap-end-chip-bg"/>`;
+      g += `<text x="${(chipX + 6).toFixed(1)}" y="${(labelY + 3.6).toFixed(1)}" class="ap-end-chip-text">${txt}</text>`;
+      g += '</g>';
+      endLabelsHtml += g;
     });
     s += endLabelsHtml;
 
@@ -176,8 +187,8 @@ import { declutter1D } from '../lib/ladderLayout.js';
     $('apChart').innerHTML = s;
     $('apLegend').innerHTML = [
       ...keys.map((k, i) => [colorFor(k, i), labelFor(k), false]),
-      ['#ffd166', 'SPY', true],
-      ['var(--magenta)', 'SMH', true],
+      [SPY_COLOR, 'SPY', true],
+      [SMH_COLOR, 'SMH', true],
     ].map(([color, label, dash]) => `<span><i style="border-top-color:${color}${dash ? ';border-top-style:dashed' : ''}"></i>${label}</span>`).join('');
     chartCtx = { modelSeries, spy, smh, domain, viewW: W, plotW: PLOT_W, pad };
     bindChartTooltip();
