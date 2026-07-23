@@ -15,3 +15,4 @@ import './arena.js';
 import './arenaPicks.js';
 import './arenaTech.js';
 import './arenaAutopilot.js';
+import './arenaDigest.js';

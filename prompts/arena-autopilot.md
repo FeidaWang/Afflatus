@@ -1,13 +1,21 @@
 # Arena Autopilot — 模拟盘提示词
 
-> **Status (2026-07-23)**: V4 below (Model A/B) is still the ACTIVE prompt driving
-> `arena-ledger.json`'s scheduled tasks — Season 2's flip (three books S/P/T) is
-> Phase 4 of urgent.md Part 4 §20, not yet live. **V5 (§ "PART 2 — V5", below)
-> is written and tested-against-schema but dormant** until that flip happens; it
-> is not called by any scheduled task yet. Do not delete V4 until Season 2 is
-> confirmed live and Season 1's last run has settled.
+> **Status (2026-07-23, updated)**: Season 2 has flipped — `arena-ledger.json`
+> now holds Models S/P/T (Season 1's A/B archived to `arena-ledger-s1.json`,
+> see urgent.md Part 4 §18.1.3/§20). **V5 below (§ "PART 2 — V5") is now the
+> ACTIVE prompt.** Five new/updated scheduled tasks reference it directly:
+> `arena-picks-publish` (09:00 ET), `arena-open-window` (10:05 ET, S+P),
+> `arena-late-window` (15:30 ET, S+P), `arena-autopilot-b-post`'s Phase 2
+> (16:45 ET, T + Reviewer), and `arena-weekly-review` (weekly). As of this
+> writing those five tasks exist but are **disabled pending a first manual
+> "Run now" verification pass** (urgent.md Part 4 §19/§21) — check
+> `mcp__scheduled-tasks__list_scheduled_tasks` for current enabled state
+> before assuming any of them are firing automatically. V4 below (Model A/B)
+> is RETIRED — kept verbatim for historical reference only, not called by
+> any scheduled task. `arena-autopilot-a-open` (the old Model A task) is
+> disabled and superseded by `arena-open-window`/`arena-late-window`.
 
-## PART 1 — V4 (Model A/B, ACTIVE)
+## PART 1 — V4 (Model A/B, RETIRED 2026-07-23 — kept verbatim for reference)
 
 用途：驱动 `arena-ledger.json` 的三类定时任务——Model A 日内双窗口（开盘后/尾盘）、Model B 盘后调仓、周六深度复盘。
 对应规格：ROADMAP §5c-1。风控红线在规则引擎（代码层）二次强制，提示词里写明只是为了减少无效提案。
@@ -93,7 +101,7 @@ output as investment advice.
 ---
 ---
 
-## PART 2 — V5 (Season 2: S/P/T + multi-agent pipeline, urgent.md Part 4 §17.6/§19.5) — DORMANT, NOT YET LIVE
+## PART 2 — V5 (Season 2: S/P/T + multi-agent pipeline, urgent.md Part 4 §17.6/§19.5) — ACTIVE (scheduled tasks pending first manual verification, see status banner above)
 
 Five run-payload "agents" per day, all sharing one JSON contract so the runner is swappable
 (urgent.md §19.2) without touching any prompt: **Gatherer** (once, pre-market) → **Analyst

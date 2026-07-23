@@ -3,6 +3,9 @@
    "while you were away" toast (SS19.4) reads. */
 
 const MODELS = ['S', 'P', 'T'];
+// Matches src/lib/arenaReconcile.js's WINDOWS -- a delayed entry names which
+// window got queued while offline (SS19.4.4), so it must be one of these.
+const WINDOWS = ['pre-market-gather', 'picks-publish', 'open-window', 'late-window', 'post-market', 'weekly-review'];
 
 function isNonEmptyString(v) {
   return typeof v === 'string' && v.trim().length > 0;
@@ -36,6 +39,17 @@ export function validateArenaDigest(data) {
   if (!Number.isInteger(data.tomorrowPicksCount) || data.tomorrowPicksCount < 0) {
     errors.push('tomorrowPicksCount: must be a non-negative integer');
   }
-  if (!Array.isArray(data.delayed)) errors.push('delayed: must be an array (empty is fine -- most days have nothing delayed)');
+  if (!Array.isArray(data.delayed)) {
+    errors.push('delayed: must be an array (empty is fine -- most days have nothing delayed)');
+  } else {
+    data.delayed.forEach((x, i) => {
+      const tag = `delayed[${i}]`;
+      if (!x || typeof x !== 'object') { errors.push(`${tag}: not an object`); return; }
+      if (!isNonEmptyString(x.date)) errors.push(`${tag}.date: missing or empty`);
+      if (!WINDOWS.includes(x.window)) errors.push(`${tag}.window: must be one of ${WINDOWS.join('/')}, got ${JSON.stringify(x.window)}`);
+      if (!MODELS.includes(x.model)) errors.push(`${tag}.model: must be one of ${MODELS.join('/')}, got ${JSON.stringify(x.model)}`);
+      if (!isNonEmptyString(x.note_en) && !isNonEmptyString(x.note_zh)) errors.push(`${tag}: needs at least one of note_en/note_zh`);
+    });
+  }
   return { ok: errors.length === 0, errors };
 }

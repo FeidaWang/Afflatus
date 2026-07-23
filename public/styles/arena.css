@@ -375,3 +375,33 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-log-row.sell{border-left-color:var(--down)}
 .ap-log-row.rej{border-left-color:var(--muted);color:var(--muted);font-style:italic}
 @media(max-width:1080px){.ap-models{grid-template-columns:1fr}}
+
+/* ===== Part 4 §19.4.3 · daily digest toast + drawer ("while you were away") ===== */
+/* Reuses the OpenAI-derived viz tooltip tokens (--viz-tip-*) rather than
+   inventing a new surface — same near-black panel, same radius, no arrows. */
+.digest-toast{position:fixed;left:16px;bottom:16px;z-index:70;display:flex;align-items:center;gap:10px;max-width:360px;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);border-radius:var(--viz-tip-radius);padding:11px 12px;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:digestIn .25s ease}
+@keyframes digestIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.digest-toast{animation:none}}
+.digest-toast-body{cursor:pointer;color:var(--text);font:600 12.5px/1.5 var(--font-mono)}
+.digest-toast-close{flex:none;background:none;border:0;color:var(--muted);font-size:16px;line-height:1;cursor:pointer;padding:2px 4px}
+.digest-toast-close:hover{color:var(--text)}
+.digest-drawer{position:fixed;inset:0;z-index:80;display:flex;justify-content:flex-end}
+.digest-drawer-backdrop{position:absolute;inset:0;background:rgba(2,4,10,.6)}
+.digest-drawer-panel{position:relative;width:min(360px,86vw);height:100%;background:var(--viz-tip-bg);border-left:1px solid var(--viz-tip-line);box-shadow:-8px 0 30px rgba(0,0,0,.5);display:flex;flex-direction:column;animation:digestSlide .2s ease}
+@keyframes digestSlide{from{transform:translateX(16px);opacity:0}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){.digest-drawer-panel{animation:none}}
+.digest-drawer-hd{display:flex;align-items:center;gap:6px;padding:14px 16px;border-bottom:1px solid rgba(120,140,200,.16);font:700 12px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase;color:var(--cyan)}
+.digest-drawer-close{margin-left:auto;background:none;border:0;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;padding:2px 4px}
+.digest-drawer-close:hover{color:var(--text)}
+.digest-drawer-body{flex:1;overflow:auto;padding:14px 16px}
+.digest-note{color:var(--muted);font:500 12px/1.5 var(--font-mono);margin:0 0 12px}
+.digest-books{display:flex;flex-direction:column;gap:10px}
+.digest-book{border:1px solid rgba(120,140,200,.2);background:var(--panel-2);padding:10px 11px}
+.digest-book-hd{display:flex;justify-content:space-between;font:700 11px/1 var(--font-hud);letter-spacing:.06em}
+.digest-book-pnl.up{color:var(--up)} .digest-book-pnl.down{color:var(--down)}
+.digest-book-meta{color:var(--muted);font:600 10px/1 var(--font-hud);margin-top:4px}
+.digest-book-note{margin:6px 0 0;color:#c6cfea;font:500 11.5px/1.5 var(--font-mono)}
+.digest-delayed{margin-top:12px;border-left:2px solid #ffd166;padding-left:10px}
+.digest-delayed-hd{color:#ffd166;font:700 10px/1 var(--font-hud);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.digest-delayed-list{margin:0;padding-left:16px;color:var(--muted);font:500 11px/1.6 var(--font-mono)}
+.digest-tomorrow{margin:14px 0 0;color:var(--muted);font:600 11px/1.5 var(--font-mono);border-top:1px solid rgba(120,140,200,.14);padding-top:10px}
