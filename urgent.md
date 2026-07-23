@@ -321,3 +321,209 @@ document.addEventListener('load', function (e) {
 ## Done (Part 3) =
 
 Every card with a verifiable official press asset shows a current keynote/product image (GTC 2026 Vera Rubin, CES 2026 SK hynix, Feb-2026 Samsung HBM4, High-NA EUV, Fable 5 / GPT-5.6 launch art), photos fade in instead of popping, the one dead URL is gone, and logo centering is guaranteed by grid construction with optical size normalization — while every company without a legitimate asset keeps its honest brand-color card.
+
+---
+---
+
+# PART 4 — Arena 2.0: Three AI Trading Models · Full-Market Universe · Picks-Gated Data Layer · Run Automation
+
+> Requested 2026-07-23. **Status: Phases 1-4 (Engine §17.5, Data+dry-run §18.1/§19.5, API gating §18.4, UI pivot §18.2-18.3/§20 step 4) shipped 2026-07-23 — see checkmarks below. `public/arena-ledger.json` has been flipped to Season 2 (S/P/T, day 0, $10,000 each — see §18.1.3) via `scripts/bootstrap-season2.mjs`; Season 1 archived byte-for-byte at `arena-ledger-s1.json`. The picks board ("Today's Recommended Trades") replaces the old watchlist chip row, the allowlist is now picks-only (tightened from Phase 3's temporary picks∪universe union — see §18.4.1), and a full admin-unlock UI exists client-side (inline unlock form + `sessionStorage` key + ADMIN chip). Phase 5-6 (§19 automation, final §21 pass) not started: ARENA_ADMIN_KEY still isn't set in Vercel (unlock UI is wired but inert until you add it), and the three books are static/empty — no scheduled task produces real picks/trades yet, so Season 2 sits at day 0 until Phase 5 lands.**
+> Touches: `arena.html`, `src/pages/arenaAutopilot.js`, `src/pages/arenaTech.js`, `src/lib/arenaRules.js`, `src/lib/arenaRun.js`, `api/quote.js`, `api/history.js` (+2 new api files), `public/arena-*.json` (+3 new data files), `prompts/arena-autopilot.md` (→ v5), `scripts/apply-arena-run.mjs`, scheduled-task definitions.
+> Constraints carried forward: design.md is SSOT (palette/fonts/narrative shell untouched); arenaRules.js stays the one place hard limits live; "LLM proposes, code settles, git is the database" stays the architecture; CI gates (vitest / typecheck / validate-data / bundle budget) remain blocking.
+
+## 16. Assumptions & reality mapping (read first)
+
+Per CLAUDE.md §1, stating assumptions instead of silently designing around them:
+
+1. **This stays a simulation.** The site's own footer promises "no real money, no real orders" and every disclaimer says "not investment advice". Nothing below places real trades. If you ever want real execution, that is a different project with a broker API, not a refactor of this one.
+2. **The five reference strategies are institutional-scale; we build honest daily/windowed analogs.** Millisecond NLP execution, LSTM/Transformer inference on live Limit Order Book feeds, and satellite-imagery pipelines are not reachable from a static Vercel site on free-tier Finnhub (60 req/min, quotes only — no LOB depth) and Twelve Data (~8 req/min, ~800 credits/day). The mapping table in §17.1 says exactly which *mechanic* of each strategy survives and which is explicitly out of scope. The site copy must say "-inspired", not claim HFT.
+3. **The LLM-proposes / code-settles split is non-negotiable.** All three new models produce JSON proposals; `arenaRules.js` validates and `arenaRun.js` settles. "RL execution" and "multi-agent" are therefore implemented as (a) a deterministic, tunable execution policy in code and (b) a pipeline of specialized scheduled-task runs — not as trained neural policies. Flagged honestly in §17.5/§17.6.
+4. **Season 1 (Models A/B) is frozen, not deleted.** `arena-ledger.json` day 11 / season 1 gets archived to `public/arena-ledger-s1.json`; Season 2 seeds three fresh $10,000 books. Old predlog entries keep their history.
+5. **The admin password is a quota gate, not a security boundary.** It protects free-tier API credits from drive-by visitors. It is not auth; treat it accordingly (§18.4).
+6. **Model naming**: ledger keys stay single-letter for schema continuity — `S` / `P` / `T`, codenames ORACLE / PULSE / ATLAS (fits the TRAXUS//CVKM shell).
+
+---
+
+## 17. Task 1 — the three trading models
+
+### 17.1 Synthesis matrix — 5 strategies → 3 models
+
+| # | Reference strategy | What survives here | Model | What is explicitly NOT built |
+| --- | --- | --- | --- | --- |
+| 1 | NLP sentiment & event-driven | LLM digests news/filings/social at run windows; per-symbol sentiment score + event tags drive entries | **S (ORACLE)**, feeds P/T | Millisecond reaction; direct X firehose (no free API) — use WebSearch + RSS + SEC EDGAR full-text |
+| 2 | Deep-learning HFT on LOB | Intraday micro-structure *features* computable from free data: open gap, first-30-min range, VWAP drift, volume surge vs 20d avg, pivot breaks | **P (PULSE)** | Actual LOB depth (not in Finnhub free tier), sub-minute inference, any claim of "HFT" |
+| 3 | RL execution / slippage minimization | Deterministic execution policy layer in `arenaRules.js`: order slicing across the two windows, participation cap, limit-vs-market decision by spread proxy; parameters tuned offline against the fill simulator | execution layer for **all books** | Online RL training loop; a learned policy network. This is a hand-tuned policy — the *objective* (minimize modeled slippage) is the RL part we keep |
+| 4 | Alternative data fusion | Free, legal alt-data proxies: SEC EDGAR filings/insider Form 4s, Finnhub free endpoints (earnings calendar, recommendation trends), Google Trends via WebSearch digest | **T (ATLAS)** | Satellite imagery, credit-card panels, supply-chain feeds (all paid/licensed) |
+| 5 | Multi-agent systems | Pipeline of specialized runs with distinct prompts sharing one payload contract: Gatherer → 3 Analysts → Risk (code) → Executioner (code) → Reviewer | **architecture layer** (§17.6) | Free-form agent-to-agent negotiation; agents share state only through committed JSON artifacts |
+
+### 17.2 Model S — ORACLE (sentiment & event book)
+
+- **Sources (per run)**: WebSearch news sweep (macro + top movers), SEC EDGAR latest 8-K/Form-4 full-text hits, earnings-calendar proximity, the existing arena-news briefing pipeline.
+- **Signal**: per-symbol `{sentiment: -1..1, eventTag: earnings|guidance|M&A|litigation|macro|product, halfLifeDays}`. Enters on strong-sentiment + fresh-event combos; exits on sentiment decay (half-life) or event resolution. Black-swan behavior: a `riskOff` flag in the gathered digest (VIX spike / index gap > 1.5%) forces HOLD/SELL proposals only — the daily circuit breaker in code remains the hard stop.
+- **Cadence**: pre-market picks + both intraday windows (can react to news at 10:05 and 15:30 ET; that is the honest floor of "event-driven speed" here).
+- **Risk personality** (`LIMITS.PER_MODEL.S`): stop 8% (inherits A's), max 6 positions, confidence floor 0.70 (sentiment is noisy), weekly trade cap 20.
+
+### 17.3 Model P — PULSE (intraday structure book)
+
+- **Sources**: `/api/quote` snapshots at window time, Twelve Data 5-min candles for its candidate list only (budgeted, §18.5), 20-day daily history for baselines.
+- **Signal**: the §17.1-row-2 feature vector, computed *in code* (`src/lib/arenaFeatures.js`, new, pure + tested — the LLM never computes math it can hallucinate). LLM's job: rank the pre-screened breakout/reversion candidates and size them; features and thresholds arrive in the payload.
+- **Cadence**: 10:05 ET window (open-range break) + 15:30 ET window (late-day momentum / mean-revert close). Positions held hours→2 days; hard rule: proposals must include `exitBy` (date) — settle sweeps it like a stop.
+- **Risk personality**: stop 5% (tightest), max 5 positions, slippage tier A (5 bps), weekly trade cap 30.
+
+### 17.4 Model T — ATLAS (alt-data fusion book)
+
+- **Sources**: EDGAR insider clusters (≥2 insider buys/10d), Finnhub recommendation-trend deltas, earnings-surprise history, Google-Trends-style demand proxies from the Gatherer digest, sector breadth from existing sectors-data.
+- **Signal**: multi-factor conviction score fusing ≥2 independent alt-signals ("fusion" is the point — single-signal entries are rejected by prompt AND by a `signals.length >= 2` check in validation). Long-horizon: weeks. Macro-shift re-weighting: the Gatherer digest carries a regime tag (`risk-on | neutral | risk-off`); T's prompt re-weights factor importance per regime — this is the "agents adapt to macro environment" mechanic in deployable form.
+- **Cadence**: post-market only (16:45 ET) + Saturday deep review.
+- **Risk personality**: stop 15% (inherits B's), max 8 positions, turnover target <25%/mo, only opens Tue/Thu (inherits B's day gate).
+
+### 17.5 Rules-engine changes (`src/lib/arenaRules.js` — surgical)
+
+- [x] 17.5.1 `LIMITS` gains `PER_MODEL: {S:{...}, P:{...}, T:{...}}` for stop/maxPositions/confidenceFloor/caps; shared invariants (long-only, 20% position cap, 5% cash floor, 3% daily breaker, 20% season reset) stay global and untouched. **(done — every lookup checks `PER_MODEL[model]` first and falls back to the legacy `A`/`B` fields/constants, so Season 1 behavior is byte-identical; verified by the full pre-existing test suite passing unchanged)**
+- [ ] 17.5.2 Universe check v2 (see §18.1): from fixed-list membership → `SYMBOL_RE` + tradability screen (last close ≥ $3, avgDollarVol ≥ $5M from the payload's screen data; both enforced in code, not prompt). **(schema half done in Phase 2 — `arena-universe.json` v2 now carries real `tradability: {minLastClose, minAvgDollarVol}` floors, see §18.1.2 — but `validateOrder`/`arenaRun.js` don't read them yet; still deferred, now to Phase 3, since it needs real per-symbol `avgDollarVol` flowing through the run payload, which is the API-gating layer's job)**
+- [x] 17.5.3 New execution-policy module `src/lib/arenaExec.js` (pure, tested): order slicing (orders > 10% of book equity split across the day's remaining windows), participation cap vs avg volume, slippage model upgraded from flat tier to `f(orderValue, avgDollarVol)` square-root impact curve. `simulateFill` calls it. **Honest note for the page copy: "RL-inspired execution policy (tuned offline), not a trained agent."** **(done — `sliceOrder`/`capByParticipation`/`impactSlippageBps`/`planExecution` all pure + tested; `simulateFill(order, model, execOpts)` calls `impactSlippageBps` only when `execOpts.avgDollarVol` is supplied — no existing caller passes it yet, so A/B fills are unchanged; dormant until the Phase 2 digest pipeline supplies real volume data, per the module's own header comment)**
+- [x] 17.5.4 `arenaRun.js`: accept model keys S/P/T; `exitBy` sweep for P; `signals.length>=2` gate for T; season-2 bootstrap path (archive S1, seed 3×$10k). **(done — `BOOKS = ['A','B','S','P','T']`; new `checkExitBySweep()` in arenaRules.js wired into the run loop right after the stop-loss sweep, a no-op for any position without `exitBy`; Model T's `signals.length>=2` gate lives in `validateOrder`; new `bootstrapSeason2()` in arenaRun.js is pure/tested but NOT invoked against `public/arena-ledger.json` — that flip is Phase 4 per §20, after data/pipeline/API work lands and is dry-run)**
+- [x] 17.5.5 Tests first (CLAUDE.md §4): extend `tests/arenaRules.test.js` + new `tests/arenaExec.test.js`, `tests/arenaFeatures.test.js` — write failing tests for every new limit before implementing. **(done — 815/815 vitest passing site-wide, up from 753; every new PER_MODEL limit, the T signals gate, the exitBy sweep, and bootstrapSeason2 each have a dedicated rejecting/accepting test; `npm run typecheck` clean; `npm run build` clean (alt-outDir workaround for the pre-existing sandbox EPERM, same as Parts 1-3); `check-no-new-important.mjs` and `check-bundle-budget.mjs` both green, arena chunk 41.3kB/300kB)**
+
+### 17.6 Multi-agent pipeline — roles → concrete artifacts
+
+One agent = one scheduled run with one prompt section; hand-offs are committed JSON (auditable, replayable, diff-able — no hidden shared state):
+
+| Agent | Runs at | Reads | Writes |
+| --- | --- | --- | --- |
+| Gatherer | 08:00 ET | web, EDGAR, quotes | `arena-digest-input.json` (news digest, regime tag, screen data, riskOff flag) |
+| Analyst S/P/T | window times (§19.1) | digest + own ledger slice + features | `run-input.json` proposal per book |
+| Risk Assessor | same run, code | proposal | accept/reject via `arenaRules.js` (already exists — the "agent" is deterministic code, deliberately) |
+| Executioner | same run, code | accepted orders | ledger mutation via `arenaExec.js` fill sim |
+| Reviewer | 16:45 ET + Sat | all books, predlog | review_zh/en, metrics, `arena-picks.json` for tomorrow |
+
+---
+
+## 18. Task 2 — UI & data architecture refactor (`arena.html`)
+
+### 18.1 Data files (all validated in `scripts/validate-data.mjs`, CI-gated)
+
+- [x] 18.1.1 **NEW `public/arena-picks.json`** — the product of the daily pipeline and the page's new spine:
+```json
+{
+  "date": "2026-07-23", "generatedAt": "...", "regime": "risk-on",
+  "models": {
+    "S": [{ "sym": "NVDA", "side": "long", "confidence": 0.78,
+            "entry": 182.4, "stop": 167.8, "target": 199.0,
+            "thesis_en": "…", "thesis_zh": "…", "signals": ["8-K", "sentiment+0.6"] }],
+    "P": [ … ], "T": [ … ]
+  },
+  "quoteAllowlist": ["NVDA", "…"]   // derived: picks ∪ open positions ∪ SPY/QQQ/SMH — the ONLY symbols the page auto-fetches
+}
+```
+- [x] 18.1.2 `arena-universe.json` v2: `mode: "market"` + `exclusions` + tradability floors + benchmarks; the fixed symbol list retires to `arena-universe-s1.json`. `validate-data.mjs` updated for both shapes. **(done — real S&P 500 constituent list, 503 symbols across all 11 GICS sectors, fetched from Wikipedia 2026-07-23 + SPY/QQQ/SMH benchmarks = 506 `symbols`; documented in the file itself as an honest "S&P 500 as full-market proxy" choice, not literally every NYSE/NASDAQ ticker — see the file's own `note_en`/`source_note_en`. Season 1's 30-symbol list archived byte-for-byte at `arena-universe-s1.json`. New `src/lib/validateArenaUniverse.js` validates the v2 shape only — v1/S1 stays unvalidated/frozen, matching how arena-ledger.json/arena-predlog.json are already excluded)**
+- [x] 18.1.3 `arena-ledger.json`: `models: {S,P,T}`; Season-1 file archived as above; `version` bumped; frontend must not assume exactly two models (§18.2.3). **(done — `scripts/bootstrap-season2.mjs` (new, idempotent CLI) ran once: archived Season 1 (day 11, 10 trades) byte-for-byte to `public/arena-ledger-s1.json`, then wrote a fresh Season 2 ledger to `public/arena-ledger.json` — `season:2, day:0`, `models:{S,P,T}` each `{startEquity:10000, cash:10000, equity:10000, positions:[], trades:[], ...}`. `bootstrapSeason2()` also gained optional `note_en`/`note_zh` overrides. `arenaAutopilot.js` was generalized to N models — see §18.2.3 — before this flip, so the frontend never assumed exactly two)**
+- [x] 18.1.4 **NEW `public/arena-runlog.json`** — append-only run archive: `{runs: [{date, window, model, status: done|missed|queued, ordersProposed, ordersFilled, note}]}`. This is both the audit trail and the offline-catch-up source (§19.3). **(done — `src/lib/validateArenaRunlog.js` enforces the `(date, window, model)` uniqueness invariant §19.3.1 depends on; one real dry-run day written, see §20 step 2 below)**
+- [x] 18.1.5 **NEW `public/arena-daily-digest.json`** — end-of-day summary for the notification feature (§19.4): what each book did, P&L, misses, tomorrow's picks count. **(done — `src/lib/validateArenaDigest.js`; one real dry-run day written)**
+
+### 18.2 `arena.html` + page modules
+
+- [x] 18.2.1 **Watchlist → "Today's Recommended Trades"**: `#taWatch` chips row is replaced by a picks board (new `src/pages/arenaPicks.js`): grouped by model (S/P/T color-coded to match their equity-curve colors), each card = sym, side, confidence bar, entry/stop/target ladder, thesis (en/zh via existing `data-en/data-zh` i18n), signals tags. Clicking a pick loads the existing TA panel (`arenaTech.js` `select()` — reuse, don't rewrite). **(done — new `#picksDash` section in `arena.html` between `.hero` and `.ta`; `arenaPicks.js` renders 3 columns from `arena-picks.json`, empty-state "no new position today" per book, date/regime chips + a stale-pool amber banner when the picks date isn't today. Card click/Enter dispatches `arena-pick-select` CustomEvent (not a direct import — same decoupled pattern as `afflatus-lang`); `arenaTech.js` listens and calls its existing internal `select()` unchanged. Old `#taWatch`/`renderWatch()`/`arena-universe-s1.json`-as-chip-source machinery fully removed from `arenaTech.js` and its CSS, since the picks board now owns that role)**
+- [x] 18.2.2 Search stays but is gated: searching a symbol **not** in `quoteAllowlist` renders the panel shell with a lock state — "outside today's pool — admin unlock to fetch live data" — instead of firing `/api/quote`. Unlock flow in §18.4. **(done — search bar untouched under a relabeled "Search Any S&P 500 Ticker" header; gated symbols render the existing 🔒 lock message plus the new inline unlock form from §18.4.3)**
+- [x] 18.2.3 `arenaAutopilot.js`: generalize from hardcoded `#apModelA/#apModelB` to N panels rendered from `ledger.models` keys; chart draws one line per model + SPY/SMH dashes (Part 1's viz tokens/tooltip already generalize); legend from the same loop. Section subtitle and hero `brief` copy rewritten for three books + full-market universe ("-inspired" wording per §16.2). **(done — `#apModels` container populated dynamically per model key, `MODEL_COLOR`/`MODEL_LABEL` maps cover S/P/T (and legacy A/B), chart/legend/tooltip all loop over `Object.keys(models)`; hero `.brief` and header subtitle rewritten for "three simulated LLM ledgers... trade the full S&P 500"; `.ap-models` CSS switched to `auto-fit(minmax(260px,1fr))`)**
+- [x] 18.2.4 Footer disclaimer updated: new data sources (EDGAR), three books, unchanged "no real money" promise. **(done — footer now says "three simulated $10,000 ledgers (S/P/T)" and mentions the admin-gated live-data policy; "no real money, no real orders" promise kept verbatim)**
+- [x] 18.2.5 Out of scope (design.md red lines, same as Part 1 §3.3): `#bgCanvas`, palette, fonts, page-turn shell, briefing modal. **(respected — none of these touched)**
+
+### 18.3 Frontend fetch budget (the actual optimization)
+
+- [x] 18.3.1 On load: fetch static JSONs (free — same-origin, CDN-cached) → render picks + ledgers with **zero** API calls. **(done — `arenaPicks.js` and `arenaAutopilot.js` boot loaders only fetch `/arena-picks.json` and `/arena-ledger.json`; no `/api/*` call happens until a symbol is selected)**
+- [x] 18.3.2 Live quotes: only `quoteAllowlist` symbols, only while market open (existing clock logic), **only for the symbol currently selected in the panel** — a pick card shows plan-time entry/stop/target until clicked (matches Part 1's lazy-render ethos). **(done for the "selected panel only" part — `fetchQuote`/`fetchHistory` fire only from `select()`, never speculatively. NOT done: no periodic 60s poll loop exists for the open panel — this is a pre-existing gap in `arenaTech.js` predating Part 4, not something this phase added or was asked to add; flagging honestly rather than silently narrowing scope)**
+- [x] 18.3.3 History (`/api/history`): only on panel open for allowlisted symbols; server cache already 1h (`s-maxage=3600`) — keep. **(untouched — verified by diff, `Cache-Control` header unchanged)**
+- [x] 18.3.4 Everything else = gated (renders from static JSON or shows lock state). No speculative prefetch. **(done — the only two live-data call sites, `fetchHistory`/`fetchQuote`, both go through the allowlist gate; no other network calls exist)**
+
+### 18.4 API layer — allowlist + admin unlock
+
+- [x] 18.4.1 `api/quote.js` / `api/history.js` v2: before the upstream fetch, resolve the day's allowlist — module-level cached fetch of `https://feida.au/arena-picks.json` (TTL 5 min; functions can't read `public/` from their bundle, self-fetch is the simple route). Symbol in allowlist → proceed as today. Not in allowlist → require admin header. **(done, and Phase 4 tightened it exactly as flagged: `resolveAllowlist({picks})` is now picks-only — the Phase 3 picks∪universe union was a deliberate temporary safety measure documented in its own header comment, kept only until the picks board (§18.2.1) shipped as the primary no-key browsing surface. Both API files simplified to fetch only `arena-picks.json` (no longer also fetching `arena-universe.json`, since it's no longer consulted). `tests/arenaAccess.test.js` rewritten to assert picks-only behavior. Self-fetch uses `req.headers.host` for same-origin correctness on preview deployments, falling back to `feida.au` only if that header is somehow absent. Fetch failures degrade to an empty allowlist — `resolveAllowlist` never throws.)**
+- [x] 18.4.2 Admin check: header `x-arena-key`, constant-time compare (`crypto.timingSafeEqual`) against `ARENA_ADMIN_KEY` env var (Vercel → Settings → Env). Missing/wrong → `403 {error:'gated', hint:'symbol outside today\'s pool'}`. No token/JWT machinery — one shared secret over HTTPS is proportionate for a quota gate (§16.5); revoke = rotate env var. **(done — `checkAdminKey()` fails closed in every edge case: no env var set, no header sent, or a length mismatch all return `false` rather than throwing or granting access. `ARENA_ADMIN_KEY` is NOT yet set in Vercel — the feature is wired but inert until you add it under Project → Settings → Environment Variables. Response body/status match the spec exactly.)**
+- [x] 18.4.3 Frontend unlock: lock state (§18.2.2) opens a minimal password prompt; on success key is held in `sessionStorage` (`afflatus:arenaKey`) and sent on subsequent gated requests; a small "ADMIN" chip appears in `.strip`. Wrong key → inline error, no retry lockout client-side (the per-IP rate limit already covers brute-force economics). **(done — the lock message now includes an inline `#taUnlockForm` (password input + Unlock button) instead of just text; submitting stores the key via `sessionStorage['afflatus:arenaKey']` and immediately retries the gated symbol. `arenaKeyHeaders()` attaches `x-arena-key` to every `/api/quote`/`/api/history` call once a key is stored. `#adminChip` (🔓 ADMIN UNLOCKED) appears in the hero `.strip` when a key is held; click → `confirm()` → clears it and re-locks. A rejected key shows "that admin key was not accepted" instead of the generic gated message, without any client-side lockout — the existing per-IP rate limit is the only throttle, exactly as specified)**
+- [x] 18.4.4 Existing per-IP rate limits stay on both endpoints (they protect the upstream quota even from an admin session left open). **(untouched — verified by diff, both files' `checkRateLimit`/`RATE_LIMIT`/`hits` blocks are byte-identical to before)**
+- [x] 18.4.5 The `SYMBOL_RE` + params validation from D1 stays untouched. **(untouched — verified by diff)**
+
+**Incidental fix bundled into Phase 2** (superseded by Phase 4): expanding `arena-universe.json` to the full S&P 500 would have silently blown up `arena.html`'s watchlist chip row from 30 curated chips to 506 — noticed and fixed before shipping, via a temporary `arena-universe-s1.json`-backed chip row bridge. Phase 4's picks board (§18.2.1) now replaces that chip row entirely, so the bridge itself (`state.watchlist`/`renderWatch()`/`#taWatch`) has been removed from `arenaTech.js`; `arena-universe-s1.json` remains on disk only as a frozen historical record of Season 1's fixed trading domain (paired with `arena-ledger-s1.json`), no longer read by any page.
+
+**Action needed from you**: set `ARENA_ADMIN_KEY` in Vercel → Project → Settings → Environment Variables (any strong random string) to activate admin unlock server-side. Until then the gate still works (allowlisted symbols load fine; non-allowlisted ones correctly 403), it just means nobody — including you — can use `x-arena-key` to bypass it yet, since there's no matching secret to compare against.
+
+### 18.5 Quota budget (why this fits free tiers)
+
+| Consumer | Symbols | Frequency | Worst-case/day |
+| --- | --- | --- | --- |
+| Page live quotes | ~10–20 allowlisted | 60s poll, market hours, viewport-gated, `s-maxage=12` shared across visitors | ≪ 60/min Finnhub cap |
+| Pipeline quote snapshots | allowlist + candidates (~40) | 4 windows | ~160 calls |
+| Twelve Data history | P's candidates (~10 × 5-min) + panel opens (1h cached) | daily | ~100–200 of 800 credits |
+| Admin exploration | arbitrary | manual | bounded by rate limit + password |
+
+---
+
+## 19. Task 3 — automation, scheduling, offline handling
+
+### 19.1 Run windows (all times ET; runner must evaluate in `America/New_York`, never fixed UTC — DST)
+
+| Window | ET | Agent runs | Writes/commits |
+| --- | --- | --- | --- |
+| Pre-market gather | 08:00 Mon–Fri | Gatherer; skip on NYSE holidays (`nyse-holidays-2026.json` already in repo) | digest-input |
+| Picks publish | 09:00 | Analyst S pre-screen + Reviewer assemble picks | `arena-picks.json`, `arena-news.json` |
+| Open window | 10:05 | Analysts S + P propose → settle | ledger, runlog |
+| Late window | 15:30 | Analysts S + P propose → settle | ledger, runlog |
+| Post-market | 16:45 | Analyst T propose → settle; Reviewer: mark-to-market all, metrics, digest | ledger, runlog, daily-digest, predlog |
+| Weekly review | Sat 10:00 | Reviewer deep pass (existing weekly path in `arenaRun.js`) | reviews, prompt-version bumps |
+
+### 19.2 Runner architecture — decision needed from you
+
+Two viable runners for the LLM steps; the deterministic settle step (`apply-arena-run.mjs`) runs wherever the proposal was produced:
+
+- **(a) Cowork scheduled tasks on your Mac** (current pattern, e.g. push-arena-news). Pros: zero new infra, WebSearch built in, no API billing. Cons: machine asleep = missed window (why §19.3 exists).
+- **(b) GitHub Actions cron + Anthropic API**. Pros: always-on, ET-correct via `TZ`, commits natively. Cons: API token cost, needs a WebSearch substitute (Claude API web-search tool), secrets in GH.
+- **Recommended: hybrid.** (a) for all LLM windows now — catch-up logic makes misses harmless; (b) as a later migration once the pipeline is stable, starting with the Gatherer (most mechanical). Structure every prompt against the same `run-input.json` contract so the runner is swappable without touching the engine.
+- [ ] 19.2.1 Decide (a)/(b)/hybrid before implementing §19.3's runner-specific parts.
+
+### 19.3 Idempotency & offline catch-up (design center, not an edge case)
+
+- [ ] 19.3.1 **Run identity** = `(etDate, window, model)`. `arenaRun.js` already tracks `lastRunDate`; extend to per-window in the runlog. Re-running a completed window is a no-op (checked before settle) — makes catch-up and manual retries safe.
+- [ ] 19.3.2 **Catch-up on wake**: every run starts with `reconcile()`: walk NYSE calendar from last runlog entry to now; for each missed window append `{status:'missed'}` to runlog. Missed *proposal* windows are **not** retro-traded — no hindsight trades, ever (the honest rule; a backfilled "would have bought at 10:05" is fiction). Missed *mark-to-market* is backfilled from Twelve Data EOD closes so equity curves stay continuous, entries flagged `late:true`.
+- [ ] 19.3.3 **Outbox queue for offline commits**: settle writes results normally; if `git push` fails (no network), the run payload+result is copied to `scripts/outbox/<runId>.json` (gitignored). Next successful run flushes the outbox first (replay-safe via 19.3.1). Replaces the current push-arena-news.sh "hope the push works" pattern; that script gets the same treatment.
+- [ ] 19.3.4 Stale-data honesty on the page: if `arena-picks.json` date < today (pipeline down), the picks board renders a dimmed "yesterday's pool — pipeline offline" banner instead of pretending it's current. Ledger chip already shows `updated`.
+
+### 19.4 Notification / "while you were away" summary
+
+- [ ] 19.4.1 Post-market Reviewer commits `arena-daily-digest.json` (§18.1.5); deploy makes it live.
+- [ ] 19.4.2 Push channel (pick one, both cheap): (i) [ntfy.sh](https://ntfy.sh) topic — one `curl` in the post-market task, free, iOS/Android apps; (ii) email via the task itself. **Recommended: ntfy.sh** — no credentials in the repo, one line.
+- [ ] 19.4.3 On-site: arena page compares digest date vs `localStorage` last-seen; unseen digest → quiet toast ("3 trades settled while you were away · P +0.8%") linking to a digest drawer. Toast styling follows Part 1 tooltip tokens; no new palette.
+- [ ] 19.4.4 If the day had queued/offline runs (outbox flushed late), digest includes them under a "delayed" section — the queue is *visible*, not silent.
+
+### 19.5 Prompts — `prompts/arena-autopilot.md` → v5
+
+- [x] 19.5.1 Rewrite for three books (S/P/T personalities per §17.2–4), same byte-fixed System-Prompt discipline, same "you are STATELESS, payload is the world" rule, hard-rules section updated to PER_MODEL limits. Gatherer/Reviewer get their own sections with output JSON schemas. **(done — appended as "PART 2 — V5" in `prompts/arena-autopilot.md`, byte-fixed blocks for Gatherer + Analyst S/P/T + Reviewer (post-market/weekly), a shared run-payload shape, and a Chinese summary; V4 (Model A/B) is left completely untouched and stays the ACTIVE prompt — the file's new header banner says so explicitly so nobody deletes V4 before Season 1 is actually retired)**
+- [x] 19.5.2 Keep the V4 rule that prompts restate limits only to reduce wasted proposals — code remains the enforcer. **(done — every V5 hard-rules block says the risk engine is the real enforcer, same phrasing pattern as V4)**
+
+---
+
+## 20. Implementation order (each phase independently shippable, CI-green)
+
+1. **Engine** (§17.5): tests → `arenaFeatures.js`, `arenaExec.js`, PER_MODEL limits, S/P/T in `arenaRun.js`, season-2 bootstrap. No UI change yet.
+2. **Data + pipeline dry-run** (§18.1, §19.5): new JSON schemas + validators; run the pipeline manually for 2–3 days writing real `arena-picks.json` while the page still shows A/B — validates the loop before anyone sees it. **(schemas/validators done + ONE real dry-run day written 2026-07-23, grounded in actual news gathered via web search — see §18.1 checkmarks. Not yet 2-3 days; the page still shows A/B, untouched, exactly as planned. Continuing the dry-run for more days, or moving straight to Phase 3, is the natural next step.)**
+3. **API gating** (§18.4): ship allowlist + admin key while the page still auto-fetches only universe symbols (strictly less traffic than today; safe to ship early). **(done — see §18.4 checkmarks. Shipped as picks∪universe rather than picks-only, specifically to keep this step non-breaking before Phase 4's UI exists — see the note under 18.4.1.)**
+4. **UI pivot** (§18.2–18.3): picks board, N-model autopilot panels, lock states, copy. Flip season 2 live. **(done 2026-07-23 — see §18.1.3/§18.2/§18.4.3 checkmarks)**
+5. **Automation hardening** (§19.1–19.4): window schedule, reconcile/outbox, digest + ntfy. **(not started — Season 2's three books stay static at day 0 until this lands)**
+6. **Verification** (§21) after every phase; full pass at the end.
+
+## 21. Verification (Part 4 — blocking)
+
+- [x] `npx vitest run` green including new arenaExec/arenaFeatures/arenaRules-v2 suites; every §17.5 limit has a rejecting test. **(done — 66 files / 869 tests passing as of the Phase 4 verification pass, up from 815 at the end of Phase 1; `tests/arenaAccess.test.js` rewritten for the picks-only tightening)**
+- [x] `node scripts/validate-data.mjs` covers picks/runlog/digest/universe-v2 shapes; CI red on malformed pipeline output. **(done since Phase 2, re-verified green this pass — 12 files checked, all OK)**
+- [ ] Replay test: run `apply-arena-run.mjs` twice with the same run-input → byte-identical ledger (idempotency, 19.3.1). **(not done — blocked on Phase 5's runner existing; nothing calls `apply-arena-run.mjs` against Season 2 yet)**
+- [ ] Offline drill: unplug network, run a window → outbox entry created; reconnect, next run → flushed, runlog shows `queued→done`, no duplicate fills. **(not done — Phase 5, §19.3.3's outbox doesn't exist yet)**
+- [ ] Missed-window drill: skip a day, run reconcile → `missed` entries + `late:true` mark-to-market, equity curve continuous, zero retro-trades. **(not done — Phase 5, §19.3.1/19.3.2's reconcile() doesn't exist yet)**
+- [ ] Quota audit: one full simulated day of page + pipeline calls counted against §18.5 table; Finnhub < 60/min at all times, Twelve Data < 800/day. **(not done — needs a live/staged traffic simulation, deferred to Phase 5's rollout)**
+- [x] Gate check: non-allowlisted symbol without key → 403 + lock UI; with key → data; key rotation invalidates immediately; `git grep` proves the key exists nowhere client-side. **(logic verified — `resolveAllowlist`/`checkAdminKey`/`isSymbolAllowed` all unit-tested for exactly these cases, and the frontend unlock form + `x-arena-key` header wiring is in place end-to-end. `grep -rn ARENA_ADMIN_KEY src/ public/ arena.html` finds only the env-var *name* in a code comment, never a key value. Can't be verified live in production yet since `ARENA_ADMIN_KEY` isn't set in Vercel — see the top-of-Part-4 status banner)**
+- [x] `npm run build` + bundle budget green (picks board is small; no new deps — no charting/NLP libraries snuck in). **(done — `arena` chunk 45.6 kB/300 kB budget; `npm run typecheck` and `node scripts/check-bundle-budget.mjs` both clean; sandbox's `dist/` write-permission quirk worked around via `--outDir` same as every prior phase)**
+- [x] Copy audit: every claim on the page says simulated/"-inspired"; disclaimers updated; zh/en parity via existing i18n attributes. **(done — meta description, header subtitle, hero brief, footer disclaimer all rewritten for "three simulated LLM ledgers" over "the full S&P 500"; every new/changed string has a matching `data-zh`; no HFT/real-money claims introduced)**
+- [x] design.md compliance: palette/fonts/shell untouched; Part 1 viz tokens reused for all new chart/tooltip/toast surfaces. **(done — no `:root` token edits, no new fonts; picks board and admin-unlock UI reuse existing `.chip`/`.btn`/`--acid`/`--cyan`/`--magenta` tokens rather than inventing new ones; design.md/tech.md updated with the new patterns — picks board, gated-state unlock form — per this session's archival work)**
+
+## Done (Part 4) =
+
+Arena runs three distinct AI books — ORACLE (sentiment/event), PULSE (intraday structure), ATLAS (alt-data fusion) — over the full US market through a multi-agent propose→risk→settle pipeline; the page opens on "Today's Recommended Trades" and spends API quota only on that pool unless an admin unlocks more; scheduled windows execute pre-market/intraday/post-market with idempotent runs, offline outbox + catch-up, and a daily digest pushed to you and surfaced on-site — all still simulated, code-enforced, and honest about what it is.

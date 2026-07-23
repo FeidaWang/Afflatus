@@ -57,6 +57,7 @@
 | stats | `--bg:#070a12` `--panel:#0d1220` `--ink:#dce8f2` | `--teal:#4fd6c4` `--gold:#e8ad6f` `--red:#e0596b` `--green:#57c98a` | JetBrains Mono |
 | horoscope | 治愈系：暖奶油/鼠尾草绿/赤陶橙/淡金（V21 定调，逃离「深紫神棍风」）；星盘/夜间模块唯一允许深色=墨水蓝 `#1a2440`+淡金星点（「星图手账」非「水晶球」） | 文字一律深色变体，逐一过 WCAG AA | 中文衬线 + 几何无衬线 |
 | serial | 阅读区双主题（`.reader[data-theme]`，U-toolbar-redo 起）：green（默认·日间护眼）`#c8dfcb`/`#213325` · night（夜间琥珀·低蓝光）`#211a12`/`#e8c98a`（实测对比度 8.5–10.8:1 全过 AA）；退役的第三主题「皇木」`#2b1a16→#231411` 移作全站页面背景（`body{background}`），不再是可选阅读主题 | `--read-accent` 随主题 | 中文衬线（正文）+ mono（工具条） |
+| arena | `--bg:#05070e` `--panel:#0b0f1c` `--text:#eaf1ff` `--muted:#8590b5` | `--acid:#3dff9a`（涨/支撑/Model 系）`--cyan:#27e7ff`（世界/数据，链接·边框·标签）`--down:#ff5470`（跌/阻力）`--blue:#3a5bff`/`--magenta:#ff3df0`（点缀，Autopilot 双模型区分色之一）；双色温纪律在此页体现为「酸绿=活/涨，青=系统语汇，暖色不出现」 | Orbitron（展示）/ Rajdhani（HUD 标签）/ JetBrains Mono（数据体） |
 | course/league | violet 系 / 海克斯金蓝 | — | 各自独立 |
 
 ### 2.3 暗色模式纪律
@@ -78,6 +79,10 @@
 - **战斗视图**：3D 俯视战场默认 + 导演运镜（镜头库 tacticalTopdown/bridgeWide/mainGunAxis/missileTail/ciwsTurret/chaseCam/deckCam/towerCam/flybyCam）；起降完整生命周期叙事；尾焰彩带 billboard 三段色老化淡出；HMD v3 座舱。bloom/冲击波级别的「效果冲顶」曾整批被站主 revert（U25）——**战斗视觉的浓度以站主口味为准，宁欠勿过**。
 - **页间转场**：`transition.js` 按目标页选类型（warp/cannon/takeoff/control/cyber）+ Web Audio 环境音（`audio.js`）；语言切换=warp 折叠脉冲（400ms 一次性）。
 - **微反馈**：一切可点元素 hover/active/`:focus-visible` 三态；任何操作 200ms 内可见反馈；count-up 数字入场（IntersectionObserver 一次性触发）。
+- **OpenAI 基准图表几何**（arena/stats 图表层，U-viz-openai 起，2026-07-21 定稿）：借鉴 openai.com 基准对比图的**几何与行为**（非其中性灰调/字体）——无卡片边框/无图背景，图表直接落在页面底色上；栅格只留基线+顶线两条实线（`--viz-grid`），不留虚线网格；线宽 1.5px + 末端圆点标记（marker-terminated）；配色仍走各页自有色板（arena：Model A/B 用 acid/cyan 系，SPY/SMH 基准用虚线降透明度，虚线=「这是模拟基准线不是真实历史」的诚实标记，非装饰）；悬浮提示统一走 `--viz-tip-*` token（近黑面板、8px 圆角、无箭头、`Label: value` 纯文本行）。此几何一旦引入即全站图表共享语言，新图表复用 token 不重新发明。
+- **价位标尺（Level Ladder，arena TA 面板）**：单价格轴上同屏叠加阻力/支撑/MA/枢轴/整数关口/突破位/缺口，真实价格位置（`trueY`，背景带/水平线）与文字标签位置（`labelY`，防重叠 declutter）分离——标签可被挤开但短引导线永远连回真实价位，禁止「标签飘走查无实据」。容器高度随标签拥挤程度自适应变高，而非压缩到不可读。
+- **锁定态（gated state，Part 4 §18.2.2/§20，2026-07-23 起）**：面板请求的标的若不在当日免管理员密钥可查名单内，不显示通用报错，而是专属锁态文案（🔒 + 双语说明）+ 内嵌解锁表单（密钥输入框 + 「解锁」按钮，提交即存入 `sessionStorage` 并重试该标的）；密钥被拒时文案切换为「该密钥未通过验证」而非重复通用说明。解锁成功后 hero 状态条出现 🔓 ADMIN UNLOCKED 常驻绿色 chip，点击可二次确认清空密钥重新锁定。延续「宪章②每个读数绑真实状态」——查询失败必须诚实区分「代码错了/网络错了」与「本来就被有意限制」，不可混为一谈。
+- **今日推荐交易面板（picks board，Part 4 §18.2.1，2026-07-23 起）**：替代旧的 30-symbol 自选股 chip 行——三栏并排（S/P/T 各一栏，`auto-fit(minmax(280px,1fr))` 窄屏自动收为单列），每栏顶部色条=模型主色（沿用 Autopilot 图例色，S=acid/P=cyan/T=magenta），栏内是卡片而非 chip：代码+信心度进度条+入场/止损/目标三段价位梯 + 可选到期平仓日 + 一句话论据 + 信号标签。空仓日不留空白，显示「今日不下单」。卡片本身是交互入口——点击/回车即派发 `arena-pick-select` 事件驱动下方 TA 面板加载该代码，搜索框仍保留给「我想自己找」的场景，两者并列而非互斥。日期/regime chip + 陈旧提示条（推荐超过一天未更新时变琥珀色，说明这是「最近一次可用推荐」而非「今日」）延续 provenanceBadge 的数据龄诚实纪律。
 
 ## 4. UX 整改与可达性（Remediation & A11y Plan）
 

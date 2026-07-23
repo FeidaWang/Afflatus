@@ -1,0 +1,31 @@
+{
+  "date": "2026-07-23",
+  "generatedAt": "2026-07-23T21:50:00Z",
+  "note_en": "Manual dry-run digest (Phase 2) -- pnlPct/tradesCount are 0 for every book because no Season 2 ledger exists yet to settle against; today's output is picks-only (see arena-picks.json).",
+  "note_zh": "人工干跑日报（Phase 2)——三本 pnlPct/tradesCount 均为 0,因为目前还没有可结算的 Season 2 账本；今天的产出仅是推荐（见 arena-picks.json)。",
+  "books": [
+    {
+      "model": "S",
+      "pnlPct": 0,
+      "tradesCount": 0,
+      "note_en": "1 proposal (WAB, event-driven) -- awaiting the Phase 4 ledger flip to actually settle.",
+      "note_zh": "1 条提案（WAB,事件驱动)——待 Phase 4 账本切换后才会实际结算。"
+    },
+    {
+      "model": "P",
+      "pnlPct": 0,
+      "tradesCount": 0,
+      "note_en": "1 proposal (SMCI, gap+volume breakout, exitBy 2026-07-27) -- awaiting the Phase 4 ledger flip.",
+      "note_zh": "1 条提案（SMCI,缺口+放量突破,exitBy 2026-07-27)——待 Phase 4 账本切换。"
+    },
+    {
+      "model": "T",
+      "pnlPct": 0,
+      "tradesCount": 0,
+      "note_en": "1 proposal (T/AT&T, 2-signal fusion, Thu open-window) -- awaiting the Phase 4 ledger flip.",
+      "note_zh": "1 条提案（T/AT&T,双信号融合,周四开仓窗口)——待 Phase 4 账本切换。"
+    }
+  ],
+  "tomorrowPicksCount": 0,
+  "delayed": []
+}

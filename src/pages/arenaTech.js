@@ -18,6 +18,11 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   if (!host) return;
 
   const $ = (id) => document.getElementById(id);
+  // Part 4 (urgent.md §18.2.1/§21): arena-universe.json is the full S&P 500
+  // (506 symbols), used for search only. The old curated 30-symbol watchlist
+  // chip row has been replaced by the "Today's Recommended Trades" picks
+  // board (arenaPicks.js), which dispatches an `arena-pick-select` CustomEvent
+  // on card click — see the listener near the bottom of this file.
   const UNIVERSE_URL = '/arena-universe.json';
   const CACHE_PREFIX = 'afflatus-ta:v1:';
   const SYM_RE = /^[A-Za-z.\-]{1,12}$/;
@@ -26,15 +31,23 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
     'megacap-tech': ['MEGACAP', '大盘科技'],
     'benchmark': ['ETF', '基准 ETF'],
   };
+  function prettyBucket(bucket) {
+    const words = String(bucket || '').split('-').filter(Boolean);
+    return words.map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') || bucket;
+  }
+  function bucketLabel(bucket) {
+    return BUCKET_LABEL[bucket] || [prettyBucket(bucket), prettyBucket(bucket)];
+  }
 
   // ---- state ---------------------------------------------------
   const state = {
     lang: (window.AfflatusI18N && window.AfflatusI18N.get && window.AfflatusI18N.get()) || 'en',
-    universe: [],
+    universe: [],   // full market (search only) — public/arena-universe.json
     sym: null,
     mode: defaultMode(),         // 'pre' | 'post'
     loading: false,
     error: null,
+    keyRejected: false,          // true when a stored admin key was rejected by the API
     data: {},                    // sym -> { candles, quote, analysis, fetchedAt }
   };
   const T = (en, zh) => (state.lang === 'zh' ? zh : en);
@@ -51,6 +64,29 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
     return (mins >= 16 * 60 || mins < 4 * 60) ? 'post' : 'pre';
   }
 
+  // ---- admin key (Part 4 §18.4/§20) --------------------------------
+  // sessionStorage only (not localStorage) — the unlock is meant to last a
+  // browser tab session, not persist forever on a shared/public machine.
+  const ADMIN_KEY_STORAGE = 'afflatus:arenaKey';
+  function getArenaKey() {
+    try { return sessionStorage.getItem(ADMIN_KEY_STORAGE) || ''; } catch { return ''; }
+  }
+  function setArenaKey(k) {
+    try {
+      if (k) sessionStorage.setItem(ADMIN_KEY_STORAGE, k);
+      else sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+    } catch {}
+    renderAdminChip();
+  }
+  function arenaKeyHeaders() {
+    const k = getArenaKey();
+    return k ? { 'x-arena-key': k } : {};
+  }
+  function renderAdminChip() {
+    const chip = $('adminChip');
+    if (chip) chip.hidden = !getArenaKey();
+  }
+
   // ---- data ------------------------------------------------------
   function cacheGet(sym) {
     try {
@@ -65,7 +101,11 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   async function fetchHistory(sym) {
     const cached = cacheGet(sym);
     if (cached) return cached;
-    const r = await fetch(`/api/history?symbol=${encodeURIComponent(sym)}&interval=1day&outputsize=250`);
+    const r = await fetch(`/api/history?symbol=${encodeURIComponent(sym)}&interval=1day&outputsize=250`, { headers: arenaKeyHeaders() });
+    // Part 4 (urgent.md §18.4/§20): outside today's admin-free allowlist.
+    // Thrown as a distinct sentinel so renderPanel() can show the inline
+    // unlock form instead of the generic "could not load" error.
+    if (r.status === 403) throw new Error('GATED');
     if (!r.ok) throw new Error('history http ' + r.status);
     const j = await r.json();
     if (!j || j.status !== 'ok' || !Array.isArray(j.values)) throw new Error('history payload');
@@ -79,7 +119,7 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   }
   async function fetchQuote(sym) {
     try {
-      const r = await fetch(`/api/quote?symbol=${encodeURIComponent(sym)}`);
+      const r = await fetch(`/api/quote?symbol=${encodeURIComponent(sym)}`, { headers: arenaKeyHeaders() });
       if (!r.ok) return null;
       const q = await r.json();
       return q && q.c ? q : null;
@@ -88,8 +128,8 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   async function select(sym) {
     sym = sym.toUpperCase();
     if (!SYM_RE.test(sym)) return;
-    state.sym = sym; state.loading = true; state.error = null;
-    renderWatch(); renderPanel();
+    state.sym = sym; state.loading = true; state.error = null; state.keyRejected = false;
+    renderPanel();
     try {
       const [candles, quote] = await Promise.all([fetchHistory(sym), fetchQuote(sym)]);
       const { date, mins } = etParts();
@@ -99,18 +139,13 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
       state.loading = false;
     } catch (e) {
       state.loading = false;
-      state.error = String((e && e.message) || e);
+      if (e && e.message === 'GATED') { state.error = 'GATED'; state.keyRejected = !!getArenaKey(); }
+      else state.error = String((e && e.message) || e);
     }
     renderPanel();
   }
 
-  // ---- watchlist + search ----------------------------------------
-  function renderWatch() {
-    const el = $('taWatch');
-    el.innerHTML = state.universe.map((u) =>
-      `<button class="ta-chip ${u.sym === state.sym ? 'on' : ''} b-${u.bucket}" data-sym="${u.sym}" role="option" aria-selected="${u.sym === state.sym}"><b>${u.sym}</b><i>${u.name}</i></button>`).join('');
-    el.querySelectorAll('.ta-chip').forEach((b) => b.addEventListener('click', () => select(b.dataset.sym)));
-  }
+  // ---- search ------------------------------------------------------
   function searchMatches(qRaw) {
     const q = qRaw.trim().toLowerCase();
     if (!q) return [];
@@ -120,7 +155,7 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   }
   function renderSuggest(list, raw) {
     const el = $('taSuggest');
-    const rows = list.map((u) => `<button class="ta-sg" data-sym="${u.sym}"><b>${u.sym}</b> ${u.name} <i>${T(...(BUCKET_LABEL[u.bucket] || ['', '']))}</i></button>`);
+    const rows = list.map((u) => `<button class="ta-sg" data-sym="${u.sym}"><b>${u.sym}</b> ${u.name} <i>${T(...bucketLabel(u.bucket))}</i></button>`);
     const rawUp = raw.trim().toUpperCase();
     if (rawUp && SYM_RE.test(rawUp) && !list.some((u) => u.sym === rawUp)) {
       rows.push(`<button class="ta-sg ta-sg--raw" data-sym="${rawUp}">${T('Load ticker', '直接加载')} <b>${rawUp}</b> ↵</button>`);
@@ -302,7 +337,7 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   function renderPanel() {
     const el = $('taPanel');
     if (!state.sym) {
-      el.innerHTML = `<div class="ta-empty">${T('Pick a ticker from the watchlist or search above.', '从上方自选股列表选择或搜索一只股票。')}</div>`;
+      el.innerHTML = `<div class="ta-empty">${T('Pick a recommended trade above, or search any S&P 500 ticker.', '点选上方推荐交易，或搜索任意标普 500 代码。')}</div>`;
       return;
     }
     if (state.loading) {
@@ -310,6 +345,25 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
       return;
     }
     const d = state.data[state.sym];
+    if (state.error === 'GATED') {
+      const msg = state.keyRejected
+        ? T('That admin key was not accepted.', '该管理员密钥未通过验证。')
+        : T('Live quotes are limited to the day\'s recommended symbols to conserve free-tier API limits.', '为节省免费档 API 额度，实时报价目前仅覆盖当日推荐标的。');
+      el.innerHTML = `<div class="ta-empty err gated">
+        <div>🔒 ${state.sym} ${T('is outside today\'s live-data pool.', '不在今日实时数据名单内。')} ${msg}</div>
+        <form class="ta-unlock" id="taUnlockForm">
+          <input type="password" id="taUnlockInput" autocomplete="off" placeholder="${T('Admin key', '管理员密钥')}" aria-label="${T('Admin key', '管理员密钥')}">
+          <button type="submit" class="btn">${T('Unlock', '解锁')}</button>
+        </form>
+      </div>`;
+      const form = $('taUnlockForm');
+      if (form) form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = ($('taUnlockInput').value || '').trim();
+        if (val) { setArenaKey(val); select(state.sym); }
+      });
+      return;
+    }
     if (state.error || !d || !d.analysis) {
       el.innerHTML = `<div class="ta-empty err">${T('Could not load', '加载失败')} ${state.sym} — ${T('check the ticker or try again (free-tier API limits: ~8 req/min).', '请确认代码是否正确，或稍后重试（免费档 API 限流约 8 次/分钟）。')}</div>`;
       return;
@@ -348,15 +402,28 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   }
 
   // ---- boot -------------------------------------------------------
-  fetch(UNIVERSE_URL, { cache: 'no-store' })
-    .then((r) => (r.ok ? r.json() : Promise.reject()))
-    .then((j) => { state.universe = (j.symbols || []).map((s) => ({ sym: s.sym, name: s.name, bucket: s.bucket })); })
-    .catch(() => { state.universe = []; })
-    .finally(() => {
-      renderWatch();
+  renderAdminChip();
+  const adminChipEl = $('adminChip');
+  if (adminChipEl) adminChipEl.addEventListener('click', () => {
+    if (getArenaKey() && confirm(T('Clear the admin key?', '清除管理员密钥？'))) {
+      setArenaKey('');
+      if (state.sym) select(state.sym);
+    }
+  });
+
+  fetch(UNIVERSE_URL, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : Promise.reject())).catch(() => null)
+    .then((universeJson) => {
+      state.universe = ((universeJson && universeJson.symbols) || []).map((s) => ({ sym: s.sym, name: s.name, bucket: s.bucket }));
+    }).finally(() => {
       renderPanel();
-      if (state.universe.length) select(state.universe[0].sym);
     });
+
+  // Part 4 (urgent.md §18.2.1): the picks board (arenaPicks.js) dispatches
+  // this on card click/Enter instead of calling into this module directly —
+  // the two files are independent IIFEs (same pattern as `afflatus-lang`).
+  window.addEventListener('arena-pick-select', (e) => {
+    if (e && e.detail && e.detail.sym) select(e.detail.sym);
+  });
 
   const search = $('taSearch');
   search.addEventListener('input', () => renderSuggest(searchMatches(search.value), search.value));
@@ -369,5 +436,5 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
     }
   });
   document.addEventListener('click', (e) => { if (!e.target.closest('.ta-searchwrap')) hideSuggest(); });
-  window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; renderWatch(); renderPanel(); });
+  window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; renderPanel(); });
 })();

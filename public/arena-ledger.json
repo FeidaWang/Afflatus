@@ -1,262 +1,92 @@
 {
   "updated": "2026-07-21",
-  "version": 1,
-  "day": 11,
-  "season": 1,
-  "lastRunDate": "2026-07-21",
-  "note_en": "Arena Autopilot — two simulated $10,000 ledgers (Model A: intraday double-window swing; Model B: end-of-day deep review) trading a fixed universe (public/arena-universe.json) under code-enforced risk rules (public/../src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Not investment advice.",
-  "note_zh": "Arena Autopilot——两本各 $10,000 的模拟账本（Model A：日内双窗口 swing；Model B：盘后深度复盘），在固定交易域内（public/arena-universe.json）按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。非投资建议。",
+  "version": 2,
+  "day": 0,
+  "season": 2,
+  "lastRunDate": null,
+  "note_en": "Arena Autopilot — three simulated $10,000 ledgers (S: ORACLE, sentiment/event-driven; P: PULSE, intraday structure; T: ATLAS, alt-data fusion) trading the full S&P 500 (public/arena-universe.json) under code-enforced risk rules (src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Season 1 (Models A/B, fixed 30-symbol AI-hardware watchlist) is archived at arena-ledger-s1.json. Not investment advice.",
+  "note_zh": "Arena Autopilot——三本各 $10,000 的模拟账本（S：ORACLE，情绪/事件驱动；P：PULSE，盘中结构；T：ATLAS，另类数据融合），在全标普 500（public/arena-universe.json）范围内按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。Season 1（Model A/B，固定 30 只 AI 硬件自选股）归档于 arena-ledger-s1.json。非投资建议。",
   "bench": {
     "spyPct": 0,
     "smhPct": 0
   },
   "models": {
-    "A": {
-      "promptVersion": "A-v1",
+    "S": {
+      "promptVersion": "S-v1",
       "startEquity": 10000,
-      "cash": 8059.8081,
-      "equity": 9741.8781,
-      "dayStartEquity": 9741.8781,
+      "cash": 10000,
+      "equity": 10000,
+      "dayStartEquity": 10000,
       "equityHistory": [
         {
           "day": 0,
           "equity": 10000
-        },
-        {
-          "day": 1,
-          "equity": 10000
-        },
-        {
-          "day": 2,
-          "equity": 9810.4237
-        },
-        {
-          "day": 3,
-          "equity": 9848.7037
-        },
-        {
-          "day": 4,
-          "equity": 9986.3258
-        },
-        {
-          "day": 5,
-          "equity": 9894.0621
-        },
-        {
-          "day": 6,
-          "equity": 9870.2625
-        },
-        {
-          "day": 7,
-          "equity": 9854.3725
-        },
-        {
-          "day": 8,
-          "equity": 9805.2025
-        },
-        {
-          "day": 9,
-          "equity": 9734.3781
-        },
-        {
-          "day": 10,
-          "equity": 9732.9581
-        },
-        {
-          "day": 11,
-          "equity": 9741.8781
         }
       ],
-      "positions": [
-        {
-          "sym": "NVDA",
-          "qty": 4,
-          "avgPx": 207.6338,
-          "mkPx": 203.28
-        },
-        {
-          "sym": "CRM",
-          "qty": 5,
-          "avgPx": 171.7959,
-          "mkPx": 173.79
-        }
-      ],
-      "trades": [
-        {
-          "ts": "2026-07-07T13:15:00Z",
-          "sym": "AMD",
-          "side": "buy",
-          "qty": 3,
-          "px": 552.326,
-          "fee": 0.0828,
-          "slipBps": 5,
-          "realizedPnl": null
-        },
-        {
-          "ts": "2026-07-07T13:15:00Z",
-          "sym": "TSM",
-          "side": "buy",
-          "qty": 3,
-          "px": 452.0159,
-          "fee": 0.0678,
-          "slipBps": 5,
-          "realizedPnl": null
-        },
-        {
-          "ts": "2026-07-09T21:41:10.498Z",
-          "sym": "MU",
-          "side": "buy",
-          "qty": 1,
-          "px": 1014.9772,
-          "fee": 0.0507,
-          "slipBps": 5,
-          "realizedPnl": null
-        },
-        {
-          "ts": "2026-07-10T14:38:03.704Z",
-          "sym": "TSM",
-          "side": "sell",
-          "qty": 3,
-          "px": 434.3127,
-          "fee": 0.0651,
-          "slipBps": 5,
-          "realizedPnl": -53.1747
-        },
-        {
-          "ts": "2026-07-10T14:38:03.704Z",
-          "sym": "NVDA",
-          "side": "buy",
-          "qty": 4,
-          "px": 207.6338,
-          "fee": 0.0415,
-          "slipBps": 5,
-          "realizedPnl": null
-        },
-        {
-          "ts": "2026-07-13T21:41:41.577Z",
-          "sym": "MU",
-          "side": "sell",
-          "qty": 1,
-          "px": 939.9598,
-          "fee": 0.047,
-          "slipBps": 5,
-          "realizedPnl": -75.0644
-        },
-        {
-          "ts": "2026-07-13T21:41:41.577Z",
-          "sym": "CRM",
-          "side": "buy",
-          "qty": 5,
-          "px": 171.7959,
-          "fee": 0.0429,
-          "slipBps": 5,
-          "realizedPnl": null
-        },
-        {
-          "ts": "2026-07-16T14:37:50.418Z",
-          "sym": "AMD",
-          "side": "sell",
-          "qty": 3,
-          "px": 511.6341,
-          "fee": 0.0767,
-          "slipBps": 5,
-          "realizedPnl": -122.1524
-        }
-      ],
+      "positions": [],
+      "trades": [],
       "rejections": [],
       "metrics": {
-        "cumPct": -2.581,
-        "maxDD": -2.67,
-        "hitRate": 0,
-        "exposure": 17.3
+        "cumPct": 0,
+        "maxDD": 0,
+        "hitRate": null,
+        "exposure": 0
       },
       "review": {
-        "zh": "周一AI硬件板块出现企稳迹象(SK海力士、美光、西数均涨超4%),但上周SOX重挫的余波未散。GOOGL明日(7/22)公布财报,7/28-29美联储议息将至,信号尚不明朗。NVDA现价较成本-2.1%、CRM+1.2%,均未触及止损线。此前连续三次(TSM/MU/AMD)平仓均为亏损,这次不急于追反弹,维持两仓不动,本次不下单。",
-        "en": "AI-hardware complex found some footing Monday (SK Hynix, Micron, WDC up 4%+) after last week's brutal SOX selloff, but conviction is thin ahead of GOOGL earnings tomorrow and the Jul 28-29 Fed decision. NVDA -2.1% vs cost, CRM +1.2% -- neither near a stop. After three straight realized losses trimming AMD/MU/TSM, I'm resisting the urge to chase the bounce without a clearer signal. No orders this run; holding both positions unchanged."
+        "zh": "",
+        "en": ""
       }
     },
-    "B": {
-      "promptVersion": "B-v1",
+    "P": {
+      "promptVersion": "P-v1",
       "startEquity": 10000,
-      "cash": 6233.0587,
-      "equity": 9955.2587,
-      "dayStartEquity": 9955.2587,
+      "cash": 10000,
+      "equity": 10000,
+      "dayStartEquity": 10000,
       "equityHistory": [
         {
           "day": 0,
           "equity": 10000
-        },
-        {
-          "day": 2,
-          "equity": 10012.4087
-        },
-        {
-          "day": 3,
-          "equity": 9959.3587
-        },
-        {
-          "day": 7,
-          "equity": 9959.3587
-        },
-        {
-          "day": 8,
-          "equity": 9955.2587
-        },
-        {
-          "day": 10,
-          "equity": 9955.2587
-        },
-        {
-          "day": 11,
-          "equity": 9955.2587
         }
       ],
-      "positions": [
-        {
-          "sym": "MSFT",
-          "qty": 5,
-          "avgPx": 386.8173,
-          "mkPx": 384.93
-        },
-        {
-          "sym": "GOOGL",
-          "qty": 5,
-          "avgPx": 366.5333,
-          "mkPx": 359.51
-        }
-      ],
-      "trades": [
-        {
-          "ts": "2026-07-07T13:20:00Z",
-          "sym": "MSFT",
-          "side": "buy",
-          "qty": 5,
-          "px": 386.8173,
-          "fee": 0.0967,
-          "slipBps": 2,
-          "realizedPnl": null
-        },
-        {
-          "ts": "2026-07-07T13:20:00Z",
-          "sym": "GOOGL",
-          "side": "buy",
-          "qty": 5,
-          "px": 366.5333,
-          "fee": 0.0916,
-          "slipBps": 2,
-          "realizedPnl": null
-        }
-      ],
+      "positions": [],
+      "trades": [],
       "rejections": [],
       "metrics": {
-        "cumPct": -0.447,
-        "maxDD": -0.571,
+        "cumPct": 0,
+        "maxDD": 0,
         "hitRate": null,
-        "exposure": 37.4
+        "exposure": 0
       },
       "review": {
-        "zh": "今日30只标的中多数行情数据源返回陈旧报价（部分长达一至两周），可信度不足，尽管今天是周二开仓窗口，也不宜据此新开仓位。MSFT现价较成本-0.5%，GOOGL现价-1.9%，均远未触及止损线。GOOGL将于7月22日公布财报，在此二元事件前加仓不符合Book B低换手、保守长线的定位。本次维持两个仓位不变，不下单。",
-        "en": "Today's price feed returned stale data for most of the 30-symbol universe (up to two weeks old for several names), so I'm not trusting it enough to size a new entry even though today is a Tue open-window. MSFT (-0.5% vs cost) and GOOGL (-1.9%) are both well inside stop-loss. GOOGL reports Jul 22 -- adding exposure into that binary event doesn't fit Book B's low-turnover, conservative mandate. Holding both positions unchanged, no orders this run."
+        "zh": "",
+        "en": ""
+      }
+    },
+    "T": {
+      "promptVersion": "T-v1",
+      "startEquity": 10000,
+      "cash": 10000,
+      "equity": 10000,
+      "dayStartEquity": 10000,
+      "equityHistory": [
+        {
+          "day": 0,
+          "equity": 10000
+        }
+      ],
+      "positions": [],
+      "trades": [],
+      "rejections": [],
+      "metrics": {
+        "cumPct": 0,
+        "maxDD": 0,
+        "hitRate": null,
+        "exposure": 0
+      },
+      "review": {
+        "zh": "",
+        "en": ""
       }
     }
   }

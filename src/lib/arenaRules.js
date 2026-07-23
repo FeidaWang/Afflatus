@@ -22,6 +22,7 @@
      metrics: {cumPct, maxDD, hitRate, exposure},
    }
    ============================================================ */
+import { impactSlippageBps } from './arenaExec.js';
 
 // ---- hard limits (ROADMAP §7.1) --------------------------------
 export const LIMITS = {
@@ -36,6 +37,22 @@ export const LIMITS = {
   FEE_BPS: 0.5,
   MAX_WEEKLY_TRADES: { A: 20 },        // Model A turnover cap; Model B is day-gated instead (see ALLOWED_TRADE_DAYS)
   ALLOWED_TRADE_DAYS: { B: [2, 4] },   // Model B may only OPEN/ADD on Tue(2)/Thu(4) (JS getDay()); risk-reduction exempt
+
+  // ---- Part 4 §17.2-17.4: per-model risk personalities for Season 2's
+  // three books — S=ORACLE (sentiment/event), P=PULSE (intraday structure),
+  // T=ATLAS (alt-data fusion). Season 1's A/B intentionally stay on the
+  // legacy fields above, untouched, so their historical behavior is
+  // byte-identical; every lookup below checks PER_MODEL[model] first and
+  // falls back to the legacy fields/constants, so A/B never take this path.
+  // Shared invariants — 20% position cap, 5% cash floor, 3% daily circuit
+  // breaker, 20% season reset, long-only/no-shorting — apply to every
+  // model equally and are NOT duplicated here (see MAX_POSITION_PCT etc.
+  // above).
+  PER_MODEL: {
+    S: { STOP_LOSS: 0.08, SLIPPAGE_BPS: 5, MAX_POSITIONS: 6, CONFIDENCE_FLOOR: 0.70, MAX_WEEKLY_TRADES: 20 },
+    P: { STOP_LOSS: 0.05, SLIPPAGE_BPS: 5, MAX_POSITIONS: 5, CONFIDENCE_FLOOR: 0.65, MAX_WEEKLY_TRADES: 30 },
+    T: { STOP_LOSS: 0.15, SLIPPAGE_BPS: 2, MAX_POSITIONS: 8, CONFIDENCE_FLOOR: 0.65, ALLOWED_TRADE_DAYS: [2, 4] },
+  },
 };
 
 // ---- order validation -------------------------------------------
@@ -62,18 +79,29 @@ export function validateOrder(order, modelLedger, ctx) {
   const isRiskReduction = side === 'sell';
   if (!isRiskReduction) {
     // confidence floor (new positions only — adding to an existing winner also gated,
-    // matching "新开仓订单 confidence<0.65 一律拒单" read literally as any buy order)
-    if (typeof confidence === 'number' && confidence < LIMITS.CONFIDENCE_FLOOR) {
-      return { ok: false, reason: `confidence ${confidence} below floor ${LIMITS.CONFIDENCE_FLOOR}` };
+    // matching "新开仓订单 confidence<0.65 一律拒单" read literally as any buy order).
+    // Per-model override (Part 4 §17.2-17.4) falls back to the shared constant for A/B.
+    const confFloor = LIMITS.PER_MODEL?.[ctx.model]?.CONFIDENCE_FLOOR ?? LIMITS.CONFIDENCE_FLOOR;
+    if (typeof confidence === 'number' && confidence < confFloor) {
+      return { ok: false, reason: `confidence ${confidence} below floor ${confFloor}` };
     }
 
-    // turnover cap (Model A: weekly trade count; Model B: day-gated instead)
-    if (ctx.model === 'A' && ctx.weeklyTradeCount != null && ctx.weeklyTradeCount >= LIMITS.MAX_WEEKLY_TRADES.A) {
-      return { ok: false, reason: `Model A weekly turnover cap reached (${LIMITS.MAX_WEEKLY_TRADES.A}/week)` };
+    // alt-data fusion gate (Model T, Part 4 §17.4): a single signal isn't a
+    // "fusion" — new/added positions need at least two independent signals.
+    if (ctx.model === 'T') {
+      const nSignals = Array.isArray(order.signals) ? order.signals.length : 0;
+      if (nSignals < 2) return { ok: false, reason: `Model T requires >=2 fused signals (got ${nSignals})` };
     }
-    if (ctx.model === 'B' && ctx.weekday != null) {
-      const allowed = LIMITS.ALLOWED_TRADE_DAYS.B;
-      if (!allowed.includes(ctx.weekday)) return { ok: false, reason: 'Model B may only open/add positions on Tue/Thu runs' };
+
+    // turnover cap (Model A weekly cap; Model S/P inherit the same weekly-cap
+    // shape via PER_MODEL). Model B/T are day-gated instead (see below).
+    const weeklyCap = ctx.model === 'A' ? LIMITS.MAX_WEEKLY_TRADES.A : LIMITS.PER_MODEL?.[ctx.model]?.MAX_WEEKLY_TRADES;
+    if (weeklyCap != null && ctx.weeklyTradeCount != null && ctx.weeklyTradeCount >= weeklyCap) {
+      return { ok: false, reason: `Model ${ctx.model} weekly turnover cap reached (${weeklyCap}/week)` };
+    }
+    const allowedDays = ctx.model === 'B' ? LIMITS.ALLOWED_TRADE_DAYS.B : LIMITS.PER_MODEL?.[ctx.model]?.ALLOWED_TRADE_DAYS;
+    if (allowedDays && ctx.weekday != null && !allowedDays.includes(ctx.weekday)) {
+      return { ok: false, reason: `Model ${ctx.model} may only open/add positions on Tue/Thu runs` };
     }
 
     // single-position cap: check the resulting position value against equity AFTER the trade
@@ -84,9 +112,11 @@ export function validateOrder(order, modelLedger, ctx) {
       return { ok: false, reason: `position would exceed ${LIMITS.MAX_POSITION_PCT * 100}% of equity` };
     }
 
-    // max distinct positions (only matters if this order opens a brand-new symbol)
-    if (!existing && modelLedger.positions.length >= LIMITS.MAX_POSITIONS) {
-      return { ok: false, reason: `already at max ${LIMITS.MAX_POSITIONS} distinct positions` };
+    // max distinct positions (only matters if this order opens a brand-new
+    // symbol); per-model override falls back to the shared constant for A/B.
+    const maxPositions = LIMITS.PER_MODEL?.[ctx.model]?.MAX_POSITIONS ?? LIMITS.MAX_POSITIONS;
+    if (!existing && modelLedger.positions.length >= maxPositions) {
+      return { ok: false, reason: `already at max ${maxPositions} distinct positions` };
     }
 
     // min cash buffer after the buy
@@ -103,8 +133,17 @@ export function validateOrder(order, modelLedger, ctx) {
 
 // ---- simulated matching -----------------------------------------
 // Reference price +/- slippage (buys pay up, sells receive less), plus a flat fee.
-export function simulateFill(order, model /* 'A'|'B' */) {
-  const slipBps = LIMITS.SLIPPAGE_BPS[model] ?? 5;
+// execOpts is optional and defaults to {}: existing callers (Season 1 A/B)
+// never pass it, so they get the flat per-model bps tier exactly as before.
+// When a caller DOES supply execOpts.avgDollarVol (Part 4 §17.5.3, once the
+// digest pipeline provides real volume data), slippage instead comes from
+// arenaExec.js's square-root impact model — the deterministic "RL execution"
+// stand-in (see that file's header for the honest scope note).
+export function simulateFill(order, model /* 'A'|'B'|'S'|'P'|'T' */, execOpts = {}) {
+  const baseBps = LIMITS.PER_MODEL?.[model]?.SLIPPAGE_BPS ?? LIMITS.SLIPPAGE_BPS[model] ?? 5;
+  const slipBps = execOpts.avgDollarVol > 0
+    ? impactSlippageBps(order.qty * order.refPx, execOpts.avgDollarVol, baseBps)
+    : baseBps;
   const feeBps = LIMITS.FEE_BPS;
   const slipMult = order.side === 'buy' ? (1 + slipBps / 10000) : (1 - slipBps / 10000);
   const execPx = Number((order.refPx * slipMult).toFixed(4));
@@ -127,9 +166,15 @@ export function applyFill(modelLedger, order, fill, ts) {
       const p = positions[idx];
       const newQty = p.qty + order.qty;
       const newAvg = (p.avgPx * p.qty + fill.execPx * order.qty) / newQty;
-      positions[idx] = { ...p, qty: newQty, avgPx: Number(newAvg.toFixed(4)) };
+      const next = { ...p, qty: newQty, avgPx: Number(newAvg.toFixed(4)) };
+      // exitBy (Model P, Part 4 §17.3): only set on orders that carry it —
+      // A/B/S/T orders never do, so their positions never gain this field.
+      if (order.exitBy) next.exitBy = order.exitBy;
+      positions[idx] = next;
     } else {
-      positions.push({ sym: order.sym, qty: order.qty, avgPx: fill.execPx, mkPx: fill.execPx });
+      const pos = { sym: order.sym, qty: order.qty, avgPx: fill.execPx, mkPx: fill.execPx };
+      if (order.exitBy) pos.exitBy = order.exitBy;
+      positions.push(pos);
     }
   } else {
     const proceeds = fill.execPx * order.qty - fill.fee;
@@ -167,12 +212,28 @@ export function markToMarket(modelLedger, priceMap) {
 // Returns an array of forced sell orders (reduceOnly) for positions breaching
 // the per-model stop, in cost-basis terms — never trusts the model to "remember".
 export function checkStopLoss(modelLedger, model) {
-  const stopPct = LIMITS.STOP_LOSS[model] ?? 0.08;
+  const stopPct = LIMITS.PER_MODEL?.[model]?.STOP_LOSS ?? LIMITS.STOP_LOSS[model] ?? 0.08;
   const orders = [];
   for (const p of modelLedger.positions) {
     const drawdown = (p.mkPx - p.avgPx) / p.avgPx;
     if (drawdown <= -stopPct) {
       orders.push({ sym: p.sym, side: 'sell', qty: p.qty, refPx: p.mkPx, reduceOnly: true, reason: `stop-loss ${(drawdown * 100).toFixed(1)}% <= -${stopPct * 100}%` });
+    }
+  }
+  return orders;
+}
+
+// ---- exit-by sweep (Model P, Part 4 §17.3) ---------------------------------
+// P's proposals must carry an exitBy date (YYYY-MM-DD, "hours to ~2 days"
+// holding period); positions past that date are force-closed at the next
+// mark, same "never trust the model to remember" discipline as the
+// stop-loss sweep. A no-op for any position without an exitBy — i.e. every
+// Season 1 A/B position, and any S/T position (they never set it).
+export function checkExitBySweep(modelLedger, etDateStr) {
+  const orders = [];
+  for (const p of modelLedger.positions) {
+    if (p.exitBy && p.exitBy <= etDateStr) {
+      orders.push({ sym: p.sym, side: 'sell', qty: p.qty, refPx: p.mkPx, reduceOnly: true, reason: `exitBy ${p.exitBy} reached` });
     }
   }
   return orders;
