@@ -3,3 +3,4 @@ dist
 dist_old_*
 .DS_Store
 scripts/*.log
+scripts/outbox/

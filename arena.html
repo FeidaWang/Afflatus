@@ -156,6 +156,22 @@
 
 <div id="briefing" hidden></div>
 
+<!-- ===== Part 4 §19.4.3 · Daily digest toast + drawer ("while you were away") ===== -->
+<div class="digest-toast" id="digestToast" hidden role="status">
+  <div class="digest-toast-body" id="digestToastBody" tabindex="0" role="button" aria-label="Open today's digest"></div>
+  <button class="digest-toast-close" id="digestToastClose" aria-label="Dismiss">×</button>
+</div>
+<div class="digest-drawer" id="digestDrawer" hidden aria-label="Daily digest" aria-modal="true" role="dialog">
+  <div class="digest-drawer-backdrop" id="digestDrawerBackdrop"></div>
+  <div class="digest-drawer-panel">
+    <div class="digest-drawer-hd">
+      <span data-en="Daily Digest" data-zh="每日摘要">Daily Digest</span> · <span id="digestDrawerDate"></span>
+      <button class="digest-drawer-close" id="digestDrawerClose" aria-label="Close">×</button>
+    </div>
+    <div class="digest-drawer-body" id="digestDrawerBody"></div>
+  </div>
+</div>
+
 <script type="module" src="/src/pages/arenaEntry.js"></script>
 </body>
 </html>

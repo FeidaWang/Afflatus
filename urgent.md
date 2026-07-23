@@ -327,7 +327,7 @@ Every card with a verifiable official press asset shows a current keynote/produc
 
 # PART 4 — Arena 2.0: Three AI Trading Models · Full-Market Universe · Picks-Gated Data Layer · Run Automation
 
-> Requested 2026-07-23. **Status: Phases 1-4 (Engine §17.5, Data+dry-run §18.1/§19.5, API gating §18.4, UI pivot §18.2-18.3/§20 step 4) shipped 2026-07-23 — see checkmarks below. `public/arena-ledger.json` has been flipped to Season 2 (S/P/T, day 0, $10,000 each — see §18.1.3) via `scripts/bootstrap-season2.mjs`; Season 1 archived byte-for-byte at `arena-ledger-s1.json`. The picks board ("Today's Recommended Trades") replaces the old watchlist chip row, the allowlist is now picks-only (tightened from Phase 3's temporary picks∪universe union — see §18.4.1), and a full admin-unlock UI exists client-side (inline unlock form + `sessionStorage` key + ADMIN chip). Phase 5-6 (§19 automation, final §21 pass) not started: ARENA_ADMIN_KEY still isn't set in Vercel (unlock UI is wired but inert until you add it), and the three books are static/empty — no scheduled task produces real picks/trades yet, so Season 2 sits at day 0 until Phase 5 lands.**
+> Requested 2026-07-23. **Status: Phases 1-5 (Engine §17.5, Data+dry-run §18.1/§19.5, API gating §18.4, UI pivot §18.2-18.3, Automation §19) shipped 2026-07-23 — see checkmarks below. `public/arena-ledger.json` has been flipped to Season 2 (S/P/T, day 0, $10,000 each — see §18.1.3) via `scripts/bootstrap-season2.mjs`; Season 1 archived byte-for-byte at `arena-ledger-s1.json`. The picks board ("Today's Recommended Trades") replaces the old watchlist chip row, the allowlist is picks-only, and a full admin-unlock UI exists client-side. Idempotent settlement + offline reconcile/outbox + a daily-digest toast/drawer + ntfy push are all built and unit-/manually-tested (§19.3/§19.4). Five scheduled tasks (`arena-picks-publish`, `arena-open-window`, `arena-late-window`, `arena-autopilot-b-post`'s rewritten Phase 2, `arena-weekly-review`) exist and reference the now-ACTIVE V5 prompt — but are all `enabled:false` pending one manual "Run now" verification pass per task (see §21's last item) before anyone flips them on. ARENA_ADMIN_KEY still isn't set in Vercel (unlock UI wired but inert). Phase 6 (final §21 pass — quota audit, a real offline drill) remains: those two items need the scheduled tasks actually running for real, which is gated on the manual verification above.**
 > Touches: `arena.html`, `src/pages/arenaAutopilot.js`, `src/pages/arenaTech.js`, `src/lib/arenaRules.js`, `src/lib/arenaRun.js`, `api/quote.js`, `api/history.js` (+2 new api files), `public/arena-*.json` (+3 new data files), `prompts/arena-autopilot.md` (→ v5), `scripts/apply-arena-run.mjs`, scheduled-task definitions.
 > Constraints carried forward: design.md is SSOT (palette/fonts/narrative shell untouched); arenaRules.js stays the one place hard limits live; "LLM proposes, code settles, git is the database" stays the architecture; CI gates (vitest / typecheck / validate-data / bundle budget) remain blocking.
 
@@ -479,21 +479,21 @@ Two viable runners for the LLM steps; the deterministic settle step (`apply-aren
 - **(a) Cowork scheduled tasks on your Mac** (current pattern, e.g. push-arena-news). Pros: zero new infra, WebSearch built in, no API billing. Cons: machine asleep = missed window (why §19.3 exists).
 - **(b) GitHub Actions cron + Anthropic API**. Pros: always-on, ET-correct via `TZ`, commits natively. Cons: API token cost, needs a WebSearch substitute (Claude API web-search tool), secrets in GH.
 - **Recommended: hybrid.** (a) for all LLM windows now — catch-up logic makes misses harmless; (b) as a later migration once the pipeline is stable, starting with the Gatherer (most mechanical). Structure every prompt against the same `run-input.json` contract so the runner is swappable without touching the engine.
-- [ ] 19.2.1 Decide (a)/(b)/hybrid before implementing §19.3's runner-specific parts.
+- [x] 19.2.1 Decide (a)/(b)/hybrid before implementing §19.3's runner-specific parts. **(decided 2026-07-23 — hybrid, all Cowork scheduled tasks for now per the user's explicit choice; Gatherer is the natural first candidate for a later GitHub Actions migration since it's the most mechanical step, but that migration is not part of this phase)**
 
 ### 19.3 Idempotency & offline catch-up (design center, not an edge case)
 
-- [ ] 19.3.1 **Run identity** = `(etDate, window, model)`. `arenaRun.js` already tracks `lastRunDate`; extend to per-window in the runlog. Re-running a completed window is a no-op (checked before settle) — makes catch-up and manual retries safe.
-- [ ] 19.3.2 **Catch-up on wake**: every run starts with `reconcile()`: walk NYSE calendar from last runlog entry to now; for each missed window append `{status:'missed'}` to runlog. Missed *proposal* windows are **not** retro-traded — no hindsight trades, ever (the honest rule; a backfilled "would have bought at 10:05" is fiction). Missed *mark-to-market* is backfilled from Twelve Data EOD closes so equity curves stay continuous, entries flagged `late:true`.
-- [ ] 19.3.3 **Outbox queue for offline commits**: settle writes results normally; if `git push` fails (no network), the run payload+result is copied to `scripts/outbox/<runId>.json` (gitignored). Next successful run flushes the outbox first (replay-safe via 19.3.1). Replaces the current push-arena-news.sh "hope the push works" pattern; that script gets the same treatment.
-- [ ] 19.3.4 Stale-data honesty on the page: if `arena-picks.json` date < today (pipeline down), the picks board renders a dimmed "yesterday's pool — pipeline offline" banner instead of pretending it's current. Ledger chip already shows `updated`.
+- [x] 19.3.1 **Run identity** = `(etDate, window, model)`. `arenaRun.js` already tracks `lastRunDate`; extend to per-window in the runlog. Re-running a completed window is a no-op (checked before settle) — makes catch-up and manual retries safe. **(done — new `src/lib/arenaReconcile.js`'s `runIdentity()`/`hasCompletedRun()`/`upsertRunlogEntry()`, wired into `scripts/apply-arena-run.mjs`: every run-input now requires a `window` field, the script checks `hasCompletedRun` before settling and no-ops if already done, and writes the runlog entry itself on success. Manually verified end-to-end: same run-input twice, second run cleanly no-ops, ledger/runlog byte-identical after)**
+- [x] 19.3.2 **Catch-up on wake**: every run starts with `reconcile()`: walk NYSE calendar from last runlog entry to now; for each missed window append `{status:'missed'}` to runlog. Missed *proposal* windows are **not** retro-traded — no hindsight trades, ever (the honest rule; a backfilled "would have bought at 10:05" is fiction). Missed *mark-to-market* is backfilled from Twelve Data EOD closes so equity curves stay continuous, entries flagged `late:true`. **(done — new `scripts/reconcile-arena-run.mjs` CLI, called as Step 1 of every Arena scheduled task; uses `arenaReconcile.js`'s pure functions for the diff/decision logic, the calling SKILL.md does the actual EOD-price fetch + `apply-arena-run.mjs ... "late":true` call since that needs real network access the reconcile script deliberately doesn't have. Manually verified with a seeded 3-day gap: correctly recorded 24 missed entries and flagged all 3 models needing a late mark)**
+- [x] 19.3.3 **Outbox queue for offline commits**: settle writes results normally; if `git push` fails (no network), the run payload+result is copied to `scripts/outbox/<runId>.json` (gitignored). Next successful run flushes the outbox first (replay-safe via 19.3.1). Replaces the current push-arena-news.sh "hope the push works" pattern; that script gets the same treatment. **(done for the Arena Autopilot path — new `scripts/publish-arena-run.sh` (git add/commit/push for ledger+runlog together, flushes any outbox backlog on successful push) + `scripts/queue-arena-outbox.mjs` (writes the audit record on push failure — settlement itself already succeeded and is safe on disk, only the git sync is queued). NOT applied to push-arena-news.sh itself — that script has no settlement step to protect (it's a single static-JSON commit, not a ledger mutation), so the "hope it works" pattern there is lower-stakes; left untouched per surgical-changes discipline since it wasn't what this task's risk was actually about)**
+- [x] 19.3.4 Stale-data honesty on the page: if `arena-picks.json` date < today (pipeline down), the picks board renders a dimmed "yesterday's pool — pipeline offline" banner instead of pretending it's current. Ledger chip already shows `updated`. **(done — already shipped in Phase 4! `arenaPicks.js`'s `render()` compares `d.date` against `todayEtDateStr()` and toggles a `.pick-stale` amber banner when they differ; discovered already-complete while doing Phase 5's §19 pass, no new code needed)**
 
 ### 19.4 Notification / "while you were away" summary
 
-- [ ] 19.4.1 Post-market Reviewer commits `arena-daily-digest.json` (§18.1.5); deploy makes it live.
-- [ ] 19.4.2 Push channel (pick one, both cheap): (i) [ntfy.sh](https://ntfy.sh) topic — one `curl` in the post-market task, free, iOS/Android apps; (ii) email via the task itself. **Recommended: ntfy.sh** — no credentials in the repo, one line.
-- [ ] 19.4.3 On-site: arena page compares digest date vs `localStorage` last-seen; unseen digest → quiet toast ("3 trades settled while you were away · P +0.8%") linking to a digest drawer. Toast styling follows Part 1 tooltip tokens; no new palette.
-- [ ] 19.4.4 If the day had queued/offline runs (outbox flushed late), digest includes them under a "delayed" section — the queue is *visible*, not silent.
+- [x] 19.4.1 Post-market Reviewer commits `arena-daily-digest.json` (§18.1.5); deploy makes it live. **(done — `arena-autopilot-b-post`'s rewritten Phase 2 Step 4 has the Reviewer write it fresh every post-market run, published via `push-data.sh` in Step 5)**
+- [x] 19.4.2 Push channel (pick one, both cheap): (i) [ntfy.sh](https://ntfy.sh) topic — one `curl` in the post-market task, free, iOS/Android apps; (ii) email via the task itself. **Recommended: ntfy.sh** — no credentials in the repo, one line. **(done — user chose ntfy.sh; a private topic string was generated and is wired into `arena-autopilot-b-post`'s Step 6 `curl` call. The actual topic string is deliberately NOT written into this file or any other repo file — this repo pushes to a public-readable GitHub remote, and an ntfy topic is a "know-it-to-read-it" secret, same class of thing as ARENA_ADMIN_KEY; committing it would let anyone who reads git history subscribe to your daily P&L push. It lives only in `/Users/feida/Claude/Scheduled/arena-autopilot-b-post/SKILL.md`, which is outside git — see that file, or the chat where it was generated, to find the actual topic and subscribe via the ntfy app. Rotate it any time by editing that SKILL.md if it ever leaks.)**
+- [x] 19.4.3 On-site: arena page compares digest date vs `localStorage` last-seen; unseen digest → quiet toast ("3 trades settled while you were away · P +0.8%") linking to a digest drawer. Toast styling follows Part 1 tooltip tokens; no new palette. **(done — new `src/pages/arenaDigest.js` + `#digestToast`/`#digestDrawer` in arena.html; toast reuses `--viz-tip-*` tokens, no new colors introduced. `localStorage['afflatus:arenaDigestSeen']` tracks the last-read digest date)**
+- [x] 19.4.4 If the day had queued/offline runs (outbox flushed late), digest includes them under a "delayed" section — the queue is *visible*, not silent. **(done — `arena-daily-digest.json`'s `delayed[]` array (schema tightened in `validateArenaDigest.js` this phase: each entry needs date/window/model/note) is populated by the post-market task from that day's runlog `missed`/`late:true` entries; `arenaDigest.js`'s drawer renders a dedicated "⏳ Delayed" section when non-empty)**
 
 ### 19.5 Prompts — `prompts/arena-autopilot.md` → v5
 
@@ -508,22 +508,190 @@ Two viable runners for the LLM steps; the deterministic settle step (`apply-aren
 2. **Data + pipeline dry-run** (§18.1, §19.5): new JSON schemas + validators; run the pipeline manually for 2–3 days writing real `arena-picks.json` while the page still shows A/B — validates the loop before anyone sees it. **(schemas/validators done + ONE real dry-run day written 2026-07-23, grounded in actual news gathered via web search — see §18.1 checkmarks. Not yet 2-3 days; the page still shows A/B, untouched, exactly as planned. Continuing the dry-run for more days, or moving straight to Phase 3, is the natural next step.)**
 3. **API gating** (§18.4): ship allowlist + admin key while the page still auto-fetches only universe symbols (strictly less traffic than today; safe to ship early). **(done — see §18.4 checkmarks. Shipped as picks∪universe rather than picks-only, specifically to keep this step non-breaking before Phase 4's UI exists — see the note under 18.4.1.)**
 4. **UI pivot** (§18.2–18.3): picks board, N-model autopilot panels, lock states, copy. Flip season 2 live. **(done 2026-07-23 — see §18.1.3/§18.2/§18.4.3 checkmarks)**
-5. **Automation hardening** (§19.1–19.4): window schedule, reconcile/outbox, digest + ntfy. **(not started — Season 2's three books stay static at day 0 until this lands)**
+5. **Automation hardening** (§19.1–19.4): window schedule, reconcile/outbox, digest + ntfy. **(done 2026-07-23 — see §19 checkmarks. Five scheduled tasks created/rewritten (`arena-picks-publish`, `arena-open-window`, `arena-late-window`, `arena-autopilot-b-post`'s Phase 2, `arena-weekly-review`) but left DISABLED pending a manual "Run now" verification pass — see §21's last item. Season 2's three books remain static at day 0 until that first real run happens.)**
 6. **Verification** (§21) after every phase; full pass at the end.
 
 ## 21. Verification (Part 4 — blocking)
 
 - [x] `npx vitest run` green including new arenaExec/arenaFeatures/arenaRules-v2 suites; every §17.5 limit has a rejecting test. **(done — 66 files / 869 tests passing as of the Phase 4 verification pass, up from 815 at the end of Phase 1; `tests/arenaAccess.test.js` rewritten for the picks-only tightening)**
 - [x] `node scripts/validate-data.mjs` covers picks/runlog/digest/universe-v2 shapes; CI red on malformed pipeline output. **(done since Phase 2, re-verified green this pass — 12 files checked, all OK)**
-- [ ] Replay test: run `apply-arena-run.mjs` twice with the same run-input → byte-identical ledger (idempotency, 19.3.1). **(not done — blocked on Phase 5's runner existing; nothing calls `apply-arena-run.mjs` against Season 2 yet)**
-- [ ] Offline drill: unplug network, run a window → outbox entry created; reconnect, next run → flushed, runlog shows `queued→done`, no duplicate fills. **(not done — Phase 5, §19.3.3's outbox doesn't exist yet)**
-- [ ] Missed-window drill: skip a day, run reconcile → `missed` entries + `late:true` mark-to-market, equity curve continuous, zero retro-trades. **(not done — Phase 5, §19.3.1/19.3.2's reconcile() doesn't exist yet)**
-- [ ] Quota audit: one full simulated day of page + pipeline calls counted against §18.5 table; Finnhub < 60/min at all times, Twelve Data < 800/day. **(not done — needs a live/staged traffic simulation, deferred to Phase 5's rollout)**
+- [x] Replay test: run `apply-arena-run.mjs` twice with the same run-input → byte-identical ledger (idempotency, 19.3.1). **(done — manually verified this phase: a throwaway run-input (book S, window weekly-review, a future dummy date so it can't collide with real data) run twice via `apply-arena-run.mjs`; run 1 settled normally, run 2 printed the no-op message and left `arena-ledger.json`/`arena-runlog.json` untouched. Real files were backed up before and restored after — no lasting change to the actual ledger)**
+- [~] Offline drill: unplug network, run a window → outbox entry created; reconnect, next run → flushed, runlog shows `queued→done`, no duplicate fills. **(partially done — the outbox mechanics themselves are verified: `queue-arena-outbox.mjs` writes a well-formed `{runId,queuedAt,commitMessage,payload,result}` record, and `publish-arena-run.sh` flushes/clears any backlog on the next successful push. What's NOT been verified is the actual "network down mid-push" trigger path, since a sandbox can't safely simulate that against your real GitHub remote — this needs a real drill on your Mac, e.g. temporarily disabling networking during a manual "Run now")**
+- [x] Missed-window drill: skip a day, run reconcile → `missed` entries + `late:true` mark-to-market, equity curve continuous, zero retro-trades. **(the missed-entry half is done and manually verified — seeded a runlog with a 3-trading-day gap, ran `reconcile-arena-run.mjs`, got exactly 24 `missed` entries (8 expected windows × 3 days) and all three models correctly flagged in `lateMarkNeeded`; confirmed zero orders are ever proposed for a missed window, by construction (`buildMissedEntry` hardcodes `ordersProposed:0`). The late-mark-to-market HALF (fetching real EOD closes and calling `apply-arena-run.mjs ... late:true`) is written into the scheduled tasks' Step 1 but hasn't fired for real yet — that's part of the pending manual "Run now" verification)**
+- [ ] Quota audit: one full simulated day of page + pipeline calls counted against §18.5 table; Finnhub < 60/min at all times, Twelve Data < 800/day. **(not done — needs a live/staged traffic simulation; realistically only measurable once the scheduled tasks are enabled and run for real, deferred to after the manual verification pass)**
 - [x] Gate check: non-allowlisted symbol without key → 403 + lock UI; with key → data; key rotation invalidates immediately; `git grep` proves the key exists nowhere client-side. **(logic verified — `resolveAllowlist`/`checkAdminKey`/`isSymbolAllowed` all unit-tested for exactly these cases, and the frontend unlock form + `x-arena-key` header wiring is in place end-to-end. `grep -rn ARENA_ADMIN_KEY src/ public/ arena.html` finds only the env-var *name* in a code comment, never a key value. Can't be verified live in production yet since `ARENA_ADMIN_KEY` isn't set in Vercel — see the top-of-Part-4 status banner)**
 - [x] `npm run build` + bundle budget green (picks board is small; no new deps — no charting/NLP libraries snuck in). **(done — `arena` chunk 45.6 kB/300 kB budget; `npm run typecheck` and `node scripts/check-bundle-budget.mjs` both clean; sandbox's `dist/` write-permission quirk worked around via `--outDir` same as every prior phase)**
 - [x] Copy audit: every claim on the page says simulated/"-inspired"; disclaimers updated; zh/en parity via existing i18n attributes. **(done — meta description, header subtitle, hero brief, footer disclaimer all rewritten for "three simulated LLM ledgers" over "the full S&P 500"; every new/changed string has a matching `data-zh`; no HFT/real-money claims introduced)**
 - [x] design.md compliance: palette/fonts/shell untouched; Part 1 viz tokens reused for all new chart/tooltip/toast surfaces. **(done — no `:root` token edits, no new fonts; picks board and admin-unlock UI reuse existing `.chip`/`.btn`/`--acid`/`--cyan`/`--magenta` tokens rather than inventing new ones; design.md/tech.md updated with the new patterns — picks board, gated-state unlock form — per this session's archival work)**
+- [ ] **Manual "Run now" verification (blocking before enabling the Phase 5 scheduled tasks)**: `arena-picks-publish`/`arena-open-window`/`arena-late-window`/`arena-autopilot-b-post`/`arena-weekly-review` all exist but are `enabled:false` as of 2026-07-23 — none of this phase's automation has actually fired yet against the live Season 2 ledger. Before flipping any of them to `enabled:true`, run each once manually via "Run now" (cheapest/lowest-risk first: `arena-picks-publish`, since it never touches the ledger) and confirm: the published JSON passes `validate-data.mjs`, `apply-arena-run.mjs` settles without error, the runlog/ledger diffs look sane, and the git push actually lands on `origin/main`. Only enable a task once its own dry run looks right — do not flip all five at once on faith.
 
 ## Done (Part 4) =
 
 Arena runs three distinct AI books — ORACLE (sentiment/event), PULSE (intraday structure), ATLAS (alt-data fusion) — over the full US market through a multi-agent propose→risk→settle pipeline; the page opens on "Today's Recommended Trades" and spends API quota only on that pool unless an admin unlocks more; scheduled windows execute pre-market/intraday/post-market with idempotent runs, offline outbox + catch-up, and a daily digest pushed to you and surfaced on-site — all still simulated, code-enforced, and honest about what it is.
+
+---
+
+# PART 5 — horoscope.html ZWDS Beta Suite: Bazi Schema + Daily Fortune v2 (日运) · 合盘 Cross-Chart Matrix · Bazi×ZWDS Deep Integration
+
+> **Source spec**: `zwds-astrology-specification.md` (Ni Hai-hsia / 天纪-derived ZWDS architecture, uploaded 2026-07-23). Copy it into `rfcs/` as the reference document. It is a *reference*, not SSOT for math — see §22.1.
+> **Scope decision (confirmed 2026-07-23)**: Yang Zhai sectors (阳宅方位), `humanActions` (Junzi/Xiaoren) and the Heaven-Earth-Man 33.33-point formula (spec §3.3) are **deferred to Beta 2**. The `ZWDSChartMatrix` output schema keeps the hooks (fields exist, unused) so Beta 2 is additive, not a migration.
+> **All new features ship behind a visible "Beta" badge on horoscope.html.** Entertainment-only banners and the wording law (§22.4) apply to every new string.
+
+## 22. Assumptions & reality mapping (read first — most of this suite already exists)
+
+The spec describes a greenfield build. This repo is **not** greenfield: `src/lib/` already contains a verified calendar/astrology stack. PART 5 is a **gap-closure overhaul**, not a rewrite. Anything below marked SHIPPED must not be re-implemented.
+
+| Spec / task item | Repo reality | Status |
+| --- | --- | --- |
+| Four Pillars from true sexagenary cycle (`birthPillars`) | `src/lib/bazi.js` — real solar-term (节气) boundaries via Meeus solar longitude, 晚子时 convention, day-cycle pinned to two published anchors (`tests/bazi.test.js`) | **SHIPPED** — gap: no spec-§1.1-shaped JSON export |
+| Solar→lunar conversion | `src/lib/lunar.js` (1900–2100, tested vs independent impl) | **SHIPPED** |
+| Daily fortune from the real day pillar (日柱), no RNG | `src/lib/horoscopeEngine.js` `dailyFortune()` — day's actual ganzhi × day master, deterministic; seeded PRNG picks *phrasing only* | **SHIPPED** — gap: only day-master element vs day element; no stem ten-god, no branch 合冲刑害 vs the full natal chart (§23.3) |
+| ZWDS 12-palace chart (命宫/身宫, 五行局, 14 majors) | `src/lib/ziwei.js` — verified **400/400 vs iztro** | **SHIPPED** — gaps: no 四化, no auxiliary/sha stars, no brightness, no 大限 ages, no §1.2 matrix export (§25.1) |
+| 三方四正 scoring, sibling-palace rule, 流年倒推 | nothing | **NEW** (§25.2–25.4) |
+| Two-person bazi/ziwei/western synastry | `horoscopeEngine.synastry()`, `synastryModes.synastryZiwei()` (life-palace branch relation), `synastryAstro.js` | **SHIPPED** — gaps: no full 4×4 cross-chart branch matrix, no side-by-side dual-chart UI (§24) |
+| Branch relation tables (合/冲/刑/害/破) | `ziping.branchRelations()` (single chart), `dayun.pairRelations()` (one branch vs list), 破 table in `dayun.js` | **PARTIAL** — need a chart-vs-chart pairwise form (§24.1) |
+| 大运/流年/犯太岁 (bazi side) | `src/lib/dayun.js` | **SHIPPED** — feeds synthesis rule R3/R4 (§25.5) |
+| Stateless REST backend (spec §4.1) | Repo discipline is **fetch-free, client-side pure functions** (`horoscope.js` header, `arenaRules.js` pattern) | **DECISION: no backend.** Pure ESM modules + vitest satisfy the spec's actual requirement (stateless, functional, ephemeris-true). Nothing here needs a server |
+
+### 22.1 Spec-vs-repo conflicts — resolved in favor of verified repo code
+
+1. **Branch indexing**: spec anchors 寅=0; repo uses the standard 子=0 with 寅 at index 2. Spec's 命宫 `(month−1−hour)%12` ≡ repo's `mod(2+(m−1)−hb,12)`; spec's 天府 `(10−zw)%12` ≡ repo's `mod(4−zw,12)`. Same math, different origin. **Keep 子=0 everywhere**; write the equivalence into `ziweiDeep.js`'s header so nobody "fixes" it later.
+2. **紫微 placement**: spec §2.3 pseudocode and `ziwei.ziweiBranch()` are equivalent formulations; the repo one is pinned by the 400-chart iztro comparison. **Repo wins.** Do not touch `ziwei.js`.
+3. **Palace naming**: spec says 交友宫, repo says 仆役 (same palace). Keep 仆役 internally, render 交友 in zh UI copy if desired — display-only.
+4. **Spec §1.1 marks `yangZhaiSectors`/`humanActions` as `required`** — our Beta-1 input schema makes them optional-absent (deferred, see banner).
+5. **五行局 derivation**: spec §2.2 uses a year-stem × 命宫-branch lookup table; repo derives 局 from the 命宫 stem-branch's nayin element (五虎遁 + 纳音). These are two encodings of the same mapping — the repo path is the one verified vs iztro. **Repo wins**; add one test asserting the spec's table rows reproduce (§27).
+
+### 22.2 Decision needed from you (default chosen, flag if you disagree)
+
+**"Today" for the daily pillar**: `horoscope.js` `todayStr()` uses the *viewer's local civil date* (matches the existing check-in streak). Mainstream almanac practice reads the day pillar for your local date. **Default: keep viewer-local date** (a Perth user and a Sydney user can legitimately see different day pillars near midnight). Alternative — normalize to Beijing/CST like `normalizeBirthToCST()` does for births — is one line if you prefer a single global "today". Either way the pillar comes from `dayPillar()` (pure JDN arithmetic = the true ephemeris day cycle); **`Math.random` remains banned from every fortune-math path** (§27 greps for it).
+
+### 22.3 New-module map (all pure, all vitest-covered, no new deps)
+
+| Module | Contents | Consumed by |
+| --- | --- | --- |
+| `src/lib/baziSchema.js` | spec-§1.1 `birthPillars` export/validate | share payloads, §25.6 matrix export |
+| `src/lib/synastryBazi.js` | 4×4 cross-chart branch matrix + score | 合盘 UI (§24.2) |
+| `src/lib/ziweiDeep.js` | 四化, aux/sha stars, brightness, 大限, §1.2 matrix, 三方四正, sibling rule, 流年 layer | palace-grid UI (§25.6), synthesis |
+| `src/lib/deepSynthesis.js` | Bazi×ZWDS concordance rules R1–R5 | deep-analysis panel (§25.6) |
+
+`ziwei.js`, `bazi.js`, `lunar.js`, `dayun.js`, `ziping.js` are **frozen** for this part except: export the internal branch pair tables from `ziping.js`/`dayun.js` that §24.1 needs (export-only lines, zero behavior change).
+
+### 22.4 Wording law (blocking for every new string)
+
+The spec's warning copy ("Extreme structural hazard!", "cardiac/respiratory incidents", "DO NOT INVEST OR EXPAND!") **violates the site's established wording law** (`synastryAstro.js`/`synastryModes.js`: *a pattern + a coping action, never a verdict*; no health claims, no financial directives — hard-learned in Part 4's copy audit). We keep the spec's **math** (thresholds, weights, flags) and rewrite its **copy**: e.g. 化忌-broken sibling palace renders as "this chart pattern favors running things solo — shared ownership reads as high-friction" — never "strictly prohibited". Every string bilingual via existing `data-zh` i18n.
+
+---
+
+## 23. Task 1 — Bazi schema alignment + Daily Fortune v2 (日运)
+
+### 23.1 `baziSchema.js` — spec-§1.1 adapter (~40 lines)
+
+- `toBirthPillars(chart)` → `{ year:'甲子', month:'丙寅', day:'…', hour:'…'|null }` from `computeBazi()` output; strings must match the spec regex `^[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]$`.
+- `validateBirthPillars(obj)` → hand-rolled asserts (no ajv — no new deps), used by tests and by the share-link codec when ingesting.
+- `todayPillars(dateStr)` → `{ day: '…' }` + stem/branch indices for today via `dayPillar()` — the single sanctioned entry point for "today's ganzhi" (both §23.3 and §25.4 import it; nothing else recomputes it).
+
+### 23.2 `dailyFortune()` v2 — full 五行生克 upgrade (`horoscopeEngine.js`, surgical)
+
+Current read = day-master element vs today's element (`elementRelation()`, line 30). v2 layers on, keeping the signature, the 8..96 clamp, the seeded phrasing banks, and every existing test:
+
+1. **Stem channel**: today's stem vs natal day master → 十神 via `ziping.tenGodOfStem()`; map ten-god → domain emphasis (官杀→career, 财→wealth, 印→learning/backing, 食伤→expression, 比劫→peers/competition).
+2. **Branch channel**: today's branch vs **all four** natal branches via the exported pair tables (§22.3) — 六合/三合/六冲/相刑/相害/相破 — weighted by pillar: day 0.4, year 0.25, month 0.25, hour 0.1 (hour term dropped when hour unknown, weights renormalized).
+3. **Score composition**: element relation (existing) 50% + stem channel 25% + branch channel 25%; a 冲 on the natal day branch caps `overall` at 60 (a clash day never reads "excellent" — spec's restriction principle), a 六合 on the day branch floors it at 40.
+4. Phrasing banks gain fragments keyed by ten-god and by strongest branch event, zh/en. Deterministic as before: same (birth, date) → identical output.
+
+**Backward-compat**: existing `tests/horoscopeEngine.test.js` invariants (determinism, cross-day variation, cross-person variation, clamp) must pass unchanged; add new cases pinning one hand-computed 冲 day and one 合 day.
+
+### 23.3 Daily Fortune module UI (`horoscope.js` + `horoscope.html`)
+
+- The existing daily panel gains: today's full day pillar rendered as a pillar card (reuse `pillarCardsHTML()`, line ~296), the ten-god label, and a "why" strip listing the branch events (e.g. 午—子冲 on your day pillar) — the receipts, not just a score. Beta badge on the panel header.
+
+## 24. Task 2 — 合盘 v2: cross-chart Earthly-Branch matrix + side-by-side UI
+
+### 24.1 `synastryBazi.js` — the exact 地支相合相冲 algorithm (~120 lines)
+
+```
+crossBranchMatrix(pillarsA, pillarsB) →
+  { cells: 4×4 [{ pa, pb, relations: ['六合'|'三合'|'六冲'|'相刑'|'相害'|'相破'...], w }],
+    score: 0..100, combos: [...], clashes: [...] }
+```
+
+- **Tables** (import from `ziping.js`/`dayun.js` after the export-only change — do not duplicate): 六合 (子丑 寅亥 卯戌 辰酉 巳申 午未), 三合 pairs counted as半合 (申子辰/亥卯未/寅午戌/巳酉丑), 六冲 (i vs i+6), 相刑 (both directions, incl. 自刑), 相害, 相破 (`dayun.js`'s table).
+- **Weights**: pillar-pair significance matrix — day×day 1.0 (the spouse axis), day×year .6, year×year .5, month×month .5, day×month .5, hour pairs .3, others .4. Relation values: 六合 +10, 半合 +6, 六冲 −10, 刑 −7, 害 −5, 破 −4, multiplied by pair weight, summed, sigmoid-squashed to 0..100 centred at 50.
+- **Invariant (tested)**: `crossBranchMatrix(A,B).score === crossBranchMatrix(B,A).score` and cell (i,j) mirrors (j,i).
+- Missing hour on either side → 3×4 / 3×3 matrix, weights renormalized (same discipline as `synastry()`).
+
+### 24.2 Side-by-side dual-chart UI (`horoscope.html` + `horoscope.js`)
+
+- New 合盘 layout: two full pillar-card columns (A = 关系册 "me", B = other — reuse `pillarCardsHTML()` verbatim per column), desktop side-by-side / mobile stacked, with the **4×4 matrix rendered as a grid between/below them** — cells color-coded (existing tokens only: harmony = `--cyan`-tinted, clash = `--magenta`-tinted, neutral = dim) with the relation glyph (合/冲/刑/害/破).
+- Clicking a non-neutral cell draws an SVG connector line between the two physical pillar cards involved (same overlay technique as §10's star-map lines; no new lib).
+- Below the matrix: the existing `synastry()` + `synastryZiwei()` + western `crossAspects()` panels remain untouched — this section *adds* the branch-matrix layer above them; nothing is removed.
+- 关系册 (BOOK_KEY) flow unchanged: pick a saved person → dual chart renders.
+
+## 25. Task 3 — ZWDS deep layer + Bazi×ZWDS synthesis
+
+### 25.1 `ziweiDeep.js` part A — completing the spec-§1.2 matrix (input: `computeZiwei()` output; `ziwei.js` untouched)
+
+1. **四化 (birth-year transformations)**: year stem → (化禄, 化权, 化科, 化忌) star table. ⚠ Known school variance on 庚/壬/戊 rows — **pin to iztro's table** (consistent with the harness that already validates `ziwei.js`) and document the choice in the header, same convention-footnote discipline as `ziping.js`.
+2. **Auxiliary + sha stars** (spec star `level`s): 禄存/擎羊/陀罗 (year stem), 天马 (year branch trine), 左辅/右弼 (lunar month), 文昌/文曲 (hour branch), 火星/铃星 (year branch group + hour), 地空/地劫 (hour). Levels: `Lucky` (禄存 天马 左辅 右弼 文昌 文曲), `Sha` (擎羊 陀罗 火星 铃星 地空 地劫), majors = `Major`.
+3. **大限 (Da Xian) ages**: first decade starts at 局数 (Water 2 → age 2, … Fire 6 → age 6); direction = 阳年男/阴年女 forward, else backward (mirrors `dayun.dayunDirection()` — assert agreement in tests); walk the 12 palaces from 命宫 assigning `startAge/endAge` (10y each).
+4. **Brightness (庙旺得利平陷)**: 14-major lookup table, `brightness` field per spec. School variance is real here too — mark the field optional in our validator, pin one published table, footnote it.
+5. **`toChartMatrix(z, deep, clientId)`** → the spec-§1.2 `ZWDSChartMatrix` JSON verbatim (incl. `isSelfPalace` from 身宫, `wuXing`/`polarization` per star, `transformation`). This is the export/interop surface; internal code keeps using the richer live objects.
+
+### 25.2 三方四正 scoring engine (spec §3.1, exact weights)
+
+`sanFangSiZheng(palaces, i)` → target + opposite `(i+6)%12` + trines `(i+4)%12`,`(i+8)%12`; scoring per spec: Sha star +3.0 clash, 化忌 +5.0 clash (**+5.0 again and `huaJiActive=true` when it sits in the opposing palace** — the spec's 2× rule), 化禄/权/科 +4.0 favorable. Returns the spec's `scoring_matrix` shape plus a 0..100 normalized score for UI/synthesis use.
+
+### 25.3 Sibling-palace partnership rule (spec §3.2)
+
+`partnershipRead(palaces)` — FALSE iff 兄弟宫 holds 化忌, or holds 七杀 together with any Sha star (exact spec condition). Copy per §22.4: solo-structure *pattern* language, never "prohibited". Renders as one card in the deep panel with the receipts (which star, which condition).
+
+### 25.4 流年 layer + back-propagation (spec §3.4, capped)
+
+- 流年命宫 = the palace whose branch equals the year's branch (`dayun.liunianPillar()` supplies the ganzhi); 流年四化 from the year stem re-using §25.1's table; year score = §25.2 over the 流年命宫 **with the annual transformations overlaid**.
+- `flowingYearScan(deep, currentAge)`: exactly the spec's shape — look ahead ages +1/+2, `deceptiveBait` triggers when current ≥ 75 and any look-ahead < 20; returns defensive/aggressive stance scores (25/90 per spec). **Horizon hard-capped at 10 years** (spec §4.1.3) — enforced by a test, and it's cheap anyway (pure array math, no server).
+- Copy per §22.4: "unusually bright year followed by a sharp dip — the pattern favors consolidating over expanding" — no ALL-CAPS financial commands.
+
+### 25.5 `deepSynthesis.js` — the Bazi×ZWDS rules (the actual "deep integrated analysis")
+
+Both systems are computed from the same birth instant; synthesis = structured agreement/disagreement, never averaging into mush. Rules (each emits `{verdict: 'reinforced'|'crosscurrent', receipts: [...]}`):
+
+| # | Bazi input (exists) | ZWDS input (new) | Synthesis rule |
+| --- | --- | --- | --- |
+| R1 | 身强/身弱 from `ziPingAnalysis()` | 命宫 §25.2 score | Both strong → "reinforced self-direction"; strong bazi + broken 命宫 (or inverse) → crosscurrent copy naming both receipts |
+| R2 | 用神 element (`ziPingAnalysis`) | 命宫 major stars' `wuXing` | 用神 element generated/matched by 命宫 stars → amplifier flag on R1; restricted → damper |
+| R3 | current 大运 pillar (`computeDayun()`) | current 大限 palace + its §25.2 score | The two decade systems cover the same years: agreement tiers (both favorable / mixed / both adverse) drive the decade card's tone |
+| R4 | 流年 犯太岁 (`taisuiRelation()`) | 流年宫 score + 流年四化 (§25.4) | Year card: 犯太岁 AND 化忌-hit 流年宫 → strongest caution tier; either alone → moderate; neither → 流年宫 score speaks |
+| R5 | daily v2 relation + branch events (§23.2) | today's branch palace §25.2 score | Daily deep line: bazi day read × the palace today's branch lights up — the one place Task 1 and Task 3 meet |
+
+Concordance principle (header-documented): **agreement sharpens copy, disagreement hedges it** — a crosscurrent never renders as a verdict, it renders as both receipts + a coping line (§22.4).
+
+### 25.6 UI — 12-palace grid + deep panel (`horoscope.html` + `horoscope.js`)
+
+- **Palace grid component** (spec §4.2): classic 4×4 ring (12 palaces around a 2×2 center box), 子-branch palace bottom-center, 午 top-center (spec's stated orientation, standard layout). Center box = 五行局, 命主 info, Beta badge. Each cell: palace name, branch+stem, stars with 四化 superscripts (禄权科忌), 大限 age range.
+- **Click a palace → SVG 三方四正 overlay** arrows to its three linked palaces (spec §4.2.2) + that palace's §25.2 score breakdown in a side strip.
+- **Warning states** (spec §4.2.3): 化忌-holding palaces get the existing amber/`--magenta` border treatment — reuse Part-1 viz tokens, invent nothing.
+- **Deep-analysis panel** below the grid: R1–R5 cards. Renders only when hour is known (`computeZiwei()` returns null otherwise — surface the "hour needed" empty state, existing pattern).
+
+## 26. Implementation order (each phase independently shippable, CI-green)
+
+1. **Engine T1** (§23.1–23.2): `baziSchema.js` + `dailyFortune` v2, tests first (old invariants must stay green). Ship — daily panel upgrade (§23.3) can ride along or follow.
+2. **Engine T2** (§24.1): `ziping.js`/`dayun.js` export-only edits + `synastryBazi.js` + symmetry/weight tests. No UI yet.
+3. **Engine T3a** (§25.1): `ziweiDeep.js` stars/四化/大限/brightness/matrix + iztro spot-check harness.
+4. **Engine T3b** (§25.2–25.5): scoring, sibling rule, 流年, `deepSynthesis.js`. Pure math, fully testable headless.
+5. **UI** (§23.3, §24.2, §25.6): dual-chart 合盘, palace grid, deep panel, Beta badges, zh/en strings.
+6. **Verification** (§27) after every phase; full pass at the end.
+
+## 27. Verification (Part 5 — blocking)
+
+- [ ] `npx vitest run` green; new suites: `baziSchema`, `dailyFortune`-v2 (old invariants unchanged + pinned 冲/合 days), `synastryBazi` (A↔B symmetry, missing-hour renormalization, hand-checked 子午冲 day×day case), `ziweiDeep` (大限 direction agrees with `dayunDirection()` for 20 random births; 大限 ranges tile all 12 palaces gaplessly), `deepSynthesis` (each R-rule's agreement and crosscurrent branch exercised).
+- [ ] iztro spot-check harness extended: 四化 + 禄存/擎羊/陀罗/文昌/文曲 placements match on ≥100 random births (same methodology that pinned `ziwei.js`); any deliberate school-convention divergence documented in the module header, not silently different.
+- [ ] Spec-table reproduction: §2.2's 五行局 lookup rows reproduce from the repo's nayin path (all 10 stems × 6 branch-pairs); `toChartMatrix()` output validates against spec §1.2 (hand-rolled asserts; every star has `name/level/wuXing/transformation`).
+- [ ] Determinism audit: `grep -rn "Math.random" src/lib/` shows zero hits in any fortune-math module (seeded PRNG for phrasing only, as today); same (birth, date) → byte-identical `dailyFortune`/`flowingYearScan` output across two runs.
+- [ ] `npm run build` + `node scripts/check-bundle-budget.mjs` green — horoscope chunk stays inside budget (all new code is table math; no new deps allowed).
+- [ ] Copy audit (§22.4): no health claims, no financial directives, no verdict language in any new string; every new string has `data-zh`; entertainment-only banner present on every new panel; Beta badges present.
+- [ ] design.md compliance: no `:root` edits, no new fonts; grid/matrix/warning states reuse Part-1 viz tokens and existing `.chip`/`.btn` patterns.
+- [ ] Frozen-file audit: `git diff` on `ziwei.js`/`bazi.js`/`lunar.js` shows zero changes; `ziping.js`/`dayun.js` diffs are export-keyword-only.
+
+## Done (Part 5) =
+
+horoscope.html carries a Beta suite where the daily reading is driven by the full 五行生克 of today's true day pillar against all four natal pillars with visible receipts; 合盘 shows two complete charts side-by-side with an exact 4×4 Earthly-Branch combination/clash matrix; and a full ZWDS deep layer — 四化, sha stars, 大限 ages, 三方四正 scoring, the sibling-palace partnership rule, and a capped 流年 back-propagation scan — synthesizes with the existing Bazi engine through five explicit concordance rules, all pure, deterministic, ephemeris-true, test-pinned against iztro, and worded within the site's no-verdict copy law.

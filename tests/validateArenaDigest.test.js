@@ -35,6 +35,14 @@ describe('validateArenaDigest — top-level', () => {
   it('requires delayed to be an array', () => {
     expect(validateArenaDigest(base({ delayed: null })).ok).toBe(false);
   });
+  it('accepts a well-formed delayed entry', () => {
+    const delayed = [{ date: '2026-07-22', window: 'post-market', model: 'T', note_en: 'queued offline', note_zh: '离线排队' }];
+    expect(validateArenaDigest(base({ delayed })).ok).toBe(true);
+  });
+  it('rejects a delayed entry with a bad window or missing notes', () => {
+    expect(validateArenaDigest(base({ delayed: [{ date: '2026-07-22', window: 'bogus', model: 'T', note_en: 'x' }] })).ok).toBe(false);
+    expect(validateArenaDigest(base({ delayed: [{ date: '2026-07-22', window: 'post-market', model: 'T' }] })).ok).toBe(false);
+  });
 });
 
 describe('validateArenaDigest — per-book fields', () => {
