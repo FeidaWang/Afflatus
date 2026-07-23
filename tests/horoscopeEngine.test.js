@@ -49,6 +49,27 @@ describe('dailyFortune', () => {
     expect(f.lucky.number).toBeGreaterThanOrEqual(1);
     expect(f.lucky.number).toBeLessThanOrEqual(9);
   });
+
+  // v2 (Part 5 §23.2): stem-channel ten god + branch-channel 合冲刑害,
+  // hand-verified against P1's real chart (甲戌年 戊辰月 甲戌日 戊辰时,
+  // day branch 戌=10).
+  it('tags the ten-god of the day (stem channel)', () => {
+    const f = dailyFortune(P1, '2026-07-05');
+    expect(f.tenGod.zh).toBeTruthy(); expect(f.tenGod.en).toBeTruthy();
+    expect(f.tenGod.idx).toBeGreaterThanOrEqual(0); expect(f.tenGod.idx).toBeLessThanOrEqual(9);
+  });
+  it('2026-07-05 (庚辰日) clashes P1\'s natal day branch (戌) — caps overall at 60', () => {
+    const f = dailyFortune(P1, '2026-07-05');
+    const dayEvent = f.branchEvents.find((e) => e.pillar === 'day');
+    expect(dayEvent.type).toBe('chong');
+    expect(f.overall.score).toBeLessThanOrEqual(60);
+  });
+  it('2026-01-05 (己卯日) six-harmonizes P1\'s natal day branch (戌, 卯戌合) — floors overall at 40', () => {
+    const f = dailyFortune(P1, '2026-01-05');
+    const dayEvent = f.branchEvents.find((e) => e.pillar === 'day');
+    expect(dayEvent.type).toBe('liuhe');
+    expect(f.overall.score).toBeGreaterThanOrEqual(40);
+  });
 });
 
 describe('synastry', () => {

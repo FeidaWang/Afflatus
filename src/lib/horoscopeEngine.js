@@ -1,5 +1,6 @@
 /* ============================================================
-   HOROSCOPE ENGINE (V20) — daily fortune + two-person synastry.
+   HOROSCOPE ENGINE (V20, v2 daily engine V25 Part 5 §23.2) — daily
+   fortune + two-person synastry.
 
    Pure functions, deterministic: same (chart, date) → same output. Daily
    variation is REAL — the day's actual sexagenary pillar (true calendar
@@ -11,11 +12,29 @@
 
    ENTERTAINMENT ONLY. Scores are clamped to 8..96: this product never
    hands out absolute answers, by design.
+
+   dailyFortune() v2 (Part 5 §23.2) layers two more REAL (non-random)
+   channels onto the original element-relation read, composed 50/25/25:
+   - stem channel (25%): today's stem vs the natal day master, via
+     ziping.tenGodOfStem() — the ten-god maps to ONE of the four domains
+     (a documented simplification: 比劫→wealth, 食伤→love, 官杀→career,
+     印→health; each domain gets exactly one favorable + one draining god,
+     see TEN_GOD_DOMAIN below).
+   - branch channel (25%): today's branch vs all natal branches (year
+     .25 / month .25 / day .4 / hour .1, renormalized when hour is
+     unknown) via ziping.branchRelations() — 六合/半合/六冲/相刑/相害 (破
+     is intentionally out of scope here; it's the least-common of the six
+     relations and is reserved for the 合盘 cross-chart matrix in
+     synastryBazi.js §24.1, where the spec requires it explicitly).
+   A 六冲 on the natal DAY branch caps `overall` at 60 (a clash day never
+   reads "excellent"); a 六合 on the day branch floors it at 40.
    ============================================================ */
 import {
-  computeBazi, dayPillar, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN,
-  zodiacIndex, ZODIAC_TRIPLICITY,
+  computeBazi, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN,
+  zodiacIndex, ZODIAC_TRIPLICITY, dayPillar,
 } from './bazi.js';
+import { tenGodOfStem, TEN_GOD_ZH, TEN_GOD_EN, branchRelations } from './ziping.js';
+import { todayPillars } from './baziSchema.js';
 
 // ---- seeded PRNG (deterministic) ----------------------------------------
 function strHash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -33,6 +52,72 @@ export function elementRelation(dayMasterEl, todayEl) {
   if ((dayMasterEl + 1) % 5 === todayEl) return 'drains';
   if ((dayMasterEl + 2) % 5 === todayEl) return 'prize';
   return 'presses'; // (todayEl + 2) % 5 === dayMasterEl
+}
+
+// ---- stem channel: today's stem vs day master → ten god → domain -------
+// TEN_GOD order (ziping.js): 0比肩 1劫财 2食神 3伤官 4偏财 5正财 6七杀 7正官
+// 8偏印 9正印. Each of the four domains gets exactly one favorable (+1) and
+// one draining (-1) god — a deliberate, documented simplification onto the
+// site's existing 4-domain shape (see module header).
+const TEN_GOD_DOMAIN = [
+  { domain: 'wealth', sign: -1 }, { domain: 'wealth', sign: -1 },
+  { domain: 'love', sign: 1 }, { domain: 'love', sign: -1 },
+  { domain: 'wealth', sign: 1 }, { domain: 'wealth', sign: 1 },
+  { domain: 'career', sign: -1 }, { domain: 'career', sign: 1 },
+  { domain: 'health', sign: -1 }, { domain: 'health', sign: 1 },
+];
+const TEN_GOD_NOTE = {
+  0: { zh: '今日比肩当值，人脉热络，破财小心', en: 'A Companion day — sociable, but watch the wallet' },
+  1: { zh: '今日劫财当值，合伙分利之事从缓', en: 'A Rob-Wealth day — hold off on splitting anything with others' },
+  2: { zh: '今日食神当值，谈吐灵光，桃花隐现', en: 'An Eating-God day — words flow easily, charm runs warm' },
+  3: { zh: '今日伤官当值，言辞犀利，话到嘴边留三分', en: 'A Hurting-Officer day — sharp tongue; leave a third unsaid' },
+  4: { zh: '今日偏财当值，意外之财易现', en: 'An Indirect-Wealth day — unexpected income may surface' },
+  5: { zh: '今日正财当值，本份收入稳进', en: 'A Direct-Wealth day — steady, earned income' },
+  6: { zh: '今日七杀当值，压力当前，宜静不宜躁', en: 'A Seven-Killings day — pressure is real; stay calm, not brash' },
+  7: { zh: '今日正官当值，责任加身，正是露脸的时候', en: 'A Direct-Officer day — responsibility lands; a good day to be seen' },
+  8: { zh: '今日偏印当值，思虑偏多，留一段独处时间', en: 'An Indirect-Seal day — overthinking looms; carve out solo time' },
+  9: { zh: '今日正印当值，贵人扶持，身心得养', en: 'A Direct-Seal day — support arrives; body and mind get looked after' },
+};
+function stemChannel(dayMasterStem, todayStem) {
+  const god = tenGodOfStem(dayMasterStem, todayStem);
+  const { domain, sign } = TEN_GOD_DOMAIN[god];
+  const scores = { career: 50, love: 50, wealth: 50, health: 50 };
+  scores[domain] = 50 + sign * 15;
+  return { god, domain, sign, scores, overall: 50 + (sign * 15) / 4 };
+}
+
+// ---- branch channel: today's branch vs every natal branch ----------------
+const BRANCH_EVENT_PTS = { liuhe: 20, banhe: 12, chong: -20, hai: -10, xing: -14 };
+const BRANCH_EVENT_NOTE = {
+  liuhe: { zh: '与你的%s六合，诸事顺水', en: 'Six-harmony with your %s pillar — things flow' },
+  banhe: { zh: '与你的%s半合，助力一分', en: 'Half-combination with your %s pillar — a small lift' },
+  chong: { zh: '与你的%s相冲，今日宜守不宜攻', en: 'Clashes with your %s pillar — a day to defend, not push' },
+  hai:   { zh: '与你的%s相害，小心口舌', en: 'Harms your %s pillar — mind the small friction' },
+  xing:  { zh: '与你的%s相刑，节奏易乱，慢半拍处理', en: 'Punishes your %s pillar — pace runs ragged; slow down a beat' },
+};
+const PILLAR_LABEL = { year: { zh: '年柱', en: 'year' }, month: { zh: '月柱', en: 'month' }, day: { zh: '日柱', en: 'day' }, hour: { zh: '时柱', en: 'hour' } };
+function branchChannel(chart, todayBranch) {
+  const natal = [
+    { id: 'year', branch: chart.year.branch, w: 0.25 },
+    { id: 'month', branch: chart.month.branch, w: 0.25 },
+    { id: 'day', branch: chart.day.branch, w: 0.4 },
+    ...(chart.hour ? [{ id: 'hour', branch: chart.hour.branch, w: 0.1 }] : []),
+  ];
+  const totalW = natal.reduce((s, n) => s + n.w, 0);
+  let score = 50;
+  const events = [];
+  for (const n of natal) {
+    if (n.branch === todayBranch) continue; // identical branch: no table relation to report
+    for (const r of branchRelations([todayBranch, n.branch])) {
+      const pts = BRANCH_EVENT_PTS[r.type];
+      if (pts == null) continue; // sanhe needs 3 branches, never fires here
+      score += (pts * n.w) / totalW;
+      const note = BRANCH_EVENT_NOTE[r.type];
+      events.push({ type: r.type, text: r.text, pillar: n.id, w: n.w, zh: note.zh.replace('%s', PILLAR_LABEL[n.id].zh), en: note.en.replace('%s', PILLAR_LABEL[n.id].en) });
+    }
+  }
+  const dayEvent = events.find((e) => e.pillar === 'day') || null;
+  return { score: Math.max(0, Math.min(100, Math.round(score))), events, dayEvent };
 }
 
 // Base score per (relation × domain). Domains: career love wealth health.
@@ -119,19 +204,26 @@ const DIRECTIONS = [
 // birth: {y,m,d,hour?}; dateStr: 'YYYY-MM-DD' (the day being read).
 export function dailyFortune(birth, dateStr) {
   const chart = computeBazi(birth);
-  const [ty, tm, td] = dateStr.split('-').map(Number);
-  const today = dayPillar(ty, tm, td);
+  const today = todayPillars(dateStr);
   const todayEl = STEM_ELEMENT[today.stem];
   const rel = elementRelation(chart.dayMasterElement, todayEl);
   const rnd = mulberry32(strHash(`${dateStr}|${birth.y}-${birth.m}-${birth.d}-${birth.hour ?? 'x'}`));
 
+  const stem = stemChannel(chart.dayMaster, today.stem);
+  const branch = branchChannel(chart, today.branch);
+
   const domains = ['career', 'love', 'wealth', 'health'].map((id) => {
-    const score = clamp(Math.round(REL_BASE[rel][id] + (rnd() * 22 - 11)), 8, 96);
+    const base = REL_BASE[rel][id] * 0.5 + stem.scores[id] * 0.25 + branch.score * 0.25;
+    const score = clamp(Math.round(base + (rnd() * 22 - 11)), 8, 96);
     const tone = toneOf(score);
     const frag = pick(rnd, DOMAIN_TXT[id][tone]);
     return { id, score, tone, zh: frag.zh, en: frag.en };
   });
-  const overall = clamp(Math.round(REL_BASE[rel].overall + (rnd() * 16 - 8)), 8, 96);
+  const overallBase = REL_BASE[rel].overall * 0.5 + stem.overall * 0.25 + branch.score * 0.25;
+  let overall = clamp(Math.round(overallBase + (rnd() * 16 - 8)), 8, 96);
+  // a clash on the natal day branch never reads "excellent"; a combo never reads "grim"
+  if (branch.dayEvent?.type === 'chong') overall = Math.min(overall, 60);
+  if (branch.dayEvent?.type === 'liuhe') overall = Math.max(overall, 40);
 
   // lucky color = the element that FEEDS the day master (印, the nourisher)
   const luckyEl = (chart.dayMasterElement + 4) % 5;
@@ -143,6 +235,8 @@ export function dailyFortune(birth, dateStr) {
     chart, todayPillar: today, relation: rel,
     overall: { score: overall, tone: toneOf(overall), zh: OVERALL_TXT[rel].zh, en: OVERALL_TXT[rel].en },
     domains,
+    tenGod: { idx: stem.god, zh: TEN_GOD_ZH[stem.god], en: TEN_GOD_EN[stem.god], domain: stem.domain, note: TEN_GOD_NOTE[stem.god] },
+    branchEvents: branch.events,
     lucky: {
       color: LUCKY_COLORS[luckyEl],
       element: { zh: ELEMENTS_ZH[luckyEl], en: ELEMENTS_EN[luckyEl] },

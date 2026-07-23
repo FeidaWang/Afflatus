@@ -118,10 +118,13 @@ export function seasonalStrength(monthBranchIdx) {
 // ---- stem/branch relations (刑冲合害) --------------------------------------
 const STEM_COMBOS = [[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]]; // 甲己 乙庚 丙辛 丁壬 戊癸
 const STEM_CLASHES = [[0, 6], [1, 7], [2, 8], [3, 9]]; // 甲庚 乙辛 丙壬 丁癸
-const BRANCH_LIUHE = [[0, 1], [2, 11], [3, 10], [4, 9], [5, 8], [6, 7]]; // 子丑 寅亥 卯戌 辰酉 巳申 午未
-const BRANCH_LIUCHONG = [[0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11]];
-const BRANCH_LIUHAI = [[0, 7], [1, 6], [2, 5], [3, 4], [8, 11], [9, 10]];
-const SANHE_GROUPS = [
+// Exported (V25 Part 5 §24.1): synastryBazi.js's cross-chart branch matrix
+// reuses these same tables instead of duplicating them — export-only, no
+// behavior change to anything in this file.
+export const BRANCH_LIUHE = [[0, 1], [2, 11], [3, 10], [4, 9], [5, 8], [6, 7]]; // 子丑 寅亥 卯戌 辰酉 巳申 午未
+export const BRANCH_LIUCHONG = [[0, 6], [1, 7], [2, 8], [3, 9], [4, 10], [5, 11]];
+export const BRANCH_LIUHAI = [[0, 7], [1, 6], [2, 5], [3, 4], [8, 11], [9, 10]];
+export const SANHE_GROUPS = [
   { branches: [8, 0, 4], el: 4 }, // 申子辰 -> 水
   { branches: [2, 6, 10], el: 1 }, // 寅午戌 -> 火
   { branches: [5, 9, 1], el: 3 }, // 巳酉丑 -> 金
@@ -130,9 +133,9 @@ const SANHE_GROUPS = [
 // 三刑 cyclic sets: 寅->巳->申->寅 (无恩之刑), 丑->戌->未->丑 (恃势之刑).
 // Direction matters (verified: a real chart with 寅+申 present reports
 // "申刑寅", not "寅刑申").
-const XING_CYCLES = [[2, 5, 8], [1, 10, 7]];
-const ZIMAO_XING = [0, 3]; // 子卯 无礼之刑 (mutual, non-cyclic)
-const SELF_XING = [4, 6, 9, 11]; // 辰午酉亥 自刑 (only if the branch repeats)
+export const XING_CYCLES = [[2, 5, 8], [1, 10, 7]];
+export const ZIMAO_XING = [0, 3]; // 子卯 无礼之刑 (mutual, non-cyclic)
+export const SELF_XING = [4, 6, 9, 11]; // 辰午酉亥 自刑 (only if the branch repeats)
 
 function overcomes(a, b) { return mod(a + 2, 5) === b; } // element a overcomes element b
 
@@ -172,9 +175,12 @@ export function branchRelations(branches) {
 }
 
 // ---- 神煞 (shensha) ---------------------------------------------------------
-function groupOf(branchIdx) { return SANHE_GROUPS.find((g) => g.branches.includes(branchIdx)); }
-const groupKey = (g) => g.branches.join(',');
-const YIMA_BY_GROUP = { '8,0,4': 2, '2,6,10': 8, '5,9,1': 11, '11,3,7': 5 };
+// groupOf/groupKey/YIMA_BY_GROUP/LU_BY_STEM exported (V25 Part 5 §25.1):
+// ziweiDeep.js's 禄存/擎羊/陀罗/天马 placement reuses these instead of
+// duplicating them — export-only, no behavior change to this file.
+export function groupOf(branchIdx) { return SANHE_GROUPS.find((g) => g.branches.includes(branchIdx)); }
+export const groupKey = (g) => g.branches.join(',');
+export const YIMA_BY_GROUP = { '8,0,4': 2, '2,6,10': 8, '5,9,1': 11, '11,3,7': 5 };
 const HUAGAI_BY_GROUP = { '8,0,4': 4, '2,6,10': 10, '5,9,1': 1, '11,3,7': 7 };
 const JIANGXING_BY_GROUP = { '8,0,4': 0, '2,6,10': 6, '5,9,1': 9, '11,3,7': 3 };
 const TAOHUA_BY_GROUP = { '8,0,4': 9, '2,6,10': 3, '5,9,1': 6, '11,3,7': 0 };
@@ -189,7 +195,7 @@ const SANHUI_GROUPS = [
   { branches: [8, 9, 10], guchen: 11, guasu: 7 }, // 申酉戌(秋) -> 孤辰亥 寡宿未
 ];
 function sanhuiOf(branchIdx) { return SANHUI_GROUPS.find((g) => g.branches.includes(branchIdx)); }
-const LU_BY_STEM = [2, 3, 5, 6, 5, 6, 8, 9, 11, 0]; // 十干禄
+export const LU_BY_STEM = [2, 3, 5, 6, 5, 6, 8, 9, 11, 0]; // 十干禄
 const YANGREN_BY_STEM = [3, null, 6, null, 6, null, 9, null, 0, null]; // 羊刃, 阳干only
 const TIANYI_BY_STEM = [[1, 7], [0, 8], [11, 9], [11, 9], [1, 7], [0, 8], [6, 2], [6, 2], [3, 5], [3, 5]]; // 天乙贵人
 const WENCHANG_BY_STEM = [5, 6, 8, 9, 8, 9, 11, 0, 2, 3]; // 文昌贵人

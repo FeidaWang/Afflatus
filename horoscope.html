@@ -167,13 +167,14 @@
 
   <!-- ===== my chart + daily fortune ===== -->
   <section class="sec" id="mineSec" hidden aria-label="My chart and daily fortune">
-    <div class="sec-label"><span class="zh" data-en="TODAY'S READING" data-zh="今日运程">TODAY'S READING</span></div>
+    <div class="sec-label"><span class="zh" data-en="TODAY'S READING" data-zh="今日运程">TODAY'S READING</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
     <div class="panel">
       <div class="today-head">
         <span class="today-gz" id="todayGz">—</span>
         <span class="today-rel" id="todayRel"></span>
         <span class="streak" id="streakChip" hidden></span>
       </div>
+      <div class="today-detail" id="todayDetailWrap"></div>
       <div class="star-draw" id="starDrawWrap"></div>
 
       <div class="pillars" id="pillarRow" style="margin-top:14px"></div>
@@ -205,6 +206,9 @@
 
       <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="ZIWEI · TWELVE PALACES" data-zh="紫微斗数 · 十二宫">ZIWEI · TWELVE PALACES</span></div>
       <div class="zw-wrap" id="zwWrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span data-en="ZWDS DEEP LAYER" data-zh="紫微斗数 · 深度层">ZWDS DEEP LAYER</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
+      <div class="zwd-wrap" id="zwdWrap"></div>
 
       <div class="overall">
         <div class="oring" aria-hidden="true">
@@ -268,6 +272,12 @@
             <em data-en="RESONANCE" data-zh="共鸣指数">RESONANCE</em>
           </div>
           <div class="syn-title" id="synTitle" data-en="Reading the sky…" data-zh="正在解读星盘……">Reading the sky…</div>
+        </div>
+
+        <!-- §1.5 合盘 Beta: dual full charts + 4×4 Earthly-Branch matrix -->
+        <div class="syn-sec" id="synBaziMatrixWrap" hidden>
+          <div class="xiu-h"><span data-en="BRANCH MATRIX · 合盘" data-zh="地支合盘矩阵">BRANCH MATRIX · 合盘</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
+          <div id="synbmWrap"></div>
         </div>
 
         <!-- §2 what draws you together -->
