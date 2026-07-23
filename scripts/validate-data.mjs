@@ -23,6 +23,10 @@ import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
 import { validateNovelsIndex, validateNovelBook } from '../src/lib/validateNovelsData.js';
+import { validateArenaUniverse } from '../src/lib/validateArenaUniverse.js';
+import { validateArenaPicks } from '../src/lib/validateArenaPicks.js';
+import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
+import { validateArenaDigest } from '../src/lib/validateArenaDigest.js';
 
 const CHECKS = [
   { path: 'public/sectors-data.json', validate: validateSectorsData },
@@ -30,6 +34,15 @@ const CHECKS = [
   { path: 'public/leagues-data.json', validate: validateLeaguesData },
   { path: 'public/games-data.json', validate: validateGamesData },
   { path: 'public/novels-index.json', validate: validateNovelsIndex },
+  // Part 4 (urgent.md SS18.1): arena-universe.json's live v2 ("market") shape,
+  // and the new pipeline artifacts. arena-universe-s1.json is Season 1's
+  // frozen archive and is deliberately NOT checked here (historical, never
+  // written again). arena-ledger.json/arena-predlog.json stay excluded per
+  // the note above -- their own settlement scripts are the correctness gate.
+  { path: 'public/arena-universe.json', validate: validateArenaUniverse },
+  { path: 'public/arena-picks.json', validate: validateArenaPicks },
+  { path: 'public/arena-runlog.json', validate: validateArenaRunlog },
+  { path: 'public/arena-daily-digest.json', validate: validateArenaDigest },
 ];
 
 let anyFail = false;

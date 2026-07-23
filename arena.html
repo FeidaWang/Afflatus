@@ -26,13 +26,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Arena · US Stock TA + Autopilot — Afflatus</title>
-<meta name="description" content="Arena: self-serve US AI-complex stock technical analysis (key levels, MAs, pivots, pre/post-market) plus Autopilot — two rule-constrained LLM ledgers trading a fixed universe vs SPY/SMH. Not investment advice.">
+<meta name="description" content="Arena: self-serve US stock technical analysis (key levels, MAs, pivots, pre/post-market) across the full S&P 500, plus Autopilot — three rule-constrained LLM ledgers (sentiment/event, intraday structure, alt-data fusion) trading vs SPY/SMH. Not investment advice.">
 <meta name="theme-color" content="#05070e">
 <link rel="canonical" href="https://feida.au/arena.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Project Afflatus">
 <meta property="og:title" content="Project Afflatus · Arena">
-<meta property="og:description" content="US stock TA dashboard + two simulated LLM trading ledgers (Autopilot) scored against SPY/SMH. Not investment advice.">
+<meta property="og:description" content="S&P 500 TA dashboard + three simulated LLM trading ledgers (Autopilot) scored against SPY/SMH. Not investment advice.">
 <meta property="og:url" content="https://feida.au/arena.html">
 <meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -69,7 +69,7 @@
       </div>
       <div>
         <h1>AFFLATUS<br><span>TRADING ARENA</span></h1>
-        <p data-en="US AI-complex TA dashboard · Autopilot vs SPY/SMH" data-zh="美股 AI 板块技术面板 · Autopilot 对比大盘基准">US AI-complex TA dashboard · Autopilot vs SPY/SMH</p>
+        <p data-en="Full S&amp;P 500 TA dashboard · Autopilot vs SPY/SMH" data-zh="标普 500 全市场技术面板 · Autopilot 对比大盘基准">Full S&amp;P 500 TA dashboard · Autopilot vs SPY/SMH</p>
       </div>
     </div>
     <nav class="nav" aria-label="Primary" data-afflatus-nav>
@@ -80,7 +80,7 @@
   <section class="hero" aria-label="Status">
     <div class="kicker" data-en="TRAXUS//CVKM · simulation deck" data-zh="TRAXUS//CVKM · 模拟终端">TRAXUS//CVKM · simulation deck</div>
     <h2 data-i18n-html data-en="Read the levels. Let the <b>machines</b> trade." data-zh="看懂关键位，交给<b>机器</b>去交易。">Read the levels. Let the <b>machines</b> trade.</h2>
-    <p class="brief" data-en="Search any US ticker for a technical read — key levels, moving averages, pivot points, a pre/post-market view. Alongside it, two simulated LLM ledgers (Model A: intraday swing; Model B: end-of-day review) trade a fixed universe under hard-coded risk rules, scored against SPY/SMH. Not investment advice." data-zh="搜索任意美股代码查看技术面：关键价位、均线、枢轴点、盘前盘后视图。同时两个模拟 LLM 账本（Model A：日内 swing；Model B：盘后深度复盘）在固定交易域内按代码风控规则运作，对比 SPY/SMH 基准计分。非投资建议。">Search any US ticker for a technical read — key levels, moving averages, pivot points, a pre/post-market view. Alongside it, two simulated LLM ledgers (Model A: intraday swing; Model B: end-of-day review) trade a fixed universe under hard-coded risk rules, scored against SPY/SMH. Not investment advice.</p>
+    <p class="brief" data-en="Three simulated LLM ledgers — S (ORACLE, sentiment &amp; event-driven), P (PULSE, intraday structure), T (ATLAS, alt-data fusion) — trade the full S&amp;P 500 under hard-coded risk rules, scored against SPY/SMH. Below, pick a recommended trade or search any S&amp;P 500 ticker for a technical read: key levels, moving averages, pivot points, a pre/post-market view. Not investment advice." data-zh="三个模拟 LLM 账本——S（ORACLE，情绪与事件驱动）、P（PULSE，盘中结构）、T（ATLAS，另类数据融合）——在全标普 500 范围内按代码强制风控规则运作，对比 SPY/SMH 基准计分。下方可直接点选推荐交易，或搜索任意标普 500 代码查看技术面：关键价位、均线、枢轴点、盘前盘后视图。非投资建议。">Three simulated LLM ledgers — S (ORACLE, sentiment &amp; event-driven), P (PULSE, intraday structure), T (ATLAS, alt-data fusion) — trade the full S&amp;P 500 under hard-coded risk rules, scored against SPY/SMH. Below, pick a recommended trade or search any S&amp;P 500 ticker for a technical read: key levels, moving averages, pivot points, a pre/post-market view. Not investment advice.</p>
     <button class="brief-cta" id="openBriefBtn" type="button">
       <span class="brief-cta__tag" data-en="▣ TODAY" data-zh="▣ 今日">▣ TODAY</span>
       <span class="brief-cta__main" data-en="PRE-MARKET BRIEFING" data-zh="盘前简报">PRE-MARKET BRIEFING</span>
@@ -90,6 +90,7 @@
     <div class="strip">
       <span class="chip closed" id="statusChip"><span class="d"></span><span id="statusTxt">—</span></span>
       <span class="chip flat" id="sentChip"><span data-en="NEWS" data-zh="情绪">NEWS</span> · <span id="sentTxt">—</span></span>
+      <span class="chip open" id="adminChip" hidden style="cursor:pointer" title="Click to lock again"><span data-en="🔓 ADMIN UNLOCKED" data-zh="🔓 管理员已解锁">🔓 ADMIN UNLOCKED</span></span>
     </div>
     <div class="opencd" id="openCd">
       <span class="opencd-label" id="cdLabel">US MARKET OPENS IN</span>
@@ -98,10 +99,23 @@
     </div>
   </section>
 
+  <!-- ===== Part 4 §18.2.1 · TODAY'S RECOMMENDED TRADES (picks board, replaces static watchlist) ===== -->
+  <section class="picks" id="picksDash" aria-label="Today's Recommended Trades">
+    <div class="picks-topbar">
+      <div class="sec-label" style="margin-bottom:0"><span data-en="Today's Recommended Trades" data-zh="今日推荐交易">Today's Recommended Trades</span></div>
+      <div class="picks-meta">
+        <span class="chip" id="picksDateChip">—</span>
+        <span class="chip" id="picksRegimeChip">—</span>
+      </div>
+    </div>
+    <p class="picks-note" id="picksNote"></p>
+    <div class="picks-grid" id="picksGrid"></div>
+  </section>
+
   <!-- ===== V13 · US STOCK TA DASHBOARD (key levels / MAs / pivots / special points) ===== -->
   <section class="ta" id="taDash" aria-label="US stock technical analysis dashboard">
     <div class="ta-topbar">
-      <div class="sec-label" style="margin-bottom:0"><span data-en="US Stock Watchlist" data-zh="美股自选股">US Stock Watchlist</span></div>
+      <div class="sec-label" style="margin-bottom:0"><span data-en="Search Any S&amp;P 500 Ticker" data-zh="搜索标普 500 任意代码">Search Any S&amp;P 500 Ticker</span></div>
       <div class="ta-searchwrap">
         <input id="taSearch" class="ta-search" type="search" autocomplete="off" spellcheck="false"
                placeholder="Search ticker / name… (Enter loads any US symbol)"
@@ -110,12 +124,11 @@
         <div class="ta-suggest" id="taSuggest" hidden role="listbox"></div>
       </div>
     </div>
-    <div class="ta-watch" id="taWatch" role="listbox" aria-label="Watchlist tickers"></div>
     <div class="ta-panelhost panel" id="taPanel"></div>
   </section>
 
-  <!-- ===== V5 · ARENA AUTOPILOT (Model A/B simulated ledgers, ROADMAP §7.1) ===== -->
-  <section class="ap" id="apDash" aria-label="Arena Autopilot dashboard">
+  <!-- ===== V5/V6 · ARENA AUTOPILOT (S/P/T simulated ledgers, Part 4 §17) ===== -->
+  <section class="ap" id="apDash" aria-label="Arena Autopilot dashboard — three model ledgers">
     <div class="ap-topbar">
       <div class="sec-label" style="margin-bottom:0"><span data-en="Autopilot" data-zh="自动交易">Autopilot</span></div>
       <div class="ap-meta">
@@ -127,13 +140,10 @@
 
     <div class="ap-chartwrap panel">
       <div class="ap-chart-hd"><div class="ap-legend" id="apLegend"></div></div>
-      <svg class="ap-chart" id="apChart" viewBox="0 0 600 240" preserveAspectRatio="none" role="img" aria-label="Model A vs Model B equity curves"></svg>
+      <svg class="ap-chart" id="apChart" viewBox="0 0 600 240" preserveAspectRatio="none" role="img" aria-label="Model S/P/T equity curves vs SPY/SMH"></svg>
     </div>
 
-    <div class="ap-models">
-      <div class="ap-model panel pad" id="apModelA"></div>
-      <div class="ap-model panel pad" id="apModelB"></div>
-    </div>
+    <div class="ap-models" id="apModels"></div>
   </section>
 
   <div class="panel pad news" aria-label="Today's Signal digest">
@@ -141,7 +151,7 @@
     <div id="newsList"><div class="empty">…</div></div>
   </div>
 
-  <footer class="foot" data-i18n-html data-en="For entertainment only — not investment advice. Live quotes via Finnhub (free tier); daily history via Twelve Data (real where available, else modeled). Autopilot trades two simulated $10,000 ledgers under code-enforced risk rules — no real money, no real orders." data-zh="仅供娱乐——非投资建议。实时报价来自 Finnhub（免费档）；日线历史来自 Twelve Data（可用时为真实历史，否则为建模）。Autopilot 交易两本各 $10,000 的模拟账本，按代码强制风控规则运作——无真实资金，无真实下单。">For entertainment only — not investment advice. Live quotes via Finnhub (free tier); daily history via Twelve Data (real where available, else modeled). Autopilot trades two simulated $10,000 ledgers under code-enforced risk rules — no real money, no real orders.</footer>
+  <footer class="foot" data-i18n-html data-en="For entertainment only — not investment advice. Live quotes via Finnhub (free tier); daily history via Twelve Data (real where available, else modeled). Autopilot trades three simulated $10,000 ledgers (S/P/T) under code-enforced risk rules — no real money, no real orders. Live data is gated to today's recommended symbols; unlock the full S&amp;P 500 with an admin key." data-zh="仅供娱乐——非投资建议。实时报价来自 Finnhub（免费档）；日线历史来自 Twelve Data（可用时为真实历史，否则为建模）。Autopilot 交易三本各 $10,000 的模拟账本（S/P/T），按代码强制风控规则运作——无真实资金，无真实下单。实时数据默认仅开放今日推荐代码，输入管理员密钥可解锁全标普 500。">For entertainment only — not investment advice. Live quotes via Finnhub (free tier); daily history via Twelve Data (real where available, else modeled). Autopilot trades three simulated $10,000 ledgers (S/P/T) under code-enforced risk rules — no real money, no real orders. Live data is gated to today's recommended symbols; unlock the full S&amp;P 500 with an admin key.</footer>
 </main>
 
 <div id="briefing" hidden></div>

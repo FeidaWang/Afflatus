@@ -7,6 +7,7 @@ import {
   rejectOrder,
   markToMarket,
   checkStopLoss,
+  checkExitBySweep,
   checkDailyCircuitBreaker,
   checkSeasonReset,
   resetSeason,
@@ -340,5 +341,167 @@ describe('never trust the model — end-to-end guardrail sanity', () => {
     const next = check.ok ? applyFill(m, badOrder, simulateFill(badOrder, 'A'), 'T') : rejectOrder(m, badOrder, check.reason, 'T');
     expect(next.positions).toHaveLength(0);
     expect(next.rejections).toHaveLength(1);
+  });
+});
+
+/* ============================================================
+   PART 4 — Season 2 books: S (ORACLE) / P (PULSE) / T (ATLAS)
+   (urgent.md §17.2-17.5, §21). A/B's existing behavior above must stay
+   byte-identical — these tests only exercise the new PER_MODEL paths.
+   ============================================================ */
+
+describe('PER_MODEL — per-model confidence floor (S stricter than default)', () => {
+  it('rejects Model S below its 0.70 floor even though 0.65 would clear the default', () => {
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.68 }, freshModel(), { model: 'S', universe: UNIVERSE });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/confidence/);
+  });
+  it('accepts Model S right at its own 0.70 floor', () => {
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.70, signals: ['a'] }, freshModel(), { model: 'S', universe: UNIVERSE });
+    expect(r.ok).toBe(true);
+  });
+  it('Model P uses the same 0.65 floor as the default', () => {
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.65 }, freshModel(), { model: 'P', universe: UNIVERSE });
+    expect(r.ok).toBe(true);
+  });
+});
+
+describe('PER_MODEL — max distinct positions (S<=6, P<=5, T<=8)', () => {
+  it('rejects Model S opening a 7th distinct symbol', () => {
+    const positions = Array.from({ length: 6 }, (_, i) => ({ sym: `S${i}`, qty: 1, avgPx: 10, mkPx: 10 }));
+    const m = freshModel({ positions, cash: 9940, equity: 9994 });
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 50, confidence: 0.9 }, m, { model: 'S', universe: [...UNIVERSE, ...positions.map((p) => p.sym)] });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/6/);
+  });
+  it('rejects Model P opening a 6th distinct symbol', () => {
+    const positions = Array.from({ length: 5 }, (_, i) => ({ sym: `S${i}`, qty: 1, avgPx: 10, mkPx: 10 }));
+    const m = freshModel({ positions, cash: 9950, equity: 9995 });
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 50, confidence: 0.9 }, m, { model: 'P', universe: [...UNIVERSE, ...positions.map((p) => p.sym)] });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/5/);
+  });
+  it('Model T keeps the original 8-position cap', () => {
+    const positions = Array.from({ length: 8 }, (_, i) => ({ sym: `S${i}`, qty: 1, avgPx: 10, mkPx: 10 }));
+    const m = freshModel({ positions, cash: 9900, equity: 9990 });
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 50, confidence: 0.9, signals: ['a', 'b'] }, m, { model: 'T', universe: [...UNIVERSE, ...positions.map((p) => p.sym)] });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/8/);
+  });
+});
+
+describe('PER_MODEL — weekly turnover cap (S/P) vs day-gate (T)', () => {
+  it('rejects a Model S buy once its 20/week cap is reached', () => {
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9 }, freshModel(), { model: 'S', universe: UNIVERSE, weeklyTradeCount: 20 });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/turnover/);
+  });
+  it('rejects a Model P buy once its 30/week cap is reached', () => {
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9 }, freshModel(), { model: 'P', universe: UNIVERSE, weeklyTradeCount: 30 });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/turnover/);
+  });
+  it('Model T inherits the Tue/Thu day-gate (same as Model B)', () => {
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9, signals: ['a', 'b'] }, freshModel(), { model: 'T', universe: UNIVERSE, weekday: 3 });
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/Tue\/Thu/);
+    expect(validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9, signals: ['a', 'b'] }, freshModel(), { model: 'T', universe: UNIVERSE, weekday: 2 }).ok).toBe(true);
+  });
+});
+
+describe('PER_MODEL — Model T alt-data fusion gate (>=2 signals)', () => {
+  it('rejects a Model T buy with fewer than 2 signals', () => {
+    const r1 = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9 }, freshModel(), { model: 'T', universe: UNIVERSE, weekday: 2 });
+    expect(r1.ok).toBe(false);
+    expect(r1.reason).toMatch(/signal/);
+    const r2 = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9, signals: ['insider-buy'] }, freshModel(), { model: 'T', universe: UNIVERSE, weekday: 2 });
+    expect(r2.ok).toBe(false);
+  });
+  it('accepts a Model T buy with 2+ independent signals', () => {
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9, signals: ['insider-buy', 'earnings-surprise'] }, freshModel(), { model: 'T', universe: UNIVERSE, weekday: 2 });
+    expect(r.ok).toBe(true);
+  });
+  it('does not gate risk-reducing sells by the signals requirement', () => {
+    const m = freshModel({ positions: [{ sym: 'NVDA', qty: 5, avgPx: 100, mkPx: 100 }] });
+    const r = validateOrder({ sym: 'NVDA', side: 'sell', qty: 5, refPx: 100 }, m, { model: 'T', universe: UNIVERSE });
+    expect(r.ok).toBe(true);
+  });
+});
+
+describe('PER_MODEL — stop-loss and slippage tiers for S/P/T', () => {
+  it('Model S uses an 8% stop (same shape as A)', () => {
+    const m = freshModel({ positions: [{ sym: 'NVDA', qty: 10, avgPx: 100, mkPx: 91 }] }); // -9%
+    expect(checkStopLoss(m, 'S')).toHaveLength(1);
+  });
+  it('Model P uses the tightest 5% stop', () => {
+    const m = freshModel({ positions: [{ sym: 'NVDA', qty: 10, avgPx: 100, mkPx: 96 }] }); // -4%, fine
+    expect(checkStopLoss(m, 'P')).toHaveLength(0);
+    const m2 = freshModel({ positions: [{ sym: 'NVDA', qty: 10, avgPx: 100, mkPx: 94 }] }); // -6%, breaches
+    expect(checkStopLoss(m2, 'P')).toHaveLength(1);
+  });
+  it('Model T uses the loosest 15% stop (same shape as B)', () => {
+    const m = freshModel({ positions: [{ sym: 'NVDA', qty: 10, avgPx: 100, mkPx: 86 }] }); // -14%, fine
+    expect(checkStopLoss(m, 'T')).toHaveLength(0);
+  });
+  it('slippage tiers: P/S pay 5bps, T pays 2bps (like B)', () => {
+    const order = { sym: 'NVDA', side: 'buy', qty: 10, refPx: 100 };
+    expect(simulateFill(order, 'S').slipBps).toBe(5);
+    expect(simulateFill(order, 'P').slipBps).toBe(5);
+    expect(simulateFill(order, 'T').slipBps).toBe(2);
+  });
+  it('an unrecognized model falls back to the 5bp default, not a crash', () => {
+    expect(simulateFill({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100 }, 'Z').slipBps).toBe(5);
+  });
+});
+
+describe('simulateFill — optional impact-based slippage override (Part 4 §17.5.3)', () => {
+  it('ignores execOpts entirely when avgDollarVol is absent (default path unchanged)', () => {
+    const order = { sym: 'NVDA', side: 'buy', qty: 10, refPx: 100 };
+    expect(simulateFill(order, 'A').slipBps).toBe(LIMITS.SLIPPAGE_BPS.A);
+    expect(simulateFill(order, 'A', {}).slipBps).toBe(LIMITS.SLIPPAGE_BPS.A);
+  });
+  it('widens slippage above the base tier when avgDollarVol makes the order a large participation', () => {
+    const order = { sym: 'NVDA', side: 'buy', qty: 10000, refPx: 100 }; // $1,000,000 notional
+    const withoutImpact = simulateFill(order, 'A');
+    const withImpact = simulateFill(order, 'A', { avgDollarVol: 2000000 }); // 50% of ADV — huge participation
+    expect(withImpact.slipBps).toBeGreaterThan(withoutImpact.slipBps);
+  });
+});
+
+describe('checkExitBySweep — Model P holding-period discipline', () => {
+  it('force-sells a position once its exitBy date has passed', () => {
+    const m = freshModel({ positions: [{ sym: 'NVDA', qty: 5, avgPx: 100, mkPx: 105, exitBy: '2026-07-10' }] });
+    const orders = checkExitBySweep(m, '2026-07-10');
+    expect(orders).toHaveLength(1);
+    expect(orders[0]).toMatchObject({ sym: 'NVDA', side: 'sell', qty: 5, reduceOnly: true });
+  });
+  it('leaves a position alone before its exitBy date', () => {
+    const m = freshModel({ positions: [{ sym: 'NVDA', qty: 5, avgPx: 100, mkPx: 105, exitBy: '2026-07-12' }] });
+    expect(checkExitBySweep(m, '2026-07-10')).toHaveLength(0);
+  });
+  it('is a no-op for positions with no exitBy (every A/B/S/T position)', () => {
+    const m = freshModel({ positions: [{ sym: 'NVDA', qty: 5, avgPx: 100, mkPx: 105 }] });
+    expect(checkExitBySweep(m, '2026-07-10')).toHaveLength(0);
+  });
+});
+
+describe('applyFill — carries exitBy onto new and added positions, never onto orders without it', () => {
+  it('sets exitBy on a brand-new position when the order carries it', () => {
+    const m = freshModel();
+    const order = { sym: 'NVDA', side: 'buy', qty: 10, refPx: 100, exitBy: '2026-07-15' };
+    const next = applyFill(m, order, simulateFill(order, 'P'), 'T1');
+    expect(next.positions[0].exitBy).toBe('2026-07-15');
+  });
+  it('does not add an exitBy field when the order omits it (A/B/S/T orders)', () => {
+    const m = freshModel();
+    const order = { sym: 'NVDA', side: 'buy', qty: 10, refPx: 100 };
+    const next = applyFill(m, order, simulateFill(order, 'A'), 'T1');
+    expect(next.positions[0].exitBy).toBeUndefined();
+  });
+  it('updates exitBy on an add when the new order supplies a later date', () => {
+    const m = freshModel({ positions: [{ sym: 'NVDA', qty: 10, avgPx: 100, mkPx: 100, exitBy: '2026-07-11' }], cash: 9000 });
+    const order = { sym: 'NVDA', side: 'buy', qty: 5, refPx: 100, exitBy: '2026-07-16' };
+    const next = applyFill(m, order, simulateFill(order, 'P'), 'T2');
+    expect(next.positions[0].exitBy).toBe('2026-07-16');
   });
 });

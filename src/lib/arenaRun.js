@@ -14,13 +14,18 @@
    One call = one scheduled-task run (Model A open window / late window /
    Model B post-market / weekly review all go through this same function;
    "weekly review" just skips new proposedOrders and only updates review
-   text + reads metrics, same code path).
+   text + reads metrics, same code path). Part 4 (urgent.md §17-20) adds
+   three Season 2 books — S/P/T — through the same function; see BOOKS
+   below and bootstrapSeason2() for the (not-yet-invoked-on-live-data)
+   Season 1 -> Season 2 transition.
    ============================================================ */
 import {
   validateOrder, simulateFill, applyFill, rejectOrder, markToMarket,
-  checkStopLoss, checkDailyCircuitBreaker, checkSeasonReset, resetSeason,
+  checkStopLoss, checkExitBySweep, checkDailyCircuitBreaker, checkSeasonReset, resetSeason,
   computeMetrics,
 } from './arenaRules.js';
+
+const BOOKS = ['A', 'B', 'S', 'P', 'T'];
 
 function bumpVersion(v) {
   const m = /^(.*-v)(\d+)$/.exec(v || '');
@@ -53,7 +58,7 @@ function upsertDay(history, day, equity) {
 
 /**
  * @param {object} ledgerFull - full parsed arena-ledger.json
- * @param {'A'|'B'} book
+ * @param {'A'|'B'|'S'|'P'|'T'} book
  * @param {object} opts
  *   etDateStr        'YYYY-MM-DD' — US/Eastern trading-day date for this run
  *   nowIso           ISO timestamp for trade/rejection records
@@ -72,7 +77,7 @@ export function runArenaLedger(ledgerFull, book, opts) {
     reviewZh, reviewEn, benchPct, newPromptVersionOnReset,
   } = opts;
   if (!etDateStr || !nowIso) throw new Error('runArenaLedger: etDateStr and nowIso are required');
-  if (book !== 'A' && book !== 'B') throw new Error(`runArenaLedger: invalid book "${book}"`);
+  if (!BOOKS.includes(book)) throw new Error(`runArenaLedger: invalid book "${book}"`);
 
   const weekday = new Date(`${etDateStr}T12:00:00Z`).getUTCDay();
   const isNewTradingDay = ledgerFull.lastRunDate !== etDateStr;
@@ -91,6 +96,14 @@ export function runArenaLedger(ledgerFull, book, opts) {
     const fill = simulateFill(so, book);
     modelLedger = applyFill(modelLedger, so, fill, nowIso);
     filled.push({ order: so, fill, forced: 'stop-loss' });
+  }
+
+  // Forced exitBy closes (Model P holding-period discipline, Part 4 §17.3) —
+  // a no-op for any position without an exitBy, i.e. every A/B/S/T position.
+  for (const eo of checkExitBySweep(modelLedger, etDateStr)) {
+    const fill = simulateFill(eo, book);
+    modelLedger = applyFill(modelLedger, eo, fill, nowIso);
+    filled.push({ order: eo, fill, forced: 'exitBy' });
   }
 
   for (const raw of proposedOrders) {
@@ -143,6 +156,58 @@ export function runArenaLedger(ledgerFull, book, opts) {
       book, day, riskLockdown, seasonReset,
       filled, rejected,
       equity: modelLedger.equity, metrics: modelLedger.metrics,
+    },
+  };
+}
+
+/**
+ * Season 1 -> Season 2 transition (Part 4 §16.4/§17.5.4): archives nothing
+ * itself (the caller is expected to have already written the Season 1
+ * ledger out to arena-ledger-s1.json before calling this — see urgent.md
+ * §18.1.3) and returns a brand-new ledger seeded with three fresh $10,000
+ * books (S/P/T). Pure — does not read or write any file, and is NOT wired
+ * into any scheduled task yet: Part 4's implementation order (§20) puts the
+ * live flip in Phase 4, after the data/pipeline/API work in Phases 2-3 is
+ * in place and dry-run. Exists now so that later work has a tested seed
+ * function to call rather than hand-rolling the ledger shape at flip time.
+ *
+ * @param {object} ledgerFull - the Season 1 ledger (read for version/season bookkeeping only)
+ * @param {object} opts
+ *   day               starting day counter for Season 2 (default 0)
+ *   promptVersions    { S, P, T } initial prompt version strings
+ *   note_en/note_zh   optional site-copy overrides (Season 1's note text
+ *                      describes Model A/B and would otherwise carry over
+ *                      unchanged, since this function only overrides the
+ *                      specific fields a season transition needs)
+ */
+export function bootstrapSeason2(ledgerFull, opts = {}) {
+  const { day = 0, promptVersions = { S: 'S-v1', P: 'P-v1', T: 'T-v1' }, note_en, note_zh } = opts;
+  const freshModel = (promptVersion) => ({
+    promptVersion,
+    startEquity: 10000,
+    cash: 10000,
+    equity: 10000,
+    dayStartEquity: 10000,
+    equityHistory: [{ day, equity: 10000 }],
+    positions: [],
+    trades: [],
+    rejections: [],
+    metrics: { cumPct: 0, maxDD: 0, hitRate: null, exposure: 0 },
+    review: { zh: '', en: '' },
+  });
+  return {
+    ...ledgerFull,
+    version: (ledgerFull.version || 1) + 1,
+    season: (ledgerFull.season || 1) + 1,
+    day,
+    lastRunDate: null,
+    bench: { spyPct: 0, smhPct: 0 },
+    ...(note_en != null ? { note_en } : {}),
+    ...(note_zh != null ? { note_zh } : {}),
+    models: {
+      S: freshModel(promptVersions.S),
+      P: freshModel(promptVersions.P),
+      T: freshModel(promptVersions.T),
     },
   };
 }

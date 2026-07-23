@@ -1,0 +1,58 @@
+{
+  "runs": [
+    {
+      "date": "2026-07-23",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Manual dry run -- digest gathered via WebSearch (oil/Iran tension, chip momentum fading, GOOGL/TSLA post-earnings selldown, WAB/PM/SMCI/T earnings-day movers)."
+    },
+    {
+      "date": "2026-07-23",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "arena-picks.json published: 1 pick per book (S/P/T)."
+    },
+    {
+      "date": "2026-07-23",
+      "window": "open-window",
+      "model": "S",
+      "status": "queued",
+      "ordersProposed": 1,
+      "ordersFilled": 0,
+      "note": "Proposal recorded in arena-picks.json; NOT settled against a live ledger yet (Season 2 ledger flip is Phase 4)."
+    },
+    {
+      "date": "2026-07-23",
+      "window": "open-window",
+      "model": "P",
+      "status": "queued",
+      "ordersProposed": 1,
+      "ordersFilled": 0,
+      "note": "Proposal recorded in arena-picks.json; NOT settled against a live ledger yet (Season 2 ledger flip is Phase 4)."
+    },
+    {
+      "date": "2026-07-23",
+      "window": "post-market",
+      "model": "T",
+      "status": "queued",
+      "ordersProposed": 1,
+      "ordersFilled": 0,
+      "note": "Thu open-window eligible; proposal recorded in arena-picks.json; NOT settled yet (Phase 4)."
+    },
+    {
+      "date": "2026-07-23",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Daily digest written to arena-daily-digest.json."
+    }
+  ]
+}

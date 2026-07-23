@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { runArenaLedger } from '../src/lib/arenaRun.js';
+import { runArenaLedger, bootstrapSeason2 } from '../src/lib/arenaRun.js';
 
 // arenaRun.js orchestrates arenaRules.js for one scheduled-task run (V4,
 // ROADMAP §7.1). Ledger math is the project's one "silently-wrong is
@@ -234,5 +234,116 @@ describe('runArenaLedger — single-run orchestration (V4)', () => {
     expect(() => runArenaLedger(freshLedger(), 'C', {
       etDateStr: '2026-07-06', nowIso: '2026-07-06T14:35:00Z', priceMap: {}, universe: UNIVERSE,
     })).toThrow();
+  });
+});
+
+/* ============================================================
+   PART 4 — Season 2 books (S/P/T) run through the same orchestration
+   (urgent.md §17-21). Season-2-shaped ledger fixture for these tests.
+   ============================================================ */
+
+function freshSeason2Ledger(overrides = {}) {
+  const model = (over = {}) => ({
+    promptVersion: 'S-v1', startEquity: 10000, cash: 10000, equity: 10000,
+    dayStartEquity: 10000,
+    equityHistory: [{ day: 0, equity: 10000 }],
+    positions: [], trades: [], rejections: [],
+    metrics: { cumPct: 0, maxDD: 0, hitRate: null, exposure: 0 },
+    review: { zh: '尚未开仓', en: 'No trades yet' },
+    ...over,
+  });
+  return {
+    updated: '2026-07-23', version: 2, day: 0, season: 2, lastRunDate: null,
+    bench: { spyPct: 0, smhPct: 0 },
+    models: {
+      S: model({ promptVersion: 'S-v1' }),
+      P: model({ promptVersion: 'P-v1' }),
+      T: model({ promptVersion: 'T-v1' }),
+    },
+    ...overrides,
+  };
+}
+
+describe('runArenaLedger — Season 2 books S/P/T', () => {
+  it('accepts book S/P/T and settles a valid order the same way A/B do', () => {
+    const { ledger, summary } = runArenaLedger(freshSeason2Ledger(), 'S', {
+      etDateStr: '2026-07-23', nowIso: '2026-07-23T14:35:00Z',
+      priceMap: { NVDA: 100 }, universe: UNIVERSE,
+      proposedOrders: [{ sym: 'NVDA', side: 'buy', qty: 10, refPx: 100, confidence: 0.75, signals: ['sentiment', 'event'] }],
+    });
+    expect(summary.filled.length).toBe(1);
+    expect(ledger.models.S.positions).toHaveLength(1);
+  });
+
+  it('Model T requires >=2 signals — a single-signal order is rejected end to end', () => {
+    const { summary } = runArenaLedger(freshSeason2Ledger(), 'T', {
+      etDateStr: '2026-07-23', nowIso: '2026-07-23T21:00:00Z', // Thursday
+      priceMap: { NVDA: 100 }, universe: UNIVERSE,
+      proposedOrders: [{ sym: 'NVDA', side: 'buy', qty: 5, refPx: 100, confidence: 0.9, signals: ['insider-buy'] }],
+    });
+    expect(summary.rejected.length).toBe(1);
+    expect(summary.rejected[0].reason).toMatch(/signal/);
+  });
+
+  it('Model P exitBy sweep force-closes a position on schedule, ahead of any new proposal', () => {
+    const withOpenPosition = freshSeason2Ledger({
+      models: {
+        S: freshSeason2Ledger().models.S,
+        T: freshSeason2Ledger().models.T,
+        P: {
+          promptVersion: 'P-v1', startEquity: 10000, cash: 9000, equity: 10000, dayStartEquity: 10000,
+          equityHistory: [{ day: 1, equity: 10000 }],
+          positions: [{ sym: 'NVDA', qty: 10, avgPx: 100, mkPx: 100, exitBy: '2026-07-23' }],
+          trades: [], rejections: [],
+          metrics: { cumPct: 0, maxDD: 0, hitRate: null, exposure: 0 }, review: { zh: '', en: '' },
+        },
+      },
+      lastRunDate: '2026-07-22', day: 1,
+    });
+    const { summary, ledger } = runArenaLedger(withOpenPosition, 'P', {
+      etDateStr: '2026-07-23', nowIso: '2026-07-23T14:35:00Z',
+      priceMap: { NVDA: 105 }, universe: UNIVERSE, proposedOrders: [],
+    });
+    expect(summary.filled.some((f) => f.forced === 'exitBy' && f.order.sym === 'NVDA')).toBe(true);
+    expect(ledger.models.P.positions).toHaveLength(0);
+  });
+});
+
+describe('bootstrapSeason2', () => {
+  it('seeds three fresh $10,000 books keyed S/P/T', () => {
+    const s1 = freshLedger(); // Season 1 A/B ledger
+    const s2 = bootstrapSeason2(s1, { day: 0 });
+    expect(Object.keys(s2.models).sort()).toEqual(['P', 'S', 'T']);
+    for (const key of ['S', 'P', 'T']) {
+      expect(s2.models[key].equity).toBe(10000);
+      expect(s2.models[key].cash).toBe(10000);
+      expect(s2.models[key].positions).toHaveLength(0);
+    }
+  });
+  it('bumps version and season, resets day/lastRunDate', () => {
+    const s1 = freshLedger({ version: 1, season: 1 });
+    const s2 = bootstrapSeason2(s1);
+    expect(s2.version).toBe(2);
+    expect(s2.season).toBe(2);
+    expect(s2.day).toBe(0);
+    expect(s2.lastRunDate).toBeNull();
+  });
+  it('does not mutate the Season 1 input (pure function)', () => {
+    const s1 = freshLedger();
+    const snapshot = JSON.parse(JSON.stringify(s1));
+    bootstrapSeason2(s1);
+    expect(s1).toEqual(snapshot);
+  });
+  it('accepts custom starting prompt versions', () => {
+    const s2 = bootstrapSeason2(freshLedger(), { promptVersions: { S: 'S-v2', P: 'P-v2', T: 'T-v2' } });
+    expect(s2.models.S.promptVersion).toBe('S-v2');
+  });
+  it('overrides note_en/note_zh when supplied, otherwise leaves Season 1 copy untouched', () => {
+    const s1 = freshLedger({ note_en: 'Season 1 text', note_zh: 'S1 文案' });
+    const withOverride = bootstrapSeason2(s1, { note_en: 'Season 2 text', note_zh: 'S2 文案' });
+    expect(withOverride.note_en).toBe('Season 2 text');
+    expect(withOverride.note_zh).toBe('S2 文案');
+    const withoutOverride = bootstrapSeason2(s1);
+    expect(withoutOverride.note_en).toBe('Season 1 text'); // carried over -- caller's responsibility to supply new copy
   });
 });
