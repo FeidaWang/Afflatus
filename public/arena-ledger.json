@@ -1,9 +1,9 @@
 {
-  "updated": "2026-07-21",
+  "updated": "2026-07-23",
   "version": 2,
-  "day": 0,
+  "day": 1,
   "season": 2,
-  "lastRunDate": null,
+  "lastRunDate": "2026-07-23",
   "note_en": "Arena Autopilot — three simulated $10,000 ledgers (S: ORACLE, sentiment/event-driven; P: PULSE, intraday structure; T: ATLAS, alt-data fusion) trading the full S&P 500 (public/arena-universe.json) under code-enforced risk rules (src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Season 1 (Models A/B, fixed 30-symbol AI-hardware watchlist) is archived at arena-ledger-s1.json. Not investment advice.",
   "note_zh": "Arena Autopilot——三本各 $10,000 的模拟账本（S：ORACLE，情绪/事件驱动；P：PULSE，盘中结构；T：ATLAS，另类数据融合），在全标普 500（public/arena-universe.json）范围内按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。Season 1（Model A/B，固定 30 只 AI 硬件自选股）归档于 arena-ledger-s1.json。非投资建议。",
   "bench": {
@@ -14,53 +14,98 @@
     "S": {
       "promptVersion": "S-v1",
       "startEquity": 10000,
-      "cash": 10000,
-      "equity": 10000,
+      "cash": 8246.5563,
+      "equity": 9999.0363,
       "dayStartEquity": 10000,
       "equityHistory": [
         {
           "day": 0,
           "equity": 10000
+        },
+        {
+          "day": 1,
+          "equity": 9999.0363
         }
       ],
-      "positions": [],
-      "trades": [],
+      "positions": [
+        {
+          "sym": "WAB",
+          "qty": 6,
+          "avgPx": 292.226,
+          "mkPx": 292.08
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-23T13:42:39.629Z",
+          "sym": "WAB",
+          "side": "buy",
+          "qty": 6,
+          "px": 292.226,
+          "fee": 0.0877,
+          "slipBps": 5,
+          "realizedPnl": null
+        }
+      ],
       "rejections": [],
       "metrics": {
-        "cumPct": 0,
-        "maxDD": 0,
+        "cumPct": -0.01,
+        "maxDD": -0.01,
         "hitRate": null,
-        "exposure": 0
+        "exposure": 17.5
       },
       "review": {
-        "zh": "",
-        "en": ""
+        "zh": "Season 2 首日运行(day 0),S 账本此前无持仓、无拒单历史可学习。今日唯一候选 WAB 具备两条确凿信号(财报超预期+指引上调),置信度 0.74 超过本账本 0.70 门槛,按 20% 仓位上限建仓 6 股(约合总仓位 17.5%),现金充足。后续窗口将观察利好兑现后的持续性,若动能衰减将按 -8% 止损规则退出。",
+        "en": "First run of Season 2 (day 0) — no prior trades or rejections to learn from yet. WAB is the day's only qualifying candidate: two concrete signals (earnings beat + guidance raise), confidence 0.74 clears the 0.70 floor. Sized at 6 shares (~17.5% of equity), well under the 20% cap, cash floor untouched. Will watch for momentum follow-through next window; -8% stop-loss is the automatic exit if the event-driven move fades."
       }
     },
     "P": {
       "promptVersion": "P-v1",
       "startEquity": 10000,
-      "cash": 10000,
-      "equity": 10000,
+      "cash": 8026.4357,
+      "equity": 9998.9157,
       "dayStartEquity": 10000,
       "equityHistory": [
         {
           "day": 0,
           "equity": 10000
+        },
+        {
+          "day": 1,
+          "equity": 9998.9157
         }
       ],
-      "positions": [],
-      "trades": [],
+      "positions": [
+        {
+          "sym": "SMCI",
+          "qty": 64,
+          "avgPx": 30.8354,
+          "mkPx": 30.82,
+          "exitBy": "2026-07-24"
+        }
+      ],
+      "trades": [
+        {
+          "ts": "2026-07-23T13:42:44.532Z",
+          "sym": "SMCI",
+          "side": "buy",
+          "qty": 64,
+          "px": 30.8354,
+          "fee": 0.0987,
+          "slipBps": 5,
+          "realizedPnl": null
+        }
+      ],
       "rejections": [],
       "metrics": {
-        "cumPct": 0,
-        "maxDD": 0,
+        "cumPct": -0.011,
+        "maxDD": -0.011,
         "hitRate": null,
-        "exposure": 0
+        "exposure": 19.7
       },
       "review": {
-        "zh": "",
-        "en": ""
+        "zh": "Season 2 首日运行(day 0),P 账本此前无持仓、无拒单历史。SMCI 昨日放量跳空+26.6%,盘中结构特征(pivotBreak: above pivot,距离1.22%;intradayRangePct 4.45%)支持短线跟随,今日开盘小幅回落(openGapPct -0.72%)但整体结构未破坏。置信度0.72超过0.65门槛,按20%仓位上限建仓64股(约合19.7%总仓位),设置1个交易日exitBy(7/24)强制平仓,严格执行-5%止损。VWAP漂移与成交量激增比因缺少盘中K线数据未能计算,已如实标注。",
+        "en": "First run of Season 2 (day 0) — no prior trades or rejections yet. SMCI gapped +19.8% and surged +26.6% intraday yesterday on record FY26Q4 order backlog news; today's precomputed features show it still 1.22% above pivot with a 4.45% intraday range, though openGapPct is slightly negative (-0.72%) this morning. Confidence 0.72 clears the 0.65 floor. Sized at 64 shares (~19.7% of equity, under the 20% cap) with a hard 1-day exitBy (7/24) given how much of the move is already banked. Note: vwapDriftPct/volumeSurgeRatio came back null (no intraday candles in this run's inputs) — not estimated, left as missing data per mandate."
       }
     },
     "T": {
