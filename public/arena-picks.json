@@ -1,23 +1,23 @@
 {
   "date": "2026-07-23",
-  "generatedAt": "2026-07-23T21:45:00Z",
+  "generatedAt": "2026-07-23T13:25:00Z",
   "regime": "neutral",
-  "note_en": "MANUAL DRY RUN (urgent.md Part 4 Phase 2, SS20 step 2) -- hand-run once through the Gatherer/Analyst pipeline to validate the loop end to end, using real news gathered via web search on 2026-07-23. NOT produced by an automated scheduled task yet (that's Phase 5), and NOT settled against a live Season 2 ledger (arena-ledger.json stays Season 1 / Models A-B until the Phase 4 flip) -- these are recommendations only, nothing here has been bought or sold.",
-  "note_zh": "人工干跑（urgent.md Part 4 Phase 2, SS20 第2步)——手动跑一遍 Gatherer/Analyst 流程,验证整条链路,基于 2026-07-23 网络搜索获取的真实新闻。尚未接入自动定时任务（那是 Phase 5),也未对 Season 2 账本实际结算（arena-ledger.json 在 Phase 4 切换前仍是 Season 1 的 A/B 两本)——这只是推荐,没有任何实际买卖发生。",
+  "note_en": "Neutral tape: SPY/QQQ flat-to-down on Big Tech earnings jitters (GOOGL, TSLA, NOW slipped) and rising yields/oil, while single-stock catalysts (WAB, SMCI, AT&T) offered the day's real trade setups.",
+  "note_zh": "大盘中性:科技巨头财报承压(谷歌、特斯拉、ServiceNow 下跌)叠加油价与美债收益率走高,标普/纳指窄幅波动,但个股催化剂(WAB、SMCI、AT&T)提供了今日真正的交易机会。",
   "models": {
     "S": [
       {
         "sym": "WAB",
         "side": "long",
         "confidence": 0.74,
-        "entry": 293.75,
-        "stop": 270.25,
-        "target": 329.0,
-        "thesis_en": "Q2 earnings beat + raised full-year guidance drove an 11.5% single-day move on real volume (Jul 22) -- textbook confirmed-event momentum for the sentiment/event book.",
-        "thesis_zh": "Q2 财报超预期加上调全年指引,7/22 单日放量上涨 11.5%——对情绪/事件驱动账本来说是教科书式的\"利好兑现+动能确认\"。",
+        "entry": 290.00,
+        "stop": 266.80,
+        "target": 340.00,
+        "thesis_en": "Wabtec beat Q2 EPS ($2.76 vs $2.63 est) and revenue ($3.18B, +17.5% YoY), then raised FY2026 EPS guidance to $10.60-$10.90 -- confirmed-event momentum drove the stock +9.6-10% on real volume Jul 22, with at least one analyst target hike to $340 following.",
+        "thesis_zh": "Wabtec 二季度每股收益(2.76美元 vs 预期2.63美元)和营收(31.8亿美元,同比+17.5%)均超预期,并将2026全年每股收益指引上调至10.60-10.90美元——利好兑现推动股价7/22放量上涨9.6%-10%,随后至少一家机构将目标价上调至340美元。",
         "signals": [
-          "earnings-beat",
-          "guidance-raise"
+          "earnings-beat: Q2 adj. EPS $2.76 vs $2.63 est (+4.9%), revenue $3.18B vs $3.08B est",
+          "guidance-raise: FY2026 adj. EPS raised to $10.60-$10.90 from $10.25-$10.65"
         ]
       }
     ],
@@ -26,15 +26,15 @@
         "sym": "SMCI",
         "side": "long",
         "confidence": 0.72,
-        "entry": 32.28,
-        "stop": 30.67,
-        "target": 34.9,
-        "exitBy": "2026-07-27",
-        "thesis_en": "Gapped up and surged as much as 26.6% intraday (Jul 22) on a record $60B order backlog and a near-doubling gross-margin guide -- gap+volume-surge structure squarely in Model P's lane. Tight exitBy per the book's hours-to-2-days mandate.",
-        "thesis_zh": "7/22 因创纪录的 600 亿美元订单积压与毛利率指引近乎翻倍,跳空高开、盘中一度暴涨 26.6%——缺口+成交量激增的结构正是 Model P 的主场。按该账本\"数小时至两天\"的持仓纪律设置了较短的 exitBy。",
+        "entry": 30.56,
+        "stop": 29.03,
+        "target": 33.00,
+        "exitBy": "2026-07-24",
+        "thesis_en": "SMCI disclosed over $60B in new FY26 Q4 orders plus a gross-margin guide raise (8.2-8.4% to 15-17%) tied to a new SpaceX/xAI AI-datacenter project, gapping up and running as much as +26.6% intraday on Jul 22 on heavy volume -- textbook gap-and-surge structure for the intraday book, with a tight 1-day exitBy given the size of the move already banked.",
+        "thesis_zh": "SMCI 披露2026财年第四季度新增订单超600亿美元,并将毛利率指引从8.2%-8.4%大幅上调至15%-17%,与新的SpaceX/xAI人工智能数据中心项目相关,7/22 放量跳空高开、盘中一度暴涨26.6%——是盘中结构账本的典型缺口+放量结构,鉴于涨幅已经兑现较多,设置了较紧的1个交易日 exitBy。",
         "signals": [
-          "volume-surge",
-          "gap-up-breakout"
+          "gap-up-breakout: opened 28.89 vs prior close 25.50, +19.8% on the day",
+          "volume-surge: intraday range 28.50-32.28 on record order-backlog news"
         ]
       }
     ],
@@ -42,15 +42,15 @@
       {
         "sym": "T",
         "side": "long",
-        "confidence": 0.7,
+        "confidence": 0.70,
         "entry": 23.04,
         "stop": 19.58,
-        "target": 26.5,
-        "thesis_en": "Two independent alt-data-style signals converge: a real subscriber-growth earnings beat (432k postpaid net adds) AND a $10B increase to the buyback authorization -- fusion, not a single headline, fits Model T's mandate. Today (Thu) is one of its two allowed open-window days.",
-        "thesis_zh": "两条独立的另类数据式信号同时出现：实打实的用户增长财报超预期（净增 43.2 万后付费用户）以及 100 亿美元的回购额度上调——是信号融合而非单一头条,契合 Model T 的定位。今天（周四）恰好是其两个允许开仓日之一。",
+        "target": 27.00,
+        "thesis_en": "Two independent signals converge: a real subscriber-driven earnings beat (Q2 adj. EPS $0.65 vs $0.59 est, 432k postpaid phone net adds vs ~338.5k est) and a raised 2026 buyback target to ~$10B from $8B (management citing undervaluation) -- fusion, not a single headline, fits Model T's mandate, and today (Thursday) is one of its two allowed open-window days.",
+        "thesis_zh": "两条独立信号同时出现:实打实的用户驱动型财报超预期(二季度调整后每股收益0.65美元 vs 预期0.59美元,后付费用户净增43.2万,高于预期的约33.85万)以及2026年回购目标从80亿美元上调至约100亿美元(管理层称股价被低估)——信号融合而非单一头条,契合 Model T 定位,今天(周四)恰好是其两个允许开仓日之一。",
         "signals": [
-          "earnings-beat-subscriber-adds",
-          "buyback-authorization-increase"
+          "earnings-beat-subscriber-adds: Q2 adj. EPS $0.65 vs $0.59 est, 432k postpaid phone net adds vs ~338.5k est",
+          "buyback-authorization-increase: 2026 repurchase target raised to ~$10B from $8B, citing undervaluation"
         ]
       }
     ]
