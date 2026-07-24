@@ -14,8 +14,8 @@
     "S": {
       "promptVersion": "S-v1",
       "startEquity": 10000,
-      "cash": 8246.5563,
-      "equity": 10034.4963,
+      "cash": 6252.137,
+      "equity": 10046.837,
       "dayStartEquity": 10034.4963,
       "equityHistory": [
         {
@@ -28,7 +28,7 @@
         },
         {
           "day": 2,
-          "equity": 10034.4963
+          "equity": 10046.837
         }
       ],
       "positions": [
@@ -36,7 +36,13 @@
           "sym": "WAB",
           "qty": 6,
           "avgPx": 292.226,
-          "mkPx": 297.99
+          "mkPx": 300.23
+        },
+        {
+          "sym": "T",
+          "qty": 84,
+          "avgPx": 23.7419,
+          "mkPx": 23.73
         }
       ],
       "trades": [
@@ -49,18 +55,28 @@
           "fee": 0.0877,
           "slipBps": 5,
           "realizedPnl": null
+        },
+        {
+          "ts": "2026-07-24T14:45:41.646Z",
+          "sym": "T",
+          "side": "buy",
+          "qty": 84,
+          "px": 23.7419,
+          "fee": 0.0997,
+          "slipBps": 5,
+          "realizedPnl": null
         }
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": 0.345,
+        "cumPct": 0.468,
         "maxDD": -0.01,
         "hitRate": null,
-        "exposure": 17.8
+        "exposure": 37.8
       },
       "review": {
-        "zh": "Season 2 首日运行(day 0),S 账本此前无持仓、无拒单历史可学习。今日唯一候选 WAB 具备两条确凿信号(财报超预期+指引上调),置信度 0.74 超过本账本 0.70 门槛,按 20% 仓位上限建仓 6 股(约合总仓位 17.5%),现金充足。后续窗口将观察利好兑现后的持续性,若动能衰减将按 -8% 止损规则退出。",
-        "en": "First run of Season 2 (day 0) — no prior trades or rejections to learn from yet. WAB is the day's only qualifying candidate: two concrete signals (earnings beat + guidance raise), confidence 0.74 clears the 0.70 floor. Sized at 6 shares (~17.5% of equity), well under the 20% cap, cash floor untouched. Will watch for momentum follow-through next window; -8% stop-loss is the automatic exit if the event-driven move fades."
+        "zh": "WAB(6股,约占净值17.9%)延续周四以来涨势,信号与昨日相同,未加仓且已接近20%仓位上限。AT&T(T)财报超预期+回购上调两条信号确凿,置信度0.72高于0.70门槛,按20%仓位上限附近建仓84股(约19.8%净值),现价23.73。目前S账本持有WAB与T两个仓位,远低于6仓上限。",
+        "en": "WAB (6 sh, ~17.9% of equity) holds Friday's rally intact -- no new signal beyond yesterday's, so no add; already near the 20% cap anyway. T (AT&T) clears both the earnings-beat and buyback-hike signals (confidence 0.72 > 0.70 floor); opened 84 shares (~19.8% of equity) at 23.73, near its 20% cap given only 5% cash-floor headroom. Two positions now open, well under the 6-position ceiling."
       }
     },
     "P": {
@@ -114,8 +130,8 @@
         "exposure": 0
       },
       "review": {
-        "zh": "Season 2 首日运行(day 0),P 账本此前无持仓、无拒单历史。SMCI 昨日放量跳空+26.6%,盘中结构特征(pivotBreak: above pivot,距离1.22%;intradayRangePct 4.45%)支持短线跟随,今日开盘小幅回落(openGapPct -0.72%)但整体结构未破坏。置信度0.72超过0.65门槛,按20%仓位上限建仓64股(约合19.7%总仓位),设置1个交易日exitBy(7/24)强制平仓,严格执行-5%止损。VWAP漂移与成交量激增比因缺少盘中K线数据未能计算,已如实标注。",
-        "en": "First run of Season 2 (day 0) — no prior trades or rejections yet. SMCI gapped +19.8% and surged +26.6% intraday yesterday on record FY26Q4 order backlog news; today's precomputed features show it still 1.22% above pivot with a 4.45% intraday range, though openGapPct is slightly negative (-0.72%) this morning. Confidence 0.72 clears the 0.65 floor. Sized at 64 shares (~19.7% of equity, under the 20% cap) with a hard 1-day exitBy (7/24) given how much of the move is already banked. Note: vwapDriftPct/volumeSurgeRatio came back null (no intraday candles in this run's inputs) — not estimated, left as missing data per mandate."
+        "zh": "今日 picks 池中 P 账本无候选标的(arena-picks.json models.P 为空数组),且当前无持仓——昨日 SMCI 仓位已在今晨的迟到盯市补记中按 exitBy 平仓。本窗口不提交任何订单。",
+        "en": "No qualifying candidates in today's picks pool (arena-picks.json models.P is empty) and no open positions to manage -- yesterday's SMCI position was already closed at its exitBy via this morning's late mark-to-market catch-up. Proposing no orders this window."
       }
     },
     "T": {
