@@ -348,7 +348,7 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
     if (state.error === 'GATED') {
       const msg = state.keyRejected
         ? T('That admin key was not accepted.', '该管理员密钥未通过验证。')
-        : T('Live quotes are limited to the day\'s recommended symbols to conserve free-tier API limits.', '为节省免费档 API 额度，实时报价目前仅覆盖当日推荐标的。');
+        : T('Live quotes are limited to the day\'s recommended symbols.', '实时报价目前仅覆盖当日推荐标的。');
       el.innerHTML = `<div class="ta-empty err gated">
         <div>🔒 ${state.sym} ${T('is outside today\'s live-data pool.', '不在今日实时数据名单内。')} ${msg}</div>
         <form class="ta-unlock" id="taUnlockForm">
@@ -365,7 +365,7 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
       return;
     }
     if (state.error || !d || !d.analysis) {
-      el.innerHTML = `<div class="ta-empty err">${T('Could not load', '加载失败')} ${state.sym} — ${T('check the ticker or try again (free-tier API limits: ~8 req/min).', '请确认代码是否正确，或稍后重试（免费档 API 限流约 8 次/分钟）。')}</div>`;
+      el.innerHTML = `<div class="ta-empty err">${T('Could not load', '加载失败')} ${state.sym} — ${T('check the ticker or try again in a moment.', '请确认代码是否正确，或稍后重试。')}</div>`;
       return;
     }
     const a = d.analysis;

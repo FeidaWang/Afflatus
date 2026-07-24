@@ -50,8 +50,8 @@ writeFileSync(LEDGER_S1_PATH, `${JSON.stringify(current, null, 2)}\n`);
 console.log(`[bootstrap-season2] archived Season 1 (day ${current.day}, ${current.models.A.trades.length + current.models.B.trades.length} total trades) -> ${LEDGER_S1_PATH}`);
 
 // 2. Write the fresh Season 2 ledger.
-const NOTE_EN = 'Arena Autopilot — three simulated $10,000 ledgers (S: ORACLE, sentiment/event-driven; P: PULSE, intraday structure; T: ATLAS, alt-data fusion) trading the full S&P 500 (public/arena-universe.json) under code-enforced risk rules (src/lib/arenaRules.js — the model proposes, the rules engine settles, never the other way around). Season 1 (Models A/B, fixed 30-symbol AI-hardware watchlist) is archived at arena-ledger-s1.json. Not investment advice.';
-const NOTE_ZH = 'Arena Autopilot——三本各 $10,000 的模拟账本（S：ORACLE，情绪/事件驱动；P：PULSE，盘中结构；T：ATLAS，另类数据融合），在全标普 500（public/arena-universe.json）范围内按代码强制的风控规则运作（src/lib/arenaRules.js——模型只提案，规则引擎收单，永远不是反过来）。Season 1（Model A/B，固定 30 只 AI 硬件自选股）归档于 arena-ledger-s1.json。非投资建议。';
+const NOTE_EN = 'Arena Autopilot — three simulated $10,000 ledgers (S: ORACLE, sentiment/event-driven; P: PULSE, intraday structure; T: ATLAS, alt-data fusion) trading the full S&P 500 under strict, rule-based risk limits — the models only propose trades; a fixed rule set decides what\'s allowed, never the other way around. Season 1 (Models A/B, fixed 30-symbol AI-hardware watchlist) is archived separately. Not investment advice.';
+const NOTE_ZH = 'Arena Autopilot——三本各 $10,000 的模拟账本（S：ORACLE，情绪/事件驱动；P：PULSE，盘中结构；T：ATLAS，另类数据融合），在全标普 500 范围内按严格的风控规则运作——模型只负责提案，是否放行由固定规则决定，永远不是反过来。Season 1（Model A/B，固定 30 只 AI 硬件自选股）已单独归档。非投资建议。';
 
 const season2 = bootstrapSeason2(current, {
   day: 0,
