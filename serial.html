@@ -108,6 +108,13 @@
       <button id="fsPlus" type="button" aria-label="增大字号">大</button>
     </div>
     <button class="tbtn" id="autoToggle" type="button">▶<span class="lbl"> 自动翻页</span></button>
+    <!-- U-ambient-player: 3-control ambient music player (urgent.md).
+         hidden until /audio/playlist.json yields at least one playable track. -->
+    <div class="player" id="ambientPlayer" role="group" aria-label="伴读音乐" hidden>
+      <button id="plPrev" type="button" aria-label="上一曲">⏮</button>
+      <button id="plToggle" type="button" aria-label="播放 / 暂停">♪</button>
+      <button id="plNext" type="button" aria-label="下一曲">⏭</button>
+    </div>
     <div class="spacer"></div>
     <button class="tbtn" id="bookmarkBtn" type="button">☆<span class="lbl"> 书签</span></button>
   </section>
@@ -445,6 +452,102 @@
       stopAuto(); toast('检测到手动滑动，已暂停自动翻页');
     }, { passive: true });
   });
+
+  /* ---------- U-ambient-player: 3-control ambient music (urgent.md) ----------
+     Config-driven: /audio/playlist.json supplies the station owner's cleared
+     track URLs. No backend — lossless files stream via native HTTP Range
+     requests from wherever they're hosted. preload="none" so zero audio
+     bytes move before the reader's first gesture. Tracks lacking a playable
+     URL are skipped; if nothing is playable the player stays hidden. */
+  (function () {
+    var wrap = document.getElementById('ambientPlayer'); if (!wrap) return;
+    var btnPrev = document.getElementById('plPrev'),
+        btnPlay = document.getElementById('plToggle'),
+        btnNext = document.getElementById('plNext');
+    var LSIDX = 'afflatus:novels:player:idx';
+    var audio = new Audio();
+    audio.preload = 'none';
+    var tracks = [], idx = 0, failStreak = 0;
+
+    function pickUrl(t) {
+      /* Prefer the lossless src when the browser can decode it; else fallback. */
+      var byExt = { flac:'audio/flac', wav:'audio/wav', ogg:'audio/ogg', opus:'audio/ogg; codecs=opus', mp3:'audio/mpeg', m4a:'audio/mp4', aac:'audio/aac' };
+      function playable(url) {
+        if (!url) return false;
+        var ext = (url.split('?')[0].split('.').pop() || '').toLowerCase();
+        var mime = byExt[ext];
+        return mime ? audio.canPlayType(mime) !== '' : true; /* unknown ext: let the browser try */
+      }
+      if (playable(t.src)) return t.src;
+      if (playable(t.fallback)) return t.fallback;
+      return null;
+    }
+
+    function syncUi(playing) {
+      btnPlay.textContent = playing ? '❚❚' : '♪';
+      btnPlay.classList.toggle('active', !!playing);
+      var t = tracks[idx];
+      btnPlay.title = t ? ('♪ ' + t.title + (t.artist ? ' — ' + t.artist : '')) : '';
+    }
+
+    function setMediaSession(t) {
+      if (!('mediaSession' in navigator)) return;
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({ title: t.title || '伴读音乐', artist: t.artist || '', album: 'Afflatus 伴读' });
+        navigator.mediaSession.setActionHandler('play', play);
+        navigator.mediaSession.setActionHandler('pause', pause);
+        navigator.mediaSession.setActionHandler('previoustrack', function () { step(-1, true); });
+        navigator.mediaSession.setActionHandler('nexttrack', function () { step(1, true); });
+      } catch (e) {}
+    }
+
+    function load(i) {
+      idx = (i + tracks.length) % tracks.length;
+      var t = tracks[idx], url = pickUrl(t);
+      if (!url) { skipBad(); return false; }
+      audio.src = url;
+      setMediaSession(t);
+      try { localStorage.setItem(LSIDX, String(idx)); } catch (e) {}
+      syncUi(!audio.paused && !audio.ended);
+      return true;
+    }
+
+    function skipBad() {
+      failStreak++;
+      if (failStreak >= tracks.length) { /* every track failed: hide, stop trying */
+        pause(); wrap.hidden = true; return;
+      }
+      var wasPlaying = !audio.paused;
+      if (load(idx + 1) && wasPlaying) play();
+    }
+
+    function play() {
+      audio.play().then(function () { failStreak = 0; syncUi(true); })
+        .catch(function () { skipBad(); });
+    }
+    function pause() { audio.pause(); syncUi(false); }
+    function step(d, keepPlaying) {
+      var wasPlaying = keepPlaying || !audio.paused;
+      if (load(idx + d) && wasPlaying) play(); else syncUi(false);
+    }
+
+    btnPlay.addEventListener('click', function () { audio.paused ? play() : pause(); });
+    btnPrev.addEventListener('click', function () { step(-1); });
+    btnNext.addEventListener('click', function () { step(1); });
+    audio.addEventListener('ended', function () { step(1, true); });
+    audio.addEventListener('error', skipBad);
+
+    fetch('/audio/playlist.json', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        tracks = (data.tracks || []).filter(function (t) { return t && (t.src || t.fallback); });
+        if (!tracks.length) return; /* placeholder config: stay hidden */
+        var saved = 0; try { saved = Number(localStorage.getItem(LSIDX)) || 0; } catch (e) {}
+        wrap.hidden = false;
+        load(saved < tracks.length ? saved : 0);
+      })
+      .catch(function () { /* no playlist: player stays hidden */ });
+  })();
 
   /* ---------- FAB ---------- */
   var fabMenu = document.getElementById('fabMenu'), fabToggle = document.getElementById('fabToggle');

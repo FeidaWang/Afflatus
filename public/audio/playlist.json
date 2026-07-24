@@ -1,0 +1,8 @@
+{
+ "_readme": "站主专用：把已获授权/清权的曲目 URL 填入 tracks。src=无损(FLAC/WAV)，fallback=可选的有损备选。src 留空的条目会被跳过；全部为空时播放器自动隐藏。详见 /urgent.md §3–4。",
+ "updated": "2026-07-20",
+ "tracks": [
+  { "title": "示例曲目一（待填）", "artist": "待填", "src": "", "fallback": "" },
+  { "title": "示例曲目二（待填）", "artist": "待填", "src": "", "fallback": "" }
+ ]
+}
