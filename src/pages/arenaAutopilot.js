@@ -121,13 +121,15 @@ import { declutter1D } from '../lib/ladderLayout.js';
     return `<path class="ap-line" style="stroke:${color}" d="${d}"/><circle class="ap-end-dot" cx="${end.x}" cy="${end.y}" r="3" fill="${color}"/>`;
   }
   function renderChart(models, bench) {
-    // PLOT_W is the data area (unchanged math from before); a reserved
-    // right-hand strip (LABEL_MARGIN) is added on top for end-of-line value
-    // chips, replacing the old shared $ axis -- each series' own current
-    // value is now legible directly off its line end instead of a second
-    // read against a generic price scale.
-    const PLOT_W = 600, H = 240, pad = 30, LABEL_MARGIN = 96;
-    const W = PLOT_W + LABEL_MARGIN;
+    // Design per the "Arena Autopilot Chart Fix" mockup (2026-07-24): calmer
+    // than the previous glowing-pill iteration -- thinner lines, plain
+    // (no box/no glow) end-value text at a lighter weight, a dashed
+    // baseline at everyone's common starting equity, and a range readout
+    // (max/min $ top-left, day span bottom) so the plot is legible without
+    // hovering. PLOT_W/H is the data area; LABEL_MARGIN (right) fits the
+    // end-of-line values, BOTTOM_MARGIN fits the day-range caption.
+    const PLOT_W = 600, H = 240, pad = 30, LABEL_MARGIN = 90, BOTTOM_MARGIN = 24;
+    const W = PLOT_W + LABEL_MARGIN, TOTAL_H = H + BOTTOM_MARGIN;
     const keys = Object.keys(models);
     const first = models[keys[0]];
     const spy = benchmarkEndpoints(first.equityHistory, first.startEquity, bench.spyPct);
@@ -135,27 +137,40 @@ import { declutter1D } from '../lib/ladderLayout.js';
     const modelSeries = keys.map((k) => ({ key: k, series: models[k].equityHistory }));
     const domain = equityDomain([...modelSeries.map((m) => m.series), spy, smh]);
 
-    // four evenly-spaced gridlines (was top/bottom only) for rhythm, no text.
+    // four evenly-spaced gridlines for rhythm, no text (the $ range now
+    // lives in the top-left/bottom-left readout instead).
     let grid = '';
     for (let i = 0; i <= 3; i++) {
       const y = pad + (i / 3) * (H - pad * 2);
       grid += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${PLOT_W - pad}" y2="${y.toFixed(1)}" class="ap-grid"/>`;
     }
+    // dashed baseline at the shared starting equity -- an at-a-glance
+    // "above/below where everyone began" reference the old chart lacked.
+    const baselineY = scalePoint({ day: domain.minDay, equity: first.startEquity }, domain, PLOT_W, H, pad).y;
+    const baseline = `<line x1="${pad}" y1="${baselineY.toFixed(1)}" x2="${PLOT_W - pad}" y2="${baselineY.toFixed(1)}" class="ap-baseline"/>`;
+
     // SMH used to share T·ATLAS's magenta -- five series need five
     // distinguishable colors, so the benchmark pair now takes the two
     // palette hues no model uses: gold for SPY, blue for SMH.
     const SPY_COLOR = '#ffd166', SMH_COLOR = 'var(--blue)';
-    let s = grid;
+    let s = grid + baseline;
     s += `<g class="ap-line-spy">${buildPath(spy, domain, PLOT_W, H, pad, SPY_COLOR)}</g>`;
     s += `<g class="ap-line-smh">${buildPath(smh, domain, PLOT_W, H, pad, SMH_COLOR)}</g>`;
     modelSeries.forEach(({ key, series }, i) => {
       s += `<g class="ap-line-model">${buildPath(series, domain, PLOT_W, H, pad, colorFor(key, i))}</g>`;
     });
 
-    // end-of-line HUD readouts: one glowing pill per model + SPY/SMH, at
-    // their true final Y position, decluttered (same 1D declutter the TA
-    // Level Ladder uses) so converged values -- e.g. day 1, everyone still
-    // near $10,000 -- never overlap. A short leader connects a nudged pill
+    // top-left / bottom-left range readout ($ max/min) + bottom day-span
+    // caption -- lets the plot be read at a glance without hovering.
+    s += `<text x="${pad + 2}" y="${(pad - 8).toFixed(1)}" class="ap-axis-range">${fmtUsd(domain.maxEq)}</text>`;
+    s += `<text x="${pad + 2}" y="${(H - pad + 14).toFixed(1)}" class="ap-axis-range">${fmtUsd(domain.minEq)}</text>`;
+    s += `<text x="${pad}" y="${(H + 16).toFixed(1)}" class="ap-day-range">${T('DAY', '第')} ${domain.minDay}${state.lang === 'zh' ? '日' : ''}</text>`;
+    s += `<text x="${PLOT_W - pad}" y="${(H + 16).toFixed(1)}" text-anchor="end" class="ap-day-range">${T('DAY', '第')} ${domain.maxDay}${state.lang === 'zh' ? '日' : ''}</text>`;
+
+    // end-of-line readouts: one plain value per model + SPY/SMH, at their
+    // true final Y position, decluttered (same 1D declutter the TA Level
+    // Ladder uses) so converged values -- e.g. day 1, everyone still near
+    // $10,000 -- never overlap. A short leader connects a nudged label
     // back to its true line-end when they diverge.
     const endItems = [
       ...modelSeries.map(({ key, series }, i) => ({ color: colorFor(key, i), pt: series[series.length - 1] })),
@@ -163,27 +178,24 @@ import { declutter1D } from '../lib/ladderLayout.js';
       { color: SMH_COLOR, pt: smh[smh.length - 1] },
     ].filter((it) => it.pt);
     const trueYs = endItems.map((it) => scalePoint(it.pt, domain, PLOT_W, H, pad).y);
-    const labelYs = declutter1D(trueYs, { minGap: 18 });
+    const labelYs = declutter1D(trueYs, { minGap: 14 });
     let endLabelsHtml = '';
     endItems.forEach((it, i) => {
       const trueY = trueYs[i], labelY = labelYs[i];
       const lineX = PLOT_W - pad + 2;
-      const txt = fmtUsd(it.pt.equity);
-      const tw = txt.length * 6.6 + 12;
-      const chipX = PLOT_W - pad + 8;
+      const chipX = PLOT_W - pad + 10;
       let g = `<g class="ap-end-chip" style="color:${it.color}">`;
       if (Math.abs(labelY - trueY) > 2) {
         g += `<line x1="${lineX.toFixed(1)}" y1="${trueY.toFixed(1)}" x2="${lineX.toFixed(1)}" y2="${labelY.toFixed(1)}" class="ap-end-leader"/>`;
       }
       g += `<circle cx="${(PLOT_W - pad).toFixed(1)}" cy="${trueY.toFixed(1)}" r="2.4" class="ap-end-chip-dot"/>`;
-      g += `<rect x="${chipX.toFixed(1)}" y="${(labelY - 8.5).toFixed(1)}" width="${tw.toFixed(1)}" height="17" rx="3" class="ap-end-chip-bg"/>`;
-      g += `<text x="${(chipX + 6).toFixed(1)}" y="${(labelY + 3.6).toFixed(1)}" class="ap-end-chip-text">${txt}</text>`;
+      g += `<text x="${chipX.toFixed(1)}" y="${(labelY + 3.4).toFixed(1)}" class="ap-end-chip-text">${fmtUsd(it.pt.equity)}</text>`;
       g += '</g>';
       endLabelsHtml += g;
     });
     s += endLabelsHtml;
 
-    $('apChart').setAttribute('viewBox', `0 0 ${W} ${H}`);
+    $('apChart').setAttribute('viewBox', `0 0 ${W} ${TOTAL_H}`);
     $('apChart').innerHTML = s;
     $('apLegend').innerHTML = [
       ...keys.map((k, i) => [colorFor(k, i), labelFor(k), false]),

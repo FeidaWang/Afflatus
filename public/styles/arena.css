@@ -8,7 +8,7 @@
   --font-mono:'JetBrains Mono','PP Fraktion Mono',ui-monospace,monospace;
   --radius:4px;
   --viz-axis:rgba(234,241,255,.26);--viz-grid:rgba(234,241,255,.07);--viz-tick:var(--muted);
-  --viz-line-w:2.4px;--viz-marker-r:3;--viz-tip-bg:rgba(5,7,14,.96);--viz-tip-line:rgba(234,241,255,.14);--viz-tip-radius:8px;
+  --viz-line-w:1.8px;--viz-marker-r:3;--viz-tip-bg:rgba(5,7,14,.96);--viz-tip-line:rgba(234,241,255,.14);--viz-tip-radius:8px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -333,11 +333,11 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-note{color:var(--muted);font:500 12px/1.5 var(--font-mono);margin:0 0 12px;max-width:900px}
 .ap-chartwrap{padding:14px 16px 8px}
 .ap-chart-hd{display:flex;justify-content:flex-end;margin-bottom:4px}
-.ap-legend{display:flex;gap:12px;flex-wrap:wrap;font:700 10px/1 var(--font-hud);letter-spacing:.08em;text-transform:uppercase}
+.ap-legend{display:flex;gap:12px;flex-wrap:wrap;font:600 10px/1 var(--font-hud);letter-spacing:.08em;text-transform:uppercase}
 .ap-legend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
 .ap-legend i{width:16px;height:0;border-top:3px solid;display:inline-block}
 .ap-legend i.dash{border-top-style:dashed;border-top-width:1.5px}
-.ap-chart{width:100%;height:260px;display:block;cursor:crosshair}
+.ap-chart{width:100%;height:280px;display:block;cursor:crosshair}
 .viz-tip{position:fixed;z-index:60;pointer-events:none;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);border-radius:var(--viz-tip-radius);padding:9px 11px;font:12px/1.6 var(--font-mono);color:var(--text);box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
 .viz-tip.show{opacity:1;transform:none}
 .viz-tip b{display:block;color:var(--muted);font:700 9.5px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
@@ -345,19 +345,21 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-line{fill:none;stroke-width:var(--viz-line-w);stroke-linecap:round;stroke-linejoin:round}
 .ap-line-a{stroke:var(--acid);color:var(--acid)}
 .ap-line-b{stroke:var(--cyan);color:var(--cyan)}
-.ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.2;stroke-opacity:.8;color:#ffd166}
-.ap-line-smh{stroke:var(--blue);stroke-dasharray:2 4;stroke-width:1.2;stroke-opacity:.8;color:var(--blue)}
+.ap-line-spy{stroke:#ffd166;stroke-dasharray:4 4;stroke-width:1.1;stroke-opacity:.8;color:#ffd166}
+.ap-line-smh{stroke:var(--blue);stroke-dasharray:2 4;stroke-width:1.1;stroke-opacity:.8;color:var(--blue)}
 .ap-dot{stroke:none}
-/* end-of-line HUD readouts: a glowing pill (dark backing + currentColor
-   border/text) fed by the series' own color, plus a glowing marker dot at
-   the true line-end and a dashed leader when decluttering had to nudge the
-   label away from it -- same "neon terminal readout" language as the Level
-   Ladder's .lad-px/.lad-lab chips, not a bare color:text label. */
-.ap-end-chip{filter:drop-shadow(0 0 4px currentColor)}
+.ap-baseline{stroke:rgba(133,144,181,.4);stroke-width:1;stroke-dasharray:2 4}
+.ap-axis-range{fill:var(--muted);font:500 9px/1 var(--font-hud);letter-spacing:.08em}
+.ap-day-range{fill:#5b6486;font:500 9px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase}
+/* end-of-line readouts: the series' own color on a plain value (no
+   box/glow -- calmer than the first pass), plus a small true-position dot
+   and a dashed leader when decluttering had to nudge the label away from
+   it. Level Ladder's .lad-px/.lad-lab chips use a boxed/glowing treatment
+   deliberately reserved for THAT panel's single "current price" callout;
+   this chart shows five values at once, so plain text reads cleaner. */
 .ap-end-leader{stroke:currentColor;stroke-width:1;stroke-dasharray:1.5 2;opacity:.6}
 .ap-end-chip-dot{fill:currentColor}
-.ap-end-chip-bg{fill:rgba(6,9,17,.92);stroke:currentColor;stroke-width:1}
-.ap-end-chip-text{fill:currentColor;font:800 11px/1 var(--font-mono);letter-spacing:.02em}
+.ap-end-chip-text{fill:currentColor;font:500 11px/1 var(--font-mono);font-variant-numeric:tabular-nums}
 /* auto-fit/minmax (not a hardcoded 1fr 1fr) so this works whether the
    ledger has 2 (Season 1, A/B) or 3+ (Season 2, S/P/T) models — see
    arenaAutopilot.js's renderModels(), Part 4 §18.2.3 */
