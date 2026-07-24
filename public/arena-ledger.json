@@ -15,7 +15,7 @@
       "promptVersion": "S-v1",
       "startEquity": 10000,
       "cash": 6252.137,
-      "equity": 10046.837,
+      "equity": 10078.937,
       "dayStartEquity": 10034.4963,
       "equityHistory": [
         {
@@ -28,7 +28,7 @@
         },
         {
           "day": 2,
-          "equity": 10046.837
+          "equity": 10078.937
         }
       ],
       "positions": [
@@ -36,13 +36,13 @@
           "sym": "WAB",
           "qty": 6,
           "avgPx": 292.226,
-          "mkPx": 300.23
+          "mkPx": 300.82
         },
         {
           "sym": "T",
           "qty": 84,
           "avgPx": 23.7419,
-          "mkPx": 23.73
+          "mkPx": 24.07
         }
       ],
       "trades": [
@@ -69,14 +69,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": 0.468,
+        "cumPct": 0.789,
         "maxDD": -0.01,
         "hitRate": null,
-        "exposure": 37.8
+        "exposure": 38
       },
       "review": {
-        "zh": "WAB(6股,约占净值17.9%)延续周四以来涨势,信号与昨日相同,未加仓且已接近20%仓位上限。AT&T(T)财报超预期+回购上调两条信号确凿,置信度0.72高于0.70门槛,按20%仓位上限附近建仓84股(约19.8%净值),现价23.73。目前S账本持有WAB与T两个仓位,远低于6仓上限。",
-        "en": "WAB (6 sh, ~17.9% of equity) holds Friday's rally intact -- no new signal beyond yesterday's, so no add; already near the 20% cap anyway. T (AT&T) clears both the earnings-beat and buyback-hike signals (confidence 0.72 > 0.70 floor); opened 84 shares (~19.8% of equity) at 23.73, near its 20% cap given only 5% cash-floor headroom. Two positions now open, well under the 6-position ceiling."
+        "zh": "WAB(今日+0.95%,约占净值17.9%)与T(今日+4.8%,约占净值20.1%,已因价格上涨触及仓位上限)均延续本周财报超预期动能——WAB创历史新高,T的回购上调/用户超预期逻辑仍有多份最新分析师上调目标价支撑(TD Cowen上调至33美元,摩根士丹利上调至27美元)。未见衰减信号,今日digest也无新增合格标的,且两仓位均无加仓空间(20%上限)。本窗口不提交订单。",
+        "en": "WAB (+0.95% today, ~17.9% of equity) and T (+4.8% today, ~20.1% of equity, effectively at cap from price action alone) both continue to hold this week's earnings-beat momentum -- WAB hit a fresh record high, T's buyback-raise/subscriber-beat thesis is still backed by fresh analyst target hikes (TD Cowen to $33, Morgan Stanley to $27). No decay signal, no new qualifying candidate in today's digest, and neither position has room to add given the 20% cap. Proposing no orders this window."
       }
     },
     "P": {
@@ -130,8 +130,8 @@
         "exposure": 0
       },
       "review": {
-        "zh": "今日 picks 池中 P 账本无候选标的(arena-picks.json models.P 为空数组),且当前无持仓——昨日 SMCI 仓位已在今晨的迟到盯市补记中按 exitBy 平仓。本窗口不提交任何订单。",
-        "en": "No qualifying candidates in today's picks pool (arena-picks.json models.P is empty) and no open positions to manage -- yesterday's SMCI position was already closed at its exitBy via this morning's late mark-to-market catch-up. Proposing no orders this window."
+        "zh": "今日 P 账本 picks 池仍无候选标的(arena-picks.json models.P 为空),且当前无持仓——晨间窗口已确认无标的可交易。本窗口继续不提交订单。",
+        "en": "No qualifying candidates in today's picks pool for P (arena-picks.json models.P remains empty) and no open positions to manage -- same as the open-window read this morning. Proposing no orders this window."
       }
     },
     "T": {
