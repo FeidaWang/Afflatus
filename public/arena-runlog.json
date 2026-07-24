@@ -53,6 +53,98 @@
       "ordersProposed": 0,
       "ordersFilled": 0,
       "note": "Daily digest written to arena-daily-digest.json."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "post-market",
+      "model": "T",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-24",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "reconcile catch-up mark-to-market",
+      "late": true
+    },
+    {
+      "date": "2026-07-24",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 1,
+      "note": "reconcile catch-up mark-to-market",
+      "late": true
     }
   ]
 }
