@@ -337,7 +337,14 @@ body.embed .hero{border-top:2px solid var(--line)}
 .ap-legend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
 .ap-legend i{width:16px;height:0;border-top:3px solid;display:inline-block}
 .ap-legend i.dash{border-top-style:dashed;border-top-width:1.5px}
-.ap-chart{width:100%;height:280px;display:block;cursor:crosshair}
+/* aspect-ratio (not a fixed height) matches the SVG's own viewBox
+   (600+90 label margin x 240+24 day-range margin, set in
+   arenaAutopilot.js's renderChart) so the box the chart renders into is
+   never a different shape than its content -- with preserveAspectRatio
+   left at its "meet" default, a fixed height forced non-uniform stretch
+   (much more horizontal than vertical scaling on any wide panel),
+   flattening the lines and distorting the value-chip text. */
+.ap-chart{width:100%;aspect-ratio:690/264;height:auto;display:block;cursor:crosshair}
 .viz-tip{position:fixed;z-index:60;pointer-events:none;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);border-radius:var(--viz-tip-radius);padding:9px 11px;font:12px/1.6 var(--font-mono);color:var(--text);box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
 .viz-tip.show{opacity:1;transform:none}
 .viz-tip b{display:block;color:var(--muted);font:700 9.5px/1 var(--font-hud);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}

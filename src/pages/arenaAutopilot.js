@@ -128,6 +128,12 @@ import { declutter1D } from '../lib/ladderLayout.js';
     // (max/min $ top-left, day span bottom) so the plot is legible without
     // hovering. PLOT_W/H is the data area; LABEL_MARGIN (right) fits the
     // end-of-line values, BOTTOM_MARGIN fits the day-range caption.
+    // W/TOTAL_H below MUST match arena.css's `.ap-chart{aspect-ratio:...}`
+    // and arena.html's static <svg viewBox> (the pre-first-render fallback)
+    // -- otherwise the box the chart renders into is a different shape
+    // than its own coordinate system and preserveAspectRatio has to
+    // non-uniformly stretch the content to fill it (the flattened/
+    // distorted look reported 2026-07-24).
     const PLOT_W = 600, H = 240, pad = 30, LABEL_MARGIN = 90, BOTTOM_MARGIN = 24;
     const W = PLOT_W + LABEL_MARGIN, TOTAL_H = H + BOTTOM_MARGIN;
     const keys = Object.keys(models);
