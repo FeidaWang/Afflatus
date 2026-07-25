@@ -19,6 +19,7 @@
  * Exits 1 and prints every problem if any present file is invalid. */
 import { readFileSync, existsSync } from 'node:fs';
 import { validateSectorsData } from '../src/lib/validateSectorsData.js';
+import { validateSectorsCompetition } from '../src/lib/validateSectorsCompetition.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
@@ -30,6 +31,7 @@ import { validateArenaDigest } from '../src/lib/validateArenaDigest.js';
 
 const CHECKS = [
   { path: 'public/sectors-data.json', validate: validateSectorsData },
+  { path: 'public/sectors-competition.json', validate: validateSectorsCompetition },
   { path: 'public/signal-events.json', validate: validateSignalEvents },
   { path: 'public/leagues-data.json', validate: validateLeaguesData },
   { path: 'public/games-data.json', validate: validateGamesData },

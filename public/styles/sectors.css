@@ -14,6 +14,17 @@
   --accent:#10a37f;--accent-ink:#ffffff;
   --chip-bg:#f2f2f3;--chip-ink:#0a0a0b;
   --faction-us:#5b8dff;--faction-cn:#ff6161;
+  /* Red vs Blue layer (urgent.md Part 3, RB-P0-01). Bloc colour encodes country
+     of ecosystem only -- never sentiment, never a recommendation -- and every
+     bloc-coloured element is paired with a text or flag label so the map stays
+     readable without colour. --rb-ink on --rb-bg measures 15.4:1. */
+  --rb-bg:#07080C;--rb-panel:#0D0F15;--rb-panel-edge:#1A1D26;
+  --rb-ink:#EDEAE3;--rb-ink-dim:#9A97A0;
+  --rb-blue:#2F6BFF;--rb-blue-soft:#62A8FF;
+  --rb-red:#E5484D;--rb-red-soft:#FF7A80;
+  --rb-neutral:#7EF0DC;
+  --rb-font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Songti SC","Noto Serif SC",serif;
+  --rb-gap-section:clamp(56px,8vw,112px);
   --radius-lg:28px;--radius:18px;--radius-sm:10px;
   --shadow-sm:0 0 0 1px rgba(255,255,255,.04),0 6px 16px rgba(0,0,0,.5);
   --shadow-md:0 0 0 1px rgba(255,255,255,.06),0 20px 40px rgba(0,0,0,.65);
@@ -178,7 +189,7 @@ h1 span{color:#8ff0d7}
 .mwGraph:focus-visible{outline:2px solid #b99cff;outline-offset:-4px}
 .mwGraph:active{cursor:grabbing}
 .graphLegend{position:absolute;z-index:3;left:max(18px,env(safe-area-inset-left));top:max(18px,env(safe-area-inset-top));display:flex;gap:6px;max-width:calc(100% - 36px);flex-wrap:wrap;pointer-events:none;opacity:0;transform:translateY(-8px);transition:opacity .35s ease,transform .35s ease}
-.graphStory:not([data-graph-chapter="quiet"]) .graphLegend{opacity:1;transform:none}
+.graphStory:not([data-graph-chapter="divide"]) .graphLegend{opacity:1;transform:none}
 .graphLegend span{display:flex;align-items:center;gap:6px;padding:7px 9px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(8,9,14,.66);color:rgba(244,247,255,.7);font:650 9.5px/1 var(--font-mono);backdrop-filter:blur(12px)}
 .graphLegend span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--legend);box-shadow:0 0 10px var(--legend)}
 .graphProgress{position:absolute;z-index:4;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.08);pointer-events:none}
@@ -350,3 +361,127 @@ canvas[data-renderer="poster"]{background:radial-gradient(circle at 50% 45%,rgba
 .mwCol .newsGrid{grid-template-columns:1fr}
 @media(max-width:980px){.newsGrid>.mwColWrap{grid-template-columns:1fr}}
 @media(max-width:600px){.mwCol .newsGrid{grid-template-columns:1fr}}
+
+/* ============================================================
+   RED vs BLUE — US-China AI competition sections (urgent.md Part 3).
+   Anthropic-inspired rhythm on this site's dark field: wide section gaps, a
+   serif display face for act headings, exactly two accent colours, and no
+   colour-only meaning anywhere.
+   ============================================================ */
+.rbSection{margin:var(--rb-gap-section) 0 0}
+.rbSectionHead{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;max-width:760px}
+.rbSectionHead h2{margin:0;font-family:var(--rb-font-display);font-size:clamp(26px,3.4vw,40px);font-weight:600;line-height:1.1;letter-spacing:-.01em;color:var(--rb-ink)}
+.rbSectionHead p{margin:0;color:var(--ink-soft);font:500 15px/1.6 var(--font);max-width:660px}
+.rbProv{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font:650 10.5px/1 var(--font-mono);color:var(--ink-faint)}
+.rbTier{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:var(--bg-soft);color:var(--ink-soft);font:650 9.5px/1 var(--font-mono);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.rbTier[data-tier="verified"]{border-color:color-mix(in srgb,var(--rb-neutral) 45%,transparent);color:var(--rb-neutral)}
+.rbTier[data-tier="reported"]{border-color:color-mix(in srgb,var(--rb-blue-soft) 40%,transparent);color:var(--rb-blue-soft)}
+.rbTier[data-tier="estimate"],.rbTier[data-tier="derived"]{border-color:color-mix(in srgb,#FFD36A 40%,transparent);color:#FFD36A}
+.rbTier[data-tier="pending"],.rbTier[data-tier="not_published"],.rbTier[data-tier="provider_dependent"]{border-color:var(--line);color:var(--ink-faint)}
+.rbBloc{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;font:800 10px/1 var(--font-mono);letter-spacing:.06em}
+.rbBloc[data-bloc="US"]{background:color-mix(in srgb,var(--rb-blue) 20%,transparent);color:var(--rb-blue-soft);border:1px solid color-mix(in srgb,var(--rb-blue) 45%,transparent)}
+.rbBloc[data-bloc="CN"]{background:color-mix(in srgb,var(--rb-red) 20%,transparent);color:var(--rb-red-soft);border:1px solid color-mix(in srgb,var(--rb-red) 45%,transparent)}
+.rbBloc[data-bloc="neutral"]{background:color-mix(in srgb,var(--rb-neutral) 16%,transparent);color:var(--rb-neutral);border:1px solid color-mix(in srgb,var(--rb-neutral) 40%,transparent)}
+
+/* ── evaluation radar ─────────────────────────────────────────────────── */
+.rbRadarLayout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:26px;align-items:start}
+.rbRadarFig{margin:0;padding:18px;border:1px solid var(--rb-panel-edge);border-radius:var(--radius);background:var(--rb-panel)}
+.rbRadarFig svg{display:block;width:100%;height:auto;max-height:620px}
+.rbRadarFig figcaption{margin-top:14px;color:var(--ink-soft);font:500 13px/1.6 var(--font)}
+.rbRadarPicker{display:flex;flex-direction:column;gap:10px}
+.rbPickerHint{color:var(--ink-faint);font:600 11px/1.5 var(--font-mono)}
+.rbPickerList{display:flex;flex-wrap:wrap;gap:8px}
+.rbPickerList button{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 13px;border:1px solid var(--line);border-radius:999px;background:var(--bg-soft);color:var(--ink-soft);font:700 12px/1 var(--font);cursor:pointer}
+.rbPickerList button::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--pick,var(--ink-faint))}
+.rbPickerList button[aria-pressed="true"]{color:var(--ink);border-color:var(--pick,var(--ink-soft));box-shadow:0 0 0 2px color-mix(in srgb,var(--pick,#888) 22%,transparent)}
+.rbPickerList button:focus-visible{outline:2px solid var(--rb-blue-soft);outline-offset:2px}
+.rbAxisNote{color:var(--ink-faint);font:500 12px/1.6 var(--font);border-top:1px solid var(--line-soft);padding-top:12px}
+.rbSeriesUS{stroke:var(--rb-blue-soft)}
+.rbSeriesCN{stroke:var(--rb-red-soft)}
+@media(max-width:900px){.rbRadarLayout{grid-template-columns:1fr}}
+
+/* ── benchmark table ──────────────────────────────────────────────────── */
+.rbTableWrap{overflow-x:auto;border:1px solid var(--rb-panel-edge);border-radius:var(--radius);background:var(--rb-panel)}
+.rbTable{border-collapse:collapse;width:100%;min-width:1080px;font:500 12.5px/1.45 var(--font)}
+.rbTable caption{caption-side:top;padding:14px 16px;text-align:left;color:var(--ink-soft);font:500 13px/1.6 var(--font)}
+.rbTable th,.rbTable td{padding:9px 12px;border-bottom:1px solid var(--line-soft);text-align:right;white-space:nowrap;vertical-align:middle}
+.rbTable th[scope="row"],.rbTable td:first-child{text-align:left}
+.rbTable thead th{position:sticky;top:0;background:var(--rb-panel);color:var(--ink-soft);font:700 11px/1.3 var(--font-mono);text-align:right;z-index:1}
+.rbTable thead th:first-child{text-align:left}
+.rbTable thead button{display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:2px 6px;border:1px solid transparent;border-radius:8px;background:none;color:inherit;font:inherit;cursor:pointer}
+.rbTable thead button:hover{border-color:var(--line);color:var(--ink)}
+.rbTable thead button:focus-visible{outline:2px solid var(--rb-blue-soft);outline-offset:1px}
+.rbTable thead button[aria-sort="descending"]::after{content:"↓"}
+.rbTable thead button[aria-sort="ascending"]::after{content:"↑"}
+.rbTable tbody tr:hover{background:rgba(255,255,255,.02)}
+.rbTable .rbName{display:flex;align-items:center;gap:9px;font-weight:700;color:var(--ink)}
+.rbTable .rbEmpty{color:var(--ink-faint);font:600 11px/1 var(--font-mono)}
+.rbTable td[data-tier="verified"]{color:var(--rb-ink)}
+.rbTable .rbNotes{max-width:520px;white-space:normal;color:var(--ink-soft);font-size:12px}
+.rbColKey{display:flex;flex-direction:column;gap:8px;margin-top:16px;color:var(--ink-faint);font:500 12px/1.6 var(--font)}
+.rbColKey b{color:var(--ink-soft);font:700 11px/1.4 var(--font-mono)}
+
+/* ── equity boards ────────────────────────────────────────────────────── */
+.rbBoards{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.rbBoard{min-width:0;padding:18px;border:1px solid var(--rb-panel-edge);border-radius:var(--radius);background:var(--rb-panel)}
+.rbBoard[data-bloc="US"]{border-top:2px solid var(--rb-blue)}
+.rbBoard[data-bloc="CN"]{border-top:2px solid var(--rb-red)}
+.rbBoardHead{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:0 0 14px;font:800 17px/1.2 var(--font);color:var(--ink)}
+.rbBoardHead small{color:var(--ink-faint);font:600 11.5px/1.4 var(--font-mono)}
+.rbRow{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:14px 0;border-top:1px solid var(--line-soft)}
+.rbRow:first-of-type{border-top:0}
+.rbRank{grid-row:1/span 3;align-self:start;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--bg-soft);color:var(--ink-faint);font:800 13px/1 var(--font-mono)}
+.rbRowHead{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.rbTicker{font:800 14px/1.2 var(--font-mono);color:var(--ink)}
+.rbExch{color:var(--ink-faint);font:600 10.5px/1 var(--font-mono);letter-spacing:.04em}
+.rbLayer{padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink-soft);font:650 9.5px/1 var(--font-mono);text-transform:uppercase;letter-spacing:.05em}
+.rbConv{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--ink-soft);font:700 11px/1 var(--font-mono)}
+.rbConvBar{width:56px;height:5px;border-radius:999px;background:var(--line);overflow:hidden}
+.rbConvBar i{display:block;height:100%;width:var(--w,0%);border-radius:999px;background:var(--barColor,var(--ink-soft))}
+.rbRow p{grid-column:2;margin:0;color:var(--ink-soft);font:500 13px/1.6 var(--font)}
+.rbKpis{grid-column:2;display:flex;flex-wrap:wrap;gap:8px}
+.rbKpi{display:inline-flex;align-items:baseline;gap:6px;padding:5px 9px;border-radius:8px;background:var(--bg-soft);border:1px solid var(--line-soft);font:600 11px/1.3 var(--font-mono);color:var(--ink)}
+.rbKpi span{color:var(--ink-faint)}
+.rbRisk{grid-column:2;margin:0;color:var(--ink-faint);font:500 12px/1.55 var(--font)}
+.rbRisk b{color:var(--rb-red-soft);font:700 9.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.rbBoardNote{margin:16px 0 0;color:var(--ink-faint);font:500 12px/1.6 var(--font)}
+@media(max-width:900px){.rbBoards{grid-template-columns:1fr}}
+
+/* ── geopolitical scoreboard ──────────────────────────────────────────── */
+.rbScoreTotals{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;padding:20px;border:1px solid var(--rb-panel-edge);border-radius:var(--radius);background:var(--rb-panel);margin-bottom:20px}
+.rbTotal{display:flex;flex-direction:column;gap:4px}
+.rbTotal[data-bloc="CN"]{text-align:right}
+.rbTotal b{font-family:var(--rb-font-display);font-size:clamp(30px,5vw,52px);font-weight:600;line-height:1}
+.rbTotal[data-bloc="US"] b{color:var(--rb-blue-soft)}
+.rbTotal[data-bloc="CN"] b{color:var(--rb-red-soft)}
+.rbTotal span{color:var(--ink-faint);font:650 10.5px/1.3 var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.rbTotalDivide{width:1px;align-self:stretch;background:linear-gradient(180deg,var(--rb-blue),transparent 45%,transparent 55%,var(--rb-red))}
+.rbAxisRow{padding:16px 0;border-top:1px solid var(--line-soft)}
+.rbAxisHead{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:10px}
+.rbAxisHead h3{margin:0;font:800 15px/1.2 var(--font);color:var(--ink)}
+.rbAxisWeight{color:var(--ink-faint);font:650 10.5px/1 var(--font-mono)}
+.rbAxisBars{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.rbAxisBar{display:flex;align-items:center;gap:9px;padding:5px 0}
+.rbAxisBar[data-bloc="US"]{flex-direction:row-reverse;padding-right:10px;border-right:1px solid var(--line)}
+.rbAxisBar[data-bloc="CN"]{padding-left:10px}
+.rbAxisBar b{min-width:32px;font:800 13px/1 var(--font-mono)}
+.rbAxisBar[data-bloc="US"] b{text-align:left;color:var(--rb-blue-soft)}
+.rbAxisBar[data-bloc="CN"] b{color:var(--rb-red-soft)}
+.rbAxisBar i{display:block;height:9px;border-radius:3px;width:var(--w,0%)}
+.rbAxisBar[data-bloc="US"] i{background:linear-gradient(270deg,var(--rb-blue),color-mix(in srgb,var(--rb-blue) 35%,transparent))}
+.rbAxisBar[data-bloc="CN"] i{background:linear-gradient(90deg,var(--rb-red),color-mix(in srgb,var(--rb-red) 35%,transparent))}
+.rbAxisBar>div{flex:1;display:flex;justify-content:flex-end}
+.rbAxisBar[data-bloc="CN"]>div{justify-content:flex-start}
+.rbAxisMethod{margin:10px 0 0;color:var(--ink-soft);font:500 12.5px/1.6 var(--font)}
+.rbAxisMethod b{color:var(--ink-faint);font:700 9.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+.rbOutlook{margin:22px 0 0;padding:20px;border-left:2px solid var(--line);color:var(--ink-soft);font:500 15px/1.7 var(--font)}
+.rbOutlook b{display:block;margin-bottom:8px;color:var(--ink-faint);font:700 10px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:600px){
+  .rbScoreTotals{grid-template-columns:1fr 1fr;gap:12px}
+  .rbTotalDivide{display:none}
+  .rbAxisBars{grid-template-columns:1fr}
+  .rbAxisBar[data-bloc="US"]{flex-direction:row;padding-right:0;border-right:0}
+  .rbAxisBar[data-bloc="US"]>div{justify-content:flex-start}
+  .rbAxisBar[data-bloc="US"] i{background:linear-gradient(90deg,var(--rb-blue),color-mix(in srgb,var(--rb-blue) 35%,transparent))}
+}
+@media(prefers-reduced-motion:reduce){.rbPickerList button{transition:none}}

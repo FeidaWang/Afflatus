@@ -19,16 +19,64 @@ const RELATION_FORCE = { direct: 1, supplier: 0.7, infra: 0.5, competitor: -0.6 
 // Story poles deliberately occupy a wide landscape. The canvas always fits
 // this complete extent, so separation is structural rather than dependent on
 // a user zooming into a crowded cluster.
+//
+// urgent.md Part 3 (RB-P0-03) makes the horizontal axis geopolitical: an anchor
+// is addressed by `stage:bloc`, US stages sit left of the meridian, Chinese
+// stages sit right, and a stage whose members belong to neither bloc sits ON the
+// meridian at x=0. That last case is the co-existence argument stated as
+// geometry rather than as copy — TSMC and SK hynix are load-bearing for both
+// sides, so neither side gets to own them. Vertical position stays stack depth:
+// models at the top, memory and foundry at the bottom.
+//
+// Positions are hand-placed rather than generated because the canvas has to fit
+// all 13 populated cells at once without overlap at 56px plate height; a formula
+// that spaced eight stage rows evenly did not fit a 16:9 stage.
 const STORY_ANCHOR = {
-  cloud: [-2.15, -0.76],
-  platform: [-1.92, 1.16],
-  models: [-0.42, 0.02],
-  initiative: [0.02, 1.62],
-  compute: [0.9, -1.4],
-  silicon: [2.02, -0.58],
-  memory: [1.22, 1.14],
-  manufacturing: [2.35, 1.15],
+  'models:US': [-2.2, -1.25],
+  'models:CN': [2.2, -1.25],
+  'initiative:US': [-0.95, -1.6],
+  'initiative:CN': [0.95, -1.6],
+  'platform:US': [-1.15, -0.45],
+  'platform:CN': [1.25, -0.55],
+  'cloud:US': [-2.45, 0.3],
+  'cloud:CN': [2.45, 0.3],
+  'compute:US': [-1.05, 0.8],
+  'compute:CN': [1.15, 0.55],
+  'silicon:US': [-2.3, 1.45],
+  'silicon:CN': [2.3, 1.45],
+  'memory:US': [-1.15, 1.45],
+  'memory:CN': [1.3, 1.45],
+  'memory:neutral': [0, 1.55],
+  'manufacturing:neutral': [0, 0.6],
+  'manufacturing:US': [-2.5, 1.9],
+  'manufacturing:CN': [2.5, 1.9],
+  'models:neutral': [0, -1.6],
+  'platform:neutral': [0, -0.5],
+  'cloud:neutral': [0, -0.05],
+  'compute:neutral': [0, 0.2],
+  'silicon:neutral': [0, 1.0],
+  'initiative:neutral': [0, -1.05],
 };
+
+/**
+ * Bloc assignment for the storyboard's horizontal axis. Only the two competing
+ * ecosystems get a side; every other jurisdiction (KR, TW, …) is neutral by
+ * design, because a Korean or Taiwanese supplier feeding both blocs is exactly
+ * the dependency the page is about.
+ * @param {string|undefined} country ISO-2 country code from the dataset
+ * @returns {'US'|'CN'|'neutral'}
+ */
+export function ecosystemBloc(country) {
+  if (country === 'US') return 'US';
+  if (country === 'CN') return 'CN';
+  return 'neutral';
+}
+
+function anchorCell(stage, bloc) {
+  return STORY_ANCHOR[`${stage}:${bloc}`]
+    ? `${stage}:${bloc}`
+    : (STORY_ANCHOR[`${stage}:neutral`] ? `${stage}:neutral` : 'models:neutral');
+}
 
 /** Deterministic PRNG (mulberry32) — same algorithm used by src/bootengine/seed.ts,
  *  reimplemented locally so this stays a dependency-free plain-JS module. */
@@ -58,24 +106,33 @@ export function buildForceGraphData(sectorsData, opts = {}) {
     const nodes = [];
     const links = [];
     const known = new Set();
-    const usedStages = new Set(ecosystem.nodes.map((node) => node.stage || 'models'));
+    // One anchor per populated (stage, bloc) cell rather than per stage: that is
+    // what turns the layout from "supply chain scatter" into "two ecosystems
+    // sharing a supply chain".
+    const usedCells = new Set(ecosystem.nodes.map(
+      (node) => anchorCell(node.stage || 'models', ecosystemBloc(node.country)),
+    ));
 
-    for (const stage of usedStages) {
-      const [x, y] = STORY_ANCHOR[stage] || STORY_ANCHOR.models;
-      const id = 'anchor:' + stage;
-      nodes.push({ id, kind: 'anchor', label: stage, stage, fx: x, fy: y, x, y, vx: 0, vy: 0 });
+    for (const cell of usedCells) {
+      const [x, y] = STORY_ANCHOR[cell];
+      const [stage, bloc] = cell.split(':');
+      const id = 'anchor:' + cell;
+      nodes.push({ id, kind: 'anchor', label: stage, stage, bloc, fx: x, fy: y, x, y, vx: 0, vy: 0 });
       known.add(id);
     }
 
     for (const item of ecosystem.nodes) {
       if (!item || !item.id) continue;
       const stage = item.stage || 'models';
-      const [ax, ay] = STORY_ANCHOR[stage] || STORY_ANCHOR.models;
+      const bloc = ecosystemBloc(item.country);
+      const cell = anchorCell(stage, bloc);
+      const [ax, ay] = STORY_ANCHOR[cell];
       nodes.push({
         ...item,
         id: String(item.id),
         kind: item.kind || 'model',
         stage,
+        bloc,
         x: ax + (rand() - 0.5) * 0.62,
         y: ay + (rand() - 0.5) * 0.62,
         vx: 0,
@@ -84,7 +141,7 @@ export function buildForceGraphData(sectorsData, opts = {}) {
       known.add(String(item.id));
       links.push({
         id: 'anchor-link:' + item.id,
-        source: 'anchor:' + stage,
+        source: 'anchor:' + cell,
         target: String(item.id),
         kind: 'anchor',
         type: 'anchor',

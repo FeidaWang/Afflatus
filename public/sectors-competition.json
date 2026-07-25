@@ -1,0 +1,1332 @@
+{
+  "schemaVersion": "competition/v1",
+  "updated": "2026-07-25T18:00:00+10:00",
+  "as_of": "2026-07-25",
+  "title_en": "US-China AI competition: models, economics, equities",
+  "title_zh": "中美 AI 竞争：模型、经济性与股票",
+  "provenance_note_en": "Every numeric leaf carries a tier: verified (primary source), reported (secondary/aggregator), estimate (editorial), derived (computed here) or pending (not published). Empty cells are deliberate. Nothing on this page is investment advice.",
+  "provenance_note_zh": "每个数值都带有层级标注：verified（一手来源）、reported（二手/聚合）、estimate（编辑估算）、derived（本页计算）或 pending（未公布）。空白单元格是有意留空。本页内容不构成投资建议。",
+  "radarAxes": [
+    {
+      "id": "intelligence",
+      "label_en": "Intelligence",
+      "label_zh": "综合智能",
+      "metric_en": "Artificial Analysis Intelligence Index v4.1",
+      "metric_zh": "Artificial Analysis 智能指数 v4.1",
+      "unit": "index",
+      "higher_better": true,
+      "from": {
+        "kind": "bench",
+        "bench": "aa_intelligence"
+      }
+    },
+    {
+      "id": "coding_agentic",
+      "label_en": "Coding / agentic",
+      "label_zh": "编码与代执行",
+      "metric_en": "SWE-Bench Pro pass rate",
+      "metric_zh": "SWE-Bench Pro 通过率",
+      "unit": "%",
+      "higher_better": true,
+      "from": {
+        "kind": "bench",
+        "bench": "swe_bench_pro"
+      }
+    },
+    {
+      "id": "cost_efficiency",
+      "label_en": "Cost efficiency",
+      "label_zh": "成本效率",
+      "metric_en": "Intelligence index per blended $/1M token (3:1 input:output)",
+      "metric_zh": "每混合美元（输入:输出 3:1）可得智能指数",
+      "unit": "index/$",
+      "higher_better": true,
+      "derived": true,
+      "from": {
+        "kind": "ratio",
+        "numerator": "aa_intelligence",
+        "denominator": "blended_price",
+        "input_weight": 0.75
+      }
+    },
+    {
+      "id": "openness",
+      "label_en": "Openness",
+      "label_zh": "权重开放",
+      "metric_en": "Open-weight route = 100, closed API = 0",
+      "metric_zh": "开放权重 = 100，闭源 API = 0",
+      "unit": "0/100",
+      "higher_better": null,
+      "from": {
+        "kind": "route"
+      }
+    }
+  ],
+  "benchColumns": [
+    {
+      "id": "aa_intelligence",
+      "family": "intelligence",
+      "label_en": "AA Intelligence Index",
+      "label_zh": "AA 智能指数",
+      "unit": "index",
+      "higher_better": true
+    },
+    {
+      "id": "aa_agentic",
+      "family": "professional",
+      "label_en": "AA Agentic Index",
+      "label_zh": "AA 代执行指数",
+      "unit": "index",
+      "higher_better": true
+    },
+    {
+      "id": "swe_bench_pro",
+      "family": "professional",
+      "label_en": "SWE-Bench Pro",
+      "label_zh": "SWE-Bench Pro",
+      "unit": "%",
+      "higher_better": true
+    },
+    {
+      "id": "terminal_bench",
+      "family": "professional",
+      "label_en": "Terminal-Bench 2.1",
+      "label_zh": "Terminal-Bench 2.1",
+      "unit": "%",
+      "higher_better": true
+    },
+    {
+      "id": "deepswe",
+      "family": "professional",
+      "label_en": "DeepSWE",
+      "label_zh": "DeepSWE",
+      "unit": "%",
+      "higher_better": true
+    },
+    {
+      "id": "osworld",
+      "family": "professional",
+      "label_en": "OSWorld-Verified",
+      "label_zh": "OSWorld-Verified",
+      "unit": "%",
+      "higher_better": true
+    },
+    {
+      "id": "mle_bench",
+      "family": "professional",
+      "label_en": "MLE-Bench",
+      "label_zh": "MLE-Bench",
+      "unit": "%",
+      "higher_better": true
+    },
+    {
+      "id": "hmmt",
+      "family": "intelligence",
+      "label_en": "HMMT Feb 2026",
+      "label_zh": "HMMT 2026年2月",
+      "unit": "score",
+      "higher_better": true
+    },
+    {
+      "id": "apex",
+      "family": "intelligence",
+      "label_en": "Apex reasoning",
+      "label_zh": "Apex 推理",
+      "unit": "score",
+      "higher_better": true
+    },
+    {
+      "id": "mmlu_pro",
+      "family": "intelligence",
+      "label_en": "MMLU-Pro",
+      "label_zh": "MMLU-Pro",
+      "unit": "%",
+      "higher_better": true,
+      "status": "not_published",
+      "note_en": "No roster model published MMLU-Pro at launch as of 2026-07-25. GPT-5.6 Sol and Grok 4.5 shipped agentic evals only.",
+      "note_zh": "截至 2026-07-25，名单内模型均未在发布时公布 MMLU-Pro；GPT-5.6 Sol 与 Grok 4.5 仅发布代执行类评测。"
+    },
+    {
+      "id": "superclue",
+      "family": "intelligence",
+      "label_en": "SuperCLUE",
+      "label_zh": "SuperCLUE",
+      "unit": "score",
+      "higher_better": true,
+      "status": "not_published",
+      "note_en": "Chinese-native composite. Pending transcription from the latest SuperCLUE monthly report with its publication date.",
+      "note_zh": "中文原生综合榜。待从 SuperCLUE 最新月报连同报告日期转录后填入。"
+    },
+    {
+      "id": "hallucination",
+      "family": "professional",
+      "label_en": "Hallucination control",
+      "label_zh": "幻觉控制率",
+      "unit": "%",
+      "higher_better": true,
+      "status": "not_published",
+      "note_en": "No vendor-neutral cross-roster factuality eval published for these models. Left empty rather than estimated.",
+      "note_zh": "这些模型缺少中立第三方的跨模型事实性评测，故留空而非估算。"
+    },
+    {
+      "id": "linguistic",
+      "family": "linguistic",
+      "label_en": "Perplexity / ROUGE / BLEU",
+      "label_zh": "困惑度 / ROUGE / BLEU",
+      "unit": "n/a",
+      "higher_better": null,
+      "status": "not_published",
+      "note_en": "Frontier labs stopped publishing these baselines. Retained as a column to show the transparency regression, never filled with invented values.",
+      "note_zh": "前沿实验室已不再公布这些语言学基线。保留此列以呈现透明度的倒退，绝不填入臆造数值。"
+    },
+    {
+      "id": "ttft",
+      "family": "operational",
+      "label_en": "TTFT p50",
+      "label_zh": "首 token 延迟 p50",
+      "unit": "s",
+      "higher_better": false,
+      "status": "provider_dependent",
+      "note_en": "Latency is a provider property, not a model property. Per-provider figures live in each model's speed[] rows.",
+      "note_zh": "延迟属于服务方而非模型属性。分服务方数据见各模型 speed[] 行。"
+    },
+    {
+      "id": "tpot",
+      "family": "operational",
+      "label_en": "Throughput",
+      "label_zh": "生成吞吐",
+      "unit": "tok/s",
+      "higher_better": true,
+      "status": "provider_dependent",
+      "note_en": "Same as TTFT: measured per host. Inference-optimized hosts reach 100-300+ tok/s versus first-party APIs.",
+      "note_zh": "与 TTFT 同理，按服务方实测。推理优化厂商可达 100–300+ tok/s，高于一方 API。"
+    },
+    {
+      "id": "price_in",
+      "family": "economic",
+      "label_en": "Input $/1M",
+      "label_zh": "输入 美元/百万",
+      "unit": "USD",
+      "higher_better": false
+    },
+    {
+      "id": "price_out",
+      "family": "economic",
+      "label_en": "Output $/1M",
+      "label_zh": "输出 美元/百万",
+      "unit": "USD",
+      "higher_better": false
+    },
+    {
+      "id": "price_ratio",
+      "family": "economic",
+      "label_en": "Output:input ratio",
+      "label_zh": "输出:输入 倍数",
+      "unit": "x",
+      "higher_better": false,
+      "derived": true
+    }
+  ],
+  "models": [
+    {
+      "id": "claude-opus-5",
+      "vendor": "anthropic",
+      "bloc": "US",
+      "name": "Claude Opus 5",
+      "route": "closed",
+      "released": "2026-07-24",
+      "pricing": {
+        "in_per_m": 5.0,
+        "out_per_m": 25.0,
+        "tier": "verified",
+        "src": "https://www.anthropic.com/news/claude-opus-5"
+      },
+      "bench": [
+        {
+          "id": "aa_intelligence",
+          "value": 61,
+          "unit": "index",
+          "tier": "verified",
+          "src": "https://artificialanalysis.ai/models/claude-opus-5",
+          "note_en": "Max effort. 60 xhigh / 59 high / 56 medium.",
+          "note_zh": "max effort 档；xhigh 60 / high 59 / medium 56。"
+        },
+        {
+          "id": "aa_agentic",
+          "value": 55.3,
+          "unit": "index",
+          "tier": "verified",
+          "src": "https://artificialanalysis.ai/models/claude-opus-5"
+        },
+        {
+          "id": "osworld",
+          "value": null,
+          "unit": "%",
+          "tier": "reported",
+          "src": "https://www.anthropic.com/news/claude-opus-5",
+          "note_en": "Vendor states Opus 5 beats Fable 5's best OSWorld 2.0 result at about a third of the cost; no absolute score published.",
+          "note_zh": "厂商称在 OSWorld 2.0 上以约三分之一成本超过 Fable 5 最佳成绩，未公布绝对分。"
+        }
+      ],
+      "speed": [
+        {
+          "provider": "Anthropic API (Fast mode)",
+          "ttft_s": null,
+          "tpot_tps": null,
+          "relative": "~2.5x default speed at 2x base price",
+          "tier": "verified",
+          "src": "https://www.anthropic.com/news/claude-opus-5"
+        }
+      ],
+      "notes_en": "Frontier-Bench v0.1, GDPval-AA, ARC-AGI 3 (about 3x the next-best model) and Zapier AutomationBench are vendor-claimed state-of-the-art pending third-party runs. Behind Mythos 5 on offensive cyber; lowest misaligned-behaviour score (2.3) on Anthropic's automated audit.",
+      "notes_zh": "Frontier-Bench v0.1、GDPval-AA、ARC-AGI 3（约为次优模型的 3 倍）与 Zapier AutomationBench 均为厂商自称 SOTA，待第三方复测。攻击性网络安全能力仍落后 Mythos 5；在 Anthropic 自动化对齐审计中失准行为分最低（2.3）。",
+      "src": "https://www.anthropic.com/news/claude-opus-5",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "claude-fable-5",
+      "vendor": "anthropic",
+      "bloc": "US",
+      "name": "Claude Fable 5",
+      "route": "closed",
+      "released": "2026-07-01",
+      "pricing": {
+        "in_per_m": 10.0,
+        "out_per_m": 50.0,
+        "tier": "reported",
+        "src": "https://www.tldl.io/resources/llm-api-pricing"
+      },
+      "bench": [
+        {
+          "id": "aa_intelligence",
+          "value": 60,
+          "unit": "index",
+          "tier": "reported",
+          "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked"
+        },
+        {
+          "id": "swe_bench_pro",
+          "value": 80.3,
+          "unit": "%",
+          "tier": "reported",
+          "src": "https://divkix.me/blog/ai-models-compared-2026/",
+          "note_en": "Highest published SWE-Bench Pro of any generally usable model.",
+          "note_zh": "公开可用模型中 SWE-Bench Pro 最高。"
+        }
+      ],
+      "speed": [],
+      "notes_en": "Suspended June 2026, back online 1 July. Lost the Intelligence Index top slot to Opus 5 on 24 July while remaining the coding-benchmark leader.",
+      "notes_zh": "2026 年 6 月曾暂停，7 月 1 日恢复。7 月 24 日智能指数榜首被 Opus 5 取代，但仍是编码基准领先者。",
+      "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "claude-opus-4-8",
+      "vendor": "anthropic",
+      "bloc": "US",
+      "name": "Claude Opus 4.8",
+      "route": "closed",
+      "released": null,
+      "pricing": {
+        "in_per_m": 5.0,
+        "out_per_m": 25.0,
+        "tier": "reported",
+        "src": "https://www.tldl.io/resources/llm-api-pricing"
+      },
+      "bench": [
+        {
+          "id": "aa_intelligence",
+          "value": 56,
+          "unit": "index",
+          "tier": "reported",
+          "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked"
+        }
+      ],
+      "speed": [],
+      "notes_en": "Superseded as latest Opus on 2026-07-24. Retained because it is the safety-classifier fallback target for flagged Opus 5 and Fable 5 requests.",
+      "notes_zh": "2026-07-24 起不再是最新 Opus。保留在名单内，因为它是 Opus 5 / Fable 5 触发安全分类器时的回退模型。",
+      "src": "https://www.anthropic.com/news/claude-opus-5",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "gpt-5-6-sol",
+      "vendor": "openai",
+      "bloc": "US",
+      "name": "GPT-5.6 Sol",
+      "route": "closed",
+      "released": null,
+      "pricing": {
+        "in_per_m": 5.0,
+        "out_per_m": 30.0,
+        "tier": "reported",
+        "src": "https://www.tldl.io/resources/llm-api-pricing"
+      },
+      "bench": [
+        {
+          "id": "aa_intelligence",
+          "value": 59,
+          "unit": "index",
+          "tier": "reported",
+          "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked"
+        }
+      ],
+      "speed": [],
+      "notes_en": "OpenAI's STEM flagship. Published only agentic/coding evals at launch, so GPQA/MMLU/AIME/ARC cells stay empty. The 39.6% FrontierMath Tier 4 figure in circulation is verified for GPT-5.5 Pro, not 5.6 Sol, and is deliberately not attributed here.",
+      "notes_zh": "OpenAI 的 STEM 旗舰。发布时仅公布代执行/编码类评测，因此 GPQA/MMLU/AIME/ARC 单元格留空。流传的 FrontierMath Tier 4 39.6% 是 GPT-5.5 Pro 的数据而非 5.6 Sol，此处刻意不做归属。",
+      "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "gemini-3-6-flash",
+      "vendor": "google",
+      "bloc": "US",
+      "name": "Gemini 3.6 Flash",
+      "route": "closed",
+      "released": "2026-07-21",
+      "pricing": {
+        "in_per_m": 1.5,
+        "out_per_m": 7.5,
+        "tier": "verified",
+        "src": "https://kie.ai/blog/what-is-gemini-3-6-flash"
+      },
+      "bench": [
+        {
+          "id": "aa_intelligence",
+          "value": 50,
+          "unit": "index",
+          "tier": "reported",
+          "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked",
+          "note_en": "Best price-performance at the frontier per the ranking.",
+          "note_zh": "该榜单称其为前沿区间性价比最佳。"
+        },
+        {
+          "id": "deepswe",
+          "value": 49.0,
+          "unit": "%",
+          "tier": "verified",
+          "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
+        },
+        {
+          "id": "mle_bench",
+          "value": 63.9,
+          "unit": "%",
+          "tier": "verified",
+          "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
+        },
+        {
+          "id": "osworld",
+          "value": 83.0,
+          "unit": "%",
+          "tier": "verified",
+          "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
+        }
+      ],
+      "speed": [],
+      "notes_en": "Launched with 17% fewer output tokens and lower pricing than Gemini 3.5 Flash while scoring higher on every benchmark Google tested. 1M context.",
+      "notes_zh": "相比 Gemini 3.5 Flash 输出 token 减少 17%、定价更低，且在谷歌测试的每项基准上得分更高。上下文 100 万。",
+      "src": "https://kie.ai/blog/what-is-gemini-3-6-flash",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "gemini-3-5-flash",
+      "vendor": "google",
+      "bloc": "US",
+      "name": "Gemini 3.5 Flash",
+      "route": "closed",
+      "released": "2026-05-20",
+      "pricing": {
+        "in_per_m": 1.5,
+        "out_per_m": 9.0,
+        "tier": "reported",
+        "src": "https://codersera.com/blog/gemini-3-5-complete-guide-2026/"
+      },
+      "bench": [
+        {
+          "id": "deepswe",
+          "value": 37.0,
+          "unit": "%",
+          "tier": "verified",
+          "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
+        },
+        {
+          "id": "mle_bench",
+          "value": 49.7,
+          "unit": "%",
+          "tier": "verified",
+          "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
+        },
+        {
+          "id": "osworld",
+          "value": 78.4,
+          "unit": "%",
+          "tier": "verified",
+          "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
+        }
+      ],
+      "speed": [],
+      "notes_en": "Default consumer Gemini since Google I/O. Gemini 3.5 Pro remains in partner testing only and is therefore not given a radar record.",
+      "notes_zh": "自 Google I/O 起为消费端默认 Gemini。Gemini 3.5 Pro 仍仅限合作方测试，故不建立雷达记录。",
+      "src": "https://codersera.com/blog/gemini-3-5-complete-guide-2026/",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "grok-4-5",
+      "vendor": "xai",
+      "bloc": "US",
+      "name": "Grok 4.5",
+      "route": "closed",
+      "released": null,
+      "pricing": {
+        "in_per_m": null,
+        "out_per_m": null,
+        "tier": "pending",
+        "src": null
+      },
+      "bench": [
+        {
+          "id": "aa_intelligence",
+          "value": 54,
+          "unit": "index",
+          "tier": "reported",
+          "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked"
+        }
+      ],
+      "speed": [],
+      "notes_en": "Published agentic/coding evals only at launch; classic academic benchmarks unavailable. Public per-token pricing not captured at audit time.",
+      "notes_zh": "发布时仅公布代执行/编码类评测，缺少经典学术基准。审计时未取得公开的按 token 定价。",
+      "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "muse-spark-1-1",
+      "vendor": "meta",
+      "bloc": "US",
+      "name": "Muse Spark 1.1",
+      "route": "closed",
+      "released": null,
+      "pricing": {
+        "in_per_m": null,
+        "out_per_m": null,
+        "tier": "pending",
+        "src": null
+      },
+      "bench": [],
+      "speed": [],
+      "notes_en": "Brings planning and delegated action into Meta AI. No comparable public benchmark or per-token price captured; present in the storyboard as an ecosystem node rather than a scored model.",
+      "notes_zh": "把规划与代执行带入 Meta AI。未取得可比的公开基准或按 token 定价；在故事板中作为生态节点而非计分模型出现。",
+      "src": "https://about.fb.com/news/",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "qwen-3-7-max",
+      "vendor": "alibaba",
+      "bloc": "CN",
+      "name": "Qwen3.7-Max",
+      "route": "open",
+      "released": null,
+      "pricing": {
+        "in_per_m": null,
+        "out_per_m": null,
+        "tier": "pending",
+        "src": null
+      },
+      "bench": [
+        {
+          "id": "swe_bench_pro",
+          "value": 58.0,
+          "unit": "%",
+          "tier": "estimate",
+          "src": "https://www.aimadetools.com/blog/qwen-3-7-vs-minimax-m3/",
+          "note_en": "Reported as slightly below MiniMax M3; no exact published figure.",
+          "note_zh": "据报道略低于 MiniMax M3，无确切公布数值。"
+        },
+        {
+          "id": "hmmt",
+          "value": 97.1,
+          "unit": "score",
+          "tier": "reported",
+          "src": "https://www.datacamp.com/blog/qwen3-7-max",
+          "note_en": "Table-leading competition-mathematics score.",
+          "note_zh": "该表中竞赛数学最高分。"
+        },
+        {
+          "id": "apex",
+          "value": 44.5,
+          "unit": "score",
+          "tier": "reported",
+          "src": "https://www.datacamp.com/blog/qwen3-7-max"
+        }
+      ],
+      "speed": [],
+      "notes_en": "Native extended-thinking model; leads SWE-Pro and Terminal-Bench among Chinese labs. No Artificial Analysis index entry captured at audit time.",
+      "notes_zh": "原生长思考模型，在中国实验室中领先 SWE-Pro 与 Terminal-Bench。审计时未取得 Artificial Analysis 指数条目。",
+      "src": "https://www.datacamp.com/blog/qwen3-7-max",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "vendor": "deepseek",
+      "bloc": "CN",
+      "name": "DeepSeek V4 Pro",
+      "route": "open",
+      "released": null,
+      "pricing": {
+        "in_per_m": 0.43,
+        "out_per_m": 0.87,
+        "tier": "reported",
+        "src": "https://www.cloudzero.com/blog/llm-api-pricing-comparison/"
+      },
+      "bench": [
+        {
+          "id": "hmmt",
+          "value": 95.2,
+          "unit": "score",
+          "tier": "reported",
+          "src": "https://www.datacamp.com/blog/qwen3-7-max",
+          "note_en": "Reported for the V4-Pro Max configuration.",
+          "note_zh": "为 V4-Pro Max 配置下的数据。"
+        },
+        {
+          "id": "apex",
+          "value": 38.3,
+          "unit": "score",
+          "tier": "reported",
+          "src": "https://www.datacamp.com/blog/qwen3-7-max"
+        }
+      ],
+      "speed": [],
+      "notes_en": "Dual thinking / non-thinking modes. Base DeepSeek V4 is the cheapest capable model at $0.14/$0.28 per 1M tokens, which is the price floor the whole comparison is measured against.",
+      "notes_zh": "双模式（思考/非思考）。基础版 DeepSeek V4 以每百万 token 0.14/0.28 美元成为最便宜的可用模型，是整个对比的价格地板。",
+      "src": "https://www.cloudzero.com/blog/llm-api-pricing-comparison/",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "kimi-k3",
+      "vendor": "moonshot",
+      "bloc": "CN",
+      "name": "Kimi K3",
+      "route": "open",
+      "released": null,
+      "pricing": {
+        "in_per_m": 3.0,
+        "out_per_m": 15.0,
+        "tier": "reported",
+        "src": "https://www.tldl.io/resources/llm-api-pricing"
+      },
+      "bench": [
+        {
+          "id": "aa_intelligence",
+          "value": 57,
+          "unit": "index",
+          "tier": "reported",
+          "src": "https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked",
+          "note_en": "Highest-scoring Chinese model on the index; within 4 points of Opus 5.",
+          "note_zh": "该指数上中国模型最高分，与 Opus 5 相差 4 分以内。"
+        }
+      ],
+      "speed": [],
+      "notes_en": "2.8T parameters with a million-token context per the storyboard sources. The narrowest capability gap to the US frontier on an independent index.",
+      "notes_zh": "据故事板来源为 2.8 万亿参数、百万 token 上下文。在第三方指数上与美国前沿的能力差距最小。",
+      "src": "https://www.orcarouter.ai/blog/kimi-k3-vs-deepseek-v4",
+      "params_b": null,
+      "context_k": null
+    },
+    {
+      "id": "minimax-m3",
+      "vendor": "minimax",
+      "bloc": "CN",
+      "name": "MiniMax-M3",
+      "route": "open",
+      "released": null,
+      "pricing": {
+        "in_per_m": null,
+        "out_per_m": null,
+        "tier": "pending",
+        "src": null
+      },
+      "bench": [
+        {
+          "id": "swe_bench_pro",
+          "value": 59.0,
+          "unit": "%",
+          "tier": "reported",
+          "src": "https://apidog.com/blog/minimax-m3-vs-deepseek-v4-vs-qwen-3-7/"
+        },
+        {
+          "id": "terminal_bench",
+          "value": 66.0,
+          "unit": "%",
+          "tier": "reported",
+          "src": "https://apidog.com/blog/minimax-m3-vs-deepseek-v4-vs-qwen-3-7/"
+        }
+      ],
+      "speed": [],
+      "notes_en": "Published verifiable agentic-coding benchmarks at launch, unlike several US flagships. Parent listed on HKEX in January 2026.",
+      "notes_zh": "与部分美国旗舰不同，发布时即公布可核验的代执行编码基准。母公司 2026 年 1 月于港交所上市。",
+      "src": "https://apidog.com/blog/minimax-m3-vs-deepseek-v4-vs-qwen-3-7/",
+      "params_b": null,
+      "context_k": null
+    }
+  ],
+  "equities": [
+    {
+      "id": "eq-nvda",
+      "ticker": "NVDA",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "US",
+      "layer": "compute",
+      "links": [
+        {
+          "to": "openai",
+          "type": "supply"
+        },
+        {
+          "to": "anthropic",
+          "type": "supply"
+        }
+      ],
+      "conviction": {
+        "value": 24,
+        "tier": "estimate"
+      },
+      "thesis_en": "Accelerated compute remains the gravity well: intact data-center demand, the CUDA plus networking moat, and a hardware lead the export-control regime is designed to preserve.",
+      "thesis_zh": "加速计算仍是引力井：数据中心需求稳固、CUDA 与网络护城河完整，且出口管制体制本身就在保护这一硬件领先。",
+      "kpis": [
+        {
+          "label_en": "Q1 FY27 revenue",
+          "label_zh": "第一财季营收",
+          "value": "$81.6B (+85% YoY)",
+          "src": "https://blockonomi.com/top-5-ai-stocks-for-july-2026-nvidia-nvda-microsoft-msft-and-broadcom-avgo-lead-the-way/",
+          "tier": "reported"
+        },
+        {
+          "label_en": "Data-center segment",
+          "label_zh": "数据中心分部",
+          "value": "$75.2B (+92% YoY)",
+          "src": "https://blockonomi.com/top-5-ai-stocks-for-july-2026-nvidia-nvda-microsoft-msft-and-broadcom-avgo-lead-the-way/",
+          "tier": "reported"
+        }
+      ],
+      "risk_en": "Crowded, headline-sensitive trade; any China-policy or capex-pause headline moves it first.",
+      "risk_zh": "交易拥挤且对消息敏感；任何涉华政策或资本开支暂停的消息都会先冲击它。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-avgo",
+      "ticker": "AVGO",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "US",
+      "layer": "silicon",
+      "links": [
+        {
+          "to": "openai",
+          "type": "silicon"
+        },
+        {
+          "to": "anthropic",
+          "type": "silicon"
+        },
+        {
+          "to": "google",
+          "type": "silicon"
+        },
+        {
+          "to": "meta",
+          "type": "silicon"
+        }
+      ],
+      "conviction": {
+        "value": 16,
+        "tier": "estimate"
+      },
+      "thesis_en": "The cleanest structural counterweight to a single-vendor accelerator market: custom XPU plus Ethernet design wins across the four largest model buyers give multi-year visibility.",
+      "thesis_zh": "对单一加速器厂商市场最干净的结构性制衡：定制 XPU 与以太网在四大模型采购方均有设计中标，带来多年可见度。",
+      "kpis": [
+        {
+          "label_en": "Hyperscaler design wins",
+          "label_zh": "超大规模客户中标",
+          "value": "Google, Meta, Anthropic, OpenAI",
+          "src": "https://blockonomi.com/top-5-ai-stocks-for-july-2026-nvidia-nvda-microsoft-msft-and-broadcom-avgo-lead-the-way/",
+          "tier": "reported"
+        }
+      ],
+      "risk_en": "Programme-based revenue is lumpy; a single customer re-spin moves a whole year.",
+      "risk_zh": "按项目计的营收本身起伏很大；单一客户改版就能左右一整年。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-mu",
+      "ticker": "MU",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "US",
+      "layer": "memory",
+      "links": [
+        {
+          "to": "anthropic",
+          "type": "memory"
+        },
+        {
+          "to": "nvidia",
+          "type": "memory"
+        }
+      ],
+      "conviction": {
+        "value": 14,
+        "tier": "estimate"
+      },
+      "thesis_en": "HBM and DRAM are the confirmed bottleneck of the build-out, and multi-year strategic customer agreements convert a cyclical business into contracted earnings.",
+      "thesis_zh": "HBM 与 DRAM 是本轮建设已确认的瓶颈，多年期战略客户协议把周期性生意转成合约化盈利。",
+      "kpis": [
+        {
+          "label_en": "1-year total return",
+          "label_zh": "一年总回报",
+          "value": "approximately +657%",
+          "src": "https://www.nerdwallet.com/investing/learn/ai-stocks-invest-in-artificial-intelligence",
+          "tier": "reported"
+        }
+      ],
+      "risk_en": "Highest torque in the stack — the same contracts that lift earnings amplify a downcycle.",
+      "risk_zh": "产业链中弹性最大——同一批合约在下行周期同样会放大波动。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-tsm",
+      "ticker": "TSM",
+      "exchange": "NYSE",
+      "market": "US",
+      "bloc": "neutral",
+      "layer": "foundry",
+      "links": [
+        {
+          "to": "nvidia",
+          "type": "manufacturing"
+        },
+        {
+          "to": "broadcom",
+          "type": "manufacturing"
+        }
+      ],
+      "conviction": {
+        "value": 12,
+        "tier": "estimate"
+      },
+      "thesis_en": "Every leading-edge accelerator on both sides of the divide routes through its nodes, and CoWoS packaging is now a tighter constraint than fabrication itself.",
+      "thesis_zh": "分界两侧的每一颗先进加速器都要经过它的制程，而 CoWoS 封装如今比制造本身更紧。",
+      "kpis": [],
+      "risk_en": "Concentration and cross-strait risk are the position, not a footnote to it.",
+      "risk_zh": "集中度与两岸风险本身就是这个仓位的实质，而不是脚注。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-asml",
+      "ticker": "ASML",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "neutral",
+      "layer": "equipment",
+      "links": [
+        {
+          "to": "tsmc",
+          "type": "manufacturing"
+        }
+      ],
+      "conviction": {
+        "value": 10,
+        "tier": "estimate"
+      },
+      "thesis_en": "The single true monopoly in the stack and the physical instrument of export control: no high-NA EUV, no denser logic on either side of the divide.",
+      "thesis_zh": "产业链中唯一真正的垄断者，也是出口管制的物理执行工具：没有高数值孔径 EUV，分界两侧都造不出更密的逻辑芯片。",
+      "kpis": [],
+      "risk_en": "Order timing is lumpy and China-policy headlines drive the multiple more than the backlog does.",
+      "risk_zh": "订单节奏本就不均，且涉华政策消息对估值的影响大于订单储备。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-skhy",
+      "ticker": "SKHY",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "neutral",
+      "layer": "memory",
+      "links": [
+        {
+          "to": "nvidia",
+          "type": "memory"
+        }
+      ],
+      "conviction": {
+        "value": 8,
+        "tier": "estimate"
+      },
+      "thesis_en": "The HBM chokepoint became directly ownable with the July Nasdaq ADR listing; roughly half to two-thirds of global HBM share feeds the US accelerator complex.",
+      "thesis_zh": "随着 7 月纳斯达克 ADR 上市，HBM 咽喉环节第一次可直接持有；全球约半数至三分之二的 HBM 份额供给美国加速器体系。",
+      "kpis": [],
+      "risk_en": "ADR structure and FX add risks the underlying Korean line does not carry.",
+      "risk_zh": "ADR 结构与汇率带来韩股本体不具备的额外风险。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-msft",
+      "ticker": "MSFT",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "US",
+      "layer": "cloud",
+      "links": [
+        {
+          "to": "openai",
+          "type": "cloud"
+        }
+      ],
+      "conviction": {
+        "value": 6,
+        "tier": "estimate"
+      },
+      "thesis_en": "Cloud capacity plus the deepest model-distribution channel into enterprise; also the party whose channel friction with model vendors is now overt.",
+      "thesis_zh": "云容量叠加进入企业市场最深的模型分发渠道；同时也是与模型厂商渠道摩擦已然公开化的一方。",
+      "kpis": [],
+      "risk_en": "Capex intensity and vendor-relationship friction both compress the multiple.",
+      "risk_zh": "资本开支强度与厂商关系摩擦都会压缩估值。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-googl",
+      "ticker": "GOOGL",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "US",
+      "layer": "model",
+      "links": [
+        {
+          "to": "google",
+          "type": "platform"
+        }
+      ],
+      "conviction": {
+        "value": 6,
+        "tier": "estimate"
+      },
+      "thesis_en": "The only fully vertical US stack: frontier models, own TPU silicon, own cloud, own distribution — and the July Flash release cut price while raising every tested score.",
+      "thesis_zh": "美国唯一完整垂直整合的一方：前沿模型、自研 TPU、自有云与分发渠道——7 月的 Flash 版本在降价同时提高了所有测试分数。",
+      "kpis": [
+        {
+          "label_en": "Gemini 3.6 Flash price",
+          "label_zh": "Gemini 3.6 Flash 定价",
+          "value": "$1.50 / $7.50 per 1M",
+          "src": "https://kie.ai/blog/what-is-gemini-3-6-flash",
+          "tier": "verified"
+        }
+      ],
+      "risk_en": "Search-revenue cannibalisation remains the open question no benchmark answers.",
+      "risk_zh": "搜索营收自我蚕食仍是任何基准都无法回答的悬念。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-meta",
+      "ticker": "META",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "US",
+      "layer": "application",
+      "links": [
+        {
+          "to": "meta",
+          "type": "distribution"
+        },
+        {
+          "to": "openweights",
+          "type": "coalition"
+        }
+      ],
+      "conviction": {
+        "value": 5,
+        "tier": "estimate"
+      },
+      "thesis_en": "Distribution at population scale plus a declared open-weight stance — the US actor whose incentives most resemble the Chinese open-weight bloc.",
+      "thesis_zh": "人口级分发规模叠加公开的开放权重立场——美国阵营中激励结构最接近中国开源阵营的一方。",
+      "kpis": [],
+      "risk_en": "Capex is committed ahead of a monetisation path that is still being argued for.",
+      "risk_zh": "资本开支已先行投入，而变现路径仍在论证之中。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-amzn",
+      "ticker": "AMZN",
+      "exchange": "NASDAQ",
+      "market": "US",
+      "bloc": "US",
+      "layer": "cloud",
+      "links": [
+        {
+          "to": "anthropic",
+          "type": "cloud"
+        }
+      ],
+      "conviction": {
+        "value": 5,
+        "tier": "estimate"
+      },
+      "thesis_en": "The infrastructure counterparty for a leading frontier lab, with its own silicon programme as the hedge against accelerator concentration.",
+      "thesis_zh": "一家领先前沿实验室的基础设施对手方，并以自研芯片计划对冲加速器集中风险。",
+      "kpis": [],
+      "risk_en": "Retail margin cycle and cloud capex compete for the same balance sheet.",
+      "risk_zh": "零售利润周期与云资本开支争夺同一张资产负债表。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-cambricon",
+      "ticker": "688256.SS",
+      "exchange": "SSE STAR",
+      "market": "A",
+      "bloc": "CN",
+      "layer": "compute",
+      "links": [
+        {
+          "to": "huawei",
+          "type": "compute"
+        }
+      ],
+      "conviction": {
+        "value": 20,
+        "tier": "estimate"
+      },
+      "thesis_en": "The listed pure-play on domestic accelerator substitution; volume guidance implies a step change rather than an incremental year.",
+      "thesis_zh": "国产加速器替代唯一的上市纯标的；出货指引指向的是台阶式跃升而非渐进增长。",
+      "kpis": [
+        {
+          "label_en": "Q1 2026 revenue",
+          "label_zh": "2026 年第一季度营收",
+          "value": "approximately $423M (+160% YoY)",
+          "src": "https://nai500.com/blog/2026/05/top-10-china-stocks-powering-asia-s-ai-breakout/",
+          "tier": "reported"
+        },
+        {
+          "label_en": "2026 shipment target",
+          "label_zh": "2026 出货目标",
+          "value": "500,000 accelerators vs 116,000 in 2025",
+          "src": "https://nai500.com/blog/2026/05/top-10-china-stocks-powering-asia-s-ai-breakout/",
+          "tier": "reported"
+        }
+      ],
+      "risk_en": "Valuation prices the substitution thesis in full; any node or yield slip is repriced violently.",
+      "risk_zh": "估值已完全反映替代逻辑；制程或良率一旦不及预期会被剧烈重估。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-smic",
+      "ticker": "0981.HK",
+      "exchange": "HKEX",
+      "market": "HK",
+      "bloc": "CN",
+      "layer": "foundry",
+      "links": [
+        {
+          "to": "huawei",
+          "type": "manufacturing"
+        }
+      ],
+      "conviction": {
+        "value": 16,
+        "tier": "estimate"
+      },
+      "thesis_en": "The self-sufficiency chokepoint: domestic leading-edge capacity is the binding constraint on every Chinese accelerator roadmap, and the most-bought Chinese asset in offshore flow this cycle.",
+      "thesis_zh": "自主可控的咽喉环节：国产先进制程产能是所有中国加速器路线图的硬约束，也是本轮离岸资金买入最多的中国资产。",
+      "kpis": [
+        {
+          "label_en": "H1 2026 Korean retail inflow",
+          "label_zh": "2026 上半年韩国零售买入",
+          "value": "$854.6M, largest of any Chinese asset",
+          "src": "https://www.kucoin.com/news/flash/korean-retail-investors-buy-2-8b-in-chinese-ai-assets-in-h1-2026",
+          "tier": "reported"
+        }
+      ],
+      "risk_en": "Without high-NA EUV access, node progression is a capital-and-yield problem with no purchasable shortcut.",
+      "risk_zh": "在无法获得高数值孔径 EUV 的前提下，制程推进是资本与良率问题，没有可购买的捷径。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-baba",
+      "ticker": "9988.HK",
+      "exchange": "HKEX",
+      "market": "HK",
+      "bloc": "CN",
+      "layer": "model",
+      "links": [
+        {
+          "to": "alibaba",
+          "type": "platform"
+        },
+        {
+          "to": "moonshot",
+          "type": "investment"
+        }
+      ],
+      "conviction": {
+        "value": 14,
+        "tier": "estimate"
+      },
+      "thesis_en": "The closest Chinese analogue to a full stack: frontier open-weight models, the largest domestic cloud, and a disclosed stake in a competing frontier lab.",
+      "thesis_zh": "中国最接近完整栈的一方：前沿开源权重模型、国内最大的云，以及对另一家前沿实验室的已披露持股。",
+      "kpis": [
+        {
+          "label_en": "Cloud Intelligence quarterly revenue",
+          "label_zh": "云智能季度营收",
+          "value": "$1.3B with triple-digit growth",
+          "src": "https://nai500.com/blog/2026/05/top-10-china-stocks-powering-asia-s-ai-breakout/",
+          "tier": "reported"
+        }
+      ],
+      "risk_en": "Compute access, not model quality, is the ceiling on how fast the cloud line can compound.",
+      "risk_zh": "限制云业务复合增速的上限是算力可得性，而非模型质量。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-tencent",
+      "ticker": "0700.HK",
+      "exchange": "HKEX",
+      "market": "HK",
+      "bloc": "CN",
+      "layer": "application",
+      "links": [
+        {
+          "to": "tencent",
+          "type": "platform"
+        },
+        {
+          "to": "cxmt",
+          "type": "memory"
+        }
+      ],
+      "conviction": {
+        "value": 10,
+        "tier": "estimate"
+      },
+      "thesis_en": "The largest domestic compute buyer with the deepest consumer distribution; its reported memory supply agreement is the clearest sign of a domestic memory vector forming.",
+      "thesis_zh": "国内最大的算力采购方，且拥有最深的消费端分发；其据报道的存储供货协议是国产存储向量正在形成的最清晰信号。",
+      "kpis": [],
+      "risk_en": "Regulatory posture and compute rationing bound the AI line more than demand does.",
+      "risk_zh": "监管姿态与算力配给对其 AI 业务的约束大于需求端。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-baidu",
+      "ticker": "9888.HK",
+      "exchange": "HKEX",
+      "market": "HK",
+      "bloc": "CN",
+      "layer": "model",
+      "links": [],
+      "conviction": {
+        "value": 7,
+        "tier": "estimate"
+      },
+      "thesis_en": "The earliest domestic full-stack attempt — own models, own accelerators, own autonomous-driving deployment — now judged on execution rather than ambition.",
+      "thesis_zh": "国内最早的全栈尝试——自研模型、自研加速器、自有自动驾驶落地——如今被以执行力而非雄心来评判。",
+      "kpis": [],
+      "risk_en": "Losing frontier-model mindshare to Alibaba and Moonshot is the structural risk.",
+      "risk_zh": "在前沿模型的话语权上被阿里与月之暗面拉开是其结构性风险。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-iflytek",
+      "ticker": "002230.SZ",
+      "exchange": "SZSE",
+      "market": "A",
+      "bloc": "CN",
+      "layer": "application",
+      "links": [],
+      "conviction": {
+        "value": 7,
+        "tier": "estimate"
+      },
+      "thesis_en": "The application-layer proxy already optimised for domestic accelerators: speech, education and enterprise deployment running on Ascend-class silicon.",
+      "thesis_zh": "已针对国产加速器优化的应用层代表：语音、教育与企业部署运行在昇腾级芯片之上。",
+      "kpis": [],
+      "risk_en": "Application-layer margins compress fastest when frontier model prices fall.",
+      "risk_zh": "前沿模型降价时，应用层利润率压缩得最快。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-minimax",
+      "ticker": "MiniMax (HKEX)",
+      "exchange": "HKEX",
+      "market": "HK",
+      "bloc": "CN",
+      "layer": "model",
+      "links": [
+        {
+          "to": "minimax",
+          "type": "platform"
+        }
+      ],
+      "conviction": {
+        "value": 6,
+        "tier": "estimate"
+      },
+      "thesis_en": "A frontier open-weight lab that is directly listed — rare in this bloc — and one that published verifiable agentic benchmarks at launch.",
+      "thesis_zh": "一家直接上市的前沿开源权重实验室——在该阵营中少见——且发布时即公布可核验的代执行基准。",
+      "kpis": [
+        {
+          "label_en": "H1 2026 Korean retail inflow",
+          "label_zh": "2026 上半年韩国零售买入",
+          "value": "$666.5M, second only to SMIC",
+          "src": "https://www.kucoin.com/news/flash/korean-retail-investors-buy-2-8b-in-chinese-ai-assets-in-h1-2026",
+          "tier": "reported"
+        }
+      ],
+      "risk_en": "Listed January 2026; verify the exact ticker and free float before sizing. Short trading history.",
+      "risk_zh": "2026 年 1 月上市；建仓前需核实确切代码与自由流通量。交易历史尚短。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-cxmt",
+      "ticker": "CXMT (STAR, pending)",
+      "exchange": "SSE STAR",
+      "market": "A",
+      "bloc": "CN",
+      "layer": "memory",
+      "links": [
+        {
+          "to": "cxmt",
+          "type": "memory"
+        },
+        {
+          "to": "tencent",
+          "type": "supply"
+        }
+      ],
+      "conviction": {
+        "value": 5,
+        "tier": "estimate"
+      },
+      "thesis_en": "The domestic memory vector: a STAR Market listing milestone plus a reported hyperscaler supply agreement would make Chinese HBM/DRAM investable for the first time.",
+      "thesis_zh": "国产存储向量：科创板上市里程碑叠加据报道的超大规模客户供货协议，将首次让中国 HBM/DRAM 变得可投。",
+      "kpis": [],
+      "risk_en": "Listing status and ticker must be confirmed before this row leaves estimate tier. Do not size on a milestone alone.",
+      "risk_zh": "在该行脱离 estimate 层级之前必须确认上市状态与代码。不要仅凭一个里程碑建仓。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-hygon",
+      "ticker": "688041.SS",
+      "exchange": "SSE STAR",
+      "market": "A",
+      "bloc": "CN",
+      "layer": "compute",
+      "links": [],
+      "conviction": {
+        "value": 4,
+        "tier": "estimate"
+      },
+      "thesis_en": "The second domestic compute vector beyond the headline accelerator name — server CPU and DCU exposure to the same substitution budget.",
+      "thesis_zh": "除头部加速器之外的第二条国产算力向量——服务器 CPU 与 DCU 共享同一笔替代预算。",
+      "kpis": [],
+      "risk_en": "Ticker and business mix marked reported, not verified, at audit time.",
+      "risk_zh": "审计时代码与业务构成仅为 reported，尚未 verified。",
+      "asOf": "2026-07-25"
+    },
+    {
+      "id": "eq-huawei-proxy",
+      "ticker": "Huawei chain (unlisted)",
+      "exchange": "n/a",
+      "market": "A",
+      "bloc": "CN",
+      "layer": "compute",
+      "links": [
+        {
+          "to": "huawei",
+          "type": "compute"
+        }
+      ],
+      "conviction": {
+        "value": 4,
+        "tier": "estimate"
+      },
+      "thesis_en": "The most important Chinese compute actor is not listed. Exposure is only available through suppliers and integrators, and the board says so rather than implying a tradable proxy exists.",
+      "thesis_zh": "中国最重要的算力主体并未上市。只能通过供应商与集成商获得敞口；本榜直接说明这一点，而非暗示存在可交易替代标的。",
+      "kpis": [],
+      "risk_en": "No direct instrument. Treat every \"Huawei play\" claim as a supplier bet with its own basis risk.",
+      "risk_zh": "没有直接工具。任何「华为概念」都应视为带自身基差风险的供应商押注。",
+      "asOf": "2026-07-25"
+    }
+  ],
+  "scoreboard": {
+    "weights": {
+      "compute": 0.35,
+      "algorithms": 0.3,
+      "capital": 0.2,
+      "data": 0.15
+    },
+    "weights_note_en": "Weights are editorial, chosen to reflect what is hardest to substitute on a multi-year horizon. They are not derived from a published model.",
+    "weights_note_zh": "权重为编辑判断，依据是多年期内最难替代的要素，并非来自任何已发表模型。",
+    "axes": [
+      {
+        "id": "compute",
+        "label_en": "Compute",
+        "label_zh": "算力",
+        "us": 92,
+        "cn": 48,
+        "tier": "reported",
+        "method_en": "Anchored on advanced AI-processor die capacity for the US and partners at roughly 35-38x China's on a quality-adjusted basis, and on a per-accelerator gap of about an order of magnitude.",
+        "method_zh": "以质量调整后美国及伙伴的先进 AI 处理器裸片产能约为中国的 35–38 倍为锚，并参考单卡算力约一个数量级的差距。",
+        "evidence_en": "Blackwell Ultra GB300 at 15 PFLOPS FP4 versus Huawei Ascend 950PR at 1.56 PFLOPS.",
+        "evidence_zh": "Blackwell Ultra GB300 为 15 PFLOPS FP4，华为昇腾 950PR 为 1.56 PFLOPS。",
+        "src": "https://www.solidaitech.com/2026/07/us-china-ai-race-capability-gap.html"
+      },
+      {
+        "id": "algorithms",
+        "label_en": "Algorithmic innovation",
+        "label_zh": "算法创新",
+        "us": 88,
+        "cn": 84,
+        "tier": "reported",
+        "method_en": "Anchored on the arena spread between the top US and top Chinese models collapsing to about 2.7 points by March 2026 from over 30 points in 2023.",
+        "method_zh": "以竞技场榜单上美中头部模型差距从 2023 年的 30 余分收窄至 2026 年 3 月的约 2.7 分为锚。",
+        "evidence_en": "Kimi K3 sits within 4 points of Claude Opus 5 on the independent intelligence index.",
+        "evidence_zh": "在第三方智能指数上，Kimi K3 与 Claude Opus 5 相差 4 分以内。",
+        "src": "https://chinabizinsider.com/stanfords-2026-ai-index-says-chinas-top-models-are-closing-the-gap-with-the-us/"
+      },
+      {
+        "id": "capital",
+        "label_en": "Capital",
+        "label_zh": "资本",
+        "us": 90,
+        "cn": 60,
+        "tier": "reported",
+        "method_en": "Private AI investment of $285.9B versus $12.4B, roughly 23x, offset by about $184B of cumulative Chinese state-guided fund injections.",
+        "method_zh": "私人 AI 投资 2859 亿美元对 124 亿美元，约 23 倍；以约 1840 亿美元的中国政府引导基金累计注入作为抵补。",
+        "evidence_en": "The private-market gap is the widest of the four axes; the state-capital offset is why this is not scored as low as compute.",
+        "evidence_zh": "私募市场差距是四轴中最大的；国家资本的抵补是它未被打到与算力同样低分的原因。",
+        "src": "https://www.digitimes.com/news/a20260415PD226/2026-competition-performance-development-data.html"
+      },
+      {
+        "id": "data",
+        "label_en": "Data ecosystem",
+        "label_zh": "数据生态",
+        "us": 76,
+        "cn": 82,
+        "tier": "estimate",
+        "method_en": "The only axis where China scores higher. No single composite source exists, so this is an explicit editorial estimate weighing research and patent volume plus industrial deployment scale against English-corpus and evaluation-infrastructure depth.",
+        "method_zh": "四轴中唯一中国得分更高的一项。不存在单一综合来源，因此这是明确的编辑估算：将研究与专利产出、产业部署规模，与英文语料及评测基础设施的深度相互权衡。",
+        "evidence_en": "China leads research volume and patent output; the US led notable model releases 50 to 30 in 2025 and retains deeper evaluation infrastructure.",
+        "evidence_zh": "中国在研究数量与专利产出上领先；2025 年美国以 50 比 30 领先重要模型发布数量，并保有更深的评测基础设施。",
+        "src": "https://www.digitimes.com/news/a20260415PD226/2026-competition-performance-development-data.html"
+      }
+    ],
+    "outlook_en": "Capability is converging while compute is structurally diverging. The case that the US position holds: every Chinese frontier run still depends on fabrication and lithography it cannot yet source domestically, and no amount of algorithmic efficiency substitutes for dies that do not exist. The case that convergence wins: a 2.7-point capability gap at roughly a tenth of the price, shipped as open weights, sets the global default for anyone who is not paying frontier prices - and open weights compound distribution faster than capex compounds capacity.",
+    "outlook_zh": "能力在收敛，算力在结构性分化。认为美国优势可守的理由：中国每一次前沿训练仍依赖尚无法国产的制造与光刻，而算法效率再高也替代不了不存在的裸片。认为收敛会赢的理由：以约十分之一的价格把 2.7 分的能力差距以开放权重交付，会成为所有不愿支付前沿价格者的全球默认选项——而开放权重扩张分发的速度快于资本开支扩张产能的速度。"
+  }
+}

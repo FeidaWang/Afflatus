@@ -3,48 +3,48 @@
   "version": 3,
   "chapters": [
     {
-      "id": "quiet",
+      "id": "divide",
       "start": 0,
-      "label_en": "Signal before form",
-      "label_zh": "形态之前",
-      "description_en": "Begin with an empty field; scroll to reveal the system.",
-      "description_zh": "从空场开始，向下滚动让生态逐层显形。",
+      "label_en": "The divide",
+      "label_zh": "分界线",
+      "description_en": "An empty field, then the meridian: US ecosystem left, Chinese ecosystem right, shared suppliers on the line.",
+      "description_zh": "先是空场，然后是子午线：美国生态在左，中国生态在右，双方共用的供应商落在线上。",
       "edge_types": []
     },
     {
       "id": "frontier",
       "start": 0.2,
-      "label_en": "Frontier models",
-      "label_zh": "前沿模型",
-      "description_en": "US and China model labs appear first, including Muse Spark 1.1 and Kimi K3.",
-      "description_zh": "中美模型实验室率先出现，包括 Muse Spark 1.1 与 Kimi K3。",
+      "label_en": "The frontier goes multipolar",
+      "label_zh": "前沿走向多极",
+      "description_en": "Both blocs light up at once. Claude Opus 5 launched 24 July 2026 and tops the independent intelligence index at 61; Kimi K3 sits within four points of it.",
+      "description_zh": "两个阵营同时点亮。Claude Opus 5 于 2026 年 7 月 24 日发布，以 61 分居第三方智能指数首位；Kimi K3 与之相差四分以内。",
       "edge_types": []
     },
     {
       "id": "capital",
       "start": 0.4,
-      "label_en": "Capital and openness",
-      "label_zh": "资本与开放",
-      "description_en": "Investment and the 25-member open-weight coalition connect model roadmaps to distribution.",
-      "description_zh": "投资关系与 25 家开放权重联盟，把模型路线图连接到分发层。",
+      "label_en": "Capital picks ecosystems",
+      "label_zh": "资本选择生态",
+      "description_en": "US private AI investment runs about 23x China's, offset by state-guided funds; the open-weight coalition and cloud ties decide distribution.",
+      "description_zh": "美国私人 AI 投资约为中国的 23 倍，由政府引导基金部分抵补；开放权重联盟与云绑定决定分发格局。",
       "edge_types": ["investment", "platform", "distribution", "coalition"]
     },
     {
-      "id": "compute",
+      "id": "chokepoints",
       "start": 0.6,
-      "label_en": "Compute supply chain",
-      "label_zh": "算力供应链",
-      "description_en": "Cloud, accelerators, silicon, memory and foundry unfold as one compute system.",
-      "description_zh": "云、加速器、芯片、存储与晶圆制造展开为同一套算力系统。",
+      "label_en": "Every model lands on a chokepoint",
+      "label_zh": "每个模型都落在咽喉环节",
+      "description_en": "Cloud, accelerators, custom silicon, HBM and foundry cross the meridian. Advanced-die capacity still runs 35-38x in the US bloc's favour.",
+      "description_zh": "云、加速器、定制芯片、HBM 与晶圆代工跨过子午线。先进裸片产能仍以约 35–38 倍的差距倾向美国阵营。",
       "edge_types": ["cloud", "compute", "silicon", "memory", "manufacturing", "supply"]
     },
     {
       "id": "system",
       "start": 0.8,
-      "label_en": "Living system",
-      "label_zh": "生态全景",
-      "description_en": "The complete verified network remains interactive for inspection.",
-      "description_zh": "完整的经核验关系网络保持可交互，供进一步查阅。",
+      "label_en": "One system, two blocs",
+      "label_zh": "一套系统，两个阵营",
+      "description_en": "The complete network holds for inspection. Select any node to trace its products and source-backed relationships across the divide.",
+      "description_zh": "完整网络保持可查阅。选择任一节点，即可追踪其产品与跨越分界的、有来源支持的关系。",
       "edge_types": []
     }
   ],
@@ -58,10 +58,10 @@
       "stage": "models",
       "reveal": 0.18,
       "color": "#F29A76",
-      "products": ["Claude Fable 5", "Claude Sonnet 5", "Claude Opus 4.8", "Claude Code"],
-      "summary_en": "Anthropic's latest verified Opus release is Opus 4.8. No official Claude Opus 5 launch could be verified as of 25 July 2026.",
-      "summary_zh": "截至 2026 年 7 月 25 日，Anthropic 官方可核验的最新 Opus 为 4.8；尚无 Claude Opus 5 的官方发布信息。",
-      "source": "https://www.anthropic.com/claude/opus"
+      "products": ["Claude Opus 5", "Claude Fable 5", "Claude Sonnet 5", "Claude Code"],
+      "summary_en": "Claude Opus 5 launched 24 July 2026 at $5/$25 per 1M tokens and tops the independent Artificial Analysis Intelligence Index at 61, superseding Opus 4.8 as the latest Opus release.",
+      "summary_zh": "Claude Opus 5 于 2026 年 7 月 24 日发布，定价每百万 token 输入 5 / 输出 25 美元，在第三方 Artificial Analysis 智能指数以 61 分居首，已取代 Opus 4.8 成为最新 Opus。",
+      "source": "https://www.anthropic.com/news/claude-opus-5"
     },
     {
       "id": "openai",

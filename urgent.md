@@ -560,3 +560,292 @@ An optimization item is complete only when:
 - No WebGPU production switch before WebGL baselines, fallbacks, and real-device evidence exist.
 - No high-detail GLB asset merely to replace a cheaper, testable procedural model.
 - No “120 fps” claim based on a desktop simulator; flagship acceptance is on real devices.
+
+---
+
+# Part 3 — Fable 5 Recommended P0 · Sectors → “Red vs Blue” US-China AI Competition Storyboard
+
+> Authored 2026-07-25 by Claude Fable 5 at the operator's request. This part is additive: Parts 1–2 delivery records stand, and every rule already ratified there (renderer lease, RenderBudgetCoordinator registration, `fetchJson` resource registry, no graph zoom, bilingual copy schema, provenance discipline, P0-07 accessibility contract) is **binding** on this work. Recommended priority: **P0** for RB-P0-\*, P1/P2 as labeled.
+>
+> Theme: sectors.html's center of gravity moves from "AI-infrastructure watchlist with a US-China aside" to a full **US-China AI Competition storyboard** — rivalry, co-existence, supply-chain dependency, and capital-market flow — told in the modular scroll-story language of anthropic.com, restyled for this site's ambient dark identity.
+
+## RB-0. Scope, fit, and what already exists
+
+sectors.html (977 lines) already ships the load-bearing pieces: a scroll-driven Canvas ecosystem storyboard (`initSectorsGraph`, `sectors-ecosystem.json` v3 — 19 nodes / 19 typed edges / 5 chapters), a two-column US/CN vendor news grid, the `AfflatusBrand` local asset registry, the `buildDetail()` content/shell separation, the `mwMatrix` data fallback, and post-memory thesis cards. This part **extends** those systems; it does not rebuild them.
+
+| ID | Priority | Effort | Scope | Item |
+| --- | --- | --- | --- | --- |
+| RB-P0-01 | P0 ✅ | S | Design system | Ship the Red-vs-Blue token layer (§RB-1) into `styles/sectors.css` behind `.sectors-page` — no global token pollution. |
+| RB-P0-02 | P0 ✅ | M | Data | Author `public/sectors-competition.json` v1 (§RB-3 schema): models, radar axes, benchmark table, efficiency, pricing, geo scores, equity nodes — every numeric field carries `{value, src, tier}` provenance. Add schema validator + `fetchJson` registry key `sectors-competition`. |
+| RB-P0-03 | P0 ✅ | M | Storyboard | Re-chapter the existing scroll story to the five-act competition arc (§RB-2.2) and add bloc polarity (US left/blue field, CN right/red field) to node layout + dual-polar edge rendering. |
+| RB-P0-04 | P0 ✅ | M | Radar | Build the multidimensional evaluation radar + sortable benchmark table (§RB-4) as SVG+DOM per the Part 1 §4 rendering decision table (≤2,000 marks ⇒ SVG). Full keyboard/table parity per P0-07. |
+| RB-P0-05 | P0 ✅ | M | Equities | Ship the dual Top-10 equity boards (US / CN A-share+HKEX, §RB-5) reusing `newsCard()`; every pick maps to model-vendor nodes via stable IDs. |
+| RB-P0-06 | P0 ✅ | S | Macro | Ship the geopolitical scoreboard (§RB-6): four 1–100 axes, methodology note, dated sources, EN/ZH. |
+| RB-P1-01 | P1 | M | Interaction | Pricing/efficiency scatter (cost vs intelligence, TTFT vs TPOT) with crosshair + table fallback. |
+| RB-P1-02 | P1 | S | Storyboard | Supply-chain dependency ribbons (HBM→GPU→cloud→model; EUV/foundry chokepoints) as typed edges in the existing graph, not a second renderer. |
+| RB-P0-07 | P0 ✅ | S | Data correction | **Opus 5 verified 2026-07-24** ([primary source](https://www.anthropic.com/news/claude-opus-5)): update `sectors-ecosystem.json` anthropic node (products += "Claude Opus 5"; rewrite `summary_en/zh` — drop the "no official Opus 5 launch verified" line, it is now false), update `sectors-data.json` modelWatch anthropic `current_line`, and rewrite the storyboard `frontier` chapter copy in sectors.html that repeats the old correction ("Anthropic's latest verified Opus remains 4.8"). Part 2's correction discipline worked exactly as designed: the claim stayed out until a primary source existed, and the same discipline now requires publishing the launch. |
+| RB-P2-01 | P2 | S | Polish | Glow-node pulse on chapter reveal, meridian shimmer, OG image refresh for the new narrative. |
+
+**Non-goals (inherited + new):** no second simultaneous WebGL surface (renderer lease stands); no zoom reinstatement; no CDN chart library — the site is a Vite MPA with self-hosted modules; no claim of model capability, launch, or score that lacks a citable primary/secondary source — unverified items ship as `tier:"estimate"` or `tier:"pending"` and render with the existing provenance badge, never as fact.
+
+## RB-1. Design system — Anthropic-inspired, ambient dark, Red vs Blue
+
+### RB-1.1 Aesthetic translation
+
+Anthropic.com's grammar → this site's dark identity:
+
+| anthropic.com trait | Sectors translation |
+| --- | --- |
+| Warm ivory field, high whitespace | Near-black field `#07080C` with warm-tinted panels; whitespace ratios kept (≥96px section gaps desktop, ≥56px mobile) |
+| Serif display + humanist grotesque body | Display serif stack for chapter heads; existing grotesque for body/UI (no webfont purchase — stack below) |
+| Modular full-width story sections | Retain `graphStorySteps` sticky-canvas pattern; each act is one full-viewport module |
+| Restrained accent color | Two accents only: bloc-blue and bloc-red; everything else neutral |
+| Fluid, physics-light canvas moments | Existing 60 Hz force model + scroll reveal; add polarity field, nothing heavier |
+
+### RB-1.2 Token layer (production CSS — scope: `.sectors-page`)
+
+```css
+.sectors-page {
+  /* field */
+  --rb-bg: #07080C;
+  --rb-panel: #0D0F15;
+  --rb-panel-edge: #1A1D26;
+  --rb-ink: #EDEAE3;          /* warm ivory ink on dark — the Anthropic nod */
+  --rb-ink-dim: #9A97A0;
+  /* blocs */
+  --rb-blue: #2F6BFF;         /* US ecosystem */
+  --rb-blue-soft: #62A8FF;
+  --rb-blue-glow: 0 0 18px rgba(47,107,255,.45);
+  --rb-red: #E5484D;          /* CN ecosystem */
+  --rb-red-soft: #FF7A80;
+  --rb-red-glow: 0 0 18px rgba(229,72,77,.45);
+  --rb-meridian: linear-gradient(180deg, var(--rb-blue) 0%, transparent 45%,
+                 transparent 55%, var(--rb-red) 100%);
+  /* neutral edge/link classes reuse Part 2 legend colors where types overlap */
+  --rb-neutral-edge: #7EF0DC;
+  /* type */
+  --rb-font-display: "Iowan Old Style", "Palatino Linotype", Palatino,
+                     "Songti SC", "Noto Serif SC", serif;
+  --rb-font-body: inherit;    /* keep the page's existing grotesque */
+  --rb-h-display: clamp(2rem, 5.5vw, 3.6rem);
+  --rb-lh-display: 1.08;
+  /* rhythm */
+  --rb-gap-section: clamp(56px, 8vw, 112px);
+  --rb-radius: 14px;
+}
+```
+
+Rules: bloc color encodes **country of ecosystem only** — never sentiment or recommendation. Every bloc-colored element also carries a text/flag label (P0-07: no color-only meaning). Contrast: `--rb-ink` on `--rb-bg` = 15.4:1; bloc colors used on dark pass 3:1 for large text/graphics; body text never sits directly on a glow. Glows are `box-shadow`/`filter` on composited layers only, disabled under `prefers-reduced-motion` and on the low quality tier from the RenderBudgetCoordinator.
+
+### RB-1.3 Dual-polar vector lines
+
+Cross-bloc edges (e.g. NVIDIA→Chinese cloud constraint, TSMC→both blocs) render as a two-stop gradient stroke blue→red along the edge direction; same-bloc edges use the bloc soft color at 55% alpha. Canvas implementation: per-edge `createLinearGradient(x1,y1,x2,y2)` cached per layout revision (Part 1 §4 performance rules — no per-frame gradient allocation).
+
+## RB-2. Layout and storyboard architecture
+
+### RB-2.1 Page section order (replaces current section order for the mid-page; hero/ticker/macro/stock rails above stay)
+
+```html
+<!-- S3 · replaces the "US–China AI watch" band -->
+<section id="rbStory" class="graphStory rbStory" aria-label="US-China AI competition storyboard">
+  <div class="graphSticky"><div class="graphWrap">
+    <canvas id="mwGraph" role="group" tabindex="0"
+            aria-describedby="mwGraphHint mwGraphSummary"></canvas>
+    <div class="rbMeridian" aria-hidden="true"></div>   <!-- vertical dual-polar divide -->
+    <div class="graphLegend"><!-- + bloc legend: ■ US · ■ CN --></div>
+  </div></div>
+  <div class="graphStorySteps"><!-- five acts, §RB-2.2 --></div>
+  <div class="graphAfter"><!-- summary, DOM node list, take — unchanged contract --></div>
+</section>
+
+<!-- S4 · NEW: evaluation radar + benchmark table -->
+<section id="rbRadar" class="rbRadar" aria-label="Frontier model evaluation radar">
+  <header class="rbSectionHead">…</header>
+  <div class="rbRadarLayout">
+    <figure class="rbRadarFig">
+      <svg id="rbRadarSvg" viewBox="0 0 640 640" role="img"></svg>
+      <figcaption id="rbRadarCaption" aria-live="polite"></figcaption>
+    </figure>
+    <div class="rbRadarPicker" role="group" aria-label="Compare models"><!-- model toggle buttons --></div>
+  </div>
+  <details class="mwMatrix" open><summary>…full benchmark table…</summary>
+    <div id="rbBenchTable"></div>   <!-- sortable semantic <table>, the SSOT view -->
+  </details>
+</section>
+
+<!-- S5 · NEW: efficiency & price scatter (RB-P1-01) -->
+<section id="rbEcon" class="rbEcon" aria-label="Cost and speed economics">…</section>
+
+<!-- S6 · replaces newsGrid columns header: dual Top-10 equity boards -->
+<section id="rbEquities" class="rbEquities" aria-label="US and China AI equity boards">
+  <div class="mwColWrap">
+    <section class="mwCol rbColUS"><h3>US Top 10 · 蓝方</h3><div class="newsGrid"></div></section>
+    <section class="mwCol rbColCN"><h3>China Top 10 · 红方</h3><div class="newsGrid"></div></section>
+  </div>
+</section>
+
+<!-- S7 · NEW: geopolitical scoreboard -->
+<section id="rbScore" class="rbScore" aria-label="US-China AI ecosystem scoreboard">…</section>
+```
+
+### RB-2.2 Five-act scroll arc (rewrites `data-graph-step` chapters; canvas reveal thresholds move to the competition dataset)
+
+1. **`divide`** — empty dark field; the meridian draws in; US nodes settle left/blue, CN right/red. Copy: two ecosystems, one supply chain.
+2. **`frontier`** — flagship model nodes ignite (§RB-3 roster). The 2.7-point Arena gap is the chapter stat.
+3. **`chokepoints`** — supply edges draw across the meridian: EUV→foundry→HBM→accelerator→cloud. Export-control edges render as interrupted (dashed) dual-polar lines.
+4. **`capital`** — equity nodes attach to their vendors; market badges (NASDAQ/NYSE · SSE/SZSE STAR · HKEX) appear.
+5. **`system`** — full map holds for inspection; scoreboard totals fade in; DOM node list + full matrix below remain the complete non-visual dataset.
+
+Scroll mechanics, keyboard Canvas control, DOM mirror, reveal thresholds, reduced-motion final-state rendering: all inherited unchanged from the delivered Part 2 slice.
+
+### RB-2.3 JS module plan
+
+| Module | Role |
+| --- | --- |
+| `src/lib/sectorsCompetition.js` | Pure: parse/validate competition data, derive radar geometry, scoreboard math, sort orders. Vitest-covered. |
+| `src/lib/sectorsGraphView.js` | Extended: bloc polarity forces (x-bias by `bloc`), meridian, dual-polar edge paint. Same lease/coordinator registration. |
+| `src/lib/rbRadarView.js` | SVG radar render + picker + caption announcements. No canvas. |
+| `src/pages/sectors*` inline IIFEs | Wire-up only, same window-bridge conventions as today. |
+
+Polarity force (pure, testable): `fx += (bloc === 'US' ? -1 : bloc === 'CN' ? 1 : 0) * k * (targetX - x)` where `targetX = center ± fieldWidth*0.28`; neutral (supply-chain multinationals: TSMC, ASML, SK hynix, Samsung) settle on the meridian — that placement **is** the co-existence argument.
+
+## RB-3. Data contract — `public/sectors-competition.json` v1
+
+One document, atomic publish, validated at authoring/CI/runtime (Part 1 §3.3). Every numeric leaf is `{ "value", "src", "asOf", "tier" }` with `tier ∈ verified | reported | estimate | pending`. The provenance badge and matrix render the tier; the radar renders `pending` axes as gaps, never zeros.
+
+### RB-3.1 Model record schema + verified July 2026 roster
+
+```json
+{
+  "schemaVersion": "competition/v1",
+  "updated": "2026-07-25",
+  "models": [
+    {
+      "id": "claude-fable-5", "vendor": "anthropic", "bloc": "US",
+      "name": "Claude Fable 5", "route": "closed",
+      "released": "2026-07-01", "params_b": null, "context_k": null,
+      "radar": {
+        "intelligence": { "value": 60,  "unit": "AA Intelligence Index v4.1", "tier": "verified" },
+        "coding_agentic": { "value": 80.3, "unit": "SWE-Bench Pro %", "tier": "verified" },
+        "reliability": { "value": null, "unit": "hallucination-control composite", "tier": "pending" },
+        "speed": { "value": null, "unit": "TTFT/TPOT composite", "tier": "pending" },
+        "cost_efficiency": { "value": null, "unit": "II per $ blended", "tier": "derived" },
+        "openness": { "value": 0, "unit": "open-weight = 100", "tier": "verified" }
+      },
+      "pricing": { "in_per_m": 10.00, "out_per_m": 50.00, "currency": "USD", "tier": "verified" },
+      "notes_en": "Suspended June 2026; back online since July 1. Highest SWE-Bench Pro of any usable model.",
+      "notes_zh": "2026年6月曾暂停服务，7月1日恢复。可用模型中 SWE-Bench Pro 最高。"
+    }
+  ]
+}
+```
+
+Roster to author (all fields per the record above; the figures below are the research-verified seeds, sources in §RB-8):
+
+| id | bloc | Route | Key verified seeds (2026-07) |
+| --- | --- | --- | --- |
+| `claude-fable-5` | US | closed | II v4.1 **60**; SWE-Bench Pro **80.3%**; $10/$50 per 1M in/out; resumed Jul 1. No longer index rank 1 since Opus 5's Jul 24 launch |
+| `claude-opus-5` | US | closed | **Launched 2026-07-24** (primary source: [anthropic.com/news/claude-opus-5](https://www.anthropic.com/news/claude-opus-5)). $5/$25 (same as 4.8); Fast mode 2.5× speed at 2× price; adaptive effort settings. AA Intelligence Index **61** at max effort (**new rank 1**, above Fable 5 60 / GPT-5.6 Sol 59; 60 xhigh / 59 high / 56 medium); AA Agentic Index **55.3** (rank 1). Vendor-claimed SOTA: Frontier-Bench v0.1, GDPval-AA, ARC-AGI 3 (≈3× next best), OSWorld 2.0, Zapier AutomationBench — `tier:"reported"` until third-party runs land; CursorBench within 0.5% of Fable 5 peak at half cost/task. Behind Mythos 5 on cyber; most-aligned on Anthropic's behavioral audit (2.3 misaligned score) |
+| `claude-opus-4-8` | US | closed | II **56**; $5/$25. Superseded as latest Opus on 2026-07-24; retained in dataset as the safety-classifier fallback model for Opus 5/Fable 5 |
+| `gpt-5-6-sol` | US | closed | II **59**; $5/$30; STEM flagship (FrontierMath Tier 4 39.6% verified on 5.5 Pro); classic MMLU/GPQA not published at launch ⇒ those cells `pending` |
+| `gemini-3-5-flash` | US | closed | Launched May 20; $1.50/$9; consumer default. `gemini-3-5-pro`: partner testing only ⇒ whole record `tier:"reported"`, no radar |
+| `gemini-3-6-flash` | US | closed | Launched Jul 21; $1.50/$7.50; II **50**; DeepSWE 49%, MLE-Bench 63.9%, OSWorld-V 83.0%; −17% output tokens vs 3.5 |
+| `grok-4-5` | US | closed | II **54**; agentic/coding evals only at launch ⇒ academic cells `pending` |
+| `muse-spark-1-1` | US | closed | Meta planning/action agent (already in ecosystem v3 with source); benchmarks `pending` |
+| `qwen-3-7-max` | CN | open | HMMT Feb-2026 **97.1** (table-leading); Apex reasoning **44.5**; leads SWE-Pro/Terminal-Bench among CN models |
+| `deepseek-v4-pro` | CN | open | Apex **38.3**; $0.43/$0.87 (base V4: $0.14/$0.28 — cheapest capable model); dual thinking modes |
+| `kimi-k3` | CN | open | II **57** (top CN on the index); 2.8T params / 1M context (per ecosystem v3 sources); $3/$15 |
+| `minimax-m3` | CN | open | SWE-Bench Pro **59.0%**, Terminal-Bench 2.1 **66.0%** (published at launch); HKEX-listed parent |
+
+### RB-3.2 Benchmark table columns (the `bench` block, all provenance-wrapped)
+
+- **Universal/academic:** MMLU-Pro; **SuperCLUE** (Chinese-native composite — populate from superclueai.com's latest monthly report at authoring time; ships `pending` until transcribed with report date); GPQA Diamond; ARC-AGI-2.
+- **Professional:** SWE-Bench Pro / HumanEval-class coding; hallucination-control rate (use a named public eval, e.g. vendor-neutral factuality suites; `pending` where unpublished); precise instruction following (IFEval-class); agentic planning (Terminal-Bench / OSWorld-Verified).
+- **Linguistic baseline (perplexity, accuracy, ROUGE, BLEU):** honest handling — frontier closed labs stopped publishing these; the table keeps the columns for open-weight models where third-party evals exist and renders `n/a — not published` otherwise. The plan explicitly forbids inventing values to fill the grid.
+- **Operational:** TTFT (s, p50) and TPOT (tok/s) **measured per provider, not per model** — record `{provider, value}` pairs (first-party API vs Groq/Cerebras-class hosts, where 100–300+ tok/s and 0.16–0.18 s TTFT are verified for open models). Param scale/VRAM only for open weights.
+- **Economic:** `$ / 1M in`, `$ / 1M out`, output:input price ratio (a real spread signal: Fable 5 ratio 5.0 vs DeepSeek V4 2.0).
+
+### RB-3.3 Equity node schema
+
+```json
+{
+  "equities": [
+    {
+      "id": "eq-nvda", "ticker": "NVDA", "exchange": "NASDAQ", "market": "US",
+      "bloc": "US", "layer": "compute",
+      "links": [ { "to": "openai", "type": "supply" }, { "to": "anthropic", "type": "supply" } ],
+      "conviction": { "value": 24, "tier": "estimate" },
+      "thesis_en": "…", "thesis_zh": "…",
+      "kpis": [ { "label_en": "Q1 FY27 revenue", "value": "$81.6B (+85% YoY)", "src": "…", "tier": "verified" } ],
+      "risk_en": "…", "risk_zh": "…", "asOf": "2026-07-25"
+    }
+  ]
+}
+```
+
+`market ∈ US | A | HK`; `layer ∈ compute | silicon | foundry | memory | equipment | cloud | model | application`; `links[].to` must resolve to a model-vendor or ecosystem node ID — CI rejects dangling IDs (Part 1 §3.3). Conviction stays `estimate` by definition: it is the operator's desk weight, not data.
+
+## RB-4. Evaluation radar — spec
+
+Six axes (order fixed clockwise): Intelligence · Coding/Agentic · Reliability · Speed · Cost-efficiency · Openness. Normalization: each axis maps its native unit to 0–100 against the *current roster's* min/max, recomputed at data build — the JSON stores native values, never pre-normalized ones. Radar renders ≤4 models simultaneously (legibility rule); picker enforces it and announces changes through `#rbRadarCaption`.
+
+Accessibility parity (P0-07): the SVG carries a name listing every plotted model+axis value; the sortable `<table>` under it is the complete dataset including tier badges and per-provider speed rows; axis sort + bloc filter are DOM buttons; color never encodes alone (US solid stroke / CN dashed stroke in addition to hue for color-blind users).
+
+## RB-5. Capital markets — dual Top-10 boards
+
+Curated picks (verify prices/KPIs at authoring; theses below are the research-backed starting set):
+
+**US board (blue):** NVDA (compute; Q1 FY27 rev $81.6B +85%), AVGO (custom XPU + networking; OpenAI/Anthropic/Google/Meta design wins), MU (HBM; top 1-yr AI performer ≈ +657%), TSM* (foundry/CoWoS), ASML* (EUV monopoly), SKHY* (HBM leader, Jul 10 Nasdaq ADR), MSFT (cloud+OpenAI), GOOGL (Gemini+TPU full stack), META (Muse Spark + open-weight distribution), AMZN (AWS + Anthropic infra). *Meridian names — US-listed but supply both blocs' constraints narrative; the board badges them as such.
+
+**China board (red):** Cambricon 688256.SS (AI accelerators; Q1 rev +160%, 500k-unit 2026 target), SMIC 0981.HK/688981.SS (foundry self-sufficiency; top Korean-flow HK asset H1), Alibaba 9988.HK (Qwen + cloud, Moonshot stake), Tencent 0700.HK (compute buyer; reported CXMT supply agreement), Baidu 9888.HK (Ernie + robotaxi), iFlytek 002230.SZ (speech/education on Ascend), MiniMax HKEX (Jan 2026 listing; M3), Moonshot-exposure vehicle (private — exposure via Alibaba stake; board carries an explicit "no direct listing" note), CXMT (STAR Market — verify listing status vs the milestone already recorded in ecosystem v3 before publishing a ticker), Hygon/Huawei-chain proxy 688041.SS (domestic x86/DCU — mark `reported`).
+
+Board card = existing `newsCard()` with a `kpis` row and bloc tag; every ticker joins the graph as an equity node (§RB-3.3). Disclaimer band inherits "desk view only · no tips" and adds an A-share/HKEX access note (QDII/Connect eligibility differs — factual note, no advice).
+
+## RB-6. Macro geopolitical scoreboard
+
+Four axes, 1–100, each with published methodology line and dated sources; composite is a stated weighted mean (Compute .35 / Algorithms .30 / Capital .20 / Data .15) — weights are editorial and labeled as such.
+
+| Axis | US | CN | Data backing (2026 sources, §RB-8) |
+| --- | --- | --- | --- |
+| Compute | 92 | 48 | US+partner advanced-die capacity ≈ 35–38× China's (quality-adj.); Blackwell Ultra 15 PF FP4 vs Ascend 950PR 1.56 PF |
+| Algorithmic innovation | 88 | 84 | Arena gap top-US vs top-CN ≈ 2.7 pts (Mar 2026, Stanford AI Index) vs >30 pts in 2023; Kimi K3 II 57 within 3 of Fable 5 |
+| Capital | 90 | 60 | Private AI investment $285.9B vs $12.4B (≈23×); offset: ≈$184B cumulative Chinese state-guided funds |
+| Data ecosystem | 76 | 82 | CN leads research volume/patent output + industrial deployment scale; US leads high-quality English corpus/eval infrastructure — axis marked `estimate` (no single composite source exists) |
+
+Rendering: two mirrored horizontal bar pairs per axis on the meridian, numbers always printed, EN/ZH methodology footnote, `tier` badge per axis. Outlook paragraph (EN/ZH) states the report's own framing: capability converging, compute structurally divergent — and must carry both blocs' counter-arguments per the site's even-handed voice.
+
+## RB-7. Execution and acceptance gates
+
+**Wave RB-1 (data + tokens, 2–3 days):** RB-P0-01/02. *Exit:* schema validates in CI; every leaf has tier+src; `pending` count reported by the validator; no visual change shipped yet.
+**Wave RB-2 (storyboard re-chapter, 3–5 days):** RB-P0-03. *Exit:* five acts pass the existing Playwright canvas/keyboard/DOM-mirror contracts; renderer lease + coordinator registration unchanged; reduced-motion final state renders all five acts' end-state.
+**Wave RB-3 (radar + boards + scoreboard, 4–6 days):** RB-P0-04/05/06. *Exit:* axe clean; table↔radar↔graph selection stays in sync; sort/filter keyboard-complete; Sectors route stays within its Lighthouse regression budgets (FCP/SI/CLS/script-bytes hard gates per P0-05) and CLS ≤0.02 held.
+**Wave RB-4 (P1/P2):** scatter, dependency ribbons, polish — only after RB-P0 gates stay green one full weekly data cycle.
+
+**Definition of done additions:** every rendered number traceable to a JSON leaf with source+date; EN/ZH parity lint passes on all new copy; no bloc color without text label; weekly data refresh runbook updated to include SuperCLUE/leaderboard transcription steps with report-date capture.
+
+## RB-7b. Delivered 2026-07-25 — RB-P0-01 … RB-P0-07, with the deviations named
+
+Shipped files: `public/sectors-competition.json` (new, 51.0 kB raw / 14.7 kB gzip, lazy-fetched below the fold), `src/lib/validateSectorsCompetition.js` (new), `src/lib/sectorsCompetition.js` (new, pure), `src/lib/sectorsCompetitionView.js` (new, DOM/SVG only), `src/lib/forceGraph.js`, `src/lib/sectorsGraphView.js`, `src/lib/fetchJson.js`, `scripts/validate-data.mjs`, `public/sectors-ecosystem.json`, `public/sectors-data.json`, `public/styles/sectors.css`, `sectors.html`, plus `tests/sectorsCompetition.test.js`, `tests/sectorsCompetitionView.test.js` and six new cases in `tests/forceGraph.test.js`.
+
+Gates green: **84 Vitest files / 1,193 tests** (up from 82 / 1,138), `tsc --noEmit`, **13** data schemas (`sectors-competition.json` now among them), `site:check` (12 routes / 8 discoverable), production build, bundle budgets (all entries inside budget; `sectors` chunk 39.78 kB raw / 16.41 kB gzip), and the `!important` baseline unchanged at 2,960 + 2. `sectors.html` grows 59.93 → 72.8 kB raw (22.84 kB gzip), all of it below-the-fold bilingual copy.
+
+**Deviations from the plan as written above — each one is a decision, not an omission:**
+
+1. **The radar ships 4 axes, not 6.** Intelligence, Coding/agentic, Cost-efficiency and Openness have real values for part of the roster. "Reliability" and "Speed" do not: no vendor-neutral hallucination-control eval covers this roster, and TTFT/throughput is a property of the serving provider rather than the model. Shipping them as radar spokes that are empty for every model would have been worse than honest omission, so they are table columns carrying `status: "not_published"` / `"provider_dependent"` with a printed reason. §RB-4's six-axis list is superseded by this.
+2. **Act order kept as `divide → frontier → capital → chokepoints → system`**, not the plan's `divide → frontier → chokepoints → capital → system`. The existing dataset already ordered capital before compute and every node's reveal threshold is tuned to it; reordering would have rewritten 19 thresholds to no narrative gain.
+3. **Position encodes bloc on desktop only.** Mobile keeps the hand-placed row grid, because bloc columns plus 56 px plates do not fit a phone stage. On mobile the bloc is carried by the plate ring colour and the existing flag badge. Colour is never the sole channel on either breakpoint — every node keeps its country badge, table rows keep a US/CN text pill, and China-bloc radar series are dashed as well as red.
+4. **The meridian is drawn on canvas, not as a CSS overlay.** A fixed CSS line desyncs from the node columns the instant a desktop user pans. The `.rbMeridian` element in §RB-2.1's markup sketch was therefore not built.
+5. **Cross-bloc gradients are allocated per frame, not cached per layout revision.** The shipped dataset has 3 cross-bloc edges out of 19, so this is at most 3 `createLinearGradient` calls per frame; a cached gradient would point the wrong way as soon as a node breathes or the camera moves. §RB-1.3's caching instruction was wrong and is retracted.
+6. **Tokens live in the existing `:root` block of `public/styles/sectors.css`**, not a new `.sectors-page` block. That stylesheet is loaded by exactly one document, so `:root` is already page-scoped, and the file's existing convention wins over the plan's.
+7. **One view module, not two.** `sectorsCompetitionView.js` renders radar, table, boards and scoreboard; a separate `rbRadarView.js` would have duplicated the same tier-badge and bilingual helpers three times.
+8. **Force settings retuned and measured, not guessed.** Bloc anchors with the old constants blew the composition out to a 10.3-unit span (canvas fit `scale` 48). The shipped `{repulsion 0.05, springLength 0.42, poleStrength 0.1, minDist 0.12}` settles at 7.96 × 6.21 (`scale` 63) and puts the closest pair of plates **73 CSS px** apart versus the pre-change baseline of 68 px. A unit test asserts the ≥68 px floor against the real dataset so a future retune cannot silently regress it.
+
+**Not done, and deliberately so:** RB-P1-01 (cost/speed scatter), RB-P1-02 (dependency ribbons) and RB-P2-01 (glow polish) remain open per the wave plan. `newsCard()` was **not** reused for the equity boards as §RB-P0-05 proposed — a ranked board needs rank, exchange, layer, desk weight, KPI chips and a risk line, which is a different component from a media card; the boards are their own `.rbRow` markup instead.
+
+**Still owed before this can be called complete:** no browser ran this code. The Playwright matrix, axe pass, Lighthouse route budgets and real-device iPhone/Samsung sign-off required by Part 1 §10 have not executed — this sandbox has no browsers installed. Treat the current state as unit-verified and visually unverified until `npm run test:e2e` and `npm run test:lighthouse` pass locally or in CI.
+
+## RB-8. Source register (verified 2026-07-25)
+
+Opus 5 launch (added 2026-07-25): [Anthropic — Introducing Claude Opus 5](https://www.anthropic.com/news/claude-opus-5) (primary; Jul 24 launch, $5/$25, Fast mode, safeguards/fallback routing) · [Artificial Analysis — Claude Opus 5 (max)](https://artificialanalysis.ai/models/claude-opus-5) (independent II 61 / Agentic 55.3, per-effort scores) · [System Card](https://www.anthropic.com/claude-opus-5-system-card). Model rankings/benchmarks: [buildfastwithai July 2026 rankings](https://www.buildfastwithai.com/blogs/best-ai-models-july-2026-ranked) · [divkix model comparison](https://divkix.me/blog/ai-models-compared-2026/) · [LM Council benchmarks](https://lmcouncil.ai/benchmarks) · [apidog M3 vs V4-Pro vs Qwen3.7](https://apidog.com/blog/minimax-m3-vs-deepseek-v4-vs-qwen-3-7/) · [DataCamp Qwen3.7-Max](https://www.datacamp.com/blog/qwen3-7-max) · [orcarouter Kimi K3 vs DeepSeek V4](https://www.orcarouter.ai/blog/kimi-k3-vs-deepseek-v4) · [aimadetools Qwen 3.7 vs MiniMax M3](https://www.aimadetools.com/blog/qwen-3-7-vs-minimax-m3/). Pricing: [CloudZero](https://www.cloudzero.com/blog/llm-api-pricing-comparison/) · [TLDL pricing table](https://www.tldl.io/resources/llm-api-pricing) · [BenchLM pricing](https://benchlm.ai/llm-pricing). Gemini: [kie.ai Gemini 3.6 Flash](https://kie.ai/blog/what-is-gemini-3-6-flash) · [TechTimes 3.6 Flash](https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm) · [codersera Gemini 3.5 guide](https://codersera.com/blog/gemini-3-5-complete-guide-2026/). Speed: [inworld TTFT/throughput](https://inworld.ai/resources/fastest-llm-inference-api) · [digitalapplied latency benchmarks](https://www.digitalapplied.com/blog/ai-model-latency-benchmarks-2026-ttft-throughput). Macro: [Stanford AI Index via digitimes](https://www.digitimes.com/news/a20260415PD226/2026-competition-performance-development-data.html) · [chinabizinsider AI Index 2026](https://chinabizinsider.com/stanfords-2026-ai-index-says-chinas-top-models-are-closing-the-gap-with-the-us/) · [SolidAITech US-China 2026](https://www.solidaitech.com/2026/07/us-china-ai-race-capability-gap.html). Equities: [Blockonomi top AI stocks Jul 2026](https://blockonomi.com/top-5-ai-stocks-for-july-2026-nvidia-nvda-microsoft-msft-and-broadcom-avgo-lead-the-way/) · [NerdWallet best-performing AI stocks](https://www.nerdwallet.com/investing/learn/ai-stocks-invest-in-artificial-intelligence) · [NAI500 top 10 China AI stocks](https://nai500.com/blog/2026/05/top-10-china-stocks-powering-asia-s-ai-breakout/) · [Investing.com Chinese AI landscape](https://www.investing.com/news/stock-market-news/chinese-ai-stocks-the-full-landscape-from-chips-to-cloud-93CH-4810339) · [KuCoin Korean flows H1 2026](https://www.kucoin.com/news/flash/korean-retail-investors-buy-2-8b-in-chinese-ai-assets-in-h1-2026).
+
+Aggregator figures above are seeds: before each leaf ships `tier:"verified"`, the weekly data run must confirm against the primary (vendor model card, exchange filing, or the named leaderboard itself) and record the capture date.

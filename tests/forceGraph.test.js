@@ -1,5 +1,23 @@
 import { describe, it, expect } from 'vitest';
-import { buildForceGraphData, createForceSim, stepForceSim, settleForceSim } from '../src/lib/forceGraph.js';
+import { readFileSync } from 'node:fs';
+import {
+  buildForceGraphData,
+  createForceSim,
+  stepForceSim,
+  settleForceSim,
+  ecosystemBloc,
+} from '../src/lib/forceGraph.js';
+
+// The settings the view actually ships for the ecosystem storyboard; the layout
+// assertions below are meaningless against different constants.
+const ECOSYSTEM_SETTINGS = {
+  repulsion: 0.05,
+  springLength: 0.42,
+  springStrength: 0.022,
+  poleStrength: 0.1,
+  damping: 0.86,
+  minDist: 0.12,
+};
 
 function fixtureData() {
   return {
@@ -189,5 +207,101 @@ describe('stepForceSim / settleForceSim', () => {
     const state = createForceSim({ nodes: [], links: [] });
     expect(() => settleForceSim(state, 10)).not.toThrow();
     expect(state.nodes).toEqual([]);
+  });
+});
+
+/* Red vs Blue layout (urgent.md Part 3, RB-P0-03): the horizontal axis is
+   geopolitical, so these tests assert the property the design depends on —
+   separation of the two blocs with shared suppliers on the meridian — rather than
+   exact coordinates, which are free to be retuned. */
+describe('bloc polarity', () => {
+  it('assigns only the two competing ecosystems a side', () => {
+    expect(ecosystemBloc('US')).toBe('US');
+    expect(ecosystemBloc('CN')).toBe('CN');
+    for (const country of ['KR', 'TW', 'NL', undefined, '']) {
+      expect(ecosystemBloc(country)).toBe('neutral');
+    }
+  });
+
+  it('creates one anchor per populated stage-and-bloc cell', () => {
+    const graph = buildForceGraphData({
+      ecosystemGraph: {
+        chapters: [],
+        nodes: [
+          { id: 'us-lab', label: 'US lab', country: 'US', stage: 'models' },
+          { id: 'cn-lab', label: 'CN lab', country: 'CN', stage: 'models' },
+          { id: 'us-lab-2', label: 'US lab 2', country: 'US', stage: 'models' },
+          { id: 'fab', label: 'Fab', country: 'TW', stage: 'manufacturing' },
+        ],
+        edges: [],
+      },
+    });
+    const anchors = graph.nodes.filter((node) => node.kind === 'anchor');
+    // models:US, models:CN, manufacturing:neutral — the two US labs share a cell.
+    expect(anchors).toHaveLength(3);
+    expect(anchors.map((anchor) => anchor.id).sort()).toEqual([
+      'anchor:manufacturing:neutral',
+      'anchor:models:CN',
+      'anchor:models:US',
+    ]);
+  });
+
+  it('tags every ecosystem node with its bloc for the renderer', () => {
+    const graph = buildForceGraphData({
+      ecosystemGraph: {
+        chapters: [],
+        nodes: [{ id: 'a', country: 'US', stage: 'models' }, { id: 'b', country: 'KR', stage: 'memory' }],
+        edges: [],
+      },
+    });
+    expect(graph.nodes.find((node) => node.id === 'a').bloc).toBe('US');
+    expect(graph.nodes.find((node) => node.id === 'b').bloc).toBe('neutral');
+  });
+
+  it('settles the US bloc left, the China bloc right and shared suppliers between them', () => {
+    const ecosystem = JSON.parse(readFileSync('public/sectors-ecosystem.json', 'utf8'));
+    const graph = buildForceGraphData({ ecosystemGraph: ecosystem });
+    const sim = settleForceSim(createForceSim(graph, ECOSYSTEM_SETTINGS), 360);
+    const placed = sim.nodes.filter((node) => node.kind !== 'anchor');
+    const mean = (bloc) => {
+      const xs = placed.filter((node) => node.bloc === bloc).map((node) => node.x);
+      return xs.reduce((a, b) => a + b, 0) / xs.length;
+    };
+    expect(mean('US')).toBeLessThan(-1);
+    expect(mean('CN')).toBeGreaterThan(1);
+    expect(Math.abs(mean('neutral'))).toBeLessThan(1);
+    // No US node may end up on the Chinese side of the meridian, or the map lies.
+    for (const node of placed.filter((item) => item.bloc === 'CN')) expect(node.x).toBeGreaterThan(0);
+  });
+
+  it('keeps node plates from overlapping at the shipped desktop fit', () => {
+    const ecosystem = JSON.parse(readFileSync('public/sectors-ecosystem.json', 'utf8'));
+    const graph = buildForceGraphData({ ecosystemGraph: ecosystem });
+    const sim = settleForceSim(createForceSim(graph, ECOSYSTEM_SETTINGS), 360);
+    const placed = sim.nodes.filter((node) => node.kind !== 'anchor');
+    const xs = placed.map((node) => node.x);
+    const ys = placed.map((node) => node.y);
+    // Mirrors sectorsGraphView.size() for a 1180x620 stage with desktop padding.
+    const scale = Math.max(34, Math.min(
+      (1180 - 190) / (Math.max(...xs) - Math.min(...xs)),
+      (620 - 230) / (Math.max(...ys) - Math.min(...ys)),
+    ));
+    let closest = Infinity;
+    for (let i = 0; i < placed.length; i++) {
+      for (let j = i + 1; j < placed.length; j++) {
+        closest = Math.min(closest, Math.hypot(placed[i].x - placed[j].x, placed[i].y - placed[j].y));
+      }
+    }
+    // 68 CSS px was the pre-change baseline; the retuned settings must not regress it.
+    expect(closest * scale).toBeGreaterThanOrEqual(68);
+  });
+
+  it('is deterministic across rebuilds so the map does not reshuffle', () => {
+    const ecosystem = JSON.parse(readFileSync('public/sectors-ecosystem.json', 'utf8'));
+    const run = () => settleForceSim(
+      createForceSim(buildForceGraphData({ ecosystemGraph: ecosystem }), ECOSYSTEM_SETTINGS),
+      360,
+    ).nodes.filter((node) => node.kind !== 'anchor').map((node) => [node.id, node.x.toFixed(6), node.y.toFixed(6)]);
+    expect(run()).toEqual(run());
   });
 });

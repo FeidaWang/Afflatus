@@ -29,6 +29,7 @@ const lazyValidator = (load) => {
 
 const validators = {
   sectors: lazyValidator(async () => (await import('./validateSectorsData.js')).validateSectorsData),
+  sectorsCompetition: lazyValidator(async () => (await import('./validateSectorsCompetition.js')).validateSectorsCompetition),
   signal: lazyValidator(async () => (await import('./validateSignalEvents.js')).validateSignalEvents),
   leagues: lazyValidator(async () => (await import('./validateLeaguesData.js')).validateLeaguesData),
   games: lazyValidator(async () => (await import('./validateGamesData.js')).validateGamesData),
@@ -56,6 +57,7 @@ const validateQuote = (data) => ({
 const STATIC_RESOURCES = Object.freeze({
   sectors: { url: '/sectors-data.json', freshness: 60 * 60_000, validate: validators.sectors },
   'sectors-ecosystem': { url: '/sectors-ecosystem.json?v=3', freshness: 6 * 60 * 60_000, validate: objectWith('updated', 'nodes', 'edges', 'chapters') },
+  'sectors-competition': { url: '/sectors-competition.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsCompetition },
   signal: { url: '/signal-events.json', freshness: 15 * 60_000, validate: validators.signal },
   leagues: { url: '/leagues-data.json', freshness: 60 * 60_000, validate: validators.leagues },
   games: { url: '/games-data.json', freshness: 60 * 60_000, validate: validators.games },

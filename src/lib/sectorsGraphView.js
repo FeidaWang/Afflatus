@@ -55,6 +55,16 @@ const COUNTRY_BADGE = {
   TW: '🇹🇼 TW',
 };
 
+// urgent.md Part 3 (RB-P0-01/03): bloc identity is carried by BOTH colour and the
+// country badge above, never by colour alone — the badge is what makes the map
+// readable for colour-blind users and in forced-colours mode. These hexes mirror
+// --rb-blue / --rb-red / --rb-neutral-edge in public/styles/sectors.css.
+const BLOC_COLOR = {
+  US: '#2F6BFF',
+  CN: '#E5484D',
+  neutral: '#7EF0DC',
+};
+
 const MOBILE_MAX_EQUITIES = 8;
 const PAN_TAU = 0.1;
 const FOCUS_TAU = 0.32;
@@ -188,14 +198,20 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
 
   function buildSim(data) {
     const graph = buildForceGraphData(capForMobile(data));
+    // Retuned for the bloc-column anchors added in RB-P0-03: with 13 precise
+    // (stage, bloc) cells instead of 8 scattered stage anchors, the old strong
+    // repulsion blew the composition out to a 10.3-unit span and the canvas fit
+    // shrank to scale 48. These values settle at span 7.96 x 6.21 / scale 63, and
+    // the closest pair of node plates sits 73 CSS px apart versus 68 px before —
+    // measured against the shipped dataset, not guessed.
     const settings = graph.mode === 'ecosystem'
       ? {
-          repulsion: 0.115,
-          springLength: 0.7,
+          repulsion: 0.05,
+          springLength: 0.42,
           springStrength: 0.022,
-          poleStrength: 0.065,
+          poleStrength: 0.1,
           damping: 0.86,
-          minDist: 0.16,
+          minDist: 0.12,
         }
       : {};
     const next = createForceSim(graph, settings);
@@ -420,8 +436,63 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     return node.color || KIND_COLOR[node.kind] || '#EEF7FB';
   }
 
+  /** Bloc tint used for the plate ring and glow. Kind colour still drives the
+   *  logo plate itself, so relationship type and geopolitics stay separable. */
+  function blocColor(node) {
+    return BLOC_COLOR[node.bloc] || BLOC_COLOR.neutral;
+  }
+
   function edgeColor(link) {
     return EDGE_COLOR[link.type] || EDGE_COLOR[link.kind] || '#78D8FF';
+  }
+
+  /**
+   * Dual-polar stroke for an edge (RB-P0-03). A US-to-China edge is painted as a
+   * blue-to-red gradient along its own direction — that is the rivalry line made
+   * literal. Edges touching a neutral supplier fade from the bloc colour into the
+   * neutral teal instead, and same-bloc edges keep their relationship-type colour
+   * so the existing legend still reads correctly.
+   *
+   * The shipped dataset has 3 cross-bloc edges out of 19, so this allocates at
+   * most 3 gradients per frame; caching them per layout revision was rejected
+   * because node positions move every frame (breathing plus camera pan), which
+   * would make a cached gradient point the wrong way.
+   */
+  function edgeStroke(link, a, b, ax, ay, bx, by) {
+    const flat = rgba(edgeColor(link), 0.82);
+    if (!a.bloc || !b.bloc || a.bloc === b.bloc) return flat;
+    const gradient = ctx.createLinearGradient(ax, ay, bx, by);
+    gradient.addColorStop(0, rgba(blocColor(a), 0.92));
+    gradient.addColorStop(0.5, rgba(edgeColor(link), 0.55));
+    gradient.addColorStop(1, rgba(blocColor(b), 0.92));
+    return gradient;
+  }
+
+  /**
+   * The meridian: the vertical divide at world x = 0. Drawn on canvas rather than
+   * as a CSS overlay so it pans with the graph on desktop; a fixed CSS line would
+   * desync from the node columns the moment the user drags. Skipped on mobile,
+   * where the hand-placed row grid is used instead of bloc columns and a divide
+   * would be meaningless.
+   */
+  function drawMeridian(amount) {
+    if (isMobile() || amount <= 0) return;
+    const [x] = worldToScreen(0, 0);
+    if (x < -40 || x > W + 40) return;
+    const gradient = ctx.createLinearGradient(x, 0, x, H);
+    gradient.addColorStop(0, rgba(BLOC_COLOR.US, 0.34 * amount));
+    gradient.addColorStop(0.45, `rgba(120,140,180,${0.05 * amount})`);
+    gradient.addColorStop(0.55, `rgba(120,140,180,${0.05 * amount})`);
+    gradient.addColorStop(1, rgba(BLOC_COLOR.CN, 0.34 * amount));
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, 8);
+    ctx.lineTo(x, H - 8);
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash(reduce ? [] : [6, 9]);
+    ctx.stroke();
+    ctx.restore();
   }
 
   function edgeCurve(link, ax, ay, bx, by) {
@@ -502,7 +573,6 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     const focus = node === focusNode;
     const connected = isConnected(node, focusNode);
     const dim = connected ? 1 : 0.22;
-    const color = nodeColor(node);
     const scale = reduce ? amount : 0.82 + amount * 0.18;
     const width = plate.width * scale;
     const height = plate.height * scale;
@@ -510,25 +580,27 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     if (focus) {
       const pulse = reduce ? 1 : 1 + Math.sin(time * 2) * 0.045;
       roundedRect(ctx, x - width * 0.62 * pulse, y - height * 0.72 * pulse, width * 1.24 * pulse, height * 1.44 * pulse, 18);
-      ctx.strokeStyle = rgba(color, 0.45);
+      ctx.strokeStyle = rgba(blocColor(node), 0.5);
       ctx.lineWidth = 1;
       ctx.globalAlpha = amount;
-      ctx.shadowColor = rgba(color, 0.75);
+      ctx.shadowColor = rgba(blocColor(node), 0.8);
       ctx.shadowBlur = 22;
       ctx.stroke();
       ctx.shadowBlur = 0;
     }
 
+    // Ring and glow carry the bloc; the plate interior keeps the kind colour.
+    const bloc = blocColor(node);
     ctx.save();
     ctx.globalAlpha = amount * dim;
-    ctx.shadowColor = rgba(color, focus ? 0.62 : 0.32);
-    ctx.shadowBlur = focus ? 24 : 14;
+    ctx.shadowColor = rgba(bloc, focus ? 0.7 : 0.4);
+    ctx.shadowBlur = focus ? 26 : 16;
     roundedRect(ctx, x - width / 2, y - height / 2, width, height, 13);
     ctx.fillStyle = node.logo_bg || 'rgba(249,250,247,.96)';
     ctx.fill();
     ctx.shadowBlur = 0;
-    ctx.lineWidth = focus ? 2 : 1;
-    ctx.strokeStyle = rgba(color, focus ? 0.96 : 0.58);
+    ctx.lineWidth = focus ? 2.2 : 1.3;
+    ctx.strokeStyle = rgba(bloc, focus ? 0.98 : 0.66);
     ctx.stroke();
     roundedRect(ctx, x - width / 2 + 2, y - height / 2 + 2, width - 4, height - 4, 11);
     ctx.clip();
@@ -601,6 +673,10 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       ctx.fill();
     }
 
+    // The divide is the first thing to appear: act 1 draws it into an empty field
+    // before any node ignites, so the geography is established before the actors.
+    drawMeridian(sim.mode === 'ecosystem' ? smoothstep(0.02, 0.16, storyProgress) : 0);
+
     for (const link of sim.links) {
       if (link.kind === 'pole' || link.kind === 'anchor') continue;
       const amount = revealFor(link);
@@ -620,7 +696,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       ctx.beginPath();
       ctx.moveTo(ax, ay);
       ctx.quadraticCurveTo(cx, cy, bx, by);
-      ctx.strokeStyle = rgba(color, 0.82);
+      ctx.strokeStyle = edgeStroke(link, a, b, ax, ay, bx, by);
       ctx.lineWidth = (connected && focusNode ? 1.9 : 0.85) + (link.weight || 0.5) * 0.95;
       ctx.shadowColor = rgba(color, connected ? 0.58 : 0.18);
       ctx.shadowBlur = connected ? 10 : 3;
