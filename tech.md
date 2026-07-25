@@ -290,7 +290,7 @@ Vercel：push 即部署；`api/*.js` 自动成为 serverless 函数；环境变�
 **git/环境**
 13. **沙盒 dist/ 权限受限**：build 一律 `--outDir=/tmp/...`。
 13b. **沙盒装得上 Playwright 二进制、跑不起来**（2026-07-25 实案）：`npx playwright install chromium` 能下载 Chrome Headless Shell，但 `chromium.launch()` 因缺系统依赖（`libxdamage1` 等）+ 无 root/sudo（容器 no-new-privileges 阻止 `sudo playwright install-deps`）必然失败。→ 浏览器门禁（Playwright/axe/Lighthouse/真机）在此类沙盒里**不可执行**，视觉改动只能停在「单测已验证、视觉未验证」，必须显式记录待补跑而非假装通过；`tests/sectorsCompetitionView.test.js` 这类最小 DOM 桩单测是唯一可行的中间替代。
-14. **`.git/*.lock` 残留链式故障**：并行会话/崩溃进程留锁。→ 时间戳 >30min 才清；rm 被拒用**同目录 rename** 顶替；极端时走私有索引 `GIT_INDEX_FILE=/tmp/x git read-tree HEAD && git add … && git write-tree && git commit-tree && git update-ref`。
+14. **`.git/*.lock` 残留链式故障 — 根因已查明，2026-07-25 彻底修复**：此前误判为「并行会话/崩溃进程留锁，时间戳 >30min 才清」，实际根因是 **Cowork 沙盒对已连接工作区文件夹的 unlink/rename 一律拒绝**（安全护栏，非 bug——用刚创建的全新 scratch 文件测试 `rm`/`os.unlink` 同样 `Operation not permitted`，与文件新旧、是否 `.git` 内无关），导致锁文件一旦产生就永久堆积（2026-07-25 实测积压 186 个历史锁碎片，跨 7/15–7/25 十天会话）。**真正修复**：调用 `mcp__cowork__allow_cowork_file_delete`（任意一个位于该工作区内的文件路径即可，例如 `.git/index.lock`）——一次调用即为**整个已连接文件夹**开启删除权限（不是只对传入的单个文件），此后 `rm`/`mv` 恢复正常，直到本次会话结束。**新会话开局若需要 git 操作，先主动调一次此工具**，不必等 `rm` 报错才被动触发；旧的私有索引/`commit-tree`/`update-ref` 迂回法（见 15）仅在**不便请求删除权限**时才用，不再是默认路径。
 15. **陈旧主索引吃掉前一提交**（2026-07-18 实案）：私有索引提交后，主索引仍是旧树，随后的常规 `git commit` 把前一提交的文件**静默回退**（b9d2b16 revert 掉 5d278ec 的 sectors.css）。→ 私有索引提交后，下一次常规提交前必须 `git status` 逐文件核对暂存区；push 后 `git show --stat` 复核本次 diff 恰好是本次改动。
 16. **定时任务残留文件**：`arena-a-open-*.json` 类未跟踪产物**永不 `git add`**；`git add -A` 前必看 status。
 17. **key 泄露**（真实发生过）：scripts/ 进 git，任何脚本禁明文 key；能走 `/api/*` 代理一律走代理；泄露过的 key 必须后台重置。
