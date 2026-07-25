@@ -1,7 +1,7 @@
 # tech.md — Project Afflatus 技术架构与工程蓝图（SSOT · Disaster-Recovery 级）
 
 > **本文件性质**：全站重构期间的技术唯一真源（与 `design.md` 成对）。目标：即使整个代码库损毁，开发者/AI agent 仅凭这两份文档即可从零重建功能等价的站点。
-> **整理基线**：2026-07-18；2026-07-25 已同步 P0 平台收口与 Sectors 滚动叙事星图 v3。综合 KNOWLEDGE.md / technical.md / roadmap.md / Urgent.md（U1–U46）/ RELEASE_NOTES.md / course.md 全部内容 + 当日代码实况核对。
+> **整理基线**：2026-07-18；2026-07-25 已同步 P0 平台收口与 Sectors 滚动叙事星图 v3；2026-07-25（同日二次更新）并入 Sectors「Red vs Blue」中美 AI 竞争数据契约、力学与新增模块（原 `urgent.md` Part 3 RB-P0-01～07，已归档并从该文件删除）。综合 KNOWLEDGE.md / technical.md / roadmap.md / Urgent.md（U1–U46）/ RELEASE_NOTES.md / course.md 全部内容 + 当日代码实况核对。
 > **裁决冲突处理**：凡本文件与旧文档冲突，以本文件为准；凡重构提案与本文件「已裁决」条目冲突，需新证据才能重开（KNOWLEDGE §6 规则延续）。
 
 ## 目录
@@ -72,6 +72,7 @@ src/lib/                 全站共享库（依赖零 DOM 的纯函数为主）�
   transition.js page-turn.js audio.js clock.js
   arenaRules.js arenaRun.js arenaLedgerView.js predlogEntry.js rateLimit.js
   validateSectorsData.js validateSignalEvents.js provenanceBadge.js trackRecord.js
+  validateSectorsCompetition.js sectorsCompetition.js sectorsCompetitionView.js
   bazi.js ziping.js dayun.js lunar.js xiu.js ziwei.js persona.js astro.js
   horoscopeEngine.js synastryAstro.js dailyTransits.js starDraw.js shareCard.js
   cityPicker.js shenshaRarity.js（生成物）
@@ -90,11 +91,12 @@ public/page-turn.css     子页共享：翻页箭头 + 自托管字体 + Labs �
 public/styles/<page>.css 每页独立样式表（sectors/signal/games/league/horoscope/serial…）
 public/*.json            数据文件（§3）
 public/sectors-ecosystem.json  Sectors 滚动叙事星图 v3（节点/关系/章节/来源）
+public/sectors-competition.json Sectors「Red vs Blue」竞争数据（模型/基准/股票/评分板，2026-07-25 新增）
 public/assets/sectors/    Sectors 本地品牌标志与产品/发布视觉
 scripts/                 结算/校验/推送 CLI（进 git，禁明文 key）
 prompts/                 定时任务提示词正本（README 五条硬规则 + 各模块文件）
 rfcs/                    决策文档（O1 制度：>1 天改动先 RFC）
-tests/                   vitest（82 文件 1,138 条，2026-07-25 当前）
+tests/                   vitest（84 文件 1,193 条，2026-07-25 当前）
 lighthouserc.cjs         8 活跃路由 × 3 次的回归断言矩阵
 lighthouse-baseline.json 路由实验室债务基线 + 字段 p75 产品目标
 ```
@@ -128,7 +130,8 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 | arena-runlog.json **(新增 2026-07-23)** | 同上 | 审计 + 离线补跑判定源（urgent.md Part 4 §19.3） | `{runs:[{date,window,model,status:done\|missed\|queued,ordersProposed,ordersFilled,note}]}`；`(date,window,model)` 三元组必须唯一（校验器强制），是幂等重跑判定的键 |
 | arena-daily-digest.json **(新增 2026-07-23)** | 同上 | 「离线时段摘要」推送/站内 toast（Phase 5 未接线） | `{date,generatedAt,books:[{model:S\|P\|T,pnlPct,tradesCount,note_en/zh}]（固定 3 条）,tomorrowPicksCount,delayed:[]}` |
 | sectors-data.json | sectors-watch-weekly（周日 10:00） | sectors | `{modelWatch:[4 厂商],baskets:[{vendor,market,equities:[{ticker,relation,confidence,correlation_note}]}],postMemory,weeklyTake}`；发布前 `validate-sectors-data.mjs`；**显式拒绝数值相关系数字段**（只给定性关系标签） |
-| sectors-ecosystem.json | 编辑审核后手动更新；定期复核来源 | sectors 滚动叙事星图 | v3 `{updated,version,chapters[],nodes[],edges[]}`；节点以稳定 `id` 引用，含 `country/logo|mark/kind/stage/reveal/color/products/summary_en/zh/source`；边含 `source/target/type/strength/label_en/zh/source_url/reveal`。当前 19 节点、19 关系、5 章节；关系端点必须存在，产品/结论必须有来源。发布日期无法从官方来源验证时不得按提示词猜测——2026-07-25 数据明确保留 Claude Opus 4.8，并声明未核验到 Opus 5 官方发布。 |
+| sectors-ecosystem.json | 编辑审核后手动更新；定期复核来源 | sectors 滚动叙事星图 | v3 `{updated,version,chapters[],nodes[],edges[]}`；节点以稳定 `id` 引用，含 `country/logo|mark/kind/stage/reveal/color/products/summary_en/zh/source`；边含 `source/target/type/strength/label_en/zh/source_url/reveal`。当前 19 节点、19 关系、5 章节（2026-07-25 起 `divide/frontier/capital/chokepoints/system`，原 `quiet/frontier/capital/compute/system` 改名重编为 Red vs Blue 五幕，`start` 阈值不变）；关系端点必须存在，产品/结论必须有来源。发布日期无法从官方来源验证时不得按提示词猜测——**2026-07-25 已核验 Claude Opus 5 于 7/24 发布**（[主源](https://www.anthropic.com/news/claude-opus-5)），anthropic 节点 `products/summary_en/zh/source` 已更新，此前「未核验到 Opus 5 官方发布」的表述已作废。 |
+| sectors-competition.json **(新增 2026-07-25)** | 编辑手动更新；定期复核来源 | sectors Red vs Blue 专区（评测雷达/基准矩阵/双榜十强/地缘评分板），`fetchJson` 键 `sectors-competition` | `competition/v1 {schemaVersion,updated,as_of,radarAxes[],benchColumns[],models[],equities[],scoreboard}`。每个数值叶子是 `{value,unit,tier,src}`，`tier∈verified\|reported\|estimate\|derived\|pending`；**`verified` 必须带 `src` URL**，由 `validateSectorsCompetition.js` 强制（含 `models[].pricing`/`bench[]`/`speed[]`、`equities[].conviction`/`kpis[]`、`scoreboard.axes[].tier` 全覆盖）。当前 12 模型（US 8/CN 4）、18 基准列（4 列因该名单无可比数据显式标 `status:"not_published"`/`"provider_dependent"` 并印出原因，绝不估算填充）、20 支股票（美 10/中 10，A 股+HKEX 合并一栏）、4 轴评分板（compute/algorithms/capital/data，权重 .35/.30/.20/.15 求和须为 1，`buildScoreboard()` 按权重和归一防越界）。`equities[].links[].to` 必须解析到 `models[]` 里存在的 `id`。 |
 | signal-events.json | signal-warsh-daily（交易日 07:00） | signal | schema v2：`{updated,version:2,as_of,hawkDoveCompass(-2..+2),pillarSummary,pillars[5],events[]}`；发布前 `validate-signal-events.mjs` 强制 |
 | signal-release-dates-2026.json / nyse-holidays-2026.json | 静态年更 | 任务守卫 | 发布日历/休市日查表，不为此调 API |
 | leagues-data.json | （任务过期待删） | stats | stats 前端实时计算全部统计 |
@@ -190,8 +193,9 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 - `renderBudget.js` / `renderBudgetCoordinator.js`（P0-03 已完成）：纯策略层定义 `low/balanced/high`、移动/桌面像素预算、renderer cost 系数、DPR 公式、刷新率中位数采样与 p95 帧窗；浏览器协调层只保存 route/device tier、surface id/cost/targetFps/p95，不收集指针、文案或用户输入。降档需连续 2 个超预算窗口，升档需连续 8 个有余量窗口，且永不超过初始硬件档上限。长期 renderer 必须注册；`renderBudgetCoordinator.d.ts` 为 Boot TypeScript 场景提供同一接口契约。
 - `responsive-primitives.css` / `viewportRuntime.js`（P0-10 已完成）：12 路由统一 `viewport-fit=cover`、四向 safe-area token、`100svh/100dvh` fallback、44 px coarse-pointer/≤440 px HTML 控件基线；11 个构建入口挂载 VisualViewport 协调器，以单 rAF 合并 resize/scroll/orientation，写入 visual height/offset/center、keyboard inset 与 `data-keyboard-open`，销毁时移除全部 listener。`site:check` 强制 stylesheet/meta/entry 唯一性；Playwright 在全部 active/redirect/prototype/404 路由的 320×720 布局验证无页面级横向溢出并审计触控尺寸。Vite 生产构建只把小型 responsive primitives 内联为关键样式，开发源码仍分离；`page-turn.css` 保持外链，避免推迟 Horoscope 的路由主样式发现。Sectors 按 320–660 px 实测导航换行高度预留 header，Lighthouse CLS 从 0.221 降至 0.019。物理刘海/动态岛、Samsung Internet 软键盘与 120 Hz 仍须真机签署。
 - `webglLifecycle.js` / `.d.ts`（P0-06 已完成）：`createWebGLContextLifecycle()` 统一 context 租约、session loss budget、恢复/降级 callback、AbortSignal 与可访问恢复 UI；`disposeThreeScene()` 遍历场景图并按对象 identity 去重回收 geometry/material/嵌套 texture/render target，最后释放 renderer/context。硬上限为 8 个同时活跃 context，同一 surface 第二次丢失即静态化；`tests/webglLifecycle.test.js` 与浏览器真实 `WEBGL_lose_context` gate 覆盖契约。
-- `forceGraph.js`：自研力导向（两两斥力 + Hookean 弹簧 + 弱引力锚点，固定步长 Euler）。v3 以 cloud/platform/models/initiative/compute/silicon/memory/manufacturing 八个宽景 stage anchor 生成稳定构图，边只认存在的稳定 ID；旧 `sectors-data.json` 输入仍保留向后兼容。**教训内嵌**：pressure 连线必须用带 rest length 的弹簧（恒定力不收敛）；锚定力施加在自由端而非被钉住的极点（被钉节点跳过受力）。
-- `sectorsGraphView.js`（2026-07-25 v3）：Canvas 2D 滚动叙事渲染器。空场起步，按五章节与 `reveal` 阈值展开 19 节点/19 关系；节点使用本地 Logo 牌、国旗徽章与文字 mark fallback，边按关系类型着色并带方向粒子，详情卡显示双语产品、关系和来源。缩放按钮、wheel 与 pinch-to-zoom listener 全部移除；浏览器页面缩放/纵向触摸滚动保留，触屏只负责 tap 选择，桌面保留 pan 与节点拖动。物理固定 60 Hz，绘制注册 `RenderBudgetCoordinator` 的 120 fps 目标并使用 pixel-budget DPR；移动端采用确定性三列纵向拓扑，`prefers-reduced-motion` 关闭渐变/漂浮并直出章节状态。Canvas 与并行 DOM 节点按钮共享选择状态，支持方向键、Enter/Space、Home/Escape。唯一滚动采样是一个 passive listener，经单 rAF 合并后只写 0–1 故事进度；销毁时 listener、ResizeObserver、rAF 与 coordinator registration 全部释放。
+- `forceGraph.js`：自研力导向（两两斥力 + Hookean 弹簧 + 弱引力锚点，固定步长 Euler）。**2026-07-25 起锚点键从「按 stage」改为「按 `stage:bloc`」**（`ecosystemBloc(country)` 只把 US/CN 判给对应阵营，其余国家一律 `neutral`）：13 个已填充的 (stage,bloc) 格子各建一个锚，US 阵营落左、CN 阵营落右、跨阵营供应商落子午线上——共存论点直接是几何而非文案。力学常数已实测重调（旧 8 锚宽景常数在新 13 锚布局下把构图撑到 10.3 单位跨度，画布 `scale` 掉到 48）：`{repulsion:0.05, springLength:0.42, springStrength:0.022, poleStrength:0.1, damping:0.86, minDist:0.12}` 结算于 7.96×6.21（`scale` 63），最近节点板间距 73 CSS px（此前 68 px），由 `tests/forceGraph.test.js` 的「bloc polarity」组针对真实数据集断言下限，防止未来retune 静默回退。边只认存在的稳定 ID；旧 `sectors-data.json` 输入仍保留向后兼容。**教训内嵌**：pressure 连线必须用带 rest length 的弹簧（恒定力不收敛）；锚定力施加在自由端而非被钉住的极点（被钉节点跳过受力）。
+- `sectorsGraphView.js`（2026-07-25 v3 + Red vs Blue 极化更新同日）：Canvas 2D 滚动叙事渲染器。空场起步，按五章节（`divide/frontier/capital/chokepoints/system`）与 `reveal` 阈值展开 19 节点/19 关系；节点使用本地 Logo 牌、国旗徽章与文字 mark fallback，边按关系类型着色并带方向粒子，详情卡显示双语产品、关系和来源。**阵营层**：节点外环/辉光改用 `blocColor(node)`（US `#2F6BFF`/CN `#E5484D`/neutral `#7EF0DC`，与 design.md `--rb-*` token 同值）；跨阵营边用 `edgeStroke()` 沿方向绘制蓝→中性→红双极渐变（`createLinearGradient` 每帧现算，不跨帧缓存——渐变端点随节点呼吸/相机平移持续变化，缓存会指错方向；数据集仅 3 条跨阵营边，帧成本可忽略）；`drawMeridian()` 在世界坐标 x=0 处画竖向渐变分界线，随桌面平移同步、随首幕 `storyProgress` 淡入，移动端不绘制（改用行栅格，无子午线几何）。缩放按钮、wheel 与 pinch-to-zoom listener 全部移除；浏览器页面缩放/纵向触摸滚动保留，触屏只负责 tap 选择，桌面保留 pan 与节点拖动。物理固定 60 Hz，绘制注册 `RenderBudgetCoordinator` 的 120 fps 目标并使用 pixel-budget DPR；移动端采用确定性三列纵向拓扑，`prefers-reduced-motion` 关闭渐变/漂浮并直出章节状态。Canvas 与并行 DOM 节点按钮共享选择状态，支持方向键、Enter/Space、Home/Escape。唯一滚动采样是一个 passive listener，经单 rAF 合并后只写 0–1 故事进度；销毁时 listener、ResizeObserver、rAF 与 coordinator registration 全部释放。
+- `sectorsCompetition.js` / `sectorsCompetitionView.js`（新增 2026-07-25）：Red vs Blue 专区的纯逻辑/DOM 分层，同仓库「数学层纯函数 + 胶水层不单测」标准打法。前者零 DOM/fetch：`axisValue()` 按数据集声明的 `from:{kind:bench|ratio|route}` 派生雷达值（`ratio` 是唯一现算的 `derived` 值——成本效率=智能指数÷混合价，3:1 输入输出加权）；`normalizeAxis()` 按**当前名单**（非当前选中的对比子集）实时算 min/max 做 0–1 归一，**缺失值返回 `null` 而非 0**，`radarPolygon()` 相应把该顶点跳过连线而非拉到圆心——这是宪章②的代码级落地，不是文案承诺；`buildTable()`/`sortRows()` 给完整基准矩阵、`buildScoreboard()` 按声明权重归一算美中composite 与逐轴 lead/gap、`buildBoards()` 按台面权重分美/中两栏各十支。后者只做 SVG/DOM 投影（`createElement`/`textContent`，JSON 来源字符串禁止 `innerHTML`），雷达 SVG 的 `aria-label` 列出全部绘制数值，China 阵营描边额外加 `stroke-dasharray` 纹样（色觉不便用户可辨），表格空单元格印出未公布原因而非留白。`tests/sectorsCompetitionView.test.js` 用与 `tests/renderBudgetCoordinator.test.js` 同款的最小 DOM 桩（非 jsdom 依赖）覆盖交互——沙盒装得上 Playwright 的 Chromium 二进制但缺系统依赖且无 root 权限，无法跑真实浏览器，这是当前唯一的浏览器测试替代方案。
 - 可视化无障碍契约（P0-07 已完成）：交互 SVG mark 必须是有名称的 `role=button` + `tabindex=0`，Enter/Space 与 pointer 走同一 action；Canvas 必须有文字摘要和并行 DOM 节点按钮；纯图像 SVG 的可访问名称必须包含实际值而非只写“chart”；装饰连线/背景 Canvas 一律 `aria-hidden`。Stats 记录表、Sectors 完整矩阵、Arena 模型卡/持仓表、Horoscope 维度详情分别是对应视觉的等价数据层。共享翻页左右键遇到 `a/button/form/canvas/role/tabindex/contenteditable` 焦点时必须让路。
 - `dataToSpace.js`：sectors/universe 数据→3D 星域坐标。`MARKET_X={US:-1,CN:1}`、`BUCKET_Z={'model-vendor':-1.5,'core-ai-hardware':-0.5,'megacap-tech':0.5,benchmark:1.5,'supply-chain':0}`、y=confidence（`hasConfidence:false` 时中性 0.5）、mulberry32 seeded jitter、同 (market,bucket) 群组偏移。节点形状 `{id,kind:vendor|equity|universe,label,market,bucket,confidence,hasConfidence,x,y,z,vendor?}`。
 - `sectorsStarfield.js`：THREE.Points + 自定义 GLSL（`gl_PointSize = aSize*(K/max(1.0,-mv.z))` 透视衰减 + fragment `discard` 圆形边缘）；Manhattan 三段折线 `LineSegments` 单 draw call；NormalBlending 实心圆片（**非** Additive 辉光——V1 方向性错误）；全屏 `.sfStage` modal + HUD（`?fx=starfield3d` opt-in）；生命周期、DPR 与帧窗上报由共享协调器负责。
@@ -240,7 +244,7 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 
 ## 7. 测试、CI 与验证
 
-- `npm run test` = vitest run：**82 文件 1,138 条（2026-07-25 当前）**，全绿是合并前提。账本类代码不写测试不许上线。
+- `npm run test` = vitest run：**84 文件 1,193 条（2026-07-25 当前，含 Red vs Blue 新增的 sectorsCompetition/sectorsCompetitionView/forceGraph 阵营极化三批用例）**，全绿是合并前提。账本类代码不写测试不许上线。
 - P0 状态以 `urgent.md` 为执行真源：P0-01～P0-07、P0-09、P0-10 已凭实现与门禁关闭；P0-08 因站主要求保留 Games/League，继续处于 owner hold，不得误当技术债清理自行退役。
 - CI 基础门禁：vitest + `npm run typecheck` + build + **体积预算断言**（主 chunk 250KB / vendor-three 700KB / astronomy 60KB 量级）+ 12 份数据 schema + route manifest/sitemap/metadata 漂移 + `!important` 基线。
 - 浏览器门禁：Playwright 对 8 个活跃路由运行桌面 Chromium、iPhone 16 Pro Max-like WebKit、Galaxy S26 Ultra-like Chromium；覆盖加载/metadata/overflow、键盘与路由、console/page error、桌面 axe 债务回归及每路由/设备两张确定性截图。桌面 Chromium 另用真实 `WEBGL_lose_context` 验证恢复/静态降级，验证 Stats 键盘图表、Sectors Canvas+DOM 节点等价层、Arena 曲线文字摘要，并断言 Signal 两个独立 renderer 共享一次已校验 JSON 请求。320×720 响应式 gate 另外覆盖全部 12 个 active/redirect/prototype/system 路由、44×44 HTML 触控目标和横向溢出。当前完整自动矩阵为 **150 collected：98 passed + 52 intentional skips**；Sectors v3 另在 1512×982、440×956、480×1040 做浏览器实视图复核，19 节点可达、零缩放控件、零页面横向溢出、零 console error。物理真机仍是发布签署条件。
@@ -285,6 +289,7 @@ Vercel：push 即部署；`api/*.js` 自动成为 serverless 函数；环境变�
 
 **git/环境**
 13. **沙盒 dist/ 权限受限**：build 一律 `--outDir=/tmp/...`。
+13b. **沙盒装得上 Playwright 二进制、跑不起来**（2026-07-25 实案）：`npx playwright install chromium` 能下载 Chrome Headless Shell，但 `chromium.launch()` 因缺系统依赖（`libxdamage1` 等）+ 无 root/sudo（容器 no-new-privileges 阻止 `sudo playwright install-deps`）必然失败。→ 浏览器门禁（Playwright/axe/Lighthouse/真机）在此类沙盒里**不可执行**，视觉改动只能停在「单测已验证、视觉未验证」，必须显式记录待补跑而非假装通过；`tests/sectorsCompetitionView.test.js` 这类最小 DOM 桩单测是唯一可行的中间替代。
 14. **`.git/*.lock` 残留链式故障**：并行会话/崩溃进程留锁。→ 时间戳 >30min 才清；rm 被拒用**同目录 rename** 顶替；极端时走私有索引 `GIT_INDEX_FILE=/tmp/x git read-tree HEAD && git add … && git write-tree && git commit-tree && git update-ref`。
 15. **陈旧主索引吃掉前一提交**（2026-07-18 实案）：私有索引提交后，主索引仍是旧树，随后的常规 `git commit` 把前一提交的文件**静默回退**（b9d2b16 revert 掉 5d278ec 的 sectors.css）。→ 私有索引提交后，下一次常规提交前必须 `git status` 逐文件核对暂存区；push 后 `git show --stat` 复核本次 diff 恰好是本次改动。
 16. **定时任务残留文件**：`arena-a-open-*.json` 类未跟踪产物**永不 `git add`**；`git add -A` 前必看 status。
@@ -322,6 +327,10 @@ Vercel：push 即部署；`api/*.js` 自动成为 serverless 函数；环境变�
 1. **V19 Phase 2/3**：`predCalibration.js` 校准（等 `arena-predlog.json` 攒够真实数据）→ `.wl-grid`/`.wl-card` 信号卡 UI（替换默认展开面板）。Phase 1 已完成攒数据中。
 2. **V2 Games 世界杯收官**：被动监控，赛程推进补 `home/away/result` 即可。
 3. **机会主义拾取（无排期压力）**：C1/C2 Signal 传导链可视化自动化（BREACH METER 概率位移条、事件回放迷你图 SPX ±2h sparkline）；B3 combatHudSC 机库跑道纵深透视（记录在案不建议单独立项，需接入起降路径，工作量远超数据绑定修复）。
+4. **Sectors Red vs Blue RB-P1/P2**（原 `urgent.md` Part 3，RB-P0-01～07 已交付，见 §3/§4.5 与 design.md §3；以下三项未做）：
+   - **RB-P1-01 成本/速度散点**（M）：智能指数 vs 成本、TTFT vs TPOT 双散点，crosshair 交互 + 表格兜底，复用 `sectorsCompetition.js` 已有的 `blendedPrice()`。
+   - **RB-P1-02 供应链依赖彩带**（S）：HBM→GPU→云→模型、EUV/晶圆代工咽喉环节，作为现有 `forceGraph.js` 图里的新类型边，不建第二个渲染器。
+   - **RB-P2-01 打磨**（S）：章节揭示时的节点辉光脉冲、子午线微光动效、新叙事的 OG 分享图刷新。
 
 ### 10.3 roadmap.md 队列 A 未完成/触发式项
 
