@@ -112,10 +112,10 @@
       "date": "2026-07-24",
       "window": "post-market",
       "model": "T",
-      "status": "missed",
+      "status": "done",
       "ordersProposed": 0,
       "ordersFilled": 0,
-      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+      "note": "settled via apply-arena-run.mjs — 0 filled, 0 rejected."
     },
     {
       "date": "2026-07-24",

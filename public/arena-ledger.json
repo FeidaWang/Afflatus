@@ -144,6 +144,10 @@
         {
           "day": 0,
           "equity": 10000
+        },
+        {
+          "day": 2,
+          "equity": 10000
         }
       ],
       "positions": [],
@@ -156,8 +160,8 @@
         "exposure": 0
       },
       "review": {
-        "zh": "",
-        "en": ""
+        "zh": "周五，不在T的周二/周四开仓窗口内。当前无持仓需要管理，且今日推荐池中T也没有候选标的，故不操作。",
+        "en": "Friday — outside T's Tue/Thu open window. No existing positions to manage and today's picks screen surfaced zero T candidates, so no action is the correct call."
       }
     }
   }
