@@ -7,8 +7,10 @@
    never a teleport).
 
    Applied to exactly three selectors per urgent.md §9.4 — .heroCard,
-   .graphWrap, .band — nothing else. sectors.html-only (not part of the
-   shared sectorsLibs.js bundle other pages also load).
+   .graphWrap, .band — nothing else. An above-the-fold .heroCard is kept
+   fully open: clipping the initial hero prevents Chromium from producing
+   a stable LCP candidate. sectors.html-only (not part of the shared
+   sectorsLibs.js bundle other pages also load).
    ============================================================ */
 import { revealProgress, chase, easeOutQuad, revealClipPath, revealClipPathX } from './scrollReveal.js';
 
@@ -19,7 +21,17 @@ export function initScrollReveal() {
   if (typeof CSS === 'undefined' || !CSS.supports || !CSS.supports('clip-path', 'inset(0px round 0px)')) return;
 
   const targets = [];
-  document.querySelectorAll('.heroCard, .graphWrap').forEach((el) => targets.push({ el, kind: 'card', rendered: 0, target: 0, tracking: false }));
+  document.querySelectorAll('.heroCard, .graphWrap').forEach((el) => {
+    const aboveFoldHero = el.classList.contains('heroCard')
+      && el.getBoundingClientRect().top < innerHeight;
+    if (aboveFoldHero) {
+      // P0-05: never clip the initial LCP region. `none` also avoids
+      // accidentally promoting the full hero to a permanent paint layer.
+      el.style.clipPath = 'none';
+      return;
+    }
+    targets.push({ el, kind: 'card', rendered: 0, target: 0, tracking: false });
+  });
   document.querySelectorAll('.band').forEach((el) => targets.push({ el, kind: 'x', rendered: 0, target: 0, tracking: false }));
   if (!targets.length) return;
 

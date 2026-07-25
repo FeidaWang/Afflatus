@@ -9,17 +9,51 @@
  */
 import * as THREE from 'three';
 import { createNighthawk } from './nighthawk.js';
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import {
+  canAcquireWebGLContext,
+  createWebGLContextLifecycle,
+  disposeThreeScene,
+} from '../lib/webglLifecycle.js';
 
 const DEG = Math.PI / 180;
 
 export function createFighter3D() {
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let budgetActive = false;
+  let contextReady = true;
+  let surfaceActive = false;
   let renderer;
+  if (!canAcquireWebGLContext('home:fighter-3d')) return null;
   try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' }); }
   catch (e) { return null; }
+  const rendererLifecycle = createWebGLContextLifecycle({
+    id: 'home:fighter-3d',
+    canvas: renderer.domElement,
+    showFallback: false,
+    onLost() {
+      contextReady = false;
+      surfaceActive = false;
+    },
+    onRestore() {
+      renderer.resetState?.();
+      contextReady = true;
+      surfaceActive = budgetActive;
+    },
+    onFallback() {
+      contextReady = false;
+      surfaceActive = false;
+    },
+  });
+  if (!rendererLifecycle.canInitialize) {
+    rendererLifecycle.dispose();
+    renderer.dispose();
+    renderer.forceContextLoss?.();
+    return null;
+  }
   renderer.setClearColor(0x000000, 0);
-  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false);
-  const RES = 320;
-  renderer.setSize(RES, RES, false);
+  let renderSize = 320;
+  renderer.setSize(renderSize, renderSize, false);
   renderer.setPixelRatio(1);
 
   const scene = new THREE.Scene();
@@ -51,7 +85,7 @@ export function createFighter3D() {
   }
 
   function drawOriented(ctx, type, { az = 90, el = 45, size = 96, alpha = 1 } = {}) {
-    if (type === 'b2' || !ready) return false;   // bomber keeps its sprite
+    if (type === 'b2' || !ready || !surfaceActive) return false;   // bomber keeps its sprite
     orient(az, el, performance.now());
     renderer.render(scene, camera);
     const draw = size * 1.6;
@@ -62,5 +96,35 @@ export function createFighter3D() {
     return true;
   }
 
-  return { drawOriented, available: () => ready };
+  const renderSurface = renderCoordinator.register({
+    id: 'home:fighter-3d',
+    observe: false,
+    cost: 'medium',
+    targetFps: 60,
+    onResume() {
+      budgetActive = true;
+      surfaceActive = contextReady;
+    },
+    onPause() {
+      budgetActive = false;
+      surfaceActive = false;
+    },
+    onQualityChange(policy) {
+      const nextSize = policy.qualityTier === 'low' ? 192 : policy.qualityTier === 'balanced' ? 256 : 320;
+      if (nextSize !== renderSize) {
+        renderSize = nextSize;
+        renderer.setSize(renderSize, renderSize, false);
+      }
+    },
+    onDispose() {
+      rendererLifecycle.dispose();
+      disposeThreeScene(scene, renderer);
+    },
+  });
+
+  return {
+    drawOriented,
+    available: () => ready && surfaceActive,
+    destroy() { renderSurface.dispose(); },
+  };
 }

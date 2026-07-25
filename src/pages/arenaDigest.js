@@ -14,6 +14,8 @@
 
    Read-only, like arenaPicks.js: never mutates any ledger/digest file.
    ============================================================ */
+import { fetchJson } from '../lib/fetchJson.js';
+
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -21,7 +23,6 @@
   const drawer = $('digestDrawer');
   if (!toast || !drawer) return;
 
-  const DIGEST_URL = '/arena-daily-digest.json';
   const SEEN_KEY = 'afflatus:arenaDigestSeen';
 
   const MODEL_LABEL = { S: 'S · ORACLE', P: 'P · PULSE', T: 'T · ATLAS' };
@@ -100,8 +101,7 @@
     showToast(d);
   }
 
-  fetch(DIGEST_URL, { cache: 'no-store' })
-    .then((r) => (r.ok ? r.json() : Promise.reject()))
+  fetchJson('arena-digest')
     .then((d) => { state.digest = d; render(); })
     .catch(() => { state.digest = null; });
 

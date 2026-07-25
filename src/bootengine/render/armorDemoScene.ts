@@ -14,11 +14,18 @@
 
 import * as THREE from 'three';
 import { createArmorMaterial } from './armorMaterial';
+import { getRenderBudgetCoordinator } from '../../lib/renderBudgetCoordinator.js';
+import {
+  canAcquireWebGLContext,
+  createWebGLContextLifecycle,
+  disposeThreeScene,
+} from '../../lib/webglLifecycle.js';
 
 export interface ArmorDemoScene {
   start(): void;
   stop(): void;
   resize(w?: number, h?: number): void;
+  destroy(): void;
 }
 
 // Kept from the previous pass, but dialed back per owner direction ("你不
@@ -64,6 +71,9 @@ function buildEnvironment(renderer: THREE.WebGLRenderer): THREE.Texture {
 }
 
 export function createArmorDemoScene({ canvas }: { canvas: HTMLCanvasElement }): ArmorDemoScene | null {
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'low', targetFps: 60 });
+  if (!canAcquireWebGLContext('boot:armor-demo')) return null;
   let renderer: THREE.WebGLRenderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
@@ -129,34 +139,121 @@ export function createArmorDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   let running = false;
   let raf = 0;
   let t0 = 0;
+  let sized = false;
+  let wantsLoop = false;
+  let surfaceActive = false;
+  let contextReady = true;
+  let loopLastT = 0;
+  let renderSurface: ReturnType<typeof renderCoordinator.register> | null = null;
 
   function loop(now: number) {
+    const frameMs = loopLastT ? now - loopLastT : 0;
+    loopLastT = now;
     if (!t0) t0 = now;
     const elapsed = (now - t0) / 1000;
     mesh.rotation.y = elapsed * 0.18;
     mesh.rotation.x = Math.sin(elapsed * 0.11) * 0.15;
     armor.update(elapsed);
     renderer.render(scene, camera);
+    renderSurface?.reportFrame(frameMs);
     if (running) raf = requestAnimationFrame(loop);
   }
 
   function resize(w?: number, h?: number) {
-    const W = Math.max(1, w ?? canvas.clientWidth ?? window.innerWidth);
-    const H = Math.max(1, h ?? canvas.clientHeight ?? window.innerHeight);
+    const W = Math.max(1, (w ?? canvas.clientWidth) || window.innerWidth);
+    const H = Math.max(1, (h ?? canvas.clientHeight) || window.innerHeight);
+    sized = true;
     // No 1.75 cap here (unlike topdownCombat.js, which caps for a busy
     // scene with many objects): this is a single-mesh materials-reference
     // demo, GPU cost is trivial, and a soft/undersharp render defeats its
     // purpose. Cap at 3 purely as a sanity ceiling, not a real limit.
-    const dpr = Math.min(3, window.devicePixelRatio || 1);
+    const dpr = renderPolicy.computeDpr(W, H, { minDpr: 0.75, maxDpr: 3 });
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
   }
 
+  function startLoop() {
+    if (running || !surfaceActive || !contextReady) return;
+    running = true;
+    loopLastT = 0;
+    raf = requestAnimationFrame(loop);
+  }
+
+  function stopLoop() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+
+  const webglLifecycle = createWebGLContextLifecycle({
+    id: 'boot:armor-demo',
+    canvas,
+    onLost() {
+      contextReady = false;
+      stopLoop();
+    },
+    onRestore() {
+      renderer.resetState?.();
+      const previousEnvironment = scene.environment;
+      scene.environment = buildEnvironment(renderer);
+      previousEnvironment?.dispose();
+      contextReady = true;
+      resize();
+      renderer.render(scene, camera);
+      if (surfaceActive && wantsLoop) startLoop();
+    },
+    onFallback() {
+      contextReady = false;
+      stopLoop();
+    },
+  });
+  if (!webglLifecycle.canInitialize) {
+    disposeThreeScene(scene, renderer, [scene.environment]);
+    return null;
+  }
+
+  renderSurface = renderCoordinator.register({
+    id: 'boot:armor-demo',
+    element: canvas,
+    observe: false,
+    cost: 'low',
+    targetFps: 60,
+    onResume() {
+      surfaceActive = true;
+      if (wantsLoop) startLoop();
+    },
+    onPause() {
+      surfaceActive = false;
+      stopLoop();
+    },
+    onResize() {
+      if (sized) resize();
+    },
+    onQualityChange(nextPolicy) {
+      renderPolicy = nextPolicy;
+    },
+    onDispose() {
+      webglLifecycle.dispose();
+      disposeThreeScene(scene, renderer, [scene.environment]);
+    },
+  });
+
   return {
-    start() { if (!running) { running = true; raf = requestAnimationFrame(loop); } },
-    stop() { running = false; cancelAnimationFrame(raf); },
+    start() {
+      wantsLoop = true;
+      startLoop();
+    },
+    stop() {
+      wantsLoop = false;
+      stopLoop();
+    },
     resize,
+    destroy() {
+      wantsLoop = false;
+      stopLoop();
+      renderSurface?.dispose();
+    },
   };
 }

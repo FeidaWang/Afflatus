@@ -1,7 +1,7 @@
 # tech.md — Project Afflatus 技术架构与工程蓝图（SSOT · Disaster-Recovery 级）
 
 > **本文件性质**：全站重构期间的技术唯一真源（与 `design.md` 成对）。目标：即使整个代码库损毁，开发者/AI agent 仅凭这两份文档即可从零重建功能等价的站点。
-> **整理基线**：2026-07-18，综合 KNOWLEDGE.md / technical.md / roadmap.md / Urgent.md（U1–U46）/ RELEASE_NOTES.md / course.md 全部内容 + 当日代码实况核对。
+> **整理基线**：2026-07-18；2026-07-25 已同步 P0 平台收口与 Sectors 滚动叙事星图 v3。综合 KNOWLEDGE.md / technical.md / roadmap.md / Urgent.md（U1–U46）/ RELEASE_NOTES.md / course.md 全部内容 + 当日代码实况核对。
 > **裁决冲突处理**：凡本文件与旧文档冲突，以本文件为准；凡重构提案与本文件「已裁决」条目冲突，需新证据才能重开（KNOWLEDGE §6 规则延续）。
 
 ## 目录
@@ -16,7 +16,7 @@
 
 | 层 | 选型 | 裁决状态 |
 | --- | --- | --- |
-| 构建 | **Vite 8 MPA**：每页一个根目录 HTML 入口，注册于 `vite.config.js` `build.rollupOptions.input` | 已裁决保留（U21：架构资产） |
+| 构建 | **Vite 8 MPA**：每页一个根目录 HTML 入口；`src/config/siteManifest.js` 是路由/构建纳入/导航/sitemap/元数据唯一真源，`vite.config.js` 从其 `BUILD_ROUTES` 派生 input | 已裁决保留（U21：架构资产；P0-01 清单治理） |
 | 运行时 | **vanilla ES modules，零框架**。React/Vue/Svelte/SSR/Rust/WASM 全站禁用 | 已裁决（roadmap §8.2，重开需新证据） |
 | 框架迁移 | **Next.js/Astro 不做**——2026-07-12 正式评估（roadmap §8.4）：`<head>` 样板重复仅 ~250 行，唯一真实收益点是 serial.html 单章 SEO，收益集中一页、迁移风险摊九页。serial.html 的 Astro 候选资格单独记录（150 章或需要单章 SEO 时重评） | 已裁决 |
 | CSS | 原生 CSS。主站 `src/styles.css`（~8000 行，`@layer legacy/tokens/components/overrides` 四层）+ 每页独立样式表 `public/styles/<page>.css`。**Tailwind 不做**（U46-乙-④：作用域污染已由 @layer 纪律 + `!important` 计数基线 + CI 体积预算控制；Tailwind = 全站重写 + 构建期依赖生态，过不了 U21 动刀标准。采纳其目标、沿用自有路径） | 已裁决 |
@@ -27,19 +27,19 @@
 | 隐私 | Local-First：排盘/紫微/合盘全部浏览器本地计算，生辰只存 localStorage，分享 = base64url 编进 URL 参数。「出生数据永不离开设备」是隐私卖点也是无限水平扩展 | 红线 |
 | 数据 | 静态 JSON 文件（`public/*.json`）= 内容引擎，git 版本历史 = 审计 = 回滚。数据与展示完全解耦 | 常设 |
 | 调度 | Cowork scheduled-tasks（**不用 launchd**，历史规划从未落地，technical.md §4 已更正） | 已裁决 |
-| 分析 | GA4（gtag 延迟到 requestIdleCallback，不抢首屏） | 常设 |
+| 分析 | GA4（gtag 延迟到 requestIdleCallback）+ `web-vitals` 6 的 CLS/INP/LCP 字段遥测；只发送白名单指标、清单路由、`en/zh` 与粗粒度设备档，不发送 URL query、UA、输入、DOM attribution 或原始硬件值 | P0-05 已接入 |
 
 **域名/部署**：feida.au · Vercel 监听 GitHub `FeidaWang/Afflatus` main 分支 · 自动 `vite build` → `dist/`。
 
 ## 2. 目录结构与页面装配
 
-### 2.1 页面清单（10 个 Vite 入口，导航循环序）
+### 2.1 页面清单（11 个 Vite 入口；8 个活跃导航路由）
 
 | 入口 | 身份 | 导航位置 | 状态 |
 | --- | --- | --- | --- |
 | index.html | 深空舰长日志（Three.js + 战斗 HUD） | 顶层 | 常设 |
 | arena.html | 美股 TA 仪表盘 + Autopilot 双模拟盘 | 顶层 | 常设 |
-| sectors.html | 中美 AI 矩阵 + 后内存专题 + `?fx=starfield3d` 数据星域 | 顶层 | 常设 |
+| sectors.html | AI 产业公司故事网格 + 滚动叙事生态星图 + 后内存专题 + `?fx=starfield3d` 数据星域 | 顶层 | 常设 |
 | signal.html | 美联储观察（SCP 皮肤，Warsh 时代，U41 编辑部版式） | 顶层 | 常设 |
 | games.html | 世界杯竞猜（U38/U39/U40 阶段滑杆+缩放+季军赛） | — | 已下线 →302 到 stats（U18c，2026-07-20 决赛后）；文件保留待英雄联盟 S 赛复用 |
 | league.html | MSI 竞猜 | — | 已下线 →302 到 stats（U18） |
@@ -52,13 +52,23 @@
 ### 2.2 目录树
 
 ```
-/                        10 个 HTML 入口（根目录，非 public/）
+/                        11 个 HTML 入口（根目录，非 public/）
 api/                     quote.js + history.js（Vercel serverless，symbol 正则校验 + rateLimit）
 src/main.js              首页主程序 ~3.5k 行（HUD/场景/光标/语言/装配，持续拆分中）
 src/styles.css           首页/主站样式 ~8000 行，@layer 四层
+src/config/
+  siteManifest.js        ★ 路由/构建/导航/sitemap/元数据唯一真源
+  navRoutes.generated.js 浏览器导航轻量投影（生成物，禁手改）
+  performanceRoutes.generated.js 字段遥测路由轻量投影（生成物，禁手改）
+  lighthouseRoutes.generated.json Lighthouse 活跃路由投影（生成物，禁手改）
+src/entry/performance.js 每个活跃 HTML 唯一加载的 CWV 启动入口
 src/lib/                 全站共享库（依赖零 DOM 的纯函数为主）：
-  nav.js                 ★ SITE 数组 = 导航/翻页唯一真源；Labs 下拉 portal 到 <body>
+  nav.js                 消费生成的导航投影；Labs 下拉 portal 到 <body>
   i18n.js                data-en/data-zh 引擎 + afflatus-lang 事件（首页除外，见 §5.2）
+  webVitals.js           CLS/INP/LCP 采集、隐私白名单、粗粒度维度与 gtag 有界内存队列
+  renderBudget.js        渲染质量/DPR/刷新率/p95 纯策略
+  renderBudgetCoordinator.js 页面生命周期/可见性/resize/自适应质量唯一协调器
+  webglLifecycle.js/.d.ts WebGL context 租约/丢失恢复/静态降级/Three 资源回收
   transition.js page-turn.js audio.js clock.js
   arenaRules.js arenaRun.js arenaLedgerView.js predlogEntry.js rateLimit.js
   validateSectorsData.js validateSignalEvents.js provenanceBadge.js trackRecord.js
@@ -74,28 +84,38 @@ src/scene/               Three.js/Canvas 场景：alphardForge topdownCombat com
 src/combat/              纯逻辑层：weaponClock cameraMath weaponCameraDirector
                          flightPath combatRuntime combatConfig
 src/ui/                  HUD 绘制：combatHmdV3 battleFeed marketDeck radarDeck viz
-                         cursor.ts terminalStarMap softClock pageTurn …
+                         cursor.ts terminalStarMap softClock pageTurn ambientBackdrops …
 src/data/content.js      首页文案 + Top 10 持仓 PICKS_ZH/EN + COPY 双语对象
 public/page-turn.css     子页共享：翻页箭头 + 自托管字体 + Labs 下拉样式
 public/styles/<page>.css 每页独立样式表（sectors/signal/games/league/horoscope/serial…）
 public/*.json            数据文件（§3）
+public/sectors-ecosystem.json  Sectors 滚动叙事星图 v3（节点/关系/章节/来源）
+public/assets/sectors/    Sectors 本地品牌标志与产品/发布视觉
 scripts/                 结算/校验/推送 CLI（进 git，禁明文 key）
 prompts/                 定时任务提示词正本（README 五条硬规则 + 各模块文件）
 rfcs/                    决策文档（O1 制度：>1 天改动先 RFC）
-tests/                   vitest（57 文件 717 条，2026-07-18 计数）
+tests/                   vitest（82 文件 1,138 条，2026-07-25 当前）
+lighthouserc.cjs         8 活跃路由 × 3 次的回归断言矩阵
+lighthouse-baseline.json 路由实验室债务基线 + 字段 p75 产品目标
 ```
 
 ### 2.3 新增页面 checklist（V0 验证，全文 technical.md §1，勿删）
 
-HTML 放根目录 → vite.config input 加行 → 建 `src/pages/xxxEntry.js`（**nav 必须 import 在 page-turn 之前**）→ nav.js `SITE` 加条目（季节页 `group:'labs'`）→ body class + data-prev/next + `<nav data-afflatus-nav>` → page-turn.css 配色变量（`--labs-*` 下拉主题必须显式配，portal 面板不继承页面样式）→ 双语文案 data-en/zh 成对 → `<head>` 最前同步内联脚本按 `afflatus:lang` 预设 `<html lang>` → sitemap.xml 加行 → build 后**按内容 grep**（不按 chunk 文件名）验证。
+HTML 放根目录 → 建 `src/pages/xxxEntry.js`（**nav 必须 import 在 page-turn 之前**）→ `siteManifest.js` 加完整 route（build/nav/sitemap/EN-ZH metadata/schema/capabilities）→ `npm run site:generate` 生成浏览器导航投影与 sitemap → body class + data-prev/next + `<nav data-afflatus-nav>` → page-turn.css 配色变量（`--labs-*` 下拉主题必须显式配，portal 面板不继承页面样式）→ 双语文案 data-en/zh 成对 → `<head>` 最前同步内联脚本按统一 locale key 预设 `<html lang>` → `npm run site:check` → build 后**按内容 grep**（不按 chunk 文件名）验证。
 
 ### 2.4 首页渲染分层
 
 `#starfield`（背景星空，fixed z0，OffscreenCanvas + Worker，特性检测回退主线程）→ `#blackhole-gl`（z1）→ `#event-layer`（2D 战斗/彗星，z2）。`.stardrive` 段自带 `#alphardForge` canvas，滚动进度写 CSS 变量 `--forge`(0→1)（原生 `animation-timeline:view()` 优先、JS pin 兜底），驱动星体放大/台词逐字/指标点亮/舞台缩放（30e `?fx=stage`→已转默认）。Combat View 默认 3D（U23 M1：`topdownCombat.js` + 导演运镜默认开，`?combatview=2d` 完整退路）。
 
+P0-03 完成后，首页 master rAF、背景 Worker、Alphard Forge、combat/radar/market/terminal/hologram 与 lazy 3D asset，Sectors 两套渲染器，Boot 三个 WebGL 分支 + telemetry，以及 Arena/Signal/Serial 环境 Canvas 均注册到 `RenderBudgetCoordinator`：页面 hidden / freeze / pagehide 时停止，pageshow / resume 时恢复；resize 由协调器单点合并到下一帧；恢复首帧重置时钟，首页 `dt` 硬夹 32 ms。背景 Worker 的 `start/stop` 带 generation guard，避免快速暂停/恢复产生双计时器。DPR 不再使用散落的设备上限，而走 `sqrt(pixelBudget/(cssW*cssH))` 的绝对 backing-store 预算。明确例外只有一次性 share/export/transition Canvas，以及已 302 下线 Games/League 的纯 pointer 刮卡（无持续帧循环）。
+
+P0-06 完成后，活跃 3D/GL 表面统一由 `webglLifecycle.js` 领取最多 8 个同时存在的 context 租约。首次 `webglcontextlost` 阻止默认销毁并暂停表面；恢复时 raw Saturn GL 重新编译 shader/链接 program/重建 buffer 与 uniform location，Three 场景调用 `resetState()`，Boot 材质预览另重建 PMREM environment。一个 session 内同表面第二次丢失直接释放租约、终止 lifecycle `AbortSignal`、设 `data-renderer="poster"` 并显示中英双语恢复按钮；未来 GLTF/纹理 fetch 必须使用该 signal。销毁顺序固定为：停止 rAF → 移除协调器/DOM listener → dispose composer/render targets → identity 去重回收 geometry/material/texture/uniform resource → renderer dispose + context loss。当前没有生产 GLTF/TextureLoader 异步任务。
+
 ## 3. 数据文件台账与 Schema
 
 > 顶层统一 `{updated, version}`；前端溯源徽章（`provenanceBadge.js`：>36h 琥珀 / >72h 红）按数据龄分级。双语字段新约定：嵌套 `{en,zh}`。**账本/记录类 JSON 只许经结算脚本修改，禁止手编**。
+
+P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注册表，禁止新页面直接 `fetch(...).json()`。契约为 `fetchJson(key,{signal,freshness,timeoutMs,headers,forceRefresh})`：网络请求去重、每调用方独立取消、默认 8 秒超时、payload 到达 UI 前执行现有 schema validator，并以带 `code/status/retriable/validationErrors` 的 `JsonDataError` 表达失败。缓存分两层：当前文档内存 + Cache Storage；新鲜值直接返回，过期值先返回并在后台只发一次 revalidate。固定 URL 的静态 JSON 使用浏览器正常 HTTP cache，不得再无差别 `no-store`；报价/历史 API 仍按实时性单独控制。各资源 validator 使用动态分块，并在 JSON/Cache Storage I/O 开始时并行预热，避免 payload 到达后再串行付出一个 RTT。经典内联 IIFE 通过 `public/lib/data-bridge.js` 等待 `src/entry/dataBridge.js` 暴露同一模块实例，避免生产构建引用未转换的 `/src/` 动态 import；Vite 构建会把 0.2 kB bridge 内联进消费页，源码开发形态不变且不产生阻塞请求。Serial 音乐 playlist 因功能暂停暂不纳入迁移。
 
 | 文件 | 写入方 | 消费页 | 关键 schema/纪律 |
 | --- | --- | --- | --- |
@@ -108,6 +128,7 @@ HTML 放根目录 → vite.config input 加行 → 建 `src/pages/xxxEntry.js`�
 | arena-runlog.json **(新增 2026-07-23)** | 同上 | 审计 + 离线补跑判定源（urgent.md Part 4 §19.3） | `{runs:[{date,window,model,status:done\|missed\|queued,ordersProposed,ordersFilled,note}]}`；`(date,window,model)` 三元组必须唯一（校验器强制），是幂等重跑判定的键 |
 | arena-daily-digest.json **(新增 2026-07-23)** | 同上 | 「离线时段摘要」推送/站内 toast（Phase 5 未接线） | `{date,generatedAt,books:[{model:S\|P\|T,pnlPct,tradesCount,note_en/zh}]（固定 3 条）,tomorrowPicksCount,delayed:[]}` |
 | sectors-data.json | sectors-watch-weekly（周日 10:00） | sectors | `{modelWatch:[4 厂商],baskets:[{vendor,market,equities:[{ticker,relation,confidence,correlation_note}]}],postMemory,weeklyTake}`；发布前 `validate-sectors-data.mjs`；**显式拒绝数值相关系数字段**（只给定性关系标签） |
+| sectors-ecosystem.json | 编辑审核后手动更新；定期复核来源 | sectors 滚动叙事星图 | v3 `{updated,version,chapters[],nodes[],edges[]}`；节点以稳定 `id` 引用，含 `country/logo|mark/kind/stage/reveal/color/products/summary_en/zh/source`；边含 `source/target/type/strength/label_en/zh/source_url/reveal`。当前 19 节点、19 关系、5 章节；关系端点必须存在，产品/结论必须有来源。发布日期无法从官方来源验证时不得按提示词猜测——2026-07-25 数据明确保留 Claude Opus 4.8，并声明未核验到 Opus 5 官方发布。 |
 | signal-events.json | signal-warsh-daily（交易日 07:00） | signal | schema v2：`{updated,version:2,as_of,hawkDoveCompass(-2..+2),pillarSummary,pillars[5],events[]}`；发布前 `validate-signal-events.mjs` 强制 |
 | signal-release-dates-2026.json / nyse-holidays-2026.json | 静态年更 | 任务守卫 | 发布日历/休市日查表，不为此调 API |
 | leagues-data.json | （任务过期待删） | stats | stats 前端实时计算全部统计 |
@@ -153,7 +174,7 @@ HTML 放根目录 → vite.config input 加行 → 建 `src/pages/xxxEntry.js`�
 - `arenaRules.js`：**LLM 提案、代码收单**——模型只出 JSON 订单，`validateOrder/applyFill/checkStopLoss/checkExitBySweep/checkDailyCircuitBreaker/checkSeasonReset/computeMetrics` 是唯一有权改账本的代码。共享硬风控（对全部模型一视同仁，不因 Season/模型而异）：单仓 20%/现金 5%/日熔断 3%/赛季重置 20%——定义在 `LIMITS` 顶层常量。**按模型分化**的风控（止损/最大持仓/信心阈值/换手节奏/滑点档）：Season 1 沿用旧字段 `LIMITS.STOP_LOSS.{A,B}`/`SLIPPAGE_BPS.{A,B}`/`MAX_WEEKLY_TRADES.A`/`ALLOWED_TRADE_DAYS.B`（A：止损 8%/持仓 8/信心 0.65/周换手 20 笔；B：止损 15%/仅周二四开仓）；Season 2 三本走新增的 `LIMITS.PER_MODEL.{S,P,T}`（S=ORACLE 止损 8%/持仓 6/信心 0.70/周换手 20；P=PULSE 止损 5%/持仓 5/信心 0.65/周换手 30；T=ATLAS 止损 15%/持仓 8/仅周二四开仓，继承 B 的日期闸）——所有查找函数先查 `PER_MODEL[model]` 再退回旧字段，Season 1 数学路径因此逐字节不变。Model T 独有：新开仓订单 `signals[]` 数组长度必须 ≥2（"融合而非单一头条"），否则一律拒单，与信心阈值同级校验。Model P 独有：买单需带 `exitBy`（YYYY-MM-DD），`checkExitBySweep()` 到期强制平仓（对没有 `exitBy` 字段的仓位是纯 no-op，即 Season 1 和 S/T 完全不受影响）。
 - `arenaFeatures.js`（新增）：Model P 盘中结构特征的**纯函数**层——`openGapPct/intradayRangePct/computeVWAP/vwapDriftPct/volumeSurgeRatio/pivotBreakState`（复用 `technicals.js` 的 `classicPivots`，不重复造轮子）+ `buildPulseFeatures()` 组装单标的完整特征向量。设计原则：LLM 只对预计算好的数字排序/定仓位，绝不自己算这些数字（同"代码收单"纪律的自然延伸）。
 - `arenaExec.js`（新增）：「RL 启发式」执行策略的确定性替身——`sliceOrder()`（订单超过账本净值 10% 时按剩余窗口数切片）、`capByParticipation()`（按标的平均成交量的参与率封顶）、`impactSlippageBps()`（`baseBps + k·√(参与率)` 平方根冲击成本模型，`k=50` 温和系数、`maxBps=250` 兜底）。`arenaRules.js` 的 `simulateFill(order, model, execOpts)` 第三参数可选：不传（现有全部调用方式）=旧的按模型分级平坦滑点，逐字节不变；传 `execOpts.avgDollarVol` 才会切到冲击成本模型——**目前没有任何调用方传这个参数**，因为管线还没有真实成交量数据流入 payload，这层是"接好线，等数据"的休眠状态，如实记录避免以为已经生效。
-- `arenaAccess.js`（新增 2026-07-23，Phase 4/§20 收紧为纯推荐名单）：API 门禁的纯逻辑层，供 `api/quote.js`/`api/history.js` 调用——`resolveAllowlist({picks})` 现在**只认今日推荐**（`arena-picks.json` 的 `quoteAllowlist`，管线固定把 SPY/QQQ/SMH 基准也塞进这个数组），不再并入全市场标普 500。收紧的前提是 Phase 4 的「今日推荐交易」面板（`arenaPicks.js`）已上线为主入口，不会再像 Phase 3 那样让"搜索任意美股"这个日常功能被静默锁死——想搜索全市场任意标的，走管理员密钥解锁（`#taUnlockForm`/`#adminChip`，见上方 `arenaTech.js` 条目）。`checkAdminKey(providedKey, configuredKey)` 用 `crypto.timingSafeEqual` 恒定时间比较，任何一边为空/长度不等都直接判否（fail-closed，不抛异常）。两个 API 文件各自维护 5 分钟 TTL 的模块级缓存，自请求 `https://${req.headers.host}/arena-picks.json`（同源，preview 部署也能跑；不再需要拉 `arena-universe.json`），拿不到就把已有的（可能是空的）结果原样退回，从不因为一次网络抖动而把整站锁死。管理员密钥通不过时返回 `403 {error:'gated',hint:'symbol outside today's pool — admin unlock required'}`；`ARENA_ADMIN_KEY` 环境变量未配置时功能天生失效（不是"绕过"，是"没这功能"）。
+- `arenaAccess.js`（新增 2026-07-23，Phase 4/§20 收紧为纯推荐名单）：API 门禁的纯逻辑层，供 `api/quote.js`/`api/history.js` 调用——`resolveAllowlist({picks})` 现在**只认今日推荐**（`arena-picks.json` 的 `quoteAllowlist`，管线固定把 SPY/QQQ/SMH 基准也塞进这个数组），不再并入全市场标普 500。收紧的前提是 Phase 4 的「今日推荐交易」面板（`arenaPicks.js`）已上线为主入口，不会再像 Phase 3 那样让"搜索任意美股"这个日常功能被静默锁死——想搜索全市场任意标的，走管理员密钥解锁（`#taUnlockForm`/`#adminChip`，见上方 `arenaTech.js` 条目）。`checkAdminKey(providedKey, configuredKey)` 用 `crypto.timingSafeEqual` 恒定时间比较，任何一边为空/长度不等都直接判否（fail-closed，不抛异常）。两个 API 文件各自维护 5 分钟 TTL 的模块级缓存，同源读取 `arena-picks.json`，拿不到就把已有的（可能为空）结果原样退回。P0-09 起 allowlist fetch 分别限时 3 秒，Finnhub quote 限时 5 秒、Twelve Data history 限时 7 秒；上游 HTTP/payload 结构/超时/网络错误归一为 `{error:{code,message,upstreamStatus?},requestId}`，错误响应 `private,no-store`，所有响应带 `X-Request-Id`，成功仍分别使用 12 秒与 1 小时 edge cache。管理员密钥通不过返回 403 `ARENA_KEY_REQUIRED`；`ARENA_ADMIN_KEY` 未配置时功能 fail-closed。
 - `arenaRun.js`：单次运行编排 mark-to-market→止损扫描→exitBy 扫描（Season 2 Model P 专用，见上）→撮合→熔断→赛季重置→复盘，`BOOKS=['A','B','S','P','T']` 五个账本键值共用同一条orchestration路径。`bootstrapSeason2(ledgerFull, {day, promptVersions, note_en, note_zh})`：纯函数，返回一份全新的三本 $10,000 账本（S/P/T）；`note_en`/`note_zh` 不传时沿用旧账本的复盘文案。**已被 `scripts/bootstrap-season2.mjs` 实际调用过一次**（2026-07-23），产物就是当前的 `public/arena-ledger.json`（见上方状态说明）——不是仅存在于测试里的休眠代码。
 - `predlogEntry.js`：`pctChange/directionHit/buildPredlogDay/appendPredlogDay`；规划中 `predCalibration.js` 三态信号 LEAN LONG/NEUTRAL/LEAN SHORT（`calibConf ≥0.62` 且近 20 次 hitRate ≥55%，信号必挂 hitRate+Brier 战绩——不越「非投资建议」红线的硬约束）。
 - `rateLimit.js`：纯函数滑动窗口（按 x-forwarded-for 分桶，quote 60/60s，history 20/60s，429+Retry-After）。symbol 正则 `^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$`，两个 API 文件的门禁检查都插在限流之后、上游 fetch 之前。
@@ -166,10 +187,14 @@ HTML 放根目录 → vite.config input 加行 → 建 `src/pages/xxxEntry.js`�
 - `flightPath.js`：起降生命周期 `DOCKED→CATAPULT→CLIMB→CRUISE→BREAK→APPROACH→TOUCHDOWN`，Hermite 链式段 C1 连续，速度/加速度解析求导（零帧差分噪声）。
 
 ### 4.5 图形/交互引擎
-- `forceGraph.js`：自研力导向（两两斥力 + Hookean 弹簧 + 弱引力锚点，固定步长 Euler）。**教训内嵌**：pressure 连线必须用带 rest length 的弹簧（恒定力不收敛）；锚定力施加在自由端而非被钉住的极点（被钉节点跳过受力）。
-- `sectorsGraphView.js`：Canvas 2D 渲染 + IntersectionObserver 门控 rAF + pan/zoom/拖拽（单 2D 变换矩阵）。
+- `renderBudget.js` / `renderBudgetCoordinator.js`（P0-03 已完成）：纯策略层定义 `low/balanced/high`、移动/桌面像素预算、renderer cost 系数、DPR 公式、刷新率中位数采样与 p95 帧窗；浏览器协调层只保存 route/device tier、surface id/cost/targetFps/p95，不收集指针、文案或用户输入。降档需连续 2 个超预算窗口，升档需连续 8 个有余量窗口，且永不超过初始硬件档上限。长期 renderer 必须注册；`renderBudgetCoordinator.d.ts` 为 Boot TypeScript 场景提供同一接口契约。
+- `responsive-primitives.css` / `viewportRuntime.js`（P0-10 已完成）：12 路由统一 `viewport-fit=cover`、四向 safe-area token、`100svh/100dvh` fallback、44 px coarse-pointer/≤440 px HTML 控件基线；11 个构建入口挂载 VisualViewport 协调器，以单 rAF 合并 resize/scroll/orientation，写入 visual height/offset/center、keyboard inset 与 `data-keyboard-open`，销毁时移除全部 listener。`site:check` 强制 stylesheet/meta/entry 唯一性；Playwright 在全部 active/redirect/prototype/404 路由的 320×720 布局验证无页面级横向溢出并审计触控尺寸。Vite 生产构建只把小型 responsive primitives 内联为关键样式，开发源码仍分离；`page-turn.css` 保持外链，避免推迟 Horoscope 的路由主样式发现。Sectors 按 320–660 px 实测导航换行高度预留 header，Lighthouse CLS 从 0.221 降至 0.019。物理刘海/动态岛、Samsung Internet 软键盘与 120 Hz 仍须真机签署。
+- `webglLifecycle.js` / `.d.ts`（P0-06 已完成）：`createWebGLContextLifecycle()` 统一 context 租约、session loss budget、恢复/降级 callback、AbortSignal 与可访问恢复 UI；`disposeThreeScene()` 遍历场景图并按对象 identity 去重回收 geometry/material/嵌套 texture/render target，最后释放 renderer/context。硬上限为 8 个同时活跃 context，同一 surface 第二次丢失即静态化；`tests/webglLifecycle.test.js` 与浏览器真实 `WEBGL_lose_context` gate 覆盖契约。
+- `forceGraph.js`：自研力导向（两两斥力 + Hookean 弹簧 + 弱引力锚点，固定步长 Euler）。v3 以 cloud/platform/models/initiative/compute/silicon/memory/manufacturing 八个宽景 stage anchor 生成稳定构图，边只认存在的稳定 ID；旧 `sectors-data.json` 输入仍保留向后兼容。**教训内嵌**：pressure 连线必须用带 rest length 的弹簧（恒定力不收敛）；锚定力施加在自由端而非被钉住的极点（被钉节点跳过受力）。
+- `sectorsGraphView.js`（2026-07-25 v3）：Canvas 2D 滚动叙事渲染器。空场起步，按五章节与 `reveal` 阈值展开 19 节点/19 关系；节点使用本地 Logo 牌、国旗徽章与文字 mark fallback，边按关系类型着色并带方向粒子，详情卡显示双语产品、关系和来源。缩放按钮、wheel 与 pinch-to-zoom listener 全部移除；浏览器页面缩放/纵向触摸滚动保留，触屏只负责 tap 选择，桌面保留 pan 与节点拖动。物理固定 60 Hz，绘制注册 `RenderBudgetCoordinator` 的 120 fps 目标并使用 pixel-budget DPR；移动端采用确定性三列纵向拓扑，`prefers-reduced-motion` 关闭渐变/漂浮并直出章节状态。Canvas 与并行 DOM 节点按钮共享选择状态，支持方向键、Enter/Space、Home/Escape。唯一滚动采样是一个 passive listener，经单 rAF 合并后只写 0–1 故事进度；销毁时 listener、ResizeObserver、rAF 与 coordinator registration 全部释放。
+- 可视化无障碍契约（P0-07 已完成）：交互 SVG mark 必须是有名称的 `role=button` + `tabindex=0`，Enter/Space 与 pointer 走同一 action；Canvas 必须有文字摘要和并行 DOM 节点按钮；纯图像 SVG 的可访问名称必须包含实际值而非只写“chart”；装饰连线/背景 Canvas 一律 `aria-hidden`。Stats 记录表、Sectors 完整矩阵、Arena 模型卡/持仓表、Horoscope 维度详情分别是对应视觉的等价数据层。共享翻页左右键遇到 `a/button/form/canvas/role/tabindex/contenteditable` 焦点时必须让路。
 - `dataToSpace.js`：sectors/universe 数据→3D 星域坐标。`MARKET_X={US:-1,CN:1}`、`BUCKET_Z={'model-vendor':-1.5,'core-ai-hardware':-0.5,'megacap-tech':0.5,benchmark:1.5,'supply-chain':0}`、y=confidence（`hasConfidence:false` 时中性 0.5）、mulberry32 seeded jitter、同 (market,bucket) 群组偏移。节点形状 `{id,kind:vendor|equity|universe,label,market,bucket,confidence,hasConfidence,x,y,z,vendor?}`。
-- `sectorsStarfield.js`：THREE.Points + 自定义 GLSL（`gl_PointSize = aSize*(K/max(1.0,-mv.z))` 透视衰减 + fragment `discard` 圆形边缘）；Manhattan 三段折线 `LineSegments` 单 draw call；NormalBlending 实心圆片（**非** Additive 辉光——V1 方向性错误）；全屏 `.sfStage` modal + HUD（`?fx=starfield3d` opt-in）。
+- `sectorsStarfield.js`：THREE.Points + 自定义 GLSL（`gl_PointSize = aSize*(K/max(1.0,-mv.z))` 透视衰减 + fragment `discard` 圆形边缘）；Manhattan 三段折线 `LineSegments` 单 draw call；NormalBlending 实心圆片（**非** Additive 辉光——V1 方向性错误）；全屏 `.sfStage` modal + HUD（`?fx=starfield3d` opt-in）；生命周期、DPR 与帧窗上报由共享协调器负责。
 - `bracketModel.js`：赛事无关淘汰赛模型（qf/sf/third/final 阶段 + 比分解析 + 主客重排）；`pinchZoom.js`：总览/轮次/单场三档状态机（触摸双指距 + ctrl+wheel + 按钮兜底共用）。
 - `pinchZoom/scrubber` 交互统一走 **Pointer Events**（pointerdown/move/up + setPointerCapture），鼠标/触摸/笔一套代码。
 
@@ -181,17 +206,19 @@ HTML 放根目录 → vite.config input 加行 → 建 `src/pages/xxxEntry.js`�
 ## 5. 状态管理与运行时约定
 
 ### 5.1 客户端状态（全部 localStorage / URL，零后端）
-`afflatus:lang`（子页语言）· `afflatus-lang`（首页语言，独立管线）· `afflatus-horo:me`（生辰档案）· 关系册/签到 streak（horoscope）· `afflatus-combatview`（战斗视图）· 阅读器主题/书签/进度（serial）· 星域/缩放等 flag 态。分享 = URL 参数（`?p=` base64url）。
+`afflatus:locale:v1`（全站语言唯一键；`localeStore.js` 一次性迁移旧 `afflatus:lang`/`afflatus-lang`，新键写入确认后才清旧键）· `afflatus-horo:me`（生辰档案）· 关系册/签到 streak（horoscope）· `afflatus-combatview`（战斗视图）· 阅读器主题/书签/进度（serial）· 星域/缩放等 flag 态。分享 = URL 参数（`?p=` base64url）。
 
 ### 5.2 双语双机制（重建时最易踩的坑）
+- **共享持久层**：所有页面通过 `localeStore.js` 读写 `afflatus:locale:v1`；每个可切换语言的 HTML 入口在 `<head>` 最前运行同一段同步 pre-paint/migration，小于首帧且由 `site:check` 做逐页字节一致性守门。冲突顺序固定为新键 > 旧子页键 > 旧首页键。
 - **子页**：`i18n.js`——`data-en`/`data-zh` 属性对，默认 textContent、带 `data-i18n-html` 用 innerHTML；`.lang-toggle` 按钮；切换派发 `window` 事件 **`afflatus-lang`**，动态页面监听重渲染。嵌在 data-* HTML 字符串里的子元素（如 `.term` 按钮）每次切换随 innerHTML 重建，天然存活；事件处理器必须**委托到 document**（course.js 术语浮层先例）。
-- **首页**：`src/main.js` 自有 `setLang()` + `src/data/content.js` 的 `COPY` 对象，**不用 i18n.js**。多数落点用 textContent——给某 label 嵌按钮必须改 `setLang()` 本体（U46 已做 sl1-sl3 先例）。已知未根治：先英后中一瞬跳变（根治需 SSR，留给 serial-Astro 候选评估）。
+- **首页**：`src/main.js` 自有 `setLang()` + `src/data/content.js` 的 `COPY` 对象，**不用 i18n.js**，但与子页共享 `localeStore.js`。多数落点用 textContent——给某 label 嵌按钮必须改 `setLang()` 本体（U46 已做 sl1-sl3 先例）。
 
 ### 5.3 模块加载约定
 - **每页一个显式 import 链入口**（`xxxEntry.js`）——同页多个独立 `<script type="module">` 会被 Vite 8 静默丢码（§9-1）。
 - **window 桥接模式**：经典内联 IIFE 需要 lazy `import()` 时，把 `import()` 放进 `type="module"` 块并暴露 `window.AfflatusXxx = {load:()=>import(...)}`（AfflatusI18N/AfflatusProvenance/AfflatusSectorsGraph/AfflatusSectorsStarfield 同款）；桥接模块就绪后 `dispatchEvent` 通知已在跑的 IIFE 重试（30j 时序 bug 的修复）。
-- **rAF 纪律**：禁独立 rAF 循环（挂进页面主循环）；后台 canvas 用 IntersectionObserver 门控可见性；`document.hidden` 停画。
-- **滚动纪律**：零 scroll 监听——原生 `animation-timeline: view()/scroll()`（`@supports` 渐进增强 + 静态兜底）或 IntersectionObserver。
+- **数据桥接例外**：Stats/Signal/Sectors/Serial 的经典内联控制器调用 `AfflatusFetchJson()`；同步 `public/lib/data-bridge.js` 只负责等待，真正实现由 Vite 管理的 `src/entry/dataBridge.js` 注入并派发 `afflatus-data-ready`。经典脚本不得写裸 `import('/src/...')`，因为该字符串不会被 Vite 转换，生产构建会 404。
+- **rAF 纪律**：新 renderer 必须注册 `RenderBudgetCoordinator`，通过 `onPause/onResume/onResize/onQualityChange/onDispose` 暴露边界；不得自建 `visibilitychange` / page-lifecycle / resize 全局策略。确需独立 rAF 的组件由协调器门控可见性并上报帧窗；页面 master loop 在 hidden/freeze/pagehide 完全停止，恢复时重置时钟并夹紧 `dt`。
+- **滚动纪律**：内容入场优先原生 `animation-timeline: view()/scroll()`（`@supports` 渐进增强 + 静态兜底）或 IntersectionObserver。只有 Canvas/WebGL 连续故事状态确实需要 0–1 精确进度时，才允许一个 passive `scroll` listener，并必须用单 rAF 合并、只读一次几何、hidden/offscreen 停画、destroy 完整解绑；Sectors v3 是当前唯一批准例外。
 
 ## 6. 定时任务与数据管线
 
@@ -213,8 +240,12 @@ HTML 放根目录 → vite.config input 加行 → 建 `src/pages/xxxEntry.js`�
 
 ## 7. 测试、CI 与验证
 
-- `npm run test` = vitest run：**57 文件 717 条（2026-07-18）**，全绿是合并前提。账本类代码不写测试不许上线。
-- CI 五件套（U21）：vitest + `npm run typecheck` + build + **体积预算断言**（主 chunk 250KB / vendor-three 700KB / astronomy 60KB 量级）+ 数据 schema 校验。
+- `npm run test` = vitest run：**82 文件 1,138 条（2026-07-25 当前）**，全绿是合并前提。账本类代码不写测试不许上线。
+- P0 状态以 `urgent.md` 为执行真源：P0-01～P0-07、P0-09、P0-10 已凭实现与门禁关闭；P0-08 因站主要求保留 Games/League，继续处于 owner hold，不得误当技术债清理自行退役。
+- CI 基础门禁：vitest + `npm run typecheck` + build + **体积预算断言**（主 chunk 250KB / vendor-three 700KB / astronomy 60KB 量级）+ 12 份数据 schema + route manifest/sitemap/metadata 漂移 + `!important` 基线。
+- 浏览器门禁：Playwright 对 8 个活跃路由运行桌面 Chromium、iPhone 16 Pro Max-like WebKit、Galaxy S26 Ultra-like Chromium；覆盖加载/metadata/overflow、键盘与路由、console/page error、桌面 axe 债务回归及每路由/设备两张确定性截图。桌面 Chromium 另用真实 `WEBGL_lose_context` 验证恢复/静态降级，验证 Stats 键盘图表、Sectors Canvas+DOM 节点等价层、Arena 曲线文字摘要，并断言 Signal 两个独立 renderer 共享一次已校验 JSON 请求。320×720 响应式 gate 另外覆盖全部 12 个 active/redirect/prototype/system 路由、44×44 HTML 触控目标和横向溢出。当前完整自动矩阵为 **150 collected：98 passed + 52 intentional skips**；Sectors v3 另在 1512×982、440×956、480×1040 做浏览器实视图复核，19 节点可达、零缩放控件、零页面横向溢出、零 console error。物理真机仍是发布签署条件。
+- 字段性能：每个活跃入口只启动一次 `web-vitals` 的 CLS/INP/LCP。GA4 事件名固定为 `web_vital`，字段严格限于 `schema_version/metric_name/value/metric_value/metric_delta/metric_rating/metric_id/route/locale/device_tier`；`gtag` 未就绪时只在内存轮询 10 秒，超时丢弃。产品目标是 LCP ≤2.5 s、INP ≤200 ms、CLS ≤0.10（各自 p75），只按 route/locale/device tier 切片。部署后须在 GA4 管理端登记这些自定义维度/指标，样本不足时不得据此下结论。
+- 实验室性能：`npm run test:lighthouse` 先清理 `.lighthouseci` 的旧生成报告、再 build，并以 Lighthouse 12.6.1 默认移动模拟对 8 路由各跑 3 次。路由 LCP/TBT/Speed Index/CLS/script bytes 为相对当前基线的 5% 硬回归门禁，total bytes 与总分只告警；基线是债务地板，不是合格目标。CLS 因字体/异步内容存在双峰，硬门禁采用三轮中可重复的高位 `clsBudgetBase`。采集器只在 stdout/report 明确包含瞬态 `NO_FCP` runtime error 时清理生成物并有界重试一次；普通断言失败不重试。P0-09/P0-10 只依据已完成的 24-report 批次与受影响路由三轮样本重录直接受新增平台入口影响的预算。Sectors 在该 Lighthouse 版本会间歇 `NO_LCP`，因此实验室硬门禁 FCP/Speed Index/CLS/script bytes，LCP 只告警并以上线后字段 p75 为判断源。2026-07-25 收口时当前 macOS 主机随后出现跨 Home/Arena/Horoscope 的持续 `NO_FCP`（采集器在断言前终止），故最终独立全站复跑必须在浏览器主机恢复后补做，不能把该 runtime error 记作页面通过或失败。
 - **`!important` 计数基线**（`check-no-new-important.mjs`）：新增数必须为 0；改既有 `!important` 片段时原地改值不加新声明。
 - 纯函数测试纪律：不依赖 DOM/fetch/`Date.now()` 默认值；确定性（同 seed 逐位一致）、无 NaN/Infinity、空输入优雅降级是标准断言三件套。
 - **视觉改动的验证阶梯**：纯函数 vitest → 构建产物按内容 grep → 生产站 Claude-in-Chrome 复核（能做的话）→ **站主真机验收才算关闭**（沙盒无法渲染 WebGL/页面，V15 三轮返工换来的铁律）。高风险视觉一律 flag 起步（`?fx=`/`?combatview=`/`?ship=`），真机看过再转默认（U25 教训制度化）。
@@ -225,6 +256,8 @@ HTML 放根目录 → vite.config input 加行 → 建 `src/pages/xxxEntry.js`�
 npm run dev        # http://127.0.0.1:5173（本地无 /api，实时行情降级到简报快照属预期）
 npm run build      # 沙盒里必须 npx vite build --outDir=/tmp/xxx（dist/ 权限受限，§9-13）
 npm run preview
+npm run test:e2e   # 三浏览器/设备配置的页面、键盘、axe、视觉与 CWV 传输合约
+npm run test:lighthouse # 8 活跃路由 × 3 次 Lighthouse 回归预算
 ```
 Vercel：push 即部署；`api/*.js` 自动成为 serverless 函数；环境变量 `FINNHUB_KEY`/`TWELVE_KEY`（改完必须 Redeploy）。验证：`/api/quote?symbol=NVDA` 返回含 `"c"` 的 JSON；arena 页显示 LIVE。
 
@@ -293,7 +326,7 @@ Vercel：push 即部署；`api/*.js` 自动成为 serverless 函数；环境变�
 ### 10.3 roadmap.md 队列 A 未完成/触发式项
 
 - **A2 main.js 拆分 Phase 4 剩余**（state 飞行状态机/nav/boot）+ **Phase 5**（styles.css `@layer` 分层）：不在沙盒强做。
-- **B6 首页 WebGL 收尾**：`saturnRenderer` 等 raw-GL 渲染器补完整 context-restored 重建；跃迁点 shader 弱机自适应；统一渲染器 `powerPreference`/dpr 上限（现 1.75 vs 1.5 不一致）。
+- **B6 首页 WebGL 收尾（已并入 P0-03/P0-06 完成）**：`saturnRenderer` 已补 raw-GL context-restored 全资源重建；各渲染面由 pixel-budget DPR 与统一 quality tier 自适应，不再以散落的固定 DPR 上限作为全局策略。
 - **C3 three.js WebGPURenderer + Bloom/ACES**：投入大，等有余力评估。
 - **serial.html 的 Astro 候选资格**：单独记录，不与页面数量绑定——待章节数继续涨（150 章目标）或需要单章 SEO/独立分享链接时再评估，不在 2026-07-12 结论范围内。
 - **SEO Phase 2**（SSG/SSR/Astro，已并入 C5 触发条件）/ **Phase 3**（`Person` JSON-LD 的 jobTitle/sameAs 需站主提供真实信息；独立 `/about` 页面）：均未排期。

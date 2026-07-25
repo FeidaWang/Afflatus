@@ -12,13 +12,14 @@
    pattern as the existing `afflatus-lang` event), so neither needs to
    import the other's internals.
    ============================================================ */
+import { fetchJson } from '../lib/fetchJson.js';
+
 (() => {
   'use strict';
   const host = document.getElementById('picksDash');
   if (!host) return;
 
   const $ = (id) => document.getElementById(id);
-  const PICKS_URL = '/arena-picks.json';
 
   const MODEL_COLOR = { S: 'var(--acid)', P: 'var(--cyan)', T: 'var(--magenta)' };
   const MODEL_LABEL = { S: 'S · ORACLE', P: 'P · PULSE', T: 'T · ATLAS' };
@@ -93,8 +94,7 @@
     });
   }
 
-  fetch(PICKS_URL, { cache: 'no-store' })
-    .then((r) => r.ok ? r.json() : Promise.reject())
+  fetchJson('arena-picks')
     .then((d) => { state.picks = d; render(); })
     .catch(() => { state.picks = null; render(); });
 

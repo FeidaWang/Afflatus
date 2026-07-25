@@ -1,7 +1,7 @@
 # design.md — Project Afflatus UI/UX 体系、美学与主题圣经（SSOT · Disaster-Recovery 级）
 
 > **本文件性质**：全站重构期间的设计唯一真源（与 `tech.md` 成对——本文件管「造成什么样、为什么」，tech.md 管「怎么造」）。任何新功能上线前先过本文件的宪章与红线，答不上「它在这页的世界观里是什么设备」就不上。
-> **整理基线**：2026-07-18。来源：U22 视觉宪章、U27d 人格分层、U30 重设计裁决、U41–U46 逐页改版记录、roadmap §2/§7.10 模块三、KNOWLEDGE §3。
+> **整理基线**：2026-07-18；2026-07-25 已同步 P0 平台收口、Sectors 公司故事网格与滚动叙事星图 v3。来源：U22 视觉宪章、U27d 人格分层、U30 重设计裁决、U41–U46 逐页改版记录、roadmap §2/§7.10 模块三、KNOWLEDGE §3。
 
 ## 目录
 
@@ -52,7 +52,7 @@
 | --- | --- | --- | --- |
 | index | `--bg:#04060a` `--ink:#e4e8f0` `--dim:#69748c` | `--cyan:#8db4c0`（世界）`--warm:#e8b380`（自身） | Orbitron / Rajdhani / JetBrains Mono |
 | signal | 纸感档案 `--doc:#d6d4cc` on `#1b1b1e`，panel `#232327` | `--amber:#f5c400`（hazard）`--green:#3fb950` `--red:#b3261e`；mood 变量随 FOMC 偏向切换 | Oswald（disp）/ Space Mono |
-| sectors | 纯黑底白字（U36 起） | 青 `#00C3D7` / acid；公司一律真实品牌色+产品图标（禁通用渐变） | 系统无衬线 + mono |
+| sectors | 深黑 `#06070b` / 墨蓝黑层次，正文暖白；公司故事区保留明亮编辑部留白 | 关系语义多色：模型紫、开放权重酸黄、云青、算力青柠、芯片珊瑚、存储金、制造雾蓝；品牌节点保留真实 Logo 色，禁把全图退回红/蓝二分 | 系统无衬线 + mono |
 | games | WC26 官方配色：藏青 `#1B2766` / 金 `#9F7D23` / 白（U40） | 品红/青赛博残留仅点缀 | mono 系 |
 | stats | `--bg:#070a12` `--panel:#0d1220` `--ink:#dce8f2` | `--teal:#4fd6c4` `--gold:#e8ad6f` `--red:#e0596b` `--green:#57c98a` | JetBrains Mono |
 | horoscope | 治愈系：暖奶油/鼠尾草绿/赤陶橙/淡金（V21 定调，逃离「深紫神棍风」）；星盘/夜间模块唯一允许深色=墨水蓝 `#1a2440`+淡金星点（「星图手账」非「水晶球」） | 文字一律深色变体，逐一过 WCAG AA | 中文衬线 + 几何无衬线 |
@@ -69,11 +69,11 @@
 > 实现细节与数学在 tech.md §4.4/4.5；此处记设计语言与参数手感。
 
 - **星门 sticky 缩放舞台**（首页 stardrive，30e→默认）：滚动进度 `--forge`(0→1) 驱动容器 `scale(.8→1)`+圆角 32px→0「星门迎面展开」；caption/tagline/strip 分层多向视差；缩小态带淡青描边光的「取景窗」框（裁切边 diegetic 化）；`prefers-reduced-motion` 直出终态。年化回报指标条（38.66% 四件套）锚定 hero「航向·奇点王座」正下方（U45）。
-- **滚动叙事**：signal 事件卡 `animation-timeline:view()` 错速浮入（奇偶卡不同 range/方向）；阅读进度条 `.readProgress`；一切滚动驱动零 JS 监听。
+- **滚动叙事**：signal 事件卡 `animation-timeline:view()` 错速浮入（奇偶卡不同 range/方向）；阅读进度条 `.readProgress`；普通内容入场零 JS 监听。只有 Canvas 连续故事状态可按 tech.md §5.3 的单 passive listener + rAF 合并例外执行。
 - **共享元素转场**（View Transitions API）：serial 书架封面→阅读器头图跨态 morph（`view-transition-name:novelMorph` 临时授予、转场后清空）；signal 事件卡点击展开 dossier。
 - **卡片二层翻转**（U44 pick-card）：`.pcCover`（ticker/权重）hover/tap/`:focus-visible` 三入口切 `.pcDetail`（论点+CTA），transform+opacity 320ms；触屏用 `.open` class 点击切换。
-- **手风琴**（sectors cards-4）：`flex:1→3` + line-clamp 放开，仅 `hover:hover and pointer:fine`（触屏保持常显堆叠，不强迫）。
-- **力导向图**（sectors）：US/CN 双引力极、拖拽回弹、呼吸浮动；点击节点=详情卡；旧矩阵表降级为 `<details>` 折叠（渐进披露）。
+- **公司故事网格**（sectors，2026-07-25）：废除倾斜卡、横向轨道和“靠 hover 才排整齐”的布局；桌面固定两列、移动一列，媒体统一比例、Logo 统一品牌板、标题/论点/权重/标签保持同一纵向节奏。媒体必须是本地产品界面、芯片/设备或发布场景，禁止总部楼宇与空占位；图片失败时仍保留品牌色与文字身份。
+- **滚动叙事星图**（sectors v3）：以「形态之前 → 前沿模型 → 资本与开放 → 算力供应链 → 生态全景」五幕展开。首幕必须是真正空场，只留微弱环境尘埃与引导文字；节点按内容阶段从 Logo 牌与国旗徽章渐显，关系线随后出现，最终完整星图停留一屏供查阅。桌面可平移/拖动但不缩放，移动端页面纵向滚动优先，只保留轻触选择；详情卡与 DOM 节点列表提供同一信息。
 - **3D 数据星域**（sectors `?fx=starfield3d`）：全屏 modal 体验，实心圆片（NormalBlending）+ Manhattan 线格 + 尘埃场；轨道/惯性/fly-to 全走 smoothDamp；鼠标视差=加性偏移叠在 azimuth/elevation 上（拖拽时挂起、RM 归零）；配色青=US/金=CN/白=未评分 on 纯黑。
 - **鼠标视差**（首页 hero，U44）：`--mx/--my` CSS 变量，各元素系数不同做纵深（-10px/-6px 标题、-4px/-2px 序号），负号=逆光标漂移；首帧默认 0 零 CLS；hover:hover 限定。
 - **战斗视图**：3D 俯视战场默认 + 导演运镜（镜头库 tacticalTopdown/bridgeWide/mainGunAxis/missileTail/ciwsTurret/chaseCam/deckCam/towerCam/flybyCam）；起降完整生命周期叙事；尾焰彩带 billboard 三段色老化淡出；HMD v3 座舱。bloom/冲击波级别的「效果冲顶」曾整批被站主 revert（U25）——**战斗视觉的浓度以站主口味为准，宁欠勿过**。
@@ -94,7 +94,7 @@
 
 - **规则**：凡 ≥2 列的 grid/flex 布局必须在 ≤480–768px 有单列（或自然塌陷）档——但以**逐页审计**落实，不写「<768px 全部强制单列」的空头立法（多数页早有 520–900px 降级段，盲目立法只会重复劳动）。2026-07-18 全站 9 页代码级审计结论：唯一真破版 = sectors `.macro`（已修）；horoscope `.zw-grid` 仅拥挤不溢出（fr 轨道，不动）。
 - **「横屏查看」提示组件**：设计保留（`.rotateHint` 虚线框、可点×关闭记 localStorage、**建议不拦截**——强制横屏遮罩与内容站身份冲突，U23 同源裁决）；**当前无落点不上线**——games 淘汰赛树已有 `overflow-x:auto`、stats 分布图是 viewBox 响应式 SVG。触发条件：未来出现真正无法回流的宽可视化时按此设计接入。
-- **触控**：交互元素热区 ≥44px——`position:relative`+`::before{inset:...}` 扩热区**不改视觉尺寸**（D4 模式）；核心操作收拇指区；移动端裁剪（星域粒子减半、节点封顶、`<560px` 关镜头震动）。
+- **触控**：交互元素热区 ≥44px——`position:relative`+`::before{inset:...}` 扩热区**不改视觉尺寸**（D4 模式）；核心操作收拇指区；移动端裁剪（3D 星域粒子减半、节点封顶、`<560px` 关镜头震动）。Sectors 2D 故事星图不截断实体数据，改用确定性三列纵向拓扑与更小 Logo 牌；Canvas 声明 `touch-action:pan-y pinch-zoom`，不得抢占页面滚动或浏览器缩放。
 
 ### 4.3 阅读疲劳与暗色眩光（U46-乙-③）
 
@@ -131,6 +131,7 @@
 2. **R3**：待真机验收 >5 项冻结新视觉改动（flag 隔离项豁免）。
 3. 新视觉上线自查清单：宪章六条逐条过 → RM 降级 → 22c 无 hover 专属 → 双语成对 → `!important` 零新增 → 独立 rAF 零新增 → 触屏等价交互 → 该页人格未被稀释。
 4. **参考站点消化模式**（U30 定式，Two Sigma/Apple Sports/Accenture/openai.com 四轮验证）：**效果照收，库一个不引**——交互模式是价值，指定库不是；一律先核实仓库现状再写规格（prompt 声称的现状常过期）。
+5. **2026-07-25 P0 同步状态**：视觉侧接受 P0-01～P0-07、P0-09、P0-10 的平台门禁为已完成；P0-08 按站主决定保持未关闭，Games/League 不得因“视觉清理”被擅自永久退役。Sectors v3 已通过桌面与两档旗舰移动视口的实视图复核，但物理 iPhone/Samsung 的安全区、120 Hz、热降频仍是最终签署，不写成已真机通过。
 
 ---
 *交叉引用：所有实现路径、算法、schema、防坑清单见 `tech.md`。*

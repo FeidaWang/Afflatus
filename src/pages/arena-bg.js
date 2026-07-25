@@ -2,6 +2,8 @@
    Arena background - static PCB / chip substrate.
    The previous moving segmented "caterpillar" effect has been removed.
    ============================================================ */
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+
 (() => {
   'use strict';
 
@@ -9,7 +11,9 @@
   if (!cv || !cv.getContext) return;
 
   const ctx = cv.getContext('2d');
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'low', targetFps: 1 });
+  let dpr = 1;
   let W = 0;
   let H = 0;
   let board = null;
@@ -110,6 +114,7 @@
   }
 
   function init() {
+    dpr = renderPolicy.computeDpr(innerWidth, innerHeight, { minDpr: 0.75, maxDpr: 2 });
     W = cv.width = Math.floor(innerWidth * dpr);
     H = cv.height = Math.floor(innerHeight * dpr);
     cv.style.width = `${innerWidth}px`;
@@ -118,11 +123,13 @@
     render();
   }
 
-  init();
-
-  let resizeTimer = 0;
-  addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(init, 200);
+  renderCoordinator.register({
+    id: 'arena:pcb-background',
+    element: cv,
+    observe: false,
+    cost: 'low',
+    targetFps: 1,
+    onResize: init,
+    onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
   });
 })();

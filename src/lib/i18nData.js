@@ -29,9 +29,8 @@ export function t(value, lang) {
   return value;
 }
 
-/** Reads the page's current language the same way every other page does
-    (localStorage 'afflatus:lang' via <html lang>), so callers don't each
-    re-implement this check. */
+/** Reads the current language from <html lang>, which is pre-painted and
+    maintained by localeStore.js/i18n.js, so callers do not touch storage. */
 export function currentLang() {
   try {
     return (document.documentElement.lang || '').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en';

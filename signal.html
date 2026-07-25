@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en'}catch(e){}</script>
+<script type="module" src="/src/entry/performance.js"></script>
+<script src="/lib/data-bridge.js"></script>
 <!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
      fetch + init only runs once the browser reports idle time (or after a
      3s/2s fallback timeout for browsers without requestIdleCallback), so it
@@ -24,7 +26,7 @@
 })();
 </script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Project Afflatus · Signal — O5 Reserve Containment</title>
 <meta name="description" content="Signal: a Federal Reserve watch rendered as an SCP-style O5 Council dossier — FOMC containment review, rate-decision directive and Fable 5 Max sector calls (AI, memory, optical, semis, space). Desk view, not advice.">
 <meta name="theme-color" content="#0c0d0a">
@@ -43,6 +45,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles/signal.css">
+<link rel="stylesheet" href="/styles/responsive-primitives.css">
+<script type="module" src="/src/entry/dataBridge.js"></script>
+<script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="signal-page scp mood-bull" data-prev="/sectors.html" data-next="/games.html">
 <div class="scpbg" aria-hidden="true"><canvas id="scpCanvas"></canvas><div class="wm"><b>CLASSIFIED</b></div></div>
@@ -207,29 +212,6 @@
 </main>
 
 <script>
-/* classified world-control background: lat/long grid + pulsing control nodes */
-(function () {
-  var cv = document.getElementById('scpCanvas'); if (!cv || !cv.getContext) return;
-  var ctx = cv.getContext('2d'); var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
-  var W, H, nodes, raf = 0;
-  function init() { W = cv.width = innerWidth; H = cv.height = innerHeight; var n = Math.min(26, Math.round(W / 60)); nodes = []; for (var i = 0; i < n; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H, p: Math.random() * 6.28, s: 0.3 + Math.random() * 0.7 }); }
-  function frame(t) {
-    ctx.clearRect(0, 0, W, H);
-    // meridians / parallels (faint green graticule)
-    ctx.strokeStyle = 'rgba(245,196,0,0.08)'; ctx.lineWidth = 1;
-    for (var x = (t * 0.006) % 90; x < W; x += 90) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-    for (var y = 0; y < H; y += 90) { ctx.beginPath(); ctx.moveTo(0, y); var cy = y + Math.sin((y + t * 0.02) * 0.01) * 6; ctx.bezierCurveTo(W * 0.33, cy + 10, W * 0.66, cy - 10, W, y); ctx.stroke(); }
-    // control links + nodes
-    for (var i = 0; i < nodes.length; i++) { for (var j = i + 1; j < nodes.length; j++) { var a = nodes[i], b = nodes[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy); if (d < 190) { ctx.strokeStyle = 'rgba(240,180,41,' + (0.05 * (1 - d / 190)) + ')'; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); } } }
-    for (var k = 0; k < nodes.length; k++) { var nd = nodes[k]; var pulse = 0.5 + 0.5 * Math.sin(t * 0.001 + nd.p); ctx.fillStyle = 'rgba(245,196,0,' + (0.25 + pulse * 0.4) + ')'; ctx.fillRect(nd.x - 1.5, nd.y - 1.5, 3, 3); ctx.strokeStyle = 'rgba(245,196,0,' + (0.15 * pulse) + ')'; ctx.beginPath(); ctx.arc(nd.x, nd.y, 4 + pulse * 6, 0, 6.28); ctx.stroke(); }
-    if (Math.random() > 0.985) { ctx.fillStyle = 'rgba(214,69,61,0.05)'; ctx.fillRect(0, Math.random() * H, W, 2 + Math.random() * 30); }
-    raf = requestAnimationFrame(frame);
-  }
-  init(); if (RM) { frame(0); cancelAnimationFrame(raf); raf = 0; } else raf = requestAnimationFrame(frame);
-  addEventListener('resize', function () { clearTimeout(window.__st); window.__st = setTimeout(init, 200); });
-  document.addEventListener('visibilitychange', function () { if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; } else if (!document.hidden && !raf && !RM) raf = requestAnimationFrame(frame); });
-})();
-
 /* next-containment-test countdown — nearest of FOMC / CPI / NFP, not FOMC-only */
 (function () {
   // type-specific bilingual copy: label / when-word / release time / directive-word / directive text
@@ -386,7 +368,7 @@
       renderFilters(); render();
     });
   }
-  fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d.events || []; PILLARS = d.pillars || []; renderFilters(); render(); })
+  AfflatusFetchJson('signal').then(function (d) { DATA = d.events || []; PILLARS = d.pillars || []; renderFilters(); render(); })
     .catch(function () { list.innerHTML = '<div class="empty">' + T('Incident log unavailable.', '事件簿暂不可用。') + '</div>'; });
   addEventListener('afflatus-lang', function () { renderFilters(); render(); });
 })();
@@ -468,7 +450,7 @@
   }
 
   function render() { renderCompass(); renderPillars(); }
-  fetch('/signal-events.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
+  AfflatusFetchJson('signal').then(function (d) { DATA = d; render(); })
     .catch(function () {});
   addEventListener('afflatus-lang', render);
 })();

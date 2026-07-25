@@ -138,4 +138,28 @@ describe('renderRadar — five-dimension polygon', () => {
       { key: 'c', label: 'C', value: 50 }, { key: 'd', label: 'D', value: 50 }, { key: 'e', label: 'E', value: 50 },
     ])).not.toThrow();
   });
+  it('exposes the plotted values as a textual SVG name', () => {
+    const svg = renderRadar(dims);
+    expect(svg).toContain('aria-label="Five-dimension radar.');
+    expect(svg).toContain('Love 80 of 100');
+    expect(svg).toContain('Growth 100 of 100');
+  });
+});
+
+describe('chart accessibility summaries', () => {
+  it('names the natal wheel with ascendant and planet positions', () => {
+    const svg = renderWheel({
+      ascDeg: 25,
+      planets: [{ body: 'Sun', lonDeg: 101.25 }, { body: 'Mercury', lonDeg: 80, retro: true }],
+    });
+    expect(svg).toContain('Ascendant 25.0 degrees');
+    expect(svg).toContain('Sun 101.3 degrees');
+    expect(svg).toContain('Mercury 80.0 degrees retrograde');
+  });
+
+  it('names the aspect grid with its data relationships', () => {
+    const svg = renderAspectGrid([{ body: 'Sun', lonDeg: 10 }, { body: 'Moon', lonDeg: 12 }]);
+    expect(svg).toContain('aria-label="Aspect grid.');
+    expect(svg).toContain('Sun conj Moon');
+  });
 });

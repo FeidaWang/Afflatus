@@ -20,8 +20,8 @@
     link.addEventListener('pointerup', go);
   });
   window.addEventListener('keydown', (event) => {
-    const tag = (event.target?.tagName || '').toLowerCase();
-    if (event.metaKey || event.ctrlKey || event.altKey || ['input', 'textarea', 'select'].includes(tag)) return;
+    const interactive = event.target?.closest?.('a,button,input,textarea,select,canvas,[contenteditable="true"],[role="button"],[role="group"],[role="tab"],[role="slider"],[tabindex]');
+    if (event.metaKey || event.ctrlKey || event.altKey || interactive) return;
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
       turn(prev, 'prev');

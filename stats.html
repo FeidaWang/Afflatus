@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en'}catch(e){}</script>
+<script type="module" src="/src/entry/performance.js"></script>
+<script src="/lib/data-bridge.js"></script>
 <!-- Google tag (gtag.js) — deferred to idle, same pattern as every sub-page. -->
 <script>
 (function(){
@@ -20,7 +22,7 @@
 })();
 </script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Project Afflatus · Stats — 竞猜战绩存档</title>
 <meta name="description" content="Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 与 FIFA 世界杯 2026 全部预测的命中率、Wilson 置信区间、Brier 评分、可靠性校准图与 bootstrap 重采样，数据全部可回溯。">
 <meta name="theme-color" content="#070a12">
@@ -40,7 +42,7 @@
   --viz-axis:rgba(220,232,242,.28);--viz-grid:rgba(220,232,242,.07);--viz-tick:var(--dim);
   --viz-line-w:1.5px;--viz-marker-r:3;--viz-tip-bg:rgba(7,10,18,.96);--viz-tip-line:rgba(220,232,242,.14);--viz-tip-radius:8px}
 *{box-sizing:border-box;margin:0;padding:0}
-body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--mono);min-height:100vh}
+body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--mono);min-height:var(--viewport-small-height,100vh)}
 .wrap{max-width:1020px;margin:0 auto;padding:28px 20px 80px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:34px}
 .brand{display:flex;flex-direction:column;color:var(--ink);text-decoration:none}
@@ -73,6 +75,9 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 @media(max-width:760px){.grid2{grid-template-columns:1fr}}
 .bar-hit{cursor:pointer;transition:opacity .15s}
 svg:hover .bar-hit:not(:hover){opacity:.45}
+.bar-hit:focus{outline:none;stroke:var(--gold);stroke-width:3;filter:drop-shadow(0 0 4px rgba(232,173,111,.55))}
+.tbl tbody tr[role="button"]{cursor:pointer}
+.tbl tbody tr[role="button"]:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
 .tooltip{position:fixed;z-index:60;pointer-events:none;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);padding:10px 12px;font-size:11.5px;line-height:1.6;border-radius:var(--viz-tip-radius);max-width:280px;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
 .tooltip.show{opacity:1;transform:none}
 .tooltip b{color:var(--teal)}
@@ -123,6 +128,9 @@ svg:hover .bar-hit:not(:hover){opacity:.45}
 .termTip{position:fixed;z-index:90;max-width:34ch;padding:10px 12px;font:400 13px/1.6 var(--mono);color:var(--ink);background:var(--panel);border:1px solid var(--line);box-shadow:0 12px 28px rgba(0,0,0,.5)}
 .termTip[hidden]{display:none}
 </style>
+<link rel="stylesheet" href="/styles/responsive-primitives.css">
+<script type="module" src="/src/entry/dataBridge.js"></script>
+<script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="stats-page" data-prev="/signal.html" data-next="/horoscope.html">
 
@@ -175,14 +183,14 @@ svg:hover .bar-hit:not(:hover){opacity:.45}
       <div class="chart-card">
         <h3 data-en="Confidence-threshold explorer" data-zh="置信度阈值探索器">Confidence-threshold explorer</h3>
         <p class="note" data-en="&quot;Would only betting the high-conviction calls have done better?&quot; Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live. A demo of selection effects — shrinking n widens the interval faster than the rate improves." data-zh="「只押高置信度的预测会不会更准？」拖动阈值，n、命中率、Wilson 区间与 Brier 评分实时重算。这是一个选择效应演示——n 缩小让区间变宽的速度，比命中率提升的速度更快。">"Would only betting the high-conviction calls have done better?" Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live. A demo of selection effects — shrinking n widens the interval faster than the rate improves.</p>
-        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="thSlider" min="50" max="80" step="1" value="50"><span class="val" id="thVal">50%</span></div>
-        <div class="readout" id="thReadout"></div>
+        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="thSlider" min="50" max="80" step="1" value="50" aria-label="MSI confidence threshold"><span class="val" id="thVal">50%</span></div>
+        <div class="readout" id="thReadout" role="status" aria-live="polite"></div>
       </div>
       <div class="chart-card">
         <h3 data-en="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;bootstrap&quot;&gt;Bootstrap&lt;/button&gt; resampling" data-zh="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;bootstrap&quot;&gt;Bootstrap&lt;/button&gt; 重采样" data-i18n-html><button type="button" class="term" data-term="bootstrap">Bootstrap</button> resampling</h3>
         <p class="note" data-en="2,000 resamples (with replacement) of the resolved calls: the distribution of hit rates you'd see if this exact skill level replayed the tournament. Gold lines mark the 2.5% / 97.5% percentiles." data-zh="对已判定的预测做 2000 次有放回重采样：同一水平重打一遍比赛，命中率会落在什么分布。金线为 2.5% / 97.5% 分位。">2,000 resamples (with replacement) of the resolved calls: the distribution of hit rates you'd see if this exact skill level replayed the tournament. Gold lines mark the 2.5% / 97.5% percentiles.</p>
         <button class="btn" id="bootBtn" data-en="RUN ×2000" data-zh="重采样 ×2000">RUN ×2000</button>
-        <div id="bootHist"></div>
+        <div id="bootHist" role="status" aria-live="polite"></div>
       </div>
     </div>
 
@@ -248,14 +256,14 @@ svg:hover .bar-hit:not(:hover){opacity:.45}
       <div class="chart-card">
         <h3 data-en="Confidence-threshold explorer" data-zh="置信度阈值探索器">Confidence-threshold explorer</h3>
         <p class="note" data-en="Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live over the 16 knockout-stage calls." data-zh="拖动阈值，n、命中率、Wilson 区间与 Brier 评分基于 16 场淘汰赛预测实时重算。">Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live over the 16 knockout-stage calls.</p>
-        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="wcThSlider" min="50" max="80" step="1" value="50"><span class="val" id="wcThVal">50%</span></div>
-        <div class="readout" id="wcThReadout"></div>
+        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="wcThSlider" min="50" max="80" step="1" value="50" aria-label="World Cup confidence threshold"><span class="val" id="wcThVal">50%</span></div>
+        <div class="readout" id="wcThReadout" role="status" aria-live="polite"></div>
       </div>
       <div class="chart-card">
         <h3 data-en="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;bootstrap&quot;&gt;Bootstrap&lt;/button&gt; resampling" data-zh="&lt;button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;bootstrap&quot;&gt;Bootstrap&lt;/button&gt; 重采样" data-i18n-html><button type="button" class="term" data-term="bootstrap">Bootstrap</button> resampling</h3>
         <p class="note" data-en="2,000 resamples of the 16 resolved knockout calls. Gold lines mark the 2.5% / 97.5% percentiles." data-zh="对 16 场已判定的淘汰赛预测做 2000 次有放回重采样。金线为 2.5% / 97.5% 分位。">2,000 resamples of the 16 resolved knockout calls. Gold lines mark the 2.5% / 97.5% percentiles.</p>
         <button class="btn" id="wcBootBtn" data-en="RUN ×2000" data-zh="重采样 ×2000">RUN ×2000</button>
-        <div id="wcBootHist"></div>
+        <div id="wcBootHist" role="status" aria-live="polite"></div>
       </div>
     </div>
 
@@ -354,13 +362,33 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     tip.style.left = x + 'px'; tip.style.top = y + 'px';
   }
   function hideTip() { tip.classList.remove('show'); }
+  function makeSvgAction(node, label, action) {
+    node.setAttribute('role', 'button');
+    node.setAttribute('tabindex', '0');
+    node.setAttribute('aria-label', label);
+    node.addEventListener('keydown', function (event) {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      action();
+    });
+  }
+  function makeRowAction(row, label, action) {
+    row.setAttribute('role', 'button');
+    row.setAttribute('tabindex', '0');
+    row.setAttribute('aria-label', label);
+    row.addEventListener('keydown', function (event) {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      action();
+    });
+  }
 
   /* ---------- count-up ---------- */
   function countUp(node, target, suffix, dp) {
     if (RM) { node.textContent = (dp != null ? target.toFixed(dp) : target) + (suffix || ''); return; }
     var t0 = performance.now(), dur = 850;
     (function frame(t) {
-      var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      var k = Math.max(0, Math.min(1, (t - t0) / dur)), e = 1 - Math.pow(1 - k, 3);
       var v = target * e;
       node.textContent = (dp != null ? v.toFixed(dp) : Math.round(v)) + (suffix || '');
       if (k < 1) requestAnimationFrame(frame);
@@ -377,7 +405,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     cards.forEach(function (c) { io.observe(c); });
   }
 
-  fetch('/leagues-data.json').then(function (r) { return r.json(); }).then(render).catch(function () {
+  AfflatusFetchJson('leagues').then(render).catch(function () {
     document.getElementById('msiStrip').appendChild(el('div','stat','<b>—</b><small>data unavailable / 数据暂不可用</small>'));
   });
 
@@ -415,7 +443,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     var W = 720, H = 240, padL = 34, padB = 46, bw = (W - padL - 10) / Math.max(scored.length, 1);
     var NS = 'http://www.w3.org/2000/svg';
     var svg1 = document.createElementNS(NS, 'svg');
-    svg1.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg1.setAttribute('role', 'img');
+    svg1.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg1.setAttribute('role', 'group'); svg1.setAttribute('aria-label', 'MSI per-series confidence and outcomes');
     [0, 1].forEach(function (g) {
       var y = (H - padB) - g * (H - padB - 14);
       var ln = document.createElementNS(NS, 'line');
@@ -449,7 +477,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
         setTimeout(function () {
           var t0 = performance.now(), dur = 700;
           (function fr(t) {
-            var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+            var k = Math.max(0, Math.min(1, (t - t0) / dur)), e = 1 - Math.pow(1 - k, 3);
             r.setAttribute('height', hTarget * e); r.setAttribute('y', yBase - hTarget * e);
             if (k < 1) requestAnimationFrame(fr);
           })(t0);
@@ -462,6 +490,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       r.addEventListener('mousemove', function (ev) { showTip(tipHtml, ev); });
       r.addEventListener('mouseleave', hideTip);
       r.addEventListener('click', function () { hideTip(); openDrawer(x); });
+      makeSvgAction(r, (zh() ? '打开' : 'Open') + ' ' + x.s.home + ' vs ' + x.s.away + ', ' + Math.round(x.s.conf * 100) + '%, ' + (x.ok ? (zh() ? '判对' : 'correct') : (zh() ? '判错' : 'wrong')), function () { hideTip(); openDrawer(x); });
       svg1.appendChild(r);
       if (x.exact) {
         var st = document.createElementNS(NS, 'text');
@@ -486,7 +515,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       var w = wilson(hit, i + 1);
       pts.push([pl + i * pw, y2(hit / (i + 1))]); lo.push([pl + i * pw, y2(w[0])]); hi.push([pl + i * pw, y2(w[1])]);
     });
-    var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MSI cumulative hit rate and Wilson confidence interval">';
     svg2 += '<defs><linearGradient id="wilsonGradMsi" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + C.teal + '" stop-opacity=".16"/><stop offset="100%" stop-color="' + C.teal + '" stop-opacity="0"/></linearGradient></defs>';
     [0, 1].forEach(function (g) {
       svg2 += '<line x1="' + pl + '" y1="' + y2(g) + '" x2="' + (W2 - 6) + '" y2="' + y2(g) + '" stroke="' + (g === 0 ? C.axis : C.grid) + '"/>' +
@@ -513,7 +542,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     var W3 = 360, H3 = 210, pl3 = 36, pb3 = 26;
     function x3(v) { return pl3 + (v - 0.4) / 0.6 * (W3 - pl3 - 12); }
     function y3(v) { return (H3 - pb3) - v * (H3 - pb3 - 14); }
-    var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MSI reliability calibration diagram">';
     [0, 1].forEach(function (g) {
       svg3 += '<line x1="' + pl3 + '" y1="' + y3(g) + '" x2="' + (W3 - 6) + '" y2="' + y3(g) + '" stroke="' + (g === 0 ? C.axis : C.grid) + '"/>' +
               '<text x="4" y="' + (y3(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
@@ -569,7 +598,8 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
         samples.sort(function (a, b2) { return a - b2; });
         var p025 = samples.length ? samples[Math.floor(samples.length * 0.025)] / n : 0;
         var p975 = samples.length ? samples[Math.min(samples.length - 1, Math.floor(samples.length * 0.975))] / n : 0;
-        var s = '<svg viewBox="0 0 ' + Wb + ' ' + Hb + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+        var histLabel = done === TOTAL ? 'MSI bootstrap hit-rate distribution, 95% interval ' + fmtPct(p025) + ' to ' + fmtPct(p975) : 'MSI bootstrap resampling progress ' + done + ' of ' + TOTAL;
+        var s = '<svg viewBox="0 0 ' + Wb + ' ' + Hb + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + histLabel + '">';
         counts.forEach(function (c, k) {
           var h = c / mx * (Hb - pbb - 16);
           s += '<rect x="' + (plb + k * bwb + 0.5) + '" y="' + ((Hb - pbb) - h) + '" width="' + (bwb - 1) + '" height="' + h + '" fill="' + C.teal + '" fill-opacity=".8"/>';
@@ -632,6 +662,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
 
     /* ---- full log table (rows open the reasoning drawer too) ---- */
     var tbl = document.getElementById('msiLog');
+    tbl.setAttribute('aria-label', zh() ? 'MSI 全部系列赛判定记录；每行可打开原始理由' : 'MSI full series log; activate a row to open the original reasoning');
     var zhNow = zh();
     tbl.innerHTML = '<tr><th data-en="Round" data-zh="轮次">' + (zhNow ? '轮次' : 'Round') + '</th><th data-en="Series" data-zh="对阵">' + (zhNow ? '对阵' : 'Series') + '</th><th data-en="Call" data-zh="预测">' + (zhNow ? '预测' : 'Call') + '</th><th data-en="Conf." data-zh="置信度">' + (zhNow ? '置信度' : 'Conf.') + '</th><th data-en="Result" data-zh="结果">' + (zhNow ? '结果' : 'Result') + '</th><th></th></tr>';
     var tb = document.createElement('tbody');
@@ -641,6 +672,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       var mark = x.ok ? (x.exact ? '<span class="star">⭐</span>' : '<span class="ok">✓</span>') : '<span class="bad">✗</span>';
       var tr = el('tr', null, '<td>' + esc(pick(s, 'round', zhNow ? 'zh' : 'en')) + '</td><td>' + esc(s.home + ' vs ' + s.away) + '</td><td>' + esc(pickTeam + ' ' + (s.opusScore || '')) + '</td><td>' + Math.round(s.conf * 100) + '%</td><td>' + s.result.home + '-' + s.result.away + '</td><td>' + mark + '</td>');
       tr.addEventListener('click', function () { openDrawer(x); });
+      makeRowAction(tr, (zhNow ? '打开理由：' : 'Open reasoning: ') + s.home + ' vs ' + s.away, function () { openDrawer(x); });
       tb.appendChild(tr);
     });
     tbl.appendChild(tb);
@@ -657,7 +689,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
      to chart for them. Headline strip reads record{} (whole tournament,
      never recomputed); every other chart below is scoped to the 16
      knockout-stage matches that have full detail on file. */
-  fetch('/games-data.json').then(function (r) { return r.json(); }).then(renderWC).catch(function () {
+  AfflatusFetchJson('games').then(renderWC).catch(function () {
     var s = document.getElementById('wcStrip');
     if (s) s.appendChild(el('div','stat','<b>—</b><small>data unavailable / 数据暂不可用</small>'));
   });
@@ -696,7 +728,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     var W = 720, H = 240, padL = 34, padB = 46, bw = (W - padL - 10) / Math.max(scored.length, 1);
     var NS = 'http://www.w3.org/2000/svg';
     var svg1 = document.createElementNS(NS, 'svg');
-    svg1.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg1.setAttribute('role', 'img');
+    svg1.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg1.setAttribute('role', 'group'); svg1.setAttribute('aria-label', 'World Cup per-match confidence and outcomes');
     [0, 1].forEach(function (g) {
       var y = (H - padB) - g * (H - padB - 14);
       var ln = document.createElementNS(NS, 'line');
@@ -731,7 +763,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
         setTimeout(function () {
           var t0 = performance.now(), dur = 700;
           (function fr(t) {
-            var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+            var k = Math.max(0, Math.min(1, (t - t0) / dur)), e = 1 - Math.pow(1 - k, 3);
             r.setAttribute('height', hTarget * e); r.setAttribute('y', yBase - hTarget * e);
             if (k < 1) requestAnimationFrame(fr);
           })(t0);
@@ -744,6 +776,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       r.addEventListener('mousemove', function (ev) { showTip(tipHtml, ev); });
       r.addEventListener('mouseleave', hideTip);
       r.addEventListener('click', function () { hideTip(); openDrawerWC(x); });
+      makeSvgAction(r, (zh() ? '打开' : 'Open') + ' ' + x.s.home + ' vs ' + x.s.away + ', ' + Math.round(x.s.conf * 100) + '%, ' + (x.ok ? (zh() ? '判对' : 'correct') : (zh() ? '判错' : 'wrong')), function () { hideTip(); openDrawerWC(x); });
       svg1.appendChild(r);
       if (x.exact) {
         var st = document.createElementNS(NS, 'text');
@@ -768,7 +801,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       var w = wilson(hit, i + 1);
       pts.push([pl + i * pw, y2(hit / (i + 1))]); lo.push([pl + i * pw, y2(w[0])]); hi.push([pl + i * pw, y2(w[1])]);
     });
-    var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    var svg2 = '<svg viewBox="0 0 ' + W2 + ' ' + H2 + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="World Cup cumulative hit rate and Wilson confidence interval">';
     svg2 += '<defs><linearGradient id="wilsonGradWc" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + C.teal + '" stop-opacity=".16"/><stop offset="100%" stop-color="' + C.teal + '" stop-opacity="0"/></linearGradient></defs>';
     [0, 1].forEach(function (g) {
       svg2 += '<line x1="' + pl + '" y1="' + y2(g) + '" x2="' + (W2 - 6) + '" y2="' + y2(g) + '" stroke="' + (g === 0 ? C.axis : C.grid) + '"/>' +
@@ -795,7 +828,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
     var W3 = 360, H3 = 210, pl3 = 36, pb3 = 26;
     function x3(v) { return pl3 + (v - 0.4) / 0.6 * (W3 - pl3 - 12); }
     function y3(v) { return (H3 - pb3) - v * (H3 - pb3 - 14); }
-    var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+    var svg3 = '<svg viewBox="0 0 ' + W3 + ' ' + H3 + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="World Cup reliability calibration diagram">';
     [0, 1].forEach(function (g) {
       svg3 += '<line x1="' + pl3 + '" y1="' + y3(g) + '" x2="' + (W3 - 6) + '" y2="' + y3(g) + '" stroke="' + (g === 0 ? C.axis : C.grid) + '"/>' +
               '<text x="4" y="' + (y3(g) + 4) + '" fill="' + C.dim + '" font-size="10" font-family="monospace">' + Math.round(g * 100) + '%</text>';
@@ -851,7 +884,8 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
         samples.sort(function (a, b2) { return a - b2; });
         var p025 = samples.length ? samples[Math.floor(samples.length * 0.025)] / n : 0;
         var p975 = samples.length ? samples[Math.min(samples.length - 1, Math.floor(samples.length * 0.975))] / n : 0;
-        var s = '<svg viewBox="0 0 ' + Wb + ' ' + Hb + '" xmlns="http://www.w3.org/2000/svg" role="img">';
+        var histLabel = done === TOTAL ? 'World Cup bootstrap hit-rate distribution, 95% interval ' + fmtPct(p025) + ' to ' + fmtPct(p975) : 'World Cup bootstrap resampling progress ' + done + ' of ' + TOTAL;
+        var s = '<svg viewBox="0 0 ' + Wb + ' ' + Hb + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + histLabel + '">';
         counts.forEach(function (c, k) {
           var h = c / mx * (Hb - pbb - 16);
           s += '<rect x="' + (plb + k * bwb + 0.5) + '" y="' + ((Hb - pbb) - h) + '" width="' + (bwb - 1) + '" height="' + h + '" fill="' + C.teal + '" fill-opacity=".8"/>';
@@ -914,6 +948,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
 
     /* ---- knockout-stage log table (rows open the reasoning drawer too) ---- */
     var tbl2 = document.getElementById('wcLog');
+    tbl2.setAttribute('aria-label', zh() ? '世界杯淘汰赛逐场记录；每行可打开原始理由' : 'World Cup knockout-stage log; activate a row to open the original reasoning');
     var zhNow2 = zh();
     tbl2.innerHTML = '<tr><th data-en="Round" data-zh="轮次">' + (zhNow2 ? '轮次' : 'Round') + '</th><th data-en="Match" data-zh="对阵">' + (zhNow2 ? '对阵' : 'Match') + '</th><th data-en="Call" data-zh="预测">' + (zhNow2 ? '预测' : 'Call') + '</th><th data-en="Conf." data-zh="置信度">' + (zhNow2 ? '置信度' : 'Conf.') + '</th><th data-en="Result" data-zh="结果">' + (zhNow2 ? '结果' : 'Result') + '</th><th></th></tr>';
     var tb2 = document.createElement('tbody');
@@ -923,6 +958,7 @@ import { pickedTeam, pickCorrect, pickExact, matchesMvp } from '/src/lib/leagues
       var mark = x.ok ? (x.exact ? '<span class="star">⭐</span>' : '<span class="ok">✓</span>') : '<span class="bad">✗</span>';
       var tr = el('tr', null, '<td>' + esc(pick(m, 'round', lang)) + '</td><td>' + esc(pick(m, 'home', lang) + ' vs ' + pick(m, 'away', lang)) + '</td><td>' + esc(pickTeam + ' ' + (m.opusScore || '')) + '</td><td>' + Math.round(m.conf * 100) + '%</td><td>' + resultStr(m) + '</td><td>' + mark + '</td>');
       tr.addEventListener('click', function () { openDrawerWC(x); });
+      makeRowAction(tr, (zhNow2 ? '打开理由：' : 'Open reasoning: ') + pick(m, 'home', lang) + ' vs ' + pick(m, 'away', lang), function () { openDrawerWC(x); });
       tb2.appendChild(tr);
     });
     tbl2.appendChild(tb2);

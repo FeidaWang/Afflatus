@@ -30,6 +30,31 @@ function fixtureData() {
 }
 
 describe('buildForceGraphData', () => {
+  it('builds the ecosystem storyboard schema with stage anchors and typed relationships', () => {
+    const data = {
+      ecosystemGraph: {
+        chapters: [{ id: 'all', edge_types: [] }, { id: 'capital', edge_types: ['investment'] }],
+        nodes: [
+          { id: 'lab', label: 'Lab', kind: 'model', stage: 'models', products: ['Model X'] },
+          { id: 'cloud', label: 'Cloud', kind: 'cloud', stage: 'cloud', products: ['Compute Y'] },
+        ],
+        edges: [
+          { id: 'cloud-lab', source: 'cloud', target: 'lab', type: 'investment', strength: 0.9 },
+        ],
+      },
+    };
+    const graph = buildForceGraphData(data, { seed: 5 });
+    expect(graph.mode).toBe('ecosystem');
+    expect(graph.chapters).toHaveLength(2);
+    expect(graph.nodes.filter((node) => node.kind === 'anchor')).toHaveLength(2);
+    expect(graph.nodes.find((node) => node.id === 'lab').products).toEqual(['Model X']);
+    expect(graph.links.find((link) => link.id === 'cloud-lab')).toMatchObject({
+      kind: 'ecosystem',
+      type: 'investment',
+      weight: 0.9,
+    });
+  });
+
   it('creates 2 pole nodes + 1 node per vendor + 1 node per unique ticker', () => {
     const { nodes } = buildForceGraphData(fixtureData());
     // poles: US, CN (2); vendors: anthropic/openai/zhipu/alibaba (4);
@@ -80,6 +105,24 @@ describe('buildForceGraphData', () => {
 });
 
 describe('stepForceSim / settleForceSim', () => {
+  it('keeps ecosystem stage anchors pinned while related nodes settle around them', () => {
+    const graph = buildForceGraphData({
+      ecosystemGraph: {
+        nodes: [
+          { id: 'lab', label: 'Lab', kind: 'model', stage: 'models' },
+          { id: 'cloud', label: 'Cloud', kind: 'cloud', stage: 'cloud' },
+        ],
+        edges: [{ source: 'cloud', target: 'lab', type: 'cloud', strength: 0.8 }],
+      },
+    });
+    const state = createForceSim(graph);
+    settleForceSim(state, 300);
+    for (const anchor of state.nodes.filter((node) => node.kind === 'anchor')) {
+      expect(anchor.x).toBe(anchor.fx);
+      expect(anchor.y).toBe(anchor.fy);
+    }
+  });
+
   it('never produces NaN/Infinity after many iterations', () => {
     const state = createForceSim(buildForceGraphData(fixtureData(), { seed: 3 }));
     settleForceSim(state, 400);

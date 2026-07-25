@@ -12,6 +12,12 @@
  */
 import * as THREE from 'three';
 import { createOdinHull } from './odinHull.js';
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import {
+  canAcquireWebGLContext,
+  createWebGLContextLifecycle,
+  disposeThreeScene,
+} from '../lib/webglLifecycle.js';
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -26,11 +32,40 @@ function odinHullEnabled() {
 }
 
 export function createCapitalShip3D() {
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'high', targetFps: 60 });
+  let budgetActive = false;
+  let contextReady = true;
+  let surfaceActive = false;
   let renderer;
+  if (!canAcquireWebGLContext('home:capital-ship-3d')) return null;
   try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' }); }
   catch (e) { return null; }
+  const webglLifecycle = createWebGLContextLifecycle({
+    id: 'home:capital-ship-3d',
+    canvas: renderer.domElement,
+    showFallback: false,
+    onLost() {
+      contextReady = false;
+      surfaceActive = false;
+    },
+    onRestore() {
+      renderer.resetState?.();
+      contextReady = true;
+      surfaceActive = budgetActive;
+    },
+    onFallback() {
+      contextReady = false;
+      surfaceActive = false;
+    },
+  });
+  if (!webglLifecycle.canInitialize) {
+    webglLifecycle.dispose();
+    renderer.dispose();
+    renderer.forceContextLoss?.();
+    return null;
+  }
   renderer.setClearColor(0x000000, 0);
-  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false); // recover, not black-screen
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1.6, 0.1, 200);
@@ -248,8 +283,9 @@ export function createCapitalShip3D() {
   let lastW = 0, lastH = 0;
 
   function draw(ctx, w, h, now, t01, lang) {
+    if (!surfaceActive) return false;
     const t = clamp(t01, 0, 1);
-    const dpr = Math.min(devicePixelRatio || 1, 1.75);
+    const dpr = renderPolicy.computeDpr(w, h, { minDpr: 0.6, maxDpr: 1.75 });
     const rw = Math.max(2, Math.floor(w * dpr)), rh = Math.max(2, Math.floor(h * dpr));
     if (rw !== lastW || rh !== lastH) { renderer.setSize(rw, rh, false); camera.aspect = rw / rh; camera.updateProjectionMatrix(); lastW = rw; lastH = rh; }
 
@@ -297,7 +333,32 @@ export function createCapitalShip3D() {
     const pg = ctx.createLinearGradient(10, 0, w - 10, 0);
     pg.addColorStop(0, 'rgba(154,229,255,.9)'); pg.addColorStop(1, 'rgba(255,90,100,.95)');
     ctx.fillStyle = pg; ctx.fillRect(10, h - bar * .5, (w - 20) * t, 2);
+    return true;
   }
 
-  return { draw, ready: () => true };
+  const renderSurface = renderCoordinator.register({
+    id: 'home:capital-ship-3d',
+    observe: false,
+    cost: 'high',
+    targetFps: 60,
+    onResume() {
+      budgetActive = true;
+      surfaceActive = contextReady;
+    },
+    onPause() {
+      budgetActive = false;
+      surfaceActive = false;
+    },
+    onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
+    onDispose() {
+      webglLifecycle.dispose();
+      disposeThreeScene(scene, renderer, [bumpTex]);
+    },
+  });
+
+  return {
+    draw,
+    ready: () => true,
+    destroy() { renderSurface.dispose(); },
+  };
 }

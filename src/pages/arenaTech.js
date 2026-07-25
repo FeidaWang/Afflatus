@@ -11,6 +11,7 @@ import {
   analyzeTicker, normalizeDaily,
 } from '../lib/technicals.js';
 import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
+import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
 
 (() => {
   'use strict';
@@ -23,7 +24,6 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   // chip row has been replaced by the "Today's Recommended Trades" picks
   // board (arenaPicks.js), which dispatches an `arena-pick-select` CustomEvent
   // on card click — see the listener near the bottom of this file.
-  const UNIVERSE_URL = '/arena-universe.json';
   const CACHE_PREFIX = 'afflatus-ta:v1:';
   const SYM_RE = /^[A-Za-z.\-]{1,12}$/;
   const BUCKET_LABEL = {
@@ -101,14 +101,15 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   async function fetchHistory(sym) {
     const cached = cacheGet(sym);
     if (cached) return cached;
-    const r = await fetch(`/api/history?symbol=${encodeURIComponent(sym)}&interval=1day&outputsize=250`, { headers: arenaKeyHeaders() });
-    // Part 4 (urgent.md §18.4/§20): outside today's admin-free allowlist.
-    // Thrown as a distinct sentinel so renderPanel() can show the inline
-    // unlock form instead of the generic "could not load" error.
-    if (r.status === 403) throw new Error('GATED');
-    if (!r.ok) throw new Error('history http ' + r.status);
-    const j = await r.json();
-    if (!j || j.status !== 'ok' || !Array.isArray(j.values)) throw new Error('history payload');
+    let j;
+    try {
+      j = await fetchJson(`history:${sym}:1day:250`, { headers: arenaKeyHeaders() });
+    } catch (error) {
+      // Outside today's admin-free allowlist: preserve the dedicated unlock
+      // state instead of collapsing it into a generic data error.
+      if (error instanceof JsonDataError && error.status === 403) throw new Error('GATED');
+      throw error;
+    }
     const candles = j.values
       .map((v) => ({ t: String(v.datetime).slice(0, 10), o: +v.open, h: +v.high, l: +v.low, c: +v.close, v: +v.volume || 0 }))
       .filter((k) => isFinite(k.c) && k.c > 0)
@@ -119,9 +120,7 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
   }
   async function fetchQuote(sym) {
     try {
-      const r = await fetch(`/api/quote?symbol=${encodeURIComponent(sym)}`, { headers: arenaKeyHeaders() });
-      if (!r.ok) return null;
-      const q = await r.json();
+      const q = await fetchJson(`quote:${sym}`, { headers: arenaKeyHeaders() });
       return q && q.c ? q : null;
     } catch { return null; }
   }
@@ -411,7 +410,7 @@ import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
     }
   });
 
-  fetch(UNIVERSE_URL, { cache: 'no-store' }).then((r) => (r.ok ? r.json() : Promise.reject())).catch(() => null)
+  fetchJson('arena-universe').catch(() => null)
     .then((universeJson) => {
       state.universe = ((universeJson && universeJson.symbols) || []).map((s) => ({ sym: s.sym, name: s.name, bucket: s.bucket }));
     }).finally(() => {

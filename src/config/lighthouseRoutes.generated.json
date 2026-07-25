@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "routes": [
+    {
+      "id": "main",
+      "path": "/"
+    },
+    {
+      "id": "arena",
+      "path": "/arena.html"
+    },
+    {
+      "id": "sectors",
+      "path": "/sectors.html"
+    },
+    {
+      "id": "signal",
+      "path": "/signal.html"
+    },
+    {
+      "id": "stats",
+      "path": "/stats.html"
+    },
+    {
+      "id": "horoscope",
+      "path": "/horoscope.html"
+    },
+    {
+      "id": "serial",
+      "path": "/serial.html"
+    },
+    {
+      "id": "course",
+      "path": "/course.html"
+    }
+  ]
+}

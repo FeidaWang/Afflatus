@@ -15,7 +15,7 @@
  *
  *   const scene = createTopdownCombat({ canvas });
  *   scene.start();            // runs its own rAF battle loop
- *   scene.resize(w, h);       // css px; handles devicePixelRatio internally
+ *   scene.resize(w, h);       // css px; DPR comes from RenderBudgetCoordinator
  *   scene.stop(); scene.destroy();
  */
 import * as THREE from 'three';
@@ -24,6 +24,12 @@ import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
 import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
 import { activePhase, msUntilPhase, msRemaining } from '../combat/weaponClock.js';
 import { createLaunchPath, createLandingPath } from '../combat/flightPath.js';
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import {
+  canAcquireWebGLContext,
+  createWebGLContextLifecycle,
+  disposeThreeScene,
+} from '../lib/webglLifecycle.js';
 
 // ── U27 (27b-3): Stellaris-style atmospheric nebula backdrop ────────────
 // A single low-poly (icosahedron, subdiv 2 = 320 tris) BackSide dome, one
@@ -75,15 +81,20 @@ function glowTexture() {
   return t;
 }
 
-export function createTopdownCombat({ canvas }) {
+let surfaceSequence = 0;
+
+export function createTopdownCombat({ canvas, surfaceId }) {
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'high', targetFps: 60 });
+  const lifecycleId = surfaceId || `combat:topdown:${++surfaceSequence}`;
+  if (!canAcquireWebGLContext(lifecycleId)) return null;
+  let budgetActive = false;
+  let contextReady = true;
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   } catch (e) { return null; }
   renderer.setClearColor(0x04060a, 1);
-  // context-loss resilience (home runs many WebGL contexts; recover instead of black-screening)
-  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false);
-  renderer.domElement.addEventListener('webglcontextrestored', () => { try { renderer.render(scene, camera); } catch (e) {} }, false);
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x04060a, 0.012);
@@ -540,6 +551,7 @@ export function createTopdownCombat({ canvas }) {
 
   // ── animation loop ────────────────────────────────────────────────────────
   let W = 1, H = 1, raf = 0, running = false, t0 = 0, lastFire = 0, lastMissile = 0, lastLaser = 0, lastOrb = 0, lastChase = 0;
+  let sized = false, wantsLoop = false, surfaceActive = false, renderSurface = null, loopLastT = 0;
   // Real-state hooks (Phase 2b, partial): renderOnce(now, state) can pass a
   // snapshot from main.js's getBattleSnapshot(). Consumed narrowly for now —
   // kill events trigger a real explosion flash, and the comet hides while the
@@ -548,8 +560,10 @@ export function createTopdownCombat({ canvas }) {
   let lastKillSeen = null, wasAlive = true;
 
   function resize(w, h) {
-    W = Math.max(1, w); H = Math.max(1, h);
-    const dpr = Math.min(1.75, window.devicePixelRatio || 1); // cap for retina GPU load
+    W = Math.max(1, (w ?? canvas.clientWidth) || window.innerWidth);
+    H = Math.max(1, (h ?? canvas.clientHeight) || window.innerHeight);
+    sized = true;
+    const dpr = renderPolicy.computeDpr(W, H, { minDpr: 0.6, maxDpr: 1.75 });
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.aspect = W / H; camera.updateProjectionMatrix();
@@ -838,10 +852,26 @@ export function createTopdownCombat({ canvas }) {
   }
 
   function loop(now) {
+    const frameMs = loopLastT ? now - loopLastT : 0;
+    loopLastT = now;
     if (!t0) t0 = now;
     update(now);
     renderer.render(scene, camera);
+    renderSurface?.reportFrame(frameMs);
     if (running) raf = requestAnimationFrame(loop);
+  }
+
+  function startLoop() {
+    if (running || !surfaceActive) return;
+    running = true;
+    loopLastT = 0;
+    raf = requestAnimationFrame(loop);
+  }
+
+  function stopLoop() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
   }
 
   // V18 Phase 1 item 2 (ROADMAP §4): drives the camera director off a
@@ -866,14 +896,80 @@ export function createTopdownCombat({ canvas }) {
     }
   }
 
+  const webglLifecycle = createWebGLContextLifecycle({
+    id: lifecycleId,
+    canvas,
+    onLost() {
+      contextReady = false;
+      surfaceActive = false;
+      stopLoop();
+    },
+    onRestore() {
+      renderer.resetState?.();
+      contextReady = true;
+      surfaceActive = budgetActive;
+      if (sized) resize();
+      if (wantsLoop) startLoop();
+      else renderer.render(scene, camera);
+    },
+    onFallback() {
+      contextReady = false;
+      surfaceActive = false;
+      stopLoop();
+    },
+  });
+  if (!webglLifecycle.canInitialize) {
+    disposeThreeScene(scene, renderer);
+    return null;
+  }
+
+  renderSurface = renderCoordinator.register({
+    id: lifecycleId,
+    element: canvas,
+    observe: false,
+    cost: 'high',
+    targetFps: 60,
+    onResume() {
+      budgetActive = true;
+      surfaceActive = contextReady;
+      if (wantsLoop) startLoop();
+    },
+    onPause() {
+      budgetActive = false;
+      surfaceActive = false;
+      stopLoop();
+    },
+    onResize() {
+      if (sized) resize();
+    },
+    onQualityChange(nextPolicy) {
+      renderPolicy = nextPolicy;
+    },
+    onDispose() {
+      webglLifecycle.dispose();
+      disposeThreeScene(scene, renderer);
+    },
+  });
+
   return {
-    start() { if (!running) { running = true; raf = requestAnimationFrame(loop); } },
-    stop() { running = false; if (raf) cancelAnimationFrame(raf); },
+    start() {
+      wantsLoop = true;
+      startLoop();
+    },
+    stop() {
+      wantsLoop = false;
+      stopLoop();
+    },
     resize,
     // state: optional real-battle snapshot (see main.js getBattleSnapshot()).
     // Consumed for kill flashes + comet visibility; full state-driven flight
     // path is a separate follow-up (ROADMAP §4 Phase 2b).
-    renderOnce(now = performance.now(), state = null) { if (!t0) t0 = now; update(now, state); renderer.render(scene, camera); },
+    renderOnce(now = performance.now(), state = null) {
+      if (!surfaceActive) return;
+      if (!t0) t0 = now;
+      update(now, state);
+      renderer.render(scene, camera);
+    },
     driveMissileTimeline,
     // U24 (24c consumes this): start a launch or landing lifecycle on the
     // lead fighter. Ignored (returns false) while another event is live —
@@ -886,7 +982,11 @@ export function createTopdownCombat({ canvas }) {
       startFlight(kind, performance.now());
       return true;
     },
-    destroy() { this.stop(); renderer.dispose(); }
+    destroy() {
+      wantsLoop = false;
+      stopLoop();
+      renderSurface.dispose();
+    },
   };
 }
 
@@ -908,10 +1008,10 @@ function maybeMountHarness() {
   label.style.cssText = "position:absolute;top:16px;left:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.34em;color:#aee0ff;pointer-events:none";
   wrap.append(cv, close, label);
   document.body.appendChild(wrap);
-  const scene = createTopdownCombat({ canvas: cv });
+  const scene = createTopdownCombat({ canvas: cv, surfaceId: 'lab:topdown-combat' });
   if (!scene) { label.textContent = 'WebGL unavailable'; return; }
   const fit = () => scene.resize(wrap.clientWidth, wrap.clientHeight);
-  fit(); addEventListener('resize', fit);
+  fit();
   scene.start();
   close.addEventListener('click', () => { scene.destroy(); wrap.remove(); });
 }

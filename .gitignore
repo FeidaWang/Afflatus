@@ -1,6 +1,12 @@
 node_modules
 dist
+dist_*
 dist_old_*
 .DS_Store
 scripts/*.log
 scripts/outbox/
+arena-a-open-*.json
+probe_delete_test.txt
+playwright-report/
+test-results/
+.lighthouseci/

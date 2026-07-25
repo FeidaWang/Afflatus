@@ -34,6 +34,9 @@ jobs:
       - name: Data schema validation
         run: node scripts/validate-data.mjs
 
+      - name: Route manifest, sitemap and metadata
+        run: npm run site:check
+
       - name: No new !important (D1 @layer discipline)
         run: node scripts/check-no-new-important.mjs
 
@@ -46,3 +49,39 @@ jobs:
         # headroom above today's measured size, not a target to grow into —
         # lower it as Phase 2 chunk-splitting work lands.
         run: node scripts/check-bundle-budget.mjs
+
+  browser-quality:
+    name: Browser quality (desktop + flagship mobile)
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Browser, keyboard, axe and visual gates
+        run: npm run test:e2e
+
+      - name: Lighthouse route regression budgets
+        run: npm run lighthouse:ci
+
+      - name: Upload browser and Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-performance-reports
+          path: |
+            playwright-report/
+            test-results/
+            .lighthouseci/
+          if-no-files-found: ignore
+          retention-days: 7

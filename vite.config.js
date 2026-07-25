@@ -1,5 +1,21 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'path';
+import { BUILD_ROUTES } from './src/config/siteManifest.js';
+
+const buildInputs = Object.fromEntries(
+  BUILD_ROUTES.map((route) => [route.id, resolve(__dirname, route.file)]),
+);
+const responsiveCss = readFileSync(
+  resolve(__dirname, 'public/styles/responsive-primitives.css'),
+  'utf8',
+);
+const responsiveLinkPattern = /<link\s+rel=["']stylesheet["']\s+href=["']\/styles\/responsive-primitives\.css["']\s*>/i;
+const dataBridgeScript = readFileSync(
+  resolve(__dirname, 'public/lib/data-bridge.js'),
+  'utf8',
+);
+const dataBridgePattern = /<script\s+src=["']\/lib\/data-bridge\.js["']\s*><\/script>/i;
 
 // MPA multi-entry: index.html (home Three.js app) + the five sub-pages,
 // which used to live untouched in public/ (no bundling/hashing/minification).
@@ -8,6 +24,27 @@ import { resolve } from 'path';
 // static passthrough (unbundled) for now — see ROADMAP §6 for the follow-up
 // (converting those to ES modules for full bundling).
 export default defineConfig({
+  plugins: [
+    {
+      name: 'inline-critical-primitives',
+      transformIndexHtml(html) {
+        return html
+          .replace(
+            responsiveLinkPattern,
+            `<style data-responsive-primitives>\n${responsiveCss}</style>`,
+          )
+          .replace(
+            dataBridgePattern,
+            `<script data-data-bridge>\n${dataBridgeScript}</script>`,
+          );
+      },
+    },
+  ],
+  test: {
+    // Keep Playwright's browser specs out of Vitest's default *.spec.js
+    // discovery. All existing pure/unit suites live under tests/.
+    include: ['tests/**/*.test.{js,ts}'],
+  },
   server: {
     host: '127.0.0.1',
     port: 5173
@@ -18,20 +55,9 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-        arena: resolve(__dirname, 'arena.html'),
-        sectors: resolve(__dirname, 'sectors.html'),
-        signal: resolve(__dirname, 'signal.html'),
-        games: resolve(__dirname, 'games.html'),
-        league: resolve(__dirname, 'league.html'),
-        horoscope: resolve(__dirname, 'horoscope.html'),
-        serial: resolve(__dirname, 'serial.html'),
-        course: resolve(__dirname, 'course.html'),
-        stats: resolve(__dirname, 'stats.html'),
-        // U23 option-C prototype (disposable, noindex, not in nav SITE)
-        boot: resolve(__dirname, 'boot.html')
-      },
+      // Route inclusion is declared once in siteManifest.js. Redirect pages
+      // remain build entries until P0-08 retires their static payloads.
+      input: buildInputs,
       output: {
         // U21 Phase 1 D3 (rfcs/2026-07-12-u21-tech-audit.md §1.2/§1.4): the
         // safe half of chunk-splitting — vendor libraries get their own

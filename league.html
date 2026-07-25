@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en'}catch(e){}</script>
 <!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
      fetch + init only runs once the browser reports idle time (or after a
      3s/2s fallback timeout for browsers without requestIdleCallback), so it
@@ -24,7 +24,7 @@
 })();
 </script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Project Afflatus · Leagues — MSI 2026 Prediction Arena</title>
 <meta name="description" content="A Hextech-styled MSI 2026 prediction arena: Fable 5 Max's Bo5 bracket-stage calls, real book odds, and Fearless Draft pool tracking. For fun, not betting advice.">
 <meta name="theme-color" content="#0a1428">
@@ -43,6 +43,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=IBM+Plex+Mono:wght@400;600;700&family=Spectral:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles/league.css">
+<link rel="stylesheet" href="/styles/responsive-primitives.css">
+<script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="leagues-page" data-prev="/games.html" data-next="/horoscope.html">
 <div class="cyb" aria-hidden="true"><div class="glow"></div><div class="circuit"></div><div class="grid"></div><div class="scan"></div><div class="bar"></div></div>

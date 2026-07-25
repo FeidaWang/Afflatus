@@ -36,6 +36,7 @@ import { MINGZAO_DIST } from '../lib/mingzaoDist.js';
 import { iqPercentile, eqPercentile } from '../lib/quizNorm.js';
 import { downloadShareCard } from '../lib/shareCard.js';
 import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.js';
+import { fetchJson } from '../lib/fetchJson.js';
 
 (() => {
   'use strict';
@@ -57,6 +58,7 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
     me: null, other: null,
   };
   const T = (en, zh) => (state.lang === 'zh' ? zh : en);
+  const attr = (value) => String(value).replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[char]));
   const todayStr = () => { const d = new Date(); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
   const dateStrPlus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
 
@@ -71,7 +73,7 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
   // (scripts/gen-transits-daily.mjs, refreshed by a daily scheduled task),
   // not an ephemeris library, so this carries no bundle-weight concern.
   let transitsPromise = null;
-  const ensureTransits = () => transitsPromise || (transitsPromise = fetch('/transits-daily.json').then((r) => (r.ok ? r.json() : null)).catch(() => null));
+  const ensureTransits = () => transitsPromise || (transitsPromise = fetchJson('transits').catch(() => null));
 
   // ---- 时辰 selects -------------------------------------------------------
   // 子 (23:00-01:00) is split into 早子 (00:xx, same calendar day) and 晚子
@@ -780,7 +782,7 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
       const hasJi = p.stars.some((s) => s.transformation === '化忌');
       const starRow = p.stars.length ? p.stars.map(zwdStarHTML).join('') : `<span class="zw-empty">${T('—', '（空宫）')}</span>`;
       const ageRow = p.startAge != null ? `<div class="zwd-age">${p.startAge}–${p.endAge}${T('y', '岁')}</div>` : '';
-      return `<button type="button" class="zwd-cell${b === z.ming ? ' zw-ming' : ''}${b === z.shen ? ' zw-shen' : ''}${hasJi ? ' zwd-jihit' : ''}" data-branch="${b}">
+      return `<button type="button" class="zwd-cell${b === z.ming ? ' zw-ming' : ''}${b === z.shen ? ' zw-shen' : ''}${hasJi ? ' zwd-jihit' : ''}" data-branch="${b}" aria-pressed="false" aria-label="${attr(`${T(p.nameEn, p.name)} · ${STEMS[p.stem]}${BRANCHES[b]} · ${p.stars.map((star) => T(ZW_STAR_EN[star.index] || star.name, star.name)).join('、') || T('empty palace', '空宫')}`)}">
         <div class="zw-h"><span class="zw-p">${T(p.nameEn, p.name)}</span><span class="zw-b">${STEMS[p.stem]}${BRANCHES[b]}</span></div>
         <div class="zwd-stars">${starRow}</div>
         ${ageRow}
@@ -796,7 +798,7 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
         : T('This chart pattern favors running things solo — shared ownership reads as higher friction here.', '此命局更偏向独立运作——共同持有、合伙分利这件事，摩擦信号偏高。')}</p>
     </div>`;
 
-    return `<div class="zwd-inner"><svg class="zwd-svg" id="zwdSvg"></svg><div class="zwd-grid">${cells}</div></div>
+    return `<div class="zwd-inner"><svg class="zwd-svg" id="zwdSvg" aria-hidden="true"></svg><div class="zwd-grid">${cells}</div></div>
       <div class="zwd-detail" id="zwdDetail" hidden></div>
       ${prCard}
       <div id="zwdSynthesis"></div>
@@ -815,12 +817,16 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
     inner.querySelectorAll('.zwd-cell').forEach((btn) => {
       btn.addEventListener('click', () => {
         const wasActive = btn.classList.contains('zwd-active');
-        inner.querySelectorAll('.zwd-cell').forEach((b) => b.classList.remove('zwd-active', 'zwd-linked'));
+        inner.querySelectorAll('.zwd-cell').forEach((b) => {
+          b.classList.remove('zwd-active', 'zwd-linked');
+          b.setAttribute('aria-pressed', 'false');
+        });
         svg.innerHTML = '';
         if (wasActive) { detail.hidden = true; return; }
         const target = Number(btn.dataset.branch);
         const s = sanFangSiZheng(deep.palaces, target);
         btn.classList.add('zwd-active');
+        btn.setAttribute('aria-pressed', 'true');
         const box = inner.getBoundingClientRect();
         const pt = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top }; };
         const tPt = pt(btn);
@@ -1085,14 +1091,16 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
         const cell = m.cells.find((c) => c.pa === ia && c.pb === ib);
         const cls = bmCellClass(cell.relations);
         const label = cell.relations.length ? [...new Set(cell.relations.map((t) => BM_GLYPH[t]))].join('') : '·';
-        return `<button type="button" class="synbm-cell ${cls}" data-pa="${ia}" data-pb="${ib}" title="${cell.texts.join(' / ') || T('no relation', '无明显关系')}">${label}</button>`;
+        const relationText = cell.texts.join(' / ') || T('no relation', '无明显关系');
+        const accessibleLabel = `${T(...BM_PLABEL[ia])} × ${T(...BM_PLABEL[ib])}: ${relationText}`;
+        return `<button type="button" class="synbm-cell ${cls}" data-pa="${ia}" data-pb="${ib}" aria-pressed="false" aria-label="${attr(accessibleLabel)}" title="${attr(relationText)}">${label}</button>`;
       }).join('')}`).join('')}
     </div>`;
     const caveat = `<p class="bz-caveat">${T(
       `${m.combos.length} combination${m.combos.length === 1 ? '' : 's'} · ${m.clashes.length} clash${m.clashes.length === 1 ? '' : 'es'} found across both charts' branches — tap a highlighted cell to see which pillars connect. Overall branch score ${m.score}/100.`,
       `双方地支之间共找到 ${m.combos.length} 组合 · ${m.clashes.length} 组冲刑害破——点击高亮格可看具体是哪两柱相连。地支综合分 ${m.score}/100。`
     )}</p>`;
-    return `<div class="synbm-inner"><svg class="synbm-svg" id="synbmSvg"></svg>${dual}${grid}${caveat}</div>`;
+    return `<div class="synbm-inner"><svg class="synbm-svg" id="synbmSvg" aria-hidden="true"></svg>${dual}${grid}${caveat}</div>`;
   }
 
   function wireSynBaziMatrix() {
@@ -1102,10 +1110,14 @@ import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.
     inner.querySelectorAll('.synbm-cell').forEach((btn) => {
       btn.addEventListener('click', () => {
         const wasActive = btn.classList.contains('active');
-        inner.querySelectorAll('.synbm-cell.active').forEach((b) => b.classList.remove('active'));
+        inner.querySelectorAll('.synbm-cell.active').forEach((b) => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
         svg.innerHTML = '';
         if (wasActive || btn.classList.contains('neutral')) return;
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
         const aCard = inner.querySelector(`[data-side="a"][data-pid="${btn.dataset.pa}"]`);
         const bCard = inner.querySelector(`[data-side="b"][data-pid="${btn.dataset.pb}"]`);
         if (!aCard || !bCard) return;

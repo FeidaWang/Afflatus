@@ -1,21 +1,5 @@
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import { clamp, rand } from '../utils/math.js';
-
-// Hard backing-store budget. Three fullscreen canvases (starfield,
-// black-hole WebGL, event-layer) all share this dpr. The previous stepped
-// cap (1.25/1.5/2 by area) still let each canvas grow without an absolute
-// ceiling, so at fullscreen the three backing stores together blew past the
-// GPU tile-memory budget and Chrome re-rastered the WHOLE document — text
-// included — at reduced scale. Here we instead pin each canvas to <= a fixed
-// pixel ceiling: dpr = sqrt(BUDGET / viewportArea), clamped. Soft glow can't
-// tell 0.9x from 2x, but freeing that memory lets the root/text layer keep
-// its native scale and stay sharp. Half-screen windows stay near 2x (crisp),
-// which is why half-screen already looked fine.
-const BUDGET_PX = 3_600_000; // ~ a 2560x1440 frame, per canvas
-function computeDpr(w, h) {
-  const area = Math.max(1, w * h);
-  const budgetDpr = Math.sqrt(BUDGET_PX / area);
-  return Math.min(devicePixelRatio || 1, Math.max(0.6, budgetDpr));
-}
 
 // Runs the star/warp draw loop in a Worker via OffscreenCanvas so the main
 // thread only pays for tiny postMessage calls each frame (pointer x/y +
@@ -24,7 +8,7 @@ function computeDpr(w, h) {
 // back to the original main-thread canvas path (untouched below) on any
 // browser/engine that lacks transferControlToOffscreen or module Workers —
 // no feature gets worse, it just doesn't get the offload.
-function tryCreateWorkerScene(canvas) {
+function tryCreateWorkerScene(canvas, computeDpr) {
   if (typeof OffscreenCanvas === 'undefined') return null;
   if (typeof canvas.transferControlToOffscreen !== 'function') return null;
   if (typeof Worker === 'undefined') return null;
@@ -57,6 +41,9 @@ function tryCreateWorkerScene(canvas) {
     return {
       resize,
       draw: null, // replaced below once we know getPointer/getWarpIntensity
+      pause() { worker.postMessage({ type: 'stop' }); },
+      resume() { worker.postMessage({ type: 'start' }); },
+      destroy() { worker.terminate(); },
       get width() { return width; },
       get height() { return height; },
       get dpr() { return dpr; },
@@ -69,10 +56,14 @@ function tryCreateWorkerScene(canvas) {
 }
 
 export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) {
-  const workerScene = tryCreateWorkerScene(canvas);
+  const coordinator = getRenderBudgetCoordinator();
+  let renderPolicy = coordinator.getPolicy({ cost: 'medium', targetFps: 60 });
+  const computeDpr = (width, height) => renderPolicy.computeDpr(width, height, { minDpr: 0.6 });
+  const workerScene = tryCreateWorkerScene(canvas, computeDpr);
   if (workerScene) {
     const worker = workerScene._worker;
     let lastIntensity = null;
+    let sized = false;
     workerScene.draw = () => {
       const pointer = getPointer();
       worker.postMessage({ type: 'pointer', x: pointer.x, y: pointer.y });
@@ -82,9 +73,32 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
         worker.postMessage({ type: 'intensity', value: intensity });
       }
     };
+    const resize = () => {
+      sized = true;
+      return workerScene.resize();
+    };
+    const surface = coordinator.register({
+      id: 'home:background-worker',
+      element: canvas,
+      observe: false,
+      cost: 'medium',
+      targetFps: 60,
+      onPause: workerScene.pause,
+      onResume: workerScene.resume,
+      onQualityChange(nextPolicy) {
+        renderPolicy = nextPolicy;
+        if (sized) resize();
+      },
+    });
     return {
       draw: workerScene.draw,
-      resize: workerScene.resize,
+      resize,
+      pause: workerScene.pause,
+      resume: workerScene.resume,
+      destroy() {
+        surface.unregister();
+        workerScene.destroy();
+      },
       get width() { return workerScene.width; },
       get height() { return workerScene.height; },
       get dpr() { return workerScene.dpr; },
@@ -98,6 +112,7 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
   let dpr = 1;
   let stars = [];
   let warpStars = [];
+  let sized = false;
 
   function buildStars() {
     stars = [];
@@ -132,6 +147,7 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
   }
 
   function resize() {
+    sized = true;
     dpr = computeDpr(innerWidth, innerHeight);
     width = canvas.width = innerWidth * dpr;
     height = canvas.height = innerHeight * dpr;
@@ -221,9 +237,24 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
     drawWarp(intensity);
   }
 
+  const surface = coordinator.register({
+    id: 'home:background-canvas',
+    element: canvas,
+    observe: false,
+    cost: 'medium',
+    targetFps: 60,
+    onQualityChange(nextPolicy) {
+      renderPolicy = nextPolicy;
+      if (sized) resize();
+    },
+  });
+
   return {
     draw,
     resize,
+    pause() {},
+    resume() {},
+    destroy() { surface.unregister(); },
     get width() { return width; },
     get height() { return height; },
     get dpr() { return dpr; },

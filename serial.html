@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en'}catch(e){}</script>
+<script type="module" src="/src/entry/performance.js"></script>
+<script src="/lib/data-bridge.js"></script>
 <!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
      fetch + init only runs once the browser reports idle time (or after a
      3s/2s fallback timeout for browsers without requestIdleCallback), so it
@@ -50,6 +52,9 @@
 {"@type":"Book","name":"玉熙宫词","alternateName":"无限流 · 明穿 · 灵魂契约 · 权谋求生","author":{"@type":"Person","name":"槐酿"},"description":"温哥华的雨夜，数据科学分析师白道微与公共卫生研究员常灵珂在剧本杀局上初识，一本明朝古本《玉熙宫词》却在烛灭的瞬间将两人卷入嘉靖年间，SYS 强制绑定二人为「同契」。系统宣示：明幕共十节，一节一局，一节一判——判失者卷宗封存。他的技能是拾遗（回放过往场景细节），她的技能是先见（预知短时未来景象）；清流与严党的博弈之下，她入宫为婢求生，他赴京赶考步步为营，在改稻为桑、毁堤淹田的惊涛里解谜、渡节、护人。连载中，规划30章约40万字。","inLanguage":"zh-CN","genre":["无限流","明穿","灵魂契约","权谋智斗","大明官场","生存游戏化"],"url":"https://feida.au/serial.html"}
 ]}
 </script>
+<link rel="stylesheet" href="/styles/responsive-primitives.css">
+<script type="module" src="/src/entry/dataBridge.js"></script>
+<script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <!-- U16a: data-no-page-turn opts this page out of the site-wide prev/next
      page-turn system (edge arrows removed below, and nav.js skips writing
@@ -558,28 +563,6 @@
     applyTheme(next); fabMenu.classList.remove('open'); toast('已切换到' + ({green:'日间护眼',night:'夜间琥珀（低蓝光）'})[next]);
   });
 
-  /* ---------- retro backdrop canvas ---------- */
-  (function () {
-    var cv = document.getElementById('retroCanvas'); if (!cv || !cv.getContext) return;
-    var ctx = cv.getContext('2d'); var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
-    var W, H, raf = 0;
-    function init() { W = cv.width = innerWidth; H = cv.height = innerHeight; }
-    function frame(t) {
-      ctx.clearRect(0, 0, W, H);
-      ctx.strokeStyle = 'rgba(201,131,74,0.06)'; ctx.lineWidth = 1;
-      var step = 64;
-      for (var x = (t * 0.004) % step; x < W; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-      for (var y = (t * 0.002) % step; y < H; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-      ctx.strokeStyle = 'rgba(79,214,196,0.05)';
-      var r = 90 + 60 * Math.sin(t * 0.0003);
-      ctx.beginPath(); ctx.arc(W * 0.85, H * 0.15, r, 0, 6.283); ctx.stroke();
-      raf = requestAnimationFrame(frame);
-    }
-    init(); if (RM) { frame(0); cancelAnimationFrame(raf); raf = 0; } else raf = requestAnimationFrame(frame);
-    addEventListener('resize', function () { clearTimeout(window.__st2); window.__st2 = setTimeout(init, 200); });
-    document.addEventListener('visibilitychange', function () { if (document.hidden && raf) { cancelAnimationFrame(raf); raf = 0; } else if (!document.hidden && !raf && !RM) raf = requestAnimationFrame(frame); });
-  })();
-
   /* ---------- bookshelf ---------- */
   function renderShelf() {
     var shelf = document.getElementById('shelf'); shelf.innerHTML = '';
@@ -610,7 +593,7 @@
   function selectNovel(idx, scrollToShelf) {
     var n = state.novels[idx]; if (!n) return;
     if (!n.chapters) {
-      fetch('/novels/' + n.id + '.json').then(function (r) { return r.json(); }).then(function (data) {
+      AfflatusFetchJson('novel:' + n.id).then(function (data) {
         n.chapters = data.chapters;
         selectNovel(idx, scrollToShelf);
       }).catch(function () {
@@ -683,7 +666,7 @@
     var savedFs = 18; try { savedFs = Number(localStorage.getItem(LS.fs)) || 18; } catch (e) {}
     curFs = applyFs(savedFs);
 
-    fetch('/novels-index.json').then(function (r) { return r.json(); }).then(function (data) {
+    AfflatusFetchJson('novels-index').then(function (data) {
       state.novels = data.novels || [];
       if (!state.novels.length) throw new Error('no novels');
 

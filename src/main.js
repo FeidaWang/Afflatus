@@ -14,6 +14,12 @@ import {
   createInitialFleetHp,
 } from './config/combatConfig.js';
 import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
+import { getLocale, setLocale } from './lib/localeStore.js';
+import { getRenderBudgetCoordinator } from './lib/renderBudgetCoordinator.js';
+import {
+  canAcquireWebGLContext,
+  createWebGLContextLifecycle,
+} from './lib/webglLifecycle.js';
 import { mountTermGlossary } from './lib/termGlossary.js';
 import { createBackgroundScene } from './scene/backgroundScene.js';
 import { createSpriteCraft } from './scene/spriteCraft.js';
@@ -44,13 +50,22 @@ import { applyDeviceBodyClasses, setText } from './utils/dom.js';
 import { clamp, easeOut, lerp, rand } from './utils/math.js';
 import { createCursor } from './ui/cursor.ts';
 
-let currentLang='en';
+let currentLang=getLocale('en');
 // U46 46-乙-①: hero strip labels sl1(Sharpe)/sl2(Max Drawdown)/sl3(Beta) get a
 // term-glossary button; sl0(Annualized Return) is plain English, no term.
 const STRIP_TERMS=[null,'sharpe','drawdown','beta'];
 const termGlossaryCtl=mountTermGlossary({getLang:()=>currentLang});
-try{const savedLang=localStorage.getItem('afflatus-lang');if(savedLang==='zh'||savedLang==='en')currentLang=savedLang;}catch(e){}
 const REDUCED_MOTION=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const renderBudgetCoordinator=getRenderBudgetCoordinator();
+let hudRenderPolicy=renderBudgetCoordinator.getPolicy({cost:'low',targetFps:60});
+renderBudgetCoordinator.register({
+  id:'home:hud-canvases',
+  element:document.documentElement,
+  observe:false,
+  cost:'low',
+  targetFps:60,
+  onQualityChange(nextPolicy){hudRenderPolicy=nextPolicy;}
+});
 
 applyDeviceBodyClasses();
 
@@ -103,7 +118,7 @@ function getTopdownCV(){
   if(!topdownTried){
     topdownTried=true;
     import('./scene/topdownCombat.js')
-      .then(m=>{ try{ topdownCanvas=document.createElement('canvas'); topdownCV=m.createTopdownCombat({canvas:topdownCanvas}); }catch(e){ topdownCV=null; } })
+      .then(m=>{ try{ topdownCanvas=document.createElement('canvas'); topdownCV=m.createTopdownCombat({canvas:topdownCanvas,surfaceId:'home:topdown-combat'}); }catch(e){ topdownCV=null; } })
       .catch(()=>{ topdownCV=null; });
   }
   return topdownCV;
@@ -218,7 +233,7 @@ function updateCommandButton(){
   ];
   // U27 27c: BRIDGE SIM entry — home-page-only (this dropdown only exists on
   // index.html; boot.html is a deliberately non-indexed prototype, so it's
-  // appended here rather than added to nav.js's site-wide SITE array).
+  // appended here rather than added to the site manifest's primary routes).
   pages.push({path:'/boot.html',en:'Bridge Sim',zh:'舰桥模拟'});
   const norm=(p)=>{p=(p||'/').replace(/index\.html$/,'');return p===''?'/':p;};
   const here=norm(location.pathname);
@@ -601,9 +616,6 @@ function updateTopTelemetry(){
   } catch(e){}
 }
 
-function sizeRadar(){
-  radarDeck.resize();
-}
 function angleDelta(a,b){return Math.atan2(Math.sin(a-b),Math.cos(a-b));}
 function getCannonFx(){
   if(!mainCannonFx) return null;
@@ -616,6 +628,7 @@ function getCannonFx(){
   return {...mainCannonFx,mode:'charge',t:clamp((now-mainCannonFx.chargeStart)/4500,0,1)};
 }
 function drawRadar(){
+  if(!radarDeck.active){document.body.classList.remove('radar-sweeping');return;}
   if(!combatHot){document.body.classList.remove('radar-sweeping');return;}
   const w=radarCanvas.width, h=radarCanvas.height;
   if(!w||!h) return;
@@ -867,7 +880,7 @@ function drawRadar(){
 
 function drawAttitude(now){
   const canvas=document.getElementById('attitudeCanvas'); if(!canvas) return;
-  const ctx=canvas.getContext('2d'), rect=canvas.getBoundingClientRect(), dpr=Math.min(2, devicePixelRatio || 1);
+  const ctx=canvas.getContext('2d'), rect=canvas.getBoundingClientRect(), dpr=hudRenderPolicy.computeDpr(rect.width,rect.height,{minDpr:.75,maxDpr:2});
   if(canvas.width !== rect.width*dpr || canvas.height !== rect.height*dpr){ canvas.width=rect.width*dpr; canvas.height=rect.height*dpr; }
   const cx=rect.width/2, cy=rect.height/2;
   ctx.clearRect(0,0,canvas.width,canvas.height); ctx.save(); ctx.scale(dpr,dpr);
@@ -892,7 +905,7 @@ function drawAttitude(now){
 
 function setupFeedCanvas(canvas){
   if(!canvas) return null;
-  const rect=canvas.getBoundingClientRect(), dpr=Math.min(2,devicePixelRatio||1);
+  const rect=canvas.getBoundingClientRect(), dpr=hudRenderPolicy.computeDpr(rect.width,rect.height,{minDpr:.75,maxDpr:2});
   if(rect.width<2||rect.height<2) return null;
   if(canvas.width!==Math.floor(rect.width*dpr)||canvas.height!==Math.floor(rect.height*dpr)){
     canvas.width=Math.floor(rect.width*dpr);canvas.height=Math.floor(rect.height*dpr);
@@ -1543,6 +1556,8 @@ const saturnRenderer=createSaturnRenderer(orbitalCanvas);
 
 function createSaturnRenderer(canvas){
   if(!canvas) return null;
+  const surfaceId='home:saturn-blackhole';
+  if(!canAcquireWebGLContext(surfaceId)) return null;
   const gl=canvas.getContext('webgl',{
     alpha:true,
     antialias:false,
@@ -1553,7 +1568,6 @@ function createSaturnRenderer(canvas){
     powerPreference:'high-performance'
   });
   if(!gl) return null;
-  canvas.addEventListener('webglcontextlost',(e)=>e.preventDefault(),false); // keep the canvas alive on context loss
   const vert=`
     attribute vec2 aPos;
     void main(){gl_Position=vec4(aPos,0.0,1.0);}
@@ -1654,31 +1668,52 @@ function createSaturnRenderer(canvas){
     }
     return shader;
   };
-  const vs=compile(gl.VERTEX_SHADER,vert),fs=compile(gl.FRAGMENT_SHADER,frag);
-  if(!vs||!fs) return null;
-  const program=gl.createProgram();
-  gl.attachShader(program,vs);gl.attachShader(program,fs);gl.linkProgram(program);
-  if(!gl.getProgramParameter(program,gl.LINK_STATUS)){
-    console.warn(gl.getProgramInfoLog(program));
-    return null;
+  let program=null,buffer=null,aPos=-1,loc=null,ready=false,disposed=false,currentDpr=1;
+  function destroyResources(){
+    ready=false;
+    if(buffer) gl.deleteBuffer(buffer);
+    if(program) gl.deleteProgram(program);
+    buffer=null;program=null;loc=null;aPos=-1;
   }
-  const buffer=gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
-  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
-  const aPos=gl.getAttribLocation(program,'aPos');
-  const loc={
-    resolution:gl.getUniformLocation(program,'uResolution'),
-    center:gl.getUniformLocation(program,'uCenter'),
-    time:gl.getUniformLocation(program,'uTime'),
-    intensity:gl.getUniformLocation(program,'uIntensity'),
-    eventR:gl.getUniformLocation(program,'uEventR'),
-    readFade:gl.getUniformLocation(program,'uReadFade')
-  };
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-  canvas.addEventListener('webglcontextlost',e=>e.preventDefault());
-  return {
-    resize(dpr){
+  function buildResources(){
+    destroyResources();
+    const vs=compile(gl.VERTEX_SHADER,vert),fs=compile(gl.FRAGMENT_SHADER,frag);
+    if(!vs||!fs){
+      if(vs) gl.deleteShader(vs);
+      if(fs) gl.deleteShader(fs);
+      return false;
+    }
+    const nextProgram=gl.createProgram();
+    gl.attachShader(nextProgram,vs);gl.attachShader(nextProgram,fs);gl.linkProgram(nextProgram);
+    gl.deleteShader(vs);gl.deleteShader(fs);
+    if(!gl.getProgramParameter(nextProgram,gl.LINK_STATUS)){
+      console.warn(gl.getProgramInfoLog(nextProgram));
+      gl.deleteProgram(nextProgram);
+      return false;
+    }
+    const nextBuffer=gl.createBuffer();
+    if(!nextBuffer){gl.deleteProgram(nextProgram);return false;}
+    program=nextProgram;buffer=nextBuffer;
+    gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+    aPos=gl.getAttribLocation(program,'aPos');
+    loc={
+      resolution:gl.getUniformLocation(program,'uResolution'),
+      center:gl.getUniformLocation(program,'uCenter'),
+      time:gl.getUniformLocation(program,'uTime'),
+      intensity:gl.getUniformLocation(program,'uIntensity'),
+      eventR:gl.getUniformLocation(program,'uEventR'),
+      readFade:gl.getUniformLocation(program,'uReadFade')
+    };
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+    ready=true;
+    return true;
+  }
+  function resizeSurface(dpr){
+      currentDpr=dpr||1;
+      dpr=currentDpr;
+      if(disposed) return;
       const w=Math.max(1,Math.floor(innerWidth*dpr));
       const h=Math.max(1,Math.floor(innerHeight*dpr));
       if(canvas.width!==w||canvas.height!==h){
@@ -1686,9 +1721,24 @@ function createSaturnRenderer(canvas){
       }
       canvas.style.width=innerWidth+'px';
       canvas.style.height=innerHeight+'px';
-      gl.viewport(0,0,w,h);
+      if(ready) gl.viewport(0,0,w,h);
+  }
+  const webglLifecycle=createWebGLContextLifecycle({
+    id:surfaceId,
+    canvas,
+    onLost(){ready=false;},
+    onRestore(){
+      if(disposed) return;
+      if(buildResources()) resizeSurface(currentDpr);
     },
+    onFallback(){ready=false;}
+  });
+  if(webglLifecycle.canInitialize) buildResources();
+  else gl.getExtension('WEBGL_lose_context')?.loseContext();
+  return {
+    resize:resizeSurface,
     draw(time,intensity){
+      if(!ready||disposed||!program||!buffer||!loc) return;
       const dpr=canvas.width/Math.max(1,innerWidth);
       const compact=innerWidth<880;
       const readFade=clamp(1-Math.max(0,scrollY-innerHeight*.42)/(innerHeight*.85),.16,1);
@@ -1708,6 +1758,12 @@ function createSaturnRenderer(canvas){
       gl.uniform1f(loc.eventR,eventR*dpr);
       gl.uniform1f(loc.readFade,readFade);
       gl.drawArrays(gl.TRIANGLES,0,6);
+    },
+    destroy(){
+      if(disposed) return;
+      disposed=true;
+      destroyResources();
+      webglLifecycle.dispose();
     }
   };
 }
@@ -1720,12 +1776,10 @@ function resize(){
   H=backgroundScene.height;
   saturnRenderer?.resize(DPR);
 }
-addEventListener('resize',resize);
 /* ===== NEW COMET, WEAPONS & FX ===== */
 const evtCanvas=document.getElementById('event-layer');
 const ectx=evtCanvas.getContext('2d');
-function resizeEvt(){ evtCanvas.width=innerWidth*DPR; evtCanvas.height=innerHeight*DPR; evtCanvas.style.width=innerWidth+'px'; evtCanvas.style.height=innerHeight+'px'; sizeRadar(); }
-addEventListener('resize',resizeEvt);
+function resizeEvt(){ evtCanvas.width=innerWidth*DPR; evtCanvas.height=innerHeight*DPR; evtCanvas.style.width=innerWidth+'px'; evtCanvas.style.height=innerHeight+'px'; }
 
 let halley=null, weapons=[], escorts=[], explosions=[], nukeFlash=0, killCount=0, giantKillCount=0, mainCannonFx=null;
 const COMET_LOCK_MS=2000;
@@ -3328,11 +3382,13 @@ function drawPilotFeed(now){
 
 /* ===== MAIN LOOP ===== */
 let lastT=performance.now();
+let mainLoopRunning=false, mainLoopRaf=0, mainRenderSurface=null;
 
 function frame(now){
-  if(document.hidden){lastT=now;requestAnimationFrame(frame);return;}
+  if(!mainLoopRunning) return;
+  const rawFrameMs=Math.max(0,now-lastT);
   try {
-    const dt=Math.min(64,now-lastT);lastT=now;
+    const dt=Math.min(32,now-lastT);lastT=now;
     if(!window.__mouseReady){mx=innerWidth/2;my=innerHeight/2;}
     
     cursorCtl.setPosition(mx,my);
@@ -3372,12 +3428,37 @@ function frame(now){
     
     pcx=mx;pcy=my;
   } catch (err) {}
-  requestAnimationFrame(frame);
+  mainRenderSurface?.reportFrame(rawFrameMs);
+  if(mainLoopRunning) mainLoopRaf=requestAnimationFrame(frame);
 }
 
-resize();resizeEvt();
+function startMainLoop(){
+  if(mainLoopRunning) return;
+  mainLoopRunning=true;
+  lastT=performance.now();
+  mainLoopRaf=requestAnimationFrame(frame);
+}
+
+function stopMainLoop(){
+  mainLoopRunning=false;
+  if(mainLoopRaf) cancelAnimationFrame(mainLoopRaf);
+  mainLoopRaf=0;
+}
+
 window.__launchTime = Date.now();
-requestAnimationFrame(frame);
+mainRenderSurface=renderBudgetCoordinator.register({
+  id:'home:master',
+  element:document.documentElement,
+  observe:false,
+  cost:'medium',
+  targetFps:60,
+  onResume:startMainLoop,
+  onPause:stopMainLoop,
+  onResize(){
+    resize();
+    resizeEvt();
+  }
+});
 // motion-sensitive visitors: no auto-spawned combat; battles stay opt-in via the Command button
 if(!REDUCED_MOTION){
   setTimeout(spawnHalley,7000);
@@ -3387,7 +3468,6 @@ if(!REDUCED_MOTION){
 /* ===== MARKET DECK ===== */
 const marketDeck=initMarketDeck({
   getLang:()=>currentLang,
-  getDpr:()=>DPR,
   onPickHotChange:on=>cursorCtl.setHot(on)
 });
 function updateSignalDeckHud(){
@@ -3408,7 +3488,7 @@ function updateSignalDeckHud(){
 
 /* ===== LANGUAGE SWITCH (修复动画重置 Bug) ===== */
 function setLang(lang){
-  currentLang=lang; try{localStorage.setItem('afflatus-lang',lang);}catch(e){}
+  currentLang=setLocale(lang);
   const langMini=document.getElementById('langMiniToggle'); if(langMini) langMini.dataset.active=lang;
   const c=COPY[lang]; document.title=c.title; document.documentElement.lang=c.lang; document.getElementById('langBtn').textContent=c.langBtn;
   updateCommandButton(); updateJumpButton();
@@ -3535,7 +3615,7 @@ setInterval(pulseVoyageIndicator,60000);
   const heroEl=document.querySelector('.hero');
   if(!heroEl||REDUCED_MOTION) return;
   const root=document.documentElement;
-  let tx=0,ty=0,cx=0,cy=0,raf=0,heroOn=true;
+  let tx=0,ty=0,cx=0,cy=0,raf=0,heroOn=false;
   addEventListener('pointermove',(e)=>{
     if(e.pointerType!=='mouse'||!heroOn) return;
     tx=(e.clientX/innerWidth)*2-1;
@@ -3548,5 +3628,16 @@ setInterval(pulseVoyageIndicator,60000);
     root.style.setProperty('--my',cy.toFixed(4));
     raf=(Math.abs(tx-cx)+Math.abs(ty-cy)>0.002)?requestAnimationFrame(frame):0;
   }
-  new IntersectionObserver((es)=>{heroOn=es[0].isIntersecting;}).observe(heroEl);
+  renderBudgetCoordinator.register({
+    id:'home:hero-parallax',
+    element:heroEl,
+    cost:'low',
+    targetFps:60,
+    onResume(){heroOn=true;},
+    onPause(){
+      heroOn=false;
+      if(raf) cancelAnimationFrame(raf);
+      raf=0;
+    }
+  });
 })();

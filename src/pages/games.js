@@ -9,12 +9,14 @@ import { renderTrackRecordHTML } from '../lib/trackRecord.js';
 import { buildWcStages } from '../lib/bracketModel.js';
 import { wheelScaleDelta } from '../lib/pinchZoom.js';
 import { panRange, resizeLeft, resizeRight, zoomRange, densityFor } from '../lib/stageRange.js';
+import { fetchJson } from '../lib/fetchJson.js';
+import { getLocale } from '../lib/localeStore.js';
 
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
   const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
-  let lang = (() => { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : (localStorage.getItem('afflatus:lang') === 'zh' ? 'zh' : 'en'); } catch { return 'en'; } })();
+  let lang = window.AfflatusI18N ? window.AfflatusI18N.get() : getLocale('en');
   const T = (en, zh) => lang === 'zh' ? zh : en;
   const FABLE_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:-2px" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="7" width="18" height="14" rx="5" fill="#F2994A"/><rect x="10" y="2" width="4" height="5" rx="2" fill="#F2994A"/><circle cx="12" cy="2" r="1.6" fill="#F2994A"/><circle cx="9" cy="14" r="1.8" fill="#3A2410"/><circle cx="15" cy="14" r="1.8" fill="#3A2410"/><path d="M8.5 17.5 Q12 20.5 15.5 17.5" stroke="#3A2410" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
 
@@ -348,7 +350,7 @@ import { panRange, resizeLeft, resizeRight, zoomRange, densityFor } from '../lib
 
   function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderPlayers(); renderFixtures(); renderBracket(); }
 
-  fetch('/games-data.json', { cache: 'no-store' }).then((r) => r.json()).then((d) => { data = d; renderAll(); }).catch(() => { if ($('fixtures')) $('fixtures').innerHTML = `<div class="empty">${T('Fixtures unavailable.', '赛程暂不可用。')}</div>`; });
+  fetchJson('games').then((d) => { data = d; renderAll(); }).catch(() => { if ($('fixtures')) $('fixtures').innerHTML = `<div class="empty">${T('Fixtures unavailable.', '赛程暂不可用。')}</div>`; });
   setInterval(tickFixtures, 1000);
   window.addEventListener('afflatus-lang', (e) => { lang = e.detail === 'zh' ? 'zh' : 'en'; renderAll(); });
 })();

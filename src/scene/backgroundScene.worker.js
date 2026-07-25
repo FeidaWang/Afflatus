@@ -17,6 +17,8 @@ let warpStars = [];
 let pointer = { x: -9999, y: -9999 };
 let warpIntensity = 0.18;
 let running = false;
+let shouldRun = false;
+let loopGeneration = 0;
 
 function buildStars() {
   stars = [];
@@ -131,10 +133,17 @@ function draw(now) {
 // Dedicated-worker rAF support is inconsistent across engines; a fixed
 // ~60fps setTimeout driver is universally available via `self` and keeps
 // this independent of that API's availability.
-function loop() {
-  if (!running) return;
+function loop(generation) {
+  if (!running || generation !== loopGeneration) return;
   draw(performance.now());
-  setTimeout(loop, 16);
+  setTimeout(() => loop(generation), 16);
+}
+
+function startLoop() {
+  if (running || !canvas) return;
+  running = true;
+  loopGeneration += 1;
+  loop(loopGeneration);
 }
 
 self.onmessage = (e) => {
@@ -147,8 +156,7 @@ self.onmessage = (e) => {
     canvas.height = innerHeight * dpr;
     width = canvas.width; height = canvas.height;
     buildStars(); buildWarp();
-    running = true;
-    loop();
+    if (shouldRun) startLoop();
   } else if (msg.type === 'resize') {
     innerWidth = msg.innerWidth; innerHeight = msg.innerHeight; dpr = msg.dpr;
     if (canvas) {
@@ -162,6 +170,11 @@ self.onmessage = (e) => {
   } else if (msg.type === 'intensity') {
     warpIntensity = msg.value;
   } else if (msg.type === 'stop') {
+    shouldRun = false;
     running = false;
+    loopGeneration += 1;
+  } else if (msg.type === 'start') {
+    shouldRun = true;
+    startLoop();
   }
 };

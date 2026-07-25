@@ -15,6 +15,12 @@ import type { ParticlePool } from './particles';
 import { createLaserBeam } from './laserBeam';
 import type { LaserBeam } from './laserBeam';
 import { rngFromString } from '../seed';
+import { getRenderBudgetCoordinator } from '../../lib/renderBudgetCoordinator.js';
+import {
+  canAcquireWebGLContext,
+  createWebGLContextLifecycle,
+  disposeThreeScene,
+} from '../../lib/webglLifecycle.js';
 
 // U29 P2 "cinematic light contrast" pass (owner-supplied AAA guide, 2026-
 // 07-16): the guide's WebGPU/deferred/G-Buffer/POM/SSR ask is a different
@@ -44,6 +50,7 @@ export interface FleetDemoScene {
   start(): void;
   stop(): void;
   resize(w?: number, h?: number): void;
+  destroy(): void;
 }
 
 // Duplicated from armorDemoScene.ts on purpose rather than extracted into a
@@ -84,6 +91,9 @@ function buildEnvironment(renderer: THREE.WebGLRenderer): THREE.Texture {
 }
 
 export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }): FleetDemoScene | null {
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'high', targetFps: 60 });
+  if (!canAcquireWebGLContext('boot:fleet-demo')) return null;
   let renderer: THREE.WebGLRenderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
@@ -197,8 +207,16 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   let raf = 0;
   let t0 = 0;
   let frameCount = 0;
+  let sized = false;
+  let wantsLoop = false;
+  let surfaceActive = false;
+  let contextReady = true;
+  let loopLastT = 0;
+  let renderSurface: ReturnType<typeof renderCoordinator.register> | null = null;
 
   function loop(now: number) {
+    const frameMs = loopLastT ? now - loopLastT : 0;
+    loopLastT = now;
     if (!t0) t0 = now;
     const elapsed = (now - t0) / 1000;
     frameCount++;
@@ -228,22 +246,101 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     for (const beam of beams) beam.update(elapsed);
 
     renderer.render(scene, camera);
+    renderSurface?.reportFrame(frameMs);
     if (running) raf = requestAnimationFrame(loop);
   }
 
   function resize(w?: number, h?: number) {
-    const W = Math.max(1, w ?? canvas.clientWidth ?? window.innerWidth);
-    const H = Math.max(1, h ?? canvas.clientHeight ?? window.innerHeight);
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const W = Math.max(1, (w ?? canvas.clientWidth) || window.innerWidth);
+    const H = Math.max(1, (h ?? canvas.clientHeight) || window.innerHeight);
+    sized = true;
+    const dpr = renderPolicy.computeDpr(W, H, { minDpr: 0.6, maxDpr: 2 });
     renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
   }
 
+  function startLoop() {
+    if (running || !surfaceActive || !contextReady) return;
+    running = true;
+    loopLastT = 0;
+    raf = requestAnimationFrame(loop);
+  }
+
+  function stopLoop() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+
+  const webglLifecycle = createWebGLContextLifecycle({
+    id: 'boot:fleet-demo',
+    canvas,
+    onLost() {
+      contextReady = false;
+      stopLoop();
+    },
+    onRestore() {
+      renderer.resetState?.();
+      const previousEnvironment = scene.environment;
+      scene.environment = buildEnvironment(renderer);
+      previousEnvironment?.dispose();
+      contextReady = true;
+      resize();
+      renderer.render(scene, camera);
+      if (surfaceActive && wantsLoop) startLoop();
+    },
+    onFallback() {
+      contextReady = false;
+      stopLoop();
+    },
+  });
+  if (!webglLifecycle.canInitialize) {
+    disposeThreeScene(scene, renderer, [scene.environment]);
+    return null;
+  }
+
+  renderSurface = renderCoordinator.register({
+    id: 'boot:fleet-demo',
+    element: canvas,
+    observe: false,
+    cost: 'high',
+    targetFps: 60,
+    onResume() {
+      surfaceActive = true;
+      if (wantsLoop) startLoop();
+    },
+    onPause() {
+      surfaceActive = false;
+      stopLoop();
+    },
+    onResize() {
+      if (sized) resize();
+    },
+    onQualityChange(nextPolicy) {
+      renderPolicy = nextPolicy;
+    },
+    onDispose() {
+      webglLifecycle.dispose();
+      disposeThreeScene(scene, renderer, [scene.environment]);
+    },
+  });
+
   return {
-    start() { if (!running) { running = true; raf = requestAnimationFrame(loop); } },
-    stop() { running = false; cancelAnimationFrame(raf); },
+    start() {
+      wantsLoop = true;
+      startLoop();
+    },
+    stop() {
+      wantsLoop = false;
+      stopLoop();
+    },
     resize,
+    destroy() {
+      wantsLoop = false;
+      stopLoop();
+      renderSurface?.dispose();
+    },
   };
 }

@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en'}catch(e){}</script>
+<script type="module" src="/src/entry/performance.js"></script>
 <!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
      fetch + init only runs once the browser reports idle time (or after a
      3s/2s fallback timeout for browsers without requestIdleCallback), so it
@@ -24,7 +25,7 @@
 })();
 </script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Project Afflatus · Course — My Personal AI-Collaboration Playbook</title>
 <meta name="description" content="A radically transparent, living playbook built from one real developer's own git history: strengths, weaknesses, a curated AI/CS/math curriculum, a Codeforces + 2026 job-prep track, a data-analyst path, and an infrastructure/MTS career track for top AI labs. 一份基于真实 git 记录、公开透明的个人 AI 协作成长蓝图。">
 <meta name="theme-color" content="#05060a">
@@ -50,6 +51,8 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Course","name":"My Personal AI-Collaboration Playbook","description":"A living, evidence-based personal playbook: coding-habit analysis from real git history, a curated AI/CS/math curriculum, a Codeforces + 2026 job-prep track, a data-analyst path, and an infrastructure/MTS track aimed at top AI labs.","provider":{"@type":"Organization","name":"Project Afflatus","sameAs":"https://feida.au/"},"inLanguage":["en","zh-CN"],"isAccessibleForFree":true,"url":"https://feida.au/course.html"}]}
 </script>
+<link rel="stylesheet" href="/styles/responsive-primitives.css">
+<script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="course-page" data-prev="/serial.html" data-next="/">
 <div class="cbg" aria-hidden="true"><div class="grid"></div><div class="glow"></div></div>

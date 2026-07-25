@@ -58,7 +58,8 @@ function wheelPoint(lonDeg, ascDeg, r, cx, cy) {
  */
 export function renderWheel({ ascDeg, planets }) {
   const cx = 200, cy = 200, rOuter = 190, rZodiacIn = 156, rPlanet = 118, rAspect = 64;
-  let svg = `<svg class="astro-wheel" viewBox="0 0 400 400" role="img" aria-label="natal wheel">`;
+  const wheelSummary = `Natal wheel. Ascendant ${mod360(ascDeg).toFixed(1)} degrees. ${planets.map((planet) => `${planet.body} ${mod360(planet.lonDeg).toFixed(1)} degrees${planet.retro ? ' retrograde' : ''}`).join('; ')}.`;
+  let svg = `<svg class="astro-wheel" viewBox="0 0 400 400" role="img" aria-label="${esc(wheelSummary)}">`;
   svg += `<circle cx="${cx}" cy="${cy}" r="${rOuter}" class="aw-bg"/>`;
   // element-tinted sign band (annular sectors, approximated with chord
   // polylines — no SVG arc-flag pitfalls, deterministic under vitest)
@@ -157,7 +158,14 @@ export function renderAspectGrid(planets) {
   const cell = 30, pad = 4, head = 26;
   const size = n * cell + pad * 2 + head;
   const ASPECT_GLYPH = { conj: '☌' + TXT, sextile: '﹡', square: '□', trine: '△', opp: '☍' + TXT };
-  let svg = `<svg class="astro-aspect-grid" viewBox="0 0 ${size} ${size}" role="img" aria-label="aspect grid">`;
+  const aspectSummary = [];
+  for (let i = 0; i < planets.length; i++) {
+    for (let j = i + 1; j < planets.length; j++) {
+      const aspect = aspectBetween(planets[i].lonDeg, planets[j].lonDeg);
+      if (aspect) aspectSummary.push(`${planets[i].body} ${aspect.key} ${planets[j].body}`);
+    }
+  }
+  let svg = `<svg class="astro-aspect-grid" viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(`Aspect grid. ${aspectSummary.length ? aspectSummary.join('; ') : 'No major aspects in orb.'}`)}">`;
   // header row (top) + header column (left)
   for (let k = 0; k < n; k++) {
     const gx = pad + head + k * cell + cell / 2, gy = pad + head / 2;
@@ -191,7 +199,8 @@ export function renderRadar(dims) {
   const cx = 130, cy = 130, rMax = 96;
   const angleFor = (i) => (-90 + (360 / n) * i) * DEG; // start at top, clockwise
   const pt = (i, r) => [cx + r * Math.cos(angleFor(i)), cy + r * Math.sin(angleFor(i))];
-  let svg = `<svg class="astro-radar" viewBox="0 0 260 260" role="img" aria-label="five-dimension radar">`;
+  const radarSummary = `Five-dimension radar. ${dims.map((dimension) => `${dimension.label} ${Math.round(dimension.value)} of 100`).join('; ')}.`;
+  let svg = `<svg class="astro-radar" viewBox="0 0 260 260" role="img" aria-label="${esc(radarSummary)}">`;
   // grid rings at 33/66/100%
   for (const frac of [0.33, 0.66, 1]) {
     const poly = dims.map((_, i) => pt(i, rMax * frac).map((v) => v.toFixed(1)).join(',')).join(' ');

@@ -15,6 +15,12 @@
 import * as THREE from 'three';
 import { createOdinHull } from './odinHull.js';
 import { createCarrierHull } from './carrierHull.js';
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import {
+  canAcquireWebGLContext,
+  createWebGLContextLifecycle,
+  disposeThreeScene,
+} from '../lib/webglLifecycle.js';
 
 // ?ship=odin / ?ship=wedge opt out of the new default "Wraith" carrier hull
 // (see file header). Same query-param convention as capitalShip3D.js's
@@ -27,12 +33,43 @@ function shipVariant() {
 }
 
 export function createShipHologram(canvas) {
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'medium', targetFps: 60 });
   let renderer;
+  let raf = 0, running = false, desired = false, surfaceActive = false;
+  let start = performance.now(), loopLastT = 0, renderSurface = null;
+  if (!canAcquireWebGLContext('home:ship-hologram')) return null;
   try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true }); }
   catch (e) { return null; }
+  let budgetActive = false;
+  let contextReady = true;
+  const webglLifecycle = createWebGLContextLifecycle({
+    id: 'home:ship-hologram',
+    canvas,
+    onLost() {
+      contextReady = false;
+      surfaceActive = false;
+      stopLoop();
+    },
+    onRestore() {
+      renderer.resetState?.();
+      contextReady = true;
+      surfaceActive = budgetActive;
+      resize();
+      startLoop();
+    },
+    onFallback() {
+      contextReady = false;
+      surfaceActive = false;
+      stopLoop();
+    },
+  });
+  if (!webglLifecycle.canInitialize) {
+    renderer.dispose();
+    renderer.forceContextLoss?.();
+    return null;
+  }
   renderer.setClearColor(0x000000, 0);
-  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false); // recover, not black-screen
-  renderer.setSize(240, 300, false);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 240 / 300, 0.1, 100);
@@ -153,7 +190,6 @@ export function createShipHologram(canvas) {
 
   camera.position.set(0, 1.2, 9.0); camera.lookAt(0, -0.05, -0.2);
 
-  let raf = 0, active = false, start = performance.now();
   function frame(now) {
     ship.rotation.y = (now - start) / 3800 + 0.5;
     const cl = document.body.classList;
@@ -172,12 +208,69 @@ export function createShipHologram(canvas) {
     else muzzle.material.opacity = 0.5 + 0.45 * Math.sin(now / 300);
     renderer.render(scene, camera);
   }
-  function loop() { if (active) { frame(performance.now()); raf = requestAnimationFrame(loop); } }
-  function setActive(on) {
-    if (on === active) return;
-    active = on;
-    if (on) { start = performance.now(); raf = requestAnimationFrame(loop); }
-    else cancelAnimationFrame(raf);
+  function loop(now) {
+    if (!running) return;
+    const frameMs = loopLastT ? now - loopLastT : 0;
+    loopLastT = now;
+    frame(now);
+    renderSurface?.reportFrame(frameMs);
+    if (running) raf = requestAnimationFrame(loop);
   }
-  return { setActive };
+  function startLoop() {
+    if (running || !surfaceActive || !desired) return;
+    running = true;
+    start = performance.now();
+    loopLastT = 0;
+    raf = requestAnimationFrame(loop);
+  }
+  function stopLoop() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    const width = Math.max(1, rect.width || 240);
+    const height = Math.max(1, rect.height || 300);
+    const dpr = renderPolicy.computeDpr(width, height, { minDpr: 0.75, maxDpr: 2 });
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  }
+  function setActive(on) {
+    desired = Boolean(on);
+    if (desired) startLoop();
+    else stopLoop();
+  }
+  renderSurface = renderCoordinator.register({
+    id: 'home:ship-hologram',
+    element: canvas,
+    cost: 'medium',
+    targetFps: 60,
+    onResume() {
+      budgetActive = true;
+      surfaceActive = contextReady;
+      startLoop();
+    },
+    onPause() {
+      budgetActive = false;
+      surfaceActive = false;
+      stopLoop();
+    },
+    onResize: resize,
+    onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
+    onDispose() {
+      webglLifecycle.dispose();
+      disposeThreeScene(scene, renderer);
+    },
+  });
+  return {
+    setActive,
+    destroy() {
+      desired = false;
+      stopLoop();
+      renderSurface.dispose();
+    },
+  };
 }

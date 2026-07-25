@@ -5,17 +5,32 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "prebuild": "npm run site:check",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
+    "pretest:e2e": "npm run build",
+    "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test e2e/quality-gates.spec.js",
+    "test:e2e:visual": "playwright test e2e/visual-captures.spec.js",
+    "test:e2e:report": "playwright show-report",
+    "pretest:lighthouse": "npm run build",
+    "test:lighthouse": "node scripts/run-lighthouse.mjs",
+    "lighthouse:ci": "node scripts/run-lighthouse.mjs",
     "typecheck": "tsc --noEmit",
+    "site:generate": "node scripts/site-manifest.mjs --write",
+    "site:check": "node scripts/site-manifest.mjs --check",
     "linkcheck": "vite build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\""
   },
   "dependencies": {
     "astronomy-engine": "^2.1.19",
-    "three": "^0.160.1"
+    "three": "^0.160.1",
+    "web-vitals": "^6.0.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.61.1",
     "@types/three": "^0.160.0",
     "linkinator": "^6.1.2",
     "typescript": "^5.7.3",

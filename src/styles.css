@@ -18,7 +18,7 @@
   :root{--bg:#04060a;--ink:#e4e8f0;--dim:#69748c;--faint:#1f2536;--cyan:#8db4c0;--warm:#e8b380;--line:rgba(228,232,240,.055);--hud-x:18px;--hud-gap:10px;--hud-bottom:14px;--hud-combat-h:232px;--hud-cols:minmax(145px,.25fr) minmax(360px,.58fr) minmax(185px,.30fr) minmax(610px,1.16fr)}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none!important;}
-  body{font-family:'Rajdhani','Noto Sans SC',sans-serif;font-weight:300;min-height:100vh;line-height:1.65;-webkit-font-smoothing:antialiased;position:relative}
+  body{font-family:'Rajdhani','Noto Sans SC',sans-serif;font-weight:300;min-height:var(--viewport-small-height,100vh);line-height:1.65;-webkit-font-smoothing:antialiased;position:relative}
   #starfield{position:fixed;inset:0;z-index:0;display:block;background:#04060a}
   #blackhole-gl{position:fixed;inset:0;z-index:1;display:block;pointer-events:none;background:transparent}
   #event-layer{position:fixed;inset:0;z-index:6;pointer-events:none}
@@ -784,7 +784,7 @@
   body.warp-hover #hudThrusters{color:#5dff9d;text-shadow:0 0 12px rgba(93,255,157,.7)}
 
   /* hero */
-  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:130px 96px 0;position:relative}
+  .hero{min-height:var(--viewport-small-height,100vh);display:flex;flex-direction:column;justify-content:center;padding:130px 96px 0;position:relative}
   .hero-num{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;color:var(--dim);margin-bottom:32px}
   .hero-num span{color:var(--cyan)}
   .hero-title{font-family:'Orbitron',sans-serif;font-weight:300;font-size:clamp(52px,7vw,104px);line-height:1.05;letter-spacing:-.018em;margin-bottom:34px}
@@ -1359,7 +1359,7 @@
   .nav-links a.active{color:#8cf1ff;text-shadow:0 0 10px rgba(116,240,255,.6);position:relative}
   .nav-links a.active::after{content:'';position:absolute;left:8%;right:8%;bottom:1px;height:1px;background:rgba(140,241,255,.72)}
   /* "Labs" nav dropdown (Games/Novels today; future seasonal/experimental
-     pages join here — see src/lib/nav.js's SITE `group:'labs'` tag). The
+     pages join here — see siteManifest.js's nav `group:'labs'` field). The
      trigger is a real .nav-links a element so the rules above already style
      it for free; only the dropdown panel itself needs new CSS.
      The panel (.nav-labs__menu) is portaled to a direct child of <body> by
@@ -6619,7 +6619,7 @@
     .nav-center{padding:0!important;}
     .nav-links{gap:16px!important;justify-content:center!important;}
     .nav-links a{font-size:8px!important;letter-spacing:.14em!important;}
-    #commandModeBtn{min-width:84px!important;height:28px!important;min-height:28px!important;font-size:7px!important;}
+    #commandModeBtn{min-width:84px!important;height:44px!important;min-height:44px!important;font-size:7px!important;}
     .nav-clock b,.nav-clock time{font-size:10px!important;letter-spacing:.16em!important;}
 
     /* --- HUD: slimmer overall, keep all 4 panels usable --- */
@@ -7340,7 +7340,7 @@
 
   @media (prefers-reduced-motion: reduce){
     .stardrive.is-live{height:auto;--forge:1}
-    .stardrive.is-live .stardrive-stage{position:relative;height:100vh;top:auto;bottom:auto}
+    .stardrive.is-live .stardrive-stage{position:relative;height:var(--viewport-small-height,100vh);top:auto;bottom:auto}
     .stardrive.is-live .stardrive-stage.pin-fixed,.stardrive.is-live .stardrive-stage.pin-end{position:relative}
     .stardrive .strip{transform:none}
     .stardrive .hero-metric .strip-value{transform:none}
@@ -7997,6 +7997,7 @@
      hover, .open (tap), or :focus-visible (keyboard) — three equivalent
      entry points per the repo's 22c no-hover-only-info rule. */
   .pick-card { min-height: 216px; contain: layout paint; box-shadow: 0 1px 4px rgba(0,0,0,.4); transition: box-shadow .3s ease; }
+  .pcCover { appearance: none; width: 100%; margin: 0; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; }
   .pcCover, .pcDetail { transition: transform .32s ease, opacity .32s ease; }
   .pcDetail { position: absolute; inset: 0; padding: 18px 16px 16px; display: flex; flex-direction: column; opacity: 0; transform: translateY(14px); pointer-events: none; }
   .pcDetail .pick-thesis { flex: 1; margin-bottom: 12px; }
@@ -8004,9 +8005,9 @@
   .pcCta:hover, .pcCta:focus-visible { text-decoration: underline; }
   @media (hover: hover) {
     .pcCover, .pcDetail { will-change: transform, opacity; }
-    .pick-card:hover, .pick-card:focus-visible, .pick-card.open { box-shadow: 0 14px 34px rgba(0,0,0,.55); }
-    .pick-card:hover .pcCover, .pick-card:focus-visible .pcCover { transform: translateY(-12px); opacity: 0; }
-    .pick-card:hover .pcDetail, .pick-card:focus-visible .pcDetail { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .pick-card:hover, .pick-card:focus-within, .pick-card.open { box-shadow: 0 14px 34px rgba(0,0,0,.55); }
+    .pick-card:hover .pcCover, .pick-card:focus-within .pcCover { transform: translateY(-12px); opacity: 0; }
+    .pick-card:hover .pcDetail, .pick-card:focus-within .pcDetail { transform: translateY(0); opacity: 1; pointer-events: auto; }
   }
   .pick-card.open .pcCover { transform: translateY(-12px); opacity: 0; }
   .pick-card.open .pcDetail { transform: translateY(0); opacity: 1; pointer-events: auto; }
@@ -8060,5 +8061,28 @@
   body.warp-pulse{animation:warpPulse .38s ease-out}
   @media (prefers-reduced-motion: reduce){
     body.warp-pulse{animation:none}
+  }
+  canvas[data-renderer="poster"]{
+    background:
+      radial-gradient(circle at 52% 44%,rgba(154,229,255,.15),transparent 34%),
+      linear-gradient(155deg,#09111b,#020306 72%);
+  }
+  .webgl-fallback{
+    position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));
+    z-index:95;display:flex;align-items:center;gap:12px;max-width:min(90vw,620px);
+    padding:9px 10px 9px 14px;transform:translateX(-50%);
+    border:1px solid rgba(154,229,255,.28);border-radius:999px;
+    background:rgba(3,7,12,.9);box-shadow:0 12px 36px rgba(0,0,0,.45);
+    color:rgba(231,242,251,.78);font:500 11px/1.35 'JetBrains Mono',monospace;
+    backdrop-filter:blur(12px);
+  }
+  .webgl-fallback button{
+    min-height:44px;padding:0 14px;border:1px solid rgba(154,229,255,.42);
+    border-radius:999px;background:transparent;color:#dff7ff;
+    font:600 11px/1 'JetBrains Mono',monospace;cursor:pointer;
+  }
+  .webgl-fallback button:focus-visible{outline:2px solid #9ae5ff;outline-offset:2px}
+  @media(max-width:560px){
+    .webgl-fallback{width:calc(100vw - 24px);justify-content:space-between}
   }
 }

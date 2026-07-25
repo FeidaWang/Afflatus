@@ -16,6 +16,7 @@
  * reference image).
  */
 import { createStarMapScene } from '../scene/starMapScene.js';
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 
 export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const panel = document.getElementById('terminalStarMapPanel');
@@ -23,6 +24,8 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const toggle = document.getElementById('starmapToggle');
   const login = document.querySelector('.notebook-login');
   if (!panel || !canvas || !toggle) return null;
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'low', targetFps: 60 });
 
   const modeLabel = active => {
     if (active) return getLang() === 'zh' ? '登录' : 'LOGIN';
@@ -140,10 +143,13 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
   const scene = createStarMapScene();
   const ctx = canvas.getContext('2d');
 
-  (function drawMap(now) {
-    if (!document.hidden && panel.classList.contains('active')) {
+  let running = false, raf = 0, loopLastT = 0, renderSurface = null;
+  function drawMap(now) {
+    const frameMs = loopLastT ? now - loopLastT : 0;
+    loopLastT = now;
+    if (panel.classList.contains('active')) {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(devicePixelRatio || 1, 2);
+      const dpr = renderPolicy.computeDpr(rect.width, rect.height, { minDpr: 0.75, maxDpr: 2 });
       if (rect.width > 2 && rect.height > 2) {
         const ww = Math.floor(rect.width * dpr);
         const hh = Math.floor(rect.height * dpr);
@@ -155,8 +161,36 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
         scene.draw(ctx, rect.width, rect.height, now, getLang());
       }
     }
-    requestAnimationFrame(drawMap);
-  })(performance.now());
+    renderSurface?.reportFrame(frameMs);
+    if (running) raf = requestAnimationFrame(drawMap);
+  }
+  function start() {
+    if (running) return;
+    running = true;
+    loopLastT = 0;
+    raf = requestAnimationFrame(drawMap);
+  }
+  function stop() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  renderSurface = renderCoordinator.register({
+    id: 'home:terminal-star-map',
+    element: canvas,
+    cost: 'low',
+    targetFps: 60,
+    onResume: start,
+    onPause: stop,
+    onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
+  });
 
-  return { setMode };
+  return {
+    setMode,
+    destroy() {
+      renderSurface.unregister();
+      stop();
+      holoUnit?.destroy?.();
+    },
+  };
 }

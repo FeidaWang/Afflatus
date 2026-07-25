@@ -115,7 +115,7 @@ a{color:inherit;text-decoration:none}
 /* ===== briefing modal ===== */
 #briefing[hidden]{display:none}
 .bf-backdrop{position:fixed;inset:0;z-index:80;background:rgba(3,5,12,.78);backdrop-filter:blur(4px)}
-.bf-modal{position:fixed;z-index:81;left:50%;top:50%;transform:translate(-50%,-50%);width:min(680px,calc(100% - 24px));max-height:88vh;display:flex;flex-direction:column;
+.bf-modal{position:fixed;z-index:81;left:50%;top:var(--visual-viewport-center,50vh);transform:translate(-50%,-50%);width:min(680px,calc(100% - 24px));max-height:88vh;max-height:min(88dvh,calc(var(--visual-viewport-height,100vh) - 24px));display:flex;flex-direction:column;
   background:linear-gradient(180deg,rgba(11,15,28,.99),rgba(5,7,14,.99));border:2px solid var(--acid);box-shadow:0 0 0 4px rgba(61,255,154,.06),0 30px 80px rgba(0,0,0,.6)}
 .bf-prog{height:12px;background:rgba(255,255,255,.06);border-bottom:1px solid rgba(61,255,154,.25);cursor:pointer;position:relative}
 .bf-prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--acid))}
@@ -395,7 +395,7 @@ body.embed .hero{border-top:2px solid var(--line)}
 /* ===== Part 4 §19.4.3 · daily digest toast + drawer ("while you were away") ===== */
 /* Reuses the OpenAI-derived viz tooltip tokens (--viz-tip-*) rather than
    inventing a new surface — same near-black panel, same radius, no arrows. */
-.digest-toast{position:fixed;left:16px;bottom:16px;z-index:70;display:flex;align-items:center;gap:10px;max-width:360px;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);border-radius:var(--viz-tip-radius);padding:11px 12px;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:digestIn .25s ease}
+.digest-toast{position:fixed;left:calc(16px + var(--safe-left,0px));bottom:calc(16px + var(--safe-bottom,0px) + var(--keyboard-inset,0px));z-index:70;display:flex;align-items:center;gap:10px;max-width:360px;background:var(--viz-tip-bg);border:1px solid var(--viz-tip-line);border-radius:var(--viz-tip-radius);padding:11px 12px;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:digestIn .25s ease}
 @keyframes digestIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.digest-toast{animation:none}}
 .digest-toast-body{cursor:pointer;color:var(--text);font:600 12.5px/1.5 var(--font-mono)}

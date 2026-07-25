@@ -1,7 +1,9 @@
+import { NAV_ROUTES, normalizeRoutePath } from '../config/navRoutes.generated.js';
+
 /* ============================================================
    Afflatus shared navigation — SINGLE SOURCE OF TRUTH.
 
-   To add / reorder / rename a page, edit ONLY the SITE array below.
+   To add / reorder / rename a page, edit ONLY src/config/siteManifest.js.
    Every public page just needs:
      • <nav class="nav" data-afflatus-nav> … keep your .lang-toggle … </nav>
        (the page links are rendered into it; the current page gets .active)
@@ -16,28 +18,9 @@
 (() => {
   'use strict';
 
-  // `group: 'labs'` pages render as a dropdown under one "Labs" trigger in
-  // the top nav instead of their own top-level link (see run() below).
-  // Future seasonal / experimental pages should be added here with the same
-  // group tag — nothing else needs to change to make them show up in Labs.
-  // prev/next page-turn order is unaffected: it still walks SITE flat, so
-  // arrow-key/click paging still visits every page in this exact order.
-  const SITE = [
-    { path: '/',             en: 'Home',    zh: '首页' },
-    { path: '/arena.html',   en: 'Arena',   zh: '竞技场' },
-    { path: '/sectors.html', en: 'Sectors', zh: '板块' },
-    { path: '/signal.html',  en: 'Signal',  zh: '信号' },
-    // U18b (2026-07-12): league.html (MSI 2026) taken offline after the
-    // tournament ended — replaced in nav & the prev/next cycle by the
-    // stats.html archive; vercel.json 302s the old URL there. U18c
-    // (2026-07-20): games.html (World Cup) got the same treatment after
-    // the final — its SITE entry is removed outright (stats.html was
-    // already present); vercel.json 302s /games.html -> /stats.html.
-    { path: '/stats.html',     en: 'Stats',     zh: '战绩', group: 'labs' },
-    { path: '/horoscope.html', en: 'Horoscope', zh: '观星', group: 'labs' },
-    { path: '/serial.html',    en: 'Novels',    zh: '小说', group: 'labs' },
-    { path: '/course.html',    en: 'Course',    zh: '课程', group: 'labs' }
-  ];
+  // `group: 'labs'` pages render as a dropdown under one "Labs" trigger.
+  // NAV_ROUTES is derived from the manifest and already sorted by nav.order.
+  const SITE = NAV_ROUTES;
   const LABS_LABEL = { en: 'Labs', zh: '实验室' };
   // Exposed read-only for consumers that can't use the full DOM-rendering
   // behaviour below (e.g. index.html's own nav, which has its own bilingual
@@ -45,7 +28,7 @@
   // is unchanged for the five pages already using it.
   window.AfflatusSite = SITE.slice();
 
-  const norm = (p) => { p = (p || '/').replace(/index\.html$/, ''); return p === '' ? '/' : p; };
+  const norm = normalizeRoutePath;
   const here = norm(location.pathname);
   let i = SITE.findIndex((s) => norm(s.path) === here);
   if (i < 0) i = 0;

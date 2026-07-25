@@ -208,7 +208,7 @@ a{color:inherit;text-decoration:none}
 .filterChips button:hover{border-color:var(--amber);color:var(--amber)}
 .filterChips button.active{background:var(--amber);border-color:var(--amber);color:#1a1a1c}
 .filterChips .sep{width:1px;align-self:stretch;background:var(--line);margin:0 4px}
-.incidentList{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.incidentList{display:flex;flex-direction:column;gap:16px;margin-top:16px;overflow:clip;overflow-clip-margin:8px}
 .incidentList .empty{padding:14px 16px;border:1px solid var(--line);background:var(--panel2);color:var(--dim);font:400 12px var(--mono)}
 .incident{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,.55)}
 /* U30 R4: "event cards float in at staggered speeds" — one CSS scroll-driven

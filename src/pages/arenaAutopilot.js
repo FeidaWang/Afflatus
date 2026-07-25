@@ -15,6 +15,7 @@
    fetches and renders.
    ============================================================ */
 import { unrealizedPnl, benchmarkEndpoints, equityDomain, scalePoint } from '../lib/arenaLedgerView.js';
+import { fetchJson } from '../lib/fetchJson.js';
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
 import { declutter1D } from '../lib/ladderLayout.js';
 
@@ -24,8 +25,6 @@ import { declutter1D } from '../lib/ladderLayout.js';
   if (!host) return;
 
   const $ = (id) => document.getElementById(id);
-  const LEDGER_URL = '/arena-ledger.json';
-  const UNIVERSE_URL = '/arena-universe.json';
 
   // Known model codenames get a fixed color + label; an unrecognized future
   // key still renders correctly via the fallback palette/generic label
@@ -47,13 +46,11 @@ import { declutter1D } from '../lib/ladderLayout.js';
   const fmtNum = (x, d = 2) => (x == null || !isFinite(x)) ? '—' : Number(x).toFixed(d);
 
   // ---- data ------------------------------------------------------
-  fetch(UNIVERSE_URL, { cache: 'no-store' })
-    .then((r) => r.ok ? r.json() : Promise.reject())
+  fetchJson('arena-universe')
     .then((d) => { for (const s of d.symbols || []) state.names[s.sym] = s.name; })
     .catch(() => {});
 
-  fetch(LEDGER_URL, { cache: 'no-store' })
-    .then((r) => r.ok ? r.json() : Promise.reject())
+  fetchJson('arena-ledger')
     .then((d) => { state.ledger = d; render(); })
     .catch(() => { renderError(); });
 
@@ -203,6 +200,15 @@ import { declutter1D } from '../lib/ladderLayout.js';
 
     $('apChart').setAttribute('viewBox', `0 0 ${W} ${TOTAL_H}`);
     $('apChart').innerHTML = s;
+    const finalValues = [
+      ...modelSeries.map(({ key, series }) => ({ label: labelFor(key), point: series[series.length - 1] })),
+      { label: 'SPY', point: spy[spy.length - 1] },
+      { label: 'SMH', point: smh[smh.length - 1] },
+    ].filter(({ point }) => point);
+    $('apChartSummary').textContent = T(
+      `Equity curves from day ${domain.minDay} to ${domain.maxDay}. Final values: ${finalValues.map(({ label, point }) => `${label} ${fmtUsd(point.equity)}`).join('; ')}.`,
+      `净值曲线覆盖第 ${domain.minDay} 日至第 ${domain.maxDay} 日。期末净值：${finalValues.map(({ label, point }) => `${label} ${fmtUsd(point.equity)}`).join('；')}。`,
+    );
     $('apLegend').innerHTML = [
       ...keys.map((k, i) => [colorFor(k, i), labelFor(k), false]),
       [SPY_COLOR, 'SPY', true],

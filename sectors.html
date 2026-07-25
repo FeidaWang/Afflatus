@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script>try{document.documentElement.lang=(localStorage.getItem('afflatus:lang')==='zh')?'zh-CN':'en';}catch(e){}</script>
+<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en'}catch(e){}</script>
+<script type="module" src="/src/entry/performance.js"></script>
+<script src="/lib/data-bridge.js"></script>
 <!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
      fetch + init only runs once the browser reports idle time (or after a
      3s/2s fallback timeout for browsers without requestIdleCallback), so it
@@ -24,7 +26,7 @@
 })();
 </script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Project Afflatus · Sectors</title>
 <meta name="description" content="Sector analysis from the Afflatus captain log: US-equity convictions across the AI-infrastructure stack — NVDA, AVGO, MU, SKHY, TSM, ASML. Desk view, not advice.">
 <meta name="theme-color" content="#000000">
@@ -39,6 +41,10 @@
 <meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
 <link rel="stylesheet" href="/page-turn.css">
 <link rel="stylesheet" href="/styles/sectors.css">
+<link rel="stylesheet" href="/styles/responsive-primitives.css">
+<script type="module" src="/src/entry/dataBridge.js"></script>
+<script type="module" src="/src/entry/viewport.js"></script>
+<script type="module" src="/src/pages/sectorsLibs.js"></script>
 </head>
 <body class="sectors-page" data-prev="/arena.html" data-next="/signal.html">
 <nav class="page-turn-controls" aria-label="Page navigation">
@@ -78,13 +84,12 @@
   </section>
 
   <div class="band"><span data-i18n-html data-en="AI compute &amp; custom silicon" data-zh="AI 算力与定制芯片">AI compute &amp; custom silicon</span> <span data-en="· the gravity well" data-zh="· 引力井">· the gravity well</span></div>
-  <div class="storyRail">
-    <button type="button" class="railArrow" data-target="cardsA" data-dir="-1" aria-label="Scroll left">‹</button>
-    <div class="railTrack" id="cardsA">
+  <section class="storyRail" aria-label="AI compute and custom silicon company stories">
+    <div class="railTrack companyGrid" id="cardsA">
       <article class="rCard" id="card-NVDA">
         <div class="rArt" data-brand="NVDA"><b>NVDA</b></div>
         <div class="rBody">
-          <div class="rName" data-en="NVIDIA · accelerated compute" data-zh="英伟达 · 加速计算">NVIDIA · accelerated compute</div>
+          <h3 class="rName" data-en="NVIDIA · accelerated compute" data-zh="英伟达 · 加速计算">NVIDIA · accelerated compute</h3>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">24%</b></label><div class="rBar"><i style="--w:24%"></i></div></div>
           <p class="rThesis" data-i18n-html data-en="&lt;b&gt;My read (Jun '26):&lt;/b&gt; still the core lock. Data-center demand is intact, the CUDA + networking moat holds, and BioNeMo / Halos push the platform beyond GPUs. The trade is crowded and headline-sensitive — own it, don't chase green days into the Fed." data-zh="&lt;b&gt;我的研判（26年6月）：&lt;/b&gt;仍是核心持仓。数据中心需求稳固，CUDA + 网络护城河仍在，BioNeMo / Halos 把平台拓展到 GPU 之外。交易拥挤、对消息敏感——可以持有，但别在联储前追高。"><b>My read (Jun '26):</b> still the core lock. Data-center demand is intact, the CUDA + networking moat holds, and BioNeMo / Halos push the platform beyond GPUs. The trade is crowded and headline-sensitive — own it, don't chase green days into the Fed.</p>
           <button type="button" class="rMore" data-en-more="Read full thesis" data-zh-more="展开全文" data-en-less="Show less" data-zh-less="收起">Read full thesis</button>
@@ -94,7 +99,7 @@
       <article class="rCard" id="card-AVGO">
         <div class="rArt" data-brand="AVGO"><b>AVGO</b></div>
         <div class="rBody">
-          <div class="rName" data-en="Broadcom · custom AI ASIC + networking" data-zh="博通 · 定制 AI ASIC + 网络">Broadcom · custom AI ASIC + networking</div>
+          <h3 class="rName" data-en="Broadcom · custom AI ASIC + networking" data-zh="博通 · 定制 AI ASIC + 网络">Broadcom · custom AI ASIC + networking</h3>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">18%</b></label><div class="rBar"><i style="--w:18%"></i></div></div>
           <p class="rThesis" data-i18n-html data-en="&lt;b&gt;My read:&lt;/b&gt; the cleanest structural counterweight to Nvidia. A 10GW OpenAI custom-ASIC deal, ~$73B backlog and ~60% projected AI-compute ASIC share by 2027 with Microsoft, Google, Amazon and Meta anchoring. Hyperscaler capex flows straight through it." data-zh="&lt;b&gt;我的研判：&lt;/b&gt;对英伟达最干净的结构性制衡。10 吉瓦的 OpenAI 定制 ASIC 协议、约 730 亿美元订单储备，2027 年 AI 算力 ASIC 份额预计约 60%，微软、谷歌、亚马逊、Meta 为核心客户。超大规模厂商的资本开支直接流经它。"><b>My read:</b> the cleanest structural counterweight to Nvidia. A 10GW OpenAI custom-ASIC deal, ~$73B backlog and ~60% projected AI-compute ASIC share by 2027 with Microsoft, Google, Amazon and Meta anchoring. Hyperscaler capex flows straight through it.</p>
           <button type="button" class="rMore" data-en-more="Read full thesis" data-zh-more="展开全文" data-en-less="Show less" data-zh-less="收起">Read full thesis</button>
@@ -102,17 +107,15 @@
         </div>
       </article>
     </div>
-    <button type="button" class="railArrow" data-target="cardsA" data-dir="1" aria-label="Scroll right">›</button>
-  </div>
+  </section>
 
   <div class="band"><span data-i18n-html data-en="Memory, foundry &amp; the toolmakers" data-zh="存储、晶圆代工与设备制造商">Memory, foundry &amp; the toolmakers</span> <span data-en="· the chokepoints" data-zh="· 咽喉环节">· the chokepoints</span></div>
-  <div class="storyRail">
-    <button type="button" class="railArrow" data-target="cardsB" data-dir="-1" aria-label="Scroll left">‹</button>
-    <div class="railTrack" id="cardsB">
+  <section class="storyRail" aria-label="Memory, foundry and semiconductor equipment company stories">
+    <div class="railTrack companyGrid" id="cardsB">
       <article class="rCard" id="card-MU">
         <div class="rArt" data-brand="MU"><b>MU</b></div>
         <div class="rBody">
-          <div class="rName" data-en="Micron · HBM &amp; DRAM memory" data-zh="美光 · HBM 与 DRAM 存储">Micron · HBM &amp; DRAM memory</div>
+          <h3 class="rName" data-en="Micron · HBM &amp; DRAM memory" data-zh="美光 · HBM 与 DRAM 存储">Micron · HBM &amp; DRAM memory</h3>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">18%</b></label><div class="rBar"><i style="--w:18%"></i></div></div>
           <p class="rThesis" data-i18n-html data-en="&lt;b&gt;My read:&lt;/b&gt; the super-cycle is now confirmed, not hoped-for. Record FQ3 ($41.5B rev, 85% gross margin), a ~$50B Q4 guide and multi-year Strategic Customer Agreements that lock pricing and make earnings durable. HBM4 is shipping in volume. Samsung's Jul 7 Q2 guide — op. profit ~₩89.4T, ~19x YoY, on 40–60% memory price gains and its first quarter of commercial HBM4 shipments — is independent, cross-vendor confirmation of the same cycle, not just a Micron story. Highest torque in the stack — expect sharp two-way swings." data-zh="&lt;b&gt;我的研判：&lt;/b&gt;超级周期已被确认，而非停留在期待。创纪录的第三财季（营收 415 亿美元、毛利率 85%）、约 500 亿美元的第四季度指引，以及锁定价格、使盈利持续的多年期「战略客户协议」。HBM4 已大批量出货。三星 7/7 公布的第二季度指引——营业利润约 89.4 万亿韩元，同比约 19 倍，受 40–60% 存储涨价与本季度首次 HBM4 商用出货驱动——是来自另一家厂商的独立佐证，不再只是美光一家的故事。栈中弹性最大——预期剧烈双向波动。"><b>My read:</b> the super-cycle is now confirmed, not hoped-for. Record FQ3 ($41.5B rev, 85% gross margin), a ~$50B Q4 guide and multi-year Strategic Customer Agreements that lock pricing and make earnings durable. HBM4 is shipping in volume. Samsung's Jul 7 Q2 guide — op. profit ~₩89.4T, ~19x YoY, on 40–60% memory price gains and its first quarter of commercial HBM4 shipments — is independent, cross-vendor confirmation of the same cycle, not just a Micron story. Highest torque in the stack — expect sharp two-way swings.</p>
           <button type="button" class="rMore" data-en-more="Read full thesis" data-zh-more="展开全文" data-en-less="Show less" data-zh-less="收起">Read full thesis</button>
@@ -122,7 +125,7 @@
       <article class="rCard" id="card-SKHY">
         <div class="rArt" data-brand="SKHY"><b>SKHY</b></div>
         <div class="rBody">
-          <div class="rName" data-en="SK Hynix · HBM leader, new Nasdaq ADR" data-zh="SK 海力士 · HBM 龙头，纳斯达克新 ADR">SK Hynix · HBM leader, new Nasdaq ADR</div>
+          <h3 class="rName" data-en="SK Hynix · HBM leader, new Nasdaq ADR" data-zh="SK 海力士 · HBM 龙头，纳斯达克新 ADR">SK Hynix · HBM leader, new Nasdaq ADR</h3>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">12%</b></label><div class="rBar"><i style="--w:12%"></i></div></div>
           <p class="rThesis" data-i18n-html data-en="&lt;b&gt;My read (Jul '26):&lt;/b&gt; the HBM chokepoint becomes directly ownable. SK Hynix commands ~50–70% of global HBM share — feeding NVIDIA's GPUs — and its Jul 10 Nasdaq ADR debut (ticker SKHY, 10:1 vs KRX:000660) ends the old &quot;Korea discount.&quot; Late-Jul SOX index inclusion forces passive buying; the ~30% pre-listing pullback and ~2.44% dilution are the entry cost. Adding it, not replacing Micron — different balance sheet, different FX/ADR-structure risk. Swapped in for Marvell this cycle: more differentiated exposure, a real re-rating catalyst." data-zh="&lt;b&gt;我的研判（26年7月）：&lt;/b&gt;HBM 咽喉环节第一次可以直接持有。SK 海力士掌握全球约 50%–70% 的 HBM 份额，直供英伟达 GPU；7 月 10 日纳斯达克 ADR 首秀（代码 SKHY，与 KRX:000660 按 10:1 兑换）终结了旧有的「韩国折价」。7 月底纳入 SOX 指数将触发被动资金强制买入；上市前约 30% 的回调与约 2.44% 的新股稀释是进场成本。是新增仓位，不是替代美光——资产负债表与汇率/ADR 结构风险都不同。本轮换下了 Marvell：敞口更具差异化，且有真实的重估催化剂。"><b>My read (Jul '26):</b> the HBM chokepoint becomes directly ownable. SK Hynix commands ~50–70% of global HBM share — feeding NVIDIA's GPUs — and its Jul 10 Nasdaq ADR debut (ticker SKHY, 10:1 vs KRX:000660) ends the old "Korea discount." Late-Jul SOX index inclusion forces passive buying; the ~30% pre-listing pullback and ~2.44% dilution are the entry cost. Adding it, not replacing Micron — different balance sheet, different FX/ADR-structure risk. Swapped in for Marvell this cycle: more differentiated exposure, a real re-rating catalyst.</p>
           <button type="button" class="rMore" data-en-more="Read full thesis" data-zh-more="展开全文" data-en-less="Show less" data-zh-less="收起">Read full thesis</button>
@@ -132,7 +135,7 @@
       <article class="rCard" id="card-TSM">
         <div class="rArt" data-brand="TSM"><b>TSM</b></div>
         <div class="rBody">
-          <div class="rName" data-en="TSMC · foundry &amp; CoWoS packaging" data-zh="台积电 · 晶圆代工与 CoWoS 封装">TSMC · foundry &amp; CoWoS packaging</div>
+          <h3 class="rName" data-en="TSMC · foundry &amp; CoWoS packaging" data-zh="台积电 · 晶圆代工与 CoWoS 封装">TSMC · foundry &amp; CoWoS packaging</h3>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">14%</b></label><div class="rBar"><i style="--w:14%"></i></div></div>
           <p class="rThesis" data-i18n-html data-en="&lt;b&gt;My read:&lt;/b&gt; the company that physically makes the AI era. Every GPU and custom ASIC routes through its leading-edge nodes, and CoWoS advanced packaging is now a tighter constraint than fabrication itself. The lowest-drama way to own the whole build-out." data-zh="&lt;b&gt;我的研判：&lt;/b&gt;真正在物理层面制造 AI 时代的公司。每一颗 GPU 和定制 ASIC 都要经过它的先进制程，而 CoWoS 先进封装如今比制造本身更紧。这是持有整个建设浪潮最少波折的方式。"><b>My read:</b> the company that physically makes the AI era. Every GPU and custom ASIC routes through its leading-edge nodes, and CoWoS advanced packaging is now a tighter constraint than fabrication itself. The lowest-drama way to own the whole build-out.</p>
           <button type="button" class="rMore" data-en-more="Read full thesis" data-zh-more="展开全文" data-en-less="Show less" data-zh-less="收起">Read full thesis</button>
@@ -142,7 +145,7 @@
       <article class="rCard" id="card-ASML">
         <div class="rArt" data-brand="ASML"><b>ASML</b></div>
         <div class="rBody">
-          <div class="rName" data-en="ASML · EUV lithography" data-zh="ASML · EUV 光刻">ASML · EUV lithography</div>
+          <h3 class="rName" data-en="ASML · EUV lithography" data-zh="ASML · EUV 光刻">ASML · EUV lithography</h3>
           <div class="rWeight"><label><span data-en="conviction vector" data-zh="信念权重">conviction vector</span><b class="countup">14%</b></label><div class="rBar"><i style="--w:14%"></i></div></div>
           <p class="rThesis" data-i18n-html data-en="&lt;b&gt;My read:&lt;/b&gt; the one true monopoly in the stack. No high-NA EUV, no denser chips — and its ~$400M machine is seen powering chipmaking for a decade. Lumpy orders and China headlines create the volatility; the moat is unmatched. Accumulate on capex-fear dips." data-zh="&lt;b&gt;我的研判：&lt;/b&gt;栈中唯一真正的垄断者。没有高数值孔径 EUV，就没有更密集的芯片——其约 4 亿美元的机器被视为未来十年芯片制造的引擎。订单起伏与中国相关消息制造波动；护城河无可匹敌。在资本开支恐慌的回调中逢低累积。"><b>My read:</b> the one true monopoly in the stack. No high-NA EUV, no denser chips — and its ~$400M machine is seen powering chipmaking for a decade. Lumpy orders and China headlines create the volatility; the moat is unmatched. Accumulate on capex-fear dips.</p>
           <button type="button" class="rMore" data-en-more="Read full thesis" data-zh-more="展开全文" data-en-less="Show less" data-zh-less="收起">Read full thesis</button>
@@ -150,27 +153,75 @@
         </div>
       </article>
     </div>
-    <button type="button" class="railArrow" data-target="cardsB" data-dir="1" aria-label="Scroll right">›</button>
-  </div>
+  </section>
 
   <div class="band"><span data-i18n-html data-en="US–China AI watch" data-zh="中美 AI 观察">US–China AI watch</span></div>
   <div id="mwAsOf" class="asof"></div>
-  <div class="newsToggle">
-    <button type="button" id="toggleMap" data-en="View as interactive map →" data-zh="切换为交互星图 →">View as interactive map →</button>
-  </div>
+  <section id="storyGraphSection" class="graphStory" aria-label="AI ecosystem scroll story">
+    <div class="graphSticky">
+      <div class="graphWrap">
+        <canvas id="mwGraph" class="mwGraph" role="group" tabindex="0" aria-label="Scroll-driven AI ecosystem storyboard" aria-describedby="mwGraphHint mwGraphSummary"></canvas>
+        <div class="graphLegend" aria-hidden="true">
+          <span style="--legend:#ff77b7" data-en="investment" data-zh="投资">investment</span>
+          <span style="--legend:#e8ff8a" data-en="coalition" data-zh="联盟">coalition</span>
+          <span style="--legend:#62d6ff" data-en="cloud" data-zh="云">cloud</span>
+          <span style="--legend:#c7f464" data-en="compute" data-zh="算力">compute</span>
+          <span style="--legend:#ffd36a" data-en="memory" data-zh="存储">memory</span>
+          <span style="--legend:#7ef0dc" data-en="supply" data-zh="供应">supply</span>
+        </div>
+        <div class="graphProgress" aria-hidden="true"><i id="mwStoryProgress"></i></div>
+        <div id="mwHover" class="mwHover" hidden aria-hidden="true"></div>
+        <div id="mwDetail" class="mwDetail" hidden></div>
+        <div id="mwEmpty" class="empty" hidden></div>
+      </div>
+    </div>
+    <div class="graphStorySteps">
+      <article class="graphStoryStep is-active" data-graph-step="quiet">
+        <div class="graphStoryCard graphStoryHero">
+          <span class="graphEyebrow" data-en="AI ECOSYSTEM · VERIFIED CONNECTIONS" data-zh="AI 生态 · 经核验关系">AI ECOSYSTEM · VERIFIED CONNECTIONS</span>
+          <h3 data-en="Follow how an idea becomes infrastructure." data-zh="追踪一个想法如何变成基础设施。">Follow how an idea becomes infrastructure.</h3>
+          <p id="mwGraphHint" data-en="Scroll to let the network unfold. Tap or click a logo to inspect its products and verified relationships; desktop users can also pan or reposition nodes. Zoom is intentionally disabled." data-zh="向下滚动，让网络逐层展开。轻触或点击 Logo 可查看产品与经核验关系；桌面端也可平移或重新摆放节点。缩放已按设计关闭。">Scroll to let the network unfold. Tap or click a logo to inspect its products and verified relationships; desktop users can also pan or reposition nodes. Zoom is intentionally disabled.</p>
+          <span class="graphScrollCue" data-en="SCROLL TO UNFURL ↓" data-zh="向下滚动展开 ↓">SCROLL TO UNFURL ↓</span>
+        </div>
+      </article>
+      <article class="graphStoryStep" data-graph-step="frontier">
+        <div class="graphStoryCard">
+          <span class="graphStepNo">01</span>
+          <h4 data-en="The frontier becomes multipolar." data-zh="前沿能力正在走向多极。">The frontier becomes multipolar.</h4>
+          <p data-en="Muse Spark 1.1 brings planning and action into Meta AI. Moonshot's Kimi K3 arrives as a 2.8T-parameter, million-context model. Anthropic's latest verified Opus remains 4.8—not an unverified Opus 5 claim." data-zh="Muse Spark 1.1 把规划与代执行带入 Meta AI；月之暗面的 Kimi K3 以 2.8 万亿参数和百万上下文进入前沿。Anthropic 当前可核验的最新 Opus 仍为 4.8，而不是未经证实的 Opus 5。">Muse Spark 1.1 brings planning and action into Meta AI. Moonshot's Kimi K3 arrives as a 2.8T-parameter, million-context model. Anthropic's latest verified Opus remains 4.8—not an unverified Opus 5 claim.</p>
+        </div>
+      </article>
+      <article class="graphStoryStep" data-graph-step="capital">
+        <div class="graphStoryCard">
+          <span class="graphStepNo">02</span>
+          <h4 data-en="Capital chooses ecosystems, not isolated models." data-zh="资本选择的是生态，而非孤立模型。">Capital chooses ecosystems, not isolated models.</h4>
+          <p data-en="Alibaba's disclosed Moonshot stake, cloud-linked frontier investments and the 25-member open-weight coalition show how capital, policy and distribution now move together." data-zh="阿里披露的月之暗面持股、与云绑定的前沿投资，以及 25 家开放权重联盟，说明资本、政策与分发正在同步流动。">Alibaba's disclosed Moonshot stake, cloud-linked frontier investments and the 25-member open-weight coalition show how capital, policy and distribution now move together.</p>
+        </div>
+      </article>
+      <article class="graphStoryStep" data-graph-step="compute">
+        <div class="graphStoryCard">
+          <span class="graphStepNo">03</span>
+          <h4 data-en="Every model resolves into a supply chain." data-zh="每个模型最终都落在一条供应链上。">Every model resolves into a supply chain.</h4>
+          <p data-en="Cloud capacity flows through accelerators and custom silicon into HBM, DRAM and advanced packaging. CXMT's STAR Market milestone and reported Tencent supply agreement add a new Chinese memory vector." data-zh="云容量沿加速器与定制芯片流入 HBM、DRAM 和先进封装。CXMT 的科创板里程碑与据报道的腾讯供货协议，新增了一条中国存储向量。">Cloud capacity flows through accelerators and custom silicon into HBM, DRAM and advanced packaging. CXMT's STAR Market milestone and reported Tencent supply agreement add a new Chinese memory vector.</p>
+        </div>
+      </article>
+      <article class="graphStoryStep" data-graph-step="system">
+        <div class="graphStoryCard">
+          <span class="graphStepNo">04</span>
+          <h4 data-en="One living system, open for inspection." data-zh="一个持续流动、可供查阅的系统。">One living system, open for inspection.</h4>
+          <p data-en="The full network is now visible. Select any branded node to trace primary products and source-backed investment, platform and compute-supply relationships." data-zh="完整网络现已展开。选择任一品牌节点，即可追踪其核心产品，以及有来源支持的投资、平台与算力供应关系。">The full network is now visible. Select any branded node to trace primary products and source-backed investment, platform and compute-supply relationships.</p>
+        </div>
+      </article>
+    </div>
+    <div class="graphAfter">
+      <p id="mwGraphSummary" class="graphSummary" aria-live="polite"></p>
+      <div id="mwGraphNodes" class="mwGraphNodes" role="group" aria-label="Graph nodes"></div>
+      <div id="mwTake" class="take"></div>
+    </div>
+  </section>
   <div id="storyCards">
     <article id="storyTake" class="featured"></article>
     <div id="newsGrid" class="newsGrid"></div>
-  </div>
-  <div id="storyGraphSection" hidden>
-    <p class="graphHint" data-en="Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure)." data-zh="拖动节点可重新摆放，滚轮/双指可缩放，点击节点查看详情。美股模型偏左，中国模型偏右——线条样式表示每只个股与模型的关系（实线=受益，虚线=承压）。">Drag a node to reposition it, scroll/pinch to zoom, click a node for detail. US models pull left, China models pull right — line style shows how each equity relates (solid = benefits, dashed = under pressure).</p>
-    <div class="graphWrap">
-      <canvas id="mwGraph" class="mwGraph" aria-label="US–China AI model and equity gravity map"></canvas>
-      <div id="mwDetail" class="mwDetail" hidden></div>
-      <div id="mwEmpty" class="empty" hidden></div>
-    </div>
-    <div id="mwTake" class="take"></div>
-    <button type="button" id="toggleCards" data-en="← Back to cards" data-zh="← 返回卡片">← Back to cards</button>
   </div>
   <details class="mwMatrix">
     <summary data-en="Data view: full comparison matrix" data-zh="数据视图：完整对比矩阵">Data view: full comparison matrix</summary>
@@ -224,18 +275,67 @@
 })();
 </script>
 <script>
-/* infinite ticker marquee. Content is arena-universe.json's tracked-symbol
-   universe (not company logos — no licensed brand assets to use, and this
-   is the site's real "tracked universe" already). Double-clone technique:
-   one real track, one aria-hidden clone appended beside it, animate the
-   wrapper -50%. Click a chip -> scroll to whichever card mentions that
-   ticker (the six research cards above, else a matching news-grid card)
-   and flash it. */
+/* Infinite ticker marquee. The full 500+ symbol universe belongs in Arena;
+   this ambient strip takes a bounded, sector-balanced sample so its cloned
+   marquee cannot create 1,000+ first-viewport buttons. Priority thesis
+   symbols appear first, then each available sector contributes in rounds.
+   Click a chip -> scroll to whichever local card mentions that ticker. */
 (function () {
   var wrap = document.getElementById('tickerTrackWrap');
   var track = document.getElementById('tickerTrack');
   if (!wrap || !track) return;
+  /* A transform animation present from the first paint prevents Chromium
+     from registering this route's otherwise valid H1 LCP candidate. Keep
+     the ticker static until the first candidate is recorded, then animate.
+     Unsupported browsers get a bounded fallback; reduced-motion users keep
+     the intentionally static layout. */
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var motionStarted = false;
+    var motionFallback = 0;
+    var startMotion = function () {
+      if (motionStarted) return;
+      motionStarted = true;
+      if (motionFallback) clearTimeout(motionFallback);
+      wrap.classList.add('motion-ready');
+    };
+    if (typeof PerformanceObserver === 'function'
+        && PerformanceObserver.supportedEntryTypes
+        && PerformanceObserver.supportedEntryTypes.indexOf('largest-contentful-paint') !== -1) {
+      var lcpObserver = new PerformanceObserver(function (list) {
+        if (!list.getEntries().length) return;
+        lcpObserver.disconnect();
+        requestAnimationFrame(startMotion);
+      });
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+      motionFallback = setTimeout(startMotion, 2500);
+    } else {
+      motionFallback = setTimeout(startMotion, 1500);
+    }
+  }
   var BUCKET_COLOR = { 'core-ai-hardware': '#10a37f', 'megacap-tech': '#2f6bff', 'benchmark': '#e5484d' };
+  function ambientTickerSymbols(symbols, limit) {
+    var priority = { NVDA: true, AVGO: true, MU: true, SKHY: true, TSM: true, ASML: true };
+    var selected = symbols.filter(function (item) { return priority[item.sym]; });
+    var seen = {};
+    selected.forEach(function (item) { seen[item.sym] = true; });
+    var buckets = {};
+    symbols.forEach(function (item) {
+      if (seen[item.sym]) return;
+      var key = item.bucket || 'other';
+      (buckets[key] = buckets[key] || []).push(item);
+    });
+    var groups = Object.keys(buckets).sort().map(function (key) { return buckets[key]; });
+    for (var row = 0; selected.length < limit; row++) {
+      var added = false;
+      groups.forEach(function (group) {
+        if (selected.length >= limit || !group[row]) return;
+        selected.push(group[row]);
+        added = true;
+      });
+      if (!added) break;
+    }
+    return selected.slice(0, limit);
+  }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
   function scrollToTicker(sym) {
     var el = document.getElementById('card-' + sym);
@@ -246,17 +346,18 @@
     el.classList.add('flash');
     setTimeout(function () { el.classList.remove('flash'); }, 1400);
   }
-  fetch('/arena-universe.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
+  AfflatusFetchJson('arena-universe').then(function (d) {
     var syms = Array.isArray(d.symbols) ? d.symbols : [];
     if (!syms.length) return;
-    track.innerHTML = syms.map(function (s) {
-      var c = BUCKET_COLOR[s.bucket] || '#0d0d0d';
+    track.innerHTML = ambientTickerSymbols(syms, 60).map(function (s) {
+      var c = BUCKET_COLOR[s.bucket] || '#aeaeb6';
       return '<button type="button" class="tickerChip" style="--tc:' + c + '" data-ticker="' + esc(s.sym) + '"><b>' + esc(s.sym) + '</b>' + esc(s.name) + '</button>';
     }).join('');
     var clone = track.cloneNode(true);
     clone.removeAttribute('id');
     clone.classList.add('clone');
     clone.setAttribute('aria-hidden', 'true');
+    clone.setAttribute('inert', '');
     wrap.appendChild(clone);
     wrap.addEventListener('click', function (e) {
       var btn = e.target.closest('.tickerChip'); if (!btn) return;
@@ -279,10 +380,8 @@ import { buildProvenanceBadge } from '/src/lib/provenanceBadge.js';
 window.AfflatusProvenance = { buildProvenanceBadge };
 </script>
 <script type="module">
-/* force-directed "US–CN AI watch" gravity map (kept as a secondary "view as
-   map" panel — see 2026-07-18 reconstruction note in sectors.css). Physics
-   lives in src/lib/forceGraph.js (pure, vitest-covered); sectorsGraphView.js
-   owns the canvas/pointer glue; neither was touched by the redesign. */
+/* AI ecosystem storyboard. The dependency-free force model remains pure and
+   testable; sectorsGraphView owns Canvas rendering, camera and gestures. */
 import { initSectorsGraph } from '/src/lib/sectorsGraphView.js';
 window.AfflatusSectorsGraph = { initSectorsGraph };
 dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
@@ -292,7 +391,26 @@ dispatchEvent(new Event('afflatus-sectorsgraph-ready'));
    lives in src/lib/scrollReveal.js (pure, vitest-covered); scrollRevealView.js
    owns the DOM/rAF glue. Self-initializing, sectors.html-only. */
 import { initScrollReveal } from '/src/lib/scrollRevealView.js';
-initScrollReveal();
+/* P0-05: clip-path reveal starts only after real user intent. Initializing it
+   during page load prevents Chromium from emitting an LCP candidate for this
+   otherwise fully rendered hero. Queueing one task after the interaction lets
+   the browser finalize LCP first; pointer, keyboard and wheel/scroll users all
+   retain the reveal on their first navigation gesture. */
+{
+  const events = ['pointerdown', 'keydown', 'scroll'];
+  let queued = false;
+  const onIntent = () => {
+    if (queued) return;
+    queued = true;
+    events.forEach((event) => removeEventListener(event, onIntent, true));
+    setTimeout(initScrollReveal, 0);
+  };
+  events.forEach((event) => addEventListener(event, onIntent, {
+    capture: true,
+    passive: true,
+    once: true,
+  }));
+}
 </script>
 <script type="module">
 /* U42 (2026-07-18): 3D data-starfield, opt-in via ?fx=starfield3d. Unlike
@@ -306,26 +424,13 @@ initScrollReveal();
    convention as AfflatusSectorsGraph/AfflatusProvenance just above. */
 window.AfflatusSectorsStarfield = { load: function () { return import('/src/scene/sectorsStarfield.js'); } };
 </script>
-<script type="module" src="/src/pages/sectorsLibs.js"></script>
 <script>
-/* Brand registry (2026-07-18 photo/logo pass) — every company named on this
-   page gets its own real brand color, its own real logo, and — where an
-   official newsroom/press-kit photo could actually be found — its own real
-   photo, styled after the openai.com Business-page card carousel (photo
-   background, logo centered on top forced to solid white via CSS filter so
-   it reads regardless of the logo's source colors, real lettering/shape
-   kept intact). No SVG icons, no fabricated photography, no redrawn logos:
-   logo files are real company logos (mostly Wikimedia Commons, which hosts
-   them specifically for this kind of identification use); photos are real
-   images pulled from each company's own official newsroom/press/media page
-   (see Urgent.md U37 for the source list — 6 of 17 companies had a findable
-   official photo; the rest fall back to a plain brand-color card, and
-   Astera Labs additionally has no findable logo file so it falls back to a
-   plain text wordmark). Since these are hotlinked to external domains,
-   there's a delegated `error` listener below so a dead/blocked image
-   degrades to the same graceful fallback rather than a broken-image icon.
-   Exposed on window so both the six static stock-rail cards below and the
-   data-driven news-grid renderer further down share one source of truth. */
+/* Brand asset registry (2026-07-25) — one local, auditable contract for
+   every static and data-driven company card. Logos are cached vector
+   wordmarks/marks; media is sourced from the company's product, newsroom,
+   press-kit or official product interface rather than headquarters imagery.
+   Local paths remove runtime hotlink failures while the error handler keeps
+   a readable brand-color fallback if an asset is ever removed. */
 (function () {
   var BRAND_COLOR = {
     NVDA: '#76B900', AVGO: '#CC092F', MU: '#0077C8', SKHY: '#FF7A00', TSM: '#E7000A', ASML: '#0F238C',
@@ -344,47 +449,67 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     anthropic: 'Anthropic', openai: 'OpenAI', zhipu: 'Zhipu AI', alibaba: 'Alibaba',
     google: 'Google Gemini', xai: 'xAI Grok', meta: 'Meta', cohere: 'Cohere',
     deepseek: 'DeepSeek', moonshot: 'Moonshot Kimi', minimax: 'MiniMax',
-    /* V12 vendors: no verified Wikimedia logo files yet — text wordmark fallback by design */
+    /* Dormant vendor aliases retain text fallback until data enables them. */
   };
-  // Real logo files — Wikimedia Commons' Special:FilePath is a stable
-  // redirect-to-raw-file service meant for exactly this kind of hotlink.
   var LOGO_URL = {
-    NVDA: 'https://commons.wikimedia.org/wiki/Special:FilePath/NVIDIA_logo_white.svg',
-    AVGO: 'https://commons.wikimedia.org/wiki/Special:FilePath/Broadcom_logo_(2016-present).svg',
-    MU: 'https://commons.wikimedia.org/wiki/Special:FilePath/Micron_Technology_logo_2024.svg',
-    SKHY: 'https://commons.wikimedia.org/wiki/Special:FilePath/SK_Hynix.svg',
-    TSM: 'https://commons.wikimedia.org/wiki/Special:FilePath/TSMC_wordmark.svg',
-    ASML: 'https://commons.wikimedia.org/wiki/Special:FilePath/ASML_Holding_N.V._logo.svg',
-    anthropic: 'https://commons.wikimedia.org/wiki/Special:FilePath/Anthropic_logo.svg',
-    openai: 'https://commons.wikimedia.org/wiki/Special:FilePath/OpenAI_logo_2025_(symbol).svg',
-    zhipu: 'https://commons.wikimedia.org/wiki/Special:FilePath/Z.ai_(company_logo).svg',
-    alibaba: 'https://commons.wikimedia.org/wiki/Special:FilePath/Alibaba_en_logo.svg',
-    SSNLF: 'https://commons.wikimedia.org/wiki/Special:FilePath/Samsung_Electronics_logo_(english).svg',
-    MRVL: 'https://commons.wikimedia.org/wiki/Special:FilePath/Marvell_Logo.svg',
-    PSTG: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pure-storage-vector-logo.svg',
-    SNDK: 'https://commons.wikimedia.org/wiki/Special:FilePath/SanDisk_2024_logo.svg',
-    TER: 'https://www.teradyne.com/wp-content/uploads/2025/07/Teradyne-logo-white.svg',
-    RMBS: 'https://commons.wikimedia.org/wiki/Special:FilePath/Rambus_logo.svg',
-    // ALAB: no usable logo file found on Wikimedia Commons or Astera Labs'
-    // own (JS-rendered) site — falls back to .rLogoFallback text.
+    NVDA: '/assets/sectors/logos/nvidia.svg',
+    AVGO: '/assets/sectors/logos/broadcom.svg',
+    MU: '/assets/sectors/logos/micron.svg',
+    SKHY: '/assets/sectors/logos/sk-hynix.svg',
+    TSM: '/assets/sectors/logos/tsmc.svg',
+    ASML: '/assets/sectors/logos/asml.svg',
+    anthropic: '/assets/sectors/logos/anthropic.svg',
+    openai: '/assets/sectors/logos/openai.svg',
+    zhipu: '/assets/sectors/logos/zhipu.svg',
+    alibaba: '/assets/sectors/logos/alibaba.svg',
+    SSNLF: '/assets/sectors/logos/samsung.svg',
+    ALAB: '/assets/sectors/logos/astera-labs.svg',
+    MRVL: '/assets/sectors/logos/marvell.svg',
+    PSTG: '/assets/sectors/logos/pure-storage.svg',
+    SNDK: '/assets/sectors/logos/sandisk.svg',
+    TER: '/assets/sectors/logos/teradyne.svg',
+    RMBS: '/assets/sectors/logos/rambus.svg',
   };
-  // Real photos from each company's own official newsroom/press/media page
-  // — only where one could actually be found and confirmed (see Urgent.md
-  // U37). Everyone else falls back to a plain brand-color card (.noPhoto).
   var PHOTO_URL = {
-    // never use nvidianews.nvidia.com/file?fid=… — hotlink-blocked; use the
-    // iprsoftwaremedia.com CDN form from the press-kit page instead.
-    NVDA: 'https://iprsoftwaremedia.com/219/files/202603/nvidia-vera-rubin-family.jpeg',
-    AVGO: 'https://news-editor.broadcom.com/wp-content/uploads/2025/07/5-Broadcom-Palo-Alto-Campus-Entrance-2025.jpg',
-    MU: 'https://www.micron.com/content/dam/micron/connectedassets/micron/global/locations/location-boise-idaho-site-03.jpg',
-    SKHY: 'https://d36ae2cxtn9mcr.cloudfront.net/wp-content/uploads/2026/01/05223845/SK-hynix-CES-2026-showcase-products-2.jpg',
-    TSM: 'https://pr.tsmc.com/sites/pr/multimedia-gallery/407A9160_0.jpg',
-    SSNLF: 'https://news.samsungsemiconductor.com/global/wp-content/uploads/2026/02/Image-1.-Samsung-Electronics-HBM4-2-1024x731.jpg',
-    ASML: 'https://edge.sitecorecloud.io/asmlnetherlaaea-asmlcom-prd-5369/media/project/asmlcom/asmlcom/asml/images/products/euv-lithography-systems/twinscan-exe5200b.png?h=608&iar=0&w=1080',
-    anthropic: 'https://cdn.sanity.io/images/4zrzovbb/website/b7055119423427c40a0e4d84054aed17682b50a2-2880x1620.png?w=1200&auto=format',
-    openai: 'https://images.ctfassets.net/kftzwdyauwt9/3T0kxQLJk1VcXVxMwXF97J/4345df401f2b08ed6a1eef88c9588d2e/OAI_ChatGPTWork_ModelBlog_OpenGraph_16x9_1200x630.png?w=1600&h=900&fit=fill',
+    NVDA: '/assets/sectors/media/nvidia-vera-rubin.jpg',
+    AVGO: '/assets/sectors/media/broadcom-tomahawk6.png',
+    MU: '/assets/sectors/media/micron-hbm4.jpg',
+    SKHY: '/assets/sectors/media/sk-hynix-hbm.jpg',
+    TSM: '/assets/sectors/media/tsmc-3dfabric.jpg',
+    ASML: '/assets/sectors/media/asml-high-na.png',
+    anthropic: '/assets/sectors/media/anthropic-claude.jpg',
+    openai: '/assets/sectors/media/openai-chatgpt-work.jpg',
+    zhipu: '/assets/sectors/media/zhipu-bigmodel.jpg',
+    alibaba: '/assets/sectors/media/alibaba-model-studio.jpg',
+    SSNLF: '/assets/sectors/media/samsung-hbm4.jpg',
+    ALAB: '/assets/sectors/media/astera-scorpio.webp',
+    MRVL: '/assets/sectors/media/marvell-structera.jpg',
+    PSTG: '/assets/sectors/media/pure-flashblade.jpg',
+    SNDK: '/assets/sectors/media/sandisk-sn861.jpg',
+    TER: '/assets/sectors/media/teradyne-ai-chip.jpg',
+    RMBS: '/assets/sectors/media/rambus-cxl.jpg',
+  };
+  var MEDIA_ALT = {
+    NVDA: 'NVIDIA Vera Rubin AI compute platform',
+    AVGO: 'Broadcom Tomahawk 6 AI networking switch silicon',
+    MU: 'Micron HBM4 memory product',
+    SKHY: 'SK hynix HBM product showcase',
+    TSM: 'TSMC 3DFabric heterogeneous integration roadmap',
+    ASML: 'ASML TWINSCAN EXE high-NA EUV lithography system',
+    anthropic: 'Claude product interface',
+    openai: 'ChatGPT Work product interface',
+    zhipu: 'Zhipu BigModel product homepage',
+    alibaba: 'Alibaba Cloud Model Studio and Qwen product page',
+    SSNLF: 'Samsung HBM4 memory product',
+    ALAB: 'Astera Labs Scorpio smart fabric switch platform',
+    MRVL: 'Marvell Structera CXL product-line press kit',
+    PSTG: 'Pure Storage FlashBlade product platform',
+    SNDK: 'SanDisk DC SN861 data-center SSD',
+    TER: 'Teradyne semiconductor testing for AI chips',
+    RMBS: 'Rambus CXL 2.0 controller product page',
   };
   function colorFor(key) { return BRAND_COLOR[key]; }
+  function nameFor(key) { return DISPLAY_NAME[key] || key; }
   function escAttr(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   // Builds the whole .rArt thumbnail for one company. `extraHtml` (the
   // US/CN + open/closed tag pills) is injected between the photo and the
@@ -393,19 +518,15 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     var color = colorFor(key);
     var photo = PHOTO_URL[key];
     var logo = LOGO_URL[key];
-    var name = DISPLAY_NAME[key] || key;
+    var name = nameFor(key);
     var style = color ? ' style="--brand:' + color + '"' : '';
-    var photoHtml = photo ? '<img class="rPhoto" src="' + photo + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"><div class="rScrim"></div>' : '';
+    var photoHtml = photo ? '<img class="rPhoto" src="' + photo + '" alt="' + escAttr(MEDIA_ALT[key] || (name + ' product visual')) + '" width="1200" height="750" loading="lazy" decoding="async"><div class="rScrim"></div>' : '';
     var logoHtml = logo
-      ? '<img class="rLogo" src="' + logo + '" alt="' + escAttr(name) + '" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
+      ? '<span class="rBrandPlate"><img class="rLogo" src="' + logo + '" alt="' + escAttr(name) + ' logo" width="240" height="80" loading="lazy" decoding="async"></span>'
       : '<span class="rLogoFallback">' + escAttr(name) + '</span>';
-    return '<div class="rArt' + (photo ? '' : ' noPhoto') + '"' + style + '>' + photoHtml + (extraHtml || '') + logoHtml + '</div>';
+    return '<div class="rArt' + (photo ? '' : ' noPhoto') + '" data-brand="' + escAttr(key) + '"' + style + '>' + photoHtml + (extraHtml || '') + logoHtml + '</div>';
   }
-  window.AfflatusBrand = { colorFor: colorFor, artHTML: artHTML };
-  // Hotlinked images can 404 or hit hotlink protection over time; `error`
-  // doesn't bubble, so one capture-phase listener on the document catches
-  // every card's <img> and degrades it to the same fallback a missing
-  // asset would use, instead of a broken-image glyph.
+  window.AfflatusBrand = { colorFor: colorFor, nameFor: nameFor, artHTML: artHTML };
   document.addEventListener('error', function (e) {
     var el = e.target;
     if (!el || !el.classList) return;
@@ -417,11 +538,11 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
       var span = document.createElement('span');
       span.className = 'rLogoFallback';
       span.textContent = el.alt || '';
-      el.replaceWith(span);
+      var plate = el.closest('.rBrandPlate');
+      if (plate) plate.replaceWith(span); else el.replaceWith(span);
     }
   }, true);
-  // Fade photos in on load instead of popping in once the (often multi-MB)
-  // hotlinked original decodes.
+  // Fade product media in only after it has decoded.
   document.addEventListener('load', function (e) {
     if (e.target && e.target.classList && e.target.classList.contains('rPhoto')) e.target.classList.add('loaded');
   }, true);
@@ -440,28 +561,6 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
   document.querySelectorAll('.rArt[data-brand]').forEach(function (el) {
     el.outerHTML = artHTML(el.dataset.brand);
   });
-  // "Pull a card from the stack": clicking a stock card's art selects it
-  // (stays in color, straightens + lifts) while siblings in the same rail
-  // desaturate — CSS does the desaturation via :has(), this just toggles
-  // .selected exclusively within one rail.
-  function wireRailSelect(trackEl) {
-    if (!trackEl) return;
-    trackEl.querySelectorAll('.rCard').forEach(function (card) {
-      var art = card.querySelector('.rArt');
-      if (!art) return;
-      art.setAttribute('tabindex', '0');
-      art.setAttribute('role', 'button');
-      var select = function () {
-        var was = card.classList.contains('selected');
-        trackEl.querySelectorAll('.rCard.selected').forEach(function (c) { c.classList.remove('selected'); });
-        if (!was) card.classList.add('selected');
-      };
-      art.addEventListener('click', select);
-      art.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); } });
-    });
-  }
-  wireRailSelect(document.getElementById('cardsA'));
-  wireRailSelect(document.getElementById('cardsB'));
 })();
 </script>
 <script>
@@ -471,11 +570,13 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
   var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function T(en, zh) { try { return (window.AfflatusI18N && window.AfflatusI18N.get() === 'zh') ? zh : en; } catch (e) { return en; } }
   document.querySelectorAll('.rCard .rMore').forEach(function (btn) {
+    btn.setAttribute('aria-expanded', 'false');
     btn.addEventListener('click', function () {
       var card = btn.closest('.rCard');
       var doIt = function () {
         card.classList.toggle('open');
         var open = card.classList.contains('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
         btn.textContent = open ? (btn.dataset.enLess) : (btn.dataset.enMore);
         btn.setAttribute('data-en', open ? btn.dataset.enLess : btn.dataset.enMore);
         btn.setAttribute('data-zh', open ? btn.dataset.zhLess : btn.dataset.zhMore);
@@ -493,11 +594,12 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
 (function () {
   var mwAsOf = document.getElementById('mwAsOf'), mwGrid = document.getElementById('mwGrid'),
       mwBaskets = document.getElementById('mwBaskets'), mwTake = document.getElementById('mwTake'),
-      mwGraph = document.getElementById('mwGraph'),
+      mwGraph = document.getElementById('mwGraph'), mwGraphNodes = document.getElementById('mwGraphNodes'),
+      mwGraphSummary = document.getElementById('mwGraphSummary'), mwStoryProgress = document.getElementById('mwStoryProgress'),
+      mwHover = document.getElementById('mwHover'),
       mwDetail = document.getElementById('mwDetail'), mwEmpty = document.getElementById('mwEmpty'),
       pmAsOf = document.getElementById('pmAsOf'), pmTracks = document.getElementById('pmTracks'),
       pmGrid = document.getElementById('pmGrid'), pmSwap = document.getElementById('pmSwap'), pmTake = document.getElementById('pmTake'),
-      toggleMap = document.getElementById('toggleMap'), toggleCards = document.getElementById('toggleCards'),
       storyCardsEl = document.getElementById('storyCards'), storyGraphEl = document.getElementById('storyGraphSection'),
       storyTake = document.getElementById('storyTake'), newsGrid = document.getElementById('newsGrid');
   if (!mwGrid && !pmGrid) return;
@@ -539,6 +641,45 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
   // structured {title, tag?, tagClass?, bodyHtml} or null (no card), so
   // each renderer owns only its own shell/close-button chrome.
   function buildDetail(node) {
+    if (node && node.source && DATA && DATA.ecosystemGraph) {
+      var graph = DATA.ecosystemGraph;
+      var nodeById = {};
+      (graph.nodes || []).forEach(function (item) { nodeById[item.id] = item; });
+      var edgeNames = {
+        investment: T('INVESTMENT', '投资'),
+        cloud: T('CLOUD', '云'),
+        compute: T('COMPUTE', '算力'),
+        silicon: T('SILICON', '芯片'),
+        memory: T('MEMORY', '存储'),
+        manufacturing: T('MANUFACTURING', '制造'),
+        distribution: T('DISTRIBUTION', '分发'),
+        platform: T('PLATFORM', '平台'),
+        coalition: T('COALITION', '联盟'),
+        supply: T('SUPPLY', '供应')
+      };
+      var products = (node.products || []).map(function (product) {
+        return '<span class="mwProduct">' + esc(product) + '</span>';
+      }).join('');
+      var connections = (graph.edges || []).filter(function (edge) {
+        return edge.source === node.id || edge.target === node.id;
+      }).map(function (edge) {
+        var other = nodeById[edge.source === node.id ? edge.target : edge.source];
+        var label = T(edge.label_en, edge.label_zh);
+        return '<a class="mwConnection" href="' + esc(edge.source_url) + '" target="_blank" rel="noopener">'
+          + '<span><i class="edge-' + esc(edge.type) + '"></i>' + esc(edgeNames[edge.type] || edge.type) + '</span>'
+          + '<b>' + esc(other ? other.label : '') + '</b>'
+          + '<small>' + esc(label) + '</small></a>';
+      }).join('');
+      return {
+        title: node.label,
+        tag: T(node.kind, ({ model: '模型', initiative: '倡议', cloud: '云', compute: '算力', silicon: '芯片', memory: '存储', manufacturing: '制造', platform: '平台' }[node.kind] || node.kind)),
+        tagClass: 'ecosystem',
+        bodyHtml: '<div class="mwLine">' + esc(T(node.summary_en, node.summary_zh)) + '</div>'
+          + (products ? '<div class="mwProducts">' + products + '</div>' : '')
+          + (connections ? '<div class="mwConnections"><strong>' + esc(T('VERIFIED CONNECTIONS', '经核验关系')) + '</strong>' + connections + '</div>' : '')
+          + '<a class="mwPrimarySource" href="' + esc(node.source) + '" target="_blank" rel="noopener">' + esc(T('Primary product source ↗', '产品一手来源 ↗')) + '</a>',
+      };
+    }
     if (node.kind === 'vendor') {
       var card = (DATA && DATA.modelWatch || []).filter(function (c) { return c.vendor === node.vendor; })[0];
       if (!card) return null;
@@ -597,25 +738,24 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
   // AfflatusBrand registry defined in the script above.
   function newsCard(opts) {
     var AB = window.AfflatusBrand;
+    var detailId = opts.id ? opts.id + '-detail' : '';
     var artHtml = AB ? AB.artHTML(opts.brand, '<div class="nTags">' + (opts.tags || '') + '</div>') : '<div class="rArt noPhoto"><div class="nTags">' + (opts.tags || '') + '</div></div>';
-    return '<article class="nCard" tabindex="0" role="button" aria-expanded="false"' + (opts.id ? ' id="' + esc(opts.id) + '"' : '') + '>'
+    return '<article class="nCard"' + (opts.id ? ' id="' + esc(opts.id) + '"' : '') + '>'
       + artHtml
-      + '<div class="nBody"><div class="nHead"><span class="nTitle">' + esc(opts.title) + '</span>' + (opts.meta ? '<span class="nMeta">' + esc(opts.meta) + '</span>' : '') + '</div>'
+      + '<div class="nBody"><div class="nHead"><h3 class="nTitle">' + esc(opts.title) + '</h3>' + (opts.meta ? '<span class="nMeta">' + esc(opts.meta) + '</span>' : '') + '</div>'
       + '<div class="nExcerpt">' + esc(opts.excerpt || '') + '</div>'
       + (opts.chips ? '<div class="nChips">' + opts.chips + '</div>' : '')
-      + '<div class="nDetail">' + (opts.detail || '') + '</div>'
+      + (opts.detail ? '<button type="button" class="nToggle" aria-expanded="false"' + (detailId ? ' aria-controls="' + esc(detailId) + '"' : '') + '>' + esc(T('Read details', '查看详情')) + '</button><div class="nDetail"' + (detailId ? ' id="' + esc(detailId) + '"' : '') + '>' + opts.detail + '</div>' : '')
       + '</div></article>';
   }
 
   function renderNewsGrid() {
     if (!newsGrid) return;
     if (storyTake) storyTake.innerHTML = DATA && DATA.weeklyTake
-      ? '<div class="rArt noPhoto"></div><div class="featuredBody"><b>' + esc(T('WEEKLY TAKE', '本周主线')) + '</b><p>' + esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) + '</p></div>'
+      ? '<div class="featuredMedia"><img src="/assets/sectors/media/zhipu-bigmodel.jpg" alt="" width="756" height="386" loading="lazy" decoding="async"><img src="/assets/sectors/media/openai-chatgpt-work.jpg" alt="" width="800" height="450" loading="lazy" decoding="async"></div><div class="featuredBody"><b>' + esc(T('WEEKLY TAKE', '本周主线')) + '</b><p>' + esc(T(DATA.weeklyTake.en, DATA.weeklyTake.zh)) + '</p></div>'
       : '';
-    // V12: the roster comes from modelWatch (11 vendor cards), not baskets —
-    // private labs (deepseek/moonshot/minimax/xai) carry no basket by design
-    // and would otherwise never render. Baskets are joined per vendor where
-    // they exist; a defensive pass appends any basket-only vendor (legacy).
+    // The roster comes from modelWatch; baskets are joined defensively
+    // because snapshot data may be sparse.
     var baskets = DATA && Array.isArray(DATA.baskets) ? DATA.baskets : [];
     var basketByVendor = {};
     baskets.forEach(function (b) { basketByVendor[b.vendor] = b; });
@@ -667,55 +807,23 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     wireNewsCards(newsGrid);
   }
 
-  function scrollRailEl(trackEl, dir) {
-    if (!trackEl) return;
-    var card = trackEl.querySelector('.rCard');
-    var step = card ? card.getBoundingClientRect().width + 18 : 320;
-    trackEl.scrollBy({ left: dir * step, behavior: reduceMotion ? 'auto' : 'smooth' });
-  }
-  document.querySelectorAll('.railArrow[data-target]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      scrollRailEl(document.getElementById(btn.dataset.target), Number(btn.dataset.dir));
-    });
-  });
-  // Mouse drag-to-scroll on the two stock rails (touch already gets native
-  // swipe from overflow-x scroll-snap).
-  function wireRailDragFor(trackEl) {
-    if (!trackEl) return;
-    var dragging = false, startX = 0, startScroll = 0;
-    trackEl.addEventListener('pointerdown', function (e) {
-      if (e.pointerType === 'touch') return;
-      dragging = true; startX = e.clientX; startScroll = trackEl.scrollLeft;
-      trackEl.setPointerCapture(e.pointerId);
-    });
-    trackEl.addEventListener('pointermove', function (e) { if (dragging) trackEl.scrollLeft = startScroll - (e.clientX - startX); });
-    var stopDrag = function () { dragging = false; };
-    trackEl.addEventListener('pointerup', stopDrag);
-    trackEl.addEventListener('pointercancel', stopDrag);
-  }
-  wireRailDragFor(document.getElementById('cardsA'));
-  wireRailDragFor(document.getElementById('cardsB'));
-
-  // Clicking a card both expands its thesis text (.open, existing behavior)
-  // and "selects" it in the openai.com Business-page sense: it stays in
-  // color while any other selected card in the same grid desaturates
-  // (.selected, CSS-driven via :has() in sectors.css). Only one card per
-  // grid is ever .selected — opening a second card demotes the first.
+  // A dedicated disclosure control keeps nested source links independently
+  // actionable and avoids applying button semantics to the whole article.
   function wireNewsCards(container) {
     if (!container) return;
     container.querySelectorAll('.nCard').forEach(function (card) {
+      var btn = card.querySelector('.nToggle');
+      if (!btn) return;
       function toggle() {
         var open = function () {
           card.classList.toggle('open');
-          card.setAttribute('aria-expanded', card.classList.contains('open') ? 'true' : 'false');
-          var willSelect = card.classList.contains('open');
-          container.querySelectorAll('.nCard.selected').forEach(function (c) { if (c !== card) c.classList.remove('selected'); });
-          card.classList.toggle('selected', willSelect);
+          var expanded = card.classList.contains('open');
+          btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+          btn.textContent = expanded ? T('Hide details', '收起详情') : T('Read details', '查看详情');
         };
         if (!reduceMotion && document.startViewTransition) document.startViewTransition(open); else open();
       }
-      card.addEventListener('click', toggle);
-      card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+      btn.addEventListener('click', toggle);
     });
   }
 
@@ -737,7 +845,7 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
       });
     };
     if (!universeData) {
-      fetch('/arena-universe.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+      AfflatusFetchJson('arena-universe')
         .then(function (d) { universeData = d; mount(); })
         .catch(function () { universeData = {}; mount(); });
     } else {
@@ -745,22 +853,10 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     }
   }
 
-  function showGraph() {
-    if (is3D) { openStarfield(); return; }
-    if (storyCardsEl) storyCardsEl.hidden = true;
-    if (storyGraphEl) storyGraphEl.hidden = false;
-    renderGraph(); // lazy: first click is when the canvas is actually sized
-  }
-  function showCards() {
-    if (storyGraphEl) storyGraphEl.hidden = true;
-    if (storyCardsEl) storyCardsEl.hidden = false;
-  }
-  if (toggleMap) toggleMap.addEventListener('click', showGraph);
-  if (toggleCards) toggleCards.addEventListener('click', showCards);
-
   function renderGraph() {
     var mw = DATA && Array.isArray(DATA.modelWatch) ? DATA.modelWatch : [];
-    if (!mw.length) {
+    var hasEcosystem = DATA && DATA.ecosystemGraph && Array.isArray(DATA.ecosystemGraph.nodes) && DATA.ecosystemGraph.nodes.length;
+    if (!mw.length && !hasEcosystem) {
       if (mwGraph) mwGraph.hidden = true;
       if (mwDetail) mwDetail.hidden = true;
       if (mwEmpty) { mwEmpty.hidden = false; mwEmpty.textContent = emptyMsg(); }
@@ -771,7 +867,16 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     if (!mwGraph || !window.AfflatusSectorsGraph) return;
     mwGraph.hidden = false;
     if (!graphHandle) {
-      graphHandle = window.AfflatusSectorsGraph.initSectorsGraph(mwGraph, DATA, { onSelect: renderNodeDetail, labelFor: graphLabelFor });
+      graphHandle = window.AfflatusSectorsGraph.initSectorsGraph(mwGraph, DATA, {
+        onSelect: renderNodeDetail,
+        labelFor: graphLabelFor,
+        lang: function () { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; },
+        controlHost: mwGraphNodes,
+        summaryElement: mwGraphSummary,
+        tooltipElement: mwHover,
+        storyHost: storyGraphEl,
+        progressElement: mwStoryProgress
+      });
     } else {
       graphHandle.update(DATA);
     }
@@ -837,7 +942,8 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
       var detail = '<div class="mwGap"><b>' + T('MOAT', '护城河') + '</b> ' + esc(T(c.moat_en, c.moat_zh)) + '</div>'
         + '<div class="mwGap"><b>' + T('KEY RISK', '关键风险') + '</b> ' + esc(T(c.key_risk_en, c.key_risk_zh)) + '</div>'
         + (cats ? '<div class="mwGap">' + cats + '</div>' : '');
-      return newsCard({ id: 'pmCard-' + c.ticker, brand: c.ticker, tags: tags, title: c.ticker, excerpt: T(c.thesis_en, c.thesis_zh), chips: chips, detail: detail });
+      var AB = window.AfflatusBrand;
+      return newsCard({ id: 'pmCard-' + c.ticker, brand: c.ticker, tags: tags, title: AB ? AB.nameFor(c.ticker) : c.ticker, meta: c.ticker, excerpt: T(c.thesis_en, c.thesis_zh), chips: chips, detail: detail });
     }).join('');
     wireNewsCards(pmGrid);
     if (pmSwap) pmSwap.innerHTML = (pm.swap_proposals && pm.swap_proposals.length)
@@ -850,7 +956,15 @@ window.AfflatusSectorsStarfield = { load: function () { return import('/src/scen
     renderModelWatch(); renderNewsGrid(); renderPostMemory();
     if (graphHandle || (storyGraphEl && !storyGraphEl.hidden)) renderGraph();
   }
-  fetch('/sectors-data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
+  Promise.all([
+    AfflatusFetchJson('sectors'),
+    AfflatusFetchJson('sectors-ecosystem').catch(function () { return null; })
+  ])
+    .then(function (items) {
+      DATA = items[0];
+      if (items[1]) DATA.ecosystemGraph = items[1];
+      render();
+    })
     .catch(function () {
       if (mwGrid) mwGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>'; if (pmGrid) pmGrid.innerHTML = '<div class="empty">' + emptyMsg() + '</div>';
       if (mwGraph) mwGraph.hidden = true; if (mwEmpty) { mwEmpty.hidden = false; mwEmpty.textContent = emptyMsg(); }

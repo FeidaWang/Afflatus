@@ -17,6 +17,12 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import {
+  canAcquireWebGLContext,
+  createWebGLContextLifecycle,
+  disposeThreeScene,
+} from '../lib/webglLifecycle.js';
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -125,6 +131,12 @@ export function initAlphardForge() {
   if (!section || !canvas) return null;
   const stageEl = section.querySelector('.stardrive-stage');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'high', targetFps: 60 });
+  let budgetActive = false;
+  let contextReady = true;
+  let stopForContext = () => {};
+  let resumeAfterContext = () => {};
   // U30 R2, default off (R3 WIP exception — flag-gated visual work doesn't
   // count against the real-device review backlog): ?fx=stage turns on the
   // sticky-scale "stargate" wrapper (styles.css .stardrive.fx-stage rules).
@@ -133,7 +145,7 @@ export function initAlphardForge() {
   // ── bilingual tagline typed out by the scroll ──
   const tagEl = document.getElementById('forgeTagline');
   const CLAUSES = { en: ['Every return', 'is a jump', 'through the dark.'], zh: ['每一份回报，', '都是一次', '穿越深空的跃迁。'] };
-  function detectZh() { const l = (document.documentElement.lang || '').toLowerCase(); if (l) return l.startsWith('zh'); try { return localStorage.getItem('afflatus-lang') === 'zh'; } catch (e) { return false; } }
+  function detectZh() { return (document.documentElement.lang || '').toLowerCase().startsWith('zh'); }
   let curZh = detectZh(), lastTagKey = '';
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
   function renderTagline(p) {
@@ -149,7 +161,8 @@ export function initAlphardForge() {
     }
     tagEl.innerHTML = html;
   }
-  new MutationObserver(() => { curZh = detectZh(); lastTagKey = ''; }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  const languageObserver = new MutationObserver(() => { curZh = detectZh(); lastTagKey = ''; });
+  languageObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
 
   const sv0 = document.getElementById('sv0');
   const retPct = Math.abs(parseFloat(sv0?.dataset.counter || '38.66')) || 38.66;
@@ -157,12 +170,35 @@ export function initAlphardForge() {
 
   // ── renderer ──
   let renderer;
+  if (!canAcquireWebGLContext('home:alphard-forge')) return null;
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' }); }
   catch (e) { return null; }
+  const webglLifecycle = createWebGLContextLifecycle({
+    id: 'home:alphard-forge',
+    canvas,
+    onLost() {
+      contextReady = false;
+      stopForContext();
+    },
+    onRestore() {
+      renderer.resetState?.();
+      contextReady = true;
+      size();
+      render(performance.now());
+      resumeAfterContext();
+    },
+    onFallback() {
+      contextReady = false;
+      stopForContext();
+    },
+  });
+  if (!webglLifecycle.canInitialize) {
+    languageObserver.disconnect();
+    renderer.dispose();
+    renderer.forceContextLoss?.();
+    return null;
+  }
   renderer.setClearColor(0x04060a, 1);
-  // context-loss resilience (home runs many WebGL contexts; recover, don't black-screen)
-  renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault(), false);
-  renderer.domElement.addEventListener('webglcontextrestored', () => { try { size(); render(performance.now()); } catch (e) {} }, false);
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x061018, 0.0016);
@@ -276,7 +312,7 @@ export function initAlphardForge() {
   let W = 1, H = 1;
   function size() {
     const r = canvas.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = renderPolicy.computeDpr(W, H, { minDpr: 0.6, maxDpr: 2 });
     renderer.setPixelRatio(dpr); renderer.setSize(W, H, false);
     composer.setPixelRatio(dpr); composer.setSize(W, H);
     bloom.setSize(W * dpr, H * dpr);
@@ -364,27 +400,90 @@ export function initAlphardForge() {
   size();
   if (reduce) {
     nebUniforms.uForge.value = 1; renderTagline(1); render(0);
-    addEventListener('resize', () => { size(); render(0); }, { passive: true });
-    return { destroy() { renderer.dispose(); composer.dispose?.(); } };
+    const reducedSurface = renderCoordinator.register({
+      id: 'home:alphard-forge',
+      element: section,
+      cost: 'high',
+      targetFps: 60,
+      onResize() { size(); render(0); },
+      onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
+      onDispose() {
+        webglLifecycle.dispose();
+        composer.dispose?.();
+        disposeThreeScene(scene, renderer);
+      },
+    });
+    return {
+      destroy() {
+        languageObserver.disconnect();
+        reducedSurface.dispose();
+      },
+    };
   }
 
   section.classList.add('is-live'); size();
-  let running = false, raf = 0;
-  function loop(t) { render(t); if (running) raf = requestAnimationFrame(loop); }
-  function start() { if (!running) { running = true; raf = requestAnimationFrame(loop); } }
+  let running = false, raf = 0, loopLastT = 0, renderSurface = null;
+  function loop(t) {
+    const frameMs = loopLastT ? t - loopLastT : 0;
+    loopLastT = t;
+    render(t);
+    renderSurface?.reportFrame(frameMs);
+    if (running) raf = requestAnimationFrame(loop);
+  }
+  function start() {
+    if (!running && contextReady) {
+      running = true;
+      lastT = 0;
+      loopLastT = 0;
+      raf = requestAnimationFrame(loop);
+    }
+  }
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
-  const io = new IntersectionObserver(es => { es.forEach(e => { e.isIntersecting ? start() : stop(); }); }, { threshold: 0 });
-  io.observe(section);
+  stopForContext = stop;
+  resumeAfterContext = () => { if (budgetActive) start(); };
   // only needed to keep .pin-fixed/.pin-end in sync while the rAF loop isn't
   // running — moot when cssPin is true, since progress() no longer touches
   // those classes at all in that branch.
   const onScroll = () => { if (!running) progress(); };
   if (!cssPin) addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('resize', () => { size(); if (!running) render(performance.now()); }, { passive: true });
   addEventListener('pointermove', onMove, { passive: true });
   render(performance.now());
+  renderSurface = renderCoordinator.register({
+    id: 'home:alphard-forge',
+    element: section,
+    cost: 'high',
+    targetFps: 60,
+    onResume() {
+      budgetActive = true;
+      start();
+    },
+    onPause() {
+      budgetActive = false;
+      stop();
+    },
+    onResize() {
+      size();
+      if (!running) render(performance.now());
+    },
+    onQualityChange(nextPolicy) {
+      renderPolicy = nextPolicy;
+    },
+    onDispose() {
+      webglLifecycle.dispose();
+      composer.dispose?.();
+      disposeThreeScene(scene, renderer);
+    },
+  });
 
-  return { destroy() { stop(); io.disconnect(); if (!cssPin) removeEventListener('scroll', onScroll); removeEventListener('pointermove', onMove); renderer.dispose(); } };
+  return {
+    destroy() {
+      stop();
+      if (!cssPin) removeEventListener('scroll', onScroll);
+      removeEventListener('pointermove', onMove);
+      languageObserver.disconnect();
+      renderSurface.dispose();
+    },
+  };
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAlphardForge, { once: true });

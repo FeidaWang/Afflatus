@@ -15,12 +15,13 @@
    For entertainment only — NOT investment advice.
    ============================================================ */
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
+import { fetchJson } from '../lib/fetchJson.js';
+import { getLocale } from '../lib/localeStore.js';
 
 (() => {
   'use strict';
 
-  const CONFIG = { newsUrl: '/arena-news.json' };
-  const BRIEF_KEY = 'afflatus-arena:briefing', LANG_KEY = 'afflatus:lang';
+  const BRIEF_KEY = 'afflatus-arena:briefing';
   const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
 
   // ---- market hours / session --------------------------------
@@ -39,7 +40,7 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
   function sentLabel(s) { return s > 0.25 ? { label: 'Bullish', tone: 'bull' } : s < -0.25 ? { label: 'Bearish', tone: 'bear' } : { label: 'Neutral', tone: 'flat' }; }
 
   // ---- state --------------------------------------------------
-  let lang0 = 'en'; try { const l = localStorage.getItem(LANG_KEY); if (l === 'zh' || l === 'en') lang0 = l; } catch {}
+  const lang0 = getLocale('en');
   const state = { lang: lang0, sentiment: 0, news: { date: null, items: [], aiPredictions: {}, loading: true }, lastUpdate: 0 };
   const T = (en, zh) => state.lang === 'zh' ? zh : en;
 
@@ -86,7 +87,7 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
     host.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
     setTimeout(() => { try { $('bfModal').focus(); } catch {} update(); }, 30);
   }
-  function toggleLang() { if (window.AfflatusI18N) { window.AfflatusI18N.toggle(); return; } state.lang = state.lang === 'zh' ? 'en' : 'zh'; try { localStorage.setItem(LANG_KEY, state.lang); } catch {} renderNews(); }
+  function toggleLang() { if (window.AfflatusI18N) { window.AfflatusI18N.toggle(); return; } state.lang = state.lang === 'zh' ? 'en' : 'zh'; renderNews(); }
 
   // ---- custom HUD cursor --------------------------------------
   function initCursor() {
@@ -100,8 +101,7 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
   }
 
   // ---- boot ---------------------------------------------------
-  fetch(CONFIG.newsUrl, { cache: 'no-store' })
-    .then((r) => r.ok ? r.json() : Promise.reject())
+  fetchJson('arena-news')
     .then((data) => { const items = (data.items || []).map((it) => ({ ...it, sentiment: typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || it.title || ''} ${it.summary_en || it.summary || ''}`) })); state.news = { date: data.date || null, generatedAt: data.generatedAt || null, items, aiPredictions: data.aiPredictions || {}, disclaimer_en: data.disclaimer_en, disclaimer_zh: data.disclaimer_zh, predictionNote_en: data.predictionNote_en, predictionNote_zh: data.predictionNote_zh, loading: false }; state.sentiment = aggregateSentiment(items); state.lastUpdate = Date.now(); })
     .catch(() => { state.news = { date: null, items: [], aiPredictions: {}, loading: false }; })
     .finally(() => { renderNews(); renderStatus(); if (!EMBED && !briefingAcked()) openBriefing(); });

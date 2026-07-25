@@ -8,13 +8,27 @@
    this page ever produces, and keeps the whole thing vitest-testable
    without a DOM or canvas.
 
-   Coordinate space is abstract/normalized (roughly [-1.6, 1.6] on either
+   Coordinate space is abstract/normalized (roughly [-2.5, 2.5] on either
    axis once settled) — the rendering layer (sectorsGraphView.js) owns the
-   canvas-pixel + pan/zoom mapping, this module never touches a DOM API.
+   canvas-pixel fit and desktop pan mapping. User zoom is deliberately absent;
+   this module never touches a DOM API.
    ============================================================ */
 
 const MARKET_ANCHOR = { US: -1, CN: 1 };
 const RELATION_FORCE = { direct: 1, supplier: 0.7, infra: 0.5, competitor: -0.6 };
+// Story poles deliberately occupy a wide landscape. The canvas always fits
+// this complete extent, so separation is structural rather than dependent on
+// a user zooming into a crowded cluster.
+const STORY_ANCHOR = {
+  cloud: [-2.15, -0.76],
+  platform: [-1.92, 1.16],
+  models: [-0.42, 0.02],
+  initiative: [0.02, 1.62],
+  compute: [0.9, -1.4],
+  silicon: [2.02, -0.58],
+  memory: [1.22, 1.14],
+  manufacturing: [2.35, 1.15],
+};
 
 /** Deterministic PRNG (mulberry32) — same algorithm used by src/bootengine/seed.ts,
  *  reimplemented locally so this stays a dependency-free plain-JS module. */
@@ -39,6 +53,66 @@ function mulberry32(seed) {
  */
 export function buildForceGraphData(sectorsData, opts = {}) {
   const rand = mulberry32(opts.seed ?? 1);
+  const ecosystem = sectorsData?.ecosystemGraph;
+  if (ecosystem && Array.isArray(ecosystem.nodes) && ecosystem.nodes.length) {
+    const nodes = [];
+    const links = [];
+    const known = new Set();
+    const usedStages = new Set(ecosystem.nodes.map((node) => node.stage || 'models'));
+
+    for (const stage of usedStages) {
+      const [x, y] = STORY_ANCHOR[stage] || STORY_ANCHOR.models;
+      const id = 'anchor:' + stage;
+      nodes.push({ id, kind: 'anchor', label: stage, stage, fx: x, fy: y, x, y, vx: 0, vy: 0 });
+      known.add(id);
+    }
+
+    for (const item of ecosystem.nodes) {
+      if (!item || !item.id) continue;
+      const stage = item.stage || 'models';
+      const [ax, ay] = STORY_ANCHOR[stage] || STORY_ANCHOR.models;
+      nodes.push({
+        ...item,
+        id: String(item.id),
+        kind: item.kind || 'model',
+        stage,
+        x: ax + (rand() - 0.5) * 0.62,
+        y: ay + (rand() - 0.5) * 0.62,
+        vx: 0,
+        vy: 0,
+      });
+      known.add(String(item.id));
+      links.push({
+        id: 'anchor-link:' + item.id,
+        source: 'anchor:' + stage,
+        target: String(item.id),
+        kind: 'anchor',
+        type: 'anchor',
+        weight: 0.7,
+      });
+    }
+
+    for (const edge of ecosystem.edges || []) {
+      if (!edge || !known.has(String(edge.source)) || !known.has(String(edge.target))) continue;
+      links.push({
+        ...edge,
+        id: edge.id || `${edge.source}:${edge.target}:${edge.type || 'partnership'}`,
+        source: String(edge.source),
+        target: String(edge.target),
+        kind: 'ecosystem',
+        type: edge.type || 'partnership',
+        weight: typeof edge.strength === 'number' ? edge.strength : 0.65,
+      });
+    }
+
+    return {
+      nodes,
+      links,
+      chapters: Array.isArray(ecosystem.chapters) ? ecosystem.chapters : [],
+      mode: 'ecosystem',
+    };
+  }
+
   const modelWatch = Array.isArray(sectorsData?.modelWatch) ? sectorsData.modelWatch : [];
   const baskets = Array.isArray(sectorsData?.baskets) ? sectorsData.baskets : [];
   const nodes = [];
@@ -112,6 +186,8 @@ export function createForceSim(graphData, opts = {}) {
   return {
     nodes,
     links,
+    mode: graphData.mode || 'legacy',
+    chapters: Array.isArray(graphData.chapters) ? graphData.chapters.map((chapter) => ({ ...chapter })) : [],
     opts: {
       repulsion: opts.repulsion ?? 0.045,
       springLength: opts.springLength ?? 0.42,
@@ -153,13 +229,15 @@ export function stepForceSim(state, dt = 1) {
     const dx0 = b.x - a.x, dy0 = b.y - a.y;
     const d = Math.max(Math.sqrt(dx0 * dx0 + dy0 * dy0), 1e-4);
     const ux = dx0 / d, uy = dy0 / d;
-    if (l.kind === 'pole') {
+    if (l.kind === 'pole' || l.kind === 'anchor') {
       // Pole links point FROM the (pinned) pole TO the vendor, i.e. l.a is the
       // pole and l.b is the vendor. Pinned nodes skip force integration
       // entirely (see the fx!=null branch below), so applying this force to
       // l.a like every other link kind does was a no-op — poleStrength never
       // actually pulled any vendor toward its market pole. Apply it to l.b.
-      const f = (d - opts.poleRestLength) * opts.poleStrength;
+      const restLength = l.kind === 'anchor' ? opts.springLength * 0.72 : opts.poleRestLength;
+      const strength = l.kind === 'anchor' ? opts.poleStrength * 0.72 : opts.poleStrength;
+      const f = (d - restLength) * strength;
       fx[l.b] -= ux * f; fy[l.b] -= uy * f;
     } else if (l.kind === 'pressure') {
       // A "competitor" link still needs to be a proper spring (rest length just

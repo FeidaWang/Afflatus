@@ -55,7 +55,10 @@
     const stars = (type === 'warp' || type === 'takeoff') ? Array.from({ length: type === 'warp' ? 240 : 90 }, () => ({ a: Math.random() * 6.283, r: Math.random() * 40 + 4, sp: Math.random() * 5 + 3, x: Math.random() * W, y: Math.random() * H, s: Math.random() * 2 + 0.5 })) : null;
     const ease = (p) => 1 - Math.pow(1 - p, 3);
     function frame(now) {
-      const p = Math.min(1, (now - t0) / dur);
+      // A restored page or browser time-origin hand-off can yield one rAF
+      // timestamp just below the value returned by performance.now(). Clamp
+      // both ends so derived radii/scales never become negative.
+      const p = Math.max(0, Math.min(1, (now - t0) / dur));
       c.clearRect(0, 0, W, H);
       c.fillStyle = `rgba(3,5,12,${0.3 + 0.55 * p})`; c.fillRect(0, 0, W, H);
       if (type === 'warp') {
@@ -127,5 +130,11 @@
   window.AfflatusFX = { run, sfx, type: TYPE };
   function internal(a) { if (!a || a.target === '_blank' || a.hasAttribute('download')) return null; const href = a.getAttribute('href'); if (!href || href.startsWith('#') || /^(mailto|tel|javascript):/i.test(href)) return null; let u; try { u = new URL(href, location.href); } catch { return null; } if (u.origin !== location.origin) return null; if (!(u.pathname === '/' || /\.html?$/.test(u.pathname))) return null; if (u.pathname === location.pathname) return null; return u.href; }
   document.addEventListener('click', (e) => { if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; const a = e.target.closest && e.target.closest('a[href]'); const href = internal(a); if (!href) return; e.preventDefault(); e.stopImmediatePropagation(); let dir = 'next'; try { dir = (a.dataset.pageTurn === 'prev' || a.dataset.turn === 'prev' || href === new URL(document.body.dataset.prev || '', location.href).href) ? 'prev' : 'next'; } catch {} run(href, dir); }, true);
-  document.addEventListener('keydown', (e) => { const tag = (e.target?.tagName || '').toLowerCase(); if (e.metaKey || e.ctrlKey || e.altKey || ['input', 'textarea', 'select'].includes(tag)) return; const prev = document.body.dataset.prev, next = document.body.dataset.next; if (e.key === 'ArrowLeft' && prev) { e.preventDefault(); e.stopImmediatePropagation(); run(prev, 'prev'); } else if (e.key === 'ArrowRight' && next) { e.preventDefault(); e.stopImmediatePropagation(); run(next, 'next'); } }, true);
+  document.addEventListener('keydown', (e) => {
+    const interactive = e.target?.closest?.('a,button,input,textarea,select,canvas,[contenteditable="true"],[role="button"],[role="group"],[role="tab"],[role="slider"],[tabindex]');
+    if (e.metaKey || e.ctrlKey || e.altKey || interactive) return;
+    const prev = document.body.dataset.prev, next = document.body.dataset.next;
+    if (e.key === 'ArrowLeft' && prev) { e.preventDefault(); e.stopImmediatePropagation(); run(prev, 'prev'); }
+    else if (e.key === 'ArrowRight' && next) { e.preventDefault(); e.stopImmediatePropagation(); run(next, 'next'); }
+  }, true);
 })();

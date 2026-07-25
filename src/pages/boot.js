@@ -13,6 +13,8 @@
  * Still disposable: no production module is modified — data comes from the
  * same public/*.json the real pages read.
  */
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import { fetchJson } from '../lib/fetchJson.js';
 
 const log = document.getElementById('bootLog');
 const bar = document.querySelector('#bootBar i');
@@ -20,6 +22,7 @@ const overlay = document.getElementById('bootOverlay');
 const bridge = document.getElementById('bridge');
 const glFail = document.getElementById('glFail');
 const canvas = document.getElementById('bridgeCanvas');
+const renderCoordinator = getRenderBudgetCoordinator();
 
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Homeworld default: director ON unless explicitly ?combatcam=tactical.
@@ -36,13 +39,11 @@ const fmtUsd = (n) => '$' + Math.round(n).toLocaleString('en-US');
 
 // ── real boot tasks (charter ②: the log is gated on these promises) ─────
 const scenePromise = import('../scene/topdownCombat.js');
-const j = (p) => fetch(p).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
-
 const TASKS = [
   { line: 'BIOS: singular-throne · bearing locked', cls: 'b', run: () => Promise.resolve() },
   { line: 'loading hull geometry (carrier · escorts)', cls: '', run: () => scenePromise },
   {
-    line: 'ledger uplink /arena', cls: '', run: () => j('/arena-ledger.json').then((d) => {
+    line: 'ledger uplink /arena', cls: '', run: () => fetchJson('arena-ledger').then((d) => {
       const A = d.models?.A, B = d.models?.B;
       if (A) { $('bArena').textContent = `A ${fmtUsd(A.equity)}`; $('bArena').classList.remove('off'); }
       if (A && B) $('dArena').innerHTML =
@@ -51,14 +52,14 @@ const TASKS = [
     })
   },
   {
-    line: 'basket matrix /sectors', cls: '', run: () => j('/sectors-data.json').then((d) => {
+    line: 'basket matrix /sectors', cls: '', run: () => fetchJson('sectors').then((d) => {
       $('bSectors').textContent = `${d.baskets.length} BASKETS`; $('bSectors').classList.remove('off');
       $('dSectors').innerHTML = `US–CN AI watch · ${d.modelWatch.length} models<br>as of ${d.as_of}`;
       return `${d.baskets.length} baskets`;
     })
   },
   {
-    line: 'macro compass /signal', cls: '', run: () => j('/signal-events.json').then((d) => {
+    line: 'macro compass /signal', cls: '', run: () => fetchJson('signal').then((d) => {
       const c = d.hawkDoveCompass;
       $('bSignal').textContent = `${c.label_en} ${c.score > 0 ? '+' : ''}${c.score}`;
       $('bSignal').classList.remove('off');
@@ -67,7 +68,7 @@ const TASKS = [
     })
   },
   {
-    line: 'prediction record /intel', cls: '', run: () => j('/games-data.json').then((d) => {
+    line: 'prediction record /intel', cls: '', run: () => fetchJson('games').then((d) => {
       $('bIntel').textContent = `${d.record.winRate}% · ${d.record.resolved}`;
       $('bIntel').classList.remove('off');
       $('dIntel').innerHTML = `${d.record.exactScore} exact scores ⭐<br>${d.tournament}`;
@@ -75,7 +76,7 @@ const TASKS = [
     })
   },
   {
-    line: 'archive index /log', cls: '', run: () => j('/novels-index.json').then((d) => {
+    line: 'archive index /log', cls: '', run: () => fetchJson('novels-index').then((d) => {
       const ch = d.novels.reduce((s, n) => s + (n.chapterCount || 0), 0);
       $('bLog').textContent = `${d.novels.length} BOOKS`; $('bLog').classList.remove('off');
       $('dLog').innerHTML = `${ch} chapters on file<br>长夜清减 · 万界种春 · 御西宫词`;
@@ -130,7 +131,7 @@ async function takeBridge() {
   bridge.removeAttribute('aria-hidden');
   let mod = null;
   try { mod = await scenePromise; } catch (e) { mod = null; }
-  td = mod && mod.createTopdownCombat ? mod.createTopdownCombat({ canvas }) : null;
+  td = mod && mod.createTopdownCombat ? mod.createTopdownCombat({ canvas, surfaceId: 'boot:topdown-combat' }) : null;
   if (!td) { glFail.classList.add('on'); return; }
   sizeCanvas();
   td.start();
@@ -142,7 +143,7 @@ async function takeBridge() {
 // takeBridge() above — this skips the boot log, the bridge dock chrome
 // (#bridge never gets `.on`), and telemetry, none of which make sense for
 // a materials preview. `td` is still reused so the existing resize/
-// visibilitychange plumbing below (sizeCanvas/pause-when-hidden) works
+// coordinator plumbing below (pixel-budget resize/pause-when-hidden) works
 // unmodified — createArmorDemoScene() matches createTopdownCombat()'s
 // { start, stop, resize } shape on purpose.
 async function runArmorDemo() {
@@ -170,16 +171,9 @@ async function runFleetDemo() {
 
 function sizeCanvas() {
   canvas.style.width = '100vw';
-  canvas.style.height = '100vh';
+  canvas.style.height = 'var(--visual-viewport-height, var(--viewport-dynamic-height, 100vh))';
   if (td) td.resize();
 }
-addEventListener('resize', sizeCanvas);
-
-// not visible → not rendered (U23 rAF discipline)
-document.addEventListener('visibilitychange', () => {
-  if (!td) return;
-  if (document.hidden) td.stop(); else td.start();
-});
 
 // ── self-ship telemetry (warm): clock + measured fps + cam rig ──────────
 function startTelemetry() {
@@ -187,16 +181,36 @@ function startTelemetry() {
   const rig = TACTICAL ? 'TACTICAL' : 'DIRECTOR';
   tCam.textContent = rig;
   $('camLabel').textContent = TACTICAL ? '→ DIRECTOR' : '→ TACTICAL';
-  let frames = 0, last = performance.now();
-  (function tick(now) {
+  let frames = 0, last = performance.now(), running = false, raf = 0;
+  function tick(now) {
     frames++;
     if (now - last >= 1000) {
       tFps.textContent = String(frames);
       frames = 0; last = now || performance.now();
       tClock.textContent = new Date().toTimeString().slice(0, 8);
     }
-    requestAnimationFrame(tick);
-  })(performance.now());
+    if (running) raf = requestAnimationFrame(tick);
+  }
+  function start() {
+    if (running) return;
+    running = true;
+    last = performance.now();
+    raf = requestAnimationFrame(tick);
+  }
+  function stop() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  renderCoordinator.register({
+    id: 'boot:telemetry',
+    element: bridge,
+    observe: false,
+    cost: 'low',
+    targetFps: 30,
+    onResume: start,
+    onPause: stop,
+  });
 }
 
 // CAM station: flip rig via the scene's existing query mechanism.

@@ -45,6 +45,8 @@
 import * as THREE from 'three';
 import { smoothDamp } from '../combat/cameraMath.js';
 import { buildSpaceData } from '../lib/dataToSpace.js';
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import { createWebGLContextLifecycle, disposeThreeScene } from '../lib/webglLifecycle.js';
 
 const COLOR_US = new THREE.Color(0x00c3d7);       // cyan — US camp
 const COLOR_CN = new THREE.Color(0xf5d76e);       // gold — CN camp
@@ -126,7 +128,7 @@ function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() :
 function T(en, zh) { return lang() === 'zh' ? zh : en; }
 
 const STAGE_HTML = `
-<canvas class="sfCanvas"></canvas>
+<canvas class="sfCanvas" role="group" tabindex="0" aria-label="Interactive data star field" aria-describedby="sfSummary"></canvas>
 <button class="sfPlay" type="button" aria-pressed="true" aria-label="Pause ambient motion">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path class="ic-pause" d="M8 6h3v12H8zM13 6h3v12h-3z"/><path class="ic-play" d="M8 5l12 7-12 7z"/></svg>
 </button>
@@ -145,6 +147,8 @@ const STAGE_HTML = `
   <button data-dir="right" aria-label="Pan right">&rarr;</button>
   <button data-dir="down" aria-label="Pan down">&darr;</button>
 </div>
+<p class="sfSummary" id="sfSummary" aria-live="polite"></p>
+<div class="sfNodeList" role="group" aria-label="Star field data nodes"></div>
 <aside class="sfModal" hidden role="dialog" aria-modal="false">
   <button class="sfModalClose" type="button" aria-label="Close">&times;</button>
   <h2 class="sfModalTitle"></h2>
@@ -162,6 +166,12 @@ export function initSectorsStarfield(data, opts = {}) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const buildDetail = typeof opts.buildDetail === 'function' ? opts.buildDetail : () => null;
   const onExit = typeof opts.onExit === 'function' ? opts.onExit : () => {};
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'high', targetFps: 60 });
+  let budgetActive = false;
+  let contextReady = true;
+  let stopForContext = () => {};
+  let resumeAfterContext = () => {};
 
   const stage = document.createElement('div');
   stage.className = 'sfStage';
@@ -179,15 +189,40 @@ export function initSectorsStarfield(data, opts = {}) {
   const modalTitle = stage.querySelector('.sfModalTitle');
   const modalTag = stage.querySelector('.sfModalTag');
   const modalBody = stage.querySelector('.sfModalBody');
+  const summaryEl = stage.querySelector('.sfSummary');
+  const nodeListEl = stage.querySelector('.sfNodeList');
 
   function isMobile() { return innerWidth < 640; }
 
+  const webglLifecycle = createWebGLContextLifecycle({
+    id: 'sectors:starfield-3d',
+    canvas,
+    onLost() {
+      contextReady = false;
+      stopForContext();
+    },
+    onRestore() {
+      renderer.resetState?.();
+      contextReady = true;
+      size();
+      render(performance.now());
+      resumeAfterContext();
+    },
+    onFallback() {
+      contextReady = false;
+      stopForContext();
+    },
+  });
+  if (!webglLifecycle.canInitialize) {
+    webglLifecycle.dispose();
+    stage.remove();
+    return null;
+  }
+
   let renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' }); }
-  catch (e) { stage.remove(); return null; }
+  catch (e) { webglLifecycle.dispose(); stage.remove(); return null; }
   renderer.setClearColor(0x000000, 1);
-  canvas.addEventListener('webglcontextlost', (e) => e.preventDefault(), false);
-  canvas.addEventListener('webglcontextrestored', () => { try { size(); render(performance.now()); } catch (e) {} }, false);
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x000000, FOG_NEAR, FOG_FAR); // line layer only — points do their own fog math (see POINT_FRAG)
@@ -253,6 +288,9 @@ export function initSectorsStarfield(data, opts = {}) {
   function buildDataLayer(raw) {
     const { nodes: n } = buildSpaceData(raw || {});
     nodes = n;
+    // Replacing BufferAttributes alone leaves the previous GPU buffers owned
+    // by the live geometry. Dispose its WebGL allocation before rebuilding.
+    if (dataGeo.getAttribute('position')) dataGeo.dispose();
     const count = Math.max(1, nodes.length);
     const pos = new Float32Array(count * 3), siz = new Float32Array(count), phase = new Float32Array(count),
           col = new Float32Array(count * 3), match = new Float32Array(count);
@@ -277,6 +315,22 @@ export function initSectorsStarfield(data, opts = {}) {
     dataGeo.setAttribute('aMatch', new THREE.BufferAttribute(match, 1));
     focusDefault = { x: cx, y: cy, z: cz };
     overviewDistance = Math.max(110, maxR * 1.9);
+    renderNodeControls();
+  }
+  function renderNodeControls(selected = null) {
+    nodeListEl.replaceChildren();
+    nodes.forEach((node, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.nodeIndex = String(index);
+      button.textContent = node.label || node.id;
+      button.setAttribute('aria-pressed', String(node === selected));
+      nodeListEl.appendChild(button);
+    });
+    summaryEl.textContent = T(
+      `Star field contains ${nodes.length} selectable data nodes. ${selected ? `Current: ${selected.label || selected.id}.` : 'Use the node buttons to open details without pointer picking.'}`,
+      `星域含 ${nodes.length} 个可选数据节点。${selected ? `当前：${selected.label || selected.id}。` : '可用节点按钮直接打开详情，无需指针拾取。'}`,
+    );
   }
   buildDataLayer(data);
 
@@ -327,12 +381,14 @@ export function initSectorsStarfield(data, opts = {}) {
     focusTarget = { x: node._wx, y: node._wy, z: node._wz };
     distanceTarget = FOCUS_DISTANCE;
     openModal(node);
+    renderNodeControls(node);
   }
   function flyToOverview() {
     focused = null;
     focusTarget = { ...focusDefault };
     distanceTarget = overviewDistance;
     closeModal();
+    renderNodeControls();
   }
   // Esc / double-click-empty step back one layer at a time rather than
   // exiting outright — matches the reference's "close what's on top first".
@@ -475,16 +531,25 @@ export function initSectorsStarfield(data, opts = {}) {
   });
   modalCloseBtn.addEventListener('click', flyToOverview);
   exitBtn.addEventListener('click', destroy);
+  const onNodeListClick = (event) => {
+    const button = event.target.closest?.('button[data-node-index]');
+    if (!button || !nodeListEl.contains(button)) return;
+    flyTo(nodes[Number(button.dataset.nodeIndex)]);
+  };
+  nodeListEl.addEventListener('click', onNodeListClick);
 
   // ── render loop ──
   function size() {
-    const dpr = Math.min(isMobile() ? 1.5 : 2, window.devicePixelRatio || 1);
+    const dpr = renderPolicy.computeDpr(innerWidth, innerHeight, {
+      minDpr: 0.6,
+      maxDpr: isMobile() ? 1.5 : 2,
+    });
     renderer.setPixelRatio(dpr); renderer.setSize(innerWidth, innerHeight, false);
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
     dustUniforms.uPixelRatio.value = dpr; dataUniforms.uPixelRatio.value = dpr;
   }
 
-  let lastT = 0, running = false, raf = 0;
+  let lastT = 0, running = false, raf = 0, loopLastT = 0, renderSurface = null;
   function render(t) {
     const dt = lastT ? Math.min(0.1, (t - lastT) / 1000) : 0.016; lastT = t;
     if (playing) {
@@ -508,22 +573,54 @@ export function initSectorsStarfield(data, opts = {}) {
     camera.lookAt(focus.x, focus.y, focus.z);
     renderer.render(scene, camera);
   }
-  function loop(t) { render(t); if (running) raf = requestAnimationFrame(loop); }
-  function start() { if (!running) { running = true; raf = requestAnimationFrame(loop); } }
+  function loop(t) {
+    const frameMs = loopLastT ? t - loopLastT : 0;
+    loopLastT = t;
+    render(t);
+    renderSurface?.reportFrame(frameMs);
+    if (running) raf = requestAnimationFrame(loop);
+  }
+  function start() {
+    if (!running && contextReady && budgetActive) {
+      running = true;
+      lastT = 0;
+      loopLastT = 0;
+      raf = requestAnimationFrame(loop);
+    }
+  }
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
-  const onVisibility = () => { if (document.hidden) stop(); else start(); };
+  stopForContext = stop;
+  resumeAfterContext = () => { if (budgetActive) start(); };
 
   size();
   render(performance.now());
-  start();
-  document.addEventListener('visibilitychange', onVisibility);
-  addEventListener('resize', size, { passive: true });
+  renderSurface = renderCoordinator.register({
+    id: 'sectors:starfield-3d',
+    element: stage,
+    observe: false,
+    cost: 'high',
+    targetFps: 60,
+    onResume() {
+      budgetActive = true;
+      start();
+    },
+    onPause() {
+      budgetActive = false;
+      stop();
+    },
+    onResize: size,
+    onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
+    onDispose() {
+      webglLifecycle.dispose();
+      disposeThreeScene(scene, renderer);
+    },
+  });
 
   let destroyed = false;
   function destroy() {
     if (destroyed) return; destroyed = true;
+    renderSurface.dispose();
     stop();
-    document.removeEventListener('visibilitychange', onVisibility);
     canvas.removeEventListener('pointerdown', onPointerDown);
     removeEventListener('pointermove', onPointerMove);
     removeEventListener('pointerup', onPointerUp);
@@ -532,8 +629,7 @@ export function initSectorsStarfield(data, opts = {}) {
     canvas.removeEventListener('dblclick', onDblClick);
     removeEventListener('keydown', onKeyDown);
     removeEventListener('keyup', onKeyUp);
-    removeEventListener('resize', size);
-    renderer.dispose();
+    nodeListEl.removeEventListener('click', onNodeListClick);
     stage.remove();
     onExit();
   }

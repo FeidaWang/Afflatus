@@ -1,11 +1,13 @@
 import { PERIOD_META, genCandles, movingAverage } from '../data/marketSeries.js';
+import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import { animateCountUp } from './viz.js';
 
 export function initMarketDeck({
   getLang = () => 'en',
-  getDpr = () => window.devicePixelRatio || 1,
   onPickHotChange,
 } = {}) {
+  const renderCoordinator = getRenderBudgetCoordinator();
+  let renderPolicy = renderCoordinator.getPolicy({ cost: 'medium', targetFps: 60 });
   const kc = document.getElementById('kchart');
   const kctx = kc?.getContext('2d');
   const seen = new Set();
@@ -14,6 +16,9 @@ export function initMarketDeck({
   let activePeriod = '1Y';
   let candles = genCandles(activePeriod);
   let ma20 = movingAverage(candles, 20);
+  let chartActive = false;
+  let chartRaf = 0;
+  let chartDpr = 1;
   // U44 44-2: tickers that actually have a real #card-<TICKER> anchor on
   // sectors.html today (verified 2026-07-18). The other picks share the AI
   // hardware supply-chain space sectors.html covers but aren't individually
@@ -27,12 +32,12 @@ export function initMarketDeck({
 
   function sizeK() {
     if (!kc) return;
-    const dpr = getDpr();
     const r = kc.getBoundingClientRect();
     const safeW = Math.max(320, r.width || kc.parentElement?.clientWidth || innerWidth * 0.8);
     const safeH = Math.max(220, r.height || 360);
-    kc.width = safeW * dpr;
-    kc.height = safeH * dpr;
+    chartDpr = renderPolicy.computeDpr(safeW, safeH, { minDpr: 0.75, maxDpr: 2 });
+    kc.width = safeW * chartDpr;
+    kc.height = safeH * chartDpr;
   }
 
   function updatePeriodUI() {
@@ -69,7 +74,7 @@ export function initMarketDeck({
   }
 
   function startKChart() {
-    if (kStarted || !kc || !kctx) return;
+    if (kStarted || !chartActive || !kc || !kctx) return;
     kStarted = true;
     drawProgress = 0;
     sizeK();
@@ -80,7 +85,7 @@ export function initMarketDeck({
   function drawK() {
     if (!kc || !kctx) return;
     sizeK();
-    const dpr = getDpr();
+    const dpr = chartDpr;
     const w = kc.width;
     const h = kc.height;
     kctx.clearRect(0, 0, w, h);
@@ -210,13 +215,14 @@ export function initMarketDeck({
   }
 
   function animateK() {
+    if (!chartActive) return;
     if (drawProgress >= 1) {
       drawK();
       return;
     }
     drawProgress = Math.min(1, drawProgress + 1 / 120);
     drawK();
-    requestAnimationFrame(animateK);
+    chartRaf = requestAnimationFrame(animateK);
   }
 
   function animateCounter(el) {
@@ -255,6 +261,27 @@ export function initMarketDeck({
     });
   }, { threshold: 0.25 });
   window.__io = observer;
+  const chartSurface = kc ? renderCoordinator.register({
+    id: 'home:market-chart',
+    element: kc,
+    cost: 'medium',
+    targetFps: 60,
+    onResume() {
+      chartActive = true;
+      if (kStarted && drawProgress < 1) chartRaf = requestAnimationFrame(animateK);
+      else startKChart();
+    },
+    onPause() {
+      chartActive = false;
+      if (chartRaf) cancelAnimationFrame(chartRaf);
+      chartRaf = 0;
+    },
+    onResize() {
+      sizeK();
+      if (kStarted) drawK();
+    },
+    onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
+  }) : null;
 
   function observePick(el) {
     if (!el) return;
@@ -272,11 +299,9 @@ export function initMarketDeck({
     picks.forEach((p, i) => {
       const el = document.createElement('article');
       el.className = 'pick pick-card';
-      el.tabIndex = 0;
-      el.setAttribute('role', 'button');
-      el.setAttribute('aria-expanded', 'false');
       const href = SECTORS_ANCHORS.has(p.tk) ? `/sectors.html#card-${p.tk}` : '/sectors.html';
-      el.innerHTML = `<div class="pcCover"><div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${String(i + 1).padStart(2, '0')} / 10</div></div><div class="pick-name">${p.name}</div><div class="alloc-row"><div class="alloc-bar"><i data-target="${p.pct}"></i></div><div class="alloc-num">0.0<span>%</span></div></div></div><div class="pcDetail"><p class="pick-thesis">${p.why}</p><a class="pcCta" href="${href}">${ctaLabel}</a></div>`;
+      const detailsLabel = langKey() === 'zh' ? `展开 ${p.tk} 研判` : `Show ${p.tk} thesis`;
+      el.innerHTML = `<button type="button" class="pcCover" aria-expanded="false" aria-label="${detailsLabel}"><div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${String(i + 1).padStart(2, '0')} / 10</div></div><div class="pick-name">${p.name}</div><div class="alloc-row"><div class="alloc-bar"><i data-target="${p.pct}"></i></div><div class="alloc-num">0.0<span>%</span></div></div></button><div class="pcDetail"><p class="pick-thesis">${p.why}</p><a class="pcCta" href="${href}">${ctaLabel}</a></div>`;
       grid.appendChild(el);
       observePick(el);
     });
@@ -284,7 +309,7 @@ export function initMarketDeck({
 
   function togglePickOpen(el) {
     const open = el.classList.toggle('open');
-    el.setAttribute('aria-expanded', String(open));
+    el.querySelector('.pcCover')?.setAttribute('aria-expanded', String(open));
   }
 
   function initPickGridToggle() {
@@ -295,19 +320,11 @@ export function initMarketDeck({
       if (!card || e.target.closest('.pcCta')) return;
       togglePickOpen(card);
     });
-    grid.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      const card = e.target.closest('.pick-card');
-      if (!card || e.target.closest('.pcCta')) return;
-      e.preventDefault();
-      togglePickOpen(card);
-    });
   }
 
   function init() {
     initPickGridToggle();
     if (kc) {
-      addEventListener('resize', sizeK);
       const periodTabs = document.getElementById('periodTabs');
       if (periodTabs) {
         const selectPeriod = event => {
@@ -324,15 +341,7 @@ export function initMarketDeck({
       const chartFrame = document.getElementById('chartFrame');
       if (chartFrame) {
         observer.observe(chartFrame);
-        ['load', 'scroll', 'visibilitychange'].forEach(ev => addEventListener(ev, () => {
-          const r = chartFrame.getBoundingClientRect();
-          if (r.top < innerHeight * 1.15 && r.bottom > -80) startKChart();
-        }, { passive: true }));
         setTimeout(drawK, 250);
-        setTimeout(() => {
-          const r = chartFrame.getBoundingClientRect();
-          if (r.top < innerHeight * 1.3) startKChart();
-        }, 1200);
       }
     }
 
@@ -349,5 +358,16 @@ export function initMarketDeck({
   }
 
   init();
-  return { renderPicks, updatePeriodUI, startKChart, drawK, observePick };
+  return {
+    renderPicks,
+    updatePeriodUI,
+    startKChart,
+    drawK,
+    observePick,
+    destroy() {
+      chartSurface?.unregister();
+      observer.disconnect();
+      if (chartRaf) cancelAnimationFrame(chartRaf);
+    },
+  };
 }
