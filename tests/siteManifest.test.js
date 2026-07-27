@@ -4,6 +4,7 @@ import {
   NAV_ROUTES,
   SITE_LOCALES,
   SITE_MANIFEST,
+  SOCIAL_CARD,
   SITEMAP_ROUTES,
   findRouteByPath,
   localizedRoutePath,
@@ -78,6 +79,7 @@ describe('siteManifest', () => {
   });
 
   it('requires active routes to carry the metadata audited in source HTML', () => {
+    const socialImages = new Set();
     for (const route of SITE_MANIFEST.filter((item) => item.status === 'active')) {
       expect(route.metadata.title).toBeTruthy();
       expect(route.metadata.description).toBeTruthy();
@@ -87,14 +89,21 @@ describe('siteManifest', () => {
       expect(route.metadata.ogImage).toMatch(/^https:\/\/feida\.au\//);
       expect(route.seo.structuredData.kind).toBeTruthy();
       for (const locale of SITE_LOCALES) {
-        expect(route.seo.social.images[locale]).toBe(
-          'https://feida.au/assets/og/og-image.jpg',
+        const image = route.seo.social.images[locale];
+        expect(image).toBe(
+          `https://feida.au/assets/og/${route.id}-${locale}.${SOCIAL_CARD.extension}`,
         );
+        expect(socialImages.has(image)).toBe(false);
+        socialImages.add(image);
         expect(route.seo.social.alt[locale]).toBeTruthy();
         expect(route.seo.social.title[locale]).toBeTruthy();
       }
       expect(route.themeColor).toMatch(/^#[0-9a-f]{6}$/i);
     }
+    expect(socialImages.size).toBe(
+      SITE_MANIFEST.filter((item) => item.status === 'active').length
+        * SITE_LOCALES.length,
+    );
   });
 
   it('keeps redirects pointed at active routes and prototypes out of discovery', () => {

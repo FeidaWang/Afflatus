@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parse } from 'parse5';
+import { SOCIAL_CARD } from '../src/config/siteManifest.js';
 
 const SITE_URL = 'https://feida.au';
 const SITE_NAME = 'Project Afflatus';
@@ -135,8 +136,8 @@ const imageNode = (route, locale, url) => {
     '@id': `${url}#primaryimage`,
     url: route.seo.social.images[key],
     contentUrl: route.seo.social.images[key],
-    width: 1200,
-    height: 630,
+    width: SOCIAL_CARD.width,
+    height: SOCIAL_CARD.height,
     caption: route.seo.social.alt[key],
     inLanguage: LANGUAGE_TAGS[key],
   };
@@ -608,9 +609,9 @@ export function renderRouteSeoBlock(route, {
     `<meta property="og:locale:alternate" content="${OG_LOCALES[key === 'en' ? 'zh' : 'en']}">`,
     `<meta property="og:image" content="${escapeAttribute(image)}">`,
     `<meta property="og:image:secure_url" content="${escapeAttribute(image)}">`,
-    `<meta property="og:image:type" content="image/png">`,
-    `<meta property="og:image:width" content="1200">`,
-    `<meta property="og:image:height" content="630">`,
+    `<meta property="og:image:type" content="${SOCIAL_CARD.format}">`,
+    `<meta property="og:image:width" content="${SOCIAL_CARD.width}">`,
+    `<meta property="og:image:height" content="${SOCIAL_CARD.height}">`,
     `<meta property="og:image:alt" content="${escapeAttribute(alt)}">`,
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${escapeAttribute(title)}">`,

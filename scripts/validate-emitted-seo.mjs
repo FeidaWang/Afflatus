@@ -5,6 +5,7 @@ import { parse } from 'parse5';
 import {
   SITE_LOCALES,
   SITE_MANIFEST,
+  SOCIAL_CARD,
   localizedRouteUrl,
 } from '../src/config/siteManifest.js';
 import {
@@ -142,7 +143,12 @@ for (const route of activeRoutes) {
       ['og:description', meta(relativePath, document, ['property', 'og:description']), expected.ogDescription],
       ['og:url', meta(relativePath, document, ['property', 'og:url']), expected.canonical],
       ['og:image', meta(relativePath, document, ['property', 'og:image']), expected.image],
+      ['og:image:secure_url', meta(relativePath, document, ['property', 'og:image:secure_url']), expected.image],
+      ['og:image:type', meta(relativePath, document, ['property', 'og:image:type']), SOCIAL_CARD.format],
+      ['og:image:width', meta(relativePath, document, ['property', 'og:image:width']), String(SOCIAL_CARD.width)],
+      ['og:image:height', meta(relativePath, document, ['property', 'og:image:height']), String(SOCIAL_CARD.height)],
       ['og:image:alt', meta(relativePath, document, ['property', 'og:image:alt']), expected.imageAlt],
+      ['twitter:card', meta(relativePath, document, ['name', 'twitter:card']), 'summary_large_image'],
       ['twitter:image', meta(relativePath, document, ['name', 'twitter:image']), expected.image],
       ['twitter:image:alt', meta(relativePath, document, ['name', 'twitter:image:alt']), expected.imageAlt],
     ];

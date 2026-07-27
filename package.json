@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "prebuild": "npm run data:check && npm run site:check && npm run lint:i18n",
+    "prebuild": "npm run data:check && npm run site:check && npm run lint:i18n && npm run og:check",
     "build": "vite build && node scripts/localize-site.mjs --out-dir dist && node scripts/validate-emitted-seo.mjs --out-dir dist",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
@@ -22,6 +22,8 @@
     "site:generate": "node scripts/site-manifest.mjs --write",
     "site:check": "node scripts/site-manifest.mjs --check",
     "seo:check": "node scripts/validate-emitted-seo.mjs --out-dir dist",
+    "og:generate": "node scripts/generate-og-assets.mjs",
+    "og:check": "node scripts/validate-og-assets.mjs",
     "lint:i18n": "node scripts/lint-bilingual.mjs",
     "format:i18n": "node scripts/format-bilingual-content.mjs --write",
     "linkcheck": "npm run build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\""

@@ -7,15 +7,23 @@
  * no DOM, filesystem, process or Vite imports.
  */
 
-const OG_IMAGE = 'https://feida.au/assets/og/og-image.jpg';
-// Route-specific social cards ship in the following visual-assets module.
-// Until then, every emitted document must reference the existing fallback.
-const routeOgImage = () => OG_IMAGE;
+export const SOCIAL_CARD = Object.freeze({
+  width: 1200,
+  height: 630,
+  format: 'image/jpeg',
+  extension: 'jpg',
+  quality: 88,
+  maxBytes: 400_000,
+});
+
+const LEGACY_OG_IMAGE = 'https://feida.au/assets/og/og-image.jpg';
+const routeOgImage = (routeId, locale) =>
+  `https://feida.au/assets/og/${routeId}-${locale}.${SOCIAL_CARD.extension}`;
 
 export const ROUTE_SEO = Object.freeze({
   main: {
     social: {
-      background: '/assets/og/backgrounds/home.png',
+      background: 'assets/og-backgrounds/home.jpg',
       eyebrow: { en: 'AFFLATUS · CAPTAIN LOG', zh: 'AFFLATUS · 舰长日志' },
       title: { en: 'Deep-space captain log', zh: '深空舰长日志' },
       subtitle: {
@@ -32,7 +40,7 @@ export const ROUTE_SEO = Object.freeze({
   },
   arena: {
     social: {
-      background: '/assets/og/backgrounds/arena.png',
+      background: 'assets/og-backgrounds/arena.jpg',
       eyebrow: { en: 'MARKET INTELLIGENCE', zh: '市场情报' },
       title: { en: 'Arena', zh: '竞技场' },
       subtitle: {
@@ -55,7 +63,7 @@ export const ROUTE_SEO = Object.freeze({
   },
   sectors: {
     social: {
-      background: '/assets/og/backgrounds/sectors.png',
+      background: 'assets/og-backgrounds/sectors.jpg',
       eyebrow: { en: 'AI ECOSYSTEM', zh: 'AI 生态' },
       title: {
         en: 'Two ecosystems. One supply chain.',
@@ -84,7 +92,7 @@ export const ROUTE_SEO = Object.freeze({
   },
   signal: {
     social: {
-      background: '/assets/og/backgrounds/signal.png',
+      background: 'assets/og-backgrounds/signal.jpg',
       eyebrow: { en: 'MACRO DOSSIER', zh: '宏观档案' },
       title: { en: 'Federal Reserve watch', zh: '美联储观察' },
       subtitle: {
@@ -104,7 +112,7 @@ export const ROUTE_SEO = Object.freeze({
   },
   stats: {
     social: {
-      background: '/assets/og/backgrounds/stats.png',
+      background: 'assets/og-backgrounds/stats.jpg',
       eyebrow: { en: 'TRACK RECORD', zh: '战绩档案' },
       title: { en: 'Prediction track record', zh: '竞猜记录存档' },
       subtitle: {
@@ -127,7 +135,7 @@ export const ROUTE_SEO = Object.freeze({
   },
   horoscope: {
     social: {
-      background: '/assets/og/backgrounds/horoscope.png',
+      background: 'assets/og-backgrounds/horoscope.jpg',
       eyebrow: { en: 'LOCAL-FIRST', zh: '本地计算' },
       title: { en: 'Bazi & astrology', zh: '八字与西方占星' },
       subtitle: {
@@ -147,7 +155,7 @@ export const ROUTE_SEO = Object.freeze({
   },
   serial: {
     social: {
-      background: '/assets/og/backgrounds/serial.png',
+      background: 'assets/og-backgrounds/serial.jpg',
       eyebrow: { en: 'SERIAL FICTION', zh: '原创连载' },
       title: { en: 'Original Chinese fiction', zh: '原创中文小说连载' },
       subtitle: {
@@ -164,7 +172,7 @@ export const ROUTE_SEO = Object.freeze({
   },
   course: {
     social: {
-      background: '/assets/og/backgrounds/course.png',
+      background: 'assets/og-backgrounds/course.jpg',
       eyebrow: { en: 'LIVING PLAYBOOK', zh: '持续更新' },
       title: { en: 'AI collaboration playbook', zh: 'AI 协作成长蓝图' },
       subtitle: {
@@ -458,7 +466,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/games.html',
       ogTitle: 'Project Afflatus · Games — World Cup Prediction',
       ogDescription: 'Cyberpunk World Cup 2026 prediction vs Fable 5 Max + daily champion / best-player odds. For fun, not betting advice.',
-      ogImage: OG_IMAGE,
+      ogImage: LEGACY_OG_IMAGE,
     },
     locales: {
       en: { title: 'World Cup Prediction Archive', description: 'Archived World Cup prediction experience.' },
@@ -485,7 +493,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/league.html',
       ogTitle: 'Project Afflatus · Leagues — MSI 2026 Prediction',
       ogDescription: 'Hextech-styled MSI 2026 prediction vs Fable 5 Max + Fearless Draft pool tracking. For fun, not betting advice.',
-      ogImage: OG_IMAGE,
+      ogImage: LEGACY_OG_IMAGE,
     },
     locales: {
       en: { title: 'MSI Prediction Archive', description: 'Archived MSI prediction experience.' },

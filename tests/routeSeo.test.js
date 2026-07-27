@@ -86,6 +86,8 @@ describe('route SEO architecture', () => {
       expect(twice, route.file).toBe(once);
       expect(once.match(/afflatus:route-seo:start/g)).toHaveLength(1);
       expect(once.match(/data-afflatus-route-schema=/g)).toHaveLength(1);
+      expect(once).toContain('<meta property="og:image:type" content="image/jpeg">');
+      expect(once).toContain(route.metadata.ogImage);
     }
   });
 
