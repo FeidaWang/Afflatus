@@ -1,8 +1,85 @@
 {
- "_readme": "站主专用：把已获授权/清权的曲目 URL 填入 tracks。src=无损(FLAC/WAV)，fallback=可选的有损备选。src 留空的条目会被跳过；全部为空时播放器自动隐藏。详见 /urgent.md §3–4。",
- "updated": "2026-07-20",
- "tracks": [
-  { "title": "示例曲目一（待填）", "artist": "待填", "src": "", "fallback": "" },
-  { "title": "示例曲目二（待填）", "artist": "待填", "src": "", "fallback": "" }
- ]
+  "_readme": "站点所有者确认已取得以下录音及词曲的使用授权。播放器不会自动播放，只有读者主动点击播放按钮后才会开始。",
+  "updated": "2026-07-28",
+  "credits": "/audio/credits.html",
+  "tracks": [
+    {
+      "title": "明明（互动影视《盛世天下》情感曲）",
+      "artist": "阿YueYue、小时姑娘",
+      "src": "/audio/mingming.flac",
+      "fallback": "/audio/mingming.mp3"
+    },
+    {
+      "title": "无情画",
+      "artist": "王唯旖",
+      "src": "/audio/wuqing-hua.flac",
+      "fallback": "/audio/wuqing-hua.mp3"
+    },
+    {
+      "title": "你是倒映的微星（《春闺梦里人》季曼命运主题曲）",
+      "artist": "单依纯",
+      "src": "/audio/ni-shi-daoying-de-weixing.flac",
+      "fallback": "/audio/ni-shi-daoying-de-weixing.mp3"
+    },
+    {
+      "title": "门",
+      "artist": "周深",
+      "src": "/audio/men.flac",
+      "fallback": "/audio/men.mp3"
+    },
+    {
+      "title": "九万字",
+      "artist": "黄诗扶",
+      "src": "/audio/jiu-wan-zi.flac",
+      "fallback": "/audio/jiu-wan-zi.mp3"
+    },
+    {
+      "title": "江湖之间",
+      "artist": "曹雨航、朝歌夜弦",
+      "src": "/audio/jianghu-zhijian.flac",
+      "fallback": "/audio/jianghu-zhijian.mp3"
+    },
+    {
+      "title": "知否知否（《知否知否应是绿肥红瘦》电视剧主题曲）",
+      "artist": "胡夏、郁可唯",
+      "src": "/audio/zhi-fou-zhi-fou.flac",
+      "fallback": "/audio/zhi-fou-zhi-fou.mp3"
+    },
+    {
+      "title": "叹云兮（《芸汐传》电视剧片尾曲）",
+      "artist": "鞠婧祎",
+      "src": "/audio/tan-yun-xi.flac",
+      "fallback": "/audio/tan-yun-xi.mp3"
+    },
+    {
+      "title": "若梦",
+      "artist": "周深",
+      "src": "/audio/ruomeng.flac",
+      "fallback": "/audio/ruomeng.mp3"
+    },
+    {
+      "title": "会开花的云",
+      "artist": "弦子、姚晓棠",
+      "src": "/audio/hui-kai-hua-de-yun.flac",
+      "fallback": "/audio/hui-kai-hua-de-yun.mp3"
+    },
+    {
+      "title": "傀",
+      "artist": "任然",
+      "src": "/audio/kui.flac",
+      "fallback": "/audio/kui.mp3"
+    },
+    {
+      "title": "爱殇",
+      "artist": "小时姑娘",
+      "src": "/audio/ai-shang.flac",
+      "fallback": "/audio/ai-shang.mp3"
+    },
+    {
+      "title": "失去就是这样么（电影《李茂扮太子》插曲）",
+      "artist": "郁可唯",
+      "src": "/audio/the-way-i-lose-you.flac",
+      "fallback": "/audio/the-way-i-lose-you.mp3"
+    }
+  ]
 }
