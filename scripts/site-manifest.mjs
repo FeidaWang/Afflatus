@@ -9,28 +9,70 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   NAV_ROUTES,
+  SITE_LOCALES,
   SITE_MANIFEST,
   SITEMAP_ROUTES,
   findRouteByPath,
+  localizedRouteUrl,
 } from '../src/config/siteManifest.js';
+import { readerUrl } from '../src/lib/serialRoutes.js';
+import {
+  buildRouteStructuredData,
+  loadRouteSeoFacts,
+  transformRouteSeoSource,
+  validateRouteStructuredData,
+} from './route-seo.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const MODE = process.argv.includes('--write') ? 'write' : 'check';
 const failures = [];
 let localePrepaintBody = null;
+const ACTIVE_ROUTES = SITE_MANIFEST.filter((route) => route.status === 'active');
+const routeSeoFacts = await loadRouteSeoFacts(ROOT, ACTIVE_ROUTES);
 
 function fail(message) {
   failures.push(message);
 }
 
 function generatedSitemap() {
-  const rows = SITEMAP_ROUTES.map(
-    (route) => `  <url><loc>${route.metadata.canonical}</loc></url>`,
-  );
+  const routeRows = SITEMAP_ROUTES.flatMap((route) => SITE_LOCALES.map((locale) => {
+    const url = localizedRouteUrl(route, locale);
+    const lastModified = routeSeoFacts[route.id]?.dateModified?.slice(0, 10);
+    return [
+      '  <url>',
+      `    <loc>${url}</loc>`,
+      ...(lastModified ? [`    <lastmod>${lastModified}</lastmod>`] : []),
+      `    <xhtml:link rel="alternate" hreflang="en" href="${localizedRouteUrl(route, 'en')}"/>`,
+      `    <xhtml:link rel="alternate" hreflang="zh-CN" href="${localizedRouteUrl(route, 'zh')}"/>`,
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${route.metadata.canonical}"/>`,
+      '  </url>',
+    ].join('\n');
+  }));
+  const novelsIndex = JSON.parse(readFileSync(resolve(ROOT, 'public/novels-index.json'), 'utf8'));
+  const novelRows = (novelsIndex.novels || []).flatMap((entry) => {
+    const book = JSON.parse(readFileSync(resolve(ROOT, `public/novels/${entry.id}.json`), 'utf8'));
+    return [null, ...(book.chapters || [])].flatMap((chapter) => (
+      SITE_LOCALES.map((locale) => {
+        const input = {
+          bookId: entry.id,
+          ...(chapter ? { chapterId: chapter.id } : {}),
+        };
+        return [
+          '  <url>',
+          `    <loc>${readerUrl({ ...input, locale })}</loc>`,
+          `    <xhtml:link rel="alternate" hreflang="en" href="${readerUrl({ ...input, locale: 'en' })}"/>`,
+          `    <xhtml:link rel="alternate" hreflang="zh-CN" href="${readerUrl({ ...input, locale: 'zh' })}"/>`,
+          `    <xhtml:link rel="alternate" hreflang="x-default" href="${readerUrl({ ...input, locale: 'adaptive' })}"/>`,
+          '  </url>',
+        ].join('\n');
+      })
+    ));
+  });
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ...rows,
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    ...routeRows,
+    ...novelRows,
     '</urlset>',
     '',
   ].join('\n');
@@ -44,7 +86,8 @@ function generatedNavModule() {
     `export const NAV_ROUTES = Object.freeze(${JSON.stringify(NAV_ROUTES, null, 2)});`,
     '',
     'export function normalizeRoutePath(pathname) {',
-    "  const path = (pathname || '/').replace(/index\\.html$/, '');",
+    "  const withoutLocale = String(pathname || '/').replace(/^\\/(?:en|zh)(?=\\/|$)/, '') || '/';",
+    "  const path = withoutLocale.replace(/index\\.html$/, '');",
     "  return path === '' ? '/' : path;",
     '}',
     '',
@@ -64,7 +107,8 @@ function generatedPerformanceRoutesModule() {
     '',
     'export function normalizePerformancePath(pathname) {',
     "  const raw = String(pathname || '/').split(/[?#]/, 1)[0];",
-    "  const path = raw.replace(/\\/index\\.html$/, '/');",
+    "  const withoutLocale = raw.replace(/^\\/(?:en|zh)(?=\\/|$)/, '') || '/';",
+    "  const path = withoutLocale.replace(/\\/index\\.html$/, '/');",
     "  return path === '' ? '/' : path;",
     '}',
     '',
@@ -87,7 +131,12 @@ function parseAttributes(tag) {
   const attrs = {};
   const pattern = /([:\w-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
   for (const match of tag.matchAll(pattern)) {
-    attrs[match[1].toLowerCase()] = match[2] ?? match[3] ?? '';
+    attrs[match[1].toLowerCase()] = (match[2] ?? match[3] ?? '')
+      .replaceAll('&quot;', '"')
+      .replaceAll('&#39;', "'")
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&amp;', '&');
   }
   return attrs;
 }
@@ -171,6 +220,13 @@ function auditRoute(route) {
   }
 
   if (route.status === 'active') {
+    const graph = buildRouteStructuredData(route, {
+      facts: routeSeoFacts[route.id],
+    });
+    for (const message of validateRouteStructuredData(route, graph)) {
+      fail(message);
+    }
+
     const performanceEntries = html.match(
       /<script\s+type=["']module["']\s+src=["']\/src\/entry\/performance\.js["']\s*><\/script>/gi,
     ) || [];
@@ -201,6 +257,24 @@ function auditRoute(route) {
     } else if (prepaint !== localePrepaintBody) {
       fail(`${route.file}: locale pre-paint script differs from other routes`);
     }
+  }
+}
+
+function syncRouteSeo(route) {
+  if (route.status !== 'active') return;
+  const sourcePath = resolve(ROOT, route.file);
+  if (!existsSync(sourcePath)) return;
+  const source = readFileSync(sourcePath, 'utf8');
+  const expected = transformRouteSeoSource(source, route, {
+    facts: routeSeoFacts[route.id],
+  });
+  if (source === expected) return;
+
+  if (MODE === 'write') {
+    writeFileSync(sourcePath, expected);
+    console.log(`UPDATED: ${route.file} route SEO`);
+  } else {
+    fail(`${route.file}: route SEO differs from siteManifest.js; run "npm run site:generate"`);
   }
 }
 
@@ -242,6 +316,7 @@ function syncGeneratedFile(relativePath, expected) {
   }
 }
 
+for (const route of SITE_MANIFEST) syncRouteSeo(route);
 for (const route of SITE_MANIFEST) auditRoute(route);
 auditRedirects();
 syncGeneratedFile('public/sitemap.xml', generatedSitemap());

@@ -1,3 +1,5 @@
+/* afflatus-i18n allow-monolingual: official mainland-China locality
+   labels intentionally keep their published Chinese names in both locales. */
 /* ============================================================
    CITIES (birthplace picker) — V23.x. Verified city coordinate data for
    the 'cast your chart' city selector, replacing manual timezone-dropdown

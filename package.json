@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "prebuild": "npm run site:check",
-    "build": "vite build",
+    "prebuild": "npm run data:check && npm run site:check && npm run lint:i18n",
+    "build": "vite build && node scripts/localize-site.mjs --out-dir dist && node scripts/validate-emitted-seo.mjs --out-dir dist",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
     "pretest:e2e": "npm run build",
@@ -18,9 +18,13 @@
     "test:lighthouse": "node scripts/run-lighthouse.mjs",
     "lighthouse:ci": "node scripts/run-lighthouse.mjs",
     "typecheck": "tsc --noEmit",
+    "data:check": "node scripts/validate-data.mjs",
     "site:generate": "node scripts/site-manifest.mjs --write",
     "site:check": "node scripts/site-manifest.mjs --check",
-    "linkcheck": "vite build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\""
+    "seo:check": "node scripts/validate-emitted-seo.mjs --out-dir dist",
+    "lint:i18n": "node scripts/lint-bilingual.mjs",
+    "format:i18n": "node scripts/format-bilingual-content.mjs --write",
+    "linkcheck": "npm run build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\""
   },
   "dependencies": {
     "astronomy-engine": "^2.1.19",
@@ -33,6 +37,7 @@
     "@playwright/test": "^1.61.1",
     "@types/three": "^0.160.0",
     "linkinator": "^6.1.2",
+    "parse5": "^8.0.0",
     "typescript": "^5.7.3",
     "vite": "^8.0.14",
     "vitest": "^4.1.9"

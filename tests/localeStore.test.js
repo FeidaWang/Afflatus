@@ -2,10 +2,14 @@ import { describe, expect, it } from 'vitest';
 import {
   LEGACY_LOCALE_KEYS,
   LOCALE_KEY,
+  localeFromPathname,
+  localeSwitchHref,
   localeToHtmlLang,
+  localizePathname,
   migrateLocaleStorage,
   normalizeLocale,
   resolveStoredLocale,
+  stripLocalePathname,
 } from '../src/lib/localeStore.js';
 
 function memoryStorage(seed = {}, options = {}) {
@@ -36,6 +40,24 @@ describe('localeStore', () => {
     expect(normalizeLocale(null, 'zh')).toBe('zh');
     expect(localeToHtmlLang('zh')).toBe('zh-CN');
     expect(localeToHtmlLang('en')).toBe('en');
+  });
+
+  it('maps fixed-locale paths without losing the underlying route', () => {
+    expect(localeFromPathname('/en/arena.html')).toBe('en');
+    expect(localeFromPathname('/zh/')).toBe('zh');
+    expect(localeFromPathname('/arena.html')).toBeNull();
+    expect(stripLocalePathname('/zh/arena.html')).toBe('/arena.html');
+    expect(stripLocalePathname('/en/')).toBe('/');
+    expect(localizePathname('/zh/arena.html', 'en')).toBe('/en/arena.html');
+    expect(localizePathname('/', 'zh')).toBe('/zh/');
+  });
+
+  it('preserves route query and hash when switching locale URLs', () => {
+    expect(localeSwitchHref({
+      pathname: '/en/sectors.html',
+      search: '?fx=starfield3d',
+      hash: '#storyGraphSection',
+    }, 'zh')).toBe('/zh/sectors.html?fx=starfield3d#storyGraphSection');
   });
 
   it('resolves the current key before either legacy key', () => {

@@ -82,7 +82,7 @@ export function scorePersona(answers) {
 // Original one-liner + short read for each type (site's own text, healing tone).
 export const PERSONA_TYPES = {
   INTJ: { zh: '沉静的布局者', en: 'The Quiet Strategist', dZh: '脑内常年运行着一张长期地图，享受把复杂的事收敛成一条清晰的路。记得偶尔把地图摊开给别人看看。', dEn: 'You carry a long-range map in your head and love collapsing complexity into one clean path. Remember to show others the map sometimes.' },
-  INTP: { zh: '好奇的拆解者', en: 'The Curious Analyst', dZh: '对"为什么"上瘾，凡事都想拆到原理层。你的世界很安静，但思维从不休息。', dEn: 'Addicted to "why", you take everything apart down to first principles. Your world is quiet; your mind never is.' },
+  INTP: { zh: '好奇的拆解者', en: 'The Curious Analyst', dZh: '对「为什么」上瘾，凡事都想拆到原理层。你的世界很安静，但思维从不休息。', dEn: 'Addicted to "why", you take everything apart down to first principles. Your world is quiet; your mind never is.' },
   ENTJ: { zh: '天生的推进器', en: 'The Born Driver', dZh: '看见目标就想立刻搭出路径，把混乱变成秩序是你的舒适区。留一点耐心给走得慢的人。', dEn: 'You see a goal and immediately build the road to it. Turning chaos into order is home for you — save some patience for slower walkers.' },
   ENTP: { zh: '灵感的放风筝人', en: 'The Idea Kiteflyer', dZh: '新点子像风筝一样一只接一只放上天，辩论是你的运动。偶尔也要挑一只风筝收线落地。', dEn: 'You fly new ideas like kites, one after another, and debate is your sport. Occasionally reel one in and land it.' },
   INFJ: { zh: '提灯的倾听者', en: 'The Lantern Bearer', dZh: '安静，却对他人的情绪有显微镜般的分辨率。你在乎意义多过热闹，能量珍贵，记得先照亮自己。', dEn: 'Quiet, with microscope-grade resolution for other people\'s feelings. You care about meaning over noise — your light is precious, shine it on yourself first.' },
@@ -91,10 +91,10 @@ export const PERSONA_TYPES = {
   ENFP: { zh: '行走的小太阳', en: 'The Walking Sunbeam', dZh: '热情有传染性，对人和可能性都保持敞开。你的火花很多，能坚持给其中几颗添柴就会很惊人。', dEn: 'Your enthusiasm is contagious and you stay open to people and possibilities alike. You throw many sparks — tend a few into fires and you\'re unstoppable.' },
   ISTJ: { zh: '可靠的基石', en: 'The Steady Keystone', dZh: '说到做到，流程和承诺在你手里都很安全。变化让你皱眉，但你适应得比自己以为的好。', dEn: 'You do what you said you would; processes and promises are safe in your hands. Change makes you frown — you adapt better than you think.' },
   ISFJ: { zh: '安静的守护者', en: 'The Quiet Guardian', dZh: '记得每个人的小事，用具体的照顾表达在乎。你撑伞的样子很好看，也别忘了自己头顶的雨。', dEn: 'You remember everyone\'s small things and care through concrete acts. You hold umbrellas beautifully — mind the rain over your own head too.' },
-  ESTJ: { zh: '靠谱的主理人', en: 'The Reliable Organiser', dZh: '规则、清单、执行力——事情交到你手上就会被办完。练习偶尔容忍"够好"，世界不会塌。', dEn: 'Rules, lists, follow-through: hand you a thing and it gets done. Practice tolerating "good enough" now and then — the sky will hold.' },
+  ESTJ: { zh: '靠谱的主理人', en: 'The Reliable Organiser', dZh: '规则、清单、执行力——事情交到你手上就会被办完。练习偶尔容忍「够好」，世界不会塌。', dEn: 'Rules, lists, follow-through: hand you a thing and it gets done. Practice tolerating "good enough" now and then — the sky will hold.' },
   ESFJ: { zh: '热心的张罗人', en: 'The Warm Host', dZh: '聚会因你成型，关系因你保温。你对气氛的经营是真本事，但不必对每个人的情绪负责。', dEn: 'Gatherings take shape around you; relationships stay warm because of you. Reading a room is a real skill — but every mood is not your job.' },
   ISTP: { zh: '冷静的巧匠', en: 'The Calm Tinkerer', dZh: '手上功夫和临场判断都稳，话不多，事很准。你的酷是真的酷，偶尔多说两句没人会嫌。', dEn: 'Steady hands, sharp in-the-moment judgement, few words, precise work. Your cool is real — a few extra sentences wouldn\'t hurt.' },
-  ISFP: { zh: '采风的生活家', en: 'The Wandering Aesthete', dZh: '对美和当下的质感极其敏感，活法本身就是你的作品。别让"不争"变成"不说"。', dEn: 'Exquisitely tuned to beauty and the texture of now — your way of living is itself the artwork. Don\'t let "easygoing" become "unheard".' },
+  ISFP: { zh: '采风的生活家', en: 'The Wandering Aesthete', dZh: '对美和当下的质感极其敏感，活法本身就是你的作品。别让「不争」变成「不说」。', dEn: 'Exquisitely tuned to beauty and the texture of now — your way of living is itself the artwork. Don\'t let "easygoing" become "unheard".' },
   ESTP: { zh: '破浪的行动派', en: 'The Wavebreaker', dZh: '现场感极强，越是变化越兴奋，先做再说是你的信条。大多数时候这很灵，记得系好安全绳。', dEn: 'You thrive live and in motion — the more things change, the more awake you feel. Acting first usually works; clip into the safety rope anyway.' },
   ESFP: { zh: '氛围的点灯人', en: 'The Room Brightener', dZh: '你一进门，房间的亮度先升一档。快乐在你这里是即时的、大方的、会分享的。偶尔的安静也值得体验。', dEn: 'The room brightens a notch when you walk in. Joy, for you, is immediate, generous, shared. The occasional quiet is worth tasting too.' },
 };

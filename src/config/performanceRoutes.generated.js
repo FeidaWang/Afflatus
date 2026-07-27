@@ -38,7 +38,8 @@ export const PERFORMANCE_ROUTES = Object.freeze([
 
 export function normalizePerformancePath(pathname) {
   const raw = String(pathname || '/').split(/[?#]/, 1)[0];
-  const path = raw.replace(/\/index\.html$/, '/');
+  const withoutLocale = raw.replace(/^\/(?:en|zh)(?=\/|$)/, '') || '/';
+  const path = withoutLocale.replace(/\/index\.html$/, '/');
   return path === '' ? '/' : path;
 }
 

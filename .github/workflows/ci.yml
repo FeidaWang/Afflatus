@@ -32,13 +32,13 @@ jobs:
         run: npm run typecheck
 
       - name: Data schema validation
-        run: node scripts/validate-data.mjs
+        run: npm run data:check
 
       - name: Route manifest, sitemap and metadata
         run: npm run site:check
 
-      - name: No new !important (D1 @layer discipline)
-        run: node scripts/check-no-new-important.mjs
+      - name: Bilingual content contract
+        run: npm run lint:i18n
 
       - name: Build
         run: npm run build

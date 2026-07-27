@@ -38,7 +38,7 @@
       "label_en": "Cost efficiency",
       "label_zh": "成本效率",
       "metric_en": "Intelligence index per blended $/1M token (3:1 input:output)",
-      "metric_zh": "每混合美元（输入:输出 3:1）可得智能指数",
+      "metric_zh": "每混合美元（输入：输出 3:1）可得智能指数",
       "unit": "index/$",
       "higher_better": true,
       "derived": true,
@@ -221,7 +221,7 @@
       "id": "price_ratio",
       "family": "economic",
       "label_en": "Output:input ratio",
-      "label_zh": "输出:输入 倍数",
+      "label_zh": "输出：输入 倍数",
       "unit": "x",
       "higher_better": false,
       "derived": true
@@ -236,8 +236,8 @@
       "route": "closed",
       "released": "2026-07-24",
       "pricing": {
-        "in_per_m": 5.0,
-        "out_per_m": 25.0,
+        "in_per_m": 5,
+        "out_per_m": 25,
         "tier": "verified",
         "src": "https://www.anthropic.com/news/claude-opus-5"
       },
@@ -292,8 +292,8 @@
       "route": "closed",
       "released": "2026-07-01",
       "pricing": {
-        "in_per_m": 10.0,
-        "out_per_m": 50.0,
+        "in_per_m": 10,
+        "out_per_m": 50,
         "tier": "reported",
         "src": "https://www.tldl.io/resources/llm-api-pricing"
       },
@@ -330,8 +330,8 @@
       "route": "closed",
       "released": null,
       "pricing": {
-        "in_per_m": 5.0,
-        "out_per_m": 25.0,
+        "in_per_m": 5,
+        "out_per_m": 25,
         "tier": "reported",
         "src": "https://www.tldl.io/resources/llm-api-pricing"
       },
@@ -359,8 +359,8 @@
       "route": "closed",
       "released": null,
       "pricing": {
-        "in_per_m": 5.0,
-        "out_per_m": 30.0,
+        "in_per_m": 5,
+        "out_per_m": 30,
         "tier": "reported",
         "src": "https://www.tldl.io/resources/llm-api-pricing"
       },
@@ -405,7 +405,7 @@
         },
         {
           "id": "deepswe",
-          "value": 49.0,
+          "value": 49,
           "unit": "%",
           "tier": "verified",
           "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
@@ -419,7 +419,7 @@
         },
         {
           "id": "osworld",
-          "value": 83.0,
+          "value": 83,
           "unit": "%",
           "tier": "verified",
           "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
@@ -441,14 +441,14 @@
       "released": "2026-05-20",
       "pricing": {
         "in_per_m": 1.5,
-        "out_per_m": 9.0,
+        "out_per_m": 9,
         "tier": "reported",
         "src": "https://codersera.com/blog/gemini-3-5-complete-guide-2026/"
       },
       "bench": [
         {
           "id": "deepswe",
-          "value": 37.0,
+          "value": 37,
           "unit": "%",
           "tier": "verified",
           "src": "https://www.techtimes.com/articles/321268/20260722/gemini-36-flash-cuts-token-costs-scores-higher-every-benchmark.htm"
@@ -541,7 +541,7 @@
       "bench": [
         {
           "id": "swe_bench_pro",
-          "value": 58.0,
+          "value": 58,
           "unit": "%",
           "tier": "estimate",
           "src": "https://www.aimadetools.com/blog/qwen-3-7-vs-minimax-m3/",
@@ -618,8 +618,8 @@
       "route": "open",
       "released": null,
       "pricing": {
-        "in_per_m": 3.0,
-        "out_per_m": 15.0,
+        "in_per_m": 3,
+        "out_per_m": 15,
         "tier": "reported",
         "src": "https://www.tldl.io/resources/llm-api-pricing"
       },
@@ -657,14 +657,14 @@
       "bench": [
         {
           "id": "swe_bench_pro",
-          "value": 59.0,
+          "value": 59,
           "unit": "%",
           "tier": "reported",
           "src": "https://apidog.com/blog/minimax-m3-vs-deepseek-v4-vs-qwen-3-7/"
         },
         {
           "id": "terminal_bench",
-          "value": 66.0,
+          "value": 66,
           "unit": "%",
           "tier": "reported",
           "src": "https://apidog.com/blog/minimax-m3-vs-deepseek-v4-vs-qwen-3-7/"

@@ -1,4 +1,9 @@
-import { getLocale, localeToHtmlLang, setLocale } from './localeStore.js';
+import {
+  getLocale,
+  localeSwitchHref,
+  localeToHtmlLang,
+  setLocale,
+} from './localeStore.js';
 
 /* ============================================================
    Afflatus shared bilingual engine (EN / 中文).
@@ -26,9 +31,34 @@ import { getLocale, localeToHtmlLang, setLocale } from './localeStore.js';
       }
     });
     document.querySelectorAll('[data-en-ph]').forEach((el) => { el.setAttribute('placeholder', lang === 'zh' ? (el.getAttribute('data-zh-ph') || el.getAttribute('data-en-ph')) : el.getAttribute('data-en-ph')); });
-    document.querySelectorAll('.lang-toggle').forEach((b) => { b.textContent = lang === 'zh' ? 'EN' : '中文'; b.setAttribute('aria-label', lang === 'zh' ? 'Switch to English' : '切换到中文'); b.setAttribute('aria-pressed', lang === 'zh'); });
+    document.querySelectorAll('[data-aria-en]').forEach((el) => {
+      const value = lang === 'zh'
+        ? (el.getAttribute('data-aria-zh') || el.getAttribute('data-aria-en'))
+        : el.getAttribute('data-aria-en');
+      if (value != null) el.setAttribute('aria-label', value);
+    });
+    document.querySelectorAll('.lang-toggle').forEach((b) => {
+      const nextLocale = lang === 'zh' ? 'en' : 'zh';
+      b.textContent = nextLocale === 'zh' ? '中文' : 'EN';
+      b.setAttribute('aria-label', nextLocale === 'zh' ? '切换到中文' : 'Switch to English');
+      b.setAttribute('aria-pressed', lang === 'zh');
+      if (b.matches('a[href]')) {
+        b.setAttribute('href', localeSwitchHref(window.location, nextLocale));
+        b.setAttribute('hreflang', nextLocale === 'zh' ? 'zh-CN' : 'en');
+      }
+    });
   }
-  function set(l) { lang = setLocale(l); apply(); try { window.dispatchEvent(new CustomEvent('afflatus-lang', { detail: lang })); } catch {} }
+  function set(l) {
+    lang = setLocale(l);
+    const href = localeSwitchHref(window.location, lang);
+    if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== href) {
+      document.documentElement.classList.add('vt-suppress');
+      window.location.assign(href);
+      return;
+    }
+    apply();
+    try { window.dispatchEvent(new CustomEvent('afflatus-lang', { detail: lang })); } catch {}
+  }
   window.AfflatusI18N = { get: () => lang, set, toggle: () => set(lang === 'zh' ? 'en' : 'zh'), apply };
 
   document.addEventListener('click', (e) => { const b = e.target.closest && e.target.closest('.lang-toggle'); if (b) { e.preventDefault(); window.AfflatusI18N.toggle(); } });

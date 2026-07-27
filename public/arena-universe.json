@@ -3,7 +3,7 @@
   "version": 2,
   "mode": "market",
   "note_en": "Arena's trading universe expanded from a 30-symbol AI-hardware/megacap watchlist to the S&P 500 (503 symbols, all 11 GICS sectors) plus SPY/QQQ/SMH benchmarks -- our honest proxy for \"the entire US equity market\": a precise, well-defined, liquid index rather than every microcap ticker on NYSE/NASDAQ, which free-tier Finnhub/Twelve Data quotas couldn't cover anyway (see urgent.md Part 4 SS16.2/SS18.1.2). Season 1's fixed 30-symbol universe is archived at arena-universe-s1.json.",
-  "note_zh": "Arena 的交易域从 30 只 AI 硬件/大盘科技股自选股扩展为标普 500 指数（503 只标的,覆盖全部 11 个 GICS 板块）外加 SPY/QQQ/SMH 基准 —— 这是我们对\"全美股市场\"的诚实替代方案：一个精确、定义清晰、流动性好的指数,而不是纽交所/纳斯达克上每一只微型股（免费版 Finnhub/Twelve Data 的配额本来也覆盖不了,见 urgent.md Part 4 SS16.2/SS18.1.2）。Season 1 的固定 30 只标的自选股归档在 arena-universe-s1.json。",
+  "note_zh": "Arena 的交易域从 30 只 AI 硬件/大盘科技股自选股扩展为标普 500 指数（503 只标的，覆盖全部 11 个 GICS 板块）外加 SPY/QQQ/SMH 基准 —— 这是我们对「全美股市场」的诚实替代方案：一个精确、定义清晰、流动性好的指数，而不是纽交所/纳斯达克上每一只微型股（免费版 Finnhub/Twelve Data 的配额本来也覆盖不了，见 urgent.md Part 4 SS16.2/SS18.1.2）。Season 1 的固定 30 只标的自选股归档在 arena-universe-s1.json。",
   "source_note_en": "Constituent list + GICS sectors from Wikipedia's \"List of S&P 500 companies\" (fetched 2026-07-23); re-derive periodically as index membership changes -- this file is not auto-synced to S&P Dow Jones Indices' official methodology feed.",
   "source_note_zh": "成分股列表与 GICS 板块取自维基百科\"List of S&P 500 companies\"词条（抓取于 2026-07-23）；指数成分变动时需重新生成 —— 本文件未与标普道琼斯指数官方方法论数据源自动同步。",
   "exclusions": [],
@@ -11,7 +11,7 @@
     "minLastClose": 3,
     "minAvgDollarVol": 5000000,
     "note_en": "Enforced in code at universe-check time (arenaRules.js Sec17.5.2), not by the prompt -- a symbol technically in the S&P 500 that fails either floor is rejected the same way an out-of-universe symbol is.",
-    "note_zh": "在代码层的交易域校验环节强制执行（arenaRules.js SS17.5.2）,而非靠提示词约束 —— 标普 500 成分股若未达到这两条门槛,会像域外标的一样被拒单。"
+    "note_zh": "在代码层的交易域校验环节强制执行（arenaRules.js SS17.5.2），而非靠提示词约束 —— 标普 500 成分股若未达到这两条门槛，会像域外标的一样被拒单。"
   },
   "benchmarks": [
     "SPY",

@@ -13,6 +13,7 @@
 
 export const LOCALE_KEY = 'afflatus:locale:v1';
 export const LEGACY_LOCALE_KEYS = Object.freeze(['afflatus:lang', 'afflatus-lang']);
+export const ROUTE_LOCALES = Object.freeze(['en', 'zh']);
 
 export function normalizeLocale(value, fallback = 'en') {
   if (value === 'zh' || value === 'zh-CN') return 'zh';
@@ -22,6 +23,30 @@ export function normalizeLocale(value, fallback = 'en') {
 
 export function localeToHtmlLang(locale) {
   return normalizeLocale(locale) === 'zh' ? 'zh-CN' : 'en';
+}
+
+export function localeFromPathname(pathname) {
+  const match = String(pathname || '/').match(/^\/(en|zh)(?:\/|$)/);
+  return match ? match[1] : null;
+}
+
+export function stripLocalePathname(pathname) {
+  const raw = String(pathname || '/').split(/[?#]/, 1)[0] || '/';
+  const stripped = raw.replace(/^\/(?:en|zh)(?=\/|$)/, '');
+  return stripped === '' ? '/' : stripped;
+}
+
+export function localizePathname(pathname, locale) {
+  const nextLocale = normalizeLocale(locale);
+  const base = stripLocalePathname(pathname);
+  return base === '/' ? `/${nextLocale}/` : `/${nextLocale}${base.startsWith('/') ? base : `/${base}`}`;
+}
+
+export function localeSwitchHref(locationLike, locale) {
+  const pathname = locationLike?.pathname || '/';
+  const search = locationLike?.search || '';
+  const hash = locationLike?.hash || '';
+  return `${localizePathname(pathname, locale)}${search}${hash}`;
 }
 
 function safeGet(storage, key) {
@@ -81,6 +106,8 @@ export function migrateLocaleStorage(storage, fallback = 'en') {
 
 export function getLocale(fallback = 'en') {
   try {
+    const routeLocale = localeFromPathname(window.location?.pathname);
+    if (routeLocale) return routeLocale;
     return migrateLocaleStorage(window.localStorage, fallback);
   } catch {
     return normalizeLocale(fallback);

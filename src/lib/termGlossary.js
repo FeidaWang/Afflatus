@@ -30,7 +30,7 @@ export const TERMS = {
   },
   sep: {
     en: 'The Fed’s Summary of Economic Projections, released quarterly — includes the "dot plot" of rate expectations.',
-    zh: '美联储经济预测摘要（SEP），每季度发布一次——包含利率预期的"点阵图"。',
+    zh: '美联储经济预测摘要（SEP），每季度发布一次——包含利率预期的「点阵图」。',
   },
   brier: {
     en: 'Prediction accuracy score, 0 (perfect) to 1 (worst).',

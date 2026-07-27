@@ -27,14 +27,198 @@
 <meta name="description" content="Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 与 FIFA 世界杯 2026 全部预测的命中率、Wilson 置信区间、Brier 评分、可靠性校准图与 bootstrap 重采样，数据全部可回溯。">
 <meta name="theme-color" content="#070a12">
 <link rel="canonical" href="https://feida.au/stats.html">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Project Afflatus">
-<meta property="og:title" content="Project Afflatus · Stats — 竞猜战绩存档">
-<meta property="og:description" content="MSI 2026 与世界杯 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。">
-<meta property="og:url" content="https://feida.au/stats.html">
-<meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
+  <!-- afflatus:route-seo:start -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Project Afflatus">
+  <meta property="og:title" content="Project Afflatus · Stats — 竞猜战绩存档">
+  <meta property="og:description" content="MSI 2026 与世界杯 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。">
+  <meta property="og:url" content="https://feida.au/stats.html">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_AU">
+  <meta property="og:image" content="https://feida.au/assets/og/og-image.jpg">
+  <meta property="og:image:secure_url" content="https://feida.au/assets/og/og-image.jpg">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="竞猜记录的统计校准与分布图">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Project Afflatus · Stats — 竞猜战绩存档">
+  <meta name="twitter:description" content="MSI 2026 与世界杯 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。">
+  <meta name="twitter:image" content="https://feida.au/assets/og/og-image.jpg">
+  <meta name="twitter:image:alt" content="竞猜记录的统计校准与分布图">
+  <script type="application/ld+json" data-afflatus-route-schema="stats" lang="zh-CN">
+  {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://feida.au/#person",
+      "name": "Feida Wang",
+      "alternateName": "Bruce",
+      "url": "https://feida.au/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://feida.au/#website",
+      "url": "https://feida.au/",
+      "name": "Project Afflatus",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "publisher": {
+        "@id": "https://feida.au/#person"
+      }
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://feida.au/stats.html#primaryimage",
+      "url": "https://feida.au/assets/og/og-image.jpg",
+      "contentUrl": "https://feida.au/assets/og/og-image.jpg",
+      "width": 1200,
+      "height": 630,
+      "caption": "竞猜记录的统计校准与分布图",
+      "inLanguage": "zh-CN"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://feida.au/stats.html#webpage",
+      "url": "https://feida.au/stats.html",
+      "name": "战绩 — 竞猜记录存档 · Project Afflatus",
+      "description": "可回溯的 MSI 2026 与世界杯 2026 竞猜记录，包含 Wilson 区间、Brier 评分、可靠性校准和 bootstrap 分析。",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "isPartOf": {
+        "@id": "https://feida.au/#website"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://feida.au/stats.html#primaryimage"
+      },
+      "breadcrumb": {
+        "@id": "https://feida.au/stats.html#breadcrumb"
+      },
+      "dateModified": "2026-07-20",
+      "mainEntity": {
+        "@id": "https://feida.au/stats.html#catalog"
+      }
+    },
+    {
+      "@type": "DataCatalog",
+      "@id": "https://feida.au/stats.html#catalog",
+      "name": "Project Afflatus 竞猜数据目录",
+      "description": "可回溯的 MSI 2026 与世界杯 2026 竞猜记录，包含 Wilson 区间、Brier 评分、可靠性校准和 bootstrap 分析。",
+      "url": "https://feida.au/stats.html",
+      "dataset": [
+        {
+          "@id": "https://feida.au/stats.html#world-cup-dataset"
+        },
+        {
+          "@id": "https://feida.au/stats.html#msi-dataset"
+        }
+      ],
+      "dateModified": "2026-07-20"
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://feida.au/stats.html#world-cup-dataset",
+      "name": "2026 世界杯竞猜记录",
+      "description": "包含赛前预测、置信度、最终比分与命中结果的可下载记录。",
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "name": "World Cup prediction records",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://feida.au/games-data.json"
+        }
+      ],
+      "variableMeasured": [
+        "prediction",
+        "confidence",
+        "score",
+        "outcome"
+      ],
+      "measurementTechnique": [
+        "Wilson interval",
+        "Brier score",
+        "bootstrap resampling"
+      ],
+      "dateModified": "2026-07-20",
+      "creator": {
+        "@id": "https://feida.au/#person"
+      },
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "isPartOf": {
+        "@id": "https://feida.au/stats.html#catalog"
+      }
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://feida.au/stats.html#msi-dataset",
+      "name": "2026 MSI 竞猜记录",
+      "description": "包含系列赛预测、置信度、最终比分与命中结果的可下载记录。",
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "name": "MSI prediction records",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://feida.au/leagues-data.json"
+        }
+      ],
+      "variableMeasured": [
+        "prediction",
+        "confidence",
+        "score",
+        "outcome"
+      ],
+      "measurementTechnique": [
+        "Wilson interval",
+        "Brier score",
+        "bootstrap resampling"
+      ],
+      "dateModified": "2026-07-12",
+      "creator": {
+        "@id": "https://feida.au/#person"
+      },
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "isPartOf": {
+        "@id": "https://feida.au/stats.html#catalog"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://feida.au/stats.html#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "首页",
+          "item": "https://feida.au/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "战绩",
+          "item": "https://feida.au/stats.html"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- afflatus:route-seo:end -->
+
+
+
+
+
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/page-turn.css">
 <style>

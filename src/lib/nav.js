@@ -1,4 +1,5 @@
 import { NAV_ROUTES, normalizeRoutePath } from '../config/navRoutes.generated.js';
+import { localeFromPathname, localizePathname } from './localeStore.js';
 
 /* ============================================================
    Afflatus shared navigation — SINGLE SOURCE OF TRUTH.
@@ -30,11 +31,13 @@ import { NAV_ROUTES, normalizeRoutePath } from '../config/navRoutes.generated.js
 
   const norm = normalizeRoutePath;
   const here = norm(location.pathname);
+  const routeLocale = localeFromPathname(location.pathname);
+  const routeHref = (path) => routeLocale ? localizePathname(path, routeLocale) : path;
   let i = SITE.findIndex((s) => norm(s.path) === here);
   if (i < 0) i = 0;
   const n = SITE.length;
-  const prev = SITE[(i - 1 + n) % n].path;
-  const next = SITE[(i + 1) % n].path;
+  const prev = routeHref(SITE[(i - 1 + n) % n].path);
+  const next = routeHref(SITE[(i + 1) % n].path);
 
   function run() {
     // prev/next: keyboard (body.dataset, read by page-turn.js AND
@@ -55,6 +58,7 @@ import { NAV_ROUTES, normalizeRoutePath } from '../config/navRoutes.generated.js
     // `group: 'labs'` entries collapse into a single dropdown trigger at the
     // position of the first one encountered, instead of their own link.
     document.querySelectorAll('[data-afflatus-nav]').forEach((navEl) => {
+      navEl.querySelectorAll('[data-afflatus-static-nav]').forEach((node) => node.remove());
       const frag = document.createDocumentFragment();
       let labsWrap = null;
       let labsMenu = null;
@@ -70,7 +74,7 @@ import { NAV_ROUTES, normalizeRoutePath } from '../config/navRoutes.generated.js
         // `here` (the current page) IS home.
         if (s.path === '/' && here === '/') return;
         const a = document.createElement('a');
-        a.setAttribute('href', s.path);
+        a.setAttribute('href', routeHref(s.path));
         a.setAttribute('data-en', s.en);
         a.setAttribute('data-zh', s.zh);
         a.textContent = s.en;

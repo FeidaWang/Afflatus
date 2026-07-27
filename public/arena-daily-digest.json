@@ -2,28 +2,28 @@
   "date": "2026-07-24",
   "generatedAt": "2026-07-25T00:58:00Z",
   "note_en": "Chip stocks stayed volatile after Thursday's Mag7-led selloff; broader tape stabilized Friday. S opened an AT&T long, P booked a small SMCI gain, T stayed flat (outside its Tue/Thu window). Note: today's pre-market gather and picks-publish never ran (repo-mount race, since fixed), so no fresh picks pool was available today.",
-  "note_zh": "芯片股在周四七巨头抛售后仍有波动,周五大盘趋稳。S新开AT&T多头,P兑现SMCI小额收益,T因不在周二/周四窗口内保持不动。注:今日盘前收集与推荐发布均未运行(仓库挂载竞态问题,现已修复),故今日无新推荐池。",
+  "note_zh": "芯片股在周四七巨头抛售后仍有波动，周五大盘趋稳。S新开AT&T多头，P兑现SMCI小额收益，T因不在周二/周四窗口内保持不动。注：今日盘前收集与推荐发布均未运行(仓库挂载竞态问题，现已修复)，故今日无新推荐池。",
   "books": [
     {
       "model": "S",
       "pnlPct": 0.4,
       "tradesCount": 1,
       "note_en": "Opened a long in AT&T (T), 84 shares — its only trade today. Equity ticked up ~0.4% to $10,079 (+0.79% cumulative).",
-      "note_zh": "今日新开AT&T(T)多头仓位84股,为今日唯一交易。账户上涨约0.4%至10079美元(累计+0.79%)。"
+      "note_zh": "今日新开AT&T(T)多头仓位84股，为今日唯一交易。账户上涨约0.4%至10079美元(累计+0.79%)。"
     },
     {
       "model": "P",
       "pnlPct": 0.2,
       "tradesCount": 1,
       "note_en": "Sold SMCI (64 sh) for a realized gain of ~$22, its only trade today. Equity up ~0.2% to $10,022 (+0.22% cumulative).",
-      "note_zh": "今日卖出SMCI 64股,兑现约22美元收益,为今日唯一交易。账户上涨约0.2%至10022美元(累计+0.22%)。"
+      "note_zh": "今日卖出SMCI 64股，兑现约22美元收益，为今日唯一交易。账户上涨约0.2%至10022美元(累计+0.22%)。"
     },
     {
       "model": "T",
       "pnlPct": 0,
       "tradesCount": 0,
       "note_en": "No activity — Friday falls outside T's Tue/Thu open window, it holds no positions, and today's picks-publish never ran (see regime note) so there was no candidate pool anyway.",
-      "note_zh": "无操作——周五不在T的周二/周四开仓窗口内,当前无持仓,且今日推荐发布未运行(见上方备注),本就没有候选池。"
+      "note_zh": "无操作——周五不在T的周二/周四开仓窗口内，当前无持仓，且今日推荐发布未运行(见上方备注)，本就没有候选池。"
     }
   ],
   "tomorrowPicksCount": 0,

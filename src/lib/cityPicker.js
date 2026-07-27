@@ -16,6 +16,8 @@
    the existing birth-timezone form fields (bTz/bDst/bLat/bLon) — this
    module has no DOM/form knowledge.
    ============================================================ */
+/* afflatus-i18n allow-monolingual: derived mainland-China region/city
+   option records intentionally use the official Chinese label in EN too. */
 import { CHINA_CITIES, GLOBAL_CITIES } from './cities.js';
 
 /**

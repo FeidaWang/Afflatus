@@ -116,7 +116,7 @@ const ATTRACTION_MEANING = {
 // friction + coping advice, in a red-flag context (never fatalistic)
 const FRICTION_ADVICE = {
   Sun: { zh: '各自都需要被看见的时刻，轮流当主角，别抢麦', en: 'You both need your moment in the spotlight — take turns, not the mic' },
-  Moon: { zh: '累的时候先说"我需要静一静"，别憋着等对方猜', en: 'Say "I need a minute" when drained — don\'t make them guess' },
+  Moon: { zh: '累的时候先说「我需要静一静」，别憋着等对方猜', en: 'Say "I need a minute" when drained — don\'t make them guess' },
   Mercury: { zh: '文字消息容易误会，重要事打电话或见面说', en: 'Text messages misread easily — call or talk face to face for anything that matters' },
   Venus: { zh: '示爱的方式不一样，别用自己的标准判断对方冷不冷淡', en: "You show affection differently — don't measure their warmth by your own scale" },
   Mars: { zh: '争执上头时先暂停十分钟，别在气头上下结论', en: 'Pause ten minutes when it heats up — never conclude mid-flare' },

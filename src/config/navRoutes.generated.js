@@ -57,6 +57,7 @@ export const NAV_ROUTES = Object.freeze([
 ]);
 
 export function normalizeRoutePath(pathname) {
-  const path = (pathname || '/').replace(/index\.html$/, '');
+  const withoutLocale = String(pathname || '/').replace(/^\/(?:en|zh)(?=\/|$)/, '') || '/';
+  const path = withoutLocale.replace(/index\.html$/, '');
   return path === '' ? '/' : path;
 }

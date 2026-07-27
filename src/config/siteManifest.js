@@ -8,6 +8,178 @@
  */
 
 const OG_IMAGE = 'https://feida.au/assets/og/og-image.jpg';
+// Route-specific social cards ship in the following visual-assets module.
+// Until then, every emitted document must reference the existing fallback.
+const routeOgImage = () => OG_IMAGE;
+
+export const ROUTE_SEO = Object.freeze({
+  main: {
+    social: {
+      background: '/assets/og/backgrounds/home.png',
+      eyebrow: { en: 'AFFLATUS · CAPTAIN LOG', zh: 'AFFLATUS · 舰长日志' },
+      title: { en: 'Deep-space captain log', zh: '深空舰长日志' },
+      subtitle: {
+        en: 'AI field notes, original fiction, and data-driven experiments.',
+        zh: 'AI 实践、原创连载与数据实验。',
+      },
+      alt: {
+        en: 'Project Afflatus captain log in deep space',
+        zh: '深空中的 Project Afflatus 舰长日志',
+      },
+      images: { en: routeOgImage('main', 'en'), zh: routeOgImage('main', 'zh') },
+    },
+    structuredData: { kind: 'profile' },
+  },
+  arena: {
+    social: {
+      background: '/assets/og/backgrounds/arena.png',
+      eyebrow: { en: 'MARKET INTELLIGENCE', zh: '市场情报' },
+      title: { en: 'Arena', zh: '竞技场' },
+      subtitle: {
+        en: 'US stock technical analysis and simulated model ledgers.',
+        zh: '美股技术分析与模型模拟账本。',
+      },
+      alt: {
+        en: 'Arena market intelligence data lanes',
+        zh: '竞技场市场情报数据轨道',
+      },
+      images: { en: routeOgImage('arena', 'en'), zh: routeOgImage('arena', 'zh') },
+    },
+    structuredData: {
+      kind: 'arena',
+      provenance: [
+        { path: 'public/arena-daily-digest.json', dateField: 'generatedAt' },
+        { path: 'public/arena-news.json', dateField: 'generatedAt' },
+      ],
+    },
+  },
+  sectors: {
+    social: {
+      background: '/assets/og/backgrounds/sectors.png',
+      eyebrow: { en: 'AI ECOSYSTEM', zh: 'AI 生态' },
+      title: {
+        en: 'Two ecosystems. One supply chain.',
+        zh: '两套生态，一条供应链。',
+      },
+      subtitle: {
+        en: 'A structured map of the US–China AI stack.',
+        zh: '结构化观察中美 AI 产业链。',
+      },
+      alt: {
+        en: 'Constellation map of the US and China AI ecosystems',
+        zh: '中美 AI 生态系统交互星图',
+      },
+      images: {
+        en: routeOgImage('sectors', 'en'),
+        zh: routeOgImage('sectors', 'zh'),
+      },
+    },
+    structuredData: {
+      kind: 'sectors',
+      provenance: [
+        { path: 'public/sectors-ecosystem.json', dateField: 'updated' },
+        { path: 'public/sectors-competition.json', dateField: 'updated' },
+      ],
+    },
+  },
+  signal: {
+    social: {
+      background: '/assets/og/backgrounds/signal.png',
+      eyebrow: { en: 'MACRO DOSSIER', zh: '宏观档案' },
+      title: { en: 'Federal Reserve watch', zh: '美联储观察' },
+      subtitle: {
+        en: 'Decision-relevant macro signals with explicit provenance.',
+        zh: '带明示来源的决策型宏观信号。',
+      },
+      alt: {
+        en: 'Signal macroeconomic research dossier',
+        zh: 'Signal 宏观经济研究档案',
+      },
+      images: { en: routeOgImage('signal', 'en'), zh: routeOgImage('signal', 'zh') },
+    },
+    structuredData: {
+      kind: 'signal',
+      provenance: [{ path: 'public/signal-events.json', dateField: 'updated' }],
+    },
+  },
+  stats: {
+    social: {
+      background: '/assets/og/backgrounds/stats.png',
+      eyebrow: { en: 'TRACK RECORD', zh: '战绩档案' },
+      title: { en: 'Prediction track record', zh: '竞猜记录存档' },
+      subtitle: {
+        en: 'Transparent outcomes, calibration, and model notes.',
+        zh: '公开结果、置信校准与模型备注。',
+      },
+      alt: {
+        en: 'Statistical calibration and prediction track record',
+        zh: '竞猜记录的统计校准与分布图',
+      },
+      images: { en: routeOgImage('stats', 'en'), zh: routeOgImage('stats', 'zh') },
+    },
+    structuredData: {
+      kind: 'stats',
+      provenance: [
+        { path: 'public/games-data.json', dateField: 'updated' },
+        { path: 'public/leagues-data.json', dateField: 'updated' },
+      ],
+    },
+  },
+  horoscope: {
+    social: {
+      background: '/assets/og/backgrounds/horoscope.png',
+      eyebrow: { en: 'LOCAL-FIRST', zh: '本地计算' },
+      title: { en: 'Bazi & astrology', zh: '八字与西方占星' },
+      subtitle: {
+        en: 'A private, local-first entertainment experience.',
+        zh: '隐私优先、本地计算的娱乐体验。',
+      },
+      alt: {
+        en: 'Botanical celestial chart for Bazi and astrology',
+        zh: '八字与西方占星的植物天体图',
+      },
+      images: {
+        en: routeOgImage('horoscope', 'en'),
+        zh: routeOgImage('horoscope', 'zh'),
+      },
+    },
+    structuredData: { kind: 'horoscope' },
+  },
+  serial: {
+    social: {
+      background: '/assets/og/backgrounds/serial.png',
+      eyebrow: { en: 'SERIAL FICTION', zh: '原创连载' },
+      title: { en: 'Original Chinese fiction', zh: '原创中文小说连载' },
+      subtitle: {
+        en: 'Three serialized worlds by Feida Wang.',
+        zh: '王飞达创作的三个连载世界。',
+      },
+      alt: {
+        en: 'Retro-futurist library for original serialized fiction',
+        zh: '原创连载小说的复古未来主义图书馆',
+      },
+      images: { en: routeOgImage('serial', 'en'), zh: routeOgImage('serial', 'zh') },
+    },
+    structuredData: { kind: 'serial' },
+  },
+  course: {
+    social: {
+      background: '/assets/og/backgrounds/course.png',
+      eyebrow: { en: 'LIVING PLAYBOOK', zh: '持续更新' },
+      title: { en: 'AI collaboration playbook', zh: 'AI 协作成长蓝图' },
+      subtitle: {
+        en: 'A practical path from prompts to production systems.',
+        zh: '从提示词到生产系统的实践路径。',
+      },
+      alt: {
+        en: 'Learning map for the Project Afflatus AI course',
+        zh: 'Project Afflatus AI 课程学习地图',
+      },
+      images: { en: routeOgImage('course', 'en'), zh: routeOgImage('course', 'zh') },
+    },
+    structuredData: { kind: 'course' },
+  },
+});
 
 export const SITE_MANIFEST = Object.freeze([
   {
@@ -21,6 +193,7 @@ export const SITE_MANIFEST = Object.freeze([
     nav: { order: 10, group: null, en: 'Home', zh: '首页' },
     themeColor: '#05070b',
     schema: ['WebSite', 'ProfilePage'],
+    seo: ROUTE_SEO.main,
     capabilities: ['canvas', 'webgl', 'combat'],
     metadata: {
       title: 'Project Afflatus - Deep-Space Captain Log',
@@ -28,7 +201,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/',
       ogTitle: 'Project Afflatus · Deep-Space Captain Log',
       ogDescription: "A lone commander's US-equity captain log: positions, allocation logic, discipline. No ads, no tips, no promises.",
-      ogImage: OG_IMAGE,
+      ogImage: ROUTE_SEO.main.social.images.en,
     },
     locales: {
       en: {
@@ -51,7 +224,8 @@ export const SITE_MANIFEST = Object.freeze([
     defaultLocale: 'en',
     nav: { order: 20, group: null, en: 'Arena', zh: '竞技场' },
     themeColor: '#05070e',
-    schema: ['WebApplication', 'Dataset'],
+    schema: ['WebApplication', 'Article', 'Dataset'],
+    seo: ROUTE_SEO.arena,
     capabilities: ['live-data', 'svg-viz', 'admin-session'],
     metadata: {
       title: 'Arena · US Stock TA + Autopilot — Afflatus',
@@ -59,7 +233,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/arena.html',
       ogTitle: 'Project Afflatus · Arena',
       ogDescription: 'S&P 500 TA dashboard + three simulated LLM trading ledgers (Autopilot) scored against SPY/SMH. Not investment advice.',
-      ogImage: OG_IMAGE,
+      ogImage: ROUTE_SEO.arena.social.images.en,
     },
     locales: {
       en: {
@@ -83,6 +257,7 @@ export const SITE_MANIFEST = Object.freeze([
     nav: { order: 30, group: null, en: 'Sectors', zh: '板块' },
     themeColor: '#000000',
     schema: ['CollectionPage', 'ItemList'],
+    seo: ROUTE_SEO.sectors,
     capabilities: ['canvas', 'webgl', 'graph'],
     metadata: {
       title: 'Project Afflatus · Sectors',
@@ -90,7 +265,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/sectors.html',
       ogTitle: 'Project Afflatus · Sectors',
       ogDescription: 'One frontier worth paying up for: the AI-infrastructure stack — compute, custom silicon, memory, foundry and the toolmakers. Desk view, not advice.',
-      ogImage: OG_IMAGE,
+      ogImage: ROUTE_SEO.sectors.social.images.en,
     },
     locales: {
       en: {
@@ -99,7 +274,7 @@ export const SITE_MANIFEST = Object.freeze([
       },
       zh: {
         title: '板块 — AI 基础设施 · Project Afflatus',
-        description: '从算力、定制芯片、存储、晶圆代工到设备制造商的 AI 基础设施案头观察。非投资建议。',
+        description: '从算力、定制芯片、存储、晶圆代工到设备制造商的 AI 基础设施个人案头观点。非投资建议。',
       },
     },
   },
@@ -114,6 +289,7 @@ export const SITE_MANIFEST = Object.freeze([
     nav: { order: 40, group: null, en: 'Signal', zh: '信号' },
     themeColor: '#0c0d0a',
     schema: ['CollectionPage', 'ItemList'],
+    seo: ROUTE_SEO.signal,
     capabilities: ['canvas', 'data-feed', 'audio'],
     metadata: {
       title: 'Project Afflatus · Signal — O5 Reserve Containment',
@@ -121,7 +297,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/signal.html',
       ogTitle: 'Project Afflatus · Signal — O5 Reserve Containment',
       ogDescription: 'A Fed watch as an SCP O5 dossier: FOMC containment + Fable sector calls. Desk view, not advice.',
-      ogImage: OG_IMAGE,
+      ogImage: ROUTE_SEO.signal.social.images.en,
     },
     locales: {
       en: {
@@ -130,7 +306,7 @@ export const SITE_MANIFEST = Object.freeze([
       },
       zh: {
         title: '信号 — 美联储观察 · Project Afflatus',
-        description: '以 SCP 档案形式呈现美联储、利率情景与板块影响的案头观察。非投资建议。',
+        description: '以 SCP 档案形式呈现美联储、利率情景与板块影响的个人案头观点。非投资建议。',
       },
     },
   },
@@ -144,7 +320,8 @@ export const SITE_MANIFEST = Object.freeze([
     defaultLocale: 'zh',
     nav: { order: 50, group: 'labs', en: 'Stats', zh: '战绩' },
     themeColor: '#070a12',
-    schema: ['Dataset'],
+    schema: ['DataCatalog', 'Dataset'],
+    seo: ROUTE_SEO.stats,
     capabilities: ['svg-viz', 'statistics'],
     metadata: {
       title: 'Project Afflatus · Stats — 竞猜战绩存档',
@@ -152,7 +329,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/stats.html',
       ogTitle: 'Project Afflatus · Stats — 竞猜战绩存档',
       ogDescription: 'MSI 2026 与世界杯 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。',
-      ogImage: OG_IMAGE,
+      ogImage: ROUTE_SEO.stats.social.images.zh,
     },
     locales: {
       en: {
@@ -176,6 +353,7 @@ export const SITE_MANIFEST = Object.freeze([
     nav: { order: 60, group: 'labs', en: 'Horoscope', zh: '观星' },
     themeColor: '#F6EFE3',
     schema: ['WebApplication'],
+    seo: ROUTE_SEO.horoscope,
     capabilities: ['local-first', 'share-query', 'svg-viz'],
     metadata: {
       title: 'Project Afflatus · Horoscope — 观星台 · Bazi & Astrology',
@@ -183,7 +361,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/horoscope.html',
       ogTitle: 'Project Afflatus · 观星台 Horoscope',
       ogDescription: 'Daily Bazi + astrology readings and two-person synastry, in warm botanical colors. Entertainment only.',
-      ogImage: OG_IMAGE,
+      ogImage: ROUTE_SEO.horoscope.social.images.en,
     },
     locales: {
       en: {
@@ -207,6 +385,7 @@ export const SITE_MANIFEST = Object.freeze([
     nav: { order: 70, group: 'labs', en: 'Novels', zh: '小说' },
     themeColor: '#231411',
     schema: ['Book', 'CreativeWorkSeries'],
+    seo: ROUTE_SEO.serial,
     capabilities: ['reader', 'local-state', 'audio'],
     metadata: {
       title: 'Project Afflatus · Novels — 小说连载书架',
@@ -214,7 +393,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/serial.html',
       ogTitle: 'Project Afflatus · Novels — 小说连载书架',
       ogDescription: '多部无限流原创小说连载，护眼阅读，每日更新。',
-      ogImage: OG_IMAGE,
+      ogImage: ROUTE_SEO.serial.social.images.zh,
     },
     locales: {
       en: {
@@ -238,6 +417,7 @@ export const SITE_MANIFEST = Object.freeze([
     nav: { order: 80, group: 'labs', en: 'Course', zh: '课程' },
     themeColor: '#05060a',
     schema: ['Course', 'ItemList'],
+    seo: ROUTE_SEO.course,
     capabilities: ['long-form', 'glossary'],
     metadata: {
       title: 'Project Afflatus · Course — My Personal AI-Collaboration Playbook',
@@ -245,7 +425,7 @@ export const SITE_MANIFEST = Object.freeze([
       canonical: 'https://feida.au/course.html',
       ogTitle: 'Project Afflatus · Course — My Personal AI-Collaboration Playbook',
       ogDescription: "A living, evidence-based playbook built from one developer's real git history — strengths, weaknesses, curriculum, and a career track toward top AI labs.",
-      ogImage: OG_IMAGE,
+      ogImage: ROUTE_SEO.course.social.images.en,
     },
     locales: {
       en: {
@@ -387,8 +567,22 @@ export const SITEMAP_ROUTES = Object.freeze(
   SITE_MANIFEST.filter((route) => route.status === 'active' && route.sitemap),
 );
 
+export const SITE_LOCALES = Object.freeze(['en', 'zh']);
+
+export function localizedRoutePath(routeOrPath, locale) {
+  const path = typeof routeOrPath === 'string' ? routeOrPath : routeOrPath?.path;
+  const normalizedLocale = locale === 'zh' ? 'zh' : 'en';
+  const base = normalizeRoutePath(String(path || '/').replace(/^\/(?:en|zh)(?=\/|$)/, ''));
+  return base === '/' ? `/${normalizedLocale}/` : `/${normalizedLocale}${base}`;
+}
+
+export function localizedRouteUrl(routeOrPath, locale) {
+  return `https://feida.au${localizedRoutePath(routeOrPath, locale)}`;
+}
+
 export function normalizeRoutePath(pathname) {
-  const path = (pathname || '/').replace(/index\.html$/, '');
+  const withoutLocale = String(pathname || '/').replace(/^\/(?:en|zh)(?=\/|$)/, '') || '/';
+  const path = withoutLocale.replace(/index\.html$/, '');
   return path === '' ? '/' : path;
 }
 

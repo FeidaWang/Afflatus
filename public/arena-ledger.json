@@ -75,7 +75,7 @@
         "exposure": 38
       },
       "review": {
-        "zh": "WAB(今日+0.95%,约占净值17.9%)与T(今日+4.8%,约占净值20.1%,已因价格上涨触及仓位上限)均延续本周财报超预期动能——WAB创历史新高,T的回购上调/用户超预期逻辑仍有多份最新分析师上调目标价支撑(TD Cowen上调至33美元,摩根士丹利上调至27美元)。未见衰减信号,今日digest也无新增合格标的,且两仓位均无加仓空间(20%上限)。本窗口不提交订单。",
+        "zh": "WAB(今日+0.95%，约占净值17.9%)与T(今日+4.8%，约占净值20.1%，已因价格上涨触及仓位上限)均延续本周财报超预期动能——WAB创历史新高，T的回购上调/用户超预期逻辑仍有多份最新分析师上调目标价支撑(TD Cowen上调至33美元，摩根士丹利上调至27美元)。未见衰减信号，今日digest也无新增合格标的，且两仓位均无加仓空间(20%上限)。本窗口不提交订单。",
         "en": "WAB (+0.95% today, ~17.9% of equity) and T (+4.8% today, ~20.1% of equity, effectively at cap from price action alone) both continue to hold this week's earnings-beat momentum -- WAB hit a fresh record high, T's buyback-raise/subscriber-beat thesis is still backed by fresh analyst target hikes (TD Cowen to $33, Morgan Stanley to $27). No decay signal, no new qualifying candidate in today's digest, and neither position has room to add given the 20% cap. Proposing no orders this window."
       }
     },
@@ -130,7 +130,7 @@
         "exposure": 0
       },
       "review": {
-        "zh": "今日 P 账本 picks 池仍无候选标的(arena-picks.json models.P 为空),且当前无持仓——晨间窗口已确认无标的可交易。本窗口继续不提交订单。",
+        "zh": "今日 P 账本 picks 池仍无候选标的(arena-picks.json models.P 为空)，且当前无持仓——晨间窗口已确认无标的可交易。本窗口继续不提交订单。",
         "en": "No qualifying candidates in today's picks pool for P (arena-picks.json models.P remains empty) and no open positions to manage -- same as the open-window read this morning. Proposing no orders this window."
       }
     },

@@ -3,7 +3,7 @@
   "generatedAt": "2026-07-24T13:32:43Z",
   "regime": "neutral",
   "note_en": "Tape stabilizing after Thursday's worst day in a month (oil topped $100, VIX +12%, Mag7 -$797B on GOOGL/TSLA capex jitters); new Section 301 tariffs took effect but futures leaned green. WAB and AT&T carry real earnings-beat momentum into today; Model T stays closed (Fri is not a Tue/Thu open day).",
-  "note_zh": "周四为月内最差交易日(油价突破100美元、VIX+12%,七巨头因谷歌/特斯拉资本支出引发担忧蒸发797亿美元)后大盘趋于企稳;新一轮301条款关税已生效,但期货偏绿。WAB 与 AT&T 的财报超预期动能延续至今日;Model T 今日不开仓(周五非其允许的周二/周四开仓日)。",
+  "note_zh": "周四为月内最差交易日(油价突破100美元、VIX+12%，七巨头因谷歌/特斯拉资本支出引发担忧蒸发797亿美元)后大盘趋于企稳；新一轮301条款关税已生效，但期货偏绿。WAB 与 AT&T 的财报超预期动能延续至今日；Model T 今日不开仓(周五非其允许的周二/周四开仓日)。",
   "models": {
     "S": [
       {
@@ -12,9 +12,9 @@
         "confidence": 0.74,
         "entry": 298.77,
         "stop": 274.87,
-        "target": 340.00,
+        "target": 340,
         "thesis_en": "Wabtec's Q2 beat (adj. EPS $2.76 vs $2.63 est, revenue $3.18B +17.5% YoY) and raised FY2026 EPS guidance ($10.60-$10.90) is still driving fresh analyst target hikes (KeyCorp to $340, Morgan Stanley to $355, Stephens to $330, all Jul 23) and the stock is holding its gain into today ($298.77, prevClose $297.99).",
-        "thesis_zh": "Wabtec 二季度业绩超预期(调整后每股收益2.76美元 vs 预期2.63美元,营收31.8亿美元,同比+17.5%)并上调2026全年指引(10.60-10.90美元)后,7/23 多家机构继续上调目标价(KeyCorp 340美元、摩根士丹利355美元、Stephens 330美元),股价今日维持涨势(298.77美元,前收297.99美元)。",
+        "thesis_zh": "Wabtec 二季度业绩超预期(调整后每股收益2.76美元 vs 预期2.63美元，营收31.8亿美元，同比+17.5%)并上调2026全年指引(10.60-10.90美元)后，7/23 多家机构继续上调目标价(KeyCorp 340美元、摩根士丹利355美元、Stephens 330美元)，股价今日维持涨势(298.77美元，前收297.99美元)。",
         "signals": [
           "earnings-beat: Q2 adj. EPS $2.76 vs $2.63 est, revenue $3.18B vs $3.08B est (+17.5% YoY)",
           "guidance-raise: FY2026 adj. EPS raised to $10.60-$10.90 from $10.25-$10.65",
@@ -27,9 +27,9 @@
         "confidence": 0.72,
         "entry": 23.18,
         "stop": 21.33,
-        "target": 26.50,
+        "target": 26.5,
         "thesis_en": "AT&T's Q2 beat (adj. EPS $0.65 vs $0.59 est, 432k postpaid phone net adds vs ~338.5k est) plus a 2026 buyback target raised to ~$10B from $8B is a confirmed dual catalyst; shares are extending the move this morning ($23.18, prevClose $22.96). Routed to Model S today since Model T's Tue/Thu-only open window is closed on a Friday.",
-        "thesis_zh": "AT&T 二季度业绩超预期(调整后每股收益0.65美元 vs 预期0.59美元,后付费用户净增43.2万,预期约33.85万),同时将2026年回购目标从80亿美元上调至约100亿美元——确认性双重催化剂,股价今晨延续涨势(23.18美元,前收22.96美元)。因 Model T 仅限周二/周四开仓、今日周五不开仓,故本次归入 Model S。",
+        "thesis_zh": "AT&T 二季度业绩超预期(调整后每股收益0.65美元 vs 预期0.59美元，后付费用户净增43.2万，预期约33.85万)，同时将2026年回购目标从80亿美元上调至约100亿美元——确认性双重催化剂，股价今晨延续涨势(23.18美元，前收22.96美元)。因 Model T 仅限周二/周四开仓、今日周五不开仓，故本次归入 Model S。",
         "signals": [
           "earnings-beat-subscriber-adds: Q2 adj. EPS $0.65 vs $0.59 est, 432k postpaid phone net adds vs ~338.5k est",
           "buyback-authorization-increase: 2026 repurchase target raised to ~$10B from $8B, citing undervaluation"

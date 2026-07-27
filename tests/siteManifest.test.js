@@ -2,9 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   BUILD_ROUTES,
   NAV_ROUTES,
+  SITE_LOCALES,
   SITE_MANIFEST,
   SITEMAP_ROUTES,
   findRouteByPath,
+  localizedRoutePath,
+  localizedRouteUrl,
   normalizeRoutePath,
 } from '../src/config/siteManifest.js';
 
@@ -62,6 +65,18 @@ describe('siteManifest', () => {
     }
   });
 
+  it('derives stable self-canonical locale paths for every discoverable route', () => {
+    expect(SITE_LOCALES).toEqual(['en', 'zh']);
+    for (const route of SITEMAP_ROUTES) {
+      expect(localizedRoutePath(route, 'en')).toBe(
+        route.path === '/' ? '/en/' : `/en${route.path}`,
+      );
+      expect(localizedRouteUrl(route, 'zh')).toBe(
+        route.path === '/' ? 'https://feida.au/zh/' : `https://feida.au/zh${route.path}`,
+      );
+    }
+  });
+
   it('requires active routes to carry the metadata audited in source HTML', () => {
     for (const route of SITE_MANIFEST.filter((item) => item.status === 'active')) {
       expect(route.metadata.title).toBeTruthy();
@@ -70,6 +85,14 @@ describe('siteManifest', () => {
       expect(route.metadata.ogTitle).toBeTruthy();
       expect(route.metadata.ogDescription).toBeTruthy();
       expect(route.metadata.ogImage).toMatch(/^https:\/\/feida\.au\//);
+      expect(route.seo.structuredData.kind).toBeTruthy();
+      for (const locale of SITE_LOCALES) {
+        expect(route.seo.social.images[locale]).toBe(
+          'https://feida.au/assets/og/og-image.jpg',
+        );
+        expect(route.seo.social.alt[locale]).toBeTruthy();
+        expect(route.seo.social.title[locale]).toBeTruthy();
+      }
       expect(route.themeColor).toMatch(/^#[0-9a-f]{6}$/i);
     }
   });
@@ -89,8 +112,11 @@ describe('siteManifest', () => {
 
   it('normalizes root and index paths consistently', () => {
     expect(normalizeRoutePath('/index.html')).toBe('/');
+    expect(normalizeRoutePath('/en/index.html')).toBe('/');
+    expect(normalizeRoutePath('/zh/arena.html')).toBe('/arena.html');
     expect(normalizeRoutePath('')).toBe('/');
     expect(findRouteByPath('/index.html')?.id).toBe('main');
+    expect(findRouteByPath('/zh/arena.html')?.id).toBe('arena');
     expect(findRouteByPath('/missing.html')).toBeNull();
   });
 });
