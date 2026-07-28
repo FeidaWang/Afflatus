@@ -5,43 +5,85 @@
    daily check-in streak), share-link codec plumbing and DOM rendering.
    ENTERTAINMENT ONLY — the page says so, loudly.
    ============================================================ */
-import { pillarName, STEMS, BRANCHES, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN, ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, normalizeBirthToCST } from '../lib/bazi.js';
-import { dailyFortune, synastry, dailyPull, encodeShare, decodeShare } from '../lib/horoscopeEngine.js';
-import {
-  TEN_GOD_ZH, TEN_GOD_EN, tenGodOfStem, HIDDEN_STEMS, nayinOf, kongWangOf,
-  STAGE_ZH, STAGE_EN, twelveStage, SEASON_STAGE_ZH, SEASON_STAGE_EN, seasonalStrength,
-  stemRelations, branchRelations, computeShensha, SHENSHA_EN, ziPingAnalysis,
-  tenGodDistribution,
-} from '../lib/ziping.js';
-import { SHENSHA_RARITY } from '../lib/shenshaRarity.js';
-import { computeDayun, liunianPillar, taisuiRelation, pairRelations, TAISUI_ZH, TAISUI_EN } from '../lib/dayun.js';
-import { solarToLunar } from '../lib/lunar.js';
-import { dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL } from '../lib/xiu.js';
-import { PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS } from '../lib/persona.js';
-import { LOGIC_QUESTIONS, scoreLogic } from '../lib/logicQuiz.js';
-import { EQ_QUESTIONS, scoreEQ } from '../lib/eqQuiz.js';
-import { cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T } from '../lib/astro.js';
-import { personalityTags, dimensionScores } from '../lib/astroReadings.js';
-import { renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH } from '../lib/astroChart.js';
-import { crossAspects, relationshipTitle, resonanceScore, attractionLines, redFlagLines, davisonReading } from '../lib/synastryAstro.js';
-import { crossBranchMatrix } from '../lib/synastryBazi.js';
-import { dailyCoupleWeather } from '../lib/dailyTransits.js';
-import { dailyDraw } from '../lib/starDraw.js';
-import { computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH } from '../lib/ziwei.js';
-import { computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace } from '../lib/ziweiDeep.js';
-import { synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5 } from '../lib/deepSynthesis.js';
-import { relationshipScores, synastryZiwei } from '../lib/synastryModes.js';
-import { mingzaoRank, percentileOf } from '../lib/mingzao.js';
-import { MINGZAO_DIST } from '../lib/mingzaoDist.js';
-import { iqPercentile, eqPercentile } from '../lib/quizNorm.js';
-import { downloadShareCard } from '../lib/shareCard.js';
-import { allRegions, citiesInRegion, findCityInRegion } from '../lib/cityPicker.js';
-import { fetchJson } from '../lib/fetchJson.js';
+import { createLatestWorkerTask } from '../lib/latestWorkerTask.js';
+import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&url';
 
-(() => {
+(async () => {
   'use strict';
   const $ = (id) => document.getElementById(id);
   if (!$('birthForm')) return;
+
+  let normalizeBirthToCST, encodeShare, decodeShare, allRegions, citiesInRegion, findCityInRegion;
+  let pillarName, STEMS, BRANCHES, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN;
+  let ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, dailyFortune;
+  let TEN_GOD_ZH, TEN_GOD_EN, tenGodOfStem, HIDDEN_STEMS, nayinOf, kongWangOf;
+  let STAGE_ZH, STAGE_EN, twelveStage, SEASON_STAGE_ZH, SEASON_STAGE_EN, seasonalStrength;
+  let stemRelations, branchRelations, computeShensha, SHENSHA_EN, ziPingAnalysis, tenGodDistribution;
+  let SHENSHA_RARITY, computeDayun, liunianPillar, taisuiRelation, pairRelations, TAISUI_ZH, TAISUI_EN;
+  let solarToLunar, dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL;
+  let cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T;
+  let personalityTags, dimensionScores, renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH;
+  let dailyDraw, computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH;
+  let computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace;
+  let synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5;
+  let mingzaoRank, percentileOf, MINGZAO_DIST;
+  let synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, relationshipScores, synastryZiwei;
+  let PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS;
+  let LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile;
+
+  let birthFeaturePromise;
+  const loadBirthFeature = () => birthFeaturePromise || (birthFeaturePromise = import('../horoscope/birthFeature.js').then((feature) => {
+    ({ normalizeBirthToCST, encodeShare, decodeShare, allRegions, citiesInRegion, findCityInRegion } = feature);
+    return feature;
+  }));
+
+  let mineFeaturePromise;
+  const loadMineFeature = () => mineFeaturePromise || (mineFeaturePromise = import('../horoscope/mineFeature.js').then((feature) => {
+    ({
+      pillarName, STEMS, BRANCHES, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN,
+      ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, dailyFortune,
+      TEN_GOD_ZH, TEN_GOD_EN, tenGodOfStem, HIDDEN_STEMS, nayinOf, kongWangOf,
+      STAGE_ZH, STAGE_EN, twelveStage, SEASON_STAGE_ZH, SEASON_STAGE_EN, seasonalStrength,
+      stemRelations, branchRelations, computeShensha, SHENSHA_EN, ziPingAnalysis, tenGodDistribution,
+      SHENSHA_RARITY, computeDayun, liunianPillar, taisuiRelation, pairRelations, TAISUI_ZH, TAISUI_EN,
+      solarToLunar, dailyXiu, natalXiu, xiuRelation, XIU27_ZH, XIU28_ZH, XIU_REL,
+      cstToJD, sunLongitude, moonLongitude, ascendant, signOf, degInSign, aspectBetween, ASPECT_T,
+      personalityTags, dimensionScores, renderRadar, renderWheel, renderAspectGrid, PLANET_GLYPH, ZODIAC_GLYPH,
+      dailyDraw, computeZiwei, ZW_STARS_ZH, ZW_STAR_READS, JU_ZH,
+      computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace,
+      synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5,
+      mingzaoRank, percentileOf, MINGZAO_DIST,
+    } = feature);
+    return feature;
+  }));
+
+  let synastryFeaturePromise;
+  const loadSynastryFeature = () => synastryFeaturePromise || (synastryFeaturePromise = import('../horoscope/synastryFeature.js').then((feature) => {
+    ({ synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, relationshipScores, synastryZiwei } = feature);
+    return feature;
+  }));
+
+  let quizFeaturePromise;
+  const loadQuizFeature = () => quizFeaturePromise || (quizFeaturePromise = import('../horoscope/quizFeature.js').then((feature) => {
+    ({
+      PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS,
+      LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile, renderRadar,
+    } = feature);
+    return feature;
+  }));
+
+  let shareFeaturePromise;
+  const loadShareFeature = () => shareFeaturePromise || (shareFeaturePromise = import('../horoscope/shareFeature.js'));
+  const saveShareCard = async (kind, data, filename) => {
+    const { downloadShareCard } = await loadShareFeature();
+    return downloadShareCard(kind, data, filename);
+  };
+
+  const synAstroRunner = createLatestWorkerTask(synthesisWorkerUrl);
+  const ephemerisRunner = createLatestWorkerTask(synthesisWorkerUrl);
+  let mineRenderEpoch = 0;
+  let synRenderEpoch = 0;
+  await loadBirthFeature();
 
   const PROFILE_KEY = 'afflatus-horo:me';
   const STREAK_KEY = 'afflatus-horo:streak';
@@ -73,7 +115,9 @@ import { fetchJson } from '../lib/fetchJson.js';
   // (scripts/gen-transits-daily.mjs, refreshed by a daily scheduled task),
   // not an ephemeris library, so this carries no bundle-weight concern.
   let transitsPromise = null;
-  const ensureTransits = () => transitsPromise || (transitsPromise = fetchJson('transits').catch(() => null));
+  const ensureTransits = () => transitsPromise || (transitsPromise = import('../lib/fetchJson.js')
+    .then(({ fetchJson }) => fetchJson('transits'))
+    .catch(() => null));
 
   // ---- 时辰 selects -------------------------------------------------------
   // 子 (23:00-01:00) is split into 早子 (00:xx, same calendar day) and 晚子
@@ -641,8 +685,13 @@ import { fetchJson } from '../lib/fetchJson.js';
       + (nx == null ? '' : `<span class="elem">☘ ${T(`${XIU27_ZH[nx]} mansion`, '本命·' + XIU27_ZH[nx] + '宿')}</span>`);
   };
 
-  function renderMine() {
-    if (!state.me) return;
+  async function renderMine() {
+    const me = state.me;
+    if (!me) return;
+    const epoch = ++mineRenderEpoch;
+    await loadMineFeature();
+    if (epoch !== mineRenderEpoch || state.me !== me) return;
+    ZW_STAR_EN_BY_ZH ||= Object.fromEntries(ZW_STARS_ZH.map((zh, i) => [zh, ZW_STAR_EN[i]]));
     const f = dailyFortune(state.me, todayStr());
     state.mineChart = f.chart; // kept for the share-card button
     $('mineSec').hidden = false;
@@ -704,7 +753,15 @@ import { fetchJson } from '../lib/fetchJson.js';
       state.l1Sun = sun; state.l1Moon = moon;
       $('l1Wrap').innerHTML = l1HTML(state.me, sun, moon, ascDeg);
       $('l2Wrap').innerHTML = l2HTML(sun, moon, ascDeg);
-      if (state.l3 && state.l3.jd !== jd) { state.l3 = null; $('l3Body').innerHTML = ''; $('l3Body').classList.remove('open'); $('l3Toggle').setAttribute('aria-expanded', 'false'); }
+      if (state.l3JD != null && state.l3JD !== jd) {
+        ephemerisRunner.cancel('chart-changed');
+        l3RequestEpoch++;
+        l3Loading = false;
+        state.l3 = null;
+        $('l3Body').innerHTML = '';
+        $('l3Body').classList.remove('open');
+        $('l3Toggle').setAttribute('aria-expanded', 'false');
+      }
       state.l3JD = jd; state.l3AscDeg = ascDeg;
       if (state.l3 && state.l3.planets) renderL3Body();
     }
@@ -750,7 +807,7 @@ import { fetchJson } from '../lib/fetchJson.js';
   // up visually. Needs the birth hour (same guard as ziweiHTML above); the
   // R3 decade-agreement rule additionally needs gender.
   const AUX_SHA_EN = { 禄存: 'Lucun', 擎羊: 'Qingyang', 陀罗: 'Tuoluo', 天马: 'Tianma', 左辅: 'Zuofu', 右弼: 'Youbi', 文昌: 'Wenchang', 文曲: 'Wenqu', 火星: 'Huoxing', 铃星: 'Lingxing', 地空: 'Dikong', 地劫: 'Dijie' };
-  const ZW_STAR_EN_BY_ZH = Object.fromEntries(ZW_STARS_ZH.map((zh, i) => [zh, ZW_STAR_EN[i]]));
+  let ZW_STAR_EN_BY_ZH = null;
   const HUA_CLASS = { 禄: 'lu', 权: 'quan', 科: 'ke', 忌: 'ji' };
   let currentZWDeep = null; // { z, deep, me, f } — kept for the grid's click handler
 
@@ -902,29 +959,20 @@ import { fetchJson } from '../lib/fetchJson.js';
   // ---- render: synastry -----------------------------------------------------
   const SYN_PILLAR_T = { romance: ['ROMANCE', '情缘'], marriage: ['MARRIAGE', '婚嫁'], career: ['CAREER', '事业'], wealth: ['WEALTH', '财帛'], health: ['HEALTH', '康健'] };
 
-  // Mercury/Venus/Mars come from the dynamically-imported astroPlanets.ts;
-  // Sun/Moon reuse the existing light astro.js calc — see the module-level
-  // dynamic-import discipline note in astroPlanets.ts.
+  // The full planet layer runs off-main-thread. A new pair terminates the
+  // previous Worker, so obsolete charts stop consuming CPU rather than merely
+  // having their eventual response ignored.
   async function computeSynAstroLayer(me, other, baziBase) {
-    const { planetReading } = await import('../lib/astroPlanets.ts');
-    const jdMe = cstToJD(me.y, me.m, me.d, me.hour);
-    const jdThem = cstToJD(other.y, other.m, other.d, other.hour);
-    const meLons = { Sun: sunLongitude(jdMe), Moon: moonLongitude(jdMe) };
-    const themLons = { Sun: sunLongitude(jdThem), Moon: moonLongitude(jdThem) };
-    for (const body of ['Mercury', 'Venus', 'Mars']) {
-      meLons[body] = planetReading(body, jdMe).lonDeg;
-      themLons[body] = planetReading(body, jdThem).lonDeg;
+    try {
+      return await synAstroRunner.run('synastry-astro', { me, other, baziBase });
+    } catch (error) {
+      if (error?.name === 'AbortError') throw error;
+      // Workers can be disabled by privacy tooling or older embedded
+      // browsers. Keep the feature available through a lazy main-thread
+      // fallback without putting the ephemeris back in the initial bundle.
+      const { computeSynastryAstro } = await import('../lib/horoscopeSynthesis.js');
+      return computeSynastryAstro({ me, other, baziBase });
     }
-    const aspects = crossAspects(themLons, meLons);
-    const jdMid = (jdMe + jdThem) / 2;
-    return {
-      title: relationshipTitle(aspects),
-      score: resonanceScore(baziBase, aspects),
-      attraction: attractionLines(aspects),
-      flags: redFlagLines(aspects),
-      davison: davisonReading(sunLongitude(jdMid), moonLongitude(jdMid)),
-      aspects, // U2: kept for the relationship-mode reweighting
-    };
   }
 
   // U2: five relationship lenses (朋友/同事/暧昧/情侣/夫妻) — same signals,
@@ -1132,8 +1180,14 @@ import { fetchJson } from '../lib/fetchJson.js';
     });
   }
 
-  function renderSyn() {
-    if (!state.me || !state.other) return;
+  async function renderSyn() {
+    const me = state.me;
+    const other = state.other;
+    if (!me || !other) return;
+    const epoch = ++synRenderEpoch;
+    synAstroRunner.cancel('pair-changed');
+    await Promise.all([loadMineFeature(), loadSynastryFeature()]);
+    if (epoch !== synRenderEpoch || state.me !== me || state.other !== other) return;
     const s = synastry(state.me, state.other);
     state.synData = s; // kept for the share-card button
     const pull = dailyPull(state.me, state.other, todayStr());
@@ -1184,7 +1238,10 @@ import { fetchJson } from '../lib/fetchJson.js';
         const curKey = state.me && state.other ? `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}` : null;
         if (curKey === pairKey) renderSynAstroSections(data);
         track('synastry_cast', { score: data.score }); // north-star metric (roadmap module 2)
-      }).catch(() => { $('synTitle').textContent = T('Could not read the sky — the base bond score above still applies.', '星盘解读失败——上方底盘缘分分数仍然有效。'); });
+      }).catch((error) => {
+        if (error?.name === 'AbortError') return;
+        $('synTitle').textContent = T('Could not read the sky — the base bond score above still applies.', '星盘解读失败——上方底盘缘分分数仍然有效。');
+      });
     }
 
     $('synParts').innerHTML = s.parts.map((p) =>
@@ -1294,7 +1351,7 @@ import { fetchJson } from '../lib/fetchJson.js';
       const cardBtn = $('cardBtnPersona');
       if (cardBtn) cardBtn.addEventListener('click', () => {
         track('share_card_generated', { type: 'persona' });
-        downloadShareCard('persona', {
+        void saveShareCard('persona', {
           lang: state.lang,
           type: prev.type,
           name: T(PERSONA_TYPES[prev.type].en, PERSONA_TYPES[prev.type].zh),
@@ -1330,7 +1387,6 @@ import { fetchJson } from '../lib/fetchJson.js';
     const back = $('pqBack');
     if (back) back.addEventListener('click', () => { quiz.idx--; renderPersona(); });
   }
-  renderPersona();
 
   // ---- logic & EQ quizzes (V23 MBTI-expansion follow-up) --------------------
   // Same in-page, result-only-persists shape as the MBTI quiz above, but both
@@ -1401,7 +1457,7 @@ import { fetchJson } from '../lib/fetchJson.js';
   function shareQuizCard(kind, r) {
     track('share_card_generated', { type: kind });
     if (kind === 'logic') {
-      downloadShareCard('quiz', {
+      void saveShareCard('quiz', {
         lang: state.lang,
         headZh: '思维速测', headEn: 'LOGIC SPRINT',
         score: r.funScore, ringFrac: (r.funScore - 70) / 80,
@@ -1411,7 +1467,7 @@ import { fetchJson } from '../lib/fetchJson.js';
         caveat: T('Timed original puzzle quiz — not a clinically normed IQ instrument.', '限时原创谜题速测——非临床标准化智商测验。'),
       }, 'afflatus-logic-card.png');
     } else if (kind === 'eq') {
-      downloadShareCard('quiz', {
+      void saveShareCard('quiz', {
         lang: state.lang,
         headZh: '情商风格', headEn: 'EQ STYLE',
         score: r.overall, ringFrac: r.overall / 100,
@@ -1423,7 +1479,17 @@ import { fetchJson } from '../lib/fetchJson.js';
     }
   }
 
-  const renderLogicQuiz = makeIndexQuiz({
+  let renderLogicQuiz = () => {};
+  let renderEqQuiz = () => {};
+  let quizzesReady = false;
+  let quizMountPromise = null;
+  async function mountQuizExperiences() {
+    if (quizMountPromise) return quizMountPromise;
+    quizMountPromise = loadQuizFeature().then(() => {
+      if (quizzesReady) return;
+      quizzesReady = true;
+      renderPersona();
+      renderLogicQuiz = makeIndexQuiz({
     wrapId: 'logicWrap', storageKey: 'afflatus-horo:logic', questions: LOGIC_QUESTIONS, score: scoreLogic,
     timed: true, // U3: per-question countdown (q.t seconds, difficulty-scaled)
     startLabel: () => T(`Start · ${LOGIC_QUESTIONS.length} timed questions ≈ 8 min`, `开始 · ${LOGIC_QUESTIONS.length} 题限时作答约 8 分钟`),
@@ -1437,9 +1503,9 @@ import { fetchJson } from '../lib/fetchJson.js';
         <p class="pq-desc">${T('Timed original puzzles — not a clinically normed IQ instrument.', '限时原创谜题——非临床标准化智商测验，仅供娱乐。')}</p>
       </div>`,
     resultButtons: () => `<button class="btn btn--seal" type="button" data-quiz-share="logic">${T('Save result card ⤓', '保存结果卡 ⤓')}</button>`,
-  });
+      });
 
-  const renderEqQuiz = makeIndexQuiz({
+      renderEqQuiz = makeIndexQuiz({
     wrapId: 'eqWrap', storageKey: 'afflatus-horo:eq', questions: EQ_QUESTIONS, score: scoreEQ,
     startLabel: () => T(`Start · ${EQ_QUESTIONS.length} questions ≈ 5 min`, `开始 · ${EQ_QUESTIONS.length} 题约 5 分钟`),
     renderResult: (r) => `
@@ -1451,6 +1517,28 @@ import { fetchJson } from '../lib/fetchJson.js';
         <div class="l2-radar">${renderRadar(r.dims.map((d) => ({ key: d.key, label: T(d.en, d.zh), value: d.value })))}</div>
       </div>`,
     resultButtons: () => `<button class="btn btn--seal" type="button" data-quiz-share="eq">${T('Save result card ⤓', '保存结果卡 ⤓')}</button>`,
+      });
+    });
+    return quizMountPromise;
+  }
+
+  // Quizzes sit well below the chart tools. Prefetch shortly before they
+  // enter view, with focus/pointer fallbacks for keyboard and fast-scroll
+  // users. The initial Horoscope route no longer evaluates quiz data.
+  const quizSections = ['personaSec', 'logicSec', 'eqSec'].map($).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    const quizObserver = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      void mountQuizExperiences();
+      quizObserver.disconnect();
+    }, { rootMargin: '200px 0px' });
+    quizSections.forEach((section) => quizObserver.observe(section));
+  } else {
+    window.setTimeout(() => { void mountQuizExperiences(); }, 0);
+  }
+  quizSections.forEach((section) => {
+    section.addEventListener('pointerdown', () => { void mountQuizExperiences(); }, { once: true, capture: true });
+    section.addEventListener('focusin', () => { void mountQuizExperiences(); }, { once: true, capture: true });
   });
 
   // ---- share cards (V21 Phase 0: PNG download in the healing palette) --------
@@ -1462,7 +1550,7 @@ import { fetchJson } from '../lib/fetchJson.js';
     track('share_card_generated', { type: 'mine' }); // guardrail metric (roadmap module 2)
     const labels = PILLAR_T.map((t) => T(...t));
     const zi = zodiacIndex(state.me.m, state.me.d);
-    downloadShareCard('mine', {
+    void saveShareCard('mine', {
       lang: state.lang,
       pillars: cardPillars(state.mineChart, labels),
       chips: [T(ANIMALS_EN[state.mineChart.animal], '属' + ANIMALS_ZH[state.mineChart.animal]), T(ZODIAC_EN[zi], ZODIAC_ZH[zi] + '座')],
@@ -1486,7 +1574,7 @@ import { fetchJson } from '../lib/fetchJson.js';
     // the ephemeris import failed or hasn't finished yet.
     const card = state.synAstroCard;
     const topLine = card && (card.attraction[0] || card.flags[0]);
-    downloadShareCard('syn', {
+    void saveShareCard('syn', {
       lang: state.lang,
       score: card ? card.score : state.synData.base,
       title: card ? T(card.title.en, card.title.zh) : undefined,
@@ -1536,22 +1624,42 @@ import { fetchJson } from '../lib/fetchJson.js';
   }
 
   let l3Loading = false;
+  let l3RequestEpoch = 0;
   const l3Toggle = $('l3Toggle'), l3Body = $('l3Body');
   if (l3Toggle) l3Toggle.addEventListener('click', async () => {
     const willOpen = !l3Body.classList.contains('open');
     l3Toggle.setAttribute('aria-expanded', String(willOpen));
     l3Body.classList.toggle('open', willOpen);
-    if (!willOpen || l3Loading) return;
+    if (!willOpen) {
+      l3RequestEpoch++;
+      l3Loading = false;
+      ephemerisRunner.cancel('panel-closed');
+      return;
+    }
+    if (l3Loading) return;
     if (state.l3 && state.l3.jd === state.l3JD && state.l3.planets) { renderL3Body(); return; }
+    const requestEpoch = ++l3RequestEpoch;
+    const jd = state.l3JD;
     l3Loading = true;
     l3Body.innerHTML = `<p class="l3-loading">${T('Loading the professional ephemeris…', '正在加载专业星历……')}</p>`;
     try {
-      const { allPlanets } = await import('../lib/astroPlanets.ts');
-      state.l3 = { jd: state.l3JD, planets: allPlanets(state.l3JD), ascDeg: state.l3AscDeg };
+      let planets;
+      try {
+        planets = await ephemerisRunner.run('professional-ephemeris', { jd });
+      } catch (error) {
+        if (error?.name === 'AbortError') throw error;
+        const { computeProfessionalEphemeris } = await import('../lib/horoscopeSynthesis.js');
+        planets = computeProfessionalEphemeris({ jd });
+      }
+      if (requestEpoch !== l3RequestEpoch || jd !== state.l3JD || !l3Body.classList.contains('open')) return;
+      state.l3 = { jd, planets, ascDeg: state.l3AscDeg };
       renderL3Body();
-    } catch {
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
       l3Body.innerHTML = `<p class="l3-loading">${T('Could not load the ephemeris — try again.', '星历加载失败——请重试。')}</p>`;
-    } finally { l3Loading = false; }
+    } finally {
+      if (requestEpoch === l3RequestEpoch) l3Loading = false;
+    }
   });
 
   // ---- privacy: one-click clear (covers both "me"/"them" charts + all
@@ -1620,6 +1728,14 @@ import { fetchJson } from '../lib/fetchJson.js';
 
   window.addEventListener('afflatus-lang', (e) => {
     state.lang = e.detail === 'zh' ? 'zh' : 'en';
-    renderMine(); renderSyn(); renderPersona(); renderBook(); renderLogicQuiz(); renderEqQuiz();
+    renderMine(); renderSyn(); renderBook();
+    if (quizzesReady) { renderPersona(); renderLogicQuiz(); renderEqQuiz(); }
+  });
+  window.addEventListener('pagehide', () => {
+    // pagehide also fires when the document enters the back/forward cache.
+    // Cancel current CPU work without permanently disposing the channels so
+    // the restored page can run fresh calculations after pageshow.
+    synAstroRunner.cancel('page-hidden');
+    ephemerisRunner.cancel('page-hidden');
   });
 })();

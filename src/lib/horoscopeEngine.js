@@ -35,6 +35,7 @@ import {
 } from './bazi.js';
 import { tenGodOfStem, TEN_GOD_ZH, TEN_GOD_EN, branchRelations } from './ziping.js';
 import { todayPillars } from './baziSchema.js';
+export { encodeShare, decodeShare } from './horoscopeShareCodec.js';
 
 // ---- seeded PRNG (deterministic) ----------------------------------------
 function strHash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
@@ -323,22 +324,4 @@ export function dailyPull(birthA, birthB, dateStr) {
   const el = STEM_ELEMENT[today.stem];
   const score = clamp(Math.round(40 + rnd() * 56), 8, 96);
   return { score, todayElement: { zh: ELEMENTS_ZH[el], en: ELEMENTS_EN[el] } };
-}
-
-// ---- share codec (URL-safe base64 of both birthdays) -----------------------
-export function encodeShare(a, b) {
-  const s = JSON.stringify([a.y, a.m, a.d, a.hour ?? null, b.y, b.m, b.d, b.hour ?? null]);
-  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-export function decodeShare(code) {
-  try {
-    const s = atob(String(code).replace(/-/g, '+').replace(/_/g, '/'));
-    const v = JSON.parse(s);
-    if (!Array.isArray(v) || v.length !== 8) return null;
-    const num = (x, lo, hi) => (typeof x === 'number' && x >= lo && x <= hi) ? x : null;
-    const a = { y: num(v[0], 1900, 2100), m: num(v[1], 1, 12), d: num(v[2], 1, 31), hour: v[3] == null ? null : num(v[3], 0, 23) };
-    const b = { y: num(v[4], 1900, 2100), m: num(v[5], 1, 12), d: num(v[6], 1, 31), hour: v[7] == null ? null : num(v[7], 0, 23) };
-    if (a.y == null || a.m == null || a.d == null || b.y == null || b.m == null || b.d == null) return null;
-    return { a, b };
-  } catch { return null; }
 }

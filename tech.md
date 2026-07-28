@@ -219,6 +219,8 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 
 ### 5.3 模块加载约定
 - **每页一个显式 import 链入口**（`xxxEntry.js`）——同页多个独立 `<script type="module">` 会被 Vite 8 静默丢码（§9-1）。
+- **Horoscope 功能边界（P7 / P1-04）**：`src/pages/horoscope.js` 保持唯一页面入口，出生/城市、个人命盘、合盘、测验和结果卡分别通过 `src/horoscope/*Feature.js` 动态导入。基础表单先就绪，命盘与合盘按真实资料触发，测验在距视口 200 px 时预取，PNG 渲染只在保存时加载；`fetchJson('transits')` 也不得回到关键入口。
+- **Horoscope 重计算通道**：专业星历与全行星合盘统一由 `horoscopeSynthesis.worker.js` 执行；`createLatestWorkerTask()` 每个功能通道最多保留一个 Worker，新盘、关闭面板或 `pagehide` 必须真正终止旧计算。`pagehide` 只取消而不永久销毁通道，因为浏览器可能把文档放进 bfcache；返回后必须能运行新任务。Worker 不可用时才动态导入同一纯函数做主线程兜底，结果仍须通过请求 epoch 与当前资料身份校验后才能落入 DOM。
 - **window 桥接模式**：经典内联 IIFE 需要 lazy `import()` 时，把 `import()` 放进 `type="module"` 块并暴露 `window.AfflatusXxx = {load:()=>import(...)}`（AfflatusI18N/AfflatusProvenance/AfflatusSectorsGraph/AfflatusSectorsStarfield 同款）；桥接模块就绪后 `dispatchEvent` 通知已在跑的 IIFE 重试（30j 时序 bug 的修复）。
 - **数据桥接例外**：Stats/Signal/Sectors/Serial 的经典内联控制器调用 `AfflatusFetchJson()`；同步 `public/lib/data-bridge.js` 只负责等待，真正实现由 Vite 管理的 `src/entry/dataBridge.js` 注入并派发 `afflatus-data-ready`。经典脚本不得写裸 `import('/src/...')`，因为该字符串不会被 Vite 转换，生产构建会 404。
 - **rAF 纪律**：新 renderer 必须注册 `RenderBudgetCoordinator`，通过 `onPause/onResume/onResize/onQualityChange/onDispose` 暴露边界；不得自建 `visibilitychange` / page-lifecycle / resize 全局策略。确需独立 rAF 的组件由协调器门控可见性并上报帧窗；页面 master loop 在 hidden/freeze/pagehide 完全停止，恢复时重置时钟并夹紧 `dt`。

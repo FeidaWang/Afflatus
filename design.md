@@ -75,6 +75,7 @@
 > 实现细节与数学在 tech.md §4.4/4.5；此处记设计语言与参数手感。
 
 - **星门 sticky 缩放舞台**（首页 stardrive，30e→默认）：滚动进度 `--forge`(0→1) 驱动容器 `scale(.8→1)`+圆角 32px→0「星门迎面展开」；caption/tagline/strip 分层多向视差；缩小态带淡青描边光的「取景窗」框（裁切边 diegetic 化）；`prefers-reduced-motion` 直出终态。年化回报指标条（38.66% 四件套）锚定 hero「航向·奇点王座」正下方（U45）。
+- **观星台渐进功能加载（P7 / P1-04）**：首屏保留完整 hero、出生输入、免责声明与各功能章节标题；出生城市/时区数据就绪后表单立即可用。八字/紫微只在用户已有或提交个人资料后展开，合盘只在双方资料齐全后展开，三类测验在接近视口时预取，结果卡只在用户主动保存时加载。PRO 星历打开后先显示克制的双语加载占位，关闭即停算；快速换盘、换合盘对象或浏览器离页时旧结果不得闪回。Worker 是性能实现而非新视觉人格，既有暖奶油、鼠尾草、赤陶与墨水蓝星图手账语言保持不变。
 - **滚动叙事**：signal 事件卡 `animation-timeline:view()` 错速浮入（奇偶卡不同 range/方向）；阅读进度条 `.readProgress`；普通内容入场零 JS 监听。只有 Canvas 连续故事状态可按 tech.md §5.3 的单 passive listener + rAF 合并例外执行。
 - **共享元素转场**（View Transitions API）：serial 书架封面→阅读器头图跨态 morph（`view-transition-name:novelMorph` 临时授予、转场后清空）；signal 事件卡点击展开 dossier。
 - **卡片二层翻转**（U44 pick-card）：`.pcCover`（ticker/权重）hover/tap/`:focus-visible` 三入口切 `.pcDetail`（论点+CTA），transform+opacity 320ms；触屏用 `.open` class 点击切换。
