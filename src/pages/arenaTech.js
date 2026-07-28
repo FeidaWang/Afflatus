@@ -2,8 +2,8 @@
    ARENA · US STOCK TA DASHBOARD (V13) — watchlist + search + per-ticker
    technical analysis panel (key levels / MAs / pivots / special points).
 
-   Data: real only — /api/history (Twelve Data daily candles, day-cached in
-   localStorage) + /api/quote (Finnhub live quote). No simulated prices.
+   Data: real only — /api/history (Twelve Data daily candles, cached by the
+   latest completed market session) + /api/quote (Finnhub live quote).
    All math lives in src/lib/technicals.js (pure, vitest-covered); this file
    only fetches, assembles and renders. NOT investment advice.
    ============================================================ */
@@ -12,6 +12,20 @@ import {
 } from '../lib/technicals.js';
 import { declutter1D, fitExtent } from '../lib/ladderLayout.js';
 import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
+import {
+  ARENA_PAGE_STATUS,
+  createLatestSelectionPipeline,
+  initialArenaPageState,
+  isArenaAbort,
+  reduceArenaPageState,
+} from '../lib/arenaPageState.js';
+import {
+  lastCompletedMarketSession,
+  readHistoryCache,
+  readLatestHistoryCache,
+  removeHistoryCache,
+  writeHistoryCache,
+} from '../lib/marketSession.js';
 
 (() => {
   'use strict';
@@ -24,7 +38,6 @@ import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
   // chip row has been replaced by the "Today's Recommended Trades" picks
   // board (arenaPicks.js), which dispatches an `arena-pick-select` CustomEvent
   // on card click — see the listener near the bottom of this file.
-  const CACHE_PREFIX = 'afflatus-ta:v1:';
   const SYM_RE = /^[A-Za-z.\-]{1,12}$/;
   const BUCKET_LABEL = {
     'core-ai-hardware': ['AI HW', 'AI 硬件'],
@@ -43,12 +56,8 @@ import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
   const state = {
     lang: (window.AfflatusI18N && window.AfflatusI18N.get && window.AfflatusI18N.get()) || 'en',
     universe: [],   // full market (search only) — public/arena-universe.json
-    sym: null,
     mode: defaultMode(),         // 'pre' | 'post'
-    loading: false,
-    error: null,
-    keyRejected: false,          // true when a stored admin key was rejected by the API
-    data: {},                    // sym -> { candles, quote, analysis, fetchedAt }
+    page: initialArenaPageState(),
   };
   const T = (en, zh) => (state.lang === 'zh' ? zh : en);
   const fmt = (x, d = 2) => (x == null || !isFinite(x) ? '—' : Number(x).toFixed(d));
@@ -88,60 +97,155 @@ import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
   }
 
   // ---- data ------------------------------------------------------
-  function cacheGet(sym) {
-    try {
-      const r = JSON.parse(localStorage.getItem(CACHE_PREFIX + sym));
-      if (r && r.d === etParts().date && Array.isArray(r.c) && r.c.length > 20) return r.c;
-    } catch {}
-    return null;
+  class ArenaGateError extends Error {
+    constructor(cause) {
+      super('Arena live data is gated', { cause });
+      this.name = 'ArenaGateError';
+    }
   }
-  function cacheSet(sym, candles) {
-    try { localStorage.setItem(CACHE_PREFIX + sym, JSON.stringify({ d: etParts().date, c: candles })); } catch {}
+  function isGateError(error) {
+    return error instanceof JsonDataError && error.status === 403;
   }
-  async function fetchHistory(sym) {
-    const cached = cacheGet(sym);
-    if (cached) return cached;
+  function historyStorage() {
+    try { return localStorage; } catch { return null; }
+  }
+  async function fetchHistory(sym, { signal, forceRefresh = false } = {}) {
+    const expectedSession = lastCompletedMarketSession();
+    const storage = historyStorage();
+    const cached = !forceRefresh
+      ? readHistoryCache(storage, sym, expectedSession)
+      : null;
+    if (cached) {
+      return { candles: cached.candles, session: cached.session, source: 'cache' };
+    }
     let j;
     try {
-      j = await fetchJson(`history:${sym}:1day:250`, { headers: arenaKeyHeaders() });
+      // A missing session-key is a hard freshness boundary. Bypass fetchJson's
+      // generic SWR layer so an older response can never be relabelled as the
+      // newly completed market session.
+      j = await fetchJson(`history:${sym}:1day:250`, {
+        headers: arenaKeyHeaders(),
+        signal,
+        forceRefresh: true,
+      });
     } catch (error) {
-      // Outside today's admin-free allowlist: preserve the dedicated unlock
-      // state instead of collapsing it into a generic data error.
-      if (error instanceof JsonDataError && error.status === 403) throw new Error('GATED');
+      if (isArenaAbort(error)) throw error;
+      if (isGateError(error)) throw new ArenaGateError(error);
+      const fallback = readLatestHistoryCache(storage, sym, expectedSession);
+      if (fallback) {
+        return {
+          candles: fallback.candles,
+          session: fallback.session,
+          source: 'stale-cache',
+          error,
+        };
+      }
       throw error;
     }
     const candles = j.values
       .map((v) => ({ t: String(v.datetime).slice(0, 10), o: +v.open, h: +v.high, l: +v.low, c: +v.close, v: +v.volume || 0 }))
       .filter((k) => isFinite(k.c) && k.c > 0)
-      .reverse();
+      .reverse()
+      // Daily providers may expose today's still-forming candle before the
+      // close. It must never be persisted under a completed-session cache.
+      .filter((candle) => candle.t <= expectedSession);
     if (candles.length < 21) throw new Error('history too short');
-    cacheSet(sym, candles);
-    return candles;
+    const session = candles.at(-1).t;
+    try { writeHistoryCache(storage, sym, session, candles); } catch {}
+    return {
+      candles,
+      session,
+      source: session < expectedSession ? 'stale-network' : 'network',
+    };
   }
-  async function fetchQuote(sym) {
-    try {
-      const q = await fetchJson(`quote:${sym}`, { headers: arenaKeyHeaders() });
-      return q && q.c ? q : null;
-    } catch { return null; }
+  async function fetchQuote(sym, { signal, forceRefresh = false } = {}) {
+    return fetchJson(`quote:${sym}`, {
+      headers: arenaKeyHeaders(),
+      signal,
+      forceRefresh,
+    });
   }
-  async function select(sym) {
-    sym = sym.toUpperCase();
-    if (!SYM_RE.test(sym)) return;
-    state.sym = sym; state.loading = true; state.error = null; state.keyRejected = false;
-    renderPanel();
-    try {
-      const [candles, quote] = await Promise.all([fetchHistory(sym), fetchQuote(sym)]);
-      const { date, mins } = etParts();
-      const complete = normalizeDaily(candles, { etDateStr: date, sessionComplete: mins >= 16 * 60 });
-      const analysis = analyzeTicker(complete, { price: quote ? quote.c : undefined });
-      state.data[sym] = { candles: complete, quote, analysis, fetchedAt: Date.now() };
-      state.loading = false;
-    } catch (e) {
-      state.loading = false;
-      if (e && e.message === 'GATED') { state.error = 'GATED'; state.keyRejected = !!getArenaKey(); }
-      else state.error = String((e && e.message) || e);
+
+  async function loadSelection({ sym, forceRefresh }, { signal }) {
+    const [historyResult, quoteResult] = await Promise.allSettled([
+      fetchHistory(sym, { signal, forceRefresh }),
+      fetchQuote(sym, { signal, forceRefresh }),
+    ]);
+    if (signal.aborted) throw new DOMException('Arena selection aborted', 'AbortError');
+
+    const errors = [historyResult, quoteResult]
+      .filter((result) => result.status === 'rejected')
+      .map((result) => result.reason);
+    if (errors.some((error) => error instanceof ArenaGateError || isGateError(error))) {
+      throw new ArenaGateError(errors.find((error) => error instanceof ArenaGateError || isGateError(error)));
     }
-    renderPanel();
+    if (historyResult.status === 'rejected') throw historyResult.reason;
+
+    const history = historyResult.value;
+    const quote = quoteResult.status === 'fulfilled' ? quoteResult.value : null;
+    const quoteError = quoteResult.status === 'rejected' ? quoteResult.reason : null;
+    if (isArenaAbort(quoteError)) throw quoteError;
+    const { date, mins } = etParts();
+    const candles = normalizeDaily(history.candles, {
+      etDateStr: date,
+      sessionComplete: mins >= 16 * 60,
+    });
+    return {
+      sym,
+      history,
+      quote,
+      quoteError,
+      candles,
+      analysis: analyzeTicker(candles, { price: quote ? quote.c : undefined }),
+      fetchedAt: Date.now(),
+    };
+  }
+
+  const selectionPipeline = createLatestSelectionPipeline(loadSelection, {
+    onStart(input, requestId) {
+      state.page = reduceArenaPageState(state.page, {
+        type: 'select',
+        requestId,
+        sym: input.sym,
+      });
+      renderPanel();
+    },
+    onResolve(result, _input, requestId) {
+      state.page = reduceArenaPageState(state.page, {
+        type: 'resolve',
+        requestId,
+        result,
+      });
+      renderPanel();
+    },
+    onReject(error, _input, requestId) {
+      state.page = reduceArenaPageState(state.page, error instanceof ArenaGateError
+        ? {
+          type: 'gated',
+          requestId,
+          error,
+          keyRejected: Boolean(getArenaKey()),
+        }
+        : { type: 'error', requestId, error });
+      renderPanel();
+    },
+  });
+
+  function select(rawSymbol, options = {}) {
+    const sym = String(rawSymbol || '').trim().toUpperCase();
+    if (!SYM_RE.test(sym)) return Promise.resolve(null);
+    return selectionPipeline.run({
+      sym,
+      forceRefresh: Boolean(options.forceRefresh),
+    }).catch((error) => {
+      if (isArenaAbort(error)) return null;
+      // The state transition and user-facing render happen in onReject.
+      return null;
+    });
+  }
+
+  function clearHistory(sym) {
+    try { removeHistoryCache(historyStorage(), sym); } catch {}
   }
 
   // ---- search ------------------------------------------------------
@@ -335,21 +439,25 @@ import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
 
   function renderPanel() {
     const el = $('taPanel');
-    if (!state.sym) {
+    const page = state.page;
+    const sym = page.sym;
+    el.dataset.arenaState = page.status;
+    el.setAttribute('aria-busy', String(page.status === ARENA_PAGE_STATUS.LOADING));
+    if (!sym) {
       el.innerHTML = `<div class="ta-empty">${T('Pick a recommended trade above, or search any S&P 500 ticker.', '点选上方推荐交易，或搜索任意标普 500 代码。')}</div>`;
       return;
     }
-    if (state.loading) {
-      el.innerHTML = `<div class="ta-empty"><span class="ta-spin"></span>${T('Loading daily candles for', '正在加载日K数据')} ${state.sym}…</div>`;
+    if (page.status === ARENA_PAGE_STATUS.LOADING) {
+      el.innerHTML = `<div class="ta-empty" role="status" aria-live="polite"><span class="ta-spin"></span>${T('Loading daily candles for', '正在加载日K数据')} ${sym}…</div>`;
       return;
     }
-    const d = state.data[state.sym];
-    if (state.error === 'GATED') {
-      const msg = state.keyRejected
+    const d = page.data;
+    if (page.status === ARENA_PAGE_STATUS.GATED) {
+      const msg = page.keyRejected
         ? T('That admin key was not accepted.', '该管理员密钥未通过验证。')
         : T('Live quotes are limited to the day\'s recommended symbols.', '实时报价目前仅覆盖当日推荐标的。');
-      el.innerHTML = `<div class="ta-empty err gated">
-        <div>🔒 ${state.sym} ${T('is outside today\'s live-data pool.', '不在今日实时数据名单内。')} ${msg}</div>
+      el.innerHTML = `<div class="ta-empty err gated" role="status">
+        <div>🔒 ${sym} ${T('is outside today\'s live-data pool.', '不在今日实时数据名单内。')} ${msg}</div>
         <form class="ta-unlock" id="taUnlockForm">
           <input type="password" id="taUnlockInput" autocomplete="off" placeholder="${T('Admin key', '管理员密钥')}" aria-label="${T('Admin key', '管理员密钥')}">
           <button type="submit" class="btn">${T('Unlock', '解锁')}</button>
@@ -359,23 +467,35 @@ import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
       if (form) form.addEventListener('submit', (e) => {
         e.preventDefault();
         const val = ($('taUnlockInput').value || '').trim();
-        if (val) { setArenaKey(val); select(state.sym); }
+        if (val) { setArenaKey(val); select(sym, { forceRefresh: true }); }
       });
       return;
     }
-    if (state.error || !d || !d.analysis) {
-      el.innerHTML = `<div class="ta-empty err">${T('Could not load', '加载失败')} ${state.sym} — ${T('check the ticker or try again in a moment.', '请确认代码是否正确，或稍后重试。')}</div>`;
+    if (page.status === ARENA_PAGE_STATUS.ERROR || !d || !d.analysis) {
+      el.innerHTML = `<div class="ta-empty err" role="alert">${T('Could not load', '加载失败')} ${sym} — ${T('check the ticker or try again in a moment.', '请确认代码是否正确，或稍后重试。')}</div>`;
       return;
     }
     const a = d.analysis;
-    const u = state.universe.find((x) => x.sym === state.sym);
+    const u = state.universe.find((x) => x.sym === sym);
     const q = d.quote;
     const chg = q ? q.c - q.pc : a.last.c - a.prev.c;
     const chgPct = q ? (q.pc ? (chg / q.pc) * 100 : 0) : ((a.last.c - a.prev.c) / a.prev.c) * 100;
     const up = chg >= 0;
+    const stateNotice = page.status === ARENA_PAGE_STATUS.STALE
+      ? `<p class="ta-state-note stale" role="status">${T(
+        `Latest completed session unavailable — showing history through ${d.history.session}.`,
+        `最近完整交易日数据不可用——当前显示截至 ${d.history.session} 的历史记录。`,
+      )}</p>`
+      : page.status === ARENA_PAGE_STATUS.PARTIAL
+        ? `<p class="ta-state-note partial" role="status">${T(
+          'Live quote unavailable — analysis uses the latest completed daily close.',
+          '实时报价不可用——分析暂以最近完整交易日收盘价为准。',
+        )}</p>`
+        : '';
     el.innerHTML = `
+      ${stateNotice}
       <div class="ta-head">
-        <div class="ta-id"><b>${state.sym}</b><span>${u ? u.name : ''}</span><i class="ta-src">${q ? 'LIVE' : T('EOD', '日线收盘')}</i></div>
+        <div class="ta-id"><b>${sym}</b><span>${u ? u.name : ''}</span><i class="ta-src ${page.status}">${page.status === ARENA_PAGE_STATUS.STALE ? T('STALE', '陈旧') : q ? 'LIVE' : T('EOD', '日线收盘')}</i></div>
         <div class="ta-quote ${up ? 'up' : 'down'}"><b>$${fmt(a.price)}</b><span>${up ? '▲' : '▼'} ${fmt(Math.abs(chg))} (${fmt(Math.abs(chgPct))}%)</span></div>
         <div class="ta-modes" role="tablist">
           <button class="ta-mode ${state.mode === 'pre' ? 'on' : ''}" data-m="pre" role="tab" aria-selected="${state.mode === 'pre'}">${T('PRE-MARKET', '盘前')}<i>${T('plan · next session', '计划 · 下一交易日')}</i></button>
@@ -396,17 +516,21 @@ import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
       <p class="ta-note">${T('Levels are mechanical references computed from public daily data — context (earnings, news, liquidity) decides whether they matter. Not investment advice.', '以上价位均为公开日线数据的机械计算参考——是否有效取决于财报、新闻与流动性等上下文。非投资建议。')}</p>`;
     el.querySelectorAll('.ta-mode').forEach((b) => b.addEventListener('click', () => { state.mode = b.dataset.m; renderPanel(); }));
     const rf = $('taRefresh');
-    if (rf) rf.addEventListener('click', () => { try { localStorage.removeItem(CACHE_PREFIX + state.sym); } catch {} select(state.sym); });
+    if (rf) rf.addEventListener('click', () => {
+      clearHistory(sym);
+      select(sym, { forceRefresh: true });
+    });
     renderLadder(a);
   }
 
   // ---- boot -------------------------------------------------------
+  renderPanel();
   renderAdminChip();
   const adminChipEl = $('adminChip');
   if (adminChipEl) adminChipEl.addEventListener('click', () => {
     if (getArenaKey() && confirm(T('Clear the admin key?', '清除管理员密钥？'))) {
       setArenaKey('');
-      if (state.sym) select(state.sym);
+      if (state.page.sym) select(state.page.sym, { forceRefresh: true });
     }
   });
 
@@ -430,10 +554,24 @@ import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
     if (e.key === 'Escape') { hideSuggest(); search.blur(); return; }
     if (e.key === 'Enter') {
       const list = searchMatches(search.value);
-      const sym = list.length ? list[0].sym : search.value.trim().toUpperCase();
+      const rawSymbol = search.value.trim().toUpperCase();
+      const exact = list.find((item) => item.sym === rawSymbol);
+      const sym = exact ? exact.sym : list.length ? list[0].sym : rawSymbol;
       if (sym && SYM_RE.test(sym)) { hideSuggest(); search.value = ''; select(sym); }
     }
   });
   document.addEventListener('click', (e) => { if (!e.target.closest('.ta-searchwrap')) hideSuggest(); });
   window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; renderPanel(); });
+  // A BFCache-restored document may leave more than once. Keep this listener
+  // alive so every pagehide cancels the active generation.
+  window.addEventListener('pagehide', () => selectionPipeline.cancel());
+  window.addEventListener('pageshow', (event) => {
+    if (
+      event.persisted
+      && state.page.status === ARENA_PAGE_STATUS.LOADING
+      && state.page.sym
+    ) {
+      select(state.page.sym, { forceRefresh: true });
+    }
+  });
 })();
