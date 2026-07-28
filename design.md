@@ -64,6 +64,12 @@
 
 深底站点的可读性防线：正文行高 ≥1.6（serial 1.95）、行长 ≤68ch（signal U41 立规、serial U46 补齐）、次要文字 `--dim` 类 token 对最深底必须 ≥4.5:1（U21 Phase 3 曾抓出 4.32:1 的真失败 token）。亮动态背景（星云）上的文字必须不透明纯色+不透明面板（tech.md §9-9）。
 
+### 2.4 Home 品牌锁定的三带视觉合同（P5）
+
+品牌锁定是一个组件，不再由页面历史 override 拼装。Wide（≥72 rem）显示 38×24 的程序化舰徽、完整渐变字标与 mono 版本号；Medium（40–<72 rem）缩为 32×20、收紧字距与版本间隔；Compact（<40 rem）换成 24×24 favicon 舰徽、隐藏版本号并允许字标在可用空间内截断。440 CSS px 应显示完整短字标和三项 44 px 控制；320 CSS px 至少保留舰徽与可辨识缩写，绝不把品牌列压成 0，也不显示重复的桌面语言入口。三带只改变密度，不改变品牌色、导航信息顺序或触控尺寸。
+
+字标的流光和舰徽脉冲属于低幅 ambient motion；`prefers-reduced-motion` 下必须静止，favicon 紧凑态本身不播放伪元素动画。所有后续品牌视觉调整只改 `@layer components` 中的这一组件 owner；不得为某个视口追加新的 `.brand* !important`、全局 media override 或第二套 keyframes。
+
 ## 3. 交互微效果（Signature Micro-Interactions）
 
 > 实现细节与数学在 tech.md §4.4/4.5；此处记设计语言与参数手感。

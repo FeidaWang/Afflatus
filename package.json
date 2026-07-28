@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "prebuild": "npm run data:check && npm run site:check && npm run header:check && npm run lint:i18n && npm run og:check",
+    "prebuild": "npm run data:check && npm run site:check && npm run header:check && npm run css:check && npm run lint:i18n && npm run og:check",
     "build": "vite build && node scripts/localize-site.mjs --out-dir dist && node scripts/validate-emitted-seo.mjs --out-dir dist",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
@@ -23,6 +23,7 @@
     "site:check": "node scripts/site-manifest.mjs --check",
     "header:audit": "node scripts/audit-header.mjs",
     "header:check": "node scripts/audit-header.mjs --check",
+    "css:check": "node scripts/check-no-new-important.mjs && node scripts/check-css-architecture.mjs",
     "seo:check": "node scripts/validate-emitted-seo.mjs --out-dir dist",
     "og:generate": "node scripts/generate-og-assets.mjs",
     "og:check": "node scripts/validate-og-assets.mjs",
@@ -42,6 +43,7 @@
     "@types/three": "^0.160.0",
     "linkinator": "^6.1.2",
     "parse5": "^8.0.0",
+    "postcss": "^8.5.15",
     "typescript": "^5.7.3",
     "vite": "^8.0.14",
     "vitest": "^4.1.9"

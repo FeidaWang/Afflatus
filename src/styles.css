@@ -728,16 +728,6 @@
     position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;
     padding:22px 56px;backdrop-filter:blur(14px);background:linear-gradient(to bottom,rgba(4,6,10,.8),rgba(4,6,10,0));
   }
-  .brand{
-    font-family:'Orbitron',sans-serif;font-weight:700;font-size:24px;letter-spacing:.18em;text-transform:uppercase;display:flex;align-items:center;gap:14px;
-    background:linear-gradient(90deg,rgba(154,229,255,.45) 0%,rgba(255,255,255,1) 20%,rgba(232,179,128,1) 50%,rgba(154,229,255,.9) 80%,rgba(255,255,255,.55) 100%);
-    background-size:260% 100%;background-position:130% 50%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-    animation:brandFlow 6.8s linear infinite;filter:drop-shadow(0 0 12px rgba(141,180,192,.28));
-  }
-  .brand-mark{width:44px;height:25px;position:relative;display:inline-block;flex:0 0 44px;-webkit-text-fill-color:initial;background:linear-gradient(180deg,rgba(206,222,236,.88),rgba(82,98,114,.48));clip-path:polygon(50% 0,97% 82%,72% 100%,50% 78%,28% 100%,3% 82%);box-shadow:0 0 14px rgba(154,229,255,.28)}
-  .brand-mark::before{content:'';position:absolute;left:49%;top:8%;bottom:16%;width:1px;background:rgba(229,239,249,.78);box-shadow:-10px 11px 0 -1px rgba(154,229,255,.36),10px 11px 0 -1px rgba(154,229,255,.36)}
-  .brand-mark::after{content:'';position:absolute;left:21%;right:21%;bottom:12%;height:2px;background:linear-gradient(90deg,transparent,rgba(154,229,255,.72),transparent);box-shadow:0 -7px 0 rgba(255,255,255,.22),0 -13px 0 rgba(255,255,255,.12)}
-  @keyframes brandFlow{0%{background-position:120% 50%}100%{background-position:-120% 50%}}
   .lang-btn{
     font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--dim);background:transparent;
     border:1px solid rgba(228,232,240,.18);padding:7px 14px;cursor:none;position:relative;z-index:999;pointer-events:auto;
@@ -912,8 +902,6 @@
   /* Mobile Adaptation Fix */
   @media(max-width:880px){
     nav{padding:18px 24px;grid-template-columns:auto 1fr auto}
-    .brand{font-size:16px;gap:9px}
-    .brand-mark{width:34px;height:20px;flex-basis:34px}
     .nav-right{gap:8px}
     .control-btn{min-height:28px;padding:0 8px;font-size:7px;letter-spacing:.1em}
     .nav-center{position:absolute;left:18px;right:18px;top:58px;display:flex;transform:none;pointer-events:none}
@@ -1057,7 +1045,6 @@
     -webkit-backdrop-filter:blur(20px) saturate(1.35);
     border-bottom:1px solid rgba(154,229,255,.055);
   }
-  .brand{grid-area:brand;min-width:0;font-size:clamp(15px,1.26vw,22px);letter-spacing:.16em;white-space:nowrap}
   .nav-center{
     grid-area:center;position:static;left:auto;top:auto;right:auto;transform:none;
     display:flex;justify-content:center;min-width:0;pointer-events:auto;
@@ -1120,7 +1107,6 @@
     nav{grid-template-columns:minmax(170px,.8fr) minmax(280px,1fr) minmax(190px,.8fr);gap:12px}
     .top-telemetry{grid-template-columns:repeat(3,max-content);gap:5px 10px}
     .top-stat.mobile-hide{display:none}
-    .brand{font-size:clamp(13px,1.7vw,18px)}
   }
   @media(max-width:880px){
     nav{
@@ -1129,8 +1115,6 @@
       grid-template-areas:"brand right" "center center";
       gap:7px 10px;
     }
-    .brand{font-size:clamp(12px,4.1vw,16px);gap:8px;letter-spacing:.12em;overflow:hidden;text-overflow:ellipsis}
-    .brand-mark{width:30px;height:18px;flex-basis:30px}
     .nav-right{display:grid;grid-template-columns:auto;gap:5px;justify-items:end}
     #commandModeBtn{position:static;min-width:90px;height:30px;min-height:30px;font-size:7px;padding:0 8px}
     .nav-clock{min-width:0;align-items:flex-end;gap:2px}
@@ -1330,8 +1314,6 @@
     border-bottom:1px solid rgba(116,206,230,.20);
     box-shadow:inset 0 -1px 0 rgba(255,255,255,.035),0 0 34px rgba(0,0,0,.38);
   }
-  .brand{gap:12px;font-size:clamp(15px,1.15vw,21px);letter-spacing:.14em}
-  .brand-mark{width:36px;height:22px;flex-basis:36px}
   .nav-center{flex-direction:column;gap:6px;align-items:center;justify-content:center}
   .nav-links{
     display:grid;
@@ -1565,8 +1547,6 @@
       left:12px;
       width:auto;
     }
-    .brand{font-size:clamp(15px,5vw,20px);gap:10px}
-    .brand-mark{width:32px;height:20px;flex-basis:32px}
     .nav-center,.nav-clock{display:none}
     .nav-right{display:flex;gap:10px}
     #commandModeBtn{min-width:104px;height:34px;font-size:8px}
@@ -1623,9 +1603,6 @@
   }
   nav{
     grid-template-columns:minmax(250px,1fr) minmax(480px,1.22fr) minmax(240px,1fr);
-  }
-  .brand span:last-child{
-    white-space:nowrap;
   }
   .nav-links a{
     border-bottom:1px solid transparent;
@@ -1887,20 +1864,6 @@
       linear-gradient(90deg,transparent,rgba(94,178,207,.10),transparent);
     border-bottom:1px solid rgba(105,181,206,.32);
     box-shadow:0 18px 44px rgba(0,0,0,.38), inset 0 -1px 0 rgba(255,255,255,.035);
-  }
-  .brand{
-    gap:14px;
-    min-width:0;
-  }
-  .brand span:last-child{
-    font-size:clamp(14px,1.45vw,25px);
-    letter-spacing:.10em;
-    line-height:1;
-  }
-  .brand-mark{
-    width:32px;
-    height:24px;
-    filter:drop-shadow(0 0 12px rgba(116,206,230,.28));
   }
   .nav-center{
     display:flex;
@@ -2359,14 +2322,6 @@
       min-height:56px;
       grid-template-columns:minmax(150px,1fr) auto auto;
       padding:8px 12px;
-    }
-    .brand span:last-child{
-      font-size:15px;
-      letter-spacing:.12em;
-    }
-    .brand-mark{
-      width:27px;
-      height:20px;
     }
     .nav-center,
     .nav-clock{
@@ -4281,54 +4236,6 @@
       moved to the top of .stardrive-stage (above), so less pre-pin dead air
       is needed between the hero title and the stage engaging. */
   }
-  .brand{
-    display:flex!important;
-    align-items:center!important;
-    gap:12px!important;
-    min-width:max-content!important;
-    color:#dce8f7!important;
-    filter:none!important;
-  }
-  .brand .brand-word{
-    font-family:'Orbitron',sans-serif!important;
-    font-weight:700!important;
-    letter-spacing:.17em!important;
-    background:linear-gradient(90deg,#e8eef5 0%,#f1c08a 38%,#9ae5ff 72%,#dce8f7 100%)!important;
-    -webkit-background-clip:text!important;
-    background-clip:text!important;
-    color:transparent!important;
-    animation:brandOpsLight 5.8s ease-in-out infinite!important;
-  }
-  .brand-version{
-    font-family:'JetBrains Mono',monospace!important;
-    font-size:9px!important;
-    letter-spacing:.16em!important;
-    color:rgba(154,229,255,.78)!important;
-    border-left:1px solid rgba(154,229,255,.24)!important;
-    padding-left:10px!important;
-    white-space:nowrap!important;
-    text-shadow:0 0 10px rgba(154,229,255,.16)!important;
-  }
-  .brand-mark{
-    width:38px!important;
-    height:24px!important;
-    flex:0 0 38px!important;
-    clip-path:polygon(50% 3%,95% 84%,72% 100%,50% 79%,28% 100%,5% 84%)!important;
-    background:linear-gradient(180deg,rgba(221,234,242,.92),rgba(107,126,143,.54) 55%,rgba(30,42,53,.74))!important;
-    box-shadow:0 0 12px rgba(154,229,255,.20),inset 0 -4px 10px rgba(0,0,0,.28)!important;
-  }
-  .brand-mark::after{
-    animation:brandEnginePulse 3.8s ease-in-out infinite!important;
-  }
-  @keyframes brandOpsLight{
-    0%,100%{filter:drop-shadow(0 0 3px rgba(154,229,255,.10))}
-    45%{filter:drop-shadow(0 0 7px rgba(154,229,255,.24))}
-    62%{filter:drop-shadow(0 0 5px rgba(232,179,128,.22))}
-  }
-  @keyframes brandEnginePulse{
-    0%,100%{opacity:.42;transform:scaleX(.82)}
-    50%{opacity:.88;transform:scaleX(1)}
-  }
   .nav-clock b{
     display:inline-flex!important;
     align-items:center!important;
@@ -4510,7 +4417,6 @@
       --hud-combat-h:186px!important;
       --hud-cols:minmax(130px,.15fr) minmax(350px,.39fr) minmax(410px,.43fr) minmax(300px,.32fr)!important;
     }
-    .brand-version{display:none!important}
   }
   @media(max-width:860px){
     :root{--hud-combat-h:min(52svh,390px)!important}
@@ -4903,10 +4809,6 @@
       --hud-cols: minmax(180px, .7fr) minmax(310px, 1.22fr) minmax(320px, 1.22fr) minmax(220px, .86fr) !important;
     }
 
-    .brand-version {
-      display: none !important;
-    }
-
     .weapon-choice b,
     .hud-center .weapon-choice b {
       font-size: 10px !important;
@@ -5011,26 +4913,6 @@
     align-items: center !important;
     gap: 18px !important;
     overflow: hidden !important;
-  }
-
-  .brand {
-    gap: 10px !important;
-    min-width: 0 !important;
-  }
-
-  .brand-word {
-    letter-spacing: .16em !important;
-  }
-
-  .brand-version {
-    display: inline-flex !important;
-    text-transform: none !important;
-    font-size: 8px !important;
-    letter-spacing: .16em !important;
-    color: rgba(154, 229, 255, .72) !important;
-    padding-left: 8px !important;
-    border-left: 1px solid rgba(154, 229, 255, .22) !important;
-    white-space: nowrap !important;
   }
 
   .nav-center {
@@ -5509,10 +5391,6 @@
       grid-template-columns: auto 1fr auto !important;
     }
 
-    .brand-version {
-      display: inline-flex !important;
-    }
-
     .top-telemetry {
       display: none !important;
     }
@@ -5538,15 +5416,6 @@
       min-height: 56px !important;
       grid-template-columns: minmax(0, 1fr) auto !important;
       gap: 10px !important;
-    }
-
-    .brand-word {
-      font-size: 18px !important;
-    }
-
-    .brand-version {
-      font-size: 6px !important;
-      letter-spacing: .12em !important;
     }
 
     .nav-center,
@@ -5667,35 +5536,6 @@
     gap: clamp(14px, 2vw, 36px) !important;
     background: linear-gradient(180deg, rgba(7, 9, 14, .90), rgba(3, 5, 9, .78)) !important;
     border-bottom: 1px solid rgba(143, 212, 237, .18) !important;
-  }
-
-  .brand {
-    gap: 12px !important;
-    min-width: 0 !important;
-    align-items: center !important;
-  }
-
-  .brand-word {
-    font-size: clamp(17px, 1.25vw, 23px) !important;
-    letter-spacing: .16em !important;
-  }
-
-  .brand-version {
-    display: inline-block !important;
-    color: rgba(154, 229, 255, .82) !important;
-    -webkit-text-fill-color: rgba(154, 229, 255, .82) !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 10px !important;
-    line-height: 1 !important;
-    letter-spacing: .13em !important;
-    text-transform: none !important;
-    white-space: nowrap !important;
-  }
-
-  .brand-version::before {
-    content: "|" !important;
-    margin: 0 12px 0 2px !important;
-    color: rgba(141, 180, 192, .46) !important;
   }
 
   .nav-center {
@@ -6186,10 +6026,6 @@
       display: none !important;
     }
 
-    .brand-version {
-      font-size: 8px !important;
-    }
-
     .nav-clock {
       min-width: 130px !important;
     }
@@ -6211,10 +6047,6 @@
       gap: 8px !important;
     }
 
-    body > nav:not(.route-arrows) .brand {
-      grid-area: brand !important;
-    }
-
     body > nav:not(.route-arrows) .nav-center {
       grid-area: center !important;
       width: 100% !important;
@@ -6223,20 +6055,6 @@
 
     body > nav:not(.route-arrows) .nav-right {
       grid-area: right !important;
-    }
-
-    .brand-word {
-      font-size: 16px !important;
-    }
-
-    .brand-version {
-      display: inline-block !important;
-      font-size: 6px !important;
-      letter-spacing: .09em !important;
-    }
-
-    .brand-version::before {
-      margin-right: 8px !important;
     }
 
     .nav-links {
@@ -6352,13 +6170,6 @@
      - terminal fills its panel (21:9 letterbox removed), toggle sits
        inline in the status row
      ============================================================ */
-  .brand-sep{display:none!important}
-  .brand-version::before{content:none!important;margin:0!important}
-  .brand-version{
-    border-left:1px solid rgba(154,229,255,.30)!important;
-    padding-left:11px!important;
-    margin-left:2px!important;
-  }
 
   .nav-clock{
     min-width:0!important;
@@ -6481,13 +6292,6 @@
      ============================================================ */
 
   /* --- 1. Brand: restore the flowing light sweep on AFFLATUS --- */
-  .brand .brand-word{
-    background:linear-gradient(90deg,#9ae5ff 0%,#e8eef5 20%,#f1c08a 46%,#ffffff 60%,#9ae5ff 100%)!important;
-    background-size:230% 100%!important;
-    -webkit-background-clip:text!important;background-clip:text!important;
-    -webkit-text-fill-color:transparent!important;color:transparent!important;
-    animation:brandFlow 5.4s linear infinite, brandOpsLight 5.8s ease-in-out infinite!important;
-  }
 
   /* --- 2. Nav clock: drop the box, align with nav-right, subtle tick --- */
   .nav-clock{
@@ -6598,17 +6402,7 @@
      blocks above.
      ============================================================ */
   @media (max-width:860px){
-    /* --- logo: use the actual favicon ship, smaller --- */
-    .brand-mark{
-      width:26px!important;height:26px!important;flex:0 0 26px!important;
-      background:url('/favicon.svg') center/contain no-repeat!important;
-      clip-path:none!important;border-radius:6px!important;box-shadow:none!important;
-      -webkit-text-fill-color:initial!important;animation:none!important;
-    }
-    .brand-mark::before,.brand-mark::after{display:none!important;content:none!important;}
-    .brand{gap:8px!important;letter-spacing:.12em!important;}
-    .brand .brand-word{font-size:14px!important;}
-    .brand-version{display:none!important;}  /* version chip is noise on mobile */
+    /* Brand lockup density is owned by the component container queries below. */
 
     /* --- top bar: tighter, declutter the telemetry strip --- */
     body>nav:not(.route-arrows){
@@ -7384,18 +7178,6 @@
       padding:0 8px!important;
       gap:6px!important;
     }
-    .brand{
-      font-size:11px!important;
-      gap:5px!important;
-      letter-spacing:.07em!important;
-      flex:0 1 auto!important;
-      min-width:0!important;
-      overflow:hidden!important;
-      white-space:nowrap!important;
-      text-overflow:ellipsis!important;
-    }
-    .brand-mark{width:20px!important;height:12px!important;flex-basis:20px!important}
-    .brand-sep,.brand-version{display:none!important}
     .nav-center{display:none!important}
     .nav-clock{display:none!important}
     .nav-right{
@@ -7985,12 +7767,196 @@
   /* U21 Phase 1: design tokens land here going forward (Phase 3's design
      system work). Empty today — :root's custom properties still live at
      the top of the legacy layer above; moving them is a separate, riskier
-     change (many are read by inline <style> blocks and JS) and is out of
+     change (many are read by inline \3c style> blocks and JS) and is out of
      scope for this mechanical pass. */
+  :root {
+    /* P1-11 layout bands. CSS custom properties document the shared contract
+       for JS/design tooling; container queries below repeat the lengths
+       because custom properties are not valid in query conditions. */
+    --layout-band-compact-max: 40rem;
+    --layout-band-medium-max: 72rem;
+    --brand-ink: #dce8f7;
+    --brand-data: rgba(154,229,255,.82);
+  }
 }
 
 @layer components {
   /* U21 Phase 1: ordinary new component styles land here going forward. */
+
+  /* P1-11 component migration 01 — Home brand lockup.
+     The 54 historical .brand* rules (194 declarations / 110 priority flags)
+     were removed from @layer legacy. This is now the only owner. The nav is
+     merely the sizing container; its wider layout remains a separate family. */
+  nav:not(.route-arrows) {
+    container: home-nav / inline-size;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--brand-ink);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: .16em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    filter: none;
+  }
+  .brand-word {
+    overflow: hidden;
+    font-size: clamp(17px, 1.25cqi, 23px);
+    letter-spacing: .16em;
+    text-overflow: ellipsis;
+    background: linear-gradient(90deg,#9ae5ff 0%,#e8eef5 20%,#f1c08a 46%,#fff 60%,#9ae5ff 100%);
+    background-size: 230% 100%;
+    background-clip: text;
+    color: transparent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: brandFlow 5.4s linear infinite, brandOpsLight 5.8s ease-in-out infinite;
+  }
+  .brand-mark {
+    position: relative;
+    display: inline-block;
+    width: 38px;
+    height: 24px;
+    flex: 0 0 38px;
+    background: linear-gradient(180deg,rgba(221,234,242,.92),rgba(107,126,143,.54) 55%,rgba(30,42,53,.74));
+    clip-path: polygon(50% 3%,95% 84%,72% 100%,50% 79%,28% 100%,5% 84%);
+    box-shadow: 0 0 12px rgba(154,229,255,.2), inset 0 -4px 10px rgba(0,0,0,.28);
+    -webkit-text-fill-color: initial;
+  }
+  .brand-mark::before {
+    content: '';
+    position: absolute;
+    top: 8%;
+    bottom: 16%;
+    left: 49%;
+    width: 1px;
+    background: rgba(229,239,249,.78);
+    box-shadow: -10px 11px 0 -1px rgba(154,229,255,.36), 10px 11px 0 -1px rgba(154,229,255,.36);
+  }
+  .brand-mark::after {
+    content: '';
+    position: absolute;
+    right: 21%;
+    bottom: 12%;
+    left: 21%;
+    height: 2px;
+    background: linear-gradient(90deg,transparent,rgba(154,229,255,.72),transparent);
+    box-shadow: 0 -7px 0 rgba(255,255,255,.22), 0 -13px 0 rgba(255,255,255,.12);
+    animation: brandEnginePulse 3.8s ease-in-out infinite;
+  }
+  .brand-sep {
+    display: none;
+  }
+  .brand-version {
+    display: inline-flex;
+    margin-left: 2px;
+    padding-left: 11px;
+    border-left: 1px solid rgba(154,229,255,.3);
+    color: var(--brand-data);
+    font: 400 10px/1 'JetBrains Mono', monospace;
+    letter-spacing: .13em;
+    text-transform: none;
+    white-space: nowrap;
+    -webkit-text-fill-color: var(--brand-data);
+    text-shadow: 0 0 10px rgba(154,229,255,.16);
+  }
+  .brand-version::before {
+    content: none;
+  }
+  @keyframes brandFlow {
+    0% { background-position: 120% 50%; }
+    100% { background-position: -120% 50%; }
+  }
+  @keyframes brandOpsLight {
+    0%, 100% { filter: drop-shadow(0 0 3px rgba(154,229,255,.1)); }
+    45% { filter: drop-shadow(0 0 7px rgba(154,229,255,.24)); }
+    62% { filter: drop-shadow(0 0 5px rgba(232,179,128,.22)); }
+  }
+  @keyframes brandEnginePulse {
+    0%, 100% { opacity: .42; transform: scaleX(.82); }
+    50% { opacity: .88; transform: scaleX(1); }
+  }
+  @container home-nav (min-width: 40rem) and (max-width: 71.999rem) {
+    .brand {
+      gap: 9px;
+    }
+    .brand-word {
+      font-size: clamp(15px, 2.1cqi, 18px);
+      letter-spacing: .14em;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 20px;
+      flex-basis: 32px;
+    }
+    .brand-version {
+      padding-left: 8px;
+      font-size: 8px;
+      letter-spacing: .12em;
+    }
+  }
+  @container home-nav (max-width: 39.999rem) {
+    .brand {
+      gap: 7px;
+      flex: 0 1 auto;
+      font-size: 11px;
+      letter-spacing: .07em;
+      text-overflow: ellipsis;
+    }
+    .brand-word {
+      font-size: 14px;
+      letter-spacing: .12em;
+    }
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      flex-basis: 24px;
+      border-radius: 6px;
+      background: url('/favicon.svg') center / contain no-repeat;
+      clip-path: none;
+      box-shadow: none;
+    }
+    .brand-mark::before,
+    .brand-mark::after {
+      content: none;
+      display: none;
+      animation: none;
+    }
+    .brand-version {
+      display: none;
+    }
+  }
+  @container home-nav (max-width: 22rem) {
+    .brand {
+      gap: 4px;
+    }
+    .brand-word {
+      font-size: 0;
+      letter-spacing: .08em;
+      text-overflow: clip;
+    }
+    .brand-word::before {
+      content: 'AF';
+      font-size: 11px;
+    }
+    .brand-mark {
+      width: 20px;
+      height: 20px;
+      flex-basis: 20px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .brand-word,
+    .brand-mark::after {
+      animation: none;
+    }
+  }
 
   /* U44 44-2: pick-card two-layer hover/tap reveal. .pcCover (ticker/name/bar,
      current default) swaps for .pcDetail (thesis + real sectors.html CTA) on
