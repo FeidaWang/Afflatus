@@ -5,9 +5,17 @@
    zoom buttons and no wheel/pinch zoom handlers: page scroll owns the story,
    while pointer input is limited to hover, click, desktop pan and node drag.
    ============================================================ */
-import { buildForceGraphData, createForceSim, stepForceSim, settleForceSim } from './forceGraph.js';
 import { smoothDamp, decayVelocity, clampPanTarget } from './graphCamera.js';
 import { getRenderBudgetCoordinator } from './renderBudgetCoordinator.js';
+import { createLatestWorkerTask } from './latestWorkerTask.js';
+import {
+  applySectorsGraphPositions,
+  createInitialSectorsGraphLayout,
+  encodeSectorsGraphPositions,
+  prepareSectorsGraphLayout,
+  settlePreparedSectorsGraphLayout,
+} from './sectorsGraphLayout.js';
+import sectorsForceWorkerUrl from '../workers/sectorsForce.worker.js?worker&url';
 
 const KIND_COLOR = {
   model: '#B99CFF',
@@ -65,7 +73,6 @@ const BLOC_COLOR = {
   neutral: '#7EF0DC',
 };
 
-const MOBILE_MAX_EQUITIES = 8;
 const PAN_TAU = 0.1;
 const FOCUS_TAU = 0.32;
 const MOBILE_NODE_ROWS = [
@@ -132,6 +139,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
   const storyHost = opts.storyHost || null;
   const progressElement = opts.progressElement || null;
   const storySteps = storyHost ? Array.from(storyHost.querySelectorAll('[data-graph-step]')) : [];
+  const layoutRunner = createLatestWorkerTask(sectorsForceWorkerUrl);
 
   const renderCoordinator = getRenderBudgetCoordinator();
   let renderPolicy = renderCoordinator.getPolicy({ cost: 'medium', targetFps: 120 });
@@ -181,42 +189,48 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     return (canvas.getBoundingClientRect().width || innerWidth) < 640;
   }
 
-  function capForMobile(data) {
-    if (!isMobile()) return data;
-    const capped = JSON.parse(JSON.stringify(data));
-    if (Array.isArray(capped.baskets)) {
-      capped.baskets = capped.baskets.map((basket) => ({
-        ...basket,
-        equities: (basket.equities || [])
-          .slice()
-          .sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
-          .slice(0, MOBILE_MAX_EQUITIES),
-      }));
+  let layoutRevision = 0;
+  let pendingSettledLayout = null;
+
+  function applySettledLayout(snapshot, revision) {
+    if (revision !== layoutRevision) return;
+    if (dragging) {
+      pendingSettledLayout = { snapshot, revision };
+      return;
     }
-    return capped;
+    const activeId = activeNode?.id;
+    sim = applySectorsGraphPositions(sim, snapshot);
+    activeNode = activeId ? sim.nodes.find((node) => node.id === activeId) || null : null;
+    pendingSettledLayout = null;
+    canvas.dataset.forceRuntime = canvas.dataset.forceRuntime === 'fallback-pending'
+      ? 'main-thread-fallback'
+      : 'worker';
+    preloadLogos();
+    renderNodeControls();
+    size();
+    updateStoryProgress();
+    draw(lastTime);
   }
 
   function buildSim(data) {
-    const graph = buildForceGraphData(capForMobile(data));
-    // Retuned for the bloc-column anchors added in RB-P0-03: with 13 precise
-    // (stage, bloc) cells instead of 8 scattered stage anchors, the old strong
-    // repulsion blew the composition out to a 10.3-unit span and the canvas fit
-    // shrank to scale 48. These values settle at span 7.96 x 6.21 / scale 63, and
-    // the closest pair of node plates sits 73 CSS px apart versus 68 px before —
-    // measured against the shipped dataset, not guessed.
-    const settings = graph.mode === 'ecosystem'
-      ? {
-          repulsion: 0.05,
-          springLength: 0.42,
-          springStrength: 0.022,
-          poleStrength: 0.1,
-          damping: 0.86,
-          minDist: 0.12,
-        }
-      : {};
-    const next = createForceSim(graph, settings);
-    settleForceSim(next, graph.mode === 'ecosystem' ? 360 : 220);
-    return next;
+    const revision = ++layoutRevision;
+    const prepared = prepareSectorsGraphLayout(data, { mobile: isMobile() });
+    const initial = createInitialSectorsGraphLayout(prepared);
+    canvas.dataset.forceRuntime = 'worker-pending';
+    layoutRunner.run('settle', prepared)
+      .then((next) => applySettledLayout(next, revision))
+      .catch((error) => {
+        if (error?.name === 'AbortError' || revision !== layoutRevision) return;
+        canvas.dataset.forceRuntime = 'fallback-pending';
+        setTimeout(() => {
+          if (revision !== layoutRevision) return;
+          applySettledLayout(
+            encodeSectorsGraphPositions(settlePreparedSectorsGraphLayout(prepared)),
+            revision,
+          );
+        }, 0);
+      });
+    return initial;
   }
 
   function hiddenNode(node) {
@@ -792,6 +806,10 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     }
     dragging = false;
     panning = false;
+    if (pendingSettledLayout) {
+      const pending = pendingSettledLayout;
+      applySettledLayout(pending.snapshot, pending.revision);
+    }
   }
 
   function relXY(event) {
@@ -910,7 +928,6 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
   let raf = 0;
   let lastFrame = 0;
   let lastTime = 0;
-  let physicsAccumulator = 0;
   let renderSurface = null;
 
   function loop(timestamp) {
@@ -918,14 +935,6 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     const dt = lastFrame ? Math.min(0.05, frameMs / 1000) : 1 / 60;
     lastFrame = timestamp;
     lastTime = timestamp * 0.001;
-
-    physicsAccumulator = Math.min(physicsAccumulator + dt, 1 / 30);
-    if (!dragging) {
-      while (physicsAccumulator >= 1 / 60) {
-        stepForceSim(sim, 1);
-        physicsAccumulator -= 1 / 60;
-      }
-    }
 
     if (inertiaActive) {
       cam.tx += panVelX * dt;
@@ -958,7 +967,6 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     if (running) return;
     running = true;
     lastFrame = 0;
-    physicsAccumulator = 0;
     raf = requestAnimationFrame(loop);
   }
 
@@ -1014,7 +1022,14 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       updateStoryProgress();
       draw(lastTime);
     },
+    refreshLanguage() {
+      renderNodeControls();
+      updateSemanticState(activeNode);
+      draw(lastTime);
+    },
     destroy() {
+      layoutRevision += 1;
+      layoutRunner.destroy();
       renderSurface?.unregister();
       resizeObserver?.disconnect();
       stop();

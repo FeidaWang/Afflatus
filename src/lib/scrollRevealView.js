@@ -18,7 +18,9 @@ const EPS = 0.001;
 
 export function initScrollReveal() {
   // §9.6: no clip-path support -> render everything normally, no animation attempted.
-  if (typeof CSS === 'undefined' || !CSS.supports || !CSS.supports('clip-path', 'inset(0px round 0px)')) return;
+  if (typeof CSS === 'undefined' || !CSS.supports || !CSS.supports('clip-path', 'inset(0px round 0px)')) {
+    return { destroy() {} };
+  }
 
   const targets = [];
   document.querySelectorAll('.heroCard, .graphWrap').forEach((el) => {
@@ -33,7 +35,7 @@ export function initScrollReveal() {
     targets.push({ el, kind: 'card', rendered: 0, target: 0, tracking: false });
   });
   document.querySelectorAll('.band').forEach((el) => targets.push({ el, kind: 'x', rendered: 0, target: 0, tracking: false }));
-  if (!targets.length) return;
+  if (!targets.length) return { destroy() {} };
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -47,7 +49,7 @@ export function initScrollReveal() {
   // freeze it open (reduced motion, §9.6) or let the loop chase it open as
   // it scrolls into the trigger window.
   targets.forEach((t) => { t.rendered = reduce ? 1 : 0; apply(t); });
-  if (reduce) return;
+  if (reduce) return { destroy() {} };
 
   let running = false, raf = 0, lastT = 0;
   function loop(now) {
@@ -83,6 +85,21 @@ export function initScrollReveal() {
   }, { threshold: [0, 1], rootMargin: '20% 0px 20% 0px' });
   targets.forEach((t) => io.observe(t.el));
 
-  addEventListener('scroll', () => { if (targets.some((t) => t.tracking)) start(); }, { passive: true });
-  addEventListener('resize', () => { targets.forEach(apply); }, { passive: true });
+  const onScroll = () => {
+    if (targets.some((target) => target.tracking)) start();
+  };
+  const onResize = () => {
+    targets.forEach(apply);
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onResize, { passive: true });
+
+  return {
+    destroy() {
+      io.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+      removeEventListener('scroll', onScroll);
+      removeEventListener('resize', onResize);
+    },
+  };
 }

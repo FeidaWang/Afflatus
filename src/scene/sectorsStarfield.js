@@ -159,7 +159,7 @@ const STAGE_HTML = `
 
 /**
  * @param {{sectorsData?: object, universeData?: object}} data
- * @param {{buildDetail?:(node:object)=>({title:string,tag?:string,tagClass?:string,bodyHtml:string}|null), onExit?:()=>void}} [opts]
+ * @param {{buildDetail?:(node:object)=>({title:string,tag?:string,tagClass?:string,bodyHtml:string}|null), onExit?:(reason:'user'|'programmatic')=>void}} [opts]
  * @returns {{update:(data:object)=>void, destroy:()=>void}|null}
  */
 export function initSectorsStarfield(data, opts = {}) {
@@ -395,7 +395,7 @@ export function initSectorsStarfield(data, opts = {}) {
   function layeredBack() {
     if (!modalEl.hidden) { flyToOverview(); return; }
     if (!filtersEl.hidden) { closeFilters(); return; }
-    destroy();
+    destroy('user');
   }
 
   // ── filter panel (real fields: market from dataToSpace, bucket layer) ──
@@ -530,7 +530,8 @@ export function initSectorsStarfield(data, opts = {}) {
     filtersEl.hidden = !open; filterBtn.setAttribute('aria-expanded', String(open));
   });
   modalCloseBtn.addEventListener('click', flyToOverview);
-  exitBtn.addEventListener('click', destroy);
+  const onExitClick = () => destroy('user');
+  exitBtn.addEventListener('click', onExitClick);
   const onNodeListClick = (event) => {
     const button = event.target.closest?.('button[data-node-index]');
     if (!button || !nodeListEl.contains(button)) return;
@@ -617,7 +618,7 @@ export function initSectorsStarfield(data, opts = {}) {
   });
 
   let destroyed = false;
-  function destroy() {
+  function destroy(reason = 'programmatic') {
     if (destroyed) return; destroyed = true;
     renderSurface.dispose();
     stop();
@@ -630,8 +631,9 @@ export function initSectorsStarfield(data, opts = {}) {
     removeEventListener('keydown', onKeyDown);
     removeEventListener('keyup', onKeyUp);
     nodeListEl.removeEventListener('click', onNodeListClick);
+    exitBtn.removeEventListener('click', onExitClick);
     stage.remove();
-    onExit();
+    onExit(reason);
   }
 
   return {
