@@ -46,11 +46,11 @@ a{color:inherit;text-decoration:none}
 .hdr{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
   border:2px solid var(--line);background:linear-gradient(90deg,rgba(61,255,154,.10),transparent 55%),var(--panel);padding:12px 16px;position:relative}
 .hdr::before{content:"A1.2 // 2999.1";position:absolute;right:14px;top:-9px;background:var(--bg);padding:0 6px;color:var(--blue);font:700 10px var(--font-hud);letter-spacing:.28em}
-.brand{display:flex;align-items:center;gap:13px}
+.page-hero{display:flex;align-items:center;gap:13px}
 .logo{width:44px;height:44px;display:grid;place-items:center;border:2px solid var(--acid);color:var(--acid);font:900 20px var(--font-display);background:rgba(61,255,154,.08);position:relative}
 .logo::after{content:"";position:absolute;inset:3px;border:1px solid rgba(61,255,154,.35)}
-.brand h1{font:900 20px/1 var(--font-display);letter-spacing:.04em;margin:0}
-.brand p{margin:4px 0 0;color:var(--cyan);font:600 11px/1 var(--font-hud);letter-spacing:.22em;text-transform:uppercase}
+.page-hero h1{font:900 20px/1 var(--font-display);letter-spacing:.04em;margin:0}
+.page-hero p{margin:4px 0 0;color:var(--cyan);font:600 11px/1 var(--font-hud);letter-spacing:.22em;text-transform:uppercase}
 .nav{display:flex;gap:7px;flex-wrap:wrap}
 .nav a,.hbtn{position:relative;border:1px solid var(--line-b);background:rgba(58,91,255,.06);color:var(--cyan);font:700 11px/1 var(--font-hud);letter-spacing:.18em;text-transform:uppercase;padding:9px 11px;cursor:pointer}
 .nav a::before,.hbtn::before{content:'';position:absolute;top:-8px;bottom:-8px;left:-2px;right:-2px}
@@ -150,8 +150,8 @@ a{color:inherit;text-decoration:none}
 /* ===== title / logo ===== */
 .logo{padding:4px;display:grid;place-items:center}
 .logo svg{display:block}
-.brand h1{font:900 16px/1.04 var(--font-display);letter-spacing:.03em}
-.brand h1 span{color:var(--cyan)}
+.page-hero h1{font:900 16px/1.04 var(--font-display);letter-spacing:.03em}
+.page-hero h1 span{color:var(--cyan)}
 
 /* ===== prominent briefing CTA ===== */
 .brief-cta{display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 2px;cursor:pointer;text-align:left;
@@ -192,7 +192,7 @@ body.embed .arena{padding-top:6px}
 body.embed .hero{border-top:2px solid var(--line)}
 
 /* ===== responsive ===== */
-@media(max-width:720px){.brand h1{font-size:17px}.hero h2{font-size:26px}.opencd-clock{font-size:24px}}
+@media(max-width:720px){.page-hero h1{font-size:17px}.hero h2{font-size:26px}.opencd-clock{font-size:24px}}
 .arena ::-webkit-scrollbar{width:8px;height:8px}.arena ::-webkit-scrollbar-thumb,.bf-body::-webkit-scrollbar-thumb{background:rgba(120,140,200,.3)}
 
 /* ===== Part 4 §18.2.1 · Today's Recommended Trades (picks board) ===== */
