@@ -80,8 +80,9 @@ function readJson(adapter, key) {
 
 function writeState(adapter, state) {
   try {
-    adapter.setItem(READER_STORE_KEY, JSON.stringify(state));
-    return adapter.getItem(READER_STORE_KEY) != null;
+    const serialized = JSON.stringify(state);
+    adapter.setItem(READER_STORE_KEY, serialized);
+    return adapter.getItem(READER_STORE_KEY) === serialized;
   } catch {
     return false;
   }

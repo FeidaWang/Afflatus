@@ -25,6 +25,12 @@ describe('pre-rendered novel documents', () => {
     expect(source).not.toContain('if (load(saved < tracks.length ? saved : 0)) play();');
   });
 
+  it('re-arms waterfall observers after reaching the end or switching books', () => {
+    expect(source).toContain('if (wfHeaderObserver) wfHeaderObserver.disconnect();');
+    expect(source).toContain('if (wfSentinelObserver) wfSentinelObserver.disconnect();');
+    expect(source).toContain('if (wfSentinelObserver) wfSentinelObserver.observe(wfSentinel);');
+  });
+
   it('emits a crawlable chapter with stable localized metadata and navigation', () => {
     const chapter = entry.chapters[0];
     const html = transformNovelPageDocument(source, catalog, entry, chapter, 'en');

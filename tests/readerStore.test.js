@@ -83,6 +83,25 @@ describe('reader store', () => {
     expect(store.getState().bookId).toBe('wanjie-zhongchun');
   });
 
+  it('keeps legacy keys when the versioned write cannot be verified byte-for-byte', () => {
+    const adapter = new MemoryAdapter({
+      [READER_STORE_KEY]: '{broken',
+      'afflatus:novels:theme': 'night',
+      'afflatus:novels:lastNovel': 'wanjie-zhongchun',
+    });
+    adapter.setItem = () => {};
+
+    const store = createReaderStore(adapter, { migrate: false });
+    store.migrate(['wanjie-zhongchun']);
+
+    expect(store.getState()).toMatchObject({
+      theme: 'night',
+      bookId: 'wanjie-zhongchun',
+    });
+    expect(adapter.getItem('afflatus:novels:theme')).toBe('night');
+    expect(adapter.getItem('afflatus:novels:lastNovel')).toBe('wanjie-zhongchun');
+  });
+
   it('notifies subscribers without exposing adapter failures', () => {
     const adapter = new MemoryAdapter();
     const store = createReaderStore(adapter, { migrate: false });

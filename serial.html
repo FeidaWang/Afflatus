@@ -696,6 +696,12 @@
 
   function resetWaterfallFrom(i, scrollToTop, historyMode, restoreOffset) {
     state.idx = i;
+    // Drop references to detached chapters and always re-arm the sentinel.
+    // It is disconnected after the final chapter, so without this reset a
+    // later book/chapter switch would stop after the two initially mounted
+    // chapters.
+    if (wfHeaderObserver) wfHeaderObserver.disconnect();
+    if (wfSentinelObserver) wfSentinelObserver.disconnect();
     wfList.innerHTML = '';
     wfDone = false;
     wfSentinel.classList.remove('done');
@@ -703,6 +709,7 @@
     state.wfIndex = i;
     wfAppendChapter(i);
     if (i + 1 < state.chapters.length) { state.wfIndex = i + 1; wfAppendChapter(i + 1); }
+    if (wfSentinelObserver) wfSentinelObserver.observe(wfSentinel);
     renderToc();
     syncReaderUrl(state.chapters[i].id, historyMode || 'replace');
     if (restoreOffset != null && restoreOffset > 0) {

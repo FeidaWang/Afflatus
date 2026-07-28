@@ -18,7 +18,7 @@
 | --- | --- | --- |
 | 构建 | **Vite 8 MPA**：每页一个根目录 HTML 入口；`src/config/siteManifest.js` 是路由/构建纳入/导航/sitemap/元数据唯一真源，`vite.config.js` 从其 `BUILD_ROUTES` 派生 input | 已裁决保留（U21：架构资产；P0-01 清单治理） |
 | 运行时 | **vanilla ES modules，零框架**。React/Vue/Svelte/SSR/Rust/WASM 全站禁用 | 已裁决（roadmap §8.2，重开需新证据） |
-| 框架迁移 | **Next.js/Astro 不做**——2026-07-12 正式评估（roadmap §8.4）：`<head>` 样板重复仅 ~250 行，唯一真实收益点是 serial.html 单章 SEO，收益集中一页、迁移风险摊九页。serial.html 的 Astro 候选资格单独记录（150 章或需要单章 SEO 时重评） | 已裁决 |
+| 框架迁移 | **Next.js/Astro 不做**——2026-07-12 正式评估（roadmap §8.4）：`<head>` 样板重复仅 ~250 行，迁移风险摊九页。Serial 单章 SEO/分享已由现有 Vite + `parse5` 构建派生解决；只有出现必须依赖服务器运行时且无法由当前静态管线满足的新能力时才重评 | 已裁决 |
 | CSS | 原生 CSS。主站 `src/styles.css`（~8000 行，`@layer legacy/tokens/components/overrides` 四层）+ 每页独立样式表 `public/styles/<page>.css`。**Tailwind 不做**（U46-乙-④：作用域污染已由 @layer 纪律 + `!important` 计数基线 + CI 体积预算控制；Tailwind = 全站重写 + 构建期依赖生态，过不了 U21 动刀标准。采纳其目标、沿用自有路径） | 已裁决 |
 | 3D | three@0.160（仅首页 + sectors 星域，vendor 独立分包 ~674KB），**不无故升级**。WebGPURenderer 评估需真机基线后（U22b） | 已裁决 |
 | 星历 | astronomy-engine（MIT，~130KB，动态 import 按需加载，仅 horoscope L3/合盘）。手写 VSOP87 系数判定不安全，Swiss Ephemeris WASM 精度过剩 | 已裁决（roadmap §7.10 模块四） |
@@ -69,6 +69,8 @@ src/lib/                 全站共享库（依赖零 DOM 的纯函数为主）�
   renderBudget.js        渲染质量/DPR/刷新率/p95 纯策略
   renderBudgetCoordinator.js 页面生命周期/可见性/resize/自适应质量唯一协调器
   webglLifecycle.js/.d.ts WebGL context 租约/丢失恢复/静态降级/Three 资源回收
+  readerStore.js         Serial `afflatus:reader:v1` 状态归一、适配器与旧键安全迁移
+  serialRoutes.js        Serial adaptive/en/zh 书籍/章节路径解析与 URL 生成
   transition.js page-turn.js audio.js clock.js
   arenaRules.js arenaRun.js arenaLedgerView.js predlogEntry.js rateLimit.js
   validateSectorsData.js validateSignalEvents.js provenanceBadge.js trackRecord.js
@@ -210,7 +212,7 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 ## 5. 状态管理与运行时约定
 
 ### 5.1 客户端状态（全部 localStorage / URL，零后端）
-`afflatus:locale:v1`（全站语言唯一键；`localeStore.js` 一次性迁移旧 `afflatus:lang`/`afflatus-lang`，新键写入确认后才清旧键）· `afflatus-horo:me`（生辰档案）· 关系册/签到 streak（horoscope）· `afflatus-combatview`（战斗视图）· 阅读器主题/书签/进度（serial）· 星域/缩放等 flag 态。分享 = URL 参数（`?p=` base64url）。
+`afflatus:locale:v1`（全站语言唯一键；`localeStore.js` 一次性迁移旧 `afflatus:lang`/`afflatus-lang`，新键写入确认后才清旧键）· `afflatus-horo:me`（生辰档案）· 关系册/签到 streak（horoscope）· `afflatus-combatview`（战斗视图）· `afflatus:reader:v1`（Serial 唯一版本化状态：`bookId/chapterId/offset/theme/fontSize/layout/bookmarks/visited/audioTrack`）· 星域/缩放等 flag 态。Serial 旧键只迁移一次，必须在新值逐字节回读确认后才删除；分享 = URL 参数（`?p=` base64url）或 Serial 稳定章节 URL。
 
 ### 5.2 双语双机制（重建时最易踩的坑）
 - **共享持久层**：所有页面通过 `localeStore.js` 读写 `afflatus:locale:v1`；每个可切换语言的 HTML 入口在 `<head>` 最前运行同一段同步 pre-paint/migration，小于首帧且由 `site:check` 做逐页字节一致性守门。冲突顺序固定为新键 > 旧子页键 > 旧首页键。
@@ -341,7 +343,7 @@ Vercel：push 即部署；`api/*.js` 自动成为 serverless 函数；环境变�
 - **A2 main.js 拆分 Phase 4 剩余**（state 飞行状态机/nav/boot）+ **Phase 5**（styles.css `@layer` 分层）：不在沙盒强做。
 - **B6 首页 WebGL 收尾（已并入 P0-03/P0-06 完成）**：`saturnRenderer` 已补 raw-GL context-restored 全资源重建；各渲染面由 pixel-budget DPR 与统一 quality tier 自适应，不再以散落的固定 DPR 上限作为全局策略。
 - **C3 three.js WebGPURenderer + Bloom/ACES**：投入大，等有余力评估。
-- **serial.html 的 Astro 候选资格**：单独记录，不与页面数量绑定——待章节数继续涨（150 章目标）或需要单章 SEO/独立分享链接时再评估，不在 2026-07-12 结论范围内。
+- **serial.html 的 Astro 候选资格已关闭（P1-08）**：单章 SEO/独立分享链接已由 Vite 后处理静态派生解决，章节数增长本身不再构成迁移理由；只有出现必须依赖服务器运行时且经测量无法由当前 SSG 管线满足的能力时才重开 RFC。
 - **SEO Phase 2**（SSG/SSR/Astro，已并入 C5 触发条件）/ **Phase 3**（`Person` JSON-LD 的 jobTitle/sameAs 需站主提供真实信息；独立 `/about` 页面）：均未排期。
 - **`<head>` 样板重复合并**（~250 行×9页）：机会主义小任务，构建期脚本合并（非框架迁移），不单独立项。
 
