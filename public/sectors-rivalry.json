@@ -1,0 +1,1198 @@
+{
+  "schemaVersion": "2026-07-29",
+  "updated": "2026-07-29T23:20:00+10:00",
+  "asOf": "29 Jul 2026",
+  "editorialNote": {
+    "en": "Scenario analysis, not a price target or recommendation. Multiples are Afflatus fair-value bands for comparing business models; they are not live market quotes.",
+    "zh": "情景分析，不是目标价或投资建议。估值倍数是 Afflatus 用来比较商业模式的合理区间，并非实时行情。"
+  },
+  "sources": [
+    {
+      "label": "FeidaWang/Kimi-K3 fork",
+      "url": "https://github.com/FeidaWang/Kimi-K3",
+      "kind": "primary"
+    },
+    {
+      "label": "MoonshotAI/Kimi-K3 upstream",
+      "url": "https://github.com/MoonshotAI/Kimi-K3",
+      "kind": "primary"
+    },
+    {
+      "label": "Kimi K3 technical report",
+      "url": "https://arxiv.org/abs/2607.24653",
+      "kind": "primary"
+    },
+    {
+      "label": "Open Weights and American AI Leadership",
+      "url": "https://images.nvidia.com/pdf/Open-Weights-and-American-AI-Leadership.pdf",
+      "kind": "primary"
+    },
+    {
+      "label": "Microsoft-hosted open-weights statement",
+      "url": "https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/",
+      "kind": "primary"
+    },
+    {
+      "label": "AP · global AI-stock de-risking, 16 Jul",
+      "url": "https://apnews.com/article/stock-markets-iran-inflation-oil-e1c646be279423406586c67c79e738e4",
+      "kind": "reported"
+    },
+    {
+      "label": "CNN · K3 repricing session, 17 Jul",
+      "url": "https://ktvz.com/money/cnn-business-consumer/2026/07/17/us-stock-futures-asian-markets-down-on-concerns-over-chinese-ai-advances/",
+      "kind": "reported"
+    },
+    {
+      "label": "AP · Chinese-model adoption, 26 Jul",
+      "url": "https://apnews.com/article/china-ai-model-us-kimi-deepseek-a00bf637866fcd4d81f4fde28c9862ce",
+      "kind": "reported"
+    },
+    {
+      "label": "Quartz · K3 and listed China-lab repricing, 17 Jul",
+      "url": "https://qz.com/moonshot-ai-kimi-k3-model-launch-rival-stocks-071726",
+      "kind": "reported"
+    },
+    {
+      "label": "Axios · second-leg chip and Korea selloff, 29 Jul",
+      "url": "https://www.axios.com/2026/07/29/chips-stocks-ai-china",
+      "kind": "reported"
+    },
+    {
+      "label": "HKEX · Z.ai stock code 2513",
+      "url": "https://www.hkex.com.hk/eng/market/sec_tradinfo/tradarng/tradarng_news/currentmonth/e2513b_260715.htm",
+      "kind": "primary"
+    },
+    {
+      "label": "HKEX · MiniMax stock code 00100",
+      "url": "https://www1.hkexnews.hk/search/titlesearch.xhtml?category=0&lang=EN&market=SEHK&stockId=1000286746",
+      "kind": "primary"
+    }
+  ],
+  "k3": {
+    "name": "Kimi K3",
+    "route": {
+      "en": "OPEN WEIGHTS · COMMERCIAL THRESHOLDS",
+      "zh": "开放权重 · 带商业门槛"
+    },
+    "headline": {
+      "en": "The frontier did not become free. It became contestable.",
+      "zh": "前沿能力没有变成免费品，但已经变得可争夺。"
+    },
+    "summary": {
+      "en": "K3 combines a 2.8T-parameter MoE, 104B active parameters, native vision, one-million-token context and quantization-aware deployment. Its strongest signal is not parameter count: it is near-frontier agentic and coding work at a lower per-task cost, delivered as downloadable weights.",
+      "zh": "K3 将 2.8 万亿参数 MoE、1040 亿激活参数、原生视觉、百万上下文与量化感知部署结合起来。真正重要的不是参数规模，而是以更低的单任务成本提供接近前沿的代理与编程能力，并交付可下载权重。"
+    },
+    "stats": [
+      {
+        "value": "2.8T",
+        "label": {
+          "en": "total parameters",
+          "zh": "总参数"
+        }
+      },
+      {
+        "value": "104B",
+        "label": {
+          "en": "active / token",
+          "zh": "每 Token 激活"
+        }
+      },
+      {
+        "value": "1M",
+        "label": {
+          "en": "context window",
+          "zh": "上下文窗口"
+        }
+      },
+      {
+        "value": "2.5×",
+        "label": {
+          "en": "scaling efficiency vs K2",
+          "zh": "相对 K2 扩展效率"
+        }
+      }
+    ],
+    "architecture": [
+      {
+        "code": "KDA",
+        "title": {
+          "en": "Hybrid recurrent attention",
+          "zh": "混合递归注意力"
+        },
+        "body": {
+          "en": "69 KDA layers plus 24 gated-MLA layers reduce the long-context KV burden without pretending memory is free.",
+          "zh": "69 层 KDA 加 24 层门控 MLA，降低长上下文 KV 负担，但并不意味着内存成本消失。"
+        }
+      },
+      {
+        "code": "MOE",
+        "title": {
+          "en": "Stable LatentMoE",
+          "zh": "稳定潜在 MoE"
+        },
+        "body": {
+          "en": "16 of 896 routed experts fire per token. Sparse compute lowers active FLOPs while the full weight set still demands serious memory and interconnect.",
+          "zh": "每个 Token 激活 896 个路由专家中的 16 个。稀疏计算降低激活 FLOPs，但完整权重仍需要大量内存与互连。"
+        }
+      },
+      {
+        "code": "SYS",
+        "title": {
+          "en": "Systems are part of the model",
+          "zh": "系统工程就是模型的一部分"
+        },
+        "body": {
+          "en": "MoonEP balancing, activation offload, persistent sandboxes, hybrid prefix caching and speculative decoding are essential to the result.",
+          "zh": "MoonEP 负载平衡、激活卸载、持久化沙箱、混合前缀缓存与推测解码，都是结果不可分割的一部分。"
+        }
+      },
+      {
+        "code": "LIC",
+        "title": {
+          "en": "Open-weight, not frictionless",
+          "zh": "开放权重，不等于无摩擦"
+        },
+        "body": {
+          "en": "The license requires a separate agreement for model-as-a-service businesses above US$20M trailing revenue and attribution above defined scale thresholds.",
+          "zh": "模型即服务企业连续 12 个月收入超过 2000 万美元时需另行签约；达到规定规模的产品还需显著展示 Kimi K3 标识。"
+        }
+      }
+    ],
+    "costFrontier": [
+      {
+        "task": "Kimi Code Bench 2.0",
+        "score": "72.9",
+        "costIndex": 38,
+        "note": {
+          "en": "Four points behind Fable at 38% of its per-task cost.",
+          "zh": "比 Fable 低 4 分，单任务成本约为其 38%。"
+        }
+      },
+      {
+        "task": "BrowseComp",
+        "score": "91.2",
+        "costIndex": 10,
+        "note": {
+          "en": "US$2.03 per task; roughly half GPT-5.6 and about one-tenth of Claude at maximum effort.",
+          "zh": "每任务 2.03 美元；约为 GPT-5.6 的一半、Claude 最大努力档的十分之一。"
+        }
+      },
+      {
+        "task": "GDPval-AA v2",
+        "score": "1686",
+        "costIndex": 38,
+        "note": {
+          "en": "Within 50 Elo of GPT-5.6 and about 2.6× cheaper than Fable.",
+          "zh": "距 GPT-5.6 不到 50 Elo，且比 Fable 便宜约 2.6 倍。"
+        }
+      },
+      {
+        "task": "AA-Briefcase",
+        "score": "1548",
+        "costIndex": 50,
+        "note": {
+          "en": "Second-best result in the report at roughly half Fable's cost.",
+          "zh": "报告中排名第二，成本约为 Fable 的一半。"
+        }
+      }
+    ]
+  },
+  "frontierLabs": {
+    "method": {
+      "en": "Afflatus score: capability 35%, deployment economics 25%, distribution 20%, compute security 10%, weight portability 10%. It is an editorial comparison, not a benchmark.",
+      "zh": "Afflatus 评分：能力 35%、部署经济性 25%、分发 20%、算力安全 10%、权重可迁移性 10%。这是编辑比较，不是基准榜单。"
+    },
+    "US": [
+      {
+        "name": "Anthropic",
+        "model": "Claude Fable 5",
+        "route": "CLOSED",
+        "score": 91,
+        "vector": [98, 61, 87, 91, 8],
+        "edge": {
+          "en": "Best all-round proprietary frontier and enterprise pull.",
+          "zh": "综合闭源前沿与企业需求最强。"
+        },
+        "risk": {
+          "en": "Open-weight substitution attacks API gross margin and bargaining power.",
+          "zh": "开放权重替代直接冲击 API 毛利与议价权。"
+        }
+      },
+      {
+        "name": "OpenAI",
+        "model": "GPT-5.6 Sol",
+        "route": "CLOSED + SIGNED",
+        "score": 90,
+        "vector": [97, 67, 96, 89, 20],
+        "edge": {
+          "en": "Largest consumer and developer distribution surface.",
+          "zh": "消费端与开发者分发面最广。"
+        },
+        "risk": {
+          "en": "A pro-open-weights signature does not remove a closed-API revenue model.",
+          "zh": "支持开放权重的签名并未改变闭源 API 收入模式。"
+        }
+      },
+      {
+        "name": "Google DeepMind",
+        "model": "Gemini / Gemma",
+        "route": "HYBRID",
+        "score": 92,
+        "vector": [96, 84, 98, 98, 72],
+        "edge": {
+          "en": "Only complete US vertical stack: model, TPU, cloud, search and Android.",
+          "zh": "美国唯一完整垂直栈：模型、TPU、云、搜索与 Android。"
+        },
+        "risk": {
+          "en": "AI answers must grow without destroying search economics.",
+          "zh": "AI 回答必须增长，同时不能摧毁搜索经济性。"
+        }
+      },
+      {
+        "name": "Meta",
+        "model": "Llama / Muse",
+        "route": "OPEN-LED",
+        "score": 86,
+        "vector": [86, 91, 99, 90, 90],
+        "edge": {
+          "en": "Population-scale distribution and incentives aligned with commoditizing models.",
+          "zh": "人口级分发，且激励与模型商品化方向一致。"
+        },
+        "risk": {
+          "en": "Frontier cadence has been less consistent than capex.",
+          "zh": "前沿模型发布节奏不及资本开支稳定。"
+        }
+      },
+      {
+        "name": "xAI",
+        "model": "Grok",
+        "route": "HYBRID",
+        "score": 82,
+        "vector": [90, 65, 91, 94, 38],
+        "edge": {
+          "en": "Compute concentration plus real-time distribution through X.",
+          "zh": "集中算力叠加 X 的实时分发。"
+        },
+        "risk": {
+          "en": "Governance concentration and volatile product policy.",
+          "zh": "治理高度集中，产品政策波动较大。"
+        }
+      }
+    ],
+    "CN": [
+      {
+        "name": "Moonshot AI",
+        "model": "Kimi K3",
+        "route": "OPEN WEIGHTS",
+        "score": 89,
+        "vector": [94, 96, 82, 61, 90],
+        "edge": {
+          "en": "Near-frontier agentic work on the report's cost frontier.",
+          "zh": "以成本前沿实现接近前沿的代理任务能力。"
+        },
+        "risk": {
+          "en": "Capacity shortage, commercial license thresholds and policy exposure.",
+          "zh": "容量短缺、商业许可门槛与政策风险。"
+        }
+      },
+      {
+        "name": "DeepSeek",
+        "model": "DeepSeek V4",
+        "route": "OPEN WEIGHTS",
+        "score": 87,
+        "vector": [91, 97, 86, 63, 94],
+        "edge": {
+          "en": "The reference architecture for Chinese efficiency-first research.",
+          "zh": "中国效率优先研究路线的参考架构。"
+        },
+        "risk": {
+          "en": "Monetisation and reliable global serving lag model mindshare.",
+          "zh": "变现与全球稳定服务能力落后于模型声量。"
+        }
+      },
+      {
+        "name": "Alibaba Qwen",
+        "model": "Qwen 3.8 Max",
+        "route": "OPEN + CLOUD",
+        "score": 90,
+        "vector": [93, 94, 96, 73, 92],
+        "edge": {
+          "en": "China's strongest model-to-cloud-to-commerce distribution loop.",
+          "zh": "中国最强的模型—云—电商分发闭环。"
+        },
+        "risk": {
+          "en": "Compute availability limits the pace of global cloud conversion.",
+          "zh": "算力可得性限制全球云转化速度。"
+        }
+      },
+      {
+        "name": "Z.ai",
+        "model": "GLM-5.2",
+        "route": "OPEN WEIGHTS",
+        "score": 84,
+        "vector": [87, 91, 76, 69, 93],
+        "edge": {
+          "en": "Directly listed frontier exposure and a strong coding lineage.",
+          "zh": "可直接交易的前沿模型敞口，编程路线强。"
+        },
+        "risk": {
+          "en": "K3 exposed scarcity-premium valuation faster than it changed fundamentals.",
+          "zh": "K3 首先击穿的是稀缺性估值，而非基本面。"
+        }
+      },
+      {
+        "name": "MiniMax",
+        "model": "MiniMax M3",
+        "route": "OPEN WEIGHTS",
+        "score": 81,
+        "vector": [85, 90, 79, 67, 91],
+        "edge": {
+          "en": "Listed multimodal lab with consumer-product reach.",
+          "zh": "具消费产品触达能力的上市多模态实验室。"
+        },
+        "risk": {
+          "en": "Model price wars compress a young revenue base before fixed costs mature.",
+          "zh": "模型价格战会在固定成本成熟前压缩年轻收入基盘。"
+        }
+      }
+    ]
+  },
+  "eventStudy": [
+    {
+      "date": "16 JUL",
+      "title": {
+        "en": "Valuation and macro de-risking came first",
+        "zh": "首先发生的是估值与宏观去风险"
+      },
+      "moves": [
+        "NVDA −2.4%",
+        "MU −5.6%",
+        "KOSPI −6.4%"
+      ],
+      "cause": {
+        "en": "AI winners were already under pressure; Korea also faced a rate hike, while oil and bond yields were elevated.",
+        "zh": "AI 赢家此前已承压；韩国同时遭遇加息，油价与债券收益率也处于高位。"
+      },
+      "confidence": "HIGH"
+    },
+    {
+      "date": "17 JUL",
+      "title": {
+        "en": "K3 became the narrative catalyst",
+        "zh": "K3 成为叙事催化剂"
+      },
+      "moves": [
+        "NASDAQ −1.4%",
+        "S&P 500 −1.0%",
+        "SOX proxy −1.6%"
+      ],
+      "cause": {
+        "en": "The market repriced model pricing power and the return on hyperscaler capex; positioning amplified the move.",
+        "zh": "市场重估模型定价权与超大规模资本开支回报；拥挤持仓放大了波动。"
+      },
+      "confidence": "MEDIUM"
+    },
+    {
+      "date": "17 JUL · HK",
+      "title": {
+        "en": "Scarcity premium broke inside China",
+        "zh": "中国内部的稀缺性溢价被击穿"
+      },
+      "moves": [
+        "Z.AI ≈−30%",
+        "MINIMAX ≈−16%",
+        "BABA ≈−4%"
+      ],
+      "cause": {
+        "en": "Directly listed model labs were valued as scarce frontier proxies. K3 raised the capability ceiling without offering a listed Moonshot instrument.",
+        "zh": "上市模型实验室此前被当作稀缺前沿代理。K3 抬高能力上限，却没有提供可交易的月之暗面标的。"
+      },
+      "confidence": "MEDIUM"
+    },
+    {
+      "date": "28–29 JUL",
+      "title": {
+        "en": "The second leg was about cash conversion",
+        "zh": "第二段下跌转向现金转化问题"
+      },
+      "moves": [
+        "NDX −9.5% vs Jun peak",
+        "KOSPI −34% / 25 sessions",
+        "SK HYNIX −19% session"
+      ],
+      "cause": {
+        "en": "K3 remained part of the pricing narrative, but capex, free cash flow, memory supply and momentum reversal were independent drivers.",
+        "zh": "K3 仍是定价叙事的一部分，但资本开支、自由现金流、存储供给与动量反转都是独立驱动。"
+      },
+      "confidence": "HIGH"
+    }
+  ],
+  "transmission": [
+    {
+      "step": "01",
+      "title": {
+        "en": "API price ceiling falls",
+        "zh": "API 价格上限下降"
+      },
+      "body": {
+        "en": "Closed labs lose the right to price routine agentic work as frontier work.",
+        "zh": "闭源实验室难以继续把日常代理任务按前沿任务定价。"
+      },
+      "winners": "ROUTERS · EVALS · ENTERPRISE BUYERS",
+      "losers": "PURE API MARGIN"
+    },
+    {
+      "step": "02",
+      "title": {
+        "en": "Usage elasticity rises",
+        "zh": "使用弹性上升"
+      },
+      "body": {
+        "en": "Lower cost expands token volume, especially for agents. Efficiency lowers unit cost; it does not guarantee lower aggregate compute.",
+        "zh": "更低成本扩大 Token 用量，代理任务尤其明显。效率降低单位成本，但不保证总算力下降。"
+      },
+      "winners": "INFERENCE · NETWORKING · POWER",
+      "losers": "IDLE CAPACITY"
+    },
+    {
+      "step": "03",
+      "title": {
+        "en": "Capex must show conversion",
+        "zh": "资本开支必须证明转化"
+      },
+      "body": {
+        "en": "Hyperscalers are no longer rewarded for spending alone; investors demand cloud growth, retention and cash conversion.",
+        "zh": "超大规模厂商不再仅因花钱而获奖赏；投资者要求云增长、留存与现金转化。"
+      },
+      "winners": "VERTICAL DISTRIBUTION",
+      "losers": "UNMONETISED CAPEX"
+    },
+    {
+      "step": "04",
+      "title": {
+        "en": "Scarcity migrates",
+        "zh": "稀缺性发生迁移"
+      },
+      "body": {
+        "en": "Value moves away from raw parameter count toward foundry, memory bandwidth, interconnect, proprietary workflow data and trusted deployment.",
+        "zh": "价值从参数规模迁移到晶圆、内存带宽、互连、专有工作流数据与可信部署。"
+      },
+      "winners": "PHYSICAL + DISTRIBUTION MOATS",
+      "losers": "MODEL-ONLY PREMIUM"
+    }
+  ],
+  "valuationMethod": {
+    "title": {
+      "en": "Price the layer, not the AI label",
+      "zh": "按产业层定价，不按 AI 标签定价"
+    },
+    "body": {
+      "en": "Fair bands use normalized earnings or free cash flow for mature businesses and forward sales only where earnings are not yet meaningful. A stock above the band requires evidence of faster cash conversion; below it may still deserve a discount for policy, dilution or cyclicality.",
+      "zh": "成熟公司使用正常化盈利或自由现金流，尚无有效盈利的公司才使用远期销售额。高于区间需要更快现金转化作为证据；低于区间也可能因政策、稀释或周期性而理应折价。"
+    }
+  },
+  "equities": {
+    "US": [
+      {
+        "rank": 1,
+        "ticker": "TSM",
+        "name": "TSMC",
+        "layer": "FOUNDRY + PACKAGING",
+        "strength": 94,
+        "fairBand": "18–24× NTM EPS",
+        "stance": "CORE",
+        "thesis": {
+          "en": "K3 changes who buys compute, not who can fabricate leading-edge compute. CoWoS and advanced nodes remain the cleanest toll road.",
+          "zh": "K3 改变谁购买算力，却没有改变谁能制造先进算力。CoWoS 与先进制程仍是最干净的收费站。"
+        },
+        "risk": {
+          "en": "Cross-strait concentration and customer concentration.",
+          "zh": "两岸与客户集中风险。"
+        }
+      },
+      {
+        "rank": 2,
+        "ticker": "AVGO",
+        "name": "Broadcom",
+        "layer": "CUSTOM SILICON + NETWORK",
+        "strength": 92,
+        "fairBand": "24–31× NTM FCF",
+        "stance": "CORE",
+        "thesis": {
+          "en": "Open models increase the number of inference stacks; custom ASIC and Ethernet monetise diversification away from one accelerator.",
+          "zh": "开放模型增加推理栈数量；定制 ASIC 与以太网从加速器多元化中变现。"
+        },
+        "risk": {
+          "en": "Programme timing and customer concentration.",
+          "zh": "项目节奏与客户集中。"
+        }
+      },
+      {
+        "rank": 3,
+        "ticker": "NVDA",
+        "name": "NVIDIA",
+        "layer": "ACCELERATED COMPUTE",
+        "strength": 91,
+        "fairBand": "24–30× normalized FCF",
+        "stance": "CORE / PRICE DISCIPLINE",
+        "thesis": {
+          "en": "K3 is negative for scarcity pricing but positive for token volume. CUDA, networking and installed capacity keep the platform central.",
+          "zh": "K3 不利于稀缺性定价，却有利于 Token 总量。CUDA、网络与装机量仍让平台居于中心。"
+        },
+        "risk": {
+          "en": "Gross-margin compression and capex digestion.",
+          "zh": "毛利压缩与资本开支消化。"
+        }
+      },
+      {
+        "rank": 4,
+        "ticker": "GOOGL",
+        "name": "Alphabet",
+        "layer": "MODEL + TPU + DISTRIBUTION",
+        "strength": 90,
+        "fairBand": "18–24× NTM FCF",
+        "stance": "ACCUMULATE",
+        "thesis": {
+          "en": "The most complete hedge: proprietary frontier, open Gemma, TPU economics, cloud and search distribution.",
+          "zh": "最完整的对冲：闭源前沿、开放 Gemma、TPU 经济性、云与搜索分发。"
+        },
+        "risk": {
+          "en": "Search cannibalisation and capex-heavy free cash flow.",
+          "zh": "搜索自我蚕食与资本开支拖累自由现金流。"
+        }
+      },
+      {
+        "rank": 5,
+        "ticker": "MSFT",
+        "name": "Microsoft",
+        "layer": "CLOUD + ENTERPRISE",
+        "strength": 89,
+        "fairBand": "25–31× NTM FCF",
+        "stance": "HOLD / DEMAND CONVERSION",
+        "thesis": {
+          "en": "Enterprise distribution lets Azure route between closed and open models; the moat is the workflow, not one lab.",
+          "zh": "企业分发让 Azure 可在闭源与开放模型间路由；护城河是工作流，而非某一家实验室。"
+        },
+        "risk": {
+          "en": "Capex outruns Azure and Copilot monetisation.",
+          "zh": "资本开支跑在 Azure 与 Copilot 变现之前。"
+        }
+      },
+      {
+        "rank": 6,
+        "ticker": "META",
+        "name": "Meta",
+        "layer": "OPEN MODEL + ADS",
+        "strength": 88,
+        "fairBand": "19–25× NTM FCF",
+        "stance": "CORE",
+        "thesis": {
+          "en": "Open-weight commoditisation supports Meta's strategy: cheaper intelligence feeds engagement and ad conversion at population scale.",
+          "zh": "开放权重商品化符合 Meta 的战略：更便宜的智能在全球规模上提高互动与广告转化。"
+        },
+        "risk": {
+          "en": "Capex discipline and uneven open-model cadence.",
+          "zh": "资本开支纪律与开放模型节奏不稳。"
+        }
+      },
+      {
+        "rank": 7,
+        "ticker": "ASML",
+        "name": "ASML",
+        "layer": "LITHOGRAPHY",
+        "strength": 87,
+        "fairBand": "24–30× normalized EPS",
+        "stance": "ACCUMULATE ON CAPEX FEAR",
+        "thesis": {
+          "en": "No algorithm removes the need for leading-edge patterning. K3 reinforces sovereignty demand on both sides.",
+          "zh": "没有算法可以取消先进图形化需求。K3 反而强化两侧的自主算力需求。"
+        },
+        "risk": {
+          "en": "Export policy and lumpy orders.",
+          "zh": "出口政策与订单起伏。"
+        }
+      },
+      {
+        "rank": 8,
+        "ticker": "ANET",
+        "name": "Arista Networks",
+        "layer": "AI NETWORKING",
+        "strength": 85,
+        "fairBand": "28–36× NTM EPS",
+        "stance": "WATCH VALUATION",
+        "thesis": {
+          "en": "Agentic inference turns east-west traffic and cluster utilisation into first-order economics.",
+          "zh": "代理推理让东西向流量与集群利用率成为一阶经济变量。"
+        },
+        "risk": {
+          "en": "Premium multiple and hyperscaler concentration.",
+          "zh": "高估值与超大规模客户集中。"
+        }
+      },
+      {
+        "rank": 9,
+        "ticker": "AMZN",
+        "name": "Amazon",
+        "layer": "CLOUD + CUSTOM SILICON",
+        "strength": 84,
+        "fairBand": "22–28× NTM FCF",
+        "stance": "HOLD",
+        "thesis": {
+          "en": "AWS can sell the model choice, Trainium and the infrastructure around Anthropic; open weights widen the catalogue.",
+          "zh": "AWS 可同时销售模型选择、Trainium 与 Anthropic 周边基础设施；开放权重扩大目录。"
+        },
+        "risk": {
+          "en": "Anthropic concentration and retail/cloud capital competition.",
+          "zh": "Anthropic 集中与零售/云资本竞争。"
+        }
+      },
+      {
+        "rank": 10,
+        "ticker": "MU",
+        "name": "Micron",
+        "layer": "HBM + DRAM",
+        "strength": 80,
+        "fairBand": "9–13× mid-cycle EPS",
+        "stance": "CYCLICAL CORE",
+        "thesis": {
+          "en": "MoE and million-token agents remain memory hungry, but the stock must be valued on mid-cycle earnings, never peak gross margin.",
+          "zh": "MoE 与百万上下文代理仍然吞噬内存，但股票必须按中周期盈利定价，不能按峰值毛利定价。"
+        },
+        "risk": {
+          "en": "Supply response and violent inventory cycles.",
+          "zh": "供给响应与剧烈库存周期。"
+        }
+      }
+    ],
+    "CN": [
+      {
+        "rank": 1,
+        "ticker": "9988.HK",
+        "name": "Alibaba",
+        "layer": "QWEN + CLOUD + DISTRIBUTION",
+        "strength": 93,
+        "fairBand": "12–18× core FCF",
+        "stance": "CORE",
+        "thesis": {
+          "en": "The strongest Chinese full-stack public instrument and a disclosed Moonshot backer; K3 validates its open-cloud strategy even while it increases competition.",
+          "zh": "中国最强的全栈上市工具，也是月之暗面已披露投资者；K3 加剧竞争，却验证其开放云战略。"
+        },
+        "risk": {
+          "en": "Cloud capex, policy and portfolio complexity.",
+          "zh": "云资本开支、政策与组合复杂性。"
+        }
+      },
+      {
+        "rank": 2,
+        "ticker": "0700.HK",
+        "name": "Tencent",
+        "layer": "DISTRIBUTION + CLOUD",
+        "strength": 90,
+        "fairBand": "18–24× NTM EPS",
+        "stance": "CORE",
+        "thesis": {
+          "en": "WeChat distribution and gaming cash flow make falling model costs an input benefit rather than a pure pricing threat.",
+          "zh": "微信分发与游戏现金流让模型降价成为投入成本利好，而非纯粹定价威胁。"
+        },
+        "risk": {
+          "en": "Regulation and slower frontier-model mindshare.",
+          "zh": "监管与前沿模型声量偏弱。"
+        }
+      },
+      {
+        "rank": 3,
+        "ticker": "688256.SH",
+        "name": "Cambricon",
+        "layer": "DOMESTIC ACCELERATOR",
+        "strength": 86,
+        "fairBand": "8–12× forward sales",
+        "stance": "HIGH-RISK STRATEGIC",
+        "thesis": {
+          "en": "The purest listed accelerator-substitution instrument; K3 strengthens sovereign-compute demand.",
+          "zh": "最纯粹的上市加速器替代工具；K3 强化自主算力需求。"
+        },
+        "risk": {
+          "en": "Yield, software ecosystem and valuation already price success.",
+          "zh": "良率、软件生态与估值已预支成功。"
+        }
+      },
+      {
+        "rank": 4,
+        "ticker": "0981.HK",
+        "name": "SMIC",
+        "layer": "DOMESTIC FOUNDRY",
+        "strength": 85,
+        "fairBand": "16–24× normalized EPS",
+        "stance": "STRATEGIC CORE",
+        "thesis": {
+          "en": "China's binding compute constraint is fabrication. Every successful open model raises pressure to localise the silicon below it.",
+          "zh": "中国算力的硬约束是制造。每个成功开放模型都会增加底层芯片国产化压力。"
+        },
+        "risk": {
+          "en": "Tool restrictions, yield and capital intensity.",
+          "zh": "设备限制、良率与资本强度。"
+        }
+      },
+      {
+        "rank": 5,
+        "ticker": "1810.HK",
+        "name": "Xiaomi",
+        "layer": "MODEL + EDGE DEVICES",
+        "strength": 84,
+        "fairBand": "16–22× blended EPS",
+        "stance": "ACCUMULATE",
+        "thesis": {
+          "en": "Open-model economics are most valuable where intelligence ships into phones, cars and home devices.",
+          "zh": "当智能进入手机、汽车与家庭设备时，开放模型经济性最有价值。"
+        },
+        "risk": {
+          "en": "Hardware cycles and automotive execution.",
+          "zh": "硬件周期与汽车执行。"
+        }
+      },
+      {
+        "rank": 6,
+        "ticker": "688041.SH",
+        "name": "Hygon",
+        "layer": "CPU + DCU",
+        "strength": 82,
+        "fairBand": "30–45× normalized EPS",
+        "stance": "WATCH / NO CHASE",
+        "thesis": {
+          "en": "A second domestic compute vector beyond headline accelerators, with server CPU and DCU exposure.",
+          "zh": "除头部加速器外的第二条国产算力向量，同时覆盖服务器 CPU 与 DCU。"
+        },
+        "risk": {
+          "en": "High multiple, ecosystem dependence and procurement cycles.",
+          "zh": "高估值、生态依赖与采购周期。"
+        }
+      },
+      {
+        "rank": 7,
+        "ticker": "9888.HK",
+        "name": "Baidu",
+        "layer": "MODEL + CLOUD + AUTONOMY",
+        "strength": 79,
+        "fairBand": "8–13× core EPS",
+        "stance": "VALUE / PROVE EXECUTION",
+        "thesis": {
+          "en": "A low-multiple full-stack option with autonomous-driving deployment, but model mindshare must stabilise.",
+          "zh": "低估值全栈期权，拥有自动驾驶落地，但模型声量必须止跌。"
+        },
+        "risk": {
+          "en": "Search decline and frontier share loss.",
+          "zh": "搜索下滑与前沿份额流失。"
+        }
+      },
+      {
+        "rank": 8,
+        "ticker": "2513.HK",
+        "name": "Z.ai",
+        "layer": "LISTED FRONTIER LAB",
+        "strength": 76,
+        "fairBand": "6–10× forward sales",
+        "stance": "REPRICE, THEN VERIFY",
+        "thesis": {
+          "en": "Direct frontier exposure remains strategically rare, but K3 proved that rarity cannot justify any multiple.",
+          "zh": "直接前沿敞口仍然稀缺，但 K3 证明稀缺不能为任何估值背书。"
+        },
+        "risk": {
+          "en": "Cash burn, dilution and rapid benchmark obsolescence.",
+          "zh": "现金消耗、稀释与基准快速过时。"
+        }
+      },
+      {
+        "rank": 9,
+        "ticker": "0100.HK",
+        "name": "MiniMax",
+        "layer": "LISTED MULTIMODAL LAB",
+        "strength": 74,
+        "fairBand": "5–9× forward sales",
+        "stance": "SPECULATIVE",
+        "thesis": {
+          "en": "Consumer distribution and multimodal products are the defence; a model-only scarcity premium is not.",
+          "zh": "消费分发与多模态产品才是防线；模型稀缺性溢价不是。"
+        },
+        "risk": {
+          "en": "Price war before operating leverage.",
+          "zh": "经营杠杆形成前先遭遇价格战。"
+        }
+      },
+      {
+        "rank": 10,
+        "ticker": "3896.HK",
+        "name": "Kingsoft Cloud",
+        "layer": "INFERENCE CLOUD",
+        "strength": 72,
+        "fairBand": "2.5–4.5× forward sales",
+        "stance": "OPTIONALITY",
+        "thesis": {
+          "en": "A lower-tier cloud can win if open weights reduce model dependence and let it compete on deployment and service.",
+          "zh": "如果开放权重降低模型依赖，二线云可凭部署与服务竞争。"
+        },
+        "risk": {
+          "en": "Scale, financing and hyperscaler price competition.",
+          "zh": "规模、融资与超大规模云价格竞争。"
+        }
+      }
+    ]
+  },
+  "openWeightsLetter": {
+    "officialSnapshot": {
+      "date": "29 Jul 2026",
+      "count": 77,
+      "source": "https://images.nvidia.com/pdf/Open-Weights-and-American-AI-Leadership.pdf"
+    },
+    "screenshotNames": [
+      "Merge",
+      "Meta",
+      "Microsoft",
+      "Mistral",
+      "Modal",
+      "Morph",
+      "Mozilla",
+      "Nebius",
+      "Neon",
+      "Netlify",
+      "Notion",
+      "Nous Research",
+      "NVIDIA",
+      "Ollama",
+      "OpenAI",
+      "OpenClaw",
+      "OpenCode",
+      "Palantir",
+      "Palo Alto Networks",
+      "Periodic Labs",
+      "Perplexity",
+      "Plastic Labs",
+      "Postman",
+      "Prime Intellect",
+      "PrismML",
+      "RadixArk",
+      "Red Hat",
+      "Reducto",
+      "Reflection",
+      "Rehearsals",
+      "Reka",
+      "Replit",
+      "Resemble.AI",
+      "Recursive Intelligence",
+      "Runway",
+      "Sakana AI",
+      "SAP",
+      "Scale",
+      "ServiceNow",
+      "Siemens",
+      "SkyPilot",
+      "SpaceX",
+      "Stack Overflow",
+      "Sycamore",
+      "Telnyx",
+      "TensorWave",
+      "Together.ai",
+      "Trainloop",
+      "Trajectory",
+      "TrendAI"
+    ],
+    "officialNames": [
+      "Agno",
+      "AI21",
+      "AMD",
+      "American Innovators Network",
+      "AMP",
+      "Andreessen Horowitz",
+      "Applied Compute",
+      "Arcee AI",
+      "Arena",
+      "Atreides Management",
+      "Baseten",
+      "Black Forest Labs",
+      "Block",
+      "Bolt",
+      "Box",
+      "Camber",
+      "Cisco",
+      "Cloudflare",
+      "Cohere",
+      "Core Automation",
+      "CrowdStrike",
+      "Dell Technologies",
+      "DoorDash",
+      "EdgeRunner",
+      "Emergence Capital",
+      "Exia Labs",
+      "Fastino Labs",
+      "Fireworks AI",
+      "Genspark",
+      "GitHub",
+      "Glean",
+      "Google",
+      "GPU MODE",
+      "Hugging Face",
+      "humans&",
+      "IBM",
+      "Inferact",
+      "Intangible",
+      "Interconnects AI",
+      "LangChain",
+      "The Linux Foundation",
+      "LM Studio",
+      "LMSYS",
+      "Mariana Minerals",
+      "Meta",
+      "Microsoft",
+      "Mistral",
+      "Modal",
+      "Morph",
+      "Mozilla",
+      "Nebius",
+      "Nous Research",
+      "NVIDIA",
+      "Ollama",
+      "OpenAI",
+      "OpenClaw",
+      "Palantir",
+      "Palo Alto Networks",
+      "Periodic Labs",
+      "Perplexity",
+      "Plastic Labs",
+      "Prime Intellect",
+      "PrismML",
+      "RadixArk",
+      "Reflection",
+      "Rehearsals",
+      "Replit",
+      "Sakana AI",
+      "Scale",
+      "ServiceNow",
+      "SpaceX",
+      "Telnyx",
+      "Trajectory",
+      "Unsloth",
+      "Unusual Ventures",
+      "Vercel",
+      "Y Combinator"
+    ],
+    "missing": [
+      {
+        "name": "Anthropic",
+        "why": {
+          "en": "Most important closed-frontier holdout; absence does not prove support for a ban.",
+          "zh": "最重要的闭源前沿缺席者；缺席不等于支持禁令。"
+        }
+      },
+      {
+        "name": "Amazon / AWS",
+        "why": {
+          "en": "Largest cloud holdout and Anthropic's closest infrastructure partner.",
+          "zh": "最大的云缺席者，也是 Anthropic 最紧密的基础设施伙伴。"
+        }
+      },
+      {
+        "name": "Apple",
+        "why": {
+          "en": "Major device distribution gatekeeper with no name in the snapshot.",
+          "zh": "重要设备分发守门人，快照中未署名。"
+        }
+      },
+      {
+        "name": "xAI",
+        "why": {
+          "en": "SpaceX signed; xAI itself is not listed in the official PDF snapshot.",
+          "zh": "SpaceX 已签，但 xAI 本身不在官方 PDF 快照。"
+        }
+      },
+      {
+        "name": "Oracle",
+        "why": {
+          "en": "Important AI-cloud and database platform absent from the official snapshot.",
+          "zh": "重要 AI 云与数据库平台，官方快照中缺席。"
+        }
+      },
+      {
+        "name": "Intel",
+        "why": {
+          "en": "A strategic US semiconductor name that did not appear in the snapshot.",
+          "zh": "具有战略意义的美国半导体公司，快照中未出现。"
+        }
+      },
+      {
+        "name": "Databricks",
+        "why": {
+          "en": "One of the largest private data-and-model platforms, absent from the snapshot.",
+          "zh": "最大的私有数据与模型平台之一，快照中缺席。"
+        }
+      },
+      {
+        "name": "Salesforce",
+        "why": {
+          "en": "Large enterprise application distributor absent from the snapshot.",
+          "zh": "大型企业应用分发商，快照中缺席。"
+        }
+      }
+    ]
+  },
+  "postMemoryTheses": [
+    {
+      "id": "01",
+      "title": {
+        "en": "Efficiency does not kill compute",
+        "zh": "效率不会消灭算力"
+      },
+      "thesis": {
+        "en": "Cheaper tokens expand agentic workloads. The bearish case is lower price per unit; the bullish case is much higher unit volume.",
+        "zh": "更便宜的 Token 会扩大代理工作负载。空头看到单位价格下降，多头看到单位数量大幅上升。"
+      },
+      "own": "NETWORK · POWER · INFERENCE",
+      "invalidate": {
+        "en": "Token growth fails to offset price decline for two quarters.",
+        "zh": "连续两个季度 Token 增长无法抵消价格下降。"
+      }
+    },
+    {
+      "id": "02",
+      "title": {
+        "en": "MoE is sparse compute, not small memory",
+        "zh": "MoE 是稀疏计算，不是小内存"
+      },
+      "thesis": {
+        "en": "K3 activates 104B parameters but stores a 2.8T model. Memory capacity, bandwidth and expert-parallel traffic remain strategic.",
+        "zh": "K3 激活 1040 亿参数，却要存放 2.8 万亿参数模型。内存容量、带宽与专家并行流量仍具战略价值。"
+      },
+      "own": "HBM · INTERCONNECT",
+      "invalidate": {
+        "en": "Model compression materially reduces fleet memory per useful task.",
+        "zh": "模型压缩显著降低每项有效任务的集群内存。"
+      }
+    },
+    {
+      "id": "03",
+      "title": {
+        "en": "The model-only multiple is over",
+        "zh": "纯模型估值时代结束"
+      },
+      "thesis": {
+        "en": "A benchmark lead can disappear in weeks. Distribution, proprietary data and retained workflow matter more than launch-day rank.",
+        "zh": "基准领先可在数周内消失。分发、专有数据与留存工作流比发布日排名更重要。"
+      },
+      "own": "DISTRIBUTION · DATA",
+      "invalidate": {
+        "en": "One lab sustains a capability lead and pricing power for four releases.",
+        "zh": "某实验室连续四次发布都维持能力领先与定价权。"
+      }
+    },
+    {
+      "id": "04",
+      "title": {
+        "en": "Foundry is still the constitution",
+        "zh": "晶圆制造仍是底层宪法"
+      },
+      "thesis": {
+        "en": "Algorithmic sovereignty without manufacturing sovereignty still rents a foreign physical stack.",
+        "zh": "只有算法自主而没有制造自主，仍然是在租用外国物理栈。"
+      },
+      "own": "FOUNDRY · LITHOGRAPHY · PACKAGING",
+      "invalidate": {
+        "en": "A domestic alternative closes the yield and throughput gap.",
+        "zh": "国产替代品弥合良率与吞吐差距。"
+      }
+    },
+    {
+      "id": "05",
+      "title": {
+        "en": "Open weights create cloud pluralism",
+        "zh": "开放权重创造云多极化"
+      },
+      "thesis": {
+        "en": "The same model can be served by hyperscalers, neoclouds or sovereign clusters, shifting competition toward reliability and total task cost.",
+        "zh": "同一模型可由超大规模云、新云或主权集群托管，竞争转向可靠性与任务总成本。"
+      },
+      "own": "CLOUD ROUTING · OBSERVABILITY",
+      "invalidate": {
+        "en": "Regulation blocks cross-provider weight portability.",
+        "zh": "监管阻断跨服务商权重可迁移性。"
+      }
+    },
+    {
+      "id": "06",
+      "title": {
+        "en": "Memory must be valued mid-cycle",
+        "zh": "存储必须按中周期估值"
+      },
+      "thesis": {
+        "en": "HBM scarcity is real, but every memory cycle eventually attracts supply. Contract visibility changes duration, not cyclicality.",
+        "zh": "HBM 稀缺真实存在，但每轮存储周期最终都会吸引供给。合约提高可见度，不会消灭周期。"
+      },
+      "own": "LOW-COST MEMORY LEADERS",
+      "invalidate": {
+        "en": "Supply growth stays below bit-demand growth through 2028.",
+        "zh": "到 2028 年供给增长持续低于位需求增长。"
+      }
+    },
+    {
+      "id": "07",
+      "title": {
+        "en": "China's model winners need global serving",
+        "zh": "中国模型赢家还需要全球服务"
+      },
+      "thesis": {
+        "en": "Weights win mindshare; reliable capacity, compliance, billing and support win enterprise revenue.",
+        "zh": "权重赢得声量；可靠容量、合规、计费与支持才能赢得企业收入。"
+      },
+      "own": "CLOUD · PAYMENTS · COMPLIANCE",
+      "invalidate": {
+        "en": "Policy permanently blocks adoption in major overseas markets.",
+        "zh": "政策永久阻断其在主要海外市场的采用。"
+      }
+    },
+    {
+      "id": "08",
+      "title": {
+        "en": "Sovereignty is a procurement budget",
+        "zh": "主权就是采购预算"
+      },
+      "thesis": {
+        "en": "Open weights turn data residency and continuity from legal clauses into infrastructure purchases.",
+        "zh": "开放权重把数据驻留与业务连续性从法律条款变成基础设施采购。"
+      },
+      "own": "PRIVATE CLOUD · SECURITY",
+      "invalidate": {
+        "en": "Closed APIs satisfy sovereign audit and portability requirements.",
+        "zh": "闭源 API 能满足主权审计与可迁移要求。"
+      }
+    },
+    {
+      "id": "09",
+      "title": {
+        "en": "The barbell beats the middle",
+        "zh": "杠铃组合胜过中间层"
+      },
+      "thesis": {
+        "en": "Own physical chokepoints on one side and distribution/workflow on the other; avoid undifferentiated model wrappers and rented capacity.",
+        "zh": "一端持有物理咽喉，另一端持有分发与工作流；避开无差异模型套壳与租赁算力。"
+      },
+      "own": "PHYSICS + DISTRIBUTION",
+      "invalidate": {
+        "en": "Application middle layers build durable proprietary data moats.",
+        "zh": "应用中间层建立可持续的专有数据护城河。"
+      }
+    },
+    {
+      "id": "10",
+      "title": {
+        "en": "Cash conversion is the new benchmark",
+        "zh": "现金转化是新基准"
+      },
+      "thesis": {
+        "en": "The market will increasingly score AI companies on free cash flow per dollar of capex, not parameters, tokens or benchmark Elo.",
+        "zh": "市场会越来越按每美元资本开支产生的自由现金流评价 AI 公司，而不是参数、Token 或基准 Elo。"
+      },
+      "own": "DISCIPLINED FULL STACKS",
+      "invalidate": {
+        "en": "Capital markets resume rewarding spend without monetisation.",
+        "zh": "资本市场重新奖励没有变现的支出。"
+      }
+    }
+  ]
+}

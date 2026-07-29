@@ -398,9 +398,10 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
   function nodePlateSize(node) {
     const mobile = isMobile();
     const primary = node.kind === 'model' || node.kind === 'initiative';
+    const scale = Math.max(0.8, Math.min(1.7, Number(node.plate_scale) || 1));
     return {
-      width: mobile ? (primary ? 66 : 58) : (primary ? 82 : 70),
-      height: mobile ? (primary ? 46 : 42) : (primary ? 56 : 48),
+      width: (mobile ? (primary ? 66 : 58) : (primary ? 82 : 70)) * scale,
+      height: (mobile ? (primary ? 46 : 42) : (primary ? 56 : 48)) * Math.min(scale, 1.35),
     };
   }
 
@@ -573,10 +574,28 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     const image = entry.image;
     const imageWidth = image.naturalWidth || image.width || 1;
     const imageHeight = image.naturalHeight || image.height || 1;
-    const fit = Math.min((width - 16) / imageWidth, (height - 14) / imageHeight);
-    const drawWidth = imageWidth * fit;
-    const drawHeight = imageHeight * fit;
-    ctx.drawImage(image, x - drawWidth / 2, y - drawHeight / 2, drawWidth, drawHeight);
+    const cropX = clamp01(Number(node.logo_crop?.x) || 0);
+    const cropY = clamp01(Number(node.logo_crop?.y) || 0);
+    const cropWidth = Math.max(0.05, Math.min(1 - cropX, Number(node.logo_crop?.width) || 1));
+    const cropHeight = Math.max(0.05, Math.min(1 - cropY, Number(node.logo_crop?.height) || 1));
+    const sourceX = imageWidth * cropX;
+    const sourceY = imageHeight * cropY;
+    const sourceWidth = imageWidth * cropWidth;
+    const sourceHeight = imageHeight * cropHeight;
+    const fit = Math.min((width - 16) / sourceWidth, (height - 14) / sourceHeight);
+    const drawWidth = sourceWidth * fit;
+    const drawHeight = sourceHeight * fit;
+    ctx.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      x - drawWidth / 2,
+      y - drawHeight / 2,
+      drawWidth,
+      drawHeight,
+    );
   }
 
   function drawNode(node, time, focusNode) {

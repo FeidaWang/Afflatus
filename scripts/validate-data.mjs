@@ -20,6 +20,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { validateSectorsData } from '../src/lib/validateSectorsData.js';
 import { validateSectorsCompetition } from '../src/lib/validateSectorsCompetition.js';
+import { validateSectorsRivalry } from '../src/lib/validateSectorsRivalry.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
@@ -32,6 +33,7 @@ import { validateArenaDigest } from '../src/lib/validateArenaDigest.js';
 const CHECKS = [
   { path: 'public/sectors-data.json', validate: validateSectorsData },
   { path: 'public/sectors-competition.json', validate: validateSectorsCompetition },
+  { path: 'public/sectors-rivalry.json', validate: validateSectorsRivalry },
   { path: 'public/signal-events.json', validate: validateSignalEvents },
   { path: 'public/leagues-data.json', validate: validateLeaguesData },
   { path: 'public/games-data.json', validate: validateGamesData },

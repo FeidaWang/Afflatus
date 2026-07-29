@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-25T12:00:00+10:00",
-  "version": 3,
+  "updated": "2026-07-29T23:29:00+10:00",
+  "version": 4,
   "chapters": [
     {
       "id": "divide",
@@ -138,7 +138,9 @@
       "id": "openweights",
       "label": "Open Weights Coalition",
       "country": "US",
-      "mark": "25×",
+      "logo": "/assets/sectors/logos/open-secure-ai-alliance.png",
+      "logo_bg": "#ffffff",
+      "plate_scale": 1.7,
       "kind": "initiative",
       "stage": "initiative",
       "reveal": 0.38,
@@ -194,7 +196,9 @@
       "id": "nvidia",
       "label": "NVIDIA",
       "country": "US",
-      "logo": "/assets/sectors/logos/nvidia.svg",
+      "logo": "/assets/sectors/logos/nvidia-wordmark.png",
+      "logo_bg": "#ffffff",
+      "plate_scale": 1.2,
       "kind": "compute",
       "stage": "compute",
       "reveal": 0.58,
@@ -292,7 +296,15 @@
       "id": "tencent",
       "label": "Tencent",
       "country": "CN",
-      "mark": "腾讯",
+      "logo": "/assets/sectors/logos/tencent.png",
+      "logo_bg": "#000000",
+      "logo_crop": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.64
+      },
+      "plate_scale": 1.3,
       "kind": "platform",
       "stage": "platform",
       "reveal": 0.44,

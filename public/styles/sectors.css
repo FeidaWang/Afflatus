@@ -44,8 +44,8 @@ a{color:inherit;text-decoration:none}
 .nav a{position:relative;padding:9px 13px;border-radius:999px;color:var(--ink-soft);font-size:14px;font-weight:600}
 .nav a:hover{background:var(--bg-soft);color:var(--ink)}
 .nav a.active{background:var(--chip-bg);color:var(--chip-ink)}
-.lang-toggle{font:700 13px var(--font);color:var(--chip-ink);background:var(--chip-bg);border:1px solid var(--chip-bg);border-radius:999px;padding:9px 16px;cursor:pointer}
-.lang-toggle:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.lang-toggle,.nav .lang-toggle{font:700 13px var(--font);color:var(--chip-ink);background:var(--chip-bg);border:1px solid var(--chip-bg);border-radius:999px;padding:9px 16px;cursor:pointer}
+.lang-toggle:hover,.nav .lang-toggle:hover{background:#08634f;border-color:#08634f;color:#fff}
 /* The shared route links are injected at DOMContentLoaded. Reserve the
    wrapping header's final mobile height so that insertion never pushes the
    hero (the first-viewport content) after first paint. */
@@ -499,3 +499,616 @@ canvas[data-renderer="poster"]{background:radial-gradient(circle at 50% 45%,rgba
   .rbAxisBar[data-bloc="US"] i{background:linear-gradient(90deg,var(--rb-blue),color-mix(in srgb,var(--rb-blue) 35%,transparent))}
 }
 @media(prefers-reduced-motion:reduce){.rbPickerList button{transition:none}}
+
+/* ============================================================
+   2026-07-29 · MODEL RIVALRY REBUILD
+   The old vendor-photo card wall is retired. This layer is a
+   research interface: two strategic blocs, one evidence ledger.
+   ============================================================ */
+:root{
+  --war-bg:#050609;
+  --war-panel:#0a0c11;
+  --war-panel-2:#10131a;
+  --war-line:#252a35;
+  --war-line-hot:#3a4252;
+  --war-text:#f2f4f8;
+  --war-dim:#969eac;
+  --war-blue:#5a8cff;
+  --war-blue-hot:#83b4ff;
+  --war-red:#ff4f67;
+  --war-red-hot:#ff8191;
+  --war-green:#8fffc1;
+  --war-amber:#ffc76b;
+  --war-font:"Arial Narrow","Roboto Condensed","Helvetica Neue",Arial,sans-serif;
+  --war-mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+.sectors-page{
+  background:
+    radial-gradient(1200px 720px at 10% 4%,rgba(42,91,181,.12),transparent 68%),
+    radial-gradient(1100px 700px at 92% 19%,rgba(183,36,62,.1),transparent 70%),
+    var(--war-bg);
+}
+.sectors-page .shell{width:min(1280px,calc(100% - 40px))}
+.rivalryHero{
+  position:relative;
+  width:100vw;
+  min-height:min(780px,calc(100svh - 82px));
+  margin-left:calc(50% - 50vw);
+  overflow:hidden;
+  isolation:isolate;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(260px,390px);
+  align-items:end;
+  gap:clamp(30px,7vw,110px);
+  padding:clamp(100px,14vh,168px) max(24px,calc((100vw - 1240px)/2)) clamp(58px,9vh,92px);
+  border-bottom:1px solid var(--war-line-hot);
+  background:
+    linear-gradient(90deg,rgba(19,48,99,.5),transparent 42%,transparent 58%,rgba(95,19,32,.48)),
+    radial-gradient(circle at 50% 47%,rgba(255,255,255,.09) 0 1px,transparent 2px),
+    #06080d;
+}
+.rivalryHero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-2;
+  background:
+    linear-gradient(108deg,transparent 0 46.6%,rgba(255,255,255,.13) 46.7% 46.75%,transparent 46.85%),
+    linear-gradient(72deg,transparent 0 53.2%,rgba(255,255,255,.08) 53.3% 53.35%,transparent 53.45%),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0 1px,transparent 1px 72px),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 72px);
+  mask-image:linear-gradient(to bottom,black,rgba(0,0,0,.22));
+}
+.rivalryHero::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:7%;
+  bottom:0;
+  left:50%;
+  width:1px;
+  background:linear-gradient(transparent,var(--war-text) 20%,var(--war-text) 72%,transparent);
+  box-shadow:0 0 38px rgba(255,255,255,.45),-38vw 0 160px rgba(60,123,255,.12),38vw 0 160px rgba(255,55,85,.12);
+}
+.rivalryHeroGrid{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  opacity:.68;
+  background:
+    radial-gradient(ellipse at 20% 42%,transparent 0 23%,rgba(90,140,255,.18) 23.2% 23.45%,transparent 23.7%),
+    radial-gradient(ellipse at 80% 42%,transparent 0 23%,rgba(255,79,103,.18) 23.2% 23.45%,transparent 23.7%);
+}
+.rivalryHeroSignal{
+  position:absolute;
+  top:38px;
+  font:700 10px/1 var(--war-mono);
+  letter-spacing:.15em;
+  color:var(--war-dim);
+}
+.rivalryHeroSignal::before{
+  content:"";
+  display:inline-block;
+  width:46px;
+  height:1px;
+  margin-right:12px;
+  vertical-align:middle;
+  background:currentColor;
+}
+.rivalryHeroSignal--us{left:max(24px,calc((100vw - 1240px)/2));color:var(--war-blue-hot)}
+.rivalryHeroSignal--cn{right:max(24px,calc((100vw - 1240px)/2));color:var(--war-red-hot)}
+.rivalryHeroCopy{max-width:860px}
+.rivalryEyebrow{
+  display:block;
+  margin-bottom:22px;
+  color:var(--war-green);
+  font:700 11px/1.2 var(--war-mono);
+  letter-spacing:.14em;
+}
+.rivalryHero h1{
+  max-width:930px;
+  margin:0;
+  color:var(--war-text);
+  font:740 clamp(48px,7.2vw,104px)/.91 var(--war-font);
+  letter-spacing:-.045em;
+  text-transform:uppercase;
+  text-wrap:balance;
+}
+.rivalryHero h1 span{color:var(--war-blue-hot)}
+.rivalryHero h1 em{color:var(--war-red-hot);font-style:normal}
+html[lang^="zh"] .rivalryHero h1{
+  font-size:clamp(50px,5.4vw,78px);
+  line-height:.98;
+  letter-spacing:-.025em;
+  text-transform:none;
+}
+.rivalryHeroCopy>p{
+  max-width:760px;
+  margin:28px 0 0;
+  color:#c6cbd5;
+  font:500 clamp(15px,1.8vw,19px)/1.65 var(--font);
+}
+.rivalryHeroActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.rivalryHeroActions a{
+  min-height:44px;
+  display:inline-flex;
+  align-items:center;
+  padding:0 15px;
+  border:1px solid var(--war-line-hot);
+  color:var(--war-text);
+  background:rgba(9,11,16,.7);
+  font:750 10px/1 var(--war-mono);
+  letter-spacing:.09em;
+}
+.rivalryHeroActions a:hover{border-color:var(--war-green);color:var(--war-green)}
+.rivalryHeroVerdict{
+  align-self:end;
+  display:grid;
+  gap:0;
+  border:1px solid var(--war-line-hot);
+  background:rgba(7,9,13,.78);
+  box-shadow:0 28px 80px rgba(0,0,0,.48);
+}
+.rivalryHeroVerdict span{
+  padding:13px 16px;
+  border-bottom:1px solid var(--war-line);
+  color:var(--war-dim);
+  font:700 9px/1 var(--war-mono);
+  letter-spacing:.13em;
+}
+.rivalryHeroVerdict b{
+  padding:16px;
+  border-bottom:1px solid var(--war-line);
+  color:var(--war-text);
+  font:780 clamp(16px,2vw,22px)/1 var(--war-font);
+  letter-spacing:.04em;
+}
+.rivalryHeroVerdict b:nth-of-type(1){color:var(--war-red-hot)}
+.rivalryHeroVerdict b:nth-of-type(2){color:var(--war-green)}
+.rivalryHeroVerdict b:nth-of-type(3){border-bottom:0;color:var(--war-amber)}
+
+.rivalrySection{margin:clamp(84px,11vw,148px) 0 0}
+.rivalrySectionHead{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(150px,.28fr) minmax(0,.88fr) minmax(260px,.5fr);
+  align-items:start;
+  gap:clamp(22px,4vw,58px);
+  padding-top:22px;
+  margin-bottom:42px;
+  border-top:1px solid var(--war-line-hot);
+}
+.rivalrySectionHead>span{
+  color:var(--war-green);
+  font:700 10px/1.35 var(--war-mono);
+  letter-spacing:.12em;
+}
+.rivalrySectionHead h2{
+  margin:0;
+  color:var(--war-text);
+  font:720 clamp(34px,5.2vw,68px)/.98 var(--war-font);
+  letter-spacing:-.035em;
+  text-transform:uppercase;
+  text-wrap:balance;
+}
+.rivalrySectionHead p{
+  margin:2px 0 0;
+  color:var(--war-dim);
+  font:500 14px/1.68 var(--font);
+}
+
+#rivalryK3{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:24px}
+.k3Signal{
+  position:relative;
+  min-height:470px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:clamp(28px,4vw,54px);
+  border:1px solid var(--war-line-hot);
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 82% 16%,rgba(143,255,193,.16),transparent 28%),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0 1px,transparent 1px 38px),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 38px),
+    var(--war-panel);
+}
+.k3Signal::before{
+  content:"K3";
+  position:absolute;
+  right:-.05em;
+  top:-.18em;
+  color:rgba(255,255,255,.035);
+  font:900 clamp(180px,30vw,420px)/1 var(--war-font);
+  letter-spacing:-.12em;
+}
+.k3Route{
+  position:relative;
+  align-self:flex-start;
+  margin-bottom:auto;
+  padding:8px 10px;
+  border:1px solid rgba(143,255,193,.35);
+  color:var(--war-green);
+  background:rgba(3,20,13,.55);
+  font:700 9px/1 var(--war-mono);
+  letter-spacing:.1em;
+}
+.k3Signal h2{
+  position:relative;
+  max-width:620px;
+  margin:70px 0 16px;
+  color:var(--war-text);
+  font:720 clamp(34px,4.7vw,62px)/.98 var(--war-font);
+  letter-spacing:-.035em;
+  text-transform:uppercase;
+}
+.k3Signal>p{position:relative;max-width:630px;margin:0;color:#b8bec9;font:500 15px/1.65 var(--font)}
+.rivalryStats{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin-top:32px;border-top:1px solid var(--war-line)}
+.rivalryStat{padding:19px 13px 0 0}
+.rivalryStat b{display:block;color:var(--war-text);font:760 clamp(21px,3vw,32px)/1 var(--war-mono)}
+.rivalryStat span{display:block;margin-top:8px;color:var(--war-dim);font:650 9px/1.35 var(--war-mono);text-transform:uppercase}
+.k3Modules{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.k3Module{
+  min-height:220px;
+  padding:22px;
+  border:1px solid var(--war-line);
+  background:var(--war-panel);
+  transition:border-color .2s ease,transform .2s ease;
+}
+.k3Module:hover{border-color:var(--war-green);transform:translateY(-3px)}
+.k3Module>span{color:var(--war-green);font:800 11px/1 var(--war-mono);letter-spacing:.12em}
+.k3Module h3{margin:44px 0 10px;color:var(--war-text);font:720 21px/1.05 var(--war-font);text-transform:uppercase}
+.k3Module p{margin:0;color:var(--war-dim);font:500 13px/1.58 var(--font)}
+.costFrontierPanel{
+  display:grid;
+  grid-template-columns:minmax(250px,.34fr) minmax(0,1fr);
+  gap:32px;
+  margin-top:24px;
+  padding:clamp(26px,4vw,48px);
+  border:1px solid var(--war-line);
+  background:linear-gradient(135deg,rgba(143,255,193,.045),transparent 40%),var(--war-panel);
+}
+.costFrontierPanel>header span,.transmissionHeader span{color:var(--war-green);font:700 9px/1 var(--war-mono);letter-spacing:.12em}
+.costFrontierPanel>header h3,.transmissionHeader h3{margin:14px 0 0;color:var(--war-text);font:720 clamp(28px,3.5vw,44px)/1 var(--war-font);text-transform:uppercase}
+.costLegend{display:grid;grid-template-columns:1fr auto;gap:16px;padding-bottom:11px;border-bottom:1px solid var(--war-line);color:var(--war-dim);font:650 9px/1 var(--war-mono);text-transform:uppercase}
+.costRow{display:grid;grid-template-columns:minmax(180px,.7fr) minmax(190px,1fr) 54px;gap:18px;align-items:center;padding:17px 0;border-bottom:1px solid var(--war-line)}
+.costLabel b{display:block;color:var(--war-text);font:700 13px/1.2 var(--war-mono)}
+.costLabel span{display:block;margin-top:6px;color:var(--war-dim);font:500 11px/1.45 var(--font)}
+.costPlot{position:relative;height:9px;background:#181c24}
+.costPlot::after{content:"";position:absolute;right:0;top:-4px;bottom:-4px;width:1px;background:var(--war-red-hot)}
+.costPlot i{display:block;width:var(--cost);height:100%;background:linear-gradient(90deg,var(--war-green),var(--war-amber));box-shadow:0 0 16px rgba(143,255,193,.25)}
+.costPlot span{position:absolute;left:var(--cost);top:-16px;transform:translateX(-50%);color:var(--war-text);font:700 9px/1 var(--war-mono)}
+.costRow>strong{text-align:right;color:var(--war-text);font:760 18px/1 var(--war-mono)}
+.rivalryCaveat,.rivalryMethod{margin:18px 0 0;color:var(--war-dim);font:500 11px/1.6 var(--font)}
+
+.labTheatre{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);
+  gap:18px;
+  padding:20px;
+  border:1px solid var(--war-line-hot);
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(35,79,160,.14),transparent 44%,transparent 56%,rgba(160,30,50,.14)),
+    var(--war-panel);
+}
+.labTheatre::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 5px);
+}
+.labBloc{position:relative;min-width:0}
+.labBloc>header{min-height:118px;padding:22px;border:1px solid var(--war-line)}
+.labBloc--us>header{background:linear-gradient(120deg,rgba(90,140,255,.19),transparent)}
+.labBloc--cn>header{text-align:right;background:linear-gradient(240deg,rgba(255,79,103,.2),transparent)}
+.labBloc>header span{font:800 10px/1 var(--war-mono);letter-spacing:.16em}
+.labBloc--us>header span{color:var(--war-blue-hot)}
+.labBloc--cn>header span{color:var(--war-red-hot)}
+.labBloc>header h3{margin:13px 0 0;color:var(--war-text);font:720 clamp(24px,3.2vw,40px)/1 var(--war-font);text-transform:uppercase}
+.labStack{display:grid;gap:10px;margin-top:10px}
+.labCard{
+  position:relative;
+  min-width:0;
+  padding:20px;
+  border:1px solid var(--war-line);
+  background:rgba(8,10,15,.88);
+  overflow:hidden;
+}
+.labCard::after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:2px;
+  opacity:.75;
+}
+.labCard--us::after{left:0;background:var(--war-blue)}
+.labCard--cn::after{right:0;background:var(--war-red)}
+.labCard>header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.labCard>header span{color:var(--war-dim);font:700 9px/1 var(--war-mono);letter-spacing:.08em}
+.labCard>header strong{font:800 25px/1 var(--war-mono)}
+.labCard--us>header strong{color:var(--war-blue-hot)}
+.labCard--cn>header strong{color:var(--war-red-hot)}
+.labCard h3{margin:14px 0 2px;color:var(--war-text);font:740 27px/1 var(--war-font);text-transform:uppercase}
+.labModel{margin:0;color:var(--war-dim);font:600 11px/1.3 var(--war-mono)}
+.labVectors{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:20px 0}
+.labVector span,.labVector em{display:block;color:var(--war-dim);font:650 8px/1 var(--war-mono);font-style:normal}
+.labVector i{display:block;height:38px;margin:5px 0;background:#171a21;transform:rotate(180deg)}
+.labVector i b{display:block;width:100%;height:var(--v);background:var(--war-blue);opacity:.75}
+.labCard--cn .labVector i b{background:var(--war-red)}
+.labVector em{text-align:right;color:var(--war-text)}
+.labEdge,.labRisk{margin:0;padding-top:12px;border-top:1px solid var(--war-line);color:#b8bec9;font:500 12px/1.55 var(--font)}
+.labRisk{margin-top:10px;color:var(--war-dim)}
+.labEdge b,.labRisk b{display:block;margin-bottom:4px;color:var(--war-green);font:750 8px/1 var(--war-mono);letter-spacing:.12em}
+.labRisk b{color:var(--war-amber)}
+.labMeridian{position:relative;display:flex;align-items:center;flex-direction:column;color:var(--war-dim)}
+.labMeridian b{
+  position:sticky;
+  top:120px;
+  z-index:1;
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--war-text);
+  border-radius:50%;
+  color:var(--war-text);
+  background:var(--war-bg);
+  font:800 13px/1 var(--war-mono);
+  box-shadow:0 0 28px rgba(255,255,255,.18);
+}
+.labMeridian i{position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(var(--war-blue),var(--war-text),var(--war-red))}
+.labMeridian span{position:sticky;top:180px;z-index:1;margin-top:12px;padding:8px 4px;color:var(--war-dim);background:var(--war-panel);font:700 8px/1.35 var(--war-mono);text-align:center}
+
+.eventStudy{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--war-line-hot)}
+.eventCell{min-width:0;min-height:360px;padding:24px;border-right:1px solid var(--war-line);background:var(--war-panel)}
+.eventCell:last-child{border-right:0}
+.eventDate{display:flex;justify-content:space-between;align-items:start}
+.eventDate span{color:var(--war-green);font:750 10px/1 var(--war-mono);letter-spacing:.08em}
+.eventDate b{color:#697383;font:900 60px/.8 var(--war-mono)}
+.eventCell h3{margin:40px 0 16px;color:var(--war-text);font:720 25px/1.02 var(--war-font);text-transform:uppercase}
+.eventMoves{display:flex;flex-wrap:wrap;gap:6px}
+.eventMoves span{padding:6px 8px;background:rgba(255,79,103,.1);border:1px solid rgba(255,79,103,.24);color:var(--war-red-hot);font:750 10px/1 var(--war-mono)}
+.eventCell p{margin:18px 0;color:var(--war-dim);font:500 13px/1.58 var(--font)}
+.eventCell small{display:block;margin-top:auto;color:var(--war-amber);font:700 8px/1 var(--war-mono);letter-spacing:.1em}
+.transmissionHeader{display:flex;align-items:end;justify-content:space-between;gap:30px;margin:54px 0 20px}
+.transmissionHeader h3{max-width:620px;text-align:right}
+.transmissionChain{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.transmissionNode{position:relative;min-height:290px;padding:22px;border:1px solid var(--war-line);background:var(--war-panel)}
+.transmissionNode:not(:last-child)::after{
+  content:"→";
+  position:absolute;
+  z-index:2;
+  right:-18px;
+  top:50%;
+  width:26px;
+  height:26px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--war-line-hot);
+  border-radius:50%;
+  background:var(--war-bg);
+  color:var(--war-green);
+  font:700 12px/1 var(--war-mono);
+}
+.transmissionNode>span{color:var(--war-green);font:800 11px/1 var(--war-mono)}
+.transmissionNode h3{margin:48px 0 12px;color:var(--war-text);font:720 25px/1 var(--war-font);text-transform:uppercase}
+.transmissionNode p{margin:0;color:var(--war-dim);font:500 13px/1.58 var(--font)}
+.transmissionNode>div{position:absolute;left:22px;right:22px;bottom:20px;display:grid;gap:5px}
+.transmissionNode>div b,.transmissionNode>div em{font:700 8px/1.35 var(--war-mono);font-style:normal;letter-spacing:.06em}
+.transmissionNode>div b{color:var(--war-green)}
+.transmissionNode>div em{color:var(--war-red-hot)}
+
+.valuationIntro{
+  display:grid;
+  grid-template-columns:.48fr 1fr;
+  gap:42px;
+  margin-bottom:22px;
+  padding:28px;
+  border:1px solid var(--war-line);
+  background:var(--war-panel);
+}
+.valuationIntro h3{margin:0;color:var(--war-text);font:720 32px/1 var(--war-font);text-transform:uppercase}
+.valuationIntro p{margin:0;color:var(--war-dim);font:500 14px/1.66 var(--font)}
+.equityBoard{margin-top:28px;border:1px solid var(--war-line-hot);background:var(--war-panel)}
+.equityBoard>header{display:flex;justify-content:space-between;align-items:end;gap:20px;padding:22px;border-bottom:1px solid var(--war-line)}
+.equityBoard>header span{font:800 10px/1 var(--war-mono);letter-spacing:.12em}
+.equityBoard--us>header span{color:var(--war-blue-hot)}
+.equityBoard--cn>header span{color:var(--war-red-hot)}
+.equityBoard>header h3{margin:0;color:var(--war-text);font:720 28px/1 var(--war-font);text-transform:uppercase}
+.equityColumns,.equityRow{
+  display:grid;
+  grid-template-columns:42px 160px minmax(150px,.8fr) minmax(130px,.6fr) minmax(150px,.62fr) minmax(140px,.7fr) 96px;
+  gap:14px;
+  align-items:center;
+}
+.equityColumns{padding:10px 18px;color:var(--war-dim);font:700 8px/1 var(--war-mono);letter-spacing:.08em;text-transform:uppercase}
+.equityRow{padding:17px 18px;border-top:1px solid var(--war-line)}
+.equityRow:hover{background:rgba(255,255,255,.018)}
+.equityRank{color:#697383;font:800 21px/1 var(--war-mono)}
+.equityIdentity{display:grid;gap:3px;min-width:0}
+.equityIdentity b{color:var(--war-text);font:800 14px/1 var(--war-mono)}
+.equityIdentity span{overflow:hidden;color:var(--war-dim);font:600 11px/1.2 var(--font);text-overflow:ellipsis;white-space:nowrap}
+.equityLayer,.equityStance{color:var(--war-dim);font:700 9px/1.35 var(--war-mono);letter-spacing:.04em}
+.equityStrength{display:flex;align-items:center;gap:8px}
+.equityStrength i{flex:1;height:5px;background:#191d24}
+.equityStrength i b{display:block;width:var(--strength);height:100%;background:var(--war-blue)}
+.equityRow--cn .equityStrength i b{background:var(--war-red)}
+.equityStrength span{color:var(--war-text);font:750 10px/1 var(--war-mono)}
+.equityBand{color:var(--war-text);font:700 11px/1.35 var(--war-mono)}
+.equityStance{color:var(--war-green)}
+.equityRow details{justify-self:end;position:relative}
+.equityRow summary{
+  min-height:36px;
+  display:grid;
+  place-items:center;
+  padding:0 9px;
+  border:1px solid var(--war-line-hot);
+  color:var(--war-text);
+  font:700 8px/1 var(--war-mono);
+  letter-spacing:.06em;
+  cursor:pointer;
+  list-style:none;
+}
+.equityRow summary::-webkit-details-marker{display:none}
+.equityRow details[open]{grid-column:2/-1;justify-self:stretch;padding:8px 0 6px}
+.equityRow details[open] summary{display:none}
+.equityRow details p{margin:0;color:#c1c6d0;font:500 13px/1.58 var(--font)}
+.equityRow details small{display:block;margin-top:8px;color:var(--war-dim);font:500 11px/1.5 var(--font)}
+.equityRow details small b{margin-right:6px;color:var(--war-amber);font:700 8px/1 var(--war-mono)}
+
+.letterAudit{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--war-line-hot);background:var(--war-panel)}
+.letterAudit>div{display:grid;grid-template-columns:1fr auto;gap:12px;padding:28px}
+.letterAudit>div+div{border-left:1px solid var(--war-line)}
+.letterAudit span{color:var(--war-green);font:750 9px/1 var(--war-mono);letter-spacing:.1em}
+.letterAudit b{grid-row:1/span 2;grid-column:2;color:var(--war-text);font:800 clamp(54px,8vw,92px)/.8 var(--war-mono)}
+.letterAudit p{margin:16px 0 0;color:var(--war-dim);font:500 13px/1.6 var(--font)}
+.letterAudit a{color:var(--war-green);text-decoration:underline;text-underline-offset:3px}
+.letterNames{display:grid;grid-template-columns:repeat(5,1fr);border-left:1px solid var(--war-line);border-top:1px solid var(--war-line)}
+.letterName{
+  min-width:0;
+  min-height:76px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:10px;
+  padding:14px;
+  border-right:1px solid var(--war-line);
+  border-bottom:1px solid var(--war-line);
+  background:var(--war-panel);
+}
+.letterName b{overflow-wrap:anywhere;color:var(--war-text);font:700 12px/1.25 var(--font)}
+.letterName small{font:700 7px/1 var(--war-mono);letter-spacing:.08em}
+.letterName.is-official small{color:var(--war-green)}
+.letterName.is-screenshot small{color:var(--war-amber)}
+.letterAdditions,.letterMissing{margin-top:24px;padding:26px;border:1px solid var(--war-line);background:var(--war-panel)}
+.letterAdditions h3,.letterMissing h3{margin:0 0 18px;color:var(--war-text);font:720 24px/1 var(--war-font);text-transform:uppercase}
+.letterAdditions>div{display:flex;flex-wrap:wrap;gap:7px}
+.letterAdditions>div span{padding:7px 9px;border:1px solid var(--war-line);color:var(--war-dim);font:650 9px/1 var(--war-mono)}
+.letterMissing>div{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--war-line)}
+.letterMissing article{min-height:130px;padding:17px;background:var(--war-panel)}
+.letterMissing article b{color:var(--war-red-hot);font:750 14px/1.2 var(--war-mono)}
+.letterMissing article p{margin:12px 0 0;color:var(--war-dim);font:500 12px/1.55 var(--font)}
+
+.thesisGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.thesisCard{
+  position:relative;
+  min-height:330px;
+  padding:28px;
+  border:1px solid var(--war-line);
+  overflow:hidden;
+  background:
+    linear-gradient(135deg,rgba(143,255,193,.04),transparent 45%),
+    var(--war-panel);
+}
+.thesisCard>span{position:absolute;right:20px;top:12px;color:#222832;font:900 74px/1 var(--war-mono)}
+.thesisCard h3{position:relative;max-width:75%;margin:70px 0 18px;color:var(--war-text);font:720 clamp(27px,3.1vw,39px)/.98 var(--war-font);text-transform:uppercase}
+.thesisCard p{position:relative;max-width:82%;margin:0;color:#b8bec9;font:500 14px/1.65 var(--font)}
+.thesisCard>b{position:absolute;left:28px;bottom:64px;color:var(--war-green);font:750 9px/1 var(--war-mono);letter-spacing:.08em}
+.thesisCard small{position:absolute;left:28px;right:28px;bottom:24px;color:var(--war-dim);font:500 10px/1.4 var(--font)}
+.thesisCard small strong{margin-right:7px;color:var(--war-amber);font:700 8px/1 var(--war-mono);letter-spacing:.07em}
+
+.rivalrySources{margin:clamp(84px,11vw,148px) 0 40px;padding:30px;border:1px solid var(--war-line);background:var(--war-panel)}
+.rivalrySources>h2{margin:0;color:var(--war-text);font:720 30px/1 var(--war-font);text-transform:uppercase}
+.rivalrySources #rivalrySources>p{max-width:880px;margin:16px 0;color:var(--war-dim);font:500 13px/1.6 var(--font)}
+.rivalrySources #rivalrySources>div{display:flex;flex-wrap:wrap;gap:7px}
+.sourceLink{padding:7px 9px;border:1px solid var(--war-line);color:var(--war-dim);font:650 9px/1.2 var(--war-mono)}
+.sourceLink:hover{border-color:var(--war-green);color:var(--war-green)}
+.sourceLink--primary::before{content:"PRIMARY · ";color:var(--war-green)}
+.sourceLink--reported::before{content:"REPORTED · ";color:var(--war-amber)}
+
+@media(max-width:1080px){
+  .rivalrySectionHead{grid-template-columns:150px 1fr}
+  .rivalrySectionHead p{grid-column:2}
+  #rivalryK3{grid-template-columns:1fr}
+  .k3Modules{grid-template-columns:repeat(4,1fr)}
+  .k3Module{min-height:200px}
+  .k3Module h3{margin-top:32px}
+  .eventStudy{grid-template-columns:1fr 1fr}
+  .eventCell:nth-child(2){border-right:0}
+  .eventCell:nth-child(-n+2){border-bottom:1px solid var(--war-line)}
+  .transmissionChain{grid-template-columns:1fr 1fr}
+  .transmissionNode:nth-child(2)::after{display:none}
+  .equityColumns{display:none}
+  .equityRow{grid-template-columns:38px 130px minmax(130px,.9fr) minmax(120px,.6fr) minmax(140px,.7fr) 90px}
+  .equityStance{display:none}
+  .letterNames{grid-template-columns:repeat(4,1fr)}
+}
+
+@media(max-width:820px){
+  .sectors-page .shell{width:min(100% - 28px,1280px)}
+  .rivalryHero{min-height:760px;grid-template-columns:1fr;align-items:end;padding-top:112px}
+  .rivalryHero::after{left:auto;right:22%}
+  .rivalryHeroVerdict{width:min(100%,560px);grid-template-columns:1fr 1fr 1fr}
+  .rivalryHeroVerdict span{grid-column:1/-1}
+  .rivalryHeroVerdict b{border-bottom:0;border-right:1px solid var(--war-line)}
+  .rivalryHeroVerdict b:last-child{border-right:0}
+  .rivalrySectionHead{grid-template-columns:1fr}
+  .rivalrySectionHead p{grid-column:auto}
+  .k3Modules{grid-template-columns:1fr 1fr}
+  .costFrontierPanel{grid-template-columns:1fr}
+  .labTheatre{grid-template-columns:1fr;padding:12px}
+  .labBloc--cn>header{text-align:left}
+  .labMeridian{height:70px;flex-direction:row;justify-content:center}
+  .labMeridian i{left:0;right:0;top:50%;bottom:auto;width:auto;height:1px;background:linear-gradient(90deg,var(--war-blue),var(--war-text),var(--war-red))}
+  .labMeridian b{position:relative;top:auto}
+  .labMeridian span{position:relative;top:auto;margin:0 0 0 10px}
+  .transmissionChain{grid-template-columns:1fr}
+  .transmissionNode:not(:last-child)::after{display:none}
+  .transmissionNode{min-height:240px}
+  .transmissionHeader{align-items:start;flex-direction:column}
+  .transmissionHeader h3{text-align:left}
+  .valuationIntro{grid-template-columns:1fr}
+  .equityRow{grid-template-columns:34px 1fr 1fr}
+  .equityLayer{grid-column:2}
+  .equityStrength{grid-column:3;grid-row:1}
+  .equityBand{grid-column:3;grid-row:2}
+  .equityRow details{grid-column:2/-1;grid-row:3;justify-self:start}
+  .equityRow details[open]{grid-column:2/-1}
+  .letterAudit{grid-template-columns:1fr}
+  .letterAudit>div+div{border-left:0;border-top:1px solid var(--war-line)}
+  .letterMissing>div{grid-template-columns:1fr 1fr}
+  .thesisCard h3,.thesisCard p{max-width:90%}
+}
+
+@media(max-width:560px){
+  .rivalryHero{min-height:720px;padding-left:20px;padding-right:20px}
+  .rivalryHeroSignal--cn{display:none}
+  .rivalryHero h1{font-size:clamp(41px,13.3vw,70px)}
+  html[lang^="zh"] .rivalryHero h1{font-size:clamp(39px,11.5vw,50px)}
+  .rivalryHeroVerdict{grid-template-columns:1fr}
+  .rivalryHeroVerdict b{border-right:0;border-bottom:1px solid var(--war-line)}
+  .rivalryHeroVerdict b:last-child{border-bottom:0}
+  .rivalryStats{grid-template-columns:1fr 1fr}
+  .k3Modules{grid-template-columns:1fr}
+  .k3Module{min-height:180px}
+  .costRow{grid-template-columns:1fr 48px;gap:10px}
+  .costPlot{grid-column:1}
+  .costRow>strong{grid-column:2;grid-row:1/span 2}
+  .costLegend{grid-template-columns:1fr}
+  .eventStudy{grid-template-columns:1fr}
+  .eventCell{min-height:300px;border-right:0;border-bottom:1px solid var(--war-line)}
+  .eventCell:last-child{border-bottom:0}
+  .labBloc>header{min-height:100px}
+  .labVectors{gap:3px}
+  .equityBoard>header{align-items:start;flex-direction:column}
+  .equityRow{grid-template-columns:30px 1fr}
+  .equityStrength{grid-column:2;grid-row:auto}
+  .equityBand{grid-column:2;grid-row:auto}
+  .equityLayer{grid-column:2}
+  .equityRow details{grid-column:2}
+  .letterNames{grid-template-columns:1fr 1fr}
+  .letterAudit>div{padding:22px}
+  .letterAudit b{font-size:54px}
+  .letterMissing>div{grid-template-columns:1fr}
+  .thesisGrid{grid-template-columns:1fr}
+  .thesisCard{min-height:350px}
+  .rivalrySources{padding:22px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .k3Module{transition:none}
+}

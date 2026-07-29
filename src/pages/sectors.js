@@ -1,42 +1,33 @@
 import './sectorsLibs.js';
-import { installBrandAssets } from '../sectors/brandAssets.js';
-import { createSectorsCardsController } from '../sectors/cardsController.js';
 import { currentLanguage, emptyMessage } from '../sectors/content.js';
 import { createSectorsDataController } from '../sectors/dataController.js';
 import { initSectorsPageChrome } from '../sectors/pageChromeController.js';
+import { initSectorsRivalryController } from '../sectors/rivalryController.js';
 import { initSectorsStoryController } from '../sectors/storyController.js';
 
 let sectorsData = null;
 let destroyed = false;
 
 const byId = (id) => document.getElementById(id);
-const cards = createSectorsCardsController({
-  modelAsOf: byId('mwAsOf'),
-  modelGrid: byId('mwGrid'),
-  modelBaskets: byId('mwBaskets'),
-  modelTake: byId('mwTake'),
-  postAsOf: byId('pmAsOf'),
-  postTracks: byId('pmTracks'),
-  postGrid: byId('pmGrid'),
-  postSwap: byId('pmSwap'),
-  postTake: byId('pmTake'),
-  storyTake: byId('storyTake'),
-  newsGrid: byId('newsGrid'),
-}, {
-  getData: () => sectorsData,
-  getLanguage: currentLanguage,
-});
 
 const dataController = createSectorsDataController();
-const destroyBrandAssets = installBrandAssets();
 const destroyChrome = initSectorsPageChrome();
 const destroyStory = initSectorsStoryController();
+const rivalry = initSectorsRivalryController({
+  k3: byId('rivalryK3'),
+  cost: byId('rivalryCost'),
+  labs: byId('rivalryLabs'),
+  event: byId('rivalryEvent'),
+  transmission: byId('rivalryTransmission'),
+  equities: byId('rivalryEquities'),
+  letter: byId('rivalryLetter'),
+  theses: byId('rivalryTheses'),
+  sources: byId('rivalrySources'),
+});
 
 let graphObserver = null;
 let graph = null;
 let graphTask = null;
-let competitionObserver = null;
-let destroyCompetition = () => {};
 
 async function loadGraphController() {
   if (destroyed) return null;
@@ -105,51 +96,10 @@ function scheduleGraph() {
   graphObserver.observe(story);
 }
 
-async function startCompetition() {
-  competitionObserver?.disconnect();
-  competitionObserver = null;
-  try {
-    const { initSectorsCompetitionController } = await import('../sectors/competitionController.js');
-    if (destroyed) return;
-    destroyCompetition = initSectorsCompetitionController({
-      radar: byId('rbRadarHost'),
-      table: byId('rbTableHost'),
-      boards: byId('rbBoardsHost'),
-      scoreboard: byId('rbScoreHost'),
-      provenance: byId('rbCompetitionProv'),
-    });
-  } catch {
-    const radar = byId('rbRadarHost');
-    if (radar) {
-      radar.innerHTML = `<div class="empty">${emptyMessage(currentLanguage())}</div>`;
-    }
-  }
-}
-
-function scheduleCompetition() {
-  const host = byId('rbRadarHost');
-  const section = host?.closest('section') || host;
-  if (!section || typeof IntersectionObserver !== 'function') {
-    void startCompetition();
-    return;
-  }
-  competitionObserver = new IntersectionObserver((entries) => {
-    if (!entries.some((entry) => entry.isIntersecting)) return;
-    void startCompetition();
-  }, { rootMargin: '900px 0px' });
-  competitionObserver.observe(section);
-}
-
-scheduleCompetition();
-
 function renderFailure() {
   const message = emptyMessage(currentLanguage());
-  const modelGrid = byId('mwGrid');
-  const postGrid = byId('pmGrid');
   const graphCanvas = byId('mwGraph');
   const graphEmpty = byId('mwEmpty');
-  if (modelGrid) modelGrid.innerHTML = `<div class="empty">${message}</div>`;
-  if (postGrid) postGrid.innerHTML = `<div class="empty">${message}</div>`;
   if (graphCanvas) graphCanvas.hidden = true;
   if (graphEmpty) {
     graphEmpty.hidden = false;
@@ -161,7 +111,12 @@ dataController.load()
   .then((data) => {
     if (destroyed) return;
     sectorsData = data;
-    cards.render();
+    const asOf = byId('mwAsOf');
+    if (asOf) {
+      asOf.textContent = currentLanguage() === 'zh'
+        ? `关系数据快照 · ${data.as_of || data.updated || ''}`
+        : `Relationship data snapshot · ${data.as_of || data.updated || ''}`;
+    }
     scheduleGraph();
   })
   .catch((error) => {
@@ -170,7 +125,12 @@ dataController.load()
 
 const onLanguage = () => {
   if (!sectorsData) return;
-  cards.render();
+  const asOf = byId('mwAsOf');
+  if (asOf) {
+    asOf.textContent = currentLanguage() === 'zh'
+      ? `关系数据快照 · ${sectorsData.as_of || sectorsData.updated || ''}`
+      : `Relationship data snapshot · ${sectorsData.as_of || sectorsData.updated || ''}`;
+  }
   graph?.refreshLanguage();
 };
 addEventListener('afflatus-lang', onLanguage);
@@ -182,13 +142,10 @@ addEventListener('pagehide', (event) => {
   if (event.persisted) return;
   destroyed = true;
   graphObserver?.disconnect();
-  competitionObserver?.disconnect();
   dataController.destroy();
   graph?.destroy();
-  cards.destroy();
+  rivalry.destroy();
   destroyStory();
-  destroyCompetition();
   destroyChrome();
-  destroyBrandAssets();
   removeEventListener('afflatus-lang', onLanguage);
 });

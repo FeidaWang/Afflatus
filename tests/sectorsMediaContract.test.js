@@ -33,14 +33,14 @@ describe('sectors media contract', () => {
     expect(totalBytes).toBeLessThan(1.2 * 1024 * 1024);
   });
 
-  it('reserves the mobile header and hero and defers below-fold visualizers', () => {
+  it('reserves the mobile header and model-war hero and defers the graph visualizer', () => {
     const css = readFileSync('public/styles/sectors.css', 'utf8');
     const entry = readFileSync('src/pages/sectors.js', 'utf8');
     expect(css).toContain('@media(min-width:371px) and (max-width:440px){.top{height:137px}}');
-    expect(css).toContain('@media(min-width:371px) and (max-width:440px){.heroCard{min-height:600px}}');
+    expect(css).toContain('.rivalryHero{');
+    expect(css).toContain('@media(max-width:560px)');
     expect(entry).toContain("import('../sectors/graphController.js')");
-    expect(entry).toContain("import('../sectors/competitionController.js')");
+    expect(entry).toContain("import { initSectorsRivalryController } from '../sectors/rivalryController.js'");
     expect(entry).not.toMatch(/^import .*graphController/m);
-    expect(entry).not.toMatch(/^import .*competitionController/m);
   });
 });

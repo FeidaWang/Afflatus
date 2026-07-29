@@ -64,18 +64,18 @@ export const ROUTE_SEO = Object.freeze({
   sectors: {
     social: {
       background: 'assets/og-backgrounds/sectors.jpg',
-      eyebrow: { en: 'AI ECOSYSTEM', zh: 'AI 生态' },
+      eyebrow: { en: 'MODEL WAR', zh: '模型战争' },
       title: {
-        en: 'Two ecosystems. One supply chain.',
-        zh: '两套生态，一条供应链。',
+        en: 'Open weights. Closed frontier.',
+        zh: '开放权重，闭源前沿。',
       },
       subtitle: {
-        en: 'A structured map of the US–China AI stack.',
-        zh: '结构化观察中美 AI 产业链。',
+        en: 'Kimi K3 and the repricing of the US–China AI stack.',
+        zh: 'Kimi K3 与中美 AI 产业链重估。',
       },
       alt: {
-        en: 'Constellation map of the US and China AI ecosystems',
-        zh: '中美 AI 生态系统交互星图',
+        en: 'US and China frontier AI systems in a model-war briefing',
+        zh: '中美前沿 AI 体系模型战争简报',
       },
       images: {
         en: routeOgImage('sectors', 'en'),
@@ -86,7 +86,7 @@ export const ROUTE_SEO = Object.freeze({
       kind: 'sectors',
       provenance: [
         { path: 'public/sectors-ecosystem.json', dateField: 'updated' },
-        { path: 'public/sectors-competition.json', dateField: 'updated' },
+        { path: 'public/sectors-rivalry.json', dateField: 'updated' },
       ],
     },
   },
@@ -268,21 +268,21 @@ export const SITE_MANIFEST = Object.freeze([
     seo: ROUTE_SEO.sectors,
     capabilities: ['canvas', 'webgl', 'graph'],
     metadata: {
-      title: 'Project Afflatus · Sectors',
-      description: 'Sector analysis from the Afflatus captain log: US-equity convictions across the AI-infrastructure stack — NVDA, AVGO, MU, SKHY, TSM, ASML. Desk view, not advice.',
+      title: 'Project Afflatus · US–China AI Model War',
+      description: 'Kimi K3, open weights, frontier-lab rivalry and a scenario-based repricing of 10 US and 10 China-listed AI instruments. Desk view, not advice.',
       canonical: 'https://feida.au/sectors.html',
-      ogTitle: 'Project Afflatus · Sectors',
-      ogDescription: 'One frontier worth paying up for: the AI-infrastructure stack — compute, custom silicon, memory, foundry and the toolmakers. Desk view, not advice.',
+      ogTitle: 'Open Weights. Closed Frontier. · Afflatus',
+      ogDescription: 'Kimi K3 and the repricing of the US–China AI stack: model margin, token volume, physical chokepoints and distribution. Not investment advice.',
       ogImage: ROUTE_SEO.sectors.social.images.en,
     },
     locales: {
       en: {
-        title: 'Sectors — AI Infrastructure · Project Afflatus',
-        description: 'A desk view of the AI-infrastructure stack from compute and custom silicon to memory, foundry, and equipment. Not investment advice.',
+        title: 'Sectors — US–China AI Model War · Afflatus',
+        description: 'Kimi K3, open weights, ten frontier labs and 20 listed AI instruments assessed across model economics, compute and distribution. Not investment advice.',
       },
       zh: {
-        title: '板块 — AI 基础设施 · Project Afflatus',
-        description: '从算力、定制芯片、存储、晶圆代工到设备制造商的 AI 基础设施个人案头观点。非投资建议。',
+        title: '板块 — 中美 AI 模型战争 · Afflatus',
+        description: '围绕 Kimi K3、开放权重、十家前沿实验室与二十只上市 AI 标的，分析模型经济性、算力与分发。非投资建议。',
       },
     },
   },

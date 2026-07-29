@@ -41,10 +41,14 @@ import {
       const nextLocale = lang === 'zh' ? 'en' : 'zh';
       b.textContent = nextLocale === 'zh' ? '中文' : 'EN';
       b.setAttribute('aria-label', nextLocale === 'zh' ? '切换到中文' : 'Switch to English');
-      b.setAttribute('aria-pressed', lang === 'zh');
       if (b.matches('a[href]')) {
+        // Fixed-locale builds turn this control into a real cross-locale link.
+        // aria-pressed is valid for the adaptive button, but not for an anchor.
+        b.removeAttribute('aria-pressed');
         b.setAttribute('href', localeSwitchHref(window.location, nextLocale));
         b.setAttribute('hreflang', nextLocale === 'zh' ? 'zh-CN' : 'en');
+      } else {
+        b.setAttribute('aria-pressed', lang === 'zh');
       }
     });
   }
