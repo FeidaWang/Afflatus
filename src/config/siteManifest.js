@@ -396,10 +396,10 @@ export const SITE_MANIFEST = Object.freeze([
     seo: ROUTE_SEO.serial,
     capabilities: ['reader', 'local-state', 'audio'],
     metadata: {
-      title: 'Project Afflatus · Novels — 小说连载书架',
+      title: 'Project Afflatus · 小说连载书架',
       description: 'Project Afflatus 小说书架：《万界种春》（无限流·种田·多女主）、《长夜请柬》（无限流·悬疑推理·大女主成长）等原创连载，复古未来主义视觉，纯中文护眼阅读，每日更新。',
       canonical: 'https://feida.au/serial.html',
-      ogTitle: 'Project Afflatus · Novels — 小说连载书架',
+      ogTitle: 'Project Afflatus · 小说连载书架',
       ogDescription: '多部无限流原创小说连载，护眼阅读，每日更新。',
       ogImage: ROUTE_SEO.serial.social.images.zh,
     },

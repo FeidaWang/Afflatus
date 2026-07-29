@@ -464,10 +464,11 @@ function buildSerialGraph(route, locale, facts, url) {
     listItem(index + 1, { '@id': entry['@id'] }),
   );
   const page = basePageNode(route, locale, facts, url, 'CollectionPage');
+  page.inLanguage = 'zh-CN';
   page.mainEntity = { '@id': `${url}#bookshelf` };
   return [
     personNode(),
-    websiteNode(languageValue(route, locale)),
+    websiteNode('zh-CN'),
     imageNode(route, locale, url),
     page,
     {
@@ -606,7 +607,9 @@ export function renderRouteSeoBlock(route, {
     `<meta property="og:description" content="${escapeAttribute(description)}">`,
     `<meta property="og:url" content="${escapeAttribute(url)}">`,
     `<meta property="og:locale" content="${OG_LOCALES[key]}">`,
-    `<meta property="og:locale:alternate" content="${OG_LOCALES[key === 'en' ? 'zh' : 'en']}">`,
+    ...(route.id === 'serial'
+      ? []
+      : [`<meta property="og:locale:alternate" content="${OG_LOCALES[key === 'en' ? 'zh' : 'en']}">`]),
     `<meta property="og:image" content="${escapeAttribute(image)}">`,
     `<meta property="og:image:secure_url" content="${escapeAttribute(image)}">`,
     `<meta property="og:image:type" content="${SOCIAL_CARD.format}">`,

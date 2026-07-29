@@ -72,6 +72,18 @@ const meta = (file, document, selector) => {
 
 const expectedDocument = (route, locale) => {
   if (locale === 'adaptive') {
+    if (route.id === 'serial') {
+      return {
+        canonical: route.metadata.canonical,
+        title: route.locales.zh.title,
+        description: route.locales.zh.description,
+        ogTitle: route.locales.zh.title,
+        ogDescription: route.locales.zh.description,
+        image: route.seo.social.images.zh,
+        imageAlt: route.seo.social.alt.zh,
+        htmlLang: 'zh-CN',
+      };
+    }
     return {
       canonical: route.metadata.canonical,
       title: route.metadata.title,
@@ -102,6 +114,7 @@ const relativeDocumentPath = (route, locale) => {
 
 for (const route of activeRoutes) {
   for (const locale of ['adaptive', ...SITE_LOCALES]) {
+    if (route.id === 'serial' && locale === 'en') continue;
     const relativePath = relativeDocumentPath(route, locale);
     const filePath = path.join(outputRoot, relativePath);
     if (!existsSync(filePath)) {
@@ -159,8 +172,9 @@ for (const route of activeRoutes) {
     }
 
     if (h1s.length !== 1) fail(relativePath, `expected one h1, found ${h1s.length}`);
-    if (alternates.length !== 3) {
-      fail(relativePath, `expected three hreflang alternates, found ${alternates.length}`);
+    const expectedAlternateCount = route.id === 'serial' ? 2 : 3;
+    if (alternates.length !== expectedAlternateCount) {
+      fail(relativePath, `expected ${expectedAlternateCount} hreflang alternates, found ${alternates.length}`);
     }
     if (jsonScripts.length !== 1) {
       fail(relativePath, `expected one JSON-LD graph, found ${jsonScripts.length}`);
@@ -207,7 +221,7 @@ for (const indexedNovel of novelsIndex.novels || []) {
       'utf8',
     ),
   );
-  for (const locale of ['adaptive', ...SITE_LOCALES]) {
+  for (const locale of ['adaptive', 'zh']) {
     for (const chapter of [null, ...(book.chapters || [])]) {
       const routeInput = {
         locale,
@@ -249,7 +263,6 @@ for (const indexedNovel of novelsIndex.novels || []) {
           && attr(node, 'hreflang'),
       );
       const expectedAlternates = new Map([
-        ['en', readerUrl({ ...routeInput, locale: 'en' })],
         ['zh-CN', readerUrl({ ...routeInput, locale: 'zh' })],
         ['x-default', readerUrl({ ...routeInput, locale: 'adaptive' })],
       ]);
@@ -335,5 +348,5 @@ if (failures.length) {
 }
 
 console.log(
-  `OK: emitted SEO (${activeRoutes.length * 3} route documents + ${novelDocumentCount} novel documents, adaptive + EN/ZH)`,
+  `OK: emitted SEO (${activeRoutes.length * 3 - 1} route documents + ${novelDocumentCount} novel documents; serial is Chinese-only)`,
 );

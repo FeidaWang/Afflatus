@@ -25,29 +25,33 @@ describe('pre-rendered novel documents', () => {
     expect(source).not.toContain('if (load(saved < tracks.length ? saved : 0)) play();');
   });
 
-  it('re-arms waterfall observers after reaching the end or switching books', () => {
-    expect(source).toContain('if (wfHeaderObserver) wfHeaderObserver.disconnect();');
-    expect(source).toContain('if (wfSentinelObserver) wfSentinelObserver.disconnect();');
-    expect(source).toContain('if (wfSentinelObserver) wfSentinelObserver.observe(wfSentinel);');
+  it('uses a paged book surface with sound, swipe and chapter-boundary handoff', () => {
+    expect(source).toContain("serialApi.createPagedBook({");
+    expect(source).toContain("pageSoundToggle");
+    expect(source).toContain("pagePreviousHotspot");
+    expect(source).toContain("pageNextHotspot");
+    expect(source).toContain("pageIndex:direction > 0 ? 0 : 'last'");
+    expect(source).not.toContain('initWaterfall(');
   });
 
-  it('emits a crawlable chapter with stable localized metadata and navigation', () => {
+  it('emits a crawlable Chinese chapter with stable metadata and navigation', () => {
     const chapter = entry.chapters[0];
-    const html = transformNovelPageDocument(source, catalog, entry, chapter, 'en');
+    const html = transformNovelPageDocument(source, catalog, entry, chapter, 'zh');
 
     expect(html).toContain(
-      '<link rel="canonical" href="https://feida.au/en/novels/wanjie-zhongchun/1/">',
+      '<link rel="canonical" href="https://feida.au/zh/novels/wanjie-zhongchun/1/">',
     );
     expect(html).toContain(
       '<link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/novels/wanjie-zhongchun/1/">',
     );
+    expect(html).not.toContain('hreflang="en"');
     expect(html).toContain('data-reader-route="chapter"');
     expect(html).toContain('data-prerendered="chapter"');
     expect(html).toContain(chapter.title);
     expect(html).toContain(chapter.blocks[0].text);
     expect(html).toContain('"@type":["Chapter","Article"]');
     expect(html).toContain(
-      '<link rel="next" href="https://feida.au/en/novels/wanjie-zhongchun/2/">',
+      '<link rel="next" href="https://feida.au/zh/novels/wanjie-zhongchun/2/">',
     );
   });
 

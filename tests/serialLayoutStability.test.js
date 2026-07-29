@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 const html = readFileSync('serial.html', 'utf8');
 const css = readFileSync('public/styles/serial.css', 'utf8');
 const entry = readFileSync('src/pages/serialLibs.js', 'utf8');
+const pagedBook = readFileSync('src/lib/pagedBook.js', 'utf8');
 
 describe('serial layout stability', () => {
   it('uses self-hosted UI fonts without a render-blocking Google font payload', () => {
@@ -25,5 +26,24 @@ describe('serial layout stability', () => {
     expect(entry).toContain("import('../ui/ambientBackdrops.js')");
     expect(entry).not.toMatch(/^import .*ambientBackdrops/m);
     expect(entry).toContain('15_000');
+  });
+
+  it('is Chinese-only and has no language switch control', () => {
+    expect(html).toContain('<html lang="zh-CN">');
+    expect(html).not.toContain('class="lang-toggle"');
+    expect(html).not.toContain('data-en=');
+    expect(entry).not.toContain("import '../lib/i18n.js'");
+  });
+
+  it('paginates chapters into a physical book with generated page sound', () => {
+    expect(html).toContain('id="bookStage"');
+    expect(html).toContain('id="bookTurn"');
+    expect(html).toContain('id="pageSoundToggle"');
+    expect(css).toContain('@keyframes turnPaperNext');
+    expect(css).toContain('@keyframes openHardCover');
+    expect(pagedBook).toContain('createPagedBook');
+    expect(pagedBook).toContain('context.createBuffer');
+    expect(pagedBook).toContain("stage.addEventListener('pointerdown'");
+    expect(pagedBook).toContain("event.key === 'ArrowRight'");
   });
 });

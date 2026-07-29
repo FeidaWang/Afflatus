@@ -35,24 +35,27 @@ function fail(message) {
 }
 
 function generatedSitemap() {
-  const routeRows = SITEMAP_ROUTES.flatMap((route) => SITE_LOCALES.map((locale) => {
+  const routeRows = SITEMAP_ROUTES.flatMap((route) => (
+    (route.id === 'serial' ? ['zh'] : SITE_LOCALES).map((locale) => {
     const url = localizedRouteUrl(route, locale);
     const lastModified = routeSeoFacts[route.id]?.dateModified?.slice(0, 10);
     return [
       '  <url>',
       `    <loc>${url}</loc>`,
       ...(lastModified ? [`    <lastmod>${lastModified}</lastmod>`] : []),
-      `    <xhtml:link rel="alternate" hreflang="en" href="${localizedRouteUrl(route, 'en')}"/>`,
+      ...(route.id === 'serial' ? [] : [
+        `    <xhtml:link rel="alternate" hreflang="en" href="${localizedRouteUrl(route, 'en')}"/>`,
+      ]),
       `    <xhtml:link rel="alternate" hreflang="zh-CN" href="${localizedRouteUrl(route, 'zh')}"/>`,
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${route.metadata.canonical}"/>`,
       '  </url>',
     ].join('\n');
-  }));
+  })));
   const novelsIndex = JSON.parse(readFileSync(resolve(ROOT, 'public/novels-index.json'), 'utf8'));
   const novelRows = (novelsIndex.novels || []).flatMap((entry) => {
     const book = JSON.parse(readFileSync(resolve(ROOT, `public/novels/${entry.id}.json`), 'utf8'));
     return [null, ...(book.chapters || [])].flatMap((chapter) => (
-      SITE_LOCALES.map((locale) => {
+      ['zh'].map((locale) => {
         const input = {
           bookId: entry.id,
           ...(chapter ? { chapterId: chapter.id } : {}),
@@ -60,7 +63,6 @@ function generatedSitemap() {
         return [
           '  <url>',
           `    <loc>${readerUrl({ ...input, locale })}</loc>`,
-          `    <xhtml:link rel="alternate" hreflang="en" href="${readerUrl({ ...input, locale: 'en' })}"/>`,
           `    <xhtml:link rel="alternate" hreflang="zh-CN" href="${readerUrl({ ...input, locale: 'zh' })}"/>`,
           `    <xhtml:link rel="alternate" hreflang="x-default" href="${readerUrl({ ...input, locale: 'adaptive' })}"/>`,
           '  </url>',
@@ -248,7 +250,7 @@ function auditRoute(route) {
     }
   }
 
-  if (route.build && route.status !== 'prototype') {
+  if (route.build && route.status !== 'prototype' && route.id !== 'serial') {
     const prepaint = html.match(/<script>([^<]*afflatus:locale:v1[^<]*)<\/script>/i)?.[1] || null;
     if (!prepaint) {
       fail(`${route.file}: missing synchronous locale pre-paint/migration script`);

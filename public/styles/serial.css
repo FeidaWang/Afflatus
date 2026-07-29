@@ -64,16 +64,14 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .nav a::before{content:'';position:absolute;top:-8px;bottom:-8px;left:-1px;right:-1px}
 .nav a:hover{border-color:var(--teal);color:var(--teal)}
 .nav a.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
-.lang-toggle{font:700 10.5px/1 var(--mono);letter-spacing:.08em;color:#1a1410;background:var(--copper-b);border:1px solid var(--copper-b);padding:8px 10px;border-radius:2px}
-.lang-toggle:hover{background:var(--teal);border-color:var(--teal)}
-
 /* ---- bookshelf ---- */
 .shelf{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 .book-skeleton{display:block;min-height:112px;border:1px solid var(--line);background:linear-gradient(105deg,var(--panel) 35%,var(--panel2) 48%,var(--panel) 61%);background-size:220% 100%;animation:shelfScan 1.35s linear infinite}
 @keyframes shelfScan{to{background-position:-220% 0}}
-.book{text-align:left;border:1px solid var(--line);background:var(--panel);padding:14px;border-radius:2px;cursor:pointer;position:relative;overflow:hidden}
-.book::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--copper),var(--teal));opacity:.5;transition:opacity .2s ease}
-.book:hover{border-color:var(--copper-b)}
+.book{text-align:left;border:1px solid var(--line);background:linear-gradient(110deg,#17110d 0 7px,var(--panel2) 8px 12px,var(--panel) 13px 100%);padding:16px 16px 14px 22px;border-radius:2px 7px 7px 2px;cursor:pointer;position:relative;overflow:hidden;min-height:126px;box-shadow:5px 7px 0 rgba(0,0,0,.28),inset -8px 0 14px rgba(0,0,0,.18);transform-origin:left center;transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}
+.book::before{content:"";position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--copper),var(--teal));opacity:.62;box-shadow:2px 0 5px rgba(0,0,0,.45);transition:opacity .2s ease}
+.book::after{content:"";position:absolute;inset:5px;border:1px solid rgba(232,173,111,.13);border-radius:1px 5px 5px 1px;pointer-events:none}
+.book:hover{border-color:var(--copper-b);transform:perspective(700px) rotateY(-5deg) translateY(-3px);box-shadow:9px 12px 0 rgba(0,0,0,.26),inset -8px 0 14px rgba(0,0,0,.18)}
 .book.active{border-color:var(--teal);background:var(--panel2)}
 .book.active::before{opacity:1}
 .book h3{font:400 15px/1.3 var(--serif);color:var(--chrome);margin:0 0 6px;font-weight:700}
@@ -163,6 +161,34 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
    mobile's narrower .pad is already at or under 68ch so it never showed). */
 .reader .body{max-width:68ch;min-height:60vh;margin:0 auto}
 .reader .body p{font:400 var(--read-fs)/1.95 var(--serif);color:var(--read-ink);margin:0 0 1.35em;text-indent:2em;letter-spacing:.02em}
+
+/* ---- physical paged-book reader ---- */
+.book-stage{position:relative;height:clamp(520px,70svh,720px);margin:8px auto 0;max-width:760px;perspective:1900px;isolation:isolate;touch-action:pan-y;user-select:text;filter:drop-shadow(0 16px 18px rgba(0,0,0,.24))}
+.book-stage::before{content:"";position:absolute;inset:7px 2px 5px 9px;z-index:-1;border-radius:4px 11px 11px 5px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--read-ink) 12%,var(--read-bg2)) 0 1px,var(--read-bg2) 1px 3px);box-shadow:7px 8px 0 color-mix(in srgb,var(--read-ink) 18%,transparent),12px 13px 18px rgba(0,0,0,.25)}
+.book-stack{position:absolute;inset:3px 8px 8px 5px;z-index:0;border:1px solid color-mix(in srgb,var(--read-ink) 21%,transparent);border-radius:5px 10px 10px 5px;background:var(--read-bg2);box-shadow:3px 3px 0 color-mix(in srgb,var(--read-bg2) 72%,var(--read-ink)),6px 6px 0 color-mix(in srgb,var(--read-bg2) 84%,var(--read-ink))}
+.book-page{position:absolute;inset:0 11px 11px 0;z-index:2;overflow:hidden;padding:clamp(22px,4vw,40px) clamp(28px,6vw,62px) 48px;border:1px solid color-mix(in srgb,var(--read-ink) 22%,transparent);border-radius:5px 10px 10px 5px;background:repeating-linear-gradient(0deg,transparent 0 27px,color-mix(in srgb,var(--read-ink) 2.8%,transparent) 27px 28px),radial-gradient(circle at 15% 12%,color-mix(in srgb,var(--read-bg) 92%,white) 0,var(--read-bg) 42%,var(--read-bg2) 100%);box-shadow:inset 15px 0 28px rgba(0,0,0,.08),inset -2px 0 0 rgba(255,255,255,.18)}
+.book-page::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.09),transparent 5%,transparent 94%,rgba(0,0,0,.045)),repeating-radial-gradient(circle at 20% 30%,rgba(58,43,23,.022) 0 1px,transparent 1px 4px);mix-blend-mode:multiply}
+.reader .book-page-content,.reader .book-measure,.book-turn-face .body{position:relative;z-index:1;width:100%;height:100%;max-width:none;min-height:0;margin:0;overflow:hidden}
+.reader .book-page-content p,.reader .book-measure p,.book-turn-face .body p{font:400 var(--read-fs)/1.95 var(--serif);color:var(--read-ink);margin:0 0 1.35em;text-indent:2em;letter-spacing:.02em}
+.reader .book-page-content p.page-continuation,.reader .book-measure p.page-continuation,.book-turn-face p.page-continuation{text-indent:0}
+.book-folio{position:absolute;left:clamp(28px,6vw,62px);right:clamp(28px,6vw,62px);bottom:17px;z-index:2;display:flex;justify-content:space-between;gap:12px;padding-top:9px;border-top:1px solid var(--read-line);font:400 10px/1 var(--mono);letter-spacing:.08em;color:var(--read-ink-dim)}
+.book-turn{position:absolute;inset:0 11px 11px 0;z-index:8;display:none;transform-style:preserve-3d;pointer-events:none}
+.book-turn-face{position:absolute;inset:0;overflow:hidden;padding:clamp(22px,4vw,40px) clamp(28px,6vw,62px) 48px;backface-visibility:hidden;border:1px solid color-mix(in srgb,var(--read-ink) 22%,transparent);border-radius:5px 10px 10px 5px;background:radial-gradient(circle at 15% 12%,color-mix(in srgb,var(--read-bg) 92%,white) 0,var(--read-bg) 42%,var(--read-bg2) 100%);box-shadow:inset 15px 0 28px rgba(0,0,0,.08)}
+.book-turn-back{transform:rotateY(180deg);box-shadow:inset -16px 0 30px rgba(0,0,0,.12)}
+.book-stage.is-turning-next .book-turn{display:block;transform-origin:left center;animation:turnPaperNext .68s cubic-bezier(.45,.03,.2,1)}
+.book-stage.is-turning-previous .book-turn{display:block;transform-origin:right center;animation:turnPaperPrevious .68s cubic-bezier(.45,.03,.2,1)}
+@keyframes turnPaperNext{0%{transform:rotateY(0);filter:brightness(1)}48%{filter:brightness(.72)}100%{transform:rotateY(-180deg);filter:brightness(1)}}
+@keyframes turnPaperPrevious{0%{transform:rotateY(0);filter:brightness(1)}48%{filter:brightness(.72)}100%{transform:rotateY(180deg);filter:brightness(1)}}
+.book-hotspot{position:absolute;top:0;bottom:11px;z-index:10;width:12%;min-width:46px;display:grid;place-items:center;font:300 38px/1 var(--serif);color:var(--read-ink-dim);opacity:.12;transition:opacity .2s ease,background .2s ease}
+.book-hotspot:hover,.book-hotspot:focus-visible{opacity:.75;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--read-accent) 10%,transparent))}
+.book-hotspot:disabled{opacity:0;cursor:default}
+.book-hotspot-previous{left:0;border-radius:5px 0 0 5px}
+.book-hotspot-next{right:11px;border-radius:0 10px 10px 0}
+.reader .book-measure{position:fixed;left:-200vw;top:0;z-index:-20;visibility:hidden;pointer-events:none}
+.page-oversize{max-height:100%;overflow:hidden}
+.book-stage::after{content:attr(data-cover-title);position:absolute;inset:-2px 9px 9px -2px;z-index:20;display:grid;place-items:center;padding:32px;border:2px solid #a36a3d;border-radius:4px 12px 12px 4px;background:radial-gradient(circle at 70% 20%,rgba(232,173,111,.18),transparent 30%),linear-gradient(120deg,#241510,#4a281b 55%,#2c1812);box-shadow:inset 8px 0 12px rgba(0,0,0,.45),inset 0 0 0 8px rgba(232,173,111,.08),10px 13px 18px rgba(0,0,0,.35);color:#e8c98a;font:700 clamp(24px,5vw,42px)/1.5 var(--serif);letter-spacing:.14em;text-align:center;transform-origin:left center;transform:rotateY(-105deg);opacity:0;pointer-events:none}
+.book-stage.is-opening::after{animation:openHardCover .88s cubic-bezier(.2,.7,.18,1) both}
+@keyframes openHardCover{0%{transform:rotateY(0);opacity:1}65%{opacity:1}100%{transform:rotateY(-112deg);opacity:0}}
 /* ---- U-sys-panel: SYS blocks = cross-world game terminal ----
    The novel's system prompts (技能升级/结算面板/规则卡) now render as a
    sci-fi "screen" instead of an inline quote box: cool low-blue teal
@@ -245,11 +271,18 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
   .fsize button{padding:8px 9px}
   .spacer{display:none}
   .hero .pad{padding-bottom:20px}
+  .book-stage{height:clamp(470px,68svh,610px)}
+  .book-page,.book-turn-face{padding:22px 25px 45px}
+  .book-folio{left:25px;right:25px;bottom:15px}
+  .book-folio span:last-child{display:none}
+  .sys-head .sys-tag{display:none}
+  .book-hotspot{width:15%;opacity:.18}
 }
 @media (prefers-reduced-motion: reduce){
   .book-skeleton{animation:none}
   .toc-drawer,.toc-backdrop,.fab-menu,.reader-progress i,.toast{transition:none}
   .sys-dot{animation:none}
+  .book-stage.is-turning-next .book-turn,.book-stage.is-turning-previous .book-turn,.book-stage.is-opening::after{animation:none}
   /* U30 R1: kill the shelf→hero morph animation, keep the instant swap */
   ::view-transition-group(novelMorph),::view-transition-old(novelMorph),::view-transition-new(novelMorph){animation:none!important}
 }

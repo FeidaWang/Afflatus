@@ -3,9 +3,9 @@
  * (see homeLibs.js for why this pattern replaces individual script tags).
  * Order matches the original <script> tag order exactly.
  */
-import '../lib/i18n.js';
 import '../lib/nav.js';
 import '../lib/transition.js';
+import { createPagedBook } from '../lib/pagedBook.js';
 import {
   createReaderStore,
   createStorageAdapter,
@@ -21,11 +21,21 @@ import {
 
 window.AfflatusSerial = Object.freeze({
   chapterIdEquals,
+  createPagedBook,
   createReaderStore,
   createStorageAdapter,
   parseReaderPath,
   readerLocale,
   readerPath,
+});
+
+// This route is intentionally Chinese-only. nav.js still emits its shared
+// bilingual data attributes, so select the Chinese labels locally without
+// persisting or changing the visitor's language preference elsewhere.
+document.documentElement.lang = 'zh-CN';
+document.querySelectorAll('[data-zh]').forEach((node) => {
+  const value = node.getAttribute('data-zh');
+  if (value != null) node.textContent = value;
 });
 window.dispatchEvent(new CustomEvent('afflatus-serial-ready'));
 

@@ -15,6 +15,16 @@
       "source": "/games.html",
       "destination": "/stats.html",
       "permanent": false
+    },
+    {
+      "source": "/en/serial.html",
+      "destination": "/zh/serial.html",
+      "permanent": true
+    },
+    {
+      "source": "/en/novels/:path*",
+      "destination": "/zh/novels/:path*",
+      "permanent": true
     }
   ],
   "headers": [

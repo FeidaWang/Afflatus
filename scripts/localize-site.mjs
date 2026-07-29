@@ -209,7 +209,8 @@ function setLinkHref(document, rel, href) {
 function setDocumentMetadata(document, route, locale = null) {
   const head = element(document, 'head');
   const title = element(document, 'title');
-  const fixed = locale ? route.locales[locale] : null;
+  const metadataLocale = locale || (route.id === 'serial' ? 'zh' : null);
+  const fixed = metadataLocale ? route.locales[metadataLocale] : null;
   const canonical = locale ? localizedRouteUrl(route, locale) : route.metadata.canonical;
 
   if (title && fixed) setText(title, fixed.title);
@@ -219,13 +220,13 @@ function setDocumentMetadata(document, route, locale = null) {
     setMetaContent(document, { property: 'og:title' }, fixed.title);
     setMetaContent(document, { property: 'og:description' }, fixed.description);
     setMetaContent(document, { property: 'og:url' }, canonical);
-    setMetaContent(document, { property: 'og:image' }, social.images[locale]);
-    setMetaContent(document, { property: 'og:image:secure_url' }, social.images[locale]);
-    setMetaContent(document, { property: 'og:image:alt' }, social.alt[locale]);
+    setMetaContent(document, { property: 'og:image' }, social.images[metadataLocale]);
+    setMetaContent(document, { property: 'og:image:secure_url' }, social.images[metadataLocale]);
+    setMetaContent(document, { property: 'og:image:alt' }, social.alt[metadataLocale]);
     setMetaContent(document, { name: 'twitter:title' }, fixed.title);
     setMetaContent(document, { name: 'twitter:description' }, fixed.description);
-    setMetaContent(document, { name: 'twitter:image' }, social.images[locale]);
-    setMetaContent(document, { name: 'twitter:image:alt' }, social.alt[locale]);
+    setMetaContent(document, { name: 'twitter:image' }, social.images[metadataLocale]);
+    setMetaContent(document, { name: 'twitter:image:alt' }, social.alt[metadataLocale]);
   }
   setLinkHref(document, 'canonical', canonical);
 
@@ -252,6 +253,29 @@ function setDocumentMetadata(document, route, locale = null) {
     );
   }
   setRouteJsonLd(document, route, locale || 'adaptive');
+}
+
+function makeSerialChineseOnly(document) {
+  for (const node of all(document, (candidate) => (
+    candidate.tagName === 'link'
+    && getAttr(candidate, 'rel') === 'alternate'
+    && getAttr(candidate, 'hreflang') === 'en'
+  ))) {
+    removeNode(node);
+  }
+  for (const node of all(document, (candidate) => (
+    candidate.tagName === 'meta'
+    && getAttr(candidate, 'property') === 'og:locale:alternate'
+  ))) {
+    removeNode(node);
+  }
+  for (const node of all(document, (candidate) => (
+    hasClass(candidate, 'lang-toggle')
+    || getAttr(candidate, 'id') === 'langBtn'
+    || getAttr(candidate, 'id') === 'langMiniToggle'
+  ))) {
+    removeNode(node);
+  }
 }
 
 function setHtmlFragmentAtEnd(node, markup) {
@@ -376,11 +400,16 @@ function validateLocalizedDocument(document, route, locale) {
   if (getAttr(html, 'lang') !== HTML_LANG[locale]) errors.push(`html lang is not ${HTML_LANG[locale]}`);
   if (getAttr(html, 'data-afflatus-locale') !== locale) errors.push('missing fixed locale marker');
   if (getAttr(canonical, 'href') !== localizedRouteUrl(route, locale)) errors.push('canonical is not self-referential');
-  if (alternates.length !== 3) errors.push(`expected 3 hreflang links, found ${alternates.length}`);
+  const chineseOnly = route.id === 'serial';
+  const expectedAlternates = chineseOnly ? 2 : 3;
+  if (alternates.length !== expectedAlternates) {
+    errors.push(`expected ${expectedAlternates} hreflang links, found ${alternates.length}`);
+  }
   if (h1s.length !== 1) errors.push(`expected one h1, found ${h1s.length}`);
-  if (!languageLinks.length || languageLinks.some((node) => node.tagName !== 'a' || !getAttr(node, 'href'))) {
+  if (!chineseOnly && (!languageLinks.length || languageLinks.some((node) => node.tagName !== 'a' || !getAttr(node, 'href')))) {
     errors.push('language switch is not a crawlable link');
   }
+  if (chineseOnly && languageLinks.length) errors.push('Chinese-only serial route still has a language switch');
   if (all(document, (node) => node.tagName === 'script' && textContent(node).includes('document.documentElement.lang') && textContent(node).includes('afflatus:locale:v1')).length) {
     errors.push('adaptive locale prepaint remains in fixed locale document');
   }
@@ -400,6 +429,7 @@ export function transformLocalizedDocument(source, route, locale) {
   injectStaticNavigation(document, route, locale);
   convertLanguageLinks(document, route, locale);
   setDocumentMetadata(document, route, locale);
+  if (route.id === 'serial') makeSerialChineseOnly(document);
 
   const errors = validateLocalizedDocument(document, route, locale);
   if (errors.length) throw new Error(`${route.id}/${locale}: ${errors.join('; ')}`);
@@ -413,6 +443,7 @@ export function transformAdaptiveDocument(source, route) {
   injectStaticNavigation(document, route, null);
   convertLanguageLinks(document, route, null);
   setDocumentMetadata(document, route, null);
+  if (route.id === 'serial') makeSerialChineseOnly(document);
   return serialize(document);
 }
 
@@ -492,7 +523,6 @@ function setNovelAlternates(document, input) {
   removeLinksByRel(document, 'alternate');
   if (!head) return;
   setHtmlFragmentAtEnd(head, [
-    ['en', readerUrl({ ...input, locale: 'en' })],
     ['zh-CN', readerUrl({ ...input, locale: 'zh' })],
     ['x-default', readerUrl({ ...input, locale: 'adaptive' })],
   ].map(([hreflang, href]) => (
@@ -631,7 +661,6 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
 export function generateNovelDocuments(outputRoot, catalog = loadNovelCatalog()) {
   const templates = [
     ['adaptive', resolve(outputRoot, 'serial.html')],
-    ['en', resolve(outputRoot, 'en/serial.html')],
     ['zh', resolve(outputRoot, 'zh/serial.html')],
   ];
   let emitted = 0;
@@ -669,6 +698,7 @@ export function generateLocalizedSite(outDir = 'dist') {
     writeFileSync(sourcePath, transformAdaptiveDocument(source, route));
 
     for (const locale of SITE_LOCALES) {
+      if (route.id === 'serial' && locale === 'en') continue;
       const relative = route.path === '/'
         ? `${locale}/index.html`
         : `${locale}/${route.file}`;
