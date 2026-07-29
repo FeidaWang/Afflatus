@@ -39,9 +39,13 @@ describe('serial layout stability', () => {
     expect(html).toContain('id="bookStage"');
     expect(html).toContain('id="bookTurn"');
     expect(html).toContain('id="pageSoundToggle"');
+    expect(css).toMatch(/\.book-stage\{[^}]*width:min\(100%,560px\)[^}]*aspect-ratio:140\/203/);
     expect(css).toContain('@keyframes turnPaperNext');
+    expect(css).toContain('@keyframes fadeDepartingPageText');
+    expect(css).toContain('@keyframes revealArrivingPageText');
     expect(css).toContain('@keyframes openHardCover');
     expect(pagedBook).toContain('createPagedBook');
+    expect(pagedBook).toContain('event.target !== turnLayer');
     expect(pagedBook).toContain('context.createBuffer');
     expect(pagedBook).toContain("stage.addEventListener('pointerdown'");
     expect(pagedBook).toContain("event.key === 'ArrowRight'");

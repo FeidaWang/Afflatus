@@ -256,12 +256,13 @@ export function createPagedBook(options) {
     turnBack.innerHTML = nextHtml;
     void turnLayer.offsetWidth;
     stage.classList.add(direction > 0 ? 'is-turning-next' : 'is-turning-previous');
-    const finish = () => {
+    const finish = (event) => {
+      if (event && event.target !== turnLayer) return;
       turnLayer.removeEventListener('animationend', finish);
       clearAnimation();
     };
     turnLayer.addEventListener('animationend', finish);
-    animationTimer = window.setTimeout(finish, 760);
+    animationTimer = window.setTimeout(finish, 820);
   }
 
   function setChapterContext(context = {}) {
