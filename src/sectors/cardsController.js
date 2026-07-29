@@ -81,7 +81,7 @@ export function createSectorsCardsController(hosts, options = {}) {
     if (!hosts.newsGrid) return;
     if (hosts.storyTake) {
       hosts.storyTake.innerHTML = data?.weeklyTake
-        ? '<div class="featuredMedia"><img src="/assets/sectors/media/zhipu-bigmodel.jpg" alt="" width="756" height="386" loading="lazy" decoding="async"><img src="/assets/sectors/media/openai-chatgpt-work.jpg" alt="" width="800" height="450" loading="lazy" decoding="async"></div>'
+        ? '<div class="featuredMedia"><img src="/assets/sectors/media/zhipu-bigmodel.web.jpg" alt="" width="756" height="386" loading="lazy" decoding="async"><img src="/assets/sectors/media/openai-chatgpt-work.opt.web.jpg" alt="" width="800" height="450" loading="lazy" decoding="async"></div>'
           + `<div class="featuredBody"><b>${escapeHtml(t('WEEKLY TAKE', '本周主线'))}</b><p>${escapeHtml(t(data.weeklyTake.en, data.weeklyTake.zh))}</p></div>`
         : '';
     }

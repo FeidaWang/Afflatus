@@ -49,9 +49,9 @@ a{color:inherit;text-decoration:none}
 /* The shared route links are injected at DOMContentLoaded. Reserve the
    wrapping header's final mobile height so that insertion never pushes the
    hero (the first-viewport content) after first paint. */
-@media(max-width:370px){.top{min-height:185px}}
-@media(min-width:371px) and (max-width:440px){.top{min-height:137px}}
-@media(min-width:441px) and (max-width:660px){.top{min-height:120px}}
+@media(max-width:370px){.top{height:185px}}
+@media(min-width:371px) and (max-width:440px){.top{height:137px}}
+@media(min-width:441px) and (max-width:660px){.top{height:120px}}
 
 /* ── hero art card (poster style — GPT-5.6-poster reference) ──────────── */
 .heroCard{position:relative;margin:28px 0;border-radius:var(--radius-lg);overflow:hidden;min-height:440px;display:flex;align-items:flex-end;box-shadow:var(--shadow-md)}
@@ -62,7 +62,14 @@ a{color:inherit;text-decoration:none}
 h1{max-width:720px;margin:14px 0 14px;font-size:clamp(30px,4.4vw,50px);font-weight:800;line-height:1.08;letter-spacing:-.01em;color:#fff}
 h1 span{color:#8ff0d7}
 .brief{max-width:640px;color:rgba(255,255,255,.86);font:500 16px/1.6 var(--font)}
-@media(max-width:760px){.heroCard{min-height:360px}.heroCopy{padding:28px 22px 28px}}
+/* The bilingual hero copy is intentionally substantial. On narrow screens its
+   intrinsic height is about 600px; reserving only the old 360px allowed the
+   first card to grow after the language/navigation runtime hydrated, producing
+   a repeatable 0.10 CLS. Reserve the real envelope up front. */
+@media(max-width:370px){.heroCard{min-height:680px}}
+@media(min-width:371px) and (max-width:440px){.heroCard{min-height:600px}}
+@media(min-width:441px) and (max-width:600px){.heroCard{min-height:520px}}
+@media(max-width:760px){.heroCopy{padding:28px 22px 28px}}
 
 /* ── ticker: pill marquee (double-clone technique unchanged) ──────────── */
 .tickerBand{position:relative;overflow:hidden;border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:8px}
@@ -111,13 +118,17 @@ h1 span{color:#8ff0d7}
    launch visual fills the card; the local SVG logo sits on a stable dark
    plate so both black and multicolor source marks retain clear contrast. */
 .rArt{position:relative;aspect-ratio:16/10;display:grid;place-items:stretch;overflow:hidden;--brand:var(--accent);background:#0d0d10;isolation:isolate}
-.rArt.noPhoto{background:radial-gradient(110% 130% at 18% 12%,color-mix(in srgb,var(--brand) 42%,transparent) 0%,transparent 58%),#0d0d10}
+.rArt[data-media-kind="poster"]{background:radial-gradient(110% 130% at 18% 12%,color-mix(in srgb,var(--brand) 42%,transparent) 0%,transparent 58%),#0d0d10}
 .rArt>*{grid-area:1/1}
 .rPhoto{width:100%;height:100%;object-fit:cover;align-self:stretch;justify-self:stretch;opacity:0;transition:opacity .35s ease,transform .45s cubic-bezier(.22,1,.36,1)}
 .rPhoto.loaded{opacity:1}
 .rArt[data-brand="zhipu"] .rPhoto,.rArt[data-brand="alibaba"] .rPhoto,.rArt[data-brand="MRVL"] .rPhoto,.rArt[data-brand="RMBS"] .rPhoto,.rArt[data-brand="SNDK"] .rPhoto{object-position:center top}
 .rCard:hover .rPhoto,.nCard:hover .rPhoto{transform:scale(1.025)}
 .rScrim{z-index:1;width:100%;height:100%;background:linear-gradient(180deg,rgba(0,0,0,.02) 30%,rgba(0,0,0,.66) 100%)}
+.rPoster{z-index:0;align-self:stretch;justify-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:26px;background:linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:24px 24px;color:#fff}
+.rPoster::before{content:"";display:block;width:36px;height:3px;background:var(--brand);box-shadow:0 0 18px color-mix(in srgb,var(--brand) 70%,transparent)}
+.rPoster span,.rPoster i{font:700 9px/1.35 var(--font-mono);letter-spacing:.18em;color:rgba(255,255,255,.64);font-style:normal}
+.rPoster b{max-width:86%;font:800 clamp(24px,3vw,42px)/1 var(--font);letter-spacing:-.03em;overflow-wrap:anywhere}
 .rBrandPlate{z-index:2;place-self:end start;display:grid;place-items:center;min-width:112px;min-height:48px;max-width:58%;margin:16px;padding:10px 14px;border:1px solid rgba(255,255,255,.16);border-radius:10px;background:rgba(8,8,10,.82);box-shadow:0 8px 24px rgba(0,0,0,.28);backdrop-filter:blur(10px)}
 .rLogo{display:block;width:auto;height:auto;max-width:100%;max-height:28px;object-fit:contain;filter:brightness(0) invert(1)}
 .rArt.is-mark .rBrandPlate{min-width:52px;width:52px}
@@ -161,9 +172,9 @@ h1 span{color:#8ff0d7}
 .nTag.us{color:var(--faction-us)}
 .nTag.cn{color:var(--faction-cn)}
 .nBody{display:flex;flex:1;flex-direction:column;padding:18px 18px 20px}
-.nHead{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
-.nTitle{margin:0;font:750 17px/1.25 var(--font);letter-spacing:-.01em;color:var(--ink)}
-.nMeta{color:var(--ink-faint);font:700 10.5px var(--font-mono);text-transform:uppercase}
+.nHead{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:7px}
+.nTitle{min-width:0;margin:0;font:750 17px/1.25 var(--font);letter-spacing:-.01em;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nMeta{min-width:0;color:var(--ink-faint);font:650 10.5px/1.45 var(--font-mono);text-transform:none;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .nExcerpt{margin-top:8px;color:var(--ink-soft);font:500 13.5px/1.55 var(--font);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .nChips{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
 .nChip{padding:3px 8px;border:1px solid var(--line);border-radius:999px;color:var(--ink-soft);font:700 10.5px var(--font-mono)}
@@ -340,7 +351,7 @@ h1 span{color:#8ff0d7}
 /* ── mega-footer ────────────────────────────────────────────────────── */
 .megaFoot{margin-top:60px;border-top:1px solid var(--line);padding:36px 0 28px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
 .megaFoot h4{margin:0 0 12px;font:800 11px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
-.megaFoot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.megaFoot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:8px 18px}
 .megaFoot a{color:var(--ink-soft);font:600 13.5px var(--font)}
 .megaFoot a:hover{color:var(--ink);text-decoration:underline}
 .megaFoot p{margin:0;color:var(--ink-soft);font:500 13px/1.6 var(--font)}

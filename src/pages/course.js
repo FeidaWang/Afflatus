@@ -1,3 +1,5 @@
+import { courseStageForProgress } from '../lib/courseNarrative.js';
+
 /**
  * course.html page logic — three small, independent features:
  *   1. scroll progress rail (left edge)
@@ -25,6 +27,7 @@
 
   /* ---------- scroll progress rail ---------- */
   const rail = document.getElementById('courseProgress');
+  const stageReadout = document.getElementById('courseStageReadout');
   let ticking = false;
   function updateProgress() {
     ticking = false;
@@ -33,10 +36,31 @@
     const max = doc.scrollHeight - doc.clientHeight;
     const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
     rail.style.height = pct + '%';
+    const stage = courseStageForProgress(pct / 100);
+    document.body.dataset.courseStage = String(stage);
+    if (stageReadout) stageReadout.textContent = `STAGE 0${stage} · ${Math.round(pct).toString().padStart(3, '0')}%`;
   }
   window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(updateProgress); } }, { passive: true });
   window.addEventListener('resize', updateProgress);
   updateProgress();
+
+  /* ---------- film/fax chapter exposure ---------- */
+  const sections = document.querySelectorAll('.shell > section');
+  const reduceMotion = (() => {
+    try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
+  })();
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    sections.forEach((section) => section.classList.add('is-exposed'));
+  } else {
+    const exposure = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-exposed');
+        exposure.unobserve(entry.target);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+    sections.forEach((section) => exposure.observe(section));
+  }
 
   /* ---------- copy-prompt buttons ---------- */
   document.querySelectorAll('.copy-btn[data-copy-target="prev"]').forEach((btn) => {

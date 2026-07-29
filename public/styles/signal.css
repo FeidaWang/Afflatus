@@ -4,7 +4,7 @@
   --paper:#f4f4f4;--line:rgba(245,196,0,.26);--dim:#8d8c86;--mute:#cfcdc7;
   --green:#3fb950;--amber:#f5c400;--red:#b3261e;--hazard:#f5c400;
   --mood:var(--amber); /* post-FOMC bias accent: green (bull) / red (bear) / amber (neutral) */
-  --disp:'Oswald',Impact,system-ui,sans-serif;--mono:'Space Mono',ui-monospace,monospace;
+  --disp:'Marathon Shapiro 65',Impact,system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;
 }
 body.mood-bull{--mood:var(--green)} body.mood-bear{--mood:var(--red)}
 *{box-sizing:border-box}
@@ -69,6 +69,57 @@ a{color:inherit;text-decoration:none}
 .chapterHead .kicker{font:700 12px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--amber)}
 .chapterHead h2{margin:10px 0 0;font:700 clamp(2.4rem,7vw,5.5rem)/.98 var(--disp);letter-spacing:0;text-transform:uppercase;color:var(--paper);text-shadow:none;-webkit-text-stroke:0}
 .chapterHead .dek{margin:14px 0 0;max-width:68ch;font:400 17px/1.6 var(--mono);color:var(--mute)}
+
+/* policy reaction story */
+.causalStory{scroll-margin-top:24px}
+.policyStory{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.75fr);gap:clamp(24px,4vw,52px);align-items:start}
+.policyMap{position:sticky;top:22px;min-height:620px;padding:18px;border:1px solid rgba(245,196,0,.42);background:linear-gradient(135deg,rgba(245,196,0,.06),transparent 44%),#111215;box-shadow:8px 8px 0 rgba(0,0,0,.45);overflow:hidden}
+.policyMap::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 23px,rgba(255,255,255,.025) 23px 24px)}
+.policyMapTop{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line);font:700 9px/1.3 var(--mono);letter-spacing:.12em;color:var(--dim)}
+.policyMapTop b{color:var(--amber);text-align:right}
+.policyColumns{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}
+.policyColumn{min-width:0;display:flex;flex-direction:column;gap:12px}
+.policyColumnLabel{min-height:28px;font:700 9px/1.35 var(--mono);letter-spacing:.1em;color:var(--dim)}
+.policyNode,.policyDecision{position:relative;min-width:0;padding:13px 11px;border:1px solid rgba(255,255,255,.13);background:#202126;color:var(--mute);opacity:.3;filter:saturate(.2);transform:translateY(4px);transition:opacity .28s ease,border-color .28s ease,background .28s ease,transform .28s ease,filter .28s ease}
+.policyNode::after{content:"›";position:absolute;right:-11px;top:50%;z-index:2;transform:translateY(-50%);font:700 16px/1 var(--mono);color:rgba(245,196,0,.38)}
+.policyColumn:last-child .policyNode::after{display:none}
+.policyNode small,.policyNode i{display:block;font:700 8px/1.35 var(--mono);letter-spacing:.06em;color:var(--dim);font-style:normal;overflow-wrap:anywhere}
+.policyNode b{display:block;margin:7px 0 5px;font:700 14px/1.05 var(--disp);letter-spacing:.02em;text-transform:uppercase;color:var(--paper);overflow-wrap:anywhere}
+.policyNode.core{min-height:140px;display:flex;flex-direction:column;justify-content:center;border-width:2px}
+.policyDecision{display:grid;gap:8px;padding:10px}
+.policyDecision span{font:700 8px/1.5 var(--mono);color:var(--mute)}
+.policyMapHint{position:relative;z-index:1;margin:18px 0 0;font:400 9px/1.5 var(--mono);letter-spacing:.08em;color:var(--dim)}
+.causalStory[data-step="0"] [data-active-steps~="0"],
+.causalStory[data-step="1"] [data-active-steps~="1"],
+.causalStory[data-step="2"] [data-active-steps~="2"],
+.causalStory[data-step="3"] [data-active-steps~="3"],
+.causalStory[data-step="4"] [data-active-steps~="4"]{opacity:1;filter:none;transform:none;border-color:var(--amber);background:linear-gradient(145deg,rgba(245,196,0,.12),transparent 62%),#24252a}
+.causalStory[data-step="1"] .policyNode.hot,
+.causalStory[data-step="3"] .policyNode.risk{border-color:var(--red)}
+.causalStory[data-step="2"] .policyNode.cool{border-color:var(--green)}
+.policySteps{list-style:none;margin:0;padding:0}
+.policyStep{min-height:58vh;padding:22px 0 38px;border-top:1px solid var(--line);opacity:.42;transition:opacity .25s ease}
+.policyStep:first-child{border-top:0}
+.policyStep>span{font:700 11px/1 var(--mono);color:var(--amber);letter-spacing:.18em}
+.policyStep h3{margin:12px 0 10px;font:700 clamp(1.5rem,3vw,2.2rem)/1.05 var(--disp);text-transform:uppercase;color:var(--paper)}
+.policyStep p{margin:0;font:400 15px/1.7 var(--mono);color:var(--mute)}
+.policyStep.active{opacity:1}
+@media(max-width:900px){
+  .policyStory{grid-template-columns:1fr}
+  .policyMap{position:relative;top:auto;min-height:0}
+  .policyStep{min-height:0;padding:24px 0}
+}
+@media(max-width:620px){
+  .policyColumns{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .policyNode::after{display:none}
+  .policyMapTop{align-items:flex-start;flex-direction:column}
+  .policyMapTop b{text-align:left}
+}
+@media (prefers-reduced-motion: reduce){
+  .policyNode,.policyDecision,.policyStep{transition:none}
+  .policyNode,.policyDecision{opacity:1;filter:none;transform:none}
+  .policyStep{opacity:1}
+}
 
 /* scroll-reveal fade-up — same IO-once/threshold-.2/staggered-delay recipe
    as sectors.html's storyCard reveal (U31), reused verbatim rather than a

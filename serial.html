@@ -253,9 +253,8 @@
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="stylesheet" href="/page-turn.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/styles/serial.css">
 
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
@@ -288,7 +287,11 @@
     </nav>
   </header>
 
-  <section class="shelf" id="shelf" aria-label="书架"></section>
+  <section class="shelf is-loading" id="shelf" aria-label="书架" aria-busy="true">
+    <span class="book-skeleton" aria-hidden="true"></span>
+    <span class="book-skeleton" aria-hidden="true"></span>
+    <span class="book-skeleton" aria-hidden="true"></span>
+  </section>
 
   <section class="hero">
     <div class="bar" aria-hidden="true"></div>
@@ -922,6 +925,8 @@
       b.addEventListener('click', function () { if (i !== state.novelIdx) selectNovel(i, true, null, 'push'); });
       shelf.appendChild(b);
     });
+    shelf.classList.remove('is-loading');
+    shelf.removeAttribute('aria-busy');
   }
 
   function renderHud(hud) {

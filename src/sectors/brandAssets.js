@@ -75,35 +75,37 @@ const LOGO_URL = {
   RMBS: '/assets/sectors/logos/rambus.svg',
 };
 
-const PHOTO_URL = {
-  NVDA: '/assets/sectors/media/nvidia-vera-rubin.jpg',
-  AVGO: '/assets/sectors/media/broadcom-tomahawk6.png',
-  MU: '/assets/sectors/media/micron-hbm4.jpg',
-  SKHY: '/assets/sectors/media/sk-hynix-hbm.jpg',
-  TSM: '/assets/sectors/media/tsmc-3dfabric.jpg',
-  ASML: '/assets/sectors/media/asml-high-na.png',
-  anthropic: '/assets/sectors/media/anthropic-claude.jpg',
-  openai: '/assets/sectors/media/openai-chatgpt-work.jpg',
-  zhipu: '/assets/sectors/media/zhipu-bigmodel.jpg',
-  alibaba: '/assets/sectors/media/alibaba-model-studio.jpg',
-  SSNLF: '/assets/sectors/media/samsung-hbm4.jpg',
-  ALAB: '/assets/sectors/media/astera-scorpio.webp',
-  MRVL: '/assets/sectors/media/marvell-structera.jpg',
-  PSTG: '/assets/sectors/media/pure-flashblade.jpg',
-  SNDK: '/assets/sectors/media/sandisk-sn861.jpg',
-  TER: '/assets/sectors/media/teradyne-ai-chip.jpg',
-  RMBS: '/assets/sectors/media/rambus-cxl.jpg',
+export const MEDIA_MANIFEST = {
+  NVDA: { kind: 'photo', src: '/assets/sectors/media/nvidia-vera-rubin.opt.web.jpg', alt: 'NVIDIA Vera Rubin AI compute platform' },
+  AVGO: { kind: 'photo', src: '/assets/sectors/media/broadcom-tomahawk6.opt.web.jpg', alt: 'Broadcom Tomahawk 6 AI networking switch silicon' },
+  MU: { kind: 'photo', src: '/assets/sectors/media/micron-hbm4.opt.web.jpg', alt: 'Micron HBM4 memory product' },
+  SKHY: '/assets/sectors/media/sk-hynix-hbm.opt.web.jpg',
+  TSM: '/assets/sectors/media/tsmc-3dfabric.web.jpg',
+  ASML: { kind: 'photo', src: '/assets/sectors/media/asml-high-na.opt.web.jpg', alt: 'ASML TWINSCAN EXE high-NA EUV lithography system' },
+  anthropic: '/assets/sectors/media/anthropic-claude.opt.web.jpg',
+  openai: { kind: 'photo', src: '/assets/sectors/media/openai-chatgpt-work.opt.web.jpg', alt: 'ChatGPT Work product interface' },
+  zhipu: '/assets/sectors/media/zhipu-bigmodel.web.jpg',
+  alibaba: '/assets/sectors/media/alibaba-model-studio.web.jpg',
+  SSNLF: '/assets/sectors/media/samsung-hbm4.web.jpg',
+  ALAB: '/assets/sectors/media/astera-scorpio.opt.web.jpg',
+  MRVL: '/assets/sectors/media/marvell-structera.web.jpg',
+  PSTG: '/assets/sectors/media/pure-flashblade.web.jpg',
+  SNDK: '/assets/sectors/media/sandisk-sn861.opt.web.jpg',
+  TER: '/assets/sectors/media/teradyne-ai-chip.opt.web.jpg',
+  RMBS: '/assets/sectors/media/rambus-cxl.web.jpg',
+  google: { kind: 'poster', alt: 'Google Gemini model intelligence signal' },
+  xai: { kind: 'poster', alt: 'xAI Grok model intelligence signal' },
+  meta: { kind: 'poster', alt: 'Meta Llama model intelligence signal' },
+  cohere: { kind: 'poster', alt: 'Cohere model intelligence signal' },
+  deepseek: { kind: 'poster', alt: 'DeepSeek model intelligence signal' },
+  moonshot: { kind: 'poster', alt: 'Moonshot Kimi model intelligence signal' },
+  minimax: { kind: 'poster', alt: 'MiniMax model intelligence signal' },
 };
 
 const MEDIA_ALT = {
-  NVDA: 'NVIDIA Vera Rubin AI compute platform',
-  AVGO: 'Broadcom Tomahawk 6 AI networking switch silicon',
-  MU: 'Micron HBM4 memory product',
   SKHY: 'SK hynix HBM product showcase',
   TSM: 'TSMC 3DFabric heterogeneous integration roadmap',
-  ASML: 'ASML TWINSCAN EXE high-NA EUV lithography system',
   anthropic: 'Claude product interface',
-  openai: 'ChatGPT Work product interface',
   zhipu: 'Zhipu BigModel product homepage',
   alibaba: 'Alibaba Cloud Model Studio and Qwen product page',
   SSNLF: 'Samsung HBM4 memory product',
@@ -114,6 +116,16 @@ const MEDIA_ALT = {
   TER: 'Teradyne semiconductor testing for AI chips',
   RMBS: 'Rambus CXL 2.0 controller product page',
 };
+
+Object.entries(MEDIA_MANIFEST).forEach(([key, media]) => {
+  if (typeof media === 'string') {
+    MEDIA_MANIFEST[key] = {
+      kind: 'photo',
+      src: media,
+      alt: MEDIA_ALT[key] || `${DISPLAY_NAME[key] || key} product visual`,
+    };
+  }
+});
 
 function escapeAttribute(value) {
   return String(value ?? '').replace(/[&<>"]/g, (character) => ({
@@ -132,19 +144,27 @@ export function nameFor(key) {
   return DISPLAY_NAME[key] || key;
 }
 
+function posterHtml(key, media) {
+  const name = nameFor(key);
+  return `<div class="rPoster" role="img" aria-label="${escapeAttribute(media.alt || `${name} model intelligence signal`)}"><span>MODEL INTELLIGENCE</span><b>${escapeAttribute(name)}</b><i>VERIFIED SIGNAL FEED · ${escapeAttribute(String(key).toUpperCase())}</i></div>`;
+}
+
 export function artHtml(key, extraHtml = '') {
   const color = colorFor(key);
-  const photo = PHOTO_URL[key];
+  const media = MEDIA_MANIFEST[key] || {
+    kind: 'poster',
+    alt: `${nameFor(key)} model intelligence signal`,
+  };
   const logo = LOGO_URL[key];
   const name = nameFor(key);
   const style = color ? ` style="--brand:${color}"` : '';
-  const photoHtml = photo
-    ? `<img class="rPhoto" src="${photo}" alt="${escapeAttribute(MEDIA_ALT[key] || `${name} product visual`)}" width="1200" height="750" loading="lazy" decoding="async"><div class="rScrim"></div>`
-    : '';
+  const mediaHtml = media.kind === 'photo'
+    ? `<img class="rPhoto" src="${escapeAttribute(media.src)}" alt="${escapeAttribute(media.alt)}" width="1200" height="750" loading="lazy" decoding="async"><div class="rScrim"></div>`
+    : posterHtml(key, media);
   const logoHtml = logo
     ? `<span class="rBrandPlate"><img class="rLogo" src="${logo}" alt="${escapeAttribute(name)} logo" width="240" height="80" loading="lazy" decoding="async"></span>`
     : `<span class="rLogoFallback">${escapeAttribute(name)}</span>`;
-  return `<div class="rArt${photo ? '' : ' noPhoto'}" data-brand="${escapeAttribute(key)}"${style}>${photoHtml}${extraHtml}${logoHtml}</div>`;
+  return `<div class="rArt" data-brand="${escapeAttribute(key)}" data-media-kind="${media.kind}"${style}>${mediaHtml}${extraHtml}${logoHtml}</div>`;
 }
 
 export function installBrandAssets(root = document) {
@@ -153,8 +173,13 @@ export function installBrandAssets(root = document) {
     if (!element?.classList) return;
     if (element.classList.contains('rPhoto')) {
       const art = element.parentElement;
+      const key = art?.dataset.brand || '';
       element.remove();
-      art?.classList.add('noPhoto');
+      art?.querySelector('.rScrim')?.remove();
+      art?.insertAdjacentHTML('afterbegin', posterHtml(key, {
+        alt: `${nameFor(key)} model intelligence signal`,
+      }));
+      if (art) art.dataset.mediaKind = 'poster';
     } else if (element.classList.contains('rLogo')) {
       const fallback = document.createElement('span');
       fallback.className = 'rLogoFallback';

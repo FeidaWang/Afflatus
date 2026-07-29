@@ -89,7 +89,7 @@ html.vt-suppress::view-transition-new(root){
    reads as part of the same nav bar instead of a generic popup. */
 .signal-page .nav-labs__menu{--labs-bg:rgba(35,35,39,.97);--labs-border:rgba(255,255,255,.12)}
 .signal-page .nav-labs__menu a{
-  --labs-font:'Oswald',Impact,system-ui,sans-serif;--labs-tracking:.14em;
+  --labs-font:'Marathon Shapiro 65',Impact,system-ui,sans-serif;--labs-tracking:.14em;
   --labs-ink:#cfcdc7;--labs-line:rgba(255,255,255,.12);
   --labs-hover-border:#f5c400;--labs-hover-ink:#f5c400;
   --labs-active-bg:#f5c400;--labs-active-ink:#1a1a1c;

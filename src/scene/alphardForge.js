@@ -341,7 +341,11 @@ export function initAlphardForge() {
   // are skipped there entirely. `p` (0..1) is still computed here either way:
   // it feeds the WebGL uniforms (dolly/brightness) and tagline typing, which
   // CSS can't drive on its own.
-  const cssPin = typeof CSS !== 'undefined' && !!CSS.supports && CSS.supports('animation-timeline', 'view()');
+  // Keep a single pin implementation. The former CSS view-timeline animation
+  // translated the stage by 100svh and created a full blank viewport before
+  // the jump point. This rAF loop already samples the section geometry for
+  // --forge, so the existing fixed/end class fallback adds no extra listener.
+  const cssPin = false;
   // 2026-07-16 (station-master, live-inspected via devtools): the stage is
   // exactly 100vh tall, same as the viewport, so it starts appearing at the
   // very first pixel of scroll (its top is always vh below the wrapper's

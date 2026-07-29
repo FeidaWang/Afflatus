@@ -15,6 +15,7 @@
    For entertainment only — NOT investment advice.
    ============================================================ */
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
+import { BRIEFING_ACTION, shouldAcknowledgeBriefing } from '../lib/briefingAction.js';
 import { fetchJson } from '../lib/fetchJson.js';
 import { getLocale } from '../lib/localeStore.js';
 
@@ -43,6 +44,7 @@ import { getLocale } from '../lib/localeStore.js';
   const lang0 = getLocale('en');
   const state = { lang: lang0, sentiment: 0, news: { date: null, items: [], aiPredictions: {}, loading: true }, lastUpdate: 0 };
   const T = (en, zh) => state.lang === 'zh' ? zh : en;
+  let briefingInvoker = null;
 
   // ---- rendering ------------------------------------------------
   const $ = (id) => document.getElementById(id);
@@ -71,21 +73,40 @@ import { getLocale } from '../lib/localeStore.js';
     const disclaimer = T(n.disclaimer_en || 'NOT INVESTMENT ADVICE — entertainment only.', n.disclaimer_zh || '非投资建议——仅供娱乐。');
     const note = T(n.predictionNote_en || '', n.predictionNote_zh || '');
     const items = n.items.map((it) => { const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`)); const title = T(it.title_en || it.title || '', it.title_zh || it.title_en || ''); const sum = T(it.summary_en || it.summary || '', it.summary_zh || it.summary_en || ''); return `<article class="bf-item"><div class="bf-itop"><span class="bf-cat">${icon[it.category] || '•'} ${it.category || 'note'}</span><span class="bf-sent ${s.tone}">${s.label}</span></div><h3 class="bf-title">${title}</h3>${sum ? `<p class="bf-sum">${sum}</p>` : ''}${it.source ? `<a class="bf-src" href="${it.url || '#'}" target="_blank" rel="noreferrer noopener">${it.source} ↗</a>` : ''}</article>`; }).join('');
-    return `<div class="bf-backdrop" id="bfBackdrop"></div><div class="bf-modal" role="dialog" aria-modal="true" aria-labelledby="bfHeading" tabindex="-1" id="bfModal"><div class="bf-prog" id="bfProg" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="bf-prog-fill" id="bfProgFill"></div></div><header class="bf-head"><div class="bf-barcode" aria-hidden="true"></div><div class="bf-htext"><p class="bf-kicker">TRAXUS//CVKM · ${T('DESK BRIEFING', '交易台简报')}</p><h2 class="bf-h" id="bfHeading">${T('Pre-Market Briefing', '盘前简报')}</h2><p class="bf-date">${n.date ? T('Digest', '摘要') + ' · ' + n.date : T('awaiting first run', '等待首次生成')} · ${T('sentiment', '情绪')} <b class="${sl.tone}">${sl.label}</b></p></div><button class="bf-lang" id="bfLang" aria-label="Toggle language">${state.lang === 'zh' ? 'EN' : '中文'}</button><button class="bf-x" id="bfClose" aria-label="Skip and close">✕</button></header><div class="bf-body" id="bfBody" tabindex="0"><div class="bf-warn" role="note"><b>⚠ ${T('NOT INVESTMENT ADVICE.', '非投资建议。')}</b> ${disclaimer}</div>${note ? `<p class="bf-note">${note}</p>` : ''}${items || `<div class="bf-empty">${T('No digest yet. The scheduled task writes it ~1h before the US open.', '暂无摘要。定时任务会在美股开盘前约 1 小时生成。')}</div>`}<div class="bf-end">— ${T('END OF BRIEFING', '简报结束')} —</div></div><footer class="bf-foot"><button class="bf-skip" id="bfSkip">${T('Skip', '跳过')}</button><button class="bf-enter" id="bfEnter">${T('ENTER THE ARENA ▶', '进入 ARENA ▶')}</button></footer></div>`;
+    return `<div class="bf-backdrop" id="bfBackdrop"></div><div class="bf-modal" role="dialog" aria-modal="true" aria-labelledby="bfHeading" aria-describedby="bfSummary" tabindex="-1" id="bfModal"><div class="bf-prog" id="bfProg" role="progressbar" aria-label="${T('Reading progress', '阅读进度')}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="bf-prog-fill" id="bfProgFill"></div></div><header class="bf-head"><div class="bf-barcode" aria-hidden="true"></div><div class="bf-htext"><p class="bf-kicker">TRAXUS//CVKM · ${T('DESK BRIEFING', '交易台简报')}</p><h2 class="bf-h" id="bfHeading">${T('Pre-Market Briefing', '盘前简报')}</h2><p class="bf-date" id="bfSummary">${n.date ? T('Digest', '摘要') + ' · ' + n.date : T('awaiting first run', '等待首次生成')} · ${T('sentiment', '情绪')} <b class="${sl.tone}">${sl.label}</b></p></div><button class="bf-control bf-lang" id="bfLang" aria-label="${T('Switch to Chinese', 'Switch to English')}">${state.lang === 'zh' ? 'EN' : '中文'}</button><button class="bf-control bf-x" id="bfClose" aria-label="${T('Dismiss briefing', '关闭简报')}">✕</button></header><div class="bf-body" id="bfBody" tabindex="0"><div class="bf-warn" role="note"><b>⚠ ${T('NOT INVESTMENT ADVICE.', '非投资建议。')}</b> ${disclaimer}</div>${note ? `<p class="bf-note">${note}</p>` : ''}${items || `<div class="bf-empty">${T('No digest yet. The scheduled task writes it ~1h before the US open.', '暂无摘要。定时任务会在美股开盘前约 1 小时生成。')}</div>`}<div class="bf-end">— ${T('END OF BRIEFING', '简报结束')} —</div></div><footer class="bf-foot"><button class="bf-skip" id="bfSkip">${T('Read later', '稍后阅读')}</button><button class="bf-enter" id="bfEnter">${T('ENTER THE ARENA ▶', '进入 ARENA ▶')}</button></footer></div>`;
   }
   function openBriefing() {
-    const host = $('briefing'); if (!host) return; host.innerHTML = buildBriefing(); host.hidden = false; try { document.body.style.overflow = 'hidden'; } catch {}
+    const host = $('briefing'); if (!host) return;
+    if (!host.contains(document.activeElement)) briefingInvoker = document.activeElement;
+    host.innerHTML = buildBriefing(); host.hidden = false; try { document.body.style.overflow = 'hidden'; } catch {}
     const body = $('bfBody'), fill = $('bfProgFill'), prog = $('bfProg');
     const update = () => { const max = body.scrollHeight - body.clientHeight, pct = max > 0 ? Math.min(100, (body.scrollTop / max) * 100) : 100; fill.style.width = pct + '%'; prog.setAttribute('aria-valuenow', Math.round(pct)); };
     body.addEventListener('scroll', update);
     const scrub = (cx) => { const r = prog.getBoundingClientRect(); body.scrollTop = Math.max(0, Math.min(1, (cx - r.left) / r.width)) * (body.scrollHeight - body.clientHeight); };
     let drag = false; prog.addEventListener('pointerdown', (e) => { drag = true; try { prog.setPointerCapture(e.pointerId); } catch {} scrub(e.clientX); }); prog.addEventListener('pointermove', (e) => { if (drag) scrub(e.clientX); }); prog.addEventListener('pointerup', () => { drag = false; });
     prog.addEventListener('keydown', (e) => { const max = body.scrollHeight - body.clientHeight; if (e.key === 'ArrowRight' || e.key === 'ArrowDown') body.scrollTop = Math.min(max, body.scrollTop + max * 0.1); if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') body.scrollTop = Math.max(0, body.scrollTop - max * 0.1); });
-    const close = () => { ackBriefing(); host.hidden = true; try { document.body.style.overflow = ''; } catch {} };
-    $('bfEnter').addEventListener('click', close); $('bfClose').addEventListener('click', close); $('bfSkip').addEventListener('click', close); $('bfBackdrop').addEventListener('click', close);
+    const close = (action) => {
+      if (shouldAcknowledgeBriefing(action)) ackBriefing();
+      host.hidden = true;
+      try { document.body.style.overflow = ''; } catch {}
+      if (briefingInvoker?.isConnected) briefingInvoker.focus();
+    };
+    $('bfEnter').addEventListener('click', () => close(BRIEFING_ACTION.ENTER));
+    $('bfClose').addEventListener('click', () => close(BRIEFING_ACTION.DISMISS));
+    $('bfSkip').addEventListener('click', () => close(BRIEFING_ACTION.READ_LATER));
+    $('bfBackdrop').addEventListener('click', () => close(BRIEFING_ACTION.DISMISS));
     $('bfLang').addEventListener('click', () => { toggleLang(); openBriefing(); });
-    host.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-    setTimeout(() => { try { $('bfModal').focus(); } catch {} update(); }, 30);
+    host.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close(BRIEFING_ACTION.DISMISS);
+      if (e.key !== 'Tab') return;
+      const focusable = [...host.querySelectorAll('button,[href],[tabindex]:not([tabindex="-1"])')]
+        .filter((element) => !element.disabled && element.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+    setTimeout(() => { try { $('bfEnter').focus(); } catch {} update(); }, 30);
   }
   function toggleLang() { if (window.AfflatusI18N) { window.AfflatusI18N.toggle(); return; } state.lang = state.lang === 'zh' ? 'en' : 'zh'; renderNews(); }
 

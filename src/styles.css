@@ -19,7 +19,21 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none!important;}
   body{font-family:'Rajdhani','Noto Sans SC',sans-serif;font-weight:300;min-height:var(--viewport-small-height,100vh);line-height:1.65;-webkit-font-smoothing:antialiased;position:relative}
-  #starfield{position:fixed;inset:0;z-index:0;display:block;background:#04060a}
+  /* Zero-JS/static scene poster: the gradients live on the canvas element
+     itself, so the page keeps its deep-space identity before the deferred
+     combat renderer starts and when canvas/WebGL are unavailable. */
+  #starfield{
+    position:fixed;inset:0;z-index:0;display:block;
+    background-color:#04060a;
+    background-image:
+      radial-gradient(circle at 72% 24%,rgba(78,123,161,.18) 0 1px,transparent 2px),
+      radial-gradient(circle at 18% 36%,rgba(232,179,128,.13) 0 1px,transparent 2px),
+      radial-gradient(circle at 56% 68%,rgba(141,180,192,.11) 0 1px,transparent 2px),
+      radial-gradient(ellipse at 76% 18%,rgba(47,82,121,.14),transparent 34%),
+      radial-gradient(ellipse at 28% 74%,rgba(97,58,92,.10),transparent 38%),
+      linear-gradient(155deg,#04060a 0%,#070d16 54%,#04060a 100%);
+    background-size:173px 173px,241px 241px,307px 307px,100% 100%,100% 100%,100% 100%;
+  }
   #blackhole-gl{position:fixed;inset:0;z-index:1;display:block;pointer-events:none;background:transparent}
   #event-layer{position:fixed;inset:0;z-index:6;pointer-events:none}
 
@@ -6936,26 +6950,11 @@
      The svh-vs-vh lesson above still applies (that's why the new top offset
      is also unitless-safe/clamp-bounded, not a bare vh value), it's just the
      offset's *edge* that changed, not the underlying reasoning. */
-  @supports (animation-timeline: view()) {
-    .stardrive.is-live{view-timeline-name:--stardriveScroll;view-timeline-axis:block}
-    .stardrive.is-live .stardrive-stage{animation:stardrivePin linear both,stageShrink linear both;animation-timeline:--stardriveScroll,--stardriveScroll;animation-range:contain 0% contain 100%,exit 0% exit 100%}
-    @keyframes stardrivePin{from{transform:translateY(0)}to{transform:translateY(100svh)}}
-    /* U44 44-1: the exit phase (~100svh of scroll after the pin's contain
-       phase ends, previously inert — stage just rides out pinned at its
-       translateY(100svh) end value) now shrinks the stage into a rounded
-       corner window as it leaves, handing off to 02 · equity curve below.
-       `from` restates stardrivePin's forward-filled end value: two animations
-       both touching `transform` on the same element resolve to whichever is
-       later in the list once active, so omitting it here would jump the
-       stage back to translateY(0) the instant exit phase starts. */
-    @keyframes stageShrink{
-      from{transform:translateY(100svh)}
-      to{clip-path:inset(6% 44% 10% 4% round 16px);transform:translateY(100svh) scale(.94)}
-    }
-    @media (prefers-reduced-motion: reduce){
-      .stardrive.is-live .stardrive-stage{animation:none}
-    }
-  }
+  /* The former view-timeline pin translated the whole stage by 100svh. At the
+     section entrance that forward-filled transform placed the first visible
+     star-gate frame exactly one viewport below the hero. Keep one pin owner:
+     alphardForge.js applies the existing .pin-fixed/.pin-end fallback while it
+     is already sampling scroll progress in the render loop. */
 
   /* U13d (2026-07-11): dim the vortex render itself — "beautiful but
      overblown", and it was fighting the caption/tagline text (z-index 3,
@@ -7026,8 +7025,8 @@
      spot and moves to the bottom edge instead. Value picked to clear both
      the strip above and .forge-tagline (top:43%) in the middle; real-device
      fine-tuning is U45 slice 19. */
-  .stardrive-caption{position:absolute;left:0;right:0;bottom:14svh;z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:9px;opacity:calc(.18 + var(--forge)*.82)}
-  .fc-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.42em;color:#aee0ff;text-shadow:0 0 calc(8px + var(--forge)*22px) rgba(110,180,255,.7)}
+  .stardrive-caption{position:absolute;left:0;right:0;bottom:clamp(148px,20svh,204px);z-index:3;text-align:center;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:9px;opacity:calc(.68 + var(--forge)*.32)}
+  .fc-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.32em;color:#d9efff;padding:5px 9px 5px 12px;background:rgba(2,7,14,.68);border:1px solid rgba(174,224,255,.2);text-shadow:0 1px 3px #000,0 0 calc(8px + var(--forge)*16px) rgba(110,180,255,.72)}
   .fc-sub{font-family:'Orbitron',sans-serif;font-weight:300;font-size:13px;letter-spacing:.34em;color:rgba(200,228,255,.78);text-transform:uppercase}
 
   /* the page tagline over the jump point — clauses typed out by the scroll */
@@ -7039,9 +7038,13 @@
   @keyframes twBlink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
   @keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
 
-  /* the metrics row as a telemetry band pinned near the bottom of the stage */
-  .stardrive .strip{position:absolute;left:96px;right:96px;top:clamp(72px, 12svh, 128px);bottom:auto;z-index:2;margin:0;border-top:none;border-bottom:none;border-color:rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(3,5,9,.88),rgba(3,5,9,.72));backdrop-filter:blur(11px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*26px))}
-  .stardrive .strip-cell{border-color:rgba(140,196,255,.16)}
+  /* Telemetry occupies a compact lower HUD band instead of covering the
+     jump-point's focal area. It only resolves after the approach is underway. */
+  .stardrive .strip{position:absolute;left:96px;right:96px;top:auto;bottom:clamp(18px,3.5svh,38px);z-index:2;margin:0;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid rgba(140,196,255,.20);background:linear-gradient(180deg,rgba(3,5,9,.94),rgba(3,5,9,.86));backdrop-filter:blur(11px) saturate(1.1);transform:translateY(calc((1 - var(--forge))*18px));opacity:clamp(0,calc((var(--forge) - .28)*2.8),1)}
+  .stardrive .strip-cell{min-width:0;overflow:hidden;padding:18px 20px;border-color:rgba(140,196,255,.16)}
+  .stardrive .strip-label{margin-bottom:9px}
+  .stardrive .strip-value{max-width:100%;margin-bottom:6px;font-size:clamp(28px,3vw,42px);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .stardrive .strip-foot{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   /* 2026-07-16 (station-master feedback, round 3): rounds 1-2 (hue swap,
      then a dark contact-shadow) still read as too faint — the remaining
      culprit is that every color here was still alpha-blended (rgba(...,.6
@@ -7065,14 +7068,11 @@
   .stardrive .hero-metric{position:relative}
   .stardrive .hero-metric .strip-value{
     color:#eef7ff;
-    transform:scale(calc(1 + var(--forge)*0.30));
-    transform-origin:left center;
     text-shadow:
       0 1px 4px rgba(0,0,0,.9),
       0 0 calc(var(--forge)*10px) rgba(255,255,255,calc(var(--forge)*.95)),
       0 0 calc(var(--forge)*34px) rgba(150,210,255,calc(var(--forge)*.95)),
       0 0 calc(var(--forge)*72px) rgba(80,150,255,calc(var(--forge)*.7));
-    will-change:transform;
   }
   /* dark contact-shadow (same reasoning as the three secondary metrics
      above) so the label under the glow still separates from a bright patch
@@ -7081,8 +7081,10 @@
 
   @media (max-width:640px){
     .stardrive.is-live{height:170svh}
-    .stardrive .strip{left:20px;right:20px;bottom:auto;top:clamp(56px, 10svh, 96px)}
-    .stardrive .hero-metric .strip-value{transform:scale(calc(1 + var(--forge)*0.16))}
+    .stardrive .strip{left:20px;right:20px;bottom:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .stardrive .strip-cell{padding:12px 14px}
+    .stardrive .strip-value{font-size:clamp(24px,8vw,32px)}
+    .stardrive-caption{bottom:clamp(248px,37svh,324px)}
     .forge-tagline{top:40%}
     .fc-sub{font-size:11px;letter-spacing:.22em}
   }
@@ -7427,6 +7429,7 @@
   .nav-right #langBtn{
     min-width:0;min-height:0;padding:7px 16px;font-size:9.5px;letter-spacing:.18em;
     border-color:rgba(232,179,128,.28);
+    text-decoration:none;
   }
   @media(max-width:860px){
     /* Mobile already has #langMiniToggle (U12c) forwarding to this same

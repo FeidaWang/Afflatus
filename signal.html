@@ -224,10 +224,10 @@
 
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preload" href="/assets/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/jetbrains-mono-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/page-turn.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles/signal.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 <script type="module" src="/src/entry/dataBridge.js"></script>
@@ -243,6 +243,7 @@
 </nav>
 
 <nav class="chapterRail" aria-label="Chapter navigation">
+  <a href="#ch00" data-chapter="ch00"><b>00</b><span data-en="Policy Story" data-zh="政策故事线">Policy Story</span></a>
   <a href="#ch01" data-chapter="ch01"><b>01</b><span data-en="Compass" data-zh="罗盘">Compass</span></a>
   <a href="#ch02" data-chapter="ch02"><b>02</b><span data-en="Signal Matrix" data-zh="信号矩阵">Signal Matrix</span></a>
   <a href="#ch03" data-chapter="ch03"><b>03</b><span data-en="Incident Archive" data-zh="事件档案">Incident Archive</span></a>
@@ -286,6 +287,78 @@
   </section>
 
   <div class="chapters">
+  <section class="chapter causalStory" id="ch00" data-step="0" aria-labelledby="policyStoryHeading">
+    <div class="chapterHead reveal">
+      <div class="kicker" data-en="CHAPTER 00 · POLICY REACTION FUNCTION" data-zh="第〇章 · 政策反应函数">CHAPTER 00 · POLICY REACTION FUNCTION</div>
+      <h2 id="policyStoryHeading" data-en="How the market gets repriced" data-zh="市场如何被重新定价">How the market gets repriced</h2>
+      <p class="dek" data-en="Read the causal chain first. The incident archive below is the evidence ledger, not the story itself." data-zh="先读懂因果链。下方事件档案是证据账本，而不是故事本身。">Read the causal chain first. The incident archive below is the evidence ledger, not the story itself.</p>
+    </div>
+
+    <div class="policyStory">
+      <div class="policyMap" role="img" aria-label="Macro data flows through Fed policy into rates and assets" data-aria-en="Macro data flows through Fed policy into rates and assets" data-aria-zh="宏观数据经过美联储政策，传导至利率与资产">
+        <div class="policyMapTop">
+          <span data-en="LIVE REACTION MAP" data-zh="实时反应图">LIVE REACTION MAP</span>
+          <b data-en="BASE CASE · HOLD / DATA-DEPENDENT" data-zh="基准情景 · 维持利率／取决于数据">BASE CASE · HOLD / DATA-DEPENDENT</b>
+        </div>
+        <div class="policyColumns">
+          <div class="policyColumn">
+            <span class="policyColumnLabel" data-en="01 · INPUTS" data-zh="01 · 输入">01 · INPUTS</span>
+            <div class="policyNode hot" data-active-steps="0 1 4"><small>PCE · CPI</small><b data-en="Inflation" data-zh="通胀">Inflation</b><i data-en="sticky core" data-zh="核心通胀偏黏">sticky core</i></div>
+            <div class="policyNode cool" data-active-steps="0 2 4"><small>NFP · JOLTS</small><b data-en="Labor" data-zh="就业">Labor</b><i data-en="cracks emerging" data-zh="裂痕开始出现">cracks emerging</i></div>
+            <div class="policyNode risk" data-active-steps="0 3 4"><small>OIL · SUPPLY</small><b data-en="Energy shock" data-zh="能源冲击">Energy shock</b><i data-en="inflation tail" data-zh="通胀尾部风险">inflation tail</i></div>
+          </div>
+          <div class="policyColumn">
+            <span class="policyColumnLabel" data-en="02 · FED FILTER" data-zh="02 · 联储过滤器">02 · FED FILTER</span>
+            <div class="policyNode core" data-active-steps="0 1 2 3 4"><small>FED-26</small><b data-en="Reaction function" data-zh="政策反应函数">Reaction function</b><i data-en="inflation · labor · credibility" data-zh="通胀／就业／可信度">inflation · labor · credibility</i></div>
+            <div class="policyDecision" data-active-steps="4">
+              <span data-en="HOT DATA → HOLD LONGER" data-zh="数据偏热 → 延长维持">HOT DATA → HOLD LONGER</span>
+              <span data-en="LABOR BREAK → CUT PATH" data-zh="就业转弱 → 打开降息路径">LABOR BREAK → CUT PATH</span>
+            </div>
+          </div>
+          <div class="policyColumn">
+            <span class="policyColumnLabel" data-en="03 · PRICING" data-zh="03 · 定价">03 · PRICING</span>
+            <div class="policyNode market" data-active-steps="0 1 2 4"><small>UST 2Y</small><b data-en="Rate path" data-zh="利率路径">Rate path</b><i data-en="cuts repriced first" data-zh="降息预期最先变化">cuts repriced first</i></div>
+            <div class="policyNode market" data-active-steps="1 3 4"><small>DXY · 10Y</small><b data-en="Financial conditions" data-zh="金融条件">Financial conditions</b><i data-en="tighten / loosen" data-zh="收紧／放松">tighten / loosen</i></div>
+          </div>
+          <div class="policyColumn">
+            <span class="policyColumnLabel" data-en="04 · ASSETS" data-zh="04 · 资产">04 · ASSETS</span>
+            <div class="policyNode asset" data-active-steps="0 2 4"><small>NDX · AI</small><b data-en="Duration assets" data-zh="长久期资产">Duration assets</b><i data-en="benefit from lower yields" data-zh="受益于收益率下降">benefit from lower yields</i></div>
+            <div class="policyNode asset" data-active-steps="1 3 4"><small>GLD · XLE</small><b data-en="Hedges" data-zh="对冲资产">Hedges</b><i data-en="inflation / shock protection" data-zh="对冲通胀与冲击">inflation / shock protection</i></div>
+          </div>
+        </div>
+        <p class="policyMapHint" data-en="Active nodes follow the chapter beside the map." data-zh="高亮节点随右侧章节变化。">Active nodes follow the chapter beside the map.</p>
+      </div>
+
+      <ol class="policySteps" aria-label="Policy transmission story">
+        <li class="policyStep" data-policy-step="0" tabindex="0">
+          <span>00</span>
+          <h3 data-en="Current state: hold, but no longer comfortable" data-zh="当前态势：维持利率，但并不轻松">Current state: hold, but no longer comfortable</h3>
+          <p data-en="Inflation is still too sticky for an easy cut, while labor is beginning to weaken. The market is trading the tension between those two facts." data-zh="通胀仍然偏黏，尚不足以轻松降息；就业却开始走弱。市场正在交易这两股力量之间的张力。">Inflation is still too sticky for an easy cut, while labor is beginning to weaken. The market is trading the tension between those two facts.</p>
+        </li>
+        <li class="policyStep" data-policy-step="1" tabindex="0">
+          <span>01</span>
+          <h3 data-en="If inflation stays hot" data-zh="如果通胀继续偏热">If inflation stays hot</h3>
+          <p data-en="The Fed holds for longer. Two-year yields and the dollar rise first; expensive growth assets lose valuation support." data-zh="美联储将更久维持利率。两年期收益率与美元最先上行，高估值成长资产失去估值支撑。">The Fed holds for longer. Two-year yields and the dollar rise first; expensive growth assets lose valuation support.</p>
+        </li>
+        <li class="policyStep" data-policy-step="2" tabindex="0">
+          <span>02</span>
+          <h3 data-en="If labor breaks faster" data-zh="如果就业更快转弱">If labor breaks faster</h3>
+          <p data-en="Cut probabilities return. The front end rallies before the Fed acts, financial conditions loosen, and duration-sensitive technology regains support." data-zh="降息概率回升。短端利率会在美联储行动前先行下跌，金融条件放松，利率敏感型科技股重新获得支撑。">Cut probabilities return. The front end rallies before the Fed acts, financial conditions loosen, and duration-sensitive technology regains support.</p>
+        </li>
+        <li class="policyStep" data-policy-step="3" tabindex="0">
+          <span>03</span>
+          <h3 data-en="If energy becomes the shock" data-zh="如果能源成为新的冲击">If energy becomes the shock</h3>
+          <p data-en="Oil lifts the inflation tail while growth slows. The Fed's room to cut narrows; energy and gold become protection rather than simple bullish calls." data-zh="油价抬高通胀尾部风险，同时经济增长放缓。美联储的降息空间收窄；能源与黄金此时是保护仓位，而不是简单的看多判断。">Oil lifts the inflation tail while growth slows. The Fed's room to cut narrows; energy and gold become protection rather than simple bullish calls.</p>
+        </li>
+        <li class="policyStep" data-policy-step="4" tabindex="0">
+          <span>04</span>
+          <h3 data-en="The next decision is a branch, not a forecast" data-zh="下一次决策是一棵分支树，不是一句预测">The next decision is a branch, not a forecast</h3>
+          <p data-en="Watch core inflation and labor together. One determines how long policy stays tight; the other determines how urgently the Fed must respond." data-zh="必须同时观察核心通胀与就业：前者决定紧缩维持多久，后者决定美联储需要多快作出反应。">Watch core inflation and labor together. One determines how long policy stays tight; the other determines how urgently the Fed must respond.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
   <section class="chapter compass" id="ch01" aria-label="Hawk-dove compass">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 01 · O5 BEHAVIORAL MODEL" data-zh="第一章 · O5 行为模型">CHAPTER 01 · O5 BEHAVIORAL MODEL</div>
@@ -392,7 +465,7 @@
     <span class="msg" id="ambMsg" data-en="site-19 reactor drone · tap to listen" data-zh="19 号站点反应堆低鸣 · 点击聆听">site-19 reactor drone · tap to listen</span>
   </div>
 
-  <footer class="foot" data-i18n-html data-en="<b>SECURE. CONTAIN. PROTECT.</b> — DESK VIEW ONLY · NOT INVESTMENT ADVICE · O5 EYES ONLY" data-zh="<b>控制。收容。保护。</b> — 仅为台面观点 · 非投资建议 · O5 限阅"><b>SECURE. CONTAIN. PROTECT.</b> — DESK VIEW ONLY · NOT INVESTMENT ADVICE · O5 EYES ONLY</footer>
+  <footer class="foot" data-i18n-html data-en="<b>SECURE. CONTAIN. PROTECT.</b> — DESK VIEW ONLY · NOT INVESTMENT ADVICE · O5 EYES ONLY" data-zh="<b>控制。收容。保护。</b> — 仅为个人案头观点 · 非投资建议 · O5 限阅"><b>SECURE. CONTAIN. PROTECT.</b> — DESK VIEW ONLY · NOT INVESTMENT ADVICE · O5 EYES ONLY</footer>
 </main>
 
 <script>
@@ -659,6 +732,31 @@
   }
   function stop() { on = false; clearInterval(timer); if (master) master.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.6); nodes.forEach(function (n) { try { n.stop && n.stop(ac.currentTime + 0.7); } catch (e) {} }); nodes = []; btn.textContent = lang() === 'zh' ? '▣ 站点环境音 — 收容低鸣' : '▣ SITE AMBIENCE — CONTAINMENT HUM'; btn.classList.add('off'); btn.setAttribute('aria-pressed', 'false'); dock.classList.remove('on'); msg.textContent = lang() === 'zh' ? '已暂停 · 点击聆听' : 'paused · tap to listen'; }
   btn.addEventListener('click', function () { on ? stop() : start(); });
+})();
+
+/* Policy reaction story — one sticky causal map, state changed only when a
+   narrative step crosses the reading line. Reduced-motion keeps the complete
+   map visible and skips state transitions. */
+(function () {
+  var story = document.getElementById('ch00'); if (!story) return;
+  var steps = story.querySelectorAll('[data-policy-step]');
+  var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+  function activate(step) {
+    story.dataset.step = String(step);
+    steps.forEach(function (item) {
+      var active = item.dataset.policyStep === String(step);
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-current', active ? 'step' : 'false');
+    });
+  }
+  activate(0);
+  if (RM || !('IntersectionObserver' in window)) return;
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) activate(entry.target.dataset.policyStep);
+    });
+  }, { rootMargin: '-38% 0px -48% 0px', threshold: 0 });
+  steps.forEach(function (step) { observer.observe(step); });
 })();
 
 /* U41: chapter rail active-highlight + smooth scroll, scroll-reveal fade-up
