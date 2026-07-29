@@ -112,8 +112,8 @@ export function drawSCReticle(ctx,cx,cy){
    @param {number} [dash.cdRatio] - that weapon's cooldown ratio (0 just fired .. 1 ready)
    @param {number} [dash.warpIntensity] - real warp/throttle value (0..~1.3)
    @param {boolean} [dash.warpHover] - true while the user hovers the "入梦" warp button
-   @param {number} [dash.pwr] - mothership remaining energy, 0..1 (U28 28f)
-   @param {number} [dash.shield] - shield status, 0..1 (U28 28f)
+   @param {number} [dash.ammo] - tracked ammunition reserve, 0..1
+   @param {number} [dash.deck] - tracked flight-deck readiness, 0..1
 */
 const WPN_COLOR_BASE={cannon:'rgba(154,229,255,',missile:'rgba(232,179,128,',nuke:'rgba(255,77,91,',enforcer:'rgba(255,94,205,'};
 export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
@@ -140,12 +140,11 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
   // layered on top of each real ratio so the bars visibly breathe
   // frame-to-frame like real telemetry instead of only moving when the
   // underlying value changes.
-  const pwrRatio=clamp(dash.pwr??1,0,1);
-  const shieldRatio=clamp(dash.shield??1,0,1);
+  const ammoRatio=clamp(dash.ammo??0,0,1);
+  const deckRatio=clamp(dash.deck??0,0,1);
   const thrRatio=clamp(clamp(warpIntensity/1.4,0,1)*hoverMul,0,1);
   const vBar=(bx,by,bw,bh,ratio,colorBase,seed)=>{
-    const jitter=Math.sin(now/220+seed*7)*0.02;
-    const t=clamp(ratio+jitter,0,1);
+    const t=clamp(ratio,0,1);
     ctx.fillStyle=`${colorBase}.12)`;
     ctx.fillRect(bx,by,bw,bh);
     const fillH=bh*t;
@@ -196,9 +195,9 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
   // colours (low-saturation, within the dual color-temperature discipline):
   // PWR cyan-white (mothership energy), WPN the already-dynamic per-weapon
   // colour, THR blue-green (power/thrust gear), SHLD violet-cyan (shield).
-  const BTN_COLOR={PWR:'rgba(210,245,255,',THR:'rgba(110,230,180,',SHLD:'rgba(190,140,255,'};
-  const BTN_RATIO={PWR:pwrRatio,WPN:cdRatio,THR:thrRatio,SHLD:shieldRatio};
-  ['PWR','WPN','THR','SHLD'].forEach((lb,i)=>{
+  const BTN_COLOR={AMMO:'rgba(210,245,255,',THR:'rgba(110,230,180,',DECK:'rgba(190,140,255,'};
+  const BTN_RATIO={AMMO:ammoRatio,WPN:cdRatio,THR:thrRatio,DECK:deckRatio};
+  ['AMMO','WPN','THR','DECK'].forEach((lb,i)=>{
     const by=colY+i*(bh+bgap);
     const p=st(.10+i*.045,.22+i*.045);
     const colorBase=lb==='WPN'?wpnColorBase:BTN_COLOR[lb];
@@ -308,12 +307,9 @@ export function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
   ctx.fillStyle='rgba(148,228,255,.72)';
   ctx.fillText('ENFORCER CANNON',tx,ty-R-12);
   ctx.textAlign='left';
-  ctx.fillText(`RNG  ${range} M`,tx+R+8,ty-8);
+  ctx.fillText(`RNG  ${range} PX`,tx+R+8,ty-8);
   ctx.fillStyle=lockT>.95?'rgba(255,60,88,.92)':cyan;
   ctx.fillText(lockT>.95?'LOCK ACQUIRED':`LOCK  ${Math.round(lockT*100)}%`,tx+R+8,ty+7);
-  // Bottom: zoom factor
-  ctx.fillStyle='rgba(148,228,255,.50)';ctx.textAlign='center';
-  ctx.fillText(`ZOOM  ${(8+lockT*70.54).toFixed(2)} ×`,tx,ty+R+14);
 
   // SC-style 4-corner target bracket (tighter = more lock)
   const bR=Math.min(w,h)*.035+lockT*(-Math.min(w,h)*.012);
@@ -347,7 +343,7 @@ export function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
  * @param {() => number} [deps.getKillCount] - real kill count (mission panel)
  * @param {() => number} [deps.getGiantKillCount] - real giant-class kill count
  */
-export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, pilotTrackedPoint, getKillCount, getGiantKillCount }){
+export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, getCombatState, pilotTrackedPoint, getKillCount, getGiantKillCount }){
   // U14e (2026-07-12): servo-lag state for the target frame — persists across
   // frames in this factory's own closure (createCombatHmdV3 is instantiated
   // once at boot, not per-frame), reset to null whenever the target isn't
@@ -358,9 +354,12 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
   /** Flight-path marker, SC style (V17b): a small bracket-dot secondary marker
    *  ( ⌐ · ¬ ) drifting slightly off boresight — no ghost line, no circle. */
   function drawVelocityVector(ctx,w,h,now){
+    const state=getCombatState?.();
+    if(!Number.isFinite(state?.telemetry?.headingDeg)) return;
     const bx=w*.5, by=h*.46;
-    const vvX=bx+Math.sin(now/2800)*w*.022+Math.sin(now/5100)*w*.008;
-    const vvY=by+Math.cos(now/3200)*h*.018+Math.cos(now/4700)*h*.008+h*.05;
+    const heading=state.telemetry.headingDeg*Math.PI/180;
+    const vvX=bx+Math.cos(heading)*w*.022;
+    const vvY=by+Math.sin(heading)*h*.018+h*.05;
     ctx.save();
     ctx.strokeStyle='rgba(148,228,255,.72)';ctx.lineWidth=1.1;
     const g=7, arm=3.5;   // bracket half-gap + arm length
@@ -392,10 +391,10 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
    *  real targeting servo, implemented as a plain lerp, no new dependency. */
   function drawTargetFrame(ctx,cx,cy,size,rangeM,locked){
     const halley=getHalley();
+    const state=getCombatState?.();
     if(!halley||halley.destroyed) return;
-    const vx=halley.vx||0, vy=halley.vy||0;
-    const closingMs=Math.round(Math.hypot(vx,vy)*180);
-    const rangeKm=(rangeM/1000).toFixed(1);
+    const speed=state?.target?.speedKms;
+    const rangePx=Math.round(state?.solution?.rangePx??rangeM??0);
     ctx.save();
     ctx.strokeStyle=locked?'rgba(255,205,128,.92)':'rgba(226,246,255,.82)';
     ctx.lineWidth=0.9;
@@ -410,15 +409,16 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.font=`${fs}px 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='middle';
     ctx.fillStyle='rgba(226,246,255,.78)';
-    ctx.fillText(`HALLEY · ${rangeKm}km`,cx+size+8,cy-size*.35);
+    ctx.fillText(`HALLEY · ${rangePx}px`,cx+size+8,cy-size*.35);
     ctx.textAlign='center';ctx.textBaseline='top';
     ctx.fillStyle='rgba(226,246,255,.92)';
     ctx.fillText('1P/HALLEY',cx,cy+size+8);
     ctx.font=`${fs*.9}px 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(180,225,255,.64)';
-    ctx.fillText(`${rangeKm}km [${closingMs}m/s]`,cx,cy+size+8+fs*1.3);
+    ctx.fillText(`${rangePx}px [${Number.isFinite(speed)?`${speed.toFixed(1)}km/s`:'—'}]`,cx,cy+size+8+fs*1.3);
     // single hull bar, below the two text lines
-    const maxHp=200, hp=clamp(halley.hp||100,0,maxHp), pct=hp/maxHp;
+    const maxHp=Math.max(1,state?.target?.hpMax||halley.hpMax||1);
+    const hp=clamp(state?.target?.hp??halley.hp??0,0,maxHp), pct=hp/maxHp;
     const bw=size*1.5, bx=cx-bw/2, by=cy+size+8+fs*2.9, bh=2;
     ctx.fillStyle='rgba(148,228,255,.18)';ctx.fillRect(bx,by,bw,bh);
     ctx.fillStyle=pct<.3?'rgba(255,120,112,.78)':'rgba(148,228,255,.62)';
@@ -429,13 +429,11 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
   /** Lead indicator: small amber diamond ahead of the target, accounting for
    *  projectile flight time. Visible only while the target is visible. */
   function drawLeadIndicator(ctx,cx,cy,w,h,now){
-    const halley=getHalley();
-    if(!halley||!halley.hover) return;
-    const vx=halley.vx||0, vy=halley.vy||0;
-    if(Math.hypot(vx,vy)<.04) return;  // near-stationary: skip
-    const tof=0.22;   // normalised projectile flight time
-    const lx=clamp(cx+vx*tof*w*.20, w*.04, w*.96);
-    const ly=clamp(cy+vy*tof*h*.20, h*.04, h*.92);
+    const state=getCombatState?.();
+    const target=state?.target, solution=state?.solution;
+    if(!target?.locked||!solution?.valid||!solution.aimPoint) return;
+    const lx=clamp(cx+(solution.aimPoint.x-target.x)*.65,w*.04,w*.96);
+    const ly=clamp(cy+(solution.aimPoint.y-target.y)*.65,h*.04,h*.92);
     if(Math.hypot(lx-cx,ly-cy)<8) return;
     ctx.save();
     ctx.strokeStyle='rgba(255,205,128,.62)';ctx.lineWidth=1;
@@ -458,7 +456,7 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
    *  propellant readouts derived from warpIntensity (real runtime value,
    *  not static text — same honesty tier as the old chip stack's SCM/GUN
    *  rows it replaces). */
-  function drawLeftColumn(ctx,w,h,now,mode,speed,warpIntensity){
+  function drawLeftColumn(ctx,w,h,now,mode,state){
     if(w<300||h<220) return;
     const combatMode=['missile','nukeAuth','nemp','mainGun','ciws'].includes(mode);
     const x=w*.045;
@@ -485,7 +483,8 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
       const ty=tapeY+tapeH*i/4;
       ctx.beginPath();ctx.moveTo(tapeX-3,ty);ctx.lineTo(tapeX+3,ty);ctx.stroke();
     }
-    const speedT=clamp((speed-600)/500,0,1);
+    const speed=state?.target?.speedKms;
+    const speedT=Number.isFinite(speed)?clamp(speed/180,0,1):0;
     const markY=tapeY+tapeH*(1-speedT);
     ctx.fillStyle='rgba(226,246,255,.92)';
     ctx.fillRect(tapeX-5,markY-1.5,10,3);
@@ -493,17 +492,14 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.font=`${Math.max(16,Math.min(26,w*.045))}px 'Orbitron',sans-serif`;
     ctx.fillStyle='rgba(226,246,255,.95)';
     ctx.textBaseline='alphabetic';
-    ctx.fillText(String(speed),x,tapeY+tapeH+28);
+    ctx.fillText(Number.isFinite(speed)?speed.toFixed(1):'—',x,tapeY+tapeH+28);
     ctx.font=`${Math.max(6,w*.011)}px 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(180,225,255,.5)';
-    ctx.fillText('m/s',x,tapeY+tapeH+38);
-    // propellant readouts (derived from warpIntensity — real value)
-    const h2Pct=Math.round(clamp(99-warpIntensity*6,60,99));
-    const qPct=Math.round(clamp(89-(1-warpIntensity)*4,55,89));
+    ctx.fillText('km/s TRACK',x,tapeY+tapeH+38);
     ctx.font=`${Math.max(7,w*.013)}px 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(148,228,255,.7)';
-    ctx.fillText(`${h2Pct}% 氢燃料`,x,h*.92);
-    ctx.fillText(`${qPct}% 量子燃料`,x,h*.92+13);
+    ctx.fillText(`AMMO ${Math.round(state?.fleet?.ammoPct??0)}%`,x,h*.92);
+    ctx.fillText(`DECK ${Math.round(state?.fleet?.deckPct??0)}%`,x,h*.92+13);
     ctx.restore();
   }
 
@@ -518,44 +514,37 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
    *  track literal rounds-per-kill); the trailing "current burst" digit is
    *  still cosmetic dressing, but now visibly cycles instead of being
    *  frozen at its first-paint value. */
-  function drawRightColumn(ctx,w,h,now,warpIntensity){
+  function drawRightColumn(ctx,w,h,now,state){
     if(w<300||h<220) return;
     const rx=w*.955;
-    const kills=getKillCount?getKillCount():0;
-    const cannonLeft=Math.max(6,48-kills*2);
-    const missileLeft=Math.max(0,5-Math.floor(kills/2));
-    const burstA=1+Math.floor((now/1300)%4);
-    const burstB=1+Math.floor((now/1700)%2);
+    const kills=state?.fleet?.kills??(getKillCount?getKillCount():0);
     ctx.save();
     ctx.font=`${Math.max(7,Math.min(9,w*.014))}px 'JetBrains Mono',monospace`;
     ctx.textAlign='right';ctx.textBaseline='top';
     ctx.fillStyle='rgba(148,228,255,.6)';
-    ctx.fillText(`速射炮 ${cannonLeft}·${burstA}`,rx,h*.10);
-    ctx.fillText(`导弹 ${missileLeft}·${burstB}`,rx,h*.10+13);
+    ctx.fillText(`KILLS ${kills}`,rx,h*.10);
+    ctx.fillText(`SOLUTION ${state?.solution?.lockQuality??0}%`,rx,h*.10+13);
     // boost bar (two-tone: cyan-green body, amber-red base segment) — U28
     // 28e: y/height/width (h*.20/h*.34/6) mirror drawLeftColumn's RULER_Y/
     // RULER_H/RULER_W exactly, keeping the two side rulers symmetric.
     const barX=rx-8, barY=h*.20, barH=h*.34, barW=6;
-    const fillT=clamp(warpIntensity,0,1);
+    const fillT=clamp((state?.fleet?.deckPct??0)/100,0,1);
     ctx.fillStyle='rgba(154,229,255,.14)';ctx.fillRect(barX-barW,barY,barW,barH);
     const baseH=barH*.18;
     ctx.fillStyle='rgba(255,120,112,.7)';ctx.fillRect(barX-barW,barY+barH-baseH,barW,Math.min(baseH,barH*fillT));
     const bodyH=Math.max(0,barH*fillT-baseH);
     ctx.fillStyle='rgba(120,255,178,.7)';ctx.fillRect(barX-barW,barY+barH-baseH-bodyH,barW,bodyH);
-    // G readout (real, same figure the old bottom telemetry line used)
-    const g=(1.2+warpIntensity*.9);
+    const p95=state?.telemetry?.frameP95Ms??0;
     ctx.textAlign='right';ctx.textBaseline='alphabetic';
     ctx.font=`${Math.max(8,w*.016)}px 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(226,246,255,.85)';
-    ctx.fillText(g.toFixed(1),rx,h*.62);
+    ctx.fillText(p95?p95.toFixed(1):'—',rx,h*.62);
     ctx.font=`${Math.max(6,w*.011)}px 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(180,225,255,.5)';
-    ctx.fillText('G',rx,h*.62+11);
-    // boost %
-    const boostPct=Math.round(clamp(70+warpIntensity*30,70,100));
+    ctx.fillText('MS P95',rx,h*.62+11);
     ctx.font=`${Math.max(7,w*.013)}px 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(148,228,255,.7)';
-    ctx.fillText(`${boostPct}% 加力`,rx,h*.92);
+    ctx.fillText(`${Math.round(state?.fleet?.deckPct??0)}% DECK`,rx,h*.92);
     ctx.restore();
   }
 
@@ -584,10 +573,10 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
      target frame; the centre of the screen stays clear for the scene) === */
   function drawCleanCombatHmd(ctx,w,h,now,label,mode){
     const halley=getHalley(), warpIntensity=getWarpIntensity(), shipRecoil=getShipRecoil();
+    const state=getCombatState?.()||{};
     const missileLike=mode==='missile'||mode==='nukeAuth'||mode==='nemp';
     const lock=pilotTrackedPoint(w,h,mode);
-    const speed=Math.round(760+warpIntensity*240+Math.sin(now/900)*16);
-    const range=lock.visible?Math.max(88,Math.round(720-lock.approach*560+(halley?.collisionRisk||0)*80)):620;
+    const range=state.solution?.rangePx??0;
     ctx.save();
 
     // Soft vignette — glass tint
@@ -602,8 +591,8 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     drawSCReticle(ctx,w*.5,h*.46);
 
     // ── Left/right cockpit columns (U8: replaces the old chip stacks) ──────
-    drawLeftColumn(ctx,w,h,now,mode,speed,warpIntensity);
-    drawRightColumn(ctx,w,h,now,warpIntensity);
+    drawLeftColumn(ctx,w,h,now,mode,state);
+    drawRightColumn(ctx,w,h,now,state);
 
     // U28 28e (2026-07-14): the fixed-position decorative contact labels
     // (DEEP-SPACE-KING/WARMASTAR/etc + the real-escort branch that fed them)

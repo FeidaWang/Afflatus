@@ -8,8 +8,9 @@
  * R-ALT/VSI/ATMO, a centre pitch ladder + boresight reticle, and amber/red
  * warning text. Cyan default; amber/red when damaged.
  *
- * Pure canvas: drawCombatHudSC(ctx, w, h, now, state). `state` is optional —
- * sensible demo values fill any gaps, so it renders standalone for previews.
+ * Pure canvas: drawCombatHudSC(ctx, w, h, now, state). Unavailable sensors
+ * render as em dashes; this surface never invents propellant, shield or
+ * countermeasure values.
  */
 const F = "'JetBrains Mono','Orbitron',monospace";
 const COL = { cy: '#5fd0ff', cyD: 'rgba(95,208,255,.45)', gr: '#5dff9d', rd: '#ff5c66', am: '#ffb020', grn: '#39d98a', dim: 'rgba(150,200,230,.5)' };
@@ -22,11 +23,12 @@ function txt(ctx, s, x, y, size, color, align, weight) {
 
 export function drawCombatHudSC(ctx, w, h, now, state) {
   const S = Object.assign({
-    mode: 'GUN', scm: 'SCM', speed: 0, throttle: 0.0, ab: 1.0, hFuel: 99, qFuel: 100,
-    alt: 3, vsi: 0, atmo: null, g: 0.0, gMax: 1.0, heading: 0, decoy: 48, noise: 5,
-    shieldF: 75, shieldR: 75, status: 'ONLINE', warn: [], gimbal: 'P F', group: 'GUNS (ALL)',
+    mode: 'GUN', scm: 'SCM', speed: null, throttle: null, ab: 0, hFuel: null, qFuel: null,
+    alt: null, vsi: null, atmo: null, g: null, gMax: null, heading: null, decoy: null, noise: null,
+    shieldF: null, shieldR: null, status: 'ONLINE', warn: [], gimbal: 'P F', group: 'GUNS (ALL)',
     accent: 'cy', ladder: false, kills: 0, lock: false
   }, state || {});
+  const readout=(value,suffix='')=>Number.isFinite(value)?`${value}${suffix}`:'—';
   const A = COL[S.accent] || COL.cy;           // theme accent (cy / am / rd)
   const cx = w * 0.5, cy = h * 0.5;
   const u = Math.min(w, h);
@@ -58,8 +60,8 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   for (const sgx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sgx * Wd * 1.1, Ld * 0.5); ctx.lineTo(sgx * Wd * 1.7, Ld * 0.92); ctx.stroke(); } // twin tails
   for (const sgx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sgx * Wd * 0.9, Ld * 0.8); ctx.lineTo(sgx * Wd * 3.0, Ld * 1.02); ctx.lineTo(sgx * Wd * 2.6, Ld * 1.06); ctx.closePath(); ctx.stroke(); } // stabilators
   ctx.restore();
-  txt(ctx, S.shieldF, hx + hw * 0.32, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);
-  txt(ctx, S.shieldR, hx + hw * 0.68, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);
+  txt(ctx, readout(S.shieldF), hx + hw * 0.32, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);
+  txt(ctx, readout(S.shieldR), hx + hw * 0.68, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);
   ctx.strokeStyle = COL.gr; ctx.beginPath(); ctx.moveTo(hx + hw * 0.2, hy + hh + fs * 0.2); ctx.lineTo(hx + hw * 0.44, hy + hh + fs * 0.2); ctx.moveTo(hx + hw * 0.56, hy + hh + fs * 0.2); ctx.lineTo(hx + hw * 0.8, hy + hh + fs * 0.2); ctx.stroke();
   txt(ctx, 'GIMBAL', hx + hw + u * 0.02, hy + fs * 0.6, fs, A, 'left', 600);
   txt(ctx, 'GROUP', hx + hw + u * 0.02, hy + fs * 2.0, fs, A, 'left', 600);
@@ -77,14 +79,14 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   const tapeY = m + u * 0.08, ppd = u * 0.0125;
   ctx.strokeStyle = COL.cyD; ctx.fillStyle = A;
   for (let d = -40; d <= 40; d += 10) {
-    const hd = Math.round(S.heading + d), x = cx + d * ppd;
+    const hd = Math.round((Number.isFinite(S.heading)?S.heading:0) + d), x = cx + d * ppd;
     if (Math.abs(d) <= 36) {
       ctx.beginPath(); ctx.moveTo(x, tapeY); ctx.lineTo(x, tapeY + fs * 0.5); ctx.stroke();
       txt(ctx, ((hd % 360) + 360) % 360, x, tapeY - fs * 0.6, fs * 0.92, COL.dim, 'center');
     }
   }
   ctx.fillStyle = A; ctx.beginPath(); ctx.moveTo(cx, tapeY + fs * 0.9); ctx.lineTo(cx - fs * 0.5, tapeY + fs * 1.6); ctx.lineTo(cx + fs * 0.5, tapeY + fs * 1.6); ctx.closePath(); ctx.fill();
-  txt(ctx, (((Math.round(S.heading)) % 360) + 360) % 360, cx, tapeY + fs * 2.4, fs, A, 'center', 600);
+  txt(ctx, Number.isFinite(S.heading)?(((Math.round(S.heading)) % 360) + 360) % 360:'—', cx, tapeY + fs * 2.4, fs, A, 'center', 600);
 
   // ── vertical throttle bar helper ────────────────────────────────────────
   function bar(x, val) {
@@ -105,7 +107,7 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
 
   // ── left column: ESP/CPLD, gimbal cross, SCM/GUN, speed, fuel ───────────
   const lx = w * 0.27;
-  bar(lx, Math.max(0.04, Math.min(1, S.speed / Math.max(1, (S.scm === 'SCM' ? 220 : 1200)))));
+  bar(lx, Number.isFinite(S.speed)?Math.max(0.04, Math.min(1, S.speed / Math.max(1, (S.scm === 'SCM' ? 220 : 1200)))):0);
   const ex = w * 0.15;
   ctx.strokeStyle = A;
   ['ESP', 'CPLD'].forEach((s, i) => { const by = h * 0.49 + i * fs * 1.8; ctx.strokeRect(ex - fs * 1.6, by - fs * 0.7, fs * 3.2, fs * 1.4); txt(ctx, s, ex, by, fs, A, 'center', 600); });
@@ -115,11 +117,11 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   ctx.fillStyle = 'rgba(255,92,102,.85)'; ctx.fillRect(gx + fs * 1.1, gy - fs * 0.45, fs * 0.9, fs * 0.9); txt(ctx, '+', gx + fs * 1.55, gy, fs, '#fff', 'center', 700);
   txt(ctx, S.scm, w * 0.18, h * 0.30, fs * 1.05, A, 'left', 700);
   txt(ctx, S.mode, w * 0.18, h * 0.30 + fs * 1.4, fs * 1.05, A, 'left', 700);
-  txt(ctx, Math.round(S.speed), lx, h * 0.74, fs * 2.0, '#eaf6ff', 'center', 700);
+  txt(ctx, Number.isFinite(S.speed)?Math.round(S.speed):'—', lx, h * 0.74, fs * 2.0, '#eaf6ff', 'center', 700);
   txt(ctx, 'm/s', lx, h * 0.74 + fs * 1.6, fs, COL.dim, 'center');
   // fuel — bottom-left corner, clear of the speed readout
-  txt(ctx, S.hFuel + '%', m, h * 0.86, fs, '#eaf6ff', 'left', 600); txt(ctx, 'H-FUEL', m + fs * 2.9, h * 0.86, fs, A, 'left');
-  txt(ctx, S.qFuel + '%', m, h * 0.86 + fs * 1.5, fs, '#eaf6ff', 'left', 600); txt(ctx, 'Q-FUEL', m + fs * 2.9, h * 0.86 + fs * 1.5, fs, A, 'left');
+  txt(ctx, readout(S.hFuel,'%'), m, h * 0.86, fs, '#eaf6ff', 'left', 600); txt(ctx, 'H-FUEL', m + fs * 2.9, h * 0.86, fs, A, 'left');
+  txt(ctx, readout(S.qFuel,'%'), m, h * 0.86 + fs * 1.5, fs, '#eaf6ff', 'left', 600); txt(ctx, 'Q-FUEL', m + fs * 2.9, h * 0.86 + fs * 1.5, fs, A, 'left');
 
   // ── right column: AB bar, G-meter node, decoy/noise, alt/vsi ────────────
   const rx = w * 0.73;
@@ -131,13 +133,13 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   ctx.strokeStyle = COL.cyD;
   ctx.beginPath(); ctx.arc(ngx, ngy, fs * 0.5, 0, 7); ctx.stroke();
   for (let a = 0; a < 4; a++) { const ax = ngx + Math.cos(a * Math.PI / 2) * nr, ay = ngy + Math.sin(a * Math.PI / 2) * nr; ctx.beginPath(); ctx.moveTo(ngx + Math.cos(a * Math.PI / 2) * fs * 0.6, ngy + Math.sin(a * Math.PI / 2) * fs * 0.6); ctx.lineTo(ax, ay); ctx.stroke(); ctx.fillStyle = COL.cyD; ctx.beginPath(); ctx.arc(ax, ay, fs * 0.18, 0, 7); ctx.fill(); }
-  txt(ctx, S.g.toFixed(1), w * 0.9, ngy - fs * 0.5, fs * 1.7, '#eaf6ff', 'right', 700); txt(ctx, 'G', w * 0.9 + fs * 0.4, ngy - fs * 0.5, fs, A, 'left');
-  txt(ctx, S.gMax.toFixed(1), w * 0.9, ngy + fs * 1.1, fs, COL.dim, 'right');
-  txt(ctx, 'DECOY', w * 0.78, h * 0.31, fs, A); txt(ctx, S.decoy, w * 0.86, h * 0.31, fs, '#eaf6ff', 'left', 600);
-  txt(ctx, 'NOISE', w * 0.78, h * 0.31 + fs * 1.4, fs, A); txt(ctx, S.noise, w * 0.86, h * 0.31 + fs * 1.4, fs, '#eaf6ff', 'left', 600);
+  txt(ctx, Number.isFinite(S.g)?S.g.toFixed(1):'—', w * 0.9, ngy - fs * 0.5, fs * 1.7, '#eaf6ff', 'right', 700); txt(ctx, 'G', w * 0.9 + fs * 0.4, ngy - fs * 0.5, fs, A, 'left');
+  txt(ctx, Number.isFinite(S.gMax)?S.gMax.toFixed(1):'—', w * 0.9, ngy + fs * 1.1, fs, COL.dim, 'right');
+  txt(ctx, 'DECOY', w * 0.78, h * 0.31, fs, A); txt(ctx, readout(S.decoy), w * 0.86, h * 0.31, fs, '#eaf6ff', 'left', 600);
+  txt(ctx, 'NOISE', w * 0.78, h * 0.31 + fs * 1.4, fs, A); txt(ctx, readout(S.noise), w * 0.86, h * 0.31 + fs * 1.4, fs, '#eaf6ff', 'left', 600);
   txt(ctx, 'KILLS', w * 0.78, h * 0.31 + fs * 2.8, fs, A); txt(ctx, S.kills, w * 0.86, h * 0.31 + fs * 2.8, fs, COL.gr, 'left', 700);
-  txt(ctx, 'R-ALT', w * 0.79, h * 0.80, fs, A); txt(ctx, S.alt + 'm', w * 0.96, h * 0.80, fs, '#eaf6ff', 'right', 600);
-  txt(ctx, 'VSI', w * 0.79, h * 0.80 + fs * 1.5, fs, A); txt(ctx, S.vsi + 'm/s', w * 0.96, h * 0.80 + fs * 1.5, fs, '#eaf6ff', 'right', 600);
+  txt(ctx, 'R-ALT', w * 0.79, h * 0.80, fs, A); txt(ctx, readout(S.alt,'m'), w * 0.96, h * 0.80, fs, '#eaf6ff', 'right', 600);
+  txt(ctx, 'VSI', w * 0.79, h * 0.80 + fs * 1.5, fs, A); txt(ctx, readout(S.vsi,'m/s'), w * 0.96, h * 0.80 + fs * 1.5, fs, '#eaf6ff', 'right', 600);
   if (S.atmo != null) { txt(ctx, 'ATMO', w * 0.79, h * 0.80 + fs * 3.0, fs, A); txt(ctx, S.atmo, w * 0.96, h * 0.80 + fs * 3.0, fs, '#eaf6ff', 'right', 600); }
 
   // ── centre: pitch ladder (atmo/hangar only) + boresight reticle ─────────

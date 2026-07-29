@@ -57,8 +57,9 @@ export function createCombatRuntime({
     lastServiceTick = now;
     ammoLevel = Math.min(100, ammoLevel + (dt / ammoRecoveryMs) * 100);
     const flags = getCombatFlags?.() || {};
-    const deckTarget = 90 + Math.sin(now / 6800) * 3.4 - (flags.weaponCutoff ? 14 : 0) - (flags.nukeAlert ? 9 : 0);
-    deckReadiness = lerp(deckReadiness, clamp(deckTarget, 38, 96), Math.min(0.04, dt / 9000));
+    const readinessCeiling = flags.weaponCutoff ? 72 : flags.nukeAlert ? 81 : flags.empEffect ? 58 : 96;
+    const readinessRate = readinessCeiling < deckReadiness ? dt / 2200 : dt / 120000;
+    deckReadiness = lerp(deckReadiness, readinessCeiling, Math.min(1, readinessRate));
     if (repairServiceUntil > now) {
       const repairRate = dt / 900;
       Object.keys(fleetHp).forEach(type => {

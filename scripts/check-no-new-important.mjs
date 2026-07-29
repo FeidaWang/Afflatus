@@ -19,6 +19,7 @@ const BASELINES = {
   // P1-11 (2026-07-26): the Home brand family migration removed 110
   // legacy priorities, lowering the accepted ratchet from 2,960 to 2,850.
   'src/styles.css': 2850,
+  'src/cic-hud.css': 0,
   'index.html': 2,
 };
 

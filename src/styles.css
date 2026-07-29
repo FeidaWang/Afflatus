@@ -3937,7 +3937,7 @@
     inset:0!important;
     width:auto!important;
     height:auto!important;
-    display:block!important;
+    display:var(--route-arrows-display,block)!important;
     pointer-events:none!important;
     background:none!important;
     border:0!important;
@@ -5632,10 +5632,10 @@
   }
 
   body:not(.hud-off) .jump-toggle {
-    display: grid !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
+    display: var(--jump-toggle-display, grid) !important;
+    opacity: var(--jump-toggle-opacity, 1) !important;
+    visibility: var(--jump-toggle-visibility, visible) !important;
+    pointer-events: var(--jump-toggle-pointer, auto) !important;
   }
 
   body.hud-off .jump-toggle {
@@ -5648,7 +5648,7 @@
   .jump-toggle {
     position: fixed !important;
     right: 12px !important;
-    bottom: calc(var(--hud-bottom) + var(--hud-combat-h) + 4px) !important;
+    bottom: calc(var(--cic-shell-height) + 14px) !important;
     width: 136px !important;
     min-width: 136px !important;
     height: 32px !important;

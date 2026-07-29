@@ -235,6 +235,9 @@ export function createRenderBudgetCoordinator(options = {}) {
     if (result.state === 'over-budget') {
       record.slowWindows += 1;
       record.headroomWindows = 0;
+      record.thermalState = record.slowWindows >= 2
+        ? 'hot'
+        : record.thermalState === 'hot' ? 'hot' : 'warm';
       if (record.slowWindows >= 2) {
         record.slowWindows = 0;
         setQualityTier(stepQualityTier(qualityTier, -1, initialTier));
@@ -242,6 +245,7 @@ export function createRenderBudgetCoordinator(options = {}) {
     } else if (result.state === 'headroom') {
       record.headroomWindows += 1;
       record.slowWindows = 0;
+      if (record.headroomWindows >= 2) record.thermalState = 'nominal';
       if (record.headroomWindows >= 8) {
         record.headroomWindows = 0;
         setQualityTier(stepQualityTier(qualityTier, 1, initialTier));
@@ -249,6 +253,7 @@ export function createRenderBudgetCoordinator(options = {}) {
     } else {
       record.slowWindows = 0;
       record.headroomWindows = 0;
+      if (record.thermalState === 'hot') record.thermalState = 'warm';
     }
   }
 
@@ -276,6 +281,9 @@ export function createRenderBudgetCoordinator(options = {}) {
       p95Ms: 0,
       slowWindows: 0,
       headroomWindows: 0,
+      drawCalls: 0,
+      triangles: 0,
+      thermalState: 'nominal',
     };
 
     records.set(id, record);
@@ -323,8 +331,10 @@ export function createRenderBudgetCoordinator(options = {}) {
       dispose() {
         release(true);
       },
-      reportFrame(durationMs) {
+      reportFrame(durationMs, stats = {}) {
         if (!record.active || !Number.isFinite(durationMs) || durationMs <= 0 || durationMs > 250) return;
+        if (Number.isFinite(stats.drawCalls)) record.drawCalls = Math.max(0, Math.trunc(stats.drawCalls));
+        if (Number.isFinite(stats.triangles)) record.triangles = Math.max(0, Math.trunc(stats.triangles));
         record.frameSamples.push(durationMs);
         if (record.frameSamples.length >= 90) evaluateRecord(record);
       },
@@ -368,6 +378,9 @@ export function createRenderBudgetCoordinator(options = {}) {
           cost: record.cost,
           targetFps: record.targetFps,
           p95Ms: record.p95Ms,
+          drawCalls: record.drawCalls,
+          triangles: record.triangles,
+          thermalState: record.thermalState,
         })),
       });
     },

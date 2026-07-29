@@ -152,49 +152,84 @@
 <div class="weapon-warning" id="weaponWarning"><b>ENFORCER MAIN CANNON</b><span>charging particle spine · stand by</span></div>
 <div class="bridge-callout" id="bridgeCallout">Cruising mode on</div>
 
-<div id="combatHud" aria-hidden="true">
-  <div class="hud-vignette"></div>
+<div id="combatHud" aria-hidden="true" data-cic-hud>
+  <div class="cic-vignette" aria-hidden="true"></div>
   <div class="hud-warning">战术尾迹 · 引力井前方</div>
   <div class="hud-subwarning">舰桥锁定 · 目标神谕 · 信号帷幕</div>
-  <div class="hud-panels">
-    <aside class="hud-panel hud-center">
-      <div class="hud-label hud-label-row"><span data-hud="battleTitle">防御模块</span><b class="hud-kill-badge" id="hudKillBadge" data-hud-tpl="killsLabel"><span data-hud="killsLabel">确认击毁</span> <i id="hudKillCount">0</i></b><button class="voyage-log-toggle" id="voyageLogToggle" type="button" data-hot aria-label="Toggle private voyage log">LOG</button></div>
-      <div class="combat-module">
-        <div class="weapon-matrix" id="weaponMatrix">
-          <button class="weapon-choice" data-weapon="cannon" data-hot><span class="wpn-icon">▥</span><span class="wpn-info"><b data-hud="wCannon">密集阵</b><small>近防弹幕</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
-          <button class="weapon-choice" data-weapon="missile" data-hot><span class="wpn-icon">↗</span><span class="wpn-info"><b data-hud="wMissile">导弹</b><small>自主制导</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
-          <button class="weapon-choice" data-weapon="nuke" data-hot><span class="wpn-icon">☢</span><span class="wpn-info"><b data-hud="wNuke">核打击</b><small>战术核击</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
-          <button class="weapon-choice" data-weapon="enforcer" data-hot><span class="wpn-icon">✦</span><span class="wpn-info"><b data-hud="wEnforcer">主炮</b><small>蓄力主炮</small></span><i class="wpn-rec" data-hud="recommendLabel">系统推荐</i></button>
-        </div>
-        <form class="mobile-weapon-form weapon-form-hidden" id="weaponForm">
-          <label for="weaponSelect">彗星截击裁决</label>
-          <select id="weaponSelect">
-            <option value="auto">自动 · 舰长裁决火力</option>
-            <option value="cannon">密集阵 · 左右舷近防弹幕</option>
-            <option value="missile">F-47 · 自主制导导弹</option>
-            <option value="nuke">B2 · 战术核打击护航</option>
-            <option value="enforcer">执法者主炮 · 冷却30秒</option>
-          </select>
-        </form>
-        <div class="battle-log wide" id="battleLog">战术甲板待命 · 入梦按钮预热跃迁</div>
+  <div class="cic-shell">
+    <aside class="cic-panel cic-fire-control" aria-label="Fire control and interception">
+      <header class="cic-panel-head">
+        <span class="cic-eyebrow">FIRE CONTROL · 01</span>
+        <strong data-hud="battleTitle">火控与拦截协议</strong>
+        <button class="cic-ap-toggle" id="apToggle" type="button" data-hot aria-pressed="false">
+          <span>AP</span><b id="apState">自动</b>
+        </button>
+      </header>
+      <div class="cic-weapon-wells" id="cicWeaponMatrix">
+        <button class="cic-weapon" data-cic-weapon data-weapon="cannon" type="button" data-hot>
+          <span class="cic-weapon-rail" aria-hidden="true"><i></i></span>
+          <span class="cic-weapon-code"><i>PD-01</i><em>▥</em></span>
+          <b data-hud="wCannon">密集阵</b>
+          <small data-hud="wCannonDesc">近防弹幕</small>
+          <span class="cic-weapon-state" data-hud="ready">就绪</span>
+          <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
+        </button>
+        <button class="cic-weapon" data-cic-weapon data-weapon="missile" type="button" data-hot>
+          <span class="cic-weapon-rail" aria-hidden="true"><i></i></span>
+          <span class="cic-weapon-code"><i>AA-47</i><em>↗</em></span>
+          <b data-hud="wMissile">导弹</b>
+          <small data-hud="wMissileDesc">自主制导</small>
+          <span class="cic-weapon-state" data-hud="ready">就绪</span>
+          <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
+        </button>
+        <button class="cic-weapon" data-cic-weapon data-weapon="nuke" type="button" data-hot>
+          <span class="cic-weapon-rail" aria-hidden="true"><i></i></span>
+          <span class="cic-weapon-code"><i>NX-02</i><em>☢</em></span>
+          <b data-hud="wNuke">核打击</b>
+          <small data-hud="wNukeDesc">双钥授权</small>
+          <span class="cic-weapon-state" data-hud="ready">就绪</span>
+          <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
+        </button>
+        <button class="cic-weapon" data-cic-weapon data-weapon="enforcer" type="button" data-hot>
+          <span class="cic-weapon-rail" aria-hidden="true"><i></i></span>
+          <span class="cic-weapon-code"><i>EF-09</i><em>✦</em></span>
+          <b data-hud="wEnforcer">主炮</b>
+          <small data-hud="wEnforcerDesc">粒子脊柱</small>
+          <span class="cic-weapon-state" data-hud="ready">就绪</span>
+          <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
+        </button>
       </div>
+      <form class="cic-state-form" id="weaponForm">
+        <label for="weaponSelect">彗星截击裁决</label>
+        <select id="weaponSelect">
+          <option value="auto">自动 · 舰长裁决火力</option>
+          <option value="cannon">密集阵 · 左右舷近防弹幕</option>
+          <option value="missile">F-47 · 自主制导导弹</option>
+          <option value="nuke">B2 · 战术核打击护航</option>
+          <option value="enforcer">执法者主炮 · 冷却30秒</option>
+        </select>
+      </form>
     </aside>
-    <aside class="hud-panel hud-pilot">
-      <div class="hud-label" data-hud="pilotTitle">COMBAT VIEW</div>
-      <canvas class="pilot-feed" id="pilotFeed"></canvas>
-      <!-- U13b (2026-07-11): radar merged in from the deleted hud-left panel
-           (see main.js drawRadar() comment) — small dock, no label (redundant
-           under "COMBAT VIEW"), overlaid so it doesn't steal pilotFeed's rect.
-           U14b (2026-07-12): re-docked bottom-center + shrunk further, see
-           the .pilot-radar-dock override at the end of styles.css. -->
-      <div class="pilot-radar-dock" aria-hidden="true"><canvas id="radarCanvas"></canvas></div>
-      <!-- U14b (2026-07-12): battle broadcast feed revived from its U10
-           display:none — moved here (was inside .combat-module) as a
-           compact top-right ticker instead of a Defense Module header
-           row. Same #battleFeed id/children, main.js's createBattleFeed
-           still finds it by getElementById, zero JS changes needed. -->
-      <div class="battle-feed defense-command-log" id="battleFeed">
-        <output class="combat-kill-meter" aria-label="Confirmed kills"><b id="killCounter">0</b></output>
+
+    <section class="cic-panel cic-tactical" aria-label="Combat information center sensor picture">
+      <header class="cic-panel-head cic-tactical-head">
+        <span>
+          <i class="cic-live-dot" aria-hidden="true"></i>
+          <strong data-hud="pilotTitle">舰桥战术态势</strong>
+        </span>
+        <span class="cic-view-mode" data-hud="sensorFusion">传感器融合 · 舰桥视角</span>
+      </header>
+      <div class="cic-viewport">
+        <canvas class="cic-pilot-feed" id="cicPilotFeed"></canvas>
+        <div class="cic-reticle" aria-hidden="true"><span></span><i></i></div>
+        <div class="cic-radar-dock" aria-hidden="true">
+          <span>DRADIS · L1</span>
+          <canvas id="cicRadarCanvas"></canvas>
+        </div>
+        <div class="cic-view-caption">
+          <b data-hud="cicCaption">CIC 战术传感图</b>
+          <span id="cicThreatReadout">NO TRACK · SENSOR PASSIVE</span>
+        </div>
       </div>
       <!-- U14d (2026-07-12): Commander Terminal moved onto the Combat View
            screen itself — was its own permanent "hud-right" column showing
@@ -257,6 +292,26 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <aside class="cic-panel cic-intel" aria-label="Tactical feed and damage control">
+      <header class="cic-panel-head">
+        <span class="cic-eyebrow">CIC / CONDITION · 03</span>
+        <strong data-hud="systemsTitle">战斗情报与损管</strong>
+        <output class="cic-kill-meter" aria-label="Confirmed kills">
+          <span data-hud="killsLabel">确认击毁</span><b id="killCounter">0</b>
+        </output>
+        <button class="voyage-log-toggle" id="voyageLogToggle" type="button" data-hot aria-label="Toggle private voyage log">LOG</button>
+      </header>
+      <div class="cic-battle-feed" id="cicBattleFeed"></div>
+      <div class="cic-condition-grid">
+        <span><i data-hud="ammoLabel">弹药</i><b id="cicAmmoPct">100%</b></span>
+        <span><i data-hud="bayCdLabel">甲板</i><b id="cicDeckPct">96%</b></span>
+        <span><i data-hud="deviceLabel">舰体</i><b id="cicFleetPct">100%</b></span>
+        <span><i data-hud="manualLabel">火力</i><b id="cicWeaponName">AUTO</b></span>
+      </div>
+      <output class="cic-perf-readout" id="cicPerfReadout" aria-label="Combat renderer performance">P95 — · DC — · Q HIGH</output>
+      <div class="cic-battle-log" id="battleLog">战术甲板待命 · 入梦按钮预热跃迁</div>
     </aside>
   </div>
 </div>

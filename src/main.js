@@ -1,6 +1,8 @@
 import './styles.css';
+import './cic-hud.css';
 import { createHudImages } from './assets/hudAssets.js';
 import { createCombatRuntime } from './combat/combatRuntime.js';
+import { createCombatState } from './combat/combatState.js';
 import {
   DEFENSE_ATTACK_TIME_SCALE,
   DEFENSE_PROJECTILE_SPEED_SCALE,
@@ -105,7 +107,6 @@ function getFighter3D(){
 // opt out with ?combatview=2d (persists), re-enable with ?combatview=topdown.
 // Falls back to the existing 2D cockpit if WebGL/the module is unavailable.
 let topdownCV=null, topdownTried=false, topdownCanvas=null;
-let tdFlightStamp=0; // U24 (24c): last pilotView.started that triggered a flight event — one event per mode entry
 function combatViewTopdown(){
   try{
     const q=location.search;
@@ -158,16 +159,19 @@ function combatHudState(mode){
   const cls=document.body.classList; const warn=[]; let accent='cy';
   if(cls.contains('nuke-alert')){ warn.push(currentLang==='zh'?'警报：核打击在途':'ALERT: NUCLEAR STRIKE INBOUND'); accent='rd'; }
   else if(cls.contains('emp-effect')){ warn.push(currentLang==='zh'?'警告：EMP · 系统降级':'WARNING: EMP — SYSTEMS DEGRADED'); accent='am'; }
-  const wp=(window.__warpPower||41)/100;
+  const state=combatSnapshot;
+  const wp=clamp(warpIntensity/1.4,0,1);
   return {
     scm:(mode==='launch'||mode==='landing')?'NAV':'SCM', mode:'GUN',
-    speed:Math.round(60+wp*180+warpIntensity*120), ab:clamp(0.4+wp*0.6,0,1),
-    hFuel:99, qFuel:100, alt:0, vsi:0, g:(window.__gLoad||1.2), gMax:8.0,
-    heading:Math.round(window.__navDeg??((performance.now()/80)%360)), decoy:48, noise:5,
-    shieldF:cls.contains('nuke-alert')?0:75, shieldR:cls.contains('nuke-alert')?0:75,
+    speed:null, ab:wp,
+    hFuel:null, qFuel:null, alt:null, vsi:null, g:null, gMax:null,
+    heading:state.telemetry.headingDeg, decoy:null, noise:null,
+    shieldF:null, shieldR:null,
     status: mode==='launch'?(currentLang==='zh'?'起飞授权':'TAKEOFF'):(mode==='landing'?(currentLang==='zh'?'进近':'APPROACH'):'ONLINE'),
     warn, accent, ladder:false,
-    kills: killCount, lock: !!(halley && halley.hover)   // real battle state
+    kills:state.fleet.kills, lock:!!state.target?.locked,
+    ammoPct:state.fleet.ammoPct,
+    deckPct:state.fleet.deckPct,
   };
 }
 
@@ -194,7 +198,7 @@ document.querySelectorAll('[data-hot],a,button').forEach(el=>{
 });
 
 const combatHud=document.getElementById('combatHud');
-const radarCanvas=document.getElementById('radarCanvas');
+const radarCanvas=document.getElementById('cicRadarCanvas');
 const radarDeck=createRadarDeck(radarCanvas);
 const rctx=radarDeck.ctx;
 const radarState=radarDeck.state;
@@ -348,7 +352,11 @@ function logBattle(msg){
   battleLog.classList.add('flipping');
 }
 function setPilotView(mode, subject=null, ms=4200){
+  const previous=pilotView?.mode;
   pilotView=combatViewState.set(mode,subject,ms);
+  if((mode==='launch'||mode==='landing')&&mode!==previous){
+    emitCombatEvent(`flight:${mode}`,{craft:subject?.type||'f47'});
+  }
 }
 function commandTimestamp(offsetSec=0){
   const d=new Date(Date.now()-offsetSec*1000);
@@ -359,9 +367,14 @@ const {
   ensureKillMeter,
   pushBattleToast,
   seedBattleFeed,
-}=createBattleFeed({getLang:()=>currentLang,timestamp:commandTimestamp});
+}=createBattleFeed({
+  feed:document.getElementById('cicBattleFeed'),
+  getLang:()=>currentLang,
+  timestamp:commandTimestamp,
+});
 if(weaponSelect) weaponSelect.addEventListener('change',()=>{
   apAuto=weaponSelect.value==='auto';
+  emitCombatEvent('fire-control:changed',{mode:apAuto?'auto':'manual',weapon:weaponSelect.value});
   updateCombatModule();
   logBattle(`${HC('logWeapon')} · ${weaponSelect.options[weaponSelect.selectedIndex].text}`);
 });
@@ -371,13 +384,15 @@ if(apToggle) apToggle.addEventListener('click',(e)=>{
   apAuto=!apAuto;
   if(apAuto && weaponSelect) weaponSelect.value='auto';
   if(!apAuto && weaponSelect && weaponSelect.value==='auto') weaponSelect.value=recommendedWeapon();
+  emitCombatEvent('fire-control:changed',{mode:apAuto?'auto':'manual',weapon:weaponSelect?.value||'auto'});
   updateCombatModule();
   logBattle(apAuto ? `${HC('logWeapon')} · AP ${HC('apAuto')}` : `${HC('logWeapon')} · AP ${HC('apManual')}`);
 });
-document.querySelectorAll('.weapon-choice').forEach(btn=>{
+document.querySelectorAll('[data-cic-weapon]').forEach(btn=>{
   btn.addEventListener('click',()=>{
     apAuto=false;
-    weaponSelect.value=btn.dataset.weapon;
+    if(weaponSelect) weaponSelect.value=btn.dataset.weapon;
+    emitCombatEvent('fire-control:changed',{mode:'manual',weapon:btn.dataset.weapon});
     updateCombatModule();
     logBattle(`${HC('logWeapon')} · ${btn.querySelector('b').textContent}`);
   });
@@ -397,23 +412,13 @@ function selectedWeapon(){
   return !apAuto && weaponSelect?.value && weaponSelect.value !== 'auto' ? weaponSelect.value : recommendedWeapon();
 }
 function interceptProbability(){
-  if(!halley) return 0;
-  const mode=chooseWeapon(halley.isGiant);
-  if(mode==='cannon'){
-    const speedPenalty=clamp(((halley.speedKms||38)-34)/120,0,18);
-    return Math.round(clamp(86-speedPenalty-(halley.collisionRisk||0)*10,52,90));
-  }
-  const base={small:96,medium:88,large:74,giant:62}[halley.sizeClass||'medium'];
-  const weaponBonus={cannon:0,missile:4,nuke:10,enforcer:18,auto:0}[mode]||0;
-  const riskPenalty=(halley.collisionRisk||0)*12;
-  const cooldownPenalty=!weaponReady(mode)?22:0;
-  return Math.round(clamp(base+weaponBonus-riskPenalty-cooldownPenalty,28,99));
+  return combatSnapshot?.solution?.lockQuality||0;
 }
 function localWeaponName(w){
   const idx=currentLang==='zh'?0:1;
   return (weaponNames[w]||weaponNames.auto)[idx];
 }
-function updateCombatModule(){
+function updateCombatModule(state=syncCombatState(Date.now())){
   tickService();
   // 2026-07-04 (ROADMAP §4 V16 — single weapon clock): the nuke T-countdown
   // and main-gun charge countdown used to each run their own setInterval(40)
@@ -435,11 +440,11 @@ function updateCombatModule(){
     const remain=Math.max(0,(enforcerChargeUntil-Date.now())/1000);
     weaponWarning.innerHTML=`<b>${HC('enforcerWarn')}</b><span>${HC('brace')}${remain.toFixed(2)}</span>`;
   }
-  const rec=recommendedWeapon(), active=chooseWeapon(!!halley?.isGiant), manual=apAuto ? 'auto' : (weaponSelect?.value || 'auto');
+  const rec=recommendedWeapon(), active=state.fireControl.activeWeapon, manual=state.fireControl.selectedWeapon;
   ensureKillMeter();
   const killCounter=document.getElementById('killCounter');
   if(killCounter) killCounter.textContent=String(killCount);
-  const battleFeed=document.getElementById('battleFeed');
+  const battleFeed=document.getElementById('cicBattleFeed');
   if(battleFeed) battleFeed.dataset.kills=String(killCount);
   const hudKillCount=document.getElementById('hudKillCount');
   if(hudKillCount) hudKillCount.textContent=String(killCount);
@@ -450,10 +455,13 @@ function updateCombatModule(){
   const bomberStock=document.getElementById('bomberStock');
   if(bomberStock) bomberStock.textContent=`${Math.max(0,totalBombers-Math.min(totalBombers,airborneBombers))} / ${totalBombers}`;
   const apState=document.getElementById('apState'); if(apState) apState.textContent=apAuto ? HC('apAuto') : HC('apManual');
-  if(apToggle) apToggle.classList.toggle('manual',!apAuto);
-  const ammoPctVal=Math.round(combatRuntime.getAmmoLevel());
-  const repairPctVal=Math.round(fleetHealthAverage());
-  const bayPctVal=Math.round(Math.min(96,combatRuntime.getDeckReadiness()));
+  if(apToggle){
+    apToggle.classList.toggle('manual',!apAuto);
+    apToggle.setAttribute('aria-pressed',String(!apAuto));
+  }
+  const ammoPctVal=Math.round(state.fleet.ammoPct);
+  const repairPctVal=Math.round(state.fleet.hpPct);
+  const bayPctVal=Math.round(state.fleet.deckPct);
   const ammo=document.getElementById('ammoCd'), device=document.getElementById('deviceCd'), bay=document.getElementById('bayCd');
   const ammoPct=document.getElementById('ammoPct'), devicePct=document.getElementById('devicePct'), bayPct=document.getElementById('bayPct');
   setProgress(ammo,ammoPctVal);
@@ -462,20 +470,46 @@ function updateCombatModule(){
   if(ammoPct) ammoPct.textContent=`${ammoPctVal}%`;
   if(devicePct) devicePct.textContent=`${repairPctVal}%`;
   if(bayPct) bayPct.textContent=`${bayPctVal}%`;
-  document.querySelectorAll('.weapon-choice').forEach(btn=>{
+  const cicAmmoPct=document.getElementById('cicAmmoPct');
+  const cicDeckPct=document.getElementById('cicDeckPct');
+  const cicFleetPct=document.getElementById('cicFleetPct');
+  const cicWeaponName=document.getElementById('cicWeaponName');
+  if(cicAmmoPct) cicAmmoPct.textContent=`${ammoPctVal}%`;
+  if(cicDeckPct) cicDeckPct.textContent=`${bayPctVal}%`;
+  if(cicFleetPct) cicFleetPct.textContent=`${repairPctVal}%`;
+  if(cicWeaponName) cicWeaponName.textContent=localWeaponName(active);
+  const cicPerfReadout=document.getElementById('cicPerfReadout');
+  if(cicPerfReadout){
+    const perf=state.telemetry;
+    const pressure=perf.thermalState==='hot'?' · LOAD HOT':perf.thermalState==='warm'?' · LOAD WARM':'';
+    cicPerfReadout.textContent=`P95 ${perf.frameP95Ms?perf.frameP95Ms.toFixed(1):'—'}ms · DC ${perf.drawCalls||'—'} · ${Math.round((perf.triangles||0)/1000)}K△ · Q ${perf.qualityTier.toUpperCase()}${pressure}`;
+    cicPerfReadout.dataset.pressure=perf.thermalState;
+  }
+  const cicThreatReadout=document.getElementById('cicThreatReadout');
+  if(cicThreatReadout){
+    const idle=currentLang==='zh'?'无目标 · 传感器静默监听':'NO TRACK · SENSOR PASSIVE';
+    cicThreatReadout.textContent=state.target
+      ? `${currentLang==='zh'?'目标解算':'SOLUTION'} ${state.target.sizeClass.toUpperCase()} · ${state.solution.valid?`${state.solution.interceptMs}ms / ${state.solution.lockQuality}%`:(currentLang==='zh'?'超出包线':'OUT OF ENVELOPE')}`
+      : idle;
+  }
+  document.querySelectorAll('[data-cic-weapon]').forEach(btn=>{
     const w=btn.dataset.weapon;
     const ready=weaponReady(w);
     const ratio=weaponCooldownRatio(w);
     const rem=Math.ceil(weaponRemaining(w)/1000);
     const temp=Math.round(lerp(820,86,ratio));
     btn.style.setProperty('--cool',ratio.toFixed(3));
-    btn.dataset.status=ready?(currentLang==='zh'?'就绪':'READY'):(w==='enforcer'?`${temp}°C`:`${rem}s`);
+    const status=ready?(currentLang==='zh'?'就绪':'READY'):(w==='enforcer'?`${temp}°C`:`${rem}s`);
+    btn.dataset.status=status;
+    const stateEl=btn.querySelector('.cic-weapon-state');
+    if(stateEl) stateEl.textContent=status;
     btn.classList.toggle('cooling',!ready);
     btn.classList.toggle('ready-gun',ready);
     btn.classList.toggle('ready',ready);
     btn.classList.toggle('recommended',w===rec);
     btn.classList.toggle('selected',w===active || (!apAuto && manual===w));
     btn.classList.toggle('locked',halley?.hover && w===active);
+    btn.setAttribute('aria-pressed',String(w===active || (!apAuto && manual===w)));
   });
   updateFleetBay();
 }
@@ -535,14 +569,14 @@ function applyHudLanguage(){
   setText('[data-hud="hangarTitle"]',h.hangarTitle);
   setText('[data-hud="sideProfile"]',h.sideProfile);
   setText('[data-hud="rearProfile"]',h.rearProfile);
-  const weaponLabel=document.querySelector('.mobile-weapon-form label'); if(weaponLabel) weaponLabel.textContent=h.weaponLabel;
+  const weaponLabel=document.querySelector('.cic-state-form label'); if(weaponLabel) weaponLabel.textContent=h.weaponLabel;
   if(weaponSelect) [...weaponSelect.options].forEach((opt,i)=>{opt.textContent=h.options[i];});
   const rows=[...document.querySelectorAll('.hud-right .hud-row span:first-child')];
   [h.core,h.thrusters,h.shield,h.scan].forEach((txt,i)=>{if(rows[i])rows[i].textContent=txt;});
   ['core','thrusters','shield','scan'].forEach(k=>document.querySelectorAll(`.sys-bars [data-hud="${k}"]`).forEach(el=>el.textContent=h[k]));
   const hudThrusters=document.getElementById('hudThrusters'); if(hudThrusters) hudThrusters.textContent=document.body.classList.contains('warp-hover')?h.ready:h.armed;
-  const hudScan=document.getElementById('hudScan'); if(hudScan) hudScan.textContent='0.73C';
-  ['killsLabel','bayLabel','bomberLabel','recommendLabel','manualLabel','maintenanceLabel','ammoLabel','deviceLabel','bayCdLabel','radarG','radarAzimuth','radarCruise','wCannon','wMissile','wNuke','wEnforcer'].forEach(k=>{
+  const hudScan=document.getElementById('hudScan'); if(hudScan) hudScan.textContent='—';
+  ['killsLabel','bayLabel','bomberLabel','recommendLabel','manualLabel','maintenanceLabel','ammoLabel','deviceLabel','bayCdLabel','radarG','radarAzimuth','radarCruise','wCannon','wMissile','wNuke','wEnforcer','wCannonDesc','wMissileDesc','wNukeDesc','wEnforcerDesc','sensorFusion','cicCaption'].forEach(k=>{
     document.querySelectorAll(`[data-hud="${k}"]`).forEach(el=>el.textContent=h[k]);
   });
   if(battleLog && !halley) battleLog.textContent=h.battleReady;
@@ -566,17 +600,14 @@ function setCombatMode(on){
   }
 }
 
-function updateTopTelemetry(){
+function updateTopTelemetry(state=combatSnapshot){
   try {
     const now = new Date();
-    const elapsedH = (now.getTime() - window.__launchTime) / 3600000;
     const voyageDays = currentLang==='zh' ? '2738 天' : '2738 DAYS';
-    const fuel = clamp(100 - elapsedH * 0.23 - (warpIntensity - .18) * 8.5, 12, 100);
-    const hull = clamp(98.8 - Math.max(0, (halley?.collisionRisk || 0)) * 10 - (warpIntensity - .18) * 3.2, 72, 100);
-    const navDeg = (112 + Math.sin(now.getTime()/9000)*3.5 + (halley?.collisionRisk||0)*18).toFixed(0).padStart(3,'0');
-    const rangeScan = (12.4 + Math.sin(now.getTime()/6000)*1.8 + warpIntensity*2.2).toFixed(1);
-    const throttle = clamp(36 + warpIntensity*55 + Math.sin(now.getTime()/4200)*4, 0, 100).toFixed(0);
-    window.__warpPower=parseFloat(throttle);
+    const hull=state.fleet.hpPct;
+    const navDeg=state.telemetry.headingDeg;
+    const throttle=Math.round(clamp(warpIntensity/1.4,0,1)*100);
+    window.__warpPower=throttle;
     
     const clockZone=document.getElementById('clockZone');
     if(clockZone){ clockZone.textContent=''; clockZone.hidden=true; }
@@ -585,27 +616,27 @@ function updateTopTelemetry(){
     document.getElementById('earthDistLabel').textContent = COPY[currentLang].distEarth;
     document.getElementById('earthDistance').textContent = voyageDays;
 
-    const gLoad=(1.18+warpIntensity*.72+(halley?.collisionRisk||0)*1.05);
-    const cruiseSpeed=(0.69 + warpIntensity*.18);
-    window.__navDeg=navDeg; window.__gLoad=gLoad; window.__cruiseSpeed=cruiseSpeed;
+    window.__navDeg=navDeg;
+    window.__gLoad=null;
+    window.__cruiseSpeed=null;
     const hullReadout=document.getElementById('hullReadout'); if(hullReadout) hullReadout.textContent = `${hull.toFixed(0)}%`;
-    const gLoadReadout=document.getElementById('gLoadReadout'); if(gLoadReadout) gLoadReadout.textContent = `${gLoad.toFixed(2)}G`;
+    const gLoadReadout=document.getElementById('gLoadReadout'); if(gLoadReadout) gLoadReadout.textContent = '—';
     const throttleEl=document.getElementById('throttleState');
     if(throttleEl){
       throttleEl.style.setProperty('--energy',`${throttle}%`);
       const txt=throttleEl.querySelector('em');
       if(txt) txt.textContent=`${throttle}%`; else throttleEl.textContent = `${throttle}%`;
     }
-    const drivePower=document.getElementById('drivePower'); if(drivePower) drivePower.textContent = `${cruiseSpeed.toFixed(2)}C`;
-    const topLock=document.getElementById('topLock'); if(topLock) topLock.textContent = halley ? (halley.hover ? (currentLang==='zh'?'锁定':'LOCK') : (currentLang==='zh'?'扫描':'SCAN')) : HC('idle');
+    const drivePower=document.getElementById('drivePower'); if(drivePower) drivePower.textContent = `${throttle}%`;
+    const topLock=document.getElementById('topLock'); if(topLock) topLock.textContent = state.target ? (state.target.locked ? (currentLang==='zh'?'锁定':'LOCK') : (currentLang==='zh'?'解算':'SOLVING')) : HC('idle');
     const cd = Math.max(0, Math.ceil(weaponRemaining('enforcer')/1000));
-    const hudCore=document.getElementById('hudCore'); if(hudCore) hudCore.textContent = `${fuel.toFixed(1)}%`;
-    const hudCoreBar=document.getElementById('hudCoreBar'); setProgress(hudCoreBar,fuel);
-    const barCore=document.getElementById('barCore'); setProgress(barCore,fuel,'height');
+    const hudCore=document.getElementById('hudCore'); if(hudCore) hudCore.textContent = `${state.fleet.ammoPct.toFixed(0)}%`;
+    const hudCoreBar=document.getElementById('hudCoreBar'); setProgress(hudCoreBar,state.fleet.ammoPct);
+    const barCore=document.getElementById('barCore'); setProgress(barCore,state.fleet.ammoPct,'height');
     const barThrust=document.getElementById('barThrust'); setProgress(barThrust,throttle,'height');
     const barCannon=document.getElementById('barCannon'); setProgress(barCannon,weaponCooldownRatio('enforcer')*100,'height');
-    const barCruise=document.getElementById('barCruise'); setProgress(barCruise,clamp(68 + warpIntensity*24,10,100),'height');
-    const hudScan=document.getElementById('hudScan'); if(hudScan) hudScan.textContent = `${(0.68 + warpIntensity*.22).toFixed(2)}C`;
+    const barCruise=document.getElementById('barCruise'); setProgress(barCruise,throttle,'height');
+    const hudScan=document.getElementById('hudScan'); if(hudScan) hudScan.textContent = state.telemetry.speedKms===null?'—':`${state.telemetry.speedKms.toFixed(1)} KM/S`;
     const hudShield=document.getElementById('hudShield'); if(hudShield) hudShield.textContent = cd ? `${cd}s` : HC('ready');
     const hudThrusters=document.getElementById('hudThrusters'); if(hudThrusters) hudThrusters.textContent = document.body.classList.contains('warp-hover') ? HC('ready') : HC('armed');
     const linkText = document.body.classList.contains('nuke-alert') ? (currentLang==='zh'?'红色':'RED') : (document.body.classList.contains('emp-effect') ? (currentLang==='zh'?'黄色':'YELLOW') : (currentLang==='zh'?'绿色':'GREEN'));
@@ -627,7 +658,7 @@ function getCannonFx(){
   }
   return {...mainCannonFx,mode:'charge',t:clamp((now-mainCannonFx.chargeStart)/4500,0,1)};
 }
-function drawRadar(){
+function drawRadar(state=combatSnapshot){
   if(!radarDeck.active){document.body.classList.remove('radar-sweeping');return;}
   if(!combatHot){document.body.classList.remove('radar-sweeping');return;}
   const w=radarCanvas.width, h=radarCanvas.height;
@@ -635,16 +666,15 @@ function drawRadar(){
   const cx=w/2, cy=h/2, min=Math.min(w,h);
   rctx.clearRect(0,0,w,h); rctx.save(); rctx.translate(cx,cy);
   const now=performance.now();
-  const navDeg=window.__navDeg || '128';
+  const navDeg=state.telemetry.headingDeg;
   const contacts=[];
-  if(halley && !halley.destroyed) contacts.push({id:'comet',kind:'comet',x:halley.curX,y:halley.curY,size:halley.isGiant?5.5:4});
-  escorts.forEach((e,i)=>contacts.push({id:`escort-${i}`,kind:'ally',x:e.x,y:e.y,size:e.type==='b2'?4.5:3.2}));
-  weapons.forEach((w,i)=>{
-    if(w.type==='missile') contacts.push({id:`missile-${i}`,kind:'missile',x:w.x,y:w.y,size:3});
-    if(w.type==='phalanx') contacts.push({id:`round-${i}`,kind:'missile',x:w.x,y:w.y,size:2.6});
-    if(w.type==='nuke') contacts.push({id:`nuke-${i}`,kind:'nuke',x:w.x,y:w.y,size:4.2});
+  if(state.target) contacts.push({id:state.target.id,kind:'comet',x:state.target.x,y:state.target.y,size:state.target.sizeClass==='giant'?5.5:4});
+  state.escorts.forEach((escort)=>contacts.push({id:escort.id,kind:'ally',x:escort.x,y:escort.y,size:escort.type==='b2'?4.5:3.2}));
+  state.projectiles.forEach((projectile)=>{
+    if(projectile.type==='missile') contacts.push({id:projectile.id,kind:'missile',x:projectile.x,y:projectile.y,size:3});
+    if(projectile.type==='phalanx') contacts.push({id:projectile.id,kind:'missile',x:projectile.x,y:projectile.y,size:2.6});
+    if(projectile.type==='nuke') contacts.push({id:projectile.id,kind:'nuke',x:projectile.x,y:projectile.y,size:4.2});
   });
-  if(halley) contacts.push({id:'unknown-1',kind:'ufo',x:innerWidth*.82+Math.sin(radarState.phase)*80,y:innerHeight*.28+Math.cos(radarState.phase*.7)*40,size:3});
   const radarScanning=contacts.length>0;
   if(radarScanning){
     const lastTurn=Math.floor(radarState.phase/(Math.PI*2));
@@ -714,8 +744,8 @@ function drawRadar(){
   rctx.globalAlpha=1;
   rctx.restore();   // undo the ELLIPSE squash before drawing anything non-elliptical
 
-  if(halley&&!halley.destroyed){
-    const dx=(halley.curX-innerWidth/2)/innerWidth, dy=(halley.curY-innerHeight/2)/innerHeight;
+  if(state.target){
+    const dx=(state.target.x-innerWidth/2)/innerWidth, dy=(state.target.y-innerHeight/2)/innerHeight;
     const tAng=Math.atan2(dy,dx), tDist=clamp(Math.hypot(dx,dy)*1.8,.08,.92);
     const bx=Math.cos(tAng)*radarR*tDist, by=Math.sin(tAng)*radarR*tDist*ELLIPSE;
     rctx.save();rctx.globalCompositeOperation='lighter';
@@ -729,18 +759,31 @@ function drawRadar(){
     rctx.restore();
     rctx.strokeStyle='rgba(255,255,255,.85)';rctx.lineWidth=1;
     rctx.beginPath();rctx.moveTo(bx,by-min*.045);rctx.lineTo(bx,by-min*.018);rctx.stroke();
+    if(state.solution.valid&&state.solution.aimPoint){
+      const sx=(state.solution.aimPoint.x-innerWidth/2)/innerWidth;
+      const sy=(state.solution.aimPoint.y-innerHeight/2)/innerHeight;
+      const sa=Math.atan2(sy,sx);
+      const sd=clamp(Math.hypot(sx,sy)*1.8,.08,.92);
+      const lx=Math.cos(sa)*radarR*sd;
+      const ly=Math.sin(sa)*radarR*sd*ELLIPSE;
+      rctx.strokeStyle='rgba(154,229,255,.82)';
+      rctx.setLineDash([3,3]);
+      rctx.beginPath();rctx.moveTo(bx,by);rctx.lineTo(lx,ly);rctx.stroke();
+      rctx.setLineDash([]);
+      rctx.strokeRect(lx-3,ly-3,6,6);
+    }
   }
 
-  const navDegNum=Math.round(parseFloat(navDeg)||128);
-  const primaryKm=halley&&!halley.destroyed?(Math.hypot(halley.curX-innerWidth/2,halley.curY-innerHeight/2)/Math.min(innerWidth,innerHeight)*9).toFixed(1):'--';
+  const navDegNum=Number.isFinite(navDeg)?Math.round(navDeg):null;
+  const primaryRange=state.target?Math.round(Math.hypot(state.target.x-innerWidth/2,state.target.y-innerHeight/2)):null;
   if(!compact){
     rctx.save();
     rctx.textAlign='center';rctx.textBaseline='middle';
     rctx.font=`${Math.max(7,min*.024)}px 'JetBrains Mono',monospace`;
     rctx.fillStyle='rgba(200,245,235,.72)';
-    rctx.fillText(`${navDegNum}度`,-radarR*.26,radarR*ELLIPSE+16);
+    rctx.fillText(navDegNum===null?'AZ —':`AZ ${String(navDegNum).padStart(3,'0')}°`,-radarR*.26,radarR*ELLIPSE+16);
     rctx.fillStyle='rgba(200,245,235,.55)';
-    rctx.fillText(`${primaryKm}km`,radarR*.30,radarR*ELLIPSE+16);
+    rctx.fillText(primaryRange===null?'RNG —':`RNG ${primaryRange}px`,radarR*.30,radarR*ELLIPSE+16);
     rctx.restore();
   }
 
@@ -754,7 +797,7 @@ function drawRadar(){
   }
 
   rctx.save();
-  const navRad=((parseFloat(navDeg)||128)-90)*Math.PI/180;
+  const navRad=(((Number.isFinite(navDeg)?navDeg:90)-90)*Math.PI/180);
   const shipRot=navRad*.08;
   const cannonFx=getCannonFx();
   rctx.rotate(shipRot);
@@ -803,8 +846,8 @@ function drawRadar(){
     rctx.beginPath();rctx.moveTo(0,-min*.21);rctx.lineTo(0,barrelY);rctx.stroke();
     rctx.fillStyle=`rgba(255,245,245,${.2+.6*open})`;rctx.beginPath();rctx.arc(0,barrelY,2.2+2.4*open,0,Math.PI*2);rctx.fill();
     if(cannonFx.mode==='fire'){
-      const targetX=halley&&!halley.destroyed?halley.curX:cannonFx.tx;
-      const targetY=halley&&!halley.destroyed?halley.curY:cannonFx.ty;
+      const targetX=state.target?state.target.x:cannonFx.tx;
+      const targetY=state.target?state.target.y:cannonFx.ty;
       const dx=(targetX-innerWidth/2)/innerWidth, dy=(targetY-innerHeight/2)/innerHeight;
       const ang=Math.atan2(dy,dx), dist=clamp(Math.hypot(dx,dy)*1.8,.12,.92), rr=min*.94*dist;
       const rawX=Math.cos(ang)*rr, rawY=Math.sin(ang)*rr;
@@ -886,8 +929,8 @@ function drawAttitude(now){
   ctx.clearRect(0,0,canvas.width,canvas.height); ctx.save(); ctx.scale(dpr,dpr);
   ctx.translate(rand(-2,2)*shipRecoil, rand(-1,1)*shipRecoil);
   ctx.fillStyle='rgba(5,8,12,.62)';ctx.fillRect(0,0,rect.width,rect.height);
-  const roll=Math.sin(now/2600)*0.18 + (warpIntensity-.18)*0.18;
-  const pitch=Math.sin(now/3400)*10;
+  const roll=0;
+  const pitch=0;
   ctx.save();ctx.translate(cx,cy+pitch);ctx.rotate(roll);
   ctx.fillStyle='rgba(141,180,192,.08)';ctx.fillRect(-rect.width, -rect.height, rect.width*2, rect.height);
   ctx.fillStyle='rgba(232,179,128,.06)';ctx.fillRect(-rect.width, 0, rect.width*2, rect.height);
@@ -898,8 +941,9 @@ function drawAttitude(now){
   ctx.beginPath();ctx.moveTo(cx-54,cy);ctx.lineTo(cx-16,cy);ctx.moveTo(cx+16,cy);ctx.lineTo(cx+54,cy);ctx.moveTo(cx,cy-7);ctx.lineTo(cx,cy+7);ctx.stroke();
   ctx.strokeStyle='rgba(232,179,128,.55)';ctx.beginPath();ctx.arc(cx,cy,38,Math.PI*.08,Math.PI*.92);ctx.stroke();
   ctx.fillStyle='rgba(154,229,255,.75)';ctx.font="8px 'JetBrains Mono',monospace";
-  ctx.fillText(`${currentLang==='zh'?'航向':'HDG'} ${((now/80)%360).toFixed(0).padStart(3,'0')}°`,12,16);
-  ctx.fillText(`${currentLang==='zh'?'姿态':'ATT'} ${(roll*57.3).toFixed(1)}°`,12,rect.height-10);
+  const trackHeading=combatSnapshot.telemetry.headingDeg;
+  ctx.fillText(`${currentLang==='zh'?'目标航向':'TRACK HDG'} ${Number.isFinite(trackHeading)?`${String(Math.round(trackHeading)).padStart(3,'0')}°`:'—'}`,12,16);
+  ctx.fillText(`${currentLang==='zh'?'舰体姿态':'SHIP ATT'} —`,12,rect.height-10);
   ctx.restore();
 }
 
@@ -1201,7 +1245,7 @@ function drawCapitalFeed(feed,now,contacts,cannonFx){
     drawFeedContact(ctx,clamp(x,8,w-8),clamp(y,24,h-10),c);
   });
   ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
-  ctx.fillText(`${currentLang==='zh'?'过载':'G'} ${(window.__gLoad||1.2).toFixed(2)}G`,10,h-10);
+  ctx.fillText(`AMMO ${Math.round(combatSnapshot.fleet.ammoPct)}%`,10,h-10);
   ctx.textAlign='center';ctx.fillText(`${currentLang==='zh'?'机库':'BAY'} 8 · ${currentLang==='zh'?'主炮脊柱':'CANNON SPINE'}`,w*.5,h-10);
   ctx.restore();
 }
@@ -1269,7 +1313,7 @@ function drawCapitalFeedV2(feed,now,contacts,cannonFx){
     drawFeedContact(ctx,clamp(x,8,w-8),clamp(y,24,h-10),c);
   });
   ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
-  ctx.fillText(`${currentLang==='zh'?'过载':'G'} ${(window.__gLoad||1.2).toFixed(2)}G`,10,h-10);
+  ctx.fillText(`DECK ${Math.round(combatSnapshot.fleet.deckPct)}%`,10,h-10);
   ctx.textAlign='center';ctx.fillText(`${currentLang==='zh'?'PNG 战舰实况':'PNG CAPITAL FEED'} · AIM-120`,w*.5,h-10);
   ctx.restore();
   return;
@@ -1415,7 +1459,7 @@ function drawCapitalFeedV2(feed,now,contacts,cannonFx){
     drawFeedContact(ctx,clamp(x,8,w-8),clamp(y,24,h-10),c);
   });
   ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
-  ctx.fillText(`${currentLang==='zh'?'过载':'G'} ${(window.__gLoad||1.2).toFixed(2)}G`,10,h-10);
+  ctx.fillText(`HULL ${Math.round(combatSnapshot.fleet.hpPct)}%`,10,h-10);
   ctx.textAlign='center';ctx.fillText(`${currentLang==='zh'?'机库':'BAY'} 8 · AIM-120`,w*.5,h-10);
   ctx.restore();
 }
@@ -1477,7 +1521,9 @@ function drawCapitalOverlay(feed,mode,now,contacts,cannonFx){
   ctx.textAlign='left';ctx.textBaseline='top';
   ctx.fillText(label,8,7);
   ctx.textAlign='right';
-  ctx.fillText(mode==='side'?`${(window.__gLoad||1.31).toFixed(2)}G`:`${(0.72+warpIntensity*.17).toFixed(2)}C`,w-8,7);
+  ctx.fillText(mode==='side'
+    ? `HULL ${Math.round(combatSnapshot.fleet.hpPct)}%`
+    : `LOAD ${combatSnapshot.telemetry.frameP95Ms?combatSnapshot.telemetry.frameP95Ms.toFixed(1):'—'}ms`,w-8,7);
 
   const flow=(now/1200)%1;
   const sx=mode==='side'?w*(.10+flow*.78):w*(.18+flow*.64);
@@ -1783,26 +1829,112 @@ function resizeEvt(){ evtCanvas.width=innerWidth*DPR; evtCanvas.height=innerHeig
 
 let halley=null, weapons=[], escorts=[], explosions=[], nukeFlash=0, killCount=0, giantKillCount=0, mainCannonFx=null;
 const COMET_LOCK_MS=2000;
+const combatState=createCombatState();
+let combatSnapshot=combatState.getSnapshot();
+let combatFeedEventId=0;
 
-// Real-battle state snapshot: merges combatRuntime's own getState() (fleet
-// HP / ammo / deck / weapon cooldowns) with the halley/weapons/escorts/
-// killCount that live directly in this module's scope. This is the
-// interface topdownCombat (and any future renderer) reads instead of
-// self-driving its own timeline. See ROADMAP §4 Phase 2b.
-function getBattleSnapshot(){
-  return {
-    runtime: combatRuntime.getState(),
-    halley: halley ? {
-      x: halley.curX, y: halley.curY, vx: halley.vx, vy: halley.vy,
-      hp: halley.hp, sizeClass: halley.sizeClass, isGiant: halley.isGiant,
-      hover: !!halley.hover, destroyed: !!halley.destroyed,
-      collisionRisk: halley.collisionRisk||0,
-    } : null,
-    weapons: weapons.map(w=>({type:w.type, x:w.x, y:w.y, stage:w.stage})),
-    escorts: escorts.map(e=>({type:e.type, x:e.x, y:e.y, state:e.state})),
-    killCount, giantKillCount,
-    phase: pilotView?.mode || 'standby',
+function emitCombatEvent(type,payload={}){
+  return combatState.emit(type,payload);
+}
+
+function combatEventText(event){
+  const zh=currentLang==='zh';
+  const weapon=localWeaponName(event.weapon||'auto');
+  const copy={
+    'target:acquired':zh?'目标链路建立 · 解算开始':'TARGET LINK ESTABLISHED · SOLVING',
+    'weapon:fire':zh?`${weapon} · 武器离架`:`${weapon} · WEAPON AWAY`,
+    'weapon:impact':zh?`${weapon} · 命中确认`:`${weapon} · IMPACT CONFIRMED`,
+    'target:destroyed':zh?`目标摧毁 · 击毁 ${event.kills||0}`:`TARGET DESTROYED · KILLS ${event.kills||0}`,
+    'flight:launch':zh?'舰载机弹射起飞':'AIR WING LAUNCH',
+    'flight:landing':zh?'舰载机进入回收航线':'AIR WING RECOVERY',
+    'system:warning':String(event.message||'SYSTEM WARNING'),
   };
+  return copy[event.type]||'';
+}
+
+function publishCombatEvents(state){
+  for(const event of state.events){
+    if(event.id<=combatFeedEventId) continue;
+    combatFeedEventId=event.id;
+    const text=combatEventText(event);
+    if(!text) continue;
+    const severity=event.type==='system:warning'?'critical':event.type==='target:destroyed'?'warning':'info';
+    pushBattleToast(text,severity);
+    logBattle(text);
+  }
+}
+
+function syncCombatState(now=Date.now()){
+  const runtime=combatRuntime.getState();
+  const renderTelemetry=renderBudgetCoordinator.getTelemetry();
+  const topdownTelemetry=renderTelemetry.surfaces.find(surface=>surface.id==='home:topdown-combat')
+    || renderTelemetry.surfaces.find(surface=>surface.id==='home:master')
+    || {};
+  const activeWeapon=chooseWeapon(!!halley?.isGiant);
+  combatSnapshot=combatState.sync({
+    now,
+    phase:pilotView?.mode||'standby',
+    shooter:{x:innerWidth*.5,y:innerHeight*.92},
+    fireControl:{
+      mode:apAuto?'auto':'manual',
+      selectedWeapon:selectedWeapon(),
+      activeWeapon,
+    },
+    target:halley&&!halley.destroyed?{
+      id:'1P/HALLEY',
+      x:halley.curX,
+      y:halley.curY,
+      vx:halley.screenVx,
+      vy:halley.screenVy,
+      hp:halley.hp,
+      hpMax:halley.hpMax,
+      sizeClass:halley.sizeClass,
+      radius:Math.max(28,(halley.scale||1)*34),
+      speedKms:halley.speedKms,
+      headingDeg:halley.headingDeg,
+      collisionRisk:halley.collisionRisk,
+      lockProgress:(halley.hoverMs||0)/COMET_LOCK_MS,
+      locked:(halley.hoverMs||0)>=COMET_LOCK_MS,
+    }:null,
+    projectiles:weapons.map((weapon,index)=>({
+      id:weapon.id||`${weapon.type}-${index}`,
+      type:weapon.type,
+      stage:weapon.stage,
+      x:weapon.x,
+      y:weapon.y,
+      vx:weapon.vx,
+      vy:weapon.vy,
+    })),
+    escorts:escorts.map((escort,index)=>({
+      id:`${escort.type}-${escort.bayIndex??index}`,
+      type:escort.type,
+      state:escort.state,
+      x:escort.x,
+      y:escort.y,
+      hp:escort.hp,
+    })),
+    fleet:{
+      hpPct:runtime.fleetHealthAverage,
+      ammoPct:runtime.ammoLevel,
+      deckPct:runtime.deckReadiness,
+      kills:killCount,
+      giantKills:giantKillCount,
+    },
+    telemetry:{
+      headingDeg:halley?.headingDeg,
+      speedKms:halley?.speedKms,
+      gLoad:null,
+      frameP95Ms:topdownTelemetry.p95Ms,
+      drawCalls:topdownTelemetry.drawCalls,
+      triangles:topdownTelemetry.triangles,
+      qualityTier:renderTelemetry.qualityTier,
+      thermalState:topdownTelemetry.thermalState||'nominal',
+      viewportWidth:innerWidth,
+      viewportHeight:innerHeight,
+    },
+  });
+  publishCombatEvents(combatSnapshot);
+  return combatSnapshot;
 }
 
 function spawnHalley(){
@@ -1820,7 +1952,7 @@ function spawnHalley(){
     p1:{x:fr?-400:innerWidth+400,y:rand(innerHeight*.55,innerHeight-60)},
     closestT:.55+rand(-.05,.05), alerted:false, shaken:false,
     particles:[], trail:[],
-    isGiant, sizeClass, hp: hpMap[sizeClass], destroyed: false, escortsSpawned: false
+    isGiant, sizeClass, hp: hpMap[sizeClass], hpMax:hpMap[sizeClass], destroyed: false, escortsSpawned: false
   };
 }
 
@@ -1887,7 +2019,7 @@ function firePhalanxIntercept(tx, ty) {
   let barrage=null;
   setTimeout(()=>{
     if(!halley || halley.destroyed) return;
-    pushBattleToast(currentLang==='zh'?'密集阵饱和开火':'PHALANX SATURATION FIRE');
+    emitCombatEvent('weapon:fire',{weapon:'cannon',targetId:'1P/HALLEY'});
     barrage=setInterval(beginBarrage,78);
   },3000);
 }
@@ -1933,6 +2065,7 @@ function fireEscortWeapons(tx, ty, isGiant) {
       const aimX=halley && !halley.destroyed ? halley.curX : tx;
       const aimY=halley && !halley.destroyed ? halley.curY : ty;
       weapons.push({ type:'nuke', x:bx, y:by+22, tx:aimX, ty:aimY, vx:rand(-.25,.25)*DEFENSE_PROJECTILE_SPEED_SCALE, vy:2.1*DEFENSE_PROJECTILE_SPEED_SCALE, trail:[], born:performance.now(), stage:'drop' });
+      emitCombatEvent('weapon:fire',{weapon:'nuke',targetId:'1P/HALLEY'});
       nukeCountdownUntil=0;
       bomber.state='bomberReturn';
       wing.forEach(e=>{e.state='returnCover';e.laserDesignating=false;e.afterburn='violet';});
@@ -1966,6 +2099,7 @@ function fireEscortWeapons(tx, ty, isGiant) {
          const aimY=halley && !halley.destroyed ? halley.curY : ty;
          const missile={ type: 'missile', x: e.x, y: e.y + 16, tx: aimX, ty: aimY, vx: rand(-.45,.45)*DEFENSE_PROJECTILE_SPEED_SCALE, vy: 2.5*DEFENSE_PROJECTILE_SPEED_SCALE, trail: [], born: performance.now(), stage: 'drop' };
          weapons.push(missile);
+         emitCombatEvent('weapon:fire',{weapon:'missile',targetId:'1P/HALLEY',craft:`f47-${e.bayIndex??i}`});
          // V18 Phase 1 item 2: one authoritative timeline for this missile's
          // pilot-feed narrative (ROADMAP §4 "时间轴接 weaponClock 的具名
          // phases") — phase boundaries match the SAME MISSILE_DROP_MS/
@@ -2025,6 +2159,7 @@ function fireEnforcerMain(tx, ty){
     setTimeout(()=>document.body.classList.remove('main-cannon-firing'),1100);
     setTimeout(()=>document.body.classList.remove('shake'),900);
     weapons.push({type:'enforcer', active:128, tx:fireTx, ty:fireTy, ox:innerWidth*.5, oy:innerHeight+420, particles:[]});
+    emitCombatEvent('weapon:fire',{weapon:'enforcer',targetId:'1P/HALLEY'});
     setTimeout(()=>document.body.classList.remove('weapon-cutoff'), 1700);
   },4500);
 }
@@ -2089,6 +2224,8 @@ function updateHalley(dt){
   const tan={x:2*u*(halley.pc.x-halley.p0.x)+2*tt*(halley.p1.x-halley.pc.x), y:2*u*(halley.pc.y-halley.p0.y)+2*tt*(halley.p1.y-halley.pc.y)};
   const tl=Math.hypot(tan.x,tan.y)||1, tdx=-tan.x/tl, tdy=-tan.y/tl;
   halley.vx=tan.x/tl; halley.vy=tan.y/tl;
+  halley.screenVx=tan.x/halley.dur;
+  halley.screenVy=tan.y/halley.dur;
   
   const proximity=1-Math.min(1,Math.abs(tt-halley.closestT)*3.2);
   // 【放大彗星体积】
@@ -2144,7 +2281,10 @@ function updateHalley(dt){
       halley.playerFired = true;
       firePlayerBarrage(pos.x, pos.y);
     }
-    if(!halley.hoverNotified){halley.hoverNotified=true;logBattle(HC('targetNotify'));pushBattleToast(HC('targetNotify'));}
+    if(!halley.hoverNotified){
+      halley.hoverNotified=true;
+      emitCombatEvent('target:acquired',{targetId:'1P/HALLEY'});
+    }
   } else { halley.hoverMs = 0; }
 
   // Auto-Destruct Logic
@@ -2520,7 +2660,11 @@ function updateWeapons(dt) {
           }
           if(halley && !halley.destroyed) {
             halley.hp -= 9.5; halley.mainCannoned=true;
-            if(!halley.enforcerHit){halley.enforcerHit=true;startWeaponCooldown('enforcer',weaponCooldownMs.enforcer);}
+            if(!halley.enforcerHit){
+              halley.enforcerHit=true;
+              startWeaponCooldown('enforcer',weaponCooldownMs.enforcer);
+              emitCombatEvent('weapon:impact',{weapon:'enforcer',targetId:'1P/HALLEY'});
+            }
           }
           if(w.active <= 0) { weapons.splice(i, 1); document.body.classList.remove('weapon-cutoff'); }
       }
@@ -2544,6 +2688,10 @@ function updateWeapons(dt) {
           ectx.restore();
           if(w.hit && halley && !halley.destroyed && Math.hypot(w.x - halley.curX, w.y - halley.curY) < 62) {
             halley.hp -= 1.65;
+            if(!halley.cannonImpact){
+              halley.cannonImpact=true;
+              emitCombatEvent('weapon:impact',{weapon:'cannon',targetId:'1P/HALLEY'});
+            }
             explosions.push({x:w.x,y:w.y,age:0,maxAge:24,isGiant:false,particles:Array.from({length:4},()=>{const a=Math.random()*Math.PI*2,s=rand(.5,1.8);return{x:w.x,y:w.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,decay:rand(.06,.10),size:rand(.5,1.2),col:'#ffd68a'};})});
             weapons.splice(i,1); continue;
           }
@@ -2620,6 +2768,7 @@ function updateWeapons(dt) {
           if (halley && !halley.destroyed && missDist < (w.type==='nuke'?120:82)) {
               if(w.type==='nuke') { halley.nuked=true; startWeaponCooldown('nuke',weaponCooldownMs.nuke); }
               halley.hp -= w.type==='nuke' ? 260 : 18;
+              emitCombatEvent('weapon:impact',{weapon:w.type,targetId:'1P/HALLEY'});
               if(w.type==='missile') setPilotView('mosaic',null,1600);
               weapons.splice(i, 1); continue;
           }
@@ -2640,8 +2789,7 @@ function updateWeapons(dt) {
       escorts.forEach(e => e.state = 'return'); // 下达返航指令
       killCount += 1;
       if(halley.isGiant){ giantKillCount += 1; showCaptainWatermark(); }
-      logBattle(`${HC('logDestroyed')}${killCount}`);
-      pushBattleToast(`${HC('logDestroyed')}${killCount}`);
+      emitCombatEvent('target:destroyed',{targetId:'1P/HALLEY',kills:killCount,giant:!!halley.isGiant});
       if(halley.phalanxSequence || pilotView.mode==='ciws') setPilotView('offline',null,5600);
       if(halley.phalanxSequence) startWeaponCooldown('cannon',weaponCooldownMs.cannon);
       if(halley.mainCannoned){
@@ -2759,6 +2907,7 @@ const combatHmdV3=createCombatHmdV3({
   getHalley:()=>halley,
   getWarpIntensity:()=>warpIntensity,
   getShipRecoil:()=>shipRecoil,
+  getCombatState:()=>combatSnapshot,
   pilotTrackedPoint,
   getKillCount:()=>killCount,
   getGiantKillCount:()=>giantKillCount,
@@ -2775,20 +2924,15 @@ function drawPilotHmd(ctx,w,h,now,label,mode){
 // value, warpHover mirrors the real `body.warp-hover` class the "以中文
 //入梦" button already drives (see its mouseenter/mouseleave below).
 function cockpitDash(){
-  const weapon=chooseWeapon(!!halley?.isGiant);
+  const state=combatSnapshot;
+  const weapon=state.fireControl.activeWeapon;
   return {
     weapon,
     cdRatio: combatRuntime.weaponCooldownRatio(weapon),
     warpIntensity,
     warpHover: document.body.classList.contains('warp-hover'),
-    // U28 28f: real values for the PWR/SHLD vertical telemetry bars —
-    // ammoLevel (0-100, drains on weapon use / recovers over time) is the
-    // closest existing tracked resource to "mothership remaining energy";
-    // deckReadiness (0-100, real fluctuating systems-readiness pool) stands
-    // in for shield status, same honesty tier as this file's other derived
-    // (not invented) cockpit readouts.
-    pwr: combatRuntime.getAmmoLevel()/100,
-    shield: combatRuntime.getDeckReadiness()/100,
+    ammo:state.fleet.ammoPct/100,
+    deck:state.fleet.deckPct/100,
   };
 }
 function drawPilotDeck(ctx,w,h,phase,landing=false){
@@ -3175,7 +3319,7 @@ function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
   const targetY=hasGunTarget?clamp(tracked.cy,28,h*.72):h*.42;
   if(!firing){
     // SC zoom scope during charge phase — large tightening ring
-    const range=hasGunTarget?Math.max(88,Math.round(720-(tracked.lock||0)*560)):620;
+    const range=hasGunTarget?Math.round(combatSnapshot.solution.rangePx||0):0;
     drawSCZoomScope(ctx,w,h,targetX,targetY,tracked.lock||0,range,now);
   } else {
     // keep the gun indicator triangle during actual fire
@@ -3230,8 +3374,9 @@ function cockpitBootT(nowMs,mode){
   const dur=cockpitBootFrom>0?1500:2600;
   return clamp(cockpitBootFrom+(1-cockpitBootFrom)*((nowMs-cockpitBootAt)/dur),0,1);
 }
-function drawPilotFeed(now){
-  const feed=setupFeedCanvas(document.getElementById('pilotFeed'));
+function drawPilotFeed(now,state=combatSnapshot){
+  const pilotCanvas=document.getElementById('cicPilotFeed');
+  const feed=setupFeedCanvas(pilotCanvas);
   if(!feed) return;
   const {ctx,w,h}=feed, craft=pilotSubjectCraft();
   const nowMs=Date.now();
@@ -3250,12 +3395,13 @@ function drawPilotFeed(now){
   if((mode==='combat'||mode==='standby'||mode==='launch'||mode==='landing') && combatViewTopdown()){
     const td=getTopdownCV();
     if(td){
-      if((mode==='launch'||mode==='landing') && pilotView.started!==tdFlightStamp){
-        tdFlightStamp=pilotView.started;
-        td.requestFlightEvent(mode); // ignored if a lifecycle is already live (24d)
-      }
       td.resize(w,h);
-      td.renderOnce(now,getBattleSnapshot());
+      td.renderOnce(now,state);
+      if(typeof td.getDiagnostics==='function'){
+        const diagnostics=td.getDiagnostics();
+        pilotCanvas.dataset.shipModel=diagnostics.shipModelStatus;
+        pilotCanvas.dataset.cameraShot=diagnostics.cameraShot;
+      }
       ctx.save();
       const j=mode==='combat'?0.6:0;
       if(j) ctx.translate(rand(-j,j),rand(-j,j));
@@ -3263,9 +3409,16 @@ function drawPilotFeed(now){
       ctx.restore();
       const hmdLabel=mode==='launch'?(currentLang==='zh'?'弹射起飞 · 甲板机位':'LAUNCH · DECK CAM')
         :mode==='landing'?(currentLang==='zh'?'进近回收 · 塔台机位':'RECOVERY · TOWER CAM')
-        :(currentLang==='zh'?'上帝视角 · 战术网格':'TOP-DOWN · TACTICAL');
+        :(currentLang==='zh'?'舰桥战术态势 · 传感器融合':'CIC · SENSOR PICTURE');
       if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
-      else { drawPilotHmd(ctx,w,h,now,hmdLabel,'combat'); drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash()); /* V17: console after the HMD pass, same draw-order fix */ }
+      else {
+        // The Three.js sensor picture is already the background. Drawing the
+        // legacy HMD helper here used to paint a second starfield over it,
+        // reducing the ship to a drifting translucent silhouette. Only the
+        // transparent symbology layer belongs in this branch.
+        combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,hmdLabel,'combat');
+        drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash());
+      }
       return;
     }
   }
@@ -3289,8 +3442,7 @@ function drawPilotFeed(now){
     const td3d=(combatViewTopdown() && combatCamDirector()) ? getTopdownCV() : null;
     if(td3d){
       td3d.resize(w,h);
-      if(typeof td3d.driveMissileTimeline==='function') td3d.driveMissileTimeline(pilotView.weapon.timeline, nowMs);
-      td3d.renderOnce(now,getBattleSnapshot());
+      td3d.renderOnce(now,state);
       ctx.drawImage(topdownCanvas,0,0,w,h);
       const phase=pilotView.weapon.timeline ? activePhase(pilotView.weapon.timeline, nowMs) : null;
       const label=currentLang==='zh'
@@ -3408,14 +3560,18 @@ function frame(now){
     if(!cruise){
       updateEscorts(dt, now);
       updateWeapons(dt);
+      const state=syncCombatState(Date.now());
       drawExplosions(dt);
-      drawRadar();
+      drawRadar(state);
       drawAttitude(now);
       drawShipLiveFeeds(now);
-      drawPilotFeed(now);
-      updateCombatModule();
+      drawPilotFeed(now,state);
+      updateCombatModule(state);
+      updateTopTelemetry(state);
+    }else{
+      const state=syncCombatState(Date.now());
+      updateTopTelemetry(state);
     }
-    updateTopTelemetry();
     shipRecoil*=.9;
     updateCursorTarget();
     
@@ -3518,7 +3674,7 @@ function setLang(lang){
   }
   const terminalTitle=document.querySelector('.notebook-status b');
   if(terminalTitle) terminalTitle.textContent = lang==='zh' ? '舰长终端' : 'Commander Terminal';
-  const feed=document.getElementById('battleFeed');
+  const feed=document.getElementById('cicBattleFeed');
   if(feed){feed.dataset.seeded='';feed.innerHTML='';seedBattleFeed();}
   marketDeck.renderPicks(c.picks);
 }

@@ -19,10 +19,9 @@
  *   scene.stop(); scene.destroy();
  */
 import * as THREE from 'three';
-import { createNighthawk } from './nighthawk.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
 import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
-import { activePhase, msUntilPhase, msRemaining } from '../combat/weaponClock.js';
 import { createLaunchPath, createLandingPath } from '../combat/flightPath.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import {
@@ -118,7 +117,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   // accel is derived from consecutive analytic velocities, only consumed by
   // chaseLaunch's FOV/banking so light smoothing needs are already covered
   // by the director's own smoothDamp.
-  let flightEvent = null, pendingFlightKind = null;
+  let flightEvent = null;
   let flightLastPos = null, flightLastVel = null, flightPrevVel = null, flightPrevT = 0;
   let flightAccelV = { x: 0, y: 0, z: 0 };
   let flybyAnchor = null;
@@ -137,9 +136,9 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       tacticalTopdown: {
         priority: 1,
         blendInMs: 400,
-        compute(t) {
+        compute() {
           return {
-            pos: { x: CAM.x + Math.sin(t * 0.2) * 3, y: CAM.y, z: CAM.z + Math.cos(t * 0.16) * 2 },
+            pos: { x: CAM.x, y: CAM.y, z: CAM.z },
             look: { x: comet.position.x * 0.25, y: 2, z: -2 },
           };
         },
@@ -251,7 +250,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       },
     };
     camDirector = createWeaponCameraDirector({ camera, shots, home: 'tacticalTopdown' });
-    camDirector.requestShot('bridgeWide', { durationMs: 3200, blendInMs: 500 });
   }
 
   // ── lighting ───────────────────────────────────────────────────────────
@@ -291,6 +289,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   field.material.rotation = 0; scene.add(field);
 
   // starfield backdrop (well below the plane so it parallaxes)
+  let starfield = null;
   {
     const N = 600, pos = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) {
@@ -303,6 +302,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     const pts = new THREE.Points(geo, new THREE.PointsMaterial({
       color: 0x9fc4ff, size: 1.4, sizeAttenuation: true, transparent: true, opacity: 0.7
     }));
+    starfield = pts;
     scene.add(pts);
   }
 
@@ -319,6 +319,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   //    thruster nacelles + tail fins, hull-line defensive turrets. (front = -Z)
   const capital = new THREE.Group();
   let cannonOrbSprite = null;
+  let shipAnchors = null;
+  let shipModelStatus = 'loading';
   {
     const hullBody = new THREE.Mesh(new THREE.CylinderGeometry(2.6, 2.6, 22, 22), hull);
     hullBody.rotation.x = Math.PI / 2; capital.add(hullBody);
@@ -355,15 +357,59 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     capital.position.set(-2, 0, 17); // front (-Z) faces up-field toward the comet
     scene.add(capital);
   }
+  new GLTFLoader().load(
+    '/assets/combat/afflatus-command.glb',
+    (gltf) => {
+      capital.traverse((child) => {
+        if (child.isMesh) child.visible = false;
+      });
+      const model = gltf.scene;
+      model.name = 'AfflatusCommandGLB';
+      model.scale.setScalar(1);
+      capital.add(model);
+      shipAnchors = {
+        main: model.getObjectByName('Muzzle_Main'),
+        ciwsPort: model.getObjectByName('Muzzle_CIWS_Port'),
+        ciwsStarboard: model.getObjectByName('Muzzle_CIWS_Starboard'),
+        missile: model.getObjectByName('MissileBay'),
+      };
+      shipModelStatus = 'glb';
+    },
+    undefined,
+    () => {
+      shipAnchors = null;
+      shipModelStatus = 'fallback';
+    },
+  );
 
-  // ── escort fighters = "NIGHTHAWK" (high-detail hard-surface model) ───────
+  // ── escort fighters: one indexed hard-surface mesh per craft ─────────────
+  // The former procedural Nighthawk hierarchy cost over a hundred draw calls
+  // per fighter. This compact silhouette keeps the plan-view identity while
+  // reducing the whole three-ship wing to three shared-material draw calls.
+  const fighterGeometry = new THREE.BufferGeometry();
+  fighterGeometry.setAttribute('position', new THREE.Float32BufferAttribute([
+    0, 0.45, -4.2,   -0.75, 0.2, -1.2,   0.75, 0.2, -1.2,
+    -3.0, 0, 0.65,    3.0, 0, 0.65,      -0.9, 0.25, 2.8,
+    0.9, 0.25, 2.8,   0, -0.35, -0.7,    0, 0.7, 0.15,
+  ], 3));
+  fighterGeometry.setIndex([
+    0, 1, 8, 0, 8, 2, 1, 3, 8, 3, 5, 8, 8, 6, 4, 8, 4, 2,
+    0, 7, 1, 0, 2, 7, 1, 7, 3, 3, 7, 5, 5, 7, 6, 6, 7, 4, 4, 7, 2,
+    5, 6, 8,
+  ]);
+  fighterGeometry.computeVertexNormals();
+  const fighterMaterial = new THREE.MeshStandardMaterial({
+    color: 0x637485,
+    metalness: 0.78,
+    roughness: 0.38,
+    emissive: 0x0d4260,
+    emissiveIntensity: 0.52,
+  });
   function makeFighter() {
-    const nh = createNighthawk(THREE, { glowTex: GLOW });
-    nh.setMode('combat');
-    nh.group.scale.setScalar(0.62);   // fit the battle scale
-    nh.group.userData.nh = nh;
-    scene.add(nh.group);
-    return nh.group;
+    const fighter = new THREE.Mesh(fighterGeometry, fighterMaterial);
+    fighter.scale.setScalar(0.78);
+    scene.add(fighter);
+    return fighter;
   }
   const fighters = [makeFighter(), makeFighter(), makeFighter()];
 
@@ -494,6 +540,10 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   const tracerMat = new THREE.MeshBasicMaterial({ color: 0xbfeaff, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false });
   const tracerGeo = new THREE.CylinderGeometry(0.08, 0.08, 1, 6);
   const tracers = [];
+  function worldAnchor(anchor, fallback) {
+    if (!anchor) return fallback.clone();
+    return anchor.getWorldPosition(new THREE.Vector3());
+  }
   function fireTracer(from, to, color) {
     const m = new THREE.Mesh(tracerGeo, tracerMat.clone());
     m.material.color = new THREE.Color(color);
@@ -517,30 +567,28 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   const missiles = [];
-  function launchMissile() {
-    const head = sprite(0xfff0d0, 2.2, 1);
-    const start = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld);
-    start.y = 1.5;
+  function launchMissile({ nuclear = false } = {}) {
+    const head = sprite(nuclear ? 0xff746c : 0xfff0d0, nuclear ? 3.4 : 2.2, 1);
+    const fallback = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld);
+    fallback.y = 1.5;
+    const start = worldAnchor(shipAnchors?.missile, fallback);
     head.position.copy(start);
     scene.add(head);
-    missiles.push({ head, t: 0, trail: [] });
+    missiles.push({ head, t: 0, trail: [], nuclear, trailTick: 0 });
     missileLastPos = start;
-    if (camDirector) camDirector.requestShot('missileTail', { durationMs: 1900, blendInMs: 350 });
-  }
-
-  // sustained LASER beams (Nighthawk strafing runs) — bright thick green lances
-  const laserGeo = new THREE.CylinderGeometry(0.16, 0.16, 1, 8);
-  const lasers = [];
-  function fireLaser(from, to, color = 0x8dff6a) {
-    const m = new THREE.Mesh(laserGeo, new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false }));
-    scene.add(m); orient(m, from, to);
-    lasers.push({ m, life: 1 });
+    if (camDirector) {
+      camDirector.requestShot('missileTail', {
+        durationMs: nuclear ? 2600 : 1900,
+        blendInMs: 350,
+      });
+    }
   }
 
   // ENFORCER main-cannon PLASMA ORBS — big round光炮 from the centre barrel
   const orbs = [];
   function launchOrb() {
-    const muzzle = new THREE.Vector3(0, 2.5, -14); capital.localToWorld(muzzle);
+    const fallback = new THREE.Vector3(0, 2.5, -14); capital.localToWorld(fallback);
+    const muzzle = worldAnchor(shipAnchors?.main, fallback);
     const head = sprite(0x9fffe0, 5.5, 1); head.position.copy(muzzle); scene.add(head);
     const lt = new THREE.PointLight(0x6fffd0, 8, 30); lt.position.copy(muzzle); scene.add(lt);
     orbs.push({ head, lt, t: 0, trail: [] });
@@ -550,14 +598,9 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   // ── animation loop ────────────────────────────────────────────────────────
-  let W = 1, H = 1, raf = 0, running = false, t0 = 0, lastFire = 0, lastMissile = 0, lastLaser = 0, lastOrb = 0, lastChase = 0;
-  let sized = false, wantsLoop = false, surfaceActive = false, renderSurface = null, loopLastT = 0;
-  // Real-state hooks (Phase 2b, partial): renderOnce(now, state) can pass a
-  // snapshot from main.js's getBattleSnapshot(). Consumed narrowly for now —
-  // kill events trigger a real explosion flash, and the comet hides while the
-  // real halley is destroyed — without replacing the self-driven flight path
-  // (that full migration is a separate, larger follow-up; see ROADMAP §4).
-  let lastKillSeen = null, wasAlive = true;
+  let W = 1, H = 1, raf = 0, running = false, t0 = 0;
+  let sized = false, wantsLoop = false, surfaceActive = false, renderSurface = null, loopLastT = 0, renderOnceLastT = 0;
+  let lastEventSeen = 0;
 
   function resize(w, h) {
     W = Math.max(1, (w ?? canvas.clientWidth) || window.innerWidth);
@@ -660,32 +703,23 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   function update(now, state) {
     const t = (now - t0) / 1000;
     if (NEBULA_ON) nebUniforms.uTime.value = now;
-    if (pendingFlightKind) { startFlight(pendingFlightKind, now); pendingFlightKind = null; }
-    const alive = !state || !state.halley || !state.halley.destroyed;
+    const alive = Boolean(state?.target);
+    const visualWeapon = state?.fireControl?.activeWeapon || 'cannon';
 
-    // comet drifts left→right and bobs; respawns after crossing
-    const cx = -26 + ((t * 4) % 52);
-    comet.position.set(cx, Math.sin(t * 0.6) * 1.2, -18 + Math.sin(t * 0.4) * 3);
+    if (state?.target) {
+      const viewportWidth = state.telemetry?.viewportWidth || 1;
+      const viewportHeight = state.telemetry?.viewportHeight || 1;
+      comet.position.set(
+        (state.target.x / viewportWidth - 0.5) * 52,
+        0.5 + state.target.collisionRisk * 1.6,
+        -28 + (state.target.y / viewportHeight) * 32,
+      );
+    }
     comet.userData.rock.rotation.x = t * 0.5;
     comet.userData.rock.rotation.y = t * 0.7;
     comet.userData.coma.material.opacity = 0.45 + 0.15 * Math.sin(t * 6);
     const cometPos = new THREE.Vector3().setFromMatrixPosition(comet.matrixWorld);
-
-    // real-kill tie-in: a confirmed kill (killCount incrementing) fires a big
-    // warm flash at the comet's current position, distinct from routine hits
-    if (state && typeof state.killCount === 'number') {
-      if (lastKillSeen === null) lastKillSeen = state.killCount;
-      else if (state.killCount > lastKillSeen) {
-        lastKillSeen = state.killCount;
-        boom(cometPos.clone(), 4, 0xffe6b0);
-      }
-    }
-    // real-destroyed tie-in: hide the comet while the real halley is down,
-    // and stop new ambient fire from targeting it; reappears once a new
-    // halley spawns (alive again). In-flight tracers/orbs still decay normally.
-    if (!alive && wasAlive) { boom(cometPos.clone(), 4, 0xffe6b0); }
     comet.visible = alive;
-    wasAlive = alive;
 
     // capital slow patrol
     capital.position.x = -2 + Math.sin(t * 0.25) * 6;
@@ -723,7 +757,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       pos[o++] = fighters[0].position.x; pos[o++] = fighters[0].position.y; pos[o++] = fighters[0].position.z;
       formationLines.geometry.attributes.position.needsUpdate = true;
 
-      const locked = alive && !!(state && state.halley && state.halley.hover);
+      const locked = alive && !!state.target.locked;
       lockLine.visible = locked;
       if (locked) {
         const lp = lockLine.geometry.attributes.position.array;
@@ -735,47 +769,51 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       }
     }
 
-    // tracer cadence — only aim new fire at the comet while it's alive
-    if (alive && now - lastFire > 110) {
-      lastFire = now;
-      const f = fighters[(Math.random() * fighters.length) | 0];
-      const from = new THREE.Vector3().setFromMatrixPosition(f.matrixWorld);
-      const jitter = cometPos.clone().add(tmp().set((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4));
-      fireTracer(from, jitter, 0xbfeaff);
-      if (Math.random() > 0.55) boom(jitter, 0.5, 0x9fe6ff);
+    // Weapon VFX and camera shots consume the same ordered CombatState event
+    // stream as the radar and battle feed. No periodic fire and no random
+    // camera cut exists in this renderer.
+    for (const event of state?.events || []) {
+      if (event.id <= lastEventSeen) continue;
+      lastEventSeen = event.id;
+      if (event.type === 'flight:launch' || event.type === 'flight:landing') {
+        const kind = event.type.split(':')[1];
+        if (!flightEvent) startFlight(kind, now);
+      } else if (event.type === 'weapon:fire' && alive) {
+        if (event.weapon === 'cannon') {
+          const fallback = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld);
+          fallback.y = 2;
+          const anchors = [
+            worldAnchor(shipAnchors?.ciwsPort, fallback),
+            worldAnchor(shipAnchors?.ciwsStarboard, fallback),
+          ];
+          const rounds = renderPolicy.qualityTier === 'low' ? 5 : 10;
+          for (let round = 0; round < rounds; round += 1) {
+            const phase = (round / rounds - 0.5) * 0.16;
+            const target = cometPos.clone().add(tmp().set(Math.sin(phase) * 3, Math.cos(phase * 2), phase * 12));
+            fireTracer(anchors[round % anchors.length], target, round % 2 ? 0xffc878 : 0x9ae5ff);
+          }
+          camDirector?.requestShot('ciwsTurret', { durationMs: 1200, blendInMs: 260 });
+        } else if (event.weapon === 'missile') {
+          launchMissile();
+        } else if (event.weapon === 'nuke') {
+          launchMissile({ nuclear: true });
+        } else if (event.weapon === 'enforcer') {
+          launchOrb();
+        }
+      } else if (event.type === 'weapon:impact') {
+        const scale = event.weapon === 'nuke' ? 4.8 : event.weapon === 'enforcer' ? 3.2 : 1.4;
+        const color = event.weapon === 'nuke' ? 0xff5148 : event.weapon === 'enforcer' ? 0xbfffe6 : 0xffe6b0;
+        boom(cometPos.clone(), scale, color);
+      } else if (event.type === 'target:destroyed') {
+        boom(cometPos.clone(), 5.2, 0xffe6b0);
+      }
     }
-    // capital CIWS occasional burst
-    if (alive && Math.random() > 0.93) {
-      const from = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld); from.y = 2;
-      fireTracer(from, cometPos.clone().add(tmp().set((Math.random() - 0.5) * 5, 0, (Math.random() - 0.5) * 5)), 0xff5c62);
-      // refresh (not restart) — CIWS fires roughly every ~15 frames on average,
-      // far more often than a shot's duration, so this just extends the window
-      if (camDirector) camDirector.requestShot('ciwsTurret', { durationMs: 1100, blendInMs: 300, refresh: true });
-    }
-    // Nighthawk sustained laser strafe
-    if (alive && now - lastLaser > 620) {
-      lastLaser = now;
-      const f = fighters[(Math.random() * fighters.length) | 0];
-      const from = new THREE.Vector3().setFromMatrixPosition(f.matrixWorld);
-      fireLaser(from, cometPos.clone().add(tmp().set((Math.random() - 0.5) * 2.5, 0, (Math.random() - 0.5) * 2.5)));
-      boom(cometPos.clone(), 0.5, 0xd6ff9a);
-    }
-    // Enforcer main-cannon plasma orb (charge → fire)
-    if (cannonOrbSprite) cannonOrbSprite.material.opacity = Math.min(0.95, cannonOrbSprite.material.opacity + 0.02) * (0.7 + 0.3 * Math.sin(t * 8));
-    if (alive && now - lastOrb > 3200) { lastOrb = now; launchOrb(); }
-    // periodic missile + big explosion
-    if (alive && now - lastMissile > 2600) { lastMissile = now; launchMissile(); }
-    // V18 Phase 1: periodic chaseCam pass on the lead fighter (independent of
-    // the missile/orb/ciws triggers above — this is the new preset itself,
-    // not yet wired into the missile narrative migration, which is a
-    // separate follow-up per ROADMAP §4 item 2)
-    if (alive && !flightEvent && now - lastChase > 4400 && camDirector) { lastChase = now; camDirector.requestShot('chaseCam', { durationMs: 2200, blendInMs: 400 }); }
 
-    // advance lasers (quick fade)
-    for (let i = lasers.length - 1; i >= 0; i--) {
-      const lz = lasers[i]; lz.life -= 0.07;
-      lz.m.material.opacity = Math.max(0, lz.life * 0.95);
-      if (lz.life <= 0) { scene.remove(lz.m); lz.m.material.dispose(); lasers.splice(i, 1); }
+    // Enforcer main-cannon plasma orb (charge → fire)
+    if (cannonOrbSprite) {
+      const targetOpacity = visualWeapon === 'enforcer' ? 0.92 : 0.08;
+      cannonOrbSprite.material.opacity += (targetOpacity - cannonOrbSprite.material.opacity) * 0.08;
+      cannonOrbSprite.material.opacity *= 0.86 + 0.14 * Math.sin(t * 8);
     }
     // advance plasma orbs toward the comet
     for (let i = orbs.length - 1; i >= 0; i--) {
@@ -784,8 +822,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       ob.head.position.copy(p); ob.lt.position.copy(p);
       if (i === orbs.length - 1) orbLastPos = p;
       const sc = 5.5 + Math.sin(now * 0.02) * 0.6; ob.head.scale.set(sc, sc, 1);
-      const tr = sprite(0x8fffd8, 3, 0.6); tr.position.copy(p); scene.add(tr);
-      ob.trail.push({ s: tr, life: 1 });
+      ob.trailTick = (ob.trailTick || 0) + 1;
+      if (ob.trailTick % (renderPolicy.qualityTier === 'low' ? 4 : 2) === 0) {
+        const tr = sprite(0x8fffd8, 3, 0.6); tr.position.copy(p); scene.add(tr);
+        ob.trail.push({ s: tr, life: 1 });
+      }
       ob.trail.forEach(o => { o.life -= 0.06; o.s.material.opacity = Math.max(0, o.life * 0.55); });
       while (ob.trail.length && ob.trail[0].life <= 0) { const o = ob.trail.shift(); scene.remove(o.s); o.s.material.dispose(); }
       if (p.distanceTo(cometPos) < 4.5 || ob.t > 1.2) {
@@ -807,12 +848,17 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       const p = ms.head.position.clone().lerp(cometPos, 0.06 + ms.t * 0.04);
       ms.head.position.copy(p);
       if (i === missiles.length - 1) missileLastPos = p;
-      const tr = sprite(0xffcaa0, 1.4, 0.7); tr.position.copy(p); scene.add(tr);
-      ms.trail.push({ s: tr, life: 1 });
+      ms.trailTick = (ms.trailTick || 0) + 1;
+      if (ms.trailTick % (renderPolicy.qualityTier === 'low' ? 4 : 2) === 0) {
+        const tr = sprite(ms.nuclear ? 0xff5148 : 0xffcaa0, ms.nuclear ? 2.2 : 1.4, 0.7);
+        tr.position.copy(p);
+        scene.add(tr);
+        ms.trail.push({ s: tr, life: 1 });
+      }
       ms.trail.forEach(o => { o.life -= 0.08; o.s.material.opacity = Math.max(0, o.life * 0.7); });
       while (ms.trail.length && ms.trail[0].life <= 0) { const o = ms.trail.shift(); scene.remove(o.s); o.s.material.dispose(); }
       if (p.distanceTo(cometPos) < 4 || ms.t > 1.1) {
-        boom(cometPos.clone(), 2.4, 0xfff0c4);
+        boom(cometPos.clone(), ms.nuclear ? 4.8 : 2.4, ms.nuclear ? 0xff6a5f : 0xfff0c4);
         ms.trail.forEach(o => { scene.remove(o.s); o.s.material.dispose(); });
         scene.remove(ms.head); ms.head.material.dispose(); missiles.splice(i, 1);
       }
@@ -848,7 +894,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     // were the stray floating semi-transparent elements visible drifting
     // behind Combat View in the owner's screenshot — deleted outright, not
     // flag-gated ("station master: these should never have existed").
-    updateTrails(now);
+    if (renderPolicy.qualityTier !== 'low') updateTrails(now);
   }
 
   function loop(now) {
@@ -857,7 +903,10 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     if (!t0) t0 = now;
     update(now);
     renderer.render(scene, camera);
-    renderSurface?.reportFrame(frameMs);
+    renderSurface?.reportFrame(frameMs, {
+      drawCalls: renderer.info.render.calls,
+      triangles: renderer.info.render.triangles,
+    });
     if (running) raf = requestAnimationFrame(loop);
   }
 
@@ -872,28 +921,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     running = false;
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
-  }
-
-  // V18 Phase 1 item 2 (ROADMAP §4): drives the camera director off a
-  // weaponClock timeline (see main.js's missile-launch site, which builds
-  // one with drop/ignite/terminal/impact phases matching the real
-  // MISSILE_DROP_MS/MISSILE_IGNITE_MS thresholds) instead of a separate
-  // guessed duration — this is the first real consumer of weaponClock.js.
-  // No-op if the camera director isn't enabled (?combatcam=director) or no
-  // timeline was passed.
-  function driveMissileTimeline(timeline, nowMs) {
-    if (!camDirector || !timeline) return;
-    const phase = activePhase(timeline, nowMs);
-    if (phase === 'terminal' || phase === 'impact') {
-      camDirector.requestShot('chaseCam', { durationMs: Math.max(400, msRemaining(timeline, nowMs)), blendInMs: 350, refresh: true });
-    } else {
-      // missileTail (priority 4) outranks chaseCam (priority 3) — capping its
-      // duration to exactly the remaining drop+ignite window (instead of a
-      // fixed refresh) means it naturally expires right as the phase flips
-      // to 'terminal', so the chaseCam request above isn't blocked by
-      // shouldPreempt's "lower priority must wait" rule.
-      camDirector.requestShot('missileTail', { durationMs: Math.max(200, msUntilPhase(timeline, 'terminal', nowMs)), blendInMs: 300, refresh: true });
-    }
   }
 
   const webglLifecycle = createWebGLContextLifecycle({
@@ -944,6 +971,10 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     },
     onQualityChange(nextPolicy) {
       renderPolicy = nextPolicy;
+      const pressureMode = nextPolicy.qualityTier === 'low';
+      trailMesh.visible = !pressureMode;
+      grid.visible = !pressureMode;
+      if (starfield) starfield.material.opacity = pressureMode ? 0.38 : 0.7;
     },
     onDispose() {
       webglLifecycle.dispose();
@@ -967,20 +998,25 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     renderOnce(now = performance.now(), state = null) {
       if (!surfaceActive) return;
       if (!t0) t0 = now;
+      if (renderPolicy.qualityTier === 'low' && renderOnceLastT && now-renderOnceLastT<32) return;
+      const frameMs=renderOnceLastT?now-renderOnceLastT:0;
+      renderOnceLastT=now;
       update(now, state);
       renderer.render(scene, camera);
+      renderSurface?.reportFrame(frameMs, {
+        drawCalls: renderer.info.render.calls,
+        triangles: renderer.info.render.triangles,
+      });
     },
-    driveMissileTimeline,
-    // U24 (24c consumes this): start a launch or landing lifecycle on the
-    // lead fighter. Ignored (returns false) while another event is live —
-    // at most one fighter is ever off-formation (24d). Safe to call before
-    // the first frame (deferred until the scene clock exists).
-    requestFlightEvent(kind) {
-      if (kind !== 'launch' && kind !== 'landing') return false;
-      if (flightEvent || pendingFlightKind) return false;
-      if (!t0) { pendingFlightKind = kind; return true; }
-      startFlight(kind, performance.now());
-      return true;
+    getDiagnostics() {
+      return Object.freeze({
+        shipModelStatus,
+        drawCalls: renderer.info.render.calls,
+        triangles: renderer.info.render.triangles,
+        qualityTier: renderPolicy.qualityTier,
+        cameraShot: camDirector?.currentShotId || 'tacticalTopdown',
+        lastEventSeen,
+      });
     },
     destroy() {
       wantsLoop = false;

@@ -122,10 +122,10 @@ export function initTerminalStarMap({ getLang = () => 'en' } = {}) {
     setMode(true);   // reset to star-map (pauses the ship hologram) for next open
   };
   // U13b (2026-07-11): trigger moved from "click the star map" to "click
-  // Combat View" (#pilotFeed, a different panel entirely now that the
+  // Combat View" (#cicPilotFeed, a different panel entirely now that the
   // radar has merged into it) — the star map itself no longer opens the
   // terminal on click, only the ✕ close button (below) closes it.
-  const pilotFeed = document.getElementById('pilotFeed');
+  const pilotFeed = document.getElementById('cicPilotFeed');
   if (pilotFeed) {
     pilotFeed.style.cursor = 'pointer';
     pilotFeed.addEventListener('click', () => {

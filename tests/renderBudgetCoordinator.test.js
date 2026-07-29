@@ -186,11 +186,17 @@ describe('render budget coordinator', () => {
       targetFps: 60,
     });
 
-    for (let i = 0; i < 90; i += 1) handle.reportFrame(30);
+    for (let i = 0; i < 90; i += 1) handle.reportFrame(30, { drawCalls: 42, triangles: 12000 });
     expect(coordinator.getTelemetry().qualityTier).toBe('high');
+    expect(coordinator.getTelemetry().surfaces[0]).toEqual(expect.objectContaining({
+      drawCalls: 42,
+      triangles: 12000,
+      thermalState: 'warm',
+    }));
     for (let i = 0; i < 90; i += 1) handle.reportFrame(30);
     expect(coordinator.getTelemetry().qualityTier).toBe('balanced');
     expect(coordinator.getTelemetry().surfaces[0].p95Ms).toBe(30);
+    expect(coordinator.getTelemetry().surfaces[0].thermalState).toBe('hot');
   });
 
   it('rejects duplicate ids and invokes dispose hooks exactly once', () => {
