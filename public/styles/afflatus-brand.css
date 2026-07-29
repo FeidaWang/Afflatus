@@ -1,0 +1,324 @@
+/*
+ * Afflatus adaptive wordmark
+ *
+ * The full wordmark occupies a stable stage so navigation never shifts when
+ * the letters fold into the compact A·l inference mark. Route palettes only
+ * provide two color tokens; geometry and motion remain identical everywhere.
+ */
+
+.afflatus-brand-sentinel {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 1px;
+  block-size: 1px;
+  pointer-events: none;
+}
+
+/*
+ * `overflow-x: hidden` makes body a scroll container in Chromium/WebKit and
+ * silently defeats a body-level sticky header. `clip` keeps the horizontal
+ * guard without changing the header's scroll container.
+ */
+html,
+body {
+  overflow-x: clip;
+}
+
+.site-header--follow {
+  position: sticky;
+  inset-block-start: var(--safe-top, 0px);
+  z-index: 48;
+  isolation: isolate;
+  background-color: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 88%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  backdrop-filter: blur(18px) saturate(1.12);
+  transition:
+    border-color 420ms ease,
+    box-shadow 420ms ease,
+    background-color 420ms ease;
+}
+
+:root[data-afflatus-brand-state="compact"] .site-header--follow {
+  background-color: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 95%, transparent);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.2),
+    inset 0 -1px 0 color-mix(in srgb, var(--afflatus-brand-accent, currentColor) 24%, transparent);
+}
+
+.afflatus-brand {
+  --afflatus-brand-ink: currentColor;
+  --afflatus-brand-accent: #9ae5ff;
+  --afflatus-brand-ease: cubic-bezier(.22, 1, .36, 1);
+  --afflatus-brand-duration: 560ms;
+  position: relative;
+  inline-size: 132px;
+  min-inline-size: 132px;
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  flex: 0 0 auto;
+  color: var(--afflatus-brand-ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.afflatus-brand:focus-visible {
+  outline: 2px solid var(--afflatus-brand-accent);
+  outline-offset: 4px;
+}
+
+.afflatus-brand__stage {
+  position: relative;
+  inline-size: 132px;
+  block-size: 30px;
+  display: block;
+  overflow: hidden;
+  color: inherit;
+  font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "JetBrains Mono", monospace;
+  font-size: 19px;
+  font-weight: 680;
+  line-height: 30px;
+  letter-spacing: -.045em;
+  font-variant-ligatures: none;
+  white-space: nowrap;
+}
+
+.afflatus-brand__stage::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 1px;
+  inset-block-end: 2px;
+  inline-size: 106px;
+  block-size: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--afflatus-brand-accent),
+    color-mix(in srgb, var(--afflatus-brand-accent) 24%, transparent) 62%,
+    transparent
+  );
+  opacity: .52;
+  transform-origin: left center;
+  transition:
+    inline-size var(--afflatus-brand-duration) var(--afflatus-brand-ease),
+    opacity 260ms ease;
+}
+
+.afflatus-brand__a,
+.afflatus-brand__before,
+.afflatus-brand__l,
+.afflatus-brand__after,
+.afflatus-brand__vector {
+  position: absolute;
+  inset-block-start: 0;
+  display: block;
+  transition:
+    transform var(--afflatus-brand-duration) var(--afflatus-brand-ease),
+    opacity 260ms ease,
+    filter 360ms ease,
+    color 360ms ease;
+}
+
+.afflatus-brand__a {
+  inset-inline-start: 0;
+  color: var(--afflatus-brand-accent);
+  font-weight: 850;
+}
+
+.afflatus-brand__before {
+  inset-inline-start: .68em;
+  transform-origin: left center;
+}
+
+.afflatus-brand__l {
+  inset-inline-start: 1.8em;
+  color: var(--afflatus-brand-accent);
+  font-weight: 850;
+  transform-origin: center bottom;
+}
+
+.afflatus-brand__l::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-end: 3px;
+  inline-size: 3px;
+  block-size: 3px;
+  border-radius: 50%;
+  background: var(--afflatus-brand-accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--afflatus-brand-accent) 72%, transparent);
+  opacity: 0;
+  transform: translateX(-50%) scale(.3);
+  transition:
+    opacity 240ms ease 100ms,
+    transform 420ms var(--afflatus-brand-ease) 80ms;
+}
+
+.afflatus-brand__after {
+  inset-inline-start: 2.43em;
+  transform-origin: left center;
+}
+
+.afflatus-brand__vector {
+  inset-inline-start: 5em;
+  inset-block-start: 6px;
+  inline-size: 1px;
+  block-size: 17px;
+  background: var(--afflatus-brand-accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--afflatus-brand-accent) 36%, transparent);
+  opacity: .8;
+  transform: rotate(24deg);
+  transform-origin: center;
+}
+
+.afflatus-brand__sr {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__stage::after {
+  inline-size: 38px;
+  opacity: .88;
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__before {
+  opacity: 0;
+  filter: blur(3px);
+  transform: translateX(-.42em) scaleX(.08);
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__l {
+  transform: translateX(-1em) scaleY(1.08);
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__l::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__after {
+  opacity: 0;
+  filter: blur(3px);
+  transform: translateX(-1.78em) scaleX(.06);
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__vector {
+  opacity: 1;
+  transform: translateX(-3.45em) rotate(24deg);
+}
+
+.arena-page {
+  --afflatus-header-bg: #05070e;
+}
+
+.arena-page .afflatus-brand {
+  --afflatus-brand-ink: #eaf1ff;
+  --afflatus-brand-accent: #3dff9a;
+}
+
+.sectors-page {
+  --afflatus-header-bg: #000;
+}
+
+.sectors-page .afflatus-brand {
+  --afflatus-brand-ink: #f5f5f7;
+  --afflatus-brand-accent: #8ff0d7;
+}
+
+.signal-page {
+  --afflatus-header-bg: #0c0d0a;
+}
+
+.signal-page .afflatus-brand {
+  --afflatus-brand-ink: #f4f1e6;
+  --afflatus-brand-accent: #f5c400;
+}
+
+body:not(.arena-page):not(.sectors-page):not(.signal-page) {
+  --afflatus-header-bg: #04060a;
+}
+
+body:not(.arena-page):not(.sectors-page):not(.signal-page) .afflatus-brand {
+  --afflatus-brand-ink: #e8eef5;
+  --afflatus-brand-accent: #9ae5ff;
+}
+
+@media (max-width: 620px) {
+  .afflatus-brand {
+    inline-size: 108px;
+    min-inline-size: 108px;
+  }
+
+  .afflatus-brand__stage {
+    inline-size: 108px;
+    font-size: 16px;
+  }
+
+  /*
+   * Home already exposes the compact EN/中 switch at this width. Keeping the
+   * long-form language control as well starves the brand grid track and clips
+   * the full wordmark, so the duplicate control yields to the compact one.
+   */
+  body:not(.arena-page):not(.sectors-page):not(.signal-page)
+    .site-header--follow
+    #langBtn {
+    display: none;
+  }
+
+  :is(.arena-page, .sectors-page, .signal-page) .site-header--follow {
+    display: grid;
+    grid-template-columns: 108px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    block-size: auto;
+    min-block-size: 68px;
+    flex-wrap: nowrap;
+  }
+
+  :is(.arena-page, .sectors-page, .signal-page)
+    .site-header--follow
+    > .nav {
+    min-inline-size: 0;
+    inline-size: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  :is(.arena-page, .sectors-page, .signal-page)
+    .site-header--follow
+    > .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  :is(.arena-page, .sectors-page, .signal-page)
+    .site-header--follow
+    > .nav
+    > * {
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header--follow,
+  .afflatus-brand__stage::after,
+  .afflatus-brand__a,
+  .afflatus-brand__before,
+  .afflatus-brand__l,
+  .afflatus-brand__after,
+  .afflatus-brand__vector,
+  .afflatus-brand__l::after {
+    transition: none;
+  }
+}

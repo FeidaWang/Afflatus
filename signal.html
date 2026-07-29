@@ -230,6 +230,7 @@
 <link rel="stylesheet" href="/page-turn.css">
 <link rel="stylesheet" href="/styles/signal.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
+<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/dataBridge.js"></script>
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
@@ -251,11 +252,13 @@
 </nav>
 
 <main class="dossier">
-  <header class="top">
-    <div class="seal">
-      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="none" stroke="#f5c400" stroke-width="1.5"/><circle cx="24" cy="24" r="9" fill="none" stroke="#f5c400" stroke-width="1.5"/><g fill="#f5c400"><path d="M24 2 L29 13 L19 13 Z"/><path d="M46 24 L35 29 L35 19 Z"/><path d="M2 24 L13 19 L13 29 Z"/></g></svg>
-      <div><b>RESERVE CONTAINMENT INITIATIVE</b><small data-en="O5 COUNCIL · LEVEL 5 CLEARANCE" data-zh="O5 议会 · 五级权限">O5 COUNCIL · LEVEL 5 CLEARANCE</small></div>
-    </div>
+  <header class="top site-header--follow">
+    <a class="afflatus-brand" data-afflatus-brand href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
+      <span class="afflatus-brand__stage" aria-hidden="true">
+        <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__vector"></span>
+      </span>
+      <span class="afflatus-brand__sr">Afflatus</span>
+    </a>
     <nav class="nav" aria-label="Primary" data-afflatus-nav>
       <button class="lang-toggle" type="button">中文</button>
     </nav>
@@ -264,6 +267,10 @@
   <section class="hero">
     <div class="hzbar hz" aria-hidden="true"></div>
     <div class="pad">
+      <div class="seal signal-lockup">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="none" stroke="#f5c400" stroke-width="1.5"/><circle cx="24" cy="24" r="9" fill="none" stroke="#f5c400" stroke-width="1.5"/><g fill="#f5c400"><path d="M24 2 L29 13 L19 13 Z"/><path d="M46 24 L35 29 L35 19 Z"/><path d="M2 24 L13 19 L13 29 Z"/></g></svg>
+        <div><b>RESERVE CONTAINMENT INITIATIVE</b><small data-en="O5 COUNCIL · LEVEL 5 CLEARANCE" data-zh="O5 议会 · 五级权限">O5 COUNCIL · LEVEL 5 CLEARANCE</small></div>
+      </div>
       <div class="stamp" aria-hidden="true">LEVEL 5<span data-en="EYES ONLY" data-zh="仅限阅">EYES ONLY</span></div>
       <div class="meta">
         <span data-en="ITEM #:&nbsp;<b>FED-26</b>" data-zh="项目编号：&nbsp;<b>FED-26</b>" data-i18n-html>ITEM #:&nbsp;<b>FED-26</b></span>

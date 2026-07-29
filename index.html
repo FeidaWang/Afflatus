@@ -140,6 +140,7 @@
 }
 </style>
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
+<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="hud-off" data-prev="/games.html" data-next="/arena.html">
@@ -347,8 +348,13 @@
   <a class="route-arrow next" href="/arena.html" data-turn="next" data-page-turn="next" data-hot aria-label="Next page">›</a>
 </nav>
 
-<nav>
-  <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span class="brand-word">AFFLATUS</span><span class="brand-sep" aria-hidden="true">|</span><span class="brand-version">v1.6</span></div>
+<nav class="site-header--follow">
+  <a class="afflatus-brand" data-afflatus-brand href="/" aria-label="Afflatus — Home">
+    <span class="afflatus-brand__stage" aria-hidden="true">
+      <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__vector"></span>
+    </span>
+    <span class="afflatus-brand__sr">Afflatus</span>
+  </a>
   <div class="nav-center">
     <!-- Links rendered by /lib/nav.js from the shared SITE list (same source
          as arena/sectors/signal/games/novels) -- see ROADMAP §2. Home doesn't

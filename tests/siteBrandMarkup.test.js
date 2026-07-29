@@ -11,8 +11,8 @@ import { describe, expect, it } from 'vitest';
 import { BUILD_ROUTES } from '../src/config/siteManifest.js';
 
 const ROOT = resolve(import.meta.dirname, '..');
-/** 三个改造对象。index/signal/serial/boot 及四个 page-hero 均为有据排除，见审计脚本。 */
-const PAGES = ['sectors.html', 'stats.html', 'course.html'];
+/** Labs 内保留旧版通用品牌块的两个页面；其余 Labs 页面使用自身人格锁定件。 */
+const PAGES = ['stats.html', 'course.html'];
 
 const attr = (n, name) => n.attrs?.find((a) => a.name === name)?.value ?? null;
 const classesOf = (n) => (attr(n, 'class') || '').split(/\s+/).filter(Boolean);
@@ -83,14 +83,14 @@ describe.each(PAGES)('%s 的 .site-brand', (file) => {
 });
 
 describe('跨页一致性（防漂移）', () => {
-  it('只有三个经审计的通用品牌块，其他页面继续使用自身人格锁定件', () => {
+  it('只有两个 Labs 页面保留旧版通用品牌块', () => {
     const found = BUILD_ROUTES
       .map((route) => route.file)
       .filter((file) => brandOf(file));
     expect(found.sort()).toEqual([...PAGES].sort());
   });
 
-  it('三页的 SVG 路径完全相同 —— 复制粘贴的标志最容易悄悄分叉', () => {
+  it('两页的 SVG 路径完全相同 —— 复制粘贴的标志最容易悄悄分叉', () => {
     const paths = PAGES.map((f) => {
       const p = [...walk(brandOf(f))].find((n) => n.tagName === 'path');
       return attr(p, 'd');
@@ -98,7 +98,7 @@ describe('跨页一致性（防漂移）', () => {
     expect(new Set(paths).size).toBe(1);
   });
 
-  it('三页的类名结构完全相同', () => {
+  it('两页的类名结构完全相同', () => {
     const shapes = PAGES.map((f) => {
       const b = brandOf(f);
       return [...walk(b)]

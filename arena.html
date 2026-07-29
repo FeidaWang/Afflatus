@@ -235,6 +235,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles/arena.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
+<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="arena-page" data-prev="/" data-next="/sectors.html">
@@ -251,8 +252,19 @@
 </nav>
 
 <main class="arena">
-  <header class="hdr">
-    <div class="page-hero">
+  <header class="hdr site-header--follow">
+    <a class="afflatus-brand" data-afflatus-brand href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
+      <span class="afflatus-brand__stage" aria-hidden="true">
+        <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__vector"></span>
+      </span>
+      <span class="afflatus-brand__sr">Afflatus</span>
+    </a>
+    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+      <button class="hbtn lang-toggle" type="button">中文</button>
+    </nav>
+  </header>
+
+  <div class="page-hero page-hero--route">
       <div class="logo" aria-hidden="true">
         <svg viewBox="0 0 64 64" width="32" height="32" role="img" aria-label="Arena">
           <line x1="20" y1="14" x2="20" y2="50" stroke="#3dff9a" stroke-width="1.6"/><rect x="15" y="26" width="10" height="19" fill="#3dff9a"/><path d="M14 24l6-7 6 7" fill="none" stroke="#eafff4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -264,11 +276,7 @@
         <h1>AFFLATUS<br><span>TRADING ARENA</span></h1>
         <p data-en="Full S&amp;P 500 TA dashboard · Autopilot vs SPY/SMH" data-zh="标普 500 全市场技术面板 · Autopilot 对比大盘基准">Full S&amp;P 500 TA dashboard · Autopilot vs SPY/SMH</p>
       </div>
-    </div>
-    <nav class="nav" aria-label="Primary" data-afflatus-nav>
-      <button class="hbtn lang-toggle" type="button">中文</button>
-    </nav>
-  </header>
+  </div>
 
   <section class="hero" aria-label="Status">
     <div class="kicker" data-en="TRAXUS//CVKM · simulation deck" data-zh="TRAXUS//CVKM · 模拟终端">TRAXUS//CVKM · simulation deck</div>

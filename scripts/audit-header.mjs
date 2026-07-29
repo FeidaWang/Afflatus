@@ -59,7 +59,12 @@ const textOf = (node) => {
 
 /* ── 审计 ────────────────────────────────────────────────────────── */
 
-const pages = BUILD_ROUTES.map((r) => ({ id: r.id, file: r.file }))
+const pages = BUILD_ROUTES.map((r) => ({
+  id: r.id,
+  file: r.file,
+  status: r.status,
+  group: r.nav?.group || null,
+}))
   .filter((p) => existsSync(resolve(ROOT, p.file)));
 
 /* ⚠️ `.brand` 在本仓库被复用于三种不同语义。审计初稿把它们混为一谈，若照此
@@ -93,8 +98,26 @@ const ALT_BRAND = Object.freeze({
   osTag: (doc) => [...walk(doc)].find((n) => attr(n, 'id') === 'osTag') || null,
 });
 
-const results = pages.map(({ id, file }) => {
+const results = pages.map(({ id, file, status, group }) => {
   const doc = parse(readFileSync(resolve(ROOT, file), 'utf8'));
+  const adaptiveBrand = findByClass(doc, 'afflatus-brand');
+  if (adaptiveBrand) {
+    return {
+      id,
+      file,
+      status,
+      group,
+      present: true,
+      kind: 'ai-brand',
+      tag: adaptiveBrand.tagName,
+      isLink: adaptiveBrand.tagName === 'a' && Boolean(attr(adaptiveBrand, 'href')),
+      parts: collectClasses(adaptiveBrand, 'afflatus-brand'),
+      hasSvg: [...walk(adaptiveBrand)].some((n) => n.tagName === 'svg'),
+      text: textOf(adaptiveBrand) || null,
+      version: null,
+    };
+  }
+
   const brand = findByClass(doc, 'brand');
 
   /* v1.7 收尾：arena/horoscope/games/league 的报头已由 `.brand` 改名为
@@ -104,7 +127,7 @@ const results = pages.map(({ id, file }) => {
   const hero = findByClass(doc, 'page-hero');
   if (!brand && hero) {
     return {
-      id, file, present: true, kind: 'page-hero', tag: hero.tagName, isLink: false,
+      id, file, status, group, present: true, kind: 'page-hero', tag: hero.tagName, isLink: false,
       parts: [], hasSvg: [...walk(hero)].some((n) => n.tagName === 'svg'),
       text: textOf(hero).slice(0, 28) || null, version: null,
     };
@@ -115,14 +138,14 @@ const results = pages.map(({ id, file }) => {
       const alt = find(doc);
       if (alt) {
         return {
-          id, file, present: true, kind: `alt:${kind}`, tag: alt.tagName, isLink: false,
+          id, file, status, group, present: true, kind: `alt:${kind}`, tag: alt.tagName, isLink: false,
           parts: [], hasSvg: [...walk(alt)].some((n) => n.tagName === 'svg'),
           text: textOf(alt).replace(/\s+/g, ' ').slice(0, 28) || null, version: null,
         };
       }
     }
     return {
-      id, file, present: false, kind: null, tag: null, isLink: false,
+      id, file, status, group, present: false, kind: null, tag: null, isLink: false,
       parts: [], hasSvg: false, text: null, version: null,
     };
   }
@@ -133,6 +156,8 @@ const results = pages.map(({ id, file }) => {
   return {
     id,
     file,
+    status,
+    group,
     present: true,
     kind: classifyBrand(brand),
     tag: brand.tagName,
@@ -148,13 +173,11 @@ const results = pages.map(({ id, file }) => {
 
 const present = results.filter((r) => r.present);
 const missing = results.filter((r) => !r.present);
-// v1.7 的改造范围**只含** header-brand 与 nav-mark；page-hero 是页面报头，不动。
-/* index 的 nav-mark 是**有据可查的排除项**，不是待统一项：
-   它的 .brand 是 P1-11 刚迁移完的组件（容器查询 + 渐变字标，src/styles.css
-   注释写明「this is now the only owner」，design.md 有三带响应式视觉合同）。
-   H0 把它单列为 nav-mark 正因为它是有意为之的独立设计；统一掉等于毁掉刚做完的
-   工作。故 inScope 只含 header-brand。 */
-const inScope = present.filter((r) => r.kind === 'header-brand');
+// The adaptive AI wordmark is required on active, non-Labs routes only.
+// Labs pages intentionally retain their own page-personality lockups.
+const expectedAdaptive = pages.filter((r) => r.status === 'active' && r.group !== 'labs');
+const inScope = present.filter((r) => r.kind === 'ai-brand');
+const headerBrands = present.filter((r) => r.kind === 'header-brand');
 const navMarks = present.filter((r) => r.kind === 'nav-mark');
 const heroes = present.filter((r) => r.kind === 'page-hero');
 const alts = present.filter((r) => r.kind.startsWith('alt:'));
@@ -168,13 +191,20 @@ const issues = [];
 /* notes 与 issues 分开：notes 是「已裁决、记录在案」，issues 才是待办项。
    只有 issues 才让 --check 失败——否则门禁永远为红，也就永远没人看。 */
 const notes = [];
-if (missing.length) issues.push(`${missing.length} 页缺品牌块: ${missing.map((r) => r.id).join(', ')}`);
+const adaptiveIds = new Set(inScope.map((r) => r.id));
+const adaptiveMissing = expectedAdaptive.filter((r) => !adaptiveIds.has(r.id));
+if (adaptiveMissing.length) {
+  issues.push(`${adaptiveMissing.length} 个正式非 Labs 页面缺自适应字标: ${adaptiveMissing.map((r) => r.id).join(', ')}`);
+}
 if (tags.length > 1) issues.push(`范围内标签不统一: ${tags.join(' / ')}`);
 if (linkStates.length > 1) issues.push('部分可点击返回首页、部分不可——手势不一致');
 if (partSets.length > 1) issues.push(`范围内子结构有 ${partSets.length} 种变体`);
-if (versions.length > 1) issues.push(`版号不一致: ${versions.join(' / ')}`);
-if (withSvg.length !== inScope.length) {
-  issues.push(`${inScope.length - withSvg.length}/${inScope.length} 个范围内品牌仍是纯文本（v1.7 目标 inline SVG）`);
+if (inScope.some((r) => r.hasSvg)) {
+  issues.push('自适应 A·l 字标必须使用共享 CSS 字形，不得重新引入逐页 SVG 变体');
+}
+if (headerBrands.length) {
+  notes.push(`${headerBrands.length} 个 Labs 页面保留旧版通用品牌块`
+    + `（${headerBrands.map((r) => r.id).join(', ')}），不参与本轮自适应字标迁移`);
 }
 if (alts.length) {
   notes.push(`${alts.length} 页使用该页人格专属的品牌锁定件`
@@ -185,10 +215,7 @@ if (heroes.length) {
   notes.push(`页面报头 ${heroes.length} 个（${heroes.map((r) => r.id).join(', ')}）`
     + '——已于 v1.7 由 .brand 改名为 .page-hero，命名撞车已消除，不在改造范围内');
 }
-if (navMarks.length) {
-  notes.push(`nav-mark ${navMarks.length} 个（${navMarks.map((r) => r.id).join(', ')}）`
-    + '——P1-11 已有专属视觉合同，明确排除，不参与统一');
-}
+if (navMarks.length) notes.push(`旧 nav-mark：${navMarks.map((r) => r.id).join(', ')}`);
 
 const report = {
   schemaVersion: 1,
@@ -199,7 +226,7 @@ const report = {
   distinctTags: tags,
   distinctPartSets: partSets,
   versions,
-  svgAdoption: `${withSvg.length}/${inScope.length}`,
+  adaptiveAdoption: `${inScope.length}/${expectedAdaptive.length}`,
   issues,
   notes,
   pages: results,
@@ -223,10 +250,10 @@ if (AS_JSON) {
       + (r.parts.join(' ') || '（无 site-brand* 子节点）'),
     );
   }
-  console.log(`\nv1.7 改造范围：${inScope.length} 个 header-brand`
-    + `；范围外——页面报头 ${heroes.length}、人格锁定件 ${alts.length}、nav-mark ${navMarks.length}`
+  console.log(`\nAI 字标范围：${inScope.length}/${expectedAdaptive.length} 个正式非 Labs 页面`
+    + `；范围外——Labs 旧品牌 ${headerBrands.length}、页面报头 ${heroes.length}、人格锁定件 ${alts.length}`
     + `；真正缺失 ${missing.length} 个`);
-  console.log(`范围内 SVG 采用：${withSvg.length}/${inScope.length}`);
+  console.log(`范围内 CSS A·l 字标：${inScope.length - withSvg.length}/${inScope.length}`);
   if (issues.length) {
     console.log('\n待统一项：');
     for (const i of issues) console.log(`  • ${i}`);

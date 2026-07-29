@@ -20,3 +20,6 @@
 import '../lib/audio.js';
 import '../lib/nav.js';
 import '../lib/transition.js';
+import { mountAfflatusBrand } from '../lib/afflatusBrand.js';
+
+mountAfflatusBrand();

@@ -336,6 +336,7 @@
 <link rel="stylesheet" href="/page-turn.css">
 <link rel="stylesheet" href="/styles/sectors.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
+<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
 <script type="module" src="/src/pages/sectors.js"></script>
 </head>
@@ -345,10 +346,12 @@
   <a class="page-turn" href="/signal.html" data-page-turn="next" aria-label="Next to signal">→</a>
 </nav>
 <main class="shell">
-  <header class="top">
-    <a class="brand site-brand" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
-      <svg class="site-brand__mark" viewBox="0 0 26 24" fill="none" aria-hidden="true" focusable="false"><path d="M2 21 10 3l8 18M5.6 15h8.8M20.5 3 25 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span class="site-brand__text"><span class="site-brand__word">AFFLATUS</span><small class="site-brand__sub" data-en="SECTOR LOCK" data-zh="板块锁定">SECTOR LOCK</small></span>
+  <header class="top site-header--follow">
+    <a class="afflatus-brand" data-afflatus-brand href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
+      <span class="afflatus-brand__stage" aria-hidden="true">
+        <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__vector"></span>
+      </span>
+      <span class="afflatus-brand__sr">Afflatus</span>
     </a>
     <nav class="nav" data-afflatus-nav>
       <button class="lang-toggle" type="button">中文</button>
