@@ -25,13 +25,15 @@ describe('pre-rendered novel documents', () => {
     expect(source).not.toContain('if (load(saved < tracks.length ? saved : 0)) play();');
   });
 
-  it('uses a paged book surface with sound, swipe and chapter-boundary handoff', () => {
+  it('offers paged and waterfall reading with default page sound', () => {
     expect(source).toContain("serialApi.createPagedBook({");
-    expect(source).toContain("pageSoundToggle");
+    expect(source).toContain("layoutToggle");
+    expect(source).toContain("initWaterfall(");
+    expect(source).toContain("wfSentinelObserver");
     expect(source).toContain("pagePreviousHotspot");
     expect(source).toContain("pageNextHotspot");
     expect(source).toContain("pageIndex:direction > 0 ? 0 : 'last'");
-    expect(source).not.toContain('initWaterfall(');
+    expect(source).not.toContain("pageSoundToggle");
   });
 
   it('emits a crawlable Chinese chapter with stable metadata and navigation', () => {

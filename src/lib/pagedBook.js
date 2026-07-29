@@ -1,4 +1,3 @@
-const SOUND_STORAGE_KEY = 'afflatus:serial:page-sound:v1';
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
 function clamp(value, min, max) {
@@ -22,9 +21,9 @@ export function createPagedBook(options) {
     nextButton,
     previousHotspot,
     nextHotspot,
-    soundButton,
     onBoundary,
     onPageChange,
+    isActive = () => true,
   } = options;
 
   if (!stage || !content || !measure || !turnLayer || !turnFront || !turnBack) {
@@ -40,27 +39,9 @@ export function createPagedBook(options) {
   let animationTimer = 0;
   let resizeTimer = 0;
   let audioContext = null;
-  let soundEnabled = true;
   let swipeStart = null;
 
-  try {
-    soundEnabled = localStorage.getItem(SOUND_STORAGE_KEY) !== 'off';
-  } catch {}
-
-  function updateSoundButton() {
-    if (!soundButton) return;
-    soundButton.classList.toggle('active', soundEnabled);
-    soundButton.setAttribute('aria-pressed', String(soundEnabled));
-    soundButton.setAttribute(
-      'aria-label',
-      soundEnabled ? '关闭翻页声' : '开启翻页声',
-    );
-    soundButton.title = soundEnabled ? '翻页声已开启' : '翻页声已关闭';
-    soundButton.innerHTML = `${soundEnabled ? '🔊' : '🔇'}<span class="lbl"> 翻页声</span>`;
-  }
-
   function unlockSound() {
-    if (!soundEnabled) return null;
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return null;
     try {
@@ -341,6 +322,7 @@ export function createPagedBook(options) {
   }
 
   function onKeyDown(event) {
+    if (!isActive()) return;
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
     if (event.target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
     if (event.key === 'ArrowRight' || event.key === 'PageDown') {
@@ -361,18 +343,6 @@ export function createPagedBook(options) {
   stage.addEventListener('pointercancel', () => { swipeStart = null; });
   document.addEventListener('keydown', onKeyDown);
 
-  soundButton?.addEventListener('click', () => {
-    soundEnabled = !soundEnabled;
-    try {
-      localStorage.setItem(SOUND_STORAGE_KEY, soundEnabled ? 'on' : 'off');
-    } catch {}
-    updateSoundButton();
-    if (soundEnabled) {
-      unlockSound();
-      playPageSound(1);
-    }
-  });
-
   const resizeObserver = window.ResizeObserver
     ? new ResizeObserver(() => {
       clearTimeout(resizeTimer);
@@ -381,7 +351,6 @@ export function createPagedBook(options) {
     : null;
   resizeObserver?.observe(content);
   document.fonts?.ready?.then(repaginate).catch(() => {});
-  updateSoundButton();
   updateControls();
 
   return Object.freeze({

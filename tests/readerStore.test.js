@@ -3,6 +3,7 @@ import {
   createReaderStore,
   DEFAULT_READER_STATE,
   READER_STORE_KEY,
+  READER_STORE_VERSION,
 } from '../src/lib/readerStore.js';
 
 class MemoryAdapter {
@@ -47,7 +48,25 @@ describe('reader store', () => {
       visited: { 'wanjie-zhongchun': [3] },
       audioTrack: 2,
     });
-    expect(JSON.parse(adapter.getItem(READER_STORE_KEY)).version).toBe(1);
+    expect(JSON.parse(adapter.getItem(READER_STORE_KEY)).version).toBe(READER_STORE_VERSION);
+  });
+
+  it('defaults legacy waterfall state to book but preserves an explicit current choice', () => {
+    const legacyStore = createReaderStore(new MemoryAdapter({
+      [READER_STORE_KEY]: JSON.stringify({
+        version: 1,
+        layout: 'waterfall',
+      }),
+    }), { migrate: false });
+    expect(legacyStore.getState().layout).toBe('book');
+
+    const currentStore = createReaderStore(new MemoryAdapter({
+      [READER_STORE_KEY]: JSON.stringify({
+        ...DEFAULT_READER_STATE,
+        layout: 'waterfall',
+      }),
+    }), { migrate: false });
+    expect(currentStore.getState().layout).toBe('waterfall');
   });
 
   it('migrates scattered legacy keys once and removes them after a verified write', () => {

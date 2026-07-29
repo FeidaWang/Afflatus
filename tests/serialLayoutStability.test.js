@@ -35,11 +35,15 @@ describe('serial layout stability', () => {
     expect(entry).not.toContain("import '../lib/i18n.js'");
   });
 
-  it('paginates chapters into a physical book with generated page sound', () => {
+  it('supports a physical book and progressive waterfall reading', () => {
     expect(html).toContain('id="bookStage"');
     expect(html).toContain('id="bookTurn"');
-    expect(html).toContain('id="pageSoundToggle"');
+    expect(html).toContain('id="layoutToggle"');
+    expect(html).toContain('id="readerWaterfall"');
+    expect(html).toContain('id="wfSentinel"');
+    expect(html).not.toContain('id="pageSoundToggle"');
     expect(css).toMatch(/\.book-stage\{[^}]*width:min\(100%,560px\)[^}]*aspect-ratio:140\/203/);
+    expect(css).toContain('.reader .wf-chapter .body{min-height:0}');
     expect(css).toContain('@keyframes turnPaperNext');
     expect(css).toContain('@keyframes fadeDepartingPageText');
     expect(css).toContain('@keyframes revealArrivingPageText');
@@ -47,6 +51,9 @@ describe('serial layout stability', () => {
     expect(pagedBook).toContain('createPagedBook');
     expect(pagedBook).toContain('event.target !== turnLayer');
     expect(pagedBook).toContain('context.createBuffer');
+    expect(pagedBook).toContain('if (!isActive()) return');
+    expect(pagedBook).not.toContain('SOUND_STORAGE_KEY');
+    expect(pagedBook).not.toContain('soundButton');
     expect(pagedBook).toContain("stage.addEventListener('pointerdown'");
     expect(pagedBook).toContain("event.key === 'ArrowRight'");
   });
