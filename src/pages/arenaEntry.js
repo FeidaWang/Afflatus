@@ -16,6 +16,3 @@ import './arenaPicks.js';
 import './arenaTech.js';
 import './arenaAutopilot.js';
 import './arenaDigest.js';
-import { mountAfflatusBrand } from '../lib/afflatusBrand.js';
-
-mountAfflatusBrand();

@@ -22,7 +22,6 @@ const rivalry = initSectorsRivalryController({
   equities: byId('rivalryEquities'),
   letter: byId('rivalryLetter'),
   theses: byId('rivalryTheses'),
-  sources: byId('rivalrySources'),
 });
 
 let graphObserver = null;

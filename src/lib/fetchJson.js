@@ -57,9 +57,9 @@ const validateQuote = (data) => ({
 
 const STATIC_RESOURCES = Object.freeze({
   sectors: { url: '/sectors-data.json', freshness: 60 * 60_000, validate: validators.sectors },
-  'sectors-ecosystem': { url: '/sectors-ecosystem.json?v=4', freshness: 6 * 60 * 60_000, validate: objectWith('updated', 'nodes', 'edges', 'chapters') },
+  'sectors-ecosystem': { url: '/sectors-ecosystem.json?v=5', freshness: 6 * 60 * 60_000, validate: objectWith('updated', 'nodes', 'edges', 'chapters') },
   'sectors-competition': { url: '/sectors-competition.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsCompetition },
-  'sectors-rivalry': { url: '/sectors-rivalry.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsRivalry },
+  'sectors-rivalry': { url: '/sectors-rivalry.json?v=2', freshness: 6 * 60 * 60_000, validate: validators.sectorsRivalry },
   signal: { url: '/signal-events.json', freshness: 15 * 60_000, validate: validators.signal },
   leagues: { url: '/leagues-data.json', freshness: 60 * 60_000, validate: validators.leagues },
   games: { url: '/games-data.json', freshness: 60 * 60_000, validate: validators.games },

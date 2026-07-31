@@ -164,6 +164,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700;900&family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles/horoscope.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
+<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="horoscope-page" data-prev="/league.html" data-next="/serial.html">
@@ -219,9 +220,14 @@
 </nav>
 
 <main class="wrap">
-  <header class="hdr">
+  <header class="hdr site-header--follow">
     <div class="page-hero">
-      <div class="seal" aria-hidden="true">观星</div>
+      <a class="afflatus-brand" data-afflatus-brand data-brand-persona="horoscope" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
+        <span class="afflatus-brand__stage" aria-hidden="true">
+          <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
+        </span>
+        <span class="afflatus-brand__sr">Afflatus</span>
+      </a>
       <div>
         <h1>AFFLATUS<br><span data-en="STAR TERRACE" data-zh="观星台">STAR TERRACE</span></h1>
         <p data-en="Bazi × Astrology · ink & ephemeris" data-zh="八字 × 占星 · 水墨观象">Bazi × Astrology · ink & ephemeris</p>

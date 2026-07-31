@@ -194,24 +194,15 @@ function renderEquities(host, data, lang) {
 
 function renderLetter(host, data, lang) {
   if (!host) return;
+  const alliance = data.openSecureAlliance;
   const letter = data.openWeightsLetter;
-  const official = new Set(letter.officialNames);
-  const screenshot = new Set(letter.screenshotNames);
-  const screenshotRows = letter.screenshotNames.map((name) => (
-    `<span class="letterName ${official.has(name) ? 'is-official' : 'is-screenshot'}">`
+  const nameGrid = (names, badge) => names.map((name, index) => (
+    '<span class="initiativeName">'
+      + `<i>${String(index + 1).padStart(2, '0')}</i>`
       + `<b>${escapeHtml(name)}</b>`
-      + `<small>${escapeHtml(t(
-        official.has(name)
-          ? { en: 'OFFICIAL PDF', zh: '官方 PDF' }
-          : { en: 'SCREENSHOT ONLY', zh: '仅截图可见' },
-        lang,
-      ))}</small>`
+      + `<small>${escapeHtml(badge)}</small>`
     + '</span>'
   )).join('');
-  const additions = letter.officialNames
-    .filter((name) => !screenshot.has(name))
-    .map((name) => `<span>${escapeHtml(name)}</span>`)
-    .join('');
   const missing = letter.missing.map((item) => (
     '<article>'
       + `<b>${escapeHtml(item.name)}</b>`
@@ -219,26 +210,42 @@ function renderLetter(host, data, lang) {
     + '</article>'
   )).join('');
   host.innerHTML = (
-    '<div class="letterAudit">'
-      + '<div>'
-        + `<span>${escapeHtml(t({ en: 'USER SCREENSHOT AUDIT', zh: '用户截图审计' }, lang))}</span>`
-        + '<b>50</b>'
-        + `<p>${escapeHtml(t({
-          en: 'Every visible company transcribed. Green names also appear in the current NVIDIA PDF; amber names are visible in the supplied screenshot but not in that PDF snapshot.',
-          zh: '已逐一录入截图中的全部公司。绿色名称同时出现在当前 NVIDIA PDF；琥珀名称可在截图中看到，但不在该 PDF 快照中。',
-        }, lang))}</p>`
-      + '</div>'
-      + '<div>'
-        + `<span>${escapeHtml(t({ en: 'OFFICIAL PDF SNAPSHOT', zh: '官方 PDF 快照' }, lang))}</span>`
-        + `<b>${Number(letter.officialSnapshot.count)}</b>`
-        + `<p>${escapeHtml(letter.officialSnapshot.date)} · ${sourceLink(letter.officialSnapshot.source, t({ en: 'open primary document ↗', zh: '打开原始文件 ↗' }, lang))}</p>`
-      + '</div>'
+    '<div class="initiativeDossiers">'
+      + '<section class="initiativeDossier initiativeDossier--security">'
+        + '<header>'
+          + '<div>'
+            + `<span>01 · ${escapeHtml(t({ en: 'CYBERSECURITY ALLIANCE', zh: '网络安全联盟' }, lang))}</span>`
+            + `<h3>${escapeHtml(alliance.name)}</h3>`
+          + '</div>'
+          + `<b>${Number(alliance.count)}<small>${escapeHtml(t({ en: 'INAUGURAL PARTNERS', zh: '创始伙伴' }, lang))}</small></b>`
+          + `<p>${escapeHtml(t({
+            en: 'Announced by NVIDIA on 27 July 2026 to build and share open defensive tools for AI safety and cybersecurity. This is an operating alliance, not the open-weights policy letter.',
+            zh: 'NVIDIA 于 2026 年 7 月 27 日公布，目标是为 AI 安全与网络安全共同构建、共享开放防御工具。它是执行型联盟，不是开放权重政策联署。',
+          }, lang))} ${sourceLink(alliance.source, t({ en: 'NVIDIA announcement ↗', zh: 'NVIDIA 官方公告 ↗' }, lang))}</p>`
+        + '</header>'
+        + '<figure class="initiativeLogoBoard">'
+          + `<img src="${escapeHtml(alliance.image)}" width="2582" height="1332" loading="lazy" decoding="async" alt="${escapeHtml(t(alliance.imageAlt, lang))}">`
+        + '</figure>'
+        + `<div class="initiativeNames">${nameGrid(alliance.names, t({ en: 'ALLIANCE', zh: '安全联盟' }, lang))}</div>`
+      + '</section>'
+      + '<section class="initiativeDossier initiativeDossier--weights">'
+        + '<header>'
+          + '<div>'
+            + `<span>02 · ${escapeHtml(t({ en: 'OPEN-WEIGHTS POLICY LETTER', zh: '开放权重政策联署' }, lang))}</span>`
+            + '<h3>Open Weights and American AI Leadership</h3>'
+          + '</div>'
+          + `<b>${Number(letter.officialSnapshot.count)}<small>${escapeHtml(t({ en: 'LOGOS IN SNAPSHOT', zh: '快照机构' }, lang))}</small></b>`
+          + `<p>${escapeHtml(t({
+            en: 'The 77 names below are transcribed from the supplied logo snapshot for Jensen Huang’s first public open-weights letter. Supporting the policy does not prove that a company publishes frontier weights.',
+            zh: '下方 77 家机构逐一转录自你提供的黄仁勋首轮开放权重联署 Logo 快照。支持该政策，并不等于该机构会公开前沿模型权重。',
+          }, lang))} ${sourceLink(letter.officialSnapshot.source, t({ en: 'NVIDIA-hosted letter ↗', zh: 'NVIDIA 托管原文 ↗' }, lang))}</p>`
+        + '</header>'
+        + '<figure class="initiativeLogoBoard">'
+          + `<img src="${escapeHtml(letter.image)}" width="1906" height="1502" loading="lazy" decoding="async" alt="${escapeHtml(t(letter.imageAlt, lang))}">`
+        + '</figure>'
+        + `<div class="initiativeNames">${nameGrid(letter.officialNames, t({ en: 'LETTER', zh: '联署' }, lang))}</div>`
+      + '</section>'
     + '</div>'
-    + `<div class="letterNames">${screenshotRows}</div>`
-    + '<section class="letterAdditions">'
-      + `<h3>${escapeHtml(t({ en: 'Official names beyond the supplied screenshot', zh: '官方名单中截图之外的新增名称' }, lang))}</h3>`
-      + `<div>${additions}</div>`
-    + '</section>'
     + '<section class="letterMissing">'
       + `<h3>${escapeHtml(t({ en: 'Important absences · absence is not a policy position', zh: '重要缺席者 · 缺席不代表政策立场' }, lang))}</h3>`
       + `<div>${missing}</div>`
@@ -259,18 +266,6 @@ function renderTheses(host, data, lang) {
   )).join('');
 }
 
-function renderSources(host, data, lang) {
-  if (!host) return;
-  host.innerHTML = (
-    `<p>${escapeHtml(t(data.editorialNote, lang))}</p>`
-    + '<div>'
-      + data.sources.map((source, index) => (
-        sourceLink(source.url, `${String(index + 1).padStart(2, '0')} · ${source.label}`, `sourceLink sourceLink--${source.kind}`)
-      )).join('')
-    + '</div>'
-  );
-}
-
 export function initSectorsRivalryController(hosts) {
   const abortController = new AbortController();
   let data = null;
@@ -287,7 +282,6 @@ export function initSectorsRivalryController(hosts) {
     renderEquities(hosts.equities, data, lang);
     renderLetter(hosts.letter, data, lang);
     renderTheses(hosts.theses, data, lang);
-    renderSources(hosts.sources, data, lang);
   };
 
   const onLanguage = () => render();
@@ -302,7 +296,7 @@ export function initSectorsRivalryController(hosts) {
     })
     .catch((error) => {
       if (error?.code === 'ABORTED' || error?.name === 'AbortError') return null;
-      const fallback = hosts.k3 || hosts.sources;
+      const fallback = hosts.k3 || hosts.letter;
       if (fallback) {
         fallback.innerHTML = `<p class="rivalryCaveat">${escapeHtml(t({
           en: 'The research dataset could not be verified. Reload to retry.',

@@ -2,7 +2,7 @@
  * Adaptive Afflatus wordmark.
  *
  * The 1px document-top sentinel keeps the full name exclusive to the true top
- * of the page. Once it leaves the viewport the wordmark folds to A·l; returning
+ * of the page. Once it leaves the viewport the wordmark folds to Al; returning
  * to the top reverses the same transition. IntersectionObserver avoids a
  * per-frame layout read while scrolling.
  */

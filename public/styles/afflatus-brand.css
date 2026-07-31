@@ -1,9 +1,7 @@
 /*
- * Afflatus adaptive wordmark
- *
- * The full wordmark occupies a stable stage so navigation never shifts when
- * the letters fold into the compact A·l inference mark. Route palettes only
- * provide two color tokens; geometry and motion remain identical everywhere.
+ * Afflatus adaptive wordmark — full word at the document origin, page-specific
+ * Al intelligence glyph everywhere else. The compact mark is drawn entirely
+ * with type and CSS telemetry; it deliberately contains no slash/backslash.
  */
 
 .afflatus-brand-sentinel {
@@ -15,11 +13,6 @@
   pointer-events: none;
 }
 
-/*
- * `overflow-x: hidden` makes body a scroll container in Chromium/WebKit and
- * silently defeats a body-level sticky header. `clip` keeps the horizontal
- * guard without changing the header's scroll container.
- */
 html,
 body {
   overflow-x: clip;
@@ -33,24 +26,23 @@ body {
   background-color: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 88%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.12);
   backdrop-filter: blur(18px) saturate(1.12);
-  transition:
-    border-color 420ms ease,
-    box-shadow 420ms ease,
-    background-color 420ms ease;
+  transition: border-color 420ms ease, box-shadow 420ms ease, background-color 420ms ease;
 }
 
 :root[data-afflatus-brand-state="compact"] .site-header--follow {
   background-color: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 95%, transparent);
   box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.2),
+    0 12px 32px rgba(0, 0, 0, .2),
     inset 0 -1px 0 color-mix(in srgb, var(--afflatus-brand-accent, currentColor) 24%, transparent);
 }
 
 .afflatus-brand {
   --afflatus-brand-ink: currentColor;
   --afflatus-brand-accent: #9ae5ff;
+  --afflatus-brand-accent-2: #e8b380;
+  --afflatus-brand-font: ui-monospace, "SFMono-Regular", "Cascadia Code", "JetBrains Mono", monospace;
   --afflatus-brand-ease: cubic-bezier(.22, 1, .36, 1);
-  --afflatus-brand-duration: 560ms;
+  --afflatus-brand-duration: 620ms;
   position: relative;
   inline-size: 132px;
   min-inline-size: 132px;
@@ -72,104 +64,94 @@ body {
 .afflatus-brand__stage {
   position: relative;
   inline-size: 132px;
-  block-size: 30px;
-  display: block;
+  block-size: 34px;
+  display: flex;
+  align-items: center;
   overflow: hidden;
   color: inherit;
-  font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "JetBrains Mono", monospace;
+  font-family: var(--afflatus-brand-font);
   font-size: 19px;
   font-weight: 680;
-  line-height: 30px;
+  line-height: 32px;
   letter-spacing: -.045em;
   font-variant-ligatures: none;
   white-space: nowrap;
+  contain: layout paint;
 }
 
+.afflatus-brand__stage::before,
 .afflatus-brand__stage::after {
   content: "";
   position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 260ms ease, transform var(--afflatus-brand-duration) var(--afflatus-brand-ease);
+}
+
+.afflatus-brand__stage::after {
   inset-inline-start: 1px;
-  inset-block-end: 2px;
+  inset-block-end: 1px;
   inline-size: 106px;
   block-size: 1px;
-  background: linear-gradient(
-    90deg,
-    var(--afflatus-brand-accent),
-    color-mix(in srgb, var(--afflatus-brand-accent) 24%, transparent) 62%,
-    transparent
-  );
-  opacity: .52;
+  background: linear-gradient(90deg, var(--afflatus-brand-accent), transparent 88%);
+  opacity: .48;
   transform-origin: left center;
-  transition:
-    inline-size var(--afflatus-brand-duration) var(--afflatus-brand-ease),
-    opacity 260ms ease;
 }
 
 .afflatus-brand__a,
 .afflatus-brand__before,
 .afflatus-brand__l,
 .afflatus-brand__after,
-.afflatus-brand__vector {
-  position: absolute;
-  inset-block-start: 0;
+.afflatus-brand__signal,
+.afflatus-brand__core {
   display: block;
   transition:
     transform var(--afflatus-brand-duration) var(--afflatus-brand-ease),
+    max-inline-size var(--afflatus-brand-duration) var(--afflatus-brand-ease),
     opacity 260ms ease,
     filter 360ms ease,
-    color 360ms ease;
+    color 360ms ease,
+    border-color 360ms ease,
+    background-color 360ms ease;
+}
+
+.afflatus-brand__a,
+.afflatus-brand__before,
+.afflatus-brand__l,
+.afflatus-brand__after {
+  position: relative;
+  inset: auto;
+  flex: 0 0 auto;
+  overflow: hidden;
 }
 
 .afflatus-brand__a {
-  inset-inline-start: 0;
   color: var(--afflatus-brand-accent);
-  font-weight: 850;
+  font-weight: 900;
+  transform-origin: right center;
 }
 
 .afflatus-brand__before {
-  inset-inline-start: .68em;
+  max-inline-size: 2.4em;
   transform-origin: left center;
 }
 
 .afflatus-brand__l {
-  inset-inline-start: 1.8em;
   color: var(--afflatus-brand-accent);
-  font-weight: 850;
+  font-weight: 900;
   transform-origin: center bottom;
 }
 
-.afflatus-brand__l::after {
-  content: "";
-  position: absolute;
-  inset-inline-start: 50%;
-  inset-block-end: 3px;
-  inline-size: 3px;
-  block-size: 3px;
-  border-radius: 50%;
-  background: var(--afflatus-brand-accent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--afflatus-brand-accent) 72%, transparent);
-  opacity: 0;
-  transform: translateX(-50%) scale(.3);
-  transition:
-    opacity 240ms ease 100ms,
-    transform 420ms var(--afflatus-brand-ease) 80ms;
-}
-
 .afflatus-brand__after {
-  inset-inline-start: 2.43em;
+  max-inline-size: 4.8em;
   transform-origin: left center;
 }
 
-.afflatus-brand__vector {
-  inset-inline-start: 5em;
-  inset-block-start: 6px;
-  inline-size: 1px;
-  block-size: 17px;
-  background: var(--afflatus-brand-accent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--afflatus-brand-accent) 36%, transparent);
-  opacity: .8;
-  transform: rotate(24deg);
-  transform-origin: center;
+.afflatus-brand__signal,
+.afflatus-brand__core {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .afflatus-brand__sr {
@@ -185,74 +167,593 @@ body {
 }
 
 :root[data-afflatus-brand-state="compact"] .afflatus-brand__stage::after {
-  inline-size: 38px;
-  opacity: .88;
+  inline-size: 45px;
+  opacity: .92;
 }
 
-:root[data-afflatus-brand-state="compact"] .afflatus-brand__before {
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__before,
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__after {
+  max-inline-size: 0;
   opacity: 0;
-  filter: blur(3px);
-  transform: translateX(-.42em) scaleX(.08);
-}
-
-:root[data-afflatus-brand-state="compact"] .afflatus-brand__l {
-  transform: translateX(-1em) scaleY(1.08);
-}
-
-:root[data-afflatus-brand-state="compact"] .afflatus-brand__l::after {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
+  filter: blur(4px);
+  transform: scaleX(.04);
 }
 
 :root[data-afflatus-brand-state="compact"] .afflatus-brand__after {
-  opacity: 0;
-  filter: blur(3px);
-  transform: translateX(-1.78em) scaleX(.06);
+  transform: scaleX(.04);
 }
 
-:root[data-afflatus-brand-state="compact"] .afflatus-brand__vector {
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__a {
+  transform: scaleX(.94);
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__l {
+  transform: scaleY(1.08);
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__signal,
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__core,
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__stage::before {
   opacity: 1;
-  transform: translateX(-3.45em) rotate(24deg);
 }
 
-.arena-page {
-  --afflatus-header-bg: #05070e;
+/* ── HOME / deep-space navigation computer ─────────────────────── */
+
+.home-page {
+  --afflatus-header-bg: #03060b;
 }
 
-.arena-page .afflatus-brand {
-  --afflatus-brand-ink: #eaf1ff;
+[data-brand-persona="home"] {
+  --afflatus-brand-ink: #eaf6ff;
+  --afflatus-brand-accent: #8fe9ff;
+  --afflatus-brand-accent-2: #e7b77a;
+  --afflatus-brand-font: "Orbitron", "Rajdhani", ui-monospace, monospace;
+}
+
+[data-brand-persona="home"] .afflatus-brand__stage {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: .015em;
+  text-shadow: 0 0 16px rgba(143, 233, 255, .2);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="home"] .afflatus-brand__stage::before {
+  inset: 3px auto auto 0;
+  inline-size: 48px;
+  block-size: 26px;
+  border-block: 1px solid rgba(143, 233, 255, .24);
+  box-shadow: inset 8px 0 12px -12px var(--afflatus-brand-accent);
+  animation: afflatus-home-scan 2.8s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="home"] .afflatus-brand__signal {
+  inset: 8px auto auto 43px;
+  inline-size: 23px;
+  block-size: 15px;
+  border-block: 1px solid rgba(143, 233, 255, .72);
+  background: repeating-linear-gradient(90deg, transparent 0 4px, rgba(143, 233, 255, .74) 4px 5px);
+  filter: drop-shadow(0 0 5px rgba(143, 233, 255, .5));
+  animation: afflatus-home-telemetry 1.9s steps(4, end) infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="home"] .afflatus-brand__core {
+  inset: 14px auto auto 71px;
+  inline-size: 5px;
+  block-size: 5px;
+  border: 1px solid var(--afflatus-brand-accent-2);
+  border-radius: 50%;
+  box-shadow: 0 0 7px var(--afflatus-brand-accent-2), 0 0 18px rgba(231, 183, 122, .5);
+  animation: afflatus-core-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes afflatus-home-scan {
+  50% { border-block-color: rgba(231, 183, 122, .38); transform: scaleX(1.04); }
+}
+
+@keyframes afflatus-home-telemetry {
+  50% { clip-path: inset(0 22% 0 0); }
+}
+
+@keyframes afflatus-core-pulse {
+  50% { opacity: .45; transform: scale(.72); }
+}
+
+/* ── ARENA / execution terminal ────────────────────────────────── */
+
+.arena-page { --afflatus-header-bg: #05070e; }
+
+[data-brand-persona="arena"] {
+  --afflatus-brand-ink: #effff6;
   --afflatus-brand-accent: #3dff9a;
+  --afflatus-brand-accent-2: #ff4fbd;
+  --afflatus-brand-font: "Rajdhani", "Chakra Petch", ui-monospace, monospace;
 }
 
-.sectors-page {
-  --afflatus-header-bg: #000;
+[data-brand-persona="arena"] .afflatus-brand__stage {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -.02em;
 }
 
-.sectors-page .afflatus-brand {
-  --afflatus-brand-ink: #f5f5f7;
-  --afflatus-brand-accent: #8ff0d7;
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="arena"] .afflatus-brand__stage::before {
+  inset: 5px auto auto 0;
+  inline-size: 54px;
+  block-size: 23px;
+  border: 1px solid rgba(61, 255, 154, .38);
+  border-inline-end-color: var(--afflatus-brand-accent-2);
+  box-shadow: 0 0 14px rgba(61, 255, 154, .12);
 }
 
-.signal-page {
-  --afflatus-header-bg: #0c0d0a;
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="arena"] .afflatus-brand__signal {
+  inset: 8px auto auto 47px;
+  inline-size: 17px;
+  block-size: 17px;
+  background: linear-gradient(to top, var(--afflatus-brand-accent) 0 32%, transparent 32% 45%, var(--afflatus-brand-accent-2) 45% 72%, transparent 72%);
+  clip-path: polygon(0 100%, 0 52%, 26% 52%, 26% 18%, 48% 18%, 48% 70%, 70% 70%, 70% 0, 100% 0, 100% 100%);
+  animation: afflatus-arena-tick 1.2s steps(2, end) infinite;
 }
 
-.signal-page .afflatus-brand {
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="arena"] .afflatus-brand__core {
+  inset: 12px auto auto 69px;
+  inline-size: 12px;
+  block-size: 8px;
+  border-block: 1px solid var(--afflatus-brand-accent-2);
+  box-shadow: 0 0 9px rgba(255, 79, 189, .5);
+}
+
+@keyframes afflatus-arena-tick {
+  50% { transform: translateY(-1px) scaleY(.86); filter: brightness(1.35); }
+}
+
+/* ── SECTORS / two-bloc model foundry ──────────────────────────── */
+
+.sectors-page { --afflatus-header-bg: #080806; }
+
+[data-brand-persona="sectors"] {
+  --afflatus-brand-ink: #f1eee6;
+  --afflatus-brand-accent: #5b8dff;
+  --afflatus-brand-accent-2: #ff6161;
+  --afflatus-brand-font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+[data-brand-persona="sectors"] .afflatus-brand__stage {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.055em;
+}
+
+[data-brand-persona="sectors"] .afflatus-brand__l { color: var(--afflatus-brand-accent-2); }
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="sectors"] .afflatus-brand__stage::before {
+  inset: 4px auto auto 0;
+  inline-size: 53px;
+  block-size: 25px;
+  border-block: 2px solid transparent;
+  border-image: linear-gradient(90deg, var(--afflatus-brand-accent) 0 49%, var(--afflatus-brand-accent-2) 51% 100%) 1;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="sectors"] .afflatus-brand__signal {
+  inset: 8px auto auto 49px;
+  inline-size: 25px;
+  block-size: 17px;
+  background:
+    linear-gradient(var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 0 3px / 10px 2px no-repeat,
+    linear-gradient(var(--afflatus-brand-accent-2), var(--afflatus-brand-accent-2)) 15px 12px / 10px 2px no-repeat,
+    radial-gradient(circle, #f1eee6 0 1px, transparent 2px) 11px 7px / 4px 4px no-repeat;
+  animation: afflatus-sectors-bridge 2.4s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="sectors"] .afflatus-brand__core {
+  inset: 13px auto auto 78px;
+  inline-size: 7px;
+  block-size: 7px;
+  background: linear-gradient(90deg, var(--afflatus-brand-accent) 50%, var(--afflatus-brand-accent-2) 50%);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(241, 238, 230, .38);
+}
+
+@keyframes afflatus-sectors-bridge {
+  50% { filter: saturate(1.45) brightness(1.2); transform: translateX(2px); }
+}
+
+/* ── SIGNAL / classified policy intelligence ───────────────────── */
+
+.signal-page { --afflatus-header-bg: #0c0d0a; }
+
+[data-brand-persona="signal"] {
   --afflatus-brand-ink: #f4f1e6;
   --afflatus-brand-accent: #f5c400;
+  --afflatus-brand-accent-2: #c5483c;
+  --afflatus-brand-font: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 }
 
-body:not(.arena-page):not(.sectors-page):not(.signal-page) {
-  --afflatus-header-bg: #04060a;
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="signal"] .afflatus-brand__stage::before {
+  inset: 3px auto auto 0;
+  inline-size: 52px;
+  block-size: 27px;
+  border: 1px solid rgba(245, 196, 0, .44);
+  box-shadow: inset 0 0 0 3px rgba(245, 196, 0, .035);
 }
 
-body:not(.arena-page):not(.sectors-page):not(.signal-page) .afflatus-brand {
-  --afflatus-brand-ink: #e8eef5;
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="signal"] .afflatus-brand__signal {
+  inset: 7px auto auto 45px;
+  inline-size: 30px;
+  block-size: 18px;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(245, 196, 0, .68) 3px 4px);
+  clip-path: inset(0 0 0 0);
+  animation: afflatus-signal-scan 1.65s steps(5, end) infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="signal"] .afflatus-brand__core {
+  inset: 11px auto auto 79px;
+  inline-size: 9px;
+  block-size: 9px;
+  border: 2px solid var(--afflatus-brand-accent-2);
+  box-shadow: 0 0 8px rgba(197, 72, 60, .42);
+}
+
+@keyframes afflatus-signal-scan {
+  50% { clip-path: inset(35% 0 25% 0); opacity: .55; }
+}
+
+/* ── STATS / calibration lattice ───────────────────────────────── */
+
+.stats-page { --afflatus-header-bg: #080b10; }
+
+[data-brand-persona="stats"] {
+  --afflatus-brand-ink: #e8edf5;
+  --afflatus-brand-accent: #7edcf2;
+  --afflatus-brand-accent-2: #a7ffcf;
+  --afflatus-brand-font: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="stats"] .afflatus-brand__stage::before {
+  inset: 4px auto auto 0;
+  inline-size: 54px;
+  block-size: 25px;
+  background-image:
+    linear-gradient(rgba(126, 220, 242, .14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 220, 242, .14) 1px, transparent 1px);
+  background-size: 6px 6px;
+  border: 1px solid rgba(126, 220, 242, .32);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="stats"] .afflatus-brand__signal {
+  inset: 9px auto auto 48px;
+  inline-size: 25px;
+  block-size: 14px;
+  background: linear-gradient(90deg, transparent 0 8%, var(--afflatus-brand-accent) 8% 12%, transparent 12% 31%, var(--afflatus-brand-accent-2) 31% 39%, transparent 39% 61%, var(--afflatus-brand-accent) 61% 65%, transparent 65%);
+  animation: afflatus-stats-sample 1.7s steps(3, end) infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="stats"] .afflatus-brand__core {
+  inset: 13px auto auto 76px;
+  inline-size: 7px;
+  block-size: 7px;
+  border: 1px solid var(--afflatus-brand-accent-2);
+  border-radius: 50%;
+}
+
+@keyframes afflatus-stats-sample {
+  50% { transform: scaleY(.62); opacity: .62; }
+}
+
+/* ── COURSE / censored microfilm terminal ──────────────────────── */
+
+.course-page { --afflatus-header-bg: #090909; }
+
+[data-brand-persona="course"] {
+  --afflatus-brand-ink: #f2ede8;
+  --afflatus-brand-accent: #ff3f8f;
+  --afflatus-brand-accent-2: #ff5b4d;
+  --afflatus-brand-font: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+[data-brand-persona="course"] .afflatus-brand__stage { text-shadow: 1px 0 rgba(255, 63, 143, .45); }
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="course"] .afflatus-brand__stage::before {
+  inset: 4px auto auto 0;
+  inline-size: 53px;
+  block-size: 25px;
+  border-block: 3px double rgba(255, 63, 143, .48);
+  background: repeating-linear-gradient(0deg, transparent 0 4px, rgba(255, 255, 255, .06) 4px 5px);
+  animation: afflatus-course-jitter 2.6s steps(1, end) infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="course"] .afflatus-brand__signal {
+  inset: 8px auto auto 46px;
+  inline-size: 29px;
+  block-size: 17px;
+  background: repeating-linear-gradient(0deg, var(--afflatus-brand-accent-2) 0 2px, transparent 2px 5px);
+  clip-path: polygon(0 0, 73% 0, 73% 26%, 100% 26%, 100% 72%, 48% 72%, 48% 100%, 0 100%);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="course"] .afflatus-brand__core {
+  inset: 12px auto auto 78px;
+  inline-size: 12px;
+  block-size: 8px;
+  background: var(--afflatus-brand-accent);
+  box-shadow: 0 0 10px rgba(255, 63, 143, .52);
+  animation: afflatus-course-redact 2.1s steps(2, end) infinite;
+}
+
+@keyframes afflatus-course-jitter {
+  48% { transform: none; }
+  49% { transform: translateX(2px); }
+  51% { transform: translateX(-1px); }
+  52% { transform: none; }
+}
+
+@keyframes afflatus-course-redact {
+  50% { inline-size: 4px; opacity: .38; }
+}
+
+/* ── HOROSCOPE / celestial inference seal ──────────────────────── */
+
+.horoscope-page { --afflatus-header-bg: #f6f1e6; }
+
+[data-brand-persona="horoscope"] {
+  --afflatus-brand-ink: #4a453d;
+  --afflatus-brand-accent: #667a59;
+  --afflatus-brand-accent-2: #c96f4a;
+  --afflatus-brand-font: "Spectral", "Noto Serif SC", Georgia, serif;
+}
+
+[data-brand-persona="horoscope"] .afflatus-brand__stage {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="horoscope"] .afflatus-brand__stage::before {
+  inset: 2px auto auto 0;
+  inline-size: 48px;
+  block-size: 29px;
+  border: 1px solid rgba(102, 122, 89, .52);
+  border-radius: 50%;
+  transform: scaleY(.64);
+  box-shadow: inset 0 0 0 4px rgba(102, 122, 89, .04);
+  animation: afflatus-horoscope-orbit 5.5s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="horoscope"] .afflatus-brand__signal {
+  inset: 10px auto auto 45px;
+  inline-size: 26px;
+  block-size: 12px;
+  border-block: 1px solid rgba(201, 111, 74, .58);
+  border-radius: 50%;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="horoscope"] .afflatus-brand__core {
+  inset: 13px auto auto 73px;
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: 50%;
+  background: var(--afflatus-brand-accent-2);
+  box-shadow: 0 0 0 3px rgba(201, 111, 74, .12);
+}
+
+@keyframes afflatus-horoscope-orbit {
+  50% { transform: scaleY(.78) translateX(2px); border-color: rgba(201, 111, 74, .52); }
+}
+
+/* ── GAMES / broadcast prediction engine ───────────────────────── */
+
+.games-page { --afflatus-header-bg: #080d2a; }
+
+[data-brand-persona="games"] {
+  --afflatus-brand-ink: #f2f5ff;
+  --afflatus-brand-accent: #25e9ff;
+  --afflatus-brand-accent-2: #d4af37;
+  --afflatus-brand-font: "Chakra Petch", "Share Tech Mono", ui-monospace, monospace;
+}
+
+[data-brand-persona="games"] .afflatus-brand__stage { font-size: 21px; font-weight: 700; }
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="games"] .afflatus-brand__stage::before {
+  inset: 4px auto auto 0;
+  inline-size: 53px;
+  block-size: 25px;
+  border: 2px solid rgba(37, 233, 255, .5);
+  border-inline-color: var(--afflatus-brand-accent-2);
+  box-shadow: 0 0 12px rgba(37, 233, 255, .16);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="games"] .afflatus-brand__signal {
+  inset: 8px auto auto 47px;
+  inline-size: 27px;
+  block-size: 17px;
+  background:
+    linear-gradient(var(--afflatus-brand-accent-2), var(--afflatus-brand-accent-2)) 0 0 / 9px 4px no-repeat,
+    linear-gradient(var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 12px 7px / 15px 3px no-repeat,
+    linear-gradient(var(--afflatus-brand-accent-2), var(--afflatus-brand-accent-2)) 3px 13px / 18px 2px no-repeat;
+  animation: afflatus-games-score 1.35s steps(3, end) infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="games"] .afflatus-brand__core {
+  inset: 11px auto auto 78px;
+  inline-size: 10px;
+  block-size: 10px;
+  border: 1px solid var(--afflatus-brand-accent);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(37, 233, 255, .12);
+}
+
+@keyframes afflatus-games-score {
+  50% { filter: brightness(1.5); transform: translateX(1px); }
+}
+
+/* ── LEAGUE / tournament strategy core ─────────────────────────── */
+
+.leagues-page { --afflatus-header-bg: #111820; }
+
+[data-brand-persona="league"] {
+  --afflatus-brand-ink: #edf3f4;
+  --afflatus-brand-accent: #d8bc72;
+  --afflatus-brand-accent-2: #6ad6d4;
+  --afflatus-brand-font: "Rajdhani", "Cinzel", ui-monospace, monospace;
+}
+
+[data-brand-persona="league"] .afflatus-brand__stage { font-size: 21px; font-weight: 700; }
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="league"] .afflatus-brand__stage::before {
+  inset: 4px auto auto 0;
+  inline-size: 53px;
+  block-size: 25px;
+  border-block: 2px solid rgba(216, 188, 114, .52);
+  box-shadow: inset 0 0 12px rgba(106, 214, 212, .08);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="league"] .afflatus-brand__signal {
+  inset: 7px auto auto 47px;
+  inline-size: 28px;
+  block-size: 19px;
+  background:
+    linear-gradient(90deg, var(--afflatus-brand-accent) 0 70%, transparent 70%) 0 1px / 100% 2px no-repeat,
+    linear-gradient(90deg, var(--afflatus-brand-accent-2) 0 52%, transparent 52%) 0 8px / 100% 2px no-repeat,
+    linear-gradient(90deg, var(--afflatus-brand-accent) 0 84%, transparent 84%) 0 15px / 100% 2px no-repeat;
+  animation: afflatus-league-bracket 2s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="league"] .afflatus-brand__core {
+  inset: 12px auto auto 78px;
+  inline-size: 8px;
+  block-size: 8px;
+  border: 1px solid var(--afflatus-brand-accent-2);
+  box-shadow: 0 0 9px rgba(106, 214, 212, .4);
+}
+
+@keyframes afflatus-league-bracket {
+  50% { transform: scaleX(.8); transform-origin: left; }
+}
+
+/* ── SERIAL / archival film intelligence ───────────────────────── */
+
+.novels-page { --afflatus-header-bg: #281815; }
+
+[data-brand-persona="serial"] {
+  --afflatus-brand-ink: #ddd2c2;
+  --afflatus-brand-accent: #d4935d;
+  --afflatus-brand-accent-2: #67c5bd;
+  --afflatus-brand-font: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__stage::before {
+  inset: 4px auto auto 0;
+  inline-size: 53px;
+  block-size: 25px;
+  border-block: 1px solid rgba(212, 147, 93, .56);
+  background: repeating-linear-gradient(90deg, transparent 0 6px, rgba(103, 197, 189, .22) 6px 8px);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__signal {
+  inset: 8px auto auto 47px;
+  inline-size: 29px;
+  block-size: 17px;
+  border-block: 4px dotted var(--afflatus-brand-accent);
+  opacity: .75;
+  animation: afflatus-serial-film 1.8s steps(4, end) infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__core {
+  inset: 11px auto auto 79px;
+  inline-size: 10px;
+  block-size: 10px;
+  border: 1px solid var(--afflatus-brand-accent-2);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(103, 197, 189, .13);
+}
+
+@keyframes afflatus-serial-film {
+  50% { transform: translateX(4px); }
+}
+
+/* ── BOOT / bridge operating intelligence ──────────────────────── */
+
+.boot-page { --afflatus-header-bg: #04060a; }
+
+[data-brand-persona="boot"] {
+  --afflatus-brand-ink: #dff8ff;
   --afflatus-brand-accent: #9ae5ff;
+  --afflatus-brand-accent-2: #e8b380;
+  --afflatus-brand-font: "Rajdhani", "JetBrains Mono", ui-monospace, monospace;
 }
 
-@media (max-width: 620px) {
-  .afflatus-brand {
+[data-brand-persona="boot"] .afflatus-brand__stage { font-size: 20px; font-weight: 600; letter-spacing: .02em; }
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="boot"] .afflatus-brand__stage::before {
+  inset: 3px auto auto 0;
+  inline-size: 54px;
+  block-size: 27px;
+  border: 1px solid rgba(154, 229, 255, .34);
+  box-shadow: inset 0 0 10px rgba(154, 229, 255, .06), 0 0 12px rgba(154, 229, 255, .08);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="boot"] .afflatus-brand__signal {
+  inset: 7px auto auto 47px;
+  inline-size: 27px;
+  block-size: 19px;
+  background:
+    linear-gradient(var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 0 0 / 7px 1px no-repeat,
+    linear-gradient(var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 0 0 / 1px 7px no-repeat,
+    linear-gradient(var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 20px 12px / 7px 1px no-repeat,
+    linear-gradient(var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 26px 12px / 1px 7px no-repeat;
+  animation: afflatus-boot-lock 2.2s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="boot"] .afflatus-brand__core {
+  inset: 12px auto auto 78px;
+  inline-size: 9px;
+  block-size: 9px;
+  background: radial-gradient(circle, var(--afflatus-brand-accent-2) 0 1px, transparent 2px);
+  border: 1px solid rgba(232, 179, 128, .6);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(232, 179, 128, .35);
+}
+
+@keyframes afflatus-boot-lock {
+  50% { transform: scale(.88); filter: brightness(1.35); }
+}
+
+/* ── Header integrations ───────────────────────────────────────── */
+
+.page-hero > .afflatus-brand,
+.seal > .afflatus-brand {
+  margin-inline-end: 2px;
+}
+
+.horoscope-page .page-hero > .afflatus-brand,
+.games-page .page-hero > .afflatus-brand,
+.leagues-page .page-hero > .afflatus-brand,
+.novels-page .seal > .afflatus-brand {
+  inline-size: 118px;
+  min-inline-size: 118px;
+}
+
+#osTag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+#osTag .osTagMeta {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+#osTag .afflatus-brand {
+  inline-size: 118px;
+  min-inline-size: 118px;
+}
+
+@media (max-width: 760px) {
+  .afflatus-brand,
+  .horoscope-page .page-hero > .afflatus-brand,
+  .games-page .page-hero > .afflatus-brand,
+  .leagues-page .page-hero > .afflatus-brand,
+  .novels-page .seal > .afflatus-brand,
+  #osTag .afflatus-brand {
     inline-size: 108px;
     min-inline-size: 108px;
   }
@@ -262,32 +763,47 @@ body:not(.arena-page):not(.sectors-page):not(.signal-page) .afflatus-brand {
     font-size: 16px;
   }
 
-  /*
-   * Home already exposes the compact EN/中 switch at this width. Keeping the
-   * long-form language control as well starves the brand grid track and clips
-   * the full wordmark, so the duplicate control yields to the compact one.
-   */
-  body:not(.arena-page):not(.sectors-page):not(.signal-page)
-    .site-header--follow
-    #langBtn {
-    display: none;
+  [data-brand-persona="home"] .afflatus-brand__stage,
+  [data-brand-persona="arena"] .afflatus-brand__stage,
+  [data-brand-persona="games"] .afflatus-brand__stage,
+  [data-brand-persona="league"] .afflatus-brand__stage,
+  [data-brand-persona="boot"] .afflatus-brand__stage {
+    font-size: 17px;
   }
 
-  :is(.arena-page, .sectors-page, .signal-page) .site-header--follow {
-    display: grid;
-    grid-template-columns: 108px minmax(0, 1fr);
-    align-items: center;
-    gap: 10px;
-    block-size: auto;
-    min-block-size: 68px;
-    flex-wrap: nowrap;
+  [data-brand-persona="horoscope"] .afflatus-brand__stage { font-size: 19px; }
+
+  .site-header--follow {
+    min-block-size: 64px;
   }
 
-  :is(.arena-page, .sectors-page, .signal-page)
-    .site-header--follow
-    > .nav {
+  /* The home WebGL canvas can briefly clear to a light frame while its mobile
+     renderer is negotiating. Keep the flight-computer identity readable over
+     every frame instead of inheriting the legacy transparent mobile nav. */
+  .home-page .site-header--follow {
+    background: rgba(3, 6, 11, .94) !important;
+    box-shadow: inset 0 -1px 0 rgba(143, 233, 255, .22) !important;
+  }
+
+  .site-header--follow > .nav {
     min-inline-size: 0;
-    inline-size: 100%;
+    max-inline-size: 100%;
+  }
+
+  #osTag {
+    inset-inline-start: 16px;
+    gap: 6px;
+  }
+
+  #osTag .osTagMeta {
+    max-inline-size: 42vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 620px) {
+  .site-header--follow > .nav {
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
@@ -296,29 +812,27 @@ body:not(.arena-page):not(.sectors-page):not(.signal-page) .afflatus-brand {
     scrollbar-width: none;
   }
 
-  :is(.arena-page, .sectors-page, .signal-page)
-    .site-header--follow
-    > .nav::-webkit-scrollbar {
-    display: none;
-  }
+  .site-header--follow > .nav::-webkit-scrollbar { display: none; }
+  .site-header--follow > .nav > * { flex: 0 0 auto; }
 
-  :is(.arena-page, .sectors-page, .signal-page)
-    .site-header--follow
-    > .nav
-    > * {
-    flex: 0 0 auto;
+  .home-page .site-header--follow #langBtn { display: none; }
+
+  :root[data-afflatus-brand-state="compact"] .afflatus-brand__stage::after {
+    inline-size: 40px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .site-header--follow,
+  .afflatus-brand__stage::before,
   .afflatus-brand__stage::after,
   .afflatus-brand__a,
   .afflatus-brand__before,
   .afflatus-brand__l,
   .afflatus-brand__after,
-  .afflatus-brand__vector,
-  .afflatus-brand__l::after {
+  .afflatus-brand__signal,
+  .afflatus-brand__core {
     transition: none;
+    animation: none !important;
   }
 }

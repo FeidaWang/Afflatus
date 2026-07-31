@@ -67,7 +67,7 @@ describe('route SEO architecture', () => {
 
   it('derives trustworthy route dates from declared public provenance', () => {
     expect(facts.arena.dateModified).toBe('2026-07-25T00:58:00Z');
-    expect(facts.sectors.dateModified).toBe('2026-07-29T23:29:00+10:00');
+    expect(facts.sectors.dateModified).toBe('2026-07-29T23:58:00+10:00');
     expect(facts.signal.dateModified).toBe('2026-07-14');
     expect(facts.stats.dateModified).toBe('2026-07-20');
     expect(facts.main.dateModified).toBeNull();

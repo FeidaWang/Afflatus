@@ -9,7 +9,5 @@ import '../lib/audio.js';
 import '../lib/transition.js';
 import '../lib/page-turn.js';
 import { mountSignalBackdrop } from '../ui/ambientBackdrops.js';
-import { mountAfflatusBrand } from '../lib/afflatusBrand.js';
 
 mountSignalBackdrop();
-mountAfflatusBrand();

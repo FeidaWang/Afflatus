@@ -10,19 +10,15 @@ import {
 import { BUILD_ROUTES } from '../src/config/siteManifest.js';
 
 const ROOT = resolve(import.meta.dirname, '..');
-const NON_LABS = BUILD_ROUTES
-  .filter((route) => route.status === 'active' && route.nav?.group !== 'labs')
-  .map((route) => route.file);
-const LABS = BUILD_ROUTES
-  .filter((route) => route.status === 'active' && route.nav?.group === 'labs')
-  .map((route) => route.file);
+const PAGES = BUILD_ROUTES.map((route) => route.file);
+const FOLLOWING_PAGES = PAGES.filter((file) => file !== 'boot.html');
 
 const attr = (node, name) => node.attrs?.find((entry) => entry.name === name)?.value ?? null;
 const classes = (node) => (attr(node, 'class') || '').split(/\s+/).filter(Boolean);
 
 function* walk(node) {
   yield node;
-  for (const child of node.childNodes || []) yield* walk(child);
+  for (const child of node?.childNodes || []) yield* walk(child);
 }
 
 function documentOf(file) {
@@ -33,14 +29,18 @@ function findClass(root, className) {
   return [...walk(root)].find((node) => node.tagName && classes(node).includes(className)) || null;
 }
 
-describe('A·l 顶部状态', () => {
+function brandOf(file) {
+  return findClass(documentOf(file), 'afflatus-brand');
+}
+
+describe('Al 顶部状态', () => {
   it('只有在页面顶端展开完整 Afflatus', () => {
     expect(brandStateFromTop(true)).toBe(AFFLATUS_BRAND_FULL);
     expect(brandStateFromTop(false)).toBe(AFFLATUS_BRAND_COMPACT);
   });
 });
 
-describe.each(NON_LABS)('%s 自适应 AI 字标', (file) => {
+describe.each(PAGES)('%s 自适应 AI 字标', (file) => {
   const doc = documentOf(file);
   const brand = findClass(doc, 'afflatus-brand');
 
@@ -51,19 +51,32 @@ describe.each(NON_LABS)('%s 自适应 AI 字标', (file) => {
     expect(attr(brand, 'data-afflatus-brand')).not.toBeNull();
   });
 
-  it('完整字名被拆为 A / ff / l / atus，A 与 l 可独立收束', () => {
+  it('完整字名拆为 A / ff / l / atus，紧凑态另有信号与核心层', () => {
     expect(findClass(brand, 'afflatus-brand__a')).toBeTruthy();
     expect(findClass(brand, 'afflatus-brand__before')).toBeTruthy();
     expect(findClass(brand, 'afflatus-brand__l')).toBeTruthy();
     expect(findClass(brand, 'afflatus-brand__after')).toBeTruthy();
-    expect(findClass(brand, 'afflatus-brand__vector')).toBeTruthy();
+    expect(findClass(brand, 'afflatus-brand__signal')).toBeTruthy();
+    expect(findClass(brand, 'afflatus-brand__core')).toBeTruthy();
   });
 
-  it('使用共享 CSS 字形而非逐页 SVG 变体', () => {
+  it('不含反斜杠结构，也不使用逐页 SVG 变体', () => {
+    expect(findClass(brand, 'afflatus-brand__vector')).toBeNull();
     expect([...walk(brand)].some((node) => node.tagName === 'svg')).toBe(false);
+    expect(readFileSync(resolve(ROOT, file), 'utf8')).not.toContain('afflatus-brand__vector');
   });
 
-  it('顶部栏声明跟随滚动', () => {
+  it('加载共享样式并声明该页独有视觉人格', () => {
+    const links = [...walk(doc)].filter((node) => node.tagName === 'link');
+    expect(links.some((node) => attr(node, 'href') === '/styles/afflatus-brand.css')).toBe(true);
+    expect(attr(brand, 'data-brand-persona')).toBeTruthy();
+  });
+});
+
+describe.each(FOLLOWING_PAGES)('%s 跟随式品牌', (file) => {
+  it('字标位于跟随页面滚动的顶部容器', () => {
+    const doc = documentOf(file);
+    const brand = findClass(doc, 'afflatus-brand');
     const header = [...walk(doc)].find((node) => (
       node.tagName
       && classes(node).includes('site-header--follow')
@@ -71,28 +84,24 @@ describe.each(NON_LABS)('%s 自适应 AI 字标', (file) => {
     ));
     expect(header).toBeTruthy();
   });
-
-  it('加载共享字标样式', () => {
-    const links = [...walk(doc)].filter((node) => node.tagName === 'link');
-    expect(links.some((node) => attr(node, 'href') === '/styles/afflatus-brand.css')).toBe(true);
-  });
 });
 
-describe('Labs 排除合同', () => {
-  it.each(LABS)('%s 不挂载新 A·l 字标', (file) => {
-    expect(findClass(documentOf(file), 'afflatus-brand')).toBeNull();
-  });
-});
-
-describe('跨页一致性', () => {
-  it('四个非 Labs 页面使用完全相同的字形节点序列', () => {
-    const signatures = NON_LABS.map((file) => {
-      const brand = findClass(documentOf(file), 'afflatus-brand');
-      return [...walk(brand)]
-        .filter((node) => node.tagName)
-        .map((node) => `${node.tagName}.${classes(node).join('.')}`)
-        .join('|');
-    });
+describe('跨页一致性与差异化', () => {
+  it('所有构建页面使用完全相同的字形节点序列', () => {
+    const signatures = PAGES.map((file) => [...walk(brandOf(file))]
+      .filter((node) => node.tagName)
+      .map((node) => `${node.tagName}.${classes(node).join('.')}`)
+      .join('|'));
     expect(new Set(signatures).size).toBe(1);
+  });
+
+  it('每个页面拥有唯一人格，不会退回一套通用皮肤', () => {
+    const personas = PAGES.map((file) => attr(brandOf(file), 'data-brand-persona'));
+    expect(new Set(personas).size).toBe(PAGES.length);
+  });
+
+  it('共享样式中彻底移除旧反斜杠向量', () => {
+    const css = readFileSync(resolve(ROOT, 'public/styles/afflatus-brand.css'), 'utf8');
+    expect(css).not.toContain('afflatus-brand__vector');
   });
 });

@@ -102,9 +102,10 @@
   }
 </style>
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
+<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
-<body>
+<body class="boot-page">
 <canvas id="bridgeCanvas" aria-hidden="true"></canvas>
 
 <div id="glFail">SIGNAL LOST · WEBGL UNAVAILABLE · 显示核心离线</div>
@@ -112,7 +113,15 @@
 <div id="bridge" aria-hidden="true">
   <span class="corner tl"></span><span class="corner tr"></span>
   <span class="corner bl"></span><span class="corner br"></span>
-  <div id="osTag">AFFLATUS OS <b>v1.5</b> · BRIDGE SIM · 舰桥模拟</div>
+  <div id="osTag">
+    <a class="afflatus-brand" data-afflatus-brand data-brand-persona="boot" href="/" aria-label="Afflatus — Home">
+      <span class="afflatus-brand__stage" aria-hidden="true">
+        <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
+      </span>
+      <span class="afflatus-brand__sr">Afflatus</span>
+    </a>
+    <span class="osTagMeta">OS <b>v1.5</b> · BRIDGE SIM · 舰桥模拟</span>
+  </div>
   <div id="telemetry"><b id="tClock">--:--:--</b><br>FPS <b id="tFps">--</b> · CAM <b id="tCam">--</b></div>
   <nav id="dock" aria-label="Bridge stations">
     <a class="station" href="/">ASSET DECK
