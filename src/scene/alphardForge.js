@@ -1,16 +1,14 @@
 /**
- * Alphard Jump Point — a full WebGL cosmic-storm scene (Three.js).
+ * Alphard Forge — a black-hole-adjacent celestial engine (Three.js).
  *
- * A camera-locked fragment-shader nebula vortex (clockwise whirlpool fbm +
- * brilliant cyan-white pulsing core + crackling electric ring + vignette) backs
- * a 3D scene of ~6000 GPU-animated nebula particles, sparse deep-space stars,
- * and futuristic orbital stations flanking both edges (dark silhouettes with
- * blinking nav lights + lit strips) plus tiny drifting spacecraft for scale.
- * Composited through UnrealBloomPass + a subtle chromatic-aberration / film-grain
- * pass. Subtle mouse parallax. Scroll progress (--forge / uForge) dollies the
- * camera in and ramps brightness; the bilingual tagline types out across the
- * pin (JS position:fixed, since sticky is broken by body{overflow-x:hidden}).
- * Degrades to a single static frame under prefers-reduced-motion.
+ * A camera-locked shader combines three related phenomena: a differentially
+ * rotating accretion disc, gravitational redshift from white-hot emission to
+ * amber/red escape light, and bipolar relativistic jets with a collimated core
+ * and magnetic sheath. GPU point clouds add volumetric disc matter and jet
+ * knots; a sparse lensed star field supplies depth. UnrealBloomPass and the
+ * restrained final pass preserve the site's cinematic treatment. Scroll
+ * progress (--forge / uForge) dollies the observer inward and increases the
+ * energy state. Reduced-motion visitors receive one fully resolved frame.
  */
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -27,9 +25,9 @@ import {
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const lerp = (a, b, t) => a + (b - a) * t;
 
-/* ── nebula vortex (camera-locked fullscreen plane) ─────────────────────── */
+/* ── black-hole phenomena (camera-locked fullscreen plane) ─────────────── */
 const NEB_VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`;
-const NEB_FRAG = `
+const CELESTIAL_FRAG = `
 precision highp float;
 varying vec2 vUv;
 uniform float uTime, uForge, uGain, uPulse, uScroll; uniform vec2 uRes;
@@ -38,73 +36,143 @@ float noise(vec2 p){ vec2 i=floor(p),f=fract(p); float a=hash(i),b=hash(i+vec2(1
 float fbm(vec2 p){ float v=0.,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p*=2.02; a*=0.5; } return v; }
 mat2 rot(float a){ float s=sin(a),c=cos(a); return mat2(c,-s,s,c); }
 void main(){
-  vec2 uv=(vUv-0.5); uv.x*=uRes.x/uRes.y;
-  float zoom=mix(1.7,0.8,uForge); uv*=zoom;
+  vec2 uv=vUv-0.5;
+  uv.x*=uRes.x/uRes.y;
+  float zoom=mix(1.72,0.82,uForge);
+  uv*=zoom;
   float r=length(uv);
-  // four independently-rotating layers (clockwise), inner faster
-  float tw = uTime*0.05 + 1.4/(r+0.25);
-  vec2 w2 = rot(tw)*uv;
-  float warp = fbm(w2*1.5);
-  float n2 = fbm(w2*2.6 + warp + vec2(uTime*0.02,0.));        // dense spiral
-  vec2 w3 = rot(uTime*0.032)*uv;  float n3 = fbm(w3*1.5 + 4.0); // diffuse clouds
-  vec2 w4 = rot(uTime*0.018)*uv;  float n4 = fbm(w4*0.9 + 9.0); // outer fog
-  float clouds = smoothstep(0.15,1.05,n2)*0.6 + smoothstep(0.2,1.0,n3)*0.3 + smoothstep(0.1,1.0,n4)*0.25;
-  float vig = smoothstep(1.5,0.2,r);
-  // U28 28c: owner-specified two-tone field — #99FAFF for the inner ring
-  // (was a near-pure-white core that blew out to a flat white disc), #00F0FF
-  // for everything outside it (was a slightly-off cyan). Both toned down in
-  // intensity below so bloom no longer clips the center to solid white.
-  vec3 cInner=vec3(0.600,0.980,1.0), cCyan=vec3(0.0,0.941,1.0), cAzure=vec3(0.0,0.42,0.85), cNavy=vec3(0.02,0.07,0.18), cViolet=vec3(0.10,0.07,0.24);
-  vec3 col=mix(cCyan,cAzure,smoothstep(0.12,0.55,r));
-  col=mix(col,cNavy,smoothstep(0.55,1.1,r));
-  col=mix(col,cViolet,smoothstep(1.0,1.5,r)*0.5);
-  col*=(0.30+0.95*clouds);
-  col += vec3(0.0,0.26,0.17)*clouds*smoothstep(0.95,0.3,r)*0.14;     // green wisp
-  // pulsing core + bloom seed — U28: multiplier cut 1.6→1.0 so the center
-  // reads as a bright inner ring instead of an overexposed white blob.
-  float pulse = 1.0 + 0.18*uPulse;
-  float core=smoothstep(0.24*pulse,0.0,r);
-  float glow=pow(smoothstep(0.95,0.0,r),2.2);
-  col += cInner*core*1.0*pulse;
-  col += cCyan*glow*(0.45+0.5*uForge)*(1.0+uScroll*0.55);
-  // electric ring (continuous around the circle) — U28: scroll-driven flare.
-  // uScroll (0..1, rAF-sampled + lerped scroll speed, see alphardForge.js)
-  // pumps the arc turbulence and ring brightness so faster page scrolling
-  // reads as a stronger stellar-flare pulse; settles to the resting uPulse
-  // breathing cycle when the page is still.
-  float ang=atan(uv.y,uv.x);
-  float rn=fbm(vec2(cos(ang),sin(ang))*4.0+uTime*(0.6+uScroll*0.8));
-  float arc=fbm(vec2(cos(ang),sin(ang))*12.0-uTime*(1.1+uScroll*1.4));
-  float ring=smoothstep(0.05,0.0,abs(r-0.24*pulse-(rn-0.5)*0.05-(arc-0.5)*0.02));
-  col += cInner*ring*(1.0+0.4*arc)*(1.0+uScroll*0.9);
-  col*=vig;
-  col*=(0.7+0.5*uForge)*uGain;
+
+  // Lensed background: starlight bends more strongly near the photon sphere.
+  vec2 lensUv=uv*(1.0+0.07/(r*r+0.025));
+  vec2 starCell=floor(lensUv*210.0);
+  float starSeed=hash(starCell);
+  float stars=step(0.9955,starSeed)*pow(hash(starCell+9.4),7.0);
+  float dust=fbm(rot(uTime*0.012)*lensUv*1.5+vec2(7.0,2.0));
+  vec3 col=vec3(0.002,0.003,0.007);
+  col+=vec3(0.18,0.24,0.34)*stars*(1.0-smoothstep(0.18,1.55,r));
+  col+=mix(vec3(0.025,0.012,0.018),vec3(0.018,0.035,0.055),dust)*dust*0.34;
+
+  // Accretion disc: a thin tilted annulus with faster inner differential
+  // rotation. Spiral compression lanes and turbulence provide hot matter.
+  float discWarp=0.012*sin(uv.x*12.0-uTime*0.45)*(1.0-smoothstep(0.2,1.2,abs(uv.x)));
+  vec2 discUv=vec2(uv.x,(uv.y+discWarp)/0.225);
+  float rho=length(discUv);
+  float phi=atan(discUv.y,discUv.x);
+  float omega=0.32+1.45/(rho+0.13);
+  float spiral=0.5+0.5*sin(phi*7.0-log(rho+0.035)*12.0-uTime*omega*1.8);
+  float fine=0.5+0.5*sin(phi*23.0-log(rho+0.03)*34.0-uTime*omega*3.2);
+  float turbulence=fbm(vec2(phi*2.8-uTime*omega,rho*15.0+uTime*0.08));
+  float annulus=smoothstep(0.155,0.205,rho)*(1.0-smoothstep(0.28,1.34,rho));
+  float accretion=annulus*(0.34+0.38*spiral+0.18*fine+0.28*turbulence);
+
+  // Gravitational redshift: white-hot light starts near the inner edge and
+  // loses energy along the escape path, grading through amber into deep red.
+  float escapeShift=smoothstep(0.2,1.25,rho);
+  vec3 whiteHot=vec3(1.0,0.97,0.86);
+  vec3 amber=vec3(1.0,0.39,0.075);
+  vec3 redshift=vec3(0.72,0.025,0.018);
+  vec3 discColor=mix(whiteHot,amber,smoothstep(0.18,0.55,rho));
+  discColor=mix(discColor,redshift,escapeShift*0.9);
+
+  // Relativistic beaming: approaching material is brighter and slightly
+  // bluer; the receding side reinforces the observed red wing.
+  float velocitySide=cos(phi);
+  float approaching=smoothstep(-0.05,0.92,velocitySide);
+  float receding=smoothstep(-0.05,0.92,-velocitySide);
+  discColor=mix(discColor,vec3(0.82,0.94,1.0),approaching*(1.0-escapeShift)*0.72);
+  discColor=mix(discColor,vec3(0.48,0.008,0.014),receding*0.42);
+  float beaming=0.48+1.18*approaching+0.18*uScroll;
+  col+=discColor*accretion*beaming*(1.0+0.22*uPulse);
+
+  // Gravitational lensing folds the far side of the disc above and below the
+  // event horizon instead of leaving a simple flat ellipse.
+  float lensRadius=length(vec2(uv.x,uv.y/0.62));
+  float upperArc=exp(-pow((lensRadius-0.225)/0.022,2.0))*smoothstep(-0.04,0.18,uv.y);
+  float lowerArc=exp(-pow((lensRadius-0.218)/0.027,2.0))*(1.0-smoothstep(-0.16,0.08,uv.y))*0.62;
+  col+=mix(whiteHot,amber,smoothstep(0.0,0.22,abs(uv.y)))*(upperArc+lowerArc)*(0.82+0.28*uPulse);
+
+  // Bipolar relativistic jets: a white-hot spine, cyan magnetic collimation
+  // and a red-shifted outer sheath along the black hole's rotation axis.
+  float polar=abs(uv.y);
+  float jetGate=smoothstep(0.17,0.23,polar)*(1.0-smoothstep(0.3,1.5,polar));
+  float cone=0.012+polar*0.052;
+  float axisOffset=abs(uv.x+sin(uv.y*21.0-uTime*2.0)*0.006);
+  float jetCore=exp(-pow(axisOffset/max(0.006,cone*0.34),2.0)*2.8);
+  float jetSheath=exp(-pow(axisOffset/max(0.012,cone*1.9),2.0)*1.7);
+  float jetKnots=0.58+0.42*sin(polar*37.0-uTime*(5.2+uScroll*2.5)+dust*5.0);
+  float jetEscape=smoothstep(0.18,1.3,polar);
+  vec3 jetColor=mix(vec3(0.82,0.98,1.0),vec3(0.08,0.58,1.0),0.48);
+  jetColor=mix(jetColor,vec3(0.72,0.035,0.18),jetEscape*0.7);
+  col+=whiteHot*jetCore*jetGate*(1.15+uScroll*0.65)*jetKnots;
+  col+=jetColor*jetSheath*jetGate*(0.5+0.38*uForge)*(0.72+0.28*jetKnots);
+
+  // Photon ring and true dark event horizon are composited last so neither
+  // disc nor jet light can leak through the singularity silhouette.
+  float photonRing=exp(-pow((r-0.158)/0.012,2.0));
+  float nearShadow=1.0-smoothstep(0.145,0.235,r);
+  float horizon=1.0-smoothstep(0.132,0.151,r);
+  col*=1.0-nearShadow*0.7;
+  col+=mix(whiteHot,amber,0.38)*photonRing*(1.05+0.24*uPulse);
+  col=mix(col,vec3(0.00015,0.0002,0.00035),horizon);
+
+  float vignette=1.0-smoothstep(0.2,1.58,r);
+  col*=vignette*(0.72+0.48*uForge)*uGain;
   gl_FragColor=vec4(col,1.0);
 }`;
 
-/* ── nebula particles (GPU-animated points) ─────────────────────────────── */
+/* ── accretion matter (GPU-animated points) ─────────────────────────────── */
 const PT_VERT = `
 attribute float aSpeed; attribute float aSize; attribute float aSeed;
-uniform float uTime; varying float vMix;
+uniform float uTime; varying float vRadius; varying float vDoppler;
 void main(){
-  float ang = -uTime * aSpeed;                 // clockwise orbital motion
+  float ang = -uTime * aSpeed;
   float c=cos(ang), s=sin(ang);
   vec3 p = position;
   p.xy = mat2(c,-s,s,c) * p.xy;
-  p.x += sin(uTime*0.3 + aSeed)*2.2;           // slow turbulence / drift
-  p.y += cos(uTime*0.27 + aSeed*1.3)*2.2;
+  p.z += sin(uTime*1.7*aSpeed+aSeed)*1.4;
   vec4 mv = modelViewMatrix * vec4(p,1.0);
   gl_PointSize = aSize * (260.0 / max(1.0,-mv.z));
   gl_Position = projectionMatrix * mv;
-  vMix = fract(aSeed);
+  vRadius=clamp((length(position.xy)-18.0)/142.0,0.0,1.0);
+  vDoppler=0.5+0.5*p.x/max(1.0,length(p.xy));
 }`;
 const PT_FRAG = `
-precision mediump float; varying float vMix;
+precision mediump float; varying float vRadius; varying float vDoppler;
 void main(){
   float d = length(gl_PointCoord - 0.5);
-  float a = smoothstep(0.5, 0.0, d);
-  vec3 c = mix(vec3(0.55,0.92,1.0), vec3(0.9,0.99,1.0), vMix);
-  gl_FragColor = vec4(c, a*0.30);
+  float a = 1.0-smoothstep(0.0,0.5,d);
+  vec3 c=mix(vec3(1.0,0.95,0.8),vec3(1.0,0.24,0.035),smoothstep(0.08,0.62,vRadius));
+  c=mix(c,vec3(0.56,0.012,0.018),smoothstep(0.54,1.0,vRadius));
+  c=mix(c,vec3(0.76,0.94,1.0),smoothstep(0.62,1.0,vDoppler)*(1.0-vRadius)*0.72);
+  gl_FragColor = vec4(c,a*(0.22+0.24*(1.0-vRadius)));
+}`;
+
+/* ── bipolar relativistic jet knots ────────────────────────────────────── */
+const JET_VERT = `
+attribute float aSpeed; attribute float aSize; attribute float aSeed; attribute float aSide;
+uniform float uTime; varying float vLife; varying float vCore;
+void main(){
+  float travel=mod(position.y+uTime*aSpeed,210.0);
+  vec3 p=position;
+  p.y=aSide*(20.0+travel);
+  float spread=1.0+travel*0.028;
+  p.x=position.x*spread+sin(uTime*2.1+aSeed)*spread*0.34;
+  p.z=position.z*spread+cos(uTime*1.7+aSeed*1.3)*spread*0.34;
+  vec4 mv=modelViewMatrix*vec4(p,1.0);
+  gl_PointSize=aSize*(250.0/max(1.0,-mv.z));
+  gl_Position=projectionMatrix*mv;
+  vLife=travel/210.0;
+  vCore=1.0-clamp(length(position.xz)/3.6,0.0,1.0);
+}`;
+const JET_FRAG = `
+precision mediump float; varying float vLife; varying float vCore;
+void main(){
+  float d=length(gl_PointCoord-0.5);
+  float a=(1.0-smoothstep(0.0,0.5,d))*(1.0-smoothstep(0.82,1.0,vLife));
+  vec3 cyan=vec3(0.28,0.86,1.0), hot=vec3(0.98,0.99,1.0), shifted=vec3(0.78,0.035,0.22);
+  vec3 c=mix(cyan,hot,vCore);
+  c=mix(c,shifted,smoothstep(0.48,1.0,vLife)*0.72);
+  gl_FragColor=vec4(c,a*(0.28+0.46*vCore));
 }`;
 
 /* ── final pass: subtle chromatic aberration + film grain ───────────────── */
@@ -207,26 +275,23 @@ export function initAlphardForge() {
   camera.position.set(0, 0, Z0);
   scene.add(camera);
 
-  scene.add(new THREE.AmbientLight(0x35506e, 1.1));
-  const keyL = new THREE.DirectionalLight(0x9fd8ff, 1.0); keyL.position.set(0, 0, 200); scene.add(keyL);
-
-  // nebula plane locked to the camera (far background, always fills the view)
+  // Celestial plate locked to the camera (far background, always fills the view).
   const nebUniforms = { uTime: { value: 0 }, uForge: { value: 0 }, uGain: { value: uGain }, uPulse: { value: 0 }, uScroll: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } };
   const nebPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),
-    new THREE.ShaderMaterial({ vertexShader: NEB_VERT, fragmentShader: NEB_FRAG, uniforms: nebUniforms, depthTest: false, depthWrite: false, fog: false }));
+    new THREE.ShaderMaterial({ vertexShader: NEB_VERT, fragmentShader: CELESTIAL_FRAG, uniforms: nebUniforms, depthTest: false, depthWrite: false, fog: false }));
   nebPlane.position.z = -1200; nebPlane.renderOrder = -10; camera.add(nebPlane);
 
-  // ── nebula particles ──
-  const PN = 6000;
+  // ── volumetric accretion matter ──
+  const PN = 4200;
   const pos = new Float32Array(PN * 3), spd = new Float32Array(PN), siz = new Float32Array(PN), sed = new Float32Array(PN);
   for (let i = 0; i < PN; i++) {
-    const rr = 26 + Math.pow(Math.random(), 0.7) * 150;
+    const rr = 18 + Math.pow(Math.random(), 0.72) * 142;
     const a = Math.random() * Math.PI * 2;
     pos[i * 3] = Math.cos(a) * rr;
-    pos[i * 3 + 1] = Math.sin(a) * rr * 0.92;
-    pos[i * 3 + 2] = (Math.random() - 0.5) * 70;
-    spd[i] = (0.05 + 0.35 / (rr * 0.02));        // inner orbits faster
-    siz[i] = 1.2 + Math.random() * 3.6;
+    pos[i * 3 + 1] = Math.sin(a) * rr;
+    pos[i * 3 + 2] = (Math.random() - 0.5) * (1.2 + rr * 0.035);
+    spd[i] = 0.11 + 12 / (rr + 10); // Kepler-like differential rotation.
+    siz[i] = 1.1 + Math.random() * 3.2;
     sed[i] = Math.random() * 100;
   }
   const pgeo = new THREE.BufferGeometry();
@@ -239,7 +304,36 @@ export function initAlphardForge() {
     vertexShader: PT_VERT, fragmentShader: PT_FRAG, uniforms: ptUniforms,
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false
   }));
+  particles.rotation.x = 1.04;
   scene.add(particles);
+
+  // ── volumetric bipolar jet knots ──
+  const JN = 1200;
+  const jPos = new Float32Array(JN * 3), jSpd = new Float32Array(JN), jSiz = new Float32Array(JN), jSeed = new Float32Array(JN), jSide = new Float32Array(JN);
+  for (let i = 0; i < JN; i++) {
+    const radius = Math.pow(Math.random(), 2.2) * 3.6;
+    const azimuth = Math.random() * Math.PI * 2;
+    jPos[i * 3] = Math.cos(azimuth) * radius;
+    jPos[i * 3 + 1] = Math.random() * 210;
+    jPos[i * 3 + 2] = Math.sin(azimuth) * radius;
+    jSpd[i] = 24 + Math.random() * 42;
+    jSiz[i] = 1.2 + Math.random() * 3.8;
+    jSeed[i] = Math.random() * 100;
+    jSide[i] = Math.random() < 0.5 ? -1 : 1;
+  }
+  const jetGeo = new THREE.BufferGeometry();
+  jetGeo.setAttribute('position', new THREE.BufferAttribute(jPos, 3));
+  jetGeo.setAttribute('aSpeed', new THREE.BufferAttribute(jSpd, 1));
+  jetGeo.setAttribute('aSize', new THREE.BufferAttribute(jSiz, 1));
+  jetGeo.setAttribute('aSeed', new THREE.BufferAttribute(jSeed, 1));
+  jetGeo.setAttribute('aSide', new THREE.BufferAttribute(jSide, 1));
+  const jetUniforms = { uTime: { value: 0 } };
+  const jetParticles = new THREE.Points(jetGeo, new THREE.ShaderMaterial({
+    vertexShader: JET_VERT, fragmentShader: JET_FRAG, uniforms: jetUniforms,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false
+  }));
+  jetParticles.position.z = -80;
+  scene.add(jetParticles);
 
   // sparse deep-space stars (far, behind the action)
   {
@@ -249,63 +343,12 @@ export function initAlphardForge() {
     scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xbfd8ff, size: 1.6, sizeAttenuation: true, transparent: true, opacity: 0.7, fog: false })));
   }
 
-  // ── orbital stations (dark silhouettes) flanking both edges ──
-  const dark = new THREE.MeshStandardMaterial({ color: 0x0c1018, metalness: 0.8, roughness: 0.5 });
-  const strip = new THREE.MeshBasicMaterial({ color: 0x2fd0ff });
-  const blinkers = [];
-  function buildStation(scale) {
-    const g = new THREE.Group();
-    const H = 70 * scale;
-    g.add(new THREE.Mesh(new THREE.CylinderGeometry(1.4 * scale, 1.8 * scale, H, 10), dark));      // mast
-    const node = new THREE.Mesh(new THREE.SphereGeometry(4.5 * scale, 12, 10), dark); node.position.y = H * 0.1; g.add(node);
-    g.add(new THREE.Mesh(new THREE.CylinderGeometry(0.25 * scale, 0.25 * scale, 30 * scale, 6), dark)).position.y = H * 0.6; // antenna spire
-    for (let k = 0; k < 5; k++) {                                                                  // cross struts
-      const y = -H * 0.4 + k * H * 0.18, half = (7 - k) * scale;
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(half * 2, 0.7 * scale, 0.7 * scale), dark); arm.position.y = y; g.add(arm);
-    }
-    const base = new THREE.Mesh(new THREE.BoxGeometry(16 * scale, 5 * scale, 10 * scale), dark); base.position.y = -H * 0.5; g.add(base);
-    const st = new THREE.Mesh(new THREE.BoxGeometry(0.5 * scale, H * 0.7, 0.5 * scale), strip); st.position.set(1.7 * scale, 0, 0); g.add(st); // lit strip
-    const lamp = new THREE.Sprite(new THREE.SpriteMaterial({ color: 0x8af0ff, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false }));
-    lamp.scale.setScalar(6 * scale); lamp.position.y = H * 0.55; g.add(lamp); blinkers.push({ s: lamp, ph: Math.random() * 6 });
-    return g;
-  }
-  const halfW0 = Z0 * Math.tan((FOV * Math.PI / 180) / 2);  // ×aspect added at resize
-  const stationGroup = new THREE.Group(); scene.add(stationGroup);
-  function placeStations(aspect) {
-    stationGroup.clear(); blinkers.length = 0;
-    const edge = halfW0 * aspect * 0.96;
-    for (const side of [-1, 1]) {
-      for (let i = 0; i < 5; i++) {
-        const sc = 0.7 + Math.random() * 0.7;
-        const st = buildStation(sc);
-        st.position.set(side * (edge - i * 9 - Math.random() * 4), (Math.random() - 0.5) * 80, -40 - i * 26 - Math.random() * 30);
-        st.rotation.y = side < 0 ? 0.3 : -0.3;
-        stationGroup.add(st);
-      }
-    }
-  }
-
-  // tiny spacecraft for scale
-  const ships = [];
-  {
-    const sm = new THREE.MeshStandardMaterial({ color: 0x10161f, metalness: 0.7, roughness: 0.6 });
-    for (let i = 0; i < 7; i++) {
-      const g = new THREE.Group();
-      const b = new THREE.Mesh(new THREE.ConeGeometry(1.2, 5, 5), sm); b.rotation.x = Math.PI / 2; g.add(b);
-      const nav = new THREE.Sprite(new THREE.SpriteMaterial({ color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
-      nav.scale.setScalar(3); nav.position.z = -3; g.add(nav); blinkers.push({ s: nav, ph: Math.random() * 6 });
-      g.position.set((Math.random() < 0.5 ? -1 : 1) * (60 + Math.random() * 30), (Math.random() - 0.5) * 70, -20 - Math.random() * 60);
-      g.userData = { vx: (Math.random() - 0.5) * 0.04, vy: (Math.random() - 0.5) * 0.03, seed: Math.random() * 10 };
-      ships.push(g); scene.add(g);
-    }
-  }
-
   // ── post-processing ──
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  // U28 28c: threshold raised 0.2→0.32 and strength trimmed 0.9→0.72 so the
-  // (now dimmer, see NEB_FRAG) core stops blooming out to a flat white disc.
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.72, 0.7, 0.32); // strength, radius, threshold
+  // Bloom is restricted to the X-ray-hot inner disc, photon ring and jet
+  // spine; the cooler red-shifted material keeps its structure.
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.86, 0.76, 0.38);
   composer.addPass(bloom);
   const finalPass = new ShaderPass(FINAL); finalPass.renderToScreen = true; composer.addPass(finalPass);
 
@@ -322,17 +365,15 @@ export function initAlphardForge() {
     const dist = Z0 - nebPlane.position.z; // camera local z = -1200 → dist 1350
     const fh = 2 * Math.tan((FOV * Math.PI / 180) / 2) * dist, fw = fh * camera.aspect;
     nebPlane.scale.set(fw, fh, 1);
-    placeStations(camera.aspect);
   }
 
   // parallax
   let mx = 0, my = 0, tmx = 0, tmy = 0;
   function onMove(e) { tmx = (e.clientX / innerWidth - 0.5); tmy = (e.clientY / innerHeight - 0.5); }
 
-  // U28 28c: scroll-linked flare + slow nebula rotation. Both are sampled
-  // inside the rAF loop (render()), never inside a scroll listener — only
-  // raw position reads happen there, all smoothing/derivatives are rAF-timed.
-  let lastScrollY = window.scrollY || 0, scrollVel = 0, lastT = 0;
+  // Scroll-linked energy ramp is sampled inside the rAF loop; the scroll
+  // handler never performs WebGL work.
+  let lastScrollY = window.scrollY || 0, scrollVel = 0;
 
   // scroll progress + pin. The pin itself (keeping the stage visually fixed
   // while its 200vh wrapper scrolls past) is handled by a CSS scroll-driven
@@ -373,7 +414,6 @@ export function initAlphardForge() {
     section.style.setProperty('--forge', p.toFixed(4));
     renderTagline(p);
     const tm = t * 0.001;
-    const dt = lastT ? clamp((t - lastT) / 1000, 0, 0.1) : 0; lastT = t;
     // scroll speed (rAF-sampled delta, lerped) → flare intensity; decays back
     // to the resting uPulse breathing cycle when scrolling stops.
     const sy = window.scrollY || window.pageYOffset || 0;
@@ -382,17 +422,9 @@ export function initAlphardForge() {
     const uScroll = clamp(scrollVel / 26, 0, 1);
     nebUniforms.uTime.value = tm; nebUniforms.uForge.value = p; nebUniforms.uScroll.value = uScroll;
     nebUniforms.uPulse.value = 0.5 + 0.5 * Math.sin(tm * (Math.PI * 2 / 5)); // ~5s pulse
-    ptUniforms.uTime.value = tm; finalPass.uniforms.uTime.value = t;
-    // nebula/magnetic-field layer: slow majestic clockwise rotation (~0.5deg/s
-    // = 0.008727 rad/s), separate from the shader's own faster inner warp
-    // layers so the whole field still reads as one massive, stately body.
-    nebPlane.rotation.z -= 0.008727 * dt;
-    // layered rotation (particles slower than inner shader layers → depth)
-    particles.rotation.z = tm * 0.06;
-    stationGroup.rotation.z = 0; // stations fixed at edges
-    // ships drift + blink
-    for (const sh of ships) { sh.position.x += sh.userData.vx; sh.position.y += sh.userData.vy; if (Math.abs(sh.position.x) > 120) sh.userData.vx *= -1; if (Math.abs(sh.position.y) > 90) sh.userData.vy *= -1; }
-    for (const b of blinkers) b.s.material.opacity = 0.35 + 0.65 * Math.abs(Math.sin(tm * 1.8 + b.ph));
+    ptUniforms.uTime.value = tm;
+    jetUniforms.uTime.value = tm;
+    finalPass.uniforms.uTime.value = t;
     // parallax + scroll dolly
     mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;
     camera.position.x = mx * 6; camera.position.y = -my * 6;
@@ -437,7 +469,6 @@ export function initAlphardForge() {
   function start() {
     if (!running && contextReady) {
       running = true;
-      lastT = 0;
       loopLastT = 0;
       raf = requestAnimationFrame(loop);
     }
