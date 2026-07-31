@@ -951,17 +951,10 @@
     var tracks = [], idx = 0, failStreak = 0;
 
     function pickUrl(t) {
-      /* Prefer the lossless src when the browser can decode it; else fallback. */
-      var byExt = { flac:'audio/flac', wav:'audio/wav', ogg:'audio/ogg', opus:'audio/ogg; codecs=opus', mp3:'audio/mpeg', m4a:'audio/mp4', aac:'audio/aac' };
-      function playable(url) {
-        if (!url) return false;
-        var ext = (url.split('?')[0].split('.').pop() || '').toLowerCase();
-        var mime = byExt[ext];
-        return mime ? audio.canPlayType(mime) !== '' : true; /* unknown ext: let the browser try */
-      }
-      if (playable(t.src)) return t.src;
-      if (playable(t.fallback)) return t.fallback;
-      return null;
+      /* The reading playlist intentionally serves MP3 only for compact delivery. */
+      var url = t && t.src;
+      if (!url || !/\.mp3(?:[?#]|$)/i.test(url)) return null;
+      return audio.canPlayType('audio/mpeg') !== '' ? url : null;
     }
 
     function syncUi(playing) {
@@ -1027,7 +1020,7 @@
     fetch('/audio/playlist.json', { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (data) {
-        tracks = (data.tracks || []).filter(function (t) { return t && (t.src || t.fallback); });
+        tracks = (data.tracks || []).filter(function (t) { return t && t.src; });
         if (!tracks.length) return; /* placeholder config: stay hidden */
         if (credit && data.credits) credit.href = data.credits;
         var saved = readerState().audioTrack || 0;
