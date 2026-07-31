@@ -4662,7 +4662,9 @@ Shortcut: CTRL + mouse drag">
         const State = app.State;
         const scenes = [
           {
-            target: 1, radius: 36, direction: Math.PI / 2, speed: 0.1,
+            // Halving the observer radius doubles the apparent black-hole
+            // plate while preserving the shader's physical lensing geometry.
+            target: 1, radius: 18, direction: Math.PI / 2, speed: 0.1,
             inclination: 0.12, lensing: true, doppler: true, grid: false,
             yaw: 0, pitch: 0, moving: true, mass: 16900,
             exposure: 0.014, bloom: 0.16,

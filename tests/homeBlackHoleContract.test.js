@@ -46,6 +46,11 @@ describe('homepage relativistic black hole contract', () => {
     expect(styles).toContain("url('/vendor/black-hole/source-poster.jpg')");
   });
 
+  it('uses the doubled-size homepage observation plate', () => {
+    const source = readFileSync(`${vendorDir}/background.html`, 'utf8');
+    expect(source).toContain('target: 1, radius: 18');
+  });
+
   it('retains the renderer and star-catalogue license notice', () => {
     expect(existsSync('THIRD_PARTY_NOTICES.md')).toBe(true);
     const notice = readFileSync('THIRD_PARTY_NOTICES.md', 'utf8');
