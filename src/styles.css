@@ -6907,7 +6907,7 @@
      frame (--forge:1) so the numbers still read.
      ============================================================ */
   .stardrive{position:relative;padding:0;margin:0;--forge:1}
-  .stardrive-stage{position:relative;width:100%;height:100svh;overflow:hidden}
+  .stardrive-stage{position:relative;width:100%;height:100svh;overflow:hidden;z-index:2;isolation:isolate;background:transparent}
   /* live mode (JS confirmed motion ok): tall section gives scroll-room; the stage
      is pinned by JS via position:fixed — NOT position:sticky, which is broken on
      this page by html/body{overflow-x:hidden} (computes overflow-y:auto). The JS
@@ -6955,67 +6955,14 @@
      alphardForge.js applies the existing .pin-fixed/.pin-end fallback while it
      is already sampling scroll progress in the render loop. */
 
-  /* Preserve the blue-black lunar disc, white photosphere and narrow magenta
-     chromosphere as separate exposure bands after the bloom pass. */
-  #alphardForge{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;filter:brightness(.9) saturate(.92) contrast(1.12)}
-  /* U28 28b (2026-07-14): owner's real-device screenshot still showed a hard
-     edge where the cyan nebula meets the black starfield above it — the
-     ::before veil below only paints an overlay on top of the canvas, so an
-     overexposed/bloom-heavy render (see 28c) can still punch through past
-     its fade zone. Mask the canvas's own pixels directly so the top of the
-     render is guaranteed to dissolve to nothing regardless of how bright
-     the WebGL draw gets. */
-  /* 2026-07-16 round 3: round 2 widened this to 44vh for a smoother blend,
-     but that traded "smooth" for "a third of the screen is just background,
-     nothing happening" (owner's next report) — smoothness should come from
-     the eased mid-stop, not from sheer scroll distance. Settled on 26vh
-     (tighter than even the original 32vh) with the same easing shape. */
-  #alphardForge{mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 14vh,#000 26vh);-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.35) 14vh,#000 26vh)}
-  .stardrive-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 46%,transparent 0%,transparent 46%,rgba(4,6,10,.5) 100%);opacity:calc(.28 + var(--forge)*.36)}
-  /* melt the section into the page bg above (hero) and below (equity) so there is
-     no hard seam — fades use the page --bg and sit above the canvas but below
-     the strip/tagline */
-  .stardrive-stage::before{content:"";position:absolute;left:0;right:0;z-index:1;pointer-events:none}
-  /* 2026-07-16: exit fade split off from the shared 20vh with the entry —
-     owner separately reported "1/4 screen of just background" between the
-     stargate and 02 Equity Curve, i.e. this fade itself reading as dead
-     air rather than a transition. Shrunk so equity's own heading arrives
-     sooner; still enough room to avoid a hard cut into --bg. */
-  .stardrive-stage::after{content:"";position:absolute;left:0;right:0;height:12vh;z-index:1;pointer-events:none}
-  /* U13d: the entry fade (universe starfield -> jump point) went straight
-     from solid --bg to a still-fairly-opaque .55 stop at 45% before
-     dropping to transparent — read as a flat color block rather than a
-     blend against the busier starfield behind it. Added a mid-stop so it
-     steps down more gradually; exit fade (::after, toward equity)
-     untouched, not part of this complaint. */
-  /* U28 28b: taller (20vh→32vh) + re-tinted to a near-black teal (#021418,
-     matching the nebula's own hue) instead of the neutral page --bg, so the
-     entrance reads as a continuous cyan dissolve rather than a black→cyan
-     seam. Works together with the #alphardForge mask-image above.
-     U30 R2 fix (2026-07-16, real-device screenshot): 28b's retint started
-     the gradient AT #021418 0% — but the actual pixels sitting above this
-     pseudo-element are the fixed #starfield layer, which is var(--bg)
-     (#04060a), a different color. Jumping straight to #021418 with zero
-     transition recreated the exact hard seam 28b was trying to remove,
-     just moved up by one boundary (starfield→veil instead of veil→canvas).
-     Anchoring the true 0% stop at var(--bg) restores continuity with what's
-     actually above, then still reaches #021418 within the first ~3vh so the
-     rest of the dissolve into the nebula is unchanged.
-     2026-07-16 round 2 (station-master: still wants it smoother/more
-     seamless): widened the whole band 32vh->44vh — round 3 below reverses
-     most of this once it became "1/3 of the screen is empty" instead.
-     2026-07-16 round 3 (station-master: now reporting dead scroll space
-     between hero and the stargate): round 2's extra width was exactly the
-     wrong lever — a slower dissolve over more scroll distance reads as MORE
-     empty space, not less. Settled on 26vh, tighter than even the original
-     32vh; smoothness now comes entirely from the eased mid-stops, not from
-     sheer distance. Kept in step with the #alphardForge mask above so the
-     overlay and the canvas's own fade finish together. The other half of
-     the "empty space" report was .hero's own min-height ceiling (see the
-     `min(...,64vh)` rule further down) reserving more room than the hero
-     copy needs on tall viewports — fixed separately there. */
-  .stardrive-stage::before{top:0;height:26vh;background:linear-gradient(180deg,var(--bg) 0%,#061020 16%,rgba(6,16,32,.62) 42%,rgba(5,8,20,.22) 72%,rgba(5,8,20,0) 100%)}
-  .stardrive-stage::after{bottom:0;background:linear-gradient(0deg,var(--bg) 0%,rgba(4,6,10,.5) 45%,rgba(4,6,10,0) 100%)}
+  /* The eclipse is a transparent celestial layer over the same fixed universe
+     as the homepage black hole. Avoid raster filters that soften its limb. */
+  #alphardForge{position:absolute;inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);display:block;z-index:0;background:transparent;filter:none;mask-image:none;-webkit-mask-image:none}
+  /* The old full-width exposure shoulders changed the starfield brightness at
+     the stage bounds, creating the two visible horizontal seams. The shader
+     now writes only Moon/corona RGBA; every transparent pixel exposes the same
+     fixed #starfield (and localized black-hole lensing plate) without a veil. */
+  .stardrive-veil,.stardrive-stage::before,.stardrive-stage::after{display:none}
 
   /* U45 (2026-07-18): was top:7% — the strip panel now anchors near the
      stage top instead of the bottom (above), so the caption yields its old
@@ -7813,8 +7760,10 @@
     height: 106vh;
     border: 0;
     pointer-events: none;
-    mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.72) 12%,#000 28%);
-    -webkit-mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.72) 12%,#000 28%);
+    /* Localize the source renderer to the lensing field. Its rectangular Gaia
+       plate now dissolves into the fixed #starfield used by Alphard Forge. */
+    mask-image: radial-gradient(ellipse 58% 50% at 50% 50%,#000 0 44%,rgba(0,0,0,.76) 60%,rgba(0,0,0,.24) 74%,transparent 86%);
+    -webkit-mask-image: radial-gradient(ellipse 58% 50% at 50% 50%,#000 0 44%,rgba(0,0,0,.76) 60%,rgba(0,0,0,.24) 74%,transparent 86%);
   }
   .blackhole-poster {
     background: #020303 url('/vendor/black-hole/source-poster.jpg') center / cover no-repeat;
@@ -7839,8 +7788,8 @@
       left: 20vw;
       width: 124vw;
       height: 102vh;
-      mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.8) 8%,#000 23%);
-      -webkit-mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.8) 8%,#000 23%);
+      mask-image: radial-gradient(ellipse 58% 50% at 50% 48%,#000 0 42%,rgba(0,0,0,.72) 59%,rgba(0,0,0,.22) 73%,transparent 86%);
+      -webkit-mask-image: radial-gradient(ellipse 58% 50% at 50% 48%,#000 0 42%,rgba(0,0,0,.72) 59%,rgba(0,0,0,.22) 73%,transparent 86%);
     }
     #blackhole-stage::after {
       background:

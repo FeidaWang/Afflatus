@@ -9,10 +9,6 @@
  * systems. Reduced-motion visitors receive the final, fully resolved frame.
  */
 import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import {
   canAcquireWebGLContext,
@@ -21,18 +17,22 @@ import {
 } from '../lib/webglLifecycle.js';
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-const lerp = (a, b, t) => a + (b - a) * t;
+const smoothstep = (a, b, v) => {
+  const t = clamp((v - a) / Math.max(b - a, 0.0001), 0, 1);
+  return t * t * (3 - 2 * t);
+};
 
 /* ── total-eclipse sequence (camera-locked fullscreen plane) ───────────── */
 const NEB_VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`;
 const ECLIPSE_FRAG = `
 precision highp float;
 varying vec2 vUv;
-uniform float uTime, uForge, uGain, uPulse, uScroll; uniform vec2 uRes;
+uniform float uForge, uGain, uPulse, uScroll; uniform vec2 uRes;
 float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
 float noise(vec2 p){ vec2 i=floor(p),f=fract(p); float a=hash(i),b=hash(i+vec2(1.,0.)),c=hash(i+vec2(0.,1.)),d=hash(i+vec2(1.,1.)); vec2 u=f*f*(3.-2.*f); return mix(mix(a,b,u.x),mix(c,d,u.x),u.y); }
-float fbm(vec2 p){ float v=0.,a=0.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=mat2(1.62,-1.18,1.18,1.62)*p; a*=0.5; } return v; }
+float fbm(vec2 p){ float v=0.,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p=mat2(1.62,-1.18,1.18,1.62)*p; a*=0.5; } return v; }
 float gaussian(float d,float width){ float q=d/max(width,0.0001); return exp(-q*q); }
+float angleDistance(float a,float b){ return abs(atan(sin(a-b),cos(a-b))); }
 void main(){
   float aspect=max(uRes.x/uRes.y,0.01);
   vec2 uv=vUv-0.5;
@@ -44,127 +44,132 @@ void main(){
   float radius=length(lunar);
   float theta=atan(lunar.y,lunar.x);
 
-  // Irregular lunar relief is strongest at the limb. It opens the narrow
-  // valleys through which the photosphere becomes Baily's beads.
-  float relief=(noise(vec2(theta*31.0,7.0))-0.5)*0.0065;
-  relief+=(noise(vec2(theta*83.0,19.0))-0.5)*0.0025;
+  float pixel=1.0/max(uRes.y,1.0);
+
+  // Sub-pixel lunar relief opens the narrow valleys that make Baily's beads.
+  // The former amplitude was several pixels wide and made the limb look like
+  // vegetation; this stays within a photographic mountain-profile scale.
+  float relief=(noise(vec2(theta*31.0,7.0))-0.5)*0.0018;
+  relief+=(noise(vec2(theta*83.0,19.0))-0.5)*0.0007;
   float lunarDistance=radius-(moonRadius+relief);
-  float outside=smoothstep(-0.0025,0.0045,lunarDistance);
-  float upperLimb=smoothstep(-0.2,0.48,lunar.y/moonRadius);
+  float limbAA=max(pixel*1.15,0.00048);
+  float outside=smoothstep(-limbAA,limbAA,lunarDistance);
+  float upperLimb=smoothstep(-0.12,0.34,lunar.y/moonRadius);
 
-  // A cold, optically deep sky with fine grain and restrained stellar depth.
-  float skyCloud=fbm(uv*1.42+vec2(uTime*0.006,-uTime*0.004));
-  vec3 col=mix(vec3(0.0015,0.003,0.009),vec3(0.008,0.028,0.057),skyCloud*0.72);
-  vec2 starCell=floor((uv+vec2(3.7,1.9))*185.0);
-  float star=step(0.9968,hash(starCell))*pow(hash(starCell+8.3),9.0);
-  col+=vec3(0.34,0.48,0.72)*star*outside*0.7;
+  // This surface deliberately has no private sky. Transparent pixels expose
+  // the fixed homepage starfield, shared with the relativistic black hole.
+  vec3 col=vec3(0.0);
 
-  float bailyPhase=1.0-smoothstep(0.38,0.72,uForge);
-  float diamondPhase=smoothstep(0.42,0.9,uForge);
-  float coronaPhase=smoothstep(0.48,0.96,uForge);
+  float bailyPhase=1.0-smoothstep(0.36,0.72,uForge);
+  float diamondPhase=smoothstep(0.2,0.74,uForge);
+  float coronaPhase=smoothstep(0.16,0.76,uForge);
 
-  // Structured corona: a tight white inner ring, blue radial streamers and
-  // large faint lobes. Scroll reveals it only after the beads begin to close.
+  // Physically calm corona: a sub-pixel white limb, diffuse electron-scattering
+  // halo and a few broad, fixed streamers. There are deliberately no repeating
+  // sine spikes or animated angular warps that could read as vines or a HUD arc.
   float exterior=max(lunarDistance,0.0);
-  float coronaRing=gaussian(lunarDistance,0.0065)*outside;
-  float rayNoise=0.34+0.66*pow(0.5+0.5*sin(theta*13.0+fbm(vec2(theta*5.0,uTime*0.018))*5.4),3.0);
-  float longRays=exp(-exterior*(7.0+9.0*rayNoise))*outside*upperLimb;
-  float polarRays=pow(abs(sin(theta*2.0+0.35)),10.0)*exp(-exterior*3.2)*outside;
-  vec3 coronaColor=mix(vec3(0.25,0.48,0.92),vec3(0.92,0.97,1.0),exp(-exterior*18.0));
-  col+=coronaColor*(coronaRing*0.88+longRays*(0.08+0.18*rayNoise)+polarRays*0.075)*coronaPhase;
+  float coronaRing=gaussian(lunarDistance,max(pixel*1.45,0.0011))*outside;
+  float innerCorona=exp(-exterior*26.0)*outside;
+  float outerCorona=exp(-exterior*5.4)*outside;
+  float equatorialFans=pow(abs(cos(theta-0.035)),8.0)*exp(-exterior*3.8)*outside;
+  float polarFans=pow(abs(sin(theta+0.08)),16.0)*exp(-exterior*6.8)*outside;
+  float sidePlumes=(gaussian(angleDistance(theta,0.2),0.13)
+    +gaussian(angleDistance(theta,2.92),0.16))*exp(-exterior*4.4)*outside;
+  float crownPlume=gaussian(angleDistance(theta,1.58),0.24)*exp(-exterior*3.5)*outside;
+  float coronaSignal=coronaPhase*(coronaRing*1.12+innerCorona*0.27
+    +outerCorona*0.072+equatorialFans*0.15+polarFans*0.06
+    +sidePlumes*0.075+crownPlume*0.055);
+  vec3 coronaColor=mix(vec3(0.34,0.52,0.9),vec3(0.97,0.985,1.0),exp(-exterior*31.0));
+  col+=coronaColor*coronaSignal;
 
-  // Magenta chromosphere and prominences survive around the upper limb while
-  // the bead sequence is active, echoing the photographic reference palette.
-  float chromosphere=gaussian(lunarDistance,0.0042)*upperLimb;
-  float chromaTexture=0.5+0.5*sin(theta*61.0+noise(vec2(theta*27.0,2.0))*5.0);
-  float prominence=gaussian(lunarDistance-0.009*(0.35+chromaTexture),0.0055)
-    *pow(chromaTexture,5.0)*upperLimb;
-  vec3 magenta=vec3(1.0,0.045,0.48);
-  col+=magenta*(chromosphere*(0.34+0.6*bailyPhase)+prominence*0.62)*(0.72+0.28*uPulse);
+  // A restrained H-alpha chromosphere sits on the limb. Localized prominences
+  // replace the former evenly repeated flames and leave most of the arc dark.
+  float chromosphere=gaussian(lunarDistance,max(pixel*1.2,0.00072))*upperLimb;
+  float prominenceMask=gaussian(angleDistance(theta,0.58),0.045)
+    +0.72*gaussian(angleDistance(theta,1.93),0.055)
+    +0.48*gaussian(angleDistance(theta,2.44),0.038);
+  float prominence=gaussian(lunarDistance-0.0045*prominenceMask,max(pixel*1.5,0.0011))
+    *prominenceMask*upperLimb;
+  float limbGranulation=0.46+0.54*noise(vec2(theta*44.0,11.0));
+  float chromaSignal=(chromosphere*(0.1+0.19*bailyPhase)*limbGranulation
+    +prominence*0.23)*(0.94+0.06*uPulse);
+  vec3 magenta=vec3(1.0,0.035,0.28);
+  col+=magenta*chromaSignal;
 
   // Moon silhouette is composited after the atmosphere so no background
   // light leaks through it. Very low-amplitude blue texture keeps the disc
   // from reading as a flat CSS circle on calibrated displays.
   float moonMask=1.0-outside;
-  float moonTexture=fbm(lunar*5.8+vec2(14.0,-3.0));
-  vec3 moonColor=mix(vec3(0.0002,0.0007,0.002),vec3(0.003,0.009,0.019),moonTexture*0.46);
+  float moonTexture=fbm(lunar*8.4+vec2(14.0,-3.0));
+  float earthshine=(0.22+0.78*smoothstep(-0.45,0.78,lunar.y/moonRadius))*moonTexture;
+  vec3 moonColor=mix(vec3(0.00008,0.0003,0.0009),vec3(0.0022,0.0065,0.014),earthshine*0.34);
   col=mix(col,moonColor,moonMask);
 
-  // Nine discrete photospheric apertures close at different scroll thresholds
-  // to form the characteristic Baily's-beads cadence rather than a dotted arc.
+  // Seven irregular mountain-valley apertures cluster around final contact.
+  // Small hard cores and separate soft shoulders keep them photographic.
   float bailyBeads=0.0;
   float bailyHalo=0.0;
-  for(int i=0;i<9;i++){
+  for(int i=0;i<7;i++){
     float fi=float(i);
-    float angle=0.42+fi*0.285;
+    float seed=hash(vec2(fi,4.7));
+    float angle=0.78+fi*0.2+(seed-0.5)*0.036;
     vec2 radial=vec2(cos(angle),sin(angle));
     vec2 tangent=vec2(-radial.y,radial.x);
-    float beadRelief=(noise(vec2(angle*31.0,7.0))-0.5)*0.0065;
-    beadRelief+=(noise(vec2(angle*83.0,19.0))-0.5)*0.0025;
+    float beadRelief=(noise(vec2(angle*31.0,7.0))-0.5)*0.0018;
+    beadRelief+=(noise(vec2(angle*83.0,19.0))-0.5)*0.0007;
     vec2 beadPoint=moonCenter+radial*(moonRadius+beadRelief);
     vec2 q=uv-beadPoint;
-    float seed=hash(vec2(fi,4.7));
-    float width=mix(0.008,0.025,seed);
-    float aperture=exp(-pow(dot(q,tangent)/width,2.0)-pow(dot(q,radial)/0.0062,2.0));
-    float fadeAt=0.16+hash(vec2(fi,9.1))*0.37;
-    float survives=1.0-smoothstep(fadeAt,fadeAt+0.19,uForge);
+    float width=mix(0.0038,0.0092,seed);
+    float aperture=exp(-pow(dot(q,tangent)/width,2.0)
+      -pow(dot(q,radial)/max(0.00145,pixel*1.45),2.0));
+    float fadeAt=0.12+hash(vec2(fi,9.1))*0.4;
+    float survives=1.0-smoothstep(fadeAt,fadeAt+0.15,uForge);
     bailyBeads+=aperture*survives;
-    bailyHalo+=gaussian(length(q),width*3.6)*survives*(0.22+seed*0.2);
+    bailyHalo+=gaussian(length(q),width*2.8)*survives*(0.12+seed*0.11);
   }
   vec3 photosphere=vec3(1.0,0.965,0.88);
-  col+=photosphere*bailyBeads*bailyPhase*(1.4+0.35*uPulse+0.5*uScroll);
-  col+=mix(magenta,photosphere,0.72)*bailyHalo*bailyPhase*0.38;
+  float beadSignal=bailyBeads*bailyPhase;
+  float beadGlow=bailyHalo*bailyPhase;
+  col+=photosphere*beadSignal*(2.15+0.12*uPulse+0.34*uScroll);
+  col+=mix(vec3(1.0,0.42,0.2),photosphere,0.72)*beadGlow*0.3;
 
   // The last aperture becomes the diamond: a clipped white core, warm halo
   // and diffraction spikes on four axes. Scroll velocity gives a brief flash
   // without allowing idle animation to pulse aggressively.
-  float diamondAngle=1.18;
+  float diamondAngle=1.32;
   vec2 diamondPoint=moonCenter+vec2(cos(diamondAngle),sin(diamondAngle))*moonRadius;
   vec2 dq=uv-diamondPoint;
-  float diamondCore=gaussian(length(dq),mix(0.017,0.011,diamondPhase));
-  float diamondHalo=gaussian(length(dq),0.068)+0.34*gaussian(length(dq),0.17);
-  float spikeH=gaussian(abs(dq.y),0.0028)*exp(-abs(dq.x)*12.0);
-  float spikeV=gaussian(abs(dq.x),0.0026)*exp(-abs(dq.y)*10.0);
+  float diamondCore=gaussian(length(dq),mix(0.0105,0.0066,diamondPhase));
+  float diamondHot=gaussian(length(dq),0.023);
+  float diamondHalo=gaussian(length(dq),0.06)+0.2*gaussian(length(dq),0.16);
+  float spikeH=gaussian(abs(dq.y),max(pixel*0.88,0.00056))*exp(-abs(dq.x)*7.6);
+  float spikeV=gaussian(abs(dq.x),max(pixel*0.88,0.00056))*exp(-abs(dq.y)*6.3);
   vec2 diag=vec2((dq.x+dq.y)*0.7071,(dq.x-dq.y)*0.7071);
-  float spikeD=(gaussian(abs(diag.x),0.0032)*exp(-abs(diag.y)*14.0)
-    +gaussian(abs(diag.y),0.0032)*exp(-abs(diag.x)*14.0))*0.45;
-  float flash=1.0+uScroll*0.72+uPulse*0.12;
-  col+=photosphere*diamondCore*diamondPhase*3.1*flash;
-  col+=mix(vec3(1.0,0.48,0.22),vec3(0.64,0.82,1.0),diamondPhase)
+  float spikeD=(gaussian(abs(diag.x),max(pixel*1.25,0.00085))*exp(-abs(diag.y)*10.5)
+    +gaussian(abs(diag.y),max(pixel*1.25,0.00085))*exp(-abs(diag.x)*10.5))*0.22;
+  float flash=1.0+uScroll*0.46+uPulse*0.045;
+  col+=photosphere*(diamondCore*4.5+diamondHot*0.9)*diamondPhase*flash;
+  col+=mix(vec3(1.0,0.56,0.28),vec3(0.62,0.8,1.0),diamondPhase)
     *diamondHalo*diamondPhase*0.62*flash;
-  col+=vec3(0.82,0.92,1.0)*(spikeH+spikeV+spikeD)*diamondPhase*(0.82+uScroll*0.7);
+  col+=vec3(0.84,0.93,1.0)*(spikeH+spikeV+spikeD)*diamondPhase*(0.62+uScroll*0.42);
 
-  // Photographic shoulder, vignette and exposure curve. The fade never drops
-  // the focal limb below readable contrast behind the page typography.
-  float vignette=1.0-smoothstep(0.35,1.35,length(uv*vec2(0.72,1.0)));
-  col*=mix(0.74,1.0,vignette)*(0.82+0.18*uForge)*uGain;
+  // Analytic glow replaces the former multi-resolution bloom chain, preserving
+  // a sharp one-pixel lunar edge while keeping the diamond photographically hot.
+  col*=(0.88+0.12*uForge)*uGain;
   col=1.0-exp(-col*1.14);
-  gl_FragColor=vec4(col,1.0);
+  float lightAlpha=clamp(coronaSignal*2.45+chromaSignal*1.7+beadSignal*2.3
+    +beadGlow*0.62+diamondPhase*(diamondCore*4.5+diamondHot*1.25+diamondHalo*1.05
+    +spikeH*0.42+spikeV*0.42+spikeD*0.3),0.0,0.98);
+  float celestialAlpha=max(moonMask*0.985,lightAlpha);
+  gl_FragColor=vec4(col,celestialAlpha);
 }`;
-
-/* ── final pass: subtle chromatic aberration + film grain ───────────────── */
-const FINAL = {
-  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uAmt: { value: 0.0016 } },
-  vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-  fragmentShader: `
-precision highp float; varying vec2 vUv; uniform sampler2D tDiffuse; uniform float uTime, uAmt;
-float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
-void main(){
-  vec2 d = (vUv-0.5);
-  vec3 c;
-  c.r = texture2D(tDiffuse, vUv + d*uAmt).r;
-  c.g = texture2D(tDiffuse, vUv).g;
-  c.b = texture2D(tDiffuse, vUv - d*uAmt).b;
-  c += (h(vUv*uTime*0.0007) - 0.5) * 0.035;     // minimal film grain
-  gl_FragColor = vec4(c, 1.0);
-}`
-};
 
 export function initAlphardForge() {
   const section = document.getElementById('stardrive');
   const canvas = document.getElementById('alphardForge');
   if (!section || !canvas) return null;
   const stageEl = section.querySelector('.stardrive-stage');
+  const blackHoleStage = document.getElementById('blackhole-stage');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const renderCoordinator = getRenderBudgetCoordinator();
   let renderPolicy = renderCoordinator.getPolicy({ cost: 'high', targetFps: 60 });
@@ -206,7 +211,7 @@ export function initAlphardForge() {
   // ── renderer ──
   let renderer;
   if (!canAcquireWebGLContext('home:alphard-forge')) return null;
-  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' }); }
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, premultipliedAlpha: false, powerPreference: 'high-performance' }); }
   catch (e) { return null; }
   const webglLifecycle = createWebGLContextLifecycle({
     id: 'home:alphard-forge',
@@ -233,7 +238,7 @@ export function initAlphardForge() {
     renderer.forceContextLoss?.();
     return null;
   }
-  renderer.setClearColor(0x010309, 1);
+  renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
   const FOV = 45, Z0 = 150;
@@ -243,43 +248,50 @@ export function initAlphardForge() {
 
   // A single fullscreen surface keeps the lunar edge, corona and diamonds in
   // perfect registration at every aspect ratio and costs one scene draw call.
-  const eclipseUniforms = { uTime: { value: 0 }, uForge: { value: 0 }, uGain: { value: uGain }, uPulse: { value: 0 }, uScroll: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } };
+  const eclipseUniforms = { uForge: { value: 0 }, uGain: { value: uGain }, uPulse: { value: 0 }, uScroll: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } };
   const eclipsePlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),
+    // Blending stays disabled because this is the only draw: writing straight
+    // RGBA into a non-premultiplied transparent canvas avoids a second alpha
+    // multiplication when the browser composites it over #starfield.
     new THREE.ShaderMaterial({ vertexShader: NEB_VERT, fragmentShader: ECLIPSE_FRAG, uniforms: eclipseUniforms, depthTest: false, depthWrite: false, fog: false }));
   eclipsePlane.position.z = -1200;
   camera.add(eclipsePlane);
 
-  // ── post-processing ──
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  // Thresholded bloom is reserved for the photospheric apertures and final
-  // diamond; the dark lunar surface and fine chromosphere stay structured.
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 1.04, 0.82, 0.46);
-  composer.addPass(bloom);
-  const finalPass = new ShaderPass(FINAL); finalPass.renderToScreen = true; composer.addPass(finalPass);
-
   let W = 1, H = 1;
   function size() {
     const r = canvas.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
-    const dpr = renderPolicy.computeDpr(W, H, { minDpr: 0.6, maxDpr: 2 });
+    // A one-draw analytic eclipse can afford full Retina density on the high
+    // tier. Balanced/low tiers still honor the shared thermal pixel budget.
+    const nativeDpr = Math.max(1, window.devicePixelRatio || 1);
+    const dpr = renderPolicy.qualityTier === 'high'
+      ? Math.min(nativeDpr, 2)
+      : renderPolicy.computeDpr(W, H, {
+        minDpr: 1,
+        maxDpr: renderPolicy.qualityTier === 'low' ? 1.35 : 1.7,
+      });
     renderer.setPixelRatio(dpr); renderer.setSize(W, H, false);
-    composer.setPixelRatio(dpr); composer.setSize(W, H);
-    bloom.setSize(W * dpr, H * dpr);
     camera.aspect = W / H; camera.updateProjectionMatrix();
-    eclipseUniforms.uRes.value.set(W, H);
+    eclipseUniforms.uRes.value.set(W * dpr, H * dpr);
     // size the camera-locked eclipse plane to fill the frustum at its depth
     const dist = Z0 - eclipsePlane.position.z; // camera local z = -1200 → dist 1350
     const fh = 2 * Math.tan((FOV * Math.PI / 180) / 2) * dist, fw = fh * camera.aspect;
     eclipsePlane.scale.set(fw, fh, 1);
   }
 
-  // parallax
-  let mx = 0, my = 0, tmx = 0, tmy = 0;
-  function onMove(e) { tmx = (e.clientX / innerWidth - 0.5); tmy = (e.clientY / innerHeight - 0.5); }
-
   // Scroll-linked energy ramp is sampled inside the rAF loop; the scroll
   // handler never performs WebGL work.
   let lastScrollY = window.scrollY || 0, scrollVel = 0;
+  let lastBlackHoleOpacity = -1;
+  function blendSharedUniverse(p) {
+    if (!blackHoleStage) return;
+    // The black hole and eclipse both sit over #starfield. Cross-fading only
+    // the celestial plates preserves one continuous universe without letting
+    // the two high-energy phenomena bleach each other out.
+    const opacity = 1 - smoothstep(0.08, 0.46, p);
+    if (Math.abs(opacity - lastBlackHoleOpacity) < 0.004) return;
+    blackHoleStage.style.opacity = opacity.toFixed(3);
+    lastBlackHoleOpacity = opacity;
+  }
 
   // scroll progress + pin. The pin itself (keeping the stage visually fixed
   // while its 200vh wrapper scrolls past) is handled by a CSS scroll-driven
@@ -318,6 +330,7 @@ export function initAlphardForge() {
   function render(t) {
     const p = progress();
     section.style.setProperty('--forge', p.toFixed(4));
+    blendSharedUniverse(p);
     renderTagline(p);
     const tm = t * 0.001;
     // scroll speed (rAF-sampled delta, lerped) → flare intensity; decays back
@@ -326,15 +339,9 @@ export function initAlphardForge() {
     const rawVel = Math.min(Math.abs(sy - lastScrollY), 80); lastScrollY = sy;
     scrollVel += (rawVel - scrollVel) * 0.15;
     const uScroll = clamp(scrollVel / 26, 0, 1);
-    eclipseUniforms.uTime.value = tm; eclipseUniforms.uForge.value = p; eclipseUniforms.uScroll.value = uScroll;
+    eclipseUniforms.uForge.value = p; eclipseUniforms.uScroll.value = uScroll;
     eclipseUniforms.uPulse.value = 0.5 + 0.5 * Math.sin(tm * (Math.PI * 2 / 7)); // slow atmospheric shimmer
-    finalPass.uniforms.uTime.value = t;
-    // parallax + scroll dolly
-    mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;
-    camera.position.x = mx * 6; camera.position.y = -my * 6;
-    camera.position.z = lerp(Z0, Z0 * 0.62, p);
-    camera.lookAt(0, 0, 0);
-    composer.render();
+    renderer.render(scene, camera);
   }
 
   size();
@@ -349,13 +356,13 @@ export function initAlphardForge() {
       onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
       onDispose() {
         webglLifecycle.dispose();
-        composer.dispose?.();
         disposeThreeScene(scene, renderer);
       },
     });
     return {
       destroy() {
         languageObserver.disconnect();
+        blackHoleStage?.style.removeProperty('opacity');
         reducedSurface.dispose();
       },
     };
@@ -385,7 +392,6 @@ export function initAlphardForge() {
   // those classes at all in that branch.
   const onScroll = () => { if (!running) progress(); };
   if (!cssPin) addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('pointermove', onMove, { passive: true });
   render(performance.now());
   renderSurface = renderCoordinator.register({
     id: 'home:alphard-forge',
@@ -409,7 +415,6 @@ export function initAlphardForge() {
     },
     onDispose() {
       webglLifecycle.dispose();
-      composer.dispose?.();
       disposeThreeScene(scene, renderer);
     },
   });
@@ -418,8 +423,8 @@ export function initAlphardForge() {
     destroy() {
       stop();
       if (!cssPin) removeEventListener('scroll', onScroll);
-      removeEventListener('pointermove', onMove);
       languageObserver.disconnect();
+      blackHoleStage?.style.removeProperty('opacity');
       renderSurface.dispose();
     },
   };

@@ -3358,9 +3358,12 @@ function frame(now){
     ectx.clearRect(0,0,evtCanvas.width,evtCanvas.height);
     const cruise=cruiseModeActive();
     document.body.classList.toggle('combat-mode', !cruise && !!halley && !halley.destroyed);
-    updateHalley(dt);
-    drawHalley();
     if(!cruise){
+      // Cruise is the reading/eclipsing state. Keeping Halley on the global
+      // event canvas here used to spray combat bokeh across Alphard Forge even
+      // though the HUD was hidden, making the corona look low-resolution.
+      updateHalley(dt);
+      drawHalley();
       updateEscorts(dt, now);
       updateWeapons(dt);
       const state=syncCombatState(Date.now());

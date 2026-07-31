@@ -46,6 +46,13 @@ describe('homepage relativistic black hole contract', () => {
     expect(styles).toContain("url('/vendor/black-hole/source-poster.jpg')");
   });
 
+  it('dissolves the black-hole plate into the same fixed universe as the eclipse', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    expect(styles).toContain('fixed #starfield used by Alphard Forge');
+    expect(styles).toContain('radial-gradient(ellipse 58% 50% at 50% 50%');
+    expect(styles).not.toContain('mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.72)');
+  });
+
   it('uses the doubled-size homepage observation plate', () => {
     const source = readFileSync(`${vendorDir}/background.html`, 'utf8');
     expect(source).toContain('target: 1, radius: 18');
