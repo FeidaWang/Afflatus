@@ -34,7 +34,6 @@
       linear-gradient(155deg,#04060a 0%,#070d16 54%,#04060a 100%);
     background-size:173px 173px,241px 241px,307px 307px,100% 100%,100% 100%,100% 100%;
   }
-  #blackhole-gl{position:fixed;inset:0;z-index:1;display:block;pointer-events:none;background:transparent}
   #event-layer{position:fixed;inset:0;z-index:6;pointer-events:none}
 
   .attitudeCanvas{width:100%;height:54px;display:block;border:1px solid rgba(141,180,192,.14);background:rgba(3,5,9,.22)}
@@ -7785,6 +7784,77 @@
 
 @layer components {
   /* U21 Phase 1: ordinary new component styles land here going forward. */
+
+  /* Source-derived relativistic black hole background. The iframe is kept
+     non-interactive and visually isolated; a same-source poster is the only
+     fallback, so none of the observatory application's controls leak into the
+     homepage. The rightward stage preserves the hero's reading lane. */
+  #blackhole-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+    contain: strict;
+  }
+  #blackhole-stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+      linear-gradient(90deg,rgba(4,6,10,.96) 0%,rgba(4,6,10,.72) 34%,rgba(4,6,10,.2) 64%,transparent 82%),
+      linear-gradient(180deg,rgba(4,6,10,.18),transparent 36%,rgba(4,6,10,.12));
+  }
+  .blackhole-poster,
+  #blackhole-gl {
+    position: absolute;
+    top: -3vh;
+    left: 28vw;
+    width: 106vw;
+    height: 106vh;
+    border: 0;
+    pointer-events: none;
+    mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.72) 12%,#000 28%);
+    -webkit-mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.72) 12%,#000 28%);
+  }
+  .blackhole-poster {
+    background: #020303 url('/vendor/black-hole/source-poster.jpg') center / cover no-repeat;
+    opacity: .72;
+    filter: saturate(.78) contrast(1.08) brightness(.58);
+    transition: opacity .8s ease;
+  }
+  #blackhole-gl {
+    display: block;
+    opacity: 0;
+    background: transparent;
+    filter: saturate(.82) contrast(1.08) brightness(.66);
+    transition: opacity .9s ease;
+  }
+  body.blackhole-ready #blackhole-gl { opacity: .9; }
+  body.blackhole-ready .blackhole-poster { opacity: 0; }
+  body.blackhole-failed #blackhole-gl { visibility: hidden; }
+  @media (max-width: 860px) {
+    .blackhole-poster,
+    #blackhole-gl {
+      top: -1vh;
+      left: 20vw;
+      width: 124vw;
+      height: 102vh;
+      mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.8) 8%,#000 23%);
+      -webkit-mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.8) 8%,#000 23%);
+    }
+    #blackhole-stage::after {
+      background:
+        linear-gradient(90deg,rgba(4,6,10,.97) 0%,rgba(4,6,10,.78) 34%,rgba(4,6,10,.36) 68%,transparent 100%),
+        linear-gradient(180deg,rgba(4,6,10,.16),transparent 34%,rgba(4,6,10,.18));
+    }
+    body.blackhole-ready #blackhole-gl { opacity: .78; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #blackhole-gl { display: none; }
+    .blackhole-poster { opacity: .74; transition: none; }
+  }
 
   /* P1-11 component migration 01 — Home brand lockup.
      The 54 historical .brand* rules (194 declarations / 110 priority flags)

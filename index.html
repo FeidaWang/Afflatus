@@ -146,7 +146,17 @@
 <body class="hud-off" data-prev="/games.html" data-next="/arena.html">
 
 <canvas id="starfield"></canvas>
-<canvas id="blackhole-gl" aria-hidden="true"></canvas>
+<div id="blackhole-stage" aria-hidden="true">
+  <div class="blackhole-poster" role="presentation"></div>
+  <iframe
+    id="blackhole-gl"
+    title="Relativistic black hole background"
+    src="/vendor/black-hole/background.html"
+    tabindex="-1"
+    loading="eager"
+    fetchpriority="high"
+  ></iframe>
+</div>
 <canvas id="event-layer"></canvas>
 
 <div class="nuke-warning" id="nukeWarning">CRITICAL: NUCLEAR LAUNCH DETECTED<br>RADIATION HAZARD</div>

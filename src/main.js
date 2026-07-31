@@ -18,10 +18,6 @@ import {
 import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
 import { getLocale, setLocale } from './lib/localeStore.js';
 import { getRenderBudgetCoordinator } from './lib/renderBudgetCoordinator.js';
-import {
-  canAcquireWebGLContext,
-  createWebGLContextLifecycle,
-} from './lib/webglLifecycle.js';
 import { mountTermGlossary } from './lib/termGlossary.js';
 import { createBackgroundScene } from './scene/backgroundScene.js';
 import { createSpriteCraft } from './scene/spriteCraft.js';
@@ -1590,7 +1586,7 @@ function drawShipLiveFeeds(now){
 
 /* ===== STARS & WARP ===== */
 const sky=document.getElementById('starfield');
-const orbitalCanvas=document.getElementById('blackhole-gl');
+const blackHoleFrame=document.getElementById('blackhole-gl');
 let W,H,DPR;
 let warpIntensity=.18, warpTarget=.18;
 const backgroundScene=createBackgroundScene({
@@ -1598,221 +1594,30 @@ const backgroundScene=createBackgroundScene({
   getPointer:()=>({x:mx,y:my}),
   getWarpIntensity:()=>warpIntensity
 });
-const saturnRenderer=createSaturnRenderer(orbitalCanvas);
 
-function createSaturnRenderer(canvas){
-  if(!canvas) return null;
-  const surfaceId='home:saturn-blackhole';
-  if(!canAcquireWebGLContext(surfaceId)) return null;
-  const gl=canvas.getContext('webgl',{
-    alpha:true,
-    antialias:false,
-    depth:false,
-    stencil:false,
-    premultipliedAlpha:false,
-    preserveDrawingBuffer:false,
-    powerPreference:'high-performance'
-  });
-  if(!gl) return null;
-  const vert=`
-    attribute vec2 aPos;
-    void main(){gl_Position=vec4(aPos,0.0,1.0);}
-  `;
-  const frag=`
-    precision highp float;
-    uniform vec2 uResolution;
-    uniform vec2 uCenter;
-    uniform float uTime;
-    uniform float uIntensity;
-    uniform float uEventR;
-    uniform float uReadFade;
-
-    float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
-    float noise(vec2 p){
-      vec2 i=floor(p),f=fract(p);
-      vec2 u=f*f*(3.0-2.0*f);
-      return mix(mix(hash(i),hash(i+vec2(1.0,0.0)),u.x),mix(hash(i+vec2(0.0,1.0)),hash(i+vec2(1.0,1.0)),u.x),u.y);
-    }
-    float fbm(vec2 p){
-      float v=0.0,a=0.5;
-      for(int i=0;i<5;i++){v+=a*noise(p);p*=2.03;a*=0.52;}
-      return v;
-    }
-    mat2 rot(float a){float s=sin(a),c=cos(a);return mat2(c,-s,s,c);}
-
-    void main(){
-      vec2 p=(gl_FragCoord.xy-uCenter)/max(uEventR,1.0);
-      p.x*=1.04;
-      p=rot(uTime*.013)*p;
-      float fade=uReadFade;
-      float r=length(p);
-      float a=atan(p.y,p.x);
-      vec3 color=vec3(0.0);
-      float alpha=0.0;
-
-      float flow=fbm(vec2(a*2.4-uTime*.055,r*9.0+uTime*.026));
-      float micro=fbm(vec2(abs(p.x)*20.0-uTime*.11,p.y*18.0+flow*2.8));
-      float bentY=p.y*3.85 + .10*sin(p.x*4.6 + flow*4.0 - uTime*.17);
-      float radial=smoothstep(1.36,.18,abs(p.x))*smoothstep(.18,.33,r);
-      float disk=exp(-abs(bentY)*10.5)*radial;
-      float lanes=.50+.50*sin(abs(p.x)*74.0 + flow*10.0 - uTime*.58);
-      disk*=.48+.52*lanes;
-      disk*=.72+.28*micro;
-
-      float topArc=exp(-pow((length((p-vec2(0.0,.030))/vec2(.58,.36))-1.0)/.038,2.0))*smoothstep(-.07,.18,p.y);
-      float bottomArc=exp(-pow((length((p-vec2(0.0,-.035))/vec2(.52,.31))-1.0)/.048,2.0))*smoothstep(.12,-.12,p.y)*.52;
-      float photon=exp(-pow((r-.355)/.044,2.0));
-      float breath=.54+.46*sin(uTime*.52);
-      float rimPulse=.72+.28*sin(uTime*.37+flow*2.1);
-      float goldenRim=exp(-pow((r-.362)/.168,2.0))*(.48+.52*breath);
-      float outerHalo=exp(-pow((r-.60)/.30,2.0))*(.12+.34*breath*rimPulse);
-      float lensGlow=exp(-pow((r-.52)/.20,2.0))*.14;
-      float horizon=1.0-smoothstep(.300,.333,r);
-      float shadow=exp(-pow(r/.46,4.0));
-
-      vec3 deep=vec3(.22,.105,.028);
-      vec3 gold=vec3(1.0,.62,.18);
-      vec3 cream=vec3(1.0,.88,.58);
-      vec3 white=vec3(1.0,.97,.82);
-      vec3 diskCol=mix(deep,gold,.56+.32*micro);
-      diskCol=mix(diskCol,cream,smoothstep(.70,1.0,lanes)*.55);
-      color+=diskCol*disk*(.76+uIntensity*.10);
-      color+=white*topArc*.34 + vec3(1.0,.73,.34)*bottomArc*.24;
-      color+=vec3(1.0,.66,.22)*goldenRim*.50 + white*goldenRim*.18*breath + vec3(1.0,.72,.28)*outerHalo*.22;
-      color+=white*photon*.58 + vec3(.90,.58,.25)*lensGlow;
-
-      float sparks=0.0;
-      for(int i=0;i<7;i++){
-        float fi=float(i);
-        float px=fract(flow+fi*.137+uTime*.030)*2.0-1.0;
-        vec2 sp=vec2(px,.030*sin(px*5.0+uTime*.12+fi));
-        sparks+=exp(-pow(length((p-sp)/vec2(.030,.010)),2.0))*.12;
-      }
-      color+=white*sparks*disk;
-
-      color=mix(color,vec3(.001,.0008,.00045),max(horizon,shadow*.44));
-      alpha=max(alpha,disk*.62);
-      alpha=max(alpha,topArc*.28);
-      alpha=max(alpha,bottomArc*.20);
-      alpha=max(alpha,goldenRim*.82);
-      alpha=max(alpha,outerHalo*.42);
-      alpha=max(alpha,photon*.86);
-      alpha=max(alpha,lensGlow*.42);
-      alpha=max(alpha,horizon*.93);
-      alpha=clamp(alpha*fade,0.0,.94);
-      if(alpha<0.005) discard;
-      gl_FragColor=vec4(color,alpha);
-    }
-  `;
-  const compile=(type,source)=>{
-    const shader=gl.createShader(type);
-    gl.shaderSource(shader,source);
-    gl.compileShader(shader);
-    if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS)){
-      console.warn(gl.getShaderInfoLog(shader));
-      return null;
-    }
-    return shader;
-  };
-  let program=null,buffer=null,aPos=-1,loc=null,ready=false,disposed=false,currentDpr=1;
-  function destroyResources(){
-    ready=false;
-    if(buffer) gl.deleteBuffer(buffer);
-    if(program) gl.deleteProgram(program);
-    buffer=null;program=null;loc=null;aPos=-1;
+// The homepage now hosts the source observatory renderer in an isolated
+// document. Only messages from this exact same-origin frame may change the
+// visual state; its poster remains visible if WebGL2 or any lookup asset fails.
+function handleBlackHoleMessage(event){
+  if(!blackHoleFrame||event.origin!==location.origin||event.source!==blackHoleFrame.contentWindow) return;
+  if(event.data?.type==='black-hole-observatory:ready'){
+    document.body.classList.add('blackhole-ready');
+    document.body.classList.remove('blackhole-failed');
   }
-  function buildResources(){
-    destroyResources();
-    const vs=compile(gl.VERTEX_SHADER,vert),fs=compile(gl.FRAGMENT_SHADER,frag);
-    if(!vs||!fs){
-      if(vs) gl.deleteShader(vs);
-      if(fs) gl.deleteShader(fs);
-      return false;
-    }
-    const nextProgram=gl.createProgram();
-    gl.attachShader(nextProgram,vs);gl.attachShader(nextProgram,fs);gl.linkProgram(nextProgram);
-    gl.deleteShader(vs);gl.deleteShader(fs);
-    if(!gl.getProgramParameter(nextProgram,gl.LINK_STATUS)){
-      console.warn(gl.getProgramInfoLog(nextProgram));
-      gl.deleteProgram(nextProgram);
-      return false;
-    }
-    const nextBuffer=gl.createBuffer();
-    if(!nextBuffer){gl.deleteProgram(nextProgram);return false;}
-    program=nextProgram;buffer=nextBuffer;
-    gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
-    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
-    aPos=gl.getAttribLocation(program,'aPos');
-    loc={
-      resolution:gl.getUniformLocation(program,'uResolution'),
-      center:gl.getUniformLocation(program,'uCenter'),
-      time:gl.getUniformLocation(program,'uTime'),
-      intensity:gl.getUniformLocation(program,'uIntensity'),
-      eventR:gl.getUniformLocation(program,'uEventR'),
-      readFade:gl.getUniformLocation(program,'uReadFade')
-    };
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-    ready=true;
-    return true;
+  if(event.data?.type==='black-hole-observatory:error'){
+    document.body.classList.remove('blackhole-ready');
+    document.body.classList.add('blackhole-failed');
   }
-  function resizeSurface(dpr){
-      currentDpr=dpr||1;
-      dpr=currentDpr;
-      if(disposed) return;
-      const w=Math.max(1,Math.floor(innerWidth*dpr));
-      const h=Math.max(1,Math.floor(innerHeight*dpr));
-      if(canvas.width!==w||canvas.height!==h){
-        canvas.width=w;canvas.height=h;
-      }
-      canvas.style.width=innerWidth+'px';
-      canvas.style.height=innerHeight+'px';
-      if(ready) gl.viewport(0,0,w,h);
-  }
-  const webglLifecycle=createWebGLContextLifecycle({
-    id:surfaceId,
-    canvas,
-    onLost(){ready=false;},
-    onRestore(){
-      if(disposed) return;
-      if(buildResources()) resizeSurface(currentDpr);
-    },
-    onFallback(){ready=false;}
-  });
-  if(webglLifecycle.canInitialize) buildResources();
-  else gl.getExtension('WEBGL_lose_context')?.loseContext();
-  return {
-    resize:resizeSurface,
-    draw(time,intensity){
-      if(!ready||disposed||!program||!buffer||!loc) return;
-      const dpr=canvas.width/Math.max(1,innerWidth);
-      const compact=innerWidth<880;
-      const readFade=clamp(1-Math.max(0,scrollY-innerHeight*.42)/(innerHeight*.85),.16,1);
-      const cx=innerWidth*(compact?0.82:0.84);
-      const cy=innerHeight*(compact?0.28:0.33);
-      const eventR=Math.min(compact?330:540,Math.max(compact?215:370,Math.min(innerWidth,innerHeight)*.46))*(compact?0.98+intensity*.02:1.0+intensity*.035);
-      gl.clearColor(0,0,0,0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.useProgram(program);
-      gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
-      gl.enableVertexAttribArray(aPos);
-      gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,0,0);
-      gl.uniform2f(loc.resolution,canvas.width,canvas.height);
-      gl.uniform2f(loc.center,cx*dpr,canvas.height-cy*dpr);
-      gl.uniform1f(loc.time,time);
-      gl.uniform1f(loc.intensity,intensity);
-      gl.uniform1f(loc.eventR,eventR*dpr);
-      gl.uniform1f(loc.readFade,readFade);
-      gl.drawArrays(gl.TRIANGLES,0,6);
-    },
-    destroy(){
-      if(disposed) return;
-      disposed=true;
-      destroyResources();
-      webglLifecycle.dispose();
-    }
-  };
 }
+addEventListener('message',handleBlackHoleMessage);
+function probeBlackHoleFrame(){
+  blackHoleFrame?.contentWindow?.postMessage(
+    {type:'black-hole-observatory:probe'},
+    location.origin
+  );
+}
+blackHoleFrame?.addEventListener('load',probeBlackHoleFrame);
+probeBlackHoleFrame();
 
 
 function resize(){
@@ -1820,7 +1625,6 @@ function resize(){
   DPR=backgroundScene.dpr;
   W=backgroundScene.width;
   H=backgroundScene.height;
-  saturnRenderer?.resize(DPR);
 }
 /* ===== NEW COMET, WEAPONS & FX ===== */
 const evtCanvas=document.getElementById('event-layer');
@@ -3550,7 +3354,6 @@ function frame(now){
     // stargate-jump snap. Still lerped (not instant) so it doesn't pop.
     warpIntensity=lerp(warpIntensity,warpTarget,.16);
     backgroundScene.draw(now);
-    saturnRenderer?.draw(now*.001,warpIntensity);
     
     ectx.clearRect(0,0,evtCanvas.width,evtCanvas.height);
     const cruise=cruiseModeActive();
