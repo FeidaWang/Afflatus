@@ -98,7 +98,7 @@ function getFighter3D(){
 }
 
 // ── Top-down WebGL combat view (U23 M1, 2026-07-13: now the DEFAULT) ──
-// Renders the 2.5D god's-eye scene (src/scene/topdownCombat.js) offscreen and
+// Renders the multi-camera CIC sensor scene (src/scene/topdownCombat.js) offscreen and
 // blits it into #pilotFeed for the main combat/standby modes. ON by default;
 // opt out with ?combatview=2d (persists), re-enable with ?combatview=topdown.
 // Falls back to the existing 2D cockpit if WebGL/the module is unavailable.
@@ -488,6 +488,18 @@ function updateCombatModule(state=syncCombatState(Date.now())){
       ? `${currentLang==='zh'?'目标解算':'SOLUTION'} ${state.target.sizeClass.toUpperCase()} · ${state.solution.valid?`${state.solution.interceptMs}ms / ${state.solution.lockQuality}%`:(currentLang==='zh'?'超出包线':'OUT OF ENVELOPE')}`
       : idle;
   }
+  const instrumentValues={
+    cicHeading:Number.isFinite(state.telemetry.headingDeg)?`${Math.round(state.telemetry.headingDeg).toString().padStart(3,'0')}°`:'—',
+    cicVelocity:Number.isFinite(state.telemetry.speedKms)?`${state.telemetry.speedKms.toFixed(1)} km/s`:'—',
+    cicGLoad:Number.isFinite(state.telemetry.gLoad)?`${state.telemetry.gLoad.toFixed(1)} G`:'—',
+    cicRange:Number.isFinite(state.solution.rangePx)?`${Math.round(state.solution.rangePx)} VU`:'—',
+    cicIntercept:Number.isFinite(state.solution.interceptMs)?`${state.solution.interceptMs} ms`:'—',
+    cicLockPct:`${Math.round(state.solution.lockQuality||0)}%`,
+  };
+  Object.entries(instrumentValues).forEach(([id,value])=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=value;
+  });
   document.querySelectorAll('[data-cic-weapon]').forEach(btn=>{
     const w=btn.dataset.weapon;
     const ready=weaponReady(w);
@@ -1651,6 +1663,7 @@ function combatEventText(event){
     'target:destroyed':zh?`目标摧毁 · 击毁 ${event.kills||0}`:`TARGET DESTROYED · KILLS ${event.kills||0}`,
     'flight:launch':zh?'舰载机弹射起飞':'AIR WING LAUNCH',
     'flight:landing':zh?'舰载机进入回收航线':'AIR WING RECOVERY',
+    'fleet:damage':zh?`近爆冲击 · ${event.count||1} 架机体受损`:`NEAR-BLAST · ${event.count||1} AIRFRAME DAMAGED`,
     'system:warning':String(event.message||'SYSTEM WARNING'),
   };
   return copy[event.type]||'';
@@ -1662,7 +1675,7 @@ function publishCombatEvents(state){
     combatFeedEventId=event.id;
     const text=combatEventText(event);
     if(!text) continue;
-    const severity=event.type==='system:warning'?'critical':event.type==='target:destroyed'?'warning':'info';
+    const severity=(event.type==='system:warning'||event.type==='fleet:damage')?'critical':event.type==='target:destroyed'?'warning':'info';
     pushBattleToast(text,severity);
     logBattle(text);
   }
@@ -1998,6 +2011,7 @@ function createExplosion(x, y, isGiant, isNuke=false) {
   });
   if(shockCount){
     startService('repair',isNuke?18000:12000);
+    emitCombatEvent('fleet:damage',{count:shockCount,severity:isNuke?'critical':'warning'});
     pushBattleToast(currentLang==='zh'?`近爆冲击 · ${shockCount} 架舰载机受损`:`NEAR-BLAST SHOCK · ${shockCount} AIRFRAME(S) DAMAGED`);
   }
   document.body.classList.add('shake');
@@ -3201,8 +3215,9 @@ function drawPilotFeed(now,state=combatSnapshot){
     if(td){
       td.resize(w,h);
       td.renderOnce(now,state);
+      let diagnostics=null;
       if(typeof td.getDiagnostics==='function'){
-        const diagnostics=td.getDiagnostics();
+        diagnostics=td.getDiagnostics();
         pilotCanvas.dataset.shipModel=diagnostics.shipModelStatus;
         pilotCanvas.dataset.cameraShot=diagnostics.cameraShot;
       }
@@ -3211,9 +3226,19 @@ function drawPilotFeed(now,state=combatSnapshot){
       if(j) ctx.translate(rand(-j,j),rand(-j,j));
       ctx.drawImage(topdownCanvas,0,0,w,h);
       ctx.restore();
-      const hmdLabel=mode==='launch'?(currentLang==='zh'?'弹射起飞 · 甲板机位':'LAUNCH · DECK CAM')
+      const shot=diagnostics?.cameraShot||'';
+      const hmdLabel=shot==='pilotLaunch'?(currentLang==='zh'?'LANCER-01 · 驾驶员视角 · 加力爬升':'LANCER-01 · PILOT POV · BOOST CLIMB')
+        :shot==='chaseLaunch'?(currentLang==='zh'?'舰载机尾追 · 加速离舰':'AIR WING · BOOST CHASE')
+        :shot==='commandChase'?(currentLang==='zh'?'VANGUARD · 舰外战术追踪':'VANGUARD · COMMAND CHASE')
+        :shot==='missileTail'?(currentLang==='zh'?'导弹尾舱 · 数据链制导':'MISSILE TAIL · DATALINK GUIDANCE')
+        :shot==='ciwsTurret'?(currentLang==='zh'?'近防炮塔 · 解算射界':'CIWS TURRET · FIRING SOLUTION')
+        :shot==='mainGunAxis'?(currentLang==='zh'?'脊柱主炮 · 轴线摄影机':'SPINAL GUN · AXIS CAMERA')
+        :shot==='impactOrbit'?(currentLang==='zh'?'命中确认 · 目标环绕':'IMPACT CONFIRMED · TARGET ORBIT')
+        :mode==='launch'?(currentLang==='zh'?'弹射起飞 · 甲板机位':'LAUNCH · DECK CAM')
         :mode==='landing'?(currentLang==='zh'?'进近回收 · 塔台机位':'RECOVERY · TOWER CAM')
         :(currentLang==='zh'?'舰桥战术态势 · 传感器融合':'CIC · SENSOR PICTURE');
+      const cameraLabel=document.getElementById('cicCameraLabel');
+      if(cameraLabel) cameraLabel.textContent=hmdLabel;
       if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
       else {
         // The Three.js sensor picture is already the background. Drawing the

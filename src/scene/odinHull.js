@@ -1,275 +1,251 @@
 /**
- * Odin-class hull layout — shared procedural geometry for the "reference
- * rebuild" capital ship silhouette (V15, ROADMAP §4): a slender elongated
- * blade-bow battlecruiser, not the earlier fighter-scale wedge-with-wings
- * Enforcer. Reference features (extracted from the user's Blender screenshot,
- * see ROADMAP §4 V15):
- *   - length:height ratio ≈ 5.5:1
- *   - blade bow occupies ~37% of total length, tapering to a point
- *   - midship: stepped superstructure + bridge tower + antenna mast cluster
- *   - stern: dense thruster cluster + outward radiator/truss booms
- *   - dorsal turret row (spine, midship→stern)
- *   - belly weapon pods with recessed gun ports
- *   - greeble density gradient: stern > midship > bow (bow stays clean so the
- *     blade silhouette reads)
+ * AFFLATUS VANGUARD — shared, procedural hard-surface capital ship.
  *
- * This module is intentionally DOM/WebGL-free — it never creates a
- * THREE.Group, Mesh, or texture itself. It only calls the `add(geo, mat, t,
- * r, s)` callback the CALLER supplies, so the exact same shape can be
- * consumed two different ways (ROADMAP §4: "同一几何体喂 capitalShip3D 的侧
- * 视/尾视，一份资产两处用"):
- *   - capitalShip3D.js: `add` creates a plain PBR THREE.Mesh
- *   - shipHologram.js:  `add` creates a Mesh + edge-wireframe overlay
- * Being pure/DOM-free also means this file's proportions can be unit tested
- * headlessly (see tests/odinHull.test.js) — the one part of a 3D-visual
- * feature this project's sandbox CAN verify without a real renderer.
+ * The previous Odin mesh was a long stack of boxes with a needle nose.  This
+ * rebuild uses a low, broad lifting-body silhouette: a continuous faceted
+ * pressure hull, structural shoulder plates, a recessed dorsal service trench,
+ * paired drive nacelles and a compact bridge/canopy.  It is deliberately an
+ * original Afflatus design; the supplied space-sim references inform its
+ * material hierarchy and readable plan-view proportions, not its exact shape.
  *
- *   const info = createOdinHull(THREE, { add, mats, detail: 'full' });
- *   // info = { length, height, bowLen, engineMounts, muzzleAnchor, ... }
- *
- * Forward = +Z (matches the existing capitalShip3D.js / shipHologram.js /
- * nighthawk.js convention).
- *
- * mats: { hull, arm, dark, trim, glass, red, blue } — caller-owned materials
- * (colours/PBR params are the caller's concern; this file only decides shape
- * and layout).
+ * Forward is +Z.  Callers own materials and the `add` function, so the same
+ * geometry feeds the live PBR model, the hologram and the generated GLB.
  */
 
-// A continuous lofted hull body (diamond cross-section per "station", quads
-// connecting consecutive rings, a point-cap at the bow, a flat cap at the
-// stern) — this replaces what used to be three separate boxes/cone bolted
-// together with visible seams ("toy block" look the user's screenshot
-// flagged). One smooth tapering skin reads as a real hull silhouette instead
-// of stacked primitives; turrets/masts/fins/pods/greeble still attach on top
-// of it as discrete accents, same as a real ship model would layer detail
-// onto a continuous base mesh.
-//
-// Winding/normal direction was verified numerically in Node (not just
-// assumed) before shipping: sampled every side vertex's outward radial dot
-// product (all positive) and the stern cap ring's average normal.z (negative
-// = facing aft/outward), see the corresponding regression test.
-function buildHullLoftGeometry(THREE, stations) {
-  const ring = (halfW, halfH, yCenter, z) => ([
-    [0, yCenter + halfH, z], [halfW, yCenter, z], [0, yCenter - halfH, z], [-halfW, yCenter, z],
-  ]);
-  const rings = stations.map(s => ring(s.halfW, s.halfH, s.yCenter || 0, s.z));
-  const pos = [];
-  const push = p => pos.push(p[0], p[1], p[2]);
-  for (let i = 0; i < rings.length - 1; i++) {
-    const a = rings[i], b = rings[i + 1];
-    for (let k = 0; k < 4; k++) {
-      const k2 = (k + 1) % 4;
-      push(a[k]); push(b[k2]); push(a[k2]);
-      push(a[k]); push(b[k]); push(b[k2]);
-    }
+export function buildPrismGeometry(THREE, points, bottomY, topY) {
+  const vertices = [];
+  const push = (x, y, z) => vertices.push(x, y, z);
+  const n = points.length;
+  // top / bottom fans. Winding is explicit so exterior normals remain stable.
+  for (let i = 1; i < n - 1; i += 1) {
+    push(points[0][0], topY, points[0][1]);
+    push(points[i][0], topY, points[i][1]);
+    push(points[i + 1][0], topY, points[i + 1][1]);
+    push(points[0][0], bottomY, points[0][1]);
+    push(points[i + 1][0], bottomY, points[i + 1][1]);
+    push(points[i][0], bottomY, points[i][1]);
   }
-  // stern cap (closes the aft-most ring so the hull doesn't read as hollow)
-  const first = rings[0], center = [0, stations[0].yCenter || 0, stations[0].z];
-  for (let k = 0; k < 4; k++) { const k2 = (k + 1) % 4; push(center); push(first[k]); push(first[k2]); }
+  for (let i = 0; i < n; i += 1) {
+    const j = (i + 1) % n;
+    const a = points[i], b = points[j];
+    push(a[0], bottomY, a[1]); push(b[0], topY, b[1]); push(a[0], topY, a[1]);
+    push(a[0], bottomY, a[1]); push(b[0], bottomY, b[1]); push(b[0], topY, b[1]);
+  }
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
   geo.computeVertexNormals();
   return geo;
+}
+
+function buildLiftingBodyGeometry(THREE, stations) {
+  const ring = ({ halfW, topY, bottomY, z }) => ([
+    [0, topY + 0.11, z],
+    [halfW * 0.58, topY, z],
+    [halfW, topY * 0.24, z],
+    [halfW * 0.76, bottomY, z],
+    [0, bottomY - 0.08, z],
+    [-halfW * 0.76, bottomY, z],
+    [-halfW, topY * 0.24, z],
+    [-halfW * 0.58, topY, z],
+  ]);
+  const rings = stations.map(ring);
+  const vertices = [];
+  const push = (p) => vertices.push(p[0], p[1], p[2]);
+  for (let i = 0; i < rings.length - 1; i += 1) {
+    const a = rings[i], b = rings[i + 1];
+    for (let k = 0; k < a.length; k += 1) {
+      const j = (k + 1) % a.length;
+      push(a[k]); push(b[j]); push(a[j]);
+      push(a[k]); push(b[k]); push(b[j]);
+    }
+  }
+  // Close aft end; nose station is nearly a point and closes itself visually.
+  const aft = rings[0];
+  const center = [0, (stations[0].topY + stations[0].bottomY) * 0.5, stations[0].z];
+  for (let i = 0; i < aft.length; i += 1) {
+    push(center); push(aft[i]); push(aft[(i + 1) % aft.length]);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geo.computeVertexNormals();
+  return geo;
+}
+
+function seeded(index) {
+  const x = Math.sin(index * 91.733 + 17.31) * 43758.5453;
+  return x - Math.floor(x);
 }
 
 export function createOdinHull(THREE, { add, mats, detail = 'full' }) {
   const full = detail === 'full';
   const M = mats;
+  const part = (name, geo, mat, t, r, s) => {
+    const mesh = add(geo, mat, t, r, s);
+    if (mesh) mesh.name = name;
+    return mesh;
+  };
 
-  // ---- proportions ----------------------------------------------------
-  const NOSE = 5.4, STERN = -4.6;                 // total length 10.0
-  const LEN = NOSE - STERN;                       // 10.0
-  const HEIGHT = LEN / 5.5;                       // ≈1.818 (the reference ratio)
-  const BOW_LEN = LEN * 0.37;                     // ≈3.7
-  const BOW_ROOT = NOSE - BOW_LEN;                // ≈1.7
-  const STERN_ROOT = STERN + 3.2;                 // stern block starts here (≈-1.4)
+  const STERN = -5.25;
+  const NOSE = 6.85;
+  const LEN = NOSE - STERN;
+  const HEIGHT = 1.55;
+  const BOW_ROOT = 1.75;
+  const BOW_LEN = NOSE - BOW_ROOT;
 
-  // ===== continuous lofted hull skin: stern → stern-root → midship → =====
-  // bow-root → nose-point, ONE smooth tapering body (replaces three separate
-  // primitives — cone + midship box + engine-deck box — that used to read as
-  // disconnected stacked blocks with visible seams between them). Station
-  // half-width/half-height values match the accent boxes still attached at
-  // each of these z-positions below, so the loft and the accents line up.
-  const sternDeckW = 2.3, sternDeckH = HEIGHT * 0.5;
-  const midW = 2.5, midH = HEIGHT * 0.32;
-  const bowRootW = 1.8, bowRootH = HEIGHT * 0.24; // matches the old bow-cone base proportions
-  add(buildHullLoftGeometry(THREE, [
-    { z: STERN, halfW: sternDeckW / 2, halfH: sternDeckH / 2 },
-    { z: STERN + 0.6, halfW: sternDeckW / 2, halfH: sternDeckH / 2 },     // keep the stern block's cross-section for a bit (engine deck footprint)
-    { z: STERN_ROOT, halfW: midW / 2, halfH: midH / 2 },                  // widen into the midship hull
-    { z: BOW_ROOT, halfW: bowRootW / 2, halfH: bowRootH / 2 },            // narrow into the blade root
-    { z: NOSE, halfW: 0.015, halfH: 0.015 },                              // taper to a point
-  ]), M.hull, [0, 0, 0]);
-  // ===== layered/overlapping armor collar at the bow-to-midship joint =====
-  // (reference breakdown, category 1 "Layered Hull Construction": overlapping
-  // armor plates at the narrow-bow-to-wider-midship transition give a
-  // reinforced-depth read instead of one smooth uninterrupted taper). Two
-  // stacked plates straddling BOW_ROOT, each proud of the loft surface there.
-  add(new THREE.BoxGeometry(midW * 0.62, midH * 0.72, 0.3), M.arm, [0, 0, BOW_ROOT + 0.08]);
-  add(new THREE.BoxGeometry(midW * 0.72, midH * 0.52, 0.16), M.trim, [0, 0, BOW_ROOT - 0.14]);
-  add(new THREE.BoxGeometry(1.5, HEIGHT * 0.13, BOW_LEN * 0.5), M.arm, [0, HEIGHT * 0.07, BOW_ROOT + BOW_LEN * 0.28]);
-  for (let i = 0; i < 4; i++) add(new THREE.BoxGeometry(1.3 - i * 0.24, 0.03, 0.14), M.trim, [0, HEIGHT * 0.1, NOSE - 0.5 - i * (BOW_LEN * 0.2)]); // bow panel seams — kept in 'wire' too now the hull itself isn't a disconnected-boxes mess anymore, these read as detail rather than clutter
-  // twin light rail cannons flush along the blade's upper edge (bow-forward fire)
-  for (const bx of [-0.32, 0.32]) add(new THREE.CylinderGeometry(0.045, 0.06, BOW_LEN * 0.55, 10), M.trim, [bx, HEIGHT * 0.09, BOW_ROOT + BOW_LEN * 0.42], [Math.PI / 2, 0, 0]);
-
-  // ===== midship: stepped superstructure + bridge + masts (hull skin is =
-  // now the continuous loft above; only accents/greeble attach here) =====
-  const midMid = (BOW_ROOT + STERN_ROOT) / 2, midLen = BOW_ROOT - STERN_ROOT;
-  add(new THREE.BoxGeometry(1.9, HEIGHT * 0.14, midLen * 0.94), M.arm, [0, -HEIGHT * 0.22, midMid]); // belly armour skirt
-  // stepped superstructure tiers (rise toward the stern side of midship, bridge at the top)
-  const tierZ = STERN_ROOT + midLen * 0.32;
-  add(new THREE.BoxGeometry(1.5, HEIGHT * 0.2, midLen * 0.5), M.arm, [0, HEIGHT * 0.26, tierZ]);
-  add(new THREE.BoxGeometry(1.1, HEIGHT * 0.16, midLen * 0.34), M.hull, [0, HEIGHT * 0.46, tierZ]);
-  add(new THREE.BoxGeometry(0.74, HEIGHT * 0.14, midLen * 0.22), M.trim, [0, HEIGHT * 0.62, tierZ]);          // bridge tower
-  add(new THREE.BoxGeometry(0.46, HEIGHT * 0.1, midLen * 0.14), M.glass, [0, HEIGHT * 0.75, tierZ + midLen * 0.05]); // bridge glass
-  for (let i = 0; i < 3; i++) add(new THREE.BoxGeometry(1.94, 0.03, 0.24), M.trim, [0, HEIGHT * 0.16, BOW_ROOT - 0.4 - i * 0.55]); // hull panel seams
-
-  // antenna mast cluster (several thin rods at varied angles off the bridge top)
-  // mastBaseY is set flush against the bridge-glass tier's top face (computed
-  // from the SAME numbers used to place that tier, so it can't drift into a
-  // floating gap the way a separately-guessed constant could).
-  const bridgeGlassTop = HEIGHT * 0.75 + (HEIGHT * 0.1) / 2;
-  const mastBaseY = bridgeGlassTop - 0.02, mastBaseZ = tierZ; // slight negative overlap = flush, not floating
-  const MASTS_ALL = [
-    { len: 1.0, rx: 0.06, rz: 0.0, dx: 0, dz: 0 },
-    { len: 0.72, rx: 0.5, rz: 0.22, dx: -0.16, dz: -0.12 },
-    { len: 0.6, rx: -0.4, rz: -0.3, dx: 0.18, dz: -0.06 },
-    { len: 0.85, rx: 0.18, rz: -0.5, dx: -0.1, dz: 0.18 },
+  const stations = [
+    { z: STERN, halfW: 3.15, topY: 0.54, bottomY: -0.58 },
+    { z: -4.35, halfW: 4.15, topY: 0.58, bottomY: -0.6 },
+    { z: -1.8, halfW: 4.0, topY: 0.54, bottomY: -0.53 },
+    { z: 1.0, halfW: 3.05, topY: 0.44, bottomY: -0.44 },
+    { z: 3.7, halfW: 1.45, topY: 0.28, bottomY: -0.29 },
+    { z: 5.7, halfW: 0.46, topY: 0.15, bottomY: -0.17 },
+    { z: NOSE, halfW: 0.025, topY: 0.025, bottomY: -0.025 },
   ];
-  const MASTS = MASTS_ALL; // kept in both detail levels (structured accents, not random clutter)
-  const mastTips = [];
-  for (const mmast of MASTS) {
-    add(new THREE.CylinderGeometry(0.012, 0.02, mmast.len, 6), M.trim, [mmast.dx, mastBaseY + mmast.len / 2, mastBaseZ + mmast.dz], [mmast.rx, 0, mmast.rz]);
-    const tipY = mastBaseY + mmast.len, tx = mmast.dx + Math.sin(mmast.rz) * mmast.len, tz = mastBaseZ + mmast.dz - Math.sin(mmast.rx) * mmast.len;
-    add(new THREE.SphereGeometry(0.026, 6, 5), M.red, [tx, tipY, tz]);
-    mastTips.push({ x: tx, y: tipY, z: tz });
+  part('PressureHull', buildLiftingBodyGeometry(THREE, stations), M.hull, [0, 0, 0]);
+
+  // Overlapping shoulder armour: large quiet plates establish scale; smaller
+  // recesses and rails break them up without turning the silhouette noisy.
+  for (const side of [-1, 1]) {
+    const shoulder = side < 0
+      ? [[-3.82, -4.0], [-1.12, -3.92], [-0.74, 1.62], [-2.7, 0.86]]
+      : [[1.12, -3.92], [3.82, -4.0], [2.7, 0.86], [0.74, 1.62]];
+    part(`ShoulderArmor_${side < 0 ? 'Port' : 'Starboard'}`, buildPrismGeometry(THREE, shoulder, 0.43, 0.63), M.arm);
+    const outer = side < 0
+      ? [[-4.05, -3.76], [-3.16, -3.8], [-2.58, 0.45], [-3.02, -0.1]]
+      : [[3.16, -3.8], [4.05, -3.76], [3.02, -0.1], [2.58, 0.45]];
+    part(`OuterArmor_${side}`, buildPrismGeometry(THREE, outer, 0.26, 0.49), M.dark);
+    const forward = side < 0
+      ? [[-2.55, 0.72], [-0.7, 1.46], [-0.35, 4.55], [-1.18, 3.3]]
+      : [[0.7, 1.46], [2.55, 0.72], [1.18, 3.3], [0.35, 4.55]];
+    part(`ForwardArmor_${side}`, buildPrismGeometry(THREE, forward, 0.31, 0.5), M.arm);
+    // recessed VLS / heat exchanger banks
+    for (let i = 0; i < 4; i += 1) {
+      const z = -2.9 + i * 0.74;
+      part(`Bay_${side}_${i}`, new THREE.BoxGeometry(0.52, 0.06, 0.42), M.dark, [side * (2.15 + i * 0.08), 0.64, z], [0, -side * 0.04, 0]);
+      part(`BayRim_${side}_${i}`, new THREE.BoxGeometry(0.62, 0.035, 0.52), M.trim, [side * (2.15 + i * 0.08), 0.625, z], [0, -side * 0.04, 0]);
+    }
+    // wing-tip threat receiver / stabiliser
+    part(`Winglet_${side}`, new THREE.BoxGeometry(0.18, 1.28, 1.72), M.arm, [side * 3.82, 0.82, -2.65], [0.08, 0, side * 0.2]);
+    part(`WingtipSensor_${side}`, new THREE.BoxGeometry(0.11, 0.18, 0.82), M.blue, [side * 3.96, 1.2, -2.58], [0.08, 0, side * 0.2]);
   }
 
-  // ===== dorsal turret row (spine, midship → stern) — kept in both detail ===
-  // levels; now that the hull itself is a continuous loft (not disconnected
-  // boxes), a row of small turrets reads as intentional detail, not clutter.
+  // The recessed dorsal trench is a real negative level between raised rails.
+  part('ServiceTrench', new THREE.BoxGeometry(1.12, 0.06, 6.8), M.dark, [0, 0.56, -0.78]);
+  for (const x of [-0.64, 0.64]) part(`TrenchRail_${x}`, new THREE.BoxGeometry(0.1, 0.18, 6.9), M.trim, [x, 0.64, -0.78]);
+  for (let i = 0; i < 16; i += 1) {
+    const z = -3.75 + i * 0.42;
+    const x = (seeded(i) - 0.5) * 0.72;
+    part(`TrenchMachine_${i}`, new THREE.BoxGeometry(0.09 + seeded(i + 3) * 0.12, 0.08 + seeded(i + 8) * 0.1, 0.08 + seeded(i + 11) * 0.16), i % 3 ? M.trim : M.dark, [x, 0.68, z]);
+  }
+
+  // Compact command citadel/canopy.  Its wedge is set into armour rather than
+  // sitting on the hull like a separate toy canopy.
+  part('CitadelBase', buildPrismGeometry(THREE, [[-1.0, -2.55], [1.0, -2.55], [0.76, 0.2], [-0.76, 0.2]], 0.55, 0.84), M.arm);
+  part('BridgeCanopy', buildPrismGeometry(THREE, [[-0.56, -1.72], [0.56, -1.72], [0.4, -0.08], [-0.4, -0.08]], 0.83, 1.1), M.glass);
+  part('BridgeBrow', new THREE.BoxGeometry(1.35, 0.13, 0.32), M.trim, [0, 1.03, -1.6], [-0.1, 0, 0]);
+  part('SensorSpine', new THREE.BoxGeometry(0.34, 0.34, 2.55), M.dark, [0, 0.88, -3.12]);
+  part('DorsalArray', new THREE.CylinderGeometry(0.22, 0.31, 0.26, 10), M.trim, [0, 1.08, -3.35]);
+  part('DorsalArrayGlow', new THREE.TorusGeometry(0.24, 0.035, 6, 18), M.blue, [0, 1.22, -3.35], [Math.PI / 2, 0, 0]);
+
+  // Forward spinal gun and paired close-in batteries.
+  const muzzleAnchor = { x: 0, y: 0.06, z: NOSE + 0.18 };
+  part('MainGunChannel', new THREE.BoxGeometry(0.46, 0.2, 4.35), M.dark, [0, 0.05, 4.28]);
+  part('MainGunEmitter', new THREE.CylinderGeometry(0.09, 0.13, 2.4, 12), M.trim, [0, 0.05, 5.56], [Math.PI / 2, 0, 0]);
+  for (let i = 0; i < 4; i += 1) part(`Coil_${i}`, new THREE.TorusGeometry(0.18, 0.027, 6, 14), i === 3 ? M.blue : M.trim, [0, 0.05, 4.58 + i * 0.5]);
+
   const turretMounts = [];
-  const TURRET_N = 5, turretZ0 = BOW_ROOT - 0.2, turretZ1 = STERN_ROOT + 0.3;
-  for (let i = 0; i < TURRET_N; i++) {
-    const z = turretZ0 + (turretZ1 - turretZ0) * (i / (TURRET_N - 1));
-    const y = HEIGHT * 0.18; // verified flush against the midship hull top (HEIGHT*0.16): turret base sits 0.044 below it, no gap
-    add(new THREE.BoxGeometry(0.34, 0.17, 0.34), M.dark, [0, y, z]);
-    // twin barrels, not one — reference category 4 ("clear line of heavy
-    // MULTI-BARREL cannon turrets along the upper dorsal ridge") explicitly
-    // calls out multi-barrel, a single-cylinder turret undersells the
-    // "heavy battery" read.
-    for (const bx of [-0.075, 0.075]) add(new THREE.CylinderGeometry(0.026, 0.034, 0.36, 8), M.trim, [bx, y + 0.02, z + 0.2], [Math.PI / 2, 0, 0]);
-    turretMounts.push({ x: 0, y, z });
-  }
-
-  // ===== lateral hull "modular bay" row — an explicit reference callout =====
-  // (category 2, "Mid-Section Modular Bays"): a repeating row of reinforced
-  // structural modules on the hull FLANKS (missile silo / hangar bay / shield
-  // generator read), described as a scale/detail "visual anchor" distinct
-  // from the dorsal turret row or belly pods — this project had neither a
-  // side-mounted accent row nor lateral weapons before this pass.
-  const sideBayMounts = [];
-  const BAY_N = 4, bayZ0 = STERN_ROOT + midLen * 0.15, bayZ1 = BOW_ROOT - midLen * 0.12;
-  for (const sx of [-1, 1]) {
-    for (let i = 0; i < BAY_N; i++) {
-      const z = bayZ0 + (bayZ1 - bayZ0) * (i / (BAY_N - 1));
-      add(new THREE.BoxGeometry(0.1, 0.34, 0.4), M.trim, [sx * 1.2, -0.02, z]);   // raised frame/rim, proud of the hull surface
-      add(new THREE.BoxGeometry(0.06, 0.26, 0.3), M.dark, [sx * 1.16, -0.02, z]); // recessed bay panel (silo/bay "window")
-      for (const gy of [-0.08, 0.08]) add(new THREE.BoxGeometry(0.03, 0.06, 0.06), M.glass, [sx * 1.23, -0.02 + gy, z]); // twin indicator lights
-      sideBayMounts.push({ x: sx * 1.2, y: -0.02, z, side: sx });
-    }
-  }
-
-  // ===== lateral point-defense turrets — reference category 4 explicitly ===
-  // calls for defenses on BOTH ventral (existing belly pods) AND lateral
-  // surfaces, "tactically balanced/functional distribution", not just top+bottom.
   const lateralTurretMounts = [];
-  const LAT_N = 2;
-  for (const sx of [-1, 1]) {
-    for (let i = 0; i < LAT_N; i++) {
-      const z = STERN_ROOT + midLen * (0.24 + i * 0.5);
-      const lx = sx * 1.18, ly = HEIGHT * 0.05;
-      add(new THREE.BoxGeometry(0.2, 0.15, 0.2), M.dark, [lx, ly, z]);
-      add(new THREE.CylinderGeometry(0.024, 0.03, 0.24, 8), M.trim, [lx + sx * 0.12, ly, z], [0, 0, Math.PI / 2]);
-      lateralTurretMounts.push({ x: lx, y: ly, z, side: sx });
+  for (const side of [-1, 1]) {
+    for (let i = 0; i < 3; i += 1) {
+      const x = side * (1.02 + i * 0.43);
+      const z = 2.55 - i * 1.55;
+      part(`PDTurret_${side}_${i}`, new THREE.CylinderGeometry(0.18, 0.24, 0.18, 8), M.dark, [x, 0.63, z]);
+      for (const dx of [-0.055, 0.055]) part(`PDBarrel_${side}_${i}_${dx}`, new THREE.CylinderGeometry(0.025, 0.035, 0.64, 8), M.trim, [x + dx, 0.66, z + 0.36], [Math.PI / 2, 0, 0]);
+      const mount = { x, y: 0.63, z, side };
+      turretMounts.push(mount);
+      lateralTurretMounts.push(mount);
     }
   }
 
-  // ===== belly weapon pods with recessed gun ports (kept in both levels) ==
-  const bellyPodMounts = [];
-  for (const sx of [-1, 1]) {
-    const px = sx * 0.85, py = -HEIGHT * 0.34, pz = midMid - midLen * 0.1; // verified: overlaps the belly skirt by ~0.07, no gap
-    add(new THREE.BoxGeometry(0.46, 0.32, 1.0), M.arm, [px, py, pz]);
-    add(new THREE.BoxGeometry(0.3, 0.2, 0.24), M.dark, [px, py - 0.02, pz + 0.55]);            // recessed gun port
-    add(new THREE.CylinderGeometry(0.04, 0.05, 0.4, 8), M.trim, [px, py - 0.02, pz + 0.78], [Math.PI / 2, 0, 0]); // gun barrel
-    bellyPodMounts.push({ x: px, y: py, z: pz });
+  // Twin drive modules and four auxiliary vectoring nozzles.
+  const engineMounts = [];
+  for (const side of [-1, 1]) {
+    const x = side * 1.7;
+    part(`DriveHousing_${side}`, new THREE.BoxGeometry(1.35, 0.92, 2.25), M.dark, [x, -0.02, -4.45]);
+    part(`DriveCowling_${side}`, new THREE.CylinderGeometry(0.6, 0.72, 1.45, 14), M.arm, [x, -0.02, -5.0], [Math.PI / 2, 0, 0]);
+    part(`DriveNozzle_${side}`, new THREE.TorusGeometry(0.56, 0.11, 8, 20), M.trim, [x, -0.02, STERN - 0.5]);
+    part(`DrivePlasma_${side}`, new THREE.CircleGeometry(0.48, 20), M.blue, [x, -0.02, STERN - 0.62], [0, Math.PI, 0]);
+    engineMounts.push({ x, y: -0.02, z: STERN - 0.62 });
+    for (const y of [-0.34, 0.34]) {
+      part(`VectorNozzle_${side}_${y}`, new THREE.CylinderGeometry(0.18, 0.24, 0.62, 10), M.dark, [side * 3.04, y, -4.9], [Math.PI / 2, 0, 0]);
+      part(`VectorGlow_${side}_${y}`, new THREE.CircleGeometry(0.16, 12), M.blue, [side * 3.04, y, -5.23], [0, Math.PI, 0]);
+      engineMounts.push({ x: side * 3.04, y, z: -5.23 });
+    }
   }
 
-  // ===== stern: dense thruster cluster + outward radiator/truss booms ===
-  // (hull skin here is the continuous loft above; engine housings attach to it)
-  const sternMid = (STERN_ROOT + STERN) / 2;
-  // mount points chosen with margin inside the loft's stern-station half-extents
-  // (±sternDeckW/2, ±sternDeckH/2, declared above) so the housings never poke
-  // outside it — this replaces an earlier version whose Y values could exceed
-  // the deck's bounds and read as floating disconnected boxes in the hologram.
-  // (housing half-size is 0.25×0.2×0.45 — BoxGeometry(0.5,0.4,0.9) — so mount
-  // |y| stays ≤ sternDeckH/2 - 0.2, verified in the regression test below)
-  const engineMounts = [
-    { x: -0.65, y: 0.2 }, { x: 0.65, y: 0.2 },
-    { x: -0.65, y: -0.2 }, { x: 0.65, y: -0.2 },
-    { x: -0.3, y: -0.02 }, { x: 0.3, y: -0.02 },
-    { x: 0, y: 0.24 },
-  ].map(m => ({ x: m.x, y: m.y, z: STERN + 0.35 }));
-  for (const em of engineMounts) {
-    add(new THREE.BoxGeometry(0.5, 0.4, 0.9), M.trim, [em.x, em.y, em.z + 0.45]); // housing (caller attaches glow/light/plume at em)
-    // armored cowling ring around the nozzle mouth — reference category 5
-    // ("Armored Cowlings" housing the main engines, giving the aft section
-    // hefty mechanical weight). TorusGeometry's default hole-axis is +Z, so
-    // it needs no rotation to face aft, same as the nozzle it wraps.
-    add(new THREE.TorusGeometry(0.26, 0.05, 6, 12), M.arm, [em.x, em.y, em.z + 0.05]);
+  // Ventral hangar/landing aperture and modular flank bays.
+  part('VentralHangar', new THREE.BoxGeometry(2.15, 0.08, 2.65), M.dark, [0, -0.65, -1.05]);
+  part('HangarGuide', new THREE.BoxGeometry(0.16, 0.04, 2.35), M.amber || M.red, [0, -0.7, -0.92]);
+  const sideBayMounts = [];
+  for (const side of [-1, 1]) for (let i = 0; i < 4; i += 1) {
+    const z = -2.75 + i * 0.92;
+    const x = side * (3.28 - i * 0.22);
+    part(`FlankBay_${side}_${i}`, new THREE.BoxGeometry(0.12, 0.34, 0.58), M.dark, [x, -0.02, z], [0, 0, side * 0.1]);
+    part(`FlankBayLight_${side}_${i}`, new THREE.BoxGeometry(0.05, 0.05, 0.32), i === 1 ? M.amber || M.red : M.blue, [x + side * 0.08, 0.08, z], [0, 0, side * 0.1]);
+    sideBayMounts.push({ x, y: -0.02, z, side });
   }
 
-  // outward radiator fin / truss boom arrays (both sides, angled back)
-  for (const sx of [-1, 1]) {
-    add(new THREE.BoxGeometry(1.7, 0.05, 0.22), M.dark, [sx * 1.7, 0.1, sternMid - 0.2], [0, 0, sx * 0.12]);   // radiator fin
-    add(new THREE.BoxGeometry(1.7, 0.05, 0.22), M.dark, [sx * 1.7, -0.32, sternMid - 0.2], [0, 0, sx * 0.12]); // second fin, lower
-    for (let i = 0; i < 3; i++) add(new THREE.CylinderGeometry(0.02, 0.02, 0.42, 6), M.trim, [sx * (1.15 + i * 0.4), -0.11, sternMid - 0.2], [0, 0, Math.PI / 2]); // truss cross-braces
-  }
-  // stabiliser fins + vertical tail (silhouette anchors, kept from the earlier design)
-  for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.06, HEIGHT * 0.36, 0.7), M.arm, [sx * 0.9, HEIGHT * 0.14, STERN + 1.1], [0.2, 0, sx * 0.4]);
-  add(new THREE.BoxGeometry(0.5, HEIGHT * 0.26, 0.06), M.arm, [0, HEIGHT * 0.24, STERN + 0.7], [0.3, 0, 0]);
-
-  // ===== greeble density gradient: stern > midship > bow =====
-  // 'wire' gets a lighter pass (fewer random boxes — still enough to avoid
-  // reading as "no detail at all", but a wireframe hologram shows every
-  // part's edges individually so full density would be genuinely noisy);
-  // 'full' (solid PBR shading merges overlapping faces, so it can carry more).
-  {
-    const density = full ? 1 : 0.4;
-    const scatter = (n, zMin, zMax, xSpread, y) => {
-      for (let i = 0; i < n; i++) {
-        const x = (Math.random() - 0.5) * xSpread, z = zMin + Math.random() * (zMax - zMin);
-        const r = Math.random();
-        const geo = r < 0.6 ? new THREE.BoxGeometry(0.06 + Math.random() * 0.14, 0.02, 0.08 + Math.random() * 0.2)
-          : r < 0.85 ? new THREE.BoxGeometry(0.1 + Math.random() * 0.16, 0.022, 0.1 + Math.random() * 0.16)
-            : new THREE.BoxGeometry(0.035, 0.045, 0.035);
-        add(geo, r < 0.5 ? M.trim : M.dark, [x, y, z]);
-      }
-    };
-    scatter(Math.round(52 * density), STERN_ROOT, BOW_ROOT, 2.0, HEIGHT * 0.17);   // midship: medium density
-    scatter(Math.round(30 * density), STERN, STERN_ROOT, 2.2, HEIGHT * 0.1);       // stern: highest density
-    scatter(Math.round(8 * density), BOW_ROOT, NOSE - BOW_LEN * 0.3, 1.0, HEIGHT * 0.09); // bow: sparse, kept clean
+  // Long emissive strips make attitude and scale legible in darkness.
+  for (const side of [-1, 1]) {
+    part(`ShoulderSignal_${side}`, new THREE.BoxGeometry(0.08, 0.035, 2.45), M.blue, [side * 1.78, 0.66, 0.18], [0, side * 0.16, 0]);
+    part(`AftWarning_${side}`, new THREE.BoxGeometry(0.34, 0.04, 0.09), M.amber || M.red, [side * 2.62, 0.59, -3.52]);
   }
 
-  // ===== spinal main gun (bow-forward fire, existing gameplay hook) =====
-  const gunZ0 = BOW_ROOT - 0.3, gunLen = 2.6;
-  add(new THREE.CylinderGeometry(0.1, 0.14, gunLen, 12), M.trim, [0, -HEIGHT * 0.08, gunZ0], [Math.PI / 2, 0, 0]);
-  for (let i = 0; i < 3; i++) add(new THREE.TorusGeometry(0.16, 0.035, 6, 14), M.dark, [0, -HEIGHT * 0.08, gunZ0 - gunLen / 2 + 0.4 + i * 0.5]);
-  const muzzleAnchor = { x: 0, y: -HEIGHT * 0.08, z: gunZ0 + gunLen / 2 + 0.3 };
+  // Deterministic panel strips and maintenance blocks. No random-on-load
+  // shimmer: the GLB, live model and visual tests now receive one silhouette.
+  const panelCount = full ? 34 : 12;
+  for (let i = 0; i < panelCount; i += 1) {
+    const side = i % 2 ? -1 : 1;
+    const z = -3.7 + seeded(i + 30) * 6.65;
+    const taper = Math.max(0.8, 3.45 - Math.max(0, z) * 0.48);
+    const x = side * (0.86 + seeded(i + 60) * Math.max(0.2, taper - 0.92));
+    part(`SurfaceDetail_${i}`, new THREE.BoxGeometry(0.08 + seeded(i + 90) * 0.2, 0.025, 0.12 + seeded(i + 120) * 0.34), i % 4 ? M.trim : M.dark, [x, 0.61, z], [0, side * 0.08, 0]);
+  }
+
+  const bellyPodMounts = [
+    { x: -1.1, y: -0.62, z: 1.15 },
+    { x: 1.1, y: -0.62, z: 1.15 },
+  ];
+  for (const [i, p] of bellyPodMounts.entries()) {
+    part(`VentralPod_${i}`, new THREE.BoxGeometry(0.58, 0.32, 1.35), M.arm, [p.x, p.y, p.z]);
+    part(`VentralPodPort_${i}`, new THREE.BoxGeometry(0.32, 0.16, 0.28), M.dark, [p.x, p.y - 0.12, p.z + 0.7]);
+  }
+
+  const mastTips = [
+    { x: -0.32, y: 1.58, z: -2.6 },
+    { x: 0.32, y: 1.44, z: -2.9 },
+    { x: 0, y: 1.68, z: -3.3 },
+  ];
+  for (const [i, p] of mastTips.entries()) {
+    part(`Mast_${i}`, new THREE.CylinderGeometry(0.018, 0.03, p.y - 1.05, 6), M.trim, [p.x, (p.y + 1.05) * 0.5, p.z], [i === 1 ? 0.18 : -0.08, 0, i === 0 ? -0.14 : 0.12]);
+    part(`MastTip_${i}`, new THREE.SphereGeometry(0.04, 8, 6), i === 2 ? M.red : M.blue, [p.x, p.y, p.z]);
+  }
 
   return {
-    length: LEN, height: HEIGHT, bowLen: BOW_LEN, bowRoot: BOW_ROOT,
-    engineMounts, turretMounts, bellyPodMounts, mastTips, muzzleAnchor,
-    sideBayMounts, lateralTurretMounts,
+    length: LEN,
+    height: HEIGHT,
+    width: 8.3,
+    bowLen: BOW_LEN,
+    bowRoot: BOW_ROOT,
+    engineMounts,
+    turretMounts,
+    bellyPodMounts,
+    mastTips,
+    muzzleAnchor,
+    missileBayAnchor: { x: 0, y: -0.72, z: -0.25 },
+    ciwsPortAnchor: { x: -1.06, y: 0.68, z: 2.92 },
+    ciwsStarboardAnchor: { x: 1.06, y: 0.68, z: 2.92 },
+    sideBayMounts,
+    lateralTurretMounts,
   };
 }

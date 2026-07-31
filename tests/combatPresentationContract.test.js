@@ -7,13 +7,18 @@ describe('combat presentation contract', () => {
     expect(data.toString('ascii', 0, 4)).toBe('glTF');
     expect(data.readUInt32LE(4)).toBe(2);
     expect(data.readUInt32LE(8)).toBe(data.length);
-    expect(data.length).toBeLessThan(180_000);
+    expect(data.length).toBeGreaterThan(180_000);
+    expect(data.length).toBeLessThan(420_000);
   });
 
   it('keeps Three.js weapon and camera cues event-driven', async () => {
     const source = await readFile(new URL('../src/scene/topdownCombat.js', import.meta.url), 'utf8');
     expect(source).toContain("event.type === 'weapon:fire'");
     expect(source).toContain("event.type === 'flight:launch'");
+    expect(source).toContain("event.type === 'fleet:damage'");
+    expect(source).toContain('pilotLaunch');
+    expect(source).toContain('missileTail');
+    expect(source).toContain('impactOrbit');
     expect(source).toContain('/assets/combat/afflatus-command.glb');
     expect(source).not.toMatch(/\blast(?:Fire|Missile|Laser|Orb|Chase)\b/);
     expect(source).not.toContain('now - last');

@@ -170,8 +170,8 @@
   <div class="cic-shell">
     <aside class="cic-panel cic-fire-control" aria-label="Fire control and interception">
       <header class="cic-panel-head">
-        <span class="cic-eyebrow">FIRE CONTROL · 01</span>
-        <strong data-hud="battleTitle">火控与拦截协议</strong>
+        <span class="cic-eyebrow">DEFENCE ARCHITECTURE · 01</span>
+        <strong data-hud="battleTitle">四联防御与火控</strong>
         <button class="cic-ap-toggle" id="apToggle" type="button" data-hot aria-pressed="false">
           <span>AP</span><b id="apState">自动</b>
         </button>
@@ -182,6 +182,7 @@
           <span class="cic-weapon-code"><i>PD-01</i><em>▥</em></span>
           <b data-hud="wCannon">密集阵</b>
           <small data-hud="wCannonDesc">近防弹幕</small>
+          <span class="cic-weapon-profile"><i>ROF</i><b>4800</b><i>RNG</i><b>2.4K</b></span>
           <span class="cic-weapon-state" data-hud="ready">就绪</span>
           <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
         </button>
@@ -190,6 +191,7 @@
           <span class="cic-weapon-code"><i>AA-47</i><em>↗</em></span>
           <b data-hud="wMissile">导弹</b>
           <small data-hud="wMissileDesc">自主制导</small>
+          <span class="cic-weapon-profile"><i>DLK</i><b>LIVE</b><i>PK</i><b>82%</b></span>
           <span class="cic-weapon-state" data-hud="ready">就绪</span>
           <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
         </button>
@@ -198,6 +200,7 @@
           <span class="cic-weapon-code"><i>NX-02</i><em>☢</em></span>
           <b data-hud="wNuke">核打击</b>
           <small data-hud="wNukeDesc">双钥授权</small>
+          <span class="cic-weapon-profile"><i>YLD</i><b>12KT</b><i>AUTH</i><b>2/2</b></span>
           <span class="cic-weapon-state" data-hud="ready">就绪</span>
           <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
         </button>
@@ -206,6 +209,7 @@
           <span class="cic-weapon-code"><i>EF-09</i><em>✦</em></span>
           <b data-hud="wEnforcer">主炮</b>
           <small data-hud="wEnforcerDesc">粒子脊柱</small>
+          <span class="cic-weapon-profile"><i>CAP</i><b>9.8G</b><i>HEAT</i><b>86°</b></span>
           <span class="cic-weapon-state" data-hud="ready">就绪</span>
           <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
         </button>
@@ -232,13 +236,27 @@
       </header>
       <div class="cic-viewport">
         <canvas class="cic-pilot-feed" id="cicPilotFeed"></canvas>
-        <div class="cic-reticle" aria-hidden="true"><span></span><i></i></div>
+        <div class="cic-canopy-brow" aria-hidden="true"><i></i><span></span><i></i></div>
+        <div class="cic-reticle" aria-hidden="true">
+          <span class="cic-reticle-ring"></span><span class="cic-reticle-diamond"></span><i></i>
+          <b class="cic-reticle-tick cic-reticle-tick--n"></b><b class="cic-reticle-tick cic-reticle-tick--e"></b><b class="cic-reticle-tick cic-reticle-tick--s"></b><b class="cic-reticle-tick cic-reticle-tick--w"></b>
+        </div>
+        <div class="cic-flight-tape cic-flight-tape--left" aria-label="Flight vector">
+          <span><i>HDG</i><b id="cicHeading">—</b></span>
+          <span><i>VEL</i><b id="cicVelocity">—</b></span>
+          <span><i>G</i><b id="cicGLoad">—</b></span>
+        </div>
+        <div class="cic-solution-stack" aria-label="Target solution">
+          <span><i>RANGE</i><b id="cicRange">—</b></span>
+          <span><i>TOF</i><b id="cicIntercept">—</b></span>
+          <span><i>LOCK</i><b id="cicLockPct">0%</b></span>
+        </div>
         <div class="cic-radar-dock" aria-hidden="true">
-          <span>DRADIS · L1</span>
+          <span>TACTICAL SPHERE · L1</span>
           <canvas id="cicRadarCanvas"></canvas>
         </div>
         <div class="cic-view-caption">
-          <b data-hud="cicCaption">CIC 战术传感图</b>
+          <b data-hud="cicCaption" id="cicCameraLabel">CIC 战术传感图</b>
           <span id="cicThreatReadout">NO TRACK · SENSOR PASSIVE</span>
         </div>
       </div>

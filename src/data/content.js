@@ -77,7 +77,7 @@ export const COPY = {
 export const HUD_COPY = {
   zh:{
     wake:'战术尾迹 · 引力井前方', sub:'舰桥锁定 · 目标神谕 · 信号帷幕',
-    radarTitle:'雷达', battleTitle:'火控与拦截协议', pilotTitle:'舰桥战术态势', systemsTitle:'战斗情报与损管', hangarTitle:'舰长终端', weaponLabel:'彗星截击裁决', uplink:'舰队遥测',
+    radarTitle:'雷达', battleTitle:'四联防御与火控', pilotTitle:'舰桥战术态势', systemsTitle:'战斗情报与损管', hangarTitle:'舰长终端', weaponLabel:'彗星截击裁决', uplink:'舰队遥测',
     options:['自动 · 舰长裁决火力','密集阵 · 左右舷近防弹幕','F-47 · 自主制导导弹','B2 · 战术核打击护航','执法者主炮 · 冷却30秒'],
     core:'反应堆核心', thrusters:'推进阵列', shield:'主炮冷却', scan:'巡航速度',
     armed:'待命', low:'低', navLock:'导航锁定', stable:'稳定', radarSweep:'雷达扫描', active:'激活', warningClass:'警戒等级', yellow:'黄色',
@@ -95,7 +95,7 @@ export const HUD_COPY = {
   },
   en:{
     wake:'TACTICAL WAKE · GRAVITY WELL AHEAD', sub:'COMMAND DECK LOCK · TARGET ORACLE · SIGNAL VEIL',
-    radarTitle:'RADAR', battleTitle:'FIRE CONTROL / INTERCEPT', pilotTitle:'CIC SENSOR PICTURE', systemsTitle:'TACTICAL FEED / CONDITION', hangarTitle:'COMMANDER TERMINAL', weaponLabel:'COMET INTERCEPT JUDGMENT', uplink:'FLEET TELEMETRY',
+    radarTitle:'RADAR', battleTitle:'QUAD DEFENCE / FIRE CONTROL', pilotTitle:'CIC SENSOR PICTURE', systemsTitle:'TACTICAL FEED / CONDITION', hangarTitle:'COMMANDER TERMINAL', weaponLabel:'COMET INTERCEPT JUDGMENT', uplink:'FLEET TELEMETRY',
     options:['AUTO · recommended force','PHALANX · PORT / STARBOARD CIWS','F-47 · AUTONOMOUS AAM','B2 · TACTICAL NUKE + ESCORT','ENFORCER MAIN CANNON · 30S COOLDOWN'],
     core:'POWER CORE', thrusters:'THRUSTERS', shield:'MAIN GUN CD', scan:'CRUISE SPEED',
     armed:'ARMED', low:'LOW', navLock:'NAV LOCK', stable:'STABLE', radarSweep:'RADAR SWEEP', active:'ACTIVE', warningClass:'WARNING CLASS', yellow:'YELLOW',

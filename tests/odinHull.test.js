@@ -28,17 +28,17 @@ function buildForBBox(detail) {
   return { info, box, meshCount: meshes.length, meshes };
 }
 
-describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
-  it('declares a length:height ratio of ~5.5:1', () => {
+describe('createOdinHull — Afflatus Vanguard lifting-body proportions', () => {
+  it('declares the new low lifting-body length:height ratio of ~7.8:1', () => {
     const { info } = buildForBBox('full');
-    expect(info.length / info.height).toBeCloseTo(5.5, 1);
+    expect(info.length / info.height).toBeCloseTo(7.8, 1);
   });
 
-  it('the blade bow occupies 35-40% of total declared length', () => {
+  it('the spear bow occupies roughly 40-44% of total declared length', () => {
     const { info } = buildForBBox('full');
     const frac = info.bowLen / info.length;
-    expect(frac).toBeGreaterThanOrEqual(0.35);
-    expect(frac).toBeLessThanOrEqual(0.4);
+    expect(frac).toBeGreaterThanOrEqual(0.4);
+    expect(frac).toBeLessThanOrEqual(0.44);
   });
 
   it('the actual rendered bounding box spans roughly the declared length along Z', () => {
@@ -61,22 +61,22 @@ describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
     expect(spanY).toBeLessThanOrEqual(info.height * 2.5);
   });
 
-  it('exposes 7 engine mounts, 5 dorsal turrets, 2 belly pods, 4 mast tips', () => {
+  it('exposes paired main/vector drives, six dorsal turrets, two belly pods and three mast tips', () => {
     const { info } = buildForBBox('full');
-    expect(info.engineMounts.length).toBe(7);
-    expect(info.turretMounts.length).toBe(5);
+    expect(info.engineMounts.length).toBe(6);
+    expect(info.turretMounts.length).toBe(6);
     expect(info.bellyPodMounts.length).toBe(2);
-    expect(info.mastTips.length).toBe(4);
+    expect(info.mastTips.length).toBe(3);
   });
 
-  it('exposes 8 side modular-bay mounts (4/side) and 4 lateral point-defense turrets (2/side)', () => {
+  it('exposes 8 side modular-bay mounts and 6 lateral point-defense turrets, mirrored across the keel', () => {
     // added per the user's detailed reference breakdown: category 2 ("Mid-
     // Section Modular Bays" — a repeating row on the hull FLANKS, called out
     // as a scale/detail visual anchor) and category 4 ("Ventral and Lateral
     // Defenses" — point-defense distributed across both bottom AND sides).
     const { info } = buildForBBox('full');
     expect(info.sideBayMounts.length).toBe(8);
-    expect(info.lateralTurretMounts.length).toBe(4);
+    expect(info.lateralTurretMounts.length).toBe(6);
     const left = info.sideBayMounts.filter(m => m.side === -1).length;
     const right = info.sideBayMounts.filter(m => m.side === 1).length;
     expect(left).toBe(4);
@@ -87,12 +87,12 @@ describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
     const { info } = buildForBBox('full');
     for (const m of info.sideBayMounts) {
       expect(Number.isFinite(m.z)).toBe(true);
-      expect(Math.abs(m.x)).toBeGreaterThan(0.9); // proud of hull centerline, out toward the flank
-      expect(Math.abs(m.x)).toBeLessThan(1.6);    // but not flying off past the radiator fins (mounted further out at 1.7)
+      expect(Math.abs(m.x)).toBeGreaterThan(2.4); // real flank bays on the broad lifting body
+      expect(Math.abs(m.x)).toBeLessThan(3.5);    // still attached inside the 4.15 half-span
     }
     for (const m of info.lateralTurretMounts) {
       expect(Math.abs(m.x)).toBeGreaterThan(0.9);
-      expect(Math.abs(m.x)).toBeLessThan(1.6);
+      expect(Math.abs(m.x)).toBeLessThan(2.0);
     }
     // mirror symmetry: every left mount has a matching right mount at the same z
     const leftZs = info.sideBayMounts.filter(m => m.side === -1).map(m => m.z).sort((a, b) => a - b);
@@ -103,7 +103,7 @@ describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
   it('"wire" keeps the side bays and lateral turrets too (structured accents, not random greeble)', () => {
     const wire = buildForBBox('wire');
     expect(wire.info.sideBayMounts.length).toBe(8);
-    expect(wire.info.lateralTurretMounts.length).toBe(4);
+    expect(wire.info.lateralTurretMounts.length).toBe(6);
   });
 
   it('engine mounts sit at the stern (negative Z, past the turret row)', () => {
@@ -127,17 +127,16 @@ describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
     }
   });
 
-  it('regression: engine mounts stay inside the stern deck block (previously some overshot the deck\'s own bounds and floated disconnected)', () => {
-    // the stern engine-deck block is BoxGeometry(2.3, height*0.5, ...), and
-    // each housing is BoxGeometry(0.5, 0.4, 0.9) — half-height 0.2 — centred
-    // at the mount point, so a mount sitting further than (deck half-height -
-    // housing half-height) from the centreline means the housing pokes
-    // outside the deck block and reads as a floating box in the hologram.
+  it('keeps all drive mounts aft and arranges them in exact port/starboard pairs', () => {
     const { info } = buildForBBox('full');
-    const deckHalfHeight = info.height * 0.5 / 2;
-    const housingHalfHeight = 0.2;
-    const safeY = deckHalfHeight - housingHalfHeight;
-    for (const em of info.engineMounts) expect(Math.abs(em.y)).toBeLessThanOrEqual(safeY + 1e-6);
+    for (const em of info.engineMounts) expect(em.z).toBeLessThan(-5);
+    const left = info.engineMounts.filter((mount) => mount.x < 0);
+    const right = info.engineMounts.filter((mount) => mount.x > 0);
+    expect(left).toHaveLength(3);
+    expect(right).toHaveLength(3);
+    for (const mount of left) {
+      expect(right.some((peer) => Math.abs(peer.x + mount.x) < 1e-6 && Math.abs(peer.y - mount.y) < 1e-6 && Math.abs(peer.z - mount.z) < 1e-6)).toBe(true);
+    }
   });
 
   it('regression: the hull is ONE continuous tapered skin, not stacked boxes with visible seams ("toy block" report)', () => {
@@ -208,8 +207,8 @@ describe('createOdinHull — reference proportions (ROADMAP §4 V15)', () => {
     // density differs (wire: ~40% of full's count).
     const wire = buildForBBox('wire');
     const fullD = buildForBBox('full');
-    expect(wire.info.mastTips.length).toBe(4);
-    expect(wire.info.turretMounts.length).toBe(5);
+    expect(wire.info.mastTips.length).toBe(3);
+    expect(wire.info.turretMounts.length).toBe(6);
     expect(wire.info.bellyPodMounts.length).toBe(2);
     expect(wire.meshCount).toBeLessThan(fullD.meshCount); // still fewer parts overall (thinner greeble scatter)
   });
