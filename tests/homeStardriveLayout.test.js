@@ -21,20 +21,25 @@ describe('home stardrive layout contracts', () => {
     expect(styles).toMatch(/\.nav-right #langBtn\{[\s\S]*?text-decoration:none/);
   });
 
-  it('combines accretion, gravitational redshift and bipolar jets in one celestial system', () => {
-    expect(forge).toContain('const CELESTIAL_FRAG');
-    expect(forge).toContain('float accretion=');
-    expect(forge).toContain('float escapeShift=');
-    expect(forge).toContain('float jetCore=');
-    expect(forge).toContain('const JET_VERT');
-    expect(forge).toContain('const jetParticles = new THREE.Points');
+  it("resolves Baily's beads into a scroll-driven diamond ring", () => {
+    expect(forge).toContain('const ECLIPSE_FRAG');
+    expect(forge).toContain('float bailyPhase=');
+    expect(forge).toContain('float bailyBeads=');
+    expect(forge).toContain('float diamondPhase=');
+    expect(forge).toContain('float diamondCore=');
+    expect(forge).toContain('float coronaRing=');
+    expect(forge).toContain('eclipseUniforms.uForge.value = p');
   });
 
-  it('removes unrelated station and spacecraft draws while staying within the particle budget', () => {
+  it('renders the eclipse in one aligned surface without legacy particle systems', () => {
     expect(forge).not.toContain('buildStation(');
     expect(forge).not.toContain('stationGroup');
     expect(forge).not.toContain('const ships =');
-    expect(forge).toContain('const PN = 4200');
-    expect(forge).toContain('const JN = 1200');
+    expect(forge).not.toContain('const PT_VERT');
+    expect(forge).not.toContain('const JET_VERT');
+    expect(forge).not.toContain('jetParticles');
+    expect(forge).not.toContain('const PN =');
+    expect(forge).toContain('fragmentShader: ECLIPSE_FRAG');
+    expect(forge).toContain('costs one scene draw call');
   });
 });
