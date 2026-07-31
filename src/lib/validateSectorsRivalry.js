@@ -127,34 +127,17 @@ export function validateSectorsRivalry(data) {
   validateEquities(data.equities?.US, 'equities.US', errors);
   validateEquities(data.equities?.CN, 'equities.CN', errors);
 
-  const alliance = data.openSecureAlliance;
-  if (!isObject(alliance)) errors.push('openSecureAlliance: missing');
-  else {
-    requireExactArray(alliance.names, 52, 'openSecureAlliance.names', errors);
-    requireUniqueStrings(alliance.names, 'openSecureAlliance.names', errors);
-    if (alliance.count !== alliance.names?.length) {
-      errors.push('openSecureAlliance.count: must match names length');
-    }
-    if (!isUrl(alliance.source)) errors.push('openSecureAlliance.source: must be http(s)');
-    if (!isText(alliance.image) || !alliance.image.startsWith('/assets/')) {
-      errors.push('openSecureAlliance.image: must be a local asset path');
-    }
-    requireBilingual(alliance.imageAlt, 'openSecureAlliance.imageAlt', errors);
-  }
-
   const letter = data.openWeightsLetter;
   if (!isObject(letter)) errors.push('openWeightsLetter: missing');
   else {
+    requireExactArray(letter.screenshotNames, 50, 'openWeightsLetter.screenshotNames', errors);
     requireExactArray(letter.officialNames, 77, 'openWeightsLetter.officialNames', errors);
+    requireUniqueStrings(letter.screenshotNames, 'openWeightsLetter.screenshotNames', errors);
     requireUniqueStrings(letter.officialNames, 'openWeightsLetter.officialNames', errors);
     if (letter.officialSnapshot?.count !== letter.officialNames?.length) {
       errors.push('openWeightsLetter.officialSnapshot.count: must match officialNames length');
     }
     if (!isUrl(letter.officialSnapshot?.source)) errors.push('openWeightsLetter.officialSnapshot.source: must be http(s)');
-    if (!isText(letter.image) || !letter.image.startsWith('/assets/')) {
-      errors.push('openWeightsLetter.image: must be a local asset path');
-    }
-    requireBilingual(letter.imageAlt, 'openWeightsLetter.imageAlt', errors);
     if (!Array.isArray(letter.missing) || letter.missing.length < 4) {
       errors.push('openWeightsLetter.missing: must contain important absences');
     } else {

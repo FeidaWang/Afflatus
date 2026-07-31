@@ -1,6 +1,6 @@
 {
-  "updated": "2026-07-29T23:58:00+10:00",
-  "version": 5,
+  "updated": "2026-07-29T23:29:00+10:00",
+  "version": 4,
   "chapters": [
     {
       "id": "divide",
@@ -25,8 +25,8 @@
       "start": 0.4,
       "label_en": "Capital picks ecosystems",
       "label_zh": "资本选择生态",
-      "description_en": "US private AI investment runs about 23x China's, offset by state-guided funds; the 77-name open-weights letter and cloud ties influence distribution.",
-      "description_zh": "美国私人 AI 投资约为中国的 23 倍，由政府引导基金部分抵补；77 家开放权重联署方与云绑定共同影响分发格局。",
+      "description_en": "US private AI investment runs about 23x China's, offset by state-guided funds; the open-weight coalition and cloud ties decide distribution.",
+      "description_zh": "美国私人 AI 投资约为中国的 23 倍，由政府引导基金部分抵补；开放权重联盟与云绑定决定分发格局。",
       "edge_types": ["investment", "platform", "distribution", "coalition"]
     },
     {
@@ -68,7 +68,6 @@
       "label": "OpenAI",
       "country": "US",
       "logo": "/assets/sectors/logos/openai.svg",
-      "logo_bg": "#ffffff",
       "kind": "model",
       "stage": "models",
       "reveal": 0.2,
@@ -83,7 +82,6 @@
       "label": "Meta AI",
       "country": "US",
       "logo": "/assets/sectors/logos/meta.svg",
-      "logo_bg": "#ffffff",
       "kind": "model",
       "stage": "models",
       "reveal": 0.22,
@@ -98,7 +96,6 @@
       "label": "Zhipu AI",
       "country": "CN",
       "logo": "/assets/sectors/logos/zhipu.svg",
-      "logo_bg": "#ffffff",
       "kind": "model",
       "stage": "models",
       "reveal": 0.24,
@@ -139,19 +136,19 @@
     },
     {
       "id": "openweights",
-      "label": "Open-Weights Letter",
+      "label": "Open Weights Coalition",
       "country": "US",
-      "logo": "/assets/sectors/logos/open-weights-signatories.png",
+      "logo": "/assets/sectors/logos/open-secure-ai-alliance.png",
       "logo_bg": "#ffffff",
       "plate_scale": 1.7,
       "kind": "initiative",
       "stage": "initiative",
       "reveal": 0.38,
       "color": "#E8FF8A",
-      "products": ["77-logo snapshot", "Open models", "Competition", "Sovereign deployment"],
-      "summary_en": "The supplied 77-logo snapshot supports “Open Weights and American AI Leadership,” a policy letter published on 24 July 2026. It is separate from the Open Secure AI Alliance.",
-      "summary_zh": "用户提供的 77 家 Logo 快照支持 2026 年 7 月 24 日发布的《开放权重与美国 AI 领导力》政策联署；它与 Open Secure AI Alliance 并非同一组织。",
-      "source": "https://images.nvidia.com/pdf/Open-Weights-and-American-AI-Leadership.pdf"
+      "products": ["25 signatories", "Open models", "Competition", "Sovereign deployment"],
+      "summary_en": "Twenty-five organizations signed “Open Weights and American AI Leadership” on 24 July 2026.",
+      "summary_zh": "25 家机构于 2026 年 7 月 24 日签署《开放权重与美国 AI 领导力》联合信。",
+      "source": "https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/"
     },
     {
       "id": "amazon",
@@ -216,7 +213,6 @@
       "label": "Huawei",
       "country": "CN",
       "logo": "/assets/sectors/logos/huawei.svg",
-      "logo_bg": "#ffffff",
       "kind": "compute",
       "stage": "compute",
       "reveal": 0.6,
@@ -323,7 +319,6 @@
       "label": "Apple",
       "country": "US",
       "logo": "/assets/sectors/logos/apple.svg",
-      "logo_bg": "#ffffff",
       "kind": "platform",
       "stage": "platform",
       "reveal": 0.46,
@@ -342,9 +337,9 @@
       "type": "coalition",
       "reveal": 0.4,
       "strength": 0.74,
-      "label_en": "Meta appears in the supplied 77-logo open-weights snapshot",
-      "label_zh": "Meta 出现在用户提供的 77 家开放权重联署快照中",
-      "source_url": "https://images.nvidia.com/pdf/Open-Weights-and-American-AI-Leadership.pdf"
+      "label_en": "Meta is one of 25 signatories supporting open-weight AI",
+      "label_zh": "Meta 是支持开放权重 AI 的 25 家签署方之一",
+      "source_url": "https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/"
     },
     {
       "id": "microsoft-openweights-coalition",
@@ -355,7 +350,7 @@
       "strength": 0.72,
       "label_en": "Microsoft co-signed the open-weight leadership letter",
       "label_zh": "Microsoft 联署开放权重领导力联合信",
-      "source_url": "https://images.nvidia.com/pdf/Open-Weights-and-American-AI-Leadership.pdf"
+      "source_url": "https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/"
     },
     {
       "id": "nvidia-openweights-coalition",
@@ -366,7 +361,7 @@
       "strength": 0.72,
       "label_en": "NVIDIA co-signed the open-weight leadership letter",
       "label_zh": "NVIDIA 联署开放权重领导力联合信",
-      "source_url": "https://images.nvidia.com/pdf/Open-Weights-and-American-AI-Leadership.pdf"
+      "source_url": "https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/"
     },
     {
       "id": "alibaba-moonshot-capital",

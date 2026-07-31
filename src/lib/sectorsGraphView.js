@@ -248,18 +248,11 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       logoImages.set(node.logo, { image, ready: false, failed: false });
       image.onload = () => {
         const entry = logoImages.get(node.logo);
-        if (entry) {
-          entry.ready = true;
-          entry.failed = false;
-          draw(lastTime);
-        }
+        if (entry) entry.ready = true;
       };
       image.onerror = () => {
         const entry = logoImages.get(node.logo);
-        if (entry) {
-          entry.failed = true;
-          draw(lastTime);
-        }
+        if (entry) entry.failed = true;
       };
       image.src = node.logo;
     }
@@ -581,19 +574,6 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     const image = entry.image;
     const imageWidth = image.naturalWidth || image.width || 1;
     const imageHeight = image.naturalHeight || image.height || 1;
-    if (!node.logo_crop) {
-      const fit = Math.min((width - 16) / imageWidth, (height - 14) / imageHeight);
-      const drawWidth = imageWidth * fit;
-      const drawHeight = imageHeight * fit;
-      ctx.drawImage(
-        image,
-        x - drawWidth / 2,
-        y - drawHeight / 2,
-        drawWidth,
-        drawHeight,
-      );
-      return;
-    }
     const cropX = clamp01(Number(node.logo_crop?.x) || 0);
     const cropY = clamp01(Number(node.logo_crop?.y) || 0);
     const cropWidth = Math.max(0.05, Math.min(1 - cropX, Number(node.logo_crop?.width) || 1));
