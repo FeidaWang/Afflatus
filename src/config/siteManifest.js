@@ -424,7 +424,7 @@ export const SITE_MANIFEST = Object.freeze([
     sitemap: true,
     defaultLocale: 'en',
     nav: { order: 80, group: 'labs', en: 'Course', zh: '课程' },
-    themeColor: '#f2f0e9',
+    themeColor: '#090a0a',
     schema: ['Course', 'ItemList'],
     seo: ROUTE_SEO.course,
     capabilities: ['long-form', 'learning-map', 'local-state'],

@@ -11,6 +11,46 @@ import { courseStageForProgress } from '../lib/courseNarrative.js';
   };
   const T = (en, zh) => lang() === 'zh' ? zh : en;
 
+  /* The page behaves like an archive projector: load the film gate, then
+     mechanically reveal each transmission as it reaches the viewport. */
+  document.body.classList.add('course-enhanced');
+  const filmLoader = $('#filmLoader');
+  window.setTimeout(() => {
+    document.body.classList.add('course-loaded');
+    filmLoader?.setAttribute('hidden', '');
+  }, 2100);
+
+  const transmissions = $$('main > section:not(.hero)');
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    transmissions.forEach((section) => section.classList.add('awaiting-transmission'));
+    const transmissionObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.remove('awaiting-transmission');
+        entry.target.classList.add('transmitted');
+        transmissionObserver.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.04 });
+    transmissions.forEach((section) => transmissionObserver.observe(section));
+  } else {
+    transmissions.forEach((section) => section.classList.add('transmitted'));
+  }
+
+  const timecode = $('#signalTimecode');
+  const timecodeStart = performance.now();
+  function updateTimecode(now = performance.now()) {
+    if (!timecode) return;
+    const totalFrames = Math.floor((now - timecodeStart) / 40);
+    const frames = totalFrames % 25;
+    const totalSeconds = Math.floor(totalFrames / 25);
+    const seconds = totalSeconds % 60;
+    const minutes = Math.floor(totalSeconds / 60) % 60;
+    const hours = Math.floor(totalSeconds / 3600) % 100;
+    timecode.textContent = [hours, minutes, seconds, frames].map((part) => String(part).padStart(2, '0')).join(':');
+  }
+  updateTimecode();
+  window.setInterval(updateTimecode, 200);
+
   const toastEl = $('#courseToast');
   function toast(message, duration = 1900) {
     if (!toastEl) return;
@@ -75,6 +115,13 @@ import { courseStageForProgress } from '../lib/courseNarrative.js';
   }, { passive: false });
   sizeAtlas();
   if ('ResizeObserver' in window && atlasBoard) new ResizeObserver(sizeAtlas).observe(atlasBoard);
+
+  $$('.map-node').forEach((node) => {
+    node.addEventListener('pointerdown', () => {
+      node.classList.add('target-locked');
+      window.setTimeout(() => node.classList.remove('target-locked'), 180);
+    });
+  });
 
   /* Weekly review: intentionally local-only. The score is a weighted index,
      capped when there is no inspectable artifact or decision evidence. */

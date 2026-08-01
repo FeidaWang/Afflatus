@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Forward Deployed Engineer 0→1 · Project Afflatus</title>
 <meta name="description" content="A bilingual, evidence-led 52-week field map from zero to Forward Deployed Engineer: systems, AI, customer discovery, governance, portfolio projects, and a weekly assessment loop. 从零成长为 FDE 的双语实战路线图。">
-<meta name="theme-color" content="#f2f0e9">
+<meta name="theme-color" content="#090a0a">
 <link rel="canonical" href="https://feida.au/course.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
@@ -248,8 +248,17 @@
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="course-page" data-course-stage="0" data-prev="/serial.html" data-next="/">
+<div class="boot-sequence" id="filmLoader" aria-hidden="true">
+  <div class="boot-reel"><i></i><i></i></div>
+  <div class="boot-scan"></div>
+  <p>PROJECT AFFLATUS / ARCHIVE 52-FDE</p>
+</div>
 <div class="paper-noise" aria-hidden="true"></div>
+<div class="surveillance-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <div class="progress-rail" aria-hidden="true"><i id="courseProgress"></i></div>
+<aside class="signal-readout" aria-hidden="true">
+  <span class="rec-dot"></span><b>REC</b><span id="signalTimecode">00:00:00:00</span><span>CH / FDE-52</span>
+</aside>
 <nav class="page-turn-controls" aria-label="Page navigation">
   <a class="page-turn" href="/serial.html" data-page-turn="prev" aria-label="Previous page">←</a>
   <a class="page-turn" href="/" data-page-turn="next" aria-label="Next page">→</a>
@@ -265,24 +274,32 @@
 
 <main>
   <section class="hero" id="top">
+    <div class="projection-field" aria-hidden="true">
+      <div class="projector-cone"></div>
+      <span class="map-ping ping-a">AUS / MEL</span><span class="map-ping ping-b">NODE 04</span><span class="map-ping ping-c">52 WEEKS</span>
+      <span class="field-line line-a"></span><span class="field-line line-b"></span><span class="field-line line-c"></span>
+      <div class="microfiche fiche-1"><i>01 / ROLE</i><b>OWN<br>THE LOOP</b><small>OPENAI / FIELD NOTE</small></div>
+      <div class="microfiche fiche-2"><i>06 / CS</i><b>MEMORY<br>MATTERS</b><small>BASE SYSTEMS</small></div>
+      <div class="microfiche fiche-3"><i>11 / DIST</i><b>FAIL<br>PARTIALLY</b><small>PRODUCTION</small></div>
+      <div class="microfiche fiche-4"><i>16 / AI</i><b>ATTENTION<br>IS ALL</b><small>MODEL SYSTEMS</small></div>
+      <div class="microfiche fiche-5"><i>22 / EVAL</i><b>MEASURE<br>FIRST</b><small>EVIDENCE GATE</small></div>
+      <div class="microfiche fiche-6"><i>28 / BUILD</i><b>SHIP<br>TRUTH</b><small>FIELD PROOF</small></div>
+      <div class="microfiche fiche-7"><i>33 / OUTCOME</i><b>ADOPTION<br>OR NOTHING</b><small>CAPSTONE</small></div>
+      <div class="target-reticle"><span></span><b>FDE</b></div>
+    </div>
     <div class="hero-copy">
-      <div class="eyebrow" data-en="FIELD MANUAL · AUG 2026" data-zh="实地手册 · 2026 年 8 月">FIELD MANUAL · AUG 2026</div>
-      <h1><span data-en="Learn the models." data-zh="理解模型。">Learn the models.</span><br><em data-en="Ship the system." data-zh="交付系统。">Ship the system.</em><br><span data-en="Change the workflow." data-zh="改变工作流。">Change the workflow.</span></h1>
-      <p class="hero-deck" data-en="A 52-week, evidence-led route from zero to Forward Deployed Engineer — the person who turns frontier AI into adopted, governed, measurable production systems." data-zh="一条为期 52 周、以证据驱动的 Forward Deployed Engineer 从零成长路线——把前沿 AI 变成有人采用、可治理、可度量的生产系统。">A 52-week, evidence-led route from zero to Forward Deployed Engineer — the person who turns frontier AI into adopted, governed, measurable production systems.</p>
+      <div class="hero-kicker">
+        <div class="eyebrow" data-en="SURVEILLANCE FIELD MANUAL · ARCHIVE 52-FDE" data-zh="监控实地手册 · 档案 52-FDE">SURVEILLANCE FIELD MANUAL · ARCHIVE 52-FDE</div>
+        <p data-en="A 52-week evidence route for turning frontier AI into governed, adopted production systems." data-zh="一条为期 52 周、把前沿 AI 变成可治理、有人采用的生产系统的证据路线。">A 52-week evidence route for turning frontier AI into governed, adopted production systems.</p>
+      </div>
+      <h1><span data-en="Forward deployed" data-zh="前线部署">Forward deployed</span><br><em data-en="engineer." data-zh="工程师。">engineer.</em></h1>
       <div class="hero-actions">
-        <a class="button button-dark" href="#atlas" data-en="Enter the field map" data-zh="进入学习地图">Enter the field map</a>
-        <a class="button button-light" href="#review" data-en="Score this week" data-zh="为本周打分">Score this week</a>
+        <a class="button button-dark" href="#atlas" data-en="Load the field map" data-zh="装载学习地图">Load the field map</a>
+        <a class="button button-light" href="#review" data-en="Open weekly evidence" data-zh="打开每周证据">Open weekly evidence</a>
       </div>
     </div>
-    <div class="hero-orbit" aria-label="Five capabilities of a forward deployed engineer">
-      <div class="orbit-core"><strong>FDE</strong><span data-en="OUTCOME" data-zh="结果">OUTCOME</span></div>
-      <span class="orbit-word orbit-1" data-en="ENGINEER" data-zh="工程">ENGINEER</span>
-      <span class="orbit-word orbit-2" data-en="DISCOVER" data-zh="洞察">DISCOVER</span>
-      <span class="orbit-word orbit-3" data-en="EVALUATE" data-zh="评测">EVALUATE</span>
-      <span class="orbit-word orbit-4" data-en="GOVERN" data-zh="治理">GOVERN</span>
-      <span class="orbit-word orbit-5" data-en="ADOPT" data-zh="采用">ADOPT</span>
-    </div>
-    <a class="scroll-cue" href="#signal" data-en="Scroll to the evidence ↓" data-zh="向下查看证据 ↓">Scroll to the evidence ↓</a>
+    <div class="hero-caption" aria-hidden="true"><span>PROJECTOR 07</span><span>FOCUS 1:1.8</span><span>TRANSMISSION / LIVE</span></div>
+    <a class="scroll-cue" href="#signal" data-en="Advance transmission ↓" data-zh="继续传输 ↓">Advance transmission ↓</a>
   </section>
 
   <section class="signal-strip" id="signal" aria-labelledby="signal-title">
