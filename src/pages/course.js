@@ -21,20 +21,43 @@ import { courseStageForProgress } from '../lib/courseNarrative.js';
   }, 2100);
 
   const transmissions = $$('main > section:not(.hero)');
+  const revealTransmission = (section) => {
+    if (!section) return;
+    section.classList.remove('awaiting-transmission');
+    section.classList.add('transmitted');
+  };
   if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     transmissions.forEach((section) => section.classList.add('awaiting-transmission'));
     const transmissionObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        entry.target.classList.remove('awaiting-transmission');
-        entry.target.classList.add('transmitted');
+        revealTransmission(entry.target);
         transmissionObserver.unobserve(entry.target);
       });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.04 });
+    }, { rootMargin: '0px 0px -4% 0px', threshold: 0.02 });
     transmissions.forEach((section) => transmissionObserver.observe(section));
+
+    /* Fail open if a browser throttles or suppresses observer delivery. The
+       course content must always win over its entrance effect. */
+    window.setTimeout(() => {
+      transmissions.forEach((section) => {
+        revealTransmission(section);
+        transmissionObserver.unobserve(section);
+      });
+    }, 3200);
   } else {
-    transmissions.forEach((section) => section.classList.add('transmitted'));
+    transmissions.forEach(revealTransmission);
   }
+
+  const revealHashTarget = ({ align = false } = {}) => {
+    if (!window.location.hash) return;
+    let target;
+    try { target = document.querySelector(window.location.hash); } catch { return; }
+    revealTransmission(target?.closest('section'));
+    if (align) target?.scrollIntoView({ block: 'start', behavior: 'auto' });
+  };
+  window.addEventListener('hashchange', () => revealHashTarget({ align: true }));
+  revealHashTarget();
 
   const timecode = $('#signalTimecode');
   const timecodeStart = performance.now();
@@ -115,6 +138,10 @@ import { courseStageForProgress } from '../lib/courseNarrative.js';
   }, { passive: false });
   sizeAtlas();
   if ('ResizeObserver' in window && atlasBoard) new ResizeObserver(sizeAtlas).observe(atlasBoard);
+  if (window.location.hash) {
+    requestAnimationFrame(() => revealHashTarget({ align: true }));
+    window.setTimeout(() => revealHashTarget({ align: true }), 260);
+  }
 
   $$('.map-node').forEach((node) => {
     node.addEventListener('pointerdown', () => {

@@ -22,6 +22,11 @@ describe('course narrative progression', () => {
     expect(css).toContain('.atlas-board::before');
     expect(css).toContain('body[data-course-stage="4"]');
     expect(css).toContain('@keyframes gate-open');
+    expect(css).toContain('transform:translate3d(0,48px,0)');
+    expect(css).not.toContain('awaiting-transmission{clip-path:inset(0 0 100% 0)');
+    const script = readFileSync('src/pages/course.js', 'utf8');
+    expect(script).toContain('content must always win over its entrance effect');
+    expect(script).toContain("revealHashTarget({ align: true })");
     expect(css).toContain('prefers-reduced-motion: reduce');
   });
 });
