@@ -47,6 +47,13 @@ const cardHtml = ({
   displayFont,
 }) => {
   const social = route.seo.social;
+  if (social.precomposed) {
+    return `<!doctype html>
+<html lang="${locale === 'zh' ? 'zh-CN' : 'en-AU'}">
+<head><meta charset="utf-8"><style>*{box-sizing:border-box}html,body{width:${SOCIAL_CARD.width}px;height:${SOCIAL_CARD.height}px;margin:0;overflow:hidden}img{display:block;width:100%;height:100%;object-fit:cover}</style></head>
+<body><img src="${backgroundDataUrl}" alt=""></body>
+</html>`;
+  }
   const light = route.id === 'horoscope';
   const accent = ACCENTS[route.id] || route.themeColor;
   const languageLabel = locale === 'zh' ? '中文' : 'ENGLISH';

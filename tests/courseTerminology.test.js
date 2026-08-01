@@ -28,11 +28,12 @@ describe('course Chinese copy', () => {
   });
 
   it('gives readers a concise, ordered learning path with primary resources', () => {
-    expect(html).toContain('id="direction"');
-    expect(html).toContain('data-zh="网页基础与视觉回归"');
-    expect(html).toContain('https://playwright.dev/docs/test-snapshots');
-    expect(html).toContain('https://github.com/d3/d3');
-    expect(html).toContain('https://modelcontextprotocol.io/docs/learn/architecture');
+    expect(html).toContain('id="atlas"');
+    expect(html).toContain('data-zh="构建生产系统"');
+    expect(html).toContain('https://openai.com/careers/forward-deployed-engineer-(fde)-nyc-new-york-city/');
+    expect(html).toContain('https://economicgraph.linkedin.com/content/dam/me/economicgraph');
+    expect(html).toContain('https://modelcontextprotocol.io/specification/2025-11-25');
+    expect(html).toContain('https://www.nist.gov/itl/ai-risk-management-framework');
   });
 
   it('does not pull render-blocking web fonts for the analogue terminal', () => {

@@ -9,13 +9,14 @@ describe('course narrative progression', () => {
     expect(courseStageForProgress(9)).toBe(4);
   });
 
-  it('ships analogue surveillance primitives and reduced-motion fallback', () => {
+  it('ships a connected editorial atlas and reduced-motion fallback', () => {
     const html = readFileSync('course.html', 'utf8');
     const css = readFileSync('public/styles/course.css', 'utf8');
-    expect(html).toContain('class="course-device"');
-    expect(html).toContain('class="course-scanner"');
-    expect(css).toContain('MICROFILM FRAME');
-    expect(css).toContain('courseSignalSlip');
+    expect(html).toContain('id="atlasViewport"');
+    expect(html).toContain('id="fdeReviewForm"');
+    expect((html.match(/class="map-node /g) || []).length).toBe(33);
+    expect(css).toContain('--map-scale');
+    expect(css).toContain('.atlas-board::before');
     expect(css).toContain('prefers-reduced-motion: reduce');
   });
 });

@@ -14,15 +14,14 @@ const LANGUAGE_TAGS = Object.freeze({ en: 'en-AU', zh: 'zh-CN' });
 const OG_LOCALES = Object.freeze({ en: 'en_AU', zh: 'zh_CN' });
 
 const COURSE_SECTIONS = Object.freeze([
-  { id: 'ch00', en: '00 Tech Tree', zh: '00 技术树' },
-  { id: 'ch01', en: '01 Playbook', zh: '01 蓝图' },
-  { id: 'ch02', en: '02 Fundamentals', zh: '02 基础' },
-  { id: 'ch03', en: '03 Codeforces', zh: '03 算法' },
-  { id: 'ch04', en: '04 Data Analyst', zh: '04 数据分析' },
-  { id: 'ch05', en: '05 MTS Track', zh: '05 MTS 赛道' },
-  { id: 'ch06', en: '06 Assessment', zh: '06 测评' },
-  { id: 'weekly', en: 'Weekly Review', zh: '每周测评' },
-  { id: 'appendix', en: 'Appendix', zh: '附录' },
+  { id: 'signal', en: '01 Why now', zh: '01 为什么是现在' },
+  { id: 'atlas', en: '02 Field map', zh: '02 实战地图' },
+  { id: 'pathway', en: '03 52-week sequence', zh: '03 52 周学习序列' },
+  { id: 'education', en: '04 Education paths', zh: '04 学习与学历路径' },
+  { id: 'fieldwork', en: '05 Portfolio proofs', zh: '05 作品证据' },
+  { id: 'interview', en: '06 Interview rehearsal', zh: '06 面试演练' },
+  { id: 'review', en: '07 Weekly evidence loop', zh: '07 每周证据闭环' },
+  { id: 'sources', en: 'Source notes', zh: '来源说明' },
 ]);
 
 const escapeAttribute = (value) =>
