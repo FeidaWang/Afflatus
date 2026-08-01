@@ -18,8 +18,17 @@ describe('course narrative progression', () => {
     expect((html.match(/class="microfiche /g) || []).length).toBe(7);
     expect(html).toContain('id="filmLoader"');
     expect(html).toContain('id="signalTimecode"');
+    expect(html).toContain('class="signal-strip orientation-dossier"');
+    expect(html).toContain('FOUR MARKETS HIDING UNDER ONE TITLE');
+    expect(html).toContain('1,268 engineer-core postings');
+    expect(html).toContain('BEST READING ORDER / AUG 2026');
+    expect(html).not.toContain('SOURCE NOTES');
+    expect(html).not.toContain('id="sources"');
     expect(css).toContain('--map-scale');
     expect(css).toContain('.atlas-board::before');
+    expect(css).toContain('.course-page>.nav-labs__menu');
+    expect(css).toContain('.course-page .site-top .nav a{display:none}');
+    expect(css).toContain('.orientation-theses');
     expect(css).toContain('body[data-course-stage="4"]');
     expect(css).toContain('@keyframes gate-open');
     expect(css).toContain('transform:translate3d(0,48px,0)');

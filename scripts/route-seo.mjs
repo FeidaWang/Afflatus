@@ -14,14 +14,13 @@ const LANGUAGE_TAGS = Object.freeze({ en: 'en-AU', zh: 'zh-CN' });
 const OG_LOCALES = Object.freeze({ en: 'en_AU', zh: 'zh_CN' });
 
 const COURSE_SECTIONS = Object.freeze([
-  { id: 'signal', en: '01 Why now', zh: '01 为什么是现在' },
+  { id: 'signal', en: '00 Orientation intelligence', zh: '00 定向情报' },
   { id: 'atlas', en: '02 Field map', zh: '02 实战地图' },
   { id: 'pathway', en: '03 52-week sequence', zh: '03 52 周学习序列' },
   { id: 'education', en: '04 Education paths', zh: '04 学习与学历路径' },
   { id: 'fieldwork', en: '05 Portfolio proofs', zh: '05 作品证据' },
   { id: 'interview', en: '06 Interview rehearsal', zh: '06 面试演练' },
   { id: 'review', en: '07 Weekly evidence loop', zh: '07 每周证据闭环' },
-  { id: 'sources', en: 'Source notes', zh: '来源说明' },
 ]);
 
 const escapeAttribute = (value) =>

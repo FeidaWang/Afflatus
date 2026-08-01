@@ -30,7 +30,11 @@ describe('course Chinese copy', () => {
   it('gives readers a concise, ordered learning path with primary resources', () => {
     expect(html).toContain('id="atlas"');
     expect(html).toContain('data-zh="构建生产系统"');
-    expect(html).toContain('https://openai.com/careers/forward-deployed-engineer-(fde)-nyc-new-york-city/');
+    expect(html).toContain('https://openai.com/careers/forward-deployed-engineer-dublin-dublin-ireland/');
+    expect(html).toContain('https://openai.com/index/openai-launches-the-deployment-company/');
+    expect(html).toContain('https://aws.amazon.com/blogs/apn/introducing-forward-deployed-engineering-for-partners-winning-the-future-of-enterprise-ai/');
+    expect(html).toContain('https://a16z.com/the-palantirization-of-everything/');
+    expect(html).toContain('https://x.com/mikiarlo3/status/2019662719503274036');
     expect(html).toContain('https://economicgraph.linkedin.com/content/dam/me/economicgraph');
     expect(html).toContain('https://modelcontextprotocol.io/specification/2025-11-25');
     expect(html).toContain('https://www.nist.gov/itl/ai-risk-management-framework');

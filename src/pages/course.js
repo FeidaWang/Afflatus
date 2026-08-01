@@ -56,7 +56,14 @@ import { courseStageForProgress } from '../lib/courseNarrative.js';
     revealTransmission(target?.closest('section'));
     if (align) target?.scrollIntoView({ block: 'start', behavior: 'auto' });
   };
-  window.addEventListener('hashchange', () => revealHashTarget({ align: true }));
+  const settleHashTarget = () => {
+    revealHashTarget({ align: true });
+    /* A newly revealed section is still completing its 720 ms projector
+       translation. Align once more after it settles so the fixed header does
+       not cover the section title. */
+    window.setTimeout(() => revealHashTarget({ align: true }), 780);
+  };
+  window.addEventListener('hashchange', settleHashTarget);
   revealHashTarget();
 
   const timecode = $('#signalTimecode');
@@ -139,8 +146,7 @@ import { courseStageForProgress } from '../lib/courseNarrative.js';
   sizeAtlas();
   if ('ResizeObserver' in window && atlasBoard) new ResizeObserver(sizeAtlas).observe(atlasBoard);
   if (window.location.hash) {
-    requestAnimationFrame(() => revealHashTarget({ align: true }));
-    window.setTimeout(() => revealHashTarget({ align: true }), 260);
+    requestAnimationFrame(settleHashTarget);
   }
 
   $$('.map-node').forEach((node) => {
