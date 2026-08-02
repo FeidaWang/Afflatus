@@ -14,10 +14,14 @@ describe('course narrative progression', () => {
     const css = readFileSync('public/styles/course.css', 'utf8');
     expect(html).toContain('id="atlasViewport"');
     expect(html).toContain('id="fdeReviewForm"');
-    expect((html.match(/class="map-node /g) || []).length).toBe(33);
+    expect((html.match(/class="map-node /g) || []).length).toBe(36);
     expect((html.match(/class="microfiche /g) || []).length).toBe(7);
     expect(html).toContain('id="filmLoader"');
     expect(html).toContain('id="signalTimecode"');
+    expect(html).toContain('id="agent-core"');
+    expect(html).toContain('id="courseNodeDialog"');
+    expect(html).toContain('id="mapZoomFit"');
+    expect(html).toContain('Six hard questions. Thirty-six transmissions. One page.');
     expect(html).toContain('class="signal-strip orientation-dossier"');
     expect(html).toContain('FOUR MARKETS HIDING UNDER ONE TITLE');
     expect(html).toContain('1,268 engineer-core postings');
@@ -34,6 +38,9 @@ describe('course narrative progression', () => {
     expect(css).toContain('transform:translate3d(0,48px,0)');
     expect(css).not.toContain('awaiting-transmission{clip-path:inset(0 0 100% 0)');
     const script = readFileSync('src/pages/course.js', 'utf8');
+    const nodePackets = readFileSync('src/data/courseNodes.js', 'utf8');
+    expect((nodePackets.match(/'\d{2}': packet\(/g) || []).length).toBe(36);
+    expect(nodePackets).toContain('failure, gate');
     expect(script).toContain('content must always win over its entrance effect');
     expect(script).toContain("revealHashTarget({ align: true })");
     expect(css).toContain('prefers-reduced-motion: reduce');

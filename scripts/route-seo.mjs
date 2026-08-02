@@ -15,6 +15,7 @@ const OG_LOCALES = Object.freeze({ en: 'en_AU', zh: 'zh_CN' });
 
 const COURSE_SECTIONS = Object.freeze([
   { id: 'signal', en: '00 Orientation intelligence', zh: '00 定向情报' },
+  { id: 'agent-core', en: '01 Textbook audit and agent engineering', zh: '01 教材审查与智能体工程' },
   { id: 'atlas', en: '02 Field map', zh: '02 实战地图' },
   { id: 'pathway', en: '03 52-week sequence', zh: '03 52 周学习序列' },
   { id: 'education', en: '04 Education paths', zh: '04 学习与学历路径' },

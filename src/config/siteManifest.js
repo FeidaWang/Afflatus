@@ -430,20 +430,20 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['long-form', 'learning-map', 'local-state'],
     metadata: {
       title: 'Forward Deployed Engineer 0→1 · Project Afflatus',
-      description: 'A bilingual, evidence-led 52-week field map from zero to Forward Deployed Engineer: systems, AI, customer discovery, governance, portfolio projects, and a weekly assessment loop. 从零成长为 FDE 的双语实战路线图。',
+      description: 'A bilingual 52-week, 36-node field map from zero to Forward Deployed Engineer: production systems, recoverable agents, evals, security, customer deployment, and weekly evidence. 从零成长为 FDE 的双语智能体工程路线图。',
       canonical: 'https://feida.au/course.html',
       ogTitle: 'Forward Deployed Engineer 0→1',
-      ogDescription: 'A 52-week field map from learning to shipping AI systems that create measurable customer value.',
+      ogDescription: 'A 36-node field map for building, breaking, evaluating and deploying agent systems that create measurable customer value.',
       ogImage: ROUTE_SEO.course.social.images.en,
     },
     locales: {
       en: {
         title: 'Forward Deployed Engineer 0→1 · Project Afflatus',
-        description: 'A 52-week field map covering software systems, applied AI, customer discovery, governance, portfolio projects, and evidence-led assessment.',
+        description: 'A 52-week, 36-node field map covering production systems, recoverable agent runtimes, memory, security, evaluation and governed customer deployment.',
       },
       zh: {
         title: 'Forward Deployed Engineer 从 0 到 1 · Project Afflatus',
-        description: '一条覆盖软件系统、应用 AI、客户发现、治理、作品项目与证据评测的 52 周双语实战路线。',
+        description: '一条包含 36 个工程节点的 52 周双语路线，覆盖生产系统、可恢复智能体、记忆、安全、评测与受治理客户部署。',
       },
     },
   },

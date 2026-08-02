@@ -1,4 +1,5 @@
 import { courseStageForProgress } from '../lib/courseNarrative.js';
+import { courseNodes } from '../data/courseNodes.js';
 
 (() => {
   'use strict';
@@ -110,43 +111,115 @@ import { courseStageForProgress } from '../lib/courseNarrative.js';
   window.addEventListener('resize', updateProgress);
   updateProgress();
 
-  /* The editorial atlas is one connected canvas. Scaling its wrapper keeps
-     the transformed board's scroll bounds honest in every browser. */
+  /* The atlas opens as one fitted relationship map. Zooming preserves the
+     viewer's focal point; FIT always restores the full Path-to-Hope-like view. */
   const atlasViewport = $('#atlasViewport');
   const atlasStage = $('#atlasStage');
   const atlasBoard = $('#atlasBoard');
   const zoomIn = $('#mapZoomIn');
   const zoomOut = $('#mapZoomOut');
-  let mapScale = window.innerWidth < 720 ? 0.82 : 1;
+  const zoomFit = $('#mapZoomFit');
+  let mapScale = 1;
+  let mapFitScale = 1;
+  let mapWasZoomed = false;
 
   function sizeAtlas() {
-    if (!atlasBoard || !atlasStage) return;
+    if (!atlasBoard || !atlasStage || !atlasViewport) return;
     atlasBoard.style.setProperty('--map-scale', String(mapScale));
-    atlasStage.style.width = `${Math.ceil(atlasBoard.offsetWidth * mapScale)}px`;
-    atlasStage.style.height = `${Math.ceil(atlasBoard.offsetHeight * mapScale)}px`;
-    if (zoomOut) zoomOut.disabled = mapScale <= 0.68;
-    if (zoomIn) zoomIn.disabled = mapScale >= 1.2;
+    const width = Math.ceil(atlasBoard.offsetWidth * mapScale);
+    const height = Math.ceil(atlasBoard.offsetHeight * mapScale);
+    atlasStage.style.width = `${width}px`;
+    atlasStage.style.height = `${height}px`;
+    atlasStage.style.marginInline = width < atlasViewport.clientWidth ? 'auto' : '0';
+    if (zoomOut) zoomOut.disabled = mapScale <= mapFitScale + 0.005;
+    if (zoomIn) zoomIn.disabled = mapScale >= 1.25;
   }
-  function setMapScale(next) {
+
+  function fitAtlas({ keepFocus = false } = {}) {
     if (!atlasViewport || !atlasBoard) return;
-    const before = atlasBoard.offsetWidth * mapScale;
-    const focus = (atlasViewport.scrollLeft + atlasViewport.clientWidth / 2) / Math.max(1, before);
-    mapScale = Math.min(1.2, Math.max(0.68, Math.round(next * 100) / 100));
+    const horizontalInset = window.innerWidth < 720 ? 20 : 44;
+    const verticalInset = 22;
+    const availableWidth = Math.max(1, atlasViewport.clientWidth - horizontalInset);
+    const availableHeight = Math.max(1, atlasViewport.clientHeight - verticalInset);
+    mapFitScale = Math.min(1, availableWidth / atlasBoard.offsetWidth, availableHeight / atlasBoard.offsetHeight);
+    mapScale = Math.max(0.16, Math.floor(mapFitScale * 1000) / 1000);
+    mapWasZoomed = false;
     sizeAtlas();
-    const after = atlasBoard.offsetWidth * mapScale;
-    atlasViewport.scrollLeft = Math.max(0, focus * after - atlasViewport.clientWidth / 2);
+    if (!keepFocus) {
+      atlasViewport.scrollLeft = 0;
+      atlasViewport.scrollTop = 0;
+    }
+  }
+
+  function setMapScale(next) {
+    if (!atlasViewport || !atlasBoard || !atlasStage) return;
+    const beforeWidth = atlasBoard.offsetWidth * mapScale;
+    const beforeHeight = atlasBoard.offsetHeight * mapScale;
+    const focusX = (atlasViewport.scrollLeft + atlasViewport.clientWidth / 2) / Math.max(1, beforeWidth);
+    const focusY = (atlasViewport.scrollTop + atlasViewport.clientHeight / 2) / Math.max(1, beforeHeight);
+    mapScale = Math.min(1.25, Math.max(mapFitScale, Math.round(next * 100) / 100));
+    mapWasZoomed = mapScale > mapFitScale + 0.005;
+    sizeAtlas();
+    const afterWidth = atlasBoard.offsetWidth * mapScale;
+    const afterHeight = atlasBoard.offsetHeight * mapScale;
+    atlasViewport.scrollLeft = Math.max(0, focusX * afterWidth - atlasViewport.clientWidth / 2);
+    atlasViewport.scrollTop = Math.max(0, focusY * afterHeight - atlasViewport.clientHeight / 2);
   }
   zoomIn?.addEventListener('click', () => setMapScale(mapScale + 0.1));
   zoomOut?.addEventListener('click', () => setMapScale(mapScale - 0.1));
-  atlasViewport?.addEventListener('wheel', (event) => {
-    if (!event.shiftKey || Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
-    event.preventDefault();
-    atlasViewport.scrollLeft += event.deltaY;
-  }, { passive: false });
-  sizeAtlas();
-  if ('ResizeObserver' in window && atlasBoard) new ResizeObserver(sizeAtlas).observe(atlasBoard);
+  zoomFit?.addEventListener('click', () => fitAtlas());
+  requestAnimationFrame(() => fitAtlas());
+  if ('ResizeObserver' in window && atlasBoard) {
+    let resizeFrame = 0;
+    new ResizeObserver(() => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        if (mapWasZoomed) sizeAtlas(); else fitAtlas({ keepFocus: true });
+      });
+    }).observe(atlasViewport);
+  }
   if (window.location.hash) {
     requestAnimationFrame(settleHashTarget);
+  }
+
+  const nodeDialog = $('#courseNodeDialog');
+  const nodeDialogTitle = $('#nodeDialogTitle');
+  const nodeDialogMeta = $('#nodeDialogMeta');
+  const nodeDialogCode = $('#nodeDialogCode');
+  const nodeDialogCover = $('#nodeDialogCover');
+  const nodeDialogTheory = $('#nodeDialogTheory');
+  const nodeDialogBuild = $('#nodeDialogBuild');
+  const nodeDialogBreak = $('#nodeDialogBreak');
+  const nodeDialogGate = $('#nodeDialogGate');
+  const nodeDialogSource = $('#nodeDialogSource');
+  let activeMapNode = null;
+
+  function localized(value) {
+    return value?.[lang()] || value?.en || '';
+  }
+
+  function renderNodePacket(node) {
+    const detail = courseNodes[node?.dataset.node];
+    if (!node || !detail || !nodeDialog) return;
+    activeMapNode = node;
+    const code = $('i', node)?.textContent.trim() || `ARCHIVE / ${node.dataset.node}`;
+    const cover = $('b', $('.cover', node))?.innerText.trim() || T('FIELD PACKET', '实战任务包');
+    const title = $('strong', node)?.textContent.trim() || T('Course packet', '课程任务包');
+    nodeDialog.className = `node-dialog ${[...node.classList].find((name) => name.startsWith('tone-')) || 'tone-ink'}`;
+    if (nodeDialogCode) nodeDialogCode.textContent = code;
+    if (nodeDialogCover) nodeDialogCover.textContent = cover;
+    if (nodeDialogTitle) nodeDialogTitle.textContent = title;
+    if (nodeDialogMeta) nodeDialogMeta.textContent = localized(detail.meta);
+    if (nodeDialogTheory) nodeDialogTheory.textContent = localized(detail.theory);
+    if (nodeDialogBuild) nodeDialogBuild.textContent = localized(detail.build);
+    if (nodeDialogBreak) nodeDialogBreak.textContent = localized(detail.failure);
+    if (nodeDialogGate) nodeDialogGate.textContent = localized(detail.gate);
+    if (nodeDialogSource) {
+      const href = node.getAttribute('href') || '#atlas';
+      nodeDialogSource.href = href;
+      nodeDialogSource.target = href.startsWith('#') ? '_self' : '_blank';
+      nodeDialogSource.rel = href.startsWith('#') ? '' : 'noopener';
+    }
   }
 
   $$('.map-node').forEach((node) => {
@@ -154,6 +227,22 @@ import { courseStageForProgress } from '../lib/courseNarrative.js';
       node.classList.add('target-locked');
       window.setTimeout(() => node.classList.remove('target-locked'), 180);
     });
+    node.addEventListener('click', (event) => {
+      if (!nodeDialog || !courseNodes[node.dataset.node]) return;
+      event.preventDefault();
+      renderNodePacket(node);
+      if (typeof nodeDialog.showModal === 'function') nodeDialog.showModal();
+      else nodeDialog.setAttribute('open', '');
+    });
+  });
+  nodeDialog?.addEventListener('click', (event) => {
+    if (event.target === nodeDialog) nodeDialog.close();
+  });
+  nodeDialogSource?.addEventListener('click', () => {
+    if (nodeDialogSource.getAttribute('href')?.startsWith('#')) nodeDialog?.close();
+  });
+  window.addEventListener('afflatus-lang', () => {
+    if (activeMapNode && nodeDialog?.open) renderNodePacket(activeMapNode);
   });
 
   /* Weekly review: intentionally local-only. The score is a weighted index,
