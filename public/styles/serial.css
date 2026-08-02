@@ -187,7 +187,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .book-stage::after{content:attr(data-cover-title);position:absolute;inset:-2px 9px 9px -2px;z-index:20;display:grid;place-items:center;padding:32px;border:2px solid #a36a3d;border-radius:4px 12px 12px 4px;background:radial-gradient(circle at 70% 20%,rgba(232,173,111,.18),transparent 30%),linear-gradient(120deg,#241510,#4a281b 55%,#2c1812);box-shadow:inset 8px 0 12px rgba(0,0,0,.45),inset 0 0 0 8px rgba(232,173,111,.08),10px 13px 18px rgba(0,0,0,.35);color:#e8c98a;font:700 clamp(24px,5vw,42px)/1.5 var(--serif);letter-spacing:.14em;text-align:center;transform-origin:left center;transform:rotateY(-105deg);opacity:0;pointer-events:none}
 .book-stage.is-opening::after{animation:openHardCover .88s cubic-bezier(.2,.7,.18,1) both}
 @keyframes openHardCover{0%{transform:rotateY(0);opacity:1}65%{opacity:1}100%{transform:rotateY(-112deg);opacity:0}}
-/* ---- U-sys-panel: SYS blocks = cross-world game terminal ----
+/* ---- U-sys-panel: 系统播报块 = cross-world game terminal ----
    The novel's system prompts (技能升级/结算面板/规则卡) now render as a
    sci-fi "screen" instead of an inline quote box: cool low-blue teal
    terminal against the warm serif prose, mono type, scanlines, corner

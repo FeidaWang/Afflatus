@@ -67,6 +67,8 @@ describe('pre-rendered novel documents', () => {
     expect(html).toContain('data-prerendered="chapter"');
     expect(html).toContain(chapter.title);
     expect(html).toContain(chapter.blocks[0].text);
+    expect(html).toContain('<span>系统播报 ⟨');
+    expect(html).not.toContain('<span>SYS ⟨');
     expect(html).toContain('"@type":["Chapter","Article"]');
     expect(html).toContain(
       '<link rel="next" href="https://feida.au/zh/novels/wanjie-zhongchun/2/">',

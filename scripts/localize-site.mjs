@@ -492,7 +492,7 @@ function renderNovelBlocks(blocks) {
         heading = match[1];
         text = text.slice(match[0].length);
       }
-      return `<div class="sys"><div class="sys-head"><i class="sys-dot" aria-hidden="true"></i><span>SYS ⟨ ${escapeHtml(heading)} ⟩</span><span class="sys-tag">同契终端 · 明幕</span></div><div class="sys-body">${escapeHtml(text)}</div></div>`;
+      return `<div class="sys"><div class="sys-head"><i class="sys-dot" aria-hidden="true"></i><span>系统播报 ⟨ ${escapeHtml(heading)} ⟩</span><span class="sys-tag">同契终端 · 明幕</span></div><div class="sys-body">${escapeHtml(text)}</div></div>`;
     }
     return `<p>${escapeHtml(block.text || '')}</p>`;
   }).join('');
