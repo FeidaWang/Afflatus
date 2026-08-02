@@ -1,6 +1,6 @@
 /*
  * Afflatus adaptive wordmark — full word at the document origin, page-specific
- * Al intelligence glyph everywhere else. The compact mark is drawn entirely
+ * AI intelligence glyph everywhere else. The compact mark is drawn entirely
  * with type and CSS telemetry; it deliberately contains no slash/backslash.
  */
 
@@ -138,6 +138,28 @@
   transform-origin: center bottom;
 }
 
+/* The source word keeps its real lowercase l for the expanded Afflatus
+   wordmark. In compact mode this drawn uppercase I takes its place, so the
+   intelligence monogram reads as AI instead of the ambiguous Al. */
+.afflatus-brand__l::after {
+  content: "I";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--afflatus-brand-accent-2);
+  font: inherit;
+  font-weight: 900;
+  opacity: 0;
+  transform: translateY(7px) scaleY(.62);
+  transform-origin: center bottom;
+  text-shadow: 0 0 11px color-mix(in srgb, var(--afflatus-brand-accent-2) 55%, transparent);
+  transition:
+    opacity 260ms ease,
+    transform var(--afflatus-brand-duration) var(--afflatus-brand-ease),
+    color 360ms ease;
+}
+
 .afflatus-brand__after {
   max-inline-size: 4.8em;
   transform-origin: left center;
@@ -184,7 +206,15 @@
 }
 
 :root[data-afflatus-brand-state="compact"] .afflatus-brand__l {
+  inline-size: .68em;
+  overflow: visible;
+  color: transparent;
   transform: scaleY(1.08);
+}
+
+:root[data-afflatus-brand-state="compact"] .afflatus-brand__l::after {
+  opacity: 1;
+  transform: translateY(0) scaleY(.96);
 }
 
 :root[data-afflatus-brand-state="compact"] .afflatus-brand__signal,
@@ -711,6 +741,251 @@
   50% { transform: scale(.88); filter: brightness(1.35); }
 }
 
+/* ── Page-native transformation choreography ─────────────────────
+   Every route resolves the same accessible wordmark into the same AI idea,
+   but the motion and instrument language belong to that page. */
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona] .afflatus-brand__a,
+:root[data-afflatus-brand-state="compact"] [data-brand-persona] .afflatus-brand__l {
+  z-index: 3;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--afflatus-brand-accent) 36%, transparent));
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="home"] .afflatus-brand__stage {
+  animation: afflatus-home-resolve 820ms var(--afflatus-brand-ease) both;
+}
+
+:root:not([data-afflatus-brand-state="compact"]) [data-brand-persona="home"] .afflatus-brand__stage::after {
+  animation: afflatus-home-flightline 3.4s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="home"] .afflatus-brand__stage::before {
+  background:
+    linear-gradient(var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 50% 0 / 1px 5px no-repeat,
+    linear-gradient(var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 50% 100% / 1px 5px no-repeat,
+    linear-gradient(90deg, var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 0 50% / 5px 1px no-repeat,
+    linear-gradient(90deg, var(--afflatus-brand-accent), var(--afflatus-brand-accent)) 100% 50% / 5px 1px no-repeat;
+  border: 1px solid rgba(143, 233, 255, .24);
+  clip-path: polygon(0 0, 30% 0, 30% 5%, 70% 5%, 70% 0, 100% 0, 100% 30%, 95% 30%, 95% 70%, 100% 70%, 100% 100%, 70% 100%, 70% 95%, 30% 95%, 30% 100%, 0 100%, 0 70%, 5% 70%, 5% 30%, 0 30%);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="home"] .afflatus-brand__signal {
+  inset: 9px auto auto 48px;
+  inline-size: 23px;
+  block-size: 14px;
+  border: 0;
+  background:
+    linear-gradient(90deg, transparent 0 42%, var(--afflatus-brand-accent-2) 43% 57%, transparent 58%) 50% 50% / 100% 2px no-repeat,
+    var(--afflatus-brand-accent);
+  clip-path: polygon(0 50%, 38% 34%, 54% 0, 64% 38%, 100% 50%, 64% 62%, 54% 100%, 38% 66%);
+  filter: drop-shadow(0 0 5px rgba(143, 233, 255, .72));
+  animation: afflatus-home-fighter 2.45s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="home"] .afflatus-brand__core {
+  inset: 14px auto auto 76px;
+  inline-size: 12px;
+  block-size: 2px;
+  border: 0;
+  border-radius: 0 50% 50% 0;
+  background: linear-gradient(90deg, var(--afflatus-brand-accent-2), #fff6d8);
+  box-shadow: 0 0 8px var(--afflatus-brand-accent-2);
+  animation: afflatus-home-shot 1.5s ease-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="arena"] .afflatus-brand__stage {
+  animation: afflatus-arena-resolve 560ms steps(4, end) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="sectors"] .afflatus-brand__stage {
+  animation: afflatus-sectors-resolve 720ms var(--afflatus-brand-ease) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="signal"] .afflatus-brand__stage {
+  animation: afflatus-signal-resolve 680ms steps(5, end) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="stats"] .afflatus-brand__stage {
+  animation: afflatus-stats-resolve 760ms var(--afflatus-brand-ease) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="course"] .afflatus-brand__stage {
+  animation: afflatus-course-resolve 640ms steps(4, end) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="horoscope"] .afflatus-brand__stage {
+  animation: afflatus-horoscope-resolve 920ms cubic-bezier(.2, .72, .2, 1) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="games"] .afflatus-brand__stage {
+  animation: afflatus-games-resolve 620ms steps(3, end) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="league"] .afflatus-brand__stage {
+  animation: afflatus-league-resolve 760ms var(--afflatus-brand-ease) both;
+}
+
+:root:not([data-afflatus-brand-state="compact"]) [data-brand-persona="serial"] .afflatus-brand__before {
+  transform-origin: right center;
+  animation: afflatus-serial-left-page 3.8s ease-in-out infinite;
+}
+
+:root:not([data-afflatus-brand-state="compact"]) [data-brand-persona="serial"] .afflatus-brand__after {
+  transform-origin: left center;
+  animation: afflatus-serial-right-page 3.8s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__stage {
+  perspective: 120px;
+  animation: afflatus-serial-resolve 900ms var(--afflatus-brand-ease) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__stage::before {
+  inset: 3px auto auto 0;
+  inline-size: 50px;
+  block-size: 28px;
+  border: 1px solid rgba(212, 147, 93, .48);
+  border-radius: 2px 2px 4px 4px;
+  background:
+    linear-gradient(90deg, transparent 49%, rgba(103, 197, 189, .56) 49% 51%, transparent 51%),
+    repeating-linear-gradient(0deg, transparent 0 5px, rgba(212, 147, 93, .12) 5px 6px);
+  box-shadow: inset 0 -3px 7px rgba(40, 24, 21, .25);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__signal,
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__core {
+  inset-block-start: 7px;
+  inline-size: 19px;
+  block-size: 19px;
+  border: 1px solid color-mix(in srgb, var(--afflatus-brand-accent) 64%, transparent);
+  border-radius: 1px 3px 3px 1px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(212, 147, 93, .28) 4px 5px),
+    color-mix(in srgb, var(--afflatus-header-bg) 86%, var(--afflatus-brand-ink));
+  box-shadow: none;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__signal {
+  inset-inline-start: 50px;
+  transform-origin: right center;
+  animation: afflatus-serial-page-left 2.8s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__core {
+  inset-inline-start: 70px;
+  transform-origin: left center;
+  animation: afflatus-serial-page-right 2.8s ease-in-out infinite;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="boot"] .afflatus-brand__stage {
+  animation: afflatus-boot-resolve 780ms var(--afflatus-brand-ease) both;
+}
+
+@keyframes afflatus-home-resolve {
+  0% { transform: translateX(-5px); filter: blur(2px) brightness(1.6); }
+  52% { transform: translateX(2px) scaleX(.96); filter: blur(0) brightness(1.3); }
+  100% { transform: none; filter: none; }
+}
+
+@keyframes afflatus-home-flightline {
+  0%, 100% { transform: scaleX(.28); opacity: .22; }
+  48% { transform: translateX(12px) scaleX(.94); opacity: .68; }
+  52% { transform: translateX(12px) scaleX(.06); opacity: .18; }
+}
+
+@keyframes afflatus-home-fighter {
+  0%, 100% { transform: translateX(-3px) scale(.9); }
+  46% { transform: translateX(3px) scale(1); }
+  54% { transform: translateX(3px) scale(.96); filter: drop-shadow(0 0 8px rgba(231, 183, 122, .8)); }
+}
+
+@keyframes afflatus-home-shot {
+  0%, 42% { transform: translateX(-5px) scaleX(.15); opacity: 0; }
+  50% { opacity: 1; }
+  78%, 100% { transform: translateX(16px) scaleX(1); opacity: 0; }
+}
+
+@keyframes afflatus-arena-resolve {
+  0% { transform: translate(4px, -1px); clip-path: inset(0 0 72% 0); }
+  50% { transform: translate(-2px, 1px); clip-path: inset(32% 0 25% 0); }
+  100% { transform: none; clip-path: inset(0); }
+}
+
+@keyframes afflatus-sectors-resolve {
+  0% { transform: scaleX(1.18); filter: saturate(.2); }
+  58% { transform: scaleX(.94); filter: saturate(1.5); }
+  100% { transform: none; filter: none; }
+}
+
+@keyframes afflatus-signal-resolve {
+  0% { clip-path: inset(0 100% 0 0); opacity: .2; }
+  100% { clip-path: inset(0); opacity: 1; }
+}
+
+@keyframes afflatus-stats-resolve {
+  0% { transform: scale(.86); filter: blur(2px); }
+  64% { transform: scale(1.03); filter: blur(0); }
+  100% { transform: none; }
+}
+
+@keyframes afflatus-course-resolve {
+  0%, 25% { transform: translateX(4px); filter: contrast(1.6); }
+  50% { transform: translateX(-3px); clip-path: inset(28% 0 30% 0); }
+  100% { transform: none; clip-path: inset(0); filter: none; }
+}
+
+@keyframes afflatus-horoscope-resolve {
+  0% { transform: rotate(-10deg) scale(.72); opacity: .28; }
+  62% { transform: rotate(2deg) scale(1.04); opacity: 1; }
+  100% { transform: none; }
+}
+
+@keyframes afflatus-games-resolve {
+  0% { transform: scaleY(.12); filter: brightness(2); }
+  55% { transform: scaleY(1.16); }
+  100% { transform: none; filter: none; }
+}
+
+@keyframes afflatus-league-resolve {
+  0% { transform: translateX(-7px) scaleX(.8); }
+  58% { transform: translateX(2px) scaleX(1.04); }
+  100% { transform: none; }
+}
+
+@keyframes afflatus-serial-left-page {
+  0%, 76%, 100% { transform: perspective(90px) rotateY(0); }
+  84% { transform: perspective(90px) rotateY(8deg); }
+}
+
+@keyframes afflatus-serial-right-page {
+  0%, 76%, 100% { transform: perspective(90px) rotateY(0); }
+  88% { transform: perspective(90px) rotateY(-9deg); }
+}
+
+@keyframes afflatus-serial-resolve {
+  0% { transform: rotateX(18deg) scale(.78); filter: blur(1px); }
+  64% { transform: rotateX(-3deg) scale(1.03); filter: blur(0); }
+  100% { transform: none; }
+}
+
+@keyframes afflatus-serial-page-left {
+  0%, 100% { transform: rotateY(9deg); }
+  46% { transform: rotateY(54deg); }
+  58% { transform: rotateY(5deg); }
+}
+
+@keyframes afflatus-serial-page-right {
+  0%, 100% { transform: rotateY(-9deg); }
+  52% { transform: rotateY(-56deg); }
+  64% { transform: rotateY(-4deg); }
+}
+
+@keyframes afflatus-boot-resolve {
+  0% { transform: translateX(-6px) scale(.9); opacity: .35; }
+  60% { transform: translateX(1px) scale(1.02); opacity: 1; }
+  100% { transform: none; }
+}
+
 /* ── Header integrations ───────────────────────────────────────── */
 
 .page-hero > .afflatus-brand,
@@ -820,11 +1095,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .site-header--follow,
+  .afflatus-brand__stage,
   .afflatus-brand__stage::before,
   .afflatus-brand__stage::after,
   .afflatus-brand__a,
   .afflatus-brand__before,
   .afflatus-brand__l,
+  .afflatus-brand__l::after,
   .afflatus-brand__after,
   .afflatus-brand__signal,
   .afflatus-brand__core {

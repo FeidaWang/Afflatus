@@ -33,7 +33,7 @@ function brandOf(file) {
   return findClass(documentOf(file), 'afflatus-brand');
 }
 
-describe('Al 顶部状态', () => {
+describe('AI 顶部状态', () => {
   it('只有在页面顶端展开完整 Afflatus', () => {
     expect(brandStateFromTop(true)).toBe(AFFLATUS_BRAND_FULL);
     expect(brandStateFromTop(false)).toBe(AFFLATUS_BRAND_COMPACT);
@@ -87,6 +87,8 @@ describe.each(FOLLOWING_PAGES)('%s 跟随式品牌', (file) => {
 });
 
 describe('跨页一致性与差异化', () => {
+  const css = readFileSync(resolve(ROOT, 'public/styles/afflatus-brand.css'), 'utf8');
+
   it('所有构建页面使用完全相同的字形节点序列', () => {
     const signatures = PAGES.map((file) => [...walk(brandOf(file))]
       .filter((node) => node.tagName)
@@ -101,7 +103,39 @@ describe('跨页一致性与差异化', () => {
   });
 
   it('共享样式中彻底移除旧反斜杠向量', () => {
-    const css = readFileSync(resolve(ROOT, 'public/styles/afflatus-brand.css'), 'utf8');
     expect(css).not.toContain('afflatus-brand__vector');
+  });
+
+  it('压缩态把原字名中的小写 l 重绘为清晰的大写 AI 字标', () => {
+    expect(css).toMatch(/\.afflatus-brand__l::after\s*{[^}]*content:\s*"I"/s);
+    expect(css).toMatch(/data-afflatus-brand-state="compact"[^}]+\.afflatus-brand__l\s*{[^}]*color:\s*transparent/s);
+    expect(css).toMatch(/data-afflatus-brand-state="compact"[^}]+\.afflatus-brand__l::after\s*{[^}]*opacity:\s*1/s);
+  });
+
+  it.each(PAGES)('%s 的人格字体与专属变换均在共享样式内定义', (file) => {
+    const persona = attr(brandOf(file), 'data-brand-persona');
+    expect(css).toContain(`[data-brand-persona="${persona}"]`);
+    expect(css).toContain(`--afflatus-brand-font:`);
+    expect(css).toMatch(new RegExp(`data-brand-persona="${persona}"\\] \\.afflatus-brand__stage \\{[^}]*animation: afflatus-${persona}-resolve`));
+    expect(css).toContain(`@keyframes afflatus-${persona}-resolve`);
+  });
+
+  it('首页拥有太空战机、锁定和射击动作，小说页拥有左右翻书动作', () => {
+    expect(css).toContain('afflatus-home-fighter');
+    expect(css).toContain('afflatus-home-shot');
+    expect(css).toContain('afflatus-serial-left-page');
+    expect(css).toContain('afflatus-serial-right-page');
+    expect(css).toContain('afflatus-serial-page-left');
+    expect(css).toContain('afflatus-serial-page-right');
+    expect(css).toMatch(/@keyframes afflatus-serial-page-left[^}]+rotateY/s);
+  });
+
+  it('减少动态效果模式会关闭舞台、AI 字形与装饰层动画', () => {
+    const reduced = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
+    expect(reduced).toContain('.afflatus-brand__stage,');
+    expect(reduced).toContain('.afflatus-brand__stage::before');
+    expect(reduced).toContain('.afflatus-brand__l::after');
+    expect(reduced).toContain('.afflatus-brand__signal');
+    expect(reduced).toContain('animation: none !important');
   });
 });

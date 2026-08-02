@@ -1,9 +1,60 @@
 import { expect, settlePage, test } from './site-fixture.js';
 
-const ROUTES = ['/', '/arena.html', '/sectors.html', '/signal.html'];
+const ROUTES = [
+  ['/', 'home'],
+  ['/arena.html', 'arena'],
+  ['/sectors.html', 'sectors'],
+  ['/signal.html', 'signal'],
+  ['/stats.html', 'stats'],
+  ['/horoscope.html', 'horoscope'],
+  ['/serial.html', 'serial'],
+  ['/course.html', 'course'],
+  ['/games.html', 'games'],
+  ['/league.html', 'league'],
+  ['/boot.html', 'boot'],
+];
+
+const FOLLOWING_ROUTES = ROUTES
+  .map(([route]) => route)
+  .filter((route) => !['/', '/serial.html', '/course.html', '/boot.html'].includes(route));
 
 test.describe('Afflatus adaptive brand', () => {
-  for (const route of ROUTES) {
+  test.use({ reducedMotion: 'no-preference' });
+
+  for (const [route, persona] of ROUTES) {
+    test(`${route} resolves into its page-native AI identity`, async ({ page }) => {
+      await page.goto(route, { waitUntil: 'domcontentloaded' });
+      await settlePage(page);
+
+      const brand = page.locator(`a[data-afflatus-brand][data-brand-persona="${persona}"]`);
+      await expect(brand).toBeVisible();
+
+      await page.evaluate(() => {
+        document.documentElement.dataset.afflatusBrandState = 'compact';
+      });
+
+      const rendered = await brand.evaluate((element) => {
+        const stage = element.querySelector('.afflatus-brand__stage');
+        const letterI = element.querySelector('.afflatus-brand__l');
+        const bounds = element.getBoundingClientRect();
+        return {
+          animationName: getComputedStyle(stage).animationName,
+          fontFamily: getComputedStyle(stage).fontFamily,
+          iContent: getComputedStyle(letterI, '::after').content,
+          iOpacity: getComputedStyle(letterI, '::after').opacity,
+          withinViewport: bounds.left >= -1 && bounds.right <= innerWidth + 1,
+        };
+      });
+
+      expect(rendered.animationName).toContain(`afflatus-${persona}-resolve`);
+      expect(rendered.fontFamily).toBeTruthy();
+      expect(rendered.iContent).toContain('I');
+      expect(rendered.iOpacity).toBe('1');
+      expect(rendered.withinViewport).toBe(true);
+    });
+  }
+
+  for (const route of FOLLOWING_ROUTES) {
     test(`${route} expands only at the top and keeps the header attached`, async ({ page }) => {
       await page.goto(route, { waitUntil: 'domcontentloaded' });
       await settlePage(page);
@@ -30,11 +81,36 @@ test.describe('Afflatus adaptive brand', () => {
       await expect(page.locator('html')).toHaveAttribute('data-afflatus-brand-state', 'full');
     });
   }
+});
 
-  test('Labs routes retain their independent identity systems', async ({ page }) => {
-    for (const route of ['/stats.html', '/horoscope.html', '/serial.html', '/course.html']) {
-      await page.goto(route, { waitUntil: 'domcontentloaded' });
-      await expect(page.locator('a[data-afflatus-brand]')).toHaveCount(0);
-    }
+test.describe('Afflatus reduced motion brand', () => {
+  test.use({ reducedMotion: 'reduce' });
+
+  test('compact identity remains legible without motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/serial.html', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+    await page.evaluate(() => {
+      document.documentElement.dataset.afflatusBrandState = 'compact';
+    });
+
+    const brand = page.locator('a[data-afflatus-brand]');
+    await expect(brand).toBeVisible();
+    const reduced = await brand.evaluate((element) => {
+      const stage = element.querySelector('.afflatus-brand__stage');
+      const signal = element.querySelector('.afflatus-brand__signal');
+      const letterI = element.querySelector('.afflatus-brand__l');
+      return {
+        stageAnimation: getComputedStyle(stage).animationName,
+        signalAnimation: getComputedStyle(signal).animationName,
+        iContent: getComputedStyle(letterI, '::after').content,
+        iOpacity: getComputedStyle(letterI, '::after').opacity,
+      };
+    });
+
+    expect(reduced.stageAnimation).toBe('none');
+    expect(reduced.signalAnimation).toBe('none');
+    expect(reduced.iContent).toContain('I');
+    expect(reduced.iOpacity).toBe('1');
   });
 });

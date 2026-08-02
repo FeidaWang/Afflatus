@@ -1,6 +1,6 @@
 /*
  * Full-site Afflatus header audit.
- * Every build route must expose the same CSS-only Afflatus → Al structure,
+ * Every build route must expose the same CSS-only Afflatus → AI structure,
  * while `data-brand-persona` supplies a unique page-native visual system.
  */
 
@@ -110,7 +110,7 @@ if (AS_JSON) {
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 } else {
   const pad = (value, width) => String(value ?? '—').padEnd(width);
-  console.log('\n全站 Afflatus → Al 品牌审计\n');
+  console.log('\n全站 Afflatus → AI 品牌审计\n');
   console.log(`${pad('页面', 12)}${pad('状态', 11)}${pad('人格', 12)}${pad('链接', 7)}${pad('跟随', 7)}${pad('SVG', 6)}反斜杠`);
   console.log('─'.repeat(72));
   for (const page of pages) {
@@ -124,12 +124,12 @@ if (AS_JSON) {
       + (page.hasVector || page.sourceHasBackslashPart ? '有' : '无'),
     );
   }
-  console.log(`\nCSS Al 覆盖：${report.adaptiveAdoption}；独立视觉人格：${report.personaCount}/${pages.length}`);
+  console.log(`\nCSS AI 覆盖：${report.adaptiveAdoption}；独立视觉人格：${report.personaCount}/${pages.length}`);
   if (issues.length) {
     console.log('\n待修复：');
     for (const issue of issues) console.log(`  • ${issue}`);
   } else {
-    console.log('\n✔ 全部构建页面使用无反斜杠、同结构、不同人格的 Al 字标。');
+    console.log('\n✔ 全部构建页面使用无反斜杠、同结构、不同人格的 AI 字标。');
   }
   console.log('');
 }
