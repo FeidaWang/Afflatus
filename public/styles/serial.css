@@ -7,7 +7,7 @@
   --serif:'Noto Serif SC',"Songti SC","STSong",serif;
   --safe-t:var(--safe-top,env(safe-area-inset-top,0px));--safe-b:var(--safe-bottom,env(safe-area-inset-bottom,0px));
   --safe-l:var(--safe-left,env(safe-area-inset-left,0px));--safe-r:var(--safe-right,env(safe-area-inset-right,0px));
-  --read-fs:18px;--site-header-h:68px;--toolbar-h:58px;
+  --read-fs:18px;--toolbar-h:58px;
 }
 /* ---- reading-mode palettes (low-blue, long-read friendly) ----
    U15e: green white point lowered (~10-11% luminance cut) to ease
@@ -49,6 +49,9 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 
 /* ---- top bar ---- */
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid var(--line);background:linear-gradient(90deg,rgba(201,131,74,.10),transparent 60%),var(--panel);padding:11px 14px;border-radius:2px}
+/* The serial landing chrome is contextual, not persistent. Let it leave the
+   viewport so the reader controls own the full sticky area while reading. */
+.novels-page .site-header--follow{position:relative;inset-block-start:auto}
 .seal{display:flex;align-items:center;gap:10px;min-width:0}
 .seal svg{width:34px;height:34px;flex:0 0 34px}
 .seal b{font:400 15px/1.2 var(--disp);letter-spacing:.04em;color:var(--chrome);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -97,10 +100,9 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 @media(min-width:640px){.hud{grid-template-columns:repeat(4,1fr)}}
 
 /* ---- toolbar ---- */
-/* The global site header and the reader controls are two separate sticky
-   layers. Their live heights are measured in serial.html, so the reader
-   toolbar always docks immediately below the site header without overlap. */
-.toolbar{position:sticky;top:calc(var(--safe-t) + var(--site-header-h));z-index:5;margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(6px);padding:9px 10px;border-radius:2px}
+/* Once the reader reaches the viewport, its controls become the only sticky
+   bar and use the entire top edge (plus any device safe-area inset). */
+.toolbar{position:sticky;top:var(--safe-t);z-index:5;margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(6px);padding:9px 10px;border-radius:2px}
 .tbtn{display:inline-flex;align-items:center;gap:6px;font:400 11.5px/1 var(--mono);letter-spacing:.03em;color:var(--chrome);border:1px solid rgba(236,226,207,.16);padding:9px 11px;border-radius:2px;min-height:38px}
 .tbtn:hover{border-color:var(--teal);color:var(--teal)}
 .tbtn.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
@@ -139,7 +141,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 
 /* ---- reader (eye-comfort palette lives here only) ---- */
 .reader{background:var(--read-tex,none),linear-gradient(160deg,var(--read-bg) 0%,var(--read-bg2) 100%);color:var(--read-ink);border:1px solid rgba(0,0,0,.15);box-shadow:0 8px 0 rgba(0,0,0,.35);border-radius:2px;position:relative;transition:background .25s ease,color .25s ease}
-.reader-progress{position:sticky;top:calc(var(--safe-t) + var(--site-header-h) + var(--toolbar-h));height:3px;background:var(--read-line);z-index:2}
+.reader-progress{position:sticky;top:calc(var(--safe-t) + var(--toolbar-h));height:3px;background:var(--read-line);z-index:2}
 .reader-progress i{display:block;height:100%;width:0;background:var(--read-accent);transition:width .1s linear}
 .reader .pad{padding:clamp(18px,5vw,34px) clamp(16px,5vw,40px) clamp(24px,5vw,40px)}
 .reader h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px}
@@ -229,7 +231,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .wf-sentinel .eq i:nth-child(2){animation-delay:.15s}.wf-sentinel .eq i:nth-child(3){animation-delay:.3s}
 @keyframes wfeq{0%,100%{height:4px}50%{height:13px}}
 .wf-sentinel.done .eq{display:none}
-.wf-chip{position:sticky;top:calc(var(--safe-t) + var(--site-header-h) + var(--toolbar-h) + 12px);z-index:3;display:none;align-self:flex-start;font:400 10.5px/1 var(--mono);letter-spacing:.06em;color:var(--read-ink);background:color-mix(in srgb,var(--read-bg) 92%,transparent);border:1px solid var(--read-line);padding:6px 10px;border-radius:20px;margin:0 0 18px;box-shadow:0 4px 14px rgba(0,0,0,.12);backdrop-filter:blur(8px)}
+.wf-chip{position:sticky;top:calc(var(--safe-t) + var(--toolbar-h) + 12px);z-index:3;display:none;align-self:flex-start;font:400 10.5px/1 var(--mono);letter-spacing:.06em;color:var(--read-ink);background:color-mix(in srgb,var(--read-bg) 92%,transparent);border:1px solid var(--read-line);padding:6px 10px;border-radius:20px;margin:0 0 18px;box-shadow:0 4px 14px rgba(0,0,0,.12);backdrop-filter:blur(8px)}
 .wf-chip.show{display:inline-flex}
 
 /* ---- mobile FAB quick-nav (thumb-reachable) ---- */

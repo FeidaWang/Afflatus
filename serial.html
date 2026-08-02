@@ -458,21 +458,17 @@
     );
   }
 
-  /* The global header, reader toolbar, progress bar and waterfall chip form
-     one sticky stack. Both bars can wrap as navigation and controls load, so
-     measure their live heights instead of relying on desktop-only constants. */
+  /* The landing header scrolls away; only the reader toolbar is sticky. Its
+     height still varies across widths, so keep downstream offsets live. */
   var toolbarEl = document.getElementById('toolbar');
-  var siteHeaderEl = document.querySelector('.site-header--follow');
-  function syncStickyChrome() {
-    document.documentElement.style.setProperty('--site-header-h', (siteHeaderEl ? siteHeaderEl.offsetHeight : 0) + 'px');
+  function syncToolbarH() {
     document.documentElement.style.setProperty('--toolbar-h', toolbarEl.offsetHeight + 'px');
   }
-  syncStickyChrome();
-  window.addEventListener('resize', syncStickyChrome);
+  syncToolbarH();
+  window.addEventListener('resize', syncToolbarH);
   if (window.ResizeObserver) {
-    var stickyChromeObserver = new ResizeObserver(syncStickyChrome);
-    if (siteHeaderEl) stickyChromeObserver.observe(siteHeaderEl);
-    stickyChromeObserver.observe(toolbarEl);
+    var toolbarResizeObserver = new ResizeObserver(syncToolbarH);
+    toolbarResizeObserver.observe(toolbarEl);
   }
 
   function toast(msg, ms) {
