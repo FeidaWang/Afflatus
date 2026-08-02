@@ -37,13 +37,13 @@ import {
   tracerStream as hmdTracer,
   impactSparks as hmdSparks,
 } from './ui/hmdMinimal.js';
-import { createCombatHmdV3, drawCockpitFrame, drawSCZoomScope } from './ui/combatHmdV3.js';
+import { createCombatHmdV3, drawSCZoomScope } from './ui/combatHmdV3.js';
 import { createCombatViewState } from './ui/combatView.js';
 import { initMarketDeck } from './ui/marketDeck.js';
 import { createPageTurnController } from './ui/pageTurn.js';
 import { createRadarDeck } from './ui/radarDeck.js';
 import { createSoftClockRenderer } from './ui/softClock.js';
-import { initTerminalStarMap } from './ui/terminalStarMap.js';
+import { initVoyageLogConsole } from './ui/voyageLogConsole.js';
 import { applyDeviceBodyClasses, setText } from './utils/dom.js';
 import { clamp, easeOut, lerp, rand } from './utils/math.js';
 import { createCursor } from './ui/cursor.ts';
@@ -137,7 +137,7 @@ function combatCamDirector(){ try{ return !/[?&]combatcam=tactical\b/.test(locat
 // 2026-07-03 data-binding audit (ROADMAP §4b item 1): combatHudState() is only
 // ever called from the combat/standby branches of drawPilotFeed (mode is
 // always 'combat' or 'standby' there — launch/landing render through
-// drawPilotDeck+drawCockpitFrame instead, see drawPilotFeed). So the
+// their dedicated flight-deck scenes, see drawPilotFeed). So the
 // mode==='launch'/'landing' branches below, and alt/vsi/atmo/ladder, are
 // currently unreachable with real values — confirmed, not a regression.
 // Wiring combatHudSC into the launch/landing path too (so its pitch-ladder
@@ -210,6 +210,7 @@ const hudPanels={
 };
 const hudFocusButtons=[...document.querySelectorAll('[data-cic-panel-focus]')];
 let focusedHudPanel=null;
+let voyageLogCtl=null;
 function setHudPanelFocus(panelId=null){
   const next=panelId&&hudPanels[panelId]?panelId:null;
   focusedHudPanel=next;
@@ -220,7 +221,6 @@ function setHudPanelFocus(panelId=null){
     button.classList.toggle('is-active',active);
     button.setAttribute('aria-expanded',String(active));
   });
-  if(next!=='tactical') document.body.classList.remove('terminal-open');
 }
 hudFocusButtons.forEach((button)=>button.addEventListener('click',(event)=>{
   event.stopPropagation();
@@ -323,7 +323,7 @@ commandModeBtn?.addEventListener('click',()=>{
   if(toHudOff){
     disengageBattleSystems();
     setHudPanelFocus(null);
-    document.body.classList.remove('terminal-open');
+    voyageLogCtl?.close();
   }
   showBridgeCallout(toHudOff?'Cruising mode on':'Commander mode on');
   updateCommandButton();
@@ -2795,24 +2795,6 @@ function drawPilotHmd(ctx,w,h,now,label,mode){
   drawPilotSpace(ctx,w,h,now,missileLike?1.55:1.05);
   combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,label,mode);
 }
-// U14c (2026-07-12): snapshot passed into drawCockpitFrame's PWR/WPN/THR
-// pip readouts — WPN's colour + fill come from the same chooseWeapon()/
-// weaponCooldownRatio() the Defense Module buttons already use (no second
-// notion of "current weapon"), warpIntensity is the existing throttle
-// value, warpHover mirrors the real `body.warp-hover` class the "以中文
-//入梦" button already drives (see its mouseenter/mouseleave below).
-function cockpitDash(){
-  const state=combatSnapshot;
-  const weapon=state.fireControl.activeWeapon;
-  return {
-    weapon,
-    cdRatio: combatRuntime.weaponCooldownRatio(weapon),
-    warpIntensity,
-    warpHover: document.body.classList.contains('warp-hover'),
-    ammo:state.fleet.ammoPct/100,
-    deck:state.fleet.deckPct/100,
-  };
-}
 function drawPilotDeck(ctx,w,h,phase,landing=false){
   const horizon=h*(landing ? .48 : .42), center=w*.5;
   ctx.save();
@@ -3240,18 +3222,6 @@ function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
   ctx.restore();
 }
 
-// V17 cockpit boot sequence: the console powers on staged (drawCockpitFrame's
-// `boot` param). Full sequence on the first standby/combat frame ever (page
-// load), and re-armed from 65% whenever a launch hands over to TARGET LINK —
-// during the launch itself the console is already staging up with `elapsed`.
-let cockpitBootAt=0, cockpitBootFrom=0, lastPilotFeedMode='';
-function cockpitBootT(nowMs,mode){
-  if(mode!=='combat'&&mode!=='standby') return 1;
-  if(lastPilotFeedMode==='launch'){ cockpitBootAt=nowMs; cockpitBootFrom=.65; }
-  else if(!cockpitBootAt){ cockpitBootAt=nowMs; cockpitBootFrom=0; }
-  const dur=cockpitBootFrom>0?1500:2600;
-  return clamp(cockpitBootFrom+(1-cockpitBootFrom)*((nowMs-cockpitBootAt)/dur),0,1);
-}
 function drawPilotFeed(now,state=combatSnapshot){
   const pilotCanvas=document.getElementById('cicPilotFeed');
   const feed=setupFeedCanvas(pilotCanvas);
@@ -3261,8 +3231,6 @@ function drawPilotFeed(now,state=combatSnapshot){
   if(pilotView.until<nowMs && pilotView.mode!=='mosaic') pilotView.mode='standby';
   let mode=pilotModeFor(craft);
   if(mode==='mosaic' && pilotView.until<nowMs){pilotView.mode='standby';mode='standby';}
-  const cockpitBoot=cockpitBootT(nowMs,mode);
-  lastPilotFeedMode=mode;
   // Phase 2 → U24 (24c): top-down WebGL feed for combat/standby AND, since
   // U24, launch/landing — entering those modes fires the scene's flight
   // lifecycle (deckCam/chaseLaunch/towerCam/flybyCam cuts happen inside the
@@ -3306,7 +3274,6 @@ function drawPilotFeed(now,state=combatSnapshot){
         // reducing the ship to a drifting translucent silhouette. Only the
         // transparent symbology layer belongs in this branch.
         combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,hmdLabel,'combat');
-        drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash());
       }
       return;
     }
@@ -3338,7 +3305,6 @@ function drawPilotFeed(now,state=combatSnapshot){
         ? (phase==='ignite'?'导弹点火':phase==='terminal'?'终末追踪':phase==='impact'?'即将命中':'导弹投放')
         : (phase==='ignite'?'MISSILE IGNITION':phase==='terminal'?'TERMINAL TRACK':phase==='impact'?'IMPACT IMMINENT':'MISSILE DROP');
       drawPilotHmd(ctx,w,h,now,label,'missile');
-      drawCockpitFrame(ctx,w,h,now,false,1,cockpitDash());
     }else if(combatViewLegacy()) drawPilotMissilePOV(ctx,w,h,now,pilotView.weapon);
     else drawMissileCine(ctx,w,h,now,elapsed,{lang:currentLang,halley,killed:(!halley||halley.destroyed),locked:!!(halley&&halley.hover)});
   }else if(mode==='ciws'||mode==='offline'){
@@ -3372,11 +3338,6 @@ function drawPilotFeed(now,state=combatSnapshot){
         drawPilotDeck(ctx,w,h,easeOut(elapsed),false);
         drawPilotF47Nose(ctx,w,h,elapsed);
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'甲板起飞 · 12点方向':'DECK LAUNCH · 12 O CLOCK','launch');
-        // V17: console + boot checklist AFTER the HMD pass (drawPilotHmd's
-        // space repaint buried anything drawn earlier). The console stages up
-        // THROUGH the takeoff roll, finishing at 65% — TARGET LINK sync + the
-        // ESTABLISHED flash land after handover to standby.
-        drawCockpitFrame(ctx,w,h,now,false,.05+easeOut(elapsed)*.60,cockpitDash());
         drawPilotSystemSequence(ctx,w,h,elapsed,false);
       }
     }else if(mode==='landing'){
@@ -3386,9 +3347,6 @@ function drawPilotFeed(now,state=combatSnapshot){
         drawPilotDeck(ctx,w,h,elapsed,true);
         drawPilotF47Nose(ctx,w,h,elapsed,true);
         drawPilotHmd(ctx,w,h,now,currentLang==='zh'?'返航着舰 · 捕获航线':'RETURN LANDING · GLIDE SLOPE','landing');
-        // V17: console after the HMD pass (same draw-order fix as launch);
-        // landing keeps a fully-lit console (boot=1 default), green accent.
-        drawCockpitFrame(ctx,w,h,now,true,1,cockpitDash());
         drawPilotSystemSequence(ctx,w,h,elapsed,true);
       }
     }else{
@@ -3397,15 +3355,8 @@ function drawPilotFeed(now,state=combatSnapshot){
       if(combatViewScPanel()){
         drawCombatHudSC(ctx,w,h,now,combatHudState(mode));
       }else{
-        // V17 draw order fix: drawPilotSpace's near-opaque repaint used to sit
-        // ON TOP of the cockpit frame — that's why the old canopy struts read
-        // as a ghost "triangle in the background". Space (acts as the frame
-        // clear) → console → HMD, with the HMD fading in as the console boots.
         drawPilotSpace(ctx,w,h,now,1.05);
-        drawCockpitFrame(ctx,w,h,now,false,cockpitBoot,cockpitDash());
-        ctx.save();ctx.globalAlpha=clamp(cockpitBoot*1.6-.3,0,1);
         combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,currentLang==='zh'?'目标链路':'TARGET LINK','combat');
-        ctx.restore();
       }
     }
   }
@@ -3553,18 +3504,7 @@ function setLang(lang){
   document.getElementById('f1').textContent=c.f1; document.getElementById('f2').textContent=c.f2; document.getElementById('f3').textContent=c.f3;
   applyHudLanguage();
   updateSignalDeckHud();
-  const starDistance=document.getElementById('starmapDistance');
-  if(starDistance) starDistance.textContent = lang==='zh' ? '离开地球 2738 天' : '2738 days from Earth';
-  const terminalLoginBtn=document.getElementById('terminalLoginBtn');
-  if(terminalLoginBtn) terminalLoginBtn.textContent = lang==='zh' ? '登录' : 'LOGIN';
-  const starmapToggle=document.getElementById('starmapToggle');
-  const starmapPanel=document.getElementById('terminalStarMapPanel');
-  if(starmapToggle){
-    const mapActive=starmapPanel?.classList.contains('active');
-    starmapToggle.textContent = mapActive ? (lang==='zh' ? '登录' : 'LOGIN') : (lang==='zh' ? '星图' : 'STAR MAP');
-  }
-  const terminalTitle=document.querySelector('.notebook-status b');
-  if(terminalTitle) terminalTitle.textContent = lang==='zh' ? '舰长终端' : 'Commander Terminal';
+  voyageLogCtl?.setLanguage();
   const feed=document.getElementById('cicBattleFeed');
   if(feed){feed.dataset.seeded='';feed.innerHTML='';seedBattleFeed();}
   marketDeck.renderPicks(c.picks);
@@ -3613,42 +3553,13 @@ document.getElementById('langMiniToggle')?.addEventListener('click',event=>{
   langBtn.click();
 });
 setLang(currentLang);
-const terminalStarMapCtl=initTerminalStarMap({getLang:()=>currentLang});
-// U12d (2026-07-11): mobile drops the star-map "upper layer" entirely (perf —
-// its rAF draw loop only runs while .terminal-starmap has the 'active' class,
-// see terminalStarMap.js) and folds the Private Voyage Log into the Defense
-// Module behind a single toggle instead. Deactivating the map on boot (mobile
-// only; desktop keeps its default star-map-first behaviour untouched) stops
-// that draw loop before it ever starts, not just hides it visually.
-if(matchMedia('(max-width:860px)').matches) terminalStarMapCtl?.setMode(false);
-const voyageLogToggle=document.getElementById('voyageLogToggle');
-voyageLogToggle?.addEventListener('click',(e)=>{
-  e.preventDefault();
-  e.stopPropagation();
-  const opening=!document.body.classList.contains('mobile-log-open');
-  document.body.classList.toggle('mobile-log-open',opening);
-  const boot=document.getElementById('voyageLogBoot');
-  if(opening && boot){
-    boot.classList.remove('play');
-    void boot.offsetWidth;
-    boot.classList.add('play');
+voyageLogCtl=initVoyageLogConsole({
+  getLang:()=>currentLang,
+  onOpen(){
+    setHudPanelFocus(null);
+    document.body.classList.remove('terminal-open','mobile-log-open');
   }
 });
-function pulseVoyageIndicator(){
-  const el=document.getElementById('voyagePulse');
-  if(!el) return;
-  const bearing=Math.round(128 + Math.sin(Date.now()/58000)*4);
-  const drift=(1.28 + Math.cos(Date.now()/69000)*0.05).toFixed(2);
-  const span=el.querySelector('span');
-  if(span) span.textContent = currentLang==='zh'
-    ? `离开地球 2738 天 · 航向 ${bearing}° · 航迹 ${drift}G`
-    : `2738 DAYS FROM EARTH · BEARING ${bearing}° · COURSE ${drift}G`;
-  el.classList.remove('active');
-  void el.offsetWidth;
-  el.classList.add('active');
-}
-setTimeout(pulseVoyageIndicator,1800);
-setInterval(pulseVoyageIndicator,60000);
 
 /* U44 44-3: hero mouse-parallax. Passive pointermove writes two CSS custom
    properties (--mx/--my) via a self-stopping rAF lerp loop; DOM position math

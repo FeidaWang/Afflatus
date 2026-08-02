@@ -30,17 +30,29 @@ describe('combat presentation contract', () => {
   });
 
   it('provides cruise telemetry and focusable command stations at every viewport', async () => {
-    const [html, css, source] = await Promise.all([
+    const [html, css, source, hmd] = await Promise.all([
       readFile(new URL('../index.html', import.meta.url), 'utf8'),
       readFile(new URL('../src/cic-hud.css', import.meta.url), 'utf8'),
-      readFile(new URL('../src/main.js', import.meta.url), 'utf8')
+      readFile(new URL('../src/main.js', import.meta.url), 'utf8'),
+      readFile(new URL('../src/ui/combatHmdV3.js', import.meta.url), 'utf8')
     ]);
     expect(html).toContain('id="cicCruiseStrip"');
     expect(html).toContain('class="cic-station-tabs"');
     expect(html.match(/data-cic-panel-focus=/g)).toHaveLength(6);
     expect(css).toContain('body.hud-panel-focus #combatHud .cic-panel.is-focused');
     expect(css).toContain('@media (max-width: 860px)');
+    expect(css).toContain('[data-weapon="missile"] { --weapon-color: var(--cic-amber)');
+    expect(css).toContain('[data-weapon="enforcer"] { --weapon-color: var(--cic-magenta)');
     expect(source).toContain('function setHudPanelFocus(panelId=null)');
-    expect(source).toContain("document.body.classList.remove('terminal-open')");
+    expect(html).toContain('id="cicVoyageConsole"');
+    expect(html).toContain('class="cic-tactical-body"');
+    expect(html).toContain('class="cic-sensor-rail"');
+    expect(html).toContain('class="cic-target-rail"');
+    expect(html).not.toContain('class="pilot-terminal-overlay"');
+    expect(source).toContain('initVoyageLogConsole');
+    expect(source).not.toContain('initTerminalStarMap');
+    expect(source).not.toContain('drawCockpitFrame(ctx');
+    expect(hmd).not.toContain('drawLeftColumn(ctx,w,h,now,mode,state);');
+    expect(hmd).not.toContain('drawRightColumn(ctx,w,h,now,state);');
   });
 });

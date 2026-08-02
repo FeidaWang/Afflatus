@@ -6,8 +6,8 @@
  * Extracted from main.js as the first step of the main.js split (ROADMAP §2
  * Phase 4 / §0 P1-4): these were pure canvas-drawing functions tangled into
  * the 3700+-line monolith purely by physical proximity, not by real coupling.
- * `drawCockpitFrame` and `drawSCZoomScope` were already fully pure (no main.js
- * module-scope reads) and move verbatim. `drawCleanCombatHmd` and its five
+ * `drawSCZoomScope` was already fully pure (no main.js module-scope reads)
+ * and moved verbatim. `drawCleanCombatHmd` and its five
  * helpers (drawVelocityVector/drawPowerPips/drawTargetHealthBars/
  * drawLeadIndicator/drawThreatEdgeArrow) read main.js's mutable combat state
  * (halley, warpIntensity, shipRecoil) and combatRuntime's weaponRemaining, so
@@ -18,11 +18,7 @@
  * codebase, so main.js stays the single owner of the actual battle state.
  */
 import { clamp, lerp, rand } from '../utils/math.js';
-import {
-  HMD,
-  cometTarget as hmdComet,
-  statusChip as hmdStatusChip,
-} from './hmdMinimal.js';
+import { cometTarget as hmdComet } from './hmdMinimal.js';
 // U8 (2026-07-11): hmdCornerFrame/hmdBracket (hmdMinimal's cornerFrame/
 // targetBracket) are no longer used by this view — the "Combat HUD 减法
 // 改造" pass replaces the corner-frame + 4-corner SC bracket with a plain
@@ -590,9 +586,8 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     // ── Boresight (V17b: SC dashed-cross reticle) ────────────────────────────
     drawSCReticle(ctx,w*.5,h*.46);
 
-    // ── Left/right cockpit columns (U8: replaces the old chip stacks) ──────
-    drawLeftColumn(ctx,w,h,now,mode,state);
-    drawRightColumn(ctx,w,h,now,state);
+    // Flight, weapon and solution telemetry live in the DOM instrument rails
+    // beside the canvas. The glass layer owns only spatial combat symbology.
 
     // U28 28e (2026-07-14): the fixed-position decorative contact labels
     // (DEEP-SPACE-KING/WARMASTAR/etc + the real-escort branch that fed them)
@@ -621,7 +616,7 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
 
     // ── Mode-specific overlays ───────────────────────────────────────────────
     if(mode==='ciws'){
-      hmdStatusChip(ctx,w,h,'CIWS · OPTICAL TRACK',HMD.amber,true,now);
+      // The active camera/mode label is rendered in the tactical header.
     }else if(missileLike){
       ctx.save();ctx.globalCompositeOperation='lighter';
       const flame=ctx.createRadialGradient(w*.5,h*1.02,2,w*.5,h*1.02,w*.20);
@@ -631,7 +626,6 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
         ctx.save();ctx.strokeStyle='rgba(232,179,128,.4)';ctx.setLineDash([3,7]);
         ctx.beginPath();ctx.moveTo(w*.5,h*.96);ctx.lineTo(cx,cy);ctx.stroke();ctx.setLineDash([]);ctx.restore();
       }
-      hmdStatusChip(ctx,w,h,mode==='nukeAuth'?'NEMP · TERMINAL GUIDANCE':'AIM-120 · DATA LINK',HMD.amber,true,now);
     }else if(mode==='mainGun'){
       const recoil=shipRecoil||0;
       ctx.save();ctx.translate(rand(-1.2,1.2)*recoil*.18,rand(-.8,.8)*recoil*.18);
@@ -639,8 +633,6 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
       ctx.strokeStyle='rgba(255,255,255,.76)';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(w*.50,h*1.05);ctx.lineTo(cx,cy);ctx.stroke();
       ctx.strokeStyle='rgba(255,20,70,.88)';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(w*.50,h*1.05);ctx.lineTo(cx,cy);ctx.stroke();
       ctx.restore();
-    }else{
-      hmdStatusChip(ctx,w,h,label||'TARGET LINK',HMD.cyanSoft,false,now);
     }
 
     ctx.restore();

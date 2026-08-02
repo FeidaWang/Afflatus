@@ -246,95 +246,32 @@
           <i class="cic-live-dot" aria-hidden="true"></i>
           <strong data-hud="pilotTitle">舰桥战术态势</strong>
         </span>
-        <span class="cic-view-mode" data-hud="sensorFusion">传感器融合 · 舰桥视角</span>
+        <span class="cic-view-mode" data-hud="cicCaption" id="cicCameraLabel">CIC 战术传感图</span>
         <button class="cic-panel-focus" type="button" data-cic-panel-focus="tactical" aria-label="Expand tactical station" aria-expanded="false"></button>
       </header>
-      <div class="cic-viewport">
-        <canvas class="cic-pilot-feed" id="cicPilotFeed"></canvas>
-        <div class="cic-canopy-brow" aria-hidden="true"><i></i><span></span><i></i></div>
-        <div class="cic-reticle" aria-hidden="true">
-          <span class="cic-reticle-ring"></span><span class="cic-reticle-diamond"></span><i></i>
-          <b class="cic-reticle-tick cic-reticle-tick--n"></b><b class="cic-reticle-tick cic-reticle-tick--e"></b><b class="cic-reticle-tick cic-reticle-tick--s"></b><b class="cic-reticle-tick cic-reticle-tick--w"></b>
-        </div>
-        <div class="cic-flight-tape cic-flight-tape--left" aria-label="Flight vector">
+      <div class="cic-tactical-body">
+        <aside class="cic-sensor-rail" aria-label="Embedded flight sensors">
+          <div class="cic-radar-dock" aria-label="Embedded tactical radar">
+            <span>RADAR · L1</span>
+            <canvas id="cicRadarCanvas" aria-hidden="true"></canvas>
+          </div>
+          <div class="cic-flight-tape" aria-label="Flight vector">
           <span><i>HDG</i><b id="cicHeading">—</b></span>
           <span><i>VEL</i><b id="cicVelocity">—</b></span>
           <span><i>G</i><b id="cicGLoad">—</b></span>
-        </div>
-        <div class="cic-solution-stack" aria-label="Target solution">
-          <span><i>RANGE</i><b id="cicRange">—</b></span>
-          <span><i>TOF</i><b id="cicIntercept">—</b></span>
-          <span><i>LOCK</i><b id="cicLockPct">0%</b></span>
-        </div>
-        <div class="cic-radar-dock" aria-hidden="true">
-          <span>TACTICAL SPHERE · L1</span>
-          <canvas id="cicRadarCanvas"></canvas>
-        </div>
-        <div class="cic-view-caption">
-          <b data-hud="cicCaption" id="cicCameraLabel">CIC 战术传感图</b>
-          <span id="cicThreatReadout">NO TRACK · SENSOR PASSIVE</span>
-        </div>
-      </div>
-      <!-- U14d (2026-07-12): Commander Terminal moved onto the Combat View
-           screen itself — was its own permanent "hud-right" column showing
-           the star-map wallpaper at all times; now it's a hidden overlay
-           inside .hud-pilot that only appears once you click Combat View
-           (terminalStarMap.js toggles body.terminal-open), defaulting
-           straight to the Private Voyage Log (login form) instead of the
-           star map. Keeps the "hud-panel hud-right" classes on this wrapper
-           (even though it's no longer its own grid column) because ~15
-           historical `.hud-right .signal-deck`/`.hud-right .captain-terminal`
-           rules elsewhere in styles.css size and style this panel's guts via
-           that ancestor selector — dropping the classes would silently
-           strip all of that. .pilot-terminal-overlay is the new hook that
-           actually repositions the whole thing (see styles.css); it wins
-           over the old (non-!important) hud-right/hud-panel base rules by
-           being !important, not by replacing them. The standalone
-           "COMMANDER TERMINAL" label the old hud-right aside had is
-           dropped — .notebook-status inside already shows that title once
-           the overlay is open, so a second copy was pure duplication. -->
-      <div class="hud-panel hud-right pilot-terminal-overlay" id="commanderTerminalDock">
-        <div class="signal-deck fleet-status-deck" id="signalDeck">
-          <div class="captain-terminal private-notebook" id="captainTerminal">
-            <div class="notebook-shell">
-              <div class="log-boot" id="voyageLogBoot" aria-hidden="true">
-                <b class="log-boot-line" style="--i:0"><i class="seq">SEQ 01</i><span>CIPHER HANDSHAKE</span><em>OK</em></b>
-                <b class="log-boot-line" style="--i:1"><i class="seq">SEQ 02</i><span>VOYAGE LOG INTEGRITY</span><em>VERIFIED</em></b>
-                <b class="log-boot-line" style="--i:2"><i class="seq">SEQ 03</i><span>DECRYPTING PRIVATE CHANNEL</span><em>...</em></b>
-                <b class="log-boot-line" style="--i:3"><i class="seq">SEQ 04</i><span>ACCESS</span><em class="granted">GRANTED</em></b>
-              </div>
-              <div class="notebook-status">
-                <span class="terminal-led"></span>
-                <b>Commander Terminal</b>
-                <button class="starmap-toggle" id="starmapToggle" type="button" data-hot>LOGIN</button>
-                <em class="terminal-lock" aria-label="Locked"></em>
-              </div>
-              <div class="terminal-starmap active" id="terminalStarMapPanel" aria-label="Alphard galactic map">
-                <canvas id="terminalStarMap"></canvas>
-                <div class="starmap-readout">
-                  <b>ALPHARD</b>
-                  <span id="starmapDistance">2738 days from Earth</span>
-                </div>
-                <div class="voyage-pulse" id="voyagePulse" aria-live="polite">
-                  <b>EARTH -> ALPHARD</b>
-                  <span>2738 DAYS · BEARING 128° · COURSE LOCKED</span>
-                  <i></i>
-                </div>
-              </div>
-              <form class="notebook-login" autocomplete="off">
-                <label>
-                  <span>ACCOUNT</span>
-                  <input type="text" name="commander-account" placeholder="BRUCE.WANG" inputmode="email" aria-label="Commander account">
-                </label>
-                <label>
-                  <span>PASSWORD</span>
-                  <input type="password" name="commander-password" placeholder="••••••••" aria-label="Commander password">
-                </label>
-                <button id="terminalLoginBtn" type="button" data-hot>LOGIN</button>
-              </form>
-            </div>
           </div>
+        </aside>
+        <div class="cic-viewport">
+          <canvas class="cic-pilot-feed" id="cicPilotFeed"></canvas>
         </div>
+        <aside class="cic-target-rail" aria-label="Target solution">
+          <span class="cic-threat-readout" id="cicThreatReadout">NO TRACK · SENSOR PASSIVE</span>
+          <div class="cic-solution-stack">
+            <span><i>RANGE</i><b id="cicRange">—</b></span>
+            <span><i>TOF</i><b id="cicIntercept">—</b></span>
+            <span><i>LOCK</i><b id="cicLockPct">0%</b></span>
+          </div>
+        </aside>
       </div>
     </section>
 
@@ -342,12 +279,8 @@
       <header class="cic-panel-head">
         <span class="cic-eyebrow">CIC / CONDITION · 03</span>
         <strong data-hud="systemsTitle">战斗情报与损管</strong>
-        <output class="cic-kill-meter" aria-label="Confirmed kills">
-          <span data-hud="killsLabel">确认击毁</span><b id="killCounter">0</b>
-        </output>
-        <button class="cic-deck-toggle" id="jumpToggle" type="button" data-hot>资产甲板</button>
+        <button class="cic-log-toggle" id="voyageLogToggle" type="button" data-hot aria-controls="cicVoyageConsole" aria-expanded="false">PRIVATE LOG</button>
         <button class="cic-panel-focus" type="button" data-cic-panel-focus="intel" aria-label="Expand intelligence station" aria-expanded="false"></button>
-        <button class="voyage-log-toggle" id="voyageLogToggle" type="button" data-hot aria-label="Toggle private voyage log">LOG</button>
       </header>
       <div class="cic-battle-feed" id="cicBattleFeed"></div>
       <div class="cic-condition-grid">
@@ -357,8 +290,47 @@
         <span><i data-hud="manualLabel">火力</i><b id="cicWeaponName">AUTO</b></span>
       </div>
       <output class="cic-perf-readout" id="cicPerfReadout" aria-label="Combat renderer performance">P95 — · DC — · Q HIGH</output>
-      <div class="cic-battle-log" id="battleLog">战术甲板待命 · 入梦按钮预热跃迁</div>
+      <footer class="cic-intel-footer">
+        <span class="cic-battle-log" id="battleLog">战术甲板待命</span>
+        <output class="cic-kill-meter" aria-label="Confirmed kills"><i data-hud="killsLabel">确认击毁</i><b id="killCounter">0</b></output>
+        <button class="cic-deck-toggle" id="jumpToggle" type="button" data-hot>资产甲板</button>
+      </footer>
     </aside>
+
+    <section class="cic-log-console" id="cicVoyageConsole" aria-label="Private Voyage Log" aria-hidden="true">
+      <header class="cic-log-head">
+        <span><i aria-hidden="true"></i><b data-log-copy="title">PRIVATE VOYAGE LOG</b><em>BLACK BOX / AIR-GAPPED</em></span>
+        <output id="voyageLogStatus" aria-live="polite" data-log-copy="locked">IDENTITY REQUIRED</output>
+        <button id="voyageLogClose" type="button" data-hot aria-label="Close Private Voyage Log">×</button>
+      </header>
+      <div class="cic-log-body">
+        <aside class="cic-log-index" aria-label="Voyage archive summary">
+          <span class="cic-log-seal">AFFLATUS<br><b>CVN-034</b></span>
+          <dl>
+            <div><dt data-log-copy="position">POSITION</dt><dd>ALPHARD GLOWLINE</dd></div>
+            <div><dt data-log-copy="elapsed">ELAPSED</dt><dd>2738 SOL</dd></div>
+            <div><dt data-log-copy="integrity">INTEGRITY</dt><dd>SHA-384 / VERIFIED</dd></div>
+          </dl>
+          <span class="cic-log-route"><i></i><b>EARTH</b><em>128°</em><b>ALPHARD</b></span>
+        </aside>
+        <div class="cic-log-access">
+          <div class="cic-log-boot" id="voyageLogBoot" aria-hidden="true">
+            <span>CIPHER HANDSHAKE</span><span>ARCHIVE INTEGRITY</span><span>PRIVATE CHANNEL</span><b>READY</b>
+          </div>
+          <form class="cic-log-form" id="voyageAccessForm" autocomplete="off">
+            <p data-log-copy="intro">舰长日志与资产纪律记录位于隔离链路之后。认证只在当前设备会话内有效。</p>
+            <label><span data-log-copy="account">ACCOUNT</span><input id="voyageAccount" type="text" name="commander-account" placeholder="BRUCE.WANG" autocomplete="username"></label>
+            <label><span data-log-copy="password">PASSWORD</span><input id="voyagePassword" type="password" name="commander-password" placeholder="••••••••" autocomplete="current-password"></label>
+            <button id="terminalLoginBtn" type="submit" data-hot data-log-copy="authenticate">AUTHENTICATE</button>
+          </form>
+          <div class="cic-log-entries" id="voyageLogEntries" aria-hidden="true">
+            <article><time>034 · 2026.07.04</time><b data-log-copy="entry1Title">ALPHARD GLOWLINE</b><p data-log-copy="entry1Body">资本不是弹药；首先要保住舰体、选择射界，然后才是开火。</p></article>
+            <article><time>033 · 2026.06.29</time><b data-log-copy="entry2Title">ORACLE INTERCEPT</b><p data-log-copy="entry2Body">每一个仓位都必须有退出条件。没有退出条件的信念，只是未标价的风险。</p></article>
+            <article><time>032 · 2026.06.18</time><b data-log-copy="entry3Title">SILENT WATCH</b><p data-log-copy="entry3Body">在信号稀薄时保持静默，比在噪声中寻找确定性更重要。</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
 
