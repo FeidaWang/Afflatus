@@ -20,6 +20,15 @@ describe('combat presentation contract', () => {
     expect(source).toContain('missileTail');
     expect(source).toContain('impactOrbit');
     expect(source).toContain('/assets/combat/afflatus-command.glb');
+    expect(source).toContain('projectileWorldPosition(projectile, state)');
+    expect(source).toContain('targetScreen: targetScreen ? Object.freeze');
+    expect(source).not.toContain('NEB_DOME_FRAG');
+    expect(source).not.toContain('new THREE.GridHelper');
+    expect(source).not.toContain('startFlight(\'launch\', nowMs)');
+    expect(source).not.toContain('Math.sin(t * 0.25) * 6');
+    expect(source).not.toContain('const ph = f.userData.ph');
+    expect(source).toContain('const flightControlled = i === 0 && Boolean(flightEvent)');
+    expect(source).toContain('if (accepted) flightEvent.fired.add(key)');
     expect(source).not.toMatch(/\blast(?:Fire|Missile|Laser|Orb|Chase)\b/);
     expect(source).not.toContain('now - last');
   });
@@ -52,7 +61,11 @@ describe('combat presentation contract', () => {
     expect(source).toContain('initVoyageLogConsole');
     expect(source).not.toContain('initTerminalStarMap');
     expect(source).not.toContain('drawCockpitFrame(ctx');
+    expect(source).toContain('pilotCanvas.dataset.flightPhase');
+    expect(source).toContain('const activeFlightMode=pendingDiagnostics?.flightKind||null');
+    expect(source).not.toContain("const j=mode==='combat'?0.6:0");
     expect(hmd).not.toContain('drawLeftColumn(ctx,w,h,now,mode,state);');
     expect(hmd).not.toContain('drawRightColumn(ctx,w,h,now,state);');
+    expect(hmd).not.toContain('drawSCReticle(ctx,w*.5,h*.46);');
   });
 });

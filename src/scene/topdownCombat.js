@@ -34,35 +34,6 @@ import {
   disposeThreeScene,
 } from '../lib/webglLifecycle.js';
 
-// ── U27 (27b-3): Stellaris-style atmospheric nebula backdrop ────────────
-// A single low-poly (icosahedron, subdiv 2 = 320 tris) BackSide dome, one
-// draw call, no post-processing dependency (works with POST_FX on or off).
-// Self-contained GLSL (not shared with alphardForge's vortex shader — that
-// one is a different composition, a foreground centerpiece, not a distant
-// backdrop; duplicating a few lines of hash/fbm here is cheaper than
-// coupling two unrelated visual systems). Colour is deliberately
-// low-saturation per charter §22a (Homeworld: background never competes
-// with the battle) — this reads at the edges of tacticalTopdown and fills
-// more of the frame in the near-horizontal chaseCam/flybyCam shots.
-const NEB_DOME_VERT = `varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`;
-const NEB_DOME_FRAG = `
-precision mediump float;
-varying vec3 vDir;
-uniform float uTime;
-float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
-float noise(vec2 p){ vec2 i=floor(p),f=fract(p); float a=hash(i),b=hash(i+vec2(1.,0.)),c=hash(i+vec2(0.,1.)),d=hash(i+vec2(1.,1.)); vec2 u=f*f*(3.-2.*f); return mix(mix(a,b,u.x),mix(c,d,u.x),u.y); }
-float fbm(vec2 p){ float v=0.,a=0.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.03; a*=0.5; } return v; }
-void main(){
-  vec2 uv = vec2(atan(vDir.z, vDir.x), vDir.y) * vec2(1.1, 1.6);
-  float band = fbm(uv * 1.4 + vec2(uTime * 0.004, 0.0));
-  float wisp = fbm(uv * 3.1 - vec2(0.0, uTime * 0.003));
-  float horizon = smoothstep(0.55, -0.15, vDir.y); // denser near the "horizon", thin overhead
-  vec3 deep = vec3(0.02, 0.035, 0.07), teal = vec3(0.06, 0.12, 0.16), violet = vec3(0.08, 0.05, 0.12);
-  vec3 col = mix(deep, teal, smoothstep(0.2, 0.75, band) * horizon);
-  col = mix(col, violet, smoothstep(0.4, 0.9, wisp) * horizon * 0.5);
-  gl_FragColor = vec4(col, 1.0);
-}`;
-
 // U23 M1 (2026-07-13): the camera director rig is now the DEFAULT (was
 // opt-in via ?combatcam=director since V14). ?combatcam=tactical opts back
 // into the original hardcoded camera sway.
@@ -100,7 +71,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   renderer.setClearColor(0x04060a, 1);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x04060a, 0.012);
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 400);
   const CAM = new THREE.Vector3(0, 74, 30);
@@ -114,7 +84,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   // itself became active, not scene time.
   const camDirectorOn = cameraDirectorEnabled();
   let camDirector = null;
-  let missileLastPos = null, missileLastVel = null, orbLastPos = null; // live shot feeds
+  let missileLastPos = null, missileLastVel = null; // live shot feeds
 
   // ── U24 flight event state (launch/landing lifecycle for fighters[0]) ──
   // flightLastPos/Vel are the shot-compute feeds (missileLastPos pattern);
@@ -140,7 +110,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       commandChase: {
         priority: 1,
         blendInMs: 500,
-        compute(t) {
+        compute() {
           const c = capital.position;
           const q = comet.position;
           return {
@@ -151,7 +121,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
               z: c.z + (q.z - c.z) * 0.48,
             },
             fov: 56,
-            roll: Math.sin(t * 0.35) * 0.018,
+            roll: 0,
           };
         },
       },
@@ -177,7 +147,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       mainGunAxis: {
         priority: 3,
         compute() {
-          const p = orbLastPos || capital.position;
+          const p = comet.position;
           return {
             pos: { x: capital.position.x, y: 8, z: capital.position.z - 6 },
             look: { x: p.x, y: p.y ?? 1.5, z: p.z },
@@ -201,14 +171,13 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       impactOrbit: {
         priority: 5,
         blendInMs: 120,
-        compute(t) {
+        compute() {
           const p = comet.position;
-          const a = Math.min(1.2, t) * 1.9;
           return {
-            pos: { x: p.x + Math.cos(a) * 11, y: p.y + 6.5, z: p.z + Math.sin(a) * 11 },
+            pos: { x: p.x + 8.5, y: p.y + 6.5, z: p.z + 9.5 },
             look: { x: p.x, y: p.y + 0.3, z: p.z },
             fov: 58,
-            roll: 0.08 * Math.sin(a),
+            roll: 0,
           };
         },
       },
@@ -221,34 +190,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
           };
         },
       },
-      // V18 Phase 1 (ROADMAP §4 "V18 实施路线"): low, over-the-shoulder chase
-      // shot on the lead fighter — banking + dynamic FOV, both acceleration-
-      // driven off the fighter's own analytic flight path (ph, tagged onto
-      // fighters[0].userData by the strafe-formation loop below), not a
-      // separate frame-differenced tracker.
-      chaseCam: {
-        priority: 3,
-        blendInMs: 400,
-        compute() {
-          const f = fighters[0];
-          const p = new THREE.Vector3().setFromMatrixPosition(f.matrixWorld);
-          const ph = f.userData.ph || 0;
-          const w = 1.1; // angular rate, must match the strafe formation formula below
-          const vx = -Math.sin(ph) * 16 * w, vz = Math.cos(ph) * 9 * w, vy = Math.cos(ph * 2) * 1.2 * w;
-          const ax = -Math.cos(ph) * 16 * w * w, az = -Math.sin(ph) * 9 * w * w;
-          const accelMag = Math.hypot(ax, az);
-          const lateral = vz * ax - vx * az; // signed cross(v,a).y — turn direction
-          const fov = fovForAccel(accelMag, { cruiseFov: 62, boostFov: 70, accelScale: 30 });
-          const roll = bankAngle(lateral, 0.35, 0.01);
-          const pose = chaseCamPose({ x: p.x, y: p.y, z: p.z }, { x: vx, y: vy, z: vz }, { back: 6, up: 2.2, side: -2.5, lookAhead: 10 });
-          return { ...pose, fov, roll };
-        },
-      },
       // ── U24 (24b) flight-event shots. All four read flightLastPos/Vel
       //    (fed by the update() flight sampler) via closure — the same
       //    live-object pattern as missileTail/mainGunAxis above. ──────────
       deckCam: {           // deck-edge pedestal watching the catapult run / touchdown
-        priority: 4,
+        priority: 6,
         blendInMs: 250,
         compute() {
           const dp = capital.position;
@@ -258,7 +204,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         },
       },
       chaseLaunch: {       // tail-chase on the launching fighter — FOV/bank from real accel
-        priority: 4,
+        priority: 6,
         blendInMs: 350,
         compute() {
           const p = flightLastPos || capital.position;
@@ -271,7 +217,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         },
       },
       pilotLaunch: {       // canopy/helmet camera: the fighter and HUD own the launch beat
-        priority: 5,
+        priority: 6,
         blendInMs: 130,
         compute() {
           const p = flightLastPos || capital.position;
@@ -288,7 +234,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         },
       },
       towerCam: {          // LSO/tower long lens tracking the approach
-        priority: 4,
+        priority: 6,
         blendInMs: 300,
         compute() {
           const dp = capital.position;
@@ -297,7 +243,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         },
       },
       flybyCam: {          // fixed point the fighter sweeps past (classic flyby)
-        priority: 4,
+        priority: 6,
         blendInMs: 250,
         compute() {
           const f = flightLastPos || capital.position;
@@ -310,19 +256,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   // ── lighting ───────────────────────────────────────────────────────────
-  // U27 (27b-3): opt-in via ?nebula=1 — cheap enough (1 draw call, 320 tris,
-  // no lights/shadows) to allow on both desktop and mobile, unlike POST_FX.
-  const NEBULA_ON = (() => { try { return !/[?&]nebula=0\b/.test(location.search); } catch (e) { return true; } })();
-  const nebUniforms = { uTime: { value: 0 } };
-  if (NEBULA_ON) {
-    const dome = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(220, 2),
-      new THREE.ShaderMaterial({ vertexShader: NEB_DOME_VERT, fragmentShader: NEB_DOME_FRAG, uniforms: nebUniforms, side: THREE.BackSide, depthWrite: false, fog: false })
-    );
-    dome.renderOrder = -10;
-    scene.add(dome);
-  }
-
+  // No autonomous nebula, fog or lens treatment: the sensor picture only
+  // contains tracked craft, weapons, impacts and a fixed stellar reference.
   scene.add(new THREE.AmbientLight(0x2a3850, 1.4));
   const key = new THREE.DirectionalLight(0xbcd4ff, 1.5); key.position.set(20, 60, 30); scene.add(key);
   const rim = new THREE.DirectionalLight(0x4d7bd6, 0.8); rim.position.set(-30, 20, -30); scene.add(rim);
@@ -336,14 +271,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     m.scale.set(size, size, 1);
     return m;
   };
-
-  // ── CIC tactical reference plane ─────────────────────────────────────────
-  const grid = new THREE.GridHelper(160, 40, 0x1f6fae, 0x0e2438);
-  grid.material.transparent = true; grid.material.opacity = 0.34;
-  scene.add(grid);
-  // soft field glow
-  const field = sprite(0x123a5a, 150, 0.5); field.position.set(0, 0.2, -4);
-  field.material.rotation = 0; scene.add(field);
 
   // starfield backdrop (well below the plane so it parallaxes)
   let starfield = null;
@@ -370,7 +297,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   //    full-silhouette fallback while the bounded GLB streams in; the old
   //    cylinder/sphere/box placeholder no longer exists on this path. ──────
   const capital = new THREE.Group();
-  let cannonOrbSprite = null;
   let shipAnchors = null;
   let shipModelStatus = 'procedural';
   const fallbackShip = createAfflatusVanguard(THREE, { detail: 'wire', forwardNegativeZ: true });
@@ -386,9 +312,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     missile: fallbackShip.group.getObjectByName('MissileBay'),
   };
   shipAnchors = fallbackAnchors;
-  cannonOrbSprite = sprite(0x9fffe0, 3.8, 0.75);
-  cannonOrbSprite.position.set(0, 0.18, -7.2);
-  capital.add(cannonOrbSprite);
   for (const sx of [-1, 1]) {
     const glow = sprite(0x74dcff, 4.2, 0.8);
     glow.position.set(sx * 1.7, 0, 6.0);
@@ -449,6 +372,37 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     return fighter;
   }
   const fighters = [makeFighter(), makeFighter(), makeFighter()];
+  fighters.forEach((fighter) => { fighter.visible = false; });
+  let liveCombatState = null;
+
+  function escortWorldSample(escort, state = liveCombatState) {
+    if (!escort || !state) return null;
+    const viewportWidth = state.telemetry?.viewportWidth || 1;
+    const viewportHeight = state.telemetry?.viewportHeight || 1;
+    return {
+      pos: {
+        x: (escort.x / viewportWidth - 0.5) * 52,
+        y: escort.type === 'b2' ? 1.8 : 1.25,
+        z: -28 + (escort.y / viewportHeight) * 45,
+      },
+      vel: {
+        x: (escort.vx || 0) / viewportWidth * 52 * 60,
+        y: 0,
+        z: (escort.vy || 0) / viewportHeight * 45 * 60,
+      },
+    };
+  }
+
+  function projectileWorldPosition(projectile, state = liveCombatState) {
+    if (!projectile || !state) return null;
+    const viewportWidth = state.telemetry?.viewportWidth || 1;
+    const viewportHeight = state.telemetry?.viewportHeight || 1;
+    return new THREE.Vector3(
+      (projectile.x / viewportWidth - 0.5) * 52,
+      1.35,
+      -28 + (projectile.y / viewportHeight) * 45,
+    );
+  }
 
   function applyGeometryQuality() {
     const low = renderPolicy.qualityTier === 'low';
@@ -531,6 +485,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     let idx = 0;
     fighters.forEach((f, fi) => {
       const st = fighterTrails[fi];
+      if (!f.visible) {
+        st.pts.length = 0;
+        for (let j = 0; j < TRAIL_SEG_CAP; j++, idx++) trailMesh.setMatrixAt(idx, _zero4);
+        return;
+      }
       if (now - st.lastSample > TRAIL_SAMPLE_MS) {
         st.lastSample = now;
         const p = TRAIL_TAIL_LOCAL.clone(); f.localToWorld(p);
@@ -664,7 +623,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     group.scale.setScalar(nuclear ? 1.25 : 0.88);
     return { group, flare };
   }
-  function launchMissile({ nuclear = false } = {}) {
+  function launchMissile({ nuclear = false, nowMs = performance.now() } = {}) {
     const model = missileModel(nuclear);
     const head = model.group;
     const fallback = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld);
@@ -673,25 +632,34 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     head.position.copy(start);
     scene.add(head);
     const initialVelocity = comet.position.clone().sub(start).normalize();
-    missiles.push({ head, flare: model.flare, t: 0, trail: [], nuclear, trailTick: 0, velocity: initialVelocity });
+    missiles.push({ head, flare: model.flare, trail: [], nuclear, velocity: initialVelocity, lastTrailAt: nowMs });
     missileLastPos = start;
     missileLastVel = initialVelocity;
     if (camDirector) {
       camDirector.requestShot('missileTail', {
-        durationMs: nuclear ? 3100 : 2400,
+        durationMs: 7000,
         blendInMs: 180,
+        now: nowMs,
       });
     }
   }
+  function removeMissileAt(index) {
+    const missile = missiles[index];
+    if (!missile) return;
+    missile.trail.forEach((point) => {
+      scene.remove(point.s);
+      point.s.material.dispose();
+    });
+    scene.remove(missile.head);
+    missile.flare.material.dispose();
+    missiles.splice(index, 1);
+  }
 
-  // ENFORCER main-cannon PLASMA ORBS — big round光炮 from the centre barrel
-  const orbs = [];
+  // ENFORCER is an event-bound axial lance, not an autonomous plasma body.
   const lances = [];
-  function launchOrb() {
+  function launchOrb(nowMs = performance.now()) {
     const fallback = new THREE.Vector3(0, 2.5, -14); capital.localToWorld(fallback);
     const muzzle = worldAnchor(shipAnchors?.main, fallback);
-    const head = sprite(0x9fffe0, 5.5, 1); head.position.copy(muzzle); scene.add(head);
-    const lt = new THREE.PointLight(0x6fffd0, 8, 30); lt.position.copy(muzzle); scene.add(lt);
     for (const [radius, color, opacity] of [[0.22, 0x55e8ff, 0.36], [0.075, 0xffffff, 0.94]]) {
       const lance = new THREE.Mesh(
         new THREE.CylinderGeometry(radius, radius, 1, 10),
@@ -701,16 +669,15 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       orient(lance, muzzle, comet.position);
       lances.push({ mesh: lance, life: 1, baseOpacity: opacity, radius });
     }
-    orbs.push({ head, lt, t: 0, trail: [] });
-    orbLastPos = muzzle;
-    if (cannonOrbSprite) cannonOrbSprite.material.opacity = 0.2; // discharge flash
-    if (camDirector) camDirector.requestShot('mainGunAxis', { durationMs: 1500, blendInMs: 300 });
+    if (camDirector) camDirector.requestShot('mainGunAxis', { durationMs: 1500, blendInMs: 300, now: nowMs });
   }
 
   // ── animation loop ────────────────────────────────────────────────────────
-  let W = 1, H = 1, raf = 0, running = false, t0 = 0;
+  let W = 1, H = 1, raf = 0, running = false, t0 = 0, previousUpdateAt = 0;
   let sized = false, wantsLoop = false, surfaceActive = false, renderSurface = null, loopLastT = 0, renderOnceLastT = 0;
   let lastEventSeen = 0;
+  let targetScreen = null;
+  let currentFlightPhase = null;
 
   function resize(w, h) {
     W = Math.max(1, (w ?? canvas.clientWidth) || window.innerWidth);
@@ -725,70 +692,62 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   function tmp() { return new THREE.Vector3(); }
 
   // ── U24 flight lifecycle plumbing ─────────────────────────────────────
-  // The analytic world, expressed as the closures flightPath.js expects.
-  // These formulas MUST stay in lockstep with update()'s own comet/capital/
-  // fighter math below — they are the same equations, packaged with their
-  // analytic derivatives (units/second), so a launch joins the live
-  // formation exactly and a landing tracks the moving deck exactly.
+  // The flight path joins the live escort position carried by CombatState.
+  // There is no autonomous orbit or separate formation clock in this scene.
   function formationFnFor(i) {
-    const w = 1.1, TWO3 = Math.PI * 2 / 3;
-    return (tMs) => {
-      const t = (tMs - t0) / 1000;
-      const ph = t * w + i * TWO3;
-      const cometX = -26 + ((t * 4) % 52), cometVX = 4; // wrap seam ignored (quasi-static)
-      return {
-        pos: { x: Math.cos(ph) * 16 + cometX * 0.3, y: 1.4 + Math.sin(ph * 2) * 0.6, z: -2 + Math.sin(ph) * 9 },
-        vel: { x: -Math.sin(ph) * 16 * w + cometVX * 0.3, y: Math.cos(ph * 2) * 1.2 * w, z: Math.cos(ph) * 9 * w },
-      };
+    return () => escortWorldSample(liveCombatState?.escorts?.[i]) || {
+      pos: { x: capital.position.x, y: 4.8, z: capital.position.z - 34 },
+      vel: { x: 0, y: 0.8, z: -10 },
     };
   }
   function deckFn(tMs) {
-    const t = (tMs - t0) / 1000;
     return {
-      pos: { x: -2 + Math.sin(t * 0.25) * 6, y: 3.0, z: 17 },  // matches capital patrol; y = deck height
-      vel: { x: Math.cos(t * 0.25) * 1.5, y: 0, z: 0 },
+      pos: { x: -2, y: 3.0, z: 17 },
+      vel: { x: 0, y: 0, z: 0 },
     };
   }
   const DECK_DIR = { x: 0, y: 0, z: -1 }; // carrier front = -Z
 
   function startFlight(kind, nowMs) {
     const mk = kind === 'landing' ? createLandingPath : createLaunchPath;
-    const path = mk({ deck: deckFn, deckDir: DECK_DIR, formation: formationFnFor(0), t0: nowMs });
+    const liveStart = escortWorldSample(liveCombatState?.escorts?.[0], liveCombatState);
+    const heldStart = liveStart || {
+      pos: { x: fighters[0].position.x, y: fighters[0].position.y, z: fighters[0].position.z },
+      vel: flightLastVel ? { ...flightLastVel } : { x: 0, y: 0, z: -8 },
+    };
+    const formation = kind === 'landing' ? (() => heldStart) : formationFnFor(0);
+    const path = mk({ deck: deckFn, deckDir: DECK_DIR, formation, t0: nowMs });
     if (kind === 'landing') {
       const mid = path.sample(nowMs + 2900); // mid-approach → flyby pedestal beside the glide slope
       flybyAnchor = { x: mid.pos.x + 5, y: mid.pos.y + 1.2, z: mid.pos.z + 2 };
     }
     const cues = kind === 'landing'
-      ? [{ at: 0, shot: 'towerCam', dur: 2400 }, { at: 1600, shot: 'flybyCam', dur: 1800 }, { at: 4200, shot: 'deckCam', dur: 1800 }]
+      ? [{ at: 0, shot: 'towerCam', dur: 1600 }, { at: 1600, shot: 'flybyCam', dur: 2600 }, { at: 4200, shot: 'deckCam', dur: 1000 }]
       : [
         { at: 0, shot: 'deckCam', dur: 700 },
-        { at: 520, shot: 'pilotLaunch', dur: 2500 },
-        { at: 3020, shot: 'chaseLaunch', dur: 2800 },
+        { at: 700, shot: 'pilotLaunch', dur: 2320 },
+        { at: 3020, shot: 'chaseLaunch', dur: 2180 },
       ];
     flightEvent = { kind, path, cues, fired: new Set(), t0: nowMs };
     flightPrevVel = null;
   }
 
   // Drives fighters[0] while a flight event is live. Returns true if the
-  // caller (the formation loop) should SKIP its analytic placement.
-  // 24d: only one fighter ever leaves the formation; a finished launch
-  // hands straight back to the analytic loop (exact join guaranteed by
-  // flightPath), a finished landing dwells on deck then auto-relaunches.
+  // caller should skip the authoritative snapshot placement for this one
+  // craft. Once the scripted launch/landing completes, control hands back
+  // to the current CombatState escort position without an autonomous loop.
   function driveFlightFighter(f, nowMs, t) {
     if (!flightEvent) return false;
     const smp = flightEvent.path.sample(nowMs);
-    if (flightEvent.kind === 'launch' && smp.done) { flightEvent = null; return false; }
-    if (flightEvent.kind === 'landing' && smp.done && nowMs > flightEvent.path.downAtMs + 2200) {
-      startFlight('launch', nowMs); // lifecycle loops: DOCKED → CATAPULT → …
-      return driveFlightFighter(f, nowMs, t);
-    }
+    if (smp.done) { flightEvent = null; return false; }
     // camera cues (phase-scheduled, fired once each)
     if (camDirector) {
       for (const c of flightEvent.cues) {
         const key = c.shot + c.at;
         if (!flightEvent.fired.has(key) && nowMs >= flightEvent.t0 + c.at) {
-          flightEvent.fired.add(key);
-          camDirector.requestShot(c.shot, { durationMs: c.dur, blendInMs: 300 });
+          const remainingMs = Math.max(0, flightEvent.t0 + c.at + c.dur - nowMs);
+          const accepted = remainingMs > 0 && camDirector.requestShot(c.shot, { durationMs: remainingMs, blendInMs: 300, now: nowMs });
+          if (accepted) flightEvent.fired.add(key);
         }
       }
     }
@@ -817,9 +776,10 @@ export function createTopdownCombat({ canvas, surfaceId }) {
 
   function update(now, state) {
     const t = (now - t0) / 1000;
-    if (NEBULA_ON) nebUniforms.uTime.value = now;
+    const frameScale = previousUpdateAt ? Math.max(0, Math.min(3, (now - previousUpdateAt) / (1000 / 60))) : 1;
+    previousUpdateAt = now;
+    if (state) liveCombatState = state;
     const alive = Boolean(state?.target);
-    const visualWeapon = state?.fireControl?.activeWeapon || 'cannon';
 
     if (state?.target) {
       const viewportWidth = state.telemetry?.viewportWidth || 1;
@@ -830,9 +790,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         -28 + (state.target.y / viewportHeight) * 32,
       );
     }
-    comet.userData.rock.rotation.x = t * 0.5;
-    comet.userData.rock.rotation.y = t * 0.7;
-    comet.userData.coma.material.opacity = 0.45 + 0.15 * Math.sin(t * 6);
+    comet.userData.coma.material.opacity = 0.46;
     const cometPos = new THREE.Vector3().setFromMatrixPosition(comet.matrixWorld);
     comet.visible = alive;
 
@@ -840,23 +798,29 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     shieldShell.material.opacity = Math.max(0, shieldPulse * (0.18 + Math.sin(now * 0.035) * 0.08));
     shieldShell.rotation.y += 0.006;
 
-    // capital slow patrol
-    capital.position.x = -2 + Math.sin(t * 0.25) * 6;
-
-    // fighters strafe in formation between capital and comet, firing tracers
-    // (U24: fighters[0] is taken over by the flight lifecycle while a
-    // launch/landing event is live — the other two never leave formation)
+    // The command ship is the stable reference frame. Fighters exist only
+    // when the authoritative snapshot reports an escort; otherwise their
+    // meshes and trails are absent from the sensor picture.
+    capital.position.x = -2;
     fighters.forEach((f, i) => {
-      if (i === 0 && driveFlightFighter(f, now, t)) return;
-      const ph = t * 1.1 + i * (Math.PI * 2 / 3);
-      const ringX = Math.cos(ph) * 16 + comet.position.x * 0.3;
-      const ringZ = -2 + Math.sin(ph) * 9;
-      f.position.set(ringX, 1.4 + Math.sin(ph * 2) * 0.6, ringZ);
-      f.userData.ph = ph; // read by the chaseCam shot (V18 Phase 1) to derive velocity/accel analytically
-      // face travel direction
-      const next = new THREE.Vector3(Math.cos(ph + 0.1) * 16 + comet.position.x * 0.3, f.position.y, -2 + Math.sin(ph + 0.1) * 9);
-      f.lookAt(next);
-      f.rotateZ(Math.sin(ph) * 0.22);
+      const escort = state?.escorts?.[i];
+      const flightControlled = i === 0 && Boolean(flightEvent);
+      f.visible = Boolean(escort) || flightControlled;
+      if (flightControlled && driveFlightFighter(f, now, t)) return;
+      if (!escort) {
+        fighterTrails[i].pts.length = 0;
+        return;
+      }
+      const sample = escortWorldSample(escort, state);
+      f.position.set(sample.pos.x, sample.pos.y, sample.pos.z);
+      const speed = Math.hypot(sample.vel.x, sample.vel.y, sample.vel.z);
+      if (speed > 0.08) {
+        f.lookAt(
+          sample.pos.x + sample.vel.x,
+          sample.pos.y + sample.vel.y,
+          sample.pos.z + sample.vel.z,
+        );
+      }
       if (f.userData.nh) f.userData.nh.tick(t);
     });
 
@@ -896,7 +860,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       lastEventSeen = event.id;
       if (event.type === 'flight:launch' || event.type === 'flight:landing') {
         const kind = event.type.split(':')[1];
-        if (!flightEvent) startFlight(kind, now);
+        const eventAgeMs = Math.max(0, (state?.now || event.at) - event.at);
+        startFlight(kind, now - eventAgeMs);
       } else if (event.type === 'fleet:damage') {
         shieldPulse = 1;
         const scar = damageScars[damageScarIndex % damageScars.length];
@@ -918,58 +883,28 @@ export function createTopdownCombat({ canvas, surfaceId }) {
             const target = cometPos.clone().add(tmp().set(Math.sin(phase) * 3, Math.cos(phase * 2), phase * 12));
             fireTracer(anchors[round % anchors.length], target, round % 2 ? 0xffc878 : 0x9ae5ff);
           }
-          camDirector?.requestShot('ciwsTurret', { durationMs: 1200, blendInMs: 260 });
+          camDirector?.requestShot('ciwsTurret', { durationMs: 1200, blendInMs: 260, now });
         } else if (event.weapon === 'missile') {
-          launchMissile();
+          launchMissile({ nowMs: now });
         } else if (event.weapon === 'nuke') {
-          launchMissile({ nuclear: true });
+          launchMissile({ nuclear: true, nowMs: now });
         } else if (event.weapon === 'enforcer') {
-          launchOrb();
+          launchOrb(now);
         }
       } else if (event.type === 'weapon:impact') {
         const scale = event.weapon === 'nuke' ? 4.8 : event.weapon === 'enforcer' ? 3.2 : 1.4;
         const color = event.weapon === 'nuke' ? 0xff5148 : event.weapon === 'enforcer' ? 0xbfffe6 : 0xffe6b0;
         boom(cometPos.clone(), scale, color);
-        camDirector?.requestShot('impactOrbit', { durationMs: event.weapon === 'nuke' ? 1800 : 1050, blendInMs: 110 });
+        camDirector?.requestShot('impactOrbit', { durationMs: event.weapon === 'nuke' ? 1800 : 1050, blendInMs: 110, now });
       } else if (event.type === 'target:destroyed') {
         boom(cometPos.clone(), 5.2, 0xffe6b0);
       }
     }
 
-    // Enforcer main-cannon plasma orb (charge → fire)
-    if (cannonOrbSprite) {
-      const targetOpacity = visualWeapon === 'enforcer' ? 0.92 : 0.08;
-      cannonOrbSprite.material.opacity += (targetOpacity - cannonOrbSprite.material.opacity) * 0.08;
-      cannonOrbSprite.material.opacity *= 0.86 + 0.14 * Math.sin(t * 8);
-    }
-    // advance plasma orbs toward the comet
-    for (let i = orbs.length - 1; i >= 0; i--) {
-      const ob = orbs[i]; ob.t += 0.02;
-      const p = ob.head.position.clone().lerp(cometPos, 0.05 + ob.t * 0.05);
-      ob.head.position.copy(p); ob.lt.position.copy(p);
-      if (i === orbs.length - 1) orbLastPos = p;
-      const sc = 5.5 + Math.sin(now * 0.02) * 0.6; ob.head.scale.set(sc, sc, 1);
-      ob.trailTick = (ob.trailTick || 0) + 1;
-      if (ob.trailTick % (renderPolicy.qualityTier === 'low' ? 4 : 2) === 0) {
-        const tr = sprite(0x8fffd8, 3, 0.6); tr.position.copy(p); scene.add(tr);
-        ob.trail.push({ s: tr, life: 1 });
-      }
-      ob.trail.forEach(o => { o.life -= 0.06; o.s.material.opacity = Math.max(0, o.life * 0.55); });
-      while (ob.trail.length && ob.trail[0].life <= 0) { const o = ob.trail.shift(); scene.remove(o.s); o.s.material.dispose(); }
-      if (p.distanceTo(cometPos) < 4.5 || ob.t > 1.2) {
-        boom(cometPos.clone(), 3, 0xbfffe6);
-        ob.trail.forEach(o => { scene.remove(o.s); o.s.material.dispose(); });
-        scene.remove(ob.head); scene.remove(ob.lt); ob.head.material.dispose(); orbs.splice(i, 1);
-      }
-    }
-
     for (let i = lances.length - 1; i >= 0; i -= 1) {
       const lance = lances[i];
-      lance.life -= 0.085;
+      lance.life -= 0.035 * frameScale;
       lance.mesh.material.opacity = Math.max(0, lance.life * lance.baseOpacity);
-      const pulse = 1 + Math.sin(now * 0.06 + i) * 0.18;
-      lance.mesh.scale.x = pulse;
-      lance.mesh.scale.z = pulse;
       if (lance.life <= 0) {
         scene.remove(lance.mesh);
         lance.mesh.geometry.dispose();
@@ -980,45 +915,57 @@ export function createTopdownCombat({ canvas, surfaceId }) {
 
     // advance tracers
     for (let i = tracers.length - 1; i >= 0; i--) {
-      const tr = tracers[i]; tr.life -= 0.10;
+      const tr = tracers[i]; tr.life -= 0.10 * frameScale;
       tr.m.material.opacity = Math.max(0, tr.life);
       if (tr.life <= 0) { scene.remove(tr.m); tr.m.material.dispose(); tracers.splice(i, 1); }
     }
-    // missiles
-    for (let i = missiles.length - 1; i >= 0; i--) {
-      const ms = missiles[i]; ms.t += 0.018;
+    // Missiles mirror the authoritative 2D projectile snapshot exactly. The
+    // renderer does not invent its own guidance curve, impact time or speed.
+    const liveProjectiles = {
+      missile: (state?.projectiles || []).filter((item) => item.type === 'missile'),
+      nuke: (state?.projectiles || []).filter((item) => item.type === 'nuke'),
+    };
+    const ordinals = { missile: 0, nuke: 0 };
+    for (let i = 0; i < missiles.length; i += 1) {
+      const ms = missiles[i];
+      const type = ms.nuclear ? 'nuke' : 'missile';
+      const projectile = liveProjectiles[type][ordinals[type]++];
+      if (!projectile) {
+        removeMissileAt(i);
+        i -= 1;
+        continue;
+      }
+      const p = projectileWorldPosition(projectile, state);
       const previous = ms.head.position.clone();
-      const p = previous.clone().lerp(cometPos, 0.06 + ms.t * 0.04);
       const velocity = p.clone().sub(previous);
       ms.head.position.copy(p);
       if (velocity.lengthSq() > 1e-6) {
         ms.velocity.copy(velocity);
         ms.head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), velocity.clone().normalize());
       }
-      ms.flare.scale.setScalar(0.78 + Math.sin(now * 0.04) * 0.16);
-      if (i === missiles.length - 1) {
-        missileLastPos = p;
-        missileLastVel = ms.velocity;
+      const engineScale = projectile.stage === 'drop' ? 0.18 : projectile.stage === 'ignite' ? 0.82 : 1;
+      ms.flare.scale.setScalar(engineScale);
+      missileLastPos = p;
+      missileLastVel = ms.velocity;
+      if (projectile.stage !== 'drop' && now - ms.lastTrailAt >= (renderPolicy.qualityTier === 'low' ? 90 : 50)) {
+        ms.lastTrailAt = now;
+        const trail = sprite(ms.nuclear ? 0xff5148 : 0xffcaa0, ms.nuclear ? 2.2 : 1.4, 0.7);
+        trail.position.copy(p);
+        scene.add(trail);
+        ms.trail.push({ s: trail, bornAt: now });
       }
-      ms.trailTick = (ms.trailTick || 0) + 1;
-      if (ms.trailTick % (renderPolicy.qualityTier === 'low' ? 4 : 2) === 0) {
-        const tr = sprite(ms.nuclear ? 0xff5148 : 0xffcaa0, ms.nuclear ? 2.2 : 1.4, 0.7);
-        tr.position.copy(p);
-        scene.add(tr);
-        ms.trail.push({ s: tr, life: 1 });
-      }
-      ms.trail.forEach(o => { o.life -= 0.08; o.s.material.opacity = Math.max(0, o.life * 0.7); });
-      while (ms.trail.length && ms.trail[0].life <= 0) { const o = ms.trail.shift(); scene.remove(o.s); o.s.material.dispose(); }
-      if (p.distanceTo(cometPos) < 4 || ms.t > 1.1) {
-        boom(cometPos.clone(), ms.nuclear ? 4.8 : 2.4, ms.nuclear ? 0xff6a5f : 0xfff0c4);
-        camDirector?.requestShot('impactOrbit', { durationMs: ms.nuclear ? 1800 : 1150, blendInMs: 100 });
-        ms.trail.forEach(o => { scene.remove(o.s); o.s.material.dispose(); });
-        scene.remove(ms.head); missiles.splice(i, 1);
+      ms.trail.forEach((point) => {
+        point.s.material.opacity = Math.max(0, (1 - (now - point.bornAt) / 620) * 0.7);
+      });
+      while (ms.trail.length && now - ms.trail[0].bornAt >= 620) {
+        const point = ms.trail.shift();
+        scene.remove(point.s);
+        point.s.material.dispose();
       }
     }
     // explosions
     for (let i = explosions.length - 1; i >= 0; i--) {
-      const ex = explosions[i]; ex.life -= 0.05;
+      const ex = explosions[i]; ex.life -= 0.05 * frameScale;
       const age = 1 - ex.life;
       const sc = age * 7.5 * ex.scale + 1.4;
       ex.s.scale.set(sc, sc, 1);
@@ -1050,10 +997,24 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     if (camDirector) {
       camDirector.update(now);
     } else {
-      camera.position.x = CAM.x + Math.sin(t * 0.2) * 3;
-      camera.position.z = CAM.z + Math.cos(t * 0.16) * 2;
+      camera.position.copy(CAM);
       camera.lookAt(comet.position.x * 0.25, 2, -2);
     }
+
+    camera.updateMatrixWorld();
+    comet.updateMatrixWorld();
+    if (alive) {
+      const projected = comet.getWorldPosition(new THREE.Vector3()).project(camera);
+      targetScreen = {
+        x: (projected.x * 0.5 + 0.5) * W,
+        y: (-projected.y * 0.5 + 0.5) * H,
+        visible: projected.z >= -1 && projected.z <= 1 && Math.abs(projected.x) <= 1 && Math.abs(projected.y) <= 1,
+        locked: Boolean(state?.target?.locked),
+      };
+    } else {
+      targetScreen = null;
+    }
+    currentFlightPhase = flightEvent ? flightEvent.path.sample(now).phase : null;
 
     // V18 Phase 2: run after the camera update above so the trail ribbons
     // read this frame's freshly-moved camera.position rather than last
@@ -1145,7 +1106,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       renderPolicy = nextPolicy;
       const pressureMode = nextPolicy.qualityTier === 'low';
       trailMesh.visible = !pressureMode;
-      grid.visible = !pressureMode;
       if (starfield) starfield.material.opacity = pressureMode ? 0.38 : 0.7;
       applyGeometryQuality();
     },
@@ -1188,6 +1148,10 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         triangles: renderer.info.render.triangles,
         qualityTier: renderPolicy.qualityTier,
         cameraShot: camDirector?.currentShotId || 'commandChase',
+        flightKind: flightEvent?.kind || null,
+        flightPhase: currentFlightPhase,
+        targetScreen: targetScreen ? Object.freeze({ ...targetScreen }) : null,
+        activeEscortCount: liveCombatState?.escorts?.length || 0,
         lastEventSeen,
       });
     },

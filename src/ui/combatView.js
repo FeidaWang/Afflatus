@@ -16,7 +16,6 @@ export function createCombatViewState() {
       until: now + ms,
       started: now,
       bannerUntil: (['combat', 'missile', 'launch', 'landing'].includes(mode)) ? now + 2600 : 0,
-      trackSeed: Math.random() * Math.PI * 2,
       flash: mode === 'mosaic' ? 1 : 0,
     };
     return view;

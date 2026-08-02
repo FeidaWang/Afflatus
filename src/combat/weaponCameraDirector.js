@@ -30,6 +30,10 @@ import { smoothDamp, shouldPreempt, blendFactor, easeBlend, bankedUpVector } fro
 
 function vel3() { return { x: { v: 0 }, y: { v: 0 }, z: { v: 0 } }; }
 
+function monotonicNow() {
+  return globalThis.performance?.now?.() ?? Date.now();
+}
+
 export function createWeaponCameraDirector({ camera, shots, home, smoothTime = 0.55, maxSpeed = 60 }) {
   if (!shots || !shots[home]) throw new Error(`weaponCameraDirector: unknown home shot "${home}"`);
 
@@ -50,7 +54,7 @@ export function createWeaponCameraDirector({ camera, shots, home, smoothTime = 0
   let curFov = homeFov;
   let curRoll = 0;
 
-  function requestShot(id, { durationMs = 1600, blendInMs = 350, refresh = false, now = Date.now() } = {}) {
+  function requestShot(id, { durationMs = 1600, blendInMs = 350, refresh = false, now = monotonicNow() } = {}) {
     const def = shots[id];
     if (!def) return false;
     if (refresh && current.id === id) {

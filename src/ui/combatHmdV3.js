@@ -17,7 +17,7 @@
  * createCombatRuntime / createRadarDeck / createRadarDeck elsewhere in this
  * codebase, so main.js stays the single owner of the actual battle state.
  */
-import { clamp, lerp, rand } from '../utils/math.js';
+import { clamp, lerp } from '../utils/math.js';
 import { cometTarget as hmdComet } from './hmdMinimal.js';
 // U8 (2026-07-11): hmdCornerFrame/hmdBracket (hmdMinimal's cornerFrame/
 // targetBracket) are no longer used by this view — the "Combat HUD 减法
@@ -567,24 +567,19 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
      reference-screenshot minimal layout — near-monochrome cyan/white,
      no panel chrome, no bordered boxes anywhere except the one central
      target frame; the centre of the screen stays clear for the scene) === */
-  function drawCleanCombatHmd(ctx,w,h,now,label,mode){
-    const halley=getHalley(), warpIntensity=getWarpIntensity(), shipRecoil=getShipRecoil();
+  function drawCleanCombatHmd(ctx,w,h,now,label,mode,trackingOverride=null){
+    const halley=getHalley();
     const state=getCombatState?.()||{};
-    const missileLike=mode==='missile'||mode==='nukeAuth'||mode==='nemp';
-    const lock=pilotTrackedPoint(w,h,mode);
+    const spatialMode=!['standby','launch','landing'].includes(mode);
+    const fallbackLock=pilotTrackedPoint(w,h,mode);
+    const lock=trackingOverride ? {
+      cx:trackingOverride.x,
+      cy:trackingOverride.y,
+      visible:Boolean(trackingOverride.visible),
+      locked:Boolean(trackingOverride.locked),
+    } : fallbackLock;
     const range=state.solution?.rangePx??0;
     ctx.save();
-
-    // Soft vignette — glass tint
-    const g=ctx.createLinearGradient(0,0,0,h);
-    g.addColorStop(0,'rgba(8,26,42,.28)');g.addColorStop(.5,'rgba(0,5,12,.02)');g.addColorStop(1,'rgba(3,10,18,.40)');
-    ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
-
-    // ── Flight-path marker (velocity vector) ────────────────────────────────
-    drawVelocityVector(ctx,w,h,now);
-
-    // ── Boresight (V17b: SC dashed-cross reticle) ────────────────────────────
-    drawSCReticle(ctx,w*.5,h*.46);
 
     // Flight, weapon and solution telemetry live in the DOM instrument rails
     // beside the canvas. The glass layer owns only spatial combat symbology.
@@ -598,41 +593,17 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     // ── Target: comet + plain frame + lead indicator ────────────────────────
     const cx=lock.visible?lock.cx:w*.62;
     const cy=lock.visible?lock.cy:h*.40;
-    if(lock.visible){
+    if(spatialMode && state.target && lock.visible){
       const sizeScale={small:1,medium:1.2,large:1.4,giant:1.65}[halley?.sizeClass]||1.2;
       hmdComet(ctx,cx,cy,4.4*sizeScale,now,halley?.vx??-1,halley?.vy??.3);
-      // U14e: the tracking frame eases toward the real point instead of
-      // snapping to it — a plain per-frame lerp (no dt weighting; this
-      // canvas already assumes a steady rAF cadence elsewhere, e.g. the
-      // sine-driven drifts above) reads as a servo with a little inertia.
-      if(trackCx==null){trackCx=cx;trackCy=cy;}
-      else{trackCx+=(cx-trackCx)*.16;trackCy+=(cy-trackCy)*.16;}
+      // The target frame uses the scene camera's projected coordinate for
+      // this exact rendered frame; no decorative lag or tracking jitter.
+      trackCx=cx;trackCy=cy;
       drawTargetFrame(ctx,trackCx,trackCy,Math.min(w,h)*.062*sizeScale,range,!!lock.locked);
       drawLeadIndicator(ctx,trackCx,trackCy,w,h,now);
     } else {
       trackCx=null;trackCy=null;
-      drawThreatEdgeArrow(ctx,w,h);
-    }
-
-    // ── Mode-specific overlays ───────────────────────────────────────────────
-    if(mode==='ciws'){
-      // The active camera/mode label is rendered in the tactical header.
-    }else if(missileLike){
-      ctx.save();ctx.globalCompositeOperation='lighter';
-      const flame=ctx.createRadialGradient(w*.5,h*1.02,2,w*.5,h*1.02,w*.20);
-      flame.addColorStop(0,'rgba(255,250,230,.62)');flame.addColorStop(.4,'rgba(232,179,128,.30)');flame.addColorStop(1,'rgba(232,179,128,0)');
-      ctx.fillStyle=flame;ctx.beginPath();ctx.arc(w*.5,h*1.02,w*.20,0,Math.PI*2);ctx.fill();ctx.restore();
-      if(lock.visible){
-        ctx.save();ctx.strokeStyle='rgba(232,179,128,.4)';ctx.setLineDash([3,7]);
-        ctx.beginPath();ctx.moveTo(w*.5,h*.96);ctx.lineTo(cx,cy);ctx.stroke();ctx.setLineDash([]);ctx.restore();
-      }
-    }else if(mode==='mainGun'){
-      const recoil=shipRecoil||0;
-      ctx.save();ctx.translate(rand(-1.2,1.2)*recoil*.18,rand(-.8,.8)*recoil*.18);
-      ctx.globalCompositeOperation='lighter';
-      ctx.strokeStyle='rgba(255,255,255,.76)';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(w*.50,h*1.05);ctx.lineTo(cx,cy);ctx.stroke();
-      ctx.strokeStyle='rgba(255,20,70,.88)';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(w*.50,h*1.05);ctx.lineTo(cx,cy);ctx.stroke();
-      ctx.restore();
+      if(spatialMode && state.target) drawThreatEdgeArrow(ctx,w,h);
     }
 
     ctx.restore();

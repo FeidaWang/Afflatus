@@ -1788,6 +1788,8 @@ function syncCombatState(now=Date.now()){
       state:escort.state,
       x:escort.x,
       y:escort.y,
+      vx:escort.vx,
+      vy:escort.vy,
       hp:escort.hp,
     })),
     fleet:{
@@ -2728,20 +2730,10 @@ function pilotTrackedPoint(w,h,mode='combat'){
   const targetVisible=targetLive &&
     halley.curX>innerWidth*.08 && halley.curX<innerWidth*.92 &&
     halley.curY>innerHeight*.02 && halley.curY<innerHeight*.82;
-  const duration=mode==='missile'?2200:mode==='nukeAuth'?2600:mode==='launch'||mode==='landing'?1900:1500;
-  const elapsed=clamp((Date.now()-(pilotView.started||Date.now()))/duration,0,1);
-  const lock=easeOut(elapsed);
-  const chase=elapsed*elapsed*(3-2*elapsed);
-  const seed=pilotView.trackSeed||0;
   const baseX=targetVisible?clamp(w*.5+(halley.curX-innerWidth/2)/innerWidth*w*.82,w*.20,w*.80):w*.5;
   const baseY=targetVisible?clamp(h*.47+(halley.curY-innerHeight*.34)/innerHeight*h*.66,h*.24,h*.70):h*.47;
-  const settleX=targetVisible?lerp(w*.5,baseX,chase):baseX;
-  const settleY=targetVisible?lerp(h*.48,baseY,chase):baseY;
-  const shakeBase=mode==='launch'?28:mode==='landing'?24:mode==='missile'?26:mode==='nukeAuth'?18:(mode==='ciws'||mode==='mainGun'?0:10);
-  const jitter=targetVisible?shakeBase*(1-lock):0;
-  const cx=clamp(settleX+Math.sin(Date.now()/88+seed)*jitter+Math.sin(Date.now()/143+seed*1.7)*jitter*.55,w*.13,w*.87);
-  const cy=clamp(settleY+Math.cos(Date.now()/103+seed)*jitter+Math.sin(Date.now()/171+seed*.8)*jitter*.45,h*.16,h*.78);
-  return {cx,cy,locked:targetVisible&&lock>.92,lock:targetVisible?lock:0,approach:targetVisible?chase:0,baseX,baseY,visible:targetVisible,targetLive};
+  const lock=targetVisible?clamp((halley.hoverMs||0)/COMET_LOCK_MS,0,1):0;
+  return {cx:baseX,cy:baseY,locked:targetVisible&&lock>=1,lock,approach:targetVisible?1:0,baseX,baseY,visible:targetVisible,targetLive};
 }
 function drawPilotSpace(ctx,w,h,now,boost=1){
   const bg=ctx.createLinearGradient(0,0,0,h);
@@ -2754,12 +2746,11 @@ function drawPilotSpace(ctx,w,h,now,boost=1){
     const seed=i*97.13;
     const sx=(Math.sin(seed)*43758.5453%1+1)%1;
     const sy=(Math.sin(seed*1.71)*23145.913%1+1)%1;
-    const x=(sx*w + Math.sin(now/1200+i)*8)%w;
-    const y=(sy*h + (now/70*boost+i*13)%h)%h;
-    const a=.2+.5*((Math.sin(now/900+i)+1)/2);
+    const x=sx*w;
+    const y=sy*h;
+    const a=.32+(i%5)*.06;
     ctx.fillStyle=`rgba(210,230,255,${a})`;
     ctx.fillRect(x,y,1.1,1.1);
-    if(boost>1.2){ctx.strokeStyle=`rgba(154,229,255,${a*.32})`;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y+8*boost);ctx.stroke();}
   }
   ctx.restore();
 }
@@ -3222,6 +3213,32 @@ function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
   ctx.restore();
 }
 
+function combatSceneLabel(diagnostics, mode='standby'){
+  const zh=currentLang==='zh';
+  const phase=diagnostics?.flightPhase;
+  const phaseCopy={
+    catapult:zh?'LANCER-01 · 甲板弹射加速':'LANCER-01 · CATAPULT ACCEL',
+    rotate:zh?'LANCER-01 · 离舰抬升':'LANCER-01 · DECK ROTATION',
+    climb:zh?'LANCER-01 · 加力爬升至目标':'LANCER-01 · BOOST TO TARGET',
+    break:zh?'LANCER-01 · 脱离战区':'LANCER-01 · RECOVERY BREAK',
+    approach:zh?'LANCER-01 · 进近航线':'LANCER-01 · FINAL APPROACH',
+    flare:zh?'LANCER-01 · 拉平减速':'LANCER-01 · LANDING FLARE',
+    touchdown:zh?'LANCER-01 · 甲板接地':'LANCER-01 · DECK TOUCHDOWN',
+  };
+  if(phaseCopy[phase]) return phaseCopy[phase];
+  const shot=diagnostics?.cameraShot||'';
+  return shot==='pilotLaunch'?(zh?'LANCER-01 · 驾驶员视角':'LANCER-01 · PILOT POV')
+    :shot==='chaseLaunch'?(zh?'舰载机尾追 · 目标航线':'AIR WING · TARGET CHASE')
+    :shot==='commandChase'?(zh?'VANGUARD · 舰桥光学跟踪':'VANGUARD · BRIDGE OPTICAL')
+    :shot==='missileTail'?(zh?'导弹尾舱 · 数据链制导':'MISSILE TAIL · DATALINK GUIDANCE')
+    :shot==='ciwsTurret'?(zh?'近防炮塔 · 解算射界':'CIWS TURRET · FIRING SOLUTION')
+    :shot==='mainGunAxis'?(zh?'脊柱主炮 · 轴线摄影机':'SPINAL GUN · AXIS CAMERA')
+    :shot==='impactOrbit'?(zh?'命中确认 · 固定验证机位':'IMPACT CONFIRMED · FIXED VERIFY')
+    :mode==='launch'?(zh?'弹射起飞 · 甲板机位':'LAUNCH · DECK CAM')
+    :mode==='landing'?(zh?'进近回收 · 塔台机位':'RECOVERY · TOWER CAM')
+    :(zh?'舰桥战术态势 · 实时光学':'CIC · LIVE OPTICAL');
+}
+
 function drawPilotFeed(now,state=combatSnapshot){
   const pilotCanvas=document.getElementById('cicPilotFeed');
   const feed=setupFeedCanvas(pilotCanvas);
@@ -3234,13 +3251,16 @@ function drawPilotFeed(now,state=combatSnapshot){
   // Phase 2 → U24 (24c): top-down WebGL feed for combat/standby AND, since
   // U24, launch/landing — entering those modes fires the scene's flight
   // lifecycle (deckCam/chaseLaunch/towerCam/flybyCam cuts happen inside the
-  // scene, driven by the flightPath phase table). The flight timeline is
-  // scene-autonomous: it runs to completion even if pilotView's shorter
-  // mode window (2200ms) ends first — U24 风险小节的既定裁决。
+  // scene, driven by the shared flightPath phase table). Event age, fighter
+  // position and camera cuts all use the same monotonic render clock.
   // ?combatview=2d still restores the whole legacy 2D path in one flag.
-  if((mode==='combat'||mode==='standby'||mode==='launch'||mode==='landing') && combatViewTopdown()){
+  if(combatViewTopdown()){
     const td=getTopdownCV();
-    if(td){
+    const pendingDiagnostics=td && typeof td.getDiagnostics==='function' ? td.getDiagnostics() : null;
+    const activeFlightMode=pendingDiagnostics?.flightKind||null;
+    const sceneMode=activeFlightMode||mode;
+    const sceneOwnsFeed=mode==='combat'||mode==='standby'||mode==='launch'||mode==='landing'||Boolean(activeFlightMode);
+    if(td&&sceneOwnsFeed){
       td.resize(w,h);
       td.renderOnce(now,state);
       let diagnostics=null;
@@ -3248,23 +3268,12 @@ function drawPilotFeed(now,state=combatSnapshot){
         diagnostics=td.getDiagnostics();
         pilotCanvas.dataset.shipModel=diagnostics.shipModelStatus;
         pilotCanvas.dataset.cameraShot=diagnostics.cameraShot;
+        pilotCanvas.dataset.flightPhase=diagnostics.flightPhase||'none';
+        pilotCanvas.dataset.activeEscorts=String(diagnostics.activeEscortCount||0);
+        pilotCanvas.dataset.targetVisible=String(Boolean(diagnostics.targetScreen?.visible));
       }
-      ctx.save();
-      const j=mode==='combat'?0.6:0;
-      if(j) ctx.translate(rand(-j,j),rand(-j,j));
       ctx.drawImage(topdownCanvas,0,0,w,h);
-      ctx.restore();
-      const shot=diagnostics?.cameraShot||'';
-      const hmdLabel=shot==='pilotLaunch'?(currentLang==='zh'?'LANCER-01 · 驾驶员视角 · 加力爬升':'LANCER-01 · PILOT POV · BOOST CLIMB')
-        :shot==='chaseLaunch'?(currentLang==='zh'?'舰载机尾追 · 加速离舰':'AIR WING · BOOST CHASE')
-        :shot==='commandChase'?(currentLang==='zh'?'VANGUARD · 舰外战术追踪':'VANGUARD · COMMAND CHASE')
-        :shot==='missileTail'?(currentLang==='zh'?'导弹尾舱 · 数据链制导':'MISSILE TAIL · DATALINK GUIDANCE')
-        :shot==='ciwsTurret'?(currentLang==='zh'?'近防炮塔 · 解算射界':'CIWS TURRET · FIRING SOLUTION')
-        :shot==='mainGunAxis'?(currentLang==='zh'?'脊柱主炮 · 轴线摄影机':'SPINAL GUN · AXIS CAMERA')
-        :shot==='impactOrbit'?(currentLang==='zh'?'命中确认 · 目标环绕':'IMPACT CONFIRMED · TARGET ORBIT')
-        :mode==='launch'?(currentLang==='zh'?'弹射起飞 · 甲板机位':'LAUNCH · DECK CAM')
-        :mode==='landing'?(currentLang==='zh'?'进近回收 · 塔台机位':'RECOVERY · TOWER CAM')
-        :(currentLang==='zh'?'舰桥战术态势 · 传感器融合':'CIC · SENSOR PICTURE');
+      const hmdLabel=combatSceneLabel(diagnostics,sceneMode);
       const cameraLabel=document.getElementById('cicCameraLabel');
       if(cameraLabel) cameraLabel.textContent=hmdLabel;
       if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
@@ -3273,7 +3282,7 @@ function drawPilotFeed(now,state=combatSnapshot){
         // legacy HMD helper here used to paint a second starfield over it,
         // reducing the ship to a drifting translucent silhouette. Only the
         // transparent symbology layer belongs in this branch.
-        combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,hmdLabel,'combat');
+        combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,hmdLabel,sceneMode,diagnostics?.targetScreen);
       }
       return;
     }
@@ -3300,11 +3309,14 @@ function drawPilotFeed(now,state=combatSnapshot){
       td3d.resize(w,h);
       td3d.renderOnce(now,state);
       ctx.drawImage(topdownCanvas,0,0,w,h);
+      const diagnostics=typeof td3d.getDiagnostics==='function'?td3d.getDiagnostics():null;
       const phase=pilotView.weapon.timeline ? activePhase(pilotView.weapon.timeline, nowMs) : null;
       const label=currentLang==='zh'
         ? (phase==='ignite'?'导弹点火':phase==='terminal'?'终末追踪':phase==='impact'?'即将命中':'导弹投放')
         : (phase==='ignite'?'MISSILE IGNITION':phase==='terminal'?'TERMINAL TRACK':phase==='impact'?'IMPACT IMMINENT':'MISSILE DROP');
-      drawPilotHmd(ctx,w,h,now,label,'missile');
+      combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,label,'missile',diagnostics?.targetScreen);
+      const cameraLabel=document.getElementById('cicCameraLabel');
+      if(cameraLabel) cameraLabel.textContent=combatSceneLabel(diagnostics,'missile');
     }else if(combatViewLegacy()) drawPilotMissilePOV(ctx,w,h,now,pilotView.weapon);
     else drawMissileCine(ctx,w,h,now,elapsed,{lang:currentLang,halley,killed:(!halley||halley.destroyed),locked:!!(halley&&halley.hover)});
   }else if(mode==='ciws'||mode==='offline'){
@@ -3330,7 +3342,7 @@ function drawPilotFeed(now,state=combatSnapshot){
     }
   }else{
     drawPilotSpace(ctx,w,h,now,mode==='combat'?1.45:1);
-    const extCam=cameraDirector.available() && pilotView.trackSeed>Math.PI;
+    const extCam=cameraDirector.available();
     if(mode==='launch'){
       if(extCam){
         cameraDirector.drawExternalLaunch(ctx,w,h,now,elapsed,currentLang,pilotView.craft?.type==='b2'?'b2':'f47');

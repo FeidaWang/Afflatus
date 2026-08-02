@@ -57,6 +57,7 @@ describe('authoritative combat state', () => {
         locked: true,
       },
       fleet: { hpPct: 92, ammoPct: 74, deckPct: 81, kills: 2 },
+      escorts: [{ id: 'F47-1', type: 'f47', state: 'climb', x: 40, y: 80, vx: 1.5, vy: -2.5, hp: 96 }],
     });
 
     expect(snapshot.fireControl).toEqual({
@@ -67,6 +68,7 @@ describe('authoritative combat state', () => {
     expect(snapshot.solution.valid).toBe(true);
     expect(snapshot.solution.lockQuality).toBe(100);
     expect(snapshot.events.map((event) => event.type)).toEqual(['target:acquired', 'weapon:fire']);
+    expect(snapshot.escorts[0]).toMatchObject({ id: 'F47-1', vx: 1.5, vy: -2.5 });
     expect(Object.isFrozen(snapshot)).toBe(true);
     expect(state.eventsAfter(1)).toHaveLength(1);
   });

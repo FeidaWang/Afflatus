@@ -1020,8 +1020,9 @@ body.hud-off main { padding-bottom: 68px; }
   position: absolute;
   right: 0;
   bottom: 0;
-  left: 0;
-  height: clamp(340px, 62svh, 520px);
+  left: auto;
+  width: min(410px, calc(100vw - 24px));
+  height: clamp(210px, 38svh, 318px);
   z-index: 30;
   display: grid;
   grid-template-rows: 42px minmax(0, 1fr);
@@ -1035,12 +1036,12 @@ body.hud-off main { padding-bottom: 68px; }
   border: 1px solid rgba(142, 233, 255, .42);
   opacity: 0;
   visibility: hidden;
-  transform: translateX(24px) scale(.992);
+  transform: translateX(18px) scale(.992);
   pointer-events: none;
   transition: opacity 180ms ease, transform 220ms ease, visibility 180ms;
 }
 
-body.voyage-log-open #combatHud .cic-panel { opacity: .08; filter: saturate(.4); pointer-events: none; }
+body.voyage-log-open #combatHud .cic-panel { opacity: .22; filter: saturate(.55) brightness(.8); pointer-events: none; }
 body.voyage-log-open #combatHud .cic-log-console { opacity: 1; visibility: visible; transform: none; pointer-events: auto; }
 
 #combatHud .cic-log-head {
@@ -1062,8 +1063,8 @@ body.voyage-log-open #combatHud .cic-log-console { opacity: 1; visibility: visib
 #combatHud #voyageLogClose:hover,
 #combatHud #voyageLogClose:focus-visible { color: #071016; background: var(--cic-cyan); outline: 0; }
 
-#combatHud .cic-log-body { min-height: 0; display: grid; grid-template-columns: minmax(190px, 24%) minmax(0, 1fr); }
-#combatHud .cic-log-index { display: grid; align-content: space-between; gap: 10px; padding: 16px; border-right: 1px solid rgba(142, 233, 255, .18); background: rgba(2, 8, 12, .62); }
+#combatHud .cic-log-body { min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+#combatHud .cic-log-index { display: none; }
 #combatHud .cic-log-seal { color: var(--cic-muted); font-size: 8px; line-height: 1.5; letter-spacing: .14em; }
 #combatHud .cic-log-seal b { color: var(--cic-cyan-hot); font: 600 22px/1 "Orbitron", sans-serif; }
 #combatHud .cic-log-index dl { display: grid; gap: 8px; margin: 0; }
@@ -1074,8 +1075,8 @@ body.voyage-log-open #combatHud .cic-log-console { opacity: 1; visibility: visib
 #combatHud .cic-log-route i { width: auto; height: 1px; background: linear-gradient(90deg, var(--cic-cyan), rgba(142, 233, 255, .16)); }
 #combatHud .cic-log-route em { color: var(--cic-amber); font-style: normal; }
 
-#combatHud .cic-log-access { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; padding: 16px; overflow: auto; }
-#combatHud .cic-log-form { width: min(520px, 86%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+#combatHud .cic-log-access { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; padding: 12px; overflow: auto; }
+#combatHud .cic-log-form { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 #combatHud .cic-log-form p { grid-column: 1 / -1; margin: 0 0 3px; color: var(--cic-muted); font-size: 10px; line-height: 1.6; }
 #combatHud .cic-log-form label { display: grid; gap: 4px; }
 #combatHud .cic-log-form label span { color: var(--cic-muted); font-size: 8px; letter-spacing: .13em; }
@@ -1088,13 +1089,13 @@ body.voyage-log-open #combatHud .cic-log-console { opacity: 1; visibility: visib
 #combatHud .cic-log-boot b { color: var(--cic-green); }
 @keyframes cic-log-boot { 0%, 82% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
 
-#combatHud .cic-log-entries { width: min(760px, 94%); display: none; gap: 8px; }
+#combatHud .cic-log-entries { width: 100%; display: none; gap: 6px; }
 #combatHud .cic-log-console.is-unlocked .cic-log-form { display: none; }
 #combatHud .cic-log-console.is-unlocked .cic-log-entries { display: grid; }
-#combatHud .cic-log-entries article { display: grid; grid-template-columns: 120px minmax(150px, .6fr) minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 10px 12px; border: 1px solid rgba(142, 233, 255, .16); background: rgba(5, 14, 19, .6); }
+#combatHud .cic-log-entries article { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 9px; align-items: baseline; padding: 7px 9px; border: 1px solid rgba(142, 233, 255, .16); background: rgba(5, 14, 19, .6); }
 #combatHud .cic-log-entries time { color: var(--cic-amber); font-size: 8px; }
 #combatHud .cic-log-entries b { color: var(--cic-cyan-hot); font: 600 10px/1.2 "Orbitron", sans-serif; letter-spacing: .08em; }
-#combatHud .cic-log-entries p { margin: 0; color: var(--cic-muted); font-size: 10px; line-height: 1.5; }
+#combatHud .cic-log-entries p { grid-column: 1 / -1; margin: 0; color: var(--cic-muted); font-size: 9px; line-height: 1.45; }
 
 /* Any station can take the whole deck for deliberate inspection. */
 body.hud-panel-focus #combatHud .cic-panel:not(.is-focused) {
@@ -1152,6 +1153,12 @@ body:not(.hud-off) .route-arrows {
 /* Very short desktop captures retain all three stations but reduce detail. */
 @media (min-width: 861px) and (max-height: 520px) {
   :root { --cic-shell-height: min(40svh, 166px); }
+  #combatHud .cic-log-console { height: min(42svh, 176px); grid-template-rows: 34px minmax(0, 1fr); }
+  #combatHud .cic-log-access { padding: 6px; }
+  #combatHud .cic-log-form { gap: 5px; }
+  #combatHud .cic-log-form p { display: none; }
+  #combatHud .cic-log-form input { height: 32px; }
+  #combatHud .cic-log-form button { min-height: 32px; }
   #combatHud .cic-shell { grid-template-columns: minmax(250px, 23fr) minmax(460px, 60fr) minmax(220px, 17fr); }
   #combatHud .cic-panel-head { min-height: 28px; padding-top: 3px; padding-bottom: 3px; }
   #combatHud .cic-panel-head strong { font-size: 9px; }
@@ -1410,7 +1417,7 @@ body:not(.hud-off) .route-arrows {
   }
   body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-intel-footer { display: grid; }
 
-  #combatHud .cic-log-console { right: 0; bottom: 0; left: 0; height: clamp(330px, 68svh, 520px); grid-template-rows: 38px minmax(0, 1fr); }
+  #combatHud .cic-log-console { right: 0; bottom: 0; left: auto; width: min(390px, calc(100vw - 8px)); height: clamp(200px, 36svh, 276px); grid-template-rows: 38px minmax(0, 1fr); }
   #combatHud .cic-log-head { grid-template-columns: minmax(0, 1fr) 28px; gap: 5px; padding-left: 8px; }
   #combatHud .cic-log-head em,
   #combatHud #voyageLogStatus { display: none; }

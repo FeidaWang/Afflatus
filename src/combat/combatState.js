@@ -226,6 +226,8 @@ export function createCombatState({ now = Date.now, eventLimit = 96 } = {}) {
         state: String(item.state || 'standby'),
         x: finite(item.x),
         y: finite(item.y),
+        vx: finite(item.vx),
+        vy: finite(item.vy),
         hp: clamp(finite(item.hp, 100), 0, 100),
       })),
       fleet: Object.freeze({
