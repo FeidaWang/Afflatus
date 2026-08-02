@@ -1,0 +1,616 @@
+@layer components {
+  .performance-dossier {
+    position: relative;
+    padding-top: clamp(92px, 10vw, 148px);
+    isolation: isolate;
+  }
+
+  .performance-dossier::before {
+    content: '';
+    position: absolute;
+    inset: 1.5rem 0 auto;
+    height: min(76rem, 92%);
+    z-index: -1;
+    background:
+      linear-gradient(90deg, transparent 0 7%, rgba(154,229,255,.035) 7% 7.08%, transparent 7.08% 92.92%, rgba(154,229,255,.035) 92.92% 93%, transparent 93%),
+      repeating-linear-gradient(180deg, rgba(154,229,255,.018) 0 1px, transparent 1px 38px),
+      radial-gradient(ellipse at 74% 12%, rgba(92,132,171,.12), transparent 34%),
+      radial-gradient(ellipse at 22% 54%, rgba(232,179,128,.07), transparent 34%);
+    pointer-events: none;
+  }
+
+  .performance-dossier > .sec-desc {
+    max-width: 760px;
+    margin-bottom: clamp(40px, 6vw, 76px);
+  }
+
+  .dossier-lead {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(460px, .95fr);
+    gap: clamp(18px, 2vw, 30px);
+    align-items: stretch;
+  }
+
+  .realized-ledger,
+  .return-stack,
+  .benchmark-array,
+  .trade-route,
+  .risk-chamber,
+  .methodology-seal {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(154,229,255,.16);
+    background:
+      linear-gradient(145deg, rgba(12,21,30,.82), rgba(3,7,12,.92) 62%),
+      rgba(3,7,12,.86);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 24px 60px rgba(0,0,0,.22);
+    backdrop-filter: blur(16px) saturate(1.1);
+  }
+
+  .realized-ledger::after,
+  .benchmark-array::after,
+  .risk-chamber::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 32%, rgba(154,229,255,.045) 48%, transparent 64%);
+    transform: translateX(-70%);
+  }
+
+  .dossier-header,
+  .return-stack > header,
+  .benchmark-array > header {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(154,229,255,.14);
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+  }
+
+  .dossier-header span,
+  .return-stack > header span,
+  .benchmark-array > header span {
+    color: #9ae5ff;
+    font-size: 8px;
+    letter-spacing: .24em;
+  }
+
+  .dossier-header b,
+  .return-stack > header b,
+  .benchmark-array > header b {
+    color: rgba(232,241,248,.78);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: .16em;
+  }
+
+  .dossier-header em {
+    margin-left: auto;
+    color: rgba(232,179,128,.8);
+    font-size: 8px;
+    font-style: normal;
+    letter-spacing: .16em;
+  }
+
+  .realized-profit {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 3px 16px;
+    padding: clamp(28px, 4.5vw, 62px) clamp(22px, 4vw, 52px) clamp(22px, 3vw, 40px);
+  }
+
+  .realized-profit span {
+    grid-column: 1 / -1;
+    color: rgba(221,235,244,.58);
+    font: 500 10px/1 'JetBrains Mono', monospace;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+
+  .realized-profit strong {
+    color: #ecf9ff;
+    font: 400 clamp(42px, 5.1vw, 72px)/.9 'Orbitron', sans-serif;
+    letter-spacing: -.055em;
+    white-space: nowrap;
+    text-shadow: 0 0 30px rgba(154,229,255,.16);
+  }
+
+  .realized-profit em {
+    padding-bottom: .55em;
+    color: #e8b380;
+    font: 500 10px/1 'JetBrains Mono', monospace;
+    font-style: normal;
+    letter-spacing: .2em;
+  }
+
+  .ledger-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0 clamp(22px, 4vw, 52px);
+    border-top: 1px solid rgba(154,229,255,.13);
+    border-bottom: 1px solid rgba(154,229,255,.13);
+  }
+
+  .ledger-metrics div {
+    min-width: 0;
+    padding: 18px 16px 18px 0;
+  }
+
+  .ledger-metrics div + div {
+    padding-left: 16px;
+    border-left: 1px solid rgba(154,229,255,.1);
+  }
+
+  .ledger-metrics dt {
+    margin-bottom: 8px;
+    color: rgba(166,187,202,.54);
+    font: 500 8px/1.3 'JetBrains Mono', monospace;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  .ledger-metrics dd {
+    overflow: hidden;
+    color: #dff5ff;
+    font: 400 clamp(16px, 1.55vw, 23px)/1 'Orbitron', sans-serif;
+    font-variant-numeric: tabular-nums;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ledger-note {
+    margin: 0;
+    padding: 22px clamp(22px, 4vw, 52px) 26px;
+    color: rgba(194,209,219,.58);
+    font: 400 10px/1.7 'JetBrains Mono', monospace;
+  }
+
+  .return-stack {
+    display: grid;
+    grid-template-rows: auto repeat(3, minmax(0, 1fr));
+  }
+
+  .return-stack > header {
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 4px 14px;
+  }
+
+  .return-stack article {
+    display: grid;
+    grid-template-columns: 72px minmax(172px, .72fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    border-bottom: 1px solid rgba(154,229,255,.1);
+  }
+
+  .return-stack article:last-child { border-bottom: 0; }
+
+  .return-stack article > i {
+    color: rgba(173,196,210,.5);
+    font: 500 8px/1.2 'JetBrains Mono', monospace;
+    font-style: normal;
+    letter-spacing: .13em;
+  }
+
+  .return-stack article > strong {
+    color: #f0f8ff;
+    font: 400 clamp(20px, 2vw, 29px)/1 'Orbitron', sans-serif;
+    letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .return-stack article[data-level="annualized"] > strong { color: #e8b380; }
+  .return-stack article[data-level="model"] > strong { color: #9ae5ff; }
+
+  .return-stack article div b {
+    display: block;
+    margin-bottom: 3px;
+    color: rgba(232,241,248,.8);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .return-stack article div p {
+    color: rgba(174,192,204,.56);
+    font: 400 9px/1.55 'JetBrains Mono', monospace;
+  }
+
+  .benchmark-array {
+    margin-top: clamp(18px, 2vw, 30px);
+    padding-bottom: 18px;
+  }
+
+  .benchmark-array > header { margin-bottom: 20px; }
+
+  .benchmark-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr) 120px;
+    align-items: center;
+    gap: 18px;
+    min-height: 42px;
+    padding: 0 24px;
+  }
+
+  .benchmark-row span,
+  .benchmark-row strong {
+    color: rgba(184,205,218,.62);
+    font: 500 9px/1 'JetBrains Mono', monospace;
+    letter-spacing: .12em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .benchmark-row strong { text-align: right; }
+
+  .benchmark-row i {
+    height: 3px;
+    position: relative;
+    overflow: visible;
+    background: rgba(154,229,255,.08);
+  }
+
+  .benchmark-row i::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--benchmark);
+    background: linear-gradient(90deg, rgba(141,180,192,.36), rgba(154,229,255,.74));
+    box-shadow: 0 0 14px rgba(154,229,255,.22);
+  }
+
+  .benchmark-row.primary span,
+  .benchmark-row.primary strong { color: #eaf9ff; }
+  .benchmark-row.primary i::before { background: linear-gradient(90deg, #7fb6c6, #e8b380); }
+
+  .benchmark-array > p {
+    margin: 14px 24px 0 192px;
+    color: rgba(160,182,196,.44);
+    font: 400 8px/1.6 'JetBrains Mono', monospace;
+  }
+
+  .flight-path-head {
+    display: grid;
+    grid-template-columns: minmax(140px, .36fr) minmax(300px, .8fr) minmax(320px, 1fr);
+    gap: 30px;
+    align-items: end;
+    margin: clamp(80px, 10vw, 150px) 0 34px;
+  }
+
+  .flight-path-head > span {
+    color: rgba(154,229,255,.64);
+    font: 500 9px/1.5 'JetBrains Mono', monospace;
+    letter-spacing: .2em;
+  }
+
+  .flight-path-head h3,
+  .risk-chamber h3 {
+    margin: 0;
+    color: #edf6ff;
+    font: 400 clamp(28px, 3.8vw, 54px)/1.05 'Orbitron', sans-serif;
+    letter-spacing: -.03em;
+  }
+
+  .flight-path-head p,
+  .risk-chamber > header p {
+    color: rgba(196,211,222,.58);
+    font: 400 11px/1.75 'JetBrains Mono', monospace;
+  }
+
+  .trade-routes {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .trade-route {
+    grid-column: span 2;
+    min-height: 330px;
+    padding: 22px;
+  }
+
+  .trade-route:nth-child(4) { grid-column: 2 / span 2; }
+  .trade-route:nth-child(5) { grid-column: 4 / span 2; }
+
+  .trade-route::after {
+    content: attr(data-rank);
+    position: absolute;
+    right: 8px;
+    bottom: -18px;
+    z-index: -1;
+    color: rgba(154,229,255,.035);
+    font: 500 132px/1 'Orbitron', sans-serif;
+    letter-spacing: -.08em;
+  }
+
+  .trade-route header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(154,229,255,.13);
+  }
+
+  .trade-route header span {
+    color: #eaf9ff;
+    font: 500 19px/1 'Orbitron', sans-serif;
+  }
+
+  .trade-route header b,
+  .trade-route header em {
+    overflow: hidden;
+    color: rgba(173,195,208,.54);
+    font: 500 8px/1 'JetBrains Mono', monospace;
+    font-style: normal;
+    letter-spacing: .12em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .trade-route header em { color: #e8b380; }
+
+  .route-efficiency {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 26px 0 18px;
+  }
+
+  .route-efficiency strong {
+    color: #9ae5ff;
+    font: 400 clamp(25px, 2.4vw, 38px)/1 'Orbitron', sans-serif;
+    letter-spacing: -.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .route-efficiency span {
+    color: rgba(170,191,204,.45);
+    font: 500 7px/1.3 'JetBrains Mono', monospace;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+  }
+
+  .route-track {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .route-track > i {
+    height: 4px;
+    position: relative;
+    background: rgba(154,229,255,.07);
+  }
+
+  .route-track > i::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--route-return);
+    background: linear-gradient(90deg, rgba(232,179,128,.48), #9ae5ff);
+    box-shadow: 0 0 12px rgba(154,229,255,.24);
+  }
+
+  .route-track b {
+    color: rgba(230,242,250,.72);
+    font: 500 8px/1 'JetBrains Mono', monospace;
+    letter-spacing: .1em;
+  }
+
+  .trade-route dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .trade-route dl div {
+    min-width: 0;
+    padding: 12px 0;
+    border-top: 1px solid rgba(154,229,255,.09);
+    border-bottom: 1px solid rgba(154,229,255,.09);
+  }
+
+  .trade-route dt {
+    margin-bottom: 5px;
+    color: rgba(158,181,195,.42);
+    font: 500 7px/1 'JetBrains Mono', monospace;
+    letter-spacing: .12em;
+  }
+
+  .trade-route dd {
+    color: rgba(232,242,248,.76);
+    font: 500 12px/1 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .trade-route > p {
+    margin-top: 17px;
+    color: rgba(172,191,203,.5);
+    font: 400 9px/1.6 'JetBrains Mono', monospace;
+  }
+
+  .risk-chamber {
+    margin-top: clamp(80px, 10vw, 150px);
+    padding: clamp(28px, 4vw, 52px);
+  }
+
+  .risk-chamber > header {
+    display: grid;
+    grid-template-columns: 160px minmax(280px, .9fr) minmax(320px, 1fr);
+    gap: 28px;
+    align-items: end;
+    margin-bottom: 44px;
+  }
+
+  .risk-chamber > header > span {
+    color: #ff8a78;
+    font: 500 9px/1.5 'JetBrains Mono', monospace;
+    letter-spacing: .18em;
+  }
+
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid rgba(255,138,120,.18);
+  }
+
+  .risk-grid article {
+    min-width: 0;
+    padding: 24px 20px 8px 0;
+  }
+
+  .risk-grid article + article {
+    padding-left: 20px;
+    border-left: 1px solid rgba(255,138,120,.13);
+  }
+
+  .risk-grid i,
+  .risk-grid b {
+    display: block;
+    color: rgba(255,169,150,.62);
+    font: 500 8px/1 'JetBrains Mono', monospace;
+    font-style: normal;
+    letter-spacing: .14em;
+  }
+
+  .risk-grid strong {
+    display: block;
+    margin: 13px 0 10px;
+    color: #ffe7e1;
+    font: 400 clamp(24px, 2.8vw, 40px)/1 'Orbitron', sans-serif;
+    letter-spacing: -.04em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .risk-grid b { color: rgba(236,197,186,.42); }
+
+  .risk-grid p {
+    margin-top: 16px;
+    color: rgba(197,178,174,.54);
+    font: 400 9px/1.6 'JetBrains Mono', monospace;
+  }
+
+  .methodology-seal {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 26px;
+    margin-top: 18px;
+    padding: 24px 28px;
+    border-color: rgba(232,179,128,.2);
+    background: linear-gradient(90deg, rgba(26,18,12,.78), rgba(5,8,12,.88));
+  }
+
+  .methodology-seal span {
+    color: #e8b380;
+    font: 500 8px/1.5 'JetBrains Mono', monospace;
+    letter-spacing: .18em;
+  }
+
+  .methodology-seal p {
+    color: rgba(211,199,185,.62);
+    font: 400 9px/1.75 'JetBrains Mono', monospace;
+  }
+
+  .stardrive .strip-range {
+    font-size: clamp(24px, 2.55vw, 38px);
+    letter-spacing: -.055em;
+  }
+
+  .stardrive .strip-range.neg { color: #ffb4a6; }
+
+  /* The persistent cruise telemetry is part of the narrative HUD, but it must
+     never cover the financial telemetry that can only be read in this pinned
+     viewport. Reserve its physical height instead of letting the two layers
+     overlap. */
+  body.hud-off .stardrive .strip {
+    bottom: calc(clamp(18px, 3.5svh, 38px) + 58px);
+  }
+
+  body.hud-off .stardrive .stardrive-caption {
+    bottom: clamp(214px, 26svh, 274px);
+  }
+
+  @media (max-width: 1120px) {
+    .dossier-lead { grid-template-columns: 1fr; }
+    .return-stack article { min-height: 112px; }
+    .flight-path-head,
+    .risk-chamber > header { grid-template-columns: minmax(130px, .34fr) minmax(0, 1fr); }
+    .flight-path-head p,
+    .risk-chamber > header p { grid-column: 2; }
+    .trade-routes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .trade-route,
+    .trade-route:nth-child(4),
+    .trade-route:nth-child(5) { grid-column: auto; }
+    .trade-route:last-child { grid-column: 1 / -1; }
+    .risk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .risk-grid article:nth-child(3) { border-left: 0; }
+    .risk-grid article:nth-child(n+3) { border-top: 1px solid rgba(255,138,120,.13); }
+  }
+
+  @media (max-width: 720px) {
+    .performance-dossier { padding: 84px 20px 72px; }
+    .performance-dossier > .sec-desc { margin-bottom: 34px; }
+    .dossier-header,
+    .return-stack > header,
+    .benchmark-array > header { min-height: 54px; padding-inline: 14px; }
+    .dossier-header b { display: none; }
+    .realized-profit { grid-template-columns: 1fr; padding: 28px 18px 22px; }
+    .realized-profit strong { font-size: clamp(42px, 13vw, 64px); }
+    .realized-profit em { padding: 0; }
+    .ledger-metrics { grid-template-columns: 1fr; margin-inline: 18px; }
+    .ledger-metrics div { padding: 14px 0; }
+    .ledger-metrics div + div { padding-left: 0; border-left: 0; border-top: 1px solid rgba(154,229,255,.1); }
+    .ledger-note { padding: 18px; }
+    .return-stack article { grid-template-columns: 72px minmax(116px, auto) minmax(0, 1fr); gap: 10px; padding: 16px 14px; }
+    .return-stack article > strong { font-size: clamp(19px, 5.8vw, 28px); }
+    .return-stack article div b { font-size: 10px; }
+    .benchmark-row { grid-template-columns: 96px minmax(0, 1fr) 86px; gap: 10px; padding-inline: 14px; }
+    .benchmark-array > p { margin: 12px 14px 0; }
+    .flight-path-head,
+    .risk-chamber > header { display: block; margin-top: 68px; }
+    .flight-path-head > span,
+    .risk-chamber > header > span { display: block; margin-bottom: 14px; }
+    .flight-path-head h3,
+    .risk-chamber h3 { margin-bottom: 18px; }
+    .trade-routes { grid-template-columns: 1fr; }
+    .trade-route,
+    .trade-route:last-child { grid-column: auto; min-height: 0; }
+    .trade-route header { grid-template-columns: auto minmax(0, 1fr) auto; }
+    .route-efficiency { align-items: flex-end; }
+    .risk-chamber { margin-top: 68px; padding: 26px 18px; }
+    .risk-grid { grid-template-columns: 1fr; }
+    .risk-grid article,
+    .risk-grid article + article { padding: 20px 0; border-left: 0; border-top: 1px solid rgba(255,138,120,.13); }
+    .risk-grid article:first-child { border-top: 0; }
+    .methodology-seal { grid-template-columns: 1fr; gap: 10px; padding: 20px 18px; }
+    body.hud-off .stardrive .strip { bottom: calc(18px + 62px); }
+    body.hud-off .stardrive .stardrive-caption { bottom: clamp(302px, 42svh, 376px); }
+  }
+
+  @media (max-width: 440px) {
+    .return-stack article { grid-template-columns: 1fr auto; }
+    .return-stack article > div { grid-column: 1 / -1; }
+    .benchmark-row { grid-template-columns: 82px minmax(0, 1fr) auto; }
+    .benchmark-row span,
+    .benchmark-row strong { font-size: 7px; letter-spacing: .06em; }
+    .trade-route { padding: 18px; }
+    .trade-route dl { grid-template-columns: 1fr; gap: 0; }
+    .route-efficiency { display: grid; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .realized-ledger::after,
+    .benchmark-array::after,
+    .risk-chamber::after { display: none; }
+  }
+}

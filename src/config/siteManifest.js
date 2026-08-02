@@ -206,10 +206,10 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['canvas', 'webgl', 'combat'],
     metadata: {
       title: 'Project Afflatus - Deep-Space Captain Log',
-      description: "Bruce's deep-space captain log: a lone commander disclosing his US-equity positions, allocation logic and risk discipline. 深空舰长日志 · 个人美股持仓与纪律公开。No ads, no tips, no promises.",
+      description: "Bruce's FY2025–26 capital flight recorder: realized profitable trades, capital efficiency and the modeled risk behind the return. 2025–26 财年资本黑匣子 · 盈利交易、资金效率与风险代价。",
       canonical: 'https://feida.au/',
       ogTitle: 'Project Afflatus · Deep-Space Captain Log',
-      ogDescription: "A lone commander's US-equity captain log: positions, allocation logic, discipline. No ads, no tips, no promises.",
+      ogDescription: 'FY2025–26 capital flight recorder: realized profitable trades, short-cycle efficiency and modeled portfolio risk.',
       ogImage: ROUTE_SEO.main.social.images.en,
     },
     locales: {

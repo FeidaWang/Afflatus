@@ -1,5 +1,6 @@
 import './styles.css';
 import './cic-hud.css';
+import './performance-dossier.css';
 import { createHudImages } from './assets/hudAssets.js';
 import { createCombatRuntime } from './combat/combatRuntime.js';
 import { createCombatState } from './combat/combatState.js';
@@ -3578,7 +3579,14 @@ function setLang(lang){
   });
   termGlossaryCtl.close();
   c.sf.forEach((t,i)=>document.getElementById('sf'+i).textContent=t);
-  document.getElementById('s2num').innerHTML=c.s2num; document.getElementById('s2title').innerHTML=c.s2title; document.getElementById('s2desc').textContent=c.s2desc; document.getElementById('chartSub').textContent=c.chartSub;
+  document.getElementById('s2num').innerHTML=c.s2num; document.getElementById('s2title').innerHTML=c.s2title; document.getElementById('s2desc').textContent=c.s2desc;
+  const chartSub=document.getElementById('chartSub'); if(chartSub) chartSub.textContent=c.chartSub;
+  document.querySelectorAll('#fy2026Performance [data-en][data-zh]').forEach(el=>{
+    el.textContent=el.dataset[lang];
+  });
+  document.querySelectorAll('#fy2026Performance [data-aria-en][data-aria-zh]').forEach(el=>{
+    el.setAttribute('aria-label',el.dataset[lang==='zh'?'ariaZh':'ariaEn']);
+  });
   marketDeck.updatePeriodUI();
   document.getElementById('s3num').innerHTML=c.s3num; document.getElementById('s3title').innerHTML=c.s3title; document.getElementById('s3desc').textContent=c.s3desc; document.getElementById('footnoteEl').textContent=c.footnote;
   document.getElementById('f1').textContent=c.f1; document.getElementById('f2').textContent=c.f2; document.getElementById('f3').textContent=c.f3;
