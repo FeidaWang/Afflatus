@@ -1,6 +1,7 @@
 import './styles.css';
 import './cic-hud.css';
 import './performance-dossier.css';
+import './portfolio-convoy.css';
 import { createHudImages } from './assets/hudAssets.js';
 import { createCombatRuntime } from './combat/combatRuntime.js';
 import { createCombatState } from './combat/combatState.js';
@@ -3589,6 +3590,12 @@ function setLang(lang){
   });
   marketDeck.updatePeriodUI();
   document.getElementById('s3num').innerHTML=c.s3num; document.getElementById('s3title').innerHTML=c.s3title; document.getElementById('s3desc').textContent=c.s3desc; document.getElementById('footnoteEl').textContent=c.footnote;
+  document.querySelectorAll('#portfolioConvoy [data-en][data-zh]').forEach(el=>{
+    el.textContent=el.dataset[lang];
+  });
+  document.querySelectorAll('#portfolioConvoy [data-aria-en][data-aria-zh]').forEach(el=>{
+    el.setAttribute('aria-label',el.dataset[lang==='zh'?'ariaZh':'ariaEn']);
+  });
   document.getElementById('f1').textContent=c.f1; document.getElementById('f2').textContent=c.f2; document.getElementById('f3').textContent=c.f3;
   applyHudLanguage();
   updateSignalDeckHud();

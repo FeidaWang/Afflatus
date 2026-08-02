@@ -578,11 +578,56 @@
     </aside>
   </section>
 
-  <section class="holdings">
+  <section class="holdings portfolio-convoy" id="portfolioConvoy" aria-labelledby="s3title">
     <div class="sec-num" id="s3num">03 · <span>top 10 allocations · usa</span></div>
     <h2 class="sec-title" id="s3title">八月的航线不只押一块芯片，<br>而是整座 <em>AI 工厂</em>。</h2>
     <p class="sec-desc" id="s3desc">2026-08-02 研究快照：我把最看好的 10 支美股沿算力、定制硅、云、晶圆制造、HBM、网络与电力散热重新编队。权重同时考虑需求能见度、执行质量、估值与单点风险。</p>
-    <div class="pick-grid" id="pickGrid"></div>
+
+    <div class="convoy-shell">
+      <aside class="convoy-visual" aria-label="AI factory portfolio orbital map" data-aria-en="AI factory portfolio orbital map" data-aria-zh="AI 工厂投资组合轨道图">
+        <header class="convoy-telemetry">
+          <span data-en="AI FACTORY CONVOY" data-zh="AI 工业舰队">AI FACTORY CONVOY</span>
+          <b><i></i><span data-en="10 SIGNALS LOCKED" data-zh="10 个信号已锁定">10 SIGNALS LOCKED</span></b>
+        </header>
+
+        <div class="convoy-orbit">
+          <div class="orbit-field">
+            <i class="orbit-ring ring-a"></i>
+            <i class="orbit-ring ring-b"></i>
+            <i class="orbit-ring ring-c"></i>
+            <i class="orbit-axis axis-x"></i>
+            <i class="orbit-axis axis-y"></i>
+            <div class="convoy-nodes" id="convoyNodes"></div>
+            <div class="convoy-core" aria-hidden="true">
+              <span>AI</span>
+              <b>FACTORY</b>
+              <i></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="convoy-readout" aria-live="polite">
+          <span id="convoyLayer">COMPUTE CORE</span>
+          <div><b id="convoyTicker">NVDA</b><strong id="convoyWeight">16%</strong></div>
+          <p id="convoyRole">Full-stack AI-factory reactor</p>
+        </div>
+
+        <footer class="convoy-legend">
+          <span><i></i><b data-en="ACTIVE DOSSIER" data-zh="当前档案">ACTIVE DOSSIER</b></span>
+          <span><i></i><b data-en="VALUE-CHAIN LINK" data-zh="价值链连接">VALUE-CHAIN LINK</b></span>
+          <em data-en="SCROLL TO RECOMPOSE THE FLEET" data-zh="滚动以重组舰队">SCROLL TO RECOMPOSE THE FLEET</em>
+        </footer>
+      </aside>
+
+      <div class="convoy-manifest">
+        <header>
+          <span data-en="10 ORBITAL DOSSIERS · AUG 2026" data-zh="10 份轨道档案 · 2026 年 8 月">10 ORBITAL DOSSIERS · AUG 2026</span>
+          <b id="convoyProgress">01 / 10</b>
+        </header>
+        <div class="pick-grid" id="pickGrid" role="list"></div>
+      </div>
+    </div>
+
     <p class="footnote" id="footnoteEl">这是本人截至 2026-08-02 的主观研究与配置框架，不构成投资建议，也不承诺未来表现。财报、估值与风险条件会变化；研究你自己的航线，守住你自己的舱门。</p>
   </section>
 </main>

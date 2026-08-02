@@ -11,6 +11,12 @@ export function initMarketDeck({
   const kc = document.getElementById('kchart');
   const kctx = kc?.getContext('2d');
   const seen = new Set();
+  const nodePositions = [
+    [50, 8], [76, 17], [91, 41], [84, 70], [62, 89],
+    [35, 88], [14, 69], [9, 40], [25, 17], [50, 27],
+  ];
+  let pickModels = [];
+  let scrollActivePick = null;
   let drawProgress = 0;
   let kStarted = false;
   let activePeriod = '1Y';
@@ -19,6 +25,7 @@ export function initMarketDeck({
   let chartActive = false;
   let chartRaf = 0;
   let chartDpr = 1;
+  let convoyPinRaf = 0;
   // U44 44-2: tickers that actually have a real #card-<TICKER> anchor on
   // sectors.html today (verified 2026-07-18). The other picks share the AI
   // hardware supply-chain space sectors.html covers but aren't individually
@@ -241,8 +248,9 @@ export function initMarketDeck({
     const num = el.querySelector('.alloc-num');
     if (!bar || !num) return;
     const target = parseFloat(bar.dataset.target);
+    const max = parseFloat(bar.dataset.max) || target || 1;
     setTimeout(() => {
-      bar.style.width = `${(target / 15) * 100}%`;
+      bar.style.width = `${Math.min(100, (target / max) * 100)}%`;
     }, 100);
     animateCountUp(null, target, {
       duration: 2600,
@@ -261,6 +269,101 @@ export function initMarketDeck({
     });
   }, { threshold: 0.25 });
   window.__io = observer;
+
+  function activatePick(el) {
+    if (!el) return;
+    const index = Number.parseInt(el.dataset.pickIndex || '0', 10);
+    const pick = pickModels[index];
+    if (!pick) return;
+
+    document.querySelectorAll('#pickGrid .pick-card').forEach((card) => {
+      const active = card === el;
+      card.classList.toggle('is-active', active);
+      card.querySelector('.pcCover')?.setAttribute('aria-pressed', String(active));
+    });
+    document.querySelectorAll('#convoyNodes .convoy-node').forEach((node) => {
+      node.classList.toggle('is-active', Number.parseInt(node.dataset.pickIndex || '-1', 10) === index);
+    });
+
+    const layer = document.getElementById('convoyLayer');
+    const ticker = document.getElementById('convoyTicker');
+    const weight = document.getElementById('convoyWeight');
+    const role = document.getElementById('convoyRole');
+    const progress = document.getElementById('convoyProgress');
+    if (layer) layer.textContent = pick.layer;
+    if (ticker) ticker.textContent = pick.tk;
+    if (weight) weight.textContent = `${pick.pct}%`;
+    if (role) role.textContent = pick.role;
+    if (progress) progress.textContent = `${String(index + 1).padStart(2, '0')} / 10`;
+  }
+
+  const convoyObserver = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(entry => entry.isIntersecting)
+      .sort((a, b) => {
+        const ac = Math.abs((a.boundingClientRect.top + a.boundingClientRect.bottom) / 2 - innerHeight / 2);
+        const bc = Math.abs((b.boundingClientRect.top + b.boundingClientRect.bottom) / 2 - innerHeight / 2);
+        return ac - bc;
+      });
+    if (!visible.length) return;
+    scrollActivePick = visible[0].target;
+    activatePick(scrollActivePick);
+  }, { threshold: [0.15, 0.45, 0.75], rootMargin: '-22% 0px -22% 0px' });
+
+  function resetConvoyPin({ clearMeasure = false } = {}) {
+    const visual = document.querySelector('.convoy-visual');
+    if (!visual) return;
+    visual.classList.remove('is-pinned', 'is-docked');
+    if (clearMeasure) {
+      visual.style.removeProperty('--convoy-pin-left');
+      visual.style.removeProperty('--convoy-pin-width');
+      delete visual.dataset.pinWidth;
+    }
+  }
+
+  function syncConvoyPin() {
+    convoyPinRaf = 0;
+    const shell = document.querySelector('.convoy-shell');
+    const visual = shell?.querySelector('.convoy-visual');
+    if (!shell || !visual || matchMedia('(max-width: 940px)').matches) {
+      resetConvoyPin({ clearMeasure: true });
+      return;
+    }
+
+    const shellRect = shell.getBoundingClientRect();
+    const safeTop = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-top')) || 0;
+    const pinTop = safeTop + 92;
+    const visualHeight = visual.offsetHeight;
+
+    if (!visual.dataset.pinWidth) {
+      const naturalRect = visual.getBoundingClientRect();
+      visual.dataset.pinWidth = String(naturalRect.width);
+      visual.style.setProperty('--convoy-pin-width', `${naturalRect.width}px`);
+    }
+    visual.style.setProperty('--convoy-pin-left', `${shellRect.left}px`);
+
+    if (shellRect.top > pinTop) {
+      visual.classList.remove('is-pinned', 'is-docked');
+      return;
+    }
+    if (shellRect.bottom <= pinTop + visualHeight) {
+      visual.classList.remove('is-pinned');
+      visual.classList.add('is-docked');
+      return;
+    }
+    visual.classList.remove('is-docked');
+    visual.classList.add('is-pinned');
+  }
+
+  function scheduleConvoyPin() {
+    if (convoyPinRaf) return;
+    convoyPinRaf = requestAnimationFrame(syncConvoyPin);
+  }
+
+  function resizeConvoyPin() {
+    resetConvoyPin({ clearMeasure: true });
+    scheduleConvoyPin();
+  }
   const chartSurface = kc ? renderCoordinator.register({
     id: 'home:market-chart',
     element: kc,
@@ -285,31 +388,73 @@ export function initMarketDeck({
 
   function observePick(el) {
     if (!el) return;
-    el.addEventListener('mouseenter', () => onPickHotChange?.(true));
-    el.addEventListener('mouseleave', () => onPickHotChange?.(false));
+    el.addEventListener('mouseenter', () => {
+      onPickHotChange?.(true);
+      activatePick(el);
+    });
+    el.addEventListener('mouseleave', () => {
+      onPickHotChange?.(false);
+      if (scrollActivePick) activatePick(scrollActivePick);
+    });
+    el.addEventListener('focusin', () => activatePick(el));
     seen.delete(el);
     observer.observe(el);
+    convoyObserver.observe(el);
   }
 
   function renderPicks(picks = []) {
     const grid = document.getElementById('pickGrid');
     if (!grid) return;
+    grid.querySelectorAll('.pick-card').forEach(el => observer.unobserve(el));
+    convoyObserver.disconnect();
     grid.innerHTML = '';
+    pickModels = picks;
+    scrollActivePick = null;
+    const maxPct = Math.max(1, ...picks.map(pick => Number(pick.pct) || 0));
     const ctaLabel = langKey() === 'zh' ? '去 sectors 看研判 →' : 'FULL THESIS →';
+    const catalystLabel = langKey() === 'zh' ? '主要催化剂' : 'PRIMARY CATALYST';
+    const riskLabel = langKey() === 'zh' ? '主要风险' : 'CRITICAL RISK';
+    const nodes = document.getElementById('convoyNodes');
+    if (nodes) nodes.innerHTML = '';
     picks.forEach((p, i) => {
       const el = document.createElement('article');
       el.className = 'pick pick-card';
+      el.dataset.pickIndex = String(i);
+      el.setAttribute('role', 'listitem');
       const href = SECTORS_ANCHORS.has(p.tk) ? `/sectors.html#card-${p.tk}` : '/sectors.html';
-      const detailsLabel = langKey() === 'zh' ? `展开 ${p.tk} 研判` : `Show ${p.tk} thesis`;
-      el.innerHTML = `<button type="button" class="pcCover" aria-expanded="false" aria-label="${detailsLabel}"><div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${String(i + 1).padStart(2, '0')} / 10</div></div><div class="pick-name">${p.name}</div><div class="alloc-row"><div class="alloc-bar"><i data-target="${p.pct}"></i></div><div class="alloc-num">0.0<span>%</span></div></div></button><div class="pcDetail"><p class="pick-thesis">${p.why}</p><a class="pcCta" href="${href}">${ctaLabel}</a></div>`;
+      const detailsLabel = langKey() === 'zh' ? `将 ${p.tk} 设为当前轨道档案` : `Focus ${p.tk} orbital dossier`;
+      el.innerHTML = `<button type="button" class="pcCover" aria-pressed="false" aria-label="${detailsLabel}"><div class="pick-overline"><span>${p.layer}</span><b>${String(i + 1).padStart(2, '0')} / 10</b></div><div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${p.pct}<span>%</span></div></div><div class="pick-name">${p.name}</div><p class="pick-role">${p.role}</p><p class="pick-thesis">${p.why}</p><div class="alloc-row"><div class="alloc-bar"><i data-target="${p.pct}" data-max="${maxPct}"></i></div><div class="alloc-num">0.0<span>%</span></div></div></button><div class="pcDetail"><div class="pick-signal catalyst"><span>${catalystLabel}</span><p>${p.catalyst}</p></div><div class="pick-signal risk"><span>${riskLabel}</span><p>${p.risk}</p></div><a class="pcCta" href="${href}">${ctaLabel}</a></div>`;
       grid.appendChild(el);
       observePick(el);
-    });
-  }
 
-  function togglePickOpen(el) {
-    const open = el.classList.toggle('open');
-    el.querySelector('.pcCover')?.setAttribute('aria-expanded', String(open));
+      if (nodes) {
+        const [x, y] = nodePositions[i] || [50, 50];
+        const node = document.createElement('button');
+        node.type = 'button';
+        node.className = 'convoy-node';
+        node.dataset.pickIndex = String(i);
+        node.style.setProperty('--node-x', `${x}%`);
+        node.style.setProperty('--node-y', `${y}%`);
+        node.style.setProperty('--node-weight', String(p.pct));
+        node.setAttribute('aria-label', langKey() === 'zh' ? `定位 ${p.tk}，权重 ${p.pct}%` : `Locate ${p.tk}, ${p.pct}% allocation`);
+        node.innerHTML = `<span>${p.tk}</span>`;
+        node.addEventListener('click', () => {
+          scrollActivePick = el;
+          activatePick(el);
+          el.scrollIntoView({
+            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            block: 'center',
+          });
+        });
+        nodes.appendChild(node);
+      }
+    });
+    const first = grid.querySelector('.pick-card');
+    if (first) {
+      scrollActivePick = first;
+      activatePick(first);
+    }
+    scheduleConvoyPin();
   }
 
   function initPickGridToggle() {
@@ -318,12 +463,16 @@ export function initMarketDeck({
     grid.addEventListener('click', (e) => {
       const card = e.target.closest('.pick-card');
       if (!card || e.target.closest('.pcCta')) return;
-      togglePickOpen(card);
+      scrollActivePick = card;
+      activatePick(card);
     });
   }
 
   function init() {
     initPickGridToggle();
+    addEventListener('scroll', scheduleConvoyPin, { passive: true });
+    addEventListener('resize', resizeConvoyPin, { passive: true });
+    scheduleConvoyPin();
     if (kc) {
       const periodTabs = document.getElementById('periodTabs');
       if (periodTabs) {
@@ -367,6 +516,12 @@ export function initMarketDeck({
     destroy() {
       chartSurface?.unregister();
       observer.disconnect();
+      convoyObserver.disconnect();
+      removeEventListener('scroll', scheduleConvoyPin);
+      removeEventListener('resize', resizeConvoyPin);
+      if (convoyPinRaf) cancelAnimationFrame(convoyPinRaf);
+      convoyPinRaf = 0;
+      resetConvoyPin({ clearMeasure: true });
       if (chartRaf) cancelAnimationFrame(chartRaf);
     },
   };

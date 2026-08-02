@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { PICKS_EN, PICKS_ZH } from '../src/data/content.js';
 
 const html = readFileSync('index.html', 'utf8');
 const copy = readFileSync('src/data/content.js', 'utf8');
@@ -48,6 +49,24 @@ describe('FY2025–26 homepage performance dossier', () => {
     }
     for (const retiredTicker of ['MRVL', 'SNDK', 'WDC', 'TER', 'RMBS', 'ALAB', 'PSTG']) {
       expect(copy).not.toContain(`tk:'${retiredTicker}'`);
+    }
+  });
+
+  it('turns the ten-stock grid into an accessible AI-factory convoy narrative', () => {
+    expect(html).toContain('id="portfolioConvoy"');
+    expect(html).toContain('AI FACTORY CONVOY');
+    expect(html).toContain('id="convoyNodes"');
+    expect(html).toContain('id="convoyProgress"');
+    expect(html).toContain('role="list"');
+    for (const picks of [PICKS_EN, PICKS_ZH]) {
+      expect(picks).toHaveLength(10);
+      expect(picks.reduce((sum, pick) => sum + pick.pct, 0)).toBe(100);
+      for (const pick of picks) {
+        expect(pick.layer).toBeTruthy();
+        expect(pick.role).toBeTruthy();
+        expect(pick.catalyst).toBeTruthy();
+        expect(pick.risk).toBeTruthy();
+      }
     }
   });
 

@@ -128,11 +128,25 @@ test.describe('Homepage following command bar', () => {
     await page.locator('.holdings').scrollIntoViewIfNeeded();
     await expect.poll(async () => Math.round((await header.boundingBox())?.y ?? -1)).toBe(initialTop);
 
+    const fourthDossier = page.locator('#pickGrid .pick-card').nth(3).locator('.pcCover');
+    await fourthDossier.focus();
+    await fourthDossier.press('Enter');
+    await expect(page.locator('#convoyTicker')).toHaveText('TSM');
+    await expect(page.locator('#convoyProgress')).toHaveText('04 / 10');
+    const viewportWidth = await page.evaluate(() => innerWidth);
+    if (viewportWidth > 940) {
+      await expect(page.locator('.convoy-visual')).toHaveClass(/is-pinned/);
+    } else {
+      await expect(page.locator('.convoy-visual')).not.toHaveClass(/is-pinned|is-docked/);
+    }
+
     const audit = await page.evaluate(() => ({
       overflow: document.documentElement.scrollWidth - innerWidth,
       picks: document.querySelectorAll('#pickGrid .pick').length,
+      nodes: document.querySelectorAll('#convoyNodes .convoy-node').length,
+      signals: document.querySelectorAll('#pickGrid .pick-signal').length,
       currencyLeak: /(?:AUD|USD|澳元|美元|\$\s*\d)/.test(document.body.innerText),
     }));
-    expect(audit).toEqual({ overflow: 0, picks: 10, currencyLeak: false });
+    expect(audit).toEqual({ overflow: 0, picks: 10, nodes: 10, signals: 20, currencyLeak: false });
   });
 });
