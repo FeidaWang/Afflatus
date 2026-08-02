@@ -163,15 +163,29 @@
 <div class="weapon-warning" id="weaponWarning"><b>ENFORCER MAIN CANNON</b><span>charging particle spine · stand by</span></div>
 <div class="bridge-callout" id="bridgeCallout">Cruising mode on</div>
 
+<output class="cic-cruise-strip" id="cicCruiseStrip" aria-label="Cruise telemetry">
+  <span class="cic-cruise-state"><i aria-hidden="true"></i><b id="cicCruiseState">CRUISE / SENSOR PASSIVE</b></span>
+  <span><i>HDG</i><b id="cicCruiseHeading">—</b></span>
+  <span><i>VEL</i><b id="cicCruiseVelocity">—</b></span>
+  <span><i>HULL</i><b id="cicCruiseHull">100%</b></span>
+  <span class="cic-cruise-target"><i>TARGET</i><b id="cicCruiseTarget">NO TRACK</b></span>
+</output>
+
 <div id="combatHud" aria-hidden="true" data-cic-hud>
   <div class="cic-vignette" aria-hidden="true"></div>
   <div class="hud-warning">战术尾迹 · 引力井前方</div>
   <div class="hud-subwarning">舰桥锁定 · 目标神谕 · 信号帷幕</div>
   <div class="cic-shell">
+    <nav class="cic-station-tabs" aria-label="Command stations">
+      <button type="button" data-cic-panel-focus="tactical">态势</button>
+      <button type="button" data-cic-panel-focus="fire">火控</button>
+      <button type="button" data-cic-panel-focus="intel">情报</button>
+    </nav>
     <aside class="cic-panel cic-fire-control" aria-label="Fire control and interception">
       <header class="cic-panel-head">
         <span class="cic-eyebrow">DEFENCE ARCHITECTURE · 01</span>
         <strong data-hud="battleTitle">四联防御与火控</strong>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="fire" aria-label="Expand fire-control station" aria-expanded="false"></button>
         <button class="cic-ap-toggle" id="apToggle" type="button" data-hot aria-pressed="false">
           <span>AP</span><b id="apState">自动</b>
         </button>
@@ -233,6 +247,7 @@
           <strong data-hud="pilotTitle">舰桥战术态势</strong>
         </span>
         <span class="cic-view-mode" data-hud="sensorFusion">传感器融合 · 舰桥视角</span>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="tactical" aria-label="Expand tactical station" aria-expanded="false"></button>
       </header>
       <div class="cic-viewport">
         <canvas class="cic-pilot-feed" id="cicPilotFeed"></canvas>
@@ -330,6 +345,8 @@
         <output class="cic-kill-meter" aria-label="Confirmed kills">
           <span data-hud="killsLabel">确认击毁</span><b id="killCounter">0</b>
         </output>
+        <button class="cic-deck-toggle" id="jumpToggle" type="button" data-hot>资产甲板</button>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="intel" aria-label="Expand intelligence station" aria-expanded="false"></button>
         <button class="voyage-log-toggle" id="voyageLogToggle" type="button" data-hot aria-label="Toggle private voyage log">LOG</button>
       </header>
       <div class="cic-battle-feed" id="cicBattleFeed"></div>
@@ -413,8 +430,6 @@
     <button class="warp-btn verse-switch" id="langBtn" data-hot>以中文入梦</button>
   </div>
 </nav>
-<button class="jump-toggle" id="jumpToggle" data-hot>Assets</button>
-
 <main id="mainContent">
   <section class="hero" style="padding-bottom:0">
     <div class="hero-num" id="heroNum">Captain log · <span>034</span> · deep-space capital fleet</div>

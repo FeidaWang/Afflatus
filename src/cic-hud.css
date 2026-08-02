@@ -18,13 +18,58 @@
   --cic-red: #ff685f;
   --cic-magenta: #ff55c8;
   --cic-green: #86efb0;
-  --cic-shell-height: clamp(250px, 31svh, 336px);
+  --cic-shell-height: clamp(236px, 28svh, 310px);
 }
 
 #combatHud[data-cic-hud] {
   color: var(--cic-ink);
   font-family: "JetBrains Mono", monospace;
 }
+
+/* Cruise keeps only the telemetry needed to orient the reader. The full
+ * command deck is deliberately opt-in so the portfolio remains the subject. */
+.cic-cruise-strip {
+  position: fixed;
+  right: clamp(12px, 2vw, 30px);
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: clamp(12px, 2vw, 30px);
+  z-index: 88;
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: minmax(210px, 1.5fr) repeat(3, minmax(74px, .55fr)) minmax(160px, 1fr);
+  align-items: stretch;
+  overflow: hidden;
+  color: var(--cic-ink);
+  font-family: "JetBrains Mono", monospace;
+  background: linear-gradient(90deg, rgba(3, 10, 15, .94), rgba(5, 15, 21, .88));
+  border: 1px solid rgba(142, 233, 255, .34);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, .42);
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+}
+
+.cic-cruise-strip > span {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  padding: 7px 12px;
+  border-left: 1px solid rgba(142, 233, 255, .16);
+}
+
+.cic-cruise-strip > span:first-child { border-left: 0; }
+.cic-cruise-strip i { color: var(--cic-muted); font: normal 7px/1 "JetBrains Mono", monospace; letter-spacing: .12em; }
+.cic-cruise-strip b { overflow: hidden; color: var(--cic-cyan-hot); font: 600 9px/1.15 "Orbitron", sans-serif; letter-spacing: .08em; text-overflow: ellipsis; white-space: nowrap; }
+.cic-cruise-state { grid-template-columns: 7px minmax(0, 1fr); align-items: center; align-content: center; }
+.cic-cruise-state i { width: 6px; height: 6px; background: var(--cic-green); border-radius: 50%; box-shadow: 0 0 10px rgba(134, 239, 176, .74); }
+
+body:not(.hud-off) .cic-cruise-strip {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+}
+
+body.hud-off main { padding-bottom: 68px; }
 
 #combatHud .hud-warning,
 #combatHud .hud-subwarning {
@@ -48,9 +93,9 @@
   left: 12px;
   height: var(--cic-shell-height);
   display: grid;
-  grid-template-columns: minmax(290px, 25fr) minmax(540px, 54fr) minmax(250px, 21fr);
-  gap: 8px;
-  padding: 7px;
+  grid-template-columns: minmax(300px, 23fr) minmax(600px, 60fr) minmax(250px, 17fr);
+  gap: 6px;
+  padding: 5px;
   box-sizing: border-box;
   background: linear-gradient(180deg, rgba(5, 12, 17, 0.88), rgba(1, 4, 7, 0.96));
   border: 1px solid rgba(142, 233, 255, 0.28);
@@ -93,6 +138,7 @@
   background: var(--cic-panel);
   border: 1px solid var(--cic-line);
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  transition: opacity 160ms ease, transform 180ms ease, filter 180ms ease, visibility 160ms;
 }
 
 #combatHud .cic-panel::before {
@@ -109,7 +155,7 @@
 #combatHud .cic-panel-head {
   position: relative;
   z-index: 5;
-  min-height: 42px;
+  min-height: 40px;
   display: grid;
   align-content: center;
   gap: 3px;
@@ -134,7 +180,7 @@
 #combatHud .cic-panel-head strong {
   overflow: hidden;
   color: var(--cic-ink);
-  font: 600 9px/1.05 "Orbitron", sans-serif;
+  font: 600 10.5px/1.05 "Orbitron", sans-serif;
   letter-spacing: 0.13em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -142,10 +188,39 @@
 
 #combatHud .cic-eyebrow {
   color: var(--cic-muted);
-  font-size: 5.5px;
+  font-size: 7px;
   line-height: 1;
   letter-spacing: 0.21em;
 }
+
+#combatHud .cic-panel-focus {
+  position: relative;
+  z-index: 8;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  color: var(--cic-cyan);
+  background: rgba(4, 13, 18, .86);
+  border: 1px solid rgba(142, 233, 255, .34);
+  cursor: pointer;
+}
+
+#combatHud .cic-panel-focus::before { content: "↗"; font: 600 11px/1 "Orbitron", sans-serif; }
+#combatHud .cic-panel-focus:hover,
+#combatHud .cic-panel-focus:focus-visible,
+#combatHud .cic-panel-focus.is-active { color: #071016; background: var(--cic-cyan); outline: 0; }
+#combatHud .cic-panel-focus[aria-expanded="true"]::before { content: "×"; font-size: 17px; }
+
+#combatHud .cic-fire-control .cic-panel-focus {
+  position: absolute;
+  top: 6px;
+  right: 82px;
+}
+
+#combatHud .cic-station-tabs { display: none; }
 
 /* Four distinct weapon / defence wells --------------------------------- */
 
@@ -155,7 +230,7 @@
 }
 
 #combatHud .cic-fire-control .cic-panel-head {
-  padding-right: 84px;
+  padding-right: 118px;
 }
 
 #combatHud .cic-ap-toggle {
@@ -181,7 +256,7 @@
   display: grid;
   height: 100%;
   place-items: center;
-  font-size: 6.5px;
+  font-size: 7.5px;
   letter-spacing: 0.06em;
 }
 
@@ -230,13 +305,10 @@
   transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease;
 }
 
-#combatHud .cic-weapon[data-weapon="missile"] { --weapon-color: var(--cic-amber); --weapon-rgb: 239, 180, 106; }
 #combatHud .cic-weapon[data-weapon="nuke"] { --weapon-color: var(--cic-red); --weapon-rgb: 255, 104, 95; }
-#combatHud .cic-weapon[data-weapon="enforcer"] { --weapon-color: var(--cic-magenta); --weapon-rgb: 255, 85, 200; }
 
 #combatHud .cic-weapon:hover,
-#combatHud .cic-weapon:focus-visible,
-#combatHud .cic-weapon.selected {
+#combatHud .cic-weapon:focus-visible {
   border-color: var(--weapon-color);
   background:
     linear-gradient(90deg, rgba(var(--weapon-rgb), 0.19), rgba(var(--weapon-rgb), 0.03) 58%),
@@ -245,6 +317,10 @@
 }
 
 #combatHud .cic-weapon.selected {
+  --weapon-color: var(--cic-magenta);
+  --weapon-rgb: 255, 85, 200;
+  border-color: var(--cic-magenta);
+  background: linear-gradient(90deg, rgba(255, 85, 200, .18), rgba(255, 85, 200, .025) 58%), #040b10;
   transform: translateX(2px);
   box-shadow: inset 2px 0 0 var(--weapon-color), 0 0 18px rgba(var(--weapon-rgb), 0.1);
 }
@@ -263,7 +339,7 @@
 
 #combatHud .cic-weapon-code i {
   font-style: normal;
-  font-size: 5.5px;
+  font-size: 7px;
   letter-spacing: 0.1em;
 }
 
@@ -275,7 +351,7 @@
   align-self: end;
   overflow: hidden;
   color: #f1f8fa;
-  font: 600 8px/1.15 "Orbitron", sans-serif;
+  font: 600 10px/1.15 "Orbitron", sans-serif;
   letter-spacing: 0.06em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -285,7 +361,7 @@
   align-self: start;
   overflow: hidden;
   color: var(--cic-muted);
-  font-size: 5.5px;
+  font-size: 7.5px;
   line-height: 1.2;
   letter-spacing: 0.05em;
   text-overflow: ellipsis;
@@ -300,7 +376,7 @@
   gap: 2px 6px;
   padding-left: 8px;
   border-left: 1px solid rgba(var(--weapon-rgb), 0.18);
-  font-size: 5px;
+  font-size: 7px;
 }
 
 #combatHud .cic-weapon-profile i {
@@ -310,7 +386,7 @@
 
 #combatHud .cic-weapon-profile b {
   color: var(--weapon-color);
-  font-size: 5.5px;
+  font-size: 7.5px;
   font-weight: 500;
 }
 
@@ -340,7 +416,7 @@
   grid-row: 1 / 3;
   align-self: center;
   color: var(--weapon-color);
-  font-size: 5.5px;
+  font-size: 7.5px;
   letter-spacing: 0.08em;
   white-space: nowrap;
 }
@@ -349,14 +425,14 @@
   position: absolute;
   top: 3px;
   right: 4px;
-  color: var(--cic-green);
-  font-size: 4.5px;
+  color: var(--cic-amber);
+  font-size: 7px;
   letter-spacing: 0.05em;
   opacity: 0;
 }
 
 #combatHud .cic-weapon.recommended .cic-recommend { opacity: 1; }
-#combatHud .cic-weapon.cooling .cic-weapon-state { color: #e8bf83; }
+#combatHud .cic-weapon.cooling .cic-weapon-state { color: var(--cic-amber); }
 
 #combatHud .cic-state-form {
   position: absolute;
@@ -376,7 +452,7 @@
 }
 
 #combatHud .cic-tactical-head {
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto 28px;
   align-items: center;
 }
 
@@ -401,7 +477,7 @@
 
 #combatHud .cic-view-mode {
   color: var(--cic-cyan);
-  font-size: 5.5px;
+  font-size: 7.5px;
   letter-spacing: 0.13em;
 }
 
@@ -542,14 +618,14 @@
 #combatHud .cic-solution-stack i {
   color: var(--cic-muted);
   font-style: normal;
-  font-size: 4.5px;
+  font-size: 7px;
   letter-spacing: 0.1em;
 }
 
 #combatHud .cic-flight-tape b,
 #combatHud .cic-solution-stack b {
   color: var(--cic-cyan-hot);
-  font: 500 7px/1 "Orbitron", sans-serif;
+  font: 500 9px/1 "Orbitron", sans-serif;
 }
 
 #combatHud .cic-solution-stack b { color: #ffd29b; }
@@ -576,7 +652,7 @@
   top: 4px;
   left: 50%;
   color: var(--cic-cyan);
-  font-size: 4.7px;
+  font-size: 7px;
   letter-spacing: 0.15em;
   transform: translateX(-50%);
   white-space: nowrap;
@@ -601,7 +677,7 @@
 
 #combatHud .cic-view-caption b {
   color: var(--cic-ink);
-  font: 600 6px/1 "Orbitron", sans-serif;
+  font: 600 8px/1 "Orbitron", sans-serif;
   letter-spacing: 0.1em;
 }
 
@@ -609,7 +685,7 @@
   max-width: 100%;
   overflow: hidden;
   color: var(--cic-muted);
-  font-size: 4.5px;
+  font-size: 7px;
   letter-spacing: 0.07em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -622,12 +698,12 @@
   grid-template-rows: auto minmax(62px, 1fr) auto auto auto;
 }
 
-#combatHud .cic-intel .cic-panel-head { padding-right: 92px; }
+#combatHud .cic-intel .cic-panel-head { padding-right: 184px; }
 
 #combatHud .cic-kill-meter {
   position: absolute;
   top: 6px;
-  right: 8px;
+  right: 126px;
   min-width: 80px;
   height: 29px;
   display: flex;
@@ -635,11 +711,33 @@
   justify-content: flex-end;
   gap: 7px;
   color: var(--cic-muted);
-  font-size: 5px;
+  font-size: 7px;
   letter-spacing: 0.07em;
 }
 
 #combatHud .cic-kill-meter b { color: #f3fbfd; font: 600 18px/1 "Orbitron", sans-serif; }
+
+#combatHud .cic-deck-toggle {
+  position: absolute;
+  top: 6px;
+  right: 40px;
+  width: 80px;
+  height: 28px;
+  padding: 0 6px;
+  overflow: hidden;
+  color: var(--cic-cyan);
+  font: 600 7px/1 "Orbitron", sans-serif;
+  letter-spacing: .06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: rgba(3, 11, 16, .9);
+  border: 1px solid rgba(142, 233, 255, .34);
+  cursor: pointer;
+}
+
+#combatHud .cic-deck-toggle:hover,
+#combatHud .cic-deck-toggle:focus-visible { color: #071016; background: var(--cic-cyan); outline: 0; }
+#combatHud .cic-intel .cic-panel-focus { position: absolute; top: 6px; right: 6px; }
 
 #combatHud .cic-battle-feed {
   position: relative;
@@ -657,7 +755,7 @@
   align-items: center;
   overflow: hidden;
   color: #d0e4eb;
-  font: 600 7px/1.5 "JetBrains Mono", monospace;
+  font: 600 9px/1.5 "JetBrains Mono", monospace;
   letter-spacing: 0.04em;
   text-overflow: ellipsis;
 }
@@ -668,7 +766,7 @@
   padding: 2px 4px;
   border: 1px solid currentColor;
   color: currentColor;
-  font-size: 4px;
+  font-size: 6.5px;
   letter-spacing: 0.08em;
 }
 
@@ -699,7 +797,7 @@
   overflow: hidden;
   color: var(--cic-muted);
   font-style: normal;
-  font-size: 5px;
+  font-size: 7px;
   letter-spacing: 0.08em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -707,7 +805,7 @@
 
 #combatHud .cic-condition-grid b {
   color: var(--cic-cyan);
-  font: 600 7px/1 "Orbitron", sans-serif;
+  font: 600 9px/1 "Orbitron", sans-serif;
 }
 
 #combatHud .cic-perf-readout,
@@ -719,7 +817,7 @@
   padding: 3px 8px;
   box-sizing: border-box;
   color: #7298a6;
-  font-size: 5px;
+  font-size: 7.5px;
   letter-spacing: 0.045em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -729,8 +827,46 @@
 #combatHud .cic-perf-readout[data-pressure="warm"] { color: var(--cic-amber); }
 #combatHud .cic-perf-readout[data-pressure="hot"] { color: var(--cic-red); }
 #combatHud .cic-battle-log { min-height: 28px; color: #b7cbd2; border-top: 1px solid var(--cic-line); }
-#combatHud .cic-battle-log::before { content: "COMMS"; margin-right: 8px; color: var(--cic-amber); font-size: 4.5px; letter-spacing: 0.12em; }
+#combatHud .cic-battle-log::before { content: "COMMS"; margin-right: 8px; color: var(--cic-amber); font-size: 7px; letter-spacing: 0.12em; }
 #combatHud .cic-intel .voyage-log-toggle { display: none; }
+
+/* Any station can take the whole deck for deliberate inspection. */
+body.hud-panel-focus #combatHud .cic-panel:not(.is-focused) {
+  opacity: 0;
+  visibility: hidden;
+  filter: blur(2px);
+  transform: scale(.985);
+  pointer-events: none;
+}
+
+body.hud-panel-focus #combatHud .cic-panel.is-focused {
+  position: absolute;
+  inset: 5px;
+  z-index: 12;
+  width: auto;
+  height: auto;
+  clip-path: none;
+}
+
+body:not(.hud-off) .hero-title {
+  opacity: .13;
+  transform: translateY(-3vh) scale(.975);
+  transform-origin: left center;
+  transition: opacity 220ms ease, transform 280ms ease;
+}
+
+body:not(.hud-off) .hero-num,
+body:not(.hud-off) .hero-desc,
+body:not(.hud-off) .hero-cta {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+body:not(.hud-off) #blackhole-stage {
+  filter: brightness(.6) saturate(.78);
+  transition: filter 260ms ease;
+}
 
 @media (min-width: 861px) {
   #combatHud .cic-tactical > .pilot-terminal-overlay { box-sizing: border-box; visibility: hidden; pointer-events: none; }
@@ -749,26 +885,35 @@ body:not(.hud-off) .route-arrows {
 
 /* Very short desktop captures retain all three stations but reduce detail. */
 @media (min-width: 861px) and (max-height: 520px) {
-  :root { --cic-shell-height: min(42svh, 178px); }
-  #combatHud .cic-shell { grid-template-columns: minmax(260px, 25fr) minmax(460px, 54fr) minmax(230px, 21fr); }
+  :root { --cic-shell-height: min(40svh, 166px); }
+  #combatHud .cic-shell { grid-template-columns: minmax(250px, 23fr) minmax(460px, 60fr) minmax(220px, 17fr); }
   #combatHud .cic-panel-head { min-height: 28px; padding-top: 3px; padding-bottom: 3px; }
+  #combatHud .cic-panel-head strong { font-size: 9px; }
   #combatHud .cic-eyebrow,
   #combatHud .cic-weapon > small,
   #combatHud .cic-weapon-profile i,
   #combatHud .cic-recommend,
   #combatHud .cic-condition-grid,
   #combatHud .cic-battle-log { display: none; }
-  #combatHud .cic-ap-toggle { top: 3px; height: 21px; }
+  #combatHud .cic-ap-toggle { top: 3px; height: 22px; }
+  #combatHud .cic-panel-focus,
+  #combatHud .cic-deck-toggle { top: 3px; height: 22px; }
+  #combatHud .cic-panel-focus { width: 24px; }
+  #combatHud .cic-fire-control .cic-panel-focus { right: 82px; }
+  #combatHud .cic-intel .cic-panel-focus { right: 4px; }
+  #combatHud .cic-deck-toggle { right: 32px; }
   #combatHud .cic-weapon { grid-template-columns: 42px minmax(58px, 1fr) minmax(52px, 0.8fr) auto; padding-top: 3px; padding-bottom: 3px; }
   #combatHud .cic-weapon-profile { grid-template-columns: 1fr; }
   #combatHud .cic-radar-dock { width: 126px; height: 72px; }
   #combatHud .cic-intel { grid-template-rows: auto 1fr auto; }
+  .cic-cruise-strip { min-height: 42px; }
+  .cic-cruise-strip > span { padding-top: 5px; padding-bottom: 5px; }
 }
 
-/* Mobile: 1/4–1/3 height, target picture first, all four systems reachable. */
+/* Mobile: tactical picture first; the station rail expands one leg at a time. */
 @media (max-width: 860px) {
   :root {
-    --cic-shell-height: clamp(196px, 27.5svh, 244px);
+    --cic-shell-height: clamp(228px, 32svh, 286px);
     --jump-toggle-display: none;
     --jump-toggle-opacity: 0;
     --jump-toggle-visibility: hidden;
@@ -784,17 +929,43 @@ body:not(.hud-off) .route-arrows {
     display: grid;
     grid-template-areas: "tactical" "fire";
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(86px, 1fr) 72px;
+    grid-template-rows: minmax(96px, 1fr) 76px;
     gap: 3px;
-    padding: 3px;
+    padding: 32px 3px 3px;
     clip-path: none;
   }
+
+  #combatHud .cic-station-tabs {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    left: 3px;
+    z-index: 16;
+    height: 26px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2px;
+  }
+
+  #combatHud .cic-station-tabs button {
+    min-width: 0;
+    padding: 0 6px;
+    color: var(--cic-muted);
+    font: 600 8px/1 "Orbitron", sans-serif;
+    letter-spacing: .08em;
+    background: rgba(5, 14, 19, .94);
+    border: 1px solid rgba(142, 233, 255, .22);
+  }
+
+  #combatHud .cic-station-tabs button:hover,
+  #combatHud .cic-station-tabs button:focus-visible,
+  #combatHud .cic-station-tabs button.is-active { color: #071016; background: var(--cic-cyan); outline: 0; }
 
   #combatHud .cic-tactical { grid-area: tactical; }
   #combatHud .cic-fire-control { grid-area: fire; grid-template-rows: 20px minmax(0, 1fr); }
   #combatHud .cic-intel {
     position: absolute;
-    top: 29px;
+    top: 34px;
     right: 8px;
     z-index: 7;
     width: min(42%, 180px);
@@ -805,15 +976,17 @@ body:not(.hud-off) .route-arrows {
     pointer-events: none;
   }
 
-  #combatHud .cic-panel-head { min-height: 24px; padding: 3px 6px; }
-  #combatHud .cic-panel-head strong { font-size: 6px; letter-spacing: 0.08em; }
+  #combatHud .cic-panel-head { min-height: 26px; padding: 3px 6px; }
+  #combatHud .cic-panel-head strong { font-size: 8px; letter-spacing: 0.08em; }
+  #combatHud .cic-panel-head > .cic-panel-focus { display: none; }
   #combatHud .cic-eyebrow,
   #combatHud .cic-view-mode,
   #combatHud .cic-fire-control .cic-panel-head > .cic-eyebrow { display: none; }
-  #combatHud .cic-fire-control .cic-panel-head { min-height: 20px; padding-right: 64px; }
-  #combatHud .cic-ap-toggle { top: 2px; right: 3px; width: 58px; height: 15px; }
+  #combatHud .cic-fire-control .cic-panel-head { min-height: 22px; padding-right: 66px; }
+  #combatHud .cic-ap-toggle { top: 2px; right: 3px; width: 62px; height: 18px; }
   #combatHud .cic-ap-toggle span,
-  #combatHud .cic-ap-toggle b { font-size: 5px; }
+  #combatHud .cic-ap-toggle b { font-size: 7px; }
+  #combatHud .cic-tactical-head { grid-template-columns: minmax(0, 1fr) auto; }
 
   #combatHud .cic-weapon-wells {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -839,8 +1012,8 @@ body:not(.hud-off) .route-arrows {
   #combatHud .cic-weapon-profile,
   #combatHud .cic-recommend { display: none; }
   #combatHud .cic-weapon-code em { font-size: 10px; }
-  #combatHud .cic-weapon > b { align-self: center; font-size: 5.5px; text-align: center; }
-  #combatHud .cic-weapon-state { grid-row: auto; align-self: center; font-size: 4.5px; }
+  #combatHud .cic-weapon > b { align-self: center; font-size: 7.5px; text-align: center; }
+  #combatHud .cic-weapon-state { grid-row: auto; align-self: center; font-size: 7px; }
   #combatHud .cic-weapon-rail { top: 3px; bottom: 3px; left: 3px; width: 2px; }
 
   #combatHud .cic-tactical-head { min-height: 24px; }
@@ -850,17 +1023,17 @@ body:not(.hud-off) .route-arrows {
   #combatHud .cic-flight-tape span,
   #combatHud .cic-solution-stack span { min-width: 48px; padding: 2px 3px; gap: 4px; }
   #combatHud .cic-flight-tape i,
-  #combatHud .cic-solution-stack i { font-size: 3.5px; }
+  #combatHud .cic-solution-stack i { display: none; }
   #combatHud .cic-flight-tape b,
-  #combatHud .cic-solution-stack b { font-size: 4.5px; }
+  #combatHud .cic-solution-stack b { font-size: 7px; }
   #combatHud .cic-flight-tape span:nth-child(3),
   #combatHud .cic-solution-stack span:nth-child(2) { display: none; }
 
   #combatHud .cic-reticle { width: 42px; }
   #combatHud .cic-radar-dock { bottom: 3px; width: 92px; height: 55px; padding: 10px 2px 2px; }
-  #combatHud .cic-radar-dock > span { top: 2px; font-size: 3.4px; }
+  #combatHud .cic-radar-dock > span { display: none; }
   #combatHud .cic-view-caption { right: 3px; bottom: 3px; max-width: 34%; padding: 3px; }
-  #combatHud .cic-view-caption b { font-size: 4px; }
+  #combatHud .cic-view-caption b { font-size: 7px; }
   #combatHud .cic-view-caption span { display: none; }
 
   #combatHud .cic-intel .cic-panel-head,
@@ -868,12 +1041,57 @@ body:not(.hud-off) .route-arrows {
   #combatHud .cic-perf-readout,
   #combatHud .cic-battle-log { display: none; }
   #combatHud .cic-battle-feed { height: 100%; padding: 0 4px; border: 0; }
-  #combatHud .cic-feed-line { font-size: 4.5px; white-space: nowrap; }
-  #combatHud .cic-feed-line::before { margin-right: 4px; padding: 1px 2px; font-size: 3px; }
+  #combatHud .cic-feed-line { font-size: 7px; white-space: nowrap; }
+  #combatHud .cic-feed-line::before { display: none; }
   #combatHud .cic-intel .voyage-log-toggle { display: none; }
+
+  body.hud-panel-focus #combatHud .cic-panel.is-focused {
+    inset: 32px 3px 3px;
+  }
+
+  body.hud-panel-focus #combatHud .cic-intel.is-focused {
+    display: grid;
+    grid-template-rows: auto minmax(62px, 1fr) auto auto auto;
+    pointer-events: auto;
+    background: var(--cic-panel);
+  }
+
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-panel-head,
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-condition-grid,
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-perf-readout,
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-battle-log { display: grid; }
+
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-perf-readout,
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-battle-log { display: flex; }
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-panel-head { padding-right: 6px; }
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-kill-meter,
+  body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-deck-toggle { display: none; }
+
+  .cic-cruise-strip {
+    right: 6px;
+    bottom: max(6px, env(safe-area-inset-bottom));
+    left: 6px;
+    min-height: 58px;
+    grid-template-columns: minmax(118px, 1.35fr) repeat(2, minmax(54px, .55fr)) minmax(94px, 1fr);
+  }
+
+  .cic-cruise-strip > span { padding: 6px 7px; }
+  .cic-cruise-strip > span:nth-child(3) { display: none; }
+  .cic-cruise-strip i { font-size: 7px; }
+  .cic-cruise-strip b { font-size: 8px; }
+  body.hud-off main { padding-bottom: 76px; }
+}
+
+@media (max-width: 520px) {
+  .cic-cruise-strip { grid-template-columns: minmax(116px, 1.4fr) minmax(50px, .5fr) minmax(84px, .9fr); }
+  .cic-cruise-strip > span:nth-child(4) { display: none; }
+  #combatHud .cic-view-caption { display: none; }
+  #combatHud .cic-radar-dock { width: 82px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   #combatHud .cic-live-dot,
-  #combatHud .cic-weapon { animation: none; transition: none; }
+  #combatHud .cic-weapon,
+  #combatHud .cic-panel,
+  .cic-cruise-strip { animation: none; transition: none; }
 }

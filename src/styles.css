@@ -4221,8 +4221,8 @@
   }
   main,
   .hero,
-  .hero-title,
-  .hero-desc,
+  body.hud-off .hero-title,
+  body.hud-off .hero-desc,
   .asset-deck,
   .equity,
   .holdings,
@@ -4470,9 +4470,9 @@
     min-height: calc(100svh - var(--hud-combat-h) - 54px) !important;
   }
 
-  .hero-title,
-  .hero-desc,
-  .hero-num {
+  body.hud-off .hero-title,
+  body.hud-off .hero-desc,
+  body.hud-off .hero-num {
     opacity: 1 !important;
     visibility: visible !important;
     filter: none !important;

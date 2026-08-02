@@ -202,6 +202,37 @@ const HUD_IMAGES=createHudImages();
 const commandModeBtn=document.getElementById('commandModeBtn');
 const jumpToggle=document.getElementById('jumpToggle');
 const bridgeCallout=document.getElementById('bridgeCallout');
+const cruiseStrip=document.getElementById('cicCruiseStrip');
+const hudPanels={
+  fire:document.querySelector('#combatHud .cic-fire-control'),
+  tactical:document.querySelector('#combatHud .cic-tactical'),
+  intel:document.querySelector('#combatHud .cic-intel')
+};
+const hudFocusButtons=[...document.querySelectorAll('[data-cic-panel-focus]')];
+let focusedHudPanel=null;
+function setHudPanelFocus(panelId=null){
+  const next=panelId&&hudPanels[panelId]?panelId:null;
+  focusedHudPanel=next;
+  document.body.classList.toggle('hud-panel-focus',Boolean(next));
+  Object.entries(hudPanels).forEach(([id,panel])=>panel?.classList.toggle('is-focused',id===next));
+  hudFocusButtons.forEach((button)=>{
+    const active=button.dataset.cicPanelFocus===next;
+    button.classList.toggle('is-active',active);
+    button.setAttribute('aria-expanded',String(active));
+  });
+  if(next!=='tactical') document.body.classList.remove('terminal-open');
+}
+hudFocusButtons.forEach((button)=>button.addEventListener('click',(event)=>{
+  event.stopPropagation();
+  const panelId=button.dataset.cicPanelFocus;
+  setHudPanelFocus(focusedHudPanel===panelId?null:panelId);
+}));
+document.addEventListener('keydown',(event)=>{
+  if(event.key==='Escape'&&focusedHudPanel){
+    setHudPanelFocus(null);
+    commandModeBtn?.focus({preventScroll:true});
+  }
+});
 function showBridgeCallout(text){
   if(!bridgeCallout) return;
   bridgeCallout.textContent=text;
@@ -210,8 +241,10 @@ function showBridgeCallout(text){
   showBridgeCallout.timer=setTimeout(()=>bridgeCallout.classList.remove('on'),1550);
 }
 function updateCommandButton(){
-  if(!commandModeBtn) return;
-  commandModeBtn.textContent=document.body.classList.contains('hud-off')?(currentLang==='zh'?'指挥模式':'Command'):(currentLang==='zh'?'巡航模式':'Cruise');
+  const isCruise=document.body.classList.contains('hud-off');
+  if(commandModeBtn) commandModeBtn.textContent=isCruise?(currentLang==='zh'?'指挥模式':'Command'):(currentLang==='zh'?'巡航模式':'Cruise');
+  combatHud?.setAttribute('aria-hidden',String(isCruise));
+  cruiseStrip?.setAttribute('aria-hidden',String(!isCruise));
 }
 /* V22 §7.9 ③: mobile "reach any page" menu. index.html already shipped a
    hamburger button (.nav-menu-btn) that was never wired to anything —
@@ -287,7 +320,11 @@ function disengageBattleSystems(){
 commandModeBtn?.addEventListener('click',()=>{
   const toHudOff=!document.body.classList.contains('hud-off');
   document.body.classList.toggle('hud-off',toHudOff);
-  if(toHudOff) disengageBattleSystems();
+  if(toHudOff){
+    disengageBattleSystems();
+    setHudPanelFocus(null);
+    document.body.classList.remove('terminal-open');
+  }
   showBridgeCallout(toHudOff?'Cruising mode on':'Commander mode on');
   updateCommandButton();
 });
@@ -569,6 +606,7 @@ function updateCursorTarget(){
 
 function applyHudLanguage(){
   const h=HUD_COPY[currentLang]||HUD_COPY.zh;
+  const zh=currentLang==='zh';
   setText('.hud-warning',h.wake);
   setText('.hud-subwarning',h.sub);
   setText('[data-hud="battleTitle"]',h.battleTitle);
@@ -595,13 +633,27 @@ function applyHudLanguage(){
   document.getElementById('topTrajectory').textContent=currentLang==='zh'?'L1 · 稳定':'L1 · stable';
   document.getElementById('nukeWarning').innerHTML=`<span class="rad-symbol">☢</span>${h.fusion}`;
   weaponWarning.innerHTML=`<b>${h.enforcerWarn}</b><span>${currentLang==='zh'?'粒子脊柱待命':'charging particle spine · stand by'}</span>`;
+  const stationNames={tactical:zh?'态势':'TACTICAL',fire:zh?'火控':'FIRE',intel:zh?'情报':'INTEL'};
+  document.querySelectorAll('.cic-station-tabs [data-cic-panel-focus]').forEach((button)=>{
+    button.textContent=stationNames[button.dataset.cicPanelFocus]||button.textContent;
+  });
+  const focusLabels={
+    fire:zh?'展开火控舱':'Expand fire-control station',
+    tactical:zh?'展开战术态势舱':'Expand tactical station',
+    intel:zh?'展开情报舱':'Expand intelligence station'
+  };
+  document.querySelectorAll('.cic-panel-head [data-cic-panel-focus]').forEach((button)=>{
+    button.setAttribute('aria-label',focusLabels[button.dataset.cicPanelFocus]);
+  });
+  const cruiseState=document.getElementById('cicCruiseState');
+  if(cruiseState) cruiseState.textContent=zh?'巡航 · 传感器静默监听':'CRUISE · SENSOR PASSIVE';
   updateCombatModule();
 }
 
 function setCombatMode(on){
   combatHot=on;
   document.body.classList.toggle('combat-mode',on);
-  combatHud.setAttribute('aria-hidden',on?'false':'true');
+  combatHud?.setAttribute('aria-hidden',String(document.body.classList.contains('hud-off')));
   if(on){
     if(combatHoldTimer)clearTimeout(combatHoldTimer);
     combatHoldTimer=setTimeout(()=>{ if(!combatHot) document.body.classList.remove('combat-mode'); }, 120);
@@ -628,6 +680,14 @@ function updateTopTelemetry(state=combatSnapshot){
     window.__gLoad=null;
     window.__cruiseSpeed=null;
     const hullReadout=document.getElementById('hullReadout'); if(hullReadout) hullReadout.textContent = `${hull.toFixed(0)}%`;
+    const cruiseHeading=document.getElementById('cicCruiseHeading');
+    const cruiseVelocity=document.getElementById('cicCruiseVelocity');
+    const cruiseHull=document.getElementById('cicCruiseHull');
+    const cruiseTarget=document.getElementById('cicCruiseTarget');
+    if(cruiseHeading) cruiseHeading.textContent=Number.isFinite(navDeg)?`${Math.round(navDeg).toString().padStart(3,'0')}°`:'—';
+    if(cruiseVelocity) cruiseVelocity.textContent=Number.isFinite(state.telemetry.speedKms)?`${state.telemetry.speedKms.toFixed(1)} km/s`:'—';
+    if(cruiseHull) cruiseHull.textContent=`${hull.toFixed(0)}%`;
+    if(cruiseTarget) cruiseTarget.textContent=state.target?(state.target.locked?(currentLang==='zh'?'目标锁定':'TRACK LOCK'):(currentLang==='zh'?'正在解算':'SOLVING')):(currentLang==='zh'?'无目标':'NO TRACK');
     const gLoadReadout=document.getElementById('gLoadReadout'); if(gLoadReadout) gLoadReadout.textContent = '—';
     const throttleEl=document.getElementById('throttleState');
     if(throttleEl){

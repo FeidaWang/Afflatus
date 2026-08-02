@@ -28,4 +28,19 @@ describe('combat presentation contract', () => {
     const css = await readFile(new URL('../src/cic-hud.css', import.meta.url), 'utf8');
     expect(css).not.toContain('!important');
   });
+
+  it('provides cruise telemetry and focusable command stations at every viewport', async () => {
+    const [html, css, source] = await Promise.all([
+      readFile(new URL('../index.html', import.meta.url), 'utf8'),
+      readFile(new URL('../src/cic-hud.css', import.meta.url), 'utf8'),
+      readFile(new URL('../src/main.js', import.meta.url), 'utf8')
+    ]);
+    expect(html).toContain('id="cicCruiseStrip"');
+    expect(html).toContain('class="cic-station-tabs"');
+    expect(html.match(/data-cic-panel-focus=/g)).toHaveLength(6);
+    expect(css).toContain('body.hud-panel-focus #combatHud .cic-panel.is-focused');
+    expect(css).toContain('@media (max-width: 860px)');
+    expect(source).toContain('function setHudPanelFocus(panelId=null)');
+    expect(source).toContain("document.body.classList.remove('terminal-open')");
+  });
 });
