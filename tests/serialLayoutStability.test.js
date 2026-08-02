@@ -30,7 +30,12 @@ describe('serial layout stability', () => {
     expect(responsiveCss).not.toMatch(/html\s*\{[^}]*overflow-x\s*:/s);
     expect(responsiveCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
     expect(brandCss).toMatch(/\.site-header--follow\s*\{[^}]*position:\s*-webkit-sticky;[^}]*position:\s*sticky;/s);
-    expect(css).toMatch(/\.toolbar\{position:sticky;top:0;/);
+    expect(css).toMatch(/\.toolbar\{position:sticky;top:calc\(var\(--safe-t\) \+ var\(--site-header-h\)\)/);
+    expect(css).toMatch(/\.reader-progress\{position:sticky;top:calc\(var\(--safe-t\) \+ var\(--site-header-h\) \+ var\(--toolbar-h\)\)/);
+    expect(css).toMatch(/\.wf-chip\{position:sticky;top:calc\(var\(--safe-t\) \+ var\(--site-header-h\) \+ var\(--toolbar-h\) \+ 12px\)/);
+    expect(html).toContain("style.setProperty('--site-header-h'");
+    expect(html).toContain('stickyChromeObserver.observe(siteHeaderEl)');
+    expect(html).toContain('stickyChromeObserver.observe(toolbarEl)');
   });
 
   it('keeps the decorative canvas outside the reader critical path', () => {

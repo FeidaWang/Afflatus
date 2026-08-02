@@ -458,15 +458,22 @@
     );
   }
 
-  /* V22 fix: the reader-progress bar and the toolbar are two independent
-     sticky elements; the toolbar's height varies (wraps to 2 rows on
-     some widths), so a hardcoded offset would drift and reopen the gap.
-     Measure it live and feed it to CSS via --toolbar-h instead. */
+  /* The global header, reader toolbar, progress bar and waterfall chip form
+     one sticky stack. Both bars can wrap as navigation and controls load, so
+     measure their live heights instead of relying on desktop-only constants. */
   var toolbarEl = document.getElementById('toolbar');
-  function syncToolbarH() { document.documentElement.style.setProperty('--toolbar-h', toolbarEl.offsetHeight + 'px'); }
-  syncToolbarH();
-  window.addEventListener('resize', syncToolbarH);
-  if (window.ResizeObserver) new ResizeObserver(syncToolbarH).observe(toolbarEl);
+  var siteHeaderEl = document.querySelector('.site-header--follow');
+  function syncStickyChrome() {
+    document.documentElement.style.setProperty('--site-header-h', (siteHeaderEl ? siteHeaderEl.offsetHeight : 0) + 'px');
+    document.documentElement.style.setProperty('--toolbar-h', toolbarEl.offsetHeight + 'px');
+  }
+  syncStickyChrome();
+  window.addEventListener('resize', syncStickyChrome);
+  if (window.ResizeObserver) {
+    var stickyChromeObserver = new ResizeObserver(syncStickyChrome);
+    if (siteHeaderEl) stickyChromeObserver.observe(siteHeaderEl);
+    stickyChromeObserver.observe(toolbarEl);
+  }
 
   function toast(msg, ms) {
     var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
