@@ -22,6 +22,26 @@
       "permanent": true
     },
     {
+      "source": "/novels",
+      "destination": "/serial.html",
+      "permanent": true
+    },
+    {
+      "source": "/novels/",
+      "destination": "/serial.html",
+      "permanent": true
+    },
+    {
+      "source": "/zh/novels",
+      "destination": "/zh/serial.html",
+      "permanent": true
+    },
+    {
+      "source": "/zh/novels/",
+      "destination": "/zh/serial.html",
+      "permanent": true
+    },
+    {
       "source": "/en/novels/:path*",
       "destination": "/zh/novels/:path*",
       "permanent": true

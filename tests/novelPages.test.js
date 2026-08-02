@@ -5,6 +5,7 @@ import { transformNovelPageDocument } from '../scripts/localize-site.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const source = readFileSync(resolve(root, 'serial.html'), 'utf8');
+const vercel = JSON.parse(readFileSync(resolve(root, 'vercel.json'), 'utf8'));
 const index = JSON.parse(readFileSync(resolve(root, 'public/novels-index.json'), 'utf8'));
 const indexedBook = index.novels.find((item) => item.id === 'wanjie-zhongchun');
 const bookData = JSON.parse(readFileSync(
@@ -15,6 +16,21 @@ const entry = { ...indexedBook, chapters: bookData.chapters };
 const catalog = [entry];
 
 describe('pre-rendered novel documents', () => {
+  it('routes the novels collection root to the canonical Chinese bookshelf', () => {
+    expect(vercel.redirects).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        source: '/zh/novels',
+        destination: '/zh/serial.html',
+        permanent: true,
+      }),
+      expect.objectContaining({
+        source: '/zh/novels/',
+        destination: '/zh/serial.html',
+        permanent: true,
+      }),
+    ]));
+  });
+
   it('keeps reading music paused until the player button is explicitly pressed', () => {
     expect(source).toContain(
       "btnPlay.addEventListener('click', function () { audio.paused ? play() : pause(); });",

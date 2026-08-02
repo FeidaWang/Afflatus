@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 const html = readFileSync('serial.html', 'utf8');
 const css = readFileSync('public/styles/serial.css', 'utf8');
+const brandCss = readFileSync('public/styles/afflatus-brand.css', 'utf8');
+const responsiveCss = readFileSync('public/styles/responsive-primitives.css', 'utf8');
 const entry = readFileSync('src/pages/serialLibs.js', 'utf8');
 const pagedBook = readFileSync('src/lib/pagedBook.js', 'utf8');
 
@@ -20,6 +22,13 @@ describe('serial layout stability', () => {
     expect(css).toMatch(/\.hero \.pad\{[^}]*min-height:/);
     expect(css).toMatch(/\.hud\{[^}]*min-height:/);
     expect(css).toMatch(/\.reader \.body\{[^}]*min-height:/);
+  });
+
+  it('keeps body out of shared overflow clipping so sticky chrome follows scrolling', () => {
+    expect(brandCss).toMatch(/html\s*\{\s*overflow-x:\s*clip;/);
+    expect(brandCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
+    expect(responsiveCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
+    expect(css).toMatch(/\.toolbar\{position:sticky;top:0;/);
   });
 
   it('keeps the decorative canvas outside the reader critical path', () => {
