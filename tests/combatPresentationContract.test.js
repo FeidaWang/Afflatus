@@ -66,7 +66,10 @@ describe('combat presentation contract', () => {
     expect(css).toContain('@media (max-width: 860px)');
     expect(css).toContain('[data-weapon="missile"] { --weapon-color: var(--cic-amber)');
     expect(css).toContain('[data-weapon="enforcer"] { --weapon-color: var(--cic-magenta)');
-    expect(css).toContain('border-radius: 48px 48px 14px 14px');
+    expect(css).toContain('backdrop-filter: blur(9px) saturate(1.08)');
+    expect(css).toContain('grid-template-columns: minmax(0, 1fr) minmax(64px, max-content)');
+    expect(css).toContain('#combatHud .cic-intel .cic-panel-focus { display: none; }');
+    expect(css).toContain('#combatHud .cic-intel-footer');
     expect(css).toContain('grid-template-columns: minmax(0, 1fr);');
     expect(css).toContain('width: 112px');
     expect(source).toContain('function setHudPanelFocus(panelId=null)');

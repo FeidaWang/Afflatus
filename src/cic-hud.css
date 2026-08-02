@@ -1633,6 +1633,150 @@ body:not(.hud-off) .route-arrows {
 /* Immersive optical pass --------------------------------------------------
  * The 3D picture owns every pixel of the centre station. Sensor values float
  * on clear glass at the edges instead of consuming two permanent columns. */
+#combatHud .cic-shell {
+  grid-template-columns: minmax(260px, 20fr) minmax(0, 60fr) minmax(280px, 20fr);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  isolation: isolate;
+  perspective: none;
+  background:
+    linear-gradient(90deg, rgba(2, 10, 15, .82), rgba(4, 14, 20, .48) 19%, rgba(1, 6, 10, .14) 50%, rgba(4, 14, 20, .48) 81%, rgba(2, 10, 15, .82)),
+    rgba(1, 6, 10, .34);
+  border: 0;
+  border-radius: 0;
+  box-shadow: 0 22px 62px rgba(0, 0, 0, .44);
+  backdrop-filter: blur(9px) saturate(1.08);
+  -webkit-backdrop-filter: blur(9px) saturate(1.08);
+}
+
+#combatHud .cic-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: auto;
+  height: auto;
+  display: block;
+  background:
+    linear-gradient(112deg, rgba(142, 233, 255, .045), transparent 22%, transparent 72%, rgba(142, 233, 255, .025)),
+    repeating-linear-gradient(0deg, transparent 0 27px, rgba(142, 233, 255, .012) 28px);
+  pointer-events: none;
+}
+
+#combatHud .cic-shell::after { display: none; }
+
+#combatHud .cic-panel {
+  z-index: 1;
+  height: 100%;
+  align-self: stretch;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  clip-path: none;
+  box-shadow: none;
+  transform: none;
+}
+
+#combatHud .cic-panel::before,
+#combatHud .cic-fire-control::after,
+#combatHud .cic-intel::after,
+#combatHud .cic-tactical::before { display: none; }
+
+#combatHud .cic-fire-control {
+  background: linear-gradient(90deg, rgba(3, 13, 19, .68), rgba(3, 13, 19, .18) 72%, transparent);
+}
+
+#combatHud .cic-tactical {
+  height: 100%;
+  background: transparent;
+  border-radius: 0;
+  transform: none;
+}
+
+#combatHud .cic-intel {
+  height: 100%;
+  padding-right: 12px;
+  background: linear-gradient(270deg, rgba(3, 13, 19, .7), rgba(3, 13, 19, .18) 72%, transparent);
+  box-sizing: border-box;
+}
+
+#combatHud .cic-panel-head,
+#combatHud .cic-tactical-head,
+#combatHud .cic-fire-control .cic-panel-head,
+#combatHud .cic-intel .cic-panel-head {
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+#combatHud .cic-fire-control .cic-panel-head { padding-left: 14px; }
+#combatHud .cic-intel .cic-panel-head { padding-left: 12px; padding-right: 116px; }
+#combatHud .cic-tactical-head { padding-right: 10px; padding-left: 12px; }
+
+#combatHud .cic-intel .cic-battle-feed {
+  margin: 0;
+  padding: 8px 12px;
+  background: linear-gradient(270deg, rgba(142, 233, 255, .035), transparent 88%);
+  border: 0;
+}
+
+#combatHud .cic-intel .cic-condition-grid {
+  width: auto;
+  min-width: 0;
+  padding: 4px 0 4px 12px;
+  box-sizing: border-box;
+}
+
+#combatHud .cic-condition-grid > span {
+  width: auto;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(64px, max-content);
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px 4px 2px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: linear-gradient(270deg, rgba(142, 233, 255, .04), transparent 84%);
+  border: 0;
+  border-radius: 0;
+}
+
+#combatHud .cic-condition-grid i {
+  width: auto;
+  min-width: 0;
+}
+
+#combatHud .cic-condition-grid b {
+  width: auto;
+  min-width: 64px;
+  max-width: none;
+  justify-self: end;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: clip;
+}
+
+#combatHud .cic-perf-readout {
+  margin: 2px 0 5px 12px;
+  padding-right: 10px;
+  border: 0;
+}
+
+#combatHud .cic-intel-footer {
+  margin: 0;
+  padding: 0;
+}
+
+#combatHud .cic-log-toggle {
+  right: 34px;
+  overflow: hidden;
+}
+
 #combatHud .cic-tactical-body {
   position: relative;
   display: block;
@@ -1794,18 +1938,25 @@ body:not(.hud-off) .route-arrows {
 #combatHud .cic-weapon-state { font-size: 6.5px; }
 
 #combatHud .cic-fire-control .cic-panel-head { padding-right: 108px; }
-#combatHud .cic-intel .cic-panel-head { padding-right: 116px; }
+#combatHud .cic-intel .cic-panel-head { padding-right: 101px; }
 #combatHud .cic-panel-head strong { font-size: 8.5px; }
 #combatHud .cic-log-toggle {
-  right: 31px;
+  right: 12px;
   width: 82px;
   font-size: 5.75px;
 }
 #combatHud .cic-condition-grid b {
-  max-width: 58%;
-  overflow: visible;
+  min-width: 64px;
+  max-width: none;
+  overflow: hidden;
   font-size: 7.5px;
   text-overflow: clip;
+  text-align: right;
+}
+
+@media (min-width: 861px) {
+  #combatHud .cic-intel .cic-panel-focus { display: none; }
+  #combatHud .cic-intel .cic-panel-head strong { font-size: 8px; }
 }
 
 @media (min-width: 861px) and (max-height: 520px) {
@@ -1820,8 +1971,8 @@ body:not(.hud-off) .route-arrows {
   #combatHud .cic-weapon > b { font-size: 8px; text-overflow: clip; }
   #combatHud .cic-weapon-state { font-size: 6.5px; }
   #combatHud .cic-fire-control .cic-panel-head { padding-right: 112px; }
-  #combatHud .cic-intel .cic-panel-head { padding-right: 108px; }
-  #combatHud .cic-log-toggle { right: 31px; width: 75px; font-size: 5.5px; }
+  #combatHud .cic-intel .cic-panel-head { padding-right: 93px; }
+  #combatHud .cic-log-toggle { right: 10px; width: 75px; font-size: 5.5px; }
   #combatHud .cic-sensor-rail,
   #combatHud .cic-target-rail { bottom: 4px; gap: 3px; padding: 0; }
   #combatHud .cic-radar-dock { width: 45px; height: 32px; padding: 0; }
@@ -1829,6 +1980,19 @@ body:not(.hud-off) .route-arrows {
 }
 
 @media (max-width: 860px) {
+  #combatHud .cic-shell {
+    grid-template-areas: "tactical" "fire";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(96px, 1fr) 76px;
+    gap: 0;
+  }
+  #combatHud .cic-tactical,
+  #combatHud .cic-fire-control { height: auto; }
+  #combatHud .cic-intel { height: 25px; padding-right: 0; }
+  body.hud-panel-focus #combatHud .cic-intel.is-focused {
+    height: calc(100% - 35px);
+    padding-right: 0;
+  }
   #combatHud .cic-tactical-body,
   body.hud-panel-focus #combatHud .cic-tactical.is-focused .cic-tactical-body {
     display: block;
