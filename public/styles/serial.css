@@ -117,10 +117,10 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .fsize button{padding:9px 12px;min-height:38px;font:700 13px/1 var(--mono)}
 .fsize button:hover{color:var(--teal)}
 .spacer{flex:1 1 auto}
-/* U-ambient-player: compact controls + visible license/credit entry */
+/* U-ambient-player: compact playback controls */
 .player{display:flex;align-items:center;gap:2px;border:1px solid rgba(236,226,207,.16);border-radius:2px}
-.player button,.player a{display:inline-grid;place-items:center;padding:9px 10px;min-height:38px;font:400 12.5px/1 var(--mono);color:var(--chrome);text-decoration:none}
-.player button:hover,.player a:hover{color:var(--teal)}
+.player button{display:inline-grid;place-items:center;padding:9px 10px;min-height:38px;font:400 12.5px/1 var(--mono);color:var(--chrome)}
+.player button:hover{color:var(--teal)}
 .player button.active{color:var(--teal)}
 
 /* ---- reader shell / TOC drawer ---- */

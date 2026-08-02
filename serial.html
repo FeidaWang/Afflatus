@@ -323,7 +323,6 @@
       <button id="plPrev" type="button" aria-label="上一曲">⏮</button>
       <button id="plToggle" type="button" aria-label="播放 / 暂停">♪</button>
       <button id="plNext" type="button" aria-label="下一曲">⏭</button>
-      <a id="plCredit" href="/audio/credits.html" target="_blank" rel="license noopener" aria-label="音乐来源与许可证" title="音乐来源与许可证">ⓘ</a>
     </div>
     <div class="spacer"></div>
     <button class="tbtn" id="bookmarkBtn" type="button">☆<span class="lbl"> 书签</span></button>
@@ -946,8 +945,7 @@
     var wrap = document.getElementById('ambientPlayer'); if (!wrap) return;
     var btnPrev = document.getElementById('plPrev'),
         btnPlay = document.getElementById('plToggle'),
-        btnNext = document.getElementById('plNext'),
-        credit = document.getElementById('plCredit');
+        btnNext = document.getElementById('plNext');
     var audio = new Audio();
     audio.preload = 'none';
     audio.volume = 0.32;
@@ -1025,7 +1023,6 @@
       .then(function (data) {
         tracks = (data.tracks || []).filter(function (t) { return t && t.src; });
         if (!tracks.length) return; /* placeholder config: stay hidden */
-        if (credit && data.credits) credit.href = data.credits;
         var saved = readerState().audioTrack || 0;
         wrap.hidden = false;
         load(saved < tracks.length ? saved : 0);
