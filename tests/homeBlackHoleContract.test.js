@@ -48,9 +48,24 @@ describe('homepage relativistic black hole contract', () => {
 
   it('dissolves the black-hole plate into the same fixed universe as the eclipse', () => {
     const styles = readFileSync('src/styles.css', 'utf8');
-    expect(styles).toContain('fixed #starfield used by Alphard Forge');
-    expect(styles).toContain('radial-gradient(ellipse 58% 50% at 50% 50%');
+    expect(styles).toContain('shared 72% / 38% navigation');
+    expect(styles).toContain('radial-gradient(ellipse 44% 48% at 53% 48%');
     expect(styles).not.toContain('mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.72)');
+  });
+
+  it('labels the gravity well and drives every star through one approach field', () => {
+    const html = readFileSync('index.html', 'utf8');
+    const fallback = readFileSync('src/scene/backgroundScene.js', 'utf8');
+    const worker = readFileSync('src/scene/backgroundScene.worker.js', 'utf8');
+
+    expect(html).toContain('class="blackhole-course-marker"');
+    expect(html).toContain('APPROACH VECTOR / ΔR NEGATIVE');
+    expect(fallback).toContain('function drawApproach');
+    expect(worker).toContain('function drawApproach');
+    expect(fallback).toContain("ctx.fillStyle = '#04060a'");
+    expect(worker).toContain("ctx.fillStyle = '#04060a'");
+    expect(fallback).not.toContain('eventR * 1.35');
+    expect(worker).not.toContain('eventR * 1.35');
   });
 
   it('uses the doubled-size homepage observation plate', () => {

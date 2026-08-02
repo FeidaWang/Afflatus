@@ -21,6 +21,7 @@ describe('combat presentation contract', () => {
     expect(source).toContain('impactOrbit');
     expect(source).toContain('/assets/combat/afflatus-command.glb');
     expect(source).toContain('projectileWorldPosition(projectile, state)');
+    expect(source).toContain('stellarPosition.needsUpdate = true');
     expect(source).toContain('targetScreen: targetScreen ? Object.freeze');
     expect(source).not.toContain('NEB_DOME_FRAG');
     expect(source).not.toContain('new THREE.GridHelper');
@@ -52,6 +53,8 @@ describe('combat presentation contract', () => {
     expect(css).toContain('@media (max-width: 860px)');
     expect(css).toContain('[data-weapon="missile"] { --weapon-color: var(--cic-amber)');
     expect(css).toContain('[data-weapon="enforcer"] { --weapon-color: var(--cic-magenta)');
+    expect(css).toContain('border-radius: 32px 32px 9px 9px');
+    expect(css).toContain('width: 112px');
     expect(source).toContain('function setHudPanelFocus(panelId=null)');
     expect(html).toContain('id="cicVoyageConsole"');
     expect(html).toContain('class="cic-tactical-body"');

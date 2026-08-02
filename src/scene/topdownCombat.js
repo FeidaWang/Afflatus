@@ -312,11 +312,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     missile: fallbackShip.group.getObjectByName('MissileBay'),
   };
   shipAnchors = fallbackAnchors;
-  for (const sx of [-1, 1]) {
-    const glow = sprite(0x74dcff, 4.2, 0.8);
-    glow.position.set(sx * 1.7, 0, 6.0);
-    capital.add(glow);
-  }
   const shieldShell = new THREE.Mesh(
     new THREE.SphereGeometry(5.25, 28, 18),
     new THREE.MeshBasicMaterial({ color: 0x70ddff, transparent: true, opacity: 0, wireframe: true, blending: THREE.AdditiveBlending, depthWrite: false }),
@@ -797,6 +792,21 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     shieldPulse *= 0.9;
     shieldShell.material.opacity = Math.max(0, shieldPulse * (0.18 + Math.sin(now * 0.035) * 0.08));
     shieldShell.rotation.y += 0.006;
+
+    // The bridge is never parked in space: the fixed stellar references pass
+    // aft along the ship's authoritative forward axis. Wrapping the existing
+    // points (rather than spawning streak sprites) keeps this as navigation
+    // parallax, not an unrelated fog or celestial effect.
+    if (starfield) {
+      const stellarPosition = starfield.geometry.attributes.position;
+      const values = stellarPosition.array;
+      const advance = 0.105 * frameScale;
+      for (let i = 2; i < values.length; i += 3) {
+        values[i] += advance;
+        if (values[i] > 300) values[i] = -300;
+      }
+      stellarPosition.needsUpdate = true;
+    }
 
     // The command ship is the stable reference frame. Fighters exist only
     // when the authoritative snapshot reports an escort; otherwise their

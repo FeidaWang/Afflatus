@@ -111,18 +111,20 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
   let height = 1;
   let dpr = 1;
   let stars = [];
-  let warpStars = [];
+  let lastFrameAt = 0;
   let sized = false;
 
   function buildStars() {
     stars = [];
-    const count = Math.min(240, Math.floor(innerWidth * innerHeight / 5200));
+    const count = Math.min(280, Math.max(150, Math.floor(innerWidth * innerHeight / 4300)));
     const cols = ['#e4eaf6', '#c4d0ea', '#7a89af'];
     for (let i = 0; i < count; i += 1) {
       const l = Math.random();
       stars.push({
-        x: Math.random() * innerWidth,
-        y: Math.random() * innerHeight,
+        x: rand(-1.18, 1.18),
+        y: rand(-1.08, 1.08),
+        z: rand(0.18, 1.9),
+        speed: rand(0.72, 1.28),
         r: l < 0.7 ? rand(0.32, 0.7) : rand(0.7, 1.5),
         a: rand(0.28, 0.85),
         l,
@@ -133,17 +135,10 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
     }
   }
 
-  function buildWarp() {
-    warpStars = [];
-    const maxR = Math.max(innerWidth, innerHeight) * 0.65;
-    for (let i = 0; i < 160; i += 1) {
-      warpStars.push({
-        ang: Math.random() * Math.PI * 2,
-        r: rand(20, maxR),
-        speed: rand(0.25, 1.1),
-        z: rand(0.3, 1),
-      });
-    }
+  function resetStar(star) {
+    star.x = rand(-1.18, 1.18);
+    star.y = rand(-1.08, 1.08);
+    star.z = rand(1.35, 1.95);
   }
 
   function resize() {
@@ -154,87 +149,83 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
     canvas.style.width = `${innerWidth}px`;
     canvas.style.height = `${innerHeight}px`;
     buildStars();
-    buildWarp();
+    lastFrameAt = 0;
     return { width, height, dpr };
   }
 
-  function drawWarp(intensity) {
+  function drawApproach(now, intensity, pointer) {
     const compact = innerWidth < 880;
-    const cxw = innerWidth * (compact ? 0.82 : 0.84);
-    const cyw = innerHeight * (compact ? 0.28 : 0.33);
-    const maxR = Math.max(innerWidth, innerHeight) * 0.65;
-    const eventR = Math.min(
-      compact ? 330 : 540,
-      Math.max(compact ? 215 : 370, Math.min(innerWidth, innerHeight) * 0.46),
-    ) * (compact ? 0.98 + intensity * 0.02 : 1.0 + intensity * 0.035);
+    const cx = innerWidth * (compact ? 0.69 : 0.72);
+    const cy = innerHeight * (compact ? 0.35 : 0.38);
+    const dt = lastFrameAt ? clamp((now - lastFrameAt) / 1000, 0, 0.05) : 1 / 60;
+    lastFrameAt = now;
+    const travel = dt * (0.08 + intensity * 0.34);
+    const focal = compact ? 0.34 : 0.38;
 
     ctx.save();
     ctx.scale(dpr, dpr);
-    // U28 28g: stretch factors roughly doubled (6.5→13 speed, 18→34 tail
-    // length) so warp-hover reads as a genuine high-speed stargate jump
-    // instead of a mild drift. Keep this in sync with backgroundScene.worker.js.
-    for (const s of warpStars) {
-      s.r += s.speed * (0.6 + 13 * intensity);
-      if (s.r > maxR) {
-        s.r = eventR + rand(2, 25);
-        s.ang = Math.random() * Math.PI * 2;
+    for (const s of stars) {
+      s.z -= travel * s.speed;
+      if (s.z < 0.14) resetStar(s);
+
+      const currentScale = focal / s.z;
+      const previousScale = focal / Math.max(s.z + travel * s.speed * (1.8 + intensity * 4.5), 0.15);
+      let x = cx + s.x * innerWidth * currentScale;
+      let y = cy + s.y * innerHeight * currentScale;
+      const px = cx + s.x * innerWidth * previousScale;
+      const py = cy + s.y * innerHeight * previousScale;
+
+      if (x < -80 || x > innerWidth + 80 || y < -80 || y > innerHeight + 80) {
+        resetStar(s);
+        continue;
       }
-      if (s.r < eventR * 1.35) continue;
-      const x = cxw + Math.cos(s.ang) * s.r;
-      const y = cyw + Math.sin(s.ang) * s.r;
-      const closeness = clamp(s.r / maxR, 0, 1);
-      const tail = (0.5 + 34 * intensity) * s.z * closeness;
-      const alpha = (0.12 + 0.55 * closeness * s.z) * (0.6 + 0.4 * intensity);
-      const tx = cxw + Math.cos(s.ang) * (s.r + tail);
-      const ty = cyw + Math.sin(s.ang) * (s.r + tail);
-      if (tail > 1.5) {
-        const g = ctx.createLinearGradient(x, y, tx, ty);
-        g.addColorStop(0, `rgba(220,230,250,${alpha})`);
-        g.addColorStop(1, 'rgba(220,230,250,0)');
+
+      const dxp = x - pointer.x;
+      const dyp = y - pointer.y;
+      const d2 = dxp * dxp + dyp * dyp;
+      if (d2 > 0 && d2 < 8100) {
+        const d = Math.sqrt(d2);
+        const nudge = (1 - d / 90) * 7;
+        x += (dxp / d) * nudge;
+        y += (dyp / d) * nudge;
+      }
+
+      const proximity = clamp(1 - s.z / 1.95, 0, 1);
+      const alpha = s.a * (0.24 + proximity * 0.76);
+      let twinkle = 1;
+      if (s.tw > 0) twinkle = 0.72 + 0.28 * Math.sin(now / s.tw + s.ph);
+      const lineLength = Math.hypot(x - px, y - py);
+      ctx.globalAlpha = alpha * twinkle;
+
+      if (lineLength > 0.7) {
+        const g = ctx.createLinearGradient(px, py, x, y);
+        g.addColorStop(0, 'rgba(220,230,250,0)');
+        g.addColorStop(1, s.col);
         ctx.strokeStyle = g;
-        ctx.lineWidth = 0.4 + s.z * 0.5;
+        ctx.lineWidth = Math.min(1.75, s.r * (0.7 + proximity));
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(tx, ty);
+        ctx.moveTo(px, py);
+        ctx.lineTo(x, y);
         ctx.stroke();
       } else {
-        ctx.fillStyle = `rgba(220,230,250,${alpha})`;
+        ctx.fillStyle = s.col;
         ctx.beginPath();
-        ctx.arc(x, y, 0.5 + s.z * 0.5, 0, Math.PI * 2);
+        ctx.arc(x, y, Math.min(1.8, s.r * (0.55 + proximity)), 0, Math.PI * 2);
         ctx.fill();
       }
     }
+    ctx.globalAlpha = 1;
     ctx.restore();
   }
 
   function draw(now) {
     const pointer = getPointer();
     const intensity = getWarpIntensity();
-    ctx.fillStyle = 'rgba(4,6,10,0.22)';
+    // Opaque clearing prevents the old trail accumulation that produced
+    // parallel star bands. Every point now belongs to one perspective field.
+    ctx.fillStyle = '#04060a';
     ctx.fillRect(0, 0, width, height);
-
-    for (const s of stars) {
-      let sx = s.x;
-      let sy = s.y;
-      const dxp = sx - pointer.x;
-      const dyp = sy - pointer.y;
-      const d2 = dxp * dxp + dyp * dyp;
-      if (d2 < 12100) {
-        const d = Math.sqrt(d2);
-        const f = (1 - d / 110) * 22 * (0.4 + s.l * 0.6);
-        sx += (dxp / d) * f;
-        sy += (dyp / d) * f;
-      }
-      let alpha = s.a;
-      if (s.tw > 0) alpha *= 0.55 + 0.45 * Math.sin(now / s.tw + s.ph);
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = s.col;
-      ctx.beginPath();
-      ctx.arc(sx * dpr, sy * dpr, s.r * dpr, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-    drawWarp(intensity);
+    drawApproach(now, intensity, pointer);
   }
 
   const surface = coordinator.register({
