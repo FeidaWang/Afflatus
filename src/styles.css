@@ -4491,7 +4491,7 @@
 
   body:not(.hud-off) #combatHud {
     opacity: 1 !important;
-    pointer-events: auto !important;
+    pointer-events: none !important;
     transform: none !important;
   }
 
@@ -7748,130 +7748,59 @@
     inset: 0;
     z-index: 2;
     background:
-      linear-gradient(90deg,rgba(4,6,10,.97) 0%,rgba(4,6,10,.76) 31%,rgba(4,6,10,.25) 52%,transparent 66%),
-      radial-gradient(ellipse 34% 47% at 72% 38%,transparent 0 55%,rgba(4,6,10,.14) 76%,rgba(4,6,10,.34) 100%),
-      linear-gradient(180deg,rgba(4,6,10,.2),transparent 34%,rgba(4,6,10,.16));
+      linear-gradient(90deg,rgba(4,6,10,.96) 0%,rgba(4,6,10,.72) 34%,rgba(4,6,10,.2) 64%,transparent 82%),
+      linear-gradient(180deg,rgba(4,6,10,.18),transparent 36%,rgba(4,6,10,.12));
   }
-  .blackhole-poster {
+  .blackhole-poster,
+  #blackhole-gl {
     position: absolute;
-    inset: -1vh 0;
-    width: 100vw;
-    height: 102vh;
+    top: -3vh;
+    left: 28vw;
+    width: 106vw;
+    height: 106vh;
     border: 0;
     pointer-events: none;
-    /* The poster and live renderer have different internal focal points.
-       Each plate is therefore registered to the shared 72% / 38% navigation
-       axis independently instead of being pushed through one broad mask. */
-    mask-image: radial-gradient(ellipse 37% 47% at 69% 49%,#000 0 48%,rgba(0,0,0,.78) 62%,rgba(0,0,0,.2) 75%,transparent 84%);
-    -webkit-mask-image: radial-gradient(ellipse 37% 47% at 69% 49%,#000 0 48%,rgba(0,0,0,.78) 62%,rgba(0,0,0,.2) 75%,transparent 84%);
+    /* Localize the source renderer to the lensing field. Its rectangular Gaia
+       plate now dissolves into the fixed #starfield used by Alphard Forge. */
+    mask-image: radial-gradient(ellipse 58% 50% at 50% 50%,#000 0 44%,rgba(0,0,0,.76) 60%,rgba(0,0,0,.24) 74%,transparent 86%);
+    -webkit-mask-image: radial-gradient(ellipse 58% 50% at 50% 50%,#000 0 44%,rgba(0,0,0,.76) 60%,rgba(0,0,0,.24) 74%,transparent 86%);
   }
   .blackhole-poster {
     background: #020303 url('/vendor/black-hole/source-poster.jpg') center / cover no-repeat;
-    opacity: .68;
-    filter: saturate(.7) contrast(1.1) brightness(.5);
+    opacity: .72;
+    filter: saturate(.78) contrast(1.08) brightness(.58);
     transition: opacity .8s ease;
   }
   #blackhole-gl {
-    position: absolute;
-    top: -8vh;
-    left: 18vw;
-    width: 100vw;
-    height: 108vh;
     display: block;
     opacity: 0;
     background: transparent;
-    border: 0;
-    pointer-events: none;
-    filter: saturate(.7) contrast(1.12) brightness(.54);
-    mask-image: radial-gradient(ellipse 44% 48% at 53% 48%,#000 0 42%,rgba(0,0,0,.76) 55%,rgba(0,0,0,.18) 67%,transparent 76%);
-    -webkit-mask-image: radial-gradient(ellipse 44% 48% at 53% 48%,#000 0 42%,rgba(0,0,0,.76) 55%,rgba(0,0,0,.18) 67%,transparent 76%);
+    filter: saturate(.82) contrast(1.08) brightness(.66);
     transition: opacity .9s ease;
   }
-  body.blackhole-ready #blackhole-gl { opacity: .38; }
-  body.blackhole-ready .blackhole-poster { opacity: .5; }
+  body.blackhole-ready #blackhole-gl { opacity: .9; }
+  body.blackhole-ready .blackhole-poster { opacity: 0; }
   body.blackhole-failed #blackhole-gl { visibility: hidden; }
-
-  .blackhole-course-marker {
-    position: absolute;
-    top: 38%;
-    left: 72%;
-    z-index: 3;
-    width: clamp(138px, 12vw, 190px);
-    aspect-ratio: 1;
-    color: rgba(168, 224, 238, .62);
-    background: radial-gradient(circle,rgba(0,0,0,.96) 0 15%,rgba(0,0,0,.76) 21%,rgba(0,0,0,.18) 27%,transparent 35%);
-    border: 1px solid rgba(142, 233, 255, .16);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: inset 0 0 34px rgba(142, 233, 255, .025);
-  }
-  .blackhole-course-marker::before,
-  .blackhole-course-marker::after {
-    content: '';
-    position: absolute;
-    background: rgba(142, 233, 255, .32);
-  }
-  .blackhole-course-marker::before { top: 50%; right: -14px; left: -14px; height: 1px; }
-  .blackhole-course-marker::after { top: -14px; bottom: -14px; left: 50%; width: 1px; }
-  .blackhole-course-marker > i {
-    position: absolute;
-    inset: 15%;
-    border: 1px dashed rgba(239, 180, 106, .2);
-    border-radius: 50%;
-    animation: blackhole-course-bearing 18s linear infinite;
-  }
-  .blackhole-course-marker > span {
-    position: absolute;
-    top: calc(100% + 14px);
-    left: 50%;
-    display: grid;
-    gap: 4px;
-    width: max-content;
-    padding-left: 22px;
-    transform: translateX(-50%);
-    text-shadow: 0 1px 8px #020406;
-  }
-  .blackhole-course-marker > span::before {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 0;
-    width: 14px;
-    height: 1px;
-    background: var(--cic-amber, #efb46a);
-  }
-  .blackhole-course-marker b { font: 600 7px/1 "Orbitron", sans-serif; letter-spacing: .15em; }
-  .blackhole-course-marker em { color: rgba(151, 178, 188, .55); font: normal 6px/1 "JetBrains Mono", monospace; letter-spacing: .12em; }
-  @keyframes blackhole-course-bearing { to { transform: rotate(360deg); } }
   @media (max-width: 860px) {
-    .blackhole-poster {
-      width: 112vw;
-      mask-image: radial-gradient(ellipse 42% 46% at 68% 46%,#000 0 46%,rgba(0,0,0,.7) 61%,rgba(0,0,0,.16) 74%,transparent 83%);
-      -webkit-mask-image: radial-gradient(ellipse 42% 46% at 68% 46%,#000 0 46%,rgba(0,0,0,.7) 61%,rgba(0,0,0,.16) 74%,transparent 83%);
-    }
+    .blackhole-poster,
     #blackhole-gl {
-      top: -5vh;
-      left: 12vw;
-      width: 108vw;
-      height: 104vh;
-      mask-image: radial-gradient(ellipse 48% 46% at 53% 46%,#000 0 40%,rgba(0,0,0,.68) 54%,rgba(0,0,0,.15) 66%,transparent 75%);
-      -webkit-mask-image: radial-gradient(ellipse 48% 46% at 53% 46%,#000 0 40%,rgba(0,0,0,.68) 54%,rgba(0,0,0,.15) 66%,transparent 75%);
+      top: -1vh;
+      left: 20vw;
+      width: 124vw;
+      height: 102vh;
+      mask-image: radial-gradient(ellipse 58% 50% at 50% 48%,#000 0 42%,rgba(0,0,0,.72) 59%,rgba(0,0,0,.22) 73%,transparent 86%);
+      -webkit-mask-image: radial-gradient(ellipse 58% 50% at 50% 48%,#000 0 42%,rgba(0,0,0,.72) 59%,rgba(0,0,0,.22) 73%,transparent 86%);
     }
     #blackhole-stage::after {
       background:
-        linear-gradient(90deg,rgba(4,6,10,.97) 0%,rgba(4,6,10,.72) 30%,rgba(4,6,10,.25) 52%,transparent 72%),
-        radial-gradient(ellipse 44% 44% at 69% 35%,transparent 0 52%,rgba(4,6,10,.2) 78%,rgba(4,6,10,.38) 100%),
-        linear-gradient(180deg,rgba(4,6,10,.18),transparent 34%,rgba(4,6,10,.2));
+        linear-gradient(90deg,rgba(4,6,10,.97) 0%,rgba(4,6,10,.78) 34%,rgba(4,6,10,.36) 68%,transparent 100%),
+        linear-gradient(180deg,rgba(4,6,10,.16),transparent 34%,rgba(4,6,10,.18));
     }
-    body.blackhole-ready #blackhole-gl { opacity: .32; }
-    body.blackhole-ready .blackhole-poster { opacity: .46; }
-    .blackhole-course-marker { top: 35%; left: 69%; width: clamp(112px, 26vw, 148px); }
-    .blackhole-course-marker > span { top: calc(100% + 10px); }
+    body.blackhole-ready #blackhole-gl { opacity: .78; }
   }
   @media (prefers-reduced-motion: reduce) {
     #blackhole-gl { display: none; }
     .blackhole-poster { opacity: .74; transition: none; }
-    .blackhole-course-marker > i { animation: none; }
   }
 
   /* P1-11 component migration 01 — Home brand lockup.

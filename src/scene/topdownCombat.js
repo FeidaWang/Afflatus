@@ -55,6 +55,68 @@ function glowTexture() {
   return t;
 }
 
+function distantBlackHoleTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+
+  const halo = ctx.createRadialGradient(cx, cy, 72, cx, cy, 238);
+  halo.addColorStop(0, 'rgba(255,198,112,.22)');
+  halo.addColorStop(.34, 'rgba(238,154,70,.14)');
+  halo.addColorStop(.68, 'rgba(116,148,178,.05)');
+  halo.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = halo;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-.08);
+  for (let i = 18; i >= 0; i -= 1) {
+    const u = i / 18;
+    const diskGradient = ctx.createLinearGradient(-330, 0, 330, 0);
+    diskGradient.addColorStop(0, `rgba(117,153,184,${.018 + (1 - u) * .025})`);
+    diskGradient.addColorStop(.35, `rgba(255,177,82,${.045 + (1 - u) * .075})`);
+    diskGradient.addColorStop(.56, `rgba(255,232,173,${.075 + (1 - u) * .105})`);
+    diskGradient.addColorStop(1, `rgba(196,92,37,${.014 + (1 - u) * .032})`);
+    ctx.strokeStyle = diskGradient;
+    ctx.lineWidth = 2.4 + i * .72;
+    ctx.beginPath();
+    ctx.moveTo(-338, 8 + i * .24);
+    ctx.bezierCurveTo(-164, -40 - i * .45, 138, 42 + i * .28, 342, -4 - i * .16);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(0, 0, 82, 0, Math.PI * 2);
+  ctx.fill();
+
+  // The upper arc is the lensed far side of the disc, not an orbital ring.
+  for (let i = 0; i < 8; i += 1) {
+    ctx.strokeStyle = `rgba(255,${184 + i * 7},${95 + i * 9},${.045 + i * .022})`;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.ellipse(0, 1, 87 + i * 2.2, 103 + i * 1.2, 0, Math.PI * 1.08, Math.PI * 1.92);
+    ctx.stroke();
+  }
+
+  for (let i = 0; i < 7; i += 1) {
+    ctx.strokeStyle = `rgba(255,${174 + i * 8},${80 + i * 10},${.055 + i * .025})`;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.ellipse(0, 3, 184 + i * 3, 28 + i * 1.2, 0, .08, Math.PI - .08);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
 let surfaceSequence = 0;
 
 export function createTopdownCombat({ canvas, surfaceId }) {
@@ -272,23 +334,81 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     return m;
   };
 
-  // starfield backdrop (well below the plane so it parallaxes)
-  let starfield = null;
-  {
-    const N = 600, pos = new Float32Array(N * 3);
-    for (let i = 0; i < N; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 600;
-      pos[i * 3 + 1] = -40 - Math.random() * 80;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 600;
+  // A true camera-surrounding volume. The former y=-40 plane projected as a
+  // flat star carpet; these two depth layers occupy the full view frustum and
+  // pass aft along the ship's forward axis.
+  const starLayers = [];
+  function addStarVolume(count, { size, opacity, drift, spreadX, spreadY }) {
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    const palette = [new THREE.Color(0xc9e6ff), new THREE.Color(0x8fb7d8), new THREE.Color(0xffdfb5)];
+    for (let i = 0; i < count; i += 1) {
+      positions[i * 3] = (Math.random() - .5) * spreadX;
+      positions[i * 3 + 1] = (Math.random() - .46) * spreadY;
+      positions[i * 3 + 2] = -320 + Math.random() * 500;
+      const color = palette[Math.random() < .72 ? 0 : Math.random() < .82 ? 1 : 2];
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
     }
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const pts = new THREE.Points(geo, new THREE.PointsMaterial({
-      color: 0x9fc4ff, size: 1.4, sizeAttenuation: true, transparent: true, opacity: 0.7
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const points = new THREE.Points(geometry, new THREE.PointsMaterial({
+      vertexColors: true,
+      size,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity,
+      depthWrite: false,
     }));
-    starfield = pts;
-    scene.add(pts);
+    points.userData = { drift, spreadX, spreadY };
+    starLayers.push(points);
+    scene.add(points);
   }
+  addStarVolume(920, { size: .62, opacity: .72, drift: .095, spreadX: 520, spreadY: 310 });
+  addStarVolume(240, { size: 1.25, opacity: .5, drift: .17, spreadX: 360, spreadY: 230 });
+
+  const approachBlackHole = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: distantBlackHoleTexture(),
+    transparent: true,
+    opacity: .88,
+    depthWrite: false,
+  }));
+  approachBlackHole.name = 'AlphardDistantBlackHole';
+  approachBlackHole.position.set(34, 24, -218);
+  approachBlackHole.scale.set(172, 86, 1);
+  scene.add(approachBlackHole);
+
+  // A sparse velocity layer makes forward motion legible without turning the
+  // sensor picture into a warp tunnel. Each line occupies its own x/y/z
+  // coordinate, so the streaks retain depth rather than forming a flat sheet.
+  const streakCount = 74;
+  const streakPositions = new Float32Array(streakCount * 6);
+  function resetStreak(index, initial = false) {
+    const offset = index * 6;
+    const z = initial ? -310 + Math.random() * 480 : -310;
+    const length = 1.4 + Math.random() * 5.4;
+    const x = (Math.random() - .5) * 380;
+    const y = (Math.random() - .46) * 230;
+    streakPositions[offset] = x;
+    streakPositions[offset + 1] = y;
+    streakPositions[offset + 2] = z;
+    streakPositions[offset + 3] = x;
+    streakPositions[offset + 4] = y;
+    streakPositions[offset + 5] = z - length;
+  }
+  for (let i = 0; i < streakCount; i += 1) resetStreak(i, true);
+  const streakGeometry = new THREE.BufferGeometry();
+  streakGeometry.setAttribute('position', new THREE.BufferAttribute(streakPositions, 3));
+  const flightStreaks = new THREE.LineSegments(streakGeometry, new THREE.LineBasicMaterial({
+    color: 0xb8dcf2,
+    transparent: true,
+    opacity: .2,
+    depthWrite: false,
+  }));
+  flightStreaks.name = 'ForwardVelocityReferences';
+  scene.add(flightStreaks);
 
   // ── materials ────────────────────────────────────────────────────────────
   const enemyMat = new THREE.MeshStandardMaterial({ color: 0x6b4a3a, metalness: 0.6, roughness: 0.7, emissive: 0x3a1206, emissiveIntensity: 0.5 });
@@ -522,13 +642,29 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   const comet = new THREE.Group();
   let cometHP = 1;
   {
-    const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(3.2, 1),
-      new THREE.MeshStandardMaterial({ color: 0x3a4452, metalness: 0.3, roughness: 0.9, flatShading: true,
-        emissive: 0x14406a, emissiveIntensity: 0.45 }));
+    const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(1.35, 1),
+      new THREE.MeshBasicMaterial({ color: 0xa59277 }));
+    rock.scale.set(1.8, .82, .9);
     comet.add(rock);
-    const coma = sprite(0x9fe6ff, 18, 0.55); comet.add(coma);
-    const tail = sprite(0x7fbaff, 30, 0.28); tail.position.set(0, 0, 16); tail.scale.set(14, 40, 1); comet.add(tail);
-    comet.userData = { rock, coma };
+    for (let i = 0; i < 5; i += 1) {
+      const fragment = new THREE.Mesh(new THREE.IcosahedronGeometry(.28 + i * .035, 0), rock.material);
+      fragment.position.set((Math.random() - .5) * 1.8, (Math.random() - .5) * .9, 3.8 + i * 2.1);
+      fragment.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      comet.add(fragment);
+    }
+    const tailGeometry = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-.24, .06, 1.2),
+      new THREE.Vector3(.12, .03, 17),
+      new THREE.Vector3(.52, -.12, 36),
+    ]);
+    const tail = new THREE.Line(tailGeometry, new THREE.LineBasicMaterial({
+      color: 0xd5c3a7,
+      transparent: true,
+      opacity: .34,
+      depthWrite: false,
+    }));
+    comet.add(tail);
+    comet.userData = { rock, tail };
     comet.position.set(-22, 0, -18);
     scene.add(comet);
   }
@@ -780,28 +916,42 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         -28 + (state.target.y / viewportHeight) * 32,
       );
     }
-    comet.userData.coma.material.opacity = 0.46;
     const cometPos = new THREE.Vector3().setFromMatrixPosition(comet.matrixWorld);
     comet.visible = alive;
+    comet.userData.rock.rotation.x += .003 * frameScale;
+    comet.userData.rock.rotation.y += .004 * frameScale;
 
     shieldPulse *= 0.9;
     shieldShell.material.opacity = Math.max(0, shieldPulse * (0.18 + Math.sin(now * 0.035) * 0.08));
     shieldShell.rotation.y += 0.006;
 
-    // The bridge is never parked in space: the fixed stellar references pass
-    // aft along the ship's authoritative forward axis. Wrapping the existing
-    // points (rather than spawning streak sprites) keeps this as navigation
-    // parallax, not an unrelated fog or celestial effect.
-    if (starfield) {
-      const stellarPosition = starfield.geometry.attributes.position;
+    // The bridge is never parked in space. Both stellar volumes pass aft at
+    // different rates, providing near/far parallax around every camera shot.
+    for (const layer of starLayers) {
+      const stellarPosition = layer.geometry.attributes.position;
       const values = stellarPosition.array;
-      const advance = 0.105 * frameScale;
+      const advance = layer.userData.drift * frameScale;
       for (let i = 2; i < values.length; i += 3) {
         values[i] += advance;
-        if (values[i] > 300) values[i] = -300;
+        if (values[i] > 180) {
+          values[i - 2] = (Math.random() - .5) * layer.userData.spreadX;
+          values[i - 1] = (Math.random() - .46) * layer.userData.spreadY;
+          values[i] = -320;
+        }
       }
       stellarPosition.needsUpdate = true;
     }
+    const velocityPositions = flightStreaks.geometry.attributes.position;
+    const velocityValues = velocityPositions.array;
+    const streakAdvance = .24 * frameScale;
+    for (let i = 0; i < streakCount; i += 1) {
+      const offset = i * 6;
+      velocityValues[offset + 2] += streakAdvance;
+      velocityValues[offset + 5] += streakAdvance;
+      if (velocityValues[offset + 2] > 180) resetStreak(i);
+    }
+    velocityPositions.needsUpdate = true;
+    approachBlackHole.position.z = Math.min(-155, approachBlackHole.position.z + .0035 * frameScale);
 
     // The command ship is the stable reference frame. Fighters exist only
     // when the authoritative snapshot reports an escort; otherwise their

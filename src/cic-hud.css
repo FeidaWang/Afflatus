@@ -18,7 +18,7 @@
   --cic-red: #ff685f;
   --cic-magenta: #ff55c8;
   --cic-green: #86efb0;
-  --cic-shell-height: clamp(236px, 28svh, 310px);
+  --cic-shell-height: clamp(248px, 31svh, 340px);
 }
 
 #combatHud[data-cic-hud] {
@@ -832,116 +832,145 @@ body.hud-off main { padding-bottom: 68px; }
 #combatHud .cic-battle-log::before { content: "COMMS"; margin-right: 8px; color: var(--cic-amber); font-size: 7px; letter-spacing: 0.12em; }
 #combatHud .cic-intel .voyage-log-toggle { display: none; }
 
-/* Clear-glass tactical architecture ---------------------------------------
- * The scene owns the centre. Radar, flight data and targeting data are
- * physical instrument rails beside it, never overlays above the sightline. */
+/* Flight-deck architecture -------------------------------------------------
+ * The centre is one continuous optical visor. Fire control and intelligence
+ * are independent swept consoles, not three dashboard cards in a row. */
 #combatHud .cic-shell {
-  grid-template-columns: minmax(292px, 24fr) minmax(570px, 57fr) minmax(270px, 19fr);
-  gap: 9px;
+  grid-template-columns: minmax(258px, 20fr) minmax(610px, 61fr) minmax(268px, 19fr);
+  gap: 7px;
   padding: 0;
   background: transparent;
   border: 0;
   clip-path: none;
   box-shadow: none;
-  perspective: 1400px;
+  perspective: 1200px;
   overflow: visible;
 }
 
-#combatHud .cic-shell::before {
-  top: -19px;
-  left: 26%;
-  width: 48%;
-  height: 30px;
-  background: transparent;
-  border-top: 1px solid rgba(142, 233, 255, .28);
-  border-radius: 50% 50% 0 0;
-  box-shadow: inset 0 8px 24px rgba(142, 233, 255, .025);
-}
-#combatHud .cic-shell::after {
-  right: 31%;
-  bottom: 2px;
-  width: 38%;
-  background: linear-gradient(90deg, transparent, var(--cic-amber), transparent);
-  opacity: .5;
-}
+#combatHud .cic-shell::before,
+#combatHud .cic-shell::after { display: none; }
 
 #combatHud .cic-panel {
   clip-path: none;
-  background: linear-gradient(165deg, rgba(6, 17, 23, .89), rgba(1, 6, 10, .76));
-  border-color: rgba(113, 191, 216, .24);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, .34), inset 0 0 24px rgba(73, 179, 209, .025);
-  backdrop-filter: blur(7px);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 #combatHud .cic-fire-control {
-  border-radius: 22px 5px 7px 30px / 14px 5px 7px 22px;
+  height: calc(100% - 18px);
+  align-self: end;
+  overflow: hidden;
+  background: linear-gradient(94deg, rgba(2, 9, 14, .86), rgba(3, 12, 18, .56) 76%, rgba(3, 12, 18, .12));
+  border-left: 2px solid rgba(142, 233, 255, .28);
+  border-radius: 32px 3px 5px 44px / 20px 3px 5px 30px;
+  clip-path: polygon(0 11%, 7% 0, 100% 0, 100% 91%, 88% 100%, 0 100%);
   transform-origin: right bottom;
-  box-shadow: -10px 14px 34px rgba(0, 0, 0, .4), inset -12px 0 30px rgba(67, 178, 208, .025);
+  transform: rotateY(1.8deg);
 }
 
 #combatHud .cic-intel {
+  height: calc(100% - 18px);
+  align-self: end;
   overflow: hidden;
-  border-radius: 5px 22px 30px 7px / 5px 14px 22px 7px;
+  background: linear-gradient(266deg, rgba(2, 9, 14, .86), rgba(3, 12, 18, .56) 76%, rgba(3, 12, 18, .12));
+  border-right: 2px solid rgba(142, 233, 255, .28);
+  border-radius: 3px 32px 44px 5px / 3px 20px 30px 5px;
+  clip-path: polygon(0 0, 93% 0, 100% 11%, 100% 100%, 12% 100%, 0 91%);
   transform-origin: left bottom;
-  box-shadow: 10px 14px 34px rgba(0, 0, 0, .4), inset 12px 0 30px rgba(67, 178, 208, .025);
+  transform: rotateY(-1.8deg);
+}
+
+#combatHud .cic-fire-control::before,
+#combatHud .cic-intel::before {
+  background: linear-gradient(180deg, rgba(142, 233, 255, .025), transparent 36%);
 }
 
 #combatHud .cic-fire-control::after,
 #combatHud .cic-intel::after {
   content: '';
   position: absolute;
-  top: 48px;
-  bottom: 18px;
-  width: 22px;
-  border: 1px solid rgba(142, 233, 255, .11);
-  border-top-color: transparent;
-  border-bottom-color: transparent;
-  border-radius: 50%;
+  top: 44px;
+  bottom: 14px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(142, 233, 255, .34), transparent);
+  border: 0;
   pointer-events: none;
 }
 
-#combatHud .cic-fire-control::after { right: -13px; border-left-color: transparent; }
-#combatHud .cic-intel::after { left: -13px; border-right-color: transparent; }
+#combatHud .cic-fire-control::after { right: 0; }
+#combatHud .cic-intel::after { left: 0; }
 
 #combatHud .cic-tactical {
   grid-template-rows: auto minmax(0, 1fr);
-  height: calc(100% + 2px);
+  height: calc(100% + 8px);
   overflow: hidden;
-  border-color: rgba(142, 233, 255, .38);
-  border-radius: 32px 32px 9px 9px / 15px 15px 7px 7px;
-  transform: translateY(-10px);
-  box-shadow: 0 18px 48px rgba(0, 0, 0, .48), inset 0 12px 32px rgba(54, 165, 197, .045);
+  background: linear-gradient(180deg, rgba(3, 12, 18, .54), rgba(1, 5, 8, .14));
+  border: 0;
+  border-radius: 48px 48px 14px 14px / 22px 22px 10px 10px;
+  transform: translateY(-16px);
+  box-shadow: 0 22px 64px rgba(0, 0, 0, .44);
+}
+
+#combatHud .cic-tactical::before {
+  inset: 0;
+  z-index: 6;
+  background: transparent;
+  border-top: 1px solid rgba(142, 233, 255, .42);
+  border-right: 1px solid rgba(142, 233, 255, .2);
+  border-left: 1px solid rgba(142, 233, 255, .2);
+  border-radius: 48px 48px 0 0 / 22px 22px 0 0;
 }
 
 #combatHud .cic-panel-head {
-  background: linear-gradient(98deg, rgba(9, 25, 33, .86), rgba(3, 10, 15, .66) 58%, rgba(8, 20, 27, .82));
+  background: linear-gradient(98deg, rgba(7, 23, 31, .72), rgba(2, 8, 12, .42) 58%, rgba(7, 19, 26, .68));
+  border-bottom-color: rgba(142, 233, 255, .2);
 }
 
 #combatHud .cic-tactical-head {
   padding-right: 10px;
-  border-radius: 31px 31px 0 0 / 14px 14px 0 0;
+  background: linear-gradient(90deg, rgba(8, 28, 36, .76), rgba(2, 8, 12, .25) 44%, rgba(8, 24, 31, .68));
+  border-radius: 47px 47px 0 0 / 21px 21px 0 0;
 }
 
-#combatHud .cic-weapon-wells { gap: 5px; padding: 7px 5px 6px 7px; }
+#combatHud .cic-fire-control .cic-panel-head,
+#combatHud .cic-intel .cic-panel-head {
+  margin: 0 9px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(142, 233, 255, .18);
+  border-radius: 0;
+}
+
+#combatHud .cic-weapon-wells { gap: 6px; padding: 8px 7px 7px 10px; }
 
 #combatHud .cic-weapon {
   clip-path: none;
-  border-right-color: rgba(var(--weapon-rgb), .1);
-  border-radius: 10px 3px 3px 12px / 7px 3px 3px 8px;
+  border: 0;
+  border-bottom: 1px solid rgba(var(--weapon-rgb), .17);
+  border-left: 2px solid rgba(var(--weapon-rgb), .54);
+  border-radius: 14px 2px 9px 4px / 8px 2px 6px 3px;
   background:
-    linear-gradient(96deg, rgba(var(--weapon-rgb), .09), transparent 42%),
-    rgba(3, 8, 12, .68);
+    linear-gradient(96deg, rgba(var(--weapon-rgb), .12), rgba(var(--weapon-rgb), .025) 52%, transparent 86%);
 }
 
-#combatHud .cic-weapon:nth-child(1) { width: calc(100% - 10px); margin-left: 10px; }
-#combatHud .cic-weapon:nth-child(2) { width: calc(100% - 6px); margin-left: 6px; }
-#combatHud .cic-weapon:nth-child(3) { width: calc(100% - 3px); margin-left: 3px; }
+#combatHud .cic-weapon:nth-child(1) { width: calc(100% - 18px); margin-left: 18px; }
+#combatHud .cic-weapon:nth-child(2) { width: calc(100% - 11px); margin-left: 11px; }
+#combatHud .cic-weapon:nth-child(3) { width: calc(100% - 5px); margin-left: 5px; }
+
+#combatHud .cic-weapon:hover,
+#combatHud .cic-weapon:focus-visible,
+#combatHud .cic-weapon.selected {
+  border-left-color: var(--weapon-color);
+  background: linear-gradient(96deg, rgba(var(--weapon-rgb), .22), rgba(var(--weapon-rgb), .04) 58%, transparent 90%);
+}
 
 #combatHud .cic-tactical-body {
   min-width: 0;
   min-height: 0;
   display: grid;
-  grid-template-columns: clamp(94px, 8vw, 116px) minmax(0, 1fr) clamp(88px, 7.4vw, 108px);
+  grid-template-columns: clamp(98px, 7.2vw, 118px) minmax(0, 1fr) clamp(92px, 6.8vw, 110px);
   overflow: hidden;
 }
 
@@ -956,11 +985,11 @@ body.hud-off main { padding-bottom: 68px; }
   gap: 7px;
   padding: 8px 7px;
   box-sizing: border-box;
-  background: linear-gradient(180deg, rgba(5, 14, 20, .82), rgba(2, 7, 11, .68));
+  background: linear-gradient(180deg, rgba(5, 14, 20, .7), rgba(2, 7, 11, .52));
 }
 
-#combatHud .cic-sensor-rail { border-right: 1px solid rgba(142, 233, 255, .18); border-radius: 16px 0 0 4px / 10px 0 0 4px; }
-#combatHud .cic-target-rail { border-left: 1px solid rgba(142, 233, 255, .18); border-radius: 0 16px 4px 0 / 0 10px 4px 0; }
+#combatHud .cic-sensor-rail { border-right: 1px solid rgba(142, 233, 255, .16); border-radius: 22px 0 0 5px / 14px 0 0 5px; }
+#combatHud .cic-target-rail { border-left: 1px solid rgba(142, 233, 255, .16); border-radius: 0 22px 5px 0 / 0 14px 5px 0; }
 
 #combatHud .cic-radar-dock {
   position: relative;
@@ -1018,7 +1047,9 @@ body.hud-off main { padding-bottom: 68px; }
 
 #combatHud .cic-viewport {
   isolation: isolate;
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 5px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 5px), 0 8px);
+  clip-path: none;
+  border-radius: 12px 12px 5px 5px / 8px 8px 5px 5px;
+  box-shadow: inset 0 0 0 1px rgba(142, 233, 255, .1);
 }
 #combatHud .cic-pilot-feed { filter: saturate(.94) contrast(1.04); }
 #combatHud .cic-canopy-brow,
@@ -1038,12 +1069,12 @@ body.hud-off main { padding-bottom: 68px; }
   box-shadow: inset 3px 0 0 var(--weapon-color), 0 0 16px rgba(var(--weapon-rgb), .12);
 }
 
-/* Intel footer: system status, kill count and deck navigation share one rail. */
-#combatHud .cic-intel { grid-template-rows: auto minmax(48px, 1fr) auto auto auto; }
+/* Intel is a vertical flight console so long labels never compete inside a
+ * cramped half-width cell. */
+#combatHud .cic-intel { grid-template-rows: auto minmax(44px, 1fr) auto auto auto; }
 
 #combatHud .cic-intel .cic-panel-head {
-  padding-right: 158px;
-  border-radius: 0 21px 0 0 / 0 13px 0 0;
+  padding-right: 154px;
 }
 
 #combatHud .cic-log-toggle {
@@ -1063,6 +1094,57 @@ body.hud-off main { padding-bottom: 68px; }
   border-radius: 12px 3px 3px 3px / 7px 3px 3px 3px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, .28);
   cursor: pointer;
+}
+
+#combatHud .cic-battle-feed {
+  margin: 6px 8px 4px;
+  padding: 7px 9px;
+  background: linear-gradient(270deg, rgba(142, 233, 255, .05), transparent);
+  border: 0;
+  border-right: 1px solid rgba(142, 233, 255, .3);
+  border-radius: 0;
+}
+
+#combatHud .cic-condition-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+  padding: 3px 8px;
+  background: transparent;
+}
+
+#combatHud .cic-condition-grid > span {
+  min-height: 24px;
+  padding: 4px 8px;
+  background: linear-gradient(270deg, rgba(142, 233, 255, .055), transparent 82%);
+  border: 0;
+  border-right: 1px solid rgba(142, 233, 255, .26);
+  border-radius: 8px 2px 2px 8px / 5px 2px 2px 5px;
+}
+
+#combatHud .cic-condition-grid i {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 7.25px;
+  letter-spacing: .065em;
+  text-overflow: ellipsis;
+}
+
+#combatHud .cic-condition-grid b {
+  flex: 0 0 auto;
+  max-width: 46%;
+  overflow: hidden;
+  font-size: 8.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#combatHud .cic-perf-readout {
+  margin: 2px 8px 5px;
+  border: 0;
+  border-right: 1px solid rgba(142, 233, 255, .18);
+  border-radius: 0;
+  background: transparent;
 }
 
 #combatHud .cic-log-toggle:hover,
@@ -1308,7 +1390,11 @@ body:not(.hud-off) .route-arrows {
 
   #combatHud .cic-tactical { height: auto; transform: none; }
   #combatHud .cic-fire-control,
-  #combatHud .cic-intel { border-radius: 10px 10px 5px 5px; }
+  #combatHud .cic-intel {
+    height: auto;
+    border-radius: 10px 10px 5px 5px;
+    transform: none;
+  }
 
   #combatHud .cic-station-tabs {
     position: absolute;
@@ -1424,6 +1510,9 @@ body:not(.hud-off) .route-arrows {
 
   body.hud-panel-focus #combatHud .cic-panel.is-focused {
     inset: 32px 3px 3px;
+    height: calc(100% - 35px);
+    max-height: calc(100% - 35px);
+    align-self: auto;
   }
 
   body.hud-panel-focus #combatHud .cic-intel.is-focused {

@@ -22,6 +22,10 @@ describe('combat presentation contract', () => {
     expect(source).toContain('/assets/combat/afflatus-command.glb');
     expect(source).toContain('projectileWorldPosition(projectile, state)');
     expect(source).toContain('stellarPosition.needsUpdate = true');
+    expect(source).toContain("approachBlackHole.name = 'AlphardDistantBlackHole'");
+    expect(source).toContain("flightStreaks.name = 'ForwardVelocityReferences'");
+    expect(source).toContain('const starLayers = []');
+    expect(source).not.toContain('pos[i * 3 + 1] = -40');
     expect(source).toContain('targetScreen: targetScreen ? Object.freeze');
     expect(source).not.toContain('NEB_DOME_FRAG');
     expect(source).not.toContain('new THREE.GridHelper');
@@ -54,7 +58,8 @@ describe('combat presentation contract', () => {
     expect(css).toContain('@media (max-width: 860px)');
     expect(css).toContain('[data-weapon="missile"] { --weapon-color: var(--cic-amber)');
     expect(css).toContain('[data-weapon="enforcer"] { --weapon-color: var(--cic-magenta)');
-    expect(css).toContain('border-radius: 32px 32px 9px 9px');
+    expect(css).toContain('border-radius: 48px 48px 14px 14px');
+    expect(css).toContain('grid-template-columns: minmax(0, 1fr);');
     expect(css).toContain('width: 112px');
     expect(source).toContain('function setHudPanelFocus(panelId=null)');
     expect(html).toContain('id="cicVoyageConsole"');
@@ -67,6 +72,8 @@ describe('combat presentation contract', () => {
     expect(source).not.toContain('drawCockpitFrame(ctx');
     expect(source).toContain('pilotCanvas.dataset.flightPhase');
     expect(source).toContain('const activeFlightMode=pendingDiagnostics?.flightKind||null');
+    expect(source).toContain('requestAnimationFrame(ensureSpaceSceneRunning)');
+    expect(source).toContain('event.stopPropagation()');
     expect(source).not.toContain("const j=mode==='combat'?0.6:0");
     expect(hmd).not.toContain('drawLeftColumn(ctx,w,h,now,mode,state);');
     expect(hmd).not.toContain('drawRightColumn(ctx,w,h,now,state);');

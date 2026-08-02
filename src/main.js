@@ -317,7 +317,19 @@ function disengageBattleSystems(){
   document.getElementById('nukeWarning')?.classList.remove('on');
   if(halley){halley.attackStarted=false;halley.playerFired=false;halley.escortsFired=true;halley.escortsSpawned=false;}
 }
-commandModeBtn?.addEventListener('click',()=>{
+function ensureSpaceSceneRunning(){
+  mainRenderSurface?.resume();
+  startMainLoop();
+  backgroundScene?.resume();
+  blackHoleFrame?.contentWindow?.postMessage(
+    {type:'black-hole-observatory:play'},
+    location.origin
+  );
+}
+
+commandModeBtn?.addEventListener('click',(event)=>{
+  event.preventDefault();
+  event.stopPropagation();
   const toHudOff=!document.body.classList.contains('hud-off');
   document.body.classList.toggle('hud-off',toHudOff);
   if(toHudOff){
@@ -327,6 +339,7 @@ commandModeBtn?.addEventListener('click',()=>{
   }
   showBridgeCallout(toHudOff?'Cruising mode on':'Commander mode on');
   updateCommandButton();
+  requestAnimationFrame(ensureSpaceSceneRunning);
 });
 jumpToggle?.addEventListener('click',()=>{
   const holdings=document.querySelector('.holdings'), hero=document.querySelector('.hero');
