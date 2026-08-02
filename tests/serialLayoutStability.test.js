@@ -24,10 +24,12 @@ describe('serial layout stability', () => {
     expect(css).toMatch(/\.reader \.body\{[^}]*min-height:/);
   });
 
-  it('keeps body out of shared overflow clipping so sticky chrome follows scrolling', () => {
-    expect(brandCss).toMatch(/html\s*\{\s*overflow-x:\s*clip;/);
+  it('keeps both document roots out of overflow clipping so sticky chrome follows scrolling', () => {
+    expect(brandCss).not.toMatch(/html\s*\{[^}]*overflow-x\s*:/s);
     expect(brandCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
+    expect(responsiveCss).not.toMatch(/html\s*\{[^}]*overflow-x\s*:/s);
     expect(responsiveCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
+    expect(brandCss).toMatch(/\.site-header--follow\s*\{[^}]*position:\s*-webkit-sticky;[^}]*position:\s*sticky;/s);
     expect(css).toMatch(/\.toolbar\{position:sticky;top:0;/);
   });
 

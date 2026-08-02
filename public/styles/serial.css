@@ -31,15 +31,9 @@ html,body{margin:0;min-height:100%}
    it duplicated the site's own dark chrome and read as a no-op background
    swap. Retired as a reading option and re-homed here as the actual page
    background instead — moved, not deleted. */
-/* U-sticky-fix (2026-07-27): body's overflow-x:hidden removed. Since
-   responsive-primitives.css (911bd74) set html{overflow-x:clip}, body's
-   overflow no longer propagates to the viewport — a non-visible overflow-x
-   forced body to compute overflow-y:auto, turning body into the toolbar's
-   scroll container and silently killing every position:sticky on this page
-   (toolbar + progress bar scrolled away with the content). Horizontal
-   clipping is already guaranteed globally by the html{overflow-x:clip}
-   primitive, so body needs no overflow of its own. Verified live: with
-   body overflow visible the toolbar pins at top:0 again. */
+/* Keep both document roots at their default visible overflow. Setting
+   overflow-x on either html or body can establish a non-viewport scrolling
+   box in WebKit, causing the site header and reader toolbar to scroll away. */
 body{background:linear-gradient(160deg,#2b1a16 0%,#231411 100%);color:var(--chrome);font-family:var(--mono);font-size:14px;line-height:1.6}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}

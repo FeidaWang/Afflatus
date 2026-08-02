@@ -13,14 +13,8 @@
   pointer-events: none;
 }
 
-/* Keep horizontal clipping on the document root only. Applying non-visible
-   overflow to body makes it an independent scroll container in Safari and
-   some Chromium builds, silently disabling descendant sticky headers. */
-html {
-  overflow-x: clip;
-}
-
 .site-header--follow {
+  position: -webkit-sticky;
   position: sticky;
   inset-block-start: var(--safe-top, 0px);
   z-index: 48;

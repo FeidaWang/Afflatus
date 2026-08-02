@@ -24,7 +24,6 @@ html {
   inline-size: 100%;
   max-inline-size: 100%;
   min-block-size: 100%;
-  overflow-x: clip;
   scroll-padding-block-start: calc(var(--safe-top) + 12px);
   scroll-padding-block-end: calc(var(--safe-bottom) + var(--keyboard-inset) + 12px);
   -webkit-text-size-adjust: 100%;
@@ -37,12 +36,6 @@ body {
   min-block-size: var(--viewport-small-height);
   margin-inline: 0;
   overflow-wrap: anywhere;
-}
-
-@supports not (overflow: clip) {
-  /* Keep body as the viewport's content flow so sticky route chrome remains
-     attached even on older browsers without overflow:clip support. */
-  html { overflow-x: hidden; }
 }
 
 :where(button, summary, select, textarea, input, [role="button"], [role="tab"], [role="menuitem"]) {
