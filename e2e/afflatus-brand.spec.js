@@ -114,3 +114,25 @@ test.describe('Afflatus reduced motion brand', () => {
     expect(reduced.iOpacity).toBe('1');
   });
 });
+
+test.describe('Homepage following command bar', () => {
+  test('stays fixed through the allocation deck without leaking private amounts', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await settlePage(page);
+
+    const header = page.locator('nav.site-header--follow');
+    await expect(header).toBeVisible();
+    expect(await header.evaluate((element) => getComputedStyle(element).position)).toBe('fixed');
+    const initialTop = Math.round((await header.boundingBox())?.y ?? -1);
+
+    await page.locator('.holdings').scrollIntoViewIfNeeded();
+    await expect.poll(async () => Math.round((await header.boundingBox())?.y ?? -1)).toBe(initialTop);
+
+    const audit = await page.evaluate(() => ({
+      overflow: document.documentElement.scrollWidth - innerWidth,
+      picks: document.querySelectorAll('#pickGrid .pick').length,
+      currencyLeak: /(?:AUD|USD|澳元|美元|\$\s*\d)/.test(document.body.innerText),
+    }));
+    expect(audit).toEqual({ overflow: 0, picks: 10, currencyLeak: false });
+  });
+});

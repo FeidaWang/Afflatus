@@ -1,34 +1,31 @@
-/* 2026-07-04 后内存时代换仓（v1.5 V13）：深度回调后的杠铃配置。
-   核心仓（MU/AVGO/NVDA，47%）= 现金流与定价权在回调中未受损的质量资产；
-   卫星仓 = 内存墙三主线（HBM/CXL/NAND 分层）纯标的，涨幅透支的压到轻仓。
-   三大催化剂（当日检索核实）：韩股半导体巨震＋SK 海力士放缓 HBM 扩产、
-   6 月非农 +5.7 万远逊预期、Meta 宣布出租过剩 AI 算力（neocloud 重挫）。
-   撤出：TSM/AMD/ASML/LITE/NOK（非存储主线）、FLKR（韩国集中度风险正是
-   本轮震中）。权重为站主当日主观判断，非投资建议（见 footnote）。 */
+/* 2026-08-02 AI factory conviction map：不再把组合压在单一存储周期上，
+   而是沿“计算 → 定制硅/网络 → 云分发 → 先进制造 → HBM → 以太网 →
+   电力与散热”整条 AI 工厂价值链配置。权重综合截至当日可获得的公司披露、
+   需求能见度、执行质量、估值与单点风险；它是站主的研究快照，不是投资建议。 */
 export const PICKS_ZH = [
-  {tk:'MU',   name:'Micron Technology',    pct:18, why:'美国本土 HBM 独苗。韩系双雄巨震、SK 海力士放缓 HBM 扩产，供给纪律反而巩固其定价权；深度回调后前瞻估值已回到个位数区间，是后内存时代的<em>旗舰补给舰</em>。'},
-  {tk:'AVGO', name:'Broadcom',             pct:15, why:'定制 ASIC 与以太网交换在巨头自研潮里两头收租；高位回撤逾两成而现金流护城河未损，仍是算力集群的<em>神经中枢</em>。'},
-  {tk:'NVDA', name:'NVIDIA',               pct:14, why:'算力王座的<em>主力反应堆</em>。Meta 上调资本开支印证需求，出租算力动的是租赁商的蛋糕；回调至关键支撑带后，这里不再是拥挤交易。'},
-  {tk:'MRVL', name:'Marvell Technology',   pct: 9, why:'光互连、定制硅与 CXL 布局，是穿越内存墙的<em>高速总线</em>；AI 溢价降温后性价比回升。'},
-  {tk:'SNDK', name:'SanDisk',              pct: 8, why:'KV-Cache 分层把 NAND 拉进 AI 推理核心工作流；抛物线行情后的深回调是对<em>弹药库</em>的重新定价，刻意只配中等仓位。'},
-  {tk:'WDC',  name:'Western Digital',      pct: 8, why:'AI 数据湖的近线存储底座，回调周里展现相对强势；HDD 供给纪律让它成为组合的<em>深空货舱</em>。'},
-  {tk:'TER',  name:'Teradyne',             pct: 8, why:'HBM 堆叠层数越高、测试强度越陡峭——单层缺陷即整组报废。后端测试是这轮周期里最稳的<em>质检船坞</em>。'},
-  {tk:'RMBS', name:'Rambus',               pct: 8, why:'内存接口 IP 的<em>收费站</em>：带宽扩容浪潮里毛利最高、beta 最低的一环，回调期的防御泊位。'},
-  {tk:'ALAB', name:'Astera Labs',          pct: 6, why:'PCIe 6 / CXL 互连纯标的，机架级互联瓶颈的<em>跳线大师</em>；估值仍极贵，轻仓当期权押。'},
-  {tk:'PSTG', name:'Pure Storage',         pct: 6, why:'全闪存阵列承接 KV-Cache 外溢需求，超大规模订单落地中；企业级闪存层的<em>前哨站</em>。'}
+  {tk:'NVDA', name:'NVIDIA',               pct:16, why:'加速器、网络与软件组成最完整的 AI 工厂平台；数据中心需求仍在高速扩张。它是舰队的<em>主反应堆</em>，但出口限制与高预期决定了仓位不能失控。'},
+  {tk:'AVGO', name:'Broadcom',             pct:14, why:'定制 AI 加速器与以太网交换同时受益于超大规模客户自研潮，软件现金流又提供缓冲，是集群内部不可替代的<em>神经总线</em>。'},
+  {tk:'MSFT', name:'Microsoft',            pct:12, why:'Azure、Copilot 与企业分发把模型能力直接送进工作流；当前约束更像供给而非需求。资本开支沉重，但它拥有最清晰的<em>商业化舱门</em>。'},
+  {tk:'TSM',  name:'TSMC',                 pct:12, why:'先进制程与先进封装仍是整条 AI 供应链最难绕开的制造咽喉。技术领先提供护城河，地缘风险则要求保留<em>安全距离</em>。'},
+  {tk:'AMZN', name:'Amazon',               pct:11, why:'AWS 同时掌握云需求、Trainium 芯片经济性与 Bedrock 智能体入口；既卖算力又改造算力成本，是舰队的<em>分发母港</em>。'},
+  {tk:'GOOGL',name:'Alphabet',             pct:10, why:'搜索现金引擎、Gemini、TPU 与 Google Cloud 构成少数真正端到端的 AI 平台。监管与搜索迁移是风险，也是估值没有完全失重的原因。'},
+  {tk:'MU',   name:'Micron Technology',    pct: 8, why:'HBM4 量产让它直接站在带宽瓶颈上；供给纪律可把技术升级转成定价权。但内存周期极端，故只把它作为<em>高能补给舰</em>。'},
+  {tk:'ANET', name:'Arista Networks',      pct: 7, why:'AI 集群向 800G 与 1.6T 以太网演进，Arista 用软件与交换平台承接东西向流量爆发；客户集中和建设周期限制仓位。'},
+  {tk:'VRT',  name:'Vertiv',               pct: 6, why:'电力、液冷与热管理已从幕后设备变成 AI 数据中心的物理瓶颈。订单能见度强，但市场预期同样很高，定位为<em>生命维持系统</em>。'},
+  {tk:'AMD',  name:'Advanced Micro Devices',pct:4, why:'MI450、Helios 与 EPYC 提供最可信的第二套加速计算路线；软件生态和执行仍需验证，因此把它控制为一张<em>非对称期权</em>。'}
 ];
 
 export const PICKS_EN = [
-  {tk:'MU',   name:'Micron Technology',    pct:18, why:'The only US-soil HBM pure play. Korean turmoil and SK Hynix slowing HBM expansion tighten supply discipline in its favor; post-correction forward multiples sit back in single digits — the post-memory era\'s <em>flagship supply ship</em>.'},
-  {tk:'AVGO', name:'Broadcom',             pct:15, why:'Custom ASICs and Ethernet switching collect rent on both sides of the hyperscaler self-silicon wave. Down over 20% from highs with the cash-flow moat intact — still the cluster\'s <em>nervous system</em>.'},
-  {tk:'NVDA', name:'NVIDIA',               pct:14, why:'The compute throne\'s <em>main reactor</em>. Meta raising capex validates demand, and renting out surplus compute mostly eats the neoclouds\' lunch. Back at key support, no longer a crowded trade.'},
-  {tk:'MRVL', name:'Marvell Technology',   pct: 9, why:'Optical interconnect, custom silicon and CXL: the <em>high-speed bus</em> through the memory wall, better priced after the AI premium cooled.'},
-  {tk:'SNDK', name:'SanDisk',              pct: 8, why:'KV-cache tiering pulls NAND into the core AI inference loop. After a parabolic run and deep pullback, the <em>ammunition depot</em> gets repriced — deliberately sized medium.'},
-  {tk:'WDC',  name:'Western Digital',      pct: 8, why:'Nearline backbone for AI data lakes; showed relative strength through the rout. Supply discipline makes it the fleet\'s <em>deep-space cargo hold</em>.'},
-  {tk:'TER',  name:'Teradyne',             pct: 8, why:'Taller HBM stacks mean brutally steeper test intensity — one bad die scraps the whole stack. Back-end test is the cycle\'s steadiest <em>inspection dock</em>.'},
-  {tk:'RMBS', name:'Rambus',               pct: 8, why:'The <em>toll booth</em> of memory-interface IP: the highest-margin, lowest-beta claim on the bandwidth build-out. The portfolio\'s defensive berth.'},
-  {tk:'ALAB', name:'Astera Labs',          pct: 6, why:'The PCIe 6 / CXL interconnect pure play — <em>jumper master</em> of rack-scale bottlenecks. Still extremely expensive; a light position priced as an option.'},
-  {tk:'PSTG', name:'Pure Storage',         pct: 6, why:'All-flash arrays catching KV-cache spillover as hyperscale wins land: the <em>forward outpost</em> of the enterprise flash tier.'}
+  {tk:'NVDA', name:'NVIDIA',               pct:16, why:'The most complete AI-factory platform across accelerators, networking and software, with data-center demand still expanding fast. The fleet\'s <em>main reactor</em>—sized below dominance because export controls and expectations remain real risks.'},
+  {tk:'AVGO', name:'Broadcom',             pct:14, why:'Custom AI accelerators and Ethernet both ride hyperscaler self-silicon, while software cash flow adds ballast. It remains the cluster\'s essential <em>neural bus</em>.'},
+  {tk:'MSFT', name:'Microsoft',            pct:12, why:'Azure, Copilot and enterprise distribution move model capability directly into workflows; supply looks tighter than demand. Capex is heavy, but it owns the clearest <em>monetization airlock</em>.'},
+  {tk:'TSM',  name:'TSMC',                 pct:12, why:'Leading-edge process and advanced packaging remain the hardest manufacturing choke point to route around. Technical leadership is the moat; geopolitics sets the <em>safety distance</em>.'},
+  {tk:'AMZN', name:'Amazon',               pct:11, why:'AWS owns cloud demand, Trainium silicon economics and the Bedrock agent gateway. It sells compute while redesigning its cost curve—the fleet\'s <em>distribution harbor</em>.'},
+  {tk:'GOOGL',name:'Alphabet',             pct:10, why:'Search cash flow, Gemini, TPUs and Google Cloud form one of very few end-to-end AI platforms. Regulation and search migration are risks—and why expectations have not fully escaped gravity.'},
+  {tk:'MU',   name:'Micron Technology',    pct: 8, why:'HBM4 volume shipments put Micron directly on the bandwidth bottleneck, where supply discipline can become pricing power. Memory is violently cyclical, so it stays a <em>high-energy supply ship</em>.'},
+  {tk:'ANET', name:'Arista Networks',      pct: 7, why:'As AI fabrics move through 800G into 1.6T Ethernet, Arista\'s software and switching platform carries the east-west traffic surge. Customer concentration and build cycles cap the weight.'},
+  {tk:'VRT',  name:'Vertiv',               pct: 6, why:'Power, liquid cooling and thermal management have become physical AI-datacenter bottlenecks. Visibility is strong, expectations are high: the portfolio\'s <em>life-support system</em>.'},
+  {tk:'AMD',  name:'Advanced Micro Devices',pct:4, why:'MI450, Helios and EPYC offer the most credible second route in accelerated computing. Software and execution still need proof, so it remains an <em>asymmetric option</em>.'}
 ];
 
 export const COPY = {
@@ -36,7 +33,7 @@ export const COPY = {
     title:'Project Afflatus - 深空舰长日志',lang:'zh-CN',langBtn:'Dream in English',
     heroNum:'FY25/26 · <span>资本飞行记录仪</span> · 财年战后报告',
     heroTitle:'我让资本高速跃迁<br>回撤则提醒我<br>速度的<em>代价</em>',
-    heroDesc:'一份私人的 2025—26 财年交易记录：已结清盈利子组合实现 5,782.97 澳元收益，并将成交事实、短周期年化效率与组合层面估算严格分开。',
+    heroDesc:'一份私人的 2025—26 财年交易记录：只公开收益率、持有周期与风险口径，不展示本金、成交金额或账户余额。',
     coord:'坐标 · FY25/26 资本黑匣子',scrollHint:'下潜至财年记录',
     sl:['账户级年化 · 模型估算','夏普比率 · 估算','最大回撤 · 估算','β 系数 · 估算'],
     sf:['资本时间重建 · 非审计结果','无风险利率输入 · 4.50%','2026-06-16—25 · 重建区间','科技集中组合相对 SPX'],
@@ -45,9 +42,9 @@ export const COPY = {
     s2desc:'这份报告将已结清交易事实、短周期年化与账户层面模型严格分层。三种口径回答三个不同问题，任何一个都不应被偷换成另一个。',
     chartSub:'private · daily · 2026 ytd',barsLabel:'bars · <b id="barCount">0</b>',
     s3num:'03 · <span>top 10 allocations · usa</span>',
-    s3title:'我把远征舰队分成<em>十支编队</em>，每支都押上一段未来。',
-    s3desc:'2026-07-04 换仓：存储与半导体板块深度回调之后，我认为后内存时代最值得持有的 10 支美股，以及我会分给它们的权重。比例条会在你看到它的瞬间自动爬升。',
-    footnote:'上述权重为本人在当日的主观判断，不构成投资建议。任何标的都可能在你按下买入键的下一秒坠入引力井。研究你自己的航线，守住你自己的舱门。',
+    s3title:'八月的航线不只押一块芯片，<br>而是整座 <em>AI 工厂</em>。',
+    s3desc:'2026-08-02 研究快照：我把最看好的 10 支美股沿算力、定制硅、云、晶圆制造、HBM、网络与电力散热重新编队。权重同时考虑需求能见度、执行质量、估值与单点风险。',
+    footnote:'这是本人截至 2026-08-02 的主观研究与配置框架，不构成投资建议，也不承诺未来表现。财报、估值与风险条件会变化；研究你自己的航线，守住你自己的舱门。',
     f1:'afflatus · 深空舰长日志 · MMXXVI',f2:'no ads · no tips · no promises',f3:'signal origin · local stardate',
     distTarget:'目标距离', distEarth:'离开地球',
     picks:PICKS_ZH,
@@ -56,7 +53,7 @@ export const COPY = {
     title:'Project Afflatus - Deep-Space Captain Log',lang:'en',langBtn:'以中文入梦',
     heroNum:'FY25/26 · <span>capital flight recorder</span> · after-action report',
     heroTitle:'I made capital move fast.<br>The drawdown taught me<br>what speed <em>costs</em>.',
-    heroDesc:'A private FY2025–26 trading record: AUD 5,782.97 realized across the profitable closed subset, with facts separated from annualized efficiency and portfolio-level estimates.',
+    heroDesc:'A private FY2025–26 trading record showing return, holding period and risk methodology—never principal, transaction amounts or account balance.',
     coord:'coordinates · FY25/26 capital black box',scrollHint:'descend to financial-year record',
     sl:['Account annual return · modeled','Sharpe ratio · estimated','Max drawdown · estimated','Beta · estimated'],
     sf:['capital-time reconstruction · not audited','risk-free input · 4.50%','2026-06-16—25 · reconstructed range','technology concentration vs SPX'],
@@ -65,9 +62,9 @@ export const COPY = {
     s2desc:'This report separates closed-trade facts from short-cycle annualization and account-level modeling. Each layer answers a different question; none may be silently substituted for another.',
     chartSub:'private · daily · 2026 ytd',barsLabel:'bars · <b id="barCount">0</b>',
     s3num:'03 · <span>top 10 allocations · usa</span>',
-    s3title:'I divide the expedition into <em>ten fleets</em>,<br>each carrying a claim on the future.',
-    s3desc:'Reallocated 2026-07-04, after the deep correction in memory and semis: the 10 US stocks I believe are most worth holding for the post-memory era, with the weight I would assign each. Allocation bars begin climbing the moment you see them.',
-    footnote:'The above allocations reflect my personal judgment on this date and do not constitute investment advice. Any position can fall into a gravity well the second you hit buy. Study your own route and protect your own cargo.',
+    s3title:'The August route is not one chip.<br>It is the <em>entire AI factory</em>.',
+    s3desc:'Research snapshot · 2026-08-02. My 10 highest-conviction US listings now span compute, custom silicon, cloud, foundry, HBM, networking, power and cooling. Weights balance demand visibility, execution, valuation and single-point risk.',
+    footnote:'This is my subjective research and allocation framework as of 2026-08-02—not investment advice or a promise of future performance. Earnings, valuations and risks change. Study your own route and protect your own cargo.',
     f1:'afflatus · deep-space captain log · MMXXVI',f2:'no ads · no tips · no promises',f3:'signal origin · local stardate',
     distTarget:'TARGET DIST', distEarth:'DAYS FROM EARTH',
     picks:PICKS_EN,

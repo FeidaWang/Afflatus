@@ -406,32 +406,6 @@
     letter-spacing: .1em;
   }
 
-  .trade-route dl {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .trade-route dl div {
-    min-width: 0;
-    padding: 12px 0;
-    border-top: 1px solid rgba(154,229,255,.09);
-    border-bottom: 1px solid rgba(154,229,255,.09);
-  }
-
-  .trade-route dt {
-    margin-bottom: 5px;
-    color: rgba(158,181,195,.42);
-    font: 500 7px/1 'JetBrains Mono', monospace;
-    letter-spacing: .12em;
-  }
-
-  .trade-route dd {
-    color: rgba(232,242,248,.76);
-    font: 500 12px/1 'JetBrains Mono', monospace;
-    font-variant-numeric: tabular-nums;
-  }
-
   .trade-route > p {
     margin-top: 17px;
     color: rgba(172,191,203,.5);
@@ -604,7 +578,6 @@
     .benchmark-row span,
     .benchmark-row strong { font-size: 7px; letter-spacing: .06em; }
     .trade-route { padding: 18px; }
-    .trade-route dl { grid-template-columns: 1fr; gap: 0; }
     .route-efficiency { display: grid; }
   }
 

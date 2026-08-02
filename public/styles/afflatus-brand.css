@@ -25,6 +25,17 @@
   transition: border-color 420ms ease, box-shadow 420ms ease, background-color 420ms ease;
 }
 
+/* Home is a continuous flight deck with pinned 3D stages. Sticky headers stop
+   following when an ancestor establishes a containing block, so this route
+   deliberately uses a viewport-fixed command bar. Other site sections retain
+   the generic sticky contract above. */
+.home-page .site-header--follow {
+  position: fixed;
+  inset-inline: 0;
+  inline-size: 100%;
+  z-index: 1200;
+}
+
 :root[data-afflatus-brand-state="compact"] .site-header--follow {
   background-color: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 95%, transparent);
   box-shadow:
