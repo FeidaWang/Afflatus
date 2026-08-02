@@ -362,7 +362,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       opacity,
       depthWrite: false,
     }));
-    points.userData = { drift, spreadX, spreadY };
+    points.userData = { drift, spreadX, spreadY, baseOpacity: opacity };
     starLayers.push(points);
     scene.add(points);
   }
@@ -1261,7 +1261,12 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       renderPolicy = nextPolicy;
       const pressureMode = nextPolicy.qualityTier === 'low';
       trailMesh.visible = !pressureMode;
-      if (starfield) starfield.material.opacity = pressureMode ? 0.38 : 0.7;
+      for (const layer of starLayers) {
+        layer.material.opacity = pressureMode
+          ? layer.userData.baseOpacity * .52
+          : layer.userData.baseOpacity;
+      }
+      flightStreaks.material.opacity = pressureMode ? .1 : .2;
       applyGeometryQuality();
     },
     onDispose() {

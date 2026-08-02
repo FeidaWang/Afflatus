@@ -26,6 +26,8 @@ describe('combat presentation contract', () => {
     expect(source).toContain("flightStreaks.name = 'ForwardVelocityReferences'");
     expect(source).toContain('const starLayers = []');
     expect(source).not.toContain('pos[i * 3 + 1] = -40');
+    expect(source).not.toContain('if (starfield)');
+    expect(source).toContain('layer.userData.baseOpacity * .52');
     expect(source).toContain('targetScreen: targetScreen ? Object.freeze');
     expect(source).not.toContain('NEB_DOME_FRAG');
     expect(source).not.toContain('new THREE.GridHelper');
