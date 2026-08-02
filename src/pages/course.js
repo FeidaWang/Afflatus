@@ -118,6 +118,7 @@ import { courseNodes } from '../data/courseNodes.js';
   const atlasViewport = $('#atlasViewport');
   const atlasStage = $('#atlasStage');
   const atlasBoard = $('#atlasBoard');
+  const atlasClusterWiresSvg = $('#atlasClusterWires');
   const atlasRelationsSvg = $('#atlasRelations');
   const zoomIn = $('#mapZoomIn');
   const zoomOut = $('#mapZoomOut');
@@ -245,6 +246,7 @@ import { courseNodes } from '../data/courseNodes.js';
   });
   const atlasBodyById = new Map(atlasBodies.map((body) => [body.id, body]));
   const relationEntries = [];
+  const clusterEntries = [];
 
   if (atlasRelationsSvg) {
     atlasRelations.forEach(([from, to, kind], index) => {
@@ -258,7 +260,26 @@ import { courseNodes } from '../data/courseNodes.js';
     });
   }
 
+  if (atlasClusterWiresSvg) {
+    $$('.map-lane', atlasBoard || document).forEach((lane) => {
+      const header = $('header', lane);
+      $$('.map-node', lane).forEach((node, index) => {
+        const body = atlasBodyById.get(node.dataset.node);
+        if (!header || !body) return;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.dataset.node = body.id;
+        path.dataset.bend = index % 2 ? '1' : '-1';
+        atlasClusterWiresSvg.append(path);
+        clusterEntries.push({ body, header, lane, path });
+      });
+    });
+  }
+
   function measureAtlasBodies() {
+    const boardWidth = atlasBoard?.offsetWidth || 2200;
+    const boardHeight = atlasBoard?.offsetHeight || 820;
+    atlasClusterWiresSvg?.setAttribute('viewBox', `0 0 ${boardWidth} ${boardHeight}`);
+    atlasRelationsSvg?.setAttribute('viewBox', `0 0 ${boardWidth} ${boardHeight}`);
     atlasBodies.forEach((body) => {
       const lane = body.node.closest('.map-lane');
       body.baseX = (lane?.offsetLeft || 0) + body.node.offsetLeft + body.node.offsetWidth / 2;
@@ -267,6 +288,16 @@ import { courseNodes } from '../data/courseNodes.js';
   }
 
   function drawAtlasRelations() {
+    clusterEntries.forEach(({ body, header, lane, path }) => {
+      const ax = body.baseX + body.x;
+      const ay = body.baseY + body.y;
+      const hx = lane.offsetLeft + header.offsetLeft + header.offsetWidth / 2;
+      const hy = lane.offsetTop + header.offsetTop + header.offsetHeight / 2;
+      const bend = Number(path.dataset.bend) * Math.min(36, Math.abs(hx - ax) * 0.08);
+      const midX = (ax + hx) / 2 + bend;
+      const midY = (ay + hy) / 2 - bend * 0.3;
+      path.setAttribute('d', `M${ax.toFixed(1)} ${ay.toFixed(1)} Q${midX.toFixed(1)} ${midY.toFixed(1)} ${hx.toFixed(1)} ${hy.toFixed(1)}`);
+    });
     relationEntries.forEach(({ from, to, path }) => {
       const a = atlasBodyById.get(from);
       const b = atlasBodyById.get(to);
@@ -384,6 +415,8 @@ import { courseNodes } from '../data/courseNodes.js';
     if (!atlasRelationsSvg || !node) return;
     const id = node.dataset.node;
     atlasRelationsSvg.classList.add('has-focus');
+    atlasClusterWiresSvg?.classList.add('has-focus');
+    clusterEntries.forEach(({ body, path }) => path.classList.toggle('is-active', body.id === id));
     relationEntries.forEach(({ from, to, path }) => {
       const active = from === id || to === id;
       path.classList.toggle('is-active', active);
@@ -395,6 +428,8 @@ import { courseNodes } from '../data/courseNodes.js';
 
   function clearAtlasRelations() {
     atlasRelationsSvg?.classList.remove('has-focus');
+    atlasClusterWiresSvg?.classList.remove('has-focus');
+    clusterEntries.forEach(({ path }) => path.classList.remove('is-active'));
     relationEntries.forEach(({ path }) => path.classList.remove('is-active'));
     atlasBodies.forEach(({ node }) => node.classList.remove('is-related'));
   }

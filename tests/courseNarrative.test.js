@@ -22,6 +22,7 @@ describe('course narrative progression', () => {
     expect(html).toContain('id="courseNodeDialog"');
     expect(html).toContain('id="mapZoomFit"');
     expect(html).toContain('id="atlasSticky"');
+    expect(html).toContain('id="atlasClusterWires"');
     expect(html).toContain('id="atlasRelations"');
     expect(html).toContain('Six hard questions. Thirty-six transmissions. One page.');
     expect(html).toContain('class="signal-strip orientation-dossier"');
@@ -49,6 +50,7 @@ describe('course narrative progression', () => {
     expect(script).toContain('content must always win over its entrance effect');
     expect(script).toContain("revealHashTarget({ align: true })");
     expect(script).toContain('requestAnimationFrame(stepAtlasPhysics)');
+    expect(script).toContain('clusterEntries');
     expect(script).toContain('window scroll');
     expect(css).toContain('prefers-reduced-motion: reduce');
   });
