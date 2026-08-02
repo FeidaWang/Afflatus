@@ -262,7 +262,11 @@
           </div>
         </aside>
         <div class="cic-viewport">
-          <canvas class="cic-pilot-feed" id="cicPilotFeed"></canvas>
+          <canvas class="cic-pilot-feed" id="cicPilotFeed" tabindex="0" aria-label="Interactive three-dimensional combat view. Drag to orbit the camera, scroll to zoom, and use arrow keys to rotate."></canvas>
+          <div class="cic-camera-controls" aria-label="Combat camera controls" hidden>
+            <span aria-hidden="true">DRAG · ORBIT</span>
+            <button id="cicCameraReset" type="button">RESET VIEW</button>
+          </div>
         </div>
         <aside class="cic-target-rail" aria-label="Target solution">
           <span class="cic-threat-readout" id="cicThreatReadout">NO TRACK · SENSOR PASSIVE</span>

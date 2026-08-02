@@ -63,10 +63,10 @@ function distantBlackHoleTexture() {
   const cx = canvas.width / 2;
   const cy = canvas.height / 2;
 
-  const halo = ctx.createRadialGradient(cx, cy, 72, cx, cy, 238);
-  halo.addColorStop(0, 'rgba(255,198,112,.22)');
-  halo.addColorStop(.34, 'rgba(238,154,70,.14)');
-  halo.addColorStop(.68, 'rgba(116,148,178,.05)');
+  const halo = ctx.createRadialGradient(cx, cy, 72, cx, cy, 246);
+  halo.addColorStop(0, 'rgba(255,232,183,.2)');
+  halo.addColorStop(.3, 'rgba(215,177,113,.13)');
+  halo.addColorStop(.62, 'rgba(111,169,205,.075)');
   halo.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = halo;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -77,10 +77,10 @@ function distantBlackHoleTexture() {
   for (let i = 18; i >= 0; i -= 1) {
     const u = i / 18;
     const diskGradient = ctx.createLinearGradient(-330, 0, 330, 0);
-    diskGradient.addColorStop(0, `rgba(117,153,184,${.018 + (1 - u) * .025})`);
-    diskGradient.addColorStop(.35, `rgba(255,177,82,${.045 + (1 - u) * .075})`);
-    diskGradient.addColorStop(.56, `rgba(255,232,173,${.075 + (1 - u) * .105})`);
-    diskGradient.addColorStop(1, `rgba(196,92,37,${.014 + (1 - u) * .032})`);
+    diskGradient.addColorStop(0, `rgba(113,178,218,${.028 + (1 - u) * .034})`);
+    diskGradient.addColorStop(.34, `rgba(219,190,137,${.045 + (1 - u) * .065})`);
+    diskGradient.addColorStop(.56, `rgba(255,244,214,${.08 + (1 - u) * .11})`);
+    diskGradient.addColorStop(1, `rgba(173,124,73,${.018 + (1 - u) * .03})`);
     ctx.strokeStyle = diskGradient;
     ctx.lineWidth = 2.4 + i * .72;
     ctx.beginPath();
@@ -96,7 +96,7 @@ function distantBlackHoleTexture() {
 
   // The upper arc is the lensed far side of the disc, not an orbital ring.
   for (let i = 0; i < 8; i += 1) {
-    ctx.strokeStyle = `rgba(255,${184 + i * 7},${95 + i * 9},${.045 + i * .022})`;
+    ctx.strokeStyle = `rgba(${205 + i * 6},${213 + i * 5},${202 + i * 6},${.04 + i * .021})`;
     ctx.lineWidth = 2.2;
     ctx.beginPath();
     ctx.ellipse(0, 1, 87 + i * 2.2, 103 + i * 1.2, 0, Math.PI * 1.08, Math.PI * 1.92);
@@ -104,7 +104,7 @@ function distantBlackHoleTexture() {
   }
 
   for (let i = 0; i < 7; i += 1) {
-    ctx.strokeStyle = `rgba(255,${174 + i * 8},${80 + i * 10},${.055 + i * .025})`;
+    ctx.strokeStyle = `rgba(${207 + i * 6},${198 + i * 7},${166 + i * 10},${.05 + i * .024})`;
     ctx.lineWidth = 2.4;
     ctx.beginPath();
     ctx.ellipse(0, 3, 184 + i * 3, 28 + i * 1.2, 0, .08, Math.PI - .08);
@@ -356,10 +356,13 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     const points = new THREE.Points(geometry, new THREE.PointsMaterial({
       vertexColors: true,
+      map: GLOW,
       size,
       sizeAttenuation: true,
       transparent: true,
       opacity,
+      alphaTest: 0.025,
+      blending: THREE.AdditiveBlending,
       depthWrite: false,
     }));
     points.userData = { drift, spreadX, spreadY, baseOpacity: opacity };
@@ -378,6 +381,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   approachBlackHole.name = 'AlphardDistantBlackHole';
   approachBlackHole.position.set(34, 24, -218);
   approachBlackHole.scale.set(172, 86, 1);
+  approachBlackHole.userData.baseScale = new THREE.Vector2(172, 86);
   scene.add(approachBlackHole);
 
   // A sparse velocity layer makes forward motion legible without turning the
@@ -638,34 +642,56 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     if (trailMesh.instanceColor) trailMesh.instanceColor.needsUpdate = true;
   }
 
-  // ── comet target (1P/HALLEY) drifting across the top ─────────────────────
+  // ── comet target (1P/HALLEY) ─────────────────────────────────────────────
+  // It enters the optical picture only after the real target-acquisition
+  // event. The old beige fragments + polyline tail looked like an unexplained
+  // yellow marker and a wire hanging through space, so the target is now a
+  // dark irregular body with a sparse, circular-point dust wake.
   const comet = new THREE.Group();
   let cometHP = 1;
+  let targetRevealStartedAt = 0;
   {
-    const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(1.35, 1),
-      new THREE.MeshBasicMaterial({ color: 0xa59277 }));
+    const rockMaterial = new THREE.MeshStandardMaterial({
+      color: 0x30373b,
+      emissive: 0x071018,
+      emissiveIntensity: .34,
+      metalness: .04,
+      roughness: .96,
+      flatShading: true,
+      transparent: true,
+      opacity: 0,
+    });
+    const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(1.35, 2), rockMaterial);
     rock.scale.set(1.8, .82, .9);
     comet.add(rock);
-    for (let i = 0; i < 5; i += 1) {
-      const fragment = new THREE.Mesh(new THREE.IcosahedronGeometry(.28 + i * .035, 0), rock.material);
-      fragment.position.set((Math.random() - .5) * 1.8, (Math.random() - .5) * .9, 3.8 + i * 2.1);
-      fragment.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-      comet.add(fragment);
+    const dustCount = 42;
+    const dustPositions = new Float32Array(dustCount * 3);
+    for (let i = 0; i < dustCount; i += 1) {
+      const u = (i + 1) / dustCount;
+      dustPositions[i * 3] = (Math.random() - .5) * (0.3 + u * 2.4);
+      dustPositions[i * 3 + 1] = (Math.random() - .5) * (0.2 + u * 1.35);
+      dustPositions[i * 3 + 2] = 1.2 + u * u * 22;
     }
-    const tailGeometry = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(-.24, .06, 1.2),
-      new THREE.Vector3(.12, .03, 17),
-      new THREE.Vector3(.52, -.12, 36),
-    ]);
-    const tail = new THREE.Line(tailGeometry, new THREE.LineBasicMaterial({
-      color: 0xd5c3a7,
+    const dustGeometry = new THREE.BufferGeometry();
+    dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+    const dustMaterial = new THREE.PointsMaterial({
+      map: GLOW,
+      color: 0xa8c5d3,
+      size: .58,
+      sizeAttenuation: true,
       transparent: true,
-      opacity: .34,
+      opacity: 0,
+      alphaTest: .02,
+      blending: THREE.AdditiveBlending,
       depthWrite: false,
-    }));
-    comet.add(tail);
-    comet.userData = { rock, tail };
+    });
+    const dust = new THREE.Points(dustGeometry, dustMaterial);
+    comet.add(dust);
+    const coma = sprite(0xb8d9e8, 5.6, 0);
+    comet.add(coma);
+    comet.userData = { rock, dust, coma };
     comet.position.set(-22, 0, -18);
+    comet.visible = false;
     scene.add(comet);
   }
 
@@ -804,6 +830,85 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   let lastEventSeen = 0;
   let targetScreen = null;
   let currentFlightPhase = null;
+  const userCamera = {
+    active: false,
+    blend: 0,
+    yaw: .5,
+    pitch: .34,
+    radius: 28,
+    lastInputAt: -Infinity,
+  };
+  const orbitFocus = new THREE.Vector3();
+  const orbitPosition = new THREE.Vector3();
+  const orbitBaseQuaternion = new THREE.Quaternion();
+  const orbitTargetQuaternion = new THREE.Quaternion();
+
+  function cameraFocusPoint() {
+    orbitFocus.copy(capital.position);
+    if (comet.visible) orbitFocus.lerp(comet.position, .32);
+    else orbitFocus.z -= 11;
+    orbitFocus.y = Math.max(1.5, orbitFocus.y + 1.2);
+    return orbitFocus;
+  }
+
+  function beginCameraOrbit(now = performance.now()) {
+    const focus = cameraFocusPoint();
+    orbitPosition.subVectors(camera.position, focus);
+    const radius = Math.max(8, orbitPosition.length());
+    userCamera.radius = Math.min(72, radius);
+    userCamera.yaw = Math.atan2(orbitPosition.x, orbitPosition.z);
+    userCamera.pitch = Math.asin(THREE.MathUtils.clamp(orbitPosition.y / radius, -.92, .92));
+    userCamera.active = true;
+    userCamera.blend = 1;
+    userCamera.lastInputAt = now;
+  }
+
+  function orbitCameraBy(deltaX = 0, deltaY = 0, now = performance.now()) {
+    userCamera.yaw -= deltaX * .0052;
+    userCamera.pitch = THREE.MathUtils.clamp(userCamera.pitch + deltaY * .0044, -.18, 1.22);
+    userCamera.active = true;
+    userCamera.blend = 1;
+    userCamera.lastInputAt = now;
+  }
+
+  function zoomCameraBy(delta = 0, now = performance.now()) {
+    userCamera.radius = THREE.MathUtils.clamp(userCamera.radius * Math.exp(delta * .001), 10, 72);
+    userCamera.blend = 1;
+    userCamera.lastInputAt = now;
+  }
+
+  function endCameraOrbit(now = performance.now()) {
+    userCamera.active = false;
+    userCamera.lastInputAt = now;
+  }
+
+  function resetCameraOrbit() {
+    userCamera.active = false;
+    userCamera.blend = 0;
+    userCamera.lastInputAt = -Infinity;
+  }
+
+  function applyUserCamera(now, frameScale) {
+    const scriptedShot = camDirector && camDirector.currentShotId !== 'commandChase';
+    const hold = userCamera.active || now - userCamera.lastInputAt < 2600;
+    const targetBlend = scriptedShot ? 0 : hold ? 1 : 0;
+    const rate = targetBlend > userCamera.blend ? .16 : .045;
+    userCamera.blend += (targetBlend - userCamera.blend) * Math.min(1, rate * frameScale);
+    if (userCamera.blend < .001) return;
+
+    const focus = cameraFocusPoint();
+    const horizontal = Math.cos(userCamera.pitch) * userCamera.radius;
+    orbitPosition.set(
+      focus.x + Math.sin(userCamera.yaw) * horizontal,
+      focus.y + Math.sin(userCamera.pitch) * userCamera.radius,
+      focus.z + Math.cos(userCamera.yaw) * horizontal,
+    );
+    orbitBaseQuaternion.copy(camera.quaternion);
+    camera.position.lerp(orbitPosition, userCamera.blend);
+    camera.lookAt(focus);
+    orbitTargetQuaternion.copy(camera.quaternion);
+    camera.quaternion.copy(orbitBaseQuaternion).slerp(orbitTargetQuaternion, userCamera.blend);
+  }
 
   function resize(w, h) {
     W = Math.max(1, (w ?? canvas.clientWidth) || window.innerWidth);
@@ -906,6 +1011,14 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     previousUpdateAt = now;
     if (state) liveCombatState = state;
     const alive = Boolean(state?.target);
+    const unseenEvents = (state?.events || []).filter((event) => event.id > lastEventSeen);
+    const revealEvent = unseenEvents.find((event) => event.type === 'target:acquired' || event.type === 'weapon:fire');
+    if (alive && !targetRevealStartedAt && (state?.target?.locked || revealEvent)) {
+      const eventAge = revealEvent ? Math.max(0, (state?.now || revealEvent.at) - revealEvent.at) : 0;
+      targetRevealStartedAt = now - Math.min(900, eventAge);
+    } else if (!alive) {
+      targetRevealStartedAt = 0;
+    }
 
     if (state?.target) {
       const viewportWidth = state.telemetry?.viewportWidth || 1;
@@ -917,7 +1030,13 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       );
     }
     const cometPos = new THREE.Vector3().setFromMatrixPosition(comet.matrixWorld);
-    comet.visible = alive;
+    const targetReveal = targetRevealStartedAt ? THREE.MathUtils.clamp((now - targetRevealStartedAt) / 720, 0, 1) : 0;
+    const revealEase = targetReveal * targetReveal * (3 - 2 * targetReveal);
+    comet.visible = alive && revealEase > .002;
+    comet.scale.setScalar(.72 + revealEase * .28);
+    comet.userData.rock.material.opacity = revealEase;
+    comet.userData.dust.material.opacity = revealEase * .26;
+    comet.userData.coma.material.opacity = revealEase * .11;
     comet.userData.rock.rotation.x += .003 * frameScale;
     comet.userData.rock.rotation.y += .004 * frameScale;
 
@@ -952,6 +1071,13 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     }
     velocityPositions.needsUpdate = true;
     approachBlackHole.position.z = Math.min(-155, approachBlackHole.position.z + .0035 * frameScale);
+    const gravityPulse = 1 + Math.sin(now * .00022) * .018;
+    approachBlackHole.scale.set(
+      approachBlackHole.userData.baseScale.x * gravityPulse,
+      approachBlackHole.userData.baseScale.y * (2 - gravityPulse),
+      1,
+    );
+    approachBlackHole.material.opacity = .78 + Math.sin(now * .00017) * .055;
 
     // The command ship is the stable reference frame. Fighters exist only
     // when the authoritative snapshot reports an escort; otherwise their
@@ -1155,10 +1281,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       camera.position.copy(CAM);
       camera.lookAt(comet.position.x * 0.25, 2, -2);
     }
+    applyUserCamera(now, frameScale);
 
     camera.updateMatrixWorld();
     comet.updateMatrixWorld();
-    if (alive) {
+    if (comet.visible) {
       const projected = comet.getWorldPosition(new THREE.Vector3()).project(camera);
       targetScreen = {
         x: (projected.x * 0.5 + 0.5) * W,
@@ -1285,6 +1412,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       stopLoop();
     },
     resize,
+    beginCameraOrbit,
+    orbitCameraBy,
+    zoomCameraBy,
+    endCameraOrbit,
+    resetCameraOrbit,
     // state: optional real-battle snapshot (see main.js getBattleSnapshot()).
     // Consumed for kill flashes + comet visibility; full state-driven flight
     // path is a separate follow-up (ROADMAP §4 Phase 2b).
@@ -1311,6 +1443,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         flightKind: flightEvent?.kind || null,
         flightPhase: currentFlightPhase,
         targetScreen: targetScreen ? Object.freeze({ ...targetScreen }) : null,
+        cameraInteractive: true,
+        cameraManual: userCamera.blend > .05,
         activeEscortCount: liveCombatState?.escorts?.length || 0,
         lastEventSeen,
       });

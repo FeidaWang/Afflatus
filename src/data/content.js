@@ -95,7 +95,7 @@ export const HUD_COPY = {
   },
   en:{
     wake:'TACTICAL WAKE · GRAVITY WELL AHEAD', sub:'COMMAND DECK LOCK · TARGET ORACLE · SIGNAL VEIL',
-    radarTitle:'RADAR', battleTitle:'QUAD DEFENCE / FIRE CONTROL', pilotTitle:'CIC SENSOR PICTURE', systemsTitle:'TACTICAL FEED / CONDITION', hangarTitle:'COMMANDER TERMINAL', weaponLabel:'COMET INTERCEPT JUDGMENT', uplink:'FLEET TELEMETRY',
+    radarTitle:'RADAR', battleTitle:'FIRE CONTROL', pilotTitle:'CIC SENSOR PICTURE', systemsTitle:'TACTICAL FEED / CONDITION', hangarTitle:'COMMANDER TERMINAL', weaponLabel:'COMET INTERCEPT JUDGMENT', uplink:'FLEET TELEMETRY',
     options:['AUTO · recommended force','PHALANX · PORT / STARBOARD CIWS','F-47 · AUTONOMOUS AAM','B2 · TACTICAL NUKE + ESCORT','ENFORCER MAIN CANNON · 30S COOLDOWN'],
     core:'POWER CORE', thrusters:'THRUSTERS', shield:'MAIN GUN CD', scan:'CRUISE SPEED',
     armed:'ARMED', low:'LOW', navLock:'NAV LOCK', stable:'STABLE', radarSweep:'RADAR SWEEP', active:'ACTIVE', warningClass:'WARNING CLASS', yellow:'YELLOW',

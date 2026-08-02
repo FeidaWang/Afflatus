@@ -103,6 +103,60 @@ function getFighter3D(){
 // opt out with ?combatview=2d (persists), re-enable with ?combatview=topdown.
 // Falls back to the existing 2D cockpit if WebGL/the module is unavailable.
 let topdownCV=null, topdownTried=false, topdownCanvas=null;
+let combatOrbitBound=false;
+function bindCombatOrbitControls(){
+  if(combatOrbitBound) return;
+  const canvas=document.getElementById('cicPilotFeed');
+  const reset=document.getElementById('cicCameraReset');
+  if(!canvas) return;
+  const controls=document.querySelector('#combatHud .cic-camera-controls');
+  if(controls) controls.hidden=!topdownCV;
+  combatOrbitBound=true;
+  let pointerId=null,lastX=0,lastY=0;
+  const release=(event)=>{
+    if(pointerId===null || (event && event.pointerId!==pointerId)) return;
+    try{canvas.releasePointerCapture(pointerId);}catch(error){}
+    pointerId=null;
+    canvas.classList.remove('is-camera-dragging');
+    topdownCV?.endCameraOrbit?.(performance.now());
+  };
+  canvas.addEventListener('pointerdown',(event)=>{
+    if(event.button!==0 || pointerId!==null) return;
+    pointerId=event.pointerId;lastX=event.clientX;lastY=event.clientY;
+    canvas.setPointerCapture(pointerId);
+    canvas.classList.add('is-camera-dragging');
+    topdownCV?.beginCameraOrbit?.(performance.now());
+    event.preventDefault();
+  });
+  canvas.addEventListener('pointermove',(event)=>{
+    if(event.pointerId!==pointerId) return;
+    const dx=event.clientX-lastX,dy=event.clientY-lastY;
+    lastX=event.clientX;lastY=event.clientY;
+    topdownCV?.orbitCameraBy?.(dx,dy,performance.now());
+    event.preventDefault();
+  });
+  canvas.addEventListener('pointerup',release);
+  canvas.addEventListener('pointercancel',release);
+  canvas.addEventListener('lostpointercapture',release);
+  canvas.addEventListener('wheel',(event)=>{
+    topdownCV?.zoomCameraBy?.(event.deltaY,performance.now());
+    event.preventDefault();
+  },{passive:false});
+  canvas.addEventListener('keydown',(event)=>{
+    const cameraKeys={ArrowLeft:[-18,0],ArrowRight:[18,0],ArrowUp:[0,-14],ArrowDown:[0,14]};
+    const movement=cameraKeys[event.key];
+    if(!movement) return;
+    topdownCV?.beginCameraOrbit?.(performance.now());
+    topdownCV?.orbitCameraBy?.(movement[0],movement[1],performance.now());
+    topdownCV?.endCameraOrbit?.(performance.now());
+    event.preventDefault();
+  });
+  reset?.addEventListener('click',(event)=>{
+    event.stopPropagation();
+    topdownCV?.resetCameraOrbit?.();
+    canvas.focus({preventScroll:true});
+  });
+}
 function combatViewTopdown(){
   try{
     const q=location.search;
@@ -115,7 +169,7 @@ function getTopdownCV(){
   if(!topdownTried){
     topdownTried=true;
     import('./scene/topdownCombat.js')
-      .then(m=>{ try{ topdownCanvas=document.createElement('canvas'); topdownCV=m.createTopdownCombat({canvas:topdownCanvas,surfaceId:'home:topdown-combat'}); }catch(e){ topdownCV=null; } })
+      .then(m=>{ try{ topdownCanvas=document.createElement('canvas'); topdownCV=m.createTopdownCombat({canvas:topdownCanvas,surfaceId:'home:topdown-combat'}); bindCombatOrbitControls(); }catch(e){ topdownCV=null; } })
       .catch(()=>{ topdownCV=null; });
   }
   return topdownCV;
@@ -3284,6 +3338,7 @@ function drawPilotFeed(now,state=combatSnapshot){
         pilotCanvas.dataset.flightPhase=diagnostics.flightPhase||'none';
         pilotCanvas.dataset.activeEscorts=String(diagnostics.activeEscortCount||0);
         pilotCanvas.dataset.targetVisible=String(Boolean(diagnostics.targetScreen?.visible));
+        pilotCanvas.dataset.cameraManual=String(Boolean(diagnostics.cameraManual));
       }
       ctx.drawImage(topdownCanvas,0,0,w,h);
       const hmdLabel=combatSceneLabel(diagnostics,sceneMode);

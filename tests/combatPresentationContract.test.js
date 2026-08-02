@@ -25,6 +25,12 @@ describe('combat presentation contract', () => {
     expect(source).toContain("approachBlackHole.name = 'AlphardDistantBlackHole'");
     expect(source).toContain("flightStreaks.name = 'ForwardVelocityReferences'");
     expect(source).toContain('const starLayers = []');
+    expect(source).toContain('map: GLOW');
+    expect(source).toContain('alphaTest: 0.025');
+    expect(source).toContain('beginCameraOrbit');
+    expect(source).toContain('orbitCameraBy');
+    expect(source).toContain("event.type === 'target:acquired'");
+    expect(source).not.toContain('const tailGeometry');
     expect(source).not.toContain('pos[i * 3 + 1] = -40');
     expect(source).not.toContain('if (starfield)');
     expect(source).toContain('layer.userData.baseOpacity * .52');
@@ -74,6 +80,9 @@ describe('combat presentation contract', () => {
     expect(source).not.toContain('drawCockpitFrame(ctx');
     expect(source).toContain('pilotCanvas.dataset.flightPhase');
     expect(source).toContain('const activeFlightMode=pendingDiagnostics?.flightKind||null');
+    expect(source).toContain("canvas.addEventListener('pointerdown'");
+    expect(source).toContain('topdownCV?.orbitCameraBy?.');
+    expect(html).toContain('id="cicCameraReset"');
     expect(source).toContain('requestAnimationFrame(ensureSpaceSceneRunning)');
     expect(source).toContain('event.stopPropagation()');
     expect(source).not.toContain("const j=mode==='combat'?0.6:0");

@@ -1366,7 +1366,7 @@ body:not(.hud-off) .route-arrows {
 /* Mobile: tactical picture first; the station rail expands one leg at a time. */
 @media (max-width: 860px) {
   :root {
-    --cic-shell-height: clamp(228px, 32svh, 286px);
+    --cic-shell-height: clamp(220px, 27svh, 258px);
     --jump-toggle-display: none;
     --jump-toggle-opacity: 0;
     --jump-toggle-visibility: hidden;
@@ -1628,6 +1628,239 @@ body:not(.hud-off) .route-arrows {
   #combatHud .cic-log-entries { width: 96%; gap: 4px; }
   #combatHud .cic-log-entries article { grid-template-columns: auto minmax(0, 1fr); gap: 5px 8px; padding: 6px 7px; }
   #combatHud .cic-log-entries p { grid-column: 1 / -1; }
+}
+
+/* Immersive optical pass --------------------------------------------------
+ * The 3D picture owns every pixel of the centre station. Sensor values float
+ * on clear glass at the edges instead of consuming two permanent columns. */
+#combatHud .cic-tactical-body {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+#combatHud .cic-viewport {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+#combatHud .cic-pilot-feed {
+  cursor: grab;
+  touch-action: none;
+  outline: 0;
+}
+
+#combatHud .cic-pilot-feed.is-camera-dragging { cursor: grabbing; }
+#combatHud .cic-pilot-feed:focus-visible { box-shadow: inset 0 0 0 1px rgba(142, 233, 255, .58); }
+
+#combatHud .cic-sensor-rail,
+#combatHud .cic-target-rail {
+  position: absolute;
+  z-index: 7;
+  bottom: 8px;
+  width: auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 7px rgba(0, 0, 0, .86));
+}
+
+#combatHud .cic-sensor-rail { left: 9px; }
+#combatHud .cic-target-rail { right: 9px; flex-direction: column; align-items: flex-end; }
+
+#combatHud .cic-radar-dock {
+  position: relative;
+  width: 58px;
+  height: 42px;
+  padding: 0;
+  overflow: hidden;
+  background: radial-gradient(circle, rgba(15, 51, 61, .18), transparent 68%);
+  border: 0;
+  border-radius: 50%;
+  opacity: .68;
+}
+
+#combatHud .cic-radar-dock > span { display: none; }
+
+#combatHud .cic-flight-tape,
+#combatHud .cic-solution-stack {
+  position: static;
+  display: flex;
+  gap: 5px;
+}
+
+#combatHud .cic-flight-tape span,
+#combatHud .cic-solution-stack span {
+  min-width: 0;
+  gap: 4px;
+  padding: 2px 4px;
+  background: rgba(1, 7, 11, .34);
+  border: 0;
+  border-bottom: 1px solid rgba(142, 233, 255, .2);
+  backdrop-filter: blur(2px);
+}
+
+#combatHud .cic-flight-tape i,
+#combatHud .cic-solution-stack i { font-size: 5.75px; }
+#combatHud .cic-flight-tape b,
+#combatHud .cic-solution-stack b { font-size: 7px; }
+
+#combatHud .cic-threat-readout {
+  min-height: 0;
+  max-width: 176px;
+  padding: 2px 4px;
+  color: rgba(204, 230, 238, .62);
+  background: rgba(1, 7, 11, .28);
+  font-size: 6px;
+  line-height: 1.2;
+  text-align: right;
+}
+
+#combatHud .cic-camera-controls {
+  position: absolute;
+  right: 50%;
+  bottom: 7px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(193, 223, 232, .44);
+  font-size: 5.75px;
+  letter-spacing: .1em;
+  transform: translateX(50%);
+}
+#combatHud .cic-camera-controls[hidden] { display: none; }
+
+#combatHud .cic-camera-controls button {
+  height: 18px;
+  padding: 0 7px;
+  color: rgba(216, 249, 255, .68);
+  background: rgba(1, 7, 11, .3);
+  border: 0;
+  border-bottom: 1px solid rgba(142, 233, 255, .28);
+  font: 600 5.75px/1 "Orbitron", sans-serif;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+
+#combatHud .cic-camera-controls button:hover,
+#combatHud .cic-camera-controls button:focus-visible {
+  color: #061016;
+  background: var(--cic-cyan);
+  outline: 0;
+}
+
+#combatHud .cic-fire-control,
+#combatHud .cic-intel {
+  clip-path: none;
+  border-radius: 0;
+}
+
+#combatHud .cic-weapon > b { min-width: 0; }
+#combatHud .cic-condition-grid > span { overflow: hidden; }
+
+/* Only combat-critical identity and readiness stay in the weapon strip. The
+ * secondary ROF/range table was the direct cause of name truncation. */
+#combatHud .cic-weapon {
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  column-gap: 6px;
+}
+#combatHud .cic-weapon > small,
+#combatHud .cic-weapon-profile { display: none; }
+#combatHud .cic-weapon-code,
+#combatHud .cic-weapon-state { grid-row: auto; }
+#combatHud .cic-weapon > b {
+  align-self: center;
+  overflow: visible;
+  font-size: 8.25px;
+  text-overflow: clip;
+}
+#combatHud .cic-ap-toggle,
+#combatHud .cic-panel-focus,
+#combatHud .cic-log-toggle,
+#combatHud .cic-deck-toggle,
+#combatHud .cic-station-tabs button,
+#combatHud .cic-camera-controls button { min-height: 0; }
+#combatHud .cic-weapon-state { font-size: 6.5px; }
+
+#combatHud .cic-fire-control .cic-panel-head { padding-right: 108px; }
+#combatHud .cic-intel .cic-panel-head { padding-right: 116px; }
+#combatHud .cic-panel-head strong { font-size: 8.5px; }
+#combatHud .cic-log-toggle {
+  right: 31px;
+  width: 82px;
+  font-size: 5.75px;
+}
+#combatHud .cic-condition-grid b {
+  max-width: 58%;
+  overflow: visible;
+  font-size: 7.5px;
+  text-overflow: clip;
+}
+
+@media (min-width: 861px) and (max-height: 520px) {
+  #combatHud .cic-shell { grid-template-columns: minmax(290px, 22fr) minmax(480px, 58fr) minmax(270px, 20fr); }
+  #combatHud .cic-weapon {
+    grid-template-columns: 36px minmax(86px, 1fr) auto;
+    column-gap: 5px;
+    padding: 1px 6px 1px 14px;
+  }
+  #combatHud .cic-weapon-code i { display: none; }
+  #combatHud .cic-weapon-code em { font-size: 9px; }
+  #combatHud .cic-weapon > b { font-size: 8px; text-overflow: clip; }
+  #combatHud .cic-weapon-state { font-size: 6.5px; }
+  #combatHud .cic-fire-control .cic-panel-head { padding-right: 112px; }
+  #combatHud .cic-intel .cic-panel-head { padding-right: 108px; }
+  #combatHud .cic-log-toggle { right: 31px; width: 75px; font-size: 5.5px; }
+  #combatHud .cic-sensor-rail,
+  #combatHud .cic-target-rail { bottom: 4px; gap: 3px; padding: 0; }
+  #combatHud .cic-radar-dock { width: 45px; height: 32px; padding: 0; }
+  #combatHud .cic-camera-controls { bottom: 3px; }
+}
+
+@media (max-width: 860px) {
+  #combatHud .cic-tactical-body,
+  body.hud-panel-focus #combatHud .cic-tactical.is-focused .cic-tactical-body {
+    display: block;
+  }
+  #combatHud .cic-sensor-rail { left: 4px; bottom: 3px; }
+  #combatHud .cic-target-rail { right: 4px; bottom: 3px; }
+  #combatHud .cic-radar-dock { width: 40px; height: 30px; padding: 0; }
+  #combatHud .cic-flight-tape span,
+  #combatHud .cic-solution-stack span { padding: 1px 2px; }
+  #combatHud .cic-flight-tape i,
+  #combatHud .cic-solution-stack i { display: none; }
+  #combatHud .cic-flight-tape b,
+  #combatHud .cic-solution-stack b { font-size: 6px; }
+  #combatHud .cic-threat-readout { display: none; }
+  #combatHud .cic-camera-controls { bottom: 2px; }
+  #combatHud .cic-camera-controls span { display: none; }
+  #combatHud .cic-camera-controls button { height: 16px; font-size: 5.25px; }
+  #combatHud .cic-weapon {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    justify-items: center;
+    gap: 1px;
+  }
+  #combatHud .cic-weapon-code { grid-row: auto; display: block; }
+  #combatHud .cic-weapon > b { font-size: 7.25px; text-align: center; }
+  #combatHud .cic-weapon-state { grid-row: auto; }
+}
+
+@media (max-width: 520px) {
+  #combatHud .cic-radar-dock { display: none; }
+  #combatHud .cic-flight-tape span:nth-child(3),
+  #combatHud .cic-solution-stack span:nth-child(2) { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
