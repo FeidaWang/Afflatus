@@ -27,6 +27,7 @@ describe('combat presentation contract', () => {
     expect(source).not.toContain('new THREE.GridHelper');
     expect(source).not.toContain('startFlight(\'launch\', nowMs)');
     expect(source).not.toContain('Math.sin(t * 0.25) * 6');
+    expect(source).not.toContain('sprite(0x62d9ff');
     expect(source).not.toContain('const ph = f.userData.ph');
     expect(source).toContain('const flightControlled = i === 0 && Boolean(flightEvent)');
     expect(source).toContain('if (accepted) flightEvent.fired.add(key)');

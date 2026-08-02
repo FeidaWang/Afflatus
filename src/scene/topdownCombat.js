@@ -358,11 +358,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   function makeFighter() {
     const fighter = fighterPrototype.group.clone(true);
     fighter.scale.setScalar(0.43);
-    for (const sx of [-1, 1]) {
-      const flare = sprite(0x62d9ff, 1.15, 0.72);
-      flare.position.set(sx * 0.58, 0.02, -3.18);
-      fighter.add(flare);
-    }
     scene.add(fighter);
     return fighter;
   }
