@@ -21,6 +21,8 @@ describe('course narrative progression', () => {
     expect(html).toContain('id="agent-core"');
     expect(html).toContain('id="courseNodeDialog"');
     expect(html).toContain('id="mapZoomFit"');
+    expect(html).toContain('id="atlasSticky"');
+    expect(html).toContain('id="atlasRelations"');
     expect(html).toContain('Six hard questions. Thirty-six transmissions. One page.');
     expect(html).toContain('class="signal-strip orientation-dossier"');
     expect(html).toContain('FOUR MARKETS HIDING UNDER ONE TITLE');
@@ -29,6 +31,9 @@ describe('course narrative progression', () => {
     expect(html).not.toContain('SOURCE NOTES');
     expect(html).not.toContain('id="sources"');
     expect(css).toContain('--map-scale');
+    expect(css).toContain('overscroll-behavior:auto');
+    expect(css).toContain('touch-action:pan-y');
+    expect(css).not.toContain('overscroll-behavior:contain');
     expect(css).toContain('.atlas-board::before');
     expect(css).toContain('.course-page>.nav-labs__menu');
     expect(css).toContain('.course-page .site-top .nav a{display:none}');
@@ -43,6 +48,8 @@ describe('course narrative progression', () => {
     expect(nodePackets).toContain('failure, gate');
     expect(script).toContain('content must always win over its entrance effect');
     expect(script).toContain("revealHashTarget({ align: true })");
+    expect(script).toContain('requestAnimationFrame(stepAtlasPhysics)');
+    expect(script).toContain('window scroll');
     expect(css).toContain('prefers-reduced-motion: reduce');
   });
 });
