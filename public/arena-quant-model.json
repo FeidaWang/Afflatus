@@ -1,0 +1,55 @@
+{
+  "id": "QF-01",
+  "version": "0.1.0",
+  "updated": "2026-08-05",
+  "benchmark": "SPY",
+  "engine": "browser-walk-forward",
+  "minimumHistory": 130,
+  "note_en": "QF-01 is an independent browser-native research model. It borrows gs-quant's separation of data context, factor risk, portfolio and hard constraints; it does not use Goldman Sachs proprietary data, models or Marquee services.",
+  "note_zh": "QF-01 是独立实现的浏览器原生研究模型。它借鉴 gs-quant 对时间数据、因子风险、组合对象与硬约束的分层；不使用高盛专有数据、模型或 Marquee 服务。",
+  "provenance": {
+    "repository": "https://github.com/FeidaWang/gs-quant",
+    "commit": "ac755c0",
+    "license": "Apache-2.0",
+    "inspected": "2026-08-05"
+  },
+  "universe": [
+    { "sym": "NVDA", "name": "NVIDIA", "sector": "Semiconductors" },
+    { "sym": "AVGO", "name": "Broadcom", "sector": "Semiconductors" },
+    { "sym": "MSFT", "name": "Microsoft", "sector": "Cloud Platforms" },
+    { "sym": "TSM", "name": "TSMC", "sector": "Semiconductor Foundry" },
+    { "sym": "AMZN", "name": "Amazon", "sector": "Cloud Platforms" },
+    { "sym": "GOOGL", "name": "Alphabet", "sector": "Cloud Platforms" },
+    { "sym": "MU", "name": "Micron", "sector": "Memory" },
+    { "sym": "ANET", "name": "Arista Networks", "sector": "Networking" },
+    { "sym": "VRT", "name": "Vertiv", "sector": "Power & Cooling" },
+    { "sym": "AMD", "name": "Advanced Micro Devices", "sector": "Semiconductors" }
+  ],
+  "weights": {
+    "momentum": 0.38,
+    "trend": 0.27,
+    "resilience": 0.20,
+    "lowVol": 0.15
+  },
+  "settings": {
+    "maxNames": 6,
+    "maxWeight": 0.24,
+    "sectorCap": 0.38,
+    "rebalanceDays": 20,
+    "transactionCostBps": 10
+  },
+  "presets": {
+    "balanced": {
+      "weights": { "momentum": 0.38, "trend": 0.27, "resilience": 0.20, "lowVol": 0.15 },
+      "settings": { "maxNames": 6, "maxWeight": 0.24, "sectorCap": 0.38, "rebalanceDays": 20, "transactionCostBps": 10 }
+    },
+    "momentum": {
+      "weights": { "momentum": 0.55, "trend": 0.25, "resilience": 0.10, "lowVol": 0.10 },
+      "settings": { "maxNames": 5, "maxWeight": 0.28, "sectorCap": 0.48, "rebalanceDays": 10, "transactionCostBps": 12 }
+    },
+    "defensive": {
+      "weights": { "momentum": 0.20, "trend": 0.20, "resilience": 0.30, "lowVol": 0.30 },
+      "settings": { "maxNames": 7, "maxWeight": 0.18, "sectorCap": 0.30, "rebalanceDays": 20, "transactionCostBps": 10 }
+    }
+  }
+}

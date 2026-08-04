@@ -38,6 +38,7 @@ const validators = {
   novelBook: lazyValidator(async () => (await import('./validateNovelsData.js')).validateNovelBook),
   arenaUniverse: lazyValidator(async () => (await import('./validateArenaUniverse.js')).validateArenaUniverse),
   arenaPicks: lazyValidator(async () => (await import('./validateArenaPicks.js')).validateArenaPicks),
+  arenaQuantModel: lazyValidator(async () => (await import('./validateArenaQuantModel.js')).validateArenaQuantModel),
   arenaDigest: lazyValidator(async () => (await import('./validateArenaDigest.js')).validateArenaDigest),
 };
 
@@ -65,6 +66,7 @@ const STATIC_RESOURCES = Object.freeze({
   games: { url: '/games-data.json', freshness: 60 * 60_000, validate: validators.games },
   'novels-index': { url: '/novels-index.json', freshness: 5 * 60_000, validate: validators.novelsIndex },
   'arena-universe': { url: '/arena-universe.json', freshness: 60 * 60_000, validate: validators.arenaUniverse },
+  'arena-quant-model': { url: '/arena-quant-model.json', freshness: 60 * 60_000, validate: validators.arenaQuantModel },
   'arena-picks': { url: '/arena-picks.json', freshness: 5 * 60_000, validate: validators.arenaPicks },
   'arena-digest': { url: '/arena-daily-digest.json', freshness: 5 * 60_000, validate: validators.arenaDigest },
   'arena-news': { url: '/arena-news.json', freshness: 5 * 60_000, validate: objectWith('date', 'items', 'prices') },

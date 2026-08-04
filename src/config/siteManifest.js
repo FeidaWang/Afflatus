@@ -44,8 +44,8 @@ export const ROUTE_SEO = Object.freeze({
       eyebrow: { en: 'MARKET INTELLIGENCE', zh: '市场情报' },
       title: { en: 'Arena', zh: '竞技场' },
       subtitle: {
-        en: 'US stock technical analysis and simulated model ledgers.',
-        zh: '美股技术分析与模型模拟账本。',
+        en: 'QF-01 quant foundry, technical analysis and model ledgers.',
+        zh: 'QF-01 量化铸造舱、技术分析与模型账本。',
       },
       alt: {
         en: 'Arena market intelligence data lanes',
@@ -56,6 +56,7 @@ export const ROUTE_SEO = Object.freeze({
     structuredData: {
       kind: 'arena',
       provenance: [
+        { path: 'public/arena-quant-model.json', dateField: 'updated' },
         { path: 'public/arena-daily-digest.json', dateField: 'generatedAt' },
         { path: 'public/arena-news.json', dateField: 'generatedAt' },
       ],
@@ -235,23 +236,23 @@ export const SITE_MANIFEST = Object.freeze([
     themeColor: '#05070e',
     schema: ['WebApplication', 'Article', 'Dataset'],
     seo: ROUTE_SEO.arena,
-    capabilities: ['live-data', 'svg-viz', 'admin-session'],
+    capabilities: ['live-data', 'canvas', 'svg-viz', 'admin-session'],
     metadata: {
-      title: 'Arena · US Stock TA + Autopilot — Afflatus',
-      description: 'Arena: self-serve US stock technical analysis (key levels, MAs, pivots, pre/post-market) across the full S&P 500, plus Autopilot — three rule-constrained LLM ledgers (sentiment/event, intraday structure, alt-data fusion) trading vs SPY/SMH. Not investment advice.',
+      title: 'Arena · QF-01 Quant Foundry + US Stock TA — Afflatus',
+      description: 'Arena: QF-01, a gs-quant-inspired browser-native factor, risk and walk-forward model lab, plus US stock technical analysis and simulated Autopilot ledgers. Not investment advice.',
       canonical: 'https://feida.au/arena.html',
       ogTitle: 'Project Afflatus · Arena',
-      ogDescription: 'S&P 500 TA dashboard + three simulated LLM trading ledgers (Autopilot) scored against SPY/SMH. Not investment advice.',
+      ogDescription: 'QF-01 factor and risk model lab + S&P 500 TA + simulated Autopilot ledgers. Not investment advice.',
       ogImage: ROUTE_SEO.arena.social.images.en,
     },
     locales: {
       en: {
-        title: 'Arena — US Stock TA and Autopilot · Afflatus',
-        description: 'S&P 500 technical analysis and three rule-constrained simulated model ledgers scored against SPY and SMH. Not investment advice.',
+        title: 'Arena — QF-01 Quant Foundry and US Stock TA · Afflatus',
+        description: 'A gs-quant-inspired browser-native factor, portfolio-risk and walk-forward research model, S&P 500 technical analysis and simulated model ledgers. Not investment advice.',
       },
       zh: {
-        title: '竞技场 — 美股技术分析与自动驾驶模拟盘 · Afflatus',
-        description: '覆盖标普 500 的技术分析，以及三套受规则约束、对照 SPY 与 SMH 的模型模拟账本。非投资建议。',
+        title: '竞技场 — QF-01 量化铸造舱与美股技术分析 · Afflatus',
+        description: '受 gs-quant 架构启发的浏览器原生因子、组合风险与滚动研究模型，以及标普 500 技术分析和模拟账本。非投资建议。',
       },
     },
   },

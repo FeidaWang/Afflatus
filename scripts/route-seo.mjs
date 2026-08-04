@@ -212,25 +212,29 @@ function buildArenaGraph(route, locale, facts, url) {
     name: key === 'zh' ? '竞技场公开模拟记录' : 'Arena public simulation records',
     description:
       key === 'zh'
-        ? '用于竞技场界面的模拟交易运行日志、预测日志与股票池。'
-        : 'Simulation run logs, prediction logs, and equity universe used by the Arena interface.',
+        ? '用于竞技场界面的 QF-01 模型清单、模拟交易运行日志、预测日志与股票池。'
+        : 'QF-01 model manifest, simulation run logs, prediction logs, and equity universe used by the Arena interface.',
     url,
     inLanguage: languageValue(route, locale),
     creator: { '@id': PROFILE_ID },
     measurementTechnique: [
       'rule-constrained model simulation',
       'benchmark-relative return tracking',
+      'costed walk-forward factor simulation',
     ],
     variableMeasured: [
       'model prediction',
       'simulated position',
       'simulated return',
       'benchmark return',
+      'factor score',
+      'constrained portfolio weight',
     ],
     distribution: [
       datasetDistribution('Arena run log', '/arena-runlog.json'),
       datasetDistribution('Arena prediction log', '/arena-predlog.json'),
       datasetDistribution('Arena equity universe', '/arena-universe.json'),
+      datasetDistribution('QF-01 model manifest', '/arena-quant-model.json'),
     ],
     ...(facts.dateModified ? { dateModified: facts.dateModified } : {}),
   };
@@ -255,8 +259,8 @@ function buildArenaGraph(route, locale, facts, url) {
       key === 'zh' ? '竞技场模拟方法与边界' : 'Arena simulation methodology and limits',
     description:
       key === 'zh'
-        ? '三套模型模拟账本在代码强制风控规则下运行，并与 SPY、SMH 基准对照；所有结果均为模拟，非投资建议。'
-        : 'Three simulated model ledgers operate under code-enforced risk rules and are compared with SPY and SMH; all outcomes are simulated and are not investment advice.',
+        ? 'QF-01 在含交易成本的无前视滚动窗口中执行因子评分、市场状态识别与组合硬约束；三套模型模拟账本另与 SPY、SMH 对照。所有结果均为研究模拟，非投资建议。'
+        : 'QF-01 applies factor scoring, regime detection and hard portfolio constraints in a costed, no-look-ahead walk-forward window; three separate model ledgers are compared with SPY and SMH. All outcomes are research simulations, not investment advice.',
     url: `${url}#briefing`,
     inLanguage: languageValue(route, locale),
     author: { '@id': PROFILE_ID },

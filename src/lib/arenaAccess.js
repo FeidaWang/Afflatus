@@ -10,22 +10,26 @@ import { timingSafeEqual } from 'node:crypto';
 /**
  * Resolve today's allowed-without-admin-key symbol set.
  *
- * Picks-only, matching §18.4.1's original intent: just
- * arena-picks.json's `quoteAllowlist` (today's recommended symbols plus the
- * SPY/QQQ/SMH benchmarks the pipeline always includes in it). Free browsing
- * of the full ~500-symbol universe now requires the admin key (§20) — the
+ * Research surfaces only, matching §18.4.1's quota-control intent:
+ * arena-picks.json's `quoteAllowlist` plus Q-Foundry's explicit public
+ * research universe and benchmark. Free browsing of the full ~500-symbol
+ * universe still requires the admin key (§20) — the
  * "Today's Recommended Trades" picks board (arenaPicks.js) is the primary
  * no-key surface, and arenaTech.js's search only loads history/quote data
- * for a symbol once the user picks or searches it, so gating to picks-only
- * here is what actually conserves the free-tier quota. `universe` is no
+ * for a symbol once the user picks or searches it, so limiting anonymous
+ * access to declared research surfaces conserves the free-tier quota. `universe` is no
  * longer consulted; the param is kept so callers don't need to change their
  * call shape. Deliberately does NOT check `picks.date` against "today": a
  * stale picks file still describes real symbols worth allowing.
  */
-export function resolveAllowlist({ picks } = {}) {
+export function resolveAllowlist({ picks, quantModel } = {}) {
   const set = new Set();
   if (picks && Array.isArray(picks.quoteAllowlist)) {
     for (const s of picks.quoteAllowlist) if (s) set.add(s);
+  }
+  if (quantModel && Array.isArray(quantModel.universe)) {
+    for (const asset of quantModel.universe) if (asset && asset.sym) set.add(asset.sym);
+    if (quantModel.benchmark) set.add(quantModel.benchmark);
   }
   return set;
 }

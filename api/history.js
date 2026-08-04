@@ -27,11 +27,16 @@ async function getAllowlist(req) {
   if (allowlistCache.allowlist && now - allowlistCache.at < ALLOWLIST_TTL_MS) return allowlistCache.allowlist;
   const origin = (req.headers && req.headers.host) ? `https://${req.headers.host}` : 'https://feida.au';
   let picks = null;
+  let quantModel = null;
   try {
-    const pr = await fetchWithTimeout(`${origin}/arena-picks.json`, { cache: 'no-store' }, 3000);
-    if (pr.ok) picks = await pr.json();
+    const [picksResponse, modelResponse] = await Promise.allSettled([
+      fetchWithTimeout(`${origin}/arena-picks.json`, { cache: 'no-store' }, 3000),
+      fetchWithTimeout(`${origin}/arena-quant-model.json`, { cache: 'no-store' }, 3000),
+    ]);
+    if (picksResponse.status === 'fulfilled' && picksResponse.value.ok) picks = await picksResponse.value.json();
+    if (modelResponse.status === 'fulfilled' && modelResponse.value.ok) quantModel = await modelResponse.value.json();
   } catch (e) { /* network hiccup — resolveAllowlist degrades gracefully on whatever we got */ }
-  const allowlist = resolveAllowlist({ picks });
+  const allowlist = resolveAllowlist({ picks, quantModel });
   allowlistCache = { at: now, allowlist };
   return allowlist;
 }

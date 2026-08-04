@@ -27,6 +27,7 @@ import { validateGamesData } from '../src/lib/validateGamesData.js';
 import { validateNovelsIndex, validateNovelBook } from '../src/lib/validateNovelsData.js';
 import { validateArenaUniverse } from '../src/lib/validateArenaUniverse.js';
 import { validateArenaPicks } from '../src/lib/validateArenaPicks.js';
+import { validateArenaQuantModel } from '../src/lib/validateArenaQuantModel.js';
 import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
 import { validateArenaDigest } from '../src/lib/validateArenaDigest.js';
 
@@ -45,6 +46,7 @@ const CHECKS = [
   // the note above -- their own settlement scripts are the correctness gate.
   { path: 'public/arena-universe.json', validate: validateArenaUniverse },
   { path: 'public/arena-picks.json', validate: validateArenaPicks },
+  { path: 'public/arena-quant-model.json', validate: validateArenaQuantModel },
   { path: 'public/arena-runlog.json', validate: validateArenaRunlog },
   { path: 'public/arena-daily-digest.json', validate: validateArenaDigest },
 ];

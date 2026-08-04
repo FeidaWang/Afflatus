@@ -9,9 +9,9 @@
    V13 lets users load ANY US ticker (not just the Arena watchlist), so this is
    deliberately NOT a fixed symbol whitelist — see ROADMAP §1 D1 for why.
 
-   Part 4 (urgent.md §18.4/§20, 2026-07-23): a symbol outside today's
-   allowlist (arena-picks.json's quoteAllowlist, picks-only — see
-   arenaAccess.js's resolveAllowlist() header) now requires an `x-arena-key`
+   Part 4 (urgent.md §18.4/§20, 2026-07-23; QF-01 extension 2026-08-05):
+   a symbol outside the explicit public research allowlist (today's picks plus
+   Q-Foundry's manifest universe) now requires an `x-arena-key`
    header matching ARENA_ADMIN_KEY (Vercel env var) — a quota gate, not real
    auth. Set ARENA_ADMIN_KEY in Vercel → Project → Settings → Environment
    Variables to enable admin unlock; until it's set, checkAdminKey() fails
@@ -37,11 +37,16 @@ async function getAllowlist(req) {
   if (allowlistCache.allowlist && now - allowlistCache.at < ALLOWLIST_TTL_MS) return allowlistCache.allowlist;
   const origin = (req.headers && req.headers.host) ? `https://${req.headers.host}` : 'https://feida.au';
   let picks = null;
+  let quantModel = null;
   try {
-    const pr = await fetchWithTimeout(`${origin}/arena-picks.json`, { cache: 'no-store' }, 3000);
-    if (pr.ok) picks = await pr.json();
+    const [picksResponse, modelResponse] = await Promise.allSettled([
+      fetchWithTimeout(`${origin}/arena-picks.json`, { cache: 'no-store' }, 3000),
+      fetchWithTimeout(`${origin}/arena-quant-model.json`, { cache: 'no-store' }, 3000),
+    ]);
+    if (picksResponse.status === 'fulfilled' && picksResponse.value.ok) picks = await picksResponse.value.json();
+    if (modelResponse.status === 'fulfilled' && modelResponse.value.ok) quantModel = await modelResponse.value.json();
   } catch (e) { /* network hiccup — resolveAllowlist degrades gracefully on whatever we got */ }
-  const allowlist = resolveAllowlist({ picks });
+  const allowlist = resolveAllowlist({ picks, quantModel });
   allowlistCache = { at: now, allowlist };
   return allowlist;
 }

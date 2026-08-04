@@ -28,7 +28,7 @@ describe('localized site generator', () => {
   it('emits a fixed Chinese document with localized content and URL contracts', () => {
     const html = transformLocalizedDocument(fixture, arena, 'zh');
     expect(html).toContain('<html lang="zh-CN" data-afflatus-locale="zh">');
-    expect(html).toContain('<title>竞技场 — 美股技术分析与自动驾驶模拟盘 · Afflatus</title>');
+    expect(html).toContain('<title>竞技场 — QF-01 量化铸造舱与美股技术分析 · Afflatus</title>');
     expect(html).toContain('rel="canonical" href="https://feida.au/zh/arena.html"');
     expect(html).toContain('hreflang="en" href="https://feida.au/en/arena.html"');
     expect(html).toContain('hreflang="zh-CN" href="https://feida.au/zh/arena.html"');

@@ -26,15 +26,15 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Arena · US Stock TA + Autopilot — Afflatus</title>
-<meta name="description" content="Arena: self-serve US stock technical analysis (key levels, MAs, pivots, pre/post-market) across the full S&P 500, plus Autopilot — three rule-constrained LLM ledgers (sentiment/event, intraday structure, alt-data fusion) trading vs SPY/SMH. Not investment advice.">
+<title>Arena · QF-01 Quant Foundry + US Stock TA — Afflatus</title>
+<meta name="description" content="Arena: QF-01, a gs-quant-inspired browser-native factor, risk and walk-forward model lab, plus US stock technical analysis and simulated Autopilot ledgers. Not investment advice.">
 <meta name="theme-color" content="#05070e">
 <link rel="canonical" href="https://feida.au/arena.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Project Afflatus">
   <meta property="og:title" content="Project Afflatus · Arena">
-  <meta property="og:description" content="S&amp;P 500 TA dashboard + three simulated LLM trading ledgers (Autopilot) scored against SPY/SMH. Not investment advice.">
+  <meta property="og:description" content="QF-01 factor and risk model lab + S&amp;P 500 TA + simulated Autopilot ledgers. Not investment advice.">
   <meta property="og:url" content="https://feida.au/arena.html">
   <meta property="og:locale" content="en_AU">
   <meta property="og:locale:alternate" content="zh_CN">
@@ -46,7 +46,7 @@
   <meta property="og:image:alt" content="Arena market intelligence data lanes">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Project Afflatus · Arena">
-  <meta name="twitter:description" content="S&amp;P 500 TA dashboard + three simulated LLM trading ledgers (Autopilot) scored against SPY/SMH. Not investment advice.">
+  <meta name="twitter:description" content="QF-01 factor and risk model lab + S&amp;P 500 TA + simulated Autopilot ledgers. Not investment advice.">
   <meta name="twitter:image" content="https://feida.au/assets/og/arena-en.jpg">
   <meta name="twitter:image:alt" content="Arena market intelligence data lanes">
   <script type="application/ld+json" data-afflatus-route-schema="arena" lang="en-AU">
@@ -87,8 +87,8 @@
       "@type": "WebPage",
       "@id": "https://feida.au/arena.html#webpage",
       "url": "https://feida.au/arena.html",
-      "name": "Arena — US Stock TA and Autopilot · Afflatus",
-      "description": "S&P 500 technical analysis and three rule-constrained simulated model ledgers scored against SPY and SMH. Not investment advice.",
+      "name": "Arena — QF-01 Quant Foundry and US Stock TA · Afflatus",
+      "description": "A gs-quant-inspired browser-native factor, portfolio-risk and walk-forward research model, S&P 500 technical analysis and simulated model ledgers. Not investment advice.",
       "inLanguage": [
         "en-AU",
         "zh-CN"
@@ -102,7 +102,7 @@
       "breadcrumb": {
         "@id": "https://feida.au/arena.html#breadcrumb"
       },
-      "dateModified": "2026-07-25T00:58:00Z",
+      "dateModified": "2026-08-05",
       "mainEntity": {
         "@id": "https://feida.au/arena.html#application"
       },
@@ -113,8 +113,8 @@
     {
       "@type": "WebApplication",
       "@id": "https://feida.au/arena.html#application",
-      "name": "Arena — US Stock TA and Autopilot · Afflatus",
-      "description": "S&P 500 technical analysis and three rule-constrained simulated model ledgers scored against SPY and SMH. Not investment advice.",
+      "name": "Arena — QF-01 Quant Foundry and US Stock TA · Afflatus",
+      "description": "A gs-quant-inspired browser-native factor, portfolio-risk and walk-forward research model, S&P 500 technical analysis and simulated model ledgers. Not investment advice.",
       "url": "https://feida.au/arena.html",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Any",
@@ -137,7 +137,7 @@
       "@type": "Article",
       "@id": "https://feida.au/arena.html#methodology",
       "headline": "Arena simulation methodology and limits",
-      "description": "Three simulated model ledgers operate under code-enforced risk rules and are compared with SPY and SMH; all outcomes are simulated and are not investment advice.",
+      "description": "QF-01 applies factor scoring, regime detection and hard portfolio constraints in a costed, no-look-ahead walk-forward window; three separate model ledgers are compared with SPY and SMH. All outcomes are research simulations, not investment advice.",
       "url": "https://feida.au/arena.html#briefing",
       "inLanguage": [
         "en-AU",
@@ -160,7 +160,7 @@
       "@type": "Dataset",
       "@id": "https://feida.au/arena.html#dataset",
       "name": "Arena public simulation records",
-      "description": "Simulation run logs, prediction logs, and equity universe used by the Arena interface.",
+      "description": "QF-01 model manifest, simulation run logs, prediction logs, and equity universe used by the Arena interface.",
       "url": "https://feida.au/arena.html",
       "inLanguage": [
         "en-AU",
@@ -171,13 +171,16 @@
       },
       "measurementTechnique": [
         "rule-constrained model simulation",
-        "benchmark-relative return tracking"
+        "benchmark-relative return tracking",
+        "costed walk-forward factor simulation"
       ],
       "variableMeasured": [
         "model prediction",
         "simulated position",
         "simulated return",
-        "benchmark return"
+        "benchmark return",
+        "factor score",
+        "constrained portfolio weight"
       ],
       "distribution": [
         {
@@ -197,9 +200,15 @@
           "name": "Arena equity universe",
           "encodingFormat": "application/json",
           "contentUrl": "https://feida.au/arena-universe.json"
+        },
+        {
+          "@type": "DataDownload",
+          "name": "QF-01 model manifest",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://feida.au/arena-quant-model.json"
         }
       ],
-      "dateModified": "2026-07-25T00:58:00Z"
+      "dateModified": "2026-08-05"
     },
     {
       "@type": "BreadcrumbList",
@@ -234,6 +243,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles/arena.css">
+<link rel="stylesheet" href="/styles/arena-quant.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
@@ -297,6 +307,119 @@
       <span class="opencd-label" id="cdLabel">US MARKET OPENS IN</span>
       <span class="opencd-clock" id="cdClock" aria-live="off">--:--:--</span>
       <span class="opencd-sub" data-en="NYSE · 09:30–16:00 ET · Mon–Fri" data-zh="纽交所 · 美东 09:30–16:00 · 周一至周五">NYSE · 09:30–16:00 ET · Mon–Fri</span>
+    </div>
+  </section>
+
+  <!-- ===== QF-01 · GS-QUANT-INSPIRED, BROWSER-NATIVE MODEL LAB ===== -->
+  <section class="qm" id="quantFoundry" aria-labelledby="qmTitle">
+    <header class="qm-header">
+      <div class="qm-ident">
+        <span class="qm-eyebrow" data-en="Q-FOUNDRY // INDEPENDENT RESEARCH ENGINE" data-zh="Q-FOUNDRY // 独立研究引擎">Q-FOUNDRY // INDEPENDENT RESEARCH ENGINE</span>
+        <h2 id="qmTitle" data-en="A risk engine, not another stock picker." data-zh="这不是又一个荐股器，而是一台风险引擎。">A risk engine, not another stock picker.</h2>
+        <p data-en="QF-01 turns the current AI-factory research universe into a reproducible walk-forward experiment: completed daily bars enter a time-bounded data context, four cross-sectional factors become an explainable score, and hard portfolio constraints decide what survives." data-zh="QF-01 将当前 AI 工厂研究池变成可复现的滚动实验：已完成日线进入有明确时间边界的数据上下文，四个截面因子形成可解释得分，再由组合硬约束决定哪些信号能够存活。">QF-01 turns the current AI-factory research universe into a reproducible walk-forward experiment: completed daily bars enter a time-bounded data context, four cross-sectional factors become an explainable score, and hard portfolio constraints decide what survives.</p>
+      </div>
+      <div class="qm-stamp" aria-label="Model identity">
+        <b id="qmVersion">QF-01</b>
+        <span><span data-en="manifest" data-zh="清单">manifest</span> · <i id="qmAsOf">—</i></span>
+        <span><span data-en="source commit" data-zh="源提交">source commit</span> · <i id="qmCommit">—</i></span>
+      </div>
+    </header>
+
+    <div class="qm-pipeline" aria-label="Quant model architecture">
+      <div><span>01</span><b>DATA CONTEXT</b><small data-en="completed sessions" data-zh="已完成交易日">completed sessions</small></div>
+      <div><span>02</span><b>FACTOR LENS</b><small data-en="robust cross-section" data-zh="稳健截面标准化">robust cross-section</small></div>
+      <div><span>03</span><b>RISK REGIME</b><small data-en="trend × volatility" data-zh="趋势 × 波动">trend × volatility</small></div>
+      <div><span>04</span><b>CONSTRAINT GATE</b><small data-en="name × sector caps" data-zh="个股 × 行业上限">name × sector caps</small></div>
+      <div><span>05</span><b>WALK-FORWARD</b><small data-en="costed out-of-sample" data-zh="含成本样本外检验">costed out-of-sample</small></div>
+    </div>
+
+    <div class="qm-workbench">
+      <aside class="qm-console" aria-label="Model controls">
+        <div class="qm-console-head">
+          <div><span data-en="VARIANT PATCH BAY" data-zh="变体调参舱">VARIANT PATCH BAY</span><b><i id="qmRunCount">00</i> LOCAL RUNS</b></div>
+          <div class="qm-presets" role="group" aria-label="Model presets">
+            <button type="button" data-qm-preset="balanced" class="is-active">BAL</button>
+            <button type="button" data-qm-preset="momentum">MOM</button>
+            <button type="button" data-qm-preset="defensive">DEF</button>
+          </div>
+        </div>
+
+        <fieldset class="qm-controls">
+          <legend data-en="FACTOR MIX" data-zh="因子混合">FACTOR MIX</legend>
+          <label for="qmMomentum"><span data-en="63D momentum ex-5D" data-zh="63日动量（剔除近5日）">63D momentum ex-5D</span><output id="qmMomentumValue">38%</output><input id="qmMomentum" type="range" min="0" max="70" step="1" value="38"></label>
+          <label for="qmTrend"><span data-en="20D trend" data-zh="20日趋势">20D trend</span><output id="qmTrendValue">27%</output><input id="qmTrend" type="range" min="0" max="60" step="1" value="27"></label>
+          <label for="qmResilience"><span data-en="63D resilience" data-zh="63日抗回撤">63D resilience</span><output id="qmResilienceValue">20%</output><input id="qmResilience" type="range" min="0" max="60" step="1" value="20"></label>
+          <label for="qmLowVol"><span data-en="20D low volatility" data-zh="20日低波动">20D low volatility</span><output id="qmLowVolValue">15%</output><input id="qmLowVol" type="range" min="0" max="60" step="1" value="15"></label>
+        </fieldset>
+
+        <fieldset class="qm-controls qm-constraints">
+          <legend data-en="HARD CONSTRAINTS" data-zh="硬约束">HARD CONSTRAINTS</legend>
+          <label for="qmMaxNames"><span data-en="maximum names" data-zh="最大持仓数">maximum names</span><output id="qmMaxNamesValue">6</output><input id="qmMaxNames" type="range" min="2" max="10" step="1" value="6"></label>
+          <label for="qmMaxWeight"><span data-en="single-name cap" data-zh="单一个股上限">single-name cap</span><output id="qmMaxWeightValue">24%</output><input id="qmMaxWeight" type="range" min="10" max="40" step="1" value="24"></label>
+          <label for="qmSectorCap"><span data-en="sector cap" data-zh="行业上限">sector cap</span><output id="qmSectorCapValue">38%</output><input id="qmSectorCap" type="range" min="20" max="70" step="1" value="38"></label>
+          <label for="qmRebalance"><span data-en="rebalance cadence" data-zh="再平衡周期">rebalance cadence</span><select id="qmRebalance"><option value="10">10D</option><option value="20" selected>20D</option><option value="40">40D</option></select></label>
+        </fieldset>
+
+        <button class="qm-compile" id="qmCompile" type="button"><span data-en="COMPILE LIVE WALK-FORWARD" data-zh="编译实时滚动实验">COMPILE LIVE WALK-FORWARD</span><i aria-hidden="true">↗</i></button>
+        <p class="qm-status" id="qmStatus" data-kind="idle" role="status" aria-live="polite">MODEL COLD</p>
+      </aside>
+
+      <div class="qm-display">
+        <div class="qm-universe-head"><span data-en="RESEARCH UNIVERSE · NO PRINCIPAL / NO ORDERS" data-zh="研究池 · 无本金数据 / 不发送订单">RESEARCH UNIVERSE · NO PRINCIPAL / NO ORDERS</span><b>SPY // BENCHMARK</b></div>
+        <div class="qm-universe" id="qmUniverse" aria-label="Model universe"></div>
+
+        <div class="qm-empty-state" id="qmEmpty">
+          <div class="qm-scope">
+            <span>CONTEXT</span><i></i><span>FACTORS</span><i></i><span>PORTFOLIO</span><i></i><span>RISK</span>
+          </div>
+          <p data-en="Compile when you want the browser to request the latest completed daily histories. Nothing here is annualized from a single trade, no future bar enters a signal, and every rebalance pays the configured cost." data-zh="需要时再编译，浏览器会请求最新的已完成日线。这里不会把单笔交易伪装成年化结果，不让未来 K 线进入信号，并且每次再平衡都扣除设定成本。">Compile when you want the browser to request the latest completed daily histories. Nothing here is annualized from a single trade, no future bar enters a signal, and every rebalance pays the configured cost.</p>
+        </div>
+
+        <div class="qm-result" id="qmResult" hidden>
+          <div class="qm-readouts">
+            <div><span>REGIME</span><b id="qmRegime">—</b></div>
+            <div><span>GROSS</span><b id="qmGross">—</b></div>
+            <div><span>β / SPY</span><b id="qmBeta">—</b></div>
+            <div><span>WINDOW</span><b id="qmWindow">—</b></div>
+          </div>
+          <div class="qm-chart-head"><div><b>QF-01</b><span data-en="costed walk-forward" data-zh="含成本滚动回测">costed walk-forward</span></div><div><i></i>QF-01 <i class="benchmark"></i>SPY</div></div>
+          <div class="qm-chart-wrap" id="qmChartWrap"><canvas id="qmChart" role="img" aria-label="QF-01 walk-forward equity curve compared with SPY"></canvas></div>
+          <div class="qm-metrics" id="qmMetrics"></div>
+
+          <div class="qm-table-head"><b data-en="CONSTRAINED PORTFOLIO" data-zh="约束后组合">CONSTRAINED PORTFOLIO</b><span data-en="weight is normalized exposure, never account value" data-zh="权重是标准化敞口，绝非账户金额">weight is normalized exposure, never account value</span></div>
+          <div class="qm-table-scroll" tabindex="0" aria-label="Portfolio allocation table">
+            <table class="qm-table"><thead><tr><th>ASSET</th><th>SCORE</th><th>MOM</th><th>VOL</th><th>β</th><th>WEIGHT</th></tr></thead><tbody id="qmAllocations"></tbody></table>
+          </div>
+
+          <details class="qm-factor-diagnostics">
+            <summary data-en="OPEN FACTOR DIAGNOSTICS" data-zh="展开因子诊断">OPEN FACTOR DIAGNOSTICS</summary>
+            <div class="qm-table-scroll" tabindex="0" aria-label="Factor diagnostics table">
+              <table class="qm-table qm-factor-table"><thead><tr><th>ASSET</th><th>MOM</th><th>TREND</th><th>RESIL.</th><th>LOW VOL</th><th>SCORE</th></tr></thead><tbody id="qmFactors"></tbody></table>
+            </div>
+          </details>
+          <button class="qm-export" id="qmExport" type="button" data-en="EXPORT THIS RUN · JSON" data-zh="导出本次实验 · JSON">EXPORT THIS RUN · JSON</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="qm-lower">
+      <div class="qm-iterations">
+        <div><b data-en="LOCAL ITERATION TAPE" data-zh="本地迭代磁带">LOCAL ITERATION TAPE</b><span data-en="device-only · newest first" data-zh="仅此设备 · 最新优先">device-only · newest first</span></div>
+        <ol id="qmIterations"><li class="qm-no-run">—</li></ol>
+      </div>
+      <details class="qm-provenance">
+        <summary data-en="WHY THIS IS BASED ON GS-QUANT" data-zh="为什么它以 GS-QUANT 为基础">WHY THIS IS BASED ON GS-QUANT</summary>
+        <p data-en="The implementation follows the repository's architectural seams, not its proprietary services: an explicit time context, a portfolio as a first-class object, factor and specific-risk diagnostics, then an optimizer gate with position, sector and turnover constraints. Arena replaces Marquee-bound calls with public completed-session data and a transparent local engine." data-zh="实现遵循的是仓库的架构接缝，而非它的专有服务：显式时间上下文、作为一等对象的组合、因子与特异风险诊断，最后通过含个股、行业与换手约束的优化门。Arena 用公开的已完成交易日数据与透明本地引擎，替换依赖 Marquee 的调用。">The implementation follows the repository's architectural seams, not its proprietary services: an explicit time context, a portfolio as a first-class object, factor and specific-risk diagnostics, then an optimizer gate with position, sector and turnover constraints. Arena replaces Marquee-bound calls with public completed-session data and a transparent local engine.</p>
+        <div class="qm-source-links">
+          <a href="https://github.com/FeidaWang/gs-quant" target="_blank" rel="noopener">FeidaWang/gs-quant ↗</a>
+          <a href="https://github.com/FeidaWang/gs-quant/blob/master/gs_quant/data/core.py" target="_blank" rel="noopener">DataContext ↗</a>
+          <a href="https://github.com/FeidaWang/gs-quant/blob/master/gs_quant/markets/portfolio.py" target="_blank" rel="noopener">Portfolio ↗</a>
+          <a href="https://github.com/FeidaWang/gs-quant/blob/master/gs_quant/models/risk_model.py" target="_blank" rel="noopener">FactorRiskModel ↗</a>
+          <a href="https://github.com/FeidaWang/gs-quant/blob/master/gs_quant/markets/optimizer.py" target="_blank" rel="noopener">OptimizerConstraints ↗</a>
+          <a href="https://github.com/FeidaWang/gs-quant/blob/master/gs_quant/backtests/generic_engine.py" target="_blank" rel="noopener">GenericEngine ↗</a>
+        </div>
+        <p class="qm-legal" data-en="Independent educational research, not affiliated with or endorsed by Goldman Sachs. Backtests are hypothetical, sensitive to assumptions and transaction costs, and are not investment advice." data-zh="独立教育研究，与高盛无关联且未经其背书。回测属于假设性结果，对参数与交易成本敏感，不构成投资建议。">Independent educational research, not affiliated with or endorsed by Goldman Sachs. Backtests are hypothetical, sensitive to assumptions and transaction costs, and are not investment advice.</p>
+      </details>
     </div>
   </section>
 

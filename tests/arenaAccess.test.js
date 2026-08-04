@@ -3,9 +3,10 @@ import { resolveAllowlist, isSymbolAllowed, checkAdminKey } from '../src/lib/are
 
 const universe = { symbols: [{ sym: 'NVDA' }, { sym: 'AAPL' }, { sym: 'SPY' }] };
 const picks = { date: '2026-07-23', quoteAllowlist: ['WAB', 'SMCI', 'T', 'SPY'] };
+const quantModel = { benchmark: 'SPY', universe: [{ sym: 'NVDA' }, { sym: 'AVGO' }] };
 
 describe('resolveAllowlist', () => {
-  it('is picks-only — the quoteAllowlist symbols, nothing from the universe', () => {
+  it('uses the picks allowlist and nothing from the broad market universe', () => {
     const set = resolveAllowlist({ picks, universe });
     expect(set.has('WAB')).toBe(true);
     expect(set.has('NVDA')).toBe(false); // universe is no longer consulted
@@ -35,6 +36,16 @@ describe('resolveAllowlist', () => {
     const set = resolveAllowlist({ picks });
     expect(set.has('GME')).toBe(false);
     expect(set.has('NVDA')).toBe(false);
+  });
+  it('adds only the explicit Q-Foundry universe and benchmark', () => {
+    const set = resolveAllowlist({ picks, quantModel, universe });
+    expect(set.has('NVDA')).toBe(true);
+    expect(set.has('AVGO')).toBe(true);
+    expect(set.has('SPY')).toBe(true);
+    expect(set.has('AAPL')).toBe(false);
+  });
+  it('ignores malformed Q-Foundry manifests', () => {
+    expect(resolveAllowlist({ picks: null, quantModel: { universe: 'NVDA' } }).size).toBe(0);
   });
 });
 
