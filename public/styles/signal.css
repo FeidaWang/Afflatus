@@ -139,8 +139,8 @@ a{color:inherit;text-decoration:none}
 .nav a::before{content:'';position:absolute;top:-8px;bottom:-8px;left:-2px;right:-2px}
 .nav a:hover{border-color:var(--amber);color:var(--amber)}
 .nav a.active{background:var(--amber);border-color:var(--amber);color:#1a1a1c}
-.lang-toggle{font:700 11px/1 var(--mono);letter-spacing:.1em;color:#1a1a1c;background:var(--amber);border:1px solid var(--amber);padding:9px 11px;cursor:pointer}
-.lang-toggle:hover{background:var(--red);border-color:var(--red);color:#fff}
+.lang-toggle,.nav .lang-toggle{font:700 11px/1 var(--mono);letter-spacing:.1em;color:#1a1a1c;background:var(--amber);border:1px solid var(--amber);padding:9px 11px;cursor:pointer}
+.lang-toggle:hover,.nav .lang-toggle:hover{background:var(--red);border-color:var(--red);color:#fff}
 
 /* dossier hero */
 .hero{margin-top:16px;background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:8px 8px 0 rgba(0,0,0,.6);position:relative;overflow:hidden}

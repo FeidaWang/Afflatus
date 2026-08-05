@@ -43,4 +43,8 @@ describe('signal policy reaction story', () => {
     expect(css).toMatch(/\.signal-stale-notice\{[^}]*color:#533b00;[^}]*font:700/s);
     expect(css).toMatch(/\.signal-stale-notice\{[^}]*text-shadow:none/s);
   });
+
+  it('keeps the localized language link dark on its amber control', () => {
+    expect(css).toMatch(/\.lang-toggle,\.nav \.lang-toggle\{[^}]*color:#1a1a1c;[^}]*background:var\(--amber\)/s);
+  });
 });

@@ -1220,6 +1220,7 @@ body.hud-off main { padding-bottom: 68px; }
 }
 
 body.voyage-log-open #combatHud .cic-panel { opacity: .22; filter: saturate(.55) brightness(.8); pointer-events: none; }
+body.voyage-log-open #combatHud .cic-shell { overflow: visible; }
 body.voyage-log-open #combatHud .cic-log-console { opacity: 1; visibility: visible; transform: none; pointer-events: auto; }
 
 #combatHud .cic-log-head {

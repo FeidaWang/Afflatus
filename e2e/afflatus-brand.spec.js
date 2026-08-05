@@ -131,6 +131,10 @@ test.describe('Mobile primary navigation', () => {
       await expect(nav.locator(':scope > *')).toHaveCount(route === '/serial.html' ? 5 : 6);
 
       const audit = await nav.evaluate((element) => {
+        const header = element.closest('.site-header--follow');
+        const brand = header?.querySelector('[data-afflatus-brand]');
+        const navBounds = element.getBoundingClientRect();
+        const brandBounds = brand?.getBoundingClientRect();
         const children = [...element.children].map((child) => {
           const target = child.matches('a, button') ? child : child.querySelector('a, button');
           const bounds = target.getBoundingClientRect();
@@ -142,11 +146,13 @@ test.describe('Mobile primary navigation', () => {
         });
         return {
           overflow: element.scrollWidth - element.clientWidth,
+          brandNavOverlap: brandBounds ? Math.max(0, brandBounds.bottom - navBounds.top) : 0,
           children,
         };
       });
 
       expect(audit.overflow).toBeLessThanOrEqual(1);
+      expect(audit.brandNavOverlap).toBeLessThanOrEqual(1);
       for (const item of audit.children) {
         expect(item.left).toBeGreaterThanOrEqual(-1);
         expect(item.right).toBeLessThanOrEqual(391);
@@ -157,6 +163,29 @@ test.describe('Mobile primary navigation', () => {
 });
 
 test.describe('Homepage following command bar', () => {
+  test('keeps Voyage Notes fully inside the viewport when opened', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop CIC geometry regression');
+    await page.setViewportSize({ width: 1512, height: 827 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await settlePage(page);
+
+    await page.locator('#commandModeBtn').click();
+    await expect(page.locator('body')).not.toHaveClass(/hud-off/);
+    await page.locator('#voyageLogToggle').click();
+
+    const consolePanel = page.locator('#cicVoyageConsole');
+    await expect(consolePanel).toBeVisible();
+    await expect(consolePanel).toHaveAttribute('aria-hidden', 'false');
+    const panelBounds = await consolePanel.boundingBox();
+    const viewport = page.viewportSize();
+
+    expect(panelBounds).not.toBeNull();
+    expect(viewport).not.toBeNull();
+    expect(panelBounds.y).toBeGreaterThanOrEqual(-1);
+    expect(panelBounds.y + panelBounds.height).toBeLessThanOrEqual(viewport.height + 1);
+    await expect(page.locator('#voyageLogClose')).toBeInViewport();
+  });
+
   test('stays fixed through the allocation deck without leaking private amounts', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await settlePage(page);

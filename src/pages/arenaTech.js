@@ -444,7 +444,7 @@ import {
     el.dataset.arenaState = page.status;
     el.setAttribute('aria-busy', String(page.status === ARENA_PAGE_STATUS.LOADING));
     if (!sym) {
-      el.innerHTML = `<div class="ta-empty">${T('Pick a recommended trade above, or search any S&P 500 ticker.', '点选上方推荐交易，或搜索任意标普 500 代码。')}</div>`;
+      el.innerHTML = `<div class="ta-empty">${T('Search a ticker above to load its latest available daily candles.', '在上方搜索代码，以加载最近可用的日K数据。')}</div>`;
       return;
     }
     if (page.status === ARENA_PAGE_STATUS.LOADING) {

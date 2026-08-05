@@ -13,15 +13,10 @@ import { courseNodes } from '../data/courseNodes.js';
   };
   const T = (en, zh) => lang() === 'zh' ? zh : en;
 
-  /* The page behaves like an archive projector: load the film gate, then
-     mechanically reveal each transmission as it reaches the viewport. */
+  /* The page behaves like an archive projector, but the archive itself is
+     visible immediately; scroll position mechanically reveals later
+     transmissions without placing a decorative gate over the first paint. */
   document.body.classList.add('course-enhanced');
-  const filmLoader = $('#filmLoader');
-  window.setTimeout(() => {
-    document.body.classList.add('course-loaded');
-    filmLoader?.setAttribute('hidden', '');
-  }, 2100);
-
   const transmissions = $$('main > section:not(.hero)');
   const revealTransmission = (section) => {
     if (!section) return;

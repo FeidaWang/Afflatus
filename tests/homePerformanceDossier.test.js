@@ -41,6 +41,7 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(combatCss).toMatch(/\.cic-log-console\s*\{[^}]*width:\s*min\(520px,/s);
     expect(combatCss).toMatch(/\.cic-log-entries p\s*\{[^}]*font-size:\s*10\.5px;/s);
     expect(combatCss).toMatch(/\.cic-log-boot\.play\s*\{[^}]*\.55s/s);
+    expect(combatCss).toMatch(/body\.voyage-log-open #combatHud \.cic-shell\s*\{[^}]*overflow:\s*visible;/s);
   });
 
   it('publishes all five supplied profitable trade cycles', () => {

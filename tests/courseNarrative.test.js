@@ -16,7 +16,7 @@ describe('course narrative progression', () => {
     expect(html).toContain('id="fdeReviewForm"');
     expect((html.match(/class="map-node /g) || []).length).toBe(36);
     expect((html.match(/class="microfiche /g) || []).length).toBe(7);
-    expect(html).toContain('id="filmLoader"');
+    expect(html).not.toContain('id="filmLoader"');
     expect(html).toContain('id="signalTimecode"');
     expect(html).toContain('id="agent-core"');
     expect(html).toContain('id="courseNodeDialog"');
@@ -37,10 +37,10 @@ describe('course narrative progression', () => {
     expect(css).not.toContain('overscroll-behavior:contain');
     expect(css).toContain('.atlas-board::before');
     expect(css).toContain('.course-page>.nav-labs__menu');
-    expect(css).toContain('.course-page .site-top .nav a{display:none}');
+    expect(css).not.toContain('.course-page .site-top .nav a{display:none}');
     expect(css).toContain('.orientation-theses');
     expect(css).toContain('body[data-course-stage="4"]');
-    expect(css).toContain('@keyframes gate-open');
+    expect(css).not.toContain('@keyframes gate-open');
     expect(css).toContain('transform:translate3d(0,48px,0)');
     expect(css).not.toContain('awaiting-transmission{clip-path:inset(0 0 100% 0)');
     const script = readFileSync('src/pages/course.js', 'utf8');
@@ -48,6 +48,7 @@ describe('course narrative progression', () => {
     expect((nodePackets.match(/'\d{2}': packet\(/g) || []).length).toBe(36);
     expect(nodePackets).toContain('failure, gate');
     expect(script).toContain('content must always win over its entrance effect');
+    expect(script).not.toContain('filmLoader');
     expect(script).toContain("revealHashTarget({ align: true })");
     expect(script).toContain('requestAnimationFrame(stepAtlasPhysics)');
     expect(script).toContain('clusterEntries');
