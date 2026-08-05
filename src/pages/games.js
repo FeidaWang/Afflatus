@@ -101,6 +101,10 @@ import { getLocale } from '../lib/localeStore.js';
   /* ---------- fixtures ---------- */
   function renderFixtures() {
     const host = $('fixtures'); if (!host || !data) return;
+    if (!data.fixtures.length) {
+      host.innerHTML = `<div class="empty">${T('The final scored match log now lives in the unified Stats archive.', '最终逐场计分记录已归入统一统计存档。')} <a href="/stats.html">${T('Open Stats →', '打开统计 →')}</a></div>`;
+      return;
+    }
     host.innerHTML = data.fixtures.map((f) => {
       const tbd = isTBD(f);
       // Fable prediction (always visible once kickoff locked, or always show for upcoming)
@@ -345,7 +349,20 @@ import { getLocale } from '../lib/localeStore.js';
       el.className = 'sub prov-badge prov-' + badge.tier;
       el.textContent = badge.text;
     }
-    if ($('gnote')) $('gnote').textContent = T(data.note_en, data.note_zh);
+    const note = $('gnote');
+    if (note) {
+      note.textContent = T(data.note_en, data.note_zh);
+      const source = data.archiveSource;
+      if (source?.url) {
+        note.append(' · ');
+        const link = document.createElement('a');
+        link.href = source.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = T(source.label_en, source.label_zh);
+        note.append(link);
+      }
+    }
   }
 
   function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderPlayers(); renderFixtures(); renderBracket(); }

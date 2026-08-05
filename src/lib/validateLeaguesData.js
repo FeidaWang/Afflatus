@@ -13,6 +13,22 @@
 function isNonEmptyString(v) { return typeof v === 'string' && v.trim().length > 0; }
 function pushErr(errors, msg) { errors.push(msg); }
 
+function validateArchiveSource(source, errors) {
+  if (source == null) return;
+  if (!source || typeof source !== 'object' || Array.isArray(source)) {
+    pushErr(errors, 'archiveSource: must be an object');
+    return;
+  }
+  if (!isNonEmptyString(source.label_en) || !isNonEmptyString(source.label_zh)) {
+    pushErr(errors, 'archiveSource: bilingual labels are required');
+  }
+  try {
+    if (new URL(source.url).protocol !== 'https:') pushErr(errors, 'archiveSource.url: must use https');
+  } catch {
+    pushErr(errors, 'archiveSource.url: must be a valid https URL');
+  }
+}
+
 function seriesIsResolved(s) {
   return s && s.result && typeof s.result.home === 'number' && typeof s.result.away === 'number';
 }
@@ -54,6 +70,8 @@ export function validateLeaguesData(data) {
   }
   if (!isNonEmptyString(data.tournament)) errors.push('tournament: missing or empty');
   if (!isNonEmptyString(data.updated)) errors.push('updated: missing or empty');
+  if (data.mode != null && !['live', 'archive'].includes(data.mode)) errors.push('mode: must be "live" or "archive"');
+  validateArchiveSource(data.archiveSource, errors);
   validateSeries(data.series, errors);
   if (data.champion != null) validateProbBoard(data.champion, 'champion', errors, true);
   if (data.mvp != null) validateProbBoard(data.mvp, 'mvp', errors, false);

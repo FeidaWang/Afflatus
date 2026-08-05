@@ -1,8 +1,14 @@
 {
   "tournament": "MSI 2026 Bracket Stage",
-  "updated": "2026-07-12",
-  "version": 12,
-  "mode": "live",
+  "updated": "2026-08-05",
+  "version": 13,
+  "mode": "archive",
+  "finalsMvp": "Zeus · HLE",
+  "archiveSource": {
+    "label_en": "MSI 2026 result log",
+    "label_zh": "MSI 2026 赛果记录",
+    "url": "https://gol.gg/tournament/tournament-matchlist/MSI%202026/"
+  },
   "teamLogos": {
     "BLG": "https://gol.gg/_img/teams_icon/Bilibili_Gaminglogo_profile.webp",
     "HLE": "https://gol.gg/_img/teams_icon/Hanwha_Life_Esportslogo_profile.webp",
@@ -13,16 +19,16 @@
     "FURIA": "https://gol.gg/_img/teams_icon/FURIAlogo_profile.webp",
     "TSW": "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/c/c9/Team_Secret_Whaleslogo_profile.png/revision/latest?cb=20260405162909"
   },
-  "note_en": "Fable 5 Max's own reads on every MSI 2026 Bracket Stage series — for entertainment, not betting advice. Double-elimination, all series Bo5, Fearless Draft (each champion locks out for both teams once picked in the series). Odds shown only where a real book price was found (GG.bet); otherwise Fable states its own probability plainly as a call, not a market price.",
-  "note_zh": "Fable 5 Max 对每场 MSI 2026 淘汰赛的个人研判——仅供娱乐，不构成博彩建议。双败淘汰赛制，全部系列赛 Bo5，赛制为 Fearless Draft（同一系列赛内任意一方选过的英雄，双方均不可再选）。仅在查到真实盘口（GG.bet）时展示赔率；其余情况 Fable 直接给出自己的概率研判，不冒充市场价格。",
+  "note_en": "Final archive of Fable 5 Max's pre-match calls for all 14 MSI 2026 Bracket Stage series — for entertainment, not betting advice. Historical odds are shown only where a GG.bet price was recorded. HLE's 3-2 Grand Final win and Zeus's MVP award were verified after the event.",
+  "note_zh": "Fable 5 Max 对 MSI 2026 淘汰赛阶段全部 14 场系列赛赛前研判的最终存档——仅供娱乐，不构成博彩建议。仅在当时记录到 GG.bet 盘口时展示历史赔率。HLE 总决赛 3-2 夺冠及 Zeus 获得 MVP 已在赛后核验。",
   "record": {
     "since": "2026-07-03",
-    "resolved": 13,
+    "resolved": 14,
     "correctOutcome": 7,
     "exactScore": 2,
-    "winRate": 54,
-    "note_en": "Fable series-outcome calls scored from Bracket Stage Round 1 onward, through the Grand Final. Updated daily. ⭐ = exact series score. ✓ = correct outcome.",
-    "note_zh": "自淘汰赛第一轮起对 Fable 系列赛胜负预测计分，并延续至总决赛，每日更新。⭐ = 比分全中，✓ = 结果正确。",
+    "winRate": 50,
+    "note_en": "Final record of all 14 bracket-stage series calls through the 12 July Grand Final. Archive corrected and closed 5 August 2026. ⭐ = exact series score. ✓ = correct outcome.",
+    "note_zh": "淘汰赛阶段全部 14 场系列赛研判的最终记录，覆盖至 7 月 12 日总决赛；存档于 2026 年 8 月 5 日校正并封存。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
       {
         "id": "msi-hle-g2",
@@ -95,6 +101,15 @@
         "pick_zh": "HLE 胜",
         "ok": true,
         "exact": false
+      },
+      {
+        "id": "msi-grand-final",
+        "label_en": "BLG 2-3 HLE",
+        "label_zh": "BLG 2-3 HLE",
+        "pick_en": "BLG win",
+        "pick_zh": "BLG 胜",
+        "ok": false,
+        "exact": false
       }
     ]
   },
@@ -103,15 +118,15 @@
       "team": "BLG",
       "team_zh": "BLG",
       "prob": 60,
-      "reason_en": "Unbeaten in every series all tournament, resting since July 9. Enters the Grand Final as the favorite on both form and the GG.bet line (BLG 1.61).",
-      "reason_zh": "本届赛事系列赛保持全胜，自7月9日起持续休整。无论状态还是GG.bet盘口（BLG 1.61）均看好其夺冠。"
+      "reason_en": "Pre-final snapshot: unbeaten in every series and rested since July 9. BLG entered the Grand Final as the favorite on both form and the recorded GG.bet line (1.61).",
+      "reason_zh": "决赛前快照：此前系列赛保持全胜，自 7 月 9 日起休整。无论状态还是当时记录的 GG.bet 盘口（1.61）均更看好 BLG。"
     },
     {
       "team": "HLE",
       "team_zh": "HLE",
       "prob": 40,
-      "reason_en": "Survived a five-game war with LYON in the Lower Bracket Final (3-2) to earn a rematch with BLG, who beat them 3-1 in the Upper Bracket Final. Slight underdog on the GG.bet line (2.23).",
-      "reason_zh": "下位组决赛五局苦战3-2淘汰LYON，将与曾3-1击败自己的BLG再战总决赛。GG.bet盘口（2.23）中处于劣势。"
+      "reason_en": "Pre-final snapshot: HLE survived a five-game Lower Bracket Final against LYON and entered the rematch as the slight underdog on the recorded GG.bet line (2.23). HLE ultimately won the title 3-2.",
+      "reason_zh": "决赛前快照：HLE 在下位组决赛五局淘汰 LYON，并以当时 GG.bet 盘口（2.23）的轻微劣势进入重赛；最终 HLE 以 3-2 夺冠。"
     }
   ],
   "mvp": [
@@ -119,32 +134,32 @@
       "team": "Knight · BLG",
       "team_zh": "Knight · BLG",
       "prob": 40,
-      "reason_en": "Still unbeaten all tournament and the Upper Bracket Final series MVP; enters the Grand Final rested and the heavy favorite to lift the MVP trophy alongside the title.",
-      "reason_zh": "全程不败，且当选上位组决赛系列赛MVP，休整多日后以夺冠头号热门身份出战总决赛，MVP呼声最高。",
+      "reason_en": "Pre-final shortlist: Upper Bracket Final series MVP and the leading candidate while BLG were still unbeaten.",
+      "reason_zh": "决赛前候选：上位组决赛系列赛 MVP；当时 BLG 仍保持不败，因此排名首位。",
       "teamCode": "BLG"
     },
     {
       "team": "Gumayusi · HLE",
       "team_zh": "Gumayusi · HLE",
       "prob": 26,
-      "reason_en": "Posted zero deaths in Game 4 of HLE's 3-2 Lower Bracket Final win over LYON (Crypto Briefing) — flawless since joining HLE from T1, now gets a Grand Final rematch with BLG.",
-      "reason_zh": "在HLE 3-2淘汰LYON的下位组决赛中打出第四局0死亡数据（Crypto Briefing）——加盟HLE后状态火热，将出战总决赛复仇战。",
+      "reason_en": "Pre-final shortlist: entered the title series after HLE's five-game Lower Bracket Final win over LYON.",
+      "reason_zh": "决赛前候选：HLE 五局淘汰 LYON 后进入总决赛。",
       "teamCode": "HLE"
     },
     {
       "team": "Zeka · HLE",
       "team_zh": "Zeka · HLE",
       "prob": 20,
-      "reason_en": "Rebounded from the 1-3 Upper Bracket Final loss to help HLE survive LYON's five-game push and reach a second shot at BLG in the Grand Final.",
-      "reason_zh": "从上位组决赛1-3失利中调整，助HLE五局艰难淘汰LYON，晋级总决赛再战BLG。",
+      "reason_en": "Pre-final shortlist: helped HLE recover from the Upper Bracket Final loss and earn a second shot at BLG.",
+      "reason_zh": "决赛前候选：帮助 HLE 从上位组决赛失利中调整，并再次获得挑战 BLG 的机会。",
       "teamCode": "HLE"
     },
     {
       "team": "Delight · HLE",
       "team_zh": "Delight · HLE",
       "prob": 14,
-      "reason_en": "Delivered a near-flawless Blitzcrank in the Game 5 decider vs LYON (GosuGamers) — the calm center of HLE's five-game Lower Bracket Final win.",
-      "reason_zh": "决胜局对LYON打出近乎完美的机器人表演（GosuGamers），是HLE五局逆转晋级的稳定核心。",
+      "reason_en": "Pre-final shortlist: the stabilizing center of HLE's five-game Lower Bracket Final win.",
+      "reason_zh": "决赛前候选：HLE 下位组决赛五局取胜时的稳定核心。",
       "teamCode": "HLE"
     }
   ],
@@ -505,7 +520,7 @@
       "reason_en": "BLG remain unbeaten in every series this tournament and enter rested since July 9; HLE arrive off a grueling 5-game war with LYON. Leaning BLG for the title, but expecting HLE to make it close.",
       "reason_zh": "BLG本届赛事系列赛保持全胜，7月9日后一直休整；HLE则刚打完对LYON的五局苦战。倾向BLG夺冠，但预计HLE会缠斗到底。",
       "odds": { "h": 1.61, "a": 2.23, "src": "GG.bet" },
-      "result": null
+      "result": { "home": 2, "away": 3 }
     }
   ]
 }

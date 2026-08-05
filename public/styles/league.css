@@ -48,6 +48,7 @@ a{color:inherit;text-decoration:none}
 .brief{max-width:70ch;color:#c9d3d8;font:400 14.5px/1.6 var(--serif)}
 .note{margin-top:12px;color:var(--dim);font:400 12px/1.5 var(--mono);border-left:2px solid var(--gold);padding-left:10px}
 .note b{color:var(--yellow)}
+.note a{color:var(--yellow);text-decoration:underline;text-underline-offset:2px}
 
 .panel-block{margin-top:16px}
 .panel{border:1px solid var(--line);background:var(--panel2);position:relative;clip-path:polygon(0 0,100% 0,100% 100%,18px 100%,0 calc(100% - 18px));box-shadow:0 0 26px rgba(200,170,110,.07)}

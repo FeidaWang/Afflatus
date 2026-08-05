@@ -1,16 +1,22 @@
 {
   "tournament": "FIFA World Cup 2026",
   "updated": "2026-07-20",
-  "note_en": "Predictions are my (Fable 5) own reads — for entertainment, not betting advice. 1X2 odds from DraftKings/bet365/FanDuel (16-19 Jul); score odds are market-derived estimates. Scratch a panel to reveal my exact score call.",
-  "note_zh": "预测为我（Fable 5）的个人研判——仅供娱乐，不构成博彩建议。胜平负赔率来源：DraftKings/bet365/FanDuel（7 月 16-19 日）；比分赔率为市场推算估值。刮开面板揭晓我的精准比分预测。",
+  "mode": "archive",
+  "archiveSource": {
+    "label_en": "FIFA final report",
+    "label_zh": "FIFA 决赛报告",
+    "url": "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/spain-argentina-final-report-highlights"
+  },
+  "note_en": "Final archive of Fable 5's pre-match calls — for entertainment, not betting advice. Historical 1X2 odds came from DraftKings/bet365/FanDuel (16-19 Jul); score odds were market-derived estimates. Final outcomes were verified after the 19 July final.",
+  "note_zh": "Fable 5 赛前研判的最终存档——仅供娱乐，不构成博彩建议。历史胜平负赔率来源：DraftKings/bet365/FanDuel（7 月 16-19 日）；比分赔率为市场推算估值。最终赛果已在 7 月 19 日决赛后核验。",
   "record": {
     "since": "2026-06-24",
     "resolved": 56,
     "correctOutcome": 38,
     "exactScore": 10,
     "winRate": 68,
-    "note_en": "Match-outcome calls scored from Matchday 3 onward, continuing through the knockout rounds. Updated daily. ⭐ = exact scoreline. ✓ = correct outcome.",
-    "note_zh": "自第三轮起对预测胜负计分，并延续至淘汰赛阶段，每日更新。⭐ = 比分全中，✓ = 结果正确。",
+    "note_en": "Final record of match-outcome calls from Matchday 3 through the 19 July final. Archive closed 20 July 2026. ⭐ = exact scoreline. ✓ = correct outcome.",
+    "note_zh": "自第三轮至 7 月 19 日决赛的胜负研判最终记录；存档于 2026 年 7 月 20 日封存。⭐ = 比分全中，✓ = 结果正确。",
     "log": [
       {
         "id": "wc-fra-mar",

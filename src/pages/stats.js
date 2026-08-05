@@ -356,7 +356,13 @@ function renderBoards(archive) {
       winner: (entry, actual) => archive.matchesMvp(entry, actual),
       winnerGlyph: '✓',
     });
-    if (!archive.actualMvp) {
+    if (archive.actualMvp) {
+      mvpContainer.appendChild(bilingualNode(
+        element('p', 'note'),
+        `Actual Finals MVP: ${archive.actualMvp}.`,
+        `实际总决赛 MVP：${archive.actualMvp}。`,
+      ));
+    } else {
       mvpContainer.appendChild(bilingualNode(
         element('p', 'note'),
         'Official Finals MVP pending in the data file.',

@@ -105,9 +105,9 @@ import { getLocale } from '../lib/localeStore.js';
   /* ---------- series (bracket cards) ---------- */
   function renderSeries() {
     const host = $('series'); if (!host || !data) return;
-    const upcoming = data.series.filter((s) => !s.result);
-    if (!upcoming.length) { host.innerHTML = `<div class="empty">${T('All series in this stage are complete.', '本阶段赛事均已结束。')}</div>`; return; }
-    host.innerHTML = upcoming.map((s) => {
+    const visibleSeries = data.mode === 'archive' ? data.series : data.series.filter((s) => !s.result);
+    if (!visibleSeries.length) { host.innerHTML = `<div class="empty">${T('No series are currently scheduled.', '当前没有待进行的系列赛。')}</div>`; return; }
+    host.innerHTML = visibleSeries.map((s) => {
       const tbd = isTBD(s);
       const done = !!s.result;
       const opusLine = (s.opus && !tbd) ? `<div class="opus">${FABLE_ICON} <b>Fable</b> · ${outcomeLabel(s, s.opus)} · ${Math.round(s.conf * 100)}%<span class="orsn">${T(s.reason_en, s.reason_zh)}</span></div>` : (tbd ? '' : `<div class="opus dim">${FABLE_ICON} ${T('Call pending exact schedule confirmation', '待官方具体时间确认后给出研判')}</div>`);
@@ -155,7 +155,20 @@ import { getLocale } from '../lib/localeStore.js';
       el.className = 'sub prov-badge prov-' + badge.tier;
       el.textContent = badge.text;
     }
-    if ($('gnote')) $('gnote').textContent = T(data.note_en, data.note_zh);
+    const note = $('gnote');
+    if (note) {
+      note.textContent = T(data.note_en, data.note_zh);
+      const source = data.archiveSource;
+      if (source?.url) {
+        note.append(' · ');
+        const link = document.createElement('a');
+        link.href = source.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = T(source.label_en, source.label_zh);
+        note.append(link);
+      }
+    }
   }
 
   function renderAll() { if (!data) return; renderUpdated(); renderRecord(); renderChampions(); renderMvp(); renderSeries(); }

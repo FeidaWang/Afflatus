@@ -18,7 +18,8 @@ describe('stats archive adapters', () => {
     expect(archive.scored).toHaveLength(data.record.resolved);
     expect(archive.scored.filter((record) => record.ok)).toHaveLength(data.record.correctOutcome);
     expect(archive.scored.filter((record) => record.exact)).toHaveLength(data.record.exactScore);
-    expect(archive.actualChampion).toBeNull();
+    expect(archive.actualChampion).toBe('HLE');
+    expect(archive.actualMvp).toBe('Zeus · HLE');
   });
 
   it('keeps World Cup full-tournament headlines separate from detailed matches', async () => {

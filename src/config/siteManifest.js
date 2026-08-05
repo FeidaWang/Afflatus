@@ -463,11 +463,11 @@ export const SITE_MANIFEST = Object.freeze([
     schema: [],
     capabilities: ['archived'],
     metadata: {
-      title: 'Project Afflatus · Games — World Cup Prediction Arena',
-      description: 'A cyberpunk World Cup 2026 prediction arena: pick match winners before kickoff against Fable 5 Max, with daily champion and best-player probabilities. For fun, not betting advice.',
+      title: 'Project Afflatus · World Cup 2026 Prediction Archive',
+      description: 'Archived World Cup 2026 predictions and final scorecard: 56 calls, 68% outcome hit rate, 10 exact scorelines, plus the final champion and player awards. Entertainment only.',
       canonical: 'https://feida.au/games.html',
-      ogTitle: 'Project Afflatus · Games — World Cup Prediction',
-      ogDescription: 'Cyberpunk World Cup 2026 prediction vs Fable 5 Max + daily champion / best-player odds. For fun, not betting advice.',
+      ogTitle: 'Project Afflatus · World Cup 2026 Prediction Archive',
+      ogDescription: 'The completed Fable 5 Max World Cup 2026 prediction record: 56 calls, final results and tournament awards.',
       ogImage: LEGACY_OG_IMAGE,
     },
     locales: {
@@ -490,11 +490,11 @@ export const SITE_MANIFEST = Object.freeze([
     schema: [],
     capabilities: ['archived'],
     metadata: {
-      title: 'Project Afflatus · Leagues — MSI 2026 Prediction Arena',
-      description: "A Hextech-styled MSI 2026 prediction arena: Fable 5 Max's Bo5 bracket-stage calls, real book odds, and Fearless Draft pool tracking. For fun, not betting advice.",
+      title: 'Project Afflatus · MSI 2026 Prediction Archive',
+      description: "Archived MSI 2026 bracket predictions: 14 pre-match series calls, final outcomes, confidence, Fearless Draft pools, and HLE's 3–2 championship win. Entertainment only.",
       canonical: 'https://feida.au/league.html',
-      ogTitle: 'Project Afflatus · Leagues — MSI 2026 Prediction',
-      ogDescription: 'Hextech-styled MSI 2026 prediction vs Fable 5 Max + Fearless Draft pool tracking. For fun, not betting advice.',
+      ogTitle: 'Project Afflatus · MSI 2026 Prediction Archive',
+      ogDescription: "The completed Fable 5 Max MSI 2026 record: 14 pre-match calls, HLE's title and the final 50% outcome hit rate.",
       ogImage: LEGACY_OG_IMAGE,
     },
     locales: {

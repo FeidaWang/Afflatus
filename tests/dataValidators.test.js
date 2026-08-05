@@ -41,6 +41,17 @@ describe('validateLeaguesData', () => {
     expect(ok).toBe(false);
     expect(errors.some((e) => e.includes('opus'))).toBe(true);
   });
+
+  it('rejects an unsafe archive source URL', () => {
+    const data = {
+      tournament: 'T', updated: '2026-01-01', mode: 'archive',
+      archiveSource: { label_en: 'Source', label_zh: '来源', url: 'javascript:alert(1)' },
+      series: [],
+    };
+    const { ok, errors } = validateLeaguesData(data);
+    expect(ok).toBe(false);
+    expect(errors.some((e) => e.includes('must use https'))).toBe(true);
+  });
 });
 
 describe('validateGamesData', () => {
@@ -66,6 +77,17 @@ describe('validateGamesData', () => {
     const { ok, errors } = validateGamesData(data);
     expect(ok).toBe(false);
     expect(errors.some((e) => e.includes('exceeds record.correctOutcome'))).toBe(true);
+  });
+
+  it('rejects an unsafe archive source URL', () => {
+    const data = {
+      tournament: 'T', updated: '2026-01-01', mode: 'archive',
+      archiveSource: { label_en: 'Source', label_zh: '来源', url: 'http://example.com/result' },
+      record: { resolved: 0, correctOutcome: 0, exactScore: 0, log: [] },
+    };
+    const { ok, errors } = validateGamesData(data);
+    expect(ok).toBe(false);
+    expect(errors.some((e) => e.includes('must use https'))).toBe(true);
   });
 });
 
