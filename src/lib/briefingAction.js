@@ -1,6 +1,5 @@
 export const BRIEFING_ACTION = Object.freeze({
   ENTER: 'enter',
-  READ_LATER: 'read-later',
   DISMISS: 'dismiss',
 });
 

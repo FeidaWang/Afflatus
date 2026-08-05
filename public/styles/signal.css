@@ -207,6 +207,8 @@ a{color:inherit;text-decoration:none}
 .prov-badge.prov-amber{color:var(--amber)}
 .prov-badge.prov-red{color:var(--red)}
 .prov-badge.prov-seed{color:var(--dim)}
+.signal-stale-notice{margin:16px 0 0;padding:12px 14px;border:1px solid rgba(245,196,0,.46);background:rgba(245,196,0,.08);color:#ffe99a;font:600 12px/1.6 var(--mono)}
+.signal-data-stale .heroCountdown .live{color:var(--amber);border-color:rgba(245,196,0,.48)}
 .compass .rationale{margin:10px 0 0;font:400 17px/1.6 var(--mono);color:var(--mute)}
 .compass .method{margin:8px 0 0;font:400 11px/1.6 var(--mono);color:var(--dim);font-style:italic}
 

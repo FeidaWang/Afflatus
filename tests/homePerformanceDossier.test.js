@@ -4,6 +4,7 @@ import { PICKS_EN, PICKS_ZH } from '../src/data/content.js';
 
 const html = readFileSync('index.html', 'utf8');
 const copy = readFileSync('src/data/content.js', 'utf8');
+const voyageConsole = readFileSync('src/ui/voyageLogConsole.js', 'utf8');
 const brandCss = readFileSync('public/styles/afflatus-brand.css', 'utf8');
 
 describe('FY2025–26 homepage performance dossier', () => {
@@ -25,6 +26,14 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(copy).not.toMatch(/\$[0-9]/);
     expect(copy).not.toMatch(/\b(?:AUD|USD)\b/);
     expect(html).toContain('transaction values and account balances are not published');
+  });
+
+  it('presents voyage notes as a local read-only archive, not fake authentication', () => {
+    expect(html).toContain('LOCAL / READ-ONLY');
+    expect(html).not.toContain('id="voyageAccessForm"');
+    expect(html).not.toContain('id="voyagePassword"');
+    expect(voyageConsole).not.toContain('unlocked = true');
+    expect(voyageConsole).toContain("status: 'LOCAL ARCHIVE · READ ONLY'");
   });
 
   it('publishes all five supplied profitable trade cycles', () => {

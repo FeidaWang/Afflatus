@@ -286,10 +286,11 @@
         <span class="tag" data-en="CONTAINMENT REVIEW" data-zh="收容复核">CONTAINMENT REVIEW</span>
         <span id="eventTypeLabel" data-en="NEXT CONTAINMENT TEST" data-zh="下一次收容测试">NEXT CONTAINMENT TEST</span>
         <span class="bias" data-en="TAPE BIAS · BULLISH" data-zh="盘面倾向 · 看涨">TAPE BIAS · BULLISH</span>
-        <span class="live" data-en="MONITORING · LIVE" data-zh="监控中 · 实时">MONITORING · LIVE</span>
+        <span class="live" id="signalLiveState" data-en="MONITORING · LIVE" data-zh="监控中 · 实时">MONITORING · LIVE</span>
         <span class="clock" id="fomcClock" aria-live="off">--d --:--:--</span>
         <span class="when"><span id="eventWhenLabel" data-en="REVIEW" data-zh="复核">REVIEW</span> <b id="fomcDate">—</b> · <span id="eventTime">2:00 PM ET</span> — <span id="eventDirectiveLabel" data-en="DIRECTIVE" data-zh="指令">DIRECTIVE</span> <span class="bc" id="eventDirective" data-en="HOLD 3.50–3.75% · WATCH THE DOTS" data-zh="维持 3.50–3.75% · 紧盯点阵图">HOLD 3.50–3.75% · WATCH THE DOTS</span></span>
       </div>
+      <p class="signal-stale-notice" id="signalStaleNotice" role="status" hidden></p>
     </div>
   </section>
 
@@ -304,7 +305,7 @@
     <div class="policyStory">
       <div class="policyMap" role="img" aria-label="Macro data flows through Fed policy into rates and assets" data-aria-en="Macro data flows through Fed policy into rates and assets" data-aria-zh="宏观数据经过美联储政策，传导至利率与资产">
         <div class="policyMapTop">
-          <span data-en="LIVE REACTION MAP" data-zh="实时反应图">LIVE REACTION MAP</span>
+          <span id="reactionMapLabel" data-en="LIVE REACTION MAP" data-zh="实时反应图">LIVE REACTION MAP</span>
           <b data-en="BASE CASE · HOLD / DATA-DEPENDENT" data-zh="基准情景 · 维持利率／取决于数据">BASE CASE · HOLD / DATA-DEPENDENT</b>
         </div>
         <div class="policyColumns">
@@ -448,7 +449,7 @@
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 04 · O5 PROJECTION" data-zh="第四章 · O5 推演">CHAPTER 04 · O5 PROJECTION</div>
       <h2 data-en="Anomalous Asset Watch" data-zh="异常资产监控">Anomalous Asset Watch</h2>
-      <p class="dek" data-en="Fable 5 Max · today's directional read · not advice" data-zh="Fable 5 Max · 今日方向研判 · 非投资建议">Fable 5 Max · today's directional read · not advice</p>
+      <p class="dek" id="assetWatchDek" data-en="Fable 5 Max · today's directional read · not advice" data-zh="Fable 5 Max · 今日方向研判 · 非投资建议">Fable 5 Max · today's directional read · not advice</p>
     </div>
     <div class="grid2">
       <div class="asset reveal"><div class="hd"><span class="dir up"><svg class="diricon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.2 L19.4 17 L4.6 17 Z" fill="currentColor"/><line x1="6.5" y1="19.4" x2="17.5" y2="19.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity=".5"/></svg></span><span class="nm" data-en="AI Compute" data-zh="AI 算力">AI Compute</span><span class="cf">UP · 58%</span></div><div class="tks">NVDA · AMD · SMH</div><p class="rs" data-en="Micron's blowout validates AI demand and should support a risk-on bounce in the compute leaders; a hawkish Fed caps the upside." data-zh="美光超预期验证 AI 需求，应支撑算力龙头的风险偏好反弹；鹰派联储限制上行空间。">Micron's blowout validates AI demand and should support a risk-on bounce in the compute leaders; a hawkish Fed caps the upside.</p></div>
@@ -646,7 +647,9 @@
       hdLabel = document.getElementById('hdLabel'), hdRationale = document.getElementById('hdRationale'),
       hdMethod = document.getElementById('hdMethod'), hdAsOf = document.getElementById('hdAsOf'),
       pillarSummaryEl = document.getElementById('pillarSummaryText'),
-      heroHdLabel = document.getElementById('heroHdLabel'), heroHdScore = document.getElementById('heroHdScore');
+      heroHdLabel = document.getElementById('heroHdLabel'), heroHdScore = document.getElementById('heroHdScore'),
+      signalLiveState = document.getElementById('signalLiveState'), signalStaleNotice = document.getElementById('signalStaleNotice'),
+      reactionMapLabel = document.getElementById('reactionMapLabel'), assetWatchDek = document.getElementById('assetWatchDek');
   if (!pillarGrid && !hdNeedle) return;
   var DATA = null;
   // U41 Ch.01: needle sweeps 0 -> true reading once #ch01 scrolls into view
@@ -675,6 +678,22 @@
       var badge = window.AfflatusProvenance.buildProvenanceBadge({ updatedAt: DATA.updated, version: DATA.version, lang: lang() });
       hdAsOf.className = 'asof prov-badge prov-' + badge.tier;
       hdAsOf.textContent = badge.text;
+      var stale = badge.tier === 'red' || badge.tier === 'seed';
+      document.body.classList.toggle('signal-data-stale', stale);
+      if (signalLiveState) signalLiveState.textContent = stale ? T('ARCHIVE MODE', '历史模式') : T('MONITORING · LIVE', '监控中 · 实时');
+      if (reactionMapLabel) reactionMapLabel.textContent = stale ? T('HISTORICAL REACTION MODEL', '历史反应模型') : T('LIVE REACTION MAP', '实时反应图');
+      if (assetWatchDek) assetWatchDek.textContent = stale
+        ? T('Fable 5 Max · historical directional snapshot · not advice', 'Fable 5 Max · 历史方向快照 · 非投资建议')
+        : T("Fable 5 Max · today's directional read · not advice", 'Fable 5 Max · 今日方向研判 · 非投资建议');
+      if (signalStaleNotice) {
+        signalStaleNotice.hidden = !stale;
+        signalStaleNotice.textContent = stale
+          ? T(
+            `Automation is delayed. This dossier was last updated ${DATA.updated || 'on an unknown date'} and is shown for historical review only.`,
+            `自动任务当前延迟。本档案最后更新于 ${DATA.updated || '日期不明'}，以下内容仅供历史回看。`,
+          )
+          : '';
+      }
     }
     // U41 hero: the compass reading doubles as the hero's one-line conclusion
     // (same DATA.hawkDoveCompass, no second fetch).

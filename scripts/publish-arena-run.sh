@@ -40,12 +40,15 @@ mkdir -p "$OUTBOX_DIR"
 
 echo "[$(date)] --- publish-arena-run start: $RUN_ID ---" >> "$LOG"
 
-# Remove stale lock files if present. `mv` not `rm` — some sandboxes block
-# unlink under .git/ even when nothing holds the lock; `mv` works there and
-# is harmless on a normal machine too.
-for f in .git/index.lock .git/HEAD.lock .git/refs/remotes/origin/main.lock .git/REBASE_HEAD.lock .git/packed-refs.lock; do
-  [ -f "$f" ] && mv "$f" "$f.bak_$(date +%s)" 2>/dev/null
-done
+# Share one project-owned lock with every data publisher. Git lock files are
+# deliberately left untouched because they may belong to a live operation.
+PIPELINE_LOCK="$REPO/.git/afflatus-data-pipeline.lock"
+if ! mkdir "$PIPELINE_LOCK" 2>/dev/null; then
+  echo "[$(date)] another data publisher is active; queueing $RUN_ID without touching Git locks" >> "$LOG"
+  node "$REPO/scripts/queue-arena-outbox.mjs" "$RUN_ID" "$MSG" "$PAYLOAD_PATH" "$RESULT_PATH" >> "$LOG" 2>&1
+  exit 75
+fi
+trap 'rmdir "$PIPELINE_LOCK" 2>/dev/null || true' EXIT INT TERM
 
 # ---- flush any outbox backlog from a previous offline run first ----
 # Outbox entries are audit records only, not work to redo: whatever they

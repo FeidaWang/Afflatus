@@ -283,7 +283,7 @@
       <header class="cic-panel-head">
         <span class="cic-eyebrow">CIC / CONDITION · 03</span>
         <strong data-hud="systemsTitle">战斗情报与损管</strong>
-        <button class="cic-log-toggle" id="voyageLogToggle" type="button" data-hot aria-controls="cicVoyageConsole" aria-expanded="false">PRIVATE LOG</button>
+        <button class="cic-log-toggle" id="voyageLogToggle" type="button" data-hot aria-controls="cicVoyageConsole" aria-expanded="false">VOYAGE NOTES</button>
         <button class="cic-panel-focus" type="button" data-cic-panel-focus="intel" aria-label="Expand intelligence station" aria-expanded="false"></button>
       </header>
       <div class="cic-battle-feed" id="cicBattleFeed"></div>
@@ -301,11 +301,11 @@
       </footer>
     </aside>
 
-    <section class="cic-log-console" id="cicVoyageConsole" aria-label="Private Voyage Log" aria-hidden="true">
+    <section class="cic-log-console" id="cicVoyageConsole" aria-label="Voyage Notes" aria-hidden="true">
       <header class="cic-log-head">
-        <span><i aria-hidden="true"></i><b data-log-copy="title">PRIVATE VOYAGE LOG</b><em>BLACK BOX / AIR-GAPPED</em></span>
-        <output id="voyageLogStatus" aria-live="polite" data-log-copy="locked">IDENTITY REQUIRED</output>
-        <button id="voyageLogClose" type="button" data-hot aria-label="Close Private Voyage Log">×</button>
+        <span><i aria-hidden="true"></i><b data-log-copy="title">VOYAGE NOTES</b><em>LOCAL / READ-ONLY</em></span>
+        <output id="voyageLogStatus" aria-live="polite" data-log-copy="status">LOCAL ARCHIVE</output>
+        <button id="voyageLogClose" type="button" data-hot aria-label="Close Voyage Notes">×</button>
       </header>
       <div class="cic-log-body">
         <aside class="cic-log-index" aria-label="Voyage archive summary">
@@ -319,15 +319,9 @@
         </aside>
         <div class="cic-log-access">
           <div class="cic-log-boot" id="voyageLogBoot" aria-hidden="true">
-            <span>CIPHER HANDSHAKE</span><span>ARCHIVE INTEGRITY</span><span>PRIVATE CHANNEL</span><b>READY</b>
+            <span>OPENING FIELD NOTES</span><span>ARCHIVE INTEGRITY</span><span>LOCAL READ-ONLY VIEW</span><b>READY</b>
           </div>
-          <form class="cic-log-form" id="voyageAccessForm" autocomplete="off">
-            <p data-log-copy="intro">舰长日志与资产纪律记录位于隔离链路之后。认证只在当前设备会话内有效。</p>
-            <label><span data-log-copy="account">ACCOUNT</span><input id="voyageAccount" type="text" name="commander-account" placeholder="BRUCE.WANG" autocomplete="username"></label>
-            <label><span data-log-copy="password">PASSWORD</span><input id="voyagePassword" type="password" name="commander-password" placeholder="••••••••" autocomplete="current-password"></label>
-            <button id="terminalLoginBtn" type="submit" data-hot data-log-copy="authenticate">AUTHENTICATE</button>
-          </form>
-          <div class="cic-log-entries" id="voyageLogEntries" aria-hidden="true">
+          <div class="cic-log-entries" id="voyageLogEntries" aria-hidden="false">
             <article><time>034 · 2026.07.04</time><b data-log-copy="entry1Title">ALPHARD GLOWLINE</b><p data-log-copy="entry1Body">资本不是弹药；首先要保住舰体、选择射界，然后才是开火。</p></article>
             <article><time>033 · 2026.06.29</time><b data-log-copy="entry2Title">ORACLE INTERCEPT</b><p data-log-copy="entry2Body">每一个仓位都必须有退出条件。没有退出条件的信念，只是未标价的风险。</p></article>
             <article><time>032 · 2026.06.18</time><b data-log-copy="entry3Title">SILENT WATCH</b><p data-log-copy="entry3Body">在信号稀薄时保持静默，比在噪声中寻找确定性更重要。</p></article>

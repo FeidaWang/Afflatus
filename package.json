@@ -19,6 +19,8 @@
     "lighthouse:ci": "node scripts/run-lighthouse.mjs",
     "typecheck": "tsc --noEmit",
     "data:check": "node scripts/validate-data.mjs",
+    "data:freshness": "node scripts/check-data-freshness.mjs",
+    "data:freshness:strict": "node scripts/check-data-freshness.mjs --strict",
     "site:generate": "node scripts/site-manifest.mjs --write",
     "site:check": "node scripts/site-manifest.mjs --check",
     "header:audit": "node scripts/audit-header.mjs",

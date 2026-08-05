@@ -30,6 +30,7 @@ import { validateArenaPicks } from '../src/lib/validateArenaPicks.js';
 import { validateArenaQuantModel } from '../src/lib/validateArenaQuantModel.js';
 import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
 import { validateArenaDigest } from '../src/lib/validateArenaDigest.js';
+import { validateArenaNews } from '../src/lib/validateArenaNews.js';
 
 const CHECKS = [
   { path: 'public/sectors-data.json', validate: validateSectorsData },
@@ -49,6 +50,7 @@ const CHECKS = [
   { path: 'public/arena-quant-model.json', validate: validateArenaQuantModel },
   { path: 'public/arena-runlog.json', validate: validateArenaRunlog },
   { path: 'public/arena-daily-digest.json', validate: validateArenaDigest },
+  { path: 'public/arena-news.json', validate: validateArenaNews },
 ];
 
 let anyFail = false;

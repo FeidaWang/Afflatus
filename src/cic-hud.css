@@ -1192,7 +1192,7 @@ body.hud-off main { padding-bottom: 68px; }
   background: rgba(3, 8, 12, .98);
 }
 
-/* The private log is an explicit, reversible station mode. It never opens
+/* The local voyage notes are an explicit, reversible station mode. They never open
  * from a shot-window click and therefore cannot steal combat input. */
 #combatHud .cic-log-console {
   position: absolute;
@@ -1253,23 +1253,14 @@ body.voyage-log-open #combatHud .cic-log-console { opacity: 1; visibility: visib
 #combatHud .cic-log-route i { width: auto; height: 1px; background: linear-gradient(90deg, var(--cic-cyan), rgba(142, 233, 255, .16)); }
 #combatHud .cic-log-route em { color: var(--cic-amber); font-style: normal; }
 
-#combatHud .cic-log-access { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; padding: 12px; overflow: auto; }
-#combatHud .cic-log-form { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-#combatHud .cic-log-form p { grid-column: 1 / -1; margin: 0 0 3px; color: var(--cic-muted); font-size: 10px; line-height: 1.6; }
-#combatHud .cic-log-form label { display: grid; gap: 4px; }
-#combatHud .cic-log-form label span { color: var(--cic-muted); font-size: 8px; letter-spacing: .13em; }
-#combatHud .cic-log-form input { min-width: 0; height: 40px; padding: 0 10px; color: var(--cic-cyan-hot); font: 500 11px/1 "JetBrains Mono", monospace; background: rgba(1, 6, 10, .76); border: 1px solid rgba(142, 233, 255, .28); outline: 0; }
-#combatHud .cic-log-form input:focus { border-color: var(--cic-cyan); box-shadow: 0 0 14px rgba(142, 233, 255, .12); }
-#combatHud .cic-log-form button { grid-column: 1 / -1; min-height: 40px; color: #071016; font: 700 10px/1 "Orbitron", sans-serif; letter-spacing: .18em; background: var(--cic-cyan); border: 0; cursor: pointer; }
+#combatHud .cic-log-access { position: relative; min-width: 0; min-height: 0; display: grid; padding: 12px; overflow: auto; }
 
 #combatHud .cic-log-boot { position: absolute; inset: 0; z-index: 3; display: grid; align-content: center; gap: 8px; padding: 12%; color: var(--cic-muted); font-size: 8px; letter-spacing: .11em; background: rgba(1, 6, 9, .97); opacity: 0; visibility: hidden; pointer-events: none; }
 #combatHud .cic-log-boot.play { animation: cic-log-boot 1.15s steps(5, end); }
 #combatHud .cic-log-boot b { color: var(--cic-green); }
 @keyframes cic-log-boot { 0%, 82% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
 
-#combatHud .cic-log-entries { width: 100%; display: none; gap: 6px; }
-#combatHud .cic-log-console.is-unlocked .cic-log-form { display: none; }
-#combatHud .cic-log-console.is-unlocked .cic-log-entries { display: grid; }
+#combatHud .cic-log-entries { width: 100%; display: grid; align-content: start; gap: 6px; }
 #combatHud .cic-log-entries article { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px 9px; align-items: baseline; padding: 7px 9px; border: 1px solid rgba(142, 233, 255, .16); background: rgba(5, 14, 19, .6); }
 #combatHud .cic-log-entries time { color: var(--cic-amber); font-size: 8px; }
 #combatHud .cic-log-entries b { color: var(--cic-cyan-hot); font: 600 10px/1.2 "Orbitron", sans-serif; letter-spacing: .08em; }

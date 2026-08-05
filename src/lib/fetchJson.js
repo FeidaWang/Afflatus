@@ -40,6 +40,7 @@ const validators = {
   arenaPicks: lazyValidator(async () => (await import('./validateArenaPicks.js')).validateArenaPicks),
   arenaQuantModel: lazyValidator(async () => (await import('./validateArenaQuantModel.js')).validateArenaQuantModel),
   arenaDigest: lazyValidator(async () => (await import('./validateArenaDigest.js')).validateArenaDigest),
+  arenaNews: lazyValidator(async () => (await import('./validateArenaNews.js')).validateArenaNews),
 };
 
 const validateHistory = (data) => ({
@@ -69,7 +70,7 @@ const STATIC_RESOURCES = Object.freeze({
   'arena-quant-model': { url: '/arena-quant-model.json', freshness: 60 * 60_000, validate: validators.arenaQuantModel },
   'arena-picks': { url: '/arena-picks.json', freshness: 5 * 60_000, validate: validators.arenaPicks },
   'arena-digest': { url: '/arena-daily-digest.json', freshness: 5 * 60_000, validate: validators.arenaDigest },
-  'arena-news': { url: '/arena-news.json', freshness: 5 * 60_000, validate: objectWith('date', 'items', 'prices') },
+  'arena-news': { url: '/arena-news.json', freshness: 5 * 60_000, validate: validators.arenaNews },
   'arena-ledger': { url: '/arena-ledger.json', freshness: 5 * 60_000, validate: objectWith('season', 'models', 'bench') },
   transits: { url: '/transits-daily.json', freshness: 6 * 60 * 60_000, validate: objectWith('date', 'planets') },
 });

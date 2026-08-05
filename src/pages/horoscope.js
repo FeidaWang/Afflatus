@@ -1306,8 +1306,16 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (!transits || !state.me || !state.other) return;
       const curKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}`;
       if (curKey !== weatherPairKey) return; // pair changed while the fetch was in flight
-      const weather = dailyCoupleWeather(transits.planets, { Sun: bodies[0][2], Moon: moonA }, { Sun: bodies[0][3], Moon: moonB });
       const wWrap = $('synWeatherWrap');
+      if (transits.date !== todayStr()) {
+        wWrap.hidden = false;
+        $('synWeather').textContent = T(
+          `Daily transit automation is delayed (last published ${transits.date || 'unknown'}). Today's transit weather is unavailable; no older sky data has been reused.`,
+          `每日行星数据自动任务当前延迟（最后发布于 ${transits.date || '日期不明'}）。今日天象暂不可用，系统没有复用旧星象。`,
+        );
+        return;
+      }
+      const weather = dailyCoupleWeather(transits.planets, { Sun: bodies[0][2], Moon: moonA }, { Sun: bodies[0][3], Moon: moonB });
       if (weather.lines.length) {
         wWrap.hidden = false;
         $('synWeather').innerHTML = weather.lines.map((l) => `<p class="syn-line syn-line--pos">${T(l.en, l.zh)}</p>`).join('');

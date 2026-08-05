@@ -31,8 +31,14 @@ fi
 
 echo "[$(date)] Starting push for $FILE" >> "$LOG"
 
-# Remove stale lock files if present
-rm -f .git/HEAD.lock .git/index.lock
+# Serialize every data publisher with a project-owned lock. Never move or
+# delete Git's own lock files: their presence can indicate a live operation.
+PIPELINE_LOCK="$REPO/.git/afflatus-data-pipeline.lock"
+if ! mkdir "$PIPELINE_LOCK" 2>/dev/null; then
+  echo "[$(date)] ERROR: another data publisher is active; skipping this run" >> "$LOG"
+  exit 75
+fi
+trap 'rmdir "$PIPELINE_LOCK" 2>/dev/null || true' EXIT INT TERM
 
 git add "$FILE"
 

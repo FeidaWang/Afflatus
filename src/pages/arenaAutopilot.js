@@ -18,6 +18,8 @@ import { unrealizedPnl, benchmarkEndpoints, equityDomain, scalePoint } from '../
 import { fetchJson } from '../lib/fetchJson.js';
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
 import { declutter1D } from '../lib/ladderLayout.js';
+import { escapeHtml } from '../lib/contentSafety.js';
+import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFreshness.js';
 
 (() => {
   'use strict';
@@ -83,7 +85,7 @@ import { declutter1D } from '../lib/ladderLayout.js';
       return `${labelFor(key)}: ${fmtUsd(pt ? pt.equity : null)}`;
     });
     tipEl.innerHTML = `<b>${T('DAY', '第')} ${modelSeries[0] && nearestByDay(modelSeries[0].series, day) ? nearestByDay(modelSeries[0].series, day).day : '—'}${state.lang === 'zh' ? '日' : ''}</b>` +
-      rows.join('<br>') + `<br>SPY: ${fmtUsd(interpTwoPoint(spy, day))}<br>SMH: ${fmtUsd(interpTwoPoint(smh, day))}`;
+      rows.map(escapeHtml).join('<br>') + `<br>SPY: ${escapeHtml(fmtUsd(interpTwoPoint(spy, day)))}<br>SMH: ${escapeHtml(fmtUsd(interpTwoPoint(smh, day)))}`;
     tipEl.style.left = (clientX + 14) + 'px';
     tipEl.style.top = (clientY + 14) + 'px';
     tipEl.classList.add('show');
@@ -213,23 +215,23 @@ import { declutter1D } from '../lib/ladderLayout.js';
       ...keys.map((k, i) => [colorFor(k, i), labelFor(k), false]),
       [SPY_COLOR, 'SPY', true],
       [SMH_COLOR, 'SMH', true],
-    ].map(([color, label, dash]) => `<span><i style="border-top-color:${color}${dash ? ';border-top-style:dashed' : ''}"></i>${label}</span>`).join('');
+    ].map(([color, label, dash]) => `<span><i style="border-top-color:${color}${dash ? ';border-top-style:dashed' : ''}"></i>${escapeHtml(label)}</span>`).join('');
     chartCtx = { modelSeries, spy, smh, domain, viewW: W, plotW: PLOT_W, pad };
     bindChartTooltip();
   }
 
   // ---- per-model card -----------------------------------------------
-  function metricChip(label, value) { return `<div class="ap-metric"><span>${label}</span><b>${value}</b></div>`; }
+  function metricChip(label, value) { return `<div class="ap-metric"><span>${escapeHtml(label)}</span><b>${escapeHtml(value)}</b></div>`; }
   function positionRow(p) {
     const { pnl, pnlPct } = unrealizedPnl(p);
-    const name = state.names[p.sym] ? ` <span style="color:var(--muted)">${state.names[p.sym]}</span>` : '';
-    return `<tr><td>${p.sym}${name}</td><td>${fmtNum(p.qty, 0)}</td><td>${fmtUsd(p.avgPx)}</td><td>${fmtUsd(p.mkPx)}</td><td class="${pnl >= 0 ? 'up' : 'down'}">${fmtPct(pnlPct)}</td></tr>`;
+    const name = state.names[p.sym] ? ` <span style="color:var(--muted)">${escapeHtml(state.names[p.sym])}</span>` : '';
+    return `<tr><td>${escapeHtml(p.sym)}${name}</td><td>${fmtNum(p.qty, 0)}</td><td>${fmtUsd(p.avgPx)}</td><td>${fmtUsd(p.mkPx)}</td><td class="${pnl >= 0 ? 'up' : 'down'}">${fmtPct(pnlPct)}</td></tr>`;
   }
   function logRow(entry) {
-    if (entry.kind === 'trade') { const t = entry.data; return `<div class="ap-log-row ${t.side}"><span>${t.side.toUpperCase()} ${t.sym} × ${fmtNum(t.qty, 0)} @ ${fmtUsd(t.px)}</span><span>${t.realizedPnl != null ? fmtUsd(t.realizedPnl) : ''}</span></div>`; }
-    const o = entry.data.order || {}; return `<div class="ap-log-row rej"><span>✗ ${(o.side || '?').toUpperCase()} ${o.sym || '?'}</span><span>${entry.data.reason || ''}</span></div>`;
+    if (entry.kind === 'trade') { const t = entry.data; const side = t.side === 'buy' ? 'buy' : 'sell'; return `<div class="ap-log-row ${side}"><span>${escapeHtml(side.toUpperCase())} ${escapeHtml(t.sym)} × ${fmtNum(t.qty, 0)} @ ${fmtUsd(t.px)}</span><span>${t.realizedPnl != null ? fmtUsd(t.realizedPnl) : ''}</span></div>`; }
+    const o = entry.data.order || {}; return `<div class="ap-log-row rej"><span>✗ ${escapeHtml((o.side || '?').toUpperCase())} ${escapeHtml(o.sym || '?')}</span><span>${escapeHtml(entry.data.reason || '')}</span></div>`;
   }
-  function renderModel(hostId, label, m) {
+  function renderModel(modelHost, label, m) {
     const metrics = m.metrics || {};
     const chips = [
       metricChip(T('EQUITY', '净值'), fmtUsd(m.equity)),
@@ -249,10 +251,10 @@ import { declutter1D } from '../lib/ladderLayout.js';
       ...(m.rejections || []).map((data) => ({ kind: 'rej', ts: data.ts, data })),
     ].sort((a, b) => Date.parse(b.ts || 0) - Date.parse(a.ts || 0)).slice(0, 8);
     const logBlock = log.length ? `<div class="ap-log">${log.map(logRow).join('')}</div>` : `<div class="empty">${T('No trades yet.', '尚未成交。')}</div>`;
-    $(hostId).innerHTML = `
-      <div class="ap-mh"><b>${label}</b><span class="chip">${m.promptVersion || ''}</span></div>
+    modelHost.innerHTML = `
+      <div class="ap-mh"><b>${escapeHtml(label)}</b><span class="chip">${escapeHtml(m.promptVersion || '')}</span></div>
       <div class="ap-metrics">${chips}</div>
-      ${review ? `<p class="ap-review">${review}</p>` : ''}
+      ${review ? `<p class="ap-review">${escapeHtml(review)}</p>` : ''}
       <div class="ap-sub">${T('Positions', '持仓')}</div>
       ${posBlock}
       <div class="ap-sub">${T('Recent activity', '近期动态')}</div>
@@ -262,8 +264,13 @@ import { declutter1D } from '../lib/ladderLayout.js';
   function renderModels(models) {
     const container = $('apModels');
     const keys = Object.keys(models);
-    container.innerHTML = keys.map((k) => `<div class="ap-model panel pad" id="apModel${k}"></div>`).join('');
-    keys.forEach((k) => renderModel(`apModel${k}`, labelFor(k), models[k]));
+    container.replaceChildren();
+    keys.forEach((key) => {
+      const modelHost = document.createElement('div');
+      modelHost.className = 'ap-model panel pad';
+      container.appendChild(modelHost);
+      renderModel(modelHost, labelFor(key), models[key]);
+    });
   }
 
   function render() {
@@ -272,7 +279,14 @@ import { declutter1D } from '../lib/ladderLayout.js';
     const badge = buildProvenanceBadge({ updatedAt: d.updated, version: d.version, lang: state.lang });
     $('apUpdChip').className = 'chip prov-badge prov-' + badge.tier;
     $('apUpdChip').textContent = badge.text;
-    $('apNote').textContent = T(d.note_en || '', d.note_zh || '');
+    const freshness = assessMarketSnapshot(d.updated, new Date(), { availableFromMinutes: ARENA_PUBLICATION_MINUTES.postMarket });
+    host.classList.toggle('ap-stale', freshness.stale);
+    $('apNote').textContent = freshness.stale
+      ? T(
+        `Historical simulation ledger · last settled ${d.updated || 'unknown'}. Automation is delayed; no current-session execution is implied.`,
+        `历史模拟账本 · 最后结算于 ${d.updated || '日期不明'}。自动任务当前延迟；不代表当前交易时段仍在执行。`,
+      )
+      : T(d.note_en || '', d.note_zh || '');
     renderChart(d.models, d.bench || {});
     renderModels(d.models);
   }

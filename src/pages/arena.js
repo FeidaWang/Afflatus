@@ -18,6 +18,8 @@ import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
 import { BRIEFING_ACTION, shouldAcknowledgeBriefing } from '../lib/briefingAction.js';
 import { fetchJson } from '../lib/fetchJson.js';
 import { getLocale } from '../lib/localeStore.js';
+import { escapeHtml, safeExternalUrl } from '../lib/contentSafety.js';
+import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFreshness.js';
 
 (() => {
   'use strict';
@@ -51,8 +53,36 @@ import { getLocale } from '../lib/localeStore.js';
   const fmtClock = (ts) => ts ? new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
   const EMBED = (() => { try { return new URLSearchParams(location.search).has('embed'); } catch { return false; } })();
   function postHeight() { if (!EMBED) return; try { parent.postMessage({ type: 'afflatus-arena-height', height: document.documentElement.scrollHeight }, '*'); } catch {} }
+  function newsFreshness() {
+    if (state.news.loading) return { state: 'loading', stale: false, snapshotDate: null, expectedDate: null };
+    return assessMarketSnapshot(state.news.date, new Date(), { availableFromMinutes: ARENA_PUBLICATION_MINUTES.briefing });
+  }
+  function localizedSentiment(sl) {
+    const labels = {
+      Bullish: ['Bullish', '看涨'],
+      Bearish: ['Bearish', '看跌'],
+      Neutral: ['Neutral', '中性'],
+    };
+    const copy = labels[sl.label] || [sl.label, sl.label];
+    return T(copy[0], copy[1]);
+  }
 
-  function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = st.label; const sl = sentLabel(state.sentiment); $('sentChip').className = `chip ${sl.tone}`; $('sentTxt').textContent = sl.label; }
+  function renderBriefingCta() {
+    const button = $('openBriefBtn');
+    if (!button) return;
+    const stale = newsFreshness().stale;
+    const tag = button.querySelector('.brief-cta__tag');
+    const main = button.querySelector('.brief-cta__main');
+    const sub = button.querySelector('.brief-cta__sub');
+    if (tag) tag.textContent = stale ? T('▣ ARCHIVE', '▣ 历史') : T('▣ TODAY', '▣ 今日');
+    if (main) main.textContent = stale ? T('LAST PUBLISHED BRIEFING', '最近一次盘前简报') : T('PRE-MARKET BRIEFING', '盘前简报');
+    if (sub) sub.textContent = stale
+      ? T(`Last published ${state.news.date || '—'} · historical review`, `最后发布于 ${state.news.date || '—'} · 仅供历史回看`)
+      : T('AI news + Fable research', 'AI 新闻 + Fable 研判');
+    button.classList.toggle('is-stale', stale);
+  }
+
+  function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = st.label; const sl = sentLabel(state.sentiment); const stale = newsFreshness().stale; $('sentChip').className = `chip ${stale ? 'closed' : sl.tone}`; $('sentTxt').textContent = stale ? T(`HISTORICAL · ${sl.label}`, `历史快照 · ${localizedSentiment(sl)}`) : localizedSentiment(sl); renderBriefingCta(); }
   function renderCountdown() { const { wd, sec } = nyNow(), open = wd >= 1 && wd <= 5 && sec >= OPEN_S && sec < CLOSE_S; $('openCd').classList.toggle('open', open); $('cdLabel').textContent = open ? 'US MARKET CLOSES IN' : 'US MARKET OPENS IN'; $('cdClock').textContent = fmtDur(open ? CLOSE_S - sec : secsToNextOpen(wd, sec)); }
   function renderNews() {
     const host = $('newsList'), n = state.news;
@@ -62,7 +92,26 @@ import { getLocale } from '../lib/localeStore.js';
       dateEl.className = 'prov-badge prov-' + badge.tier;
       dateEl.textContent = badge.text;
     } else { dateEl.className = ''; dateEl.textContent = ''; }
-    if (n.loading) { host.innerHTML = `<div class="empty">${T('Loading digest…', '加载中…')}</div>`; return; } if (!n.items.length) { host.innerHTML = `<div class="empty">${T('No digest yet.', '暂无摘要。')}</div>`; return; } const icon = { financial: '◇', industrial: '▣', political: '⬡', tech: '⊞' }; host.innerHTML = n.items.map((it) => { const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`)); const title = T(it.title_en || it.title || '', it.title_zh || it.title_en || ''); return `<a href="${it.url || '#'}" target="_blank" rel="noreferrer noopener"><div class="t1"><span class="cat">${icon[it.category] || '•'} ${it.category || ''}</span><span class="sent ${s.tone}">${s.label}</span></div><div class="ti">${title}</div></a>`; }).join(''); }
+    if (n.loading) { host.innerHTML = `<div class="empty">${T('Loading digest…', '加载中…')}</div>`; return; }
+    const stale = newsFreshness().stale;
+    const staleNotice = stale
+      ? `<div class="data-stale-notice" role="status">${escapeHtml(T(
+        `Automation has not published a current briefing. Showing the ${n.date || 'unknown'} snapshot for historical review only.`,
+        `自动任务尚未发布当前简报。以下为 ${n.date || '日期不明'} 的历史快照，仅供回看。`,
+      ))}</div>`
+      : '';
+    if (!n.items.length) { host.innerHTML = staleNotice + `<div class="empty">${T('No digest yet.', '暂无摘要。')}</div>`; return; }
+    const icon = { financial: '◇', industrial: '▣', political: '⬡', tech: '⊞' };
+    const items = n.items.map((it) => {
+      const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`));
+      const title = escapeHtml(T(it.title_en || it.title || '', it.title_zh || it.title_en || ''));
+      const category = escapeHtml(it.category || 'note');
+      const url = safeExternalUrl(it.url);
+      const body = `<div class="t1"><span class="cat">${icon[String(it.category || '').toLowerCase()] || '•'} ${category}</span><span class="sent ${s.tone}">${escapeHtml(localizedSentiment(s))}</span></div><div class="ti">${title}</div>`;
+      return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer noopener">${body}</a>` : `<div class="news-item">${body}</div>`;
+    }).join('');
+    host.innerHTML = staleNotice + items;
+  }
 
   // ---- briefing (bilingual) -----------------------------------
   const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -70,10 +119,27 @@ import { getLocale } from '../lib/localeStore.js';
   function ackBriefing() { try { localStorage.setItem(BRIEF_KEY, state.news.date || todayStr()); } catch {} }
   function buildBriefing() {
     const n = state.news, sl = sentLabel(state.sentiment), icon = { financial: '◇', industrial: '▣', political: '⬡', tech: '⊞' };
-    const disclaimer = T(n.disclaimer_en || 'NOT INVESTMENT ADVICE — entertainment only.', n.disclaimer_zh || '非投资建议——仅供娱乐。');
-    const note = T(n.predictionNote_en || '', n.predictionNote_zh || '');
-    const items = n.items.map((it) => { const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`)); const title = T(it.title_en || it.title || '', it.title_zh || it.title_en || ''); const sum = T(it.summary_en || it.summary || '', it.summary_zh || it.summary_en || ''); return `<article class="bf-item"><div class="bf-itop"><span class="bf-cat">${icon[it.category] || '•'} ${it.category || 'note'}</span><span class="bf-sent ${s.tone}">${s.label}</span></div><h3 class="bf-title">${title}</h3>${sum ? `<p class="bf-sum">${sum}</p>` : ''}${it.source ? `<a class="bf-src" href="${it.url || '#'}" target="_blank" rel="noreferrer noopener">${it.source} ↗</a>` : ''}</article>`; }).join('');
-    return `<div class="bf-backdrop" id="bfBackdrop"></div><div class="bf-modal" role="dialog" aria-modal="true" aria-labelledby="bfHeading" aria-describedby="bfSummary" tabindex="-1" id="bfModal"><div class="bf-prog" id="bfProg" role="progressbar" aria-label="${T('Reading progress', '阅读进度')}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="bf-prog-fill" id="bfProgFill"></div></div><header class="bf-head"><div class="bf-barcode" aria-hidden="true"></div><div class="bf-htext"><p class="bf-kicker">TRAXUS//CVKM · ${T('DESK BRIEFING', '交易台简报')}</p><h2 class="bf-h" id="bfHeading">${T('Pre-Market Briefing', '盘前简报')}</h2><p class="bf-date" id="bfSummary">${n.date ? T('Digest', '摘要') + ' · ' + n.date : T('awaiting first run', '等待首次生成')} · ${T('sentiment', '情绪')} <b class="${sl.tone}">${sl.label}</b></p></div><button class="bf-control bf-lang" id="bfLang" aria-label="${T('Switch to Chinese', 'Switch to English')}">${state.lang === 'zh' ? 'EN' : '中文'}</button><button class="bf-control bf-x" id="bfClose" aria-label="${T('Dismiss briefing', '关闭简报')}">✕</button></header><div class="bf-body" id="bfBody" tabindex="0"><div class="bf-warn" role="note"><b>⚠ ${T('NOT INVESTMENT ADVICE.', '非投资建议。')}</b> ${disclaimer}</div>${note ? `<p class="bf-note">${note}</p>` : ''}${items || `<div class="bf-empty">${T('No digest yet. The scheduled task writes it ~1h before the US open.', '暂无摘要。定时任务会在美股开盘前约 1 小时生成。')}</div>`}<div class="bf-end">— ${T('END OF BRIEFING', '简报结束')} —</div></div><footer class="bf-foot"><button class="bf-skip" id="bfSkip">${T('Read later', '稍后阅读')}</button><button class="bf-enter" id="bfEnter">${T('ENTER THE ARENA ▶', '进入 ARENA ▶')}</button></footer></div>`;
+    const freshness = newsFreshness();
+    const disclaimer = escapeHtml(T(n.disclaimer_en || 'NOT INVESTMENT ADVICE — entertainment only.', n.disclaimer_zh || '非投资建议——仅供娱乐。'));
+    const note = escapeHtml(T(n.predictionNote_en || '', n.predictionNote_zh || ''));
+    const items = n.items.map((it) => {
+      const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`));
+      const title = escapeHtml(T(it.title_en || it.title || '', it.title_zh || it.title_en || ''));
+      const sum = escapeHtml(T(it.summary_en || it.summary || '', it.summary_zh || it.summary_en || ''));
+      const category = escapeHtml(it.category || 'note');
+      const source = escapeHtml(it.source || '');
+      const url = safeExternalUrl(it.url);
+      const sourceLink = source && url ? `<a class="bf-src" href="${escapeHtml(url)}" target="_blank" rel="noreferrer noopener">${source} ↗</a>` : '';
+      return `<article class="bf-item"><div class="bf-itop"><span class="bf-cat">${icon[String(it.category || '').toLowerCase()] || '•'} ${category}</span><span class="bf-sent ${s.tone}">${escapeHtml(localizedSentiment(s))}</span></div><h3 class="bf-title">${title}</h3>${sum ? `<p class="bf-sum">${sum}</p>` : ''}${sourceLink}</article>`;
+    }).join('');
+    const staleNotice = freshness.stale
+      ? `<div class="data-stale-notice" role="status">${escapeHtml(T(
+        `Last published ${n.date || 'unknown'}. Automation is delayed; this briefing is historical, not a current market read.`,
+        `最后发布于 ${n.date || '日期不明'}。自动任务当前延迟；本简报是历史快照，不代表当前市场。`,
+      ))}</div>`
+      : '';
+    const heading = freshness.stale ? T('Last Published Briefing', '最近一次盘前简报') : T('Pre-Market Briefing', '盘前简报');
+    return `<div class="bf-backdrop" id="bfBackdrop"></div><div class="bf-modal" role="dialog" aria-modal="true" aria-labelledby="bfHeading" aria-describedby="bfSummary" tabindex="-1" id="bfModal"><div class="bf-prog" id="bfProg" role="progressbar" aria-label="${T('Reading progress', '阅读进度')}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="bf-prog-fill" id="bfProgFill"></div></div><header class="bf-head"><div class="bf-barcode" aria-hidden="true"></div><div class="bf-htext"><p class="bf-kicker">TRAXUS//CVKM · ${T('DESK BRIEFING', '交易台简报')}</p><h2 class="bf-h" id="bfHeading">${heading}</h2><p class="bf-date" id="bfSummary">${n.date ? T('Snapshot', '快照') + ' · ' + escapeHtml(n.date) : T('awaiting first run', '等待首次生成')} · ${T('sentiment', '情绪')} <b class="${sl.tone}">${escapeHtml(localizedSentiment(sl))}</b></p></div><button class="bf-control bf-lang" id="bfLang" aria-label="${T('Switch to Chinese', 'Switch to English')}">${state.lang === 'zh' ? 'EN' : '中文'}</button><button class="bf-control bf-x" id="bfClose" aria-label="${T('Close briefing', '关闭简报')}">✕</button></header><div class="bf-body" id="bfBody" tabindex="0">${staleNotice}<div class="bf-warn" role="note"><b>⚠ ${T('NOT INVESTMENT ADVICE.', '非投资建议。')}</b> ${disclaimer}</div>${note ? `<p class="bf-note">${note}</p>` : ''}${items || `<div class="bf-empty">${T('No briefing has been published.', '尚未发布简报。')}</div>`}<div class="bf-end">— ${T('END OF BRIEFING', '简报结束')} —</div></div><footer class="bf-foot"><button class="bf-enter" id="bfEnter">${T('START EXPLORING ▶', '开始浏览 ▶')}</button></footer></div>`;
   }
   function openBriefing() {
     const host = $('briefing'); if (!host) return;
@@ -93,7 +159,6 @@ import { getLocale } from '../lib/localeStore.js';
     };
     $('bfEnter').addEventListener('click', () => close(BRIEFING_ACTION.ENTER));
     $('bfClose').addEventListener('click', () => close(BRIEFING_ACTION.DISMISS));
-    $('bfSkip').addEventListener('click', () => close(BRIEFING_ACTION.READ_LATER));
     $('bfBackdrop').addEventListener('click', () => close(BRIEFING_ACTION.DISMISS));
     $('bfLang').addEventListener('click', () => { toggleLang(); openBriefing(); });
     host.addEventListener('keydown', (e) => {
@@ -125,7 +190,7 @@ import { getLocale } from '../lib/localeStore.js';
   fetchJson('arena-news')
     .then((data) => { const items = (data.items || []).map((it) => ({ ...it, sentiment: typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || it.title || ''} ${it.summary_en || it.summary || ''}`) })); state.news = { date: data.date || null, generatedAt: data.generatedAt || null, items, aiPredictions: data.aiPredictions || {}, disclaimer_en: data.disclaimer_en, disclaimer_zh: data.disclaimer_zh, predictionNote_en: data.predictionNote_en, predictionNote_zh: data.predictionNote_zh, loading: false }; state.sentiment = aggregateSentiment(items); state.lastUpdate = Date.now(); })
     .catch(() => { state.news = { date: null, items: [], aiPredictions: {}, loading: false }; })
-    .finally(() => { renderNews(); renderStatus(); if (!EMBED && !briefingAcked()) openBriefing(); });
+    .finally(() => { renderNews(); renderStatus(); if (!EMBED && !newsFreshness().stale && !briefingAcked()) openBriefing(); });
 
   const ob = $('openBriefBtn'); if (ob) ob.addEventListener('click', openBriefing);
   // language is owned by the shared i18n engine (.lang-toggle); arena re-renders on change

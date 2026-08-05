@@ -15,6 +15,8 @@
    Read-only, like arenaPicks.js: never mutates any ledger/digest file.
    ============================================================ */
 import { fetchJson } from '../lib/fetchJson.js';
+import { escapeHtml } from '../lib/contentSafety.js';
+import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFreshness.js';
 
 (() => {
   'use strict';
@@ -54,15 +56,15 @@ import { fetchJson } from '../lib/fetchJson.js';
   function bookRow(b) {
     const cls = b.pnlPct > 0 ? 'up' : b.pnlPct < 0 ? 'down' : '';
     return `<div class="digest-book">
-      <div class="digest-book-hd"><span class="digest-book-model">${MODEL_LABEL[b.model] || b.model}</span><span class="digest-book-pnl ${cls}">${fmtPct(b.pnlPct)}</span></div>
+      <div class="digest-book-hd"><span class="digest-book-model">${escapeHtml(MODEL_LABEL[b.model] || b.model)}</span><span class="digest-book-pnl ${cls}">${fmtPct(b.pnlPct)}</span></div>
       <div class="digest-book-meta">${b.tradesCount} ${b.tradesCount === 1 ? T('trade', '笔交易') : T('trades', '笔交易')}</div>
-      <p class="digest-book-note">${T(b.note_en, b.note_zh) || ''}</p>
+      <p class="digest-book-note">${escapeHtml(T(b.note_en, b.note_zh) || '')}</p>
     </div>`;
   }
 
   function delayedSection(delayed) {
     if (!delayed || !delayed.length) return '';
-    const rows = delayed.map((x) => `<li>${x.date || ''} · ${x.window || ''} · ${x.model || ''} — ${T(x.note_en, x.note_zh) || x.note || ''}</li>`).join('');
+    const rows = delayed.map((x) => `<li>${escapeHtml(x.date || '')} · ${escapeHtml(x.window || '')} · ${escapeHtml(x.model || '')} — ${escapeHtml(T(x.note_en, x.note_zh) || x.note || '')}</li>`).join('');
     return `<div class="digest-delayed">
       <div class="digest-delayed-hd">⏳ ${T('Delayed (queued while offline)', '延迟（离线期间排队）')}</div>
       <ul class="digest-delayed-list">${rows}</ul>
@@ -72,7 +74,7 @@ import { fetchJson } from '../lib/fetchJson.js';
   function renderDrawer(d) {
     $('digestDrawerDate').textContent = d.date || '—';
     $('digestDrawerBody').innerHTML = `
-      <p class="digest-note">${T(d.note_en, d.note_zh) || ''}</p>
+      <p class="digest-note">${escapeHtml(T(d.note_en, d.note_zh) || '')}</p>
       <div class="digest-books">${d.books.map(bookRow).join('')}</div>
       ${delayedSection(d.delayed)}
       <p class="digest-tomorrow">${T('Tomorrow', '明日')}: ${d.tomorrowPicksCount} ${T('new pick(s) queued', '条新推荐待发布')}</p>
@@ -97,6 +99,11 @@ import { fetchJson } from '../lib/fetchJson.js';
   function render() {
     const d = state.digest;
     if (!d || !d.date) return;
+    const freshness = assessMarketSnapshot(d.date, new Date(), { availableFromMinutes: ARENA_PUBLICATION_MINUTES.postMarket });
+    if (freshness.stale) {
+      hideToast();
+      return; // Historical digests remain in the data archive but never masquerade as a new notification.
+    }
     if (getSeen() === d.date) return; // already seen this day's digest
     showToast(d);
   }
