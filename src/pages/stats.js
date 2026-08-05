@@ -69,22 +69,6 @@ function hideTooltip() {
   tooltip.setAttribute('aria-hidden', 'true');
 }
 
-function countUp(node, target, suffix = '', decimals = null) {
-  if (reducedMotion) {
-    node.textContent = `${decimals == null ? target : target.toFixed(decimals)}${suffix}`;
-    return;
-  }
-  const startedAt = performance.now();
-  const frame = (time) => {
-    const progress = Math.max(0, Math.min(1, (time - startedAt) / 850));
-    const eased = 1 - (1 - progress) ** 3;
-    const value = target * eased;
-    node.textContent = `${decimals == null ? Math.round(value) : value.toFixed(decimals)}${suffix}`;
-    if (progress < 1 && node.isConnected) requestAnimationFrame(frame);
-  };
-  requestAnimationFrame(frame);
-}
-
 function revealCards() {
   const cards = document.querySelectorAll('.chart-card');
   if (reducedMotion || !('IntersectionObserver' in window)) {
@@ -113,7 +97,10 @@ function appendStat(strip, {
   const value = element('b');
   wrapper.append(value, bilingualNode(element('small'), en, zh));
   strip.appendChild(wrapper);
-  countUp(value, target, suffix, decimals);
+  // Statistics are claims, not decoration. Paint the settled value on the
+  // first frame so screenshots, assistive tech and quick scans never observe
+  // an animated but numerically false intermediate result.
+  value.textContent = `${decimals == null ? target : target.toFixed(decimals)}${suffix}`;
 }
 
 function renderSummaryStrip(archive) {

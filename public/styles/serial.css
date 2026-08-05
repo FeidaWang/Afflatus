@@ -76,6 +76,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .book .bk-meta{font:400 10.5px/1.6 var(--mono);color:var(--chrome-dim)}
 .book .bk-badge{position:absolute;top:10px;right:10px;font:400 9px/1 var(--mono);color:#0d211f;background:var(--teal);padding:3px 7px;border-radius:10px;display:none}
 .book.active .bk-badge{display:inline-block}
+.dossier-bridge{display:none}
 
 /* ---- hero ---- */
 .hero{margin-top:14px;border:1px solid var(--line);background:linear-gradient(160deg,var(--panel2),var(--panel));position:relative;overflow:hidden;border-radius:2px}
@@ -250,6 +251,16 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .foot b{color:var(--copper-b)}
 
 @media(max-width:640px){
+  /* Keep the shelf a compact selector instead of three full-height cards
+     stacked immediately above a second rendering of the active title. The
+     next cover remains visibly peeking in to advertise horizontal swiping. */
+  .shelf{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:min(78vw,292px);overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding:0 1px 9px}
+  .shelf::-webkit-scrollbar{display:none}
+  .book,.book-skeleton{scroll-snap-align:start;min-height:118px}
+  .dossier-bridge{display:flex;align-items:center;gap:9px;margin:4px 0 -4px;color:var(--chrome-dim);font:600 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+  .dossier-bridge span{color:var(--copper-b)}
+  .dossier-bridge i{height:1px;flex:1;background:linear-gradient(90deg,var(--line),transparent)}
+  .dossier-bridge small{font:inherit;font-size:8px;color:var(--teal)}
   /* V22: collapse the two-row wrap into one scrollable row — icon-only
      buttons (text labels hidden via .lbl) plus flex-wrap:nowrap so it
      can never re-wrap; overflow-x:auto is a safety net if it's ever a

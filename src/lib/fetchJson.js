@@ -63,8 +63,11 @@ const STATIC_RESOURCES = Object.freeze({
   'sectors-competition': { url: '/sectors-competition.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsCompetition },
   'sectors-rivalry': { url: '/sectors-rivalry.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsRivalry },
   signal: { url: '/signal-events.json', freshness: 15 * 60_000, validate: validators.signal },
-  leagues: { url: '/leagues-data.json', freshness: 60 * 60_000, validate: validators.leagues },
-  games: { url: '/games-data.json', freshness: 60 * 60_000, validate: validators.games },
+  // Tournament records are trust-critical: a freshly deployed correction
+  // must not sit behind a still-young CacheStorage entry. Load the network
+  // version first, while retaining the validated cache as an offline fallback.
+  leagues: { url: '/leagues-data.json', freshness: 60 * 60_000, validate: validators.leagues, networkFirst: true },
+  games: { url: '/games-data.json', freshness: 60 * 60_000, validate: validators.games, networkFirst: true },
   'novels-index': { url: '/novels-index.json', freshness: 5 * 60_000, validate: validators.novelsIndex },
   'arena-universe': { url: '/arena-universe.json', freshness: 60 * 60_000, validate: validators.arenaUniverse },
   'arena-quant-model': { url: '/arena-quant-model.json', freshness: 60 * 60_000, validate: validators.arenaQuantModel },
@@ -234,7 +237,9 @@ async function networkLoad(resource, { headers, timeoutMs }) {
     const response = await fetch(resource.url, {
       headers,
       signal: controller.signal,
-      cache: resource.url.startsWith('/api/') ? 'no-store' : 'default',
+      cache: resource.url.startsWith('/api/')
+        ? 'no-store'
+        : resource.networkFirst ? 'no-cache' : 'default',
     });
     if (!response.ok) {
       throw new JsonDataError('HTTP', `HTTP ${response.status} loading ${resource.key}`, {
@@ -289,8 +294,10 @@ function sharedNetworkLoad(resource, options) {
 /**
  * Load a registered JSON resource.
  *
- * Fresh entries return immediately. Stale entries return immediately and
- * trigger a de-duplicated background revalidation. A caller AbortSignal only
+ * Most fresh entries return immediately; stale entries return immediately and
+ * trigger a de-duplicated background revalidation. Trust-critical resources
+ * marked `networkFirst` revalidate before resolving and use their last
+ * validated entry only when the network fails. A caller AbortSignal only
  * cancels that caller's wait; shared work continues for other consumers.
  *
  * @param {string} key registered resource key
@@ -310,6 +317,10 @@ export async function fetchJson(key, options = {}) {
     const cached = memory.get(resource.url) || await cacheRead(resource);
     if (cached) {
       memory.set(resource.url, cached);
+      if (resource.networkFirst) {
+        const fresh = sharedNetworkLoad(resource, loadOptions).catch(() => cached.data);
+        return raceAbort(fresh, options.signal, resource);
+      }
       const age = Date.now() - cached.at;
       if (age > freshness) void sharedNetworkLoad(resource, loadOptions).catch(() => {});
       return raceAbort(Promise.resolve(cached.data), options.signal, resource);

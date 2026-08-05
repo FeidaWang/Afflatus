@@ -24,6 +24,13 @@ describe('serial layout stability', () => {
     expect(css).toMatch(/\.reader \.body\{[^}]*min-height:/);
   });
 
+  it('keeps the mobile bookshelf compact and marks the active dossier boundary', () => {
+    expect(html).toContain('class="dossier-bridge"');
+    expect(html).toContain('当前书档');
+    expect(css).toMatch(/@media\(max-width:640px\)[\s\S]*\.shelf\{[^}]*grid-auto-flow:column;[^}]*overflow-x:auto;[^}]*scroll-snap-type:x proximity;/);
+    expect(css).toMatch(/\.dossier-bridge\{display:flex;/);
+  });
+
   it('keeps both document roots out of overflow clipping so sticky chrome follows scrolling', () => {
     expect(brandCss).not.toMatch(/html\s*\{[^}]*overflow-x\s*:/s);
     expect(brandCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);

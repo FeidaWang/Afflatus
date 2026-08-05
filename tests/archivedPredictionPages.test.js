@@ -36,6 +36,14 @@ describe('completed prediction archives', () => {
     expect(leagueScript).toContain("data.mode === 'archive' ? data.series");
   });
 
+  it('keeps dynamic archive badges outside nodes rewritten by i18n', () => {
+    expect(leagueHtml).toContain('<h3><span data-en="PRE-FINAL CHAMPION ODDS · FEARLESS POOL"');
+    expect(leagueHtml).toContain(' <span class="sub" id="updated"></span></h3>');
+    expect(gamesHtml).toContain('<h3><span data-en="FINAL AWARDS · GOLDEN BALL / GOLDEN BOOT"');
+    expect(leagueHtml).not.toMatch(/<h3[^>]*data-en[^>]*>[^<]*<span class="sub"/);
+    expect(gamesHtml).not.toMatch(/<h3[^>]*data-en[^>]*>[^<]*<span class="sub"/);
+  });
+
   it('keeps the Arena mobile introduction concise and action-led', () => {
     const brief = arenaHtml.match(/<p class="brief"[^>]*data-en="([^"]+)"/)?.[1] || '';
     expect(brief).toContain('Review the latest published snapshot');

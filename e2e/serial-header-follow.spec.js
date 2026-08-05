@@ -46,3 +46,33 @@ test('Chinese serial landing header scrolls away while reader toolbar remains vi
   await expect(page.locator('#readerWaterfall')).toBeVisible();
   await expectReadingToolbarOnly(page, header, toolbar);
 });
+
+test('mobile serial shelf is a contained selector with a clear dossier handoff', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'desktop-chromium', 'Mobile shelf geometry is covered by the two phone profiles.');
+  await page.goto('/zh/serial.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#shelf .book')).toHaveCount(3);
+
+  const geometry = await page.evaluate(() => {
+    const shelf = document.getElementById('shelf');
+    const bridge = document.querySelector('.dossier-bridge');
+    const shelfStyle = getComputedStyle(shelf);
+    return {
+      flow: shelfStyle.gridAutoFlow,
+      overflowX: shelfStyle.overflowX,
+      hasHorizontalShelf: shelf.scrollWidth > shelf.clientWidth,
+      bridgeVisible: getComputedStyle(bridge).display === 'flex',
+      pageFitsViewport: document.documentElement.scrollWidth === innerWidth,
+    };
+  });
+  expect(geometry).toEqual({
+    flow: 'column',
+    overflowX: 'auto',
+    hasHorizontalShelf: true,
+    bridgeVisible: true,
+    pageFitsViewport: true,
+  });
+
+  await page.locator('#shelf .book').nth(1).click();
+  await expect(page.locator('#novelTitle')).toHaveText('长夜请柬');
+  await expect(page.locator('#shelf .book').nth(1)).toHaveClass(/active/);
+});
