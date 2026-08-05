@@ -45,6 +45,9 @@ export const NAV_ROUTES = Object.freeze([
     "path": "/serial.html",
     "en": "Novels",
     "zh": "小说",
+    "publishedLocales": [
+      "zh"
+    ],
     "group": "labs"
   },
   {

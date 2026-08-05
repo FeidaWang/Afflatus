@@ -113,8 +113,7 @@ const relativeDocumentPath = (route, locale) => {
 };
 
 for (const route of activeRoutes) {
-  for (const locale of ['adaptive', ...SITE_LOCALES]) {
-    if (route.id === 'serial' && locale === 'en') continue;
+  for (const locale of ['adaptive', ...(route.publishedLocales || SITE_LOCALES)]) {
     const relativePath = relativeDocumentPath(route, locale);
     const filePath = path.join(outputRoot, relativePath);
     if (!existsSync(filePath)) {

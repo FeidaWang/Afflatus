@@ -4,15 +4,15 @@ import { resolve } from 'path';
 import { BUILD_ROUTES } from './src/config/siteManifest.js';
 
 const buildInputs = Object.fromEntries(
-  BUILD_ROUTES.map((route) => [route.id, resolve(__dirname, route.file)]),
+  BUILD_ROUTES.map((route) => [route.id, resolve(import.meta.dirname, route.file)]),
 );
 const responsiveCss = readFileSync(
-  resolve(__dirname, 'public/styles/responsive-primitives.css'),
+  resolve(import.meta.dirname, 'public/styles/responsive-primitives.css'),
   'utf8',
 );
 const responsiveLinkPattern = /<link\s+rel=["']stylesheet["']\s+href=["']\/styles\/responsive-primitives\.css["']\s*>/i;
 const dataBridgeScript = readFileSync(
-  resolve(__dirname, 'public/lib/data-bridge.js'),
+  resolve(import.meta.dirname, 'public/lib/data-bridge.js'),
   'utf8',
 );
 const dataBridgePattern = /<script\s+src=["']\/lib\/data-bridge\.js["']\s*><\/script>/i;

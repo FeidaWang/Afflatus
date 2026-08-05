@@ -697,8 +697,7 @@ export function generateLocalizedSite(outDir = 'dist') {
     const source = readFileSync(sourcePath, 'utf8');
     writeFileSync(sourcePath, transformAdaptiveDocument(source, route));
 
-    for (const locale of SITE_LOCALES) {
-      if (route.id === 'serial' && locale === 'en') continue;
+    for (const locale of route.publishedLocales || SITE_LOCALES) {
       const relative = route.path === '/'
         ? `${locale}/index.html`
         : `${locale}/${route.file}`;

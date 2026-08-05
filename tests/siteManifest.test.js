@@ -59,6 +59,7 @@ describe('siteManifest', () => {
   it('has complete EN/ZH locale metadata for every route', () => {
     for (const route of SITE_MANIFEST) {
       expect(['en', 'zh']).toContain(route.defaultLocale);
+      expect(route.publishedLocales || SITE_LOCALES).toContain(route.defaultLocale);
       for (const locale of ['en', 'zh']) {
         expect(route.locales[locale].title).toBeTruthy();
         expect(route.locales[locale].description).toBeTruthy();
@@ -70,12 +71,15 @@ describe('siteManifest', () => {
     expect(SITE_LOCALES).toEqual(['en', 'zh']);
     for (const route of SITEMAP_ROUTES) {
       expect(localizedRoutePath(route, 'en')).toBe(
-        route.path === '/' ? '/en/' : `/en${route.path}`,
+        route.id === 'serial'
+          ? '/zh/serial.html'
+          : (route.path === '/' ? '/en/' : `/en${route.path}`),
       );
       expect(localizedRouteUrl(route, 'zh')).toBe(
         route.path === '/' ? 'https://feida.au/zh/' : `https://feida.au/zh${route.path}`,
       );
     }
+    expect(localizedRoutePath('/serial.html', 'en')).toBe('/zh/serial.html');
   });
 
   it('requires active routes to carry the metadata audited in source HTML', () => {

@@ -32,12 +32,20 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
   const norm = normalizeRoutePath;
   const here = norm(location.pathname);
   const routeLocale = localeFromPathname(location.pathname);
-  const routeHref = (path) => routeLocale ? localizePathname(path, routeLocale) : path;
+  const routeHref = (route) => {
+    const path = typeof route === 'string' ? route : route.path;
+    if (!routeLocale) return path;
+    const publishedLocales = typeof route === 'string' ? null : route.publishedLocales;
+    const locale = publishedLocales && !publishedLocales.includes(routeLocale)
+      ? publishedLocales[0]
+      : routeLocale;
+    return localizePathname(path, locale);
+  };
   let i = SITE.findIndex((s) => norm(s.path) === here);
   if (i < 0) i = 0;
   const n = SITE.length;
-  const prev = routeHref(SITE[(i - 1 + n) % n].path);
-  const next = routeHref(SITE[(i + 1) % n].path);
+  const prev = routeHref(SITE[(i - 1 + n) % n]);
+  const next = routeHref(SITE[(i + 1) % n]);
 
   function run() {
     // prev/next: keyboard (body.dataset, read by page-turn.js AND
@@ -74,7 +82,7 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
         // `here` (the current page) IS home.
         if (s.path === '/' && here === '/') return;
         const a = document.createElement('a');
-        a.setAttribute('href', routeHref(s.path));
+        a.setAttribute('href', routeHref(s));
         a.setAttribute('data-en', s.en);
         a.setAttribute('data-zh', s.zh);
         a.textContent = s.en;

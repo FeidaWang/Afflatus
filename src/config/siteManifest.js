@@ -392,6 +392,7 @@ export const SITE_MANIFEST = Object.freeze([
     build: true,
     sitemap: true,
     defaultLocale: 'zh',
+    publishedLocales: ['zh'],
     nav: { order: 70, group: 'labs', en: 'Novels', zh: '小说' },
     themeColor: '#231411',
     schema: ['Book', 'CreativeWorkSeries'],
@@ -565,6 +566,7 @@ export const NAV_ROUTES = Object.freeze(
       path: route.path,
       en: route.nav.en,
       zh: route.nav.zh,
+      ...(route.publishedLocales ? { publishedLocales: route.publishedLocales } : {}),
       ...(route.nav.group ? { group: route.nav.group } : {}),
     })),
 );
@@ -581,8 +583,13 @@ export const SITE_LOCALES = Object.freeze(['en', 'zh']);
 
 export function localizedRoutePath(routeOrPath, locale) {
   const path = typeof routeOrPath === 'string' ? routeOrPath : routeOrPath?.path;
-  const normalizedLocale = locale === 'zh' ? 'zh' : 'en';
   const base = normalizeRoutePath(String(path || '/').replace(/^\/(?:en|zh)(?=\/|$)/, ''));
+  const route = typeof routeOrPath === 'string' ? findRouteByPath(base) : routeOrPath;
+  const requestedLocale = locale === 'zh' ? 'zh' : 'en';
+  const publishedLocales = route?.publishedLocales || SITE_LOCALES;
+  const normalizedLocale = publishedLocales.includes(requestedLocale)
+    ? requestedLocale
+    : (publishedLocales.includes(route?.defaultLocale) ? route.defaultLocale : publishedLocales[0]);
   return base === '/' ? `/${normalizedLocale}/` : `/${normalizedLocale}${base}`;
 }
 

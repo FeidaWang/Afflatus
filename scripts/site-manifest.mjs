@@ -36,16 +36,17 @@ function fail(message) {
 
 function generatedSitemap() {
   const routeRows = SITEMAP_ROUTES.flatMap((route) => (
-    (route.id === 'serial' ? ['zh'] : SITE_LOCALES).map((locale) => {
+    (route.publishedLocales || SITE_LOCALES).map((locale) => {
     const url = localizedRouteUrl(route, locale);
     const lastModified = routeSeoFacts[route.id]?.dateModified?.slice(0, 10);
+    const publishedLocales = route.publishedLocales || SITE_LOCALES;
     return [
       '  <url>',
       `    <loc>${url}</loc>`,
       ...(lastModified ? [`    <lastmod>${lastModified}</lastmod>`] : []),
-      ...(route.id === 'serial' ? [] : [
+      ...(publishedLocales.includes('en') ? [
         `    <xhtml:link rel="alternate" hreflang="en" href="${localizedRouteUrl(route, 'en')}"/>`,
-      ]),
+      ] : []),
       `    <xhtml:link rel="alternate" hreflang="zh-CN" href="${localizedRouteUrl(route, 'zh')}"/>`,
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${route.metadata.canonical}"/>`,
       '  </url>',
