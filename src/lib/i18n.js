@@ -55,7 +55,8 @@ import {
   function set(l) {
     lang = setLocale(l);
     const href = localeSwitchHref(window.location, lang);
-    if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== href) {
+    const inlineLocale = document.documentElement.dataset.afflatusLocale === 'inline';
+    if (!inlineLocale && `${window.location.pathname}${window.location.search}${window.location.hash}` !== href) {
       document.documentElement.classList.add('vt-suppress');
       window.location.assign(href);
       return;

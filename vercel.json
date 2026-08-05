@@ -17,6 +17,26 @@
       "permanent": false
     },
     {
+      "source": "/en/league.html",
+      "destination": "/en/stats.html",
+      "permanent": false
+    },
+    {
+      "source": "/zh/league.html",
+      "destination": "/zh/stats.html",
+      "permanent": false
+    },
+    {
+      "source": "/en/games.html",
+      "destination": "/en/stats.html",
+      "permanent": false
+    },
+    {
+      "source": "/zh/games.html",
+      "destination": "/zh/stats.html",
+      "permanent": false
+    },
+    {
       "source": "/en/serial.html",
       "destination": "/zh/serial.html",
       "permanent": true

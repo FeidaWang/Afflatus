@@ -1047,6 +1047,17 @@
   });
 
   /* ---------- bookshelf ---------- */
+  function alignShelfToActive(shelf) {
+    var active = shelf.querySelector('.book.active');
+    if (!active) return;
+    requestAnimationFrame(function () {
+      if (!active.isConnected || shelf.scrollWidth <= shelf.clientWidth) return;
+      var shelfBox = shelf.getBoundingClientRect();
+      var activeBox = active.getBoundingClientRect();
+      shelf.scrollLeft += activeBox.left - shelfBox.left;
+    });
+  }
+
   function renderShelf() {
     var shelf = document.getElementById('shelf'); shelf.innerHTML = '';
     state.novels.forEach(function (n, i) {
@@ -1075,6 +1086,7 @@
     });
     shelf.classList.remove('is-loading');
     shelf.removeAttribute('aria-busy');
+    alignShelfToActive(shelf);
   }
 
   function renderHud(hud) {

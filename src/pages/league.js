@@ -14,7 +14,6 @@ import { getLocale } from '../lib/localeStore.js';
 (() => {
   'use strict';
   const $ = (id) => document.getElementById(id);
-  const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
   let lang = window.AfflatusI18N ? window.AfflatusI18N.get() : getLocale('en');
   const T = (en, zh) => lang === 'zh' ? zh : en;
   const FABLE_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:-2px" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="7" width="18" height="14" rx="5" fill="#F2994A"/><rect x="10" y="2" width="4" height="5" rx="2" fill="#F2994A"/><circle cx="12" cy="2" r="1.6" fill="#F2994A"/><circle cx="9" cy="14" r="1.8" fill="#3A2410"/><circle cx="15" cy="14" r="1.8" fill="#3A2410"/><path d="M8.5 17.5 Q12 20.5 15.5 17.5" stroke="#3A2410" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>';
@@ -68,10 +67,8 @@ import { getLocale } from '../lib/localeStore.js';
       const title = lang === 'zh' ? (it.team_zh || it.team) : it.team;
       const reason = T(it.reason_en, it.reason_zh);
       const code = it.teamCode || it.team;
-      return `<div class="prob" data-team="${it.team}"><div class="prow">${teamLogo(code)}<span class="pname">${title}</span><b class="pval" data-to="${it.prob}">0%</b></div><div class="pbar"><i style="--w:${it.prob}%"></i></div><p class="preason">${reason}</p></div>`;
+      return `<div class="prob" data-team="${it.team}"><div class="prow">${teamLogo(code)}<span class="pname">${title}</span><b class="pval">${it.prob}%</b></div><div class="pbar"><i style="--w:${it.prob}%"></i></div><p class="preason">${reason}</p></div>`;
     }).join('');
-    if (!RM) host.querySelectorAll('.pval').forEach((el) => { const to = +el.dataset.to, t0 = performance.now(); (function s(ts) { const p = Math.min(1, (ts - t0) / 900); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))) + '%'; if (p < 1) requestAnimationFrame(s); })(performance.now()); });
-    else host.querySelectorAll('.pval').forEach((el) => el.textContent = el.dataset.to + '%');
   }
   function renderChampions() {
     if (!$('champs')) return;

@@ -38,4 +38,15 @@ test.describe('prediction archive integrity', () => {
     await expect(page.locator('#updated')).toContainText(`v${currentLeagues.version}`);
     await expect(page.locator('#record')).toContainText('7/14');
   });
+
+  test('switches legacy archives to Chinese without leaving the document', async ({ page }) => {
+    await page.goto('/games.html', { waitUntil: 'domcontentloaded' });
+    const before = page.url();
+    await page.locator('.lang-toggle').click();
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+    await expect(page.locator('.hero h2')).toHaveText('预言冠军之路');
+    await expect(page.locator('#updated')).toContainText('非投资建议');
+    expect(page.url()).toBe(before);
+  });
 });

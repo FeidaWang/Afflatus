@@ -5,9 +5,11 @@ const gamesHtml = readFileSync('games.html', 'utf8');
 const leagueHtml = readFileSync('league.html', 'utf8');
 const arenaHtml = readFileSync('arena.html', 'utf8');
 const leagueScript = readFileSync('src/pages/league.js', 'utf8');
+const i18nScript = readFileSync('src/lib/i18n.js', 'utf8');
 const gamesData = JSON.parse(readFileSync('public/games-data.json', 'utf8'));
 const gamesScript = readFileSync('src/pages/games.js', 'utf8');
 const leagueData = JSON.parse(readFileSync('public/leagues-data.json', 'utf8'));
+const vercel = JSON.parse(readFileSync('vercel.json', 'utf8'));
 
 describe('completed prediction archives', () => {
   it('does not present the completed World Cup record as a live daily service', () => {
@@ -42,6 +44,28 @@ describe('completed prediction archives', () => {
     expect(gamesHtml).toContain('<h3><span data-en="FINAL AWARDS · GOLDEN BALL / GOLDEN BOOT"');
     expect(leagueHtml).not.toMatch(/<h3[^>]*data-en[^>]*>[^<]*<span class="sub"/);
     expect(gamesHtml).not.toMatch(/<h3[^>]*data-en[^>]*>[^<]*<span class="sub"/);
+  });
+
+  it('switches legacy archive language in place and redirects unsupported locale URLs', () => {
+    expect(gamesHtml).toContain('data-afflatus-locale="inline"');
+    expect(leagueHtml).toContain('data-afflatus-locale="inline"');
+    expect(i18nScript).toContain("dataset.afflatusLocale === 'inline'");
+    for (const [source, destination] of [
+      ['/en/games.html', '/en/stats.html'],
+      ['/zh/games.html', '/zh/stats.html'],
+      ['/en/league.html', '/en/stats.html'],
+      ['/zh/league.html', '/zh/stats.html'],
+    ]) {
+      expect(vercel.redirects).toContainEqual({ source, destination, permanent: false });
+    }
+  });
+
+  it('paints archived probabilities at their settled value on the first frame', () => {
+    for (const script of [gamesScript, leagueScript]) {
+      expect(script).toContain('<b class="pval">${it.prob}%</b>');
+      expect(script).not.toContain('data-to="${it.prob}"');
+      expect(script).not.toContain('(ts - t0) / 900');
+    }
   });
 
   it('keeps the Arena mobile introduction concise and action-led', () => {

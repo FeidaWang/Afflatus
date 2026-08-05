@@ -49,8 +49,23 @@ test('Chinese serial landing header scrolls away while reader toolbar remains vi
 
 test('mobile serial shelf is a contained selector with a clear dossier handoff', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === 'desktop-chromium', 'Mobile shelf geometry is covered by the two phone profiles.');
+  await page.addInitScript(() => {
+    localStorage.setItem('afflatus:reader:v1', JSON.stringify({
+      version: 2,
+      bookId: 'changye-qingjian',
+      chapterId: 1,
+      offset: 0,
+      theme: 'green',
+      fontSize: 18,
+      layout: 'book',
+      bookmarks: {},
+      visited: {},
+      audioTrack: 0,
+    }));
+  });
   await page.goto('/zh/serial.html', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#shelf .book')).toHaveCount(3);
+  await expect(page.locator('#novelTitle')).toHaveText('长夜请柬');
 
   const geometry = await page.evaluate(() => {
     const shelf = document.getElementById('shelf');
@@ -61,6 +76,11 @@ test('mobile serial shelf is a contained selector with a clear dossier handoff',
       overflowX: shelfStyle.overflowX,
       hasHorizontalShelf: shelf.scrollWidth > shelf.clientWidth,
       bridgeVisible: getComputedStyle(bridge).display === 'flex',
+      activeFullyVisible: (() => {
+        const activeBox = shelf.querySelector('.book.active').getBoundingClientRect();
+        const shelfBox = shelf.getBoundingClientRect();
+        return activeBox.left >= shelfBox.left && activeBox.right <= shelfBox.right;
+      })(),
       pageFitsViewport: document.documentElement.scrollWidth === innerWidth,
     };
   });
@@ -69,10 +89,11 @@ test('mobile serial shelf is a contained selector with a clear dossier handoff',
     overflowX: 'auto',
     hasHorizontalShelf: true,
     bridgeVisible: true,
+    activeFullyVisible: true,
     pageFitsViewport: true,
   });
 
-  await page.locator('#shelf .book').nth(1).click();
-  await expect(page.locator('#novelTitle')).toHaveText('长夜请柬');
-  await expect(page.locator('#shelf .book').nth(1)).toHaveClass(/active/);
+  await page.locator('#shelf .book').first().click();
+  await expect(page.locator('#novelTitle')).toHaveText('万界种春');
+  await expect(page.locator('#shelf .book').first()).toHaveClass(/active/);
 });
