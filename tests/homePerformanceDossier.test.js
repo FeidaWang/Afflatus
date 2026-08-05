@@ -6,6 +6,7 @@ const html = readFileSync('index.html', 'utf8');
 const copy = readFileSync('src/data/content.js', 'utf8');
 const voyageConsole = readFileSync('src/ui/voyageLogConsole.js', 'utf8');
 const brandCss = readFileSync('public/styles/afflatus-brand.css', 'utf8');
+const combatCss = readFileSync('src/cic-hud.css', 'utf8');
 
 describe('FY2025–26 homepage performance dossier', () => {
   it('keeps realized facts separate from modeled portfolio statistics', () => {
@@ -34,6 +35,12 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html).not.toContain('id="voyagePassword"');
     expect(voyageConsole).not.toContain('unlocked = true');
     expect(voyageConsole).toContain("status: 'LOCAL ARCHIVE · READ ONLY'");
+  });
+
+  it('keeps the voyage archive legible without a blocking boot sequence', () => {
+    expect(combatCss).toMatch(/\.cic-log-console\s*\{[^}]*width:\s*min\(520px,/s);
+    expect(combatCss).toMatch(/\.cic-log-entries p\s*\{[^}]*font-size:\s*10\.5px;/s);
+    expect(combatCss).toMatch(/\.cic-log-boot\.play\s*\{[^}]*\.55s/s);
   });
 
   it('publishes all five supplied profitable trade cycles', () => {

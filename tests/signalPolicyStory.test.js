@@ -38,4 +38,9 @@ describe('signal policy reaction story', () => {
     expect(css).toContain("'Marathon Shapiro 65'");
     expect(css).toContain("'JetBrains Mono'");
   });
+
+  it('renders the historical-data warning with dark text on the paper surface', () => {
+    expect(css).toMatch(/\.signal-stale-notice\{[^}]*color:#533b00;[^}]*font:700/s);
+    expect(css).toMatch(/\.signal-stale-notice\{[^}]*text-shadow:none/s);
+  });
 });

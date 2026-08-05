@@ -1085,17 +1085,70 @@
 }
 
 @media (max-width: 620px) {
-  .site-header--follow > .nav {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scrollbar-width: none;
+  /* Every non-home route has the same six primary actions: four direct
+     routes, Labs and language. Keep all six visible as one compact command
+     strip instead of relying on horizontal scrolling, which hid the final
+     language control with no visible affordance. The route-specific colours
+     still come from each page stylesheet; this block only owns geometry. */
+  body:not(.home-page) .site-header--follow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
   }
 
-  .site-header--follow > .nav::-webkit-scrollbar { display: none; }
-  .site-header--follow > .nav > * { flex: 0 0 auto; }
+  .site-header--follow > .nav {
+    inline-size: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 3px;
+    overflow: visible;
+  }
+
+  /* The novel shelf is intentionally Chinese-only, so it has no redundant
+     language switch and therefore owns five — not six — primary actions. */
+  .novels-page .site-header--follow > .nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .site-header--follow > .nav > * {
+    min-inline-size: 0;
+  }
+
+  .site-header--follow > .nav > a,
+  .site-header--follow > .nav .nav-labs__trigger,
+  .site-header--follow > .nav > .lang-toggle,
+  .site-header--follow > .nav > .hbtn {
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    overflow: hidden;
+    font-size: 8px;
+    line-height: 1;
+    letter-spacing: .04em;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .site-header--follow > .nav > .nav-labs {
+    inline-size: 100%;
+  }
+
+  .site-header--follow > .nav .nav-labs__trigger::after {
+    margin-inline-start: 2px;
+  }
+
+  /* Course previously hid every route link below 820px. Its page rule is
+     more specific than the shared geometry, so explicitly restore the same
+     visible command strip here. */
+  .course-page .site-top.site-header--follow > .nav > a,
+  .course-page .site-top.site-header--follow > .nav .nav-labs__trigger {
+    display: inline-flex;
+    min-block-size: 44px;
+  }
 
   .home-page .site-header--follow #langBtn { display: none; }
 

@@ -59,7 +59,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
   function modelColumn(model, picks, stale) {
     const cards = picks.length
       ? picks.map((p) => pickCard(model, p, stale)).join('')
-      : `<div class="pick-empty">${T('No new position today.', '今日不下单。')}</div>`;
+      : `<div class="pick-empty">${T('No position in this snapshot.', '本次快照无持仓。')}</div>`;
     return `<div class="pick-col" style="--pick-color:${MODEL_COLOR[model] || 'var(--muted)'}">
       <div class="pick-col-hd">${MODEL_LABEL[model] || model}</div>
       <div class="pick-col-body">${cards}</div>

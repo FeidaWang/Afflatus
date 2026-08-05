@@ -17,6 +17,9 @@ const ROUTES = [
 const FOLLOWING_ROUTES = ROUTES
   .map(([route]) => route)
   .filter((route) => !['/', '/serial.html', '/course.html', '/boot.html'].includes(route));
+const MOBILE_NAV_ROUTES = ROUTES
+  .map(([route]) => route)
+  .filter((route) => !['/', '/games.html', '/league.html', '/boot.html'].includes(route));
 
 test.describe('Afflatus adaptive brand', () => {
   test.use({ reducedMotion: 'no-preference' });
@@ -113,6 +116,44 @@ test.describe('Afflatus reduced motion brand', () => {
     expect(reduced.iContent).toContain('I');
     expect(reduced.iOpacity).toBe('1');
   });
+});
+
+test.describe('Mobile primary navigation', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  for (const route of MOBILE_NAV_ROUTES) {
+    test(`${route} keeps every primary action visible and touchable`, async ({ page }) => {
+      await page.goto(route, { waitUntil: 'domcontentloaded' });
+      await settlePage(page);
+
+      const nav = page.locator('.site-header--follow > .nav');
+      await expect(nav).toBeVisible();
+      await expect(nav.locator(':scope > *')).toHaveCount(route === '/serial.html' ? 5 : 6);
+
+      const audit = await nav.evaluate((element) => {
+        const children = [...element.children].map((child) => {
+          const target = child.matches('a, button') ? child : child.querySelector('a, button');
+          const bounds = target.getBoundingClientRect();
+          return {
+            left: bounds.left,
+            right: bounds.right,
+            height: bounds.height,
+          };
+        });
+        return {
+          overflow: element.scrollWidth - element.clientWidth,
+          children,
+        };
+      });
+
+      expect(audit.overflow).toBeLessThanOrEqual(1);
+      for (const item of audit.children) {
+        expect(item.left).toBeGreaterThanOrEqual(-1);
+        expect(item.right).toBeLessThanOrEqual(391);
+        expect(item.height).toBeGreaterThanOrEqual(44);
+      }
+    });
+  }
 });
 
 test.describe('Homepage following command bar', () => {

@@ -455,9 +455,9 @@ import {
     if (page.status === ARENA_PAGE_STATUS.GATED) {
       const msg = page.keyRejected
         ? T('That admin key was not accepted.', '该管理员密钥未通过验证。')
-        : T('Live quotes are limited to the day\'s recommended symbols.', '实时报价目前仅覆盖当日推荐标的。');
+        : T('Live quotes are limited to symbols in the latest published snapshot.', '实时报价目前仅覆盖最近一次发布快照中的标的。');
       el.innerHTML = `<div class="ta-empty err gated" role="status">
-        <div>🔒 ${sym} ${T('is outside today\'s live-data pool.', '不在今日实时数据名单内。')} ${msg}</div>
+        <div>🔒 ${sym} ${T('is outside the latest published live-data pool.', '不在最近一次发布的实时数据名单内。')} ${msg}</div>
         <form class="ta-unlock" id="taUnlockForm">
           <input type="password" id="taUnlockInput" autocomplete="off" placeholder="${T('Admin key', '管理员密钥')}" aria-label="${T('Admin key', '管理员密钥')}">
           <button type="submit" class="btn">${T('Unlock', '解锁')}</button>

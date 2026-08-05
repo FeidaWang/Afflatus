@@ -205,7 +205,7 @@ body.embed .hero{border-top:2px solid var(--line)}
 .picks-meta{display:flex;gap:8px;flex-wrap:wrap}
 .picks-note{color:var(--muted);font:500 12px/1.5 var(--font-mono);margin:0 0 12px;max-width:900px}
 .picks.pick-stale .picks-note{color:#ffd166}
-.picks.pick-stale .pick-card{cursor:default;opacity:.78;filter:saturate(.72)}
+.picks.pick-stale .pick-card{cursor:default;opacity:.92}
 .picks.pick-stale .pick-card:hover,.picks.pick-stale .pick-card:focus-visible{transform:none;border-color:rgba(120,140,200,.2)}
 .picks-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
 .pick-col{border:1px solid var(--line);background:linear-gradient(180deg,rgba(11,15,28,.95),rgba(5,7,14,.97));border-top:3px solid var(--pick-color,var(--line-b))}
