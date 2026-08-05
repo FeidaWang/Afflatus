@@ -67,5 +67,14 @@ import {
   window.AfflatusI18N = { get: () => lang, set, toggle: () => set(lang === 'zh' ? 'en' : 'zh'), apply };
 
   document.addEventListener('click', (e) => { const b = e.target.closest && e.target.closest('.lang-toggle'); if (b) { e.preventDefault(); window.AfflatusI18N.toggle(); } });
-  if (document.readyState !== 'loading') apply(); else document.addEventListener('DOMContentLoaded', apply);
+
+  // Entry modules sit after page content, but a fast cached module can still
+  // evaluate while the parser reports `loading`. Translate everything already
+  // parsed immediately, then repeat once at DOMContentLoaded for any nodes that
+  // followed a head-mounted entry. Waiting only for DOMContentLoaded exposed a
+  // brief English frame when a stored Chinese preference met a warm JSON cache.
+  apply();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', apply, { once: true });
+  }
 })();

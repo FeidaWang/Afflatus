@@ -1,4 +1,17 @@
 const REQUEST_ID_RE = /^[A-Za-z0-9._:-]{8,80}$/;
+const PRIMARY_SITE_ORIGIN = 'https://feida.au';
+const VERCEL_DEPLOYMENT_HOST_RE = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.vercel\.app$/;
+
+/**
+ * Resolve the same-deployment public origin without trusting the inbound Host
+ * header. VERCEL_URL is platform-owned; malformed or non-Vercel values fall
+ * back to the canonical production origin instead of becoming an SSRF target.
+ */
+export function trustedSiteOrigin(environment = {}) {
+  const host = String(environment?.VERCEL_URL || '').trim().toLowerCase();
+  if (VERCEL_DEPLOYMENT_HOST_RE.test(host)) return `https://${host}`;
+  return PRIMARY_SITE_ORIGIN;
+}
 
 export function getRequestId(req) {
   const incoming = String(req?.headers?.['x-request-id'] || '').trim();

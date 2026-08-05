@@ -1,4 +1,5 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
       "source": "/:path*",
@@ -9,32 +10,32 @@
     {
       "source": "/league.html",
       "destination": "/stats.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/games.html",
       "destination": "/stats.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/en/league.html",
       "destination": "/en/stats.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/zh/league.html",
       "destination": "/zh/stats.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/en/games.html",
       "destination": "/en/stats.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/zh/games.html",
       "destination": "/zh/stats.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/en/serial.html",
@@ -68,6 +69,16 @@
     }
   ],
   "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Content-Security-Policy", "value": "base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+      ]
+    },
     {
       "source": "/api/(.*)",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]

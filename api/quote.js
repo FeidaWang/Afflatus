@@ -19,7 +19,7 @@
    either way). */
 import { checkRateLimit, clientIp } from '../src/lib/rateLimit.js';
 import { resolveAllowlist, isSymbolAllowed, checkAdminKey } from '../src/lib/arenaAccess.js';
-import { fetchWithTimeout, getRequestId, isAbortError, sendApiError, setApiHeaders } from '../src/lib/apiHttp.js';
+import { fetchWithTimeout, getRequestId, isAbortError, sendApiError, setApiHeaders, trustedSiteOrigin } from '../src/lib/apiHttp.js';
 
 const SYMBOL_RE = /^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$/;
 const RATE_LIMIT = { limit: 60, windowMs: 60000 };
@@ -32,10 +32,10 @@ const hits = new Map();
 const ALLOWLIST_TTL_MS = 5 * 60 * 1000;
 let allowlistCache = { at: 0, allowlist: null };
 
-async function getAllowlist(req) {
+async function getAllowlist() {
   const now = Date.now();
   if (allowlistCache.allowlist && now - allowlistCache.at < ALLOWLIST_TTL_MS) return allowlistCache.allowlist;
-  const origin = (req.headers && req.headers.host) ? `https://${req.headers.host}` : 'https://feida.au';
+  const origin = trustedSiteOrigin(process.env);
   let picks = null;
   let quantModel = null;
   try {
@@ -54,14 +54,19 @@ async function getAllowlist(req) {
 export default async function handler(req, res) {
   const requestId = getRequestId(req);
   setApiHeaders(res, requestId);
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    sendApiError(res, 405, 'METHOD_NOT_ALLOWED', requestId);
+    return;
+  }
   const symbol = (req.query.symbol || '').toString().trim();
   if (!symbol || !SYMBOL_RE.test(symbol)) { sendApiError(res, 400, 'INVALID_SYMBOL', requestId); return; }
   const rl = checkRateLimit(hits, clientIp(req), { ...RATE_LIMIT, now: Date.now() });
   if (!rl.allowed) { res.setHeader('Retry-After', Math.ceil(rl.resetMs / 1000)); sendApiError(res, 429, 'RATE_LIMITED', requestId); return; }
 
-  const allowlist = await getAllowlist(req);
+  const allowlist = await getAllowlist();
   if (!isSymbolAllowed(symbol, allowlist)) {
-    const adminKey = (req.headers['x-arena-key'] || '').toString();
+    const adminKey = (req.headers?.['x-arena-key'] || '').toString();
     if (!checkAdminKey(adminKey, process.env.ARENA_ADMIN_KEY)) {
       sendApiError(res, 403, 'ARENA_KEY_REQUIRED', requestId, { message: "symbol outside today's pool — admin unlock required" });
       return;

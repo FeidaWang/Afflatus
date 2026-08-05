@@ -58,13 +58,14 @@ describe('completed prediction archives', () => {
       ['/en/league.html', '/en/stats.html'],
       ['/zh/league.html', '/zh/stats.html'],
     ]) {
-      expect(vercel.redirects).toContainEqual({ source, destination, permanent: false });
+      expect(vercel.redirects).toContainEqual({ source, destination, permanent: true });
     }
   });
 
   it('initializes locale state before either archive starts dynamic rendering', () => {
     expect(gamesEntry.indexOf("import '../lib/i18n.js'")).toBeLessThan(gamesEntry.indexOf("import './games.js'"));
     expect(leagueEntry.indexOf("import '../lib/i18n.js'")).toBeLessThan(leagueEntry.indexOf("import './league.js'"));
+    expect(i18nScript).toMatch(/\n  apply\(\);\n  if \(document\.readyState === 'loading'\)/);
   });
 
   it('paints archived probabilities at their settled value on the first frame', () => {
