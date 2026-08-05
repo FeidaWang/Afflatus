@@ -5,9 +5,11 @@ const gamesHtml = readFileSync('games.html', 'utf8');
 const leagueHtml = readFileSync('league.html', 'utf8');
 const arenaHtml = readFileSync('arena.html', 'utf8');
 const leagueScript = readFileSync('src/pages/league.js', 'utf8');
+const leagueEntry = readFileSync('src/pages/leagueEntry.js', 'utf8');
 const i18nScript = readFileSync('src/lib/i18n.js', 'utf8');
 const gamesData = JSON.parse(readFileSync('public/games-data.json', 'utf8'));
 const gamesScript = readFileSync('src/pages/games.js', 'utf8');
+const gamesEntry = readFileSync('src/pages/gamesEntry.js', 'utf8');
 const leagueData = JSON.parse(readFileSync('public/leagues-data.json', 'utf8'));
 const vercel = JSON.parse(readFileSync('vercel.json', 'utf8'));
 
@@ -58,6 +60,11 @@ describe('completed prediction archives', () => {
     ]) {
       expect(vercel.redirects).toContainEqual({ source, destination, permanent: false });
     }
+  });
+
+  it('initializes locale state before either archive starts dynamic rendering', () => {
+    expect(gamesEntry.indexOf("import '../lib/i18n.js'")).toBeLessThan(gamesEntry.indexOf("import './games.js'"));
+    expect(leagueEntry.indexOf("import '../lib/i18n.js'")).toBeLessThan(leagueEntry.indexOf("import './league.js'"));
   });
 
   it('paints archived probabilities at their settled value on the first frame', () => {
