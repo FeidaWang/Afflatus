@@ -208,7 +208,7 @@ a{color:inherit;text-decoration:none}
 .prov-badge.prov-red{color:var(--red)}
 .prov-badge.prov-seed{color:var(--dim)}
 .signal-stale-notice{margin:16px 0 0;padding:12px 14px;border:1px solid rgba(112,79,0,.62);background:rgba(245,196,0,.18);color:#533b00;font:700 12px/1.6 var(--mono);text-shadow:none}
-.signal-data-stale .heroCountdown .live{color:var(--amber);border-color:rgba(245,196,0,.48)}
+.signal-data-stale .heroCountdown .live{color:#533b00;border-color:rgba(83,59,0,.52)}
 .compass .rationale{margin:10px 0 0;font:400 17px/1.6 var(--mono);color:var(--mute)}
 .compass .method{margin:8px 0 0;font:400 11px/1.6 var(--mono);color:var(--dim);font-style:italic}
 

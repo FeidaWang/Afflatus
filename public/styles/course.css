@@ -19,6 +19,10 @@
   --noise-opacity:.045;
   --fault-x:0px;
 }
+/* Text accents need different luminance on paper and charcoal surfaces. */
+.signal-strip,.curriculum-audit,.pathway,.fieldwork{--red:#8f1814;--signal:#8f1814}
+.interview{--red:#ff746e;--signal:#ff746e}
+.curriculum-audit .audit-grid p{color:#484a45}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--void)}
 body{margin:0;overflow-x:hidden;background:var(--void);color:var(--paper);font-family:var(--sans);-webkit-font-smoothing:antialiased}

@@ -48,7 +48,6 @@ export const A11Y_BASELINE = Object.freeze({
         '#hdAsOf',
         '#hdMethod',
         '.bias',
-        '.live',
         '.stamp',
         '.tag',
         '.tone-amber > h3 > .pid',

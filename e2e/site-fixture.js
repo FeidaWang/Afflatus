@@ -104,6 +104,11 @@ export async function settlePage(page) {
         transition-duration: 0s !important;
         caret-color: transparent !important;
       }
+      .course-enhanced main > section:not(.hero) {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
     `,
   });
   await page.waitForTimeout(100);
