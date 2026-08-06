@@ -257,8 +257,8 @@ The highest-return work is not a framework migration. It is to turn the current 
 #### `/404.html` and the shared navigation shell
 
 - Generate the 404 page from the same route/locale manifest, return the actual HTTP 404 status, exclude it from sitemap/canonical indexing, and offer Home plus the three primary task routes rather than a dead-end visual.
-- Keep native anchor `href`s in navigation and page-turn controls so browsing works before JS. JS may enhance transitions but must not own reachability.
-- Deduplicate the two page-turn implementations (`src/lib/page-turn.js` and `src/ui/pageTurn.js`) behind one tested keyboard/pointer contract. Serial's deliberate opt-out remains a manifest capability.
+- Keep native anchor `href`s in primary navigation so browsing works before JS. JS may enhance transitions but must not own reachability.
+- Linear page-turn controls were removed site-wide: they duplicated primary navigation, consumed reading margins, and made unmodified arrow keys navigate unexpectedly.
 - The portaled Labs menu needs a real button trigger, roving/familiar arrow-key behavior, `aria-controls`, focus return, viewport collision handling, and teardown-safe global listeners.
 
 ## 3. Algorithm, logic, and state architecture

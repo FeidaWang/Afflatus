@@ -8,13 +8,9 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
    Every public page just needs:
      • <nav class="nav" data-afflatus-nav> … keep your .lang-toggle … </nav>
        (the page links are rendered into it; the current page gets .active)
-     • the usual <nav class="page-turn-controls"> arrows with
-       data-page-turn="prev"/"next" (their href is filled in here)
-   This script derives the cyclic prev/next, sets body.dataset.prev/next
-   (read by page-turn.js for keyboard turns) and the arrow hrefs — so the
-   per-page nav links and prev/next chain never need hand-editing again.
-
-   Load order on each page: i18n.js → lib/nav.js → page-turn.js (all defer).
+   Linear previous/next controls were removed in favour of the primary nav:
+   they duplicated the same routes, occupied the reading margins and made
+   unmodified arrow keys navigate unexpectedly.
    ============================================================ */
 (() => {
   'use strict';
@@ -43,24 +39,8 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
   };
   let i = SITE.findIndex((s) => norm(s.path) === here);
   if (i < 0) i = 0;
-  const n = SITE.length;
-  const prev = routeHref(SITE[(i - 1 + n) % n]);
-  const next = routeHref(SITE[(i + 1) % n]);
 
   function run() {
-    // prev/next: keyboard (body.dataset, read by page-turn.js AND
-    // transition.js's own ArrowLeft/Right listener) + arrow clicks.
-    // U16a: a page can opt out with <body data-no-page-turn> (serial.html —
-    // reading immersion: no edge arrows, and arrow keys must not navigate
-    // away mid-chapter). Skipping the dataset write here is what actually
-    // disables the keyboard turns, since both key listeners read it live.
-    if (!('noPageTurn' in document.body.dataset)) {
-      document.body.dataset.prev = prev;
-      document.body.dataset.next = next;
-      document.querySelectorAll('[data-page-turn="prev"]').forEach((a) => a.setAttribute('href', prev));
-      document.querySelectorAll('[data-page-turn="next"]').forEach((a) => a.setAttribute('href', next));
-    }
-
     // render the primary nav links from SITE (active = current page),
     // inserted BEFORE any existing children (e.g. the page's .lang-toggle).
     // `group: 'labs'` entries collapse into a single dropdown trigger at the
@@ -75,10 +55,7 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
         // U12b (2026-07-11): the home page's own nav no longer renders a
         // link to itself — it's redundant there (you're already on it) and
         // was the 5th button cluttering the home hero's top bar. Every other
-        // page keeps its Home link exactly as before (most of them have no
-        // other one-click way back to "/" — their header brand isn't a link
-        // and the page-turn prev/next arrow only reaches home if it's
-        // adjacent in the SITE order), so this only skips rendering when
+        // page keeps its Home link exactly as before, so this only skips rendering when
         // `here` (the current page) IS home.
         if (s.path === '/' && here === '/') return;
         const a = document.createElement('a');

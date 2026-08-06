@@ -42,7 +42,6 @@ import {
 import { createCombatHmdV3, drawSCZoomScope } from './ui/combatHmdV3.js';
 import { createCombatViewState } from './ui/combatView.js';
 import { initMarketDeck } from './ui/marketDeck.js';
-import { createPageTurnController } from './ui/pageTurn.js';
 import { createRadarDeck } from './ui/radarDeck.js';
 import { createSoftClockRenderer } from './ui/softClock.js';
 import { initVoyageLogConsole } from './ui/voyageLogConsole.js';
@@ -403,8 +402,6 @@ jumpToggle?.addEventListener('click',()=>{
   (inHoldings?hero:holdings)?.scrollIntoView({behavior:'smooth',block:'start'});
 });
 addEventListener('scroll',updateJumpButton,{passive:true});
-
-createPageTurnController();
 
 let combatHot=true, combatHoldTimer=null;
 const weaponSelect=document.getElementById('weaponSelect');

@@ -217,10 +217,10 @@
       "stage": "compute",
       "reveal": 0.6,
       "color": "#F48FB1",
-      "products": ["Ascend", "Huawei Cloud MaaS", "ModelArts", "Atlas"],
-      "summary_en": "Domestic accelerator and cloud stack supporting GLM deployment and model access.",
-      "summary_zh": "支撑 GLM 部署与模型调用的国产加速器和云计算栈。",
-      "source": "https://support.huaweicloud.com/intl/en-us/model-call-maas/model-call-001.html"
+      "products": ["Ascend", "ModelArts Studio", "ModelArts", "Atlas"],
+      "summary_en": "Domestic accelerator and cloud stack for foundation-model access, training and deployment.",
+      "summary_zh": "面向基础模型调用、训练与部署的国产加速器和云计算栈。",
+      "source": "https://www.huaweicloud.com/intl/en-us/product/modelarts.html"
     },
     {
       "id": "broadcom",
@@ -480,9 +480,9 @@
       "type": "compute",
       "reveal": 0.62,
       "strength": 0.8,
-      "label_en": "GLM-5.2 access and deployment through Huawei Cloud MaaS",
-      "label_zh": "通过华为云 MaaS 提供 GLM-5.2 调用与部署",
-      "source_url": "https://support.huaweicloud.com/intl/en-us/model-call-maas/model-call-001.html"
+      "label_en": "Foundation-model access and deployment through Huawei Cloud ModelArts Studio",
+      "label_zh": "通过华为云 ModelArts Studio 调用与部署基础模型",
+      "source_url": "https://www.huaweicloud.com/intl/en-us/product/modelarts.html"
     },
     {
       "id": "broadcom-openai-silicon",

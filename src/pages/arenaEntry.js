@@ -9,7 +9,6 @@ import '../lib/audio.js';
 import '../lib/transition.js';
 import '../lib/i18n.js';
 import '../lib/nav.js';
-import '../lib/page-turn.js';
 import '../lib/clock.js';
 import './arena.js';
 import './arenaQuant.js';

@@ -16,7 +16,7 @@ const fixture = `<!doctype html>
 <meta property="og:url" content="https://feida.au/arena.html">
 <link rel="canonical" href="https://feida.au/arena.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Arena"}</script>
-</head><body data-prev="/" data-next="/sectors.html">
+</head><body>
 <nav data-afflatus-nav><button class="lang-toggle" type="button">中文</button></nav>
 <h1 data-en="English heading" data-zh="中文标题">English heading</h1>
 <p data-i18n-html data-en="Read <b>levels</b>." data-zh="读取<b>关键位</b>。">Read <b>levels</b>.</p>

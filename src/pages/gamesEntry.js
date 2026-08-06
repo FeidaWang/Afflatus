@@ -10,4 +10,3 @@ import './games.js';
 import '../lib/nav.js';
 import '../lib/audio.js';
 import '../lib/transition.js';
-import '../lib/page-turn.js';

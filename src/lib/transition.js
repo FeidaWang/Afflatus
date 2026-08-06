@@ -143,12 +143,5 @@
     if (u.pathname === location.pathname) return null;
     return u.href;
   }
-  document.addEventListener('click', (e) => { if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; const a = e.target.closest && e.target.closest('a[href]'); const href = internal(a); if (!href) return; e.preventDefault(); e.stopImmediatePropagation(); let dir = 'next'; try { dir = (a.dataset.pageTurn === 'prev' || a.dataset.turn === 'prev' || href === new URL(document.body.dataset.prev || '', location.href).href) ? 'prev' : 'next'; } catch {} run(href, dir); }, true);
-  document.addEventListener('keydown', (e) => {
-    const interactive = e.target?.closest?.('a,button,input,textarea,select,canvas,[contenteditable="true"],[role="button"],[role="group"],[role="tab"],[role="slider"],[tabindex]');
-    if (e.metaKey || e.ctrlKey || e.altKey || interactive) return;
-    const prev = document.body.dataset.prev, next = document.body.dataset.next;
-    if (e.key === 'ArrowLeft' && prev) { e.preventDefault(); e.stopImmediatePropagation(); run(prev, 'prev'); }
-    else if (e.key === 'ArrowRight' && next) { e.preventDefault(); e.stopImmediatePropagation(); run(next, 'next'); }
-  }, true);
+  document.addEventListener('click', (e) => { if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; const a = e.target.closest && e.target.closest('a[href]'); const href = internal(a); if (!href) return; e.preventDefault(); e.stopImmediatePropagation(); run(href, 'next'); }, true);
 })();
