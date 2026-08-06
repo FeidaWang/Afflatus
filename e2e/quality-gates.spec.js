@@ -33,7 +33,8 @@ test.describe('active-route browser gates', () => {
           document.documentElement.scrollWidth - document.documentElement.clientWidth,
         ),
       }));
-      expect(documentState.lang).toMatch(/^en(?:-|$)/);
+      const expectedLocale = route.defaultLocale || 'en';
+      expect(documentState.lang).toMatch(new RegExp(`^${expectedLocale}(?:-|$)`));
       expect(documentState.bodyTextLength).toBeGreaterThan(80);
       expect(
         documentState.overflow,

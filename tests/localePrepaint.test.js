@@ -24,5 +24,8 @@ describe('adaptive locale pre-paint', () => {
     expect(source).toContain('p(x,false)');
     expect(source).toContain('p(document,true)');
     expect(source).toContain("e.textContent='EN'");
+    expect(source).toContain("d.style.visibility='hidden'");
+    expect(source).toContain('setTimeout(u,1500)');
+    expect(source).toContain('finally{clearTimeout(t);o.disconnect();u()}');
   });
 });
