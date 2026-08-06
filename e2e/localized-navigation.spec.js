@@ -16,6 +16,7 @@ test('English navigation targets the published Chinese-only bookshelf directly',
 
 test('fixed-locale switching keeps the reader in the current section', async ({ page }) => {
   await page.goto('/en/course.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('.page-turn-controls')).toBeHidden();
   await page.locator('#review').evaluate((section) => {
     section.scrollIntoView({ behavior: 'instant', block: 'start' });
   });

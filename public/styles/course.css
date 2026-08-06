@@ -56,7 +56,8 @@ main>section[id]{scroll-margin-top:104px}
 .course-page>.nav-labs__menu.open{opacity:1;visibility:visible;transform:none;pointer-events:auto}
 .course-page>.nav-labs__menu a{display:block;padding:10px 9px;border:1px solid transparent;color:var(--ash);font:750 9px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
 .course-page>.nav-labs__menu a:hover,.course-page>.nav-labs__menu a:focus-visible,.course-page>.nav-labs__menu a.active{outline:0;border-color:var(--red);background:var(--red);color:var(--void)}
-.page-turn-controls{z-index:1300}.page-turn-controls .page-turn{border-color:rgba(222,222,213,.3);background:var(--void);color:var(--paper)}
+/* The sticky primary nav already exposes every route; edge arrows only duplicate it over long-form copy. */
+.course-page .page-turn-controls{display:none}
 .eyebrow{color:var(--signal);font:800 9px/1.35 var(--mono);letter-spacing:.15em;text-transform:uppercase}
 
 /* Anthropic-like opening field, translated into a microfiche projector. */
