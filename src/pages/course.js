@@ -51,7 +51,7 @@ import { courseNodes } from '../data/courseNodes.js';
     let target;
     try { target = document.querySelector(window.location.hash); } catch { return; }
     revealTransmission(target?.closest('section'));
-    if (align) target?.scrollIntoView({ block: 'start', behavior: 'auto' });
+    if (align) target?.scrollIntoView({ block: 'start', behavior: 'instant' });
   };
   const settleHashTarget = () => {
     revealHashTarget({ align: true });
@@ -61,7 +61,9 @@ import { courseNodes } from '../data/courseNodes.js';
     window.setTimeout(() => revealHashTarget({ align: true }), 780);
   };
   window.addEventListener('hashchange', settleHashTarget);
-  revealHashTarget();
+  if (window.location.hash) {
+    settleHashTarget();
+  }
 
   const timecode = $('#signalTimecode');
   const timecodeStart = performance.now();
@@ -441,10 +443,6 @@ import { courseNodes } from '../data/courseNodes.js';
     drawAtlasRelations();
     updateAtlasScene();
   });
-  if (window.location.hash) {
-    requestAnimationFrame(settleHashTarget);
-  }
-
   const nodeDialog = $('#courseNodeDialog');
   const nodeDialogTitle = $('#nodeDialogTitle');
   const nodeDialogMeta = $('#nodeDialogMeta');

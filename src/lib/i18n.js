@@ -19,6 +19,31 @@ import {
   'use strict';
   let lang = getLocale('en');
 
+  function currentSectionHash() {
+    try {
+      const readingLine = Math.min(280, Math.max(96, window.innerHeight * 0.24));
+      const activeSection = [...document.querySelectorAll('main > section[id]')]
+        .find((section) => {
+          const bounds = section.getBoundingClientRect();
+          return bounds.top <= readingLine && bounds.bottom > readingLine;
+        });
+      if (!activeSection) return window.location.hash;
+      return activeSection.id === 'top'
+        ? ''
+        : `#${encodeURIComponent(activeSection.id)}`;
+    } catch {
+      return window.location.hash;
+    }
+  }
+
+  function contextualLocaleHref(nextLocale) {
+    return localeSwitchHref({
+      pathname: window.location.pathname,
+      search: window.location.search,
+      hash: currentSectionHash(),
+    }, nextLocale);
+  }
+
   function apply() {
     try { document.documentElement.lang = localeToHtmlLang(lang); } catch {}
     document.querySelectorAll('[data-en]').forEach((el) => {
@@ -54,7 +79,7 @@ import {
   }
   function set(l) {
     lang = setLocale(l);
-    const href = localeSwitchHref(window.location, lang);
+    const href = contextualLocaleHref(lang);
     const inlineLocale = document.documentElement.dataset.afflatusLocale === 'inline';
     if (!inlineLocale && `${window.location.pathname}${window.location.search}${window.location.hash}` !== href) {
       document.documentElement.classList.add('vt-suppress');
