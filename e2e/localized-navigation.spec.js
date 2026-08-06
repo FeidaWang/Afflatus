@@ -36,3 +36,22 @@ test('fixed-locale switching keeps the reader in the current section', async ({ 
   expect(reviewPosition.bottom).toBeGreaterThan(180);
   expect(new URL(page.url()).hash).toBe('#review');
 });
+
+test('desktop pointer click pins a Labs menu that hover opened', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop pointer interaction');
+  await page.goto('/en/course.html', { waitUntil: 'domcontentloaded' });
+
+  const trigger = page.locator('.nav-labs__trigger');
+  const menu = page.locator('.nav-labs__menu');
+  await trigger.hover();
+  await expect(menu).toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+  await trigger.click();
+  await expect(menu).toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+  await trigger.click();
+  await expect(menu).toBeHidden();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+});

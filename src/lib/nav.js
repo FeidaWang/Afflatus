@@ -124,14 +124,17 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
             labsMenu.className = 'nav-labs__menu';
             document.body.appendChild(labsMenu);
 
-            const openMenu = () => {
+            let clickPinned = false;
+            const openMenu = ({ pin = false } = {}) => {
               closeLabsMenus(labsMenu);
               positionLabsMenu(labsTrigger, labsMenu);
               labsWrap.classList.add('open');
               labsMenu.classList.add('open');
               labsTrigger.setAttribute('aria-expanded', 'true');
+              if (pin) clickPinned = true;
             };
             const closeMenu = () => {
+              clickPinned = false;
               labsWrap.classList.remove('open');
               labsMenu.classList.remove('open');
               labsTrigger.setAttribute('aria-expanded', 'false');
@@ -145,12 +148,13 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
             labsTrigger.addEventListener('click', (e) => {
               e.preventDefault();
               e.stopPropagation();
-              if (labsMenu.classList.contains('open')) closeMenu(); else openMenu();
+              if (labsMenu.classList.contains('open') && clickPinned) closeMenu();
+              else openMenu({ pin: true });
             });
             labsTrigger.addEventListener('mouseenter', () => { cancelClose(); openMenu(); });
-            labsTrigger.addEventListener('mouseleave', scheduleClose);
+            labsTrigger.addEventListener('mouseleave', () => { if (!clickPinned) scheduleClose(); });
             labsMenu.addEventListener('mouseenter', cancelClose);
-            labsMenu.addEventListener('mouseleave', scheduleClose);
+            labsMenu.addEventListener('mouseleave', () => { if (!clickPinned) scheduleClose(); });
             labsTrigger.addEventListener('focus', openMenu);
             labsWrap.addEventListener('focusout', (e) => {
               if (!labsMenu.contains(e.relatedTarget) && e.relatedTarget !== labsTrigger) closeMenu();
