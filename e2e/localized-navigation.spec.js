@@ -1,5 +1,28 @@
 import { expect, test } from '@playwright/test';
 
+test('home navigation follows the fixed and interactive locale', async ({ page }) => {
+  const primaryLinks = page.locator('[data-afflatus-nav] > a');
+  const labsTrigger = page.locator('.nav-labs__trigger');
+  const labsLinks = page.locator('.nav-labs__menu a');
+
+  await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
+  await expect(primaryLinks).toHaveText(['竞技场', '板块', '信号']);
+  await expect(labsTrigger).toHaveText('实验室');
+  await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程']);
+
+  await page.goto('/en/', { waitUntil: 'domcontentloaded' });
+  await expect(primaryLinks).toHaveText(['Arena', 'Sectors', 'Signal']);
+  await expect(labsTrigger).toHaveText('Labs');
+  await expect(labsLinks).toHaveText(['Stats', 'Horoscope', 'Novels', 'Course']);
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.locator('#langBtn:visible, #langMiniToggle:visible').click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+  await expect(primaryLinks).toHaveText(['竞技场', '板块', '信号']);
+  await expect(labsTrigger).toHaveText('实验室');
+  await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程']);
+});
+
 test('primary navigation replaces duplicate linear page-turn controls', async ({ page }) => {
   for (const path of ['/en/', '/en/arena.html', '/en/horoscope.html', '/en/course.html']) {
     await page.goto(path, { waitUntil: 'domcontentloaded' });

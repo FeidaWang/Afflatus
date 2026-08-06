@@ -1,5 +1,5 @@
 import { NAV_ROUTES, normalizeRoutePath } from '../config/navRoutes.generated.js';
-import { localeFromPathname, localizePathname } from './localeStore.js';
+import { getLocale, localeFromPathname, localizePathname } from './localeStore.js';
 
 /* ============================================================
    Afflatus shared navigation — SINGLE SOURCE OF TRUTH.
@@ -19,10 +19,8 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
   // NAV_ROUTES is derived from the manifest and already sorted by nav.order.
   const SITE = NAV_ROUTES;
   const LABS_LABEL = { en: 'Labs', zh: '实验室' };
-  // Exposed read-only for consumers that can't use the full DOM-rendering
-  // behaviour below (e.g. index.html's own nav, which has its own bilingual
-  // system instead of i18n.js/data-en/data-zh). Everything else in this file
-  // is unchanged for the five pages already using it.
+  // Exposed read-only for consumers that need route metadata without the DOM
+  // rendering behaviour below.
   window.AfflatusSite = SITE.slice();
 
   const norm = normalizeRoutePath;
@@ -40,7 +38,16 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
   let i = SITE.findIndex((s) => norm(s.path) === here);
   if (i < 0) i = 0;
 
+  function applyLocale(locale = getLocale('en')) {
+    const lang = locale === 'zh' ? 'zh' : 'en';
+    document.querySelectorAll('[data-afflatus-nav] [data-en][data-zh], .nav-labs__menu [data-en][data-zh]')
+      .forEach((el) => { el.textContent = el.dataset[lang]; });
+  }
+
+  window.AfflatusNav = Object.freeze({ applyLocale });
+
   function run() {
+    const renderedLocale = routeLocale || getLocale('en');
     // render the primary nav links from SITE (active = current page),
     // inserted BEFORE any existing children (e.g. the page's .lang-toggle).
     // `group: 'labs'` entries collapse into a single dropdown trigger at the
@@ -62,7 +69,7 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
         a.setAttribute('href', routeHref(s));
         a.setAttribute('data-en', s.en);
         a.setAttribute('data-zh', s.zh);
-        a.textContent = s.en;
+        a.textContent = renderedLocale === 'zh' ? s.zh : s.en;
         if (idx === i) a.className = 'active';
 
         if (s.group === 'labs') {
@@ -82,7 +89,7 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
             labsTrigger.setAttribute('data-zh', LABS_LABEL.zh);
             labsTrigger.setAttribute('aria-haspopup', 'true');
             labsTrigger.setAttribute('aria-expanded', 'false');
-            labsTrigger.textContent = LABS_LABEL.en;
+            labsTrigger.textContent = LABS_LABEL[renderedLocale];
 
             // The dropdown PANEL is portaled to a direct child of <body>
             // (position:fixed, positioned via JS from the trigger's own
@@ -161,6 +168,7 @@ import { localeFromPathname, localizePathname } from './localeStore.js';
 
     // translate freshly-rendered links to the current language
     try { if (window.AfflatusI18N) window.AfflatusI18N.apply(); } catch (e) {}
+    applyLocale(renderedLocale);
   }
 
   // Anchors the portaled panel under its trigger using the trigger's own

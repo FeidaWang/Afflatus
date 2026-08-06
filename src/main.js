@@ -3568,6 +3568,7 @@ function setLang(lang){
   currentLang=setLocale(lang);
   const langMini=document.getElementById('langMiniToggle'); if(langMini) langMini.dataset.active=lang;
   const c=COPY[lang]; document.title=c.title; document.documentElement.lang=c.lang; document.getElementById('langBtn').textContent=c.langBtn;
+  window.AfflatusNav?.applyLocale(lang);
   updateCommandButton(); updateJumpButton();
   document.getElementById('heroNum').innerHTML=c.heroNum; document.getElementById('heroTitle').innerHTML=c.heroTitle; document.getElementById('heroDesc').textContent=c.heroDesc; document.getElementById('coord').textContent=c.coord; document.getElementById('scrollHint').textContent=c.scrollHint;
   c.sl.forEach((t,i)=>{
