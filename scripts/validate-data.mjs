@@ -4,15 +4,9 @@
  * §2.7). Each file already has (or now has) a per-file validator in src/lib/
  * following the pattern established by validateSignalEvents.js/
  * validateSectorsData.js — this script just aggregates them for
- * .github/workflows/ci.yml. Individual scheduled tasks continue to call
- * their own single-file validate-*.mjs script directly (unchanged); this
- * script additionally covers files that don't have their own CLI wrapper.
- *
- * Files intentionally NOT covered here: arena-ledger.json / arena-predlog.json
- * are only ever written by their code-enforced settlement scripts
- * (scripts/apply-arena-run.mjs / apply-arena-predlog.mjs), which already are
- * the correctness gate for those files — see RFC §2.6. A schema validator on
- * top would be redundant, not defense in depth.
+ * .github/workflows/ci.yml. The unified publisher and settlement scripts call
+ * the same validators before replacing any production artifact; this entry
+ * point provides an independent full-repository check in CI.
  *
  * Exits 0 if every checked file is valid or absent (a file that doesn't
  * exist yet — e.g. before a scheduled task's first run — is not a failure).
@@ -31,11 +25,16 @@ import { validateArenaQuantModel } from '../src/lib/validateArenaQuantModel.js';
 import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
 import { validateArenaDigest } from '../src/lib/validateArenaDigest.js';
 import { validateArenaNews } from '../src/lib/validateArenaNews.js';
+import { validateArenaLedger } from '../src/lib/validateArenaLedger.js';
+import { validateArenaPredlog } from '../src/lib/validateArenaPredlog.js';
+import { validateDailyTransits } from '../src/lib/validateDailyTransits.js';
+import { validateSectorsEcosystem } from '../src/lib/validateSectorsEcosystem.js';
 
 const CHECKS = [
   { path: 'public/sectors-data.json', validate: validateSectorsData },
   { path: 'public/sectors-competition.json', validate: validateSectorsCompetition },
   { path: 'public/sectors-rivalry.json', validate: validateSectorsRivalry },
+  { path: 'public/sectors-ecosystem.json', validate: validateSectorsEcosystem },
   { path: 'public/signal-events.json', validate: validateSignalEvents },
   { path: 'public/leagues-data.json', validate: validateLeaguesData },
   { path: 'public/games-data.json', validate: validateGamesData },
@@ -43,14 +42,16 @@ const CHECKS = [
   // Part 4 (urgent.md SS18.1): arena-universe.json's live v2 ("market") shape,
   // and the new pipeline artifacts. arena-universe-s1.json is Season 1's
   // frozen archive and is deliberately NOT checked here (historical, never
-  // written again). arena-ledger.json/arena-predlog.json stay excluded per
-  // the note above -- their own settlement scripts are the correctness gate.
+  // written again).
   { path: 'public/arena-universe.json', validate: validateArenaUniverse },
   { path: 'public/arena-picks.json', validate: validateArenaPicks },
   { path: 'public/arena-quant-model.json', validate: validateArenaQuantModel },
   { path: 'public/arena-runlog.json', validate: validateArenaRunlog },
   { path: 'public/arena-daily-digest.json', validate: validateArenaDigest },
   { path: 'public/arena-news.json', validate: validateArenaNews },
+  { path: 'public/arena-ledger.json', validate: validateArenaLedger },
+  { path: 'public/arena-predlog.json', validate: validateArenaPredlog },
+  { path: 'public/transits-daily.json', validate: validateDailyTransits },
 ];
 
 let anyFail = false;

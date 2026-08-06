@@ -9,8 +9,6 @@ const ROUTES = [
   ['/horoscope.html', 'horoscope'],
   ['/serial.html', 'serial'],
   ['/course.html', 'course'],
-  ['/games.html', 'games'],
-  ['/league.html', 'league'],
   ['/boot.html', 'boot'],
 ];
 
@@ -19,7 +17,7 @@ const FOLLOWING_ROUTES = ROUTES
   .filter((route) => !['/', '/serial.html', '/course.html', '/boot.html'].includes(route));
 const MOBILE_NAV_ROUTES = ROUTES
   .map(([route]) => route)
-  .filter((route) => !['/', '/games.html', '/league.html', '/boot.html'].includes(route));
+  .filter((route) => !['/', '/boot.html'].includes(route));
 
 test.describe('Afflatus adaptive brand', () => {
   test.use({ reducedMotion: 'no-preference' });

@@ -1,22 +1,22 @@
 {
-  "updated": "2026-07-24",
+  "updated": "2026-08-05",
   "version": 2,
-  "day": 2,
+  "day": 10,
   "season": 2,
-  "lastRunDate": "2026-07-24",
+  "lastRunDate": "2026-08-05",
   "note_en": "Arena Autopilot — three simulated $10,000 ledgers (S: ORACLE, sentiment/event-driven; P: PULSE, intraday structure; T: ATLAS, alt-data fusion) trading the full S&P 500 under strict, rule-based risk limits — the models only propose trades; a fixed rule set decides what's allowed, never the other way around. Season 1 (Models A/B, fixed 30-symbol AI-hardware watchlist) is archived separately. Not investment advice.",
   "note_zh": "Arena Autopilot——三本各 $10,000 的模拟账本（S：ORACLE，情绪/事件驱动；P：PULSE，盘中结构；T：ATLAS，另类数据融合），在全标普 500 范围内按严格的风控规则运作——模型只负责提案，是否放行由固定规则决定，永远不是反过来。Season 1（Model A/B，固定 30 只 AI 硬件自选股）已单独归档。非投资建议。",
   "bench": {
-    "spyPct": 0,
-    "smhPct": 0
+    "spyPct": 4.28,
+    "smhPct": -1.8
   },
   "models": {
     "S": {
       "promptVersion": "S-v1",
       "startEquity": 10000,
       "cash": 6252.137,
-      "equity": 10078.937,
-      "dayStartEquity": 10034.4963,
+      "equity": 9967.0369,
+      "dayStartEquity": 9967.0369,
       "equityHistory": [
         {
           "day": 0,
@@ -29,6 +29,38 @@
         {
           "day": 2,
           "equity": 10078.937
+        },
+        {
+          "day": 3,
+          "equity": 10108.8169
+        },
+        {
+          "day": 4,
+          "equity": 10158.3171
+        },
+        {
+          "day": 5,
+          "equity": 10013.6571
+        },
+        {
+          "day": 6,
+          "equity": 9956.5369
+        },
+        {
+          "day": 7,
+          "equity": 9950.2969
+        },
+        {
+          "day": 8,
+          "equity": 10012.517
+        },
+        {
+          "day": 9,
+          "equity": 10010.477
+        },
+        {
+          "day": 10,
+          "equity": 9967.0369
         }
       ],
       "positions": [
@@ -36,13 +68,13 @@
           "sym": "WAB",
           "qty": 6,
           "avgPx": 292.226,
-          "mkPx": 300.82
+          "mkPx": 296.31
         },
         {
           "sym": "T",
           "qty": 84,
           "avgPx": 23.7419,
-          "mkPx": 24.07
+          "mkPx": 23.059999
         }
       ],
       "trades": [
@@ -69,14 +101,14 @@
       ],
       "rejections": [],
       "metrics": {
-        "cumPct": 0.789,
-        "maxDD": -0.01,
+        "cumPct": -0.33,
+        "maxDD": -2.048,
         "hitRate": null,
-        "exposure": 38
+        "exposure": 37.3
       },
       "review": {
-        "zh": "WAB(今日+0.95%，约占净值17.9%)与T(今日+4.8%，约占净值20.1%，已因价格上涨触及仓位上限)均延续本周财报超预期动能——WAB创历史新高，T的回购上调/用户超预期逻辑仍有多份最新分析师上调目标价支撑(TD Cowen上调至33美元，摩根士丹利上调至27美元)。未见衰减信号，今日digest也无新增合格标的，且两仓位均无加仓空间(20%上限)。本窗口不提交订单。",
-        "en": "WAB (+0.95% today, ~17.9% of equity) and T (+4.8% today, ~20.1% of equity, effectively at cap from price action alone) both continue to hold this week's earnings-beat momentum -- WAB hit a fresh record high, T's buyback-raise/subscriber-beat thesis is still backed by fresh analyst target hikes (TD Cowen to $33, Morgan Stanley to $27). No decay signal, no new qualifying candidate in today's digest, and neither position has room to add given the 20% cap. Proposing no orders this window."
+        "en": "Open positions (WAB, T) were marked through the 2026-08-05 provider close during late recovery. Missed proposal windows remain missed and no discretionary or hindsight order was added.",
+        "zh": "现有持仓（WAB、T）已完成估值至 2026-08-05 行情供应商收盘价。错过的提案窗口仍保留为 missed，未新增主观或事后订单。"
       }
     },
     "P": {
@@ -96,6 +128,38 @@
         },
         {
           "day": 2,
+          "equity": 10022.1375
+        },
+        {
+          "day": 3,
+          "equity": 10022.1375
+        },
+        {
+          "day": 4,
+          "equity": 10022.1375
+        },
+        {
+          "day": 5,
+          "equity": 10022.1375
+        },
+        {
+          "day": 6,
+          "equity": 10022.1375
+        },
+        {
+          "day": 7,
+          "equity": 10022.1375
+        },
+        {
+          "day": 8,
+          "equity": 10022.1375
+        },
+        {
+          "day": 9,
+          "equity": 10022.1375
+        },
+        {
+          "day": 10,
           "equity": 10022.1375
         }
       ],
@@ -130,8 +194,8 @@
         "exposure": 0
       },
       "review": {
-        "zh": "今日 P 账本 picks 池仍无候选标的(arena-picks.json models.P 为空)，且当前无持仓——晨间窗口已确认无标的可交易。本窗口继续不提交订单。",
-        "en": "No qualifying candidates in today's picks pool for P (arena-picks.json models.P remains empty) and no open positions to manage -- same as the open-window read this morning. Proposing no orders this window."
+        "en": "The empty book was marked through the 2026-08-05 provider close during late recovery. Missed proposal windows remain missed and no discretionary or hindsight order was added.",
+        "zh": "空仓账本已完成核对至 2026-08-05 行情供应商收盘价。错过的提案窗口仍保留为 missed，未新增主观或事后订单。"
       }
     },
     "T": {
@@ -148,6 +212,38 @@
         {
           "day": 2,
           "equity": 10000
+        },
+        {
+          "day": 3,
+          "equity": 10000
+        },
+        {
+          "day": 4,
+          "equity": 10000
+        },
+        {
+          "day": 5,
+          "equity": 10000
+        },
+        {
+          "day": 6,
+          "equity": 10000
+        },
+        {
+          "day": 7,
+          "equity": 10000
+        },
+        {
+          "day": 8,
+          "equity": 10000
+        },
+        {
+          "day": 9,
+          "equity": 10000
+        },
+        {
+          "day": 10,
+          "equity": 10000
         }
       ],
       "positions": [],
@@ -160,8 +256,8 @@
         "exposure": 0
       },
       "review": {
-        "zh": "周五，不在T的周二/周四开仓窗口内。当前无持仓需要管理，且今日推荐池中T也没有候选标的，故不操作。",
-        "en": "Friday — outside T's Tue/Thu open window. No existing positions to manage and today's picks screen surfaced zero T candidates, so no action is the correct call."
+        "en": "The empty book was marked through the 2026-08-05 provider close during late recovery. Missed proposal windows remain missed and no discretionary or hindsight order was added.",
+        "zh": "空仓账本已完成核对至 2026-08-05 行情供应商收盘价。错过的提案窗口仍保留为 missed，未新增主观或事后订单。"
       }
     }
   }

@@ -1,46 +1,53 @@
 {
-  "date": "2026-07-24",
-  "generatedAt": "2026-07-25T00:58:00Z",
-  "note_en": "Chip stocks stayed volatile after Thursday's Mag7-led selloff; broader tape stabilized Friday. S opened an AT&T long, P booked a small SMCI gain, T stayed flat (outside its Tue/Thu window). Note: today's pre-market gather and picks-publish never ran (repo-mount race, since fixed), so no fresh picks pool was available today.",
-  "note_zh": "芯片股在周四七巨头抛售后仍有波动，周五大盘趋稳。S新开AT&T多头，P兑现SMCI小额收益，T因不在周二/周四窗口内保持不动。注：今日盘前收集与推荐发布均未运行(仓库挂载竞态问题，现已修复)，故今日无新推荐池。",
+  "date": "2026-08-05",
+  "generatedAt": "2026-08-06T13:30:00.000Z",
+  "note_en": "Recovered 8 missed market sessions with provider closing prices. Missed proposal windows remain marked missed; no hindsight trades were created.",
+  "note_zh": "已使用行情供应商收盘价恢复 8 个漏跑交易日。错过的提案窗口仍标记为 missed，未创建任何事后交易。",
   "books": [
     {
       "model": "S",
-      "pnlPct": 0.4,
-      "tradesCount": 1,
-      "note_en": "Opened a long in AT&T (T), 84 shares — its only trade today. Equity ticked up ~0.4% to $10,079 (+0.79% cumulative).",
-      "note_zh": "今日新开AT&T(T)多头仓位84股，为今日唯一交易。账户上涨约0.4%至10079美元(累计+0.79%)。"
+      "pnlPct": -0.43,
+      "tradesCount": 0,
+      "note_en": "Marked to the 2026-08-05 close with no discretionary or retroactive orders.",
+      "note_zh": "已按 2026-08-05 收盘价计价，未新增主观或事后订单。"
     },
     {
       "model": "P",
-      "pnlPct": 0.2,
-      "tradesCount": 1,
-      "note_en": "Sold SMCI (64 sh) for a realized gain of ~$22, its only trade today. Equity up ~0.2% to $10,022 (+0.22% cumulative).",
-      "note_zh": "今日卖出SMCI 64股，兑现约22美元收益，为今日唯一交易。账户上涨约0.2%至10022美元(累计+0.22%)。"
+      "pnlPct": 0,
+      "tradesCount": 0,
+      "note_en": "Marked to the 2026-08-05 close with no discretionary or retroactive orders.",
+      "note_zh": "已按 2026-08-05 收盘价计价，未新增主观或事后订单。"
     },
     {
       "model": "T",
       "pnlPct": 0,
       "tradesCount": 0,
-      "note_en": "No activity — Friday falls outside T's Tue/Thu open window, it holds no positions, and today's picks-publish never ran (see regime note) so there was no candidate pool anyway.",
-      "note_zh": "无操作——周五不在T的周二/周四开仓窗口内，当前无持仓，且今日推荐发布未运行(见上方备注)，本就没有候选池。"
+      "note_en": "Marked to the 2026-08-05 close with no discretionary or retroactive orders.",
+      "note_zh": "已按 2026-08-05 收盘价计价，未新增主观或事后订单。"
     }
   ],
   "tomorrowPicksCount": 0,
   "delayed": [
     {
-      "date": "2026-07-24",
+      "date": "2026-08-05",
       "window": "post-market",
       "model": "S",
-      "note_en": "Reconcile applied a late mark-to-market catch-up for S's post-market window (0 orders filled).",
-      "note_zh": "对账脚本为S的盘后窗口补做了迟到的按市值重新计价(0笔成交)。"
+      "note_en": "Late mark-to-market recovery completed after 8 missed session(s).",
+      "note_zh": "在漏跑 8 个交易日后完成迟到的按市值计价恢复。"
     },
     {
-      "date": "2026-07-24",
+      "date": "2026-08-05",
       "window": "post-market",
       "model": "P",
-      "note_en": "Reconcile applied a late mark-to-market catch-up for P's post-market window (1 order filled).",
-      "note_zh": "对账脚本为P的盘后窗口补做了迟到的按市值重新计价(1笔成交)。"
+      "note_en": "Late mark-to-market recovery completed after 8 missed session(s).",
+      "note_zh": "在漏跑 8 个交易日后完成迟到的按市值计价恢复。"
+    },
+    {
+      "date": "2026-08-05",
+      "window": "post-market",
+      "model": "T",
+      "note_en": "Late mark-to-market recovery completed after 8 missed session(s).",
+      "note_zh": "在漏跑 8 个交易日后完成迟到的按市值计价恢复。"
     }
   ]
 }

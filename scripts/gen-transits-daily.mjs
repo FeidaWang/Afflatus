@@ -8,11 +8,11 @@
    runs the existing light aspect math (src/lib/astro.js aspectBetween)
    against each visitor's own natal longitudes.
 
-   Run by a daily scheduled task (see roadmap §7.10 module 4: "复用
-   push-data.sh 管线"), same pattern as the site's other scheduled data
-   generators (sectors-data.json, signal-events.json, etc.):
-     node scripts/gen-transits-daily.mjs
-     bash scripts/push-data.sh public/transits-daily.json "chore: refresh daily transits"
+   Run by the unified data orchestrator. The scheduled path writes to its
+   temporary candidate directory and hands that file to data:publish; a plain
+   invocation still refreshes public/transits-daily.json for local use:
+     node scripts/gen-transits-daily.mjs --output=<candidate>/transits-daily.json
+     npm run data:publish -- horoscope-transits <candidate>
 
    Duplicates the small geocentric-longitude call from src/lib/
    astroPlanets.ts instead of importing that file directly: this script
@@ -25,12 +25,19 @@
    verbatim, including the heliocentric-vs-geocentric gotcha documented
    there.
    ============================================================ */
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import * as Astronomy from 'astronomy-engine';
+import { zonedDate } from '../src/lib/dataFreshness.js';
 
 const BODIES = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'];
+
+function option(name, fallback = null) {
+  const prefix = `--${name}=`;
+  const value = process.argv.slice(2).find((item) => item.startsWith(prefix));
+  return value ? value.slice(prefix.length) : fallback;
+}
 
 function geoLongitude(body, date) {
   if (body === 'Sun') {
@@ -43,19 +50,20 @@ function geoLongitude(body, date) {
   return ((lon % 360) + 360) % 360;
 }
 
-const now = new Date();
+const now = new Date(option('now', new Date().toISOString()));
+if (Number.isNaN(now.getTime())) throw new Error('invalid --now timestamp');
 const planets = {};
 for (const body of BODIES) planets[body] = Number(geoLongitude(body, now).toFixed(4));
 
-const p = (x) => String(x).padStart(2, '0');
 const out = {
   generatedAt: now.toISOString(),
-  date: `${now.getUTCFullYear()}-${p(now.getUTCMonth() + 1)}-${p(now.getUTCDate())}`,
+  date: zonedDate(now, 'Australia/Melbourne'),
   planets,
 };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const outPath = join(__dirname, '..', 'public', 'transits-daily.json');
+const outPath = resolve(option('output', join(__dirname, '..', 'public', 'transits-daily.json')));
+mkdirSync(dirname(outPath), { recursive: true });
 writeFileSync(outPath, JSON.stringify(out, null, 2) + '\n');
 console.log(`Wrote ${outPath}`);
 console.log(JSON.stringify(out, null, 2));

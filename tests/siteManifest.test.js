@@ -113,6 +113,7 @@ describe('siteManifest', () => {
   it('keeps redirects pointed at active routes and prototypes out of discovery', () => {
     for (const route of SITE_MANIFEST.filter((item) => item.status === 'redirect')) {
       expect(findRouteByPath(route.redirectTo)?.status).toBe('active');
+      expect(route.build).toBe(false);
       expect(route.sitemap).toBe(false);
       expect(route.nav).toBeNull();
     }

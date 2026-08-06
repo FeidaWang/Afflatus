@@ -145,6 +145,768 @@
       "ordersFilled": 1,
       "note": "reconcile catch-up mark-to-market",
       "late": true
+    },
+    {
+      "date": "2026-07-27",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-27",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-27",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-27",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-27",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-27",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-27",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-27 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-27",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-27",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-27 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-27",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-27 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-28",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-28",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-28",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-28",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-28",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-28",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-28",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-28 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-28",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-28",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-28 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-28",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-28 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-29",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-29",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-29",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-29",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-29",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-29",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-29",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-29 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-29",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-29",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-29 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-29",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-29 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-30",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-30",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-30",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-30",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-30",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-30",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-30",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-30 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-30",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-30",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-30 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-30",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-30 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-31",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-31",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-31",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-31",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-31",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-31",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-31",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-31 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-31",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-07-31",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-31 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-07-31",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-07-31 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-03",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-03",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-03",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-03",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-03",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-03",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-03",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-03 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-03",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-03",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-03 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-03",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-03 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-04",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-04",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-04",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-04",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-04",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-04",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-04",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-04 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-04",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-04",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-04 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-04",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-04 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-05",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-05",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-05",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-05",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-05",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-05",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-05",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-05 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-05",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-05",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-05 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-05",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-05 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-06",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Validated bilingual briefing published with 3 sourced item(s)."
+    },
+    {
+      "date": "2026-08-06",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Validated picks board published with 0 candidate(s); empty arrays are an intentional fail-closed outcome."
     }
   ]
 }
