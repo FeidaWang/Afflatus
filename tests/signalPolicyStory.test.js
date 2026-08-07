@@ -55,9 +55,13 @@ describe('signal policy reaction story', () => {
     expect(html).toContain('−23K');
     expect(html).toContain('−103K');
     expect(html).toContain('https://www.bls.gov/news.release/empsit.nr0.htm');
-    expect(html).toContain("T('OPEN PRIMARY SOURCE ↗', '打开原始来源 ↗')");
+    expect(html).toContain("label_en: 'PRIMARY RECORD ↗', label_zh: '原始文件 ↗'");
+    expect(html).toContain("['marketWindow', 'OBSERVATION WINDOW', '观察窗口']");
+    expect(html).toContain("['industryTransmission', 'POLICY / INDUSTRY', '政策／行业传导']");
     expect(signalData.updated).toBe('2026-08-07');
     expect(signalData.events.some((event) => event.id === 'NFP-2026-07')).toBe(true);
+    expect(signalData.events.some((event) => event.id === 'PCE-2026-06')).toBe(true);
+    expect(signalData.events.some((event) => event.id === 'PCE-2026-05')).toBe(false);
   });
 
   it('explains Trump influence through separate Fed and AI transmission maps', () => {

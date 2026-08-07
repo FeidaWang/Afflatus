@@ -11,6 +11,11 @@ function isNonEmptyString(v) {
   return typeof v === 'string' && v.trim().length > 0;
 }
 
+function isHttpsUrl(v) {
+  if (!isNonEmptyString(v)) return false;
+  try { return new URL(v).protocol === 'https:'; } catch { return false; }
+}
+
 function pushErr(errors, msg) {
   errors.push(msg);
 }
@@ -77,9 +82,21 @@ function validateEvents(events, errors) {
     if (ev.hawkDove != null && (typeof ev.hawkDove !== 'number' || ev.hawkDove < -2 || ev.hawkDove > 2)) {
       pushErr(errors, `${tag}.hawkDove: must be null or a number in [-2, 2], got ${JSON.stringify(ev.hawkDove)}`);
     }
+    if (!isHttpsUrl(ev.source)) pushErr(errors, `${tag}.source: must be a valid https URL`);
     validateBilingual(ev.name, `${tag}.name`, errors);
-    for (const f of ['before', 'print', 'repricing', 'equityReaction', 'verdict']) {
-      if (ev[f] != null) validateBilingual(ev[f], `${tag}.${f}`, errors);
+    for (const f of ['before', 'print', 'marketWindow', 'repricing', 'equityReaction', 'industryTransmission', 'verdict']) {
+      validateBilingual(ev[f], `${tag}.${f}`, errors);
+    }
+    if (!Array.isArray(ev.marketSources) || ev.marketSources.length === 0) {
+      pushErr(errors, `${tag}.marketSources: must be a non-empty array`);
+    } else {
+      for (const [j, source] of ev.marketSources.entries()) {
+        const sourceTag = `${tag}.marketSources[${j}]`;
+        if (!source || typeof source !== 'object') { pushErr(errors, `${sourceTag}: not an object`); continue; }
+        if (!isHttpsUrl(source.url)) pushErr(errors, `${sourceTag}.url: must be a valid https URL`);
+        if (!isNonEmptyString(source.label_en)) pushErr(errors, `${sourceTag}.label_en: missing or empty`);
+        if (!isNonEmptyString(source.label_zh)) pushErr(errors, `${sourceTag}.label_zh: missing or empty`);
+      }
     }
   }
 }

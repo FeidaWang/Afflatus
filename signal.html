@@ -135,9 +135,9 @@
           "position": 2,
           "item": {
             "@type": "Event",
-            "@id": "https://feida.au/signal.html#PCE-2026-05",
-            "name": "May Personal Income and Outlays",
-            "startDate": "2026-06-25",
+            "@id": "https://feida.au/signal.html#PCE-2026-06",
+            "name": "June Personal Income and Outlays",
+            "startDate": "2026-07-30",
             "eventStatus": "https://schema.org/EventCompleted",
             "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
             "location": {
@@ -422,7 +422,7 @@
     <article class="file reveal">
       <h2><span data-en="NEXT DECISION · THREAT BOARD" data-zh="下次决策 · 威胁面板">NEXT DECISION · THREAT BOARD</span><span class="c">04</span></h2>
       <div class="in"><div class="bars">
-        <div class="row"><span data-en="core PCE · YoY" data-zh="核心PCE同比">core PCE · YoY</span><b class="red">3.4%</b><div class="bar r"><i style="--w:68%"></i></div></div>
+        <div class="row"><span data-en="core PCE · YoY" data-zh="核心PCE同比">core PCE · YoY</span><b class="red">3.3%</b><div class="bar r"><i style="--w:66%"></i></div></div>
         <div class="row"><span data-en="3-month payroll total" data-zh="三个月非农累计">3-month payroll total</span><b class="red">+60K</b><div class="bar r"><i style="--w:20%"></i></div></div>
         <div class="row"><span data-en="labor participation" data-zh="劳动参与率">labor participation</span><b class="amber">61.4%</b><div class="bar a"><i style="--w:61.4%"></i></div></div>
         <div class="row"><span data-en="July FOMC vote" data-zh="7月FOMC投票">July FOMC vote</span><b class="amber">9–3 HOLD</b><div class="bar a"><i style="--w:75%"></i></div></div>
@@ -436,8 +436,9 @@
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 03 · CONTAINMENT BREACHES" data-zh="第三章 · 收容失效记录">CHAPTER 03 · CONTAINMENT BREACHES</div>
       <h2 data-en="Incident Archive" data-zh="事件档案">Incident Archive</h2>
-      <p class="dek" data-en="Real macro prints, traced from pre-release pricing to equity reaction · not advice" data-zh="真实宏观数据，从发布前定价到股市反应的完整追踪 · 非投资建议">Real macro prints, traced from pre-release pricing to equity reaction · not advice</p>
+      <p class="dek" data-en="Verified event windows: pre-release baseline → print → rates → equities → industry transmission · not advice" data-zh="可核实事件窗口：发布前基线 → 实际数据 → 利率重定价 → 股市反应 → 行业传导 · 非投资建议">Verified event windows: pre-release baseline → print → rates → equities → industry transmission · not advice</p>
     </div>
+    <p class="incidentMethod reveal" data-en="TRACKING RULE · Closing or early-session windows are labelled. When oil, earnings or policy shocks overlap, the archive records the confounder instead of forcing a single-cause story." data-zh="追踪规则 · 明确标注收盘或盘中观察窗口；若油价、财报或政策冲击同时发生，档案会记录交叉因素，而不强行归因于单一事件。">TRACKING RULE · Closing or early-session windows are labelled. When oil, earnings or policy shocks overlap, the archive records the confounder instead of forcing a single-cause story.</p>
     <div class="filterChips" id="incidentFilters" role="group" aria-label="Filter incidents"></div>
     <div class="incidentList" id="incidentList"></div>
   </section>
@@ -537,7 +538,7 @@
   // attributes onto these elements, so the shared i18n.js apply() repaints them on toggle.
 })();
 
-/* incident log — fetched dossiers, before→print→repricing→reaction, re-rendered on lang toggle */
+/* incident log — fetched dossiers, baseline→print→window→rates→equities→industry, re-rendered on lang toggle */
 (function () {
   var list = document.getElementById('incidentList'); if (!list) return;
   var filterBox = document.getElementById('incidentFilters');
@@ -559,8 +560,10 @@
   var ROW_KEYS = [
     ['before', 'BEFORE', '事件前定价'],
     ['print', 'PRINT', '实际数据'],
+    ['marketWindow', 'OBSERVATION WINDOW', '观察窗口'],
     ['repricing', 'REPRICING', '利率路径重定价'],
-    ['equityReaction', 'EQUITY REACTION', '股市反应']
+    ['equityReaction', 'EQUITY REACTION', '股市反应'],
+    ['industryTransmission', 'POLICY / INDUSTRY', '政策／行业传导']
   ];
   var CLASS_LABEL = { euclid: ['EUCLID', 'Euclid 级'], keter: ['KETER', 'Keter 级'], safe: ['SAFE', 'Safe 级'] };
   // U30 R1: cards render collapsed (id/date/class only) and expand to the
@@ -596,8 +599,12 @@
       var clsPair = CLASS_LABEL[ev['class']] || [ev['class'], ev['class']];
       var clsLabel = T(clsPair[0], clsPair[1]);
       var verdict = ev.verdict || {};
-      var sourceLink = ev.source
-        ? '<a class="source" href="' + escAttr(ev.source) + '" target="_blank" rel="noopener">' + T('OPEN PRIMARY SOURCE ↗', '打开原始来源 ↗') + '</a>'
+      var sources = ev.source ? [{ url: ev.source, label_en: 'PRIMARY RECORD ↗', label_zh: '原始文件 ↗' }] : [];
+      (ev.marketSources || []).forEach(function (source) { sources.push(source); });
+      var sourceLinks = sources.length
+        ? '<div class="incidentSources" aria-label="' + T('Sources', '资料来源') + '">' + sources.map(function (source) {
+            return '<a class="source" href="' + escAttr(source.url) + '" target="_blank" rel="noopener">' + esc(T(source.label_en || 'SOURCE ↗', source.label_zh || '来源 ↗')) + '</a>';
+          }).join('') + '</div>'
         : '';
       var open = OPEN.has(ev.id);
       var bodyId = 'ibody-' + esc(ev.id);
@@ -605,7 +612,7 @@
         + '<div class="ihead" role="button" tabindex="0" aria-expanded="' + open + '" aria-controls="' + bodyId + '"><span class="iid">' + esc(ev.id) + '</span><span class="idate">' + fmtDate(ev.date) + ' · ' + esc(ev.type) + '</span><span class="cls ' + esc(ev['class']) + '">' + clsLabel + '</span></div>'
         + '<div class="ibody" id="' + bodyId + '">'
         + '<div class="iname">' + esc(T((ev.name || {}).en || '', (ev.name || {}).zh || '')) + '</div>'
-        + sourceLink
+        + sourceLinks
         + rows
         + '<p class="verdict"><b>' + T('VERDICT', '裁定') + ':</b> ' + esc(T(verdict.en || '', verdict.zh || '')) + '</p>'
         + '</div></article>';

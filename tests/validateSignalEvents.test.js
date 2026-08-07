@@ -26,6 +26,23 @@ function validHawkDove() {
   };
 }
 
+function validEvent(overrides = {}) {
+  return {
+    id: 'INCIDENT-2026-X', date: '2026-07-04', pillar: 1, hawkDove: 0,
+    source: 'https://example.com/primary',
+    name: { en: 'x', zh: 'x' },
+    before: { en: 'x', zh: 'x' },
+    print: { en: 'x', zh: 'x' },
+    marketWindow: { en: 'x', zh: 'x' },
+    repricing: { en: 'x', zh: 'x' },
+    equityReaction: { en: 'x', zh: 'x' },
+    industryTransmission: { en: 'x', zh: 'x' },
+    verdict: { en: 'x', zh: 'x' },
+    marketSources: [{ url: 'https://example.com/market', label_en: 'x', label_zh: 'x' }],
+    ...overrides,
+  };
+}
+
 function minimalValidDoc() {
   return {
     updated: '2026-07-04', version: 2, as_of: '2026-07-04',
@@ -88,10 +105,7 @@ describe('validateSignalEvents', () => {
 
   it('rejects duplicate event ids', () => {
     const doc = minimalValidDoc();
-    const event = {
-      id: 'INCIDENT-2026-DUP', date: '2026-07-04', pillar: 1, hawkDove: 0,
-      name: { en: 'x', zh: 'x' },
-    };
+    const event = validEvent({ id: 'INCIDENT-2026-DUP' });
     doc.events = [event, { ...event }];
     const { ok, errors } = validateSignalEvents(doc);
     expect(ok).toBe(false);
@@ -100,10 +114,7 @@ describe('validateSignalEvents', () => {
 
   it('rejects an event with hawkDove out of range', () => {
     const doc = minimalValidDoc();
-    doc.events = [{
-      id: 'INCIDENT-2026-X', date: '2026-07-04', pillar: 1, hawkDove: 9,
-      name: { en: 'x', zh: 'x' },
-    }];
+    doc.events = [validEvent({ hawkDove: 9 })];
     const { ok, errors } = validateSignalEvents(doc);
     expect(ok).toBe(false);
     expect(errors.some((e) => e.includes('hawkDove'))).toBe(true);
@@ -111,24 +122,37 @@ describe('validateSignalEvents', () => {
 
   it('allows event.hawkDove and event.pillar to be null (legacy events like INCIDENT-2026-NFP-06)', () => {
     const doc = minimalValidDoc();
-    doc.events = [{
-      id: 'INCIDENT-2026-NFP-06', date: '2026-07-02', pillar: 1, hawkDove: null,
-      name: { en: 'x', zh: 'x' },
-    }];
+    doc.events = [validEvent({ id: 'INCIDENT-2026-NFP-06', hawkDove: null })];
     const { ok } = validateSignalEvents(doc);
     expect(ok).toBe(true);
   });
 
   it('rejects a missing bilingual field on an event sub-object', () => {
     const doc = minimalValidDoc();
-    doc.events = [{
-      id: 'INCIDENT-2026-Y', date: '2026-07-04', pillar: 1, hawkDove: 0,
-      name: { en: 'x', zh: 'x' },
-      before: { en: 'x' }, // missing zh
-    }];
+    doc.events = [validEvent({ id: 'INCIDENT-2026-Y', before: { en: 'x' } })];
     const { ok, errors } = validateSignalEvents(doc);
     expect(ok).toBe(false);
     expect(errors.some((e) => e.includes('before.zh'))).toBe(true);
+  });
+
+  it('rejects an event without a labelled market-source trail', () => {
+    const doc = minimalValidDoc();
+    doc.events = [validEvent({ marketSources: [] })];
+    const { ok, errors } = validateSignalEvents(doc);
+    expect(ok).toBe(false);
+    expect(errors.some((e) => e.includes('marketSources'))).toBe(true);
+  });
+
+  it('rejects non-https primary and market source URLs', () => {
+    const doc = minimalValidDoc();
+    doc.events = [validEvent({
+      source: 'http://example.com/primary',
+      marketSources: [{ url: 'not-a-url', label_en: 'x', label_zh: 'x' }],
+    })];
+    const { ok, errors } = validateSignalEvents(doc);
+    expect(ok).toBe(false);
+    expect(errors.some((e) => e.includes('.source'))).toBe(true);
+    expect(errors.some((e) => e.includes('marketSources[0].url'))).toBe(true);
   });
 
   it('rejects version !== 2', () => {

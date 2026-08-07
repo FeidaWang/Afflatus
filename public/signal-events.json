@@ -1,17 +1,17 @@
 {
   "updated": "2026-08-07",
   "version": 2,
-  "as_of": "2026-08-07T13:00:00Z",
-  "note_en": "Evidence-first macro monitor. Payroll figures are from BLS, policy from the Federal Reserve, inflation from BEA, and Trump-administration AI measures from official White House actions. The 87,000 payroll consensus is attributed to Axios; unverified intraday moves are omitted.",
-  "note_zh": "证据优先的宏观监测。就业数据来自美国劳工统计局，货币政策来自美联储，通胀来自美国经济分析局，特朗普政府的AI措施来自白宫正式文件。8.7万非农共识值引自Axios；未经核实的盘中波动不作陈述。",
+  "as_of": "2026-08-07T15:00:00Z",
+  "note_en": "Evidence-first macro monitor. Every archive entry separates the official record from a labelled market window and names material confounders. Payroll figures are from BLS, policy from the Federal Reserve, inflation from BEA, and Trump-administration AI measures from official White House actions. Market observations are sourced separately and are not presented as single-cause event studies.",
+  "note_zh": "证据优先的宏观监测。每条档案均把官方记录与明确标注的市场观察窗口分开，并列出重要交叉冲击。就业数据来自美国劳工统计局，货币政策来自美联储，通胀来自美国经济分析局，特朗普政府AI措施来自白宫正式文件；市场观察另列来源，不被包装成单一因果事件研究。",
   "hawkDoveCompass": {
     "score": 0,
     "scale": "-2 (dovish) .. +2 (hawkish)",
     "label_en": "TWO-SIDED HOLD",
     "label_zh": "双向风险／维持偏置",
-    "rationale_en": "July payrolls fell 23,000, May and June were revised down by a combined 103,000, and participation slipped to 61.4%. That is a materially dovish labor impulse. But the Fed held 3.50–3.75% on July 29 while three voters preferred a 25bp hike and inflation remained above 2%, leaving the near-term policy signal balanced rather than cleanly dovish.",
-    "rationale_zh": "7月非农减少2.3万人，5月与6月合计下修10.3万人，劳动参与率降至61.4%，构成明显的鸽派就业冲击。但美联储7月29日仍维持3.50%–3.75%，且有三名票委主张加息25个基点，通胀亦高于2%；因此近期政策信号是双向拉扯，而非单边鸽派。",
-    "asOf": "2026-08-07T13:00:00Z",
+    "rationale_en": "July payrolls fell 23,000, May and June were revised down by a combined 103,000, and participation slipped to 61.4%. That is a materially dovish labor impulse. But June core PCE was still 3.3% year over year and the Fed held 3.50–3.75% on July 29 while three voters preferred a 25bp hike, leaving the near-term policy signal balanced rather than cleanly dovish.",
+    "rationale_zh": "7月非农减少2.3万人，5月与6月合计下修10.3万人，劳动参与率降至61.4%，构成明显的鸽派就业冲击。但6月核心PCE同比仍为3.3%，且美联储7月29日维持3.50%–3.75%、三名票委主张加息25个基点；因此近期政策信号是双向拉扯，而非单边鸽派。",
+    "asOf": "2026-08-07T15:00:00Z",
     "method_en": "Editorial score from the latest BLS employment release, July FOMC statement, verified PCE release and official policy actions. It is a qualitative reaction-function label, not a futures probability, rate forecast or investment advice.",
     "method_zh": "依据最新BLS就业报告、7月FOMC声明、已核实PCE数据与正式政策文件进行编辑评分；它是政策反应函数的定性标签，不是期货概率、利率预测或投资建议。"
   },
@@ -28,9 +28,9 @@
       "status_en": "PCE STILL ABOVE TARGET",
       "status_zh": "PCE仍高于目标",
       "tone": "red",
-      "read_en": "BEA reported May PCE prices up 0.4% month over month and 4.1% year over year; core PCE rose 0.3% monthly and 3.4% yearly. Weak payrolls alter the risk balance but do not erase this price-stability constraint.",
-      "read_zh": "美国经济分析局公布：5月PCE物价环比上涨0.4%、同比上涨4.1%；核心PCE环比上涨0.3%、同比上涨3.4%。疲弱非农改变了风险平衡，却没有消除价格稳定约束。",
-      "asOf": "2026-06-25"
+      "read_en": "BEA reported June headline PCE down 0.1% month over month but still up 3.7% year over year; core PCE rose 0.1% monthly and 3.3% yearly. Real consumption grew 0.4%, while the saving rate fell to 2.7%. Disinflation resumed, but the level and household buffer still constrain policy.",
+      "read_zh": "美国经济分析局公布：6月整体PCE环比下降0.1%，同比仍上涨3.7%；核心PCE环比上涨0.1%、同比上涨3.3%。实际消费增长0.4%，储蓄率降至2.7%。通胀重新降温，但其绝对水平与家庭缓冲仍约束政策。",
+      "asOf": "2026-07-30"
     },
     {
       "id": 2,
@@ -95,58 +95,98 @@
         "zh": "FOMC维持利率，三名票委主张加息"
       },
       "before": {
-        "en": "The Fed entered the meeting with elevated inflation, solid investment and uncertainty around energy and the Middle East.",
-        "zh": "会议召开前，通胀偏高、投资稳健，能源与中东局势仍带来不确定性。"
+        "en": "Most economists expected another hold. A minority of one to three hike dissents was plausible because inflation remained elevated, investment was solid and the Middle East energy shock had lifted the inflation tail.",
+        "zh": "多数经济学家预期继续维持利率。由于通胀仍高、投资稳健且中东能源冲击抬高通胀尾部风险，一至三张加息异议票并非意外。"
       },
       "print": {
         "en": "The Committee held 3.50–3.75% by a 9–3 vote; three members preferred a 25bp hike.",
         "zh": "委员会以9比3维持3.50%–3.75%；三名成员主张加息25个基点。"
       },
+      "marketWindow": {
+        "en": "Observation window: July 29 statement through the US close. Oil surged on a fresh Iran shock, so the rates and equity moves below are observed jointly and are not attributed to the Fed alone.",
+        "zh": "观察窗口：7月29日声明发布至美股收盘。伊朗局势新冲击同时推高油价，因此下述利率与股市波动是联合观察结果，不能全部归因于美联储。"
+      },
       "repricing": {
-        "en": "The split established a high bar for immediate easing before the July jobs report materially weakened the employment side of the mandate.",
-        "zh": "这一分歧为立即宽松设置了较高门槛；随后7月就业报告显著削弱了双重使命中的就业一侧。"
+        "en": "The 2-year yield fell about 3.7bp while the 10-year rose about 6.7bp to 4.67%: a bearish steepening consistent with long-run inflation and term-premium risk, not a simple near-term hike repricing. July payroll weakness later reduced September hike odds.",
+        "zh": "2年期收益率下降约3.7个基点，10年期上升约6.7个基点至4.67%：这更像长期通胀与期限溢价驱动的熊市陡峭化，而非简单的近期加息重定价。随后7月非农走弱又压低了9月加息概率。"
       },
       "equityReaction": {
-        "en": "For AI duration assets, the policy split preserved rate volatility; no clean event-window equity move is assigned here.",
-        "zh": "对AI长久期资产而言，政策分歧维持了利率波动；此处不对单一事件窗口的股市波动作因果归因。"
+        "en": "At the close, the Dow fell 2.2%, the S&P 500 1.5% and the Nasdaq 1.7%. The hawkish hold and higher long yields pressured duration, but the concurrent oil shock materially contaminated the window.",
+        "zh": "收盘时，道指下跌2.2%、标普500下跌1.5%、纳指下跌1.7%。鹰派维持与长端收益率上行压制长久期资产，但同期油价冲击显著污染了事件窗口。"
+      },
+      "industryTransmission": {
+        "en": "Higher long yields raise the hurdle rate for AI projects with distant cash flows; the split favors already-profitable platforms and bottleneck suppliers over leveraged capacity stories. Energy inflation also raises data-center power and cooling costs.",
+        "zh": "长端收益率上升会提高远期现金流型AI项目的资本门槛；政策分歧更有利于已盈利平台和瓶颈供应商，而非高杠杆扩产叙事。能源通胀还会抬高数据中心电力与散热成本。"
       },
       "verdict": {
         "en": "Hawkish hold before payrolls: inflation credibility remained the binding constraint. Not investment advice.",
         "zh": "非农发布前属于鹰派维持：通胀可信度仍是硬约束。非投资建议。"
-      }
+      },
+      "marketSources": [
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/equities-tumble-following-fed-apos-202733412.html",
+          "label_en": "Market close: yields and indexes",
+          "label_zh": "收盘记录：收益率与指数"
+        },
+        {
+          "url": "https://finance.yahoo.com/markets/stocks/articles/markets-news-july-29-2026-110123938.html",
+          "label_en": "Cross-check: Fed and oil shock",
+          "label_zh": "交叉核验：美联储与油价冲击"
+        }
+      ]
     },
     {
-      "id": "PCE-2026-05",
-      "date": "2026-06-25",
+      "id": "PCE-2026-06",
+      "date": "2026-07-30",
       "type": "INFLATION",
       "pillar": 1,
       "class": "keter",
-      "hawkDove": 1.5,
-      "source": "https://www.bea.gov/news/2026/personal-income-and-outlays-may-2026",
+      "hawkDove": 0.5,
+      "source": "https://www.bea.gov/news/2026/personal-income-and-outlays-june-2026",
       "name": {
-        "en": "May Personal Income and Outlays",
-        "zh": "5月个人收入与支出"
+        "en": "June Personal Income and Outlays",
+        "zh": "6月个人收入与支出"
       },
       "before": {
-        "en": "The policy question was whether inflation was moving durably back toward target.",
-        "zh": "政策核心问题是通胀是否正持续回落至目标。"
+        "en": "The release arrived one day after the hawkish FOMC hold. Markets needed to know whether May's 4.1% headline and 3.4% core inflation burst was reversing without consumption collapsing.",
+        "zh": "该报告在鹰派FOMC维持决定次日公布。市场需要判断5月整体4.1%、核心3.4%的通胀冲高是否逆转，同时消费是否避免坍塌。"
       },
       "print": {
-        "en": "Headline PCE rose 0.4% monthly and 4.1% yearly; core PCE rose 0.3% monthly and 3.4% yearly.",
-        "zh": "整体PCE环比上涨0.4%、同比上涨4.1%；核心PCE环比上涨0.3%、同比上涨3.4%。"
+        "en": "Headline PCE fell 0.1% monthly and rose 3.7% yearly; core rose 0.1% monthly and 3.3% yearly. Real PCE grew 0.4%, nominal PCE 0.3%, and the saving rate fell to 2.7%. Services supplied $58.2bn of the $65.2bn nominal spending increase.",
+        "zh": "整体PCE环比下降0.1%、同比上涨3.7%；核心PCE环比上涨0.1%、同比上涨3.3%。实际PCE增长0.4%、名义PCE增长0.3%，储蓄率降至2.7%；名义消费增加652亿美元，其中服务贡献582亿美元。"
+      },
+      "marketWindow": {
+        "en": "Observation window: July 30 release through the US close. Microsoft and Meta earnings dominated AI stock dispersion, so index returns are recorded but not assigned solely to PCE.",
+        "zh": "观察窗口：7月30日数据发布至美股收盘。微软与Meta财报主导AI股票分化，因此记录指数表现，但不把它全部归因于PCE。"
       },
       "repricing": {
-        "en": "Above-target inflation keeps the easing threshold high even as the labor side deteriorates.",
-        "zh": "即使就业一侧恶化，高于目标的通胀仍把宽松门槛维持在较高水平。"
+        "en": "The monthly cooldown offset part of the prior day's hawkish impulse and long yields held near 4.67%, but 3.3% core inflation and a thin household saving buffer leave any easing path conditional on further confirmation.",
+        "zh": "月度降温抵消了前一日部分鹰派冲击，长端收益率维持在约4.67%；但3.3%的核心通胀与偏薄的家庭储蓄缓冲，使任何宽松路径仍取决于后续确认。"
       },
       "equityReaction": {
-        "en": "No causal equity reaction is assigned in the absence of a verified event study.",
-        "zh": "在没有核实事件研究的情况下，不对股市反应作因果归因。"
+        "en": "The S&P 500 rose 1.7%, the Dow 1.2% and the Nasdaq 2.8%. AP identified Microsoft's AI-profit signal as the main driver, while Meta's higher capex floor pulled its shares down 8%—a clean reminder that earnings quality outweighed the macro print inside this window.",
+        "zh": "标普500上涨1.7%、道指上涨1.2%、纳指上涨2.8%。美联社把微软AI投入开始转化为利润视为主要驱动；Meta上调资本开支下限则令其股价下跌8%——说明该窗口内盈利质量的影响强于宏观数据本身。"
+      },
+      "industryTransmission": {
+        "en": "Cooling inflation supports valuation duration and firm real consumption supports cloud and enterprise demand. But a 2.7% saving rate, services-heavy spending and future energy pass-through keep consumer, wage and data-center margin risks alive.",
+        "zh": "通胀降温支持估值久期，实际消费稳健支持云与企业需求；但2.7%的储蓄率、服务主导的支出结构及未来能源成本传导，仍保留消费、工资与数据中心利润率风险。"
       },
       "verdict": {
-        "en": "Price stability is not yet demonstrated by this release. Not investment advice.",
-        "zh": "这份数据尚不足以证明价格稳定已经实现。非投资建议。"
-      }
+        "en": "A genuine monthly disinflation step, not proof that price stability is restored; the equity rally was earnings-led. Not investment advice.",
+        "zh": "这是一次真实的月度通胀降温，但尚不足以证明价格稳定已经恢复；股市反弹主要由财报驱动。非投资建议。"
+      },
+      "marketSources": [
+        {
+          "url": "https://apnews.com/article/99b5702d93a2b5c6e513fb952ccdcc92",
+          "label_en": "AP close: equities, yields and earnings",
+          "label_zh": "美联社收盘：股市、收益率与财报"
+        },
+        {
+          "url": "https://finance.yahoo.com/economy/articles/us-inflation-slows-june-reversal-132011688.html",
+          "label_en": "Reuters: June inflation context",
+          "label_zh": "路透：6月通胀背景"
+        }
+      ]
     },
     {
       "id": "NFP-2026-07",
@@ -161,25 +201,45 @@
         "zh": "7月就业形势"
       },
       "before": {
-        "en": "The soft-landing case still depended on slow but positive job growth and a stable participation rate.",
-        "zh": "软着陆叙事仍依赖缓慢但为正的就业增长，以及稳定的劳动参与率。"
+        "en": "Economists expected payrolls to rise 87,000. Before the release, traders viewed a September hike as slightly more likely than not, while the soft-landing case still required positive job growth and stable participation.",
+        "zh": "经济学家预期非农增加8.7万人。数据发布前，交易员认为9月加息概率略高于不加息；软着陆叙事仍要求就业保持正增长并维持稳定参与率。"
       },
       "print": {
         "en": "Payrolls fell 23,000; May and June were revised down 103,000 combined. Private payrolls still rose 30,000, but local-government education fell 50,000, retail 19,000 and financial activities 14,000; health care added 22,000. Unemployment was 4.1%, participation 61.4%, hourly earnings growth 3.2% year over year, and temporary layoffs rose 153,000 to 921,000.",
         "zh": "非农减少2.3万人；5月与6月合计下修10.3万人。私人部门仍增加3万人，但地方政府教育减少5万人、零售减少1.9万人、金融活动减少1.4万人，医疗保健增加2.2万人。失业率为4.1%，劳动参与率61.4%，时薪同比增长3.2%，临时失业人数增加15.3万至92.1万。"
       },
+      "marketWindow": {
+        "en": "Observation window: 8:30 ET release through early US trading; it is provisional, not a closing return. Oil and an ongoing AI valuation correction remained parallel market drivers.",
+        "zh": "观察窗口：美东8:30发布至美股早盘；这是盘中暂定读数，不是收盘收益。油价与仍在进行的AI估值调整也是并行驱动因素。"
+      },
       "repricing": {
-        "en": "The release raises the value of the Fed's employment insurance, but hot inflation and three July hike dissents prevent a mechanical cut conclusion.",
-        "zh": "该报告提高了美联储为就业提供政策保险的价值，但偏热通胀与7月三张加息异议票阻止了“必然降息”的机械推论。"
+        "en": "The 10-year Treasury yield fell from 4.67% immediately before the release to 4.60%. CME pricing cited by Axios cut the September hike probability to 44%, reversing a slightly-better-than-even pre-release chance; this is less-hawkish repricing, not evidence of an automatic cut.",
+        "zh": "10年期美债收益率从发布前的4.67%降至4.60%。Axios引用的CME定价把9月加息概率降至44%，逆转此前略高于五成的概率；这是偏鸽重定价，而非“自动降息”的证据。"
       },
       "equityReaction": {
-        "en": "Lower-rate optionality helps AI valuation duration; a genuine labor break hurts aggregate demand and capex confidence. The cleaner implication is quality dispersion, not blanket risk-on.",
-        "zh": "潜在利率下行有利于AI估值久期；真正的就业断裂则伤害总需求与资本开支信心。更清晰的结论是质量分化，而非全面风险偏好。"
+        "en": "In early trading, the S&P 500 rose 0.4%, the Nasdaq 1.1% and the Dow slipped 0.1%; S&P futures had gained 0.5%. The initial move treated weaker jobs as rate relief, but the window is not yet a final session verdict.",
+        "zh": "美股早盘标普500上涨0.4%、纳指上涨1.1%、道指下跌0.1%；此前标普期货上涨0.5%。初始交易把就业走弱视为利率缓解，但该窗口尚不是最终收盘裁决。"
+      },
+      "industryTransmission": {
+        "en": "Rate relief helps profitable AI leaders with long-duration cash flows. The sector details are less benign: retail and finance job losses point to demand and credit caution, while health care remained the only clear large-sector cushion. Quality dispersion is stronger than blanket risk-on.",
+        "zh": "利率缓解有利于拥有长期现金流的盈利型AI龙头；行业明细却并不完全乐观：零售与金融就业下降提示需求和信贷谨慎，医疗保健是唯一清晰的大行业缓冲。质量分化强于全面risk-on。"
       },
       "verdict": {
         "en": "Dovish labor shock, but not a clean soft landing: the falling unemployment rate was accompanied by labor-force exit. Not investment advice.",
         "zh": "这是鸽派就业冲击，却不是干净的软着陆：失业率下降伴随着劳动力退出。非投资建议。"
-      }
+      },
+      "marketSources": [
+        {
+          "url": "https://www.axios.com/2026/08/07/july-jobs-report-employment-losses",
+          "label_en": "Axios: consensus and Fed pricing",
+          "label_zh": "Axios：共识与联储定价"
+        },
+        {
+          "url": "https://apnews.com/article/9636095906bbb689a1f612bce9a07343",
+          "label_en": "AP early market window",
+          "label_zh": "美联社早盘市场窗口"
+        }
+      ]
     },
     {
       "id": "TRUMP-AI-2026-07-23",
@@ -198,21 +258,41 @@
         "zh": "AI数据中心需求正与电网容量、融资需求及居民对电费上涨的抵触发生碰撞。"
       },
       "print": {
-        "en": "The White House said large data-center operators, not ratepayers, must fund the generation and grid infrastructure their projects require.",
-        "zh": "白宫称，大型数据中心运营商而非普通电费用户，必须承担项目所需新增发电与电网基础设施成本。"
+        "en": "The White House expanded the voluntary pledge to more than 200 additional utilities, developers, cooperatives and states, claiming coverage of 80% of US power deliveries. Large data-center operators commit to fund the generation and grid infrastructure their projects require.",
+        "zh": "白宫把自愿承诺扩大至另外200多家公用事业、开发商、合作社与州，并称其覆盖美国80%的电力配送。大型数据中心运营商承诺承担项目所需新增发电与电网基础设施成本。"
+      },
+      "marketWindow": {
+        "en": "Policy window, not a clean trading event. The July 23 announcement overlapped earnings, power-market news and geopolitical risk; no standalone stock or rate move is assigned.",
+        "zh": "这是政策窗口，不是干净的交易事件。7月23日公告与财报、电力市场消息及地缘风险重叠，因此不指定独立股价或利率波动。"
       },
       "repricing": {
-        "en": "The rule supports buildout but raises the capital hurdle, favoring hyperscalers and scaled power, grid, cooling and network vendors.",
-        "zh": "该规则支持建设却提高资本门槛，更有利于超大规模云厂商及具备规模的电力、电网、散热与网络供应商。"
+        "en": "Because the pledge is voluntary and implementation sits with utilities, states and contracts, the immediate rate effect is indeterminate. Its economic direction is clearer: data-center capex and project-finance burdens rise while household cost-shifting becomes harder.",
+        "zh": "由于承诺属自愿性质，且落地依赖公用事业、州与具体合同，其即时利率影响无法确定。经济方向更清晰：数据中心资本开支与项目融资负担上升，向居民转嫁成本则更困难。"
       },
       "equityReaction": {
-        "en": "The policy is structurally positive for infrastructure bottlenecks but does not guarantee project returns or stock performance.",
-        "zh": "该政策在结构上利好基础设施瓶颈环节，但不保证项目回报或股价表现。"
+        "en": "No causal index move is claimed. The policy creates a relative-value split rather than a broad AI beta signal: funded infrastructure bottlenecks gain bargaining power, while marginal developers face a higher all-in cost.",
+        "zh": "不主张存在可归因的指数波动。该政策制造的是相对价值分化，而非广泛AI beta信号：资金充足的瓶颈环节议价力上升，边缘开发商的全成本提高。"
+      },
+      "industryTransmission": {
+        "en": "Cash-rich hyperscalers can internalize generation and grid upgrades; utilities, baseload generation, electrical equipment, cooling and networking gain visible demand. The pledge is non-binding, so state tariffs, interconnection contracts and cost-allocation rules decide whether claimed household savings appear.",
+        "zh": "现金充裕的超大规模云厂商可以内部化新增发电与电网升级；公用事业、基荷电源、电气设备、散热与网络获得更清晰需求。由于承诺不具约束力，最终能否兑现居民电费节省，取决于州级费率、并网合同与成本分摊规则。"
       },
       "verdict": {
         "en": "Direct industrial-policy support, with higher self-funded capex intensity. Not investment advice.",
-        "zh": "产业政策直接支持，同时要求更高强度的自筹资本开支。非投资建议。"
-      }
+        "zh": "产业政策直接支持，同时要求更高强度的自筹资本开支；执行风险不可忽略。非投资建议。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.epa.gov/newsreleases/president-trump-expands-historic-ratepayer-protection-pledge-protect-american",
+          "label_en": "EPA: implementation and PJM mechanism",
+          "label_zh": "美国环保署：落地与PJM机制"
+        },
+        {
+          "url": "https://apnews.com/article/490ea7e4c7227d5e550b00a0056c33c9",
+          "label_en": "AP: voluntary-pledge limits",
+          "label_zh": "美联社：自愿承诺的边界"
+        }
+      ]
     },
     {
       "id": "TRUMP-CHIPS-2026-01",
@@ -231,21 +311,46 @@
         "zh": "政府把对外国芯片供应的依赖界定为经济与国家安全脆弱点。"
       },
       "print": {
-        "en": "A 25% duty applied to a narrow advanced-chip category, with exemptions for US data centers, R&D, startups and other domestic buildout; a broader second phase remains possible.",
-        "zh": "一小类先进芯片被征收25%关税，但美国数据中心、研发、初创企业及其他本土建设用途获豁免；更广泛的第二阶段关税仍有可能。"
+        "en": "A 25% duty applied to a narrow category including Nvidia H200 and AMD MI325X chips, with exemptions for US data centers, R&D, startups and other domestic buildout; a broader second phase remains possible.",
+        "zh": "包括Nvidia H200与AMD MI325X在内的一小类先进芯片被征收25%关税，但美国数据中心、研发、初创企业及其他本土建设用途获豁免；更广泛的第二阶段仍有可能。"
+      },
+      "marketWindow": {
+        "en": "Announcement window: after the January 14 US close. Nvidia, AMD and Qualcomm edged lower after hours, but the action overlapped China export-security rules and Taiwan negotiations; no full-session index attribution is made.",
+        "zh": "公告窗口：1月14日美股收盘后。Nvidia、AMD与Qualcomm盘后小幅走低，但该行动与对华出口安全规则及台湾谈判重叠，因此不作完整交易日指数归因。"
       },
       "repricing": {
-        "en": "Exemptions protect current US AI construction, while broader tariff risk rewards domestic manufacturing commitments and increases supply-chain dispersion.",
-        "zh": "豁免保护当前美国AI建设；更广泛的关税风险则奖励本土制造承诺，并加大供应链分化。"
+        "en": "The exemption design protects current US AI construction rather than imposing a blanket 25% tax on domestic data-center demand. Broader phase-two risk still rewards US manufacturing and packaging commitments and increases supplier and country dispersion.",
+        "zh": "豁免设计保护当前美国AI建设，并非对美国数据中心需求一律征收25%税率。更广泛的第二阶段风险仍奖励美国制造与封装承诺，并扩大供应商与国家分化。"
       },
       "equityReaction": {
-        "en": "US capacity and compliant supply chains gain a policy premium; foreign exposure and pass-through costs remain company-specific risks.",
-        "zh": "美国本土产能与合规供应链获得政策溢价；海外敞口及成本转嫁仍是公司层面的具体风险。"
+        "en": "The thin after-hours decline was directionally cautious, not evidence of a 25% earnings hit. Company outcomes depend on destination, exemption eligibility, China licensing and whether customers can reroute or absorb costs.",
+        "zh": "盘后小幅下跌体现谨慎情绪，并不意味着盈利遭受25%冲击。公司结果取决于目的地、豁免资格、对华许可，以及客户能否改道或吸收成本。"
+      },
+      "industryTransmission": {
+        "en": "US fabs, advanced packaging and compliant domestic supply chains receive a policy premium. Accelerator vendors preserve US data-center demand but face export-channel and country-negotiation risk; cloud buyers retain leverage through exempt domestic buildout.",
+        "zh": "美国晶圆厂、先进封装与合规本土供应链获得政策溢价。加速器厂商保住美国数据中心需求，却承受出口渠道与国家谈判风险；云买家则通过本土建设豁免保留议价能力。"
       },
       "verdict": {
         "en": "Direct Trump leverage over AI industry economics is stronger than his direct leverage over a single FOMC vote. Not investment advice.",
-        "zh": "特朗普对AI产业经济性的直接影响，强于其对单次FOMC投票的直接影响。非投资建议。"
-      }
+        "zh": "特朗普对AI产业经济性的直接影响，强于其对单次FOMC投票的直接影响；豁免范围比标题税率更重要。非投资建议。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.whitehouse.gov/fact-sheets/2026/01/fact-sheet-president-donald-j-trump-takes-action-on-certain-advanced-computing-chips-to-protect-americas-economic-and-national-security/",
+          "label_en": "White House: covered chips and exemptions",
+          "label_zh": "白宫：适用芯片与豁免"
+        },
+        {
+          "url": "https://www.investing.com/news/stock-market-news/trump-imposes-25-tariff-on-imports-of-some-advanced-computing-chips-4448307",
+          "label_en": "Reuters: tariff scope",
+          "label_zh": "路透：关税范围"
+        },
+        {
+          "url": "https://finance.yahoo.com/video/trump-imposes-25-tariff-imports-072910627.html",
+          "label_en": "Reuters: after-hours reaction",
+          "label_zh": "路透：盘后反应"
+        }
+      ]
     }
   ]
 }

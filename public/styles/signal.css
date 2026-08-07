@@ -257,9 +257,10 @@ a{color:inherit;text-decoration:none}
 .redact{background:#15140f;color:transparent;padding:0 4px;animation:rv 11s steps(1) infinite}
 @keyframes rv{0%,92%,100%{background:#15140f;color:transparent}94%{background:transparent;color:inherit}}
 
-/* incident log — real macro-event dossiers, before→print→repricing→reaction.
+/* incident log — real macro-event dossiers, baseline→print→window→rates→equities→industry.
    Chapter header is .chapterHead in HTML; filter chips are new (U41). */
 .incidents{margin-top:16px}
+.incidentMethod{margin:14px 0 18px;padding:11px 14px;border-left:3px solid var(--amber);background:rgba(245,196,0,.06);color:var(--mute);font:700 11px/1.65 var(--mono);letter-spacing:.04em;text-transform:uppercase}
 .filterChips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 .filterChips button{font:700 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);background:transparent;border:1px solid var(--line);padding:8px 12px;cursor:pointer;transition:color .2s ease,border-color .2s ease,background .2s ease}
 .filterChips button:hover{border-color:var(--amber);color:var(--amber)}
@@ -295,8 +296,9 @@ a{color:inherit;text-decoration:none}
 .incident .ibody{display:none;padding:14px}
 .incident.open .ibody{display:block}
 .incident .iname{font:700 15px/1.3 var(--disp);text-transform:uppercase;letter-spacing:.02em;margin:0 0 8px;color:#15140f}
-.incident .source{display:inline-block;margin:0 0 8px;font:700 11px/1.4 var(--mono);letter-spacing:.06em}
-.incident .irow{display:grid;grid-template-columns:130px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed rgba(21,20,15,.25)}
+.incidentSources{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 8px;padding:0 0 10px;border-bottom:1px solid rgba(21,20,15,.18)}
+.incident .source{display:inline-block;margin:0;font:700 11px/1.5 var(--mono);letter-spacing:.04em}
+.incident .irow{display:grid;grid-template-columns:156px 1fr;gap:14px;padding:10px 0;border-bottom:1px dashed rgba(21,20,15,.25)}
 .incident .irow:last-of-type{border-bottom:0}
 .incident .irow .k{font:700 11px/1.6 var(--mono);letter-spacing:.06em;color:var(--red);text-transform:uppercase}
 .incident .irow .v{font:400 17px/1.6 var(--mono);color:#26241d}
