@@ -15,7 +15,7 @@ describe('home presentation contract', () => {
     expect(telemetry).toContain("root: '#fy2026Performance'");
     expect(telemetry).toContain('new IntersectionObserver');
     expect(telemetry).toContain("group.classList.add('telemetry-live')");
-    expect(performanceStyles).toContain('.telemetry-pending:not(.telemetry-live) .benchmark-row i::before');
+    expect(performanceStyles).toContain('.telemetry-pending:not(.telemetry-live) .benchmark-row > .vector-rail::before');
     expect(performanceStyles).toContain('.telemetry-live .route-track > i::after');
   });
 

@@ -12,13 +12,17 @@ const convoyCss = readFileSync('src/portfolio-convoy.css', 'utf8');
 const siteManifest = readFileSync('src/config/siteManifest.js', 'utf8');
 
 describe('FY2025–26 homepage performance dossier', () => {
-  it('publishes a privacy-first hierarchy without position-level outcomes', () => {
-    expect(html).toContain('ANNUALIZED CLOSED-CYCLE MODEL');
+  it('publishes one focused A/B/C capital-black-box sequence', () => {
+    expect(html).toContain('02-A / CYCLE CORE');
+    expect(html).toContain('CLOSED-CYCLE CAPITAL VELOCITY');
     expect(html).toContain('Weighted capital days');
-    expect(html).toContain('Profitable flight paths');
-    expect(html).toContain('DISCLOSURE BOUNDARY');
-    expect(html).toContain('PRIVACY BY DESIGN');
-    expect(html).toContain('Position results, principal, buy and sale values, and account balances are intentionally omitted.');
+    expect(html).toContain('Annual volatility');
+    expect(html).toContain('VECTOR FIELD / NORMALIZED');
+    expect(html).toContain('02-C / FLIGHT PATH MATRIX');
+    expect(html).toContain('route-manifest');
+    expect(html).not.toContain('DISCLOSURE BOUNDARY');
+    expect(html).not.toContain('PRIVACY BY DESIGN');
+    expect(html).not.toContain('02-D / RISK COST');
     expect(html).toContain('+261.2%');
     expect(html).toContain('41.4%');
     expect(html).toContain('method-dependent estimates');
@@ -50,13 +54,12 @@ describe('FY2025–26 homepage performance dossier', () => {
     }
   });
 
-  it('does not repeat headline risk metrics in the lower risk chamber', () => {
-    const riskChamber = html.slice(html.indexOf('<div class="risk-chamber">'), html.indexOf('<aside class="methodology-seal">'));
-    expect(riskChamber).toContain('ANNUAL VOLATILITY');
-    expect(riskChamber).toContain('<strong>45%</strong>');
-    expect(riskChamber).not.toContain('<i>MAX DRAWDOWN</i>');
-    expect(riskChamber).not.toContain('<i>SHARPE RATIO</i>');
-    expect(riskChamber).not.toContain('<i>BETA / SPX</i>');
+  it('folds the single additional risk reading into 02-A', () => {
+    const cycleCore = html.slice(html.indexOf('<section class="blackbox-module cycle-core"'), html.indexOf('<section class="blackbox-module velocity-field"'));
+    expect(cycleCore).toContain('Annual volatility');
+    expect(cycleCore).toContain('<dd>45%</dd>');
+    expect(html).not.toContain('class="risk-chamber"');
+    expect(html).not.toContain('class="risk-grid');
   });
 
   it('keeps principal, transaction values and account balances private', () => {
@@ -64,7 +67,7 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html).not.toMatch(/\b(?:AUD|USD)\b/);
     expect(copy).not.toMatch(/\$[0-9]/);
     expect(copy).not.toMatch(/\b(?:AUD|USD)\b/);
-    expect(html).toContain('omits position outcomes, principal, transaction values, quantities and account balances');
+    expect(html).toContain('Position outcomes, principal, transaction values, quantities and account balances are omitted');
   });
 
   it('presents voyage notes as a local read-only archive, not fake authentication', () => {
@@ -134,7 +137,7 @@ describe('FY2025–26 homepage performance dossier', () => {
   });
 
   it('keeps section 02 modules ordered before section 03 and left-aligns both introductions', () => {
-    const section02Labels = ['02-A / CYCLE EFFICIENCY', '02-B / RELATIVE VELOCITY', '02-C / PROFITABLE FLIGHT PATHS', '02-D / RISK COST'];
+    const section02Labels = ['02-A / CYCLE CORE', '02-B / RELATIVE VELOCITY', '02-C / FLIGHT PATH MATRIX'];
     let previousIndex = -1;
     for (const label of section02Labels) {
       const index = html.indexOf(label);
@@ -142,7 +145,9 @@ describe('FY2025–26 homepage performance dossier', () => {
       previousIndex = index;
     }
     expect(html.indexOf('03 · <span>top 10 allocations · usa')).toBeGreaterThan(previousIndex);
-    expect(performanceCss).toMatch(/\.flight-path-head\s*\{[\s\S]*?display:\s*flex;[\s\S]*?flex-direction:\s*column;[\s\S]*?align-items:\s*flex-start;[\s\S]*?text-align:\s*left;/);
+    expect(performanceCss).toMatch(/\.route-axis,\s*\.trade-route\s*\{[^}]*grid-template-columns:\s*46px/s);
+    expect(performanceCss).toContain('@keyframes manifestScan');
+    expect(performanceCss).toContain('@keyframes vectorScan');
     expect(convoyCss).toMatch(/\.portfolio-intro\s*\{[^}]*text-align:\s*left;/s);
     expect(convoyCss).toMatch(/\.portfolio-intro > \.sec-title\s*\{[^}]*margin-inline:\s*0;/s);
     expect(convoyCss).toMatch(/\.portfolio-intro > \.sec-desc\s*\{[^}]*margin-inline:\s*0;/s);

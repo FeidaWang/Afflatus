@@ -9,11 +9,10 @@ const TELEMETRY_GROUPS = [
     root: '#fy2026Performance',
     values: [
       '.cycle-efficiency strong',
-      '.ledger-metrics dd',
+      '.core-telemetry dd',
       '.benchmark-row strong',
       '.route-efficiency strong',
       '.route-track b',
-      '.risk-grid strong',
     ].join(','),
   },
 ];

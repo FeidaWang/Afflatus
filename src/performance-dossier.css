@@ -24,355 +24,476 @@
     margin-bottom: clamp(40px, 6vw, 76px);
   }
 
-  .dossier-lead {
+  .blackbox-sequence {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(420px, .95fr);
-    gap: clamp(18px, 2vw, 30px);
-    align-items: stretch;
+    gap: clamp(34px, 4.6vw, 64px);
   }
 
-  .cycle-ledger,
-  .privacy-stack,
-  .benchmark-array,
-  .trade-route,
-  .risk-chamber,
+  .blackbox-module,
   .methodology-seal {
     position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(154,229,255,.16);
-    background:
-      linear-gradient(145deg, rgba(12,21,30,.82), rgba(3,7,12,.92) 62%),
-      rgba(3,7,12,.86);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 24px 60px rgba(0,0,0,.22);
-    backdrop-filter: blur(16px) saturate(1.1);
+    min-width: 0;
   }
 
-  .cycle-ledger::after,
-  .benchmark-array::after,
-  .risk-chamber::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(110deg, transparent 32%, rgba(154,229,255,.045) 48%, transparent 64%);
-    transform: translateX(-70%);
-  }
-
-  .dossier-header,
-  .privacy-stack > header,
-  .benchmark-array > header {
-    min-height: 48px;
-    display: flex;
+  .module-label {
+    min-height: 52px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 14px;
+    gap: 18px;
     padding: 0 20px;
     border-bottom: 1px solid rgba(154,229,255,.14);
     font-family: 'JetBrains Mono', monospace;
     text-transform: uppercase;
   }
 
-  .dossier-header span,
-  .privacy-stack > header span,
-  .benchmark-array > header span {
+  .module-label span {
     color: #9ae5ff;
     font-size: 8px;
     letter-spacing: .24em;
   }
 
-  .dossier-header b,
-  .privacy-stack > header b,
-  .benchmark-array > header b {
+  .module-label b {
     color: rgba(232,241,248,.78);
     font-size: 9px;
     font-weight: 500;
     letter-spacing: .16em;
   }
 
-  .dossier-header em {
-    margin-left: auto;
+  .module-label em {
     color: rgba(232,179,128,.8);
     font-size: 8px;
     font-style: normal;
     letter-spacing: .16em;
+    text-align: right;
   }
 
-  .cycle-efficiency {
+  .cycle-core {
+    overflow: hidden;
+    border: 1px solid rgba(154,229,255,.18);
+    background:
+      radial-gradient(circle at 22% 54%, rgba(91,172,205,.12), transparent 27%),
+      linear-gradient(145deg, rgba(11,20,29,.85), rgba(3,7,12,.94) 68%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 28px 70px rgba(0,0,0,.22);
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  }
+
+  .cycle-core::before {
+    content: '';
+    position: absolute;
+    inset: 52px 0 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent 49.94%, rgba(154,229,255,.05) 50%, transparent 50.06%),
+      repeating-linear-gradient(180deg, rgba(154,229,255,.022) 0 1px, transparent 1px 32px);
+  }
+
+  .cycle-core-grid {
     display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: end;
-    gap: 3px 16px;
-    padding: clamp(28px, 4.5vw, 62px) clamp(22px, 4vw, 52px) clamp(22px, 3vw, 40px);
+    grid-template-columns: minmax(330px, .82fr) minmax(0, 1.18fr);
+    min-height: 318px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cycle-dial {
+    width: min(100%, 390px);
+    min-height: 268px;
+    position: relative;
+    display: grid;
+    place-items: center;
+    align-self: center;
+    justify-self: center;
+    background:
+      linear-gradient(90deg, transparent 49.8%, rgba(154,229,255,.1) 50%, transparent 50.2%),
+      linear-gradient(0deg, transparent 49.8%, rgba(154,229,255,.1) 50%, transparent 50.2%);
+  }
+
+  .cycle-dial::before {
+    content: '';
+    width: 230px;
+    aspect-ratio: 1;
+    position: absolute;
+    border: 1px solid rgba(154,229,255,.24);
+    border-radius: 50%;
+    background:
+      conic-gradient(from 38deg, transparent 0 14%, rgba(154,229,255,.72) 14% 14.6%, transparent 14.6% 58%, rgba(232,179,128,.76) 58% 58.7%, transparent 58.7%),
+      radial-gradient(circle, transparent 58%, rgba(154,229,255,.06) 59% 60%, transparent 61%);
+    box-shadow: inset 0 0 38px rgba(88,168,199,.06), 0 0 34px rgba(88,168,199,.08);
+    animation: cycleOrbit 22s linear infinite;
+  }
+
+  .cycle-dial::after {
+    content: '';
+    width: 8px;
+    aspect-ratio: 1;
+    position: absolute;
+    top: calc(50% - 116px);
+    left: calc(50% - 4px);
+    border-radius: 50%;
+    background: #e8b380;
+    box-shadow: 0 0 10px #e8b380, 0 0 26px rgba(232,179,128,.7);
+  }
+
+  @keyframes cycleOrbit { to { transform: rotate(1turn); } }
+
+  .cycle-efficiency {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    text-align: center;
   }
 
   .cycle-efficiency span {
-    grid-column: 1 / -1;
     color: rgba(221,235,244,.58);
-    font: 500 10px/1 'JetBrains Mono', monospace;
-    letter-spacing: .22em;
+    font: 500 8px/1 'JetBrains Mono', monospace;
+    letter-spacing: .18em;
     text-transform: uppercase;
   }
 
   .cycle-efficiency strong {
     color: #ecf9ff;
-    font: 400 clamp(42px, 5.1vw, 72px)/.9 'Orbitron', sans-serif;
+    font: 400 clamp(44px, 5vw, 72px)/.9 'Orbitron', sans-serif;
     letter-spacing: -.055em;
     white-space: nowrap;
     text-shadow: 0 0 30px rgba(154,229,255,.16);
   }
 
   .cycle-efficiency em {
-    padding-bottom: .55em;
     color: #e8b380;
-    font: 500 10px/1 'JetBrains Mono', monospace;
+    font: 500 8px/1 'JetBrains Mono', monospace;
     font-style: normal;
     letter-spacing: .2em;
   }
 
-  .ledger-metrics {
+  .core-telemetry {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin: 0 clamp(22px, 4vw, 52px);
-    border-top: 1px solid rgba(154,229,255,.13);
-    border-bottom: 1px solid rgba(154,229,255,.13);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 34px 34px 34px 0;
+    border: 1px solid rgba(154,229,255,.12);
   }
 
-  .ledger-metrics div {
+  .core-telemetry div {
     min-width: 0;
-    padding: 18px 16px 18px 0;
+    position: relative;
+    padding: 26px 28px;
   }
 
-  .ledger-metrics div + div {
-    padding-left: 16px;
-    border-left: 1px solid rgba(154,229,255,.1);
-  }
+  .core-telemetry div:nth-child(even) { border-left: 1px solid rgba(154,229,255,.1); }
+  .core-telemetry div:nth-child(n+3) { border-top: 1px solid rgba(154,229,255,.1); }
 
-  .ledger-metrics dt {
-    margin-bottom: 8px;
+  .core-telemetry dt {
+    margin-bottom: 12px;
     color: rgba(166,187,202,.54);
     font: 500 8px/1.3 'JetBrains Mono', monospace;
     letter-spacing: .16em;
     text-transform: uppercase;
   }
 
-  .ledger-metrics dd {
+  .core-telemetry dd {
     overflow: hidden;
     color: #dff5ff;
-    font: 400 clamp(16px, 1.55vw, 23px)/1 'Orbitron', sans-serif;
+    font: 400 clamp(22px, 2.4vw, 36px)/1 'Orbitron', sans-serif;
     font-variant-numeric: tabular-nums;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .ledger-note {
-    margin: 0;
-    padding: 22px clamp(22px, 4vw, 52px) 26px;
-    color: rgba(194,209,219,.58);
-    font: 400 10px/1.7 'JetBrains Mono', monospace;
-  }
-
-  .privacy-stack {
-    display: grid;
-    grid-template-rows: auto repeat(3, minmax(0, 1fr));
-  }
-
-  .privacy-stack > header {
-    flex-wrap: wrap;
-    align-content: center;
-    gap: 4px 14px;
-  }
-
-  .privacy-stack article {
-    display: grid;
-    grid-template-columns: 82px minmax(104px, .42fr) minmax(0, 1fr);
-    align-items: center;
-    gap: 16px;
-    padding: 18px 22px;
-    border-bottom: 1px solid rgba(154,229,255,.1);
-  }
-
-  .privacy-stack article:last-child { border-bottom: 0; }
-
-  .privacy-stack article > i {
-    color: rgba(173,196,210,.5);
-    font: 500 8px/1.2 'JetBrains Mono', monospace;
-    font-style: normal;
-    letter-spacing: .13em;
-  }
-
-  .privacy-stack article > strong {
-    color: #f0f8ff;
-    font: 500 clamp(10px, 1vw, 13px)/1 'Orbitron', sans-serif;
-    letter-spacing: .12em;
-    white-space: nowrap;
-  }
-
-  .privacy-stack article[data-level="published"] > strong { color: #9ae5ff; }
-  .privacy-stack article[data-level="private"] > strong { color: #e8b380; }
-
-  .privacy-stack article div b {
+  .core-telemetry small {
     display: block;
-    margin-bottom: 3px;
-    color: rgba(232,241,248,.8);
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  .privacy-stack article div p {
-    color: rgba(174,192,204,.56);
-    font: 400 9px/1.55 'JetBrains Mono', monospace;
-  }
-
-  .benchmark-array {
-    margin-top: clamp(18px, 2vw, 30px);
-    padding-bottom: 18px;
-  }
-
-  .benchmark-array > header { margin-bottom: 20px; }
-
-  .benchmark-row {
-    display: grid;
-    grid-template-columns: 150px minmax(0, 1fr) 120px;
-    align-items: center;
-    gap: 18px;
-    min-height: 42px;
-    padding: 0 24px;
-  }
-
-  .benchmark-row span,
-  .benchmark-row strong {
-    color: rgba(184,205,218,.62);
-    font: 500 9px/1 'JetBrains Mono', monospace;
+    margin-top: 9px;
+    color: rgba(166,187,202,.38);
+    font: 500 7px/1.3 'JetBrains Mono', monospace;
     letter-spacing: .12em;
-    font-variant-numeric: tabular-nums;
   }
 
-  .benchmark-row strong { text-align: right; }
+  .core-telemetry .risk-load dd,
+  .core-telemetry .risk-load small { color: #f0b09e; }
 
-  .benchmark-row i {
-    height: 3px;
-    position: relative;
-    overflow: visible;
-    background: rgba(154,229,255,.08);
+  .core-note {
+    margin: 0;
+    padding: 13px 22px 15px;
+    border-top: 1px solid rgba(154,229,255,.12);
+    color: rgba(194,209,219,.58);
+    font: 400 8px/1.65 'JetBrains Mono', monospace;
+    text-align: center;
   }
 
-  .benchmark-row i::before {
+  .velocity-field {
+    overflow: hidden;
+    border-top: 1px solid rgba(154,229,255,.18);
+    border-bottom: 1px solid rgba(154,229,255,.18);
+    background:
+      radial-gradient(ellipse at 72% 50%, rgba(71,137,168,.11), transparent 40%),
+      linear-gradient(90deg, rgba(4,9,14,.9), rgba(10,18,27,.5), rgba(4,9,14,.9));
+  }
+
+  .velocity-field::before {
     content: '';
     position: absolute;
-    inset: 0 auto 0 0;
+    inset: 52px 0 0;
+    pointer-events: none;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 79px, rgba(154,229,255,.035) 79px 80px),
+      linear-gradient(180deg, transparent, rgba(154,229,255,.035) 50%, transparent);
+  }
+
+  .velocity-field::after {
+    content: '';
+    width: 18%;
+    position: absolute;
+    inset: 52px auto 0 -20%;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(154,229,255,.08), transparent);
+    transform: skewX(-14deg);
+  }
+
+  .telemetry-live .velocity-field::after { animation: vectorScan 4.8s ease-in-out 1 both; }
+
+  @keyframes vectorScan { to { left: 110%; } }
+
+  .velocity-stage {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    padding: 20px clamp(20px, 3vw, 42px) 10px;
+  }
+
+  .benchmark-row.velocity-vector {
+    display: grid;
+    grid-template-columns: minmax(150px, .4fr) minmax(260px, 1.6fr) minmax(88px, .24fr);
+    align-items: center;
+    gap: clamp(18px, 2.5vw, 38px);
+    min-height: 74px;
+    padding: 0;
+  }
+
+  .velocity-vector + .velocity-vector { border-top: 1px solid rgba(154,229,255,.08); }
+
+  .velocity-vector > span {
+    display: grid;
+    gap: 7px;
+    color: rgba(184,205,218,.62);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .velocity-vector > span i {
+    color: rgba(154,229,255,.4);
+    font-size: 7px;
+    font-style: normal;
+    letter-spacing: .18em;
+  }
+
+  .velocity-vector > span b {
+    color: rgba(222,237,246,.74);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: .11em;
+  }
+
+  .velocity-vector > strong {
+    color: #dff6ff;
+    font: 400 clamp(25px, 2.7vw, 40px)/1 'Orbitron', sans-serif;
+    letter-spacing: -.04em;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .velocity-vector > .vector-rail {
+    height: 44px;
+    position: relative;
+    overflow: visible;
+    background:
+      linear-gradient(180deg, transparent 48%, rgba(154,229,255,.09) 49% 51%, transparent 52%),
+      repeating-linear-gradient(90deg, rgba(154,229,255,.08) 0 1px, transparent 1px 12.5%);
+  }
+
+  .velocity-vector > .vector-rail::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 2px;
     width: var(--benchmark);
     background: linear-gradient(90deg, rgba(141,180,192,.36), rgba(154,229,255,.74));
     box-shadow: 0 0 14px rgba(154,229,255,.22);
+    transform: translateY(-50%);
     transform-origin: left center;
     transition: transform 1.35s cubic-bezier(.16, 1, .3, 1);
   }
 
-  .benchmark-row.primary span,
-  .benchmark-row.primary strong { color: #eaf9ff; }
-  .benchmark-row.primary i::before { background: linear-gradient(90deg, #7fb6c6, #e8b380); }
-
-  .benchmark-array > p {
-    margin: 14px 24px 0 192px;
-    color: rgba(160,182,196,.44);
-    font: 400 8px/1.6 'JetBrains Mono', monospace;
+  .velocity-vector > .vector-rail::after {
+    content: '';
+    width: 13px;
+    aspect-ratio: 1;
+    position: absolute;
+    top: 50%;
+    left: var(--benchmark);
+    border: 1px solid #9ae5ff;
+    border-radius: 50%;
+    background: rgba(4,9,14,.95);
+    box-shadow: 0 0 0 5px rgba(154,229,255,.06), 0 0 18px rgba(154,229,255,.52);
+    transform: translate(-50%, -50%);
+    transition: opacity .5s ease, transform 1.35s cubic-bezier(.16, 1, .3, 1);
+    animation: vectorPulse 2.8s ease-in-out infinite;
   }
 
-  .flight-path-head {
-    display: flex;
-    max-width: 880px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-    margin: clamp(80px, 10vw, 150px) 0 34px;
+  .velocity-vector.primary > strong { color: #f0c79f; }
+  .velocity-vector.primary > .vector-rail::before { background: linear-gradient(90deg, #7fb6c6, #e8b380); }
+  .velocity-vector.primary > .vector-rail::after { border-color: #e8b380; box-shadow: 0 0 0 5px rgba(232,179,128,.06), 0 0 18px rgba(232,179,128,.52); }
+
+  @keyframes vectorPulse {
+    50% { box-shadow: 0 0 0 9px rgba(154,229,255,.025), 0 0 28px rgba(154,229,255,.64); }
+  }
+
+  .velocity-note {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    padding: 8px clamp(20px, 3vw, 42px) 18px;
+    color: rgba(160,182,196,.44);
+    font: 400 8px/1.6 'JetBrains Mono', monospace;
+    text-align: right;
+  }
+
+  .flight-paths { overflow: hidden; }
+
+  .flight-path-head.module-label {
+    min-height: 0;
+    grid-template-columns: minmax(150px, .35fr) minmax(260px, .8fr) minmax(300px, 1.15fr);
+    align-items: end;
+    gap: clamp(20px, 3vw, 46px);
+    padding: 0 0 20px;
+    border-bottom: 0;
     text-align: left;
   }
 
-  .flight-path-head > span {
-    display: block;
-    margin-bottom: 18px;
-    color: rgba(154,229,255,.64);
-    font: 500 9px/1.5 'JetBrains Mono', monospace;
-    letter-spacing: .2em;
-  }
-
-  .flight-path-head h3,
-  .risk-chamber h3 {
+  .flight-path-head h3 {
     margin: 0;
     color: #edf6ff;
-    font: 400 clamp(28px, 3.8vw, 54px)/1.05 'Orbitron', sans-serif;
+    font: 400 clamp(25px, 3vw, 42px)/1.05 'Orbitron', sans-serif;
     letter-spacing: -.03em;
-  }
-
-  .flight-path-head p,
-  .risk-chamber > header p {
-    color: rgba(196,211,222,.58);
-    font: 400 11px/1.75 'JetBrains Mono', monospace;
+    text-transform: none;
   }
 
   .flight-path-head p {
-    max-width: 760px;
-    margin: 20px 0 0;
+    margin: 0;
+    color: rgba(196,211,222,.58);
+    font: 400 9px/1.7 'JetBrains Mono', monospace;
+    text-transform: none;
   }
 
-  .trade-routes {
+  .route-manifest {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba(154,229,255,.18);
+    border-bottom: 1px solid rgba(154,229,255,.18);
+    background:
+      linear-gradient(90deg, rgba(5,10,15,.94), rgba(9,17,24,.64), rgba(5,10,15,.94)),
+      repeating-linear-gradient(90deg, transparent 0 99px, rgba(154,229,255,.025) 99px 100px);
+  }
+
+  .route-manifest::before {
+    content: '';
+    width: 1px;
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 2;
+    pointer-events: none;
+    background: #9ae5ff;
+    box-shadow: 0 0 18px rgba(154,229,255,.7);
+    opacity: 0;
+  }
+
+  .telemetry-live .route-manifest::before { animation: manifestScan 3.8s .35s cubic-bezier(.16, 1, .3, 1) 1 both; }
+
+  @keyframes manifestScan {
+    0% { left: 0; opacity: 0; }
+    10% { opacity: .8; }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  .route-axis,
+  .trade-route {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: 46px minmax(120px, .58fr) minmax(150px, .72fr) minmax(190px, .9fr) minmax(240px, 1.6fr);
+    align-items: center;
+    gap: clamp(14px, 1.8vw, 28px);
+    padding-inline: clamp(16px, 2vw, 28px);
+  }
+
+  .route-axis {
+    min-height: 34px;
+    color: rgba(154,229,255,.34);
+    font: 500 7px/1 'JetBrains Mono', monospace;
+    letter-spacing: .16em;
   }
 
   .trade-route {
-    grid-column: span 2;
-    min-height: 330px;
-    padding: 22px;
+    min-height: 88px;
+    position: relative;
+    border-top: 1px solid rgba(154,229,255,.09);
+    transition: background .3s ease, padding-left .3s ease;
   }
 
-  .trade-route:nth-child(4) { grid-column: 2 / span 2; }
-  .trade-route:nth-child(5) { grid-column: 4 / span 2; }
-
   .trade-route::after {
-    content: attr(data-rank);
+    content: '';
     position: absolute;
-    right: 8px;
-    bottom: -18px;
-    z-index: -1;
-    color: rgba(154,229,255,.035);
-    font: 500 132px/1 'Orbitron', sans-serif;
-    letter-spacing: -.08em;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(154,229,255,.055), transparent 36%);
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+
+  .trade-route:hover,
+  .trade-route:focus-within {
+    padding-left: calc(clamp(16px, 2vw, 28px) + 4px);
+    background: rgba(154,229,255,.025);
+  }
+
+  .trade-route:hover::after,
+  .trade-route:focus-within::after { opacity: 1; }
+
+  .route-rank {
+    color: rgba(154,229,255,.36);
+    font: 500 9px/1 'JetBrains Mono', monospace;
+    letter-spacing: .15em;
   }
 
   .trade-route header {
+    min-width: 0;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: baseline;
-    gap: 12px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(154,229,255,.13);
+    gap: 7px;
   }
 
   .trade-route header span {
     color: #eaf9ff;
-    font: 500 19px/1 'Orbitron', sans-serif;
+    font: 500 18px/1 'Orbitron', sans-serif;
   }
 
   .trade-route header b {
     overflow: hidden;
-    color: rgba(173,195,208,.54);
-    font: 500 8px/1 'JetBrains Mono', monospace;
-    font-style: normal;
+    color: rgba(173,195,208,.5);
+    font: 500 7px/1 'JetBrains Mono', monospace;
+    font-weight: 500;
     letter-spacing: .12em;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .route-efficiency {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin: 26px 0 18px;
+    min-width: 0;
+    display: grid;
+    gap: 6px;
+    margin: 0;
   }
 
   .route-efficiency strong {
     color: #9ae5ff;
-    font: 400 clamp(25px, 2.4vw, 38px)/1 'Orbitron', sans-serif;
+    font: 400 clamp(21px, 2vw, 30px)/1 'Orbitron', sans-serif;
     letter-spacing: -.04em;
     font-variant-numeric: tabular-nums;
   }
@@ -386,16 +507,18 @@
 
   .route-track {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(76px, 1fr) auto;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 22px;
+    gap: 10px;
+    margin: 0;
   }
 
   .route-track > i {
-    height: 4px;
+    height: 3px;
     position: relative;
-    background: rgba(154,229,255,.07);
+    background:
+      linear-gradient(90deg, rgba(154,229,255,.08), rgba(154,229,255,.035)),
+      repeating-linear-gradient(90deg, transparent 0 24px, rgba(154,229,255,.12) 24px 25px);
   }
 
   .route-track > i::after {
@@ -409,15 +532,29 @@
     transition: transform 1.45s cubic-bezier(.16, 1, .3, 1);
   }
 
-  .telemetry-pending:not(.telemetry-live) .benchmark-row i::before,
+  .telemetry-pending:not(.telemetry-live) .benchmark-row > .vector-rail::before {
+    transform: translateY(-50%) scaleX(0);
+  }
+
   .telemetry-pending:not(.telemetry-live) .route-track > i::after {
     transform: scaleX(0);
   }
 
-  .telemetry-live .benchmark-row i::before,
+  .telemetry-pending:not(.telemetry-live) .benchmark-row > .vector-rail::after { opacity: 0; }
+
+  .telemetry-live .benchmark-row > .vector-rail::before {
+    transform: translateY(-50%) scaleX(1);
+    animation: vectorTelemetrySweep 1.45s cubic-bezier(.16, 1, .3, 1) both;
+  }
+
   .telemetry-live .route-track > i::after {
     transform: scaleX(1);
     animation: telemetrySweep 1.45s cubic-bezier(.16, 1, .3, 1) both;
+  }
+
+  @keyframes vectorTelemetrySweep {
+    from { transform: translateY(-50%) scaleX(0); filter: brightness(1.8); }
+    to { transform: translateY(-50%) scaleX(1); filter: brightness(1); }
   }
 
   @keyframes telemetrySweep {
@@ -432,81 +569,19 @@
   }
 
   .trade-route > p {
-    margin-top: 17px;
-    color: rgba(172,191,203,.5);
-    font: 400 9px/1.6 'JetBrains Mono', monospace;
-  }
-
-  .risk-chamber {
-    margin-top: clamp(80px, 10vw, 150px);
-    padding: clamp(28px, 4vw, 52px);
-  }
-
-  .risk-chamber > header {
-    display: grid;
-    grid-template-columns: 160px minmax(280px, .9fr) minmax(320px, 1fr);
-    gap: 28px;
-    align-items: end;
-    margin-bottom: 44px;
-  }
-
-  .risk-chamber > header > span {
-    color: #ff8a78;
-    font: 500 9px/1.5 'JetBrains Mono', monospace;
-    letter-spacing: .18em;
-  }
-
-  .risk-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    border-top: 1px solid rgba(255,138,120,.18);
-  }
-
-  .risk-grid article {
     min-width: 0;
-    padding: 24px 20px 8px 0;
-  }
-
-  .risk-grid article + article {
-    padding-left: 20px;
-    border-left: 1px solid rgba(255,138,120,.13);
-  }
-
-  .risk-grid i,
-  .risk-grid b {
-    display: block;
-    color: rgba(255,169,150,.62);
-    font: 500 8px/1 'JetBrains Mono', monospace;
-    font-style: normal;
-    letter-spacing: .14em;
-  }
-
-  .risk-grid strong {
-    display: block;
-    margin: 13px 0 10px;
-    color: #ffe7e1;
-    font: 400 clamp(24px, 2.8vw, 40px)/1 'Orbitron', sans-serif;
-    letter-spacing: -.04em;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  .risk-grid b { color: rgba(236,197,186,.42); }
-
-  .risk-grid p {
-    margin-top: 16px;
-    color: rgba(197,178,174,.54);
-    font: 400 9px/1.6 'JetBrains Mono', monospace;
+    margin: 0;
+    color: rgba(172,191,203,.5);
+    font: 400 8px/1.55 'JetBrains Mono', monospace;
   }
 
   .methodology-seal {
     display: grid;
-    grid-template-columns: 190px minmax(0, 1fr);
-    gap: 26px;
-    margin-top: 18px;
-    padding: 24px 28px;
-    border-color: rgba(232,179,128,.2);
-    background: linear-gradient(90deg, rgba(26,18,12,.78), rgba(5,8,12,.88));
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 22px;
+    margin-top: 20px;
+    padding: 14px 0 0;
+    border-top: 1px solid rgba(232,179,128,.18);
   }
 
   .methodology-seal span {
@@ -517,7 +592,7 @@
 
   .methodology-seal p {
     color: rgba(211,199,185,.62);
-    font: 400 9px/1.75 'JetBrains Mono', monospace;
+    font: 400 8px/1.65 'JetBrains Mono', monospace;
   }
 
   /* The approach caption and the metric strip share one geometry contract.
@@ -567,72 +642,82 @@
     --metric-strip-bottom: calc(clamp(18px, 3.5svh, 38px) + 58px);
   }
 
-  .risk-grid.risk-grid--summary { grid-template-columns: minmax(0, 1fr); }
-
-  .risk-grid--summary article {
-    display: grid;
-    grid-template-columns: minmax(150px, .55fr) minmax(120px, .3fr) minmax(190px, .65fr) minmax(280px, 1.5fr);
-    gap: 24px;
-    align-items: center;
-    padding: 24px 0 8px;
+  @media (max-width: 1120px) {
+    .cycle-core-grid { grid-template-columns: minmax(290px, .72fr) minmax(0, 1.28fr); }
+    .core-telemetry { margin-right: 24px; }
+    .route-axis,
+    .trade-route {
+      grid-template-columns: 38px minmax(100px, .5fr) minmax(130px, .68fr) minmax(150px, .82fr) minmax(190px, 1.45fr);
+      gap: 14px;
+    }
+    .trade-route > p { font-size: 7.5px; }
   }
 
-  .risk-grid--summary strong,
-  .risk-grid--summary p { margin: 0; }
-
-  @media (max-width: 1120px) {
-    .dossier-lead { grid-template-columns: 1fr; }
-    .privacy-stack article { min-height: 112px; }
-    .risk-chamber > header { grid-template-columns: minmax(130px, .34fr) minmax(0, 1fr); }
-    .risk-chamber > header p { grid-column: 2; }
-    .trade-routes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .trade-route,
-    .trade-route:nth-child(4),
-    .trade-route:nth-child(5) { grid-column: auto; }
-    .trade-route:last-child { grid-column: 1 / -1; }
-    .risk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .risk-grid article:nth-child(3) { border-left: 0; }
-    .risk-grid article:nth-child(n+3) { border-top: 1px solid rgba(255,138,120,.13); }
+  @media (max-width: 900px) {
+    .cycle-core-grid { grid-template-columns: 1fr; }
+    .cycle-dial { min-height: 250px; }
+    .core-telemetry { margin: 0 24px 26px; }
+    .flight-path-head.module-label {
+      grid-template-columns: 150px minmax(0, 1fr);
+      align-items: start;
+    }
+    .flight-path-head p { grid-column: 2; }
+    .route-axis { display: none; }
+    .trade-route {
+      grid-template-columns: 38px minmax(110px, .55fr) minmax(135px, .7fr) minmax(150px, .85fr) minmax(170px, 1.35fr);
+    }
   }
 
   @media (max-width: 720px) {
     .performance-dossier { padding: 84px 20px 72px; }
     .performance-dossier > .sec-desc { margin-bottom: 34px; }
-    .dossier-header,
-    .privacy-stack > header,
-    .benchmark-array > header { min-height: 54px; padding-inline: 14px; }
-    .dossier-header b { display: none; }
-    .cycle-efficiency { grid-template-columns: 1fr; padding: 28px 18px 22px; }
-    .cycle-efficiency strong { font-size: clamp(42px, 13vw, 64px); }
-    .cycle-efficiency em { padding: 0; }
-    .ledger-metrics { grid-template-columns: 1fr; margin-inline: 18px; }
-    .ledger-metrics div { padding: 14px 0; }
-    .ledger-metrics div + div { padding-left: 0; border-left: 0; border-top: 1px solid rgba(154,229,255,.1); }
-    .ledger-note { padding: 18px; }
-    .privacy-stack article { grid-template-columns: 72px minmax(96px, auto) minmax(0, 1fr); gap: 10px; padding: 16px 14px; }
-    .privacy-stack article > strong { font-size: 10px; }
-    .privacy-stack article div b { font-size: 10px; }
-    .benchmark-row { grid-template-columns: 96px minmax(0, 1fr) 86px; gap: 10px; padding-inline: 14px; }
-    .benchmark-array > p { margin: 12px 14px 0; }
-    .flight-path-head { margin-top: 68px; }
-    .risk-chamber > header { display: block; margin-top: 68px; }
-    .risk-chamber > header > span { display: block; margin-bottom: 14px; }
-    .flight-path-head h3,
-    .risk-chamber h3 { margin-bottom: 18px; }
-    .trade-routes { grid-template-columns: 1fr; }
-    .trade-route,
-    .trade-route:last-child { grid-column: auto; min-height: 0; }
-    .trade-route header { grid-template-columns: auto minmax(0, 1fr); }
-    .route-efficiency { align-items: flex-end; }
-    .risk-chamber { margin-top: 68px; padding: 26px 18px; }
-    .risk-grid { grid-template-columns: 1fr; }
-    .risk-grid article,
-    .risk-grid article + article { padding: 20px 0; border-left: 0; border-top: 1px solid rgba(255,138,120,.13); }
-    .risk-grid article:first-child { border-top: 0; }
-    .risk-grid--summary article { display: block; }
-    .risk-grid--summary strong { margin: 13px 0 10px; }
-    .risk-grid--summary p { margin-top: 16px; }
-    .methodology-seal { grid-template-columns: 1fr; gap: 10px; padding: 20px 18px; }
+    .blackbox-sequence { gap: 38px; }
+    .module-label {
+      min-height: 62px;
+      grid-template-columns: 1fr auto;
+      gap: 7px 12px;
+      padding: 12px 14px;
+    }
+    .module-label b { grid-column: 1 / -1; grid-row: 2; }
+    .module-label em { grid-column: 2; grid-row: 1; }
+    .cycle-core-grid { grid-template-columns: 1fr; }
+    .cycle-dial { min-height: 248px; }
+    .core-telemetry { margin: 0 14px 20px; }
+    .core-telemetry div { padding: 20px 18px; }
+    .core-note { padding-inline: 16px; text-align: left; }
+    .velocity-stage { padding: 12px 16px 8px; }
+    .benchmark-row.velocity-vector {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px 18px;
+      padding: 12px 0;
+    }
+    .velocity-vector > .vector-rail { grid-column: 1 / -1; grid-row: 2; }
+    .velocity-vector > strong { grid-column: 2; grid-row: 1; }
+    .velocity-note { padding: 4px 16px 14px; text-align: left; }
+    .flight-path-head.module-label {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 0 0 16px;
+    }
+    .flight-path-head.module-label > * { grid-column: 1; }
+    .flight-path-head h3 { font-size: clamp(25px, 8vw, 36px); }
+    .trade-route {
+      min-height: 0;
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      grid-template-areas:
+        'rank asset efficiency'
+        '. track track'
+        '. log log';
+      gap: 12px 14px;
+      padding-block: 16px;
+    }
+    .route-rank { grid-area: rank; }
+    .trade-route header { grid-area: asset; }
+    .route-efficiency { grid-area: efficiency; text-align: right; }
+    .route-track { grid-area: track; }
+    .trade-route > p { grid-area: log; }
+    .methodology-seal { grid-template-columns: 1fr; gap: 8px; }
     body.hud-off .stardrive { --metric-strip-bottom: 80px; }
   }
 
@@ -662,18 +747,28 @@
   }
 
   @media (max-width: 440px) {
-    .privacy-stack article { grid-template-columns: 1fr auto; }
-    .privacy-stack article > div { grid-column: 1 / -1; }
-    .benchmark-row { grid-template-columns: 82px minmax(0, 1fr) auto; }
-    .benchmark-row span,
-    .benchmark-row strong { font-size: 7px; letter-spacing: .06em; }
-    .trade-route { padding: 18px; }
-    .route-efficiency { display: grid; }
+    .cycle-dial { min-height: 224px; }
+    .cycle-dial::before { width: 198px; }
+    .cycle-dial::after { top: calc(50% - 100px); }
+    .cycle-efficiency strong { font-size: clamp(41px, 13vw, 56px); }
+    .core-telemetry div { padding: 17px 12px; }
+    .core-telemetry dd { font-size: 23px; }
+    .core-telemetry small { font-size: 6px; letter-spacing: .08em; }
+    .trade-route {
+      grid-template-columns: 30px minmax(0, 1fr);
+      grid-template-areas:
+        'rank asset'
+        '. efficiency'
+        '. track'
+        '. log';
+    }
+    .route-efficiency { text-align: left; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .cycle-ledger::after,
-    .benchmark-array::after,
-    .risk-chamber::after { display: none; }
+    .cycle-dial::before,
+    .velocity-vector > .vector-rail::after { animation: none; }
+    .velocity-field::after,
+    .route-manifest::before { display: none; }
   }
 }
