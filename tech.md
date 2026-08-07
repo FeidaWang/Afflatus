@@ -54,7 +54,8 @@
 ```
 /                        11 个 HTML 入口（根目录，非 public/）
 api/                     quote.js + history.js（Vercel serverless，symbol 正则校验 + rateLimit）
-src/main.js              首页主程序 ~3.5k 行（HUD/场景/光标/语言/装配，持续拆分中）
+src/main.js              首页 4.4kB 基础加载器（意图/可见性/idle 调度）
+src/homeExperience.js    首页重型体验（HUD/战斗/场景/光标/初始语言投影，按需加载）
 src/styles.css           首页/主站样式 ~8000 行，@layer 四层
 src/config/
   siteManifest.js        ★ 路由/构建/导航/sitemap/元数据唯一真源
@@ -179,7 +180,7 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 - `arenaRules.js`：**LLM 提案、代码收单**——模型只出 JSON 订单，`validateOrder/applyFill/checkStopLoss/checkExitBySweep/checkDailyCircuitBreaker/checkSeasonReset/computeMetrics` 是唯一有权改账本的代码。共享硬风控（对全部模型一视同仁，不因 Season/模型而异）：单仓 20%/现金 5%/日熔断 3%/赛季重置 20%——定义在 `LIMITS` 顶层常量。**按模型分化**的风控（止损/最大持仓/信心阈值/换手节奏/滑点档）：Season 1 沿用旧字段 `LIMITS.STOP_LOSS.{A,B}`/`SLIPPAGE_BPS.{A,B}`/`MAX_WEEKLY_TRADES.A`/`ALLOWED_TRADE_DAYS.B`（A：止损 8%/持仓 8/信心 0.65/周换手 20 笔；B：止损 15%/仅周二四开仓）；Season 2 三本走新增的 `LIMITS.PER_MODEL.{S,P,T}`（S=ORACLE 止损 8%/持仓 6/信心 0.70/周换手 20；P=PULSE 止损 5%/持仓 5/信心 0.65/周换手 30；T=ATLAS 止损 15%/持仓 8/仅周二四开仓，继承 B 的日期闸）——所有查找函数先查 `PER_MODEL[model]` 再退回旧字段，Season 1 数学路径因此逐字节不变。Model T 独有：新开仓订单 `signals[]` 数组长度必须 ≥2（"融合而非单一头条"），否则一律拒单，与信心阈值同级校验。Model P 独有：买单需带 `exitBy`（YYYY-MM-DD），`checkExitBySweep()` 到期强制平仓（对没有 `exitBy` 字段的仓位是纯 no-op，即 Season 1 和 S/T 完全不受影响）。
 - `arenaFeatures.js`（新增）：Model P 盘中结构特征的**纯函数**层——`openGapPct/intradayRangePct/computeVWAP/vwapDriftPct/volumeSurgeRatio/pivotBreakState`（复用 `technicals.js` 的 `classicPivots`，不重复造轮子）+ `buildPulseFeatures()` 组装单标的完整特征向量。设计原则：LLM 只对预计算好的数字排序/定仓位，绝不自己算这些数字（同"代码收单"纪律的自然延伸）。
 - `arenaExec.js`（新增）：「RL 启发式」执行策略的确定性替身——`sliceOrder()`（订单超过账本净值 10% 时按剩余窗口数切片）、`capByParticipation()`（按标的平均成交量的参与率封顶）、`impactSlippageBps()`（`baseBps + k·√(参与率)` 平方根冲击成本模型，`k=50` 温和系数、`maxBps=250` 兜底）。`arenaRules.js` 的 `simulateFill(order, model, execOpts)` 第三参数可选：不传（现有全部调用方式）=旧的按模型分级平坦滑点，逐字节不变；传 `execOpts.avgDollarVol` 才会切到冲击成本模型——**目前没有任何调用方传这个参数**，因为管线还没有真实成交量数据流入 payload，这层是"接好线，等数据"的休眠状态，如实记录避免以为已经生效。
-- `arenaAccess.js`（新增 2026-07-23，Phase 4/§20 收紧为纯推荐名单）：API 门禁的纯逻辑层，供 `api/quote.js`/`api/history.js` 调用——`resolveAllowlist({picks})` 现在**只认今日推荐**（`arena-picks.json` 的 `quoteAllowlist`，管线固定把 SPY/QQQ/SMH 基准也塞进这个数组），不再并入全市场标普 500。收紧的前提是 Phase 4 的「今日推荐交易」面板（`arenaPicks.js`）已上线为主入口，不会再像 Phase 3 那样让"搜索任意美股"这个日常功能被静默锁死——想搜索全市场任意标的，走管理员密钥解锁（`#taUnlockForm`/`#adminChip`，见上方 `arenaTech.js` 条目）。`checkAdminKey(providedKey, configuredKey)` 用 `crypto.timingSafeEqual` 恒定时间比较，任何一边为空/长度不等都直接判否（fail-closed，不抛异常）。两个 API 文件各自维护 5 分钟 TTL 的模块级缓存，同源读取 `arena-picks.json`，拿不到就把已有的（可能为空）结果原样退回。P0-09 起 allowlist fetch 分别限时 3 秒，Finnhub quote 限时 5 秒、Twelve Data history 限时 7 秒；上游 HTTP/payload 结构/超时/网络错误归一为 `{error:{code,message,upstreamStatus?},requestId}`，错误响应 `private,no-store`，所有响应带 `X-Request-Id`，成功仍分别使用 12 秒与 1 小时 edge cache。管理员密钥通不过返回 403 `ARENA_KEY_REQUIRED`；`ARENA_ADMIN_KEY` 未配置时功能 fail-closed。
+- `arenaAccess.js`（新增 2026-07-23，2026-08-07 收紧交付边界）：API 门禁的纯逻辑层，供 `api/quote.js`/`api/history.js` 调用——`resolveAllowlist({picks})` **只认构建时随函数发布的推荐名单**（由 `arena-picks.json` 的 `quoteAllowlist` 生成，含管线固定加入的 SPY/QQQ/SMH），不再让运行时函数通过公开站点 URL 回读 allowlist，因而消除主域名变化、网络失败与缓存漂移造成的授权边界不一致。搜索非推荐标的仍须管理员密钥（`#taUnlockForm`/`#adminChip`）。`checkAdminKey(providedKey, configuredKey)` 用 `crypto.timingSafeEqual` 恒定时间比较，任何一边为空/长度不等都直接判否（fail-closed，不抛异常）。Finnhub quote 限时 5 秒、Twelve Data history 限时 7 秒；上游 HTTP/payload 结构/超时/网络错误归一为 `{error:{code,message,upstreamStatus?},requestId}`，错误响应 `private,no-store`，所有响应带 `X-Request-Id`，成功分别使用 12 秒与 1 小时 edge cache。管理员密钥通不过返回 403 `ARENA_KEY_REQUIRED`；`ARENA_ADMIN_KEY` 未配置时功能 fail-closed。
 - `arenaRun.js`：单次运行编排 mark-to-market→止损扫描→exitBy 扫描（Season 2 Model P 专用，见上）→撮合→熔断→赛季重置→复盘，`BOOKS=['A','B','S','P','T']` 五个账本键值共用同一条orchestration路径。`bootstrapSeason2(ledgerFull, {day, promptVersions, note_en, note_zh})`：纯函数，返回一份全新的三本 $10,000 账本（S/P/T）；`note_en`/`note_zh` 不传时沿用旧账本的复盘文案。**已被 `scripts/bootstrap-season2.mjs` 实际调用过一次**（2026-07-23），产物就是当前的 `public/arena-ledger.json`（见上方状态说明）——不是仅存在于测试里的休眠代码。
 - `predlogEntry.js`：`pctChange/directionHit/buildPredlogDay/appendPredlogDay`；规划中 `predCalibration.js` 三态信号 LEAN LONG/NEUTRAL/LEAN SHORT（`calibConf ≥0.62` 且近 20 次 hitRate ≥55%，信号必挂 hitRate+Brier 战绩——不越「非投资建议」红线的硬约束）。
 - `rateLimit.js`：纯函数滑动窗口（按 x-forwarded-for 分桶，quote 60/60s，history 20/60s，429+Retry-After）。symbol 正则 `^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$`，两个 API 文件的门禁检查都插在限流之后、上游 fetch 之前。
@@ -217,7 +218,7 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 ### 5.2 双语双机制（重建时最易踩的坑）
 - **共享持久层**：所有页面通过 `localeStore.js` 读写 `afflatus:locale:v1`；每个可切换语言的 HTML 入口在 `<head>` 最前运行同一段同步 pre-paint/migration，小于首帧且由 `site:check` 做逐页字节一致性守门。冲突顺序固定为新键 > 旧子页键 > 旧首页键。
 - **子页**：`i18n.js`——`data-en`/`data-zh` 属性对，默认 textContent、带 `data-i18n-html` 用 innerHTML；`.lang-toggle` 按钮；切换派发 `window` 事件 **`afflatus-lang`**，动态页面监听重渲染。嵌在 data-* HTML 字符串里的子元素（如 `.term` 按钮）每次切换随 innerHTML 重建，天然存活；事件处理器必须**委托到 document**（course.js 术语浮层先例）。
-- **首页**：`src/main.js` 自有 `setLang()` + `src/data/content.js` 的 `COPY` 对象，**不用 i18n.js**，但与子页共享 `localeStore.js`。多数落点用 textContent——给某 label 嵌按钮必须改 `setLang()` 本体（U46 已做 sl1-sl3 先例）。
+- **首页**：`src/main.js` 只负责基础外壳与延迟调度；按需加载的 `src/homeExperience.js` 用 `setLang()` + `src/data/content.js` 的 `COPY` 做当前固定文档的初始动态投影，**不用 i18n.js**。语言控制本身是 `/en/`/`/zh/` 原生链接，并用 `localeSwitchHref()` 保留 query/hash；不得再用 `preventDefault()` 做只改 DOM、不改 URL 的首页切换。多数落点用 textContent——给某 label 嵌按钮必须改 `setLang()` 本体（U46 已做 sl1-sl3 先例）。
 
 ### 5.3 模块加载约定
 - **每页一个显式 import 链入口**（`xxxEntry.js`）——同页多个独立 `<script type="module">` 会被 Vite 8 静默丢码（§9-1）。
