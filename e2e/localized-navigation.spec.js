@@ -1,5 +1,13 @@
 import { expect, test } from '@playwright/test';
 
+const visibleHomeLanguageSwitch = (page) => page.locator('#langBtn:visible, #langMiniToggle:visible');
+
+async function clickOnlyHomeLanguageSwitch(page) {
+  const switcher = visibleHomeLanguageSwitch(page);
+  await expect(switcher).toHaveCount(1);
+  await switcher.click();
+}
+
 test('home navigation follows the fixed and interactive locale', async ({ page }) => {
   const primaryLinks = page.locator('[data-afflatus-nav] > a');
   const labsTrigger = page.locator('.nav-labs__trigger');
@@ -18,7 +26,7 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await Promise.all([
     page.waitForURL(/\/zh\/$/),
-    page.locator('#langBtn:visible, #langMiniToggle:visible').click(),
+    clickOnlyHomeLanguageSwitch(page),
   ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(primaryLinks).toHaveText(['竞技场', '板块', '信号']);
@@ -30,7 +38,7 @@ test('home fixed-locale switch preserves query and hash state', async ({ page })
   await page.goto('/en/?combatview=2d#portfolioConvoy', { waitUntil: 'domcontentloaded' });
   await Promise.all([
     page.waitForURL(/\/zh\/\?combatview=2d#portfolioConvoy$/),
-    page.locator('#langBtn:visible, #langMiniToggle:visible').click(),
+    clickOnlyHomeLanguageSwitch(page),
   ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
 });
@@ -44,6 +52,7 @@ test('home shell resolves a stored adaptive locale before rich experience loads'
   await expect(page.locator('#langBtn')).toHaveAttribute('href', '/en/');
   await expect(page.locator('#langBtn')).toHaveText('Dream in English');
   await expect(page.locator('#langMiniToggle')).toHaveAttribute('href', '/en/');
+  await expect(visibleHomeLanguageSwitch(page)).toHaveCount(1);
 });
 
 test('primary navigation replaces duplicate linear page-turn controls', async ({ page }) => {

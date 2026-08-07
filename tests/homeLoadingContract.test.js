@@ -46,6 +46,8 @@ describe('home loading contract', () => {
   it('keeps both home language switches crawlable without loading combat', () => {
     expect(html).toMatch(/<a class="lang-mini-toggle" id="langMiniToggle" href="\/zh\/"/u);
     expect(html).toMatch(/<a class="warp-btn verse-switch" id="langBtn" href="\/zh\/"/u);
+    expect(html).toContain('<style id="home-language-visibility">');
+    expect(html).toContain('@media(max-width:860px){#langBtn{display:none}#langMiniToggle{display:inline-flex}}');
     expect(entry.match(/HOME_INTENT_SELECTOR[\s\S]*?\.join\(','\)/u)?.[0] || '').not.toContain('#langBtn');
     expect(entry).toContain('localeSwitchHref(location, next)');
     expect(entry).toContain("link.addEventListener('click', () => { setLocale(next); })");
