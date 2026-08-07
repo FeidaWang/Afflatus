@@ -39,6 +39,10 @@ describe('homepage AI portfolio solar system', () => {
     expect(solar).toContain('scene.background = new THREE.Color(0x01030a)');
     expect(solar).toContain("profile.type === 'jupiter'");
     expect(solar).toContain("profile.ring === 'saturn'");
+    expect(solar).toContain('function jovianCloudSignal');
+    expect(solar).toContain('function saturnCloudSignal');
+    expect(solar).not.toMatch(/Math\.sin\(v \* (?:74|92|118)/);
+    expect(solar).not.toContain('latitude * 32');
   });
 
   it('uses current-epoch orbital mechanics and expands the selected body like an atlas', () => {

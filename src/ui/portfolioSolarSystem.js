@@ -85,9 +85,44 @@ function writePixel(data, offset, color, alpha = 255) {
   data[offset + 3] = clamp(Math.round(alpha), 0, 255);
 }
 
+function gaussian(value, center, width) {
+  const distance = (value - center) / Math.max(width, .0001);
+  return Math.exp(-distance * distance);
+}
+
+function jovianCloudSignal(v, noise, detail) {
+  const latitude = Math.abs((v - .5) * 2);
+  const equatorialZone = gaussian(latitude, 0, .2);
+  const temperateBelts = gaussian(latitude, .34, .13);
+  const highLatitudeZones = gaussian(latitude, .63, .18);
+  return clamp(
+    .54
+      + equatorialZone * .12
+      - temperateBelts * .11
+      + highLatitudeZones * .055
+      + (noise - .5) * .22
+      + (detail - .5) * .065,
+    .24,
+    .82,
+  );
+}
+
+function saturnCloudSignal(v, noise, detail) {
+  const latitude = Math.abs((v - .5) * 2);
+  const equatorialHaze = gaussian(latitude, 0, .3);
+  const temperateHaze = gaussian(latitude, .46, .24);
+  return clamp(
+    .57
+      + equatorialHaze * .065
+      - temperateHaze * .045
+      + (noise - .5) * .13
+      + (detail - .5) * .035,
+    .38,
+    .74,
+  );
+}
+
 function bodyColor(profile, u, v, noise, detail) {
-  const latitude = (v - .5) * Math.PI;
-  const band = Math.sin(latitude * 32 + noise * 5);
   if (profile.type === 'sun') {
     const cell = smoothstep(.2, .92, noise * .78 + detail * .34);
     const hot = rgb('#fff4b0');
@@ -104,10 +139,11 @@ function bodyColor(profile, u, v, noise, detail) {
     return blendColor(low, high, smoothstep(.16, .88, noise * .72 + detail * .28));
   }
   if (profile.type === 'venus') {
-    const amber = rgb('#9a5627');
-    const cream = rgb('#f7d28b');
-    const swirl = .5 + .5 * Math.sin(v * 74 + noise * 11 + Math.sin(u * TAU * 3));
-    return blendColor(amber, cream, smoothstep(.08, .92, swirl * .55 + detail * .45));
+    const amber = rgb('#a86d35');
+    const cream = rgb('#ead09a');
+    const polarHaze = smoothstep(.68, 1, Math.abs(v - .5) * 2) * .06;
+    const cloudTone = clamp(.5 + (noise - .5) * .38 + (detail - .5) * .12 + polarHaze, .26, .78);
+    return blendColor(amber, cream, cloudTone);
   }
   if (profile.type === 'earth') {
     const continent = fbm(u * 6.1 + Math.sin(v * 7) * .45, v * 5.2, 305, 6);
@@ -127,25 +163,27 @@ function bodyColor(profile, u, v, noise, detail) {
     return blendColor(dust, rgb('#f4ddd1'), polar);
   }
   if (profile.type === 'jupiter') {
-    const bands = .5 + .5 * Math.sin(v * 92 + noise * 7 + Math.sin(u * TAU * 2) * 1.5);
-    let color = blendColor(rgb('#6d493b'), rgb('#e5c59b'), smoothstep(.08, .92, bands * .74 + detail * .26));
+    const cloudSignal = jovianCloudSignal(v, noise, detail);
+    let color = blendColor(rgb('#8b674e'), rgb('#e1c7a0'), cloudSignal);
     const dx = Math.min(Math.abs(u - .72), 1 - Math.abs(u - .72)) / .085;
     const dy = (v - .64) / .045;
     const redSpot = Math.exp(-(dx * dx + dy * dy));
-    color = blendColor(color, rgb('#b94b32'), redSpot * .88);
+    color = blendColor(color, rgb('#b85b43'), redSpot * .78);
     return color;
   }
   if (profile.type === 'saturn') {
-    const bands = .5 + .5 * Math.sin(v * 118 + noise * 4);
-    return blendColor(rgb('#826d50'), rgb('#ead7a5'), smoothstep(.08, .93, bands * .42 + detail * .58));
+    const cloudSignal = saturnCloudSignal(v, noise, detail);
+    return blendColor(rgb('#b59b70'), rgb('#ead8ad'), cloudSignal);
   }
   if (profile.type === 'uranus') {
-    const tint = .48 + band * .07 + noise * .14;
-    return blendColor(rgb('#438f98'), rgb('#b8edef'), tint);
+    const polarHaze = smoothstep(.58, 1, Math.abs(v - .5) * 2) * .045;
+    const tint = clamp(.58 + (noise - .5) * .1 + (detail - .5) * .025 + polarHaze, .46, .7);
+    return blendColor(rgb('#64aeb6'), rgb('#c2eceb'), tint);
   }
   if (profile.type === 'neptune') {
-    const streak = Math.pow(smoothstep(.72, .94, detail), 2) * (.5 + .5 * Math.sin(u * 46 + v * 18));
-    return blendColor(blendColor(rgb('#10246e'), rgb('#376bd5'), noise), rgb('#b8dcff'), streak * .8);
+    const base = blendColor(rgb('#183181'), rgb('#416fd0'), clamp(.42 + (noise - .5) * .4, .2, .74));
+    const methaneCloud = smoothstep(.74, .9, noise * .62 + detail * .38);
+    return blendColor(base, rgb('#b7d7f5'), methaneCloud * .44);
   }
   if (profile.type === 'pluto') {
     let color = blendColor(rgb('#4e403a'), rgb('#cbb09b'), smoothstep(.12, .88, noise));
