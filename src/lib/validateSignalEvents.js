@@ -4,7 +4,7 @@
    during V6 is exactly the class of mistake this exists to catch automatically, since
    nobody reviews the scheduled task's output before it commits+pushes. */
 
-const PILLAR_KEYS = ['inflation_data', 'fed_policy', 'earnings_guidance', 'industry_tech', 'geopolitics_trade'];
+const PILLAR_KEYS = ['inflation_data', 'fed_policy', 'labor_market', 'earnings_guidance', 'industry_tech', 'geopolitics_trade'];
 const TONES = ['green', 'amber', 'red'];
 
 function isNonEmptyString(v) {

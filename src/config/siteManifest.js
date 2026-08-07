@@ -303,20 +303,20 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['canvas', 'data-feed', 'audio'],
     metadata: {
       title: 'Project Afflatus · Signal — O5 Reserve Containment',
-      description: 'Signal: a Federal Reserve watch rendered as an SCP-style O5 Council dossier — FOMC containment review, rate-decision directive and Fable 5 Max sector calls (AI, memory, optical, semis, space). Desk view, not advice.',
+      description: 'Signal: the July 2026 US payroll report, Federal Reserve reaction function, Trump policy influence and AI-sector transmission — evidence-first, bilingual and not investment advice.',
       canonical: 'https://feida.au/signal.html',
       ogTitle: 'Project Afflatus · Signal — O5 Reserve Containment',
-      ogDescription: 'A Fed watch as an SCP O5 dossier: FOMC containment + Fable sector calls. Desk view, not advice.',
+      ogDescription: "July payroll contraction, the Fed's two-sided reaction function, Trump policy influence and AI-sector transmission. Desk research, not advice.",
       ogImage: ROUTE_SEO.signal.social.images.en,
     },
     locales: {
       en: {
         title: 'Signal — Federal Reserve Watch · Project Afflatus',
-        description: 'An SCP-styled Federal Reserve watch covering the FOMC, rate scenarios, and sector implications. Desk view, not advice.',
+        description: 'July 2026 US payrolls, the Federal Reserve reaction function, Trump policy influence, and AI-sector transmission. Desk research, not advice.',
       },
       zh: {
         title: '信号 — 美联储观察 · Project Afflatus',
-        description: '以 SCP 档案形式呈现美联储、利率情景与板块影响的个人案头观点。非投资建议。',
+        description: '研判 2026 年 7 月美国非农、美联储反应函数、特朗普政策影响与 AI 板块传导。案头研究，非投资建议。',
       },
     },
   },

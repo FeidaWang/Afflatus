@@ -4,6 +4,7 @@ import { parse } from 'parse5';
 
 const html = readFileSync('signal.html', 'utf8');
 const css = readFileSync('public/styles/signal.css', 'utf8');
+const signalData = JSON.parse(readFileSync('public/signal-events.json', 'utf8'));
 
 function walk(node, visit) {
   visit(node);
@@ -46,5 +47,25 @@ describe('signal policy reaction story', () => {
 
   it('keeps the localized language link dark on its amber control', () => {
     expect(css).toMatch(/\.lang-toggle,\.nav \.lang-toggle\{[^}]*color:#1a1a1c;[^}]*background:var\(--amber\)/s);
+  });
+
+  it('ships the July payroll diagnosis and primary-source links in both languages', () => {
+    expect(html).toContain('JULY LABOR CONTROL PANEL');
+    expect(html).toContain('7月就业控制面板');
+    expect(html).toContain('−23K');
+    expect(html).toContain('−103K');
+    expect(html).toContain('https://www.bls.gov/news.release/empsit.nr0.htm');
+    expect(html).toContain("T('OPEN PRIMARY SOURCE ↗', '打开原始来源 ↗')");
+    expect(signalData.updated).toBe('2026-08-07');
+    expect(signalData.events.some((event) => event.id === 'NFP-2026-07')).toBe(true);
+  });
+
+  it('explains Trump influence through separate Fed and AI transmission maps', () => {
+    expect(html).toContain('TRUMP → FED INFLUENCE MAP');
+    expect(html).toContain('TRUMP → AI TRANSMISSION MAP');
+    expect(html).toContain('The FOMC has twelve voters');
+    expect(html).toContain('大型数据中心运营商承担新增发电与电网基础设施成本');
+    expect(signalData.events.some((event) => event.id === 'TRUMP-AI-2026-07-23')).toBe(true);
+    expect(signalData.events.some((event) => event.id === 'TRUMP-CHIPS-2026-01')).toBe(true);
   });
 });
