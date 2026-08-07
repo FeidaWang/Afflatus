@@ -35,6 +35,17 @@ test('home fixed-locale switch preserves query and hash state', async ({ page })
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
 });
 
+test('home shell resolves a stored adaptive locale before rich experience loads', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem('afflatus:locale:v1', 'zh');
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+  await expect(page.locator('#langBtn')).toHaveAttribute('href', '/en/');
+  await expect(page.locator('#langBtn')).toHaveText('Dream in English');
+  await expect(page.locator('#langMiniToggle')).toHaveAttribute('href', '/en/');
+});
+
 test('primary navigation replaces duplicate linear page-turn controls', async ({ page }) => {
   for (const path of ['/en/', '/en/arena.html', '/en/horoscope.html', '/en/course.html']) {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
