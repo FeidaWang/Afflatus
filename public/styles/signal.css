@@ -168,7 +168,7 @@ a{color:inherit;text-decoration:none}
 .heroCountdown{margin-top:18px;padding-top:14px;border-top:2px solid rgba(21,20,15,.25);display:flex;align-items:baseline;gap:9px 16px;flex-wrap:wrap;font:400 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#4a463c}
 .heroCountdown .tag{font:700 10px/1 var(--mono);letter-spacing:.14em;color:var(--red)}
 .heroCountdown .bias{color:var(--mood);border:1px solid var(--mood);padding:3px 8px;font:700 10px/1 var(--mono);letter-spacing:.1em;box-shadow:0 0 10px color-mix(in srgb,var(--mood) 35%,transparent)}
-.heroCountdown .live{color:var(--red)}
+.heroCountdown .live{color:#7a1c18;font-weight:700}
 .heroCountdown .live::before{content:"◉ ";animation:bl 1.1s steps(1) infinite}
 @keyframes bl{50%{opacity:0}}
 .heroCountdown .clock{font:700 22px/1 var(--disp);color:var(--red);letter-spacing:.02em}
@@ -218,7 +218,7 @@ a{color:inherit;text-decoration:none}
 .pillar{background:var(--doc);color:var(--ink);border:1px solid #000;box-shadow:5px 5px 0 rgba(0,0,0,.5);padding:16px;border-top:5px solid var(--dim);cursor:pointer}
 .pillar.tone-green{border-top-color:var(--green)}.pillar.tone-amber{border-top-color:var(--amber)}.pillar.tone-red{border-top-color:var(--red)}
 .pillar h3{margin:0;font:700 12px/1.3 var(--disp);letter-spacing:.03em;text-transform:uppercase;display:flex;justify-content:space-between;gap:6px;color:#15140f}
-.pillar h3 .pid{color:var(--dim);font:400 10px var(--mono)}
+.pillar h3 .pid{color:#4a463c;font:400 10px var(--mono)}
 .pillar .status{margin-top:6px;font:700 11px/1.3 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:#4a463c}
 /* Charter ⑥ progressive disclosure — default layer is name+status+tone dot
    only; hover exposes the detail for pointer users, .open (click/Enter)
