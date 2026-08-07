@@ -34,6 +34,17 @@ const migratedFamilies = [
       'max-width: 22rem',
     ],
   },
+  {
+    name: 'home primary navigation links',
+    selector: /\.nav-links\b/,
+    container: 'home-nav',
+    requiredQueries: [
+      'max-width: 39.999rem',
+      'min-width: 40rem',
+      'max-width: 71.999rem',
+      'max-width: 22rem',
+    ],
+  },
 ];
 
 for (const family of migratedFamilies) {
@@ -86,6 +97,8 @@ for (const token of [
   '--layout-band-medium-max',
   '--brand-ink',
   '--brand-data',
+  '--nav-link-ink',
+  '--nav-link-active',
 ]) {
   if (!tokens.has(token)) fail(`missing CSS architecture token ${token}`);
 }
@@ -96,5 +109,5 @@ if (failures.length) {
 }
 
 console.log(
-  `OK: CSS architecture (${migratedFamilies.length} migrated family, 3 layout bands + narrow guard)`,
+  `OK: CSS architecture (${migratedFamilies.length} migrated families, 3 layout bands + narrow guard)`,
 );

@@ -27,6 +27,7 @@ import {
   createAfflatusInterceptorPrototype,
   createAfflatusVanguard,
 } from './afflatusVanguard.js';
+import { projectedDiameterPx, selectProceduralLod } from '../lib/proceduralLod.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import {
   canAcquireWebGLContext,
@@ -423,7 +424,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   const capital = new THREE.Group();
   let shipAnchors = null;
   let shipModelStatus = 'procedural';
-  const fallbackShip = createAfflatusVanguard(THREE, { detail: 'wire', forwardNegativeZ: true });
+  let authoredShip = null;
+  const fallbackShip = createAfflatusVanguard(THREE, { detail: 'full', forwardNegativeZ: true });
   fallbackShip.group.name = 'VanguardProceduralFallback';
   capital.add(fallbackShip.group);
   capital.scale.setScalar(1.55);
@@ -460,6 +462,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       model.name = 'AfflatusCommandGLB';
       model.scale.setScalar(1);
       capital.add(model);
+      authoredShip = model;
       shipAnchors = {
         main: model.getObjectByName('Muzzle_Main'),
         ciwsPort: model.getObjectByName('Muzzle_CIWS_Port'),
@@ -467,7 +470,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         missile: model.getObjectByName('MissileBay'),
       };
       shipModelStatus = 'glb';
-      applyGeometryQuality();
+      applyAuthoredGeometryQuality();
     },
     undefined,
     () => {
@@ -488,6 +491,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   const fighters = [makeFighter(), makeFighter(), makeFighter()];
   fighters.forEach((fighter) => { fighter.visible = false; });
   let liveCombatState = null;
+  let capitalLodTier = 'medium';
+  const fighterLodTiers = fighters.map(() => 'medium');
 
   function escortWorldSample(escort, state = liveCombatState) {
     if (!escort || !state) return null;
@@ -518,18 +523,65 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     );
   }
 
-  function applyGeometryQuality() {
-    const low = renderPolicy.qualityTier === 'low';
-    capital.traverse((child) => {
+  function applySurfaceTier(root, tier, { mediumExcludes, silhouetteIncludes }) {
+    root.traverse((child) => {
       if (!child.isMesh) return;
-      if (['MachinedEdges', 'MechanicalRecesses'].includes(child.name)) child.visible = !low;
+      if (tier === 'high') child.visible = true;
+      else if (tier === 'medium') child.visible = !mediumExcludes.includes(child.name);
+      else child.visible = silhouetteIncludes.includes(child.name);
     });
-    for (const fighter of fighters) fighter.traverse((child) => {
-      if (!child.isMesh) return;
-      if (['InterceptorRecesses', 'InterceptorWarnings'].includes(child.name)) child.visible = !low;
+    root.userData.lodTier = tier;
+  }
+
+  function applyAuthoredGeometryQuality() {
+    if (!authoredShip) return;
+    const low = renderPolicy.qualityTier === 'low';
+    authoredShip.traverse((child) => {
+      if (child.isMesh && ['MachinedEdges', 'MechanicalRecesses'].includes(child.name)) {
+        child.visible = !low;
+      }
     });
   }
-  applyGeometryQuality();
+
+  const lodCameraPosition = new THREE.Vector3();
+  const lodObjectPosition = new THREE.Vector3();
+  const lodObjectScale = new THREE.Vector3();
+  function selectObjectLod(root, radius, previousTier, viewportHeight) {
+    camera.getWorldPosition(lodCameraPosition);
+    root.getWorldPosition(lodObjectPosition);
+    root.getWorldScale(lodObjectScale);
+    return selectProceduralLod({
+      projectedPixels: projectedDiameterPx({
+        radius: radius * Math.max(lodObjectScale.x, lodObjectScale.y, lodObjectScale.z),
+        distance: lodCameraPosition.distanceTo(lodObjectPosition),
+        verticalFovDegrees: camera.fov,
+        viewportHeight,
+      }),
+      previousTier,
+      qualityTier: renderPolicy.qualityTier,
+    });
+  }
+
+  const capitalLodRules = {
+    mediumExcludes: ['MachinedEdges', 'MechanicalRecesses', 'ThreatMarkers'],
+    silhouetteIncludes: ['CommandHull', 'ArmorPlates', 'DriveGlow'],
+  };
+  const fighterLodRules = {
+    mediumExcludes: ['InterceptorRecesses', 'InterceptorWarnings'],
+    silhouetteIncludes: ['InterceptorHull', 'InterceptorArmor', 'InterceptorEmission'],
+  };
+  function updateProceduralLods(viewportHeight) {
+    capital.updateMatrixWorld(true);
+    for (const fighter of fighters) fighter.updateMatrixWorld(true);
+    capitalLodTier = selectObjectLod(fallbackShip.group, 7.8, capitalLodTier, viewportHeight);
+    applySurfaceTier(fallbackShip.group, capitalLodTier, capitalLodRules);
+    fighters.forEach((fighter, index) => {
+      fighterLodTiers[index] = selectObjectLod(fighter, 4.5, fighterLodTiers[index], viewportHeight);
+      applySurfaceTier(fighter, fighterLodTiers[index], fighterLodRules);
+    });
+  }
+  applySurfaceTier(fallbackShip.group, capitalLodTier, capitalLodRules);
+  fighters.forEach((fighter) => applySurfaceTier(fighter, 'medium', fighterLodRules));
 
   // ── U27 (27b-2): Homeworld-style tactical lines — opt-in via ?tacticalines=1
   // (owner adjudication 2026-07-14: flag-gated, default off, no verification-
@@ -1284,6 +1336,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     applyUserCamera(now, frameScale);
 
     camera.updateMatrixWorld();
+    updateProceduralLods(H);
     comet.updateMatrixWorld();
     if (comet.visible) {
       const projected = comet.getWorldPosition(new THREE.Vector3()).project(camera);
@@ -1394,7 +1447,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
           : layer.userData.baseOpacity;
       }
       flightStreaks.material.opacity = pressureMode ? .1 : .2;
-      applyGeometryQuality();
+      applyAuthoredGeometryQuality();
+      updateProceduralLods(H);
     },
     onDispose() {
       webglLifecycle.dispose();
@@ -1417,9 +1471,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     zoomCameraBy,
     endCameraOrbit,
     resetCameraOrbit,
-    // state: optional real-battle snapshot (see main.js getBattleSnapshot()).
-    // Consumed for kill flashes + comet visibility; full state-driven flight
-    // path is a separate follow-up (ROADMAP §4 Phase 2b).
+    // state: optional authoritative combat snapshot (see main.js getBattleSnapshot()).
+    // Drives targets, escorts, projectiles, weapon events, and flight lifecycle.
     renderOnce(now = performance.now(), state = null) {
       if (!surfaceActive) return;
       if (!t0) t0 = now;
@@ -1446,6 +1499,10 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         cameraInteractive: true,
         cameraManual: userCamera.blend > .05,
         activeEscortCount: liveCombatState?.escorts?.length || 0,
+        proceduralLod: Object.freeze({
+          capital: capitalLodTier,
+          fighters: Object.freeze([...fighterLodTiers]),
+        }),
         lastEventSeen,
       });
     },

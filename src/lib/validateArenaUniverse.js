@@ -58,3 +58,14 @@ export function validateArenaUniverse(data) {
   }
   return { ok: errors.length === 0, errors };
 }
+
+export function validateArenaUniverseArchive(data) {
+  const errors = [];
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return { ok: false, errors: ['top-level: must be an object'] };
+  }
+  if (!isNonEmptyString(data.updated)) errors.push('updated: missing or empty');
+  if (typeof data.version !== 'number') errors.push('version: must be a number');
+  validateSymbols(data.symbols, errors);
+  return { ok: errors.length === 0, errors };
+}

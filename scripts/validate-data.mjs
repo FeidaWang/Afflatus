@@ -11,7 +11,8 @@
  * Exits 0 if every checked file is valid or absent (a file that doesn't
  * exist yet — e.g. before a scheduled task's first run — is not a failure).
  * Exits 1 and prints every problem if any present file is invalid. */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { validateSectorsData } from '../src/lib/validateSectorsData.js';
 import { validateSectorsCompetition } from '../src/lib/validateSectorsCompetition.js';
 import { validateSectorsRivalry } from '../src/lib/validateSectorsRivalry.js';
@@ -19,16 +20,21 @@ import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
 import { validateNovelsIndex, validateNovelBook } from '../src/lib/validateNovelsData.js';
-import { validateArenaUniverse } from '../src/lib/validateArenaUniverse.js';
+import { validateArenaUniverse, validateArenaUniverseArchive } from '../src/lib/validateArenaUniverse.js';
 import { validateArenaPicks } from '../src/lib/validateArenaPicks.js';
 import { validateArenaQuantModel } from '../src/lib/validateArenaQuantModel.js';
 import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
 import { validateArenaDigest } from '../src/lib/validateArenaDigest.js';
 import { validateArenaNews } from '../src/lib/validateArenaNews.js';
-import { validateArenaLedger } from '../src/lib/validateArenaLedger.js';
+import { validateArenaLedger, validateArenaLedgerArchive } from '../src/lib/validateArenaLedger.js';
 import { validateArenaPredlog } from '../src/lib/validateArenaPredlog.js';
 import { validateDailyTransits } from '../src/lib/validateDailyTransits.js';
 import { validateSectorsEcosystem } from '../src/lib/validateSectorsEcosystem.js';
+import {
+  validateAudioPlaylist,
+  validateNyseCalendar,
+  validateSignalReleaseDates,
+} from '../src/lib/validateStaticPublicData.js';
 
 const CHECKS = [
   { path: 'public/sectors-data.json', validate: validateSectorsData },
@@ -39,23 +45,27 @@ const CHECKS = [
   { path: 'public/leagues-data.json', validate: validateLeaguesData },
   { path: 'public/games-data.json', validate: validateGamesData },
   { path: 'public/novels-index.json', validate: validateNovelsIndex },
-  // Part 4 (urgent.md SS18.1): arena-universe.json's live v2 ("market") shape,
-  // and the new pipeline artifacts. arena-universe-s1.json is Season 1's
-  // frozen archive and is deliberately NOT checked here (historical, never
-  // written again).
+  // Live and immutable archive artifacts have distinct schemas, but both are
+  // public contracts and therefore both remain checked.
   { path: 'public/arena-universe.json', validate: validateArenaUniverse },
+  { path: 'public/arena-universe-s1.json', validate: validateArenaUniverseArchive },
   { path: 'public/arena-picks.json', validate: validateArenaPicks },
   { path: 'public/arena-quant-model.json', validate: validateArenaQuantModel },
   { path: 'public/arena-runlog.json', validate: validateArenaRunlog },
   { path: 'public/arena-daily-digest.json', validate: validateArenaDigest },
   { path: 'public/arena-news.json', validate: validateArenaNews },
   { path: 'public/arena-ledger.json', validate: validateArenaLedger },
+  { path: 'public/arena-ledger-s1.json', validate: validateArenaLedgerArchive },
   { path: 'public/arena-predlog.json', validate: validateArenaPredlog },
   { path: 'public/transits-daily.json', validate: validateDailyTransits },
+  { path: 'public/audio/playlist.json', validate: validateAudioPlaylist },
+  { path: 'public/nyse-holidays-2026.json', validate: validateNyseCalendar },
+  { path: 'public/signal-release-dates-2026.json', validate: validateSignalReleaseDates },
 ];
 
 let anyFail = false;
 let checked = 0;
+const registeredPaths = new Set(CHECKS.map(({ path }) => path));
 
 for (const { path, validate } of CHECKS) {
   if (!existsSync(path)) { console.log(`SKIP: ${path} does not exist yet`); continue; }
@@ -85,6 +95,7 @@ if (existsSync('public/novels-index.json')) {
     const idx = JSON.parse(readFileSync('public/novels-index.json', 'utf8'));
     for (const n of idx.novels || []) {
       const p = `public/novels/${n.id}.json`;
+      registeredPaths.add(p);
       if (!existsSync(p)) { console.error(`FAIL: ${p} referenced by novels-index.json but missing`); anyFail = true; checked++; continue; }
       const data = JSON.parse(readFileSync(p, 'utf8'));
       const { ok, errors } = validateNovelBook(data);
@@ -94,6 +105,25 @@ if (existsSync('public/novels-index.json')) {
     }
   } catch (e) {
     console.error(`FAIL: could not cross-check public/novels/*.json against the index — ${e.message}`);
+    anyFail = true;
+  }
+}
+
+// Coverage gate: schema registration must grow in the same change as any new
+// public JSON. Referenced novel books are registered dynamically above; an
+// orphan book is intentionally reported here too.
+function listJsonFiles(directory) {
+  const files = [];
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...listJsonFiles(path));
+    else if (entry.isFile() && entry.name.endsWith('.json')) files.push(path);
+  }
+  return files;
+}
+for (const path of listJsonFiles('public')) {
+  if (!registeredPaths.has(path)) {
+    console.error(`FAIL: ${path} has no registered schema validator`);
     anyFail = true;
   }
 }

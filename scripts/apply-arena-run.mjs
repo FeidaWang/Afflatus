@@ -9,10 +9,9 @@
  * which is the "code settles" half: it calls the already-tested
  * src/lib/arenaRun.js -> src/lib/arenaRules.js pipeline to validate, fill,
  * mark-to-market, sweep stop-losses, and check circuit-breaker/season-reset,
- * then writes the updated ledger back. This script does NOT git add/commit/
- * push — the calling scheduled task does that itself (same pattern as the
- * existing arena-news/games/leagues scheduled tasks), so a settlement bug
- * never accidentally ships without the task's own review step seeing it.
+ * then publishes ledger + runlog through the repository's recoverable
+ * validate/rename/build/commit transaction. The calling task may push that
+ * commit, but cannot bypass the build smoke or leave a half-written pair.
  *
  * Part 4 (urgent.md §19.3.1, 2026-07-23): now also idempotent. Every run
  * carries a `window` (one of src/lib/arenaReconcile.js's WINDOWS) and is
@@ -42,11 +41,14 @@
  *                                            // catch-up mark-to-market (§19.3.2)
  * }
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { runArenaLedger } from '../src/lib/arenaRun.js';
 import { WINDOWS, hasCompletedRun, upsertRunlogEntry } from '../src/lib/arenaReconcile.js';
+import { validateArenaLedger } from '../src/lib/validateArenaLedger.js';
+import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
+import { runAtomicPublishTransaction } from './lib/publish-transaction.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO = join(__dirname, '..');
@@ -97,8 +99,6 @@ try {
   fail(`runArenaLedger threw: ${e.message}`);
 }
 
-writeFileSync(LEDGER_PATH, `${JSON.stringify(result.ledger, null, 2)}\n`);
-
 const runlogEntry = {
   date: etDateStr, window, model: book, status: 'done',
   ordersProposed: (proposedOrders || []).length,
@@ -107,9 +107,27 @@ const runlogEntry = {
   ...(late ? { late: true } : {}),
 };
 const nextRunlog = upsertRunlogEntry(runlogFull, runlogEntry);
-writeFileSync(RUNLOG_PATH, `${JSON.stringify(nextRunlog, null, 2)}\n`);
+try {
+  runAtomicPublishTransaction({
+    repoRoot: REPO,
+    pipelineId: 'arena-settlement',
+    commitMessage: `data: settle Arena ${book} ${window} ${etDateStr}`,
+    prepare() {
+      const ledgerValidation = validateArenaLedger(result.ledger);
+      if (!ledgerValidation.ok) throw new Error(`arena-ledger.json: ${ledgerValidation.errors.join('; ')}`);
+      const runlogValidation = validateArenaRunlog(nextRunlog);
+      if (!runlogValidation.ok) throw new Error(`arena-runlog.json: ${runlogValidation.errors.join('; ')}`);
+      return [
+        { path: LEDGER_PATH, data: result.ledger },
+        { path: RUNLOG_PATH, data: nextRunlog },
+      ];
+    },
+  });
+} catch (error) {
+  fail(`${error.phase || 'publish'}: ${error.message}`);
+}
 
 console.log(JSON.stringify(result.summary, null, 2));
-console.log(`[apply-arena-run] wrote ${LEDGER_PATH} and ${RUNLOG_PATH} — day ${result.summary.day}, ` +
+console.log(`[apply-arena-run] committed ${LEDGER_PATH} and ${RUNLOG_PATH} — day ${result.summary.day}, ` +
   `${result.summary.filled.length} filled, ${result.summary.rejected.length} rejected, ` +
   `riskLockdown=${result.summary.riskLockdown}, seasonReset=${result.summary.seasonReset}`);

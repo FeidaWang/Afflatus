@@ -22,13 +22,15 @@
  *   in the right timezone is the caller's job (same convention as every
  *   existing Arena scheduled task's own STEP 0).
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
   tradingDaysBetween, findMissingRuns, buildMissedEntry, upsertRunlogEntry,
   needsLateMarkToMarket,
 } from '../src/lib/arenaReconcile.js';
+import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
+import { runAtomicPublishTransaction } from './lib/publish-transaction.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO = join(__dirname, '..');
@@ -73,7 +75,20 @@ for (const gap of missing) {
   nextRunlog = upsertRunlogEntry(nextRunlog, buildMissedEntry(gap));
 }
 if (missing.length > 0) {
-  writeFileSync(RUNLOG_PATH, `${JSON.stringify(nextRunlog, null, 2)}\n`);
+  try {
+    runAtomicPublishTransaction({
+      repoRoot: REPO,
+      pipelineId: 'arena-reconcile',
+      commitMessage: `data: reconcile Arena through ${throughDateStr}`,
+      prepare() {
+        const validation = validateArenaRunlog(nextRunlog);
+        if (!validation.ok) throw new Error(`arena-runlog.json: ${validation.errors.join('; ')}`);
+        return [{ path: RUNLOG_PATH, data: nextRunlog }];
+      },
+    });
+  } catch (error) {
+    fail(`${error.phase || 'publish'}: ${error.message}`);
+  }
 }
 
 const MODELS = ['S', 'P', 'T'];
@@ -84,6 +99,6 @@ const lateMarkNeeded = MODELS
 console.log(JSON.stringify({ sinceDateStr, throughDateStr, tradingDays, missedRecorded: missing.length, lateMarkNeeded }, null, 2));
 console.log(`[reconcile-arena-run] scanned ${tradingDays.length} trading day(s) since ${sinceDateStr}; ` +
   `recorded ${missing.length} missed entr${missing.length === 1 ? 'y' : 'ies'}` +
-  (missing.length > 0 ? ` (wrote ${RUNLOG_PATH})` : '') +
+  (missing.length > 0 ? ` (committed ${RUNLOG_PATH})` : '') +
   `. ${lateMarkNeeded.length} model(s) need a late mark-to-market catch-up — see "lateMarkNeeded" above; ` +
   `fetch EOD closes for those dates and call apply-arena-run.mjs with "late": true.`);

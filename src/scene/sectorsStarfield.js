@@ -269,6 +269,21 @@ export function initSectorsStarfield(data, opts = {}) {
   const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.13, fog: true });
   scene.add(new THREE.LineSegments(lineGeo, lineMat));
 
+  // Three-tier procedural-field LOD. Only decorative dust/connectors are
+  // downsampled; the real data point layer and its complete DOM fallback stay
+  // intact at every tier. Draw ranges reuse the same buffers/materials.
+  function applyStarfieldLod() {
+    const tier = renderPolicy.qualityTier;
+    const ratio = tier === 'high' ? 1 : tier === 'balanced' ? 0.5 : 0.2;
+    const lodName = tier === 'high' ? 'high' : tier === 'balanced' ? 'medium' : 'silhouette';
+    dustGeo.setDrawRange(0, Math.max(1, Math.floor(dustN * ratio)));
+    const lineVertexCount = lineGeo.getAttribute('position').count;
+    lineGeo.setDrawRange(0, Math.floor(lineVertexCount * ratio / 6) * 6);
+    lineMat.opacity = tier === 'low' ? 0.07 : tier === 'balanced' ? 0.1 : 0.13;
+    stage.dataset.lod = lodName;
+  }
+  applyStarfieldLod();
+
   // ── data layer (from dataToSpace.js — real coordinates, real meaning) ──
   const dataGeo = new THREE.BufferGeometry();
   const dataUniforms = { uTime: { value: 0 }, uSizeK: { value: 420 }, uSizeMax: { value: 90 }, uPixelRatio: { value: 1 }, uFogNear: { value: FOG_NEAR }, uFogFar: { value: FOG_FAR } };
@@ -610,7 +625,10 @@ export function initSectorsStarfield(data, opts = {}) {
       stop();
     },
     onResize: size,
-    onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
+    onQualityChange(nextPolicy) {
+      renderPolicy = nextPolicy;
+      applyStarfieldLod();
+    },
     onDispose() {
       webglLifecycle.dispose();
       disposeThreeScene(scene, renderer);

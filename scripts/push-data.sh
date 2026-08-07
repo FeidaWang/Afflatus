@@ -1,13 +1,13 @@
 #!/bin/bash
 # push-data.sh <file> <commit-message>
-# Generic version of push-arena-news.sh: commits and pushes a single data JSON
-# file independently of other changes. Used by scheduled data-pipeline tasks
+# Pushes a data JSON transaction commit independently of other changes. Used
+# by scheduled data-pipeline tasks after `data:publish` has validated, renamed,
+# build-smoked and committed the complete output group.
 # (arena-ledger/leagues/sectors/signal/predlog, etc.) via:
 #   bash scripts/push-data.sh public/<file>.json "<commit message>"
 #
-# Same commit-first-then-sync order as push-arena-news.sh: the old
-# "stash --keep-index -> rebase" pattern never actually worked (rebase
-# refuses to run with staged changes) — see push-arena-news.sh history.
+# Commit creation deliberately stays in the atomic publisher; this helper is
+# network synchronization only.
 
 set -u
 
@@ -40,14 +40,11 @@ if ! mkdir "$PIPELINE_LOCK" 2>/dev/null; then
 fi
 trap 'rmdir "$PIPELINE_LOCK" 2>/dev/null || true' EXIT INT TERM
 
-git add "$FILE"
-
-if git diff --cached --quiet; then
-  echo "[$(date)] No changes to $FILE, skipping commit" >> "$LOG"
-  exit 0
+if ! git diff --quiet -- "$FILE" || ! git diff --cached --quiet -- "$FILE"; then
+  echo "[$(date)] ERROR: $FILE is dirty; refusing to bypass data:publish" >> "$LOG"
+  exit 1
 fi
 
-git commit -m "$MSG" >> "$LOG" 2>&1
 git pull --rebase --autostash origin main >> "$LOG" 2>&1
 git push origin main >> "$LOG" 2>&1
 

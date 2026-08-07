@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { computeFormation } from '../src/bootengine/render/kitbashFleet';
+import * as THREE from 'three';
+import { computeFormation, createKitbashFleet } from '../src/bootengine/render/kitbashFleet';
 import { createRng } from '../src/bootengine/seed';
 
 const finite = (v) => Number.isFinite(v.x) && Number.isFinite(v.y) && Number.isFinite(v.z) && Number.isFinite(v.yaw);
@@ -38,5 +39,34 @@ describe('computeFormation', () => {
 
   it('escortCount=0 returns an empty array without throwing', () => {
     expect(computeFormation(createRng(1), 0)).toEqual([]);
+  });
+});
+
+describe('kitbash fleet procedural LOD + pooling', () => {
+  it('builds three explicit levels per ship and shares clone resources', () => {
+    const fleet = createKitbashFleet({ rng: createRng(42), escortCount: 2 });
+    const ships = fleet.group.children;
+    expect(ships).toHaveLength(3);
+    for (const ship of ships) {
+      expect(ship.getObjectByName('LOD_HIGH')).toBeTruthy();
+      expect(ship.getObjectByName('LOD_MEDIUM')).toBeTruthy();
+      expect(ship.getObjectByName('LOD_SILHOUETTE')).toBeTruthy();
+    }
+    const firstHull = ships[0].getObjectByName('LOD_HIGH').children.find((child) => child.isMesh);
+    const secondHull = ships[1].getObjectByName('LOD_HIGH').children.find((child) => child.isMesh);
+    expect(secondHull.geometry).toBe(firstHull.geometry);
+    expect(secondHull.material).toBe(firstHull.material);
+
+    const diagnostics = fleet.getLodDiagnostics();
+    expect(diagnostics.meshInstances).toBeGreaterThan(diagnostics.uniqueGeometries * 2);
+    expect(diagnostics.meshInstances).toBeGreaterThan(diagnostics.uniqueMaterials * 2);
+  });
+
+  it('uses renderer quality as a hard ceiling across the whole fleet', () => {
+    const fleet = createKitbashFleet({ rng: createRng(7), escortCount: 3 });
+    const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 220);
+    camera.position.set(20, 13, 27);
+    fleet.updateLod(camera, 900, 'low');
+    expect(fleet.getLodDiagnostics().tiers).toEqual({ high: 0, medium: 0, silhouette: 4 });
   });
 });

@@ -38,6 +38,12 @@
 import * as THREE from 'three';
 import { createWedgeCruiserHull } from '../../scene/wedgeCruiserHull.js';
 import type { HullMats } from '../../scene/carrierHull';
+import {
+  analyzeProceduralResourceSharing,
+  applyProceduralLod,
+  projectedDiameterPx,
+  selectProceduralLod,
+} from '../../lib/proceduralLod.js';
 
 export interface FormationSlot {
   x: number;
@@ -74,6 +80,15 @@ export interface KitbashFleet {
   group: THREE.Group;
   engineMarkers: THREE.Object3D[]; // world-trackable, one per engine mount across every ship
   muzzleMarkers: THREE.Object3D[]; // one per ship's main gun muzzle
+  updateLod(camera: THREE.PerspectiveCamera, viewportHeight: number, qualityTier: 'low' | 'balanced' | 'high'): void;
+  getLodDiagnostics(): {
+    tiers: Record<'high' | 'medium' | 'silhouette', number>;
+    meshInstances: number;
+    uniqueGeometries: number;
+    uniqueMaterials: number;
+    geometryReuseRatio: number;
+    materialReuseRatio: number;
+  };
 }
 
 function buildMats(): HullMats {
@@ -155,16 +170,74 @@ function addMarkers(ship: THREE.Group, mounts: Mount[], into: THREE.Object3D[]):
   }
 }
 
+type LodTier = 'high' | 'medium' | 'silhouette';
+type LodLevels = Record<LodTier, THREE.Group>;
+type LodShip = {
+  root: THREE.Group;
+  levels: LodLevels;
+  radius: number;
+  tier: LodTier;
+};
+
+function createHullPrototype(detail: 'full' | 'wire', mats: HullMats) {
+  const group = new THREE.Group();
+  const info = createWedgeCruiserHull(THREE, {
+    add: makeAdd(group),
+    addInstanced: makeAddInstanced(group),
+    mats,
+    detail,
+  });
+  return { group, info };
+}
+
+function createLodLevels(
+  highPrototype: THREE.Group,
+  mediumPrototype: THREE.Group,
+): LodLevels {
+  const high = highPrototype.clone(true);
+  const medium = mediumPrototype.clone(true);
+  // The continuous first hull mesh owns the primary dagger silhouette. The
+  // lowest tier deliberately keeps only that mesh: one draw call, no greeble,
+  // while reusing (not recreating) the high-tier geometry and material.
+  const silhouette = new THREE.Group();
+  const hullSkin = highPrototype.children.find((child) => child instanceof THREE.Mesh);
+  if (!hullSkin) throw new Error('wedge cruiser prototype is missing its primary hull mesh');
+  silhouette.add(hullSkin.clone(true));
+  high.name = 'LOD_HIGH';
+  medium.name = 'LOD_MEDIUM';
+  silhouette.name = 'LOD_SILHOUETTE';
+  return { high, medium, silhouette };
+}
+
 export function createKitbashFleet(opts: { rng: () => number; escortCount?: number }): KitbashFleet {
   const { rng } = opts;
   const escortCount = opts.escortCount ?? 4;
   const group = new THREE.Group();
   const engineMarkers: THREE.Object3D[] = [];
   const muzzleMarkers: THREE.Object3D[] = [];
+  const lodShips: LodShip[] = [];
+  const sharedMats = buildMats();
+  // Build each detail tier once. Every fleet member below is a deep Object3D
+  // clone whose geometries/materials retain these prototype identities.
+  const highPrototype = createHullPrototype('full', sharedMats);
+  const mediumPrototype = createHullPrototype('wire', sharedMats);
+  const prototypeSphere = new THREE.Box3()
+    .setFromObject(highPrototype.group)
+    .getBoundingSphere(new THREE.Sphere());
+
+  const makeShip = (): THREE.Group => {
+    const root = new THREE.Group();
+    const levels = createLodLevels(highPrototype.group, mediumPrototype.group);
+    root.add(levels.high, levels.medium, levels.silhouette);
+    const tier: LodTier = 'medium';
+    applyProceduralLod(levels, tier);
+    lodShips.push({ root, levels, radius: prototypeSphere.radius, tier });
+    return root;
+  };
 
   // ---- flagship: the fleet's centerpiece, stationary at the formation origin ----
-  const flagship = new THREE.Group();
-  const flagshipInfo = createWedgeCruiserHull(THREE, { add: makeAdd(flagship), addInstanced: makeAddInstanced(flagship), mats: buildMats(), detail: 'full' });
+  const flagship = makeShip();
+  const flagshipInfo = highPrototype.info;
   group.add(flagship);
   addMarkers(flagship, flagshipInfo.engineMounts, engineMarkers);
   const flagshipMuzzle = new THREE.Object3D();
@@ -177,8 +250,8 @@ export function createKitbashFleet(opts: { rng: () => number; escortCount?: numb
   // than mixing unrelated hull styles in one shot. ----
   const formation = computeFormation(rng, escortCount);
   for (const slot of formation) {
-    const escortShip = new THREE.Group();
-    const escortInfo = createWedgeCruiserHull(THREE, { add: makeAdd(escortShip), addInstanced: makeAddInstanced(escortShip), mats: buildMats(), detail: 'full' });
+    const escortShip = makeShip();
+    const escortInfo = highPrototype.info;
     escortShip.scale.setScalar(0.42); // escorts read as smaller hulls of the same class next to the flagship
     escortShip.position.set(slot.x, slot.y, slot.z);
     escortShip.rotation.y = slot.yaw; // same +Z forward heading as the flagship, formation-flying
@@ -190,5 +263,43 @@ export function createKitbashFleet(opts: { rng: () => number; escortCount?: numb
     muzzleMarkers.push(muzzle);
   }
 
-  return { group, engineMarkers, muzzleMarkers };
+  const cameraPosition = new THREE.Vector3();
+  const shipPosition = new THREE.Vector3();
+  const shipScale = new THREE.Vector3();
+
+  function updateLod(
+    camera: THREE.PerspectiveCamera,
+    viewportHeight: number,
+    qualityTier: 'low' | 'balanced' | 'high',
+  ): void {
+    group.updateMatrixWorld(true);
+    camera.getWorldPosition(cameraPosition);
+    for (const ship of lodShips) {
+      ship.root.getWorldPosition(shipPosition);
+      ship.root.getWorldScale(shipScale);
+      const projectedPixels = projectedDiameterPx({
+        radius: ship.radius * Math.max(shipScale.x, shipScale.y, shipScale.z),
+        distance: cameraPosition.distanceTo(shipPosition),
+        verticalFovDegrees: camera.fov,
+        viewportHeight,
+      });
+      ship.tier = selectProceduralLod({
+        projectedPixels,
+        previousTier: ship.tier,
+        qualityTier,
+      }) as LodTier;
+      applyProceduralLod(ship.levels, ship.tier);
+    }
+  }
+
+  function getLodDiagnostics() {
+    const tiers: Record<LodTier, number> = { high: 0, medium: 0, silhouette: 0 };
+    for (const ship of lodShips) tiers[ship.tier] += 1;
+    return {
+      tiers,
+      ...analyzeProceduralResourceSharing(lodShips.map((ship) => ship.root)),
+    };
+  }
+
+  return { group, engineMarkers, muzzleMarkers, updateLod, getLodDiagnostics };
 }

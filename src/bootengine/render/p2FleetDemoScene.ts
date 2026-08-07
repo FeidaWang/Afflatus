@@ -212,6 +212,7 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   let surfaceActive = false;
   let contextReady = true;
   let loopLastT = 0;
+  let viewportHeight = 1;
   let renderSurface: ReturnType<typeof renderCoordinator.register> | null = null;
 
   function loop(now: number) {
@@ -245,6 +246,7 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     debrisPool.update(elapsed);
     for (const beam of beams) beam.update(elapsed);
 
+    fleet.updateLod(camera, viewportHeight, renderPolicy.qualityTier);
     renderer.render(scene, camera);
     renderSurface?.reportFrame(frameMs);
     if (running) raf = requestAnimationFrame(loop);
@@ -253,6 +255,7 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
   function resize(w?: number, h?: number) {
     const W = Math.max(1, (w ?? canvas.clientWidth) || window.innerWidth);
     const H = Math.max(1, (h ?? canvas.clientHeight) || window.innerHeight);
+    viewportHeight = H;
     sized = true;
     const dpr = renderPolicy.computeDpr(W, H, { minDpr: 0.6, maxDpr: 2 });
     renderer.setPixelRatio(dpr);
@@ -320,6 +323,7 @@ export function createFleetDemoScene({ canvas }: { canvas: HTMLCanvasElement }):
     },
     onQualityChange(nextPolicy) {
       renderPolicy = nextPolicy;
+      fleet.updateLod(camera, viewportHeight, renderPolicy.qualityTier);
     },
     onDispose() {
       webglLifecycle.dispose();

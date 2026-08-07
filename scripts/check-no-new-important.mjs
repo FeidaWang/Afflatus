@@ -16,9 +16,9 @@
 import { readFileSync } from 'node:fs';
 
 const BASELINES = {
-  // P1-11 (2026-07-26): the Home brand family migration removed 110
-  // legacy priorities, lowering the accepted ratchet from 2,960 to 2,850.
-  'src/styles.css': 2850,
+  // P1-11: Home brand + primary-navigation-link family migrations removed
+  // 123 legacy priorities, lowering the accepted ratchet from 2,960 to 2,837.
+  'src/styles.css': 2837,
   'src/cic-hud.css': 0,
   'index.html': 2,
 };

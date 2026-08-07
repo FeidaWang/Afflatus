@@ -9,7 +9,7 @@ export const DATA_PIPELINES = Object.freeze([
     kind: 'market-session',
     availableFromMinutes: 8 * 60 + 30,
     owner: 'data-orchestrator',
-    publishMode: 'validated-atomic-group',
+    publishMode: 'recoverable-build-commit-transaction',
     outputs: [
       { resource: 'arena-news', path: 'public/arena-news.json', dateField: 'date' },
       { resource: 'arena-picks', path: 'public/arena-picks.json', dateField: 'date' },
@@ -20,7 +20,7 @@ export const DATA_PIPELINES = Object.freeze([
     kind: 'market-session',
     availableFromMinutes: 16 * 60 + 30,
     owner: 'data-orchestrator',
-    publishMode: 'validated-atomic-group',
+    publishMode: 'recoverable-build-commit-transaction',
     outputs: [
       { resource: 'arena-ledger', path: 'public/arena-ledger.json', dateField: 'updated' },
       { resource: 'arena-digest', path: 'public/arena-daily-digest.json', dateField: 'date' },
@@ -32,7 +32,7 @@ export const DATA_PIPELINES = Object.freeze([
     kind: 'max-age',
     maxAgeHours: 7 * 24,
     owner: 'data-orchestrator',
-    publishMode: 'validated-atomic-group',
+    publishMode: 'recoverable-build-commit-transaction',
     outputs: [{ resource: 'signal', path: 'public/signal-events.json', dateField: 'updated' }],
   },
   {
@@ -40,7 +40,7 @@ export const DATA_PIPELINES = Object.freeze([
     kind: 'max-age',
     maxAgeHours: 14 * 24,
     owner: 'data-orchestrator',
-    publishMode: 'validated-atomic-group',
+    publishMode: 'recoverable-build-commit-transaction',
     outputs: [
       { resource: 'sectors', path: 'public/sectors-data.json', dateField: 'updated' },
       { resource: 'sectors-competition', path: 'public/sectors-competition.json', dateField: 'updated' },
@@ -53,7 +53,8 @@ export const DATA_PIPELINES = Object.freeze([
     kind: 'calendar-day',
     timeZone: 'Australia/Melbourne',
     owner: 'data-orchestrator',
-    publishMode: 'deterministic-generator',
+    publishMode: 'recoverable-build-commit-transaction',
+    sourceMode: 'deterministic-generator',
     outputs: [{ resource: 'transits', path: 'public/transits-daily.json', dateField: 'date' }],
   },
 ]);

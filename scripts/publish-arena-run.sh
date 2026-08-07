@@ -1,12 +1,12 @@
 #!/bin/bash
 # publish-arena-run.sh <runId> <commit-message> [<payload-json-path> <result-json-path>]
 #
-# Commits + pushes public/arena-ledger.json and public/arena-runlog.json
-# together after an apply-arena-run.mjs settlement (urgent.md Part 4
+# Pushes the transaction commit created by apply-arena-run.mjs (ledger +
+# runlog together) after an Arena settlement (urgent.md Part 4
 # §19.3.3's offline outbox). If the push fails (no network), the ledger and
-# runlog writes are ALREADY correct and safe on disk — apply-arena-run.mjs
-# wrote them before this script ever runs — so nothing here re-executes any
-# settlement logic. This script only queues a scripts/outbox/<runId>.json
+# runlog writes are already validated, build-smoked and committed locally by
+# apply-arena-run.mjs, so nothing here re-executes settlement or stages files.
+# This script only queues a scripts/outbox/<runId>.json
 # audit record (via queue-arena-outbox.mjs) and leaves the local commit in
 # place for the next scheduled run to pick up and retry pushing.
 #
@@ -16,8 +16,8 @@
 #   payload-json-path  optional — this run's run-input.json (for the outbox record)
 #   result-json-path   optional — apply-arena-run.mjs's summary JSON (same)
 #
-# Same commit-first-then-sync order as push-data.sh/push-arena-news.sh (the
-# old "stash --keep-index -> rebase" pattern never actually worked).
+# Commit creation deliberately does not live here: the atomic publisher owns
+# the full validate -> rename -> build -> commit boundary.
 
 set -u
 
@@ -63,13 +63,12 @@ if [ "$BACKLOG_COUNT" -gt 0 ]; then
   echo "[$(date)] $BACKLOG_COUNT outbox entr(y/ies) pending from earlier offline run(s) — this push will flush them" >> "$LOG"
 fi
 
-# ---- commit + push this run's ledger/runlog together ----
-git add public/arena-ledger.json public/arena-runlog.json 2>>"$LOG"
-
-if git diff --cached --quiet; then
-  echo "[$(date)] no staged changes for $RUN_ID (likely an idempotent no-op run)" >> "$LOG"
-else
-  git commit -m "$MSG" >> "$LOG" 2>&1
+# ---- push the already-created transaction commit ----
+if ! git diff --quiet -- public/arena-ledger.json public/arena-runlog.json || \
+   ! git diff --cached --quiet -- public/arena-ledger.json public/arena-runlog.json; then
+  echo "[$(date)] ERROR: ledger/runlog are dirty after $RUN_ID; refusing to bypass the atomic publisher" >> "$LOG"
+  node "$REPO/scripts/queue-arena-outbox.mjs" "$RUN_ID" "$MSG" "$PAYLOAD_PATH" "$RESULT_PATH" >> "$LOG" 2>&1
+  exit 1
 fi
 
 PUSH_OK=0

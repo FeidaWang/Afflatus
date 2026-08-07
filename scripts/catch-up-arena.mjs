@@ -15,7 +15,7 @@ import { validateArenaDigest } from '../src/lib/validateArenaDigest.js';
 import { validateArenaLedger } from '../src/lib/validateArenaLedger.js';
 import { validateArenaPredlog } from '../src/lib/validateArenaPredlog.js';
 import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
-import { atomicWriteJsonGroup } from './lib/atomic-json.mjs';
+import { runAtomicPublishTransaction } from './lib/publish-transaction.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const paths = {
@@ -59,10 +59,6 @@ async function fetchHistory(baseUrl, symbol, outputsize) {
   } finally {
     clearTimeout(timer);
   }
-}
-
-function assertValid(label, validation) {
-  if (!validation.ok) fail(`${label}: ${validation.errors.join('; ')}`);
 }
 
 function percentChange(current, previous) {
@@ -214,18 +210,37 @@ const digest = {
 };
 const nextPredlog = { ...predlog, checkedThrough: throughDate };
 
-assertValid('arena-ledger.json', validateArenaLedger(nextLedger));
-assertValid('arena-runlog.json', validateArenaRunlog(nextRunlog));
-assertValid('arena-daily-digest.json', validateArenaDigest(digest));
-assertValid('arena-predlog.json', validateArenaPredlog(nextPredlog));
-
-if (!dryRun) {
-  atomicWriteJsonGroup([
+function prepareValidatedCatchUp() {
+  const validations = [
+    ['arena-ledger.json', validateArenaLedger(nextLedger)],
+    ['arena-runlog.json', validateArenaRunlog(nextRunlog)],
+    ['arena-daily-digest.json', validateArenaDigest(digest)],
+    ['arena-predlog.json', validateArenaPredlog(nextPredlog)],
+  ];
+  for (const [label, validation] of validations) {
+    if (!validation.ok) throw new Error(`${label}: ${validation.errors.join('; ')}`);
+  }
+  return [
     { path: paths.ledger, data: nextLedger },
     { path: paths.runlog, data: nextRunlog },
     { path: paths.digest, data: digest },
     { path: paths.predlog, data: nextPredlog },
-  ]);
+  ];
+}
+
+if (dryRun) {
+  try { prepareValidatedCatchUp(); } catch (error) { fail(error.message); }
+} else {
+  try {
+    runAtomicPublishTransaction({
+      repoRoot: ROOT,
+      pipelineId: 'arena-catch-up',
+      prepare: prepareValidatedCatchUp,
+      commitMessage: option('message', `data: recover Arena through ${throughDate}`),
+    });
+  } catch (error) {
+    fail(`${error.phase || 'publish'}: ${error.message}`);
+  }
 }
 console.log(JSON.stringify({
   dryRun,

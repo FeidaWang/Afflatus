@@ -32,7 +32,7 @@ function validateModel(model, tag, errors) {
   }
 }
 
-export function validateArenaLedger(data) {
+function validateLedger(data, modelNames) {
   const errors = [];
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     return { ok: false, errors: ['top-level: must be an object'] };
@@ -44,10 +44,18 @@ export function validateArenaLedger(data) {
   if (!data.models || typeof data.models !== 'object' || Array.isArray(data.models)) {
     errors.push('models: must be an object');
   } else {
-    for (const model of MODELS) validateModel(data.models[model], `models.${model}`, errors);
+    for (const model of modelNames) validateModel(data.models[model], `models.${model}`, errors);
   }
   if (!data.bench || !finite(data.bench.spyPct) || !finite(data.bench.smhPct)) {
     errors.push('bench: needs finite spyPct and smhPct');
   }
   return { ok: errors.length === 0, errors };
+}
+
+export function validateArenaLedger(data) {
+  return validateLedger(data, MODELS);
+}
+
+export function validateArenaLedgerArchive(data) {
+  return validateLedger(data, ['A', 'B']);
 }
