@@ -14,10 +14,11 @@ function filesUnder(dir) {
 describe('homepage relativistic black hole contract', () => {
   it('replaces the synthetic gold ring with the source observatory background', () => {
     const html = readFileSync('index.html', 'utf8');
-    const main = readFileSync('src/main.js', 'utf8');
+    const main = readFileSync('src/homeExperience.js', 'utf8');
 
     expect(html).toContain('id="blackhole-stage"');
-    expect(html).toContain('src="/vendor/black-hole/background.html"');
+    expect(html).toContain('data-src="/vendor/black-hole/background.html"');
+    expect(html).toContain('loading="lazy"');
     expect(html).not.toContain('<canvas id="blackhole-gl"');
     expect(main).not.toContain('createSaturnRenderer');
     expect(main).not.toContain('goldenRim');
@@ -79,7 +80,7 @@ describe('homepage relativistic black hole contract', () => {
 
   it('can explicitly resume the embedded observatory after a command-mode transition', () => {
     const source = readFileSync(`${vendorDir}/background.html`, 'utf8');
-    const main = readFileSync('src/main.js', 'utf8');
+    const main = readFileSync('src/homeExperience.js', 'utf8');
 
     expect(source).toContain("event.data.type === 'black-hole-observatory:play'");
     expect(main).toContain('function ensureSpaceSceneRunning()');

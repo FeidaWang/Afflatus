@@ -56,7 +56,7 @@ describe('combat presentation contract', () => {
     const [html, css, source, hmd] = await Promise.all([
       readFile(new URL('../index.html', import.meta.url), 'utf8'),
       readFile(new URL('../src/cic-hud.css', import.meta.url), 'utf8'),
-      readFile(new URL('../src/main.js', import.meta.url), 'utf8'),
+      readFile(new URL('../src/homeExperience.js', import.meta.url), 'utf8'),
       readFile(new URL('../src/ui/combatHmdV3.js', import.meta.url), 'utf8')
     ]);
     expect(html).toContain('id="cicCruiseStrip"');

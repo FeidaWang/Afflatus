@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 const styles = readFileSync('src/styles.css', 'utf8');
 const forge = readFileSync('src/scene/alphardForge.js', 'utf8');
-const main = readFileSync('src/main.js', 'utf8');
+const main = readFileSync('src/homeExperience.js', 'utf8');
 
 describe('home stardrive layout contracts', () => {
   it('does not translate the jump-point stage by a full viewport', () => {

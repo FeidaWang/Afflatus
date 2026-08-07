@@ -949,3 +949,27 @@
     }
   }
 }
+@layer components {
+  .no-js-holdings {
+    display: grid;
+    gap: 8px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .no-js-holdings li {
+    display: grid;
+    grid-template-columns: minmax(64px, .45fr) minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: baseline;
+    padding: 11px 12px;
+    border: 1px solid rgba(154, 229, 255, .16);
+    background: rgba(4, 9, 14, .74);
+    color: rgba(228, 232, 240, .76);
+    font: 500 12px/1.4 'JetBrains Mono', monospace;
+  }
+
+  .no-js-holdings strong,
+  .no-js-holdings b { color: #e4e8f0; }
+}
