@@ -495,24 +495,65 @@
     font: 400 9px/1.75 'JetBrains Mono', monospace;
   }
 
-  .stardrive .strip-range {
-    font-size: clamp(24px, 2.55vw, 38px);
-    letter-spacing: -.055em;
+  /* The approach caption and the metric strip share one geometry contract.
+     Keeping their offsets derived from the same variables prevents the
+     "limit of charted space" line from being squeezed into the strip border
+     when a label wraps or the persistent HUD reserves extra space. */
+  .stardrive {
+    --metric-strip-bottom: clamp(18px, 3.5svh, 38px);
+    --metric-strip-block-size: 146px;
+    --metric-cell-block-size: 146px;
+    --metric-caption-gap: 32px;
   }
 
-  .stardrive .strip-range.neg { color: #ffb4a6; }
+  .stardrive .stardrive-caption {
+    bottom: calc(var(--metric-strip-bottom) + var(--metric-strip-block-size) + var(--metric-caption-gap));
+  }
+
+  .stardrive .strip {
+    bottom: var(--metric-strip-bottom);
+    height: var(--metric-strip-block-size);
+  }
+
+  .stardrive .strip-cell {
+    display: grid;
+    grid-template-rows: 34px auto minmax(0, 1fr);
+    row-gap: 6px;
+    align-items: start;
+    height: var(--metric-cell-block-size);
+  }
+
+  .stardrive .strip-label,
+  .stardrive .strip-value,
+  .stardrive .strip-foot {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .stardrive .strip-label { line-height: 1.45; }
+  .stardrive .strip-foot { align-self: end; }
+  .stardrive .strip-value.neg { color: #ffb4a6; }
 
   /* The persistent cruise telemetry is part of the narrative HUD, but it must
      never cover the financial telemetry that can only be read in this pinned
      viewport. Reserve its physical height instead of letting the two layers
      overlap. */
-  body.hud-off .stardrive .strip {
-    bottom: calc(clamp(18px, 3.5svh, 38px) + 58px);
+  body.hud-off .stardrive {
+    --metric-strip-bottom: calc(clamp(18px, 3.5svh, 38px) + 58px);
   }
 
-  body.hud-off .stardrive .stardrive-caption {
-    bottom: clamp(214px, 26svh, 274px);
+  .risk-grid.risk-grid--summary { grid-template-columns: minmax(0, 1fr); }
+
+  .risk-grid--summary article {
+    display: grid;
+    grid-template-columns: minmax(150px, .55fr) minmax(120px, .3fr) minmax(190px, .65fr) minmax(280px, 1.5fr);
+    gap: 24px;
+    align-items: center;
+    padding: 24px 0 8px;
   }
+
+  .risk-grid--summary strong,
+  .risk-grid--summary p { margin: 0; }
 
   @media (max-width: 1120px) {
     .dossier-lead { grid-template-columns: 1fr; }
@@ -566,9 +607,36 @@
     .risk-grid article,
     .risk-grid article + article { padding: 20px 0; border-left: 0; border-top: 1px solid rgba(255,138,120,.13); }
     .risk-grid article:first-child { border-top: 0; }
+    .risk-grid--summary article { display: block; }
+    .risk-grid--summary strong { margin: 13px 0 10px; }
+    .risk-grid--summary p { margin-top: 16px; }
     .methodology-seal { grid-template-columns: 1fr; gap: 10px; padding: 20px 18px; }
-    body.hud-off .stardrive .strip { bottom: calc(18px + 62px); }
-    body.hud-off .stardrive .stardrive-caption { bottom: clamp(302px, 42svh, 376px); }
+    body.hud-off .stardrive { --metric-strip-bottom: 80px; }
+  }
+
+  @media (max-width: 640px) {
+    .stardrive {
+      --metric-strip-bottom: 18px;
+      --metric-strip-block-size: 232px;
+      --metric-cell-block-size: 116px;
+      --metric-caption-gap: 24px;
+    }
+
+    .stardrive .strip-cell {
+      grid-template-rows: 30px auto minmax(0, 1fr);
+      row-gap: 4px;
+    }
+
+    .stardrive .strip-label {
+      font-size: 8.5px;
+      letter-spacing: .14em;
+      line-height: 1.4;
+    }
+
+    .stardrive .strip-value { font-size: clamp(22px, 7vw, 30px); }
+    .stardrive .strip-cell:nth-child(2n) { border-right: 0; }
+    .stardrive .strip-cell:nth-child(n + 3) { border-top: 1px solid rgba(140,196,255,.16); }
+    body.hud-off .stardrive { --metric-strip-bottom: 80px; }
   }
 
   @media (max-width: 440px) {

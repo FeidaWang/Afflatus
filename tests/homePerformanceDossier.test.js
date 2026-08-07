@@ -16,9 +16,27 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html).toContain('Profitable flight paths');
     expect(html).toContain('ANNUALIZED / 02');
     expect(html).toContain('+261.2%');
-    expect(html).toContain('MODEL / 03');
-    expect(html).toContain('37.5–41.4%');
+    expect(html).toContain('MODEL MAX / 03');
+    expect(html).toContain('41.4%');
     expect(html).toContain('method-dependent estimates');
+  });
+
+  it('shows one explicitly labeled upper bound per headline metric', () => {
+    for (const [id, value] of [['sv0', '41.4%'], ['sv1', '0.85'], ['sv2', '−22%'], ['sv3', '1.85']]) {
+      expect(html).toContain(`id="${id}">${value}</div>`);
+    }
+    expect(html).not.toMatch(/id="sv[0-3]">[^<]*[–…][^<]*<\/div>/);
+    expect(copy).toContain("sl:['账户年化 · 上界'");
+    expect(copy).toContain("sl:['Annual return · upper bound'");
+  });
+
+  it('does not repeat headline risk metrics in the lower risk chamber', () => {
+    const riskChamber = html.slice(html.indexOf('<div class="risk-chamber">'), html.indexOf('<aside class="methodology-seal">'));
+    expect(riskChamber).toContain('ANNUAL VOLATILITY');
+    expect(riskChamber).toContain('<strong>45%</strong>');
+    expect(riskChamber).not.toContain('<i>MAX DRAWDOWN</i>');
+    expect(riskChamber).not.toContain('<i>SHARPE RATIO</i>');
+    expect(riskChamber).not.toContain('<i>BETA / SPX</i>');
   });
 
   it('keeps principal, transaction values and account balances private', () => {

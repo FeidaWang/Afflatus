@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const styles = readFileSync('src/styles.css', 'utf8');
+const performanceStyles = readFileSync('src/performance-dossier.css', 'utf8');
 const forge = readFileSync('src/scene/alphardForge.js', 'utf8');
 const main = readFileSync('src/homeExperience.js', 'utf8');
 
@@ -15,7 +16,15 @@ describe('home stardrive layout contracts', () => {
   it('keeps the annualized-return value inside a fixed numeric slot', () => {
     expect(styles).toMatch(/\.stardrive \.strip-cell\{[^}]*overflow:hidden/);
     expect(styles).toMatch(/\.stardrive \.strip-value\{[^}]*font-variant-numeric:tabular-nums/);
+    expect(performanceStyles).toMatch(/\.stardrive \.strip-cell\s*\{[^}]*grid-template-rows:\s*34px auto minmax\(0, 1fr\)/s);
     expect(styles).not.toMatch(/\.stardrive \.hero-metric \.strip-value\{[^}]*transform:scale/);
+  });
+
+  it('derives the approach-caption clearance from the metric-strip geometry', () => {
+    expect(performanceStyles).toContain('--metric-strip-block-size: 146px');
+    expect(performanceStyles).toContain('--metric-caption-gap: 32px');
+    expect(performanceStyles).toMatch(/\.stardrive \.stardrive-caption\s*\{[^}]*bottom:\s*calc\(var\(--metric-strip-bottom\) \+ var\(--metric-strip-block-size\) \+ var\(--metric-caption-gap\)\)/s);
+    expect(performanceStyles).toMatch(/\.stardrive \.strip\s*\{[^}]*height:\s*var\(--metric-strip-block-size\)/s);
   });
 
   it('normalizes the localized language link decoration', () => {

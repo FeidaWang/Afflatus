@@ -426,24 +426,24 @@
         </div>
         <div class="strip" id="strip">
           <div class="strip-cell hero-metric">
-            <div class="strip-label" id="sl0">Account-level annual return · modeled</div>
-            <div class="strip-value pos strip-range" id="sv0">37.5–41.4%</div>
-            <div class="strip-foot" id="sf0">capital-time reconstruction · not audited</div>
+            <div class="strip-label" id="sl0">Annual return · upper bound</div>
+            <div class="strip-value pos" id="sv0">41.4%</div>
+            <div class="strip-foot" id="sf0">modeled · capital-time reconstruction</div>
           </div>
           <div class="strip-cell">
-            <div class="strip-label" id="sl1">Sharpe · estimated</div>
-            <div class="strip-value strip-range" id="sv1">0.78–0.85</div>
-            <div class="strip-foot" id="sf1">risk-free input · 4.50%</div>
+            <div class="strip-label" id="sl1">Sharpe · upper bound</div>
+            <div class="strip-value" id="sv1">0.85</div>
+            <div class="strip-foot" id="sf1">estimated · risk-free input 4.50%</div>
           </div>
           <div class="strip-cell">
-            <div class="strip-label" id="sl2">Max drawdown · estimated</div>
-            <div class="strip-value strip-range neg" id="sv2">−18…−22%</div>
-            <div class="strip-foot" id="sf2">2026-06-16—25 · reconstructed window</div>
+            <div class="strip-label" id="sl2">Max drawdown · upper bound</div>
+            <div class="strip-value neg" id="sv2">−22%</div>
+            <div class="strip-foot" id="sf2">estimated · 2026-06-16—25 window</div>
           </div>
           <div class="strip-cell">
-            <div class="strip-label" id="sl3">Beta · estimated</div>
-            <div class="strip-value strip-range" id="sv3">1.65–1.85</div>
-            <div class="strip-foot" id="sf3">technology concentration vs SPX</div>
+            <div class="strip-label" id="sl3">Beta · upper bound</div>
+            <div class="strip-value" id="sv3">1.85</div>
+            <div class="strip-foot" id="sf3">estimated · technology concentration vs SPX</div>
           </div>
         </div>
       </div>
@@ -488,8 +488,8 @@
           <div><b data-en="How fast was capital recycled?" data-zh="资金周转有多快？">How fast was capital recycled?</b><p data-en="Short-cycle capital efficiency projected over 365 days; not an achieved account return." data-zh="将短周期资金效率机械外推至 365 天；并非账户已实现年化。">Short-cycle capital efficiency projected over 365 days; not an achieved account return.</p></div>
         </article>
         <article data-level="model">
-          <i>MODEL / 03</i><strong>37.5–41.4%</strong>
-          <div><b data-en="What might the account-level year imply?" data-zh="账户层面的全年结果可能是多少？">What might the account-level year imply?</b><p data-en="Capital-time estimate reconstructed from dated funding flows; account balances remain private." data-zh="依据带日期的资金流进行资本时间重建；账户余额保持私密。">Capital-time estimate reconstructed from dated funding flows; account balances remain private.</p></div>
+          <i>MODEL MAX / 03</i><strong>41.4%</strong>
+          <div><b data-en="What is the modeled upper bound?" data-zh="账户模型上界是多少？">What is the modeled upper bound?</b><p data-en="Upper bound of the capital-time estimate reconstructed from dated funding flows; account balances remain private." data-zh="依据带日期资金流重建的资本时间估算上界；账户余额保持私密。">Upper bound of the capital-time estimate reconstructed from dated funding flows; account balances remain private.</p></div>
         </article>
       </aside>
     </div>
@@ -497,9 +497,9 @@
     <div class="benchmark-array" aria-label="Modeled annual return and supplied benchmarks" data-aria-en="Modeled annual return and supplied benchmarks" data-aria-zh="账户年化模型与所提供基准对比">
       <header>
         <span data-en="RELATIVE VELOCITY" data-zh="相对速度">RELATIVE VELOCITY</span>
-        <b data-en="MODELED ACCOUNT RANGE VS SUPPLIED BENCHMARK INPUTS" data-zh="账户模型区间与所提供基准输入对比">MODELED ACCOUNT RANGE VS SUPPLIED BENCHMARK INPUTS</b>
+        <b data-en="MODELED ACCOUNT UPPER BOUND VS SUPPLIED BENCHMARK INPUTS" data-zh="账户模型上界与所提供基准输入对比">MODELED ACCOUNT UPPER BOUND VS SUPPLIED BENCHMARK INPUTS</b>
       </header>
-      <div class="benchmark-row primary"><span>ACCOUNT / MODEL</span><i style="--benchmark:100%"></i><strong>37.5–41.4%</strong></div>
+      <div class="benchmark-row primary"><span>ACCOUNT / MODEL MAX</span><i style="--benchmark:100%"></i><strong>41.4%</strong></div>
       <div class="benchmark-row"><span>QQQ / INPUT</span><i style="--benchmark:34.1%"></i><strong>+14.1%</strong></div>
       <div class="benchmark-row"><span>SPX / INPUT</span><i style="--benchmark:22.7%"></i><strong>+9.4%</strong></div>
       <p data-en="Benchmark values are comparison inputs supplied for this report, not independently verified index calculations." data-zh="基准数值为本次报告提供的对比输入，并非本站独立核算的指数收益。">Benchmark values are comparison inputs supplied for this report, not independently verified index calculations.</p>
@@ -550,15 +550,12 @@
 
     <div class="risk-chamber">
       <header>
-        <span data-en="RISK COST / MODELED" data-zh="风险代价 / 模型估算">RISK COST / MODELED</span>
+        <span data-en="RISK COST / UPPER BOUND" data-zh="风险代价 / 上界标记">RISK COST / UPPER BOUND</span>
         <h3 data-en="Alpha arrived with a heavy hull load." data-zh="超额收益抵达时，舰体承受着沉重载荷。">Alpha arrived with a heavy hull load.</h3>
-        <p data-en="Semiconductor and AI concentration amplified both the profitable bursts and the June drawdown. These are reconstructed ranges, not measurements from a complete daily NAV series." data-zh="半导体与 AI 方向的集中暴露同时放大了盈利脉冲与 6 月回撤。以下均为重建区间，并非来自完整每日净值序列的精确测量。">Semiconductor and AI concentration amplified both the profitable bursts and the June drawdown. These are reconstructed ranges, not measurements from a complete daily NAV series.</p>
+        <p data-en="The headline strip carries annual return, Sharpe, drawdown and beta once, as explicitly labeled upper bounds. The only additional risk statistic retained here is annual volatility, also shown at its estimated upper bound." data-zh="首栏中的年化、夏普、回撤与 Beta 仅展示一次，并明确标为上界。这里仅保留额外的年波动率指标，同样显示其估算上界。">The headline strip carries annual return, Sharpe, drawdown and beta once, as explicitly labeled upper bounds. The only additional risk statistic retained here is annual volatility, also shown at its estimated upper bound.</p>
       </header>
-      <div class="risk-grid">
-        <article><i>MAX DRAWDOWN</i><strong>−18…−22%</strong><b>16—25 JUN 2026</b><p data-en="Reconstructed from clustered exits during the technology selloff." data-zh="依据科技股震荡期的密集平仓记录反推。">Reconstructed from clustered exits during the technology selloff.</p></article>
-        <article><i>ANNUAL VOLATILITY</i><strong>38–45%</strong><b>ESTIMATED RANGE</b><p data-en="Consistent with a concentrated semiconductor and leveraged ETF book." data-zh="与半导体个股及杠杆 ETF 高度集中的组合特征一致。">Consistent with a concentrated semiconductor and leveraged ETF book.</p></article>
-        <article><i>SHARPE RATIO</i><strong>0.78–0.85</strong><b>RF INPUT 4.50%</b><p data-en="High absolute return, but only moderate reward per unit of estimated risk." data-zh="绝对收益很高，但按估算风险调整后的单位回报仅属中等。">High absolute return, but only moderate reward per unit of estimated risk.</p></article>
-        <article><i>BETA / SPX</i><strong>1.65–1.85</strong><b>ESTIMATED RANGE</b><p data-en="A one-percent market move could imply roughly 1.65–1.85 percent in the same direction." data-zh="大盘每变动 1%，组合可能同向变动约 1.65%—1.85%。">A one-percent market move could imply roughly 1.65–1.85 percent in the same direction.</p></article>
+      <div class="risk-grid risk-grid--summary">
+        <article><i>ANNUAL VOLATILITY</i><strong>45%</strong><b>ESTIMATED UPPER BOUND</b><p data-en="Upper-bound marker for a concentrated semiconductor and leveraged ETF book." data-zh="半导体个股及杠杆 ETF 高度集中组合的上界标记。">Upper-bound marker for a concentrated semiconductor and leveraged ETF book.</p></article>
       </div>
     </div>
 
