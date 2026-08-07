@@ -15,6 +15,10 @@ const LIVE_SIM_DAYS_PER_SECOND = 0.06;
 const FASTEST_ROTATION_HOURS = 9.925;
 const MIN_VISUAL_ROTATION_SECONDS = 44;
 const MAX_VISUAL_ROTATION_SECONDS = 176;
+const CAMERA_TOUR_SECONDS = 112;
+const FOCUSED_CAMERA_SPEED = .24;
+const CAMERA_ORBIT_RADIUS = 13.8;
+const CAMERA_ORBIT_HEIGHT = 4.25;
 
 // Astronomical periods, axial tilts, eccentricities and inclinations follow
 // real Solar System relationships. Distances and radii are perceptually
@@ -570,7 +574,7 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
   scene.background = new THREE.Color(0x01030a);
   scene.fog = new THREE.FogExp2(0x01030a, .018);
   const camera = new THREE.PerspectiveCamera(40, 1, .1, 80);
-  camera.position.set(0, 4.25, 13.8);
+  camera.position.set(0, CAMERA_ORBIT_HEIGHT, CAMERA_ORBIT_RADIUS);
   camera.lookAt(0, 0, 0);
 
   scene.add(new THREE.AmbientLight(0x1c2d48, .72));
@@ -587,9 +591,11 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
   system.rotation.x = .13;
   system.rotation.z = -.025;
   scene.add(system);
+  const backdrop = new THREE.Group();
+  scene.add(backdrop);
   const starPointTexture = makeStarPointTexture();
   const starField = buildStarField(starPointTexture);
-  scene.add(starField);
+  backdrop.add(starField);
 
   const nebulaTexture = makeNebulaTexture();
   const nebulae = [
@@ -607,7 +613,7 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
     }));
     sprite.position.set(x, y, z);
     sprite.scale.set(scale, scale * .58, 1);
-    scene.add(sprite);
+    backdrop.add(sprite);
     return sprite;
   });
 
@@ -729,6 +735,25 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
 
   const projected = new THREE.Vector3();
   const orbitScratch = new THREE.Vector3();
+  let cameraOrbitAngle = 0;
+  let cameraOrbitSpeed = 1;
+
+  function updateCameraTour(delta) {
+    const targetSpeed = activeIndex === 0 ? 1 : FOCUSED_CAMERA_SPEED;
+    cameraOrbitSpeed += (targetSpeed - cameraOrbitSpeed) * Math.min(1, delta * 2.2);
+    cameraOrbitAngle = (cameraOrbitAngle + delta * TAU / CAMERA_TOUR_SECONDS * cameraOrbitSpeed) % TAU;
+    camera.position.set(
+      Math.sin(cameraOrbitAngle) * CAMERA_ORBIT_RADIUS,
+      CAMERA_ORBIT_HEIGHT,
+      Math.cos(cameraOrbitAngle) * CAMERA_ORBIT_RADIUS,
+    );
+    camera.lookAt(0, 0, 0);
+
+    // The camera tours the physical system while the deep-space plate follows
+    // the view transform, so stars remain visually fixed instead of drifting.
+    backdrop.rotation.y = cameraOrbitAngle;
+  }
+
   function syncNodePositions() {
     scene.updateMatrixWorld(true);
     const nodes = host.querySelectorAll('.convoy-node');
@@ -776,6 +801,7 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
   function render(now, delta) {
     const elapsedSeconds = Math.max(0, now - startTime) / 1000;
     const liveEpochDays = currentEpochDays + elapsedSeconds * LIVE_SIM_DAYS_PER_SECOND;
+    updateCameraTour(delta);
     bodies.forEach((body, index) => {
       if (index > 0) body.group.position.copy(orbitalPosition(body.profile, liveEpochDays, orbitScratch));
       const targetScale = body.group.userData.targetScale;

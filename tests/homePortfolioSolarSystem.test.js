@@ -78,6 +78,15 @@ describe('homepage AI portfolio solar system', () => {
     expect(solar).not.toContain('starField.rotation.y =');
   });
 
+  it('keeps a slow camera tour around the solar system without moving the star plate', () => {
+    expect(solar).toContain('const CAMERA_TOUR_SECONDS = 112');
+    expect(solar).toContain('function updateCameraTour(delta)');
+    expect(solar).toContain('activeIndex === 0 ? 1 : FOCUSED_CAMERA_SPEED');
+    expect(solar).toContain('camera.lookAt(0, 0, 0)');
+    expect(solar).toContain('backdrop.rotation.y = cameraOrbitAngle');
+    expect(solar).toContain('updateCameraTour(delta)');
+  });
+
   it('keeps the full dossier visible on hover and focus', () => {
     expect(legacyCss).not.toMatch(/\.pick-card:hover \.pcCover[^\{]*\{[^}]*opacity:\s*0/s);
     expect(legacyCss).not.toMatch(/\.pick-card\.open \.pcCover[^\{]*\{[^}]*opacity:\s*0/s);
