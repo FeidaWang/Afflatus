@@ -12,6 +12,9 @@ const DEG = Math.PI / 180;
 const DAY_MS = 86_400_000;
 const J2000_MS = Date.UTC(2000, 0, 1, 12);
 const LIVE_SIM_DAYS_PER_SECOND = 0.06;
+const FASTEST_ROTATION_HOURS = 9.925;
+const MIN_VISUAL_ROTATION_SECONDS = 44;
+const MAX_VISUAL_ROTATION_SECONDS = 176;
 
 // Astronomical periods, axial tilts, eccentricities and inclinations follow
 // real Solar System relationships. Distances and radii are perceptually
@@ -438,7 +441,24 @@ function makeAtmosphere(profile) {
   return new THREE.Mesh(new THREE.SphereGeometry(profile.size * 1.075, 64, 42), material);
 }
 
-function buildStarField() {
+function makeStarPointTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 64;
+  const context = canvas.getContext('2d');
+  if (!context) return null;
+  const glow = context.createRadialGradient(32, 32, 0, 32, 32, 32);
+  glow.addColorStop(0, 'rgba(255,255,255,1)');
+  glow.addColorStop(.16, 'rgba(235,246,255,.96)');
+  glow.addColorStop(.48, 'rgba(168,205,235,.34)');
+  glow.addColorStop(1, 'rgba(120,170,220,0)');
+  context.fillStyle = glow;
+  context.fillRect(0, 0, 64, 64);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function buildStarField(starPointTexture) {
   const positions = [];
   const colors = [];
   const random = (index, channel) => hash2(index, channel, 2903);
@@ -458,13 +478,26 @@ function buildStarField() {
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
   return new THREE.Points(geometry, new THREE.PointsMaterial({
-    size: .035,
+    map: starPointTexture,
+    size: .052,
+    sizeAttenuation: true,
     vertexColors: true,
     transparent: true,
-    opacity: .86,
+    opacity: .74,
+    alphaTest: .025,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
   }));
+}
+
+function visualRotationPeriodSeconds(rotationHours) {
+  const hours = Math.max(FASTEST_ROTATION_HOURS, Math.abs(rotationHours || 600));
+  const relativePeriod = Math.log2(hours / FASTEST_ROTATION_HOURS);
+  return clamp(
+    MIN_VISUAL_ROTATION_SECONDS + relativePeriod * 18,
+    MIN_VISUAL_ROTATION_SECONDS,
+    MAX_VISUAL_ROTATION_SECONDS,
+  );
 }
 
 export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
@@ -554,7 +587,8 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
   system.rotation.x = .13;
   system.rotation.z = -.025;
   scene.add(system);
-  const starField = buildStarField();
+  const starPointTexture = makeStarPointTexture();
+  const starField = buildStarField(starPointTexture);
   scene.add(starField);
 
   const nebulaTexture = makeNebulaTexture();
@@ -749,10 +783,13 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
       body.group.scale.setScalar(body.group.userData.currentScale);
 
       const rotationDirection = Math.sign(body.profile.rotationHours || 1);
-      const visualRotationSeconds = Math.max(2.8, Math.abs(body.profile.rotationHours || 600) * .22);
+      const visualRotationSeconds = visualRotationPeriodSeconds(body.profile.rotationHours);
       body.sphere.rotation.y += rotationDirection * delta * TAU / visualRotationSeconds;
-      if (body.cloudLayer) body.cloudLayer.rotation.y += delta * TAU / 8.6;
-      if (body.ring) body.ring.rotation.z += delta * .015 * rotationDirection;
+      if (body.cloudLayer) {
+        const cloudRotationSeconds = visualRotationSeconds * .92;
+        body.cloudLayer.rotation.y += rotationDirection * delta * TAU / cloudRotationSeconds;
+      }
+      if (body.ring) body.ring.rotation.z += rotationDirection * delta * TAU / (visualRotationSeconds * 3.2);
       if (index === 0) {
         const pulse = .86 + Math.sin(now * .0017) * .08;
         body.focusGlow.material.opacity = (index === activeIndex ? .98 : .78) * pulse;
@@ -763,7 +800,6 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
         });
       }
     });
-    starField.rotation.y = now * .0000025;
     nebulae.forEach((sprite, index) => {
       sprite.material.rotation = Math.sin(now * .00004 + index) * .08;
     });
@@ -832,7 +868,7 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
     },
     onDispose() {
       lifecycle.dispose();
-      disposeThreeScene(scene, renderer, [glowTexture, blueGlowTexture, nebulaTexture]);
+      disposeThreeScene(scene, renderer, [glowTexture, blueGlowTexture, nebulaTexture, starPointTexture]);
       host.classList.remove('solar-ready', 'solar-atlas-ready');
     },
   });

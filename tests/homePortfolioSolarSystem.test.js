@@ -52,6 +52,10 @@ describe('homepage AI portfolio solar system', () => {
     expect(solar).toContain('function solveEccentricAnomaly');
     expect(solar).toContain('profile.periodDays');
     expect(solar).toContain('profile.rotationHours');
+    expect(solar).toContain('function visualRotationPeriodSeconds');
+    expect(solar).toContain('Math.log2(hours / FASTEST_ROTATION_HOURS)');
+    expect(solar).toContain('const rotationDirection = Math.sign');
+    expect(solar).not.toContain('Math.max(2.8, Math.abs(body.profile.rotationHours');
     expect(solar).toContain('body.profile.type === \'jupiter\' ? 2.05 : 2.75');
     expect(solar).toContain("host.dataset.activeBody = BODY_PROFILES[activeIndex]?.body || 'SUN'");
     expect(convoyCss).toMatch(/\.solar-ready \.solar-epoch\s*\{\s*opacity:\s*1;/);
@@ -65,6 +69,13 @@ describe('homepage AI portfolio solar system', () => {
     expect(solar).toContain("id: SURFACE_ID");
     expect(solar).toContain("cost: 'high'");
     expect(solar).toContain('surface?.dispose()');
+  });
+
+  it('uses round static star sprites instead of drifting square points', () => {
+    expect(solar).toContain('function makeStarPointTexture');
+    expect(solar).toContain('map: starPointTexture');
+    expect(solar).toContain('alphaTest: .025');
+    expect(solar).not.toContain('starField.rotation.y =');
   });
 
   it('keeps the full dossier visible on hover and focus', () => {
