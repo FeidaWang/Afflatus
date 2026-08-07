@@ -381,18 +381,15 @@
   </div>
   <div class="nav-right">
     <button class="control-btn" id="commandModeBtn" data-hot>Command</button>
-    <button class="lang-mini-toggle" id="langMiniToggle" type="button" data-hot aria-label="Toggle language" data-active="en"><span data-mini="en">EN</span><span class="mini-sep">/</span><span data-mini="zh">中</span></button>
+    <a class="lang-mini-toggle" id="langMiniToggle" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-active="en"><span data-mini="en">EN</span><span class="mini-sep">/</span><span data-mini="zh">中</span></a>
     <button class="nav-menu-btn" type="button" data-hot aria-label="Open deck menu">DECK</button>
     <div class="nav-clock">
       <span id="clockZone" aria-hidden="true"></span>
       <b id="melDateTime">---</b>
     </div>
-    <!-- U12b (2026-07-11): moved here from hero-cta so it no longer competes
-         with the hero headline for visual weight; hover warp-transition
-         effect (body.warp-hover, main.js) is bound purely by #id, unaffected
-         by DOM position. Desktop-only — mobile already has #langMiniToggle
-         forwarding to this same button's click handler (see U12c). -->
-    <button class="warp-btn verse-switch" id="langBtn" data-hot>以中文入梦</button>
+    <!-- The language controls are native links so fixed-locale documents,
+         canonical URLs, browser history and no-JS navigation stay aligned. -->
+    <a class="warp-btn verse-switch" id="langBtn" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文">以中文入梦</a>
   </div>
 </nav>
 <main id="mainContent">

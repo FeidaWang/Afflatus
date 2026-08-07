@@ -16,11 +16,23 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
   await expect(labsLinks).toHaveText(['Stats', 'Horoscope', 'Novels', 'Course']);
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await page.locator('#langBtn:visible, #langMiniToggle:visible').click();
+  await Promise.all([
+    page.waitForURL(/\/zh\/$/),
+    page.locator('#langBtn:visible, #langMiniToggle:visible').click(),
+  ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(primaryLinks).toHaveText(['竞技场', '板块', '信号']);
   await expect(labsTrigger).toHaveText('实验室');
   await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程']);
+});
+
+test('home fixed-locale switch preserves query and hash state', async ({ page }) => {
+  await page.goto('/en/?combatview=2d#portfolioConvoy', { waitUntil: 'domcontentloaded' });
+  await Promise.all([
+    page.waitForURL(/\/zh\/\?combatview=2d#portfolioConvoy$/),
+    page.locator('#langBtn:visible, #langMiniToggle:visible').click(),
+  ]);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
 });
 
 test('primary navigation replaces duplicate linear page-turn controls', async ({ page }) => {

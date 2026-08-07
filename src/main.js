@@ -5,8 +5,6 @@ import './portfolio-convoy.css';
 
 const HOME_INTENT_SELECTOR = [
   '#commandModeBtn',
-  '#langBtn',
-  '#langMiniToggle',
   '#voyageLogToggle',
   '[data-cic-panel-focus]',
   '[data-cic-weapon]',

@@ -14,7 +14,7 @@ import {
   createInitialFleetHp,
 } from './config/combatConfig.js';
 import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
-import { getLocale, setLocale } from './lib/localeStore.js';
+import { getLocale, localeSwitchHref, setLocale } from './lib/localeStore.js';
 import { getRenderBudgetCoordinator } from './lib/renderBudgetCoordinator.js';
 import { mountTermGlossary } from './lib/termGlossary.js';
 import { createBackgroundScene } from './scene/backgroundScene.js';
@@ -3591,28 +3591,12 @@ langBtn.addEventListener('mouseleave',()=>{
   document.body.classList.remove('warp-hover');
   const hudThrusters=document.getElementById('hudThrusters'); if(hudThrusters) hudThrusters.textContent=HC('armed');
 });
-let langSetTimer=null;
-let langFoldTimer=null;
-langBtn.addEventListener('click',event=>{
-  event.preventDefault();
-  event.stopPropagation();
-  clearTimeout(langSetTimer);
-  clearTimeout(langFoldTimer);
-  document.body.classList.remove('folding');
-  void document.body.offsetWidth;
-  document.body.classList.add('folding');
-  warpTarget=1;
-  const nextLang=currentLang==='zh'?'en':'zh';
-  langSetTimer=setTimeout(()=>setLang(nextLang),140);
-  langFoldTimer=setTimeout(()=>{document.body.classList.remove('folding'); if(!langBtn.matches(':hover')) warpTarget=.18;},540);
-});
-// U12c (2026-07-11): mobile top-bar EN/CN mini toggle — no separate language
-// state, just forwards to the same langBtn click handler above so setLang()
-// stays the single source of truth (storage key, full-page text swap, warp
-// fold transition all reused as-is).
-document.getElementById('langMiniToggle')?.addEventListener('click',event=>{
-  event.preventDefault();
-  langBtn.click();
+document.querySelectorAll('#langBtn, #langMiniToggle').forEach((link)=>{
+  link.addEventListener('click',()=>{
+    const nextLang=currentLang==='zh'?'en':'zh';
+    setLocale(nextLang);
+    link.setAttribute('href',localeSwitchHref(location,nextLang));
+  });
 });
 setLang(currentLang);
 scheduleMarketDeck();

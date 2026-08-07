@@ -42,4 +42,11 @@ describe('home loading contract', () => {
     expect(fallback).toContain('<strong>NVDA</strong>');
     expect(fallback).toContain('<strong>AMD</strong>');
   });
+
+  it('keeps both home language switches crawlable without loading combat', () => {
+    expect(html).toMatch(/<a class="lang-mini-toggle" id="langMiniToggle" href="\/zh\/"/u);
+    expect(html).toMatch(/<a class="warp-btn verse-switch" id="langBtn" href="\/zh\/"/u);
+    expect(entry.match(/HOME_INTENT_SELECTOR[\s\S]*?\.join\(','\)/u)?.[0] || '').not.toContain('#langBtn');
+    expect(experience).not.toContain("event.preventDefault();\n  event.stopPropagation();\n  clearTimeout(langSetTimer)");
+  });
 });
