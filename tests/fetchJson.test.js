@@ -6,6 +6,7 @@ const validIndex = {
   novels: [{ id: 'demo', novel: { title: 'Demo' }, chapterCount: 1 }],
 };
 const currentLeagues = JSON.parse(readFileSync('public/leagues-data.json', 'utf8'));
+const currentSignal = JSON.parse(readFileSync('public/signal-events.json', 'utf8'));
 
 describe('fetchJson', () => {
   beforeEach(() => {
@@ -109,6 +110,27 @@ describe('fetchJson', () => {
     await fetchJson('leagues');
     await expect(fetchJson('leagues')).resolves.toMatchObject({ version: currentLeagues.version });
     expect(network).toHaveBeenCalledTimes(2);
+  });
+
+  it('revalidates Signal before returning a fresh browser cache entry', async () => {
+    const staleSignal = {
+      ...currentSignal,
+      updated: '2026-08-06',
+      events: currentSignal.events.slice(0, 4),
+    };
+    const network = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(staleSignal), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(currentSignal), { status: 200 }));
+    vi.stubGlobal('fetch', network);
+
+    await expect(fetchJson('signal')).resolves.toMatchObject({ updated: '2026-08-06' });
+    await expect(fetchJson('signal')).resolves.toMatchObject({
+      updated: '2026-08-07',
+      events: expect.arrayContaining([expect.objectContaining({ id: 'NFP-2026-07' })]),
+    });
+
+    expect(network).toHaveBeenCalledTimes(2);
+    expect(network.mock.calls[1][1]).toMatchObject({ cache: 'no-cache' });
   });
 
   it('preserves HTTP status in a typed error', async () => {

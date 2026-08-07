@@ -62,7 +62,11 @@ const STATIC_RESOURCES = Object.freeze({
   'sectors-ecosystem': { url: '/sectors-ecosystem.json?v=4', freshness: 6 * 60 * 60_000, validate: objectWith('updated', 'nodes', 'edges', 'chapters') },
   'sectors-competition': { url: '/sectors-competition.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsCompetition },
   'sectors-rivalry': { url: '/sectors-rivalry.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsRivalry },
-  signal: { url: '/signal-events.json', freshness: 15 * 60_000, validate: validators.signal },
+  // Signal is trust-critical and changes on scheduled macro releases. A new
+  // deployment must not render a still-fresh CacheStorage snapshot beside
+  // newly published static analysis; revalidate first and retain the last
+  // validated payload only as an offline fallback.
+  signal: { url: '/signal-events.json', freshness: 15 * 60_000, validate: validators.signal, networkFirst: true },
   // Tournament records are trust-critical: a freshly deployed correction
   // must not sit behind a still-young CacheStorage entry. Load the network
   // version first, while retaining the validated cache as an offline fallback.
