@@ -2,6 +2,7 @@ import './styles.css';
 import './cic-hud.css';
 import './performance-dossier.css';
 import './portfolio-convoy.css';
+import { getLocale, localeSwitchHref, setLocale } from './lib/localeStore.js';
 
 const HOME_INTENT_SELECTOR = [
   '#commandModeBtn',
@@ -12,6 +13,22 @@ const HOME_INTENT_SELECTOR = [
 
 let experiencePromise = null;
 let experienceReady = false;
+
+function installLocaleLinks() {
+  const fallback = document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  const current = getLocale(fallback);
+  const next = current === 'zh' ? 'en' : 'zh';
+  const href = localeSwitchHref(location, next);
+  document.querySelectorAll('#langBtn, #langMiniToggle').forEach((link) => {
+    if (!(link instanceof HTMLAnchorElement)) return;
+    link.href = href;
+    link.hreflang = next === 'zh' ? 'zh-CN' : 'en';
+    link.setAttribute('aria-label', next === 'zh' ? '切换到中文' : 'Switch to English');
+    if (link.id === 'langBtn') link.textContent = next === 'zh' ? '以中文入梦' : 'Dream in English';
+    if (link.id === 'langMiniToggle') link.dataset.active = current;
+    link.addEventListener('click', () => { setLocale(next); });
+  });
+}
 
 function allowRichMotion() {
   const reducedMotion = typeof matchMedia === 'function'
@@ -163,6 +180,7 @@ function installNavigationMenu() {
   addEventListener('resize', close);
 }
 
+installLocaleLinks();
 installNavigationMenu();
 installIntentLoader();
 installVisibilityLoaders();

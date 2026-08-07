@@ -14,7 +14,7 @@ import {
   createInitialFleetHp,
 } from './config/combatConfig.js';
 import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
-import { getLocale, localeSwitchHref, setLocale } from './lib/localeStore.js';
+import { getLocale } from './lib/localeStore.js';
 import { getRenderBudgetCoordinator } from './lib/renderBudgetCoordinator.js';
 import { mountTermGlossary } from './lib/termGlossary.js';
 import { createBackgroundScene } from './scene/backgroundScene.js';
@@ -3590,13 +3590,6 @@ langBtn.addEventListener('mouseleave',()=>{
   cursorCtl.setWarp(false);
   document.body.classList.remove('warp-hover');
   const hudThrusters=document.getElementById('hudThrusters'); if(hudThrusters) hudThrusters.textContent=HC('armed');
-});
-document.querySelectorAll('#langBtn, #langMiniToggle').forEach((link)=>{
-  link.addEventListener('click',()=>{
-    const nextLang=currentLang==='zh'?'en':'zh';
-    setLocale(nextLang);
-    link.setAttribute('href',localeSwitchHref(location,nextLang));
-  });
 });
 setLang(currentLang);
 scheduleMarketDeck();

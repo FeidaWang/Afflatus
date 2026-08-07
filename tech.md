@@ -54,7 +54,7 @@
 ```
 /                        11 个 HTML 入口（根目录，非 public/）
 api/                     quote.js + history.js（Vercel serverless，symbol 正则校验 + rateLimit）
-src/main.js              首页 4.4kB 基础加载器（意图/可见性/idle 调度）
+src/main.js              首页 4.9kB 基础加载器（语言 URL + 意图/可见性/idle 调度）
 src/homeExperience.js    首页重型体验（HUD/战斗/场景/光标/初始语言投影，按需加载）
 src/styles.css           首页/主站样式 ~8000 行，@layer 四层
 src/config/

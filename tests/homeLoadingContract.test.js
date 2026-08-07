@@ -47,6 +47,9 @@ describe('home loading contract', () => {
     expect(html).toMatch(/<a class="lang-mini-toggle" id="langMiniToggle" href="\/zh\/"/u);
     expect(html).toMatch(/<a class="warp-btn verse-switch" id="langBtn" href="\/zh\/"/u);
     expect(entry.match(/HOME_INTENT_SELECTOR[\s\S]*?\.join\(','\)/u)?.[0] || '').not.toContain('#langBtn');
+    expect(entry).toContain('localeSwitchHref(location, next)');
+    expect(entry).toContain("link.addEventListener('click', () => { setLocale(next); })");
+    expect(experience).not.toContain("querySelectorAll('#langBtn, #langMiniToggle')");
     expect(experience).not.toContain("event.preventDefault();\n  event.stopPropagation();\n  clearTimeout(langSetTimer)");
   });
 });
