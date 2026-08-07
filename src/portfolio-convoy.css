@@ -192,6 +192,35 @@
       radial-gradient(circle at center, rgba(154,229,255,.065), transparent 28%, rgba(0,0,0,.13) 62%, transparent 64%);
   }
 
+  .convoy-solar-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .8s ease;
+  }
+
+  .orbit-field.solar-ready .convoy-solar-canvas {
+    opacity: 1;
+  }
+
+  .orbit-field.solar-ready > .orbit-ring,
+  .orbit-field.solar-ready > .orbit-axis,
+  .orbit-field.solar-ready > .convoy-core {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .orbit-field.solar-ready::before,
+  .orbit-field.solar-ready::after {
+    opacity: .16;
+    animation: none;
+  }
+
   .orbit-field::before,
   .orbit-field::after {
     content: '';
@@ -382,6 +411,60 @@
     color: #f8dec0;
   }
 
+  .orbit-field.solar-ready .convoy-node {
+    width: 48px;
+    height: 48px;
+  }
+
+  .orbit-field.solar-ready .convoy-node.is-sun {
+    width: 74px;
+    height: 74px;
+  }
+
+  .orbit-field.solar-ready .convoy-node::before {
+    width: 24px;
+    height: 24px;
+    border-color: rgba(154,229,255,.12);
+    background: transparent;
+    box-shadow: none;
+    opacity: .24;
+  }
+
+  .orbit-field.solar-ready .convoy-node.is-sun::before {
+    width: 42px;
+    height: 42px;
+  }
+
+  .orbit-field.solar-ready .convoy-node:hover::before,
+  .orbit-field.solar-ready .convoy-node:focus-visible::before,
+  .orbit-field.solar-ready .convoy-node.is-active::before {
+    width: 32px;
+    height: 32px;
+    border-color: rgba(255,226,187,.9);
+    background: transparent;
+    box-shadow: 0 0 18px rgba(232,179,128,.28), inset 0 0 12px rgba(154,229,255,.12);
+    opacity: 1;
+  }
+
+  .orbit-field.solar-ready .convoy-node.is-sun:hover::before,
+  .orbit-field.solar-ready .convoy-node.is-sun:focus-visible::before,
+  .orbit-field.solar-ready .convoy-node.is-sun.is-active::before {
+    width: 54px;
+    height: 54px;
+  }
+
+  .orbit-field.solar-ready .convoy-node span {
+    top: calc(50% + 19px);
+    background: rgba(2,5,9,.86);
+    color: rgba(218,234,243,.72);
+    text-shadow: 0 0 10px rgba(154,229,255,.35);
+  }
+
+  .orbit-field.solar-ready .convoy-node.is-sun span {
+    top: calc(50% + 31px);
+    color: #ffd9ad;
+  }
+
   .convoy-readout {
     position: relative;
     z-index: 4;
@@ -568,6 +651,14 @@
     transform: none;
     opacity: 1;
     transition: none;
+  }
+
+  .portfolio-convoy .pick-card:hover .pcCover,
+  .portfolio-convoy .pick-card:focus-within .pcCover,
+  .portfolio-convoy .pick-card.is-active .pcCover {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
   }
 
   .portfolio-convoy .pcCover:focus-visible {

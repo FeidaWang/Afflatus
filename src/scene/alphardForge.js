@@ -1,10 +1,10 @@
 /**
  * Alphard Forge — Baily's beads resolving into the diamond-ring effect.
  *
- * One camera-locked shader owns the complete eclipse sequence: irregular
- * lunar topography breaks the chromosphere into beads, scroll progress closes
- * those apertures one by one, and the final aperture blooms into a white-hot
- * diamond over a layered corona. Keeping the phenomenon in a single draw
+ * One camera-locked shader owns the complete eclipse sequence: analytically
+ * anti-aliased lunar geometry keeps the silhouette perfectly circular while
+ * independent photospheric apertures resolve into Baily's beads and a final
+ * white-hot diamond over a layered corona. Keeping everything in a single draw
  * avoids the alignment drift and particle cost of the previous disc/jet
  * systems. Reduced-motion visitors receive the final, fully resolved frame.
  */
@@ -46,13 +46,10 @@ void main(){
 
   float pixel=1.0/max(uRes.y,1.0);
 
-  // Sub-pixel lunar relief opens the narrow valleys that make Baily's beads.
-  // The former amplitude was several pixels wide and made the limb look like
-  // vegetation; this stays within a photographic mountain-profile scale.
-  float relief=(noise(vec2(theta*31.0,7.0))-0.5)*0.0018;
-  relief+=(noise(vec2(theta*83.0,19.0))-0.5)*0.0007;
-  float lunarDistance=radius-(moonRadius+relief);
-  float limbAA=max(pixel*1.15,0.00048);
+  // Exact analytic circle: no angular noise is allowed to displace the lunar
+  // silhouette. Resolution-aware smoothstep gives a stable, sub-pixel limb.
+  float lunarDistance=radius-moonRadius;
+  float limbAA=max(pixel*1.35,0.00042);
   float outside=smoothstep(-limbAA,limbAA,lunarDistance);
   float upperLimb=smoothstep(-0.12,0.34,lunar.y/moonRadius);
 
@@ -82,17 +79,10 @@ void main(){
   vec3 coronaColor=mix(vec3(0.34,0.52,0.9),vec3(0.97,0.985,1.0),exp(-exterior*31.0));
   col+=coronaColor*coronaSignal;
 
-  // A restrained H-alpha chromosphere sits on the limb. Localized prominences
-  // replace the former evenly repeated flames and leave most of the arc dark.
+  // A restrained, continuous H-alpha chromosphere sits on the exact limb.
+  // It never modulates silhouette geometry, so the visible edge stays smooth.
   float chromosphere=gaussian(lunarDistance,max(pixel*1.2,0.00072))*upperLimb;
-  float prominenceMask=gaussian(angleDistance(theta,0.58),0.045)
-    +0.72*gaussian(angleDistance(theta,1.93),0.055)
-    +0.48*gaussian(angleDistance(theta,2.44),0.038);
-  float prominence=gaussian(lunarDistance-0.0045*prominenceMask,max(pixel*1.5,0.0011))
-    *prominenceMask*upperLimb;
-  float limbGranulation=0.46+0.54*noise(vec2(theta*44.0,11.0));
-  float chromaSignal=(chromosphere*(0.1+0.19*bailyPhase)*limbGranulation
-    +prominence*0.23)*(0.94+0.06*uPulse);
+  float chromaSignal=chromosphere*(0.09+0.15*bailyPhase)*(0.98+0.02*uPulse);
   vec3 magenta=vec3(1.0,0.035,0.28);
   col+=magenta*chromaSignal;
 
@@ -105,8 +95,8 @@ void main(){
   vec3 moonColor=mix(vec3(0.00008,0.0003,0.0009),vec3(0.0022,0.0065,0.014),earthshine*0.34);
   col=mix(col,moonColor,moonMask);
 
-  // Seven irregular mountain-valley apertures cluster around final contact.
-  // Small hard cores and separate soft shoulders keep them photographic.
+  // Seven independent photospheric apertures cluster around final contact.
+  // They sit on the perfect circle and never perturb the lunar silhouette.
   float bailyBeads=0.0;
   float bailyHalo=0.0;
   for(int i=0;i<7;i++){
@@ -115,9 +105,7 @@ void main(){
     float angle=0.78+fi*0.2+(seed-0.5)*0.036;
     vec2 radial=vec2(cos(angle),sin(angle));
     vec2 tangent=vec2(-radial.y,radial.x);
-    float beadRelief=(noise(vec2(angle*31.0,7.0))-0.5)*0.0018;
-    beadRelief+=(noise(vec2(angle*83.0,19.0))-0.5)*0.0007;
-    vec2 beadPoint=moonCenter+radial*(moonRadius+beadRelief);
+    vec2 beadPoint=moonCenter+radial*moonRadius;
     vec2 q=uv-beadPoint;
     float width=mix(0.0038,0.0092,seed);
     float aperture=exp(-pow(dot(q,tangent)/width,2.0)

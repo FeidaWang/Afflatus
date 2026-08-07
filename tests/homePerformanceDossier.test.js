@@ -84,19 +84,24 @@ describe('FY2025–26 homepage performance dossier', () => {
   });
 
   it('publishes the August 2026 AI-factory conviction map', () => {
-    expect(copy).toContain('Research snapshot · 2026-08-02');
-    for (const ticker of ['NVDA', 'AVGO', 'MSFT', 'TSM', 'AMZN', 'GOOGL', 'MU', 'ANET', 'VRT', 'AMD']) {
+    expect(copy).toContain('2026-08-07 08:29 ET · PRE-NFP');
+    for (const ticker of ['NVDA', 'AVGO', 'AMD', 'ORCL', 'AMZN', 'MSFT', 'TSM', 'GOOGL', 'MU', 'VRT']) {
       expect(copy).toContain(`tk:'${ticker}'`);
     }
-    for (const retiredTicker of ['MRVL', 'SNDK', 'WDC', 'TER', 'RMBS', 'ALAB', 'PSTG']) {
+    for (const retiredTicker of ['ANET', 'MRVL', 'SNDK', 'WDC', 'TER', 'RMBS', 'ALAB', 'PSTG']) {
       expect(copy).not.toContain(`tk:'${retiredTicker}'`);
     }
+    expect(PICKS_EN.map(({ tk, pct }) => [tk, pct])).toEqual([
+      ['NVDA', 18], ['AVGO', 15], ['AMD', 13], ['ORCL', 10], ['AMZN', 9],
+      ['MSFT', 9], ['TSM', 8], ['GOOGL', 7], ['MU', 6], ['VRT', 5],
+    ]);
   });
 
   it('turns the ten-stock grid into an accessible AI-factory convoy narrative', () => {
     expect(html).toContain('id="portfolioConvoy"');
     expect(html).toContain('AI FACTORY CONVOY');
     expect(html).toContain('id="convoyNodes"');
+    expect(html).toContain('id="convoySolarSystem"');
     expect(html).toContain('id="convoyProgress"');
     expect(html).toContain('<ol class="holdings-fallback"');
     for (const picks of [PICKS_EN, PICKS_ZH]) {

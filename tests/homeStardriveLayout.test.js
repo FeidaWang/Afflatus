@@ -54,6 +54,16 @@ describe('home stardrive layout contracts', () => {
     expect(forge).not.toContain('UnrealBloomPass');
   });
 
+  it('uses a mathematically smooth lunar limb without noise-displaced geometry', () => {
+    expect(forge).toContain('float lunarDistance=radius-moonRadius;');
+    expect(forge).toContain('float limbAA=max(pixel*1.35,0.00042);');
+    expect(forge).toContain('vec2 beadPoint=moonCenter+radial*moonRadius;');
+    expect(forge).not.toContain('float relief=');
+    expect(forge).not.toContain('beadRelief');
+    expect(forge).not.toContain('limbGranulation');
+    expect(forge).not.toContain('prominenceMask');
+  });
+
   it('shares the fixed homepage universe instead of painting a second sky', () => {
     expect(forge).toContain('alpha: true, premultipliedAlpha: false');
     expect(forge).toContain('renderer.setClearColor(0x000000, 0)');

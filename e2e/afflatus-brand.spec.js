@@ -199,7 +199,7 @@ test.describe('Homepage following command bar', () => {
     const fourthDossier = page.locator('#pickGrid .pick-card').nth(3).locator('.pcCover');
     await fourthDossier.focus();
     await fourthDossier.press('Enter');
-    await expect(page.locator('#convoyTicker')).toHaveText('TSM');
+    await expect(page.locator('#convoyTicker')).toHaveText('ORCL');
     await expect(page.locator('#convoyProgress')).toHaveText('04 / 10');
     const viewportWidth = await page.evaluate(() => innerWidth);
     if (viewportWidth > 940) {
@@ -208,13 +208,31 @@ test.describe('Homepage following command bar', () => {
       await expect(page.locator('.convoy-visual')).not.toHaveClass(/is-pinned|is-docked/);
     }
 
+    for (const cover of await page.locator('#pickGrid .pick-card .pcCover').all()) {
+      await cover.hover();
+      const state = await cover.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          opacity: style.opacity,
+          visibility: style.visibility,
+          transform: style.transform,
+          ticker: element.querySelector('.pick-ticker')?.textContent?.trim(),
+        };
+      });
+      expect(state.opacity).toBe('1');
+      expect(state.visibility).toBe('visible');
+      expect(['none', 'matrix(1, 0, 0, 1, 0, 0)']).toContain(state.transform);
+      expect(state.ticker).toBeTruthy();
+    }
+
     const audit = await page.evaluate(() => ({
       overflow: document.documentElement.scrollWidth - innerWidth,
       picks: document.querySelectorAll('#pickGrid .pick').length,
       nodes: document.querySelectorAll('#convoyNodes .convoy-node').length,
       signals: document.querySelectorAll('#pickGrid .pick-signal').length,
+      solarCanvas: Boolean(document.getElementById('convoySolarSystem')),
       currencyLeak: /(?:AUD|USD|澳元|美元|\$\s*\d)/.test(document.body.innerText),
     }));
-    expect(audit).toEqual({ overflow: 0, picks: 10, nodes: 10, signals: 20, currencyLeak: false });
+    expect(audit).toEqual({ overflow: 0, picks: 10, nodes: 10, signals: 20, solarCanvas: true, currencyLeak: false });
   });
 });

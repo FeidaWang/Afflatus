@@ -1,5 +1,6 @@
 import { PERIOD_META, genCandles, movingAverage } from '../data/marketSeries.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import { initPortfolioSolarSystem } from './portfolioSolarSystem.js';
 import { animateCountUp } from './viz.js';
 
 export function initMarketDeck({
@@ -12,8 +13,8 @@ export function initMarketDeck({
   const kctx = kc?.getContext('2d');
   const seen = new Set();
   const nodePositions = [
-    [50, 8], [76, 17], [91, 41], [84, 70], [62, 89],
-    [35, 88], [14, 69], [9, 40], [25, 17], [50, 27],
+    [50, 50], [60, 45], [39, 58], [64, 64], [31, 39],
+    [71, 31], [25, 71], [79, 61], [46, 19], [18, 48],
   ];
   let pickModels = [];
   let scrollActivePick = null;
@@ -26,6 +27,7 @@ export function initMarketDeck({
   let chartRaf = 0;
   let chartDpr = 1;
   let convoyPinRaf = 0;
+  let solarSystem = null;
   // U44 44-2: tickers that actually have a real #card-<TICKER> anchor on
   // sectors.html today (verified 2026-07-18). The other picks share the AI
   // hardware supply-chain space sectors.html covers but aren't individually
@@ -284,6 +286,7 @@ export function initMarketDeck({
     document.querySelectorAll('#convoyNodes .convoy-node').forEach((node) => {
       node.classList.toggle('is-active', Number.parseInt(node.dataset.pickIndex || '-1', 10) === index);
     });
+    solarSystem?.setActive(index);
 
     const layer = document.getElementById('convoyLayer');
     const ticker = document.getElementById('convoyTicker');
@@ -432,7 +435,7 @@ export function initMarketDeck({
         const [x, y] = nodePositions[i] || [50, 50];
         const node = document.createElement('button');
         node.type = 'button';
-        node.className = 'convoy-node';
+        node.className = `convoy-node ${i === 0 ? 'is-sun' : 'is-planet'}`;
         node.dataset.pickIndex = String(i);
         node.style.setProperty('--node-x', `${x}%`);
         node.style.setProperty('--node-y', `${y}%`);
@@ -450,6 +453,13 @@ export function initMarketDeck({
         nodes.appendChild(node);
       }
     });
+    const solarCanvas = document.getElementById('convoySolarSystem');
+    const orbitHost = solarCanvas?.closest('.orbit-field');
+    if (!solarSystem && solarCanvas && orbitHost) {
+      solarSystem = initPortfolioSolarSystem({ canvas: solarCanvas, host: orbitHost, picks });
+    } else {
+      solarSystem?.updatePicks(picks);
+    }
     const first = grid.querySelector('.pick-card');
     if (first) {
       scrollActivePick = first;
@@ -524,6 +534,8 @@ export function initMarketDeck({
       convoyPinRaf = 0;
       resetConvoyPin({ clearMeasure: true });
       if (chartRaf) cancelAnimationFrame(chartRaf);
+      solarSystem?.destroy();
+      solarSystem = null;
     },
   };
 }
