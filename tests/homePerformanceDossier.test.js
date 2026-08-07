@@ -9,18 +9,29 @@ const brandCss = readFileSync('public/styles/afflatus-brand.css', 'utf8');
 const combatCss = readFileSync('src/cic-hud.css', 'utf8');
 const performanceCss = readFileSync('src/performance-dossier.css', 'utf8');
 const convoyCss = readFileSync('src/portfolio-convoy.css', 'utf8');
+const siteManifest = readFileSync('src/config/siteManifest.js', 'utf8');
 
 describe('FY2025–26 homepage performance dossier', () => {
-  it('keeps realized facts separate from modeled portfolio statistics', () => {
-    expect(html).toContain('CLOSED PROFITABLE SUBSET');
-    expect(html).toContain('+2.78%');
+  it('publishes a privacy-first hierarchy without position-level outcomes', () => {
+    expect(html).toContain('ANNUALIZED CLOSED-CYCLE MODEL');
     expect(html).toContain('Weighted capital days');
     expect(html).toContain('Profitable flight paths');
-    expect(html).toContain('02-B / ANNUALIZED');
+    expect(html).toContain('DISCLOSURE BOUNDARY');
+    expect(html).toContain('PRIVACY BY DESIGN');
+    expect(html).toContain('Position results, principal, buy and sale values, and account balances are intentionally omitted.');
     expect(html).toContain('+261.2%');
-    expect(html).toContain('02-C / MODEL MAX');
     expect(html).toContain('41.4%');
     expect(html).toContain('method-dependent estimates');
+  });
+
+  it('removes position-return values, labels and derived presentation data', () => {
+    const publicRuntime = [html, copy, performanceCss, siteManifest].join('\n');
+    expect(publicRuntime).not.toMatch(/ABS(?:OLUTE)? RETURN/i);
+    expect(publicRuntime).not.toContain('绝对收益率');
+    expect(publicRuntime).not.toContain('--route-return');
+    expect(publicRuntime).not.toMatch(/realized profitable|showing return/i);
+    expect(html).toContain('--route-duration:');
+    expect(html.match(/data-en="[\d.]+ D HOLD"/g)).toHaveLength(5);
   });
 
   it('shows one explicitly labeled upper bound per headline metric', () => {
@@ -30,6 +41,7 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html).not.toMatch(/id="sv[0-3]">[^<]*[–…][^<]*<\/div>/);
     expect(copy).toContain("sl:['账户年化 · 上界'");
     expect(copy).toContain("sl:['Annual return · upper bound'");
+    expect(html.match(/41\.4%/g)).toHaveLength(1);
   });
 
   it('removes every lower-bound value from visible homepage markup', () => {
@@ -52,7 +64,7 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html).not.toMatch(/\b(?:AUD|USD)\b/);
     expect(copy).not.toMatch(/\$[0-9]/);
     expect(copy).not.toMatch(/\b(?:AUD|USD)\b/);
-    expect(html).toContain('transaction values and account balances are not published');
+    expect(html).toContain('omits position outcomes, principal, transaction values, quantities and account balances');
   });
 
   it('presents voyage notes as a local read-only archive, not fake authentication', () => {
@@ -76,6 +88,9 @@ describe('FY2025–26 homepage performance dossier', () => {
     }
     for (const annualized of ['+260.4%', '+208.5%', '+257.9%', '+32.6%', '+85.6%']) {
       expect(html).toContain(annualized);
+    }
+    for (const duration of ['17.5 D HOLD', '3.0 D HOLD', '11.2 D HOLD', '246 D HOLD', '5.6 D HOLD']) {
+      expect(html).toContain(duration);
     }
   });
 
@@ -119,7 +134,7 @@ describe('FY2025–26 homepage performance dossier', () => {
   });
 
   it('keeps section 02 modules ordered before section 03 and left-aligns both introductions', () => {
-    const section02Labels = ['02-A / FACT', '02-B / ANNUALIZED', '02-C / MODEL MAX', '02-D / RELATIVE VELOCITY', '02-E / PROFITABLE FLIGHT PATHS'];
+    const section02Labels = ['02-A / CYCLE EFFICIENCY', '02-B / RELATIVE VELOCITY', '02-C / PROFITABLE FLIGHT PATHS', '02-D / RISK COST'];
     let previousIndex = -1;
     for (const label of section02Labels) {
       const index = html.indexOf(label);

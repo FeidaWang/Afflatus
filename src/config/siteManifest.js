@@ -207,20 +207,20 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['canvas', 'webgl', 'combat'],
     metadata: {
       title: 'Project Afflatus - Deep-Space Captain Log',
-      description: "Bruce's FY2025–26 capital flight recorder: realized profitable trades, capital efficiency and the modeled risk behind the return. 2025–26 财年资本黑匣子 · 盈利交易、资金效率与风险代价。",
+      description: "Bruce's privacy-first FY2025–26 capital flight recorder: model bounds, cycle efficiency, holding duration and risk—without position outcomes or account values. 2025–26 财年资本黑匣子 · 模型上界、周期效率、持仓时长与风险。",
       canonical: 'https://feida.au/',
       ogTitle: 'Project Afflatus · Deep-Space Captain Log',
-      ogDescription: 'FY2025–26 capital flight recorder: realized profitable trades, short-cycle efficiency and modeled portfolio risk.',
+      ogDescription: 'Privacy-first FY2025–26 capital flight recorder: modeled bounds, cycle efficiency, holding duration and risk.',
       ogImage: ROUTE_SEO.main.social.images.en,
     },
     locales: {
       en: {
         title: 'Project Afflatus — Deep-Space Captain Log',
-        description: "A lone commander's US-equity positions, allocation logic, and risk discipline. No ads, tips, or promises.",
+        description: "A commander's privacy-first US-equity research, modeled bounds and risk discipline—without position outcomes or account values.",
       },
       zh: {
         title: 'Project Afflatus — 深空舰长日志',
-        description: '一名独行舰长公开记录美股持仓、配置逻辑与风险纪律。不投放广告，不荐股，不承诺收益。',
+        description: '一名独行舰长以隐私优先方式记录美股研究、模型上界与风险纪律，不公开单笔结果或账户数值。',
       },
     },
   },

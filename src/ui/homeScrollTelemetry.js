@@ -8,9 +8,8 @@ const TELEMETRY_GROUPS = [
   {
     root: '#fy2026Performance',
     values: [
-      '.realized-profit strong',
+      '.cycle-efficiency strong',
       '.ledger-metrics dd',
-      '.return-stack article > strong',
       '.benchmark-row strong',
       '.route-efficiency strong',
       '.route-track b',

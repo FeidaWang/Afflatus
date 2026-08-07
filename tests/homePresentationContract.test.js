@@ -24,7 +24,7 @@ describe('home presentation contract', () => {
       '亚马逊（Amazon）', '微软（Microsoft）', '台积公司（TSMC）', 'Alphabet（谷歌母公司）',
       '美光科技（Micron）', '维谛技术（Vertiv）'].forEach(name => expect(content).toContain(name));
     expect(content).toContain("s3num:'03 · <span>美股十大配置</span>'");
-    expect(html).toContain('data-zh="绝对收益率"');
+    expect(html).not.toContain('data-zh="绝对收益率"');
     expect(html).toContain('data-zh="年波动率"');
   });
 
