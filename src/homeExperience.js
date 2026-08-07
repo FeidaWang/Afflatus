@@ -14,7 +14,7 @@ import {
   createInitialFleetHp,
 } from './config/combatConfig.js';
 import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
-import { getLocale } from './lib/localeStore.js';
+import { getLocale, setLocale } from './lib/localeStore.js';
 import { getRenderBudgetCoordinator } from './lib/renderBudgetCoordinator.js';
 import { mountTermGlossary } from './lib/termGlossary.js';
 import { createBackgroundScene } from './scene/backgroundScene.js';

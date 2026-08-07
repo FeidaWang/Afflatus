@@ -30,6 +30,12 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(copy).toContain("sl:['Annual return · upper bound'");
   });
 
+  it('removes every lower-bound value from visible homepage markup', () => {
+    for (const lowerBound of ['37.5', '0.78', '−18', '1.65']) {
+      expect(html).not.toContain(lowerBound);
+    }
+  });
+
   it('does not repeat headline risk metrics in the lower risk chamber', () => {
     const riskChamber = html.slice(html.indexOf('<div class="risk-chamber">'), html.indexOf('<aside class="methodology-seal">'));
     expect(riskChamber).toContain('ANNUAL VOLATILITY');
@@ -92,7 +98,7 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html).toContain('AI FACTORY CONVOY');
     expect(html).toContain('id="convoyNodes"');
     expect(html).toContain('id="convoyProgress"');
-    expect(html).toContain('role="list"');
+    expect(html).toContain('<ol class="holdings-fallback"');
     for (const picks of [PICKS_EN, PICKS_ZH]) {
       expect(picks).toHaveLength(10);
       expect(picks.reduce((sum, pick) => sum + pick.pct, 0)).toBe(100);

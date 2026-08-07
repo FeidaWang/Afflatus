@@ -32,15 +32,17 @@ describe('home loading contract', () => {
   it('splits market and voyage features from the combat experience', () => {
     expect(experience).toContain("import('./ui/marketDeck.js')");
     expect(experience).toContain("import('./ui/voyageLogConsole.js')");
+    expect(experience).toContain("import { getLocale, setLocale } from './lib/localeStore.js'");
     expect(experience).not.toMatch(/^import .*marketDeck/m);
     expect(experience).not.toMatch(/^import .*voyageLogConsole/m);
   });
 
-  it('retains a meaningful no-JavaScript holdings path', () => {
-    const fallback = html.match(/<noscript>[\s\S]*?<ol class="no-js-holdings"[\s\S]*?<\/ol>[\s\S]*?<\/noscript>/u)?.[0] || '';
+  it('renders all holdings before or without the dynamic experience', () => {
+    const fallback = html.match(/<ol class="holdings-fallback"[\s\S]*?<\/ol>/u)?.[0] || '';
     expect(fallback.match(/<li>/g)).toHaveLength(10);
     expect(fallback).toContain('<strong>NVDA</strong>');
     expect(fallback).toContain('<strong>AMD</strong>');
+    expect(html).toMatch(/<div class="pick-grid" id="pickGrid">\s*<ol class="holdings-fallback"/u);
   });
 
   it('keeps both home language switches crawlable without loading combat', () => {

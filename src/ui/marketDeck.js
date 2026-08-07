@@ -407,7 +407,8 @@ export function initMarketDeck({
     if (!grid) return;
     grid.querySelectorAll('.pick-card').forEach(el => observer.unobserve(el));
     convoyObserver.disconnect();
-    grid.innerHTML = '';
+    grid.replaceChildren();
+    grid.setAttribute('role', 'list');
     pickModels = picks;
     scrollActivePick = null;
     const maxPct = Math.max(1, ...picks.map(pick => Number(pick.pct) || 0));
