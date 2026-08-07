@@ -907,6 +907,81 @@
       "ordersProposed": 0,
       "ordersFilled": 0,
       "note": "Validated picks board published with 0 candidate(s); empty arrays are an intentional fail-closed outcome."
+    },
+    {
+      "date": "2026-08-06",
+      "window": "open-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-06",
+      "window": "open-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-06",
+      "window": "late-window",
+      "model": "S",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-06",
+      "window": "late-window",
+      "model": "P",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-06",
+      "window": "post-market",
+      "model": "T",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-06 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-06",
+      "window": "post-market",
+      "model": "reviewer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "catch-up: window never ran (reconcile on wake, §19.3.2) — no retro-trade, proposal opportunity is gone for good."
+    },
+    {
+      "date": "2026-08-06",
+      "window": "post-market",
+      "model": "S",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-06 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
+    },
+    {
+      "date": "2026-08-06",
+      "window": "post-market",
+      "model": "P",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "late catch-up mark-to-market for 2026-08-06 (equity curve continuity, §19.3.2) — no new orders proposed.",
+      "late": true
     }
   ]
 }

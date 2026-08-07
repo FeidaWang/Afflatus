@@ -1,53 +1,53 @@
 {
-  "date": "2026-08-05",
-  "generatedAt": "2026-08-06T13:30:00.000Z",
-  "note_en": "Recovered 8 missed market sessions with provider closing prices. Missed proposal windows remain marked missed; no hindsight trades were created.",
-  "note_zh": "已使用行情供应商收盘价恢复 8 个漏跑交易日。错过的提案窗口仍标记为 missed，未创建任何事后交易。",
+  "date": "2026-08-06",
+  "generatedAt": "2026-08-07T08:58:00.000Z",
+  "note_en": "Recovered 1 missed market session with provider closing prices. Missed proposal windows remain marked missed; no hindsight trades were created.",
+  "note_zh": "已使用行情供应商收盘价恢复 1 个漏跑交易日。错过的提案窗口仍标记为 missed，未创建任何事后交易。",
   "books": [
     {
       "model": "S",
-      "pnlPct": -0.43,
+      "pnlPct": 0.48,
       "tradesCount": 0,
-      "note_en": "Marked to the 2026-08-05 close with no discretionary or retroactive orders.",
-      "note_zh": "已按 2026-08-05 收盘价计价，未新增主观或事后订单。"
+      "note_en": "Marked to the 2026-08-06 close with no discretionary or retroactive orders.",
+      "note_zh": "已按 2026-08-06 收盘价计价，未新增主观或事后订单。"
     },
     {
       "model": "P",
       "pnlPct": 0,
       "tradesCount": 0,
-      "note_en": "Marked to the 2026-08-05 close with no discretionary or retroactive orders.",
-      "note_zh": "已按 2026-08-05 收盘价计价，未新增主观或事后订单。"
+      "note_en": "Marked to the 2026-08-06 close with no discretionary or retroactive orders.",
+      "note_zh": "已按 2026-08-06 收盘价计价，未新增主观或事后订单。"
     },
     {
       "model": "T",
       "pnlPct": 0,
       "tradesCount": 0,
-      "note_en": "Marked to the 2026-08-05 close with no discretionary or retroactive orders.",
-      "note_zh": "已按 2026-08-05 收盘价计价，未新增主观或事后订单。"
+      "note_en": "Marked to the 2026-08-06 close with no discretionary or retroactive orders.",
+      "note_zh": "已按 2026-08-06 收盘价计价，未新增主观或事后订单。"
     }
   ],
   "tomorrowPicksCount": 0,
   "delayed": [
     {
-      "date": "2026-08-05",
+      "date": "2026-08-06",
       "window": "post-market",
       "model": "S",
-      "note_en": "Late mark-to-market recovery completed after 8 missed session(s).",
-      "note_zh": "在漏跑 8 个交易日后完成迟到的按市值计价恢复。"
+      "note_en": "Late mark-to-market recovery completed after 1 missed session(s).",
+      "note_zh": "在漏跑 1 个交易日后完成迟到的按市值计价恢复。"
     },
     {
-      "date": "2026-08-05",
+      "date": "2026-08-06",
       "window": "post-market",
       "model": "P",
-      "note_en": "Late mark-to-market recovery completed after 8 missed session(s).",
-      "note_zh": "在漏跑 8 个交易日后完成迟到的按市值计价恢复。"
+      "note_en": "Late mark-to-market recovery completed after 1 missed session(s).",
+      "note_zh": "在漏跑 1 个交易日后完成迟到的按市值计价恢复。"
     },
     {
-      "date": "2026-08-05",
+      "date": "2026-08-06",
       "window": "post-market",
       "model": "T",
-      "note_en": "Late mark-to-market recovery completed after 8 missed session(s).",
-      "note_zh": "在漏跑 8 个交易日后完成迟到的按市值计价恢复。"
+      "note_en": "Late mark-to-market recovery completed after 1 missed session(s).",
+      "note_zh": "在漏跑 1 个交易日后完成迟到的按市值计价恢复。"
     }
   ]
 }

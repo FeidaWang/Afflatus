@@ -15,6 +15,7 @@
  */
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import { fetchJson } from '../lib/fetchJson.js';
+import { arenaBootSummary } from '../lib/arenaBootSummary.js';
 
 const log = document.getElementById('bootLog');
 const bar = document.querySelector('#bootBar i');
@@ -44,11 +45,13 @@ const TASKS = [
   { line: 'loading hull geometry (carrier · escorts)', cls: '', run: () => scenePromise },
   {
     line: 'ledger uplink /arena', cls: '', run: () => fetchJson('arena-ledger').then((d) => {
-      const A = d.models?.A, B = d.models?.B;
-      if (A) { $('bArena').textContent = `A ${fmtUsd(A.equity)}`; $('bArena').classList.remove('off'); }
-      if (A && B) $('dArena').innerHTML =
-        `B ${fmtUsd(B.equity)} · day ${d.day} S${d.season}<br>start $10,000 ×2 · sim ledgers`;
-      return `A ${A ? fmtUsd(A.equity) : '?'}`;
+      const summary = arenaBootSummary(d);
+      $('bArena').textContent = `${summary.primary.id} ${fmtUsd(summary.primary.equity)}`;
+      $('bArena').classList.remove('off');
+      $('dArena').innerHTML =
+        `${summary.secondary.map((model) => `${model.id} ${fmtUsd(model.equity)}`).join(' · ')} · day ${summary.day} S${summary.season}`
+        + `<br>start ${fmtUsd(summary.startEquity)} ×3 · sim ledgers`;
+      return `${summary.primary.id} ${fmtUsd(summary.primary.equity)}`;
     })
   },
   {
