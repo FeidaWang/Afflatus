@@ -191,6 +191,7 @@ test.describe('Homepage following command bar', () => {
     const header = page.locator('nav.site-header--follow');
     await expect(header).toBeVisible();
     expect(await header.evaluate((element) => getComputedStyle(element).position)).toBe('fixed');
+    await page.waitForTimeout(500);
     const initialTop = Math.round((await header.boundingBox())?.y ?? -1);
 
     await page.locator('.holdings').scrollIntoViewIfNeeded();
@@ -201,6 +202,13 @@ test.describe('Homepage following command bar', () => {
     await fourthDossier.press('Enter');
     await expect(page.locator('#convoyTicker')).toHaveText('ORCL');
     await expect(page.locator('#convoyProgress')).toHaveText('04 / 10');
+
+    await page.locator('#convoyNodes .convoy-node').nth(6).evaluate((node) => node.click());
+    await expect(page.locator('#convoyTicker')).toHaveText('TSM');
+    await expect(page.locator('#convoyProgress')).toHaveText('07 / 10');
+    await expect(page.locator('.orbit-field')).toHaveAttribute('data-active-body', 'SATURN');
+    await expect(page.locator('#convoyNodes .convoy-node.is-active')).toHaveCount(1);
+    await expect(page.locator('#convoyNodes .convoy-node.is-active')).toHaveAttribute('data-solar-body', /SATURN|土星/);
     const viewportWidth = await page.evaluate(() => innerWidth);
     if (viewportWidth > 940) {
       await expect(page.locator('.convoy-visual')).toHaveClass(/is-pinned/);
@@ -231,8 +239,9 @@ test.describe('Homepage following command bar', () => {
       nodes: document.querySelectorAll('#convoyNodes .convoy-node').length,
       signals: document.querySelectorAll('#pickGrid .pick-signal').length,
       solarCanvas: Boolean(document.getElementById('convoySolarSystem')),
+      solarBodies: [...document.querySelectorAll('#convoyNodes .convoy-node')].filter((node) => node.dataset.solarBody).length,
       currencyLeak: /(?:AUD|USD|澳元|美元|\$\s*\d)/.test(document.body.innerText),
     }));
-    expect(audit).toEqual({ overflow: 0, picks: 10, nodes: 10, signals: 20, solarCanvas: true, currencyLeak: false });
+    expect(audit).toEqual({ overflow: 0, picks: 10, nodes: 10, signals: 20, solarCanvas: true, solarBodies: 10, currencyLeak: false });
   });
 });

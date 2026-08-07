@@ -7,6 +7,8 @@ const copy = readFileSync('src/data/content.js', 'utf8');
 const voyageConsole = readFileSync('src/ui/voyageLogConsole.js', 'utf8');
 const brandCss = readFileSync('public/styles/afflatus-brand.css', 'utf8');
 const combatCss = readFileSync('src/cic-hud.css', 'utf8');
+const performanceCss = readFileSync('src/performance-dossier.css', 'utf8');
+const convoyCss = readFileSync('src/portfolio-convoy.css', 'utf8');
 
 describe('FY2025–26 homepage performance dossier', () => {
   it('keeps realized facts separate from modeled portfolio statistics', () => {
@@ -14,9 +16,9 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html).toContain('+2.78%');
     expect(html).toContain('Weighted capital days');
     expect(html).toContain('Profitable flight paths');
-    expect(html).toContain('ANNUALIZED / 02');
+    expect(html).toContain('02-B / ANNUALIZED');
     expect(html).toContain('+261.2%');
-    expect(html).toContain('MODEL MAX / 03');
+    expect(html).toContain('02-C / MODEL MAX');
     expect(html).toContain('41.4%');
     expect(html).toContain('method-dependent estimates');
   });
@@ -97,9 +99,9 @@ describe('FY2025–26 homepage performance dossier', () => {
     ]);
   });
 
-  it('turns the ten-stock grid into an accessible AI-factory convoy narrative', () => {
+  it('turns the ten-stock grid into an accessible live solar-atlas narrative', () => {
     expect(html).toContain('id="portfolioConvoy"');
-    expect(html).toContain('AI FACTORY CONVOY');
+    expect(html).toContain('AI INDUSTRY SOLAR ATLAS');
     expect(html).toContain('id="convoyNodes"');
     expect(html).toContain('id="convoySolarSystem"');
     expect(html).toContain('id="convoyProgress"');
@@ -114,6 +116,21 @@ describe('FY2025–26 homepage performance dossier', () => {
         expect(pick.risk).toBeTruthy();
       }
     }
+  });
+
+  it('keeps section 02 modules ordered before section 03 and left-aligns both introductions', () => {
+    const section02Labels = ['02-A / FACT', '02-B / ANNUALIZED', '02-C / MODEL MAX', '02-D / RELATIVE VELOCITY', '02-E / PROFITABLE FLIGHT PATHS'];
+    let previousIndex = -1;
+    for (const label of section02Labels) {
+      const index = html.indexOf(label);
+      expect(index).toBeGreaterThan(previousIndex);
+      previousIndex = index;
+    }
+    expect(html.indexOf('03 · <span>top 10 allocations · usa')).toBeGreaterThan(previousIndex);
+    expect(performanceCss).toMatch(/\.flight-path-head\s*\{[\s\S]*?display:\s*flex;[\s\S]*?flex-direction:\s*column;[\s\S]*?align-items:\s*flex-start;[\s\S]*?text-align:\s*left;/);
+    expect(convoyCss).toMatch(/\.portfolio-intro\s*\{[^}]*text-align:\s*left;/s);
+    expect(convoyCss).toMatch(/\.portfolio-intro > \.sec-title\s*\{[^}]*margin-inline:\s*0;/s);
+    expect(convoyCss).toMatch(/\.portfolio-intro > \.sec-desc\s*\{[^}]*margin-inline:\s*0;/s);
   });
 
   it('keeps the homepage command bar attached to the viewport', () => {

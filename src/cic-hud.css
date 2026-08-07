@@ -106,6 +106,10 @@ body.hud-off main { padding-bottom: 68px; }
   pointer-events: auto;
 }
 
+#combatHud[aria-hidden="true"] .cic-shell {
+  pointer-events: none;
+}
+
 #combatHud .cic-shell::before,
 #combatHud .cic-shell::after {
   content: "";

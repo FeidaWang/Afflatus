@@ -33,9 +33,7 @@
     box-shadow: 0 0 34px rgba(154,229,255,.12);
   }
 
-  .portfolio-convoy > .sec-num,
-  .portfolio-convoy > .sec-title,
-  .portfolio-convoy > .sec-desc,
+  .portfolio-intro,
   .portfolio-convoy > .footnote,
   .convoy-shell {
     position: relative;
@@ -43,13 +41,17 @@
     margin-inline: auto;
   }
 
-  .portfolio-convoy > .sec-num {
+  .portfolio-intro {
+    text-align: left;
+  }
+
+  .portfolio-intro > .sec-num {
     margin-bottom: 24px;
   }
 
-  .portfolio-convoy > .sec-title {
+  .portfolio-intro > .sec-title {
     max-width: 1180px;
-    margin-inline: auto;
+    margin-inline: 0;
     margin-bottom: 24px;
     font-size: clamp(52px, 6.4vw, 104px);
     line-height: .98;
@@ -57,9 +59,9 @@
     text-wrap: balance;
   }
 
-  .portfolio-convoy > .sec-desc {
+  .portfolio-intro > .sec-desc {
     max-width: 760px;
-    margin-inline: auto;
+    margin-inline: 0;
     margin-bottom: clamp(64px, 8vw, 112px);
     color: rgba(213,227,237,.66);
     font: 400 clamp(12px, 1vw, 15px)/1.8 'JetBrains Mono', monospace;
@@ -192,6 +194,16 @@
       radial-gradient(circle at center, rgba(154,229,255,.065), transparent 28%, rgba(0,0,0,.13) 62%, transparent 64%);
   }
 
+  .orbit-field.solar-atlas-ready {
+    background:
+      radial-gradient(ellipse at 22% 18%, rgba(39,78,125,.12), transparent 30%),
+      radial-gradient(ellipse at 78% 70%, rgba(95,49,86,.09), transparent 35%),
+      #01030a;
+    box-shadow:
+      inset 0 0 90px rgba(0,0,0,.72),
+      0 0 80px rgba(15,46,76,.16);
+  }
+
   .convoy-solar-canvas {
     position: absolute;
     inset: 0;
@@ -217,9 +229,34 @@
 
   .orbit-field.solar-ready::before,
   .orbit-field.solar-ready::after {
-    opacity: .16;
+    opacity: 0;
     animation: none;
   }
+
+  .solar-epoch {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 7;
+    display: grid;
+    justify-items: end;
+    gap: 3px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s ease;
+  }
+
+  .solar-ready .solar-epoch { opacity: 1; }
+
+  .solar-epoch i,
+  .solar-epoch b {
+    color: rgba(201,226,243,.54);
+    font: 500 6px/1.4 'JetBrains Mono', monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .solar-epoch i { color: rgba(232,179,128,.72); }
 
   .orbit-field::before,
   .orbit-field::after {
@@ -386,6 +423,23 @@
     transition: color .3s ease, opacity .3s ease;
   }
 
+  .convoy-node span b,
+  .convoy-node span i {
+    display: block;
+    font: inherit;
+    font-style: normal;
+  }
+
+  .convoy-node span i {
+    max-width: 78px;
+    margin-top: 3px;
+    overflow: hidden;
+    color: rgba(154,229,255,.44);
+    font-size: 5px;
+    letter-spacing: .08em;
+    text-overflow: ellipsis;
+  }
+
   .convoy-node:hover,
   .convoy-node:focus-visible,
   .convoy-node.is-active {
@@ -412,13 +466,18 @@
   }
 
   .orbit-field.solar-ready .convoy-node {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
   }
 
   .orbit-field.solar-ready .convoy-node.is-sun {
-    width: 74px;
-    height: 74px;
+    width: 96px;
+    height: 96px;
+  }
+
+  .orbit-field.solar-ready .convoy-node.is-active:not(.is-sun) {
+    width: 104px;
+    height: 104px;
   }
 
   .orbit-field.solar-ready .convoy-node::before {
@@ -438,8 +497,8 @@
   .orbit-field.solar-ready .convoy-node:hover::before,
   .orbit-field.solar-ready .convoy-node:focus-visible::before,
   .orbit-field.solar-ready .convoy-node.is-active::before {
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border-color: rgba(255,226,187,.9);
     background: transparent;
     box-shadow: 0 0 18px rgba(232,179,128,.28), inset 0 0 12px rgba(154,229,255,.12);
@@ -449,20 +508,24 @@
   .orbit-field.solar-ready .convoy-node.is-sun:hover::before,
   .orbit-field.solar-ready .convoy-node.is-sun:focus-visible::before,
   .orbit-field.solar-ready .convoy-node.is-sun.is-active::before {
-    width: 54px;
-    height: 54px;
+    width: 70px;
+    height: 70px;
   }
 
   .orbit-field.solar-ready .convoy-node span {
-    top: calc(50% + 19px);
+    top: calc(50% + 25px);
     background: rgba(2,5,9,.86);
     color: rgba(218,234,243,.72);
     text-shadow: 0 0 10px rgba(154,229,255,.35);
   }
 
   .orbit-field.solar-ready .convoy-node.is-sun span {
-    top: calc(50% + 31px);
+    top: calc(50% + 39px);
     color: #ffd9ad;
+  }
+
+  .orbit-field.solar-ready .convoy-node.is-active:not(.is-sun) span {
+    top: calc(50% + 33px);
   }
 
   .convoy-readout {
@@ -917,16 +980,16 @@
       overflow: hidden;
     }
 
-    .portfolio-convoy > .sec-title {
+    .portfolio-intro > .sec-title {
       font-size: clamp(40px, 12vw, 62px);
       line-height: 1.02;
     }
 
-    .portfolio-convoy > .sec-title br {
+    .portfolio-intro > .sec-title br {
       display: none;
     }
 
-    .portfolio-convoy > .sec-desc {
+    .portfolio-intro > .sec-desc {
       margin-bottom: 48px;
       font-size: 10px;
     }

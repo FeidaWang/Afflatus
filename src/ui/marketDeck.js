@@ -12,6 +12,7 @@ export function initMarketDeck({
   const kc = document.getElementById('kchart');
   const kctx = kc?.getContext('2d');
   const seen = new Set();
+  const visibleConvoyCards = new Set();
   const nodePositions = [
     [50, 50], [60, 45], [39, 58], [64, 64], [31, 39],
     [71, 31], [25, 71], [79, 61], [46, 19], [18, 48],
@@ -28,6 +29,8 @@ export function initMarketDeck({
   let chartDpr = 1;
   let convoyPinRaf = 0;
   let solarSystem = null;
+  let orbitSelectionLock = null;
+  let orbitSelectionTimer = 0;
   // U44 44-2: tickers that actually have a real #card-<TICKER> anchor on
   // sectors.html today (verified 2026-07-18). The other picks share the AI
   // hardware supply-chain space sectors.html covers but aren't individually
@@ -300,16 +303,40 @@ export function initMarketDeck({
     if (progress) progress.textContent = `${String(index + 1).padStart(2, '0')} / 10`;
   }
 
+  function lockOrbitSelection(el) {
+    const lock = { element: el, until: performance.now() + 1800 };
+    orbitSelectionLock = lock;
+    if (orbitSelectionTimer) clearTimeout(orbitSelectionTimer);
+    orbitSelectionTimer = setTimeout(() => {
+      if (orbitSelectionLock !== lock) return;
+      orbitSelectionLock = null;
+      scrollActivePick = el;
+      activatePick(el);
+    }, 1850);
+  }
+
   const convoyObserver = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter(entry => entry.isIntersecting)
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) visibleConvoyCards.add(entry.target);
+      else visibleConvoyCards.delete(entry.target);
+    });
+    if (orbitSelectionLock && performance.now() < orbitSelectionLock.until) {
+      scrollActivePick = orbitSelectionLock.element;
+      activatePick(scrollActivePick);
+      return;
+    }
+    orbitSelectionLock = null;
+    const visible = [...visibleConvoyCards]
+      .filter(card => card.isConnected)
       .sort((a, b) => {
-        const ac = Math.abs((a.boundingClientRect.top + a.boundingClientRect.bottom) / 2 - innerHeight / 2);
-        const bc = Math.abs((b.boundingClientRect.top + b.boundingClientRect.bottom) / 2 - innerHeight / 2);
+        const aRect = a.getBoundingClientRect();
+        const bRect = b.getBoundingClientRect();
+        const ac = Math.abs((aRect.top + aRect.bottom) / 2 - innerHeight / 2);
+        const bc = Math.abs((bRect.top + bRect.bottom) / 2 - innerHeight / 2);
         return ac - bc;
       });
     if (!visible.length) return;
-    scrollActivePick = visible[0].target;
+    scrollActivePick = visible[0];
     activatePick(scrollActivePick);
   }, { threshold: [0.15, 0.45, 0.75], rootMargin: '-22% 0px -22% 0px' });
 
@@ -410,6 +437,7 @@ export function initMarketDeck({
     if (!grid) return;
     grid.querySelectorAll('.pick-card').forEach(el => observer.unobserve(el));
     convoyObserver.disconnect();
+    visibleConvoyCards.clear();
     grid.replaceChildren();
     grid.setAttribute('role', 'list');
     pickModels = picks;
@@ -433,6 +461,7 @@ export function initMarketDeck({
 
       if (nodes) {
         const [x, y] = nodePositions[i] || [50, 50];
+        const solarBody = p.layer.split('/')[0].trim();
         const node = document.createElement('button');
         node.type = 'button';
         node.className = `convoy-node ${i === 0 ? 'is-sun' : 'is-planet'}`;
@@ -440,19 +469,37 @@ export function initMarketDeck({
         node.style.setProperty('--node-x', `${x}%`);
         node.style.setProperty('--node-y', `${y}%`);
         node.style.setProperty('--node-weight', String(p.pct));
-        node.setAttribute('aria-label', langKey() === 'zh' ? `定位 ${p.tk}，权重 ${p.pct}%` : `Locate ${p.tk}, ${p.pct}% allocation`);
-        node.innerHTML = `<span>${p.tk}</span>`;
-        node.addEventListener('click', () => {
-          scrollActivePick = el;
-          activatePick(el);
-          el.scrollIntoView({
-            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-            block: 'center',
-          });
-        });
+        node.dataset.solarBody = solarBody;
+        node.setAttribute('aria-label', langKey() === 'zh' ? `聚焦 ${solarBody}，${p.tk}，权重 ${p.pct}%` : `Focus ${solarBody}, ${p.tk}, ${p.pct}% allocation`);
+        node.innerHTML = `<span><b>${p.tk}</b><i>${solarBody}</i></span>`;
         nodes.appendChild(node);
       }
     });
+    if (nodes) {
+      nodes.onclick = (event) => {
+        const nodeList = [...nodes.querySelectorAll('.convoy-node')];
+        const eventNode = event.target.closest('.convoy-node');
+        let selectedNode = eventNode;
+        if (event.detail !== 0 && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
+          selectedNode = nodeList.reduce((closest, node) => {
+            const rect = node.getBoundingClientRect();
+            const distance = (rect.left + rect.width / 2 - event.clientX) ** 2
+              + (rect.top + rect.height / 2 - event.clientY) ** 2;
+            return !closest || distance < closest.distance ? { node, distance } : closest;
+          }, null)?.node || eventNode;
+        }
+        const index = Number.parseInt(selectedNode?.dataset.pickIndex || '-1', 10);
+        const card = grid.querySelector(`.pick-card[data-pick-index="${index}"]`);
+        if (!card) return;
+        scrollActivePick = card;
+        lockOrbitSelection(card);
+        activatePick(card);
+        card.scrollIntoView({
+          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          block: 'center',
+        });
+      };
+    }
     const solarCanvas = document.getElementById('convoySolarSystem');
     const orbitHost = solarCanvas?.closest('.orbit-field');
     if (!solarSystem && solarCanvas && orbitHost) {
@@ -532,6 +579,9 @@ export function initMarketDeck({
       removeEventListener('resize', resizeConvoyPin);
       if (convoyPinRaf) cancelAnimationFrame(convoyPinRaf);
       convoyPinRaf = 0;
+      if (orbitSelectionTimer) clearTimeout(orbitSelectionTimer);
+      orbitSelectionTimer = 0;
+      orbitSelectionLock = null;
       resetConvoyPin({ clearMeasure: true });
       if (chartRaf) cancelAnimationFrame(chartRaf);
       solarSystem?.destroy();
