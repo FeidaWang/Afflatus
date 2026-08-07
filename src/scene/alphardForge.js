@@ -281,18 +281,10 @@ export function initAlphardForge() {
     lastBlackHoleOpacity = opacity;
   }
 
-  // scroll progress + pin. The pin itself (keeping the stage visually fixed
-  // while its 200vh wrapper scrolls past) is handled by a CSS scroll-driven
-  // animation (see styles.css "@supports (animation-timeline: view())") on
-  // browsers that support it — classList toggling + the scroll listener below
-  // are skipped there entirely. `p` (0..1) is still computed here either way:
-  // it feeds the WebGL uniforms (dolly/brightness) and tagline typing, which
-  // CSS can't drive on its own.
-  // Keep a single pin implementation. The former CSS view-timeline animation
-  // translated the stage by 100svh and created a full blank viewport before
-  // the jump point. This rAF loop already samples the section geometry for
-  // --forge, so the existing fixed/end class fallback adds no extra listener.
-  const cssPin = false;
+  // The stage is pinned with position:sticky and never escapes its section.
+  // Earlier fixed-position class toggles could survive a first-load lifecycle
+  // pause and cover later content. JS now owns only visual progress; CSS owns
+  // layout, so a suspended render loop cannot leave an overlay behind.
   // 2026-07-16 (station-master, live-inspected via devtools): the stage is
   // exactly 100vh tall, same as the viewport, so it starts appearing at the
   // very first pixel of scroll (its top is always vh below the wrapper's
@@ -311,7 +303,6 @@ export function initAlphardForge() {
   function progress() {
     if (reduce) return 1;
     const rect = section.getBoundingClientRect(), vh = window.innerHeight;
-    if (stageEl && !cssPin) { const ended = rect.bottom < vh; stageEl.classList.toggle('pin-fixed', rect.top <= 0 && rect.bottom >= vh && !ended); stageEl.classList.toggle('pin-end', ended); }
     if (rect.height <= 0) return 0; return clamp((vh - rect.top) / rect.height, 0, 1);
   }
 
@@ -375,11 +366,6 @@ export function initAlphardForge() {
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
   stopForContext = stop;
   resumeAfterContext = () => { if (budgetActive) start(); };
-  // only needed to keep .pin-fixed/.pin-end in sync while the rAF loop isn't
-  // running — moot when cssPin is true, since progress() no longer touches
-  // those classes at all in that branch.
-  const onScroll = () => { if (!running) progress(); };
-  if (!cssPin) addEventListener('scroll', onScroll, { passive: true });
   render(performance.now());
   renderSurface = renderCoordinator.register({
     id: 'home:alphard-forge',
@@ -410,13 +396,12 @@ export function initAlphardForge() {
   return {
     destroy() {
       stop();
-      if (!cssPin) removeEventListener('scroll', onScroll);
       languageObserver.disconnect();
       blackHoleStage?.style.removeProperty('opacity');
+      section.classList.remove('is-live', 'has-motion-shell');
+      stageEl?.classList.remove('pin-fixed', 'pin-end');
+      section.style.removeProperty('--forge');
       renderSurface.dispose();
     },
   };
 }
-
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAlphardForge, { once: true });
-else initAlphardForge();

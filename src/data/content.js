@@ -6,16 +6,16 @@
    H2 revenue acceleration, backlog/visibility, execution and financing risk;
    it is a research view, not investment advice or a promise of performance. */
 export const PICKS_ZH = [
-  {tk:'NVDA', name:'NVIDIA', pct:18, layer:'太阳 / 算力核心', role:'AI 太阳系的恒星与能量源', catalyst:'FY27 Q1 数据中心收入同比增长 92%，Vera Rubin 把计算、网络与软件继续平台化。', risk:'对华出口限制、客户自研芯片、产品切换与极高预期。', why:'数据中心收入达到新的记录，Rubin、NVLink、Spectrum-X 与 CUDA 共同维持最完整的 AI 工厂平台。它是权重最高的<em>太阳</em>，也是整个系统最集中的单点风险。'},
-  {tk:'AVGO', name:'Broadcom', pct:15, layer:'水星 / 定制硅与网络', role:'贴近算力核心的高速信号行星', catalyst:'FY26 Q2 AI 半导体收入同比增长 143%，公司预计 Q3 增速超过 200%。', risk:'客户集中、定制项目节奏、供应链与估值压缩。', why:'定制加速器和以太网同时承接超大规模客户扩张，像水星一样贴近算力太阳并高速传递信号；软件现金流提供<em>稳定引力</em>。'},
-  {tk:'AMD', name:'Advanced Micro Devices', pct:13, layer:'金星 / 第二算力平台', role:'高温竞争轨道上的第二计算世界', catalyst:'Q2 数据中心收入同比增长 107%，Helios、MI400 与 EPYC 进入下半年放量阶段。', risk:'ROCm 生态、机架级交付、竞争性定价与路线图兑现。', why:'最新季度的数据中心业务已占公司收入 58%，并明确指向下半年加速。AMD 像金星一样明亮且高压，成为<em>第二算力世界</em>。'},
-  {tk:'ORCL', name:'Oracle', pct:10, layer:'地球 / AI 云与数据库', role:'承载已预订算力需求的云端生态圈', catalyst:'FY26 Q4 OCI 收入增长 93%，RPO 达 6380 亿美元，Q1 云收入指引增长 58%—64%。', risk:'自由现金流为负、债务与股权融资、客户集中和交付资本强度。', why:'巨额 AI 合同把未来需求提前锁入 RPO，OCI 与多云数据库形成可以承载应用生态的<em>产业地球</em>；融资需求仍是高压天气。'},
-  {tk:'AMZN', name:'Amazon', pct:9, layer:'火星 / 云与自研芯片', role:'持续扩建基础设施的算力前线', catalyst:'Q2 AWS 收入增长 37%，为 18 个季度最快，运营利润同比增长 64%。', risk:'AI 基建使自由现金流转负、折旧上升与云端竞争。', why:'AWS 在 Trainium、Bedrock 与大规模 GPU 服务之间同时优化需求和成本，像火星基地一样持续扩建，担当<em>推理前线</em>。'},
-  {tk:'MSFT', name:'Microsoft', pct:9, layer:'木星 / 企业云与智能体', role:'以企业分发形成最大云端引力场', catalyst:'FY26 Q4 Azure 增长 43%，商业剩余履约义务增长 84%。', risk:'供给约束、AI 毛利压力、资本开支回报周期和伙伴依赖。', why:'Azure、Foundry、GitHub 与 Microsoft 365 共同形成木星般的企业引力场，把模型能力直接送入工作流；重资本投入压低<em>短期效率</em>。'},
-  {tk:'TSM', name:'TSMC', pct:8, layer:'土星 / 先进制造', role:'由制程与封装光环守护的制造咽喉', catalyst:'Q2 收入达到指引上限，Q3 收入指引升至 446—458 亿美元。', risk:'台海地缘风险、汇率、海外扩产成本与半导体资本周期。', why:'领先制程与先进封装像土星环一样构成层层壁垒，是整条 AI 供应链最难绕开的<em>制造咽喉</em>。'},
-  {tk:'GOOGL', name:'Alphabet', pct:7, layer:'天王星 / 模型与分发', role:'以自研 TPU 倾斜传统计算轴线', catalyst:'Gemini、TPU、搜索与 Google Cloud 形成从模型到现金流的闭环。', risk:'生成式答案重塑搜索经济、监管压力与高资本开支。', why:'TPU、Gemini、Cloud 与搜索分发形成端到端平台，像天王星的倾斜自转轴一样改变传统计算方向，并以广告现金流<em>自供能源</em>。'},
-  {tk:'MU', name:'Micron Technology', pct:6, layer:'海王星 / 高带宽内存', role:'位于深蓝带宽边界的高能补给世界', catalyst:'FQ3 创纪录，HBM4 已大批量出货，Q4 收入与利润率指引再次跃升。', risk:'内存价格周期、扩产、客户认证节奏与高峰利润可持续性。', why:'HBM4 量产让 Micron 站在 AI 带宽瓶颈上，像海王星一样位于深蓝边界；强周期属性把仓位限制为<em>高能补给世界</em>。'},
-  {tk:'VRT', name:'Vertiv', pct:5, layer:'冥王星 / 电力与液冷', role:'外缘却不可缺失的物理生命维持层', catalyst:'Q2 销售增长 24%、有机增长 18%，并上调全年关键指标指引。', risk:'高预期、供应链拥堵、大项目执行和数据中心延期。', why:'电力、液冷与热管理位于软件叙事的外缘，却是 AI 数据中心不可缺失的物理条件，像冥王星一样守在<em>系统边界</em>。'}
+  {tk:'NVDA', name:'英伟达（NVIDIA）', pct:18, layer:'太阳 / 算力核心', role:'AI 太阳系的恒星与能量源', catalyst:'FY27 Q1 数据中心收入同比增长 92%，Vera Rubin 把计算、网络与软件继续平台化。', risk:'对华出口限制、客户自研芯片、产品切换与极高预期。', why:'数据中心收入达到新的记录，Rubin、NVLink、Spectrum-X 与 CUDA 共同维持最完整的 AI 工厂平台。它是权重最高的<em>太阳</em>，也是整个系统最集中的单点风险。'},
+  {tk:'AVGO', name:'博通（Broadcom）', pct:15, layer:'水星 / 定制硅与网络', role:'贴近算力核心的高速信号行星', catalyst:'FY26 Q2 AI 半导体收入同比增长 143%，公司预计 Q3 增速超过 200%。', risk:'客户集中、定制项目节奏、供应链与估值压缩。', why:'定制加速器和以太网同时承接超大规模客户扩张，像水星一样贴近算力太阳并高速传递信号；软件现金流提供<em>稳定引力</em>。'},
+  {tk:'AMD', name:'超威半导体（AMD）', pct:13, layer:'金星 / 第二算力平台', role:'高温竞争轨道上的第二计算世界', catalyst:'Q2 数据中心收入同比增长 107%，Helios、MI400 与 EPYC 进入下半年放量阶段。', risk:'ROCm 生态、机架级交付、竞争性定价与路线图兑现。', why:'最新季度的数据中心业务已占公司收入 58%，并明确指向下半年加速。AMD 像金星一样明亮且高压，成为<em>第二算力世界</em>。'},
+  {tk:'ORCL', name:'甲骨文（Oracle）', pct:10, layer:'地球 / AI 云与数据库', role:'承载已预订算力需求的云端生态圈', catalyst:'FY26 Q4 OCI 收入增长 93%，RPO 达 6380 亿美元，Q1 云收入指引增长 58%—64%。', risk:'自由现金流为负、债务与股权融资、客户集中和交付资本强度。', why:'巨额 AI 合同把未来需求提前锁入 RPO，OCI 与多云数据库形成可以承载应用生态的<em>产业地球</em>；融资需求仍是高压天气。'},
+  {tk:'AMZN', name:'亚马逊（Amazon）', pct:9, layer:'火星 / 云与自研芯片', role:'持续扩建基础设施的算力前线', catalyst:'Q2 AWS 收入增长 37%，为 18 个季度最快，运营利润同比增长 64%。', risk:'AI 基建使自由现金流转负、折旧上升与云端竞争。', why:'AWS 在 Trainium、Bedrock 与大规模 GPU 服务之间同时优化需求和成本，像火星基地一样持续扩建，担当<em>推理前线</em>。'},
+  {tk:'MSFT', name:'微软（Microsoft）', pct:9, layer:'木星 / 企业云与智能体', role:'以企业分发形成最大云端引力场', catalyst:'FY26 Q4 Azure 增长 43%，商业剩余履约义务增长 84%。', risk:'供给约束、AI 毛利压力、资本开支回报周期和伙伴依赖。', why:'Azure、Foundry、GitHub 与 Microsoft 365 共同形成木星般的企业引力场，把模型能力直接送入工作流；重资本投入压低<em>短期效率</em>。'},
+  {tk:'TSM', name:'台积公司（TSMC）', pct:8, layer:'土星 / 先进制造', role:'由制程与封装光环守护的制造咽喉', catalyst:'Q2 收入达到指引上限，Q3 收入指引升至 446—458 亿美元。', risk:'台海地缘风险、汇率、海外扩产成本与半导体资本周期。', why:'领先制程与先进封装像土星环一样构成层层壁垒，是整条 AI 供应链最难绕开的<em>制造咽喉</em>。'},
+  {tk:'GOOGL', name:'Alphabet（谷歌母公司）', pct:7, layer:'天王星 / 模型与分发', role:'以自研 TPU 倾斜传统计算轴线', catalyst:'Gemini、TPU、搜索与 Google Cloud 形成从模型到现金流的闭环。', risk:'生成式答案重塑搜索经济、监管压力与高资本开支。', why:'TPU、Gemini、Cloud 与搜索分发形成端到端平台，像天王星的倾斜自转轴一样改变传统计算方向，并以广告现金流<em>自供能源</em>。'},
+  {tk:'MU', name:'美光科技（Micron）', pct:6, layer:'海王星 / 高带宽内存', role:'位于深蓝带宽边界的高能补给世界', catalyst:'FQ3 创纪录，HBM4 已大批量出货，Q4 收入与利润率指引再次跃升。', risk:'内存价格周期、扩产、客户认证节奏与高峰利润可持续性。', why:'HBM4 量产让 Micron 站在 AI 带宽瓶颈上，像海王星一样位于深蓝边界；强周期属性把仓位限制为<em>高能补给世界</em>。'},
+  {tk:'VRT', name:'维谛技术（Vertiv）', pct:5, layer:'冥王星 / 电力与液冷', role:'外缘却不可缺失的物理生命维持层', catalyst:'Q2 销售增长 24%、有机增长 18%，并上调全年关键指标指引。', risk:'高预期、供应链拥堵、大项目执行和数据中心延期。', why:'电力、液冷与热管理位于软件叙事的外缘，却是 AI 数据中心不可缺失的物理条件，像冥王星一样守在<em>系统边界</em>。'}
 ];
 
 export const PICKS_EN = [
@@ -43,12 +43,12 @@ export const COPY = {
     s2num:'02 · <span>FY25/26 资本黑匣子</span>',
     s2title:'收益从来不只是一个数字。<br>它是一整条<em>假设链</em>。',
     s2desc:'这份报告将已结清交易事实、短周期年化与账户层面模型严格分层。三种口径回答三个不同问题，任何一个都不应被偷换成另一个。',
-    chartSub:'private · daily · 2026 ytd',barsLabel:'bars · <b id="barCount">0</b>',
-    s3num:'03 · <span>top 10 allocations · usa</span>',
+    chartSub:'私密 · 日频 · 2026 年初至今',barsLabel:'数据柱 · <b id="barCount">0</b>',
+    s3num:'03 · <span>美股十大配置</span>',
     s3title:'十个 AI 引力源，<br>组成一座实时运行的<em>产业太阳系</em>。',
     s3desc:'2026-08-07 08:29 ET · 非农发布前快照：最高权重 NVDA 是太阳，其余九支映射为水星至冥王星。星体按当前历元公转并依据真实自转方向动态演化；点击任意代码，可展开对应产业天体。',
     footnote:'这是本人截至 2026-08-07 08:29 ET、美国 7 月非农发布前的主观研究与配置框架，不构成投资建议，也不承诺未来表现。宏观数据、财报、估值与风险条件会变化；研究你自己的航线，守住你自己的舱门。',
-    f1:'afflatus · 深空舰长日志 · MMXXVI',f2:'no ads · no tips · no promises',f3:'signal origin · local stardate',
+    f1:'afflatus · 深空舰长日志 · MMXXVI',f2:'无广告 · 无荐股 · 无承诺',f3:'信号源 · 本地星历',
     distTarget:'目标距离', distEarth:'离开地球',
     picks:PICKS_ZH,
   },

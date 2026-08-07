@@ -263,6 +263,8 @@
     width: var(--benchmark);
     background: linear-gradient(90deg, rgba(141,180,192,.36), rgba(154,229,255,.74));
     box-shadow: 0 0 14px rgba(154,229,255,.22);
+    transform-origin: left center;
+    transition: transform 1.35s cubic-bezier(.16, 1, .3, 1);
   }
 
   .benchmark-row.primary span,
@@ -407,6 +409,24 @@
     width: var(--route-return);
     background: linear-gradient(90deg, rgba(232,179,128,.48), #9ae5ff);
     box-shadow: 0 0 12px rgba(154,229,255,.24);
+    transform-origin: left center;
+    transition: transform 1.45s cubic-bezier(.16, 1, .3, 1);
+  }
+
+  .telemetry-pending:not(.telemetry-live) .benchmark-row i::before,
+  .telemetry-pending:not(.telemetry-live) .route-track > i::after {
+    transform: scaleX(0);
+  }
+
+  .telemetry-live .benchmark-row i::before,
+  .telemetry-live .route-track > i::after {
+    transform: scaleX(1);
+    animation: telemetrySweep 1.45s cubic-bezier(.16, 1, .3, 1) both;
+  }
+
+  @keyframes telemetrySweep {
+    from { transform: scaleX(0); filter: brightness(1.8); }
+    to { transform: scaleX(1); filter: brightness(1); }
   }
 
   .route-track b {

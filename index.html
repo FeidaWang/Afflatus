@@ -119,7 +119,7 @@
 
 
 
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicons/home.svg?v=20260808">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -167,12 +167,12 @@
 <div class="weapon-warning" id="weaponWarning"><b>ENFORCER MAIN CANNON</b><span>charging particle spine · stand by</span></div>
 <div class="bridge-callout" id="bridgeCallout">Cruising mode on</div>
 
-<output class="cic-cruise-strip" id="cicCruiseStrip" aria-label="Cruise telemetry">
-  <span class="cic-cruise-state"><i aria-hidden="true"></i><b id="cicCruiseState">CRUISE / SENSOR PASSIVE</b></span>
-  <span><i>HDG</i><b id="cicCruiseHeading">—</b></span>
-  <span><i>VEL</i><b id="cicCruiseVelocity">—</b></span>
-  <span><i>HULL</i><b id="cicCruiseHull">100%</b></span>
-  <span class="cic-cruise-target"><i>TARGET</i><b id="cicCruiseTarget">NO TRACK</b></span>
+<output class="cic-cruise-strip" id="cicCruiseStrip" aria-label="Cruise telemetry" data-aria-en="Cruise telemetry" data-aria-zh="巡航遥测">
+  <span class="cic-cruise-state"><i aria-hidden="true"></i><b id="cicCruiseState" data-en="CRUISE / SENSOR PASSIVE" data-zh="巡航 / 传感器静默监听">CRUISE / SENSOR PASSIVE</b></span>
+  <span><i data-en="HDG" data-zh="航向">HDG</i><b id="cicCruiseHeading">—</b></span>
+  <span><i data-en="VEL" data-zh="速度">VEL</i><b id="cicCruiseVelocity">—</b></span>
+  <span><i data-en="HULL" data-zh="舰体">HULL</i><b id="cicCruiseHull">100%</b></span>
+  <span class="cic-cruise-target"><i data-en="TARGET" data-zh="目标">TARGET</i><b id="cicCruiseTarget" data-en="NO TRACK" data-zh="无目标">NO TRACK</b></span>
 </output>
 
 <div id="combatHud" aria-hidden="true" data-cic-hud>
@@ -460,16 +460,16 @@
         <header class="dossier-header">
           <span data-en="02-A / REALIZED FACT" data-zh="02-A / 已实现事实">02-A / REALIZED FACT</span>
           <b data-en="CLOSED PROFITABLE SUBSET" data-zh="已结清盈利子组合">CLOSED PROFITABLE SUBSET</b>
-          <em>FY2025—26 / CLOSED LOTS</em>
+          <em data-en="FY2025—26 / CLOSED LOTS" data-zh="2025—26 财年 / 已结清批次">FY2025—26 / CLOSED LOTS</em>
         </header>
         <div class="realized-profit">
           <span data-en="Closed-subset absolute return" data-zh="已结清子组合绝对收益率">Closed-subset absolute return</span>
-          <strong>+2.78%</strong><em>ABS RETURN</em>
+          <strong>+2.78%</strong><em data-en="ABS RETURN" data-zh="绝对收益率">ABS RETURN</em>
         </div>
         <dl class="ledger-metrics">
           <div><dt data-en="Weighted capital days" data-zh="资金加权占用天数">Weighted capital days</dt><dd>7.8</dd></div>
           <div><dt data-en="Profitable flight paths" data-zh="盈利交易航线">Profitable flight paths</dt><dd>05</dd></div>
-          <div><dt data-en="Reporting basis" data-zh="披露口径">Reporting basis</dt><dd>CLOSED LOTS</dd></div>
+          <div><dt data-en="Reporting basis" data-zh="披露口径">Reporting basis</dt><dd data-en="CLOSED LOTS" data-zh="已结清批次">CLOSED LOTS</dd></div>
         </dl>
         <p class="ledger-note" data-en="Control figure: profitable positions closed within the financial year. Losing trades and open lots are outside this subset." data-zh="控制口径：财年内已结清的盈利仓位。亏损交易与期末未平仓仓位不在此子组合中。">Control figure: profitable positions closed within the financial year. Losing trades and open lots are outside this subset.</p>
       </article>
@@ -480,15 +480,15 @@
           <b data-en="THREE NUMBERS. THREE QUESTIONS." data-zh="三个数字，回答三个问题。">THREE NUMBERS. THREE QUESTIONS.</b>
         </header>
         <article data-level="fact">
-          <i>02-A / FACT</i><strong>+2.78%</strong>
+          <i data-en="02-A / FACT" data-zh="02-A / 事实">02-A / FACT</i><strong>+2.78%</strong>
           <div><b data-en="What was earned?" data-zh="实际赚了多少？">What was earned?</b><p data-en="Absolute return inside the profitable closed subset." data-zh="已结清盈利子组合内的绝对收益率。">Absolute return inside the profitable closed subset.</p></div>
         </article>
         <article data-level="annualized">
-          <i>02-B / ANNUALIZED</i><strong>+261.2%</strong>
+          <i data-en="02-B / ANNUALIZED" data-zh="02-B / 周期年化">02-B / ANNUALIZED</i><strong>+261.2%</strong>
           <div><b data-en="How fast was capital recycled?" data-zh="资金周转有多快？">How fast was capital recycled?</b><p data-en="Short-cycle capital efficiency projected over 365 days; not an achieved account return." data-zh="将短周期资金效率机械外推至 365 天；并非账户已实现年化。">Short-cycle capital efficiency projected over 365 days; not an achieved account return.</p></div>
         </article>
         <article data-level="model">
-          <i>02-C / MODEL MAX</i><strong>41.4%</strong>
+          <i data-en="02-C / MODEL MAX" data-zh="02-C / 模型上界">02-C / MODEL MAX</i><strong>41.4%</strong>
           <div><b data-en="What is the modeled upper bound?" data-zh="账户模型上界是多少？">What is the modeled upper bound?</b><p data-en="Upper bound of the capital-time estimate reconstructed from dated funding flows; account balances remain private." data-zh="依据带日期资金流重建的资本时间估算上界；账户余额保持私密。">Upper bound of the capital-time estimate reconstructed from dated funding flows; account balances remain private.</p></div>
         </article>
       </aside>
@@ -499,9 +499,9 @@
         <span data-en="02-D / RELATIVE VELOCITY" data-zh="02-D / 相对速度">02-D / RELATIVE VELOCITY</span>
         <b data-en="MODELED ACCOUNT UPPER BOUND VS SUPPLIED BENCHMARK INPUTS" data-zh="账户模型上界与所提供基准输入对比">MODELED ACCOUNT UPPER BOUND VS SUPPLIED BENCHMARK INPUTS</b>
       </header>
-      <div class="benchmark-row primary"><span>ACCOUNT / MODEL MAX</span><i style="--benchmark:100%"></i><strong>41.4%</strong></div>
-      <div class="benchmark-row"><span>QQQ / INPUT</span><i style="--benchmark:34.1%"></i><strong>+14.1%</strong></div>
-      <div class="benchmark-row"><span>SPX / INPUT</span><i style="--benchmark:22.7%"></i><strong>+9.4%</strong></div>
+      <div class="benchmark-row primary"><span data-en="ACCOUNT / MODEL MAX" data-zh="账户 / 模型上界">ACCOUNT / MODEL MAX</span><i style="--benchmark:100%"></i><strong>41.4%</strong></div>
+      <div class="benchmark-row"><span data-en="QQQ / INPUT" data-zh="QQQ / 输入值">QQQ / INPUT</span><i style="--benchmark:34.1%"></i><strong>+14.1%</strong></div>
+      <div class="benchmark-row"><span data-en="SPX / INPUT" data-zh="标普 500 / 输入值">SPX / INPUT</span><i style="--benchmark:22.7%"></i><strong>+9.4%</strong></div>
       <p data-en="Benchmark values are comparison inputs supplied for this report, not independently verified index calculations." data-zh="基准数值为本次报告提供的对比输入，并非本站独立核算的指数收益。">Benchmark values are comparison inputs supplied for this report, not independently verified index calculations.</p>
     </div>
 
@@ -513,37 +513,37 @@
 
     <div class="trade-routes">
       <article class="trade-route" style="--route-return:58.32%" data-rank="01">
-        <header><span>AVGO</span><b>Broadcom</b><em>17.5 D</em></header>
+        <header><span>AVGO</span><b data-en="Broadcom" data-zh="博通">Broadcom</b><em data-en="17.5 D" data-zh="17.5 天">17.5 D</em></header>
         <div class="route-efficiency"><strong>+260.4%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
-        <div class="route-track"><i></i><b>+14.58% ABS</b></div>
+        <div class="route-track"><i></i><b data-en="+14.58% ABS" data-zh="+14.58% 绝对收益">+14.58% ABS</b></div>
         <p data-en="Two entry clusters in May and June; two exits completed by 16 June." data-zh="5 月与 6 月分两组建仓，并于 6 月 16 日前分两次退出。">Two entry clusters in May and June; two exits completed by 16 June.</p>
       </article>
 
       <article class="trade-route" style="--route-return:93.52%" data-rank="02">
-        <header><span>DRAM</span><b>Memory ETF</b><em>3.0 D</em></header>
+        <header><span>DRAM</span><b data-en="Memory ETF" data-zh="内存 ETF">Memory ETF</b><em data-en="3.0 D" data-zh="3.0 天">3.0 D</em></header>
         <div class="route-efficiency"><strong>+208.5%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
-        <div class="route-track"><i></i><b>+23.38% ABS</b></div>
+        <div class="route-track"><i></i><b data-en="+23.38% ABS" data-zh="+23.38% 绝对收益">+23.38% ABS</b></div>
         <p data-en="Closed CGT lots only; 120 shares still held at year-end are excluded." data-zh="仅包含财年内已结清并产生 CGT 的批次；期末仍持有的 120 股不计入。">Closed CGT lots only; 120 shares still held at year-end are excluded.</p>
       </article>
 
       <article class="trade-route" style="--route-return:26.4%" data-rank="03">
-        <header><span>SNDK</span><b>SanDisk</b><em>11.2 D</em></header>
+        <header><span>SNDK</span><b data-en="SanDisk" data-zh="闪迪">SanDisk</b><em data-en="11.2 D" data-zh="11.2 天">11.2 D</em></header>
         <div class="route-efficiency"><strong>+257.9%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
-        <div class="route-track"><i></i><b>+6.60% ABS</b></div>
+        <div class="route-track"><i></i><b data-en="+6.60% ABS" data-zh="+6.60% 绝对收益">+6.60% ABS</b></div>
         <p data-en="Four rolling entries and four rolling exits from late January through 18 March." data-zh="从 1 月下旬至 3 月 18 日，分四次滚动买入并分四次滚动卖出。">Four rolling entries and four rolling exits from late January through 18 March.</p>
       </article>
 
       <article class="trade-route" style="--route-return:80.52%" data-rank="04">
-        <header><span>NVO</span><b>Novo Nordisk</b><em>246 D</em></header>
+        <header><span>NVO</span><b data-en="Novo Nordisk" data-zh="诺和诺德">Novo Nordisk</b><em data-en="246 D" data-zh="246 天">246 D</em></header>
         <div class="route-efficiency"><strong>+32.6%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
-        <div class="route-track"><i></i><b>+20.13% ABS</b></div>
+        <div class="route-track"><i></i><b data-en="+20.13% ABS" data-zh="+20.13% 绝对收益">+20.13% ABS</b></div>
         <p data-en="The longest profitable hold. Sale value includes at-par allocation-transfer flows." data-zh="盈利交易中持有时间最长；卖出总额包含期间按平价结算的分配转出流水。">The longest profitable hold. Sale value includes at-par allocation-transfer flows.</p>
       </article>
 
       <article class="trade-route" style="--route-return:5.36%" data-rank="05">
-        <header><span>XLE</span><b>Energy ETF</b><em>5.6 D</em></header>
+        <header><span>XLE</span><b data-en="Energy ETF" data-zh="能源 ETF">Energy ETF</b><em data-en="5.6 D" data-zh="5.6 天">5.6 D</em></header>
         <div class="route-efficiency"><strong>+85.6%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
-        <div class="route-track"><i></i><b>+1.34% ABS</b></div>
+        <div class="route-track"><i></i><b data-en="+1.34% ABS" data-zh="+1.34% 绝对收益">+1.34% ABS</b></div>
         <p data-en="Three March exits plus fragmented settlement flows; a fast, low-margin cycle." data-zh="3 月分三次主要退出并包含零碎结算流水；这是一次快速、低利润率的交易周期。">Three March exits plus fragmented settlement flows; a fast, low-margin cycle.</p>
       </article>
     </div>
@@ -555,12 +555,12 @@
         <p data-en="The headline strip carries annual return, Sharpe, drawdown and beta once, as explicitly labeled upper bounds. The only additional risk statistic retained here is annual volatility, also shown at its estimated upper bound." data-zh="首栏中的年化、夏普、回撤与 Beta 仅展示一次，并明确标为上界。这里仅保留额外的年波动率指标，同样显示其估算上界。">The headline strip carries annual return, Sharpe, drawdown and beta once, as explicitly labeled upper bounds. The only additional risk statistic retained here is annual volatility, also shown at its estimated upper bound.</p>
       </header>
       <div class="risk-grid risk-grid--summary">
-        <article><i>ANNUAL VOLATILITY</i><strong>45%</strong><b>ESTIMATED UPPER BOUND</b><p data-en="Upper-bound marker for a concentrated semiconductor and leveraged ETF book." data-zh="半导体个股及杠杆 ETF 高度集中组合的上界标记。">Upper-bound marker for a concentrated semiconductor and leveraged ETF book.</p></article>
+        <article><i data-en="ANNUAL VOLATILITY" data-zh="年波动率">ANNUAL VOLATILITY</i><strong>45%</strong><b data-en="ESTIMATED UPPER BOUND" data-zh="估算上界">ESTIMATED UPPER BOUND</b><p data-en="Upper-bound marker for a concentrated semiconductor and leveraged ETF book." data-zh="半导体个股及杠杆 ETF 高度集中组合的上界标记。">Upper-bound marker for a concentrated semiconductor and leveraged ETF book.</p></article>
       </div>
     </div>
 
     <aside class="methodology-seal">
-      <span>METHOD / 2026-08-02</span>
+      <span data-en="METHOD / 2026-08-02" data-zh="方法说明 / 2026-08-02">METHOD / 2026-08-02</span>
       <p data-en="Principal, transaction values and account balances are not published. DRAM excludes open shares, NVO includes at-par transfers, and XLE includes fragmented settlements. Until a complete lot-level ledger and daily NAV series are reconciled, the disclosed absolute return remains the controlling closed-subset fact; annualization, Sharpe, drawdown, volatility and beta remain method-dependent estimates." data-zh="本站不公开本金、成交金额或账户余额。DRAM 排除了期末未平仓股份，NVO 含平价转出，XLE 含零碎结算。在完整逐笔税务批次与每日净值序列完成勾稽前，所披露的绝对收益率是已结清子组合的控制事实；年化、夏普、回撤、波动率与 β 仍属于依赖计算方法的估算。">Principal, transaction values and account balances are not published. DRAM excludes open shares, NVO includes at-par transfers, and XLE includes fragmented settlements. Until a complete lot-level ledger and daily NAV series are reconciled, the disclosed absolute return remains the controlling closed-subset fact; annualization, Sharpe, drawdown, volatility and beta remain method-dependent estimates.</p>
     </aside>
   </section>
@@ -590,17 +590,17 @@
             <i class="orbit-axis axis-y"></i>
             <div class="convoy-nodes" id="convoyNodes"></div>
             <div class="convoy-core" aria-hidden="true">
-              <span>SOLAR</span>
-              <b>ATLAS</b>
+              <span data-en="SOLAR" data-zh="太阳">SOLAR</span>
+              <b data-en="ATLAS" data-zh="图鉴">ATLAS</b>
               <i></i>
             </div>
           </div>
         </div>
 
         <div class="convoy-readout" aria-live="polite">
-          <span id="convoyLayer">SUN / COMPUTE CORE</span>
+          <span id="convoyLayer" data-en="SUN / COMPUTE CORE" data-zh="太阳 / 算力核心">SUN / COMPUTE CORE</span>
           <div><b id="convoyTicker">NVDA</b><strong id="convoyWeight">18%</strong></div>
-          <p id="convoyRole">The star and energy source of the AI system</p>
+          <p id="convoyRole" data-en="The star and energy source of the AI system" data-zh="AI 太阳系的恒星与能量源">The star and energy source of the AI system</p>
         </div>
 
         <footer class="convoy-legend">
@@ -616,17 +616,17 @@
           <b id="convoyProgress">01 / 10</b>
         </header>
         <div class="pick-grid" id="pickGrid">
-          <ol class="holdings-fallback" aria-label="Top 10 allocation research snapshot / 十大配置研究快照">
-            <li><strong>NVDA</strong><span>Sun · compute core / 太阳 · 算力核心</span><b>18%</b></li>
-            <li><strong>AVGO</strong><span>Mercury · custom silicon &amp; network / 水星 · 定制硅与网络</span><b>15%</b></li>
-            <li><strong>AMD</strong><span>Venus · second compute platform / 金星 · 第二算力平台</span><b>13%</b></li>
-            <li><strong>ORCL</strong><span>Earth · AI cloud &amp; database / 地球 · AI 云与数据库</span><b>10%</b></li>
-            <li><strong>AMZN</strong><span>Mars · cloud &amp; custom silicon / 火星 · 云与自研芯片</span><b>9%</b></li>
-            <li><strong>MSFT</strong><span>Jupiter · enterprise cloud &amp; agents / 木星 · 企业云与智能体</span><b>9%</b></li>
-            <li><strong>TSM</strong><span>Saturn · advanced manufacturing / 土星 · 先进制造</span><b>8%</b></li>
-            <li><strong>GOOGL</strong><span>Uranus · model distribution / 天王星 · 模型分发</span><b>7%</b></li>
-            <li><strong>MU</strong><span>Neptune · high-bandwidth memory / 海王星 · 高带宽内存</span><b>6%</b></li>
-            <li><strong>VRT</strong><span>Pluto · power &amp; liquid cooling / 冥王星 · 电力与液冷</span><b>5%</b></li>
+          <ol class="holdings-fallback" aria-label="Top 10 allocation research snapshot" data-aria-en="Top 10 allocation research snapshot" data-aria-zh="美股十大配置研究快照">
+            <li><strong>NVDA</strong><span data-en="NVIDIA · Sun · compute core" data-zh="英伟达 · 太阳 · 算力核心">NVIDIA · Sun · compute core</span><b>18%</b></li>
+            <li><strong>AVGO</strong><span data-en="Broadcom · Mercury · custom silicon &amp; network" data-zh="博通 · 水星 · 定制硅与网络">Broadcom · Mercury · custom silicon &amp; network</span><b>15%</b></li>
+            <li><strong>AMD</strong><span data-en="AMD · Venus · second compute platform" data-zh="超威半导体 · 金星 · 第二算力平台">AMD · Venus · second compute platform</span><b>13%</b></li>
+            <li><strong>ORCL</strong><span data-en="Oracle · Earth · AI cloud &amp; database" data-zh="甲骨文 · 地球 · AI 云与数据库">Oracle · Earth · AI cloud &amp; database</span><b>10%</b></li>
+            <li><strong>AMZN</strong><span data-en="Amazon · Mars · cloud &amp; custom silicon" data-zh="亚马逊 · 火星 · 云与自研芯片">Amazon · Mars · cloud &amp; custom silicon</span><b>9%</b></li>
+            <li><strong>MSFT</strong><span data-en="Microsoft · Jupiter · enterprise cloud &amp; agents" data-zh="微软 · 木星 · 企业云与智能体">Microsoft · Jupiter · enterprise cloud &amp; agents</span><b>9%</b></li>
+            <li><strong>TSM</strong><span data-en="TSMC · Saturn · advanced manufacturing" data-zh="台积公司 · 土星 · 先进制造">TSMC · Saturn · advanced manufacturing</span><b>8%</b></li>
+            <li><strong>GOOGL</strong><span data-en="Alphabet · Uranus · model distribution" data-zh="Alphabet（谷歌母公司）· 天王星 · 模型分发">Alphabet · Uranus · model distribution</span><b>7%</b></li>
+            <li><strong>MU</strong><span data-en="Micron · Neptune · high-bandwidth memory" data-zh="美光科技 · 海王星 · 高带宽内存">Micron · Neptune · high-bandwidth memory</span><b>6%</b></li>
+            <li><strong>VRT</strong><span data-en="Vertiv · Pluto · power &amp; liquid cooling" data-zh="维谛技术 · 冥王星 · 电力与液冷">Vertiv · Pluto · power &amp; liquid cooling</span><b>5%</b></li>
           </ol>
         </div>
       </div>

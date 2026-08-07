@@ -5,12 +5,19 @@ const styles = readFileSync('src/styles.css', 'utf8');
 const performanceStyles = readFileSync('src/performance-dossier.css', 'utf8');
 const forge = readFileSync('src/scene/alphardForge.js', 'utf8');
 const main = readFileSync('src/homeExperience.js', 'utf8');
+const entry = readFileSync('src/main.js', 'utf8');
 
 describe('home stardrive layout contracts', () => {
-  it('does not translate the jump-point stage by a full viewport', () => {
+  it('keeps the jump-point stage contained in a preallocated sticky shell', () => {
     expect(styles).not.toMatch(/@keyframes\s+stardrivePin/);
     expect(styles).not.toMatch(/translateY\(100svh\)/);
-    expect(forge).toContain('const cssPin = false');
+    expect(styles).toMatch(/\.stardrive\.has-motion-shell\{height:200svh/);
+    expect(styles).toMatch(/\.stardrive\.has-motion-shell \.stardrive-stage\{position:sticky/);
+    expect(styles).not.toMatch(/\.stardrive\.is-live \.stardrive-stage\.pin-fixed\{position:fixed/);
+    expect(entry).toContain("stardrive.classList.add('has-motion-shell')");
+    expect(entry).toContain('if (!initAlphardForge())');
+    expect(forge).not.toContain("stageEl.classList.toggle('pin-fixed'");
+    expect(forge).not.toContain("document.addEventListener('DOMContentLoaded', initAlphardForge");
   });
 
   it('keeps the annualized-return value inside a fixed numeric slot', () => {

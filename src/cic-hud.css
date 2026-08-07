@@ -30,45 +30,64 @@
  * command deck is deliberately opt-in so the portfolio remains the subject. */
 .cic-cruise-strip {
   position: fixed;
-  right: clamp(16px, 14vw, 220px);
-  bottom: max(10px, env(safe-area-inset-bottom));
-  left: clamp(16px, 14vw, 220px);
+  right: auto;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  left: 50%;
   z-index: 88;
-  min-height: 48px;
+  width: min(760px, calc(100vw - 32px));
+  min-height: 36px;
   display: grid;
-  grid-template-columns: minmax(210px, 1.5fr) repeat(3, minmax(74px, .55fr)) minmax(160px, 1fr);
+  grid-template-columns: minmax(178px, 1.55fr) repeat(3, minmax(62px, .5fr)) minmax(126px, 1fr);
   align-items: stretch;
   overflow: hidden;
   color: var(--cic-ink);
   font-family: "JetBrains Mono", monospace;
-  background: linear-gradient(105deg, rgba(3, 10, 15, .9), rgba(5, 15, 21, .72) 54%, rgba(3, 9, 13, .88));
-  border: 1px solid rgba(142, 233, 255, .34);
-  border-radius: 18px 18px 4px 4px / 9px 9px 4px 4px;
-  box-shadow: 0 14px 42px rgba(0, 0, 0, .42), inset 0 8px 28px rgba(40, 137, 167, .035);
-  backdrop-filter: blur(7px);
+  background:
+    linear-gradient(90deg, rgba(142, 233, 255, .08), transparent 18%, transparent 82%, rgba(232, 179, 128, .06)),
+    rgba(2, 9, 14, .82);
+  border: 1px solid rgba(142, 233, 255, .3);
+  border-radius: 3px;
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%);
+  box-shadow: 0 9px 30px rgba(0, 0, 0, .48), inset 0 0 24px rgba(48, 170, 204, .045);
+  backdrop-filter: blur(9px) saturate(1.18);
   pointer-events: none;
+  transform: translateX(-50%);
   transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
 }
+
+.cic-cruise-strip::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 12%;
+  width: 18%;
+  background: linear-gradient(90deg, transparent, rgba(142, 233, 255, .07), transparent);
+  animation: cicCruiseScan 7s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes cicCruiseScan { to { transform: translateX(420%); } }
 
 .cic-cruise-strip > span {
   min-width: 0;
   display: grid;
   align-content: center;
-  gap: 3px;
-  padding: 7px 12px;
+  gap: 2px;
+  padding: 5px 10px;
   border-left: 1px solid rgba(142, 233, 255, .16);
 }
 
 .cic-cruise-strip > span:first-child { border-left: 0; }
-.cic-cruise-strip i { color: var(--cic-muted); font: normal 7px/1 "JetBrains Mono", monospace; letter-spacing: .12em; }
-.cic-cruise-strip b { overflow: hidden; color: var(--cic-cyan-hot); font: 600 9px/1.15 "Orbitron", sans-serif; letter-spacing: .08em; text-overflow: ellipsis; white-space: nowrap; }
+.cic-cruise-strip i { color: var(--cic-muted); font: normal 6px/1 "JetBrains Mono", monospace; letter-spacing: .12em; }
+.cic-cruise-strip b { overflow: hidden; color: var(--cic-cyan-hot); font: 600 8px/1.1 "Orbitron", sans-serif; letter-spacing: .075em; text-overflow: ellipsis; white-space: nowrap; }
 .cic-cruise-state { grid-template-columns: 7px minmax(0, 1fr); align-items: center; align-content: center; }
 .cic-cruise-state i { width: 6px; height: 6px; background: var(--cic-green); border-radius: 50%; box-shadow: 0 0 10px rgba(134, 239, 176, .74); }
 
 body:not(.hud-off) .cic-cruise-strip {
   opacity: 0;
   visibility: hidden;
-  transform: translateY(12px);
+  transform: translate(-50%, 12px);
 }
 
 body.hud-off main { padding-bottom: 68px; }
@@ -1355,7 +1374,7 @@ body:not(.hud-off) .route-arrows {
   #combatHud .cic-weapon-profile { grid-template-columns: 1fr; }
   #combatHud .cic-radar-dock { width: 126px; height: 72px; }
   #combatHud .cic-intel { grid-template-rows: auto 1fr auto; }
-  .cic-cruise-strip { min-height: 42px; }
+  .cic-cruise-strip { min-height: 34px; }
   .cic-cruise-strip > span { padding-top: 5px; padding-bottom: 5px; }
 }
 
@@ -1530,10 +1549,11 @@ body:not(.hud-off) .route-arrows {
   body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-deck-toggle { display: none; }
 
   .cic-cruise-strip {
-    right: 6px;
+    right: auto;
     bottom: max(6px, env(safe-area-inset-bottom));
-    left: 6px;
-    min-height: 58px;
+    left: 50%;
+    width: calc(100vw - 12px);
+    min-height: 44px;
     grid-template-columns: minmax(118px, 1.35fr) repeat(2, minmax(54px, .55fr)) minmax(94px, 1fr);
   }
 

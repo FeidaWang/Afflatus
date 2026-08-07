@@ -17,7 +17,7 @@
 @layer legacy {
   :root{--bg:#04060a;--ink:#e4e8f0;--dim:#69748c;--faint:#1f2536;--cyan:#8db4c0;--warm:#e8b380;--line:rgba(228,232,240,.055);--hud-x:18px;--hud-gap:10px;--hud-bottom:14px;--hud-combat-h:232px;--hud-cols:minmax(145px,.25fr) minmax(360px,.58fr) minmax(185px,.30fr) minmax(610px,1.16fr)}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none!important;}
+  html,body{background:var(--bg);color:var(--ink);overflow-x:hidden;overflow-x:clip;cursor:none!important;}
   body{font-family:'Rajdhani','Noto Sans SC',sans-serif;font-weight:300;min-height:var(--viewport-small-height,100vh);line-height:1.65;-webkit-font-smoothing:antialiased;position:relative}
   /* Zero-JS/static scene poster: the gradients live on the canvas element
      itself, so the page keeps its deep-space identity before the deferred
@@ -6841,14 +6841,13 @@
      ============================================================ */
   .stardrive{position:relative;padding:0;margin:0;--forge:1}
   .stardrive-stage{position:relative;width:100%;height:100svh;overflow:hidden;z-index:2;isolation:isolate;background:transparent}
-  /* live mode (JS confirmed motion ok): tall section gives scroll-room; the stage
-     is pinned by JS via position:fixed — NOT position:sticky, which is broken on
-     this page by html/body{overflow-x:hidden} (computes overflow-y:auto). The JS
-     toggles .pin-fixed (during the pin range) and .pin-end (after). */
-  .stardrive.is-live{height:200svh;--forge:0}
-  .stardrive.is-live .stardrive-stage{position:absolute;top:0;left:0;right:0;height:100svh}
-  .stardrive.is-live .stardrive-stage.pin-fixed{position:fixed;top:0}
-  .stardrive.is-live .stardrive-stage.pin-end{position:absolute;top:auto;bottom:0}
+  /* The entry module reserves this geometry before Three.js is imported.
+     Native sticky containment cannot cover content outside this section and
+     remains correct if rAF is paused, a tab is restored, or WebGL is lost. */
+  .stardrive.has-motion-shell{height:200svh;--forge:0}
+  .stardrive.has-motion-shell .stardrive-stage{position:sticky;top:0;left:0;right:0;height:100svh}
+  .stardrive.is-live .stardrive-stage.pin-fixed,
+  .stardrive.is-live .stardrive-stage.pin-end{position:sticky;top:0;bottom:auto}
 
   /* B1 (2026-07-05): where CSS Scroll-Driven Animations are supported, the pin
      itself moves to the compositor — a view-timeline named on the 200vh wrapper
@@ -7012,8 +7011,8 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .stardrive.is-live{height:auto;--forge:1}
-    .stardrive.is-live .stardrive-stage{position:relative;height:var(--viewport-small-height,100vh);top:auto;bottom:auto}
+    .stardrive.has-motion-shell{height:auto;--forge:1}
+    .stardrive.has-motion-shell .stardrive-stage{position:relative;height:var(--viewport-small-height,100vh);top:auto;bottom:auto}
     .stardrive.is-live .stardrive-stage.pin-fixed,.stardrive.is-live .stardrive-stage.pin-end{position:relative}
     .stardrive .strip{transform:none}
     .stardrive .hero-metric .strip-value{transform:none}

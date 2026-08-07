@@ -3,6 +3,7 @@ import './cic-hud.css';
 import './performance-dossier.css';
 import './portfolio-convoy.css';
 import { getLocale, localeSwitchHref, setLocale } from './lib/localeStore.js';
+import { initHomeScrollTelemetry } from './ui/homeScrollTelemetry.js';
 
 const HOME_INTENT_SELECTOR = [
   '#commandModeBtn',
@@ -103,15 +104,33 @@ function installVisibilityLoaders() {
   const stardrive = document.getElementById('stardrive');
   const portfolio = document.getElementById('portfolioConvoy');
   if (!('IntersectionObserver' in window)) {
-    window.setTimeout(() => { void import('./scene/alphardForge.js').catch(() => {}); }, 1800);
+    if (stardrive && allowRichMotion()) {
+      stardrive.classList.add('has-motion-shell');
+      window.setTimeout(() => {
+        void import('./scene/alphardForge.js')
+          .then(({ initAlphardForge }) => {
+            if (!initAlphardForge()) stardrive.classList.remove('has-motion-shell');
+          })
+          .catch(() => { stardrive.classList.remove('has-motion-shell'); });
+      }, 1800);
+    }
+    if (portfolio) window.setTimeout(() => { void loadHomeExperience().catch(() => {}); }, 2200);
     return;
   }
 
   if (stardrive && allowRichMotion()) {
+    // Reserve the complete scroll stage before Three.js arrives. This prevents
+    // late module evaluation from doubling the section height under a restored
+    // scroll position and keeps the enhancement inside the document flow.
+    stardrive.classList.add('has-motion-shell');
     const forgeObserver = new IntersectionObserver((entries, observer) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       observer.disconnect();
-      void import('./scene/alphardForge.js').catch(() => {});
+      void import('./scene/alphardForge.js')
+        .then(({ initAlphardForge }) => {
+          if (!initAlphardForge()) stardrive.classList.remove('has-motion-shell');
+        })
+        .catch(() => { stardrive.classList.remove('has-motion-shell'); });
     }, { rootMargin: '240px 0px' });
     forgeObserver.observe(stardrive);
   }
@@ -184,4 +203,5 @@ installLocaleLinks();
 installNavigationMenu();
 installIntentLoader();
 installVisibilityLoaders();
+initHomeScrollTelemetry();
 scheduleIdleExperience();
