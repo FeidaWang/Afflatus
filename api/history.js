@@ -12,34 +12,13 @@
    Part 4 (urgent.md §18.4/§20, 2026-07-23): same allowlist + admin-key gate
    as api/quote.js — see that file's header for the full rationale. */
 import { checkRateLimit, clientIp } from '../src/lib/rateLimit.js';
-import { resolveAllowlist, isSymbolAllowed, checkAdminKey } from '../src/lib/arenaAccess.js';
-import { fetchWithTimeout, getRequestId, isAbortError, sendApiError, setApiHeaders, trustedSiteOrigin } from '../src/lib/apiHttp.js';
+import { isSymbolAllowed, checkAdminKey } from '../src/lib/arenaAccess.js';
+import { getPublishedArenaAllowlist } from '../src/lib/arenaPublishedAccess.js';
+import { fetchWithTimeout, getRequestId, isAbortError, sendApiError, setApiHeaders } from '../src/lib/apiHttp.js';
 
 const SYMBOL_RE = /^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$/;
 const RATE_LIMIT = { limit: 20, windowMs: 60000 };
 const hits = new Map();
-
-const ALLOWLIST_TTL_MS = 5 * 60 * 1000;
-let allowlistCache = { at: 0, allowlist: null };
-
-async function getAllowlist() {
-  const now = Date.now();
-  if (allowlistCache.allowlist && now - allowlistCache.at < ALLOWLIST_TTL_MS) return allowlistCache.allowlist;
-  const origin = trustedSiteOrigin(process.env);
-  let picks = null;
-  let quantModel = null;
-  try {
-    const [picksResponse, modelResponse] = await Promise.allSettled([
-      fetchWithTimeout(`${origin}/arena-picks.json`, { cache: 'no-store' }, 3000),
-      fetchWithTimeout(`${origin}/arena-quant-model.json`, { cache: 'no-store' }, 3000),
-    ]);
-    if (picksResponse.status === 'fulfilled' && picksResponse.value.ok) picks = await picksResponse.value.json();
-    if (modelResponse.status === 'fulfilled' && modelResponse.value.ok) quantModel = await modelResponse.value.json();
-  } catch (e) { /* network hiccup — resolveAllowlist degrades gracefully on whatever we got */ }
-  const allowlist = resolveAllowlist({ picks, quantModel });
-  allowlistCache = { at: now, allowlist };
-  return allowlist;
-}
 
 export default async function handler(req, res) {
   const requestId = getRequestId(req);
@@ -56,7 +35,7 @@ export default async function handler(req, res) {
   const rl = checkRateLimit(hits, clientIp(req), { ...RATE_LIMIT, now: Date.now() });
   if (!rl.allowed) { res.setHeader('Retry-After', Math.ceil(rl.resetMs / 1000)); sendApiError(res, 429, 'RATE_LIMITED', requestId); return; }
 
-  const allowlist = await getAllowlist();
+  const allowlist = getPublishedArenaAllowlist();
   if (!isSymbolAllowed(symbol, allowlist)) {
     const adminKey = (req.headers?.['x-arena-key'] || '').toString();
     if (!checkAdminKey(adminKey, process.env.ARENA_ADMIN_KEY)) {

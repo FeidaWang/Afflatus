@@ -1,18 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchWithTimeout, getRequestId, sendApiError, setApiHeaders, trustedSiteOrigin } from '../src/lib/apiHttp.js';
+import { fetchWithTimeout, getRequestId, sendApiError, setApiHeaders } from '../src/lib/apiHttp.js';
 
 describe('API HTTP helpers', () => {
   it('keeps a safe caller request id and rejects unsafe values', () => {
     expect(getRequestId({ headers: { 'x-request-id': 'edge:abc-1234' } })).toBe('edge:abc-1234');
     expect(getRequestId({ headers: { 'x-request-id': 'bad\nheader' } })).toMatch(/^[-a-z0-9]+/i);
-  });
-
-  it('uses only platform-owned deployment origins for internal data fetches', () => {
-    expect(trustedSiteOrigin({ VERCEL_URL: 'afflatus-git-main-feida.vercel.app' }))
-      .toBe('https://afflatus-git-main-feida.vercel.app');
-    expect(trustedSiteOrigin({ VERCEL_URL: 'evil.example' })).toBe('https://feida.au');
-    expect(trustedSiteOrigin({ VERCEL_URL: 'evil.example@afflatus.vercel.app' })).toBe('https://feida.au');
-    expect(trustedSiteOrigin({})).toBe('https://feida.au');
   });
 
   it('emits normalized non-cacheable errors with correlation id', () => {

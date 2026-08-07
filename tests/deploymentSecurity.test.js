@@ -25,10 +25,12 @@ describe('deployment security policy', () => {
     });
   });
 
-  it('does not derive internal allowlist fetches from the inbound Host header', () => {
+  it('uses deployment-bundled allowlists without trusting or fetching an inbound host', () => {
     for (const source of [quoteApi, historyApi]) {
-      expect(source).toContain('trustedSiteOrigin(process.env)');
+      expect(source).toContain('getPublishedArenaAllowlist()');
       expect(source).not.toMatch(/req\.headers(?:\?\.)?\.host/);
+      expect(source).not.toContain('/arena-picks.json');
+      expect(source).not.toContain('/arena-quant-model.json');
       expect(source).toContain("req.method !== 'GET'");
     }
   });
