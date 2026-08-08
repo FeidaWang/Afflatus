@@ -16,6 +16,7 @@ import { validateArenaLedger } from '../src/lib/validateArenaLedger.js';
 import { validateArenaPredlog } from '../src/lib/validateArenaPredlog.js';
 import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
 import { runAtomicPublishTransaction } from './lib/publish-transaction.mjs';
+import { SITE_GENERATE_COMMAND, SITE_PUBLISH_ARTIFACTS } from './lib/site-publish-artifacts.mjs';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const paths = {
@@ -237,6 +238,8 @@ if (dryRun) {
       pipelineId: 'arena-catch-up',
       prepare: prepareValidatedCatchUp,
       commitMessage: option('message', `data: recover Arena through ${throughDate}`),
+      deriveCommand: SITE_GENERATE_COMMAND,
+      derivedPaths: SITE_PUBLISH_ARTIFACTS,
     });
   } catch (error) {
     fail(`${error.phase || 'publish'}: ${error.message}`);

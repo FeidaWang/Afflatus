@@ -135,6 +135,44 @@ describe('complete atomic data publish transaction', () => {
     expect(actualRunner('git', ['diff', '--cached', '--name-only'], { cwd: root }).stdout.trim()).toBe('unrelated.txt');
   });
 
+  it('commits declared site artifacts regenerated from the published data', () => {
+    const root = mkdtempSync(join(tmpdir(), 'afflatus-publish-derived-'));
+    roots.push(root);
+    mkdirSync(join(root, 'public'));
+    writeFileSync(join(root, 'public/a.json'), '{"version":"old-a"}\n');
+    writeFileSync(join(root, 'public/b.json'), '{"version":"old-b"}\n');
+    writeFileSync(join(root, 'derived.html'), 'old derived\n');
+    writeFileSync(join(root, 'unrelated.txt'), 'initial\n');
+    for (const [command, args] of [
+      ['git', ['init', '-q']],
+      ['git', ['config', 'user.email', 'tests@example.invalid']],
+      ['git', ['config', 'user.name', 'Afflatus Tests']],
+      ['git', ['add', '.']],
+      ['git', ['commit', '-qm', 'initial']],
+    ]) expect(actualRunner(command, args, { cwd: root }).status).toBe(0);
+
+    const result = runAtomicPublishTransaction({
+      repoRoot: root,
+      pipelineId: 'derived-git-test',
+      transactionId: 'derived-git-txn',
+      entries: entries(),
+      deriveCommand: [
+        process.execPath,
+        '-e',
+        "require('node:fs').writeFileSync('derived.html', 'new derived\\n')",
+      ],
+      derivedPaths: ['derived.html'],
+      buildCommand: [process.execPath, '-e', 'process.exit(0)'],
+      commandRunner: actualRunner,
+    });
+
+    expect(result.status).toBe('committed');
+    expect(readFileSync(join(root, 'derived.html'), 'utf8')).toBe('new derived\n');
+    const committedPaths = actualRunner('git', ['show', '--pretty=format:', '--name-only', 'HEAD'], { cwd: root })
+      .stdout.trim().split('\n').filter(Boolean).sort();
+    expect(committedPaths).toEqual(['derived.html', 'public/a.json', 'public/b.json']);
+  });
+
   it('restores every original byte when the build smoke fails', () => {
     const root = makeRepository();
     const beforeA = readFileSync(join(root, 'public/a.json'));
@@ -151,6 +189,36 @@ describe('complete atomic data publish transaction', () => {
     expect(readFileSync(join(root, 'public/a.json'))).toEqual(beforeA);
     expect(readFileSync(join(root, 'public/b.json'))).toEqual(beforeB);
     expect(calls.some(([command, args]) => command === 'git' && args[0] === 'commit')).toBe(false);
+    expect(readdirSync(join(root, '.git'))).toEqual([]);
+  });
+
+  it('restores generated artifacts when a later build smoke fails', () => {
+    const root = makeRepository();
+    const derivedPath = join(root, 'derived.html');
+    writeFileSync(derivedPath, 'old derived\n');
+    const phases = [];
+    const { runner: baseRunner } = createRunner({ buildStatus: 1 });
+    const runner = (command, args, options) => {
+      if (command === 'derive') {
+        writeFileSync(derivedPath, 'new derived\n');
+        return { status: 0, stdout: '' };
+      }
+      return baseRunner(command, args, options);
+    };
+
+    expect(() => runAtomicPublishTransaction({
+      repoRoot: root,
+      pipelineId: 'derived-rollback-test',
+      transactionId: 'derived-rollback-txn',
+      entries: entries(),
+      deriveCommand: ['derive'],
+      derivedPaths: ['derived.html'],
+      commandRunner: runner,
+      onPhase: (phase) => phases.push(phase),
+    })).toThrowError(PublishTransactionError);
+
+    expect(phases).toEqual(['validate', 'stage', 'publish', 'derive', 'build']);
+    expect(readFileSync(derivedPath, 'utf8')).toBe('old derived\n');
     expect(readdirSync(join(root, '.git'))).toEqual([]);
   });
 

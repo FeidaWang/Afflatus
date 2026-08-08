@@ -17,6 +17,7 @@ import { validateSectorsEcosystem } from '../src/lib/validateSectorsEcosystem.js
 import { validateSectorsRivalry } from '../src/lib/validateSectorsRivalry.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { runAtomicPublishTransaction } from './lib/publish-transaction.mjs';
+import { SITE_GENERATE_COMMAND, SITE_PUBLISH_ARTIFACTS } from './lib/site-publish-artifacts.mjs';
 
 const validators = new Map([
   ['arena-news', validateArenaNews],
@@ -117,6 +118,8 @@ try {
     pipelineId: pipeline.id,
     prepare: prepareValidatedGroup,
     commitMessage,
+    deriveCommand: SITE_GENERATE_COMMAND,
+    derivedPaths: SITE_PUBLISH_ARTIFACTS,
   });
   console.log(
     `[publish-data-pipeline] ${result.status} ${pipeline.id}: ${pipeline.outputs.map((item) => item.resource).join(', ')}`

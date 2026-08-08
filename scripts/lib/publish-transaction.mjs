@@ -32,7 +32,7 @@ function sha256(value) {
 }
 
 function removeFile(path) {
-  if (existsSync(path)) unlinkSync(path);
+  if (path && existsSync(path)) unlinkSync(path);
 }
 
 function durableWrite(path, content, { exclusive = false } = {}) {
@@ -92,6 +92,23 @@ function normalizeEntries(repoRoot, entries, transactionId) {
       hadOriginal: existsSync(targetPath),
       expectedSha256: sha256(content),
       content,
+    };
+  });
+}
+
+function normalizeDerivedEntries(repoRoot, paths, transactionId, occupiedTargets) {
+  const seen = new Set(occupiedTargets);
+  return paths.map((path) => {
+    const targetPath = resolve(repoRoot, path);
+    const relativePath = assertInsideRepo(repoRoot, targetPath, path);
+    if (seen.has(targetPath)) throw new Error(`duplicate publish target ${relativePath}`);
+    seen.add(targetPath);
+    return {
+      kind: 'derived',
+      relativePath,
+      targetPath,
+      backupPath: `${targetPath}.${transactionId}.derived-backup`,
+      hadOriginal: existsSync(targetPath),
     };
   });
 }
@@ -163,7 +180,7 @@ function cleanupArtifacts(journalPath, journal) {
 function rollbackJournal(repoRoot, journalPath, journal) {
   for (const entry of [...journal.entries].reverse()) {
     assertInsideRepo(repoRoot, entry.targetPath, 'journal target');
-    assertInsideRepo(repoRoot, entry.stagePath, 'journal stage');
+    if (entry.stagePath) assertInsideRepo(repoRoot, entry.stagePath, 'journal stage');
     assertInsideRepo(repoRoot, entry.backupPath, 'journal backup');
     if (existsSync(entry.backupPath)) {
       removeFile(entry.targetPath);
@@ -201,8 +218,9 @@ export function recoverAtomicPublish({ repoRoot = process.cwd(), commandRunner =
 
 /**
  * Complete data publication boundary:
- * prepare/validate -> same-filesystem stage/rename -> build smoke -> path-only
- * Git commit. Build/commit failures restore every target byte-for-byte.
+ * prepare/validate -> same-filesystem stage/rename -> regenerate declared
+ * derived artifacts -> build smoke -> path-only Git commit. Derive/build/commit
+ * failures restore every target byte-for-byte.
  */
 export function runAtomicPublishTransaction({
   repoRoot = process.cwd(),
@@ -210,6 +228,8 @@ export function runAtomicPublishTransaction({
   prepare,
   entries,
   commitMessage = `data: publish ${pipelineId || 'pipeline'}`,
+  deriveCommand = null,
+  derivedPaths = [],
   buildCommand = ['npm', 'run', 'build'],
   commandRunner = defaultCommandRunner,
   transactionId = `${Date.now()}-${process.pid}`,
@@ -227,6 +247,7 @@ export function runAtomicPublishTransaction({
 
   let journal = null;
   let normalized = [];
+  let normalizedDerived = [];
   let committed = false;
   try {
     recoverAtomicPublish({ repoRoot: root, commandRunner });
@@ -239,7 +260,20 @@ export function runAtomicPublishTransaction({
       throw new PublishTransactionError('validate', error.message, { cause: error });
     }
     normalized = normalizeEntries(root, prepared, transactionId);
-    const paths = normalized.map((entry) => entry.relativePath);
+    normalizedDerived = normalizeDerivedEntries(
+      root,
+      derivedPaths,
+      transactionId,
+      normalized.map((entry) => entry.targetPath),
+    );
+    if (normalizedDerived.length && (!Array.isArray(deriveCommand) || !deriveCommand.length)) {
+      throw new PublishTransactionError('validate', 'deriveCommand is required when derivedPaths are declared');
+    }
+    if (!normalizedDerived.length && deriveCommand) {
+      throw new PublishTransactionError('validate', 'derivedPaths are required when deriveCommand is declared');
+    }
+    const allEntries = [...normalized, ...normalizedDerived];
+    const paths = allEntries.map((entry) => entry.relativePath);
 
     // Do not overwrite a human/sibling publisher's target edits. `--only`
     // later preserves unrelated staged files, but these exact paths must start
@@ -256,7 +290,10 @@ export function runAtomicPublishTransaction({
       id: transactionId,
       pipelineId,
       phase: 'preparing',
-      entries: normalized.map(({ content: _content, ...entry }) => entry),
+      entries: [
+        ...normalized.map(({ content: _content, ...entry }) => ({ kind: 'publish', ...entry })),
+        ...normalizedDerived,
+      ],
     };
     // Journal the exact stage/backup names before the first filesystem write,
     // so even a kill in the middle of staging is self-cleaning on next run.
@@ -265,6 +302,12 @@ export function runAtomicPublishTransaction({
       removeFile(entry.stagePath);
       removeFile(entry.backupPath);
       durableWrite(entry.stagePath, entry.content, { exclusive: true });
+    }
+    for (const entry of normalizedDerived) {
+      removeFile(entry.backupPath);
+      if (entry.hadOriginal) {
+        durableWrite(entry.backupPath, readFileSync(entry.targetPath), { exclusive: true });
+      }
     }
     journal.phase = 'staged';
     writeJournal(journalPath, journal);
@@ -277,13 +320,32 @@ export function runAtomicPublishTransaction({
     journal.phase = 'published';
     writeJournal(journalPath, journal);
 
+    if (normalizedDerived.length) {
+      onPhase('derive');
+      const [deriveProgram, ...deriveArgs] = deriveCommand;
+      runChecked(commandRunner, 'derive', deriveProgram, deriveArgs, {
+        cwd: root,
+        env: { ...process.env, AFFLATUS_DATA_PUBLISH_TRANSACTION: transactionId },
+      });
+      for (const entry of normalizedDerived) {
+        if (!existsSync(entry.targetPath)) {
+          throw new PublishTransactionError('derive', `${entry.relativePath} was not generated`);
+        }
+        entry.expectedSha256 = sha256(readFileSync(entry.targetPath));
+        const journalEntry = journal.entries.find((item) => item.targetPath === entry.targetPath);
+        journalEntry.expectedSha256 = entry.expectedSha256;
+      }
+      journal.phase = 'derived';
+      writeJournal(journalPath, journal);
+    }
+
     onPhase('build');
     const [buildProgram, ...buildArgs] = buildCommand;
     runChecked(commandRunner, 'build', buildProgram, buildArgs, {
       cwd: root,
       env: { ...process.env, AFFLATUS_DATA_PUBLISH_TRANSACTION: transactionId },
     });
-    for (const entry of normalized) {
+    for (const entry of allEntries) {
       if (sha256(readFileSync(entry.targetPath)) !== entry.expectedSha256) {
         throw new PublishTransactionError('build', `${entry.relativePath} changed during build smoke`);
       }
@@ -321,7 +383,7 @@ export function runAtomicPublishTransaction({
   } catch (error) {
     if (!committed && journal) rollbackJournal(root, journalPath, journal);
     else if (!journal) {
-      for (const entry of normalized) {
+      for (const entry of [...normalized, ...normalizedDerived]) {
         removeFile(entry.stagePath);
         removeFile(entry.backupPath);
       }
