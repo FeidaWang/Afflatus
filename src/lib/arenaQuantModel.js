@@ -24,6 +24,49 @@ export function orderedHistorySymbols(config = {}) {
   return [...new Set([benchmark, ...universe])];
 }
 
+export function assessHistoryCoverage(plannedSymbols, histories, minimumHistory = 130, fetchFailures = []) {
+  const planned = [...new Set((plannedSymbols || [])
+    .map((symbol) => String(symbol || '').trim().toUpperCase())
+    .filter(Boolean))];
+  const minimum = Math.max(1, Number.parseInt(minimumHistory, 10) || 130);
+  const failuresBySymbol = new Map();
+
+  for (const failure of fetchFailures || []) {
+    const symbol = String(failure?.symbol || '').trim().toUpperCase();
+    if (!symbol || !planned.includes(symbol)) continue;
+    failuresBySymbol.set(symbol, {
+      ...failure,
+      symbol,
+      reason: failure.reason || 'fetch-failed',
+      observations: Array.isArray(histories?.[symbol]) ? histories[symbol].length : 0,
+      minimumHistory: minimum,
+    });
+  }
+
+  for (const symbol of planned) {
+    const observations = Array.isArray(histories?.[symbol]) ? histories[symbol].length : 0;
+    if (observations >= minimum) continue;
+    const existing = failuresBySymbol.get(symbol);
+    failuresBySymbol.set(symbol, {
+      ...existing,
+      symbol,
+      reason: existing?.reason || 'insufficient-history',
+      observations,
+      minimumHistory: minimum,
+    });
+  }
+
+  const failures = planned.map((symbol) => failuresBySymbol.get(symbol)).filter(Boolean);
+  const failed = new Set(failures.map((failure) => failure.symbol));
+  const coveredSymbols = planned.filter((symbol) => !failed.has(symbol));
+  return {
+    plannedSymbols: planned,
+    coveredSymbols,
+    failures,
+    complete: failures.length === 0 && coveredSymbols.length === planned.length,
+  };
+}
+
 export function mean(values) {
   const clean = (values || []).filter(Number.isFinite);
   return clean.length ? clean.reduce((sum, value) => sum + value, 0) / clean.length : 0;

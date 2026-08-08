@@ -239,7 +239,7 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['live-data', 'canvas', 'svg-viz', 'admin-session'],
     metadata: {
       title: 'Arena · QF-01 Quant Foundry + US Stock TA — Afflatus',
-      description: 'Arena: QF-01, a gs-quant-inspired browser-native factor, risk and walk-forward model lab, plus US stock technical analysis and simulated Autopilot ledgers. Not investment advice.',
+      description: 'Arena: QF-01, an independent browser-native factor, risk and walk-forward model lab, plus US stock technical analysis and simulated Autopilot ledgers. Not investment advice.',
       canonical: 'https://feida.au/arena.html',
       ogTitle: 'Project Afflatus · Arena',
       ogDescription: 'QF-01 factor and risk model lab + S&P 500 TA + simulated Autopilot ledgers. Not investment advice.',
@@ -248,11 +248,11 @@ export const SITE_MANIFEST = Object.freeze([
     locales: {
       en: {
         title: 'Arena — QF-01 Quant Foundry and US Stock TA · Afflatus',
-        description: 'A gs-quant-inspired browser-native factor, portfolio-risk and walk-forward research model, S&P 500 technical analysis and simulated model ledgers. Not investment advice.',
+        description: 'An independent browser-native factor, portfolio-risk and walk-forward research model, S&P 500 technical analysis and simulated model ledgers. Not investment advice.',
       },
       zh: {
         title: '竞技场 — QF-01 量化铸造舱与美股技术分析 · Afflatus',
-        description: '受 gs-quant 架构启发的浏览器原生因子、组合风险与滚动研究模型，以及标普 500 技术分析和模拟账本。非投资建议。',
+        description: '独立构建的浏览器原生因子、组合风险与滚动研究模型，以及标普 500 技术分析和模拟账本。非投资建议。',
       },
     },
   },
@@ -468,7 +468,7 @@ export const SITE_MANIFEST = Object.freeze([
       description: 'Archived World Cup 2026 predictions and final scorecard: 56 calls, 68% outcome hit rate, 10 exact scorelines, plus the final champion and player awards. Entertainment only.',
       canonical: 'https://feida.au/games.html',
       ogTitle: 'Project Afflatus · World Cup 2026 Prediction Archive',
-      ogDescription: 'The completed Fable 5 Max World Cup 2026 prediction record: 56 calls, final results and tournament awards.',
+      ogDescription: 'The completed Fable 5 Max World Cup 2026 prediction record, with a 5.6 Sol Ultra audit: 56 calls, final results and tournament awards.',
       ogImage: LEGACY_OG_IMAGE,
     },
     locales: {
@@ -495,7 +495,7 @@ export const SITE_MANIFEST = Object.freeze([
       description: "Archived MSI 2026 bracket predictions: 14 pre-match series calls, final outcomes, confidence, Fearless Draft pools, and HLE's 3–2 championship win. Entertainment only.",
       canonical: 'https://feida.au/league.html',
       ogTitle: 'Project Afflatus · MSI 2026 Prediction Archive',
-      ogDescription: "The completed Fable 5 Max MSI 2026 record: 14 pre-match calls, HLE's title and the final 50% outcome hit rate.",
+      ogDescription: "The completed Fable 5 Max MSI 2026 record, with a 5.6 Sol Ultra audit: 14 pre-match calls, HLE's title and the final 50% outcome hit rate.",
       ogImage: LEGACY_OG_IMAGE,
     },
     locales: {

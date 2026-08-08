@@ -105,11 +105,11 @@ import { getLocale } from '../lib/localeStore.js';
     host.innerHTML = data.fixtures.map((f) => {
       const tbd = isTBD(f);
       // Fable prediction (always visible once kickoff locked, or always show for upcoming)
-      const opusLine = (f.opus && !tbd) ? `<div class="opus">${FABLE_ICON} <b>Fable</b> · ${outcomeLabel(f, f.opus)} · ${Math.round(f.conf * 100)}%<span class="orsn">${T(f.reason_en, f.reason_zh)}</span></div>` : '';
+      const opusLine = (f.opus && !tbd) ? `<div class="opus">${FABLE_ICON} <b>Fable 5 Max · 5.6 Sol Ultra</b> · ${outcomeLabel(f, f.opus)} · ${Math.round(f.conf * 100)}%<span class="orsn">${T(f.reason_en, f.reason_zh)}</span></div>` : '';
       // Odds
       const oddsHtml = !tbd ? renderOdds(f) : '';
       // Scratch to reveal exact score only
-      const opScore = (f.opusScore && !tbd) ? `<div class="scratch opscore" data-key="score:${f.id}"><div class="reveal">${FABLE_ICON} <span data-en="FABLE SCORE" data-zh="FABLE 比分">FABLE SCORE</span> · <b>${f.homeFlag} ${f.opusScore} ${f.awayFlag}</b></div></div>` : (tbd ? `<div class="tbdnote">${T('Opponents undecided', '对手未定')}</div>` : '');
+      const opScore = (f.opusScore && !tbd) ? `<div class="scratch opscore" data-key="score:${f.id}"><div class="reveal">${FABLE_ICON} <span data-en="FABLE 5 MAX · 5.6 SOL ULTRA SCORE" data-zh="FABLE 5 MAX · 5.6 SOL ULTRA 比分">FABLE 5 MAX · 5.6 SOL ULTRA SCORE</span> · <b>${f.homeFlag} ${f.opusScore} ${f.awayFlag}</b></div></div>` : (tbd ? `<div class="tbdnote">${T('Opponents undecided', '对手未定')}</div>` : '');
       // Teams — static display, no picks
       const homeTeam = `<div class="team-d"><span class="fl">${f.homeFlag || ''}</span><span class="nm">${teamName(f, 'home')}</span></div>`;
       const awayTeam = `<div class="team-d"><span class="fl">${f.awayFlag || ''}</span><span class="nm">${teamName(f, 'away')}</span></div>`;
@@ -333,7 +333,7 @@ import { getLocale } from '../lib/localeStore.js';
   function renderRecord() {
     const host = $('record'); if (!host) return;
     const r = data && data.record;
-    const html = renderTrackRecordHTML(r, { T, fableIcon: FABLE_ICON, exactLabel: { en: 'exact scorelines', zh: '比分全中' }, title: { en: 'FABLE HISTORICAL RECORD', zh: 'FABLE 历史战绩' } });
+    const html = renderTrackRecordHTML(r, { T, fableIcon: FABLE_ICON, exactLabel: { en: 'exact scorelines', zh: '比分全中' }, title: { en: 'FABLE 5 MAX · 5.6 SOL ULTRA HISTORICAL RECORD', zh: 'FABLE 5 MAX · 5.6 SOL ULTRA 历史战绩' } });
     if (!html) { host.innerHTML = ''; host.style.display = 'none'; return; }
     host.style.display = '';
     host.innerHTML = html;

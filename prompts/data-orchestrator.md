@@ -43,8 +43,19 @@ Calculate all market windows in `America/New_York` and the transit calendar in
 
 - `arena-premarket`: after 08:30 ET on an NYSE session, research and publish
   `arena-news.json` and `arena-picks.json` together. Record the gather and picks
-  windows in `arena-runlog.json`. Empty model pick arrays are valid and safer
-  than weak recommendations.
+  windows in `arena-runlog.json`. Research is mandatory on every session even
+  when every pick array is empty: publish at least four distinct sourced items
+  spanning at least four of macro/policy, frontier models, compute/memory,
+  optical networking, power/cooling, cloud demand, or public-company earnings.
+  The ban on hindsight applies to directional calls and orders; it must never be
+  used as a reason to omit industry research. Preserve a source-time cutoff in
+  `researchCoverage`; every news category must include `category` and
+  `category_zh`. Keep the forward earnings watch tied to confirmed IR dates
+  plus plainly labelled scenario assumptions. Mark each event `scheduled` or
+  `released`, never leave an elapsed event looking like a live countdown, and
+  preserve at least two unique explicitly-primary evidence URLs spanning two
+  official hostnames (for example issuer IR plus SEC). Empty model pick arrays
+  are valid and safer than weak recommendations.
 - `arena-postmarket`: after 16:30 ET, reconcile missed windows, mark every book
   to provider closes, settle only current-window proposals, update the daily
   digest, and audit prediction coverage. Missed proposal windows remain missed.

@@ -1,5 +1,6 @@
 /* ============================================================
-   PROVENANCE BADGE — shared "FABLE 5 MAX · data age · sources · NOT ADVICE"
+   PROVENANCE BADGE — shared
+   "FABLE 5 MAX · 5.6 SOL ULTRA · data age · sources · NOT ADVICE"
    widget (ROADMAP §7.5, V12 queue A). Pure logic only: each page's data JSON
    has a different raw schema (arena-news.json uses date/generatedAt with no
    version; games-data.json has updated but no version; sectors/signal/leagues
@@ -43,7 +44,7 @@ function formatAge(ageHours, lang) {
 export function buildProvenanceBadge({ updatedAt, version, sourceCount, lang = 'en', now } = {}) {
   const ageHours = computeAgeHours(updatedAt, now);
   const tier = computeBadgeTier(ageHours);
-  const parts = ['FABLE 5 MAX', formatAge(ageHours, lang)];
+  const parts = ['FABLE 5 MAX', '5.6 SOL ULTRA', formatAge(ageHours, lang)];
   if (typeof sourceCount === 'number') parts.push(lang === 'zh' ? `来源 ${sourceCount}` : `${sourceCount} sources`);
   if (version != null) parts.push('v' + version);
   parts.push(lang === 'zh' ? '非投资建议' : 'NOT ADVICE');

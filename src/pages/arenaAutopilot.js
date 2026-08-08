@@ -231,15 +231,20 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     if (entry.kind === 'trade') { const t = entry.data; const side = t.side === 'buy' ? 'buy' : 'sell'; return `<div class="ap-log-row ${side}"><span>${escapeHtml(side.toUpperCase())} ${escapeHtml(t.sym)} × ${fmtNum(t.qty, 0)} @ ${fmtUsd(t.px)}</span><span>${t.realizedPnl != null ? fmtUsd(t.realizedPnl) : ''}</span></div>`; }
     const o = entry.data.order || {}; return `<div class="ap-log-row rej"><span>✗ ${escapeHtml((o.side || '?').toUpperCase())} ${escapeHtml(o.sym || '?')}</span><span>${escapeHtml(entry.data.reason || '')}</span></div>`;
   }
-  function renderModel(modelHost, label, m) {
+  function renderModel(modelHost, key, label, m) {
     const metrics = m.metrics || {};
+    const exposure = Math.max(0, Math.min(100, Number(metrics.exposure) || 0));
+    const cashRatio = Number(m.equity) > 0 ? Math.max(0, Math.min(100, Number(m.cash) / Number(m.equity) * 100)) : 0;
+    const cumPct = Number(metrics.cumPct) || 0;
+    const positionCount = (m.positions || []).length;
+    const status = positionCount
+      ? T(`${positionCount} OPEN POSITION${positionCount === 1 ? '' : 'S'}`, `${positionCount} 个持仓`)
+      : T('CASH / NO OPEN RISK', '现金待命 / 无开放风险');
     const chips = [
       metricChip(T('EQUITY', '净值'), fmtUsd(m.equity)),
-      metricChip(T('CASH', '现金'), fmtUsd(m.cash)),
-      metricChip(T('CUM %', '累计%'), fmtPct(metrics.cumPct)),
-      metricChip(T('MAX DD', '最大回撤'), fmtPct(metrics.maxDD)),
-      metricChip(T('HIT %', '胜率'), metrics.hitRate == null ? '—' : metrics.hitRate.toFixed(1) + '%'),
-      metricChip(T('EXPOSURE', '仓位'), metrics.exposure == null ? '—' : metrics.exposure.toFixed(1) + '%'),
+      metricChip(T('CUMULATIVE', '累计收益'), fmtPct(metrics.cumPct)),
+      metricChip(T('MAX DRAWDOWN', '最大回撤'), fmtPct(metrics.maxDD)),
+      metricChip(T('HIT RATE', '胜率'), metrics.hitRate == null ? '—' : metrics.hitRate.toFixed(1) + '%'),
     ].join('');
     const review = m.review && (m.review.en || m.review.zh) ? T(m.review.en, m.review.zh) : '';
     const positions = (m.positions || []);
@@ -252,24 +257,38 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     ].sort((a, b) => Date.parse(b.ts || 0) - Date.parse(a.ts || 0)).slice(0, 8);
     const logBlock = log.length ? `<div class="ap-log">${log.map(logRow).join('')}</div>` : `<div class="empty">${T('No trades yet.', '尚未成交。')}</div>`;
     modelHost.innerHTML = `
-      <div class="ap-mh"><b>${escapeHtml(label)}</b><span class="chip">${escapeHtml(m.promptVersion || '')}</span></div>
-      <div class="ap-metrics">${chips}</div>
-      ${review ? `<p class="ap-review">${escapeHtml(review)}</p>` : ''}
-      <div class="ap-sub">${T('Positions', '持仓')}</div>
-      ${posBlock}
-      <div class="ap-sub">${T('Recent activity', '近期动态')}</div>
-      ${logBlock}
+      <section class="ap-book-summary">
+        <div class="ap-book-id"><span>${escapeHtml(key)}</span><div><small>${T('SIMULATED MODEL', '模拟模型')}</small><h3>${escapeHtml(label)}</h3></div></div>
+        <div class="ap-book-equity ${cumPct >= 0 ? 'up' : 'down'}"><small>${T('MARKED EQUITY', '已估值净值')}</small><strong>${fmtUsd(m.equity)}</strong><b>${fmtPct(metrics.cumPct)}</b></div>
+        <div class="ap-book-status"><i></i>${escapeHtml(status)}<em>${escapeHtml(m.promptVersion || '')}</em></div>
+        <div class="ap-risk-rail">
+          <div><span>${T('MARKET EXPOSURE', '市场敞口')}</span><b>${fmtNum(exposure, 1)}%</b></div>
+          <i style="--risk:${exposure}%"><span></span></i>
+          <div class="ap-risk-cash"><span>${T('CASH RESERVE', '现金储备')}</span><b>${fmtNum(cashRatio, 1)}% · ${fmtUsd(m.cash)}</b></div>
+        </div>
+        ${review ? `<p class="ap-review"><b>${T('LATEST REVIEW', '最新复盘')}</b>${escapeHtml(review)}</p>` : ''}
+      </section>
+      <section class="ap-book-core">
+        <div class="ap-metrics">${chips}</div>
+        <div class="ap-book-pane-head"><b>${T('OPEN POSITIONS', '当前持仓')}</b><span>${positionCount} ${T('NAMES', '个标的')}</span></div>
+        <div class="ap-position-scroll">${posBlock}</div>
+      </section>
+      <section class="ap-book-activity">
+        <div class="ap-book-pane-head"><b>${T('EXECUTION TAPE', '执行记录')}</b><span>${Math.min(log.length, 8)} / 8</span></div>
+        ${logBlock}
+      </section>
     `;
   }
   function renderModels(models) {
     const container = $('apModels');
     const keys = Object.keys(models);
     container.replaceChildren();
-    keys.forEach((key) => {
+    keys.forEach((key, index) => {
       const modelHost = document.createElement('div');
-      modelHost.className = 'ap-model panel pad';
+      modelHost.className = 'ap-model panel';
+      modelHost.style.setProperty('--model-accent', colorFor(key, index));
       container.appendChild(modelHost);
-      renderModel(modelHost, labelFor(key), models[key]);
+      renderModel(modelHost, key, labelFor(key), models[key]);
     });
   }
 

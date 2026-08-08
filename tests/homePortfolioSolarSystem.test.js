@@ -8,6 +8,10 @@ const convoyCss = readFileSync('src/portfolio-convoy.css', 'utf8');
 const legacyCss = readFileSync('src/styles.css', 'utf8');
 
 describe('homepage AI portfolio solar system', () => {
+  it('does not draw a stray divider below the allocation and gravity-source headings', () => {
+    expect(convoyCss).not.toMatch(/\.portfolio-convoy::after/);
+  });
+
   it('maps the highest-weight pick to a sun and the remaining nine to planets', () => {
     expect(html).toContain('id="convoySolarSystem"');
     expect(solar).toContain("import * as THREE from 'three'");

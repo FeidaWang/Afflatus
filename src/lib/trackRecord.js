@@ -31,7 +31,10 @@ export function renderTrackRecordHTML(record, { T, fableIcon, exactLabel, logLim
     const icon = e.exact ? '⭐' : (e.ok ? '✓' : '✗');
     return `<span class="rlog ${cls}" title="${T(e.pick_en, e.pick_zh)}">${icon} ${T(e.label_en, e.label_zh)}</span>`;
   }).join('');
-  const titleText = title || { en: 'FABLE TRACK RECORD', zh: 'FABLE 历史战绩' };
+  const titleText = title || {
+    en: 'FABLE 5 MAX · 5.6 SOL ULTRA TRACK RECORD',
+    zh: 'FABLE 5 MAX · 5.6 SOL ULTRA 历史战绩',
+  };
   return (
     `<div class="rec-h"><span class="rec-t">${fableIcon} ${T(titleText.en, titleText.zh)}</span><span class="rec-since">${T('since', '自')} ${record.since || ''}</span></div>` +
     `<div class="rec-stats">` +

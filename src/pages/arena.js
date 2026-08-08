@@ -15,6 +15,7 @@
    For entertainment only — NOT investment advice.
    ============================================================ */
 import { buildProvenanceBadge } from '../lib/provenanceBadge.js';
+import { earningsTimingState } from '../lib/arenaEarningsState.js';
 import { BRIEFING_ACTION, shouldAcknowledgeBriefing } from '../lib/briefingAction.js';
 import { fetchJson } from '../lib/fetchJson.js';
 import { getLocale } from '../lib/localeStore.js';
@@ -44,7 +45,12 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
 
   // ---- state --------------------------------------------------
   const lang0 = getLocale('en');
-  const state = { lang: lang0, sentiment: 0, news: { date: null, items: [], aiPredictions: {}, loading: true }, lastUpdate: 0 };
+  const state = {
+    lang: lang0,
+    sentiment: 0,
+    news: { date: null, items: [], aiPredictions: {}, earningsWatch: null, loading: true },
+    lastUpdate: 0,
+  };
   const T = (en, zh) => state.lang === 'zh' ? zh : en;
   let briefingInvoker = null;
 
@@ -78,20 +84,31 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     if (main) main.textContent = stale ? T('LAST PUBLISHED BRIEFING', '最近一次盘前简报') : T('PRE-MARKET BRIEFING', '盘前简报');
     if (sub) sub.textContent = stale
       ? T(`Last published ${state.news.date || '—'} · historical review`, `最后发布于 ${state.news.date || '—'} · 仅供历史回看`)
-      : T('AI news + Fable research', 'AI 新闻 + Fable 研判');
+      : T('AI news + Fable · 5.6 Sol Ultra research', 'AI 新闻 + Fable · 5.6 Sol Ultra 研判');
     button.classList.toggle('is-stale', stale);
   }
 
-  function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = st.label; const sl = sentLabel(state.sentiment); const stale = newsFreshness().stale; $('sentChip').className = `chip ${stale ? 'closed' : sl.tone}`; $('sentTxt').textContent = stale ? T(`HISTORICAL · ${sl.label}`, `历史快照 · ${localizedSentiment(sl)}`) : localizedSentiment(sl); renderBriefingCta(); }
-  function renderCountdown() { const { wd, sec } = nyNow(), open = wd >= 1 && wd <= 5 && sec >= OPEN_S && sec < CLOSE_S; $('openCd').classList.toggle('open', open); $('cdLabel').textContent = open ? 'US MARKET CLOSES IN' : 'US MARKET OPENS IN'; $('cdClock').textContent = fmtDur(open ? CLOSE_S - sec : secsToNextOpen(wd, sec)); }
+  function localizedMarketStatus(stateName, fallback) {
+    const labels = {
+      open: ['Regular Session', '常规交易时段'],
+      pre: ['Pre-Market', '盘前交易'],
+      post: ['After Hours', '盘后交易'],
+      closed: ['Market Closed', '美股休市'],
+    };
+    const copy = labels[stateName] || [fallback, fallback];
+    return T(copy[0], copy[1]);
+  }
+  function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = localizedMarketStatus(st.state, st.label); const sl = sentLabel(state.sentiment); const stale = newsFreshness().stale; $('sentChip').className = `chip ${stale ? 'closed' : sl.tone}`; $('sentTxt').textContent = stale ? T(`HISTORICAL · ${sl.label}`, `历史快照 · ${localizedSentiment(sl)}`) : localizedSentiment(sl); renderBriefingCta(); }
+  function renderCountdown() { const { wd, sec } = nyNow(), open = wd >= 1 && wd <= 5 && sec >= OPEN_S && sec < CLOSE_S; $('openCd').classList.toggle('open', open); $('cdLabel').textContent = open ? T('US MARKET CLOSES IN', '距离美股收盘') : T('US MARKET OPENS IN', '距离美股开盘'); $('cdClock').textContent = fmtDur(open ? CLOSE_S - sec : secsToNextOpen(wd, sec)); }
   function renderNews() {
     const host = $('newsList'), n = state.news;
     const dateEl = $('newsDate');
-    if (n.date) {
+    if (dateEl && n.date) {
       const badge = buildProvenanceBadge({ updatedAt: n.generatedAt || n.date, lang: state.lang });
       dateEl.className = 'prov-badge prov-' + badge.tier;
       dateEl.textContent = badge.text;
-    } else { dateEl.className = ''; dateEl.textContent = ''; }
+    } else if (dateEl) { dateEl.className = ''; dateEl.textContent = ''; }
+    if (!host) return;
     if (n.loading) { host.innerHTML = `<div class="empty">${T('Loading digest…', '加载中…')}</div>`; return; }
     const stale = newsFreshness().stale;
     const staleNotice = stale
@@ -105,12 +122,102 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     const items = n.items.map((it) => {
       const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`));
       const title = escapeHtml(T(it.title_en || it.title || '', it.title_zh || it.title_en || ''));
-      const category = escapeHtml(it.category || 'note');
+      const category = escapeHtml(T(it.category || 'note', it.category_zh || it.category || '记录'));
       const url = safeExternalUrl(it.url);
       const body = `<div class="t1"><span class="cat">${icon[String(it.category || '').toLowerCase()] || '•'} ${category}</span><span class="sent ${s.tone}">${escapeHtml(localizedSentiment(s))}</span></div><div class="ti">${title}</div>`;
       return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer noopener">${body}</a>` : `<div class="news-item">${body}</div>`;
     }).join('');
     host.innerHTML = staleNotice + items;
+  }
+
+  function money(value, unit = 'USDm') {
+    if (!Number.isFinite(Number(value))) return '—';
+    const amount = Number(value);
+    if (unit === 'USDm' && Math.abs(amount) >= 1000) {
+      return `$${(amount / 1000).toFixed(amount >= 10_000 ? 1 : 2)}B`;
+    }
+    if (unit === 'USDm') return `$${amount.toFixed(amount >= 100 ? 0 : 1)}M`;
+    return `${amount.toLocaleString()} ${unit}`;
+  }
+
+  function renderEarningsClocks() {
+    document.querySelectorAll('[data-earnings-at]').forEach((clock) => {
+      const timing = earningsTimingState(clock.dataset.earningsAt);
+      if (timing.state === 'invalid') { clock.textContent = '—'; return; }
+      if (clock.dataset.earningsStatus === 'released' || timing.state === 'released') {
+        clock.textContent = T('RELEASED · DATA UPDATE PENDING', '已发布 · 数据待更新');
+        clock.closest('.earn-card')?.classList.add('is-released');
+        return;
+      }
+      clock.closest('.earn-card')?.classList.remove('is-released');
+      const totalSeconds = Math.floor(timing.remainingMs / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const clockTime = [hours, minutes, seconds].map((value) => String(value).padStart(2, '0')).join(':');
+      clock.textContent = state.lang === 'zh' ? `${days}天 ${clockTime}` : `${days}D ${clockTime}`;
+    });
+  }
+
+  function renderEstimateMetric(metric, titleEn, titleZh) {
+    if (!metric) return '';
+    const baseline = Number(metric.baseline);
+    const estimate = Number(metric.estimate);
+    const delta = Number.isFinite(baseline) && baseline !== 0 && Number.isFinite(estimate)
+      ? ((estimate / baseline) - 1) * 100
+      : null;
+    const deltaText = Number.isFinite(delta) ? `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%` : '—';
+    return `<div class="earn-metric">
+      <div class="earn-metric__head"><b>${escapeHtml(T(titleEn, titleZh))}</b><span>${escapeHtml(deltaText)}</span></div>
+      <div class="earn-compare">
+        <div><small>${escapeHtml(T(metric.baseline_en || 'BASE CASE', metric.baseline_zh || '基准情景'))}</small><strong>${escapeHtml(money(baseline, metric.unit))}</strong></div>
+        <i aria-hidden="true">→</i>
+        <div class="is-independent"><small>${escapeHtml(T(metric.estimate_en || 'INDEPENDENT', metric.estimate_zh || '独立预测'))}</small><strong>${escapeHtml(money(estimate, metric.unit))}</strong></div>
+      </div>
+    </div>`;
+  }
+
+  function renderEarnings() {
+    const host = $('earningsGrid');
+    const watch = state.news.earningsWatch;
+    if (!host) return;
+    const asOf = $('earningsAsOf');
+    const method = $('earningsMethod');
+    if (!watch || !Array.isArray(watch.events) || !watch.events.length) {
+      host.innerHTML = `<div class="empty">${T('No confirmed AI earnings event is currently published.', '当前尚未发布已确认的 AI 财报事件。')}</div>`;
+      if (asOf) asOf.textContent = '—';
+      if (method) method.textContent = '';
+      return;
+    }
+    if (asOf) asOf.textContent = `${T('RESEARCH CUT', '研究截点')} · ${watch.asOf || state.news.date || '—'}`;
+    if (method) method.textContent = T(watch.methodology_en || '', watch.methodology_zh || watch.methodology_en || '');
+    const events = [...watch.events].sort((a, b) => Date.parse(a.reportAt) - Date.parse(b.reportAt));
+    host.innerHTML = events.map((event, index) => {
+      const sources = (event.sources || []).map((source) => {
+        const url = safeExternalUrl(source.url);
+        if (!url) return '';
+        return `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer noopener">${escapeHtml(T(source.label_en || 'SOURCE', source.label_zh || source.label_en || '来源'))} ↗</a>`;
+      }).join('');
+      return `<article class="earn-card${index === 0 ? ' is-next' : ''}">
+        <header class="earn-card__head">
+          <div><span>${index === 0 ? T('NEXT VERIFIED EVENT', '下一场已确认财报') : T('ON DECK', '后续财报')}</span><h3>${escapeHtml(event.sym)} <small>${escapeHtml(T(event.company_en, event.company_zh || event.company_en))}</small></h3></div>
+          <div class="earn-clock" data-earnings-at="${escapeHtml(event.reportAt)}" data-earnings-status="${escapeHtml(event.status || 'scheduled')}">—</div>
+        </header>
+        <div class="earn-period"><span>${escapeHtml(T(event.period_en, event.period_zh || event.period_en))}</span><b>${escapeHtml(T(event.timing_en, event.timing_zh || event.timing_en))}</b></div>
+        <div class="earn-metrics">
+          ${renderEstimateMetric(event.revenue, 'REVENUE', '营收')}
+          ${renderEstimateMetric(event.adjustedEbitda, 'ADJUSTED EBITDA PROXY', '调整后 EBITDA 代理值')}
+        </div>
+        <p class="earn-formula"><b>${T('REPRODUCIBLE PROXY', '可复算代理公式')}</b>${escapeHtml(T(event.formula_en || '', event.formula_zh || event.formula_en || ''))}</p>
+        <div class="earn-reading">
+          <p><b>${T('INDEPENDENT READ', '独立判断')}</b>${escapeHtml(T(event.thesis_en, event.thesis_zh || event.thesis_en))}</p>
+          <p class="risk"><b>${T('WHAT BREAKS IT', '证伪条件')}</b>${escapeHtml(T(event.risk_en, event.risk_zh || event.risk_en))}</p>
+        </div>
+        <footer class="earn-sources">${sources}</footer>
+      </article>`;
+    }).join('');
+    renderEarningsClocks();
   }
 
   // ---- briefing (bilingual) -----------------------------------
@@ -126,7 +233,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
       const s = sentLabel(typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || ''} ${it.summary_en || ''}`));
       const title = escapeHtml(T(it.title_en || it.title || '', it.title_zh || it.title_en || ''));
       const sum = escapeHtml(T(it.summary_en || it.summary || '', it.summary_zh || it.summary_en || ''));
-      const category = escapeHtml(it.category || 'note');
+      const category = escapeHtml(T(it.category || 'note', it.category_zh || it.category || '记录'));
       const source = escapeHtml(it.source || '');
       const url = safeExternalUrl(it.url);
       const sourceLink = source && url ? `<a class="bf-src" href="${escapeHtml(url)}" target="_blank" rel="noreferrer noopener">${source} ↗</a>` : '';
@@ -139,7 +246,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
       ))}</div>`
       : '';
     const heading = freshness.stale ? T('Last Published Briefing', '最近一次盘前简报') : T('Pre-Market Briefing', '盘前简报');
-    return `<div class="bf-backdrop" id="bfBackdrop"></div><div class="bf-modal" role="dialog" aria-modal="true" aria-labelledby="bfHeading" aria-describedby="bfSummary" tabindex="-1" id="bfModal"><div class="bf-prog" id="bfProg" role="progressbar" aria-label="${T('Reading progress', '阅读进度')}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="bf-prog-fill" id="bfProgFill"></div></div><header class="bf-head"><div class="bf-barcode" aria-hidden="true"></div><div class="bf-htext"><p class="bf-kicker">TRAXUS//CVKM · ${T('DESK BRIEFING', '交易台简报')}</p><h2 class="bf-h" id="bfHeading">${heading}</h2><p class="bf-date" id="bfSummary">${n.date ? T('Snapshot', '快照') + ' · ' + escapeHtml(n.date) : T('awaiting first run', '等待首次生成')} · ${T('sentiment', '情绪')} <b class="${sl.tone}">${escapeHtml(localizedSentiment(sl))}</b></p></div><button class="bf-control bf-lang" id="bfLang" aria-label="${T('Switch to Chinese', 'Switch to English')}">${state.lang === 'zh' ? 'EN' : '中文'}</button><button class="bf-control bf-x" id="bfClose" aria-label="${T('Close briefing', '关闭简报')}">✕</button></header><div class="bf-body" id="bfBody" tabindex="0">${staleNotice}<div class="bf-warn" role="note"><b>⚠ ${T('NOT INVESTMENT ADVICE.', '非投资建议。')}</b> ${disclaimer}</div>${note ? `<p class="bf-note">${note}</p>` : ''}${items || `<div class="bf-empty">${T('No briefing has been published.', '尚未发布简报。')}</div>`}<div class="bf-end">— ${T('END OF BRIEFING', '简报结束')} —</div></div><footer class="bf-foot"><button class="bf-enter" id="bfEnter">${T('START EXPLORING ▶', '开始浏览 ▶')}</button></footer></div>`;
+    return `<div class="bf-backdrop" id="bfBackdrop"></div><div class="bf-modal" role="dialog" aria-modal="true" aria-labelledby="bfHeading" aria-describedby="bfSummary" tabindex="-1" id="bfModal"><div class="bf-prog" id="bfProg" role="progressbar" aria-label="${T('Reading progress', '阅读进度')}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="bf-prog-fill" id="bfProgFill"></div></div><header class="bf-head"><div class="bf-barcode" aria-hidden="true"></div><div class="bf-htext"><p class="bf-kicker">TRAXUS//CVKM · ${T('DESK BRIEFING', '交易台简报')}</p><h2 class="bf-h" id="bfHeading">${heading}</h2><p class="bf-date" id="bfSummary">${n.date ? T('Snapshot', '快照') + ' · ' + escapeHtml(n.date) : T('awaiting first run', '等待首次生成')} · ${T('sentiment', '情绪')} <b class="${sl.tone}">${escapeHtml(localizedSentiment(sl))}</b></p></div><button class="bf-control bf-lang" id="bfLang" aria-label="${T('Switch to Chinese', 'Switch to English')}">${state.lang === 'zh' ? 'EN' : '中文'}</button></header><div class="bf-body" id="bfBody" tabindex="0">${staleNotice}<div class="bf-warn" role="note"><b>⚠ ${T('NOT INVESTMENT ADVICE.', '非投资建议。')}</b> ${disclaimer}</div>${note ? `<p class="bf-note">${note}</p>` : ''}${items || `<div class="bf-empty">${T('No briefing has been published.', '尚未发布简报。')}</div>`}<div class="bf-end">— ${T('END OF BRIEFING', '简报结束')} —</div></div><footer class="bf-foot"><button class="bf-enter" id="bfEnter">${T('CLOSE BRIEFING · ENTER ARENA ▶', '关闭简报 · 进入竞技场 ▶')}</button></footer></div>`;
   }
   function openBriefing() {
     const host = $('briefing'); if (!host) return;
@@ -151,18 +258,17 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     const scrub = (cx) => { const r = prog.getBoundingClientRect(); body.scrollTop = Math.max(0, Math.min(1, (cx - r.left) / r.width)) * (body.scrollHeight - body.clientHeight); };
     let drag = false; prog.addEventListener('pointerdown', (e) => { drag = true; try { prog.setPointerCapture(e.pointerId); } catch {} scrub(e.clientX); }); prog.addEventListener('pointermove', (e) => { if (drag) scrub(e.clientX); }); prog.addEventListener('pointerup', () => { drag = false; });
     prog.addEventListener('keydown', (e) => { const max = body.scrollHeight - body.clientHeight; if (e.key === 'ArrowRight' || e.key === 'ArrowDown') body.scrollTop = Math.min(max, body.scrollTop + max * 0.1); if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') body.scrollTop = Math.max(0, body.scrollTop - max * 0.1); });
-    const close = (action) => {
-      if (shouldAcknowledgeBriefing(action)) ackBriefing();
+    const complete = () => {
+      if (shouldAcknowledgeBriefing(BRIEFING_ACTION.COMPLETE)) ackBriefing();
       host.hidden = true;
       try { document.body.style.overflow = ''; } catch {}
       if (briefingInvoker?.isConnected) briefingInvoker.focus();
     };
-    $('bfEnter').addEventListener('click', () => close(BRIEFING_ACTION.ENTER));
-    $('bfClose').addEventListener('click', () => close(BRIEFING_ACTION.DISMISS));
-    $('bfBackdrop').addEventListener('click', () => close(BRIEFING_ACTION.DISMISS));
+    $('bfEnter').addEventListener('click', complete);
+    $('bfBackdrop').addEventListener('click', complete);
     $('bfLang').addEventListener('click', () => { toggleLang(); openBriefing(); });
     host.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') close(BRIEFING_ACTION.DISMISS);
+      if (e.key === 'Escape') complete();
       if (e.key !== 'Tab') return;
       const focusable = [...host.querySelectorAll('button,[href],[tabindex]:not([tabindex="-1"])')]
         .filter((element) => !element.disabled && element.offsetParent !== null);
@@ -188,17 +294,17 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
 
   // ---- boot ---------------------------------------------------
   fetchJson('arena-news')
-    .then((data) => { const items = (data.items || []).map((it) => ({ ...it, sentiment: typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || it.title || ''} ${it.summary_en || it.summary || ''}`) })); state.news = { date: data.date || null, generatedAt: data.generatedAt || null, items, aiPredictions: data.aiPredictions || {}, disclaimer_en: data.disclaimer_en, disclaimer_zh: data.disclaimer_zh, predictionNote_en: data.predictionNote_en, predictionNote_zh: data.predictionNote_zh, loading: false }; state.sentiment = aggregateSentiment(items); state.lastUpdate = Date.now(); })
-    .catch(() => { state.news = { date: null, items: [], aiPredictions: {}, loading: false }; })
-    .finally(() => { renderNews(); renderStatus(); if (!EMBED && !newsFreshness().stale && !briefingAcked()) openBriefing(); });
+    .then((data) => { const items = (data.items || []).map((it) => ({ ...it, sentiment: typeof it.sentiment === 'number' ? it.sentiment : scoreText(`${it.title_en || it.title || ''} ${it.summary_en || it.summary || ''}`) })); state.news = { date: data.date || null, generatedAt: data.generatedAt || null, items, aiPredictions: data.aiPredictions || {}, earningsWatch: data.earningsWatch || null, disclaimer_en: data.disclaimer_en, disclaimer_zh: data.disclaimer_zh, predictionNote_en: data.predictionNote_en, predictionNote_zh: data.predictionNote_zh, loading: false }; state.sentiment = aggregateSentiment(items); state.lastUpdate = Date.now(); })
+    .catch(() => { state.news = { date: null, items: [], aiPredictions: {}, earningsWatch: null, loading: false }; })
+    .finally(() => { renderNews(); renderEarnings(); renderStatus(); if (!EMBED && !newsFreshness().stale && !briefingAcked()) openBriefing(); });
 
   const ob = $('openBriefBtn'); if (ob) ob.addEventListener('click', openBriefing);
   // language is owned by the shared i18n engine (.lang-toggle); arena re-renders on change
-  window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; renderStatus(); renderNews(); });
+  window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; renderStatus(); renderNews(); renderEarnings(); });
   if (EMBED) { document.body.classList.add('embed'); window.addEventListener('resize', postHeight); setInterval(postHeight, 1200); }
   initCursor();
-  renderStatus(); renderNews(); renderCountdown();
+  renderStatus(); renderNews(); renderEarnings(); renderCountdown();
   setInterval(renderStatus, 15000);
-  setInterval(renderCountdown, 1000);
+  setInterval(() => { renderCountdown(); renderEarningsClocks(); }, 1000);
   setTimeout(postHeight, 300); setTimeout(postHeight, 1500);
 })();

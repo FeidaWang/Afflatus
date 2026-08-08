@@ -258,30 +258,36 @@
     <div class="sec-label"><span class="zh" data-en="CAST YOUR CHART" data-zh="立　盘">CAST YOUR CHART</span></div>
     <div class="panel">
       <form class="form-grid" id="birthForm">
-        <div class="fld"><label for="bDate" data-en="Birth date" data-zh="出生日期">Birth date</label>
-          <input type="date" id="bDate" required min="1900-01-01" max="2100-12-31"></div>
-        <div class="fld"><label for="bHour" data-en="Hour (optional)" data-zh="时辰（可不填）">Hour (optional)</label>
-          <select id="bHour"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
-        <div class="fld"><label for="bGender" data-en="Gender (for luck cycles)" data-zh="性别（排大运用）">Gender (for luck cycles)</label>
-          <select id="bGender">
-            <option value="" data-en="Prefer not to say" data-zh="不填">Prefer not to say</option>
-            <option value="M" data-en="Male" data-zh="男">Male</option>
-            <option value="F" data-en="Female" data-zh="女">Female</option>
-          </select></div>
-        <div class="fld fld--city"><label for="bRegionSel" data-en="Birth region (optional, more accurate)" data-zh="出生地区（可不填，更精确）">Birth region (optional, more accurate)</label>
-          <select id="bRegionSel"><option value="" data-en="Unspecified" data-zh="不填">Unspecified</option></select></div>
-        <div class="fld fld--city"><label for="bCitySel" data-en="Birth city" data-zh="出生城市">Birth city</label>
-          <select id="bCitySel" disabled></select></div>
-        <div class="fld fld--check"><label for="bDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
-          <input type="checkbox" id="bDst" disabled></div>
-        <div class="fld-manual" id="bManualWrap" hidden>
-          <div class="fld"><label for="bTz" data-en="Birth timezone (optional, more accurate)" data-zh="出生地时区（可不填，更精确）">Birth timezone (optional, more accurate)</label>
-            <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
-          <div class="fld"><label for="bLat" data-en="Birthplace latitude (optional, rising sign)" data-zh="出生地纬度（可不填，升星座用）">Birthplace latitude (optional, rising sign)</label>
-            <input type="number" id="bLat" step="0.01" min="-90" max="90" placeholder="31.23"></div>
-          <div class="fld"><label for="bLon" data-en="Longitude (E+ / W−)" data-zh="经度（东正西负）">Longitude (E+ / W−)</label>
-            <input type="number" id="bLon" step="0.01" min="-180" max="180" placeholder="121.47"></div>
-        </div>
+        <fieldset class="form-cluster">
+          <legend data-en="1 · Birth basics" data-zh="1 · 出生信息">1 · Birth basics</legend>
+          <div class="fld"><label for="bDate" data-en="Birth date" data-zh="出生日期">Birth date</label>
+            <input type="date" id="bDate" required min="1900-01-01" max="2100-12-31"></div>
+          <div class="fld"><label for="bHour" data-en="Hour (optional)" data-zh="时辰（可不填）">Hour (optional)</label>
+            <select id="bHour"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+          <div class="fld fld--wide"><label for="bGender" data-en="Gender (for luck cycles)" data-zh="性别（排大运用）">Gender (for luck cycles)</label>
+            <select id="bGender">
+              <option value="" data-en="Prefer not to say" data-zh="不填">Prefer not to say</option>
+              <option value="M" data-en="Male" data-zh="男">Male</option>
+              <option value="F" data-en="Female" data-zh="女">Female</option>
+            </select></div>
+        </fieldset>
+        <fieldset class="form-cluster">
+          <legend data-en="2 · Location fine-tuning · optional" data-zh="2 · 地区校准 · 可不填">2 · Location fine-tuning · optional</legend>
+          <div class="fld fld--city"><label for="bRegionSel" data-en="Birth region" data-zh="出生地区">Birth region</label>
+            <select id="bRegionSel"><option value="" data-en="Unspecified" data-zh="不填">Unspecified</option></select></div>
+          <div class="fld fld--city"><label for="bCitySel" data-en="Birth city" data-zh="出生城市">Birth city</label>
+            <select id="bCitySel" disabled></select></div>
+          <div class="fld fld--check"><label for="bDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
+            <input type="checkbox" id="bDst" disabled></div>
+          <div class="fld-manual" id="bManualWrap" hidden>
+            <div class="fld"><label for="bTz" data-en="Birth timezone (optional, more accurate)" data-zh="出生地时区（可不填，更精确）">Birth timezone (optional, more accurate)</label>
+              <select id="bTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
+            <div class="fld"><label for="bLat" data-en="Birthplace latitude (optional, rising sign)" data-zh="出生地纬度（可不填，升星座用）">Birthplace latitude (optional, rising sign)</label>
+              <input type="number" id="bLat" step="0.01" min="-90" max="90" placeholder="31.23"></div>
+            <div class="fld"><label for="bLon" data-en="Longitude (E+ / W−)" data-zh="经度（东正西负）">Longitude (E+ / W−)</label>
+              <input type="number" id="bLon" step="0.01" min="-180" max="180" placeholder="121.47"></div>
+          </div>
+        </fieldset>
         <button class="btn" type="submit" data-en="Cast ◈" data-zh="起盘 ◈">Cast ◈</button>
       </form>
       <p class="form-note" data-en="Saved on this device only — nothing is uploaded. Solar-term boundaries are computed from real sun-position astronomy; hour unknown casts a three-pillar chart. Note: 早子 (00:xx) and 晚子 (23:xx) give different charts — a 23:xx birth rolls the day pillar to the next day. Timezone/DST matter most for the hour pillar (and, near midnight or a solar-term date, the day/month pillar) — pick yours if you know it." data-zh="生日只保存在本机，不上传。节气边界按真实太阳黄经推算；不填时辰则排三柱盘。注意：早子（00:xx）与晚子（23:xx）命盘不同——23 点出生的日柱要算到次日。时区/夏令时主要影响时柱（若接近午夜或节气交接日，也会影响日柱/月柱）——知道的话建议选择。">Saved on this device only — nothing is uploaded. Solar-term boundaries are computed from real sun-position astronomy; hour unknown casts a three-pillar chart. Note: 早子 (00:xx) and 晚子 (23:xx) give different charts — a 23:xx birth rolls the day pillar to the next day. Timezone/DST matter most for the hour pillar (and, near midnight or a solar-term date, the day/month pillar) — pick yours if you know it.</p>
@@ -363,22 +369,28 @@
       <div class="syn-book" id="synBook" hidden></div>
 
       <form class="syn-form" id="synForm">
-        <div class="fld"><label for="sName" data-en="Their name (optional, saved on this device only)" data-zh="对方称呼（可不填，仅存本机）">Their name (optional, saved on this device only)</label>
-          <input type="text" id="sName" maxlength="12" placeholder="TA"></div>
-        <div class="fld"><label for="sDate" data-en="Their birth date" data-zh="对方出生日期">Their birth date</label>
-          <input type="date" id="sDate" required min="1900-01-01" max="2100-12-31"></div>
-        <div class="fld"><label for="sHour" data-en="Their hour (optional)" data-zh="对方时辰（可不填）">Their hour (optional)</label>
-          <select id="sHour"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
-        <div class="fld fld--city"><label for="sRegionSel" data-en="Their birth region (optional)" data-zh="对方出生地区（可不填）">Their birth region (optional)</label>
-          <select id="sRegionSel"><option value="" data-en="Unspecified" data-zh="不填">Unspecified</option></select></div>
-        <div class="fld fld--city"><label for="sCitySel" data-en="Their birth city" data-zh="对方出生城市">Their birth city</label>
-          <select id="sCitySel" disabled></select></div>
-        <div class="fld fld--check"><label for="sDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
-          <input type="checkbox" id="sDst" disabled></div>
-        <div class="fld-manual" id="sManualWrap" hidden>
-          <div class="fld"><label for="sTz" data-en="Their timezone (optional)" data-zh="对方时区（可不填）">Their timezone (optional)</label>
-            <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
-        </div>
+        <fieldset class="form-cluster">
+          <legend data-en="1 · Their birth basics" data-zh="1 · 对方出生信息">1 · Their birth basics</legend>
+          <div class="fld fld--wide"><label for="sName" data-en="Their name (optional, saved on this device only)" data-zh="对方称呼（可不填，仅存本机）">Their name (optional, saved on this device only)</label>
+            <input type="text" id="sName" maxlength="12" placeholder="TA"></div>
+          <div class="fld"><label for="sDate" data-en="Their birth date" data-zh="对方出生日期">Their birth date</label>
+            <input type="date" id="sDate" required min="1900-01-01" max="2100-12-31"></div>
+          <div class="fld"><label for="sHour" data-en="Their hour (optional)" data-zh="对方时辰（可不填）">Their hour (optional)</label>
+            <select id="sHour"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
+        </fieldset>
+        <fieldset class="form-cluster">
+          <legend data-en="2 · Their location · optional" data-zh="2 · 对方地区 · 可不填">2 · Their location · optional</legend>
+          <div class="fld fld--city"><label for="sRegionSel" data-en="Their birth region" data-zh="对方出生地区">Their birth region</label>
+            <select id="sRegionSel"><option value="" data-en="Unspecified" data-zh="不填">Unspecified</option></select></div>
+          <div class="fld fld--city"><label for="sCitySel" data-en="Their birth city" data-zh="对方出生城市">Their birth city</label>
+            <select id="sCitySel" disabled></select></div>
+          <div class="fld fld--check"><label for="sDst" data-en="Daylight saving in effect" data-zh="当时实行夏令时">Daylight saving in effect</label>
+            <input type="checkbox" id="sDst" disabled></div>
+          <div class="fld-manual" id="sManualWrap" hidden>
+            <div class="fld"><label for="sTz" data-en="Their timezone (optional)" data-zh="对方时区（可不填）">Their timezone (optional)</label>
+              <select id="sTz"><option value="" data-en="Unspecified · treat as China" data-zh="不确定 · 按中国处理">Unspecified · treat as China</option></select></div>
+          </div>
+        </fieldset>
         <button class="btn btn--seal" type="submit" data-en="Interlock ❖" data-zh="合盘 ❖">Interlock ❖</button>
       </form>
       <p class="form-note" id="synHint" data-en="Cast your own chart above first — synastry needs both." data-zh="先在上方立好自己的盘——合盘需要两个人。">Cast your own chart above first — synastry needs both.</p>
@@ -463,30 +475,12 @@
     </div>
   </section>
 
-  <!-- ===== sixteen-type quick quiz (V21 Phase 4, expanded) ===== -->
+  <!-- ===== original sixteen-type preference explorer ===== -->
   <section class="sec" id="personaSec" aria-label="Sixteen-type personality quiz">
-    <div class="sec-label"><span class="zh" data-en="SIXTEEN TYPES · QUICK QUIZ" data-zh="十六型人格速测">SIXTEEN TYPES · QUICK QUIZ</span></div>
+    <div class="sec-label"><span class="zh" data-en="SIXTEEN TYPES · PREFERENCE EXPLORER" data-zh="十六型人格 · 偏好探索">SIXTEEN TYPES · PREFERENCE EXPLORER</span></div>
     <div class="panel">
       <div id="personaWrap"></div>
-      <p class="form-note" data-en="An original 32-question quiz in the public four-axis tradition, with playful compatibility notes. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only." data-zh="按公开的四轴传统自编的 32 题速测，附带娱乐性的合拍/易摩擦提示。与 Myers-Briggs Type Indicator®（Myers & Briggs 基金会商标）及 16personalities 无任何关联。结果只保存在本机。仅供娱乐。">An original 32-question quiz in the public four-axis tradition, with playful compatibility notes. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only.</p>
-    </div>
-  </section>
-
-  <!-- ===== logic quiz (IQ-style, entertainment only) ===== -->
-  <section class="sec" id="logicSec" aria-label="Logic puzzle quiz">
-    <div class="sec-label"><span class="zh" data-en="LOGIC & PATTERNS · QUICK QUIZ" data-zh="逻辑速测">LOGIC & PATTERNS · QUICK QUIZ</span></div>
-    <div class="panel">
-      <div id="logicWrap"></div>
-      <p class="form-note" data-en="An original 16-question puzzle set (sequences, analogies, odd-one-out, short logic). A fun brain-teaser, not a clinically validated or norm-referenced IQ test — no such claim is made here. Result stays on this device. Entertainment only." data-zh="原创 16 题趣味谜题（数列、类比、找不同、简单逻辑）。是好玩的脑力小测，不是经过临床验证或常模校准的智商测试，本页也不作此宣称。结果只保存在本机。仅供娱乐。">An original 16-question puzzle set (sequences, analogies, odd-one-out, short logic). A fun brain-teaser, not a clinically validated or norm-referenced IQ test — no such claim is made here. Result stays on this device. Entertainment only.</p>
-    </div>
-  </section>
-
-  <!-- ===== EQ scenario quiz (entertainment only) ===== -->
-  <section class="sec" id="eqSec" aria-label="Emotional intelligence scenario quiz">
-    <div class="sec-label"><span class="zh" data-en="EQ · SCENARIO QUIZ" data-zh="情商速测">EQ · SCENARIO QUIZ</span></div>
-    <div class="panel">
-      <div id="eqWrap"></div>
-      <p class="form-note" data-en="15 original everyday scenarios across five widely-discussed EQ dimensions (self-awareness, self-regulation, motivation, empathy, social skills). A reflective, entertainment-only quiz — not a validated psychometric instrument. Result stays on this device." data-zh="15 道原创生活情境题，覆盖五个常被讨论的情商维度（自我觉察、自我调节、内驱力、共情力、社交技巧）。是一次自我反思的娱乐小测，不是经过验证的心理测评工具。结果只保存在本机。">15 original everyday scenarios across five widely-discussed EQ dimensions (self-awareness, self-regulation, motivation, empathy, social skills). A reflective, entertainment-only quiz — not a validated psychometric instrument. Result stays on this device.</p>
+      <p class="form-note" data-en="48 original, bilingual statements map four broad preference pairs and twelve behavioural facets on continuous scales. Answer for your usual behaviour, not an ideal self. The four-letter result is a best-fit reflection prompt—not a diagnosis, fixed identity, hiring tool or substitute for a qualified assessment. This independent quiz is not affiliated with or endorsed by the Myers-Briggs Type Indicator® or 16Personalities; its result stays on this device." data-zh="48 道原创双语陈述题，以连续强度呈现四组宽泛偏好和十二个行为面向。请按平时真实状态作答，而不是理想中的自己。四字母结果只是帮助反思的「当前最贴近简写」，不是诊断、固定身份、招聘工具，也不能替代合格的专业测评。本测试为独立创作，与 Myers-Briggs Type Indicator® 或 16Personalities 无关联或背书；结果只保存在本机。">48 original, bilingual statements map four broad preference pairs and twelve behavioural facets on continuous scales. Answer for your usual behaviour, not an ideal self. The four-letter result is a best-fit reflection prompt—not a diagnosis, fixed identity, hiring tool or substitute for a qualified assessment. This independent quiz is not affiliated with or endorsed by the Myers-Briggs Type Indicator® or 16Personalities; its result stays on this device.</p>
     </div>
   </section>
 

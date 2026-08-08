@@ -28,8 +28,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   let synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5;
   let mingzaoRank, percentileOf, MINGZAO_DIST;
   let synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, relationshipScores, synastryZiwei;
-  let PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS;
-  let LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile;
+  let PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, AXIS_LETTERS, AXIS_META, FACET_META, RESPONSE_OPTIONS;
 
   let birthFeaturePromise;
   const loadBirthFeature = () => birthFeaturePromise || (birthFeaturePromise = import('../horoscope/birthFeature.js').then((feature) => {
@@ -64,10 +63,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   }));
 
   let quizFeaturePromise;
-  const loadQuizFeature = () => quizFeaturePromise || (quizFeaturePromise = import('../horoscope/quizFeature.js').then((feature) => {
+  const loadQuizFeature = () => quizFeaturePromise || (quizFeaturePromise = import('../lib/quizPersona.js').then((feature) => {
     ({
-      PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS,
-      LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile, renderRadar,
+      PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, AXIS_LETTERS, AXIS_META, FACET_META, RESPONSE_OPTIONS,
     } = feature);
     return feature;
   }));
@@ -215,7 +213,12 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // cities.js's header and bazi.js's CN_DST_WINDOWS); hand-setting
   // {utcOffset:8, dst:false} would silently skip that correction for
   // anyone born in it.
-  const { provinces, countries } = allRegions();
+  const { provinces, countries: allCountries } = allRegions();
+  // This edition deliberately keeps the overseas path focused on the site's
+  // Australia / New Zealand audience. Mainland-China provinces remain
+  // available; every other overseas country is omitted from both forms.
+  const allowedOverseas = new Set(['Australia', 'New Zealand']);
+  const countries = allCountries.filter((country) => allowedOverseas.has(country.key));
   const provinceKeys = new Set(provinces.map((p) => p.key));
   function wireRegionCityPicker(regionSelId, citySelId, tzSelId, latId, lonId) {
     const regionSel = $(regionSelId), citySel = $(citySelId), tzSel = $(tzSelId);
@@ -1323,172 +1326,132 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     });
   }
 
-  // ---- sixteen-type quick quiz (V21 Phase 4) --------------------------------
-  // In-page section (C5-evaluated: no ninth page). Quiz progress lives in
-  // memory; only the RESULT persists (localStorage). Re-renders in place on
-  // language toggle because renderPersona() reads state.lang at call time.
-  const PERSONA_KEY = 'afflatus-horo:persona';
-  const quiz = { idx: -1, answers: [] }; // idx -1 = not started
+  // ---- sixteen-type preference explorer -------------------------------------
+  // Progress stays in memory and only the scored profile persists. The v2 key
+  // intentionally leaves old binary-quiz results untouched: a 32-item forced
+  // choice score must not masquerade as this 48-item continuous profile.
+  const PERSONA_KEY = 'afflatus-horo:persona-v2';
+  const quiz = { idx: -1, answers: [] };
   const loadPersona = () => { try { return JSON.parse(localStorage.getItem(PERSONA_KEY)); } catch { return null; } };
+  const axisPct = (axis) => Number.isFinite(axis?.pctA) ? axis.pctA : Math.round((axis?.a || 0) / Math.max(1, (axis?.a || 0) + (axis?.b || 0)) * 100);
+  const bandLabel = (band) => ({
+    balanced: T('Close balance · context may move this axis', '接近平衡 · 情境可能改变这一轴'),
+    slight: T('Slight preference', '轻微偏好'),
+    clear: T('Clear preference', '清晰偏好'),
+    pronounced: T('Pronounced preference', '显著偏好'),
+  }[band] || T('Current preference', '当前偏好'));
+
+  function renderPersonaResult(prev) {
+    if (!prev || !Array.isArray(prev.axes)) return '';
+    const profile = PERSONA_TYPES[prev.type] || {
+      en: 'Context Explorer', zh: '情境探索者',
+      dEn: 'One or more preference pairs landed in an exact tie. The X is the honest result: this response set does not support choosing one letter on that axis.',
+      dZh: '至少一组偏好出现完全平分。X 才是诚实结果：这组回答不足以支持在该维度上选择其中一个字母。',
+    };
+    const balancedAxes = prev.axes.map((axis, index) => axis.balanced ? AXIS_META[index] : null).filter(Boolean);
+    const axisCards = prev.axes.map((axis, index) => {
+      const pctA = axisPct(axis);
+      const pctB = 100 - pctA;
+      const meta = AXIS_META[index];
+      const leadingLetter = pctA === 50 ? '↔' : pctA > 50 ? AXIS_LETTERS[index][0] : AXIS_LETTERS[index][1];
+      return `<article class="pq-axis-card">
+        <div class="pq-axis-head"><span>${T(meta.en, meta.zh)}</span><b>${leadingLetter} · ${Math.max(pctA, pctB)}%</b></div>
+        <div class="pq-axis-labels"><span>${AXIS_LETTERS[index][0]} · ${T(meta.firstEn, meta.firstZh)}</span><span>${T(meta.secondEn, meta.secondZh)} · ${AXIS_LETTERS[index][1]}</span></div>
+        <div class="pq-axis-bar" aria-label="${attr(`${pctA}% ${AXIS_LETTERS[index][0]}, ${pctB}% ${AXIS_LETTERS[index][1]}`)}"><i style="width:${pctA}%"></i><em style="left:${pctA}%"></em></div>
+        <p>${bandLabel(axis.band)}</p>
+      </article>`;
+    }).join('');
+    const facets = Array.isArray(prev.facets) ? prev.facets.map((facet) => {
+      const meta = FACET_META[facet.key];
+      if (!meta) return '';
+      const leaning = facet.leaning === 'first' ? T(meta.firstEn, meta.firstZh)
+        : facet.leaning === 'second' ? T(meta.secondEn, meta.secondZh)
+          : T('Context-balanced', '随情境平衡');
+      return `<div class="pq-facet">
+        <div class="pq-facet-copy"><span>${T(meta.firstEn, meta.firstZh)}</span><b>${leaning}</b><span>${T(meta.secondEn, meta.secondZh)}</span></div>
+        <div class="pq-facet-bar"><i style="left:${facet.pctFirst}%"></i></div>
+      </div>`;
+    }).join('') : '';
+    const contextNote = balancedAxes.length
+      ? T(`Your ${balancedAxes.map((meta) => meta.en).join(' and ')} responses sit near the middle. That is useful context sensitivity, not a failed result; revisit which side feels less effortful over time.`,
+        `你的${balancedAxes.map((meta) => meta.zh).join('、')}回答接近中线。这不是「测不准」，而是有价值的情境敏感性；可以继续观察长期使用哪一侧时更省力。`)
+      : T('None of the four axes landed in the close-balance zone this time. Still test the code against real situations instead of treating it as a fixed identity.', '本次四个维度都没有落在接近平衡区，但仍应把简写放回真实情境中核对，而不是当成固定身份。');
+    return `<div class="pq-result">
+      <div class="pq-result-kicker">${T('BEST-FIT SHORTHAND · NOT A VERDICT', '当前最贴近简写 · 不是定论')}</div>
+      <div class="pq-type">${prev.type}</div>
+      <div class="pq-name">${T(profile.en, profile.zh)}</div>
+      <p class="pq-desc">${T(profile.dEn, profile.dZh)}</p>
+      <div class="pq-axis-grid">${axisCards}</div>
+      ${facets ? `<details class="pq-facet-details"><summary>${T('Open the 12-facet fingerprint', '展开十二面向指纹')}</summary><div class="pq-facet-grid">${facets}</div></details>` : ''}
+      <div class="pq-reflection"><b>${T('Read the edges, not just the code', '读懂边界，不只看字母')}</b><p>${contextNote}</p><p>${T('A useful next step: notice one setting where you naturally use the opposite side. Flexibility is a skill; preference is only the route that currently feels more available.', '下一步可以观察：在哪一种场景里，你会自然使用相反偏好？灵活性是一种能力；偏好只代表眼下更容易调用的路径。')}</p></div>
+    </div>`;
+  }
+
   function renderPersona() {
     const wrap = $('personaWrap');
     if (!wrap) return;
-    if (quiz.idx === -1) { // start screen (+ previous result, if any)
+    if (quiz.idx === -1) {
       const prev = loadPersona();
-      const match = prev && PERSONA_MATCH[prev.type];
-      const prevHTML = prev && PERSONA_TYPES[prev.type] ? `
-        <div class="pq-result">
-          <div class="pq-type">${prev.type}</div>
-          <div class="pq-name">${T(PERSONA_TYPES[prev.type].en, PERSONA_TYPES[prev.type].zh)}</div>
-          ${PERSONA_FREQ[prev.type] ? `<p class="pq-desc pq-freq">${T(`~${PERSONA_FREQ[prev.type]}% of people share this type (published US estimates).`, `人群中约 ${PERSONA_FREQ[prev.type]}% 是这个类型（公开发表的美国样本估算）。`)}</p>` : ''}
-          <p class="pq-desc">${T(PERSONA_TYPES[prev.type].dEn, PERSONA_TYPES[prev.type].dZh)}</p>
-          ${prev.axes ? `<div class="pq-axes">${prev.axes.map((ax, k) => `
-            <div class="pq-ax"><span>${AXIS_LETTERS[k][0]}</span><span class="pq-ax-bar"><i style="width:${Math.round(ax.a / (ax.a + ax.b) * 100)}%"></i></span><span>${AXIS_LETTERS[k][1]}</span></div>`).join('')}</div>` : ''}
-          ${match ? `<div class="pq-compat">
-            <span class="pq-compat-good">${T('Vibes well with', '合得来')} <b>${match.match.join(' · ')}</b></span>
-            <span class="pq-compat-friction">${T('Tends to friction with', '容易碰摩擦')} <b>${match.friction}</b></span>
-          </div>` : ''}
-        </div>` : '';
-      wrap.innerHTML = `${prevHTML}
+      wrap.innerHTML = `${renderPersonaResult(prev)}
+        <div class="pq-primer">
+          <b>${T('Before you begin', '开始之前')}</b>
+          <span>${T('Choose what resembles your usual behaviour across ordinary weeks. “It depends” is a valid answer; there are no better letters.', '请选择更接近平常几周里真实行为的选项。「看情境」是有效答案，也不存在更优越的字母。')}</span>
+        </div>
         <div class="share-row">
-          <button class="btn" type="button" id="pqStart">${prev ? T('Retake the quiz', '重新测一次') : T(`Start · ${PERSONA_QUESTIONS.length} questions ≈ 4 min`, `开始 · ${PERSONA_QUESTIONS.length} 题约 4 分钟`)}</button>
+          <button class="btn" type="button" id="pqStart">${prev ? T('Retake · answers replace this profile', '重新测 · 新答案会覆盖本次画像') : T(`Start · ${PERSONA_QUESTIONS.length} statements ≈ 7–9 min`, `开始 · ${PERSONA_QUESTIONS.length} 题约 7–9 分钟`)}</button>
           ${prev ? `<button class="btn btn--seal" type="button" id="cardBtnPersona">${T('Save result card ⤓', '保存结果卡 ⤓')}</button>` : ''}
-          ${prev ? `<span class="share-tip">${T('Your previous result is above — retaking replaces it.', '上方是你上次的结果——重测会覆盖。')}</span>` : ''}
         </div>`;
       $('pqStart').addEventListener('click', () => { quiz.idx = 0; quiz.answers = []; renderPersona(); });
       const cardBtn = $('cardBtnPersona');
-      if (cardBtn) cardBtn.addEventListener('click', () => {
+      if (cardBtn && prev) cardBtn.addEventListener('click', () => {
         track('share_card_generated', { type: 'persona' });
+        const cardProfile = PERSONA_TYPES[prev.type] || { en: 'Context Explorer', zh: '情境探索者' };
         void saveShareCard('persona', {
           lang: state.lang,
           type: prev.type,
-          name: T(PERSONA_TYPES[prev.type].en, PERSONA_TYPES[prev.type].zh),
+          name: T(cardProfile.en, cardProfile.zh),
           axes: prev.axes,
           axisLetters: AXIS_LETTERS,
-          freqLine: PERSONA_FREQ[prev.type] ? T(`~${PERSONA_FREQ[prev.type]}% of people`, `人群占比约 ${PERSONA_FREQ[prev.type]}%`) : undefined,
+          freqLine: T('Best-fit preference shorthand · non-diagnostic', '当前最贴近偏好简写 · 非诊断'),
         }, 'afflatus-persona-card.png');
       });
       return;
     }
-    if (quiz.idx >= PERSONA_QUESTIONS.length) { // finished → score, persist, show
-      const r = scorePersona(quiz.answers);
-      if (r) { try { localStorage.setItem(PERSONA_KEY, JSON.stringify(r)); } catch {} }
+    if (quiz.idx >= PERSONA_QUESTIONS.length) {
+      const result = scorePersona(quiz.answers);
+      if (result) {
+        try { localStorage.setItem(PERSONA_KEY, JSON.stringify(result)); } catch {}
+        track('persona_quiz_completed', { version: 2, questions: PERSONA_QUESTIONS.length });
+      }
       quiz.idx = -1;
       renderPersona();
       return;
     }
-    const q = PERSONA_QUESTIONS[quiz.idx];
+    const item = PERSONA_QUESTIONS[quiz.idx];
+    const axis = AXIS_META[item.axis];
+    const facet = FACET_META[item.facet];
+    const selected = quiz.answers[quiz.idx];
+    const currentQuestion = quiz.idx + 1;
+    const progress = Math.round((currentQuestion / PERSONA_QUESTIONS.length) * 100);
     wrap.innerHTML = `
-      <div class="pq-progress"><i style="width:${Math.round(quiz.idx / PERSONA_QUESTIONS.length * 100)}%"></i></div>
-      <div class="pq-count">${quiz.idx + 1} / ${PERSONA_QUESTIONS.length}</div>
-      <div class="pq-q">${T(q.q[0], q.q[1])}</div>
-      <div class="pq-opts">
-        <button class="pq-opt" type="button" data-v="a">${T(q.a[0], q.a[1])}</button>
-        <button class="pq-opt" type="button" data-v="b">${T(q.b[0], q.b[1])}</button>
+      <div class="pq-progress" role="progressbar" aria-label="${T('Question progress', '答题进度')}" aria-valuemin="1" aria-valuemax="${PERSONA_QUESTIONS.length}" aria-valuenow="${currentQuestion}" aria-valuetext="${currentQuestion} / ${PERSONA_QUESTIONS.length}"><i style="width:${progress}%"></i></div>
+      <div class="pq-question-meta"><span>${currentQuestion} / ${PERSONA_QUESTIONS.length}</span><span>${T(axis.en, axis.zh)} · ${T(facet.firstEn, facet.firstZh)} ↔ ${T(facet.secondEn, facet.secondZh)}</span></div>
+      <div class="pq-q" id="pqPrompt">${T(item.q[0], item.q[1])}</div>
+      <div class="pq-scale" role="group" aria-labelledby="pqPrompt">
+        ${RESPONSE_OPTIONS.map((option) => `<button class="pq-scale-opt${selected === option.value ? ' is-selected' : ''}" type="button" data-v="${option.value}" aria-pressed="${selected === option.value}"><b>${option.value}</b><span>${T(option.en, option.zh)}</span></button>`).join('')}
       </div>
-      <div class="share-row">${quiz.idx > 0 ? `<button class="btn" type="button" id="pqBack">${T('← Back', '← 上一题')}</button>` : ''}</div>`;
-    wrap.querySelectorAll('.pq-opt').forEach((btn) => btn.addEventListener('click', () => {
-      quiz.answers[quiz.idx] = btn.dataset.v;
-      quiz.idx++;
+      <div class="pq-scale-poles" aria-hidden="true"><span>${T('Less like me', '较不像我')}</span><span>${T('More like me', '更像我')}</span></div>
+      <div class="share-row">${quiz.idx > 0 ? `<button class="btn" type="button" id="pqBack">${T('← Back', '← 上一题')}</button>` : ''}<button class="btn pq-cancel" type="button" id="pqCancel">${T('Save nothing & exit', '不保存并退出')}</button></div>`;
+    wrap.querySelectorAll('.pq-scale-opt').forEach((button) => button.addEventListener('click', () => {
+      quiz.answers[quiz.idx] = Number(button.dataset.v);
+      quiz.idx += 1;
       renderPersona();
     }));
     const back = $('pqBack');
-    if (back) back.addEventListener('click', () => { quiz.idx--; renderPersona(); });
+    if (back) back.addEventListener('click', () => { quiz.idx -= 1; renderPersona(); });
+    $('pqCancel').addEventListener('click', () => { quiz.idx = -1; quiz.answers = []; renderPersona(); });
   }
 
-  // ---- logic & EQ quizzes (V23 MBTI-expansion follow-up) --------------------
-  // Same in-page, result-only-persists shape as the MBTI quiz above, but both
-  // questions offer index-based options rather than persona's fixed a/b, so
-  // they share one small generic runner instead of duplicating the state
-  // machine twice more.
-  function makeIndexQuiz({ wrapId, storageKey, questions, score, startLabel, renderResult, resultButtons, timed }) {
-    const st = { idx: -1, answers: [], timer: 0, deadline: 0 };
-    const load = () => { try { return JSON.parse(localStorage.getItem(storageKey)); } catch { return null; } };
-    const stopTimer = () => { if (st.timer) { clearInterval(st.timer); st.timer = 0; } };
-    function render() {
-      const wrap = $(wrapId);
-      if (!wrap) return;
-      stopTimer();
-      if (st.idx === -1) {
-        const prev = load();
-        wrap.innerHTML = `${prev ? renderResult(prev) : ''}
-          <div class="share-row">
-            <button class="btn" type="button" id="${wrapId}Start">${prev ? T('Retake the quiz', '重新测一次') : startLabel()}</button>
-            ${prev && resultButtons ? resultButtons(prev) : ''}
-            ${prev ? `<span class="share-tip">${T('Your previous result is above — retaking replaces it.', '上方是你上次的结果——重测会覆盖。')}</span>` : ''}
-          </div>`;
-        $(`${wrapId}Start`).addEventListener('click', () => { st.idx = 0; st.answers = []; render(); });
-        if (resultButtons && load()) wrap.querySelectorAll('[data-quiz-share]').forEach((b) => b.addEventListener('click', () => shareQuizCard(b.dataset.quizShare, load())));
-        return;
-      }
-      if (st.idx >= questions.length) {
-        const r = score(st.answers);
-        if (r) { try { localStorage.setItem(storageKey, JSON.stringify(r)); } catch {} }
-        st.idx = -1;
-        render();
-        return;
-      }
-      const q = questions[st.idx];
-      // U3: per-question countdown for the timed (logic/IQ) quiz — harder
-      // items carry more seconds (q.t); running out records null (= wrong)
-      // and auto-advances. No back button in timed mode: revisiting an
-      // already-seen timed item would defeat the clock.
-      const timedSec = timed && q.t ? q.t : 0;
-      wrap.innerHTML = `
-        <div class="pq-progress"><i style="width:${Math.round(st.idx / questions.length * 100)}%"></i></div>
-        <div class="pq-count">${st.idx + 1} / ${questions.length}${timedSec ? ` <span class="pq-clock" id="${wrapId}Clock">${timedSec}s</span>` : ''}</div>
-        ${timedSec ? `<div class="pq-timebar"><i id="${wrapId}Timebar" style="width:100%"></i></div>` : ''}
-        <div class="pq-q">${T(q.q[0], q.q[1])}</div>
-        <div class="pq-opts">${q.opts.map((o, i) => `<button class="pq-opt" type="button" data-v="${i}">${T(o[0], o[1])}</button>`).join('')}</div>
-        <div class="share-row">${!timed && st.idx > 0 ? `<button class="btn" type="button" id="${wrapId}Back">${T('← Back', '← 上一题')}</button>` : ''}</div>`;
-      const advance = (v) => { stopTimer(); st.answers[st.idx] = v; st.idx++; render(); };
-      wrap.querySelectorAll('.pq-opt').forEach((btn) => btn.addEventListener('click', () => advance(Number(btn.dataset.v))));
-      if (timedSec) {
-        st.deadline = Date.now() + timedSec * 1000;
-        const clock = $(`${wrapId}Clock`), bar = $(`${wrapId}Timebar`);
-        st.timer = setInterval(() => {
-          const left = st.deadline - Date.now();
-          if (left <= 0) { advance(null); return; }
-          if (clock) clock.textContent = `${Math.ceil(left / 1000)}s`;
-          if (bar) bar.style.width = `${Math.max(0, (left / (timedSec * 1000)) * 100)}%`;
-          if (clock && left < 6000) clock.classList.add('pq-clock--low');
-        }, 250);
-      }
-      const back = $(`${wrapId}Back`);
-      if (back) back.addEventListener('click', () => { st.idx--; render(); });
-    }
-    render();
-    return render;
-  }
-
-  // U3: quiz share cards (logic + EQ) — pre-resolved strings only.
-  function shareQuizCard(kind, r) {
-    track('share_card_generated', { type: kind });
-    if (kind === 'logic') {
-      void saveShareCard('quiz', {
-        lang: state.lang,
-        headZh: '思维速测', headEn: 'LOGIC SPRINT',
-        score: r.funScore, ringFrac: (r.funScore - 70) / 80,
-        scoreLabel: T('for-fun score', '娱乐分'),
-        band: T(r.band.en, r.band.zh),
-        pctLine: T(`Beats ~${iqPercentile(r.funScore)}% on the N(100,15) model`, `按正态模型 N(100,15) 约超过 ${iqPercentile(r.funScore)}% 的人`),
-        caveat: T('Timed original puzzle quiz — not a clinically normed IQ instrument.', '限时原创谜题速测——非临床标准化智商测验。'),
-      }, 'afflatus-logic-card.png');
-    } else if (kind === 'eq') {
-      void saveShareCard('quiz', {
-        lang: state.lang,
-        headZh: '情商风格', headEn: 'EQ STYLE',
-        score: r.overall, ringFrac: r.overall / 100,
-        scoreLabel: T('EQ-style score', '情商风格分'),
-        band: T('Five-domain self-read', '五维自评画像'),
-        pctLine: T(`Higher than ~${eqPercentile(r.overall)}% on a self-report model`, `按自评分布模型约高于 ${eqPercentile(r.overall)}% 的人`),
-        caveat: T('Self-report style read (Goleman five domains) — not a clinical assessment.', '五维自评风格测验（戈尔曼框架）——非临床测评。'),
-      }, 'afflatus-eq-card.png');
-    }
-  }
-
-  let renderLogicQuiz = () => {};
-  let renderEqQuiz = () => {};
   let quizzesReady = false;
   let quizMountPromise = null;
   async function mountQuizExperiences() {
@@ -1497,35 +1460,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (quizzesReady) return;
       quizzesReady = true;
       renderPersona();
-      renderLogicQuiz = makeIndexQuiz({
-    wrapId: 'logicWrap', storageKey: 'afflatus-horo:logic', questions: LOGIC_QUESTIONS, score: scoreLogic,
-    timed: true, // U3: per-question countdown (q.t seconds, difficulty-scaled)
-    startLabel: () => T(`Start · ${LOGIC_QUESTIONS.length} timed questions ≈ 8 min`, `开始 · ${LOGIC_QUESTIONS.length} 题限时作答约 8 分钟`),
-    renderResult: (r) => `
-      <div class="pq-result">
-        <div class="pq-type">${r.correct}/${r.total}</div>
-        <div class="pq-name">${T(r.band.en, r.band.zh)}</div>
-        <p class="pq-desc">${T(r.band.dEn, r.band.dZh)}</p>
-        <p class="pq-desc">${T(`For-fun score: ${r.funScore} — beats ~${iqPercentile(r.funScore)}% of people on the conventional N(100,15) model.${r.timeouts ? ` ${r.timeouts} question(s) timed out.` : ''}`,
-          `娱乐分数：${r.funScore}——按正态模型 N(100,15) 约超过 ${iqPercentile(r.funScore)}% 的人。${r.timeouts ? `有 ${r.timeouts} 题超时未答。` : ''}`)}</p>
-        <p class="pq-desc">${T('Timed original puzzles — not a clinically normed IQ instrument.', '限时原创谜题——非临床标准化智商测验，仅供娱乐。')}</p>
-      </div>`,
-    resultButtons: () => `<button class="btn btn--seal" type="button" data-quiz-share="logic">${T('Save result card ⤓', '保存结果卡 ⤓')}</button>`,
-      });
-
-      renderEqQuiz = makeIndexQuiz({
-    wrapId: 'eqWrap', storageKey: 'afflatus-horo:eq', questions: EQ_QUESTIONS, score: scoreEQ,
-    startLabel: () => T(`Start · ${EQ_QUESTIONS.length} questions ≈ 5 min`, `开始 · ${EQ_QUESTIONS.length} 题约 5 分钟`),
-    renderResult: (r) => `
-      <div class="pq-result">
-        <div class="pq-type">${r.overall}</div>
-        <div class="pq-name">${T('Overall EQ-style score', '综合情商风格分')}</div>
-        <p class="pq-desc">${T(`Higher than ~${eqPercentile(r.overall)}% of people on a self-report model — self-rated EQ runs generous, hence the shifted baseline.`,
-          `按自评分布模型约高于 ${eqPercentile(r.overall)}% 的人——自评情商普遍偏高，基线已相应右移。`)}</p>
-        <div class="l2-radar">${renderRadar(r.dims.map((d) => ({ key: d.key, label: T(d.en, d.zh), value: d.value })))}</div>
-      </div>`,
-    resultButtons: () => `<button class="btn btn--seal" type="button" data-quiz-share="eq">${T('Save result card ⤓', '保存结果卡 ⤓')}</button>`,
-      });
     });
     return quizMountPromise;
   }
@@ -1533,7 +1467,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // Quizzes sit well below the chart tools. Prefetch shortly before they
   // enter view, with focus/pointer fallbacks for keyboard and fast-scroll
   // users. The initial Horoscope route no longer evaluates quiz data.
-  const quizSections = ['personaSec', 'logicSec', 'eqSec'].map($).filter(Boolean);
+  const quizSections = ['personaSec'].map($).filter(Boolean);
   if ('IntersectionObserver' in window) {
     const quizObserver = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
@@ -1737,7 +1671,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   window.addEventListener('afflatus-lang', (e) => {
     state.lang = e.detail === 'zh' ? 'zh' : 'en';
     renderMine(); renderSyn(); renderBook();
-    if (quizzesReady) { renderPersona(); renderLogicQuiz(); renderEqQuiz(); }
+    if (quizzesReady) renderPersona();
   });
   window.addEventListener('pagehide', () => {
     // pagehide also fires when the document enters the back/forward cache.

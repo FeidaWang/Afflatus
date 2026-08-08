@@ -22,17 +22,6 @@
     background-size: 137px 137px, 211px 211px, 293px 293px, 100% 100%, 100% 100%, 100% 100%;
   }
 
-  .portfolio-convoy::after {
-    content: '';
-    position: absolute;
-    inset: 8% 0 auto;
-    z-index: -1;
-    height: 1px;
-    pointer-events: none;
-    background: linear-gradient(90deg, transparent, rgba(154,229,255,.26) 18%, rgba(232,179,128,.24) 52%, rgba(154,229,255,.18) 78%, transparent);
-    box-shadow: 0 0 34px rgba(154,229,255,.12);
-  }
-
   .portfolio-intro,
   .portfolio-convoy > .footnote,
   .convoy-shell {

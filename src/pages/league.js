@@ -107,10 +107,10 @@ import { getLocale } from '../lib/localeStore.js';
     host.innerHTML = visibleSeries.map((s) => {
       const tbd = isTBD(s);
       const done = !!s.result;
-      const opusLine = (s.opus && !tbd) ? `<div class="opus">${FABLE_ICON} <b>Fable</b> · ${outcomeLabel(s, s.opus)} · ${Math.round(s.conf * 100)}%<span class="orsn">${T(s.reason_en, s.reason_zh)}</span></div>` : (tbd ? '' : `<div class="opus dim">${FABLE_ICON} ${T('Call pending exact schedule confirmation', '待官方具体时间确认后给出研判')}</div>`);
+      const opusLine = (s.opus && !tbd) ? `<div class="opus">${FABLE_ICON} <b>Fable 5 Max · 5.6 Sol Ultra</b> · ${outcomeLabel(s, s.opus)} · ${Math.round(s.conf * 100)}%<span class="orsn">${T(s.reason_en, s.reason_zh)}</span></div>` : (tbd ? '' : `<div class="opus dim">${FABLE_ICON} ${T('Fable 5 Max · 5.6 Sol Ultra call pending exact schedule confirmation', 'Fable 5 Max · 5.6 Sol Ultra 待官方具体时间确认后给出研判')}</div>`);
       const oddsHtml = !tbd && !done ? renderOdds(s) : '';
-      const opScore = (s.opusScore && !tbd && !done) ? `<div class="scratch opscore" data-key="score:${s.id}"><div class="reveal">${FABLE_ICON} <span data-en="FABLE SERIES SCORE" data-zh="FABLE 比分预测">FABLE SERIES SCORE</span> · <b>${teamLogo(s.home)} ${s.opusScore} ${teamLogo(s.away)}</b></div></div>` : '';
-      const resultLine = done ? `<div class="resline">${T('FINAL', '终局')} · <b>${teamName(s, 'home')} ${s.result.home}–${s.result.away} ${teamName(s, 'away')}</b>${s.opus ? ` · ${T('Fable called', 'Fable 预测')} ${s.opus === (s.result.home > s.result.away ? 'home' : 'away') ? '✓' : '✗'}` : ''}</div>` : '';
+      const opScore = (s.opusScore && !tbd && !done) ? `<div class="scratch opscore" data-key="score:${s.id}"><div class="reveal">${FABLE_ICON} <span data-en="FABLE 5 MAX · 5.6 SOL ULTRA SERIES SCORE" data-zh="FABLE 5 MAX · 5.6 SOL ULTRA 比分预测">FABLE 5 MAX · 5.6 SOL ULTRA SERIES SCORE</span> · <b>${teamLogo(s.home)} ${s.opusScore} ${teamLogo(s.away)}</b></div></div>` : '';
+      const resultLine = done ? `<div class="resline">${T('FINAL', '终局')} · <b>${teamName(s, 'home')} ${s.result.home}–${s.result.away} ${teamName(s, 'away')}</b>${s.opus ? ` · ${T('Fable 5 Max · 5.6 Sol Ultra called', 'Fable 5 Max · 5.6 Sol Ultra 预测')} ${s.opus === (s.result.home > s.result.away ? 'home' : 'away') ? '✓' : '✗'}` : ''}</div>` : '';
       const homeTeam = `<div class="team-d">${teamLogo(s.home)}<span class="nm">${teamName(s, 'home')}</span></div>`;
       const awayTeam = `<div class="team-d">${teamLogo(s.away)}<span class="nm">${teamName(s, 'away')}</span></div>`;
       const vsBlock = `<div class="team-vs"><b>VS</b></div>`;

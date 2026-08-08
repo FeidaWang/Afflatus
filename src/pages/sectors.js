@@ -10,19 +10,59 @@ let destroyed = false;
 
 const byId = (id) => document.getElementById(id);
 
+function createGraphDetailPortal(story, host) {
+  if (!story || !host) return () => {};
+
+  // The detail panel used to live inside the sticky canvas stacking context.
+  // Story cards sit in a later, higher stacking context, so they could cover the
+  // panel regardless of its local z-index. Keep it in the story, but portal it
+  // beside the sticky scene so the panel and cards share one z-index hierarchy.
+  story.appendChild(host);
+
+  const sync = () => {
+    const open = !host.hidden;
+    story.toggleAttribute('data-detail-open', open);
+    host.setAttribute('aria-hidden', String(!open));
+  };
+  const mutationObserver = typeof MutationObserver === 'function'
+    ? new MutationObserver(sync)
+    : null;
+  mutationObserver?.observe(host, { attributes: true, attributeFilter: ['hidden'] });
+
+  const visibilityObserver = typeof IntersectionObserver === 'function'
+    ? new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting && !host.hidden) {
+        host.hidden = true;
+        sync();
+      }
+    }, { threshold: 0 })
+    : null;
+  visibilityObserver?.observe(story);
+  sync();
+
+  return () => {
+    mutationObserver?.disconnect();
+    visibilityObserver?.disconnect();
+    story.removeAttribute('data-detail-open');
+  };
+}
+
 const dataController = createSectorsDataController();
 const destroyChrome = initSectorsPageChrome();
 const destroyStory = initSectorsStoryController();
+const destroyGraphDetailPortal = createGraphDetailPortal(
+  byId('storyGraphSection'),
+  byId('mwDetail'),
+);
 const rivalry = initSectorsRivalryController({
   k3: byId('rivalryK3'),
   cost: byId('rivalryCost'),
+  deepSeek: byId('rivalryDeepSeek'),
   labs: byId('rivalryLabs'),
   event: byId('rivalryEvent'),
   transmission: byId('rivalryTransmission'),
   equities: byId('rivalryEquities'),
-  letter: byId('rivalryLetter'),
   theses: byId('rivalryTheses'),
-  sources: byId('rivalrySources'),
 });
 
 let graphObserver = null;
@@ -146,6 +186,7 @@ addEventListener('pagehide', (event) => {
   graph?.destroy();
   rivalry.destroy();
   destroyStory();
+  destroyGraphDetailPortal();
   destroyChrome();
   removeEventListener('afflatus-lang', onLanguage);
 });

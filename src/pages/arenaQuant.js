@@ -1,5 +1,5 @@
 import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
-import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantModel.js';
+import { assessHistoryCoverage, orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantModel.js';
 
 (() => {
   'use strict';
@@ -14,6 +14,7 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
     config: null,
     result: null,
     histories: null,
+    coverage: null,
     running: false,
     chartObserver: null,
   };
@@ -80,9 +81,10 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
 
   function renderUniverse() {
     if (!state.base) return;
-    $('qmUniverse').innerHTML = state.base.universe.map((asset) => (
-      `<span><b>${escapeHtml(asset.sym)}</b><small>${escapeHtml(asset.sector)}</small></span>`
-    )).join('');
+    $('qmUniverse').innerHTML = state.base.universe.map((asset) => {
+      const identity = `${asset.name} · ${asset.sector}`;
+      return `<span title="${escapeHtml(identity)}" aria-label="${escapeHtml(`${asset.sym} — ${identity}`)}"><b>${escapeHtml(asset.sym)}</b><small>${escapeHtml(asset.name)}</small><em>${escapeHtml(asset.sector)}</em></span>`;
+    }).join('');
     $('qmVersion').textContent = `${state.base.id} · v${state.base.version}`;
     $('qmAsOf').textContent = state.base.updated;
     $('qmCommit').textContent = state.base.provenance?.commit || '—';
@@ -139,22 +141,46 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
       <tr class="qm-cash-row"><td><span>—</span><b>CASH</b><small>${T('regime reserve', '状态储备')}</small></td><td>—</td><td>—</td><td>—</td><td>—</td><td><div class="qm-weight"><i style="--w:${model.cash * 100}%"></i><b>${pct(model.cash)}</b></div></td></tr>`;
   }
 
-  function factorCell(value) {
-    const width = Math.min(100, Math.abs(value) / 3 * 100);
-    const direction = value >= 0 ? 'positive' : 'negative';
-    return `<div class="qm-factor ${direction}"><i style="--f:${width}%"></i><span>${value >= 0 ? '+' : ''}${num(value)}</span></div>`;
-  }
-
-  function renderFactors() {
-    $('qmFactors').innerHTML = state.result.model.factorRows.map((row) => `
-      <tr>
-        <td><b>${escapeHtml(row.sym)}</b></td>
-        <td>${factorCell(row.factors.momentum)}</td>
-        <td>${factorCell(row.factors.trend)}</td>
-        <td>${factorCell(row.factors.resilience)}</td>
-        <td>${factorCell(row.factors.lowVol)}</td>
-        <td><b>${num(row.score)}</b></td>
-      </tr>`).join('');
+  function renderJudgment() {
+    const host = $('qmJudgment');
+    if (!host || !state.result) return;
+    const { model, backtest } = state.result;
+    const positions = model.positions || [];
+    const leaders = positions.slice(0, 3).map((position) => position.sym);
+    const topWeight = positions[0]?.weight || 0;
+    const relative = Number(backtest.metrics?.totalReturn || 0) - Number(backtest.benchmarkReturn || 0);
+    const drawdown = Number(backtest.metrics?.maxDrawdown || 0);
+    const available = state.coverage?.assetAvailable ?? state.config?.universe?.length ?? 0;
+    const total = state.coverage?.assetTotal ?? state.base?.universe?.length ?? available;
+    const missing = Math.max(0, total - available);
+    const regime = String(model.regime?.id || 'unknown').replace(/[-_]/g, ' ');
+    const positioning = leaders.length
+      ? T(
+        `${regime.toUpperCase()} permits ${pct(model.invested, 0)} gross exposure. The constrained leaders are ${leaders.join(', ')}; the decision is selective participation, not a blanket AI-beta bet.`,
+        `${regime.toUpperCase()} 状态允许 ${pct(model.invested, 0)} 的总敞口。约束后领先标的是 ${leaders.join('、')}；当前判断是选择性参与，而不是无差别押注 AI 贝塔。`,
+      )
+      : T(
+        `${regime.toUpperCase()} produces no qualifying risk allocation. Cash is the result, not a missing recommendation.`,
+        `${regime.toUpperCase()} 状态下没有标的通过风险门槛。空仓是模型结论，不是漏掉了推荐。`,
+      );
+    const challenge = T(
+      `The run is ${relative >= 0 ? 'ahead of' : 'behind'} ${state.base.benchmark} by ${pct(Math.abs(relative))} in this test window, with ${pct(drawdown)} maximum drawdown and ${num(model.portfolioBeta)} beta. A reversal in the current leaders or a volatility jump would invalidate the present exposure faster than a strong headline would confirm it.`,
+      `本次窗口相对 ${state.base.benchmark}${relative >= 0 ? '领先' : '落后'} ${pct(Math.abs(relative))}，最大回撤为 ${pct(drawdown)}，组合贝塔为 ${num(model.portfolioBeta)}。若当前领涨标的反转或波动率跳升，现有敞口会先被证伪；单条利好新闻不能证明观点成立。`,
+    );
+    const reflection = T(
+      `${available}/${total} assets cleared the ${state.base.minimumHistory}-session history gate${missing ? `; ${missing} were excluded rather than backfilled` : ''}. This is one survivorship-sensitive, parameter-dependent window. The model can rank completed bars; it cannot see private order books, customer concentration changes or tomorrow's policy shock.`,
+      `${available}/${total} 个标的通过 ${state.base.minimumHistory} 个交易日的历史门槛${missing ? `；另有 ${missing} 个被排除而没有伪造补齐` : ''}。这仍是一个对样本存续与参数敏感的单一窗口。模型能排序已完成的行情，却看不到私有订单、客户集中度变化和明天的政策冲击。`,
+    );
+    const cards = [
+      [T('POSITIONING CALL', '仓位判断'), positioning, `${leaders.join(' · ') || 'CASH'} · ${pct(topWeight)} ${T('top weight', '最高权重')}`],
+      [T('WHAT BREAKS THE VIEW', '观点证伪条件'), challenge, `${state.base.benchmark} ${relative >= 0 ? '+' : '−'}${pct(Math.abs(relative))} · β ${num(model.portfolioBeta)}`],
+      [T('MODEL REFLECTION', '模型反思'), reflection, `${available}/${total} ${T('histories usable', '份历史可用')}`],
+    ];
+    host.innerHTML = cards.map(([title, copy, evidence], index) => `
+      <article class="qm-judgment-card qm-judgment-card--${index + 1}">
+        <span>0${index + 1}</span><h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(copy)}</p><small>${escapeHtml(evidence)}</small>
+      </article>`).join('');
   }
 
   function drawChart() {
@@ -233,7 +259,7 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
   function renderResult() {
     renderMetrics();
     renderAllocations();
-    renderFactors();
+    renderJudgment();
     $('qmResult').hidden = false;
     $('qmEmpty').hidden = true;
     $('qmExport').disabled = false;
@@ -280,11 +306,16 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
           .reverse();
       } catch (error) { failures.push({ symbol, error }); }
     });
-    if (!histories[config.benchmark]) throw failures.find((failure) => failure.symbol === config.benchmark)?.error || new Error('Benchmark unavailable');
-    const available = config.universe.filter((asset) => (histories[asset.sym] || []).length >= config.minimumHistory);
+    const coverage = assessHistoryCoverage(symbols, histories, config.minimumHistory, failures);
+    const failedSymbols = new Set(coverage.failures.map((failure) => failure.symbol));
+    if (failedSymbols.has(config.benchmark)) {
+      const benchmarkFailure = coverage.failures.find((failure) => failure.symbol === config.benchmark);
+      throw benchmarkFailure?.error || new Error(`${config.benchmark} has ${benchmarkFailure?.observations || 0}/${config.minimumHistory} required sessions`);
+    }
+    const available = config.universe.filter((asset) => !failedSymbols.has(asset.sym));
     if (available.length < 2) throw failures[0]?.error || new Error('Insufficient model histories');
     config.universe = available;
-    return { histories, failures };
+    return { histories, ...coverage };
   }
 
   async function compile() {
@@ -298,15 +329,29 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
       state.config = controlConfig();
       const loaded = await loadHistories(state.config);
       state.histories = loaded.histories;
+      state.coverage = {
+        assetAvailable: state.config.universe.length,
+        assetTotal: state.base.universe.length,
+        plannedAvailable: loaded.coveredSymbols.length,
+        plannedTotal: loaded.plannedSymbols.length,
+        failures: loaded.failures.map((failure) => failure.symbol),
+      };
       setStatus('loading', 'WALK-FORWARD · scoring factors and applying constraints', '滚动回测 · 计算因子并执行硬约束');
       await new Promise((resolve) => requestAnimationFrame(resolve));
       state.result = runQuantExperiment(state.histories, state.config);
       const record = saveIteration();
       renderResult();
-      const degraded = loaded.failures.length > 0;
-      setStatus(degraded ? 'partial' : 'ready',
-        `${record.id} COMPILED · ${state.config.universe.length}/${state.base.universe.length} assets · no orders routed`,
-        `${record.id} 编译完成 · ${state.config.universe.length}/${state.base.universe.length} 个标的 · 未发送订单`);
+      const ready = loaded.complete
+        && loaded.failures.length === 0
+        && loaded.coveredSymbols.length === loaded.plannedSymbols.length;
+      const failedText = loaded.failures.map((failure) => failure.symbol).join(', ');
+      setStatus(ready ? 'ready' : 'partial',
+        ready
+          ? `${record.id} READY · ${loaded.coveredSymbols.length}/${loaded.plannedSymbols.length} planned histories · no orders routed`
+          : `${record.id} PARTIAL · ${loaded.coveredSymbols.length}/${loaded.plannedSymbols.length} planned histories · failed ${failedText || 'coverage gate'}`,
+        ready
+          ? `${record.id} 就绪 · ${loaded.coveredSymbols.length}/${loaded.plannedSymbols.length} 份计划历史齐备 · 未发送订单`
+          : `${record.id} 部分完成 · ${loaded.coveredSymbols.length}/${loaded.plannedSymbols.length} 份计划历史 · 失败 ${failedText || '覆盖门槛'}`);
     } catch (error) {
       const gated = error instanceof JsonDataError && error.status === 403;
       setStatus('error',

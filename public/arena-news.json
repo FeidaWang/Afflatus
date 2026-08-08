@@ -1,54 +1,217 @@
 {
   "date": "2026-08-07",
-  "generatedAt": "2026-08-08T02:44:17Z",
+  "generatedAt": "2026-08-08T10:43:52Z",
   "lang_default": "en",
   "priceNote_en": "Weekend audit snapshot. Prices are verified regular-session closes from the production market-data proxy: Aug 7 close as price and Aug 6 close as prevClose. They are not pre-market or live quotes.",
   "priceNote_zh": "周末审计快照。价格来自生产行情代理核实的常规交易时段收盘价：price 为 8 月 7 日收盘，prevClose 为 8 月 6 日收盘；并非盘前或实时行情。",
-  "disclaimer_en": "This briefing is an entertainment and research record for a paper-trading game, not investment advice. Verify every price and source independently before making a financial decision.",
-  "disclaimer_zh": "本简报是模拟交易游戏的娱乐与研究记录，不构成投资建议。做出任何财务决定前，请独立核实价格与来源。",
-  "predictionNote_en": "This archive was completed after Friday's trading windows closed. No directional prediction or trade candidate was recreated with hindsight; the record contains only sourced news and verified closing prices.",
-  "predictionNote_zh": "本档案在周五交易窗口结束后补齐。系统没有利用后见信息补造方向预测或交易候选，只记录有来源的新闻与经核实的收盘价。",
+  "disclaimer_en": "This briefing is an entertainment and research record for a paper-trading game, not investment advice. Verify every price, source and assumption independently before making a financial decision.",
+  "disclaimer_zh": "本简报是模拟交易游戏的娱乐与研究记录，不构成投资建议。做出任何财务决定前，请独立核实价格、来源与假设。",
+  "predictionNote_en": "Daily research was completed across macro policy, memory and storage, optical networking, AI-factory capex and earnings. Because this archive was completed after Friday's trading windows, no directional call or order was recreated with hindsight; the sourced research still informs the next-session watchlist and risk scenarios.",
+  "predictionNote_zh": "本交易日已完成宏观政策、内存与存储、光互连、AI 工厂资本开支及财报研究。由于档案在周五交易窗口结束后补齐，系统没有事后补造方向判断或订单；但有来源的研究仍会进入下一交易日观察池和风险情景。",
+  "researchCoverage": {
+    "cutoff": "2026-08-07T08:30:00-04:00",
+    "lanes": [
+      "macro and policy",
+      "AI memory and storage",
+      "optical networking",
+      "AI-factory capital expenditure",
+      "public-company earnings"
+    ],
+    "method_en": "Archive research uses only material published by the stated 08:30 ET cutoff. Primary company or government sources are preferred; an empty trade board does not waive the research requirement.",
+    "method_zh": "本档案仅使用美东 08:30 截点前已发布的材料，并优先采用公司或政府一手来源；交易候选为空并不免除每日研究义务。"
+  },
   "prices": {
-    "NVDA": {
-      "price": 223.96001,
-      "prevClose": 218.99001
-    },
-    "MU": {
-      "price": 877.57001,
-      "prevClose": 881.46997
-    },
-    "AVGO": {
-      "price": 427.76001,
-      "prevClose": 420.57001
-    },
-    "TSM": {
-      "price": 420.040009,
-      "prevClose": 418.20001
-    },
-    "AMD": {
-      "price": 483.35999,
-      "prevClose": 489.28
-    },
-    "SMH": {
-      "price": 582.70001,
-      "prevClose": 571.47998
-    }
+    "NVDA": { "price": 223.96001, "prevClose": 218.99001 },
+    "MU": { "price": 877.57001, "prevClose": 881.46997 },
+    "AVGO": { "price": 427.76001, "prevClose": 420.57001 },
+    "TSM": { "price": 420.040009, "prevClose": 418.20001 },
+    "AMD": { "price": 483.35999, "prevClose": 489.28 },
+    "SMH": { "price": 582.70001, "prevClose": 571.47998 }
   },
   "items": [
     {
       "category": "Macro",
+      "category_zh": "宏观",
       "title_en": "July payrolls contract and prior months are revised lower",
       "title_zh": "7 月非农转为负增长，前两月数据同步下修",
-      "summary_en": "The Bureau of Labor Statistics reported that July payrolls fell 23,000 and May-June payrolls were revised down by a combined 103,000. Unemployment was 4.1%, participation 61.4% and average hourly earnings growth 3.2% year over year. The mix points to weaker labor demand without turning one release into a retrospective trading signal.",
-      "summary_zh": "美国劳工统计局公布，7 月非农就业减少 2.3 万人，5 月与 6 月合计下修 10.3 万人；失业率为 4.1%，劳动参与率 61.4%，平均时薪同比增长 3.2%。这组数据指向劳动力需求转弱，但系统不会把一次发布事后包装成交易信号。",
+      "summary_en": "The Bureau of Labor Statistics reported that July payrolls fell 23,000 and May-June payrolls were revised down by a combined 103,000. Unemployment was 4.1%, participation 61.4% and average hourly earnings growth 3.2% year over year. The mix weakens the demand backdrop for high-duration AI equities, but one release is not a trading instruction.",
+      "summary_zh": "美国劳工统计局公布，7 月非农就业减少 2.3 万人，5 月与 6 月合计下修 10.3 万人；失业率为 4.1%，劳动参与率 61.4%，平均时薪同比增长 3.2%。这会削弱高久期 AI 股票的需求背景，但单次数据并不是交易指令。",
       "source": "U.S. Bureau of Labor Statistics",
       "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
-      "tickers": [
-        "SPY",
-        "QQQ",
-        "SMH"
-      ]
+      "sentiment": -0.35,
+      "tickers": ["SPY", "QQQ", "SMH"]
+    },
+    {
+      "category": "Memory",
+      "category_zh": "存储",
+      "title_en": "SK hynix and Sandisk publish the first open HBF specification",
+      "title_zh": "SK 海力士与闪迪发布首个开放 HBF 规范",
+      "summary_en": "The companies disclosed an OCP-oriented High Bandwidth Flash specification with capacity up to 512GB, bandwidth up to 3.0TB/s and UCIe connectivity. The investable read is that inference is broadening the memory bottleneck from HBM alone to a tiered HBM-HBF-SSD hierarchy; standards adoption and mass-production timing remain the proof points.",
+      "summary_zh": "双方公布面向 OCP 的高带宽闪存规范，容量最高 512GB、带宽最高 3.0TB/s，并采用 UCIe 互连。可投资的核心判断是：推理负载正把内存瓶颈从单一 HBM 扩展为 HBM—HBF—SSD 分层体系；标准采用率与量产节奏仍是关键验证点。",
+      "source": "SK hynix Newsroom",
+      "url": "https://news.skhynix.com/en/hbf-at-fms-2026/",
+      "sentiment": 0.4,
+      "tickers": ["SKHY", "SNDK"]
+    },
+    {
+      "category": "AI Infrastructure",
+      "category_zh": "AI 基础设施",
+      "title_en": "NAVER, NVIDIA and Brookfield plan a 200MW sovereign AI factory",
+      "title_zh": "NAVER、英伟达与布鲁克菲尔德规划 200MW 主权 AI 工厂",
+      "summary_en": "The proposed Korea buildout would expand from 55MW to 200MW by 2028 and pairs NVIDIA's planned $1 billion investment with a nonbinding Brookfield financing term sheet of up to $9 billion. It supports full-stack AI-factory demand, but the financing condition and long delivery horizon mean announced capacity should not be treated as booked revenue.",
+      "summary_zh": "该韩国项目计划到 2028 年把 55MW 扩至 200MW，并由英伟达拟投资 10 亿美元、布鲁克菲尔德提供最高 90 亿美元的非约束性融资意向。它强化了全栈 AI 工厂需求，但融资条件与漫长交付周期意味着公布的容量不能直接视为已确认收入。",
+      "source": "NVIDIA Newsroom",
+      "url": "https://nvidianews.nvidia.com/news/naver-nvidia-and-brookfield-to-expand-koreas-national-ai-factory-infrastructure-buildout",
+      "sentiment": 0.35,
+      "tickers": ["NVDA"]
+    },
+    {
+      "category": "Optical Networking",
+      "category_zh": "光互连",
+      "title_en": "Applied Optoelectronics starts a 400,000-square-foot 800G and 1.6T expansion",
+      "title_zh": "应用光电启动约 40 万平方英尺的 800G 与 1.6T 扩产",
+      "summary_en": "AAOI began construction on two Pearland properties to scale advanced optical-transceiver production. This is concrete evidence that optical data movement remains an AI-cluster bottleneck; it is also a capital-execution test because capacity must arrive with customer qualification, yield and diversified demand.",
+      "summary_zh": "应用光电已在 Pearland 两处物业开工，以扩大先进光模块产能。这是光互连仍属 AI 集群瓶颈的实质证据；同时也是资本执行力考验，因为新增产能必须同时满足客户认证、良率提升与需求多元化。",
+      "source": "Applied Optoelectronics Investor Relations",
+      "url": "https://investors.ao-inc.com/news-releases/news-release-details/aoi-begins-expansion-pearland-manufacturing-campus-scale-800g",
+      "sentiment": 0.3,
+      "tickers": ["AAOI"]
+    },
+    {
+      "category": "Earnings",
+      "category_zh": "财报",
+      "title_en": "Lumentum's next print will test whether AI-optics growth can keep converting into margin",
+      "title_zh": "朗美通下一份财报将检验 AI 光学增长能否继续转化为利润率",
+      "summary_en": "After Q3 revenue reached $808.4 million, up 90% year over year, Lumentum guided Q4 revenue to $960 million-$1.01 billion and non-GAAP operating margin to 35%-36%. The setup is strong but expectations now demand both volume and mix: revenue without sustained margin expansion would be a lower-quality beat.",
+      "summary_zh": "朗美通第三财季营收达到 8.084 亿美元、同比增长 90%，并指引第四财季营收 9.60 亿至 10.10 亿美元、非 GAAP 营业利润率 35%—36%。基本面强劲，但预期已同时要求销量与产品组合兑现；只有收入增长、利润率却无法维持扩张，将属于质量较低的超预期。",
+      "source": "Lumentum Investor Relations",
+      "url": "https://investor.lumentum.com/financial-news-releases/news-details/2026/Lumentum-Announces-Third-Quarter-of-Fiscal-Year-2026-Financial-Results/default.aspx",
+      "sentiment": 0.35,
+      "tickers": ["LITE"]
+    },
+    {
+      "category": "Earnings Calendar",
+      "category_zh": "财报日历",
+      "title_en": "NVIDIA confirms its Aug. 26 Q2 FY2027 results window",
+      "title_zh": "英伟达确认 8 月 26 日发布 2027 财年第二季度业绩",
+      "summary_en": "NVIDIA will publish results at approximately 1:20 p.m. PT and hold its call at 2 p.m. PT. The company previously guided revenue to $91.0 billion plus or minus 2%, with no China data-center compute revenue assumed; the decisive comparison is not simply a beat, but whether data-center mix and forward capacity support the next guide without margin erosion.",
+      "summary_zh": "英伟达预计在太平洋时间 13:20 左右发布业绩，并于 14:00 举行电话会。公司此前指引营收为 910 亿美元、上下浮动 2%，且未计入中国数据中心计算收入；真正关键的不只是是否超预期，而是数据中心产品组合与远期产能能否在不侵蚀利润率的情况下支撑下一季指引。",
+      "source": "NVIDIA Investor Relations",
+      "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Sets-Conference-Call-for-Second-Quarter-Financial-Results/default.aspx",
+      "sentiment": 0.2,
+      "tickers": ["NVDA", "SMH"]
     }
   ],
+  "earningsWatch": {
+    "asOf": "2026-08-08",
+    "methodology_en": "Revenue baselines use company guidance midpoints. Every adjusted-EBITDA figure below is a site-calculated proxy, never company guidance or analyst consensus. LITE proxy = revenue × a site-derived EBITDA margin; NVIDIA proxy = revenue × non-GAAP gross margin − non-GAAP operating expense + estimated D&A. Exact arithmetic is printed on each card. Independent figures are scenarios, not investment advice.",
+    "methodology_zh": "营收基准采用公司指引中点。下方所有调整后 EBITDA 数字均为本站计算的代理值，绝非公司指引或分析师一致预期。朗美通代理值＝营收×本站推导的 EBITDA 利润率；英伟达代理值＝营收×非 GAAP 毛利率－非 GAAP 营业费用＋估算折旧摊销。每张卡均公开具体算式。独立数字仅为情景预测，不构成投资建议。",
+    "events": [
+      {
+        "sym": "LITE",
+        "company_en": "Lumentum",
+        "company_zh": "朗美通",
+      "period_en": "Q4 + FY2026",
+      "period_zh": "2026 财年第四季度及全年",
+      "status": "scheduled",
+      "reportAt": "2026-08-11T17:00:00-04:00",
+      "timing_en": "Results after close · call 5:00 PM ET",
+      "timing_zh": "盘后发布 · 美东 17:00 电话会",
+      "formula_en": "Base: $985m × 36.31% site-derived Q3 EBITDA proxy margin = $357.7m. Independent: $1,004m × 38.35% scenario margin = $385.0m. The 36.31% is a site-derived proxy, not a company-reported EBITDA margin.",
+      "formula_zh": "基准：9.85 亿美元×本站推导的第三财季 EBITDA 代理利润率 36.31%＝3.577 亿美元。独立情景：10.04 亿美元×情景利润率 38.35%＝3.85 亿美元。36.31% 是本站推导的代理值，并非公司披露的 EBITDA 利润率。",
+        "revenue": {
+          "baseline": 985,
+          "estimate": 1004,
+          "unit": "USDm",
+          "baseline_en": "Company guide midpoint",
+          "baseline_zh": "公司指引中点",
+          "estimate_en": "Independent scenario",
+          "estimate_zh": "独立情景"
+        },
+        "adjustedEbitda": {
+          "baseline": 357.7,
+          "estimate": 385,
+          "unit": "USDm",
+        "baseline_en": "Site-derived proxy",
+        "baseline_zh": "本站推导代理值",
+        "estimate_en": "Independent proxy",
+        "estimate_zh": "独立代理值"
+        },
+        "thesis_en": "AI-cloud optics demand and the Q3 step-up in operating leverage justify a revenue case near the top of guidance and modest further EBITDA-margin expansion. The more important signal is quality of mix across laser chips, scale-across components, OCS and early CPO—not the headline beat alone.",
+        "thesis_zh": "AI 云光学需求与第三财季经营杠杆跃升，使营收靠近指引上沿、EBITDA 利润率小幅再扩张成为合理情景。比单纯超预期更重要的是激光芯片、横向互连组件、OCS 与早期 CPO 的收入质量。",
+        "risk_en": "A slower cloud qualification cycle, weaker high-margin laser-chip mix or integration costs could leave revenue healthy while EBITDA misses the scenario.",
+        "risk_zh": "云客户认证放缓、高毛利激光芯片占比下降或整合成本上升，都可能造成营收仍强但 EBITDA 低于情景预测。",
+        "sources": [
+        {
+          "label_en": "Official reporting date",
+          "label_zh": "官方财报日期",
+          "url": "https://investor.lumentum.com/financial-news-releases/news-details/2026/Lumentum-Announces-Reporting-Date-for-Fourth-Quarter-and-Fiscal-Year-2026-Results/default.aspx",
+          "primary": true
+        },
+        {
+          "label_en": "SEC-filed Q3 results and Q4 guide",
+          "label_zh": "向 SEC 提交的第三财季业绩与第四财季指引",
+          "url": "https://www.sec.gov/Archives/edgar/data/1633978/000162828026030530/lite_ex991xq3fy26.htm",
+          "primary": true
+        }
+        ]
+      },
+      {
+        "sym": "NVDA",
+        "company_en": "NVIDIA",
+        "company_zh": "英伟达",
+      "period_en": "Q2 FY2027",
+      "period_zh": "2027 财年第二季度",
+      "status": "scheduled",
+      "reportAt": "2026-08-26T16:20:00-04:00",
+      "timing_en": "Results approx. 4:20 PM ET · call 5:00 PM ET",
+      "timing_zh": "预计美东 16:20 发布 · 17:00 电话会",
+      "formula_en": "Base: $91.0bn × 75.0% − $8.3bn non-GAAP opex + $1.10bn estimated D&A = $61.05bn. Independent: $92.4bn × 75.2% − $8.3bn + $1.015bn estimated D&A = $62.20bn.",
+      "formula_zh": "基准：910 亿美元×75.0%－83 亿美元非 GAAP 营业费用＋11.0 亿美元估算折旧摊销＝610.5 亿美元。独立情景：924 亿美元×75.2%－83 亿美元＋10.15 亿美元估算折旧摊销＝622.0 亿美元。",
+        "revenue": {
+          "baseline": 91000,
+          "estimate": 92400,
+          "unit": "USDm",
+          "baseline_en": "Company guide midpoint",
+          "baseline_zh": "公司指引中点",
+          "estimate_en": "Independent scenario",
+          "estimate_zh": "独立情景"
+        },
+        "adjustedEbitda": {
+          "baseline": 61050,
+          "estimate": 62200,
+          "unit": "USDm",
+          "baseline_en": "Guide-derived proxy",
+          "baseline_zh": "按指引推算的代理值",
+          "estimate_en": "Independent proxy",
+          "estimate_zh": "独立代理值"
+        },
+        "thesis_en": "The base case assumes data-center demand keeps the quarter above the revenue midpoint while gross margin stays near 75%. The independent upside is intentionally small: at NVIDIA's scale, supply timing, mix and the next-quarter guide matter more than extrapolating another extreme beat.",
+        "thesis_zh": "基准情景假设数据中心需求推动本季营收高于指引中点，同时毛利率维持在 75% 左右。独立上行情景被刻意控制得较小：在英伟达当前体量下，供给节奏、产品组合与下一季指引比继续外推极端超预期更重要。",
+        "risk_en": "The guide assumes no China data-center compute revenue. Product-transition timing, customer concentration, power constraints or a lower forward guide could outweigh a backward-looking quarterly beat.",
+        "risk_zh": "现有指引未计入中国数据中心计算收入。产品换代节奏、客户集中度、电力约束或偏弱的下一季指引，都可能压过本季度业绩超预期的影响。",
+        "sources": [
+        {
+          "label_en": "Official reporting date",
+          "label_zh": "官方财报日期",
+          "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Sets-Conference-Call-for-Second-Quarter-Financial-Results/default.aspx",
+          "primary": true
+        },
+        {
+          "label_en": "Q1 results and Q2 guide",
+          "label_zh": "第一财季业绩与第二财季指引",
+          "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+          "primary": true
+        },
+        {
+          "label_en": "SEC-filed Q1 Form 10-Q",
+          "label_zh": "向 SEC 提交的第一财季 10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+          "primary": true
+        }
+        ]
+      }
+    ]
+  },
   "aiPredictions": {}
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  assessHistoryCoverage,
   buildPortfolioModel,
   computeFactorRows,
   maxDrawdown,
@@ -53,6 +54,37 @@ describe('Arena QF-01 factor engine', () => {
       benchmark: 'SPY',
       universe: [{ sym: 'NVDA' }, { sym: 'SPY' }, { sym: 'NVDA' }, { sym: 'AVGO' }],
     })).toEqual(['SPY', 'NVDA', 'AVGO']);
+  });
+
+  it('counts every planned history below the 130-session gate as a failure', () => {
+    const coverage = assessHistoryCoverage(
+      ['SPY', 'AAA', 'BBB'],
+      { SPY: history({ count: 250 }), AAA: history({ count: 129 }), BBB: history({ count: 130 }) },
+      130,
+    );
+    expect(coverage.coveredSymbols).toEqual(['SPY', 'BBB']);
+    expect(coverage.failures).toMatchObject([
+      { symbol: 'AAA', reason: 'insufficient-history', observations: 129, minimumHistory: 130 },
+    ]);
+    expect(coverage.complete).toBe(false);
+  });
+
+  it('marks coverage complete only when every planned symbol is present and no fetch failed', () => {
+    const complete = assessHistoryCoverage(
+      ['SPY', 'AAA'],
+      { SPY: history({ count: 130 }), AAA: history({ count: 130 }) },
+      130,
+    );
+    expect(complete.complete).toBe(true);
+
+    const failed = assessHistoryCoverage(
+      ['SPY', 'AAA'],
+      { SPY: history({ count: 130 }), AAA: history({ count: 130 }) },
+      130,
+      [{ symbol: 'AAA', reason: 'fetch-failed' }],
+    );
+    expect(failed.complete).toBe(false);
+    expect(failed.failures.map((failure) => failure.symbol)).toEqual(['AAA']);
   });
 
   it('winsorizes cross-sectional z-scores and handles a flat cross-section', () => {

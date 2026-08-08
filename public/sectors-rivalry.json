@@ -1,73 +1,11 @@
 {
-  "schemaVersion": "2026-07-29",
-  "updated": "2026-07-29T23:20:00+10:00",
-  "asOf": "29 Jul 2026",
+  "schemaVersion": "2026-08-08",
+  "updated": "2026-08-08T14:30:00+10:00",
+  "asOf": "8 Aug 2026",
   "editorialNote": {
     "en": "Scenario analysis, not a price target or recommendation. Multiples are Afflatus fair-value bands for comparing business models; they are not live market quotes.",
     "zh": "情景分析，不是目标价或投资建议。估值倍数是 Afflatus 用来比较商业模式的合理区间，并非实时行情。"
   },
-  "sources": [
-    {
-      "label": "FeidaWang/Kimi-K3 fork",
-      "url": "https://github.com/FeidaWang/Kimi-K3",
-      "kind": "primary"
-    },
-    {
-      "label": "MoonshotAI/Kimi-K3 upstream",
-      "url": "https://github.com/MoonshotAI/Kimi-K3",
-      "kind": "primary"
-    },
-    {
-      "label": "Kimi K3 technical report",
-      "url": "https://arxiv.org/abs/2607.24653",
-      "kind": "primary"
-    },
-    {
-      "label": "Open Weights and American AI Leadership",
-      "url": "https://images.nvidia.com/pdf/Open-Weights-and-American-AI-Leadership.pdf",
-      "kind": "primary"
-    },
-    {
-      "label": "Microsoft-hosted open-weights statement",
-      "url": "https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/",
-      "kind": "primary"
-    },
-    {
-      "label": "AP · global AI-stock de-risking, 16 Jul",
-      "url": "https://apnews.com/article/stock-markets-iran-inflation-oil-e1c646be279423406586c67c79e738e4",
-      "kind": "reported"
-    },
-    {
-      "label": "CNN · K3 repricing session, 17 Jul",
-      "url": "https://ktvz.com/money/cnn-business-consumer/2026/07/17/us-stock-futures-asian-markets-down-on-concerns-over-chinese-ai-advances/",
-      "kind": "reported"
-    },
-    {
-      "label": "AP · Chinese-model adoption, 26 Jul",
-      "url": "https://apnews.com/article/china-ai-model-us-kimi-deepseek-a00bf637866fcd4d81f4fde28c9862ce",
-      "kind": "reported"
-    },
-    {
-      "label": "Quartz · K3 and listed China-lab repricing, 17 Jul",
-      "url": "https://qz.com/moonshot-ai-kimi-k3-model-launch-rival-stocks-071726",
-      "kind": "reported"
-    },
-    {
-      "label": "Axios · second-leg chip and Korea selloff, 29 Jul",
-      "url": "https://www.axios.com/2026/07/29/chips-stocks-ai-china",
-      "kind": "reported"
-    },
-    {
-      "label": "HKEX · Z.ai stock code 2513",
-      "url": "https://www.hkex.com.hk/eng/market/sec_tradinfo/tradarng/tradarng_news/currentmonth/e2513b_260715.htm",
-      "kind": "primary"
-    },
-    {
-      "label": "HKEX · MiniMax stock code 00100",
-      "url": "https://www1.hkexnews.hk/search/titlesearch.xhtml?category=0&lang=EN&market=SEHK&stockId=1000286746",
-      "kind": "primary"
-    }
-  ],
   "k3": {
     "name": "Kimi K3",
     "route": {
@@ -115,49 +53,133 @@
     "architecture": [
       {
         "code": "KDA",
-        "title": {
-          "en": "Hybrid recurrent attention",
-          "zh": "混合递归注意力"
+        "axis": {
+          "en": "TOKEN-TIME MEMORY",
+          "zh": "沿 TOKEN 时间轴"
         },
-        "body": {
-          "en": "69 KDA layers plus 24 gated-MLA layers reduce the long-context KV burden without pretending memory is free.",
-          "zh": "69 层 KDA 加 24 层门控 MLA，降低长上下文 KV 负担，但并不意味着内存成本消失。"
+        "title": {
+          "en": "Write, correct and decay a fixed state",
+          "zh": "在固定状态中写入、纠错与衰减"
+        },
+        "official": {
+          "en": "K3 uses 69 KDA layers with a fixed-size recurrent state and data-dependent channel-wise decay. This flattens the state cost as token count grows, but the state is finite and can suffer interference.",
+          "zh": "K3 使用 69 层 KDA，以固定大小的递归状态和数据依赖的逐通道衰减工作。Token 增长时状态成本趋于平坦，但容量仍有限，也会发生信息干扰。"
+        },
+        "thread": {
+          "en": "The Waterloo thread's write / erase / fade language is a useful teaching metaphor for delta correction and decay, not Moonshot's formal terminology and not lossless memory.",
+          "zh": "Waterloo 推文用“写入／擦除／褪色”解释 Delta 纠错与衰减，教学上很直观，但这不是月之暗面的正式术语，更不代表无损记忆。"
+        },
+        "investment": {
+          "en": "Long-context cache grows more slowly; HBM demand does not disappear because model weights and the MLA layers still have to reside and serve.",
+          "zh": "长上下文缓存斜率下降，但模型权重与 MLA 层仍需驻留和服务，因此 HBM 需求并未消失。"
+        }
+      },
+      {
+        "code": "MLA",
+        "axis": {
+          "en": "PERIODIC GLOBAL RECALL",
+          "zh": "周期性全局召回"
+        },
+        "title": {
+          "en": "Full attention becomes a correction layer",
+          "zh": "全注意力变成周期纠错层"
+        },
+        "official": {
+          "en": "The 93-layer stack interleaves 69 KDA and 24 gated-MLA layers, broadly three KDA layers followed by one MLA layer. MLA periodically restores global softmax retrieval over compressed latent KV history.",
+          "zh": "93 层堆栈由 69 层 KDA 与 24 层门控 MLA 交错构成，大致每三层 KDA 接一层 MLA。MLA 周期性地对压缩后的 latent KV 历史执行全局 Softmax 检索。"
+        },
+        "thread": {
+          "en": "Calling this exact retrieval is only relative to the latent history that MLA retained. It cannot reconstruct original information that was never stored or was compressed away.",
+          "zh": "所谓“精确检索”只能相对于 MLA 保留的 latent 历史成立；未被保存或压缩时丢失的原始信息，无法凭空恢复。"
+        },
+        "investment": {
+          "en": "Attention is not eliminated. Memory bandwidth, cache policy and serving software remain investable bottlenecks, especially at one million tokens.",
+          "zh": "注意力并未被消灭。尤其在百万 Token 场景，内存带宽、缓存策略与服务软件仍是可投资的关键瓶颈。"
+        }
+      },
+      {
+        "code": "ARES",
+        "axis": {
+          "en": "DEPTH-WISE RETRIEVAL",
+          "zh": "沿网络深度检索"
+        },
+        "title": {
+          "en": "AttnRes retrieves earlier representations",
+          "zh": "AttnRes 回取更早层的表征"
+        },
+        "official": {
+          "en": "Block AttnRes uses learned pseudo-queries to weight the embedding and earlier block outputs. K3 groups roughly 12 layers per block, creating about eight depth checkpoints without retaining every layer output.",
+          "zh": "Block AttnRes 通过可学习的伪查询，为嵌入和更早区块输出分配权重。K3 大约每 12 层组成一个区块，形成约八个深度检查点，而不必保留每一层输出。"
+        },
+        "thread": {
+          "en": "This is retrieval across network depth, not retrieval across the token timeline. Performance ratios quoted in explanatory threads stay commentary unless the official report defines the same setup.",
+          "zh": "它检索的是网络深度，不是 Token 时间轴。解释性推文中的性能倍数，除非官方报告给出同一测试设置，否则仍属于作者评论。"
+        },
+        "investment": {
+          "en": "The design attacks representation dilution, while moving pressure into activation staging, block communication and runtime orchestration.",
+          "zh": "该设计缓解深层表征稀释，却把压力转移到激活暂存、区块通信与运行时编排。"
         }
       },
       {
         "code": "MOE",
-        "title": {
-          "en": "Stable LatentMoE",
-          "zh": "稳定潜在 MoE"
+        "axis": {
+          "en": "WIDTH + CAPACITY",
+          "zh": "宽度与模型容量"
         },
-        "body": {
-          "en": "16 of 896 routed experts fire per token. Sparse compute lowers active FLOPs while the full weight set still demands serious memory and interconnect.",
-          "zh": "每个 Token 激活 896 个路由专家中的 16 个。稀疏计算降低激活 FLOPs，但完整权重仍需要大量内存与互连。"
-        }
-      },
-      {
-        "code": "SYS",
         "title": {
-          "en": "Systems are part of the model",
-          "zh": "系统工程就是模型的一部分"
+          "en": "Sparse compute still needs a dense system",
+          "zh": "稀疏计算仍需要密集系统"
         },
-        "body": {
-          "en": "MoonEP balancing, activation offload, persistent sandboxes, hybrid prefix caching and speculative decoding are essential to the result.",
-          "zh": "MoonEP 负载平衡、激活卸载、持久化沙箱、混合前缀缓存与推测解码，都是结果不可分割的一部分。"
-        }
-      },
-      {
-        "code": "LIC",
-        "title": {
-          "en": "Open-weight, not frictionless",
-          "zh": "开放权重，不等于无摩擦"
+        "official": {
+          "en": "Stable LatentMoE routes 16 of 896 experts per token, plus shared experts, inside a compressed latent path. Total capacity is 2.8T parameters while active parameters are 104B.",
+          "zh": "Stable LatentMoE 在压缩潜空间路径中为每个 Token 路由 896 个专家中的 16 个，并配有共享专家。总容量为 2.8 万亿参数，激活参数为 1040 亿。"
         },
-        "body": {
-          "en": "The license requires a separate agreement for model-as-a-service businesses above US$20M trailing revenue and attribution above defined scale thresholds.",
-          "zh": "模型即服务企业连续 12 个月收入超过 2000 万美元时需另行签约；达到规定规模的产品还需显著展示 Kimi K3 标识。"
+        "thread": {
+          "en": "The thread correctly emphasizes sparsity, but any comparison that substitutes a much smaller active-parameter figure conflicts with the official 104B figure and is excluded here.",
+          "zh": "推文正确强调了稀疏性，但若用显著更小的激活参数类比，就与官方 1040 亿数字冲突；本页不采用这类数字。"
+        },
+        "investment": {
+          "en": "Expert weights still need HBM residency and cross-device routing still needs high-speed all-to-all fabric. MoE shifts value toward memory, interconnect and scheduling rather than removing it.",
+          "zh": "专家权重仍需驻留 HBM，跨设备路由仍依赖高速 All-to-All 互连。MoE 不是消灭基础设施价值，而是把价值推向内存、互连与调度。"
         }
       }
     ],
+    "evidenceBoundary": {
+      "title": {
+        "en": "One architecture, three evidence layers",
+        "zh": "同一套架构，三层证据必须分开"
+      },
+      "body": {
+        "en": "Official Moonshot materials establish KDA, gated MLA, Block AttnRes, Stable LatentMoE and the 2.8T / 104B configuration. The Waterloo thread supplies an engineer's explanatory frame. Afflatus then maps the verified mechanisms to memory, interconnect and serving economics. Metaphors and vendor-measured figures are not promoted into independent facts.",
+        "zh": "月之暗面官方材料确认 KDA、门控 MLA、Block AttnRes、Stable LatentMoE 与 2.8T／104B 配置；Waterloo 推文提供工程师的解释框架；Afflatus 再把已核验机制映射到内存、互连和服务经济性。比喻与厂商测试数字不会被抬升为独立事实。"
+      },
+      "sources": [
+        {
+          "label": {
+            "en": "ORIGINAL THREAD",
+            "zh": "原始推文"
+          },
+          "url": "https://x.com/waterloo_intern/status/2081762065392541951",
+          "level": "COMMENTARY"
+        },
+        {
+          "label": {
+            "en": "K3 TECHNICAL REPORT",
+            "zh": "K3 技术报告"
+          },
+          "url": "https://arxiv.org/abs/2607.24653",
+          "level": "PRIMARY"
+        },
+        {
+          "label": {
+            "en": "KIMI LINEAR REPORT",
+            "zh": "KIMI LINEAR 报告"
+          },
+          "url": "https://arxiv.org/abs/2510.26692",
+          "level": "PRIMARY"
+        }
+      ]
+    },
     "costFrontier": [
       {
         "task": "Kimi Code Bench 2.0",
@@ -197,10 +219,173 @@
       }
     ]
   },
+  "deepSeek": {
+    "status": {
+      "en": "31 JUL 2026 · FLASH-0731 OFFICIAL RELEASE · API PUBLIC BETA",
+      "zh": "2026 年 7 月 31 日 · FLASH-0731 正式版 · API 公测"
+    },
+    "headline": {
+      "en": "Low price is a live capacity experiment, not a permanent free lunch",
+      "zh": "低价是一场正在运行的容量实验，不是永久免费的午餐"
+    },
+    "assessment": {
+      "en": "DeepSeek V4 is best understood as a capacity-and-pricing experiment during a low-cost Preview phase. V4-Flash-0731 pairs 284B / 13B parameters, a 1M context window and 2,500 account-level concurrency for throughput-heavy workloads; V4-Pro pairs 1.6T / 49B with 500 concurrency for heavier reasoning. The Flash 0731 API is in public beta, while the 31 July notice kept the official Pro release pending.",
+      "zh": "DeepSeek V4 更适合被理解为低价 Preview 阶段的容量—价格实验。V4-Flash-0731 以 2840 亿／130 亿参数、100 万上下文和每账户 2500 并发承接高吞吐任务；V4-Pro 以 1.6 万亿／490 亿参数和 500 并发覆盖更重推理。Flash 0731 API 已进入公测，而 7 月 31 日公告仍把 Pro 正式版列为待发布。"
+    },
+    "models": [
+      {
+        "id": "deepseek-v4-flash",
+        "version": "DeepSeek-V4-Flash-0731",
+        "parameters": "284B / 13B ACTIVE",
+        "context": "1M / 384K MAX OUTPUT",
+        "concurrency": "2,500 / ACCOUNT",
+        "availability": {
+          "en": "OpenAI + Anthropic APIs; Responses API available",
+          "zh": "支持 OpenAI 与 Anthropic API；Responses API 已可用"
+        }
+      },
+      {
+        "id": "deepseek-v4-pro",
+        "version": "DeepSeek-V4-Pro",
+        "parameters": "1.6T / 49B ACTIVE",
+        "context": "1M / 384K MAX OUTPUT",
+        "concurrency": "500 / ACCOUNT",
+        "availability": {
+          "en": "OpenAI + Anthropic APIs; Responses API was still listed as planned",
+          "zh": "支持 OpenAI 与 Anthropic API；Responses API 在官方页仍标为计划中"
+        }
+      }
+    ],
+    "pricing": [
+      {
+        "model": "V4 FLASH",
+        "cacheHit": "$0.0028",
+        "cacheMiss": "$0.14",
+        "output": "$0.28"
+      },
+      {
+        "model": "V4 PRO",
+        "cacheHit": "$0.003625",
+        "cacheMiss": "$0.435",
+        "output": "$0.87"
+      }
+    ],
+    "operations": [
+      {
+        "code": "429",
+        "title": {
+          "en": "Concurrency is account-wide",
+          "zh": "并发按账户统一计算"
+        },
+        "body": {
+          "en": "Limits do not reset per API key. A request occupies a slot until its response completes; excess requests receive HTTP 429.",
+          "zh": "并发不会因拆分 API Key 而重置。请求从发送到响应结束始终占用槽位，超限返回 HTTP 429。"
+        }
+      },
+      {
+        "code": "SCALE",
+        "title": {
+          "en": "Expansion is available, not guaranteed",
+          "zh": "可以申请扩容，但不是默认保证"
+        },
+        "body": {
+          "en": "DeepSeek says qualified accounts may request capacity expansion without an extra expansion fee; approval is matched to business need.",
+          "zh": "DeepSeek 表示符合条件的账户可申请扩容，扩容本身不额外收费，但是否批准会结合业务需求。"
+        }
+      },
+      {
+        "code": "MIGRATE",
+        "title": {
+          "en": "Legacy aliases passed their retirement date",
+          "zh": "旧模型别名已越过退役日期"
+        },
+        "body": {
+          "en": "The official changelog scheduled deepseek-chat and deepseek-reasoner for full retirement after 24 July 2026 15:59 UTC. Production integrations should use explicit V4 model IDs rather than treating aliases as durable.",
+          "zh": "官方变更日志安排 deepseek-chat 与 deepseek-reasoner 在 2026 年 7 月 24 日 15:59 UTC 后完全退役。生产集成应改用明确的 V4 模型 ID，不应再把旧别名视为长期接口。"
+        }
+      },
+      {
+        "code": "WATCH",
+        "title": {
+          "en": "Measure effective task cost",
+          "zh": "监控有效任务成本"
+        },
+        "body": {
+          "en": "The useful dashboard is cache-hit rate, 429 and queue behaviour, expansion availability, completed-task quality and the eventual Flash–Pro price spread—not headline token price alone.",
+          "zh": "真正有用的监控项是缓存命中率、429 与排队、扩容可得性、任务完成质量，以及最终 Flash—Pro 价差，而不是单看 Token 标价。"
+        }
+      }
+    ],
+    "causality": {
+      "label": {
+        "en": "EVIDENCE BOUNDARY · PRICE",
+        "zh": "证据边界 · 价格"
+      },
+      "fact": {
+        "en": "The current pricing page signals a significant future overall price increase, but publishes no effective date, new rates or cause.",
+        "zh": "当前定价页只预告未来将整体显著提价，没有公布生效日、新费率或原因。"
+      },
+      "hypothesis": {
+        "en": "A link between global usage growth and a future increase is an Afflatus hypothesis to test, not an official explanation. Demand growth and future pricing remain separate variables until DeepSeek discloses causality.",
+        "zh": "“全球使用量增长导致未来提价”只是 Afflatus 待验证的分析假设，不是官方解释。在 DeepSeek 披露因果之前，需求增长与未来价格必须视为两个独立变量。"
+      }
+    },
+    "sources": [
+      {
+        "label": {
+          "en": "FLASH-0731 MODEL CARD",
+          "zh": "FLASH-0731 模型卡"
+        },
+        "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731"
+      },
+      {
+        "label": {
+          "en": "V4 PREVIEW RELEASE",
+          "zh": "V4 PREVIEW 公告"
+        },
+        "url": "https://api-docs.deepseek.com/news/news260424/"
+      },
+      {
+        "label": {
+          "en": "CURRENT PRICING",
+          "zh": "当前定价"
+        },
+        "url": "https://api-docs.deepseek.com/quick_start/pricing/"
+      },
+      {
+        "label": {
+          "en": "RATE LIMITS",
+          "zh": "并发限制"
+        },
+        "url": "https://api-docs.deepseek.com/quick_start/rate_limit/"
+      },
+      {
+        "label": {
+          "en": "CHANGELOG",
+          "zh": "变更日志"
+        },
+        "url": "https://api-docs.deepseek.com/updates"
+      }
+    ]
+  },
   "frontierLabs": {
     "method": {
-      "en": "Afflatus score: capability 35%, deployment economics 25%, distribution 20%, compute security 10%, weight portability 10%. It is an editorial comparison, not a benchmark.",
-      "zh": "Afflatus 评分：能力 35%、部署经济性 25%、分发 20%、算力安全 10%、权重可迁移性 10%。这是编辑比较，不是基准榜单。"
+      "en": "Afflatus operating index: capability 35%, deployment economics 25%, distribution 20%, compute security 10%, weight portability 10%. These are editorial business-system vectors, not benchmark scores. N/A means no comparable, verifiable evidence was available and is never converted to zero.",
+      "zh": "Afflatus 经营指数：能力 35%、部署经济性 25%、分发 20%、算力安全 10%、权重可迁移性 10%。这些是商业系统的编辑向量，不是模型基准分。N/A 表示没有可比、可核验的证据，绝不会被换算成零分。"
+    },
+    "runtimeMarker": {
+      "after": "Claude Fable 5",
+      "name": "5.6 Sol Ultra",
+      "route": {
+        "en": "SITE RUNTIME IDENTIFIER",
+        "zh": "站点运行标识"
+      },
+      "score": null,
+      "vector": [null, null, null, null, null],
+      "note": {
+        "en": "Afflatus can observe this identifier in the site runtime, but no public, like-for-like benchmark package was verified. It is registered for operational visibility and excluded from ranking.",
+        "zh": "Afflatus 可在站点运行环境中观察到该标识，但尚未核验到公开且可横向比较的基准包。因此只登记运行状态，不参与排名。"
+      }
     },
     "US": [
       {
@@ -297,17 +482,17 @@
       },
       {
         "name": "DeepSeek",
-        "model": "DeepSeek V4",
-        "route": "OPEN WEIGHTS",
+        "model": "DeepSeek V4-Flash-0731",
+        "route": "API PUBLIC BETA",
         "score": 87,
         "vector": [91, 97, 86, 63, 94],
         "edge": {
-          "en": "The reference architecture for Chinese efficiency-first research.",
-          "zh": "中国效率优先研究路线的参考架构。"
+          "en": "Official Flash API public beta pairs a 1M context with unusually low listed token prices and 2,500 account concurrency.",
+          "zh": "Flash API 正式版公测以 100 万上下文、极低的当前 Token 标价和每账户 2500 并发组合出击。"
         },
         "risk": {
-          "en": "Monetisation and reliable global serving lag model mindshare.",
-          "zh": "变现与全球稳定服务能力落后于模型声量。"
+          "en": "A significant future price increase is signalled but undefined; effective task cost and capacity behaviour remain the real test.",
+          "zh": "官方已预告未来显著提价但方案未定；有效任务成本与容量表现才是真正考验。"
         }
       },
       {
@@ -481,6 +666,58 @@
       "losers": "MODEL-ONLY PREMIUM"
     }
   ],
+  "supplyChain": {
+    "title": {
+      "en": "Twenty instruments mapped to five cash-conversion stages",
+      "zh": "二十只标的映射到五个现金转化环节"
+    },
+    "body": {
+      "en": "Country remains a risk lens, but the first comparison is now the economic function each company owns. The chain runs from fabrication to compute, memory and interconnect, cloud serving, then model and distribution. This makes duplicate exposure and missing physical chokepoints visible before a ticker is ranked.",
+      "zh": "国家仍是风险维度，但首要比较标准改为公司真正控制的经济功能。产业链从制造流向算力，再到内存与互连、云服务，最后到模型与分发。这样在标的排序前，就能先看到重复暴露与缺失的物理咽喉。"
+    },
+    "stages": [
+      {
+        "id": "FAB",
+        "step": "01",
+        "label": {
+          "en": "FAB + TOOLS",
+          "zh": "制造与设备"
+        }
+      },
+      {
+        "id": "COMPUTE",
+        "step": "02",
+        "label": {
+          "en": "ACCELERATED COMPUTE",
+          "zh": "加速算力"
+        }
+      },
+      {
+        "id": "FABRIC",
+        "step": "03",
+        "label": {
+          "en": "MEMORY + FABRIC",
+          "zh": "内存与互连"
+        }
+      },
+      {
+        "id": "CLOUD",
+        "step": "04",
+        "label": {
+          "en": "CLOUD SERVING",
+          "zh": "云端服务"
+        }
+      },
+      {
+        "id": "PLATFORM",
+        "step": "05",
+        "label": {
+          "en": "MODEL + DISTRIBUTION",
+          "zh": "模型与分发"
+        }
+      }
+    ]
+  },
   "valuationMethod": {
     "title": {
       "en": "Price the layer, not the AI label",
@@ -497,6 +734,7 @@
         "rank": 1,
         "ticker": "TSM",
         "name": "TSMC",
+        "chainStage": "FAB",
         "layer": "FOUNDRY + PACKAGING",
         "strength": 94,
         "fairBand": "18–24× NTM EPS",
@@ -514,6 +752,7 @@
         "rank": 2,
         "ticker": "AVGO",
         "name": "Broadcom",
+        "chainStage": "FABRIC",
         "layer": "CUSTOM SILICON + NETWORK",
         "strength": 92,
         "fairBand": "24–31× NTM FCF",
@@ -531,6 +770,7 @@
         "rank": 3,
         "ticker": "NVDA",
         "name": "NVIDIA",
+        "chainStage": "COMPUTE",
         "layer": "ACCELERATED COMPUTE",
         "strength": 91,
         "fairBand": "24–30× normalized FCF",
@@ -548,6 +788,7 @@
         "rank": 4,
         "ticker": "GOOGL",
         "name": "Alphabet",
+        "chainStage": "PLATFORM",
         "layer": "MODEL + TPU + DISTRIBUTION",
         "strength": 90,
         "fairBand": "18–24× NTM FCF",
@@ -565,6 +806,7 @@
         "rank": 5,
         "ticker": "MSFT",
         "name": "Microsoft",
+        "chainStage": "CLOUD",
         "layer": "CLOUD + ENTERPRISE",
         "strength": 89,
         "fairBand": "25–31× NTM FCF",
@@ -582,6 +824,7 @@
         "rank": 6,
         "ticker": "META",
         "name": "Meta",
+        "chainStage": "PLATFORM",
         "layer": "OPEN MODEL + ADS",
         "strength": 88,
         "fairBand": "19–25× NTM FCF",
@@ -599,6 +842,7 @@
         "rank": 7,
         "ticker": "ASML",
         "name": "ASML",
+        "chainStage": "FAB",
         "layer": "LITHOGRAPHY",
         "strength": 87,
         "fairBand": "24–30× normalized EPS",
@@ -616,6 +860,7 @@
         "rank": 8,
         "ticker": "ANET",
         "name": "Arista Networks",
+        "chainStage": "FABRIC",
         "layer": "AI NETWORKING",
         "strength": 85,
         "fairBand": "28–36× NTM EPS",
@@ -633,6 +878,7 @@
         "rank": 9,
         "ticker": "AMZN",
         "name": "Amazon",
+        "chainStage": "CLOUD",
         "layer": "CLOUD + CUSTOM SILICON",
         "strength": 84,
         "fairBand": "22–28× NTM FCF",
@@ -650,6 +896,7 @@
         "rank": 10,
         "ticker": "MU",
         "name": "Micron",
+        "chainStage": "FABRIC",
         "layer": "HBM + DRAM",
         "strength": 80,
         "fairBand": "9–13× mid-cycle EPS",
@@ -669,6 +916,7 @@
         "rank": 1,
         "ticker": "9988.HK",
         "name": "Alibaba",
+        "chainStage": "PLATFORM",
         "layer": "QWEN + CLOUD + DISTRIBUTION",
         "strength": 93,
         "fairBand": "12–18× core FCF",
@@ -686,6 +934,7 @@
         "rank": 2,
         "ticker": "0700.HK",
         "name": "Tencent",
+        "chainStage": "PLATFORM",
         "layer": "DISTRIBUTION + CLOUD",
         "strength": 90,
         "fairBand": "18–24× NTM EPS",
@@ -703,6 +952,7 @@
         "rank": 3,
         "ticker": "688256.SH",
         "name": "Cambricon",
+        "chainStage": "COMPUTE",
         "layer": "DOMESTIC ACCELERATOR",
         "strength": 86,
         "fairBand": "8–12× forward sales",
@@ -720,6 +970,7 @@
         "rank": 4,
         "ticker": "0981.HK",
         "name": "SMIC",
+        "chainStage": "FAB",
         "layer": "DOMESTIC FOUNDRY",
         "strength": 85,
         "fairBand": "16–24× normalized EPS",
@@ -737,6 +988,7 @@
         "rank": 5,
         "ticker": "1810.HK",
         "name": "Xiaomi",
+        "chainStage": "PLATFORM",
         "layer": "MODEL + EDGE DEVICES",
         "strength": 84,
         "fairBand": "16–22× blended EPS",
@@ -754,6 +1006,7 @@
         "rank": 6,
         "ticker": "688041.SH",
         "name": "Hygon",
+        "chainStage": "COMPUTE",
         "layer": "CPU + DCU",
         "strength": 82,
         "fairBand": "30–45× normalized EPS",
@@ -771,6 +1024,7 @@
         "rank": 7,
         "ticker": "9888.HK",
         "name": "Baidu",
+        "chainStage": "PLATFORM",
         "layer": "MODEL + CLOUD + AUTONOMY",
         "strength": 79,
         "fairBand": "8–13× core EPS",
@@ -788,6 +1042,7 @@
         "rank": 8,
         "ticker": "2513.HK",
         "name": "Z.ai",
+        "chainStage": "PLATFORM",
         "layer": "LISTED FRONTIER LAB",
         "strength": 76,
         "fairBand": "6–10× forward sales",
@@ -805,6 +1060,7 @@
         "rank": 9,
         "ticker": "0100.HK",
         "name": "MiniMax",
+        "chainStage": "PLATFORM",
         "layer": "LISTED MULTIMODAL LAB",
         "strength": 74,
         "fairBand": "5–9× forward sales",
@@ -822,6 +1078,7 @@
         "rank": 10,
         "ticker": "3896.HK",
         "name": "Kingsoft Cloud",
+        "chainStage": "CLOUD",
         "layer": "INFERENCE CLOUD",
         "strength": 72,
         "fairBand": "2.5–4.5× forward sales",
@@ -833,202 +1090,6 @@
         "risk": {
           "en": "Scale, financing and hyperscaler price competition.",
           "zh": "规模、融资与超大规模云价格竞争。"
-        }
-      }
-    ]
-  },
-  "openWeightsLetter": {
-    "officialSnapshot": {
-      "date": "29 Jul 2026",
-      "count": 77,
-      "source": "https://images.nvidia.com/pdf/Open-Weights-and-American-AI-Leadership.pdf"
-    },
-    "screenshotNames": [
-      "Merge",
-      "Meta",
-      "Microsoft",
-      "Mistral",
-      "Modal",
-      "Morph",
-      "Mozilla",
-      "Nebius",
-      "Neon",
-      "Netlify",
-      "Notion",
-      "Nous Research",
-      "NVIDIA",
-      "Ollama",
-      "OpenAI",
-      "OpenClaw",
-      "OpenCode",
-      "Palantir",
-      "Palo Alto Networks",
-      "Periodic Labs",
-      "Perplexity",
-      "Plastic Labs",
-      "Postman",
-      "Prime Intellect",
-      "PrismML",
-      "RadixArk",
-      "Red Hat",
-      "Reducto",
-      "Reflection",
-      "Rehearsals",
-      "Reka",
-      "Replit",
-      "Resemble.AI",
-      "Recursive Intelligence",
-      "Runway",
-      "Sakana AI",
-      "SAP",
-      "Scale",
-      "ServiceNow",
-      "Siemens",
-      "SkyPilot",
-      "SpaceX",
-      "Stack Overflow",
-      "Sycamore",
-      "Telnyx",
-      "TensorWave",
-      "Together.ai",
-      "Trainloop",
-      "Trajectory",
-      "TrendAI"
-    ],
-    "officialNames": [
-      "Agno",
-      "AI21",
-      "AMD",
-      "American Innovators Network",
-      "AMP",
-      "Andreessen Horowitz",
-      "Applied Compute",
-      "Arcee AI",
-      "Arena",
-      "Atreides Management",
-      "Baseten",
-      "Black Forest Labs",
-      "Block",
-      "Bolt",
-      "Box",
-      "Camber",
-      "Cisco",
-      "Cloudflare",
-      "Cohere",
-      "Core Automation",
-      "CrowdStrike",
-      "Dell Technologies",
-      "DoorDash",
-      "EdgeRunner",
-      "Emergence Capital",
-      "Exia Labs",
-      "Fastino Labs",
-      "Fireworks AI",
-      "Genspark",
-      "GitHub",
-      "Glean",
-      "Google",
-      "GPU MODE",
-      "Hugging Face",
-      "humans&",
-      "IBM",
-      "Inferact",
-      "Intangible",
-      "Interconnects AI",
-      "LangChain",
-      "The Linux Foundation",
-      "LM Studio",
-      "LMSYS",
-      "Mariana Minerals",
-      "Meta",
-      "Microsoft",
-      "Mistral",
-      "Modal",
-      "Morph",
-      "Mozilla",
-      "Nebius",
-      "Nous Research",
-      "NVIDIA",
-      "Ollama",
-      "OpenAI",
-      "OpenClaw",
-      "Palantir",
-      "Palo Alto Networks",
-      "Periodic Labs",
-      "Perplexity",
-      "Plastic Labs",
-      "Prime Intellect",
-      "PrismML",
-      "RadixArk",
-      "Reflection",
-      "Rehearsals",
-      "Replit",
-      "Sakana AI",
-      "Scale",
-      "ServiceNow",
-      "SpaceX",
-      "Telnyx",
-      "Trajectory",
-      "Unsloth",
-      "Unusual Ventures",
-      "Vercel",
-      "Y Combinator"
-    ],
-    "missing": [
-      {
-        "name": "Anthropic",
-        "why": {
-          "en": "Most important closed-frontier holdout; absence does not prove support for a ban.",
-          "zh": "最重要的闭源前沿缺席者；缺席不等于支持禁令。"
-        }
-      },
-      {
-        "name": "Amazon / AWS",
-        "why": {
-          "en": "Largest cloud holdout and Anthropic's closest infrastructure partner.",
-          "zh": "最大的云缺席者，也是 Anthropic 最紧密的基础设施伙伴。"
-        }
-      },
-      {
-        "name": "Apple",
-        "why": {
-          "en": "Major device distribution gatekeeper with no name in the snapshot.",
-          "zh": "重要设备分发守门人，快照中未署名。"
-        }
-      },
-      {
-        "name": "xAI",
-        "why": {
-          "en": "SpaceX signed; xAI itself is not listed in the official PDF snapshot.",
-          "zh": "SpaceX 已签，但 xAI 本身不在官方 PDF 快照。"
-        }
-      },
-      {
-        "name": "Oracle",
-        "why": {
-          "en": "Important AI-cloud and database platform absent from the official snapshot.",
-          "zh": "重要 AI 云与数据库平台，官方快照中缺席。"
-        }
-      },
-      {
-        "name": "Intel",
-        "why": {
-          "en": "A strategic US semiconductor name that did not appear in the snapshot.",
-          "zh": "具有战略意义的美国半导体公司，快照中未出现。"
-        }
-      },
-      {
-        "name": "Databricks",
-        "why": {
-          "en": "One of the largest private data-and-model platforms, absent from the snapshot.",
-          "zh": "最大的私有数据与模型平台之一，快照中缺席。"
-        }
-      },
-      {
-        "name": "Salesforce",
-        "why": {
-          "en": "Large enterprise application distributor absent from the snapshot.",
-          "zh": "大型企业应用分发商，快照中缺席。"
         }
       }
     ]

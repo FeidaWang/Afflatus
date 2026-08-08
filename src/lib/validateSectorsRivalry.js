@@ -2,8 +2,8 @@
  *
  * This dataset is intentionally a compact research snapshot rather than a live
  * quote feed. The validator therefore protects the commitments visible on the
- * page: balanced US/CN comparisons, exact audit counts, bilingual analysis and
- * explicit valuation denominators.
+ * page: evidence-layer separation, balanced US/CN comparisons, explicit N/A
+ * states, a complete 20-instrument supply chain and valuation denominators.
  */
 
 const isObject = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -26,16 +26,6 @@ function requireExactArray(value, length, path, errors) {
   }
   if (value.length !== length) errors.push(`${path}: expected ${length} entries, got ${value.length}`);
   return true;
-}
-
-function requireUniqueStrings(value, path, errors) {
-  if (!Array.isArray(value)) return;
-  const seen = new Set();
-  value.forEach((entry, index) => {
-    if (!isText(entry)) errors.push(`${path}[${index}]: missing or empty`);
-    if (seen.has(entry)) errors.push(`${path}[${index}]: duplicate "${entry}"`);
-    seen.add(entry);
-  });
 }
 
 function validateLabs(labs, path, errors) {
@@ -61,7 +51,7 @@ function validateLabs(labs, path, errors) {
   });
 }
 
-function validateEquities(items, path, errors) {
+function validateEquities(items, path, chainStages, errors) {
   if (!requireExactArray(items, 10, path, errors)) return;
   const tickers = new Set();
   items.forEach((item, index) => {
@@ -70,6 +60,7 @@ function validateEquities(items, path, errors) {
     for (const key of ['ticker', 'name', 'layer', 'stance']) {
       if (!isText(item?.[key])) errors.push(`${tag}.${key}: missing`);
     }
+    if (!chainStages.has(item?.chainStage)) errors.push(`${tag}.chainStage: unknown supply-chain stage`);
     if (tickers.has(item?.ticker)) errors.push(`${tag}.ticker: duplicate "${item?.ticker}"`);
     tickers.add(item?.ticker);
     if (!Number.isFinite(item?.strength) || item.strength < 0 || item.strength > 100) {
@@ -91,20 +82,13 @@ export function validateSectorsRivalry(data) {
   const errors = [];
   if (!isObject(data)) return { ok: false, errors: ['top-level value must be an object'] };
 
-  if (data.schemaVersion !== '2026-07-29') {
-    errors.push(`schemaVersion: expected "2026-07-29", got ${JSON.stringify(data.schemaVersion)}`);
+  if (data.schemaVersion !== '2026-08-08') {
+    errors.push(`schemaVersion: expected "2026-08-08", got ${JSON.stringify(data.schemaVersion)}`);
   }
   if (!isText(data.updated) || Number.isNaN(Date.parse(data.updated))) errors.push('updated: must be an ISO-style date');
   requireBilingual(data.editorialNote, 'editorialNote', errors);
-
-  if (!Array.isArray(data.sources) || data.sources.length < 8) {
-    errors.push('sources: must contain at least eight primary/reported sources');
-  } else {
-    data.sources.forEach((source, index) => {
-      if (!isText(source?.label)) errors.push(`sources[${index}].label: missing`);
-      if (!isUrl(source?.url)) errors.push(`sources[${index}].url: must be http(s)`);
-      if (!['primary', 'reported'].includes(source?.kind)) errors.push(`sources[${index}].kind: must be primary/reported`);
-    });
+  if (/github\.com\//i.test(JSON.stringify(data))) {
+    errors.push('privacy: public rivalry research may not use GitHub provenance');
   }
 
   if (!isObject(data.k3)) errors.push('k3: missing');
@@ -112,11 +96,82 @@ export function validateSectorsRivalry(data) {
     requireBilingual(data.k3.headline, 'k3.headline', errors);
     requireBilingual(data.k3.summary, 'k3.summary', errors);
     requireExactArray(data.k3.stats, 4, 'k3.stats', errors);
-    requireExactArray(data.k3.architecture, 4, 'k3.architecture', errors);
+    if (requireExactArray(data.k3.architecture, 4, 'k3.architecture', errors)) {
+      data.k3.architecture.forEach((item, index) => {
+        const tag = `k3.architecture[${index}]`;
+        if (!isText(item?.code)) errors.push(`${tag}.code: missing`);
+        for (const key of ['axis', 'title', 'official', 'thread', 'investment']) {
+          requireBilingual(item?.[key], `${tag}.${key}`, errors);
+        }
+      });
+    }
     requireExactArray(data.k3.costFrontier, 4, 'k3.costFrontier', errors);
+    requireBilingual(data.k3.evidenceBoundary?.title, 'k3.evidenceBoundary.title', errors);
+    requireBilingual(data.k3.evidenceBoundary?.body, 'k3.evidenceBoundary.body', errors);
+    if (requireExactArray(data.k3.evidenceBoundary?.sources, 3, 'k3.evidenceBoundary.sources', errors)) {
+      data.k3.evidenceBoundary.sources.forEach((source, index) => {
+        if (!isUrl(source?.url)) errors.push(`k3.evidenceBoundary.sources[${index}].url: must be http(s)`);
+        requireBilingual(source?.label, `k3.evidenceBoundary.sources[${index}].label`, errors);
+        if (!['PRIMARY', 'COMMENTARY'].includes(source?.level)) errors.push(`k3.evidenceBoundary.sources[${index}].level: invalid`);
+      });
+    }
+  }
+
+  if (!isObject(data.deepSeek)) errors.push('deepSeek: missing');
+  else {
+    for (const key of ['status', 'headline', 'assessment']) requireBilingual(data.deepSeek[key], `deepSeek.${key}`, errors);
+    if (requireExactArray(data.deepSeek.models, 2, 'deepSeek.models', errors)) {
+      data.deepSeek.models.forEach((model, index) => {
+        const tag = `deepSeek.models[${index}]`;
+        for (const key of ['id', 'version', 'parameters', 'context', 'concurrency']) {
+          if (!isText(model?.[key])) errors.push(`${tag}.${key}: missing`);
+        }
+        requireBilingual(model?.availability, `${tag}.availability`, errors);
+      });
+    }
+    if (requireExactArray(data.deepSeek.pricing, 2, 'deepSeek.pricing', errors)) {
+      data.deepSeek.pricing.forEach((price, index) => {
+        for (const key of ['model', 'cacheHit', 'cacheMiss', 'output']) {
+          if (!isText(price?.[key])) errors.push(`deepSeek.pricing[${index}].${key}: missing`);
+        }
+      });
+    }
+    if (requireExactArray(data.deepSeek.operations, 4, 'deepSeek.operations', errors)) {
+      data.deepSeek.operations.forEach((item, index) => {
+        if (!isText(item?.code)) errors.push(`deepSeek.operations[${index}].code: missing`);
+        requireBilingual(item?.title, `deepSeek.operations[${index}].title`, errors);
+        requireBilingual(item?.body, `deepSeek.operations[${index}].body`, errors);
+      });
+    }
+    for (const key of ['label', 'fact', 'hypothesis']) requireBilingual(data.deepSeek.causality?.[key], `deepSeek.causality.${key}`, errors);
+    if (!Array.isArray(data.deepSeek.sources) || data.deepSeek.sources.length < 5) errors.push('deepSeek.sources: must contain at least five direct sources');
+    else data.deepSeek.sources.forEach((source, index) => {
+      if (!isUrl(source?.url)) errors.push(`deepSeek.sources[${index}].url: must be http(s)`);
+      requireBilingual(source?.label, `deepSeek.sources[${index}].label`, errors);
+    });
   }
 
   requireBilingual(data.frontierLabs?.method, 'frontierLabs.method', errors);
+  const runtimeMarker = data.frontierLabs?.runtimeMarker;
+  if (!isObject(runtimeMarker)) errors.push('frontierLabs.runtimeMarker: missing');
+  else {
+    if (runtimeMarker.name !== '5.6 Sol Ultra') errors.push('frontierLabs.runtimeMarker.name: expected 5.6 Sol Ultra');
+    if (!isText(runtimeMarker.after)) errors.push('frontierLabs.runtimeMarker.after: missing');
+    const rankedModels = [
+      ...(Array.isArray(data.frontierLabs?.US) ? data.frontierLabs.US : []),
+      ...(Array.isArray(data.frontierLabs?.CN) ? data.frontierLabs.CN : []),
+    ].map((lab) => lab?.model);
+    if (isText(runtimeMarker.after) && !rankedModels.includes(runtimeMarker.after)) {
+      errors.push('frontierLabs.runtimeMarker.after: anchor model does not exist');
+    }
+    requireBilingual(runtimeMarker.route, 'frontierLabs.runtimeMarker.route', errors);
+    requireBilingual(runtimeMarker.note, 'frontierLabs.runtimeMarker.note', errors);
+    if (runtimeMarker.score !== null) errors.push('frontierLabs.runtimeMarker.score: must be null/N/A');
+    if (!Array.isArray(runtimeMarker.vector) || runtimeMarker.vector.length !== 5
+      || runtimeMarker.vector.some((value) => value !== null)) {
+      errors.push('frontierLabs.runtimeMarker.vector: all five values must be null/N/A');
+    }
+  }
   validateLabs(data.frontierLabs?.US, 'frontierLabs.US', errors);
   validateLabs(data.frontierLabs?.CN, 'frontierLabs.CN', errors);
   requireExactArray(data.eventStudy, 4, 'eventStudy', errors);
@@ -124,29 +179,27 @@ export function validateSectorsRivalry(data) {
 
   requireBilingual(data.valuationMethod?.title, 'valuationMethod.title', errors);
   requireBilingual(data.valuationMethod?.body, 'valuationMethod.body', errors);
-  validateEquities(data.equities?.US, 'equities.US', errors);
-  validateEquities(data.equities?.CN, 'equities.CN', errors);
-
-  const letter = data.openWeightsLetter;
-  if (!isObject(letter)) errors.push('openWeightsLetter: missing');
-  else {
-    requireExactArray(letter.screenshotNames, 50, 'openWeightsLetter.screenshotNames', errors);
-    requireExactArray(letter.officialNames, 77, 'openWeightsLetter.officialNames', errors);
-    requireUniqueStrings(letter.screenshotNames, 'openWeightsLetter.screenshotNames', errors);
-    requireUniqueStrings(letter.officialNames, 'openWeightsLetter.officialNames', errors);
-    if (letter.officialSnapshot?.count !== letter.officialNames?.length) {
-      errors.push('openWeightsLetter.officialSnapshot.count: must match officialNames length');
-    }
-    if (!isUrl(letter.officialSnapshot?.source)) errors.push('openWeightsLetter.officialSnapshot.source: must be http(s)');
-    if (!Array.isArray(letter.missing) || letter.missing.length < 4) {
-      errors.push('openWeightsLetter.missing: must contain important absences');
-    } else {
-      letter.missing.forEach((item, index) => {
-        if (!isText(item?.name)) errors.push(`openWeightsLetter.missing[${index}].name: missing`);
-        requireBilingual(item?.why, `openWeightsLetter.missing[${index}].why`, errors);
-      });
-    }
+  requireBilingual(data.supplyChain?.title, 'supplyChain.title', errors);
+  requireBilingual(data.supplyChain?.body, 'supplyChain.body', errors);
+  const stageIds = new Set();
+  if (requireExactArray(data.supplyChain?.stages, 5, 'supplyChain.stages', errors)) {
+    data.supplyChain.stages.forEach((stage, index) => {
+      if (!isText(stage?.id)) errors.push(`supplyChain.stages[${index}].id: missing`);
+      if (stageIds.has(stage?.id)) errors.push(`supplyChain.stages[${index}].id: duplicate`);
+      stageIds.add(stage?.id);
+      if (stage?.step !== String(index + 1).padStart(2, '0')) errors.push(`supplyChain.stages[${index}].step: invalid sequence`);
+      requireBilingual(stage?.label, `supplyChain.stages[${index}].label`, errors);
+    });
   }
+  validateEquities(data.equities?.US, 'equities.US', stageIds, errors);
+  validateEquities(data.equities?.CN, 'equities.CN', stageIds, errors);
+  const allEquities = [...(data.equities?.US || []), ...(data.equities?.CN || [])];
+  if (allEquities.length !== 20) errors.push(`equities: expected 20 total entries, got ${allEquities.length}`);
+  const globalTickers = new Set(allEquities.map((equity) => equity?.ticker).filter(isText));
+  if (globalTickers.size !== allEquities.length) errors.push('equities: tickers must be globally unique across US and CN');
+  stageIds.forEach((stage) => {
+    if (!allEquities.some((equity) => equity.chainStage === stage)) errors.push(`supplyChain.stages.${stage}: has no instruments`);
+  });
 
   if (requireExactArray(data.postMemoryTheses, 10, 'postMemoryTheses', errors)) {
     data.postMemoryTheses.forEach((item, index) => {

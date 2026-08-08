@@ -1,17 +1,17 @@
 {
   "id": "QF-01",
-  "version": "0.1.0",
-  "updated": "2026-08-05",
+  "version": "0.2.1",
+  "updated": "2026-08-08",
   "benchmark": "SPY",
   "engine": "browser-walk-forward",
   "minimumHistory": 130,
-  "note_en": "QF-01 is an independent browser-native research model. It borrows gs-quant's separation of data context, factor risk, portfolio and hard constraints; it does not use Goldman Sachs proprietary data, models or Marquee services.",
-  "note_zh": "QF-01 是独立实现的浏览器原生研究模型。它借鉴 gs-quant 对时间数据、因子风险、组合对象与硬约束的分层；不使用高盛专有数据、模型或 Marquee 服务。",
+  "note_en": "QF-01 is an independent, browser-native research model. It separates completed-session data context, robust cross-sectional signals, portfolio construction and hard constraints in a transparent local engine.",
+  "note_zh": "QF-01 是独立实现的浏览器原生研究模型。它在透明的本地引擎中分离已完成交易日的数据上下文、稳健截面信号、组合构建与硬约束。",
   "provenance": {
-    "repository": "https://github.com/FeidaWang/gs-quant",
-    "commit": "ac755c0",
-    "license": "Apache-2.0",
-    "inspected": "2026-08-05"
+    "repository": "internal-implementation",
+    "commit": "qf01-20260808",
+    "license": "internal-research",
+    "inspected": "2026-08-08"
   },
   "universe": [
     { "sym": "NVDA", "name": "NVIDIA", "sector": "Semiconductors" },
@@ -23,7 +23,29 @@
     { "sym": "MU", "name": "Micron", "sector": "Memory" },
     { "sym": "ANET", "name": "Arista Networks", "sector": "Networking" },
     { "sym": "VRT", "name": "Vertiv", "sector": "Power & Cooling" },
-    { "sym": "AMD", "name": "Advanced Micro Devices", "sector": "Semiconductors" }
+    { "sym": "AMD", "name": "Advanced Micro Devices", "sector": "Semiconductors" },
+    {
+      "sym": "SKHY",
+      "name": "SK hynix Inc. American Depositary Shares",
+      "sector": "Memory Semiconductors",
+      "securityType": "NASDAQ-listed ADS",
+      "identityStatus": "verified",
+      "identitySource": "https://www.nasdaqtrader.com/TraderNews.aspx?id=DTN2026-11"
+    },
+    {
+      "sym": "SPCX",
+      "name": "Space Exploration Technologies Corp. Class A Common Stock",
+      "sector": "Space, Connectivity & AI Infrastructure",
+      "securityType": "NASDAQ and Nasdaq Texas-listed Class A common stock",
+      "identityStatus": "verified-current",
+      "identitySource": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026043865/spaceexplorationtechnologi.htm",
+      "identityNote": "The prior SPCX ETF changed its ticker to SPCK before Space Exploration Technologies Corp. began trading as SPCX on 2026-06-12."
+    },
+    { "sym": "AAOI", "name": "Applied Optoelectronics", "sector": "Optical Networking" },
+    { "sym": "COHR", "name": "Coherent", "sector": "Optical Networking" },
+    { "sym": "MRVL", "name": "Marvell Technology", "sector": "AI Interconnect" },
+    { "sym": "LITE", "name": "Lumentum", "sector": "Optical Networking" },
+    { "sym": "SNDK", "name": "Sandisk", "sector": "Memory & Storage" }
   ],
   "weights": {
     "momentum": 0.38,

@@ -29,7 +29,7 @@
 | 调度 | Cowork scheduled-tasks（**不用 launchd**，历史规划从未落地，technical.md §4 已更正） | 已裁决 |
 | 分析 | GA4（gtag 延迟到 requestIdleCallback）+ `web-vitals` 6 的 CLS/INP/LCP 字段遥测；只发送白名单指标、清单路由、`en/zh` 与粗粒度设备档，不发送 URL query、UA、输入、DOM attribution 或原始硬件值 | P0-05 已接入 |
 
-**域名/部署**：feida.au · Vercel 监听 GitHub `FeidaWang/Afflatus` main 分支 · 自动 `vite build` → `dist/`。
+**域名/部署**：feida.au · Vercel 监听私有生产仓库的默认分支 · 自动 `vite build` → `dist/`。公开页面不得泄露仓库所有者或路径。
 
 ## 2. 目录结构与页面装配
 

@@ -201,7 +201,7 @@
     white-space: nowrap;
   }
 
-  .core-telemetry small {
+  .core-telemetry .core-telemetry-note {
     display: block;
     margin-top: 9px;
     color: rgba(166,187,202,.38);
@@ -210,7 +210,7 @@
   }
 
   .core-telemetry .risk-load dd,
-  .core-telemetry .risk-load small { color: #f0b09e; }
+  .core-telemetry .risk-load .core-telemetry-note { color: #f0b09e; }
 
   .core-note {
     margin: 0;
@@ -753,7 +753,7 @@
     .cycle-efficiency strong { font-size: clamp(41px, 13vw, 56px); }
     .core-telemetry div { padding: 17px 12px; }
     .core-telemetry dd { font-size: 23px; }
-    .core-telemetry small { font-size: 6px; letter-spacing: .08em; }
+    .core-telemetry .core-telemetry-note { font-size: 6px; letter-spacing: .08em; }
     .trade-route {
       grid-template-columns: 30px minmax(0, 1fr);
       grid-template-areas:

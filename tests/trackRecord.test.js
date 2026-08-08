@@ -17,7 +17,7 @@ function originalGamesTemplate(r, T) {
     return `<span class="rlog ${cls}" title="${T(e.pick_en, e.pick_zh)}">${icon} ${T(e.label_en, e.label_zh)}</span>`;
   }).join('');
   return (
-    `<div class="rec-h"><span class="rec-t">${FABLE_ICON} ${T('FABLE TRACK RECORD', 'FABLE 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${r.since || ''}</span></div>` +
+    `<div class="rec-h"><span class="rec-t">${FABLE_ICON} ${T('FABLE 5 MAX · 5.6 SOL ULTRA TRACK RECORD', 'FABLE 5 MAX · 5.6 SOL ULTRA 历史战绩')}</span><span class="rec-since">${T('since', '自')} ${r.since || ''}</span></div>` +
     `<div class="rec-stats">` +
       `<div class="rec-big"><b>${rate}%</b><i>${T('outcome win rate', '胜负命中率')}</i></div>` +
       `<div class="rec-kv"><b>${r.correctOutcome || 0}/${r.resolved || 0}</b><i>${T('correct calls', '预测正确')}</i></div>` +

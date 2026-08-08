@@ -43,4 +43,37 @@ describe('sectors media contract', () => {
     expect(entry).toContain("import { initSectorsRivalryController } from '../sectors/rivalryController.js'");
     expect(entry).not.toMatch(/^import .*graphController/m);
   });
+
+  it('keeps the Sectors command bar full-width and the graph below it', () => {
+    const css = readFileSync('public/styles/sectors.css', 'utf8');
+    expect(css).toContain('.sectors-page .top.site-header--follow{');
+    expect(css).toContain('width:100vw;');
+    expect(css).toContain('top:var(--sectors-header-h,89px);');
+    expect(css).toMatch(/\.mwDetail\{\s*position:fixed;/);
+  });
+
+  it('removes the letter audit and source-ledger sections while preserving an updateable post-memory register', () => {
+    const html = readFileSync('sectors.html', 'utf8');
+    const controller = readFileSync('src/sectors/rivalryController.js', 'utf8');
+    const rivalry = JSON.parse(readFileSync('public/sectors-rivalry.json', 'utf8'));
+    expect(html).not.toContain('OPEN-WEIGHTS LETTER AUDIT');
+    expect(html).not.toContain('rivalryLetter');
+    expect(html).not.toContain('Source ledger &amp; methodology');
+    expect(html).not.toContain('rivalrySources');
+    expect(controller).not.toContain('renderLetter');
+    expect(controller).not.toContain('renderSources');
+    expect(rivalry).not.toHaveProperty('openWeightsLetter');
+    expect(rivalry).not.toHaveProperty('sources');
+    expect(html).toContain('05 / POST-MEMORY ERA');
+    expect(html).toContain('class="postMemoryFrame"');
+  });
+
+  it('publishes the DeepSeek brief and explicit 5.6 Sol Ultra N/A disclosure without personal GitHub provenance', () => {
+    const html = readFileSync('sectors.html', 'utf8');
+    const dataset = readFileSync('public/sectors-rivalry.json', 'utf8');
+    expect(html).toContain('id="rivalryDeepSeek"');
+    expect(html).toContain('5.6 Sol Ultra');
+    expect(html).toContain('benchmark and ranking fields set to N/A');
+    expect(`${html}\n${dataset}`).not.toContain('github.com/FeidaWang');
+  });
 });

@@ -100,6 +100,53 @@ function rgba(hex, alpha) {
   return `rgba(${value >> 16},${(value >> 8) & 255},${value & 255},${alpha})`;
 }
 
+/**
+ * Draw a Sectors logo without accidentally cropping viewBox-only SVGs.
+ *
+ * Chromium gives an SVG without explicit width/height a 150px natural size,
+ * while its vector artwork still occupies its own viewBox. Passing that
+ * synthetic size back as a nine-argument source crop shrinks the artwork to a
+ * tiny corner. Use the five-argument contain path for normal assets and reserve
+ * source cropping for the one asset that explicitly declares logo_crop.
+ */
+export function drawSectorsLogoImage(ctx, image, node, x, y, width, height) {
+  const imageWidth = image.naturalWidth || image.width || 1;
+  const imageHeight = image.naturalHeight || image.height || 1;
+  const crop = node.logo_crop;
+  const hasCrop = crop && typeof crop === 'object';
+  const cropX = hasCrop ? clamp01(Number(crop.x) || 0) : 0;
+  const cropY = hasCrop ? clamp01(Number(crop.y) || 0) : 0;
+  const cropWidth = hasCrop
+    ? Math.max(0.05, Math.min(1 - cropX, Number(crop.width) || 1))
+    : 1;
+  const cropHeight = hasCrop
+    ? Math.max(0.05, Math.min(1 - cropY, Number(crop.height) || 1))
+    : 1;
+  const sourceWidth = imageWidth * cropWidth;
+  const sourceHeight = imageHeight * cropHeight;
+  const fit = Math.min((width - 16) / sourceWidth, (height - 14) / sourceHeight);
+  const drawWidth = sourceWidth * fit;
+  const drawHeight = sourceHeight * fit;
+  const drawX = x - drawWidth / 2;
+  const drawY = y - drawHeight / 2;
+
+  if (!hasCrop) {
+    ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+    return;
+  }
+  ctx.drawImage(
+    image,
+    imageWidth * cropX,
+    imageHeight * cropY,
+    sourceWidth,
+    sourceHeight,
+    drawX,
+    drawY,
+    drawWidth,
+    drawHeight,
+  );
+}
+
 function roundedRect(ctx, x, y, width, height, radius) {
   const r = Math.min(radius, width / 2, height / 2);
   ctx.beginPath();
@@ -248,11 +295,17 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       logoImages.set(node.logo, { image, ready: false, failed: false });
       image.onload = () => {
         const entry = logoImages.get(node.logo);
-        if (entry) entry.ready = true;
+        if (entry) {
+          entry.ready = true;
+          requestAnimationFrame(() => draw(lastTime));
+        }
       };
       image.onerror = () => {
         const entry = logoImages.get(node.logo);
-        if (entry) entry.failed = true;
+        if (entry) {
+          entry.failed = true;
+          requestAnimationFrame(() => draw(lastTime));
+        }
       };
       image.src = node.logo;
     }
@@ -302,6 +355,8 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       const button = document.createElement('button');
       button.type = 'button';
       button.dataset.nodeIndex = String(index);
+      button.dataset.bloc = node.bloc || 'neutral';
+      button.dataset.kind = node.kind || 'entity';
       button.textContent = `${COUNTRY_BADGE[node.country] || node.country || ''} ${labelFor(node)}`.trim();
       button.setAttribute('aria-pressed', 'false');
       controlHost.appendChild(button);
@@ -400,8 +455,8 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     const primary = node.kind === 'model' || node.kind === 'initiative';
     const scale = Math.max(0.8, Math.min(1.7, Number(node.plate_scale) || 1));
     return {
-      width: (mobile ? (primary ? 66 : 58) : (primary ? 82 : 70)) * scale,
-      height: (mobile ? (primary ? 46 : 42) : (primary ? 56 : 48)) * Math.min(scale, 1.35),
+      width: (mobile ? (primary ? 68 : 60) : (primary ? 96 : 84)) * scale,
+      height: (mobile ? (primary ? 48 : 42) : (primary ? 64 : 56)) * Math.min(scale, 1.35),
     };
   }
 
@@ -571,31 +626,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
   function drawLogo(node, x, y, width, height) {
     const entry = node.logo ? logoImages.get(node.logo) : null;
     if (!entry?.ready) return drawFallbackMark(node, x, y, width, height);
-    const image = entry.image;
-    const imageWidth = image.naturalWidth || image.width || 1;
-    const imageHeight = image.naturalHeight || image.height || 1;
-    const cropX = clamp01(Number(node.logo_crop?.x) || 0);
-    const cropY = clamp01(Number(node.logo_crop?.y) || 0);
-    const cropWidth = Math.max(0.05, Math.min(1 - cropX, Number(node.logo_crop?.width) || 1));
-    const cropHeight = Math.max(0.05, Math.min(1 - cropY, Number(node.logo_crop?.height) || 1));
-    const sourceX = imageWidth * cropX;
-    const sourceY = imageHeight * cropY;
-    const sourceWidth = imageWidth * cropWidth;
-    const sourceHeight = imageHeight * cropHeight;
-    const fit = Math.min((width - 16) / sourceWidth, (height - 14) / sourceHeight);
-    const drawWidth = sourceWidth * fit;
-    const drawHeight = sourceHeight * fit;
-    ctx.drawImage(
-      image,
-      sourceX,
-      sourceY,
-      sourceWidth,
-      sourceHeight,
-      x - drawWidth / 2,
-      y - drawHeight / 2,
-      drawWidth,
-      drawHeight,
-    );
+    drawSectorsLogoImage(ctx, entry.image, node, x, y, width, height);
   }
 
   function drawNode(node, time, focusNode) {

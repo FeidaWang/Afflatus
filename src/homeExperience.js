@@ -252,6 +252,11 @@ const commandModeBtn=document.getElementById('commandModeBtn');
 const jumpToggle=document.getElementById('jumpToggle');
 const bridgeCallout=document.getElementById('bridgeCallout');
 const cruiseStrip=document.getElementById('cicCruiseStrip');
+function setCombatHudHidden(hidden){
+  if(!combatHud) return;
+  combatHud.setAttribute('aria-hidden',String(hidden));
+  combatHud.toggleAttribute('inert',hidden);
+}
 const hudPanels={
   fire:document.querySelector('#combatHud .cic-fire-control'),
   tactical:document.querySelector('#combatHud .cic-tactical'),
@@ -293,7 +298,7 @@ function showBridgeCallout(text){
 function updateCommandButton(){
   const isCruise=document.body.classList.contains('hud-off');
   if(commandModeBtn) commandModeBtn.textContent=isCruise?(currentLang==='zh'?'指挥模式':'Command'):(currentLang==='zh'?'巡航模式':'Cruise');
-  combatHud?.setAttribute('aria-hidden',String(isCruise));
+  setCombatHudHidden(isCruise);
   cruiseStrip?.setAttribute('aria-hidden',String(!isCruise));
 }
 function updateJumpButton(){
@@ -658,7 +663,7 @@ function applyHudLanguage(){
 function setCombatMode(on){
   combatHot=on;
   document.body.classList.toggle('combat-mode',on);
-  combatHud?.setAttribute('aria-hidden',String(document.body.classList.contains('hud-off')));
+  setCombatHudHidden(document.body.classList.contains('hud-off'));
   if(on){
     if(combatHoldTimer)clearTimeout(combatHoldTimer);
     combatHoldTimer=setTimeout(()=>{ if(!combatHot) document.body.classList.remove('combat-mode'); }, 120);
