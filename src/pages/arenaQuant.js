@@ -1,5 +1,5 @@
 import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
-import { runQuantExperiment } from '../lib/arenaQuantModel.js';
+import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantModel.js';
 
 (() => {
   'use strict';
@@ -258,7 +258,10 @@ import { runQuantExperiment } from '../lib/arenaQuantModel.js';
   }
 
   async function loadHistories(config) {
-    const symbols = [...new Set([...config.universe.map((asset) => asset.sym), config.benchmark])];
+    // The benchmark is the one non-negotiable input. Request it first so a
+    // provider credit/rate boundary can degrade the asset set instead of
+    // halting the entire model after successfully loading several stocks.
+    const symbols = orderedHistorySymbols(config);
     const histories = {};
     const failures = [];
     await mapLimit(symbols, 4, async (symbol, index) => {
@@ -266,7 +269,7 @@ import { runQuantExperiment } from '../lib/arenaQuantModel.js';
         `DATA CONTEXT · ${index + 1}/${symbols.length} · ${symbol}`,
         `数据上下文 · ${index + 1}/${symbols.length} · ${symbol}`);
       try {
-        const payload = await fetchJson(`history:${symbol}:1day:250`);
+        const payload = await fetchJson(`history:${symbol}:1day:250`, { forceRefresh: true });
         histories[symbol] = payload.values
           .map((value) => ({
             t: String(value.datetime).slice(0, 10),

@@ -3,6 +3,7 @@ import {
   buildPortfolioModel,
   computeFactorRows,
   maxDrawdown,
+  orderedHistorySymbols,
   resolveRegime,
   robustZScores,
   runQuantExperiment,
@@ -47,6 +48,13 @@ function histories() {
 }
 
 describe('Arena QF-01 factor engine', () => {
+  it('requests the benchmark before model assets and removes duplicates', () => {
+    expect(orderedHistorySymbols({
+      benchmark: 'SPY',
+      universe: [{ sym: 'NVDA' }, { sym: 'SPY' }, { sym: 'NVDA' }, { sym: 'AVGO' }],
+    })).toEqual(['SPY', 'NVDA', 'AVGO']);
+  });
+
   it('winsorizes cross-sectional z-scores and handles a flat cross-section', () => {
     expect(robustZScores([1, 1, 1])).toEqual([0, 0, 0]);
     expect(Math.max(...robustZScores([0, 1, 100]))).toBeLessThanOrEqual(3);

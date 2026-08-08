@@ -16,6 +16,14 @@ const EPSILON = 1e-10;
 const finite = (value, fallback = 0) => (Number.isFinite(Number(value)) ? Number(value) : fallback);
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
+export function orderedHistorySymbols(config = {}) {
+  const benchmark = String(config.benchmark || 'SPY').trim().toUpperCase();
+  const universe = Array.isArray(config.universe)
+    ? config.universe.map((asset) => String(asset?.sym || '').trim().toUpperCase()).filter(Boolean)
+    : [];
+  return [...new Set([benchmark, ...universe])];
+}
+
 export function mean(values) {
   const clean = (values || []).filter(Number.isFinite);
   return clean.length ? clean.reduce((sum, value) => sum + value, 0) / clean.length : 0;
