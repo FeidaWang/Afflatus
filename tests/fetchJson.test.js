@@ -7,6 +7,21 @@ const validIndex = {
 };
 const currentLeagues = JSON.parse(readFileSync('public/leagues-data.json', 'utf8'));
 const currentSignal = JSON.parse(readFileSync('public/signal-events.json', 'utf8'));
+const currentArenaPicks = JSON.parse(readFileSync('public/arena-picks.json', 'utf8'));
+const currentArenaDigest = JSON.parse(readFileSync('public/arena-daily-digest.json', 'utf8'));
+const currentArenaNews = JSON.parse(readFileSync('public/arena-news.json', 'utf8'));
+const currentArenaLedger = JSON.parse(readFileSync('public/arena-ledger.json', 'utf8'));
+const currentArenaQuantModel = JSON.parse(readFileSync('public/arena-quant-model.json', 'utf8'));
+const currentTransits = JSON.parse(readFileSync('public/transits-daily.json', 'utf8'));
+
+const scheduledNetworkFirstCases = [
+  ['arena-picks', { ...currentArenaPicks, date: '2026-08-06' }, currentArenaPicks, 'date'],
+  ['arena-digest', { ...currentArenaDigest, date: '2026-08-06' }, currentArenaDigest, 'date'],
+  ['arena-news', { ...currentArenaNews, date: '2026-08-06' }, currentArenaNews, 'date'],
+  ['arena-ledger', { ...currentArenaLedger, updated: '2026-08-06' }, currentArenaLedger, 'updated'],
+  ['arena-quant-model', { ...currentArenaQuantModel, updated: '2026-08-04' }, currentArenaQuantModel, 'updated'],
+  ['transits', { ...currentTransits, date: '2026-08-07' }, currentTransits, 'date'],
+];
 
 describe('fetchJson', () => {
   beforeEach(() => {
@@ -132,6 +147,22 @@ describe('fetchJson', () => {
     expect(network).toHaveBeenCalledTimes(2);
     expect(network.mock.calls[1][1]).toMatchObject({ cache: 'no-cache' });
   });
+
+  it.each(scheduledNetworkFirstCases)(
+    'revalidates %s before returning a fresh browser cache entry',
+    async (key, previous, current, marker) => {
+      const network = vi.fn()
+        .mockResolvedValueOnce(new Response(JSON.stringify(previous), { status: 200 }))
+        .mockResolvedValueOnce(new Response(JSON.stringify(current), { status: 200 }));
+      vi.stubGlobal('fetch', network);
+
+      await expect(fetchJson(key)).resolves.toMatchObject({ [marker]: previous[marker] });
+      await expect(fetchJson(key)).resolves.toMatchObject({ [marker]: current[marker] });
+
+      expect(network).toHaveBeenCalledTimes(2);
+      expect(network.mock.calls[1][1]).toMatchObject({ cache: 'no-cache' });
+    },
+  );
 
   it('preserves HTTP status in a typed error', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 403 })));

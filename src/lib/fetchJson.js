@@ -73,13 +73,17 @@ const STATIC_RESOURCES = Object.freeze({
   leagues: { url: '/leagues-data.json', freshness: 60 * 60_000, validate: validators.leagues, networkFirst: true },
   games: { url: '/games-data.json', freshness: 60 * 60_000, validate: validators.games, networkFirst: true },
   'novels-index': { url: '/novels-index.json', freshness: 5 * 60_000, validate: validators.novelsIndex },
-  'arena-universe': { url: '/arena-universe.json', freshness: 60 * 60_000, validate: validators.arenaUniverse },
-  'arena-quant-model': { url: '/arena-quant-model.json', freshness: 60 * 60_000, validate: validators.arenaQuantModel },
-  'arena-picks': { url: '/arena-picks.json', freshness: 5 * 60_000, validate: validators.arenaPicks },
-  'arena-digest': { url: '/arena-daily-digest.json', freshness: 5 * 60_000, validate: validators.arenaDigest },
-  'arena-news': { url: '/arena-news.json', freshness: 5 * 60_000, validate: validators.arenaNews },
-  'arena-ledger': { url: '/arena-ledger.json', freshness: 5 * 60_000, validate: objectWith('season', 'models', 'bench') },
-  transits: { url: '/transits-daily.json', freshness: 6 * 60 * 60_000, validate: objectWith('date', 'planets') },
+  // Arena and daily transits are published by atomic scheduled transactions.
+  // Revalidate them before rendering so a successful deployment can never sit
+  // behind a still-young browser CacheStorage entry; validated cache remains
+  // available only as the offline/failure fallback.
+  'arena-universe': { url: '/arena-universe.json', freshness: 60 * 60_000, validate: validators.arenaUniverse, networkFirst: true },
+  'arena-quant-model': { url: '/arena-quant-model.json', freshness: 60 * 60_000, validate: validators.arenaQuantModel, networkFirst: true },
+  'arena-picks': { url: '/arena-picks.json', freshness: 5 * 60_000, validate: validators.arenaPicks, networkFirst: true },
+  'arena-digest': { url: '/arena-daily-digest.json', freshness: 5 * 60_000, validate: validators.arenaDigest, networkFirst: true },
+  'arena-news': { url: '/arena-news.json', freshness: 5 * 60_000, validate: validators.arenaNews, networkFirst: true },
+  'arena-ledger': { url: '/arena-ledger.json', freshness: 5 * 60_000, validate: objectWith('season', 'models', 'bench'), networkFirst: true },
+  transits: { url: '/transits-daily.json', freshness: 6 * 60 * 60_000, validate: objectWith('date', 'planets'), networkFirst: true },
 });
 
 const memory = new Map();
