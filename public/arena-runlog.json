@@ -982,6 +982,24 @@
       "ordersFilled": 0,
       "note": "late catch-up mark-to-market for 2026-08-06 (equity curve continuity, §19.3.2) — no new orders proposed.",
       "late": true
+    },
+    {
+      "date": "2026-08-07",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Validated bilingual briefing published with 1 sourced item(s)."
+    },
+    {
+      "date": "2026-08-07",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Validated picks board published with 0 candidate(s); empty arrays are an intentional fail-closed outcome."
     }
   ]
 }

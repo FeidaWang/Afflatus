@@ -1,9 +1,9 @@
 {
-  "date": "2026-08-06",
-  "generatedAt": "2026-08-06T13:30:00Z",
+  "date": "2026-08-07",
+  "generatedAt": "2026-08-08T02:44:17Z",
   "regime": "neutral",
-  "note_en": "No new candidate cleared the evidence bar. Futures were mixed, AMD's post-results reaction was sharply negative, and the verified proxy did not provide a complete pre-market quote set. All models remain empty rather than converting incomplete data into false precision.",
-  "note_zh": "没有新候选标的通过证据门槛。期指涨跌互现，AMD 财报后的市场反应明显偏弱，而且经核实的代理未提供完整盘前报价。三个模型均保持空候选，避免把不完整数据包装成虚假精确度。",
+  "note_en": "Weekend audit completion: Friday's pre-market, open and late-entry windows had already closed. S, P and T therefore publish no retroactive candidate; existing positions remain governed only by deterministic risk exits and closing mark-to-market.",
+  "note_zh": "周末审计补齐：周五盘前、开盘与尾盘入场窗口均已结束，因此 S、P、T 三模型不补造事后候选；现有持仓只执行确定性风险退出与收盘估值。",
   "models": {
     "S": [],
     "P": [],
