@@ -1,8 +1,17 @@
-# Afflatus unified data orchestrator
+# Afflatus grouped data orchestrator
 
-This is the single operating contract for the recurring Afflatus data task.
-It replaces page-specific schedulers. Run the task hourly; calculate all
-market windows in `America/New_York` and the transit calendar in
+This is the single operating contract for two grouped Afflatus data tasks. It
+replaces the former hourly runner and all page-specific schedulers. Every run
+must declare one profile and process only that profile's pipelines:
+
+- `morning-research`: runs once per Melbourne calendar day after 01:15. It may
+  process `arena-premarket`, `signal-macro`, `sectors-research`, and
+  `horoscope-transits` when each pipeline is due.
+- `postmarket-settlement`: runs Tuesday through Saturday after 09:15 Melbourne
+  time. It may process only `arena-postmarket` for the most recently completed
+  New York market session.
+
+Calculate all market windows in `America/New_York` and the transit calendar in
 `Australia/Melbourne`, so daylight-saving changes never alter the contract.
 
 ## Non-negotiable rules
@@ -11,8 +20,9 @@ market windows in `America/New_York` and the transit calendar in
    the lock already exists, stop without removing it. Always remove only the
    lock you created before returning, including after validation or push errors.
 2. Read `src/config/dataPipelines.js` and run `npm run data:freshness -- --json`
-   before deciding what is due. Do not refresh a timestamp merely to satisfy
-   freshness.
+   before deciding what is due. Filter the result to the declared profile; a
+   run must never publish another profile's pipeline. Do not refresh a timestamp
+   merely to satisfy freshness.
 3. Use primary sources where available and preserve source URLs. Every market
    number must come from a cited source or the production quote/history proxy.
    Missing evidence means publish no claim and propose no trade.
@@ -29,7 +39,7 @@ market windows in `America/New_York` and the transit calendar in
    fetch/rebase once, rerun validation, and retry once. Report failure after
    that; do not force-push.
 
-## Due work
+## Profile work
 
 - `arena-premarket`: after 08:30 ET on an NYSE session, research and publish
   `arena-news.json` and `arena-picks.json` together. Record the gather and picks
@@ -47,6 +57,6 @@ market windows in `America/New_York` and the transit calendar in
   --output=<temporary-directory>/transits-daily.json`, then validate and publish
   it once per Melbourne calendar day.
 
-If no pipeline is due, make no repository change. Return a compact result with
-the checked time, due pipelines, files published, validation result, commit, and
-push status.
+If no pipeline in the declared profile is due, make no repository change.
+Return a compact result with the Chinese task name, profile, checked time, due
+pipelines, files published, validation result, commit, and push status.
