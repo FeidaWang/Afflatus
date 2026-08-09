@@ -392,6 +392,8 @@ html, body {
 }
 
     </style>
+    <script src="./quality-policy.js"></script>
+    <script src="./gpu-particles.js"></script>
     <script>
 
 BlackHoleShaderDemoApp = {};
@@ -1153,6 +1155,7 @@ const RENDER_SHADER =
   precision highp float;
   uniform sampler2D source;
   uniform vec2 source_delta_uv;
+  uniform vec2 output_delta_uv;
   uniform vec3 source_samples_uvw[SIZE];
   uniform sampler2D bloom;
   uniform vec2 bloom_delta_uv;
@@ -1178,8 +1181,15 @@ const RENDER_SHADER =
   }
 
   void main() {
-    vec2 source_uv = (gl_FragCoord.xy + vec2(1.0)) * source_delta_uv;
-    vec3 color = texture(bloom, 0.5 * gl_FragCoord.xy * bloom_delta_uv).rgb;
+    // The expensive relativistic pass can be smaller than the presentation
+    // canvas. Convert the full-resolution fragment coordinate to normalized
+    // output UV, then address the one-pixel-padded source texture. The same
+    // precomputed deflection/Doppler LUT shader still owns every source pixel;
+    // this pass only performs a linear composite/upscale.
+    vec2 output_uv = gl_FragCoord.xy * output_delta_uv;
+    vec2 source_uv = source_delta_uv
+      + output_uv * (vec2(1.0) - 2.0 * source_delta_uv);
+    vec3 color = texture(bloom, output_uv).rgb;
     for (int i = 0; i < SIZE; ++i) {
       vec3 uvw = source_samples_uvw[i];
       color += uvw.z * texture(source, source_uv + uvw.xy).rgb;
@@ -1217,10 +1227,13 @@ const createTexture = function(gl, textureUnit, target) {
 // size changes.
 class Bloom {
 
-  constructor(gl, width, height) {
+  constructor(gl, width, height, renderScale = 1) {
     this.gl = gl;
     this.width = width;
     this.height = height;
+    this.renderScale = renderScale;
+    this.renderWidth = width;
+    this.renderHeight = height;
     gl.getExtension('OES_texture_float_linear');
     gl.getExtension('EXT_color_buffer_float');
     gl.getExtension('EXT_float_blend');
@@ -1281,6 +1294,8 @@ class Bloom {
         gl.getUniformLocation(this.renderProgram, 'high_contrast');
     this.renderProgram.sourceDeltaUvUniform =
         gl.getUniformLocation(this.renderProgram, 'source_delta_uv');
+    this.renderProgram.outputDeltaUvUniform =
+        gl.getUniformLocation(this.renderProgram, 'output_delta_uv');
     this.renderProgram.bloomDeltaUvUniform =
         gl.getUniformLocation(this.renderProgram, 'bloom_delta_uv');
 
@@ -1290,6 +1305,13 @@ class Bloom {
     this.bloomFilters = [];
     for (let i = 0; i < MAX_LEVELS; ++i) {
       const mipmapTexture = createTexture(gl, gl.TEXTURE0, gl.TEXTURE_2D);
+      if (i == 0) {
+        // Level zero is also the source for the full-resolution presentation
+        // composite. Linear filtering provides the bounded upscale; the
+        // relativistic shader and all lookup textures remain unchanged.
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      }
       this.mipmapTextures.push(mipmapTexture);
       if (i > 0) {
         const filterTexture = createTexture(gl, gl.TEXTURE0, gl.TEXTURE_2D);
@@ -1330,18 +1352,23 @@ class Bloom {
     }
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-    this.resize(width, height);
+    this.resize(width, height, renderScale);
   }
 
-  resize(width, height) {
+  resize(width, height, renderScale = this.renderScale) {
     this.width = width;
     this.height = height;
+    this.renderScale = Math.min(1, Math.max(0.35, Number(renderScale) || 0.5));
+    // Bloom's final composite samples level 1, so retain two valid levels even
+    // in a transient tiny iframe during responsive layout.
+    this.renderWidth = Math.max(8, Math.round(width * this.renderScale));
+    this.renderHeight = Math.max(8, Math.round(height * this.renderScale));
 
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE0);
     let level = 0;
-    let w = width;
-    let h = height;
+    let w = this.renderWidth;
+    let h = this.renderHeight;
     while (h > 2 && level < MAX_LEVELS) {
       gl.bindTexture(gl.TEXTURE_2D, this.mipmapTextures[level]);
       gl.texImage2D(
@@ -1365,13 +1392,14 @@ class Bloom {
       h = Math.ceil(h / 2);
     }
     this.numLevels = level;
+    this.bloomFilters = [];
 
     let nearest_size_index = 0;
     let nearest_size = BLOOM_FILTERS[nearest_size_index];
     for (let i = 2; i < BLOOM_FILTERS.length; i += 2) {
       const size = BLOOM_FILTERS[i]
-      if (Math.abs(BLOOM_FILTERS[i] - height) <
-          Math.abs(nearest_size - height)) {
+      if (Math.abs(BLOOM_FILTERS[i] - this.renderHeight) <
+          Math.abs(nearest_size - this.renderHeight)) {
         nearest_size_index = i;
         nearest_size = BLOOM_FILTERS[i];
       }
@@ -1469,6 +1497,9 @@ class Bloom {
     gl.uniform2f(program.sourceDeltaUvUniform,
         1.0 / this.mipmapTextures[0].width,
         1.0 / this.mipmapTextures[0].height);
+    gl.uniform2f(program.outputDeltaUvUniform,
+        1.0 / this.width,
+        1.0 / this.height);
     gl.uniform2f(program.bloomDeltaUvUniform,
         1.0 / this.filterTextures[1].width,
         1.0 / this.filterTextures[1].height);
@@ -2484,7 +2515,8 @@ class ShaderManager {
 BlackHoleShaderDemoApp.ShaderManager = ShaderManager;
 })();
 
-(function(model, Bloom, TextureManager, ShaderManager, RocketManager) {
+(function(model, Bloom, TextureManager, ShaderManager, RocketManager,
+    ParticleField, QualityPolicy) {
 
 const createQuadVertexBuffer = function(gl) {
   const vertexBuffer = gl.createBuffer();
@@ -2498,6 +2530,12 @@ class CameraView {
   constructor(model, rootElement) {
     this.model = model;
     this.rootElement = rootElement;
+    this.qualityOptions = QualityPolicy?.browserOptions?.(window) || {};
+    this.quality = QualityPolicy?.selectQuality?.(this.qualityOptions) || {
+      tier: 'balanced', renderScale: 0.5, particleCount: 0,
+      particleCap: 0, targetFps: 45, motionSuppressed: false,
+    };
+    this.qualityLocked = Boolean(this.qualityOptions.explicitTier);
     this.devicePixelRatio = this.getDevicePixelRatio();
     this.canvas = rootElement.querySelector('#camera_view');
     this.canvas.style.width = `${rootElement.clientWidth}px`;
@@ -2523,29 +2561,198 @@ class CameraView {
       drawRocket() {},
       drawExhaust() {},
     };
-    this.bloom = new Bloom(this.gl, this.canvas.width, this.canvas.height);
+    this.bloom = new Bloom(
+        this.gl, this.canvas.width, this.canvas.height,
+        this.quality.renderScale);
+    this.particles = null;
+    if (ParticleField) {
+      try {
+        this.particles = new ParticleField(this.gl, {
+          count: this.quality.particleCount,
+          pointScale: this.quality.tier === 'high' ? 1 : 0.86,
+        });
+      } catch (error) {
+        // A particle enhancement must never take down the physical renderer.
+        console.warn('Black-hole GPU particles are unavailable.', error);
+      }
+    }
 
     this.lastTauSeconds = Date.now() / 1000.0;
     this.lastFrameTime = undefined;
     this.numFrames = 0;
+    this.lastPresentedFrame = 0;
+    this.raf = 0;
+    this.pauseReasons = new Set();
+    this.singleFrameOnly = this.quality.motionSuppressed;
 
     this.drag = false;
     this.previousMouseX = undefined;
     this.previousMouseY = undefined;
-    this.hidden = false;
-
     window.addEventListener('mousedown', (e) => this.onMouseDown(e));
     window.addEventListener('mousemove', (e) => this.onMouseMove(e));
     window.addEventListener('mouseup', (e) => this.onMouseUp(e));
     window.addEventListener('resize', (e) => this.onResize(e));
-    document.addEventListener('visibilitychange', (e) => {
-      this.hidden = document.hidden;
-      if (!this.hidden) {
-        this.lastFrameTime = undefined;
+    document.addEventListener('visibilitychange', () => {
+      this.setPaused('document-hidden', document.hidden);
+    });
+    this.installVisibilityBridge();
+    this.installMessageBridge();
+    this.publishRendererApi();
+    this.scheduleRender();
+  }
+
+  installVisibilityBridge() {
+    if ('IntersectionObserver' in window) {
+      this.intersectionObserver = new IntersectionObserver((entries) => {
+        const visible = entries.some((entry) => entry.isIntersecting);
+        this.setPaused('intersection', !visible);
+      }, {threshold: 0.001});
+      this.intersectionObserver.observe(this.canvas);
+    }
+
+    this.parentVisibilityQueued = false;
+    this.queueParentVisibilityCheck = () => {
+      if (this.parentVisibilityQueued) return;
+      this.parentVisibilityQueued = true;
+      requestAnimationFrame(() => {
+        this.parentVisibilityQueued = false;
+        this.setPaused('parent-offscreen', !this.isVisibleInParent());
+      });
+    };
+    try {
+      if (window.parent !== window) {
+        window.parent.addEventListener('scroll', this.queueParentVisibilityCheck,
+            {passive: true});
+        window.parent.addEventListener('resize', this.queueParentVisibilityCheck,
+            {passive: true});
+      }
+    } catch (error) {
+      // Cross-origin standalone embeds still retain document visibility and
+      // the explicit pause/play message contract.
+    }
+    this.queueParentVisibilityCheck();
+  }
+
+  isVisibleInParent() {
+    try {
+      const frame = window.frameElement;
+      if (!frame) return true;
+      const ownerWindow = frame.ownerDocument.defaultView;
+      const rect = frame.getBoundingClientRect();
+      if (rect.right <= 0 || rect.bottom <= 0
+          || rect.left >= ownerWindow.innerWidth
+          || rect.top >= ownerWindow.innerHeight) return false;
+      // Ignore the iframe's own opacity: the host intentionally keeps it at
+      // zero while the poster is visible and fades it in only after the LUTs
+      // are ready. Ancestor opacity (notably #blackhole-stage fading to zero)
+      // is the actual offscreen/hidden signal that should suspend the loop.
+      let element = frame.parentElement;
+      while (element) {
+        const style = ownerWindow.getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden'
+            || style.contentVisibility === 'hidden'
+            || Number(style.opacity) <= 0.015) return false;
+        element = element.parentElement;
+      }
+    } catch (error) {
+      return true;
+    }
+    return true;
+  }
+
+  installMessageBridge() {
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin) return;
+      const type = event.data?.type;
+      if (type === 'black-hole-observatory:pause') {
+        this.setPaused('bridge', true);
+      } else if (type === 'black-hole-observatory:play') {
+        this.setPaused('bridge', false);
+      } else if (type === 'black-hole-observatory:quality') {
+        this.setQuality({
+          tier: event.data.tier,
+          renderScale: event.data.renderScale,
+          particleCount: event.data.particleCount,
+        }, {lock: true});
       }
     });
+  }
 
-    requestAnimationFrame(() => this.onRender());
+  publishRendererApi() {
+    window.BlackHoleBackgroundRenderer = Object.freeze({
+      getQualityState: () => this.getQualityState(),
+      pause: () => this.setPaused('api', true),
+      play: () => this.setPaused('api', false),
+      setQuality: (options) => this.setQuality(options, {lock: true}),
+    });
+    this.postRendererState('black-hole-observatory:renderer-ready');
+  }
+
+  postRendererState(type = 'black-hole-observatory:quality-change') {
+    const state = this.getQualityState();
+    if (this.canvas?.dataset) {
+      this.canvas.dataset.qualityTier = state.tier;
+      this.canvas.dataset.renderScale = String(state.renderScale);
+      this.canvas.dataset.particleCount = String(state.particleCount);
+      this.canvas.dataset.renderSize = state.renderSize.join('x');
+    }
+    try {
+      window.parent.postMessage({type, ...state},
+          window.location.origin);
+    } catch (error) {}
+  }
+
+  getQualityState() {
+    return {
+      tier: this.quality.tier,
+      renderScale: this.quality.renderScale,
+      particleCount: this.quality.particleCount,
+      particleCap: this.quality.particleCap,
+      targetFps: this.quality.targetFps,
+      motionSuppressed: this.quality.motionSuppressed,
+      outputSize: [this.canvas.width, this.canvas.height],
+      renderSize: [this.bloom.renderWidth, this.bloom.renderHeight],
+      paused: this.pauseReasons.size > 0,
+      pauseReasons: [...this.pauseReasons],
+    };
+  }
+
+  setQuality(options = {}, {lock = false} = {}) {
+    if (!QualityPolicy?.selectQuality) return this.getQualityState();
+    const next = QualityPolicy.selectQuality({
+      ...this.qualityOptions,
+      explicitTier: options.tier || this.quality.tier,
+      renderScale: options.renderScale,
+      particleCount: options.particleCount,
+    });
+    this.quality = next;
+    if (lock) this.qualityLocked = true;
+    this.singleFrameOnly = next.motionSuppressed;
+    this.particles?.setCount(next.particleCount);
+    this.bloom.resize(this.canvas.width, this.canvas.height, next.renderScale);
+    this.lastPresentedFrame = 0;
+    this.setPaused('motion-preference', false);
+    this.scheduleRender();
+    this.postRendererState();
+    return this.getQualityState();
+  }
+
+  setPaused(reason, paused) {
+    if (paused) this.pauseReasons.add(reason);
+    else this.pauseReasons.delete(reason);
+    if (this.pauseReasons.size) {
+      if (this.raf) cancelAnimationFrame(this.raf);
+      this.raf = 0;
+      return;
+    }
+    this.lastTauSeconds = Date.now() / 1000.0;
+    this.lastFrameTime = undefined;
+    this.scheduleRender();
+  }
+
+  scheduleRender() {
+    if (this.raf || this.pauseReasons.size) return;
+    this.raf = requestAnimationFrame((time) => this.onRender(time));
   }
 
   initGl() {
@@ -2568,13 +2775,18 @@ class CameraView {
     return true;
   }
 
-  onRender() {
-    if (this.hidden) {
+  onRender(timestamp = performance.now()) {
+    this.raf = 0;
+    if (this.pauseReasons.size) return;
+    const frameInterval = 1000 / this.quality.targetFps;
+    if (this.lastPresentedFrame
+        && timestamp - this.lastPresentedFrame < frameInterval - 1) {
+      this.scheduleRender();
       return;
     }
     const program = this.shaderManager.getProgram();
     if (!program) {
-      requestAnimationFrame(() => this.onRender());
+      this.scheduleRender();
       return;
     }
     if (this.devicePixelRatio != this.getDevicePixelRatio()) {
@@ -2586,7 +2798,7 @@ class CameraView {
     this.lastTauSeconds = tauSeconds;
 
     const tanFovY = Math.tan(this.model.fovY / 2);
-    const focalLength = this.canvas.height / (2 * tanFovY);
+    const focalLength = this.bloom.renderHeight / (2 * tanFovY);
 
     const gl = this.gl;
     gl.activeTexture(gl.TEXTURE0);
@@ -2622,7 +2834,7 @@ class CameraView {
 
     gl.useProgram(program);
     gl.uniform3f(program.cameraSize,
-        this.canvas.width / 2, this.canvas.height / 2, focalLength);
+        this.bloom.renderWidth / 2, this.bloom.renderHeight / 2, focalLength);
     gl.uniform4f(program.cameraPosition,
         this.model.t, this.model.r, this.model.worldTheta, this.model.worldPhi);
     gl.uniform3f(program.p, this.model.p[0], this.model.p[1], this.model.p[2]);
@@ -2668,13 +2880,23 @@ class CameraView {
       }
     }
 
+    this.particles?.draw({
+      timeSeconds: tauSeconds,
+      width: this.bloom.renderWidth,
+      height: this.bloom.renderHeight,
+    });
+
     this.bloom.end(this.model.bloom.getValue(), this.model.exposure.getValue(),
         this.model.highContrast.getValue());
 
     this.model.updateOrbit(dTauSeconds);
-
-    requestAnimationFrame(() => this.onRender());
+    this.lastPresentedFrame = timestamp;
     this.checkFrameRate();
+    if (this.singleFrameOnly) {
+      this.setPaused('motion-preference', true);
+    } else {
+      this.scheduleRender();
+    }
   }
 
   checkFrameRate() {
@@ -2685,7 +2907,11 @@ class CameraView {
       this.numFrames = 0;
     }
     if (time > this.lastFrameTime + 1000) {
-      if (this.numFrames <= 10 && this.model.stars.getValue() &&
+      const slow = this.numFrames <= Math.max(10, this.quality.targetFps * 0.55);
+      if (slow && !this.qualityLocked && this.quality.tier !== 'low') {
+        const nextTier = this.quality.tier === 'high' ? 'balanced' : 'low';
+        this.setQuality({tier: nextTier}, {lock: false});
+      } else if (this.numFrames <= 10 && this.model.stars.getValue() &&
           !this.errorPanelShown) {
         this.model.stars.setValue(false);
         this.errorPanel.innerHTML = 'Stars have been automatically disabled ' +
@@ -2734,7 +2960,9 @@ class CameraView {
     this.canvas.style.height = `${rootElement.clientHeight}px`;
     this.canvas.width = rootElement.clientWidth * this.devicePixelRatio;
     this.canvas.height = rootElement.clientHeight * this.devicePixelRatio;
-    this.bloom.resize(this.canvas.width, this.canvas.height);
+    this.bloom.resize(
+        this.canvas.width, this.canvas.height, this.quality.renderScale);
+    this.lastPresentedFrame = 0;
   }
 
   getDevicePixelRatio() {
@@ -2749,7 +2977,9 @@ window.addEventListener('DOMContentLoaded', () => {
     BlackHoleShaderDemoApp.Bloom,
     BlackHoleShaderDemoApp.TextureManager,
     BlackHoleShaderDemoApp.ShaderManager,
-    BlackHoleShaderDemoApp.RocketManager);
+    BlackHoleShaderDemoApp.RocketManager,
+    window.BlackHoleGpuParticles?.GpuParticleField,
+    window.BlackHoleQualityPolicy);
 
 (function(model) {
 
@@ -4762,6 +4992,9 @@ Shortcut: CTRL + mouse drag">
           }
           if (event.data && event.data.type === 'black-hole-observatory:play') {
             model.setState(State.PLAYING);
+          }
+          if (event.data && event.data.type === 'black-hole-observatory:pause') {
+            model.setState(State.PAUSED);
           }
           if (event.data && event.data.type === 'black-hole-observatory:probe') {
             if (window.BlackHoleBackgroundReady) {

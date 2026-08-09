@@ -13,6 +13,17 @@ const HOME_INTENT_SELECTOR = [
   '[data-cic-weapon]',
 ].join(',');
 
+// Keep the complete flagship/WebGPU upgrade available without making it the
+// default hero composition. The legacy visual keeps the original full-scale,
+// particle-free black-hole plate as the dominant focal point; append
+// ?heroFx=flagship to review the upgraded ship narrative at any time.
+const FLAGSHIP_UPGRADE_ENABLED = new URLSearchParams(location.search)
+  .get('heroFx') === 'flagship';
+document.body.classList.toggle('flagship-upgrade-enabled', FLAGSHIP_UPGRADE_ENABLED);
+document.documentElement.dataset.heroFx = FLAGSHIP_UPGRADE_ENABLED
+  ? 'flagship'
+  : 'black-hole-legacy';
+
 // The licensed combat craft are part of the default homepage composition.
 // `heroCraft=off` remains a deterministic support escape hatch, while the
 // black-hole renderer above keeps its original full-resolution treatment.
@@ -72,7 +83,14 @@ function loadBlackHoleObservatory() {
   if (!allowRichMotion()) return;
   const frame = document.getElementById('blackhole-gl');
   const source = frame?.dataset.src;
-  if (frame && source && !frame.getAttribute('src')) frame.setAttribute('src', source);
+  if (!frame || !source || frame.getAttribute('src')) return;
+  const sourceUrl = new URL(source, location.href);
+  if (!FLAGSHIP_UPGRADE_ENABLED) {
+    sourceUrl.searchParams.set('bhQuality', 'high');
+    sourceUrl.searchParams.set('bhRenderScale', '1');
+    sourceUrl.searchParams.set('bhParticles', '0');
+  }
+  frame.setAttribute('src', `${sourceUrl.pathname}${sourceUrl.search}`);
 }
 
 export function loadHomeExperience() {
