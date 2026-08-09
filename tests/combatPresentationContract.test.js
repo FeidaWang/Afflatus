@@ -14,12 +14,28 @@ describe('combat presentation contract', () => {
   it('keeps Three.js weapon and camera cues event-driven', async () => {
     const source = await readFile(new URL('../src/scene/topdownCombat.js', import.meta.url), 'utf8');
     expect(source).toContain("event.type === 'weapon:fire'");
+    expect(source).toContain("event.type === 'weapon:charge'");
     expect(source).toContain("event.type === 'flight:launch'");
     expect(source).toContain("event.type === 'fleet:damage'");
+    expect(source).toContain('const shieldMaterial = new THREE.ShaderMaterial');
+    expect(source).toContain('float hexEnergyGrid');
+    expect(source).toContain('uniform vec3 uHitDirection');
+    expect(source).toContain("shieldShell.name = 'ImpactEnergyShield'");
+    expect(source).toContain('shieldShell.visible = shieldPulse > 0.008');
+    expect(source).not.toContain('new THREE.MeshBasicMaterial({ color: 0x70ddff');
     expect(source).toContain('pilotLaunch');
     expect(source).toContain('missileTail');
     expect(source).toContain('impactOrbit');
-    expect(source).toContain('/assets/combat/afflatus-command.glb');
+    expect(source).toContain('CAPITAL_ASSET_PROFILE');
+    expect(source).toContain('FIGHTER_ASSET_PROFILE');
+    expect(source).toContain('loadCombatAsset(renderer, CAPITAL_ASSET_PROFILE)');
+    expect(source).toContain('loadCombatAsset(renderer, FIGHTER_ASSET_PROFILE)');
+    expect(source).toContain("authoredShip.name = 'VenatorClassStarDestroyerCCBY'");
+    expect(source).toContain("fighterModelStatus = 'sixth-gen-ready'");
+    expect(source).toContain('combatVfx.linkedBeam');
+    expect(source).toContain('combatVfx.fireSmoke');
+    expect(source).toContain('combatVfx.shieldArc');
+    expect(source).toContain('combatVfx.bloom');
     expect(source).toContain('projectileWorldPosition(projectile, state)');
     expect(source).toContain('stellarPosition.needsUpdate = true');
     expect(source).toContain("approachBlackHole.name = 'AlphardDistantBlackHole'");
@@ -47,9 +63,25 @@ describe('combat presentation contract', () => {
     expect(source).not.toContain('now - last');
   });
 
+  it('publishes the authoritative Enforcer charge window for renderer VFX', async () => {
+    const source = await readFile(new URL('../src/homeExperience.js', import.meta.url), 'utf8');
+    expect(source).toContain("emitCombatEvent('weapon:charge',{weapon:'enforcer'");
+    expect(source).toContain('durationMs:4500');
+    expect(source).toContain("'weapon:charge':zh?");
+  });
+
   it('keeps the new CIC stylesheet free of priority escalation', async () => {
     const css = await readFile(new URL('../src/cic-hud.css', import.meta.url), 'utf8');
     expect(css).not.toContain('!important');
+  });
+
+  it('uses the sixth-generation fighter planform in the pilot HUD', async () => {
+    const source = await readFile(new URL('../src/scene/combatHudSC.js', import.meta.url), 'utf8');
+    expect(source).toContain('const deltaHalfSpan = hw * 0.41');
+    expect(source).toContain('Twin buried engine bays and exhaust apertures');
+    expect(source).toContain('Low-profile canopy nested in the broad blended fuselage');
+    expect(source).not.toContain('F-14 TOMCAT');
+    expect(source).not.toContain('twin tails');
   });
 
   it('provides cruise telemetry and focusable command stations at every viewport', async () => {
@@ -83,6 +115,12 @@ describe('combat presentation contract', () => {
     expect(source).not.toContain('drawCockpitFrame(ctx');
     expect(source).toContain('pilotCanvas.dataset.flightPhase');
     expect(source).toContain('const activeFlightMode=pendingDiagnostics?.flightKind||null');
+    expect(source).toContain('if(td&&td.available?.()&&sceneOwnsFeed)');
+    expect(source).toContain('if(td3d?.available?.())');
+    expect(source).toContain("||mode==='mainGun'||mode==='mosaic'||Boolean(activeFlightMode)");
+    expect(source).toContain("||mode==='ciws'||mode==='offline'");
+    expect(source).toContain("||mode==='nukeAuth'||mode==='nemp'");
+    expect(source).toContain("||mode==='mosaic'||Boolean(activeFlightMode)");
     expect(source).toContain("canvas.addEventListener('pointerdown'");
     expect(source).toContain('topdownCV?.orbitCameraBy?.');
     expect(html).toContain('id="cicCameraReset"');

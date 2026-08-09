@@ -47,18 +47,78 @@ export function drawCombatHudSC(ctx, w, h, now, state) {
   const hx = m + u * 0.01, hy = m + u * 0.01, hw = u * 0.2, hh = u * 0.15;
   ctx.strokeStyle = 'rgba(95,208,255,.28)';
   ctx.strokeRect(hx, hy, hw, hh);
-  // top-view ship wireframe (arrow body + 2 nacelles) in the box
+  // Top-view hologram of the Fictional 6th Gen Fighter: a tailless, broad
+  // blended-delta planform with twin buried engines (nose = -y).
   ctx.save();
   ctx.translate(hx + hw * 0.5, hy + hh * 0.5);
   ctx.strokeStyle = A; ctx.globalAlpha = 0.9; ctx.lineWidth = Math.max(1, u * 0.0028);
-  // top-view wireframe of an F-14 TOMCAT: long nose + pancake fuselage, twin
-  // engine nacelles, swept wings, twin tails + stabilators (nose = -y)
-  const Ld = hh * 0.42, Wd = hw * 0.075;
-  ctx.beginPath(); ctx.moveTo(0, -Ld); ctx.lineTo(Wd * 0.8, -Ld * 0.4); ctx.lineTo(Wd, Ld * 0.3); ctx.lineTo(-Wd, Ld * 0.3); ctx.lineTo(-Wd * 0.8, -Ld * 0.4); ctx.closePath(); ctx.stroke();
-  for (const sgx of [-1, 1]) ctx.strokeRect(sgx * Wd * 1.0 - Wd * 0.42, Ld * 0.05, Wd * 0.84, Ld * 0.85); // nacelles
-  for (const sgx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sgx * Wd, -Ld * 0.05); ctx.lineTo(sgx * Wd * 5.2, Ld * 0.5); ctx.lineTo(sgx * Wd * 4.8, Ld * 0.62); ctx.lineTo(sgx * Wd, Ld * 0.18); ctx.closePath(); ctx.stroke(); } // swept wings
-  for (const sgx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sgx * Wd * 1.1, Ld * 0.5); ctx.lineTo(sgx * Wd * 1.7, Ld * 0.92); ctx.stroke(); } // twin tails
-  for (const sgx of [-1, 1]) { ctx.beginPath(); ctx.moveTo(sgx * Wd * 0.9, Ld * 0.8); ctx.lineTo(sgx * Wd * 3.0, Ld * 1.02); ctx.lineTo(sgx * Wd * 2.6, Ld * 1.06); ctx.closePath(); ctx.stroke(); } // stabilators
+  const fighterLength = hh * 0.42;
+  const deltaHalfSpan = hw * 0.41;
+  const blendedBody = hw * 0.1;
+
+  // Continuous low-observable outer mold line: clipped delta tips, cranked
+  // trailing edge and a shallow centre notch, with no separate tail planes.
+  ctx.beginPath();
+  ctx.moveTo(0, -fighterLength);
+  ctx.lineTo(blendedBody * 0.82, -fighterLength * 0.72);
+  ctx.lineTo(blendedBody * 1.38, -fighterLength * 0.4);
+  ctx.lineTo(deltaHalfSpan * 0.56, -fighterLength * 0.12);
+  ctx.lineTo(deltaHalfSpan, fighterLength * 0.31);
+  ctx.lineTo(deltaHalfSpan * 0.9, fighterLength * 0.48);
+  ctx.lineTo(deltaHalfSpan * 0.55, fighterLength * 0.39);
+  ctx.lineTo(blendedBody * 1.95, fighterLength * 0.56);
+  ctx.lineTo(blendedBody * 1.7, fighterLength * 0.97);
+  ctx.lineTo(blendedBody * 0.5, fighterLength * 1.04);
+  ctx.lineTo(0, fighterLength * 0.88);
+  ctx.lineTo(-blendedBody * 0.5, fighterLength * 1.04);
+  ctx.lineTo(-blendedBody * 1.7, fighterLength * 0.97);
+  ctx.lineTo(-blendedBody * 1.95, fighterLength * 0.56);
+  ctx.lineTo(-deltaHalfSpan * 0.55, fighterLength * 0.39);
+  ctx.lineTo(-deltaHalfSpan * 0.9, fighterLength * 0.48);
+  ctx.lineTo(-deltaHalfSpan, fighterLength * 0.31);
+  ctx.lineTo(-deltaHalfSpan * 0.56, -fighterLength * 0.12);
+  ctx.lineTo(-blendedBody * 1.38, -fighterLength * 0.4);
+  ctx.lineTo(-blendedBody * 0.82, -fighterLength * 0.72);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Faceted chine, wing panels and centre spine communicate the fused body
+  // without reintroducing conventional fins or stabilators.
+  for (const side of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(side * blendedBody * 0.82, -fighterLength * 0.72);
+    ctx.lineTo(side * blendedBody * 1.2, fighterLength * 0.18);
+    ctx.lineTo(side * deltaHalfSpan * 0.9, fighterLength * 0.48);
+    ctx.moveTo(side * blendedBody * 1.2, fighterLength * 0.18);
+    ctx.lineTo(side * blendedBody * 1.95, fighterLength * 0.56);
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.moveTo(0, -fighterLength * 0.86);
+  ctx.lineTo(0, fighterLength * 0.86);
+  ctx.stroke();
+
+  // Twin buried engine bays and exhaust apertures.
+  for (const side of [-1, 1]) {
+    const engineX = side * blendedBody * 1.05;
+    ctx.beginPath();
+    ctx.moveTo(engineX, -fighterLength * 0.08);
+    ctx.lineTo(engineX, fighterLength * 0.78);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(engineX, fighterLength * 0.83, blendedBody * 0.38, fighterLength * 0.09, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Low-profile canopy nested in the broad blended fuselage.
+  ctx.beginPath();
+  ctx.moveTo(0, -fighterLength * 0.55);
+  ctx.lineTo(blendedBody * 0.48, -fighterLength * 0.24);
+  ctx.lineTo(blendedBody * 0.34, fighterLength * 0.05);
+  ctx.lineTo(-blendedBody * 0.34, fighterLength * 0.05);
+  ctx.lineTo(-blendedBody * 0.48, -fighterLength * 0.24);
+  ctx.closePath();
+  ctx.stroke();
   ctx.restore();
   txt(ctx, readout(S.shieldF), hx + hw * 0.32, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);
   txt(ctx, readout(S.shieldR), hx + hw * 0.68, hy + hh + fs * 0.9, fs * 0.9, COL.gr, 'center', 600);

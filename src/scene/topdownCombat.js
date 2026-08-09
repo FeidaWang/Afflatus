@@ -19,16 +19,24 @@
  *   scene.stop(); scene.destroy();
  */
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createWeaponCameraDirector } from '../combat/weaponCameraDirector.js';
 import { fovForAccel, bankAngle, chaseCamPose } from '../combat/cameraMath.js';
 import { createLaunchPath, createLandingPath } from '../combat/flightPath.js';
 import {
+  applyVanguardSurfaceTextures,
   createAfflatusInterceptorPrototype,
   createAfflatusVanguard,
+  disposeVanguardSurfaceTextures,
+  loadVanguardSurfaceTextures,
 } from './afflatusVanguard.js';
 import { projectedDiameterPx, selectProceduralLod } from '../lib/proceduralLod.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
+import {
+  CAPITAL_ASSET_PROFILE,
+  FIGHTER_ASSET_PROFILE,
+  loadCombatAsset,
+} from './combatAssetLoader.js';
+import { createCombatVfx } from './combatVfx.js';
 import {
   canAcquireWebGLContext,
   createWebGLContextLifecycle,
@@ -326,6 +334,15 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   const rim = new THREE.DirectionalLight(0x4d7bd6, 0.8); rim.position.set(-30, 20, -30); scene.add(rim);
 
   const GLOW = glowTexture();
+  // r160-compatible port of the Three.js linked-particle, fire/smoke and
+  // emissive-bloom examples. All effect families share three bounded draws;
+  // authoritative CombatState events below are the only spawn source.
+  const combatVfx = createCombatVfx(THREE, {
+    scene,
+    glowTexture: GLOW,
+    qualityTier: renderPolicy.qualityTier,
+  });
+  const combatVfxBufferSize = new THREE.Vector2();
   const sprite = (color, size, opacity = 1) => {
     const m = new THREE.Sprite(new THREE.SpriteMaterial({
       map: GLOW, color, transparent: true, opacity,
@@ -424,7 +441,13 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   const capital = new THREE.Group();
   let shipAnchors = null;
   let shipModelStatus = 'procedural';
+  let shipTextureStatus = 'idle';
+  let shipSurfaceTextures = null;
+  let shipSurfaceTexturePromise = null;
+  let sceneDisposed = false;
   let authoredShip = null;
+  let shipAssetHandle = null;
+  let shipModelPromise = null;
   const fallbackShip = createAfflatusVanguard(THREE, { detail: 'full', forwardNegativeZ: true });
   fallbackShip.group.name = 'VanguardProceduralFallback';
   capital.add(fallbackShip.group);
@@ -438,12 +461,105 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     missile: fallbackShip.group.getObjectByName('MissileBay'),
   };
   shipAnchors = fallbackAnchors;
+  function applyShipSurfaceQuality() {
+    if (!shipSurfaceTextures) return;
+    applyVanguardSurfaceTextures(fallbackShip.group, shipSurfaceTextures, renderPolicy.qualityTier);
+  }
+  function ensureShipSurfaceTextures() {
+    if (renderPolicy.qualityTier === 'low' || shipSurfaceTexturePromise || dataSaverEnabled()) return;
+    shipTextureStatus = 'loading';
+    shipSurfaceTexturePromise = loadVanguardSurfaceTextures(THREE, renderer)
+      .then((textures) => {
+        if (sceneDisposed) {
+          disposeVanguardSurfaceTextures(textures);
+          return;
+        }
+        shipSurfaceTextures = textures;
+        shipTextureStatus = 'ktx2';
+        applyShipSurfaceQuality();
+      })
+      .catch(() => { shipTextureStatus = 'fallback'; });
+  }
+  // One low-poly shell and one fragment pass replace the old wire sphere.
+  // The shader stays dormant between authoritative fleet:damage events; when
+  // hit, its local-space pattern provides a Fresnel rim, a hex energy lattice
+  // and a single expanding wave without particles, textures or postprocessing.
+  const shieldMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      uColor: { value: new THREE.Color(0x70ddff) },
+      uPulse: { value: 0 },
+      uHitDirection: { value: new THREE.Vector3(0, 0.08, -1).normalize() },
+    },
+    vertexShader: /* glsl */ `
+      varying vec3 vNormalV;
+      varying vec3 vViewDirV;
+      varying vec3 vShieldDirection;
+
+      void main() {
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        vNormalV = normalize(normalMatrix * normal);
+        vViewDirV = normalize(-mvPosition.xyz);
+        vShieldDirection = normalize(position);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform vec3 uColor;
+      uniform float uPulse;
+      uniform vec3 uHitDirection;
+      varying vec3 vNormalV;
+      varying vec3 vViewDirV;
+      varying vec3 vShieldDirection;
+
+      float hexEnergyGrid(vec2 point) {
+        const vec2 cellSize = vec2(1.0, 1.7320508);
+        vec2 cellA = mod(point, cellSize) - cellSize * 0.5;
+        vec2 cellB = mod(point - cellSize * 0.5, cellSize) - cellSize * 0.5;
+        vec2 cell = dot(cellA, cellA) < dot(cellB, cellB) ? cellA : cellB;
+        vec2 edgePoint = abs(cell);
+        float edgeDistance = abs(0.5 - max(edgePoint.x, dot(edgePoint, vec2(0.5, 0.8660254))));
+        return 1.0 - smoothstep(0.015, 0.055, edgeDistance);
+      }
+
+      void main() {
+        float pulse = clamp(uPulse, 0.0, 1.0);
+        vec3 direction = normalize(vShieldDirection);
+        float fresnel = pow(1.0 - max(0.0, dot(normalize(vNormalV), normalize(vViewDirV))), 2.35);
+
+        // Chord distance avoids an acos per fragment while still tracing a
+        // circular wave across the curved shield from the actual hit side.
+        float hitDistance = length(direction - normalize(uHitDirection));
+        float progress = 1.0 - pulse;
+        float rippleRadius = 0.04 + progress * 1.55;
+        float rippleWidth = 0.05 + progress * 0.025;
+        float ripple = 1.0 - smoothstep(rippleWidth, rippleWidth + 0.075, abs(hitDistance - rippleRadius));
+        float impact = (1.0 - smoothstep(0.0, 0.22, hitDistance)) * smoothstep(0.55, 1.0, pulse);
+
+        float grid = hexEnergyGrid(direction.xz * 6.0);
+        float energizedGrid = grid * (0.12 + ripple * 0.88);
+        float alpha = pulse * (0.09 * fresnel + 0.11 * energizedGrid + 0.68 * ripple + 0.52 * impact);
+        vec3 baseColor = uColor * (0.55 + fresnel * 0.8);
+        vec3 hotColor = vec3(0.84, 0.97, 1.0);
+        vec3 color = mix(baseColor, hotColor, clamp(ripple * 0.78 + impact, 0.0, 1.0));
+        gl_FragColor = vec4(color, clamp(alpha, 0.0, 0.86));
+      }
+    `,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+  });
   const shieldShell = new THREE.Mesh(
     new THREE.SphereGeometry(5.25, 28, 18),
-    new THREE.MeshBasicMaterial({ color: 0x70ddff, transparent: true, opacity: 0, wireframe: true, blending: THREE.AdditiveBlending, depthWrite: false }),
+    shieldMaterial,
   );
+  shieldShell.name = 'ImpactEnergyShield';
   shieldShell.scale.set(1.0, 0.23, 1.45);
+  shieldShell.visible = false;
   capital.add(shieldShell);
+  const shieldHitDirection = shieldMaterial.uniforms.uHitDirection.value;
+  const shieldWorldHitDirection = new THREE.Vector3();
+  const shieldWorldImpact = new THREE.Vector3();
   let shieldPulse = 0;
   const damageScars = [];
   for (const [x, z] of [[-1.65, -0.9], [1.9, 0.7], [-0.4, 2.25]]) {
@@ -454,42 +570,138 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     damageScars.push(scar);
   }
   let damageScarIndex = 0;
-  new GLTFLoader().load(
-    '/assets/combat/afflatus-command.glb',
-    (gltf) => {
-      fallbackShip.group.visible = false;
-      const model = gltf.scene;
-      model.name = 'AfflatusCommandGLB';
-      model.scale.setScalar(1);
-      capital.add(model);
-      authoredShip = model;
-      shipAnchors = {
-        main: model.getObjectByName('Muzzle_Main'),
-        ciwsPort: model.getObjectByName('Muzzle_CIWS_Port'),
-        ciwsStarboard: model.getObjectByName('Muzzle_CIWS_Starboard'),
-        missile: model.getObjectByName('MissileBay'),
-      };
-      shipModelStatus = 'glb';
-      applyAuthoredGeometryQuality();
-    },
-    undefined,
-    () => {
-      shipAnchors = null;
-      shipModelStatus = 'fallback';
-    },
-  );
 
-  // ── LANCER interceptors: six shared surface buffers per craft, complete
-  //    top/bottom volume, canopy, gun rails, wing roots and vectoring drives.
+  function addCapitalWeaponAnchors(root) {
+    const definitions = {
+      main: ['Muzzle_Main', [0, 1.0, 5.4]],
+      ciwsPort: ['Muzzle_CIWS_Port', [-2.1, 0.65, 2.8]],
+      ciwsStarboard: ['Muzzle_CIWS_Starboard', [2.1, 0.65, 2.8]],
+      missile: ['MissileBay', [0, 0.65, 0.8]],
+    };
+    return Object.fromEntries(Object.entries(definitions).map(([keyName, [name, position]]) => {
+      const anchor = new THREE.Object3D();
+      anchor.name = name;
+      anchor.position.fromArray(position);
+      root.add(anchor);
+      return [keyName, anchor];
+    }));
+  }
+
+  let authoredShipAnchors = null;
+  function syncShipAssetVisibility() {
+    const useAuthored = Boolean(authoredShip && renderPolicy.qualityTier !== 'low');
+    fallbackShip.group.visible = !useAuthored;
+    if (authoredShip) authoredShip.visible = useAuthored;
+    shipAnchors = useAuthored ? authoredShipAnchors : fallbackAnchors;
+  }
+
+  function dataSaverEnabled() {
+    try { return Boolean(navigator.connection?.saveData); } catch { return false; }
+  }
+
+  async function ensureAuthoredShip() {
+    if (shipModelPromise || sceneDisposed || renderPolicy.qualityTier === 'low' || dataSaverEnabled()) return shipModelPromise;
+    shipModelStatus = 'loading-venator';
+    shipModelPromise = loadCombatAsset(renderer, CAPITAL_ASSET_PROFILE)
+      .then((asset) => {
+        if (sceneDisposed) {
+          asset.dispose();
+          return null;
+        }
+        shipAssetHandle = asset;
+        authoredShip = asset.root;
+        authoredShip.name = 'VenatorClassStarDestroyerCCBY';
+        // Combat convention is +Z, while the fixed carrier faces up-field -Z.
+        authoredShip.rotation.y += Math.PI;
+        authoredShipAnchors = addCapitalWeaponAnchors(authoredShip);
+        capital.add(authoredShip);
+        shipModelStatus = 'venator-ready';
+        syncShipAssetVisibility();
+        applyAuthoredGeometryQuality();
+        return asset;
+      })
+      .catch((error) => {
+        shipModelStatus = 'procedural-fallback';
+        capital.userData.shipAssetError = error instanceof Error ? error.message : String(error);
+        syncShipAssetVisibility();
+        ensureShipSurfaceTextures();
+        return null;
+      });
+    return shipModelPromise;
+  }
+
+  // Licensed sixth-generation fighters replace the procedural Lancers after
+  // their bounded GLB has loaded. The Lancers remain the low-tier, loading and
+  // failure fallback so combat never waits on a network asset.
   const fighterPrototype = createAfflatusInterceptorPrototype(THREE);
   function makeFighter() {
-    const fighter = fighterPrototype.group.clone(true);
+    const fighter = new THREE.Group();
+    const fallback = fighterPrototype.group.clone(true);
+    fighter.add(fallback);
+    fighter.userData.fallback = fallback;
+    fighter.userData.authored = null;
     fighter.scale.setScalar(0.43);
     scene.add(fighter);
     return fighter;
   }
   const fighters = [makeFighter(), makeFighter(), makeFighter()];
   fighters.forEach((fighter) => { fighter.visible = false; });
+  let fighterAssetHandle = null;
+  let fighterModelPromise = null;
+  let combatAssetLoadPromise = null;
+  let fighterModelStatus = 'procedural';
+
+  function syncFighterAssetVisibility() {
+    const useAuthored = Boolean(fighterAssetHandle && renderPolicy.qualityTier !== 'low');
+    for (const fighter of fighters) {
+      fighter.userData.fallback.visible = !useAuthored;
+      if (fighter.userData.authored) fighter.userData.authored.visible = useAuthored;
+    }
+  }
+
+  async function ensureAuthoredFighters() {
+    if (fighterModelPromise || sceneDisposed || renderPolicy.qualityTier === 'low' || dataSaverEnabled()) return fighterModelPromise;
+    fighterModelStatus = 'loading-sixth-gen';
+    fighterModelPromise = loadCombatAsset(renderer, FIGHTER_ASSET_PROFILE)
+      .then((asset) => {
+        if (sceneDisposed) {
+          asset.dispose();
+          return null;
+        }
+        fighterAssetHandle = asset;
+        fighters.forEach((fighter, index) => {
+          const model = index === 0 ? asset.root : asset.root.clone(true);
+          model.name = `FictionalSixthGenFighterCCBY_${index + 1}`;
+          fighter.userData.authored = model;
+          fighter.add(model);
+        });
+        fighterModelStatus = 'sixth-gen-ready';
+        syncFighterAssetVisibility();
+        return asset;
+      })
+      .catch((error) => {
+        fighterModelStatus = 'procedural-fallback';
+        scene.userData.fighterAssetError = error instanceof Error ? error.message : String(error);
+        syncFighterAssetVisibility();
+        return null;
+      });
+    return fighterModelPromise;
+  }
+
+  function ensureAuthoredCombatAssets(state) {
+    if (!state || renderPolicy.qualityTier === 'low' || dataSaverEnabled()) return;
+    const active = Boolean(state.target || state.escorts?.length || state.projectiles?.length);
+    if (!active || combatAssetLoadPromise || (shipModelPromise && fighterModelPromise)) return;
+    // KTX2Loader owns a worker pool. Stream the two authored models through
+    // one active loader at a time to avoid duplicate transcoder workers and
+    // their associated GPU-memory warning; procedural craft cover both waits.
+    combatAssetLoadPromise = Promise.resolve(shipSurfaceTexturePromise)
+      .catch(() => null)
+      .then(() => ensureAuthoredShip())
+      .then(() => ensureAuthoredFighters())
+      .finally(() => { combatAssetLoadPromise = null; });
+  }
+
   let liveCombatState = null;
   let capitalLodTier = 'medium';
   const fighterLodTiers = fighters.map(() => 'medium');
@@ -535,11 +747,12 @@ export function createTopdownCombat({ canvas, surfaceId }) {
 
   function applyAuthoredGeometryQuality() {
     if (!authoredShip) return;
-    const low = renderPolicy.qualityTier === 'low';
+    const high = renderPolicy.qualityTier === 'high';
+    const balancedDetail = /trench[_ -]*greebles|bottom[_ -]*greebles|turbolaser/i;
     authoredShip.traverse((child) => {
-      if (child.isMesh && ['MachinedEdges', 'MechanicalRecesses'].includes(child.name)) {
-        child.visible = !low;
-      }
+      if (!child.isMesh) return;
+      const label = `${child.name} ${child.parent?.name || ''}`;
+      child.visible = high || !balancedDetail.test(label);
     });
   }
 
@@ -577,11 +790,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     applySurfaceTier(fallbackShip.group, capitalLodTier, capitalLodRules);
     fighters.forEach((fighter, index) => {
       fighterLodTiers[index] = selectObjectLod(fighter, 4.5, fighterLodTiers[index], viewportHeight);
-      applySurfaceTier(fighter, fighterLodTiers[index], fighterLodRules);
+      applySurfaceTier(fighter.userData.fallback, fighterLodTiers[index], fighterLodRules);
     });
   }
   applySurfaceTier(fallbackShip.group, capitalLodTier, capitalLodRules);
-  fighters.forEach((fighter) => applySurfaceTier(fighter, 'medium', fighterLodRules));
+  fighters.forEach((fighter) => applySurfaceTier(fighter.userData.fallback, 'medium', fighterLodRules));
 
   // ── U27 (27b-2): Homeworld-style tactical lines — opt-in via ?tacticalines=1
   // (owner adjudication 2026-07-14: flag-gated, default off, no verification-
@@ -839,6 +1052,20 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     missiles.push({ head, flare: model.flare, trail: [], nuclear, velocity: initialVelocity, lastTrailAt: nowMs });
     missileLastPos = start;
     missileLastVel = initialVelocity;
+    combatVfx.bloom({
+      at: start,
+      color: nuclear ? 0xff6257 : 0xffb65f,
+      size: nuclear ? 2.2 : 1.25,
+      lifeMs: nuclear ? 420 : 240,
+    });
+    combatVfx.fireSmoke({
+      at: start,
+      velocity: initialVelocity.clone().multiplyScalar(-1.25),
+      color: nuclear ? 0xff5b4d : 0xff9f42,
+      lifeMs: nuclear ? 980 : 650,
+      scale: nuclear ? 1.35 : 0.72,
+      nuclear,
+    });
     if (camDirector) {
       camDirector.requestShot('missileTail', {
         durationMs: 7000,
@@ -873,7 +1100,9 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       orient(lance, muzzle, comet.position);
       lances.push({ mesh: lance, life: 1, baseOpacity: opacity, radius });
     }
-    if (camDirector) camDirector.requestShot('mainGunAxis', { durationMs: 1500, blendInMs: 300, now: nowMs });
+    combatVfx.linkedBeam({ from: muzzle, to: comet.position, color: 0x8dfff3, lifeMs: 460, jitter: 0.18 });
+    combatVfx.bloom({ at: muzzle, color: 0xeaffff, size: 2.65, lifeMs: 420 });
+    if (camDirector) camDirector.requestShot('mainGunAxis', { durationMs: 1500, blendInMs: 300, refresh: true, now: nowMs });
   }
 
   // ── animation loop ────────────────────────────────────────────────────────
@@ -1061,7 +1290,12 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     const t = (now - t0) / 1000;
     const frameScale = previousUpdateAt ? Math.max(0, Math.min(3, (now - previousUpdateAt) / (1000 / 60))) : 1;
     previousUpdateAt = now;
+    // Sync the event-spawn clock before processing this frame. A combat feed
+    // may resume after seconds offscreen; using the previous render time would
+    // make freshly spawned short-lived effects expire in the same frame.
+    combatVfx.beginFrame(now);
     if (state) liveCombatState = state;
+    ensureAuthoredCombatAssets(liveCombatState);
     const alive = Boolean(state?.target);
     const unseenEvents = (state?.events || []).filter((event) => event.id > lastEventSeen);
     const revealEvent = unseenEvents.find((event) => event.type === 'target:acquired' || event.type === 'weapon:fire');
@@ -1092,9 +1326,10 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     comet.userData.rock.rotation.x += .003 * frameScale;
     comet.userData.rock.rotation.y += .004 * frameScale;
 
-    shieldPulse *= 0.9;
-    shieldShell.material.opacity = Math.max(0, shieldPulse * (0.18 + Math.sin(now * 0.035) * 0.08));
-    shieldShell.rotation.y += 0.006;
+    shieldPulse *= Math.pow(0.9, frameScale);
+    shieldMaterial.uniforms.uPulse.value = shieldPulse;
+    // Skip even the transparent draw call while no impact is active.
+    shieldShell.visible = shieldPulse > 0.008;
 
     // The bridge is never parked in space. Both stellar volumes pass aft at
     // different rates, providing near/far parallax around every camera shot.
@@ -1191,17 +1426,72 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     for (const event of state?.events || []) {
       if (event.id <= lastEventSeen) continue;
       lastEventSeen = event.id;
+      const eventAgeMs = Math.max(0, Number(state?.now || event.at) - Number(event.at || 0));
+      const eventTtlMs = event.type === 'weapon:charge'
+        ? (Number(event.durationMs) || 4500) + 900
+        : event.type === 'flight:launch' || event.type === 'flight:landing'
+          ? 7000
+          : 2600;
+      // Dynamic imports and hidden HUD modes can deliver an older snapshot.
+      // Advance the event cursor, but never replay a long-expired flash,
+      // explosion or camera cut after the scene becomes visible again.
+      if (eventAgeMs > eventTtlMs) continue;
       if (event.type === 'flight:launch' || event.type === 'flight:landing') {
         const kind = event.type.split(':')[1];
-        const eventAgeMs = Math.max(0, (state?.now || event.at) - event.at);
         startFlight(kind, now - eventAgeMs);
       } else if (event.type === 'fleet:damage') {
         shieldPulse = 1;
+        shieldMaterial.uniforms.uPulse.value = shieldPulse;
+        shieldShell.visible = true;
+        // fleet:damage currently carries no impact coordinates. Its source is
+        // the tracked threat's near-blast, so aim the response at that real
+        // scene direction and account for the shell's ellipsoid scale.
+        shieldWorldHitDirection.copy(comet.position).sub(capital.position);
+        if (shieldWorldHitDirection.lengthSq() < 0.0001) shieldWorldHitDirection.set(0, 0.08, -1);
+        shieldWorldHitDirection.normalize();
+        shieldHitDirection.copy(shieldWorldHitDirection);
+        shieldHitDirection.set(
+          shieldHitDirection.x / shieldShell.scale.x,
+          shieldHitDirection.y / shieldShell.scale.y,
+          shieldHitDirection.z / shieldShell.scale.z,
+        );
+        if (shieldHitDirection.lengthSq() < 0.0001) shieldHitDirection.set(0, 0.08, -1);
+        shieldHitDirection.normalize();
+        shieldWorldImpact.copy(shieldHitDirection).multiplyScalar(5.25);
+        shieldShell.localToWorld(shieldWorldImpact);
+        const shieldWorldRadius = shieldWorldImpact.distanceTo(capital.position);
+        combatVfx.shieldArc({
+          center: capital.position,
+          hitDirection: shieldWorldHitDirection,
+          radius: shieldWorldRadius,
+          color: 0x70ddff,
+          lifeMs: 680,
+        });
+        combatVfx.bloom({
+          at: shieldWorldImpact,
+          color: 0xd9fbff,
+          size: 2.8,
+          lifeMs: 420,
+        });
         const scar = damageScars[damageScarIndex % damageScars.length];
         damageScarIndex += 1;
         scar.material.opacity = Math.min(0.72, scar.material.opacity + 0.36);
         const hits = Math.min(Number(event.count) || 1, fighters.length);
         for (let i = 0; i < hits; i += 1) boom(fighters[i].position.clone(), 0.52, 0xff874f);
+      } else if (event.type === 'weapon:charge' && event.weapon === 'enforcer' && alive) {
+        const chargeRemainingMs = (Number(event.durationMs) || 4500) - eventAgeMs;
+        if (chargeRemainingMs <= 0) continue;
+        const fallback = new THREE.Vector3(0, 2.5, -14);
+        capital.localToWorld(fallback);
+        const muzzle = worldAnchor(shipAnchors?.main, fallback);
+        combatVfx.charge({
+          at: muzzle,
+          color: 0x72fff0,
+          lifeMs: chargeRemainingMs,
+          radius: 2.35,
+        });
+        combatVfx.bloom({ at: muzzle, color: 0xe9ffff, size: 1.55, lifeMs: 760 });
+        camDirector?.requestShot('mainGunAxis', { durationMs: chargeRemainingMs, blendInMs: 420, now });
       } else if (event.type === 'weapon:fire' && alive) {
         if (event.weapon === 'cannon') {
           const fallback = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld);
@@ -1216,6 +1506,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
             const target = cometPos.clone().add(tmp().set(Math.sin(phase) * 3, Math.cos(phase * 2), phase * 12));
             fireTracer(anchors[round % anchors.length], target, round % 2 ? 0xffc878 : 0x9ae5ff);
           }
+          anchors.forEach((anchor, index) => {
+            const color = index ? 0xffc878 : 0x9ae5ff;
+            combatVfx.linkedBeam({ from: anchor, to: cometPos, color, lifeMs: 250, jitter: 0.1 });
+            combatVfx.bloom({ at: anchor, color, size: 0.82, lifeMs: 190 });
+          });
           camDirector?.requestShot('ciwsTurret', { durationMs: 1200, blendInMs: 260, now });
         } else if (event.weapon === 'missile') {
           launchMissile({ nowMs: now });
@@ -1228,9 +1523,19 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         const scale = event.weapon === 'nuke' ? 4.8 : event.weapon === 'enforcer' ? 3.2 : 1.4;
         const color = event.weapon === 'nuke' ? 0xff5148 : event.weapon === 'enforcer' ? 0xbfffe6 : 0xffe6b0;
         boom(cometPos.clone(), scale, color);
+        combatVfx.bloom({ at: cometPos, color, size: scale * 2.1, lifeMs: event.weapon === 'nuke' ? 820 : 420 });
+        combatVfx.fireSmoke({
+          at: cometPos,
+          velocity: event.weapon === 'enforcer' ? [0, 1.4, 0] : [0, 0.75, 0],
+          color,
+          lifeMs: event.weapon === 'nuke' ? 2100 : 980,
+          scale: event.weapon === 'nuke' ? 3.2 : event.weapon === 'enforcer' ? 1.8 : 0.9,
+          nuclear: event.weapon === 'nuke',
+        });
         camDirector?.requestShot('impactOrbit', { durationMs: event.weapon === 'nuke' ? 1800 : 1050, blendInMs: 110, now });
       } else if (event.type === 'target:destroyed') {
         boom(cometPos.clone(), 5.2, 0xffe6b0);
+        combatVfx.fireSmoke({ at: cometPos, velocity: [0, 1.1, 0], color: 0xffb05c, lifeMs: 2400, scale: 3.4, nuclear: true });
       }
     }
 
@@ -1280,12 +1585,24 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       ms.flare.scale.setScalar(engineScale);
       missileLastPos = p;
       missileLastVel = ms.velocity;
-      if (projectile.stage !== 'drop' && now - ms.lastTrailAt >= (renderPolicy.qualityTier === 'low' ? 90 : 50)) {
+      if (projectile.stage !== 'drop' && now - ms.lastTrailAt >= (renderPolicy.qualityTier === 'low' ? 180 : 110)) {
         ms.lastTrailAt = now;
         const trail = sprite(ms.nuclear ? 0xff5148 : 0xffcaa0, ms.nuclear ? 2.2 : 1.4, 0.7);
         trail.position.copy(p);
         scene.add(trail);
         ms.trail.push({ s: trail, bornAt: now });
+        const exhaustVelocity = ms.velocity.lengthSq() > 1e-6
+          ? ms.velocity.clone().normalize().multiplyScalar(-1.1)
+          : new THREE.Vector3(0, 0.15, 0.5);
+        combatVfx.fireSmoke({
+          at: p,
+          velocity: exhaustVelocity,
+          color: ms.nuclear ? 0xff584f : 0xffa85a,
+          lifeMs: ms.nuclear ? 900 : 620,
+          scale: ms.nuclear ? 0.95 : 0.52,
+          nuclear: false,
+          continuous: true,
+        });
       }
       ms.trail.forEach((point) => {
         point.s.material.opacity = Math.max(0, (1 - (now - point.bornAt) / 620) * 0.7);
@@ -1336,6 +1653,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     applyUserCamera(now, frameScale);
 
     camera.updateMatrixWorld();
+    renderer.getDrawingBufferSize(combatVfxBufferSize);
+    combatVfx.update(now, camera, combatVfxBufferSize.y);
     updateProceduralLods(H);
     comet.updateMatrixWorld();
     if (comet.visible) {
@@ -1414,6 +1733,9 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     },
   });
   if (!webglLifecycle.canInitialize) {
+    sceneDisposed = true;
+    webglLifecycle.dispose();
+    combatVfx.dispose();
     disposeThreeScene(scene, renderer);
     return null;
   }
@@ -1440,6 +1762,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     onQualityChange(nextPolicy) {
       renderPolicy = nextPolicy;
       const pressureMode = nextPolicy.qualityTier === 'low';
+      combatVfx.setQuality(nextPolicy.qualityTier);
       trailMesh.visible = !pressureMode;
       for (const layer of starLayers) {
         layer.material.opacity = pressureMode
@@ -1447,16 +1770,26 @@ export function createTopdownCombat({ canvas, surfaceId }) {
           : layer.userData.baseOpacity;
       }
       flightStreaks.material.opacity = pressureMode ? .1 : .2;
+      if (shipModelStatus === 'procedural-fallback') ensureShipSurfaceTextures();
+      applyShipSurfaceQuality();
       applyAuthoredGeometryQuality();
+      syncShipAssetVisibility();
+      syncFighterAssetVisibility();
+      ensureAuthoredCombatAssets(liveCombatState);
       updateProceduralLods(H);
     },
     onDispose() {
+      sceneDisposed = true;
       webglLifecycle.dispose();
+      combatVfx.dispose();
       disposeThreeScene(scene, renderer);
     },
   });
 
   return {
+    available() {
+      return contextReady && surfaceActive && !sceneDisposed;
+    },
     start() {
       wantsLoop = true;
       startLoop();
@@ -1489,9 +1822,12 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     getDiagnostics() {
       return Object.freeze({
         shipModelStatus,
+        fighterModelStatus,
+        shipTextureStatus,
         drawCalls: renderer.info.render.calls,
         triangles: renderer.info.render.triangles,
         qualityTier: renderPolicy.qualityTier,
+        contextReady,
         cameraShot: camDirector?.currentShotId || 'commandChase',
         flightKind: flightEvent?.kind || null,
         flightPhase: currentFlightPhase,
@@ -1499,6 +1835,12 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         cameraInteractive: true,
         cameraManual: userCamera.blend > .05,
         activeEscortCount: liveCombatState?.escorts?.length || 0,
+        authoredAssets: Object.freeze({
+          ship: shipAssetHandle?.diagnostics || null,
+          fighter: fighterAssetHandle?.diagnostics || null,
+          dataSaver: dataSaverEnabled(),
+        }),
+        vfx: Object.freeze(combatVfx.getDiagnostics()),
         proceduralLod: Object.freeze({
           capital: capitalLodTier,
           fighters: Object.freeze([...fighterLodTiers]),

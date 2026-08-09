@@ -74,6 +74,22 @@ export default defineConfig({
         // chunk becomes shared/cacheable across every page that imports
         // it (currently duplicated per-page-bundle).
         manualChunks(id) {
+          if (id.includes('node_modules/three/examples/jsm/libs/meshopt_decoder.module.js')) {
+            return 'vendor-three-codecs';
+          }
+          if (id.includes('node_modules/three/examples/jsm/loaders/KTX2Loader.js')
+            || id.includes('node_modules/three/examples/jsm/libs/ktx-parse.module.js')
+            || id.includes('node_modules/three/examples/jsm/libs/zstddec.module.js')
+            || id.includes('node_modules/three/examples/jsm/utils/WorkerPool.js')) {
+            return 'vendor-three-textures';
+          }
+          if (id.includes('node_modules/three/examples/jsm/renderers/webgpu')
+            || id.includes('node_modules/three/examples/jsm/renderers/webgl/')
+            || id.includes('node_modules/three/examples/jsm/renderers/common/')
+            || id.includes('node_modules/three/examples/jsm/nodes')
+            || id.includes('node_modules/three/examples/jsm/capabilities/WebGPU.js')) {
+            return 'vendor-three-webgpu';
+          }
           if (id.includes('node_modules/three')) return 'vendor-three';
           if (id.includes('node_modules/astronomy-engine')) return 'vendor-astronomy';
         }

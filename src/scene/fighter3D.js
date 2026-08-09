@@ -1,6 +1,6 @@
 /**
- * Three.js combat fighter — now the NIGHTHAWK (shared model from nighthawk.js),
- * so the home-page escorts and the top-down scene use one detailed model.
+ * Three.js combat fighter — loads the licensed sixth-generation fighter GLB,
+ * with the procedural NIGHTHAWK retained as the async/low-tier/GPU fallback.
  *
  * Drop-in for spriteCraft: exposes drawOriented(ctx, type, {az, el, size, alpha})
  * (nose up in frame; az/el = view angle). Renders the model offscreen for the
@@ -9,6 +9,10 @@
  */
 import * as THREE from 'three';
 import { createNighthawk } from './nighthawk.js';
+import {
+  FIGHTER_ASSET_PROFILE,
+  loadCombatFighterAsset,
+} from './combatAssetLoader.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import {
   canAcquireWebGLContext,
@@ -17,12 +21,22 @@ import {
 } from '../lib/webglLifecycle.js';
 
 const DEG = Math.PI / 180;
+// The licensed model's 12.7-unit wingspan is wider than its 8.2-unit length;
+// keep the square offscreen camera from clipping the stealth planform.
+const AUTHORED_DISPLAY_SCALE = 0.25;
 
 export function createFighter3D() {
   const renderCoordinator = getRenderBudgetCoordinator();
   let budgetActive = false;
   let contextReady = true;
   let surfaceActive = false;
+  let qualityTier = 'balanced';
+  let destroyed = false;
+  let loadStarted = false;
+  let loadStatus = 'deferred';
+  let loadError = '';
+  let authoredAsset = null;
+  let pendingSwap = false;
   let renderer;
   if (!canAcquireWebGLContext('home:fighter-3d')) return null;
   try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' }); }
@@ -34,11 +48,14 @@ export function createFighter3D() {
     onLost() {
       contextReady = false;
       surfaceActive = false;
+      syncModelVisibility();
     },
     onRestore() {
       renderer.resetState?.();
       contextReady = true;
       surfaceActive = budgetActive;
+      syncModelVisibility();
+      void startAuthoredLoad();
     },
     onFallback() {
       contextReady = false;
@@ -77,6 +94,71 @@ export function createFighter3D() {
 
   const ready = true;
 
+  function gpuCanLoadAuthoredAsset() {
+    const context = renderer.getContext?.();
+    return Boolean(context && !context.isContextLost?.());
+  }
+
+  function syncModelVisibility() {
+    const useAuthored = Boolean(authoredAsset && qualityTier !== 'low' && contextReady);
+    if (authoredAsset) authoredAsset.root.visible = useAuthored;
+    if (useAuthored) {
+      // Keep Nighthawk for the first authored render so the async hand-off
+      // cannot create a transparent frame.
+      nh.group.visible = true;
+      pendingSwap = true;
+    } else {
+      nh.group.visible = true;
+      pendingSwap = false;
+    }
+  }
+
+  async function startAuthoredLoad() {
+    if (loadStarted || destroyed || qualityTier === 'low') return;
+    if (!gpuCanLoadAuthoredAsset()) {
+      loadStatus = 'gpu-unavailable';
+      return;
+    }
+    loadStarted = true;
+    loadStatus = 'loading';
+    try {
+      const asset = await loadCombatFighterAsset(renderer);
+      if (destroyed) {
+        asset.dispose();
+        return;
+      }
+      authoredAsset = asset;
+      authoredAsset.root.scale.multiplyScalar(AUTHORED_DISPLAY_SCALE);
+      fighter.add(authoredAsset.root);
+      loadStatus = 'ready';
+      syncModelVisibility();
+    } catch (error) {
+      if (destroyed) return;
+      loadStatus = 'failed';
+      loadError = error instanceof Error ? error.message : String(error);
+      syncModelVisibility();
+    }
+  }
+
+  function getAssetStatus() {
+    const authoredVisible = Boolean(authoredAsset?.root.visible);
+    const activeModel = authoredVisible && !nh.group.visible
+      ? FIGHTER_ASSET_PROFILE.id
+      : authoredVisible ? 'transition' : 'nighthawk';
+    const reason = qualityTier === 'low'
+      ? 'quality-low'
+      : !contextReady ? 'context-unavailable'
+        : loadStatus === 'failed' ? 'load-failed'
+          : loadStatus === 'gpu-unavailable' ? 'gpu-unavailable' : '';
+    return Object.freeze({
+      loadStatus,
+      activeModel,
+      reason,
+      error: loadError,
+      profile: FIGHTER_ASSET_PROFILE,
+    });
+  }
+
   function orient(az, el, now) {
     fighter.rotation.set(0, 0, 0);
     fighter.rotateX(-Math.PI / 2 + (el - 30) * DEG * 0.5);  // nose up; tip with elevation
@@ -88,6 +170,10 @@ export function createFighter3D() {
     if (type === 'b2' || !ready || !surfaceActive) return false;   // bomber keeps its sprite
     orient(az, el, performance.now());
     renderer.render(scene, camera);
+    if (pendingSwap && authoredAsset?.root.visible) {
+      nh.group.visible = false;
+      pendingSwap = false;
+    }
     const draw = size * 1.6;
     const a = ctx.globalAlpha;
     ctx.globalAlpha = a * alpha;
@@ -110,13 +196,19 @@ export function createFighter3D() {
       surfaceActive = false;
     },
     onQualityChange(policy) {
+      qualityTier = policy.qualityTier;
       const nextSize = policy.qualityTier === 'low' ? 192 : policy.qualityTier === 'balanced' ? 256 : 320;
       if (nextSize !== renderSize) {
         renderSize = nextSize;
         renderer.setSize(renderSize, renderSize, false);
       }
+      syncModelVisibility();
+      void startAuthoredLoad();
     },
     onDispose() {
+      destroyed = true;
+      authoredAsset?.dispose();
+      authoredAsset = null;
       rendererLifecycle.dispose();
       disposeThreeScene(scene, renderer);
     },
@@ -125,6 +217,14 @@ export function createFighter3D() {
   return {
     drawOriented,
     available: () => ready && surfaceActive,
+    getAssetStatus,
+    getDiagnostics: () => Object.freeze({
+      asset: getAssetStatus(),
+      model: authoredAsset?.diagnostics || null,
+      qualityTier,
+      contextReady,
+      surfaceActive,
+    }),
     destroy() { renderSurface.dispose(); },
   };
 }

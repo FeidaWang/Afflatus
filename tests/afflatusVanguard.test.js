@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as THREE from 'three';
 import {
+  applyVanguardSurfaceTextures,
   createAfflatusInterceptorPrototype,
   createAfflatusVanguard,
 } from '../src/scene/afflatusVanguard.js';
@@ -25,6 +26,31 @@ describe('Afflatus Vanguard combat assets', () => {
     expect(size.x).toBeGreaterThan(size.y * 3);
     expect(size.z).toBeGreaterThan(size.y * 4.5);
     expect(size.x / size.z).toBeGreaterThan(0.6);
+  });
+
+  it('provides merged UVs and applies the packed PBR surface maps by quality tier', () => {
+    const { group } = createAfflatusVanguard(THREE, { detail: 'full' });
+    const meshes = group.children.filter((child) => child.isMesh);
+    for (const mesh of meshes) {
+      const uv = mesh.geometry.getAttribute('uv');
+      expect(uv).toBeTruthy();
+      expect(uv.count).toBe(mesh.geometry.getAttribute('position').count);
+    }
+    const textures = {
+      normal: { name: 'normal' },
+      orm: { name: 'orm' },
+      detailWear: { name: 'detail-wear' },
+    };
+    applyVanguardSurfaceTextures(group, textures, 'high');
+    expect(meshes.find((mesh) => mesh.material.name === 'basalt_ceramic').material).toMatchObject({
+      normalMap: textures.normal,
+      aoMap: textures.orm,
+      roughnessMap: textures.orm,
+      metalnessMap: textures.orm,
+      map: textures.detailWear,
+    });
+    applyVanguardSurfaceTextures(group, textures, 'low');
+    expect(meshes.find((mesh) => mesh.material.name === 'basalt_ceramic').material.normalMap).toBeNull();
   });
 
   it('builds a volumetric six-surface-family interceptor with shared clone buffers', () => {

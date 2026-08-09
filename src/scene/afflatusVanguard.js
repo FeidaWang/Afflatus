@@ -1,5 +1,38 @@
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { mergeGeometries, mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { buildPrismGeometry, createOdinHull } from './odinHull.js';
+
+const SURFACE_TEXTURE_URLS = {
+  normal: '/assets/combat/materials/vanguard-normal.ktx2',
+  orm: '/assets/combat/materials/vanguard-orm.ktx2',
+  detailWear: '/assets/combat/materials/vanguard-detail-wear.ktx2',
+};
+
+function addBoxProjectedUvs(THREE, geometry, scale = 0.42) {
+  const positions = geometry.getAttribute('position');
+  let normals = geometry.getAttribute('normal');
+  if (!normals) {
+    geometry.computeVertexNormals();
+    normals = geometry.getAttribute('normal');
+  }
+  const uv = new Float32Array(positions.count * 2);
+  for (let index = 0; index < positions.count; index += 1) {
+    const x = positions.getX(index), y = positions.getY(index), z = positions.getZ(index);
+    const nx = Math.abs(normals.getX(index));
+    const ny = Math.abs(normals.getY(index));
+    const nz = Math.abs(normals.getZ(index));
+    if (ny >= nx && ny >= nz) {
+      uv[index * 2] = x * scale;
+      uv[index * 2 + 1] = z * scale;
+    } else if (nx >= nz) {
+      uv[index * 2] = z * scale;
+      uv[index * 2 + 1] = y * scale;
+    } else {
+      uv[index * 2] = x * scale;
+      uv[index * 2 + 1] = y * scale;
+    }
+  }
+  geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+}
 
 function transformGeometry(THREE, geometry, position, rotation, scale) {
   const matrix = new THREE.Matrix4().compose(
@@ -9,12 +42,12 @@ function transformGeometry(THREE, geometry, position, rotation, scale) {
   );
   const clone = geometry.index ? geometry.toNonIndexed() : geometry.clone();
   clone.applyMatrix4(matrix);
-  // Primitive families do not all expose UVs/tangents.  This model uses
-  // geometry/material layering rather than texture atlases, so keeping only
-  // position/normal makes every bucket merge-compatible and smaller.
+  // A stable box projection gives every procedural primitive the same texel
+  // density, including custom prisms that never shipped authored UVs.
   for (const name of Object.keys(clone.attributes)) {
     if (name !== 'position' && name !== 'normal') clone.deleteAttribute(name);
   }
+  addBoxProjectedUvs(THREE, clone);
   return clone;
 }
 
@@ -22,7 +55,7 @@ function mergePartBuckets(THREE, buckets, materials, names) {
   const group = new THREE.Group();
   for (const [key, geometries] of buckets) {
     if (!geometries.length) continue;
-    const geometry = mergeGeometries(geometries, false);
+    const geometry = mergeVertices(mergeGeometries(geometries, false), 1e-4);
     geometry.computeVertexNormals();
     geometry.computeBoundingSphere();
     const mesh = new THREE.Mesh(geometry, materials[key]);
@@ -67,6 +100,60 @@ export function createVanguardMaterials(THREE) {
       metalness: 0.2, roughness: 0.22,
     }),
   };
+}
+
+export async function loadVanguardSurfaceTextures(THREE, renderer) {
+  const { KTX2Loader } = await import('three/addons/loaders/KTX2Loader.js');
+  const loader = new KTX2Loader()
+    .setTranscoderPath('/vendor/basis/')
+    .detectSupport(renderer);
+  try {
+    const [normal, orm, detailWear] = await Promise.all([
+      loader.loadAsync(SURFACE_TEXTURE_URLS.normal),
+      loader.loadAsync(SURFACE_TEXTURE_URLS.orm),
+      loader.loadAsync(SURFACE_TEXTURE_URLS.detailWear),
+    ]);
+    const maxAnisotropy = Math.min(8, renderer.capabilities?.getMaxAnisotropy?.() || 1);
+    for (const texture of [normal, orm, detailWear]) {
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.anisotropy = maxAnisotropy;
+      texture.colorSpace = THREE.NoColorSpace;
+      texture.needsUpdate = true;
+    }
+    normal.name = 'VanguardNormalKTX2';
+    orm.name = 'VanguardORMKTX2';
+    detailWear.name = 'VanguardDetailWearKTX2';
+    return { normal, orm, detailWear };
+  } finally {
+    loader.dispose();
+  }
+}
+
+export function applyVanguardSurfaceTextures(root, textures, qualityTier = 'high') {
+  if (!root || !textures) return;
+  const texturedNames = new Set(['basalt_ceramic', 'graphite_armour', 'machined_edges']);
+  root.traverse?.((child) => {
+    if (!child.isMesh) return;
+    for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
+      if (!material || !texturedNames.has(material.name)) continue;
+      const detailed = qualityTier !== 'low';
+      material.normalMap = detailed ? textures.normal : null;
+      material.aoMap = detailed ? textures.orm : null;
+      material.roughnessMap = detailed ? textures.orm : null;
+      material.metalnessMap = detailed ? textures.orm : null;
+      material.map = qualityTier === 'high' ? textures.detailWear : null;
+      if ('clearcoatRoughnessMap' in material) {
+        material.clearcoatRoughnessMap = qualityTier === 'high' ? textures.detailWear : null;
+      }
+      material.normalScale?.set(0.36, 0.36);
+      material.needsUpdate = true;
+    }
+  });
+}
+
+export function disposeVanguardSurfaceTextures(textures) {
+  for (const texture of Object.values(textures || {})) texture?.dispose?.();
 }
 
 /** Build a seven-draw-call capital model from the shared procedural parts. */

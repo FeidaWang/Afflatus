@@ -907,6 +907,10 @@
   .sponsor-logos{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
   .sponsor-logos i{font-style:normal;border:1px solid rgba(141,180,192,.22);padding:3px 6px;font-size:7px;color:#edf5ff;background:rgba(255,255,255,.035)}
   footer{padding:50px 96px 38px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.18em;margin-top:80px}
+  .footer-meta{text-align:right}
+  #assetCredits{max-width:58ch;margin-top:8px;font-size:7px;line-height:1.6;letter-spacing:.08em;color:rgba(184,204,220,.48)}
+  #assetCredits a{color:inherit;text-decoration:underline;text-decoration-color:rgba(154,229,255,.22);text-underline-offset:2px}
+  #assetCredits a:hover,#assetCredits a:focus-visible{color:rgba(205,238,255,.82);text-decoration-color:currentColor}
   .footnote{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.14em;margin-top:42px;line-height:1.9}
 
   @keyframes screenShake{0%,100%{transform:translate(0,0)}20%{transform:translate(-6px,4px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-6px,4px)}80%{transform:translate(4px,-4px)}}
@@ -940,6 +944,8 @@
     section{padding:90px 32px}.sec-title{font-size:34px}
     .pick-grid{grid-template-columns:1fr}.pick:nth-child(odd){border-right:1px solid rgba(141,180,192,.1)}
     footer{padding:32px;flex-direction:column;gap:12px;}
+    .footer-meta{text-align:center}
+    #assetCredits{max-width:46ch}
     .hero-cta{grid-template-columns:1fr;grid-template-areas:"hint" "coord";width:100%;gap:10px}
     .coord{white-space:normal}
     .hud-warning,.hud-subwarning{display:none}

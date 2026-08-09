@@ -1554,26 +1554,37 @@ function drawF47Vector(ctx,x,y,size=1,angle=-Math.PI/2,color='rgba(93,255,157,.8
   ctx.fillStyle=hull;
   ctx.strokeStyle=color;
   ctx.lineWidth=1.2;
+  // Fictional sixth-generation planform: tailless blended body, broad clipped delta.
   ctx.beginPath();
-  ctx.moveTo(23,0);
-  ctx.lineTo(8,-7);
-  ctx.lineTo(-5,-12);
-  ctx.lineTo(-14,-22);
-  ctx.lineTo(-11,-7);
-  ctx.lineTo(-25,-4);
-  ctx.lineTo(-27,4);
-  ctx.lineTo(-11,7);
-  ctx.lineTo(-14,22);
-  ctx.lineTo(-5,12);
-  ctx.lineTo(8,7);
+  ctx.moveTo(27,0);
+  ctx.quadraticCurveTo(18,-4,10,-6);
+  ctx.lineTo(-16,-24);
+  ctx.lineTo(-24,-22);
+  ctx.lineTo(-15,-6);
+  ctx.lineTo(-24,-4);
+  ctx.lineTo(-27,-1.5);
+  ctx.lineTo(-21,0);
+  ctx.lineTo(-27,1.5);
+  ctx.lineTo(-24,4);
+  ctx.lineTo(-15,6);
+  ctx.lineTo(-24,22);
+  ctx.lineTo(-16,24);
+  ctx.lineTo(10,6);
+  ctx.quadraticCurveTo(18,4,27,0);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
   ctx.globalAlpha=.85;
   ctx.strokeStyle='rgba(180,238,255,.38)';
   ctx.lineWidth=.75;
-  [['nose',16,0,-12,0],['left',0,-4,-17,-15],['right',0,4,-17,15],['spine',8,0,-19,0]].forEach(([,x1,y1,x2,y2])=>{
+  [['spine',20,0,-18,0],['leftWing',6,-4,-18,-20],['rightWing',6,4,-18,20]].forEach(([,x1,y1,x2,y2])=>{
     ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  });
+  // Twin buried engine bays and paired exhaust apertures.
+  ctx.fillStyle='rgba(8,16,26,.62)';
+  [-3.3,3.3].forEach(py=>{
+    ctx.beginPath();ctx.ellipse(-11,py,8,1.75,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.ellipse(-23,py,2.7,1.15,0,0,Math.PI*2);ctx.fill();
   });
   ctx.fillStyle='rgba(8,16,26,.70)';
   ctx.beginPath();ctx.ellipse(8,0,5,2.2,0,0,Math.PI*2);ctx.fill();
@@ -1728,6 +1739,7 @@ function combatEventText(event){
   const weapon=localWeaponName(event.weapon||'auto');
   const copy={
     'target:acquired':zh?'目标链路建立 · 解算开始':'TARGET LINK ESTABLISHED · SOLVING',
+    'weapon:charge':zh?`${weapon} · 充能汇聚`:`${weapon} · CHARGE CONVERGENCE`,
     'weapon:fire':zh?`${weapon} · 武器离架`:`${weapon} · WEAPON AWAY`,
     'weapon:impact':zh?`${weapon} · 命中确认`:`${weapon} · IMPACT CONFIRMED`,
     'target:destroyed':zh?`目标摧毁 · 击毁 ${event.kills||0}`:`TARGET DESTROYED · KILLS ${event.kills||0}`,
@@ -2030,6 +2042,10 @@ function fireEnforcerMain(tx, ty){
   pushBattleToast(`${HC('enforcerWarn')} · ${HC('brace')}4.50`);
   enforcerChargeUntil=Date.now()+4500;
   mainCannonFx={chargeStart:Date.now(),fireAt:0,tx,ty};
+  // The 3D renderer consumes the same authoritative event stream as the HUD.
+  // Publishing the real 4.5 s deadline here lets its linked particles converge
+  // on the muzzle without inventing a second charge clock in the render layer.
+  emitCombatEvent('weapon:charge',{weapon:'enforcer',targetId:'1P/HALLEY',durationMs:4500});
   weaponWarning.innerHTML=`<b>${HC('enforcerWarn')}</b><span>${HC('brace')}4.50</span>`;
   weaponWarning.classList.add('on');
   // 2026-07-04 (ROADMAP §4 V16): same fix as the nuke ticker above — this
@@ -3249,6 +3265,18 @@ function combatSceneLabel(diagnostics, mode='standby'){
     :(zh?'舰桥战术态势 · 实时光学':'CIC · LIVE OPTICAL');
 }
 
+function drawMosaicInterference(ctx,w,h){
+  ctx.save();
+  const cell=Math.max(5,Math.floor(Math.min(w,h)/16));
+  for(let y=0;y<h;y+=cell) for(let x=0;x<w;x+=cell){
+    const v=80+Math.random()*170|0;
+    ctx.fillStyle=`rgba(${v},${v+rand(-18,18)|0},${v+rand(-24,24)|0},${.38+Math.random()*.55})`;
+    ctx.fillRect(x,y,cell,cell);
+  }
+  ctx.fillStyle='rgba(255,255,255,.82)';ctx.font="10px 'JetBrains Mono',monospace";ctx.textAlign='center';ctx.fillText('TARGET IMAGE LOST',w*.5,h*.52);
+  ctx.restore();
+}
+
 function drawPilotFeed(now,state=combatSnapshot){
   const pilotCanvas=document.getElementById('cicPilotFeed');
   const feed=setupFeedCanvas(pilotCanvas);
@@ -3269,8 +3297,8 @@ function drawPilotFeed(now,state=combatSnapshot){
     const pendingDiagnostics=td && typeof td.getDiagnostics==='function' ? td.getDiagnostics() : null;
     const activeFlightMode=pendingDiagnostics?.flightKind||null;
     const sceneMode=activeFlightMode||mode;
-    const sceneOwnsFeed=mode==='combat'||mode==='standby'||mode==='launch'||mode==='landing'||Boolean(activeFlightMode);
-    if(td&&sceneOwnsFeed){
+    const sceneOwnsFeed=mode==='combat'||mode==='standby'||mode==='launch'||mode==='landing'||mode==='ciws'||mode==='offline'||mode==='nukeAuth'||mode==='nemp'||mode==='mainGun'||mode==='mosaic'||Boolean(activeFlightMode);
+    if(td&&td.available?.()&&sceneOwnsFeed){
       td.resize(w,h);
       td.renderOnce(now,state);
       let diagnostics=null;
@@ -3295,6 +3323,7 @@ function drawPilotFeed(now,state=combatSnapshot){
         // transparent symbology layer belongs in this branch.
         combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,hmdLabel,sceneMode,diagnostics?.targetScreen);
       }
+      if(mode==='mosaic') drawMosaicInterference(ctx,w,h);
       return;
     }
   }
@@ -3316,7 +3345,7 @@ function drawPilotFeed(now,state=combatSnapshot){
     // WebGL is unavailable — same fallback shape as the combat/standby
     // topdown branch above.
     const td3d=(combatViewTopdown() && combatCamDirector()) ? getTopdownCV() : null;
-    if(td3d){
+    if(td3d?.available?.()){
       td3d.resize(w,h);
       td3d.renderOnce(now,state);
       ctx.drawImage(topdownCanvas,0,0,w,h);
@@ -3383,15 +3412,7 @@ function drawPilotFeed(now,state=combatSnapshot){
       }
     }
   }
-  if(mode==='mosaic'){
-    const cell=Math.max(5,Math.floor(Math.min(w,h)/16));
-    for(let y=0;y<h;y+=cell) for(let x=0;x<w;x+=cell){
-      const v=80+Math.random()*170|0;
-      ctx.fillStyle=`rgba(${v},${v+rand(-18,18)|0},${v+rand(-24,24)|0},${.38+Math.random()*.55})`;
-      ctx.fillRect(x,y,cell,cell);
-    }
-    ctx.fillStyle='rgba(255,255,255,.82)';ctx.font="10px 'JetBrains Mono',monospace";ctx.textAlign='center';ctx.fillText('TARGET IMAGE LOST',w*.5,h*.52);
-  }
+  if(mode==='mosaic') drawMosaicInterference(ctx,w,h);
   ctx.restore();
 }
 
