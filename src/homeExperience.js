@@ -21,6 +21,7 @@ import { createBackgroundScene } from './scene/backgroundScene.js';
 import { createSpriteCraft } from './scene/spriteCraft.js';
 import { createCameraDirector } from './scene/cameraDirector.js';
 import { createCapitalFlyby } from './scene/capitalFlyby.js';
+import { createHomeFlagshipNarrative } from './scene/homeFlagshipNarrative.js';
 import { drawCombatHudSC } from './scene/combatHudSC.js';
 import { drawMissileCine, drawNukeCine } from './scene/combatCine.js';
 import { startTimeline, activePhase } from './combat/weaponClock.js';
@@ -49,6 +50,7 @@ let currentLang=getLocale('en');
 const STRIP_TERMS=[null,'sharpe','drawdown','beta'];
 const termGlossaryCtl=mountTermGlossary({getLang:()=>currentLang});
 const REDUCED_MOTION=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COMBAT_DEMO_MODE=typeof location!=='undefined'&&/[?&]combatDemo=1\b/.test(location.search);
 const renderBudgetCoordinator=getRenderBudgetCoordinator();
 let hudRenderPolicy=renderBudgetCoordinator.getPolicy({cost:'low',targetFps:60});
 renderBudgetCoordinator.register({
@@ -66,6 +68,7 @@ applyDeviceBodyClasses();
 const spriteCraft=createSpriteCraft();
 const cameraDirector=createCameraDirector(spriteCraft);
 const capitalFlyby=createCapitalFlyby();
+let homeFlagshipNarrative=null;
 
 // Lazy-loaded three.js capital ship (code-split so three.js only downloads the
 // first time the main gun fires). Until it loads, the 2D flyby is the fallback.
@@ -153,12 +156,11 @@ function bindCombatOrbitControls(){
   });
 }
 function combatViewTopdown(){
-  try{
-    const q=location.search;
-    if(/[?&]combatview=topdown\b/.test(q)) localStorage.setItem('afflatus-combatview','topdown');
-    else if(/[?&]combatview=2d\b/.test(q)) localStorage.setItem('afflatus-combatview','2d');
-    return localStorage.getItem('afflatus-combatview')!=='2d';
-  }catch(e){ return !/[?&]combatview=2d\b/.test(location.search); }
+  // Top-down is the deterministic default. A past one-off `?combatview=2d`
+  // preview must not leave future visits permanently stranded on the legacy
+  // renderer; 2D now applies only while it is explicit in the current URL.
+  try{ return !/[?&]combatview=2d\b/.test(location.search); }
+  catch(e){ return true; }
 }
 function getTopdownCV(){
   if(!topdownTried){
@@ -331,6 +333,7 @@ commandModeBtn?.addEventListener('click',(event)=>{
   event.stopPropagation();
   const toHudOff=!document.body.classList.contains('hud-off');
   document.body.classList.toggle('hud-off',toHudOff);
+  homeFlagshipNarrative?.setEnabled(toHudOff);
   if(toHudOff){
     disengageBattleSystems();
     setHudPanelFocus(null);
@@ -1687,6 +1690,16 @@ const backgroundScene=createBackgroundScene({
   getPointer:()=>({x:mx,y:my}),
   getWarpIntensity:()=>warpIntensity
 });
+if(document.body.classList.contains('home-combat-models-enabled')){
+  homeFlagshipNarrative=createHomeFlagshipNarrative({
+    container:document.getElementById('blackhole-stage'),
+    observeElement:document.querySelector('.hero'),
+    renderCoordinator:renderBudgetCoordinator,
+    reducedMotion:REDUCED_MOTION,
+    saveData:Boolean(navigator.connection?.saveData),
+    force3D:document.documentElement.dataset.heroCraft==='forced-3d',
+  });
+}
 
 // The homepage now hosts the source observatory renderer in an isolated
 // document. Only messages from this exact same-origin frame may change the
@@ -1841,11 +1854,12 @@ function syncCombatState(now=Date.now()){
 function spawnHalley(){
   if(halley) return;
   const fr=Math.random()<.5, roll=Math.random();
-  const sizeClass = roll < .36 ? 'small' : roll < .68 ? 'medium' : roll < .9 ? 'large' : 'giant';
+  const sizeClass = COMBAT_DEMO_MODE ? 'medium'
+    : roll < .36 ? 'small' : roll < .68 ? 'medium' : roll < .9 ? 'large' : 'giant';
   const isGiant = sizeClass === 'giant';
   const hpMap={small:14,medium:34,large:95,giant:180};
   const durMap={small:[96000,120000],medium:[120000,152000],large:[152000,184000],giant:[176000,216000]};
-  const durRange=durMap[sizeClass];
+  const durRange=COMBAT_DEMO_MODE?[12000,12000]:durMap[sizeClass];
   halley={
     t:0, dur: rand(durRange[0],durRange[1]),
     p0:{x:fr?innerWidth+350:-350,y:rand(60,innerHeight*.35)},
@@ -2353,6 +2367,7 @@ function drawF47(ctx){
 
 function updateEscorts(dt, now) {
   ectx.save(); ectx.scale(DPR, DPR);
+  let authoredFighterDraws=0;
   for (let i = escorts.length - 1; i >= 0; i--) {
       let e = escorts[i];
       
@@ -2498,7 +2513,22 @@ function updateEscorts(dt, now) {
           ectx.fillStyle=cg;ectx.fillRect(-3,size*.35,6,size*.95);
           ectx.restore();
         }
-        const drewSprite=spriteCraft.drawOriented(ectx, e.type==='b2'?'b2':'f47',
+        const saveData=Boolean(navigator.connection?.saveData);
+        const allowAuthored=e.type!=='b2'&&!saveData
+          &&(hudRenderPolicy.qualityTier!=='low'||innerWidth>=1024);
+        const authoredFighter=allowAuthored?getFighter3D():null;
+        const assetStatus=authoredFighter?.getAssetStatus?.();
+        const authoredLimit=assetStatus?.loadStatus==='ready'
+          ? (hudRenderPolicy.qualityTier==='high'?3:1)
+          : 0;
+        const drewAuthored=Boolean(authoredFighterDraws<authoredLimit
+          && authoredFighter?.drawOriented?.(ectx,'f47',
+            {az:azv, el:elv, size, frameToken:now}));
+        if(drewAuthored) authoredFighterDraws+=1;
+        evtCanvas.dataset.fighterModel=assetStatus?.loadStatus==='ready'
+          ? assetStatus.activeModel
+          : assetStatus?.loadStatus||(!allowAuthored?'sprite-fallback':'loading');
+        const drewSprite=drewAuthored||spriteCraft.drawOriented(ectx, e.type==='b2'?'b2':'f47',
           {az:azv, el:elv, size});
         if(!drewSprite){ if(e.type === 'b2') drawB2(ectx); else drawF47(ectx); }
       }
@@ -3305,6 +3335,9 @@ function drawPilotFeed(now,state=combatSnapshot){
       if(typeof td.getDiagnostics==='function'){
         diagnostics=td.getDiagnostics();
         pilotCanvas.dataset.shipModel=diagnostics.shipModelStatus;
+        pilotCanvas.dataset.fighterModel=diagnostics.fighterModelStatus;
+        pilotCanvas.dataset.renderQuality=diagnostics.qualityTier;
+        pilotCanvas.dataset.dataSaver=String(Boolean(diagnostics.authoredAssets?.dataSaver));
         pilotCanvas.dataset.cameraShot=diagnostics.cameraShot;
         pilotCanvas.dataset.flightPhase=diagnostics.flightPhase||'none';
         pilotCanvas.dataset.activeEscorts=String(diagnostics.activeEscortCount||0);
@@ -3502,8 +3535,8 @@ mainRenderSurface=renderBudgetCoordinator.register({
   }
 });
 // motion-sensitive visitors: no auto-spawned combat; battles stay opt-in via the Command button
-if(!REDUCED_MOTION){
-  setTimeout(spawnHalley,7000);
+if(!REDUCED_MOTION||COMBAT_DEMO_MODE){
+  setTimeout(spawnHalley,COMBAT_DEMO_MODE?1200:7000);
   setInterval(()=>{if(!halley&&Math.random()<.6)spawnHalley();}, 30000);
 }
 

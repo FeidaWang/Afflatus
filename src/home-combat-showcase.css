@@ -1,0 +1,60 @@
+@layer components {
+  /* The authored flagship is an additive foreground subject. The original
+     relativistic black-hole renderer, masks and exposure remain untouched. */
+  body.home-combat-models-enabled .home-flagship-narrative {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    filter: drop-shadow(0 18px 34px rgba(0, 0, 0, .48));
+  }
+
+  body.home-combat-models-enabled .home-flagship-poster {
+    position: absolute;
+    z-index: 3;
+    top: 35%;
+    right: -4vw;
+    display: block;
+    width: min(62vw, 960px);
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    filter:
+      drop-shadow(0 20px 42px rgba(0, 0, 0, .58))
+      drop-shadow(0 0 18px rgba(105, 204, 255, .1));
+  }
+
+  body:not(.hud-off) .home-flagship-narrative,
+  body:not(.hud-off) .home-flagship-poster {
+    visibility: hidden;
+  }
+
+  body.home-combat-models-enabled .home-flagship-narrative[data-model='venator-ready'] {
+    filter:
+      drop-shadow(0 20px 42px rgba(0, 0, 0, .58))
+      drop-shadow(0 0 18px rgba(105, 204, 255, .1));
+  }
+
+  @media (max-width: 860px) {
+    body.home-combat-models-enabled .home-flagship-narrative {
+      opacity: .74;
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .5));
+    }
+
+    body.home-combat-models-enabled .home-flagship-poster {
+      top: 42%;
+      right: -22vw;
+      width: 106vw;
+      opacity: .76;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.home-combat-models-enabled .home-flagship-narrative {
+      transition: none;
+    }
+  }
+}

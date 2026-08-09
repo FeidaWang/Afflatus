@@ -29,6 +29,7 @@
     "header:check": "node scripts/audit-header.mjs --check",
     "css:check": "node scripts/check-no-new-important.mjs && node scripts/check-css-architecture.mjs",
     "combat:asset:build": "node scripts/build-combat-glb.mjs",
+    "combat:textures:build": "node scripts/build-vanguard-textures.mjs",
     "combat:asset:check": "node scripts/check-combat-glb.mjs",
     "seo:check": "node scripts/validate-emitted-seo.mjs --out-dir dist",
     "og:generate": "node scripts/generate-og-assets.mjs",

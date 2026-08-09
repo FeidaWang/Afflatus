@@ -908,7 +908,7 @@
   .sponsor-logos i{font-style:normal;border:1px solid rgba(141,180,192,.22);padding:3px 6px;font-size:7px;color:#edf5ff;background:rgba(255,255,255,.035)}
   footer{padding:50px 96px 38px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.18em;margin-top:80px}
   .footer-meta{text-align:right}
-  #assetCredits{max-width:58ch;margin-top:8px;font-size:7px;line-height:1.6;letter-spacing:.08em;color:rgba(184,204,220,.48)}
+  #assetCredits{max-width:58ch;margin-top:8px;font-size:7px;line-height:1.6;letter-spacing:.08em;color:rgba(205,226,242,.82)}
   #assetCredits a{color:inherit;text-decoration:underline;text-decoration-color:rgba(154,229,255,.22);text-underline-offset:2px}
   #assetCredits a:hover,#assetCredits a:focus-visible{color:rgba(205,238,255,.82);text-decoration-color:currentColor}
   .footnote{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.14em;margin-top:42px;line-height:1.9}

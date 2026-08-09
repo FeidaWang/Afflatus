@@ -32,6 +32,8 @@ describe('combat presentation contract', () => {
     expect(source).toContain('loadCombatAsset(renderer, FIGHTER_ASSET_PROFILE)');
     expect(source).toContain("authoredShip.name = 'VenatorClassStarDestroyerCCBY'");
     expect(source).toContain("fighterModelStatus = 'sixth-gen-ready'");
+    expect(source).toContain('if (combatAssetLoadPromise || (shipModelPromise && fighterModelPromise)) return;');
+    expect(source).not.toContain('const active = Boolean(state.target');
     expect(source).toContain('combatVfx.linkedBeam');
     expect(source).toContain('combatVfx.fireSmoke');
     expect(source).toContain('combatVfx.shieldArc');
@@ -114,6 +116,13 @@ describe('combat presentation contract', () => {
     expect(source).not.toContain('initTerminalStarMap');
     expect(source).not.toContain('drawCockpitFrame(ctx');
     expect(source).toContain('pilotCanvas.dataset.flightPhase');
+    expect(source).toContain('pilotCanvas.dataset.fighterModel=diagnostics.fighterModelStatus');
+    expect(source).toContain('pilotCanvas.dataset.renderQuality=diagnostics.qualityTier');
+    expect(source).toContain("evtCanvas.dataset.fighterModel=assetStatus?.loadStatus==='ready'");
+    expect(source).toContain("hudRenderPolicy.qualityTier!=='low'||innerWidth>=1024");
+    expect(source).toContain("hudRenderPolicy.qualityTier==='high'?3:1");
+    expect(source).toContain("try{ return !/[?&]combatview=2d\\b/.test(location.search); }");
+    expect(source).not.toContain("localStorage.getItem('afflatus-combatview')");
     expect(source).toContain('const activeFlightMode=pendingDiagnostics?.flightKind||null');
     expect(source).toContain('if(td&&td.available?.()&&sceneOwnsFeed)');
     expect(source).toContain('if(td3d?.available?.())');

@@ -2,6 +2,7 @@ import './styles.css';
 import './cic-hud.css';
 import './performance-dossier.css';
 import './portfolio-convoy.css';
+import './home-combat-showcase.css';
 import { getLocale, localeSwitchHref, setLocale } from './lib/localeStore.js';
 import { initHomeScrollTelemetry } from './ui/homeScrollTelemetry.js';
 
@@ -11,6 +12,35 @@ const HOME_INTENT_SELECTOR = [
   '[data-cic-panel-focus]',
   '[data-cic-weapon]',
 ].join(',');
+
+// The licensed combat craft are part of the default homepage composition.
+// `heroCraft=off` remains a deterministic support escape hatch, while the
+// black-hole renderer above keeps its original full-resolution treatment.
+const HERO_CRAFT_MODE = new URLSearchParams(location.search).get('heroCraft');
+const HOME_COMBAT_MODELS_ENABLED = HERO_CRAFT_MODE !== 'off';
+document.body.classList.toggle('home-combat-models-enabled', HOME_COMBAT_MODELS_ENABLED);
+document.documentElement.dataset.heroCraft = HOME_COMBAT_MODELS_ENABLED
+  ? (HERO_CRAFT_MODE === '3d' ? 'forced-3d' : 'authored')
+  : 'off';
+
+function installHomeCombatPoster() {
+  if (!HOME_COMBAT_MODELS_ENABLED || navigator.connection?.saveData) return;
+  const stage = document.getElementById('blackhole-stage');
+  if (!stage || stage.querySelector('.home-flagship-poster')) return;
+  const poster = document.createElement('img');
+  poster.className = 'home-flagship-poster';
+  poster.src = '/assets/combat/models/venator-hero-poster.webp';
+  poster.alt = '';
+  poster.setAttribute('aria-hidden', 'true');
+  poster.decoding = 'async';
+  poster.loading = 'eager';
+  poster.fetchPriority = 'low';
+  poster.addEventListener('error', () => {
+    poster.dataset.failed = 'true';
+    poster.hidden = true;
+  }, { once: true });
+  stage.appendChild(poster);
+}
 
 let experiencePromise = null;
 let experienceReady = false;
@@ -201,6 +231,7 @@ function installNavigationMenu() {
 
 installLocaleLinks();
 installNavigationMenu();
+installHomeCombatPoster();
 installIntentLoader();
 installVisibilityLoaders();
 initHomeScrollTelemetry();

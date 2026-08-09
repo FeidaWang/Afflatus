@@ -184,6 +184,14 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         compute() {
           const c = capital.position;
           const q = comet.position;
+          if (!liveCombatState?.target) {
+            return {
+              pos: { x: c.x + 10.5, y: c.y + 7.2, z: c.z + 14.5 },
+              look: { x: c.x, y: c.y + .65, z: c.z - 1.4 },
+              fov: 42,
+              roll: 0,
+            };
+          }
           return {
             pos: { x: c.x + 12, y: c.y + 10.5, z: c.z + 17 },
             look: {
@@ -588,8 +596,17 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   let authoredShipAnchors = null;
+  function authoredAssetsAllowed() {
+    if (dataSaverEnabled()) return false;
+    // Low tier still gets the authored silhouette on a desktop-sized Command
+    // station; geometry detail, particles, DPR and frame rate remain reduced.
+    // Compact/mobile low-tier surfaces keep the procedural fallback.
+    return renderPolicy.qualityTier !== 'low'
+      || Number(globalThis.innerWidth || 0) >= 1024;
+  }
+
   function syncShipAssetVisibility() {
-    const useAuthored = Boolean(authoredShip && renderPolicy.qualityTier !== 'low');
+    const useAuthored = Boolean(authoredShip && authoredAssetsAllowed());
     fallbackShip.group.visible = !useAuthored;
     if (authoredShip) authoredShip.visible = useAuthored;
     shipAnchors = useAuthored ? authoredShipAnchors : fallbackAnchors;
@@ -600,7 +617,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   async function ensureAuthoredShip() {
-    if (shipModelPromise || sceneDisposed || renderPolicy.qualityTier === 'low' || dataSaverEnabled()) return shipModelPromise;
+    if (shipModelPromise || sceneDisposed || !authoredAssetsAllowed()) return shipModelPromise;
     shipModelStatus = 'loading-venator';
     shipModelPromise = loadCombatAsset(renderer, CAPITAL_ASSET_PROFILE)
       .then((asset) => {
@@ -652,7 +669,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   let fighterModelStatus = 'procedural';
 
   function syncFighterAssetVisibility() {
-    const useAuthored = Boolean(fighterAssetHandle && renderPolicy.qualityTier !== 'low');
+    const useAuthored = Boolean(fighterAssetHandle && authoredAssetsAllowed());
     for (const fighter of fighters) {
       fighter.userData.fallback.visible = !useAuthored;
       if (fighter.userData.authored) fighter.userData.authored.visible = useAuthored;
@@ -660,7 +677,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   async function ensureAuthoredFighters() {
-    if (fighterModelPromise || sceneDisposed || renderPolicy.qualityTier === 'low' || dataSaverEnabled()) return fighterModelPromise;
+    if (fighterModelPromise || sceneDisposed || !authoredAssetsAllowed()) return fighterModelPromise;
     fighterModelStatus = 'loading-sixth-gen';
     fighterModelPromise = loadCombatAsset(renderer, FIGHTER_ASSET_PROFILE)
       .then((asset) => {
@@ -689,12 +706,12 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   function ensureAuthoredCombatAssets(state) {
-    if (!state || renderPolicy.qualityTier === 'low' || dataSaverEnabled()) return;
-    const active = Boolean(state.target || state.escorts?.length || state.projectiles?.length);
-    if (!active || combatAssetLoadPromise || (shipModelPromise && fighterModelPromise)) return;
+    if (!authoredAssetsAllowed()) return;
+    if (combatAssetLoadPromise || (shipModelPromise && fighterModelPromise)) return;
     // KTX2Loader owns a worker pool. Stream the two authored models through
-    // one active loader at a time to avoid duplicate transcoder workers and
-    // their associated GPU-memory warning; procedural craft cover both waits.
+    // one active loader at a time as soon as the CIC scene exists. Waiting for
+    // a target made the Command standby frame look unchanged and left the first
+    // engagement showing fallbacks throughout most of its short timeline.
     combatAssetLoadPromise = Promise.resolve(shipSurfaceTexturePromise)
       .catch(() => null)
       .then(() => ensureAuthoredShip())

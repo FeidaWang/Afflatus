@@ -37,6 +37,7 @@ export function createFighter3D() {
   let loadError = '';
   let authoredAsset = null;
   let pendingSwap = false;
+  let lastFrameToken = null;
   let renderer;
   if (!canAcquireWebGLContext('home:fighter-3d')) return null;
   try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' }); }
@@ -99,8 +100,15 @@ export function createFighter3D() {
     return Boolean(context && !context.isContextLost?.());
   }
 
+  function authoredAssetAllowed() {
+    let saveData = false;
+    try { saveData = Boolean(navigator.connection?.saveData); } catch {}
+    return !saveData && (qualityTier !== 'low'
+      || Number(globalThis.innerWidth || 0) >= 1024);
+  }
+
   function syncModelVisibility() {
-    const useAuthored = Boolean(authoredAsset && qualityTier !== 'low' && contextReady);
+    const useAuthored = Boolean(authoredAsset && authoredAssetAllowed() && contextReady);
     if (authoredAsset) authoredAsset.root.visible = useAuthored;
     if (useAuthored) {
       // Keep Nighthawk for the first authored render so the async hand-off
@@ -114,7 +122,7 @@ export function createFighter3D() {
   }
 
   async function startAuthoredLoad() {
-    if (loadStarted || destroyed || qualityTier === 'low') return;
+    if (loadStarted || destroyed || !authoredAssetAllowed()) return;
     if (!gpuCanLoadAuthoredAsset()) {
       loadStatus = 'gpu-unavailable';
       return;
@@ -145,7 +153,7 @@ export function createFighter3D() {
     const activeModel = authoredVisible && !nh.group.visible
       ? FIGHTER_ASSET_PROFILE.id
       : authoredVisible ? 'transition' : 'nighthawk';
-    const reason = qualityTier === 'low'
+    const reason = !authoredAssetAllowed()
       ? 'quality-low'
       : !contextReady ? 'context-unavailable'
         : loadStatus === 'failed' ? 'load-failed'
@@ -166,13 +174,30 @@ export function createFighter3D() {
     nh.tick(now * 0.001);                                   // engine flicker / nav blink
   }
 
-  function drawOriented(ctx, type, { az = 90, el = 45, size = 96, alpha = 1 } = {}) {
+  function drawOriented(ctx, type, {
+    az = 90,
+    el = 45,
+    size = 96,
+    alpha = 1,
+    frameToken = performance.now(),
+  } = {}) {
     if (type === 'b2' || !ready || !surfaceActive) return false;   // bomber keeps its sprite
-    orient(az, el, performance.now());
-    renderer.render(scene, camera);
-    if (pendingSwap && authoredAsset?.root.visible) {
-      nh.group.visible = false;
-      pendingSwap = false;
+    // One shared offscreen render feeds every escort drawn in the same RAF.
+    // The outer event canvas still rotates/scales each copy independently,
+    // avoiding three 320px PBR passes for a three-aircraft formation.
+    if (frameToken !== lastFrameToken) {
+      const startedAt = performance.now();
+      lastFrameToken = frameToken;
+      orient(az, el, frameToken);
+      renderer.render(scene, camera);
+      renderSurface.reportFrame(performance.now() - startedAt, {
+        drawCalls: renderer.info.render.calls,
+        triangles: renderer.info.render.triangles,
+      });
+      if (pendingSwap && authoredAsset?.root.visible) {
+        nh.group.visible = false;
+        pendingSwap = false;
+      }
     }
     const draw = size * 1.6;
     const a = ctx.globalAlpha;
