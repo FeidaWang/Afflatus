@@ -15,6 +15,9 @@ describe('home flagship progressive GPU renderer', () => {
     expect(source).toContain("modelStatus = 'reloading-webgl2'");
     expect(source).toContain('previousAsset?.dispose()');
     expect(source).toContain('releaseAuthoredFlagship()');
+    expect(source).toContain("backendController?.backend === 'poster'");
+    expect(source).toContain('targetRenderer !== backendController?.renderer');
+    expect(source.match(/loadGeneration \+= 1/g)?.length).toBeGreaterThanOrEqual(3);
     expect(source).toContain("return modelStatus === 'venator-ready'");
     expect(source).toContain('onModelStatus?.(modelStatus)');
     expect(source).toContain("backendController.fallback('render-failed')");

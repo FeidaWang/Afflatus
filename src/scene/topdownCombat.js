@@ -598,11 +598,10 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   let authoredShipAnchors = null;
   function authoredAssetsAllowed() {
     if (dataSaverEnabled()) return false;
-    // Low tier still gets the authored silhouette on a desktop-sized Command
-    // station; geometry detail, particles, DPR and frame rate remain reduced.
-    // Compact/mobile low-tier surfaces keep the procedural fallback.
-    return renderPolicy.qualityTier !== 'low'
-      || Number(globalThis.innerWidth || 0) >= 1024;
+    // Low includes reduced-motion and constrained hardware. Keep that tier on
+    // the procedural fleet so it never pays the authored models' network,
+    // decode or GPU-memory cost merely because the viewport is desktop-sized.
+    return renderPolicy.qualityTier !== 'low';
   }
 
   function syncShipAssetVisibility() {

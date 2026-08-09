@@ -2515,7 +2515,7 @@ function updateEscorts(dt, now) {
         }
         const saveData=Boolean(navigator.connection?.saveData);
         const allowAuthored=e.type!=='b2'&&!saveData
-          &&(hudRenderPolicy.qualityTier!=='low'||innerWidth>=1024);
+          &&hudRenderPolicy.qualityTier!=='low';
         const authoredFighter=allowAuthored?getFighter3D():null;
         const assetStatus=authoredFighter?.getAssetStatus?.();
         const authoredLimit=assetStatus?.loadStatus==='ready'

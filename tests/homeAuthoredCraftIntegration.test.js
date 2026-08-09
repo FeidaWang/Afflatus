@@ -23,7 +23,8 @@ describe('homepage authored combat craft integration', () => {
     const fighter = readFileSync('src/scene/fighter3D.js', 'utf8');
 
     expect(experience).toContain("assetStatus?.loadStatus==='ready'");
-    expect(experience).toContain("hudRenderPolicy.qualityTier!=='low'||innerWidth>=1024");
+    expect(experience).toContain("hudRenderPolicy.qualityTier!=='low'");
+    expect(experience).not.toContain("hudRenderPolicy.qualityTier!=='low'||innerWidth>=1024");
     expect(experience).toContain('!saveData');
     expect(experience).toContain('{az:azv, el:elv, size, frameToken:now}');
     expect(experience).toContain('drewAuthored||spriteCraft.drawOriented');
@@ -39,7 +40,7 @@ describe('homepage authored combat craft integration', () => {
     expect(combat).toContain('f.visible = Boolean(escort) || flightControlled');
     expect(combat).toContain('function authoredAssetsAllowed()');
     expect(combat).toContain("renderPolicy.qualityTier !== 'low'");
-    expect(combat).toContain('Number(globalThis.innerWidth || 0) >= 1024');
+    expect(combat).not.toContain('Number(globalThis.innerWidth || 0) >= 1024');
     expect(combat).toContain('if (dataSaverEnabled()) return false;');
   });
 });

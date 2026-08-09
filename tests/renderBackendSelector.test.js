@@ -26,7 +26,7 @@ describe('progressive render backend selection', () => {
     let loseDevice;
     const lost = new Promise((resolve) => { loseDevice = resolve; });
     const webgpuRenderer = { backend: { device: { lost } }, dispose: vi.fn() };
-    const webglRenderer = { dispose: vi.fn() };
+    const webglRenderer = { dispose: vi.fn(), forceContextLoss: vi.fn() };
     const changes = [];
     const controller = await createProgressiveRenderer({
       canvas: original.canvas,
@@ -42,6 +42,9 @@ describe('progressive render backend selection', () => {
     expect(controller.canvas).toBe(replacement.canvas);
     expect(webgpuRenderer.dispose).toHaveBeenCalledOnce();
     expect(changes).toEqual(['webgpu', 'webgl2']);
+    controller.dispose();
+    expect(webglRenderer.dispose).toHaveBeenCalledOnce();
+    expect(webglRenderer.forceContextLoss).toHaveBeenCalledOnce();
   });
 
   it('uses WebGL2 when WebGPU init fails, then falls through to poster on context loss', async () => {
@@ -76,6 +79,24 @@ describe('progressive render backend selection', () => {
     expect(controller.backend).toBe('poster');
     controller.dispose();
     controller.dispose();
+    expect(renderer.dispose).toHaveBeenCalledOnce();
+    expect(renderer.forceContextLoss).toHaveBeenCalledOnce();
+  });
+
+  it('still releases a WebGL context when renderer disposal throws', async () => {
+    const fixture = canvasFixture();
+    const renderer = {
+      dispose: vi.fn(() => { throw new Error('dispose failed'); }),
+      forceContextLoss: vi.fn(),
+    };
+    const controller = await createProgressiveRenderer({
+      canvas: fixture.canvas,
+      preferWebGPU: false,
+      createWebGL2: vi.fn(async () => renderer),
+      replaceCanvas: () => fixture.canvas,
+    });
+
+    expect(() => controller.dispose()).not.toThrow();
     expect(renderer.dispose).toHaveBeenCalledOnce();
     expect(renderer.forceContextLoss).toHaveBeenCalledOnce();
   });

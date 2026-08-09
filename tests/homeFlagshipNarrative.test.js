@@ -47,6 +47,9 @@ describe('home flagship micro-narrative', () => {
     expect(source).toContain('onPause()');
     expect(source).toContain('function posterAvailable()');
     expect(source).toContain('gpuNarrativePromise === pending');
+    expect(source).toContain('if (!terminalMode) ensureGpuNarrative()');
+    expect(source).toMatch(/\.catch\(\(\) => \{[\s\S]*?gpuNarrative\?\.destroy\(\);[\s\S]*?gpuNarrative = null;/);
+    expect(source.match(/gpuNarrativePromise = null/g)?.length).toBeGreaterThanOrEqual(3);
     expect(source).toContain('getDiagnostics()');
     expect(experience).toContain('homeFlagshipNarrative?.setEnabled(toHudOff)');
     expect(experience).toContain("classList.contains('home-combat-models-enabled')");

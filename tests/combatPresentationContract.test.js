@@ -119,7 +119,8 @@ describe('combat presentation contract', () => {
     expect(source).toContain('pilotCanvas.dataset.fighterModel=diagnostics.fighterModelStatus');
     expect(source).toContain('pilotCanvas.dataset.renderQuality=diagnostics.qualityTier');
     expect(source).toContain("evtCanvas.dataset.fighterModel=assetStatus?.loadStatus==='ready'");
-    expect(source).toContain("hudRenderPolicy.qualityTier!=='low'||innerWidth>=1024");
+    expect(source).toContain("hudRenderPolicy.qualityTier!=='low'");
+    expect(source).not.toContain("hudRenderPolicy.qualityTier!=='low'||innerWidth>=1024");
     expect(source).toContain("hudRenderPolicy.qualityTier==='high'?3:1");
     expect(source).toContain("try{ return !/[?&]combatview=2d\\b/.test(location.search); }");
     expect(source).not.toContain("localStorage.getItem('afflatus-combatview')");

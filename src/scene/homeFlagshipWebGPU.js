@@ -131,6 +131,10 @@ export async function createHomeFlagshipWebGPU({ container, onModelStatus } = {}
       activeCanvas.hidden = backend === 'poster';
 
       if (backend === 'poster') {
+        // Invalidate a decode that may still be resolving against the renderer
+        // we just discarded. Otherwise it can attach a fresh 11 MB asset after
+        // the scene has already committed to its static fallback.
+        loadGeneration += 1;
         releaseAuthoredFlagship();
         modelStatus = 'poster-fallback';
       }
@@ -139,6 +143,7 @@ export async function createHomeFlagshipWebGPU({ container, onModelStatus } = {}
       // WebGPU device loss, keep the procedural shell visible until a fresh
       // WebGL2-specific GLB load completes.
       if (previousBackend === 'webgpu' && backend === 'webgl2' && fallbackShip) {
+        loadGeneration += 1;
         releaseAuthoredFlagship();
         fallbackShip.visible = true;
         modelStatus = 'reloading-webgl2';
@@ -243,7 +248,12 @@ export async function createHomeFlagshipWebGPU({ container, onModelStatus } = {}
     markStatus();
     try {
       const nextAsset = await loadCombatAsset(targetRenderer, CAPITAL_ASSET_PROFILE);
-      if (disposed || generation !== loadGeneration) {
+      if (
+        disposed
+        || generation !== loadGeneration
+        || backendController?.backend === 'poster'
+        || targetRenderer !== backendController?.renderer
+      ) {
         nextAsset.dispose();
         return null;
       }

@@ -103,8 +103,7 @@ export function createFighter3D() {
   function authoredAssetAllowed() {
     let saveData = false;
     try { saveData = Boolean(navigator.connection?.saveData); } catch {}
-    return !saveData && (qualityTier !== 'low'
-      || Number(globalThis.innerWidth || 0) >= 1024);
+    return !saveData && qualityTier !== 'low';
   }
 
   function syncModelVisibility() {

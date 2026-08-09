@@ -308,6 +308,12 @@ export function createHomeFlagshipNarrative({
         return narrative;
       })
       .catch(() => {
+        // Creation can fail after the narrative object was assigned (for
+        // example while sizing the first backend). Release that partial scene
+        // before clearing the in-flight guard so a later visibility resume can
+        // make a clean retry.
+        gpuNarrative?.destroy();
+        gpuNarrative = null;
         canvas.dataset.model = 'static-fallback';
         return null;
       });
@@ -377,6 +383,11 @@ export function createHomeFlagshipNarrative({
       gpuNarrative?.setVisible(false);
       return;
     }
+    // A failed or unavailable backend clears gpuNarrativePromise when it
+    // settles. Re-entering the hero (for example after leaving Command mode)
+    // is the bounded retry point; the in-flight guard still prevents duplicate
+    // renderer creation while a previous attempt is pending.
+    if (!terminalMode) ensureGpuNarrative();
     gpuNarrative?.setVisible(true);
     if (!visible) visible = true;
     if (terminalMode || elapsed >= DURATION_MS) draw(performance.now());
@@ -418,6 +429,10 @@ export function createHomeFlagshipNarrative({
         stop();
         gpuNarrative?.destroy();
         gpuNarrative = null;
+        // Do not retain an in-flight promise from the surface owner. Its own
+        // completion handler still observes terminalMode and destroys any
+        // renderer that finishes after this downgrade.
+        gpuNarrativePromise = null;
         canvas.dataset.model = posterAvailable() ? 'static-venator-poster' : 'static-fallback';
         if (visible) draw(performance.now());
       }
@@ -429,6 +444,8 @@ export function createHomeFlagshipNarrative({
       viewportObserver?.disconnect();
       removeVisibilityFallback?.();
       gpuNarrative?.destroy();
+      gpuNarrative = null;
+      gpuNarrativePromise = null;
       canvas.remove();
     },
   });
