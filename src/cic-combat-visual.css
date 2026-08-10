@@ -1,0 +1,75 @@
+/* CIC direct-render combat viewport
+ *
+ * Three.js owns the opaque sensor picture while #cicPilotFeed remains a
+ * transparent, interactive HMD layer. Keeping the two canvases as siblings
+ * avoids a GPU-canvas -> Canvas2D copy on every combat frame. */
+
+#combatHud .cic-viewport {
+  isolation: isolate;
+  background: #010407;
+}
+
+#combatHud .cic-pilot-scene,
+#combatHud .cic-pilot-feed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#combatHud .cic-pilot-scene {
+  z-index: 1;
+  background: #010407;
+  filter: saturate(1.12) contrast(1.05);
+  pointer-events: none;
+}
+
+#combatHud .cic-pilot-feed {
+  z-index: 2;
+}
+
+#combatHud .cic-viewport.has-three-scene .cic-pilot-feed {
+  background: transparent;
+  filter: none;
+}
+
+#combatHud .cic-viewport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    linear-gradient(90deg, rgba(0, 8, 13, .32), transparent 12%, transparent 88%, rgba(0, 8, 13, .32)),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(154, 229, 255, .018) 4px);
+  box-shadow: inset 0 0 42px rgba(0, 5, 9, .42);
+  pointer-events: none;
+}
+
+#combatHud .cic-camera-controls,
+#combatHud .cic-sensor-rail,
+#combatHud .cic-target-rail {
+  z-index: 8;
+}
+
+@media (min-width: 861px) {
+  :root {
+    --cic-shell-height: clamp(316px, 40svh, 430px);
+  }
+
+  #combatHud .cic-shell {
+    grid-template-columns: minmax(238px, 19fr) minmax(0, 62fr) minmax(238px, 19fr);
+  }
+}
+
+@media (min-width: 861px) and (max-height: 620px) {
+  :root {
+    --cic-shell-height: clamp(270px, 46svh, 330px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #combatHud .cic-viewport::after {
+    background: linear-gradient(90deg, rgba(0, 8, 13, .3), transparent 13%, transparent 87%, rgba(0, 8, 13, .3));
+  }
+}

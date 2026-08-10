@@ -32,11 +32,16 @@ import {
 import { projectedDiameterPx, selectProceduralLod } from '../lib/proceduralLod.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import {
-  CAPITAL_ASSET_PROFILE,
-  FIGHTER_ASSET_PROFILE,
-  loadCombatAsset,
+  CIC_CAPITAL_ASSET_PROFILE,
+  CIC_FIGHTER_ASSET_PROFILE,
+  createCombatAssetLoader,
 } from './combatAssetLoader.js';
 import { createCombatVfx } from './combatVfx.js';
+import {
+  cometTailDirection,
+  cometVisualProfile,
+  phaseCameraCue,
+} from './topdownCombatMath.js';
 import {
   canAcquireWebGLContext,
   createWebGLContextLifecycle,
@@ -64,69 +69,92 @@ function glowTexture() {
   g.addColorStop(1, 'rgba(255,255,255,0)');
   x.fillStyle = g; x.fillRect(0, 0, s, s);
   const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
 
-function distantBlackHoleTexture() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 512;
-  const ctx = canvas.getContext('2d');
-  const cx = canvas.width / 2;
-  const cy = canvas.height / 2;
+function createDistantBlackHole() {
+  const uniforms = {
+    uTime: { value: 0 },
+    uSize: { value: new THREE.Vector2(172, 86) },
+    uIntensity: { value: 1 },
+  };
+  const material = new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader: /* glsl */ `
+      uniform vec2 uSize;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        vec4 center = modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0);
+        center.xy += position.xy * uSize;
+        gl_Position = projectionMatrix * center;
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      uniform float uTime;
+      uniform float uIntensity;
+      varying vec2 vUv;
 
-  const halo = ctx.createRadialGradient(cx, cy, 72, cx, cy, 246);
-  halo.addColorStop(0, 'rgba(255,232,183,.2)');
-  halo.addColorStop(.3, 'rgba(215,177,113,.13)');
-  halo.addColorStop(.62, 'rgba(111,169,205,.075)');
-  halo.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = halo;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+      float band(float value, float center, float width) {
+        return 1.0 - smoothstep(width, width * 2.0, abs(value - center));
+      }
 
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(-.08);
-  for (let i = 18; i >= 0; i -= 1) {
-    const u = i / 18;
-    const diskGradient = ctx.createLinearGradient(-330, 0, 330, 0);
-    diskGradient.addColorStop(0, `rgba(113,178,218,${.028 + (1 - u) * .034})`);
-    diskGradient.addColorStop(.34, `rgba(219,190,137,${.045 + (1 - u) * .065})`);
-    diskGradient.addColorStop(.56, `rgba(255,244,214,${.08 + (1 - u) * .11})`);
-    diskGradient.addColorStop(1, `rgba(173,124,73,${.018 + (1 - u) * .03})`);
-    ctx.strokeStyle = diskGradient;
-    ctx.lineWidth = 2.4 + i * .72;
-    ctx.beginPath();
-    ctx.moveTo(-338, 8 + i * .24);
-    ctx.bezierCurveTo(-164, -40 - i * .45, 138, 42 + i * .28, 342, -4 - i * .16);
-    ctx.stroke();
-  }
+      void main() {
+        vec2 p = (vUv - 0.5) * 2.0;
+        p.x *= 1.82;
+        float c = cos(-0.075), s = sin(-0.075);
+        p = mat2(c, -s, s, c) * p;
+        float radius = length(p);
+        float angle = atan(p.y, p.x);
 
-  ctx.fillStyle = '#000';
-  ctx.beginPath();
-  ctx.arc(0, 0, 82, 0, Math.PI * 2);
-  ctx.fill();
+        // A thin analytic accretion band: no scene sample, loop or ray march.
+        float diskRadius = abs(p.x);
+        float diskWidth = 0.04 + 0.11 * (1.0 - smoothstep(0.25, 1.45, diskRadius));
+        float disk = (1.0 - smoothstep(diskWidth, diskWidth + 0.07, abs(p.y)));
+        disk *= smoothstep(0.31, 0.45, radius) * (1.0 - smoothstep(1.18, 1.62, diskRadius));
+        float stream = 0.84 + 0.16 * sin(angle * 7.0 - uTime * 1.25 + radius * 19.0);
+        disk *= stream;
 
-  // The upper arc is the lensed far side of the disc, not an orbital ring.
-  for (let i = 0; i < 8; i += 1) {
-    ctx.strokeStyle = `rgba(${205 + i * 6},${213 + i * 5},${202 + i * 6},${.04 + i * .021})`;
-    ctx.lineWidth = 2.2;
-    ctx.beginPath();
-    ctx.ellipse(0, 1, 87 + i * 2.2, 103 + i * 1.2, 0, Math.PI * 1.08, Math.PI * 1.92);
-    ctx.stroke();
-  }
+        vec3 cyan = vec3(0.19, 0.68, 1.0);
+        vec3 whiteHot = vec3(1.0, 0.92, 0.72);
+        vec3 amber = vec3(1.0, 0.31, 0.075);
+        vec3 diskColor = mix(cyan, amber, smoothstep(-1.15, 1.15, p.x));
+        diskColor = mix(diskColor, whiteHot, band(radius, 0.48, 0.13) * 0.3);
 
-  for (let i = 0; i < 7; i += 1) {
-    ctx.strokeStyle = `rgba(${207 + i * 6},${198 + i * 7},${166 + i * 10},${.05 + i * .024})`;
-    ctx.lineWidth = 2.4;
-    ctx.beginPath();
-    ctx.ellipse(0, 3, 184 + i * 3, 28 + i * 1.2, 0, .08, Math.PI - .08);
-    ctx.stroke();
-  }
-  ctx.restore();
+        float photon = band(radius, 0.355, 0.012) + band(radius, 0.405, 0.026) * 0.48;
+        float farMetric = length(vec2(p.x, p.y * 0.66));
+        float farArc = band(farMetric, 0.52, 0.022) * smoothstep(-0.1, 0.26, p.y);
+        float halo = (1.0 - smoothstep(0.34, 1.35, radius)) * smoothstep(0.27, 0.43, radius);
+        halo *= 0.18 + 0.04 * sin(uTime * 0.7 + angle * 5.0);
+        float horizon = 1.0 - smoothstep(0.305, 0.352, radius);
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  return texture;
+        vec3 photonColor = mix(vec3(0.48, 0.82, 1.0), vec3(1.0, 0.55, 0.2), smoothstep(-0.42, 0.42, p.x));
+        vec3 color = diskColor * disk * 1.75;
+        color += photonColor * photon * 1.2;
+        color += mix(vec3(0.65, 0.86, 1.0), whiteHot, 0.55) * farArc * 0.88;
+        color += mix(cyan, amber, 0.35) * halo * 0.78;
+        color *= uIntensity;
+        float lightAlpha = disk * 0.9 + photon + farArc * 0.82 + halo * 0.7;
+        float alpha = clamp(max(horizon * 0.985, lightAlpha), 0.0, 1.0);
+        if (alpha < 0.003) discard;
+        gl_FragColor = vec4(color * (1.0 - horizon), alpha);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    toneMapped: true,
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+  mesh.name = 'AlphardDistantBlackHole';
+  mesh.position.set(34, 24, -218);
+  mesh.frustumCulled = false;
+  mesh.renderOrder = -20;
+  mesh.userData.baseSize = new THREE.Vector2(172, 86);
+  return mesh;
 }
 
 let surfaceSequence = 0;
@@ -148,6 +176,21 @@ export function createTopdownCombat({
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   } catch (e) { return null; }
   renderer.setClearColor(0x04060a, 1);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.08;
+  const authoredAssetLoader = createCombatAssetLoader(renderer, { workerLimit: 2 });
+  const performanceProbeEnabled = (() => {
+    try { return /[?&]combatPerfProbe=1\b/.test(location.search); } catch { return false; }
+  })();
+  function markPerformanceStage(name) {
+    if (!performanceProbeEnabled) return;
+    const at = performance.now();
+    const key = `cic${name.charAt(0).toUpperCase()}${name.slice(1)}At`;
+    document.documentElement.dataset[key] = at.toFixed(2);
+    try { performance.mark(`cic:${name}`, { startTime: at }); } catch {}
+  }
+  markPerformanceStage('surfaceCreated');
 
   const scene = new THREE.Scene();
 
@@ -164,6 +207,21 @@ export function createTopdownCombat({
   const camDirectorOn = cameraDirectorEnabled();
   let camDirector = null;
   let missileLastPos = null, missileLastVel = null; // live shot feeds
+  const defaultMissileDirection = new THREE.Vector3(0, 0, -1);
+  const missileCameraDirection = new THREE.Vector3();
+  let activeMissileCameraTrackId = null;
+  let missileTrackSequence = 0;
+
+  // Camera feeds must retain their own storage. In particular, the projectile
+  // sampler below deliberately reuses scratch vectors for every missile, so
+  // assigning those vectors here would make a two-missile frame point the
+  // camera at whichever missile was updated last.
+  function updateMissileCameraFeed(position, velocity) {
+    if (!missileLastPos) missileLastPos = new THREE.Vector3();
+    if (!missileLastVel) missileLastVel = new THREE.Vector3();
+    missileLastPos.copy(position);
+    missileLastVel.copy(velocity);
+  }
 
   // ── U24 flight event state (launch/landing lifecycle for fighters[0]) ──
   // flightLastPos/Vel are the shot-compute feeds (missileLastPos pattern);
@@ -250,10 +308,19 @@ export function createTopdownCombat({
       mainGunAxis: {
         priority: 4,
         compute() {
+          const c = capital.position;
           const p = comet.position;
           return {
-            pos: { x: capital.position.x, y: 8, z: capital.position.z - 6 },
-            look: { x: p.x, y: p.y ?? 1.5, z: p.z },
+            // Rear-quarter axial composition retains the complete flagship
+            // silhouette while the beam leads the eye toward the threat.
+            pos: { x: c.x + 12.5, y: c.y + 7.8, z: c.z + 15.5 },
+            look: {
+              x: c.x + (p.x - c.x) * 0.34,
+              y: c.y + 1.05 + ((p.y ?? 1.5) - c.y) * 0.18,
+              z: c.z + (p.z - c.z) * 0.34,
+            },
+            fov: 52,
+            roll: -0.012,
           };
         },
       },
@@ -261,8 +328,8 @@ export function createTopdownCombat({
         priority: 4,
         compute(t) {
           const p = missileLastPos || capital.position;
-          const v = missileLastVel || new THREE.Vector3(0, 0, -1);
-          const dir = v.clone().normalize();
+          const v = missileLastVel || defaultMissileDirection;
+          const dir = missileCameraDirection.copy(v).normalize();
           return {
             pos: { x: p.x - dir.x * 4.4, y: p.y - dir.y * 4.4 + 1.15, z: p.z - dir.z * 4.4 },
             look: { x: p.x + dir.x * 13, y: p.y + dir.y * 13, z: p.z + dir.z * 13 },
@@ -290,6 +357,50 @@ export function createTopdownCombat({
           return {
             pos: { x: capital.position.x + 6, y: 4, z: capital.position.z + 2 },
             look: { x: comet.position.x, y: 1, z: comet.position.z },
+            fov: 58,
+          };
+        },
+      },
+      offlineWide: {
+        priority: 2,
+        compute() {
+          const c = capital.position;
+          return {
+            pos: { x: c.x + 20, y: c.y + 14, z: c.z + 26 },
+            look: { x: c.x, y: c.y + 1, z: c.z - 6 },
+            fov: 48,
+            roll: 0,
+          };
+        },
+      },
+      nukeEscort: {
+        priority: 5,
+        compute() {
+          const b = bomber.visible ? bomber.position : capital.position;
+          return {
+            pos: { x: b.x + 13, y: b.y + 8.5, z: b.z + 17 },
+            look: {
+              x: b.x + (comet.position.x - b.x) * 0.22,
+              y: b.y + 0.45,
+              z: b.z + (comet.position.z - b.z) * 0.22,
+            },
+            fov: 55,
+            roll: 0.018,
+          };
+        },
+      },
+      nukeTerminal: {
+        priority: 5,
+        blendInMs: 140,
+        compute(t) {
+          const p = missileLastPos || comet.position;
+          const v = missileLastVel || defaultMissileDirection;
+          const dir = missileCameraDirection.copy(v).normalize();
+          return {
+            pos: { x: p.x - dir.x * 6.8 + 2.1, y: p.y - dir.y * 6.8 + 2.6, z: p.z - dir.z * 6.8 },
+            look: { x: p.x + dir.x * 17, y: p.y + dir.y * 17, z: p.z + dir.z * 17 },
+            fov: 68,
+            roll: 0.045 * Math.sin(t * 5.2),
           };
         },
       },
@@ -360,12 +471,11 @@ export function createTopdownCombat({
     camDirector = createWeaponCameraDirector({ camera, shots, home: 'commandChase' });
   }
 
-  // ── lighting ───────────────────────────────────────────────────────────
-  // No autonomous nebula, fog or lens treatment: the sensor picture only
-  // contains tracked craft, weapons, impacts and a fixed stellar reference.
-  scene.add(new THREE.AmbientLight(0x2a3850, 1.4));
-  const key = new THREE.DirectionalLight(0xbcd4ff, 1.5); key.position.set(20, 60, 30); scene.add(key);
-  const rim = new THREE.DirectionalLight(0x4d7bd6, 0.8); rim.position.set(-30, 20, -30); scene.add(rim);
+  // Three non-shadow-casting lights provide a cheap image-based-lighting
+  // approximation: cool stellar sky, neutral key and warm accretion-disc rim.
+  scene.add(new THREE.HemisphereLight(0x78bfff, 0x05070c, 1.18));
+  const key = new THREE.DirectionalLight(0xd9e8ff, 2.15); key.position.set(22, 54, 34); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xff9f62, 1.05); rim.position.set(-34, 18, -42); scene.add(rim);
 
   const GLOW = glowTexture();
   // r160-compatible port of the Three.js linked-particle, fire/smoke and
@@ -376,6 +486,12 @@ export function createTopdownCombat({
     glowTexture: GLOW,
     qualityTier: renderPolicy.qualityTier,
   });
+  // Do not make the first CIC frame compile all three VFX shader families.
+  // They are warmed one material at a time after the lightweight sensor frame.
+  combatVfx.setVisible?.(false);
+  let combatEffectsReady = false;
+  let combatEffectsWarmPromise = null;
+  markPerformanceStage('vfxCreated');
   const combatVfxBufferSize = new THREE.Vector2();
   const sprite = (color, size, opacity = 1) => {
     const m = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -424,27 +540,20 @@ export function createTopdownCombat({
   addStarVolume(920, { size: .62, opacity: .72, drift: .095, spreadX: 520, spreadY: 310 });
   addStarVolume(240, { size: 1.25, opacity: .5, drift: .17, spreadX: 360, spreadY: 230 });
 
-  const approachBlackHole = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: distantBlackHoleTexture(),
-    transparent: true,
-    opacity: .88,
-    depthWrite: false,
-  }));
-  approachBlackHole.name = 'AlphardDistantBlackHole';
-  approachBlackHole.position.set(34, 24, -218);
-  approachBlackHole.scale.set(172, 86, 1);
-  approachBlackHole.userData.baseScale = new THREE.Vector2(172, 86);
+  // One analytic draw: event horizon, photon ring and Doppler-shifted disc.
+  // It intentionally avoids a composer or scene-depth sampling.
+  const approachBlackHole = createDistantBlackHole();
   scene.add(approachBlackHole);
 
   // A sparse velocity layer makes forward motion legible without turning the
   // sensor picture into a warp tunnel. Each line occupies its own x/y/z
   // coordinate, so the streaks retain depth rather than forming a flat sheet.
-  const streakCount = 74;
+  const streakCount = 96;
   const streakPositions = new Float32Array(streakCount * 6);
   function resetStreak(index, initial = false) {
     const offset = index * 6;
     const z = initial ? -310 + Math.random() * 480 : -310;
-    const length = 1.4 + Math.random() * 5.4;
+    const length = 2.4 + Math.random() * 7.2;
     const x = (Math.random() - .5) * 380;
     const y = (Math.random() - .46) * 230;
     streakPositions[offset] = x;
@@ -460,11 +569,12 @@ export function createTopdownCombat({
   const flightStreaks = new THREE.LineSegments(streakGeometry, new THREE.LineBasicMaterial({
     color: 0xb8dcf2,
     transparent: true,
-    opacity: .2,
+    opacity: .24,
     depthWrite: false,
   }));
   flightStreaks.name = 'ForwardVelocityReferences';
   scene.add(flightStreaks);
+  markPerformanceStage('backdropCreated');
 
   // ── materials ────────────────────────────────────────────────────────────
   const enemyMat = new THREE.MeshStandardMaterial({ color: 0x6b4a3a, metalness: 0.6, roughness: 0.7, emissive: 0x3a1206, emissiveIntensity: 0.5 });
@@ -482,8 +592,28 @@ export function createTopdownCombat({
   let authoredShip = null;
   let shipAssetHandle = null;
   let shipModelPromise = null;
+  let shipModelTerminalFailure = false;
+  let proceduralFramePresented = false;
+  let authoredWarmGeneration = 0;
   const fallbackShip = createAfflatusVanguard(THREE, { detail: 'full', forwardNegativeZ: true });
+  markPerformanceStage('fallbackShipCreated');
   fallbackShip.group.name = 'VanguardProceduralFallback';
+  // The procedural carrier is visible for roughly one second while the CIC
+  // LOD streams. A shared analytic silhouette avoids compiling eight PBR
+  // variants (including transmission) just to discard them at the GLB swap.
+  const fallbackBootHullMaterial = new THREE.MeshBasicMaterial({ color: 0x536878 });
+  const fallbackBootGlowMaterial = new THREE.MeshBasicMaterial({ color: 0x91efff, toneMapped: false });
+  const fallbackOriginalMaterials = new Set();
+  fallbackShip.group.traverse((child) => {
+    if (!child.isMesh || !child.material) return;
+    const originals = Array.isArray(child.material) ? child.material : [child.material];
+    originals.forEach((material) => fallbackOriginalMaterials.add(material));
+    child.material = /drive|glow|emission|thruster/i.test(child.name)
+      ? fallbackBootGlowMaterial
+      : fallbackBootHullMaterial;
+  });
+  fallbackOriginalMaterials.forEach((material) => material.dispose());
+  fallbackOriginalMaterials.clear();
   capital.add(fallbackShip.group);
   capital.scale.setScalar(1.55);
   capital.position.set(-2, 0, 17); // front (-Z) faces up-field toward the comet
@@ -500,6 +630,13 @@ export function createTopdownCombat({
     applyVanguardSurfaceTextures(fallbackShip.group, shipSurfaceTextures, renderPolicy.qualityTier);
   }
   function ensureShipSurfaceTextures() {
+    // The short-lived fallback intentionally uses analytic materials; loading
+    // a second KTX2 surface set would duplicate work immediately before the
+    // authored CIC model replaces it.
+    if (fallbackBootHullMaterial) {
+      shipTextureStatus = 'analytic-fallback';
+      return;
+    }
     if (renderPolicy.qualityTier === 'low' || shipSurfaceTexturePromise || dataSaverEnabled()) return;
     shipTextureStatus = 'loading';
     shipSurfaceTexturePromise = loadVanguardSurfaceTextures(THREE, renderer)
@@ -601,6 +738,7 @@ export function createTopdownCombat({
     scar.position.set(x, 0.78, z);
     scar.scale.set(1.6, 1.6, 1);
     capital.add(scar);
+    scar.visible = false;
     damageScars.push(scar);
   }
   let damageScarIndex = 0;
@@ -622,6 +760,181 @@ export function createTopdownCombat({
   }
 
   let authoredShipAnchors = null;
+  function prepareAuthoredMaterials(root) {
+    root.traverse((child) => {
+      if (!child.isMesh) return;
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      for (const material of materials) {
+        if (!material || material.transparent || material.opacity < 1) continue;
+        if (material.side !== THREE.FrontSide) {
+          material.side = THREE.FrontSide;
+          material.needsUpdate = true;
+        }
+      }
+    });
+  }
+
+  function authoredWarmCurrent(generation) {
+    return generation === authoredWarmGeneration && !sceneDisposed && contextReady;
+  }
+
+  function authoredSurfaceRequested() {
+    try {
+      return surfaceActive
+        && document.visibilityState !== 'hidden'
+        && authoredAssetsAllowed()
+        && shouldLoadAuthoredAssets(liveCombatState);
+    } catch {
+      return false;
+    }
+  }
+
+  function nextAssetFrame(generation) {
+    return new Promise((resolve) => {
+      const waitStartedAt = performance.now();
+      const wait = () => {
+        if (!authoredWarmCurrent(generation)) {
+          resolve(false);
+          return;
+        }
+        if (!authoredAssetsAllowed()) {
+          resolve(false);
+          return;
+        }
+        let settled = false;
+        let rafId = 0;
+        const finish = () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timerId);
+          if (rafId && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(rafId);
+          if (!authoredWarmCurrent(generation)) {
+            resolve(false);
+            return;
+          }
+          if (!authoredSurfaceRequested()) {
+            if (performance.now() - waitStartedAt >= 2000) {
+              resolve(false);
+              return;
+            }
+            wait();
+            return;
+          }
+          resolve(true);
+        };
+        const timerId = setTimeout(finish, 120);
+        if (authoredSurfaceRequested() && typeof requestAnimationFrame === 'function') {
+          rafId = requestAnimationFrame(finish);
+        }
+      };
+      wait();
+    });
+  }
+
+  function authoredTextures(root) {
+    const textures = new Set();
+    root.traverse((child) => {
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      for (const material of materials) {
+        if (!material) continue;
+        for (const value of Object.values(material)) {
+          if (value?.isTexture) textures.add(value);
+        }
+      }
+    });
+    return [...textures];
+  }
+
+  async function prewarmAuthoredGeometry(root, generation) {
+    const meshes = [];
+    root.traverse((child) => { if (child.isMesh) meshes.push(child); });
+    if (!meshes.length) return true;
+
+    const originalState = meshes.map((mesh) => ({
+      mesh,
+      visible: mesh.visible,
+      frustumCulled: mesh.frustumCulled,
+    }));
+    const stagingScene = new THREE.Scene();
+    const stagingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const stagingTarget = new THREE.WebGLRenderTarget(1, 1, {
+      depthBuffer: false,
+      stencilBuffer: false,
+    });
+    stagingScene.overrideMaterial = stagingMaterial;
+    stagingScene.add(root);
+    for (const mesh of meshes) {
+      mesh.visible = false;
+      mesh.frustumCulled = false;
+    }
+
+    try {
+      // WebGLRenderer.compile() prepares programs but not vertex/index buffers.
+      // Render two hidden meshes into a 1px target per refresh so the first
+      // visible authored frame does not absorb every geometry upload at once.
+      for (let index = 0; index < meshes.length; index += 1) {
+        const batch = meshes.slice(index, index + 1);
+        batch.forEach((mesh) => { mesh.visible = true; });
+        const previousTarget = renderer.getRenderTarget();
+        try {
+          renderer.setRenderTarget(stagingTarget);
+          renderer.render(stagingScene, camera);
+        } finally {
+          renderer.setRenderTarget(previousTarget);
+          batch.forEach((mesh) => { mesh.visible = false; });
+        }
+        if (!await nextAssetFrame(generation)) return false;
+      }
+      return true;
+    } finally {
+      stagingScene.remove(root);
+      for (const state of originalState) {
+        state.mesh.visible = state.visible;
+        state.mesh.frustumCulled = state.frustumCulled;
+      }
+      stagingTarget.dispose();
+      stagingMaterial.dispose();
+    }
+  }
+
+  async function prewarmAuthoredPrograms(root, generation) {
+    const meshes = [];
+    root.traverse((child) => { if (child.isMesh && child.material) meshes.push(child); });
+    for (const mesh of meshes) {
+      if (!authoredWarmCurrent(generation)) return false;
+      // r160's compileAsync can poll an orphaned WebGLProgram forever after
+      // context loss. One synchronous material compile per refresh is bounded
+      // and still prevents a whole-model program burst on the swap frame.
+      renderer.compile(mesh, camera, scene);
+      if (!await nextAssetFrame(generation)) return false;
+    }
+    return true;
+  }
+
+  async function prewarmAuthoredAsset(root, generation) {
+    if (!authoredWarmCurrent(generation)) return 'cancelled';
+    const textures = authoredTextures(root);
+    try {
+      if (!await nextAssetFrame(generation)) return 'cancelled';
+      // Upload one compressed texture per refresh instead of presenting one
+      // frame that absorbs the entire KTX2 upload burst.
+      for (let index = 0; index < textures.length; index += 1) {
+        renderer.initTexture(textures[index]);
+        if (!await nextAssetFrame(generation)) return 'cancelled';
+      }
+      if (!await prewarmAuthoredGeometry(root, generation)) return 'cancelled';
+      // Compile one incoming material per refresh while borrowing the live
+      // scene's lights/environment for the correct PBR program variants.
+      if (!await prewarmAuthoredPrograms(root, generation)) return 'cancelled';
+      return 'ready';
+    } catch (error) {
+      // The procedural fleet remains visible until every warmup stage passes.
+      if (!authoredWarmCurrent(generation)) return 'cancelled';
+      root.userData.prewarmError = error instanceof Error ? error.message : String(error);
+      return 'failed';
+    }
+  }
+
   function authoredAssetsAllowed() {
     if (dataSaverEnabled()) return false;
     // Low includes reduced-motion and constrained hardware. Keep that tier on
@@ -642,32 +955,54 @@ export function createTopdownCombat({
   }
 
   async function ensureAuthoredShip() {
-    if (shipModelPromise || sceneDisposed || !authoredAssetsAllowed()) return shipModelPromise;
+    if (shipModelPromise || shipModelTerminalFailure || sceneDisposed || !contextReady || !authoredAssetsAllowed()) return shipModelPromise;
+    const generation = authoredWarmGeneration;
+    let retryable = true;
     shipModelStatus = 'loading-venator';
-    shipModelPromise = loadCombatAsset(renderer, CAPITAL_ASSET_PROFILE)
-      .then((asset) => {
+    markPerformanceStage('shipLoadStart');
+    shipModelPromise = authoredAssetLoader.load(CIC_CAPITAL_ASSET_PROFILE)
+      .then(async (asset) => {
+        markPerformanceStage('shipDecoded');
         if (sceneDisposed) {
           asset.dispose();
           return null;
         }
-        shipAssetHandle = asset;
-        authoredShip = asset.root;
-        authoredShip.name = 'VenatorClassStarDestroyerCCBY';
+        const root = asset.root;
+        root.name = 'VenatorClassStarDestroyerCCBY';
+        prepareAuthoredMaterials(root);
         // Combat convention is +Z, while the fixed carrier faces up-field -Z.
-        authoredShip.rotation.y += Math.PI;
-        authoredShipAnchors = addCapitalWeaponAnchors(authoredShip);
-        capital.add(authoredShip);
+        root.rotation.y += Math.PI;
+        const anchors = addCapitalWeaponAnchors(root);
+        applyAuthoredGeometryQuality(root);
+        const prewarmResult = await prewarmAuthoredAsset(root, generation);
+        if (prewarmResult !== 'ready') {
+          asset.dispose();
+          retryable = prewarmResult === 'cancelled';
+          if (prewarmResult === 'failed') shipModelTerminalFailure = true;
+          if (!sceneDisposed) shipModelStatus = 'procedural-fallback';
+          return null;
+        }
+        shipAssetHandle = asset;
+        authoredShip = root;
+        authoredShipAnchors = anchors;
+        markPerformanceStage('shipWarm');
+        capital.add(root);
         shipModelStatus = 'venator-ready';
         syncShipAssetVisibility();
-        applyAuthoredGeometryQuality();
+        markPerformanceStage('shipSwap');
         return asset;
       })
       .catch((error) => {
+        retryable = false;
+        shipModelTerminalFailure = true;
         shipModelStatus = 'procedural-fallback';
         capital.userData.shipAssetError = error instanceof Error ? error.message : String(error);
         syncShipAssetVisibility();
         ensureShipSurfaceTextures();
         return null;
+      })
+      .finally(() => {
+        if (!shipAssetHandle && retryable && !sceneDisposed) shipModelPromise = null;
       });
     return shipModelPromise;
   }
@@ -688,8 +1023,51 @@ export function createTopdownCombat({
   }
   const fighters = [makeFighter(), makeFighter(), makeFighter()];
   fighters.forEach((fighter) => { fighter.visible = false; });
+
+  // The nuclear platform is a distinct, deliberately light flying-wing proxy.
+  // It must not consume a fourth 43k-triangle fighter clone merely to make the
+  // B2 release beat readable in the CIC feed.
+  function makeB2Proxy() {
+    const outline = [
+      [0, 0.02, 4.8], [2.5, 0.02, 2.15], [7.2, 0, 0.35],
+      [4.55, -0.04, -0.65], [2.15, -0.02, -1.72], [0.9, 0, -3.15],
+      [0, 0, -2.52], [-0.9, 0, -3.15], [-2.15, -0.02, -1.72],
+      [-4.55, -0.04, -0.65], [-7.2, 0, 0.35], [-2.5, 0.02, 2.15],
+    ];
+    const positions = [0, 0.34, 0];
+    for (const point of outline) positions.push(...point);
+    const indices = [];
+    for (let index = 0; index < outline.length; index += 1) {
+      indices.push(0, index + 1, ((index + 1) % outline.length) + 1);
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x242d39,
+      emissive: 0x071627,
+      emissiveIntensity: 0.75,
+      metalness: 0.82,
+      roughness: 0.31,
+      side: THREE.DoubleSide,
+    });
+    const proxy = new THREE.Group();
+    const wing = new THREE.Mesh(geometry, material);
+    wing.name = 'B2FlyingWingSurface';
+    proxy.name = 'B2NuclearPlatformProxy';
+    proxy.userData.wing = wing;
+    proxy.add(wing);
+    proxy.scale.setScalar(0.72);
+    proxy.visible = false;
+    scene.add(proxy);
+    return proxy;
+  }
+  const bomber = makeB2Proxy();
+  markPerformanceStage('fallbackFleetCreated');
   let fighterAssetHandle = null;
   let fighterModelPromise = null;
+  let fighterModelTerminalFailure = false;
   let combatAssetLoadPromise = null;
   let fighterModelStatus = 'procedural';
 
@@ -702,12 +1080,25 @@ export function createTopdownCombat({
   }
 
   async function ensureAuthoredFighters() {
-    if (fighterModelPromise || sceneDisposed || !authoredAssetsAllowed()) return fighterModelPromise;
+    if (fighterModelPromise || fighterModelTerminalFailure || sceneDisposed || !contextReady || !authoredAssetsAllowed()) return fighterModelPromise;
+    const generation = authoredWarmGeneration;
+    let retryable = true;
     fighterModelStatus = 'loading-sixth-gen';
-    fighterModelPromise = loadCombatAsset(renderer, FIGHTER_ASSET_PROFILE)
-      .then((asset) => {
+    markPerformanceStage('fighterLoadStart');
+    fighterModelPromise = authoredAssetLoader.load(CIC_FIGHTER_ASSET_PROFILE)
+      .then(async (asset) => {
+        markPerformanceStage('fighterDecoded');
         if (sceneDisposed) {
           asset.dispose();
+          return null;
+        }
+        prepareAuthoredMaterials(asset.root);
+        const prewarmResult = await prewarmAuthoredAsset(asset.root, generation);
+        if (prewarmResult !== 'ready') {
+          asset.dispose();
+          retryable = prewarmResult === 'cancelled';
+          if (prewarmResult === 'failed') fighterModelTerminalFailure = true;
+          if (!sceneDisposed) fighterModelStatus = 'procedural-fallback';
           return null;
         }
         fighterAssetHandle = asset;
@@ -719,19 +1110,25 @@ export function createTopdownCombat({
         });
         fighterModelStatus = 'sixth-gen-ready';
         syncFighterAssetVisibility();
+        markPerformanceStage('fighterSwap');
         return asset;
       })
       .catch((error) => {
+        retryable = false;
+        fighterModelTerminalFailure = true;
         fighterModelStatus = 'procedural-fallback';
         scene.userData.fighterAssetError = error instanceof Error ? error.message : String(error);
         syncFighterAssetVisibility();
         return null;
+      })
+      .finally(() => {
+        if (!fighterAssetHandle && retryable && !sceneDisposed) fighterModelPromise = null;
       });
     return fighterModelPromise;
   }
 
   function ensureAuthoredCombatAssets(state) {
-    if (!authoredAssetsAllowed() || !shouldLoadAuthoredAssets(state)) return;
+    if (!proceduralFramePresented || !contextReady || !authoredAssetsAllowed() || !shouldLoadAuthoredAssets(state)) return;
     const fighterDemand = preloadAuthoredFighters
       || Boolean(state?.escorts?.some((escort) => escort.type === 'f47'));
     const needsShip = !shipModelPromise;
@@ -755,37 +1152,82 @@ export function createTopdownCombat({
       .finally(() => { combatAssetLoadPromise = null; });
   }
 
+  function beginDeferredCombatWarmup() {
+    void ensureCombatEffectsWarm()
+      .catch(() => false)
+      .then(() => ensureAuthoredCombatAssets(liveCombatState));
+  }
+
+  function invalidateAuthoredAssetsForContextLoss() {
+    authoredWarmGeneration += 1;
+    combatEffectsReady = false;
+    combatEffectsWarmPromise = null;
+    syncCombatEffectsVisibility();
+    if (shipAssetHandle) {
+      shipAssetHandle.dispose();
+      shipAssetHandle = null;
+      authoredShip = null;
+      authoredShipAnchors = null;
+      shipModelPromise = null;
+      shipModelStatus = 'procedural-fallback';
+    }
+    if (fighterAssetHandle) {
+      for (const fighter of fighters) {
+        const model = fighter.userData.authored;
+        if (model) fighter.remove(model);
+        fighter.userData.authored = null;
+      }
+      fighterAssetHandle.dispose();
+      fighterAssetHandle = null;
+      fighterModelPromise = null;
+      fighterModelStatus = 'procedural-fallback';
+    }
+    syncShipAssetVisibility();
+    syncFighterAssetVisibility();
+  }
+
   let liveCombatState = null;
+  let fighterEscortSlots = [];
+  let bomberEscort = null;
   let capitalLodTier = 'medium';
   const fighterLodTiers = fighters.map(() => 'medium');
+  const COMBAT_WORLD_WIDTH = 52;
+  const COMBAT_WORLD_DEPTH = 32;
+  const COMBAT_WORLD_Z_ORIGIN = -28;
+
+  function screenToCombatWorld(x, y, state = liveCombatState, elevation = 1.35, out = new THREE.Vector3()) {
+    const viewportWidth = state?.telemetry?.viewportWidth || 1;
+    const viewportHeight = state?.telemetry?.viewportHeight || 1;
+    return out.set(
+      (x / viewportWidth - 0.5) * COMBAT_WORLD_WIDTH,
+      elevation,
+      COMBAT_WORLD_Z_ORIGIN + (y / viewportHeight) * COMBAT_WORLD_DEPTH,
+    );
+  }
+
+  function syncEscortSlots(state = liveCombatState) {
+    const escorts = state?.escorts || [];
+    fighterEscortSlots = escorts.filter((escort) => escort.type === 'f47').slice(0, fighters.length);
+    bomberEscort = escorts.find((escort) => escort.type === 'b2') || null;
+  }
 
   function escortWorldSample(escort, state = liveCombatState) {
     if (!escort || !state) return null;
     const viewportWidth = state.telemetry?.viewportWidth || 1;
     const viewportHeight = state.telemetry?.viewportHeight || 1;
     return {
-      pos: {
-        x: (escort.x / viewportWidth - 0.5) * 52,
-        y: escort.type === 'b2' ? 1.8 : 1.25,
-        z: -28 + (escort.y / viewportHeight) * 45,
-      },
+      pos: screenToCombatWorld(escort.x, escort.y, state, escort.type === 'b2' ? 1.8 : 1.25),
       vel: {
-        x: (escort.vx || 0) / viewportWidth * 52 * 60,
+        x: (escort.vx || 0) / viewportWidth * COMBAT_WORLD_WIDTH * 60,
         y: 0,
-        z: (escort.vy || 0) / viewportHeight * 45 * 60,
+        z: (escort.vy || 0) / viewportHeight * COMBAT_WORLD_DEPTH * 60,
       },
     };
   }
 
-  function projectileWorldPosition(projectile, state = liveCombatState) {
+  function projectileWorldPosition(projectile, state = liveCombatState, out = new THREE.Vector3()) {
     if (!projectile || !state) return null;
-    const viewportWidth = state.telemetry?.viewportWidth || 1;
-    const viewportHeight = state.telemetry?.viewportHeight || 1;
-    return new THREE.Vector3(
-      (projectile.x / viewportWidth - 0.5) * 52,
-      1.35,
-      -28 + (projectile.y / viewportHeight) * 45,
-    );
+    return screenToCombatWorld(projectile.x, projectile.y, state, 1.35, out);
   }
 
   function applySurfaceTier(root, tier, { mediumExcludes, silhouetteIncludes }) {
@@ -798,11 +1240,11 @@ export function createTopdownCombat({
     root.userData.lodTier = tier;
   }
 
-  function applyAuthoredGeometryQuality() {
-    if (!authoredShip) return;
+  function applyAuthoredGeometryQuality(root = authoredShip) {
+    if (!root) return;
     const high = renderPolicy.qualityTier === 'high';
     const balancedDetail = /trench[_ -]*greebles|bottom[_ -]*greebles|turbolaser/i;
-    authoredShip.traverse((child) => {
+    root.traverse((child) => {
       if (!child.isMesh) return;
       const label = `${child.name} ${child.parent?.name || ''}`;
       child.visible = high || !balancedDetail.test(label);
@@ -836,15 +1278,27 @@ export function createTopdownCombat({
     mediumExcludes: ['InterceptorRecesses', 'InterceptorWarnings'],
     silhouetteIncludes: ['InterceptorHull', 'InterceptorArmor', 'InterceptorEmission'],
   };
-  function updateProceduralLods(viewportHeight) {
+  let previousLodUpdateAt = -Infinity;
+  let lodSelectionDirty = true;
+  function updateProceduralLods(viewportHeight, now = performance.now(), force = false) {
+    if (!force && !lodSelectionDirty && now - previousLodUpdateAt < 250) return false;
+    if (!force && now - previousLodUpdateAt < 250) return false;
+    previousLodUpdateAt = now;
+    lodSelectionDirty = false;
     capital.updateMatrixWorld(true);
     for (const fighter of fighters) fighter.updateMatrixWorld(true);
-    capitalLodTier = selectObjectLod(fallbackShip.group, 7.8, capitalLodTier, viewportHeight);
-    applySurfaceTier(fallbackShip.group, capitalLodTier, capitalLodRules);
+    const nextCapitalTier = selectObjectLod(fallbackShip.group, 7.8, capitalLodTier, viewportHeight);
+    if (nextCapitalTier !== capitalLodTier) {
+      capitalLodTier = nextCapitalTier;
+      applySurfaceTier(fallbackShip.group, capitalLodTier, capitalLodRules);
+    }
     fighters.forEach((fighter, index) => {
-      fighterLodTiers[index] = selectObjectLod(fighter, 4.5, fighterLodTiers[index], viewportHeight);
-      applySurfaceTier(fighter.userData.fallback, fighterLodTiers[index], fighterLodRules);
+      const nextTier = selectObjectLod(fighter, 4.5, fighterLodTiers[index], viewportHeight);
+      if (nextTier === fighterLodTiers[index]) return;
+      fighterLodTiers[index] = nextTier;
+      applySurfaceTier(fighter.userData.fallback, nextTier, fighterLodRules);
     });
+    return true;
   }
   applySurfaceTier(fallbackShip.group, capitalLodTier, capitalLodRules);
   fighters.forEach((fighter) => applySurfaceTier(fighter.userData.fallback, 'medium', fighterLodRules));
@@ -909,6 +1363,7 @@ export function createTopdownCombat({
   const trailMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
   const trailMesh = new THREE.InstancedMesh(trailGeo, trailMat, fighters.length * TRAIL_SEG_CAP);
   trailMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  trailMesh.visible = false;
   scene.add(trailMesh);
   const fighterTrails = fighters.map(() => ({ pts: [], lastSample: 0 }));
   const TRAIL_TAIL_LOCAL = new THREE.Vector3(0, 0.12, -3.8); // just behind the nighthawk's twin nozzles
@@ -961,20 +1416,21 @@ export function createTopdownCombat({
   }
 
   // ── comet target (1P/HALLEY) ─────────────────────────────────────────────
-  // It enters the optical picture only after the real target-acquisition
-  // event. The old beige fragments + polyline tail looked like an unexplained
-  // yellow marker and a wire hanging through space, so the target is now a
-  // dark irregular body with a sparse, circular-point dust wake.
+  // The optical signature is deliberately readable before fire-control lock.
+  // Authoritative radius controls scale and authoritative velocity rotates the
+  // cyan ion / amber dust wake, so it remains legible in oblique chase shots.
   const comet = new THREE.Group();
   let cometHP = 1;
   let targetRevealStartedAt = 0;
+  const cometTailAxis = new THREE.Vector3(0, 0, 1);
+  const cometTailVector = new THREE.Vector3(0, 0, 1);
   {
     const rockMaterial = new THREE.MeshStandardMaterial({
-      color: 0x30373b,
-      emissive: 0x071018,
-      emissiveIntensity: .34,
+      color: 0x70818c,
+      emissive: 0x123842,
+      emissiveIntensity: 1.05,
       metalness: .04,
-      roughness: .96,
+      roughness: .91,
       flatShading: true,
       transparent: true,
       opacity: 0,
@@ -982,20 +1438,20 @@ export function createTopdownCombat({
     const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(1.35, 2), rockMaterial);
     rock.scale.set(1.8, .82, .9);
     comet.add(rock);
-    const dustCount = 42;
+    const dustCount = 58;
     const dustPositions = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i += 1) {
       const u = (i + 1) / dustCount;
-      dustPositions[i * 3] = (Math.random() - .5) * (0.3 + u * 2.4);
-      dustPositions[i * 3 + 1] = (Math.random() - .5) * (0.2 + u * 1.35);
-      dustPositions[i * 3 + 2] = 1.2 + u * u * 22;
+      dustPositions[i * 3] = (Math.random() - .5) * (0.45 + u * 3.4);
+      dustPositions[i * 3 + 1] = (Math.random() - .5) * (0.3 + u * 2.1);
+      dustPositions[i * 3 + 2] = 1.15 + Math.pow(u, 1.45) * 23;
     }
     const dustGeometry = new THREE.BufferGeometry();
     dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
     const dustMaterial = new THREE.PointsMaterial({
       map: GLOW,
-      color: 0xa8c5d3,
-      size: .58,
+      color: 0xffb45d,
+      size: 1.1,
       sizeAttenuation: true,
       transparent: true,
       opacity: 0,
@@ -1005,12 +1461,81 @@ export function createTopdownCombat({
     });
     const dust = new THREE.Points(dustGeometry, dustMaterial);
     comet.add(dust);
-    const coma = sprite(0xb8d9e8, 5.6, 0);
+
+    const ionCount = 64;
+    const ionPositions = new Float32Array(ionCount * 3);
+    for (let i = 0; i < ionCount; i += 1) {
+      const u = (i + 1) / ionCount;
+      ionPositions[i * 3] = (Math.random() - .5) * (0.18 + u * 1.15);
+      ionPositions[i * 3 + 1] = (Math.random() - .5) * (0.14 + u * .72);
+      ionPositions[i * 3 + 2] = 1.05 + Math.pow(u, 1.18) * 31;
+    }
+    const ionGeometry = new THREE.BufferGeometry();
+    ionGeometry.setAttribute('position', new THREE.BufferAttribute(ionPositions, 3));
+    const ionMaterial = new THREE.PointsMaterial({
+      map: GLOW,
+      color: 0x7cf7ff,
+      size: 1.02,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0,
+      alphaTest: .018,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const ion = new THREE.Points(ionGeometry, ionMaterial);
+    comet.add(ion);
+    const coma = sprite(0xbaf6ff, 6.8, 0);
     comet.add(coma);
-    comet.userData = { rock, dust, coma };
+    comet.userData = { rock, dust, ion, coma };
     comet.position.set(-22, 0, -18);
     comet.visible = false;
     scene.add(comet);
+  }
+
+  function combatEffectWarmupObjects() {
+    const representatives = [...(combatVfx.getWarmupObjects?.() || [])];
+    const seenMaterials = new Set(representatives.map((object) => object.material).filter(Boolean));
+    const addRepresentatives = (root) => root?.traverse?.((child) => {
+      if (!child.material) return;
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      if (materials.every((material) => seenMaterials.has(material))) return;
+      materials.forEach((material) => seenMaterials.add(material));
+      representatives.push(child);
+    });
+    addRepresentatives(comet);
+    addRepresentatives(shieldShell);
+    addRepresentatives(damageScars[0]);
+    addRepresentatives(fighters[0]);
+    addRepresentatives(bomber);
+    addRepresentatives(trailMesh);
+    return representatives;
+  }
+
+  function syncCombatEffectsVisibility() {
+    combatVfx.setVisible?.(combatEffectsReady);
+    trailMesh.visible = combatEffectsReady && renderPolicy.qualityTier !== 'low';
+  }
+
+  function ensureCombatEffectsWarm() {
+    if (combatEffectsReady || combatEffectsWarmPromise || sceneDisposed || !contextReady) {
+      return combatEffectsWarmPromise || Promise.resolve(combatEffectsReady);
+    }
+    const generation = authoredWarmGeneration;
+    combatEffectsWarmPromise = (async () => {
+      for (const object of combatEffectWarmupObjects()) {
+        if (!await nextAssetFrame(generation)) return false;
+        renderer.compile(object, camera, scene);
+      }
+      if (!authoredWarmCurrent(generation)) return false;
+      combatEffectsReady = true;
+      syncCombatEffectsVisibility();
+      markPerformanceStage('effectsWarm');
+      return true;
+    })().finally(() => {
+      if (!combatEffectsReady) combatEffectsWarmPromise = null;
+    });
+    return combatEffectsWarmPromise;
   }
 
   if (camDirectorOn) initCameraDirector();
@@ -1022,6 +1547,13 @@ export function createTopdownCombat({
   function worldAnchor(anchor, fallback) {
     if (!anchor) return fallback.clone();
     return anchor.getWorldPosition(new THREE.Vector3());
+  }
+  const pooledPlume = combatVfx.plume?.bind(combatVfx);
+  function emitPooledPlume({ emitterId, at, velocity, color, lifeMs, scale, nuclear = false }) {
+    if (pooledPlume) {
+      return pooledPlume({ emitterId, at, velocity, color, lifeMs, scale, nuclear, continuous: true });
+    }
+    return combatVfx.fireSmoke({ at, velocity, color, lifeMs, scale, nuclear, continuous: true });
   }
   function fireTracer(from, to, color) {
     const m = new THREE.Mesh(tracerGeo, tracerMat.clone());
@@ -1042,6 +1574,7 @@ export function createTopdownCombat({
   const fragmentGeo = new THREE.TetrahedronGeometry(0.16, 0);
   const fragmentMat = new THREE.MeshBasicMaterial({ color: 0xffb06d, transparent: true, opacity: 0.9 });
   const fragmentMatrix = new THREE.Matrix4();
+  const fragmentEuler = new THREE.Euler();
   function boom(pos, scale = 1, color = 0xffd9a0) {
     const s = sprite(color, 3.2 * scale, 1); s.position.copy(pos); scene.add(s);
     const halo = sprite(color, 6.2 * scale, 0.42); halo.position.copy(pos); scene.add(halo);
@@ -1050,7 +1583,6 @@ export function createTopdownCombat({
       new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.86, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }),
     );
     ring.position.copy(pos); scene.add(ring);
-    const fl = new THREE.PointLight(color, 12, 40); fl.position.copy(pos); scene.add(fl);
     const count = renderPolicy.qualityTier === 'low' ? 6 : 14;
     const fragments = new THREE.InstancedMesh(fragmentGeo, fragmentMat.clone(), count);
     fragments.position.copy(pos);
@@ -1062,10 +1594,22 @@ export function createTopdownCombat({
       return new THREE.Vector3(Math.cos(a) * speed, lift, Math.sin(a) * speed);
     });
     scene.add(fragments);
-    explosions.push({ s, halo, ring, fl, fragments, velocities, life: 1, scale });
+    explosions.push({ s, halo, ring, fragments, velocities, life: 1, scale });
   }
 
   const missiles = [];
+  // The authoritative 2D projectile list contains at most a few entries,
+  // therefore a tiny reusable id list is faster and quieter than allocating a
+  // Set plus filtered array each 60 Hz frame. The vectors are intentionally
+  // shared only inside the synchronous update loop; camera feeds copy them.
+  const claimedProjectileIds = [];
+  const projectileUpdateScratch = {
+    position: new THREE.Vector3(),
+    candidatePosition: new THREE.Vector3(),
+    velocity: new THREE.Vector3(),
+    exhaustVelocity: new THREE.Vector3(),
+  };
+  const missileForward = new THREE.Vector3(0, 0, 1);
   const missileBodyGeo = new THREE.CylinderGeometry(0.18, 0.24, 2.3, 10);
   const missileNoseGeo = new THREE.ConeGeometry(0.18, 0.62, 10);
   const missileFinGeo = new THREE.BoxGeometry(0.52, 0.035, 0.52);
@@ -1093,25 +1637,79 @@ export function createTopdownCombat({
     group.scale.setScalar(nuclear ? 1.25 : 0.88);
     return { group, flare };
   }
-  function launchMissile({ nuclear = false, nowMs = performance.now() } = {}) {
-    const model = missileModel(nuclear);
-    const head = model.group;
+  function projectileLaunchSource(nuclear, sourceCraftId) {
+    if (nuclear && bomber.visible) {
+      const release = new THREE.Vector3(0, -0.42, -0.35);
+      bomber.localToWorld(release);
+      return release;
+    }
+    const sourceIndex = fighterEscortSlots.findIndex((escort) => escort.id === sourceCraftId);
+    const fighter = fighters[sourceIndex >= 0 ? sourceIndex : 0];
+    if (!nuclear && fighter?.visible) {
+      const release = new THREE.Vector3(0, -0.3, -0.45);
+      fighter.localToWorld(release);
+      return release;
+    }
     const fallback = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld);
     fallback.y = 1.5;
-    const start = worldAnchor(shipAnchors?.missile, fallback);
+    return worldAnchor(shipAnchors?.missile, fallback);
+  }
+
+  function missileTracksProjectile(projectileId) {
+    for (let index = 0; index < missiles.length; index += 1) {
+      if (missiles[index].projectileId === projectileId) return true;
+    }
+    return false;
+  }
+
+  function closestUntrackedProjectile(type, start, state) {
+    let closest = null;
+    let closestDistance = Infinity;
+    for (const projectile of state?.projectiles || []) {
+      if (projectile.type !== type || missileTracksProjectile(projectile.id)) continue;
+      const position = projectileWorldPosition(projectile, state, projectileUpdateScratch.candidatePosition);
+      const distance = position.distanceToSquared(start);
+      if (distance >= closestDistance) continue;
+      closest = projectile;
+      closestDistance = distance;
+    }
+    return closest;
+  }
+
+  function launchMissile({
+    nuclear = false,
+    nowMs = performance.now(),
+    sourceCraftId = null,
+    state = liveCombatState,
+    eventId = 0,
+  } = {}) {
+    const model = missileModel(nuclear);
+    const head = model.group;
+    const start = projectileLaunchSource(nuclear, sourceCraftId);
     head.position.copy(start);
     scene.add(head);
     const initialVelocity = comet.position.clone().sub(start).normalize();
-    missiles.push({ head, flare: model.flare, trail: [], nuclear, velocity: initialVelocity, lastTrailAt: nowMs });
-    missileLastPos = start;
-    missileLastVel = initialVelocity;
+    const projectileType = nuclear ? 'nuke' : 'missile';
+    const projectile = closestUntrackedProjectile(projectileType, start, state);
+    const trackId = `${projectileType}:${eventId || ++missileTrackSequence}`;
+    missiles.push({
+      head,
+      flare: model.flare,
+      nuclear,
+      velocity: initialVelocity,
+      projectileId: projectile?.id || null,
+      trackId,
+      stage: projectile?.stage || 'drop',
+      lastPlumeAt: nowMs,
+    });
     combatVfx.bloom({
       at: start,
       color: nuclear ? 0xff6257 : 0xffb65f,
       size: nuclear ? 2.2 : 1.25,
       lifeMs: nuclear ? 420 : 240,
     });
-    combatVfx.fireSmoke({
+    emitPooledPlume({
+      emitterId: `${trackId}:launch`,
       at: start,
       velocity: initialVelocity.clone().multiplyScalar(-1.25),
       color: nuclear ? 0xff5b4d : 0xff9f42,
@@ -1120,23 +1718,114 @@ export function createTopdownCombat({
       nuclear,
     });
     if (camDirector) {
-      camDirector.requestShot('missileTail', {
+      const accepted = camDirector.requestShot('missileTail', {
         durationMs: 7000,
         blendInMs: 180,
         now: nowMs,
       });
+      // A second equal-priority missile must not steal the first missile's
+      // live camera feed. Nuclear terminal mode may deliberately replace it.
+      if (accepted || !activeMissileCameraTrackId || nuclear) activeMissileCameraTrackId = trackId;
+    }
+    if (trackId === activeMissileCameraTrackId) {
+      updateMissileCameraFeed(start, initialVelocity);
     }
   }
   function removeMissileAt(index) {
     const missile = missiles[index];
     if (!missile) return;
-    missile.trail.forEach((point) => {
-      scene.remove(point.s);
-      point.s.material.dispose();
-    });
     scene.remove(missile.head);
     missile.flare.material.dispose();
     missiles.splice(index, 1);
+  }
+
+  function projectileIdIsClaimed(projectileId) {
+    for (let index = 0; index < claimedProjectileIds.length; index += 1) {
+      if (claimedProjectileIds[index] === projectileId) return true;
+    }
+    return false;
+  }
+
+  function matchProjectileForMissile(missile, type, state) {
+    const projectiles = state?.projectiles || [];
+    const projectileId = missile.projectileId;
+    for (let index = 0; index < projectiles.length; index += 1) {
+      const projectile = projectiles[index];
+      if (projectile.type !== type || projectile.id !== projectileId || projectileIdIsClaimed(projectile.id)) continue;
+      return projectile;
+    }
+
+    let nearest = null;
+    let nearestDistance = Infinity;
+    for (let index = 0; index < projectiles.length; index += 1) {
+      const projectile = projectiles[index];
+      if (projectile.type !== type || projectileIdIsClaimed(projectile.id)) continue;
+      projectileWorldPosition(projectile, state, projectileUpdateScratch.candidatePosition);
+      const distance = projectileUpdateScratch.candidatePosition.distanceToSquared(missile.head.position);
+      if (distance >= nearestDistance) continue;
+      nearest = projectile;
+      nearestDistance = distance;
+    }
+    return nearest;
+  }
+
+  let previousEnginePlumeAt = -Infinity;
+  function emitLocalEnginePlume(root, anchorLocal, outwardLocal, options) {
+    const at = new THREE.Vector3(...anchorLocal);
+    const outward = new THREE.Vector3(...outwardLocal);
+    root.localToWorld(at);
+    root.localToWorld(outward);
+    const velocity = outward.sub(at).normalize().multiplyScalar(options.speed);
+    emitPooledPlume({
+      emitterId: options.emitterId,
+      at,
+      velocity,
+      color: options.color,
+      lifeMs: options.lifeMs,
+      scale: options.scale,
+    });
+  }
+
+  function updateEnginePlumes(now) {
+    const tier = renderPolicy.qualityTier;
+    const cadence = tier === 'high' ? 180 : tier === 'low' ? 320 : 235;
+    if (now - previousEnginePlumeAt < cadence) return;
+    previousEnginePlumeAt = now;
+
+    const capitalEngines = fallbackShip.info.engineMounts.filter((mount) => Math.abs(mount.x) < 2);
+    for (const [index, mount] of capitalEngines.entries()) {
+      emitLocalEnginePlume(
+        fallbackShip.group,
+        [mount.x, mount.y, mount.z],
+        [mount.x, mount.y, mount.z - 1.25],
+        { emitterId: `capital-drive-${index}`, color: 0xb9f7ff, speed: 2.25, lifeMs: 820, scale: 0.74 },
+      );
+    }
+
+    for (const [fighterIndex, fighter] of fighters.entries()) {
+      if (!fighter.visible) continue;
+      const nozzles = tier === 'high' ? [-0.58, 0.58] : [0];
+      for (const [nozzleIndex, x] of nozzles.entries()) {
+        emitLocalEnginePlume(
+          fighter,
+          [x, 0.02, -3.12],
+          [x, 0.02, -4.25],
+          { emitterId: `fighter-${fighterIndex}-drive-${nozzleIndex}`, color: 0x55dfff, speed: 2.85, lifeMs: 680, scale: tier === 'high' ? 0.33 : 0.42 },
+        );
+      }
+    }
+
+    if (bomber.visible) {
+      const nozzles = tier === 'low' ? [0] : [-2.1, 2.1];
+      for (const [nozzleIndex, x] of nozzles.entries()) {
+        emitLocalEnginePlume(
+          bomber,
+          [x, 0, -2.2],
+          [x, 0, -3.55],
+          { emitterId: `b2-drive-${nozzleIndex}`, color: 0xd7a8ff, speed: 2.45, lifeMs: 860, scale: 0.58 },
+        );
+      }
+    }
   }
 
   // ENFORCER is an event-bound axial lance, not an autonomous plasma body.
@@ -1163,10 +1852,13 @@ export function createTopdownCombat({
 
   // ── animation loop ────────────────────────────────────────────────────────
   let W = 1, H = 1, raf = 0, running = false, t0 = 0, previousUpdateAt = 0;
-  let sized = false, wantsLoop = false, surfaceActive = false, renderSurface = null, renderOnceLastT = 0;
+  let sized = false, wantsLoop = false, surfaceActive = false, renderSurface = null;
+  const resizeCache = { width: 0, height: 0, dpr: 0 };
   let lastEventSeen = 0;
   let targetScreen = null;
   let currentFlightPhase = null;
+  let currentCombatPhase = '';
+  let pendingPhaseCameraCue = null;
   const userCamera = {
     active: false,
     blend: 0,
@@ -1179,6 +1871,27 @@ export function createTopdownCombat({
   const orbitPosition = new THREE.Vector3();
   const orbitBaseQuaternion = new THREE.Quaternion();
   const orbitTargetQuaternion = new THREE.Quaternion();
+
+  function updatePhaseCamera(now, state) {
+    const phase = String(state?.phase || 'standby');
+    if (phase !== currentCombatPhase) {
+      currentCombatPhase = phase;
+      pendingPhaseCameraCue = phaseCameraCue(phase);
+      if (phase === 'nemp') {
+        const nuclearTrack = missiles.find((missile) => missile.nuclear);
+        if (nuclearTrack) activeMissileCameraTrackId = nuclearTrack.trackId;
+      }
+    }
+    if (!camDirector || !pendingPhaseCameraCue) return;
+    const cue = pendingPhaseCameraCue;
+    const accepted = camDirector.requestShot(cue.shot, {
+      durationMs: cue.durationMs,
+      blendInMs: cue.blendInMs,
+      refresh: camDirector.currentShotId === cue.shot,
+      now,
+    });
+    if (accepted) pendingPhaseCameraCue = null;
+  }
 
   function cameraFocusPoint() {
     orbitFocus.copy(capital.position);
@@ -1248,13 +1961,27 @@ export function createTopdownCombat({
   }
 
   function resize(w, h) {
-    W = Math.max(1, (w ?? canvas.clientWidth) || window.innerWidth);
-    H = Math.max(1, (h ?? canvas.clientHeight) || window.innerHeight);
+    const nextWidth = Math.max(1, Math.round((w ?? canvas.clientWidth) || window.innerWidth));
+    const nextHeight = Math.max(1, Math.round((h ?? canvas.clientHeight) || window.innerHeight));
+    const dpr = renderPolicy.computeDpr(nextWidth, nextHeight, { minDpr: 0.6, maxDpr: 1.35 });
+    const dimensionsChanged = nextWidth !== resizeCache.width || nextHeight !== resizeCache.height;
+    const dprChanged = Math.abs(dpr - resizeCache.dpr) > 0.001;
+    W = nextWidth;
+    H = nextHeight;
     sized = true;
-    const dpr = renderPolicy.computeDpr(W, H, { minDpr: 0.6, maxDpr: 1.75 });
-    renderer.setPixelRatio(dpr);
+    if (!dimensionsChanged && !dprChanged) return false;
+    if (dprChanged) renderer.setPixelRatio(dpr);
     renderer.setSize(W, H, false);
-    camera.aspect = W / H; camera.updateProjectionMatrix();
+    resizeCache.width = W;
+    resizeCache.height = H;
+    resizeCache.dpr = dpr;
+    if (dimensionsChanged) {
+      camera.aspect = W / H;
+      camera.updateProjectionMatrix();
+    }
+    renderer.getDrawingBufferSize(combatVfxBufferSize);
+    lodSelectionDirty = true;
+    return true;
   }
 
   function tmp() { return new THREE.Vector3(); }
@@ -1263,7 +1990,7 @@ export function createTopdownCombat({
   // The flight path joins the live escort position carried by CombatState.
   // There is no autonomous orbit or separate formation clock in this scene.
   function formationFnFor(i) {
-    return () => escortWorldSample(liveCombatState?.escorts?.[i]) || {
+    return () => escortWorldSample(fighterEscortSlots[i]) || {
       pos: { x: capital.position.x, y: 4.8, z: capital.position.z - 34 },
       vel: { x: 0, y: 0.8, z: -10 },
     };
@@ -1278,7 +2005,7 @@ export function createTopdownCombat({
 
   function startFlight(kind, nowMs) {
     const mk = kind === 'landing' ? createLandingPath : createLaunchPath;
-    const liveStart = escortWorldSample(liveCombatState?.escorts?.[0], liveCombatState);
+    const liveStart = escortWorldSample(fighterEscortSlots[0], liveCombatState);
     const heldStart = liveStart || {
       pos: { x: fighters[0].position.x, y: fighters[0].position.y, z: fighters[0].position.z },
       vel: flightLastVel ? { ...flightLastVel } : { x: 0, y: 0, z: -8 },
@@ -1350,42 +2077,58 @@ export function createTopdownCombat({
     // may resume after seconds offscreen; using the previous render time would
     // make freshly spawned short-lived effects expire in the same frame.
     combatVfx.beginFrame(now);
-    if (state) liveCombatState = state;
+    if (state) {
+      liveCombatState = state;
+      syncEscortSlots(state);
+    }
     ensureAuthoredCombatAssets(liveCombatState);
     const alive = Boolean(state?.target);
-    const unseenEvents = (state?.events || []).filter((event) => event.id > lastEventSeen);
-    const revealEvent = unseenEvents.find((event) => event.type === 'target:acquired' || event.type === 'weapon:fire');
-    if (alive && !targetRevealStartedAt && (state?.target?.locked || revealEvent)) {
-      const eventAge = revealEvent ? Math.max(0, (state?.now || revealEvent.at) - revealEvent.at) : 0;
-      targetRevealStartedAt = now - Math.min(900, eventAge);
-    } else if (!alive) {
-      targetRevealStartedAt = 0;
-    }
+    if (alive && !targetRevealStartedAt) targetRevealStartedAt = now;
+    else if (!alive) targetRevealStartedAt = 0;
 
     if (state?.target) {
       const viewportWidth = state.telemetry?.viewportWidth || 1;
       const viewportHeight = state.telemetry?.viewportHeight || 1;
-      comet.position.set(
-        (state.target.x / viewportWidth - 0.5) * 52,
+      screenToCombatWorld(
+        state.target.x,
+        state.target.y,
+        state,
         0.5 + state.target.collisionRisk * 1.6,
-        -28 + (state.target.y / viewportHeight) * 32,
+        comet.position,
       );
+      const tailDirection = cometTailDirection(state.target, viewportWidth, viewportHeight);
+      cometTailVector.set(tailDirection.x, tailDirection.y, tailDirection.z);
+      comet.quaternion.setFromUnitVectors(cometTailAxis, cometTailVector);
     }
-    const cometPos = new THREE.Vector3().setFromMatrixPosition(comet.matrixWorld);
-    const targetReveal = targetRevealStartedAt ? THREE.MathUtils.clamp((now - targetRevealStartedAt) / 720, 0, 1) : 0;
+    const cometPos = comet.position.clone();
+    const targetReveal = targetRevealStartedAt ? THREE.MathUtils.clamp((now - targetRevealStartedAt) / 420, 0, 1) : 0;
     const revealEase = targetReveal * targetReveal * (3 - 2 * targetReveal);
-    comet.visible = alive && revealEase > .002;
-    comet.scale.setScalar(.72 + revealEase * .28);
-    comet.userData.rock.material.opacity = revealEase;
-    comet.userData.dust.material.opacity = revealEase * .26;
-    comet.userData.coma.material.opacity = revealEase * .11;
+    const cometProfile = cometVisualProfile(state?.target);
+    // Never start from zero: optical sensors see a useful pre-lock signature
+    // on the very first target snapshot, then settle over 420 ms.
+    const arrival = alive ? 0.62 + revealEase * 0.38 : 0;
+    comet.visible = alive && combatEffectsReady;
+    const authoredCometScale = cometProfile.scale * (0.9 + revealEase * 0.1);
+    const projectedCometPixels = projectedDiameterPx({
+      radius: 2.45 * authoredCometScale,
+      distance: camera.position.distanceTo(comet.position),
+      verticalFovDegrees: camera.fov,
+      viewportHeight: H,
+    });
+    const minimumCometPixels = renderPolicy.qualityTier === 'high' ? 28 : renderPolicy.qualityTier === 'low' ? 20 : 24;
+    const readableCometScale = authoredCometScale * Math.max(1, minimumCometPixels / Math.max(1, projectedCometPixels));
+    comet.scale.setScalar(Math.min(4.2, readableCometScale));
+    comet.userData.rock.material.opacity = cometProfile.rockOpacity * arrival;
+    comet.userData.ion.material.opacity = cometProfile.ionOpacity * arrival;
+    comet.userData.dust.material.opacity = cometProfile.dustOpacity * arrival;
+    comet.userData.coma.material.opacity = cometProfile.comaOpacity * arrival;
     comet.userData.rock.rotation.x += .003 * frameScale;
     comet.userData.rock.rotation.y += .004 * frameScale;
 
     shieldPulse *= Math.pow(0.9, frameScale);
     shieldMaterial.uniforms.uPulse.value = shieldPulse;
     // Skip even the transparent draw call while no impact is active.
-    shieldShell.visible = shieldPulse > 0.008;
+    shieldShell.visible = combatEffectsReady && shieldPulse > 0.008;
 
     // The bridge is never parked in space. Both stellar volumes pass aft at
     // different rates, providing near/far parallax around every camera shot.
@@ -1405,7 +2148,11 @@ export function createTopdownCombat({
     }
     const velocityPositions = flightStreaks.geometry.attributes.position;
     const velocityValues = velocityPositions.array;
-    const streakAdvance = .24 * frameScale;
+    const travelBoost = flightEvent || missiles.length ? 1 : 0;
+    const streakAdvance = (.28 + travelBoost * .42) * frameScale;
+    flightStreaks.material.opacity = renderPolicy.qualityTier === 'low'
+      ? .12
+      : .24 + travelBoost * .1;
     for (let i = 0; i < streakCount; i += 1) {
       const offset = i * 6;
       velocityValues[offset + 2] += streakAdvance;
@@ -1415,21 +2162,21 @@ export function createTopdownCombat({
     velocityPositions.needsUpdate = true;
     approachBlackHole.position.z = Math.min(-155, approachBlackHole.position.z + .0035 * frameScale);
     const gravityPulse = 1 + Math.sin(now * .00022) * .018;
-    approachBlackHole.scale.set(
-      approachBlackHole.userData.baseScale.x * gravityPulse,
-      approachBlackHole.userData.baseScale.y * (2 - gravityPulse),
-      1,
+    approachBlackHole.material.uniforms.uTime.value = now * .001;
+    approachBlackHole.material.uniforms.uSize.value.set(
+      approachBlackHole.userData.baseSize.x * gravityPulse,
+      approachBlackHole.userData.baseSize.y * (2 - gravityPulse),
     );
-    approachBlackHole.material.opacity = .78 + Math.sin(now * .00017) * .055;
+    approachBlackHole.material.uniforms.uIntensity.value = renderPolicy.qualityTier === 'low' ? .82 : 1;
 
     // The command ship is the stable reference frame. Fighters exist only
     // when the authoritative snapshot reports an escort; otherwise their
     // meshes and trails are absent from the sensor picture.
     capital.position.x = -2;
     fighters.forEach((f, i) => {
-      const escort = state?.escorts?.[i];
+      const escort = fighterEscortSlots[i];
       const flightControlled = i === 0 && Boolean(flightEvent);
-      f.visible = Boolean(escort) || flightControlled;
+      f.visible = combatEffectsReady && (Boolean(escort) || flightControlled);
       if (flightControlled && driveFlightFighter(f, now, t)) return;
       if (!escort) {
         fighterTrails[i].pts.length = 0;
@@ -1447,6 +2194,22 @@ export function createTopdownCombat({
       }
       if (f.userData.nh) f.userData.nh.tick(t);
     });
+
+    bomber.visible = combatEffectsReady && Boolean(bomberEscort);
+    if (bomberEscort) {
+      const sample = escortWorldSample(bomberEscort, state);
+      bomber.position.set(sample.pos.x, sample.pos.y, sample.pos.z);
+      const speed = Math.hypot(sample.vel.x, sample.vel.y, sample.vel.z);
+      if (speed > 0.08) {
+        bomber.lookAt(
+          sample.pos.x + sample.vel.x,
+          sample.pos.y + sample.vel.y,
+          sample.pos.z + sample.vel.z,
+        );
+      }
+    }
+    updateEnginePlumes(now);
+    updatePhaseCamera(now, state);
 
     // U27 (27b-2): update tactical line vertex buffers from the REAL
     // (post-movement) fighter/capital/comet positions computed just above —
@@ -1495,6 +2258,8 @@ export function createTopdownCombat({
       if (event.type === 'flight:launch' || event.type === 'flight:landing') {
         const kind = event.type.split(':')[1];
         startFlight(kind, now - eventAgeMs);
+      } else if (event.type === 'target:acquired' && alive) {
+        combatVfx.bloom({ at: cometPos, color: 0x8ff5ff, size: 2.2, lifeMs: 320 });
       } else if (event.type === 'fleet:damage') {
         shieldPulse = 1;
         shieldMaterial.uniforms.uPulse.value = shieldPulse;
@@ -1531,9 +2296,30 @@ export function createTopdownCombat({
         });
         const scar = damageScars[damageScarIndex % damageScars.length];
         damageScarIndex += 1;
+        scar.visible = true;
         scar.material.opacity = Math.min(0.72, scar.material.opacity + 0.36);
         const hits = Math.min(Number(event.count) || 1, fighters.length);
         for (let i = 0; i < hits; i += 1) boom(fighters[i].position.clone(), 0.52, 0xff874f);
+      } else if (event.type === 'weapon:charge' && event.weapon === 'nuke' && alive) {
+        const chargeRemainingMs = (Number(event.durationMs) || 3000) - eventAgeMs;
+        if (chargeRemainingMs <= 0) continue;
+        for (const fighter of fighters) {
+          if (!fighter.visible) continue;
+          combatVfx.linkedBeam({
+            from: fighter.position,
+            to: cometPos,
+            color: 0xff5f69,
+            lifeMs: chargeRemainingMs,
+            jitter: 0.035,
+          });
+        }
+        if (bomber.visible) combatVfx.bloom({ at: bomber.position, color: 0xe1b3ff, size: 1.4, lifeMs: 520 });
+        camDirector?.requestShot('nukeEscort', {
+          durationMs: chargeRemainingMs,
+          blendInMs: 320,
+          refresh: true,
+          now,
+        });
       } else if (event.type === 'weapon:charge' && event.weapon === 'enforcer' && alive) {
         const chargeRemainingMs = (Number(event.durationMs) || 4500) - eventAgeMs;
         if (chargeRemainingMs <= 0) continue;
@@ -1544,9 +2330,19 @@ export function createTopdownCombat({
           at: muzzle,
           color: 0x72fff0,
           lifeMs: chargeRemainingMs,
-          radius: 2.35,
+          radius: 3.6,
         });
-        combatVfx.bloom({ at: muzzle, color: 0xe9ffff, size: 1.55, lifeMs: 760 });
+        const chargeTip = muzzle.clone().add(
+          cometPos.clone().sub(muzzle).normalize().multiplyScalar(7.5),
+        );
+        combatVfx.linkedBeam({
+          from: muzzle,
+          to: chargeTip,
+          color: 0xa5fff4,
+          lifeMs: chargeRemainingMs,
+          jitter: 0.16,
+        });
+        combatVfx.bloom({ at: muzzle, color: 0xe9ffff, size: 2.7, lifeMs: chargeRemainingMs });
         camDirector?.requestShot('mainGunBroadside', { durationMs: chargeRemainingMs, blendInMs: 420, now });
       } else if (event.type === 'weapon:fire') {
         // The event is authoritative even if the tracked target leaves the
@@ -1567,14 +2363,19 @@ export function createTopdownCombat({
           }
           anchors.forEach((anchor, index) => {
             const color = index ? 0xffc878 : 0x9ae5ff;
-            combatVfx.linkedBeam({ from: anchor, to: cometPos, color, lifeMs: 250, jitter: 0.1 });
-            combatVfx.bloom({ at: anchor, color, size: 0.82, lifeMs: 190 });
+            combatVfx.linkedBeam({ from: anchor, to: cometPos, color, lifeMs: 560, jitter: 0.1 });
+            combatVfx.bloom({ at: anchor, color, size: 0.82, lifeMs: 340 });
           });
-          camDirector?.requestShot('ciwsTurret', { durationMs: 1200, blendInMs: 260, now });
+          camDirector?.requestShot('ciwsTurret', { durationMs: 1800, blendInMs: 260, refresh: true, now });
         } else if (event.weapon === 'missile') {
-          launchMissile({ nowMs: now });
+          launchMissile({
+            nowMs: now,
+            sourceCraftId: event.craft || null,
+            state,
+            eventId: event.id,
+          });
         } else if (event.weapon === 'nuke') {
-          launchMissile({ nuclear: true, nowMs: now });
+          launchMissile({ nuclear: true, nowMs: now, state, eventId: event.id });
         } else if (event.weapon === 'enforcer') {
           launchOrb(now);
         }
@@ -1633,64 +2434,68 @@ export function createTopdownCombat({
 
     // advance tracers
     for (let i = tracers.length - 1; i >= 0; i--) {
-      const tr = tracers[i]; tr.life -= 0.10 * frameScale;
+      // Keep the alternating CIWS barrage readable for roughly two thirds of
+      // a second at 60 Hz. The former ten-frame flash was easy to miss even
+      // though its camera shot remained active for 1.8 seconds.
+      const tr = tracers[i]; tr.life -= 0.025 * frameScale;
       tr.m.material.opacity = Math.max(0, tr.life);
       if (tr.life <= 0) { scene.remove(tr.m); tr.m.material.dispose(); tracers.splice(i, 1); }
     }
     // Missiles mirror the authoritative 2D projectile snapshot exactly. The
     // renderer does not invent its own guidance curve, impact time or speed.
-    const liveProjectiles = {
-      missile: (state?.projectiles || []).filter((item) => item.type === 'missile'),
-      nuke: (state?.projectiles || []).filter((item) => item.type === 'nuke'),
-    };
-    const ordinals = { missile: 0, nuke: 0 };
+    claimedProjectileIds.length = 0;
     for (let i = 0; i < missiles.length; i += 1) {
       const ms = missiles[i];
       const type = ms.nuclear ? 'nuke' : 'missile';
-      const projectile = liveProjectiles[type][ordinals[type]++];
+      const projectile = matchProjectileForMissile(ms, type, state);
       if (!projectile) {
         removeMissileAt(i);
         i -= 1;
         continue;
       }
-      const p = projectileWorldPosition(projectile, state);
-      const previous = ms.head.position.clone();
-      const velocity = p.clone().sub(previous);
+      claimedProjectileIds.push(projectile.id);
+      ms.projectileId = projectile.id;
+      const p = projectileWorldPosition(projectile, state, projectileUpdateScratch.position);
+      const velocity = projectileUpdateScratch.velocity.subVectors(p, ms.head.position);
       ms.head.position.copy(p);
       if (velocity.lengthSq() > 1e-6) {
         ms.velocity.copy(velocity);
-        ms.head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), velocity.clone().normalize());
+        ms.head.quaternion.setFromUnitVectors(missileForward, velocity.normalize());
       }
       const engineScale = projectile.stage === 'drop' ? 0.18 : projectile.stage === 'ignite' ? 0.82 : 1;
       ms.flare.scale.setScalar(engineScale);
-      missileLastPos = p;
-      missileLastVel = ms.velocity;
-      if (projectile.stage !== 'drop' && now - ms.lastTrailAt >= (renderPolicy.qualityTier === 'low' ? 180 : 110)) {
-        ms.lastTrailAt = now;
-        const trail = sprite(ms.nuclear ? 0xff5148 : 0xffcaa0, ms.nuclear ? 2.2 : 1.4, 0.7);
-        trail.position.copy(p);
-        scene.add(trail);
-        ms.trail.push({ s: trail, bornAt: now });
-        const exhaustVelocity = ms.velocity.lengthSq() > 1e-6
-          ? ms.velocity.clone().normalize().multiplyScalar(-1.1)
-          : new THREE.Vector3(0, 0.15, 0.5);
-        combatVfx.fireSmoke({
+      if (projectile.stage !== ms.stage) {
+        ms.stage = projectile.stage;
+        if (projectile.stage === 'ignite') {
+          combatVfx.bloom({
+            at: p,
+            color: ms.nuclear ? 0xff6a5f : 0xffcf78,
+            size: ms.nuclear ? 2.5 : 1.45,
+            lifeMs: ms.nuclear ? 460 : 280,
+          });
+        }
+      }
+      if (ms.trackId === activeMissileCameraTrackId) {
+        updateMissileCameraFeed(p, ms.velocity);
+      }
+      const plumeCadence = renderPolicy.qualityTier === 'high' ? 95 : renderPolicy.qualityTier === 'low' ? 175 : 130;
+      if (projectile.stage !== 'drop' && now - ms.lastPlumeAt >= plumeCadence) {
+        ms.lastPlumeAt = now;
+        const exhaustVelocity = projectileUpdateScratch.exhaustVelocity;
+        if (ms.velocity.lengthSq() > 1e-6) {
+          exhaustVelocity.copy(ms.velocity).normalize().multiplyScalar(ms.nuclear ? -2.2 : -1.65);
+        } else {
+          exhaustVelocity.set(0, 0.15, 0.5);
+        }
+        emitPooledPlume({
+          emitterId: `${ms.trackId}:engine`,
           at: p,
           velocity: exhaustVelocity,
           color: ms.nuclear ? 0xff584f : 0xffa85a,
-          lifeMs: ms.nuclear ? 900 : 620,
-          scale: ms.nuclear ? 0.95 : 0.52,
+          lifeMs: ms.nuclear ? 1050 : 720,
+          scale: ms.nuclear ? 1.15 : 0.62,
           nuclear: false,
-          continuous: true,
         });
-      }
-      ms.trail.forEach((point) => {
-        point.s.material.opacity = Math.max(0, (1 - (now - point.bornAt) / 620) * 0.7);
-      });
-      while (ms.trail.length && now - ms.trail[0].bornAt >= 620) {
-        const point = ms.trail.shift();
-        scene.remove(point.s);
-        point.s.material.dispose();
       }
     }
     // explosions
@@ -1708,15 +2513,15 @@ export function createTopdownCombat({
       ex.ring.material.opacity = Math.max(0, ex.life * 0.72);
       for (let j = 0; j < ex.velocities.length; j += 1) {
         const v = ex.velocities[j];
-        fragmentMatrix.makeRotationFromEuler(new THREE.Euler(age * (j + 1), age * 2, age * 0.7));
+        fragmentEuler.set(age * (j + 1), age * 2, age * 0.7);
+        fragmentMatrix.makeRotationFromEuler(fragmentEuler);
         fragmentMatrix.setPosition(v.x * age * ex.scale, v.y * age * ex.scale - age * age, v.z * age * ex.scale);
         ex.fragments.setMatrixAt(j, fragmentMatrix);
       }
       ex.fragments.instanceMatrix.needsUpdate = true;
       ex.fragments.material.opacity = Math.max(0, ex.life * 0.9);
-      ex.fl.intensity = Math.max(0, ex.life * 12);
       if (ex.life <= 0) {
-        scene.remove(ex.s, ex.halo, ex.ring, ex.fl, ex.fragments);
+        scene.remove(ex.s, ex.halo, ex.ring, ex.fragments);
         ex.s.material.dispose(); ex.halo.material.dispose(); ex.ring.geometry.dispose(); ex.ring.material.dispose(); ex.fragments.material.dispose();
         explosions.splice(i, 1);
       }
@@ -1733,9 +2538,8 @@ export function createTopdownCombat({
     applyUserCamera(now, frameScale);
 
     camera.updateMatrixWorld();
-    renderer.getDrawingBufferSize(combatVfxBufferSize);
-    combatVfx.update(now, camera, combatVfxBufferSize.y);
-    updateProceduralLods(H);
+    combatVfx.update(now, camera, combatVfxBufferSize.y || Math.max(1, H * (resizeCache.dpr || 1)));
+    updateProceduralLods(H, now);
     comet.updateMatrixWorld();
     if (comet.visible) {
       const projected = comet.getWorldPosition(new THREE.Vector3()).project(camera);
@@ -1764,15 +2568,81 @@ export function createTopdownCombat({
     if (renderPolicy.qualityTier !== 'low') updateTrails(now);
   }
 
-  function loop(now) {
+  const proceduralBootScene = new THREE.Scene();
+  const proceduralBootTarget = new THREE.WebGLRenderTarget(1, 1, {
+    depthBuffer: false,
+    stencilBuffer: false,
+  });
+  let proceduralBootObjects = null;
+  let proceduralBootIndex = 0;
+  function collectProceduralBootObjects() {
+    const representatives = [];
+    const seenMaterials = new Set();
+    const add = (object) => {
+      if (!object?.material) return;
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      if (materials.every((material) => seenMaterials.has(material))) return;
+      materials.forEach((material) => seenMaterials.add(material));
+      const clone = object.clone(false);
+      clone.visible = true;
+      clone.frustumCulled = false;
+      representatives.push(clone);
+    };
+    add(starLayers[0]);
+    add(approachBlackHole);
+    fallbackShip.group.traverse((child) => { if (child.isMesh && child.visible) add(child); });
+    return representatives;
+  }
+
+  function warmNextProceduralObject() {
+    if (!proceduralBootObjects) proceduralBootObjects = collectProceduralBootObjects();
+    const object = proceduralBootObjects[proceduralBootIndex];
+    if (!object) return true;
+    proceduralBootIndex += 1;
+    proceduralBootScene.add(object);
+    const previousTarget = renderer.getRenderTarget();
+    try {
+      renderer.setRenderTarget(proceduralBootTarget);
+      renderer.render(proceduralBootScene, camera);
+    } finally {
+      renderer.setRenderTarget(previousTarget);
+      proceduralBootScene.remove(object);
+    }
+    return proceduralBootIndex >= proceduralBootObjects.length;
+  }
+
+  function resetProceduralWarmup() {
+    proceduralBootIndex = 0;
+    proceduralBootObjects = null;
+    proceduralFramePresented = false;
+  }
+
+  function renderFrame(now, state) {
     if (!t0) t0 = now;
     const renderStartedAt = performance.now();
-    update(now);
+    update(now, state);
+    if (!proceduralFramePresented && !warmNextProceduralObject()) {
+      renderSurface?.reportFrame(performance.now() - renderStartedAt, {
+        drawCalls: renderer.info.render.calls,
+        triangles: renderer.info.render.triangles,
+      });
+      return false;
+    }
     renderer.render(scene, camera);
+    if (!proceduralFramePresented) {
+      proceduralFramePresented = true;
+      markPerformanceStage('proceduralFrame');
+      queueMicrotask(beginDeferredCombatWarmup);
+    }
     renderSurface?.reportFrame(performance.now() - renderStartedAt, {
       drawCalls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
     });
+    return true;
+  }
+
+  function loop(now) {
+    renderFrame(now, null);
     if (running) raf = requestAnimationFrame(loop);
   }
 
@@ -1788,32 +2658,41 @@ export function createTopdownCombat({
     raf = 0;
   }
 
+  markPerformanceStage('sceneBuilt');
   const webglLifecycle = createWebGLContextLifecycle({
     id: lifecycleId,
     canvas,
     onLost() {
       contextReady = false;
       surfaceActive = false;
+      resetProceduralWarmup();
       stopLoop();
+      invalidateAuthoredAssetsForContextLoss();
     },
     onRestore() {
       renderer.resetState?.();
       contextReady = true;
       surfaceActive = budgetActive;
-      if (sized) resize();
+      if (sized) {
+        resizeCache.dpr = 0;
+        resize();
+      }
       if (wantsLoop) startLoop();
-      else renderer.render(scene, camera);
     },
     onFallback() {
       contextReady = false;
       surfaceActive = false;
+      resetProceduralWarmup();
       stopLoop();
     },
   });
   if (!webglLifecycle.canInitialize) {
     sceneDisposed = true;
+    authoredWarmGeneration += 1;
     webglLifecycle.dispose();
+    authoredAssetLoader.dispose();
     combatVfx.dispose();
+    proceduralBootTarget.dispose();
     disposeThreeScene(scene, renderer);
     return null;
   }
@@ -1840,29 +2719,39 @@ export function createTopdownCombat({
     onQualityChange(nextPolicy) {
       renderPolicy = nextPolicy;
       const pressureMode = nextPolicy.qualityTier === 'low';
+      // The coordinator emits policy and resize synchronously while this
+      // candidate canvas is still detached. Wait for the CIC viewport to pass
+      // its exact CSS dimensions instead of allocating an entire-window buffer
+      // here and reallocating it again on the first visible frame.
+      if (sized) resize(W, H);
       combatVfx.setQuality(nextPolicy.qualityTier);
-      trailMesh.visible = !pressureMode;
+      syncCombatEffectsVisibility();
       for (const layer of starLayers) {
         layer.material.opacity = pressureMode
           ? layer.userData.baseOpacity * .52
           : layer.userData.baseOpacity;
       }
-      flightStreaks.material.opacity = pressureMode ? .1 : .2;
+      flightStreaks.material.opacity = pressureMode ? .12 : .24;
       if (shipModelStatus === 'procedural-fallback') ensureShipSurfaceTextures();
       applyShipSurfaceQuality();
       applyAuthoredGeometryQuality();
       syncShipAssetVisibility();
       syncFighterAssetVisibility();
       ensureAuthoredCombatAssets(liveCombatState);
-      updateProceduralLods(H);
+      lodSelectionDirty = true;
+      if (sized) updateProceduralLods(H, performance.now(), true);
     },
     onDispose() {
       sceneDisposed = true;
+      authoredWarmGeneration += 1;
       webglLifecycle.dispose();
+      authoredAssetLoader.dispose();
       combatVfx.dispose();
+      proceduralBootTarget.dispose();
       disposeThreeScene(scene, renderer);
     },
   });
+  markPerformanceStage('surfaceRegistered');
 
   return {
     available() {
@@ -1886,19 +2775,24 @@ export function createTopdownCombat({
     // Drives targets, escorts, projectiles, weapon events, and flight lifecycle.
     renderOnce(now = performance.now(), state = null) {
       if (!surfaceActive) return;
-      if (!t0) t0 = now;
-      if (renderPolicy.qualityTier === 'low' && renderOnceLastT && now-renderOnceLastT<32) return;
-      renderOnceLastT=now;
-      const renderStartedAt=performance.now();
-      update(now, state);
-      renderer.render(scene, camera);
-      renderSurface?.reportFrame(performance.now()-renderStartedAt, {
-        drawCalls: renderer.info.render.calls,
-        triangles: renderer.info.render.triangles,
+      renderFrame(now, state);
+    },
+    getPresentationState() {
+      return Object.freeze({
+        hasPresented: proceduralFramePresented,
+        shipModelStatus,
+        fighterModelStatus,
+        qualityTier: renderPolicy.qualityTier,
+        cameraShot: camDirector?.currentShotId || 'commandChase',
+        combatPhase: currentCombatPhase || 'standby',
+        flightKind: flightEvent?.kind || null,
+        flightPhase: currentFlightPhase,
+        targetScreen: targetScreen ? Object.freeze({ ...targetScreen }) : null,
       });
     },
     getDiagnostics() {
       return Object.freeze({
+        hasPresented: proceduralFramePresented,
         shipModelStatus,
         fighterModelStatus,
         shipTextureStatus,

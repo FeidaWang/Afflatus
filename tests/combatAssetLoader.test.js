@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import * as THREE from 'three';
 import {
   CAPITAL_ASSET_PROFILE,
+  CIC_CAPITAL_ASSET_PROFILE,
+  CIC_FIGHTER_ASSET_PROFILE,
   FIGHTER_ASSET_PROFILE,
   disposeCombatAsset,
   normalizeCombatAsset,
@@ -121,6 +123,11 @@ describe('combat asset loader', () => {
     );
 
     expect(loaderSource).toContain("setTranscoderPath('/vendor/basis/')");
+    expect(loaderSource).toContain('.setWorkerLimit(workerLimit)');
+    expect(loaderSource).toContain('export function createCombatAssetLoader');
+    expect(loaderSource).toContain('const activeLoads = new Set()');
+    expect(loaderSource).toContain('Promise.allSettled([...activeLoads])');
+    expect(loaderSource).toContain('ktx2Loader?.dispose()');
     expect(loaderSource).toContain('.setKTX2Loader(ktx2Loader)');
     expect(loaderSource).toContain('.setMeshoptDecoder(MeshoptDecoder)');
     expect(FIGHTER_ASSET_PROFILE).toMatchObject({
@@ -128,9 +135,21 @@ describe('combat asset loader', () => {
       sourceForward: '-x',
       targetLength: 8.2,
     });
+    expect(CIC_FIGHTER_ASSET_PROFILE).toMatchObject({
+      id: 'fictional-6th-gen-fighter-cic',
+      url: '/assets/combat/models/fictional-6th-gen-fighter-cic.glb',
+      license: 'CC-BY-4.0',
+      targetLength: 8.2,
+    });
     expect(CAPITAL_ASSET_PROFILE).toMatchObject({
       license: 'CC-BY-4.0',
       sourceForward: '+z',
+      targetLength: 12.72,
+    });
+    expect(CIC_CAPITAL_ASSET_PROFILE).toMatchObject({
+      id: 'venator-class-star-destroyer-cic',
+      url: '/assets/combat/models/venator-class-star-destroyer-cic.glb',
+      license: 'CC-BY-4.0',
       targetLength: 12.72,
     });
     expect(fighterSource).toContain("qualityTier === 'low'");

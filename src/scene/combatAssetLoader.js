@@ -14,6 +14,12 @@ export const FIGHTER_ASSET_PROFILE = Object.freeze({
   targetLength: 8.2,
 });
 
+export const CIC_FIGHTER_ASSET_PROFILE = Object.freeze({
+  ...FIGHTER_ASSET_PROFILE,
+  id: 'fictional-6th-gen-fighter-cic',
+  url: '/assets/combat/models/fictional-6th-gen-fighter-cic.glb',
+});
+
 export const CAPITAL_ASSET_PROFILE = Object.freeze({
   id: 'venator-class-star-destroyer',
   url: '/assets/combat/models/venator-class-star-destroyer.glb',
@@ -23,6 +29,15 @@ export const CAPITAL_ASSET_PROFILE = Object.freeze({
   license: 'CC-BY-4.0',
   sourceForward: '+z',
   targetLength: 12.72,
+});
+
+// The hero experiment keeps the complete web derivative above. The CIC uses
+// a separate silhouette-first derivative so entering Command does not decode
+// texture sets and greeble geometry that are sub-pixel in the pilot feed.
+export const CIC_CAPITAL_ASSET_PROFILE = Object.freeze({
+  ...CAPITAL_ASSET_PROFILE,
+  id: 'venator-class-star-destroyer-cic',
+  url: '/assets/combat/models/venator-class-star-destroyer-cic.glb',
 });
 
 function removeEmbeddedViewNodes(root) {
@@ -115,35 +130,89 @@ export function disposeCombatAsset(root) {
   for (const geometry of geometries) geometry.dispose();
 }
 
-export async function loadCombatAsset(renderer, profile) {
-  const ktx2Loader = new KTX2Loader()
-    .setTranscoderPath('/vendor/basis/')
-    .detectSupport(renderer);
-  const loader = new GLTFLoader()
-    .setKTX2Loader(ktx2Loader)
-    .setMeshoptDecoder(MeshoptDecoder);
+export function createCombatAssetLoader(renderer, { workerLimit = 2 } = {}) {
+  let ktx2Loader = null;
+  let loader = null;
+  let loaderDisposed = false;
+  let resourcesDisposed = false;
+  let disposePromise = null;
+  const activeLoads = new Set();
 
-  let gltf;
+  function ensureLoader() {
+    if (loaderDisposed) throw new Error('Combat asset loader has been disposed.');
+    if (loader) return loader;
+    ktx2Loader = new KTX2Loader()
+      .setTranscoderPath('/vendor/basis/')
+      .setWorkerLimit(workerLimit)
+      .detectSupport(renderer);
+    loader = new GLTFLoader()
+      .setKTX2Loader(ktx2Loader)
+      .setMeshoptDecoder(MeshoptDecoder);
+    return loader;
+  }
+
+  function disposeResources() {
+    if (resourcesDisposed) return;
+    resourcesDisposed = true;
+    // KTX2Loader's WorkerPool does not reject queued work when terminated in
+    // Three r160. Only terminate after every GLTF request has naturally
+    // settled, otherwise callers can retain a permanently pending Promise.
+    ktx2Loader?.dispose();
+    ktx2Loader = null;
+    loader = null;
+  }
+
+  function load(profile) {
+    if (loaderDisposed) throw new Error('Combat asset loader has been disposed.');
+    const request = (async () => {
+      let gltf;
+      try {
+        gltf = await ensureLoader().loadAsync(profile.url);
+        const normalized = normalizeCombatAsset(gltf.scene, profile);
+        let disposed = false;
+        return {
+          ...normalized,
+          animations: gltf.animations || [],
+          profile,
+          dispose() {
+            if (disposed) return;
+            disposed = true;
+            normalized.root.removeFromParent();
+            disposeCombatAsset(normalized.root);
+          },
+        };
+      } catch (error) {
+        if (gltf?.scene) disposeCombatAsset(gltf.scene);
+        throw error;
+      }
+    })();
+    activeLoads.add(request);
+    request.finally(() => { activeLoads.delete(request); }).catch(() => {});
+    return request;
+  }
+
+  return {
+    load,
+    dispose() {
+      if (disposePromise) return disposePromise;
+      loaderDisposed = true;
+      if (!activeLoads.size) {
+        disposeResources();
+        disposePromise = Promise.resolve();
+        return disposePromise;
+      }
+      disposePromise = Promise.allSettled([...activeLoads]).then(disposeResources);
+      return disposePromise;
+    },
+  };
+}
+
+export async function loadCombatAsset(renderer, profile) {
+  const loader = createCombatAssetLoader(renderer);
   try {
-    gltf = await loader.loadAsync(profile.url);
-    const normalized = normalizeCombatAsset(gltf.scene, profile);
-    let disposed = false;
-    return {
-      ...normalized,
-      animations: gltf.animations || [],
-      profile,
-      dispose() {
-        if (disposed) return;
-        disposed = true;
-        normalized.root.removeFromParent();
-        disposeCombatAsset(normalized.root);
-      },
-    };
-  } catch (error) {
-    if (gltf?.scene) disposeCombatAsset(gltf.scene);
-    throw error;
+    return await loader.load(profile);
   } finally {
-    ktx2Loader.dispose();
+    loader.dispose();
   }
 }
 

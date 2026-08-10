@@ -97,8 +97,8 @@ describe('home stardrive layout contracts', () => {
 
   it('does not paint combat particles over the eclipse in cruise mode', () => {
     const cruiseBranch = main.match(/if\(!cruise\)\{([\s\S]*?)\n\s*\}else\{/u)?.[1] || '';
-    expect(cruiseBranch).toContain('updateHalley(dt)');
-    expect(cruiseBranch).toContain('drawHalley()');
+    expect(cruiseBranch).toContain('updateHalley(dt,legacyCombatVisuals)');
+    expect(cruiseBranch).toContain('if(legacyCombatVisuals) drawHalley()');
     const beforeBranch = main.slice(main.indexOf('const cruise=cruiseModeActive()'), main.indexOf('if(!cruise){', main.indexOf('const cruise=cruiseModeActive()')));
     expect(beforeBranch).not.toContain('drawHalley()');
   });

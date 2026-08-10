@@ -8,10 +8,12 @@ import { initHomeScrollTelemetry } from './ui/homeScrollTelemetry.js';
 
 const HOME_INTENT_SELECTOR = [
   '#commandModeBtn',
+  '#heroCommandCta',
   '#voyageLogToggle',
   '[data-cic-panel-focus]',
   '[data-cic-weapon]',
 ].join(',');
+const COMMAND_INTENT_SELECTOR = '#commandModeBtn, #heroCommandCta';
 
 // Keep the complete flagship/WebGPU upgrade available without making it the
 // default hero composition. The legacy visual keeps the original full-scale,
@@ -120,17 +122,33 @@ function scheduleIdleExperience() {
 }
 
 function installIntentLoader() {
+  const loadIntent = (target) => {
+    const experience = loadHomeExperience();
+    if (target?.closest?.(COMMAND_INTENT_SELECTOR)) {
+      void experience.then((module) => module.preloadCommandRenderer?.()).catch(() => {});
+    }
+    return experience;
+  };
   document.addEventListener('pointerover', (event) => {
     if (event.target instanceof Element && event.target.closest(HOME_INTENT_SELECTOR)) {
-      void loadHomeExperience().catch(() => {});
+      void loadIntent(event.target).catch(() => {});
     }
   }, { capture: true, passive: true });
 
   document.addEventListener('focusin', (event) => {
     if (event.target instanceof Element && event.target.closest(HOME_INTENT_SELECTOR)) {
-      void loadHomeExperience().catch(() => {});
+      void loadIntent(event.target).catch(() => {});
     }
   }, { capture: true });
+
+  // Touch has no hover lead time. Start the Command chunk on pointerdown so
+  // the click handler can keep its immediate UI response while the module is
+  // already crossing the network/parse boundary.
+  document.addEventListener('pointerdown', (event) => {
+    if (event.target instanceof Element && event.target.closest(COMMAND_INTENT_SELECTOR)) {
+      void loadIntent(event.target).catch(() => {});
+    }
+  }, { capture: true, passive: true });
 
   document.addEventListener('click', async (event) => {
     if (experienceReady || !(event.target instanceof Element)) return;
@@ -139,7 +157,7 @@ function installIntentLoader() {
     event.preventDefault();
     event.stopImmediatePropagation();
     try {
-      await loadHomeExperience();
+      await loadIntent(target);
       target.click();
     } catch {
       // Static navigation and portfolio content remain usable if enhancement fails.

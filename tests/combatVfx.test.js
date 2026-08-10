@@ -112,4 +112,136 @@ describe('combat VFX pool', () => {
     expect(impact.dropped.smoke).toBe(0);
     vfx.dispose();
   });
+
+  it('adds cadence-limited propulsion plumes without adding a fourth draw call', () => {
+    const scene = new THREE.Scene();
+    const vfx = createCombatVfx(THREE, { scene, qualityTier: 'high' });
+    vfx.beginFrame(1_000);
+
+    expect(vfx.plume({
+      emitterId: 'fighter-01:left',
+      at: [0, 0, -3],
+      direction: [0, 0, -1],
+      color: 0x4ecfff,
+      coreColor: 0xffffff,
+      power: 1,
+      smoke: 0.5,
+    })).toBe(true);
+    expect(vfx.plume({
+      emitterId: 'fighter-01:left',
+      at: [0, 0, -3],
+      direction: [0, 0, -1],
+    })).toBe(false);
+
+    let diagnostics = vfx.getDiagnostics();
+    expect(scene.children).toHaveLength(3);
+    expect(diagnostics.drawCalls).toBe(3);
+    expect(diagnostics.priorities.low.energy).toBeGreaterThan(0);
+    expect(diagnostics.priorities.low.smoke).toBeGreaterThan(0);
+    expect(diagnostics.pointSizePx).toEqual({ energy: 120, smoke: 128 });
+
+    vfx.beginFrame(1_071);
+    expect(vfx.plume({
+      emitterId: 'fighter-01:left',
+      at: [0, 0, -3],
+      velocity: [0, 0, -1],
+    })).toBe(true);
+    vfx.update(1_071, new THREE.PerspectiveCamera(55, 1, 0.1, 100), 900);
+    diagnostics = vfx.getDiagnostics();
+    expect(diagnostics.active.energy).toBeLessThanOrEqual(diagnostics.capacities.energy);
+    expect(diagnostics.active.smoke).toBeLessThanOrEqual(diagnostics.capacities.smoke);
+    vfx.dispose();
+  });
+
+  it.each([
+    ['low', 1, 0, 64, 72],
+    ['medium', 1, 1, 96, 104],
+    ['high', 2, 2, 120, 128],
+  ])('tiers %s plume density and point overdraw caps', (tier, energyCount, smokeCount, energyPx, smokePx) => {
+    const scene = new THREE.Scene();
+    const vfx = createCombatVfx(THREE, { scene, qualityTier: tier });
+    vfx.beginFrame(1_500);
+    expect(vfx.plume({
+      at: [0, 0, -3],
+      direction: [0, 0, -1],
+      smoke: 1.5,
+    })).toBe(true);
+    const diagnostics = vfx.getDiagnostics();
+    expect(diagnostics.priorities.low.energy).toBe(energyCount);
+    expect(diagnostics.priorities.low.smoke).toBe(smokeCount);
+    expect(diagnostics.pointSizePx).toEqual({ energy: energyPx, smoke: smokePx });
+    expect(diagnostics.pointSizePx.energy).toBeLessThanOrEqual(120);
+    expect(diagnostics.pointSizePx.smoke).toBeLessThanOrEqual(128);
+    expect(diagnostics.drawCalls).toBe(3);
+    vfx.dispose();
+  });
+
+  it('reserves capacity and lets critical bursts reclaim the oldest plume slots', () => {
+    const scene = new THREE.Scene();
+    const vfx = createCombatVfx(THREE, { scene, qualityTier: 'low' });
+    vfx.beginFrame(2_000);
+
+    for (let index = 0; index < 100; index += 1) {
+      vfx.plume({ at: [index * 0.01, 0, -4], direction: [0, 0, -1], lifeMs: 8_000 });
+    }
+    for (let index = 0; index < 40; index += 1) {
+      vfx.fireSmoke({
+        at: [index * 0.01, 0, -4],
+        velocity: [0, 0, -0.5],
+        continuous: true,
+        lifeMs: 8_000,
+      });
+    }
+
+    const saturated = vfx.getDiagnostics();
+    expect(saturated.priorities.low.energy)
+      .toBeLessThanOrEqual(saturated.capacities.energy - saturated.reserves.energy);
+    expect(saturated.priorities.low.smoke)
+      .toBeLessThanOrEqual(saturated.capacities.smoke - saturated.reserves.smoke);
+    expect(saturated.dropped.energy + saturated.dropped.smoke).toBeGreaterThan(0);
+
+    expect(vfx.charge({ at: [0, 0, -4], radius: 1.2, lifeMs: 2_000 })).toBe(true);
+    expect(vfx.fireSmoke({
+      at: [0, 0, -4],
+      velocity: [0, 0.4, 0],
+      nuclear: true,
+      scale: 3,
+      lifeMs: 2_000,
+    })).toBe(true);
+    const impact = vfx.getDiagnostics();
+
+    expect(impact.priorities.critical.energy).toBeGreaterThan(0);
+    expect(impact.priorities.critical.smoke).toBeGreaterThan(0);
+    expect(impact.preempted.energy).toBeGreaterThan(0);
+    expect(impact.preempted.smoke).toBeGreaterThan(0);
+    expect(impact.active.energy).toBeLessThanOrEqual(impact.capacities.energy);
+    expect(impact.active.smoke).toBeLessThanOrEqual(impact.capacities.smoke);
+    vfx.dispose();
+  });
+
+  it('allows a critical shield arc to replace the oldest saturated beam slot', () => {
+    const scene = new THREE.Scene();
+    const vfx = createCombatVfx(THREE, { scene, qualityTier: 'low' });
+    vfx.beginFrame(3_000);
+    for (let index = 0; index < 6; index += 1) {
+      expect(vfx.linkedBeam({
+        from: [index, 0, 0],
+        to: [index, 0, -4],
+        lifeMs: 8_000,
+      })).toBe(true);
+    }
+
+    expect(vfx.shieldArc({
+      center: [0, 0, -4],
+      hitDirection: [1, 0, 0],
+      radius: 2,
+      lifeMs: 1_000,
+    })).toBe(true);
+    const diagnostics = vfx.getDiagnostics();
+    expect(diagnostics.active.linkedBeams).toBe(5);
+    expect(diagnostics.active.shieldArcs).toBe(1);
+    expect(diagnostics.preempted.lines).toBe(1);
+    expect(diagnostics.drawCalls).toBe(3);
+    vfx.dispose();
+  });
 });

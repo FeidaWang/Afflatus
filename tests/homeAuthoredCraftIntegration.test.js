@@ -48,7 +48,7 @@ describe('homepage authored combat craft integration', () => {
     expect(combat).toContain("state?.escorts?.some((escort) => escort.type === 'f47')");
     expect(combat).toContain('latestFighterDemand && shouldLoadAuthoredAssets(liveCombatState)');
     expect(combat).toContain('if (!needsShip && !needsFighters) return;');
-    expect(combat).toContain('f.visible = Boolean(escort) || flightControlled');
+    expect(combat).toContain('f.visible = combatEffectsReady && (Boolean(escort) || flightControlled)');
     expect(combat).toContain('function authoredAssetsAllowed()');
     expect(combat).toContain("renderPolicy.qualityTier !== 'low'");
     expect(combat).not.toContain('Number(globalThis.innerWidth || 0) >= 1024');

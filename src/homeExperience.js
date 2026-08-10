@@ -1,3 +1,5 @@
+import './cic-radar-vscan.css';
+import './cic-combat-visual.css';
 import { createHudImages } from './assets/hudAssets.js';
 import { createCombatRuntime } from './combat/combatRuntime.js';
 import { createCombatState } from './combat/combatState.js';
@@ -15,6 +17,7 @@ import {
 } from './config/combatConfig.js';
 import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
 import { getLocale, setLocale } from './lib/localeStore.js';
+import { createFramePacer } from './lib/framePacing.js';
 import { getRenderBudgetCoordinator } from './lib/renderBudgetCoordinator.js';
 import { mountTermGlossary } from './lib/termGlossary.js';
 import { createBackgroundScene } from './scene/backgroundScene.js';
@@ -119,12 +122,54 @@ function getFighter3D(){
 }
 
 // ── Top-down WebGL combat view (U23 M1, 2026-07-13: now the DEFAULT) ──
-// Renders the multi-camera CIC sensor scene (src/scene/topdownCombat.js) offscreen and
-// blits it into #pilotFeed for the main combat/standby modes. ON by default;
+// Renders the multi-camera CIC sensor scene (src/scene/topdownCombat.js) as a
+// direct canvas below #pilotFeed's transparent HMD layer. ON by default;
 // opt out with ?combatview=2d (persists), re-enable with ?combatview=topdown.
 // Falls back to the existing 2D cockpit if WebGL/the module is unavailable.
 let topdownCV=null, topdownTried=false, topdownCanvas=null, topdownGeneration=0;
+let topdownModulePromise=null;
 let combatOrbitBound=false;
+let topdownDiagnosticsCache=null,topdownDiagnosticsAt=-Infinity;
+let topdownSettledPosterDismissed=false;
+function setThreePilotScene(active){
+  const viewport=document.getElementById('cicPilotFeed')?.closest('.cic-viewport');
+  viewport?.classList.toggle('has-three-scene',Boolean(active));
+}
+const feedCanvasMetrics=new WeakMap();
+const feedCanvasObserver=typeof ResizeObserver==='function'
+  ? new ResizeObserver((entries)=>{
+      for(const entry of entries){
+        const box=entry.contentRect;
+        feedCanvasMetrics.set(entry.target,{width:box.width,height:box.height});
+      }
+    })
+  : null;
+function measureFeedCanvas(canvas){
+  let metrics=feedCanvasMetrics.get(canvas);
+  if(metrics) return metrics;
+  const rect=canvas.getBoundingClientRect();
+  metrics={width:rect.width,height:rect.height};
+  feedCanvasMetrics.set(canvas,metrics);
+  feedCanvasObserver?.observe(canvas);
+  return metrics;
+}
+function readTopdownPresentation(renderer){
+  if(!renderer) return null;
+  if(typeof renderer.getPresentationState==='function') return renderer.getPresentationState();
+  return topdownDiagnosticsCache;
+}
+function sampleTopdownDiagnostics(renderer,now){
+  if(!renderer||typeof renderer.getDiagnostics!=='function') return null;
+  if(!topdownDiagnosticsCache||now-topdownDiagnosticsAt>=250){
+    topdownDiagnosticsCache=renderer.getDiagnostics();
+    topdownDiagnosticsAt=now;
+  }
+  return topdownDiagnosticsCache;
+}
+function setPilotDataset(canvas,key,value){
+  const next=String(value);
+  if(canvas.dataset[key]!==next) canvas.dataset[key]=next;
+}
 function bindCombatOrbitControls(){
   const canvas=document.getElementById('cicPilotFeed');
   const reset=document.getElementById('cicCameraReset');
@@ -189,15 +234,23 @@ function commandFeedVisible(canvas){
   if(document.visibilityState==='hidden'||combatHud?.getAttribute('aria-hidden')==='true') return false;
   if(document.querySelector('#blackhole-stage.home-flagship-playback-active')) return false;
   if(focusedHudPanel&&focusedHudPanel!=='tactical') return false;
-  const rect=canvas.getBoundingClientRect();
-  return rect.width>2&&rect.height>2&&rect.bottom>0&&rect.right>0
-    &&rect.top<innerHeight&&rect.left<innerWidth;
+  const metrics=measureFeedCanvas(canvas);
+  return metrics.width>2&&metrics.height>2;
+}
+export function preloadCommandRenderer(){
+  if(!topdownModulePromise){
+    topdownModulePromise=import('./scene/topdownCombat.js').catch((error)=>{
+      topdownModulePromise=null;
+      throw error;
+    });
+  }
+  return topdownModulePromise;
 }
 function getTopdownCV(){
   if(!topdownTried){
     topdownTried=true;
     const generation=topdownGeneration;
-    import('./scene/topdownCombat.js')
+    preloadCommandRenderer()
       .then(m=>{
         if(generation!==topdownGeneration||cruiseModeActive()) return;
         const pilotCanvas=document.getElementById('cicPilotFeed');
@@ -208,7 +261,7 @@ function getTopdownCV(){
             canvas:candidateCanvas,
             surfaceId:'home:topdown-combat',
             shouldLoadAuthoredAssets:()=>commandFeedVisible(pilotCanvas),
-            preloadAuthoredFighters:false,
+            preloadAuthoredFighters:true,
           });
         }catch(error){}
         if(generation!==topdownGeneration||cruiseModeActive()){
@@ -216,8 +269,15 @@ function getTopdownCV(){
           return;
         }
         if(!candidate) return;
+        candidateCanvas.className='cic-pilot-scene';
+        candidateCanvas.setAttribute('aria-hidden','true');
+        pilotCanvas?.closest('.cic-viewport')?.prepend(candidateCanvas);
         topdownCanvas=candidateCanvas;
         topdownCV=candidate;
+        // Context availability is not presentation readiness. Keep the last
+        // responsive 2D sensor picture visible until Three has completed its
+        // first real frame; this prevents a black/half-compiled handoff.
+        setThreePilotScene(false);
         bindCombatOrbitControls();
       })
       .catch(()=>{if(generation===topdownGeneration) topdownCV=null;});
@@ -230,7 +290,12 @@ function destroyCombatRenderers(){
   topdownTried=false;
   const activeTopdown=topdownCV;
   topdownCV=null;
+  topdownCanvas?.remove();
   topdownCanvas=null;
+  topdownDiagnosticsCache=null;
+  topdownDiagnosticsAt=-Infinity;
+  topdownSettledPosterDismissed=false;
+  setThreePilotScene(false);
   destroyRendererInstance(activeTopdown);
 
   ship3DGeneration+=1;
@@ -325,8 +390,11 @@ document.querySelectorAll('[data-hot],a,button').forEach(el=>{
 const combatHud=document.getElementById('combatHud');
 const radarCanvas=document.getElementById('cicRadarCanvas');
 const radarDeck=createRadarDeck(radarCanvas);
-const rctx=radarDeck.ctx;
-const radarState=radarDeck.state;
+// V-SCAN owns its motion inside the bounded Canvas2D surface. Remove the
+// legacy whole-HUD sweep once instead of mutating body styles every frame.
+document.body.classList.remove('radar-sweeping');
+document.body.style.removeProperty('--hud-sweep-x');
+document.body.style.removeProperty('--hud-sweep-alpha');
 const HUD_IMAGES=createHudImages();
 const commandModeBtn=document.getElementById('commandModeBtn');
 const jumpToggle=document.getElementById('jumpToggle');
@@ -410,6 +478,9 @@ commandModeBtn?.addEventListener('click',(event)=>{
   event.preventDefault();
   event.stopPropagation();
   const toHudOff=!document.body.classList.contains('hud-off');
+  if(!toHudOff&&/[?&]combatPerfProbe=1\b/.test(location.search)){
+    document.documentElement.dataset.cicCommandRequestedAt=performance.now().toFixed(2);
+  }
   document.body.classList.toggle('hud-off',toHudOff);
   homeFlagshipNarrative?.setEnabled(toHudOff);
   if(toHudOff){
@@ -472,10 +543,7 @@ function logBattle(msg){
   const text=String(msg || '').replace(/^\d{2}:\d{2}:\d{2}\s*/, '').trim();
   if(!text || battleLog.dataset.message===text) return;
   battleLog.dataset.message=text;
-  battleLog.classList.remove('flipping');
-  void battleLog.offsetWidth;
   battleLog.textContent=text;
-  battleLog.classList.add('flipping');
 }
 function setPilotView(mode, subject=null, ms=4200){
   const previous=pilotView?.mode;
@@ -501,7 +569,7 @@ const {
 if(weaponSelect) weaponSelect.addEventListener('change',()=>{
   apAuto=weaponSelect.value==='auto';
   emitCombatEvent('fire-control:changed',{mode:apAuto?'auto':'manual',weapon:weaponSelect.value});
-  updateCombatModule();
+  updateCombatModule(undefined,true);
   logBattle(`${HC('logWeapon')} · ${weaponSelect.options[weaponSelect.selectedIndex].text}`);
 });
 if(apToggle) apToggle.addEventListener('click',(e)=>{
@@ -511,7 +579,7 @@ if(apToggle) apToggle.addEventListener('click',(e)=>{
   if(apAuto && weaponSelect) weaponSelect.value='auto';
   if(!apAuto && weaponSelect && weaponSelect.value==='auto') weaponSelect.value=recommendedWeapon();
   emitCombatEvent('fire-control:changed',{mode:apAuto?'auto':'manual',weapon:weaponSelect?.value||'auto'});
-  updateCombatModule();
+  updateCombatModule(undefined,true);
   logBattle(apAuto ? `${HC('logWeapon')} · AP ${HC('apAuto')}` : `${HC('logWeapon')} · AP ${HC('apManual')}`);
 });
 document.querySelectorAll('[data-cic-weapon]').forEach(btn=>{
@@ -519,7 +587,7 @@ document.querySelectorAll('[data-cic-weapon]').forEach(btn=>{
     apAuto=false;
     if(weaponSelect) weaponSelect.value=btn.dataset.weapon;
     emitCombatEvent('fire-control:changed',{mode:'manual',weapon:btn.dataset.weapon});
-    updateCombatModule();
+    updateCombatModule(undefined,true);
     logBattle(`${HC('logWeapon')} · ${btn.querySelector('b').textContent}`);
   });
 });
@@ -544,7 +612,13 @@ function localWeaponName(w){
   const idx=currentLang==='zh'?0:1;
   return (weaponNames[w]||weaponNames.auto)[idx];
 }
-function updateCombatModule(state=syncCombatState(Date.now())){
+let lastCombatModuleUiAt=-Infinity;
+function updateCombatModule(state=syncCombatState(Date.now()),force=false){
+  const uiNow=performance.now();
+  const countdownActive=nukeCountdownUntil>0||enforcerChargeUntil>0;
+  const minimumInterval=countdownActive?50:100;
+  if(!force&&uiNow-lastCombatModuleUiAt<minimumInterval) return;
+  lastCombatModuleUiAt=uiNow;
   tickService();
   // 2026-07-04 (ROADMAP §4 V16 — single weapon clock): the nuke T-countdown
   // and main-gun charge countdown used to each run their own setInterval(40)
@@ -672,9 +746,13 @@ function updateFleetBay(){
     slot.classList.toggle('critical',hp<55);
   });
 }
-function updateCursorTarget(){
-  document.querySelectorAll('#cursorTarget').forEach((el,idx)=>{ if(idx>0) el.remove(); });
-  const box=document.getElementById('cursorTarget');
+document.querySelectorAll('#cursorTarget').forEach((el,idx)=>{ if(idx>0) el.remove(); });
+const cursorTargetBox=document.getElementById('cursorTarget');
+let lastCursorTargetUiAt=-Infinity;
+function updateCursorTarget(now=performance.now()){
+  if(now-lastCursorTargetUiAt<50) return;
+  lastCursorTargetUiAt=now;
+  const box=cursorTargetBox;
   if(!box) return;
   if(halley?.hover && !halley.destroyed){
     const h=HUD_COPY[currentLang]||HUD_COPY.zh;
@@ -740,7 +818,7 @@ function applyHudLanguage(){
   });
   const cruiseState=document.getElementById('cicCruiseState');
   if(cruiseState) cruiseState.textContent=zh?'巡航 · 传感器静默监听':'CRUISE · SENSOR PASSIVE';
-  updateCombatModule();
+  updateCombatModule(undefined,true);
 }
 
 function setCombatMode(on){
@@ -753,7 +831,12 @@ function setCombatMode(on){
   }
 }
 
-function updateTopTelemetry(state=combatSnapshot){
+let lastTopTelemetryAt=-Infinity;
+let lastBattleCountdownAt=-Infinity;
+function updateTopTelemetry(state=combatSnapshot,force=false){
+  const uiNow=performance.now();
+  if(!force&&uiNow-lastTopTelemetryAt<100) return;
+  lastTopTelemetryAt=uiNow;
   try {
     const now = new Date();
     const voyageDays = currentLang==='zh' ? '2738 天' : '2738 DAYS';
@@ -802,8 +885,14 @@ function updateTopTelemetry(state=combatSnapshot){
     const hudThrusters=document.getElementById('hudThrusters'); if(hudThrusters) hudThrusters.textContent = document.body.classList.contains('warp-hover') ? HC('ready') : HC('armed');
     const linkText = document.body.classList.contains('nuke-alert') ? (currentLang==='zh'?'红色':'RED') : (document.body.classList.contains('emp-effect') ? (currentLang==='zh'?'黄色':'YELLOW') : (currentLang==='zh'?'绿色':'GREEN'));
     const linkEl=document.getElementById('topUplink'); if(linkEl) linkEl.textContent=linkText;
-    if(enforcerChargeUntil > Date.now()) logBattle(`${HC('logEnforcerCharge')}${((enforcerChargeUntil-Date.now())/1000).toFixed(2)}s`);
-    else if(nukeCountdownUntil > Date.now()) logBattle(`${HC('logNuke')}${((nukeCountdownUntil-Date.now())/1000).toFixed(2)}s`);
+    if(enforcerChargeUntil > Date.now()&&uiNow-lastBattleCountdownAt>=250){
+      lastBattleCountdownAt=uiNow;
+      logBattle(`${HC('logEnforcerCharge')}${((enforcerChargeUntil-Date.now())/1000).toFixed(1)}s`);
+    }
+    else if(nukeCountdownUntil > Date.now()&&uiNow-lastBattleCountdownAt>=250){
+      lastBattleCountdownAt=uiNow;
+      logBattle(`${HC('logNuke')}${((nukeCountdownUntil-Date.now())/1000).toFixed(1)}s`);
+    }
     else if(enforcerCooldownUntil > Date.now()) logBattle(`${HC('logCooldown')}${Math.ceil((enforcerCooldownUntil-Date.now())/1000)}s`);
   } catch(e){}
 }
@@ -819,269 +908,10 @@ function getCannonFx(){
   }
   return {...mainCannonFx,mode:'charge',t:clamp((now-mainCannonFx.chargeStart)/4500,0,1)};
 }
-function drawRadar(state=combatSnapshot){
-  if(!radarDeck.active){document.body.classList.remove('radar-sweeping');return;}
-  if(!combatHot){document.body.classList.remove('radar-sweeping');return;}
-  const w=radarCanvas.width, h=radarCanvas.height;
-  if(!w||!h) return;
-  const cx=w/2, cy=h/2, min=Math.min(w,h);
-  rctx.clearRect(0,0,w,h); rctx.save(); rctx.translate(cx,cy);
-  const now=performance.now();
-  const navDeg=state.telemetry.headingDeg;
-  const contacts=[];
-  if(state.target) contacts.push({id:state.target.id,kind:'comet',x:state.target.x,y:state.target.y,size:state.target.sizeClass==='giant'?5.5:4});
-  state.escorts.forEach((escort)=>contacts.push({id:escort.id,kind:'ally',x:escort.x,y:escort.y,size:escort.type==='b2'?4.5:3.2}));
-  state.projectiles.forEach((projectile)=>{
-    if(projectile.type==='missile') contacts.push({id:projectile.id,kind:'missile',x:projectile.x,y:projectile.y,size:3});
-    if(projectile.type==='phalanx') contacts.push({id:projectile.id,kind:'missile',x:projectile.x,y:projectile.y,size:2.6});
-    if(projectile.type==='nuke') contacts.push({id:projectile.id,kind:'nuke',x:projectile.x,y:projectile.y,size:4.2});
-  });
-  const radarScanning=contacts.length>0;
-  if(radarScanning){
-    const lastTurn=Math.floor(radarState.phase/(Math.PI*2));
-    radarState.phase += .018;
-    if(Math.floor(radarState.phase/(Math.PI*2))>lastTurn) {
-      radarState.glowUntil=now+980;
-    }
-    const sweepPct=clamp(50+Math.cos(radarState.phase)*50,0,100);
-    const sweepAlpha=clamp(-Math.sin(radarState.phase)*1.65,0,1);
-    document.body.classList.add('radar-sweeping');
-    document.body.style.setProperty('--hud-sweep-x',`${sweepPct.toFixed(2)}%`);
-    document.body.style.setProperty('--hud-sweep-alpha',`${(sweepAlpha*.96).toFixed(3)}`);
-    // U28 follow-up (2026-07-14): --oracle-sweep-x/--oracle-sweep-alpha
-    // writes removed along with .hud-scan-line (src/styles.css) — that was
-    // a full-viewport duplicate of the .hud-panels::before sweep these two
-    // --hud-sweep-* vars still drive, and it was the actual source of the
-    // "floating elements over Combat View" real-device report.
-  }else{
-    document.body.classList.remove('radar-sweeping');
-  }
-  const sweepA=radarState.phase;
-  // U9 (2026-07-11): "左侧雷达换全息扫描盘" — the brass pocket-watch dial
-  // (gears/case/hour numerals/date windows/PATEK PHILIPPE branding, ~160
-  // lines) is replaced with a borderless holographic scan disc (station
-  // screenshot reference): an elliptically-squashed perspective disc
-  // (concentric rings + sweep wedge + rim points + amber primary-target
-  // flame/pin/beam), all additive-blended, no hard rim/case anywhere.
-  // Scope note: the player-ship silhouette + cannon fx + the three analog
-  // gauges (IAS/CORE/ATT) further below in this same function are a
-  // separate feature (not the "机械齿轮" the screenshot complained about)
-  // and are intentionally left untouched — they now float over the new
-  // disc instead of the old brass case. `radarR` is kept as the shared
-  // variable name the contact-blip loop below already reads (its value +
-  // the loop's y-coordinate are the only two edits needed there to match
-  // the new ellipse — see the `*ELLIPSE` added at that loop).
-  const ELLIPSE=.42, radarR=min*.46;
-  // U13b (2026-07-11): radar moved into a small dock under Combat View —
-  // at that size the degree/km readout and "SILENT WATCH" text would be
-  // illegible clutter, so skip text (keep disc/sweep/blips/flame, which
-  // still read fine as color+motion small) below this threshold, same
-  // "skip rather than turn to mush" pattern combatHmdV3.js already uses.
-  const compact=min<220;
-  rctx.save();
-  rctx.scale(1,ELLIPSE);
-  const body=rctx.createRadialGradient(0,0,radarR*.1,0,0,radarR);
-  body.addColorStop(0,'rgba(80,220,200,.10)');
-  body.addColorStop(.7,'rgba(60,200,190,.05)');
-  body.addColorStop(1,'rgba(60,200,190,0)');
-  rctx.fillStyle=body;rctx.beginPath();rctx.arc(0,0,radarR,0,Math.PI*2);rctx.fill();
-  rctx.strokeStyle='rgba(120,230,215,.22)';rctx.lineWidth=1;
-  for(let i=1;i<=4;i++){rctx.beginPath();rctx.arc(0,0,radarR*i/4,0,Math.PI*2);rctx.stroke();}
-  if(radarScanning){
-    rctx.save();rctx.globalCompositeOperation='lighter';
-    const wedge=rctx.createRadialGradient(0,0,0,0,0,radarR);
-    wedge.addColorStop(0,'rgba(140,255,230,.30)');wedge.addColorStop(1,'rgba(140,255,230,0)');
-    rctx.fillStyle=wedge;
-    rctx.beginPath();rctx.moveTo(0,0);rctx.arc(0,0,radarR,sweepA-.5,sweepA+.02);rctx.closePath();rctx.fill();
-    rctx.restore();
-  }
-  rctx.fillStyle='rgba(232,250,255,.7)';
-  for(let i=0;i<14;i++){
-    const a=i*(Math.PI*2/14)+Math.sin(i*3.1)*.12;
-    const r=radarR*(.72+((i*53)%17)/60);
-    rctx.globalAlpha=.35+.5*((i*29)%10)/10;
-    rctx.beginPath();rctx.arc(Math.cos(a)*r,Math.sin(a)*r,1.1,0,Math.PI*2);rctx.fill();
-  }
-  rctx.globalAlpha=1;
-  rctx.restore();   // undo the ELLIPSE squash before drawing anything non-elliptical
-
-  if(state.target){
-    const dx=(state.target.x-innerWidth/2)/innerWidth, dy=(state.target.y-innerHeight/2)/innerHeight;
-    const tAng=Math.atan2(dy,dx), tDist=clamp(Math.hypot(dx,dy)*1.8,.08,.92);
-    const bx=Math.cos(tAng)*radarR*tDist, by=Math.sin(tAng)*radarR*tDist*ELLIPSE;
-    rctx.save();rctx.globalCompositeOperation='lighter';
-    const flame=rctx.createRadialGradient(bx,by,0,bx,by,min*.05);
-    flame.addColorStop(0,'rgba(255,205,128,.9)');flame.addColorStop(1,'rgba(255,140,60,0)');
-    rctx.fillStyle=flame;rctx.beginPath();rctx.arc(bx,by,min*.05,0,Math.PI*2);rctx.fill();
-    const beam=rctx.createLinearGradient(bx,by,bx,radarR*ELLIPSE*1.3);
-    beam.addColorStop(0,'rgba(154,229,255,.5)');beam.addColorStop(1,'rgba(154,229,255,0)');
-    rctx.strokeStyle=beam;rctx.lineWidth=1.2;
-    rctx.beginPath();rctx.moveTo(bx,by);rctx.lineTo(bx,radarR*ELLIPSE*1.3);rctx.stroke();
-    rctx.restore();
-    rctx.strokeStyle='rgba(255,255,255,.85)';rctx.lineWidth=1;
-    rctx.beginPath();rctx.moveTo(bx,by-min*.045);rctx.lineTo(bx,by-min*.018);rctx.stroke();
-    if(state.solution.valid&&state.solution.aimPoint){
-      const sx=(state.solution.aimPoint.x-innerWidth/2)/innerWidth;
-      const sy=(state.solution.aimPoint.y-innerHeight/2)/innerHeight;
-      const sa=Math.atan2(sy,sx);
-      const sd=clamp(Math.hypot(sx,sy)*1.8,.08,.92);
-      const lx=Math.cos(sa)*radarR*sd;
-      const ly=Math.sin(sa)*radarR*sd*ELLIPSE;
-      rctx.strokeStyle='rgba(154,229,255,.82)';
-      rctx.setLineDash([3,3]);
-      rctx.beginPath();rctx.moveTo(bx,by);rctx.lineTo(lx,ly);rctx.stroke();
-      rctx.setLineDash([]);
-      rctx.strokeRect(lx-3,ly-3,6,6);
-    }
-  }
-
-  const navDegNum=Number.isFinite(navDeg)?Math.round(navDeg):null;
-  const primaryRange=state.target?Math.round(Math.hypot(state.target.x-innerWidth/2,state.target.y-innerHeight/2)):null;
-  if(!compact){
-    rctx.save();
-    rctx.textAlign='center';rctx.textBaseline='middle';
-    rctx.font=`${Math.max(7,min*.024)}px 'JetBrains Mono',monospace`;
-    rctx.fillStyle='rgba(200,245,235,.72)';
-    rctx.fillText(navDegNum===null?'AZ —':`AZ ${String(navDegNum).padStart(3,'0')}°`,-radarR*.26,radarR*ELLIPSE+16);
-    rctx.fillStyle='rgba(200,245,235,.55)';
-    rctx.fillText(primaryRange===null?'RNG —':`RNG ${primaryRange}px`,radarR*.30,radarR*ELLIPSE+16);
-    rctx.restore();
-  }
-
-  if(!radarScanning && !compact){
-    rctx.save();
-    rctx.fillStyle='rgba(120,230,215,.5)';
-    rctx.font=`${Math.max(4.2,min*.016)}px 'JetBrains Mono',monospace`;
-    rctx.textAlign='center';rctx.textBaseline='middle';
-    rctx.fillText(currentLang==='zh'?'静默守望':'SILENT WATCH',0,0);
-    rctx.restore();
-  }
-
-  rctx.save();
-  const navRad=(((Number.isFinite(navDeg)?navDeg:90)-90)*Math.PI/180);
-  const shipRot=navRad*.08;
-  const cannonFx=getCannonFx();
-  rctx.rotate(shipRot);
-  if(cannonFx?.mode==='fire') rctx.translate(0,min*.034*(1-cannonFx.t));
-  rctx.scale(.38,.38);
-  const hullGrad=rctx.createLinearGradient(0,-min*.26,0,min*.22);
-  hullGrad.addColorStop(0,'rgba(196,207,218,.46)');
-  hullGrad.addColorStop(.5,'rgba(82,96,110,.32)');
-  hullGrad.addColorStop(1,'rgba(20,30,42,.48)');
-  rctx.strokeStyle='rgba(218,232,246,.64)';rctx.fillStyle=hullGrad;rctx.lineWidth=1;
-  rctx.beginPath();
-  rctx.moveTo(0,-min*.265);
-  rctx.lineTo(min*.255,min*.18);
-  rctx.lineTo(min*.07,min*.226);
-  rctx.lineTo(0,min*.19);
-  rctx.lineTo(-min*.07,min*.226);
-  rctx.lineTo(-min*.255,min*.18);
-  rctx.closePath();rctx.fill();rctx.stroke();
-  rctx.strokeStyle='rgba(218,232,246,.26)';rctx.lineWidth=.8;
-  rctx.beginPath();rctx.moveTo(0,-min*.25);rctx.lineTo(0,min*.18);rctx.stroke();
-  for(let i=1;i<=6;i++){
-    const y=lerp(-min*.145,min*.145,i/7), half=lerp(min*.032,min*.205,i/7);
-    rctx.beginPath();rctx.moveTo(-half,y);rctx.lineTo(half,y);rctx.stroke();
-  }
-  rctx.strokeStyle='rgba(154,229,255,.24)';
-  for(let i=-4;i<=4;i++){
-    rctx.beginPath();rctx.moveTo(i*min*.015,-min*.09);rctx.lineTo(i*min*.043,min*.145);rctx.stroke();
-  }
-  rctx.fillStyle='rgba(91,106,120,.52)';rctx.strokeStyle='rgba(214,226,244,.35)';
-  rctx.beginPath();
-  rctx.moveTo(-min*.052,-min*.015);rctx.lineTo(min*.052,-min*.015);rctx.lineTo(min*.073,min*.072);rctx.lineTo(min*.032,min*.112);rctx.lineTo(-min*.032,min*.112);rctx.lineTo(-min*.073,min*.072);
-  rctx.closePath();rctx.fill();rctx.stroke();
-  rctx.fillStyle='rgba(93,255,157,.92)';
-  [-.036,0,.036].forEach(x=>{rctx.beginPath();rctx.arc(x*min,min*.201,1.6,0,Math.PI*2);rctx.fill();});
-  if(cannonFx){
-    const open=cannonFx.mode==='charge'?easeOut(cannonFx.t):1;
-    const tipY=-min*.265, barrelY=-min*(.285+.055*open);
-    rctx.save();
-    rctx.globalCompositeOperation='lighter';
-    rctx.strokeStyle=`rgba(154,229,255,${.18+.52*open})`;rctx.lineWidth=1.2;
-    rctx.beginPath();
-    rctx.moveTo(-min*.012*open,tipY);rctx.lineTo(-min*(.055+.02*open),-min*.205);
-    rctx.moveTo(min*.012*open,tipY);rctx.lineTo(min*(.055+.02*open),-min*.205);
-    rctx.stroke();
-    rctx.strokeStyle=`rgba(255,240,240,${.24+.52*open})`;rctx.lineWidth=1.5;
-    rctx.beginPath();rctx.moveTo(0,-min*.21);rctx.lineTo(0,barrelY);rctx.stroke();
-    rctx.fillStyle=`rgba(255,245,245,${.2+.6*open})`;rctx.beginPath();rctx.arc(0,barrelY,2.2+2.4*open,0,Math.PI*2);rctx.fill();
-    if(cannonFx.mode==='fire'){
-      const targetX=state.target?state.target.x:cannonFx.tx;
-      const targetY=state.target?state.target.y:cannonFx.ty;
-      const dx=(targetX-innerWidth/2)/innerWidth, dy=(targetY-innerHeight/2)/innerHeight;
-      const ang=Math.atan2(dy,dx), dist=clamp(Math.hypot(dx,dy)*1.8,.12,.92), rr=min*.94*dist;
-      const rawX=Math.cos(ang)*rr, rawY=Math.sin(ang)*rr;
-      const inv=-shipRot, bx=rawX*Math.cos(inv)-rawY*Math.sin(inv), by=rawX*Math.sin(inv)+rawY*Math.cos(inv);
-      const pulse=1-cannonFx.t;
-      const beam=rctx.createLinearGradient(0,barrelY,bx,by);
-      beam.addColorStop(0,`rgba(255,255,255,${.92*pulse})`);
-      beam.addColorStop(.34,`rgba(255,42,54,${.78*pulse})`);
-      beam.addColorStop(.72,`rgba(255,0,36,${.70*pulse})`);
-      beam.addColorStop(1,`rgba(255,255,255,${.72*pulse})`);
-      rctx.strokeStyle=beam;rctx.lineCap='round';
-      [8,4,1.2].forEach((lw,i)=>{rctx.globalAlpha=i===0 ? .22:i===1 ? .6:1;rctx.lineWidth=lw*pulse;rctx.beginPath();rctx.moveTo(0,barrelY);rctx.lineTo(bx,by);rctx.stroke();});
-      rctx.globalAlpha=.9*pulse;rctx.fillStyle='rgba(255,220,210,.7)';rctx.beginPath();rctx.arc(bx,by,min*.035*(1+cannonFx.t),0,Math.PI*2);rctx.fill();
-    }
-    rctx.restore();
-  }
-  rctx.restore();
-  // U13b (2026-07-11): the three analog gauges (IAS/CORE/ATT) that used to
-  // float here — deleted per station reference ("delete the three small
-  // dials entirely"); the ship silhouette + cannon fx directly above are
-  // untouched, they were never the complaint. `drawGauge` and its 3 calls
-  // fully removed (this was their only caller).
-  contacts.forEach(c=>{
-    const dx=(c.x-innerWidth/2)/innerWidth, dy=(c.y-innerHeight/2)/innerHeight;
-    const ang=Math.atan2(dy,dx), dist=clamp(Math.hypot(dx,dy)*1.8,.08,.92);
-    if(Math.abs(angleDelta(sweepA,ang))<.12) radarState.contacts.set(c.id,{...c,ang,dist,seen:performance.now()+2200});
-  });
-  for(const [id,c] of [...radarState.contacts.entries()]){
-    if(c.seen<performance.now()){radarState.contacts.delete(id);continue;}
-    if(c.kind==='comet') continue;   // U9: comet gets its own amber flame+pin+beam marker above, not a second blip
-    const fade=clamp((c.seen-performance.now())/2200,0,1);
-    const rr=radarR*c.dist, x=Math.cos(c.ang)*rr, y=Math.sin(c.ang)*rr*ELLIPSE;   // U9: squashed to match the elliptical disc
-    const palette={
-      comet:['rgba(255,45,62,', '#ff2d3e'],
-      ally:['rgba(93,255,157,', '#5dff9d'],
-      missile:['rgba(255,255,255,', '#ffffff'],
-      nuke:['rgba(255,212,93,', '#ffd45d'],
-      ufo:['rgba(154,229,255,', '#9ae5ff']
-    }[c.kind];
-    const targetLume=radarScanning?clamp(1-Math.abs(angleDelta(sweepA,c.ang))/.16,0,1):0;
-    const drawContactShape=(scale=1)=>{
-      const s=c.size*scale;
-      rctx.beginPath();
-      if(c.kind==='comet'){rctx.moveTo(x,y-s*2);rctx.lineTo(x+s*2,y);rctx.lineTo(x,y+s*2);rctx.lineTo(x-s*2,y);rctx.closePath();rctx.fill();rctx.stroke();}
-      else if(c.kind==='ally'){rctx.moveTo(x,y-s*2.4);rctx.lineTo(x+s*2.2,y+s*1.8);rctx.lineTo(x-s*2.2,y+s*1.8);rctx.closePath();rctx.fill();rctx.stroke();}
-      else if(c.kind==='missile'){rctx.arc(x,y,s,0,Math.PI*2);rctx.fill();rctx.stroke();}
-      else if(c.kind==='nuke'){rctx.font=`${s*5}px 'JetBrains Mono',monospace`;rctx.textAlign='center';rctx.textBaseline='middle';rctx.fillText('☢',x,y);}
-      else{rctx.rect(x-s*1.6,y-s*1.6,s*3.2,s*3.2);rctx.fill();rctx.stroke();}
-    };
-    if(targetLume>0){
-      rctx.save();
-      rctx.globalCompositeOperation='lighter';
-      rctx.shadowBlur=18*targetLume;
-      rctx.shadowColor=palette[1];
-      rctx.fillStyle=`${palette[0]}${.12+.36*targetLume})`;
-      rctx.strokeStyle=`${palette[0]}${.16+.62*targetLume})`;
-      rctx.lineWidth=1.4+targetLume*1.2;
-      drawContactShape(1.8);
-      rctx.restore();
-    }
-    rctx.save();
-    rctx.shadowBlur=targetLume?9*targetLume:0;
-    rctx.shadowColor=palette[1];
-    rctx.fillStyle=`${palette[0]}${.25+.55*fade})`;
-    rctx.strokeStyle=`${palette[0]}${.45*fade})`;
-    rctx.lineWidth=1.2;
-    drawContactShape(1);
-    rctx.restore();
-  }
-  rctx.fillStyle='rgba(255,255,255,.85)'; rctx.beginPath(); rctx.arc(0,0,2.5,0,Math.PI*2); rctx.fill();
-  rctx.restore();
+function drawRadar(now,state=combatSnapshot){
+  if(!combatHot) return false;
+  return radarDeck.render(now,state);
 }
-
 function drawAttitude(now){
   const canvas=document.getElementById('attitudeCanvas'); if(!canvas) return;
   const ctx=canvas.getContext('2d'), rect=canvas.getBoundingClientRect(), dpr=hudRenderPolicy.computeDpr(rect.width,rect.height,{minDpr:.75,maxDpr:2});
@@ -1110,15 +940,15 @@ function drawAttitude(now){
 
 function setupFeedCanvas(canvas){
   if(!canvas) return null;
-  const rect=canvas.getBoundingClientRect(), dpr=hudRenderPolicy.computeDpr(rect.width,rect.height,{minDpr:.75,maxDpr:2});
-  if(rect.width<2||rect.height<2) return null;
-  if(canvas.width!==Math.floor(rect.width*dpr)||canvas.height!==Math.floor(rect.height*dpr)){
-    canvas.width=Math.floor(rect.width*dpr);canvas.height=Math.floor(rect.height*dpr);
+  const metrics=measureFeedCanvas(canvas), dpr=hudRenderPolicy.computeDpr(metrics.width,metrics.height,{minDpr:.75,maxDpr:2});
+  if(metrics.width<2||metrics.height<2) return null;
+  if(canvas.width!==Math.floor(metrics.width*dpr)||canvas.height!==Math.floor(metrics.height*dpr)){
+    canvas.width=Math.floor(metrics.width*dpr);canvas.height=Math.floor(metrics.height*dpr);
   }
   const ctx=canvas.getContext('2d');
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.clearRect(0,0,rect.width,rect.height);
-  return {ctx,w:rect.width,h:rect.height};
+  ctx.clearRect(0,0,metrics.width,metrics.height);
+  return {ctx,w:metrics.width,h:metrics.height};
 }
 function assetReady(img){
   return !!(img && img.complete && img.naturalWidth && img.naturalHeight);
@@ -1756,10 +1586,6 @@ function drawCapitalOverlay(feed,mode,now,contacts,cannonFx){
   ctx.restore();
 }
 
-function drawShipLiveFeeds(now){
-  updateSignalDeckHud();
-}
-
 /* ===== STARS & WARP ===== */
 const sky=document.getElementById('starfield');
 const blackHoleFrame=document.getElementById('blackhole-gl');
@@ -2039,6 +1865,7 @@ function fireEscortWeapons(tx, ty, isGiant) {
     // same nukeCountdownUntil deadline every other consumer already uses
     // (see the logBattle() read of this same variable in updateTopTelemetry).
     nukeCountdownUntil=Date.now()+3000;
+    emitCombatEvent('weapon:charge',{weapon:'nuke',targetId:'1P/HALLEY',durationMs:3000});
     let wing=escorts.filter(e=>e.type==='f47').slice(0,3);
     while(wing.length<3){
       const idx=wing.length;
@@ -2165,9 +1992,9 @@ function fireEnforcerMain(tx, ty){
   },4500);
 }
 
-function createExplosion(x, y, isGiant, isNuke=false) {
+function createExplosion(x, y, isGiant, isNuke=false,renderLegacyParticles=true) {
   explosions.push({ x, y, age: 0, maxAge: 180, isGiant, particles: [] });
-  const pCount = isGiant ? 320 : 150;
+  const pCount = renderLegacyParticles ? (isGiant ? 320 : 150) : 0;
   for(let i=0; i<pCount; i++) {
     const a = Math.random() * Math.PI * 2, s = rand(1.2, isGiant? 20: 10);
     explosions[explosions.length-1].particles.push({
@@ -2211,7 +2038,7 @@ function showCaptainWatermark(){
   showCaptainWatermark.t=setTimeout(()=>wm.classList.remove('on'),5000);
 }
 
-function updateHalley(dt){
+function updateHalley(dt,renderVisuals=true){
   if(!halley) return;
   if(halley.destroyed) {
     halley.strikeAge = (halley.strikeAge||0) + dt;
@@ -2235,23 +2062,28 @@ function updateHalley(dt){
   const baseScale = rand(classScale[0], classScale[1]);
   const scale = lerp(baseScale*0.4, baseScale, proximity);
   
-  halley.trail.push({x:pos.x,y:pos.y}); if(halley.trail.length > (halley.isGiant? 160:80)) halley.trail.shift();
-  
-  const pCount = halley.isGiant ? 16 : 6;
-  for(let i=0;i<pCount;i++){
-    const sp=(Math.random()*2-1)*.2;
-    halley.particles.push({type:'ion',x:pos.x,y:pos.y,vx:(tdx*Math.cos(sp)-tdy*Math.sin(sp))*rand(3,6)*scale,vy:(tdx*Math.sin(sp)+tdy*Math.cos(sp))*rand(3,6)*scale, r:rand(2,4)*scale,life:1,decay:rand(.01,.02)});
+  if(renderVisuals){
+    halley.trail.push({x:pos.x,y:pos.y}); if(halley.trail.length > (halley.isGiant? 160:80)) halley.trail.shift();
+
+    const pCount = halley.isGiant ? 16 : 6;
+    for(let i=0;i<pCount;i++){
+      const sp=(Math.random()*2-1)*.2;
+      halley.particles.push({type:'ion',x:pos.x,y:pos.y,vx:(tdx*Math.cos(sp)-tdy*Math.sin(sp))*rand(3,6)*scale,vy:(tdx*Math.sin(sp)+tdy*Math.cos(sp))*rand(3,6)*scale, r:rand(2,4)*scale,life:1,decay:rand(.01,.02)});
+    }
+    for(let i=0;i<pCount*1.5;i++){
+      const sp=(Math.random()*2-1)*.4;
+      halley.particles.push({type:'dust',x:pos.x,y:pos.y,vx:(tdx*Math.cos(sp)-tdy*Math.sin(sp))*rand(1.5,3)*scale,vy:(tdx*Math.sin(sp)+tdy*Math.cos(sp))*rand(1.5,3)*scale, r:rand(2,5)*scale,life:1,decay:rand(.008,.015)});
+    }
+
+    for(let i=halley.particles.length-1;i>=0;i--){
+      const p=halley.particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+      if(p.life<=0) halley.particles.splice(i,1);
+    }
+    if(halley.particles.length > (halley.isGiant?1800:1000)) halley.particles.splice(0, halley.particles.length-(halley.isGiant?1800:1000));
+  }else{
+    halley.trail.length=0;
+    halley.particles.length=0;
   }
-  for(let i=0;i<pCount*1.5;i++){
-    const sp=(Math.random()*2-1)*.4, d=(Math.random()*2-1)*.1;
-    halley.particles.push({type:'dust',x:pos.x,y:pos.y,vx:(tdx*Math.cos(sp)-tdy*Math.sin(sp))*rand(1.5,3)*scale,vy:(tdx*Math.sin(sp)+tdy*Math.cos(sp))*rand(1.5,3)*scale, r:rand(2,5)*scale,life:1,decay:rand(.008,.015)});
-  }
-  
-  for(let i=halley.particles.length-1;i>=0;i--){
-    const p=halley.particles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
-    if(p.life<=0) halley.particles.splice(i,1);
-  }
-  if(halley.particles.length > (halley.isGiant?1800:1000)) halley.particles.splice(0, halley.particles.length-(halley.isGiant?1800:1000));
 
   halley.hover = Math.hypot(mx-pos.x,my-pos.y) < (50 + 60*scale);
   halley.collisionRisk = clamp(1 - Math.hypot(pos.x-innerWidth/2,pos.y-innerHeight/2)/(Math.min(innerWidth,innerHeight)*.4), 0, 1);
@@ -2294,7 +2126,7 @@ function updateHalley(dt){
     halley.escortsFired = true;
     const mode = chooseWeapon(halley.isGiant);
     if(mode === 'enforcer') fireEnforcerMain(pos.x, pos.y);
-    else if(mode === 'nuke') fireEscortWeapons(pos.x, pos.y, halley.sizeClass === 'large' || halley.isGiant);
+    else if(mode === 'nuke') fireEscortWeapons(pos.x, pos.y, true);
     else if(mode === 'cannon') firePlayerBarrage(pos.x, pos.y);
     else fireEscortWeapons(pos.x, pos.y, false);
   }
@@ -2447,8 +2279,8 @@ function drawF47(ctx){
   ctx.restore();
 }
 
-function updateEscorts(dt, now) {
-  ectx.save(); ectx.scale(DPR, DPR);
+function updateEscorts(dt, now, renderVisuals=true) {
+  if(renderVisuals){ectx.save(); ectx.scale(DPR, DPR);}
   let authoredFighterDraws=0;
   for (let i = escorts.length - 1; i >= 0; i--) {
       let e = escorts[i];
@@ -2507,6 +2339,12 @@ function updateEscorts(dt, now) {
       let ang = smoothHeadingFromVelocity(e,-Math.PI/2,e.type==='b2' ? .12 : .18);
       if(e.state==='intercept' && e.y>innerHeight*.68) ang=lerpAngle(e.angle??ang,-Math.PI/2,.32);
       e.angle=ang;
+      if(!renderVisuals){
+        e.lTrail.length=0;
+        e.rTrail.length=0;
+        if(e.bayIndex!==undefined && fleetHp[e.type]) fleetHp[e.type][e.bayIndex]=Math.max(18,Math.min(100,e.hp??fleetHp[e.type][e.bayIndex]??100));
+        continue;
+      }
       let cosA = Math.cos(ang + Math.PI/2), sinA = Math.sin(ang + Math.PI/2);
       
       // 记录机翼拉烟轨迹 (Wingtip Vapor Trails)
@@ -2618,65 +2456,69 @@ function updateEscorts(dt, now) {
       ectx.restore();
       if(e.bayIndex!==undefined && fleetHp[e.type]) fleetHp[e.type][e.bayIndex]=Math.max(18,Math.min(100,e.hp??fleetHp[e.type][e.bayIndex]??100));
   }
-  ectx.restore();
+  if(renderVisuals) ectx.restore();
 }
 
-function updateWeapons(dt) {
-  ectx.save(); ectx.scale(DPR, DPR);
+function updateWeapons(dt,renderVisuals=true) {
+  if(renderVisuals){ectx.save(); ectx.scale(DPR, DPR);}
   const weaponNow=Date.now();
   
   for (let i = weapons.length - 1; i >= 0; i--) {
       let w = weapons[i];
       if (w.type === 'laser') {
           w.active -= 1;
-          ectx.globalCompositeOperation = 'lighter';
-          ectx.strokeStyle = `rgba(154,229,255,${w.active/30})`; ectx.lineWidth = 6 + Math.random()*4;
-          ectx.shadowBlur = 20; ectx.shadowColor = '#9ae5ff';
-          ectx.beginPath(); ectx.moveTo(w.ox, w.oy); ectx.lineTo(w.tx, w.ty); ectx.stroke();
-          ectx.lineWidth = 2; ectx.strokeStyle = '#fff'; ectx.stroke();
+          if(renderVisuals){
+            ectx.globalCompositeOperation = 'lighter';
+            ectx.strokeStyle = `rgba(154,229,255,${w.active/30})`; ectx.lineWidth = 6 + Math.random()*4;
+            ectx.shadowBlur = 20; ectx.shadowColor = '#9ae5ff';
+            ectx.beginPath(); ectx.moveTo(w.ox, w.oy); ectx.lineTo(w.tx, w.ty); ectx.stroke();
+            ectx.lineWidth = 2; ectx.strokeStyle = '#fff'; ectx.stroke();
+          }
           if(halley && !halley.destroyed) { halley.hp -= 2; }
           if(w.active <= 0) weapons.splice(i, 1);
       } 
       else if (w.type === 'enforcer') {
           w.active -= 1;
           const impactReady=weaponNow>=w.impactAt;
-          const life = clamp(w.active/128,0,1);
-          const pulse = .94 + Math.sin(w.active*.32)*.035;
-          const width = Math.max(innerWidth/5.2, 230) * pulse;
-          const coreW = width * .18;
-          const dx=w.tx-w.ox, dy=w.ty-w.oy, len=Math.max(1,Math.hypot(dx,dy));
-          const ux=dx/len, uy=dy/len;
-          const span=Math.max(innerWidth,innerHeight)*2.35;
-          const bx=w.ox-ux*260, by=w.oy-uy*260;
-          const ex=w.ox+ux*span, ey=w.oy+uy*span;
-          const beam=ectx.createLinearGradient(bx,by,ex,ey);
-          beam.addColorStop(0,`rgba(255,255,255,${.70*life})`);
-          beam.addColorStop(.20,`rgba(72,230,255,${.78*life})`);
-          beam.addColorStop(.45,`rgba(255,20,78,${.92*life})`);
-          beam.addColorStop(.68,`rgba(196,0,50,${.86*life})`);
-          beam.addColorStop(1,`rgba(255,255,255,${.92*life})`);
-          ectx.globalCompositeOperation='lighter';
-          for(const sx of [innerWidth*.18, innerWidth*.82]){
-            const side=ectx.createRadialGradient(sx,innerHeight-14,0,sx,innerHeight-14,220);
-            side.addColorStop(0,`rgba(255,255,255,${.30*life})`);side.addColorStop(.34,`rgba(255,58,70,${.20*life})`);side.addColorStop(1,'rgba(255,58,70,0)');
-            ectx.fillStyle=side;ectx.beginPath();ectx.arc(sx,innerHeight-14,220,0,Math.PI*2);ectx.fill();
-          }
-          ectx.strokeStyle=`rgba(72,230,255,${.22*life})`;ectx.lineCap='round';ectx.lineWidth=width*1.18;ectx.shadowBlur=76;ectx.shadowColor='#32dfff';
-          ectx.beginPath();ectx.moveTo(bx,by);ectx.lineTo(ex,ey);ectx.stroke();
-          ectx.strokeStyle=beam;ectx.lineWidth=width*.82;ectx.shadowBlur=86;ectx.shadowColor='#ff2e68';
-          ectx.beginPath();ectx.moveTo(bx,by);ectx.lineTo(ex,ey);ectx.stroke();
-          for(let wave=0;wave<5;wave++){
-            ectx.strokeStyle=wave%2?`rgba(100,236,255,${(.14-wave*.018)*life})`:`rgba(255,255,255,${(.18-wave*.024)*life})`;
-            ectx.lineWidth=width*(.72+wave*.14);
-            ectx.setLineDash([28+wave*7,20+wave*4]);
-            ectx.lineDashOffset=-w.active*(7+wave*2);
+          if(renderVisuals){
+            const life = clamp(w.active/128,0,1);
+            const pulse = .94 + Math.sin(w.active*.32)*.035;
+            const width = Math.max(innerWidth/5.2, 230) * pulse;
+            const coreW = width * .18;
+            const dx=w.tx-w.ox, dy=w.ty-w.oy, len=Math.max(1,Math.hypot(dx,dy));
+            const ux=dx/len, uy=dy/len;
+            const span=Math.max(innerWidth,innerHeight)*2.35;
+            const bx=w.ox-ux*260, by=w.oy-uy*260;
+            const ex=w.ox+ux*span, ey=w.oy+uy*span;
+            const beam=ectx.createLinearGradient(bx,by,ex,ey);
+            beam.addColorStop(0,`rgba(255,255,255,${.70*life})`);
+            beam.addColorStop(.20,`rgba(72,230,255,${.78*life})`);
+            beam.addColorStop(.45,`rgba(255,20,78,${.92*life})`);
+            beam.addColorStop(.68,`rgba(196,0,50,${.86*life})`);
+            beam.addColorStop(1,`rgba(255,255,255,${.92*life})`);
+            ectx.globalCompositeOperation='lighter';
+            for(const sx of [innerWidth*.18, innerWidth*.82]){
+              const side=ectx.createRadialGradient(sx,innerHeight-14,0,sx,innerHeight-14,220);
+              side.addColorStop(0,`rgba(255,255,255,${.30*life})`);side.addColorStop(.34,`rgba(255,58,70,${.20*life})`);side.addColorStop(1,'rgba(255,58,70,0)');
+              ectx.fillStyle=side;ectx.beginPath();ectx.arc(sx,innerHeight-14,220,0,Math.PI*2);ectx.fill();
+            }
+            ectx.strokeStyle=`rgba(72,230,255,${.22*life})`;ectx.lineCap='round';ectx.lineWidth=width*1.18;ectx.shadowBlur=76;ectx.shadowColor='#32dfff';
             ectx.beginPath();ectx.moveTo(bx,by);ectx.lineTo(ex,ey);ectx.stroke();
-            ectx.setLineDash([]);
-          }
-          ectx.strokeStyle=`rgba(255,18,64,${.96*life})`;ectx.lineWidth=coreW;ectx.beginPath();ectx.moveTo(bx,by);ectx.lineTo(ex,ey);ectx.stroke();
-          for(let p=0;p<28;p++){
-            const t=(p/28 + (w.active%20)/20)%1, x=lerp(bx,ex,t), y=lerp(by,ey,t);
-            ectx.fillStyle=`rgba(255,236,236,${.18+.36*life})`;ectx.beginPath();ectx.arc(x,y,2.2+Math.sin(w.active*.2+p)*1.2,0,Math.PI*2);ectx.fill();
+            ectx.strokeStyle=beam;ectx.lineWidth=width*.82;ectx.shadowBlur=86;ectx.shadowColor='#ff2e68';
+            ectx.beginPath();ectx.moveTo(bx,by);ectx.lineTo(ex,ey);ectx.stroke();
+            for(let wave=0;wave<5;wave++){
+              ectx.strokeStyle=wave%2?`rgba(100,236,255,${(.14-wave*.018)*life})`:`rgba(255,255,255,${(.18-wave*.024)*life})`;
+              ectx.lineWidth=width*(.72+wave*.14);
+              ectx.setLineDash([28+wave*7,20+wave*4]);
+              ectx.lineDashOffset=-w.active*(7+wave*2);
+              ectx.beginPath();ectx.moveTo(bx,by);ectx.lineTo(ex,ey);ectx.stroke();
+              ectx.setLineDash([]);
+            }
+            ectx.strokeStyle=`rgba(255,18,64,${.96*life})`;ectx.lineWidth=coreW;ectx.beginPath();ectx.moveTo(bx,by);ectx.lineTo(ex,ey);ectx.stroke();
+            for(let p=0;p<28;p++){
+              const t=(p/28 + (w.active%20)/20)%1, x=lerp(bx,ex,t), y=lerp(by,ey,t);
+              ectx.fillStyle=`rgba(255,236,236,${.18+.36*life})`;ectx.beginPath();ectx.arc(x,y,2.2+Math.sin(w.active*.2+p)*1.2,0,Math.PI*2);ectx.fill();
+            }
           }
           if(impactReady && halley && !halley.destroyed) {
             halley.hp -= 9.5; halley.mainCannoned=true;
@@ -2690,29 +2532,36 @@ function updateWeapons(dt) {
       }
       else if (w.type === 'phalanx') {
           w.x += w.vx; w.y += w.vy; w.life -= 1;
-          // fine tracer rounds (SC style): short bright dash, tiny head, no fat bloom
-          const tailX=w.x-w.vx*((w.burst||6.2)*.45);
-          const tailY=w.y-w.vy*((w.burst||6.2)*.45);
-          ectx.globalCompositeOperation='lighter';
-          ectx.save();
-          const warmRound=(w.side+w.life)%4!==0;
-          ectx.strokeStyle=warmRound?'rgba(255,226,166,.88)':'rgba(140,232,255,.78)';
-          ectx.lineWidth=.9;
-          ectx.lineCap='round';
-          ectx.beginPath();
-          ectx.moveTo(tailX,tailY);
-          ectx.lineTo(w.x,w.y);
-          ectx.stroke();
-          ectx.fillStyle='rgba(255,250,235,.85)';
-          ectx.beginPath();ectx.arc(w.x,w.y,1.1,0,Math.PI*2);ectx.fill();
-          ectx.restore();
+          if(renderVisuals){
+            // fine tracer rounds (SC style): short bright dash, tiny head, no fat bloom
+            const tailX=w.x-w.vx*((w.burst||6.2)*.45);
+            const tailY=w.y-w.vy*((w.burst||6.2)*.45);
+            ectx.globalCompositeOperation='lighter';
+            ectx.save();
+            const warmRound=(w.side+w.life)%4!==0;
+            ectx.strokeStyle=warmRound?'rgba(255,226,166,.88)':'rgba(140,232,255,.78)';
+            ectx.lineWidth=.9;
+            ectx.lineCap='round';
+            ectx.beginPath();
+            ectx.moveTo(tailX,tailY);
+            ectx.lineTo(w.x,w.y);
+            ectx.stroke();
+            ectx.fillStyle='rgba(255,250,235,.85)';
+            ectx.beginPath();ectx.arc(w.x,w.y,1.1,0,Math.PI*2);ectx.fill();
+            ectx.restore();
+          }
           if(w.hit && halley && !halley.destroyed && Math.hypot(w.x - halley.curX, w.y - halley.curY) < 62) {
             halley.hp -= 1.65;
             if(!halley.cannonImpact){
               halley.cannonImpact=true;
               emitCombatEvent('weapon:impact',{weapon:'cannon',targetId:'1P/HALLEY'});
             }
-            explosions.push({x:w.x,y:w.y,age:0,maxAge:24,isGiant:false,particles:Array.from({length:4},()=>{const a=Math.random()*Math.PI*2,s=rand(.5,1.8);return{x:w.x,y:w.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,decay:rand(.06,.10),size:rand(.5,1.2),col:'#ffd68a'};})});
+            explosions.push({
+              x:w.x,y:w.y,age:0,maxAge:24,isGiant:false,
+              particles:renderVisuals
+                ? Array.from({length:4},()=>{const a=Math.random()*Math.PI*2,s=rand(.5,1.8);return{x:w.x,y:w.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,decay:rand(.06,.10),size:rand(.5,1.2),col:'#ffd68a'};})
+                : [],
+            });
             weapons.splice(i,1); continue;
           }
           if(w.life<=0 || w.x<0 || w.x>innerWidth || w.y<0 || w.y>innerHeight) weapons.splice(i,1);
@@ -2720,15 +2569,17 @@ function updateWeapons(dt) {
       }
       else if (w.type === 'cannonRound') {
           w.x += w.vx; w.y += w.vy; w.life -= 1;
-          ectx.globalCompositeOperation='lighter';
-          ectx.fillStyle='rgba(154,229,255,.9)'; ectx.beginPath(); ectx.arc(w.x,w.y,2.2,0,Math.PI*2); ectx.fill();
-          ectx.strokeStyle='rgba(154,229,255,.42)'; ectx.lineWidth=1.2; ectx.beginPath(); ectx.moveTo(w.x-w.vx*2,w.y-w.vy*2); ectx.lineTo(w.x,w.y); ectx.stroke();
+          if(renderVisuals){
+            ectx.globalCompositeOperation='lighter';
+            ectx.fillStyle='rgba(154,229,255,.9)'; ectx.beginPath(); ectx.arc(w.x,w.y,2.2,0,Math.PI*2); ectx.fill();
+            ectx.strokeStyle='rgba(154,229,255,.42)'; ectx.lineWidth=1.2; ectx.beginPath(); ectx.moveTo(w.x-w.vx*2,w.y-w.vy*2); ectx.lineTo(w.x,w.y); ectx.stroke();
+          }
           if (halley && !halley.destroyed && Math.hypot(w.x - halley.curX, w.y - halley.curY) < 70) { halley.hp -= 2.2; weapons.splice(i,1); continue; }
           if(w.life<=0) weapons.splice(i,1);
       }
       else if (w.type === 'kinetic') {
           w.x += w.vx; w.y += w.vy;
-          ectx.fillStyle = '#ffdfa8'; ectx.beginPath(); ectx.arc(w.x, w.y, 2.5, 0, Math.PI*2); ectx.fill();
+          if(renderVisuals){ectx.fillStyle = '#ffdfa8'; ectx.beginPath(); ectx.arc(w.x, w.y, 2.5, 0, Math.PI*2); ectx.fill();}
           if (halley && !halley.destroyed && Math.hypot(w.x - halley.curX, w.y - halley.curY) < 60) {
               halley.hp -= 1.5; weapons.splice(i, 1); continue;
           }
@@ -2755,9 +2606,11 @@ function updateWeapons(dt) {
           w.x += w.vx; w.y += w.vy;
           w.x=clamp(w.x,24,innerWidth-24); w.y=clamp(w.y,24,innerHeight-24);
           w.trail = w.trail || [];
-          w.trail.push({x:w.x,y:w.y}); if(w.trail.length > (w.type==='nuke'?60:42)) w.trail.shift();
-          
-          if(w.type === 'missile') {
+          if(renderVisuals){
+            w.trail.push({x:w.x,y:w.y}); if(w.trail.length > (w.type==='nuke'?60:42)) w.trail.shift();
+          }else w.trail.length=0;
+
+          if(renderVisuals && w.type === 'missile') {
              ectx.globalCompositeOperation = 'lighter';
              if(w.stage !== 'drop'){
                w.trail.forEach((t,idx)=>{const a=idx/w.trail.length;ectx.fillStyle=`rgba(255,112,72,${a*.55})`;ectx.beginPath();ectx.arc(t.x,t.y,1+a*4,0,Math.PI*2);ectx.fill();});
@@ -2770,7 +2623,7 @@ function updateWeapons(dt) {
              ectx.rotate(Math.atan2(w.vy,w.vx));
              drawAIM120Model(ectx,w.stage==='drop'?30:38,w.stage);
              ectx.restore();
-          } else {
+          } else if(renderVisuals) {
              ectx.globalCompositeOperation = 'lighter';
              if(w.stage !== 'drop') w.trail.forEach((t,idx)=>{const a=idx/w.trail.length;ectx.fillStyle=`rgba(255,80,60,${a*.34})`;ectx.beginPath();ectx.arc(t.x,t.y,3+a*8,0,Math.PI*2);ectx.fill();});
              ectx.fillStyle = '#fff'; ectx.shadowBlur=28; ectx.shadowColor='#ff5050';
@@ -2794,14 +2647,14 @@ function updateWeapons(dt) {
           }
           if(w.stage==='locked' && ((w.minDist < (w.type==='nuke'?180:125) && missDist > w.minDist + 90) || w.life<=0 || !halley || halley.destroyed)){
               if(w.type==='missile' && pilotView.weapon===w) setPilotView('mosaic',null,1200);
-              createExplosion(w.x,w.y,false,w.type==='nuke');
+              createExplosion(w.x,w.y,false,w.type==='nuke',renderVisuals);
               weapons.splice(i, 1); continue;
           }
       }
       
       if(w.type !== 'laser' && (w.y < -100 || w.y > innerHeight+200 || w.x < -100 || w.x > innerWidth + 100)) weapons.splice(i, 1);
   }
-  ectx.restore();
+  if(renderVisuals) ectx.restore();
 
   // Halley Destruction trigger
   if(halley && !halley.destroyed && halley.hp <= 0) {
@@ -2818,16 +2671,20 @@ function updateWeapons(dt) {
         weaponWarning.classList.add('on');
         setTimeout(()=>weaponWarning.classList.remove('on'), 1800);
       }
-      createExplosion(halley.curX, halley.curY, halley.isGiant, !!halley.nuked);
+      createExplosion(halley.curX, halley.curY, halley.isGiant, !!halley.nuked,renderVisuals);
   }
 }
 
-function drawExplosions(dt) {
-  ectx.save(); ectx.scale(DPR, DPR); ectx.globalCompositeOperation = 'lighter';
+function drawExplosions(dt,renderVisuals=true) {
+  if(renderVisuals){ectx.save(); ectx.scale(DPR, DPR); ectx.globalCompositeOperation = 'lighter';}
   for(let i=explosions.length-1; i>=0; i--) {
     let ex = explosions[i]; ex.age += 1;
     let progress = ex.age / ex.maxAge;
     if(progress >= 1) { explosions.splice(i,1); continue; }
+    if(!renderVisuals){
+      ex.particles.length=0;
+      continue;
+    }
     
     // 高能冲击波 Shockwaves
     ectx.strokeStyle = ex.isGiant ? `rgba(255,150,100,${1-progress})` : `rgba(154,229,255,${1-progress})`;
@@ -2848,7 +2705,7 @@ function drawExplosions(dt) {
        }
     });
   }
-  ectx.restore();
+  if(renderVisuals) ectx.restore();
 }
 function pilotSubjectCraft(){
   if(pilotView.craft && escorts.includes(pilotView.craft)) return pilotView.craft;
@@ -3397,12 +3254,15 @@ function drawMosaicInterference(ctx,w,h){
   ctx.restore();
 }
 
+let lastPilotOverlayAt=-Infinity;
+let lastPilotOverlayKey='';
 function drawPilotFeed(now,state=combatSnapshot){
   const pilotCanvas=document.getElementById('cicPilotFeed');
   if(!commandFeedVisible(pilotCanvas)) return;
-  const feed=setupFeedCanvas(pilotCanvas);
-  if(!feed) return;
-  const {ctx,w,h}=feed, craft=pilotSubjectCraft();
+  const metrics=measureFeedCanvas(pilotCanvas);
+  const w=metrics.width,h=metrics.height;
+  if(w<2||h<2) return;
+  const craft=pilotSubjectCraft();
   const nowMs=Date.now();
   if(pilotView.until<nowMs && pilotView.mode!=='mosaic') pilotView.mode='standby';
   let mode=pilotModeFor(craft);
@@ -3415,45 +3275,62 @@ function drawPilotFeed(now,state=combatSnapshot){
   // ?combatview=2d still restores the whole legacy 2D path in one flag.
   if(combatViewTopdown()){
     const td=getTopdownCV();
-    const pendingDiagnostics=td && typeof td.getDiagnostics==='function' ? td.getDiagnostics() : null;
-    const activeFlightMode=pendingDiagnostics?.flightKind||null;
+    const pendingPresentation=readTopdownPresentation(td)
+      || (td && typeof td.getDiagnostics==='function' ? td.getDiagnostics() : null);
+    const activeFlightMode=pendingPresentation?.flightKind||null;
     const sceneMode=activeFlightMode||mode;
     const sceneOwnsFeed=mode==='combat'||mode==='standby'||mode==='launch'||mode==='landing'||mode==='ciws'||mode==='offline'||mode==='nukeAuth'||mode==='nemp'||mode==='mainGun'||mode==='mosaic'||Boolean(activeFlightMode);
     if(td&&td.available?.()&&sceneOwnsFeed){
       td.resize(w,h);
       td.renderOnce(now,state);
-      let diagnostics=null;
-      if(typeof td.getDiagnostics==='function'){
-        diagnostics=td.getDiagnostics();
-        pilotCanvas.dataset.shipModel=diagnostics.shipModelStatus;
-        pilotCanvas.dataset.fighterModel=diagnostics.fighterModelStatus;
-        pilotCanvas.dataset.renderQuality=diagnostics.qualityTier;
-        pilotCanvas.dataset.dataSaver=String(Boolean(diagnostics.authoredAssets?.dataSaver));
-        pilotCanvas.dataset.cameraShot=diagnostics.cameraShot;
-        pilotCanvas.dataset.flightPhase=diagnostics.flightPhase||'none';
-        pilotCanvas.dataset.activeEscorts=String(diagnostics.activeEscortCount||0);
-        pilotCanvas.dataset.targetVisible=String(Boolean(diagnostics.targetScreen?.visible));
-        pilotCanvas.dataset.cameraManual=String(Boolean(diagnostics.cameraManual));
+      const presentation=readTopdownPresentation(td);
+      const diagnostics=sampleTopdownDiagnostics(td,now);
+      const picture=presentation||diagnostics;
+      const threePresented=Boolean(picture?.hasPresented);
+      setThreePilotScene(threePresented);
+      if(picture){
+        setPilotDataset(pilotCanvas,'shipModel',picture.shipModelStatus);
+        setPilotDataset(pilotCanvas,'fighterModel',picture.fighterModelStatus);
+        setPilotDataset(pilotCanvas,'renderQuality',picture.qualityTier);
+        setPilotDataset(pilotCanvas,'dataSaver',Boolean(diagnostics?.authoredAssets?.dataSaver));
+        setPilotDataset(pilotCanvas,'cameraShot',picture.cameraShot);
+        setPilotDataset(pilotCanvas,'flightPhase',picture.flightPhase||'none');
+        setPilotDataset(pilotCanvas,'activeEscorts',diagnostics?.activeEscortCount||0);
+        setPilotDataset(pilotCanvas,'targetVisible',Boolean(picture.targetScreen?.visible));
+        setPilotDataset(pilotCanvas,'cameraManual',Boolean(diagnostics?.cameraManual));
       }
-      if(diagnostics?.shipModelStatus==='venator-ready'){
+      if(picture?.shipModelStatus==='venator-ready'&&!topdownSettledPosterDismissed){
+        topdownSettledPosterDismissed=true;
         homeFlagshipNarrative?.dismissSettledPoster?.('venator-command-feed-ready');
       }
-      ctx.drawImage(topdownCanvas,0,0,w,h);
-      const hmdLabel=combatSceneLabel(diagnostics,sceneMode);
+      const hmdLabel=combatSceneLabel(picture,sceneMode);
       const cameraLabel=document.getElementById('cicCameraLabel');
-      if(cameraLabel) cameraLabel.textContent=hmdLabel;
-      if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
-      else {
-        // The Three.js sensor picture is already the background. Drawing the
-        // legacy HMD helper here used to paint a second starfield over it,
-        // reducing the ship to a drifting translucent silhouette. Only the
-        // transparent symbology layer belongs in this branch.
-        combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,hmdLabel,sceneMode,diagnostics?.targetScreen);
+      if(cameraLabel&&cameraLabel.textContent!==hmdLabel) cameraLabel.textContent=hmdLabel;
+      const overlayKey=`${sceneMode}|${picture?.cameraShot||''}|${threePresented?'3d':'2d'}`;
+      if(overlayKey!==lastPilotOverlayKey||now-lastPilotOverlayAt>=1000/30){
+        const feed=setupFeedCanvas(pilotCanvas);
+        if(!feed) return;
+        const ctx=feed.ctx;
+        lastPilotOverlayAt=now;
+        lastPilotOverlayKey=overlayKey;
+        if(!threePresented) drawPilotSpace(ctx,w,h,now,1.05);
+        if(combatViewScPanel()){ drawCombatHudSC(ctx,w,h,now,combatHudState(mode)); }
+        else {
+          // The Three.js sensor picture is already the background. Drawing the
+          // legacy HMD helper here used to paint a second starfield over it,
+          // reducing the ship to a drifting translucent silhouette. Only the
+          // transparent symbology layer belongs in this branch.
+          combatHmdV3.drawCleanCombatHmd(ctx,w,h,now,hmdLabel,sceneMode,picture?.targetScreen);
+        }
+        if(mode==='mosaic') drawMosaicInterference(ctx,w,h);
       }
-      if(mode==='mosaic') drawMosaicInterference(ctx,w,h);
       return;
     }
   }
+  setThreePilotScene(false);
+  const feed=setupFeedCanvas(pilotCanvas);
+  if(!feed) return;
+  const {ctx}=feed;
   const elapsed=clamp((nowMs-(pilotView.started||nowMs))/Math.max(1,(pilotView.until||nowMs+1)-(pilotView.started||nowMs)),0,1);
   const shake=(
     mode==='launch' ? 4.8*(1-elapsed)+Math.sin(now/42)*1.1 :
@@ -3473,10 +3350,10 @@ function drawPilotFeed(now,state=combatSnapshot){
     // topdown branch above.
     const td3d=(combatViewTopdown() && combatCamDirector()) ? getTopdownCV() : null;
     if(td3d?.available?.()){
+      setThreePilotScene(true);
       td3d.resize(w,h);
       td3d.renderOnce(now,state);
-      ctx.drawImage(topdownCanvas,0,0,w,h);
-      const diagnostics=typeof td3d.getDiagnostics==='function'?td3d.getDiagnostics():null;
+      const diagnostics=readTopdownPresentation(td3d)||sampleTopdownDiagnostics(td3d,now);
       const phase=pilotView.weapon.timeline ? activePhase(pilotView.weapon.timeline, nowMs) : null;
       const label=currentLang==='zh'
         ? (phase==='ignite'?'导弹点火':phase==='terminal'?'终末追踪':phase==='impact'?'即将命中':'导弹投放')
@@ -3545,7 +3422,13 @@ function drawPilotFeed(now,state=combatSnapshot){
 
 /* ===== MAIN LOOP ===== */
 let lastT=performance.now();
-let mainLoopRunning=false, mainLoopRaf=0, mainRenderSurface=null, lastPresentedAt=0;
+let mainLoopRunning=false, mainLoopRaf=0, mainRenderSurface=null;
+const homeFramePacer=createFramePacer();
+let combatFrameProbe=/[?&]combatPerfProbe=1\b/.test(location.search)
+  ? {startedAt:0,lastRafAt:0,lastPresentedAt:0,rafSamples:[],presentedSamples:[],steadyPresentedSamples:[],longTasks:[],longFrames:[]}
+  : null;
+let combatLongTaskObserver=null;
+let combatLoafObserver=null;
 const heroSection=document.querySelector('.hero');
 const stardriveSection=document.querySelector('.stardrive');
 let heroSectionVisible=true,stardriveSectionVisible=false;
@@ -3568,14 +3451,147 @@ function masterLoopTargetFps(){
   return heroSectionVisible||stardriveSectionVisible?30:15;
 }
 
+// Opt-in acceptance probe for real-device CIC testing. Raw rAF cadence and
+// actual post-throttle presentation cadence are kept separate so a 120Hz
+// display cannot make a 40Hz/60Hz pacing bug look healthy.
+function resetCombatFrameProbe(){
+  if(!combatFrameProbe) return;
+  combatFrameProbe.startedAt=0;
+  combatFrameProbe.lastRafAt=0;
+  combatFrameProbe.lastPresentedAt=0;
+  combatFrameProbe.rafSamples.length=0;
+  combatFrameProbe.presentedSamples.length=0;
+  combatFrameProbe.steadyPresentedSamples.length=0;
+  combatFrameProbe.longTasks.length=0;
+  combatFrameProbe.longFrames.length=0;
+  combatLongTaskObserver?.disconnect();
+  combatLoafObserver?.disconnect();
+  combatLongTaskObserver=null;
+  combatLoafObserver=null;
+}
+function observeCombatLongTasks(){
+  if(combatLongTaskObserver||typeof PerformanceObserver!=='function') return;
+  if(!PerformanceObserver.supportedEntryTypes?.includes('longtask')) return;
+  try{
+    combatLongTaskObserver=new PerformanceObserver((list)=>{
+      if(!combatFrameProbe?.startedAt) return;
+      for(const entry of list.getEntries()){
+        if(entry.startTime>=combatFrameProbe.startedAt){
+          combatFrameProbe.longTasks.push({startTime:entry.startTime,duration:entry.duration});
+        }
+      }
+    });
+    combatLongTaskObserver.observe({type:'longtask',buffered:false});
+  }catch(error){combatLongTaskObserver=null;}
+  if(!combatLoafObserver&&PerformanceObserver.supportedEntryTypes?.includes('long-animation-frame')){
+    try{
+      combatLoafObserver=new PerformanceObserver((list)=>{
+        if(!combatFrameProbe?.startedAt) return;
+        for(const entry of list.getEntries()){
+          if(entry.startTime<combatFrameProbe.startedAt) continue;
+          combatFrameProbe.longFrames.push({
+            startTime:entry.startTime,
+            duration:entry.duration,
+            blockingDuration:entry.blockingDuration||0,
+            renderStart:entry.renderStart||0,
+            styleAndLayoutStart:entry.styleAndLayoutStart||0,
+            scripts:(entry.scripts||[]).map((script)=>({
+              duration:script.duration||0,
+              forcedStyleAndLayoutDuration:script.forcedStyleAndLayoutDuration||0,
+              invoker:script.invoker||'',
+              sourceURL:script.sourceURL?.split('/').pop()||'',
+            })),
+          });
+        }
+      });
+      combatLoafObserver.observe({type:'long-animation-frame',buffered:false});
+    }catch(error){combatLoafObserver=null;}
+  }
+}
+function recordCombatRafInterval(now){
+  if(!combatFrameProbe) return;
+  if(cruiseModeActive()||document.visibilityState!=='visible'){
+    resetCombatFrameProbe();
+    return;
+  }
+  if(!combatFrameProbe.startedAt){
+    combatFrameProbe.startedAt=now;
+    combatFrameProbe.lastRafAt=now;
+    observeCombatLongTasks();
+    return;
+  }
+  const interval=now-combatFrameProbe.lastRafAt;
+  combatFrameProbe.lastRafAt=now;
+  if(interval>0) combatFrameProbe.rafSamples.push(interval);
+}
+function summarizeFrameIntervals(values){
+  const samples=values.slice().sort((a,b)=>a-b);
+  const percentile=(p)=>samples[Math.min(samples.length-1,Math.floor((samples.length-1)*p))]||0;
+  return {
+    samples:samples.length,
+    p50Ms:percentile(.5),
+    p95Ms:percentile(.95),
+    p99Ms:percentile(.99),
+    maxMs:samples[samples.length-1]||0,
+    over20Ms:samples.filter(value=>value>20).length,
+    over50Ms:samples.filter(value=>value>50).length,
+  };
+}
+function recordCombatPresentedInterval(now){
+  if(!combatFrameProbe?.startedAt) return;
+  if(combatFrameProbe.lastPresentedAt){
+    const interval=now-combatFrameProbe.lastPresentedAt;
+    if(interval>0){
+      combatFrameProbe.presentedSamples.push(interval);
+      const fighterSwapAt=Number(document.documentElement.dataset.cicFighterSwapAt)||0;
+      if(fighterSwapAt&&now-fighterSwapAt>=250) combatFrameProbe.steadyPresentedSamples.push(interval);
+    }
+  }
+  combatFrameProbe.lastPresentedAt=now;
+  if(now-combatFrameProbe.startedAt<10000) return;
+  const raw=summarizeFrameIntervals(combatFrameProbe.rafSamples);
+  const presented=summarizeFrameIntervals(combatFrameProbe.presentedSamples);
+  const steady=summarizeFrameIntervals(combatFrameProbe.steadyPresentedSamples);
+  const longTasks=combatFrameProbe.longTasks.slice();
+  const longFrames=combatFrameProbe.longFrames.slice();
+  const assetResources=performance.getEntriesByType('resource')
+    .filter((entry)=>entry.startTime>=combatFrameProbe.startedAt
+      && (/\/assets\/combat\/models\//.test(entry.name)||/\/vendor\/basis\//.test(entry.name)))
+    .map((entry)=>({
+      name:entry.name.split('/').pop(),
+      durationMs:entry.duration,
+      transferSize:entry.transferSize,
+      decodedBodySize:entry.decodedBodySize,
+    }));
+  document.documentElement.dataset.cicRafResult=JSON.stringify(raw);
+  document.documentElement.dataset.cicPresentedResult=JSON.stringify({
+    ...presented,
+    steady,
+    longTasks:{
+      count:longTasks.length,
+      totalMs:longTasks.reduce((sum,entry)=>sum+entry.duration,0),
+      maxMs:Math.max(0,...longTasks.map((entry)=>entry.duration)),
+    },
+    longTaskEntries:longTasks,
+    longFrameEntries:longFrames,
+    assetResources,
+  });
+  combatLongTaskObserver?.disconnect();
+  combatLoafObserver?.disconnect();
+  combatLongTaskObserver=null;
+  combatLoafObserver=null;
+  combatFrameProbe=null;
+}
+
 function frame(now){
   if(!mainLoopRunning) return;
+  recordCombatRafInterval(now);
   const targetFps=masterLoopTargetFps();
-  if(lastPresentedAt&&now-lastPresentedAt<1000/targetFps){
+  if(!homeFramePacer.shouldPresent(now,targetFps)){
     mainLoopRaf=requestAnimationFrame(frame);
     return;
   }
-  lastPresentedAt=now;
+  recordCombatPresentedInterval(now);
   const frameStartedAt=performance.now();
   try {
     const dt=Math.min(32,now-lastT);lastT=now;
@@ -3590,24 +3606,24 @@ function frame(now){
     backgroundScene.draw(now);
     
     const cruise=cruiseModeActive();
-    if(!cruise||eventLayerDirty||nukeFlash>0){
+    const legacyCombatVisuals=!combatViewTopdown();
+    if((!cruise&&legacyCombatVisuals)||eventLayerDirty||nukeFlash>0){
       ectx.clearRect(0,0,evtCanvas.width,evtCanvas.height);
-      eventLayerDirty=!cruise||nukeFlash>0;
+      eventLayerDirty=(!cruise&&legacyCombatVisuals)||nukeFlash>0;
     }
     document.body.classList.toggle('combat-mode', !cruise && !!halley && !halley.destroyed);
     if(!cruise){
       // Cruise is the reading/eclipsing state. Keeping Halley on the global
       // event canvas here used to spray combat bokeh across Alphard Forge even
       // though the HUD was hidden, making the corona look low-resolution.
-      updateHalley(dt);
-      drawHalley();
-      updateEscorts(dt, now);
-      updateWeapons(dt);
+      updateHalley(dt,legacyCombatVisuals);
+      if(legacyCombatVisuals) drawHalley();
+      updateEscorts(dt,now,legacyCombatVisuals);
+      updateWeapons(dt,legacyCombatVisuals);
       const state=syncCombatState(Date.now());
-      drawExplosions(dt);
-      drawRadar(state);
+      drawExplosions(dt,legacyCombatVisuals);
+      drawRadar(now,state);
       drawAttitude(now);
-      drawShipLiveFeeds(now);
       drawPilotFeed(now,state);
       updateCombatModule(state);
       updateTopTelemetry(state);
@@ -3635,7 +3651,7 @@ function startMainLoop(){
   if(mainLoopRunning) return;
   mainLoopRunning=true;
   lastT=performance.now();
-  lastPresentedAt=0;
+  homeFramePacer.reset();
   mainLoopRaf=requestAnimationFrame(frame);
 }
 

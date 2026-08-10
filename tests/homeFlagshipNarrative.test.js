@@ -98,7 +98,7 @@ describe('home flagship micro-narrative', () => {
     expect(source.match(/gpuNarrativePromise = null/g)?.length).toBeGreaterThanOrEqual(3);
     expect(source).toContain('getDiagnostics()');
     expect(experience).toContain('homeFlagshipNarrative?.setEnabled(toHudOff)');
-    expect(experience).toContain("diagnostics?.shipModelStatus==='venator-ready'");
+    expect(experience).toContain("picture?.shipModelStatus==='venator-ready'");
     expect(experience).toContain("dismissSettledPoster?.('venator-command-feed-ready')");
     expect(experience).toContain("classList.contains('home-combat-models-enabled')");
     expect(main).toContain("const HOME_COMBAT_MODELS_ENABLED = HERO_CRAFT_MODE !== 'off'");

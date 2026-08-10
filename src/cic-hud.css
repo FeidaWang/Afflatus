@@ -1549,19 +1549,10 @@ body:not(.hud-off) .route-arrows {
   body.hud-panel-focus #combatHud .cic-intel.is-focused .cic-deck-toggle { display: none; }
 
   .cic-cruise-strip {
-    right: auto;
-    bottom: max(6px, env(safe-area-inset-bottom));
-    left: 50%;
-    width: calc(100vw - 12px);
-    min-height: 44px;
-    grid-template-columns: minmax(118px, 1.35fr) repeat(2, minmax(54px, .55fr)) minmax(94px, 1fr);
+    display: none;
   }
 
-  .cic-cruise-strip > span { padding: 6px 7px; }
-  .cic-cruise-strip > span:nth-child(3) { display: none; }
-  .cic-cruise-strip i { font-size: 7px; }
-  .cic-cruise-strip b { font-size: 8px; }
-  body.hud-off main { padding-bottom: 76px; }
+  body.hud-off main { padding-bottom: 0; }
 }
 
 @media (max-width: 520px) {
