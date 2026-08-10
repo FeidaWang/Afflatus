@@ -12,9 +12,13 @@ describe('home presentation contract', () => {
   it('reveals financial numbers and energy tracks at scroll entry', () => {
     expect(entry).toContain('initHomeScrollTelemetry()');
     expect(telemetry).toContain("root: '#stardrive'");
-    expect(telemetry).toContain("root: '#fy2026Performance'");
+    expect(telemetry).toContain("root: '#fy2026Performance .cycle-core'");
+    expect(telemetry).toContain("root: '#fy2026Performance .velocity-field'");
+    expect(telemetry).toContain("root: '#fy2026Performance .flight-paths'");
     expect(telemetry).toContain('new IntersectionObserver');
     expect(telemetry).toContain("group.classList.add('telemetry-live')");
+    expect(telemetry).not.toContain('animateCountUp');
+    expect(telemetry).not.toContain('element.textContent =');
     expect(performanceStyles).toContain('.telemetry-pending:not(.telemetry-live) .benchmark-row > .vector-rail::before');
     expect(performanceStyles).toContain('.telemetry-live .route-track > i::after');
   });

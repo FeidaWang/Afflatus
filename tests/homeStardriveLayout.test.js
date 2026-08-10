@@ -12,6 +12,8 @@ describe('home stardrive layout contracts', () => {
     expect(styles).not.toMatch(/@keyframes\s+stardrivePin/);
     expect(styles).not.toMatch(/translateY\(100svh\)/);
     expect(styles).toMatch(/\.stardrive\.has-motion-shell\{height:200svh/);
+    expect(styles).toMatch(/@media \(max-width:640px\)\{[\s\S]*?\.stardrive\.has-motion-shell\{height:125svh/);
+    expect(styles).not.toMatch(/\.stardrive\.is-live\{height:/);
     expect(styles).toMatch(/\.stardrive\.has-motion-shell \.stardrive-stage\{position:sticky/);
     expect(styles).not.toMatch(/\.stardrive\.is-live \.stardrive-stage\.pin-fixed\{position:fixed/);
     expect(entry).toContain("stardrive.classList.add('has-motion-shell')");

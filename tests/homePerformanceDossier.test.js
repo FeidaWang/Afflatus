@@ -48,6 +48,14 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html.match(/41\.4%/g)).toHaveLength(1);
   });
 
+  it('keeps benchmark multipliers on one intrinsic-width line', () => {
+    expect(html).toContain('<strong>2.94×</strong>');
+    expect(html).toContain('<strong>4.40×</strong>');
+    expect(performanceCss).toMatch(/grid-template-columns:[^;]*minmax\(max-content, \.24fr\)/);
+    expect(performanceCss).toMatch(/\.velocity-vector > strong\s*\{[^}]*white-space:\s*nowrap;/s);
+    expect(performanceCss).toMatch(/\.velocity-vector > strong\s*\{[^}]*overflow-wrap:\s*normal;/s);
+  });
+
   it('removes every lower-bound value from visible homepage markup', () => {
     for (const lowerBound of ['37.5', '0.78', '−18', '1.65']) {
       expect(html).not.toContain(lowerBound);

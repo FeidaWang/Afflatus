@@ -6962,7 +6962,7 @@
   .stardrive .hero-metric .strip-label{color:#bfe2ff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
 
   @media (max-width:640px){
-    .stardrive.is-live{height:170svh}
+    .stardrive.has-motion-shell{height:125svh}
     .stardrive .strip{left:20px;right:20px;bottom:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
     .stardrive .strip-cell{padding:12px 14px}
     .stardrive .strip-value{font-size:clamp(24px,8vw,32px)}

@@ -244,15 +244,22 @@
     content: '';
     width: 18%;
     position: absolute;
-    inset: 52px auto 0 -20%;
+    inset: 52px auto 0 0;
     pointer-events: none;
     background: linear-gradient(90deg, transparent, rgba(154,229,255,.08), transparent);
-    transform: skewX(-14deg);
+    opacity: 0;
+    transform: translate3d(-120%, 0, 0) skewX(-14deg);
+    will-change: transform, opacity;
   }
 
-  .telemetry-live .velocity-field::after { animation: vectorScan 4.8s ease-in-out 1 both; }
+  .velocity-field.telemetry-live::after,
+  .telemetry-live .velocity-field::after { animation: vectorScan 1.8s ease-out 1 both; }
 
-  @keyframes vectorScan { to { left: 110%; } }
+  @keyframes vectorScan {
+    0% { opacity: 0; transform: translate3d(-120%, 0, 0) skewX(-14deg); }
+    14% { opacity: 1; }
+    100% { opacity: 0; transform: translate3d(650%, 0, 0) skewX(-14deg); }
+  }
 
   .velocity-stage {
     position: relative;
@@ -263,7 +270,7 @@
 
   .benchmark-row.velocity-vector {
     display: grid;
-    grid-template-columns: minmax(150px, .4fr) minmax(260px, 1.6fr) minmax(88px, .24fr);
+    grid-template-columns: minmax(150px, .4fr) minmax(260px, 1.6fr) minmax(max-content, .24fr);
     align-items: center;
     gap: clamp(18px, 2.5vw, 38px);
     min-height: 74px;
@@ -294,11 +301,17 @@
   }
 
   .velocity-vector > strong {
+    display: inline-flex;
+    align-items: baseline;
+    justify-self: end;
     color: #dff6ff;
     font: 400 clamp(25px, 2.7vw, 40px)/1 'Orbitron', sans-serif;
     letter-spacing: -.04em;
     font-variant-numeric: tabular-nums;
+    overflow-wrap: normal;
     text-align: right;
+    white-space: nowrap;
+    word-break: normal;
   }
 
   .velocity-vector > .vector-rail {
@@ -397,22 +410,23 @@
 
   .route-manifest::before {
     content: '';
-    width: 1px;
+    width: 100%;
     position: absolute;
     inset: 0 auto 0 0;
     z-index: 2;
     pointer-events: none;
-    background: #9ae5ff;
-    box-shadow: 0 0 18px rgba(154,229,255,.7);
+    background: linear-gradient(90deg, transparent calc(100% - 2px), #9ae5ff);
     opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+    will-change: transform, opacity;
   }
 
   .telemetry-live .route-manifest::before { animation: manifestScan 3.8s .35s cubic-bezier(.16, 1, .3, 1) 1 both; }
 
   @keyframes manifestScan {
-    0% { left: 0; opacity: 0; }
+    0% { opacity: 0; transform: translate3d(-100%, 0, 0); }
     10% { opacity: .8; }
-    100% { left: 100%; opacity: 0; }
+    100% { opacity: 0; transform: translate3d(0, 0, 0); }
   }
 
   .route-axis,
@@ -540,6 +554,19 @@
     transform: scaleX(0);
   }
 
+  .telemetry-pending .telemetry-value {
+    opacity: .24;
+    transform: translate3d(0, 6px, 0);
+  }
+
+  .telemetry-pending.telemetry-live .telemetry-value {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity .34s ease-out,
+      transform .46s cubic-bezier(.16, 1, .3, 1);
+  }
+
   .telemetry-pending:not(.telemetry-live) .benchmark-row > .vector-rail::after { opacity: 0; }
 
   .telemetry-live .benchmark-row > .vector-rail::before {
@@ -553,13 +580,13 @@
   }
 
   @keyframes vectorTelemetrySweep {
-    from { transform: translateY(-50%) scaleX(0); filter: brightness(1.8); }
-    to { transform: translateY(-50%) scaleX(1); filter: brightness(1); }
+    from { transform: translateY(-50%) scaleX(0); }
+    to { transform: translateY(-50%) scaleX(1); }
   }
 
   @keyframes telemetrySweep {
-    from { transform: scaleX(0); filter: brightness(1.8); }
-    to { transform: scaleX(1); filter: brightness(1); }
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
   }
 
   .route-track b {
