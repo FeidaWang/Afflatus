@@ -15,6 +15,11 @@ describe('homepage authored combat craft integration', () => {
     expect(experience).toContain("classList.contains('home-combat-models-enabled')");
     expect(css).toContain('body.home-combat-models-enabled .home-flagship-narrative');
     expect(css).toContain('body.home-combat-models-enabled .home-flagship-poster');
+    expect(css).toContain('.home-flagship-playback-active .home-flagship-poster');
+    expect(css).toContain('.home-flagship-poster-restored .home-flagship-poster');
+    expect(css).toContain('.home-flagship-force-3d.home-flagship-playback-active');
+    expect(css).toContain('body.flagship-upgrade-enabled.hud-off .home-flagship-poster');
+    expect(css.match(/visibility: hidden;/g)?.length).toBeGreaterThanOrEqual(2);
     expect(css).not.toContain('#blackhole-gl');
   });
 
@@ -24,6 +29,7 @@ describe('homepage authored combat craft integration', () => {
 
     expect(experience).toContain("assetStatus?.loadStatus==='ready'");
     expect(experience).toContain("hudRenderPolicy.qualityTier!=='low'");
+    expect(experience).toContain('&&!combatViewTopdown()');
     expect(experience).not.toContain("hudRenderPolicy.qualityTier!=='low'||innerWidth>=1024");
     expect(experience).toContain('!saveData');
     expect(experience).toContain('{az:azv, el:elv, size, frameToken:now}');
@@ -33,10 +39,15 @@ describe('homepage authored combat craft integration', () => {
     expect(fighter).toContain('renderSurface.reportFrame');
   });
 
-  it('prewarms CIC assets without inventing fighters in standby', () => {
+  it('loads CIC assets only for a visible Command feed and real fighter demand', () => {
     const combat = readFileSync('src/scene/topdownCombat.js', 'utf8');
-    expect(combat).toContain('if (combatAssetLoadPromise || (shipModelPromise && fighterModelPromise)) return;');
-    expect(combat).not.toContain('const active = Boolean(state.target');
+    const experience = readFileSync('src/homeExperience.js', 'utf8');
+    expect(experience).toContain('function commandFeedVisible(canvas)');
+    expect(experience).toContain('shouldLoadAuthoredAssets:()=>commandFeedVisible(pilotCanvas)');
+    expect(combat).toContain('!shouldLoadAuthoredAssets(state)');
+    expect(combat).toContain("state?.escorts?.some((escort) => escort.type === 'f47')");
+    expect(combat).toContain('latestFighterDemand && shouldLoadAuthoredAssets(liveCombatState)');
+    expect(combat).toContain('if (!needsShip && !needsFighters) return;');
     expect(combat).toContain('f.visible = Boolean(escort) || flightControlled');
     expect(combat).toContain('function authoredAssetsAllowed()');
     expect(combat).toContain("renderPolicy.qualityTier !== 'low'");

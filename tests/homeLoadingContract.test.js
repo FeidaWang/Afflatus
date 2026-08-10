@@ -17,7 +17,9 @@ describe('home loading contract', () => {
 
   it('loads Three.js forge work only near its stage', () => {
     expect(entry).toContain("import('./scene/alphardForge.js')");
-    expect(entry).toContain("rootMargin: '240px 0px'");
+    expect(entry).toContain("rootMargin: '0px'");
+    expect(entry).toContain('entry.intersectionRatio >= 0.35');
+    expect(entry).toContain('threshold: 0.35');
     expect(html).not.toContain('src="/src/scene/alphardForge.js"');
   });
 

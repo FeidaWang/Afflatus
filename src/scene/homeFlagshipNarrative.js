@@ -238,6 +238,37 @@ function savesData() {
   catch (error) { return false; }
 }
 
+export function homeFlagshipPlaybackAllowed({
+  qualityTier = 'low',
+  reducedMotion = false,
+  saveData = false,
+  force3D = false,
+} = {}) {
+  return Boolean(force3D || (
+    qualityTier === 'high'
+    && !reducedMotion
+    && !saveData
+  ));
+}
+
+export function homeFlagshipLayerVisible({
+  commandMode = false,
+  playbackState = 'standby',
+  force3D = false,
+  flagshipExperiment = false,
+} = {}) {
+  const playbackInFlight = playbackState === 'requested'
+    || playbackState === 'loading'
+    || playbackState === 'active';
+  const posterRestored = playbackState === 'settled'
+    || playbackState === 'unavailable';
+  return Boolean(
+    (commandMode && (playbackInFlight || posterRestored))
+    || (force3D && (playbackInFlight || posterRestored))
+    || (flagshipExperiment && !commandMode)
+  );
+}
+
 export function createHomeFlagshipNarrative({
   container,
   observeElement,
@@ -257,75 +288,183 @@ export function createHomeFlagshipNarrative({
   const poster = container.querySelector('.home-flagship-poster');
 
   let renderPolicy = renderCoordinator.getPolicy({ cost: 'medium', targetFps: 30 });
-  let terminalMode = !force3D && (reducedMotion || saveData || renderPolicy.qualityTier === 'low');
-  let elapsed = terminalMode ? DURATION_MS : 0;
+  const playbackAllowed = () => homeFlagshipPlaybackAllowed({
+    qualityTier: renderPolicy.qualityTier,
+    reducedMotion,
+    saveData,
+    force3D,
+  });
+  let terminalMode = !playbackAllowed();
+  let elapsed = 0;
   let width = 1, height = 1, dpr = 1;
   let running = false, visible = false, raf = 0, visibilityRaf = 0;
   let lastAt = 0, lastDrawAt = 0, lastPhase = '';
   let surface = null, viewportObserver = null, removeVisibilityFallback = null;
   let gpuNarrative = null, gpuNarrativePromise = null, destroyed = false;
+  let playbackState = force3D ? 'requested' : 'standby';
+  let playbackConsumed = force3D;
+  let playbackGeneration = 0;
   let budgetActive = !container.ownerDocument.hidden;
   let inViewport = false;
   let enabled = true;
-  canvas.dataset.model = terminalMode && poster ? 'static-venator-poster'
-    : terminalMode ? 'static-fallback' : 'loading-venator';
+  const flagshipExperiment = Boolean(
+    container.ownerDocument.body?.classList.contains('flagship-upgrade-enabled'),
+  );
+  container.classList.toggle('home-flagship-force-3d', force3D);
 
   function posterAvailable() {
     return Boolean(poster && poster.dataset.failed !== 'true');
   }
+
+  function playbackInFlight() {
+    return playbackState === 'requested'
+      || playbackState === 'loading'
+      || playbackState === 'active';
+  }
+
+  function posterRestored() {
+    return playbackConsumed
+      && (playbackState === 'settled' || playbackState === 'unavailable');
+  }
+
+  function shouldShowSurface() {
+    return homeFlagshipLayerVisible({
+      commandMode: !enabled,
+      playbackState,
+      force3D,
+      flagshipExperiment,
+    })
+      && budgetActive
+      && inViewport;
+  }
+
+  function setPlaybackState(nextState, reason = '') {
+    playbackState = nextState;
+    canvas.dataset.playback = nextState;
+    if (reason) canvas.dataset.playbackReason = reason;
+    else delete canvas.dataset.playbackReason;
+    container.classList.toggle('home-flagship-playback-active', playbackInFlight());
+    container.classList.toggle('home-flagship-poster-restored', posterRestored());
+  }
+
+  canvas.dataset.model = posterAvailable() ? 'static-venator-poster' : 'static-fallback';
+  setPlaybackState(playbackState, force3D ? 'query-override' : '');
 
   function size() {
     const rect = container.getBoundingClientRect();
     width = Math.max(1, rect.width || innerWidth);
     height = Math.max(1, rect.height || innerHeight);
     dpr = renderPolicy.computeDpr(width, height, { minDpr: 0.7, maxDpr: 1.25 });
-    canvas.width = Math.round(width * dpr);
-    canvas.height = Math.round(height * dpr);
+    // The model-derived poster is the cheap Command/experiment fallback. Do
+    // not retain another full-viewport 2D backing store unless it fails.
+    canvas.width = posterAvailable() ? 1 : Math.round(width * dpr);
+    canvas.height = posterAvailable() ? 1 : Math.round(height * dpr);
     gpuNarrative?.resize(width, height, dpr);
   }
 
+  function releaseGpuNarrative() {
+    const staleNarrative = gpuNarrative;
+    gpuNarrative = null;
+    staleNarrative?.setVisible(false);
+    staleNarrative?.destroy();
+  }
+
+  function finishPlayback(reason, { unavailable = false, cancelled = false } = {}) {
+    if (destroyed) return;
+    playbackGeneration += 1;
+    stop();
+    elapsed = DURATION_MS;
+    releaseGpuNarrative();
+    gpuNarrativePromise = null;
+    setPlaybackState(cancelled ? 'cancelled' : unavailable ? 'unavailable' : 'settled', reason);
+    visible = shouldShowSurface();
+    if (visible) draw(performance.now());
+    else {
+      canvas.hidden = true;
+      if (poster) poster.hidden = true;
+    }
+  }
+
   function ensureGpuNarrative() {
-    if (terminalMode || gpuNarrative || gpuNarrativePromise || destroyed) return;
+    if (!playbackInFlight() || !playbackAllowed() || gpuNarrativePromise || destroyed) {
+      return gpuNarrativePromise;
+    }
+    const generation = playbackGeneration;
+    setPlaybackState('loading', canvas.dataset.playbackReason || 'user-intent');
+    if (visible) draw(performance.now());
     const pending = import('./homeFlagshipWebGPU.js')
-      .then(({ createHomeFlagshipWebGPU }) => createHomeFlagshipWebGPU({
-        container,
-        onModelStatus() {
-          requestAnimationFrame((now) => {
-            if (!destroyed && visible) draw(now);
-          });
-        },
-      }))
-      .then((narrative) => {
-        if (destroyed || terminalMode) {
+      .then(({ createHomeFlagshipWebGPU }) => {
+        if (destroyed || generation !== playbackGeneration || !playbackAllowed()) return null;
+        return createHomeFlagshipWebGPU({
+          container,
+          onModelStatus() {
+            requestAnimationFrame((now) => {
+              if (!destroyed && visible) draw(now);
+            });
+          },
+          onUnavailable(reason) {
+            queueMicrotask(() => {
+              if (!destroyed && generation === playbackGeneration) {
+                finishPlayback(reason || 'gpu-unavailable', { unavailable: true });
+              }
+            });
+          },
+        });
+      })
+      .then(async (narrative) => {
+        if (destroyed || generation !== playbackGeneration || !playbackAllowed()) {
           narrative?.destroy();
           return null;
         }
+        if (!narrative) {
+          finishPlayback('gpu-unavailable', { unavailable: true });
+          return null;
+        }
         gpuNarrative = narrative;
-        canvas.dataset.model = narrative?.modelStatus || 'static-fallback';
-        gpuNarrative?.resize(width, height, dpr);
-        gpuNarrative?.setVisible(visible);
-        if (visible) draw(performance.now());
+        gpuNarrative.resize(width, height, dpr);
+        gpuNarrative.setVisible(false);
+        const ready = await narrative.ready;
+        if (destroyed || generation !== playbackGeneration || !playbackAllowed()) {
+          if (gpuNarrative === narrative) gpuNarrative = null;
+          narrative.destroy();
+          return null;
+        }
+        if (!ready || narrative.modelStatus !== 'venator-ready') {
+          if (gpuNarrative === narrative) gpuNarrative = null;
+          narrative.destroy();
+          finishPlayback('model-unavailable', { unavailable: true });
+          return null;
+        }
+        elapsed = 0;
+        lastAt = 0;
+        lastDrawAt = 0;
+        lastPhase = '';
+        setPlaybackState('active', canvas.dataset.playbackReason || 'user-intent');
+        narrative.setVisible(visible);
+        if (visible) {
+          draw(performance.now());
+          start();
+        }
         return narrative;
       })
       .catch(() => {
-        // Creation can fail after the narrative object was assigned (for
-        // example while sizing the first backend). Release that partial scene
-        // before clearing the in-flight guard so a later visibility resume can
-        // make a clean retry.
-        gpuNarrative?.destroy();
-        gpuNarrative = null;
-        canvas.dataset.model = 'static-fallback';
+        if (!destroyed && generation === playbackGeneration) {
+          releaseGpuNarrative();
+          finishPlayback('gpu-create-failed', { unavailable: true });
+        }
         return null;
       });
     gpuNarrativePromise = pending;
     void pending.finally(() => {
       if (gpuNarrativePromise === pending) gpuNarrativePromise = null;
     });
+    return pending;
   }
 
   function draw(now) {
-    const state = sampleHomeFlagshipNarrative(elapsed, { terminal: terminalMode });
-    const gpuRendered = gpuNarrative?.render(now, state) || false;
+    const timelineActive = playbackState === 'active';
+    const state = sampleHomeFlagshipNarrative(elapsed, { terminal: !timelineActive });
+    const gpuRendered = timelineActive && (gpuNarrative?.render(now, state) || false);
     const usePoster = !gpuRendered && posterAvailable();
     gpuNarrative?.setVisible(gpuRendered && visible);
     if (poster) poster.hidden = !visible || !usePoster;
@@ -352,29 +491,42 @@ export function createHomeFlagshipNarrative({
   }
 
   function loop(now) {
-    if (!running) return;
+    if (!running || playbackState !== 'active') return;
     const frameMs = lastAt ? Math.min(80, Math.max(0, now - lastAt)) : 0;
     lastAt = now;
     elapsed = Math.min(DURATION_MS, elapsed + frameMs);
     if (!lastDrawAt || now - lastDrawAt >= 1000 / 30) {
-      const drawInterval = lastDrawAt ? now - lastDrawAt : 1000 / 30;
       lastDrawAt = now;
+      const drawStartedAt = performance.now();
       draw(now);
-      surface?.reportFrame(drawInterval);
+      surface?.reportFrame(Math.max(0, performance.now() - drawStartedAt));
     }
-    if (elapsed >= DURATION_MS) { stop(); return; }
+    if (elapsed >= DURATION_MS) {
+      finishPlayback('complete');
+      return;
+    }
     raf = requestAnimationFrame(loop);
   }
 
   function start() {
-    if (running || terminalMode || elapsed >= DURATION_MS) return;
-    ensureGpuNarrative();
+    if (running || playbackState !== 'active' || elapsed >= DURATION_MS) return;
     running = true;
     raf = requestAnimationFrame(loop);
   }
 
+  function requestPlayback(reason = 'user-intent') {
+    if (destroyed || playbackConsumed || !playbackAllowed()) return false;
+    playbackConsumed = true;
+    terminalMode = false;
+    elapsed = 0;
+    setPlaybackState('requested', reason);
+    surface?.resume();
+    reconcileVisibility();
+    return true;
+  }
+
   function reconcileVisibility() {
-    const shouldShow = enabled && budgetActive && inViewport;
+    const shouldShow = shouldShowSurface();
     if (!shouldShow) {
       visible = false;
       stop();
@@ -383,15 +535,10 @@ export function createHomeFlagshipNarrative({
       gpuNarrative?.setVisible(false);
       return;
     }
-    // A failed or unavailable backend clears gpuNarrativePromise when it
-    // settles. Re-entering the hero (for example after leaving Command mode)
-    // is the bounded retry point; the in-flight guard still prevents duplicate
-    // renderer creation while a previous attempt is pending.
-    if (!terminalMode) ensureGpuNarrative();
-    gpuNarrative?.setVisible(true);
     if (!visible) visible = true;
-    if (terminalMode || elapsed >= DURATION_MS) draw(performance.now());
-    else start();
+    if (playbackState === 'requested') void ensureGpuNarrative();
+    if (playbackState === 'active') start();
+    draw(performance.now());
   }
 
   function sampleViewport() {
@@ -423,16 +570,9 @@ export function createHomeFlagshipNarrative({
     },
     onQualityChange(nextPolicy) {
       renderPolicy = nextPolicy;
-      if (!force3D && nextPolicy.qualityTier === 'low') {
-        terminalMode = true;
-        elapsed = DURATION_MS;
-        stop();
-        gpuNarrative?.destroy();
-        gpuNarrative = null;
-        // Do not retain an in-flight promise from the surface owner. Its own
-        // completion handler still observes terminalMode and destroys any
-        // renderer that finishes after this downgrade.
-        gpuNarrativePromise = null;
+      terminalMode = !playbackAllowed();
+      if (!force3D && nextPolicy.qualityTier !== 'high') {
+        if (playbackInFlight()) finishPlayback('quality-downgrade');
         canvas.dataset.model = posterAvailable() ? 'static-venator-poster' : 'static-fallback';
         if (visible) draw(performance.now());
       }
@@ -443,9 +583,13 @@ export function createHomeFlagshipNarrative({
       if (visibilityRaf) cancelAnimationFrame(visibilityRaf);
       viewportObserver?.disconnect();
       removeVisibilityFallback?.();
-      gpuNarrative?.destroy();
-      gpuNarrative = null;
+      playbackGeneration += 1;
+      releaseGpuNarrative();
       gpuNarrativePromise = null;
+      container.classList.remove('home-flagship-playback-active');
+      container.classList.remove('home-flagship-poster-restored');
+      container.classList.remove('home-flagship-force-3d');
+      poster?.removeEventListener('error', handlePosterError);
       canvas.remove();
     },
   });
@@ -470,18 +614,46 @@ export function createHomeFlagshipNarrative({
   sampleViewport();
   visibilityRaf = requestAnimationFrame(sampleViewport);
 
+  function handlePosterError() {
+    size();
+    if (visible) draw(performance.now());
+  }
+  poster?.addEventListener('error', handlePosterError);
+
   return Object.freeze({
     getDiagnostics() {
       return Object.freeze({
         phase: lastPhase,
         terminalMode,
-        modelStatus: gpuNarrative?.modelStatus || 'static-fallback',
+        playbackState,
+        playbackConsumed,
+        modelStatus: gpuNarrative?.modelStatus
+          || (posterAvailable() ? 'static-venator-poster' : 'static-fallback'),
         gpu: gpuNarrative?.getDiagnostics?.() || null,
       });
     },
+    requestPlayback,
+    dismissSettledPoster(reason = 'command-feed-ready') {
+      if (destroyed || enabled || !posterRestored()) return false;
+      setPlaybackState('dismissed', reason);
+      visible = false;
+      canvas.hidden = true;
+      if (poster) poster.hidden = true;
+      surface.pause();
+      return true;
+    },
     setEnabled(nextEnabled) {
       enabled = Boolean(nextEnabled);
-      if (enabled) {
+      if (enabled && playbackInFlight() && !force3D) {
+        finishPlayback('cruise-return', { cancelled: true });
+      } else if (!enabled && (force3D || flagshipExperiment)) {
+        // Default Command goes straight to the CIC and decodes Venator once.
+        // The full 5.2s WebGPU narrative remains available as an explicit
+        // visual experiment instead of serially loading the same 11MB model
+        // into two independent GPU contexts on every first engagement.
+        requestPlayback('command-intent');
+      }
+      if (shouldShowSurface()) {
         surface.resume();
       } else {
         reconcileVisibility();

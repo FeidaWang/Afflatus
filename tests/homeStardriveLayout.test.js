@@ -50,7 +50,8 @@ describe('home stardrive layout contracts', () => {
 
   it('keeps the eclipse crisp and removes the vine-like corona noise', () => {
     expect(forge).toContain("renderPolicy.qualityTier === 'high'");
-    expect(forge).toContain('Math.min(nativeDpr, 2)');
+    expect(forge).toContain('renderPolicy.computeDpr(W, H');
+    expect(forge).toContain("renderPolicy.qualityTier === 'high'\n      ? 1.5");
     expect(forge).toContain('float sidePlumes=');
     expect(forge).toContain('float equatorialFans=');
     expect(forge).toContain('for(int i=0;i<7;i++)');

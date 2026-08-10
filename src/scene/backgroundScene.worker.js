@@ -19,6 +19,23 @@ let running = false;
 let shouldRun = false;
 let loopGeneration = 0;
 let lastFrameAt = 0;
+const TELEMETRY_INTERVAL_FRAMES = 2;
+let telemetryFrameCount = 0;
+let telemetryPeakDurationMs = 0;
+
+function resetTelemetryWindow() {
+  telemetryFrameCount = 0;
+  telemetryPeakDurationMs = 0;
+}
+
+function recordDrawDuration(durationMs) {
+  if (!Number.isFinite(durationMs) || durationMs <= 0) return;
+  telemetryFrameCount += 1;
+  telemetryPeakDurationMs = Math.max(telemetryPeakDurationMs, durationMs);
+  if (telemetryFrameCount < TELEMETRY_INTERVAL_FRAMES) return;
+  self.postMessage({ type: 'draw-duration', durationMs: telemetryPeakDurationMs });
+  resetTelemetryWindow();
+}
 
 function buildStars() {
   stars = [];
@@ -120,19 +137,26 @@ function draw(now) {
   drawApproach(now, intensity);
 }
 
-// Dedicated-worker rAF support is inconsistent across engines; a fixed
-// ~60fps setTimeout driver is universally available via `self` and keeps
-// this independent of that API's availability.
+// Dedicated-worker rAF support is inconsistent across engines. Cruise needs
+// only 30fps; reserve 60fps for the short warp ramp where streak continuity is
+// visually important.
 function loop(generation) {
   if (!running || generation !== loopGeneration) return;
-  draw(performance.now());
-  setTimeout(() => loop(generation), 16);
+  const drawStartedAt = performance.now();
+  draw(drawStartedAt);
+  const drawDurationMs = performance.now() - drawStartedAt;
+  recordDrawDuration(drawDurationMs);
+  const targetFps = warpIntensity > 0.45 ? 60 : 30;
+  // Compensate for the work just submitted; otherwise an 8ms draw plus a
+  // 16.7ms timer silently turns the nominal 60fps warp pass into ~40fps.
+  setTimeout(() => loop(generation), Math.max(0, 1000 / targetFps - drawDurationMs));
 }
 
 function startLoop() {
   if (running || !canvas) return;
   running = true;
   loopGeneration += 1;
+  resetTelemetryWindow();
   loop(loopGeneration);
 }
 
@@ -147,6 +171,7 @@ self.onmessage = (e) => {
     width = canvas.width; height = canvas.height;
     buildStars();
     lastFrameAt = 0;
+    resetTelemetryWindow();
     if (shouldRun) startLoop();
   } else if (msg.type === 'resize') {
     innerWidth = msg.innerWidth; innerHeight = msg.innerHeight; dpr = msg.dpr;
@@ -157,6 +182,7 @@ self.onmessage = (e) => {
     }
     buildStars();
     lastFrameAt = 0;
+    resetTelemetryWindow();
   } else if (msg.type === 'pointer') {
     pointer.x = msg.x; pointer.y = msg.y;
   } else if (msg.type === 'intensity') {
@@ -165,6 +191,7 @@ self.onmessage = (e) => {
     shouldRun = false;
     running = false;
     loopGeneration += 1;
+    resetTelemetryWindow();
   } else if (msg.type === 'start') {
     shouldRun = true;
     startLoop();

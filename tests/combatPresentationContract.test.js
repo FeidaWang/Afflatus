@@ -32,8 +32,8 @@ describe('combat presentation contract', () => {
     expect(source).toContain('loadCombatAsset(renderer, FIGHTER_ASSET_PROFILE)');
     expect(source).toContain("authoredShip.name = 'VenatorClassStarDestroyerCCBY'");
     expect(source).toContain("fighterModelStatus = 'sixth-gen-ready'");
-    expect(source).toContain('if (combatAssetLoadPromise || (shipModelPromise && fighterModelPromise)) return;');
-    expect(source).not.toContain('const active = Boolean(state.target');
+    expect(source).toContain('!shouldLoadAuthoredAssets(state)');
+    expect(source).toContain('if (!needsShip && !needsFighters) return;');
     expect(source).toContain('combatVfx.linkedBeam');
     expect(source).toContain('combatVfx.fireSmoke');
     expect(source).toContain('combatVfx.shieldArc');
@@ -70,6 +70,74 @@ describe('combat presentation contract', () => {
     expect(source).toContain("emitCombatEvent('weapon:charge',{weapon:'enforcer'");
     expect(source).toContain('durationMs:4500');
     expect(source).toContain("'weapon:charge':zh?");
+  });
+
+  it('holds an authored-ship broadside through charge before the delayed Enforcer impact cut', async () => {
+    const [scene, experience] = await Promise.all([
+      readFile(new URL('../src/scene/topdownCombat.js', import.meta.url), 'utf8'),
+      readFile(new URL('../src/homeExperience.js', import.meta.url), 'utf8'),
+    ]);
+
+    expect(scene).toContain('mainGunBroadside: {');
+    expect(scene).toMatch(/event\.type === 'weapon:charge'[\s\S]*?requestShot\('mainGunBroadside'/);
+    expect(scene).toMatch(/mainGunBroadside:\s*{\s*priority:\s*3/);
+    for (const flightShot of ['deckCam', 'chaseLaunch', 'pilotLaunch', 'towerCam', 'flybyCam']) {
+      expect(scene).toMatch(new RegExp(`${flightShot}:\\s*{[\\s\\S]*?priority:\\s*1\\.5`));
+    }
+    expect(scene).toContain('mainGunFireHoldUntil = nowMs + MAIN_GUN_FIRE_HOLD_MS');
+    expect(scene).toContain("} else if (event.type === 'weapon:fire') {");
+    expect(scene).not.toContain("event.type === 'weapon:fire' && alive");
+    expect(scene).toContain("event.weapon === 'enforcer' && now < mainGunFireHoldUntil");
+    expect(scene).toContain('pendingMainGunImpactShot');
+    expect(scene).toContain('expiresAt: mainGunFireHoldUntil + impactShot.durationMs + 500');
+    expect(scene).toContain("else if (camDirector.requestShot('impactOrbit', { ...shot, now }))");
+
+    const fireHold = Number(scene.match(/const MAIN_GUN_FIRE_HOLD_MS = (\d+);/)?.[1]);
+    expect(fireHold).toBeGreaterThanOrEqual(800);
+
+    const impactDelay = Number(experience.match(/const ENFORCER_IMPACT_DELAY_MS=(\d+);/)?.[1]);
+    expect(impactDelay).toBeGreaterThanOrEqual(400);
+    expect(impactDelay).toBeLessThanOrEqual(800);
+    expect(experience).toContain('impactAt:firedAt+ENFORCER_IMPACT_DELAY_MS');
+    expect(experience).toContain('const impactReady=weaponNow>=w.impactAt;');
+    expect(experience).toContain('if(impactReady && halley && !halley.destroyed)');
+    expect(experience.indexOf("if(shotCopy[shot] && !['commandChase','pilotLaunch','chaseLaunch'].includes(shot))"))
+      .toBeLessThan(experience.indexOf('if(phaseCopy[phase]) return phaseCopy[phase];'));
+
+    // WebGL/device-loss fallback remains the existing bounded procedural flyby.
+    expect(experience).toContain('if(s3) s3.draw(ctx,w,h,now,chargeT,currentLang);');
+    expect(experience).toContain('else capitalFlyby.draw(ctx,w,h,now,chargeT,currentLang);');
+  });
+
+  it('tears down Command renderers and keeps default topdown loading on the 2D flyby', async () => {
+    const source = await readFile(new URL('../src/homeExperience.js', import.meta.url), 'utf8');
+
+    expect(source).toContain('const s3=combatViewTopdown()?null:getShip3D();');
+    expect(source).not.toContain('const s3=getShip3D();');
+    expect(source).toContain('function destroyCombatRenderers()');
+    expect(source).toContain('topdownGeneration+=1;');
+    expect(source).toContain('ship3DGeneration+=1;');
+    expect(source).toContain('fighter3DGeneration+=1;');
+    expect(source).toContain('if(generation!==topdownGeneration||cruiseModeActive())');
+    expect(source).toContain('if(generation!==ship3DGeneration||combatViewTopdown()||cruiseModeActive())');
+    expect(source).toContain('if(generation!==fighter3DGeneration||combatViewTopdown()||cruiseModeActive())');
+    expect(source).toContain('destroyRendererInstance(candidate);');
+    expect(source).toMatch(/if\(toHudOff\)\{[\s\S]*?destroyCombatRenderers\(\);/);
+  });
+
+  it('uses observer-cached hero visibility to tier the master loop without layout reads', async () => {
+    const source = await readFile(new URL('../src/homeExperience.js', import.meta.url), 'utf8');
+    expect(source).toContain('let heroSectionVisible=true,stardriveSectionVisible=false;');
+    expect(source).toContain('const masterLoopSectionObserver=new IntersectionObserver');
+    expect(source).toContain('function masterLoopTargetFps()');
+    expect(source).toContain('if(!cruiseModeActive()||warpTarget>=.45||warpIntensity>=.45) return 60;');
+    expect(source).toContain('return heroSectionVisible||stardriveSectionVisible?30:15;');
+    expect(source).toContain('const targetFps=masterLoopTargetFps();');
+    const targetFpsBody = source.slice(
+      source.indexOf('function masterLoopTargetFps()'),
+      source.indexOf('function frame(now)'),
+    );
+    expect(targetFpsBody).not.toContain('getBoundingClientRect');
   });
 
   it('keeps the new CIC stylesheet free of priority escalation', async () => {

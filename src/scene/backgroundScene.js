@@ -1,6 +1,20 @@
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import { clamp, rand } from '../utils/math.js';
 
+const FULLSCREEN_CANVAS_DPR_LIMITS = Object.freeze({
+  high: Object.freeze({ minDpr: 0.6, maxDpr: 1.4 }),
+  balanced: Object.freeze({ minDpr: 0.6, maxDpr: 1.2 }),
+  low: Object.freeze({ minDpr: 0.6, maxDpr: 1 }),
+});
+
+// Full-viewport 2D surfaces trade backing-store area for very little visible
+// detail above these ceilings. Keep this exported so the shared event layer can
+// use the exact same limits without duplicating the quality policy.
+export function getFullscreenCanvasDprLimits(qualityTier = 'balanced') {
+  return FULLSCREEN_CANVAS_DPR_LIMITS[qualityTier]
+    || FULLSCREEN_CANVAS_DPR_LIMITS.balanced;
+}
+
 // Runs the star/warp draw loop in a Worker via OffscreenCanvas so the main
 // thread only pays for tiny postMessage calls each frame (pointer x/y +
 // warp intensity) instead of ~240 star draws + the warp-tunnel loop.
@@ -12,11 +26,25 @@ function tryCreateWorkerScene(canvas, computeDpr) {
   if (typeof OffscreenCanvas === 'undefined') return null;
   if (typeof canvas.transferControlToOffscreen !== 'function') return null;
   if (typeof Worker === 'undefined') return null;
+  let worker = null;
   try {
+    // Construct the module worker before irreversibly transferring the DOM
+    // canvas. A synchronous Worker/CSP failure can then still use the real
+    // main-thread Canvas2D fallback below.
+    worker = new Worker(new URL('./backgroundScene.worker.js', import.meta.url), { type: 'module' });
     const offscreen = canvas.transferControlToOffscreen();
-    const worker = new Worker(new URL('./backgroundScene.worker.js', import.meta.url), { type: 'module' });
     let width = 1, height = 1, dpr = 1;
     let inited = false;
+    let destroyed = false;
+    let frameReporter = null;
+
+    function handleWorkerMessage(event) {
+      if (event.data?.type !== 'draw-duration') return;
+      const durationMs = Number(event.data.durationMs);
+      if (!Number.isFinite(durationMs) || durationMs <= 0) return;
+      frameReporter?.(durationMs);
+    }
+    worker.addEventListener('message', handleWorkerMessage);
 
     function resize() {
       dpr = computeDpr(innerWidth, innerHeight);
@@ -43,13 +71,23 @@ function tryCreateWorkerScene(canvas, computeDpr) {
       draw: null, // replaced below once we know getPointer/getWarpIntensity
       pause() { worker.postMessage({ type: 'stop' }); },
       resume() { worker.postMessage({ type: 'start' }); },
-      destroy() { worker.terminate(); },
+      setFrameReporter(reporter) {
+        frameReporter = typeof reporter === 'function' ? reporter : null;
+      },
+      destroy() {
+        if (destroyed) return;
+        destroyed = true;
+        frameReporter = null;
+        worker.removeEventListener('message', handleWorkerMessage);
+        worker.terminate();
+      },
       get width() { return width; },
       get height() { return height; },
       get dpr() { return dpr; },
       _worker: worker,
     };
   } catch (err) {
+    worker?.terminate();
     console.warn('[backgroundScene] worker offload failed, falling back to main thread', err);
     return null;
   }
@@ -58,7 +96,11 @@ function tryCreateWorkerScene(canvas, computeDpr) {
 export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) {
   const coordinator = getRenderBudgetCoordinator();
   let renderPolicy = coordinator.getPolicy({ cost: 'medium', targetFps: 60 });
-  const computeDpr = (width, height) => renderPolicy.computeDpr(width, height, { minDpr: 0.6 });
+  const computeDpr = (width, height) => renderPolicy.computeDpr(
+    width,
+    height,
+    getFullscreenCanvasDprLimits(renderPolicy.qualityTier),
+  );
   const workerScene = tryCreateWorkerScene(canvas, computeDpr);
   if (workerScene) {
     const worker = workerScene._worker;
@@ -90,6 +132,7 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
         if (sized) resize();
       },
     });
+    workerScene.setFrameReporter((durationMs) => surface.reportFrame(durationMs));
     return {
       draw: workerScene.draw,
       resize,
@@ -144,8 +187,8 @@ export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) 
   function resize() {
     sized = true;
     dpr = computeDpr(innerWidth, innerHeight);
-    width = canvas.width = innerWidth * dpr;
-    height = canvas.height = innerHeight * dpr;
+    width = canvas.width = Math.round(innerWidth * dpr);
+    height = canvas.height = Math.round(innerHeight * dpr);
     canvas.style.width = `${innerWidth}px`;
     canvas.style.height = `${innerHeight}px`;
     buildStars();

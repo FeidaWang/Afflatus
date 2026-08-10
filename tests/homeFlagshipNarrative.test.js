@@ -2,6 +2,8 @@ import { readFileSync, statSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   HOME_FLAGSHIP_NARRATIVE_DURATION_MS,
+  homeFlagshipLayerVisible,
+  homeFlagshipPlaybackAllowed,
   sampleHomeFlagshipNarrative,
 } from '../src/scene/homeFlagshipNarrative.js';
 
@@ -28,6 +30,31 @@ describe('home flagship micro-narrative', () => {
     expect(settled.enginePower).toBeCloseTo(0.64);
   });
 
+  it('requires a high-tier explicit intent, while preserving the 3D query override', () => {
+    expect(homeFlagshipPlaybackAllowed({ qualityTier: 'high' })).toBe(true);
+    expect(homeFlagshipPlaybackAllowed({ qualityTier: 'medium' })).toBe(false);
+    expect(homeFlagshipPlaybackAllowed({ qualityTier: 'high', reducedMotion: true })).toBe(false);
+    expect(homeFlagshipPlaybackAllowed({ qualityTier: 'high', saveData: true })).toBe(false);
+    expect(homeFlagshipPlaybackAllowed({
+      qualityTier: 'low',
+      reducedMotion: true,
+      saveData: true,
+      force3D: true,
+    })).toBe(true);
+  });
+
+  it('keeps the flagship off the cruise black hole except for explicit experiments', () => {
+    expect(homeFlagshipLayerVisible({ playbackState: 'standby' })).toBe(false);
+    expect(homeFlagshipLayerVisible({ playbackState: 'requested' })).toBe(false);
+    expect(homeFlagshipLayerVisible({ commandMode: true, playbackState: 'requested' })).toBe(true);
+    expect(homeFlagshipLayerVisible({ commandMode: true, playbackState: 'loading' })).toBe(true);
+    expect(homeFlagshipLayerVisible({ commandMode: true, playbackState: 'settled' })).toBe(true);
+    expect(homeFlagshipLayerVisible({ playbackState: 'settled' })).toBe(false);
+    expect(homeFlagshipLayerVisible({ force3D: true, playbackState: 'active' })).toBe(true);
+    expect(homeFlagshipLayerVisible({ force3D: true, playbackState: 'settled' })).toBe(true);
+    expect(homeFlagshipLayerVisible({ flagshipExperiment: true })).toBe(true);
+  });
+
   it('keeps accessibility static while reserving zero-download fallback for constrained clients', () => {
     const terminal = sampleHomeFlagshipNarrative(0, { terminal: true });
     expect(terminal).toMatchObject({ phase: 'settled', reveal: 1, shieldPulse: 0 });
@@ -38,7 +65,8 @@ describe('home flagship micro-narrative', () => {
     const combat = readFileSync('src/scene/topdownCombat.js', 'utf8');
     expect(source).toContain("matchMedia('(prefers-reduced-motion: reduce)')");
     expect(source).toContain('navigator.connection?.saveData');
-    expect(source).toContain("nextPolicy.qualityTier === 'low'");
+    expect(source).toContain("qualityTier === 'high'");
+    expect(source).toContain("playbackState = force3D ? 'requested' : 'standby'");
     expect(source).toContain("container.querySelector('.home-flagship-poster')");
     expect(source).toContain("'static-venator-poster'");
     expect(source).toContain("id: 'home:flagship-narrative'");
@@ -47,11 +75,31 @@ describe('home flagship micro-narrative', () => {
     expect(source).toContain('onPause()');
     expect(source).toContain('function posterAvailable()');
     expect(source).toContain('gpuNarrativePromise === pending');
-    expect(source).toContain('if (!terminalMode) ensureGpuNarrative()');
-    expect(source).toMatch(/\.catch\(\(\) => \{[\s\S]*?gpuNarrative\?\.destroy\(\);[\s\S]*?gpuNarrative = null;/);
+    expect(source).toContain("requestPlayback('command-intent')");
+    expect(source).toContain('!enabled && (force3D || flagshipExperiment)');
+    expect(source).toContain("if (playbackState === 'requested') void ensureGpuNarrative()");
+    expect(source).toContain('const ready = await narrative.ready');
+    expect(source).toContain("finishPlayback('complete')");
+    expect(source).toContain("container.classList.toggle('home-flagship-playback-active'");
+    expect(source).toContain("container.classList.toggle('home-flagship-poster-restored'");
+    expect(source).toContain("classList.contains('flagship-upgrade-enabled')");
+    expect(source).toContain('if (enabled && playbackInFlight() && !force3D)');
+    expect(source).toContain("finishPlayback('cruise-return', { cancelled: true })");
+    expect(source).toContain("dismissSettledPoster(reason = 'command-feed-ready')");
+    expect(source).toContain("setPlaybackState('dismissed', reason)");
+    expect(source).toContain("setPlaybackState(cancelled ? 'cancelled'");
+    expect(source).toMatch(/import\('\.\/homeFlagshipWebGPU\.js'\)[\s\S]*?generation !== playbackGeneration[\s\S]*?return createHomeFlagshipWebGPU/);
+    expect(source).toContain('const drawStartedAt = performance.now()');
+    expect(source).toContain('surface?.reportFrame(Math.max(0, performance.now() - drawStartedAt))');
+    expect(source).not.toContain('reportFrame(drawInterval)');
+    expect(source).toMatch(/function finishPlayback[\s\S]*?releaseGpuNarrative\(\);[\s\S]*?visible = shouldShowSurface\(\)/);
+    expect(source).not.toContain('if (!terminalMode) ensureGpuNarrative()');
+    expect(source).toMatch(/function finishPlayback[\s\S]*?releaseGpuNarrative\(\);[\s\S]*?setPlaybackState/);
     expect(source.match(/gpuNarrativePromise = null/g)?.length).toBeGreaterThanOrEqual(3);
     expect(source).toContain('getDiagnostics()');
     expect(experience).toContain('homeFlagshipNarrative?.setEnabled(toHudOff)');
+    expect(experience).toContain("diagnostics?.shipModelStatus==='venator-ready'");
+    expect(experience).toContain("dismissSettledPoster?.('venator-command-feed-ready')");
     expect(experience).toContain("classList.contains('home-combat-models-enabled')");
     expect(main).toContain("const HOME_COMBAT_MODELS_ENABLED = HERO_CRAFT_MODE !== 'off'");
     expect(main).toContain("HERO_CRAFT_MODE === '3d' ? 'forced-3d' : 'authored'");

@@ -248,15 +248,13 @@ export function initAlphardForge() {
   let W = 1, H = 1;
   function size() {
     const r = canvas.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
-    // A one-draw analytic eclipse can afford full Retina density on the high
-    // tier. Balanced/low tiers still honor the shared thermal pixel budget.
-    const nativeDpr = Math.max(1, window.devicePixelRatio || 1);
-    const dpr = renderPolicy.qualityTier === 'high'
-      ? Math.min(nativeDpr, 2)
-      : renderPolicy.computeDpr(W, H, {
-        minDpr: 1,
-        maxDpr: renderPolicy.qualityTier === 'low' ? 1.35 : 1.7,
-      });
+    // Even the one-draw eclipse must stay inside the shared backing-store
+    // budget: Retina 2x at laptop widths still costs more than five million
+    // fragments per pass before compositing.
+    const maxDpr = renderPolicy.qualityTier === 'high'
+      ? 1.5
+      : renderPolicy.qualityTier === 'balanced' ? 1.35 : 1;
+    const dpr = renderPolicy.computeDpr(W, H, { minDpr: 0.75, maxDpr });
     renderer.setPixelRatio(dpr); renderer.setSize(W, H, false);
     camera.aspect = W / H; camera.updateProjectionMatrix();
     eclipseUniforms.uRes.value.set(W * dpr, H * dpr);
@@ -297,7 +295,7 @@ export function initAlphardForge() {
   // exactly the reported gap. Old formula only counted the post-entrance
   // dwell (rect.top: 0 -> -100vh). New formula counts the whole journey a
   // 100vh-tall stage makes through a 100vh viewport (rect.top: vh -> -vh,
-  // a 200vh span that equals the wrapper's own full height), so forge
+  // the wrapper's full visible journey), so forge
   // starts leaving 0 as soon as the stage is visible at all, not once
   // it's already nearly filled the screen.
   function progress() {
@@ -348,18 +346,26 @@ export function initAlphardForge() {
   }
 
   section.classList.add('is-live'); size();
-  let running = false, raf = 0, loopLastT = 0, renderSurface = null;
+  let running = false, raf = 0, lastDrawAt = 0, renderSurface = null;
+  function targetFrameRate() {
+    if (renderPolicy.qualityTier === 'high') return 45;
+    if (renderPolicy.qualityTier === 'balanced') return 30;
+    return 24;
+  }
   function loop(t) {
-    const frameMs = loopLastT ? t - loopLastT : 0;
-    loopLastT = t;
-    render(t);
-    renderSurface?.reportFrame(frameMs);
+    const frameInterval = 1000 / targetFrameRate();
+    if (!lastDrawAt || t - lastDrawAt >= frameInterval) {
+      lastDrawAt = t;
+      const renderStartedAt = performance.now();
+      render(t);
+      renderSurface?.reportFrame(performance.now() - renderStartedAt);
+    }
     if (running) raf = requestAnimationFrame(loop);
   }
   function start() {
     if (!running && contextReady) {
       running = true;
-      loopLastT = 0;
+      lastDrawAt = 0;
       raf = requestAnimationFrame(loop);
     }
   }
@@ -371,7 +377,7 @@ export function initAlphardForge() {
     id: 'home:alphard-forge',
     element: section,
     cost: 'high',
-    targetFps: 60,
+    targetFps: 45,
     onResume() {
       budgetActive = true;
       start();
@@ -386,6 +392,7 @@ export function initAlphardForge() {
     },
     onQualityChange(nextPolicy) {
       renderPolicy = nextPolicy;
+      size();
     },
     onDispose() {
       webglLifecycle.dispose();

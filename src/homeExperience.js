@@ -72,25 +72,48 @@ let homeFlagshipNarrative=null;
 
 // Lazy-loaded three.js capital ship (code-split so three.js only downloads the
 // first time the main gun fires). Until it loads, the 2D flyby is the fallback.
-let ship3D=null, ship3DTried=false;
+function destroyRendererInstance(instance){
+  try{instance?.destroy?.();}catch(error){}
+}
+let ship3D=null, ship3DTried=false, ship3DGeneration=0;
 function getShip3D(){
   if(!ship3DTried){
     ship3DTried=true;
+    const generation=ship3DGeneration;
     import('./scene/capitalShip3D.js')
-      .then(m=>{ try{ ship3D=m.createCapitalShip3D(); }catch(e){ ship3D=null; } })
-      .catch(()=>{ ship3D=null; });
+      .then(m=>{
+        if(generation!==ship3DGeneration||combatViewTopdown()||cruiseModeActive()) return;
+        let candidate=null;
+        try{candidate=m.createCapitalShip3D();}catch(error){}
+        if(generation!==ship3DGeneration||combatViewTopdown()||cruiseModeActive()){
+          destroyRendererInstance(candidate);
+          return;
+        }
+        ship3D=candidate;
+      })
+      .catch(()=>{if(generation===ship3DGeneration) ship3D=null;});
   }
   return ship3D;
 }
 
 // Lazy-loaded three.js combat fighter (code-split; loads when escorts launch).
-let fighter3D=null, fighter3DTried=false;
+let fighter3D=null, fighter3DTried=false, fighter3DGeneration=0;
 function getFighter3D(){
   if(!fighter3DTried){
     fighter3DTried=true;
+    const generation=fighter3DGeneration;
     import('./scene/fighter3D.js')
-      .then(m=>{ try{ fighter3D=m.createFighter3D(); }catch(e){ fighter3D=null; } })
-      .catch(()=>{ fighter3D=null; });
+      .then(m=>{
+        if(generation!==fighter3DGeneration||combatViewTopdown()||cruiseModeActive()) return;
+        let candidate=null;
+        try{candidate=m.createFighter3D();}catch(error){}
+        if(generation!==fighter3DGeneration||combatViewTopdown()||cruiseModeActive()){
+          destroyRendererInstance(candidate);
+          return;
+        }
+        fighter3D=candidate;
+      })
+      .catch(()=>{if(generation===fighter3DGeneration) fighter3D=null;});
   }
   return fighter3D;
 }
@@ -100,15 +123,14 @@ function getFighter3D(){
 // blits it into #pilotFeed for the main combat/standby modes. ON by default;
 // opt out with ?combatview=2d (persists), re-enable with ?combatview=topdown.
 // Falls back to the existing 2D cockpit if WebGL/the module is unavailable.
-let topdownCV=null, topdownTried=false, topdownCanvas=null;
+let topdownCV=null, topdownTried=false, topdownCanvas=null, topdownGeneration=0;
 let combatOrbitBound=false;
 function bindCombatOrbitControls(){
-  if(combatOrbitBound) return;
   const canvas=document.getElementById('cicPilotFeed');
   const reset=document.getElementById('cicCameraReset');
-  if(!canvas) return;
   const controls=document.querySelector('#combatHud .cic-camera-controls');
   if(controls) controls.hidden=!topdownCV;
+  if(combatOrbitBound||!canvas) return;
   combatOrbitBound=true;
   let pointerId=null,lastX=0,lastY=0;
   const release=(event)=>{
@@ -162,14 +184,70 @@ function combatViewTopdown(){
   try{ return !/[?&]combatview=2d\b/.test(location.search); }
   catch(e){ return true; }
 }
+function commandFeedVisible(canvas){
+  if(!(canvas instanceof HTMLCanvasElement)||!canvas.isConnected) return false;
+  if(document.visibilityState==='hidden'||combatHud?.getAttribute('aria-hidden')==='true') return false;
+  if(document.querySelector('#blackhole-stage.home-flagship-playback-active')) return false;
+  if(focusedHudPanel&&focusedHudPanel!=='tactical') return false;
+  const rect=canvas.getBoundingClientRect();
+  return rect.width>2&&rect.height>2&&rect.bottom>0&&rect.right>0
+    &&rect.top<innerHeight&&rect.left<innerWidth;
+}
 function getTopdownCV(){
   if(!topdownTried){
     topdownTried=true;
+    const generation=topdownGeneration;
     import('./scene/topdownCombat.js')
-      .then(m=>{ try{ topdownCanvas=document.createElement('canvas'); topdownCV=m.createTopdownCombat({canvas:topdownCanvas,surfaceId:'home:topdown-combat'}); bindCombatOrbitControls(); }catch(e){ topdownCV=null; } })
-      .catch(()=>{ topdownCV=null; });
+      .then(m=>{
+        if(generation!==topdownGeneration||cruiseModeActive()) return;
+        const pilotCanvas=document.getElementById('cicPilotFeed');
+        const candidateCanvas=document.createElement('canvas');
+        let candidate=null;
+        try{
+          candidate=m.createTopdownCombat({
+            canvas:candidateCanvas,
+            surfaceId:'home:topdown-combat',
+            shouldLoadAuthoredAssets:()=>commandFeedVisible(pilotCanvas),
+            preloadAuthoredFighters:false,
+          });
+        }catch(error){}
+        if(generation!==topdownGeneration||cruiseModeActive()){
+          destroyRendererInstance(candidate);
+          return;
+        }
+        if(!candidate) return;
+        topdownCanvas=candidateCanvas;
+        topdownCV=candidate;
+        bindCombatOrbitControls();
+      })
+      .catch(()=>{if(generation===topdownGeneration) topdownCV=null;});
   }
   return topdownCV;
+}
+
+function destroyCombatRenderers(){
+  topdownGeneration+=1;
+  topdownTried=false;
+  const activeTopdown=topdownCV;
+  topdownCV=null;
+  topdownCanvas=null;
+  destroyRendererInstance(activeTopdown);
+
+  ship3DGeneration+=1;
+  ship3DTried=false;
+  const activeShip=ship3D;
+  ship3D=null;
+  destroyRendererInstance(activeShip);
+
+  fighter3DGeneration+=1;
+  fighter3DTried=false;
+  const activeFighter=fighter3D;
+  fighter3D=null;
+  destroyRendererInstance(activeFighter);
+
+  const controls=document.querySelector('#combatHud .cic-camera-controls');
+  if(controls) controls.hidden=true;
+  document.getElementById('cicPilotFeed')?.classList.remove('is-camera-dragging');
 }
 
 // HMD v3 (cockpit frame + flight-path marker / power pips / target health bars /
@@ -323,7 +401,7 @@ function ensureSpaceSceneRunning(){
   startMainLoop();
   backgroundScene?.resume();
   blackHoleFrame?.contentWindow?.postMessage(
-    {type:'black-hole-observatory:play'},
+    {type:cruiseModeActive()?'black-hole-observatory:play':'black-hole-observatory:pause'},
     location.origin
   );
 }
@@ -336,6 +414,7 @@ commandModeBtn?.addEventListener('click',(event)=>{
   homeFlagshipNarrative?.setEnabled(toHudOff);
   if(toHudOff){
     disengageBattleSystems();
+    destroyCombatRenderers();
     setHudPanelFocus(null);
     voyageLogCtl?.close();
   }
@@ -357,6 +436,7 @@ const battleLog=document.getElementById('battleLog');
 const weaponWarning=document.getElementById('weaponWarning');
 let enforcerCooldownUntil=0, empUntil=0, enforcerChargeUntil=0, nukeCountdownUntil=0, shipRecoil=0;
 const weaponCooldownMs=WEAPON_COOLDOWN_MS;
+const ENFORCER_IMPACT_DELAY_MS=600;
 let missileReloadPending=false;
 const totalFighters=TOTAL_FIGHTERS, totalBombers=TOTAL_BOMBERS;
 const weaponNames=WEAPON_NAMES;
@@ -1738,6 +1818,7 @@ const ectx=evtCanvas.getContext('2d');
 function resizeEvt(){ evtCanvas.width=innerWidth*DPR; evtCanvas.height=innerHeight*DPR; evtCanvas.style.width=innerWidth+'px'; evtCanvas.style.height=innerHeight+'px'; }
 
 let halley=null, weapons=[], escorts=[], explosions=[], nukeFlash=0, killCount=0, giantKillCount=0, mainCannonFx=null;
+let eventLayerDirty=false;
 const COMET_LOCK_MS=2000;
 const combatState=createCombatState();
 let combatSnapshot=combatState.getSnapshot();
@@ -2071,13 +2152,14 @@ function fireEnforcerMain(tx, ty){
     document.body.classList.add('weapon-cutoff');
     const fireTx=halley&&!halley.destroyed?halley.curX:tx;
     const fireTy=halley&&!halley.destroyed?halley.curY:ty;
-    mainCannonFx={...(mainCannonFx||{}),chargeStart:mainCannonFx?.chargeStart||Date.now()-4500,fireAt:Date.now(),tx:fireTx,ty:fireTy};
+    const firedAt=Date.now();
+    mainCannonFx={...(mainCannonFx||{}),chargeStart:mainCannonFx?.chargeStart||firedAt-4500,fireAt:firedAt,tx:fireTx,ty:fireTy};
     document.body.classList.add('main-cannon-firing');
     shipRecoil=42;
     document.body.classList.add('shake');
     setTimeout(()=>document.body.classList.remove('main-cannon-firing'),1100);
     setTimeout(()=>document.body.classList.remove('shake'),900);
-    weapons.push({type:'enforcer', active:128, tx:fireTx, ty:fireTy, ox:innerWidth*.5, oy:innerHeight+420, particles:[]});
+    weapons.push({type:'enforcer', active:128, impactAt:firedAt+ENFORCER_IMPACT_DELAY_MS, tx:fireTx, ty:fireTy, ox:innerWidth*.5, oy:innerHeight+420, particles:[]});
     emitCombatEvent('weapon:fire',{weapon:'enforcer',targetId:'1P/HALLEY'});
     setTimeout(()=>document.body.classList.remove('weapon-cutoff'), 1700);
   },4500);
@@ -2515,7 +2597,7 @@ function updateEscorts(dt, now) {
         }
         const saveData=Boolean(navigator.connection?.saveData);
         const allowAuthored=e.type!=='b2'&&!saveData
-          &&hudRenderPolicy.qualityTier!=='low';
+          &&hudRenderPolicy.qualityTier!=='low'&&!combatViewTopdown();
         const authoredFighter=allowAuthored?getFighter3D():null;
         const assetStatus=authoredFighter?.getAssetStatus?.();
         const authoredLimit=assetStatus?.loadStatus==='ready'
@@ -2541,6 +2623,7 @@ function updateEscorts(dt, now) {
 
 function updateWeapons(dt) {
   ectx.save(); ectx.scale(DPR, DPR);
+  const weaponNow=Date.now();
   
   for (let i = weapons.length - 1; i >= 0; i--) {
       let w = weapons[i];
@@ -2556,6 +2639,7 @@ function updateWeapons(dt) {
       } 
       else if (w.type === 'enforcer') {
           w.active -= 1;
+          const impactReady=weaponNow>=w.impactAt;
           const life = clamp(w.active/128,0,1);
           const pulse = .94 + Math.sin(w.active*.32)*.035;
           const width = Math.max(innerWidth/5.2, 230) * pulse;
@@ -2594,7 +2678,7 @@ function updateWeapons(dt) {
             const t=(p/28 + (w.active%20)/20)%1, x=lerp(bx,ex,t), y=lerp(by,ey,t);
             ectx.fillStyle=`rgba(255,236,236,${.18+.36*life})`;ectx.beginPath();ectx.arc(x,y,2.2+Math.sin(w.active*.2+p)*1.2,0,Math.PI*2);ectx.fill();
           }
-          if(halley && !halley.destroyed) {
+          if(impactReady && halley && !halley.destroyed) {
             halley.hp -= 9.5; halley.mainCannoned=true;
             if(!halley.enforcerHit){
               halley.enforcerHit=true;
@@ -3272,6 +3356,7 @@ function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
 function combatSceneLabel(diagnostics, mode='standby'){
   const zh=currentLang==='zh';
   const phase=diagnostics?.flightPhase;
+  const shot=diagnostics?.cameraShot||'';
   const phaseCopy={
     catapult:zh?'LANCER-01 · 甲板弹射加速':'LANCER-01 · CATAPULT ACCEL',
     rotate:zh?'LANCER-01 · 离舰抬升':'LANCER-01 · DECK ROTATION',
@@ -3281,18 +3366,23 @@ function combatSceneLabel(diagnostics, mode='standby'){
     flare:zh?'LANCER-01 · 拉平减速':'LANCER-01 · LANDING FLARE',
     touchdown:zh?'LANCER-01 · 甲板接地':'LANCER-01 · DECK TOUCHDOWN',
   };
+  const shotCopy={
+    pilotLaunch:zh?'LANCER-01 · 驾驶员视角':'LANCER-01 · PILOT POV',
+    chaseLaunch:zh?'舰载机尾追 · 目标航线':'AIR WING · TARGET CHASE',
+    commandChase:zh?'VANGUARD · 舰桥光学跟踪':'VANGUARD · BRIDGE OPTICAL',
+    missileTail:zh?'导弹尾舱 · 数据链制导':'MISSILE TAIL · DATALINK GUIDANCE',
+    ciwsTurret:zh?'近防炮塔 · 解算射界':'CIWS TURRET · FIRING SOLUTION',
+    mainGunBroadside:zh?'脊柱主炮 · 侧后充能机位':'SPINAL GUN · AFT QUARTER CHARGE',
+    mainGunAxis:zh?'脊柱主炮 · 轴线摄影机':'SPINAL GUN · AXIS CAMERA',
+    impactOrbit:zh?'命中确认 · 固定验证机位':'IMPACT CONFIRMED · FIXED VERIFY',
+  };
+  // An authoritative weapon cut must label the picture it actually owns;
+  // a simultaneous background launch/landing phase is secondary telemetry.
+  if(shotCopy[shot] && !['commandChase','pilotLaunch','chaseLaunch'].includes(shot)) return shotCopy[shot];
   if(phaseCopy[phase]) return phaseCopy[phase];
-  const shot=diagnostics?.cameraShot||'';
-  return shot==='pilotLaunch'?(zh?'LANCER-01 · 驾驶员视角':'LANCER-01 · PILOT POV')
-    :shot==='chaseLaunch'?(zh?'舰载机尾追 · 目标航线':'AIR WING · TARGET CHASE')
-    :shot==='commandChase'?(zh?'VANGUARD · 舰桥光学跟踪':'VANGUARD · BRIDGE OPTICAL')
-    :shot==='missileTail'?(zh?'导弹尾舱 · 数据链制导':'MISSILE TAIL · DATALINK GUIDANCE')
-    :shot==='ciwsTurret'?(zh?'近防炮塔 · 解算射界':'CIWS TURRET · FIRING SOLUTION')
-    :shot==='mainGunAxis'?(zh?'脊柱主炮 · 轴线摄影机':'SPINAL GUN · AXIS CAMERA')
-    :shot==='impactOrbit'?(zh?'命中确认 · 固定验证机位':'IMPACT CONFIRMED · FIXED VERIFY')
-    :mode==='launch'?(zh?'弹射起飞 · 甲板机位':'LAUNCH · DECK CAM')
+  return shotCopy[shot] || (mode==='launch'?(zh?'弹射起飞 · 甲板机位':'LAUNCH · DECK CAM')
     :mode==='landing'?(zh?'进近回收 · 塔台机位':'RECOVERY · TOWER CAM')
-    :(zh?'舰桥战术态势 · 实时光学':'CIC · LIVE OPTICAL');
+    :(zh?'舰桥战术态势 · 实时光学':'CIC · LIVE OPTICAL'));
 }
 
 function drawMosaicInterference(ctx,w,h){
@@ -3309,6 +3399,7 @@ function drawMosaicInterference(ctx,w,h){
 
 function drawPilotFeed(now,state=combatSnapshot){
   const pilotCanvas=document.getElementById('cicPilotFeed');
+  if(!commandFeedVisible(pilotCanvas)) return;
   const feed=setupFeedCanvas(pilotCanvas);
   if(!feed) return;
   const {ctx,w,h}=feed, craft=pilotSubjectCraft();
@@ -3343,6 +3434,9 @@ function drawPilotFeed(now,state=combatSnapshot){
         pilotCanvas.dataset.activeEscorts=String(diagnostics.activeEscortCount||0);
         pilotCanvas.dataset.targetVisible=String(Boolean(diagnostics.targetScreen?.visible));
         pilotCanvas.dataset.cameraManual=String(Boolean(diagnostics.cameraManual));
+      }
+      if(diagnostics?.shipModelStatus==='venator-ready'){
+        homeFlagshipNarrative?.dismissSettledPoster?.('venator-command-feed-ready');
       }
       ctx.drawImage(topdownCanvas,0,0,w,h);
       const hmdLabel=combatSceneLabel(diagnostics,sceneMode);
@@ -3407,7 +3501,7 @@ function drawPilotFeed(now,state=combatSnapshot){
     const firing=!!(fx && fx.mode==='fire');
     const chargeT=fx ? (fx.mode==='charge'?fx.t:1) : clamp(elapsed/.5,0,1);
     if(!firing && chargeT<1){
-      const s3=getShip3D();
+      const s3=combatViewTopdown()?null:getShip3D();
       if(s3) s3.draw(ctx,w,h,now,chargeT,currentLang);
       else capitalFlyby.draw(ctx,w,h,now,chargeT,currentLang);
     }else{
@@ -3451,11 +3545,38 @@ function drawPilotFeed(now,state=combatSnapshot){
 
 /* ===== MAIN LOOP ===== */
 let lastT=performance.now();
-let mainLoopRunning=false, mainLoopRaf=0, mainRenderSurface=null;
+let mainLoopRunning=false, mainLoopRaf=0, mainRenderSurface=null, lastPresentedAt=0;
+const heroSection=document.querySelector('.hero');
+const stardriveSection=document.querySelector('.stardrive');
+let heroSectionVisible=true,stardriveSectionVisible=false;
+if('IntersectionObserver' in window){
+  const masterLoopSectionObserver=new IntersectionObserver((entries)=>{
+    for(const entry of entries){
+      if(entry.target===heroSection) heroSectionVisible=entry.isIntersecting;
+      else if(entry.target===stardriveSection) stardriveSectionVisible=entry.isIntersecting;
+    }
+  },{threshold:.01});
+  if(heroSection) masterLoopSectionObserver.observe(heroSection);
+  if(stardriveSection) masterLoopSectionObserver.observe(stardriveSection);
+}else{
+  heroSectionVisible=true;
+  stardriveSectionVisible=true;
+}
+
+function masterLoopTargetFps(){
+  if(!cruiseModeActive()||warpTarget>=.45||warpIntensity>=.45) return 60;
+  return heroSectionVisible||stardriveSectionVisible?30:15;
+}
 
 function frame(now){
   if(!mainLoopRunning) return;
-  const rawFrameMs=Math.max(0,now-lastT);
+  const targetFps=masterLoopTargetFps();
+  if(lastPresentedAt&&now-lastPresentedAt<1000/targetFps){
+    mainLoopRaf=requestAnimationFrame(frame);
+    return;
+  }
+  lastPresentedAt=now;
+  const frameStartedAt=performance.now();
   try {
     const dt=Math.min(32,now-lastT);lastT=now;
     if(!window.__mouseReady){mx=innerWidth/2;my=innerHeight/2;}
@@ -3468,8 +3589,11 @@ function frame(now){
     warpIntensity=lerp(warpIntensity,warpTarget,.16);
     backgroundScene.draw(now);
     
-    ectx.clearRect(0,0,evtCanvas.width,evtCanvas.height);
     const cruise=cruiseModeActive();
+    if(!cruise||eventLayerDirty||nukeFlash>0){
+      ectx.clearRect(0,0,evtCanvas.width,evtCanvas.height);
+      eventLayerDirty=!cruise||nukeFlash>0;
+    }
     document.body.classList.toggle('combat-mode', !cruise && !!halley && !halley.destroyed);
     if(!cruise){
       // Cruise is the reading/eclipsing state. Keeping Halley on the global
@@ -3503,7 +3627,7 @@ function frame(now){
     
     pcx=mx;pcy=my;
   } catch (err) {}
-  mainRenderSurface?.reportFrame(rawFrameMs);
+  mainRenderSurface?.reportFrame(performance.now()-frameStartedAt);
   if(mainLoopRunning) mainLoopRaf=requestAnimationFrame(frame);
 }
 
@@ -3511,6 +3635,7 @@ function startMainLoop(){
   if(mainLoopRunning) return;
   mainLoopRunning=true;
   lastT=performance.now();
+  lastPresentedAt=0;
   mainLoopRaf=requestAnimationFrame(frame);
 }
 

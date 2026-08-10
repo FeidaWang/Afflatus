@@ -43,6 +43,9 @@ import {
   disposeThreeScene,
 } from '../lib/webglLifecycle.js';
 
+const MAIN_GUN_FIRE_HOLD_MS = 800;
+const MAIN_GUN_FIRE_VISUAL_MS = 1000;
+
 // U23 M1 (2026-07-13): the camera director rig is now the DEFAULT (was
 // opt-in via ?combatcam=director since V14). ?combatcam=tactical opts back
 // into the original hardcoded camera sway.
@@ -128,7 +131,12 @@ function distantBlackHoleTexture() {
 
 let surfaceSequence = 0;
 
-export function createTopdownCombat({ canvas, surfaceId }) {
+export function createTopdownCombat({
+  canvas,
+  surfaceId,
+  shouldLoadAuthoredAssets = () => true,
+  preloadAuthoredFighters = true,
+}) {
   const renderCoordinator = getRenderBudgetCoordinator();
   let renderPolicy = renderCoordinator.getPolicy({ cost: 'high', targetFps: 60 });
   const lifecycleId = surfaceId || `combat:topdown:${++surfaceSequence}`;
@@ -223,8 +231,24 @@ export function createTopdownCombat({ canvas, surfaceId }) {
           };
         },
       },
-      mainGunAxis: {
+      mainGunBroadside: {
         priority: 3,
+        blendInMs: 420,
+        compute() {
+          const c = capital.position;
+          return {
+            // The carrier faces -Z, so +Z is aft. Pulling well aft and to
+            // starboard keeps the complete Venator (and its procedural
+            // fallback) in frame while the muzzle charge remains readable.
+            pos: { x: c.x + 15, y: c.y + 10.5, z: c.z + 23 },
+            look: { x: c.x, y: c.y + .7, z: c.z - 1.8 },
+            fov: 50,
+            roll: -.018,
+          };
+        },
+      },
+      mainGunAxis: {
+        priority: 4,
         compute() {
           const p = comet.position;
           return {
@@ -271,9 +295,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       },
       // ── U24 (24b) flight-event shots. All four read flightLastPos/Vel
       //    (fed by the update() flight sampler) via closure — the same
-      //    live-object pattern as missileTail/mainGunAxis above. ──────────
+      //    live-object pattern as missileTail/mainGunAxis above. Flight beats
+      //    the idle bridge view but always yields to an authoritative weapon
+      //    shot (CIWS 2 → main gun 3/4 → impact 5). ──────────
       deckCam: {           // deck-edge pedestal watching the catapult run / touchdown
-        priority: 6,
+        priority: 1.5,
         blendInMs: 250,
         compute() {
           const dp = capital.position;
@@ -283,7 +309,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         },
       },
       chaseLaunch: {       // tail-chase on the launching fighter — FOV/bank from real accel
-        priority: 6,
+        priority: 1.5,
         blendInMs: 350,
         compute() {
           const p = flightLastPos || capital.position;
@@ -296,7 +322,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         },
       },
       pilotLaunch: {       // canopy/helmet camera: the fighter and HUD own the launch beat
-        priority: 6,
+        priority: 1.5,
         blendInMs: 130,
         compute() {
           const p = flightLastPos || capital.position;
@@ -313,7 +339,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         },
       },
       towerCam: {          // LSO/tower long lens tracking the approach
-        priority: 6,
+        priority: 1.5,
         blendInMs: 300,
         compute() {
           const dp = capital.position;
@@ -322,7 +348,7 @@ export function createTopdownCombat({ canvas, surfaceId }) {
         },
       },
       flybyCam: {          // fixed point the fighter sweeps past (classic flyby)
-        priority: 6,
+        priority: 1.5,
         blendInMs: 250,
         compute() {
           const f = flightLastPos || capital.position;
@@ -705,8 +731,13 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   function ensureAuthoredCombatAssets(state) {
-    if (!authoredAssetsAllowed()) return;
-    if (combatAssetLoadPromise || (shipModelPromise && fighterModelPromise)) return;
+    if (!authoredAssetsAllowed() || !shouldLoadAuthoredAssets(state)) return;
+    const fighterDemand = preloadAuthoredFighters
+      || Boolean(state?.escorts?.some((escort) => escort.type === 'f47'));
+    const needsShip = !shipModelPromise;
+    const needsFighters = fighterDemand && !fighterModelPromise;
+    if (!needsShip && !needsFighters) return;
+    if (combatAssetLoadPromise) return;
     // KTX2Loader owns a worker pool. Stream the two authored models through
     // one active loader at a time as soon as the CIC scene exists. Waiting for
     // a target made the Command standby frame look unchanged and left the first
@@ -714,7 +745,13 @@ export function createTopdownCombat({ canvas, surfaceId }) {
     combatAssetLoadPromise = Promise.resolve(shipSurfaceTexturePromise)
       .catch(() => null)
       .then(() => ensureAuthoredShip())
-      .then(() => ensureAuthoredFighters())
+      .then(() => {
+        const latestFighterDemand = preloadAuthoredFighters
+          || Boolean(liveCombatState?.escorts?.some((escort) => escort.type === 'f47'));
+        return latestFighterDemand && shouldLoadAuthoredAssets(liveCombatState)
+          ? ensureAuthoredFighters()
+          : null;
+      })
       .finally(() => { combatAssetLoadPromise = null; });
   }
 
@@ -1104,6 +1141,8 @@ export function createTopdownCombat({ canvas, surfaceId }) {
 
   // ENFORCER is an event-bound axial lance, not an autonomous plasma body.
   const lances = [];
+  let mainGunFireHoldUntil = 0;
+  let pendingMainGunImpactShot = null;
   function launchOrb(nowMs = performance.now()) {
     const fallback = new THREE.Vector3(0, 2.5, -14); capital.localToWorld(fallback);
     const muzzle = worldAnchor(shipAnchors?.main, fallback);
@@ -1114,16 +1153,17 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       );
       scene.add(lance);
       orient(lance, muzzle, comet.position);
-      lances.push({ mesh: lance, life: 1, baseOpacity: opacity, radius });
+      lances.push({ mesh: lance, bornAt: nowMs, life: 1, lifeMs: MAIN_GUN_FIRE_VISUAL_MS, baseOpacity: opacity, radius });
     }
-    combatVfx.linkedBeam({ from: muzzle, to: comet.position, color: 0x8dfff3, lifeMs: 460, jitter: 0.18 });
+    combatVfx.linkedBeam({ from: muzzle, to: comet.position, color: 0x8dfff3, lifeMs: MAIN_GUN_FIRE_VISUAL_MS, jitter: 0.18 });
     combatVfx.bloom({ at: muzzle, color: 0xeaffff, size: 2.65, lifeMs: 420 });
+    mainGunFireHoldUntil = nowMs + MAIN_GUN_FIRE_HOLD_MS;
     if (camDirector) camDirector.requestShot('mainGunAxis', { durationMs: 1500, blendInMs: 300, refresh: true, now: nowMs });
   }
 
   // ── animation loop ────────────────────────────────────────────────────────
   let W = 1, H = 1, raf = 0, running = false, t0 = 0, previousUpdateAt = 0;
-  let sized = false, wantsLoop = false, surfaceActive = false, renderSurface = null, loopLastT = 0, renderOnceLastT = 0;
+  let sized = false, wantsLoop = false, surfaceActive = false, renderSurface = null, renderOnceLastT = 0;
   let lastEventSeen = 0;
   let targetScreen = null;
   let currentFlightPhase = null;
@@ -1507,8 +1547,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
           radius: 2.35,
         });
         combatVfx.bloom({ at: muzzle, color: 0xe9ffff, size: 1.55, lifeMs: 760 });
-        camDirector?.requestShot('mainGunAxis', { durationMs: chargeRemainingMs, blendInMs: 420, now });
-      } else if (event.type === 'weapon:fire' && alive) {
+        camDirector?.requestShot('mainGunBroadside', { durationMs: chargeRemainingMs, blendInMs: 420, now });
+      } else if (event.type === 'weapon:fire') {
+        // The event is authoritative even if the tracked target leaves the
+        // viewport during a long charge. Use the last resolved comet pose so
+        // the muzzle flash and weapon camera are never silently discarded.
         if (event.weapon === 'cannon') {
           const fallback = new THREE.Vector3().setFromMatrixPosition(capital.matrixWorld);
           fallback.y = 2;
@@ -1548,16 +1591,37 @@ export function createTopdownCombat({ canvas, surfaceId }) {
           scale: event.weapon === 'nuke' ? 3.2 : event.weapon === 'enforcer' ? 1.8 : 0.9,
           nuclear: event.weapon === 'nuke',
         });
-        camDirector?.requestShot('impactOrbit', { durationMs: event.weapon === 'nuke' ? 1800 : 1050, blendInMs: 110, now });
+        const impactShot = { durationMs: event.weapon === 'nuke' ? 1800 : 1050, blendInMs: 110 };
+        if (camDirector && event.weapon === 'enforcer' && now < mainGunFireHoldUntil) {
+          pendingMainGunImpactShot = {
+            ...impactShot,
+            notBefore: mainGunFireHoldUntil,
+            expiresAt: mainGunFireHoldUntil + impactShot.durationMs + 500,
+          };
+        } else {
+          camDirector?.requestShot('impactOrbit', { ...impactShot, now });
+        }
       } else if (event.type === 'target:destroyed') {
         boom(cometPos.clone(), 5.2, 0xffe6b0);
         combatVfx.fireSmoke({ at: cometPos, velocity: [0, 1.1, 0], color: 0xffb05c, lifeMs: 2400, scale: 3.4, nuclear: true });
       }
     }
 
+    if (pendingMainGunImpactShot && now >= pendingMainGunImpactShot.notBefore) {
+      const { notBefore, expiresAt, ...shot } = pendingMainGunImpactShot;
+      if (now > expiresAt || !camDirector) {
+        pendingMainGunImpactShot = null;
+      } else if (camDirector.requestShot('impactOrbit', { ...shot, now })) {
+        // Equal-priority impact shots may briefly reject one another. Keep
+        // retrying until accepted, but never replay a stale cut after a long
+        // offscreen/device pause (expiresAt bounds that recovery window).
+        pendingMainGunImpactShot = null;
+      }
+    }
+
     for (let i = lances.length - 1; i >= 0; i -= 1) {
       const lance = lances[i];
-      lance.life -= 0.035 * frameScale;
+      lance.life = Math.max(0, 1 - (now - lance.bornAt) / lance.lifeMs);
       lance.mesh.material.opacity = Math.max(0, lance.life * lance.baseOpacity);
       if (lance.life <= 0) {
         scene.remove(lance.mesh);
@@ -1701,12 +1765,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   }
 
   function loop(now) {
-    const frameMs = loopLastT ? now - loopLastT : 0;
-    loopLastT = now;
     if (!t0) t0 = now;
+    const renderStartedAt = performance.now();
     update(now);
     renderer.render(scene, camera);
-    renderSurface?.reportFrame(frameMs, {
+    renderSurface?.reportFrame(performance.now() - renderStartedAt, {
       drawCalls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
     });
@@ -1716,7 +1779,6 @@ export function createTopdownCombat({ canvas, surfaceId }) {
   function startLoop() {
     if (running || !surfaceActive) return;
     running = true;
-    loopLastT = 0;
     raf = requestAnimationFrame(loop);
   }
 
@@ -1826,11 +1888,11 @@ export function createTopdownCombat({ canvas, surfaceId }) {
       if (!surfaceActive) return;
       if (!t0) t0 = now;
       if (renderPolicy.qualityTier === 'low' && renderOnceLastT && now-renderOnceLastT<32) return;
-      const frameMs=renderOnceLastT?now-renderOnceLastT:0;
       renderOnceLastT=now;
+      const renderStartedAt=performance.now();
       update(now, state);
       renderer.render(scene, camera);
-      renderSurface?.reportFrame(frameMs, {
+      renderSurface?.reportFrame(performance.now()-renderStartedAt, {
         drawCalls: renderer.info.render.calls,
         triangles: renderer.info.render.triangles,
       });

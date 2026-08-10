@@ -26,7 +26,7 @@ document.documentElement.dataset.heroFx = FLAGSHIP_UPGRADE_ENABLED
 
 // The licensed combat craft are part of the default homepage composition.
 // `heroCraft=off` remains a deterministic support escape hatch, while the
-// black-hole renderer above keeps its original full-resolution treatment.
+// black-hole renderer above keeps its full-resolution final composite.
 const HERO_CRAFT_MODE = new URLSearchParams(location.search).get('heroCraft');
 const HOME_COMBAT_MODELS_ENABLED = HERO_CRAFT_MODE !== 'off';
 document.body.classList.toggle('home-combat-models-enabled', HOME_COMBAT_MODELS_ENABLED);
@@ -46,6 +46,10 @@ function installHomeCombatPoster() {
   poster.decoding = 'async';
   poster.loading = 'eager';
   poster.fetchPriority = 'low';
+  // Preserve the original black-hole-first composition. The light poster is
+  // revealed by the Command narrative while the authored model is loading;
+  // only the explicit heroFx experiment may show it during cruise.
+  poster.hidden = !FLAGSHIP_UPGRADE_ENABLED;
   poster.addEventListener('error', () => {
     poster.dataset.failed = 'true';
     poster.hidden = true;
@@ -85,11 +89,6 @@ function loadBlackHoleObservatory() {
   const source = frame?.dataset.src;
   if (!frame || !source || frame.getAttribute('src')) return;
   const sourceUrl = new URL(source, location.href);
-  if (!FLAGSHIP_UPGRADE_ENABLED) {
-    sourceUrl.searchParams.set('bhQuality', 'high');
-    sourceUrl.searchParams.set('bhRenderScale', '1');
-    sourceUrl.searchParams.set('bhParticles', '0');
-  }
   frame.setAttribute('src', `${sourceUrl.pathname}${sourceUrl.search}`);
 }
 
@@ -172,14 +171,18 @@ function installVisibilityLoaders() {
     // scroll position and keeps the enhancement inside the document flow.
     stardrive.classList.add('has-motion-shell');
     const forgeObserver = new IntersectionObserver((entries, observer) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
+      // The stardrive shell can graze the initial viewport at this layout.
+      // Wait until a meaningful part is visible so its WebGL context and
+      // backing store are not allocated behind the hero.
+      if (!entries.some((entry) => entry.isIntersecting
+        && entry.intersectionRatio >= 0.35)) return;
       observer.disconnect();
       void import('./scene/alphardForge.js')
         .then(({ initAlphardForge }) => {
           if (!initAlphardForge()) stardrive.classList.remove('has-motion-shell');
         })
         .catch(() => { stardrive.classList.remove('has-motion-shell'); });
-    }, { rootMargin: '240px 0px' });
+    }, { rootMargin: '0px', threshold: 0.35 });
     forgeObserver.observe(stardrive);
   }
 

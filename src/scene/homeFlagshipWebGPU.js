@@ -84,7 +84,11 @@ function disposeObject(root) {
   for (const geometry of geometries) geometry.dispose();
 }
 
-export async function createHomeFlagshipWebGPU({ container, onModelStatus } = {}) {
+export async function createHomeFlagshipWebGPU({
+  container,
+  onModelStatus,
+  onUnavailable,
+} = {}) {
   if (!container) return null;
   const canvas = container.ownerDocument.createElement('canvas');
   canvas.className = 'home-flagship-narrative home-flagship-narrative--gpu';
@@ -137,17 +141,19 @@ export async function createHomeFlagshipWebGPU({ container, onModelStatus } = {}
         loadGeneration += 1;
         releaseAuthoredFlagship();
         modelStatus = 'poster-fallback';
+        queueMicrotask(() => { onUnavailable?.(state.reason || 'poster-fallback'); });
       }
 
-      // Compressed textures are selected against the active renderer. After a
-      // WebGPU device loss, keep the procedural shell visible until a fresh
-      // WebGL2-specific GLB load completes.
+      // A WebGPU device loss is terminal for this five-second flourish. A GLB
+      // decoded for the lost backend must not be transcoded and uploaded again
+      // in the background; the owner disposes this short-lived fallback
+      // context and keeps the model-derived poster instead.
       if (previousBackend === 'webgpu' && backend === 'webgl2' && fallbackShip) {
         loadGeneration += 1;
         releaseAuthoredFlagship();
-        fallbackShip.visible = true;
-        modelStatus = 'reloading-webgl2';
-        queueMicrotask(() => { void loadAuthoredFlagship(state.renderer); });
+        fallbackShip.visible = false;
+        modelStatus = 'device-lost-poster';
+        queueMicrotask(() => { onUnavailable?.('webgpu-device-lost'); });
       }
       markStatus();
     },
@@ -279,7 +285,7 @@ export async function createHomeFlagshipWebGPU({ container, onModelStatus } = {}
     }
   }
 
-  void loadAuthoredFlagship(renderer);
+  const authoredReady = loadAuthoredFlagship(renderer).then(Boolean);
 
   let width = 1;
   let height = 1;
@@ -337,6 +343,7 @@ export async function createHomeFlagshipWebGPU({ container, onModelStatus } = {}
     get backend() { return backendController.backend; },
     get modelStatus() { return modelStatus; },
     get canvas() { return activeCanvas; },
+    ready: authoredReady,
     getDiagnostics() {
       return Object.freeze({
         backend: backendController.backend,

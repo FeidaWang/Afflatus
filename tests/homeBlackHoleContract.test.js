@@ -78,13 +78,13 @@ describe('homepage relativistic black hole contract', () => {
     expect(source).toContain('model.discTemperature.setValue(2700)');
   });
 
-  it('can explicitly resume the embedded observatory after a command-mode transition', () => {
+  it('plays the observatory only in cruise and pauses it while Command owns the hero', () => {
     const source = readFileSync(`${vendorDir}/background.html`, 'utf8');
     const main = readFileSync('src/homeExperience.js', 'utf8');
 
     expect(source).toContain("event.data.type === 'black-hole-observatory:play'");
     expect(main).toContain('function ensureSpaceSceneRunning()');
-    expect(main).toContain("{type:'black-hole-observatory:play'}");
+    expect(main).toContain("cruiseModeActive()?'black-hole-observatory:play':'black-hole-observatory:pause'");
   });
 
   it('retains the renderer and star-catalogue license notice', () => {
