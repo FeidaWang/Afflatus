@@ -1090,9 +1090,9 @@
       "window": "picks-publish",
       "model": "gatherer",
       "status": "done",
-      "ordersProposed": 0,
+      "ordersProposed": 1,
       "ordersFilled": 0,
-      "note": "Real pre-market HOLD resealed at 09:00 ET after an infrastructure-only retry; evidence cutoff remained 08:54 ET, with zero proposals and no orders."
+      "note": "One-time user-authorized recovery decision sealed at 09:16 ET: one Model T MU proposal for today's post-market only; the earlier 09:00 HOLD remains in Git history and no historical session was backfilled."
     }
   ]
 }

@@ -1,21 +1,56 @@
 {
   "date": "2026-08-13",
-  "generatedAt": "2026-08-13T13:00:46.000Z",
+  "generatedAt": "2026-08-13T13:16:42.000Z",
   "regime": "neutral",
   "decisionStatus": "sealed",
   "executable": true,
-  "note_en": "Real pre-market HOLD across S, P and T, resealed at 09:00 ET after an infrastructure-only retry without using any evidence after the preserved 08:54 ET cutoff. Mixed inflation evidence and durable but non-incremental AI demand do not meet the threshold for a new directional order.",
-  "note_zh": "S、P、T 的真实盘前决定均为观望；在一次仅涉及基础设施的重试后于美东时间 09:00 重新封存，且未使用 08:54 证据截止时间之后的任何信息。通胀证据分化，AI 需求虽持续但缺少增量催化，不满足新方向订单的门槛。",
+  "note_en": "One-time recovery authorization at 09:16 ET supersedes the 09:00 HOLD only for one newly sealed Model T MU proposal. The earlier HOLD remains documented in Git history. No historical session is backfilled; execution is allowed only in today's real post-market window and only at or below the signed price ceiling.",
+  "note_zh": "美东时间 09:16 的一次性恢复授权，仅以一笔新封存的 T 模型 MU 提案取代 09:00 的观望；先前观望仍保留在 Git 历史中。不会补填任何历史交易日；仅允许在今天真实盘后窗口内、且参考价不高于签名上限时执行。",
   "models": {
     "S": [],
     "P": [],
-    "T": []
+    "T": [
+      {
+        "sym": "MU",
+        "side": "long",
+        "confidence": 0.68,
+        "entry": 911.29,
+        "stop": 774.6,
+        "target": 1048,
+        "thesis_en": "Micron's record fiscal results and HBM4 volume shipments align with NVIDIA's record data-center demand. The recovery order is deliberately small and may execute only if today's closing-near reference price does not exceed the 09:16 ET signed ceiling.",
+        "thesis_zh": "美光创纪录的财年业绩与 HBM4 批量出货，和英伟达创纪录的数据中心需求相互印证。恢复订单刻意控制在小仓位，且只有今天临近收盘的参考价不高于 09:16 ET 签名上限时才可执行。",
+        "signals": [
+          "Micron HBM4 high-volume shipments and record fiscal results",
+          "NVIDIA record data-center revenue confirms compute demand"
+        ],
+        "provenanceSchema": "arena-premarket-decision/v1",
+        "sessionDate": "2026-08-13",
+        "decidedAt": "2026-08-13T13:16:39.000Z",
+        "decisionWindow": "pre-market",
+        "expiresAt": "2026-08-13T21:15:00.000Z",
+        "allowedExecutionWindows": [
+          "post-market"
+        ],
+        "sourceRefs": [
+          "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-record-results-third-quarter-fiscal-2026",
+          "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/"
+        ],
+        "sourceHash": "sha256:4ec253628246fb19da1ee73b0cd3209d2cc3ae8e429397af29c4b0f48532fca0",
+        "decisionHash": "sha256:fbf351f23b031c7482e5eebdbd57c32eef5cb4f1c3086f17ee1d490831acabd2",
+        "proposalId": "arena:2026-08-13:T:fbf351f23b031c7482e5",
+        "order": {
+          "side": "buy",
+          "qty": 2
+        }
+      }
+    ]
   },
   "quoteAllowlist": [
     "WAB",
     "T",
     "SPY",
     "QQQ",
-    "SMH"
+    "SMH",
+    "MU"
   ]
 }
