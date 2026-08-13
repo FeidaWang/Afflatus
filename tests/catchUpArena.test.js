@@ -90,6 +90,7 @@ function makeFixtureRepository(tempRoot) {
     'src/config/siteManifest.js',
     'src/lib/arenaExec.js',
     'src/lib/arenaExecution.js',
+    'src/lib/arenaEarningsDigest.js',
     'src/lib/arenaRun.js',
     'src/lib/arenaRules.js',
     'src/lib/arenaReconcile.js',

@@ -26,6 +26,7 @@
     "data:arena:open:candidates": "node scripts/build-arena-window-candidates.mjs --window=open",
     "data:arena:late:candidates": "node scripts/build-arena-window-candidates.mjs --window=late",
     "data:arena:postmarket:candidates": "node scripts/build-arena-postmarket-candidates.mjs",
+    "data:arena:earnings:candidates": "node scripts/build-arena-earnings-digest-candidate.mjs",
     "data:arena:window": "node scripts/check-arena-window.mjs",
     "data:arena:picks:witness": "node scripts/validate-arena-picks-publication.mjs",
     "data:lock": "node scripts/data-orchestrator-lock.mjs",

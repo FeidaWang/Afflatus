@@ -11,6 +11,11 @@ import { validateArenaPredlog } from '../src/lib/validateArenaPredlog.js';
 import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
 import { validateArenaPremarketGroup } from '../src/lib/arenaPublicationContract.js';
 import { validateArenaSettlementPublication } from '../src/lib/arenaSettlementPublicationContract.js';
+import {
+  arenaRelevantEarningsSymbols,
+  validateArenaEarningsDigestSupplement,
+  validateArenaEarningsItems,
+} from '../src/lib/arenaEarningsDigest.js';
 import { validateDailyTransits } from '../src/lib/validateDailyTransits.js';
 import { validateSectorsCompetition } from '../src/lib/validateSectorsCompetition.js';
 import { validateSectorsData } from '../src/lib/validateSectorsData.js';
@@ -45,6 +50,12 @@ function arenaPreCommitCommands(pipelineId) {
     return [{
       phase: 'premarket-publication-witness',
       command: ['node', 'scripts/validate-arena-picks-publication.mjs', 'public/arena-picks.json'],
+    }];
+  }
+  if (pipelineId === 'arena-earnings-digest') {
+    return [{
+      phase: 'earnings-digest-commit-window',
+      command: ['node', 'scripts/check-arena-earnings-window.mjs'],
     }];
   }
   const window = new Map([
@@ -188,6 +199,24 @@ function prepareValidatedGroup() {
     if (reviewer?.status !== 'done') {
       throw new Error(`arena-runlog.json: reviewer is not done for ${digest.date}`);
     }
+    const ledger = candidates.find((candidate) => candidate.output.resource === 'arena-ledger').data;
+    const picks = JSON.parse(readFileSync(join(process.cwd(), 'public/arena-picks.json'), 'utf8'));
+    const earningsValidation = validateArenaEarningsItems(digest.earnings || [], {
+      relevantSymbols: arenaRelevantEarningsSymbols(ledger, picks),
+      digestGeneratedAt: digest.generatedAt,
+      sessionDate: digest.date,
+    });
+    if (!earningsValidation.ok) {
+      throw new Error(`arena-daily-digest.json: ${earningsValidation.errors.join('; ')}`);
+    }
+  }
+  if (pipeline.id === 'arena-earnings-digest') {
+    const baselineDigest = JSON.parse(readFileSync(join(process.cwd(), 'public/arena-daily-digest.json'), 'utf8'));
+    const candidateDigest = candidates.find((candidate) => candidate.output.resource === 'arena-digest').data;
+    const ledger = JSON.parse(readFileSync(join(process.cwd(), 'public/arena-ledger.json'), 'utf8'));
+    const picks = JSON.parse(readFileSync(join(process.cwd(), 'public/arena-picks.json'), 'utf8'));
+    const delta = validateArenaEarningsDigestSupplement({ baselineDigest, candidateDigest, ledger, picks });
+    if (!delta.ok) throw new Error(`Arena earnings digest contract: ${delta.errors.join('; ')}`);
   }
   return prepared;
 }

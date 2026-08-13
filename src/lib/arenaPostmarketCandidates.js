@@ -113,6 +113,7 @@ export function finalizeArenaPostmarketCandidates({
   nowIso,
   actuals = {},
   predictionEvidence = {},
+  earnings = [],
 } = {}) {
   const timestamp = newYorkTimestampParts(nowIso);
   if (!timestamp || timestamp.date !== sessionDate) throw new Error('post-market finalization requires a same-session New York timestamp');
@@ -169,6 +170,7 @@ export function finalizeArenaPostmarketCandidates({
       ? Object.values(picks.models || {}).reduce((sum, list) => sum + (Array.isArray(list) ? list.length : 0), 0)
       : 0,
     delayed: [],
+    earnings,
   };
   const nextPredlog = buildPredictionAudit({
     predlog, news, sessionDate, nowIso, actuals, evidence: predictionEvidence,

@@ -85,6 +85,8 @@ describe('complete atomic data publish transaction', () => {
     }
     expect(DATA_PIPELINES.find((item) => item.id === 'arena-postmarket').outputs.map((output) => output.resource))
       .toEqual(['arena-ledger', 'arena-digest', 'arena-predlog', 'arena-runlog']);
+    expect(DATA_PIPELINES.find((item) => item.id === 'arena-earnings-digest').outputs.map((output) => output.resource))
+      .toEqual(['arena-digest']);
   });
 
   it('orders validate -> stage/rename -> build smoke -> path-only commit', () => {
@@ -283,6 +285,7 @@ describe('complete atomic data publish transaction', () => {
     expect(source).toContain("['arena-open', 'open']");
     expect(source).toContain("['arena-late', 'late']");
     expect(source).toContain("['arena-postmarket', 'postmarket']");
+    expect(source).toContain("phase: 'earnings-digest-commit-window'");
     expect(source).toContain("command: ['node', 'scripts/check-arena-window.mjs', `--window=${window}`]");
     expect(source).toContain('preCommitCommands: arenaPreCommitCommands(pipeline.id)');
     expect(source).not.toContain("command: ['node', 'scripts/check-arena-window.mjs', `--window=${window}`, '--report-only']");

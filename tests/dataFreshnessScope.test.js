@@ -45,9 +45,9 @@ describe('scoped grouped-data freshness', () => {
     const report = JSON.parse(result.stdout);
     expect(report.scope).toEqual({
       profiles: ['postmarket-settlement'],
-      pipelines: ['arena-postmarket'],
+      pipelines: ['arena-postmarket', 'arena-earnings-digest'],
     });
-    expect(report.pipelines.map((pipeline) => pipeline.id)).toEqual(['arena-postmarket']);
+    expect(report.pipelines.map((pipeline) => pipeline.id)).toEqual(['arena-postmarket', 'arena-earnings-digest']);
     expect(report.pipelines[0].outputs.map((output) => output.resource)).toContain('arena-runlog');
   });
 

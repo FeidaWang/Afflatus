@@ -105,6 +105,17 @@ export const DATA_PIPELINES = Object.freeze([
     outputs: [{ resource: 'signal', path: 'public/signal-events.json', dateField: 'updated' }],
   },
   {
+    id: 'arena-earnings-digest',
+    kind: 'market-session',
+    availableFromMinutes: 16 * 60,
+    earlyCloseAvailableFromMinutes: 13 * 60,
+    owner: 'data-orchestrator',
+    publishMode: 'recoverable-build-commit-transaction',
+    outputs: [
+      { resource: 'arena-digest', path: 'public/arena-daily-digest.json', dateField: 'date' },
+    ],
+  },
+  {
     id: 'sectors-research',
     kind: 'max-age',
     maxAgeHours: 14 * 24,
@@ -142,7 +153,7 @@ export const DATA_PIPELINE_PROFILES = Object.freeze({
   ]),
   'open-execution': Object.freeze(['arena-open']),
   'late-execution': Object.freeze(['arena-late']),
-  'postmarket-settlement': Object.freeze(['arena-postmarket']),
+  'postmarket-settlement': Object.freeze(['arena-postmarket', 'arena-earnings-digest']),
 });
 
 /** Resolve the value that represents one output's publication date/time. */

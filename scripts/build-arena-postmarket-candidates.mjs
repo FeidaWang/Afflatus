@@ -34,6 +34,10 @@ import { validateArenaPicks } from '../src/lib/validateArenaPicks.js';
 import { validateArenaPredlog } from '../src/lib/validateArenaPredlog.js';
 import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
 import { validateArenaSettlementPublication } from '../src/lib/arenaSettlementPublicationContract.js';
+import {
+  arenaRelevantEarningsSymbols,
+  validateArenaEarningsInput,
+} from '../src/lib/arenaEarningsDigest.js';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const TRUSTED_BASE_URL = 'https://feida.au';
@@ -193,7 +197,11 @@ async function main() {
   const outputValue = option('output');
   if (!outputValue) fail('usage: build-arena-postmarket-candidates.mjs --output=<outside-repo-dir>');
   const outputDirectory = resolve(outputValue);
+  const earningsInputValue = option('earnings-input');
   if (!relative(ROOT, outputDirectory).startsWith('..')) fail('--output must be outside the repository');
+  if (earningsInputValue && !relative(ROOT, resolve(earningsInputValue)).startsWith('..')) {
+    fail('--earnings-input must be outside the repository');
+  }
   if (existsSync(outputDirectory) && readdirSync(outputDirectory).length > 0) fail('--output must be absent or empty');
 
   const initialNow = new Date();
@@ -207,6 +215,15 @@ async function main() {
   const picks = readJson(PICKS_PATH);
   const news = readJson(NEWS_PATH);
   const universe = (readJson(UNIVERSE_PATH).symbols || []).map((entry) => entry.sym);
+  const earningsInput = earningsInputValue
+    ? readJson(resolve(earningsInputValue))
+    : { date: sessionDate, checkedAt: initialNow.toISOString(), items: [] };
+  const earningsValidation = validateArenaEarningsInput(earningsInput, {
+    relevantSymbols: arenaRelevantEarningsSymbols(baselineLedger, picks),
+    sessionDate,
+    digestGeneratedAt: initialNow.toISOString(),
+  });
+  if (!earningsValidation.ok) fail(`earnings input: ${earningsValidation.errors.join('; ')}`);
   const picksValidation = validateArenaPicks(picks);
   if (!picksValidation.ok) fail(`arena-picks.json: ${picksValidation.errors.join('; ')}`);
   const currentDecisionAvailable = picks.date === sessionDate
@@ -274,6 +291,7 @@ async function main() {
     nowIso: finalGateNow.toISOString(),
     actuals,
     predictionEvidence: evidence,
+    earnings: earningsInput.items,
   });
 
   const validations = [

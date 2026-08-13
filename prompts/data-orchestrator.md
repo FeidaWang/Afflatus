@@ -11,7 +11,8 @@ that profile's pipelines:
 - `late-execution`: `arena-late` only, at the current NYSE session's late
   execution window.
 - `postmarket-settlement`: `arena-postmarket` only, after the current NYSE
-  session has completed.
+  session has completed; `arena-earnings-digest` may then append newly
+  released official earnings evidence to that same session's digest only.
 
 Market dates and windows are always calculated in `America/New_York`.
 Transit dates are calculated in `Australia/Melbourne`. The local scheduler may
@@ -110,6 +111,16 @@ When it reports `due:false`, make no repository change.
   current sealed T proposal (or record a truthful zero-order completion); then
   build the reviewer, digest, prediction audit, and complete four-file group.
   Do not hand-compose or reorder those stages. Publish that group exactly once.
+- `arena-earnings-digest`: after the current session digest exists, monitor
+  only symbols in current ledger positions or the same-session sealed picks.
+  Accept evidence only from the company's official investor-relations site or
+  an SEC filing. A supplemental candidate may append a newly reported result
+  whose official `publishedAt` is later than the baseline digest; it may update
+  `generatedAt`, but must preserve the digest date, books, notes, trade counts,
+  delayed audit, prediction audit, ledger, runlog and picks byte-for-byte. Build
+  with `npm run data:arena:earnings:candidates -- --output=<temporary-directory>
+  --earnings-input=<outside-repo-json>` and publish only
+  `arena-earnings-digest`. If there is no new official report, make no change.
 - `signal-macro`: refresh only from authoritative releases and attributable
   market reporting when older than seven days or after a material event.
 - `sectors-research`: refresh the complete four-file group when older than

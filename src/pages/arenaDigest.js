@@ -44,6 +44,14 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
   }
 
   function toastSummary(d) {
+    const reported = (d.earnings || []).filter((item) => item.status === 'reported');
+    if (reported.length) {
+      const symbols = [...new Set(reported.map((item) => item.symbol))].join('/');
+      return T(
+        `${reported.length} official earnings update(s) added · ${symbols}`,
+        `新增 ${reported.length} 条官方财报更新 · ${symbols}`,
+      );
+    }
     const totalTrades = d.books.reduce((s, b) => s + (b.tradesCount || 0), 0);
     const standout = d.books.slice().sort((a, b) => Math.abs(b.pnlPct) - Math.abs(a.pnlPct))[0];
     const tradeWord = totalTrades === 1 ? T('trade', '笔交易') : T('trades', '笔交易');
@@ -71,11 +79,21 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     </div>`;
   }
 
+  function earningsSection(earnings) {
+    if (!earnings || !earnings.length) return '';
+    const rows = earnings.map((x) => `<li><a href="${escapeHtml(x.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(x.symbol)} · ${escapeHtml(T(x.headline_en, x.headline_zh))}</a><br><span>${escapeHtml(T(x.summary_en, x.summary_zh))}</span></li>`).join('');
+    return `<div class="digest-delayed digest-earnings">
+      <div class="digest-delayed-hd">◫ ${T('Earnings watch', '财报追踪')}</div>
+      <ul class="digest-delayed-list">${rows}</ul>
+    </div>`;
+  }
+
   function renderDrawer(d) {
     $('digestDrawerDate').textContent = d.date || '—';
     $('digestDrawerBody').innerHTML = `
       <p class="digest-note">${escapeHtml(T(d.note_en, d.note_zh) || '')}</p>
       <div class="digest-books">${d.books.map(bookRow).join('')}</div>
+      ${earningsSection(d.earnings)}
       ${delayedSection(d.delayed)}
       <p class="digest-tomorrow">${T('Tomorrow', '明日')}: ${d.tomorrowPicksCount} ${T('new pick(s) queued', '条新推荐待发布')}</p>
     `;
@@ -86,7 +104,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     renderDrawer(state.digest);
     drawer.hidden = false;
     hideToast();
-    setSeen(state.digest.date);
+    setSeen(state.digest.generatedAt || state.digest.date);
   }
   function closeDrawer() { drawer.hidden = true; }
 
@@ -104,7 +122,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
       hideToast();
       return; // Historical digests remain in the data archive but never masquerade as a new notification.
     }
-    if (getSeen() === d.date) return; // already seen this day's digest
+    if (getSeen() === (d.generatedAt || d.date)) return; // already seen this exact digest revision
     showToast(d);
   }
 
@@ -114,7 +132,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
 
   $('digestToastBody').addEventListener('click', openDrawer);
   $('digestToastBody').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDrawer(); } });
-  $('digestToastClose').addEventListener('click', () => { if (state.digest) setSeen(state.digest.date); hideToast(); });
+  $('digestToastClose').addEventListener('click', () => { if (state.digest) setSeen(state.digest.generatedAt || state.digest.date); hideToast(); });
   $('digestDrawerClose').addEventListener('click', closeDrawer);
   $('digestDrawerBackdrop').addEventListener('click', closeDrawer);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !drawer.hidden) closeDrawer(); });

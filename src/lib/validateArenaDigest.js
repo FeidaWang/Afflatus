@@ -1,3 +1,5 @@
+import { validateArenaEarningsItems } from './arenaEarningsDigest.js';
+
 /* Pure validation for public/arena-daily-digest.json (Part 4 SS18.1.5) --
    the end-of-day summary the post-market Reviewer commits and the
    "while you were away" toast (SS19.4) reads. */
@@ -50,6 +52,13 @@ export function validateArenaDigest(data) {
       if (!MODELS.includes(x.model)) errors.push(`${tag}.model: must be one of ${MODELS.join('/')}, got ${JSON.stringify(x.model)}`);
       if (!isNonEmptyString(x.note_en) && !isNonEmptyString(x.note_zh)) errors.push(`${tag}: needs at least one of note_en/note_zh`);
     });
+  }
+  if (data.earnings != null) {
+    const earnings = validateArenaEarningsItems(data.earnings, {
+      digestGeneratedAt: data.generatedAt,
+      sessionDate: data.date,
+    });
+    errors.push(...earnings.errors);
   }
   return { ok: errors.length === 0, errors };
 }
