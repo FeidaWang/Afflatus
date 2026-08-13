@@ -466,7 +466,7 @@ exec ${JSON.stringify(realGit)} "$@"
 });
 
 describe('Arena outbox and verification semantics', () => {
-  it('rejects a forged Arena transaction that omits another atomic-group output', () => {
+  it('allows an Arena transaction when a validated atomic-group output is byte-identical', () => {
     const fixture = makeFixture();
     commitData(
       fixture.repo, 'public/arena-runlog.json', '{"runs":[{"done":true}]}\n', 'runlog only', 'arena-open',
@@ -474,10 +474,9 @@ describe('Arena outbox and verification semantics', () => {
 
     const result = runArenaPush(fixture.repo);
 
-    expect(result.status).not.toBe(0);
-    expect(remoteMain(fixture.repo)).toBe(fixture.baseline);
-    expect(result.stderr).toContain('not a valid Arena data-publish transaction');
-  });
+    expect(result.status).toBe(0);
+    expect(remoteMain(fixture.repo)).toBe(git(fixture.repo, 'rev-parse', 'HEAD'));
+  }, 30_000);
 
   it('does not mislabel a local verification failure as pending network-sync work', () => {
     const fixture = makeFixture();

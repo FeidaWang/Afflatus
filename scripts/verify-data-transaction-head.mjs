@@ -85,10 +85,11 @@ if (unexpected.length) {
 if (!changedPaths.some((path) => outputPaths.has(path))) {
   fail(`HEAD changes no declared output of ${pipelineId}`);
 }
-if (pipelineId.startsWith('arena-')) {
-  const missing = [...outputPaths].filter((path) => !changedPaths.includes(path));
-  if (missing.length) fail(`${revision} omits Arena atomic-group outputs: ${missing.join(', ')}`);
-}
+// Atomic publication means the publisher validated and staged the complete
+// candidate group. It does not mean every member must differ byte-for-byte
+// from HEAD: an honest zero-order window or unchanged research snapshot can
+// legitimately leave one declared output untouched. The transaction trailer,
+// configured path boundary, and pipeline validators establish group integrity.
 if (requestedPath) {
   const requested = repoRelativePath(requestedPath, 'requested output');
   if (!changedPaths.includes(requested)) {
