@@ -2,9 +2,44 @@ import { isSafePlainText, safeExternalUrl } from './contentSafety.js';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const TICKER_RE = /^[A-Z]{1,5}(?:[.-][A-Z]{1,2})?$/;
+export const ARENA_NEWS_FRESHNESS_POLICY = 'session-news-v1';
+export const ARENA_NEWS_FRESHNESS_START_DATE = '2026-08-14';
+export const ARENA_NEWS_MAX_AGE_HOURS = 72;
 
 function plain(value, tag, errors, options) {
   if (!isSafePlainText(value, options)) errors.push(`${tag}: must be bounded plain text without markup`);
+}
+
+export function validateArenaNewsPublicationFreshness(data) {
+  const errors = [];
+  if (!DATE_RE.test(String(data?.date || '')) || data.date < ARENA_NEWS_FRESHNESS_START_DATE) {
+    return { ok: true, errors };
+  }
+  if (data.freshnessPolicy !== ARENA_NEWS_FRESHNESS_POLICY) {
+    errors.push(`freshnessPolicy: must be ${ARENA_NEWS_FRESHNESS_POLICY} from ${ARENA_NEWS_FRESHNESS_START_DATE}`);
+  }
+  if (!['complete', 'limited'].includes(data.coverageStatus)) {
+    errors.push('coverageStatus: must be complete or limited');
+  }
+  const cutoffMs = Date.parse(data.evidenceCutoffAt);
+  if (!Number.isFinite(cutoffMs)) {
+    errors.push('evidenceCutoffAt: must be an ISO timestamp for freshness checks');
+  }
+  for (const [index, item] of (Array.isArray(data.items) ? data.items : []).entries()) {
+    const publishedMs = Date.parse(item?.publishedAt);
+    const tag = `items[${index}].publishedAt`;
+    if (!Number.isFinite(publishedMs)) {
+      errors.push(`${tag}: must preserve the source's official publication timestamp`);
+      continue;
+    }
+    if (Number.isFinite(cutoffMs) && publishedMs > cutoffMs) {
+      errors.push(`${tag}: cannot be after evidenceCutoffAt`);
+    }
+    if (Number.isFinite(cutoffMs) && cutoffMs - publishedMs > ARENA_NEWS_MAX_AGE_HOURS * 60 * 60 * 1000) {
+      errors.push(`${tag}: source is older than the ${ARENA_NEWS_MAX_AGE_HOURS}-hour session-news limit`);
+    }
+  }
+  return { ok: errors.length === 0, errors };
 }
 
 export function validateArenaNews(data) {
@@ -38,5 +73,6 @@ export function validateArenaNews(data) {
   for (const field of ['disclaimer_en', 'disclaimer_zh', 'predictionNote_en', 'predictionNote_zh']) {
     if (data[field] != null) plain(data[field], field, errors, { maxLength: 2_000, allowEmpty: true });
   }
+  errors.push(...validateArenaNewsPublicationFreshness(data).errors);
   return { ok: errors.length === 0, errors };
 }

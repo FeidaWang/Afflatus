@@ -88,11 +88,16 @@ When it reports `due:false`, make no repository change.
 
 - `arena-premarket`: after 08:30 and before 09:30 ET on an NYSE session,
   publish `arena-news.json`, `arena-picks.json`, and `arena-runlog.json`
-  together. Research is mandatory even when picks are empty: include at least
-  four distinct source URLs spanning at least four of macro/policy, frontier
-  models, compute, memory, optical networking, power/cooling, cloud demand, or
-  public-company earnings. Preserve a source-time cutoff. Empty model arrays
-  are valid. `quoteAllowlist` must include every pick, every current ledger
+  together. Research is mandatory even when picks are empty. Every news item
+  must preserve the official source `publishedAt`, must not postdate the
+  source-time cutoff, and must be no more than 72 hours old at that cutoff.
+  Never reuse older background material to fill the briefing or a category
+  quota. Set `freshnessPolicy` to `session-news-v1`. Set `coverageStatus` to
+  `complete` only with four distinct fresh source URLs spanning four of
+  macro/policy, frontier models, compute, memory, optical networking,
+  power/cooling, cloud demand, or public-company earnings. If fewer fresh
+  categories exist, set `coverageStatus` to `limited` and publish zero trade
+  proposals. Empty model arrays are valid. `quoteAllowlist` must include every pick, every current ledger
   position, and the fixed `SPY`/`QQQ`/`SMH` execution and benchmark symbols.
   If the decision cutoff is missed, archive research but record the
   picks window as `missed`; do not create an executable snapshot.

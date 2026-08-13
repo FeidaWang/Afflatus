@@ -51,6 +51,14 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
   // ---- rendering ------------------------------------------------
   const $ = (id) => document.getElementById(id);
   const fmtClock = (ts) => ts ? new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
+  function sourceTimeLabel(item) {
+    const timestamp = Date.parse(item?.publishedAt);
+    if (!Number.isFinite(timestamp)) return T('LEGACY SOURCE · TIME UNVERIFIED', '旧格式来源 · 发布时间未核验');
+    const published = new Date(timestamp).toLocaleString(state.lang === 'zh' ? 'zh-CN' : 'en-US', {
+      timeZone: 'America/New_York', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
+    });
+    return T(`PUBLISHED ${published}`, `原文发布于 ${published}`);
+  }
   const EMBED = (() => { try { return new URLSearchParams(location.search).has('embed'); } catch { return false; } })();
   function postHeight() { if (!EMBED) return; try { parent.postMessage({ type: 'afflatus-arena-height', height: document.documentElement.scrollHeight }, '*'); } catch {} }
   function newsFreshness() {
@@ -107,7 +115,8 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
       const title = escapeHtml(T(it.title_en || it.title || '', it.title_zh || it.title_en || ''));
       const category = escapeHtml(it.category || 'note');
       const url = safeExternalUrl(it.url);
-      const body = `<div class="t1"><span class="cat">${icon[String(it.category || '').toLowerCase()] || '•'} ${category}</span><span class="sent ${s.tone}">${escapeHtml(localizedSentiment(s))}</span></div><div class="ti">${title}</div>`;
+      const sourceTime = escapeHtml(sourceTimeLabel(it));
+      const body = `<div class="t1"><span class="cat">${icon[String(it.category || '').toLowerCase()] || '•'} ${category}</span><span class="sent ${s.tone}">${escapeHtml(localizedSentiment(s))}</span></div><div class="ti">${title}</div><div class="news-source-time${it.publishedAt ? '' : ' is-unverified'}">${sourceTime}</div>`;
       return url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer noopener">${body}</a>` : `<div class="news-item">${body}</div>`;
     }).join('');
     host.innerHTML = staleNotice + items;
@@ -130,7 +139,8 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
       const source = escapeHtml(it.source || '');
       const url = safeExternalUrl(it.url);
       const sourceLink = source && url ? `<a class="bf-src" href="${escapeHtml(url)}" target="_blank" rel="noreferrer noopener">${source} ↗</a>` : '';
-      return `<article class="bf-item"><div class="bf-itop"><span class="bf-cat">${icon[String(it.category || '').toLowerCase()] || '•'} ${category}</span><span class="bf-sent ${s.tone}">${escapeHtml(localizedSentiment(s))}</span></div><h3 class="bf-title">${title}</h3>${sum ? `<p class="bf-sum">${sum}</p>` : ''}${sourceLink}</article>`;
+      const sourceTime = escapeHtml(sourceTimeLabel(it));
+      return `<article class="bf-item"><div class="bf-itop"><span class="bf-cat">${icon[String(it.category || '').toLowerCase()] || '•'} ${category}</span><span class="bf-sent ${s.tone}">${escapeHtml(localizedSentiment(s))}</span></div><h3 class="bf-title">${title}</h3>${sum ? `<p class="bf-sum">${sum}</p>` : ''}<div class="bf-source-time${it.publishedAt ? '' : ' is-unverified'}">${sourceTime}</div>${sourceLink}</article>`;
     }).join('');
     const staleNotice = freshness.stale
       ? `<div class="data-stale-notice" role="status">${escapeHtml(T(

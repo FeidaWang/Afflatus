@@ -100,4 +100,31 @@ describe('Arena atomic pre-market source contract', () => {
     news.evidenceCutoffAt = '2026-08-12T12:48:00.000Z';
     expect(validateArenaPremarketGroup(news, picks, runlog).errors.join(' ')).toMatch(/cannot be after/);
   });
+
+  it('allows limited fresh coverage only for a zero-proposal decision', () => {
+    const { news, picks, runlog } = group([]);
+    news.date = picks.date = '2026-08-14';
+    news.generatedAt = '2026-08-14T12:44:00.000Z';
+    news.evidenceCutoffAt = '2026-08-14T12:40:00.000Z';
+    picks.generatedAt = '2026-08-14T12:46:00.000Z';
+    runlog.runs.forEach((run) => { run.date = '2026-08-14'; });
+    news.freshnessPolicy = 'session-news-v1';
+    news.coverageStatus = 'limited';
+    news.items = news.items.slice(0, 2).map((item) => ({ ...item, publishedAt: '2026-08-13T13:00:00.000Z' }));
+    picks.models = { S: [], P: [], T: [] };
+    expect(validateArenaPremarketGroup(news, picks, runlog)).toEqual({ ok: true, errors: [] });
+
+    picks.models.S = [{ sourceRefs: [news.items[0].url] }];
+    expect(validateArenaPremarketGroup(news, picks, runlog).errors.join(' ')).toMatch(/zero trade proposals/);
+  });
+
+  it('requires the fresh-news policy after the cutover date', () => {
+    const { news, picks, runlog } = group([]);
+    news.date = picks.date = '2026-08-14';
+    news.generatedAt = '2026-08-14T12:44:00.000Z';
+    news.evidenceCutoffAt = '2026-08-14T12:40:00.000Z';
+    picks.generatedAt = '2026-08-14T12:46:00.000Z';
+    runlog.runs.forEach((run) => { run.date = '2026-08-14'; });
+    expect(validateArenaPremarketGroup(news, picks, runlog).errors.join(' ')).toMatch(/freshnessPolicy/);
+  });
 });

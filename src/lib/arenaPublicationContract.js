@@ -1,3 +1,9 @@
+import {
+  ARENA_NEWS_FRESHNESS_POLICY,
+  ARENA_NEWS_FRESHNESS_START_DATE,
+  validateArenaNewsPublicationFreshness,
+} from './validateArenaNews.js';
+
 const MODELS = ['S', 'P', 'T'];
 const RESEARCH_CATEGORIES = new Set([
   'macro-policy', 'frontier-models', 'compute', 'memory',
@@ -50,8 +56,18 @@ export function validateArenaPremarketGroup(news, picks, runlog, baselineLedger 
   const uniqueCategories = new Set(items
     .map((item) => String(item?.category || '').trim().toLowerCase())
     .filter(Boolean));
-  if (uniqueUrls.size < 4) errors.push('arena-news snapshot must contain at least four distinct source URLs');
-  if (uniqueCategories.size < 4) errors.push('arena-news snapshot must span at least four distinct research categories');
+  errors.push(...validateArenaNewsPublicationFreshness(news).errors);
+  const freshnessPolicyRequired = news?.date >= ARENA_NEWS_FRESHNESS_START_DATE;
+  const usesFreshnessPolicy = news?.freshnessPolicy === ARENA_NEWS_FRESHNESS_POLICY;
+  const limitedCoverage = usesFreshnessPolicy && news?.coverageStatus === 'limited';
+  if (!limitedCoverage && uniqueUrls.size < 4) errors.push('arena-news snapshot must contain at least four distinct source URLs');
+  if (!limitedCoverage && uniqueCategories.size < 4) errors.push('arena-news snapshot must span at least four distinct research categories');
+  if (freshnessPolicyRequired && limitedCoverage) {
+    const proposals = MODELS.flatMap((model) => picks?.models?.[model] || []);
+    if (proposals.length > 0) {
+      errors.push('limited fresh-news coverage must publish zero trade proposals; stale context cannot authorize a trade');
+    }
+  }
   for (const category of uniqueCategories) {
     if (!RESEARCH_CATEGORIES.has(category)) {
       errors.push(`arena-news category ${JSON.stringify(category)} is outside the canonical research taxonomy`);
