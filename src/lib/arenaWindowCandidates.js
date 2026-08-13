@@ -9,6 +9,7 @@
 import { newYorkTimestampParts } from './arenaDecisionProvenance.js';
 import { consumedArenaProposalIdsFromLedger } from './arenaExecution.js';
 import { assessArenaWindow } from './arenaWindowGate.js';
+import { isNyseSession } from './marketSession.js';
 
 export const ARENA_INTRADAY_CANDIDATE_WINDOWS = Object.freeze({
   open: 'open-window',
@@ -60,6 +61,31 @@ function currentDecisionAvailable(picks, runlog, sessionDate) {
     && picks?.decisionStatus === 'sealed'
     && picks?.executable === true
     && hasPremarketWitness(runlog, sessionDate);
+}
+
+function previousNyseSession(sessionDate) {
+  const cursor = new Date(`${sessionDate}T12:00:00Z`);
+  for (let guard = 0; guard < 10; guard += 1) {
+    cursor.setUTCDate(cursor.getUTCDate() - 1);
+    const candidate = cursor.toISOString().slice(0, 10);
+    if (isNyseSession(candidate)) return candidate;
+  }
+  throw new Error(`could not resolve the NYSE session before ${sessionDate}`);
+}
+
+export function assertPriorArenaValuationsComplete(ledger, sessionDate) {
+  const priorSession = previousNyseSession(sessionDate);
+  const staleBooks = ['S', 'P', 'T'].filter((model) => (
+    !/^\d{4}-\d{2}-\d{2}$/.test(String(ledger?.models?.[model]?.lastValuationDate || ''))
+      || ledger.models[model].lastValuationDate < priorSession
+  ));
+  if (staleBooks.length) {
+    throw new Error(
+      `prior-session catch-up is incomplete through ${priorSession} for ${staleBooks.join('/')}; `
+      + 'refusing to advance current-session execution state before historical valuation recovery',
+    );
+  }
+  return priorSession;
 }
 
 export function selectArenaWindowProposalIntents({
@@ -186,6 +212,7 @@ export async function buildArenaWindowCandidates({
   settle,
 } = {}) {
   if (typeof settle !== 'function') throw new Error('settle callback is required');
+  assertPriorArenaValuationsComplete(baselineLedger, sessionDate);
   let ledger = structuredClone(baselineLedger);
   let runlog = structuredClone(baselineRunlog);
   const results = [];

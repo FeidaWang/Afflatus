@@ -59,9 +59,9 @@ function ledger(trades = {}) {
   return {
     updated: '2026-08-11',
     models: {
-      S: { trades: trades.S || [] },
-      P: { trades: trades.P || [] },
-      T: { trades: trades.T || [] },
+      S: { trades: trades.S || [], lastValuationDate: '2026-08-11' },
+      P: { trades: trades.P || [], lastValuationDate: '2026-08-11' },
+      T: { trades: trades.T || [], lastValuationDate: '2026-08-11' },
     },
   };
 }
@@ -75,6 +75,20 @@ afterEach(() => {
 });
 
 describe('Arena open/late candidate planning', () => {
+  it('fails closed before current execution when any book lacks the prior-session valuation', async () => {
+    const staleLedger = ledger();
+    staleLedger.models.P.lastValuationDate = '2026-08-10';
+    await expect(buildArenaWindowCandidates({
+      baselineLedger: staleLedger,
+      baselineRunlog: runlog(),
+      picks: picks(),
+      window: 'open',
+      sessionDate: DATE,
+      now: () => new Date(OPEN_NOW),
+      settle: async () => { throw new Error('must not settle'); },
+    })).rejects.toThrow(/catch-up is incomplete through 2026-08-11 for P/);
+  });
+
   it('selects only same-session, unconsumed proposals authorized for the real window', () => {
     const snapshot = picks({
       models: {
@@ -326,6 +340,7 @@ describe('Arena window candidate CLI', () => {
     for (const model of ['S', 'P', 'T']) {
       emptyLedger.models[model].positions = [];
       emptyLedger.models[model].equity = emptyLedger.models[model].cash;
+      emptyLedger.models[model].lastValuationDate = '2026-08-11';
     }
     writeFileSync(join(fixture, 'public/arena-ledger.json'), `${JSON.stringify(emptyLedger, null, 2)}\n`);
     copyFileSync('public/arena-picks.json', join(fixture, 'public/arena-picks.json'));
