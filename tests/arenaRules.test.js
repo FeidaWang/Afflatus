@@ -69,6 +69,11 @@ describe('validateOrder — fixed universe', () => {
 });
 
 describe('validateOrder — confidence floor', () => {
+  it('fails closed when buy confidence is missing or non-finite', () => {
+    const base = { sym: 'NVDA', side: 'buy', qty: 1, refPx: 100 };
+    expect(validateOrder(base, freshModel(), { model: 'A', universe: UNIVERSE }).reason).toMatch(/finite/);
+    expect(validateOrder({ ...base, confidence: Number.NaN }, freshModel(), { model: 'A', universe: UNIVERSE }).ok).toBe(false);
+  });
   it('rejects a new-position buy below the confidence floor', () => {
     const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.5 }, freshModel(), { model: 'A', universe: UNIVERSE });
     expect(r.ok).toBe(false);
@@ -118,10 +123,11 @@ describe('validateOrder — single-position cap (20% of equity)', () => {
     expect(r.ok).toBe(false);
     expect(r.reason).toMatch(/20/);
   });
-  it('accepts an order right at the 20% boundary', () => {
-    // 20 shares * $100 = $2000 = exactly 20% of $10,000
+  it('rejects a reference-price boundary order when deterministic slippage breaches 20%', () => {
+    // The quote is exactly 20%, but a buy fills above the quote.
     const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 20, refPx: 100, confidence: 0.9 }, freshModel(), { model: 'A', universe: UNIVERSE });
-    expect(r.ok).toBe(true);
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/20/);
   });
   it('accounts for an existing position when checking the cap (adds are cumulative)', () => {
     const m = freshModel({ positions: [{ sym: 'NVDA', qty: 15, avgPx: 100, mkPx: 100 }] });
@@ -149,7 +155,11 @@ describe('validateOrder — max distinct positions (<=8)', () => {
 
 describe('validateOrder — minimum cash buffer (>=5%)', () => {
   it('rejects a buy that would drop cash below 5% of equity', () => {
-    const m = freshModel({ cash: 600, equity: 10000 }); // only 6% cash headroom before the trade
+    const m = freshModel({
+      cash: 600,
+      equity: 10000,
+      positions: [{ sym: 'SPY', qty: 94, avgPx: 100, mkPx: 100 }],
+    }); // only 6% cash headroom before the trade
     const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 2, refPx: 100, confidence: 0.9 }, m, { model: 'A', universe: UNIVERSE }); // $200 notional -> cash 400 -> 4% < 5%
     expect(r.ok).toBe(false);
     expect(r.reason).toMatch(/cash/);
@@ -361,7 +371,11 @@ describe('PER_MODEL — per-model confidence floor (S stricter than default)', (
     expect(r.ok).toBe(true);
   });
   it('Model P uses the same 0.65 floor as the default', () => {
-    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.65 }, freshModel(), { model: 'P', universe: UNIVERSE });
+    const r = validateOrder(
+      { sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.65, exitBy: '2026-08-14' },
+      freshModel(),
+      { model: 'P', universe: UNIVERSE, etDateStr: '2026-08-12' },
+    );
     expect(r.ok).toBe(true);
   });
 });
@@ -377,7 +391,11 @@ describe('PER_MODEL — max distinct positions (S<=6, P<=5, T<=8)', () => {
   it('rejects Model P opening a 6th distinct symbol', () => {
     const positions = Array.from({ length: 5 }, (_, i) => ({ sym: `S${i}`, qty: 1, avgPx: 10, mkPx: 10 }));
     const m = freshModel({ positions, cash: 9950, equity: 9995 });
-    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 50, confidence: 0.9 }, m, { model: 'P', universe: [...UNIVERSE, ...positions.map((p) => p.sym)] });
+    const r = validateOrder(
+      { sym: 'NVDA', side: 'buy', qty: 1, refPx: 50, confidence: 0.9, exitBy: '2026-08-14' },
+      m,
+      { model: 'P', universe: [...UNIVERSE, ...positions.map((p) => p.sym)], etDateStr: '2026-08-12' },
+    );
     expect(r.ok).toBe(false);
     expect(r.reason).toMatch(/5/);
   });
@@ -397,7 +415,11 @@ describe('PER_MODEL — weekly turnover cap (S/P) vs day-gate (T)', () => {
     expect(r.reason).toMatch(/turnover/);
   });
   it('rejects a Model P buy once its 30/week cap is reached', () => {
-    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9 }, freshModel(), { model: 'P', universe: UNIVERSE, weeklyTradeCount: 30 });
+    const r = validateOrder(
+      { sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9, exitBy: '2026-08-14' },
+      freshModel(),
+      { model: 'P', universe: UNIVERSE, weeklyTradeCount: 30, etDateStr: '2026-08-12' },
+    );
     expect(r.ok).toBe(false);
     expect(r.reason).toMatch(/turnover/);
   });
@@ -406,6 +428,16 @@ describe('PER_MODEL — weekly turnover cap (S/P) vs day-gate (T)', () => {
     expect(r.ok).toBe(false);
     expect(r.reason).toMatch(/Tue\/Thu/);
     expect(validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9, signals: ['a', 'b'] }, freshModel(), { model: 'T', universe: UNIVERSE, weekday: 2 }).ok).toBe(true);
+  });
+});
+
+describe('PER_MODEL — proposal count and P holding-period hard gates', () => {
+  it('requires a bounded exitBy date on every Model P buy', () => {
+    const base = { sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9 };
+    const ctx = { model: 'P', universe: UNIVERSE, etDateStr: '2026-08-12' };
+    expect(validateOrder(base, freshModel(), ctx).reason).toMatch(/exitBy/);
+    expect(validateOrder({ ...base, exitBy: '2026-08-15' }, freshModel(), ctx).reason).toMatch(/between/);
+    expect(validateOrder({ ...base, exitBy: '2026-08-14' }, freshModel(), ctx).ok).toBe(true);
   });
 });
 
@@ -420,6 +452,10 @@ describe('PER_MODEL — Model T alt-data fusion gate (>=2 signals)', () => {
   it('accepts a Model T buy with 2+ independent signals', () => {
     const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9, signals: ['insider-buy', 'earnings-surprise'] }, freshModel(), { model: 'T', universe: UNIVERSE, weekday: 2 });
     expect(r.ok).toBe(true);
+  });
+  it('rejects duplicate spellings of one signal', () => {
+    const r = validateOrder({ sym: 'NVDA', side: 'buy', qty: 1, refPx: 100, confidence: 0.9, signals: ['Flow', ' flow '] }, freshModel(), { model: 'T', universe: UNIVERSE, weekday: 2 });
+    expect(r.reason).toMatch(/signal/);
   });
   it('does not gate risk-reducing sells by the signals requirement', () => {
     const m = freshModel({ positions: [{ sym: 'NVDA', qty: 5, avgPx: 100, mkPx: 100 }] });
@@ -498,10 +534,10 @@ describe('applyFill — carries exitBy onto new and added positions, never onto 
     const next = applyFill(m, order, simulateFill(order, 'A'), 'T1');
     expect(next.positions[0].exitBy).toBeUndefined();
   });
-  it('updates exitBy on an add when the new order supplies a later date', () => {
+  it('never extends an existing lot exitBy when an add supplies a later date', () => {
     const m = freshModel({ positions: [{ sym: 'NVDA', qty: 10, avgPx: 100, mkPx: 100, exitBy: '2026-07-11' }], cash: 9000 });
     const order = { sym: 'NVDA', side: 'buy', qty: 5, refPx: 100, exitBy: '2026-07-16' };
     const next = applyFill(m, order, simulateFill(order, 'P'), 'T2');
-    expect(next.positions[0].exitBy).toBe('2026-07-16');
+    expect(next.positions[0].exitBy).toBe('2026-07-11');
   });
 });

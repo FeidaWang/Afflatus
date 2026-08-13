@@ -20,10 +20,11 @@
    Season 1 -> Season 2 transition.
    ============================================================ */
 import {
-  validateOrder, simulateFill, applyFill, rejectOrder, markToMarket,
+  LIMITS, validateOrder, simulateFill, applyFill, rejectOrder, markToMarket,
   checkStopLoss, checkExitBySweep, checkDailyCircuitBreaker, checkSeasonReset, resetSeason,
   computeMetrics,
 } from './arenaRules.js';
+import { validateArenaExecutionQuoteReceipt } from './arenaExecution.js';
 
 const BOOKS = ['A', 'B', 'S', 'P', 'T'];
 
@@ -69,69 +70,144 @@ function upsertDay(history, day, equity) {
  *   reviewZh/reviewEn  caller-supplied natural-language reflection (optional)
  *   benchPct         { spyPct, smhPct } optional — updates top-level bench
  *   newPromptVersionOnReset  optional string override if a season reset fires
+ *   quoteReceipts    { sym: {sourceUrl,requestId,observedAt,refPx,...} }
+ *   requireExecutionQuoteReceipt  true for the live CLI; historical callers
+ *                    remain readable without manufacturing receipts
+ *   valuationOnly    true only for historical catch-up: mark and audit without
+ *                    executing discretionary, stop-loss, or exitBy orders
  * @returns {{ ledger: object, summary: object }}
  */
 export function runArenaLedger(ledgerFull, book, opts) {
   const {
     etDateStr, nowIso, priceMap = {}, proposedOrders = [], universe,
-    reviewZh, reviewEn, benchPct, newPromptVersionOnReset,
+    reviewZh, reviewEn, benchPct, newPromptVersionOnReset, valuationOnly = false,
+    quoteReceipts = {}, requireExecutionQuoteReceipt = false, executionWindow = null,
   } = opts;
   if (!etDateStr || !nowIso) throw new Error('runArenaLedger: etDateStr and nowIso are required');
   if (!BOOKS.includes(book)) throw new Error(`runArenaLedger: invalid book "${book}"`);
+  if (valuationOnly && proposedOrders.length) {
+    throw new Error('runArenaLedger: valuationOnly catch-up cannot contain proposed orders');
+  }
+  const maxOrders = LIMITS.PER_MODEL?.[book]?.MAX_ORDERS_PER_RUN;
+  if (maxOrders != null && proposedOrders.length > maxOrders) {
+    throw new Error(`runArenaLedger: Model ${book} accepts at most ${maxOrders} proposed orders per run`);
+  }
 
   const weekday = new Date(`${etDateStr}T12:00:00Z`).getUTCDay();
   const isNewTradingDay = ledgerFull.lastRunDate !== etDateStr;
   const day = isNewTradingDay ? (ledgerFull.day || 0) + 1 : (ledgerFull.day || 0);
 
   let modelLedger = markToMarket(ledgerFull.models[book], priceMap);
-  if (isNewTradingDay) modelLedger = { ...modelLedger, dayStartEquity: modelLedger.equity };
+  // `lastRunDate` is shared by all books, so whichever book runs first moves
+  // it for the others. Equity history is the per-book proof that this book has
+  // actually started the computed day.
+  const isNewBookDay = !modelLedger.equityHistory.some((entry) => entry.day === day);
+  if (isNewBookDay) modelLedger = { ...modelLedger, dayStartEquity: modelLedger.equity };
   const dayStartEquity = modelLedger.dayStartEquity ?? modelLedger.equity;
-  const riskLockdown = checkDailyCircuitBreaker(dayStartEquity, modelLedger.equity);
+  let riskLockdown = checkDailyCircuitBreaker(dayStartEquity, modelLedger.equity);
 
   const filled = [];
   const rejected = [];
+  const executionSkipped = [];
+
+  const attachExecutionQuote = (order) => {
+    const receipt = quoteReceipts[order.sym];
+    if (requireExecutionQuoteReceipt) {
+      if (!receipt) throw new Error(`runArenaLedger: missing execution quote receipt for ${order.sym}`);
+      const validation = validateArenaExecutionQuoteReceipt(receipt, {
+        symbol: order.sym, refPx: priceMap[order.sym], executedAt: nowIso,
+      });
+      if (!validation.ok) throw new Error(`runArenaLedger: ${order.sym} ${validation.error}`);
+    }
+    return receipt ? { ...order, executionQuote: { ...receipt } } : order;
+  };
 
   // Forced stop-loss sells always run first and always pass (risk-reducing).
-  for (const so of checkStopLoss(modelLedger, book)) {
-    const fill = simulateFill(so, book);
-    modelLedger = applyFill(modelLedger, so, fill, nowIso);
-    filled.push({ order: so, fill, forced: 'stop-loss' });
+  for (const so of valuationOnly ? [] : checkStopLoss(modelLedger, book)) {
+    const order = attachExecutionQuote({
+      ...so, executionType: 'stop-loss', executionReason: so.reason,
+    });
+    const fill = simulateFill(order, book);
+    modelLedger = applyFill(modelLedger, order, fill, nowIso);
+    filled.push({ order, fill, forced: 'stop-loss' });
   }
 
   // Forced exitBy closes (Model P holding-period discipline, Part 4 §17.3) —
   // a no-op for any position without an exitBy, i.e. every A/B/S/T position.
-  for (const eo of checkExitBySweep(modelLedger, etDateStr)) {
-    const fill = simulateFill(eo, book);
-    modelLedger = applyFill(modelLedger, eo, fill, nowIso);
-    filled.push({ order: eo, fill, forced: 'exitBy' });
+  for (const eo of valuationOnly ? [] : checkExitBySweep(modelLedger, etDateStr)) {
+    const order = attachExecutionQuote({
+      ...eo, executionType: 'exitBy', executionReason: eo.reason,
+    });
+    const fill = simulateFill(order, book);
+    modelLedger = applyFill(modelLedger, order, fill, nowIso);
+    filled.push({ order, fill, forced: 'exitBy' });
   }
 
-  for (const raw of proposedOrders) {
-    const order = { ...raw, refPx: raw.refPx ?? priceMap[raw.sym] };
+  for (const raw of valuationOnly ? [] : proposedOrders) {
+    riskLockdown = riskLockdown || checkDailyCircuitBreaker(dayStartEquity, modelLedger.equity);
+    const order = attachExecutionQuote({
+      ...raw, refPx: raw.refPx ?? priceMap[raw.sym],
+      ...(requireExecutionQuoteReceipt ? { executionType: 'proposal' } : {}),
+    });
+    const projectedFill = simulateFill(order, book);
+    if (order.side === 'buy' && order.maxExecPx != null && projectedFill.execPx > order.maxExecPx) {
+      executionSkipped.push({
+        order,
+        reason: `projected execution price ${projectedFill.execPx} exceeds signed maximum entry ${order.maxExecPx}`,
+      });
+      continue;
+    }
     if (riskLockdown && order.side === 'buy' && !order.reduceOnly) {
       modelLedger = rejectOrder(modelLedger, order, 'daily circuit breaker: buys blocked for the rest of today', nowIso);
       rejected.push({ order, reason: 'daily circuit breaker' });
       continue;
     }
-    const ctx = { model: book, universe, weekday, weeklyTradeCount: countRecentTrades(modelLedger.trades, etDateStr) };
+    const ctx = { model: book, universe, weekday, etDateStr, weeklyTradeCount: countRecentTrades(modelLedger.trades, etDateStr) };
     const v = validateOrder(order, modelLedger, ctx);
     if (!v.ok) {
       modelLedger = rejectOrder(modelLedger, order, v.reason, nowIso);
       rejected.push({ order, reason: v.reason });
       continue;
     }
-    const fill = simulateFill(order, book);
+    const fill = projectedFill;
     modelLedger = applyFill(modelLedger, order, fill, nowIso);
     filled.push({ order, fill });
+    modelLedger = markToMarket(modelLedger, priceMap);
+    riskLockdown = riskLockdown || checkDailyCircuitBreaker(dayStartEquity, modelLedger.equity);
   }
 
   // Re-mark after trades so equity reflects the same quotes used to decide,
   // not stale pre-trade marks.
   modelLedger = markToMarket(modelLedger, priceMap);
-  modelLedger = { ...modelLedger, equityHistory: upsertDay(modelLedger.equityHistory, day, modelLedger.equity) };
+  modelLedger = {
+    ...modelLedger,
+    equityHistory: upsertDay(modelLedger.equityHistory, day, modelLedger.equity),
+    // The top-level lastRunDate is shared by all books and cannot prove that
+    // this particular book was valued. Keep a backward-compatible per-book
+    // cursor so catch-up can repair partially completed sessions precisely.
+    lastValuationDate: etDateStr,
+    ...(executionWindow ? {
+      // Every real execution/valuation window leaves a ledger-side witness,
+      // even for an empty book and zero orders. This keeps the complete Arena
+      // atomic group visible to Git without inventing a trade or changing P&L.
+      valuationAudits: [
+        ...(Array.isArray(modelLedger.valuationAudits) ? modelLedger.valuationAudits : []),
+        {
+          date: etDateStr,
+          window: executionWindow,
+          mode: valuationOnly ? 'valuation-only' : 'live-execution',
+          recordedAt: nowIso,
+          quoteReceipts: structuredClone(quoteReceipts),
+        },
+      ],
+    } : {}),
+  };
 
   let seasonReset = false;
-  if (checkSeasonReset(modelLedger)) {
+  // Historical valuation is an audit operation. It must never reset a season,
+  // liquidate positions, or rewrite cash based on information observed after
+  // the original execution window.
+  if (!valuationOnly && checkSeasonReset(modelLedger)) {
     seasonReset = true;
     modelLedger = resetSeason(modelLedger, newPromptVersionOnReset || bumpVersion(modelLedger.promptVersion), day);
   }
@@ -154,7 +230,7 @@ export function runArenaLedger(ledgerFull, book, opts) {
     ledger,
     summary: {
       book, day, riskLockdown, seasonReset,
-      filled, rejected,
+      filled, rejected, executionSkipped,
       equity: modelLedger.equity, metrics: modelLedger.metrics,
     },
   };

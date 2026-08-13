@@ -7,7 +7,6 @@ import {
   openSync,
   readFileSync,
   renameSync,
-  rmdirSync,
   statSync,
   unlinkSync,
   writeFileSync,
@@ -18,6 +17,7 @@ import { spawnSync } from 'node:child_process';
 const JOURNAL_NAME = 'afflatus-data-publish.json';
 const LOCK_NAME = 'afflatus-data-pipeline.lock';
 const TRAILER = 'Afflatus-Data-Publish';
+const PIPELINE_TRAILER = 'Afflatus-Data-Pipeline';
 
 export class PublishTransactionError extends Error {
   constructor(phase, message, options = {}) {
@@ -38,11 +38,14 @@ function removeFile(path) {
 function durableWrite(path, content, { exclusive = false } = {}) {
   mkdirSync(dirname(path), { recursive: true });
   const fd = openSync(path, exclusive ? 'wx' : 'w');
+  let complete = false;
   try {
     writeFileSync(fd, content);
     fsyncSync(fd);
+    complete = true;
   } finally {
     closeSync(fd);
+    if (!complete && exclusive) removeFile(path);
   }
 }
 
@@ -122,37 +125,42 @@ function defaultCommandRunner(command, args, options = {}) {
   });
 }
 
-function processIsAlive(pid) {
-  if (!Number.isInteger(pid) || pid <= 0) return false;
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch (error) {
-    return error?.code === 'EPERM';
-  }
+function samePublisherOwner(left, right) {
+  return Boolean(left && right
+    && left.transactionId === right.transactionId
+    && left.pid === right.pid);
 }
 
-function acquireLock(lockPath, journalPath, transactionId) {
-  const ownerPath = join(lockPath, 'owner.json');
+function readPublisherOwner(directory) {
+  try { return JSON.parse(readFileSync(directory, 'utf8')); } catch { return null; }
+}
+
+function acquireLock(lockPath, transactionId) {
+  const owner = { pid: process.pid, transactionId };
   try {
-    mkdirSync(lockPath);
+    durableWrite(lockPath, `${JSON.stringify(owner)}\n`, { exclusive: true });
   } catch (error) {
-    // A killed publisher leaves both its journal and its project-owned lock.
-    // Only reclaim a lock with an explicit dead PID; never guess about the
-    // empty legacy shell-script lock or steal one from a live process.
-    let owner = null;
-    try { owner = JSON.parse(readFileSync(ownerPath, 'utf8')); } catch { /* not ours to reclaim */ }
-    if (!owner || processIsAlive(owner.pid)) {
-      throw new PublishTransactionError('lock', 'another Afflatus data publisher is active', { cause: error });
-    }
-    removeFile(ownerPath);
-    try { rmdirSync(lockPath); } catch (removeError) {
-      throw new PublishTransactionError('lock', 'stale data-publisher lock could not be reclaimed', { cause: removeError });
-    }
-    mkdirSync(lockPath);
+    throw new PublishTransactionError('lock', 'publisher lock already exists or could not be acquired atomically', { cause: error });
   }
-  durableWrite(ownerPath, `${JSON.stringify({ pid: process.pid, transactionId })}\n`, { exclusive: true });
-  return ownerPath;
+  return lockPath;
+}
+
+function changedTrackedPaths(commandRunner, root, cached = false) {
+  const args = ['diff', ...(cached ? ['--cached'] : []), '--name-only', '-z', '--'];
+  const result = runChecked(commandRunner, 'validate', 'git', args, { cwd: root, capture: true });
+  return String(result.stdout || '').split('\0').filter(Boolean);
+}
+
+function assertTrackedBoundary(commandRunner, root, allowedPaths = []) {
+  const allowed = new Set(allowedPaths);
+  const changed = [
+    ...changedTrackedPaths(commandRunner, root, false),
+    ...changedTrackedPaths(commandRunner, root, true),
+  ];
+  const unexpected = [...new Set(changed)].filter((path) => !allowed.has(path));
+  if (unexpected.length) {
+    throw new PublishTransactionError('validate', `tracked worktree or index contains changes outside the publication boundary: ${unexpected.join(', ')}`);
+  }
 }
 
 function commandFailure(phase, command, args, result) {
@@ -167,6 +175,71 @@ function runChecked(runner, phase, command, args, options) {
   const result = runner(command, args, options);
   if (result?.status !== 0) throw commandFailure(phase, command, args, result);
   return result;
+}
+
+function normalizeVerificationCommands(buildCommand, verificationCommands) {
+  const commands = verificationCommands ?? (buildCommand ? [{
+    phase: 'build',
+    command: buildCommand,
+  }] : []);
+  if (!Array.isArray(commands)) {
+    throw new PublishTransactionError('validate', 'verificationCommands must be an array');
+  }
+  return commands.map((verification, index) => {
+    const command = Array.isArray(verification) ? verification : verification?.command;
+    const phase = Array.isArray(verification) ? `verify-${index + 1}` : verification?.phase;
+    if (!Array.isArray(command) || !command.length) {
+      throw new PublishTransactionError('validate', `verificationCommands[${index}].command must be non-empty`);
+    }
+    if (typeof phase !== 'string' || !phase.trim()) {
+      throw new PublishTransactionError('validate', `verificationCommands[${index}].phase must be non-empty`);
+    }
+    return { phase, command };
+  });
+}
+
+function normalizePreCommitCommands(preCommitCommands) {
+  if (preCommitCommands == null) return [];
+  if (!Array.isArray(preCommitCommands)) {
+    throw new PublishTransactionError('validate', 'preCommitCommands must be an array');
+  }
+  return preCommitCommands.map((check, index) => {
+    const command = Array.isArray(check) ? check : check?.command;
+    const phase = Array.isArray(check) ? `pre-commit-${index + 1}` : check?.phase;
+    if (!Array.isArray(command) || !command.length) {
+      throw new PublishTransactionError('validate', `preCommitCommands[${index}].command must be non-empty`);
+    }
+    if (typeof phase !== 'string' || !phase.trim()) {
+      throw new PublishTransactionError('validate', `preCommitCommands[${index}].phase must be non-empty`);
+    }
+    return { phase, command };
+  });
+}
+
+function normalizePreCommitHooks(preCommitHooks) {
+  if (preCommitHooks == null) return [];
+  if (!Array.isArray(preCommitHooks)) {
+    throw new PublishTransactionError('validate', 'preCommitHooks must be an array');
+  }
+  return preCommitHooks.map((entry, index) => {
+    const hook = typeof entry === 'function' ? entry : entry?.hook;
+    const phase = typeof entry === 'function' ? `pre-commit-hook-${index + 1}` : entry?.phase;
+    if (typeof hook !== 'function') {
+      throw new PublishTransactionError('validate', `preCommitHooks[${index}].hook must be a function`);
+    }
+    if (typeof phase !== 'string' || !phase.trim()) {
+      throw new PublishTransactionError('validate', `preCommitHooks[${index}].phase must be non-empty`);
+    }
+    return { phase, hook };
+  });
+}
+
+function assertPublishedBytes(entries, phase) {
+  for (const entry of entries) {
+    if (sha256(readFileSync(entry.targetPath)) !== entry.expectedSha256) {
+      throw new PublishTransactionError(phase, `${entry.relativePath} changed during ${phase}`);
+    }
+  }
 }
 
 function cleanupArtifacts(journalPath, journal) {
@@ -219,8 +292,9 @@ export function recoverAtomicPublish({ repoRoot = process.cwd(), commandRunner =
 /**
  * Complete data publication boundary:
  * prepare/validate -> same-filesystem stage/rename -> regenerate declared
- * derived artifacts -> build smoke -> path-only Git commit. Derive/build/commit
- * failures restore every target byte-for-byte.
+ * derived artifacts -> ordered verification commands -> commit-adjacent gates
+ * -> path-only Git commit. Derive/verification/pre-commit/commit failures
+ * restore every target byte-for-byte.
  */
 export function runAtomicPublishTransaction({
   repoRoot = process.cwd(),
@@ -231,6 +305,9 @@ export function runAtomicPublishTransaction({
   deriveCommand = null,
   derivedPaths = [],
   buildCommand = ['npm', 'run', 'build'],
+  verificationCommands,
+  preCommitCommands = [],
+  preCommitHooks = [],
   commandRunner = defaultCommandRunner,
   transactionId = `${Date.now()}-${process.pid}`,
   onPhase = () => {},
@@ -243,15 +320,24 @@ export function runAtomicPublishTransaction({
   const gitDirectory = resolveGitDirectory(root);
   const lockPath = join(gitDirectory, LOCK_NAME);
   const journalPath = join(gitDirectory, JOURNAL_NAME);
-  const lockOwnerPath = acquireLock(lockPath, journalPath, transactionId);
+  acquireLock(lockPath, transactionId);
 
   let journal = null;
   let normalized = [];
   let normalizedDerived = [];
   let committed = false;
   try {
-    recoverAtomicPublish({ repoRoot: root, commandRunner });
+    // Daily automation may remove only the lock it just acquired. A previous
+    // transaction journal is an explicit repair condition; silently rolling
+    // it back here would mutate repository data before the clean preflight.
+    if (existsSync(journalPath)) {
+      throw new PublishTransactionError(
+        'recover',
+        `publish journal already exists at ${journalPath}; run explicit recovery after confirming no publisher is active`,
+      );
+    }
     onPhase('validate');
+    assertTrackedBoundary(commandRunner, root);
     let prepared;
     try {
       prepared = typeof prepare === 'function' ? prepare() : entries;
@@ -260,6 +346,13 @@ export function runAtomicPublishTransaction({
       throw new PublishTransactionError('validate', error.message, { cause: error });
     }
     normalized = normalizeEntries(root, prepared, transactionId);
+    const declaredPaths = normalized.map((entry) => entry.relativePath);
+    if (normalized.every((entry) => (
+      entry.hadOriginal && sha256(readFileSync(entry.targetPath)) === entry.expectedSha256
+    ))) {
+      onPhase('complete');
+      return { status: 'unchanged', transactionId, paths: declaredPaths };
+    }
     normalizedDerived = normalizeDerivedEntries(
       root,
       derivedPaths,
@@ -272,17 +365,11 @@ export function runAtomicPublishTransaction({
     if (!normalizedDerived.length && deriveCommand) {
       throw new PublishTransactionError('validate', 'derivedPaths are required when deriveCommand is declared');
     }
+    const verifications = normalizeVerificationCommands(buildCommand, verificationCommands);
+    const commitCommands = normalizePreCommitCommands(preCommitCommands);
+    const commitHooks = normalizePreCommitHooks(preCommitHooks);
     const allEntries = [...normalized, ...normalizedDerived];
     const paths = allEntries.map((entry) => entry.relativePath);
-
-    // Do not overwrite a human/sibling publisher's target edits. `--only`
-    // later preserves unrelated staged files, but these exact paths must start
-    // clean for byte-perfect rollback to have an unambiguous base.
-    const worktree = commandRunner('git', ['diff', '--quiet', '--', ...paths], { cwd: root, capture: true });
-    const index = commandRunner('git', ['diff', '--cached', '--quiet', '--', ...paths], { cwd: root, capture: true });
-    if (worktree?.status !== 0 || index?.status !== 0) {
-      throw new PublishTransactionError('validate', 'publish targets contain pre-existing Git changes');
-    }
 
     onPhase('stage');
     journal = {
@@ -339,21 +426,19 @@ export function runAtomicPublishTransaction({
       writeJournal(journalPath, journal);
     }
 
-    onPhase('build');
-    const [buildProgram, ...buildArgs] = buildCommand;
-    runChecked(commandRunner, 'build', buildProgram, buildArgs, {
-      cwd: root,
-      env: { ...process.env, AFFLATUS_DATA_PUBLISH_TRANSACTION: transactionId },
-    });
-    for (const entry of allEntries) {
-      if (sha256(readFileSync(entry.targetPath)) !== entry.expectedSha256) {
-        throw new PublishTransactionError('build', `${entry.relativePath} changed during build smoke`);
-      }
+    for (const { phase, command } of verifications) {
+      onPhase(phase);
+      const [program, ...args] = command;
+      runChecked(commandRunner, phase, program, args, {
+        cwd: root,
+        env: { ...process.env, AFFLATUS_DATA_PUBLISH_TRANSACTION: transactionId },
+      });
+      assertPublishedBytes(allEntries, phase);
     }
-    journal.phase = 'build-passed';
+    journal.phase = 'verified';
     writeJournal(journalPath, journal);
 
-    onPhase('commit');
+    assertTrackedBoundary(commandRunner, root, paths);
     const changed = commandRunner('git', ['diff', '--quiet', '--', ...paths], { cwd: root, capture: true });
     if (changed?.status === 0) {
       journal.phase = 'committed';
@@ -366,10 +451,49 @@ export function runAtomicPublishTransaction({
     }
     if (changed?.status !== 1) throw commandFailure('commit', 'git', ['diff', '--quiet'], changed);
 
+    // These gates intentionally run after every potentially long derive/test/
+    // build step and after confirming that a commit is actually needed. Keep
+    // this block adjacent to git commit: it is the final authority for
+    // real-time publication windows and other expiring commit conditions.
+    for (const { phase, command } of commitCommands) {
+      onPhase(phase);
+      const [program, ...args] = command;
+      runChecked(commandRunner, phase, program, args, {
+        cwd: root,
+        env: { ...process.env, AFFLATUS_DATA_PUBLISH_TRANSACTION: transactionId },
+      });
+      assertPublishedBytes(allEntries, phase);
+    }
+    for (const { phase, hook } of commitHooks) {
+      onPhase(phase);
+      let result;
+      try {
+        result = hook({
+          repoRoot: root,
+          pipelineId,
+          transactionId,
+          paths: [...paths],
+          commandRunner,
+        });
+      } catch (error) {
+        throw new PublishTransactionError(phase, error.message, { cause: error });
+      }
+      if (result && typeof result.then === 'function') {
+        throw new PublishTransactionError(phase, 'preCommitHooks must be synchronous');
+      }
+      assertPublishedBytes(allEntries, phase);
+    }
+    if (commitCommands.length || commitHooks.length) {
+      journal.phase = 'pre-commit-passed';
+      writeJournal(journalPath, journal);
+    }
+
+    onPhase('commit');
     runChecked(commandRunner, 'commit', 'git', [
       'commit', '--only',
       '-m', commitMessage,
       '-m', `${TRAILER}: ${transactionId}`,
+      '-m', `${PIPELINE_TRAILER}: ${pipelineId}`,
       '--', ...paths,
     ], { cwd: root });
     committed = true;
@@ -391,7 +515,19 @@ export function runAtomicPublishTransaction({
     if (error instanceof PublishTransactionError) throw error;
     throw new PublishTransactionError(journal?.phase || 'validate', error.message, { cause: error });
   } finally {
-    removeFile(lockOwnerPath);
-    try { rmdirSync(lockPath); } catch { /* another recovery can clear a stale lock manually */ }
+    const liveOwner = readPublisherOwner(lockPath);
+    if (liveOwner?.transactionId === transactionId && liveOwner?.pid === process.pid) {
+      const releasePath = `${lockPath}.release-${transactionId}`;
+      try {
+        renameSync(lockPath, releasePath);
+        const releasedOwner = readPublisherOwner(releasePath);
+        if (samePublisherOwner(liveOwner, releasedOwner)) {
+          removeFile(releasePath);
+        }
+        // An owner mismatch is quarantined for explicit repair. Never rename
+        // it over lockPath: a new publisher may have acquired that O_EXCL path
+        // during this release window.
+      } catch { /* a different owner or recovery won; never remove it */ }
+    }
   }
 }

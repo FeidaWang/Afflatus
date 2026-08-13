@@ -23,6 +23,7 @@
    }
    ============================================================ */
 import { impactSlippageBps } from './arenaExec.js';
+import { addNyseSessions } from './marketSession.js';
 
 // ---- hard limits (ROADMAP §7.1) --------------------------------
 export const LIMITS = {
@@ -49,9 +50,9 @@ export const LIMITS = {
   // model equally and are NOT duplicated here (see MAX_POSITION_PCT etc.
   // above).
   PER_MODEL: {
-    S: { STOP_LOSS: 0.08, SLIPPAGE_BPS: 5, MAX_POSITIONS: 6, CONFIDENCE_FLOOR: 0.70, MAX_WEEKLY_TRADES: 20 },
-    P: { STOP_LOSS: 0.05, SLIPPAGE_BPS: 5, MAX_POSITIONS: 5, CONFIDENCE_FLOOR: 0.65, MAX_WEEKLY_TRADES: 30 },
-    T: { STOP_LOSS: 0.15, SLIPPAGE_BPS: 2, MAX_POSITIONS: 8, CONFIDENCE_FLOOR: 0.65, ALLOWED_TRADE_DAYS: [2, 4] },
+    S: { STOP_LOSS: 0.08, SLIPPAGE_BPS: 5, MAX_POSITIONS: 6, MAX_ORDERS_PER_RUN: 4, CONFIDENCE_FLOOR: 0.70, MAX_WEEKLY_TRADES: 20 },
+    P: { STOP_LOSS: 0.05, SLIPPAGE_BPS: 5, MAX_POSITIONS: 5, MAX_ORDERS_PER_RUN: 4, CONFIDENCE_FLOOR: 0.65, MAX_WEEKLY_TRADES: 30 },
+    T: { STOP_LOSS: 0.15, SLIPPAGE_BPS: 2, MAX_POSITIONS: 8, MAX_ORDERS_PER_RUN: 3, CONFIDENCE_FLOOR: 0.65, ALLOWED_TRADE_DAYS: [2, 4] },
   },
 };
 
@@ -78,18 +79,36 @@ export function validateOrder(order, modelLedger, ctx) {
   // risk-reducing sells always pass the throttles below; only opens/adds are gated
   const isRiskReduction = side === 'sell';
   if (!isRiskReduction) {
+    if (ctx.model === 'P') {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(order.exitBy || ''))) {
+        return { ok: false, reason: 'Model P buys require exitBy in YYYY-MM-DD format' };
+      }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(ctx.etDateStr || ''))) {
+        return { ok: false, reason: 'Model P exitBy validation requires the ET session date' };
+      }
+      const earliestExitStr = addNyseSessions(ctx.etDateStr, 1);
+      const latestExitStr = addNyseSessions(ctx.etDateStr, 2);
+      if (order.exitBy < earliestExitStr || order.exitBy > latestExitStr) {
+        return { ok: false, reason: `Model P exitBy must be between the next NYSE session ${earliestExitStr} and ${latestExitStr}` };
+      }
+    }
     // confidence floor (new positions only — adding to an existing winner also gated,
     // matching "新开仓订单 confidence<0.65 一律拒单" read literally as any buy order).
     // Per-model override (Part 4 §17.2-17.4) falls back to the shared constant for A/B.
     const confFloor = LIMITS.PER_MODEL?.[ctx.model]?.CONFIDENCE_FLOOR ?? LIMITS.CONFIDENCE_FLOOR;
-    if (typeof confidence === 'number' && confidence < confFloor) {
+    if (typeof confidence !== 'number' || !Number.isFinite(confidence)) {
+      return { ok: false, reason: 'confidence must be a finite number' };
+    }
+    if (confidence < confFloor) {
       return { ok: false, reason: `confidence ${confidence} below floor ${confFloor}` };
     }
 
     // alt-data fusion gate (Model T, Part 4 §17.4): a single signal isn't a
     // "fusion" — new/added positions need at least two independent signals.
     if (ctx.model === 'T') {
-      const nSignals = Array.isArray(order.signals) ? order.signals.length : 0;
+      const nSignals = Array.isArray(order.signals)
+        ? new Set(order.signals.map((signal) => String(signal).trim().toLowerCase()).filter(Boolean)).size
+        : 0;
       if (nSignals < 2) return { ok: false, reason: `Model T requires >=2 fused signals (got ${nSignals})` };
     }
 
@@ -105,10 +124,16 @@ export function validateOrder(order, modelLedger, ctx) {
     }
 
     // single-position cap: check the resulting position value against equity AFTER the trade
-    const notional = qty * refPx;
+    const projectedFill = simulateFill({ side, qty, refPx }, ctx.model);
+    const notional = projectedFill.execPx * qty;
     const newQty = (existing ? existing.qty : 0) + qty;
-    const newPositionValue = newQty * refPx;
-    if (modelLedger.equity > 0 && newPositionValue / modelLedger.equity > LIMITS.MAX_POSITION_PCT) {
+    const newPositionValue = newQty * projectedFill.execPx;
+    const markedOtherPositions = modelLedger.positions.reduce((sum, position) => (
+      position.sym === sym ? sum : sum + position.qty * position.mkPx
+    ), 0);
+    const projectedEquity = modelLedger.cash - notional - projectedFill.fee
+      + markedOtherPositions + newPositionValue;
+    if (projectedEquity > 0 && newPositionValue / projectedEquity > LIMITS.MAX_POSITION_PCT) {
       return { ok: false, reason: `position would exceed ${LIMITS.MAX_POSITION_PCT * 100}% of equity` };
     }
 
@@ -120,9 +145,8 @@ export function validateOrder(order, modelLedger, ctx) {
     }
 
     // min cash buffer after the buy
-    const feeEst = notional * (LIMITS.FEE_BPS / 10000);
-    const cashAfter = modelLedger.cash - notional - feeEst;
-    if (cashAfter / modelLedger.equity < LIMITS.MIN_CASH_PCT) {
+    const cashAfter = modelLedger.cash - notional - projectedFill.fee;
+    if (!(projectedEquity > 0) || cashAfter / projectedEquity < LIMITS.MIN_CASH_PCT) {
       return { ok: false, reason: `would breach minimum ${LIMITS.MIN_CASH_PCT * 100}% cash buffer` };
     }
     if (cashAfter < 0) return { ok: false, reason: 'insufficient cash' };
@@ -169,7 +193,7 @@ export function applyFill(modelLedger, order, fill, ts) {
       const next = { ...p, qty: newQty, avgPx: Number(newAvg.toFixed(4)) };
       // exitBy (Model P, Part 4 §17.3): only set on orders that carry it —
       // A/B/S/T orders never do, so their positions never gain this field.
-      if (order.exitBy) next.exitBy = order.exitBy;
+      if (order.exitBy) next.exitBy = p.exitBy && p.exitBy < order.exitBy ? p.exitBy : order.exitBy;
       positions[idx] = next;
     } else {
       const pos = { sym: order.sym, qty: order.qty, avgPx: fill.execPx, mkPx: fill.execPx };
@@ -186,7 +210,21 @@ export function applyFill(modelLedger, order, fill, ts) {
     else positions[idx] = { ...p, qty: remaining };
   }
 
-  const trade = { ts, sym: order.sym, side: order.side, qty: order.qty, px: fill.execPx, fee: fill.fee, slipBps: fill.slipBps, realizedPnl };
+  const trade = {
+    ts, sym: order.sym, side: order.side, qty: order.qty, px: fill.execPx,
+    fee: fill.fee, slipBps: fill.slipBps, realizedPnl,
+    // Optional only for discretionary fills. Forced risk exits and historical
+    // Season 1/early Season 2 trades intentionally remain backward-compatible.
+    ...(order.proposalId ? {
+      proposalId: order.proposalId,
+      decisionHash: order.decisionHash,
+      sourceHash: order.sourceHash,
+      decidedAt: order.decidedAt,
+    } : {}),
+    ...(order.executionQuote ? { executionQuote: { ...order.executionQuote } } : {}),
+    ...(order.executionType ? { executionType: order.executionType } : {}),
+    ...(order.executionReason ? { executionReason: order.executionReason } : {}),
+  };
   return {
     ...modelLedger,
     cash: Number((modelLedger.cash + cashDelta).toFixed(4)),

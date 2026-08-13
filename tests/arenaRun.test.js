@@ -36,6 +36,7 @@ describe('runArenaLedger — single-run orchestration (V4)', () => {
     expect(summary.day).toBe(1);
     expect(ledger.day).toBe(1);
     expect(ledger.lastRunDate).toBe('2026-07-06');
+    expect(ledger.models.A.lastValuationDate).toBe('2026-07-06');
     expect(ledger.models.A.dayStartEquity).toBe(10000);
   });
 
@@ -147,9 +148,21 @@ describe('runArenaLedger — single-run orchestration (V4)', () => {
     const { summary, ledger } = runArenaLedger(ledgerWithLoser, 'A', {
       etDateStr: '2026-07-06', nowIso: '2026-07-06T19:00:00Z',
       priceMap: { MU: 90 }, universe: UNIVERSE, proposedOrders: [],
+      quoteReceipts: {
+        MU: {
+          sourceUrl: 'https://feida.au/api/quote?symbol=MU', requestId: 'req-MU',
+          observedAt: '2026-07-06T18:59:50.000Z', providerTimestamp: '2026-07-06T18:59:45.000Z', refPx: 90,
+        },
+      },
+      requireExecutionQuoteReceipt: true,
     });
     expect(summary.filled.some((f) => f.forced === 'stop-loss' && f.order.sym === 'MU')).toBe(true);
     expect(ledger.models.A.positions.find((p) => p.sym === 'MU')).toBeUndefined();
+    expect(ledger.models.A.trades.at(-1)).toMatchObject({
+      executionType: 'stop-loss',
+      executionReason: expect.stringContaining('stop-loss'),
+      executionQuote: { requestId: 'req-MU', refPx: 90 },
+    });
   });
 
   it('Model B may only open new positions on Tue/Thu ET trading days', () => {
@@ -306,6 +319,86 @@ describe('runArenaLedger — Season 2 books S/P/T', () => {
     });
     expect(summary.filled.some((f) => f.forced === 'exitBy' && f.order.sym === 'NVDA')).toBe(true);
     expect(ledger.models.P.positions).toHaveLength(0);
+  });
+
+  it('valuation-only catch-up never turns a historical stop or exit date into a trade', () => {
+    const base = freshSeason2Ledger();
+    const ledgerWithStoppedPosition = freshSeason2Ledger({
+      models: {
+        ...base.models,
+        S: {
+          ...base.models.S,
+          cash: 9000,
+          equity: 10000,
+          positions: [{ sym: 'NVDA', qty: 10, avgPx: 100, mkPx: 100 }],
+        },
+      },
+      lastRunDate: '2026-07-22',
+      day: 1,
+    });
+    const { summary, ledger } = runArenaLedger(ledgerWithStoppedPosition, 'S', {
+      etDateStr: '2026-07-23', nowIso: '2026-07-24T01:00:00Z',
+      priceMap: { NVDA: 80 }, universe: UNIVERSE, proposedOrders: [], valuationOnly: true,
+    });
+    expect(summary.filled).toEqual([]);
+    expect(ledger.models.S.positions).toHaveLength(1);
+    expect(ledger.models.S.trades).toEqual([]);
+    expect(ledger.models.S.equity).toBe(9800);
+  });
+
+  it('valuation-only catch-up cannot trigger a season reset or rewrite cash', () => {
+    const base = freshSeason2Ledger();
+    const underwater = freshSeason2Ledger({
+      models: {
+        ...base.models,
+        S: {
+          ...base.models.S,
+          cash: 0,
+          equity: 10000,
+          dayStartEquity: 10000,
+          positions: [{ sym: 'NVDA', qty: 100, avgPx: 100, mkPx: 100 }],
+        },
+      },
+      lastRunDate: '2026-07-22',
+      day: 1,
+    });
+    const { summary, ledger } = runArenaLedger(underwater, 'S', {
+      etDateStr: '2026-07-23', nowIso: '2026-07-24T01:00:00Z',
+      priceMap: { NVDA: 70 }, universe: UNIVERSE, proposedOrders: [], valuationOnly: true,
+    });
+    expect(summary.seasonReset).toBe(false);
+    expect(ledger.models.S.cash).toBe(0);
+    expect(ledger.models.S.positions).toHaveLength(1);
+    expect(ledger.models.S.promptVersion).toBe('S-v1');
+    expect(ledger.models.S.equity).toBe(7000);
+    expect(ledger.models.S.lastValuationDate).toBe('2026-07-23');
+  });
+
+  it('records a ledger-side witness for a zero-order live window', () => {
+    const { ledger } = runArenaLedger(freshSeason2Ledger(), 'S', {
+      etDateStr: '2026-07-23', nowIso: '2026-07-23T14:05:05.000Z',
+      priceMap: {}, quoteReceipts: {}, requireExecutionQuoteReceipt: true,
+      universe: UNIVERSE, proposedOrders: [], executionWindow: 'open-window',
+    });
+    expect(ledger.models.S.valuationAudits).toEqual([{
+      date: '2026-07-23',
+      window: 'open-window',
+      mode: 'live-execution',
+      recordedAt: '2026-07-23T14:05:05.000Z',
+      quoteReceipts: {},
+    }]);
+  });
+
+  it('rejects an oversized Season 2 proposal batch before any fill', () => {
+    const orders = Array.from({ length: 5 }, (_, index) => ({
+      sym: index === 0 ? 'NVDA' : index === 1 ? 'MU' : index === 2 ? 'AVGO' : index === 3 ? 'SPY' : 'SMH',
+      side: 'buy', qty: 1, refPx: 100, confidence: 0.8, signals: ['event'],
+    }));
+    expect(() => runArenaLedger(freshSeason2Ledger(), 'S', {
+      etDateStr: '2026-07-23', nowIso: '2026-07-23T14:35:00Z',
+      priceMap: Object.fromEntries(UNIVERSE.map((symbol) => [symbol, 100])),
+      universe: UNIVERSE, proposedOrders: orders,
+    })).toThrow(/at most 4/);
   });
 });
 

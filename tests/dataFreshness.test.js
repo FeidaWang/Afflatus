@@ -43,4 +43,17 @@ describe('dataFreshness', () => {
     );
     expect(result).toMatchObject({ stale: true, state: 'future', ageHours: -12 });
   });
+
+  it('uses the exchange early-close publication time for Arena settlement', () => {
+    const pipeline = {
+      kind: 'market-session',
+      availableFromMinutes: 16 * 60 + 30,
+      earlyCloseAvailableFromMinutes: 13 * 60 + 30,
+    };
+    const afterEarlyClose = new Date('2026-11-27T18:35:00.000Z'); // 13:35 ET
+    expect(assessPipelineOutput(pipeline, {}, '2026-11-27', afterEarlyClose)).toMatchObject({
+      stale: false,
+      expectedDate: '2026-11-27',
+    });
+  });
 });

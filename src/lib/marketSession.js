@@ -102,6 +102,22 @@ export function isNyseSession(dateString, extraHolidays = []) {
   return !holidays.has(dateString);
 }
 
+/** Return the Nth NYSE session strictly after dateString (DST-proof). */
+export function addNyseSessions(dateString, amount = 1, extraHolidays = []) {
+  if (!DATE_RE.test(String(dateString || '')) || !Number.isInteger(amount) || amount < 1) {
+    throw new TypeError('addNyseSessions requires YYYY-MM-DD and a positive integer amount');
+  }
+  const cursor = utcDate(...dateString.split('-').map(Number));
+  let remaining = amount;
+  for (let guard = 0; guard < 370; guard += 1) {
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+    const candidate = isoDate(cursor);
+    if (isNyseSession(candidate, extraHolidays)) remaining -= 1;
+    if (remaining === 0) return candidate;
+  }
+  throw new RangeError(`Could not resolve ${amount} NYSE sessions after ${dateString}`);
+}
+
 export function lastCompletedMarketSession(value = new Date(), options = {}) {
   const { date, minutes } = easternTimeParts(value);
   const extraHolidays = options.extraHolidays || [];

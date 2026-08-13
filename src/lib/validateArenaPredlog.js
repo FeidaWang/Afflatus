@@ -1,4 +1,5 @@
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const AUDIT_STATUSES = new Set(['scored', 'partial', 'no-predictions', 'missed-source']);
 
 export function validateArenaPredlog(data) {
   const errors = [];
@@ -18,6 +19,21 @@ export function validateArenaPredlog(data) {
       else seen.add(day.date);
       if (!day?.entries || typeof day.entries !== 'object' || Array.isArray(day.entries)) {
         errors.push(`${tag}.entries: must be an object`);
+      }
+      if (day?.audit != null) {
+        if (!day.audit || typeof day.audit !== 'object' || Array.isArray(day.audit)) {
+          errors.push(`${tag}.audit: must be an object when present`);
+        } else {
+          if (!AUDIT_STATUSES.has(day.audit.status)) {
+            errors.push(`${tag}.audit.status: must be scored, partial, no-predictions, or missed-source`);
+          }
+          if (!Number.isFinite(Date.parse(day.audit.checkedAt))) {
+            errors.push(`${tag}.audit.checkedAt: must be an ISO timestamp`);
+          }
+          if (typeof day.audit.note !== 'string' || !day.audit.note.trim()) {
+            errors.push(`${tag}.audit.note: must be non-empty`);
+          }
+        }
       }
     });
   }

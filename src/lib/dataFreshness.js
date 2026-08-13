@@ -1,4 +1,6 @@
 import { assessMarketSnapshot } from './marketFreshness.js';
+import { isEarlyCloseSession } from './arenaWindowGate.js';
+import { easternTimeParts } from './marketSession.js';
 
 export function zonedDate(value, timeZone) {
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
@@ -13,8 +15,13 @@ export function zonedDate(value, timeZone) {
 export function assessPipelineOutput(pipeline, output, artifactValue, value = new Date()) {
   if (pipeline.kind === 'market-session') {
     const snapshotDate = typeof artifactValue === 'string' ? artifactValue.slice(0, 10) : artifactValue;
+    const etDate = easternTimeParts(value).date;
+    const availableFromMinutes = pipeline.earlyCloseAvailableFromMinutes != null
+      && isEarlyCloseSession(etDate)
+      ? pipeline.earlyCloseAvailableFromMinutes
+      : pipeline.availableFromMinutes;
     const result = assessMarketSnapshot(snapshotDate, value, {
-      availableFromMinutes: pipeline.availableFromMinutes,
+      availableFromMinutes,
     });
     return { ...result, detail: `expected ${result.expectedDate}` };
   }

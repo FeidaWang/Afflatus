@@ -38,9 +38,10 @@ function createRunner({ buildStatus = 0, commitStatus = 0, postPublishDiffStatus
     calls.push([command, [...args]]);
     if (command === 'npm') return { status: buildStatus, stderr: buildStatus ? 'smoke failed' : '' };
     if (command === 'git' && args[0] === 'diff') {
+      if (args.includes('--name-only')) return { status: 0, stdout: '' };
       if (args.includes('--cached')) return { status: 0, stdout: '' };
       worktreeDiffCalls += 1;
-      return { status: worktreeDiffCalls === 1 ? 0 : postPublishDiffStatus, stdout: '' };
+      return { status: postPublishDiffStatus, stdout: '' };
     }
     if (command === 'git' && args[0] === 'commit') return { status: commitStatus, stderr: commitStatus ? 'commit rejected' : '' };
     if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'abc123\n' };
@@ -77,6 +78,15 @@ describe('complete atomic data publish transaction', () => {
     );
   });
 
+  it('declares every Arena group atomically, including its runlog audit', () => {
+    for (const id of ['arena-premarket', 'arena-open', 'arena-late', 'arena-postmarket']) {
+      const pipeline = DATA_PIPELINES.find((item) => item.id === id);
+      expect(pipeline.outputs.map((output) => output.resource)).toContain('arena-runlog');
+    }
+    expect(DATA_PIPELINES.find((item) => item.id === 'arena-postmarket').outputs.map((output) => output.resource))
+      .toEqual(['arena-ledger', 'arena-digest', 'arena-predlog', 'arena-runlog']);
+  });
+
   it('orders validate -> stage/rename -> build smoke -> path-only commit', () => {
     const root = makeRepository();
     const phases = [];
@@ -100,10 +110,205 @@ describe('complete atomic data publish transaction', () => {
     const commit = calls.find(([command, args]) => command === 'git' && args[0] === 'commit');
     expect(commit[1]).toContain('--only');
     expect(commit[1]).toContain('Afflatus-Data-Publish: txn-success');
+    expect(commit[1]).toContain('Afflatus-Data-Pipeline: test-pipeline');
     expect(commit[1].slice(commit[1].indexOf('--') + 1)).toEqual(['public/a.json', 'public/b.json']);
   });
 
-  it('creates a real path-only Git commit without consuming unrelated staged work', () => {
+  it('runs caller-supplied verification commands in order before commit', () => {
+    const root = makeRepository();
+    const phases = [];
+    const commands = [];
+    let worktreeDiffCalls = 0;
+    const runner = (command, args) => {
+      commands.push([command, ...args]);
+      if (command === 'git' && args[0] === 'diff') {
+        if (args.includes('--name-only')) return { status: 0, stdout: '' };
+        if (args.includes('--cached')) return { status: 0 };
+        worktreeDiffCalls += 1;
+        return { status: 1 };
+      }
+      if (command === 'git' && args[0] === 'commit') return { status: 0 };
+      if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'verify123\n' };
+      if (command === 'git' && args[0] === 'log') return { status: 0, stdout: '' };
+      if (command === 'verify-data' || command === 'verify-freshness') return { status: 0 };
+      throw new Error(`unexpected command: ${command} ${args.join(' ')}`);
+    };
+
+    const result = runAtomicPublishTransaction({
+      repoRoot: root,
+      pipelineId: 'ordered-verification',
+      transactionId: 'ordered-verification-txn',
+      entries: entries(),
+      commandRunner: runner,
+      verificationCommands: [
+        { phase: 'data-check', command: ['verify-data'] },
+        { phase: 'freshness-strict', command: ['verify-freshness'] },
+      ],
+      onPhase: (phase) => phases.push(phase),
+    });
+
+    expect(result.status).toBe('committed');
+    expect(phases).toEqual([
+      'validate', 'stage', 'publish', 'data-check', 'freshness-strict', 'commit', 'complete',
+    ]);
+    expect(commands.findIndex(([command]) => command === 'verify-data'))
+      .toBeLessThan(commands.findIndex(([command, action]) => command === 'git' && action === 'commit'));
+    expect(commands.findIndex(([command]) => command === 'verify-freshness'))
+      .toBeLessThan(commands.findIndex(([command, action]) => command === 'git' && action === 'commit'));
+  });
+
+  it('runs commit-adjacent commands and synchronous hooks after verification and before Git commit', () => {
+    const root = makeRepository();
+    const phases = [];
+    const timeline = [];
+    const runner = (command, args) => {
+      if (command === 'git' && args[0] === 'diff') {
+        if (args.includes('--name-only')) return { status: 0, stdout: '' };
+        return { status: 1, stdout: '' };
+      }
+      if (command === 'verify-data') {
+        timeline.push('verification');
+        return { status: 0 };
+      }
+      if (command === 'check-current-window') {
+        timeline.push('pre-commit-command');
+        return { status: 0 };
+      }
+      if (command === 'git' && args[0] === 'commit') {
+        timeline.push('git-commit');
+        return { status: 0 };
+      }
+      if (command === 'git' && args[0] === 'rev-parse') return { status: 0, stdout: 'gated123\n' };
+      if (command === 'git' && args[0] === 'log') return { status: 0, stdout: '' };
+      throw new Error(`unexpected command: ${command} ${args.join(' ')}`);
+    };
+
+    const result = runAtomicPublishTransaction({
+      repoRoot: root,
+      pipelineId: 'arena-postmarket',
+      transactionId: 'commit-adjacent-txn',
+      entries: entries(),
+      commandRunner: runner,
+      verificationCommands: [{ phase: 'data-check', command: ['verify-data'] }],
+      preCommitCommands: [{ phase: 'postmarket-commit-window', command: ['check-current-window'] }],
+      preCommitHooks: [{
+        phase: 'publication-witness-hook',
+        hook(context) {
+          expect(context).toMatchObject({
+            repoRoot: root,
+            pipelineId: 'arena-postmarket',
+            transactionId: 'commit-adjacent-txn',
+          });
+          expect(context.paths).toEqual(['public/a.json', 'public/b.json']);
+          timeline.push('pre-commit-hook');
+        },
+      }],
+      onPhase: (phase) => phases.push(phase),
+    });
+
+    expect(result.status).toBe('committed');
+    expect(timeline).toEqual([
+      'verification', 'pre-commit-command', 'pre-commit-hook', 'git-commit',
+    ]);
+    expect(phases).toEqual([
+      'validate',
+      'stage',
+      'publish',
+      'data-check',
+      'postmarket-commit-window',
+      'publication-witness-hook',
+      'commit',
+      'complete',
+    ]);
+  });
+
+  it('rolls back without committing when a long verification crosses the publication window', () => {
+    const root = makeRepository();
+    const beforeA = readFileSync(join(root, 'public/a.json'));
+    const beforeB = readFileSync(join(root, 'public/b.json'));
+    const phases = [];
+    let verificationFinished = false;
+    let commitCalled = false;
+    const runner = (command, args) => {
+      if (command === 'git' && args[0] === 'diff') {
+        if (args.includes('--name-only')) return { status: 0, stdout: '' };
+        return { status: 1, stdout: '' };
+      }
+      if (command === 'long-verification') {
+        verificationFinished = true;
+        return { status: 0 };
+      }
+      if (command === 'authoritative-window-gate') {
+        expect(verificationFinished).toBe(true);
+        return { status: 3, stderr: 'publication window is no longer due' };
+      }
+      if (command === 'git' && args[0] === 'commit') {
+        commitCalled = true;
+        return { status: 0 };
+      }
+      throw new Error(`unexpected command: ${command} ${args.join(' ')}`);
+    };
+
+    let failure;
+    try {
+      runAtomicPublishTransaction({
+        repoRoot: root,
+        pipelineId: 'arena-open',
+        transactionId: 'crossed-window-txn',
+        entries: entries(),
+        commandRunner: runner,
+        verificationCommands: [{ phase: 'test', command: ['long-verification'] }],
+        preCommitCommands: [{ phase: 'open-commit-window', command: ['authoritative-window-gate'] }],
+        onPhase: (phase) => phases.push(phase),
+      });
+    } catch (error) {
+      failure = error;
+    }
+
+    expect(failure).toMatchObject({ phase: 'open-commit-window' });
+    expect(failure.message).toContain('publication window is no longer due');
+    expect(commitCalled).toBe(false);
+    expect(phases).toEqual([
+      'validate', 'stage', 'publish', 'test', 'open-commit-window',
+    ]);
+    expect(readFileSync(join(root, 'public/a.json'))).toEqual(beforeA);
+    expect(readFileSync(join(root, 'public/b.json'))).toEqual(beforeB);
+    expect(readdirSync(join(root, '.git'))).toEqual([]);
+  });
+
+  it('wires every Arena publisher to a real-clock commit-adjacent authority', () => {
+    const source = readFileSync(join(process.cwd(), 'scripts/publish-data-pipeline.mjs'), 'utf8');
+    expect(source).toContain("phase: 'premarket-publication-witness'");
+    expect(source).toContain("command: ['node', 'scripts/validate-arena-picks-publication.mjs', 'public/arena-picks.json']");
+    expect(source).toContain("['arena-open', 'open']");
+    expect(source).toContain("['arena-late', 'late']");
+    expect(source).toContain("['arena-postmarket', 'postmarket']");
+    expect(source).toContain("command: ['node', 'scripts/check-arena-window.mjs', `--window=${window}`]");
+    expect(source).toContain('preCommitCommands: arenaPreCommitCommands(pipeline.id)');
+    expect(source).not.toContain("command: ['node', 'scripts/check-arena-window.mjs', `--window=${window}`, '--report-only']");
+  });
+
+  it('rolls back when a caller-supplied verification command fails', () => {
+    const root = makeRepository();
+    const beforeA = readFileSync(join(root, 'public/a.json'));
+    const { runner: baseRunner } = createRunner();
+    const runner = (command, args, options) => command === 'verify-data'
+      ? { status: 1, stderr: 'invalid grouped data' }
+      : baseRunner(command, args, options);
+
+    expect(() => runAtomicPublishTransaction({
+      repoRoot: root,
+      pipelineId: 'failed-verification',
+      transactionId: 'failed-verification-txn',
+      entries: entries(),
+      commandRunner: runner,
+      verificationCommands: [{ phase: 'data-check', command: ['verify-data'] }],
+    })).toThrow(/invalid grouped data/);
+    expect(readFileSync(join(root, 'public/a.json'))).toEqual(beforeA);
+    expect(readdirSync(join(root, '.git'))).toEqual([]);
+  });
+
+  it('fails before publication when unrelated tracked work is staged', () => {
     const root = mkdtempSync(join(tmpdir(), 'afflatus-publish-git-'));
     roots.push(root);
     mkdirSync(join(root, 'public'));
@@ -120,19 +325,40 @@ describe('complete atomic data publish transaction', () => {
     writeFileSync(join(root, 'unrelated.txt'), 'staged user work\n');
     expect(actualRunner('git', ['add', 'unrelated.txt'], { cwd: root }).status).toBe(0);
 
-    const result = runAtomicPublishTransaction({
+    expect(() => runAtomicPublishTransaction({
       repoRoot: root,
       pipelineId: 'real-git-test',
       transactionId: 'real-git-txn',
       entries: entries(),
       buildCommand: [process.execPath, '-e', 'process.exit(0)'],
       commandRunner: actualRunner,
-    });
-    expect(result.status).toBe('committed');
-    const committedPaths = actualRunner('git', ['show', '--pretty=format:', '--name-only', 'HEAD'], { cwd: root })
-      .stdout.trim().split('\n').filter(Boolean).sort();
-    expect(committedPaths).toEqual(['public/a.json', 'public/b.json']);
+    })).toThrow(/outside the publication boundary/);
+    expect(actualRunner('git', ['log', '--oneline'], { cwd: root }).stdout.trim().split('\n')).toHaveLength(1);
     expect(actualRunner('git', ['diff', '--cached', '--name-only'], { cwd: root }).stdout.trim()).toBe('unrelated.txt');
+    expect(readFileSync(join(root, 'public/a.json'), 'utf8')).toBe('{"version":"old-a"}\n');
+  });
+
+  it('returns unchanged before derive or verification when all declared data bytes match', () => {
+    const root = makeRepository();
+    const phases = [];
+    const { runner, calls } = createRunner();
+    const result = runAtomicPublishTransaction({
+      repoRoot: root,
+      pipelineId: 'no-op-test',
+      transactionId: 'no-op-txn',
+      entries: [
+        { path: 'public/a.json', content: '{"version":"old-a"}\n' },
+        { path: 'public/b.json', content: '{"version":"old-b"}\n' },
+      ],
+      deriveCommand: ['derive'],
+      derivedPaths: ['derived.html'],
+      commandRunner: runner,
+      onPhase: (phase) => phases.push(phase),
+    });
+    expect(result.status).toBe('unchanged');
+    expect(phases).toEqual(['validate', 'complete']);
+    expect(calls.some(([command]) => command === 'derive' || command === 'npm')).toBe(false);
+    expect(calls.some(([command, args]) => command === 'git' && args[0] === 'commit')).toBe(false);
   });
 
   it('commits declared site artifacts regenerated from the published data', () => {
@@ -253,7 +479,7 @@ describe('complete atomic data publish transaction', () => {
       prepare() { throw new Error('schema mismatch'); },
       commandRunner: runner,
     })).toThrow(/schema mismatch/);
-    expect(calls).toEqual([]);
+    expect(calls.every(([command, args]) => command === 'git' && args[0] === 'diff' && args.includes('--name-only'))).toBe(true);
     expect(readdirSync(join(root, 'public')).sort()).toEqual(['a.json', 'b.json']);
     expect(readdirSync(join(root, '.git'))).toEqual([]);
   });
@@ -280,7 +506,28 @@ describe('complete atomic data publish transaction', () => {
     expect(existsSync(stagePath)).toBe(false);
   });
 
-  it('reclaims a dead owned lock, recovers its journal, then publishes normally', () => {
+  it('daily publication fails closed on a prior journal and removes only its new lock', () => {
+    const root = makeRepository();
+    const journalPath = join(root, '.git/afflatus-data-publish.json');
+    writeFileSync(journalPath, JSON.stringify({
+      version: 1,
+      id: 'interrupted',
+      phase: 'published',
+      entries: [],
+    }));
+    const { runner } = createRunner();
+    expect(() => runAtomicPublishTransaction({
+      repoRoot: root,
+      pipelineId: 'test-pipeline',
+      transactionId: 'new-attempt',
+      entries: entries(),
+      commandRunner: runner,
+    })).toThrow(/explicit recovery/);
+    expect(existsSync(journalPath)).toBe(true);
+    expect(existsSync(join(root, '.git/afflatus-data-pipeline.lock'))).toBe(false);
+  });
+
+  it('never removes a pre-existing dead or ownerless lock during daily publication', () => {
     const root = makeRepository();
     const targetPath = join(root, 'public/a.json');
     const backupPath = `${targetPath}.dead.backup`;
@@ -294,19 +541,28 @@ describe('complete atomic data publish transaction', () => {
       entries: [{ targetPath, backupPath, stagePath, hadOriginal: true }],
     }));
     const lock = join(root, '.git/afflatus-data-pipeline.lock');
-    mkdirSync(lock);
-    writeFileSync(join(lock, 'owner.json'), JSON.stringify({ pid: 2_147_483_647, transactionId: 'dead-publisher' }));
+    writeFileSync(lock, JSON.stringify({ pid: 2_147_483_647, transactionId: 'dead-publisher' }));
     const { runner } = createRunner();
 
-    const result = runAtomicPublishTransaction({
+    expect(() => runAtomicPublishTransaction({
       repoRoot: root,
       pipelineId: 'test-pipeline',
       transactionId: 'replacement',
       entries: entries(),
       commandRunner: runner,
-    });
-    expect(result.status).toBe('committed');
-    expect(JSON.parse(readFileSync(targetPath, 'utf8'))).toEqual({ version: 'new-a' });
-    expect(readdirSync(join(root, '.git'))).toEqual([]);
+    })).toThrow(/lock already exists/);
+    expect(readFileSync(targetPath, 'utf8')).toBe('{"version":"half-published"}\n');
+    expect(existsSync(lock)).toBe(true);
+
+    rmSync(lock);
+    writeFileSync(lock, '');
+    expect(() => runAtomicPublishTransaction({
+      repoRoot: root,
+      pipelineId: 'test-pipeline',
+      transactionId: 'ownerless',
+      entries: entries(),
+      commandRunner: runner,
+    })).toThrow(/lock already exists/);
+    expect(existsSync(lock)).toBe(true);
   });
 });

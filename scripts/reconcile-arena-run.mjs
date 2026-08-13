@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /* reconcile-arena-run.mjs — offline catch-up scan for Arena Autopilot
  * (urgent.md Part 4 §19.3.2). Meant to be the FIRST thing a scheduled task
- * runs, before its own window's work: it walks every US/Eastern trading day
+ * used to mutate the runlog before its own window's work. It is retained only
+ * as a read-only migration report: it walks every US/Eastern trading day
  * since the last runlog entry through "today" and:
  *
- *   1. Records a `missed` runlog entry for any (date, window, model) that
+ *   1. Reports the `missed` runlog entry for any (date, window, model) that
  *      never completed. This is bookkeeping only — a missed proposal
  *      window is gone for good, never retro-traded (§19.3.2's hard rule).
  *   2. Prints a `lateMarkNeeded` list of {model, dates} pairs — models that
@@ -29,8 +30,6 @@ import {
   tradingDaysBetween, findMissingRuns, buildMissedEntry, upsertRunlogEntry,
   needsLateMarkToMarket,
 } from '../src/lib/arenaReconcile.js';
-import { validateArenaRunlog } from '../src/lib/validateArenaRunlog.js';
-import { runAtomicPublishTransaction } from './lib/publish-transaction.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO = join(__dirname, '..');
@@ -74,31 +73,21 @@ let nextRunlog = runlog;
 for (const gap of missing) {
   nextRunlog = upsertRunlogEntry(nextRunlog, buildMissedEntry(gap));
 }
-if (missing.length > 0) {
-  try {
-    runAtomicPublishTransaction({
-      repoRoot: REPO,
-      pipelineId: 'arena-reconcile',
-      commitMessage: `data: reconcile Arena through ${throughDateStr}`,
-      prepare() {
-        const validation = validateArenaRunlog(nextRunlog);
-        if (!validation.ok) throw new Error(`arena-runlog.json: ${validation.errors.join('; ')}`);
-        return [{ path: RUNLOG_PATH, data: nextRunlog }];
-      },
-    });
-  } catch (error) {
-    fail(`${error.phase || 'publish'}: ${error.message}`);
-  }
-}
-
 const MODELS = ['S', 'P', 'T'];
 const lateMarkNeeded = MODELS
   .map((model) => ({ model, dates: tradingDays.filter((d) => needsLateMarkToMarket(nextRunlog, model, d, holidays)) }))
   .filter((x) => x.dates.length > 0);
 
-console.log(JSON.stringify({ sinceDateStr, throughDateStr, tradingDays, missedRecorded: missing.length, lateMarkNeeded }, null, 2));
+console.log(JSON.stringify({
+  deprecated: true,
+  readOnly: true,
+  replacement: 'npm run data:arena:catchup -- --output=<directory-outside-repo>',
+  sinceDateStr,
+  throughDateStr,
+  tradingDays,
+  missedWouldRecord: missing.length,
+  lateMarkNeeded,
+}, null, 2));
 console.log(`[reconcile-arena-run] scanned ${tradingDays.length} trading day(s) since ${sinceDateStr}; ` +
-  `recorded ${missing.length} missed entr${missing.length === 1 ? 'y' : 'ies'}` +
-  (missing.length > 0 ? ` (committed ${RUNLOG_PATH})` : '') +
-  `. ${lateMarkNeeded.length} model(s) need a late mark-to-market catch-up — see "lateMarkNeeded" above; ` +
-  `fetch EOD closes for those dates and call apply-arena-run.mjs with "late": true.`);
+  `would record ${missing.length} missed entr${missing.length === 1 ? 'y' : 'ies'}, but this legacy command is read-only. ` +
+  `Use data:arena:catchup candidate generation and the complete arena-postmarket publisher instead.`);

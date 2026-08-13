@@ -233,10 +233,10 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 
 ## 6. 定时任务与数据管线
 
-- **调度**：一律 Cowork scheduled-tasks（App 打开才触发，错过下次启动补跑——已接受此限制）。任务台账唯一真源 = Urgent.md U20 表；限时任务必带到期日；每月 1 号对照审计。
-- **典型任务**（cron 本机 AEST）：arena-news 交易日 22:00 · signal-warsh-daily `0 7 * * 2-6` · sectors-watch-weekly `0 10 * * 0` · worldcup-games-daily（至 7/20）· horoscope-transits-daily 每日 06:30 · course 周报周一。守卫先行：周末/NYSE 假日/无赛事直接 no-op。
-- **Arena Season 2 任务群（Part 4 Phase 5，2026-07-23 新建/改造，见下方专项小节）**：`arena-picks-publish`（`0 23 * * 1-5`）、`arena-open-window`（`35 0 * * 2-6`）、`arena-late-window`（`30 5 * * 2-6`）、`arena-autopilot-b-post`（Phase1 predlog + Phase2 T/Reviewer，cron 不变）、`arena-weekly-review`（`0 9 * * 0`）。**这五个任务在写入时均为 disabled——等一次人工 "Run now" 全链路验证后再手动开启**，见 §6.1。旧的 `arena-autopilot-a-open`（纯 Model A）已 disabled 且不再需要（Season 2 切换后 Model A 已退役），保留而非删除以留存历史 prompt。
-- **推送序列（唯一正确姿势）**：写 JSON → 校验 CLI（validate-*.mjs，非零退出即中止不发布）→ `git add <单文件>` → **先 commit** → `git pull --rebase --autostash origin main` → `git push`。通用脚本 `scripts/push-data.sh <file> <msg>`；Arena 结算类任务改用 `scripts/publish-arena-run.sh <runId> <msg>`（见 §6.1），同时提交 ledger+runlog 两个文件并带离线 outbox。
+- **调度（2026-08-12 可靠性重构）**：Codex scheduled tasks 只在专用、干净、固定 `main` 的 automation clone 运行，不再共享人工开发 checkout。四个 profile 分别负责盘前研究/决定、开盘成交、尾盘成交、盘后结算；本地调度为跨 DST 设置候选唤醒时刻，代码层 `America/New_York` 窗口门禁才是是否执行的唯一裁决。App/机器离线错过的交易窗口不可补做，只能写 `missed`；估值与研究允许如实追赶。
+- **Arena 决定与成交**：S/P/T 全部订单在 09:30 ET 前生成并封存；Git 发布时刻是外部见证。盘中/盘后执行器只能按 `proposalId` 读取同日、未过期、哈希一致的已发布决定，在签名价格条件满足时原样成交或跳过，不能改标的、方向、数量、阈值或来源。`catchup` 永远强制空订单；盘后完整候选统一由 `npm run data:arena:postmarket:candidates -- --output=<临时目录>` 生成，再原子发布 `arena-postmarket`。
+- **原子发布**：生成器只写临时候选目录；`data:publish` 独占 publisher lock，一次发布 config 声明的完整分组，依次跑数据校验、该 pipeline 的 strict freshness、全量测试与生产 build，成功后才 path-limited commit。失败恢复发布前字节并且无 commit。调度器使用另一把全程 orchestrator lock，禁止与 publisher 自锁。
+- **推送成功定义**：push helper 拒绝 dirty/错误分支，不使用 autostash，显式推送已验证 `HEAD` 到 `origin/main`；任何 fetch/rebase/push 错误都非零退出，并在 `ls-remote` 确认远端 SHA 等于本地 commit 后才报告 `verified`。本地 commit 或 outbox 入队都不算推送成功。
 - **提示词五条硬规则**（prompts/README，SKILL.md 只引用不复制）：① system/run 拆分吃 prompt caching；② 强制 JSON schema 输出；③ 状态外置零会话记忆（账本 JSON 是唯一事实源）；④ 只认 payload 注入数据、禁凭训练记忆报事实、不确定标 confidence 降权；⑤ 长度硬上限（复盘 ≤300 字、单条推理 ≤120 字）。**数据预消化**：指标计算/新闻去重用代码做，模型只做决策推理——一个数字模型算得出来 ≠ 应该让模型算。
 
 ### 6.1 Arena 幂等结算 / 离线补跑 / 摘要推送（Part 4 §19，2026-07-23 新增）
