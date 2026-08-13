@@ -1,9 +1,11 @@
 {
-  "date": "2026-08-07",
-  "generatedAt": "2026-08-08T02:44:17Z",
+  "date": "2026-08-13",
+  "generatedAt": "2026-08-13T13:00:46.000Z",
   "regime": "neutral",
-  "note_en": "Weekend audit completion: Friday's pre-market, open and late-entry windows had already closed. S, P and T therefore publish no retroactive candidate; existing positions remain governed only by deterministic risk exits and closing mark-to-market.",
-  "note_zh": "周末审计补齐：周五盘前、开盘与尾盘入场窗口均已结束，因此 S、P、T 三模型不补造事后候选；现有持仓只执行确定性风险退出与收盘估值。",
+  "decisionStatus": "sealed",
+  "executable": true,
+  "note_en": "Real pre-market HOLD across S, P and T, resealed at 09:00 ET after an infrastructure-only retry without using any evidence after the preserved 08:54 ET cutoff. Mixed inflation evidence and durable but non-incremental AI demand do not meet the threshold for a new directional order.",
+  "note_zh": "S、P、T 的真实盘前决定均为观望；在一次仅涉及基础设施的重试后于美东时间 09:00 重新封存，且未使用 08:54 证据截止时间之后的任何信息。通胀证据分化，AI 需求虽持续但缺少增量催化，不满足新方向订单的门槛。",
   "models": {
     "S": [],
     "P": [],

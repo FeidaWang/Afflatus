@@ -1075,6 +1075,24 @@
       "ordersFilled": 0,
       "note": "late catch-up mark-to-market for 2026-08-07 (equity curve continuity, §19.3.2) — no new orders proposed.",
       "late": true
+    },
+    {
+      "date": "2026-08-13",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Primary-source research archived with evidence cutoff 2026-08-13T12:54:20Z across macro-policy, frontier-models, compute, memory and cloud-demand."
+    },
+    {
+      "date": "2026-08-13",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Real pre-market HOLD resealed at 09:00 ET after an infrastructure-only retry; evidence cutoff remained 08:54 ET, with zero proposals and no orders."
     }
   ]
 }
