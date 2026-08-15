@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   BUILD_ROUTES,
   NAV_ROUTES,
+  RELEASE_CANDIDATE_ROUTES,
   SITE_LOCALES,
   SITE_MANIFEST,
   SOCIAL_CARD,
@@ -118,6 +119,17 @@ describe('siteManifest', () => {
       expect(route.nav).toBeNull();
     }
     for (const route of SITE_MANIFEST.filter((item) => ['prototype', 'system'].includes(item.status))) {
+      expect(route.sitemap).toBe(false);
+      expect(route.nav).toBeNull();
+      expect(route.capabilities).toContain('noindex');
+    }
+  });
+
+  it('keeps release candidates explicit, built and undiscoverable', () => {
+    expect(RELEASE_CANDIDATE_ROUTES.map((route) => route.id)).toEqual(['cityview']);
+    for (const route of RELEASE_CANDIDATE_ROUTES) {
+      expect(route.status).toBe('prototype');
+      expect(route.build).toBe(true);
       expect(route.sitemap).toBe(false);
       expect(route.nav).toBeNull();
       expect(route.capabilities).toContain('noindex');

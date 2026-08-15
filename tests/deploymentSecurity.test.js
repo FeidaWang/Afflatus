@@ -23,6 +23,10 @@ describe('deployment security policy', () => {
       source: '/api/(.*)',
       headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
     });
+    expect(vercel.headers).toContainEqual({
+      source: '/cityview.html',
+      headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
+    });
   });
 
   it('uses deployment-bundled allowlists without trusting or fetching an inbound host', () => {

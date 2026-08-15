@@ -58,6 +58,7 @@ export function createRenderBudgetCoordinator(options = {}) {
   let refreshFrame = 0;
   let refreshLast = 0;
   let refreshIntervals = [];
+  let reducedMotionQuery = null;
 
   const IntersectionObserverClass = options.IntersectionObserver
     ?? win?.IntersectionObserver
@@ -168,6 +169,10 @@ export function createRenderBudgetCoordinator(options = {}) {
     queueResize();
   }
 
+  function onReducedMotionChange() {
+    for (const record of records.values()) emitPolicy(record);
+  }
+
   function sampleRefresh(timestamp) {
     if (refreshLast) refreshIntervals.push(timestamp - refreshLast);
     refreshLast = timestamp;
@@ -197,6 +202,8 @@ export function createRenderBudgetCoordinator(options = {}) {
     win?.addEventListener?.('orientationchange', queueResize, { passive: true });
     win?.addEventListener?.('pagehide', onPageHide);
     win?.addEventListener?.('pageshow', onPageShow);
+    reducedMotionQuery = win?.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null;
+    reducedMotionQuery?.addEventListener?.('change', onReducedMotionChange);
     startRefreshSampling();
   }
 
@@ -210,6 +217,8 @@ export function createRenderBudgetCoordinator(options = {}) {
     win?.removeEventListener?.('orientationchange', queueResize);
     win?.removeEventListener?.('pagehide', onPageHide);
     win?.removeEventListener?.('pageshow', onPageShow);
+    reducedMotionQuery?.removeEventListener?.('change', onReducedMotionChange);
+    reducedMotionQuery = null;
     if (resizeFrame) cancelFrame(resizeFrame);
     if (refreshFrame) cancelFrame(refreshFrame);
     resizeFrame = 0;
@@ -232,6 +241,7 @@ export function createRenderBudgetCoordinator(options = {}) {
     });
     record.p95Ms = result.p95Ms;
     record.frameSamples.length = 0;
+    record.evaluatedWindows += 1;
     if (result.state === 'over-budget') {
       record.slowWindows += 1;
       record.headroomWindows = 0;
@@ -278,6 +288,7 @@ export function createRenderBudgetCoordinator(options = {}) {
       onQualityChange: spec.onQualityChange || noop,
       onDispose: spec.onDispose || noop,
       frameSamples: [],
+      evaluatedWindows: 0,
       p95Ms: 0,
       slowWindows: 0,
       headroomWindows: 0,
@@ -336,6 +347,13 @@ export function createRenderBudgetCoordinator(options = {}) {
         if (Number.isFinite(stats.drawCalls)) record.drawCalls = Math.max(0, Math.trunc(stats.drawCalls));
         if (Number.isFinite(stats.triangles)) record.triangles = Math.max(0, Math.trunc(stats.triangles));
         record.frameSamples.push(durationMs);
+        if (record.p95Ms === 0 && record.frameSamples.length >= 12) {
+          record.p95Ms = evaluateFrameWindow({
+            samples: record.frameSamples,
+            refreshHz,
+            targetFps: record.targetFps,
+          }).p95Ms;
+        }
         if (record.frameSamples.length >= 90) evaluateRecord(record);
       },
       getPolicy() {
@@ -377,6 +395,7 @@ export function createRenderBudgetCoordinator(options = {}) {
           active: record.active,
           cost: record.cost,
           targetFps: record.targetFps,
+          evaluatedWindows: record.evaluatedWindows,
           p95Ms: record.p95Ms,
           drawCalls: record.drawCalls,
           triangles: record.triangles,

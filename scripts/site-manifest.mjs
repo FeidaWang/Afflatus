@@ -125,7 +125,10 @@ function generatedPerformanceRoutesModule() {
 
 function generatedLighthouseRoutes() {
   const routes = SITE_MANIFEST
-    .filter((route) => route.status === 'active')
+    .filter((route) => (
+      route.status === 'active'
+      || route.capabilities?.includes('release-candidate')
+    ))
     .map(({ id, path }) => ({ id, path }));
   return `${JSON.stringify({ schemaVersion: 1, routes }, null, 2)}\n`;
 }

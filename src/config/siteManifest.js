@@ -504,6 +504,32 @@ export const SITE_MANIFEST = Object.freeze([
     },
   },
   {
+    id: 'cityview',
+    file: 'cityview.html',
+    path: '/cityview.html',
+    status: 'prototype',
+    build: true,
+    sitemap: false,
+    defaultLocale: 'en',
+    nav: null,
+    themeColor: '#e7e8e5',
+    schema: [],
+    capabilities: ['noindex', 'webgl', 'prototype', 'release-candidate'],
+    metadata: {
+      title: 'Cityview — Urban Construction Sandbox (Prototype) · Afflatus',
+      description: null,
+      canonical: null,
+      ogTitle: null,
+      ogDescription: null,
+      ogImage: null,
+      robots: 'noindex,nofollow',
+    },
+    locales: {
+      en: { title: 'Cityview — Urban Construction Sandbox Prototype', description: 'A noindex deterministic urban construction sandbox prototype.' },
+      zh: { title: '城市推演台 — 城市建造沙盒原型', description: '不参与索引的确定性城市建造沙盒原型。' },
+    },
+  },
+  {
     id: 'boot',
     file: 'boot.html',
     path: '/boot.html',
@@ -573,6 +599,10 @@ export const NAV_ROUTES = Object.freeze(
 
 export const BUILD_ROUTES = Object.freeze(
   SITE_MANIFEST.filter((route) => route.build),
+);
+
+export const RELEASE_CANDIDATE_ROUTES = Object.freeze(
+  SITE_MANIFEST.filter((route) => route.capabilities?.includes('release-candidate')),
 );
 
 export const SITEMAP_ROUTES = Object.freeze(

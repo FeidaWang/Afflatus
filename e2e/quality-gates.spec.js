@@ -1,10 +1,15 @@
 import AxeBuilder from '@axe-core/playwright';
-import { SITE_MANIFEST, normalizeRoutePath } from '../src/config/siteManifest.js';
+import {
+  RELEASE_CANDIDATE_ROUTES,
+  SITE_MANIFEST,
+  normalizeRoutePath,
+} from '../src/config/siteManifest.js';
 import { A11Y_BASELINE } from './a11y-baseline.js';
 import { expect, settlePage, test } from './site-fixture.js';
 
 const activeRoutes = SITE_MANIFEST.filter((route) => route.status === 'active');
 const activePaths = new Set(activeRoutes.map((route) => normalizeRoutePath(route.path)));
+const CITY_PROFILE_KEYS = Object.freeze(['sandbox', 'shanghai', 'melbourne', 'hong-kong']);
 
 function routeLabel(route) {
   return `${route.id} ${route.path}`;
@@ -150,6 +155,123 @@ test.describe('axe WCAG regression gate', () => {
           : [];
       });
       expect(unexpected).toEqual([]);
+    });
+  }
+});
+
+test.describe('prototype release-candidate browser gates', () => {
+  for (const route of RELEASE_CANDIDATE_ROUTES) {
+    test(`${routeLabel(route)} remains truthful, stable and undiscoverable`, async ({ page }, testInfo) => {
+      const response = await page.goto(route.path, { waitUntil: 'domcontentloaded' });
+      expect(response?.status(), 'route response').toBeLessThan(400);
+      await settlePage(page);
+
+      await expect(page.locator('main').first()).toBeVisible();
+      await expect(page.locator('h1').first()).toBeVisible();
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+      await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      const documentState = await page.evaluate(() => ({
+        bodyTextLength: document.body.innerText.trim().length,
+        overflow: Math.max(
+          0,
+          document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        ),
+      }));
+      expect(documentState.bodyTextLength).toBeGreaterThan(120);
+      expect(
+        documentState.overflow,
+        `${testInfo.project.name} must not introduce horizontal page overflow`,
+      ).toBeLessThanOrEqual(2);
+    });
+
+    test(`${routeLabel(route)} has no serious or critical WCAG violations in disclosed states`, async ({ page }, testInfo) => {
+      test.skip(
+        testInfo.project.name !== 'desktop-chromium',
+        'Axe runs once on the candidate DOM states; all projects cover responsive layout.',
+      );
+      const analyze = async () => {
+        const results = await new AxeBuilder({ page })
+          .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+          .analyze();
+        return results.violations
+          .filter((violation) => violation.impact === 'serious' || violation.impact === 'critical')
+          .map((violation) => ({
+            id: violation.id,
+            impact: violation.impact,
+            targets: violation.nodes.map((node) => node.target.join(' ')).sort(),
+          }));
+      };
+
+      for (const profile of CITY_PROFILE_KEYS) {
+        const query = new URLSearchParams({ seed: 'release-candidate-axe', profile });
+        await page.goto(`${route.path}?${query}`, { waitUntil: 'domcontentloaded' });
+        await settlePage(page);
+
+        expect(await analyze(), `${profile} default candidate state`).toEqual([]);
+        await page.locator('[data-city-data]').click();
+        expect(await analyze(), `${profile} open data panel`).toEqual([]);
+        await page.locator('[data-city-layers]').click();
+        expect(await analyze(), `${profile} open layer panel`).toEqual([]);
+      }
+
+      const auditQuery = new URLSearchParams({
+        seed: 'release-candidate-device-a11y',
+        profile: 'hong-kong',
+        'device-audit': '1',
+      });
+      await page.goto(`${route.path}?${auditQuery}`, { waitUntil: 'domcontentloaded' });
+      await settlePage(page);
+      await expect(page.locator('[data-city-device-audit]')).toBeVisible();
+      expect(await analyze(), 'opt-in physical-device evidence panel').toEqual([]);
+    });
+
+    test(`${routeLabel(route)} stays inside its declared desktop render budget`, async ({ page }, testInfo) => {
+      test.setTimeout(75_000);
+      test.skip(
+        testInfo.project.name !== 'desktop-chromium',
+        'The render budget is sampled once in the reference browser profile.',
+      );
+      await page.emulateMedia({ reducedMotion: 'no-preference' });
+      for (const profile of CITY_PROFILE_KEYS) {
+        const query = new URLSearchParams({ seed: 'release-candidate-budget', profile });
+        await page.goto(`${route.path}?${query}`, { waitUntil: 'domcontentloaded' });
+        await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+        const renderer = await page.locator('[data-city-canvas]').getAttribute('data-renderer');
+        test.skip(renderer !== 'webgl', 'The browser did not expose WebGL; fallback behavior is covered separately.');
+        await page.locator('[data-city-timeline]').evaluate((element) => {
+          element.value = '147';
+          element.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        await expect(page.locator('[data-city-day]')).toHaveText('147');
+        await page.waitForFunction(
+          () => (window.__AFFLATUS_CITYVIEW__?.getTelemetry()?.evaluatedWindows ?? 0) > 0,
+          null,
+          { timeout: 15_000 },
+        );
+        const telemetry = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry());
+        await testInfo.attach(`cityview-${profile}-render-budget.json`, {
+          body: Buffer.from(`${JSON.stringify(telemetry, null, 2)}\n`),
+          contentType: 'application/json',
+        });
+        console.info('[city-budget]', JSON.stringify({
+          profile,
+          day: telemetry.day,
+          evaluatedWindows: telemetry.evaluatedWindows,
+          drawCalls: telemetry.drawCalls,
+          triangles: telemetry.triangles,
+          p95Ms: telemetry.p95Ms,
+          qualityTier: telemetry.qualityTier,
+          lod: telemetry.lod,
+          withinBudget: telemetry.budgetEvaluation.withinBudget,
+        }));
+        expect(telemetry.profile).toBe(profile);
+        expect(telemetry.lod).not.toBe('silhouette');
+        expect(telemetry.budgetClass).toBe('desktop');
+        expect(telemetry.budgetEvaluation).toMatchObject({ withinBudget: true, violations: [] });
+        expect(telemetry.drawCalls).toBeLessThanOrEqual(40);
+        expect(telemetry.triangles).toBeLessThanOrEqual(100_000);
+        expect(telemetry.p95Ms).toBeLessThanOrEqual(18);
+      }
     });
   }
 });
