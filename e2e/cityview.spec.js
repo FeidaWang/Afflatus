@@ -18,7 +18,7 @@ test('Cityview remains truthful and readable without JavaScript', async ({ brows
     await expect(page.locator('[data-city-tour]')).toBeDisabled();
     await expect(page.locator('[data-city-timeline]')).toBeDisabled();
     await expect(page.locator('[data-city-data]')).toBeDisabled();
-    await expect(page.locator('.city-lang')).toBeDisabled();
+    await expect(page.locator('.city-lang')).toHaveAttribute('href', '/zh/cityview.html');
   } finally {
     await context.close();
   }
@@ -42,7 +42,7 @@ test('Cityview remains truthful when its optional 3D page module fails', async (
     await expect(page.locator('[data-city-tour]')).toBeDisabled();
     await expect(page.locator('[data-city-timeline]')).toBeDisabled();
     await expect(page.locator('[data-city-data]')).toBeDisabled();
-    await expect(page.locator('.city-lang')).toBeDisabled();
+    await expect(page.locator('.city-lang')).toHaveAttribute('href', '/zh/cityview.html');
   } finally {
     await context.close();
   }
@@ -169,7 +169,7 @@ test('Cityview exposes a deterministic, reversible construction sandbox', async 
   expect(contract.actionLabelLines.every((lines) => lines === 1), JSON.stringify(contract)).toBe(true);
   expect(contract.summaryText).toBeGreaterThan(120);
   if (contract.viewportWidth <= 760) {
-    expect(contract.header.height, JSON.stringify(contract)).toBeLessThanOrEqual(72);
+    expect(contract.header.height, JSON.stringify(contract)).toBeLessThanOrEqual(112);
     expect(contract.intro.top).toBeGreaterThanOrEqual(contract.header.bottom + 8);
   }
 

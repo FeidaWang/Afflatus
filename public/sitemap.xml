@@ -98,6 +98,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/course.html"/>
   </url>
   <url>
+    <loc>https://feida.au/en/cityview.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/cityview.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/cityview.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/cityview.html"/>
+  </url>
+  <url>
+    <loc>https://feida.au/zh/cityview.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/cityview.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/cityview.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/cityview.html"/>
+  </url>
+  <url>
     <loc>https://feida.au/zh/novels/wanjie-zhongchun/</loc>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/novels/wanjie-zhongchun/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/novels/wanjie-zhongchun/"/>

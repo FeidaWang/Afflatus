@@ -40,6 +40,7 @@ describe('siteManifest', () => {
       '/horoscope.html',
       '/serial.html',
       '/course.html',
+      '/cityview.html',
     ]);
     for (const route of NAV_ROUTES) {
       expect(route.en).toBeTruthy();
@@ -126,7 +127,7 @@ describe('siteManifest', () => {
   });
 
   it('keeps release candidates explicit, built and undiscoverable', () => {
-    expect(RELEASE_CANDIDATE_ROUTES.map((route) => route.id)).toEqual(['cityview']);
+    expect(RELEASE_CANDIDATE_ROUTES.map((route) => route.id)).toEqual([]);
     for (const route of RELEASE_CANDIDATE_ROUTES) {
       expect(route.status).toBe('prototype');
       expect(route.build).toBe(true);

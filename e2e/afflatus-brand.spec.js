@@ -9,12 +9,13 @@ const ROUTES = [
   ['/horoscope.html', 'horoscope'],
   ['/serial.html', 'serial'],
   ['/course.html', 'course'],
+  ['/cityview.html', 'cityview'],
   ['/boot.html', 'boot'],
 ];
 
 const FOLLOWING_ROUTES = ROUTES
   .map(([route]) => route)
-  .filter((route) => !['/', '/serial.html', '/course.html', '/boot.html'].includes(route));
+  .filter((route) => !['/', '/serial.html', '/course.html', '/cityview.html', '/boot.html'].includes(route));
 const MOBILE_NAV_ROUTES = ROUTES
   .map(([route]) => route)
   .filter((route) => !['/', '/boot.html'].includes(route));
