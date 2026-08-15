@@ -113,6 +113,20 @@
       "speedIndexMs": 2964,
       "scriptBytes": 17176,
       "totalBytes": 198597
+    },
+    {
+      "id": "cityview",
+      "path": "/cityview.html",
+      "baselineStatus": "recorded-local-baseline",
+      "recordedAt": "2026-08-15",
+      "performanceScore": 0.96,
+      "lcpMs": 2582,
+      "tbtMs": 29,
+      "cls": 0,
+      "clsBudgetBase": 0,
+      "speedIndexMs": 1885,
+      "scriptBytes": 231830,
+      "totalBytes": 255318
     }
   ]
 }

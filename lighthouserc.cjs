@@ -1,5 +1,21 @@
-const { routes } = require('./src/config/lighthouseRoutes.generated.json');
+const { routes: configuredRoutes } = require('./src/config/lighthouseRoutes.generated.json');
 const baseline = require('./lighthouse-baseline.json');
+
+const requestedRouteIds = new Set(
+  String(process.env.LIGHTHOUSE_ROUTE_IDS || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean),
+);
+const routes = requestedRouteIds.size
+  ? configuredRoutes.filter((route) => requestedRouteIds.has(route.id))
+  : configuredRoutes;
+const unknownRouteIds = [...requestedRouteIds].filter(
+  (id) => !configuredRoutes.some((route) => route.id === id),
+);
+if (unknownRouteIds.length) {
+  throw new Error(`Unknown Lighthouse route id(s): ${unknownRouteIds.join(', ')}`);
+}
 
 const regressionAllowance = baseline.regressionAllowance;
 const byId = new Map(baseline.routes.map((route) => [route.id, route]));

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-afflatus-locale="inline">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cityview — Urban Construction Sandbox (Prototype) · Afflatus</title>
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#e7e8e5">
+  <link rel="icon" type="image/svg+xml" href="/favicons/sectors.svg?v=20260808">
+  <link rel="stylesheet" href="/styles/afflatus-brand.css">
+  <link rel="stylesheet" href="/styles/responsive-primitives.css">
+  <link rel="stylesheet" href="/styles/cityview.css">
+  <script type="module" src="/src/entry/viewport.js"></script>
+</head>
+<body class="cityview-page">
+  <a class="city-skip" href="#city-controls" data-en="Skip to city controls" data-zh="跳到城市控制">Skip to city controls</a>
+
+  <main class="city-stage" data-city-stage aria-busy="false">
+    <canvas class="city-canvas" data-city-canvas aria-hidden="true"></canvas>
+    <div class="city-poster" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <header class="city-header site-header--follow">
+      <a class="afflatus-brand" data-afflatus-brand data-brand-persona="cityview" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
+        <span class="afflatus-brand__stage" aria-hidden="true"><span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span></span>
+        <span class="afflatus-brand__sr">Afflatus</span>
+      </a>
+      <div class="city-identity">
+        <span class="city-kicker" data-en="Urban observatory / prototype" data-zh="城市推演台 / 原型">Urban observatory / prototype</span>
+        <h1 data-en="Cityview" data-zh="城市推演台">Cityview</h1>
+      </div>
+      <button class="lang-toggle city-lang" type="button" aria-label="切换到中文" disabled>中文</button>
+    </header>
+
+    <section class="city-intro" aria-labelledby="city-intro-title">
+      <p class="city-eyebrow" data-en="Deterministic construction sandbox" data-zh="确定性建造沙盒">Deterministic construction sandbox</p>
+      <h2 id="city-intro-title" data-en="A city that can remember every day of its growth." data-zh="一座记得每一天生长过程的城市。">A city that can remember every day of its growth.</h2>
+      <p data-en="White massing is the planning layer—not the final destination. Shanghai, Melbourne and Hong Kong real-data precincts follow only after this construction model and each city’s licence chain are trustworthy." data-zh="白模是规划分析层，而不是终点。先让建造模型与各城市许可链可信，再分别引入上海、墨尔本和香港的真实数据片区。">White massing is the planning layer—not the final destination. Shanghai, Melbourne and Hong Kong real-data precincts follow only after this construction model and each city’s licence chain are trustworthy.</p>
+    </section>
+
+    <aside id="city-data-panel" class="city-metrics" data-city-data-panel hidden aria-labelledby="city-data-title">
+      <div class="city-metrics__head">
+        <span id="city-data-title" data-en="Causal state model" data-zh="因果状态模型">Causal state model</span>
+        <strong data-en="SIMULATED" data-zh="模拟">SIMULATED</strong>
+      </div>
+      <dl>
+        <div>
+          <dt data-en="Construction" data-zh="建造进度">Construction</dt>
+          <dd>
+            <div class="city-metric__reading">
+              <span data-city-metric="completion">0%</span>
+              <svg class="city-chart city-chart--ring" data-city-chart="completion-ring" aria-hidden="true" focusable="false" viewBox="0 0 36 36">
+                <circle class="city-chart__ring-track" cx="18" cy="18" r="15.5" pathLength="100"></circle>
+                <circle class="city-chart__ring-value" data-city-chart-ring cx="18" cy="18" r="15.5" pathLength="100"></circle>
+              </svg>
+            </div>
+            <small data-city-metric-cause="completion">—</small>
+          </dd>
+        </div>
+        <div>
+          <dt data-en="Residents" data-zh="居民">Residents</dt>
+          <dd>
+            <div class="city-metric__reading">
+              <span data-city-metric="residents">0</span>
+              <span class="city-chart city-chart--columns" data-city-chart="residents-columns" aria-hidden="true">
+                <i data-city-chart-column></i><i data-city-chart-column></i><i data-city-chart-column></i>
+                <i data-city-chart-column></i><i data-city-chart-column></i><i data-city-chart-column></i>
+                <i data-city-chart-column></i><i data-city-chart-column></i><i data-city-chart-column></i>
+              </span>
+            </div>
+            <small data-city-metric-cause="residents">—</small>
+          </dd>
+        </div>
+        <div>
+          <dt data-en="Jobs" data-zh="就业">Jobs</dt>
+          <dd>
+            <div class="city-metric__reading">
+              <span data-city-metric="jobs">0</span>
+              <span class="city-chart city-chart--horizontal" data-city-chart="jobs-bar" aria-hidden="true"><i><b data-city-chart-fill="jobs"></b></i></span>
+            </div>
+            <small data-city-metric-cause="jobs">—</small>
+          </dd>
+        </div>
+        <div>
+          <dt data-en="Energy index" data-zh="能源指数">Energy index</dt>
+          <dd>
+            <div class="city-metric__reading">
+              <span data-city-metric="energy">0</span>
+              <svg class="city-chart city-chart--line" data-city-chart="energy-line" aria-hidden="true" focusable="false" viewBox="0 0 100 32" preserveAspectRatio="none">
+                <polyline class="city-chart__line" data-city-chart-line points="2,30 98,30"></polyline>
+              </svg>
+            </div>
+            <small data-city-metric-cause="energy">—</small>
+          </dd>
+        </div>
+        <div>
+          <dt data-en="Traffic index" data-zh="交通指数">Traffic index</dt>
+          <dd>
+            <div class="city-metric__reading">
+              <span data-city-metric="traffic">0</span>
+              <span class="city-chart city-chart--horizontal city-chart--traffic" data-city-chart="traffic-bar" aria-hidden="true"><i><b data-city-chart-fill="traffic"></b></i></span>
+            </div>
+            <small data-city-metric-cause="traffic">—</small>
+          </dd>
+        </div>
+      </dl>
+      <p class="city-metrics__note" data-en="Scenario values only—not live municipal data." data-zh="仅为情景数值，并非实时市政数据。">Scenario values only—not live municipal data.</p>
+    </aside>
+
+    <aside id="city-layer-panel" class="city-layer-editor" data-city-layer-panel hidden aria-labelledby="city-layer-title">
+      <div class="city-metrics__head">
+        <span id="city-layer-title" data-en="Scene layers" data-zh="场景图层">Scene layers</span>
+        <output data-city-layer-summary data-en="6/6 visible" data-zh="显示 6/6">6/6 visible</output>
+      </div>
+      <fieldset>
+        <legend class="city-sr" data-en="Toggle scene asset categories" data-zh="切换场景资源分类">Toggle scene asset categories</legend>
+        <label>
+          <input type="checkbox" data-city-asset-toggle="structures" checked>
+          <span><strong data-en="Structures" data-zh="结构体">Structures</strong><small data-en="Shells, construction phases, roofs and hero landmarks" data-zh="建筑外壳、施工阶段、屋顶与英雄地标">Shells, construction phases, roofs and hero landmarks</small></span>
+          <output data-city-asset-count="structures">0</output>
+        </label>
+        <label>
+          <input type="checkbox" data-city-asset-toggle="facades" checked>
+          <span><strong data-en="Facades" data-zh="立面">Facades</strong><small data-en="Curtain-wall strips, balconies and their structure lines" data-zh="幕墙条、阳台及其结构线">Curtain-wall strips, balconies and their structure lines</small></span>
+          <output data-city-asset-count="facades">0</output>
+        </label>
+        <label>
+          <input type="checkbox" data-city-asset-toggle="infrastructure" checked>
+          <span><strong data-en="Roads + water" data-zh="道路与水体">Roads + water</strong><small data-en="Growing road network, lane marks and waterfront channels" data-zh="生长路网、车道线与水岸通道">Growing road network, lane marks and waterfront channels</small></span>
+          <output data-city-asset-count="infrastructure">0</output>
+        </label>
+        <label>
+          <input type="checkbox" data-city-asset-toggle="landscape" checked>
+          <span><strong data-en="Landscape" data-zh="景观">Landscape</strong><small data-en="Street and park trees, seating, lamps and cycle racks" data-zh="行道树、公园树、座椅、路灯与自行车架">Street and park trees, seating, lamps and cycle racks</small></span>
+          <output data-city-asset-count="landscape">0</output>
+        </label>
+        <label>
+          <input type="checkbox" data-city-asset-toggle="mobility" checked>
+          <span><strong data-en="Mobility" data-zh="交通载具">Mobility</strong><small data-en="Road vehicles and the survey helicopter" data-zh="道路车辆与巡检直升机">Road vehicles and the survey helicopter</small></span>
+          <output data-city-asset-count="mobility">0</output>
+        </label>
+        <label>
+          <input type="checkbox" data-city-asset-toggle="cranes" checked>
+          <span><strong data-en="Cranes" data-zh="塔吊">Cranes</strong><small data-en="Scheduled construction cranes and rigging lines" data-zh="按排期出现的施工塔吊与吊索">Scheduled construction cranes and rigging lines</small></span>
+          <output data-city-asset-count="cranes">0</output>
+        </label>
+      </fieldset>
+      <div class="city-layer-editor__foot">
+        <p data-en="Visibility only. Timeline and simulated metrics keep the complete plan." data-zh="仅改变显示。时间轴与模拟指标始终使用完整计划。">Visibility only. Timeline and simulated metrics keep the complete plan.</p>
+        <button type="button" data-city-assets-reset data-en="Show all" data-zh="全部显示">Show all</button>
+      </div>
+    </aside>
+
+    <aside id="city-device-audit" class="city-device-audit" data-city-device-audit hidden aria-labelledby="city-device-audit-title">
+      <div class="city-device-audit__head">
+        <span id="city-device-audit-title" data-en="Physical-device evidence" data-zh="实体真机证据">Physical-device evidence</span>
+        <strong data-en="LOCAL JSON" data-zh="本地 JSON">LOCAL JSON</strong>
+      </div>
+      <p class="city-device-audit__truth" data-en="Opt-in engineering audit. Samples stay in this page and are exported only when you finish; nothing is uploaded." data-zh="仅供选择启用的工程审核。样本只保留在本页面，结束时才导出；不会上传任何数据。">Opt-in engineering audit. Samples stay in this page and are exported only when you finish; nothing is uploaded.</p>
+      <label class="city-device-audit__label">
+        <span data-en="Device / OS / browser" data-zh="设备 / 系统 / 浏览器">Device / OS / browser</span>
+        <input type="text" data-city-device-label required maxlength="120" autocomplete="off" data-en-ph="e.g. iPhone 16 Pro / iOS / Safari" data-zh-ph="例如：iPhone 16 Pro / iOS / Safari">
+      </label>
+      <div class="city-device-audit__readout" aria-live="off">
+        <span><span data-en="Elapsed" data-zh="已记录">Elapsed</span> <output data-city-device-elapsed>00:00</output></span>
+        <span><span data-en="Samples" data-zh="样本">Samples</span> <output data-city-device-samples>0</output></span>
+        <span data-en="Minimum 10 minutes" data-zh="至少 10 分钟">Minimum 10 minutes</span>
+      </div>
+      <details>
+        <summary data-en="Required test path" data-zh="必须测试的路径">Required test path</summary>
+        <ol>
+          <li data-en="Portrait + landscape; scroll the short layout vertically." data-zh="测试竖屏与横屏，并在矮屏布局中纵向滚动。">Portrait + landscape; scroll the short layout vertically.</li>
+          <li data-en="Touch orbit, two-finger pinch and timeline scrub." data-zh="测试触摸环绕、双指缩放与时间轴拖动。">Touch orbit, two-finger pinch and timeline scrub.</li>
+          <li data-en="Build, Tour, English + 中文 and reduced motion on + off." data-zh="测试建设、巡游、中英文，以及开启和关闭减少动态。">Build, Tour, English + 中文 and reduced motion on + off.</li>
+          <li data-en="Send the browser to the background, then return and verify recovery." data-zh="将浏览器切到后台，再返回并验证恢复。">Send the browser to the background, then return and verify recovery.</li>
+        </ol>
+      </details>
+      <div class="city-device-audit__actions">
+        <button type="button" data-city-device-start disabled data-en="Start audit" data-zh="开始审核">Start audit</button>
+        <button type="button" data-city-device-finish disabled data-en="Finish + share JSON" data-zh="结束并分享 JSON">Finish + share JSON</button>
+      </div>
+      <p class="city-device-audit__status" role="status" data-city-device-status data-en="Device audit is loading…" data-zh="正在加载真机审核…">Device audit is loading…</p>
+    </aside>
+
+    <section class="city-controls" id="city-controls" aria-label="City construction controls" data-aria-en="City construction controls" data-aria-zh="城市建造控制">
+      <div class="city-timeline">
+        <div class="city-timeline__readout">
+          <span data-en="Construction day" data-zh="建造日">Construction day</span>
+          <output data-city-day for="city-day">000</output><span>/ 210</span>
+        </div>
+        <label class="city-sr" for="city-day" data-en="Construction day from 0 to 210" data-zh="建造日，从 0 到 210">Construction day from 0 to 210</label>
+        <input id="city-day" data-city-timeline type="range" min="0" max="210" step="1" value="0" disabled>
+        <div class="city-timeline__marks" aria-hidden="true"><span>0</span><span>70</span><span>140</span><span>210</span></div>
+      </div>
+      <div class="city-actions">
+        <label class="city-profile-picker">
+          <span data-en="City profile" data-zh="城市样板">City profile</span>
+          <select data-city-profile aria-describedby="city-profile-note" disabled>
+            <option value="sandbox" data-en="Sandbox" data-zh="沙盒">Sandbox</option>
+            <option value="shanghai" data-en="Shanghai · concept" data-zh="上海 · 概念">Shanghai · concept</option>
+            <option value="melbourne" data-en="Melbourne · concept" data-zh="墨尔本 · 概念">Melbourne · concept</option>
+            <option value="hong-kong" data-en="Hong Kong · concept" data-zh="香港 · 概念">Hong Kong · concept</option>
+          </select>
+        </label>
+        <button type="button" class="city-action city-action--primary" data-city-play aria-pressed="false" disabled><span aria-hidden="true">▶</span><span data-city-play-label data-en="Build" data-zh="建设">Build</span></button>
+        <button type="button" class="city-action" data-city-tour aria-pressed="false" disabled><span aria-hidden="true">◌</span><span data-city-tour-label data-en="Tour" data-zh="巡游">Tour</span></button>
+        <button type="button" class="city-action" data-city-view disabled><span aria-hidden="true">◎</span><span data-city-view-label data-en="Hero view" data-zh="英雄视角">Hero view</span></button>
+        <button type="button" class="city-action" data-city-data aria-expanded="false" aria-controls="city-data-panel" disabled><span aria-hidden="true">▦</span><span data-en="Data" data-zh="数据">Data</span></button>
+        <button type="button" class="city-action" data-city-layers aria-expanded="false" aria-controls="city-layer-panel" disabled><span aria-hidden="true">☷</span><span data-en="Layers" data-zh="图层">Layers</span></button>
+        <button type="button" class="city-action" data-city-rebuild disabled><span aria-hidden="true">↻</span><span data-en="New seed" data-zh="新种子">New seed</span></button>
+        <button type="button" class="city-action" data-city-reset disabled><span aria-hidden="true">⌂</span><span data-en="Reset view" data-zh="回位">Reset view</span></button>
+      </div>
+      <div class="city-run-meta">
+        <span><span data-en="Seed" data-zh="种子">Seed</span> <code data-city-seed>afflatus-city-001</code> · <strong id="city-profile-note" data-city-profile-note data-en="Generated concept—not GIS" data-zh="程序化概念，并非 GIS">Generated concept—not GIS</strong></span>
+        <p role="status" data-city-status data-en="Static city summary ready. Loading optional 3D…" data-zh="静态城市摘要已就绪，正在加载可选 3D…">Static city summary ready. Loading optional 3D…</p>
+      </div>
+    </section>
+
+    <details class="city-summary">
+      <summary data-en="Accessible city summary" data-zh="无障碍城市摘要">Accessible city summary</summary>
+      <div>
+        <p data-city-summary-model data-en="The current sandbox contains 64 blocks and 18 road segments. Buildings grow through skeleton, slab, shell and roof phases; all visible metrics are computed from that state." data-zh="当前沙盒包含 64 个街区与 18 条道路。建筑依次经历骨架、楼板、外壳与屋顶阶段；所有可见指标都由这些状态计算得出。">The current sandbox contains 64 blocks and 18 road segments. Buildings grow through skeleton, slab, shell and roof phases; all visible metrics are computed from that state.</p>
+        <ul>
+          <li data-en="Drag the day slider with a pointer or keyboard." data-zh="可用指针或键盘拖动日期滑块。">Drag the day slider with a pointer or keyboard.</li>
+          <li data-en="Build plays 210 days in about 23 seconds." data-zh="建设会在约 23 秒内播放 210 天。">Build plays 210 days in about 23 seconds.</li>
+          <li data-en="Tour is optional and becomes a static overview when reduced motion is enabled." data-zh="巡游不是强制功能；启用减少动态效果时会切换为静态总览。">Tour is optional and becomes a static overview when reduced motion is enabled.</li>
+          <li data-en="During a tour, a feathered safety field raises the camera above nearby finished structures without changing its orbit direction." data-zh="巡游期间，带羽化的安全高度场会把镜头抬到附近完整建筑上方，但不会改变环绕方向。">During a tour, a feathered safety field raises the camera above nearby finished structures without changing its orbit direction.</li>
+          <li data-en="Hero view cycles through the available concept landmarks without changing the construction day." data-zh="英雄视角会依次查看当前样板的概念地标，但不会改变建造日。">Hero view cycles through the available concept landmarks without changing the construction day.</li>
+          <li data-en="A low-poly survey helicopter follows a roof-safe orbit; reduced motion freezes it and both rotors." data-zh="低多边形巡检直升机会沿高于屋顶的安全轨道飞行；减少动态效果会冻结机身与两组旋翼。">A low-poly survey helicopter follows a roof-safe orbit; reduced motion freezes it and both rotors.</li>
+          <li data-en="Rendering may reduce vehicle and tree density for performance, but simulated traffic and capacity metrics always use the complete city plan." data-zh="渲染可为性能降低车辆与树木密度，但模拟交通和容量指标始终使用完整城市计划。">Rendering may reduce vehicle and tree density for performance, but simulated traffic and capacity metrics always use the complete city plan.</li>
+          <li data-en="The data panel is closed by default. When open, each simulated value names its construction-state inputs; when closed, metric DOM updates stop." data-zh="数据面板默认关闭。打开时，每项模拟数值都会说明其施工状态输入；关闭时，指标 DOM 更新会停止。">The data panel is closed by default. When open, each simulated value names its construction-state inputs; when closed, metric DOM updates stop.</li>
+          <li data-en="The Layers editor can hide six render categories without changing construction state or simulated metrics; it is mutually exclusive with the data panel." data-zh="图层编辑器可隐藏六类渲染资源，但不会改变施工状态或模拟指标；它与数据面板互斥显示。">The Layers editor can hide six render categories without changing construction state or simulated metrics; it is mutually exclusive with the data panel.</li>
+          <li data-en="Landmark and selected large-building cranes follow their own schedules, with no more than six active citywide; scrubbing backward reconstructs them exactly." data-zh="地标及部分大型建筑塔吊按各自排期运行，全城同时不超过六座；向后拖动时间轴会精确恢复。">Landmark and selected large-building cranes follow their own schedules, with no more than six active citywide; scrubbing backward reconstructs them exactly.</li>
+        </ul>
+      </div>
+    </details>
+  </main>
+
+  <noscript>
+    <p class="city-noscript">Interactive 3D requires JavaScript; the city summary remains available above. / 互动 3D 需要 JavaScript；仍可阅读上方的城市摘要。</p>
+  </noscript>
+
+  <script type="module" src="/src/pages/cityViewEntry.js"></script>
+</body>
+</html>

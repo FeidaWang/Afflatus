@@ -32,6 +32,10 @@
     {
       "id": "course",
       "path": "/course.html"
+    },
+    {
+      "id": "cityview",
+      "path": "/cityview.html"
     }
   ]
 }

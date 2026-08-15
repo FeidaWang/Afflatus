@@ -25,12 +25,15 @@ function harness() {
   let nextFrameId = 0;
   const frames = new Map();
   const document = eventTarget({ hidden: false });
+  const reducedMotionQuery = eventTarget({ matches: false });
   const window = eventTarget({
     innerWidth: 1440,
     innerHeight: 900,
     devicePixelRatio: 2,
     navigator: { hardwareConcurrency: 8, deviceMemory: 8 },
-    matchMedia: () => ({ matches: false }),
+    matchMedia: (query) => (query.includes('prefers-reduced-motion')
+      ? reducedMotionQuery
+      : { matches: false }),
   });
   const requestAnimationFrame = (callback) => {
     nextFrameId += 1;
@@ -51,7 +54,7 @@ function harness() {
     IntersectionObserver: null,
     initialQualityTier: 'high',
   });
-  return { coordinator, document, window, flushFrame };
+  return { coordinator, document, window, reducedMotionQuery, flushFrame };
 }
 
 describe('render budget coordinator', () => {
@@ -127,6 +130,24 @@ describe('render budget coordinator', () => {
     expect(onResize).toHaveBeenLastCalledWith(expect.objectContaining({ width: 900 }));
   });
 
+  it('publishes a fresh policy when the reduced-motion preference changes', () => {
+    const { coordinator, reducedMotionQuery } = harness();
+    const onQualityChange = vi.fn();
+    const handle = coordinator.register({
+      id: 'test:motion-policy',
+      observe: false,
+      onQualityChange,
+    });
+
+    expect(onQualityChange).toHaveBeenLastCalledWith(expect.objectContaining({ reducedMotion: false }));
+    reducedMotionQuery.matches = true;
+    reducedMotionQuery.dispatch('change');
+    expect(onQualityChange).toHaveBeenLastCalledWith(expect.objectContaining({ reducedMotion: true }));
+
+    handle.unregister();
+    expect(reducedMotionQuery.listenerCount('change')).toBe(0);
+  });
+
   it('uses one intersection registry to pause off-screen surfaces', () => {
     let observer;
     class FakeIntersectionObserver {
@@ -192,11 +213,30 @@ describe('render budget coordinator', () => {
       drawCalls: 42,
       triangles: 12000,
       thermalState: 'warm',
+      evaluatedWindows: 1,
     }));
     for (let i = 0; i < 90; i += 1) handle.reportFrame(30);
     expect(coordinator.getTelemetry().qualityTier).toBe('balanced');
     expect(coordinator.getTelemetry().surfaces[0].p95Ms).toBe(30);
     expect(coordinator.getTelemetry().surfaces[0].thermalState).toBe('hot');
+    expect(coordinator.getTelemetry().surfaces[0].evaluatedWindows).toBe(2);
+  });
+
+  it('publishes preliminary p95 telemetry before the adaptive quality window fills', () => {
+    const { coordinator } = harness();
+    const handle = coordinator.register({
+      id: 'test:early-telemetry',
+      observe: false,
+      targetFps: 60,
+    });
+
+    for (let i = 0; i < 12; i += 1) handle.reportFrame(8, { drawCalls: 12, triangles: 4000 });
+    expect(coordinator.getTelemetry().surfaces[0]).toEqual(expect.objectContaining({
+      p95Ms: 8,
+      evaluatedWindows: 0,
+      thermalState: 'nominal',
+    }));
+    expect(coordinator.getTelemetry().qualityTier).toBe('high');
   });
 
   it('rejects duplicate ids and invokes dispose hooks exactly once', () => {
