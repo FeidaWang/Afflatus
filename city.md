@@ -1,7 +1,8 @@
 # city.md — 城市推演台路线图（City Sandbox → Urban Twin → Scenic City）
 
-> **状态**：CITY-P1 实施中；`cityview.html` 已形成可信的白模原型，候选浏览器、四 profile Axe/完整/RM 视觉/90 帧预算、香港短稳、本地 Lighthouse、上海完整资产版 30 分钟长稳与真机证据采集器已闭环；实体设备签署与真实数据证据尚未闭环，继续保持 `prototype + noindex`
+> **状态**：CITY-P1 实施中；`cityview.html` 已于 2026-08-15 经产品负责人明确授权升为公开 `active` 页面并进入 Labs 导航，生产地址为 `https://feida.au/cityview.html`。自动化浏览器、四 profile、Axe、预算、Lighthouse、短稳与上海长稳证据已闭环；实体设备人工签署与真实 GIS/许可证据仍未闭环。
 > **整理基线**：2026-08-15
+> **发布决策**：本次公开上线覆盖了本文件较早的“真机签署前保持 prototype + noindex”建议；旧条目保留为决策历史，不再代表当前路由状态。公开版本仍必须标注 `generated concept—not GIS`，且不得因此绕过真实数据许可闸门。
 > **实施记录**：2026-08-15 已完成确定性 8×8 plan、可逆 0–210 天状态机、白模场景、可取消的单方向巡游、单面幕墙/住宅双条/稀疏背面阳台的实例批次、圆柱塔椭圆环线与母线、状态派生指标、共享渲染预算/WebGL 生命周期、静态 poster、双语 DOM 控件与原型路由；页面现可切换 Sandbox / 上海概念 / 墨尔本概念 / 香港概念，四者共用生成器与场景控制器，并明确标注 `generated-concept—not GIS`。香港增量采用左侧通行、横向维港、向水岸偏移的高密核心、更紧街区、26 辆计划车辆、三个英雄轮廓与一条确定性低面数山脊；它仍是规划语法，不是地形或 GIS。规则资产、因果图表、场景图层、fallback、动态线缓冲、实例热路径、英雄施工代理、道路—车辆关联、巡游面板恢复、RM Build、候选质量门、统一 Sandbox 语义 adapter 和仅由 `?device-audit=1` 开启的本地真机证据导出均已落地。四 profile 自动候选矩阵与香港 2 分钟短稳现已成为发布证据；上海 30 分钟长稳仍是完整资产长稳基线，实体真机尚待签署，真实数据继续被许可闸门禁止加载。
 > **范围**：Project Afflatus 的新城市网页专项路线图；只排列 City 项目内部优先级，不改写全站 backlog。
 > **上位约束**：技术冲突以 [`tech.md`](./tech.md) 为准，视觉与 UX 冲突以 [`design.md`](./design.md) 为准，实施纪律以 [`CLAUDE.md`](./CLAUDE.md) 为准。
