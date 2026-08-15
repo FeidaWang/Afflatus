@@ -1,16 +1,137 @@
 <!doctype html>
 <html lang="en" data-afflatus-locale="inline">
 <head>
+  <script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en';if(v==='zh'){var d=document.documentElement,u=function(){d.style.removeProperty('visibility')};d.style.visibility='hidden';var t=setTimeout(u,1500),p=function(r,h){var q=[],m='[data-en],[data-en-ph],[data-aria-en],.lang-toggle';if(r.nodeType===1&&r.matches(m))q.push(r);if(r.querySelectorAll)q.push.apply(q,r.querySelectorAll(m));q.forEach(function(e){var z;if(e.hasAttribute('data-en')&&(z=e.getAttribute('data-zh'))!==null){if(e.hasAttribute('data-i18n-html')){if(h&&e.innerHTML!==z)e.innerHTML=z}else if(e.textContent!==z)e.textContent=z}if(e.hasAttribute('data-en-ph'))e.setAttribute('placeholder',e.getAttribute('data-zh-ph')||e.getAttribute('data-en-ph'));if(e.hasAttribute('data-aria-en'))e.setAttribute('aria-label',e.getAttribute('data-aria-zh')||e.getAttribute('data-aria-en'));if(e.classList.contains('lang-toggle')){e.textContent='EN';e.setAttribute('aria-label','Switch to English');if(!e.matches('a[href]'))e.setAttribute('aria-pressed','true')}})},o=new MutationObserver(function(rs){rs.forEach(function(r){r.addedNodes.forEach(function(x){p(x,false)})})});o.observe(d,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',function(){try{p(document,true)}finally{clearTimeout(t);o.disconnect();u()}},{once:true})}}catch(e){}</script>
+  <script type="module" src="/src/entry/performance.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Cityview — Urban Construction Sandbox (Prototype) · Afflatus</title>
-  <meta name="robots" content="noindex,nofollow">
+  <title>Cityview — Urban Construction Sandbox · Afflatus</title>
+  <meta name="description" content="Explore a deterministic 0–210 day construction sandbox across Sandbox, Shanghai, Melbourne and Hong Kong concepts. Generated urban scenarios—not GIS or live municipal data.">
   <meta name="theme-color" content="#e7e8e5">
+  <link rel="canonical" href="https://feida.au/cityview.html">
   <link rel="icon" type="image/svg+xml" href="/favicons/sectors.svg?v=20260808">
   <link rel="stylesheet" href="/styles/afflatus-brand.css">
   <link rel="stylesheet" href="/styles/responsive-primitives.css">
   <link rel="stylesheet" href="/styles/cityview.css">
   <script type="module" src="/src/entry/viewport.js"></script>
+  <!-- afflatus:route-seo:start -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Project Afflatus">
+  <meta property="og:title" content="Cityview — Urban Construction Sandbox">
+  <meta property="og:description" content="Build, scrub and tour four deterministic urban concepts in a white-model city observatory.">
+  <meta property="og:url" content="https://feida.au/cityview.html">
+  <meta property="og:locale" content="en_AU">
+  <meta property="og:locale:alternate" content="zh_CN">
+  <meta property="og:image" content="https://feida.au/assets/og/cityview-en.jpg">
+  <meta property="og:image:secure_url" content="https://feida.au/assets/og/cityview-en.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Cityview white-model urban construction sandbox">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cityview — Urban Construction Sandbox">
+  <meta name="twitter:description" content="Build, scrub and tour four deterministic urban concepts in a white-model city observatory.">
+  <meta name="twitter:image" content="https://feida.au/assets/og/cityview-en.jpg">
+  <meta name="twitter:image:alt" content="Cityview white-model urban construction sandbox">
+  <script type="application/ld+json" data-afflatus-route-schema="cityview" lang="en-AU">
+  {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://feida.au/#person",
+      "name": "Feida Wang",
+      "alternateName": "Bruce",
+      "url": "https://feida.au/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://feida.au/#website",
+      "url": "https://feida.au/",
+      "name": "Project Afflatus",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "publisher": {
+        "@id": "https://feida.au/#person"
+      }
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://feida.au/cityview.html#primaryimage",
+      "url": "https://feida.au/assets/og/cityview-en.jpg",
+      "contentUrl": "https://feida.au/assets/og/cityview-en.jpg",
+      "width": 1200,
+      "height": 630,
+      "caption": "Cityview white-model urban construction sandbox",
+      "inLanguage": "en-AU"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://feida.au/cityview.html#webpage",
+      "url": "https://feida.au/cityview.html",
+      "name": "Cityview — Urban Construction Sandbox",
+      "description": "A deterministic 0–210 day construction sandbox for generated Sandbox, Shanghai, Melbourne and Hong Kong concepts.",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "isPartOf": {
+        "@id": "https://feida.au/#website"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://feida.au/cityview.html#primaryimage"
+      },
+      "breadcrumb": {
+        "@id": "https://feida.au/cityview.html#breadcrumb"
+      },
+      "mainEntity": {
+        "@id": "https://feida.au/cityview.html#application"
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://feida.au/cityview.html#application",
+      "name": "Cityview — Urban Construction Sandbox",
+      "description": "A deterministic 0–210 day construction sandbox for generated Sandbox, Shanghai, Melbourne and Hong Kong concepts.",
+      "url": "https://feida.au/cityview.html",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript; WebGL is optional",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": 0,
+        "priceCurrency": "AUD"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://feida.au/cityview.html#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://feida.au/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cityview",
+          "item": "https://feida.au/cityview.html"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- afflatus:route-seo:end -->
 </head>
 <body class="cityview-page">
   <a class="city-skip" href="#city-controls" data-en="Skip to city controls" data-zh="跳到城市控制">Skip to city controls</a>
@@ -27,15 +148,17 @@
         <span class="afflatus-brand__sr">Afflatus</span>
       </a>
       <div class="city-identity">
-        <span class="city-kicker" data-en="Urban observatory / prototype" data-zh="城市推演台 / 原型">Urban observatory / prototype</span>
-        <h1 data-en="Cityview" data-zh="城市推演台">Cityview</h1>
+        <span class="city-kicker" data-en="Urban observatory" data-zh="城市推演台">Urban observatory</span>
+        <span class="city-title" data-en="Cityview" data-zh="城市推演台">Cityview</span>
       </div>
-      <button class="lang-toggle city-lang" type="button" aria-label="切换到中文" disabled>中文</button>
+      <nav class="nav city-nav" data-afflatus-nav aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航">
+        <button class="lang-toggle city-lang" type="button" aria-label="切换到中文" disabled>中文</button>
+      </nav>
     </header>
 
     <section class="city-intro" aria-labelledby="city-intro-title">
       <p class="city-eyebrow" data-en="Deterministic construction sandbox" data-zh="确定性建造沙盒">Deterministic construction sandbox</p>
-      <h2 id="city-intro-title" data-en="A city that can remember every day of its growth." data-zh="一座记得每一天生长过程的城市。">A city that can remember every day of its growth.</h2>
+      <h1 id="city-intro-title" data-en="A city that can remember every day of its growth." data-zh="一座记得每一天生长过程的城市。">A city that can remember every day of its growth.</h1>
       <p data-en="White massing is the planning layer—not the final destination. Shanghai, Melbourne and Hong Kong real-data precincts follow only after this construction model and each city’s licence chain are trustworthy." data-zh="白模是规划分析层，而不是终点。先让建造模型与各城市许可链可信，再分别引入上海、墨尔本和香港的真实数据片区。">White massing is the planning layer—not the final destination. Shanghai, Melbourne and Hong Kong real-data precincts follow only after this construction model and each city’s licence chain are trustworthy.</p>
     </section>
 

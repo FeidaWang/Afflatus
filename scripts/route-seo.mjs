@@ -440,6 +440,33 @@ function buildHoroscopeGraph(route, locale, facts, url) {
   ];
 }
 
+function buildCityviewGraph(route, locale, facts, url) {
+  const key = localeKey(route, locale);
+  const appId = `${url}#application`;
+  const page = basePageNode(route, locale, facts, url);
+  page.mainEntity = { '@id': appId };
+  return [
+    personNode(),
+    websiteNode(languageValue(route, locale)),
+    imageNode(route, locale, url),
+    page,
+    {
+      '@type': 'WebApplication',
+      '@id': appId,
+      name: route.locales[key].title,
+      description: route.locales[key].description,
+      url,
+      applicationCategory: 'EducationalApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript; WebGL is optional',
+      inLanguage: languageValue(route, locale),
+      isAccessibleForFree: true,
+      offers: { '@type': 'Offer', price: 0, priceCurrency: 'AUD' },
+    },
+    breadcrumbNode(route, locale, url),
+  ];
+}
+
 function buildSerialGraph(route, locale, facts, url) {
   const key = localeKey(route, locale);
   const series = (facts.novels || []).map((entry) => {
@@ -535,6 +562,7 @@ const BUILDERS = Object.freeze({
   signal: buildSignalGraph,
   stats: buildStatsGraph,
   horoscope: buildHoroscopeGraph,
+  cityview: buildCityviewGraph,
   serial: buildSerialGraph,
   course: buildCourseGraph,
 });

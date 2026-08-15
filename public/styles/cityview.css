@@ -2,6 +2,7 @@
   --city-ink: #232826;
   --city-muted: #616864;
   --city-line: rgba(61, 69, 65, 0.22);
+  --city-line-strong: rgba(55, 63, 59, 0.48);
   --city-glass: rgba(244, 245, 241, 0.88);
   --city-white: #f8f8f4;
   --city-green: #466750;
@@ -175,7 +176,8 @@ button {
   text-transform: uppercase;
 }
 
-.city-identity h1 {
+.city-title {
+  display: block;
   margin: 0;
   font-size: clamp(0.92rem, 1.4vw, 1.18rem);
   font-weight: 680;
@@ -196,6 +198,99 @@ button {
   cursor: pointer;
 }
 
+.city-nav {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.city-nav > a,
+.city-nav .nav-labs__trigger {
+  min-height: 44px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  color: var(--city-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.64rem;
+  font-weight: 720;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.city-nav > a:hover,
+.city-nav > a:focus-visible,
+.city-nav .nav-labs__trigger:hover,
+.city-nav .nav-labs__trigger:focus-visible,
+.city-nav > a.active,
+.city-nav .nav-labs__trigger.active {
+  border-color: var(--city-line-strong);
+  color: var(--city-ink);
+  background: rgba(255, 255, 252, 0.72);
+}
+
+.city-nav .nav-labs {
+  display: inline-flex;
+}
+
+.city-nav .nav-labs__trigger::after {
+  margin-left: 4px;
+  content: "▾";
+}
+
+.cityview-page > .nav-labs__menu {
+  position: fixed;
+  z-index: 99000;
+  min-width: 176px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--city-line-strong);
+  background: rgba(243, 244, 240, 0.97);
+  box-shadow: 0 14px 34px rgba(42, 49, 45, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease, visibility 150ms;
+}
+
+.cityview-page > .nav-labs__menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+
+.cityview-page > .nav-labs__menu a {
+  padding: 10px 9px;
+  border: 1px solid transparent;
+  color: var(--city-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  font-weight: 720;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cityview-page > .nav-labs__menu a:hover,
+.cityview-page > .nav-labs__menu a:focus-visible,
+.cityview-page > .nav-labs__menu a.active {
+  border-color: var(--city-line-strong);
+  outline: 0;
+  color: var(--city-ink);
+  background: rgba(255, 255, 252, 0.86);
+}
+
 .city-intro {
   position: absolute;
   z-index: 2;
@@ -208,7 +303,7 @@ button {
   pointer-events: none;
 }
 
-.city-intro h2 {
+.city-intro h1 {
   max-width: 14em;
   margin: 6px 0 9px;
   font-size: clamp(1.2rem, 2.2vw, 2rem);
@@ -900,6 +995,8 @@ button {
 
 .city-action:focus-visible,
 .city-lang:focus-visible,
+.city-nav > a:focus-visible,
+.city-nav .nav-labs__trigger:focus-visible,
 .city-timeline input:focus-visible,
 .city-layer-editor input:focus-visible,
 .city-layer-editor button:focus-visible,
@@ -1020,27 +1117,52 @@ button {
   }
 
   .cityview-page .city-header.site-header--follow {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: 14px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
     min-block-size: 54px;
   }
 
   .city-identity {
-    padding-left: 10px;
-  }
-
-  .city-kicker {
     display: none;
   }
 
+  .city-header .afflatus-brand {
+    inline-size: 108px;
+    min-inline-size: 108px;
+    max-width: 108px;
+  }
+
+  .cityview-page .city-header.site-header--follow > .city-nav {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  .cityview-page .city-header.site-header--follow > .city-nav > a,
+  .cityview-page .city-header.site-header--follow > .city-nav .nav-labs__trigger,
+  .cityview-page .city-header.site-header--follow > .city-nav > .lang-toggle {
+    width: 100%;
+    min-width: 0;
+    min-inline-size: 0;
+    padding-inline: 2px;
+    overflow: hidden;
+    font-size: 0.52rem;
+    letter-spacing: 0.02em;
+  }
+
+  .cityview-page .city-header.site-header--follow > .city-nav > .nav-labs {
+    width: 100%;
+  }
+
   .city-intro {
-    top: 92px;
+    top: 136px;
     left: 12px;
     width: min(310px, calc(100vw - 24px));
     padding: 11px 13px;
   }
 
-  .city-intro h2 {
+  .city-intro h1 {
     margin: 4px 0 0;
     font-size: 1.1rem;
   }
@@ -1051,7 +1173,7 @@ button {
 
   .city-metrics,
   .city-layer-editor {
-    top: 162px;
+    top: 214px;
     right: 12px;
     width: min(300px, calc(100vw - 24px));
     max-height: max(160px, calc(100vh - 440px));
@@ -1194,11 +1316,9 @@ button {
 
 @media (max-width: 420px) {
   .city-header .afflatus-brand {
-    max-width: 80px;
-  }
-
-  .city-identity h1 {
-    font-size: 0.84rem;
+    inline-size: 108px;
+    min-inline-size: 108px;
+    max-width: 108px;
   }
 
   .city-lang {
@@ -1216,7 +1336,7 @@ button {
     display: none;
   }
 
-  .city-intro h2 {
+  .city-intro h1 {
     font-size: 1.25rem;
   }
 

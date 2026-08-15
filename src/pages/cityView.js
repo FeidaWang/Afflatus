@@ -37,6 +37,7 @@ const stage = document.querySelector('[data-city-stage]');
 const languageButton = document.querySelector('.city-lang');
 const locationParams = new URLSearchParams(window.location.search);
 const deviceAuditMode = locationParams.get('device-audit') === '1';
+if (deviceAuditMode) document.documentElement.dataset.afflatusLocale = 'inline';
 
 const metricNodes = Object.freeze({
   completion: document.querySelector('[data-city-metric="completion"]'),
@@ -108,8 +109,8 @@ function translated(en, zh) {
 
 function updateDocumentTitle() {
   document.title = translated(
-    'Cityview — Urban Construction Sandbox (Prototype) · Afflatus',
-    '城市推演台 — 城市建造沙盒原型 · Afflatus',
+    'Cityview — Urban Construction Sandbox · Afflatus',
+    '城市推演台 — 城市建造沙盒 · Afflatus',
   );
 }
 

@@ -26,8 +26,10 @@ const withAttribute = (name, value = null) => nodes.filter((node) => (
 const byId = (id) => nodes.find((node) => attr(node, 'id') === id) ?? null;
 
 describe('Cityview page release-readiness contract', () => {
-  it('keeps the prototype truthful and useful without a successful 3D boot', () => {
-    expect(attr(withAttribute('name', 'robots')[0], 'content')).toBe('noindex,nofollow');
+  it('keeps the public experience truthful and useful without a successful 3D boot', () => {
+    expect(withAttribute('name', 'robots')).toHaveLength(0);
+    expect(attr(withAttribute('rel', 'canonical')[0], 'href')).toBe('https://feida.au/cityview.html');
+    expect(withAttribute('data-afflatus-nav')).toHaveLength(1);
     const stage = withAttribute('data-city-stage')[0];
     expect(stage?.tagName).toBe('main');
     expect(attr(stage, 'aria-busy')).toBe('false');
@@ -181,6 +183,6 @@ describe('Cityview page release-readiness contract', () => {
     expect(pageSource).toContain("timeline?.addEventListener('focus'");
     expect(pageSource).toContain("stage?.setAttribute('data-city-profile-key', profile.key)");
     expect(pageSource).toContain('control.disabled = !available');
-    expect(pageSource).toContain("'城市推演台 — 城市建造沙盒原型 · Afflatus'");
+    expect(pageSource).toContain("'城市推演台 — 城市建造沙盒 · Afflatus'");
   });
 });

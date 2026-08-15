@@ -189,6 +189,26 @@ export const ROUTE_SEO = Object.freeze({
     },
     structuredData: { kind: 'course' },
   },
+  cityview: {
+    social: {
+      background: 'assets/og-backgrounds/cityview.jpg',
+      eyebrow: { en: 'URBAN OBSERVATORY', zh: '城市推演台' },
+      title: { en: 'Cityview', zh: '城市推演台' },
+      subtitle: {
+        en: 'A deterministic construction sandbox for four urban concepts.',
+        zh: '面向四种城市概念的确定性建造沙盒。',
+      },
+      alt: {
+        en: 'Cityview white-model urban construction sandbox',
+        zh: 'Cityview 白模城市建造沙盒',
+      },
+      images: {
+        en: routeOgImage('cityview', 'en'),
+        zh: routeOgImage('cityview', 'zh'),
+      },
+    },
+    structuredData: { kind: 'cityview' },
+  },
 });
 
 export const SITE_MANIFEST = Object.freeze([
@@ -507,26 +527,26 @@ export const SITE_MANIFEST = Object.freeze([
     id: 'cityview',
     file: 'cityview.html',
     path: '/cityview.html',
-    status: 'prototype',
+    status: 'active',
     build: true,
-    sitemap: false,
+    sitemap: true,
     defaultLocale: 'en',
-    nav: null,
+    nav: { order: 90, group: 'labs', en: 'Cityview', zh: '城市' },
     themeColor: '#e7e8e5',
-    schema: [],
-    capabilities: ['noindex', 'webgl', 'prototype', 'release-candidate'],
+    schema: ['WebApplication'],
+    seo: ROUTE_SEO.cityview,
+    capabilities: ['webgl', 'construction-sandbox', 'simulated-data'],
     metadata: {
-      title: 'Cityview — Urban Construction Sandbox (Prototype) · Afflatus',
-      description: null,
-      canonical: null,
-      ogTitle: null,
-      ogDescription: null,
-      ogImage: null,
-      robots: 'noindex,nofollow',
+      title: 'Cityview — Urban Construction Sandbox · Afflatus',
+      description: 'Explore a deterministic 0–210 day construction sandbox across Sandbox, Shanghai, Melbourne and Hong Kong concepts. Generated urban scenarios—not GIS or live municipal data.',
+      canonical: 'https://feida.au/cityview.html',
+      ogTitle: 'Cityview — Urban Construction Sandbox',
+      ogDescription: 'Build, scrub and tour four deterministic urban concepts in a white-model city observatory.',
+      ogImage: ROUTE_SEO.cityview.social.images.en,
     },
     locales: {
-      en: { title: 'Cityview — Urban Construction Sandbox Prototype', description: 'A noindex deterministic urban construction sandbox prototype.' },
-      zh: { title: '城市推演台 — 城市建造沙盒原型', description: '不参与索引的确定性城市建造沙盒原型。' },
+      en: { title: 'Cityview — Urban Construction Sandbox', description: 'A deterministic 0–210 day construction sandbox for generated Sandbox, Shanghai, Melbourne and Hong Kong concepts.' },
+      zh: { title: '城市推演台 — 城市建造沙盒', description: '面向沙盒、上海、墨尔本与香港概念场景的确定性 0–210 天城市建造沙盒。' },
     },
   },
   {
