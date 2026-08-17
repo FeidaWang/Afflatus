@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "bundleId": "melbourne-control-dem-licence-evidence-2026-08-16",
+  "snapshotKind": "normalized-official-record",
+  "retrievedAt": "2026-08-16",
+  "retrievedInstant": "2026-08-15T14:08:32.514Z",
+  "legalApproval": false,
+  "documents": [
+    {
+      "id": "datavic-copyright-policy-2026-08-16",
+      "title": "Copyright: DataVic",
+      "url": "https://www.data.vic.gov.au/copyright-datavic",
+      "rawPath": "data/city/raw/melbourne/evidence/control-dem-2026-08-16/datavic-copyright.html",
+      "rawResponseSha256": "5c494dedef02a762ec8b845f1af26df93fa96d36103f9e8933d104f8acbb335f",
+      "contentType": "text/html;charset=utf-8",
+      "documentUpdatedAt": null,
+      "observations": [
+        "The dataset record page controls the licence and attribution for each dataset.",
+        "DataVic says raw data is provided under CC BY 4.0 to the maximum extent possible, subject to dataset-specific and third-party exceptions.",
+        "Modified or transformed data may carry additional attribution requirements stated on the dataset record."
+      ]
+    },
+    {
+      "id": "datashare-terms-of-use-2026-08-16",
+      "title": "DataShare Terms of Use",
+      "url": "https://datashare.maps.vic.gov.au/terms-of-use",
+      "rawPath": "data/city/raw/melbourne/evidence/control-dem-2026-08-16/datashare-terms-of-use.html",
+      "rawResponseSha256": "554973bd9588f686ae33b5a6fc55caca29ee1a42e9b418db62cf7e6e8083c954",
+      "contentType": "text/html; charset=UTF-8",
+      "documentUpdatedAt": null,
+      "observations": [
+        "DataShare states that its terms prevail over linked general DEECA terms if inconsistent.",
+        "The order flow collects contact details to provide the requested product and for administrative and audit purposes.",
+        "The page directs users to the DEECA spatial-data licensing page for the licence that applies to delivered spatial data."
+      ]
+    },
+    {
+      "id": "cc-by-4-legal-code-2026-08-16",
+      "title": "Creative Commons Attribution 4.0 International — Legal Code",
+      "url": "https://creativecommons.org/licenses/by/4.0/legalcode",
+      "rawPath": "data/city/raw/melbourne/evidence/control-dem-2026-08-16/cc-by-4-legal-code.html",
+      "rawResponseSha256": "6d55b998ed5c54f43426d059a8c549ed58a3321e5463e6a6af1c6b56ab78c333",
+      "contentType": "text/html",
+      "documentUpdatedAt": "2026-06-09",
+      "observations": [
+        "CC BY 4.0 grants reproduction, sharing and adaptation rights subject to its conditions.",
+        "Shared material must retain required attribution, licence and modification information.",
+        "The licence does not grant trademark, privacy, publicity or third-party rights."
+      ]
+    },
+    {
+      "id": "vicmap-dem10m-metadata-2026-08-16",
+      "title": "Vicmap Elevation DEM 10m ISO 19115 metadata",
+      "url": "https://metashare.maps.vic.gov.au/geonetwork/srv/api/records/2fd9d712-5407-51df-bc75-bb13d37499af",
+      "rawPath": "data/city/raw/melbourne/evidence/control-dem-2026-08-16/vicmap-elevation-dem-10m.xml",
+      "rawResponseSha256": "fa9bd0f4051d03767ba8e6a745107be3f77319457f248216441067410388860d",
+      "contentType": "application/xml",
+      "documentUpdatedAt": null,
+      "observations": [
+        "The metadata identifies EPSG:4283 (GDA94 geographic) as its reference system.",
+        "It states 10 metre resolution, horizontal accuracy of 12.5 metres and vertical accuracy of 5 metres or better, with an overall vertical accuracy calculation of 2.96 metres.",
+        "It warns that reprojection, format conversion or resampling changes DEM height values; delivery-file metadata must therefore be retained and verified."
+      ]
+    }
+  ],
+  "records": [
+    {
+      "id": "melbourne-vicmap-survey-control-record",
+      "layerId": "melbourne-vicmap-survey-control",
+      "recordEndpoint": "https://discover.data.vic.gov.au/api/3/action/package_show?id=vicmap-position-rest-api",
+      "rawPath": "data/city/raw/melbourne/evidence/control-dem-2026-08-16/vicmap-position-rest-api.json",
+      "rawResponseSha256": "2a779a60c73c1a2e0eb5b9b826d523796ee8ffa7a5468cbc519780eb9f1261a7",
+      "datasetId": "7f3a66ca-af88-4e58-8b8a-8ecbb531ab28",
+      "datasetSlug": "vicmap-position-rest-api",
+      "title": "Vicmap Position REST API",
+      "licenceLabel": "Creative Commons Attribution 4.0 International",
+      "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "publisher": "Vicmap",
+      "createdAt": "2021-10-15T02:17:09.786874",
+      "modifiedAt": "2025-07-15T05:23:27.672795",
+      "updateFrequency": "weekly",
+      "resources": [
+        {
+          "id": "8c963284-3fbb-4271-9fbb-8de87bc64d0f",
+          "name": "Vicmap Position - Survey Control",
+          "format": "Esri REST",
+          "url": "https://services-ap1.arcgis.com/P744lA0wf4LlBZ84/ArcGIS/rest/services/Vicmap_Position/FeatureServer",
+          "createdAt": "2021-10-13T21:59:53.081969",
+          "modifiedAt": "2025-07-15T05:23:27.679701"
+        }
+      ]
+    },
+    {
+      "id": "melbourne-vicmap-dem10m-record",
+      "layerId": "melbourne-vicmap-dem10m",
+      "recordEndpoint": "https://discover.data.vic.gov.au/api/3/action/package_show?id=vicmap-elevation-dem-10m",
+      "rawPath": "data/city/raw/melbourne/evidence/control-dem-2026-08-16/vicmap-elevation-dem-10m.json",
+      "rawResponseSha256": "5f953ba31197c5e2a1b10178d7f98162ac79b171c4ecb9d2e166271de60fdbe1",
+      "datasetId": "e28c6ecb-b2f7-4fe1-99df-e1d7e89d0dc0",
+      "datasetSlug": "vicmap-elevation-dem-10m",
+      "title": "Vicmap Elevation DEM 10m",
+      "licenceLabel": "Creative Commons Attribution 4.0 International",
+      "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "publisher": "Department of Transport and Planning",
+      "createdAt": "2026-04-17T02:57:00.295365",
+      "modifiedAt": "2026-07-30T01:12:49.883300",
+      "updateFrequency": "unknown",
+      "resources": [
+        {
+          "id": "9f2c0013-7ba8-43ce-bb7b-a7a82a125104",
+          "name": "VICMAPELEVDEM10M ECW",
+          "format": "ECW",
+          "url": "https://datashare.maps.vic.gov.au/search?md=2fd9d712-5407-51df-bc75-bb13d37499af",
+          "createdAt": "2026-07-22T06:26:24.790709",
+          "modifiedAt": "2026-07-30T01:12:49.892816"
+        },
+        {
+          "id": "8a288e1a-52fd-4d6d-9e1b-15e10421ba2a",
+          "name": "VICMAPELEVDEM10M GeoTIFF",
+          "format": "GeoTIFF",
+          "url": "https://datashare.maps.vic.gov.au/search?md=2fd9d712-5407-51df-bc75-bb13d37499af",
+          "createdAt": "2026-07-22T06:26:24.790719",
+          "modifiedAt": "2026-07-30T01:12:49.892949"
+        },
+        {
+          "id": "fc59376d-8409-483f-bbe3-82f2af91d733",
+          "name": "VICMAPELEVDEM10M JPEG",
+          "format": "JPEG",
+          "url": "https://datashare.maps.vic.gov.au/search?md=2fd9d712-5407-51df-bc75-bb13d37499af",
+          "createdAt": "2026-07-22T06:26:24.790724",
+          "modifiedAt": "2026-07-30T01:12:49.893045"
+        },
+        {
+          "id": "4bbca821-b592-4a31-9953-aca62c401cc9",
+          "name": "VICMAPELEVDEM10M JPEG 2000",
+          "format": "JPEG 2000",
+          "url": "https://datashare.maps.vic.gov.au/search?md=2fd9d712-5407-51df-bc75-bb13d37499af",
+          "createdAt": "2026-07-22T06:26:24.790730",
+          "modifiedAt": "2026-07-30T01:12:49.893135"
+        },
+        {
+          "id": "ebe2e7e9-0134-4ece-82b1-63459f4c24c4",
+          "name": "VICMAPELEVDEM10M TIFF",
+          "format": "TIFF",
+          "url": "https://datashare.maps.vic.gov.au/search?md=2fd9d712-5407-51df-bc75-bb13d37499af",
+          "createdAt": "2026-07-22T06:26:24.790736",
+          "modifiedAt": "2026-07-30T01:12:49.893222"
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    "The evidence bundle records official terms and metadata but is not independent legal advice; the named project approval is stored separately.",
+    "The linked DEECA spatial-data licensing page was reviewed in a browser but rejected non-browser capture with HTTP 403, so it is context rather than hashed evidence in this bundle.",
+    "The DataShare delivery archive, its download-time terms and its internal GeoTIFF metadata must be hashed and verified after the guest order is delivered.",
+    "The DEM vertical datum remains unverified until the delivered archive metadata explicitly identifies it or an authoritative written clarification is obtained.",
+    "Engineering and product-release approvals remain separate from acquisition and processing approval."
+  ]
+}

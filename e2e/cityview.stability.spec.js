@@ -3,8 +3,8 @@ import { performance as nodePerformance } from 'node:perf_hooks';
 
 const requestedDurationMs = Number.parseInt(process.env.CITY_STABILITY_MS ?? '0', 10);
 const durationMs = Number.isFinite(requestedDurationMs) ? Math.max(0, requestedDurationMs) : 0;
-const requestedProfile = process.env.CITY_STABILITY_PROFILE ?? 'sandbox';
-const STABILITY_PROFILES = Object.freeze(['sandbox', 'shanghai', 'melbourne', 'hong-kong']);
+const requestedProfile = process.env.CITY_STABILITY_PROFILE ?? 'shanghai';
+const STABILITY_PROFILES = Object.freeze(['shanghai', 'melbourne', 'hong-kong']);
 if (!STABILITY_PROFILES.includes(requestedProfile)) {
   throw new Error(`Unknown CITY_STABILITY_PROFILE: ${requestedProfile}`);
 }
@@ -77,8 +77,7 @@ test.describe('Cityview opt-in scrub stability', () => {
     );
     test.setTimeout(durationMs + 5 * 60_000);
     await page.emulateMedia({ reducedMotion: 'no-preference' });
-    const query = new URLSearchParams({ seed: `city-stability-${profile}-001` });
-    if (profile !== 'sandbox') query.set('profile', profile);
+    const query = new URLSearchParams({ seed: `city-stability-${profile}-001`, profile });
     await page.goto(`/cityview.html?${query}`, { waitUntil: 'domcontentloaded' });
     await settlePage(page);
     await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');

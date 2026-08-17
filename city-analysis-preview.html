@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Melbourne Analysis · Local Engineering Preview</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #18201d; background: #dfe5e1; }
+    .stage { position: relative; min-height: 100svh; overflow: hidden; }
+    canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+    .fallback { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, #f5f7f5, #dfe5e1 68%); }
+    canvas[data-renderer="webgl"] + .fallback { display: none; }
+    .panel { position: relative; z-index: 1; width: min(480px, calc(100% - 32px)); margin: 16px; padding: 18px; border: 1px solid rgba(30, 42, 37, .2); border-radius: 12px; background: rgba(248, 250, 248, .92); box-shadow: 0 18px 60px rgba(35, 50, 44, .15); backdrop-filter: blur(16px); }
+    .eyebrow { margin: 0 0 8px; color: #b34817; font: 700 12px/1.2 ui-monospace, monospace; letter-spacing: .11em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(24px, 4vw, 38px); line-height: 1.05; }
+    .truth { margin: 12px 0; color: #43504a; line-height: 1.5; }
+    dl { display: grid; grid-template-columns: 1fr auto; gap: 7px 20px; margin: 16px 0; font: 13px/1.4 ui-monospace, monospace; }
+    dt { color: #52605a; }
+    dd { max-width: 270px; margin: 0; overflow-wrap: anywhere; font-weight: 700; text-align: right; }
+    button { min-height: 44px; padding: 0 16px; border: 1px solid #263b32; border-radius: 7px; color: #fff; background: #263b32; font-weight: 700; cursor: pointer; }
+    button:disabled { cursor: wait; opacity: .45; }
+    [role="status"] { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(30, 42, 37, .14); font-size: 13px; line-height: 1.45; }
+    [data-analysis-state="fallback"] [role="status"], [data-analysis-state="blocked"] [role="status"] { color: #9b2f1a; }
+    .note { position: absolute; right: 18px; bottom: 16px; z-index: 1; max-width: min(520px, calc(100% - 36px)); margin: 0; padding: 8px 11px; color: #f4f6f4; background: rgba(25, 32, 29, .82); font: 11px/1.45 ui-monospace, monospace; }
+    @media (max-width: 640px) { .panel { margin: 10px; width: calc(100% - 20px); } .note { display: none; } }
+  </style>
+</head>
+<body>
+  <main class="stage" data-analysis-stage data-analysis-state="loading" aria-busy="false">
+    <canvas data-analysis-canvas data-renderer="loading" aria-label="Verified Melbourne Analysis 3D candidate preview"></canvas>
+    <div class="fallback" aria-hidden="true"></div>
+    <section class="panel" aria-labelledby="preview-title">
+      <p class="eyebrow">Non-public · local engineering only / 非公开本地工程预览</p>
+      <h1 id="preview-title">Melbourne Analysis</h1>
+      <p class="truth">Flinders Street–Federation Square candidate geometry. Orbit or zoom to stream verified tiles and LODs; click geometry to inspect its stable feature ID. Licensed-real-data engineering evidence—not a production release. / 可环绕或缩放调度已验证 tiles 与 LOD，并点击几何查看稳定 feature ID。真实许可数据工程证据，并非生产发布。</p>
+      <dl>
+        <dt>Verified tiles / 已验证 tiles</dt><dd><output data-analysis-output="tiles">—</output></dd>
+        <dt>Visible bytes / 可见字节</dt><dd><output data-analysis-output="bytes">—</output></dd>
+        <dt>Asset draw calls / 资源 draw calls</dt><dd><output data-analysis-output="draw-calls">—</output></dd>
+        <dt>Triangles / 三角面</dt><dd><output data-analysis-output="triangles">—</output></dd>
+        <dt>Primary / LOD</dt><dd><output data-analysis-output="primary">—</output></dd>
+        <dt>Decoded LRU / 解码缓存</dt><dd><output data-analysis-output="resident">—</output></dd>
+        <dt>Picked feature / 选中要素</dt><dd><output data-analysis-output="picked">none / 未选择</output></dd>
+        <dt>Attribution / 署名</dt><dd><output data-analysis-output="attribution">—</output></dd>
+        <dt>Render p95 / 渲染 p95</dt><dd><output data-analysis-output="p95">warming</output></dd>
+        <dt>Manifest SHA / 清单哈希</dt><dd><output data-analysis-output="manifest">—</output></dd>
+      </dl>
+      <button type="button" data-analysis-reset disabled>Reset fixed camera / 恢复固定相机</button>
+      <p role="status" data-analysis-status>Preparing local verification… / 正在准备本地验证…</p>
+    </section>
+    <p class="note">EPSG:3111 → GDA94 → EPSG:8048 GDA2020 → local ENU · vertical authority: AHD · baseline: tile-c01-r02 direct ownership dependencies, LOD0</p>
+  </main>
+  <script type="module" src="/src/pages/cityAnalysisPreview.js"></script>
+</body>
+</html>

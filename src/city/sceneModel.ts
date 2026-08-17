@@ -31,11 +31,15 @@ export type CityEntityValue =
 export interface CityProvenance {
   truthClass: 'generated-concept' | 'licensed-real-data';
   sourceId: string;
+  sourceUrl: string | null;
   datasetVersion: string;
   licence: string;
+  licenceSnapshotSha256: string | null;
+  sourceArtifactSha256: string | null;
   attribution: string;
   sourceCrs: string;
   capturedAt: string | null;
+  approvalStatus: 'generated' | 'production-approved';
 }
 
 export interface CityEntity {
@@ -43,7 +47,7 @@ export interface CityEntity {
   kind: CityEntityKind;
   assetId: string;
   lodProfile: CityLodProfile;
-  source: Readonly<CityProvenance>;
+  sources: readonly [Readonly<CityProvenance>, ...Readonly<CityProvenance>[]];
   value: CityEntityValue;
 }
 
@@ -52,7 +56,8 @@ export interface CityScene {
   id: string;
   seed: string;
   profileId: string;
-  truthClass: 'generated-concept';
+  truthClass: 'generated-concept' | 'licensed-real-data';
+  packageId: string | null;
   extent: number;
   totalDays: number;
   entities: readonly Readonly<CityEntity>[];
@@ -73,14 +78,35 @@ export function createCityProvenance(input: CityProvenance): Readonly<CityProven
   if (truthClass === 'licensed-real-data' && sourceCrs === 'LOCAL:PLAN') {
     throw new Error('Licensed real data requires an explicit source CRS.');
   }
+  const sourceUrl = input.sourceUrl == null ? null : requiredText(input.sourceUrl, 'sourceUrl');
+  const licenceSnapshotSha256 = input.licenceSnapshotSha256;
+  const sourceArtifactSha256 = input.sourceArtifactSha256;
+  if (truthClass === 'licensed-real-data') {
+    if (!sourceUrl?.startsWith('https://')) throw new Error('Licensed real data requires an HTTPS sourceUrl.');
+    if (!/^[a-f0-9]{64}$/.test(String(licenceSnapshotSha256 || ''))) {
+      throw new Error('Licensed real data requires a licenceSnapshotSha256.');
+    }
+    if (!/^[a-f0-9]{64}$/.test(String(sourceArtifactSha256 || ''))) {
+      throw new Error('Licensed real data requires a sourceArtifactSha256.');
+    }
+    if (input.approvalStatus !== 'production-approved') {
+      throw new Error('Licensed real data requires production approval.');
+    }
+  } else if (input.approvalStatus !== 'generated') {
+    throw new Error('Generated provenance must use generated approval status.');
+  }
   return Object.freeze({
     truthClass,
     sourceId: requiredText(input.sourceId, 'sourceId'),
+    sourceUrl,
     datasetVersion: requiredText(input.datasetVersion, 'datasetVersion'),
     licence: requiredText(input.licence, 'licence'),
+    licenceSnapshotSha256,
+    sourceArtifactSha256,
     attribution: requiredText(input.attribution, 'attribution'),
     sourceCrs,
     capturedAt: input.capturedAt == null ? null : requiredText(input.capturedAt, 'capturedAt'),
+    approvalStatus: input.approvalStatus,
   });
 }
 
@@ -95,19 +121,23 @@ const entity = (
   kind,
   assetId,
   lodProfile,
-  source,
+  sources: Object.freeze([source]) as readonly [Readonly<CityProvenance>],
   value,
 });
 
-export function createSandboxCityScene(plan: CityPlan): Readonly<CityScene> {
+export function createGeneratedCityScene(plan: CityPlan): Readonly<CityScene> {
   const source = createCityProvenance({
     truthClass: 'generated-concept',
     sourceId: 'afflatus-city-generator',
+    sourceUrl: null,
     datasetVersion: `city-plan-v${plan.version}`,
     licence: 'project-authored',
+    licenceSnapshotSha256: null,
+    sourceArtifactSha256: null,
     attribution: 'Project Afflatus procedural city generator',
     sourceCrs: 'LOCAL:PLAN',
     capturedAt: null,
+    approvalStatus: 'generated',
   });
   const entities: Readonly<CityEntity>[] = [
     ...plan.blocks.map((value) => entity(value, 'block', `block:${value.zone}`, 'structure', source)),
@@ -139,8 +169,11 @@ export function createSandboxCityScene(plan: CityPlan): Readonly<CityScene> {
     seed: plan.seed,
     profileId: plan.profile.id,
     truthClass: 'generated-concept',
+    packageId: null,
     extent: plan.extent,
     totalDays: plan.profile.totalDays,
     entities: Object.freeze(entities),
   });
 }
+
+export const createSandboxCityScene = createGeneratedCityScene;

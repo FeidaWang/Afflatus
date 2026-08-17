@@ -1,0 +1,1280 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "melbourne-trees-golden-v1",
+  "pipelineVersion": "melbourne-trees-enu-v1",
+  "truthClass": "licensed-real-data-engineering-fixture",
+  "productionApproved": false,
+  "derivedFrom": {
+    "artifactId": "melbourne-trees-flinders-federation-v1",
+    "rawSha256": "2475d6e769b452bf46896e00bde49b6e8e14b3a837411dada178ec6f433e07ea"
+  },
+  "attribution": "City of Melbourne — Urban Forest tree inventory, subject to dataset-record attribution.",
+  "localFrame": {
+    "horizontalSourceCrs": {
+      "identifier": "EPSG:4326",
+      "axisOrder": "longitude,latitude in GeoJSON",
+      "unit": "degree",
+      "evidence": "The official export request fixes epsg=4326; GeoJSON Point coordinates and longitude/latitude fields agree."
+    },
+    "verticalSourceDatum": {
+      "identifier": "not-applicable-2d-point-inventory",
+      "unit": "not-applicable",
+      "evidence": "The tree inventory supplies horizontal point locations and no source ground or tree-top elevation."
+    },
+    "anchorWgs84": {
+      "longitude": 144.963,
+      "latitude": -37.815,
+      "ellipsoidHeight": 0
+    },
+    "axes": "horizontalPosition=[east,-north]; no source elevation",
+    "transform": "WGS84 ellipsoid ECEF to local ENU; vertical placement deferred to an approved terrain/ground surface"
+  },
+  "clipBoundsWgs84": {
+    "west": 144.9615,
+    "south": -37.8205,
+    "east": 144.9715,
+    "north": -37.8105
+  },
+  "entities": [
+    {
+      "id": "melbourne-urban-forest-trees:1024452",
+      "sourceComId": "1024452",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 45,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320647.94,
+        "northing": 5812968
+      },
+      "sourceWgs84": [
+        144.96247233,
+        -37.8130818
+      ],
+      "horizontalPosition": [
+        -46.464,
+        -212.907
+      ],
+      "coordinateFieldResidualMetres": 0.002642,
+      "mga94FieldResidualMetres": 0.004611
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024453",
+      "sourceComId": "1024453",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 30,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320640.05,
+        "northing": 5812994.54
+      },
+      "sourceWgs84": [
+        144.9623894,
+        -37.81284116
+      ],
+      "horizontalPosition": [
+        -53.767,
+        -239.616
+      ],
+      "coordinateFieldResidualMetres": 0,
+      "mga94FieldResidualMetres": 0.003392
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024562",
+      "sourceComId": "1024562",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 90,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "21 - 30 years",
+      "usefulLifeExpectancyValue": 30,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320572.81,
+        "northing": 5812556.04
+      },
+      "sourceWgs84": [
+        144.96151726,
+        -37.81677774
+      ],
+      "horizontalPosition": [
+        -130.556,
+        197.318
+      ],
+      "coordinateFieldResidualMetres": 0.003522,
+      "mga94FieldResidualMetres": 0.002409
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024566",
+      "sourceComId": "1024566",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 60,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320591.55,
+        "northing": 5812507.74
+      },
+      "sourceWgs84": [
+        144.9617181,
+        -37.81721648
+      ],
+      "horizontalPosition": [
+        -112.871,
+        246.015
+      ],
+      "coordinateFieldResidualMetres": 0,
+      "mga94FieldResidualMetres": 0.00105
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024568",
+      "sourceComId": "1024568",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 55,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320607.35,
+        "northing": 5812500.54
+      },
+      "sourceWgs84": [
+        144.96189571,
+        -37.81728443
+      ],
+      "horizontalPosition": [
+        -97.233,
+        253.556
+      ],
+      "coordinateFieldResidualMetres": 0.00088,
+      "mga94FieldResidualMetres": 0.000377
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024570",
+      "sourceComId": "1024570",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 40,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320617.8,
+        "northing": 5812473.44
+      },
+      "sourceWgs84": [
+        144.96200762,
+        -37.81753062
+      ],
+      "horizontalPosition": [
+        -87.379,
+        280.882
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 0.004872
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024582",
+      "sourceComId": "1024582",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 25,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320638.55,
+        "northing": 5812353.34
+      },
+      "sourceWgs84": [
+        144.96221354,
+        -37.81861646
+      ],
+      "horizontalPosition": [
+        -69.247,
+        401.402
+      ],
+      "coordinateFieldResidualMetres": 0.003522,
+      "mga94FieldResidualMetres": 0.002521
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024587",
+      "sourceComId": "1024587",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 10,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320645.53,
+        "northing": 5812434.08
+      },
+      "sourceWgs84": [
+        144.96231278,
+        -37.8178906
+      ],
+      "horizontalPosition": [
+        -60.509,
+        320.837
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 0.003554
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024589",
+      "sourceComId": "1024589",
+      "kind": "tree-point",
+      "commonName": "Cyprus Plane",
+      "scientificName": "Platanus orientalis var. insularis 'Digitata'",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 45,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320661.01,
+        "northing": 5812441.15
+      },
+      "sourceWgs84": [
+        144.96249033,
+        -37.81782991
+      ],
+      "horizontalPosition": [
+        -44.876,
+        314.1
+      ],
+      "coordinateFieldResidualMetres": 0.002641,
+      "mga94FieldResidualMetres": 0.004182
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024644",
+      "sourceComId": "1024644",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 25,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320680.69,
+        "northing": 5812567.16
+      },
+      "sourceWgs84": [
+        144.96274494,
+        -37.81669879
+      ],
+      "horizontalPosition": [
+        -22.458,
+        188.554
+      ],
+      "coordinateFieldResidualMetres": 0.003522,
+      "mga94FieldResidualMetres": 0.003149
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024646",
+      "sourceComId": "1024646",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 25,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320690.49,
+        "northing": 5812571
+      },
+      "sourceWgs84": [
+        144.96285721,
+        -37.81666614
+      ],
+      "horizontalPosition": [
+        -12.573,
+        184.93
+      ],
+      "coordinateFieldResidualMetres": 0.000881,
+      "mga94FieldResidualMetres": 0.005178
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024724",
+      "sourceComId": "1024724",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 65,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320615.37,
+        "northing": 5812813
+      },
+      "sourceWgs84": [
+        144.96206422,
+        -37.81447155
+      ],
+      "horizontalPosition": [
+        -82.398,
+        -58.654
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 0.003822
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1024785",
+      "sourceComId": "1024785",
+      "kind": "tree-point",
+      "commonName": "Cyprus Plane",
+      "scientificName": "Platanus orientalis var. insularis 'Digitata'",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 45,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320590.05,
+        "northing": 5813054.87
+      },
+      "sourceWgs84": [
+        144.96183661,
+        -37.81228793
+      ],
+      "horizontalPosition": [
+        -102.443,
+        -301.02
+      ],
+      "coordinateFieldResidualMetres": 0.000881,
+      "mga94FieldResidualMetres": 0.001126
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1027611",
+      "sourceComId": "1027611",
+      "kind": "tree-point",
+      "commonName": "Canary Island Date Palm",
+      "scientificName": "Phoenix canariensis",
+      "genus": "Phoenix",
+      "family": "Arecaceae",
+      "diameterBreastHeight": 40,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "21 - 30 years",
+      "usefulLifeExpectancyValue": 30,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321263.34,
+        "northing": 5812161.31
+      },
+      "sourceWgs84": [
+        144.96926044,
+        -37.82046875
+      ],
+      "horizontalPosition": [
+        551.208,
+        607.012
+      ],
+      "coordinateFieldResidualMetres": 0.003522,
+      "mga94FieldResidualMetres": 0.001518
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1030185",
+      "sourceComId": "1030185",
+      "kind": "tree-point",
+      "commonName": "Canary Island Date Palm",
+      "scientificName": "Phoenix canariensis",
+      "genus": "Phoenix",
+      "family": "Arecaceae",
+      "diameterBreastHeight": 40,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "21 - 30 years",
+      "usefulLifeExpectancyValue": 30,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320585.18,
+        "northing": 5812209.46
+      },
+      "sourceWgs84": [
+        144.96157185,
+        -37.81990199
+      ],
+      "horizontalPosition": [
+        -125.744,
+        544.088
+      ],
+      "coordinateFieldResidualMetres": 0.004402,
+      "mga94FieldResidualMetres": 0.002903
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1033899",
+      "sourceComId": "1033899",
+      "kind": "tree-point",
+      "commonName": "Chinese Windmill Palm",
+      "scientificName": "Trachycarpus fortunei",
+      "genus": "Trachycarpus",
+      "family": "Arecaceae",
+      "diameterBreastHeight": 12,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "21 - 30 years",
+      "usefulLifeExpectancyValue": 30,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321226.06,
+        "northing": 5812213.38
+      },
+      "sourceWgs84": [
+        144.96885002,
+        -37.81999245
+      ],
+      "horizontalPosition": [
+        515.075,
+        554.143
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 0.004422
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1063725",
+      "sourceComId": "1063725",
+      "kind": "tree-point",
+      "commonName": "Ashy Silktassel",
+      "scientificName": "Garrya flavescens",
+      "genus": "Garrya",
+      "family": "Garryaceae",
+      "diameterBreastHeight": 50,
+      "yearPlanted": "1900",
+      "datePlanted": "1900-01-01",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "11 - 20 years",
+      "usefulLifeExpectancyValue": 20,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321433.13,
+        "northing": 5812204.99
+      },
+      "sourceWgs84": [
+        144.97119924,
+        -37.82010849
+      ],
+      "horizontalPosition": [
+        721.915,
+        567.038
+      ],
+      "coordinateFieldResidualMetres": 0.003522,
+      "mga94FieldResidualMetres": 0.005317
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1289045",
+      "sourceComId": "1289045",
+      "kind": "tree-point",
+      "commonName": "Canary Island Pine",
+      "scientificName": "Pinus canariensis",
+      "genus": "Pinus",
+      "family": "Pinaceae",
+      "diameterBreastHeight": 60,
+      "yearPlanted": "2008",
+      "datePlanted": "2008-03-18",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321228.85,
+        "northing": 5812221
+      },
+      "sourceWgs84": [
+        144.96888358,
+        -37.81992432
+      ],
+      "horizontalPosition": [
+        518.03,
+        546.581
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 0.002408
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1357480",
+      "sourceComId": "1357480",
+      "kind": "tree-point",
+      "commonName": "Camphor Laurel",
+      "scientificName": "Cinnamomum camphora",
+      "genus": "Cinnamomum",
+      "family": "Lauraceae",
+      "diameterBreastHeight": 15,
+      "yearPlanted": "2008",
+      "datePlanted": "2008-03-12",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321450.72,
+        "northing": 5812170.86
+      },
+      "sourceWgs84": [
+        144.9713905,
+        -37.82041937
+      ],
+      "horizontalPosition": [
+        738.752,
+        601.545
+      ],
+      "coordinateFieldResidualMetres": 0,
+      "mga94FieldResidualMetres": 0.003422
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1455202",
+      "sourceComId": "1455202",
+      "kind": "tree-point",
+      "commonName": "Cyprus Plane",
+      "scientificName": "Platanus orientalis var. insularis 'Digitata'",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": 10,
+      "yearPlanted": "2010",
+      "datePlanted": "2010-08-26",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320679.35,
+        "northing": 5812459.06
+      },
+      "sourceWgs84": [
+        144.96270295,
+        -37.81767221
+      ],
+      "horizontalPosition": [
+        -26.155,
+        296.597
+      ],
+      "coordinateFieldResidualMetres": 0.004402,
+      "mga94FieldResidualMetres": 0.00159
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1564583",
+      "sourceComId": "1564583",
+      "kind": "tree-point",
+      "commonName": "Black Locust or False Acacia",
+      "scientificName": "Robinia pseudoacacia",
+      "genus": "Robinia",
+      "family": "Fabaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2014",
+      "datePlanted": "2014-07-15",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "11 - 20 years",
+      "usefulLifeExpectancyValue": 20,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321435.73,
+        "northing": 5812411.13
+      },
+      "sourceWgs84": [
+        144.97127957,
+        -37.81825221
+      ],
+      "horizontalPosition": [
+        729.006,
+        361.005
+      ],
+      "coordinateFieldResidualMetres": 0.002641,
+      "mga94FieldResidualMetres": 0.002008
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1573274",
+      "sourceComId": "1573274",
+      "kind": "tree-point",
+      "commonName": "Cabbage Tree Palm",
+      "scientificName": "Livistona australis",
+      "genus": "Livistona",
+      "family": "Arecaceae",
+      "diameterBreastHeight": 30,
+      "yearPlanted": "2014",
+      "datePlanted": "2014-12-30",
+      "ageDescription": "Mature",
+      "usefulLifeExpectancy": "21 - 30 years",
+      "usefulLifeExpectancyValue": 30,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320639.8,
+        "northing": 5812916.74
+      },
+      "sourceWgs84": [
+        144.96236724,
+        -37.81354186
+      ],
+      "horizontalPosition": [
+        -55.717,
+        -161.843
+      ],
+      "coordinateFieldResidualMetres": 0.003522,
+      "mga94FieldResidualMetres": 0.004517
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1749103",
+      "sourceComId": "1749103",
+      "kind": "tree-point",
+      "commonName": "Bismarck Palm",
+      "scientificName": "Bismarckia nobilis",
+      "genus": "Bismarckia",
+      "family": "Arecaceae",
+      "diameterBreastHeight": 20,
+      "yearPlanted": "2018",
+      "datePlanted": "2018-11-27",
+      "ageDescription": "Semi-mature",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321219.07,
+        "northing": 5812228.57
+      },
+      "sourceWgs84": [
+        144.96877433,
+        -37.81985424
+      ],
+      "horizontalPosition": [
+        508.412,
+        538.802
+      ],
+      "coordinateFieldResidualMetres": 0.002641,
+      "mga94FieldResidualMetres": 0.004067
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1766539",
+      "sourceComId": "1766539",
+      "kind": "tree-point",
+      "commonName": "Cyprus Plane",
+      "scientificName": "Platanus orientalis var. insularis 'Digitata'",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2019",
+      "datePlanted": "2019-07-17",
+      "ageDescription": "Semi-mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320671.12,
+        "northing": 5812226.63
+      },
+      "sourceWgs84": [
+        144.96254598,
+        -37.8197774
+      ],
+      "horizontalPosition": [
+        -39.975,
+        530.258
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 1.556936
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1766543",
+      "sourceComId": "1766543",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2019",
+      "datePlanted": "2019-07-17",
+      "ageDescription": "Semi-mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320710.63,
+        "northing": 5812237.18
+      },
+      "sourceWgs84": [
+        144.96299719,
+        -37.8196901
+      ],
+      "horizontalPosition": [
+        -0.247,
+        520.568
+      ],
+      "coordinateFieldResidualMetres": 0.00088,
+      "mga94FieldResidualMetres": 1.554476
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1782536",
+      "sourceComId": "1782536",
+      "kind": "tree-point",
+      "commonName": "Australian Frangipani",
+      "scientificName": "Hymenosporum flavum",
+      "genus": "Hymenosporum",
+      "family": "Pittosporaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2020",
+      "datePlanted": "2020-04-17",
+      "ageDescription": "Semi-mature",
+      "usefulLifeExpectancy": "21 - 30 years",
+      "usefulLifeExpectancyValue": 30,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 321029.74,
+        "northing": 5812936.25
+      },
+      "sourceWgs84": [
+        144.96679947,
+        -37.81344274
+      ],
+      "horizontalPosition": [
+        334.56,
+        -172.838
+      ],
+      "coordinateFieldResidualMetres": 0.002642,
+      "mga94FieldResidualMetres": 0.005371
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1786237",
+      "sourceComId": "1786237",
+      "kind": "tree-point",
+      "commonName": "Brown Pine",
+      "scientificName": "Podocarpus elatus",
+      "genus": "Podocarpus",
+      "family": "Podocarpaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2020",
+      "datePlanted": "2020-06-07",
+      "ageDescription": "Semi-mature",
+      "usefulLifeExpectancy": "31 - 40 years",
+      "usefulLifeExpectancyValue": 40,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 321382.28,
+        "northing": 5812973.47
+      },
+      "sourceWgs84": [
+        144.97081141,
+        -37.81317648
+      ],
+      "horizontalPosition": [
+        687.832,
+        -202.369
+      ],
+      "coordinateFieldResidualMetres": 0.000881,
+      "mga94FieldResidualMetres": 0.00385
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1801977",
+      "sourceComId": "1801977",
+      "kind": "tree-point",
+      "commonName": "Deodar",
+      "scientificName": "Cedrus deodara",
+      "genus": "Cedrus",
+      "family": "Pinaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2021",
+      "datePlanted": "2021-05-27",
+      "ageDescription": "Semi-mature",
+      "usefulLifeExpectancy": "",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321240.37,
+        "northing": 5812233.32
+      },
+      "sourceWgs84": [
+        144.96901735,
+        -37.8198156
+      ],
+      "horizontalPosition": [
+        529.809,
+        534.515
+      ],
+      "coordinateFieldResidualMetres": 0.004402,
+      "mga94FieldResidualMetres": 0.004999
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1808076",
+      "sourceComId": "1808076",
+      "kind": "tree-point",
+      "commonName": "Cadaghi",
+      "scientificName": "Corymbia torelliana",
+      "genus": "Corymbia",
+      "family": "Myrtaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2021",
+      "datePlanted": "2021-07-26",
+      "ageDescription": "Semi-mature",
+      "usefulLifeExpectancy": "21 - 30 years",
+      "usefulLifeExpectancyValue": 30,
+      "precinct": "Melbourne",
+      "locatedIn": "Park",
+      "sourceMga94Zone55": {
+        "easting": 321446.55,
+        "northing": 5812396.9
+      },
+      "sourceWgs84": [
+        144.97139887,
+        -37.8183825
+      ],
+      "horizontalPosition": [
+        739.509,
+        375.467
+      ],
+      "coordinateFieldResidualMetres": 0.002641,
+      "mga94FieldResidualMetres": 0.004765
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1833846",
+      "sourceComId": "1833846",
+      "kind": "tree-point",
+      "commonName": "Cimmaron Ash",
+      "scientificName": "Fraxinus pennsylvanica 'Cimmzam'",
+      "genus": "Fraxinus",
+      "family": "Oleaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2022",
+      "datePlanted": "2022-09-14",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 321021.92,
+        "northing": 5813223.88
+      },
+      "sourceWgs84": [
+        144.96678268,
+        -37.81084927
+      ],
+      "horizontalPosition": [
+        333.094,
+        -460.695
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 0.144269
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1859724",
+      "sourceComId": "1859724",
+      "kind": "tree-point",
+      "commonName": "London Plane",
+      "scientificName": "Platanus x acerifolia",
+      "genus": "Platanus",
+      "family": "Platanaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2023",
+      "datePlanted": "2023-05-06",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320637.1,
+        "northing": 5812215.58
+      },
+      "sourceWgs84": [
+        144.96216189,
+        -37.81985324
+      ],
+      "horizontalPosition": [
+        -73.793,
+        538.676
+      ],
+      "coordinateFieldResidualMetres": 0.00088,
+      "mga94FieldResidualMetres": 0.43178
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1859733",
+      "sourceComId": "1859733",
+      "kind": "tree-point",
+      "commonName": "Broad-leaf Tea-tree",
+      "scientificName": "Melaleuca quinquenervia",
+      "genus": "Melaleuca",
+      "family": "Myrtaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2023",
+      "datePlanted": "2023-06-13",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Southbank",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320908.28,
+        "northing": 5812196.04
+      },
+      "sourceWgs84": [
+        144.96523835,
+        -37.82007214
+      ],
+      "horizontalPosition": [
+        197.079,
+        562.975
+      ],
+      "coordinateFieldResidualMetres": 0.004402,
+      "mga94FieldResidualMetres": 1.574693
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1859854",
+      "sourceComId": "1859854",
+      "kind": "tree-point",
+      "commonName": "Blueberry ash",
+      "scientificName": "Elaeocarpus reticulatus",
+      "genus": "Elaeocarpus",
+      "family": "Elaeocarpaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2023",
+      "datePlanted": "2023-06-30",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320600.95,
+        "northing": 5813173.11
+      },
+      "sourceWgs84": [
+        144.96201898,
+        -37.81119931
+      ],
+      "horizontalPosition": [
+        -86.386,
+        -421.849
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 3.848264
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1867989",
+      "sourceComId": "1867989",
+      "kind": "tree-point",
+      "commonName": "River Birch",
+      "scientificName": "Betula nigra 'Dura Heat'",
+      "genus": "Betula",
+      "family": "Betulaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2023",
+      "datePlanted": "2023-08-31",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "21 - 30 years",
+      "usefulLifeExpectancyValue": 30,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320593.36,
+        "northing": 5812710.79
+      },
+      "sourceWgs84": [
+        144.96178492,
+        -37.8153859
+      ],
+      "horizontalPosition": [
+        -106.99,
+        42.833
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 0.416759
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1874871",
+      "sourceComId": "1874871",
+      "kind": "tree-point",
+      "commonName": "Honey locust",
+      "scientificName": "Gleditsia triacanthos",
+      "genus": "Gleditsia",
+      "family": "Fabaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2023",
+      "datePlanted": "2023-09-28",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320578.16,
+        "northing": 5812807.11
+      },
+      "sourceWgs84": [
+        144.96164022,
+        -37.81451725
+      ],
+      "horizontalPosition": [
+        -119.733,
+        -53.581
+      ],
+      "coordinateFieldResidualMetres": 0.001761,
+      "mga94FieldResidualMetres": 0.003069
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1916565",
+      "sourceComId": "1916565",
+      "kind": "tree-point",
+      "commonName": "Blueberry Ash",
+      "scientificName": "Elaeocarpus reticulatus 'Prima Donna'",
+      "genus": "Elaeocarpus",
+      "family": "Elaeocarpaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2024",
+      "datePlanted": "2024-01-11",
+      "ageDescription": "Planter box",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Docklands",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 321378.04,
+        "northing": 5812864.77
+      },
+      "sourceWgs84": [
+        144.97073643,
+        -37.81415478
+      ],
+      "horizontalPosition": [
+        681.221,
+        -93.785
+      ],
+      "coordinateFieldResidualMetres": 0.002642,
+      "mga94FieldResidualMetres": 0.001669
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1916704",
+      "sourceComId": "1916704",
+      "kind": "tree-point",
+      "commonName": "Crepe Myrtle 'Tuscarora'",
+      "scientificName": "Lagerstroemia indica x fauriei 'Tuscarora'",
+      "genus": "Lagerstroemia",
+      "family": "Lythraceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2024",
+      "datePlanted": "2024-10-21",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 321279.95,
+        "northing": 5813261.4
+      },
+      "sourceWgs84": [
+        144.9697206,
+        -37.81056296
+      ],
+      "horizontalPosition": [
+        591.802,
+        -492.459
+      ],
+      "coordinateFieldResidualMetres": 0,
+      "mga94FieldResidualMetres": 0.005309
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1917072",
+      "sourceComId": "1917072",
+      "kind": "tree-point",
+      "commonName": "Chinese tulip tree",
+      "scientificName": "Liriodendron chinense",
+      "genus": "Liriodendron",
+      "family": "Magnoliaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2024",
+      "datePlanted": "2024-10-25",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320821.79,
+        "northing": 5812507.37
+      },
+      "sourceWgs84": [
+        144.9643323,
+        -37.81726507
+      ],
+      "horizontalPosition": [
+        117.309,
+        251.408
+      ],
+      "coordinateFieldResidualMetres": 0,
+      "mga94FieldResidualMetres": 0.005034
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1927308",
+      "sourceComId": "1927308",
+      "kind": "tree-point",
+      "commonName": "Blueberry ash",
+      "scientificName": "Elaeocarpus reticulatus",
+      "genus": "Elaeocarpus",
+      "family": "Elaeocarpaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2025",
+      "datePlanted": "2025-03-26",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 320657.47,
+        "northing": 5813197.61
+      },
+      "sourceWgs84": [
+        144.96263739,
+        -37.8110154
+      ],
+      "horizontalPosition": [
+        -31.93,
+        -442.262
+      ],
+      "coordinateFieldResidualMetres": 0.000881,
+      "mga94FieldResidualMetres": 0.005752
+    },
+    {
+      "id": "melbourne-urban-forest-trees:1942878",
+      "sourceComId": "1942878",
+      "kind": "tree-point",
+      "commonName": "Coastal Banksia",
+      "scientificName": "Banksia integrifolia",
+      "genus": "Banksia",
+      "family": "Proteaceae",
+      "diameterBreastHeight": null,
+      "yearPlanted": "2025",
+      "datePlanted": "2025-04-08",
+      "ageDescription": "Unestablished",
+      "usefulLifeExpectancy": "> 41 years",
+      "usefulLifeExpectancyValue": 50,
+      "precinct": "Melbourne",
+      "locatedIn": "Street",
+      "sourceMga94Zone55": {
+        "easting": 321050.27,
+        "northing": 5812663.24
+      },
+      "sourceWgs84": [
+        144.9669651,
+        -37.81590585
+      ],
+      "horizontalPosition": [
+        349.133,
+        100.55
+      ],
+      "coordinateFieldResidualMetres": 0,
+      "mga94FieldResidualMetres": 0.001684
+    }
+  ]
+}

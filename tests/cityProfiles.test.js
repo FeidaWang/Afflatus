@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   CITY_CONCEPT_GENERATION_PROFILES,
   CITY_EXPERIENCE_PROFILES,
+  PUBLIC_CITY_CONCEPT_PROFILE_KEYS,
   canLoadRealCityData,
   normalizeCityConceptProfileKey,
+  normalizePublicCityConceptProfileKey,
   validateCityExperienceProfile,
 } from '../src/city/profiles.ts';
 
@@ -42,13 +44,22 @@ describe('city experience and generated concept profiles', () => {
     });
   });
 
-  it('defines four generated profiles without enabling real data', () => {
+  it('keeps three public concepts and one isolated synthetic fixture without enabling real data', () => {
     expect(Object.keys(CITY_CONCEPT_GENERATION_PROFILES)).toEqual([
       'sandbox',
       'shanghai',
       'melbourne',
       'hong-kong',
     ]);
+    expect(PUBLIC_CITY_CONCEPT_PROFILE_KEYS).toEqual([
+      'shanghai',
+      'melbourne',
+      'hong-kong',
+    ]);
+    expect(CITY_CONCEPT_GENERATION_PROFILES.sandbox).toMatchObject({
+      id: 'synthetic-test-fixture-v1',
+      experienceProfileId: null,
+    });
     for (const profile of Object.values(CITY_CONCEPT_GENERATION_PROFILES)) {
       expect(profile.truthClass).toBe('generated-concept');
       expect(profile.totalDays).toBe(210);
@@ -78,5 +89,9 @@ describe('city experience and generated concept profiles', () => {
     expect(normalizeCityConceptProfileKey('MELBOURNE')).toBe('melbourne');
     expect(normalizeCityConceptProfileKey('HONG-KONG')).toBe('hong-kong');
     expect(normalizeCityConceptProfileKey('unknown')).toBe('sandbox');
+    expect(normalizePublicCityConceptProfileKey('MELBOURNE')).toBe('melbourne');
+    expect(normalizePublicCityConceptProfileKey('HONG-KONG')).toBe('hong-kong');
+    expect(normalizePublicCityConceptProfileKey('sandbox')).toBe('shanghai');
+    expect(normalizePublicCityConceptProfileKey('unknown')).toBe('shanghai');
   });
 });

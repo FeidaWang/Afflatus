@@ -3,11 +3,28 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const source = readFileSync(
+  resolve(import.meta.dirname, '../src/scene/cityScene.js'),
+  'utf8',
+);
+const compatibilitySource = readFileSync(
   resolve(import.meta.dirname, '../src/scene/citySandbox.js'),
   'utf8',
 );
+const pageSource = readFileSync(
+  resolve(import.meta.dirname, '../src/pages/cityView.js'),
+  'utf8',
+);
 
-describe('City sandbox rendering source contract', () => {
+describe('City scene rendering source contract', () => {
+  it('uses the source-neutral renderer API in production and keeps a thin legacy bridge', () => {
+    expect(pageSource).toContain("import('../scene/cityScene.js')");
+    expect(pageSource).toContain('createCitySceneRenderer({');
+    expect(pageSource).toContain('renderPlan: plan');
+    expect(pageSource).not.toContain("import('../scene/citySandbox.js')");
+    expect(compatibilitySource).toContain("from './cityScene.js'");
+    expect(compatibilitySource).toContain('return createCitySceneRenderer({ ...rest, renderPlan });');
+  });
+
   it('reuses fixed-capacity dynamic line attributes instead of replacing them per day', () => {
     expect(source.match(/createDynamicLineGeometry\(/g)?.length).toBe(6);
     expect(source).toContain('position.addUpdateRange(0, positions.length)');

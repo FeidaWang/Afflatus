@@ -9,4 +9,6 @@ arena-a-open-*.json
 probe_delete_test.txt
 playwright-report/
 test-results/
+data/city/raw/
+data/city/work/
 .lighthouseci/

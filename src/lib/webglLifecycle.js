@@ -217,11 +217,8 @@ function disposeTextureValue(value, seenTextures, seenValues, depth = 0) {
   }
 }
 
-/**
- * Disposes CPU-side Three.js object graphs as well as the renderer/context.
- * Shared geometries, materials and textures are de-duplicated by identity.
- */
-export function disposeThreeScene(root, renderer, extras = []) {
+/** Disposes one Three.js object graph without releasing its renderer/context. */
+export function disposeThreeObject3D(root, extras = []) {
   const geometries = new Set();
   const materials = new Set();
   const textures = new Set();
@@ -242,15 +239,23 @@ export function disposeThreeScene(root, renderer, extras = []) {
   });
 
   for (const extra of extras) disposeTextureValue(extra, textures, textureValues);
-  renderer?.renderLists?.dispose?.();
-  renderer?.dispose?.();
-  renderer?.forceContextLoss?.();
-
   return Object.freeze({
     geometries: geometries.size,
     materials: materials.size,
     textures: textures.size,
   });
+}
+
+/**
+ * Disposes CPU-side Three.js object graphs as well as the renderer/context.
+ * Shared geometries, materials and textures are de-duplicated by identity.
+ */
+export function disposeThreeScene(root, renderer, extras = []) {
+  const disposed = disposeThreeObject3D(root, extras);
+  renderer?.renderLists?.dispose?.();
+  renderer?.dispose?.();
+  renderer?.forceContextLoss?.();
+  return disposed;
 }
 
 export function getWebGLContextTelemetry() {

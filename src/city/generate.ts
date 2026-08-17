@@ -19,7 +19,7 @@ import {
   type RoofKind,
 } from './model';
 
-export const SANDBOX_PROFILE: CityProfile = CITY_CONCEPT_GENERATION_PROFILES.sandbox;
+export const SYNTHETIC_TEST_PROFILE: CityProfile = CITY_CONCEPT_GENERATION_PROFILES.sandbox;
 
 const round = (value: number, places = 3): number => {
   const scale = 10 ** places;

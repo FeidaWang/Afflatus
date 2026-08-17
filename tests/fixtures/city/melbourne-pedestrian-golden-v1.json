@@ -1,0 +1,1395 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "melbourne-pedestrian-golden-v1",
+  "pipelineVersion": "melbourne-pedestrian-enu-v1",
+  "truthClass": "licensed-real-data-engineering-fixture",
+  "productionApproved": false,
+  "derivedFrom": {
+    "artifactId": "melbourne-pedestrian-network-complete-v1",
+    "rawSha256": "c2b84ad5aea248cc686011d759f174398db07db82eb986115f302890eaec2fa2",
+    "archiveMember": "Pedestrian_network.json",
+    "archiveMemberSha256": "7839ed851a4fb34b4d8c88437ac95ba80413f521e97cdaef5be5c642db0b8abe"
+  },
+  "attribution": "City of Melbourne — Pedestrian Network, licensed CC BY.",
+  "sourceStrategyEvidence": "data/city/reviews/2026-08-15-melbourne-pedestrian-source-strategy.md",
+  "localFrame": {
+    "horizontalSourceCrs": {
+      "identifier": "OGC:CRS84",
+      "axisOrder": "longitude,latitude",
+      "unit": "degree",
+      "evidence": "GeoJSON coordinates match the official Opendatasoft WGS84 record geometry for OBJECTID 65923 exactly."
+    },
+    "verticalSourceDatum": {
+      "identifier": "not-applicable-2d",
+      "unit": "not-applicable",
+      "evidence": "The pedestrian archive contains two-dimensional LineString and Point geometry with no source elevation."
+    },
+    "anchorWgs84": {
+      "longitude": 144.963,
+      "latitude": -37.815,
+      "ellipsoidHeight": 0
+    },
+    "axes": "x=east,y=up,z=-north",
+    "transform": "WGS84 ellipsoid ECEF to local ENU; source has no elevation"
+  },
+  "clipBoundsWgs84": {
+    "west": 144.9615,
+    "south": -37.8205,
+    "east": 144.9715,
+    "north": -37.8105
+  },
+  "entities": [
+    {
+      "id": "melbourne-pedestrian-network:10004",
+      "sourceObjectId": 10004,
+      "sourceNetId": 10039,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "High Traffic",
+      "sourceCost": 0.067605,
+      "sourceShapeLengthMetres": 4.506976,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 1386865,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 4.507,
+      "lines": [
+        [
+          [
+            122.596,
+            356.621
+          ],
+          [
+            124.757,
+            356.248
+          ],
+          [
+            126.762,
+            355.092
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 122.596,
+        "maxX": 126.762,
+        "minZ": 355.092,
+        "maxZ": 356.621
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:10128",
+      "sourceObjectId": 10128,
+      "sourceNetId": 10163,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "Low Traffic",
+      "sourceCost": 0.03848,
+      "sourceShapeLengthMetres": 2.565309,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 1388474,
+      "derivedLengthMetres": 2.565,
+      "lines": [
+        [
+          [
+            -46.098,
+            308.65
+          ],
+          [
+            -43.695,
+            307.753
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": -46.098,
+        "maxX": -43.695,
+        "minZ": 307.753,
+        "maxZ": 308.65
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:10208",
+      "sourceObjectId": 10208,
+      "sourceNetId": 10243,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "High Traffic",
+      "sourceCost": 0.570505,
+      "sourceShapeLengthMetres": 38.033669,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 1387464,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 38.034,
+      "lines": [
+        [
+          [
+            -73.872,
+            314.115
+          ],
+          [
+            -82.291,
+            290.95
+          ],
+          [
+            -86.46,
+            278.229
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": -86.46,
+        "maxX": -73.872,
+        "minZ": 278.229,
+        "maxZ": 314.115
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:10358",
+      "sourceObjectId": 10358,
+      "sourceNetId": 10393,
+      "kind": "pedestrian-link",
+      "linkType": 6,
+      "semanticClass": "arcade",
+      "sourceDescription": "Arcade",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.090253,
+      "sourceShapeLengthMetres": 6.016847,
+      "openingTime": "7AM",
+      "closingTime": "9PM",
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 6.016,
+      "lines": [
+        [
+          [
+            311.136,
+            246.058
+          ],
+          [
+            309.107,
+            240.394
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 309.107,
+        "maxX": 311.136,
+        "minZ": 240.394,
+        "maxZ": 246.058
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:10460",
+      "sourceObjectId": 10460,
+      "sourceNetId": 10495,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "High Traffic",
+      "sourceCost": 0.17954,
+      "sourceShapeLengthMetres": 11.969359,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 1387544,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 11.969,
+      "lines": [
+        [
+          [
+            106.891,
+            206.954
+          ],
+          [
+            109.87,
+            215.148
+          ],
+          [
+            110.983,
+            218.202
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 106.891,
+        "maxX": 110.983,
+        "minZ": 206.954,
+        "maxZ": 218.202
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:10534",
+      "sourceObjectId": 10534,
+      "sourceNetId": 10569,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "High Traffic",
+      "sourceCost": 0.040279,
+      "sourceShapeLengthMetres": 2.685268,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 2.685,
+      "lines": [
+        [
+          [
+            552.257,
+            199.804
+          ],
+          [
+            554.744,
+            198.793
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 552.257,
+        "maxX": 554.744,
+        "minZ": 198.793,
+        "maxZ": 199.804
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:10647",
+      "sourceObjectId": 10647,
+      "sourceNetId": 10682,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "High Traffic",
+      "sourceCost": 0.029221,
+      "sourceShapeLengthMetres": 1.948079,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 1.949,
+      "lines": [
+        [
+          [
+            642.506,
+            166.071
+          ],
+          [
+            644.278,
+            165.26
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 642.506,
+        "maxX": 644.278,
+        "minZ": 165.26,
+        "maxZ": 166.071
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:10806",
+      "sourceObjectId": 10806,
+      "sourceNetId": 10841,
+      "kind": "pedestrian-link",
+      "linkType": 7,
+      "semanticClass": "lane",
+      "sourceDescription": "Lane",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.1449,
+      "sourceShapeLengthMetres": 9.660001,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 9.66,
+      "lines": [
+        [
+          [
+            636.393,
+            147.734
+          ],
+          [
+            632.899,
+            138.728
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 632.899,
+        "maxX": 636.393,
+        "minZ": 138.728,
+        "maxZ": 147.734
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:10918",
+      "sourceObjectId": 10918,
+      "sourceNetId": 10953,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "High Traffic",
+      "sourceCost": 0.160387,
+      "sourceShapeLengthMetres": 10.69249,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 1387706,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 10.693,
+      "lines": [
+        [
+          [
+            560.679,
+            103.694
+          ],
+          [
+            557.188,
+            93.587
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 557.188,
+        "maxX": 560.679,
+        "minZ": 93.587,
+        "maxZ": 103.694
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:11069",
+      "sourceObjectId": 11069,
+      "sourceNetId": 11104,
+      "kind": "pedestrian-link",
+      "linkType": 7,
+      "semanticClass": "lane",
+      "sourceDescription": "Lane",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.080985,
+      "sourceShapeLengthMetres": 5.398996,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 5.399,
+      "lines": [
+        [
+          [
+            2.084,
+            50.846
+          ],
+          [
+            1.746,
+            50.014
+          ],
+          [
+            0.272,
+            45.761
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 0.272,
+        "maxX": 2.084,
+        "minZ": 45.761,
+        "maxZ": 50.846
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:13682",
+      "sourceObjectId": 13682,
+      "sourceNetId": 13717,
+      "kind": "pedestrian-link",
+      "linkType": 6,
+      "semanticClass": "arcade",
+      "sourceDescription": "Arcade",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.063349,
+      "sourceShapeLengthMetres": 4.223281,
+      "openingTime": "7AM",
+      "closingTime": "9PM",
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 4.222,
+      "lines": [
+        [
+          [
+            -29.154,
+            -482.129
+          ],
+          [
+            -33.171,
+            -480.828
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": -33.171,
+        "maxX": -29.154,
+        "minZ": -482.129,
+        "maxZ": -480.828
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:2156",
+      "sourceObjectId": 2156,
+      "sourceNetId": 2163,
+      "kind": "pedestrian-link",
+      "linkType": 2,
+      "semanticClass": "long-wait-crossing",
+      "sourceDescription": "Pedestrian Long wait Croosing",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.765434,
+      "sourceShapeLengthMetres": 25.514474,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 25.515,
+      "lines": [
+        [
+          [
+            180.589,
+            336.865
+          ],
+          [
+            156.286,
+            344.635
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 156.286,
+        "maxX": 180.589,
+        "minZ": 336.865,
+        "maxZ": 344.635
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:2159",
+      "sourceObjectId": 2159,
+      "sourceNetId": 2166,
+      "kind": "pedestrian-link",
+      "linkType": 2,
+      "semanticClass": "long-wait-crossing",
+      "sourceDescription": "Pedestrian Long wait Croosing",
+      "trafficClass": "Private Connection",
+      "sourceCost": 1.025231,
+      "sourceShapeLengthMetres": 34.174366,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 34.174,
+      "lines": [
+        [
+          [
+            420.446,
+            320.135
+          ],
+          [
+            387.588,
+            329.529
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 387.588,
+        "maxX": 420.446,
+        "minZ": 320.135,
+        "maxZ": 329.529
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:2396",
+      "sourceObjectId": 2396,
+      "sourceNetId": 2403,
+      "kind": "pedestrian-link",
+      "linkType": 3,
+      "semanticClass": "short-wait-crossing",
+      "sourceDescription": "Short wait crosing",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.551218,
+      "sourceShapeLengthMetres": 27.560875,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 27.561,
+      "lines": [
+        [
+          [
+            105.16,
+            392.192
+          ],
+          [
+            101.306,
+            382.828
+          ],
+          [
+            101.64,
+            375.085
+          ],
+          [
+            98.466,
+            365.935
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 98.466,
+        "maxX": 105.16,
+        "minZ": 365.935,
+        "maxZ": 392.192
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:2428",
+      "sourceObjectId": 2428,
+      "sourceNetId": 2435,
+      "kind": "pedestrian-link",
+      "linkType": 4,
+      "semanticClass": "zebra-crossing",
+      "sourceDescription": "zebra",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.103051,
+      "sourceShapeLengthMetres": 6.870092,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 6.87,
+      "lines": [
+        [
+          [
+            647.134,
+            -81.708
+          ],
+          [
+            648.273,
+            -74.933
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 647.134,
+        "maxX": 648.273,
+        "minZ": -81.708,
+        "maxZ": -74.933
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:2430",
+      "sourceObjectId": 2430,
+      "sourceNetId": 2437,
+      "kind": "pedestrian-link",
+      "linkType": 4,
+      "semanticClass": "zebra-crossing",
+      "sourceDescription": "zebra",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.123775,
+      "sourceShapeLengthMetres": 8.251674,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 8.252,
+      "lines": [
+        [
+          [
+            507.247,
+            -278.246
+          ],
+          [
+            509.715,
+            -270.372
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 507.247,
+        "maxX": 509.715,
+        "minZ": -278.246,
+        "maxZ": -270.372
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:2431",
+      "sourceObjectId": 2431,
+      "sourceNetId": 2438,
+      "kind": "pedestrian-link",
+      "linkType": 4,
+      "semanticClass": "zebra-crossing",
+      "sourceDescription": "zebra",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.144035,
+      "sourceShapeLengthMetres": 9.602312,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 9.602,
+      "lines": [
+        [
+          [
+            547.473,
+            -293.03
+          ],
+          [
+            550.682,
+            -283.98
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 547.473,
+        "maxX": 550.682,
+        "minZ": -293.03,
+        "maxZ": -283.98
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:2548",
+      "sourceObjectId": 2548,
+      "sourceNetId": 2555,
+      "kind": "pedestrian-link",
+      "linkType": 6,
+      "semanticClass": "arcade",
+      "sourceDescription": "Arcade",
+      "trafficClass": "Private Connection",
+      "sourceCost": 1.754729,
+      "sourceShapeLengthMetres": 116.981942,
+      "openingTime": "7AM",
+      "closingTime": "9PM",
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 116.983,
+      "lines": [
+        [
+          [
+            124.949,
+            -123.426
+          ],
+          [
+            121.292,
+            -131.997
+          ],
+          [
+            84.447,
+            -228.354
+          ],
+          [
+            82.965,
+            -232.606
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 82.965,
+        "maxX": 124.949,
+        "minZ": -232.606,
+        "maxZ": -123.426
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:27604",
+      "sourceObjectId": 27604,
+      "sourceNetId": 27639,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "Low Traffic",
+      "sourceCost": 0.007549,
+      "sourceShapeLengthMetres": 0.503289,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 0.504,
+      "lines": [
+        [
+          [
+            75.146,
+            -105.162
+          ],
+          [
+            74.672,
+            -104.992
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 74.672,
+        "maxX": 75.146,
+        "minZ": -105.162,
+        "maxZ": -104.992
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:27684",
+      "sourceObjectId": 27684,
+      "sourceNetId": 27719,
+      "kind": "pedestrian-link",
+      "linkType": 7,
+      "semanticClass": "lane",
+      "sourceDescription": "Lane",
+      "trafficClass": "Private Connection",
+      "sourceCost": 1.517484,
+      "sourceShapeLengthMetres": 101.165597,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 101.166,
+      "lines": [
+        [
+          [
+            513.988,
+            -283.598
+          ],
+          [
+            482.603,
+            -375.828
+          ],
+          [
+            481.767,
+            -379.476
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 481.767,
+        "maxX": 513.988,
+        "minZ": -379.476,
+        "maxZ": -283.598
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:28715",
+      "sourceObjectId": 28715,
+      "sourceNetId": 48481,
+      "kind": "pedestrian-link",
+      "linkType": 6,
+      "semanticClass": "arcade",
+      "sourceDescription": "Arcade",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.00752,
+      "sourceShapeLengthMetres": 0.501352,
+      "openingTime": "7AM",
+      "closingTime": "9PM",
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 0.501,
+      "lines": [
+        [
+          [
+            104.795,
+            -26.774
+          ],
+          [
+            104.685,
+            -26.285
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 104.685,
+        "maxX": 104.795,
+        "minZ": -26.774,
+        "maxZ": -26.285
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:28944",
+      "sourceObjectId": 28944,
+      "sourceNetId": 48710,
+      "kind": "pedestrian-link",
+      "linkType": 7,
+      "semanticClass": "lane",
+      "sourceDescription": "Lane",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.008714,
+      "sourceShapeLengthMetres": 0.580913,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 0.581,
+      "lines": [
+        [
+          [
+            88.509,
+            -443.013
+          ],
+          [
+            88.307,
+            -443.558
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 88.307,
+        "maxX": 88.509,
+        "minZ": -443.558,
+        "maxZ": -443.013
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:3574",
+      "sourceObjectId": 3574,
+      "sourceNetId": 3609,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "Low Traffic",
+      "sourceCost": 2.394583,
+      "sourceShapeLengthMetres": 159.638866,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 1467294,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 159.64,
+      "lines": [
+        [
+          [
+            539.094,
+            423.646
+          ],
+          [
+            622.053,
+            420.535
+          ],
+          [
+            641.902,
+            419.928
+          ],
+          [
+            661.45,
+            405.934
+          ],
+          [
+            689.847,
+            389.673
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 539.094,
+        "maxX": 689.847,
+        "minZ": 389.673,
+        "maxZ": 423.646
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:3641",
+      "sourceObjectId": 3641,
+      "sourceNetId": 3676,
+      "kind": "pedestrian-link",
+      "linkType": 3,
+      "semanticClass": "short-wait-crossing",
+      "sourceDescription": "Short wait crosing",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.091088,
+      "sourceShapeLengthMetres": 4.55438,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 4.554,
+      "lines": [
+        [
+          [
+            -72.25,
+            318.37
+          ],
+          [
+            -73.872,
+            314.115
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": -73.872,
+        "maxX": -72.25,
+        "minZ": 314.115,
+        "maxZ": 318.37
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:36543",
+      "sourceObjectId": 36543,
+      "sourceNetId": 34540,
+      "kind": "pedestrian-link",
+      "linkType": 91,
+      "semanticClass": "entrance-connector",
+      "sourceDescription": "Entrance conextor",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0,
+      "sourceShapeLengthMetres": 1.398554,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 0.167,
+      "lines": [
+        [
+          [
+            -132.086,
+            -444.912
+          ],
+          [
+            -131.929,
+            -444.97
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": -132.086,
+        "maxX": -131.929,
+        "minZ": -444.97,
+        "maxZ": -444.912
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:44379",
+      "sourceObjectId": 44379,
+      "sourceNetId": 42376,
+      "kind": "pedestrian-link",
+      "linkType": 91,
+      "semanticClass": "entrance-connector",
+      "sourceDescription": "Entrance conextor",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0,
+      "sourceShapeLengthMetres": 2.986271,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 2.986,
+      "lines": [
+        [
+          [
+            212.244,
+            144.365
+          ],
+          [
+            209.481,
+            145.497
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 209.481,
+        "maxX": 212.244,
+        "minZ": 144.365,
+        "maxZ": 145.497
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:49686",
+      "sourceObjectId": 49686,
+      "sourceNetId": 49521,
+      "kind": "pedestrian-link",
+      "linkType": 91,
+      "semanticClass": "entrance-connector",
+      "sourceDescription": "Entrance conextor",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0,
+      "sourceShapeLengthMetres": 86.395204,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 73.26,
+      "lines": [
+        [
+          [
+            744.698,
+            304.563
+          ],
+          [
+            744.827,
+            305.438
+          ],
+          [
+            748.413,
+            377.725
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 744.698,
+        "maxX": 748.413,
+        "minZ": 304.563,
+        "maxZ": 377.725
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:56304",
+      "sourceObjectId": 56304,
+      "sourceNetId": 56297,
+      "kind": "pedestrian-link",
+      "linkType": 92,
+      "semanticClass": "centroid-connector",
+      "sourceDescription": "Centroid Connector",
+      "trafficClass": "Private Connection",
+      "sourceCost": 500,
+      "sourceShapeLengthMetres": 323.579667,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 323.582,
+      "lines": [
+        [
+          [
+            420.504,
+            291.334
+          ],
+          [
+            743.78,
+            305.392
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 420.504,
+        "maxX": 743.78,
+        "minZ": 291.334,
+        "maxZ": 305.392
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:61219",
+      "sourceObjectId": 61219,
+      "sourceNetId": 61214,
+      "kind": "pedestrian-link",
+      "linkType": 92,
+      "semanticClass": "centroid-connector",
+      "sourceDescription": "Centroid Connector",
+      "trafficClass": "Private Connection",
+      "sourceCost": 500,
+      "sourceShapeLengthMetres": 17.547,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 17.547,
+      "lines": [
+        [
+          [
+            255.024,
+            109.359
+          ],
+          [
+            271.915,
+            114.111
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 255.024,
+        "maxX": 271.915,
+        "minZ": 109.359,
+        "maxZ": 114.111
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:6166",
+      "sourceObjectId": 6166,
+      "sourceNetId": 6201,
+      "kind": "pedestrian-link",
+      "linkType": 2,
+      "semanticClass": "long-wait-crossing",
+      "sourceDescription": "Pedestrian Long wait Croosing",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.026127,
+      "sourceShapeLengthMetres": 0.870891,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 0.871,
+      "lines": [
+        [
+          [
+            368.881,
+            298.549
+          ],
+          [
+            368.683,
+            297.701
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 368.683,
+        "maxX": 368.881,
+        "minZ": 297.701,
+        "maxZ": 298.549
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:66342",
+      "sourceObjectId": 66342,
+      "sourceNetId": 66339,
+      "kind": "pedestrian-link",
+      "linkType": 92,
+      "semanticClass": "centroid-connector",
+      "sourceDescription": "Centroid Connector",
+      "trafficClass": "Private Connection",
+      "sourceCost": 500,
+      "sourceShapeLengthMetres": 9.755175,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 0.756,
+      "lines": [
+        [
+          [
+            -131.669,
+            -45.583
+          ],
+          [
+            -132.08,
+            -46.217
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": -132.08,
+        "maxX": -131.669,
+        "minZ": -46.217,
+        "maxZ": -45.583
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:6637",
+      "sourceObjectId": 6637,
+      "sourceNetId": 6672,
+      "kind": "pedestrian-link",
+      "linkType": 3,
+      "semanticClass": "short-wait-crossing",
+      "sourceDescription": "Short wait crosing",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.060977,
+      "sourceShapeLengthMetres": 3.048861,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 3.049,
+      "lines": [
+        [
+          [
+            614.901,
+            -424.745
+          ],
+          [
+            613.991,
+            -427.655
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 613.991,
+        "maxX": 614.901,
+        "minZ": -427.655,
+        "maxZ": -424.745
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:6821",
+      "sourceObjectId": 6821,
+      "sourceNetId": 6856,
+      "kind": "pedestrian-link",
+      "linkType": 5,
+      "semanticClass": "tram-crossing",
+      "sourceDescription": "Tram crossing",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.16303,
+      "sourceShapeLengthMetres": 8.151517,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 8.152,
+      "lines": [
+        [
+          [
+            36.68,
+            168.97
+          ],
+          [
+            34.168,
+            161.215
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 34.168,
+        "maxX": 36.68,
+        "minZ": 161.215,
+        "maxZ": 168.97
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:6822",
+      "sourceObjectId": 6822,
+      "sourceNetId": 6857,
+      "kind": "pedestrian-link",
+      "linkType": 5,
+      "semanticClass": "tram-crossing",
+      "sourceDescription": "Tram crossing",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.345582,
+      "sourceShapeLengthMetres": 17.279101,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 17.279,
+      "lines": [
+        [
+          [
+            34.168,
+            161.215
+          ],
+          [
+            33.03,
+            151.01
+          ],
+          [
+            30.982,
+            144.305
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 30.982,
+        "maxX": 34.168,
+        "minZ": 144.305,
+        "maxZ": 161.215
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:7066",
+      "sourceObjectId": 7066,
+      "sourceNetId": 7101,
+      "kind": "pedestrian-link",
+      "linkType": 1,
+      "semanticClass": "footpath",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "High Traffic",
+      "sourceCost": 0.073286,
+      "sourceShapeLengthMetres": 4.885763,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 1387551,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 4.885,
+      "lines": [
+        [
+          [
+            147.583,
+            -363.722
+          ],
+          [
+            142.986,
+            -362.069
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 142.986,
+        "maxX": 147.583,
+        "minZ": -363.722,
+        "maxZ": -362.069
+      }
+    },
+    {
+      "id": "melbourne-pedestrian-network:925",
+      "sourceObjectId": 925,
+      "sourceNetId": 931,
+      "kind": "pedestrian-link",
+      "linkType": 5,
+      "semanticClass": "tram-crossing",
+      "sourceDescription": "Pestrian Footpath",
+      "trafficClass": "Private Connection",
+      "sourceCost": 0.738377,
+      "sourceShapeLengthMetres": 49.225144,
+      "openingTime": null,
+      "closingTime": null,
+      "mccid": 0,
+      "mccidA": 0,
+      "mccidB": 0,
+      "derivedLengthMetres": 49.225,
+      "lines": [
+        [
+          [
+            463.215,
+            -244.315
+          ],
+          [
+            509.807,
+            -260.2
+          ]
+        ]
+      ],
+      "bounds": {
+        "minX": 463.215,
+        "maxX": 509.807,
+        "minZ": -260.2,
+        "maxZ": -244.315
+      }
+    }
+  ]
+}

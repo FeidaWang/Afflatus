@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "reportId": "melbourne-buildings-flinders-federation-v1-qa",
+  "pipelineVersion": "melbourne-buildings-enu-v1",
+  "geometryKind": "building-polygon",
+  "status": "passed-with-exclusions",
+  "artifactId": "melbourne-buildings-flinders-federation-v1",
+  "rawSha256": "7934300a2e436bc8b50cdc214a8359dc0d37ac25b5617b02943338838ea415f6",
+  "workSha256": "70e0a33a69045966d3e7b5d466357be2371ecf6006c52850ecf1fb253e927250",
+  "goldenFixtureSha256": "07b5983e699e5e13e8a11548311388dd01c49d61d508ca64c4d0732a4160e24e",
+  "rawFeatureCount": 1957,
+  "acceptedEntityCount": 1946,
+  "excludedFeatureCount": 11,
+  "exclusions": {
+    "empty-after-clip": 11
+  },
+  "duplicateEntityIds": 0,
+  "sourceGeometryTypes": {
+    "MultiPolygon": 1,
+    "Polygon": 1956
+  },
+  "heightMetres": {
+    "minimum": 0.4,
+    "maximum": 220,
+    "average": 37.199
+  },
+  "footprintAreaSquareMetres": {
+    "minimum": 1.099,
+    "maximum": 17894.207,
+    "total": 1162612.662
+  },
+  "controlPoints": {
+    "anchor": {
+      "east": 0,
+      "north": 0,
+      "up": 0
+    },
+    "southWest": {
+      "east": -132.069,
+      "north": -610.463,
+      "up": -0.030666
+    },
+    "northEast": {
+      "east": 748.493,
+      "north": 499.434,
+      "up": -0.063475
+    }
+  },
+  "checks": {
+    "rawHashMatchesInventory": true,
+    "featureCountMatchesInventory": true,
+    "entityIdsUnique": true,
+    "coordinatesFinite": true,
+    "clippedToBounds": true,
+    "heightsOrdered": true,
+    "sourceCrsResolved": "OGC:CRS84",
+    "verticalDatumResolved": "AHD",
+    "productionApproved": false
+  }
+}

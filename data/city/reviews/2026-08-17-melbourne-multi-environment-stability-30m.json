@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "city-multi-environment-stability-evidence-v1",
+  "recordedDate": "2026-08-17",
+  "timezone": "Australia/Melbourne",
+  "scope": "non-public dev-loopback Melbourne candidate streaming plus Analysis, Day, Sunset and Night style switching",
+  "packageId": "melbourne-flinders-federation-v1",
+  "manifestSha256": "6ba99fc6830c46c42f740ff5de241040c971295ca79d18257cb3009adb8a7b60",
+  "formalEngineeringGate": true,
+  "productionReleaseGranted": false,
+  "decision": "30-minute multi-environment desktop Chromium engineering soak passed; production release and physical-device sign-off remain ungranted",
+  "command": "CITY_ANALYSIS_STABILITY_MS=1800000 npx playwright test --config=playwright.city-analysis.config.js --grep=\"separates cold/warm\"",
+  "environment": {
+    "operatingSystem": "macOS 26.6.1",
+    "cpu": "Apple M4 Pro",
+    "memoryBytes": 51539607552,
+    "architecture": "arm64",
+    "node": "v24.14.0",
+    "playwrightChromium": "149.0.7827.55",
+    "headless": true,
+    "viewportCssPixels": {
+      "width": 1440,
+      "height": 1000
+    }
+  },
+  "harness": {
+    "viteConfig": "vite.city-analysis.config.js",
+    "developmentTransformRequired": true,
+    "hmrEnabled": false,
+    "longRunTraceMode": "off",
+    "externalNetworkBlocked": true,
+    "serviceWorkersBlocked": true,
+    "rationale": "The licensed candidate remains guarded by import.meta.env.DEV, while HMR is disabled to preserve one uninterrupted page lifetime. Continuous WebGL trace screencasts are disabled for runs of 60 seconds or longer so trace I/O does not perturb heap and cache measurements.",
+    "qualificationRun": {
+      "requestedDurationMs": 15000,
+      "measuredDurationMs": 19315.20375,
+      "status": "pass",
+      "iterations": 24,
+      "visitedViews": 18,
+      "visitedEnvironments": ["analysis", "day", "night", "sunset"],
+      "environmentSwitchCount": 25,
+      "maximumSteadyP95Ms": 0.3,
+      "residentBytes": 2372728,
+      "residentAssets": 17
+    },
+    "invalidatedAttempts": [
+      {
+        "status": "invalidated",
+        "elapsed": "approximately 3.4 minutes",
+        "reason": "The ordinary Vite HMR client reported a lost server connection, reloaded the page after reconnecting and destroyed the in-flight Playwright execution context.",
+        "acceptedAsStabilityEvidence": false
+      },
+      {
+        "status": "invalidated",
+        "phase": "15-second preflight warm-up",
+        "reason": "One HMR-disabled browser run stopped receiving animation-frame polls before the 180-frame warm-up threshold. A direct fixture-equivalent reproduction reached 180 frames in about five seconds and the repeated qualification run passed before the formal timer started.",
+        "acceptedAsStabilityEvidence": false
+      }
+    ]
+  },
+  "method": {
+    "requestedDurationMs": 1800000,
+    "measuredDurationMs": 1803605.6923329998,
+    "spatialTargets": 6,
+    "lodsPerTarget": 3,
+    "expectedDistinctViews": 18,
+    "environments": ["analysis", "day", "sunset", "night"],
+    "sampleIntervalMs": 1000,
+    "interactionDelayMs": 250,
+    "heapSource": "Chrome DevTools Protocol Performance.getMetrics JSHeapUsedSize",
+    "heapWarmupFractionDiscarded": 0.2,
+    "frameMetric": "renderer CPU duration p95 over the rolling 180-frame window"
+  },
+  "result": {
+    "status": "pass",
+    "coldBootMs": 453.004666,
+    "coldP95Ms": 0.4,
+    "warmP95Ms": 0.2,
+    "maximumSteadyP95Ms": 0.3,
+    "iterations": 4236,
+    "visitedViews": 18,
+    "visitedEnvironments": ["analysis", "day", "night", "sunset"],
+    "environmentSwitchCount": 4237,
+    "heap": {
+      "samples": 1454,
+      "distinctValues": 1454,
+      "firstSteadyWindowMedianBytes": 20910884,
+      "lastSteadyWindowMedianBytes": 23606912,
+      "medianGrowthBytes": 2696028,
+      "slopeBytesPerMinute": 220946.41109349756
+    },
+    "finalCache": {
+      "residentBytes": 2372728,
+      "residentAssets": 17,
+      "referencedAssets": 4,
+      "decodedAssetCount": 10633,
+      "evictionCount": 10616,
+      "maximumResidentBytes": 2500000,
+      "maximumResidentAssets": 18
+    },
+    "allSamplesWithinVisibleBudget": true,
+    "allSamplesWithinResidentBudget": true,
+    "allSamplesRendererWebgl": true,
+    "allSamplesWithinEnvironmentContract": true,
+    "allSamplesWithoutLifecycleFallback": true,
+    "allSamplesWithoutHorizontalOverflow": true,
+    "pageLifecycleContinuous": true,
+    "consoleErrors": 0,
+    "uncaughtPageErrors": 0
+  },
+  "limits": {
+    "coldBootMs": 8000,
+    "warmP95Ms": 18,
+    "maximumSteadyP95Ms": 18,
+    "minimumHeapSamples": 1200,
+    "maximumHeapMedianGrowthBytes": 33554432,
+    "maximumHeapSlopeBytesPerMinute": 4194304,
+    "maximumResidentBytes": 2500000,
+    "maximumResidentAssets": 18,
+    "maximumVisibleBytes": 1100000,
+    "maximumVisibleDrawCalls": 36,
+    "maximumVisibleTriangles": 40000
+  },
+  "limitations": [
+    "The p95 measurement is renderer CPU duration, not GPU frame time.",
+    "Headless desktop Chromium does not provide physical-device thermal or battery evidence.",
+    "Emulated or desktop results cannot approve iPhone Safari or Samsung Chrome hardware.",
+    "This engineering evidence does not change the production registry or any package approval state."
+  ]
+}

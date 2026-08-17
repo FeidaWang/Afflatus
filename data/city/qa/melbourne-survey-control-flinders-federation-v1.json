@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "reportId": "melbourne-survey-control-flinders-federation-v1-qa",
+  "pipelineVersion": "melbourne-survey-control-enu-v1",
+  "geometryKind": "survey-control-point",
+  "status": "passed-with-exclusions",
+  "artifactId": "melbourne-survey-control-flinders-federation-v1",
+  "rawSha256": "e1697b9c766e393566907445eec8d8e52ed878480158013002046e99514e3983",
+  "workSha256": "5e6d753e3f62f884bdbbc30e6e9efe30dd5d2986c0ee8336fb5b17558a3660c4",
+  "goldenFixtureSha256": "45707f7a70954fe59f7739252bc9bf25572a00839701b6f415ed57c26b14f417",
+  "rawFeatureCount": 181,
+  "acceptedEntityCount": 40,
+  "excludedFeatureCount": 141,
+  "exclusions": {
+    "not-ahd-adjusted": 17,
+    "not-gda-adjusted": 69,
+    "status-abandoned": 1,
+    "status-destroyed": 30,
+    "status-not-found": 12,
+    "status-not-used": 10,
+    "status-suspect": 2
+  },
+  "duplicateEntityIds": 0,
+  "sourceGeometryTypes": {
+    "Point": 181
+  },
+  "trustedStatusCounts": {
+    "OK": 40
+  },
+  "publishedCoordinateResidualMetres": {
+    "maximum": 0.011509,
+    "average": 0.006222,
+    "withinTwoCentimetres": 40
+  },
+  "serviceGeometryResidualMetres": {
+    "maximum": 1.551543,
+    "average": 0.314722,
+    "withinTwoCentimetres": 32,
+    "gda94LikeOffsetReview": 8,
+    "interpretation": "The authoritative control coordinate is the published GDA2020 DMS/MGA2020 pair. Mixed service-geometry datum behaviour is classified and never silently substituted."
+  },
+  "uncertaintyMetres": {
+    "horizontalMaximum": 0.007,
+    "verticalMaximum": 0.011
+  },
+  "ahdHeightMetres": {
+    "minimum": 1.109,
+    "maximum": 24.12
+  },
+  "controlPoints": {
+    "trustedSetCount": 40,
+    "anchor": {
+      "id": "melbourne-vicmap-survey-control:308331020",
+      "distance": 70.043
+    }
+  },
+  "checks": {
+    "rawHashMatchesInventory": true,
+    "featureCountMatchesInventory": true,
+    "entityIdsUnique": true,
+    "coordinatesFinite": true,
+    "clippedToBounds": true,
+    "sourceDmsCoordinateFieldsChecked": true,
+    "sourceMga2020CoordinateFieldsChecked": true,
+    "allControlsStatusOk": true,
+    "allControlsGda2020Adjusted": true,
+    "allControlsAhdAdjusted": true,
+    "uncertaintiesFinite": true,
+    "publishedCoordinateResidualWithinTwoCentimetres": true,
+    "serviceGeometryDatumDriftClassified": true,
+    "sourceCrsResolved": "GDA2020 geographic / MGA2020 Zone 55",
+    "verticalDatumResolved": "AHD",
+    "productionApproved": false
+  }
+}
