@@ -1,6 +1,6 @@
 import { expect, settlePage, test } from './site-fixture.js';
 
-const PROFILES = Object.freeze(['sandbox', 'shanghai', 'melbourne', 'hong-kong']);
+const PROFILES = Object.freeze(['shanghai', 'melbourne', 'hong-kong']);
 const DAYS = Object.freeze([0, 70, 147, 210]);
 const VISUAL_MODES = Object.freeze([
   Object.freeze({ id: 'full', reducedMotion: 'no-preference', days: DAYS }),
@@ -28,8 +28,7 @@ test('Cityview emits a fixed-seed profile and construction-day visual matrix', a
     await page.emulateMedia({ reducedMotion: mode.reducedMotion });
 
     for (const profile of PROFILES) {
-      const query = new URLSearchParams({ seed: 'city-release-candidate-001' });
-      if (profile !== 'sandbox') query.set('profile', profile);
+      const query = new URLSearchParams({ seed: 'city-release-candidate-001', profile });
       await page.goto(`/cityview.html?${query}`, { waitUntil: 'domcontentloaded' });
       await settlePage(page);
       await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "melbourne-pedestrian-network-complete-v1",
+  "cityId": "melbourne",
+  "layerId": "melbourne-pedestrian-network",
+  "datasetId": "pedestrian-network",
+  "datasetVersion": "source-modified-2019-11-19-data-processed-2022-11-24",
+  "title": "Pedestrian Network",
+  "provider": "City of Melbourne",
+  "sourceRecordUrl": "https://data.melbourne.vic.gov.au/explore/dataset/pedestrian-network/",
+  "acquisitionUrl": "https://data.melbourne.vic.gov.au/api/datasets/1.0/pedestrian-network/alternative_exports/pedestrian_network_zip/",
+  "queryBoundsWgs84": {
+    "west": 144.9615,
+    "south": -37.8205,
+    "east": 144.9715,
+    "north": -37.8105
+  },
+  "retrievedAt": "2026-08-15T13:14:52.590Z",
+  "rawPath": "data/city/raw/melbourne/pedestrian/melbourne-pedestrian-network-complete-v1.zip",
+  "responseHeadersPath": "data/city/raw/melbourne/pedestrian/melbourne-pedestrian-network-complete-v1.headers.json",
+  "responseHeadersSha256": "438f08b53ba308833cfae4538eee778d5798b3e89d2769b4bc018502c2d4f507",
+  "rawSha256": "c2b84ad5aea248cc686011d759f174398db07db82eb986115f302890eaec2fa2",
+  "rawByteLength": 3845208,
+  "featureCount": 71060,
+  "sourceFormat": "ZIP containing GeoJSON FeatureCollections",
+  "archiveMembers": [
+    {
+      "path": "Pedestrian_network.json",
+      "byteLength": 38224447,
+      "sha256": "7839ed851a4fb34b4d8c88437ac95ba80413f521e97cdaef5be5c642db0b8abe",
+      "featureCount": 71060,
+      "geometryType": "LineString"
+    },
+    {
+      "path": "Property_centroid.json",
+      "byteLength": 3110025,
+      "sha256": "9b6549eca06be9f471139d28cdf67304e10f76e0d609dcdec665b6d3183b11ce",
+      "featureCount": 14266,
+      "geometryType": "Point"
+    }
+  ],
+  "sourceCrs": {
+    "identifier": "OGC:CRS84",
+    "axisOrder": "longitude,latitude",
+    "unit": "degree",
+    "evidence": "GeoJSON coordinates match the official Opendatasoft WGS84 record geometry for OBJECTID 65923 exactly."
+  },
+  "verticalDatum": {
+    "identifier": "not-applicable-2d",
+    "unit": "not-applicable",
+    "evidence": "The pedestrian archive contains two-dimensional LineString and Point geometry with no source elevation."
+  },
+  "licence": {
+    "id": "CC-BY-4.0-source-declared",
+    "url": "https://data.melbourne.vic.gov.au/explore/dataset/pedestrian-network/",
+    "snapshotSha256": "6cfeacc65b1486e274ffcd225af3fd49e47e69f4c5a39f2fc2c23e6b2934fde2",
+    "attribution": "City of Melbourne — Pedestrian Network, licensed CC BY."
+  },
+  "acquisitionApprovalEvidence": "data/city/reviews/2026-08-15-feida-wang-melbourne-acquisition.md",
+  "sourceStrategyEvidence": "data/city/reviews/2026-08-15-melbourne-pedestrian-source-strategy.md",
+  "productionApproved": false
+}

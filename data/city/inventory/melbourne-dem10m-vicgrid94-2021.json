@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "melbourne-dem10m-vicgrid94-2021",
+  "cityId": "melbourne",
+  "layerId": "melbourne-vicmap-dem10m",
+  "datasetId": "vicmap-elevation-dem-10m",
+  "datasetVersion": "product-specification-v3-october-2020-datashare-archive-2021",
+  "title": "Vicmap Elevation DEM 10m",
+  "provider": "Victoria Department of Transport and Planning",
+  "sourceRecordUrl": "https://discover.data.vic.gov.au/dataset/vicmap-elevation-dem-10m",
+  "acquisitionUrl": "https://datashare.maps.vic.gov.au/search?md=2fd9d712-5407-51df-bc75-bb13d37499af",
+  "queryBoundsWgs84": {
+    "west": 144.9615,
+    "south": -37.8205,
+    "east": 144.9715,
+    "north": -37.8105
+  },
+  "acquisitionScope": "statewide-prepackaged-product-clipped-locally",
+  "retrievedAt": "2026-08-15T17:35:22Z",
+  "rawPath": "data/city/raw/melbourne/dem10m/vmelev-dem10m-geotiff-gda94-vicgrid.zip",
+  "rawSha256": "42632cee7798b2154c9bb2eaeddf586148fd6cdf3b9a3913686d14f5f7f0cd8d",
+  "rawByteLength": 11920232021,
+  "featureCount": 5095350000,
+  "sourceFormat": "ZIP64/Deflate64 containing one statewide float32 GeoTIFF and official supporting documents",
+  "archiveMembers": [
+    {
+      "path": "vmelev_dem10m_Geotiff_GDA94_VicGrid/Creative Commons Licence 4.pdf",
+      "byteLength": 64687,
+      "sha256": "4277e6b502500acbe387472def27dee34920f508efb53922d504418164aa6b0e",
+      "dataKind": "licence-pdf"
+    },
+    {
+      "path": "vmelev_dem10m_Geotiff_GDA94_VicGrid/Licence links for Vicmap DEM 10m data.txt",
+      "byteLength": 320,
+      "sha256": "5d1163a5561a955b34d4e17c9792928a346e57813fe1601ca65e9f49f2601c11",
+      "dataKind": "licence-links"
+    },
+    {
+      "path": "vmelev_dem10m_Geotiff_GDA94_VicGrid/Vicmap Elevation DEM 10m Product Data Specification.docx",
+      "byteLength": 507607,
+      "sha256": "e7260c44978f28e437d36b8d70ade636f688839fdea5107cf9a3ea8381e7f6ed",
+      "dataKind": "product-specification"
+    },
+    {
+      "path": "vmelev_dem10m_Geotiff_GDA94_VicGrid/vmelev_dem10m_Geotiff_GDA94_Vicgrid.tif",
+      "byteLength": 12520685513,
+      "sha256": "4c104120c7fe721c189f5e48313caf310c167cca637d0c7b04a9d9877dd56225",
+      "dataKind": "raster",
+      "cellCount": 5095350000
+    }
+  ],
+  "verificationArchive": {
+    "role": "native-esri-grid-independent-format-check",
+    "rawPath": "data/city/raw/melbourne/dem10m/vmelev-dem10m-esri-grid-gda94-vicgrid.zip",
+    "rawSha256": "d51c9dba5eed0edb616b61e44199d07e8c1600740a89f68f5af9556d978a577f",
+    "rawByteLength": 10069584158,
+    "memberCount": 49,
+    "uncompressedByteLength": 22991845095
+  },
+  "extractedRasterPath": "data/city/raw/melbourne/dem10m/extracted-geotiff/vmelev_dem10m_Geotiff_GDA94_VicGrid/vmelev_dem10m_Geotiff_GDA94_Vicgrid.tif",
+  "verificationRasterPath": "data/city/raw/melbourne/dem10m/extracted-esri-grid/vmelev_dem10m_ESRI_grid_GDA94_Vicgrid/vmelev_dem10m/dem10m",
+  "sourceRaster": {
+    "driver": "GTiff",
+    "width": 87100,
+    "height": 58500,
+    "bandCount": 1,
+    "dataType": "float32",
+    "cellSizeMetres": 10,
+    "noDataValue": -3.4028234663852886e+38,
+    "boundsEpsg3111": [2081000.0000000002, 2258000.000000002, 2952000, 2843000.000000002]
+  },
+  "sourceCrs": {
+    "identifier": "EPSG:3111 GDA94 / Vicgrid94",
+    "axisOrder": "easting,northing",
+    "unit": "metre",
+    "evidence": "Both delivered raster headers resolve to EPSG:3111; the native ESRI Grid prj.adf names GDA94, GRS80 and Lambert projection parameters."
+  },
+  "verticalDatum": {
+    "identifier": "AHD",
+    "unit": "metre",
+    "evidence": "The delivered Vicmap Elevation DEM 10m Product Data Specification v3.0 states that Vicmap Elevation is mapped to GDA and the Australian Height Datum (AHD)."
+  },
+  "publishedAccuracyMetres": {
+    "horizontal": 12.5,
+    "vertical": 5,
+    "overallVertical": 2.96
+  },
+  "licence": {
+    "id": "CC-BY-4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "snapshotSha256": "7c5072b65f38636b87df656a792e9d62d38b65192f84fa7fb11ee1ce6aea5373",
+    "attribution": "State of Victoria — Vicmap Elevation DEM 10m, CC BY 4.0; precinct terrain is a modified derivative."
+  },
+  "deliveryOrderId": "GTIDUH",
+  "deliveryEvidencePath": "data/city/reviews/2026-08-16-vicmap-dem10m-order.md",
+  "acquisitionApprovalEvidence": "data/city/reviews/2026-08-16-feida-wang-melbourne-control-dem-acquisition.md",
+  "productionApproved": false
+}

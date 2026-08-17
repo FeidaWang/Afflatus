@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "city-analysis-stability-evidence-v1",
+  "recordedDate": "2026-08-16",
+  "timezone": "Australia/Melbourne",
+  "packageId": "melbourne-flinders-federation-v1",
+  "manifestSha256": "6ba99fc6830c46c42f740ff5de241040c971295ca79d18257cb3009adb8a7b60",
+  "scope": "non-public dev-loopback Cityview Analysis adapter",
+  "decision": "30-minute desktop Chromium release soak passed; production release and physical-device sign-off not granted",
+  "command": "CITY_ANALYSIS_STABILITY_MS=1800000 npm run test:e2e:city-analysis -- --grep separates cold/warm",
+  "environment": {
+    "operatingSystem": "macOS 26.6.1 (25G76)",
+    "cpu": "Apple M4 Pro",
+    "memoryBytes": 51539607552,
+    "architecture": "arm64",
+    "node": "v24.14.0",
+    "playwrightChromium": "149.0.7827.55",
+    "headless": true,
+    "viewportCssPixels": {
+      "width": 1440,
+      "height": 1000
+    }
+  },
+  "method": {
+    "requestedDurationMs": 1800000,
+    "measuredDurationMs": 1804051.0397080001,
+    "targets": 6,
+    "lodsPerTarget": 3,
+    "expectedDistinctViews": 18,
+    "sampleIntervalMs": 1000,
+    "interactionDelayMs": 250,
+    "heapSource": "Chrome DevTools Protocol Performance.getMetrics JSHeapUsedSize",
+    "heapWarmupFractionDiscarded": 0.2,
+    "frameMetric": "renderer CPU duration p95 over the rolling 180-frame window"
+  },
+  "result": {
+    "status": "pass",
+    "coldBootMs": 669.8137079999999,
+    "coldP95Ms": 0.3,
+    "warmP95Ms": 0.2,
+    "maximumSteadyP95Ms": 0.3,
+    "iterations": 3373,
+    "visitedViews": 18,
+    "heap": {
+      "samples": 1499,
+      "distinctValues": 1499,
+      "firstSteadyWindowMedianBytes": 29500608,
+      "lastSteadyWindowMedianBytes": 29616360,
+      "medianGrowthBytes": 115752,
+      "slopeBytesPerMinute": -9568.505776653476
+    },
+    "finalCache": {
+      "residentBytes": 2041028,
+      "residentAssets": 18,
+      "referencedAssets": 4,
+      "decodedAssetCount": 8480,
+      "evictionCount": 8462,
+      "maximumResidentBytes": 2500000,
+      "maximumResidentAssets": 18
+    },
+    "allSamplesWithinVisibleBudget": true,
+    "allSamplesWithinResidentBudget": true,
+    "allSamplesRendererWebgl": true,
+    "allSamplesWithoutLifecycleFallback": true,
+    "allSamplesWithoutHorizontalOverflow": true,
+    "consoleErrors": 0,
+    "uncaughtPageErrors": 0
+  },
+  "visualBaselines": [
+    {
+      "path": "e2e/city-analysis-candidate.spec.js-snapshots/melbourne-analysis-success-desktop-chromium-darwin.png",
+      "sha256": "03203b2c10cbfbb5b900dc57fd0eb69b5f08cb597661d86e2c8640705f7235e1",
+      "byteLength": 154460
+    },
+    {
+      "path": "e2e/city-analysis-candidate.spec.js-snapshots/melbourne-analysis-offline-poster-desktop-chromium-darwin.png",
+      "sha256": "140267668061a09d193100c94103f8aee18befdf611a8e2c8a8b89fb98cc6fc2",
+      "byteLength": 395103
+    }
+  ],
+  "visualBaselineRefresh": {
+    "date": "2026-08-17",
+    "reason": "The dev-only Environment selector changed shell pixels while preserving the Analysis camera, geometry, LOD and verified package truth.",
+    "verification": "Clean Chromium visual and fallback regression; this refresh did not rerun or alter the recorded soak metrics."
+  },
+  "historicalVisualBaselines": [
+    {
+      "path": "e2e/city-analysis-candidate.spec.js-snapshots/melbourne-analysis-success-desktop-chromium-darwin.png",
+      "sha256": "8889ecde3559b5c01be30799d5c8b71ebeac17923aaf2f80ffd8817b6d1ebb29",
+      "byteLength": 151566
+    },
+    {
+      "path": "e2e/city-analysis-candidate.spec.js-snapshots/melbourne-analysis-offline-poster-desktop-chromium-darwin.png",
+      "sha256": "e62847a1cbc5e7c903028ed9e5cbe0ddd52763bfdd4370c5bfd5eef2f5867d30",
+      "byteLength": 395525
+    }
+  ],
+  "limits": {
+    "coldBootMs": 8000,
+    "warmP95Ms": 18,
+    "maximumSteadyP95Ms": 18,
+    "maximumHeapMedianGrowthBytes": 33554432,
+    "maximumHeapSlopeBytesPerMinute": 4194304,
+    "maximumResidentBytes": 2500000,
+    "maximumResidentAssets": 18,
+    "maximumVisibleBytes": 1100000,
+    "maximumVisibleDrawCalls": 36,
+    "maximumVisibleTriangles": 40000
+  },
+  "limitations": [
+    "The p95 measurement is renderer CPU duration, not GPU frame time.",
+    "Headless desktop Chromium does not provide physical-device thermal or battery evidence.",
+    "Emulated or desktop results cannot approve iPhone Safari or Samsung Chrome hardware."
+  ]
+}

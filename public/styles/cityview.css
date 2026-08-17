@@ -1387,6 +1387,86 @@ button {
   }
 }
 
+.city-stage[data-city-analysis-preview="melbourne"] .city-timeline[hidden],
+.city-stage[data-city-analysis-preview="melbourne"] .city-actions > [hidden],
+.city-stage[data-city-analysis-preview="melbourne"] .city-summary ul[hidden] {
+  display: none;
+}
+
+.city-stage[data-city-analysis-preview="melbourne"] .city-controls {
+  width: min(720px, calc(100vw - 36px));
+}
+
+.city-stage[data-city-analysis-preview="melbourne"] .city-actions {
+  grid-template-columns: minmax(240px, 360px) minmax(112px, 160px);
+  justify-content: end;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.city-stage[data-city-analysis-preview="melbourne"] .city-environment-picker {
+  grid-column: auto;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.city-stage[data-city-analysis-preview="melbourne"] .city-run-meta.has-city-analysis-selection {
+  flex-wrap: wrap;
+}
+
+.city-analysis-selection {
+  display: grid;
+  flex: 1 0 100%;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px;
+  width: 100%;
+  padding-top: 7px;
+  border-top: 1px solid var(--city-line);
+  line-height: 1.35;
+}
+
+.city-analysis-selection[hidden] {
+  display: none;
+}
+
+.city-analysis-selection strong {
+  align-self: start;
+  white-space: nowrap;
+}
+
+.city-analysis-selection span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.city-stage[data-city-analysis-preview="melbourne"][data-city-environment="night"] .city-intro {
+  background: linear-gradient(90deg, rgba(238, 239, 235, 0.97), rgba(238, 239, 235, 0.76));
+}
+
+@media (max-width: 520px) {
+  .city-stage[data-city-analysis-preview="melbourne"] .city-actions {
+    grid-template-columns: minmax(0, 1fr) minmax(96px, 112px);
+  }
+
+  .city-stage[data-city-analysis-preview="melbourne"] .city-environment-picker {
+    padding-left: 7px;
+  }
+
+  .city-analysis-selection {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3px;
+  }
+
+  .city-analysis-selection span {
+    display: -webkit-box;
+    overflow: hidden;
+    text-align: left;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

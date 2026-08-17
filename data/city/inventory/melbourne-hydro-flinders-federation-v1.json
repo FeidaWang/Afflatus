@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "melbourne-hydro-flinders-federation-v1",
+  "cityId": "melbourne",
+  "layerId": "melbourne-vicmap-hydro",
+  "datasetId": "vicmap-hydro",
+  "datasetVersion": "arcgis-item-1e37a8817bc7497da0fbe6abdf5fade5-snapshot-2026-08-15",
+  "title": "Vicmap Hydro",
+  "provider": "Victoria Department of Transport and Planning",
+  "sourceRecordUrl": "https://discover.data.vic.gov.au/dataset/vicmap-hydro",
+  "acquisitionUrl": "https://services-ap1.arcgis.com/P744lA0wf4LlBZ84/ArcGIS/rest/services/Vicmap_Hydro/FeatureServer",
+  "queryBoundsWgs84": {
+    "west": 144.9615,
+    "south": -37.8205,
+    "east": 144.9715,
+    "north": -37.8105
+  },
+  "retrievedAt": "2026-08-15T13:23:00.942Z",
+  "rawPath": "data/city/raw/melbourne/hydro/melbourne-hydro-flinders-federation-v1.zip",
+  "responseHeadersPath": "data/city/raw/melbourne/hydro/melbourne-hydro-flinders-federation-v1.headers.json",
+  "responseHeadersSha256": "507232b2674e414ce3ed569d0703a467c8a3ade16d2ef7d8841a475949310578",
+  "rawSha256": "4695bcdeee3a55860052a0b2a884625f45063208be3254d5e9ff28746d7feb24",
+  "rawByteLength": 489829,
+  "featureCount": 8,
+  "sourceFormat": "ZIP containing exact ArcGIS FeatureServer GeoJSON responses",
+  "service": {
+    "itemId": "1e37a8817bc7497da0fbe6abdf5fade5",
+    "nativeSpatialReference": "EPSG:3857",
+    "maxRecordCount": 2000
+  },
+  "archiveMembers": [
+    {
+      "path": "water-area.geojson",
+      "byteLength": 1388191,
+      "sha256": "b6cfd7ecdb19322482f196a44facbe6b1aa5068ca107bb9e15e77ae5a4fc4c3a",
+      "featureCount": 1,
+      "geometryType": "Polygon|MultiPolygon",
+      "serviceLayerId": 1,
+      "serviceLayerName": "Water Area - Vicmap Hydro (HY_WATER_AREA_POLYGON)",
+      "queryUrl": "https://services-ap1.arcgis.com/P744lA0wf4LlBZ84/ArcGIS/rest/services/Vicmap_Hydro/FeatureServer/1/query?where=1%3D1&geometry=144.9615%2C-37.8205%2C144.9715%2C-37.8105&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&returnGeometry=true&outSR=4326&f=geojson"
+    },
+    {
+      "path": "water-structure-line.geojson",
+      "byteLength": 9857,
+      "sha256": "1c2aa9ef8faa9a2aec7f2516af6d1956470f58fe196abb2967a756a0dece6f9d",
+      "featureCount": 7,
+      "geometryType": "LineString|MultiLineString",
+      "serviceLayerId": 6,
+      "serviceLayerName": "Water Structure Line - Vicmap Hydro (HY_WATER_STRUCT_LINE)",
+      "queryUrl": "https://services-ap1.arcgis.com/P744lA0wf4LlBZ84/ArcGIS/rest/services/Vicmap_Hydro/FeatureServer/6/query?where=1%3D1&geometry=144.9615%2C-37.8205%2C144.9715%2C-37.8105&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&returnGeometry=true&outSR=4326&f=geojson"
+    }
+  ],
+  "sourceCrs": {
+    "identifier": "EPSG:4326",
+    "axisOrder": "longitude,latitude in GeoJSON",
+    "unit": "degree",
+    "evidence": "Each official FeatureServer query requests outSR=4326 and each GeoJSON response declares EPSG:4326."
+  },
+  "verticalDatum": {
+    "identifier": "not-applicable-2d",
+    "unit": "not-applicable",
+    "evidence": "Selected water polygons and structure lines contain no source elevation."
+  },
+  "licence": {
+    "id": "CC-BY-4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "snapshotSha256": "6cfeacc65b1486e274ffcd225af3fd49e47e69f4c5a39f2fc2c23e6b2934fde2",
+    "attribution": "State of Victoria — Vicmap Hydro, CC BY 4.0."
+  },
+  "acquisitionApprovalEvidence": "data/city/reviews/2026-08-15-feida-wang-melbourne-acquisition.md",
+  "productionApproved": false
+}

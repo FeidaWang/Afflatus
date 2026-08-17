@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  CITY_SANDBOX_RENDER_BUDGET,
+  CITY_SCENE_RENDER_BUDGET,
   cityBudgetClassForDevice,
   evaluateCityRenderBudget,
 } from '../src/city/budget.ts';
@@ -13,9 +13,9 @@ describe('city sandbox render budget', () => {
   });
 
   it('keeps the P0 ceiling below the site-wide warning ceiling', () => {
-    expect(CITY_SANDBOX_RENDER_BUDGET.desktop.drawCalls).toBeLessThan(120);
-    expect(CITY_SANDBOX_RENDER_BUDGET.desktop.triangles).toBeLessThan(300_000);
-    expect(CITY_SANDBOX_RENDER_BUDGET.mobile.targetFps).toBe(30);
+    expect(CITY_SCENE_RENDER_BUDGET.desktop.drawCalls).toBeLessThan(120);
+    expect(CITY_SCENE_RENDER_BUDGET.desktop.triangles).toBeLessThan(300_000);
+    expect(CITY_SCENE_RENDER_BUDGET.mobile.targetFps).toBe(30);
   });
 
   it('reports every exceeded or invalid signal', () => {

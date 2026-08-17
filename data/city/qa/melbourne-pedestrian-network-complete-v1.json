@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "reportId": "melbourne-pedestrian-network-complete-v1-qa",
+  "pipelineVersion": "melbourne-pedestrian-enu-v1",
+  "geometryKind": "linear-network",
+  "status": "passed-with-exclusions",
+  "artifactId": "melbourne-pedestrian-network-complete-v1",
+  "rawSha256": "c2b84ad5aea248cc686011d759f174398db07db82eb986115f302890eaec2fa2",
+  "archiveMemberSha256": "7839ed851a4fb34b4d8c88437ac95ba80413f521e97cdaef5be5c642db0b8abe",
+  "workSha256": "e7dc3a933cd602da0733b31bfafcd0ea1efcde2407143d30fb696ff1b8545f8c",
+  "goldenFixtureSha256": "4e00243358ac416eb325739d825b3d4f711633cd6ad80514e6cfdd617d47754a",
+  "rawFeatureCount": 71060,
+  "acceptedEntityCount": 6613,
+  "excludedFeatureCount": 64447,
+  "exclusions": {
+    "outside-or-empty-after-clip": 64447
+  },
+  "duplicateEntityIds": 0,
+  "sourceGeometryTypes": {
+    "LineString": 71060
+  },
+  "semanticClassCounts": {
+    "arcade": 441,
+    "centroid-connector": 1906,
+    "entrance-connector": 1775,
+    "footpath": 1894,
+    "lane": 426,
+    "long-wait-crossing": 102,
+    "short-wait-crossing": 57,
+    "tram-crossing": 7,
+    "zebra-crossing": 5
+  },
+  "trafficClassCounts": {
+    "High Traffic": 1144,
+    "Low Traffic": 750,
+    "Private Connection": 4719
+  },
+  "derivedLengthMetres": {
+    "minimum": 0.167,
+    "maximum": 323.582,
+    "total": 89251.181
+  },
+  "clippedLinePartCount": 6613,
+  "controlPoints": {
+    "anchor": {
+      "east": 0,
+      "north": 0,
+      "up": 0
+    },
+    "southWest": {
+      "east": -132.069,
+      "north": -610.463,
+      "up": -0.030666
+    },
+    "northEast": {
+      "east": 748.493,
+      "north": 499.434,
+      "up": -0.063475
+    }
+  },
+  "checks": {
+    "rawHashMatchesInventory": true,
+    "featureCountMatchesInventory": true,
+    "entityIdsUnique": true,
+    "coordinatesFinite": true,
+    "clippedToBounds": true,
+    "lengthsPositive": true,
+    "lineEndpointsFinite": true,
+    "stableTopologyIdsPresent": true,
+    "sourceSemanticFieldsPresent": true,
+    "sourceCrsResolved": "OGC:CRS84",
+    "verticalDatumResolved": "not-applicable-2d",
+    "productionApproved": false
+  }
+}

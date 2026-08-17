@@ -1,0 +1,2209 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "melbourne-survey-control-golden-v1",
+  "pipelineVersion": "melbourne-survey-control-enu-v1",
+  "truthClass": "licensed-surveyed-control-engineering-fixture",
+  "productionApproved": false,
+  "derivedFrom": {
+    "artifactId": "melbourne-survey-control-flinders-federation-v1",
+    "rawSha256": "e1697b9c766e393566907445eec8d8e52ed878480158013002046e99514e3983"
+  },
+  "attribution": "State of Victoria — Vicmap Position Survey Control, CC BY 4.0; precinct selection is a modified derivative.",
+  "localFrame": {
+    "horizontalSourceCrs": {
+      "identifier": "EPSG:4326 GeoJSON output with published GDA2020/MGA2020 coordinate attributes",
+      "axisOrder": "longitude,latitude in GeoJSON",
+      "unit": "degree; MGA2020 fields in metre",
+      "evidence": "The official query fixes outSR=4326 and returns GeoJSON; the layer schema supplies explicit MGA2020 coordinate fields for independent residual checking."
+    },
+    "verticalSourceDatum": {
+      "identifier": "AHD",
+      "unit": "metre",
+      "evidence": "The official Vicmap Position schema publishes ahd_height, AHD technique, adjusted-AHD flag and vertical uncertainty fields."
+    },
+    "anchorWgs84": {
+      "longitude": 144.963,
+      "latitude": -37.815,
+      "ellipsoidHeight": 0
+    },
+    "axes": "horizontalPosition=[east,-north]; scenePosition=[east,AHD-up,-north]",
+    "verticalOriginAhd": 0,
+    "transform": "Packed GDA2020 DMS to decimal degrees, checked against MGA2020 Zone 55, then geographic ECEF to local ENU; AHD retained on scene Y"
+  },
+  "clipBoundsWgs84": {
+    "west": 144.9615,
+    "south": -37.8205,
+    "east": 144.9715,
+    "north": -37.8105
+  },
+  "selectionRule": {
+    "status": "OK",
+    "horizontal": "scn_gda=YES and gda2020_technique=ADJUSTED",
+    "vertical": "adj_ahd=YES and ahd_technique=SPIRIT LEVELLING",
+    "maximumPublishedCoordinateResidualMetres": 0.02,
+    "maximumHorizontalUncertaintyMetres": 0.02,
+    "maximumVerticalUncertaintyMetres": 0.02
+  },
+  "entities": [
+    {
+      "id": "melbourne-vicmap-survey-control:308330720",
+      "sourceNineFigureNumber": "308330720",
+      "sourceObjectId": 219734,
+      "sourceUfi": 38413675,
+      "name": "MELBOURNE NORTH PM 3072",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.006
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.964392222222,
+        -37.810554527778
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320810.85,
+        "northing": 5813252.124
+      },
+      "serviceGeometryEpsg4326": [
+        144.964392270424,
+        -37.8105545201145
+      ],
+      "elevationAhd": 20.341,
+      "ellipsoidHeightGda2020": 25.123,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 20.331,
+      "markType": "plaque",
+      "horizontalPosition": [
+        122.596,
+        -493.415
+      ],
+      "scenePosition": [
+        122.596,
+        20.341,
+        -493.415
+      ],
+      "publishedCoordinateResidualMetres": 0.009468,
+      "serviceGeometryResidualMetres": 0.005232,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330730",
+      "sourceNineFigureNumber": "308330730",
+      "sourceObjectId": 219735,
+      "sourceUfi": 38413676,
+      "name": "MELBOURNE NORTH PM 3073",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.963015833333,
+        -37.810914194444
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320690.545,
+        "northing": 5813209.57
+      },
+      "serviceGeometryEpsg4326": [
+        144.963015840305,
+        -37.8109142100449
+      ],
+      "elevationAhd": 14.186,
+      "ellipsoidHeightGda2020": 18.968,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 14.176,
+      "markType": "plaque",
+      "horizontalPosition": [
+        1.394,
+        -453.496
+      ],
+      "scenePosition": [
+        1.394,
+        14.186,
+        -453.496
+      ],
+      "publishedCoordinateResidualMetres": 0.006996,
+      "serviceGeometryResidualMetres": 0.006225,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330740",
+      "sourceNineFigureNumber": "308330740",
+      "sourceObjectId": 219736,
+      "sourceUfi": 38413677,
+      "name": "MELBOURNE NORTH PM 3074",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.961952222222,
+        -37.811286694444
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320597.811,
+        "northing": 5813166.193
+      },
+      "serviceGeometryEpsg4326": [
+        144.961952240398,
+        -37.811286709726
+      ],
+      "elevationAhd": 12.26,
+      "ellipsoidHeightGda2020": 17.048,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 12.25,
+      "markType": "plaque",
+      "horizontalPosition": [
+        -92.264,
+        -412.15
+      ],
+      "scenePosition": [
+        -92.264,
+        12.26,
+        -412.15
+      ],
+      "publishedCoordinateResidualMetres": 0.007511,
+      "serviceGeometryResidualMetres": 0.00579,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330750",
+      "sourceNineFigureNumber": "308330750",
+      "sourceObjectId": 219737,
+      "sourceUfi": 38413678,
+      "name": "MELBOURNE NORTH PM 3075",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.962184722222,
+        -37.812409555556
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320620.98,
+        "northing": 5813042.042
+      },
+      "serviceGeometryEpsg4326": [
+        144.962184540239,
+        -37.8124095499686
+      ],
+      "elevationAhd": 10.927,
+      "ellipsoidHeightGda2020": 15.716,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 10.917,
+      "markType": "plaque",
+      "horizontalPosition": [
+        -71.79,
+        -287.521
+      ],
+      "scenePosition": [
+        -71.79,
+        10.927,
+        -287.521
+      ],
+      "publishedCoordinateResidualMetres": 0.009969,
+      "serviceGeometryResidualMetres": 0.006119,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330760",
+      "sourceNineFigureNumber": "308330760",
+      "sourceObjectId": 219738,
+      "sourceUfi": 38413679,
+      "name": "MELBOURNE NORTH PM 3076",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.963549444445,
+        -37.811906166667
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320739.921,
+        "northing": 5813100.521
+      },
+      "serviceGeometryEpsg4326": [
+        144.963549460245,
+        -37.811906160126
+      ],
+      "elevationAhd": 12.519,
+      "ellipsoidHeightGda2020": 17.299,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 12.509,
+      "markType": "plaque",
+      "horizontalPosition": [
+        48.382,
+        -343.394
+      ],
+      "scenePosition": [
+        48.382,
+        12.519,
+        -343.394
+      ],
+      "publishedCoordinateResidualMetres": 0.006244,
+      "serviceGeometryResidualMetres": 0.004825,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330770",
+      "sourceNineFigureNumber": "308330770",
+      "sourceObjectId": 219739,
+      "sourceUfi": 38413680,
+      "name": "MELBOURNE NORTH PM 3077",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.964809722222,
+        -37.811423722222
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320849.702,
+        "northing": 5813156.472
+      },
+      "serviceGeometryEpsg4326": [
+        144.96480971035,
+        -37.8114237299297
+      ],
+      "elevationAhd": 16.344,
+      "ellipsoidHeightGda2020": 21.127,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 16.334,
+      "markType": "plaque",
+      "horizontalPosition": [
+        159.359,
+        -396.94
+      ],
+      "scenePosition": [
+        159.359,
+        16.344,
+        -396.94
+      ],
+      "publishedCoordinateResidualMetres": 0.005035,
+      "serviceGeometryResidualMetres": 0.005945,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330780",
+      "sourceNineFigureNumber": "308330780",
+      "sourceObjectId": 219740,
+      "sourceUfi": 38413681,
+      "name": "MELBOURNE NORTH PM 3078",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.966002777778,
+        -37.811070055556
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320953.883,
+        "northing": 5813198.007
+      },
+      "serviceGeometryEpsg4326": [
+        144.966002820371,
+        -37.8110700401726
+      ],
+      "elevationAhd": 18.012,
+      "ellipsoidHeightGda2020": 22.79,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 18.002,
+      "markType": "plaque",
+      "horizontalPosition": [
+        264.417,
+        -436.192
+      ],
+      "scenePosition": [
+        264.417,
+        18.012,
+        -436.192
+      ],
+      "publishedCoordinateResidualMetres": 0.009151,
+      "serviceGeometryResidualMetres": 0.005346,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330790",
+      "sourceNineFigureNumber": "308330790",
+      "sourceObjectId": 219768,
+      "sourceUfi": 38413709,
+      "name": "MELBOURNE NORTH PM 3079",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.967283055556,
+        -37.810954833333
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321066.302,
+        "northing": 5813213.244
+      },
+      "serviceGeometryEpsg4326": [
+        144.967282940313,
+        -37.8109548398455
+      ],
+      "elevationAhd": 19.359,
+      "ellipsoidHeightGda2020": 24.129,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 19.349,
+      "markType": "plaque",
+      "horizontalPosition": [
+        377.155,
+        -448.976
+      ],
+      "scenePosition": [
+        377.155,
+        19.359,
+        -448.976
+      ],
+      "publishedCoordinateResidualMetres": 0.004315,
+      "serviceGeometryResidualMetres": 0.005867,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330810",
+      "sourceNineFigureNumber": "308330810",
+      "sourceObjectId": 219742,
+      "sourceUfi": 38413683,
+      "name": "MELBOURNE NORTH PM 3081",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.006
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.9688875,
+        -37.81691025
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321221.916,
+        "northing": 5812555.468
+      },
+      "serviceGeometryEpsg4326": [
+        144.968887350275,
+        -37.8169102501425
+      ],
+      "elevationAhd": 10.151,
+      "ellipsoidHeightGda2020": 14.911,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 10.141,
+      "markType": "plaque",
+      "horizontalPosition": [
+        518.397,
+        212.041
+      ],
+      "scenePosition": [
+        518.397,
+        10.151,
+        212.041
+      ],
+      "publishedCoordinateResidualMetres": 0.008357,
+      "serviceGeometryResidualMetres": 0.004843,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330820",
+      "sourceNineFigureNumber": "308330820",
+      "sourceObjectId": 219743,
+      "sourceUfi": 38413684,
+      "name": "MELBOURNE NORTH PM 3082",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.966007777778,
+        -37.817725083333
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320970.391,
+        "northing": 5812459.532
+      },
+      "serviceGeometryEpsg4326": [
+        144.966007670376,
+        -37.8177250900419
+      ],
+      "elevationAhd": 4.989,
+      "ellipsoidHeightGda2020": 9.755,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 4.979,
+      "markType": "plaque",
+      "horizontalPosition": [
+        264.833,
+        302.469
+      ],
+      "scenePosition": [
+        264.833,
+        4.989,
+        302.469
+      ],
+      "publishedCoordinateResidualMetres": 0.00323,
+      "serviceGeometryResidualMetres": 0.006306,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330860",
+      "sourceNineFigureNumber": "308330860",
+      "sourceObjectId": 219747,
+      "sourceUfi": 38413688,
+      "name": "MELBOURNE NORTH PM 3086",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.968303055556,
+        -37.816110916667
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321168.542,
+        "northing": 5812643.049
+      },
+      "serviceGeometryEpsg4326": [
+        144.968302939588,
+        -37.8161109100173
+      ],
+      "elevationAhd": 15.479,
+      "ellipsoidHeightGda2020": 20.244,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 15.469,
+      "markType": "plaque",
+      "horizontalPosition": [
+        466.941,
+        123.317
+      ],
+      "scenePosition": [
+        466.941,
+        15.479,
+        123.317
+      ],
+      "publishedCoordinateResidualMetres": 0.005135,
+      "serviceGeometryResidualMetres": 0.005249,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330870",
+      "sourceNineFigureNumber": "308330870",
+      "sourceObjectId": 219748,
+      "sourceUfi": 38413689,
+      "name": "MELBOURNE NORTH PM 3087",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.9693125,
+        -37.815752944444
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321256.541,
+        "northing": 5812684.702
+      },
+      "serviceGeometryEpsg4326": [
+        144.969312399829,
+        -37.8157529499997
+      ],
+      "elevationAhd": 19.17,
+      "ellipsoidHeightGda2020": 23.957,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 19.16,
+      "markType": "plaque",
+      "horizontalPosition": [
+        555.827,
+        83.59
+      ],
+      "scenePosition": [
+        555.827,
+        19.17,
+        83.59
+      ],
+      "publishedCoordinateResidualMetres": 0.003927,
+      "serviceGeometryResidualMetres": 0.004998,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330880",
+      "sourceNineFigureNumber": "308330880",
+      "sourceObjectId": 219749,
+      "sourceUfi": 38413690,
+      "name": "MELBOURNE NORTH PM 3088",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.969086666667,
+        -37.81488
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321234.555,
+        "northing": 5812781.137
+      },
+      "serviceGeometryEpsg4326": [
+        144.969086559774,
+        -37.8148800100549
+      ],
+      "elevationAhd": 24.12,
+      "ellipsoidHeightGda2020": 28.905,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 24.11,
+      "markType": "plaque",
+      "horizontalPosition": [
+        535.948,
+        -13.302
+      ],
+      "scenePosition": [
+        535.948,
+        24.12,
+        -13.302
+      ],
+      "publishedCoordinateResidualMetres": 0.003665,
+      "serviceGeometryResidualMetres": 0.005856,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330890",
+      "sourceNineFigureNumber": "308330890",
+      "sourceObjectId": 219750,
+      "sourceUfi": 38413691,
+      "name": "MELBOURNE NORTH PM 3089",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.968047777778,
+        -37.815133527778
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321143.708,
+        "northing": 5812751.017
+      },
+      "serviceGeometryEpsg4326": [
+        144.9680476303,
+        -37.8151335198104
+      ],
+      "elevationAhd": 18.5,
+      "ellipsoidHeightGda2020": 23.282,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 18.49,
+      "markType": "plaque",
+      "horizontalPosition": [
+        444.469,
+        14.833
+      ],
+      "scenePosition": [
+        444.469,
+        18.5,
+        14.833
+      ],
+      "publishedCoordinateResidualMetres": 0.007691,
+      "serviceGeometryResidualMetres": 0.005376,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330900",
+      "sourceNineFigureNumber": "308330900",
+      "sourceObjectId": 219751,
+      "sourceUfi": 38413692,
+      "name": "MELBOURNE NORTH PM 3090",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.966403333333,
+        -37.815425527778
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320999.666,
+        "northing": 5812715.463
+      },
+      "serviceGeometryEpsg4326": [
+        144.966403360292,
+        -37.815425529893
+      ],
+      "elevationAhd": 9.987,
+      "ellipsoidHeightGda2020": 14.759,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 9.977,
+      "markType": "plaque",
+      "horizontalPosition": [
+        299.671,
+        47.236
+      ],
+      "scenePosition": [
+        299.671,
+        9.987,
+        47.236
+      ],
+      "publishedCoordinateResidualMetres": 0.007322,
+      "serviceGeometryResidualMetres": 0.004937,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330910",
+      "sourceNineFigureNumber": "308330910",
+      "sourceObjectId": 219752,
+      "sourceUfi": 38413693,
+      "name": "MELBOURNE NORTH PM 3091",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.965104166667,
+        -37.815831222222
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320886.266,
+        "northing": 5812667.954
+      },
+      "serviceGeometryEpsg4326": [
+        144.965104019997,
+        -37.815831230084
+      ],
+      "elevationAhd": 7.024,
+      "ellipsoidHeightGda2020": 11.797,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 7.014,
+      "markType": "plaque",
+      "horizontalPosition": [
+        185.275,
+        92.262
+      ],
+      "scenePosition": [
+        185.275,
+        7.024,
+        92.262
+      ],
+      "publishedCoordinateResidualMetres": 0.006749,
+      "serviceGeometryResidualMetres": 0.006197,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330920",
+      "sourceNineFigureNumber": "308330920",
+      "sourceObjectId": 219753,
+      "sourceUfi": 38413694,
+      "name": "MELBOURNE NORTH PM 3092",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.964231944444,
+        -37.81625775
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320810.525,
+        "northing": 5812618.952
+      },
+      "serviceGeometryEpsg4326": [
+        144.964231910366,
+        -37.8162577499497
+      ],
+      "elevationAhd": 6.122,
+      "ellipsoidHeightGda2020": 10.903,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 6.112,
+      "markType": "plaque",
+      "horizontalPosition": [
+        108.474,
+        139.602
+      ],
+      "scenePosition": [
+        108.474,
+        6.122,
+        139.602
+      ],
+      "publishedCoordinateResidualMetres": 0.002836,
+      "serviceGeometryResidualMetres": 0.005822,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330930",
+      "sourceNineFigureNumber": "308330930",
+      "sourceObjectId": 219754,
+      "sourceUfi": 38413695,
+      "name": "MELBOURNE NORTH PM 3093",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.963752222222,
+        -37.815213416667
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320765.77,
+        "northing": 5812733.918
+      },
+      "serviceGeometryEpsg4326": [
+        144.963752210005,
+        -37.8152134100652
+      ],
+      "elevationAhd": 7.094,
+      "ellipsoidHeightGda2020": 11.873,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 7.084,
+      "markType": "plaque",
+      "horizontalPosition": [
+        66.235,
+        23.688
+      ],
+      "scenePosition": [
+        66.235,
+        7.094,
+        23.688
+      ],
+      "publishedCoordinateResidualMetres": 0.0041,
+      "serviceGeometryResidualMetres": 0.005018,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330940",
+      "sourceNineFigureNumber": "308330940",
+      "sourceObjectId": 219755,
+      "sourceUfi": 38413696,
+      "name": "MELBOURNE NORTH PM 3094",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.964893888889,
+        -37.814815916667
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320865.318,
+        "northing": 5812780.216
+      },
+      "serviceGeometryEpsg4326": [
+        144.964893939985,
+        -37.8148159201528
+      ],
+      "elevationAhd": 8.301,
+      "ellipsoidHeightGda2020": 13.077,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 8.291,
+      "markType": "plaque",
+      "horizontalPosition": [
+        166.762,
+        -20.43
+      ],
+      "scenePosition": [
+        166.762,
+        8.301,
+        -20.43
+      ],
+      "publishedCoordinateResidualMetres": 0.010713,
+      "serviceGeometryResidualMetres": 0.006214,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330950",
+      "sourceNineFigureNumber": "308330950",
+      "sourceObjectId": 219756,
+      "sourceUfi": 38413697,
+      "name": "MELBOURNE NORTH PM 3095",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.966148888889,
+        -37.814454138889
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320974.915,
+        "northing": 5812822.767
+      },
+      "serviceGeometryEpsg4326": [
+        144.966148839724,
+        -37.8144541400927
+      ],
+      "elevationAhd": 10.842,
+      "ellipsoidHeightGda2020": 15.615,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 10.832,
+      "markType": "plaque",
+      "horizontalPosition": [
+        277.27,
+        -60.582
+      ],
+      "scenePosition": [
+        277.27,
+        10.842,
+        -60.582
+      ],
+      "publishedCoordinateResidualMetres": 0.00221,
+      "serviceGeometryResidualMetres": 0.006519,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330960",
+      "sourceNineFigureNumber": "308330960",
+      "sourceObjectId": 219757,
+      "sourceUfi": 38413698,
+      "name": "MELBOURNE NORTH PM 3096",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.967409166667,
+        -37.814076361111
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321084.947,
+        "northing": 5812867.101
+      },
+      "serviceGeometryEpsg4326": [
+        144.967409130254,
+        -37.8140763799731
+      ],
+      "elevationAhd": 18.235,
+      "ellipsoidHeightGda2020": 23.011,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 18.225,
+      "markType": "plaque",
+      "horizontalPosition": [
+        388.244,
+        -102.508
+      ],
+      "scenePosition": [
+        388.244,
+        18.235,
+        -102.508
+      ],
+      "publishedCoordinateResidualMetres": 0.002293,
+      "serviceGeometryResidualMetres": 0.004817,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330970",
+      "sourceNineFigureNumber": "308330970",
+      "sourceObjectId": 219758,
+      "sourceUfi": 38413699,
+      "name": "MELBOURNE NORTH PM 3097",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.968438611111,
+        -37.813848861111
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321175.026,
+        "northing": 5812894.318
+      },
+      "serviceGeometryEpsg4326": [
+        144.968438610349,
+        -37.813848869802
+      ],
+      "elevationAhd": 22.391,
+      "ellipsoidHeightGda2020": 27.169,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 22.381,
+      "markType": "plaque",
+      "horizontalPosition": [
+        478.892,
+        -127.754
+      ],
+      "scenePosition": [
+        478.892,
+        22.391,
+        -127.754
+      ],
+      "publishedCoordinateResidualMetres": 0.005252,
+      "serviceGeometryResidualMetres": 0.005238,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330980",
+      "sourceNineFigureNumber": "308330980",
+      "sourceObjectId": 219759,
+      "sourceUfi": 38413700,
+      "name": "MELBOURNE NORTH PM 3098",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.968281666667,
+        -37.812848805556
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321158.8,
+        "northing": 5813004.991
+      },
+      "serviceGeometryEpsg4326": [
+        144.968281699822,
+        -37.8128488000592
+      ],
+      "elevationAhd": 17.573,
+      "ellipsoidHeightGda2020": 22.35,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 17.563,
+      "markType": "plaque",
+      "horizontalPosition": [
+        465.078,
+        -238.754
+      ],
+      "scenePosition": [
+        465.078,
+        17.573,
+        -238.754
+      ],
+      "publishedCoordinateResidualMetres": 0.00903,
+      "serviceGeometryResidualMetres": 0.006115,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308330990",
+      "sourceNineFigureNumber": "308330990",
+      "sourceObjectId": 219760,
+      "sourceUfi": 38413701,
+      "name": "MELBOURNE NORTH PM 3099",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.967124722222,
+        -37.813225027778
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321057.856,
+        "northing": 5812961.027
+      },
+      "serviceGeometryEpsg4326": [
+        144.967124729923,
+        -37.8132250300002
+      ],
+      "elevationAhd": 14.541,
+      "ellipsoidHeightGda2020": 19.316,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 14.531,
+      "markType": "plaque",
+      "horizontalPosition": [
+        363.201,
+        -197.001
+      ],
+      "scenePosition": [
+        363.201,
+        14.541,
+        -197.001
+      ],
+      "publishedCoordinateResidualMetres": 0.006799,
+      "serviceGeometryResidualMetres": 0.006127,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331000",
+      "sourceNineFigureNumber": "308331000",
+      "sourceObjectId": 219761,
+      "sourceUfi": 38413702,
+      "name": "MELBOURNE NORTH PM 3100",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.965691388889,
+        -37.8134515
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320932.204,
+        "northing": 5812933.151
+      },
+      "serviceGeometryEpsg4326": [
+        144.965691200189,
+        -37.8134514797043
+      ],
+      "elevationAhd": 11.275,
+      "ellipsoidHeightGda2020": 16.046,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 11.265,
+      "markType": "plaque",
+      "horizontalPosition": [
+        236.989,
+        -171.869
+      ],
+      "scenePosition": [
+        236.989,
+        11.275,
+        -171.869
+      ],
+      "publishedCoordinateResidualMetres": 0.011376,
+      "serviceGeometryResidualMetres": 0.005432,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331010",
+      "sourceNineFigureNumber": "308331010",
+      "sourceObjectId": 219762,
+      "sourceUfi": 38413703,
+      "name": "MELBOURNE NORTH PM 3101",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.964405833333,
+        -37.813843055556
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320820.002,
+        "northing": 5812887.234
+      },
+      "serviceGeometryEpsg4326": [
+        144.964405899664,
+        -37.8138430596907
+      ],
+      "elevationAhd": 9.456,
+      "ellipsoidHeightGda2020": 14.235,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 9.446,
+      "markType": "plaque",
+      "horizontalPosition": [
+        123.789,
+        -128.412
+      ],
+      "scenePosition": [
+        123.789,
+        9.456,
+        -128.412
+      ],
+      "publishedCoordinateResidualMetres": 0.011509,
+      "serviceGeometryResidualMetres": 0.005653,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331020",
+      "sourceNineFigureNumber": "308331020",
+      "sourceObjectId": 219763,
+      "sourceUfi": 38413704,
+      "name": "MELBOURNE NORTH PM 3102",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.963083055556,
+        -37.814372388889
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320704.835,
+        "northing": 5812825.958
+      },
+      "serviceGeometryEpsg4326": [
+        144.963083130408,
+        -37.8143723896804
+      ],
+      "elevationAhd": 8.449,
+      "ellipsoidHeightGda2020": 13.23,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 8.439,
+      "markType": "plaque",
+      "horizontalPosition": [
+        7.313,
+        -69.66
+      ],
+      "scenePosition": [
+        7.313,
+        8.449,
+        -69.66
+      ],
+      "publishedCoordinateResidualMetres": 0.011426,
+      "serviceGeometryResidualMetres": 0.004835,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331030",
+      "sourceNineFigureNumber": "308331030",
+      "sourceObjectId": 219764,
+      "sourceUfi": 38413705,
+      "name": "MELBOURNE NORTH PM 3103",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.011
+      },
+      "sourceGda2020": [
+        144.9628475,
+        -37.813252666667
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320681.387,
+        "northing": 5812949.758
+      },
+      "serviceGeometryEpsg4326": [
+        144.962847540038,
+        -37.813252660014
+      ],
+      "elevationAhd": 9.556,
+      "ellipsoidHeightGda2020": 14.336,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 9.546,
+      "markType": "plaque",
+      "horizontalPosition": [
+        -13.428,
+        -193.942
+      ],
+      "scenePosition": [
+        -13.428,
+        9.556,
+        -193.942
+      ],
+      "publishedCoordinateResidualMetres": 0.009593,
+      "serviceGeometryResidualMetres": 0.006038,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331040",
+      "sourceNineFigureNumber": "308331040",
+      "sourceObjectId": 219769,
+      "sourceUfi": 38413710,
+      "name": "MELBOURNE NORTH PM 3104",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.963992222222,
+        -37.812925861111
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320781.35,
+        "northing": 5812988.217
+      },
+      "serviceGeometryEpsg4326": [
+        144.963992029643,
+        -37.8129258696631
+      ],
+      "elevationAhd": 10.386,
+      "ellipsoidHeightGda2020": 15.164,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 10.376,
+      "markType": "plaque",
+      "horizontalPosition": [
+        87.37,
+        -230.214
+      ],
+      "scenePosition": [
+        87.37,
+        10.386,
+        -230.214
+      ],
+      "publishedCoordinateResidualMetres": 0.010986,
+      "serviceGeometryResidualMetres": 0.006038,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331050",
+      "sourceNineFigureNumber": "308331050",
+      "sourceObjectId": 219765,
+      "sourceUfi": 38413706,
+      "name": "MELBOURNE NORTH PM 3105",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.965119444444,
+        -37.812592416667
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320879.798,
+        "northing": 5813027.382
+      },
+      "serviceGeometryEpsg4326": [
+        144.965119489885,
+        -37.812592410354
+      ],
+      "elevationAhd": 12.077,
+      "ellipsoidHeightGda2020": 16.853,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 12.067,
+      "markType": "plaque",
+      "horizontalPosition": [
+        186.629,
+        -267.223
+      ],
+      "scenePosition": [
+        186.629,
+        12.077,
+        -267.223
+      ],
+      "publishedCoordinateResidualMetres": 0.009438,
+      "serviceGeometryResidualMetres": 0.005464,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331060",
+      "sourceNineFigureNumber": "308331060",
+      "sourceObjectId": 219766,
+      "sourceUfi": 38413707,
+      "name": "MELBOURNE NORTH PM 3106",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.007
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.01
+      },
+      "sourceGda2020": [
+        144.966281388889,
+        -37.812183555556
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320981.099,
+        "northing": 5813074.98
+      },
+      "serviceGeometryEpsg4326": [
+        144.966281399619,
+        -37.8121835498518
+      ],
+      "elevationAhd": 13.923,
+      "ellipsoidHeightGda2020": 18.697,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 13.913,
+      "markType": "plaque",
+      "horizontalPosition": [
+        288.946,
+        -312.6
+      ],
+      "scenePosition": [
+        288.946,
+        13.923,
+        -312.6
+      ],
+      "publishedCoordinateResidualMetres": 0.007388,
+      "serviceGeometryResidualMetres": 0.006393,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331100",
+      "sourceNineFigureNumber": "308331100",
+      "sourceObjectId": 220410,
+      "sourceUfi": 38414354,
+      "name": "MELBOURNE NORTH PM 3110",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1567296000000,
+        "uncertaintyMetres": 0.006
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.967651666667,
+        -37.817584722222
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321114.756,
+        "northing": 5812478.257
+      },
+      "serviceGeometryEpsg4326": [
+        144.96765151009,
+        -37.8175847299065
+      ],
+      "elevationAhd": 8.49,
+      "ellipsoidHeightGda2020": 13.251,
+      "groundToMarkOffsetMetres": null,
+      "estimatedGroundElevationAhd": null,
+      "markType": "cross",
+      "horizontalPosition": [
+        409.577,
+        286.896
+      ],
+      "scenePosition": [
+        409.577,
+        8.49,
+        286.896
+      ],
+      "publishedCoordinateResidualMetres": 0.007679,
+      "serviceGeometryResidualMetres": 0.006153,
+      "serviceGeometryDatumClass": "matches-published-gda2020"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331440",
+      "sourceNineFigureNumber": "308331440",
+      "sourceObjectId": 226845,
+      "sourceUfi": 38420792,
+      "name": "MELBOURNE NORTH PM 3144",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1689206400000,
+        "uncertaintyMetres": 0.003
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.964018694444,
+        -37.819484972222
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320799.557,
+        "northing": 5812260.427
+      },
+      "serviceGeometryEpsg4326": [
+        144.964012779828,
+        -37.8194981602222
+      ],
+      "elevationAhd": 1.52,
+      "ellipsoidHeightGda2020": 6.27,
+      "groundToMarkOffsetMetres": null,
+      "estimatedGroundElevationAhd": null,
+      "markType": "plaque",
+      "horizontalPosition": [
+        89.693,
+        497.801
+      ],
+      "scenePosition": [
+        89.693,
+        1.52,
+        497.801
+      ],
+      "publishedCoordinateResidualMetres": 0.003124,
+      "serviceGeometryResidualMetres": 1.551319,
+      "serviceGeometryDatumClass": "gda94-like-offset-review"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331450",
+      "sourceNineFigureNumber": "308331450",
+      "sourceObjectId": 226846,
+      "sourceUfi": 38420793,
+      "name": "MELBOURNE NORTH PM 3145",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1689206400000,
+        "uncertaintyMetres": 0.003
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.965131027778,
+        -37.819222611111
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320896.836,
+        "northing": 5812291.674
+      },
+      "serviceGeometryEpsg4326": [
+        144.965125099863,
+        -37.8192357901955
+      ],
+      "elevationAhd": 4.683,
+      "ellipsoidHeightGda2020": 9.43,
+      "groundToMarkOffsetMetres": null,
+      "estimatedGroundElevationAhd": null,
+      "markType": "plaque",
+      "horizontalPosition": [
+        187.632,
+        468.682
+      ],
+      "scenePosition": [
+        187.632,
+        4.683,
+        468.682
+      ],
+      "publishedCoordinateResidualMetres": 0.002858,
+      "serviceGeometryResidualMetres": 1.550483,
+      "serviceGeometryDatumClass": "gda94-like-offset-review"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331460",
+      "sourceNineFigureNumber": "308331460",
+      "sourceObjectId": 226847,
+      "sourceUfi": 38420794,
+      "name": "MELBOURNE NORTH PM 3146",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1689206400000,
+        "uncertaintyMetres": 0.002
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.970245083333,
+        -37.818746888889
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321345.86,
+        "northing": 5812354.259
+      },
+      "serviceGeometryEpsg4326": [
+        144.970239150385,
+        -37.8187600599481
+      ],
+      "elevationAhd": 1.109,
+      "ellipsoidHeightGda2020": 5.87,
+      "groundToMarkOffsetMetres": null,
+      "estimatedGroundElevationAhd": null,
+      "markType": "plaque",
+      "horizontalPosition": [
+        637.917,
+        415.903
+      ],
+      "scenePosition": [
+        637.917,
+        1.109,
+        415.903
+      ],
+      "publishedCoordinateResidualMetres": 0.002048,
+      "serviceGeometryResidualMetres": 1.550515,
+      "serviceGeometryDatumClass": "gda94-like-offset-review"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308331500",
+      "sourceNineFigureNumber": "308331500",
+      "sourceObjectId": 226920,
+      "sourceUfi": 38420867,
+      "name": "MELBOURNE NORTH PM 3150",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1689206400000,
+        "uncertaintyMetres": 0.002
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.968353194444,
+        -37.819152583333
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321180.303,
+        "northing": 5812305.619
+      },
+      "serviceGeometryEpsg4326": [
+        144.968347280431,
+        -37.8191657701984
+      ],
+      "elevationAhd": 10.379,
+      "ellipsoidHeightGda2020": 15.13,
+      "groundToMarkOffsetMetres": null,
+      "estimatedGroundElevationAhd": null,
+      "markType": "plaque",
+      "horizontalPosition": [
+        471.337,
+        460.921
+      ],
+      "scenePosition": [
+        471.337,
+        10.379,
+        460.921
+      ],
+      "publishedCoordinateResidualMetres": 0.00311,
+      "serviceGeometryResidualMetres": 1.550955,
+      "serviceGeometryDatumClass": "gda94-like-offset-review"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308405640",
+      "sourceNineFigureNumber": "308405640",
+      "sourceObjectId": 220391,
+      "sourceUfi": 38414335,
+      "name": "MELBOURNE SOUTH PM  564",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1740009600000,
+        "uncertaintyMetres": 0.002
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.968697388889,
+        -37.819775333333
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321212.104,
+        "northing": 5812237.174
+      },
+      "serviceGeometryEpsg4326": [
+        144.96869146005,
+        -37.8197885202086
+      ],
+      "elevationAhd": 10.541,
+      "ellipsoidHeightGda2020": 15.29,
+      "groundToMarkOffsetMetres": 0.01,
+      "estimatedGroundElevationAhd": 10.531,
+      "markType": "cross",
+      "horizontalPosition": [
+        501.638,
+        530.044
+      ],
+      "scenePosition": [
+        501.638,
+        10.541,
+        530.044
+      ],
+      "publishedCoordinateResidualMetres": 0.002922,
+      "serviceGeometryResidualMetres": 1.551543,
+      "serviceGeometryDatumClass": "gda94-like-offset-review"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308405880",
+      "sourceNineFigureNumber": "308405880",
+      "sourceObjectId": 226909,
+      "sourceUfi": 38420856,
+      "name": "MELBOURNE SOUTH PM  588",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1689206400000,
+        "uncertaintyMetres": 0.002
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.963845555556,
+        -37.820342777778
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 320786.391,
+        "northing": 5812164.908
+      },
+      "serviceGeometryEpsg4326": [
+        144.963839640336,
+        -37.8203559599028
+      ],
+      "elevationAhd": 2.236,
+      "ellipsoidHeightGda2020": 6.98,
+      "groundToMarkOffsetMetres": null,
+      "estimatedGroundElevationAhd": null,
+      "markType": "plaque",
+      "horizontalPosition": [
+        74.448,
+        593.011
+      ],
+      "scenePosition": [
+        74.448,
+        2.236,
+        593.011
+      ],
+      "publishedCoordinateResidualMetres": 0.002356,
+      "serviceGeometryResidualMetres": 1.551239,
+      "serviceGeometryDatumClass": "gda94-like-offset-review"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308405890",
+      "sourceNineFigureNumber": "308405890",
+      "sourceObjectId": 226910,
+      "sourceUfi": 38420857,
+      "name": "MELBOURNE SOUTH PM  589",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1689206400000,
+        "uncertaintyMetres": 0.003
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.966434055556,
+        -37.8199095
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321013.198,
+        "northing": 5812217.951
+      },
+      "serviceGeometryEpsg4326": [
+        144.9664281502,
+        -37.8199226797796
+      ],
+      "elevationAhd": 2.733,
+      "ellipsoidHeightGda2020": 7.48,
+      "groundToMarkOffsetMetres": null,
+      "estimatedGroundElevationAhd": null,
+      "markType": "plaque",
+      "horizontalPosition": [
+        302.358,
+        544.926
+      ],
+      "scenePosition": [
+        302.358,
+        2.733,
+        544.926
+      ],
+      "publishedCoordinateResidualMetres": 0.003207,
+      "serviceGeometryResidualMetres": 1.550765,
+      "serviceGeometryDatumClass": "gda94-like-offset-review"
+    },
+    {
+      "id": "melbourne-vicmap-survey-control:308405960",
+      "sourceNineFigureNumber": "308405960",
+      "sourceObjectId": 226914,
+      "sourceUfi": 38420861,
+      "name": "MELBOURNE SOUTH PM  596",
+      "kind": "survey-control-point",
+      "status": "OK",
+      "horizontalAdjustment": {
+        "flag": "YES",
+        "datum": "GDA2020",
+        "technique": "ADJUSTED",
+        "organisation": "SGV",
+        "publishedAt": 1689206400000,
+        "uncertaintyMetres": 0.001
+      },
+      "verticalAdjustment": {
+        "flag": "YES",
+        "datum": "AHD",
+        "technique": "SPIRIT LEVELLING",
+        "source": "SGV",
+        "publishedAt": 1751846400000,
+        "uncertaintyMetres": 0.009
+      },
+      "sourceGda2020": [
+        144.969935694444,
+        -37.819642444444
+      ],
+      "sourceMga2020Zone55": {
+        "easting": 321320.785,
+        "northing": 5812254.291
+      },
+      "serviceGeometryEpsg4326": [
+        144.969929759822,
+        -37.8196556199681
+      ],
+      "elevationAhd": 2.38,
+      "ellipsoidHeightGda2020": 7.14,
+      "groundToMarkOffsetMetres": null,
+      "estimatedGroundElevationAhd": null,
+      "markType": "plaque",
+      "horizontalPosition": [
+        610.668,
+        515.302
+      ],
+      "scenePosition": [
+        610.668,
+        2.38,
+        515.302
+      ],
+      "publishedCoordinateResidualMetres": 0.001873,
+      "serviceGeometryResidualMetres": 1.551087,
+      "serviceGeometryDatumClass": "gda94-like-offset-review"
+    }
+  ]
+}

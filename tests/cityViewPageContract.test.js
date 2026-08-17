@@ -127,7 +127,6 @@ describe('Cityview page release-readiness contract', () => {
       node.tagName === 'option' && node.parentNode === withAttribute('data-city-profile')[0]
     ));
     expect(profileOptions.map((node) => attr(node, 'value'))).toEqual([
-      'sandbox',
       'shanghai',
       'melbourne',
       'hong-kong',
@@ -188,6 +187,23 @@ describe('Cityview page release-readiness contract', () => {
     expect(pageSource).toContain("timeline?.addEventListener('focus'");
     expect(pageSource).toContain("stage?.setAttribute('data-city-profile-key', profile.key)");
     expect(pageSource).toContain('control.disabled = !available');
-    expect(pageSource).toContain("'城市推演台 — 城市建造沙盒 · Afflatus'");
+    expect(pageSource).toContain("'城市推演台 — 三城建造观测台 · Afflatus'");
+  });
+
+  it('gates the real-data shell adapter to dev loopback and fails back to truthful DOM', () => {
+    expect(pageSource).toContain('import.meta.env.DEV');
+    expect(pageSource).toContain("locationParams.get('analysis-preview') === 'melbourne'");
+    expect(pageSource).toContain("import('./cityAnalysisShellPreview.js')");
+    expect(pageSource).toContain("'licensed-real-data-candidate'");
+    expect(pageSource).toContain('setAnalysisView: (view)');
+    expect(pageSource).toContain('setAnalysisEnvironment: (environment)');
+    expect(pageSource).toContain('getAnalysisSelection: ()');
+    expect(pageSource).toContain("selection.dataset.cityAnalysisSelection = ''");
+    expect(pageSource).toContain('renderAnalysisSelection(feature)');
+    expect(pageSource).toContain("locationParams.get('analysis-environment-failure')");
+    expect(pageSource).toContain("picker.className = 'city-profile-picker city-environment-picker'");
+    expect(pageSource).toContain("canvas.dataset.renderer = 'poster'");
+    expect(pageSource).toContain('licensed source facts remain available below');
+    expect(pageSource).toMatch(/function updateMetrics[\s\S]*if \(localAnalysisPreviewMode\) return;/);
   });
 });

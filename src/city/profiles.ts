@@ -3,8 +3,9 @@ export type CityExperienceProfileId =
   | 'melbourne-hoddle-grid-v0'
   | 'hong-kong-victoria-harbour-v0';
 export type CityConceptProfileKey = 'sandbox' | 'shanghai' | 'melbourne' | 'hong-kong';
+export type CityPublicProfileKey = Exclude<CityConceptProfileKey, 'sandbox'>;
 export type CityConceptProfileId =
-  | 'sandbox-v1'
+  | 'synthetic-test-fixture-v1'
   | 'shanghai-concept-v0'
   | 'melbourne-concept-v0'
   | 'hong-kong-concept-v0';
@@ -109,8 +110,8 @@ const guardedDataPolicy = Object.freeze({
 export const CITY_CONCEPT_GENERATION_PROFILES: Readonly<Record<CityConceptProfileKey, CityConceptGenerationProfile>> = Object.freeze({
   sandbox: Object.freeze({
     key: 'sandbox',
-    id: 'sandbox-v1',
-    labels: Object.freeze({ en: 'Sandbox', zh: '沙盒' }),
+    id: 'synthetic-test-fixture-v1',
+    labels: Object.freeze({ en: 'Synthetic test fixture', zh: '合成测试基准' }),
     experienceProfileId: null,
     truthClass: 'generated-concept',
     radius: 4,
@@ -335,9 +336,20 @@ export const CITY_CONCEPT_GENERATION_PROFILES: Readonly<Record<CityConceptProfil
   }),
 });
 
+export const PUBLIC_CITY_CONCEPT_PROFILE_KEYS: readonly CityPublicProfileKey[] = Object.freeze([
+  'shanghai',
+  'melbourne',
+  'hong-kong',
+]);
+
 export function normalizeCityConceptProfileKey(value: unknown): CityConceptProfileKey {
   const key = String(value || '').toLowerCase();
   return key === 'shanghai' || key === 'melbourne' || key === 'hong-kong' ? key : 'sandbox';
+}
+
+export function normalizePublicCityConceptProfileKey(value: unknown): CityPublicProfileKey {
+  const key = String(value || '').toLowerCase();
+  return key === 'melbourne' || key === 'hong-kong' ? key : 'shanghai';
 }
 
 /**

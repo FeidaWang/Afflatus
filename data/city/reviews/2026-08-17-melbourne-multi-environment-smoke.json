@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "city-multi-environment-smoke-evidence-v1",
+  "date": "2026-08-17",
+  "scope": "non-public dev-loopback Melbourne candidate streaming plus four-environment style switching",
+  "packageId": "melbourne-flinders-federation-v1",
+  "manifestSha256": "6ba99fc6830c46c42f740ff5de241040c971295ca79d18257cb3009adb8a7b60",
+  "formalReleaseEvidence": false,
+  "method": {
+    "requestedDurationMs": 15000,
+    "measuredDurationMs": 19035.041708,
+    "spatialTargets": 6,
+    "lodsPerTarget": 3,
+    "expectedDistinctViews": 18,
+    "environments": ["analysis", "day", "sunset", "night"],
+    "sampleIntervalMs": 1000,
+    "interactionDelayMs": 250,
+    "heapSource": "Chrome DevTools Protocol Performance.getMetrics JSHeapUsedSize",
+    "frameMetric": "renderer CPU duration p95 over the rolling 180-frame window"
+  },
+  "limits": {
+    "visibleBytes": 1100000,
+    "visibleDrawCalls": 36,
+    "visibleTriangles": 40000,
+    "residentBytes": 2500000,
+    "residentAssets": 18,
+    "warmP95Ms": 18,
+    "maximumHeapMedianGrowthBytes": 33554432
+  },
+  "result": {
+    "status": "pass",
+    "coldBootMs": 583.64825,
+    "coldP95Ms": 0.3,
+    "warmP95Ms": 0.2,
+    "maximumSteadyP95Ms": 0.3,
+    "iterations": 23,
+    "visitedViews": 18,
+    "visitedEnvironments": ["analysis", "day", "night", "sunset"],
+    "environmentSwitchCount": 24,
+    "allSamplesWithinVisibleBudget": true,
+    "allSamplesWithinResidentBudget": true,
+    "allSamplesWithoutLifecycleFallback": true,
+    "heap": {
+      "samples": 11,
+      "distinctValues": 11,
+      "firstMedianBytes": 17537016,
+      "lastMedianBytes": 22261300,
+      "medianGrowthBytes": 4724284,
+      "slopeBytesPerMinute": 20221472.02751556,
+      "slopeAcceptedAsLongTermEvidence": false
+    },
+    "cache": {
+      "residentBytes": 2366876,
+      "residentAssets": 17,
+      "referencedAssets": 4,
+      "decodedAssetCount": 101,
+      "evictionCount": 84
+    }
+  },
+  "followUpEvidence": "data/city/reviews/2026-08-17-melbourne-multi-environment-stability-30m.json",
+  "note": "This short smoke validates the multi-environment soak driver and immediate budgets only. Its heap slope is intentionally not used as a long-duration conclusion. The later formal 30-minute multi-environment result is recorded separately and does not alter this historical smoke measurement."
+}

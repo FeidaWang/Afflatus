@@ -48,7 +48,7 @@ test('Cityview remains truthful when its optional 3D page module fails', async (
   }
 });
 
-test('Cityview exposes a deterministic, reversible construction sandbox', async ({ page }, testInfo) => {
+test('Cityview exposes a deterministic, reversible construction timeline', async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const response = await page.goto('/cityview.html?seed=e2e-city', { waitUntil: 'domcontentloaded' });
   expect(response?.status()).toBeLessThan(400);
@@ -456,6 +456,25 @@ test('Cityview settles active construction and tour when reduced motion turns on
     tourActive: false,
     environment: { motionFrozen: true },
   });
+});
+
+test('Cityview migrates a retired Sandbox URL to Shanghai and announces it once', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Legacy profile migration runs once in Chromium.');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/cityview.html?seed=legacy-sandbox-link&profile=sandbox', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+  await expect(page).toHaveURL(/profile=shanghai/);
+  await expect(page.locator('[data-city-profile]')).toHaveValue('shanghai');
+  await expect(page.locator('[data-city-profile] option')).toHaveCount(3);
+  await expect(page.locator('[data-city-status]')).toContainText('retired Sandbox link');
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary())).toMatchObject({
+    seed: 'legacy-sandbox-link',
+    profile: 'shanghai',
+  });
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+  await expect(page.locator('[data-city-status]')).not.toContainText('retired Sandbox link');
 });
 
 test('Cityview switches generated Shanghai, Melbourne and Hong Kong concepts without claiming GIS truth', async ({ page }, testInfo) => {
