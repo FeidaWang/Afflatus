@@ -340,8 +340,10 @@ function injectStaticNavigation(document, route, locale) {
   const visibleLocale = locale || route.defaultLocale;
   for (const nav of all(document, (node) => getAttr(node, 'data-afflatus-nav') != null)) {
     for (const existing of all(nav, (node) => getAttr(node, 'data-afflatus-static-nav') != null)) removeNode(existing);
-    const links = NAV_ROUTES
-      .filter((item) => !(route.id === 'main' && item.id === 'main'))
+    const visibleRoutes = NAV_ROUTES
+      .filter((item) => !(route.id === 'main' && item.id === 'main'));
+    const directLinks = visibleRoutes
+      .filter((item) => item.group !== 'labs')
       .map((item) => {
         const href = locale ? localizedRoutePath(item.path, locale) : item.path;
         const label = visibleLocale === 'zh' ? item.zh : item.en;
@@ -349,7 +351,22 @@ function injectStaticNavigation(document, route, locale) {
         return `<a${active} data-afflatus-static-nav href="${escapeAttribute(href)}">${escapeAttribute(label)}</a>`;
       })
       .join('');
-    prependHtml(nav, links);
+    const labsRoutes = visibleRoutes.filter((item) => item.group === 'labs');
+    const labsActive = labsRoutes.some((item) => item.id === route.id);
+    const labsHref = locale
+      ? localizedRoutePath(labsRoutes[0].path, locale)
+      : labsRoutes[0].path;
+    const labsLabel = visibleLocale === 'zh' ? '实验室' : 'Labs';
+    const labsLinks = labsRoutes.map((item) => {
+      const href = locale ? localizedRoutePath(item.path, locale) : item.path;
+      const label = visibleLocale === 'zh' ? item.zh : item.en;
+      const active = item.id === route.id ? ' class="active"' : '';
+      return `<a${active} href="${escapeAttribute(href)}">${escapeAttribute(label)}</a>`;
+    }).join('');
+    const labs = labsRoutes.length
+      ? `<div class="nav-labs${labsActive ? ' active' : ''}" data-afflatus-static-nav><a class="nav-labs__trigger${labsActive ? ' active' : ''}" href="${escapeAttribute(labsHref)}">${labsLabel}</a><div class="nav-labs__menu">${labsLinks}</div></div>`
+      : '';
+    prependHtml(nav, `${directLinks}${labs}`);
   }
 }
 

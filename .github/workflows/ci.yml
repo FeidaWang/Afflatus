@@ -53,8 +53,10 @@ jobs:
   browser-quality:
     name: Browser quality (desktop + flagship mobile)
     needs: test-and-build
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Pixel baselines are recorded on Darwin and WebKit is closest to the
+    # Safari engine we are emulating, so keep the browser gate on macOS.
+    runs-on: macos-26
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -66,7 +68,7 @@ jobs:
       - run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install chromium webkit
 
       - name: Browser, keyboard, axe and visual gates
         run: npm run test:e2e

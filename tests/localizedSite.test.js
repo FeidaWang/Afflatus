@@ -46,6 +46,7 @@ describe('localized site generator', () => {
     const html = transformAdaptiveDocument(fixture, arena);
     expect(html).toContain('data-afflatus-locale="adaptive"');
     expect(html).toContain('data-afflatus-static-nav');
+    expect(html).toContain('class="nav-labs__trigger" href="/stats.html">Labs</a>');
     expect(html).toContain('href="/serial.html"');
     expect(html).toContain('href="/zh/arena.html" hreflang="zh-CN"');
     expect(html).toContain('document.documentElement.lang');

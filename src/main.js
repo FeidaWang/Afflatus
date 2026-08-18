@@ -112,15 +112,6 @@ export function loadHomeExperience() {
   return experiencePromise;
 }
 
-function scheduleIdleExperience() {
-  const start = () => { void loadHomeExperience().catch(() => {}); };
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(start, { timeout: 2800 });
-  } else {
-    window.setTimeout(start, 1600);
-  }
-}
-
 function installIntentLoader() {
   const loadIntent = (target) => {
     const experience = loadHomeExperience();
@@ -209,7 +200,7 @@ function installVisibilityLoaders() {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       observer.disconnect();
       void loadHomeExperience().catch(() => {});
-    }, { rootMargin: '720px 0px' });
+    }, { rootMargin: '0px' });
     experienceObserver.observe(portfolio);
   }
 }
@@ -274,4 +265,3 @@ installHomeCombatPoster();
 installIntentLoader();
 installVisibilityLoaders();
 initHomeScrollTelemetry();
-scheduleIdleExperience();

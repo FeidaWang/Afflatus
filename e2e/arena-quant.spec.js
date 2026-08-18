@@ -32,7 +32,14 @@ test('QF-01 compiles a responsive walk-forward experiment', async ({ page }) => 
   await settlePage(page);
   const foundry = page.locator('#quantFoundry');
   await expect(foundry).toBeVisible();
-  await expect(foundry.locator('#qmUniverse > span')).toHaveCount(10);
+  const declaredUniverseSize = await page.evaluate(async () => {
+    const response = await fetch('/arena-quant-model.json');
+    if (!response.ok) throw new Error(`quant model manifest returned ${response.status}`);
+    const manifest = await response.json();
+    return manifest.universe.length;
+  });
+  expect(declaredUniverseSize).toBeGreaterThanOrEqual(10);
+  await expect(foundry.locator('#qmUniverse > span')).toHaveCount(declaredUniverseSize);
 
   const compile = foundry.locator('#qmCompile');
   await compile.scrollIntoViewIfNeeded();
@@ -40,7 +47,8 @@ test('QF-01 compiles a responsive walk-forward experiment', async ({ page }) => 
   await compile.click();
 
   await expect(foundry.locator('#qmResult')).toBeVisible();
-  await expect(foundry.locator('#qmStatus')).toContainText('COMPILED');
+  await expect(foundry.locator('#qmStatus')).toHaveAttribute('data-kind', 'ready');
+  await expect(foundry.locator('#qmStatus')).toContainText('R001 READY');
   expect(await foundry.locator('#qmAllocations tr').count()).toBeGreaterThan(2);
   await expect(foundry.locator('#qmMetrics > div')).toHaveCount(8);
   await expect(foundry.locator('#qmExport')).toBeEnabled();

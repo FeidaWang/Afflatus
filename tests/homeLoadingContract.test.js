@@ -6,10 +6,11 @@ const entry = readFileSync('src/main.js', 'utf8');
 const experience = readFileSync('src/homeExperience.js', 'utf8');
 
 describe('home loading contract', () => {
-  it('keeps the LCP shell static and defers the combat runtime until idle or intent', () => {
+  it('keeps the LCP shell static and defers the combat runtime until visibility or intent', () => {
     expect(entry).toContain("import('./homeExperience.js')");
-    expect(entry).toContain('requestIdleCallback');
     expect(entry).toContain('HOME_INTENT_SELECTOR');
+    expect(entry).toContain("experienceObserver.observe(portfolio)");
+    expect(entry).not.toContain('scheduleIdleExperience');
     expect(entry).not.toMatch(/^import .*homeExperience/m);
     expect(html).toContain('<main id="mainContent">');
     expect(html).toContain('<h1 class="hero-title"');

@@ -52,7 +52,7 @@ export const DATA_PIPELINES = Object.freeze([
     id: 'horoscope-transits',
     kind: 'calendar-day',
     timeZone: 'Australia/Melbourne',
-    owner: 'data-orchestrator',
+    owner: 'github-actions',
     publishMode: 'recoverable-build-commit-transaction',
     sourceMode: 'deterministic-generator',
     outputs: [{ resource: 'transits', path: 'public/transits-daily.json', dateField: 'date' }],

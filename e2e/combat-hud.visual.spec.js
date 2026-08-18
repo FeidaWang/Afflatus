@@ -2,8 +2,13 @@ import { expect, settlePage, test } from './site-fixture.js';
 
 test.describe('CIC HUD visual contract', () => {
   test('keeps the namespaced shell stable at desktop and mobile widths', async ({ page }, testInfo) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('afflatus:locale:v1', 'en');
+    });
     await page.goto('/?combatview=2d', { waitUntil: 'domcontentloaded' });
     await settlePage(page);
+    await page.locator('#commandModeBtn').dispatchEvent('pointerover');
+    await expect(page.locator('html')).toHaveAttribute('data-home-experience', 'ready');
     await page.evaluate(() => {
       document.body.classList.remove('hud-off');
       const hud = document.querySelector('#combatHud');

@@ -1,11 +1,32 @@
+@font-face{
+  font-family:'Afflatus Arena Display';
+  src:url('/assets/fonts/anton-latin-400-normal.woff2') format('woff2');
+  font-style:normal;
+  font-weight:400 900;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Afflatus Arena Mono';
+  src:url('/assets/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+  font-style:normal;
+  font-weight:400 600;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Afflatus Arena Mono';
+  src:url('/assets/fonts/jetbrains-mono-latin-700-normal.woff2') format('woff2');
+  font-style:normal;
+  font-weight:700 900;
+  font-display:swap;
+}
 :root{
   --bg:#05070e;--panel:#0b0f1c;--panel-2:#0a0e1a;
   --acid:#3dff9a;--cyan:#27e7ff;--blue:#3a5bff;--magenta:#ff3df0;
   --up:#3dff9a;--down:#ff5470;--text:#eaf1ff;--muted:#8590b5;
   --line:rgba(61,255,154,.34);--line-b:rgba(58,91,255,.40);
-  --font-display:'Orbitron','Marathon Shapiro 65',system-ui,sans-serif;
-  --font-hud:'Rajdhani','Orbitron',sans-serif;
-  --font-mono:'JetBrains Mono','PP Fraktion Mono',ui-monospace,monospace;
+  --font-display:'Afflatus Arena Display','Arial Narrow',system-ui,sans-serif;
+  --font-hud:'Afflatus Arena Mono','Arial Narrow',sans-serif;
+  --font-mono:'Afflatus Arena Mono',ui-monospace,monospace;
   --radius:4px;
   --viz-axis:rgba(234,241,255,.26);--viz-grid:rgba(234,241,255,.07);--viz-tick:var(--muted);
   --viz-line-w:1.8px;--viz-marker-r:3;--viz-tip-bg:rgba(5,7,14,.96);--viz-tip-line:rgba(234,241,255,.14);--viz-tip-radius:8px;

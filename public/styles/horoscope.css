@@ -10,6 +10,20 @@
    The lighter decor variants (--sage/--terra/--gold-soft) are only used
    for borders, fills, large graphics and ≥18px bold accents (3:1 rule).
    ============================================================ */
+@font-face{
+  font-family:'Afflatus Horoscope Mono';
+  src:url('/assets/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Afflatus Horoscope Mono';
+  src:url('/assets/fonts/jetbrains-mono-latin-700-normal.woff2') format('woff2');
+  font-style:normal;
+  font-weight:700 900;
+  font-display:swap;
+}
 :root{
   --bg:#F6EFE3;          /* 暖奶油 warm cream page */
   --card:#FFFBF2;        /* 卡片 */
@@ -25,9 +39,9 @@
   --gold-deep:#7A5E1D;   /* text-safe gold */
   --wood:#4A6B3B;--fire:#A2442E;--earth:#7A5E1D;--metal:#636358;--water:#396383;
   --shadow:0 8px 28px rgba(120,96,70,.10);
-  --serif:'Noto Serif SC','Spectral',Georgia,serif;
-  --en:'Spectral','Noto Serif SC',Georgia,serif;
-  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --serif:Georgia,'Songti SC',STSong,'Noto Serif CJK SC',serif;
+  --en:Georgia,'Songti SC',STSong,'Noto Serif CJK SC',serif;
+  --mono:'Afflatus Horoscope Mono',ui-monospace,monospace;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -558,7 +572,7 @@ a{color:inherit;text-decoration:none}
   .page-hero h1{font-size:16px}
   .nav{width:100%;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-inline:contain;padding:2px 0 4px;scrollbar-width:none}
   .nav::-webkit-scrollbar{display:none}
-  .nav a,.lang-toggle{flex:none;min-height:42px;display:inline-flex;align-items:center}
+  .nav a,.lang-toggle{flex:none;min-height:44px;display:inline-flex;align-items:center}
   .hero{padding:19px 15px 17px}
   .hero h2{font-size:24px}
   .hero .sub{font-size:13.5px;line-height:1.7}

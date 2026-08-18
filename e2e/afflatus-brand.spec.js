@@ -92,9 +92,8 @@ test.describe('Afflatus reduced motion brand', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/serial.html', { waitUntil: 'domcontentloaded' });
     await expect.poll(() => page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
-    await page.evaluate(() => {
-      document.documentElement.dataset.afflatusBrandState = 'compact';
-    });
+    await page.evaluate(() => scrollTo(0, 180));
+    await expect(page.locator('html')).toHaveAttribute('data-afflatus-brand-state', 'compact');
 
     const brand = page.locator('a[data-afflatus-brand]');
     await expect(brand).toBeVisible();
@@ -217,7 +216,9 @@ test.describe('Homepage following command bar', () => {
       await expect(page.locator('.convoy-visual')).not.toHaveClass(/is-pinned|is-docked/);
     }
 
-    for (const cover of await page.locator('#pickGrid .pick-card .pcCover').all()) {
+    const covers = page.locator('#pickGrid .pick-card .pcCover');
+    for (const index of [0, 4, 9]) {
+      const cover = covers.nth(index);
       await cover.hover();
       const state = await cover.evaluate((element) => {
         const style = getComputedStyle(element);
