@@ -912,7 +912,7 @@ button {
 
 .city-actions {
   display: grid;
-  grid-template-columns: minmax(230px, 2.7fr) repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(145px, 2fr)) repeat(7, minmax(0, 1fr));
   gap: 7px;
   margin-top: 12px;
   padding-top: 12px;
@@ -1013,6 +1013,37 @@ button {
   margin-top: 10px;
   color: var(--city-muted);
   font-size: 0.62rem;
+}
+
+.city-production-provenance {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--city-line);
+  color: var(--city-muted);
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.city-production-provenance summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--city-ink);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.city-production-provenance ul {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.city-production-provenance a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
 }
 
 .city-run-meta code {
@@ -1345,9 +1376,9 @@ button {
   }
 }
 
-.city-stage[data-city-analysis-preview="melbourne"] .city-timeline[hidden],
-.city-stage[data-city-analysis-preview="melbourne"] .city-actions > [hidden],
-.city-stage[data-city-analysis-preview="melbourne"] .city-summary ul[hidden] {
+.city-timeline[hidden],
+.city-actions > [hidden],
+.city-summary ul[hidden] {
   display: none;
 }
 

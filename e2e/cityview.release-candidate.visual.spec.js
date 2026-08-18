@@ -1,6 +1,6 @@
 import { expect, settlePage, test } from './site-fixture.js';
 
-const PROFILES = Object.freeze(['shanghai', 'melbourne', 'hong-kong']);
+const PROFILES = Object.freeze(['sandbox']);
 const DAYS = Object.freeze([0, 70, 147, 210]);
 const VISUAL_MODES = Object.freeze([
   Object.freeze({ id: 'full', reducedMotion: 'no-preference', days: DAYS }),
@@ -10,7 +10,7 @@ const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
 test.describe.configure({ mode: 'serial' });
 
-test('Cityview emits a fixed-seed profile and construction-day visual matrix', async ({ page }, testInfo) => {
+test('Cityview emits an explicit fixed-seed Sandbox construction-day visual matrix', async ({ page }, testInfo) => {
   test.skip(
     testInfo.project.name !== 'desktop-chromium',
     'The release-candidate visual matrix is captured once in Chromium.',
@@ -19,7 +19,11 @@ test('Cityview emits a fixed-seed profile and construction-day visual matrix', a
     await page.emulateMedia({ reducedMotion: mode.reducedMotion });
 
     for (const profile of PROFILES) {
-      const query = new URLSearchParams({ seed: 'city-release-candidate-001', profile });
+      const query = new URLSearchParams({
+        seed: 'city-release-candidate-001',
+        mode: 'sandbox',
+        profile: 'shanghai',
+      });
       await page.goto(`/cityview.html?${query}`, { waitUntil: 'domcontentloaded' });
       await settlePage(page);
       await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
@@ -122,39 +126,29 @@ test('Cityview emits a fixed-seed profile and construction-day visual matrix', a
   }
 });
 
-test('Hong Kong emits three unobstructed fixed-seed hero views', async ({ page }, testInfo) => {
+test('real-city profiles emit truthful unavailable posters instead of generated hero views', async ({ page }, testInfo) => {
   test.skip(
     testInfo.project.name !== 'desktop-chromium',
-    'The Hong Kong hero matrix is captured once in Chromium.',
+    'The real-city unavailable matrix is captured once in Chromium.',
   );
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  const query = new URLSearchParams({
-    seed: 'city-release-candidate-001',
-    profile: 'hong-kong',
-  });
-  await page.goto(`/cityview.html?${query}`, { waitUntil: 'domcontentloaded' });
-  await settlePage(page);
-  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
-  await page.locator('[data-city-timeline]').evaluate((element) => {
-    element.value = '210';
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-  });
-  await expect(page.locator('[data-city-day]')).toHaveText('210');
-
-  const heroIds = [];
-  for (let index = 0; index < 3; index += 1) {
-    await page.locator('[data-city-view]').click();
-    await expect(page.locator('[data-city-view-label]')).toHaveText(`View ${index + 1}/3`);
-    const cameraRig = await page.evaluate(
-      () => window.__AFFLATUS_CITYVIEW__?.getTelemetry?.()?.cameraRig,
-    );
-    expect(cameraRig).toMatchObject({
-      heroViews: 3,
-      currentHeroOcclusions: 0,
-      clearanceLift: 0,
+  for (const profile of ['shanghai', 'melbourne', 'hong-kong']) {
+    const query = new URLSearchParams({ profile, mode: 'reality' });
+    await page.goto(`/cityview.html?${query}`, { waitUntil: 'domcontentloaded' });
+    await settlePage(page);
+    await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+    await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-surface', 'unavailable');
+    await expect(page.locator('[data-city-canvas]')).toHaveAttribute('data-renderer', 'poster');
+    await expect(page.locator('[data-city-profile-note]')).toContainText('Reality package unavailable');
+    expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry?.())).toBeNull();
+    expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary?.())).toMatchObject({
+      profile,
+      truthMode: 'reality',
+      truthClass: 'real-city-unavailable',
+      availability: 'unavailable',
+      buildings: 0,
+      heroLandmarks: 0,
     });
-    heroIds.push(cameraRig.currentHeroView);
-
     const image = await page.screenshot({
       animations: 'disabled',
       caret: 'hide',
@@ -162,20 +156,10 @@ test('Hong Kong emits three unobstructed fixed-seed hero views', async ({ page }
       scale: 'css',
     });
     expect(image.subarray(0, PNG_SIGNATURE.length)).toEqual(PNG_SIGNATURE);
-    expect(image.byteLength, `hong-kong hero ${index + 1} must contain a rendered viewport`).toBeGreaterThan(8_000);
-    await testInfo.attach(`cityview-hong-kong-hero-${index + 1}.png`, {
+    expect(image.byteLength, `${profile} unavailable poster must contain a rendered viewport`).toBeGreaterThan(8_000);
+    await testInfo.attach(`cityview-${profile}-reality-unavailable.png`, {
       body: image,
       contentType: 'image/png',
     });
-    await testInfo.attach(`cityview-hong-kong-hero-${index + 1}.json`, {
-      body: Buffer.from(JSON.stringify(cameraRig, null, 2)),
-      contentType: 'application/json',
-    });
   }
-
-  expect(heroIds).toEqual([
-    'hong-kong-harbour-fin-concept',
-    'hong-kong-stepped-harbour-crown-concept',
-    'hong-kong-waterfront-cultural-podium-concept',
-  ]);
 });

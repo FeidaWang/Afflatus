@@ -5,6 +5,7 @@ import {
   CITY_STYLE_TWINS,
   applyCityStyleTwin,
   cityStyleTwinForEnvironment,
+  cityStyleTwinForSnapshot,
 } from '../src/scene/cityStyleTwin.ts';
 
 describe('Melbourne city style twin', () => {
@@ -52,11 +53,17 @@ describe('Melbourne city style twin', () => {
     expect(night).toEqual({
       styleId: 'melbourne-night-v1',
       materialCount: 2,
+      windowLightingMaterials: 1,
+      physicalWaterMaterials: 0,
+      authoredNightLightMaterials: 0,
+      streetLightMaterials: 0,
+      aviationLightMaterials: 0,
+      landmarkLightMaterials: 0,
       roles: ['buildings', 'other'],
     });
     expect(root.children[0].material).toBe(building);
-    expect(building.emissive.getHex()).toBe(0x2b4668);
-    expect(building.emissiveIntensity).toBe(0.32);
+    expect(building.emissive.getHex()).toBe(0x000000);
+    expect(building.emissiveIntensity).toBe(0);
     expect(unknown.color.equals(original.unknownColor)).toBe(true);
 
     applyCityStyleTwin(root, MELBOURNE_ENVIRONMENT_CLOCK.resolve('analysis'));
@@ -82,5 +89,29 @@ describe('Melbourne city style twin', () => {
       new THREE.LineSegments(new THREE.BufferGeometry(), shared),
     );
     expect(applyCityStyleTwin(root, 'sunset').materialCount).toBe(1);
+  });
+
+  it('reports city-specific style identity while sharing the renderer contract', () => {
+    expect(cityStyleTwinForEnvironment('night', 'shanghai').id).toBe('shanghai-night-v1');
+    expect(cityStyleTwinForEnvironment('sunset', 'hong-kong').id).toBe('hong-kong-sunset-v1');
+    expect(cityStyleTwinForEnvironment('day', 'melbourne').id).toBe('melbourne-day-v1');
+  });
+
+  it('blends light, IBL, water and window values continuously across solar boundaries', () => {
+    const base = MELBOURNE_ENVIRONMENT_CLOCK.resolve('day');
+    const snapshotAt = (altitudeDegrees: number) => ({
+      ...base,
+      environment: 'day' as const,
+      sun: { ...base.sun, altitudeDegrees },
+    });
+    const before = cityStyleTwinForSnapshot(snapshotAt(7.999));
+    const after = cityStyleTwinForSnapshot(snapshotAt(8));
+    expect(Math.abs(after.exposure - before.exposure)).toBeLessThan(0.001);
+    expect(Math.abs(after.iblIntensity - before.iblIntensity)).toBeLessThan(0.001);
+    expect(Math.abs(
+      after.waterSurface.reflectionIntensity - before.waterSurface.reflectionIntensity,
+    )).toBeLessThan(0.001);
+    expect(cityStyleTwinForSnapshot(snapshotAt(0)).windowLighting.intensity).toBeGreaterThan(0);
+    expect(cityStyleTwinForSnapshot(snapshotAt(30)).windowLighting.intensity).toBe(0);
   });
 });

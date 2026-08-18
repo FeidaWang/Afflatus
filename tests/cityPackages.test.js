@@ -7,11 +7,13 @@ import {
   validateCityPackageAssetReferences,
   validateCityPackageManifest,
   validateCityPackageRegistry,
-  validateCityPackageReleaseReferences,
 } from '../src/lib/validateCityPackages.js';
+import { validateCityPackageReleaseReferences } from '../src/lib/validateCityPackageReleases.js';
+import { wgs84ToLocalEnu } from '../src/city/projection.ts';
 
 const REGISTRY_PATH = resolve(import.meta.dirname, '../data/city/city-package-registry.json');
 const LEDGER_PATH = resolve(import.meta.dirname, '../data/city/city-data-ledger.json');
+const REALITY_PATH = resolve(import.meta.dirname, '../data/city/city-reality-contracts.json');
 const MANIFEST_PATH = 'public/assets/city/packages/melbourne-core-v1/manifest.json';
 const CANDIDATE_MANIFEST_PATH = resolve(
   import.meta.dirname,
@@ -26,6 +28,34 @@ const approval = (role) => ({
   at: '2026-08-15',
   evidence: `reviews/${role}.md`,
 });
+
+function syntheticCanonicalViews() {
+  return Array.from({ length: 5 }, (_, index) => ({
+    id: `fixture-view-${index + 1}`,
+    labels: { en: `Fixture view ${index + 1}`, zh: `测试视角 ${index + 1}` },
+    positionLocal: { x: 1000 + index, y: 500, z: 1000 },
+    targetLocal: { x: 250, y: 20, z: 125 },
+    verticalFovDegrees: 42,
+    verticalBasis: 'local-datum-metres',
+    verticalEvidence: 'tests/fixtures/city/canonical-view.md',
+  }));
+}
+
+function contractCanonicalViews(contract, anchor) {
+  return contract.canonicalCameras.map((camera, index) => {
+    const position = wgs84ToLocalEnu(camera.positionWgs84, anchor);
+    const target = wgs84ToLocalEnu(camera.targetWgs84, anchor);
+    return {
+      id: camera.id,
+      labels: structuredClone(camera.labels),
+      positionLocal: { x: position.east, y: 120 + index * 10, z: -position.north },
+      targetLocal: { x: target.east, y: 45, z: -target.north },
+      verticalFovDegrees: camera.verticalFovDegrees,
+      verticalBasis: 'local-datum-metres',
+      verticalEvidence: `reviews/${camera.id}-vertical-camera-evidence.md`,
+    };
+  });
+}
 
 function packageFixture({ approved = false } = {}) {
   return {
@@ -77,6 +107,12 @@ function packageFixture({ approved = false } = {}) {
       byteLength: 1024,
       lod: null,
     }],
+    landmarkAssets: approved ? {
+      admissionUri: '/assets/city/packages/melbourne-core-v1/landmark-admission.json',
+      sha256: 'e'.repeat(64),
+      byteLength: 1024,
+    } : null,
+    canonicalViews: approved ? syntheticCanonicalViews() : null,
     generatedAt: '2026-08-15T12:00:00.000Z',
     approvals: Object.fromEntries(['dataOwner', 'legal', 'engineering', 'productRelease']
       .map((role) => [role, approved
@@ -88,6 +124,99 @@ function packageFixture({ approved = false } = {}) {
       rollbackPackageId: null,
     },
   };
+}
+
+function landmarkGlb(materials) {
+  const source = Buffer.from(JSON.stringify({ asset: { version: '2.0' }, materials }), 'utf8');
+  const jsonLength = Math.ceil(source.length / 4) * 4;
+  const bytes = Buffer.alloc(20 + jsonLength, 0x20);
+  bytes.writeUInt32LE(0x46546c67, 0);
+  bytes.writeUInt32LE(2, 4);
+  bytes.writeUInt32LE(bytes.length, 8);
+  bytes.writeUInt32LE(jsonLength, 12);
+  bytes.writeUInt32LE(0x4e4f534a, 16);
+  source.copy(bytes, 20);
+  return bytes;
+}
+
+function stageLandmarkAdmission(manifest, reality) {
+  const contract = reality.cities.find(({ id }) => id === manifest.cityId);
+  manifest.precinct.boundsWgs84 = structuredClone(contract.precinct.boundsWgs84);
+  manifest.canonicalViews = contractCanonicalViews(contract, manifest.precinct.anchorWgs84);
+  const admission = {
+    schemaVersion: 1,
+    packageId: manifest.packageId,
+    cityId: manifest.cityId,
+    truthClass: 'rights-cleared-city-landmark-set',
+    assets: contract.minimumLandmarks.map((landmark) => ({
+      landmarkId: landmark.id,
+      sourceKind: landmark.assetClass === 'terrain-hero' ? 'approved-terrain-source' : 'authored-original',
+      anchor: {
+        ...contract.coordinateFrame.originWgs84,
+        yawDegrees: 0,
+        metresPerUnit: 1,
+        localFrame: 'ENU',
+        upAxis: 'Y',
+        groundReference: 'approved-local-ground-v1',
+      },
+      lods: [0, 1, 2].map((level) => ({
+        level,
+        uri: `/assets/city/packages/${manifest.packageId}/landmarks/${landmark.id}-lod${level}.glb`,
+        sha256: '0'.repeat(64),
+        byteLength: 1,
+      })),
+      wholeEnvelopeEmission: false,
+      lightMaterialGroups: contract.landmarkAssetContract.requiredMaterialGroupsByLandmark[landmark.id]
+        .map((name) => ({ name, lods: [0, 1], emitsWholeEnvelope: false })),
+      rights: {
+        mesh: 'approved',
+        textures: 'approved',
+        signage: 'approved',
+        evidence: [`reviews/${landmark.id}-rights.md`],
+      },
+    })),
+    nightGoldens: contract.landmarkAssetContract.nightGoldenCameraIds.flatMap((cameraId) => (
+      contract.landmarkAssetContract.nightGoldenPlatforms.map((platform) => ({
+        cameraId,
+        platform,
+        uri: `/assets/city/packages/${manifest.packageId}/goldens/${cameraId}-${platform}-night.png`,
+        sha256: '0'.repeat(64),
+        byteLength: 1,
+      }))
+    )),
+  };
+  const artifacts = {};
+  for (const asset of admission.assets) {
+    for (const lod of asset.lods) {
+      const materials = asset.lightMaterialGroups
+        .filter((group) => group.lods.includes(lod.level))
+        .map(({ name }) => ({ name }));
+      const bytes = landmarkGlb([{ name: `surface-${asset.landmarkId}` }, ...materials]);
+      lod.sha256 = createHash('sha256').update(bytes).digest('hex');
+      lod.byteLength = bytes.length;
+      artifacts[lod.uri] = { bytes };
+    }
+  }
+  for (const golden of admission.nightGoldens) {
+    const bytes = Buffer.alloc(32);
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(bytes);
+    golden.sha256 = createHash('sha256').update(bytes).digest('hex');
+    golden.byteLength = bytes.length;
+    artifacts[golden.uri] = { bytes };
+  }
+  const admissionBytes = Buffer.from(JSON.stringify(admission));
+  manifest.landmarkAssets = {
+    admissionUri: `/assets/city/packages/${manifest.packageId}/landmark-admission.json`,
+    sha256: createHash('sha256').update(admissionBytes).digest('hex'),
+    byteLength: admissionBytes.length,
+  };
+  artifacts[manifest.landmarkAssets.admissionUri] = {
+    sha256: manifest.landmarkAssets.sha256,
+    byteLength: admissionBytes.length,
+    bytes: admissionBytes,
+    data: admission,
+  };
+  return artifacts;
 }
 
 function registryWith(manifest) {
@@ -139,15 +268,51 @@ describe('CityPackage release gate', () => {
     expect(canPublishCityPackage(manifest)).toBe(false);
   });
 
+  it('requires an explicit landmark admission reference for production packages', () => {
+    const manifest = packageFixture({ approved: true });
+    manifest.landmarkAssets = null;
+    const result = validateCityPackageManifest(manifest);
+    expect(result.errors).toContain(
+      'landmarkAssets: production packages require an admitted landmark asset set',
+    );
+    expect(canPublishCityPackage(manifest)).toBe(false);
+  });
+
+  it('requires five frozen canonical views for production packages', () => {
+    const manifest = packageFixture({ approved: true });
+    manifest.canonicalViews = null;
+    const result = validateCityPackageManifest(manifest);
+    expect(result.errors).toContain(
+      'canonicalViews: production packages require frozen canonical views',
+    );
+    expect(canPublishCityPackage(manifest)).toBe(false);
+  });
+
+  it('requires bilingual canonical-view labels', () => {
+    const manifest = packageFixture({ approved: true });
+    manifest.canonicalViews[0].labels.zh = '';
+    expect(validateCityPackageManifest(manifest).errors).toContain(
+      'canonicalViews[0].labels: bilingual labels are required',
+    );
+  });
+
   it('requires package approval and independently approved ledger layers', () => {
     const manifest = packageFixture({ approved: true });
+    const reality = fixture(REALITY_PATH);
+    const releaseArtifacts = stageLandmarkAdmission(manifest, reality);
     const registry = registryWith(manifest);
     const packages = {
       [MANIFEST_PATH]: { sha256: 'd'.repeat(64), data: manifest },
     };
     expect(canPublishCityPackage(manifest)).toBe(true);
 
-    const blocked = validateCityPackageReleaseReferences(registry, packages, fixture(LEDGER_PATH));
+    const blocked = validateCityPackageReleaseReferences(
+      registry,
+      packages,
+      fixture(LEDGER_PATH),
+      reality,
+      releaseArtifacts,
+    );
     expect(blocked.ok).toBe(false);
     expect(blocked.errors).toContain(
       'productionPackages.melbourne: ledger layer melbourne-buildings-2023 is not production-approved',
@@ -155,8 +320,93 @@ describe('CityPackage release gate', () => {
 
     const approvedLedger = fixture(LEDGER_PATH);
     approveLedgerLayer(approvedLedger, manifest);
-    expect(validateCityPackageReleaseReferences(registry, packages, approvedLedger))
+    expect(validateCityPackageReleaseReferences(
+      registry,
+      packages,
+      approvedLedger,
+      reality,
+      releaseArtifacts,
+    ))
       .toEqual({ ok: true, errors: [] });
+  });
+
+  it('blocks a production registry reference when landmark admission bytes are absent', () => {
+    const manifest = packageFixture({ approved: true });
+    const registry = registryWith(manifest);
+    const packages = {
+      [MANIFEST_PATH]: { sha256: 'd'.repeat(64), data: manifest },
+    };
+    const result = validateCityPackageReleaseReferences(
+      registry,
+      packages,
+      fixture(LEDGER_PATH),
+      fixture(REALITY_PATH),
+      {},
+    );
+    expect(result.errors).toContain(
+      'productionPackages.melbourne: landmark admission artifact is missing',
+    );
+  });
+
+  it('blocks a production registry reference when an admitted landmark GLB is altered', () => {
+    const manifest = packageFixture({ approved: true });
+    const reality = fixture(REALITY_PATH);
+    const releaseArtifacts = stageLandmarkAdmission(manifest, reality);
+    const glbUri = Object.keys(releaseArtifacts).find((uri) => uri.endsWith('.glb'));
+    releaseArtifacts[glbUri].bytes = Buffer.from(releaseArtifacts[glbUri].bytes);
+    releaseArtifacts[glbUri].bytes[releaseArtifacts[glbUri].bytes.length - 1] ^= 1;
+    const registry = registryWith(manifest);
+    const packages = {
+      [MANIFEST_PATH]: { sha256: 'd'.repeat(64), data: manifest },
+    };
+    const result = validateCityPackageReleaseReferences(
+      registry,
+      packages,
+      fixture(LEDGER_PATH),
+      reality,
+      releaseArtifacts,
+    );
+    expect(result.errors).toContain(
+      'productionPackages.melbourne: landmark admission assets are invalid',
+    );
+  });
+
+  it('blocks a production registry reference when a canonical camera drifts horizontally', () => {
+    const manifest = packageFixture({ approved: true });
+    const reality = fixture(REALITY_PATH);
+    const releaseArtifacts = stageLandmarkAdmission(manifest, reality);
+    manifest.canonicalViews[0].positionLocal.x += 2;
+    const registry = registryWith(manifest);
+    const packages = {
+      [MANIFEST_PATH]: { sha256: 'd'.repeat(64), data: manifest },
+    };
+    const result = validateCityPackageReleaseReferences(
+      registry,
+      packages,
+      fixture(LEDGER_PATH),
+      reality,
+      releaseArtifacts,
+    );
+    expect(result.errors).toContain(
+      'productionPackages.melbourne.southbank-north-cbd: horizontal ENU pose does not match WGS84 camera contract',
+    );
+  });
+
+  it('blocks a production registry reference when a canonical camera is relabelled', () => {
+    const manifest = packageFixture({ approved: true });
+    const reality = fixture(REALITY_PATH);
+    const releaseArtifacts = stageLandmarkAdmission(manifest, reality);
+    manifest.canonicalViews[0].labels.en = 'Invented skyline';
+    const result = validateCityPackageReleaseReferences(
+      registryWith(manifest),
+      { [MANIFEST_PATH]: { sha256: 'd'.repeat(64), data: manifest } },
+      fixture(LEDGER_PATH),
+      reality,
+      releaseArtifacts,
+    );
+    expect(result.errors).toContain(
+      'productionPackages.melbourne.southbank-north-cbd: bilingual labels do not match camera contract',
+    );
   });
 
   it('rejects remote package assets and approval without named evidence', () => {

@@ -4,3 +4,4 @@ export interface CityPackageValidationResult {
 }
 
 export function validateCityPackageManifest(data: unknown): CityPackageValidationResult;
+export function canPublishCityPackage(data: unknown): boolean;

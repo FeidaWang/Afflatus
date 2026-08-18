@@ -4,6 +4,7 @@ import {
   Horizon,
   Observer,
 } from 'astronomy-engine';
+import type { CityPackageCityId } from './packages';
 
 export const CITY_ENVIRONMENT_IDS = Object.freeze([
   'analysis',
@@ -63,6 +64,45 @@ export const MELBOURNE_ENVIRONMENT_PRESET_INSTANTS = Object.freeze({
   sunset: '2026-01-15T09:30:00.000Z',
   night: '2026-01-15T13:00:00.000Z',
 } satisfies Readonly<Record<CityEnvironmentId, string>>);
+
+export const CITY_ENVIRONMENT_LOCATIONS: Readonly<Record<CityPackageCityId, CityEnvironmentLocation>> = Object.freeze({
+  shanghai: Object.freeze({
+    id: 'shanghai-bund-lujiazui',
+    labels: Object.freeze({ en: 'Shanghai Bund–Lujiazui', zh: '上海外滩—陆家嘴' }),
+    timeZone: 'Asia/Shanghai',
+    latitude: 31.238,
+    longitude: 121.497,
+    elevationMetres: 4,
+  }),
+  melbourne: MELBOURNE_ENVIRONMENT_LOCATION,
+  'hong-kong': Object.freeze({
+    id: 'hong-kong-victoria-harbour',
+    labels: Object.freeze({ en: 'Hong Kong Victoria Harbour', zh: '香港维多利亚港' }),
+    timeZone: 'Asia/Hong_Kong',
+    latitude: 22.2888,
+    longitude: 114.1694,
+    elevationMetres: 5,
+  }),
+});
+
+export const CITY_ENVIRONMENT_PRESET_INSTANTS: Readonly<Record<
+  CityPackageCityId,
+  Readonly<Record<CityEnvironmentId, string>>
+>> = Object.freeze({
+  shanghai: Object.freeze({
+    analysis: '2026-06-21T04:00:00.000Z',
+    day: '2026-06-21T04:00:00.000Z',
+    sunset: '2026-06-21T11:00:00.000Z',
+    night: '2026-06-21T15:00:00.000Z',
+  }),
+  melbourne: MELBOURNE_ENVIRONMENT_PRESET_INSTANTS,
+  'hong-kong': Object.freeze({
+    analysis: '2026-06-21T04:00:00.000Z',
+    day: '2026-06-21T04:00:00.000Z',
+    sunset: '2026-06-21T11:00:00.000Z',
+    night: '2026-06-21T15:00:00.000Z',
+  }),
+});
 
 const DAY_ALTITUDE_DEGREES = 8;
 const NIGHT_ALTITUDE_DEGREES = -6;
@@ -202,6 +242,13 @@ export class EnvironmentClock {
       simulatedLighting: environment === 'night',
     });
   }
+}
+
+export function createCityEnvironmentClock(cityId: CityPackageCityId): EnvironmentClock {
+  return new EnvironmentClock({
+    location: CITY_ENVIRONMENT_LOCATIONS[cityId],
+    presetInstants: CITY_ENVIRONMENT_PRESET_INSTANTS[cityId],
+  });
 }
 
 export const MELBOURNE_ENVIRONMENT_CLOCK = Object.freeze(new EnvironmentClock({

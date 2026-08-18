@@ -195,12 +195,12 @@ export const ROUTE_SEO = Object.freeze({
       eyebrow: { en: 'URBAN OBSERVATORY', zh: '城市推演台' },
       title: { en: 'Cityview', zh: '城市推演台' },
       subtitle: {
-        en: 'Three generated city concepts, one reversible construction timeline.',
-        zh: '三座城市概念，共用一条可逆建造时间轴。',
+        en: 'Verified real-city packages, with procedural generation isolated in Sandbox.',
+        zh: '真实城市须经验证，程序化生成仅存在于沙盒。',
       },
       alt: {
-        en: 'Cityview white-model views of Shanghai, Melbourne and Hong Kong concepts',
-        zh: 'Cityview 上海、墨尔本与香港概念白模视图',
+        en: 'Cityview reality-gated urban observatory and synthetic Sandbox',
+        zh: 'Cityview 真实数据门控城市观测台与合成沙盒',
       },
       images: {
         en: routeOgImage('cityview', 'en'),
@@ -537,16 +537,16 @@ export const SITE_MANIFEST = Object.freeze([
     seo: ROUTE_SEO.cityview,
     capabilities: ['webgl', 'construction-timeline', 'simulated-data'],
     metadata: {
-      title: 'Cityview — Three-City Construction Observatory · Afflatus',
-      description: 'Explore deterministic 0–210 day construction concepts for Shanghai, Melbourne and Hong Kong. Generated planning scenarios—not GIS or live municipal data.',
+      title: 'Cityview — Reality-Gated Urban Observatory · Afflatus',
+      description: 'Explore verified real-city packages only after source, licence and release approval. Procedural construction remains explicitly isolated in Sandbox.',
       canonical: 'https://feida.au/cityview.html',
-      ogTitle: 'Cityview — Three-City Construction Observatory',
-      ogDescription: 'Build, scrub and tour Shanghai, Melbourne and Hong Kong concepts in a white-model city observatory.',
+      ogTitle: 'Cityview — Reality-Gated Urban Observatory',
+      ogDescription: 'Real Shanghai, Melbourne and Hong Kong packages fail closed until approved; procedural construction remains in Sandbox.',
       ogImage: ROUTE_SEO.cityview.social.images.en,
     },
     locales: {
-      en: { title: 'Cityview — Three-City Construction Observatory', description: 'A deterministic 0–210 day construction observatory for generated Shanghai, Melbourne and Hong Kong concepts.' },
-      zh: { title: '城市推演台 — 三城建造观测台', description: '面向上海、墨尔本与香港概念场景的确定性 0–210 天城市建造观测台。' },
+      en: { title: 'Cityview — Reality-Gated Urban Observatory', description: 'Verified real-city packages for Shanghai, Melbourne and Hong Kong, with procedural construction isolated in Sandbox.' },
+      zh: { title: '城市推演台 — 真实数据门控城市观测台', description: '上海、墨尔本与香港仅加载已验证真实城市包，程序化建造仅限沙盒。' },
     },
   },
   {

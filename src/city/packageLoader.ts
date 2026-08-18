@@ -1,5 +1,8 @@
 import type { CityPackageManifest } from './packages';
-import { validateCityPackageManifest } from '../lib/validateCityPackages.js';
+import {
+  canPublishCityPackage,
+  validateCityPackageManifest,
+} from '../lib/validateCityPackages.js';
 
 export type CityPackageFallbackReason =
   | 'manifest-invalid'
@@ -49,7 +52,7 @@ export type CityPackageTileResolutionResult =
   }>
   | Readonly<{ status: 'fallback'; reason: 'tile-invalid' }>;
 
-export interface CandidateCityPackageSession {
+export interface CityPackageSession {
   readonly packageId: string;
   readonly index: unknown;
   resolveTileIds(requestedTileIds: readonly string[]): CityPackageTileResolutionResult;
@@ -65,20 +68,28 @@ export interface CandidateCityPackageSession {
   }): Promise<CityPackageTileLoadResult>;
 }
 
-export type CandidateCityPackageSessionResult =
+/** @deprecated Use CityPackageSession. Kept for the non-public Analysis adapter. */
+export type CandidateCityPackageSession = CityPackageSession;
+
+export type CityPackageSessionResult =
   | Readonly<{
     status: 'ready';
     packageId: string;
     index: unknown;
-    session: CandidateCityPackageSession;
+    session: CityPackageSession;
   }>
   | Readonly<{ status: 'cancelled' }>
   | Readonly<{ status: 'fallback'; reason: CityPackageFallbackReason }>;
+
+/** @deprecated Use CityPackageSessionResult. */
+export type CandidateCityPackageSessionResult = CityPackageSessionResult;
 
 export type CityPackageAssetFetcher = (
   uri: string,
   signal: AbortSignal,
 ) => Promise<ArrayBuffer | Uint8Array>;
+
+export type CityPackageUsage = 'candidate' | 'production';
 
 const SHA256_RE = /^[a-f0-9]{64}$/;
 const LOCAL_ASSET_RE = /^\/assets\/city\/packages\/[a-z0-9-/]+\.[a-z0-9]+$/;
@@ -176,18 +187,21 @@ async function fetchVerified(
   return bytes;
 }
 
-export async function openCandidateCityPackage({
+async function openCityPackage({
   manifest,
   fetchAsset,
   signal = new AbortController().signal,
+  usage,
 }: {
   manifest: CityPackageManifest;
   fetchAsset: CityPackageAssetFetcher;
   signal?: AbortSignal;
-}): Promise<CandidateCityPackageSessionResult> {
+  usage: CityPackageUsage;
+}): Promise<CityPackageSessionResult> {
   if (
     !validateCityPackageManifest(manifest).ok
-    || manifest.status !== 'candidate'
+    || (usage === 'candidate' && manifest.status !== 'candidate')
+    || (usage === 'production' && !canPublishCityPackage(manifest))
   ) return Object.freeze({ status: 'fallback', reason: 'manifest-invalid' });
   const indexAsset = manifest.assets.find(({ kind }) => kind === 'entities-index');
   if (!indexAsset) return Object.freeze({ status: 'fallback', reason: 'manifest-invalid' });
@@ -202,9 +216,9 @@ export async function openCandidateCityPackage({
   if (
     index?.packageId !== manifest.packageId
     || !Array.isArray(index.tiles)
-    || index.runtime?.representation !== 'Analysis GLB'
+    || index.runtime?.representation !== (usage === 'candidate' ? 'Analysis GLB' : 'CityPackage GLB')
     || index.runtime?.compression !== 'EXT_meshopt_compression'
-    || index.runtime?.candidateOnly !== true
+    || index.runtime?.candidateOnly !== (usage === 'candidate')
     || index.runtime?.dependencySemantics !== 'direct-entity-home-tiles'
     || index.tiles.some((tile: any) => (
       !tile
@@ -333,6 +347,22 @@ export async function openCandidateCityPackage({
     index,
     session,
   });
+}
+
+export function openCandidateCityPackage(options: {
+  manifest: CityPackageManifest;
+  fetchAsset: CityPackageAssetFetcher;
+  signal?: AbortSignal;
+}): Promise<CandidateCityPackageSessionResult> {
+  return openCityPackage({ ...options, usage: 'candidate' });
+}
+
+export function openProductionCityPackage(options: {
+  manifest: CityPackageManifest;
+  fetchAsset: CityPackageAssetFetcher;
+  signal?: AbortSignal;
+}): Promise<CityPackageSessionResult> {
+  return openCityPackage({ ...options, usage: 'production' });
 }
 
 export async function loadCandidateCityTiles({

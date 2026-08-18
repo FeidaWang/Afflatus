@@ -336,7 +336,8 @@ export const CITY_CONCEPT_GENERATION_PROFILES: Readonly<Record<CityConceptProfil
   }),
 });
 
-export const PUBLIC_CITY_CONCEPT_PROFILE_KEYS: readonly CityPublicProfileKey[] = Object.freeze([
+/** Legacy generated style fixtures. They are not exposed as real cities by Cityview. */
+export const LEGACY_CITY_CONCEPT_PROFILE_KEYS: readonly CityPublicProfileKey[] = Object.freeze([
   'shanghai',
   'melbourne',
   'hong-kong',
@@ -347,7 +348,7 @@ export function normalizeCityConceptProfileKey(value: unknown): CityConceptProfi
   return key === 'shanghai' || key === 'melbourne' || key === 'hong-kong' ? key : 'sandbox';
 }
 
-export function normalizePublicCityConceptProfileKey(value: unknown): CityPublicProfileKey {
+export function normalizeCityExperienceProfileKey(value: unknown): CityPublicProfileKey {
   const key = String(value || '').toLowerCase();
   return key === 'melbourne' || key === 'hong-kong' ? key : 'shanghai';
 }

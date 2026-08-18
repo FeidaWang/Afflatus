@@ -1,7 +1,10 @@
 import type { CityPackageTileLoadResult } from './packageLoader';
 
 export const MELBOURNE_ANALYSIS_PACKAGE_ID = 'melbourne-flinders-federation-v1';
-export const MELBOURNE_ANALYSIS_MANIFEST_SHA256 = '6ba99fc6830c46c42f740ff5de241040c971295ca79d18257cb3009adb8a7b60';
+export const MELBOURNE_ANALYSIS_MANIFEST_SHA256 = '239bee1165f4a296152c86702b7f240a4fd2398d76f28b8e7119f5fccfbb3986';
+// Historical visual/stability evidence remains bound to the pre-admission-field
+// manifest. The current candidate must not silently inherit a different hash.
+export const MELBOURNE_ANALYSIS_EVIDENCE_MANIFEST_SHA256 = '6ba99fc6830c46c42f740ff5de241040c971295ca79d18257cb3009adb8a7b60';
 export const MELBOURNE_ANALYSIS_MANIFEST_URL = `/data/city/candidates/${MELBOURNE_ANALYSIS_PACKAGE_ID}/manifest.json`;
 
 export const MELBOURNE_ANALYSIS_BASELINE = Object.freeze({

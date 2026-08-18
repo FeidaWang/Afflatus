@@ -72,6 +72,20 @@ export interface CityPackageManifest {
   };
   sourceLayers: readonly CityPackageProvenance[];
   assets: readonly CityPackageAsset[];
+  landmarkAssets: null | Readonly<{
+    admissionUri: string;
+    sha256: string;
+    byteLength: number;
+  }>;
+  canonicalViews: null | readonly Readonly<{
+    id: string;
+    labels: Readonly<{ en: string; zh: string }>;
+    positionLocal: Readonly<{ x: number; y: number; z: number }>;
+    targetLocal: Readonly<{ x: number; y: number; z: number }>;
+    verticalFovDegrees: number;
+    verticalBasis: 'local-datum-metres';
+    verticalEvidence: string;
+  }>[];
   generatedAt: string;
   approvals: {
     dataOwner: CityPackageApproval;

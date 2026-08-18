@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   CITY_CONCEPT_GENERATION_PROFILES,
   CITY_EXPERIENCE_PROFILES,
-  PUBLIC_CITY_CONCEPT_PROFILE_KEYS,
+  LEGACY_CITY_CONCEPT_PROFILE_KEYS,
   canLoadRealCityData,
   normalizeCityConceptProfileKey,
-  normalizePublicCityConceptProfileKey,
+  normalizeCityExperienceProfileKey,
   validateCityExperienceProfile,
 } from '../src/city/profiles.ts';
 
@@ -44,14 +44,14 @@ describe('city experience and generated concept profiles', () => {
     });
   });
 
-  it('keeps three public concepts and one isolated synthetic fixture without enabling real data', () => {
+  it('keeps three legacy concept fixtures isolated from the synthetic Sandbox and real-data approval', () => {
     expect(Object.keys(CITY_CONCEPT_GENERATION_PROFILES)).toEqual([
       'sandbox',
       'shanghai',
       'melbourne',
       'hong-kong',
     ]);
-    expect(PUBLIC_CITY_CONCEPT_PROFILE_KEYS).toEqual([
+    expect(LEGACY_CITY_CONCEPT_PROFILE_KEYS).toEqual([
       'shanghai',
       'melbourne',
       'hong-kong',
@@ -89,9 +89,9 @@ describe('city experience and generated concept profiles', () => {
     expect(normalizeCityConceptProfileKey('MELBOURNE')).toBe('melbourne');
     expect(normalizeCityConceptProfileKey('HONG-KONG')).toBe('hong-kong');
     expect(normalizeCityConceptProfileKey('unknown')).toBe('sandbox');
-    expect(normalizePublicCityConceptProfileKey('MELBOURNE')).toBe('melbourne');
-    expect(normalizePublicCityConceptProfileKey('HONG-KONG')).toBe('hong-kong');
-    expect(normalizePublicCityConceptProfileKey('sandbox')).toBe('shanghai');
-    expect(normalizePublicCityConceptProfileKey('unknown')).toBe('shanghai');
+    expect(normalizeCityExperienceProfileKey('MELBOURNE')).toBe('melbourne');
+    expect(normalizeCityExperienceProfileKey('HONG-KONG')).toBe('hong-kong');
+    expect(normalizeCityExperienceProfileKey('sandbox')).toBe('shanghai');
+    expect(normalizeCityExperienceProfileKey('unknown')).toBe('shanghai');
   });
 });

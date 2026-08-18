@@ -1,4 +1,152 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { expect, settlePage, test } from './site-fixture.js';
+
+const PRODUCTION_FIXTURE_DIRECTORY = resolve(
+  import.meta.dirname,
+  '../data/city/candidates/melbourne-flinders-federation-v1',
+);
+
+function renameGlbMaterial(bytes, sourceName, targetName) {
+  const source = Buffer.from(bytes);
+  const jsonLength = source.readUInt32LE(12);
+  const jsonType = source.readUInt32LE(16);
+  const json = JSON.parse(source.subarray(20, 20 + jsonLength).toString().trimEnd());
+  const material = json.materials?.find(({ name }) => name === sourceName);
+  if (!material) throw new Error(`Fixture material ${sourceName} is missing.`);
+  material.name = targetName;
+  const jsonBytes = Buffer.from(JSON.stringify(json));
+  const paddedJsonLength = Math.ceil(jsonBytes.byteLength / 4) * 4;
+  const remainingChunks = source.subarray(20 + jsonLength);
+  const result = Buffer.alloc(20 + paddedJsonLength + remainingChunks.byteLength, 0x20);
+  source.subarray(0, 12).copy(result, 0);
+  result.writeUInt32LE(result.byteLength, 8);
+  result.writeUInt32LE(paddedJsonLength, 12);
+  result.writeUInt32LE(jsonType, 16);
+  jsonBytes.copy(result, 20);
+  remainingChunks.copy(result, 20 + paddedJsonLength);
+  return result;
+}
+
+function productionCityPackageFixture() {
+  const manifest = JSON.parse(readFileSync(resolve(PRODUCTION_FIXTURE_DIRECTORY, 'manifest.json'), 'utf8'));
+  const index = JSON.parse(readFileSync(resolve(PRODUCTION_FIXTURE_DIRECTORY, 'entities-index.json'), 'utf8'));
+  manifest.status = 'production-approved';
+  manifest.landmarkAssets = {
+    admissionUri: `/assets/city/packages/${manifest.packageId}/landmark-admission.json`,
+    sha256: 'e'.repeat(64),
+    byteLength: 1024,
+  };
+  manifest.canonicalViews = Array.from({ length: 5 }, (_, index) => ({
+    id: `browser-fixture-view-${index + 1}`,
+    labels: { en: `Classic view ${index + 1}`, zh: `经典视角 ${index + 1}` },
+    positionLocal: index === 1
+      ? { x: 800, y: 480, z: 1050 }
+      : { x: 1047.5 + index, y: 525, z: 1115 },
+    targetLocal: index === 1
+      ? { x: -125, y: 18, z: 375 }
+      : { x: 250, y: 18, z: 125 },
+    verticalFovDegrees: 42 + index,
+    verticalBasis: 'local-datum-metres',
+    verticalEvidence: 'e2e/browser-camera-fixture.md',
+  }));
+  for (const role of Object.keys(manifest.approvals)) {
+    manifest.approvals[role] = {
+      status: 'approved',
+      by: `${role}-browser-fixture`,
+      at: '2026-08-18',
+      evidence: `e2e/${role}-browser-fixture`,
+    };
+  }
+  index.runtime.representation = 'CityPackage GLB';
+  index.runtime.candidateOnly = false;
+  // The compact candidate's centre tile has no hydro primitive. Include the
+  // verified Yarra tile in the centre dependency set so this production-path
+  // fixture exercises the PBR water shader instead of merely loading an unused
+  // material declaration from the GLB.
+  const centreTile = index.tiles.find(({ id }) => id === 'tile-c02-r02');
+  if (!centreTile.dependencyTileIds.includes('tile-c00-r03')) {
+    centreTile.dependencyTileIds.push('tile-c00-r03');
+  }
+  // Reclassify the existing tree point primitive in the water-bearing fixture
+  // tile as explicitly authored aviation-light geometry. The GLB JSON chunk is
+  // rebuilt while vertex data stays unchanged, and both package hash layers are
+  // updated so the browser exercises the real verification and beacon paths.
+  const assetOverrides = new Map();
+  const authoredLightTile = index.tiles.find(({ id }) => id === 'tile-c00-r03');
+  for (const lod of authoredLightTile.lods) {
+    const filename = lod.runtimeAsset.uri.split('/').at(-1);
+    const bytes = renameGlbMaterial(
+      readFileSync(resolve(PRODUCTION_FIXTURE_DIRECTORY, filename)),
+      'trees-analysis',
+      'aviation-light-fixture',
+    );
+    const authoredSha256 = createHash('sha256').update(bytes).digest('hex');
+    lod.runtimeAsset.sha256 = authoredSha256;
+    lod.runtimeAsset.byteLength = bytes.byteLength;
+    const manifestRuntimeAsset = manifest.assets.find(({ id }) => id === lod.runtimeAsset.assetId);
+    manifestRuntimeAsset.sha256 = authoredSha256;
+    manifestRuntimeAsset.byteLength = bytes.byteLength;
+    assetOverrides.set(filename, bytes);
+  }
+  const indexBytes = Buffer.from(JSON.stringify(index));
+  const indexAsset = manifest.assets.find(({ kind }) => kind === 'entities-index');
+  indexAsset.byteLength = indexBytes.byteLength;
+  indexAsset.sha256 = createHash('sha256').update(indexBytes).digest('hex');
+  const manifestBytes = Buffer.from(JSON.stringify(manifest));
+  return {
+    manifestBytes,
+    indexBytes,
+    indexUri: indexAsset.uri,
+    assetOverrides,
+    packageReference: {
+      packageId: manifest.packageId,
+      manifestPath: 'public/assets/city/packages/melbourne-browser-fixture-v1/manifest.json',
+      manifestSha256: createHash('sha256').update(manifestBytes).digest('hex'),
+    },
+  };
+}
+
+async function installProductionCityPackageFixture(
+  page,
+  { corruptFirstGlb = false, corruptViewSwitchTile = false } = {},
+) {
+  const fixture = productionCityPackageFixture();
+  await page.addInitScript(({ packageReference }) => {
+    window.__AFFLATUS_CITY_PACKAGE_FIXTURE__ = { cityId: 'melbourne', packageReference };
+  }, { packageReference: fixture.packageReference });
+  let corrupted = false;
+  await page.route('**/assets/city/packages/**', async (route) => {
+    const pathname = new URL(route.request().url()).pathname;
+    if (pathname === '/assets/city/packages/melbourne-browser-fixture-v1/manifest.json') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: fixture.manifestBytes });
+      return;
+    }
+    if (pathname === fixture.indexUri) {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: fixture.indexBytes });
+      return;
+    }
+    const filename = pathname.split('/').at(-1);
+    const sourcePath = resolve(PRODUCTION_FIXTURE_DIRECTORY, filename);
+    let bytes = fixture.assetOverrides.get(filename) ?? readFileSync(sourcePath);
+    if (corruptFirstGlb && !corrupted && filename.endsWith('.glb')) {
+      bytes = Buffer.from(bytes);
+      bytes[bytes.length - 1] ^= 1;
+      corrupted = true;
+    }
+    if (corruptViewSwitchTile && filename.startsWith('tile-c00-r02-lod')) {
+      bytes = Buffer.from(bytes);
+      bytes[bytes.length - 1] ^= 1;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: filename.endsWith('.glb') ? 'model/gltf-binary' : 'application/json',
+      body: bytes,
+    });
+  });
+  return fixture;
+}
 
 test('Cityview remains truthful and readable without JavaScript', async ({ browser }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'The no-JS fallback contract runs once in Chromium.');
@@ -13,7 +161,7 @@ test('Cityview remains truthful and readable without JavaScript', async ({ brows
     await expect(page.locator('h1')).toBeVisible();
     await expect(page.locator('.city-summary')).toBeVisible();
     await expect(page.locator('.city-noscript')).toBeVisible();
-    await expect(page.locator('[data-city-status]')).toContainText('Static city summary ready');
+    await expect(page.locator('[data-city-status]')).toContainText('Static truth summary ready');
     await expect(page.locator('[data-city-play]')).toBeDisabled();
     await expect(page.locator('[data-city-tour]')).toBeDisabled();
     await expect(page.locator('[data-city-timeline]')).toBeDisabled();
@@ -37,7 +185,7 @@ test('Cityview remains truthful when its optional 3D page module fails', async (
     expect(response?.status()).toBeLessThan(400);
     await expect(page.locator('h1')).toBeVisible();
     await expect(page.locator('.city-summary')).toBeVisible();
-    await expect(page.locator('[data-city-status]')).toContainText('Static city summary ready');
+    await expect(page.locator('[data-city-status]')).toContainText('Static truth summary ready');
     await expect(page.locator('[data-city-play]')).toBeDisabled();
     await expect(page.locator('[data-city-tour]')).toBeDisabled();
     await expect(page.locator('[data-city-timeline]')).toBeDisabled();
@@ -50,7 +198,7 @@ test('Cityview remains truthful when its optional 3D page module fails', async (
 
 test('Cityview exposes a deterministic, reversible construction timeline', async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  const response = await page.goto('/cityview.html?seed=e2e-city', { waitUntil: 'domcontentloaded' });
+  const response = await page.goto('/cityview.html?mode=sandbox&seed=e2e-city', { waitUntil: 'domcontentloaded' });
   expect(response?.status()).toBeLessThan(400);
   await settlePage(page);
 
@@ -148,8 +296,9 @@ test('Cityview exposes a deterministic, reversible construction timeline', async
     const header = document.querySelector('.city-header');
     return {
       overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      actionCount: document.querySelectorAll('.city-action').length,
-      actionLabelLines: [...document.querySelectorAll('.city-action > span:last-child')]
+      actionCount: [...document.querySelectorAll('.city-action')]
+        .filter((node) => !node.hidden).length,
+      actionLabelLines: [...document.querySelectorAll('.city-action:not([hidden]) > span:last-child')]
         .map((node) => node.getClientRects().length),
       summaryText: document.querySelector('.city-summary')?.textContent?.trim().length || 0,
       viewportWidth: document.documentElement.clientWidth,
@@ -165,7 +314,7 @@ test('Cityview exposes a deterministic, reversible construction timeline', async
     };
   });
   expect(contract.overflow, `${testInfo.project.name} must not overflow horizontally`).toBeLessThanOrEqual(1);
-  expect(contract.actionCount).toBe(7);
+  expect(contract.actionCount).toBe(6);
   expect(contract.actionLabelLines.every((lines) => lines === 1), JSON.stringify(contract)).toBe(true);
   expect(contract.summaryText).toBeGreaterThan(120);
   if (contract.viewportWidth <= 760) {
@@ -188,7 +337,7 @@ test('Cityview keeps controls reachable at a 200% zoom-equivalent short viewport
   test.skip(testInfo.project.name !== 'desktop-chromium', 'The short-viewport keyboard gate runs once in Chromium.');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 640, height: 360 });
-  await page.goto('/cityview.html?seed=zoom-contract', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?mode=sandbox&seed=zoom-contract', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
 
   const layout = await page.evaluate(() => ({
@@ -235,7 +384,7 @@ test('Cityview keeps controls reachable at a 200% zoom-equivalent short viewport
 test('Cityview retains a visible keyboard focus indicator in forced-colors mode', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Forced-colors runs once in Chromium.');
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
-  await page.goto('/cityview.html?seed=forced-colors-contract', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?mode=sandbox&seed=forced-colors-contract', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
 
   const timeline = page.locator('[data-city-timeline]');
@@ -258,7 +407,7 @@ test('Cityview retains a visible keyboard focus indicator in forced-colors mode'
 test('Cityview restores once, then falls back truthfully after a repeated context loss', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Context-loss recovery runs once in Chromium.');
   await page.addInitScript(() => sessionStorage.removeItem('afflatus:webgl-losses:v1'));
-  await page.goto('/cityview.html?seed=context-city', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?mode=sandbox&seed=context-city', { waitUntil: 'domcontentloaded' });
 
   const canvas = page.locator('[data-city-canvas]');
   await expect(canvas).toHaveAttribute('data-renderer', 'webgl');
@@ -310,7 +459,7 @@ test('Cityview starts paused when initially hidden and renders after visibility 
       },
     });
   });
-  await page.goto('/cityview.html?seed=initial-hidden-contract', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?mode=sandbox&seed=initial-hidden-contract', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
   await expect(page.locator('[data-city-canvas]')).toHaveAttribute('data-renderer', 'webgl');
   expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry())).toMatchObject({
@@ -360,7 +509,7 @@ test('Cityview starts paused when initially off-screen and renders after interse
     }
     window.IntersectionObserver = ControlledIntersectionObserver;
   });
-  await page.goto('/cityview.html?seed=initial-offscreen-contract', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?mode=sandbox&seed=initial-offscreen-contract', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
   await expect(page.locator('[data-city-canvas]')).toHaveAttribute('data-renderer', 'webgl');
   expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry())).toMatchObject({
@@ -380,7 +529,7 @@ test('Cityview starts paused when initially off-screen and renders after interse
 test('Cityview tour returns control with Escape and exposes read-only telemetry', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Camera takeover contract runs once in Chromium.');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/cityview.html?seed=tour-contract', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?mode=sandbox&seed=tour-contract', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
 
   const tour = page.locator('[data-city-tour]');
@@ -426,7 +575,7 @@ test('Cityview tour returns control with Escape and exposes read-only telemetry'
 test('Cityview settles active construction and tour when reduced motion turns on', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Dynamic reduced-motion runs once in Chromium.');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/cityview.html?seed=dynamic-motion-contract', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?mode=sandbox&seed=dynamic-motion-contract', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
   await expect.poll(
     () => page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry()?.p95Ms ?? 0),
@@ -458,93 +607,67 @@ test('Cityview settles active construction and tour when reduced motion turns on
   });
 });
 
-test('Cityview migrates a retired Sandbox URL to Shanghai and announces it once', async ({ page }, testInfo) => {
+test('Cityview migrates profile=sandbox to the explicit Sandbox mode and announces it once', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Legacy profile migration runs once in Chromium.');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/cityview.html?seed=legacy-sandbox-link&profile=sandbox', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
   await expect(page).toHaveURL(/profile=shanghai/);
+  await expect(page).toHaveURL(/mode=sandbox/);
   await expect(page.locator('[data-city-profile]')).toHaveValue('shanghai');
+  await expect(page.locator('[data-city-profile]')).toBeDisabled();
+  await expect(page.locator('[data-city-truth-mode]')).toHaveValue('sandbox');
   await expect(page.locator('[data-city-profile] option')).toHaveCount(3);
-  await expect(page.locator('[data-city-status]')).toContainText('retired Sandbox link');
+  await expect(page.locator('[data-city-status]')).toContainText('legacy profile=sandbox link');
   expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary())).toMatchObject({
     seed: 'legacy-sandbox-link',
-    profile: 'shanghai',
+    profile: 'sandbox',
+    truthMode: 'sandbox',
+    truthClass: 'generated-sandbox',
   });
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
-  await expect(page.locator('[data-city-status]')).not.toContainText('retired Sandbox link');
+  await expect(page.locator('[data-city-status]')).not.toContainText('legacy profile=sandbox link');
 });
 
-test('Cityview switches generated Shanghai, Melbourne and Hong Kong concepts without claiming GIS truth', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'desktop-chromium', 'Concept profile contract runs once in Chromium.');
+test('Cityview fails real cities closed and mounts generated geometry only in Sandbox', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Truth-mode contract runs once in Chromium.');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/cityview.html?seed=profile-contract&profile=shanghai', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?seed=truth-contract&profile=shanghai', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-surface', 'unavailable');
+  await expect(page.locator('[data-city-canvas]')).toHaveAttribute('data-renderer', 'poster');
   await expect(page.locator('[data-city-profile]')).toHaveValue('shanghai');
-  await expect(page.locator('[data-city-profile-note]')).toContainText('generated concept');
-
-  let summary = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary());
-  expect(summary).toMatchObject({
+  await expect(page.locator('[data-city-profile]')).toBeEnabled();
+  await expect(page.locator('[data-city-truth-mode]')).toHaveValue('reality');
+  await expect(page.locator('[data-city-profile-note]')).toContainText('Reality package unavailable');
+  await expect(page.locator('[data-city-timeline]').locator('..')).toBeHidden();
+  await expect(page.locator('[data-city-rebuild]')).toBeHidden();
+  await expect(page.locator('[data-city-seed]')).toHaveText('not loaded');
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry())).toBeNull();
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary())).toMatchObject({
+    seed: null,
     profile: 'shanghai',
-    truthClass: 'generated-concept',
-    waterChannels: 1,
-    heroLandmarks: 3,
+    truthMode: 'reality',
+    truthClass: 'real-city-unavailable',
+    availability: 'unavailable',
+    blocks: 0,
+    roads: 0,
+    buildings: 0,
+    heroLandmarks: 0,
   });
-
-  const dayBeforeView = await page.locator('[data-city-day]').textContent();
-  await page.locator('[data-city-view]').click();
-  await expect(page.locator('[data-city-view-label]')).toHaveText('View 1/3');
-  await expect(page.locator('[data-city-day]')).toHaveText(dayBeforeView);
-  const cameraTelemetry = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry());
-  expect(cameraTelemetry.cameraRig).toMatchObject({
-    heroViews: 3,
-    currentHeroView: 'shanghai-stepped-crown-concept',
-    currentHeroOcclusions: 0,
-    clearanceLift: 0,
-  });
-  expect(cameraTelemetry.cameraRig.safetyEnvelopes).toBeGreaterThan(0);
-  expect(cameraTelemetry.helicopter).toMatchObject({
-    moving: false,
-  });
-  expect(cameraTelemetry.helicopter.height).toBeGreaterThan(175);
-  expect(cameraTelemetry.cranes.maxActive).toBe(6);
-  expect(cameraTelemetry.cranes.planned).toBeGreaterThan(4);
-  expect(cameraTelemetry.cranes.active).toBeLessThanOrEqual(6);
-  expect(cameraTelemetry.environment).toMatchObject({
-    vehiclesPlanned: 18,
-    motionFrozen: true,
-  });
-  expect(cameraTelemetry.environment.vehiclesVisible).toBeLessThanOrEqual(18);
-  expect(cameraTelemetry.environment.treesVisible).toBeLessThanOrEqual(cameraTelemetry.environment.treesPlanned);
-
-  const shanghaiHeroStates = [cameraTelemetry.cameraRig];
-  for (let index = 1; index < 3; index += 1) {
-    await page.locator('[data-city-view]').click();
-    shanghaiHeroStates.push(
-      (await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry())).cameraRig,
-    );
-  }
-  expect(shanghaiHeroStates.map((state) => state.currentHeroView)).toEqual([
-    'shanghai-stepped-crown-concept',
-    'shanghai-corn-curve-concept',
-    'shanghai-pearl-concept',
-  ]);
-  expect(shanghaiHeroStates.every((state) => state.currentHeroOcclusions === 0)).toBe(true);
-
-  await Promise.all([
-    page.waitForURL((url) => url.searchParams.get('profile') === 'melbourne'),
-    page.locator('[data-city-profile]').selectOption('melbourne'),
-  ]);
-  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
-  await expect(page.locator('[data-city-profile]')).toHaveValue('melbourne');
-  summary = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary());
-  expect(summary).toMatchObject({
-    profile: 'melbourne',
-    truthClass: 'generated-concept',
-    waterChannels: 1,
-    heroLandmarks: 3,
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTruthState())).toMatchObject({
+    mode: 'reality',
+    profile: 'shanghai',
+    surface: 'unavailable',
+    available: false,
+    blockers: [
+      'profile-unapproved',
+      'external-data-blocked',
+      'licence-review-required',
+      'production-package-missing',
+    ],
   });
 
   await Promise.all([
@@ -553,37 +676,204 @@ test('Cityview switches generated Shanghai, Melbourne and Hong Kong concepts wit
   ]);
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
   await expect(page.locator('[data-city-profile]')).toHaveValue('hong-kong');
-  await expect(page.locator('[data-city-profile-note]')).toContainText('generated concept');
-  summary = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary());
-  expect(summary).toMatchObject({
+  await expect(page.locator('[data-city-profile-note]')).toContainText('Reality package unavailable');
+  await expect(page.locator('[data-city-canvas]')).toHaveAttribute('data-renderer', 'poster');
+
+  await Promise.all([
+    page.waitForURL((url) => url.searchParams.get('mode') === 'construction-scenario'),
+    page.locator('[data-city-truth-mode]').selectOption('construction-scenario'),
+  ]);
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+  await expect(page.locator('[data-city-profile-note]')).toContainText('Construction scenario package unavailable');
+  await expect(page.locator('[data-city-canvas]')).toHaveAttribute('data-renderer', 'poster');
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary())).toMatchObject({
     profile: 'hong-kong',
-    truthClass: 'generated-concept',
-    waterChannels: 1,
-    heroLandmarks: 3,
+    truthMode: 'construction-scenario',
+    truthClass: 'real-city-unavailable',
   });
-  const hongKongTelemetry = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry());
-  expect(hongKongTelemetry).toMatchObject({
-    profile: 'hong-kong',
-    truthClass: 'generated-concept',
-    heroLandmarks: 3,
-    environment: {
-      vehiclesPlanned: 26,
-      ridgePeaks: 9,
-      motionFrozen: true,
+
+  await Promise.all([
+    page.waitForURL((url) => url.searchParams.get('mode') === 'sandbox'),
+    page.locator('[data-city-truth-mode]').selectOption('sandbox'),
+  ]);
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-surface', 'sandbox');
+  await expect(page.locator('[data-city-profile]')).toBeDisabled();
+  await expect(page.locator('[data-city-profile-note]')).toContainText('generated synthetic fixture—not a real city');
+  await expect(page.locator('[data-city-timeline]').locator('..')).toBeVisible();
+  await expect(page.locator('[data-city-rebuild]')).toBeVisible();
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary())).toMatchObject({
+    seed: 'truth-contract',
+    profile: 'sandbox',
+    truthMode: 'sandbox',
+    truthClass: 'generated-sandbox',
+    availability: 'available',
+  });
+});
+
+test('Cityview streams a registry-approved CityPackage through the production renderer', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await installProductionCityPackageFixture(page);
+  await page.goto('/cityview.html?profile=melbourne', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-surface', 'production');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-package-session', 'ready');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-truth-class', 'licensed-real-data');
+  await expect(page.locator('[data-city-canvas]')).toHaveAttribute('data-renderer', 'webgl');
+  await expect(page.locator('[data-city-profile-note]')).toContainText('verified Reality package');
+  await expect(page.locator('[data-city-environment-picker]')).toBeVisible();
+  await expect(page.locator('[data-city-production-environment]')).toBeEnabled();
+  await expect(page.locator('[data-city-production-view-picker]')).toBeVisible();
+  await expect(page.locator('[data-city-production-view]')).toBeEnabled();
+  await expect(page.locator('[data-city-production-view] > option')).toHaveCount(5);
+  await expect(page.locator('[data-city-production-view]')).toHaveValue('browser-fixture-view-1');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute(
+    'data-city-canonical-view',
+    'browser-fixture-view-1',
+  );
+  await expect(page.locator('[data-city-production-provenance]')).toBeVisible();
+  await expect(page.locator('[data-city-production-provenance-list] > li')).toHaveCount(7);
+  const summary = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary());
+  expect(summary).toMatchObject({
+    profile: 'melbourne',
+    truthMode: 'reality',
+    truthClass: 'licensed-real-data',
+    availability: 'available',
+  });
+  expect(summary.firstFrameTiles).toBeGreaterThan(0);
+  expect(summary.firstFrameBytes).toBeGreaterThan(0);
+  expect(summary.firstFrameDrawCalls).toBeGreaterThan(0);
+
+  await page.locator('[data-city-production-view]').selectOption('browser-fixture-view-2');
+  await expect(page.locator('[data-city-status]')).toContainText('Classic view: Classic view 2');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute(
+    'data-city-canonical-view',
+    'browser-fixture-view-2',
+  );
+  const viewTelemetry = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry());
+  expect(viewTelemetry).toMatchObject({
+    primaryTileId: 'tile-c00-r03',
+    camera: {
+      target: { x: -125, y: 18, z: 375 },
+      verticalFovDegrees: 43,
     },
   });
-  const hongKongHeroIds = [];
-  for (let index = 0; index < 3; index += 1) {
-    await page.locator('[data-city-view]').click();
-    const heroState = (await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry())).cameraRig;
-    expect(heroState.currentHeroOcclusions).toBe(0);
-    hongKongHeroIds.push(heroState.currentHeroView);
-  }
-  expect(new Set(hongKongHeroIds)).toEqual(new Set([
-    'hong-kong-harbour-fin-concept',
-    'hong-kong-stepped-harbour-crown-concept',
-    'hong-kong-waterfront-cultural-podium-concept',
-  ]));
+  expect(viewTelemetry.camera.position.x).toBeCloseTo(800, 8);
+  expect(viewTelemetry.camera.position.y).toBeCloseTo(480, 8);
+  expect(viewTelemetry.camera.position.z).toBeCloseTo(1050, 8);
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getProductionView())).toMatchObject({
+    id: 'browser-fixture-view-2',
+    labels: { en: 'Classic view 2', zh: '经典视角 2' },
+  });
+
+  await page.locator('[data-city-production-environment]').selectOption('night');
+  await expect(page.locator('[data-city-status]')).toContainText('environment: night');
+  const telemetry = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry());
+  expect(telemetry).toMatchObject({
+      packageId: 'melbourne-flinders-federation-v1',
+      environment: {
+        styleId: 'melbourne-night-v1',
+        pbr: true,
+        imageBasedLighting: true,
+        outdoorIbl: true,
+        atmosphereProfileId: 'melbourne-night-atmosphere-v1',
+        transitionMode: 'solar-altitude-continuous',
+        boundedShadows: true,
+        wholeBuildingEmission: false,
+        waterProfileId: 'melbourne-water-visual-v1',
+        waterVisualBasis: 'art-directed-visual-only',
+        nightLightBasis: 'authored-light-geometry-only',
+      },
+    });
+  expect(telemetry.environment.windowLightingMaterials).toBeGreaterThan(0);
+  expect(telemetry.environment.physicalWaterMaterials).toBeGreaterThan(0);
+  expect(telemetry.environment.animatedWaterSpecular).toBe(true);
+  expect(telemetry.environment.waterFlowDirection.x).toBeLessThan(-0.9);
+  expect(telemetry.environment.authoredNightLightMaterials).toBeGreaterThan(0);
+  expect(telemetry.environment.aviationLightMaterials).toBeGreaterThan(0);
+  expect(telemetry.environment.streetLightMaterials).toBe(0);
+  expect(telemetry.environment.landmarkLightMaterials).toBe(0);
+
+  await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.setProductionEnvironment(
+    'auto-local',
+    '2026-01-15T09:30:00.000Z',
+  ));
+  const twilightTelemetry = await page.evaluate(
+    () => window.__AFFLATUS_CITYVIEW__?.getTelemetry().environment,
+  );
+  expect(twilightTelemetry).toMatchObject({
+    environment: 'sunset',
+    transitionMode: 'solar-altitude-continuous',
+    atmosphereProfileId: 'melbourne-sunset-atmosphere-v1',
+  });
+  expect(twilightTelemetry.solarBlend.sunset).toBeGreaterThan(0.5);
+  expect(
+    twilightTelemetry.solarBlend.day
+    + twilightTelemetry.solarBlend.sunset
+    + twilightTelemetry.solarBlend.night,
+  ).toBeCloseTo(1, 8);
+  expect(await page.evaluate(
+    () => window.__AFFLATUS_CITYVIEW__?.getProductionAutoLocalState(),
+  )).toMatchObject({
+    selectedRequest: 'auto-local',
+    active: true,
+    paused: false,
+    intervalMs: 60_000,
+  });
+
+  await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.setProductionEnvironment('day'));
+  expect(await page.evaluate(
+    () => window.__AFFLATUS_CITYVIEW__?.getProductionAutoLocalState(),
+  )).toMatchObject({ selectedRequest: 'day', active: false });
+});
+
+test('Cityview fails a corrupt production tile closed without mounting Sandbox geometry', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Injected production corruption runs once in Chromium.');
+  await installProductionCityPackageFixture(page, { corruptFirstGlb: true });
+  await page.goto('/cityview.html?profile=melbourne', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-surface', 'unavailable');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-package-session', 'fallback');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute(
+    'data-city-package-failure',
+    'first-frame-tile-load-failed',
+  );
+  await expect(page.locator('[data-city-canvas]')).toHaveAttribute('data-renderer', 'poster');
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry())).toBeNull();
+  expect(await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getPlanSummary())).toMatchObject({
+    profile: 'melbourne',
+    truthClass: 'real-city-unavailable',
+    blocks: 0,
+    roads: 0,
+    buildings: 0,
+  });
+});
+
+test('Cityview retains the verified camera and tiles when a classic-view stream is corrupt', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Injected view-stream corruption runs once in Chromium.');
+  await installProductionCityPackageFixture(page, { corruptViewSwitchTile: true });
+  await page.goto('/cityview.html?profile=melbourne', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-package-session', 'ready');
+  const before = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry());
+
+  await page.locator('[data-city-production-view]').selectOption('browser-fixture-view-2');
+  await expect(page.locator('[data-city-status]')).toContainText(
+    'the previous verified camera and tile set remain active',
+  );
+  await expect(page.locator('[data-city-production-view]')).toHaveValue('browser-fixture-view-1');
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute(
+    'data-city-canonical-view',
+    'browser-fixture-view-1',
+  );
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('data-city-surface', 'production');
+  const after = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry());
+  expect(after.primaryTileId).toBe(before.primaryTileId);
+  expect(after.resolvedTileIds).toEqual(before.resolvedTileIds);
+  expect(after.camera.position.x).toBeCloseTo(before.camera.position.x, 8);
+  expect(after.camera.position.y).toBeCloseTo(before.camera.position.y, 8);
+  expect(after.camera.position.z).toBeCloseTo(before.camera.position.z, 8);
+  expect(after.camera.target).toEqual(before.camera.target);
+  expect(after.camera.verticalFovDegrees).toBe(before.camera.verticalFovDegrees);
 });
 
 test('Cityview physical-device audit stays opt-in and exports a local review artifact', async ({ page }, testInfo) => {
@@ -612,7 +902,7 @@ test('Cityview physical-device audit stays opt-in and exports a local review art
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/cityview.html?seed=device-audit-contract&profile=hong-kong&device-audit=1', { waitUntil: 'domcontentloaded' });
+  await page.goto('/cityview.html?mode=sandbox&seed=device-audit-contract&profile=hong-kong&device-audit=1', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
   await expect(page.locator('[data-city-device-audit]')).toBeVisible();
   await expect(page.locator('[data-city-device-start]')).toBeEnabled();
@@ -656,7 +946,7 @@ test('Cityview physical-device audit stays opt-in and exports a local review art
   const downloadPromise = page.waitForEvent('download');
   await page.locator('[data-city-device-finish]').click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/^cityview-device-hong-kong-reference-phone-test-os-test-browser\.json$/);
+  expect(download.suggestedFilename()).toMatch(/^cityview-device-sandbox-reference-phone-test-os-test-browser\.json$/);
   const report = await page.evaluate(() => window.__AFFLATUS_CITY_DEVICE_AUDIT__.getReport());
   await testInfo.attach('cityview-device-audit.json', {
     body: Buffer.from(`${JSON.stringify(report, null, 2)}\n`),
@@ -670,7 +960,7 @@ test('Cityview physical-device audit stays opt-in and exports a local review art
     schemaVersion: 'city-device-audit-v1',
     truthClass: 'physical-device-observation—not benchmark certification',
     privacy: 'local JSON export only; the page does not upload this report',
-    profile: 'hong-kong',
+    profile: 'sandbox',
     seed: 'device-audit-contract',
     readyForReview: true,
   });
