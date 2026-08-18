@@ -3,6 +3,7 @@ import {
   MELBOURNE_ENVIRONMENT_CLOCK,
   MELBOURNE_ENVIRONMENT_PRESET_INSTANTS,
   classifySolarEnvironment,
+  createCityEnvironmentClock,
   normalizeCityEnvironmentRequest,
 } from '../src/city/environmentClock.ts';
 
@@ -70,5 +71,24 @@ describe('Melbourne EnvironmentClock', () => {
     expect(() => MELBOURNE_ENVIRONMENT_CLOCK.resolve('weather')).toThrow('Unknown city environment');
     expect(MELBOURNE_ENVIRONMENT_CLOCK.resolve('night').simulatedLighting).toBe(true);
     expect(MELBOURNE_ENVIRONMENT_CLOCK.resolve('sunset').simulatedLighting).toBe(false);
+  });
+
+  it('shares the same deterministic environment contract across all production cities', () => {
+    const expectations = {
+      shanghai: 'Asia/Shanghai',
+      melbourne: 'Australia/Melbourne',
+      'hong-kong': 'Asia/Hong_Kong',
+    } as const;
+    for (const [cityId, timeZone] of Object.entries(expectations)) {
+      const clock = createCityEnvironmentClock(cityId as keyof typeof expectations);
+      expect(clock.resolve('day')).toMatchObject({ environment: 'day', solarBand: 'day' });
+      expect(clock.resolve('sunset')).toMatchObject({ environment: 'sunset', solarBand: 'sunset' });
+      expect(clock.resolve('night')).toMatchObject({
+        environment: 'night',
+        solarBand: 'night',
+        simulatedLighting: true,
+        location: { timeZone },
+      });
+    }
   });
 });

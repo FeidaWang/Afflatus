@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   MELBOURNE_ANALYSIS_BASELINE,
+  MELBOURNE_ANALYSIS_EVIDENCE_MANIFEST_SHA256,
   MELBOURNE_ANALYSIS_MANIFEST_SHA256,
   isMelbourneAnalysisPreviewAllowed,
   melbourneCandidateSourceUrl,
@@ -75,9 +76,11 @@ describe('local Melbourne Analysis preview contract', () => {
     expect(pageSource).toContain('MELBOURNE_ANALYSIS_MANIFEST_SHA256');
     expect(pageSource).toContain('prepareMelbourneAnalysisRuntime');
     expect(rendererSource).toContain('setMeshoptDecoder(MeshoptDecoder)');
-    expect(rendererSource).toContain('selectMelbourneAnalysisStreamingSet');
+    expect(rendererSource).toContain('selectCityPackageStreamingSet');
     expect(rendererSource).toContain('applyCityStyleTwin');
     expect(rendererSource).toContain('setEnvironment(snapshot)');
+    expect(rendererSource).toContain('setCameraPreset');
+    expect(rendererSource).toContain('applyCameraPreset(previous)');
     expect(rendererSource).toContain('selection: pickedEntity');
     expect(rendererSource).toContain('disposeThreeObject3D(record.group)');
     expect(rendererSource).toContain("getAttribute?.('_feature_id_0')");
@@ -95,7 +98,7 @@ describe('local Melbourne Analysis preview contract', () => {
       expect(evidence).toMatchObject({
         schemaVersion: 'city-analysis-stability-evidence-v1',
         packageId: 'melbourne-flinders-federation-v1',
-        manifestSha256: MELBOURNE_ANALYSIS_MANIFEST_SHA256,
+        manifestSha256: MELBOURNE_ANALYSIS_EVIDENCE_MANIFEST_SHA256,
         result: {
           status: 'pass',
           visitedViews: 18,
@@ -131,7 +134,7 @@ describe('local Melbourne Analysis preview contract', () => {
     expect(evidence).toMatchObject({
       schemaVersion: 'city-environment-engineering-evidence-v1',
       packageId: 'melbourne-flinders-federation-v1',
-      manifestSha256: MELBOURNE_ANALYSIS_MANIFEST_SHA256,
+      manifestSha256: MELBOURNE_ANALYSIS_EVIDENCE_MANIFEST_SHA256,
       productionReleaseGranted: false,
       invariants: {
         sameGeometry: true,
@@ -172,7 +175,7 @@ describe('local Melbourne Analysis preview contract', () => {
     expect(evidence).toMatchObject({
       schemaVersion: 'city-multi-environment-smoke-evidence-v1',
       packageId: 'melbourne-flinders-federation-v1',
-      manifestSha256: MELBOURNE_ANALYSIS_MANIFEST_SHA256,
+      manifestSha256: MELBOURNE_ANALYSIS_EVIDENCE_MANIFEST_SHA256,
       formalReleaseEvidence: false,
       followUpEvidence:
         'data/city/reviews/2026-08-17-melbourne-multi-environment-stability-30m.json',
@@ -205,7 +208,7 @@ describe('local Melbourne Analysis preview contract', () => {
     expect(evidence).toMatchObject({
       schemaVersion: 'city-multi-environment-stability-evidence-v1',
       packageId: 'melbourne-flinders-federation-v1',
-      manifestSha256: MELBOURNE_ANALYSIS_MANIFEST_SHA256,
+      manifestSha256: MELBOURNE_ANALYSIS_EVIDENCE_MANIFEST_SHA256,
       formalEngineeringGate: true,
       productionReleaseGranted: false,
       harness: {

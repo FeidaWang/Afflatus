@@ -38,7 +38,7 @@ describe('Cityview page release-readiness contract', () => {
     expect(nodes.some((node) => node.tagName === 'details' && classes(node).includes('city-summary'))).toBe(true);
     expect(html).toContain('<noscript>');
     expect(html).toContain('the city summary remains available above');
-    expect(html).toContain('Static city summary ready. Loading optional 3D…');
+    expect(html).toContain('Static truth summary ready. Checking the production registry…');
   });
 
   it('exposes native, labelled construction and panel controls', () => {
@@ -59,6 +59,9 @@ describe('Cityview page release-readiness contract', () => {
       'data-city-reset',
       'data-city-timeline',
       'data-city-profile',
+      'data-city-truth-mode',
+      'data-city-production-environment',
+      'data-city-production-view',
       'data-city-data',
       'data-city-layers',
       'data-city-rebuild',
@@ -114,15 +117,16 @@ describe('Cityview page release-readiness contract', () => {
     ))).toBe(true);
   });
 
-  it('keeps the Shanghai accessible summary aligned with the rendered hero forms', () => {
-    const source = readFileSync(resolve(ROOT, 'src/pages/cityView.js'), 'utf8');
-    expect(source).toContain('a corn-cob curve tower');
-    expect(source).toContain('玉米形曲线塔');
-    expect(source).not.toContain('a notched fin');
-    expect(source).not.toContain('开槽翼冠');
+  it('keeps generated geometry inside the explicitly selected synthetic Sandbox', () => {
+    expect(pageSource).toContain("generateSandboxCity(seed, 'sandbox')");
+    expect(pageSource).toContain("stage?.setAttribute('data-city-truth-class', 'generated-sandbox')");
+    expect(pageSource).toContain("stage?.setAttribute('data-city-truth-class', 'real-city-unavailable')");
+    expect(pageSource).toContain('if (!generatedSandbox)');
+    expect(pageSource).toContain('No generated fallback was loaded.');
+    expect(html).toContain('procedural model lives only in the explicitly selected Sandbox');
   });
 
-  it('offers a bilingual Hong Kong concept without claiming GIS truth', () => {
+  it('offers three real-city targets and a separate bilingual truth-mode selector', () => {
     const profileOptions = nodes.filter((node) => (
       node.tagName === 'option' && node.parentNode === withAttribute('data-city-profile')[0]
     ));
@@ -132,11 +136,18 @@ describe('Cityview page release-readiness contract', () => {
       'hong-kong',
     ]);
     const hongKongOption = profileOptions.find((node) => attr(node, 'value') === 'hong-kong');
-    expect(attr(hongKongOption, 'data-en')).toBe('Hong Kong · concept');
-    expect(attr(hongKongOption, 'data-zh')).toBe('香港 · 概念');
-    expect(pageSource).toContain('between Victoria Harbour and a low-poly mountain ridge');
-    expect(pageSource).toContain('置于维港与低多边形山脊之间');
-    expect(pageSource).toContain('not surveyed buildings or GIS');
+    expect(attr(hongKongOption, 'data-en')).toBe('Hong Kong · Victoria Harbour');
+    expect(attr(hongKongOption, 'data-zh')).toBe('香港 · 维多利亚港');
+    const truthOptions = nodes.filter((node) => (
+      node.tagName === 'option' && node.parentNode === withAttribute('data-city-truth-mode')[0]
+    ));
+    expect(truthOptions.map((node) => attr(node, 'value'))).toEqual([
+      'reality',
+      'construction-scenario',
+      'sandbox',
+    ]);
+    expect(pageSource).toContain('Victoria Harbour, both shorelines, Victoria Peak terrain');
+    expect(pageSource).toContain('维多利亚港两岸、太平山地形');
   });
 
   it('keeps physical-device evidence opt-in, local and bilingual', () => {
@@ -173,7 +184,7 @@ describe('Cityview page release-readiness contract', () => {
     expect(css).toContain('.city-action[hidden]');
   });
 
-  it('keeps timeline truth in the page when the optional renderer is unavailable', () => {
+  it('keeps Sandbox timeline truth while real-city failures remain renderer-free', () => {
     expect(pageSource).toContain('updateDay(nextDay);');
     expect(pageSource).toContain('scene?.setDay(nextDay);');
     expect(pageSource).toContain("canvas.dataset.renderer = 'poster'");
@@ -185,9 +196,9 @@ describe('Cityview page release-readiness contract', () => {
     expect(pageSource).toContain('window.requestIdleCallback(mountInitialCity, { timeout: 900 })');
     expect(pageSource).toMatch(/finally \{[\s\S]*setPageControllerReady\(true\);/);
     expect(pageSource).toContain("timeline?.addEventListener('focus'");
-    expect(pageSource).toContain("stage?.setAttribute('data-city-profile-key', profile.key)");
-    expect(pageSource).toContain('control.disabled = !available');
-    expect(pageSource).toContain("'城市推演台 — 三城建造观测台 · Afflatus'");
+    expect(pageSource).toContain("stage?.setAttribute('data-city-profile-key', request.profile)");
+    expect(pageSource).toContain("activeCitySurface === 'sandbox'");
+    expect(pageSource).toContain("'城市推演台 — 真实数据门控城市观测台 · Afflatus'");
   });
 
   it('gates the real-data shell adapter to dev loopback and fails back to truthful DOM', () => {
@@ -202,6 +213,8 @@ describe('Cityview page release-readiness contract', () => {
     expect(pageSource).toContain('renderAnalysisSelection(feature)');
     expect(pageSource).toContain("locationParams.get('analysis-environment-failure')");
     expect(pageSource).toContain("picker.className = 'city-profile-picker city-environment-picker'");
+    expect(pageSource).toContain('productionRuntimeState.setCanonicalView(productionViewSelect.value)');
+    expect(pageSource).toContain('the previous verified camera and tile set remain active');
     expect(pageSource).toContain("canvas.dataset.renderer = 'poster'");
     expect(pageSource).toContain('licensed source facts remain available below');
     expect(pageSource).toMatch(/function updateMetrics[\s\S]*if \(localAnalysisPreviewMode\) return;/);

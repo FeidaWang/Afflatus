@@ -1,4 +1,5 @@
 import { generateSandboxCity } from '../city/generate.ts';
+import cityPackageRegistry from '../../data/city/city-package-registry.json';
 import {
   CITY_ASSET_CATEGORIES,
   countVisibleCityAssetCategories,
@@ -6,9 +7,12 @@ import {
   setCityAssetCategoryVisibility,
 } from '../city/assetVisibility.ts';
 import {
-  CITY_CONCEPT_GENERATION_PROFILES,
-  normalizePublicCityConceptProfileKey,
-} from '../city/profiles.ts';
+  CITY_TRUTH_MODES,
+  evaluateCityRealityAvailability,
+  mayMountGeneratedSandbox,
+  normalizeCityTruthMode,
+  resolveCityTruthRequest,
+} from '../city/truthMode.ts';
 import {
   cityMetricPolylinePoints,
   createCityMetricChartSnapshot,
@@ -32,8 +36,16 @@ const assetResetButton = document.querySelector('[data-city-assets-reset]');
 const rebuildButton = document.querySelector('[data-city-rebuild]');
 const resetButton = document.querySelector('[data-city-reset]');
 const profileSelect = document.querySelector('[data-city-profile]');
+const truthModeSelect = document.querySelector('[data-city-truth-mode]');
+const productionEnvironmentPicker = document.querySelector('[data-city-environment-picker]');
+const productionEnvironmentSelect = document.querySelector('[data-city-production-environment]');
+const productionViewPicker = document.querySelector('[data-city-production-view-picker]');
+const productionViewSelect = document.querySelector('[data-city-production-view]');
 const profileNote = document.querySelector('[data-city-profile-note]');
 const summaryModel = document.querySelector('[data-city-summary-model]');
+const summaryGuidance = document.querySelector('[data-city-summary-guidance]');
+const productionProvenance = document.querySelector('[data-city-production-provenance]');
+const productionProvenanceList = document.querySelector('[data-city-production-provenance-list]');
 const introEyebrow = document.querySelector('.city-intro .city-eyebrow');
 const introTitle = document.querySelector('.city-intro h1');
 const introBody = document.querySelector('.city-intro > p:last-child');
@@ -41,6 +53,10 @@ const status = document.querySelector('[data-city-status]');
 const stage = document.querySelector('[data-city-stage]');
 const languageButton = document.querySelector('.city-lang');
 const locationParams = new URLSearchParams(window.location.search);
+const initialTruthRequest = resolveCityTruthRequest({
+  mode: locationParams.get('mode'),
+  profile: locationParams.get('profile'),
+});
 const localAnalysisPreviewMode = import.meta.env.DEV && (
   ['127.0.0.1', 'localhost', '::1', '[::1]'].includes(window.location.hostname.toLowerCase())
   && locationParams.get('analysis-preview') === 'melbourne'
@@ -54,7 +70,9 @@ const localAnalysisInitialEnvironment = localAnalysisPreviewMode
 const localAnalysisEnvironmentFailureMode = localAnalysisPreviewMode
   ? locationParams.get('analysis-environment-failure') || 'none'
   : 'none';
-const deviceAuditMode = !localAnalysisPreviewMode && locationParams.get('device-audit') === '1';
+const deviceAuditMode = !localAnalysisPreviewMode
+  && initialTruthRequest.mode === 'sandbox'
+  && locationParams.get('device-audit') === '1';
 if (deviceAuditMode) document.documentElement.dataset.afflatusLocale = 'inline';
 
 const metricNodes = Object.freeze({
@@ -90,6 +108,9 @@ const METRIC_REFRESH_INTERVAL_MS = 500;
 let scene = null;
 let plan = null;
 let sceneModule = null;
+let currentTruthRequest = initialTruthRequest;
+let currentRealityAvailability = null;
+let activeCitySurface = 'loading';
 let dataPanelOpen = false;
 let layerPanelOpen = false;
 let assetVisibility = createCityAssetVisibility();
@@ -106,6 +127,7 @@ let deviceAuditController = null;
 let legacyProfileMigrationNoticePending = false;
 let analysisAbortController = null;
 let analysisRuntime = null;
+let productionRuntimeState = null;
 let analysisEnvironmentController = null;
 let analysisEnvironmentSelect = null;
 let analysisEnvironmentLabel = null;
@@ -114,6 +136,12 @@ let analysisSelectionContainer = null;
 let analysisSelectionLabel = null;
 let analysisSelectionValue = null;
 let analysisSelectedFeature = null;
+
+function productionPackageReference(profile) {
+  const fixture = window.__AFFLATUS_E2E__ ? window.__AFFLATUS_CITY_PACKAGE_FIXTURE__ : null;
+  if (fixture?.cityId === profile && fixture.packageReference) return fixture.packageReference;
+  return cityPackageRegistry.productionPackages[profile];
+}
 
 const rendererOnlyControls = Object.freeze([
   playButton,
@@ -124,6 +152,7 @@ const rendererOnlyControls = Object.freeze([
 const pageControllerControls = Object.freeze([
   timeline,
   profileSelect,
+  truthModeSelect,
   dataButton,
   layerButton,
   rebuildButton,
@@ -144,9 +173,16 @@ function updateDocumentTitle() {
     );
     return;
   }
+  if (currentTruthRequest.mode === 'sandbox') {
+    document.title = translated(
+      'Cityview Sandbox — Synthetic Construction · Afflatus',
+      '城市推演台沙盒 — 合成建造 · Afflatus',
+    );
+    return;
+  }
   document.title = translated(
-    'Cityview — Three-City Construction Observatory · Afflatus',
-    '城市推演台 — 三城建造观测台 · Afflatus',
+    'Cityview — Reality-Gated Urban Observatory · Afflatus',
+    '城市推演台 — 真实数据门控城市观测台 · Afflatus',
   );
 }
 
@@ -246,9 +282,106 @@ function setRendererAvailable(isAvailable) {
 }
 
 function setPageControllerReady(isReady) {
-  for (const control of pageControllerControls) {
-    control.disabled = !isReady || (localAnalysisPreviewMode && control !== languageButton);
+  const ready = Boolean(isReady);
+  if (languageButton) languageButton.disabled = !ready;
+  if (localAnalysisPreviewMode) {
+    for (const control of pageControllerControls) {
+      if (control !== languageButton) control.disabled = true;
+    }
+    return;
   }
+  if (truthModeSelect) truthModeSelect.disabled = !ready;
+  if (profileSelect) profileSelect.disabled = !ready || currentTruthRequest.mode === 'sandbox';
+  if (productionEnvironmentSelect) {
+    productionEnvironmentSelect.disabled = !(ready && activeCitySurface === 'production');
+  }
+  if (productionViewSelect) {
+    productionViewSelect.disabled = !(ready && activeCitySurface === 'production');
+  }
+  const sandboxReady = ready && activeCitySurface === 'sandbox';
+  for (const control of [timeline, dataButton, layerButton, rebuildButton]) {
+    if (control) control.disabled = !sandboxReady;
+  }
+}
+
+function configureCitySurface(surface) {
+  activeCitySurface = surface;
+  stage?.setAttribute('data-city-surface', surface);
+  const sandbox = surface === 'sandbox';
+  const production = surface === 'production';
+  if (timeline?.closest('.city-timeline')) timeline.closest('.city-timeline').hidden = !sandbox;
+  if (productionEnvironmentPicker) productionEnvironmentPicker.hidden = !production;
+  if (productionViewPicker) productionViewPicker.hidden = !production;
+  if (productionProvenance) productionProvenance.hidden = !production;
+  for (const control of [playButton, tourButton, dataButton, layerButton, rebuildButton, resetButton]) {
+    if (control) control.hidden = !sandbox;
+  }
+  if (viewButton) viewButton.hidden = !sandbox || !plan?.heroLandmarks?.length;
+  if (summaryGuidance) summaryGuidance.hidden = !sandbox;
+  if (!sandbox) {
+    setDataPanelOpen(false, { announce: false });
+    setLayerPanelOpen(false, { announce: false });
+  }
+}
+
+function translateProductionViewOptions() {
+  if (!productionViewSelect) return;
+  for (const option of productionViewSelect.options) {
+    option.textContent = translated(option.dataset.en, option.dataset.zh);
+  }
+}
+
+function syncProductionView(view) {
+  if (!view) return;
+  if (productionViewSelect) productionViewSelect.value = view.id;
+  stage?.setAttribute('data-city-canonical-view', view.id);
+}
+
+function renderProductionViews(views, selectedView) {
+  if (!productionViewSelect) return;
+  productionViewSelect.replaceChildren();
+  for (const view of views ?? []) {
+    const option = document.createElement('option');
+    option.value = view.id;
+    option.dataset.en = view.labels.en;
+    option.dataset.zh = view.labels.zh;
+    productionViewSelect.append(option);
+  }
+  translateProductionViewOptions();
+  syncProductionView(selectedView);
+}
+
+function renderProductionProvenance(manifest) {
+  if (!productionProvenanceList) return;
+  productionProvenanceList.replaceChildren();
+  for (const source of manifest?.sourceLayers ?? []) {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = source.sourceUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = `${source.provider} · ${source.datasetId} · ${source.datasetVersion}`;
+    const detail = document.createElement('span');
+    detail.textContent = ` — ${source.attribution} ${source.sourceCrs.identifier ?? 'CRS under review'} / ${source.verticalDatum.name ?? 'no vertical datum'}`;
+    item.append(link, detail);
+    productionProvenanceList.append(item);
+  }
+}
+
+function updateProductionUi() {
+  const manifest = analysisRuntime?.manifest;
+  if (activeCitySurface !== 'production' || !manifest) return false;
+  setTranslatedCopy(
+    profileNote,
+    `${manifest.precinct.labels.en} · verified Reality package`,
+    `${manifest.precinct.labels.zh} · 已验证现实数据包`,
+  );
+  setTranslatedCopy(
+    summaryModel,
+    `A checksummed production CityPackage is active for ${manifest.precinct.labels.en}. Geometry and source identity are fixed by the approved manifest; no Sandbox geometry is present.`,
+    `${manifest.precinct.labels.zh}的生产 CityPackage 已启用并通过校验和验证。几何与来源身份由获批清单固定；页面没有沙盒几何。`,
+  );
+  return true;
 }
 
 function setDataPanelOpen(nextOpen, { announce = true } = {}) {
@@ -363,12 +496,16 @@ function seedFromLocation() {
   return requested || 'afflatus-city-001';
 }
 
-function profileFromLocation({ migrateLegacySandbox = false } = {}) {
+function truthRequestFromLocation({ migrateLegacySandbox = false } = {}) {
   const params = new URLSearchParams(window.location.search);
-  const requestedProfile = params.get('profile');
-  if (migrateLegacySandbox && requestedProfile?.toLowerCase() === 'sandbox') {
+  const request = resolveCityTruthRequest({
+    mode: params.get('mode'),
+    profile: params.get('profile'),
+  });
+  if (migrateLegacySandbox && request.migratedLegacySandbox) {
     const url = new URL(window.location.href);
-    url.searchParams.set('profile', 'shanghai');
+    url.searchParams.set('profile', request.profile);
+    url.searchParams.set('mode', 'sandbox');
     window.history.replaceState(
       window.history.state,
       '',
@@ -376,58 +513,78 @@ function profileFromLocation({ migrateLegacySandbox = false } = {}) {
     );
     legacyProfileMigrationNoticePending = true;
   }
-  return normalizePublicCityConceptProfileKey(requestedProfile);
+  return request;
 }
 
-function updateProfileUi(profileKey) {
-  const profile = CITY_CONCEPT_GENERATION_PROFILES[normalizePublicCityConceptProfileKey(profileKey)];
-  if (profileSelect) profileSelect.value = profile.key;
-  stage?.setAttribute('data-city-profile-key', profile.key);
+function setTranslatedCopy(node, en, zh) {
+  if (!node) return;
+  node.dataset.en = en;
+  node.dataset.zh = zh;
+  node.textContent = translated(en, zh);
+}
+
+function updateProfileUi(request = currentTruthRequest) {
+  if (profileSelect) profileSelect.value = request.profile;
+  if (truthModeSelect) truthModeSelect.value = request.mode;
+  stage?.setAttribute('data-city-truth-mode-value', request.mode);
+  if (updateProductionUi()) return;
   if (localAnalysisPreviewMode) {
+    stage?.setAttribute('data-city-profile-key', 'melbourne');
     stage?.setAttribute('data-city-truth-class', 'licensed-real-data-candidate');
-    if (profileNote) {
-      const en = 'Melbourne · verified local candidate—not published';
-      const zh = '墨尔本 · 已验证本地候选，尚未发布';
-      profileNote.dataset.en = en;
-      profileNote.dataset.zh = zh;
-      profileNote.textContent = translated(en, zh);
-    }
-    if (summaryModel) {
-      const en = 'This local engineering view uses the licensed Melbourne candidate package derived from City of Melbourne building footprints, Vicmap transport, Vicmap DEM 10m and Survey Control Marks. It is checksum-verified, non-public and not registered for production use.';
-      const zh = '此本地工程视图使用由墨尔本市建筑轮廓、Vicmap 交通、Vicmap DEM 10m 与 Survey Control Marks 派生的许可候选数据包。它经过校验和验证、并非公开内容，也未注册用于生产环境。';
-      summaryModel.dataset.en = en;
-      summaryModel.dataset.zh = zh;
-      summaryModel.textContent = translated(en, zh);
-    }
+    setTranslatedCopy(profileNote, 'Melbourne · verified local candidate—not published', '墨尔本 · 已验证本地候选，尚未发布');
+    setTranslatedCopy(
+      summaryModel,
+      'This local engineering view uses the licensed Melbourne candidate package derived from City of Melbourne building footprints, Vicmap transport, Vicmap DEM 10m and Survey Control Marks. It is checksum-verified, non-public and not registered for production use.',
+      '此本地工程视图使用由墨尔本市建筑轮廓、Vicmap 交通、Vicmap DEM 10m 与 Survey Control Marks 派生的许可候选数据包。它经过校验和验证、并非公开内容，也未注册用于生产环境。',
+    );
     return;
   }
-  if (profileNote) {
-    const en = `${profile.labels.en} · generated concept—not GIS`;
-    const zh = `${profile.labels.zh} · 程序化概念，并非 GIS`;
-    profileNote.dataset.en = en;
-    profileNote.dataset.zh = zh;
-    profileNote.textContent = translated(en, zh);
+
+  if (request.mode === 'sandbox') {
+    stage?.setAttribute('data-city-profile-key', 'sandbox');
+    stage?.setAttribute('data-city-truth-class', 'generated-sandbox');
+    stage?.setAttribute('data-city-availability', 'available');
+    setTranslatedCopy(seedLabel, 'Seed', '种子');
+    setTranslatedCopy(profileNote, 'Sandbox · generated synthetic fixture—not a real city', '沙盒 · 程序化合成基准，并非真实城市');
+    setTranslatedCopy(
+      summaryModel,
+      'Sandbox is a deterministic synthetic 0–210 day construction model. Its roads, blocks, water, buildings and seed are invented test geometry; it is never labelled Shanghai, Melbourne or Hong Kong.',
+      '沙盒是一个确定性的合成 0–210 天建造模型。其道路、街区、水体、建筑与种子均为虚构测试几何，绝不会标记为上海、墨尔本或香港。',
+    );
+    return;
   }
-  if (summaryModel) {
-    const summaries = {
-      shanghai: {
-        en: 'This generated Shanghai concept reserves a vertical waterfront and three hero blocks: a pearl mast, a stepped crown and a corn-cob curve tower. These are planning silhouettes, not surveyed buildings or GIS.',
-        zh: '上海程序化概念样板预留纵向水岸与三个英雄街区：明珠塔体、阶梯冠顶和玉米形曲线塔。这些是规划轮廓，不是测绘建筑或 GIS。',
-      },
-      melbourne: {
-        en: 'This generated Melbourne concept reserves a horizontal waterfront and three hero blocks: a long station hall, civic shards and an arts spire. These are planning silhouettes, not surveyed buildings or GIS.',
-        zh: '墨尔本程序化概念样板预留横向水岸与三个英雄街区：长站房、城市折面建筑群和艺术尖塔。这些是规划轮廓，不是测绘建筑或 GIS。',
-      },
-      'hong-kong': {
-        en: 'This generated Hong Kong concept places a dense left-driving waterfront core between Victoria Harbour and a low-poly mountain ridge. Its financial fins, stepped crown and cultural podium are planning silhouettes—not surveyed buildings or GIS.',
-        zh: '香港程序化概念样板把左侧通行的高密滨水核心置于维港与低多边形山脊之间；金融折面塔、阶梯冠顶塔和文化裙楼都只是规划轮廓，并非测绘建筑或 GIS。',
-      },
-    };
-    const copy = summaries[profile.key];
-    summaryModel.dataset.en = copy.en;
-    summaryModel.dataset.zh = copy.zh;
-    summaryModel.textContent = translated(copy.en, copy.zh);
-  }
+
+  const availability = currentRealityAvailability
+    ?? evaluateCityRealityAvailability(request.profile, productionPackageReference(request.profile));
+  const modeLabels = CITY_TRUTH_MODES[request.mode].labels;
+  stage?.setAttribute('data-city-profile-key', request.profile);
+  stage?.setAttribute('data-city-truth-class', 'real-city-unavailable');
+  stage?.setAttribute(
+    'data-city-availability',
+    availability.available ? 'runtime-pending' : 'unavailable',
+  );
+  setTranslatedCopy(seedLabel, 'Package', '数据包');
+  setTranslatedCopy(
+    profileNote,
+    `${availability.profile.labels.en} · ${modeLabels.en} package unavailable`,
+    `${availability.profile.labels.zh} · ${modeLabels.zh}数据包尚不可用`,
+  );
+  const summaries = {
+    shanghai: {
+      en: 'Shanghai Reality requires an approved package with the true Huangpu River, Suzhou Creek mouth, Waibaidu Bridge, all 52 Bund massing assets, landmark-grade Bund façades, Oriental Pearl, Shanghai Tower, Jin Mao and SWFC. No approved production package is registered, so no geometry is fabricated.',
+      zh: '上海现实城市必须使用已批准数据包，包含真实黄浦江、苏州河口、外白渡桥、外滩 52 幢连续体量与重点立面，以及东方明珠、上海中心、金茂和环球金融中心。当前没有已批准的生产数据包，因此不会伪造几何。',
+    },
+    melbourne: {
+      en: 'Melbourne Reality requires an approved package joining Hoddle Grid, the Yarra and Princes Bridge to Flinders Street, Federation Square, Arts Centre, Eureka, Australia 108, Rialto and the wider skyline. The verified local engineering slice is not yet approved for production.',
+      zh: '墨尔本现实城市必须使用已批准数据包，把霍德尔方格、亚拉河与王子桥，同弗林德斯街车站、联邦广场、艺术中心、Eureka、Australia 108、Rialto 及更广天际线正确连接。已验证的本地工程片区尚未获准用于生产。',
+    },
+    'hong-kong': {
+      en: 'Hong Kong Reality requires an approved package with Victoria Harbour, both shorelines, Victoria Peak terrain, Central and Kowloon skyline assets including Bank of China Tower, HSBC, Two IFC, ICC, Central Plaza, HKCEC and the Tsim Sha Tsui waterfront group. No approved production package is registered.',
+      zh: '香港现实城市必须使用已批准数据包，包含维多利亚港两岸、太平山地形，以及中银大厦、汇丰总行、国际金融中心二期、环球贸易广场、中环广场、会展中心和尖沙咀海滨组团。当前没有已批准的生产数据包。',
+    },
+  };
+  const copy = summaries[request.profile];
+  setTranslatedCopy(summaryModel, copy.en, copy.zh);
 }
 
 function nextSeed() {
@@ -562,14 +719,39 @@ function setReadyStatus() {
   if (legacyProfileMigrationNoticePending) {
     legacyProfileMigrationNoticePending = false;
     setStatus(
-      'The retired Sandbox link now opens the Shanghai concept. Your seed was preserved.',
-      '已停用的沙盒链接现已迁移到上海概念样板，并保留原有种子。',
+      'The legacy profile=sandbox link now opens the explicit synthetic Sandbox. Your seed was preserved.',
+      '旧版 profile=sandbox 链接现已迁移到明确标识的合成沙盒，并保留原有种子。',
+    );
+    return;
+  }
+  if (activeCitySurface === 'production') {
+    const manifest = analysisRuntime?.manifest;
+    setStatus(
+      `${manifest?.precinct?.labels?.en ?? 'Real city'} Reality tiles are verified and streaming from the approved CityPackage.`,
+      `${manifest?.precinct?.labels?.zh ?? '现实城市'}现实切片已通过验证，并正从获批 CityPackage 流送。`,
+    );
+    return;
+  }
+  if (activeCitySurface === 'unavailable') {
+    const availability = currentRealityAvailability;
+    const profile = availability?.profile;
+    const mode = CITY_TRUTH_MODES[currentTruthRequest.mode].labels;
+    if (availability?.available) {
+      setStatus(
+        `${profile?.labels.en ?? 'Real city'} ${mode.en} package session is verified. Scene streaming is not enabled until the production renderer gate passes; no generated fallback was loaded.`,
+        `${profile?.labels.zh ?? '现实城市'}${mode.zh}数据包会话已通过验证。生产渲染器通过门禁前不会启用场景流送；页面没有加载程序化替代模型。`,
+      );
+      return;
+    }
+    setStatus(
+      `${profile?.labels.en ?? 'Real city'} ${mode.en} is unavailable: source/licence approval and a production CityPackage are still required. No generated fallback was loaded.`,
+      `${profile?.labels.zh ?? '现实城市'}${mode.zh}尚不可用：仍需完成来源与许可审批并注册生产 CityPackage。页面没有加载程序化替代模型。`,
     );
     return;
   }
   const profile = plan?.profile;
-  const en = `${profile?.labels.en ?? 'City concept'} ready. Drag the timeline or orbit the city.`;
-  const zh = `${profile?.labels.zh ?? '城市概念'}已就绪。可拖动时间轴或环绕城市。`;
+  const en = `${profile?.labels.en ?? 'Synthetic Sandbox'} ready. Drag the timeline or orbit the invented test city.`;
+  const zh = `${profile?.labels.zh ?? '合成沙盒'}已就绪。可拖动时间轴或环绕这座虚构测试城市。`;
   setStatus(en, zh);
 }
 
@@ -606,6 +788,7 @@ function configureLocalAnalysisShell() {
   const controlsToHide = [
     timeline?.closest('.city-timeline'),
     profileSelect?.closest('.city-profile-picker'),
+    truthModeSelect?.closest('.city-profile-picker'),
     playButton,
     tourButton,
     viewButton,
@@ -733,30 +916,165 @@ async function mountLocalAnalysisPreview() {
   setReadyStatus();
 }
 
-async function mountCity(seed, day = 0, profileKey = profileFromLocation()) {
+async function prepareRegisteredProductionPackage() {
+  const packageReference = currentRealityAvailability?.packageReference;
+  if (!packageReference) return null;
+  analysisAbortController?.abort();
+  analysisAbortController = new AbortController();
+  const { createCityProductionShell } = await import('./cityProductionShell.js');
+  const result = await createCityProductionShell({
+    canvas,
+    cityId: currentTruthRequest.profile,
+    packageReference,
+    signal: analysisAbortController.signal,
+    readBytes: async (url, signal) => {
+      const response = await fetch(url, {
+        signal,
+        cache: 'no-store',
+        credentials: 'same-origin',
+      });
+      if (!response.ok) throw new Error(`CityPackage request failed (${response.status}).`);
+      return response.arrayBuffer();
+    },
+    onStreamingChange: (streaming) => {
+      if (streaming.status === 'loading') {
+        setStatus(
+          `Streaming verified ${streaming.selection.primaryTileId} LOD${streaming.selection.lod}…`,
+          `正在流送已验证的 ${streaming.selection.primaryTileId} LOD${streaming.selection.lod}…`,
+        );
+      } else if (streaming.status === 'fallback') {
+        setStatus(
+          `Production streaming failed closed (${streaming.reason}); retaining the last verified tile set.`,
+          `生产流送安全回退（${streaming.reason}）；继续保留上一组已验证切片。`,
+        );
+      }
+    },
+    onEnvironmentChange: (snapshot) => {
+      if (activeCitySurface === 'production') updateProductionEnvironmentStatus(snapshot);
+    },
+    onEnvironmentRefreshError: ({ reason }) => {
+      setStatus(
+        `Auto-local refresh failed closed (${reason}); the last verified lighting state remains active.`,
+        `自动本地时间刷新安全回退（${reason}）；继续保留上一项已验证光照状态。`,
+      );
+    },
+    onViewChange: syncProductionView,
+    onFallback: () => {
+      stage?.classList.add('is-poster');
+      if (canvas) canvas.dataset.renderer = 'poster';
+      setRendererAvailable(false);
+    },
+  });
+  productionRuntimeState = result;
+  stage?.setAttribute('data-city-package-session', result.status);
+  if (result.status === 'fallback') {
+    stage?.setAttribute('data-city-package-failure', result.reason);
+  } else {
+    stage?.removeAttribute('data-city-package-failure');
+  }
+  if (result.status === 'ready') {
+    analysisRuntime = result.runtime;
+    scene = result.scene;
+    configureCitySurface('production');
+    stage?.setAttribute('data-city-truth-class', 'licensed-real-data');
+    stage?.setAttribute('data-city-availability', 'available');
+    stage?.classList.remove('is-poster');
+    if (canvas) canvas.dataset.renderer = 'webgl';
+    if (seedOutput) seedOutput.textContent = result.runtime.manifest.packageId;
+    setRendererAvailable(true);
+    renderProductionProvenance(result.runtime.manifest);
+    renderProductionViews(result.canonicalViews, result.getCanonicalView());
+    updateProductionUi();
+  }
+  return result;
+}
+
+function destroyProductionRuntime() {
+  const runtime = productionRuntimeState;
+  if (!runtime) return;
+  productionRuntimeState = null;
+  runtime.destroy?.();
+  if (scene === runtime.scene) scene = null;
+  productionViewSelect?.replaceChildren();
+  stage?.removeAttribute('data-city-canonical-view');
+}
+
+async function mountCity(seed, day = 0, request = truthRequestFromLocation()) {
+  destroyProductionRuntime();
+  if (!localAnalysisPreviewMode) {
+    analysisAbortController?.abort();
+    analysisAbortController = null;
+    analysisRuntime = null;
+  }
+  currentTruthRequest = localAnalysisPreviewMode
+    ? resolveCityTruthRequest({ mode: 'reality', profile: 'melbourne' })
+    : request;
+  currentRealityAvailability = currentTruthRequest.mode === 'sandbox'
+    ? null
+    : evaluateCityRealityAvailability(
+      currentTruthRequest.profile,
+      productionPackageReference(currentTruthRequest.profile),
+    );
+  productionRuntimeState = null;
+  stage?.removeAttribute('data-city-package-session');
+  stage?.removeAttribute('data-city-package-failure');
+  const generatedSandbox = !localAnalysisPreviewMode && mayMountGeneratedSandbox(currentTruthRequest);
+  plan = localAnalysisPreviewMode
+    ? generateSandboxCity(seed, 'melbourne')
+    : generatedSandbox
+      ? generateSandboxCity(seed, 'sandbox')
+      : null;
+  configureCitySurface(localAnalysisPreviewMode ? 'analysis' : generatedSandbox ? 'sandbox' : 'unavailable');
+  assetVisibility = createCityAssetVisibility();
+  assetInventory = null;
+  renderLayerEditor();
+  if (seedOutput) {
+    seedOutput.textContent = localAnalysisPreviewMode
+      ? 'verifying…'
+      : generatedSandbox
+        ? seed
+        : currentRealityAvailability?.packageReference?.packageId ?? 'not loaded';
+  }
+  updateProfileUi(currentTruthRequest);
+  updateDocumentTitle();
+  updateDay(day);
   if (localAnalysisPreviewMode) {
     setStatus(
       'Verifying frozen candidate manifest and first-frame assets…',
       '正在验证冻结候选清单与首屏资产…',
     );
+  } else if (generatedSandbox) {
+    setStatus('Preparing deterministic Sandbox geometry…', '正在准备确定性的沙盒几何…');
   } else {
-    setStatus('Preparing deterministic city geometry…', '正在准备确定性城市几何…');
+    setStatus('Checking real-city approval and production package registration…', '正在检查现实城市审批与生产数据包注册状态…');
   }
   stage?.setAttribute('aria-busy', 'true');
   setRendererAvailable(false);
   // Let the loading state and static poster paint before the optional WebGL
   // scene performs its synchronous setup work.
   await new Promise((resolve) => window.requestAnimationFrame(resolve));
-  plan = generateSandboxCity(seed, localAnalysisPreviewMode ? 'melbourne' : profileKey);
-  assetVisibility = createCityAssetVisibility();
-  assetInventory = null;
-  renderLayerEditor();
-  if (seedOutput) seedOutput.textContent = localAnalysisPreviewMode ? 'verifying…' : seed;
-  updateProfileUi(plan.profile.key);
-  updateDay(day);
   try {
     if (localAnalysisPreviewMode) {
       await mountLocalAnalysisPreview();
+      return;
+    }
+    if (!generatedSandbox) {
+      scene?.destroy();
+      scene = null;
+      stage?.classList.add('is-poster');
+      if (canvas) canvas.dataset.renderer = 'poster';
+      if (currentRealityAvailability?.available) {
+        const runtime = await prepareRegisteredProductionPackage();
+        if (runtime?.status === 'cancelled') return;
+        if (runtime?.status === 'fallback') {
+          setStatus(
+            `Registered CityPackage failed closed (${runtime.reason}); no generated fallback was loaded.`,
+            `已注册 CityPackage 安全回退（${runtime.reason}）；页面没有加载程序化替代模型。`,
+          );
+          return;
+        }
+      }
+      setReadyStatus();
       return;
     }
     sceneModule ??= await import('../scene/cityScene.js');
@@ -822,8 +1140,13 @@ async function mountCity(seed, day = 0, profileKey = profileFromLocation()) {
         `Candidate 3D failed closed (${reason}); licensed source facts remain available below.`,
         `候选 3D 已安全回退（${reason}）；下方仍保留许可来源事实。`,
       );
+    } else if (generatedSandbox) {
+      setStatus('The synthetic Sandbox could not start; its timeline, data and truth summary remain available.', '合成沙盒未能启动；其时间轴、数据和真实性摘要仍可使用。');
     } else {
-      setStatus('The 3D scene could not start; the timeline, data and city summary remain available.', '3D 场景未能启动；时间轴、数据和城市摘要仍可使用。');
+      setStatus(
+        'The registered CityPackage runtime failed closed; no generated fallback was loaded.',
+        '已注册 CityPackage 运行时安全回退；页面没有加载程序化替代模型。',
+      );
     }
   } finally {
     stage?.setAttribute('aria-busy', 'false');
@@ -927,6 +1250,7 @@ resetButton?.addEventListener('click', () => {
 });
 
 rebuildButton?.addEventListener('click', () => {
+  if (currentTruthRequest.mode !== 'sandbox') return;
   const seed = nextSeed();
   const url = new URL(window.location.href);
   url.searchParams.set('seed', seed);
@@ -938,11 +1262,79 @@ rebuildButton?.addEventListener('click', () => {
 });
 
 profileSelect?.addEventListener('change', () => {
-  const profile = normalizePublicCityConceptProfileKey(profileSelect.value);
+  const request = resolveCityTruthRequest({
+    mode: currentTruthRequest.mode,
+    profile: profileSelect.value,
+  });
   const url = new URL(window.location.href);
-  url.searchParams.set('profile', profile);
-  setStatus('Switching deterministic concept profile…', '正在切换确定性概念样板…');
+  url.searchParams.set('profile', request.profile);
+  url.searchParams.set('mode', request.mode);
+  setStatus('Checking the selected real-city package…', '正在检查所选现实城市数据包…');
   window.location.assign(url);
+});
+
+truthModeSelect?.addEventListener('change', () => {
+  const mode = normalizeCityTruthMode(truthModeSelect.value);
+  const url = new URL(window.location.href);
+  url.searchParams.set('mode', mode);
+  url.searchParams.set('profile', currentTruthRequest.profile);
+  setStatus(
+    mode === 'sandbox' ? 'Opening the explicit synthetic Sandbox…' : 'Checking the selected real-city truth mode…',
+    mode === 'sandbox' ? '正在打开明确标识的合成沙盒…' : '正在检查所选现实城市真实性模式…',
+  );
+  window.location.assign(url);
+});
+
+function updateProductionEnvironmentStatus(snapshot) {
+  setStatus(
+    `${analysisRuntime?.manifest?.precinct?.labels?.en ?? 'Real city'} environment: ${snapshot.environment} · ${snapshot.localDateTime}. Geometry and feature IDs are unchanged.`,
+    `${analysisRuntime?.manifest?.precinct?.labels?.zh ?? '现实城市'}环境：${snapshot.environment} · ${snapshot.localDateTime}。几何与要素 ID 保持不变。`,
+  );
+}
+
+productionEnvironmentSelect?.addEventListener('change', () => {
+  if (activeCitySurface !== 'production') return;
+  try {
+    const request = productionEnvironmentSelect.value;
+    const snapshot = productionRuntimeState?.setEnvironment?.(
+      request,
+      request === 'auto-local' ? new Date() : undefined,
+    );
+    if (!snapshot) return;
+  } catch (error) {
+    setStatus(
+      `Environment switch failed closed (${error?.message ?? 'unknown'}); the last verified state remains active.`,
+      `环境切换安全回退（${error?.message ?? '未知'}）；继续保留上一项已验证状态。`,
+    );
+  }
+});
+
+productionViewSelect?.addEventListener('change', async () => {
+  if (activeCitySurface !== 'production' || productionRuntimeState?.status !== 'ready') return;
+  productionViewSelect.disabled = true;
+  try {
+    const view = await productionRuntimeState.setCanonicalView(productionViewSelect.value);
+    if (!view) {
+      syncProductionView(productionRuntimeState.getCanonicalView());
+      setStatus(
+        'Classic-view switch failed closed; the previous verified camera and tile set remain active.',
+        '经典机位切换已安全回退；继续保留上一项已验证镜头与切片。',
+      );
+      return;
+    }
+    setStatus(
+      `Classic view: ${view.labels.en}. Geometry, feature IDs and environment are unchanged.`,
+      `经典机位：${view.labels.zh}。几何、要素 ID 与环境保持不变。`,
+    );
+  } catch (error) {
+    syncProductionView(productionRuntimeState.getCanonicalView());
+    setStatus(
+      `Classic-view switch failed closed (${error?.message ?? 'unknown'}); the previous verified state remains active.`,
+      `经典机位切换已安全回退（${error?.message ?? '未知'}）；继续保留上一项已验证状态。`,
+    );
+  } finally {
+    productionViewSelect.disabled = false;
+  }
 });
 
 window.addEventListener('afflatus-lang', () => {
@@ -954,9 +1346,10 @@ window.addEventListener('afflatus-lang', () => {
   updatePlayButton(Boolean(scene?.isPlaying?.()));
   updateTourButton(Boolean(scene?.isTourActive?.()));
   updateViewButton(scene?.getHeroViewState?.() ?? null);
-  updateProfileUi(plan?.profile.key ?? profileFromLocation());
+  updateProfileUi(currentTruthRequest);
   renderLayerEditor();
   translateAnalysisEnvironmentControl();
+  translateProductionViewOptions();
   renderAnalysisSelection();
   if (status?.dataset.en && status?.dataset.zh) {
     status.textContent = translated(status.dataset.en, status.dataset.zh);
@@ -990,8 +1383,56 @@ window.addEventListener('pagehide', (event) => {
   document.removeEventListener('keydown', onDocumentKeydown);
   analysisAbortController?.abort();
   deviceAuditController?.destroy?.();
+  destroyProductionRuntime();
   scene?.destroy();
 });
+
+function getPublicPlanSummary() {
+  if (!plan) {
+    const productionReady = activeCitySurface === 'production' && productionRuntimeState?.status === 'ready';
+    const firstFrameTiles = productionReady
+      ? productionRuntimeState.firstFrame.tileLoad.tiles
+      : [];
+    return Object.freeze({
+      seed: null,
+      profile: currentTruthRequest.profile,
+      truthMode: currentTruthRequest.mode,
+      truthClass: productionReady ? 'licensed-real-data' : 'real-city-unavailable',
+      availability: productionReady
+        ? 'available'
+        : currentRealityAvailability?.available ? 'runtime-pending' : 'unavailable',
+      blockers: currentRealityAvailability?.blockers ?? Object.freeze([]),
+      candidatePackageId: currentRealityAvailability?.packageReference?.packageId ?? null,
+      manifestSha256: currentRealityAvailability?.packageReference?.manifestSha256 ?? null,
+      blocks: 0,
+      roads: 0,
+      buildings: 0,
+      waterChannels: 0,
+      heroLandmarks: 0,
+      firstFrameTiles: firstFrameTiles.length,
+      firstFrameBytes: firstFrameTiles.reduce((total, tile) => total + tile.bytes.byteLength, 0),
+      firstFrameDrawCalls: firstFrameTiles.reduce((total, tile) => total + tile.statistics.drawCalls, 0),
+      firstFrameTriangles: firstFrameTiles.reduce((total, tile) => total + tile.statistics.triangles, 0),
+    });
+  }
+  return Object.freeze({
+    seed: plan.seed,
+    profile: localAnalysisPreviewMode ? 'melbourne' : 'sandbox',
+    truthMode: localAnalysisPreviewMode ? 'reality' : currentTruthRequest.mode,
+    truthClass: localAnalysisPreviewMode
+      ? 'licensed-real-data-candidate'
+      : 'generated-sandbox',
+    availability: 'available',
+    blockers: Object.freeze([]),
+    candidatePackageId: analysisRuntime?.manifest.packageId ?? null,
+    manifestSha256: analysisRuntime?.manifestSha256 ?? null,
+    blocks: plan.blocks.length,
+    roads: plan.roads.length,
+    buildings: plan.buildings.length,
+    waterChannels: plan.water.length,
+    heroLandmarks: plan.heroLandmarks.length,
+  });
+}
 
 updatePlayButton(false);
 updateTourButton(false);
@@ -1017,23 +1458,31 @@ if (window.__AFFLATUS_E2E__ || new URLSearchParams(window.location.search).has('
       getAnalysisEnvironment: () => localAnalysisPreviewMode
         ? analysisEnvironmentState
         : null,
+      setProductionEnvironment: (environment, instant = '2026-06-21T04:00:00.000Z') => (
+        activeCitySurface === 'production'
+          ? productionRuntimeState?.setEnvironment?.(environment, instant) ?? null
+          : null
+      ),
+      setProductionView: (viewId) => (
+        activeCitySurface === 'production'
+          ? productionRuntimeState?.setCanonicalView?.(viewId) ?? null
+          : null
+      ),
+      getProductionView: () => productionRuntimeState?.getCanonicalView?.() ?? null,
+      getProductionAutoLocalState: () => productionRuntimeState?.getAutoLocalState?.() ?? null,
       getAnalysisSelection: () => localAnalysisPreviewMode
         ? analysisSelectedFeature
         : null,
-      getPlanSummary: () => plan ? Object.freeze({
-        seed: plan.seed,
-        profile: plan.profile.key,
-        truthClass: localAnalysisPreviewMode
-          ? 'licensed-real-data-candidate'
-          : plan.profile.truthClass,
-        candidatePackageId: analysisRuntime?.manifest.packageId ?? null,
-        manifestSha256: analysisRuntime?.manifestSha256 ?? null,
-        blocks: plan.blocks.length,
-        roads: plan.roads.length,
-        buildings: plan.buildings.length,
-        waterChannels: plan.water.length,
-        heroLandmarks: plan.heroLandmarks.length,
-      }) : null,
+      getPlanSummary: getPublicPlanSummary,
+      getTruthState: () => Object.freeze({
+        mode: currentTruthRequest.mode,
+        profile: currentTruthRequest.profile,
+        surface: activeCitySurface,
+        available: currentRealityAvailability?.available ?? currentTruthRequest.mode === 'sandbox',
+        blockers: currentRealityAvailability?.blockers ?? Object.freeze([]),
+        packageSessionStatus: productionRuntimeState?.status ?? null,
+        packageFailureReason: productionRuntimeState?.reason ?? null,
+      }),
       getDataPanelState: () => Object.freeze({
         open: dataPanelOpen,
         renderCount: metricRenderCount,
@@ -1058,10 +1507,7 @@ if (deviceAuditMode) {
   import('./cityDeviceAudit.js').then(({ mountCityDeviceAudit }) => {
     deviceAuditController = mountCityDeviceAudit({
       getTelemetry: () => scene?.getTelemetry?.() ?? null,
-      getPlanSummary: () => plan ? Object.freeze({
-        seed: plan.seed,
-        profile: plan.profile.key,
-      }) : null,
+      getPlanSummary: getPublicPlanSummary,
       targetDurationMs: window.__AFFLATUS_E2E__ ? 250 : undefined,
     });
   }).catch((error) => {
@@ -1083,14 +1529,15 @@ configureLocalAnalysisShell();
 
 let initialCityPromise = null;
 let initialCityTimer = 0;
-const initialProfile = localAnalysisPreviewMode
-  ? 'melbourne'
-  : profileFromLocation({ migrateLegacySandbox: true });
+const initialRequest = localAnalysisPreviewMode
+  ? resolveCityTruthRequest({ mode: 'reality', profile: 'melbourne' })
+  : truthRequestFromLocation({ migrateLegacySandbox: true });
+currentTruthRequest = initialRequest;
 const mountInitialCity = () => {
   if (!initialCityPromise) {
     if (initialCityTimer) window.clearTimeout(initialCityTimer);
     if (loadButton) loadButton.hidden = true;
-    initialCityPromise = mountCity(seedFromLocation(), 0, initialProfile);
+    initialCityPromise = mountCity(seedFromLocation(), 0, initialRequest);
   }
   return initialCityPromise;
 };
@@ -1117,8 +1564,10 @@ if (constrainedDevice) {
       'Preparing the verified local Melbourne candidate…',
       '正在准备已验证的本地墨尔本候选数据…',
     );
+  } else if (initialRequest.mode === 'sandbox') {
+    setStatus('Preparing the explicit synthetic Sandbox…', '正在准备明确标识的合成沙盒…');
   } else {
-    setStatus('Preparing deterministic city geometry…', '正在准备确定性城市几何…');
+    setStatus('Checking real-city approval and production package registration…', '正在检查现实城市审批与生产数据包注册状态…');
   }
   initialCityTimer = window.setTimeout(() => {
     if ('requestIdleCallback' in window) {

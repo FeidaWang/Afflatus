@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "contractId": "afflatus-city-reality-wave0-v1",
+  "frozenAt": "2026-08-18",
+  "truthModes": ["reality", "construction-scenario", "sandbox"],
+  "cities": [
+    {
+      "id": "shanghai",
+      "contractStatus": "frozen-data-blocked",
+      "precinct": {
+        "labels": { "en": "Bund–Huangpu–Lujiazui core", "zh": "外滩—黄浦江—陆家嘴核心区" },
+        "boundsWgs84": { "west": 121.465, "south": 31.205, "east": 121.535, "north": 31.27 }
+      },
+      "coordinateFrame": {
+        "runtimeFrame": "ENU",
+        "unit": "metre",
+        "originWgs84": { "longitude": 121.497, "latitude": 31.238 },
+        "horizontal": { "sourceCrs": "unresolved-approved-Shanghai-source-CRS", "status": "unresolved" },
+        "vertical": { "datum": "unresolved-approved-local-vertical-datum", "status": "unresolved" },
+        "terrainExaggeration": 1
+      },
+      "ianaTimeZone": "Asia/Shanghai",
+      "sourceLayerRequirements": [
+        { "id": "terrain", "status": "blocked", "acceptance": "Approved urban DTM/DEM with archived vertical datum and redistribution rights" },
+        { "id": "shoreline", "status": "blocked", "acceptance": "Huangpu and Suzhou Creek polygons with closed topology and a documented water reference" },
+        { "id": "roads", "status": "blocked", "acceptance": "Frozen roads and bridge geometry with source lineage and public-map compliance review" },
+        { "id": "building-parts", "status": "blocked", "acceptance": "Real footprints/parts, height semantics, stable IDs and source-preserving transforms" },
+        { "id": "landmarks", "status": "blocked", "acceptance": "Original or commissioned dimensioned GLBs with independent texture and signage rights" }
+      ],
+      "minimumLandmarks": [
+        { "id": "oriental-pearl", "names": { "en": "Oriental Pearl", "zh": "东方明珠" }, "assetClass": "authored-asset", "referenceHeightMetres": 468, "validationStatus": "dimension-reference-frozen" },
+        { "id": "shanghai-tower", "names": { "en": "Shanghai Tower", "zh": "上海中心大厦" }, "assetClass": "authored-asset", "referenceHeightMetres": 632, "validationStatus": "dimension-reference-frozen" },
+        { "id": "shanghai-world-financial-center", "names": { "en": "Shanghai World Financial Center", "zh": "上海环球金融中心" }, "assetClass": "authored-asset", "referenceHeightMetres": 492, "validationStatus": "dimension-reference-frozen" },
+        { "id": "jin-mao-tower", "names": { "en": "Jin Mao Tower", "zh": "金茂大厦" }, "assetClass": "authored-asset", "referenceHeightMetres": 421, "validationStatus": "dimension-reference-frozen" },
+        { "id": "bund-52-building-ensemble", "names": { "en": "The Bund 52-building ensemble", "zh": "外滩万国建筑博览群（52幢）" }, "assetClass": "authored-ensemble", "referenceHeightMetres": null, "validationStatus": "dimension-reference-frozen" },
+        { "id": "customs-house", "names": { "en": "Customs House", "zh": "江海关大楼" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "former-hsbc-building", "names": { "en": "Former HSBC Building", "zh": "原汇丰银行大楼" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "peace-hotel", "names": { "en": "Peace Hotel / Sassoon House", "zh": "和平饭店／沙逊大厦" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "bank-of-china-bund", "names": { "en": "Bank of China Building", "zh": "中国银行大楼" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "asia-building", "names": { "en": "Asia Building", "zh": "亚细亚大楼" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "waibaidu-bridge", "names": { "en": "Waibaidu Bridge", "zh": "外白渡桥" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" }
+      ],
+      "landmarkAssetContract": {
+        "schemaVersion": 1,
+        "authoredGeometryOnly": true,
+        "requiredLods": [0, 1, 2],
+        "requiredLightLods": [0, 1],
+        "allowedLightMaterialPrefixes": ["street-light-", "aviation-light-", "landmark-light-"],
+        "wholeBuildingEmissionAllowed": false,
+        "nightGoldenPlatforms": ["desktop", "mobile"],
+        "nightGoldenCameraIds": ["bund-east-skyline", "pudong-west-bund", "huangpu-four-icons", "bund-street-wall", "waibaidu-suzhou-mouth"],
+        "requiredMaterialGroupsByLandmark": {
+          "oriental-pearl": ["landmark-light-oriental-pearl", "aviation-light-oriental-pearl"],
+          "shanghai-tower": ["landmark-light-shanghai-tower-crown", "aviation-light-shanghai-tower"],
+          "shanghai-world-financial-center": ["landmark-light-swfc-crown", "aviation-light-swfc"],
+          "jin-mao-tower": ["landmark-light-jin-mao-crown", "aviation-light-jin-mao"],
+          "bund-52-building-ensemble": ["landmark-light-bund-facade"],
+          "customs-house": ["landmark-light-bund-customs-house-clock"],
+          "former-hsbc-building": ["landmark-light-bund-former-hsbc-facade"],
+          "peace-hotel": ["landmark-light-bund-peace-hotel-crown"],
+          "bank-of-china-bund": ["landmark-light-bund-bank-of-china-facade"],
+          "asia-building": ["landmark-light-bund-asia-building-facade"],
+          "waibaidu-bridge": ["landmark-light-waibaidu-bridge"]
+        }
+      },
+      "canonicalCameras": [
+        { "id": "bund-east-skyline", "labels": { "en": "The Bund → Lujiazui", "zh": "外滩东望陆家嘴" }, "positionWgs84": { "longitude": 121.486, "latitude": 31.237 }, "targetWgs84": { "longitude": 121.505, "latitude": 31.237 }, "verticalFovDegrees": 42, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "pudong-west-bund", "labels": { "en": "Pudong → The Bund", "zh": "浦东西望外滩" }, "positionWgs84": { "longitude": 121.51, "latitude": 31.238 }, "targetWgs84": { "longitude": 121.487, "latitude": 31.238 }, "verticalFovDegrees": 45, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "huangpu-four-icons", "labels": { "en": "Huangpu four-icon skyline", "zh": "黄浦江四大地标天际线" }, "positionWgs84": { "longitude": 121.479, "latitude": 31.223 }, "targetWgs84": { "longitude": 121.505, "latitude": 31.235 }, "verticalFovDegrees": 38, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "bund-street-wall", "labels": { "en": "The Bund street wall", "zh": "外滩建筑群街墙" }, "positionWgs84": { "longitude": 121.493, "latitude": 31.232 }, "targetWgs84": { "longitude": 121.486, "latitude": 31.232 }, "verticalFovDegrees": 48, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "waibaidu-suzhou-mouth", "labels": { "en": "Waibaidu Bridge + Suzhou Creek", "zh": "外白渡桥与苏州河口" }, "positionWgs84": { "longitude": 121.49, "latitude": 31.248 }, "targetWgs84": { "longitude": 121.493, "latitude": 31.244 }, "verticalFovDegrees": 50, "environmentStates": ["day", "twilight", "night"] }
+      ],
+      "releaseBlockers": [
+        { "id": "public-map-compliance", "reason": "Qualified review of the applicable public-map workflow and display obligations is not complete" },
+        { "id": "approved-spatial-sources", "reason": "Terrain, shoreline, roads and building source artifacts are not frozen and approved" },
+        { "id": "landmark-rights", "reason": "Original landmark modelling and texture/signage rights are not approved" }
+      ]
+    },
+    {
+      "id": "melbourne",
+      "contractStatus": "frozen-data-blocked",
+      "precinct": {
+        "labels": { "en": "Hoddle Grid–Yarra–Southbank skyline core", "zh": "霍德尔路网—雅拉河—南岸天际线核心区" },
+        "boundsWgs84": { "west": 144.935, "south": -37.845, "east": 145.015, "north": -37.79 }
+      },
+      "coordinateFrame": {
+        "runtimeFrame": "ENU",
+        "unit": "metre",
+        "originWgs84": { "longitude": 144.963, "latitude": -37.815 },
+        "horizontal": { "sourceCrs": "EPSG:3111 with source-specific GDA94/GDA2020 transformations", "status": "frozen" },
+        "vertical": { "datum": "AHD", "status": "frozen" },
+        "terrainExaggeration": 1
+      },
+      "ianaTimeZone": "Australia/Melbourne",
+      "sourceLayerRequirements": [
+        { "id": "terrain", "status": "candidate", "acceptance": "Delivered Vicmap DEM 10 m and Survey Control evidence pass the expanded skyline AOI QA" },
+        { "id": "shoreline", "status": "candidate", "acceptance": "Vicmap Hydro Yarra banks and water elevation remain seam-free across the full AOI" },
+        { "id": "roads", "status": "candidate", "acceptance": "Vicmap Transport plus rail and bridge surfaces cover Hoddle Grid, Southbank and sports precinct" },
+        { "id": "building-parts", "status": "candidate", "acceptance": "Official footprint parts retain AHD min/max, podium, setback and stable feature IDs" },
+        { "id": "landmarks", "status": "blocked", "acceptance": "Original landmark GLBs and rights records cover the complete minimum skyline set" }
+      ],
+      "minimumLandmarks": [
+        { "id": "flinders-street-station", "names": { "en": "Flinders Street Station", "zh": "弗林德斯街车站" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "federation-square", "names": { "en": "Federation Square", "zh": "联邦广场" }, "assetClass": "authored-ensemble", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "arts-centre-spire", "names": { "en": "Arts Centre Melbourne Spire", "zh": "墨尔本艺术中心尖塔" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "st-pauls-cathedral", "names": { "en": "St Paul's Cathedral", "zh": "圣保罗座堂" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "eureka-tower", "names": { "en": "Eureka Tower", "zh": "尤里卡大厦" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "australia-108", "names": { "en": "Australia 108", "zh": "澳大利亚108大厦" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "rialto-towers", "names": { "en": "Rialto Towers", "zh": "里亚尔托大厦" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "one-twenty-collins", "names": { "en": "120 Collins Street", "zh": "柯林斯街120号" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "melbourne-cricket-ground", "names": { "en": "Melbourne Cricket Ground", "zh": "墨尔本板球场" }, "assetClass": "authored-ensemble", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "princes-bridge", "names": { "en": "Princes Bridge", "zh": "王子桥" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" }
+      ],
+      "landmarkAssetContract": {
+        "schemaVersion": 1,
+        "authoredGeometryOnly": true,
+        "requiredLods": [0, 1, 2],
+        "requiredLightLods": [0, 1],
+        "allowedLightMaterialPrefixes": ["street-light-", "aviation-light-", "landmark-light-"],
+        "wholeBuildingEmissionAllowed": false,
+        "nightGoldenPlatforms": ["desktop", "mobile"],
+        "nightGoldenCameraIds": ["southbank-north-cbd", "cbd-south-southbank", "flinders-federation-axis", "docklands-east-oblique", "sports-precinct-west-oblique"],
+        "requiredMaterialGroupsByLandmark": {
+          "flinders-street-station": ["landmark-light-flinders-facade"],
+          "federation-square": ["landmark-light-federation-square"],
+          "arts-centre-spire": ["landmark-light-arts-centre-spire", "aviation-light-arts-centre-spire"],
+          "st-pauls-cathedral": ["landmark-light-st-pauls-cathedral"],
+          "eureka-tower": ["landmark-light-eureka-crown", "aviation-light-eureka"],
+          "australia-108": ["landmark-light-australia-108-crown", "aviation-light-australia-108"],
+          "rialto-towers": ["landmark-light-rialto-crowns", "aviation-light-rialto"],
+          "one-twenty-collins": ["landmark-light-one-twenty-collins-crown", "aviation-light-one-twenty-collins"],
+          "melbourne-cricket-ground": ["landmark-light-mcg-towers"],
+          "princes-bridge": ["landmark-light-princes-bridge"]
+        }
+      },
+      "canonicalCameras": [
+        { "id": "southbank-north-cbd", "labels": { "en": "Southbank → CBD", "zh": "南岸北望中央商务区" }, "positionWgs84": { "longitude": 144.965, "latitude": -37.823 }, "targetWgs84": { "longitude": 144.965, "latitude": -37.813 }, "verticalFovDegrees": 45, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "cbd-south-southbank", "labels": { "en": "CBD → Southbank", "zh": "中央商务区南望南岸" }, "positionWgs84": { "longitude": 144.965, "latitude": -37.811 }, "targetWgs84": { "longitude": 144.964, "latitude": -37.824 }, "verticalFovDegrees": 45, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "flinders-federation-axis", "labels": { "en": "Flinders–Federation civic axis", "zh": "弗林德斯—联邦广场城市轴线" }, "positionWgs84": { "longitude": 144.963, "latitude": -37.819 }, "targetWgs84": { "longitude": 144.969, "latitude": -37.817 }, "verticalFovDegrees": 48, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "docklands-east-oblique", "labels": { "en": "Docklands east skyline", "zh": "滨海港区东望天际线" }, "positionWgs84": { "longitude": 144.945, "latitude": -37.818 }, "targetWgs84": { "longitude": 144.973, "latitude": -37.813 }, "verticalFovDegrees": 38, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "sports-precinct-west-oblique", "labels": { "en": "Sports precinct west skyline", "zh": "体育区西望天际线" }, "positionWgs84": { "longitude": 145.006, "latitude": -37.821 }, "targetWgs84": { "longitude": 144.975, "latitude": -37.815 }, "verticalFovDegrees": 40, "environmentStates": ["day", "twilight", "night"] }
+      ],
+      "releaseBlockers": [
+        { "id": "expanded-aoi-qa", "reason": "The verified engineering candidate covers only Flinders–Federation, not the complete skyline AOI" },
+        { "id": "landmark-assets", "reason": "Minimum skyline landmark assets and their rights records are incomplete" },
+        { "id": "four-role-release", "reason": "Data owner, legal, engineering and product release approvals are incomplete" }
+      ]
+    },
+    {
+      "id": "hong-kong",
+      "contractStatus": "frozen-data-blocked",
+      "precinct": {
+        "labels": { "en": "Victoria Harbour–Central–Kowloon core", "zh": "维多利亚港—中环—九龙核心区" },
+        "boundsWgs84": { "west": 114.13, "south": 22.255, "east": 114.205, "north": 22.315 }
+      },
+      "coordinateFrame": {
+        "runtimeFrame": "ENU",
+        "unit": "metre",
+        "originWgs84": { "longitude": 114.1694, "latitude": 22.2888 },
+        "horizontal": { "sourceCrs": "EPSG:2326 Hong Kong 1980 Grid System", "status": "frozen" },
+        "vertical": { "datum": "Hong Kong Principal Datum (HKPD)", "status": "frozen" },
+        "terrainExaggeration": 1
+      },
+      "ianaTimeZone": "Asia/Hong_Kong",
+      "sourceLayerRequirements": [
+        { "id": "terrain", "status": "blocked", "acceptance": "Official 5 m DTM coverage, HKPD transform and redistribution/cache terms are frozen" },
+        { "id": "shoreline", "status": "blocked", "acceptance": "Both Victoria Harbour shorelines, reclamation edges and piers have stable official geometry" },
+        { "id": "roads", "status": "blocked", "acceptance": "Official principal roads, infrastructure and bridge/tunnel surface semantics are approved" },
+        { "id": "building-parts", "status": "blocked", "acceptance": "Official 3D mapping coverage, LOD semantics, IDs and API/cache rights pass review" },
+        { "id": "landmarks", "status": "blocked", "acceptance": "Original or approved landmark assets preserve the required skyline silhouettes" }
+      ],
+      "minimumLandmarks": [
+        { "id": "bank-of-china-tower", "names": { "en": "Bank of China Tower", "zh": "中银大厦" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "hsbc-main-building", "names": { "en": "HSBC Main Building", "zh": "汇丰总行大厦" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "two-ifc", "names": { "en": "Two International Finance Centre", "zh": "国际金融中心二期" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "icc", "names": { "en": "International Commerce Centre", "zh": "环球贸易广场" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "central-plaza", "names": { "en": "Central Plaza", "zh": "中环广场" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "the-center", "names": { "en": "The Center", "zh": "中环中心" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "hkcec", "names": { "en": "Hong Kong Convention and Exhibition Centre", "zh": "香港会议展览中心" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "tsim-sha-tsui-clock-tower", "names": { "en": "Tsim Sha Tsui Clock Tower", "zh": "尖沙咀钟楼" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "hong-kong-cultural-centre", "names": { "en": "Hong Kong Cultural Centre", "zh": "香港文化中心" }, "assetClass": "authored-asset", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "star-ferry-pier", "names": { "en": "Star Ferry Pier", "zh": "天星码头" }, "assetClass": "authored-ensemble", "referenceHeightMetres": null, "validationStatus": "blocked" },
+        { "id": "victoria-peak-terrain", "names": { "en": "Victoria Peak terrain", "zh": "太平山地形" }, "assetClass": "terrain-hero", "referenceHeightMetres": null, "validationStatus": "blocked" }
+      ],
+      "landmarkAssetContract": {
+        "schemaVersion": 1,
+        "authoredGeometryOnly": true,
+        "requiredLods": [0, 1, 2],
+        "requiredLightLods": [0, 1],
+        "allowedLightMaterialPrefixes": ["street-light-", "aviation-light-", "landmark-light-"],
+        "wholeBuildingEmissionAllowed": false,
+        "nightGoldenPlatforms": ["desktop", "mobile"],
+        "nightGoldenCameraIds": ["tsim-sha-tsui-south", "peak-north-harbour", "harbour-central-wanchai-icc", "central-close-skyline", "west-kowloon-east-oblique"],
+        "requiredMaterialGroupsByLandmark": {
+          "bank-of-china-tower": ["landmark-light-bank-of-china-crown", "aviation-light-bank-of-china"],
+          "hsbc-main-building": ["landmark-light-hsbc-main-building"],
+          "two-ifc": ["landmark-light-two-ifc-crown", "aviation-light-two-ifc"],
+          "icc": ["landmark-light-icc-crown", "aviation-light-icc"],
+          "central-plaza": ["landmark-light-central-plaza-crown", "aviation-light-central-plaza"],
+          "the-center": ["landmark-light-the-center-crown", "aviation-light-the-center"],
+          "hkcec": ["landmark-light-hkcec-roof"],
+          "tsim-sha-tsui-clock-tower": ["landmark-light-clock-tower"],
+          "hong-kong-cultural-centre": ["landmark-light-cultural-centre"],
+          "star-ferry-pier": ["landmark-light-star-ferry-pier"],
+          "victoria-peak-terrain": []
+        }
+      },
+      "canonicalCameras": [
+        { "id": "tsim-sha-tsui-south", "labels": { "en": "Tsim Sha Tsui → Hong Kong Island", "zh": "尖沙咀南望香港岛" }, "positionWgs84": { "longitude": 114.171, "latitude": 22.293 }, "targetWgs84": { "longitude": 114.164, "latitude": 22.282 }, "verticalFovDegrees": 44, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "peak-north-harbour", "labels": { "en": "Victoria Peak → Harbour", "zh": "太平山北望维多利亚港" }, "positionWgs84": { "longitude": 114.143, "latitude": 22.275 }, "targetWgs84": { "longitude": 114.171, "latitude": 22.294 }, "verticalFovDegrees": 40, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "harbour-central-wanchai-icc", "labels": { "en": "Harbour · Central–Wan Chai–ICC", "zh": "海港·中环—湾仔—ICC" }, "positionWgs84": { "longitude": 114.174, "latitude": 22.288 }, "targetWgs84": { "longitude": 114.165, "latitude": 22.286 }, "verticalFovDegrees": 50, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "central-close-skyline", "labels": { "en": "Central close skyline", "zh": "中环近景天际线" }, "positionWgs84": { "longitude": 114.168, "latitude": 22.284 }, "targetWgs84": { "longitude": 114.157, "latitude": 22.28 }, "verticalFovDegrees": 45, "environmentStates": ["day", "twilight", "night"] },
+        { "id": "west-kowloon-east-oblique", "labels": { "en": "West Kowloon east skyline", "zh": "西九龙东望天际线" }, "positionWgs84": { "longitude": 114.154, "latitude": 22.301 }, "targetWgs84": { "longitude": 114.175, "latitude": 22.286 }, "verticalFovDegrees": 42, "environmentStates": ["day", "twilight", "night"] }
+      ],
+      "releaseBlockers": [
+        { "id": "dataset-terms", "reason": "Dataset-specific API, cache, derivative and redistribution terms are not frozen" },
+        { "id": "source-package", "reason": "Official terrain, shoreline, building and infrastructure artifacts are not acquired and checksummed" },
+        { "id": "landmark-rights", "reason": "Minimum landmark asset ownership and texture/signage rights are not approved" }
+      ]
+    }
+  ],
+  "rightsChecklist": [
+    { "id": "dataset-acquisition", "status": "review", "evidenceRequired": "Dataset record, version, retrieval date, artifact SHA-256 and acquisition authority" },
+    { "id": "cache-and-redistribution", "status": "blocked", "evidenceRequired": "Frozen terms proving public package caching, modification and redistribution permissions" },
+    { "id": "map-compliance", "status": "blocked", "evidenceRequired": "City/jurisdiction-specific public-map and attribution review" },
+    { "id": "landmark-mesh-ownership", "status": "blocked", "evidenceRequired": "Original/commissioned source ownership and web redistribution rights" },
+    { "id": "reference-images", "status": "blocked", "evidenceRequired": "Rights-cleared image records with camera/lens assumptions" },
+    { "id": "textures-logos-signage", "status": "blocked", "evidenceRequired": "Separate texture, logo and signage use decisions" },
+    { "id": "four-role-release", "status": "blocked", "evidenceRequired": "Named data-owner, legal, engineering and product-release approvals" }
+  ]
+}

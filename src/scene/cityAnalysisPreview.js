@@ -3,10 +3,10 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import {
-  MELBOURNE_ANALYSIS_STREAMING_BUDGET,
-  selectMelbourneAnalysisLruEvictions,
-  selectMelbourneAnalysisStreamingSet,
-} from '../city/analysisStreaming.ts';
+  CITY_PACKAGE_STREAMING_BUDGET,
+  selectCityPackageLruEvictions,
+  selectCityPackageStreamingSet,
+} from '../city/packageStreaming.ts';
 import {
   createWebGLContextLifecycle,
   disposeThreeObject3D,
@@ -14,8 +14,17 @@ import {
 } from '../lib/webglLifecycle.js';
 import {
   applyCityStyleTwin,
-  cityStyleTwinForEnvironment,
+  cityStyleTwinForSnapshot,
 } from './cityStyleTwin.ts';
+import {
+  collectCityWaterSurfaceMaterials,
+  updateCityWaterSurfaceTime,
+} from './cityWaterSurface.ts';
+import { createCityOutdoorEnvironment } from './cityOutdoorEnvironment.ts';
+import {
+  collectAuthoredCityNightLightMaterials,
+  updateAuthoredCityNightLightTime,
+} from './cityNightLighting.ts';
 
 const percentile95 = (values) => {
   if (values.length === 0) return 0;
@@ -41,8 +50,9 @@ function pickedFeatureId(intersection) {
   return Number.isSafeInteger(featureId) ? featureId : Math.round(featureId);
 }
 
-export async function createCityAnalysisPreviewRenderer({
+export async function createCityPackageRenderer({
   canvas,
+  cityId = 'melbourne',
   tileLoad,
   tileSession,
   cameraPreset,
@@ -52,16 +62,19 @@ export async function createCityAnalysisPreviewRenderer({
   onPick = () => {},
   onFallback = () => {},
 } = {}) {
-  if (!canvas) throw new Error('Analysis preview requires a canvas.');
-  if (tileLoad?.status !== 'ready') throw new Error('Analysis preview requires verified tiles.');
-  if (!tileSession?.loadTileAssets) throw new Error('Analysis preview requires a verified package session.');
-  if (!cameraPreset) throw new Error('Analysis preview requires a fixed camera preset.');
-  if (!initialEnvironment) throw new Error('Analysis preview requires an environment snapshot.');
+  if (!canvas) throw new Error('CityPackage renderer requires a canvas.');
+  if (tileLoad?.status !== 'ready') throw new Error('CityPackage renderer requires verified tiles.');
+  if (!tileSession?.loadTileAssets) throw new Error('CityPackage renderer requires a verified package session.');
+  if (!cameraPreset) throw new Error('CityPackage renderer requires a fixed camera preset.');
+  if (!initialEnvironment) throw new Error('CityPackage renderer requires an environment snapshot.');
 
   let renderer = null;
   let scene = null;
   let controls = null;
   let resizeObserver = null;
+  let outdoorEnvironment = null;
+  let outdoorAtmosphereState = null;
+  let clearColor = null;
   let raf = 0;
   let destroyed = false;
   let running = false;
@@ -74,9 +87,15 @@ export async function createCityAnalysisPreviewRenderer({
   let decodedAssetCount = 0;
   let environmentSwitchCount = 0;
   let styledMaterialCount = 0;
+  let windowLightingMaterialCount = 0;
+  let physicalWaterMaterialCount = 0;
+  let authoredNightLightMaterialCount = 0;
+  let streetLightMaterialCount = 0;
+  let aviationLightMaterialCount = 0;
+  let landmarkLightMaterialCount = 0;
   let pointerStart = null;
   let currentEnvironment = initialEnvironment;
-  let currentStyle = cityStyleTwinForEnvironment(initialEnvironment.environment);
+  let currentStyle = cityStyleTwinForSnapshot(initialEnvironment, cityId);
   const frameTimes = [];
   const residentAssets = new Map();
   const lifecycle = createWebGLContextLifecycle({
@@ -98,6 +117,7 @@ export async function createCityAnalysisPreviewRenderer({
       available: false,
       resetCamera: () => {},
       setView: async () => null,
+      setCameraPreset: async () => null,
       setEnvironment: () => null,
       getTelemetry: () => null,
       updateStreaming: async () => null,
@@ -105,9 +125,9 @@ export async function createCityAnalysisPreviewRenderer({
     });
   }
 
-  const camera = new THREE.PerspectiveCamera(cameraPreset.fov, 1, 0.5, 2500);
+  const camera = new THREE.PerspectiveCamera(cameraPreset.fov, 1, 0.5, 25000);
   const cameraDistance = () => camera.position.distanceTo(controls.target);
-  const selectionForCamera = () => selectMelbourneAnalysisStreamingSet(tileSession.index, {
+  const selectionForCamera = () => selectCityPackageStreamingSet(tileSession.index, {
     target: { x: controls.target.x, z: controls.target.z },
     cameraDistance: cameraDistance(),
     previousLod: currentSelection?.lod ?? null,
@@ -126,8 +146,8 @@ export async function createCityAnalysisPreviewRenderer({
       referencedAssets,
       decodedAssetCount,
       evictionCount,
-      maximumResidentBytes: MELBOURNE_ANALYSIS_STREAMING_BUDGET.maximumResidentBytes,
-      maximumResidentAssets: MELBOURNE_ANALYSIS_STREAMING_BUDGET.maximumResidentAssets,
+      maximumResidentBytes: CITY_PACKAGE_STREAMING_BUDGET.maximumResidentBytes,
+      maximumResidentAssets: CITY_PACKAGE_STREAMING_BUDGET.maximumResidentAssets,
     });
   };
 
@@ -142,6 +162,30 @@ export async function createCityAnalysisPreviewRenderer({
     sunAzimuthDegrees: currentEnvironment.sun.azimuthDegrees,
     simulatedLighting: currentEnvironment.simulatedLighting,
     styleId: currentStyle.id,
+    pbr: true,
+    imageBasedLighting: Boolean(scene?.environment),
+    outdoorIbl: Boolean(outdoorAtmosphereState),
+    atmosphereProfileId: outdoorAtmosphereState?.id ?? null,
+    atmosphereTurbidity: outdoorAtmosphereState?.turbidity ?? null,
+    atmosphereRayleigh: outdoorAtmosphereState?.rayleigh ?? null,
+    transitionMode: currentEnvironment.environment === 'analysis'
+      ? 'fixed-analysis'
+      : 'solar-altitude-continuous',
+    solarBlend: outdoorAtmosphereState?.solarBlend ?? null,
+    iblIntensity: scene?.environmentIntensity ?? null,
+    boundedShadows: Boolean(renderer?.shadowMap?.enabled),
+    wholeBuildingEmission: false,
+    windowLightingMaterials: windowLightingMaterialCount,
+    physicalWaterMaterials: physicalWaterMaterialCount,
+    animatedWaterSpecular: physicalWaterMaterialCount > 0,
+    waterProfileId: currentStyle.waterProfileId ?? null,
+    waterVisualBasis: currentStyle.waterVisualBasis ?? null,
+    waterFlowDirection: currentStyle.waterSurface.flowDirection,
+    authoredNightLightMaterials: authoredNightLightMaterialCount,
+    streetLightMaterials: streetLightMaterialCount,
+    aviationLightMaterials: aviationLightMaterialCount,
+    landmarkLightMaterials: landmarkLightMaterialCount,
+    nightLightBasis: 'authored-light-geometry-only',
     switchCount: environmentSwitchCount,
     styledMaterialCount,
   });
@@ -163,6 +207,7 @@ export async function createCityAnalysisPreviewRenderer({
       position: Object.freeze({ x: camera.position.x, y: camera.position.y, z: camera.position.z }),
       target: Object.freeze({ x: controls.target.x, y: controls.target.y, z: controls.target.z }),
       distance: cameraDistance(),
+      verticalFovDegrees: camera.fov,
     }),
     environment: environmentTelemetry(),
     selection: pickedEntity,
@@ -170,17 +215,19 @@ export async function createCityAnalysisPreviewRenderer({
     lifecycle: lifecycle.getState(),
   });
 
-  const applyCameraPreset = () => {
+  const applyCameraPreset = (preset = cameraPreset) => {
     camera.position.set(
-      cameraPreset.position.x,
-      cameraPreset.position.y,
-      cameraPreset.position.z,
+      preset.position.x,
+      preset.position.y,
+      preset.position.z,
     );
     controls?.target.set(
-      cameraPreset.target.x,
-      cameraPreset.target.y,
-      cameraPreset.target.z,
+      preset.target.x,
+      preset.target.y,
+      preset.target.z,
     );
+    camera.fov = preset.fov;
+    camera.updateProjectionMatrix();
     controls?.update();
   };
 
@@ -198,6 +245,16 @@ export async function createCityAnalysisPreviewRenderer({
     if (!running || destroyed) return;
     const startedAt = performance.now();
     controls.update();
+    const waterTimeSeconds = performance.now() * 0.001;
+    for (const record of residentAssets.values()) {
+      if (record.referenceCount <= 0) continue;
+      for (const material of record.waterSurfaceMaterials) {
+        updateCityWaterSurfaceTime(material, waterTimeSeconds);
+      }
+      for (const material of record.authoredNightLightMaterials) {
+        updateAuthoredCityNightLightTime(material, waterTimeSeconds);
+      }
+    }
     const gl = renderer.getContext();
     if (gl.isContextLost()) {
       raf = requestAnimationFrame(frame);
@@ -232,7 +289,8 @@ export async function createCityAnalysisPreviewRenderer({
 
   try {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(currentStyle.background);
+    clearColor = new THREE.Color(currentStyle.background);
+    scene.background = clearColor;
     scene.fog = new THREE.Fog(
       currentStyle.fog.color,
       currentStyle.fog.near,
@@ -246,6 +304,26 @@ export async function createCityAnalysisPreviewRenderer({
     scene.add(hemisphere);
     const sun = new THREE.DirectionalLight(currentStyle.sun.color, currentStyle.sun.intensity);
     sun.position.set(-420, 680, 360);
+    sun.castShadow = true;
+    const tileBounds = tileSession.index?.tileScheme?.boundsLocal;
+    const shadowSpan = tileBounds
+      ? Math.min(900, Math.max(
+        tileBounds.maxX - tileBounds.minX,
+        tileBounds.maxZ - tileBounds.minZ,
+      ) * 0.62)
+      : 700;
+    sun.shadow.mapSize.set(
+      window.matchMedia?.('(max-width: 760px)').matches ? 1024 : 2048,
+      window.matchMedia?.('(max-width: 760px)').matches ? 1024 : 2048,
+    );
+    sun.shadow.camera.left = -shadowSpan;
+    sun.shadow.camera.right = shadowSpan;
+    sun.shadow.camera.top = shadowSpan;
+    sun.shadow.camera.bottom = -shadowSpan;
+    sun.shadow.camera.near = 50;
+    sun.shadow.camera.far = 2400;
+    sun.shadow.bias = -0.00008;
+    sun.shadow.normalBias = 0.025;
     scene.add(sun);
 
     const pickMarker = new THREE.Mesh(
@@ -265,10 +343,23 @@ export async function createCityAnalysisPreviewRenderer({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = currentStyle.exposure;
-    renderer.setClearColor(scene.background, 1);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setClearColor(clearColor, 1);
+    outdoorEnvironment = createCityOutdoorEnvironment({
+      renderer,
+      scene,
+      cityId,
+      snapshot: initialEnvironment,
+    });
+    outdoorAtmosphereState = outdoorEnvironment.state;
+    scene.environmentIntensity = currentStyle.iblIntensity;
 
-    const applyEnvironment = (snapshot, { countSwitch = true } = {}) => {
-      const style = cityStyleTwinForEnvironment(snapshot?.environment);
+    const applyEnvironment = (
+      snapshot,
+      { countSwitch = true, refreshOutdoor = true } = {},
+    ) => {
+      const style = cityStyleTwinForSnapshot(snapshot, cityId);
       const sunDirection = snapshot?.sun?.direction;
       if (
         !snapshot?.location?.timeZone
@@ -277,7 +368,7 @@ export async function createCityAnalysisPreviewRenderer({
       ) throw new Error('Analysis environment snapshot is incomplete.');
       currentEnvironment = snapshot;
       currentStyle = style;
-      scene.background.setHex(style.background);
+      clearColor.setHex(style.background);
       scene.fog.color.setHex(style.fog.color);
       scene.fog.near = style.fog.near;
       scene.fog.far = style.fog.far;
@@ -295,24 +386,47 @@ export async function createCityAnalysisPreviewRenderer({
       } else {
         sun.position.set(-420, 680, 360);
       }
+      if (refreshOutdoor) {
+        outdoorAtmosphereState = outdoorEnvironment.update(snapshot);
+      }
       renderer.toneMappingExposure = style.exposure;
-      renderer.setClearColor(scene.background, 1);
+      scene.environmentIntensity = style.iblIntensity;
+      renderer.setClearColor(clearColor, 1);
       styledMaterialCount = 0;
+      windowLightingMaterialCount = 0;
+      physicalWaterMaterialCount = 0;
+      authoredNightLightMaterialCount = 0;
+      streetLightMaterialCount = 0;
+      aviationLightMaterialCount = 0;
+      landmarkLightMaterialCount = 0;
       for (const record of residentAssets.values()) {
-        record.styleMaterialCount = applyCityStyleTwin(record.group, snapshot).materialCount;
+        const styleResult = applyCityStyleTwin(record.group, snapshot, cityId);
+        record.styleMaterialCount = styleResult.materialCount;
+        record.windowLightingMaterialCount = styleResult.windowLightingMaterials;
+        record.physicalWaterMaterialCount = styleResult.physicalWaterMaterials;
+        record.authoredNightLightMaterialCount = styleResult.authoredNightLightMaterials;
+        record.streetLightMaterialCount = styleResult.streetLightMaterials;
+        record.aviationLightMaterialCount = styleResult.aviationLightMaterials;
+        record.landmarkLightMaterialCount = styleResult.landmarkLightMaterials;
         styledMaterialCount += record.styleMaterialCount;
+        windowLightingMaterialCount += record.windowLightingMaterialCount;
+        physicalWaterMaterialCount += record.physicalWaterMaterialCount;
+        authoredNightLightMaterialCount += record.authoredNightLightMaterialCount;
+        streetLightMaterialCount += record.streetLightMaterialCount;
+        aviationLightMaterialCount += record.aviationLightMaterialCount;
+        landmarkLightMaterialCount += record.landmarkLightMaterialCount;
       }
       if (countSwitch) environmentSwitchCount += 1;
       return environmentTelemetry();
     };
 
-    applyEnvironment(initialEnvironment, { countSwitch: false });
+    applyEnvironment(initialEnvironment, { countSwitch: false, refreshOutdoor: false });
 
     controls = new OrbitControls(camera, canvas);
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
     controls.minDistance = 80;
-    controls.maxDistance = 1500;
+    controls.maxDistance = 12000;
     controls.maxPolarAngle = Math.PI * 0.49;
     applyCameraPreset();
 
@@ -325,11 +439,20 @@ export async function createCityAnalysisPreviewRenderer({
         for (const tile of tiles) {
           const gltf = await loader.parseAsync(tile.bytes, '');
           const key = assetKey(tile.id, tile.lod);
-          gltf.scene.name = `${tile.id}-lod${tile.lod}-verified-preview`;
+          gltf.scene.name = `${tile.id}-lod${tile.lod}-verified-city-package`;
           gltf.scene.traverse((object) => {
-            object.userData.analysisAssetKey = key;
+            object.userData.cityPackageAssetKey = key;
+            if (!object.isMesh) return;
+            const materials = Array.isArray(object.material) ? object.material : [object.material];
+            const names = materials.map((material) => material?.name?.toLowerCase?.() ?? '');
+            object.castShadow = names.some((name) => name.startsWith('buildings-'));
+            object.receiveShadow = names.some((name) => (
+              name.startsWith('terrain-')
+              || name.startsWith('roads-')
+              || name.startsWith('buildings-')
+            ));
           });
-          const styleResult = applyCityStyleTwin(gltf.scene, currentEnvironment);
+          const styleResult = applyCityStyleTwin(gltf.scene, currentEnvironment, cityId);
           decoded.push({
             key,
             tileId: tile.id,
@@ -340,6 +463,14 @@ export async function createCityAnalysisPreviewRenderer({
             referenceCount: 0,
             lastUsed: ++residentTick,
             styleMaterialCount: styleResult.materialCount,
+            windowLightingMaterialCount: styleResult.windowLightingMaterials,
+            physicalWaterMaterialCount: styleResult.physicalWaterMaterials,
+            waterSurfaceMaterials: collectCityWaterSurfaceMaterials(gltf.scene),
+            authoredNightLightMaterialCount: styleResult.authoredNightLightMaterials,
+            streetLightMaterialCount: styleResult.streetLightMaterials,
+            aviationLightMaterialCount: styleResult.aviationLightMaterials,
+            landmarkLightMaterialCount: styleResult.landmarkLightMaterials,
+            authoredNightLightMaterials: collectAuthoredCityNightLightMaterials(gltf.scene),
           });
         }
         return decoded;
@@ -360,16 +491,28 @@ export async function createCityAnalysisPreviewRenderer({
         scene.add(record.group);
         decodedAssetCount += 1;
         styledMaterialCount += record.styleMaterialCount;
+        windowLightingMaterialCount += record.windowLightingMaterialCount;
+        physicalWaterMaterialCount += record.physicalWaterMaterialCount;
+        authoredNightLightMaterialCount += record.authoredNightLightMaterialCount;
+        streetLightMaterialCount += record.streetLightMaterialCount;
+        aviationLightMaterialCount += record.aviationLightMaterialCount;
+        landmarkLightMaterialCount += record.landmarkLightMaterialCount;
       }
     };
 
     const evictUnreferenced = () => {
-      const evictionKeys = selectMelbourneAnalysisLruEvictions([...residentAssets.values()]);
+      const evictionKeys = selectCityPackageLruEvictions([...residentAssets.values()]);
       for (const key of evictionKeys) {
         const record = residentAssets.get(key);
         if (!record) continue;
         residentAssets.delete(record.key);
         styledMaterialCount -= record.styleMaterialCount;
+        windowLightingMaterialCount -= record.windowLightingMaterialCount;
+        physicalWaterMaterialCount -= record.physicalWaterMaterialCount;
+        authoredNightLightMaterialCount -= record.authoredNightLightMaterialCount;
+        streetLightMaterialCount -= record.streetLightMaterialCount;
+        aviationLightMaterialCount -= record.aviationLightMaterialCount;
+        landmarkLightMaterialCount -= record.landmarkLightMaterialCount;
         scene.remove(record.group);
         disposeThreeObject3D(record.group);
         evictionCount += 1;
@@ -492,7 +635,7 @@ export async function createCityAnalysisPreviewRenderer({
         onPick(null);
         return;
       }
-      const key = intersection.object.userData.analysisAssetKey;
+      const key = intersection.object.userData.cityPackageAssetKey;
       const record = residentAssets.get(key);
       const featureId = pickedFeatureId(intersection);
       const feature = featureId == null ? null : record?.features.get(featureId);
@@ -528,22 +671,42 @@ export async function createCityAnalysisPreviewRenderer({
     resize();
     start();
 
+    const setCameraPreset = async (preset) => {
+      const values = [
+        preset?.position?.x,
+        preset?.position?.y,
+        preset?.position?.z,
+        preset?.target?.x,
+        preset?.target?.y,
+        preset?.target?.z,
+        preset?.fov,
+      ];
+      if (!values.every(Number.isFinite) || preset.fov <= 0 || preset.fov >= 90) {
+        throw new Error('CityPackage camera preset requires finite position/target and a FOV between 0 and 90.');
+      }
+      const previous = {
+        position: { x: camera.position.x, y: camera.position.y, z: camera.position.z },
+        target: { x: controls.target.x, y: controls.target.y, z: controls.target.z },
+        fov: camera.fov,
+      };
+      applyCameraPreset(preset);
+      const selection = await updateStreaming();
+      if (selection) return selection;
+      applyCameraPreset(previous);
+      return null;
+    };
+
     return Object.freeze({
       get available() {
         return !destroyed && !lifecycle.getState().fallback;
       },
       resetCamera() {
-        applyCameraPreset();
-        return updateStreaming();
+        return setCameraPreset(cameraPreset);
       },
       setView({ position, target }) {
-        const values = [position?.x, position?.y, position?.z, target?.x, target?.y, target?.z];
-        if (!values.every(Number.isFinite)) throw new Error('Analysis view requires finite position and target.');
-        camera.position.set(position.x, position.y, position.z);
-        controls.target.set(target.x, target.y, target.z);
-        controls.update();
-        return updateStreaming();
+        return setCameraPreset({ position, target, fov: camera.fov });
       },
+      setCameraPreset,
       setEnvironment(snapshot) {
         return applyEnvironment(snapshot);
       },
@@ -561,6 +724,7 @@ export async function createCityAnalysisPreviewRenderer({
         canvas.removeEventListener('pointerup', onPointerUp);
         controls?.dispose();
         lifecycle.dispose();
+        outdoorEnvironment?.destroy();
         disposeThreeScene(scene, renderer);
         residentAssets.clear();
       },
@@ -573,8 +737,13 @@ export async function createCityAnalysisPreviewRenderer({
     resizeObserver?.disconnect();
     controls?.dispose();
     lifecycle.dispose();
+    outdoorEnvironment?.destroy();
     disposeThreeScene(scene, renderer);
     residentAssets.clear();
     throw error;
   }
 }
+
+// The local Melbourne engineering pages retain their old import while the
+// production shell consumes the city-neutral renderer name.
+export const createCityAnalysisPreviewRenderer = createCityPackageRenderer;

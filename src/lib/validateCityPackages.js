@@ -1,5 +1,3 @@
-import { canPublishCityLayer } from './validateCityDataLedger.js';
-
 const CITY_IDS = Object.freeze(['shanghai', 'melbourne', 'hong-kong']);
 const APPROVAL_ROLES = Object.freeze(['dataOwner', 'legal', 'engineering', 'productRelease']);
 const RIGHTS = Object.freeze(['cache', 'derivatives', 'redistribution', 'commercialUse']);
@@ -13,6 +11,7 @@ const ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const LOCAL_PATH_RE = /^public\/assets\/city\/packages\/[a-z0-9-]+\/manifest\.json$/;
 const LOCAL_ASSET_RE = /^\/assets\/city\/packages\/[a-z0-9-/]+\.[a-z0-9]+$/;
+const LANDMARK_ADMISSION_RE = /^\/assets\/city\/packages\/[a-z0-9-]+\/landmark-admission\.json$/;
 const TIME_ZONES = Object.freeze({
   shanghai: 'Asia/Shanghai',
   melbourne: 'Australia/Melbourne',
@@ -63,6 +62,12 @@ function validateBounds(bounds, field, errors) {
     && (!(bounds.west < bounds.east) || !(bounds.south < bounds.north))
   ) {
     errors.push(`${field}: must be ordered west/south/east/north`);
+  }
+}
+
+function validateLocalPoint(point, field, errors) {
+  if (!object(point) || !['x', 'y', 'z'].every((key) => Number.isFinite(point[key]))) {
+    errors.push(`${field}: finite x, y and z are required`);
   }
 }
 
@@ -269,6 +274,64 @@ export function validateCityPackageManifest(data) {
     }
   }
 
+  if (data.landmarkAssets === null) {
+    if (data.status === 'production-approved') {
+      errors.push('landmarkAssets: production packages require an admitted landmark asset set');
+    }
+  } else if (!object(data.landmarkAssets)) {
+    errors.push('landmarkAssets: must be null or an object');
+  } else {
+    if (!LANDMARK_ADMISSION_RE.test(String(data.landmarkAssets.admissionUri || ''))) {
+      errors.push('landmarkAssets.admissionUri: must be a local landmark-admission.json');
+    } else if (!data.landmarkAssets.admissionUri.startsWith(`/assets/city/packages/${data.packageId}/`)) {
+      errors.push('landmarkAssets.admissionUri: must remain inside this package');
+    }
+    if (!validSha(data.landmarkAssets.sha256)) {
+      errors.push('landmarkAssets.sha256: must be SHA-256');
+    }
+    if (!Number.isSafeInteger(data.landmarkAssets.byteLength) || data.landmarkAssets.byteLength <= 0) {
+      errors.push('landmarkAssets.byteLength: must be positive');
+    }
+  }
+
+  if (data.canonicalViews === null) {
+    if (data.status === 'production-approved') {
+      errors.push('canonicalViews: production packages require frozen canonical views');
+    }
+  } else if (!Array.isArray(data.canonicalViews) || data.canonicalViews.length < 5) {
+    errors.push('canonicalViews: must be null or contain at least five views');
+  } else {
+    const ids = new Set();
+    for (const [index, view] of data.canonicalViews.entries()) {
+      const field = `canonicalViews[${index}]`;
+      if (!object(view)) {
+        errors.push(`${field}: must be an object`);
+        continue;
+      }
+      if (!ID_RE.test(String(view.id || ''))) errors.push(`${field}.id: invalid id`);
+      if (ids.has(view.id)) errors.push(`${field}.id: duplicate ${view.id}`);
+      ids.add(view.id);
+      if (!text(view.labels?.en) || !text(view.labels?.zh)) {
+        errors.push(`${field}.labels: bilingual labels are required`);
+      }
+      validateLocalPoint(view.positionLocal, `${field}.positionLocal`, errors);
+      validateLocalPoint(view.targetLocal, `${field}.targetLocal`, errors);
+      if (
+        object(view.positionLocal)
+        && object(view.targetLocal)
+        && ['x', 'y', 'z'].every((key) => view.positionLocal[key] === view.targetLocal[key])
+      ) errors.push(`${field}: position and target must differ`);
+      if (!Number.isFinite(view.verticalFovDegrees)
+        || view.verticalFovDegrees <= 0 || view.verticalFovDegrees >= 90) {
+        errors.push(`${field}.verticalFovDegrees: must be between 0 and 90`);
+      }
+      if (view.verticalBasis !== 'local-datum-metres') {
+        errors.push(`${field}.verticalBasis: must be local-datum-metres`);
+      }
+      if (!text(view.verticalEvidence)) errors.push(`${field}.verticalEvidence: required`);
+    }
+  }
+
   if (!validInstant(data.generatedAt)) errors.push('generatedAt: must be an ISO timestamp');
   if (!object(data.approvals)) {
     errors.push('approvals: must be an object');
@@ -288,6 +351,9 @@ export function canPublishCityPackage(data) {
   if (!validateCityPackageManifest(data).ok) return false;
   return data.status === 'production-approved'
     && data.precinct.status === 'frozen'
+    && object(data.landmarkAssets)
+    && Array.isArray(data.canonicalViews)
+    && data.canonicalViews.length >= 5
     && data.sourceLayers.every((layer) => (
       layer.sourceCrs.status === 'declared'
       && ['declared', 'not-applicable'].includes(layer.verticalDatum.status)
@@ -590,57 +656,5 @@ export function validateCityPackageRegistry(data) {
       if (!validSha(reference.manifestSha256)) errors.push(`productionPackages.${cityId}.manifestSha256: must be SHA-256`);
     }
   }
-  return { ok: errors.length === 0, errors };
-}
-
-export function validateCityPackageReleaseReferences(registry, packagesByPath, ledger) {
-  const errors = [];
-  if (!validateCityPackageRegistry(registry).ok) return { ok: false, errors: ['registry: invalid'] };
-  if (!object(packagesByPath)) return { ok: false, errors: ['packagesByPath: must be an object'] };
-  const ledgerCities = new Map((ledger?.cities || []).map((city) => [city.id, city]));
-
-  for (const cityId of CITY_IDS) {
-    const reference = registry.productionPackages[cityId];
-    if (reference === null) continue;
-    const entry = packagesByPath[reference.manifestPath];
-    const field = `productionPackages.${cityId}`;
-    if (!object(entry)) {
-      errors.push(`${field}.manifestPath: missing ${reference.manifestPath}`);
-      continue;
-    }
-    if (entry.sha256 !== reference.manifestSha256) errors.push(`${field}.manifestSha256: does not match manifest bytes`);
-    const manifest = entry.data;
-    if (!validateCityPackageManifest(manifest).ok) errors.push(`${field}: manifest schema is invalid`);
-    if (!canPublishCityPackage(manifest)) errors.push(`${field}: package is not production-approved`);
-    if (manifest?.packageId !== reference.packageId) errors.push(`${field}.packageId: does not match manifest`);
-    if (manifest?.cityId !== cityId) errors.push(`${field}: manifest belongs to ${manifest?.cityId || 'unknown'}`);
-
-    const ledgerCity = ledgerCities.get(cityId);
-    for (const source of manifest?.sourceLayers || []) {
-      const ledgerLayer = ledgerCity?.layers?.find(({ id }) => id === source.ledgerLayerId);
-      if (!ledgerLayer) {
-        errors.push(`${field}: ledger layer ${source.ledgerLayerId} is missing`);
-      } else if (!canPublishCityLayer(ledgerCity, ledgerLayer)) {
-        errors.push(`${field}: ledger layer ${source.ledgerLayerId} is not production-approved`);
-      } else if (ledgerLayer.sourceArtifactSha256 !== source.sourceArtifactSha256) {
-        errors.push(`${field}: source hash for ${source.ledgerLayerId} does not match the ledger`);
-      } else if (ledgerLayer.licence.snapshotSha256 !== source.licenceSnapshotSha256) {
-        errors.push(`${field}: licence hash for ${source.ledgerLayerId} does not match the ledger`);
-      } else if (
-        ledgerLayer.datasetId !== source.datasetId
-        || ledgerLayer.datasetVersion !== source.datasetVersion
-      ) {
-        errors.push(`${field}: dataset identity for ${source.ledgerLayerId} does not match the ledger`);
-      } else if (ledgerLayer.spatial.horizontalCrs !== source.sourceCrs.identifier) {
-        errors.push(`${field}: source CRS for ${source.ledgerLayerId} does not match the ledger`);
-      } else if (
-        source.verticalDatum.status === 'declared'
-        && ledgerLayer.spatial.verticalDatum !== source.verticalDatum.name
-      ) {
-        errors.push(`${field}: vertical datum for ${source.ledgerLayerId} does not match the ledger`);
-      }
-    }
-  }
-
   return { ok: errors.length === 0, errors };
 }
