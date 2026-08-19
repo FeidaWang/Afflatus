@@ -48,7 +48,6 @@ function loadBlackHoleObservatory() {
 export function loadHomeExperience() {
   if (experiencePromise) return experiencePromise;
   document.documentElement.dataset.homeExperience = 'loading';
-  loadBlackHoleObservatory();
   experiencePromise = import('./homeExperience.js')
     .then((module) => {
       experienceReady = true;
@@ -63,25 +62,34 @@ export function loadHomeExperience() {
   return experiencePromise;
 }
 
+function loadRichHomeExperience() {
+  loadBlackHoleObservatory();
+  return loadHomeExperience();
+}
+
 function scheduleIdleExperience() {
-  const start = () => { void loadHomeExperience().catch(() => {}); };
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(start, { timeout: 2800 });
-  } else {
-    window.setTimeout(start, 1600);
-  }
+  const start = () => {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => { void loadHomeExperience().catch(() => {}); }, { timeout: 4000 });
+    } else {
+      void loadHomeExperience().catch(() => {});
+    }
+  };
+  // Keep the optional combat runtime outside the initial vitals window. Any
+  // explicit command intent below still loads it immediately.
+  window.setTimeout(start, 8000);
 }
 
 function installIntentLoader() {
   document.addEventListener('pointerover', (event) => {
     if (event.target instanceof Element && event.target.closest(HOME_INTENT_SELECTOR)) {
-      void loadHomeExperience().catch(() => {});
+      void loadRichHomeExperience().catch(() => {});
     }
   }, { capture: true, passive: true });
 
   document.addEventListener('focusin', (event) => {
     if (event.target instanceof Element && event.target.closest(HOME_INTENT_SELECTOR)) {
-      void loadHomeExperience().catch(() => {});
+      void loadRichHomeExperience().catch(() => {});
     }
   }, { capture: true });
 
@@ -92,7 +100,7 @@ function installIntentLoader() {
     event.preventDefault();
     event.stopImmediatePropagation();
     try {
-      await loadHomeExperience();
+      await loadRichHomeExperience();
       target.click();
     } catch {
       // Static navigation and portfolio content remain usable if enhancement fails.

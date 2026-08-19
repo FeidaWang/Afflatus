@@ -2,8 +2,12 @@ import { expect, settlePage, test } from './site-fixture.js';
 
 test.describe('CIC HUD visual contract', () => {
   test('keeps the namespaced shell stable at desktop and mobile widths', async ({ page }, testInfo) => {
-    await page.goto('/?combatview=2d', { waitUntil: 'domcontentloaded' });
+    // Pin the snapshot to the fixed English route; adaptive locale state is
+    // covered separately and must not change this visual baseline.
+    await page.goto('/en/?combatview=2d', { waitUntil: 'domcontentloaded' });
     await settlePage(page);
+    await page.locator('#commandModeBtn').focus();
+    await expect(page.locator('html')).toHaveAttribute('data-home-experience', 'ready');
     await page.evaluate(() => {
       document.body.classList.remove('hud-off');
       const hud = document.querySelector('#combatHud');

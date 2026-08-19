@@ -1143,8 +1143,8 @@ button {
   .cityview-page .city-header.site-header--follow > .city-nav .nav-labs__trigger,
   .cityview-page .city-header.site-header--follow > .city-nav > .lang-toggle {
     width: 100%;
-    min-width: 0;
-    min-inline-size: 0;
+    min-width: 45px;
+    min-inline-size: 45px;
     padding-inline: 2px;
     overflow: hidden;
     font-size: 0.52rem;

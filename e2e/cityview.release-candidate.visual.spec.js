@@ -11,10 +11,19 @@ const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 test.describe.configure({ mode: 'serial' });
 
 test('Cityview emits a fixed-seed profile and construction-day visual matrix', async ({ page }, testInfo) => {
+  // This intentionally renders and attaches 20 WebGL snapshots. The default
+  // 45-second project timeout is too short for the full matrix on CI Macs.
+  test.setTimeout(120_000);
   test.skip(
     testInfo.project.name !== 'desktop-chromium',
     'The release-candidate visual matrix is captured once in Chromium.',
   );
+  await page.addInitScript(() => {
+    // Visual baselines exercise the full renderer independent of the host
+    // runner's advertised CPU/memory tier.
+    Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => 8 });
+    Object.defineProperty(navigator, 'deviceMemory', { get: () => 8 });
+  });
   for (const mode of VISUAL_MODES) {
     await page.emulateMedia({ reducedMotion: mode.reducedMotion });
 
@@ -24,6 +33,10 @@ test('Cityview emits a fixed-seed profile and construction-day visual matrix', a
       await page.goto(`/cityview.html?${query}`, { waitUntil: 'domcontentloaded' });
       await settlePage(page);
       await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+      await expect.poll(
+        () => page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry?.()?.drawCalls ?? 0),
+        { message: `${mode.id}-${profile} must reach its first rendered frame` },
+      ).toBeGreaterThan(0);
 
       for (const day of mode.days) {
         await page.locator('[data-city-timeline]').evaluate((element, value) => {
@@ -33,6 +46,10 @@ test('Cityview emits a fixed-seed profile and construction-day visual matrix', a
         await expect(page.locator('[data-city-day]')).toHaveText(String(day).padStart(3, '0'));
         await expect.poll(
           () => page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry?.()?.day),
+        ).toBe(day);
+        await expect.poll(
+          () => page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry?.()?.renderedDay),
+          { message: `${mode.id}-${profile}-day-${day} must finish its render update` },
         ).toBe(day);
         const telemetry = await page.evaluate(() => window.__AFFLATUS_CITYVIEW__?.getTelemetry?.());
         const label = `${mode.id}-${profile}-day-${day}`;

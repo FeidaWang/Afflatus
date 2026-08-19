@@ -145,6 +145,7 @@
 </style>
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
+<link rel="preload" href="/vendor/black-hole/source-poster.jpg" as="image" fetchpriority="high">
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="home-page hud-off">
@@ -175,7 +176,7 @@
   <span class="cic-cruise-target"><i data-en="TARGET" data-zh="目标">TARGET</i><b id="cicCruiseTarget" data-en="NO TRACK" data-zh="无目标">NO TRACK</b></span>
 </output>
 
-<div id="combatHud" aria-hidden="true" data-cic-hud>
+<div id="combatHud" aria-hidden="true" inert data-cic-hud>
   <div class="cic-vignette" aria-hidden="true"></div>
   <div class="hud-warning">战术尾迹 · 引力井前方</div>
   <div class="hud-subwarning">舰桥锁定 · 目标神谕 · 信号帷幕</div>
@@ -471,10 +472,10 @@
             </div>
           </div>
           <dl class="core-telemetry">
-            <div><dt data-en="Weighted capital days" data-zh="资金加权占用天数">Weighted capital days</dt><dd>7.8</dd><small data-en="DAYS / CLOSED CYCLES" data-zh="天 / 已结清周期">DAYS / CLOSED CYCLES</small></div>
-            <div><dt data-en="Flight paths" data-zh="交易航线">Flight paths</dt><dd>05</dd><small data-en="PROFITABLE / CLOSED" data-zh="盈利 / 已结清">PROFITABLE / CLOSED</small></div>
-            <div class="risk-load"><dt data-en="Annual volatility" data-zh="年波动率">Annual volatility</dt><dd>45%</dd><small data-en="ESTIMATED UPPER BOUND" data-zh="估算上界">ESTIMATED UPPER BOUND</small></div>
-            <div><dt data-en="Reporting basis" data-zh="统计口径">Reporting basis</dt><dd data-en="CLOSED" data-zh="已结清">CLOSED</dd><small data-en="LOT-LEVEL WINDOW" data-zh="逐批次窗口">LOT-LEVEL WINDOW</small></div>
+            <div><dt data-en="Weighted capital days" data-zh="资金加权占用天数">Weighted capital days</dt><dd>7.8<small data-en="DAYS / CLOSED CYCLES" data-zh="天 / 已结清周期">DAYS / CLOSED CYCLES</small></dd></div>
+            <div><dt data-en="Flight paths" data-zh="交易航线">Flight paths</dt><dd>05<small data-en="PROFITABLE / CLOSED" data-zh="盈利 / 已结清">PROFITABLE / CLOSED</small></dd></div>
+            <div class="risk-load"><dt data-en="Annual volatility" data-zh="年波动率">Annual volatility</dt><dd>45%<small data-en="ESTIMATED UPPER BOUND" data-zh="估算上界">ESTIMATED UPPER BOUND</small></dd></div>
+            <div><dt data-en="Reporting basis" data-zh="统计口径">Reporting basis</dt><dd data-en="CLOSED" data-zh="已结清">CLOSED<small data-en="LOT-LEVEL WINDOW" data-zh="逐批次窗口">LOT-LEVEL WINDOW</small></dd></div>
           </dl>
         </div>
         <p class="core-note" data-en="A mechanical 365-day projection of five closed cycles—not an achieved account result. Risk measures remain method-dependent estimates." data-zh="将五个已结清周期机械外推至 365 天，并非账户实际结果；风险读数仍属于依赖计算方法的估算。">A mechanical 365-day projection of five closed cycles—not an achieved account result. Risk measures remain method-dependent estimates.</p>

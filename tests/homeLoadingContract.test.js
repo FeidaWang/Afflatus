@@ -23,10 +23,13 @@ describe('home loading contract', () => {
 
   it('uses the local static poster before the optional observatory iframe', () => {
     expect(html).toContain('class="blackhole-poster"');
+    expect(html).toContain('href="/vendor/black-hole/source-poster.jpg" as="image" fetchpriority="high"');
     expect(html).toContain('data-src="/vendor/black-hole/background.html"');
     expect(html).not.toMatch(/\s(?:src)="\/vendor\/black-hole\/background\.html"/u);
     expect(entry).toContain('navigator.connection?.saveData');
     expect(entry).toContain('prefers-reduced-motion: reduce');
+    expect(entry).toContain('function loadRichHomeExperience()');
+    expect(entry).toContain('window.setTimeout(start, 8000)');
   });
 
   it('splits market and voyage features from the combat experience', () => {

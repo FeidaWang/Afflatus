@@ -16,13 +16,16 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
   await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
   await expect(primaryLinks).toHaveText(['竞技场', '板块', '信号']);
   await expect(labsTrigger).toHaveText('实验室');
-  await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程']);
+  await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程', '城市']);
 
   await page.goto('/en/', { waitUntil: 'domcontentloaded' });
   await expect(primaryLinks).toHaveText(['Arena', 'Sectors', 'Signal']);
   await expect(labsTrigger).toHaveText('Labs');
-  await expect(labsLinks).toHaveText(['Stats', 'Horoscope', 'Novels', 'Course']);
+  await expect(labsLinks).toHaveText(['Stats', 'Horoscope', 'Novels', 'Course', 'Cityview']);
 
+  // Fixed-locale pages do not own the adaptive preference. Seed the state
+  // explicitly so this assertion never depends on a previous navigation.
+  await page.evaluate(() => localStorage.setItem('afflatus:locale:v1', 'en'));
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await Promise.all([
     page.waitForURL(/\/zh\/$/),
@@ -31,7 +34,7 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   await expect(primaryLinks).toHaveText(['竞技场', '板块', '信号']);
   await expect(labsTrigger).toHaveText('实验室');
-  await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程']);
+  await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程', '城市']);
 });
 
 test('home fixed-locale switch preserves query and hash state', async ({ page }) => {
@@ -77,10 +80,8 @@ test('fixed-locale switching keeps the reader in the current section', async ({ 
     section.scrollIntoView({ behavior: 'instant', block: 'start' });
   });
 
-  await Promise.all([
-    page.waitForURL(/\/zh\/course\.html#review$/),
-    page.locator('.lang-toggle').click(),
-  ]);
+  await page.locator('.lang-toggle').click();
+  await expect(page).toHaveURL(/\/zh\/course\.html#review$/);
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
   const reviewPosition = await page.locator('#review').evaluate((section) => {

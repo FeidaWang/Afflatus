@@ -32,6 +32,8 @@ describe('Lighthouse regression contract', () => {
     });
     expect(baseline.dimensions).toEqual(['route', 'locale', 'device_tier']);
     expect(baseline.regressionAllowance).toBe(0.05);
+    expect(baseline.tbtNoiseAllowanceMs).toBe(100);
+    expect(baseline.tbtRegressionAllowance).toBe(0.25);
   });
 
   it('has finite route-level lab budgets and a documented Sectors exception', () => {
@@ -62,6 +64,16 @@ describe('Lighthouse regression contract', () => {
       expect(row.assertions['speed-index'][0]).toBe('error');
       expect(row.assertions['resource-summary:script:size'][0]).toBe('error');
       expect(row.assertions['resource-summary:total:size'][0]).toBe('warn');
+      if (route.tbtMs != null) {
+        const tbtAssertion = row.assertions['total-blocking-time'];
+        expect(tbtAssertion[0]).toBe('error');
+        expect(tbtAssertion[1].aggregationMethod).toBe('median');
+        expect(tbtAssertion[1].maxNumericValue).toBe(Math.max(
+          baseline.tbtNoiseAllowanceMs,
+          Math.ceil(route.tbtMs + baseline.tbtNoiseAllowanceMs),
+          Math.ceil(route.tbtMs * (1 + baseline.tbtRegressionAllowance)),
+        ));
+      }
     }
   });
 

@@ -57,7 +57,7 @@ describe('FY2025–26 homepage performance dossier', () => {
   it('folds the single additional risk reading into 02-A', () => {
     const cycleCore = html.slice(html.indexOf('<section class="blackbox-module cycle-core"'), html.indexOf('<section class="blackbox-module velocity-field"'));
     expect(cycleCore).toContain('Annual volatility');
-    expect(cycleCore).toContain('<dd>45%</dd>');
+    expect(cycleCore).toContain('<dd>45%<small');
     expect(html).not.toContain('class="risk-chamber"');
     expect(html).not.toContain('class="risk-grid');
   });

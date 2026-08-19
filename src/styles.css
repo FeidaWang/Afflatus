@@ -805,8 +805,8 @@
     cursor:none;transition:all .35s ease;pointer-events:auto;text-align:center;
   }
   .warp-btn:hover{border-color:var(--warm);color:var(--warm)}
-  .coord{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dim);letter-spacing:.16em;grid-area:coord;white-space:nowrap}
-  .scroll-hint{position:static;grid-area:hint;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.24em;color:var(--dim);display:flex;align-items:center;gap:14px;min-height:18px}
+  .coord{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#aeb8cb;letter-spacing:.16em;grid-area:coord;white-space:nowrap}
+  .scroll-hint{position:static;grid-area:hint;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.24em;color:#aeb8cb;display:flex;align-items:center;gap:14px;min-height:18px}
   .scroll-hint::after{content:"";width:48px;height:1px;background:linear-gradient(90deg,var(--dim),transparent)}
 
   /* strip */
