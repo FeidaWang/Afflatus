@@ -54,19 +54,23 @@ describe('Lighthouse regression contract', () => {
     }
   });
 
-  it('uses hard per-route metric/script gates and warning-only aggregate scores', () => {
+  it('hard-gates deterministic metrics and reports runner-sensitive timing as warnings', () => {
     for (const [index, row] of lighthouse.ci.assert.assertMatrix.entries()) {
       const route = baseline.routes[index];
       expect(row.matchingUrlPattern).toMatch(/^\^https/);
       expect(row.assertions['cumulative-layout-shift'][0]).toBe('error');
       expect(row.assertions['cumulative-layout-shift'][1].maxNumericValue)
         .toBeLessThanOrEqual(Math.max(0.01, route.clsBudgetBase * 1.05 + 0.001));
-      expect(row.assertions['speed-index'][0]).toBe('error');
+      expect(row.assertions['speed-index'][0]).toBe('warn');
       expect(row.assertions['resource-summary:script:size'][0]).toBe('error');
       expect(row.assertions['resource-summary:total:size'][0]).toBe('warn');
+      expect(row.assertions['largest-contentful-paint'][0]).toBe('warn');
+      if (route.lcpMs == null) {
+        expect(row.assertions['first-contentful-paint'][0]).toBe('warn');
+      }
       if (route.tbtMs != null) {
         const tbtAssertion = row.assertions['total-blocking-time'];
-        expect(tbtAssertion[0]).toBe('error');
+        expect(tbtAssertion[0]).toBe('warn');
         expect(tbtAssertion[1].aggregationMethod).toBe('median');
         expect(tbtAssertion[1].maxNumericValue).toBe(Math.max(
           baseline.tbtNoiseAllowanceMs,

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "recordedAt": "2026-08-20",
   "profile": "Lighthouse 12.6.1 default mobile simulation on macOS, three runs per route",
-  "methodology": "Median gates for LCP/TBT/Speed Index/bytes on the dedicated macOS runner. TBT uses a 100 ms absolute noise window or 25% relative window, whichever is larger, because scheduler variance is material near zero and on WebGL routes. CLS uses clsBudgetBase, the highest repeatable observed branch, because async font/content timing is bimodal. Deterministic byte/CLS entries and OS-sensitive timing entries were re-recorded after the August route and runner changes. Route budgets are regression floors, not product targets.",
+  "methodology": "Three-run medians are recorded for LCP/TBT/Speed Index/bytes on the shared macOS runner. OS- and scheduler-sensitive timing metrics remain visible as warnings because repeat runs on the same tree vary by multiples; production field p75 is the decision source. TBT warnings use a 100 ms absolute noise window or 25% relative window, whichever is larger. CLS uses clsBudgetBase, the highest repeatable observed branch, because async font/content timing is bimodal. Deterministic script-size and CLS budgets remain hard regression gates. Route budgets are regression floors, not product targets.",
   "regressionAllowance": 0.05,
   "tbtNoiseAllowanceMs": 100,
   "tbtRegressionAllowance": 0.25,
