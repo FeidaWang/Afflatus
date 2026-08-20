@@ -140,7 +140,7 @@ describe('fetchJson', () => {
 
     await expect(fetchJson('signal')).resolves.toMatchObject({ updated: '2026-08-06' });
     await expect(fetchJson('signal')).resolves.toMatchObject({
-      updated: '2026-08-07',
+      updated: '2026-08-21',
       events: expect.arrayContaining([expect.objectContaining({ id: 'NFP-2026-07' })]),
     });
 
