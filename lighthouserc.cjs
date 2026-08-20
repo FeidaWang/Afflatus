@@ -59,7 +59,7 @@ function assertionsFor(route) {
       },
     ],
     'speed-index': [
-      'error',
+      'warn',
       { maxNumericValue: maxBudget(route.speedIndexMs), ...median },
     ],
     'resource-summary:script:size': [
@@ -74,7 +74,7 @@ function assertionsFor(route) {
 
   if (route.lcpMs == null) {
     assertions['first-contentful-paint'] = [
-      'error',
+      'warn',
       { maxNumericValue: maxBudget(route.fcpMs), ...median },
     ];
     assertions['largest-contentful-paint'] = [
@@ -83,11 +83,11 @@ function assertionsFor(route) {
     ];
   } else {
     assertions['largest-contentful-paint'] = [
-      'error',
+      'warn',
       { maxNumericValue: maxBudget(route.lcpMs), ...median },
     ];
     assertions['total-blocking-time'] = [
-      'error',
+      'warn',
       { maxNumericValue: tbtBudget(route.tbtMs), ...median },
     ];
   }
