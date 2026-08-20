@@ -4,6 +4,8 @@ import { parse } from 'parse5';
 
 const html = readFileSync('signal.html', 'utf8');
 const css = readFileSync('public/styles/signal.css', 'utf8');
+const signalLibs = readFileSync('src/pages/signalLibs.js', 'utf8');
+const yieldMonitor = readFileSync('src/lib/treasuryYieldMonitor.js', 'utf8');
 const signalData = JSON.parse(readFileSync('public/signal-events.json', 'utf8'));
 
 function walk(node, visit) {
@@ -72,5 +74,20 @@ describe('signal policy reaction story', () => {
     expect(html).toContain('大型数据中心运营商承担新增发电与电网基础设施成本');
     expect(signalData.events.some((event) => event.id === 'TRUMP-AI-2026-07-23')).toBe(true);
     expect(signalData.events.some((event) => event.id === 'TRUMP-CHIPS-2026-01')).toBe(true);
+  });
+
+  it('adds a bilingual live Treasury dashboard beside the current Fed intervention brief', () => {
+    expect(html).toContain('id="chlive"');
+    expect(html).toContain('CURRENT REINVESTMENT');
+    expect(html).toContain('本期再投资');
+    expect(html).toContain('$17.0B');
+    expect(html).toContain('data-yield-tenor="10Y"');
+    expect(html).toContain('data-yield-tenor="30Y"');
+    expect(html).toContain('data-yield-spread');
+    expect(yieldMonitor).toContain('/api/treasury-yields');
+    expect(html).toContain('treasury-securities-operational-details');
+    expect(signalLibs).toContain('mountTreasuryYieldMonitor');
+    expect(css).toContain('.marketDeskGrid');
+    expect(css).toContain('.yieldCards');
   });
 });
