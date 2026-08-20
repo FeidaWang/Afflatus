@@ -1093,6 +1093,24 @@
       "ordersProposed": 1,
       "ordersFilled": 0,
       "note": "One-time user-authorized recovery decision sealed at 09:16 ET: one Model T MU proposal for today's post-market only; the earlier 09:00 HOLD remains in Git history and no historical session was backfilled."
+    },
+    {
+      "date": "2026-08-20",
+      "window": "pre-market-gather",
+      "model": "gatherer",
+      "status": "done",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "After-window primary-source research archived at 2026-08-20T13:30:21.737Z; one fresh official macro-policy source, coverageStatus limited, no trade authorization."
+    },
+    {
+      "date": "2026-08-20",
+      "window": "picks-publish",
+      "model": "gatherer",
+      "status": "missed",
+      "ordersProposed": 0,
+      "ordersFilled": 0,
+      "note": "Pre-market decision window permanently missed; after-window archive at 2026-08-20T13:30:21.737Z is executable:false with zero proposals."
     }
   ]
 }

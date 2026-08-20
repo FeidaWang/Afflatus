@@ -1,80 +1,31 @@
 {
-  "date": "2026-08-13",
-  "generatedAt": "2026-08-13T13:00:44.000Z",
-  "evidenceCutoffAt": "2026-08-13T12:54:20.000Z",
+  "date": "2026-08-20",
+  "generatedAt": "2026-08-20T13:30:21.737Z",
+  "evidenceCutoffAt": "2026-08-20T13:30:21.737Z",
+  "freshnessPolicy": "session-news-v1",
+  "coverageStatus": "limited",
   "lang_default": "en",
-  "priceNote_en": "No live price is asserted in this research snapshot. The pre-market decision is HOLD across all three paper-trading models.",
-  "priceNote_zh": "本研究快照不声称任何实时价格。三个模拟交易模型的盘前决定均为观望。",
+  "priceNote_en": "No live price is asserted. The real pre-market decision window was missed, so this after-window research archive cannot authorize a trade.",
+  "priceNote_zh": "本归档不声称任何实时价格。真实盘前决策窗口已错过，因此这份窗口后研究不能授权交易。",
   "disclaimer_en": "This briefing is an entertainment and research record for a paper-trading game, not investment advice. Verify every price and source independently before making a financial decision.",
   "disclaimer_zh": "本简报是模拟交易游戏的娱乐与研究记录，不构成投资建议。做出任何财务决定前，请独立核实价格与来源。",
-  "predictionNote_en": "Primary-source evidence was cut off at 08:54 ET and the HOLD decision was resealed at 09:00 ET after an infrastructure-only publication retry. No market evidence after the preserved cutoff was used. Mixed inflation and AI-demand evidence did not support a sufficiently strong same-session directional proposal, so S, P and T publish an explicit zero-order HOLD.",
-  "predictionNote_zh": "一手来源证据截止于美东时间 08:54；一次仅涉及基础设施的发布重试后，观望决定于 09:00 重新封存，且未使用证据截止时间之后的任何市场信息。通胀与 AI 需求证据方向并不一致，不足以支持当日有把握的方向性提案，因此 S、P、T 均明确发布零订单观望决定。",
+  "predictionNote_en": "The pre-market decision window is permanently missed. One fresh official macro-policy source is archived after the window; coverage is limited and S, P and T contain zero proposals. This snapshot is non-executable.",
+  "predictionNote_zh": "盘前决策窗口已永久错过。窗口后仅归档一条新鲜官方宏观政策来源；覆盖有限，S、P、T 均为零提案。本快照不可执行。",
   "prices": {},
   "items": [
     {
       "category": "macro-policy",
-      "title_en": "July producer prices are flat while the core measure stays firm",
-      "title_zh": "7 月生产者价格环比持平，但核心指标仍偏强",
-      "summary_en": "The U.S. Bureau of Labor Statistics reported that final-demand PPI was unchanged in July and rose 4.7 percent year over year. Final demand less food, energy and trade services rose 0.4 percent in July and 4.7 percent over twelve months. The split is not a clean risk-on or risk-off signal by itself.",
-      "summary_zh": "美国劳工统计局公布，7 月最终需求 PPI 环比持平、同比上涨 4.7%；剔除食品、能源和贸易服务后，环比与同比增幅分别为 0.4% 和 4.7%。这组分化数据本身不足以形成明确的风险偏好方向。",
-      "source": "U.S. Bureau of Labor Statistics",
-      "url": "https://www.bls.gov/news.release/ppi.nr0.htm",
+      "title_en": "Federal Reserve releases minutes of the July 28-29 FOMC meeting",
+      "title_zh": "美联储发布 7 月 28 至 29 日 FOMC 会议纪要",
+      "summary_en": "The official minutes were released at 2:00 p.m. EDT on August 19. The underlying meeting kept the target range unchanged by a 9-3 vote, with three members preferring a quarter-point increase. This after-window archive makes no market-price or trade claim.",
+      "summary_zh": "官方会议纪要于 8 月 19 日美东时间下午 2 时发布。相关会议以 9 比 3 的表决维持目标利率区间不变，三名委员倾向加息 25 个基点。该窗口后归档不作市场价格或交易陈述。",
+      "source": "Board of Governors of the Federal Reserve System",
+      "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+      "publishedAt": "2026-08-19T18:00:00.000Z",
       "tickers": [
         "SPY",
         "QQQ",
         "SMH"
-      ]
-    },
-    {
-      "category": "frontier-models",
-      "title_en": "OpenAI releases the GPT-5.6 model family",
-      "title_zh": "OpenAI 发布 GPT-5.6 模型家族",
-      "summary_en": "OpenAI says GPT-5.6 is generally available across ChatGPT, Codex and the API, with Sol, Terra and Luna tiers. The release strengthens the long-run AI adoption case but does not provide a company-specific entry signal for this session.",
-      "summary_zh": "OpenAI 表示 GPT-5.6 已在 ChatGPT、Codex 与 API 中全面提供，并包含 Sol、Terra、Luna 三个层级。这强化了 AI 长期采用逻辑，但不足以形成今天某只股票的具体入场信号。",
-      "source": "OpenAI",
-      "url": "https://openai.com/index/gpt-5-6/",
-      "tickers": [
-        "MSFT",
-        "NVDA"
-      ]
-    },
-    {
-      "category": "compute",
-      "title_en": "NVIDIA reports record fiscal 2026 data-center demand",
-      "title_zh": "英伟达报告 2026 财年数据中心需求创纪录",
-      "summary_en": "NVIDIA reported fiscal fourth-quarter revenue of 68.1 billion dollars and data-center revenue of 62.3 billion dollars, up 73 percent and 75 percent year over year. The figures confirm structural compute demand, but they are not new enough to justify a fresh price-sensitive order today.",
-      "summary_zh": "英伟达公布财年第四季度营收 681 亿美元、数据中心营收 623 亿美元，同比分别增长 73% 与 75%。这些数据确认了算力需求的结构性趋势，但并非足够新的价格敏感信息，不能据此在今天追单。",
-      "source": "NVIDIA Investor Relations",
-      "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/",
-      "tickers": [
-        "NVDA",
-        "SMH"
-      ]
-    },
-    {
-      "category": "memory",
-      "title_en": "Micron describes record results and strong AI-memory demand",
-      "title_zh": "美光称业绩创纪录且 AI 存储需求强劲",
-      "summary_en": "Micron reported fiscal third-quarter records and said HBM4 was in high-volume shipments for a lead customer platform. This supports the memory-cycle thesis, while the absence of a fresh, validated entry price keeps the model at HOLD.",
-      "summary_zh": "美光公布创纪录的财年第三季度业绩，并表示 HBM4 已面向主要客户平台进入大批量出货。这支持存储周期逻辑，但缺少经核实的新入场价格，模型因此保持观望。",
-      "source": "Micron Investor Relations",
-      "url": "https://investors.micron.com/news-releases/news-release-details/micron-technology-inc-reports-record-results-third-quarter-fiscal-2026",
-      "tickers": [
-        "MU",
-        "SMH"
-      ]
-    },
-    {
-      "category": "cloud-demand",
-      "title_en": "Microsoft cloud and Azure growth remain strong",
-      "title_zh": "微软云与 Azure 增长仍然强劲",
-      "summary_en": "Microsoft reported fiscal third-quarter cloud revenue of 54.5 billion dollars, up 29 percent, while Azure and other cloud services grew 40 percent. The release supports durable cloud demand but is not treated as a new same-day catalyst.",
-      "summary_zh": "微软公布财年第三季度云业务营收 545 亿美元、同比增长 29%，Azure 及其他云服务增长 40%。该公告支持云需求的持续性，但不会被当作今天的新催化剂。",
-      "source": "Microsoft Investor Relations",
-      "url": "https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q3/press-release-webcast",
-      "tickers": [
-        "MSFT",
-        "QQQ"
       ]
     }
   ],
