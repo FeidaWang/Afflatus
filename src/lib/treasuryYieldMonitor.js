@@ -58,6 +58,16 @@ export function mountTreasuryYieldMonitor() {
   let timer = 0;
   let controller = null;
 
+  // Browser quality gates run against Vite's static preview server, where the
+  // Vercel Function does not exist. Keep those captures deterministic without
+  // issuing a guaranteed 404; deployed environments still use the live feed.
+  if (window.__AFFLATUS_E2E__) {
+    status.textContent = copy('LIVE FEED · DEPLOYED ENVIRONMENTS', '实时行情 · 部署环境启用');
+    status.className = 'paused';
+    board.setAttribute('aria-busy', 'false');
+    return { refresh() {}, destroy() {} };
+  }
+
   function render(payload) {
     lastPayload = payload;
     payload.yields.forEach((quote) => renderQuote(board, quote));

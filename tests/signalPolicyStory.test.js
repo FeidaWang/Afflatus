@@ -90,6 +90,7 @@ describe('signal policy reaction story', () => {
     expect(html).toContain('data-yield-tenor="30Y"');
     expect(html).toContain('data-yield-spread');
     expect(yieldMonitor).toContain('/api/treasury-yields');
+    expect(yieldMonitor).toContain('window.__AFFLATUS_E2E__');
     expect(html).toContain('treasury-securities-operational-details');
     expect(signalData.events.some((event) => event.id === 'FED-RMP-2026-08-14')).toBe(true);
     expect(signalLibs).toContain('mountTreasuryYieldMonitor');
