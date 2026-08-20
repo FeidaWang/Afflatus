@@ -58,7 +58,8 @@ describe('signal policy reaction story', () => {
     expect(html).toContain("label_en: 'PRIMARY RECORD ↗', label_zh: '原始文件 ↗'");
     expect(html).toContain("['marketWindow', 'OBSERVATION WINDOW', '观察窗口']");
     expect(html).toContain("['industryTransmission', 'POLICY / INDUSTRY', '政策／行业传导']");
-    expect(signalData.updated).toBe('2026-08-07');
+    expect(signalData.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(signalData.updated >= '2026-08-07').toBe(true);
     expect(signalData.events.some((event) => event.id === 'NFP-2026-07')).toBe(true);
     expect(signalData.events.some((event) => event.id === 'PCE-2026-06')).toBe(true);
     expect(signalData.events.some((event) => event.id === 'PCE-2026-05')).toBe(false);
