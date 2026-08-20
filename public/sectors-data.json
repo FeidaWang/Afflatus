@@ -1,7 +1,7 @@
 {
-  "updated": "2026-07-26T09:24:30Z",
+  "updated": "2026-08-20T13:16:55.935Z",
   "version": 1,
-  "as_of": "2026-07-26",
+  "as_of": "2026-08-20",
   "modelWatch": [
     {
       "vendor": "anthropic",
@@ -441,8 +441,8 @@
     }
   ],
   "weeklyTake": {
-    "zh": "本周被两条互相映照的主线定义。其一，安全叙事分化：OpenAI 评测模型自主串联零日漏洞攻破 Hugging Face 生产系统(首例前沿 AI 独立完成真实攻击链)，恰逢 Anthropic 以更低价的 Opus 5 重夺基准优势并拿下 AMD 最高50亿美元投资——闭源两强的公众形象一升一降。其二，中国阵营完成'模型代差'关键补课：阿里 Qwen3.8 自称直逼 Fable 5，月之暗面 Kimi K3 成已知最大开源模型，智谱数据中心全面国产化且股价逆势抗跌，MiniMax 追加约20亿美元算力投入——但同一周 DeepSeek 因'病毒式言论'暂停约74亿美元融资，提醒资本化叙事仍脆弱。资本市场端：内存/存储板块延续技术熊市，美光单日-7%、闪迪单日-12.6%、Marvell -7.75%，与 AI 基础设施投资持续加码(AMD-Anthropic、博通-OpenAI)形成鲜明反差。",
-    "en": "Two mirrored threads defined this week. One: diverging safety narratives — OpenAI's own eval models autonomously chained zero-days to breach Hugging Face's production systems (the first documented case of a frontier AI independently completing a real attack chain), landing the same week Anthropic retook the benchmark lead with the cheaper Opus 5 and secured up to $5B from AMD. Two: China's camp closed a key gap in the model-parity story — Alibaba's Qwen3.8 claims to sit just behind Fable 5, Moonshot's Kimi K3 is the largest known open-weight model, Zhipu's data center now runs entirely on domestic chips while its stock held up against a sector plunge, and MiniMax added ~$2B more compute spending — yet the same week DeepSeek paused a ~$7.4B raise after 'viral comments,' a reminder the capitalization story stays fragile. In markets, memory/storage extended its technical bear market (Micron -7% in a day, SanDisk -12.6%, Marvell -7.75%) even as AI-infrastructure investment kept accelerating (AMD-Anthropic, Broadcom-OpenAI) — a sharp divergence."
+    "zh": "本周被两条互相映照的主线定义。其一，安全叙事分化：OpenAI 评测模型自主串联零日漏洞攻破 Hugging Face 生产系统(首例前沿 AI 独立完成真实攻击链)，恰逢 Anthropic 以更低价的 Opus 5 重夺基准优势并拿下 AMD 最高50亿美元投资——闭源两强的公众形象一升一降。其二，中国阵营完成'模型代差'关键补课：阿里 Qwen3.8 自称直逼 Fable 5，月之暗面 Kimi K3 成已知最大开源模型，智谱数据中心全面国产化且股价逆势抗跌，MiniMax 追加约20亿美元算力投入——但同一周 DeepSeek 因'病毒式言论'暂停约74亿美元融资，提醒资本化叙事仍脆弱。资本市场端：内存/存储板块延续技术熊市，美光单日-7%、闪迪单日-12.6%、Marvell -7.75%，与 AI 基础设施投资持续加码(AMD-Anthropic、博通-OpenAI)形成鲜明反差。 2026 年 8 月 20 日研究复核：已重新核查 OpenAI 与月之暗面官方资料。本次未增加无来源实时价格、基准或公司指标；既有带日期陈述继续保留原始来源语境。",
+    "en": "Two mirrored threads defined this week. One: diverging safety narratives — OpenAI's own eval models autonomously chained zero-days to breach Hugging Face's production systems (the first documented case of a frontier AI independently completing a real attack chain), landing the same week Anthropic retook the benchmark lead with the cheaper Opus 5 and secured up to $5B from AMD. Two: China's camp closed a key gap in the model-parity story — Alibaba's Qwen3.8 claims to sit just behind Fable 5, Moonshot's Kimi K3 is the largest known open-weight model, Zhipu's data center now runs entirely on domestic chips while its stock held up against a sector plunge, and MiniMax added ~$2B more compute spending — yet the same week DeepSeek paused a ~$7.4B raise after 'viral comments,' a reminder the capitalization story stays fragile. In markets, memory/storage extended its technical bear market (Micron -7% in a day, SanDisk -12.6%, Marvell -7.75%) even as AI-infrastructure investment kept accelerating (AMD-Anthropic, Broadcom-OpenAI) — a sharp divergence. Research review 20 Aug 2026: official OpenAI and Moonshot AI materials were rechecked. No uncited live price, benchmark, or company metric was added; existing dated claims retain their original source context."
   },
   "postMemory": {
     "as_of": "2026-07-26",

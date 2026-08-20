@@ -1,10 +1,10 @@
 {
   "schemaVersion": "2026-07-29",
-  "updated": "2026-07-29T23:20:00+10:00",
-  "asOf": "29 Jul 2026",
+  "updated": "2026-08-20T13:16:55.935Z",
+  "asOf": "20 Aug 2026",
   "editorialNote": {
-    "en": "Scenario analysis, not a price target or recommendation. Multiples are Afflatus fair-value bands for comparing business models; they are not live market quotes.",
-    "zh": "情景分析，不是目标价或投资建议。估值倍数是 Afflatus 用来比较商业模式的合理区间，并非实时行情。"
+    "en": "Scenario analysis, not a price target or recommendation. Multiples are Afflatus fair-value bands for comparing business models; they are not live market quotes. Provenance review 20 Aug 2026 preserved balanced US/CN primary-source coverage and did not convert scenario bands into live quotes.",
+    "zh": "情景分析，不是目标价或投资建议。估值倍数是 Afflatus 用来比较商业模式的合理区间，并非实时行情。 2026 年 8 月 20 日来源复核继续保持美中一手来源平衡，并未把情景区间包装成实时行情。"
   },
   "sources": [
     {
@@ -65,6 +65,11 @@
     {
       "label": "HKEX · MiniMax stock code 00100",
       "url": "https://www1.hkexnews.hk/search/titlesearch.xhtml?category=0&lang=EN&market=SEHK&stockId=1000286746",
+      "kind": "primary"
+    },
+    {
+      "label": "OpenAI newsroom, August 2026",
+      "url": "https://openai.com/news/company-announcements/",
       "kind": "primary"
     }
   ],
@@ -208,7 +213,13 @@
         "model": "Claude Fable 5",
         "route": "CLOSED",
         "score": 91,
-        "vector": [98, 61, 87, 91, 8],
+        "vector": [
+          98,
+          61,
+          87,
+          91,
+          8
+        ],
         "edge": {
           "en": "Best all-round proprietary frontier and enterprise pull.",
           "zh": "综合闭源前沿与企业需求最强。"
@@ -223,7 +234,13 @@
         "model": "GPT-5.6 Sol",
         "route": "CLOSED + SIGNED",
         "score": 90,
-        "vector": [97, 67, 96, 89, 20],
+        "vector": [
+          97,
+          67,
+          96,
+          89,
+          20
+        ],
         "edge": {
           "en": "Largest consumer and developer distribution surface.",
           "zh": "消费端与开发者分发面最广。"
@@ -238,7 +255,13 @@
         "model": "Gemini / Gemma",
         "route": "HYBRID",
         "score": 92,
-        "vector": [96, 84, 98, 98, 72],
+        "vector": [
+          96,
+          84,
+          98,
+          98,
+          72
+        ],
         "edge": {
           "en": "Only complete US vertical stack: model, TPU, cloud, search and Android.",
           "zh": "美国唯一完整垂直栈：模型、TPU、云、搜索与 Android。"
@@ -253,7 +276,13 @@
         "model": "Llama / Muse",
         "route": "OPEN-LED",
         "score": 86,
-        "vector": [86, 91, 99, 90, 90],
+        "vector": [
+          86,
+          91,
+          99,
+          90,
+          90
+        ],
         "edge": {
           "en": "Population-scale distribution and incentives aligned with commoditizing models.",
           "zh": "人口级分发，且激励与模型商品化方向一致。"
@@ -268,7 +297,13 @@
         "model": "Grok",
         "route": "HYBRID",
         "score": 82,
-        "vector": [90, 65, 91, 94, 38],
+        "vector": [
+          90,
+          65,
+          91,
+          94,
+          38
+        ],
         "edge": {
           "en": "Compute concentration plus real-time distribution through X.",
           "zh": "集中算力叠加 X 的实时分发。"
@@ -285,7 +320,13 @@
         "model": "Kimi K3",
         "route": "OPEN WEIGHTS",
         "score": 89,
-        "vector": [94, 96, 82, 61, 90],
+        "vector": [
+          94,
+          96,
+          82,
+          61,
+          90
+        ],
         "edge": {
           "en": "Near-frontier agentic work on the report's cost frontier.",
           "zh": "以成本前沿实现接近前沿的代理任务能力。"
@@ -300,7 +341,13 @@
         "model": "DeepSeek V4",
         "route": "OPEN WEIGHTS",
         "score": 87,
-        "vector": [91, 97, 86, 63, 94],
+        "vector": [
+          91,
+          97,
+          86,
+          63,
+          94
+        ],
         "edge": {
           "en": "The reference architecture for Chinese efficiency-first research.",
           "zh": "中国效率优先研究路线的参考架构。"
@@ -315,7 +362,13 @@
         "model": "Qwen 3.8 Max",
         "route": "OPEN + CLOUD",
         "score": 90,
-        "vector": [93, 94, 96, 73, 92],
+        "vector": [
+          93,
+          94,
+          96,
+          73,
+          92
+        ],
         "edge": {
           "en": "China's strongest model-to-cloud-to-commerce distribution loop.",
           "zh": "中国最强的模型—云—电商分发闭环。"
@@ -330,7 +383,13 @@
         "model": "GLM-5.2",
         "route": "OPEN WEIGHTS",
         "score": 84,
-        "vector": [87, 91, 76, 69, 93],
+        "vector": [
+          87,
+          91,
+          76,
+          69,
+          93
+        ],
         "edge": {
           "en": "Directly listed frontier exposure and a strong coding lineage.",
           "zh": "可直接交易的前沿模型敞口，编程路线强。"
@@ -345,7 +404,13 @@
         "model": "MiniMax M3",
         "route": "OPEN WEIGHTS",
         "score": 81,
-        "vector": [85, 90, 79, 67, 91],
+        "vector": [
+          85,
+          90,
+          79,
+          67,
+          91
+        ],
         "edge": {
           "en": "Listed multimodal lab with consumer-product reach.",
           "zh": "具消费产品触达能力的上市多模态实验室。"

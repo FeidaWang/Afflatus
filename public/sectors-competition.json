@@ -1,11 +1,11 @@
 {
   "schemaVersion": "competition/v1",
-  "updated": "2026-07-25T18:00:00+10:00",
-  "as_of": "2026-07-25",
+  "updated": "2026-08-20T13:16:55.935Z",
+  "as_of": "2026-08-20",
   "title_en": "US-China AI competition: models, economics, equities",
   "title_zh": "中美 AI 竞争：模型、经济性与股票",
-  "provenance_note_en": "Every numeric leaf carries a tier: verified (primary source), reported (secondary/aggregator), estimate (editorial), derived (computed here) or pending (not published). Empty cells are deliberate. Nothing on this page is investment advice.",
-  "provenance_note_zh": "每个数值都带有层级标注：verified（一手来源）、reported（二手/聚合）、estimate（编辑估算）、derived（本页计算）或 pending（未公布）。空白单元格是有意留空。本页内容不构成投资建议。",
+  "provenance_note_en": "Every numeric leaf carries a tier: verified (primary source), reported (secondary/aggregator), estimate (editorial), derived (computed here) or pending (not published). Empty cells are deliberate. Nothing on this page is investment advice. Reviewed 20 Aug 2026 against official US and Chinese lab entry points; unpublished or non-primary numeric leaves remain pending/reported/estimate rather than being promoted to verified.",
+  "provenance_note_zh": "每个数值都带有层级标注：verified（一手来源）、reported（二手/聚合）、estimate（编辑估算）、derived（本页计算）或 pending（未公布）。空白单元格是有意留空。本页内容不构成投资建议。 2026 年 8 月 20 日已对照美国与中国实验室官方入口复核；未公布或缺少一手依据的数值继续标记为 pending、reported 或 estimate，不会上调为 verified。",
   "radarAxes": [
     {
       "id": "intelligence",
