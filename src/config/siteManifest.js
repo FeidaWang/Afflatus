@@ -320,23 +320,23 @@ export const SITE_MANIFEST = Object.freeze([
     themeColor: '#0c0d0a',
     schema: ['CollectionPage', 'ItemList'],
     seo: ROUTE_SEO.signal,
-    capabilities: ['canvas', 'data-feed', 'audio'],
+    capabilities: ['canvas', 'data-feed'],
     metadata: {
       title: 'Project Afflatus · Signal — O5 Reserve Containment',
-      description: 'Signal: the July 2026 US payroll report, Federal Reserve reaction function, Trump policy influence and AI-sector transmission — evidence-first, bilingual and not investment advice.',
+      description: 'Signal: current Federal Reserve operations, live 10-year and 30-year Treasury yields, and Trump-administration industry priorities — evidence-first, bilingual and not investment advice.',
       canonical: 'https://feida.au/signal.html',
       ogTitle: 'Project Afflatus · Signal — O5 Reserve Containment',
-      ogDescription: "July payroll contraction, the Fed's two-sided reaction function, Trump policy influence and AI-sector transmission. Desk research, not advice.",
+      ogDescription: 'Current Fed operations, live 10Y/30Y Treasury yields and Trump-administration industry priorities. Desk research, not advice.',
       ogImage: ROUTE_SEO.signal.social.images.en,
     },
     locales: {
       en: {
         title: 'Signal — Federal Reserve Watch · Project Afflatus',
-        description: 'July 2026 US payrolls, the Federal Reserve reaction function, Trump policy influence, and AI-sector transmission. Desk research, not advice.',
+        description: 'Current Federal Reserve operations, live 10-year and 30-year Treasury yields, and Trump-administration industry priorities. Desk research, not advice.',
       },
       zh: {
         title: '信号 — 美联储观察 · Project Afflatus',
-        description: '研判 2026 年 7 月美国非农、美联储反应函数、特朗普政策影响与 AI 板块传导。案头研究，非投资建议。',
+        description: '跟踪美联储近期操作、10年与30年期美债收益率，以及特朗普政府产业优先方向。案头研究，非投资建议。',
       },
     },
   },
