@@ -1,19 +1,19 @@
 {
-  "updated": "2026-08-07",
+  "updated": "2026-08-20",
   "version": 2,
-  "as_of": "2026-08-07T15:00:00Z",
-  "note_en": "Evidence-first macro monitor. Every archive entry separates the official record from a labelled market window and names material confounders. Payroll figures are from BLS, policy from the Federal Reserve, inflation from BEA, and Trump-administration AI measures from official White House actions. Market observations are sourced separately and are not presented as single-cause event studies.",
-  "note_zh": "证据优先的宏观监测。每条档案均把官方记录与明确标注的市场观察窗口分开，并列出重要交叉冲击。就业数据来自美国劳工统计局，货币政策来自美联储，通胀来自美国经济分析局，特朗普政府AI措施来自白宫正式文件；市场观察另列来源，不被包装成单一因果事件研究。",
+  "as_of": "2026-08-20T13:25:39.751Z",
+  "note_en": "Evidence-first macro monitor refreshed after the August 19 release of the July 28-29 FOMC minutes. Official records are separated from market observation windows; no uncited live-price claim or single-cause market attribution is made.",
+  "note_zh": "证据优先的宏观监测已在 8 月 19 日发布 7 月 28 至 29 日 FOMC 会议纪要后刷新。正式记录与市场观察窗口严格分开；不作无来源实时价格陈述，也不进行单一因果市场归因。",
   "hawkDoveCompass": {
     "score": 0,
     "scale": "-2 (dovish) .. +2 (hawkish)",
     "label_en": "TWO-SIDED HOLD",
     "label_zh": "双向风险／维持偏置",
-    "rationale_en": "July payrolls fell 23,000, May and June were revised down by a combined 103,000, and participation slipped to 61.4%. That is a materially dovish labor impulse. But June core PCE was still 3.3% year over year and the Fed held 3.50–3.75% on July 29 while three voters preferred a 25bp hike, leaving the near-term policy signal balanced rather than cleanly dovish.",
-    "rationale_zh": "7月非农减少2.3万人，5月与6月合计下修10.3万人，劳动参与率降至61.4%，构成明显的鸽派就业冲击。但6月核心PCE同比仍为3.3%，且美联储7月29日维持3.50%–3.75%、三名票委主张加息25个基点；因此近期政策信号是双向拉扯，而非单边鸽派。",
-    "asOf": "2026-08-07T15:00:00Z",
-    "method_en": "Editorial score from the latest BLS employment release, July FOMC statement, verified PCE release and official policy actions. It is a qualitative reaction-function label, not a futures probability, rate forecast or investment advice.",
-    "method_zh": "依据最新BLS就业报告、7月FOMC声明、已核实PCE数据与正式政策文件进行编辑评分；它是政策反应函数的定性标签，不是期货概率、利率预测或投资建议。"
+    "rationale_en": "The July employment contraction remains a dovish labor impulse, while June core PCE and the 9-3 July FOMC hold preserve a hawkish inflation constraint. The August 19 minutes are fresh policy documentation but do not by themselves create a new directional rate forecast, so the compass remains balanced.",
+    "rationale_zh": "7 月就业收缩仍构成鸽派劳动力冲击，但 6 月核心 PCE 与 7 月 FOMC 以 9 比 3 维持利率，继续保留鹰派通胀约束。8 月 19 日会议纪要属于新的政策记录，但其本身不足以形成新的方向性利率预测，因此罗盘维持均衡。",
+    "asOf": "2026-08-20T13:25:39.751Z",
+    "method_en": "Editorial score from official BLS, BEA and Federal Reserve releases, including the August 19 FOMC minutes. It is a qualitative reaction-function label, not a futures probability, rate forecast or investment advice.",
+    "method_zh": "依据 BLS、BEA 与美联储正式发布资料（包括 8 月 19 日 FOMC 会议纪要）进行编辑评分；它是政策反应函数的定性标签，不是期货概率、利率预测或投资建议。"
   },
   "pillarSummary": {
     "en": "The labor market has moved from soft to visibly fragile: payrolls contracted, prior months were revised sharply lower, and the unemployment-rate decline came with a smaller labor force. Inflation and a hawkish FOMC minority still block an automatic cut. For AI, lower-rate optionality helps duration, while Trump policy supports US data-center, chip, network and power buildout but adds tariff, financing and concentration risk.",
@@ -37,12 +37,12 @@
       "key": "fed_policy",
       "name_en": "Fed Policy",
       "name_zh": "货币政策",
-      "status_en": "HOLD, WITH THREE HIKE DISSENTS",
-      "status_zh": "维持利率，三票主张加息",
+      "status_en": "JULY MINUTES RELEASED; 9-3 HOLD REMAINS THE POLICY RECORD",
+      "status_zh": "7 月会议纪要已发布；9 比 3 维持利率仍是政策记录",
       "tone": "amber",
-      "read_en": "On July 29 the FOMC held 3.50–3.75% by a 9–3 vote. Hammack, Kashkari and Logan preferred a 25bp hike. July payroll weakness strengthens the employment side of the dual mandate, but the next move still depends on inflation and incoming labor confirmation.",
-      "read_zh": "7月29日FOMC以9比3维持3.50%–3.75%；Hammack、Kashkari与Logan主张加息25个基点。7月非农走弱提高了双重使命中就业一侧的权重，但下一步仍取决于通胀与后续就业确认。",
-      "asOf": "2026-08-07"
+      "read_en": "The Federal Reserve released the minutes of the July 28-29 meeting at 2:00 p.m. EDT on August 19. The meeting record follows the already published 9-3 decision to maintain 3.50-3.75%, with three members preferring a quarter-point increase. This refresh records the new official document without inventing a new market-price reaction.",
+      "read_zh": "美联储于 8 月 19 日美东时间下午 2 时发布 7 月 28 至 29 日会议纪要。该会议记录对应此前已公布的 9 比 3 决定：维持 3.50% 至 3.75%，三名委员倾向加息 25 个基点。本次刷新只记录新的官方文件，不虚构新的市场价格反应。",
+      "asOf": "2026-08-19"
     },
     {
       "id": 3,
@@ -82,6 +82,54 @@
     }
   ],
   "events": [
+    {
+      "id": "FED-MINUTES-2026-07-29",
+      "date": "2026-08-19",
+      "type": "FED_POLICY",
+      "pillar": 2,
+      "class": "keter",
+      "hawkDove": 0.5,
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm",
+      "name": {
+        "en": "Minutes of the July 28-29 FOMC Meeting",
+        "zh": "7 月 28 至 29 日 FOMC 会议纪要"
+      },
+      "before": {
+        "en": "The policy statement had already documented a 9-3 hold at 3.50-3.75%, with three members preferring a quarter-point increase. The minutes were the scheduled detailed official record.",
+        "zh": "政策声明此前已记录委员会以 9 比 3 将利率维持在 3.50% 至 3.75%，三名委员倾向加息 25 个基点；会议纪要是按计划发布的详细官方记录。"
+      },
+      "print": {
+        "en": "The Federal Reserve published the July 28-29 meeting minutes at 2:00 p.m. EDT on August 19, 2026.",
+        "zh": "美联储于 2026 年 8 月 19 日美东时间下午 2 时发布 7 月 28 至 29 日会议纪要。"
+      },
+      "marketWindow": {
+        "en": "Official-document update only. No independently verified closing-price window is attached to this refresh, so no single-cause market attribution is made.",
+        "zh": "本次仅更新官方文件。由于未附加经过独立核实的收盘价格窗口，因此不作单一因果市场归因。"
+      },
+      "repricing": {
+        "en": "The document adds detail to an already known divided hold; without a separately cited rate-market window, this archive does not assert a new probability or yield move.",
+        "zh": "该文件为已知的分歧性维持决定补充细节；在缺少单独引用的利率市场窗口时，本档案不声称新的概率或收益率变化。"
+      },
+      "equityReaction": {
+        "en": "No equity return is asserted for this event because the refresh did not verify an attributable market-close source.",
+        "zh": "本次刷新未核实可归因的市场收盘来源，因此不声称该事件对应的股票收益。"
+      },
+      "industryTransmission": {
+        "en": "A divided hold keeps both discount-rate and inflation-risk channels relevant for AI infrastructure, cloud, semiconductor and power investment, but the minutes alone do not select a trade direction.",
+        "zh": "存在分歧的维持决定意味着贴现率与通胀风险渠道仍会影响 AI 基础设施、云、半导体与电力投资，但会议纪要本身不足以选择交易方向。"
+      },
+      "verdict": {
+        "en": "Fresh official policy evidence; balanced interpretation and no market forecast. Not investment advice.",
+        "zh": "新的官方政策证据；保持均衡解读，不作市场预测。非投资建议。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/2026-august.htm",
+          "label_en": "Federal Reserve release calendar: August 19, 2:00 p.m. EDT",
+          "label_zh": "美联储发布日历：8 月 19 日美东时间下午 2 时"
+        }
+      ]
+    },
     {
       "id": "FED-2026-07-29",
       "date": "2026-07-29",
