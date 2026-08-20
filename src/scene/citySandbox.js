@@ -1692,6 +1692,7 @@ export function createCitySandbox({
       }, budgetClass);
       return Object.freeze({
         day: currentDay,
+        renderedDay,
         profile: plan.profile.key,
         truthClass: plan.profile.truthClass,
         waterChannels: plan.water.length,

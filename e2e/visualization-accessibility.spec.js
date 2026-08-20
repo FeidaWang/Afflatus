@@ -25,9 +25,9 @@ test.describe('visualization semantic and keyboard equivalents', () => {
 
   test('Sectors canvas has a parallel node control list and keyboard selection', async ({ page }) => {
     await page.goto('/sectors.html', { waitUntil: 'domcontentloaded' });
-    await page.locator('#toggleMap').click();
 
     const canvas = page.locator('#mwGraph');
+    await canvas.scrollIntoViewIfNeeded();
     await expect(canvas).toBeVisible();
     await expect(canvas).toHaveAttribute('aria-describedby', /mwGraphSummary/);
     await expect(page.locator('#mwGraphSummary')).not.toBeEmpty();

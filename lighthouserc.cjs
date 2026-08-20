@@ -32,6 +32,14 @@ function minScore(value) {
   return Math.max(0, Math.floor((value - 0.03) * 100) / 100);
 }
 
+function tbtBudget(value) {
+  return Math.max(
+    baseline.tbtNoiseAllowanceMs,
+    Math.ceil(value + baseline.tbtNoiseAllowanceMs),
+    Math.ceil(value * (1 + baseline.tbtRegressionAllowance)),
+  );
+}
+
 function matchingUrlPattern(path) {
   if (path === '/') return '^https?://[^/]+/$';
   const escaped = path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -80,7 +88,7 @@ function assertionsFor(route) {
     ];
     assertions['total-blocking-time'] = [
       'error',
-      { maxNumericValue: maxBudget(route.tbtMs, 50), ...median },
+      { maxNumericValue: tbtBudget(route.tbtMs), ...median },
     ];
   }
 

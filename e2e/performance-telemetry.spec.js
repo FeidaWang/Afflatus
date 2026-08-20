@@ -53,6 +53,15 @@ test('field telemetry emits an anonymous LCP event on the shared entry route', a
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForLoadState('load');
   expect(await waitForLcpCandidate(page), 'home must paint an LCP candidate').toBe(true);
+
+  // The collector is intentionally lazy: the first pointer interaction loads
+  // the web-vitals chunk, and a subsequent trusted interaction finalizes LCP.
+  const collectorLoaded = page.waitForResponse((response) => (
+    /\/assets\/webVitals-[^/]+\.js$/.test(new URL(response.url()).pathname)
+    && response.ok()
+  ));
+  await page.locator('h1').click({ force: true });
+  await collectorLoaded;
   await page.locator('h1').click({ force: true });
 
   await expect.poll(

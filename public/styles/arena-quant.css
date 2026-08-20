@@ -174,7 +174,7 @@
 @media(max-width:460px){
   .qm-console-head{flex-direction:column}
   .qm-presets{width:100%}
-  .qm-presets button{flex:1;min-height:34px}
+  .qm-presets button{flex:1;min-height:44px}
   .qm-universe>span{flex-basis:30%}
   .qm-universe small{display:none}
   .qm-metrics>div{min-height:54px}

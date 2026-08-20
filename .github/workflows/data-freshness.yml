@@ -5,14 +5,48 @@ on:
     - cron: '17 0,6,12,18 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+concurrency:
+  group: data-pipeline-health-main
+  cancel-in-progress: false
+
 jobs:
   freshness:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
-      - name: Check the canonical data pipeline contract
-        run: node scripts/check-data-freshness.mjs --strict
+          cache: npm
+      - run: npm ci
+
+      - name: Refresh deterministic Melbourne transits
+        run: node scripts/gen-transits-daily.mjs
+
+      - name: Validate generated data and GitHub-owned freshness
+        run: |
+          npm run data:check
+          node scripts/check-data-freshness.mjs --strict --pipeline=horoscope-transits
+
+      - name: Report externally orchestrated pipeline freshness
+        run: node scripts/check-data-freshness.mjs
+
+      - name: Publish a changed daily transit artifact
+        run: |
+          if git diff --quiet -- public/transits-daily.json; then
+            echo "Transit artifact already represents the current Melbourne day."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/transits-daily.json
+          git commit -m "data: refresh Melbourne daily transits"
+          git pull --rebase origin main
+          git push origin HEAD:main

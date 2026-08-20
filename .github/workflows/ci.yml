@@ -16,9 +16,9 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -51,14 +51,22 @@ jobs:
         run: node scripts/check-bundle-budget.mjs
 
   browser-quality:
-    name: Browser quality (desktop + flagship mobile)
+    name: Browser quality (${{ matrix.project }})
     needs: test-and-build
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Visual baselines are recorded on Darwin; run them on the matching OS.
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - desktop-chromium
+          - iphone-16-pro-max-webkit
+          - galaxy-s26-ultra-chromium
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -66,22 +74,54 @@ jobs:
       - run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install chromium webkit
 
       - name: Browser, keyboard, axe and visual gates
-        run: npm run test:e2e
+        # One browser worker per runner keeps the WebGL-heavy Cityview tests
+        # isolated while the three device projects still execute in parallel.
+        run: npm run test:e2e -- --project=${{ matrix.project }} --workers=1
 
-      - name: Lighthouse route regression budgets
-        run: npm run lighthouse:ci
-
-      - name: Upload browser and Lighthouse reports
+      - name: Upload browser reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: browser-performance-reports
+          name: browser-reports-${{ matrix.project }}
           path: |
             playwright-report/
             test-results/
-            .lighthouseci/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse route regression budgets
+    needs: test-and-build
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      # Keep performance sampling isolated from the Playwright matrix so a
+      # browser failure cannot skip it or contaminate its timing profile.
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Install Lighthouse Chromium
+        run: npx playwright install chromium
+
+      - name: Enforce route regression budgets
+        run: npm run lighthouse:ci
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 7

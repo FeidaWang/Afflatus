@@ -1193,7 +1193,7 @@
   .site-header--follow > .nav > .lang-toggle,
   .site-header--follow > .nav > .hbtn {
     inline-size: 100%;
-    min-inline-size: 0;
+    min-inline-size: 44px;
     min-block-size: 44px;
     display: inline-flex;
     align-items: center;
@@ -1219,10 +1219,15 @@
      keeps 32px controls, so restore the shared mobile touch target here. */
   .course-page .site-top.site-header--follow > .nav > a,
   .course-page .site-top.site-header--follow > .nav .nav-labs__trigger {
+    min-inline-size: 44px;
     min-block-size: 44px;
     padding-inline: 3px;
     font-size: 8.5px;
     letter-spacing: .04em;
+  }
+
+  .course-page .site-top.site-header--follow > .nav > .lang-toggle {
+    min-inline-size: 44px;
   }
 
   .home-page .site-header--follow #langBtn { display: none; }
