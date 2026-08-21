@@ -4,6 +4,8 @@ import { parse } from 'parse5';
 
 const html = readFileSync('signal.html', 'utf8');
 const css = readFileSync('public/styles/signal.css', 'utf8');
+const signalLibs = readFileSync('src/pages/signalLibs.js', 'utf8');
+const yieldMonitor = readFileSync('src/lib/treasuryYieldMonitor.js', 'utf8');
 const signalData = JSON.parse(readFileSync('public/signal-events.json', 'utf8'));
 
 function walk(node, visit) {
@@ -65,12 +67,42 @@ describe('signal policy reaction story', () => {
     expect(signalData.events.some((event) => event.id === 'PCE-2026-05')).toBe(false);
   });
 
-  it('explains Trump influence through separate Fed and AI transmission maps', () => {
+  it('explains Trump influence through separate Fed and industry transmission maps', () => {
     expect(html).toContain('TRUMP → FED INFLUENCE MAP');
-    expect(html).toContain('TRUMP → AI TRANSMISSION MAP');
+    expect(html).toContain('TRUMP → INDUSTRY PRIORITY MAP');
     expect(html).toContain('The FOMC has twelve voters');
-    expect(html).toContain('大型数据中心运营商承担新增发电与电网基础设施成本');
+    expect(html).toContain('政策同向行业监控');
+    expect(html).toContain('多晶硅与太阳能材料');
+    expect(html).toContain('国防工业基础');
+    expect(html).toContain('住房供给');
     expect(signalData.events.some((event) => event.id === 'TRUMP-AI-2026-07-23')).toBe(true);
     expect(signalData.events.some((event) => event.id === 'TRUMP-CHIPS-2026-01')).toBe(true);
+    expect(signalData.events.some((event) => event.id === 'TRUMP-POLYSILICON-2026-08-06')).toBe(true);
+  });
+
+  it('adds a bilingual live Treasury dashboard beside the current Fed intervention brief', () => {
+    expect(html).toContain('id="chlive"');
+    expect(html).toContain('href="#treasuryYieldBoard"');
+    expect(html).toContain('CURRENT REINVESTMENT');
+    expect(html).toContain('本期再投资');
+    expect(html).toContain('$17.0B');
+    expect(html).toContain('data-yield-tenor="10Y"');
+    expect(html).toContain('data-yield-tenor="30Y"');
+    expect(html).toContain('data-yield-spread');
+    expect(yieldMonitor).toContain('/api/treasury-yields');
+    expect(yieldMonitor).toContain('window.__AFFLATUS_E2E__');
+    expect(html).toContain('treasury-securities-operational-details');
+    expect(signalData.events.some((event) => event.id === 'FED-RMP-2026-08-14')).toBe(true);
+    expect(signalLibs).toContain('mountTreasuryYieldMonitor');
+    expect(css).toContain('.marketDeskGrid');
+    expect(css).toContain('.yieldCards');
+  });
+
+  it('removes the opt-in containment ambience and its Web Audio implementation', () => {
+    expect(html).not.toContain('SITE AMBIENCE');
+    expect(html).not.toContain('站点环境音');
+    expect(html).not.toContain('id="amb"');
+    expect(html).not.toContain('AudioContext');
+    expect(css).not.toContain('.dock');
   });
 });

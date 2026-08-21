@@ -1,23 +1,23 @@
 {
-  "updated": "2026-08-20",
+  "updated": "2026-08-21",
   "version": 2,
-  "as_of": "2026-08-20T13:25:39.751Z",
-  "note_en": "Evidence-first macro monitor refreshed after the August 19 release of the July 28-29 FOMC minutes. Official records are separated from market observation windows; no uncited live-price claim or single-cause market attribution is made.",
-  "note_zh": "证据优先的宏观监测已在 8 月 19 日发布 7 月 28 至 29 日 FOMC 会议纪要后刷新。正式记录与市场观察窗口严格分开；不作无来源实时价格陈述，也不进行单一因果市场归因。",
+  "as_of": "2026-08-21T12:00:00Z",
+  "note_en": "Evidence-first macro monitor refreshed after the August 19 release of the July 28-29 FOMC minutes and the current New York Fed operations schedule. Official records are separated from market observation windows; policy and operations come from the Federal Reserve and New York Fed, inflation from BEA, payrolls from BLS, and Trump-administration industry measures from official White House actions.",
+  "note_zh": "证据优先的宏观监测已纳入 8 月 19 日发布的 7 月 28 至 29 日 FOMC 会议纪要及纽约联储当前操作计划。正式记录与市场观察窗口严格分开；货币政策与操作来自美联储及纽约联储，通胀来自 BEA，就业来自 BLS，特朗普政府产业措施来自白宫正式文件。",
   "hawkDoveCompass": {
     "score": 0,
     "scale": "-2 (dovish) .. +2 (hawkish)",
     "label_en": "TWO-SIDED HOLD",
     "label_zh": "双向风险／维持偏置",
-    "rationale_en": "The July employment contraction remains a dovish labor impulse, while June core PCE and the 9-3 July FOMC hold preserve a hawkish inflation constraint. The August 19 minutes are fresh policy documentation but do not by themselves create a new directional rate forecast, so the compass remains balanced.",
-    "rationale_zh": "7 月就业收缩仍构成鸽派劳动力冲击，但 6 月核心 PCE 与 7 月 FOMC 以 9 比 3 维持利率，继续保留鹰派通胀约束。8 月 19 日会议纪要属于新的政策记录，但其本身不足以形成新的方向性利率预测，因此罗盘维持均衡。",
-    "asOf": "2026-08-20T13:25:39.751Z",
-    "method_en": "Editorial score from official BLS, BEA and Federal Reserve releases, including the August 19 FOMC minutes. It is a qualitative reaction-function label, not a futures probability, rate forecast or investment advice.",
-    "method_zh": "依据 BLS、BEA 与美联储正式发布资料（包括 8 月 19 日 FOMC 会议纪要）进行编辑评分；它是政策反应函数的定性标签，不是期货概率、利率预测或投资建议。"
+    "rationale_en": "July payrolls fell 23,000 and participation slipped to 61.4%, a materially dovish labor impulse. But June core PCE was still 3.3% year over year, the Fed held 3.50–3.75% by 9–3, and the August 19 minutes add detail without creating a new directional rate signal. The compass therefore remains balanced.",
+    "rationale_zh": "7月非农减少2.3万人、劳动参与率降至61.4%，构成明显的鸽派就业冲击。但6月核心PCE同比仍为3.3%，美联储以9比3维持3.50%–3.75%，8月19日会议纪要只是补充细节，并未形成新的方向性利率信号，因此罗盘维持均衡。",
+    "asOf": "2026-08-21T12:00:00Z",
+    "method_en": "Editorial score from official BLS, BEA, Federal Reserve and New York Fed releases, including the August 19 FOMC minutes. It is a qualitative reaction-function label, not a futures probability, rate forecast or investment advice.",
+    "method_zh": "依据 BLS、BEA、美联储与纽约联储正式发布资料（包括8月19日FOMC会议纪要）进行编辑评分；它是政策反应函数的定性标签，不是期货概率、利率预测或投资建议。"
   },
   "pillarSummary": {
-    "en": "The labor market has moved from soft to visibly fragile: payrolls contracted, prior months were revised sharply lower, and the unemployment-rate decline came with a smaller labor force. Inflation and a hawkish FOMC minority still block an automatic cut. For AI, lower-rate optionality helps duration, while Trump policy supports US data-center, chip, network and power buildout but adds tariff, financing and concentration risk.",
-    "zh": "劳动力市场已从偏软走向明显脆弱：非农转负、前值大幅下修，而失业率下降伴随着劳动力规模收缩。通胀与FOMC鹰派少数仍阻止“自动降息”。对AI而言，潜在利率下行利好长久期估值；特朗普政策支持美国数据中心、芯片、网络与电力建设，却同时增加关税、融资与集中度风险。"
+    "en": "The FOMC still holds 3.50–3.75%, while the current New York Fed schedule contains $17.0bn of reinvestment purchases and no new reserve-management purchases. That is ample-reserve implementation, not QE or long-end yield control. Trump-administration industry policy is broader than AI: it prioritizes domestic chips, energy and grids, polysilicon and solar inputs, resilient supply chains, defense capacity and housing supply, each with material cost and execution constraints.",
+    "zh": "FOMC仍把目标区间维持在3.50%–3.75%；纽约联储当前计划含170亿美元再投资购买，不含新增储备管理购买。这是充足准备金框架下的政策执行，不是QE或长端收益率控制。特朗普政府产业政策不只覆盖AI，还优先本土芯片、能源与电网、多晶硅与太阳能投入品、韧性供应链、国防产能和住房供给；每一项都伴随实质成本与执行约束。"
   },
   "pillars": [
     {
@@ -40,9 +40,9 @@
       "status_en": "JULY MINUTES RELEASED; 9-3 HOLD REMAINS THE POLICY RECORD",
       "status_zh": "7 月会议纪要已发布；9 比 3 维持利率仍是政策记录",
       "tone": "amber",
-      "read_en": "The Federal Reserve released the minutes of the July 28-29 meeting at 2:00 p.m. EDT on August 19. The meeting record follows the already published 9-3 decision to maintain 3.50-3.75%, with three members preferring a quarter-point increase. This refresh records the new official document without inventing a new market-price reaction.",
-      "read_zh": "美联储于 8 月 19 日美东时间下午 2 时发布 7 月 28 至 29 日会议纪要。该会议记录对应此前已公布的 9 比 3 决定：维持 3.50% 至 3.75%，三名委员倾向加息 25 个基点。本次刷新只记录新的官方文件，不虚构新的市场价格反应。",
-      "asOf": "2026-08-19"
+      "read_en": "The August 19 minutes document the July 9–3 hold at 3.50–3.75%. IORB is 3.65%, standing repo 3.75%, and ON RRP 3.50% with a $160bn daily counterparty cap. For 14 August–14 September the Desk plans $17.0bn of reinvestment purchases and no new RMPs, so the long end remains market-priced.",
+      "read_zh": "8月19日会议纪要记录了7月以9比3维持3.50%–3.75%的决定。准备金利率为3.65%，常备回购为3.75%，隔夜逆回购为3.50%、单一对手方每日上限1600亿美元。8月14日至9月14日操作台计划170亿美元再投资购买、不做新增储备管理购买，因此长端仍由市场定价。",
+      "asOf": "2026-08-21"
     },
     {
       "id": 3,
@@ -59,14 +59,14 @@
     {
       "id": 4,
       "key": "industry_tech",
-      "name_en": "AI Industry Policy",
-      "name_zh": "AI产业政策",
-      "status_en": "STRUCTURAL SUPPORT, HIGHER PROJECT HURDLES",
-      "status_zh": "结构性支持，项目门槛提高",
+      "name_en": "Industry Policy",
+      "name_zh": "产业政策",
+      "status_en": "BROADER ONSHORING, HIGHER COST HURDLES",
+      "status_zh": "本土化范围扩大，成本门槛提高",
       "tone": "amber",
-      "read_en": "Trump's full-stack AI export program supports US chips, servers, cloud, networking and models. The ratepayer pledge requires large data-center operators to fund their own generation and grid infrastructure, favoring cash-rich hyperscalers, power suppliers and cooling/network bottlenecks over leveraged marginal projects.",
-      "read_zh": "特朗普的全栈AI出口计划支持美国芯片、服务器、云、网络与模型。电费承担承诺要求大型数据中心运营商自行承担新增发电与电网基础设施成本，因此更有利于现金充裕的超大规模云厂商、电力供应商及散热／网络瓶颈环节，而不利于高杠杆边缘项目。",
-      "asOf": "2026-08-07"
+      "read_en": "Official priorities now span full-stack AI exports, domestic chips and equipment, energy and grid capacity, polysilicon and solar inputs, resilient industrial and defense supply chains, and housing supply. Incentives and protection can improve domestic demand visibility, while tariffs, minimum import prices, financing and local execution can raise costs.",
+      "read_zh": "正式优先方向现覆盖全栈AI出口、本土芯片与设备、能源与电网产能、多晶硅与太阳能投入品、产业及国防供应链韧性和住房供给。激励与保护可提高本土需求能见度，关税、最低进口价、融资与地方执行也可能抬高成本。",
+      "asOf": "2026-08-21"
     },
     {
       "id": 5,
@@ -76,9 +76,9 @@
       "status_en": "INDIRECT RATE POWER; DIRECT INDUSTRIAL POWER",
       "status_zh": "利率权力间接，产业权力直接",
       "tone": "amber",
-      "read_en": "Trump directly shaped Fed leadership by nominating Kevin Warsh, but cannot cast the other FOMC votes or set rates by decree. His tariffs, energy and immigration choices alter the data the Fed reacts to. In AI, semiconductor tariffs and exemptions directly redistribute cost and demand toward US buildout and domestic manufacturing.",
-      "read_zh": "特朗普通过提名Kevin Warsh直接塑造了美联储领导层，但不能代替其他FOMC票委投票，也不能以总统命令设定利率。他的关税、能源与移民政策会改变美联储所响应的数据；在AI领域，半导体关税及豁免会直接把成本与需求重新导向美国本土建设和制造。",
-      "asOf": "2026-08-07"
+      "read_en": "Trump shaped Fed leadership through nomination and can influence expectations publicly, but cannot cast the other FOMC votes or decree either the policy rate or long Treasury yields. His stronger direct channel is industrial policy: tariffs, exemptions, minimum import prices, export support, procurement and permitting redistribute demand and costs toward selected US capacity.",
+      "read_zh": "特朗普可通过提名塑造联储领导层，也能以公开表态影响预期，但不能代替其他FOMC票委投票，更不能以命令设定政策利率或长期美债收益率。他更强的直接渠道是产业政策：关税、豁免、最低进口价、出口支持、采购与许可会把需求和成本重新导向特定美国本土产能。",
+      "asOf": "2026-08-21"
     }
   ],
   "events": [
@@ -127,6 +127,102 @@
           "url": "https://www.federalreserve.gov/newsevents/2026-august.htm",
           "label_en": "Federal Reserve release calendar: August 19, 2:00 p.m. EDT",
           "label_zh": "美联储发布日历：8 月 19 日美东时间下午 2 时"
+        }
+      ]
+    },
+    {
+      "id": "FED-RMP-2026-08-14",
+      "date": "2026-08-14",
+      "type": "FED_OPERATIONS",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": 0,
+      "source": "https://www.newyorkfed.org/markets/domestic-market-operations/monetary-policy-implementation/treasury-securities/treasury-securities-operational-details",
+      "name": {
+        "en": "Desk Removes New Reserve-Management Purchases",
+        "zh": "操作台取消本期新增储备管理购买"
+      },
+      "before": {
+        "en": "The prior 14 July–13 August window combined about $17.6bn of reinvestment purchases with an additional $10bn of reserve-management purchases.",
+        "zh": "此前7月14日至8月13日窗口包含约176亿美元再投资购买，以及额外100亿美元储备管理购买。"
+      },
+      "print": {
+        "en": "For 14 August–14 September, the Desk plans about $17.0bn of reinvestment purchases and no reserve-management purchases.",
+        "zh": "8月14日至9月14日，操作台计划约170亿美元再投资购买，不进行储备管理购买。"
+      },
+      "marketWindow": {
+        "en": "Operational schedule, not a clean trading event. Treasury yields also reflect inflation, growth, issuance, term premium and global risk, so no single market move is assigned to the schedule.",
+        "zh": "这是操作计划，不是干净的交易事件。美债收益率还受通胀、增长、发行、期限溢价与全球风险影响，因此不把单一市场波动归因于该计划。"
+      },
+      "repricing": {
+        "en": "The step-down indicates the Desk currently sees less need for incremental RMPs. It does not target the 10-year or 30-year yield and is not evidence of QE or an emergency rescue.",
+        "zh": "操作降档说明操作台当前认为新增储备管理购买需求较低。它不针对10年或30年期收益率，也不是QE或紧急救市的证据。"
+      },
+      "equityReaction": {
+        "en": "No causal equity move is claimed. The relevant monitoring channel is whether money-market conditions remain orderly while long-end yields continue to clear in the market.",
+        "zh": "不主张存在可归因的股市波动。应监测的渠道是货币市场能否保持有序，以及长端收益率是否继续由市场出清。"
+      },
+      "industryTransmission": {
+        "en": "With no long-end yield cap, capital-intensive AI, power, industrial and housing projects remain exposed to 10-year and 30-year financing conditions.",
+        "zh": "由于不存在长端收益率上限，资本密集型AI、电力、工业与住房项目仍暴露于10年和30年期融资条件。"
+      },
+      "verdict": {
+        "en": "Routine ample-reserve implementation; active RMPs downshift to zero for the current window. Not investment advice.",
+        "zh": "这是充足准备金框架下的常规执行；当前窗口新增RMP降至零。非投资建议。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260729a1.htm",
+          "label_en": "Federal Reserve: operating parameters",
+          "label_zh": "美联储：操作参数"
+        }
+      ]
+    },
+    {
+      "id": "TRUMP-POLYSILICON-2026-08-06",
+      "date": "2026-08-06",
+      "type": "TRADE_POLICY",
+      "pillar": 4,
+      "class": "keter",
+      "hawkDove": 0.5,
+      "source": "https://www.whitehouse.gov/presidential-actions/2026/08/adjusting-imports-of-polysilicon-and-its-derivatives-into-the-united-states/",
+      "name": {
+        "en": "Section 232 Polysilicon Onshoring Regime",
+        "zh": "232条款多晶硅本土化机制"
+      },
+      "before": {
+        "en": "The administration described US dependence on imported polysilicon, ingots, wafers and cells as a semiconductor, solar and national-security vulnerability.",
+        "zh": "政府把美国对进口多晶硅、硅锭、硅片与电池片的依赖界定为半导体、太阳能与国家安全脆弱点。"
+      },
+      "print": {
+        "en": "The proclamation establishes minimum import prices and, from 4 December 2026, a 15% duty on covered derivatives, while authorizing incentives for US production of polysilicon, ingots, wafers and cells.",
+        "zh": "公告设立最低进口价，并从2026年12月4日起对相关衍生品征收15%关税，同时授权激励美国生产多晶硅、硅锭、硅片与电池片。"
+      },
+      "marketWindow": {
+        "en": "Policy action with delayed implementation, not a clean one-session market event. No standalone equity or rate move is assigned.",
+        "zh": "这是延后实施的政策行动，而非单一交易日事件；不指定独立股价或利率波动。"
+      },
+      "repricing": {
+        "en": "The policy protects domestic upstream economics and encourages onshoring, but raises the input-cost floor for uncovered downstream buyers.",
+        "zh": "该政策保护本土上游经济性并鼓励回流生产，但会抬高未获豁免下游买家的投入成本底线。"
+      },
+      "equityReaction": {
+        "en": "No causal index move is claimed. Company outcomes depend on product coverage, domestic capacity, trade-partner arrangements and the ability to pass through higher costs.",
+        "zh": "不主张存在可归因的指数波动。公司结果取决于产品适用范围、本土产能、贸易伙伴安排与成本转嫁能力。"
+      },
+      "industryTransmission": {
+        "en": "Domestic polysilicon and wafer capacity receive direct policy support across semiconductor and solar supply chains; module makers, developers and power users face cost, timing and capacity-ramp tradeoffs.",
+        "zh": "本土多晶硅与硅片产能在半导体和太阳能供应链同时获得直接政策支持；组件制造商、开发商与电力用户则面临成本、时间与产能爬坡权衡。"
+      },
+      "verdict": {
+        "en": "Direct onshoring support with explicit downstream cost risk. Not investment advice.",
+        "zh": "这是直接本土化支持，也包含明确的下游成本风险。非投资建议。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.whitehouse.gov/cea/2026-erp/",
+          "label_en": "White House CEA: 2026 industrial priorities",
+          "label_zh": "白宫经济顾问委员会：2026产业优先方向"
         }
       ]
     },

@@ -8,5 +8,7 @@ import '../lib/nav.js';
 import '../lib/audio.js';
 import '../lib/transition.js';
 import { mountSignalBackdrop } from '../ui/ambientBackdrops.js';
+import { mountTreasuryYieldMonitor } from '../lib/treasuryYieldMonitor.js';
 
 mountSignalBackdrop();
+mountTreasuryYieldMonitor();
