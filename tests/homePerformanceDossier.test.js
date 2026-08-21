@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { PICKS_EN, PICKS_ZH } from '../src/data/content.js';
 
-const html = readFileSync('index.html', 'utf8');
+const html = readFileSync('portfolio.html', 'utf8');
 const copy = readFileSync('src/data/content.js', 'utf8');
 const voyageConsole = readFileSync('src/ui/voyageLogConsole.js', 'utf8');
 const brandCss = readFileSync('public/styles/afflatus-brand.css', 'utf8');

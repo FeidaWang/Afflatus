@@ -3,6 +3,7 @@ import './cic-hud.css';
 import './performance-dossier.css';
 import './portfolio-convoy.css';
 import './home-combat-showcase.css';
+import './home-visual-upgrade.css';
 import { getLocale, localeSwitchHref, setLocale } from './lib/localeStore.js';
 import { initHomeScrollTelemetry } from './ui/homeScrollTelemetry.js';
 
@@ -16,8 +17,8 @@ const HOME_INTENT_SELECTOR = [
 const COMMAND_INTENT_SELECTOR = '#commandModeBtn, #heroCommandCta';
 
 // Keep the complete flagship/WebGPU upgrade available without making it the
-// default hero composition. The legacy visual keeps the original full-scale,
-// particle-free black-hole plate as the dominant focal point; append
+// default hero composition. The adaptive black-hole plate remains the
+// dominant focal point; append
 // ?heroFx=flagship to review the upgraded ship narrative at any time.
 const FLAGSHIP_UPGRADE_ENABLED = new URLSearchParams(location.search)
   .get('heroFx') === 'flagship';
@@ -259,8 +260,16 @@ function installNavigationMenu() {
   addEventListener('resize', close);
 }
 
+function installHeroCommandShortcut() {
+  const shortcut = document.getElementById('heroCommandCta');
+  shortcut?.addEventListener('click', () => {
+    document.getElementById('commandModeBtn')?.click();
+  });
+}
+
 installLocaleLinks();
 installNavigationMenu();
+installHeroCommandShortcut();
 installHomeCombatPoster();
 installIntentLoader();
 installVisibilityLoaders();

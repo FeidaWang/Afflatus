@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
 function localePrepaintSource() {
-  const html = readFileSync('index.html', 'utf8');
+  const html = readFileSync('portfolio.html', 'utf8');
   const source = html.match(/<script>([^<]*afflatus:locale:v1[^<]*)<\/script>/i)?.[1];
   if (!source) throw new Error('Locale pre-paint script is missing from index.html');
   return source;

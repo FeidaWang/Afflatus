@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const visibleHomeLanguageSwitch = (page) => page.locator('#langBtn:visible, #langMiniToggle:visible');
+const visibleHomeLanguageSwitch = (page) => page.locator('#langBtn:visible');
 
 async function clickOnlyHomeLanguageSwitch(page) {
   const switcher = visibleHomeLanguageSwitch(page);
@@ -9,19 +9,15 @@ async function clickOnlyHomeLanguageSwitch(page) {
 }
 
 test('home navigation follows the fixed and interactive locale', async ({ page }) => {
-  const primaryLinks = page.locator('[data-afflatus-nav] > a');
-  const labsTrigger = page.locator('.nav-labs__trigger');
-  const labsLinks = page.locator('.nav-labs__menu a');
+  const groupTriggers = page.locator('.nav-trigger');
 
   await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
-  await expect(primaryLinks).toHaveText(['竞技场', '板块', '信号']);
-  await expect(labsTrigger).toHaveText('实验室');
-  await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程']);
+  await expect(groupTriggers).toHaveText(['市场', '实验室', '写作']);
+  await expect(page.locator('.nav-about')).toHaveText('关于');
 
   await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-  await expect(primaryLinks).toHaveText(['Arena', 'Sectors', 'Signal']);
-  await expect(labsTrigger).toHaveText('Labs');
-  await expect(labsLinks).toHaveText(['Stats', 'Horoscope', 'Novels', 'Course']);
+  await expect(groupTriggers).toHaveText(['Markets', 'Lab', 'Writing']);
+  await expect(page.locator('.nav-about')).toHaveText('About');
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await Promise.all([
@@ -29,9 +25,7 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
     clickOnlyHomeLanguageSwitch(page),
   ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
-  await expect(primaryLinks).toHaveText(['竞技场', '板块', '信号']);
-  await expect(labsTrigger).toHaveText('实验室');
-  await expect(labsLinks).toHaveText(['战绩', '观星', '小说', '课程']);
+  await expect(groupTriggers).toHaveText(['市场', '实验室', '写作']);
 });
 
 test('home fixed-locale switch preserves query and hash state', async ({ page }) => {
@@ -43,15 +37,14 @@ test('home fixed-locale switch preserves query and hash state', async ({ page })
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
 });
 
-test('home shell resolves a stored adaptive locale before rich experience loads', async ({ page }) => {
+test('home shell remains English by default even when an old adaptive locale is stored', async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem('afflatus:locale:v1', 'zh');
   });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
-  await expect(page.locator('#langBtn')).toHaveAttribute('href', '/en/');
-  await expect(page.locator('#langBtn')).toHaveText('Dream in English');
-  await expect(page.locator('#langMiniToggle')).toHaveAttribute('href', '/en/');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('#langBtn')).toHaveAttribute('href', '/zh/');
+  await expect(page.locator('h1')).toContainText('Systems for');
   await expect(visibleHomeLanguageSwitch(page)).toHaveCount(1);
 });
 

@@ -3,6 +3,7 @@
   "recordedAt": "2026-07-25",
   "profile": "Lighthouse 12.6.1 default mobile simulation, three runs per route",
   "methodology": "Median gates for LCP/TBT/Speed Index/bytes. CLS uses clsBudgetBase, the highest repeatable observed branch, because async font/content timing is bimodal. P0-09/P0-10 platform entries were re-recorded after route-scoped validator splitting, critical bridge/CSS inlining, and mobile header stabilization; only directly affected route budgets changed. Arena and Course script budgets were re-recorded on 2026-08-15 after their shipped feature bundles grew while both routes retained zero TBT and strong performance scores. Route budgets are regression floors, not product targets.",
+  "releaseCandidatePolicy": "Prototype routes marked release-candidate use explicit provisional product ceilings until the first three-run browser baseline is recorded; they remain noindex and undiscoverable.",
   "regressionAllowance": 0.05,
   "fieldBudgets": {
     "LCP": 2500,
@@ -19,6 +20,18 @@
     {
       "id": "main",
       "path": "/",
+      "performanceScore": 0.66,
+      "lcpMs": 4469,
+      "tbtMs": 159,
+      "cls": 0.169,
+      "clsBudgetBase": 0.172,
+      "speedIndexMs": 3943,
+      "scriptBytes": 269525,
+      "totalBytes": 593163
+    },
+    {
+      "id": "portfolio",
+      "path": "/portfolio.html",
       "performanceScore": 0.66,
       "lcpMs": 4469,
       "tbtMs": 159,

@@ -441,7 +441,7 @@ export function transformLocalizedDocument(source, route, locale) {
   setAttr(html, 'data-afflatus-locale', locale);
   removeAdaptivePrepaint(document);
   localizeDataAttributes(document, locale);
-  if (route.id === 'main') localizeHome(document, locale);
+  if (route.id === 'portfolio') localizeHome(document, locale);
   localizeInternalNavigation(document, locale);
   injectStaticNavigation(document, route, locale);
   convertLanguageLinks(document, route, locale);

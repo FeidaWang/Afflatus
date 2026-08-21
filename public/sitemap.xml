@@ -13,6 +13,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/"/>
   </url>
   <url>
+    <loc>https://feida.au/en/portfolio.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/portfolio.html"/>
+  </url>
+  <url>
+    <loc>https://feida.au/zh/portfolio.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://feida.au/portfolio.html"/>
+  </url>
+  <url>
     <loc>https://feida.au/en/arena.html</loc>
     <lastmod>2026-08-08</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://feida.au/en/arena.html"/>

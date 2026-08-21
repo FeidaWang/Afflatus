@@ -295,6 +295,27 @@
   50% { opacity: .45; transform: scale(.72); }
 }
 
+/* ── SHOWCASE / quiet tactical atlas ───────────────────────────── */
+
+.showcase-page { --afflatus-header-bg: #06080c; }
+
+[data-brand-persona="showcase"] {
+  --afflatus-brand-ink: #efefe9;
+  --afflatus-brand-accent: #7ee3ff;
+  --afflatus-brand-accent-2: #a8f346;
+  --afflatus-brand-font: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+[data-brand-persona="showcase"] .afflatus-brand__stage {
+  animation: afflatus-showcase-resolve 760ms var(--afflatus-brand-ease) both;
+}
+
+@keyframes afflatus-showcase-resolve {
+  0% { transform: translateY(3px); opacity: .35; filter: blur(1px); }
+  64% { transform: translateY(-1px); opacity: 1; filter: blur(0); }
+  100% { transform: none; }
+}
+
 /* ── ARENA / execution terminal ────────────────────────────────── */
 
 .arena-page { --afflatus-header-bg: #05070e; }

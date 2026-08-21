@@ -42,7 +42,10 @@
     "linkcheck": "npm run build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\""
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "astronomy-engine": "^2.1.19",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "three": "^0.160.1",
     "web-vitals": "^6.0.0"
   },

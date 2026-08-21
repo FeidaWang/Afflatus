@@ -33,6 +33,7 @@ describe('siteManifest', () => {
   it('derives navigation only from ordered active routes', () => {
     expect(NAV_ROUTES.map((route) => route.path)).toEqual([
       '/',
+      '/portfolio.html',
       '/arena.html',
       '/sectors.html',
       '/signal.html',
