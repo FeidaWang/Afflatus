@@ -4954,8 +4954,8 @@
   }
 
   .hero-title {
-    font-size: clamp(58px, 7.8vw, 112px) !important;
-    max-width: min(1180px, 78vw) !important;
+    font-size: clamp(48px, 4.6vw, 72px) !important;
+    max-width: min(1020px, 64vw) !important;
   }
 
   .hero-num {
@@ -5400,7 +5400,7 @@
     }
 
     .hero-title {
-      font-size: clamp(42px, 13vw, 74px) !important;
+      font-size: clamp(24px, 7vw, 34px) !important;
       max-width: 92vw !important;
     }
 
@@ -6844,14 +6844,14 @@
   /* The entry module reserves this geometry before Three.js is imported.
      Native sticky containment cannot cover content outside this section and
      remains correct if rAF is paused, a tab is restored, or WebGL is lost. */
-  .stardrive.has-motion-shell{height:200svh;--forge:0}
+  .stardrive.has-motion-shell{height:140svh;--forge:0}
   .stardrive.has-motion-shell .stardrive-stage{position:sticky;top:0;left:0;right:0;height:100svh}
   .stardrive.is-live .stardrive-stage.pin-fixed,
   .stardrive.is-live .stardrive-stage.pin-end{position:sticky;top:0;bottom:auto}
 
   /* B1 (2026-07-05): where CSS Scroll-Driven Animations are supported, the pin
-     itself moves to the compositor — a view-timeline named on the 200vh wrapper
-     makes its "contain" phase equal exactly the 100vh of pin room, and a linear
+     itself moves to the compositor — a view-timeline named on the long-form wrapper
+     makes its "contain" phase match the available pin room, and a linear
      transform animation over that phase keeps the (always position:absolute)
      stage visually fixed without any scroll-listener/getBoundingClientRect work.
      alphardForge.js feature-detects this (`CSS.supports('animation-timeline','view()')`)
@@ -6877,7 +6877,7 @@
      address bar to hide).
      2026-07-18 (U45): the strip's anchor flipped from `bottom:*svh` to
      `top:clamp(...)` (station-owner layout request — panel now sits right
-     under the hero title instead of at the foot of the 200svh scroll-through).
+     under the hero title instead of at the foot of the scroll-through).
      The svh-vs-vh lesson above still applies (that's why the new top offset
      is also unitless-safe/clamp-bounded, not a bare vh value), it's just the
      offset's *edge* that changed, not the underlying reasoning. */

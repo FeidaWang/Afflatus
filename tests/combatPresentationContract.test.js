@@ -54,7 +54,7 @@ describe('combat presentation contract', () => {
 
   it('provides cruise telemetry and focusable command stations at every viewport', async () => {
     const [html, css, source, hmd] = await Promise.all([
-      readFile(new URL('../index.html', import.meta.url), 'utf8'),
+      readFile(new URL('../portfolio.html', import.meta.url), 'utf8'),
       readFile(new URL('../src/cic-hud.css', import.meta.url), 'utf8'),
       readFile(new URL('../src/homeExperience.js', import.meta.url), 'utf8'),
       readFile(new URL('../src/ui/combatHmdV3.js', import.meta.url), 'utf8')

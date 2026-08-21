@@ -1,12 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const html = readFileSync('index.html', 'utf8');
+const html = readFileSync('portfolio.html', 'utf8');
 const entry = readFileSync('src/main.js', 'utf8');
 const telemetry = readFileSync('src/ui/homeScrollTelemetry.js', 'utf8');
 const performanceStyles = readFileSync('src/performance-dossier.css', 'utf8');
 const content = readFileSync('src/data/content.js', 'utf8');
 const cruise = readFileSync('src/cic-hud.css', 'utf8');
+const heroStyles = readFileSync('src/home-visual-upgrade.css', 'utf8');
 
 describe('home presentation contract', () => {
   it('reveals financial numbers and energy tracks at scroll entry', () => {
@@ -33,6 +34,15 @@ describe('home presentation contract', () => {
     expect(html).toContain('data-zh="航向"');
     expect(cruise).toContain('width: min(760px, calc(100vw - 32px))');
     expect(cruise).toContain('clip-path: polygon(12px 0');
+  });
+
+  it('art-directs one gravity-well focal point with explicit hero actions', () => {
+    expect(html).toContain('class="hero-observatory"');
+    expect(html).toContain('class="hero-lens-reticle"');
+    expect(html).toContain('class="scroll-hint hero-record-cta" href="#fy2026Performance"');
+    expect(html).toContain('id="heroCommandCta"');
+    expect(heroStyles).toContain('.hero-lens-reticle');
+    expect(heroStyles).toContain('.hero-record-cta');
   });
 
   it('uses a dedicated battleship favicon on the home page', () => {

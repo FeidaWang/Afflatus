@@ -6,6 +6,10 @@
       "path": "/"
     },
     {
+      "id": "portfolio",
+      "path": "/portfolio.html"
+    },
+    {
       "id": "arena",
       "path": "/arena.html"
     },

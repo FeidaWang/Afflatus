@@ -254,7 +254,7 @@ function auditRoute(route) {
     }
   }
 
-  if (route.build && route.status !== 'prototype' && route.id !== 'serial') {
+  if (route.build && route.status !== 'prototype' && !['main', 'serial'].includes(route.id)) {
     const prepaint = html.match(/<script>([^<]*afflatus:locale:v1[^<]*)<\/script>/i)?.[1] || null;
     if (!prepaint) {
       fail(`${route.file}: missing synchronous locale pre-paint/migration script`);

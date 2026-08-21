@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { PICKS_EN, PICKS_ZH } from '../src/data/content.js';
 
-const html = readFileSync('index.html', 'utf8');
+const html = readFileSync('portfolio.html', 'utf8');
 const copy = readFileSync('src/data/content.js', 'utf8');
 const voyageConsole = readFileSync('src/ui/voyageLogConsole.js', 'utf8');
 const brandCss = readFileSync('public/styles/afflatus-brand.css', 'utf8');
@@ -57,7 +57,7 @@ describe('FY2025–26 homepage performance dossier', () => {
   it('folds the single additional risk reading into 02-A', () => {
     const cycleCore = html.slice(html.indexOf('<section class="blackbox-module cycle-core"'), html.indexOf('<section class="blackbox-module velocity-field"'));
     expect(cycleCore).toContain('Annual volatility');
-    expect(cycleCore).toContain('<dd>45%<small');
+    expect(cycleCore).toContain('<dd>45%</dd><dd class="core-telemetry-note"');
     expect(html).not.toContain('class="risk-chamber"');
     expect(html).not.toContain('class="risk-grid');
   });

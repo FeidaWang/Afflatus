@@ -13,7 +13,7 @@ function filesUnder(dir) {
 
 describe('homepage relativistic black hole contract', () => {
   it('replaces the synthetic gold ring with the source observatory background', () => {
-    const html = readFileSync('index.html', 'utf8');
+    const html = readFileSync('portfolio.html', 'utf8');
     const main = readFileSync('src/homeExperience.js', 'utf8');
 
     expect(html).toContain('id="blackhole-stage"');
@@ -55,7 +55,7 @@ describe('homepage relativistic black hole contract', () => {
   });
 
   it('keeps the gravity well unobstructed and drives every star through one approach field', () => {
-    const html = readFileSync('index.html', 'utf8');
+    const html = readFileSync('portfolio.html', 'utf8');
     const fallback = readFileSync('src/scene/backgroundScene.js', 'utf8');
     const worker = readFileSync('src/scene/backgroundScene.worker.js', 'utf8');
 

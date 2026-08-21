@@ -198,7 +198,13 @@ const listItem = (position, item) => ({
 function buildProfileGraph(route, locale, facts, url) {
   const page = basePageNode(route, locale, facts, url, 'ProfilePage');
   page.mainEntity = { '@id': PROFILE_ID };
-  return [personNode(), websiteNode(languageValue(route, locale)), imageNode(route, locale, url), page];
+  return [
+    personNode(),
+    websiteNode(languageValue(route, locale)),
+    imageNode(route, locale, url),
+    ...(route.id === 'main' ? [] : [breadcrumbNode(route, locale, url)]),
+    page,
+  ];
 }
 
 function buildArenaGraph(route, locale, facts, url) {

@@ -9,6 +9,12 @@ export const NAV_ROUTES = Object.freeze([
     "zh": "首页"
   },
   {
+    "id": "portfolio",
+    "path": "/portfolio.html",
+    "en": "Portfolio",
+    "zh": "作品集"
+  },
+  {
     "id": "arena",
     "path": "/arena.html",
     "en": "Arena",

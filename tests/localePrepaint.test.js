@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { SITE_MANIFEST } from '../src/config/siteManifest.js';
 
 const adaptiveRoutes = SITE_MANIFEST.filter((route) => (
-  route.build && route.status !== 'prototype' && route.id !== 'serial'
+  route.build && route.status !== 'prototype' && !['main', 'serial'].includes(route.id)
 ));
 
 function prepaintSource(file) {

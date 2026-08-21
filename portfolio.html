@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en';if(v==='zh'){var d=document.documentElement,u=function(){d.style.removeProperty('visibility')};d.style.visibility='hidden';var t=setTimeout(u,1500),p=function(r,h){var q=[],m='[data-en],[data-en-ph],[data-aria-en],.lang-toggle';if(r.nodeType===1&&r.matches(m))q.push(r);if(r.querySelectorAll)q.push.apply(q,r.querySelectorAll(m));q.forEach(function(e){var z;if(e.hasAttribute('data-en')&&(z=e.getAttribute('data-zh'))!==null){if(e.hasAttribute('data-i18n-html')){if(h&&e.innerHTML!==z)e.innerHTML=z}else if(e.textContent!==z)e.textContent=z}if(e.hasAttribute('data-en-ph'))e.setAttribute('placeholder',e.getAttribute('data-zh-ph')||e.getAttribute('data-en-ph'));if(e.hasAttribute('data-aria-en'))e.setAttribute('aria-label',e.getAttribute('data-aria-zh')||e.getAttribute('data-aria-en'));if(e.classList.contains('lang-toggle')){e.textContent='EN';e.setAttribute('aria-label','Switch to English');if(!e.matches('a[href]'))e.setAttribute('aria-pressed','true')}})},o=new MutationObserver(function(rs){rs.forEach(function(r){r.addedNodes.forEach(function(x){p(x,false)})})});o.observe(d,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',function(){try{p(document,true)}finally{clearTimeout(t);o.disconnect();u()}},{once:true})}}catch(e){}</script>
+<script type="module" src="/src/entry/performance.js"></script>
+<!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
+     fetch + init only runs once the browser reports idle time (or after a
+     3s/2s fallback timeout for browsers without requestIdleCallback), so it
+     doesn't compete with render-critical work during first paint. Same
+     dataLayer/gtag('config',...) calls as before, just deferred. -->
+<script>
+(function(){
+  function loadGtag(){
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', 'G-M078NTBWRF');
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
+    document.head.appendChild(s);
+  }
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
+  else setTimeout(loadGtag, 2000);
+})();
+</script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<style id="home-language-visibility">
+  #langMiniToggle{display:none}
+  @media(max-width:860px){#langBtn{display:none}#langMiniToggle{display:inline-flex}}
+</style>
+<title>Portfolio · Project Afflatus</title>
+<meta name="description" content="Bruce's privacy-first FY2025–26 capital flight recorder, software field notes, original writing and data-driven experiments.">
+<meta name="theme-color" content="#05070b">
+<link rel="canonical" href="https://feida.au/portfolio.html">
+  <!-- afflatus:route-seo:start -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Project Afflatus">
+  <meta property="og:title" content="Project Afflatus · Portfolio">
+  <meta property="og:description" content="A deep-space captain log for capital, software, original writing and data-driven experiments.">
+  <meta property="og:url" content="https://feida.au/portfolio.html">
+  <meta property="og:locale" content="en_AU">
+  <meta property="og:locale:alternate" content="zh_CN">
+  <meta property="og:image" content="https://feida.au/assets/og/portfolio-en.jpg">
+  <meta property="og:image:secure_url" content="https://feida.au/assets/og/portfolio-en.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Project Afflatus portfolio and captain log in deep space">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Project Afflatus · Portfolio">
+  <meta name="twitter:description" content="A deep-space captain log for capital, software, original writing and data-driven experiments.">
+  <meta name="twitter:image" content="https://feida.au/assets/og/portfolio-en.jpg">
+  <meta name="twitter:image:alt" content="Project Afflatus portfolio and captain log in deep space">
+  <script type="application/ld+json" data-afflatus-route-schema="portfolio" lang="en-AU">
+  {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://feida.au/#person",
+      "name": "Feida Wang",
+      "alternateName": "Bruce",
+      "url": "https://feida.au/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://feida.au/#website",
+      "url": "https://feida.au/",
+      "name": "Project Afflatus",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "publisher": {
+        "@id": "https://feida.au/#person"
+      }
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://feida.au/portfolio.html#primaryimage",
+      "url": "https://feida.au/assets/og/portfolio-en.jpg",
+      "contentUrl": "https://feida.au/assets/og/portfolio-en.jpg",
+      "width": 1200,
+      "height": 630,
+      "caption": "Project Afflatus portfolio and captain log in deep space",
+      "inLanguage": "en-AU"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://feida.au/portfolio.html#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://feida.au/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Portfolio",
+          "item": "https://feida.au/portfolio.html"
+        }
+      ]
+    },
+    {
+      "@type": "ProfilePage",
+      "@id": "https://feida.au/portfolio.html#webpage",
+      "url": "https://feida.au/portfolio.html",
+      "name": "Portfolio · Project Afflatus",
+      "description": "Bruce's privacy-first FY2025–26 capital flight recorder, software field notes, original writing and data-driven experiments.",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "isPartOf": {
+        "@id": "https://feida.au/#website"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://feida.au/portfolio.html#primaryimage"
+      },
+      "breadcrumb": {
+        "@id": "https://feida.au/portfolio.html#breadcrumb"
+      },
+      "mainEntity": {
+        "@id": "https://feida.au/#person"
+      }
+    }
+  ]
+}
+  </script>
+  <!-- afflatus:route-seo:end -->
+
+
+
+
+
+
+
+
+<link rel="icon" type="image/svg+xml" href="/favicons/home.svg?v=20260808">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* U21 Phase 1 D1: wrapped in @layer overrides now that src/styles.css is
+   @layer legacy — this block's own comment already says its job is to
+   WIN against styles.css's mobile HUD rules, so `overrides` (which always
+   beats `legacy` regardless of specificity) makes that explicit instead of
+   relying on being unlayered + source order, which is exactly the pattern
+   the rest of this migration exists to retire. No rule content changed. */
+@layer overrides {
+/* Combat pilot panel — relative so the canvas fills the cell */
+.hud-pilot{position:relative}
+/* V22: the old phone combat layout that hid radar+defense and forced a
+   2-col "pilot right" grid has been removed — it's superseded by (and
+   was fighting with, via #combatHud's higher-specificity ID selector)
+   the newer 2-row 4-panel mobile layout in src/styles.css's
+   "2026-06-14 Mobile target-first HUD" block (@media max-width:860px).
+   The two conflicting grid-template-areas were producing the empty,
+   non-interactive HUD area reported on real devices. */
+}
+</style>
+<link rel="stylesheet" href="/styles/responsive-primitives.css">
+<link rel="stylesheet" href="/styles/afflatus-brand.css">
+<link rel="preload" href="/vendor/black-hole/source-poster.jpg" as="image" fetchpriority="high">
+<script type="module" src="/src/entry/viewport.js"></script>
+</head>
+<body class="home-page hud-off">
+
+<canvas id="starfield"></canvas>
+<div id="blackhole-stage" aria-hidden="true">
+  <div class="blackhole-poster" role="presentation"></div>
+  <iframe
+    id="blackhole-gl"
+    title="Relativistic black hole background"
+    data-src="/vendor/black-hole/background.html"
+    tabindex="-1"
+    loading="lazy"
+    fetchpriority="low"
+  ></iframe>
+  <div class="hero-observatory" role="presentation">
+    <div class="hero-depth-field"></div>
+    <div class="hero-lens-reticle"><i></i><i></i><i></i></div>
+    <div class="hero-scene-readout">
+      <span><i data-en="LENS MODEL" data-zh="透镜模型">LENS MODEL</i><b data-en="RELATIVISTIC" data-zh="相对论模式">RELATIVISTIC</b></span>
+      <span><i data-en="PHOTON RING" data-zh="光子环">PHOTON RING</i><b data-en="TRACKING" data-zh="持续追踪">TRACKING</b></span>
+      <span><i data-en="FIELD STATE" data-zh="引力场态">FIELD STATE</i><b data-en="STABLE" data-zh="稳定">STABLE</b></span>
+    </div>
+  </div>
+</div>
+<canvas id="event-layer"></canvas>
+
+<div class="nuke-warning" id="nukeWarning">CRITICAL: NUCLEAR LAUNCH DETECTED<br>RADIATION HAZARD</div>
+<div class="weapon-warning" id="weaponWarning"><b>ENFORCER MAIN CANNON</b><span>charging particle spine · stand by</span></div>
+<div class="bridge-callout" id="bridgeCallout">Cruising mode on</div>
+
+<output class="cic-cruise-strip" id="cicCruiseStrip" aria-label="Cruise telemetry" data-aria-en="Cruise telemetry" data-aria-zh="巡航遥测">
+  <span class="cic-cruise-state"><i aria-hidden="true"></i><b id="cicCruiseState" data-en="CRUISE / SENSOR PASSIVE" data-zh="巡航 / 传感器静默监听">CRUISE / SENSOR PASSIVE</b></span>
+  <span><i data-en="HDG" data-zh="航向">HDG</i><b id="cicCruiseHeading">—</b></span>
+  <span><i data-en="VEL" data-zh="速度">VEL</i><b id="cicCruiseVelocity">—</b></span>
+  <span><i data-en="HULL" data-zh="舰体">HULL</i><b id="cicCruiseHull">100%</b></span>
+  <span class="cic-cruise-target"><i data-en="TARGET" data-zh="目标">TARGET</i><b id="cicCruiseTarget" data-en="NO TRACK" data-zh="无目标">NO TRACK</b></span>
+</output>
+
+<div id="combatHud" aria-hidden="true" inert data-cic-hud>
+  <div class="cic-vignette" aria-hidden="true"></div>
+  <div class="hud-warning">战术尾迹 · 引力井前方</div>
+  <div class="hud-subwarning">舰桥锁定 · 目标神谕 · 信号帷幕</div>
+  <div class="cic-shell">
+    <div class="cic-station-tabs" role="navigation" aria-label="Command stations">
+      <button type="button" data-cic-panel-focus="tactical">态势</button>
+      <button type="button" data-cic-panel-focus="fire">火控</button>
+      <button type="button" data-cic-panel-focus="intel">情报</button>
+    </div>
+    <aside class="cic-panel cic-fire-control" aria-label="Fire control and interception">
+      <header class="cic-panel-head">
+        <span class="cic-eyebrow">DEFENCE ARCHITECTURE · 01</span>
+        <strong data-hud="battleTitle">四联防御与火控</strong>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="fire" aria-label="Expand fire-control station" aria-expanded="false"></button>
+        <button class="cic-ap-toggle" id="apToggle" type="button" data-hot aria-pressed="false">
+          <span>AP</span><b id="apState">自动</b>
+        </button>
+      </header>
+      <div class="cic-weapon-wells" id="cicWeaponMatrix">
+        <button class="cic-weapon" data-cic-weapon data-weapon="cannon" type="button" data-hot>
+          <span class="cic-weapon-rail" aria-hidden="true"><i></i></span>
+          <span class="cic-weapon-code"><i>PD-01</i><em>▥</em></span>
+          <b data-hud="wCannon">密集阵</b>
+          <small data-hud="wCannonDesc">近防弹幕</small>
+          <span class="cic-weapon-profile"><i>ROF</i><b>4800</b><i>RNG</i><b>2.4K</b></span>
+          <span class="cic-weapon-state" data-hud="ready">就绪</span>
+          <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
+        </button>
+        <button class="cic-weapon" data-cic-weapon data-weapon="missile" type="button" data-hot>
+          <span class="cic-weapon-rail" aria-hidden="true"><i></i></span>
+          <span class="cic-weapon-code"><i>AA-47</i><em>↗</em></span>
+          <b data-hud="wMissile">导弹</b>
+          <small data-hud="wMissileDesc">自主制导</small>
+          <span class="cic-weapon-profile"><i>DLK</i><b>LIVE</b><i>PK</i><b>82%</b></span>
+          <span class="cic-weapon-state" data-hud="ready">就绪</span>
+          <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
+        </button>
+        <button class="cic-weapon" data-cic-weapon data-weapon="nuke" type="button" data-hot>
+          <span class="cic-weapon-rail" aria-hidden="true"><i></i></span>
+          <span class="cic-weapon-code"><i>NX-02</i><em>☢</em></span>
+          <b data-hud="wNuke">核打击</b>
+          <small data-hud="wNukeDesc">双钥授权</small>
+          <span class="cic-weapon-profile"><i>YLD</i><b>12KT</b><i>AUTH</i><b>2/2</b></span>
+          <span class="cic-weapon-state" data-hud="ready">就绪</span>
+          <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
+        </button>
+        <button class="cic-weapon" data-cic-weapon data-weapon="enforcer" type="button" data-hot>
+          <span class="cic-weapon-rail" aria-hidden="true"><i></i></span>
+          <span class="cic-weapon-code"><i>EF-09</i><em>✦</em></span>
+          <b data-hud="wEnforcer">主炮</b>
+          <small data-hud="wEnforcerDesc">粒子脊柱</small>
+          <span class="cic-weapon-profile"><i>CAP</i><b>9.8G</b><i>HEAT</i><b>86°</b></span>
+          <span class="cic-weapon-state" data-hud="ready">就绪</span>
+          <span class="cic-recommend" data-hud="recommendLabel">系统推荐</span>
+        </button>
+      </div>
+      <form class="cic-state-form" id="weaponForm">
+        <label for="weaponSelect">彗星截击裁决</label>
+        <select id="weaponSelect">
+          <option value="auto">自动 · 舰长裁决火力</option>
+          <option value="cannon">密集阵 · 左右舷近防弹幕</option>
+          <option value="missile">F-47 · 自主制导导弹</option>
+          <option value="nuke">B2 · 战术核打击护航</option>
+          <option value="enforcer">执法者主炮 · 冷却30秒</option>
+        </select>
+      </form>
+    </aside>
+
+    <section class="cic-panel cic-tactical" aria-label="Combat information center sensor picture">
+      <header class="cic-panel-head cic-tactical-head">
+        <span>
+          <i class="cic-live-dot" aria-hidden="true"></i>
+          <strong data-hud="pilotTitle">舰桥战术态势</strong>
+        </span>
+        <span class="cic-view-mode" data-hud="cicCaption" id="cicCameraLabel">CIC 战术传感图</span>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="tactical" aria-label="Expand tactical station" aria-expanded="false"></button>
+      </header>
+      <div class="cic-tactical-body">
+        <aside class="cic-sensor-rail" aria-label="Embedded flight sensors">
+          <div class="cic-radar-dock" aria-label="Embedded tactical radar">
+            <span>RADAR · L1</span>
+            <canvas id="cicRadarCanvas" aria-hidden="true"></canvas>
+          </div>
+          <div class="cic-flight-tape" aria-label="Flight vector">
+          <span><i>HDG</i><b id="cicHeading">—</b></span>
+          <span><i>VEL</i><b id="cicVelocity">—</b></span>
+          <span><i>G</i><b id="cicGLoad">—</b></span>
+          </div>
+        </aside>
+        <div class="cic-viewport">
+          <canvas class="cic-pilot-feed" id="cicPilotFeed" tabindex="0" aria-label="Interactive three-dimensional combat view. Drag to orbit the camera, scroll to zoom, and use arrow keys to rotate."></canvas>
+          <div class="cic-camera-controls" aria-label="Combat camera controls" hidden>
+            <span aria-hidden="true">DRAG · ORBIT</span>
+            <button id="cicCameraReset" type="button">RESET VIEW</button>
+          </div>
+        </div>
+        <aside class="cic-target-rail" aria-label="Target solution">
+          <span class="cic-threat-readout" id="cicThreatReadout">NO TRACK · SENSOR PASSIVE</span>
+          <div class="cic-solution-stack">
+            <span><i>RANGE</i><b id="cicRange">—</b></span>
+            <span><i>TOF</i><b id="cicIntercept">—</b></span>
+            <span><i>LOCK</i><b id="cicLockPct">0%</b></span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <aside class="cic-panel cic-intel" aria-label="Tactical feed and damage control">
+      <header class="cic-panel-head">
+        <span class="cic-eyebrow">CIC / CONDITION · 03</span>
+        <strong data-hud="systemsTitle">战斗情报与损管</strong>
+        <button class="cic-log-toggle" id="voyageLogToggle" type="button" data-hot aria-controls="cicVoyageConsole" aria-expanded="false">VOYAGE NOTES</button>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="intel" aria-label="Expand intelligence station" aria-expanded="false"></button>
+      </header>
+      <div class="cic-battle-feed" id="cicBattleFeed"></div>
+      <div class="cic-condition-grid">
+        <span><i data-hud="ammoLabel">弹药</i><b id="cicAmmoPct">100%</b></span>
+        <span><i data-hud="bayCdLabel">甲板</i><b id="cicDeckPct">96%</b></span>
+        <span><i data-hud="deviceLabel">舰体</i><b id="cicFleetPct">100%</b></span>
+        <span><i data-hud="manualLabel">火力</i><b id="cicWeaponName">AUTO</b></span>
+      </div>
+      <output class="cic-perf-readout" id="cicPerfReadout" aria-label="Combat renderer performance">P95 — · DC — · Q HIGH</output>
+      <footer class="cic-intel-footer">
+        <span class="cic-battle-log" id="battleLog">战术甲板待命</span>
+        <output class="cic-kill-meter" aria-label="Confirmed kills"><i data-hud="killsLabel">确认击毁</i><b id="killCounter">0</b></output>
+        <button class="cic-deck-toggle" id="jumpToggle" type="button" data-hot>资产甲板</button>
+      </footer>
+    </aside>
+
+    <section class="cic-log-console" id="cicVoyageConsole" aria-label="Voyage Notes" aria-hidden="true">
+      <header class="cic-log-head">
+        <span><i aria-hidden="true"></i><b data-log-copy="title">VOYAGE NOTES</b><em>LOCAL / READ-ONLY</em></span>
+        <output id="voyageLogStatus" aria-live="polite" data-log-copy="status">LOCAL ARCHIVE</output>
+        <button id="voyageLogClose" type="button" data-hot aria-label="Close Voyage Notes">×</button>
+      </header>
+      <div class="cic-log-body">
+        <aside class="cic-log-index" aria-label="Voyage archive summary">
+          <span class="cic-log-seal">AFFLATUS<br><b>CVN-034</b></span>
+          <dl>
+            <div><dt data-log-copy="position">POSITION</dt><dd>ALPHARD GLOWLINE</dd></div>
+            <div><dt data-log-copy="elapsed">ELAPSED</dt><dd>2738 SOL</dd></div>
+            <div><dt data-log-copy="integrity">INTEGRITY</dt><dd>SHA-384 / VERIFIED</dd></div>
+          </dl>
+          <span class="cic-log-route"><i></i><b>EARTH</b><em>128°</em><b>ALPHARD</b></span>
+        </aside>
+        <div class="cic-log-access">
+          <div class="cic-log-boot" id="voyageLogBoot" aria-hidden="true">
+            <span>OPENING FIELD NOTES</span><span>ARCHIVE INTEGRITY</span><span>LOCAL READ-ONLY VIEW</span><b>READY</b>
+          </div>
+          <div class="cic-log-entries" id="voyageLogEntries" aria-hidden="false">
+            <article><time>034 · 2026.07.04</time><b data-log-copy="entry1Title">ALPHARD GLOWLINE</b><p data-log-copy="entry1Body">资本不是弹药；首先要保住舰体、选择射界，然后才是开火。</p></article>
+            <article><time>033 · 2026.06.29</time><b data-log-copy="entry2Title">ORACLE INTERCEPT</b><p data-log-copy="entry2Body">每一个仓位都必须有退出条件。没有退出条件的信念，只是未标价的风险。</p></article>
+            <article><time>032 · 2026.06.18</time><b data-log-copy="entry3Title">SILENT WATCH</b><p data-log-copy="entry3Body">在信号稀薄时保持静默，比在噪声中寻找确定性更重要。</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div id="cursor">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="49" y="49" width="2" height="2" fill="#9ae5ff" />
+    <line x1="50" y1="10" x2="50" y2="40" stroke="#9ae5ff" stroke-width="1" opacity="0.8"/>
+    <line x1="50" y1="90" x2="50" y2="60" stroke="#9ae5ff" stroke-width="1" opacity="0.8"/>
+    <line x1="10" y1="50" x2="40" y2="50" stroke="#9ae5ff" stroke-width="1" opacity="0.8"/>
+    <line x1="90" y1="50" x2="60" y2="50" stroke="#9ae5ff" stroke-width="1" opacity="0.8"/>
+    <circle cx="50" cy="50" r="16" fill="none" stroke="rgba(232,179,128,0.5)" stroke-width="0.5" stroke-dasharray="2 4" />
+    <g class="spin-ring">
+      <path d="M 30 20 L 20 20 L 20 30" fill="none" stroke="rgba(154,229,255,0.7)" stroke-width="1.2" />
+      <path d="M 70 20 L 80 20 L 80 30" fill="none" stroke="rgba(154,229,255,0.7)" stroke-width="1.2" />
+      <path d="M 30 80 L 20 80 L 20 70" fill="none" stroke="rgba(154,229,255,0.7)" stroke-width="1.2" />
+      <path d="M 70 80 L 80 80 L 80 70" fill="none" stroke="rgba(154,229,255,0.7)" stroke-width="1.2" />
+    </g>
+  </svg>
+  <div class="cursor-target" id="cursorTarget">--</div>
+</div>
+
+<div class="captain-watermark" id="captainWatermark">
+  <b>Feida "Bruce" Wang · confirmed kill</b>
+  <span>personal command watermark · sponsor constellation</span>
+  <div class="sponsor-logos">
+    <i>in</i><i>Vercel</i><i>GitHub</i><i>Anthropic</i><i>OpenAI</i>
+  </div>
+</div>
+
+<nav class="site-header--follow">
+  <a class="afflatus-brand" data-afflatus-brand data-brand-persona="home" href="/" aria-label="Afflatus — Home">
+    <span class="afflatus-brand__stage" aria-hidden="true">
+      <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
+    </span>
+    <span class="afflatus-brand__sr">Afflatus</span>
+  </a>
+  <div class="nav-center">
+    <!-- Links rendered by /lib/nav.js from the shared SITE list (same source
+         as arena/sectors/signal/games/novels) -- see ROADMAP §2. Home doesn't
+         use i18n.js's data-en/data-zh swap (it has its own bilingual system),
+         so labels stay English-only here, matching prior behaviour. -->
+    <div class="nav-links" aria-label="Primary navigation" data-afflatus-nav></div>
+    <div class="top-telemetry" id="topTelemetry">
+      <div class="top-stat primary"><span class="sys-dot"></span><span data-top="uplink">FLEET TELEMETRY</span><b id="topUplink">ACTIVE</b></div>
+      <div class="top-stat"><span data-top="trajectory">VOID TRACK</span><b id="topTrajectory">L1 · stable</b></div>
+      <div class="top-stat"><span id="earthDistLabel" data-top="origin">DAYS FROM EARTH</span><b id="earthDistance">2738 DAYS</b></div>
+      <div class="top-stat"><span data-top="target">TARGET ORACLE</span><b id="topLock">IDLE</b></div>
+      <div class="top-stat mobile-hide top-energy"><span data-top="warp">WARP POWER</span><b class="energy-bar" id="throttleState" style="--energy:41%"><i></i><em>41%</em></b></div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="control-btn" id="commandModeBtn" data-hot>Command</button>
+    <a class="lang-mini-toggle" id="langMiniToggle" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-active="en"><span data-mini="en">EN</span><span class="mini-sep">/</span><span data-mini="zh">中</span></a>
+    <button class="nav-menu-btn" type="button" data-hot aria-label="Open deck menu">DECK</button>
+    <div class="nav-clock">
+      <span id="clockZone" aria-hidden="true"></span>
+      <b id="melDateTime">---</b>
+    </div>
+    <!-- The language controls are native links so fixed-locale documents,
+         canonical URLs, browser history and no-JS navigation stay aligned. -->
+    <a class="warp-btn verse-switch" id="langBtn" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文">以中文入梦</a>
+  </div>
+</nav>
+<main id="mainContent">
+  <section class="hero" style="padding-bottom:0">
+    <div class="hero-num" id="heroNum">FY25/26 · <span>capital flight recorder</span> · after-action report</div>
+    <h1 class="hero-title" id="heroTitle">I made capital move fast.<br> The drawdown taught me<br> what speed <em>costs</em>.</h1>
+    <p class="hero-desc" id="heroDesc">A private FY2025–26 trading record retaining only model bounds, cycle annualization, holding duration and risk methodology; position outcomes and underlying financial data stay private.</p>
+    <div class="hero-cta">
+      <a class="scroll-hint hero-record-cta" href="#fy2026Performance" id="scrollHint" data-hot>open FY25/26 flight record</a>
+      <button class="hero-command-cta" id="heroCommandCta" type="button" data-hot data-en="enter command mode" data-zh="进入指挥模式">enter command mode</button>
+      <span class="coord" id="coord">bearing · singular throne</span>
+    </div>
+  </section>
+
+  <section class="stardrive" id="stardrive" aria-label="FY2025–26 modeled performance — approach to Alphard">
+    <div class="stardrive-stage">
+      <!-- U30 R2 (?fx=stage, default off): this wrapper is the sticky-scale
+           "stargate" stage — scale(.8)+visible border-radius growing to
+           scale(1)/radius 0 as --forge (already computed by alphardForge.js
+           for the existing pin/tagline/metrics) goes 0→1. Inert no-op
+           (transform:none via default --forge:1) unless the flag is set. -->
+      <div class="stardrive-scale">
+        <canvas id="alphardForge" aria-hidden="true"></canvas>
+        <div class="stardrive-veil" aria-hidden="true"></div>
+        <div class="stardrive-caption" aria-hidden="true">
+          <span class="fc-kicker">ALPHARD JUMP POINT · APPROACH VECTOR</span>
+          <span class="fc-sub">limit of charted space</span>
+        </div>
+        <div class="forge-tagline" id="forgeTagline">
+          <b data-en="Every return is a jump through the dark." data-zh="每一份回报，都是一次穿越深空的跃迁。">Every return is a jump through the dark.</b>
+        </div>
+        <div class="strip" id="strip">
+          <div class="strip-cell hero-metric">
+            <div class="strip-label" id="sl0">Annual return · upper bound</div>
+            <div class="strip-value pos" id="sv0">41.4%</div>
+            <div class="strip-foot" id="sf0">modeled · capital-time reconstruction</div>
+          </div>
+          <div class="strip-cell">
+            <div class="strip-label" id="sl1">Sharpe · upper bound</div>
+            <div class="strip-value" id="sv1">0.85</div>
+            <div class="strip-foot" id="sf1">estimated · risk-free input 4.50%</div>
+          </div>
+          <div class="strip-cell">
+            <div class="strip-label" id="sl2">Max drawdown · upper bound</div>
+            <div class="strip-value neg" id="sv2">−22%</div>
+            <div class="strip-foot" id="sf2">estimated · 2026-06-16—25 window</div>
+          </div>
+          <div class="strip-cell">
+            <div class="strip-label" id="sl3">Beta · upper bound</div>
+            <div class="strip-value" id="sv3">1.85</div>
+            <div class="strip-foot" id="sf3">estimated · technology concentration vs SPX</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="equity performance-dossier" id="fy2026Performance" aria-labelledby="s2title">
+    <div class="sec-num" id="s2num">02 · <span>FY25/26 capital black box</span></div>
+    <h2 class="sec-title" id="s2title">Return is not one number.<br>It is a chain of <em>assumptions</em>.</h2>
+    <p class="sec-desc" id="s2desc">Three telemetry layers answer three useful questions: closed-cycle capital velocity, thrust relative to supplied benchmarks, and the holding-time geometry of five completed routes.</p>
+
+    <div class="blackbox-sequence">
+      <section class="blackbox-module cycle-core" aria-label="Closed-cycle capital core" data-aria-en="Closed-cycle capital core" data-aria-zh="已结清周期资本核心">
+        <header class="module-label">
+          <span data-en="02-A / CYCLE CORE" data-zh="02-A / 周期核心">02-A / CYCLE CORE</span>
+          <b data-en="CLOSED-CYCLE CAPITAL VELOCITY" data-zh="已结清周期资金速度">CLOSED-CYCLE CAPITAL VELOCITY</b>
+          <em data-en="FY2025—26 / 365-DAY MODEL" data-zh="2025—26 财年 / 365 天模型">FY2025—26 / 365-DAY MODEL</em>
+        </header>
+        <div class="cycle-core-grid">
+          <div class="cycle-dial">
+            <div class="cycle-efficiency">
+              <span data-en="Annualized cycle efficiency" data-zh="周期年化效率">Annualized cycle efficiency</span>
+              <strong>+261.2%</strong>
+              <em data-en="CAPITAL VELOCITY" data-zh="资金速度">CAPITAL VELOCITY</em>
+            </div>
+          </div>
+          <dl class="core-telemetry">
+            <div><dt data-en="Weighted capital days" data-zh="资金加权占用天数">Weighted capital days</dt><dd>7.8</dd><dd class="core-telemetry-note" data-en="DAYS / CLOSED CYCLES" data-zh="天 / 已结清周期">DAYS / CLOSED CYCLES</dd></div>
+            <div><dt data-en="Flight paths" data-zh="交易航线">Flight paths</dt><dd>05</dd><dd class="core-telemetry-note" data-en="PROFITABLE / CLOSED" data-zh="盈利 / 已结清">PROFITABLE / CLOSED</dd></div>
+            <div class="risk-load"><dt data-en="Annual volatility" data-zh="年波动率">Annual volatility</dt><dd>45%</dd><dd class="core-telemetry-note" data-en="ESTIMATED UPPER BOUND" data-zh="估算上界">ESTIMATED UPPER BOUND</dd></div>
+            <div><dt data-en="Reporting basis" data-zh="统计口径">Reporting basis</dt><dd data-en="CLOSED" data-zh="已结清">CLOSED</dd><dd class="core-telemetry-note" data-en="LOT-LEVEL WINDOW" data-zh="逐批次窗口">LOT-LEVEL WINDOW</dd></div>
+          </dl>
+        </div>
+        <p class="core-note" data-en="A mechanical 365-day projection of five closed cycles—not an achieved account result. Risk measures remain method-dependent estimates." data-zh="将五个已结清周期机械外推至 365 天，并非账户实际结果；风险读数仍属于依赖计算方法的估算。">A mechanical 365-day projection of five closed cycles—not an achieved account result. Risk measures remain method-dependent estimates.</p>
+      </section>
+
+      <section class="blackbox-module velocity-field" aria-label="Relative model velocity vectors" data-aria-en="Relative model velocity vectors" data-aria-zh="模型相对速度矢量">
+      <header class="module-label">
+        <span data-en="02-B / RELATIVE VELOCITY" data-zh="02-B / 相对速度">02-B / RELATIVE VELOCITY</span>
+        <b data-en="HEADLINE MODEL MAX / SUPPLIED BENCHMARK INPUT" data-zh="首屏模型上界 / 所提供基准输入">HEADLINE MODEL MAX / SUPPLIED BENCHMARK INPUT</b>
+        <em data-en="VECTOR FIELD / NORMALIZED" data-zh="矢量场 / 标准化">VECTOR FIELD / NORMALIZED</em>
+      </header>
+      <div class="velocity-stage">
+        <div class="benchmark-row velocity-vector" style="--benchmark:66.8%;--vector-order:0">
+          <span><i data-en="VECTOR 01" data-zh="矢量 01">VECTOR 01</i><b data-en="MODEL MAX / QQQ" data-zh="模型上界 / QQQ">MODEL MAX / QQQ</b></span>
+          <i class="vector-rail" aria-hidden="true"></i>
+          <strong>2.94×</strong>
+        </div>
+        <div class="benchmark-row velocity-vector primary" style="--benchmark:100%;--vector-order:1">
+          <span><i data-en="VECTOR 02" data-zh="矢量 02">VECTOR 02</i><b data-en="MODEL MAX / SPX" data-zh="模型上界 / 标普 500">MODEL MAX / SPX</b></span>
+          <i class="vector-rail" aria-hidden="true"></i>
+          <strong>4.40×</strong>
+        </div>
+      </div>
+      <p class="velocity-note" data-en="Each vector divides the single headline model maximum by its supplied benchmark input." data-zh="每条矢量均以首屏唯一的模型上界除以对应的基准输入。">Each vector divides the single headline model maximum by its supplied benchmark input.</p>
+      </section>
+
+      <section class="blackbox-module flight-paths" aria-labelledby="flightPathsTitle">
+      <header class="flight-path-head module-label">
+        <span data-en="02-C / FLIGHT PATH MATRIX" data-zh="02-C / 航线矩阵">02-C / FLIGHT PATH MATRIX</span>
+        <h3 id="flightPathsTitle" data-en="Five closed-cycle trajectories" data-zh="五条已结清周期轨迹">Five closed-cycle trajectories</h3>
+        <p data-en="Cycle efficiency, holding duration and execution chronology share one compact flight recorder." data-zh="周期效率、持仓时长与执行时间线集中在一台紧凑飞行记录仪中。">Cycle efficiency, holding duration and execution chronology share one compact flight recorder.</p>
+      </header>
+
+      <div class="route-manifest">
+        <div class="route-axis" aria-hidden="true"><span>IDX</span><span data-en="ASSET" data-zh="标的">ASSET</span><span data-en="CYCLE VELOCITY" data-zh="周期速度">CYCLE VELOCITY</span><span data-en="HOLDING ARC" data-zh="持仓弧线">HOLDING ARC</span><span data-en="FLIGHT LOG" data-zh="航行记录">FLIGHT LOG</span></div>
+      <article class="trade-route" style="--route-duration:7.1%" data-rank="01">
+        <span class="route-rank">01</span>
+        <header><span>AVGO</span><b data-en="Broadcom" data-zh="博通">Broadcom</b></header>
+        <div class="route-efficiency"><strong>+260.4%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
+        <div class="route-track"><i></i><b data-en="17.5 D HOLD" data-zh="持有 17.5 天">17.5 D HOLD</b></div>
+        <p data-en="Two entry clusters in May and June; two exits completed by 16 June." data-zh="5 月与 6 月分两组建仓，并于 6 月 16 日前分两次退出。">Two entry clusters in May and June; two exits completed by 16 June.</p>
+      </article>
+
+      <article class="trade-route" style="--route-duration:1.2%" data-rank="02">
+        <span class="route-rank">02</span>
+        <header><span>DRAM</span><b data-en="Memory ETF" data-zh="内存 ETF">Memory ETF</b></header>
+        <div class="route-efficiency"><strong>+208.5%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
+        <div class="route-track"><i></i><b data-en="3.0 D HOLD" data-zh="持有 3.0 天">3.0 D HOLD</b></div>
+        <p data-en="A three-day disclosed holding window; year-end open lots remain outside this cycle." data-zh="披露的持仓窗口为三天；期末未结清批次不计入本周期。">A three-day disclosed holding window; year-end open lots remain outside this cycle.</p>
+      </article>
+
+      <article class="trade-route" style="--route-duration:4.6%" data-rank="03">
+        <span class="route-rank">03</span>
+        <header><span>SNDK</span><b data-en="SanDisk" data-zh="闪迪">SanDisk</b></header>
+        <div class="route-efficiency"><strong>+257.9%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
+        <div class="route-track"><i></i><b data-en="11.2 D HOLD" data-zh="持有 11.2 天">11.2 D HOLD</b></div>
+        <p data-en="Four rolling entries and four rolling exits from late January through 18 March." data-zh="从 1 月下旬至 3 月 18 日，分四次滚动买入并分四次滚动卖出。">Four rolling entries and four rolling exits from late January through 18 March.</p>
+      </article>
+
+      <article class="trade-route" style="--route-duration:100%" data-rank="04">
+        <span class="route-rank">04</span>
+        <header><span>NVO</span><b data-en="Novo Nordisk" data-zh="诺和诺德">Novo Nordisk</b></header>
+        <div class="route-efficiency"><strong>+32.6%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
+        <div class="route-track"><i></i><b data-en="246 D HOLD" data-zh="持有 246 天">246 D HOLD</b></div>
+        <p data-en="The longest disclosed holding window. Operational settlement detail remains private." data-zh="这是披露周期中最长的持仓窗口；具体结算细节保持私密。">The longest disclosed holding window. Operational settlement detail remains private.</p>
+      </article>
+
+      <article class="trade-route" style="--route-duration:2.3%" data-rank="05">
+        <span class="route-rank">05</span>
+        <header><span>XLE</span><b data-en="Energy ETF" data-zh="能源 ETF">Energy ETF</b></header>
+        <div class="route-efficiency"><strong>+85.6%</strong><span data-en="annualized cycle efficiency" data-zh="持仓周期年化效率">annualized cycle efficiency</span></div>
+        <div class="route-track"><i></i><b data-en="5.6 D HOLD" data-zh="持有 5.6 天">5.6 D HOLD</b></div>
+        <p data-en="A short disclosed holding window with several March exits; settlement values remain private." data-zh="这是一个较短的公开持仓窗口，3 月分数次退出；具体结算数值保持私密。">A short disclosed holding window with several March exits; settlement values remain private.</p>
+      </article>
+      </div>
+      </section>
+    </div>
+
+    <aside class="methodology-seal">
+      <span data-en="METHOD / 2026-08-08" data-zh="方法说明 / 2026-08-08">METHOD / 2026-08-08</span>
+      <p data-en="Position outcomes, principal, transaction values, quantities and account balances are omitted. Cycle annualization, the single headline account-model maximum and risk measures remain method-dependent estimates, not audited results." data-zh="页面不展示单笔结果、本金、成交金额、数量与账户余额。周期年化、首屏唯一的账户模型上界与风险读数均依赖具体计算方法，并非审计结果。">Position outcomes, principal, transaction values, quantities and account balances are omitted. Cycle annualization, the single headline account-model maximum and risk measures remain method-dependent estimates, not audited results.</p>
+    </aside>
+  </section>
+
+  <section class="holdings portfolio-convoy" id="portfolioConvoy" aria-labelledby="s3title">
+    <header class="portfolio-intro">
+      <div class="sec-num" id="s3num">03 · <span>top 10 allocations · usa</span></div>
+      <h2 class="sec-title" id="s3title">十个 AI 引力源，<br>组成一座实时运行的<em>产业太阳系</em>。</h2>
+      <p class="sec-desc" id="s3desc">2026-08-07 08:29 ET · 非农发布前快照：最高权重 NVDA 是太阳，其余九支映射为水星至冥王星。星体按当前历元公转并依据真实自转方向动态演化；点击任意代码，可展开对应产业天体。</p>
+    </header>
+
+    <div class="convoy-shell">
+      <aside class="convoy-visual" aria-label="Interactive AI industry solar system" data-aria-en="Interactive AI industry solar system" data-aria-zh="AI 产业互动太阳系">
+        <header class="convoy-telemetry">
+          <span data-en="AI INDUSTRY SOLAR ATLAS" data-zh="AI 产业太阳图鉴">AI INDUSTRY SOLAR ATLAS</span>
+          <b><i></i><span data-en="CURRENT EPOCH · 10 BODIES" data-zh="当前历元 · 10 个天体">CURRENT EPOCH · 10 BODIES</span></b>
+        </header>
+
+        <div class="convoy-orbit">
+          <div class="orbit-field">
+            <canvas class="convoy-solar-canvas" id="convoySolarSystem" aria-hidden="true"></canvas>
+            <span class="solar-epoch" aria-hidden="true"><i data-en="LIVE ORBIT MODEL" data-zh="实时轨道模型">LIVE ORBIT MODEL</i><b id="solarEpoch">—</b></span>
+            <i class="orbit-ring ring-a"></i>
+            <i class="orbit-ring ring-b"></i>
+            <i class="orbit-ring ring-c"></i>
+            <i class="orbit-axis axis-x"></i>
+            <i class="orbit-axis axis-y"></i>
+            <div class="convoy-nodes" id="convoyNodes"></div>
+            <div class="convoy-core" aria-hidden="true">
+              <span data-en="SOLAR" data-zh="太阳">SOLAR</span>
+              <b data-en="ATLAS" data-zh="图鉴">ATLAS</b>
+              <i></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="convoy-readout" aria-live="polite">
+          <span id="convoyLayer" data-en="SUN / COMPUTE CORE" data-zh="太阳 / 算力核心">SUN / COMPUTE CORE</span>
+          <div><b id="convoyTicker">NVDA</b><strong id="convoyWeight">18%</strong></div>
+          <p id="convoyRole" data-en="The star and energy source of the AI system" data-zh="AI 太阳系的恒星与能量源">The star and energy source of the AI system</p>
+        </div>
+
+        <footer class="convoy-legend">
+          <span><i></i><b data-en="SELECTED CELESTIAL BODY" data-zh="当前聚焦天体">SELECTED CELESTIAL BODY</b></span>
+          <span><i></i><b data-en="LIVE ORBIT MODEL" data-zh="实时轨道模型">LIVE ORBIT MODEL</b></span>
+          <em data-en="CLICK A BODY TO OPEN THE ATLAS" data-zh="点击天体展开图鉴">CLICK A BODY TO OPEN THE ATLAS</em>
+        </footer>
+      </aside>
+
+      <div class="convoy-manifest">
+        <header>
+          <span data-en="10 CELESTIAL DOSSIERS · CURRENT EPOCH / 2026-08-07" data-zh="10 份天体档案 · 当前历元 / 2026-08-07">10 CELESTIAL DOSSIERS · CURRENT EPOCH / 2026-08-07</span>
+          <b id="convoyProgress">01 / 10</b>
+        </header>
+        <div class="pick-grid" id="pickGrid">
+          <ol class="holdings-fallback" aria-label="Top 10 allocation research snapshot" data-aria-en="Top 10 allocation research snapshot" data-aria-zh="美股十大配置研究快照">
+            <li><strong>NVDA</strong><span data-en="NVIDIA · Sun · compute core" data-zh="英伟达 · 太阳 · 算力核心">NVIDIA · Sun · compute core</span><b>18%</b></li>
+            <li><strong>AVGO</strong><span data-en="Broadcom · Mercury · custom silicon &amp; network" data-zh="博通 · 水星 · 定制硅与网络">Broadcom · Mercury · custom silicon &amp; network</span><b>15%</b></li>
+            <li><strong>AMD</strong><span data-en="AMD · Venus · second compute platform" data-zh="超威半导体 · 金星 · 第二算力平台">AMD · Venus · second compute platform</span><b>13%</b></li>
+            <li><strong>ORCL</strong><span data-en="Oracle · Earth · AI cloud &amp; database" data-zh="甲骨文 · 地球 · AI 云与数据库">Oracle · Earth · AI cloud &amp; database</span><b>10%</b></li>
+            <li><strong>AMZN</strong><span data-en="Amazon · Mars · cloud &amp; custom silicon" data-zh="亚马逊 · 火星 · 云与自研芯片">Amazon · Mars · cloud &amp; custom silicon</span><b>9%</b></li>
+            <li><strong>MSFT</strong><span data-en="Microsoft · Jupiter · enterprise cloud &amp; agents" data-zh="微软 · 木星 · 企业云与智能体">Microsoft · Jupiter · enterprise cloud &amp; agents</span><b>9%</b></li>
+            <li><strong>TSM</strong><span data-en="TSMC · Saturn · advanced manufacturing" data-zh="台积公司 · 土星 · 先进制造">TSMC · Saturn · advanced manufacturing</span><b>8%</b></li>
+            <li><strong>GOOGL</strong><span data-en="Alphabet · Uranus · model distribution" data-zh="Alphabet（谷歌母公司）· 天王星 · 模型分发">Alphabet · Uranus · model distribution</span><b>7%</b></li>
+            <li><strong>MU</strong><span data-en="Micron · Neptune · high-bandwidth memory" data-zh="美光科技 · 海王星 · 高带宽内存">Micron · Neptune · high-bandwidth memory</span><b>6%</b></li>
+            <li><strong>VRT</strong><span data-en="Vertiv · Pluto · power &amp; liquid cooling" data-zh="维谛技术 · 冥王星 · 电力与液冷">Vertiv · Pluto · power &amp; liquid cooling</span><b>5%</b></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <p class="footnote" id="footnoteEl">这是本人截至 2026-08-07 08:29 ET、美国 7 月非农发布前的主观研究与配置框架，不构成投资建议，也不承诺未来表现。宏观数据、财报、估值与风险条件会变化；研究你自己的航线，守住你自己的舱门。</p>
+  </section>
+</main>
+
+<footer id="footerEl">
+  <div id="f1">afflatus · Bruce 的孤航日志 · MMXXVI</div>
+  <div id="f2">no ads · no tips · no promises</div>
+  <div class="footer-meta">
+    <div id="f3">signal origin · local stardate</div>
+    <div id="assetCredits">
+      3D · <a href="https://sketchfab.com/3d-models/fictional-6th-gen-fighter-b45853e311ce4ef2a0ff7b36b6873e55" rel="external license">Fictional 6th Gen Fighter</a>
+      by <a href="https://sketchfab.com/yoshikawa_Kosuke" rel="external">yoshikawa_Kosuke</a> ·
+      <a href="https://sketchfab.com/3d-models/venator-class-star-destroyer-ff65cd3c27234615a3b68088f67e99e4" rel="external license">Venator Class Star Destroyer</a>
+      by <a href="https://sketchfab.com/ForkyForklift" rel="external">ForkyForklift</a> ·
+      <a href="https://creativecommons.org/licenses/by/4.0/" rel="license external">CC BY 4.0</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/src/pages/homeLibs.js"></script>
+<script type="module" src="/src/main.js"></script>
+<script type="module">
+  /* D3 (ROADMAP §1): topdownCombat.js's own harness only mounts when ?combat=topdown
+     is present, so gate the load itself rather than statically importing it on every
+     page view — this also fixes the vite INEFFECTIVE_DYNAMIC_IMPORT warning caused by
+     the module being both statically (here) and dynamically (main.js) imported. */
+  if (/[?&]combat=topdown\b/.test(location.search)) import('/src/scene/topdownCombat.js');
+</script>
+</body>
+</html>

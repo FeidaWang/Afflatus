@@ -2,11 +2,13 @@ import './styles.css';
 import './cic-hud.css';
 import './performance-dossier.css';
 import './portfolio-convoy.css';
+import './home-visual-upgrade.css';
 import { getLocale, localeSwitchHref, setLocale } from './lib/localeStore.js';
 import { initHomeScrollTelemetry } from './ui/homeScrollTelemetry.js';
 
 const HOME_INTENT_SELECTOR = [
   '#commandModeBtn',
+  '#heroCommandCta',
   '#voyageLogToggle',
   '[data-cic-panel-focus]',
   '[data-cic-weapon]',
@@ -207,8 +209,16 @@ function installNavigationMenu() {
   addEventListener('resize', close);
 }
 
+function installHeroCommandShortcut() {
+  const shortcut = document.getElementById('heroCommandCta');
+  shortcut?.addEventListener('click', () => {
+    document.getElementById('commandModeBtn')?.click();
+  });
+}
+
 installLocaleLinks();
 installNavigationMenu();
+installHeroCommandShortcut();
 installIntentLoader();
 installVisibilityLoaders();
 initHomeScrollTelemetry();
