@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Component, lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   Broadcast,
@@ -403,7 +403,27 @@ function CycleChart() {
   return <canvas className="cycle-chart" ref={canvasRef} aria-label="Five closed-cycle holding-duration and efficiency trajectories" />;
 }
 
-function DeckOverlay({ open, onClose, language }) {
+class SceneBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { failed: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(error) {
+    this.props.onFailure?.(error);
+  }
+
+  render() {
+    if (this.state.failed) return <div className="deck-scene deck-static-poster" data-renderer="poster" aria-hidden="true" />;
+    return this.props.children;
+  }
+}
+
+function DeckOverlay({ open, onClose, language, experienceMode, onExperienceFailure }) {
   const [mode, setMode] = useState("nav");
   const [fps, setFps] = useState(60);
 
@@ -454,11 +474,17 @@ function DeckOverlay({ open, onClose, language }) {
     <i className={index < active ? "is-active" : ""} key={index} />
   ));
 
+  const interactiveScene = experienceMode === "cinematic";
+
   return (
     <section className={`deck-overlay ${combat ? "is-combat" : ""}`} aria-label="AFFLATUS command deck simulation">
-      <Suspense fallback={<div className="deck-scene deck-loading" aria-hidden="true" />}>
-        <DeckScene mode={mode} onFpsChange={setFps} />
-      </Suspense>
+      {interactiveScene ? (
+        <SceneBoundary onFailure={onExperienceFailure}>
+          <Suspense fallback={<div className="deck-scene deck-loading" aria-hidden="true" />}>
+            <DeckScene mode={mode} onFpsChange={setFps} onUnavailable={onExperienceFailure} />
+          </Suspense>
+        </SceneBoundary>
+      ) : <div className="deck-scene deck-static-poster" data-renderer="poster" aria-hidden="true" />}
       <div className="deck-atmosphere" aria-hidden="true" />
       <header className="deck-header">
         <div>
@@ -528,7 +554,7 @@ function DeckOverlay({ open, onClose, language }) {
   );
 }
 
-export function App() {
+export function App({ experienceMode = "cinematic", onExperienceFailure }) {
   const [deckOpen, setDeckOpen] = useState(false);
   const language = window.location.pathname.startsWith("/zh/") ? "zh" : "en";
   const copy = showcaseCopy[language];
@@ -698,7 +724,13 @@ export function App() {
         </div>
       </footer>
 
-      <DeckOverlay open={deckOpen} onClose={() => setDeckOpen(false)} language={language} />
+      <DeckOverlay
+        open={deckOpen}
+        onClose={() => setDeckOpen(false)}
+        language={language}
+        experienceMode={experienceMode}
+        onExperienceFailure={onExperienceFailure}
+      />
     </div>
   );
 }

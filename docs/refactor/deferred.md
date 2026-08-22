@@ -21,3 +21,7 @@ These are observations only. They are not fixed in M00 because M00 permits docum
 
 - Do not rewrite existing content, market data, translations, analytics, or accessibility behavior during M00.
 - Do not remove legacy portfolio/deck code until the M17 cleanup gate.
+
+## M01 follow-up
+
+- M01 establishes a feature-flag and redirect boundary only. The current showcase remains the default cinematic mode; M04/M06 must replace its presentation/scene architecture behind this boundary rather than alter the legacy shell in place.

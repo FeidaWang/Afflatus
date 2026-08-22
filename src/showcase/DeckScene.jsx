@@ -22,7 +22,16 @@ function seededRandom(seed) {
   };
 }
 
-export function DeckScene({ mode, onFpsChange }) {
+function localFailureDiagnosticEnabled() {
+  try {
+    const localHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+    return localHost && new URLSearchParams(window.location.search).get('scene') === 'unavailable';
+  } catch {
+    return false;
+  }
+}
+
+export function DeckScene({ mode, onFpsChange, onUnavailable }) {
   const hostRef = useRef(null);
   const modeRef = useRef(mode);
   const callbackRef = useRef(onFpsChange);
@@ -33,6 +42,11 @@ export function DeckScene({ mode, onFpsChange }) {
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return undefined;
+    if (localFailureDiagnosticEnabled()) {
+      host.dataset.renderer = "poster";
+      onUnavailable?.();
+      return undefined;
+    }
     const profile = qualityProfile();
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x030509, profile.tier === "low" ? 0.017 : 0.012);
@@ -44,6 +58,7 @@ export function DeckScene({ mode, onFpsChange }) {
       renderer = new THREE.WebGLRenderer({ antialias: profile.tier !== "low", alpha: true, powerPreference: "high-performance" });
     } catch {
       host.dataset.renderer = "poster";
+      onUnavailable?.();
       return undefined;
     }
     renderer.setClearColor(0x000000, 0);
