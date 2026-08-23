@@ -25,3 +25,16 @@ These are observations only. They are not fixed in M00 because M00 permits docum
 ## M01 follow-up
 
 - M01 establishes a feature-flag and redirect boundary only. The current showcase remains the default cinematic mode; M04/M06 must replace its presentation/scene architecture behind this boundary rather than alter the legacy shell in place.
+
+## M17 closeout
+
+The M00 observations above are retained as historical baseline evidence. Their release dispositions are:
+
+- shared navigation selectors, Signal resource delivery and serious/critical axe baselines now pass the active-route browser gate;
+- Portfolio mobile navigation and fixed command-bar behavior pass their scoped projects;
+- the homepage owns one decorative canvas and one scene RAF; specialist routes remain intentionally isolated;
+- Command and Flight Experiment now have dedicated static-first routes;
+- Three.js remains a deferred chunk with explicit High/Medium/Mobile/Static/Reduced governance;
+- `/portfolio.html` remains a compatibility and rollback surface rather than being deleted without dependency evidence.
+
+The remaining operational limits are field INP, physical-device sustained-FPS profiling and physical VoiceOver/TalkBack review; see `m17-release-candidate.md`.

@@ -143,7 +143,7 @@ async function validateBackground(route) {
 
 for (const route of activeRoutes) {
   await validateBackground(route);
-  for (const locale of SITE_LOCALES) await validateCard(route, locale);
+  for (const locale of route.publishedLocales || SITE_LOCALES) await validateCard(route, locale);
 }
 
 if (failures.length) {

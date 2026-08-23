@@ -21,7 +21,7 @@ const graphTypes = (graph) =>
 describe('route SEO architecture', () => {
   it('builds valid adaptive and fixed-locale graphs for every active route', () => {
     for (const route of activeRoutes) {
-      for (const locale of ['adaptive', ...SITE_LOCALES]) {
+      for (const locale of ['adaptive', ...(route.publishedLocales || SITE_LOCALES)]) {
         const graph = buildRouteStructuredData(route, {
           locale,
           facts: facts[route.id],
@@ -95,7 +95,7 @@ describe('route SEO architecture', () => {
 
   it('uses the plural reader route family in serial structured data', () => {
     const serial = activeRoutes.find((route) => route.id === 'serial');
-    for (const locale of ['adaptive', ...SITE_LOCALES]) {
+    for (const locale of ['adaptive', ...serial.publishedLocales]) {
       const graph = buildRouteStructuredData(serial, {
         locale,
         facts: facts.serial,
@@ -103,6 +103,7 @@ describe('route SEO architecture', () => {
       const serialized = JSON.stringify(graph);
       expect(serialized).toContain('/novels/yuxi-gongci/');
       expect(serialized).not.toContain('/novel/');
+      expect(serialized).not.toContain('/en/novels/');
     }
   });
 });

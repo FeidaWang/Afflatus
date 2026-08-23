@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en';if(v==='zh'){var d=document.documentElement,u=function(){d.style.removeProperty('visibility')};d.style.visibility='hidden';var t=setTimeout(u,1500),p=function(r,h){var q=[],m='[data-en],[data-en-ph],[data-aria-en],.lang-toggle';if(r.nodeType===1&&r.matches(m))q.push(r);if(r.querySelectorAll)q.push.apply(q,r.querySelectorAll(m));q.forEach(function(e){var z;if(e.hasAttribute('data-en')&&(z=e.getAttribute('data-zh'))!==null){if(e.hasAttribute('data-i18n-html')){if(h&&e.innerHTML!==z)e.innerHTML=z}else if(e.textContent!==z)e.textContent=z}if(e.hasAttribute('data-en-ph'))e.setAttribute('placeholder',e.getAttribute('data-zh-ph')||e.getAttribute('data-en-ph'));if(e.hasAttribute('data-aria-en'))e.setAttribute('aria-label',e.getAttribute('data-aria-zh')||e.getAttribute('data-aria-en'));if(e.classList.contains('lang-toggle')){e.textContent='EN';e.setAttribute('aria-label','Switch to English');if(!e.matches('a[href]'))e.setAttribute('aria-pressed','true')}})},o=new MutationObserver(function(rs){rs.forEach(function(r){r.addedNodes.forEach(function(x){p(x,false)})})});o.observe(d,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',function(){try{p(document,true)}finally{clearTimeout(t);o.disconnect();u()}},{once:true})}}catch(e){}</script>
+<script type="module" src="/src/entry/performance.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flight Experiment · AFFLATUS</title>
+<meta name="description" content="An explicitly experimental launch room for the preserved AFFLATUS NAV / COMBAT flight simulation.">
+<meta name="theme-color" content="#03070b">
+<meta name="robots" content="noindex,nofollow">
+<link rel="canonical" href="https://feida.au/experiments/flight/">
+<link rel="icon" type="image/svg+xml" href="/favicons/home.svg?v=20260808">
+<link rel="stylesheet" href="/styles/responsive-primitives.css">
+<link rel="stylesheet" href="/styles/afflatus-brand.css">
+<link rel="stylesheet" href="/styles/afflatus-foundation.css">
+<link rel="stylesheet" href="/styles/afflatus-navigation.css">
+<script type="module" src="/src/entry/viewport.js"></script>
+  <!-- afflatus:route-seo:start -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Project Afflatus">
+  <meta property="og:title" content="AFFLATUS · Flight Experiment">
+  <meta property="og:description" content="A clearly labelled route to the preserved NAV / COMBAT prototype.">
+  <meta property="og:url" content="https://feida.au/experiments/flight/">
+  <meta property="og:locale" content="en_AU">
+  <meta property="og:locale:alternate" content="zh_CN">
+  <meta property="og:image" content="https://feida.au/assets/og/flight-experiment-en.jpg">
+  <meta property="og:image:secure_url" content="https://feida.au/assets/og/flight-experiment-en.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="AFFLATUS experimental flight simulation launch room">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AFFLATUS · Flight Experiment">
+  <meta name="twitter:description" content="A clearly labelled route to the preserved NAV / COMBAT prototype.">
+  <meta name="twitter:image" content="https://feida.au/assets/og/flight-experiment-en.jpg">
+  <meta name="twitter:image:alt" content="AFFLATUS experimental flight simulation launch room">
+  <script type="application/ld+json" data-afflatus-route-schema="flight-experiment" lang="en-AU">
+  {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://feida.au/#person",
+      "name": "Feida Wang",
+      "alternateName": "Bruce",
+      "url": "https://feida.au/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://feida.au/#website",
+      "url": "https://feida.au/",
+      "name": "Project Afflatus",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "publisher": {
+        "@id": "https://feida.au/#person"
+      }
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://feida.au/experiments/flight/#primaryimage",
+      "url": "https://feida.au/assets/og/flight-experiment-en.jpg",
+      "contentUrl": "https://feida.au/assets/og/flight-experiment-en.jpg",
+      "width": 1200,
+      "height": 630,
+      "caption": "AFFLATUS experimental flight simulation launch room",
+      "inLanguage": "en-AU"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://feida.au/experiments/flight/#webpage",
+      "url": "https://feida.au/experiments/flight/",
+      "name": "Flight Experiment · AFFLATUS",
+      "description": "An explicitly experimental launch room for the preserved NAV / COMBAT flight simulation.",
+      "inLanguage": [
+        "en-AU",
+        "zh-CN"
+      ],
+      "isPartOf": {
+        "@id": "https://feida.au/#website"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://feida.au/experiments/flight/#primaryimage"
+      },
+      "breadcrumb": {
+        "@id": "https://feida.au/experiments/flight/#breadcrumb"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://feida.au/experiments/flight/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://feida.au/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Flight Experiment · AFFLATUS",
+          "item": "https://feida.au/experiments/flight/"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- afflatus:route-seo:end -->
+</head>
+<body>
+  <div id="flight-experiment-root">
+    <div class="mission-shell mission-shell--flight">
+      <header class="mission-header site-header--follow">
+        <a class="afflatus-brand" data-afflatus-brand data-brand-persona="flight-experiment" href="/" aria-label="AFFLATUS home">
+          <span class="afflatus-brand__stage" aria-hidden="true"><span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span></span>
+          <span class="afflatus-brand__sr">Afflatus</span>
+        </a>
+        <nav class="mission-nav" data-afflatus-nav aria-label="Primary navigation"><a id="langBtn" class="lang-toggle mission-language" href="/zh/experiments/flight/" hreflang="zh-CN">EN / 中</a></nav>
+      </header>
+      <main class="flight-main">
+        <section class="flight-hero">
+          <p class="mission-eyebrow" data-en="Experiment / Flight Simulation" data-zh="实验 / 飞行模拟">Experiment / Flight Simulation</p>
+          <h1 data-en="Flight systems, isolated." data-zh="隔离飞行系统。">Flight systems, isolated.</h1>
+          <p class="mission-intro" data-en="This route preserves the game-like flight and combat prototype without presenting it as real operational telemetry." data-zh="此路由保留游戏化飞行与战斗原型，但不会把它描述成真实运营遥测。">This route preserves the game-like flight and combat prototype without presenting it as real operational telemetry.</p>
+          <p class="experiment-notice" data-en="Experimental simulation — not a live business, capital, weapons or safety system." data-zh="实验性模拟——并非实时业务、资本、武器或安全系统。">Experimental simulation — not a live business, capital, weapons or safety system.</p>
+        </section>
+        <section class="flight-systems"><p class="mission-label">Retained in the legacy simulation</p><div class="flight-system-list"><article><span>01</span><h2>NAV / COMBAT</h2><p>Mode switching and flight simulation</p></article><article><span>02</span><h2>RADAR</h2><p>Decorative tactical contact display</p></article><article><span>03</span><h2>WEAPONS</h2><p>Simulated fire-control interactions</p></article><article><span>04</span><h2>SHIELDS</h2><p>Simulated defense state</p></article><article><span>05</span><h2>G-FORCE</h2><p>Simulated manoeuvre feedback</p></article></div></section>
+        <section class="flight-launch"><p data-en="The previous Deck remains available at its original Portfolio route. This launcher keeps that route stable while public Command moves to the Mission Room." data-zh="旧版 Deck 仍保留在原 Portfolio 路由。本启动页保持旧路由稳定，同时公开 Command 已迁往 Mission Room。">The previous Deck remains available at its original Portfolio route. This launcher keeps that route stable while public Command moves to the Mission Room.</p><a class="mission-action mission-action--primary" href="/portfolio.html?mode=flight" data-en="Launch Legacy Flight Simulation →" data-zh="启动旧版飞行模拟 →">Launch Legacy Flight Simulation →</a></section>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="/src/flight-experiment-main.jsx"></script>
+</body>
+</html>

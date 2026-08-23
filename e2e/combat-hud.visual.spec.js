@@ -5,7 +5,7 @@ test.describe('CIC HUD visual contract', () => {
     await page.addInitScript(() => {
       localStorage.setItem('afflatus:locale:v1', 'en');
     });
-    await page.goto('/?combatview=2d', { waitUntil: 'domcontentloaded' });
+    await page.goto('/portfolio.html?combatview=2d', { waitUntil: 'domcontentloaded' });
     await settlePage(page);
     await page.locator('#commandModeBtn').dispatchEvent('pointerover');
     await expect(page.locator('html')).toHaveAttribute('data-home-experience', 'ready');

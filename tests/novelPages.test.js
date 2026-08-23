@@ -5,6 +5,7 @@ import { transformNovelPageDocument } from '../scripts/localize-site.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const source = readFileSync(resolve(root, 'serial.html'), 'utf8');
+const narrationPlayer = readFileSync(resolve(root, 'src/lib/narrationPlayer.js'), 'utf8');
 const vercel = JSON.parse(readFileSync(resolve(root, 'vercel.json'), 'utf8'));
 const index = JSON.parse(readFileSync(resolve(root, 'public/novels-index.json'), 'utf8'));
 const indexedBook = index.novels.find((item) => item.id === 'wanjie-zhongchun');
@@ -31,6 +32,22 @@ describe('pre-rendered novel documents', () => {
     ]));
   });
 
+  it('keeps every published novel route and share surface Chinese-only', () => {
+    expect(vercel.redirects).toContainEqual({
+      source: '/en/serial.html',
+      destination: '/zh/serial.html',
+      permanent: true,
+    });
+    expect(vercel.redirects).toContainEqual({
+      source: '/en/novels/:path*',
+      destination: '/zh/novels/:path*',
+      permanent: true,
+    });
+    expect(source).not.toContain('serial-en.jpg');
+    expect(source).not.toContain('og:locale:alternate');
+    expect(source).not.toContain('hreflang="en"');
+  });
+
   it('keeps reading music paused until the player button is explicitly pressed', () => {
     expect(source).toContain(
       "btnPlay.addEventListener('click', function () { audio.paused ? play() : pause(); });",
@@ -39,6 +56,15 @@ describe('pre-rendered novel documents', () => {
     expect(source).not.toContain('autoplayPending');
     expect(source).not.toContain('armAutoplayResume');
     expect(source).not.toContain('if (load(saved < tracks.length ? saved : 0)) play();');
+  });
+
+  it('loads audiobook media only from an explicit visitor action', () => {
+    expect(source).toContain('id="narrationPlayer"');
+    expect(source).toContain('data-narration-play');
+    expect(narrationPlayer).toContain('function ensureMediaLoaded()');
+    expect(narrationPlayer).toMatch(/function play\(\)[\s\S]*ensureMediaLoaded\(\);[\s\S]*audio\.play\(\)/);
+    expect(narrationPlayer.indexOf('ensureMediaLoaded();', narrationPlayer.indexOf('async function setChapter')))
+      .toBeGreaterThan(narrationPlayer.indexOf('function play()'));
   });
 
   it('offers paged and waterfall reading with default page sound', () => {
@@ -67,6 +93,9 @@ describe('pre-rendered novel documents', () => {
     expect(html).toContain('data-prerendered="chapter"');
     expect(html).toContain(chapter.title);
     expect(html).toContain(chapter.blocks[0].text);
+    expect(html).toContain('data-reader-block="0" data-page-marker="block-0"');
+    expect(html).toContain('data-reader-start="0" data-reader-end=');
+    expect(html).toContain('data-reader-body-start=');
     expect(html).toContain('<span>系统播报 ⟨');
     expect(html).not.toContain('<span>SYS ⟨');
     expect(html).toContain('"@type":["Chapter","Article"]');

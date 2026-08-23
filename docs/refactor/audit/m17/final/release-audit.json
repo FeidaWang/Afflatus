@@ -1,0 +1,45 @@
+{
+  "date": "2026-08-24",
+  "status": "accepted-with-stated-operational-limits",
+  "routes": 18,
+  "publishedLocaleDocuments": 35,
+  "deviceProfiles": [
+    "desktop-chromium-1440x1000",
+    "iphone-16-pro-max-webkit-440x956",
+    "galaxy-s26-ultra-chromium-412x892"
+  ],
+  "localizedLayoutStates": 105,
+  "viewportCaptures": 108,
+  "layoutFindingsAfterFixes": {
+    "horizontalOverflow": 0,
+    "clippedText": 0,
+    "headerControlOverlaps": 0,
+    "accidentalControlWrapping": 0
+  },
+  "additionalWidthsReviewed": [320, 390, 430, 768, 1512],
+  "textResizePercent": 200,
+  "lighthouseHomepage": {
+    "runs": 3,
+    "performanceScore": 0.98,
+    "lcpMsRange": [1953.3, 1956.5],
+    "fcpMsRange": [1803, 1806],
+    "tbtMs": 0,
+    "cls": 0,
+    "initialScriptBytes": 84869,
+    "initialTotalBytes": 359800
+  },
+  "verification": {
+    "unit": "215 files / 2065 tests passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "links": "635 passed",
+    "m16M17Browser": "58 passed / 8 expected project skips",
+    "fullE2E": "422 passed / 225 expected skips; one observer race found and fixed",
+    "postFixBrowser": "82 passed / 2 expected project skips across brand, Portfolio and visual capture gates"
+  },
+  "operationalLimits": [
+    "field INP requires production samples",
+    "physical-device sustained FPS remains a profiling follow-up",
+    "physical VoiceOver and TalkBack review is not replaced by emulation"
+  ]
+}

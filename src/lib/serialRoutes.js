@@ -1,4 +1,4 @@
-const LOCALES = new Set(['en', 'zh']);
+const LOCALES = new Set(['zh']);
 const SEGMENT_RE = /^[a-z0-9-]{1,80}$/;
 const CHAPTER_RE = /^[a-z0-9-]{1,40}$/i;
 
@@ -10,7 +10,7 @@ function safeSegment(value, pattern, label) {
 
 export function parseReaderPath(pathname) {
   const normalized = String(pathname || '/').replace(/\/index\.html$/, '/');
-  const match = normalized.match(/^\/(?:(en|zh)\/)?novels\/([^/]+?)(?:\/([^/]+?))?\/?$/);
+  const match = normalized.match(/^\/(?:(zh)\/)?novels\/([^/]+?)(?:\/([^/]+?))?\/?$/);
   if (!match) return null;
   const [, locale, rawBookId, rawChapterId] = match;
   if (!SEGMENT_RE.test(rawBookId) || (rawChapterId && !CHAPTER_RE.test(rawChapterId))) return null;
@@ -23,6 +23,9 @@ export function parseReaderPath(pathname) {
 
 export function readerPath({ locale = 'adaptive', bookId, chapterId = null }) {
   const safeBookId = safeSegment(bookId, SEGMENT_RE, 'book');
+  if (locale !== 'adaptive' && !LOCALES.has(locale)) {
+    throw new TypeError(`Unsupported novel locale: ${locale}`);
+  }
   const prefix = LOCALES.has(locale) ? `/${locale}` : '';
   const chapter = chapterId == null
     ? ''

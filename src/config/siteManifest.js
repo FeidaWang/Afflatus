@@ -1,3 +1,4 @@
+/* afflatus-i18n allow-monolingual: Serial is intentionally Chinese-only. */
 /**
  * Project Afflatus route manifest — the single source of truth for route
  * identity, build inclusion, navigation, sitemap membership and metadata.
@@ -37,6 +38,127 @@ export const ROUTE_SEO = Object.freeze({
       images: { en: routeOgImage('main', 'en'), zh: routeOgImage('main', 'zh') },
     },
     structuredData: { kind: 'profile' },
+  },
+  command: {
+    social: {
+      background: 'assets/og-backgrounds/home.jpg',
+      eyebrow: { en: 'AFFLATUS · MISSION ROOM', zh: 'AFFLATUS · 任务舱' },
+      title: { en: 'Command what is real', zh: '指挥真实存在的系统' },
+      subtitle: {
+        en: 'Objective, trajectory and next action without fictional telemetry.',
+        zh: '只呈现目标、轨迹与下一步，不虚构遥测数据。',
+      },
+      alt: {
+        en: 'AFFLATUS Mission Room objective and trajectory display',
+        zh: 'AFFLATUS 任务舱目标与轨迹界面',
+      },
+      images: { en: routeOgImage('command', 'en'), zh: routeOgImage('command', 'zh') },
+    },
+    structuredData: { kind: 'webpage' },
+  },
+  'flight-experiment': {
+    social: {
+      background: 'assets/og-backgrounds/home.jpg',
+      eyebrow: { en: 'AFFLATUS · EXPERIMENT', zh: 'AFFLATUS · 实验' },
+      title: { en: 'Flight simulation', zh: '飞行模拟实验' },
+      subtitle: {
+        en: 'A clearly labelled route to the preserved NAV / COMBAT prototype.',
+        zh: '通往已保留 NAV / COMBAT 原型的明确实验入口。',
+      },
+      alt: {
+        en: 'AFFLATUS experimental flight simulation launch room',
+        zh: 'AFFLATUS 实验性飞行模拟启动舱',
+      },
+      images: {
+        en: routeOgImage('flight-experiment', 'en'),
+        zh: routeOgImage('flight-experiment', 'zh'),
+      },
+    },
+    structuredData: { kind: 'webpage' },
+  },
+  capital: {
+    social: {
+      background: 'assets/og-backgrounds/home.jpg',
+      eyebrow: { en: 'AFFLATUS · CAPITAL', zh: 'AFFLATUS · 资本' },
+      title: { en: 'Published field record', zh: '已发布现场记录' },
+      subtitle: {
+        en: 'Method, historical record and source material without a live account feed.',
+        zh: '方法、历史记录与来源材料；不包含实时账户数据。',
+      },
+      alt: { en: 'AFFLATUS capital field record index', zh: 'AFFLATUS 资本现场记录索引' },
+      images: { en: routeOgImage('capital', 'en'), zh: routeOgImage('capital', 'zh') },
+    },
+    structuredData: { kind: 'content-index' },
+  },
+  'capital-record': {
+    social: {
+      background: 'assets/og-backgrounds/home.jpg',
+      eyebrow: { en: 'AFFLATUS · CAPITAL CASE STUDY', zh: 'AFFLATUS · 资本案例研究' },
+      title: { en: 'FY25/26 Field Record', zh: 'FY25/26 现场记录' },
+      subtitle: {
+        en: 'A stable reading entry for the published record and original charts.',
+        zh: '已发布记录与原始图表的稳定阅读入口。',
+      },
+      alt: { en: 'AFFLATUS FY25/26 capital field record', zh: 'AFFLATUS FY25/26 资本现场记录' },
+      images: { en: routeOgImage('capital-record', 'en'), zh: routeOgImage('capital-record', 'zh') },
+    },
+    structuredData: { kind: 'content-article' },
+  },
+  intelligence: {
+    social: {
+      background: 'assets/og-backgrounds/signal.jpg',
+      eyebrow: { en: 'AFFLATUS · INTELLIGENCE', zh: 'AFFLATUS · 情报' },
+      title: { en: 'Signals with a destination', zh: '每条信号都有去处' },
+      subtitle: {
+        en: 'Source-aware dossiers for long-end context and the AI industry atlas.',
+        zh: '面向长端背景与 AI 产业图鉴的可追溯来源档案。',
+      },
+      alt: { en: 'AFFLATUS intelligence dossier index', zh: 'AFFLATUS 情报档案索引' },
+      images: { en: routeOgImage('intelligence', 'en'), zh: routeOgImage('intelligence', 'zh') },
+    },
+    structuredData: { kind: 'content-index' },
+  },
+  'solar-atlas': {
+    social: {
+      background: 'assets/og-backgrounds/signal.jpg',
+      eyebrow: { en: 'AFFLATUS · INTELLIGENCE CASE STUDY', zh: 'AFFLATUS · 情报案例研究' },
+      title: { en: 'AI Industry Solar Atlas', zh: 'AI 产业太阳图鉴' },
+      subtitle: {
+        en: 'A focused entry for the published atlas and retained interactive source.',
+        zh: '通往已发布图鉴及其保留交互来源的聚焦入口。',
+      },
+      alt: { en: 'AFFLATUS AI industry Solar Atlas dossier', zh: 'AFFLATUS AI 产业太阳图鉴档案' },
+      images: { en: routeOgImage('solar-atlas', 'en'), zh: routeOgImage('solar-atlas', 'zh') },
+    },
+    structuredData: { kind: 'content-article' },
+  },
+  'field-notes': {
+    social: {
+      background: 'assets/og-backgrounds/course.jpg',
+      eyebrow: { en: 'AFFLATUS · FIELD NOTES', zh: 'AFFLATUS · 现场笔记' },
+      title: { en: 'Read at the speed of thought', zh: '以思考应有的速度阅读' },
+      subtitle: {
+        en: 'Longform fieldwork and original fiction on quiet reading surfaces.',
+        zh: '在安静阅读界面中呈现实战长文与原创小说。',
+      },
+      alt: { en: 'AFFLATUS Field Notes longform index', zh: 'AFFLATUS 现场笔记长文索引' },
+      images: { en: routeOgImage('field-notes', 'en'), zh: routeOgImage('field-notes', 'zh') },
+    },
+    structuredData: { kind: 'content-index' },
+  },
+  experiments: {
+    social: {
+      background: 'assets/og-backgrounds/arena.jpg',
+      eyebrow: { en: 'AFFLATUS · EXPERIMENTS', zh: 'AFFLATUS · 实验' },
+      title: { en: 'Prototype openly', zh: '开放原型' },
+      subtitle: {
+        en: 'Research simulations and local-first tools with explicit boundaries.',
+        zh: '边界明确的研究模拟与本地优先工具。',
+      },
+      alt: { en: 'AFFLATUS experiments index', zh: 'AFFLATUS 实验索引' },
+      images: { en: routeOgImage('experiments', 'en'), zh: routeOgImage('experiments', 'zh') },
+    },
+    structuredData: { kind: 'content-index' },
   },
   portfolio: {
     social: {
@@ -174,17 +296,11 @@ export const ROUTE_SEO = Object.freeze({
   serial: {
     social: {
       background: 'assets/og-backgrounds/serial.jpg',
-      eyebrow: { en: 'SERIAL FICTION', zh: '原创连载' },
-      title: { en: 'Original Chinese fiction', zh: '原创中文小说连载' },
-      subtitle: {
-        en: 'Three serialized worlds by Feida Wang.',
-        zh: '王飞达创作的三个连载世界。',
-      },
-      alt: {
-        en: 'Retro-futurist library for original serialized fiction',
-        zh: '原创连载小说的复古未来主义图书馆',
-      },
-      images: { en: routeOgImage('serial', 'en'), zh: routeOgImage('serial', 'zh') },
+      eyebrow: { zh: '原创连载' },
+      title: { zh: '原创中文小说连载' },
+      subtitle: { zh: '王飞达创作的三个连载世界。' },
+      alt: { zh: '原创连载小说的复古未来主义图书馆' },
+      images: { zh: routeOgImage('serial', 'zh') },
     },
     structuredData: { kind: 'serial' },
   },
@@ -292,6 +408,101 @@ export const SITE_MANIFEST = Object.freeze([
         description: '王飞达以隐私优先方式记录资本研究、软件实践、原创写作与数据实验。',
       },
     },
+  },
+  {
+    id: 'command',
+    file: 'command/index.html',
+    path: '/command/',
+    status: 'active',
+    build: true,
+    sitemap: true,
+    defaultLocale: 'en',
+    nav: null,
+    themeColor: '#05080c',
+    schema: ['WebPage'],
+    seo: ROUTE_SEO.command,
+    capabilities: ['mission-room', 'static-first'],
+    metadata: {
+      title: 'Command Mission Room · AFFLATUS',
+      description: 'AFFLATUS Mission Room: a truthful view of the current objective, trajectory, next action and Observe / Model / Commit operating loop.',
+      canonical: 'https://feida.au/command/',
+      ogTitle: 'AFFLATUS · Command Mission Room',
+      ogDescription: 'Objective, trajectory and next action without fictional telemetry.',
+      ogImage: ROUTE_SEO.command.social.images.en,
+    },
+    locales: {
+      en: { title: 'Command Mission Room · AFFLATUS', description: 'A truthful view of the current objective, trajectory, next action and Observe / Model / Commit operating loop.' },
+      zh: { title: 'Command 任务舱 · AFFLATUS', description: '如实呈现当前目标、轨迹、下一步，以及观察、建模、执行闭环。' },
+    },
+  },
+  {
+    id: 'flight-experiment',
+    file: 'experiments/flight/index.html',
+    path: '/experiments/flight/',
+    status: 'active',
+    build: true,
+    sitemap: false,
+    defaultLocale: 'en',
+    nav: null,
+    themeColor: '#03070b',
+    schema: ['WebPage'],
+    seo: ROUTE_SEO['flight-experiment'],
+    capabilities: ['experiment', 'legacy-flight', 'noindex'],
+    metadata: {
+      title: 'Flight Experiment · AFFLATUS',
+      description: 'An explicitly experimental launch room for the preserved AFFLATUS NAV / COMBAT flight simulation.',
+      canonical: 'https://feida.au/experiments/flight/',
+      ogTitle: 'AFFLATUS · Flight Experiment',
+      ogDescription: 'A clearly labelled route to the preserved NAV / COMBAT prototype.',
+      ogImage: ROUTE_SEO['flight-experiment'].social.images.en,
+      robots: 'noindex,nofollow',
+    },
+    locales: {
+      en: { title: 'Flight Experiment · AFFLATUS', description: 'An explicitly experimental launch room for the preserved NAV / COMBAT flight simulation.' },
+      zh: { title: '飞行模拟实验 · AFFLATUS', description: '明确标注为实验的 AFFLATUS NAV / COMBAT 飞行模拟入口。' },
+    },
+  },
+  {
+    id: 'capital',
+    file: 'capital/index.html', path: '/capital/', status: 'active', build: true, sitemap: true, defaultLocale: 'en', nav: null,
+    themeColor: '#05080c', schema: ['CollectionPage', 'ItemList'], seo: ROUTE_SEO.capital, capabilities: ['content-index', 'static-first'],
+    metadata: { title: 'Capital Field Record · AFFLATUS', description: 'A quiet index for the published FY25/26 capital field record, method notes and retained source material; no live account feed.', canonical: 'https://feida.au/capital/', ogTitle: 'AFFLATUS · Capital Field Record', ogDescription: 'Published method, historical record and source material without a live account feed.', ogImage: ROUTE_SEO.capital.social.images.en },
+    locales: { en: { title: 'Capital Field Record · AFFLATUS', description: 'A quiet index for the published FY25/26 capital field record, method notes and retained source material; no live account feed.' }, zh: { title: '资本现场记录 · AFFLATUS', description: '已发布 FY25/26 资本现场记录、方法说明与保留来源材料的安静索引；不包含实时账户数据。' } },
+  },
+  {
+    id: 'capital-record',
+    file: 'capital/fy25-26/index.html', path: '/capital/fy25-26/', status: 'active', build: true, sitemap: true, defaultLocale: 'en', nav: null,
+    themeColor: '#05080c', schema: ['Article'], seo: ROUTE_SEO['capital-record'], capabilities: ['case-study', 'static-first'],
+    metadata: { title: 'FY25/26 Field Record · AFFLATUS', description: 'A stable reading entry for the published FY25/26 capital field record, its scope and the original charts.', canonical: 'https://feida.au/capital/fy25-26/', ogTitle: 'AFFLATUS · FY25/26 Field Record', ogDescription: 'A stable reading entry for the published record and original charts.', ogImage: ROUTE_SEO['capital-record'].social.images.en },
+    locales: { en: { title: 'FY25/26 Field Record · AFFLATUS', description: 'A stable reading entry for the published FY25/26 capital field record, its scope and the original charts.' }, zh: { title: 'FY25/26 资本现场记录 · AFFLATUS', description: '已发布 FY25/26 资本现场记录、范围与原始图表的稳定阅读入口。' } },
+  },
+  {
+    id: 'intelligence',
+    file: 'intelligence/index.html', path: '/intelligence/', status: 'active', build: true, sitemap: true, defaultLocale: 'en', nav: null,
+    themeColor: '#061018', schema: ['CollectionPage', 'ItemList'], seo: ROUTE_SEO.intelligence, capabilities: ['content-index', 'static-first'],
+    metadata: { title: 'Intelligence Dossiers · AFFLATUS', description: 'Source-aware dossiers for Federal Reserve observations, long-end context and the published AI industry atlas.', canonical: 'https://feida.au/intelligence/', ogTitle: 'AFFLATUS · Intelligence Dossiers', ogDescription: 'Source-aware dossiers for long-end context and the AI industry atlas.', ogImage: ROUTE_SEO.intelligence.social.images.en },
+    locales: { en: { title: 'Intelligence Dossiers · AFFLATUS', description: 'Source-aware dossiers for Federal Reserve observations, long-end context and the published AI industry atlas.' }, zh: { title: '情报档案 · AFFLATUS', description: '面向美联储观察、长端背景与已发布 AI 产业图鉴的可追溯来源档案。' } },
+  },
+  {
+    id: 'solar-atlas',
+    file: 'intelligence/solar-atlas/index.html', path: '/intelligence/solar-atlas/', status: 'active', build: true, sitemap: true, defaultLocale: 'en', nav: null,
+    themeColor: '#061018', schema: ['Article'], seo: ROUTE_SEO['solar-atlas'], capabilities: ['case-study', 'static-first'],
+    metadata: { title: 'AI Industry Solar Atlas · AFFLATUS', description: 'A focused intelligence entry for the published AI industry Solar Atlas and its retained interactive source.', canonical: 'https://feida.au/intelligence/solar-atlas/', ogTitle: 'AFFLATUS · AI Industry Solar Atlas', ogDescription: 'A focused entry for the published atlas and retained interactive source.', ogImage: ROUTE_SEO['solar-atlas'].social.images.en },
+    locales: { en: { title: 'AI Industry Solar Atlas · AFFLATUS', description: 'A focused intelligence entry for the published AI industry Solar Atlas and its retained interactive source.' }, zh: { title: 'AI 产业太阳图鉴 · AFFLATUS', description: '通往已发布 AI 产业太阳图鉴及其保留交互来源的聚焦情报入口。' } },
+  },
+  {
+    id: 'field-notes',
+    file: 'field-notes/index.html', path: '/field-notes/', status: 'active', build: true, sitemap: true, defaultLocale: 'en', nav: null,
+    themeColor: '#0c0d11', schema: ['CollectionPage', 'ItemList'], seo: ROUTE_SEO['field-notes'], capabilities: ['content-index', 'static-first'],
+    metadata: { title: 'Field Notes · AFFLATUS', description: 'A quiet index for the Forward Deployed Engineer field manual and original fiction.', canonical: 'https://feida.au/field-notes/', ogTitle: 'AFFLATUS · Field Notes', ogDescription: 'Longform fieldwork and original fiction on quiet reading surfaces.', ogImage: ROUTE_SEO['field-notes'].social.images.en },
+    locales: { en: { title: 'Field Notes · AFFLATUS', description: 'A quiet index for the Forward Deployed Engineer field manual and original fiction.' }, zh: { title: '现场笔记 · AFFLATUS', description: 'Forward Deployed Engineer 实战手册与原创小说的安静索引。' } },
+  },
+  {
+    id: 'experiments',
+    file: 'experiments/index.html', path: '/experiments/', status: 'active', build: true, sitemap: true, defaultLocale: 'en', nav: null,
+    themeColor: '#07070d', schema: ['CollectionPage', 'ItemList'], seo: ROUTE_SEO.experiments, capabilities: ['content-index', 'static-first'],
+    metadata: { title: 'Experiments · AFFLATUS', description: 'A bounded index for QF-01 research simulation, Cityview, astrology and the isolated flight experiment.', canonical: 'https://feida.au/experiments/', ogTitle: 'AFFLATUS · Experiments', ogDescription: 'Research simulations and local-first tools with explicit boundaries.', ogImage: ROUTE_SEO.experiments.social.images.en },
+    locales: { en: { title: 'Experiments · AFFLATUS', description: 'A bounded index for QF-01 research simulation, Cityview, astrology and the isolated flight experiment.' }, zh: { title: '实验 · AFFLATUS', description: 'QF-01 研究模拟、城市推演台、占星与隔离飞行实验的有边界索引。' } },
   },
   {
     id: 'arena',
@@ -476,10 +687,6 @@ export const SITE_MANIFEST = Object.freeze([
       ogImage: ROUTE_SEO.serial.social.images.zh,
     },
     locales: {
-      en: {
-        title: 'Novels — Serialized Fiction · Project Afflatus',
-        description: 'Original Chinese serialized fiction in an eye-friendly retro-futurist reader.',
-      },
       zh: {
         title: '小说 — 原创连载书架 · Project Afflatus',
         description: '多部原创小说连载，以复古未来主义视觉提供纯中文护眼阅读体验。',

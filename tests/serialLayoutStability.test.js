@@ -79,5 +79,12 @@ describe('serial layout stability', () => {
     expect(pagedBook).not.toContain('soundButton');
     expect(pagedBook).toContain("stage.addEventListener('pointerdown'");
     expect(pagedBook).toContain("event.key === 'ArrowRight'");
+    expect(pagedBook).toContain("node.matches('.sys')");
+    expect(pagedBook).toContain('function revealMarker(');
+    expect(pagedBook).toContain('settings.sourceOffset');
+    expect(pagedBook).toContain('piece.dataset.readerStart');
+    expect(html).toContain('sourceOffset:Number(cue.sourceStart) || 0');
+    expect(html).toContain('if (narrationPlayer) narrationPlayer.pause();');
+    expect(pagedBook).toContain('revealMarker,');
   });
 });

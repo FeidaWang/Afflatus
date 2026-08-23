@@ -807,6 +807,8 @@
   .warp-btn:hover{border-color:var(--warm);color:var(--warm)}
   .coord{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b98b0;letter-spacing:.16em;grid-area:coord;white-space:nowrap}
   .scroll-hint{position:static;grid-area:hint;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.24em;color:#8b98b0;display:flex;align-items:center;gap:14px;min-height:18px}
+  .hero-cta:has(.hero-record-cta){width:min(100%,630px);grid-template-columns:minmax(0,1.18fr) minmax(0,.92fr);grid-template-areas:"record command" "coord coord";gap:10px 12px}
+  .scroll-hint.hero-record-cta{grid-area:record;min-height:48px;line-height:1.3;white-space:nowrap}
   .scroll-hint::after{content:"";width:48px;height:1px;background:linear-gradient(90deg,var(--dim),transparent)}
 
   /* strip */
@@ -907,9 +909,10 @@
   .sponsor-logos{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
   .sponsor-logos i{font-style:normal;border:1px solid rgba(141,180,192,.22);padding:3px 6px;font-size:7px;color:#edf5ff;background:rgba(255,255,255,.035)}
   footer{padding:50px 96px 38px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.18em;margin-top:80px}
+  #f1,#f2,#f3{color:rgba(205,226,242,.82)}
   .footer-meta{text-align:right}
   #assetCredits{max-width:58ch;margin-top:8px;font-size:7px;line-height:1.6;letter-spacing:.08em;color:rgba(205,226,242,.82)}
-  #assetCredits a{color:inherit;text-decoration:underline;text-decoration-color:rgba(154,229,255,.22);text-underline-offset:2px}
+  #assetCredits a{display:inline-block;color:inherit;text-decoration:underline;text-decoration-color:rgba(154,229,255,.22);text-underline-offset:2px;white-space:nowrap}
   #assetCredits a:hover,#assetCredits a:focus-visible{color:rgba(205,238,255,.82);text-decoration-color:currentColor}
   .footnote{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.14em;margin-top:42px;line-height:1.9}
 
@@ -947,6 +950,7 @@
     .footer-meta{text-align:center}
     #assetCredits{max-width:46ch}
     .hero-cta{grid-template-columns:1fr;grid-template-areas:"hint" "coord";width:100%;gap:10px}
+    .hero-cta:has(.hero-record-cta){grid-template-columns:1fr;grid-template-areas:"record" "command" "coord";gap:8px}
     .coord{white-space:normal}
     .hud-warning,.hud-subwarning{display:none}
     .hud-panels{inset:auto 6px max(6px,env(safe-area-inset-bottom)) 6px;display:grid;grid-template-columns:minmax(0,.60fr) minmax(0,.40fr);grid-template-areas:"left center" "pilot pilot" "right right";gap:0;padding:5px;align-items:stretch;overflow:hidden;background:linear-gradient(180deg,rgba(12,18,26,.88),rgba(5,10,16,.96) 48%,rgba(1,3,7,.98));backdrop-filter:blur(30px) saturate(1.38) brightness(.72);-webkit-backdrop-filter:blur(30px) saturate(1.38) brightness(.72)}
@@ -7660,10 +7664,11 @@
        because custom properties are not valid in query conditions. */
     --layout-band-compact-max: 40rem;
     --layout-band-medium-max: 72rem;
-    --brand-ink: #dce8f7;
-    --brand-data: rgba(154,229,255,.82);
-    --nav-link-ink: rgba(116,218,241,.72);
-    --nav-link-active: #8cf1ff;
+    /* M02 aliases: literal values are owned by afflatus-foundation.css. */
+    --brand-ink: var(--af-command);
+    --brand-data: color-mix(in srgb, var(--af-ion) 82%, transparent);
+    --nav-link-ink: color-mix(in srgb, var(--af-ion) 72%, transparent);
+    --nav-link-active: var(--af-ion);
   }
 }
 

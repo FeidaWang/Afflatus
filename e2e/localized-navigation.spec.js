@@ -9,15 +9,13 @@ async function clickOnlyHomeLanguageSwitch(page) {
 }
 
 test('home navigation follows the fixed and interactive locale', async ({ page }) => {
-  const groupTriggers = page.locator('.nav-trigger');
+  const primaryLinks = page.locator('.primary-nav-link');
 
   await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
-  await expect(groupTriggers).toHaveText(['市场', '实验室', '写作']);
-  await expect(page.locator('.nav-about')).toHaveText('关于');
+  await expect(primaryLinks).toHaveText(['系统', '情报', '现场笔记', '实验', '关于']);
 
   await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-  await expect(groupTriggers).toHaveText(['Markets', 'Lab', 'Writing']);
-  await expect(page.locator('.nav-about')).toHaveText('About');
+  await expect(primaryLinks).toHaveText(['Systems', 'Intelligence', 'Field Notes', 'Experiments', 'About']);
 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await Promise.all([
@@ -25,7 +23,7 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
     clickOnlyHomeLanguageSwitch(page),
   ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
-  await expect(groupTriggers).toHaveText(['市场', '实验室', '写作']);
+  await expect(primaryLinks).toHaveText(['系统', '情报', '现场笔记', '实验', '关于']);
 });
 
 test('home fixed-locale switch preserves query and hash state', async ({ page }) => {
@@ -54,8 +52,11 @@ test('primary navigation replaces duplicate linear page-turn controls', async ({
     await expect(page.locator('.page-turn-controls, .route-arrows')).toHaveCount(0);
     await expect(page.locator('body')).not.toHaveAttribute('data-prev');
     await expect(page.locator('body')).not.toHaveAttribute('data-next');
-    await expect(page.locator('.nav-labs__menu a[data-en="Novels"]'))
-      .toHaveAttribute('href', '/zh/serial.html');
+    const links = path === '/en/'
+      ? page.locator('[data-afflatus-nav] .primary-nav-link')
+      : page.locator('[data-afflatus-nav] .afflatus-nav-links a');
+    await expect(links).toHaveCount(5);
+    await expect(links.filter({ hasText: 'Field Notes' })).toHaveAttribute('href', '/en/field-notes/');
   }
 
   const currentUrl = page.url();
@@ -86,21 +87,11 @@ test('fixed-locale switching keeps the reader in the current section', async ({ 
   expect(new URL(page.url()).hash).toBe('#review');
 });
 
-test('desktop pointer click pins a Labs menu that hover opened', async ({ page }, testInfo) => {
+test('desktop primary concepts remain visible without a disclosure menu', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop pointer interaction');
   await page.goto('/en/course.html', { waitUntil: 'domcontentloaded' });
 
-  const trigger = page.locator('.nav-labs__trigger');
-  const menu = page.locator('.nav-labs__menu');
-  await trigger.hover();
-  await expect(menu).toBeVisible();
-  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-
-  await trigger.click();
-  await expect(menu).toBeVisible();
-  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-
-  await trigger.click();
-  await expect(menu).toBeHidden();
-  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('.afflatus-nav-links')).toBeVisible();
+  await expect(page.locator('.afflatus-nav-links a')).toHaveCount(5);
+  await expect(page.locator('.afflatus-nav-toggle')).toBeHidden();
 });

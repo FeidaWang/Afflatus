@@ -38,6 +38,22 @@ async function installDeterministicRuntime(page) {
     const request = route.request();
     const url = new URL(request.url());
     if (LOCAL_HOSTS.has(url.hostname)) {
+      if (url.pathname === '/api/treasury-yields') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json; charset=utf-8',
+          body: JSON.stringify({
+            yields: [
+              { tenor: '10Y', value: 4.21, changeBps: -1.2, open: 4.23, high: 4.25, low: 4.19, asOf: new Date(FIXED_TIME).toISOString() },
+              { tenor: '30Y', value: 4.84, changeBps: 0.8, open: 4.82, high: 4.86, low: 4.8, asOf: new Date(FIXED_TIME).toISOString() },
+            ],
+            spread30s10sBps: 63,
+            marketStatus: 'CLOSED',
+            source: { provider: 'Deterministic E2E fixture', venue: 'Tradeweb', realTime: false },
+          }),
+        });
+        return;
+      }
       await route.continue();
       return;
     }
@@ -69,6 +85,13 @@ export const test = base.extend({
     const browserErrors = [];
     page.on('pageerror', (error) => {
       browserErrors.push(`pageerror: ${error.message}`);
+    });
+    page.on('response', (response) => {
+      if (response.status() < 400) return;
+      const url = new URL(response.url());
+      if (LOCAL_HOSTS.has(url.hostname)) {
+        browserErrors.push(`http.${response.status()}: ${url.pathname}${url.search}`);
+      }
     });
     page.on('console', (message) => {
       if (message.type() !== 'error') return;

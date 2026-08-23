@@ -1,0 +1,5148 @@
+[
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Systems for uncertain worlds.",
+    "height": 1000,
+    "lang": "en",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "motion-toggle header-motion-toggle",
+        "lines": 2,
+        "tag": "button",
+        "text": "Motion Off"
+      },
+      {
+        "cls": "command-button deck-primary",
+        "lines": 2,
+        "tag": "button",
+        "text": "Enter Command"
+      },
+      {
+        "cls": "language-switch",
+        "lines": 2,
+        "tag": "a",
+        "text": "EN / 中"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "brand",
+        "h": 16,
+        "text": "AFFLATUS",
+        "w": 82
+      },
+      {
+        "cls": "primary-nav-link",
+        "h": 44,
+        "text": "About",
+        "w": 31
+      },
+      {
+        "cls": "",
+        "h": 10,
+        "text": "AFFLATUS",
+        "w": 44
+      },
+      {
+        "cls": "",
+        "h": 11,
+        "text": "LANGUAGE · EN / 中",
+        "w": 96
+      },
+      {
+        "cls": "",
+        "h": 10,
+        "text": "PRIVACY / DISCLOSURE",
+        "w": 109
+      }
+    ],
+    "title": "AFFLATUS — Systems for uncertain worlds",
+    "width": 1440,
+    "id": "main",
+    "path": "/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 6,
+    "clipped": [],
+    "h1": "I made capital move fast. The drawdown taught me what speed costs.",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "cic-ap-toggle",
+        "lines": 2,
+        "tag": "button",
+        "text": "AP 自动"
+      },
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "cic-panel-focus",
+        "h": 28,
+        "text": "Expand fire-control station",
+        "w": 28
+      },
+      {
+        "cls": "cic-ap-toggle",
+        "h": 27,
+        "text": "AP 自动",
+        "w": 67
+      },
+      {
+        "cls": "",
+        "h": 19,
+        "text": "自动 · 舰长裁决火力 密集阵 · 左右舷近防弹幕 F-47 · 自主制导导弹 B2 · 战术核打击护航 执法者主炮 · 冷却30秒",
+        "w": 165
+      },
+      {
+        "cls": "cic-panel-focus",
+        "h": 28,
+        "text": "Expand tactical station",
+        "w": 28
+      },
+      {
+        "cls": "cic-log-toggle",
+        "h": 28,
+        "text": "VOYAGE NOTES",
+        "w": 81
+      },
+      {
+        "cls": "cic-deck-toggle",
+        "h": 30,
+        "text": "资产甲板",
+        "w": 71
+      },
+      {
+        "cls": "afflatus-nav-toggle",
+        "h": 4,
+        "text": "打开主导航",
+        "w": 4
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 26
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 26
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 26
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 26
+      },
+      {
+        "cls": "control-btn",
+        "h": 34,
+        "text": "COMMAND",
+        "w": 126
+      },
+      {
+        "cls": "warp-btn verse-switch",
+        "h": 32,
+        "text": "Dream in English",
+        "w": 153
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "Fictional 6th Gen Fighter",
+        "w": 119
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "yoshikawa_Kosuke",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "Venator Class Star Destroyer",
+        "w": 133
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "ForkyForklift",
+        "w": 62
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "CC BY 4.0",
+        "w": 43
+      }
+    ],
+    "title": "Portfolio · Project Afflatus",
+    "width": 1440,
+    "id": "portfolio",
+    "path": "/portfolio.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Command what is real.",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 25
+      },
+      {
+        "cls": "lang-toggle mission-language",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 40
+      },
+      {
+        "cls": "",
+        "h": 13,
+        "text": "RETURN HOME",
+        "w": 64
+      },
+      {
+        "cls": "",
+        "h": 13,
+        "text": "OPEN FLIGHT EXPERIMENT",
+        "w": 127
+      }
+    ],
+    "title": "Command Mission Room · AFFLATUS",
+    "width": 1440,
+    "id": "command",
+    "path": "/command/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Flight systems, isolated.",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 25
+      },
+      {
+        "cls": "lang-toggle mission-language",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 40
+      },
+      {
+        "cls": "",
+        "h": 13,
+        "text": "RETURN HOME",
+        "w": 64
+      },
+      {
+        "cls": "",
+        "h": 13,
+        "text": "OPEN MISSION ROOM",
+        "w": 98
+      }
+    ],
+    "title": "Flight Experiment · AFFLATUS",
+    "width": 1440,
+    "id": "flight-experiment",
+    "path": "/experiments/flight/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "A field record, not a live feed.",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 25
+      },
+      {
+        "cls": "lang-toggle mission-language",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 40
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "Capital Field Record · AFFLATUS",
+    "width": 1440,
+    "id": "capital",
+    "path": "/capital/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "FY25/26 Field Record",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 25
+      },
+      {
+        "cls": "lang-toggle mission-language",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 40
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "FY25/26 Field Record · AFFLATUS",
+    "width": 1440,
+    "id": "capital-record",
+    "path": "/capital/fy25-26/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Signals with a destination.",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 25
+      },
+      {
+        "cls": "lang-toggle mission-language",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 40
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "Intelligence Dossiers · AFFLATUS",
+    "width": 1440,
+    "id": "intelligence",
+    "path": "/intelligence/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "AI Industry Solar Atlas",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 25
+      },
+      {
+        "cls": "lang-toggle mission-language",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 40
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "AI Industry Solar Atlas · AFFLATUS",
+    "width": 1440,
+    "id": "solar-atlas",
+    "path": "/intelligence/solar-atlas/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Read at the speed of thought.",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 25
+      },
+      {
+        "cls": "lang-toggle mission-language",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 40
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "Field Notes · AFFLATUS",
+    "width": 1440,
+    "id": "field-notes",
+    "path": "/field-notes/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Prototype openly. Label honestly.",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 44,
+        "text": "系统",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "情报",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "实验",
+        "w": 25
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "关于",
+        "w": 25
+      },
+      {
+        "cls": "lang-toggle mission-language",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 40
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "Experiments · AFFLATUS",
+    "width": 1440,
+    "id": "experiments",
+    "path": "/experiments/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 2,
+    "clipped": [
+      {
+        "cls": "sr-only",
+        "dh": 2239,
+        "dw": 14,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "p",
+        "text": "净值曲线覆盖第 0 日至第 12 日。期末净值：S · ORACLE $10,001.36；P · PULSE $10,022.14；T · ATLAS $10,000.00；SPY $10,475.00；SMH $10,044.00。"
+      }
+    ],
+    "h1": "AFFLATUS TRADING ARENA",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 40,
+        "text": "系统",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "情报",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "现场笔记",
+        "w": 49
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "实验",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "关于",
+        "w": 28
+      },
+      {
+        "cls": "afflatus-command-cta",
+        "h": 40,
+        "text": "进入指挥舱",
+        "w": 89
+      },
+      {
+        "cls": "hbtn lang-toggle",
+        "h": 31,
+        "text": "EN",
+        "w": 41
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 339
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 339
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 339
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 339
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 339
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 339
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 339
+      },
+      {
+        "cls": "",
+        "h": 29,
+        "text": "10D 20D 40D",
+        "w": 70
+      },
+      {
+        "cls": "ta-search",
+        "h": 40,
+        "text": "Search stocks",
+        "w": 420
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "官方财报日期 ↗",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "向 SEC 提交的第三财季业绩与第四财季指引 ↗",
+        "w": 187
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "官方财报日期 ↗",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "第一财季业绩与第二财季指引 ↗",
+        "w": 131
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "向 SEC 提交的第一财季 10-Q ↗",
+        "w": 141
+      }
+    ],
+    "title": "Arena · QF-01 Quant Foundry + US Stock TA — Afflatus",
+    "width": 1440,
+    "id": "arena",
+    "path": "/arena.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [],
+    "h1": "模型战争已不只是开源对闭源。 真正争夺的是价格、算力与分发。",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 40,
+        "text": "系统",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "情报",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "现场笔记",
+        "w": 49
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "实验",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "关于",
+        "w": 28
+      },
+      {
+        "cls": "afflatus-command-cta",
+        "h": 40,
+        "text": "进入指挥舱",
+        "w": 104
+      },
+      {
+        "cls": "lang-toggle",
+        "h": 35,
+        "text": "EN",
+        "w": 52
+      }
+    ],
+    "title": "Project Afflatus · US–China AI Model War",
+    "width": 1440,
+    "id": "sectors",
+    "path": "/sectors.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [],
+    "h1": "一只手收容着 ██████ 市场",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "",
+        "lines": 3,
+        "tag": "a",
+        "text": "10/30 实时收益率"
+      },
+      {
+        "cls": "",
+        "lines": 3,
+        "tag": "a",
+        "text": "00 政策故事线"
+      },
+      {
+        "cls": "",
+        "lines": 3,
+        "tag": "a",
+        "text": "01 罗盘"
+      },
+      {
+        "cls": "",
+        "lines": 3,
+        "tag": "a",
+        "text": "02 信号矩阵"
+      },
+      {
+        "cls": "",
+        "lines": 3,
+        "tag": "a",
+        "text": "03 事件档案"
+      },
+      {
+        "cls": "",
+        "lines": 3,
+        "tag": "a",
+        "text": "04 产业地图"
+      },
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      },
+      {
+        "cls": "pillar tone-red",
+        "lines": 10,
+        "tag": "article",
+        "text": "通胀数据 01 PCE仍高于目标 美国经济分析局公布：6月整体PCE环比下降0.1%，同比仍上涨3.7%；核心PCE环比上涨0.1%、同比上涨3.3%。实际消费增长0.4%，储蓄率降至2.7%。通胀重新降温，但其绝对水平与家庭缓冲仍约束政策"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 11,
+        "tag": "article",
+        "text": "货币政策 02 维持利率，三票主张加息 7月29日FOMC以9比3维持3.50%–3.75%。准备金利率为3.65%，常备回购为3.75%，隔夜逆回购为3.50%、单一对手方每日上限1600亿美元。8月14日至9月14日操作台计划170亿美"
+      },
+      {
+        "cls": "pillar tone-red",
+        "lines": 10,
+        "tag": "article",
+        "text": "就业与薪资 03 非农转负，参与率下滑 7月非农减少2.3万人，而市场共识为增加8.7万人。5月与6月合计下修10.3万人，三个月净增仅6万人。失业率降至4.1%的同时，劳动参与率降至61.4%；时薪同比增速放缓至3.2%。 2026-08"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 12,
+        "tag": "article",
+        "text": "产业政策 04 本土化范围扩大，成本门槛提高 正式优先方向现覆盖全栈AI出口、本土芯片与设备、能源与电网产能、多晶硅与太阳能投入品、产业及国防供应链韧性和住房供给。激励与保护可提高本土需求能见度，关税、最低进口价、融资与地方执行也可能抬高成"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 13,
+        "tag": "article",
+        "text": "特朗普、贸易与联储影响力 05 利率权力间接，产业权力直接 特朗普可通过提名塑造联储领导层，也能以公开表态影响预期，但不能代替其他FOMC票委投票，更不能以命令设定政策利率或长期美债收益率。他更强的直接渠道是产业政策：关税、豁免、最低进口价"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "FED-RMP-2026-08-14 8月14日 · FED_OPERATIONS EUCLID 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "TRUMP-POLYSILICON-2026-08-06 8月6日 · TRADE_POLICY KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "FED-2026-07-29 7月29日 · FED_POLICY KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "PCE-2026-06 7月30日 · INFLATION KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "NFP-2026-07 8月7日 · LABOR KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "TRUMP-AI-2026-07-23 7月23日 · AI_POLICY EUCLID 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "TRUMP-CHIPS-2026-01 1月14日 · TRADE_POLICY KETER 级"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 16,
+        "text": "10/30 实时收益率",
+        "w": 47
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "00 政策故事线",
+        "w": 47
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "01 罗盘",
+        "w": 47
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "02 信号矩阵",
+        "w": 47
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "03 事件档案",
+        "w": 47
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "04 产业地图",
+        "w": 47
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "系统",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "情报",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "现场笔记",
+        "w": 49
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "实验",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "关于",
+        "w": 28
+      },
+      {
+        "cls": "afflatus-command-cta",
+        "h": 40,
+        "text": "进入指挥舱",
+        "w": 85
+      },
+      {
+        "cls": "lang-toggle",
+        "h": 31,
+        "text": "EN",
+        "w": 39
+      },
+      {
+        "cls": "ihead",
+        "h": 40,
+        "text": "FED-RMP-2026-08-14 8月14日 · FED_OPERATIONS EUCLID 级",
+        "w": 986
+      },
+      {
+        "cls": "ihead",
+        "h": 40,
+        "text": "TRUMP-POLYSILICON-2026-08-06 8月6日 · TRADE_POLICY KETER 级",
+        "w": 986
+      },
+      {
+        "cls": "ihead",
+        "h": 40,
+        "text": "FED-2026-07-29 7月29日 · FED_POLICY KETER 级",
+        "w": 986
+      },
+      {
+        "cls": "ihead",
+        "h": 40,
+        "text": "PCE-2026-06 7月30日 · INFLATION KETER 级",
+        "w": 986
+      },
+      {
+        "cls": "ihead",
+        "h": 40,
+        "text": "NFP-2026-07 8月7日 · LABOR KETER 级",
+        "w": 986
+      },
+      {
+        "cls": "ihead",
+        "h": 40,
+        "text": "TRUMP-AI-2026-07-23 7月23日 · AI_POLICY EUCLID 级",
+        "w": 986
+      },
+      {
+        "cls": "ihead",
+        "h": 40,
+        "text": "TRUMP-CHIPS-2026-01 1月14日 · TRADE_POLICY KETER 级",
+        "w": 986
+      }
+    ],
+    "title": "Project Afflatus · Signal — O5 Reserve Containment",
+    "width": 1440,
+    "id": "signal",
+    "path": "/signal.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "竞猜战绩存档——每一次预测，都留痕可查。",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 HLE vs TSW HLE 3-0 72% 3-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 G2 vs TES TES 1-3 63% 3-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 FURIA vs LYON LYON 1-3 58% 0-3 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 BLG vs T1 T1 2-3 55% 3-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "上位组 · 第二轮 HLE vs G2 HLE 3-1 68% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "下位组 · 第一轮 TES vs TSW TES 3-1 66% 1-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "下位组 · 第一轮 T1 vs FURIA T1 3-0 85% 3-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "上位组 · 第二轮 BLG vs LYON BLG 3-1 72% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "上位组 · 决赛 BLG vs HLE HLE 3-2 60% 3-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "下位组 · 第二轮 G2 vs T1 T1 3-1 78% 3-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "下位组 · 第二轮 LYON vs TSW LYON 3-2 54% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "下位组 · 第三轮 G2 vs LYON G2 3-2 58% 0-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "下位组 · 决赛 HLE vs LYON HLE 3-1 70% 3-2 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "总决赛 BLG vs HLE BLG 3-1 65% 2-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "十六强 巴拉圭 vs 法国 法国 0-2 73% 0-1 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "十六强 加拿大 vs 摩洛哥 加拿大 1-0 52% 0-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "十六强 西班牙 vs 葡萄牙 西班牙 2-1 60% 1-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "十六强 美国 vs 比利时 比利时 1-2 53% 1-4 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "十六强 巴西 vs 挪威 巴西 2-1 62% 1-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "十六强 墨西哥 vs 英格兰 英格兰 1-2 55% 2-3 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "十六强 阿根廷 vs 埃及 阿根廷 2-0 80% 3-2 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "十六强 瑞士 vs 哥伦比亚 哥伦比亚 1-2 56% 0-0 (Switzerland win 4-3 pens) ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "八强 法国 vs 摩洛哥 法国 2-0 68% 2-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "八强 西班牙 vs 比利时 西班牙 2-0 62% 2-1 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "八强 挪威 vs 英格兰 英格兰 1-2 55% 1-2 (AET) ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "八强 阿根廷 vs 瑞士 阿根廷 2-1 66% 3-1 (AET) ✓"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "四强 法国 vs 西班牙 法国 2-1 56% 0-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "四强 阿根廷 vs 英格兰 英格兰 1-2 54% 2-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "季军赛 法国 vs 英格兰 法国 3-1 56% 4-6 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "tr",
+        "text": "决赛 西班牙 vs 阿根廷 西班牙 2-1 58% 1-0 (AET) ✓"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 40,
+        "text": "系统",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "情报",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "现场笔记",
+        "w": 49
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "实验",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "关于",
+        "w": 28
+      },
+      {
+        "cls": "afflatus-command-cta",
+        "h": 40,
+        "text": "进入指挥舱",
+        "w": 93
+      },
+      {
+        "cls": "lang-toggle",
+        "h": 28,
+        "text": "EN",
+        "w": 38
+      },
+      {
+        "cls": "bar-hit",
+        "h": 170,
+        "text": "打开 HLE vs TSW, 72%, 判对",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 149,
+        "text": "打开 G2 vs TES, 63%, 判错",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 136,
+        "text": "打开 FURIA vs LYON, 58%, 判对",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 128,
+        "text": "打开 BLG vs T1, 55%, 判错",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 157,
+        "text": "打开 HLE vs G2, 68%, 判对",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 150,
+        "text": "打开 TES vs TSW, 66%, 判错",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 188,
+        "text": "打开 T1 vs FURIA, 85%, 判对",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 154,
+        "text": "打开 BLG vs LYON, 72%, 判对",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 122,
+        "text": "打开 BLG vs HLE, 60%, 判错",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 149,
+        "text": "打开 G2 vs T1, 78%, 判错",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 96,
+        "text": "打开 LYON vs TSW, 54%, 判对",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 93,
+        "text": "打开 G2 vs LYON, 58%, 判错",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 97,
+        "text": "打开 HLE vs LYON, 70%, 判对",
+        "w": 41
+      },
+      {
+        "cls": "bar-hit",
+        "h": 74,
+        "text": "打开 BLG vs HLE, 65%, 判错",
+        "w": 41
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "MSI confidence threshold",
+        "w": 331
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "上位组 · 第一轮 HLE vs TSW HLE 3-0 72% 3-0 ⭐",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "上位组 · 第一轮 G2 vs TES TES 1-3 63% 3-2 ✗",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "上位组 · 第一轮 FURIA vs LYON LYON 1-3 58% 0-3 ✓",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "上位组 · 第一轮 BLG vs T1 T1 2-3 55% 3-2 ✗",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "上位组 · 第二轮 HLE vs G2 HLE 3-1 68% 3-0 ✓",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "下位组 · 第一轮 TES vs TSW TES 3-1 66% 1-3 ✗",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "下位组 · 第一轮 T1 vs FURIA T1 3-0 85% 3-0 ⭐",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "上位组 · 第二轮 BLG vs LYON BLG 3-1 72% 3-0 ✓",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "上位组 · 决赛 BLG vs HLE HLE 3-2 60% 3-1 ✗",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "下位组 · 第二轮 G2 vs T1 T1 3-1 78% 3-1 ✗",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "下位组 · 第二轮 LYON vs TSW LYON 3-2 54% 3-0 ✓",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "下位组 · 第三轮 G2 vs LYON G2 3-2 58% 0-3 ✗",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "下位组 · 决赛 HLE vs LYON HLE 3-1 70% 3-2 ✓",
+        "w": 945
+      },
+      {
+        "cls": "",
+        "h": 35,
+        "text": "总决赛 BLG vs HLE BLG 3-1 65% 2-3 ✗",
+        "w": 945
+      },
+      {
+        "cls": "bar-hit",
+        "h": 173,
+        "text": "打开 巴拉圭 vs 法国, 73%, 判对",
+        "w": 36
+      },
+      {
+        "cls": "bar-hit",
+        "h": 123,
+        "text": "打开 加拿大 vs 摩洛哥, 52%, 判错",
+        "w": 36
+      },
+      {
+        "cls": "bar-hit",
+        "h": 141,
+        "text": "打开 西班牙 vs 葡萄牙, 60%, 判对",
+        "w": 36
+      },
+      {
+        "cls": "bar-hit",
+        "h": 124,
+        "text": "打开 美国 vs 比利时, 53%, 判对",
+        "w": 36
+      }
+    ],
+    "title": "Project Afflatus · Stats — 竞猜战绩存档",
+    "width": 1440,
+    "id": "stats",
+    "path": "/stats.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "AFFLATUS 观星台",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 40,
+        "text": "系统",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "情报",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "现场笔记",
+        "w": 49
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "实验",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "关于",
+        "w": 28
+      },
+      {
+        "cls": "afflatus-command-cta",
+        "h": 40,
+        "text": "进入指挥舱",
+        "w": 90
+      },
+      {
+        "cls": "lang-toggle",
+        "h": 31,
+        "text": "EN",
+        "w": 47
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "",
+        "w": 17
+      },
+      {
+        "cls": "",
+        "h": 44,
+        "text": "",
+        "w": 17
+      }
+    ],
+    "title": "Project Afflatus · Horoscope — 观星台 · Bazi & Astrology",
+    "width": 1440,
+    "id": "horoscope",
+    "path": "/horoscope.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [],
+    "h1": "玉熙宫词",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 40,
+        "text": "系统",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "情报",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "现场笔记",
+        "w": 49
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "实验",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "关于",
+        "w": 28
+      },
+      {
+        "cls": "afflatus-command-cta",
+        "h": 40,
+        "text": "进入指挥舱",
+        "w": 78
+      }
+    ],
+    "title": "Project Afflatus · 小说 — 玉熙宫词",
+    "width": 1440,
+    "id": "serial",
+    "path": "/serial.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "前线部署 工程师。",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 40,
+        "text": "系统",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "情报",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "现场笔记",
+        "w": 49
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "实验",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "关于",
+        "w": 28
+      },
+      {
+        "cls": "afflatus-command-cta",
+        "h": 32,
+        "text": "进入指挥舱",
+        "w": 63
+      },
+      {
+        "cls": "lang-toggle",
+        "h": 32,
+        "text": "EN",
+        "w": 31
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 619
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 619
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 619
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 619
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 619
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 619
+      },
+      {
+        "cls": "",
+        "h": 10,
+        "text": "返回顶部 ↑",
+        "w": 622
+      }
+    ],
+    "title": "Forward Deployed Engineer 0→1 · Project Afflatus",
+    "width": 1440,
+    "id": "course",
+    "path": "/course.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [
+      {
+        "cls": "city-skip",
+        "dh": 22,
+        "dw": 95,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "跳到城市控制"
+      }
+    ],
+    "h1": "要么是真实城市，要么如实显示尚不可用。",
+    "height": 1000,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 40,
+        "text": "系统",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "情报",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "现场笔记",
+        "w": 49
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "实验",
+        "w": 28
+      },
+      {
+        "cls": "",
+        "h": 40,
+        "text": "关于",
+        "w": 28
+      }
+    ],
+    "title": "城市推演台 — 真实数据门控城市观测台 · Afflatus",
+    "width": 1440,
+    "id": "cityview",
+    "path": "/cityview.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Systems for uncertain worlds.",
+    "height": 932,
+    "lang": "en",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "command-button deck-primary",
+        "lines": 2,
+        "tag": "button",
+        "text": "Enter Command"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "brand",
+        "h": 13,
+        "text": "AFFLATUS",
+        "w": 69
+      },
+      {
+        "cls": "language-switch",
+        "h": 44,
+        "text": "EN / 中",
+        "w": 36
+      },
+      {
+        "cls": "",
+        "h": 10,
+        "text": "AFFLATUS",
+        "w": 44
+      },
+      {
+        "cls": "",
+        "h": 11,
+        "text": "LANGUAGE · EN / 中",
+        "w": 96
+      },
+      {
+        "cls": "",
+        "h": 10,
+        "text": "PRIVACY / DISCLOSURE",
+        "w": 109
+      }
+    ],
+    "title": "AFFLATUS — Systems for uncertain worlds",
+    "width": 430,
+    "id": "main",
+    "path": "/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 6,
+    "clipped": [],
+    "h1": "I made capital move fast. The drawdown taught me what speed costs.",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "cic-ap-toggle",
+        "lines": 2,
+        "tag": "button",
+        "text": "AP 自动"
+      },
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      },
+      {
+        "cls": "lang-mini-toggle",
+        "lines": 2,
+        "tag": "a",
+        "text": "EN / 中"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "a",
+        "text": "Venator Class Star Destroyer"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "cic-ap-toggle",
+        "h": 18,
+        "text": "AP 自动",
+        "w": 61
+      },
+      {
+        "cls": "",
+        "h": 43,
+        "text": "自动 · 舰长裁决火力 密集阵 · 左右舷近防弹幕 F-47 · 自主制导导弹 B2 · 战术核打击护航 执法者主炮 · 冷却30秒",
+        "w": 165
+      },
+      {
+        "cls": "cic-deck-toggle",
+        "h": 30,
+        "text": "资产甲板",
+        "w": 43
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "Fictional 6th Gen Fighter",
+        "w": 119
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "yoshikawa_Kosuke",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 20,
+        "text": "Venator Class Star Destroyer",
+        "w": 179
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "ForkyForklift",
+        "w": 62
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "CC BY 4.0",
+        "w": 43
+      }
+    ],
+    "title": "Portfolio · Project Afflatus",
+    "width": 430,
+    "id": "portfolio",
+    "path": "/portfolio.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Command what is real.",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 13,
+        "text": "RETURN HOME",
+        "w": 64
+      },
+      {
+        "cls": "",
+        "h": 13,
+        "text": "OPEN FLIGHT EXPERIMENT",
+        "w": 127
+      }
+    ],
+    "title": "Command Mission Room · AFFLATUS",
+    "width": 430,
+    "id": "command",
+    "path": "/command/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Flight systems, isolated.",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 13,
+        "text": "RETURN HOME",
+        "w": 64
+      },
+      {
+        "cls": "",
+        "h": 13,
+        "text": "OPEN MISSION ROOM",
+        "w": 98
+      }
+    ],
+    "title": "Flight Experiment · AFFLATUS",
+    "width": 430,
+    "id": "flight-experiment",
+    "path": "/experiments/flight/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "A field record, not a live feed.",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "Capital Field Record · AFFLATUS",
+    "width": 430,
+    "id": "capital",
+    "path": "/capital/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "FY25/26 Field Record",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "FY25/26 Field Record · AFFLATUS",
+    "width": 430,
+    "id": "capital-record",
+    "path": "/capital/fy25-26/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Signals with a destination.",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "Intelligence Dossiers · AFFLATUS",
+    "width": 430,
+    "id": "intelligence",
+    "path": "/intelligence/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "AI Industry Solar Atlas",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "AI Industry Solar Atlas · AFFLATUS",
+    "width": 430,
+    "id": "solar-atlas",
+    "path": "/intelligence/solar-atlas/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Read at the speed of thought.",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "Field Notes · AFFLATUS",
+    "width": 430,
+    "id": "field-notes",
+    "path": "/field-notes/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "Prototype openly. Label honestly.",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "RETURN HOME",
+        "w": 72
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "ENTER COMMAND",
+        "w": 86
+      }
+    ],
+    "title": "Experiments · AFFLATUS",
+    "width": 430,
+    "id": "experiments",
+    "path": "/experiments/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 2,
+    "clipped": [
+      {
+        "cls": "afflatus-command-cta",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "进入指挥舱"
+      },
+      {
+        "cls": "hbtn lang-toggle",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "EN"
+      },
+      {
+        "cls": "sr-only",
+        "dh": 2239,
+        "dw": 14,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "p",
+        "text": "净值曲线覆盖第 0 日至第 12 日。期末净值：S · ORACLE $10,001.36；P · PULSE $10,022.14；T · ATLAS $10,000.00；SPY $10,475.00；SMH $10,044.00。"
+      }
+    ],
+    "h1": "AFFLATUS TRADING ARENA",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "官方财报日期 ↗",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "向 SEC 提交的第三财季业绩与第四财季指引 ↗",
+        "w": 187
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "官方财报日期 ↗",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "第一财季业绩与第二财季指引 ↗",
+        "w": 131
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "向 SEC 提交的第一财季 10-Q ↗",
+        "w": 141
+      }
+    ],
+    "title": "Arena · QF-01 Quant Foundry + US Stock TA — Afflatus",
+    "width": 430,
+    "id": "arena",
+    "path": "/arena.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [],
+    "h1": "模型战争已不只是开源对闭源。 真正争夺的是价格、算力与分发。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "Project Afflatus · US–China AI Model War",
+    "width": 430,
+    "id": "sectors",
+    "path": "/sectors.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [
+      {
+        "cls": "afflatus-command-cta",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "进入指挥舱"
+      },
+      {
+        "cls": "lang-toggle",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "EN"
+      }
+    ],
+    "h1": "一只手收容着 ██████ 市场",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      },
+      {
+        "cls": "pillar tone-red",
+        "lines": 9,
+        "tag": "article",
+        "text": "通胀数据 01 PCE仍高于目标 美国经济分析局公布：6月整体PCE环比下降0.1%，同比仍上涨3.7%；核心PCE环比上涨0.1%、同比上涨3.3%。实际消费增长0.4%，储蓄率降至2.7%。通胀重新降温，但其绝对水平与家庭缓冲仍约束政策"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 11,
+        "tag": "article",
+        "text": "货币政策 02 维持利率，三票主张加息 7月29日FOMC以9比3维持3.50%–3.75%。准备金利率为3.65%，常备回购为3.75%，隔夜逆回购为3.50%、单一对手方每日上限1600亿美元。8月14日至9月14日操作台计划170亿美"
+      },
+      {
+        "cls": "pillar tone-red",
+        "lines": 9,
+        "tag": "article",
+        "text": "就业与薪资 03 非农转负，参与率下滑 7月非农减少2.3万人，而市场共识为增加8.7万人。5月与6月合计下修10.3万人，三个月净增仅6万人。失业率降至4.1%的同时，劳动参与率降至61.4%；时薪同比增速放缓至3.2%。 2026-08"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 10,
+        "tag": "article",
+        "text": "产业政策 04 本土化范围扩大，成本门槛提高 正式优先方向现覆盖全栈AI出口、本土芯片与设备、能源与电网产能、多晶硅与太阳能投入品、产业及国防供应链韧性和住房供给。激励与保护可提高本土需求能见度，关税、最低进口价、融资与地方执行也可能抬高成"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 11,
+        "tag": "article",
+        "text": "特朗普、贸易与联储影响力 05 利率权力间接，产业权力直接 特朗普可通过提名塑造联储领导层，也能以公开表态影响预期，但不能代替其他FOMC票委投票，更不能以命令设定政策利率或长期美债收益率。他更强的直接渠道是产业政策：关税、豁免、最低进口价"
+      },
+      {
+        "cls": "ihead",
+        "lines": 6,
+        "tag": "div",
+        "text": "FED-RMP-2026-08-14 8月14日 · FED_OPERATIONS EUCLID 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 6,
+        "tag": "div",
+        "text": "TRUMP-POLYSILICON-2026-08-06 8月6日 · TRADE_POLICY KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "FED-2026-07-29 7月29日 · FED_POLICY KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "PCE-2026-06 7月30日 · INFLATION KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "NFP-2026-07 8月7日 · LABOR KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "TRUMP-AI-2026-07-23 7月23日 · AI_POLICY EUCLID 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "TRUMP-CHIPS-2026-01 1月14日 · TRADE_POLICY KETER 级"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "Project Afflatus · Signal — O5 Reserve Containment",
+    "width": 430,
+    "id": "signal",
+    "path": "/signal.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "竞猜战绩存档——每一次预测，都留痕可查。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 HLE vs TSW HLE 3-0 72% 3-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 G2 vs TES TES 1-3 63% 3-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 FURIA vs LYON LYON 1-3 58% 0-3 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 BLG vs T1 T1 2-3 55% 3-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第二轮 HLE vs G2 HLE 3-1 68% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第一轮 TES vs TSW TES 3-1 66% 1-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第一轮 T1 vs FURIA T1 3-0 85% 3-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第二轮 BLG vs LYON BLG 3-1 72% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 决赛 BLG vs HLE HLE 3-2 60% 3-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第二轮 G2 vs T1 T1 3-1 78% 3-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第二轮 LYON vs TSW LYON 3-2 54% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第三轮 G2 vs LYON G2 3-2 58% 0-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 决赛 HLE vs LYON HLE 3-1 70% 3-2 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "总决赛 BLG vs HLE BLG 3-1 65% 2-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 巴拉圭 vs 法国 法国 0-2 73% 0-1 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 加拿大 vs 摩洛哥 加拿大 1-0 52% 0-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 西班牙 vs 葡萄牙 西班牙 2-1 60% 1-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 美国 vs 比利时 比利时 1-2 53% 1-4 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 巴西 vs 挪威 巴西 2-1 62% 1-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 墨西哥 vs 英格兰 英格兰 1-2 55% 2-3 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 阿根廷 vs 埃及 阿根廷 2-0 80% 3-2 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 瑞士 vs 哥伦比亚 哥伦比亚 1-2 56% 0-0 (Switzerland win 4-3 pens) ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "八强 法国 vs 摩洛哥 法国 2-0 68% 2-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "八强 西班牙 vs 比利时 西班牙 2-0 62% 2-1 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "八强 挪威 vs 英格兰 英格兰 1-2 55% 1-2 (AET) ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "八强 阿根廷 vs 瑞士 阿根廷 2-1 66% 3-1 (AET) ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "四强 法国 vs 西班牙 法国 2-1 56% 0-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "四强 阿根廷 vs 英格兰 英格兰 1-2 54% 2-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "季军赛 法国 vs 英格兰 法国 3-1 56% 4-6 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "决赛 西班牙 vs 阿根廷 西班牙 2-1 58% 1-0 (AET) ✓"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "bar-hit",
+        "h": 64,
+        "text": "打开 HLE vs TSW, 72%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 56,
+        "text": "打开 G2 vs TES, 63%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 51,
+        "text": "打开 FURIA vs LYON, 58%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 48,
+        "text": "打开 BLG vs T1, 55%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 59,
+        "text": "打开 HLE vs G2, 68%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 57,
+        "text": "打开 TES vs TSW, 66%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 71,
+        "text": "打开 T1 vs FURIA, 85%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 58,
+        "text": "打开 BLG vs LYON, 72%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 47,
+        "text": "打开 BLG vs HLE, 60%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 57,
+        "text": "打开 G2 vs T1, 78%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 37,
+        "text": "打开 LYON vs TSW, 54%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 36,
+        "text": "打开 G2 vs LYON, 58%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 38,
+        "text": "打开 HLE vs LYON, 70%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 29,
+        "text": "打开 BLG vs HLE, 65%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "MSI confidence threshold",
+        "w": 238
+      },
+      {
+        "cls": "bar-hit",
+        "h": 65,
+        "text": "打开 巴拉圭 vs 法国, 73%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 46,
+        "text": "打开 加拿大 vs 摩洛哥, 52%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 53,
+        "text": "打开 西班牙 vs 葡萄牙, 60%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 47,
+        "text": "打开 美国 vs 比利时, 53%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 54,
+        "text": "打开 巴西 vs 挪威, 62%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 47,
+        "text": "打开 墨西哥 vs 英格兰, 55%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 67,
+        "text": "打开 阿根廷 vs 埃及, 80%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 45,
+        "text": "打开 瑞士 vs 哥伦比亚, 56%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 53,
+        "text": "打开 法国 vs 摩洛哥, 68%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 45,
+        "text": "打开 西班牙 vs 比利时, 62%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 37,
+        "text": "打开 挪威 vs 英格兰, 55%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 41,
+        "text": "打开 阿根廷 vs 瑞士, 66%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 30,
+        "text": "打开 法国 vs 西班牙, 56%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 24,
+        "text": "打开 阿根廷 vs 英格兰, 54%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 20,
+        "text": "打开 法国 vs 英格兰, 56%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 13,
+        "text": "打开 西班牙 vs 阿根廷, 58%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "World Cup confidence threshold",
+        "w": 238
+      }
+    ],
+    "title": "Project Afflatus · Stats — 竞猜战绩存档",
+    "width": 430,
+    "id": "stats",
+    "path": "/stats.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [
+      {
+        "cls": "afflatus-command-cta",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "进入指挥舱"
+      },
+      {
+        "cls": "lang-toggle",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "EN"
+      }
+    ],
+    "h1": "AFFLATUS 观星台",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "Project Afflatus · Horoscope — 观星台 · Bazi & Astrology",
+    "width": 430,
+    "id": "horoscope",
+    "path": "/horoscope.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [
+      {
+        "cls": "afflatus-command-cta",
+        "dh": 8,
+        "dw": 1,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "进入指挥舱"
+      }
+    ],
+    "h1": "玉熙宫词",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "Project Afflatus · 小说 — 玉熙宫词",
+    "width": 430,
+    "id": "serial",
+    "path": "/serial.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "前线部署 工程师。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 10,
+        "text": "返回顶部 ↑",
+        "w": 46
+      }
+    ],
+    "title": "Forward Deployed Engineer 0→1 · Project Afflatus",
+    "width": 430,
+    "id": "course",
+    "path": "/course.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [
+      {
+        "cls": "city-skip",
+        "dh": 22,
+        "dw": 95,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "跳到城市控制"
+      }
+    ],
+    "h1": "要么是真实城市，要么如实显示尚不可用。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "城市推演台 — 真实数据门控城市观测台 · Afflatus",
+    "width": 430,
+    "id": "cityview",
+    "path": "/cityview.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "为不确定的世界 构建系统。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "command-button deck-primary",
+        "lines": 2,
+        "tag": "button",
+        "text": "进入指挥舱"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "brand",
+        "h": 13,
+        "text": "AFFLATUS",
+        "w": 69
+      },
+      {
+        "cls": "language-switch",
+        "h": 44,
+        "text": "中 / EN",
+        "w": 36
+      },
+      {
+        "cls": "",
+        "h": 10,
+        "text": "AFFLATUS",
+        "w": 44
+      },
+      {
+        "cls": "",
+        "h": 11,
+        "text": "语言 · 中 / EN",
+        "w": 69
+      },
+      {
+        "cls": "",
+        "h": 11,
+        "text": "隐私 / 披露",
+        "w": 51
+      }
+    ],
+    "title": "AFFLATUS — 为不确定的世界构建系统",
+    "width": 430,
+    "id": "main",
+    "path": "/zh/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 6,
+    "clipped": [],
+    "h1": "我让资本高速跃迁回撤则提醒我速度的代价",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "cic-ap-toggle",
+        "lines": 2,
+        "tag": "button",
+        "text": "AP 自动"
+      },
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      },
+      {
+        "cls": "lang-mini-toggle",
+        "lines": 2,
+        "tag": "a",
+        "text": "EN / 中"
+      },
+      {
+        "cls": "",
+        "lines": 2,
+        "tag": "a",
+        "text": "Venator Class Star Destroyer"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "cic-ap-toggle",
+        "h": 18,
+        "text": "AP 自动",
+        "w": 61
+      },
+      {
+        "cls": "",
+        "h": 43,
+        "text": "自动 · 舰长裁决火力 密集阵 · 左右舷近防弹幕 F-47 · 自主制导导弹 B2 · 战术核打击护航 执法者主炮 · 冷却30秒",
+        "w": 165
+      },
+      {
+        "cls": "cic-deck-toggle",
+        "h": 30,
+        "text": "资产甲板",
+        "w": 43
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "Fictional 6th Gen Fighter",
+        "w": 119
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "yoshikawa_Kosuke",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 20,
+        "text": "Venator Class Star Destroyer",
+        "w": 179
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "ForkyForklift",
+        "w": 62
+      },
+      {
+        "cls": "",
+        "h": 9,
+        "text": "CC BY 4.0",
+        "w": 43
+      }
+    ],
+    "title": "作品集 · Project Afflatus",
+    "width": 430,
+    "id": "portfolio",
+    "path": "/zh/portfolio.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "指挥真实存在的系统。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 13,
+        "text": "返回首页",
+        "w": 36
+      },
+      {
+        "cls": "",
+        "h": 13,
+        "text": "打开飞行实验",
+        "w": 54
+      }
+    ],
+    "title": "Command 任务舱 · AFFLATUS",
+    "width": 430,
+    "id": "command",
+    "path": "/zh/command/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "隔离飞行系统。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 13,
+        "text": "返回首页",
+        "w": 36
+      },
+      {
+        "cls": "",
+        "h": 13,
+        "text": "打开任务舱",
+        "w": 45
+      }
+    ],
+    "title": "飞行模拟实验 · AFFLATUS",
+    "width": 430,
+    "id": "flight-experiment",
+    "path": "/zh/experiments/flight/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "一份现场记录，不是实时行情。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "返回首页",
+        "w": 41
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "进入任务舱",
+        "w": 51
+      }
+    ],
+    "title": "资本现场记录 · AFFLATUS",
+    "width": 430,
+    "id": "capital",
+    "path": "/zh/capital/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "FY25/26 现场记录",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "返回首页",
+        "w": 41
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "进入任务舱",
+        "w": 51
+      }
+    ],
+    "title": "FY25/26 资本现场记录 · AFFLATUS",
+    "width": 430,
+    "id": "capital-record",
+    "path": "/zh/capital/fy25-26/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "每条信号都有去处。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "返回首页",
+        "w": 41
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "进入任务舱",
+        "w": 51
+      }
+    ],
+    "title": "情报档案 · AFFLATUS",
+    "width": 430,
+    "id": "intelligence",
+    "path": "/zh/intelligence/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "AI 产业太阳图鉴",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "返回首页",
+        "w": 41
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "进入任务舱",
+        "w": 51
+      }
+    ],
+    "title": "AI 产业太阳图鉴 · AFFLATUS",
+    "width": 430,
+    "id": "solar-atlas",
+    "path": "/zh/intelligence/solar-atlas/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "以思考应有的速度阅读。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "返回首页",
+        "w": 41
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "进入任务舱",
+        "w": 51
+      }
+    ],
+    "title": "现场笔记 · AFFLATUS",
+    "width": 430,
+    "id": "field-notes",
+    "path": "/zh/field-notes/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "开放原型，如实标注。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 15,
+        "text": "返回首页",
+        "w": 41
+      },
+      {
+        "cls": "",
+        "h": 15,
+        "text": "进入任务舱",
+        "w": 51
+      }
+    ],
+    "title": "实验 · AFFLATUS",
+    "width": 430,
+    "id": "experiments",
+    "path": "/zh/experiments/",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 2,
+    "clipped": [
+      {
+        "cls": "afflatus-command-cta",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "进入指挥舱"
+      },
+      {
+        "cls": "hbtn lang-toggle",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "EN"
+      },
+      {
+        "cls": "sr-only",
+        "dh": 2239,
+        "dw": 14,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "p",
+        "text": "净值曲线覆盖第 0 日至第 12 日。期末净值：S · ORACLE $10,001.36；P · PULSE $10,022.14；T · ATLAS $10,000.00；SPY $10,475.00；SMH $10,044.00。"
+      }
+    ],
+    "h1": "AFFLATUS TRADING ARENA",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 18,
+        "text": "",
+        "w": 382
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "官方财报日期 ↗",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "向 SEC 提交的第三财季业绩与第四财季指引 ↗",
+        "w": 187
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "官方财报日期 ↗",
+        "w": 76
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "第一财季业绩与第二财季指引 ↗",
+        "w": 131
+      },
+      {
+        "cls": "",
+        "h": 22,
+        "text": "向 SEC 提交的第一财季 10-Q ↗",
+        "w": 141
+      }
+    ],
+    "title": "竞技场 — QF-01 量化铸造舱与美股技术分析 · Afflatus",
+    "width": 430,
+    "id": "arena",
+    "path": "/zh/arena.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [],
+    "h1": "模型战争已不只是开源对闭源。 真正争夺的是价格、算力与分发。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "板块 — 中美 AI 模型战争 · Afflatus",
+    "width": 430,
+    "id": "sectors",
+    "path": "/zh/sectors.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [
+      {
+        "cls": "afflatus-command-cta",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "进入指挥舱"
+      },
+      {
+        "cls": "lang-toggle",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "EN"
+      }
+    ],
+    "h1": "一只手收容着 ██████ 市场",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      },
+      {
+        "cls": "pillar tone-red",
+        "lines": 9,
+        "tag": "article",
+        "text": "通胀数据 01 PCE仍高于目标 美国经济分析局公布：6月整体PCE环比下降0.1%，同比仍上涨3.7%；核心PCE环比上涨0.1%、同比上涨3.3%。实际消费增长0.4%，储蓄率降至2.7%。通胀重新降温，但其绝对水平与家庭缓冲仍约束政策"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 11,
+        "tag": "article",
+        "text": "货币政策 02 维持利率，三票主张加息 7月29日FOMC以9比3维持3.50%–3.75%。准备金利率为3.65%，常备回购为3.75%，隔夜逆回购为3.50%、单一对手方每日上限1600亿美元。8月14日至9月14日操作台计划170亿美"
+      },
+      {
+        "cls": "pillar tone-red",
+        "lines": 9,
+        "tag": "article",
+        "text": "就业与薪资 03 非农转负，参与率下滑 7月非农减少2.3万人，而市场共识为增加8.7万人。5月与6月合计下修10.3万人，三个月净增仅6万人。失业率降至4.1%的同时，劳动参与率降至61.4%；时薪同比增速放缓至3.2%。 2026-08"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 10,
+        "tag": "article",
+        "text": "产业政策 04 本土化范围扩大，成本门槛提高 正式优先方向现覆盖全栈AI出口、本土芯片与设备、能源与电网产能、多晶硅与太阳能投入品、产业及国防供应链韧性和住房供给。激励与保护可提高本土需求能见度，关税、最低进口价、融资与地方执行也可能抬高成"
+      },
+      {
+        "cls": "pillar tone-amber",
+        "lines": 11,
+        "tag": "article",
+        "text": "特朗普、贸易与联储影响力 05 利率权力间接，产业权力直接 特朗普可通过提名塑造联储领导层，也能以公开表态影响预期，但不能代替其他FOMC票委投票，更不能以命令设定政策利率或长期美债收益率。他更强的直接渠道是产业政策：关税、豁免、最低进口价"
+      },
+      {
+        "cls": "ihead",
+        "lines": 6,
+        "tag": "div",
+        "text": "FED-RMP-2026-08-14 8月14日 · FED_OPERATIONS EUCLID 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 6,
+        "tag": "div",
+        "text": "TRUMP-POLYSILICON-2026-08-06 8月6日 · TRADE_POLICY KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "FED-2026-07-29 7月29日 · FED_POLICY KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "PCE-2026-06 7月30日 · INFLATION KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "NFP-2026-07 8月7日 · LABOR KETER 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "TRUMP-AI-2026-07-23 7月23日 · AI_POLICY EUCLID 级"
+      },
+      {
+        "cls": "ihead",
+        "lines": 5,
+        "tag": "div",
+        "text": "TRUMP-CHIPS-2026-01 1月14日 · TRADE_POLICY KETER 级"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "信号 — 美联储观察 · Project Afflatus",
+    "width": 430,
+    "id": "signal",
+    "path": "/zh/signal.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "竞猜战绩存档——每一次预测，都留痕可查。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 HLE vs TSW HLE 3-0 72% 3-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 G2 vs TES TES 1-3 63% 3-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 FURIA vs LYON LYON 1-3 58% 0-3 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第一轮 BLG vs T1 T1 2-3 55% 3-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第二轮 HLE vs G2 HLE 3-1 68% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第一轮 TES vs TSW TES 3-1 66% 1-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第一轮 T1 vs FURIA T1 3-0 85% 3-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 第二轮 BLG vs LYON BLG 3-1 72% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "上位组 · 决赛 BLG vs HLE HLE 3-2 60% 3-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第二轮 G2 vs T1 T1 3-1 78% 3-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第二轮 LYON vs TSW LYON 3-2 54% 3-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 第三轮 G2 vs LYON G2 3-2 58% 0-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "下位组 · 决赛 HLE vs LYON HLE 3-1 70% 3-2 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "总决赛 BLG vs HLE BLG 3-1 65% 2-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 巴拉圭 vs 法国 法国 0-2 73% 0-1 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 加拿大 vs 摩洛哥 加拿大 1-0 52% 0-3 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 西班牙 vs 葡萄牙 西班牙 2-1 60% 1-0 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 美国 vs 比利时 比利时 1-2 53% 1-4 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 巴西 vs 挪威 巴西 2-1 62% 1-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 墨西哥 vs 英格兰 英格兰 1-2 55% 2-3 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 阿根廷 vs 埃及 阿根廷 2-0 80% 3-2 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "十六强 瑞士 vs 哥伦比亚 哥伦比亚 1-2 56% 0-0 (Switzerland win 4-3 pens) ✗"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "八强 法国 vs 摩洛哥 法国 2-0 68% 2-0 ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "八强 西班牙 vs 比利时 西班牙 2-0 62% 2-1 ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "八强 挪威 vs 英格兰 英格兰 1-2 55% 1-2 (AET) ⭐"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "八强 阿根廷 vs 瑞士 阿根廷 2-1 66% 3-1 (AET) ✓"
+      },
+      {
+        "cls": "",
+        "lines": 4,
+        "tag": "tr",
+        "text": "四强 法国 vs 西班牙 法国 2-1 56% 0-2 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "四强 阿根廷 vs 英格兰 英格兰 1-2 54% 2-1 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "季军赛 法国 vs 英格兰 法国 3-1 56% 4-6 ✗"
+      },
+      {
+        "cls": "",
+        "lines": 6,
+        "tag": "tr",
+        "text": "决赛 西班牙 vs 阿根廷 西班牙 2-1 58% 1-0 (AET) ✓"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "bar-hit",
+        "h": 64,
+        "text": "打开 HLE vs TSW, 72%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 56,
+        "text": "打开 G2 vs TES, 63%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 51,
+        "text": "打开 FURIA vs LYON, 58%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 48,
+        "text": "打开 BLG vs T1, 55%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 59,
+        "text": "打开 HLE vs G2, 68%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 57,
+        "text": "打开 TES vs TSW, 66%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 71,
+        "text": "打开 T1 vs FURIA, 85%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 58,
+        "text": "打开 BLG vs LYON, 72%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 46,
+        "text": "打开 BLG vs HLE, 60%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 57,
+        "text": "打开 G2 vs T1, 78%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 37,
+        "text": "打开 LYON vs TSW, 54%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 36,
+        "text": "打开 G2 vs LYON, 58%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 38,
+        "text": "打开 HLE vs LYON, 70%, 判对",
+        "w": 15
+      },
+      {
+        "cls": "bar-hit",
+        "h": 29,
+        "text": "打开 BLG vs HLE, 65%, 判错",
+        "w": 15
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "MSI confidence threshold",
+        "w": 238
+      },
+      {
+        "cls": "bar-hit",
+        "h": 65,
+        "text": "打开 巴拉圭 vs 法国, 73%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 46,
+        "text": "打开 加拿大 vs 摩洛哥, 52%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 53,
+        "text": "打开 西班牙 vs 葡萄牙, 60%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 47,
+        "text": "打开 美国 vs 比利时, 53%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 54,
+        "text": "打开 巴西 vs 挪威, 62%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 47,
+        "text": "打开 墨西哥 vs 英格兰, 55%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 67,
+        "text": "打开 阿根廷 vs 埃及, 80%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 45,
+        "text": "打开 瑞士 vs 哥伦比亚, 56%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 53,
+        "text": "打开 法国 vs 摩洛哥, 68%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 45,
+        "text": "打开 西班牙 vs 比利时, 62%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 37,
+        "text": "打开 挪威 vs 英格兰, 55%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 40,
+        "text": "打开 阿根廷 vs 瑞士, 66%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 30,
+        "text": "打开 法国 vs 西班牙, 56%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 24,
+        "text": "打开 阿根廷 vs 英格兰, 54%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 19,
+        "text": "打开 法国 vs 英格兰, 56%, 判错",
+        "w": 13
+      },
+      {
+        "cls": "bar-hit",
+        "h": 13,
+        "text": "打开 西班牙 vs 阿根廷, 58%, 判对",
+        "w": 13
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "World Cup confidence threshold",
+        "w": 238
+      }
+    ],
+    "title": "战绩 — 竞猜记录存档 · Project Afflatus",
+    "width": 430,
+    "id": "stats",
+    "path": "/zh/stats.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [
+      {
+        "cls": "afflatus-command-cta",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "进入指挥舱"
+      },
+      {
+        "cls": "lang-toggle",
+        "dh": 8,
+        "dw": 2,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "EN"
+      }
+    ],
+    "h1": "AFFLATUS 观星台",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "观星台 — 八字与西方占星 · Project Afflatus",
+    "width": 430,
+    "id": "horoscope",
+    "path": "/zh/horoscope.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 0,
+    "clipped": [],
+    "h1": "前线部署 工程师。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 16,
+        "text": "",
+        "w": 352
+      },
+      {
+        "cls": "",
+        "h": 10,
+        "text": "返回顶部 ↑",
+        "w": 46
+      }
+    ],
+    "title": "Forward Deployed Engineer 从 0 到 1 · Project Afflatus",
+    "width": 430,
+    "id": "course",
+    "path": "/zh/course.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  },
+  {
+    "canvases": 1,
+    "clipped": [
+      {
+        "cls": "city-skip",
+        "dh": 22,
+        "dw": 95,
+        "ox": "hidden",
+        "oy": "hidden",
+        "tag": "a",
+        "text": "跳到城市控制"
+      }
+    ],
+    "h1": "要么是真实城市，要么如实显示尚不可用。",
+    "height": 932,
+    "lang": "zh-CN",
+    "main": true,
+    "multilineControls": [
+      {
+        "cls": "afflatus-brand",
+        "lines": 3,
+        "tag": "a",
+        "text": "A ff l atus Afflatus"
+      }
+    ],
+    "overflow": 0,
+    "smallTargets": [],
+    "title": "城市推演台 — 真实数据门控城市观测台 · Afflatus",
+    "width": 430,
+    "id": "cityview",
+    "path": "/zh/cityview.html",
+    "logs": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      },
+      {
+        "level": "warn",
+        "message": "THREE.WebGLRenderer: The property .useLegacyLights has been deprecated. Migrate your lighting according to the following guide: https://discourse.threejs.org/t/updates-to-lighting-in-three-js-r155/53733."
+      }
+    ]
+  }
+]

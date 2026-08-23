@@ -11,9 +11,33 @@ import {
 const ROOT = path.resolve(import.meta.dirname, '..');
 const OUTPUT_DIR = path.join(ROOT, 'public/assets/og');
 const FONT_DIR = path.join(ROOT, 'public/assets/fonts');
+const requestedRouteIds = new Set(
+  String(process.env.OG_ROUTE_IDS || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean),
+);
+const activeRoutes = SITE_MANIFEST.filter((entry) => entry.status === 'active');
+const unknownRouteIds = [...requestedRouteIds].filter(
+  (routeId) => !activeRoutes.some(({ id }) => id === routeId),
+);
+if (unknownRouteIds.length) {
+  throw new Error(`Unknown active OG route ids: ${unknownRouteIds.join(', ')}`);
+}
+const routesToGenerate = requestedRouteIds.size
+  ? activeRoutes.filter(({ id }) => requestedRouteIds.has(id))
+  : activeRoutes;
 
 const ACCENTS = Object.freeze({
   main: '#9bd7ff',
+  command: '#ff7a59',
+  'flight-experiment': '#7ee3ff',
+  capital: '#d4b878',
+  'capital-record': '#e1a86d',
+  intelligence: '#78cce2',
+  'solar-atlas': '#f0bd61',
+  'field-notes': '#c99f75',
+  experiments: '#b29aff',
   arena: '#38f2c5',
   sectors: '#77b9ff',
   signal: '#f5d56a',
@@ -149,14 +173,14 @@ try {
     deviceScaleFactor: 1,
   });
 
-  for (const route of SITE_MANIFEST.filter((entry) => entry.status === 'active')) {
+  for (const route of routesToGenerate) {
     const backgroundPath = path.join(ROOT, route.seo.social.background);
     const backgroundDataUrl = await asDataUrl(
       backgroundPath,
       mimeFor(backgroundPath),
     );
 
-    for (const locale of SITE_LOCALES) {
+    for (const locale of route.publishedLocales || SITE_LOCALES) {
       await page.setContent(
         cardHtml({ route, locale, backgroundDataUrl, monoFont, displayFont }),
         { waitUntil: 'load' },

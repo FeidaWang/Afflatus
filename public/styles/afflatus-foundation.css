@@ -1,0 +1,114 @@
+/*
+ * AFFLATUS M02 visual foundation.
+ *
+ * This is the sole literal source for the shared home experience tokens.
+ * Tokens are deliberately prefixed so route-local themes (Arena, Serial,
+ * Cityview, etc.) can continue to own their distinct visual systems until
+ * the later route-consolidation work. `body.showcase-page` maps its legacy
+ * variable names below; M17 can remove those aliases once consumers migrate.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Semantic colour roles: Void is the field, Hull is structure, Command is
+     primary readable content, and Ion marks an available interaction. */
+  --af-void: #06080c;
+  --af-hull: #0a0d12;
+  --af-command: #f1f0e9;
+  --af-ion: #7ee3ff;
+  --af-command-strong: #ffffff;
+  --af-command-muted: #979ea7;
+  --af-command-faint: #5d6670;
+  --af-danger: #ff6f54;
+  --af-positive: #a8f346;
+  --af-border: rgba(255, 255, 255, 0.11);
+  --af-border-strong: rgba(255, 255, 255, 0.2);
+
+  /* Type roles. Route-specific faces can override a role, but components do
+     not need to make a new font-stack decision. */
+  --af-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --af-font-serif: "Newsreader", Georgia, "Noto Serif SC", serif;
+  --af-font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --af-font-signature: var(--af-font-serif);
+
+  /* Layout roles. They are usable by future route shells without requiring a
+     DOM rewrite in M02. */
+  --shell-max: 1320px;
+  --reading-max: 72ch;
+  --gutter: clamp(22px, 4.5vw, 72px);
+  --section-y: clamp(42px, 6vw, 84px);
+
+  --af-radius-sm: 2px;
+  --af-radius-md: 6px;
+  --af-radius-lg: 12px;
+  --af-focus-ring: #b8f0ff;
+  --af-focus-width: 3px;
+  --af-focus-offset: 3px;
+  --af-duration-fast: 120ms;
+  --af-duration-base: 180ms;
+  --af-duration-slow: 320ms;
+  --af-ease-standard: cubic-bezier(.2, .8, .2, 1);
+
+  /* Scene / application layering. Components should select a role instead of
+     inventing a new z-index integer. */
+  --af-z-below: -1;
+  --af-z-base: 0;
+  --af-z-content: 10;
+  --af-z-header: 20;
+  --af-z-menu: 30;
+  --af-z-overlay: 40;
+  --af-z-modal: 50;
+  --af-z-toast: 60;
+}
+
+/* Temporary showcase aliases. Keep this narrow: generic legacy names such as
+   --bg, --ink and --mono have incompatible meanings on other route themes. */
+body.showcase-page {
+  --void: var(--af-void);
+  --carbon: var(--af-hull);
+  --plate: #11161d;
+  --focus: #18212b;
+  --paper: var(--af-command);
+  --ink: #111315;
+  --text: #efefe9;
+  --secondary: var(--af-command-muted);
+  --muted: var(--af-command-faint);
+  --cyan: var(--af-ion);
+  --lime: var(--af-positive);
+  --amber: #ffb84d;
+  --danger: var(--af-danger);
+  --line: var(--af-border);
+  --line-strong: var(--af-border-strong);
+  --shell: var(--shell-max);
+  --page: var(--gutter);
+}
+
+/* Shared layout primitives for M03+. */
+.afflatus-shell {
+  width: min(100%, var(--shell-max));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.afflatus-reading {
+  width: min(100%, var(--reading-max));
+  margin-inline: auto;
+}
+
+.afflatus-section {
+  padding-block: var(--section-y);
+}
+
+/* A visible keyboard indicator must never depend on hover or animation. */
+:focus-visible {
+  outline: var(--af-focus-width) solid var(--af-focus-ring);
+  outline-offset: var(--af-focus-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --af-duration-fast: 1ms;
+    --af-duration-base: 1ms;
+    --af-duration-slow: 1ms;
+  }
+}

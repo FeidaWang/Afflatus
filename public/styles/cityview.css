@@ -1186,6 +1186,29 @@ button {
     width: 100%;
   }
 
+  /* The shared M03 navigation replaces the six legacy city controls with
+     three persistent actions plus an off-canvas link group. Let those actions
+     size from their labels instead of retaining six equal grid columns, which
+     clipped "Enter Command" on phone widths. */
+  .cityview-page .city-header.site-header--follow > .city-nav.afflatus-primary-nav {
+    display: flex;
+    grid-template-columns: none;
+    justify-content: flex-end;
+  }
+
+  .cityview-page .city-header.site-header--follow > .city-nav.afflatus-primary-nav > .afflatus-command-cta {
+    width: auto;
+    min-width: max-content;
+    padding-inline: 10px;
+    overflow: visible;
+  }
+
+  .cityview-page .city-header.site-header--follow > .city-nav.afflatus-primary-nav > .lang-toggle {
+    width: 44px;
+    min-width: 44px;
+    overflow: visible;
+  }
+
   .city-intro {
     top: 136px;
     left: 12px;

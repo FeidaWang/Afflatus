@@ -43,6 +43,66 @@
       "permanent": true
     },
     {
+      "source": "/markets/:path*",
+      "destination": "/intelligence/",
+      "permanent": true
+    },
+    {
+      "source": "/markets",
+      "destination": "/intelligence/",
+      "permanent": true
+    },
+    {
+      "source": "/markets/",
+      "destination": "/intelligence/",
+      "permanent": true
+    },
+    {
+      "source": "/lab/:path*",
+      "destination": "/experiments/",
+      "permanent": true
+    },
+    {
+      "source": "/lab",
+      "destination": "/experiments/",
+      "permanent": true
+    },
+    {
+      "source": "/lab/",
+      "destination": "/experiments/",
+      "permanent": true
+    },
+    {
+      "source": "/labs/:path*",
+      "destination": "/experiments/",
+      "permanent": true
+    },
+    {
+      "source": "/labs",
+      "destination": "/experiments/",
+      "permanent": true
+    },
+    {
+      "source": "/labs/",
+      "destination": "/experiments/",
+      "permanent": true
+    },
+    {
+      "source": "/writing/:path*",
+      "destination": "/field-notes/",
+      "permanent": true
+    },
+    {
+      "source": "/writing",
+      "destination": "/field-notes/",
+      "permanent": true
+    },
+    {
+      "source": "/writing/",
+      "destination": "/field-notes/",
+      "permanent": true
+    },
+    {
       "source": "/novels",
       "destination": "/serial.html",
       "permanent": true

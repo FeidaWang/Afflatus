@@ -1,7 +1,11 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parse } from 'parse5';
-import { SOCIAL_CARD } from '../src/config/siteManifest.js';
+import {
+  SITE_LOCALES,
+  SOCIAL_CARD,
+  localizedRouteUrl,
+} from '../src/config/siteManifest.js';
 
 const SITE_URL = 'https://feida.au';
 const SITE_NAME = 'Project Afflatus';
@@ -34,8 +38,11 @@ const escapeAttribute = (value) =>
 const jsonForHtml = (value) =>
   JSON.stringify(value, null, 2).replaceAll('<', '\\u003c');
 
-const localeKey = (route, locale) =>
-  locale === 'adaptive' ? route.defaultLocale : locale;
+const localeKey = (route, locale) => {
+  if (locale === 'adaptive') return route.defaultLocale;
+  const publishedLocales = route.publishedLocales || SITE_LOCALES;
+  return publishedLocales.includes(locale) ? locale : route.defaultLocale;
+};
 
 const languageValue = (route, locale) =>
   locale === 'adaptive'
@@ -44,8 +51,7 @@ const languageValue = (route, locale) =>
 
 export function routeUrl(route, locale = 'adaptive') {
   if (locale === 'adaptive') return route.metadata.canonical;
-  const suffix = route.path === '/' ? '/' : route.path;
-  return `${SITE_URL}/${locale}${suffix}`;
+  return localizedRouteUrl(route, locale);
 }
 
 const latestDate = (values) =>
@@ -159,7 +165,7 @@ const breadcrumbNode = (route, locale, url) => {
       {
         '@type': 'ListItem',
         position: 2,
-        name: route.nav[key],
+        name: route.nav?.[key] || route.locales[key].title,
         item: url,
       },
     ],
@@ -204,6 +210,53 @@ function buildProfileGraph(route, locale, facts, url) {
     imageNode(route, locale, url),
     ...(route.id === 'main' ? [] : [breadcrumbNode(route, locale, url)]),
     page,
+  ];
+}
+
+function buildWebPageGraph(route, locale, facts, url) {
+  return [
+    personNode(),
+    websiteNode(languageValue(route, locale)),
+    imageNode(route, locale, url),
+    basePageNode(route, locale, facts, url),
+    breadcrumbNode(route, locale, url),
+  ];
+}
+
+function buildContentIndexGraph(route, locale, facts, url) {
+  const key = localeKey(route, locale);
+  const page = basePageNode(route, locale, facts, url, 'CollectionPage');
+  const list = {
+    '@type': 'ItemList',
+    '@id': `${url}#index`,
+    name: key === 'zh' ? '内容索引' : 'Content index',
+    itemListOrder: 'https://schema.org/ItemListUnordered',
+    numberOfItems: 0,
+  };
+  page.mainEntity = { '@id': `${url}#index` };
+  return [
+    personNode(), websiteNode(languageValue(route, locale)), imageNode(route, locale, url),
+    breadcrumbNode(route, locale, url), page, list,
+  ];
+}
+
+function buildContentArticleGraph(route, locale, facts, url) {
+  const key = localeKey(route, locale);
+  const article = {
+    '@type': 'Article',
+    '@id': `${url}#article`,
+    headline: route.locales[key].title,
+    description: route.locales[key].description,
+    url,
+    inLanguage: languageValue(route, locale),
+    author: { '@id': PROFILE_ID },
+    publisher: { '@id': PROFILE_ID },
+    image: { '@id': `${url}#primaryimage` },
+    ...(facts.dateModified ? { dateModified: facts.dateModified } : {}),
+  };
+  return [
+    personNode(), websiteNode(languageValue(route, locale)), imageNode(route, locale, url),
+    breadcrumbNode(route, locale, url), basePageNode(route, locale, facts, url), article,
   ];
 }
 
@@ -510,7 +563,7 @@ function buildSerialGraph(route, locale, facts, url) {
     {
       '@type': 'ItemList',
       '@id': `${url}#bookshelf`,
-      name: key === 'zh' ? '原创连载书架' : 'Original serialized fiction bookshelf',
+      name: '原创连载书架',
       numberOfItems: listItems.length,
       itemListElement: listItems,
     },
@@ -562,6 +615,9 @@ function buildCourseGraph(route, locale, facts, url) {
 }
 
 const BUILDERS = Object.freeze({
+  webpage: buildWebPageGraph,
+  'content-index': buildContentIndexGraph,
+  'content-article': buildContentArticleGraph,
   profile: buildProfileGraph,
   arena: buildArenaGraph,
   sectors: buildSectorsGraph,

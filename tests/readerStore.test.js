@@ -29,6 +29,8 @@ describe('reader store', () => {
     });
     store.markVisited('wanjie-zhongchun', 3);
     store.setAudioTrack(2);
+    store.setNarrationRate(1.15);
+    store.setNarrationPosition('wanjie-zhongchun', 3, 42.75, 20, 'chapter-3-v1');
 
     expect(store.getState()).toEqual({
       ...DEFAULT_READER_STATE,
@@ -47,11 +49,19 @@ describe('reader store', () => {
       },
       visited: { 'wanjie-zhongchun': [3] },
       audioTrack: 2,
+      narration: {
+        rate: 1.15,
+        positions: {
+          'wanjie-zhongchun': {
+            3: { time: 42.75, updatedAt: 20, assetId: 'chapter-3-v1' },
+          },
+        },
+      },
     });
     expect(JSON.parse(adapter.getItem(READER_STORE_KEY)).version).toBe(READER_STORE_VERSION);
   });
 
-  it('defaults legacy waterfall state to book but preserves an explicit current choice', () => {
+  it('defaults version-one waterfall state to book but preserves version-two and current choices', () => {
     const legacyStore = createReaderStore(new MemoryAdapter({
       [READER_STORE_KEY]: JSON.stringify({
         version: 1,
@@ -60,6 +70,14 @@ describe('reader store', () => {
     }), { migrate: false });
     expect(legacyStore.getState().layout).toBe('book');
 
+    const versionTwoStore = createReaderStore(new MemoryAdapter({
+      [READER_STORE_KEY]: JSON.stringify({
+        version: 2,
+        layout: 'waterfall',
+      }),
+    }), { migrate: false });
+    expect(versionTwoStore.getState().layout).toBe('waterfall');
+
     const currentStore = createReaderStore(new MemoryAdapter({
       [READER_STORE_KEY]: JSON.stringify({
         ...DEFAULT_READER_STATE,
@@ -67,6 +85,32 @@ describe('reader store', () => {
       }),
     }), { migrate: false });
     expect(currentStore.getState().layout).toBe('waterfall');
+  });
+
+  it('sanitizes narration preferences and per-chapter positions', () => {
+    const store = createReaderStore(new MemoryAdapter({
+      [READER_STORE_KEY]: JSON.stringify({
+        version: READER_STORE_VERSION,
+        narration: {
+          rate: 9,
+          positions: {
+            'yuxi-gongci': {
+              1: { time: 18.25, updatedAt: 100, assetId: 'preview-v1' },
+              broken: 'nope',
+            },
+          },
+        },
+      }),
+    }), { migrate: false });
+
+    expect(store.getState().narration).toEqual({
+      rate: 2,
+      positions: {
+        'yuxi-gongci': {
+          1: { time: 18.25, updatedAt: 100, assetId: 'preview-v1' },
+        },
+      },
+    });
   });
 
   it('migrates scattered legacy keys once and removes them after a verified write', () => {

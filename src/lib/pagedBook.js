@@ -132,6 +132,7 @@ export function createPagedBook(options) {
 
     function appendParagraphInPieces(node) {
       let remaining = splitCharacters(node.textContent);
+      let consumed = Number(node.dataset.readerStart) || 0;
       let continuation = false;
 
       while (remaining.length) {
@@ -159,10 +160,62 @@ export function createPagedBook(options) {
         const piece = node.cloneNode(false);
         if (continuation) piece.classList.add('page-continuation');
         piece.textContent = remaining.slice(0, best).join('');
+        piece.dataset.readerStart = String(consumed);
+        piece.dataset.readerEnd = String(consumed + best);
         measure.appendChild(piece);
         remaining = remaining.slice(best);
+        consumed += best;
         continuation = true;
         if (remaining.length) flush();
+      }
+    }
+
+    function appendSystemInPieces(node) {
+      const sourceBody = node.querySelector('.sys-body');
+      if (!sourceBody) {
+        node.classList.add('page-oversize');
+        measure.appendChild(node);
+        flush();
+        return;
+      }
+      let remaining = splitCharacters(sourceBody.textContent);
+      const blockStart = Number(node.dataset.readerStart) || 0;
+      const bodyStart = Number(node.dataset.readerBodyStart) || blockStart;
+      let consumed = 0;
+      let continuation = false;
+
+      while (remaining.length) {
+        let low = 1;
+        let high = remaining.length;
+        let best = 0;
+
+        while (low <= high) {
+          const middle = Math.floor((low + high) / 2);
+          const probe = node.cloneNode(true);
+          probe.querySelector('.sys-body').textContent = remaining.slice(0, middle).join('');
+          if (continuation) probe.classList.add('page-continuation');
+          measure.appendChild(probe);
+          const fits = measureFits();
+          probe.remove();
+          if (fits) {
+            best = middle;
+            low = middle + 1;
+          } else {
+            high = middle - 1;
+          }
+        }
+
+        best = Math.max(1, best);
+        const piece = node.cloneNode(true);
+        piece.querySelector('.sys-body').textContent = remaining.slice(0, best).join('');
+        if (continuation) piece.classList.add('page-continuation');
+        piece.dataset.readerStart = String(continuation ? bodyStart + consumed : blockStart);
+        piece.dataset.readerEnd = String(bodyStart + consumed + best);
+        measure.appendChild(piece);
+        remaining = remaining.slice(best);
+        consumed += best;
+        continuation = true;
+        flush();
       }
     }
 
@@ -179,6 +232,8 @@ export function createPagedBook(options) {
 
       if (node.tagName === 'P') {
         appendParagraphInPieces(node);
+      } else if (node.matches('.sys')) {
+        appendSystemInPieces(node);
       } else {
         node.classList.add('page-oversize');
         measure.appendChild(node);
@@ -307,6 +362,36 @@ export function createPagedBook(options) {
     return { pageIndex, pageCount: pages.length };
   }
 
+  function revealMarker(marker, settings = {}) {
+    const value = String(marker || '');
+    if (!value) return false;
+    const sourceOffset = Number(settings.sourceOffset);
+    const hasSourceOffset = Number.isFinite(sourceOffset);
+    const template = document.createElement('template');
+    const target = pages.findIndex((html) => {
+      template.innerHTML = html;
+      return Array.from(template.content.querySelectorAll('[data-page-marker]'))
+        .some((node) => {
+          if (node.getAttribute('data-page-marker') !== value) return false;
+          if (!hasSourceOffset) return true;
+          const start = Number(node.dataset.readerStart);
+          const end = Number(node.dataset.readerEnd);
+          return Number.isFinite(start) && Number.isFinite(end) &&
+            sourceOffset >= start && sourceOffset < end;
+        });
+    });
+    if (target < 0) return false;
+    if (target === pageIndex) return true;
+    const previousHtml = content.innerHTML;
+    const direction = target > pageIndex ? 1 : -1;
+    pageIndex = target;
+    renderPage();
+    if (settings.animate) {
+      animate(direction, previousHtml, content.innerHTML, settings.withSound === true);
+    }
+    return true;
+  }
+
   function onPointerDown(event) {
     if (event.button !== 0 || event.target.closest('button, a')) return;
     swipeStart = { x: event.clientX, y: event.clientY };
@@ -357,6 +442,7 @@ export function createPagedBook(options) {
     getState,
     open,
     repaginate,
+    revealMarker,
     setChapterContext,
     setContent,
     turn,

@@ -1,192 +1,139 @@
+import { COMMAND_ENTRY, PRIMARY_NAVIGATION, primaryNavigationForRoute } from '../config/primaryNavigation.js';
 import { NAV_ROUTES, normalizeRoutePath } from '../config/navRoutes.generated.js';
 import { getLocale, localeFromPathname, localizePathname } from './localeStore.js';
 
-/* ============================================================
-   Afflatus shared navigation — SINGLE SOURCE OF TRUTH.
+let enhanceNavigationImpl = () => {};
 
-   To add / reorder / rename a page, edit ONLY src/config/siteManifest.js.
-   Every public page just needs:
-     • <nav class="nav" data-afflatus-nav> … keep your .lang-toggle … </nav>
-       (the page links are rendered into it; the current page gets .active)
-   Linear previous/next controls were removed in favour of the primary nav:
-   they duplicated the same routes, occupied the reading margins and made
-   unmodified arrow keys navigate unexpectedly.
-   ============================================================ */
+// React-owned route shells call this in a layout effect so the complete
+// navigation is present before first paint. Legacy documents still use the
+// module's DOMContentLoaded bootstrap below.
+export function enhanceNavigation(nav, locale) {
+  enhanceNavigationImpl(nav, locale);
+}
+
+/*
+ * M03 shared primary navigation.
+ *
+ * The route manifest still lists every destination. This module renders the
+ * smaller five-concept model from primaryNavigation.js, which maps the old
+ * Markets, Lab and Writing groupings to Intelligence, Experiments and Field
+ * Notes without moving or deleting their pages.
+ */
 (() => {
   'use strict';
 
-  // `group: 'labs'` pages render as a dropdown under one "Labs" trigger.
-  // NAV_ROUTES is derived from the manifest and already sorted by nav.order.
-  const SITE = NAV_ROUTES;
-  const LABS_LABEL = { en: 'Labs', zh: '实验室' };
-  // Exposed read-only for consumers that need route metadata without the DOM
-  // rendering behaviour below.
-  window.AfflatusSite = SITE.slice();
-
-  const norm = normalizeRoutePath;
-  const here = norm(location.pathname);
+  const here = normalizeRoutePath(location.pathname);
+  const currentRoute = NAV_ROUTES.find((route) => normalizeRoutePath(route.path) === here);
+  const currentPrimary = primaryNavigationForRoute(currentRoute?.id);
   const routeLocale = localeFromPathname(location.pathname);
-  const routeHref = (route) => {
-    const path = typeof route === 'string' ? route : route.path;
-    if (!routeLocale) return path;
-    const publishedLocales = typeof route === 'string' ? null : route.publishedLocales;
-    const locale = publishedLocales && !publishedLocales.includes(routeLocale)
-      ? publishedLocales[0]
-      : routeLocale;
-    return localizePathname(path, locale);
-  };
-  let i = SITE.findIndex((s) => norm(s.path) === here);
-  if (i < 0) i = 0;
+
+  function routeHref(path) {
+    const [pathname, hash = ''] = String(path).split('#', 2);
+    const localPath = routeLocale ? localizePathname(pathname || '/', routeLocale) : (pathname || '/');
+    return `${localPath}${hash ? `#${hash}` : ''}`;
+  }
+
+  function label(item, locale) {
+    return locale === 'zh' ? item.zh : item.en;
+  }
+
+  function closeMenu(nav, { returnFocus = false } = {}) {
+    if (!nav.classList.contains('is-menu-open')) return;
+    nav.classList.remove('is-menu-open');
+    const toggle = nav.querySelector('.afflatus-nav-toggle');
+    toggle?.setAttribute('aria-expanded', 'false');
+    if (returnFocus) toggle?.focus();
+  }
+
+  function closeAllMenus(options) {
+    document.querySelectorAll('[data-afflatus-nav].is-menu-open')
+      .forEach((nav) => closeMenu(nav, options));
+  }
+
+  function render(nav, locale) {
+    if (!nav) return;
+    const oldLanguageControl = nav.querySelector('.lang-toggle');
+    const menuId = `afflatus-primary-menu-${Math.random().toString(36).slice(2, 9)}`;
+    const links = document.createElement('div');
+    links.className = 'afflatus-nav-links';
+    links.id = menuId;
+
+    PRIMARY_NAVIGATION.forEach((item) => {
+      const anchor = document.createElement('a');
+      anchor.href = routeHref(item.path);
+      anchor.dataset.en = item.en;
+      anchor.dataset.zh = item.zh;
+      anchor.textContent = label(item, locale);
+      if (item.id === currentPrimary?.id) anchor.setAttribute('aria-current', 'page');
+      links.appendChild(anchor);
+    });
+
+    const command = document.createElement('a');
+    command.className = 'afflatus-command-cta';
+    command.href = routeHref(COMMAND_ENTRY.path);
+    command.dataset.en = COMMAND_ENTRY.en;
+    command.dataset.zh = COMMAND_ENTRY.zh;
+    command.textContent = label(COMMAND_ENTRY, locale);
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'afflatus-nav-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', menuId);
+    toggle.setAttribute('aria-label', locale === 'zh' ? '打开主导航' : 'Open primary navigation');
+    toggle.dataset.ariaEn = 'Open primary navigation';
+    toggle.dataset.ariaZh = '打开主导航';
+    toggle.innerHTML = '<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>';
+
+    nav.classList.add('afflatus-primary-nav');
+    nav.setAttribute('aria-label', locale === 'zh' ? '主导航' : 'Primary navigation');
+    nav.replaceChildren(toggle, links, command);
+
+    if (oldLanguageControl) {
+      oldLanguageControl.disabled = false;
+      nav.appendChild(oldLanguageControl);
+    }
+
+    toggle.addEventListener('click', () => {
+      const nextOpen = !nav.classList.contains('is-menu-open');
+      closeAllMenus();
+      nav.classList.toggle('is-menu-open', nextOpen);
+      toggle.setAttribute('aria-expanded', String(nextOpen));
+      if (nextOpen && matchMedia('(max-width: 47.5rem)').matches) {
+        links.querySelector('a')?.focus();
+      }
+    });
+
+    links.addEventListener('click', () => closeMenu(nav));
+  }
+
+  enhanceNavigationImpl = render;
 
   function applyLocale(locale = getLocale('en')) {
-    const lang = locale === 'zh' ? 'zh' : 'en';
-    document.querySelectorAll('[data-afflatus-nav] [data-en][data-zh], .nav-labs__menu [data-en][data-zh]')
-      .forEach((el) => { el.textContent = el.dataset[lang]; });
+    const language = locale === 'zh' ? 'zh' : 'en';
+    document.querySelectorAll('[data-afflatus-nav] [data-en][data-zh]').forEach((element) => {
+      element.textContent = element.dataset[language];
+    });
+    document.querySelectorAll('[data-afflatus-nav] [data-aria-en][data-aria-zh]').forEach((element) => {
+      element.setAttribute('aria-label', element.dataset[`aria${language === 'zh' ? 'Zh' : 'En'}`]);
+    });
   }
-
-  window.AfflatusNav = Object.freeze({ applyLocale });
 
   function run() {
-    const renderedLocale = routeLocale || getLocale('en');
-    // render the primary nav links from SITE (active = current page),
-    // inserted BEFORE any existing children (e.g. the page's .lang-toggle).
-    // `group: 'labs'` entries collapse into a single dropdown trigger at the
-    // position of the first one encountered, instead of their own link.
-    document.querySelectorAll('[data-afflatus-nav]').forEach((navEl) => {
-      navEl.querySelectorAll('[data-afflatus-static-nav]').forEach((node) => node.remove());
-      const frag = document.createDocumentFragment();
-      let labsWrap = null;
-      let labsMenu = null;
-      let labsTrigger = null;
-      SITE.forEach((s, idx) => {
-        // U12b (2026-07-11): the home page's own nav no longer renders a
-        // link to itself — it's redundant there (you're already on it) and
-        // was the 5th button cluttering the home hero's top bar. Every other
-        // page keeps its Home link exactly as before, so this only skips rendering when
-        // `here` (the current page) IS home.
-        if (s.path === '/' && here === '/') return;
-        const a = document.createElement('a');
-        a.setAttribute('href', routeHref(s));
-        a.setAttribute('data-en', s.en);
-        a.setAttribute('data-zh', s.zh);
-        a.textContent = renderedLocale === 'zh' ? s.zh : s.en;
-        if (idx === i) a.className = 'active';
-
-        if (s.group === 'labs') {
-          if (!labsWrap) {
-            labsWrap = document.createElement('div');
-            labsWrap.className = 'nav-labs';
-            // <a href="#"> (not <button>) so it inherits each page's existing
-            // ".nav a" / ".nav a:hover" / ".nav a.active" styling for free —
-            // no per-page CSS needed for the trigger's look. transition.js's
-            // click interceptor already ignores href="#" links (see its
-            // internal() check), so this never triggers page navigation.
-            labsTrigger = document.createElement('a');
-            labsTrigger.href = '#';
-            labsTrigger.className = 'nav-labs__trigger';
-            labsTrigger.setAttribute('role', 'button');
-            labsTrigger.setAttribute('data-en', LABS_LABEL.en);
-            labsTrigger.setAttribute('data-zh', LABS_LABEL.zh);
-            labsTrigger.setAttribute('aria-haspopup', 'true');
-            labsTrigger.setAttribute('aria-expanded', 'false');
-            labsTrigger.textContent = LABS_LABEL[renderedLocale];
-
-            // The dropdown PANEL is portaled to a direct child of <body>
-            // (position:fixed, positioned via JS from the trigger's own
-            // rect) instead of nesting inside .nav-labs. Two per-page
-            // ancestors were silently hiding it when it stayed nested:
-            // games.html's header (.top) has a decorative clip-path that
-            // slices away anything painted below the header edge, and the
-            // home page's <nav> only reaches z-index:100 while several HUD
-            // layers (.battle-feed, warnings, etc.) sit at 900+ — a
-            // descendant can never out-rank ancestors it's capped inside.
-            // Portaling sidesteps both: the panel is clipped/capped by
-            // nothing but the viewport. See run()'s open/close handlers
-            // below for how open state now travels via JS instead of pure
-            // CSS :hover/:focus-within (which required real DOM nesting).
-            labsMenu = document.createElement('div');
-            labsMenu.className = 'nav-labs__menu';
-            document.body.appendChild(labsMenu);
-
-            let clickPinned = false;
-            const openMenu = ({ pin = false } = {}) => {
-              closeLabsMenus(labsMenu);
-              positionLabsMenu(labsTrigger, labsMenu);
-              labsWrap.classList.add('open');
-              labsMenu.classList.add('open');
-              labsTrigger.setAttribute('aria-expanded', 'true');
-              if (pin) clickPinned = true;
-            };
-            const closeMenu = () => {
-              clickPinned = false;
-              labsWrap.classList.remove('open');
-              labsMenu.classList.remove('open');
-              labsTrigger.setAttribute('aria-expanded', 'false');
-            };
-            labsMenu._afflatusClose = closeMenu;
-
-            let closeTimer = null;
-            const cancelClose = () => { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } };
-            const scheduleClose = () => { cancelClose(); closeTimer = setTimeout(closeMenu, 160); };
-
-            labsTrigger.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (labsMenu.classList.contains('open') && clickPinned) closeMenu();
-              else openMenu({ pin: true });
-            });
-            labsTrigger.addEventListener('mouseenter', () => { cancelClose(); openMenu(); });
-            labsTrigger.addEventListener('mouseleave', () => { if (!clickPinned) scheduleClose(); });
-            labsMenu.addEventListener('mouseenter', cancelClose);
-            labsMenu.addEventListener('mouseleave', () => { if (!clickPinned) scheduleClose(); });
-            labsTrigger.addEventListener('focus', openMenu);
-            labsWrap.addEventListener('focusout', (e) => {
-              if (!labsMenu.contains(e.relatedTarget) && e.relatedTarget !== labsTrigger) closeMenu();
-            });
-            labsMenu.addEventListener('focusout', (e) => {
-              if (!labsMenu.contains(e.relatedTarget) && e.relatedTarget !== labsTrigger) closeMenu();
-            });
-
-            labsWrap.appendChild(labsTrigger);
-            frag.appendChild(labsWrap);
-          }
-          labsMenu.appendChild(a);
-          if (idx === i) { labsWrap.classList.add('active'); labsTrigger.classList.add('active'); }
-        } else {
-          frag.appendChild(a);
-        }
-      });
-      navEl.insertBefore(frag, navEl.firstChild);
+    const locale = routeLocale || getLocale('en');
+    document.querySelectorAll('[data-afflatus-nav]').forEach((nav) => render(nav, locale));
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('[data-afflatus-nav]')) closeAllMenus();
     });
-
-    // close any open Labs menu on an outside click, Escape, scroll or resize
-    // (scroll/resize would leave a stale-positioned fixed panel behind)
-    document.addEventListener('click', () => closeLabsMenus());
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLabsMenus(); });
-    window.addEventListener('scroll', () => closeLabsMenus(), { passive: true });
-    window.addEventListener('resize', () => closeLabsMenus());
-
-    // translate freshly-rendered links to the current language
-    try { if (window.AfflatusI18N) window.AfflatusI18N.apply(); } catch (e) {}
-    applyLocale(renderedLocale);
-  }
-
-  // Anchors the portaled panel under its trigger using the trigger's own
-  // viewport rect, right-aligned to match the old in-flow "right:0" look.
-  function positionLabsMenu(trigger, menu) {
-    const r = trigger.getBoundingClientRect();
-    menu.style.top = Math.round(r.bottom + 8) + 'px';
-    menu.style.right = Math.max(8, Math.round(window.innerWidth - r.right)) + 'px';
-    menu.style.left = 'auto';
-  }
-
-  function closeLabsMenus(except) {
-    document.querySelectorAll('.nav-labs__menu.open').forEach((m) => {
-      if (m === except) return;
-      if (m._afflatusClose) m._afflatusClose();
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeAllMenus({ returnFocus: true });
     });
+    window.addEventListener('resize', () => closeAllMenus());
+    window.AfflatusNav = Object.freeze({ applyLocale });
+    try { window.AfflatusI18N?.apply(); } catch {}
+    applyLocale(locale);
   }
 
   if (document.readyState !== 'loading') run();
-  else document.addEventListener('DOMContentLoaded', run);
+  else document.addEventListener('DOMContentLoaded', run, { once: true });
 })();

@@ -1,201 +1,161 @@
-import { Component, lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { GlobeHemisphereEast, List, X } from "@phosphor-icons/react";
+import { COMMAND_ENTRY, PRIMARY_NAVIGATION } from "../config/primaryNavigation.js";
+import { ExperienceRoot } from "./experience/ExperienceRoot.jsx";
+import { FocusBoundary } from "./primitives/FocusBoundary.jsx";
 import {
-  ArrowRight,
-  Broadcast,
-  CaretDown,
-  Crosshair,
-  GlobeHemisphereEast,
-  List,
-  Lightning,
-  ShieldCheck,
-  X,
-} from "@phosphor-icons/react";
-
-const DeckScene = lazy(() => import("./DeckScene.jsx").then((module) => ({ default: module.DeckScene })));
-const RadarCanvas = lazy(() => import("./DeckScene.jsx").then((module) => ({ default: module.RadarCanvas })));
-
-const navGroups = [
-  {
-    label: { en: "Markets", zh: "市场" },
-    items: [
-      [{ en: "Federal Reserve watch", zh: "美联储观察" }, "/signal.html"],
-      [{ en: "10Y / 30Y yield monitor", zh: "10年 / 30年期收益率" }, "/signal.html#treasuryYieldBoard"],
-      [{ en: "Prediction record", zh: "预测记录" }, "/stats.html"],
-      [{ en: "FY25/26 flight record", zh: "FY25/26 飞行记录" }, "/portfolio.html#fy2026Performance"],
-    ],
-  },
-  {
-    label: { en: "Lab", zh: "实验室" },
-    items: [
-      [{ en: "QF-01 Quant Foundry", zh: "QF-01 量化铸造舱" }, "/arena.html"],
-      [{ en: "US–China AI model war", zh: "中美 AI 模型战争" }, "/sectors.html"],
-      [{ en: "Melbourne Cityview", zh: "墨尔本城市推演" }, "/cityview.html"],
-      [{ en: "Local-first astrology", zh: "本地优先星盘" }, "/horoscope.html"],
-    ],
-  },
-  {
-    label: { en: "Writing", zh: "写作" },
-    items: [
-      [{ en: "Forward Deployed Engineer 0→1", zh: "前沿部署工程师 0→1" }, "/course.html"],
-      [{ en: "Original novels", zh: "原创小说" }, "/serial.html"],
-    ],
-  },
-];
+  CommandButton,
+  EditorialLink,
+  MotionToggle,
+  TransmissionRow,
+  useMotionPreference,
+} from "./primitives/InteractionPrimitives.jsx";
+import { useDisclosureMenu } from "./primitives/useDisclosureMenu.js";
 
 const systems = [
   {
     index: "01",
+    signal: "capital",
     title: { en: "Capital", zh: "资本" },
-    description: { en: "Model bounds, closed-cycle velocity and drawdown discipline.", zh: "以模型上界、闭环速度与回撤纪律约束资本。" },
-    meta: "05 CLOSED CYCLES · METHOD 2026.08.08",
-    href: "/portfolio.html#fy2026Performance",
-    action: { en: "Open flight record", zh: "查看飞行记录" },
+    description: {
+      en: "Model bounds, closed-cycle velocity and drawdown discipline for decisions that must survive uncertainty.",
+      zh: "以模型边界、闭环速度与回撤纪律，约束必须穿越不确定性的决策。",
+    },
+    href: "/capital/",
+    action: { en: "Open field record", zh: "查看现场记录" },
   },
   {
     index: "02",
+    signal: "software",
     title: { en: "Software", zh: "软件" },
-    description: { en: "Field guides for recoverable agents and enterprise AI delivery.", zh: "面向可恢复智能体与企业 AI 交付的实战指南。" },
-    meta: "36 TRANSMISSIONS · 1,268 ROLE SNAPSHOT",
-    href: "/course.html",
-    action: { en: "Open FDE course", zh: "打开 FDE 课程" },
+    description: {
+      en: "Field guides for recoverable agents, evidence-led delivery and durable operating loops.",
+      zh: "面向可恢复智能体、证据驱动交付与持久运行闭环的实战指南。",
+    },
+    href: "/field-notes/",
+    action: { en: "Open field notes", zh: "打开现场笔记" },
   },
   {
     index: "03",
+    signal: "intelligence",
     title: { en: "Intelligence", zh: "情报" },
-    description: { en: "QF-01 market intelligence with explicit provenance.", zh: "带明示来源的 QF-01 市场情报。" },
-    meta: "QF-01 · SIGNAL · MODEL WAR",
-    href: "/arena.html",
-    action: { en: "Open research lab", zh: "进入研究实验室" },
+    description: {
+      en: "Market and industry intelligence with explicit provenance, uncertainty and review windows.",
+      zh: "明确标注来源、不确定性与复核窗口的市场和产业情报。",
+    },
+    href: "/intelligence/",
+    action: { en: "Open intelligence", zh: "打开情报" },
   },
 ];
 
 const transmissions = [
   {
-    title: { en: "Long-end live monitor: 10Y / 30Y Treasury yields.", zh: "长端实时监控：10年与30年期美国国债收益率。" },
-    date: "2026.08.21",
-    category: { en: "Markets", zh: "市场" },
-    href: "/signal.html#treasuryYieldBoard",
-  },
-  {
     title: { en: "The model war is price, power and distribution.", zh: "模型战争的核心是价格、算力与分发。" },
     date: "2026.08.08",
-    category: { en: "Lab", zh: "实验室" },
     href: "/sectors.html",
   },
   {
     title: { en: "A risk engine, not another stock picker.", zh: "这是风险引擎，不是又一个选股器。" },
     date: "2026.08.08",
-    category: { en: "Lab", zh: "实验室" },
     href: "/arena.html",
   },
   {
     title: { en: "The drawdown taught me what speed costs.", zh: "回撤让我看清速度的代价。" },
     date: "2026.08.08",
-    category: { en: "Capital", zh: "资本" },
     href: "/portfolio.html#fy2026Performance",
   },
 ];
 
-const principles = [
-  ["01", { en: "Preserve capital.", zh: "保存资本。" }, { en: "Risk is a design constraint, not a surprise.", zh: "风险是设计约束，而不是意外。" }],
-  ["02", { en: "Build systems.", zh: "构建系统。" }, { en: "Durable leverage comes from repeatable operating loops.", zh: "持久杠杆来自可重复的运营闭环。" }],
-  ["03", { en: "Follow evidence.", zh: "遵循证据。" }, { en: "Primary records before slogans; provenance before confidence.", zh: "一手记录先于口号，来源先于确信。" }],
-];
-
 const showcaseCopy = {
   en: {
-    hero: {
-      eyebrow: "QUIET TACTICAL ATLAS · 2026.08.22",
-      title: <>Systems for<br />uncertain worlds.</>,
-      subtitle: "Capital, software and intelligence for long horizons.",
-      cta: "Open the deck",
+    chapters: {
+      coldVoid: "Cold Void",
+      approach: "The Approach",
+      drift: "Parallel Drift / Operating Systems",
+      aperture: "Bridge Aperture / Current Intelligence",
+      wake: "The Wake / Field Record",
+      departure: "Departure / Manifesto",
     },
-    systems: "OPERATING SYSTEMS",
-    systemAxis: "CAPITAL · SOFTWARE · INTELLIGENCE",
-    transmissions: "LATEST TRANSMISSIONS",
-    archive: "Open archive",
-    featureEyebrow: "FEATURE · MARKET SIGNAL",
-    featureTitle: <>Fed operations<br />&amp; the long end.</>,
-    featureBody: "Current posture: restrictive hold, ample-reserve implementation. The 10-year and 30-year yields remain market-priced—not administratively capped.",
-    featureCta: "Read the evidence-first dossier",
-    policyRange: "POLICY RANGE",
-    deskWindow: "CURRENT DESK WINDOW",
-    reinvestment: "reinvestment purchases",
-    newRmps: "NEW RMPs",
-    zero: "ZERO",
-    asOf: "AS OF",
-    fieldEyebrow: "FIELD NOTE · FY25/26 FLIGHT RECORD",
+    heroTitle: <>Systems for<br />uncertain worlds.</>,
+    heroBody: "Capital, software and intelligence for long horizons.",
+    heroCta: "Explore systems",
+    currentSignal: "Current signal",
+    currentSignalTitle: "Fed operations and the long end",
+    approachTitle: "Clarity before velocity.",
+    approachBody: "AFFLATUS is a personal operating system for decisions that unfold over long horizons. It joins capital discipline, software practice and evidence-led intelligence without pretending uncertainty can be removed.",
+    approachStatement: "Observe the field. Define the boundary. Move only when the evidence earns motion.",
+    approachStatus: "Approach vector / stable",
+    systemsTitle: "Three systems, one operating posture.",
+    systemsBody: "Each system remains independently useful. Together they form a repeatable loop: allocate carefully, build recoverably, and update beliefs from primary evidence.",
+    intelligenceTitle: "The current picture, with its limits visible.",
+    intelligenceBody: "Current posture: restrictive hold, ample-reserve implementation. The 10-year and 30-year yields remain market-priced—not administratively capped.",
+    intelligenceCta: "Read the evidence-first dossier",
+    relatedSignals: "Related transmissions",
     fieldTitle: "Return is not one number.",
-    fieldBody: "It is a chain of assumptions: closed-cycle velocity, benchmark choice, holding duration and the drawdown required to stay in the route.",
-    fieldBodyTwo: "Five completed trajectories are published without account values or live positions.",
+    fieldBody: "It is a chain of assumptions: closed-cycle velocity, benchmark choice, holding duration and the drawdown required to remain on the route.",
+    fieldBodyTwo: "Five completed trajectories are published without account values or live positions. The full method remains in the existing field record.",
+    fieldMarker: "05 verified closed-cycle entries · method 2026.08.08",
     fieldCta: "Inspect the method",
-    chartTitle: "CLOSED-CYCLE TRAJECTORY OVERVIEW",
-    chartReference: "REFERENCE: AFFLATUS / METHOD 2026.08.08",
-    longRoute: "LONG ROUTE",
-    shortCycles: "SHORT CYCLES",
-    verifiedEntries: "05 VERIFIED ENTRIES",
-    signatureEyebrow: "SIGNATURE DECK · AFFLATUS-01",
-    signatureTitle: <>Long range by design.<br />Built to survive uncertainty.</>,
-    signatureBody: "Open the adaptive Three.js command simulation: navigation, tactical radar, ship status, energy allocation and combat lock.",
-    signatureCta: "Enter full command deck",
-    principles: "OPERATING PRINCIPLES",
-    about: "ABOUT AFFLATUS",
-    aboutTitle: "A personal command system.",
-    aboutBody: "Built by Feida “Bruce” Wang in Melbourne for capital, code, original writing and long-range research. No ads. No tips. No promises.",
+    manifestoTitle: "Preserve capital. Build systems. Follow evidence.",
+    manifestoBody: "Risk is a design constraint, not a surprise. Durable leverage comes from repeatable operating loops. Primary records come before slogans, and provenance before confidence.",
+    aboutTitle: "A personal command system from Melbourne.",
+    aboutBody: "Built by Feida “Bruce” Wang for capital, code, original writing and long-range research. No ads. No tips. No promises.",
     portfolioCta: "Open the portfolio",
-    uplink: "SIGNAL UPLINK",
-    uplinkTitle: "Follow the evidence.",
-    uplinkBody: "Start with the latest Federal Reserve dossier, the QF-01 risk engine, or the Forward Deployed Engineer course.",
-    updatedLabel: "UPDATED",
-    heroUpdate: "FED OPERATIONS & THE LONG END",
-    systemNominal: "ALL SYSTEMS NOMINAL",
+    finalCommand: "Enter Command",
+    commandTitle: "Command remains a deliberate entry.",
+    commandBody: "The public Mission Room separates real objectives, trajectories and actions from the experimental flight simulation.",
+    commandCta: "Open the Mission Room",
+    closeCommand: "Close command preview",
+    language: "Language",
+    motion: "Motion · system preference",
+    disclosure: "Privacy / Disclosure",
+    disclosureBody: "AFFLATUS publishes methods and selected records, not account values, live positions or personal tracking profiles.",
+    nominal: "ALL SYSTEMS NOMINAL",
   },
   zh: {
-    hero: {
-      eyebrow: "安静的战术星图 · 2026.08.22",
-      title: <>为不确定的世界<br />构建系统。</>,
-      subtitle: "资本、软件与情报，为长期主义而建。",
-      cta: "开启指挥舱",
+    chapters: {
+      coldVoid: "寂静虚空",
+      approach: "接近",
+      drift: "平行漂移 / 运行系统",
+      aperture: "舰桥光阑 / 当前情报",
+      wake: "尾迹 / 现场记录",
+      departure: "离航 / 宣言",
     },
-    systems: "运行系统",
-    systemAxis: "资本 · 软件 · 情报",
-    transmissions: "最新传输",
-    archive: "打开档案",
-    featureEyebrow: "重点 · 市场信号",
-    featureTitle: <>美联储操作<br />与长端市场。</>,
-    featureBody: "当前立场：限制性利率维持，充足准备金框架继续运行。10年与30年期收益率仍由市场定价，并非行政设限。",
-    featureCta: "阅读证据优先档案",
-    policyRange: "政策区间",
-    deskWindow: "当前交易台窗口",
-    reinvestment: "再投资购买",
-    newRmps: "新增 RMP",
-    zero: "零",
-    asOf: "截至",
-    fieldEyebrow: "现场笔记 · FY25/26 飞行记录",
+    heroTitle: <>为不确定的世界<br />构建系统。</>,
+    heroBody: "资本、软件与情报，为长期主义而建。",
+    heroCta: "探索系统",
+    currentSignal: "当前信号",
+    currentSignalTitle: "美联储操作与长端市场",
+    approachTitle: "先有清晰，再谈速度。",
+    approachBody: "AFFLATUS 是一套面向长期决策的个人运行系统。它把资本纪律、软件实践与证据驱动的情报连接起来，同时承认不确定性无法被消除。",
+    approachStatement: "观察现场，定义边界；只有证据足以支撑行动时，才开始移动。",
+    approachStatus: "接近航向 / 稳定",
+    systemsTitle: "三个系统，一种运行姿态。",
+    systemsBody: "每个系统都能独立工作；组合起来则形成可重复闭环：谨慎配置、可恢复地构建，并依据一手证据更新判断。",
+    intelligenceTitle: "呈现当前图景，也呈现它的边界。",
+    intelligenceBody: "当前立场：限制性利率维持，充足准备金框架继续运行。10 年与 30 年期收益率仍由市场定价，并非行政设限。",
+    intelligenceCta: "阅读证据优先档案",
+    relatedSignals: "相关传输",
     fieldTitle: "回报从来不只一个数字。",
     fieldBody: "它由一连串假设构成：闭环速度、基准选择、持有时长，以及留在航线所需承受的回撤。",
-    fieldBodyTwo: "五条已完成轨迹均公开方法，但不公开账户数值或实时仓位。",
+    fieldBodyTwo: "五条已完成轨迹公开方法，但不公开账户数值或实时仓位。完整方法仍保留在既有现场记录中。",
+    fieldMarker: "05 条已验证闭环记录 · 方法 2026.08.08",
     fieldCta: "查看方法",
-    chartTitle: "闭环轨迹总览",
-    chartReference: "参考：AFFLATUS / 方法 2026.08.08",
-    longRoute: "长航线",
-    shortCycles: "短周期",
-    verifiedEntries: "05 条已验证记录",
-    signatureEyebrow: "标志性甲板 · AFFLATUS-01",
-    signatureTitle: <>为远航而设计。<br />为不确定性而生存。</>,
-    signatureBody: "进入自适应 Three.js 指挥模拟：星际航行、战术雷达、舰船状态、能源分配与战斗锁定。",
-    signatureCta: "进入完整指挥舱",
-    principles: "运行原则",
-    about: "关于 AFFLATUS",
-    aboutTitle: "一套个人指挥系统。",
-    aboutBody: "由 Feida “Bruce” Wang 在墨尔本构建，用于资本、代码、原创写作与长期研究。无广告、无荐股、无承诺。",
+    manifestoTitle: "保存资本。构建系统。遵循证据。",
+    manifestoBody: "风险是设计约束，而不是意外。持久杠杆来自可重复的运行闭环。一手记录先于口号，来源先于确信。",
+    aboutTitle: "一套来自墨尔本的个人指挥系统。",
+    aboutBody: "由 Feida “Bruce” Wang 构建，用于资本、代码、原创写作与长期研究。无广告、无荐股、无承诺。",
     portfolioCta: "打开作品集",
-    uplink: "信号上行",
-    uplinkTitle: "遵循证据。",
-    uplinkBody: "从最新美联储档案、QF-01 风险引擎或前沿部署工程师课程开始。",
-    updatedLabel: "更新于",
-    heroUpdate: "美联储操作与长端市场",
-    systemNominal: "所有系统正常",
+    finalCommand: "进入指挥舱",
+    commandTitle: "Command 始终是一次有意识的进入。",
+    commandBody: "公开 Mission Room 将真实目标、轨迹与行动同实验性飞行模拟明确分开。",
+    commandCta: "打开任务舱",
+    closeCommand: "关闭指挥预览",
+    language: "语言",
+    motion: "动态效果 · 跟随系统偏好",
+    disclosure: "隐私 / 披露",
+    disclosureBody: "AFFLATUS 发布方法与经过选择的记录，不发布账户数值、实时仓位或个人追踪档案。",
+    nominal: "所有系统正常",
   },
 };
 
@@ -206,530 +166,262 @@ function siteHref(path, language) {
   return path === "/" ? `/${language}/` : `/${language}${path}`;
 }
 
-function ExternalLink({ href, language, className = "", children, onClick }) {
-  return (
-    <a className={className} href={siteHref(href, language)} onClick={onClick}>
-      {children}
-      <ArrowRight aria-hidden="true" weight="thin" />
-    </a>
-  );
+function ChapterLabel({ index, children }) {
+  return <p className="chapter-label"><span>{index}</span>{children}</p>;
 }
 
-function Header({ onOpenDeck, language }) {
-  const [openGroup, setOpenGroup] = useState(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [deckMenuOpen, setDeckMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const close = (event) => {
-      if (!event.target.closest("[data-nav-popover]")) {
-        setOpenGroup(null);
-        setDeckMenuOpen(false);
-      }
-    };
-    document.addEventListener("pointerdown", close);
-    return () => document.removeEventListener("pointerdown", close);
-  }, []);
+function Header({ commandRef, language, motion, onOpenCommand }) {
+  const mobileMenuRef = useRef(null);
+  const mobileMenu = useDisclosureMenu(mobileMenuRef);
 
   const translations = language === "zh"
-    ? { about: "关于", deck: "开启指挥舱", menu: "打开导航", switcher: "切换至英文", simulation: "指挥模拟", strategy: "策略甲板", research: "研究甲板", capital: "资本甲板" }
-    : { about: "About", deck: "Open Deck", menu: "Open navigation", switcher: "Switch to Chinese", simulation: "Command simulation", strategy: "Strategy deck", research: "Research deck", capital: "Capital deck" };
+    ? { menu: "打开主导航", closeMenu: "关闭主导航", switcher: "切换至英文" }
+    : { menu: "Open primary navigation", closeMenu: "Close primary navigation", switcher: "Switch to Chinese" };
   const languageHref = `${language === "en" ? "/zh/" : "/en/"}${window.location.search}${window.location.hash}`;
 
   return (
     <header className="site-header">
-      <a className="brand" href={siteHref("/", language)} aria-label="AFFLATUS home">
-        AFFLATUS
-      </a>
-
-      <nav className={`desktop-nav ${mobileOpen ? "is-mobile-open" : ""}`} aria-label="Primary navigation">
-        {navGroups.map((group) => (
-          <div className="nav-cluster" data-nav-popover key={group.label.en}>
-            <button
-              type="button"
-              className="nav-trigger"
-              aria-expanded={openGroup === group.label.en}
-              onClick={() => setOpenGroup(openGroup === group.label.en ? null : group.label.en)}
-            >
-              {pick(group.label, language)}
-              <CaretDown aria-hidden="true" weight="thin" />
-            </button>
-            {openGroup === group.label.en && (
-              <div className="nav-popover">
-                {group.items.map(([label, href]) => (
-                  <ExternalLink key={label.en} href={href} language={language}>{pick(label, language)}</ExternalLink>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-        <a className="nav-about" href="#about" onClick={() => setMobileOpen(false)}>{translations.about}</a>
-      </nav>
-
-      <div className="header-actions">
-        <div className="deck-split" data-nav-popover>
-          <button type="button" className="deck-main" onClick={onOpenDeck}>{translations.deck}</button>
-          <button
-            type="button"
-            className="deck-more"
-            aria-label="Deck options"
-            aria-expanded={deckMenuOpen}
-            onClick={() => setDeckMenuOpen(!deckMenuOpen)}
+      <a className="brand" href={siteHref("/", language)} aria-label="AFFLATUS home">AFFLATUS</a>
+      <nav id="primary-navigation" className={`desktop-nav ${mobileMenu.open ? "is-mobile-open" : ""}`} aria-label="Primary navigation" data-afflatus-nav>
+        {PRIMARY_NAVIGATION.map((item) => (
+          <a
+            className="primary-nav-link"
+            href={siteHref(item.path, language)}
+            key={item.id}
+            aria-current={item.routeIds?.includes("main") ? "page" : undefined}
+            onClick={mobileMenu.close}
           >
-            <CaretDown aria-hidden="true" weight="thin" />
-          </button>
-          {deckMenuOpen && (
-            <div className="nav-popover deck-popover">
-              <button type="button" onClick={onOpenDeck}><span>{translations.simulation}</span><ArrowRight weight="thin" /></button>
-              <ExternalLink href="/signal.html" language={language}>{translations.strategy}</ExternalLink>
-              <ExternalLink href="/arena.html" language={language}>{translations.research}</ExternalLink>
-              <ExternalLink href="/portfolio.html#fy2026Performance" language={language}>{translations.capital}</ExternalLink>
-            </div>
-          )}
-        </div>
-        <a
-          id="langBtn"
-          className="language-switch"
-          href={languageHref}
-          hreflang={language === "en" ? "zh-CN" : "en"}
-          aria-label={translations.switcher}
+            {pick(item, language)}
+          </a>
+        ))}
+      </nav>
+      <div className="header-actions">
+        <MotionToggle
+          className="header-motion-toggle"
+          disabled={motion.locked}
+          enabled={motion.enabled}
+          language={language}
+          onToggle={motion.setEnabled}
+        />
+        <CommandButton
+          ref={commandRef}
+          className="deck-primary"
+          motionEnabled={motion.enabled}
+          onCommandIntent={onOpenCommand}
+          sceneSignal="command:open"
         >
+          {pick(COMMAND_ENTRY, language)}
+        </CommandButton>
+        <a id="langBtn" className="language-switch" href={languageHref} hrefLang={language === "en" ? "zh-CN" : "en"} aria-label={translations.switcher}>
           <GlobeHemisphereEast aria-hidden="true" weight="thin" />
           {language === "en" ? "EN / 中" : "中 / EN"}
         </a>
         <button
           type="button"
           className="mobile-menu"
-          aria-label={translations.menu}
-          aria-expanded={mobileOpen}
-          onClick={() => setMobileOpen(!mobileOpen)}
+          ref={mobileMenuRef}
+          aria-controls="primary-navigation"
+          aria-label={mobileMenu.open ? translations.closeMenu : translations.menu}
+          aria-expanded={mobileMenu.open}
+          onClick={mobileMenu.toggle}
         >
-          {mobileOpen ? <X weight="thin" /> : <List weight="thin" />}
+          {mobileMenu.open ? <X weight="thin" /> : <List weight="thin" />}
         </button>
       </div>
     </header>
   );
 }
 
-function CycleChart() {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return undefined;
-    const ctx = canvas.getContext("2d");
-    const data = [
-      { hold: 17.5, velocity: 260.4 },
-      { hold: 3, velocity: 208.5 },
-      { hold: 11.2, velocity: 257.9 },
-      { hold: 246, velocity: 32.6 },
-      { hold: 5.6, velocity: 85.6 },
-    ];
-
-    const draw = () => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(1, Math.round(rect.width * dpr));
-      canvas.height = Math.max(1, Math.round(rect.height * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const width = rect.width;
-      const height = rect.height;
-      const pad = { top: 38, right: 34, bottom: 42, left: 54 };
-      const plotW = width - pad.left - pad.right;
-      const plotH = height - pad.top - pad.bottom;
-
-      ctx.clearRect(0, 0, width, height);
-      ctx.strokeStyle = "rgba(17, 19, 21, .14)";
-      ctx.fillStyle = "#4d5258";
-      ctx.lineWidth = 1;
-      ctx.font = "10px 'IBM Plex Mono', monospace";
-      ctx.textAlign = "right";
-      for (let row = 0; row <= 4; row += 1) {
-        const y = pad.top + (plotH / 4) * row;
-        ctx.beginPath();
-        ctx.moveTo(pad.left, y);
-        ctx.lineTo(width - pad.right, y);
-        ctx.stroke();
-        ctx.fillText(`${Math.round(300 - row * 75)}%`, pad.left - 9, y + 3);
-      }
-      ctx.textAlign = "center";
-      for (let col = 0; col <= 5; col += 1) {
-        const x = pad.left + (plotW / 5) * col;
-        ctx.beginPath();
-        ctx.moveTo(x, pad.top);
-        ctx.lineTo(x, height - pad.bottom);
-        ctx.stroke();
-        ctx.fillText(`${Math.round((246 / 5) * col)}`, x, height - 18);
-      }
-
-      data.forEach((route, index) => {
-        const endX = pad.left + (route.hold / 246) * plotW;
-        const endY = pad.top + (1 - route.velocity / 300) * plotH;
-        const startY = pad.top + plotH * (0.72 + index * 0.045);
-        ctx.strokeStyle = index === 3 ? "#111315" : "rgba(17, 19, 21, .48)";
-        ctx.setLineDash(index === 3 ? [] : [4 + index, 5]);
-        ctx.lineWidth = index === 3 ? 1.7 : 1.05;
-        ctx.beginPath();
-        ctx.moveTo(pad.left, startY);
-        ctx.bezierCurveTo(pad.left + plotW * .25, startY - 70, endX - plotW * .14, endY + 44, endX, endY);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = "#111315";
-        ctx.beginPath();
-        ctx.arc(endX, endY, 3.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.font = "9px 'IBM Plex Mono', monospace";
-        ctx.textAlign = "left";
-        ctx.fillText(`0${index + 1}`, Math.min(endX + 8, width - 48), endY - 7);
-      });
-
-      ctx.fillStyle = "#111315";
-      ctx.font = "9px 'IBM Plex Mono', monospace";
-      ctx.textAlign = "center";
-      ctx.fillText("HOLDING DAYS", pad.left + plotW / 2, height - 2);
-      ctx.save();
-      ctx.translate(12, pad.top + plotH / 2);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillText("ANNUALISED CYCLE EFFICIENCY", 0, 0);
-      ctx.restore();
-    };
-
-    draw();
-    const observer = new ResizeObserver(draw);
-    observer.observe(canvas);
-    return () => observer.disconnect();
-  }, []);
-
-  return <canvas className="cycle-chart" ref={canvasRef} aria-label="Five closed-cycle holding-duration and efficiency trajectories" />;
-}
-
-class SceneBoundary extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { failed: false };
-  }
-
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-
-  componentDidCatch(error) {
-    this.props.onFailure?.(error);
-  }
-
-  render() {
-    if (this.state.failed) return <div className="deck-scene deck-static-poster" data-renderer="poster" aria-hidden="true" />;
-    return this.props.children;
-  }
-}
-
-function DeckOverlay({ open, onClose, language, experienceMode, onExperienceFailure }) {
-  const [mode, setMode] = useState("nav");
-  const [fps, setFps] = useState(60);
-
-  useEffect(() => {
-    if (!open) return undefined;
-    const close = (event) => {
-      if (event.key === "Escape") onClose();
-    };
-    document.body.classList.add("deck-open");
-    window.addEventListener("keydown", close);
-    return () => {
-      document.body.classList.remove("deck-open");
-      window.removeEventListener("keydown", close);
-    };
-  }, [open, onClose]);
+function CommandPreview({ commandRef, open, onClose, language }) {
+  const closeRef = useRef(null);
+  const copy = showcaseCopy[language];
 
   if (!open) return null;
-
-  const combat = mode === "combat";
-  const deckCopy = language === "zh" ? {
-    titleNav: "远程航行",
-    titleCombat: "战术截击",
-    shipStatus: "舰船状态",
-    tacticalSphere: "战术球面",
-    tracks: "3 个目标",
-    passive: "静默监听",
-    power: "能源管理",
-    intercept: "截击航向已获取",
-    stable: "黑洞弹弓窗口稳定",
-    combatNote: "仅限模拟 · 武器保险已启用",
-    navNote: "自适应渲染 · 后台暂停 · 支持减少动态效果",
-    close: "关闭指挥舱",
-  } : {
-    titleNav: "LONG-RANGE NAVIGATION",
-    titleCombat: "TACTICAL INTERCEPT",
-    shipStatus: "SHIP STATUS",
-    tacticalSphere: "TACTICAL SPHERE",
-    tracks: "3 TRACKS",
-    passive: "PASSIVE",
-    power: "POWER MANAGEMENT",
-    intercept: "INTERCEPT VECTOR ACQUIRED",
-    stable: "BLACK-HOLE SLINGSHOT WINDOW STABLE",
-    combatNote: "Simulation only · weapons safed",
-    navNote: "Adaptive renderer · visibility-suspended · reduced-motion ready",
-    close: "Close command deck",
-  };
-  const segments = (active, total = 10) => Array.from({ length: total }, (_, index) => (
-    <i className={index < active ? "is-active" : ""} key={index} />
-  ));
-
-  const interactiveScene = experienceMode === "cinematic";
-
   return (
-    <section className={`deck-overlay ${combat ? "is-combat" : ""}`} aria-label="AFFLATUS command deck simulation">
-      {interactiveScene ? (
-        <SceneBoundary onFailure={onExperienceFailure}>
-          <Suspense fallback={<div className="deck-scene deck-loading" aria-hidden="true" />}>
-            <DeckScene mode={mode} onFpsChange={setFps} onUnavailable={onExperienceFailure} />
-          </Suspense>
-        </SceneBoundary>
-      ) : <div className="deck-scene deck-static-poster" data-renderer="poster" aria-hidden="true" />}
-      <div className="deck-atmosphere" aria-hidden="true" />
-      <header className="deck-header">
-        <div>
-          <span className="eyebrow">AFFLATUS · COMMAND DECK / SIMULATION</span>
-          <strong>{combat ? deckCopy.titleCombat : deckCopy.titleNav}</strong>
-        </div>
-        <div className="deck-mode-switch" role="group" aria-label="Simulation mode">
-          <button type="button" className={mode === "nav" ? "is-active" : ""} onClick={() => setMode("nav")}>NAV</button>
-          <button type="button" className={mode === "combat" ? "is-active" : ""} onClick={() => setMode("combat")}>COMBAT</button>
-        </div>
-        <div className="deck-header-meta">
-          <span><i /> {fps} FPS</span>
-          <span>SOL-3 · MELBOURNE</span>
-          <button type="button" onClick={onClose} aria-label={deckCopy.close}><X weight="thin" /></button>
-        </div>
-      </header>
-
-      <aside className="deck-panel deck-panel-left">
-        <div className="deck-panel-heading"><ShieldCheck weight="thin" /><span>{deckCopy.shipStatus}</span><b>AFFLATUS-01</b></div>
-        {[
-          ["HULL", 10, "100%"],
-          ["SHIELD", combat ? 7 : 9, combat ? "74%" : "92%"],
-          ["REACTOR", combat ? 9 : 6, combat ? "91%" : "62%"],
-        ].map(([label, active, value]) => (
-          <div className="mfd-row" key={label}>
-            <span>{label}</span><div className="segment-bar">{segments(active)}</div><b>{value}</b>
-          </div>
-        ))}
-        <div className="deck-readout-grid">
-          <span><i>HDG</i><b>{combat ? "081.4°" : "274.3°"}</b></span>
-          <span><i>VEL</i><b>{combat ? "18.72" : "12.40"}<small> km/s</small></b></span>
-          <span><i>PITCH</i><b>{combat ? "+12.8°" : "+03.2°"}</b></span>
-          <span><i>G-FORCE</i><b>{combat ? "2.4 G" : "0.18 G"}</b></span>
-        </div>
-      </aside>
-
-      <div className="flight-reticle" aria-hidden="true">
-        <Crosshair weight="thin" />
-        <span>{combat ? "LOCK / 82%" : "VECTOR / STABLE"}</span>
+    <FocusBoundary
+      className="command-preview"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="command-preview-title"
+      bodyClass="command-preview-open"
+      initialFocusRef={closeRef}
+      returnFocusRef={commandRef}
+      onDismiss={onClose}
+    >
+      <div className="deck-static-poster" data-renderer="poster" aria-hidden="true" />
+      <div className="command-preview-copy">
+        <p className="chapter-label"><span>COMMAND</span>AFFLATUS-01</p>
+        <h2 id="command-preview-title">{copy.commandTitle}</h2>
+        <p>{copy.commandBody}</p>
+        <EditorialLink href={siteHref(COMMAND_ENTRY.path, language)} data-scene-signal="command:continue">{copy.commandCta}</EditorialLink>
       </div>
-
-      <aside className="deck-panel deck-panel-right">
-        <div className="deck-panel-heading"><Broadcast weight="thin" /><span>{deckCopy.tacticalSphere}</span><b>{combat ? deckCopy.tracks : deckCopy.passive}</b></div>
-        <Suspense fallback={<div className="radar-canvas" aria-hidden="true" />}>
-          <RadarCanvas combat={combat} />
-        </Suspense>
-        <div className="target-list">
-          <span><i className="friend" />AFF-02<b>0.84 AU</b></span>
-          <span><i className={combat ? "hostile" : "unknown"} />{combat ? "RED-01" : "UNKNOWN"}<b>{combat ? "14.2 KM" : "2.40 AU"}</b></span>
-          <span><i className="friend" />LAGRANGE L1<b>LOCK</b></span>
-        </div>
-      </aside>
-
-      <footer className="deck-footer">
-        <div className="power-strip">
-          <span><Lightning weight="thin" /> {deckCopy.power}</span>
-          <div><i>ENGINES</i><b style={{ "--power": combat ? "84%" : "62%" }} /></div>
-          <div><i>SHIELDS</i><b style={{ "--power": combat ? "76%" : "48%" }} /></div>
-          <div><i>WEAPONS</i><b style={{ "--power": combat ? "91%" : "12%" }} /></div>
-        </div>
-        <div className="deck-message">
-          <span>{combat ? deckCopy.intercept : deckCopy.stable}</span>
-          <small>{combat ? deckCopy.combatNote : deckCopy.navNote}</small>
-        </div>
-      </footer>
-    </section>
+      <button ref={closeRef} className="command-preview-close" type="button" onClick={onClose} aria-label={copy.closeCommand}>
+        <X aria-hidden="true" weight="thin" />
+      </button>
+    </FocusBoundary>
   );
 }
 
 export function App({ experienceMode = "cinematic", onExperienceFailure }) {
-  const [deckOpen, setDeckOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const commandRef = useRef(null);
   const language = window.location.pathname.startsWith("/zh/") ? "zh" : "en";
   const copy = showcaseCopy[language];
+  const motion = useMotionPreference(experienceMode);
 
   useEffect(() => {
     document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
   }, [language]);
 
+  const closeCommand = () => setCommandOpen(false);
+
   return (
     <div className="site-root">
-      <section className="hero" id="top">
-        <div className="hero-image" aria-hidden="true" />
-        <div className="hero-shade" aria-hidden="true" />
+      <a className="skip-link" href="#main-content">{language === 'zh' ? '跳至主要内容' : 'Skip to main content'}</a>
+      <ExperienceRoot
+        experienceMode={experienceMode}
+        motionEnabled={motion.enabled}
+        onUnavailable={onExperienceFailure}
+      />
+      <section className="chapter chapter-cold-void" data-chapter="01-cold-void" aria-labelledby="chapter-01-title" id="top">
         <Header
-          onOpenDeck={() => setDeckOpen(true)}
+          commandRef={commandRef}
           language={language}
+          motion={motion}
+          onOpenCommand={() => setCommandOpen(true)}
         />
-        <div className="hero-content">
-          <span className="eyebrow">{copy.hero.eyebrow}</span>
-          <h1>{copy.hero.title}</h1>
-          <p>{copy.hero.subtitle}</p>
-          <button type="button" className="editorial-link hero-cta" onClick={() => setDeckOpen(true)}>
-            <span>{copy.hero.cta}</span><ArrowRight aria-hidden="true" weight="thin" />
-          </button>
+        <div className="chapter-inner hero-content">
+          <ChapterLabel index="01">{copy.chapters.coldVoid}</ChapterLabel>
+          <h1 id="chapter-01-title">{copy.heroTitle}</h1>
+          <p className="chapter-lede">{copy.heroBody}</p>
+          <EditorialLink className="hero-cta" href="#chapter-03-title" sceneSignal="route:systems">{copy.heroCta}</EditorialLink>
         </div>
-        <div className="hero-telemetry" aria-label="Latest verified signal snapshot">
-          <span><i>POSITION</i><b>MELBOURNE / 37.8136° S</b></span>
-          <span><i>FOMC RANGE</i><b>3.50–3.75%</b></span>
-          <span><i>DESK WINDOW</i><b>$17.0BN REINVESTMENT</b></span>
-          <span><i>LONG END</i><b>MARKET-PRICED</b></span>
-        </div>
-        <a className="hero-update" href={siteHref("/signal.html", language)}>
-          <span>{copy.updatedLabel} 2026.08.21</span>
-          <b>{copy.heroUpdate}</b>
+        <a className="current-signal" href={siteHref("/signal.html", language)}>
+          <span>{copy.currentSignal}</span>
+          <strong>{copy.currentSignalTitle}</strong>
+          <time dateTime="2026-08-21">2026.08.21</time>
         </a>
       </section>
 
-      <main>
-        <section className="systems section-shell" aria-labelledby="systems-title">
-          <div className="section-heading">
-            <span className="eyebrow" id="systems-title">{copy.systems}</span>
-            <span>{copy.systemAxis}</span>
-          </div>
-          <div className="systems-grid">
-            {systems.map((system) => (
-              <article className="system-card" key={system.index}>
-                <span className="system-index">{system.index}</span>
-                <span className="system-rule" aria-hidden="true" />
-                <h2>{pick(system.title, language)}</h2>
-                <p>{pick(system.description, language)}</p>
-                <small>{system.meta}</small>
-                <ExternalLink href={system.href} language={language} className="editorial-link">{pick(system.action, language)}</ExternalLink>
-              </article>
-            ))}
+      <main id="main-content" tabIndex="-1">
+        <section className="chapter chapter-approach" data-chapter="02-the-approach" aria-labelledby="chapter-02-title">
+          <div className="chapter-inner chapter-copy-narrow">
+            <ChapterLabel index="02">{copy.chapters.approach}</ChapterLabel>
+            <h2 id="chapter-02-title">{copy.approachTitle}</h2>
+            <p className="chapter-lede">{copy.approachBody}</p>
+            <p className="approach-statement">{copy.approachStatement}</p>
+            <p className="approach-vector">{copy.approachStatus}</p>
           </div>
         </section>
 
-        <section className="transmissions section-shell" aria-labelledby="transmissions-title">
-          <div className="section-heading">
-            <span className="eyebrow" id="transmissions-title">{copy.transmissions}</span>
-            <ExternalLink href="/signal.html" language={language} className="section-action">{copy.archive}</ExternalLink>
+        <section className="chapter chapter-systems" data-chapter="03-parallel-drift" aria-labelledby="chapter-03-title">
+          <div className="chapter-inner">
+            <ChapterLabel index="03">{copy.chapters.drift}</ChapterLabel>
+            <div className="chapter-intro">
+              <h2 id="chapter-03-title">{copy.systemsTitle}</h2>
+              <p>{copy.systemsBody}</p>
+            </div>
+            <div className="system-routes">
+              {systems.map((system) => (
+                <article className="system-route" data-system={system.signal} key={system.index}>
+                  <span className="system-index">{system.index}</span>
+                  <h3>{pick(system.title, language)}</h3>
+                  <p>{pick(system.description, language)}</p>
+                  <EditorialLink
+                    href={siteHref(system.href, language)}
+                    sceneSignal={`system:${system.signal}`}
+                  >
+                    {pick(system.action, language)}
+                  </EditorialLink>
+                </article>
+              ))}
+            </div>
           </div>
-          <article className="featured-transmission">
+        </section>
+
+        <section className="chapter chapter-intelligence" data-chapter="04-bridge-aperture" aria-labelledby="chapter-04-title">
+          <div className="chapter-inner">
+            <ChapterLabel index="04">{copy.chapters.aperture}</ChapterLabel>
+            <article className="intelligence-feature">
+              <div>
+                <h2 id="chapter-04-title">{copy.intelligenceTitle}</h2>
+                <p>{copy.intelligenceBody}</p>
+                <EditorialLink href={siteHref("/signal.html", language)}>{copy.intelligenceCta}</EditorialLink>
+              </div>
+              <div className="signal-context" aria-label={`${copy.currentSignal}: ${copy.currentSignalTitle}`}>
+                <span>{copy.currentSignal}</span>
+                <strong>{copy.currentSignalTitle}</strong>
+                <time dateTime="2026-08-21">2026.08.21</time>
+              </div>
+            </article>
+            <div className="transmission-stubs" aria-label={copy.relatedSignals}>
+              <p>{copy.relatedSignals}</p>
+              {transmissions.map((item) => (
+                <TransmissionRow
+                  href={siteHref(item.href, language)}
+                  date={item.date}
+                  key={item.title.en}
+                  sceneSignal="route:transmission"
+                >
+                  {pick(item.title, language)}
+                </TransmissionRow>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="chapter chapter-field-record" data-chapter="05-the-wake" aria-labelledby="chapter-05-title">
+          <div className="chapter-inner field-record-layout">
             <div>
-              <span className="eyebrow">{copy.featureEyebrow}</span>
-              <h2>{copy.featureTitle}</h2>
-              <p>{copy.featureBody}</p>
-              <ExternalLink href="/signal.html" language={language} className="editorial-link">{copy.featureCta}</ExternalLink>
+              <ChapterLabel index="05">{copy.chapters.wake}</ChapterLabel>
+              <h2 id="chapter-05-title">{copy.fieldTitle}</h2>
             </div>
-            <div className="feature-facts">
-              <span><i>{copy.policyRange}</i><b>3.50–3.75%</b></span>
-              <span><i>{copy.deskWindow}</i><b>$17.0BN</b><small>{copy.reinvestment}</small></span>
-              <span><i>{copy.newRmps}</i><b>{copy.zero}</b><small>14 Aug–14 Sep</small></span>
-              <span><i>{copy.asOf}</i><b>2026.08.21</b></span>
-            </div>
-          </article>
-          <div className="transmission-list">
-            {transmissions.map((item) => (
-              <ExternalLink href={item.href} language={language} key={item.title.en}>
-                <span className="transmission-title">{pick(item.title, language)}</span>
-                <time>{item.date}</time>
-                <em>{pick(item.category, language)}</em>
-              </ExternalLink>
-            ))}
-          </div>
-        </section>
-
-        <section className="field-note" aria-labelledby="field-note-title">
-          <div className="field-copy">
-            <span className="eyebrow">{copy.fieldEyebrow}</span>
-            <h2 id="field-note-title">{copy.fieldTitle}</h2>
-            <p>{copy.fieldBody}</p>
-            <p>{copy.fieldBodyTwo}</p>
-            <ExternalLink href="/portfolio.html#fy2026Performance" language={language} className="editorial-link">{copy.fieldCta}</ExternalLink>
-          </div>
-          <div className="field-chart-wrap">
-            <div className="chart-heading">
-              <span>{copy.chartTitle}</span>
-              <span>{copy.chartReference}</span>
-            </div>
-            <CycleChart />
-            <div className="chart-legend">
-              <span><i className="legend-solid" />{copy.longRoute}</span>
-              <span><i className="legend-dash" />{copy.shortCycles}</span>
-              <span>{copy.verifiedEntries}</span>
+            <div className="field-record-copy">
+              <p className="chapter-lede">{copy.fieldBody}</p>
+              <p>{copy.fieldBodyTwo}</p>
+              <p className="field-marker">{copy.fieldMarker}</p>
+              <EditorialLink href={siteHref("/capital/fy25-26/", language)}>{copy.fieldCta}</EditorialLink>
             </div>
           </div>
         </section>
 
-        <section className="signature-deck" aria-labelledby="signature-title">
-          <div className="signature-image" aria-hidden="true" />
-          <div className="signature-shade" aria-hidden="true" />
-          <div className="signature-copy">
-            <span className="eyebrow">{copy.signatureEyebrow}</span>
-            <h2 id="signature-title">{copy.signatureTitle}</h2>
-            <p>{copy.signatureBody}</p>
-            <button type="button" className="editorial-link signature-cta" onClick={() => setDeckOpen(true)}>
-              <span>{copy.signatureCta}</span><ArrowRight weight="thin" />
-            </button>
-          </div>
-          <div className="signature-facts">
-            <span><i>FED RANGE</i><b>3.50–3.75%</b></span>
-            <span><i>DESK WINDOW</i><b>$17.0BN</b></span>
-            <span><i>{copy.updatedLabel}</i><b>2026.08.21</b></span>
-          </div>
-          <div className="signature-status"><i /> {copy.systemNominal}</div>
-        </section>
-
-        <section className="principles section-shell" aria-labelledby="principles-title">
-          <div className="section-heading"><span className="eyebrow" id="principles-title">{copy.principles}</span></div>
-          <div className="principles-grid">
-            {principles.map(([index, title, description]) => (
-              <article key={index}>
-                <span>{index}</span>
-                <h2>{pick(title, language)}</h2>
-                <p>{pick(description, language)}</p>
-                <a href="#about" aria-label={`${pick(title, language)} AFFLATUS`}><ArrowRight weight="thin" /></a>
-              </article>
-            ))}
+        <section className="chapter chapter-manifesto" data-chapter="06-departure" aria-labelledby="chapter-06-title" id="about">
+          <div className="chapter-inner manifesto-layout">
+            <ChapterLabel index="06">{copy.chapters.departure}</ChapterLabel>
+            <h2 id="chapter-06-title">{copy.manifestoTitle}</h2>
+            <p className="manifesto-copy">{copy.manifestoBody}</p>
+            <div className="about-block">
+              <h3>{copy.aboutTitle}</h3>
+              <p>{copy.aboutBody}</p>
+              <EditorialLink href={siteHref("/capital/", language)}>{copy.portfolioCta}</EditorialLink>
+            </div>
+            <EditorialLink
+              className="manifesto-command"
+              href={siteHref(COMMAND_ENTRY.path, language)}
+              sceneSignal="command:continue"
+            >
+              {copy.finalCommand}
+            </EditorialLink>
+            <p className="disclosure-copy" id="disclosure">{copy.disclosureBody}</p>
           </div>
         </section>
       </main>
 
-      <footer className="site-footer section-shell" id="about">
-        <div className="footer-grid">
-          <section>
-            <span className="eyebrow">{copy.about}</span>
-            <h2>{copy.aboutTitle}</h2>
-            <p>{copy.aboutBody}</p>
-            <ExternalLink href="/portfolio.html" language={language} className="editorial-link">{copy.portfolioCta}</ExternalLink>
-          </section>
-          <section>
-            <span className="eyebrow">{copy.uplink}</span>
-            <h2>{copy.uplinkTitle}</h2>
-            <p>{copy.uplinkBody}</p>
-            <div className="footer-links">
-              <ExternalLink href="/signal.html" language={language}>Signal</ExternalLink>
-              <ExternalLink href="/arena.html" language={language}>Arena</ExternalLink>
-              <ExternalLink href="/course.html" language={language}>Course</ExternalLink>
-            </div>
-          </section>
-        </div>
-        <div className="system-bar">
-          <span>© 2026 AFFLATUS</span>
-          <span><i /> {copy.systemNominal}</span>
-          <span>MELBOURNE, AUSTRALIA — EARTH / SOL-3</span>
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <a href={siteHref("/", language)}>AFFLATUS</a>
+          <span>MELBOURNE, AUSTRALIA</span>
+          <a href={language === "en" ? `/zh/${window.location.search}${window.location.hash}` : `/en/${window.location.search}${window.location.hash}`}>{copy.language} · {language === "en" ? "EN / 中" : "中 / EN"}</a>
+          <a href="#disclosure">{copy.disclosure}</a>
+          <span className="nominal-status">{copy.nominal}</span>
         </div>
       </footer>
 
-      <DeckOverlay
-        open={deckOpen}
-        onClose={() => setDeckOpen(false)}
+      <CommandPreview
+        commandRef={commandRef}
+        open={commandOpen}
+        onClose={closeCommand}
         language={language}
-        experienceMode={experienceMode}
-        onExperienceFailure={onExperienceFailure}
       />
     </div>
   );

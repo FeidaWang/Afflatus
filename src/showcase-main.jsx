@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './showcase/App.jsx';
 import {
@@ -47,7 +47,7 @@ class ExperienceBoundary extends Component {
   }
 }
 
-function ExperienceRoot() {
+function ExperienceModeRoot() {
   const [mode, setMode] = useState(() => resolveExperienceMode({
     env: import.meta.env,
     location: window.location,
@@ -59,9 +59,9 @@ function ExperienceRoot() {
     document.documentElement.dataset.experienceMode = mode;
   }, [mode]);
 
-  const onFailure = () => {
+  const onFailure = useCallback(() => {
     setMode((currentMode) => fallbackExperienceMode(currentMode));
-  };
+  }, []);
 
   if (mode === 'legacy') return <LegacyHomeRedirect />;
 
@@ -74,6 +74,6 @@ function ExperienceRoot() {
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ExperienceRoot />
+    <ExperienceModeRoot />
   </React.StrictMode>,
 );

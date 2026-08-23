@@ -6,6 +6,7 @@
 import '../lib/nav.js';
 import '../lib/transition.js';
 import { createPagedBook } from '../lib/pagedBook.js';
+import { createNarrationPlayer } from '../lib/narrationPlayer.js';
 import {
   createReaderStore,
   createStorageAdapter,
@@ -22,6 +23,7 @@ import {
 window.AfflatusSerial = Object.freeze({
   chapterIdEquals,
   createPagedBook,
+  createNarrationPlayer,
   createReaderStore,
   createStorageAdapter,
   parseReaderPath,

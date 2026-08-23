@@ -11,6 +11,38 @@ export const PERFORMANCE_ROUTES = Object.freeze([
     "path": "/portfolio.html"
   },
   {
+    "id": "command",
+    "path": "/command/"
+  },
+  {
+    "id": "flight-experiment",
+    "path": "/experiments/flight/"
+  },
+  {
+    "id": "capital",
+    "path": "/capital/"
+  },
+  {
+    "id": "capital-record",
+    "path": "/capital/fy25-26/"
+  },
+  {
+    "id": "intelligence",
+    "path": "/intelligence/"
+  },
+  {
+    "id": "solar-atlas",
+    "path": "/intelligence/solar-atlas/"
+  },
+  {
+    "id": "field-notes",
+    "path": "/field-notes/"
+  },
+  {
+    "id": "experiments",
+    "path": "/experiments/"
+  },
+  {
     "id": "arena",
     "path": "/arena.html"
   },

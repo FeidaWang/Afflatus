@@ -522,6 +522,11 @@ export function initMarketDeck({
       const card = e.target.closest('.pick-card');
       if (!card || e.target.closest('.pcCta')) return;
       scrollActivePick = card;
+      // A deliberate dossier choice must win over IntersectionObserver
+      // callbacks queued by the preceding scroll. Without the same short lock
+      // used by orbit-node selection, a wide desktop viewport can immediately
+      // snap the readout back to the first visible card.
+      lockOrbitSelection(card);
       activatePick(card);
     });
   }

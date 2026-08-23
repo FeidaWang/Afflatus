@@ -71,30 +71,45 @@ test.describe('active-route browser gates', () => {
         expect(focusedInteractive, 'Tab must enter an interactive control').toBe(true);
       }
 
-      const usesMobileHomeMenu = route.id === 'main' && testInfo.project.name !== 'desktop-chromium';
+      const usesMobileMenu = testInfo.project.name !== 'desktop-chromium';
+      const primaryLinkSelector = route.id === 'main'
+        ? '[data-afflatus-nav] .primary-nav-link[href]'
+        : route.id === 'portfolio' && usesMobileMenu
+          ? '.nav-site-menu a[href]'
+        : '[data-afflatus-nav] .afflatus-nav-links a[href]';
       let routeLinks;
-      if (usesMobileHomeMenu) {
-        const deckButton = page.locator('.nav-menu-btn');
-        await expect(deckButton).toBeVisible();
-        await deckButton.focus();
+      if (route.id === 'main' && usesMobileMenu) {
+        const menuButton = page.locator('.mobile-menu');
+        await expect(menuButton).toBeVisible();
+        await menuButton.focus();
         await page.keyboard.press('Enter');
-        await expect(page.locator('.nav-site-menu.open')).toBeVisible();
+        await expect(page.locator('.desktop-nav.is-mobile-open')).toBeVisible();
         await page.keyboard.press('Escape');
-        await expect(page.locator('.nav-site-menu.open')).toHaveCount(0);
+        await expect(page.locator('.desktop-nav.is-mobile-open')).toHaveCount(0);
         await page.keyboard.press('Enter');
-        await expect(page.locator('.nav-site-menu.open')).toBeVisible();
-        routeLinks = page.locator('.nav-site-menu a[href]');
+        await expect(page.locator('.desktop-nav.is-mobile-open')).toBeVisible();
+        routeLinks = page.locator(primaryLinkSelector);
+      } else if (route.id === 'portfolio' && usesMobileMenu) {
+        const menuButton = page.locator('.nav-menu-btn');
+        await expect(menuButton).toBeVisible();
+        await menuButton.focus();
+        await page.keyboard.press('Enter');
+        await expect(page.locator('.nav-site-menu')).toBeVisible();
+        routeLinks = page.locator(primaryLinkSelector);
+      } else if (usesMobileMenu) {
+        const menuButton = page.locator('[data-afflatus-nav] .afflatus-nav-toggle');
+        await expect(menuButton).toBeVisible();
+        await menuButton.focus();
+        await page.keyboard.press('Enter');
+        await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+        await page.keyboard.press('Escape');
+        await expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+        await expect(menuButton).toBeFocused();
+        await page.keyboard.press('Enter');
+        await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+        routeLinks = page.locator(primaryLinkSelector);
       } else {
-        const labsTrigger = page.locator('.nav-labs__trigger').first();
-        await expect(labsTrigger).toBeAttached();
-        await labsTrigger.focus();
-        await page.keyboard.press('Escape');
-        await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
-        await page.keyboard.press('Enter');
-        await expect(labsTrigger).toHaveAttribute('aria-expanded', 'true');
-        await page.keyboard.press('Escape');
-        await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
-        routeLinks = page.locator('[data-afflatus-nav] a[href]:not([href="#"])');
+        routeLinks = page.locator(primaryLinkSelector);
       }
 
       const destination = await routeLinks.evaluateAll((links, currentPath) => {
@@ -105,9 +120,7 @@ test.describe('active-route browser gates', () => {
       expect(destination).not.toBeNull();
 
       const routeLink = page.locator(
-        usesMobileHomeMenu
-          ? `.nav-site-menu a[href="${destination}"]`
-          : `[data-afflatus-nav] a[href="${destination}"]`,
+        `${primaryLinkSelector}[href="${destination}"]`,
       );
       await expect(routeLink).toHaveCount(1);
       await routeLink.focus();

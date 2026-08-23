@@ -80,7 +80,7 @@ test('desktop batch keeps the research, privacy and layout contracts visible', a
   expect(overseasRegions.join(' ')).toContain('新西兰');
   await expectNoPageOverflow(page);
 
-  await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/zh/portfolio.html', { waitUntil: 'domcontentloaded' });
   await settlePage(page);
   const convoyDivider = await page.locator('.portfolio-convoy').evaluate((element) => {
     const style = getComputedStyle(element, '::after');

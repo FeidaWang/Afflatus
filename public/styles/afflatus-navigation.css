@@ -1,0 +1,147 @@
+/* M03 shared navigation surface. Route themes keep their own palette; this
+   file owns only navigation hierarchy, keyboard states and responsive menu
+   geometry. It deliberately avoids decorative glow and continuous motion. */
+.afflatus-primary-nav {
+  position: relative;
+  z-index: var(--af-z-menu, 30);
+  display: flex;
+  min-inline-size: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.afflatus-nav-links {
+  display: flex;
+  min-inline-size: 0;
+  align-items: center;
+  gap: clamp(8px, 1.4vw, 20px);
+}
+
+.afflatus-nav-links a,
+.afflatus-command-cta,
+.afflatus-nav-toggle {
+  min-block-size: 40px;
+  border: 1px solid transparent;
+  color: inherit;
+  font: 500 10px/1 var(--af-font-mono, ui-monospace, monospace);
+  letter-spacing: .08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.afflatus-nav-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 2px;
+  opacity: .72;
+}
+
+.afflatus-nav-links a:hover,
+.afflatus-nav-links a[aria-current="page"] {
+  opacity: 1;
+  border-bottom-color: currentColor;
+}
+
+.afflatus-command-cta {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0 13px;
+  border-color: color-mix(in srgb, currentColor 45%, transparent);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  opacity: 1;
+}
+
+.afflatus-command-cta:hover {
+  background: color-mix(in srgb, currentColor 16%, transparent);
+}
+
+.afflatus-nav-toggle {
+  display: none;
+  inline-size: 44px;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.afflatus-nav-toggle span {
+  display: block;
+  inline-size: 16px;
+  block-size: 1px;
+  margin: 3px auto;
+  background: currentColor;
+}
+
+@media (max-width: 47.5rem) {
+  .afflatus-primary-nav {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .afflatus-nav-toggle {
+    display: inline-block;
+    order: 3;
+  }
+
+  .afflatus-primary-nav .afflatus-nav-links {
+    position: absolute;
+    z-index: var(--af-z-menu, 30);
+    inset-block-start: calc(100% + 8px);
+    inset-inline-end: 0;
+    display: none;
+    inline-size: min(22rem, calc(100vw - 24px));
+    padding: 8px;
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    background: color-mix(in srgb, #06080c 94%, transparent);
+  }
+
+  .afflatus-primary-nav.is-menu-open .afflatus-nav-links {
+    display: grid;
+  }
+
+  .afflatus-primary-nav .afflatus-nav-links a {
+    min-block-size: 44px;
+    padding-inline: 10px;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  }
+
+  .afflatus-primary-nav .afflatus-nav-links a:last-child {
+    border-bottom: 0;
+  }
+
+  .afflatus-command-cta {
+    order: 1;
+    min-block-size: 44px;
+    padding-inline: 10px;
+    font-size: 9px;
+  }
+
+  .afflatus-primary-nav > .lang-toggle {
+    order: 2;
+    min-inline-size: 44px;
+    min-block-size: 44px;
+  }
+
+  /* Route themes predate the shared menu and some still set 40px controls.
+     Keep the persistent mobile actions at the documented touch-target size. */
+  .site-header--follow > .afflatus-primary-nav .afflatus-nav-toggle,
+  .site-header--follow > .afflatus-primary-nav .afflatus-command-cta,
+  .site-header--follow > .afflatus-primary-nav > .lang-toggle {
+    box-sizing: border-box;
+    block-size: 44px;
+    min-block-size: 44px;
+    overflow: visible;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .afflatus-primary-nav *,
+  .afflatus-primary-nav *::before,
+  .afflatus-primary-nav *::after {
+    transition: none;
+  }
+}

@@ -773,6 +773,74 @@
   box-shadow: 0 0 0 3px rgba(201, 111, 64, .12);
 }
 
+/* ── COMMAND / truthful operating surface ─────────────────────── */
+
+[data-brand-persona="command"] {
+  --afflatus-brand-ink: #edf1f2;
+  --afflatus-brand-accent: #8fe9ff;
+  --afflatus-brand-accent-2: #ff7a59;
+  --afflatus-brand-font: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="command"] .afflatus-brand__stage::before {
+  inset: 4px auto auto 0;
+  inline-size: 53px;
+  block-size: 25px;
+  border-block: 1px solid rgba(143, 233, 255, .42);
+  background: linear-gradient(90deg, transparent 0 48%, rgba(143, 233, 255, .22) 49% 51%, transparent 52%);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="command"] .afflatus-brand__signal {
+  inset: 10px auto auto 48px;
+  inline-size: 25px;
+  block-size: 12px;
+  border-inline-start: 5px solid var(--afflatus-brand-accent);
+  border-inline-end: 9px solid var(--afflatus-brand-accent-2);
+  border-block: 1px solid rgba(237, 241, 242, .44);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="command"] .afflatus-brand__core {
+  inset: 13px auto auto 78px;
+  inline-size: 7px;
+  block-size: 7px;
+  border: 1px solid var(--afflatus-brand-accent-2);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 122, 89, .38);
+}
+
+/* ── FLIGHT EXPERIMENT / isolated simulator ───────────────────── */
+
+[data-brand-persona="flight-experiment"] {
+  --afflatus-brand-ink: #e7f2f5;
+  --afflatus-brand-accent: #79dbef;
+  --afflatus-brand-accent-2: #ff7655;
+  --afflatus-brand-font: "Rajdhani", "IBM Plex Mono", ui-monospace, monospace;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="flight-experiment"] .afflatus-brand__stage::before {
+  inset: 4px auto auto 0;
+  inline-size: 54px;
+  block-size: 25px;
+  border: 1px solid rgba(121, 219, 239, .36);
+  clip-path: polygon(0 0, 100% 0, 100% 72%, 72% 72%, 64% 100%, 0 100%);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="flight-experiment"] .afflatus-brand__signal {
+  inset: 9px auto auto 48px;
+  inline-size: 27px;
+  block-size: 14px;
+  background: linear-gradient(90deg, var(--afflatus-brand-accent) 0 36%, transparent 36% 54%, var(--afflatus-brand-accent-2) 54% 100%);
+  clip-path: polygon(0 50%, 38% 18%, 55% 42%, 100% 0, 78% 50%, 100% 100%, 55% 58%, 38% 82%);
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="flight-experiment"] .afflatus-brand__core {
+  inset: 13px auto auto 79px;
+  inline-size: 8px;
+  block-size: 8px;
+  background: var(--afflatus-brand-accent-2);
+  box-shadow: 0 0 10px rgba(255, 118, 85, .5);
+}
+
 /* ── BOOT / bridge operating intelligence ──────────────────────── */
 
 .boot-page { --afflatus-header-bg: #04060a; }
@@ -923,6 +991,37 @@
   animation: afflatus-cityview-resolve 760ms var(--afflatus-brand-ease) both;
 }
 
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="command"] .afflatus-brand__stage {
+  animation: afflatus-command-resolve 720ms var(--afflatus-brand-ease) both;
+}
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="flight-experiment"] .afflatus-brand__stage {
+  animation: afflatus-flight-experiment-resolve 680ms var(--afflatus-brand-ease) both;
+}
+
+/* ── CONTENT MIGRATION / quiet reading and evidence surfaces ───────── */
+
+[data-brand-persona="capital"] { --afflatus-brand-ink: #f0f0e9; --afflatus-brand-accent: #d4b878; --afflatus-brand-accent-2: #83b6a3; --afflatus-brand-font: "IBM Plex Mono", ui-monospace, monospace; }
+[data-brand-persona="capital-record"] { --afflatus-brand-ink: #f4eee0; --afflatus-brand-accent: #e1a86d; --afflatus-brand-accent-2: #b8d6bb; --afflatus-brand-font: "IBM Plex Serif", Georgia, serif; }
+[data-brand-persona="intelligence"] { --afflatus-brand-ink: #e4f0f3; --afflatus-brand-accent: #78cce2; --afflatus-brand-accent-2: #d1b374; --afflatus-brand-font: "IBM Plex Mono", ui-monospace, monospace; }
+[data-brand-persona="solar-atlas"] { --afflatus-brand-ink: #fff4d7; --afflatus-brand-accent: #f0bd61; --afflatus-brand-accent-2: #80d2bd; --afflatus-brand-font: "Cormorant Garamond", Georgia, serif; }
+[data-brand-persona="field-notes"] { --afflatus-brand-ink: #f1eae1; --afflatus-brand-accent: #c99f75; --afflatus-brand-accent-2: #93b9a9; --afflatus-brand-font: "IBM Plex Serif", Georgia, serif; }
+[data-brand-persona="experiments"] { --afflatus-brand-ink: #e8ebf0; --afflatus-brand-accent: #b29aff; --afflatus-brand-accent-2: #e8788b; --afflatus-brand-font: "IBM Plex Mono", ui-monospace, monospace; }
+
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="capital"] .afflatus-brand__stage { animation: afflatus-capital-resolve 680ms var(--afflatus-brand-ease) both; }
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="capital-record"] .afflatus-brand__stage { animation: afflatus-capital-record-resolve 760ms var(--afflatus-brand-ease) both; }
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="intelligence"] .afflatus-brand__stage { animation: afflatus-intelligence-resolve 700ms var(--afflatus-brand-ease) both; }
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="solar-atlas"] .afflatus-brand__stage { animation: afflatus-solar-atlas-resolve 800ms var(--afflatus-brand-ease) both; }
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="field-notes"] .afflatus-brand__stage { animation: afflatus-field-notes-resolve 720ms var(--afflatus-brand-ease) both; }
+:root[data-afflatus-brand-state="compact"] [data-brand-persona="experiments"] .afflatus-brand__stage { animation: afflatus-experiments-resolve 660ms var(--afflatus-brand-ease) both; }
+
+@keyframes afflatus-capital-resolve { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+@keyframes afflatus-capital-record-resolve { from { opacity: 0; letter-spacing: .12em; } to { opacity: 1; letter-spacing: -.02em; } }
+@keyframes afflatus-intelligence-resolve { from { opacity: 0; filter: blur(3px); } to { opacity: 1; filter: none; } }
+@keyframes afflatus-solar-atlas-resolve { from { opacity: 0; transform: rotate(-1deg); } to { opacity: 1; transform: none; } }
+@keyframes afflatus-field-notes-resolve { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
+@keyframes afflatus-experiments-resolve { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: none; } }
+
 :root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__stage::before {
   inset: 3px auto auto 0;
   inline-size: 50px;
@@ -1054,6 +1153,18 @@
 @keyframes afflatus-cityview-resolve {
   0% { transform: translateY(5px) scaleY(.72); filter: blur(1px); }
   64% { transform: translateY(-1px) scaleY(1.04); filter: blur(0); }
+  100% { transform: none; }
+}
+
+@keyframes afflatus-command-resolve {
+  0% { transform: translateX(-5px); opacity: .35; filter: blur(1px); }
+  62% { transform: translateX(1px); opacity: 1; filter: blur(0); }
+  100% { transform: none; }
+}
+
+@keyframes afflatus-flight-experiment-resolve {
+  0% { transform: translateY(3px) scaleX(.88); opacity: .28; }
+  58% { transform: translateY(-1px) scaleX(1.03); opacity: 1; }
   100% { transform: none; }
 }
 
@@ -1199,6 +1310,16 @@
     overflow: visible;
   }
 
+  /* nav.js enhances legacy six-column strips into a compact menu. Once that
+     contract is active, size only the three persistent controls instead of
+     leaving empty grid tracks that can squeeze or clip their labels. */
+  .site-header--follow > .nav.afflatus-primary-nav,
+  body.course-page .site-top.site-header--follow > .nav.afflatus-primary-nav {
+    display: flex;
+    grid-template-columns: none;
+    justify-content: flex-end;
+  }
+
   /* The novel shelf is intentionally Chinese-only, so it has no redundant
      language switch and therefore owns five — not six — primary actions. */
   .novels-page .site-header--follow > .nav {
@@ -1220,7 +1341,7 @@
     align-items: center;
     justify-content: center;
     padding: 0 3px;
-    overflow: hidden;
+    overflow: visible;
     font-size: 8.5px;
     line-height: 1;
     letter-spacing: .04em;
@@ -1230,6 +1351,24 @@
 
   .site-header--follow > .nav > .nav-labs {
     inline-size: 100%;
+  }
+
+  /* nav.js turns the old six-action strips into three persistent actions.
+     The legacy direct-child rule above intentionally fills grid tracks, but
+     must not make the enhanced Command action consume the whole flex row. */
+  .site-header--follow > .nav.afflatus-primary-nav > .afflatus-command-cta,
+  body.course-page .site-top.site-header--follow > .nav.afflatus-primary-nav > .afflatus-command-cta {
+    inline-size: auto;
+    min-inline-size: max-content;
+    flex: 0 0 auto;
+    padding-inline: 10px;
+  }
+
+  .site-header--follow > .nav.afflatus-primary-nav > .afflatus-nav-toggle,
+  .site-header--follow > .nav.afflatus-primary-nav > .lang-toggle {
+    inline-size: 44px;
+    min-inline-size: 44px;
+    flex: 0 0 44px;
   }
 
   .site-header--follow > .nav .nav-labs__trigger::after {

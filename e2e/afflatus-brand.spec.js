@@ -1,7 +1,7 @@
 import { expect, settlePage, test } from './site-fixture.js';
 
 const ROUTES = [
-  ['/', 'home'],
+  ['/portfolio.html', 'home'],
   ['/arena.html', 'arena'],
   ['/sectors.html', 'sectors'],
   ['/signal.html', 'signal'],
@@ -15,13 +15,25 @@ const ROUTES = [
 
 const FOLLOWING_ROUTES = ROUTES
   .map(([route]) => route)
-  .filter((route) => !['/', '/serial.html', '/course.html', '/cityview.html', '/boot.html'].includes(route));
+  .filter((route) => !['/portfolio.html', '/serial.html', '/course.html', '/cityview.html', '/boot.html'].includes(route));
 const MOBILE_NAV_ROUTES = ROUTES
   .map(([route]) => route)
-  .filter((route) => !['/', '/boot.html'].includes(route));
+  .filter((route) => !['/portfolio.html', '/boot.html'].includes(route));
 
 test.describe('Afflatus adaptive brand', () => {
   test.use({ reducedMotion: 'no-preference' });
+
+  test('showcase home keeps its semantic wordmark visible and inside the viewport', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await settlePage(page);
+    const brand = page.locator('header .brand');
+    await expect(brand).toBeVisible();
+    await expect(brand).toHaveText('AFFLATUS');
+    const bounds = await brand.boundingBox();
+    expect(bounds).not.toBeNull();
+    expect(bounds.x).toBeGreaterThanOrEqual(-1);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual((await page.evaluate(() => innerWidth)) + 1);
+  });
 
   for (const [route, persona] of ROUTES) {
     test(`${route} resolves into its page-native AI identity`, async ({ page }) => {
@@ -120,28 +132,35 @@ test.describe('Mobile primary navigation', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   for (const route of MOBILE_NAV_ROUTES) {
-    test(`${route} keeps every primary action visible and touchable`, async ({ page }) => {
+    test(`${route} keeps command and menu actions touchable`, async ({ page }) => {
       await page.goto(route, { waitUntil: 'domcontentloaded' });
       await settlePage(page);
 
-      const nav = page.locator('.site-header--follow > .nav');
+      const nav = page.locator('[data-afflatus-nav].afflatus-primary-nav');
       await expect(nav).toBeVisible();
-      await expect(nav.locator(':scope > *')).toHaveCount(route === '/serial.html' ? 5 : 6);
+      const toggle = nav.locator('.afflatus-nav-toggle');
+      const command = nav.locator('.afflatus-command-cta');
+      await expect(toggle).toBeVisible();
+      await expect(command).toBeVisible();
 
       const audit = await nav.evaluate((element) => {
         const header = element.closest('.site-header--follow');
         const brand = header?.querySelector('[data-afflatus-brand]');
         const navBounds = element.getBoundingClientRect();
         const brandBounds = brand?.getBoundingClientRect();
-        const children = [...element.children].map((child) => {
-          const target = child.matches('a, button') ? child : child.querySelector('a, button');
-          const bounds = target.getBoundingClientRect();
-          return {
-            left: bounds.left,
-            right: bounds.right,
-            height: bounds.height,
-          };
-        });
+        const children = [...element.querySelectorAll('.afflatus-nav-toggle, .afflatus-command-cta, .lang-toggle')]
+          .filter((target) => getComputedStyle(target).display !== 'none')
+          .map((target) => {
+            const bounds = target.getBoundingClientRect();
+            return {
+              className: target.className,
+              computedHeight: getComputedStyle(target).height,
+              computedMinBlockSize: getComputedStyle(target).minBlockSize,
+              left: bounds.left,
+              right: bounds.right,
+              height: bounds.height,
+            };
+          });
         return {
           overflow: element.scrollWidth - element.clientWidth,
           brandNavOverlap: brandBounds ? Math.max(0, brandBounds.bottom - navBounds.top) : 0,
@@ -154,17 +173,28 @@ test.describe('Mobile primary navigation', () => {
       for (const item of audit.children) {
         expect(item.left).toBeGreaterThanOrEqual(-1);
         expect(item.right).toBeLessThanOrEqual(391);
-        expect(item.height).toBeGreaterThanOrEqual(44);
+        expect(
+          item.height,
+          `${item.className} touch target (${item.computedHeight}; min ${item.computedMinBlockSize})`,
+        ).toBeGreaterThanOrEqual(44);
       }
+
+      await toggle.click();
+      const links = nav.locator('.afflatus-nav-links a');
+      await expect(links).toHaveCount(5);
+      await expect(nav.locator('.afflatus-nav-links')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(toggle).toBeFocused();
     });
   }
 });
 
-test.describe('Homepage following command bar', () => {
+test.describe('Portfolio following command bar', () => {
   test('keeps Voyage Notes fully inside the viewport when opened', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop CIC geometry regression');
     await page.setViewportSize({ width: 1512, height: 827 });
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/portfolio.html', { waitUntil: 'domcontentloaded' });
     await settlePage(page);
 
     await page.locator('#commandModeBtn').click();
@@ -185,7 +215,7 @@ test.describe('Homepage following command bar', () => {
   });
 
   test('stays fixed through the allocation deck without leaking private amounts', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/portfolio.html', { waitUntil: 'domcontentloaded' });
     await settlePage(page);
 
     const header = page.locator('nav.site-header--follow');
@@ -198,8 +228,7 @@ test.describe('Homepage following command bar', () => {
     await expect.poll(async () => Math.round((await header.boundingBox())?.y ?? -1)).toBe(initialTop);
 
     const fourthDossier = page.locator('#pickGrid .pick-card').nth(3).locator('.pcCover');
-    await fourthDossier.focus();
-    await fourthDossier.press('Enter');
+    await fourthDossier.click();
     await expect(page.locator('#convoyTicker')).toHaveText('ORCL');
     await expect(page.locator('#convoyProgress')).toHaveText('04 / 10');
 

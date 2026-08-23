@@ -473,45 +473,41 @@ function loadNovelCatalog() {
 }
 
 function novelLocale(locale) {
-  return locale === 'en' || locale === 'zh' ? locale : 'adaptive';
+  if (locale === 'zh') return 'zh';
+  if (locale === 'adaptive') return 'adaptive';
+  throw new Error(`Novel pages are Chinese-only; unsupported locale: ${locale}`);
 }
 
-function novelPageCopy(locale, entry, chapter = null) {
+function novelPageCopy(entry, chapter = null) {
   if (chapter) {
-    return locale === 'en'
-      ? {
-        title: `${chapter.title} — ${entry.novel.title} · Project Afflatus`,
-        description: `Read ${chapter.title} from the original Chinese serialized novel ${entry.novel.title}.`,
-      }
-      : {
-        title: `${chapter.title} — 《${entry.novel.title}》· Project Afflatus`,
-        description: `原创中文连载《${entry.novel.title}》${chapter.title}，护眼阅读。`,
-      };
-  }
-  return locale === 'en'
-    ? {
-      title: `${entry.novel.title} — Chinese Serialized Novel · Project Afflatus`,
-      description: `${entry.novel.intro} Original Chinese serialized fiction.`,
-    }
-    : {
-      title: `《${entry.novel.title}》— 原创中文连载 · Project Afflatus`,
-      description: entry.novel.intro,
+    return {
+      title: `${chapter.title} — 《${entry.novel.title}》· Project Afflatus`,
+      description: `原创中文连载《${entry.novel.title}》${chapter.title}，护眼阅读。`,
     };
+  }
+  return {
+    title: `《${entry.novel.title}》— 原创中文连载 · Project Afflatus`,
+    description: entry.novel.intro,
+  };
 }
 
 function renderNovelBlocks(blocks) {
-  return (blocks || []).map((block) => {
+  return (blocks || []).map((block, blockIndex) => {
+    const sourceLength = Array.from(String(block.text || '')).length;
+    const marker = ` data-reader-block="${blockIndex}" data-page-marker="block-${blockIndex}" data-reader-start="0" data-reader-end="${sourceLength}"`;
     if (block.type === 'sys') {
       let text = String(block.text || '');
       let heading = '幕间讯号';
+      let bodyStart = 0;
       const match = text.match(/^【([^】]+)】\s*/);
       if (match) {
         heading = match[1];
+        bodyStart = Array.from(match[0]).length;
         text = text.slice(match[0].length);
       }
-      return `<div class="sys"><div class="sys-head"><i class="sys-dot" aria-hidden="true"></i><span>系统播报 ⟨ ${escapeHtml(heading)} ⟩</span><span class="sys-tag">同契终端 · 明幕</span></div><div class="sys-body">${escapeHtml(text)}</div></div>`;
+      return `<div class="sys"${marker} data-reader-body-start="${bodyStart}"><div class="sys-head"><i class="sys-dot" aria-hidden="true"></i><span>系统播报 ⟨ ${escapeHtml(heading)} ⟩</span><span class="sys-tag">同契终端 · 明幕</span></div><div class="sys-body">${escapeHtml(text)}</div></div>`;
     }
-    return `<p>${escapeHtml(block.text || '')}</p>`;
+    return `<p${marker}>${escapeHtml(block.text || '')}</p>`;
   }).join('');
 }
 
@@ -528,10 +524,10 @@ function injectNovelShelf(document, catalog, locale) {
     `<a class="book" href="${escapeAttribute(readerPath({
       locale: novelLocale(locale),
       bookId: entry.id,
-    }))}"><span class="bk-badge">${locale === 'en' ? 'READING' : '正在阅读'}</span>`
+    }))}"><span class="bk-badge">正在阅读</span>`
     + `<h3>${escapeHtml(entry.novel.title)}</h3>`
     + `<p class="bk-sub">${escapeHtml(entry.novel.subtitle || '')}</p>`
-    + `<p class="bk-meta">${locale === 'en' ? `${entry.chapters.length} chapters` : `共 ${entry.chapters.length} 章`} · ${escapeHtml(entry.novel.author || '')}</p></a>`
+    + `<p class="bk-meta">共 ${entry.chapters.length} 章 · ${escapeHtml(entry.novel.author || '')}</p></a>`
   )).join(''));
 }
 
@@ -592,7 +588,7 @@ function setNovelJsonLd(document, entry, chapter, locale) {
   graph.push({
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: locale === 'en' ? 'Novels' : '小说', item: `https://feida.au${locale === 'adaptive' ? '' : `/${locale}`}/serial.html` },
+      { '@type': 'ListItem', position: 1, name: '小说', item: `https://feida.au${locale === 'adaptive' ? '' : `/${locale}`}/serial.html` },
       { '@type': 'ListItem', position: 2, name: entry.novel.title, item: bookUrl },
       ...(chapter ? [{ '@type': 'ListItem', position: 3, name: chapter.title, item: readerUrl({ locale, bookId: entry.id, chapterId: chapter.id }) }] : []),
     ],
@@ -605,7 +601,7 @@ function setNovelJsonLd(document, entry, chapter, locale) {
 export function transformNovelPageDocument(source, catalog, entry, chapter, locale) {
   const document = parse(source);
   const fixedLocale = novelLocale(locale);
-  const pageCopy = novelPageCopy(locale, entry, chapter);
+  const pageCopy = novelPageCopy(entry, chapter);
   const routeInput = { bookId: entry.id, ...(chapter ? { chapterId: chapter.id } : {}) };
   const canonical = readerUrl({ ...routeInput, locale: fixedLocale });
   const title = element(document, 'title');
@@ -641,11 +637,11 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
   const position = chapter ? entry.chapters.findIndex((item) => String(item.id) === String(chapter.id)) : -1;
   if (chapter) {
     setText(chapterTitle, chapter.title);
-    setText(chapterMeta, `${locale === 'en' ? 'Chapter' : '第'} ${position + 1} / ${entry.chapters.length} · ${chapter.wordCount || 0} ${locale === 'en' ? 'Chinese characters' : '字'}`);
+    setText(chapterMeta, `第 ${position + 1} / ${entry.chapters.length} · ${chapter.wordCount || 0} 字`);
     setHtml(chapterBody, renderNovelBlocks(chapter.blocks));
   } else {
-    setText(chapterTitle, locale === 'en' ? 'Chapter index' : '章节目录');
-    setText(chapterMeta, locale === 'en' ? `${entry.chapters.length} published chapters` : `已发布 ${entry.chapters.length} 章`);
+    setText(chapterTitle, '章节目录');
+    setText(chapterMeta, `已发布 ${entry.chapters.length} 章`);
     setHtml(chapterBody, `<ol class="prerender-toc">${entry.chapters.map((item) => (
       `<li><a href="${escapeAttribute(readerPath({ locale: fixedLocale, bookId: entry.id, chapterId: item.id }))}">${escapeHtml(item.title)}</a><span>${item.wordCount || 0} 字</span></li>`
     )).join('')}</ol>`);
@@ -657,7 +653,7 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
   if (chapterNav && chapter) {
     const previous = entry.chapters[position - 1];
     const next = entry.chapters[position + 1];
-    setHtmlFragmentAtEnd(chapterNav, `<nav class="prerender-chapter-nav" aria-label="${locale === 'en' ? 'Chapter links' : '章节链接'}">`
+    setHtmlFragmentAtEnd(chapterNav, '<nav class="prerender-chapter-nav" aria-label="章节链接">'
       + (previous ? `<a rel="prev" href="${escapeAttribute(readerPath({ locale: fixedLocale, bookId: entry.id, chapterId: previous.id }))}">← ${escapeHtml(previous.title)}</a>` : '<span></span>')
       + (next ? `<a rel="next" href="${escapeAttribute(readerPath({ locale: fixedLocale, bookId: entry.id, chapterId: next.id }))}">${escapeHtml(next.title)} →</a>` : '<span></span>')
       + '</nav>');
@@ -665,10 +661,7 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
     if (head && previous) setHtmlFragmentAtEnd(head, `<link rel="prev" href="${escapeAttribute(readerUrl({ locale: fixedLocale, bookId: entry.id, chapterId: previous.id }))}">`);
     if (head && next) setHtmlFragmentAtEnd(head, `<link rel="next" href="${escapeAttribute(readerUrl({ locale: fixedLocale, bookId: entry.id, chapterId: next.id }))}">`);
   }
-  for (const languageLink of all(document, (node) => hasClass(node, 'lang-toggle'))) {
-    const targetLocale = locale === 'en' ? 'zh' : 'en';
-    setAttr(languageLink, 'href', readerPath({ ...routeInput, locale: targetLocale }));
-  }
+  makeSerialChineseOnly(document);
   const body = element(document, 'body');
   if (body) setAttr(body, 'data-reader-route', chapter ? 'chapter' : 'book');
   setNovelJsonLd(document, entry, chapter, fixedLocale);

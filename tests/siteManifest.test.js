@@ -51,7 +51,7 @@ describe('siteManifest', () => {
   });
 
   it('includes only active, explicitly discoverable routes in the sitemap', () => {
-    expect(SITEMAP_ROUTES.length).toBe(NAV_ROUTES.length);
+    expect(SITEMAP_ROUTES.length).toBeGreaterThanOrEqual(NAV_ROUTES.length);
     for (const route of SITEMAP_ROUTES) {
       expect(route.status).toBe('active');
       expect(route.sitemap).toBe(true);
@@ -59,14 +59,15 @@ describe('siteManifest', () => {
     }
   });
 
-  it('has complete EN/ZH locale metadata for every route', () => {
+  it('has complete metadata for every published route locale', () => {
     for (const route of SITE_MANIFEST) {
       expect(['en', 'zh']).toContain(route.defaultLocale);
       expect(route.publishedLocales || SITE_LOCALES).toContain(route.defaultLocale);
-      for (const locale of ['en', 'zh']) {
+      for (const locale of route.publishedLocales || SITE_LOCALES) {
         expect(route.locales[locale].title).toBeTruthy();
         expect(route.locales[locale].description).toBeTruthy();
       }
+      if (route.id === 'serial') expect(route.locales.en).toBeUndefined();
     }
   });
 
@@ -95,7 +96,7 @@ describe('siteManifest', () => {
       expect(route.metadata.ogDescription).toBeTruthy();
       expect(route.metadata.ogImage).toMatch(/^https:\/\/feida\.au\//);
       expect(route.seo.structuredData.kind).toBeTruthy();
-      for (const locale of SITE_LOCALES) {
+      for (const locale of route.publishedLocales || SITE_LOCALES) {
         const image = route.seo.social.images[locale];
         expect(image).toBe(
           `https://feida.au/assets/og/${route.id}-${locale}.${SOCIAL_CARD.extension}`,
@@ -108,8 +109,8 @@ describe('siteManifest', () => {
       expect(route.themeColor).toMatch(/^#[0-9a-f]{6}$/i);
     }
     expect(socialImages.size).toBe(
-      SITE_MANIFEST.filter((item) => item.status === 'active').length
-        * SITE_LOCALES.length,
+      SITE_MANIFEST.filter((item) => item.status === 'active')
+        .reduce((total, route) => total + (route.publishedLocales || SITE_LOCALES).length, 0),
     );
   });
 

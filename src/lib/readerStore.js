@@ -1,5 +1,5 @@
 export const READER_STORE_KEY = 'afflatus:reader:v1';
-export const READER_STORE_VERSION = 2;
+export const READER_STORE_VERSION = 3;
 
 const THEMES = new Set(['green', 'night']);
 const LAYOUTS = new Set(['book', 'waterfall']);
@@ -15,12 +15,23 @@ export const DEFAULT_READER_STATE = Object.freeze({
   bookmarks: Object.freeze({}),
   visited: Object.freeze({}),
   audioTrack: 0,
+  narration: Object.freeze({
+    rate: 1,
+    positions: Object.freeze({}),
+  }),
 });
 
 function finiteInteger(value, fallback, min = 0, max = Number.MAX_SAFE_INTEGER) {
   const number = Number(value);
   return Number.isFinite(number)
     ? Math.max(min, Math.min(max, Math.round(number)))
+    : fallback;
+}
+
+function finiteNumber(value, fallback, min = 0, max = Number.MAX_SAFE_INTEGER) {
+  const number = Number(value);
+  return Number.isFinite(number)
+    ? Math.max(min, Math.min(max, number))
     : fallback;
 }
 
@@ -42,8 +53,35 @@ function sanitizeBookmark(value) {
   };
 }
 
+function sanitizeNarration(value) {
+  const positions = {};
+  const source = value && typeof value === 'object' && !Array.isArray(value)
+    ? value
+    : {};
+
+  for (const [bookId, chapters] of Object.entries(source.positions || {})) {
+    if (!bookId || !chapters || typeof chapters !== 'object' || Array.isArray(chapters)) continue;
+    const cleanChapters = {};
+    for (const [chapterId, position] of Object.entries(chapters)) {
+      if (!chapterId || !position || typeof position !== 'object' || Array.isArray(position)) continue;
+      cleanChapters[chapterId] = {
+        time: finiteNumber(position.time, 0, 0, 60 * 60 * 24),
+        updatedAt: finiteInteger(position.updatedAt, 0),
+        assetId: typeof position.assetId === 'string' ? position.assetId.slice(0, 240) : '',
+      };
+    }
+    if (Object.keys(cleanChapters).length) positions[bookId] = cleanChapters;
+  }
+
+  return {
+    rate: finiteNumber(source.rate, 1, 0.75, 2),
+    positions,
+  };
+}
+
 function sanitizeState(value = {}) {
-  const isCurrentVersion = Number(value.version) === READER_STORE_VERSION;
+  const storedVersion = Number(value.version);
+  const supportsLayout = Number.isFinite(storedVersion) && storedVersion >= 2;
   const bookmarks = {};
   for (const [bookId, bookmark] of Object.entries(value.bookmarks || {})) {
     const clean = sanitizeBookmark(bookmark);
@@ -63,12 +101,13 @@ function sanitizeState(value = {}) {
     offset: finiteInteger(value.offset, 0),
     theme: THEMES.has(value.theme) ? value.theme : DEFAULT_READER_STATE.theme,
     fontSize: finiteInteger(value.fontSize, DEFAULT_READER_STATE.fontSize, 15, 24),
-    layout: isCurrentVersion && LAYOUTS.has(value.layout)
+    layout: supportsLayout && LAYOUTS.has(value.layout)
       ? value.layout
       : DEFAULT_READER_STATE.layout,
     bookmarks,
     visited,
     audioTrack: finiteInteger(value.audioTrack, 0),
+    narration: sanitizeNarration(value.narration),
   };
 }
 
@@ -192,6 +231,29 @@ export function createReaderStore(adapter, options = {}) {
     },
     setAudioTrack(audioTrack) {
       return persist({ ...state, audioTrack });
+    },
+    setNarrationRate(rate) {
+      return persist({
+        ...state,
+        narration: { ...state.narration, rate },
+      });
+    },
+    setNarrationPosition(bookId, chapterId, time, updatedAt = Date.now(), assetId = '') {
+      if (!bookId || chapterIdentity(chapterId) == null) return state;
+      const chapterKey = String(chapterId);
+      return persist({
+        ...state,
+        narration: {
+          ...state.narration,
+          positions: {
+            ...state.narration.positions,
+            [bookId]: {
+              ...(state.narration.positions[bookId] || {}),
+              [chapterKey]: { time, updatedAt, assetId },
+            },
+          },
+        },
+      });
     },
     migrate,
     subscribe(listener) {

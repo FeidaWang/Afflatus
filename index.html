@@ -92,32 +92,121 @@
   <link rel="icon" type="image/svg+xml" href="/favicons/home.svg?v=20260822">
   <link rel="stylesheet" href="/styles/responsive-primitives.css">
   <link rel="stylesheet" href="/styles/afflatus-brand.css">
+  <link rel="stylesheet" href="/styles/afflatus-foundation.css">
+  <link rel="stylesheet" href="/src/showcase/showcase.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400&display=swap" rel="stylesheet"></noscript>
   <script type="module" src="/src/entry/performance.js"></script>
   <script type="module" src="/src/entry/viewport.js"></script>
   <script type="module" src="/src/showcase-main.jsx"></script>
 </head>
 <body class="showcase-page">
   <div id="root">
-    <main style="min-height:100vh;background:#06080c;color:#efefe9;padding:8vw;font-family:Inter,sans-serif">
-      <header class="site-header--follow" style="display:flex;justify-content:space-between;align-items:center">
-        <a class="afflatus-brand" data-afflatus-brand data-brand-persona="showcase" href="/" aria-label="AFFLATUS home">
-          <span class="afflatus-brand__stage" aria-hidden="true">
-            <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
-          </span>
-          <span class="afflatus-brand__sr">Afflatus</span>
+    <div class="site-root nojs-shell">
+      <a class="skip-link" href="#main-content" data-en="Skip to main content" data-zh="跳至主要内容">Skip to main content</a>
+      <section class="chapter chapter-cold-void" data-chapter="01-cold-void" aria-labelledby="nojs-chapter-01-title">
+        <div class="chapter-poster" aria-hidden="true"></div>
+        <header class="site-header site-header--follow nojs-header">
+          <a class="afflatus-brand" data-afflatus-brand data-brand-persona="showcase" href="/" aria-label="AFFLATUS home">
+            <span class="afflatus-brand__stage" aria-hidden="true">
+              <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
+            </span>
+            <span class="afflatus-brand__sr">Afflatus</span>
+          </a>
+          <nav class="desktop-nav" data-afflatus-fallback-nav aria-label="Primary navigation">
+            <a class="primary-nav-link" aria-current="page" href="/capital/" data-en="Systems" data-zh="系统">Systems</a>
+            <a class="primary-nav-link" href="/intelligence/" data-en="Intelligence" data-zh="情报">Intelligence</a>
+            <a class="primary-nav-link" href="/field-notes/" data-en="Field Notes" data-zh="现场笔记">Field Notes</a>
+            <a class="primary-nav-link" href="/experiments/" data-en="Experiments" data-zh="实验">Experiments</a>
+            <a class="primary-nav-link" href="#about" data-en="About" data-zh="关于">About</a>
+          </nav>
+          <div class="header-actions">
+            <a class="deck-primary" href="/command/" data-en="Enter Command" data-zh="进入指挥舱">Enter Command</a>
+            <a id="langBtn" class="language-switch" href="/zh/" hreflang="zh-CN">EN / 中</a>
+          </div>
+        </header>
+        <div class="chapter-inner hero-content">
+          <p class="chapter-label"><span>01</span><span data-en="Cold Void" data-zh="寂静虚空">Cold Void</span></p>
+          <h1 id="nojs-chapter-01-title" data-en="Systems for uncertain worlds." data-zh="为不确定的世界构建系统。">Systems for uncertain worlds.</h1>
+          <p class="chapter-lede" data-en="Capital, software and intelligence for long horizons." data-zh="资本、软件与情报，为长期主义而建。">Capital, software and intelligence for long horizons.</p>
+          <a class="editorial-link hero-cta" href="#nojs-chapter-03-title" data-en="Explore systems →" data-zh="探索系统 →">Explore systems →</a>
+        </div>
+        <a class="current-signal" href="/signal.html">
+          <span data-en="Current signal" data-zh="当前信号">Current signal</span>
+          <strong data-en="Fed operations and the long end" data-zh="美联储操作与长端市场">Fed operations and the long end</strong>
+          <time datetime="2026-08-21">2026.08.21</time>
         </a>
-        <nav data-afflatus-nav aria-label="Primary navigation"></nav>
-        <a class="lang-toggle" href="/zh/" hreflang="zh-CN" aria-label="切换到中文">EN / 中</a>
-      </header>
-      <section style="padding-top:18vh;max-width:760px">
-        <p data-en="QUIET TACTICAL ATLAS" data-zh="安静的战术星图">QUIET TACTICAL ATLAS</p>
-        <h1 data-en="Systems for uncertain worlds." data-zh="为不确定的世界构建系统。" style="font-family:Newsreader,serif;font-size:clamp(3rem,8vw,7rem);font-weight:300;line-height:.92">Systems for uncertain worlds.</h1>
-        <p data-en="Capital, software and intelligence for long horizons." data-zh="资本、软件与情报，为长期主义而建。">Capital, software and intelligence for long horizons.</p>
       </section>
-    </main>
+
+      <main id="main-content" tabindex="-1">
+        <section class="chapter chapter-approach" data-chapter="02-the-approach" aria-labelledby="nojs-chapter-02-title">
+          <div class="chapter-inner chapter-copy-narrow">
+            <p class="chapter-label"><span>02</span><span data-en="The Approach" data-zh="接近">The Approach</span></p>
+            <h2 id="nojs-chapter-02-title" data-en="Clarity before velocity." data-zh="先有清晰，再谈速度。">Clarity before velocity.</h2>
+            <p class="chapter-lede" data-en="AFFLATUS joins capital discipline, software practice and evidence-led intelligence without pretending uncertainty can be removed." data-zh="AFFLATUS 把资本纪律、软件实践与证据驱动的情报连接起来，同时承认不确定性无法被消除。">AFFLATUS joins capital discipline, software practice and evidence-led intelligence without pretending uncertainty can be removed.</p>
+            <p class="approach-statement" data-en="Observe the field. Define the boundary. Move only when the evidence earns motion." data-zh="观察现场，定义边界；只有证据足以支撑行动时，才开始移动。">Observe the field. Define the boundary. Move only when the evidence earns motion.</p>
+            <p class="approach-vector" data-en="Approach vector / stable" data-zh="接近航向 / 稳定">Approach vector / stable</p>
+          </div>
+        </section>
+
+        <section class="chapter chapter-systems" data-chapter="03-parallel-drift" aria-labelledby="nojs-chapter-03-title">
+          <div class="chapter-inner">
+            <p class="chapter-label"><span>03</span><span data-en="Parallel Drift / Operating Systems" data-zh="平行漂移 / 运行系统">Parallel Drift / Operating Systems</span></p>
+            <div class="chapter-intro">
+              <h2 id="nojs-chapter-03-title" data-en="Three systems, one operating posture." data-zh="三个系统，一种运行姿态。">Three systems, one operating posture.</h2>
+              <p data-en="Allocate carefully, build recoverably, and update beliefs from primary evidence." data-zh="谨慎配置、可恢复地构建，并依据一手证据更新判断。">Allocate carefully, build recoverably, and update beliefs from primary evidence.</p>
+            </div>
+            <div class="system-routes">
+              <article class="system-route" data-system="capital"><span class="system-index">01</span><h3 data-en="Capital" data-zh="资本">Capital</h3><p data-en="Model bounds and drawdown discipline." data-zh="模型边界与回撤纪律。">Model bounds and drawdown discipline.</p><a class="editorial-link" data-scene-signal="system:capital" href="/capital/" data-en="Open field record →" data-zh="查看现场记录 →">Open field record →</a></article>
+              <article class="system-route" data-system="software"><span class="system-index">02</span><h3 data-en="Software" data-zh="软件">Software</h3><p data-en="Recoverable agents and durable delivery loops." data-zh="可恢复智能体与持久交付闭环。">Recoverable agents and durable delivery loops.</p><a class="editorial-link" data-scene-signal="system:software" href="/field-notes/" data-en="Open field notes →" data-zh="打开现场笔记 →">Open field notes →</a></article>
+              <article class="system-route" data-system="intelligence"><span class="system-index">03</span><h3 data-en="Intelligence" data-zh="情报">Intelligence</h3><p data-en="Provenance, uncertainty and review windows." data-zh="来源、不确定性与复核窗口。">Provenance, uncertainty and review windows.</p><a class="editorial-link" data-scene-signal="system:intelligence" href="/intelligence/" data-en="Open intelligence →" data-zh="打开情报 →">Open intelligence →</a></article>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter chapter-intelligence" data-chapter="04-bridge-aperture" aria-labelledby="nojs-chapter-04-title">
+          <div class="chapter-inner">
+            <p class="chapter-label"><span>04</span><span data-en="Bridge Aperture / Current Intelligence" data-zh="舰桥光阑 / 当前情报">Bridge Aperture / Current Intelligence</span></p>
+            <article class="intelligence-feature">
+              <div>
+                <h2 id="nojs-chapter-04-title" data-en="The current picture, with its limits visible." data-zh="呈现当前图景，也呈现它的边界。">The current picture, with its limits visible.</h2>
+                <p data-en="Current posture: restrictive hold, ample-reserve implementation. Long yields remain market-priced." data-zh="当前立场：限制性利率维持，充足准备金框架继续运行。长端收益率仍由市场定价。">Current posture: restrictive hold, ample-reserve implementation. Long yields remain market-priced.</p>
+                <a class="editorial-link" href="/signal.html" data-en="Read the evidence-first dossier →" data-zh="阅读证据优先档案 →">Read the evidence-first dossier →</a>
+              </div>
+              <div class="signal-context"><span data-en="Current signal" data-zh="当前信号">Current signal</span><strong data-en="Fed operations and the long end" data-zh="美联储操作与长端市场">Fed operations and the long end</strong><time datetime="2026-08-21">2026.08.21</time></div>
+            </article>
+            <div class="transmission-stubs" aria-label="Related transmissions">
+              <p data-en="Related transmissions" data-zh="相关传输">Related transmissions</p>
+              <a class="transmission-row" href="/sectors.html"><span data-en="The model war is price, power and distribution." data-zh="模型战争的核心是价格、算力与分发。">The model war is price, power and distribution.</span><time datetime="2026-08-08">2026.08.08</time><span aria-hidden="true">→</span></a>
+              <a class="transmission-row" href="/arena.html"><span data-en="A risk engine, not another stock picker." data-zh="这是风险引擎，不是又一个选股器。">A risk engine, not another stock picker.</span><time datetime="2026-08-08">2026.08.08</time><span aria-hidden="true">→</span></a>
+              <a class="transmission-row" href="/portfolio.html#fy2026Performance"><span data-en="The drawdown taught me what speed costs." data-zh="回撤让我看清速度的代价。">The drawdown taught me what speed costs.</span><time datetime="2026-08-08">2026.08.08</time><span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="chapter chapter-field-record" data-chapter="05-the-wake" aria-labelledby="nojs-chapter-05-title">
+          <div class="chapter-inner field-record-layout">
+            <div><p class="chapter-label"><span>05</span><span data-en="The Wake / Field Record" data-zh="尾迹 / 现场记录">The Wake / Field Record</span></p><h2 id="nojs-chapter-05-title" data-en="Return is not one number." data-zh="回报从来不只一个数字。">Return is not one number.</h2></div>
+            <div class="field-record-copy"><p class="chapter-lede" data-en="It is a chain of assumptions: velocity, benchmark, holding duration and drawdown." data-zh="它由一连串假设构成：速度、基准、持有时长与回撤。">It is a chain of assumptions: velocity, benchmark, holding duration and drawdown.</p><p data-en="Five completed trajectories remain available in the FY25/26 field record; account values and live positions remain private." data-zh="五条已完成轨迹保留在 FY25/26 现场记录中；账户数值与实时仓位仍不公开。">Five completed trajectories remain available in the FY25/26 field record; account values and live positions remain private.</p><p class="field-marker">FY25/26 · 05 verified closed-cycle entries</p><a class="editorial-link" href="/capital/fy25-26/" data-en="Inspect the method →" data-zh="查看方法 →">Inspect the method →</a></div>
+          </div>
+        </section>
+
+        <section class="chapter chapter-manifesto" data-chapter="06-departure" aria-labelledby="nojs-chapter-06-title" id="about">
+          <div class="chapter-inner manifesto-layout">
+            <p class="chapter-label"><span>06</span><span data-en="Departure / Manifesto" data-zh="离航 / 宣言">Departure / Manifesto</span></p>
+            <h2 id="nojs-chapter-06-title" data-en="Preserve capital. Build systems. Follow evidence." data-zh="保存资本。构建系统。遵循证据。">Preserve capital. Build systems. Follow evidence.</h2>
+            <p class="manifesto-copy" data-en="Risk is a design constraint. Durable leverage comes from repeatable loops. Primary records come before slogans." data-zh="风险是设计约束。持久杠杆来自可重复闭环。一手记录先于口号。">Risk is a design constraint. Durable leverage comes from repeatable loops. Primary records come before slogans.</p>
+            <div class="about-block"><h3 data-en="A personal command system from Melbourne." data-zh="一套来自墨尔本的个人指挥系统。">A personal command system from Melbourne.</h3><p data-en="Built by Feida “Bruce” Wang for capital, code, original writing and long-range research. No ads. No tips. No promises." data-zh="由 Feida “Bruce” Wang 构建，用于资本、代码、原创写作与长期研究。无广告、无荐股、无承诺。">Built by Feida “Bruce” Wang for capital, code, original writing and long-range research. No ads. No tips. No promises.</p><a class="editorial-link" href="/capital/" data-en="Open the portfolio →" data-zh="打开作品集 →">Open the portfolio →</a></div>
+            <a class="editorial-link manifesto-command" href="/command/" data-en="Enter Command →" data-zh="进入指挥舱 →">Enter Command →</a>
+            <p class="disclosure-copy" id="disclosure" data-en="AFFLATUS publishes methods and selected records, not account values, live positions or personal tracking profiles." data-zh="AFFLATUS 发布方法与经过选择的记录，不发布账户数值、实时仓位或个人追踪档案。">AFFLATUS publishes methods and selected records, not account values, live positions or personal tracking profiles.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer"><div class="footer-inner"><a href="/">AFFLATUS</a><span>MELBOURNE, AUSTRALIA</span><a href="/zh/" data-en="Language · EN / 中" data-zh="语言 · 中 / EN">Language · EN / 中</a><span data-en="Motion · system preference" data-zh="动态效果 · 跟随系统偏好">Motion · system preference</span><a href="#disclosure" data-en="Privacy / Disclosure" data-zh="隐私 / 披露">Privacy / Disclosure</a><span class="nominal-status" data-en="ALL SYSTEMS NOMINAL" data-zh="所有系统正常">ALL SYSTEMS NOMINAL</span></div></footer>
+    </div>
   </div>
 </body>
 </html>
