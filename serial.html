@@ -194,25 +194,25 @@
       "@id": "https://feida.au/novels/yuxi-gongci/#series",
       "url": "https://feida.au/novels/yuxi-gongci/",
       "name": "玉熙宫词",
-      "alternativeHeadline": "女频无限流 · 明穿权谋 · BG双强 · 规则解密",
-      "description": "温哥华雨夜，公共卫生研究员常灵珂与数据科学从业者白道微在一场华人剧本杀中被卷入嘉靖年间，并被迫缔结“一人判失，两人封卷”的同契。她落入深宫，以医学判断、细节观察和人心博弈拆解规则；他身在州县，以账册、证据与藏牌设局追索真相。十重明幕彼此咬合，宫廷规矩、地方灾政与官场暗线不断改变生存条件。每一次破局，都必须由常灵珂作出最终判断，或由两人在信息不对称中共同减损。两个同样习惯独自承担的人，从互相试探走到可以把后背交给对方；他们要赢的，不只是活下去，更是在历史洪流与系统规则之间，守住人的选择。",
+      "alternativeHeadline": "女频高智商无限流 · 明穿权谋 · 三体宇宙 · BG双强 · 终极救赎",
+      "description": "2025年墨尔本冬夜，流行病学专家常灵珂与数据科学家白道微在唐人街剧本杀中突遭时空异变，被迫绑定生死相随的“同契”。从嘉靖年间的九堰决堤、沈一石自焚与深宫丹毒博弈，到雷达峰红岸天线、面壁破壁与两百年冬眠，再到大移民的澳洲荒原绝境与二维降维打击……十重明幕，七大纪元，横跨两千万年。两个习惯独自承担所有痛苦的人，在历史洪流与冷酷黑暗森林中把后背交付彼此。副本越冷，人越要相爱；他们要守护的，不只是活下去，更是冰冷宇宙法则下，人类永不熄灭的尊严与彼此。",
       "author": {
         "@type": "Person",
-        "name": "槐酿"
+        "name": "尽染"
       },
       "inLanguage": "zh-CN",
       "datePublished": "2026-07-05",
-      "numberOfItems": 40,
+      "numberOfItems": 160,
       "genre": [
         "女频无限流",
-        "BG双强",
-        "大女主",
-        "明穿",
-        "规则解密",
+        "高智商双强",
         "历史权谋",
-        "并肩救赎",
-        "克制感情线",
-        "连载中"
+        "硬核科幻",
+        "三体跨界",
+        "大女主成长",
+        "克制深情",
+        "末日救赎",
+        "全本完结"
       ],
       "isPartOf": {
         "@id": "https://feida.au/serial.html#bookshelf"
@@ -253,6 +253,7 @@
 
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
+<link rel="stylesheet" href="/styles/afflatus-navigation.css">
 <script type="module" src="/src/entry/dataBridge.js"></script>
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
@@ -321,6 +322,15 @@
     </div>
     <button class="tbtn" id="autoToggle" type="button">▶<span class="lbl"> 自动翻页</span></button>
     <button class="tbtn" id="layoutToggle" type="button" aria-pressed="false" aria-label="切换为瀑布流连续阅读" title="瀑布流连续阅读">↕<span class="lbl"> 瀑布流</span></button>
+    <div class="narration-player" id="narrationPlayer" role="group" aria-label="沉浸式听书" hidden>
+      <button type="button" data-narration-rewind aria-label="后退十五秒">−15</button>
+      <button type="button" data-narration-play aria-pressed="false" aria-label="播放有声小说">▶<span class="lbl"> 听书</span></button>
+      <button type="button" data-narration-forward aria-label="前进十五秒">+15</button>
+      <input type="range" min="0" max="1" step="0.1" value="0" data-narration-seek aria-label="有声小说播放进度">
+      <output data-narration-time>0:00 / --:--</output>
+      <button type="button" data-narration-rate aria-label="切换朗读速度">1×</button>
+      <span class="narration-status" data-narration-status role="status" aria-live="polite"></span>
+    </div>
     <!-- U-ambient-player: ambient music player (urgent.md).
          hidden until /audio/playlist.json yields at least one playable track. -->
     <div class="player" id="ambientPlayer" role="group" aria-label="伴读音乐" hidden>
@@ -395,12 +405,11 @@
     data:null, novels:[], novelId:null, novelIdx:0, chapters:[], idx:0,
     autoTimer:0, waterfall:false, wfIndex:0, lang:'zh'
   };
-  var serialApi = null, readerStore = null, fetchJson = null, pagedBook = null;
+  var serialApi = null, readerStore = null, fetchJson = null, pagedBook = null, narrationPlayer = null;
   var bootStarted = false, bootRetries = 0;
   // Schedule the core reader before optional control wiring below. A missing
   // decorative/FAB element must not prevent chapter loading.
   window.setTimeout(boot, 0);
-  function T(_en, zh) { return zh; }
   function currentPageIndex() {
     return pagedBook ? pagedBook.getState().pageIndex : 0;
   }
@@ -421,7 +430,8 @@
   function readerState() {
     return readerStore ? readerStore.getState() : {
       theme:'green', fontSize:18, bookId:null, chapterId:null, offset:0,
-      layout:'book', bookmarks:{}, visited:{}, audioTrack:0
+      layout:'book', bookmarks:{}, visited:{}, audioTrack:0,
+      narration:{ rate:1, positions:{} }
     };
   }
   function syncReaderUrl(chapterId, mode) {
@@ -514,7 +524,7 @@
   function renderToc() {
     var list = document.getElementById('tocList'); list.innerHTML = '';
     var curNovel = state.novels[state.novelIdx];
-    var updateNote = (curNovel && curNovel.novel.updateNote) || T('Updating', '连载更新');
+    var updateNote = (curNovel && curNovel.novel.updateNote) || '连载更新';
     document.getElementById('tocNote').textContent = '共 ' + state.chapters.length + ' 章 · ' + updateNote;
     var visited = visitedSet();
     var bm = getBookmark();
@@ -523,7 +533,7 @@
       var b = document.createElement('button');
       b.className = 'toc-item' + (i === state.idx ? ' current' : '');
       b.innerHTML = '<span class="t">' + (visited.has(c.id) ? '' : '● ') + c.title + '</span><span class="wc">' +
-        (c.wordCount || '') + T(' words', '字') +
+        (c.wordCount || '') + '字' +
         (bm && bm.chapterId === c.id ? ' <span class="bk">☆</span>' : '') + '</span>';
       b.addEventListener('click', function () { closeDrawer(); goToChapter(i, true); });
       list.appendChild(b);
@@ -545,12 +555,12 @@
          toolbar shows which chapter is bookmarked without overflowing. */
       var ci = state.chapters.findIndex(function (c) { return serialApi.chapterIdEquals(c.id, bm.chapterId); });
       var chip = ci >= 0
-        ? '<span class="bk-ch"> ' + T('Ch. ' + (ci + 1), '第' + (ci + 1) + '章') + '</span>'
+        ? '<span class="bk-ch"> 第' + (ci + 1) + '章</span>'
         : '';
       btn.innerHTML = '★' + chip + '<span class="lbl"> ' + escapeHtml(truncateTitle(bm.chapterTitle, 12)) + '</span>';
-      btn.title = T('Saved bookmark: ', '已保存书签：') + bm.chapterTitle;
+      btn.title = '已保存书签：' + bm.chapterTitle;
     } else {
-      btn.innerHTML = '☆<span class="lbl"> ' + T('Bookmark', '书签') + '</span>';
+      btn.innerHTML = '☆<span class="lbl"> 书签</span>';
       btn.removeAttribute('title');
     }
   }
@@ -563,20 +573,20 @@
       updatedAt: Date.now()
     };
     if (readerStore) readerStore.setBookmark(state.novelId, bm);
-    toast(T('Bookmark saved: ', '已保存书签：') + c.title);
+    toast('已保存书签：' + c.title);
     renderToc();
   }
   function goBookmark() {
     var bm = getBookmark();
-    if (!bm) { toast(T('No bookmark yet. Save one from the toolbar first.', '还没有书签，先在想要标记的地方点一下「书签」吧')); return; }
+    if (!bm) { toast('还没有书签，先在想要标记的地方点一下「书签」吧'); return; }
     var i = state.chapters.findIndex(function (c) { return serialApi.chapterIdEquals(c.id, bm.chapterId); });
-    if (i < 0) { toast(T('That bookmarked chapter is no longer available.', '书签指向的章节不存在了')); return; }
+    if (i < 0) { toast('书签指向的章节不存在了'); return; }
     if (state.waterfall) {
       resetWaterfallFrom(i, false, 'push', bm.offset);
     } else {
       loadChapter(i, true, null, 'push', { pageIndex:restoredPage(bm.offset) });
     }
-    toast(T('Moved to your bookmark.', '已跳转到书签位置'));
+    toast('已跳转到书签位置');
   }
   document.getElementById('bookmarkBtn').addEventListener('click', setBookmark);
   document.getElementById('fabBookmarkGo').addEventListener('click', goBookmark);
@@ -636,17 +646,104 @@
      leading 【…】 in the text becomes the panel's title chip, the rest is
      the screen body. Styling lives in serial.css (.sys / .sys-head). */
   function renderBlocks(blocks) {
-    return blocks.map(function (b) {
+    return blocks.map(function (b, blockIndex) {
+      var sourceLength = Array.from(b.text || '').length;
+      var marker = ' data-reader-block="' + blockIndex + '" data-page-marker="block-' + blockIndex +
+        '" data-reader-start="0" data-reader-end="' + sourceLength + '"';
       if (b.type === 'sys') {
-        var t = b.text, head = '幕间讯号';
+        var t = b.text, head = '幕间讯号', bodyStart = 0;
         var m = t.match(/^【([^】]+)】\s*/);
-        if (m) { head = m[1]; t = t.slice(m[0].length); }
-        return '<div class="sys"><div class="sys-head"><i class="sys-dot" aria-hidden="true"></i><span>系统播报 ⟨ ' + escapeHtml(head) + ' ⟩</span><span class="sys-tag">同契终端 · 明幕</span></div><div class="sys-body">' + escapeHtml(t) + '</div></div>';
+        if (m) {
+          head = m[1];
+          bodyStart = Array.from(m[0]).length;
+          t = t.slice(m[0].length);
+        }
+        return '<div class="sys"' + marker + ' data-reader-body-start="' + bodyStart + '"><div class="sys-head"><i class="sys-dot" aria-hidden="true"></i><span>系统播报 ⟨ ' + escapeHtml(head) + ' ⟩</span><span class="sys-tag">同契终端 · 明幕</span></div><div class="sys-body">' + escapeHtml(t) + '</div></div>';
       }
-      return '<p>' + escapeHtml(b.text) + '</p>';
+      return '<p' + marker + '>' + escapeHtml(b.text) + '</p>';
     }).join('');
   }
   function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  var narrationRevealVersion = 0;
+
+  function clearNarrationHighlight() {
+    document.querySelectorAll('[data-narration-active="true"]').forEach(function (node) {
+      node.removeAttribute('data-narration-active');
+    });
+  }
+
+  function revealNarrationCue(cue, context) {
+    var revealVersion = ++narrationRevealVersion;
+    clearNarrationHighlight();
+    if (!cue || !context || context.bookId !== state.novelId ||
+        !serialApi.chapterIdEquals(context.chapterId, state.chapters[state.idx] && state.chapters[state.idx].id)) return;
+    var blockIndex = String(cue.sourceBlock);
+    if (!state.waterfall && pagedBook) {
+      pagedBook.revealMarker('block-' + blockIndex, {
+        animate:false,
+        withSound:false,
+        sourceOffset:Number(cue.sourceStart) || 0
+      });
+    }
+    requestAnimationFrame(function () {
+      if (revealVersion !== narrationRevealVersion || !context ||
+          context.bookId !== state.novelId ||
+          !serialApi.chapterIdEquals(context.chapterId, state.chapters[state.idx] && state.chapters[state.idx].id)) return;
+      var scope = document.getElementById('chapterBody');
+      if (state.waterfall) {
+        scope = Array.from(document.querySelectorAll('#waterfallList .wf-chapter')).find(function (section) {
+          return serialApi.chapterIdEquals(section.dataset.chapterId, context.chapterId);
+        });
+      }
+      if (!scope) return;
+      var target = Array.from(scope.querySelectorAll('[data-reader-block]')).find(function (node) {
+        return node.dataset.readerBlock === blockIndex;
+      });
+      if (!target) return;
+      target.setAttribute('data-narration-active', 'true');
+      if (state.waterfall) {
+        var rect = target.getBoundingClientRect();
+        var toolbarHeight = toolbarEl ? toolbarEl.offsetHeight : 0;
+        var outOfView = rect.top < toolbarHeight + 12 || rect.bottom > window.innerHeight - 24;
+        if (outOfView) {
+          target.scrollIntoView({
+            behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            block:'center'
+          });
+        }
+      }
+    });
+  }
+
+  function syncNarrationChapter(chapter) {
+    if (!narrationPlayer || !chapter || !state.novelId) return;
+    narrationPlayer.setChapter({
+      bookId:state.novelId,
+      chapterId:chapter.id,
+      chapterIndex:state.idx,
+      title:chapter.title
+    });
+  }
+
+  function initNarrationPlayer() {
+    var root = document.getElementById('narrationPlayer');
+    if (!root || !serialApi || typeof serialApi.createNarrationPlayer !== 'function') return;
+    narrationPlayer = serialApi.createNarrationPlayer({
+      root:root,
+      store:readerStore,
+      onCueChange:revealNarrationCue,
+      onPlaybackChange:function (playback) {
+        if (playback.playing) stopAuto();
+      },
+      onRequestAmbientPause:function () {
+        window.dispatchEvent(new CustomEvent('afflatus-media-play', { detail:{ source:'narration' } }));
+      }
+    });
+    window.addEventListener('afflatus-media-play', function (event) {
+      if (event.detail && event.detail.source === 'ambient') narrationPlayer.pause();
+    });
+  }
 
   function ensurePagedBook() {
     if (pagedBook) return pagedBook;
@@ -703,6 +800,7 @@
       hasNextChapter:i < state.chapters.length - 1
     });
     book.setContent(renderBlocks(c.blocks), pageSettings || { pageIndex:0 });
+    syncNarrationChapter(c);
     syncReaderUrl(c.id, historyMode || 'replace');
     markVisited(c.id);
     renderToc();
@@ -757,6 +855,7 @@
     var sec = document.createElement('section');
     sec.className = 'wf-chapter';
     sec.dataset.idx = String(i);
+    sec.dataset.chapterId = String(c.id);
     sec.innerHTML = '<h2>' + escapeHtml(c.title) + '</h2>' +
       '<p class="meta">第 ' + (i + 1) + ' / ' + state.chapters.length +
       ' 章 · 约 ' + (c.wordCount || 0) + ' 字</p>' +
@@ -800,6 +899,7 @@
         if (!state.waterfall || !entry.isIntersecting) return;
         var i = Number(entry.target.dataset.idx);
         state.idx = i;
+        syncNarrationChapter(state.chapters[i]);
         updateWaterfallChip(i);
         renderToc();
         updateProgressBar();
@@ -838,6 +938,7 @@
       while (!wfDone) wfLoadNext();
     }
     updateWaterfallChip(i);
+    syncNarrationChapter(state.chapters[i]);
     renderToc();
     syncReaderUrl(state.chapters[i].id, historyMode || 'replace');
     requestAnimationFrame(function () {
@@ -900,6 +1001,7 @@
   var AUTO_PAGE_INTERVAL = 6500;
   var AUTO_SCROLL_PX = 0.65;
   function startAuto() {
+    if (narrationPlayer) narrationPlayer.pause();
     stopAuto();
     var btn = document.getElementById('autoToggle');
     btn.innerHTML = '❚❚<span class="lbl"> ' + (state.waterfall ? '停止滚动' : '停止翻页') + '</span>';
@@ -966,9 +1068,9 @@
       btnPlay.textContent = playing ? '❚❚' : '♪';
       btnPlay.classList.toggle('active', !!playing);
       var t = tracks[idx];
-      var label = t ? (t.title + (t.artist ? ' — ' + t.artist : '')) : T('Reading music', '伴读音乐');
+      var label = t ? (t.title + (t.artist ? ' — ' + t.artist : '')) : '伴读音乐';
       btnPlay.title = '♪ ' + label;
-      btnPlay.setAttribute('aria-label', (playing ? T('Pause: ', '暂停：') : T('Play: ', '播放：')) + label);
+      btnPlay.setAttribute('aria-label', (playing ? '暂停：' : '播放：') + label);
     }
 
     function setMediaSession(t) {
@@ -1003,6 +1105,7 @@
     }
 
     function play() {
+      window.dispatchEvent(new CustomEvent('afflatus-media-play', { detail:{ source:'ambient' } }));
       audio.play().then(function () { failStreak = 0; syncUi(true); })
         .catch(function (err) {
           syncUi(false);
@@ -1021,6 +1124,9 @@
     btnNext.addEventListener('click', function () { step(1); });
     audio.addEventListener('ended', function () { step(1, true); });
     audio.addEventListener('error', skipBad);
+    window.addEventListener('afflatus-media-play', function (event) {
+      if (event.detail && event.detail.source === 'narration') pause();
+    });
 
     fetch('/audio/playlist.json', { cache: 'no-store' })
       .then(function (r) { return r.json(); })
@@ -1042,10 +1148,7 @@
     var order = ['green','night']; var cur = reader.getAttribute('data-theme'); var next = order[(order.indexOf(cur) + 1) % order.length];
     applyTheme(next);
     fabMenu.classList.remove('open');
-    toast(T(
-      'Theme changed to ' + ({green:'day reading',night:'low-blue amber'})[next] + '.',
-      '已切换到' + ({green:'日间护眼',night:'夜间琥珀（低蓝光）'})[next]
-    ));
+    toast('已切换到' + ({green:'日间护眼',night:'夜间琥珀（低蓝光）'})[next]);
   });
 
   /* ---------- bookshelf ---------- */
@@ -1066,13 +1169,10 @@
       var b = document.createElement('button');
       b.className = 'book' + (i === state.novelIdx ? ' active' : '');
       b.type = 'button';
-      b.innerHTML = '<span class="bk-badge">' + T('READING', '正在阅读') + '</span>' +
+      b.innerHTML = '<span class="bk-badge">正在阅读</span>' +
         '<h3>' + escapeHtml(n.novel.title) + '</h3>' +
         '<p class="bk-sub">' + escapeHtml(n.novel.subtitle || '') + '</p>' +
-        '<p class="bk-meta">' + T(
-          n.chapterCount + ' chapters · ',
-          '共 ' + n.chapterCount + ' 章 · '
-        ) + escapeHtml(n.novel.author || '') + '</p>';
+        '<p class="bk-meta">共 ' + n.chapterCount + ' 章 · ' + escapeHtml(n.novel.author || '') + '</p>';
       b.addEventListener('click', function () {
         if (pagedBook && !state.waterfall) pagedBook.unlockSound();
         if (i !== state.novelIdx) {
@@ -1109,9 +1209,9 @@
         n.chapters = data.chapters;
         selectNovel(idx, scrollToShelf, requestedChapterId, historyMode, requestedOffset);
       }).catch(function () {
-        document.getElementById('chapterTitle').textContent = T('Content could not be loaded', '内容加载失败');
+        document.getElementById('chapterTitle').textContent = '内容加载失败';
         document.getElementById('chapterBody').innerHTML = '<p>' +
-          T('The novel data is temporarily unavailable. Refresh the page to try again.', '暂时无法读取小说数据，请刷新页面重试。') +
+          '暂时无法读取小说数据，请刷新页面重试。' +
           '</p>';
       });
       return;
@@ -1121,7 +1221,7 @@
     state.chapters = n.chapters;
 
     function paintHero() {
-      document.getElementById('novelKicker').textContent = (n.novel.tags || []).slice(0, 4).join(' · ') || T('SERIAL FICTION', '无限流 · 连载中');
+      document.getElementById('novelKicker').textContent = (n.novel.tags || []).slice(0, 4).join(' · ') || '无限流 · 连载中';
       document.getElementById('novelTitle').textContent = n.novel.title;
       document.getElementById('novelSub').textContent = n.novel.subtitle || '';
       document.getElementById('novelIntro').textContent = n.novel.intro;
@@ -1194,7 +1294,7 @@
       );
     }
     if (scrollToShelf && pagedBook && !state.waterfall) pagedBook.open(n.novel.title);
-    if (resumeIdx > 0) toast(T('Your previous reading position has been restored.', '已为你恢复到上次的阅读位置'));
+    if (resumeIdx > 0) toast('已为你恢复到上次的阅读位置');
     if (scrollToShelf) toast('已切换到《' + n.novel.title + '》');
   }
 
@@ -1209,7 +1309,7 @@
         window.setTimeout(boot, 50);
         return;
       }
-      document.getElementById('chapterTitle').textContent = T('Reader initialization failed', '阅读器初始化失败');
+      document.getElementById('chapterTitle').textContent = '阅读器初始化失败';
       return;
     }
     bootStarted = true;
@@ -1223,6 +1323,7 @@
         removeItem:function () {}
       }, { migrate:false });
     }
+    initNarrationPlayer();
 
     fetchJson('novels-index').then(function (data) {
       state.novels = data.novels || [];
@@ -1249,9 +1350,9 @@
       }
       selectNovel(startIdx, false, route && route.chapterId, route ? 'replace' : 'none', initialOffset);
     }).catch(function () {
-      document.getElementById('chapterTitle').textContent = T('Content could not be loaded', '内容加载失败');
+      document.getElementById('chapterTitle').textContent = '内容加载失败';
       document.getElementById('chapterBody').innerHTML = '<p>' +
-        T('The novel data is temporarily unavailable. Refresh the page to try again.', '暂时无法读取小说数据，请刷新页面重试。') +
+        '暂时无法读取小说数据，请刷新页面重试。' +
         '</p>';
     });
   }
