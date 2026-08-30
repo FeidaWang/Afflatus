@@ -10,3 +10,5 @@ probe_delete_test.txt
 playwright-report/
 test-results/
 .lighthouseci/
+.vercel
+.env*.local
