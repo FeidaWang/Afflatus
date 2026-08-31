@@ -44,6 +44,12 @@ const ASPECT_STYLE = {
 };
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const PLANET_NAME_ZH = Object.freeze({
+  Sun: '太阳', Moon: '月亮', Mercury: '水星', Venus: '金星', Mars: '火星',
+  Jupiter: '木星', Saturn: '土星', Uranus: '天王星', Neptune: '海王星', Pluto: '冥王星',
+});
+const isZh = (language) => String(language || '').toLowerCase().startsWith('zh');
+const planetName = (body, language) => (isZh(language) ? (PLANET_NAME_ZH[body] || body) : body);
 
 function wheelPoint(lonDeg, ascDeg, r, cx, cy) {
   const th = (180 + (lonDeg - ascDeg)) * DEG;
@@ -56,9 +62,11 @@ function wheelPoint(lonDeg, ascDeg, r, cx, cy) {
  * @returns {string} SVG markup (no outer <svg> viewBox sizing decisions made
  *   for the caller beyond a fixed 400x400 box — callers wrap/scale via CSS).
  */
-export function renderWheel({ ascDeg, planets }) {
+export function renderWheel({ ascDeg, planets, language = 'en' }) {
   const cx = 200, cy = 200, rOuter = 190, rZodiacIn = 156, rPlanet = 118, rAspect = 64;
-  const wheelSummary = `Natal wheel. Ascendant ${mod360(ascDeg).toFixed(1)} degrees. ${planets.map((planet) => `${planet.body} ${mod360(planet.lonDeg).toFixed(1)} degrees${planet.retro ? ' retrograde' : ''}`).join('; ')}.`;
+  const wheelSummary = isZh(language)
+    ? `本命星盘。上升点 ${mod360(ascDeg).toFixed(1)} 度。${planets.map((planet) => `${planetName(planet.body, language)} ${mod360(planet.lonDeg).toFixed(1)} 度${planet.retro ? '，逆行' : ''}`).join('；')}。`
+    : `Natal wheel. Ascendant ${mod360(ascDeg).toFixed(1)} degrees. ${planets.map((planet) => `${planet.body} ${mod360(planet.lonDeg).toFixed(1)} degrees${planet.retro ? ' retrograde' : ''}`).join('; ')}.`;
   let svg = `<svg class="astro-wheel" viewBox="0 0 400 400" role="img" aria-label="${esc(wheelSummary)}">`;
   svg += `<circle cx="${cx}" cy="${cy}" r="${rOuter}" class="aw-bg"/>`;
   // element-tinted sign band (annular sectors, approximated with chord
@@ -148,7 +156,7 @@ export function renderWheel({ ascDeg, planets }) {
  * show the matched aspect's color, empty if no aspect.
  * @param {Array<{body:string, lonDeg:number}>} planets
  */
-export function renderAspectGrid(planets) {
+export function renderAspectGrid(planets, { language = 'en' } = {}) {
   // Classic astrologer's staircase grid, redrawn as a legible lattice: every
   // cell (aspect or not) gets a background + border so the table structure is
   // visible; row/column planet glyphs live in a dedicated header row/column
@@ -162,10 +170,15 @@ export function renderAspectGrid(planets) {
   for (let i = 0; i < planets.length; i++) {
     for (let j = i + 1; j < planets.length; j++) {
       const aspect = aspectBetween(planets[i].lonDeg, planets[j].lonDeg);
-      if (aspect) aspectSummary.push(`${planets[i].body} ${aspect.key} ${planets[j].body}`);
+      if (aspect) aspectSummary.push(`${planetName(planets[i].body, language)} ${aspect.key} ${planetName(planets[j].body, language)}`);
     }
   }
-  let svg = `<svg class="astro-aspect-grid" viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(`Aspect grid. ${aspectSummary.length ? aspectSummary.join('; ') : 'No major aspects in orb.'}`)}">`;
+  const gridSummary = isZh(language)
+    ? (aspectSummary.length
+        ? `相位矩阵。${aspectSummary.join('；')}。`
+        : '相位矩阵。容许度内没有主要相位。')
+    : `Aspect grid. ${aspectSummary.length ? aspectSummary.join('; ') : 'No major aspects in orb.'}`;
+  let svg = `<svg class="astro-aspect-grid" viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(gridSummary)}">`;
   // header row (top) + header column (left)
   for (let k = 0; k < n; k++) {
     const gx = pad + head + k * cell + cell / 2, gy = pad + head / 2;
@@ -194,12 +207,14 @@ export function renderAspectGrid(planets) {
  * Five-dimension radar (L2) — 爱情/事业/沟通/能量/成长.
  * @param {Array<{key:string, label:string, value:number, lit?:boolean}>} dims exactly 5 entries, value in [0,100]
  */
-export function renderRadar(dims) {
+export function renderRadar(dims, { language = 'en' } = {}) {
   const n = dims.length;
   const cx = 130, cy = 130, rMax = 96;
   const angleFor = (i) => (-90 + (360 / n) * i) * DEG; // start at top, clockwise
   const pt = (i, r) => [cx + r * Math.cos(angleFor(i)), cy + r * Math.sin(angleFor(i))];
-  const radarSummary = `Five-dimension radar. ${dims.map((dimension) => `${dimension.label} ${Math.round(dimension.value)} of 100`).join('; ')}.`;
+  const radarSummary = isZh(language)
+    ? `五维雷达图。${dims.map((dimension) => `${dimension.label} ${Math.round(dimension.value)} 分（满分 100）`).join('；')}。`
+    : `Five-dimension radar. ${dims.map((dimension) => `${dimension.label} ${Math.round(dimension.value)} of 100`).join('; ')}.`;
   let svg = `<svg class="astro-radar" viewBox="0 0 260 260" role="img" aria-label="${esc(radarSummary)}">`;
   // grid rings at 33/66/100%
   for (const frac of [0.33, 0.66, 1]) {

@@ -21,8 +21,8 @@
     s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
     document.head.appendChild(s);
   }
-  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
-  else setTimeout(loadGtag, 2000);
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 8000});
+  else setTimeout(loadGtag, 6000);
 })();
 </script>
 <meta charset="utf-8">
@@ -361,7 +361,7 @@
     <div class="rivalryHeroSignal rivalryHeroSignal--cn" aria-hidden="true">CN / OPEN OFFENSIVE</div>
     <div class="rivalryHeroCopy">
       <span class="rivalryEyebrow" data-en="AFFLATUS INTELLIGENCE BRIEF · 29 JUL 2026" data-zh="AFFLATUS 情报简报 · 2026 年 7 月 29 日">AFFLATUS INTELLIGENCE BRIEF · 29 JUL 2026</span>
-      <h1 id="rivalryTitle" data-i18n-html data-en="The model war is no longer <span>open versus closed.</span><br>It is <em>price, power and distribution.</em>" data-zh="模型战争已不只是<span>开源对闭源。</span><br>真正争夺的是<em>价格、算力与分发。</em>">The model war is no longer <span>open versus closed.</span><br>It is <em>price, power and distribution.</em></h1>
+      <h1 id="rivalryTitle" data-i18n-html data-en="The model war is <span class='nowrap'>no longer</span> <span>open versus closed.</span><br>It is <em><span class='nowrap'>price</span>, <span class='nowrap'>power</span> and <span class='nowrap'>distribution</span>.</em>" data-zh="模型战争已<span class='nowrap'>不只是</span><span>开源对闭源。</span><br>真正争夺的是<em><span class='nowrap'>价格</span>、<span class='nowrap'>算力</span>与<span class='nowrap'>分发</span>。</em>">The model war is <span class="nowrap">no longer</span> <span>open versus closed.</span><br>It is <em><span class="nowrap">price</span>, <span class="nowrap">power</span> and <span class="nowrap">distribution</span>.</em></h1>
       <p data-en="Kimi K3 did not erase America's lead. It broke the assumption that near-frontier intelligence must be rented from an American API — and forced every listed AI proxy to prove where its scarcity really lives." data-zh="Kimi K3 没有抹去美国的领先。它击穿的是「接近前沿的智能必须向美国 API 租用」这一假设，并迫使每一只上市 AI 代理标的证明自己的稀缺性究竟在哪里。">Kimi K3 did not erase America's lead. It broke the assumption that near-frontier intelligence must be rented from an American API — and forced every listed AI proxy to prove where its scarcity really lives.</p>
       <div class="rivalryHeroActions">
         <a href="https://github.com/FeidaWang/Kimi-K3" target="_blank" rel="noopener noreferrer" data-en="AUDITED FORK ↗" data-zh="已审阅 FORK ↗">AUDITED FORK ↗</a>
@@ -375,6 +375,17 @@
       <b data-en="CAPEX PROOF ↑" data-zh="资本回报要求 ↑">CAPEX PROOF ↑</b>
     </div>
   </section>
+
+  <nav class="rivalryIndex" aria-label="Section index" data-aria-en="Section index" data-aria-zh="章节索引">
+    <a href="#k3Heading" data-en="K3 verdict" data-zh="K3 结论">K3 verdict</a>
+    <a href="#labsHeading" data-en="Laboratories" data-zh="模型实验室">Laboratories</a>
+    <a href="#marketHeading" data-en="Market repricing" data-zh="市场重估">Market repricing</a>
+    <a href="#equitiesHeading" data-en="Listed instruments" data-zh="上市标的">Listed instruments</a>
+    <a href="#letterHeading" data-en="Alliance map" data-zh="联盟地图">Alliance map</a>
+    <a href="#thesesHeading" data-en="Ten theses" data-zh="十条论点">Ten theses</a>
+    <a href="#sourcesHeading" data-en="Sources" data-zh="来源">Sources</a>
+  </nav>
+
   <section class="rivalrySection rivalrySection--k3" aria-labelledby="k3Heading">
     <header class="rivalrySectionHead">
       <span>01 / KIMI K3</span>
@@ -393,10 +404,10 @@
 
   <div class="band"><span data-i18n-html data-en="US–China AI competition" data-zh="中美 AI 竞争">US–China AI competition</span> <span data-en="· rivalry, co-existence, dependency" data-zh="· 竞争、共存与依赖">· rivalry, co-existence, dependency</span></div>
   <div id="mwAsOf" class="asof"></div>
-  <section id="storyGraphSection" class="graphStory" aria-label="AI ecosystem scroll story">
+  <section id="storyGraphSection" class="graphStory" aria-label="AI ecosystem scroll story" data-aria-en="AI ecosystem scroll story" data-aria-zh="AI 生态滚动叙事">
     <div class="graphSticky">
       <div class="graphWrap">
-        <canvas id="mwGraph" class="mwGraph" role="group" tabindex="0" aria-label="Scroll-driven AI ecosystem storyboard" aria-describedby="mwGraphHint mwGraphSummary"></canvas>
+        <canvas id="mwGraph" class="mwGraph" role="group" tabindex="0" aria-label="Scroll-driven AI ecosystem storyboard" data-aria-en="Scroll-driven AI ecosystem storyboard" data-aria-zh="滚动驱动的 AI 生态图" aria-describedby="mwGraphHint mwGraphSummary"></canvas>
         <div class="graphLegend" aria-hidden="true">
           <span style="--legend:#2f6bff" data-en="US bloc" data-zh="美国阵营">US bloc</span>
           <span style="--legend:#e5484d" data-en="China bloc" data-zh="中国阵营">China bloc</span>
@@ -451,7 +462,7 @@
     </div>
     <div class="graphAfter">
       <p id="mwGraphSummary" class="graphSummary" aria-live="polite"></p>
-      <div id="mwGraphNodes" class="mwGraphNodes" role="group" aria-label="Graph nodes"></div>
+      <div id="mwGraphNodes" class="mwGraphNodes" role="group" aria-label="Graph nodes" data-aria-en="Graph nodes" data-aria-zh="图谱节点"></div>
       <div id="mwTake" class="take"></div>
     </div>
   </section>
@@ -512,15 +523,15 @@
 
   <footer class="megaFoot">
     <div>
-      <h4 data-en="Afflatus" data-zh="Afflatus">Afflatus</h4>
+      <h3 data-en="Afflatus" data-zh="Afflatus">Afflatus</h3>
       <p data-en="A one-operator desk log — investment theses, macro signal-watch and a running paper-trading autopilot, all built and published in the open." data-zh="一人操作的台面日志——投资论点、宏观信号观察和一套持续运行的模拟自动交易，全部公开构建与发布。">A one-operator desk log — investment theses, macro signal-watch and a running paper-trading autopilot, all built and published in the open.</p>
     </div>
     <div>
-      <h4 data-en="Pages" data-zh="页面">Pages</h4>
+      <h3 data-en="Pages" data-zh="页面">Pages</h3>
       <ul id="footNav"></ul>
     </div>
     <div>
-      <h4 data-en="This page" data-zh="关于本页">This page</h4>
+      <h3 data-en="This page" data-zh="关于本页">This page</h3>
       <p data-en="Data refreshes weekly from public filings and news; sources are cited inline where available." data-zh="数据每周从公开披露与新闻更新；有来源的地方均以内联链接标注。"><span data-en="Data refreshes weekly from public filings and news; sources are cited inline where available." data-zh="数据每周从公开披露与新闻更新；有来源的地方均以内联链接标注。"></span></p>
     </div>
     <div class="megaFootBottom" data-en="Desk view only · no tips · no promotions" data-zh="仅为台面观点 · 不荐股 · 无推广">Desk view only · no tips · no promotions</div>

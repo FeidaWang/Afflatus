@@ -15,7 +15,7 @@
 @layer legacy, tokens, components, overrides;
 
 @layer legacy {
-  :root{--bg:#04060a;--ink:#e4e8f0;--dim:#69748c;--faint:#1f2536;--cyan:#8db4c0;--warm:#e8b380;--line:rgba(228,232,240,.055);--hud-x:18px;--hud-gap:10px;--hud-bottom:14px;--hud-combat-h:232px;--hud-cols:minmax(145px,.25fr) minmax(360px,.58fr) minmax(185px,.30fr) minmax(610px,1.16fr)}
+  :root{--bg:#04060a;--ink:#e4e8f0;--dim:#8995aa;--faint:#1f2536;--cyan:#8db4c0;--warm:#e8b380;--line:rgba(228,232,240,.055);--hud-x:18px;--hud-gap:10px;--hud-bottom:14px;--hud-combat-h:232px;--hud-cols:minmax(145px,.25fr) minmax(360px,.58fr) minmax(185px,.30fr) minmax(610px,1.16fr)}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--ink);overflow-x:hidden;overflow-x:clip;cursor:none!important;}
   body{font-family:'Rajdhani','Noto Sans SC',sans-serif;font-weight:300;min-height:var(--viewport-small-height,100vh);line-height:1.65;-webkit-font-smoothing:antialiased;position:relative}
@@ -933,6 +933,7 @@
        fleet" breaking). Drop the hard breaks here and let the whole
        heading reflow naturally against the real viewport width instead. */
     .hero-title br{display:none}
+    html[lang^="zh"] .hero-title br{display:block}
     .hero-desc{max-width:88vw;font-size:11px;line-height:1.7}
     .strip{margin:40px 32px 0;grid-template-columns:repeat(2,1fr)}
     .strip-cell:nth-child(2){border-right:none}

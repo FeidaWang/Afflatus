@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "recordedAt": "2026-08-20",
   "profile": "Lighthouse 12.6.1 default mobile simulation on macOS, three runs per route",
-  "methodology": "Three-run medians are recorded for LCP/TBT/Speed Index/bytes on the shared macOS runner. OS- and scheduler-sensitive timing metrics remain visible as warnings because repeat runs on the same tree vary by multiples; production field p75 is the decision source. TBT warnings use a 100 ms absolute noise window or 25% relative window, whichever is larger. CLS uses clsBudgetBase, the highest repeatable observed branch, because async font/content timing is bimodal. Deterministic script-size and CLS budgets remain hard regression gates. Route budgets are regression floors, not product targets.",
+  "methodology": "Three-run medians are recorded for LCP/TBT/Speed Index/bytes on the shared macOS runner. Release LCP, TBT and CLS use absolute three-run-median product ceilings; route history remains diagnostic context. Script size is also a hard regression gate, while performance score, speed index and total bytes remain visible warnings. Production field p75 remains the decision source once sample size is sufficient.",
   "releaseCandidatePolicy": "Prototype routes marked release-candidate use explicit provisional product ceilings until the first three-run browser baseline is recorded; they remain noindex and undiscoverable.",
   "regressionAllowance": 0.05,
   "tbtNoiseAllowanceMs": 100,
@@ -12,6 +12,13 @@
     "INP": 200,
     "CLS": 0.1,
     "percentile": 75
+  },
+  "releaseBudgets": {
+    "LCP": 2500,
+    "TBT": 200,
+    "CLS": 0.1,
+    "aggregationMethod": "median",
+    "runs": 3
   },
   "dimensions": [
     "route",

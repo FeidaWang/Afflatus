@@ -17,8 +17,8 @@
     s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
     document.head.appendChild(s);
   }
-  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
-  else setTimeout(loadGtag, 2000);
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 8000});
+  else setTimeout(loadGtag, 6000);
 })();
 </script>
 <meta charset="utf-8">
@@ -258,7 +258,7 @@ body.stats-page{background:var(--bg);color:var(--ink);font:400 15px/1.65 var(--m
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:760px){.grid2{grid-template-columns:1fr}}
 @media(max-width:480px){.strip .stat:last-child:nth-child(odd){grid-column:1/-1}}
-.bar-hit{cursor:pointer;transition:opacity .15s}
+.bar-hit{cursor:pointer;transition:opacity .15s;stroke:transparent;stroke-width:16px;pointer-events:all}
 svg:hover .bar-hit:not(:hover){opacity:.45}
 .bar-hit:focus{outline:none;stroke:var(--gold);stroke-width:3;filter:drop-shadow(0 0 4px rgba(232,173,111,.55))}
 .tbl tbody tr[role="button"]{cursor:pointer}
@@ -328,7 +328,7 @@ svg:hover .bar-hit:not(:hover){opacity:.45}
       </span>
       <span class="afflatus-brand__sr">Afflatus</span>
     </a>
-    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+    <nav class="nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav>
       <button class="lang-toggle" type="button">中文</button>
     </nav>
   </header>
@@ -340,7 +340,7 @@ svg:hover .bar-hit:not(:hover){opacity:.45}
 
   <!-- ================= MSI 2026 ================= -->
   <section id="msi">
-    <div class="band" data-i18n-html data-en="LEAGUE OF LEGENDS — <span>MSI 2026 · archived</span>" data-zh="英雄联盟 — <span>MSI 2026 · 已归档</span>">LEAGUE OF LEGENDS — <span>MSI 2026 · archived</span></div>
+    <h2 class="band" data-i18n-html data-en="LEAGUE OF LEGENDS — <span>MSI 2026 · archived</span>" data-zh="英雄联盟 — <span>MSI 2026 · 已归档</span>">LEAGUE OF LEGENDS — <span>MSI 2026 · archived</span></h2>
 
     <div class="strip" id="msiStrip"></div>
 
@@ -369,7 +369,7 @@ svg:hover .bar-hit:not(:hover){opacity:.45}
       <div class="chart-card">
         <h3 data-en="Confidence-threshold explorer" data-zh="置信度阈值探索器">Confidence-threshold explorer</h3>
         <p class="note" data-en="&quot;Would only betting the high-conviction calls have done better?&quot; Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live. A demo of selection effects — shrinking n widens the interval faster than the rate improves." data-zh="「只押高置信度的预测会不会更准？」拖动阈值，n、命中率、Wilson 区间与 Brier 评分实时重算。这是一个选择效应演示——n 缩小让区间变宽的速度，比命中率提升的速度更快。">"Would only betting the high-conviction calls have done better?" Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live. A demo of selection effects — shrinking n widens the interval faster than the rate improves.</p>
-        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="thSlider" min="50" max="80" step="1" value="50" aria-label="MSI confidence threshold"><span class="val" id="thVal">50%</span></div>
+        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="thSlider" min="50" max="80" step="1" value="50" aria-label="MSI confidence threshold" data-aria-en="MSI confidence threshold" data-aria-zh="MSI 置信度阈值"><span class="val" id="thVal">50%</span></div>
         <div class="readout" id="thReadout" role="status" aria-live="polite"></div>
       </div>
       <div class="chart-card">
@@ -412,7 +412,7 @@ svg:hover .bar-hit:not(:hover){opacity:.45}
 
   <!-- ================= World Cup 2026 (archived after the final) ================= -->
   <section id="wc">
-    <div class="band" data-i18n-html data-en="FOOTBALL — <span>FIFA World Cup 2026 · archived</span>" data-zh="足球 — <span>FIFA 世界杯 2026 · 已归档</span>">FOOTBALL — <span>FIFA World Cup 2026 · archived</span></div>
+    <h2 class="band" data-i18n-html data-en="FOOTBALL — <span>FIFA World Cup 2026 · archived</span>" data-zh="足球 — <span>FIFA 世界杯 2026 · 已归档</span>">FOOTBALL — <span>FIFA World Cup 2026 · archived</span></h2>
 
     <div class="strip" id="wcStrip"></div>
     <p class="note" data-en="Headline numbers cover the full tournament (Matchday 3 onward). Per-match charts and the log below cover the Round of 16 through the Final (16 matches) — the only stage where each match's stated confidence and original reasoning survived in the data file; the other 40 resolved matches (group stage) were only ever folded into the totals above, never logged individually, so re-scoring them now from memory or a fresh search would break this page's own no-re-scoring rule." data-zh="顶部总计覆盖整届赛事（自第三轮起）。下方逐场图表与记录表只覆盖 16 强到决赛（16 场）——数据文件里只有这个阶段完整保留了每场的预测置信度与理由；另外 40 场已判定的小组赛只被计入了上面的总计数，从未逐场记录，现在凭记忆或重新搜索给它们打分会违反本页自己「事后不重打分」的原则。">Headline numbers cover the full tournament (Matchday 3 onward). Per-match charts and the log below cover the Round of 16 through the Final (16 matches) — the only stage where each match's stated confidence and original reasoning survived in the data file; the other 40 resolved matches (group stage) were only ever folded into the totals above, never logged individually, so re-scoring them now from memory or a fresh search would break this page's own no-re-scoring rule.</p>
@@ -442,7 +442,7 @@ svg:hover .bar-hit:not(:hover){opacity:.45}
       <div class="chart-card">
         <h3 data-en="Confidence-threshold explorer" data-zh="置信度阈值探索器">Confidence-threshold explorer</h3>
         <p class="note" data-en="Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live over the 16 knockout-stage calls." data-zh="拖动阈值，n、命中率、Wilson 区间与 Brier 评分基于 16 场淘汰赛预测实时重算。">Drag the threshold and watch n, hit rate, Wilson interval and Brier score recompute live over the 16 knockout-stage calls.</p>
-        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="wcThSlider" min="50" max="80" step="1" value="50" aria-label="World Cup confidence threshold"><span class="val" id="wcThVal">50%</span></div>
+        <div class="ctl"><span data-en="conf ≥" data-zh="置信度 ≥">conf ≥</span><input type="range" id="wcThSlider" min="50" max="80" step="1" value="50" aria-label="World Cup confidence threshold" data-aria-en="World Cup confidence threshold" data-aria-zh="世界杯置信度阈值"><span class="val" id="wcThVal">50%</span></div>
         <div class="readout" id="wcThReadout" role="status" aria-live="polite"></div>
       </div>
       <div class="chart-card">

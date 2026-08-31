@@ -35,7 +35,7 @@ export const COPY = {
   zh:{
     title:'Project Afflatus - 深空舰长日志',lang:'zh-CN',langBtn:'Dream in English',
     heroNum:'FY25/26 · <span>资本飞行记录仪</span> · 财年战后报告',
-    heroTitle:'我让资本高速跃迁<br>回撤则提醒我<br>速度的<em>代价</em>',
+    heroTitle:'我让资本高速跃迁。<br>回撤则提醒我：<br>速度的<em>代价</em>。',
     heroDesc:'一份私人的 2025—26 财年交易记录：仅公开模型上界、周期年化、持仓时长与风险口径；单笔结果及底层财务数据全部保密。',
     coord:'坐标 · FY25/26 资本黑匣子',scrollHint:'下潜至财年记录',
     sl:['账户年化 · 上界','夏普比率 · 上界','最大回撤 · 上界','β 系数 · 上界'],
@@ -55,7 +55,7 @@ export const COPY = {
   en:{
     title:'Project Afflatus - Deep-Space Captain Log',lang:'en',langBtn:'以中文入梦',
     heroNum:'FY25/26 · <span>capital flight recorder</span> · after-action report',
-    heroTitle:'I made capital move fast.<br>The drawdown taught me<br>what speed <em>costs</em>.',
+    heroTitle:'I made capital move fast.<br> The drawdown taught me<br> what speed <em>costs</em>.',
     heroDesc:'A private FY2025–26 trading record retaining only model bounds, cycle annualization, holding duration and risk methodology; position outcomes and underlying financial data stay private.',
     coord:'coordinates · FY25/26 capital black box',scrollHint:'descend to financial-year record',
     sl:['Annual return · upper bound','Sharpe · upper bound','Max drawdown · upper bound','Beta · upper bound'],

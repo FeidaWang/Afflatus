@@ -31,6 +31,7 @@ const reducedMotion = (() => {
 })();
 const isChinese = () => (document.documentElement.lang || '').startsWith('zh');
 const currentLanguage = () => (isChinese() ? 'zh' : 'en');
+const T = (en, zh) => (isChinese() ? zh : en);
 const element = (tag, className, html) => {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -219,7 +220,9 @@ function tooltipHtml(archive, record) {
 function renderSharedCharts(archive) {
   const title = archive.id === 'msi' ? 'MSI' : 'World Cup';
   renderOutcomeBars(document.getElementById(`${archive.id}Bars`), archive.scored, {
-    ariaLabel: `${title} per-${archive.id === 'msi' ? 'series' : 'match'} confidence and outcomes`,
+    ariaLabel: archive.id === 'msi'
+      ? T('MSI confidence and outcome for each series', 'MSI 各系列赛置信度与结果')
+      : T('World Cup confidence and outcome for each match', '世界杯各场比赛置信度与结果'),
     itemLabel: (record) => displayFor(archive, record).shortMatch,
     actionLabel: (record) => {
       const display = displayFor(archive, record);
@@ -232,11 +235,17 @@ function renderSharedCharts(archive) {
   });
   renderCumulativeChart(document.getElementById(`${archive.id}Curve`), archive.scored, {
     id: archive.id,
-    ariaLabel: `${title} cumulative hit rate and Wilson confidence interval`,
+    ariaLabel: T(
+      `${title} cumulative hit rate and Wilson confidence interval`,
+      `${archive.id === 'msi' ? 'MSI' : '世界杯'}累计命中率与 Wilson 置信区间`,
+    ),
     reducedMotion,
   });
   renderCalibrationChart(document.getElementById(`${archive.id}Calib`), archive.scored, {
-    ariaLabel: `${title} reliability calibration diagram`,
+    ariaLabel: T(
+      `${title} reliability calibration diagram`,
+      `${archive.id === 'msi' ? 'MSI' : '世界杯'}可靠性校准图`,
+    ),
   });
 }
 
@@ -289,8 +298,8 @@ function wireBootstrap(archive) {
       if (epoch !== bootstrapEpochs[archive.id]) return;
       renderBootstrapHistogram(output, result, {
         label: archive.id === 'msi'
-          ? 'MSI bootstrap hit-rate distribution, 95% interval'
-          : 'World Cup bootstrap hit-rate distribution, 95% interval',
+          ? T('MSI bootstrap hit-rate distribution, 95% interval', 'MSI 自助法命中率分布，95% 区间')
+          : T('World Cup bootstrap hit-rate distribution, 95% interval', '世界杯自助法命中率分布，95% 区间'),
       });
     } catch (error) {
       if (error?.name !== 'AbortError') {

@@ -92,9 +92,11 @@
   <link rel="icon" type="image/svg+xml" href="/favicons/home.svg?v=20260822">
   <link rel="stylesheet" href="/styles/responsive-primitives.css">
   <link rel="stylesheet" href="/styles/afflatus-brand.css">
+  <link rel="stylesheet" href="/page-turn.css">
+  <link rel="preload" href="/assets/showcase/blackhole-hero.jpg" as="image" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400&display=swap" rel="stylesheet" media="(min-width: 861px)">
   <script type="module" src="/src/entry/performance.js"></script>
   <script type="module" src="/src/entry/viewport.js"></script>
   <script type="module" src="/src/showcase-main.jsx"></script>
@@ -103,14 +105,14 @@
   <div id="root">
     <main style="min-height:100vh;background:#06080c;color:#efefe9;padding:8vw;font-family:Inter,sans-serif">
       <header class="site-header--follow" style="display:flex;justify-content:space-between;align-items:center">
-        <a class="afflatus-brand" data-afflatus-brand data-brand-persona="showcase" href="/" aria-label="AFFLATUS home">
+        <a class="afflatus-brand" data-afflatus-brand data-brand-persona="showcase" href="/" aria-label="AFFLATUS home" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页">
           <span class="afflatus-brand__stage" aria-hidden="true">
             <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
           </span>
           <span class="afflatus-brand__sr">Afflatus</span>
         </a>
-        <nav data-afflatus-nav aria-label="Primary navigation"></nav>
-        <a class="lang-toggle" href="/zh/" hreflang="zh-CN" aria-label="切换到中文">EN / 中</a>
+        <nav data-afflatus-nav aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航"></nav>
+        <a class="lang-toggle" href="/zh/" hreflang="zh-CN" aria-label="切换到中文" data-i18n-static-aria>EN / 中</a>
       </header>
       <section style="padding-top:18vh;max-width:760px">
         <p data-en="QUIET TACTICAL ATLAS" data-zh="安静的战术星图">QUIET TACTICAL ATLAS</p>

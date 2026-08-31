@@ -48,6 +48,7 @@ describe('course narrative progression', () => {
     expect((nodePackets.match(/'\d{2}': packet\(/g) || []).length).toBe(36);
     expect(nodePackets).toContain('failure, gate');
     expect(script).toContain('content must always win over its entrance effect');
+    expect(script).toContain('const minimumInteractiveScale = window.innerWidth < 720 ? (44 / 76) : 0.16;');
     expect(script).not.toContain('filmLoader');
     expect(script).toContain("revealHashTarget({ align: true })");
     expect(script).toContain('requestAnimationFrame(stepAtlasPhysics)');

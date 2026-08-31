@@ -12,3 +12,7 @@ test-results/
 .lighthouseci/
 .vercel
 .env*.local
+
+# Local audit evidence and unpublished editorial drafts
+artifacts/
+content-drafts/

@@ -89,6 +89,17 @@ describe('bilingual repository lint adapters', () => {
     ]));
   });
 
+  it('requires static accessible names to participate in locale coverage', () => {
+    expect(codes(lintHtmlSource('<button aria-label="Open">×</button>')))
+      .toContain('MISSING_ARIA_LOCALE_PAIR');
+    expect(lintHtmlSource(
+      '<button aria-label="Open" data-aria-en="Open" data-aria-zh="打开">×</button>',
+    )).toEqual([]);
+    expect(lintHtmlSource(
+      '<a aria-label="切换到中文" data-i18n-static-aria>中文</a>',
+    )).toEqual([]);
+  });
+
   it('reads JavaScript suffix pairs without treating runtime templates as copy tokens', () => {
     const issues = lintScriptSource(`
       const good = { title_en: \`Hello \${nameEn}\`, title_zh: \`你好 \${nameZh}\` };

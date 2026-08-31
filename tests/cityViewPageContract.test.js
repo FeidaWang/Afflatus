@@ -49,8 +49,9 @@ describe('Cityview page release-readiness contract', () => {
     expect(attr(timeline, 'max')).toBe('210');
 
     const actions = nodes.filter((node) => node.tagName === 'button' && classes(node).includes('city-action'));
-    expect(actions).toHaveLength(7);
+    expect(actions).toHaveLength(8);
     expect(actions.every((button) => attr(button, 'type') === 'button')).toBe(true);
+    expect(attr(withAttribute('data-city-load')[0], 'hidden')).not.toBeNull();
     for (const control of [
       'data-city-play',
       'data-city-tour',
@@ -170,6 +171,7 @@ describe('Cityview page release-readiness contract', () => {
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
     expect(css).toMatch(/\.city-action\s*{[^}]*min-height:\s*44px/s);
     expect(css).toMatch(/\.city-action\s*{[^}]*white-space:\s*nowrap/s);
+    expect(css).toContain('.city-action[hidden]');
   });
 
   it('keeps timeline truth in the page when the optional renderer is unavailable', () => {
@@ -178,7 +180,10 @@ describe('Cityview page release-readiness contract', () => {
     expect(pageSource).toContain("canvas.dataset.renderer = 'poster'");
     expect(pageSource).toContain('setRendererAvailable(false);');
     expect(pageSource).toContain('setPageControllerReady(false);');
-    expect(pageSource).toContain('window.requestIdleCallback(mountInitialCity, { timeout: 600 })');
+    expect(html).toContain('data-city-load');
+    expect(pageSource).toContain("loadButton?.addEventListener('click'");
+    expect(pageSource).toContain("'Static city ready. Choose Load 3D to start the optional scene.'");
+    expect(pageSource).toContain('window.requestIdleCallback(mountInitialCity, { timeout: 900 })');
     expect(pageSource).toMatch(/finally \{[\s\S]*setPageControllerReady\(true\);/);
     expect(pageSource).toContain("timeline?.addEventListener('focus'");
     expect(pageSource).toContain("stage?.setAttribute('data-city-profile-key', profile.key)");

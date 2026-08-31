@@ -20,8 +20,8 @@
     s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
     document.head.appendChild(s);
   }
-  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
-  else setTimeout(loadGtag, 2000);
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 8000});
+  else setTimeout(loadGtag, 6000);
 })();
 </script>
 <meta charset="utf-8">
@@ -202,7 +202,7 @@
       },
       "inLanguage": "zh-CN",
       "datePublished": "2026-07-05",
-      "numberOfItems": 200,
+      "numberOfItems": 3,
       "genre": [
         "女频无限流",
         "高智商双强",
@@ -262,10 +262,10 @@
 <body class="novels-page retro" data-no-page-turn>
 <div class="crt-bg" aria-hidden="true"><canvas id="retroCanvas"></canvas><div class="scan"></div><div class="vig"></div></div>
 
-<div class="toc-backdrop" id="tocBackdrop"></div>
-<aside class="toc-drawer" id="tocDrawer" aria-label="章节目录">
-  <button class="toc-close" id="tocClose" type="button" aria-label="关闭目录">×</button>
-  <h3>章节目录</h3>
+<div class="toc-backdrop" id="tocBackdrop" aria-hidden="true"></div>
+<aside class="toc-drawer" id="tocDrawer" role="dialog" aria-modal="true" aria-labelledby="tocHeading" aria-hidden="true" inert>
+  <button class="toc-close" id="tocClose" type="button" aria-label="Close table of contents" data-aria-en="Close table of contents" data-aria-zh="关闭目录">×</button>
+  <p class="toc-title" id="tocHeading">章节目录</p>
   <p class="note" id="tocNote">共 0 章 · 连载更新</p>
   <div id="tocList"></div>
 </aside>
@@ -273,7 +273,7 @@
 <main class="wrap">
   <header class="top site-header--follow">
     <div class="seal">
-      <a class="afflatus-brand" data-afflatus-brand data-brand-persona="serial" href="/" aria-label="Afflatus — 返回首页">
+      <a class="afflatus-brand" data-afflatus-brand data-brand-persona="serial" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
         <span class="afflatus-brand__stage" aria-hidden="true">
           <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
         </span>
@@ -281,10 +281,10 @@
       </a>
       <div><b>小说连载</b><small>原创中文小说 · 书架</small></div>
     </div>
-    <nav class="nav" aria-label="主导航" data-afflatus-nav></nav>
+    <nav class="nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav></nav>
   </header>
 
-  <section class="shelf is-loading" id="shelf" aria-label="书架" aria-busy="true">
+  <section class="shelf is-loading" id="shelf" aria-label="Novel shelf" data-aria-en="Novel shelf" data-aria-zh="书架" aria-busy="true">
     <span class="book-skeleton" aria-hidden="true"></span>
     <span class="book-skeleton" aria-hidden="true"></span>
     <span class="book-skeleton" aria-hidden="true"></span>
@@ -295,51 +295,51 @@
   <section class="hero">
     <div class="bar" aria-hidden="true"></div>
     <div class="pad">
-      <div class="kicker" id="novelKicker">无限流 · 连载中</div>
-      <h1 id="novelTitle">选择一本小说</h1>
-      <p class="sub" id="novelSub"></p>
-      <p class="intro" id="novelIntro">正在加载简介……</p>
-      <div class="tags" id="novelTags"></div>
+      <div class="kicker" id="novelKicker">无限流 · 种田 · 多女主 · 系统流</div>
+      <h1 id="novelTitle">万界种春</h1>
+      <p class="sub" id="novelSub">无限流 · 种田 · 多女主 · 剧情向</p>
+      <p class="intro" id="novelIntro">国家级种质资源库首席研究员顾星辞，性格高冷、智商超群，唯独对植物和土地怀有近乎偏执的耐心。一场意外后，他被古老的“归墟”系统选中为“看守人”，穿梭于一个个即将彻底崩溃的坍缩位面，用种田与重建的方式挽救濒死的世界。每一个位面，都有一个用尽全力活下去的女孩；可“夜溯协议”注定要抹去她们对他的所有记忆——只有他，独自记得每一段本该被写进档案室、却始终被写进心里的过往。</p>
+      <div class="tags" id="novelTags"><span class="tag">无限流</span><span class="tag">种田</span><span class="tag">多女主</span><span class="tag">系统流</span><span class="tag">剧情向</span><span class="tag">HE倾向·过程虐</span></div>
       <div class="author-row">
-        <span><span>作者：</span><b id="novelAuthor">—</b></span>
-        <span id="novelUpdateNote">—</span>
-        <span><span>连载起始：</span><b id="novelStart">—</b></span>
+        <span><span>作者：</span><b id="novelAuthor">槐酿</b></span>
+        <span id="novelUpdateNote">每日更新 · 目前已更新至第15章（赤潮殖民舱篇 完）</span>
+        <span><span>连载起始：</span><b id="novelStart">2026-07-02</b></span>
       </div>
     </div>
   </section>
 
   <section class="hud" id="hudPanel" aria-hidden="true"></section>
 
-  <section class="toolbar" id="toolbar" aria-label="阅读工具">
-    <button class="tbtn" id="tocOpen" type="button">☰<span class="lbl"> 目录</span></button>
-    <div class="swatches" role="group" aria-label="阅读主题（日间／夜间护眼）">
-      <button class="swatch s-green on" type="button" data-theme="green" title="日间护眼（长时间阅读）" aria-label="日间护眼主题"></button>
-      <button class="swatch s-night" type="button" data-theme="night" title="夜间琥珀·低蓝光（长时间阅读）" aria-label="夜间护眼主题"></button>
+  <section class="toolbar" id="toolbar" aria-label="Reading tools" data-aria-en="Reading tools" data-aria-zh="阅读工具">
+    <button class="tbtn" id="tocOpen" type="button" aria-label="Open chapter list" data-aria-en="Open chapter list" data-aria-zh="打开章节目录" aria-haspopup="dialog" aria-controls="tocDrawer" aria-expanded="false">☰<span class="lbl"> 目录</span></button>
+    <div class="swatches" role="group" aria-label="Reading themes" data-aria-en="Reading themes" data-aria-zh="阅读主题（日间／夜间护眼）">
+      <button class="swatch s-green on" type="button" data-theme="green" title="日间护眼（长时间阅读）" aria-label="Daytime reading theme" data-aria-en="Daytime reading theme" data-aria-zh="日间护眼主题"></button>
+      <button class="swatch s-night" type="button" data-theme="night" title="夜间琥珀·低蓝光（长时间阅读）" aria-label="Night reading theme" data-aria-en="Night reading theme" data-aria-zh="夜间护眼主题"></button>
     </div>
     <div class="fsize">
-      <button id="fsMinus" type="button" aria-label="减小字号">小</button>
-      <button id="fsPlus" type="button" aria-label="增大字号">大</button>
+      <button id="fsMinus" type="button" aria-label="Decrease font size" data-aria-en="Decrease font size" data-aria-zh="减小字号">小</button>
+      <button id="fsPlus" type="button" aria-label="Increase font size" data-aria-en="Increase font size" data-aria-zh="增大字号">大</button>
     </div>
-    <button class="tbtn" id="autoToggle" type="button">▶<span class="lbl"> 自动翻页</span></button>
-    <button class="tbtn" id="layoutToggle" type="button" aria-pressed="false" aria-label="切换为瀑布流连续阅读" title="瀑布流连续阅读">↕<span class="lbl"> 瀑布流</span></button>
-    <div class="narration-player" id="narrationPlayer" role="group" aria-label="沉浸式听书" hidden>
-      <button type="button" data-narration-rewind aria-label="后退十五秒">−15</button>
-      <button type="button" data-narration-play aria-pressed="false" aria-label="播放有声小说">▶<span class="lbl"> 听书</span></button>
-      <button type="button" data-narration-forward aria-label="前进十五秒">+15</button>
-      <input type="range" min="0" max="1" step="0.1" value="0" data-narration-seek aria-label="有声小说播放进度">
+    <button class="tbtn" id="autoToggle" type="button" aria-label="Start automatic page turning" data-aria-en="Start automatic page turning" data-aria-zh="开始自动翻页">▶<span class="lbl"> 自动翻页</span></button>
+    <button class="tbtn" id="layoutToggle" type="button" aria-pressed="false" aria-label="Switch to continuous reading" data-aria-en="Switch to continuous reading" data-aria-zh="切换为瀑布流连续阅读" title="瀑布流连续阅读">↕<span class="lbl"> 瀑布流</span></button>
+    <div class="narration-player" id="narrationPlayer" role="group" aria-label="Immersive audiobook controls" data-aria-en="Immersive audiobook controls" data-aria-zh="沉浸式听书" hidden>
+      <button type="button" data-narration-rewind aria-label="Rewind fifteen seconds" data-aria-en="Rewind fifteen seconds" data-aria-zh="后退十五秒">−15</button>
+      <button type="button" data-narration-play aria-pressed="false" aria-label="Play audiobook" data-aria-en="Play audiobook" data-aria-zh="播放有声小说">▶<span class="lbl"> 听书</span></button>
+      <button type="button" data-narration-forward aria-label="Forward fifteen seconds" data-aria-en="Forward fifteen seconds" data-aria-zh="前进十五秒">+15</button>
+      <input type="range" min="0" max="1" step="0.1" value="0" data-narration-seek aria-label="Audiobook progress" data-aria-en="Audiobook progress" data-aria-zh="有声小说播放进度">
       <output data-narration-time>0:00 / --:--</output>
-      <button type="button" data-narration-rate aria-label="切换朗读速度">1×</button>
+      <button type="button" data-narration-rate aria-label="Change narration speed" data-aria-en="Change narration speed" data-aria-zh="切换朗读速度">1×</button>
       <span class="narration-status" data-narration-status role="status" aria-live="polite"></span>
     </div>
     <!-- U-ambient-player: ambient music player (urgent.md).
          hidden until /audio/playlist.json yields at least one playable track. -->
-    <div class="player" id="ambientPlayer" role="group" aria-label="伴读音乐" hidden>
-      <button id="plPrev" type="button" aria-label="上一曲">⏮</button>
-      <button id="plToggle" type="button" aria-label="播放 / 暂停">♪</button>
-      <button id="plNext" type="button" aria-label="下一曲">⏭</button>
+    <div class="player" id="ambientPlayer" role="group" aria-label="Reading music" data-aria-en="Reading music" data-aria-zh="伴读音乐" hidden>
+      <button id="plPrev" type="button" aria-label="Previous track" data-aria-en="Previous track" data-aria-zh="上一曲">⏮</button>
+      <button id="plToggle" type="button" aria-label="Play or pause" data-aria-en="Play or pause" data-aria-zh="播放 / 暂停">♪</button>
+      <button id="plNext" type="button" aria-label="Next track" data-aria-en="Next track" data-aria-zh="下一曲">⏭</button>
     </div>
     <div class="spacer"></div>
-    <button class="tbtn" id="bookmarkBtn" type="button">☆<span class="lbl"> 书签</span></button>
+    <button class="tbtn" id="bookmarkBtn" type="button" aria-label="Save or view bookmark" data-aria-en="Save or view bookmark" data-aria-zh="保存或查看书签">☆<span class="lbl"> 书签</span></button>
   </section>
 
   <section class="reader-shell">
@@ -347,28 +347,28 @@
       <div class="reader-progress"><i id="progressBar"></i></div>
       <div class="pad" id="readerNormal">
         <h2 id="chapterTitle">加载中…</h2>
-        <p class="meta" id="chapterMeta"></p>
-        <div class="book-stage" id="bookStage" tabindex="0" aria-label="仿真翻页阅读器；可点击页边、左右滑动或使用方向键翻页">
+        <p class="meta" id="chapterMeta" role="status" aria-live="polite"></p>
+        <div class="book-stage" id="bookStage" tabindex="0" aria-label="Book reader; click page edges, swipe, or use arrow keys to turn pages" data-aria-en="Book reader; click page edges, swipe, or use arrow keys to turn pages" data-aria-zh="仿真翻页阅读器；可点击页边、左右滑动或使用方向键翻页">
           <div class="book-stack" aria-hidden="true"></div>
-          <section class="book-page" aria-live="polite">
+          <section class="book-page">
             <div class="body book-page-content" id="chapterBody"></div>
             <footer class="book-folio">
               <span id="pageIndicator">第 - / - 页</span>
-              <span>槐酿 · 连载手稿</span>
+              <span id="bookAuthor">槐酿 · 连载手稿</span>
             </footer>
           </section>
           <div class="book-turn" id="bookTurn" aria-hidden="true">
             <div class="book-turn-face book-turn-front"><div class="body" id="bookTurnFront"></div></div>
             <div class="book-turn-face book-turn-back"><div class="body" id="bookTurnBack"></div></div>
           </div>
-          <button class="book-hotspot book-hotspot-previous" id="pagePreviousHotspot" type="button" aria-label="上一页">‹</button>
-          <button class="book-hotspot book-hotspot-next" id="pageNextHotspot" type="button" aria-label="下一页">›</button>
+          <button class="book-hotspot book-hotspot-previous" id="pagePreviousHotspot" type="button" aria-label="Previous page" data-aria-en="Previous page" data-aria-zh="翻到上一页">‹</button>
+          <button class="book-hotspot book-hotspot-next" id="pageNextHotspot" type="button" aria-label="Next page" data-aria-en="Next page" data-aria-zh="翻到下一页">›</button>
         </div>
         <div class="body book-measure" id="bookMeasure" aria-hidden="true"></div>
         <div class="chapter-nav">
-          <button id="prevChapter" type="button">← 上一页</button>
+          <button id="prevChapter" type="button" aria-label="Previous chapter" data-aria-en="Previous chapter" data-aria-zh="阅读上一章">← 上一章</button>
           <span class="ind" id="chapterIndicator">第 - / - 章</span>
-          <button id="nextChapter" type="button">下一页 →</button>
+          <button id="nextChapter" type="button" aria-label="Next chapter" data-aria-en="Next chapter" data-aria-zh="阅读下一章">下一章 →</button>
         </div>
       </div>
       <div class="pad reader-waterfall" id="readerWaterfall" hidden>
@@ -382,17 +382,17 @@
     </article>
   </section>
 
-  <footer class="foot"><b>播种 · 修复 · 铭记</b> — 归墟 · 看守人日志 · 小说书架</footer>
+  <footer class="foot"><b>阅读 · 记录 · 继续</b> — Project Afflatus · 原创小说书架</footer>
 </main>
 
 <div class="fab">
   <div class="fab-menu" id="fabMenu">
     <button id="fabTop" type="button">⤒ 回到顶部</button>
     <button id="fabBookmarkGo" type="button">☆ 跳转书签</button>
-    <button id="fabToc" type="button">☰ 章节目录</button>
+    <button id="fabToc" type="button" aria-label="Open chapter list" data-aria-en="Open chapter list" data-aria-zh="打开章节目录" aria-haspopup="dialog" aria-controls="tocDrawer" aria-expanded="false">☰ 章节目录</button>
     <button id="fabTheme" type="button">◐ 切换主题</button>
   </div>
-  <button class="fab-toggle" id="fabToggle" type="button" aria-label="快捷导航">≡</button>
+  <button class="fab-toggle" id="fabToggle" type="button" aria-label="Quick navigation" data-aria-en="Quick navigation" data-aria-zh="快捷导航">≡</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -407,6 +407,8 @@
   };
   var serialApi = null, readerStore = null, fetchJson = null, pagedBook = null, narrationPlayer = null;
   var bootStarted = false, bootRetries = 0;
+  function isZh() { return (document.documentElement.lang || '').toLowerCase().startsWith('zh'); }
+  function T(en, zh) { return isZh() ? zh : en; }
   // Schedule the core reader before optional control wiring below. A missing
   // decorative/FAB element must not prevent chapter loading.
   window.setTimeout(boot, 0);
@@ -434,15 +436,48 @@
       narration:{ rate:1, positions:{} }
     };
   }
+  function syncReaderMetadata(chapterId) {
+    if (!serialApi || !state.novelId) return;
+    var currentNovel = state.novels[state.novelIdx];
+    if (!currentNovel || !currentNovel.novel) return;
+    var chapter = state.chapters.find(function (item) {
+      return serialApi.chapterIdEquals(item.id, chapterId);
+    });
+    if (!chapter) return;
+    var locale = serialApi.readerLocale(
+      location.pathname,
+      document.documentElement.dataset.afflatusLocale
+    );
+    var path = serialApi.readerPath({ locale:locale, bookId:state.novelId, chapterId:chapter.id });
+    var canonicalUrl = 'https://feida.au' + path;
+    var title = chapter.title + ' — 《' + currentNovel.novel.title + '》· Project Afflatus';
+    var description = '原创中文连载《' + currentNovel.novel.title + '》' + chapter.title + '，护眼阅读。';
+    document.title = title;
+    var canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute('href', canonicalUrl);
+    [
+      ['meta[name="description"]', description],
+      ['meta[property="og:title"]', title],
+      ['meta[property="og:description"]', description],
+      ['meta[property="og:url"]', canonicalUrl],
+      ['meta[property="og:type"]', 'article']
+    ].forEach(function (entry) {
+      var node = document.querySelector(entry[0]);
+      if (node) node.setAttribute('content', entry[1]);
+    });
+  }
   function syncReaderUrl(chapterId, mode) {
-    if (!serialApi || !state.novelId || mode === 'none') return;
+    if (!serialApi || !state.novelId) return;
+    var currentRoute = serialApi.parseReaderPath(location.pathname);
+    var preserveBookLanding = mode === 'none' && currentRoute && currentRoute.chapterId == null;
+    if (!preserveBookLanding) syncReaderMetadata(chapterId);
+    if (mode === 'none') return;
     var locale = serialApi.readerLocale(
       location.pathname,
       document.documentElement.dataset.afflatusLocale
     );
     var path = serialApi.readerPath({ locale:locale, bookId:state.novelId, chapterId:chapterId });
     if (mode === 'push') {
-      var currentRoute = serialApi.parseReaderPath(location.pathname);
       if (currentRoute) {
         var currentReaderState = readerState();
         var currentOffset = currentReaderState.bookId === currentRoute.bookId &&
@@ -511,12 +546,56 @@
 
   /* ---------- TOC drawer ---------- */
   var drawer = document.getElementById('tocDrawer'), backdrop = document.getElementById('tocBackdrop');
-  function openDrawer() { drawer.classList.add('open'); backdrop.classList.add('open'); }
-  function closeDrawer() { drawer.classList.remove('open'); backdrop.classList.remove('open'); }
-  document.getElementById('tocOpen').addEventListener('click', openDrawer);
-  document.getElementById('fabToc').addEventListener('click', openDrawer);
-  document.getElementById('tocClose').addEventListener('click', closeDrawer);
-  backdrop.addEventListener('click', closeDrawer);
+  var mainWrap = document.querySelector('main.wrap');
+  var tocTriggers = [document.getElementById('tocOpen'), document.getElementById('fabToc')];
+  var lastTocTrigger = null;
+  function drawerFocusables() {
+    return Array.from(drawer.querySelectorAll('button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'));
+  }
+  function openDrawer(event) {
+    lastTocTrigger = event && event.currentTarget ? event.currentTarget : document.activeElement;
+    drawer.inert = false;
+    drawer.setAttribute('aria-hidden', 'false');
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+    if (mainWrap) mainWrap.inert = true;
+    document.body.classList.add('toc-open');
+    tocTriggers.forEach(function (trigger) { trigger.setAttribute('aria-expanded', 'true'); });
+    window.requestAnimationFrame(function () { document.getElementById('tocClose').focus(); });
+  }
+  function closeDrawer(options) {
+    var restoreFocus = !options || options.restoreFocus !== false;
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    drawer.inert = true;
+    backdrop.classList.remove('open');
+    if (mainWrap) mainWrap.inert = false;
+    document.body.classList.remove('toc-open');
+    tocTriggers.forEach(function (trigger) { trigger.setAttribute('aria-expanded', 'false'); });
+    if (restoreFocus && lastTocTrigger && document.contains(lastTocTrigger)) lastTocTrigger.focus();
+  }
+  tocTriggers.forEach(function (trigger) { trigger.addEventListener('click', openDrawer); });
+  document.getElementById('tocClose').addEventListener('click', function () { closeDrawer(); });
+  backdrop.addEventListener('click', function () { closeDrawer(); });
+  document.addEventListener('keydown', function (event) {
+    if (!drawer.classList.contains('open')) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeDrawer();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    var focusables = drawerFocusables();
+    if (!focusables.length) return;
+    var first = focusables[0], last = focusables[focusables.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
 
   function visitedSet() { return new Set((readerState().visited || {})[state.novelId] || []); }
   function markVisited(id) { if (readerStore && state.novelId) readerStore.markVisited(state.novelId, id); }
@@ -535,7 +614,7 @@
       b.innerHTML = '<span class="t">' + (visited.has(c.id) ? '' : '● ') + c.title + '</span><span class="wc">' +
         (c.wordCount || '') + '字' +
         (bm && bm.chapterId === c.id ? ' <span class="bk">☆</span>' : '') + '</span>';
-      b.addEventListener('click', function () { closeDrawer(); goToChapter(i, true); });
+      b.addEventListener('click', function () { closeDrawer({ restoreFocus:false }); goToChapter(i, true); });
       list.appendChild(b);
     });
   }
@@ -559,9 +638,11 @@
         : '';
       btn.innerHTML = '★' + chip + '<span class="lbl"> ' + escapeHtml(truncateTitle(bm.chapterTitle, 12)) + '</span>';
       btn.title = '已保存书签：' + bm.chapterTitle;
+      btn.setAttribute('aria-label', T('Bookmark saved at ' + bm.chapterTitle + '; activate to update it', '已保存书签：' + bm.chapterTitle + '；再次点击更新书签'));
     } else {
       btn.innerHTML = '☆<span class="lbl"> 书签</span>';
       btn.removeAttribute('title');
+      btn.setAttribute('aria-label', T('Save current reading position as a bookmark', '保存当前阅读位置为书签'));
     }
   }
   function setBookmark() {
@@ -755,8 +836,6 @@
       turnFront:document.getElementById('bookTurnFront'),
       turnBack:document.getElementById('bookTurnBack'),
       pageIndicator:document.getElementById('pageIndicator'),
-      previousButton:document.getElementById('prevChapter'),
-      nextButton:document.getElementById('nextChapter'),
       previousHotspot:document.getElementById('pagePreviousHotspot'),
       nextHotspot:document.getElementById('pageNextHotspot'),
       isActive:function () { return !state.waterfall; },
@@ -794,6 +873,8 @@
       '第 ' + (i + 1) + ' / ' + state.chapters.length + ' 章 · 约 ' + (c.wordCount || 0) + ' 字';
     document.getElementById('chapterIndicator').textContent =
       '第 ' + (i + 1) + ' / ' + state.chapters.length + ' 章';
+    document.getElementById('prevChapter').disabled = i === 0;
+    document.getElementById('nextChapter').disabled = i === state.chapters.length - 1;
     var book = ensurePagedBook();
     book.setChapterContext({
       hasPreviousChapter:i > 0,
@@ -825,6 +906,12 @@
     var direction = i > state.idx ? 1 : -1;
     loadChapter(i, scrollToTop, null, 'push', { direction:direction, pageIndex:0 });
   }
+  document.getElementById('prevChapter').addEventListener('click', function () {
+    goToChapter(state.idx - 1, true);
+  });
+  document.getElementById('nextChapter').addEventListener('click', function () {
+    goToChapter(state.idx + 1, true);
+  });
 
   /* ---------- waterfall / infinite-scroll reading ---------- */
   var wfList = document.getElementById('waterfallList');
@@ -840,7 +927,9 @@
     btn.setAttribute('aria-pressed', String(state.waterfall));
     btn.setAttribute(
       'aria-label',
-      state.waterfall ? '关闭瀑布流，切回仿真翻书阅读' : '切换为瀑布流连续阅读'
+      state.waterfall
+        ? T('Close continuous reading and return to page view', '关闭瀑布流，切回仿真翻书阅读')
+        : T('Switch to continuous reading', '切换为瀑布流连续阅读')
     );
     btn.title = state.waterfall ? '切回仿真翻书阅读' : '瀑布流连续阅读';
   }
@@ -1006,6 +1095,7 @@
     var btn = document.getElementById('autoToggle');
     btn.innerHTML = '❚❚<span class="lbl"> ' + (state.waterfall ? '停止滚动' : '停止翻页') + '</span>';
     btn.classList.add('active');
+    btn.setAttribute('aria-label', state.waterfall ? T('Stop automatic scrolling', '停止自动滚动') : T('Stop automatic page turning', '停止自动翻页'));
     if (state.waterfall) {
       state.autoTimer = setInterval(function () {
         window.scrollBy(0, AUTO_SCROLL_PX);
@@ -1029,6 +1119,7 @@
     var btn = document.getElementById('autoToggle');
     btn.innerHTML = '▶<span class="lbl"> ' + (state.waterfall ? '自动滚动' : '自动翻页') + '</span>';
     btn.classList.remove('active');
+    btn.setAttribute('aria-label', state.waterfall ? T('Start automatic scrolling', '开始自动滚动') : T('Start automatic page turning', '开始自动翻页'));
   }
   document.getElementById('autoToggle').addEventListener('click', function () { state.autoTimer ? stopAuto() : startAuto(); });
   ['pointerdown','wheel'].forEach(function (ev) {
@@ -1070,7 +1161,7 @@
       var t = tracks[idx];
       var label = t ? (t.title + (t.artist ? ' — ' + t.artist : '')) : '伴读音乐';
       btnPlay.title = '♪ ' + label;
-      btnPlay.setAttribute('aria-label', (playing ? '暂停：' : '播放：') + label);
+      btnPlay.setAttribute('aria-label', (playing ? T('Pause: ', '暂停：') : T('Play: ', '播放：')) + label);
     }
 
     function setMediaSession(t) {
@@ -1170,7 +1261,7 @@
       b.className = 'book' + (i === state.novelIdx ? ' active' : '');
       b.type = 'button';
       b.innerHTML = '<span class="bk-badge">正在阅读</span>' +
-        '<h3>' + escapeHtml(n.novel.title) + '</h3>' +
+        '<span class="bk-title">' + escapeHtml(n.novel.title) + '</span>' +
         '<p class="bk-sub">' + escapeHtml(n.novel.subtitle || '') + '</p>' +
         '<p class="bk-meta">共 ' + n.chapterCount + ' 章 · ' + escapeHtml(n.novel.author || '') + '</p>';
       b.addEventListener('click', function () {
@@ -1226,13 +1317,13 @@
       document.getElementById('novelSub').textContent = n.novel.subtitle || '';
       document.getElementById('novelIntro').textContent = n.novel.intro;
       document.getElementById('novelAuthor').textContent = n.novel.author;
+      document.getElementById('bookAuthor').textContent = n.novel.author + ' · 连载手稿';
       document.getElementById('novelUpdateNote').textContent = n.novel.updateNote;
       document.getElementById('novelStart').textContent = n.novel.startDate;
       var tagsEl = document.getElementById('novelTags'); tagsEl.innerHTML = '';
       (n.novel.tags || []).forEach(function (tg) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = tg; tagsEl.appendChild(s); });
       renderHud(n.novel.hud);
       renderShelf();
-      document.title = 'Project Afflatus · 小说 — ' + n.novel.title;
     }
 
     /* U30 R1: clicked book cover morphs into the hero pad via a native
@@ -1348,7 +1439,13 @@
           serialApi.chapterIdEquals(history.state.chapterId, route.chapterId)) {
         initialOffset = history.state.offset;
       }
-      selectNovel(startIdx, false, route && route.chapterId, route ? 'replace' : 'none', initialOffset);
+      selectNovel(
+        startIdx,
+        false,
+        route && route.chapterId,
+        route && route.chapterId != null ? 'replace' : 'none',
+        initialOffset
+      );
     }).catch(function () {
       document.getElementById('chapterTitle').textContent = '内容加载失败';
       document.getElementById('chapterBody').innerHTML = '<p>' +

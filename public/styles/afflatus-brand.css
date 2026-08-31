@@ -68,6 +68,10 @@
   outline-offset: 4px;
 }
 
+.afflatus-mobile-nav-toggle {
+  display: none;
+}
+
 .afflatus-brand__stage {
   position: relative;
   inline-size: 132px;
@@ -1163,92 +1167,99 @@
 }
 
 @media (max-width: 620px) {
-  /* Every non-home route has the same six primary actions: four direct
-     routes, Labs and language. Keep all six visible as one compact command
-     strip instead of relying on horizontal scrolling, which hid the final
-     language control with no visible affordance. The route-specific colours
-     still come from each page stylesheet; this block only owns geometry. */
-  body:not(.home-page) .site-header--follow {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 6px;
-  }
-
+  /* Shared compact disclosure for every inner route. The home showcase and
+     portfolio keep their own command-deck headers; all research/tools pages
+     now reserve the first row for identity instead of shrinking six labels. */
+  body:not(.showcase-page):not(.home-page) .site-header--follow,
   body.course-page .site-top.site-header--follow {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 12px;
+    min-block-size: 64px;
+  }
+
+  body:not(.showcase-page):not(.home-page) .site-header--follow > [data-afflatus-nav] {
+    grid-column: 1 / -1;
+    inline-size: 100%;
+    overflow-x: auto;
+  }
+
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) .afflatus-mobile-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: end;
+    min-inline-size: 64px;
+    min-block-size: 44px;
+    padding-inline: 12px;
+    border: 1px solid color-mix(in srgb, var(--afflatus-brand-accent, currentColor) 42%, transparent);
+    background: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 92%, transparent);
+    color: inherit;
+    font: 700 11px/1 var(--afflatus-brand-font);
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) .afflatus-mobile-nav-toggle:focus-visible {
+    outline: 2px solid var(--afflatus-brand-accent, currentColor);
+    outline-offset: 3px;
+  }
+
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) .site-header--follow > [data-afflatus-nav],
+  html.afflatus-nav-enhanced body.course-page .site-top.site-header--follow > [data-afflatus-nav] {
+    position: fixed;
+    z-index: 99000;
+    inset-block-start: var(--afflatus-mobile-nav-top, 72px);
+    inset-inline-end: 10px;
+    inline-size: min(340px, calc(100vw - 20px));
+    max-block-size: calc(100dvh - var(--afflatus-mobile-nav-top, 72px) - 12px);
+    display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
+    margin: 0;
+    padding: 10px;
+    overflow: auto;
+    border: 1px solid color-mix(in srgb, var(--afflatus-brand-accent, currentColor) 36%, transparent);
+    background: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 96%, #000 4%);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, .42);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+    backdrop-filter: blur(18px) saturate(1.08);
   }
 
-  /* Course's desktop stylesheet gives the nav a more-specific flex layout.
-     Reassert the shared six-column mobile strip after stacking the header so
-     the wordmark and every action occupy separate, predictable rows. */
-  body.course-page .site-top.site-header--follow > .nav {
-    inline-size: 100%;
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) .site-header--follow.mobile-nav-open > [data-afflatus-nav],
+  html.afflatus-nav-enhanced body.course-page .site-top.site-header--follow.mobile-nav-open > [data-afflatus-nav] {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 3px;
-    margin-inline-start: 0;
   }
 
-  .site-header--follow > .nav {
-    inline-size: 100%;
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 3px;
-    overflow: visible;
-  }
-
-  /* The novel shelf is intentionally Chinese-only, so it has no redundant
-     language switch and therefore owns five — not six — primary actions. */
-  .novels-page .site-header--follow > .nav {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .site-header--follow > .nav > * {
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) [data-afflatus-nav] > *,
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) [data-afflatus-nav] > .nav-labs {
     min-inline-size: 0;
+    inline-size: 100%;
   }
 
-  .site-header--follow > .nav > a,
-  .site-header--follow > .nav .nav-labs__trigger,
-  .site-header--follow > .nav > .lang-toggle,
-  .site-header--follow > .nav > .hbtn {
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) [data-afflatus-nav] > a,
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) [data-afflatus-nav] .nav-labs__trigger,
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) [data-afflatus-nav] > .lang-toggle,
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) [data-afflatus-nav] > .hbtn {
     inline-size: 100%;
-    min-inline-size: 44px;
+    min-inline-size: 0;
     min-block-size: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 3px;
+    padding: 0 10px;
     overflow: hidden;
-    font-size: 8.5px;
-    line-height: 1;
+    font-size: 12px;
+    line-height: 1.2;
     letter-spacing: .04em;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
   }
 
-  .site-header--follow > .nav > .nav-labs {
-    inline-size: 100%;
-  }
-
-  .site-header--follow > .nav .nav-labs__trigger::after {
-    margin-inline-start: 2px;
-  }
-
-  /* Course uses a denser desktop command bar. Its more-specific page rule
-     keeps 32px controls, so restore the shared mobile touch target here. */
-  .course-page .site-top.site-header--follow > .nav > a,
-  .course-page .site-top.site-header--follow > .nav .nav-labs__trigger {
-    min-inline-size: 44px;
-    min-block-size: 44px;
-    padding-inline: 3px;
-    font-size: 8.5px;
-    letter-spacing: .04em;
-  }
-
-  .course-page .site-top.site-header--follow > .nav > .lang-toggle {
-    min-inline-size: 44px;
+  html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) [data-afflatus-nav] .nav-labs__trigger::after {
+    margin-inline-start: 6px;
   }
 
   .home-page .site-header--follow #langBtn { display: none; }

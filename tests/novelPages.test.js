@@ -31,6 +31,18 @@ describe('pre-rendered novel documents', () => {
     ]));
   });
 
+  it('redirects unsupported English book and chapter routes without a catch-all splat', () => {
+    expect(vercel.redirects).toEqual(expect.arrayContaining([
+      { source: '/en/novels/:book', destination: '/zh/novels/:book', permanent: true },
+      { source: '/en/novels/:book/', destination: '/zh/novels/:book/', permanent: true },
+      { source: '/en/novels/:book/:chapter', destination: '/zh/novels/:book/:chapter', permanent: true },
+      { source: '/en/novels/:book/:chapter/', destination: '/zh/novels/:book/:chapter/', permanent: true },
+    ]));
+    expect(vercel.redirects).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ source: '/en/novels/:path*' }),
+    ]));
+  });
+
   it('keeps reading music paused until the player button is explicitly pressed', () => {
     expect(source).toContain(
       "btnPlay.addEventListener('click', function () { audio.paused ? play() : pause(); });",
@@ -86,5 +98,10 @@ describe('pre-rendered novel documents', () => {
     expect(html).toContain('data-prerendered="book"');
     expect(chapterLinks).toHaveLength(entry.chapters.length);
     expect(entry.chapters).toHaveLength(15);
+  });
+
+  it('preserves work-level URLs and metadata until a chapter is explicitly entered', () => {
+    expect(source).toContain("var preserveBookLanding = mode === 'none' && currentRoute && currentRoute.chapterId == null;");
+    expect(source).toContain("route && route.chapterId != null ? 'replace' : 'none'");
   });
 });
