@@ -20,7 +20,10 @@ export function mountViewportRuntime({
   const update = () => {
     frame = 0;
     if (destroyed) return;
-    const layoutHeight = Math.max(root.clientHeight || 0, win.innerHeight || 0);
+    // Reading documentElement.clientHeight here forces layout on every
+    // visual-viewport event. innerHeight already represents the layout
+    // viewport while visualViewport.height tracks the keyboard occlusion.
+    const layoutHeight = Math.max(0, Number(win.innerHeight) || 0);
     const height = visualViewport?.height || win.innerHeight || layoutHeight;
     const offsetTop = visualViewport?.offsetTop || 0;
     const keyboardInset = computeKeyboardInset(layoutHeight, height, offsetTop);

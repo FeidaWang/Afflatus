@@ -9,6 +9,7 @@ describe('home loading contract', () => {
   it('keeps the LCP shell static and defers the combat runtime until idle or intent', () => {
     expect(entry).toContain("import('./homeExperience.js')");
     expect(entry).toContain('requestIdleCallback');
+    expect(entry).toContain("matchMedia('(max-width: 860px), (pointer: coarse)')");
     expect(entry).toContain('HOME_INTENT_SELECTOR');
     expect(entry).not.toMatch(/^import .*homeExperience/m);
     expect(html).toContain('<main id="mainContent">');
@@ -17,7 +18,7 @@ describe('home loading contract', () => {
 
   it('loads Three.js forge work only near its stage', () => {
     expect(entry).toContain("import('./scene/alphardForge.js')");
-    expect(entry).toContain("rootMargin: '240px 0px'");
+    expect(entry).toContain("rootMargin: '80px 0px'");
     expect(html).not.toContain('src="/src/scene/alphardForge.js"');
   });
 

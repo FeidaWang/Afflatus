@@ -20,8 +20,8 @@
     s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
     document.head.appendChild(s);
   }
-  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
-  else setTimeout(loadGtag, 2000);
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 8000});
+  else setTimeout(loadGtag, 6000);
 })();
 </script>
 <meta charset="utf-8">
@@ -241,7 +241,7 @@
 <link rel="stylesheet" href="/page-turn.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" media="(min-width: 861px)">
 <link rel="stylesheet" href="/styles/arena.css">
 <link rel="stylesheet" href="/styles/arena-quant.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
@@ -249,7 +249,7 @@
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="arena-page">
-<a class="skip" href="#taSearch">Skip to the dashboard</a>
+<a class="skip" href="#taSearch" data-en="Skip to the dashboard" data-zh="跳到仪表板">Skip to the dashboard</a>
 
 <div class="bg" aria-hidden="true">
   <div class="bg-glow"></div>
@@ -264,14 +264,14 @@
       </span>
       <span class="afflatus-brand__sr">Afflatus</span>
     </a>
-    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+    <nav class="nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav>
       <button class="hbtn lang-toggle" type="button">中文</button>
     </nav>
   </header>
 
   <div class="page-hero page-hero--route">
       <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 64 64" width="32" height="32" role="img" aria-label="Arena">
+        <svg viewBox="0 0 64 64" width="32" height="32" role="img" aria-label="Arena" data-aria-en="Arena" data-aria-zh="竞技场">
           <line x1="20" y1="14" x2="20" y2="50" stroke="#3dff9a" stroke-width="1.6"/><rect x="15" y="26" width="10" height="19" fill="#3dff9a"/><path d="M14 24l6-7 6 7" fill="none" stroke="#eafff4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           <line x1="44" y1="13" x2="44" y2="49" stroke="#ff3df0" stroke-width="1.6"/><rect x="39" y="20" width="10" height="19" fill="#ff3df0"/><path d="M38 41l6 7 6-7" fill="none" stroke="#ffe6fb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="32" cy="32" r="6.4" fill="#05070e" stroke="#27e7ff" stroke-width="1.8"/><circle cx="32" cy="32" r="1.7" fill="#27e7ff"/>
@@ -283,7 +283,7 @@
       </div>
   </div>
 
-  <section class="hero" aria-label="Status">
+  <section class="hero" aria-label="Status" data-aria-en="Status" data-aria-zh="状态">
     <div class="kicker" data-en="TRAXUS//CVKM · simulation deck" data-zh="TRAXUS//CVKM · 模拟终端">TRAXUS//CVKM · simulation deck</div>
     <h2 data-i18n-html data-en="Read the levels. Let the <b>machines</b> trade." data-zh="看懂关键位，交给<b>机器</b>去交易。">Read the levels. Let the <b>machines</b> trade.</h2>
     <p class="brief" data-en="Three simulated LLM ledgers trade the S&amp;P 500 under fixed risk rules and are scored against SPY/SMH. Review the latest published snapshot, or search any ticker for daily technicals. Historical simulation only — not investment advice." data-zh="三套模拟 LLM 账本按固定风控规则覆盖标普 500，并以 SPY/SMH 为基准计分。可回看最近发布的交易快照，或搜索代码查看日线技术面。仅为历史模拟，不构成投资建议。">Three simulated LLM ledgers trade the S&amp;P 500 under fixed risk rules and are scored against SPY/SMH. Review the latest published snapshot, or search any ticker for daily technicals. Historical simulation only — not investment advice.</p>
@@ -313,14 +313,14 @@
         <h2 id="qmTitle" data-en="A risk engine, not another stock picker." data-zh="这不是又一个荐股器，而是一台风险引擎。">A risk engine, not another stock picker.</h2>
         <p data-en="QF-01 turns the current AI-factory research universe into a reproducible walk-forward experiment: completed daily bars enter a time-bounded data context, four cross-sectional factors become an explainable score, and hard portfolio constraints decide what survives." data-zh="QF-01 将当前 AI 工厂研究池变成可复现的滚动实验：已完成日线进入有明确时间边界的数据上下文，四个截面因子形成可解释得分，再由组合硬约束决定哪些信号能够存活。">QF-01 turns the current AI-factory research universe into a reproducible walk-forward experiment: completed daily bars enter a time-bounded data context, four cross-sectional factors become an explainable score, and hard portfolio constraints decide what survives.</p>
       </div>
-      <div class="qm-stamp" aria-label="Model identity">
+      <div class="qm-stamp" aria-label="Model identity" data-aria-en="Model identity" data-aria-zh="模型身份">
         <b id="qmVersion">QF-01</b>
         <span><span data-en="manifest" data-zh="清单">manifest</span> · <i id="qmAsOf">—</i></span>
         <span><span data-en="source commit" data-zh="源提交">source commit</span> · <i id="qmCommit">—</i></span>
       </div>
     </header>
 
-    <div class="qm-pipeline" aria-label="Quant model architecture">
+    <div class="qm-pipeline" aria-label="Quant model architecture" data-aria-en="Quant model architecture" data-aria-zh="量化模型架构">
       <div><span>01</span><b>DATA CONTEXT</b><small data-en="completed sessions" data-zh="已完成交易日">completed sessions</small></div>
       <div><span>02</span><b>FACTOR LENS</b><small data-en="robust cross-section" data-zh="稳健截面标准化">robust cross-section</small></div>
       <div><span>03</span><b>RISK REGIME</b><small data-en="trend × volatility" data-zh="趋势 × 波动">trend × volatility</small></div>
@@ -329,10 +329,10 @@
     </div>
 
     <div class="qm-workbench">
-      <aside class="qm-console" aria-label="Model controls">
+      <aside class="qm-console" aria-label="Model controls" data-aria-en="Model controls" data-aria-zh="模型控制">
         <div class="qm-console-head">
           <div><span data-en="VARIANT PATCH BAY" data-zh="变体调参舱">VARIANT PATCH BAY</span><b><i id="qmRunCount">00</i> LOCAL RUNS</b></div>
-          <div class="qm-presets" role="group" aria-label="Model presets">
+          <div class="qm-presets" role="group" aria-label="Model presets" data-aria-en="Model presets" data-aria-zh="模型预设">
             <button type="button" data-qm-preset="balanced" class="is-active">BAL</button>
             <button type="button" data-qm-preset="momentum">MOM</button>
             <button type="button" data-qm-preset="defensive">DEF</button>
@@ -361,7 +361,7 @@
 
       <div class="qm-display">
         <div class="qm-universe-head"><span data-en="RESEARCH UNIVERSE · NO PRINCIPAL / NO ORDERS" data-zh="研究池 · 无本金数据 / 不发送订单">RESEARCH UNIVERSE · NO PRINCIPAL / NO ORDERS</span><b>SPY // BENCHMARK</b></div>
-        <div class="qm-universe" id="qmUniverse" aria-label="Model universe"></div>
+        <div class="qm-universe" id="qmUniverse" aria-label="Model universe" data-aria-en="Model universe" data-aria-zh="模型标的池"></div>
 
         <div class="qm-empty-state" id="qmEmpty">
           <div class="qm-scope">
@@ -378,17 +378,17 @@
             <div><span>WINDOW</span><b id="qmWindow">—</b></div>
           </div>
           <div class="qm-chart-head"><div><b>QF-01</b><span data-en="costed walk-forward" data-zh="含成本滚动回测">costed walk-forward</span></div><div><i></i>QF-01 <i class="benchmark"></i>SPY</div></div>
-          <div class="qm-chart-wrap" id="qmChartWrap"><canvas id="qmChart" role="img" aria-label="QF-01 walk-forward equity curve compared with SPY"></canvas></div>
+          <div class="qm-chart-wrap" id="qmChartWrap"><canvas id="qmChart" role="img" aria-label="QF-01 walk-forward equity curve compared with SPY" data-aria-en="QF-01 walk-forward equity curve compared with SPY" data-aria-zh="QF-01 滚动前向权益曲线与 SPY 对比"></canvas></div>
           <div class="qm-metrics" id="qmMetrics"></div>
 
           <div class="qm-table-head"><b data-en="CONSTRAINED PORTFOLIO" data-zh="约束后组合">CONSTRAINED PORTFOLIO</b><span data-en="weight is normalized exposure, never account value" data-zh="权重是标准化敞口，绝非账户金额">weight is normalized exposure, never account value</span></div>
-          <div class="qm-table-scroll" tabindex="0" aria-label="Portfolio allocation table">
+          <div class="qm-table-scroll" tabindex="0" aria-label="Portfolio allocation table" data-aria-en="Portfolio allocation table" data-aria-zh="投资组合配置表">
             <table class="qm-table"><thead><tr><th>ASSET</th><th>SCORE</th><th>MOM</th><th>VOL</th><th>β</th><th>WEIGHT</th></tr></thead><tbody id="qmAllocations"></tbody></table>
           </div>
 
           <details class="qm-factor-diagnostics">
             <summary data-en="OPEN FACTOR DIAGNOSTICS" data-zh="展开因子诊断">OPEN FACTOR DIAGNOSTICS</summary>
-            <div class="qm-table-scroll" tabindex="0" aria-label="Factor diagnostics table">
+            <div class="qm-table-scroll" tabindex="0" aria-label="Factor diagnostics table" data-aria-en="Factor diagnostics table" data-aria-zh="因子诊断表">
               <table class="qm-table qm-factor-table"><thead><tr><th>ASSET</th><th>MOM</th><th>TREND</th><th>RESIL.</th><th>LOW VOL</th><th>SCORE</th></tr></thead><tbody id="qmFactors"></tbody></table>
             </div>
           </details>
@@ -432,23 +432,23 @@
   </section>
 
   <!-- ===== V13 · US STOCK TA DASHBOARD (key levels / MAs / pivots / special points) ===== -->
-  <section class="ta" id="taDash" aria-label="US stock technical analysis dashboard">
+  <section class="ta" id="taDash" aria-label="US stock technical analysis dashboard" data-aria-en="US stock technical analysis dashboard" data-aria-zh="美股技术分析仪表板">
     <div class="ta-topbar">
       <div class="sec-label" style="margin-bottom:0"><span data-en="Search Any S&amp;P 500 Ticker" data-zh="搜索标普 500 任意代码">Search Any S&amp;P 500 Ticker</span></div>
       <div class="ta-searchwrap">
         <input id="taSearch" class="ta-search" type="search" autocomplete="off" spellcheck="false"
                placeholder="Search ticker / name… (Enter loads any US symbol)"
                data-en-ph="Search ticker / name… (Enter loads any US symbol)" data-zh-ph="搜索代码/名称…（回车可加载任意美股代码）"
-               aria-label="Search stocks">
+               aria-label="Search stocks" data-aria-en="Search stocks" data-aria-zh="搜索股票">
         <div class="ta-suggest" id="taSuggest" hidden role="listbox"
-             aria-label="Ticker suggestions"></div>
+             aria-label="Ticker suggestions" data-aria-en="Ticker suggestions" data-aria-zh="股票代码建议"></div>
       </div>
     </div>
     <div class="ta-panelhost panel" id="taPanel"></div>
   </section>
 
   <!-- ===== V5/V6 · ARENA AUTOPILOT (S/P/T simulated ledgers, Part 4 §17) ===== -->
-  <section class="ap" id="apDash" aria-label="Arena Autopilot dashboard — three model ledgers">
+  <section class="ap" id="apDash" aria-label="Arena Autopilot dashboard — three model ledgers" data-aria-en="Arena Autopilot dashboard — three model ledgers" data-aria-zh="竞技场自动驾驶仪表板——三套模型账本">
     <div class="ap-topbar">
       <div class="sec-label" style="margin-bottom:0"><span data-en="Autopilot" data-zh="自动交易">Autopilot</span></div>
       <div class="ap-meta">
@@ -460,7 +460,7 @@
 
     <div class="ap-chartwrap panel">
       <div class="ap-chart-hd"><div class="ap-legend" id="apLegend"></div></div>
-      <svg class="ap-chart" id="apChart" viewBox="0 0 690 264" role="img" aria-label="Model S/P/T equity curves vs SPY/SMH" aria-describedby="apChartSummary"></svg>
+      <svg class="ap-chart" id="apChart" viewBox="0 0 690 264" role="img" aria-label="Model S/P/T equity curves vs SPY/SMH" data-aria-en="Model S/P/T equity curves vs SPY/SMH" data-aria-zh="S/P/T 模型权益曲线与 SPY/SMH 对比" aria-describedby="apChartSummary"></svg>
       <p class="sr-only" id="apChartSummary"></p>
     </div>
 
@@ -479,15 +479,15 @@
 
 <!-- ===== Part 4 §19.4.3 · Daily digest toast + drawer ("while you were away") ===== -->
 <div class="digest-toast" id="digestToast" hidden role="status">
-  <div class="digest-toast-body" id="digestToastBody" tabindex="0" role="button" aria-label="Open latest digest"></div>
-  <button class="digest-toast-close" id="digestToastClose" aria-label="Dismiss">×</button>
+  <div class="digest-toast-body" id="digestToastBody" tabindex="0" role="button" aria-label="Open latest digest" data-aria-en="Open latest digest" data-aria-zh="打开最新摘要"></div>
+  <button class="digest-toast-close" id="digestToastClose" aria-label="Dismiss" data-aria-en="Dismiss" data-aria-zh="忽略">×</button>
 </div>
-<div class="digest-drawer" id="digestDrawer" hidden aria-label="Daily digest" aria-modal="true" role="dialog">
+<div class="digest-drawer" id="digestDrawer" hidden aria-label="Daily digest" data-aria-en="Daily digest" data-aria-zh="每日摘要" aria-modal="true" role="dialog">
   <div class="digest-drawer-backdrop" id="digestDrawerBackdrop"></div>
   <div class="digest-drawer-panel">
     <div class="digest-drawer-hd">
       <span data-en="Daily Digest" data-zh="每日摘要">Daily Digest</span> · <span id="digestDrawerDate"></span>
-      <button class="digest-drawer-close" id="digestDrawerClose" aria-label="Close">×</button>
+      <button class="digest-drawer-close" id="digestDrawerClose" aria-label="Close" data-aria-en="Close" data-aria-zh="关闭">×</button>
     </div>
     <div class="digest-drawer-body" id="digestDrawerBody"></div>
   </div>

@@ -16,7 +16,12 @@ describe('viewport runtime', () => {
       setProperty: vi.fn(),
       removeProperty: vi.fn(),
     };
-    const root = { clientHeight: 956, dataset: {}, style };
+    const root = { dataset: {}, style };
+    Object.defineProperty(root, 'clientHeight', {
+      get: vi.fn(() => {
+        throw new Error('clientHeight should not be read during viewport updates');
+      }),
+    });
     const visualViewport = {
       height: 620,
       offsetTop: 0,

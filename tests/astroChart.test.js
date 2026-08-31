@@ -162,4 +162,21 @@ describe('chart accessibility summaries', () => {
     expect(svg).toContain('aria-label="Aspect grid.');
     expect(svg).toContain('Sun conj Moon');
   });
+
+  it('localizes chart summaries for Chinese assistive technology', () => {
+    const wheel = renderWheel({
+      ascDeg: 25,
+      planets: [{ body: 'Sun', lonDeg: 101.25, retro: true }],
+      language: 'zh',
+    });
+    expect(wheel).toContain('aria-label="本命星盘。上升点 25.0 度。太阳 101.3 度，逆行。"');
+    expect(renderAspectGrid(
+      [{ body: 'Sun', lonDeg: 10 }, { body: 'Moon', lonDeg: 12 }],
+      { language: 'zh' },
+    )).toContain('aria-label="相位矩阵。太阳 conj 月亮。"');
+    expect(renderRadar(
+      [{ key: 'love', label: '爱情', value: 80 }],
+      { language: 'zh' },
+    )).toContain('aria-label="五维雷达图。爱情 80 分（满分 100）。"');
+  });
 });

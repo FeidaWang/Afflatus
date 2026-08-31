@@ -20,8 +20,8 @@
     s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
     document.head.appendChild(s);
   }
-  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
-  else setTimeout(loadGtag, 2000);
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 8000});
+  else setTimeout(loadGtag, 6000);
 })();
 </script>
 <meta charset="UTF-8" />
@@ -142,9 +142,11 @@
 
 <link rel="icon" type="image/svg+xml" href="/favicons/home.svg?v=20260808">
 
+<link rel="stylesheet" href="/page-turn.css">
+<link rel="preload" href="/vendor/black-hole/source-poster.jpg" as="image" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet" media="(min-width: 861px)">
 <style>
 /* U21 Phase 1 D1: wrapped in @layer overrides now that src/styles.css is
    @layer legacy — this block's own comment already says its job is to
@@ -211,16 +213,16 @@
   <div class="hud-warning">战术尾迹 · 引力井前方</div>
   <div class="hud-subwarning">舰桥锁定 · 目标神谕 · 信号帷幕</div>
   <div class="cic-shell">
-    <div class="cic-station-tabs" role="navigation" aria-label="Command stations">
+    <div class="cic-station-tabs" role="navigation" aria-label="Command stations" data-aria-en="Command stations" data-aria-zh="指挥站">
       <button type="button" data-cic-panel-focus="tactical">态势</button>
       <button type="button" data-cic-panel-focus="fire">火控</button>
       <button type="button" data-cic-panel-focus="intel">情报</button>
     </div>
-    <aside class="cic-panel cic-fire-control" aria-label="Fire control and interception">
+    <aside class="cic-panel cic-fire-control" aria-label="Fire control and interception" data-aria-en="Fire control and interception" data-aria-zh="火控与截击">
       <header class="cic-panel-head">
         <span class="cic-eyebrow">DEFENCE ARCHITECTURE · 01</span>
         <strong data-hud="battleTitle">四联防御与火控</strong>
-        <button class="cic-panel-focus" type="button" data-cic-panel-focus="fire" aria-label="Expand fire-control station" aria-expanded="false"></button>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="fire" aria-label="Expand fire-control station" data-aria-en="Expand fire-control station" data-aria-zh="展开火控站" aria-expanded="false"></button>
         <button class="cic-ap-toggle" id="apToggle" type="button" data-hot aria-pressed="false">
           <span>AP</span><b id="apState">自动</b>
         </button>
@@ -275,35 +277,35 @@
       </form>
     </aside>
 
-    <section class="cic-panel cic-tactical" aria-label="Combat information center sensor picture">
+    <section class="cic-panel cic-tactical" aria-label="Combat information center sensor picture" data-aria-en="Combat information center sensor picture" data-aria-zh="战情中心传感器图像">
       <header class="cic-panel-head cic-tactical-head">
         <span>
           <i class="cic-live-dot" aria-hidden="true"></i>
           <strong data-hud="pilotTitle">舰桥战术态势</strong>
         </span>
         <span class="cic-view-mode" data-hud="cicCaption" id="cicCameraLabel">CIC 战术传感图</span>
-        <button class="cic-panel-focus" type="button" data-cic-panel-focus="tactical" aria-label="Expand tactical station" aria-expanded="false"></button>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="tactical" aria-label="Expand tactical station" data-aria-en="Expand tactical station" data-aria-zh="展开战术站" aria-expanded="false"></button>
       </header>
       <div class="cic-tactical-body">
-        <aside class="cic-sensor-rail" aria-label="Embedded flight sensors">
-          <div class="cic-radar-dock" aria-label="Embedded tactical radar">
+        <aside class="cic-sensor-rail" aria-label="Embedded flight sensors" data-aria-en="Embedded flight sensors" data-aria-zh="嵌入式飞行传感器">
+          <div class="cic-radar-dock" aria-label="Embedded tactical radar" data-aria-en="Embedded tactical radar" data-aria-zh="嵌入式战术雷达">
             <span>RADAR · L1</span>
             <canvas id="cicRadarCanvas" aria-hidden="true"></canvas>
           </div>
-          <div class="cic-flight-tape" aria-label="Flight vector">
+          <div class="cic-flight-tape" aria-label="Flight vector" data-aria-en="Flight vector" data-aria-zh="飞行矢量">
           <span><i>HDG</i><b id="cicHeading">—</b></span>
           <span><i>VEL</i><b id="cicVelocity">—</b></span>
           <span><i>G</i><b id="cicGLoad">—</b></span>
           </div>
         </aside>
         <div class="cic-viewport">
-          <canvas class="cic-pilot-feed" id="cicPilotFeed" tabindex="0" aria-label="Interactive three-dimensional combat view. Drag to orbit the camera, scroll to zoom, and use arrow keys to rotate."></canvas>
-          <div class="cic-camera-controls" aria-label="Combat camera controls" hidden>
+          <canvas class="cic-pilot-feed" id="cicPilotFeed" tabindex="0" aria-label="3D combat view. Drag to orbit, scroll to zoom, and use arrow keys to rotate." data-aria-en="3D combat view. Drag to orbit, scroll to zoom, and use arrow keys to rotate." data-aria-zh="互动三维战斗视图。拖动可环绕镜头，滚动可缩放，方向键可旋转。"></canvas>
+          <div class="cic-camera-controls" aria-label="Combat camera controls" data-aria-en="Combat camera controls" data-aria-zh="战斗镜头控制" hidden>
             <span aria-hidden="true">DRAG · ORBIT</span>
             <button id="cicCameraReset" type="button">RESET VIEW</button>
           </div>
         </div>
-        <aside class="cic-target-rail" aria-label="Target solution">
+        <aside class="cic-target-rail" aria-label="Target solution" data-aria-en="Target solution" data-aria-zh="目标解算">
           <span class="cic-threat-readout" id="cicThreatReadout">NO TRACK · SENSOR PASSIVE</span>
           <div class="cic-solution-stack">
             <span><i>RANGE</i><b id="cicRange">—</b></span>
@@ -314,12 +316,12 @@
       </div>
     </section>
 
-    <aside class="cic-panel cic-intel" aria-label="Tactical feed and damage control">
+    <aside class="cic-panel cic-intel" aria-label="Tactical feed and damage control" data-aria-en="Tactical feed and damage control" data-aria-zh="战术情报与损伤管制">
       <header class="cic-panel-head">
         <span class="cic-eyebrow">CIC / CONDITION · 03</span>
         <strong data-hud="systemsTitle">战斗情报与损管</strong>
         <button class="cic-log-toggle" id="voyageLogToggle" type="button" data-hot aria-controls="cicVoyageConsole" aria-expanded="false">VOYAGE NOTES</button>
-        <button class="cic-panel-focus" type="button" data-cic-panel-focus="intel" aria-label="Expand intelligence station" aria-expanded="false"></button>
+        <button class="cic-panel-focus" type="button" data-cic-panel-focus="intel" aria-label="Expand intelligence station" data-aria-en="Expand intelligence station" data-aria-zh="展开情报站" aria-expanded="false"></button>
       </header>
       <div class="cic-battle-feed" id="cicBattleFeed"></div>
       <div class="cic-condition-grid">
@@ -328,22 +330,22 @@
         <span><i data-hud="deviceLabel">舰体</i><b id="cicFleetPct">100%</b></span>
         <span><i data-hud="manualLabel">火力</i><b id="cicWeaponName">AUTO</b></span>
       </div>
-      <output class="cic-perf-readout" id="cicPerfReadout" aria-label="Combat renderer performance">P95 — · DC — · Q HIGH</output>
+      <output class="cic-perf-readout" id="cicPerfReadout" aria-label="Combat renderer performance" data-aria-en="Combat renderer performance" data-aria-zh="战斗渲染器性能">P95 — · DC — · Q HIGH</output>
       <footer class="cic-intel-footer">
         <span class="cic-battle-log" id="battleLog">战术甲板待命</span>
-        <output class="cic-kill-meter" aria-label="Confirmed kills"><i data-hud="killsLabel">确认击毁</i><b id="killCounter">0</b></output>
+        <output class="cic-kill-meter" aria-label="Confirmed kills" data-aria-en="Confirmed kills" data-aria-zh="确认击毁"><i data-hud="killsLabel">确认击毁</i><b id="killCounter">0</b></output>
         <button class="cic-deck-toggle" id="jumpToggle" type="button" data-hot>资产甲板</button>
       </footer>
     </aside>
 
-    <section class="cic-log-console" id="cicVoyageConsole" aria-label="Voyage Notes" aria-hidden="true">
+    <section class="cic-log-console" id="cicVoyageConsole" aria-label="Voyage Notes" data-aria-en="Voyage Notes" data-aria-zh="航行笔记" aria-hidden="true">
       <header class="cic-log-head">
         <span><i aria-hidden="true"></i><b data-log-copy="title">VOYAGE NOTES</b><em>LOCAL / READ-ONLY</em></span>
         <output id="voyageLogStatus" aria-live="polite" data-log-copy="status">LOCAL ARCHIVE</output>
-        <button id="voyageLogClose" type="button" data-hot aria-label="Close Voyage Notes">×</button>
+        <button id="voyageLogClose" type="button" data-hot aria-label="Close Voyage Notes" data-aria-en="Close Voyage Notes" data-aria-zh="关闭航行笔记">×</button>
       </header>
       <div class="cic-log-body">
-        <aside class="cic-log-index" aria-label="Voyage archive summary">
+        <aside class="cic-log-index" aria-label="Voyage archive summary" data-aria-en="Voyage archive summary" data-aria-zh="航行档案摘要">
           <span class="cic-log-seal">AFFLATUS<br><b>CVN-034</b></span>
           <dl>
             <div><dt data-log-copy="position">POSITION</dt><dd>ALPHARD GLOWLINE</dd></div>
@@ -394,7 +396,7 @@
 </div>
 
 <nav class="site-header--follow">
-  <a class="afflatus-brand" data-afflatus-brand data-brand-persona="home" href="/" aria-label="Afflatus — Home">
+  <a class="afflatus-brand" data-afflatus-brand data-brand-persona="home" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
     <span class="afflatus-brand__stage" aria-hidden="true">
       <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
     </span>
@@ -405,7 +407,7 @@
          as arena/sectors/signal/games/novels) -- see ROADMAP §2. Home doesn't
          use i18n.js's data-en/data-zh swap (it has its own bilingual system),
          so labels stay English-only here, matching prior behaviour. -->
-    <div class="nav-links" aria-label="Primary navigation" data-afflatus-nav></div>
+    <div class="nav-links" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav></div>
     <div class="top-telemetry" id="topTelemetry">
       <div class="top-stat primary"><span class="sys-dot"></span><span data-top="uplink">FLEET TELEMETRY</span><b id="topUplink">ACTIVE</b></div>
       <div class="top-stat"><span data-top="trajectory">VOID TRACK</span><b id="topTrajectory">L1 · stable</b></div>
@@ -416,15 +418,15 @@
   </div>
   <div class="nav-right">
     <button class="control-btn" id="commandModeBtn" data-hot>Command</button>
-    <a class="lang-mini-toggle" id="langMiniToggle" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-active="en"><span data-mini="en">EN</span><span class="mini-sep">/</span><span data-mini="zh">中</span></a>
-    <button class="nav-menu-btn" type="button" data-hot aria-label="Open deck menu">DECK</button>
+    <a class="lang-mini-toggle" id="langMiniToggle" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-i18n-static-aria data-active="en"><span data-mini="en">EN</span><span class="mini-sep">/</span><span data-mini="zh">中</span></a>
+    <button class="nav-menu-btn" type="button" data-hot aria-label="Open deck menu" data-aria-en="Open deck menu" data-aria-zh="打开甲板菜单">DECK</button>
     <div class="nav-clock">
       <span id="clockZone" aria-hidden="true"></span>
       <b id="melDateTime">---</b>
     </div>
     <!-- The language controls are native links so fixed-locale documents,
          canonical URLs, browser history and no-JS navigation stay aligned. -->
-    <a class="warp-btn verse-switch" id="langBtn" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文">以中文入梦</a>
+    <a class="warp-btn verse-switch" id="langBtn" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-i18n-static-aria>以中文入梦</a>
   </div>
 </nav>
 <main id="mainContent">
@@ -439,7 +441,7 @@
     </div>
   </section>
 
-  <section class="stardrive" id="stardrive" aria-label="FY2025–26 modeled performance — approach to Alphard">
+  <section class="stardrive" id="stardrive" aria-label="FY2025–26 modeled performance — approach to Alphard" data-aria-en="FY2025–26 modeled performance — approach to Alphard" data-aria-zh="2025–26 财年模型表现——驶近星宿一">
     <div class="stardrive-stage">
       <!-- U30 R2 (?fx=stage, default off): this wrapper is the sticky-scale
            "stargate" stage — scale(.8)+visible border-radius growing to

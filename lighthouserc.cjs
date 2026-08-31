@@ -1,5 +1,6 @@
 const { routes: configuredRoutes } = require('./src/config/lighthouseRoutes.generated.json');
 const baseline = require('./lighthouse-baseline.json');
+const releaseBudgets = baseline.releaseBudgets;
 
 const requestedRouteIds = new Set(
   String(process.env.LIGHTHOUSE_ROUTE_IDS || '')
@@ -32,14 +33,6 @@ function minScore(value) {
   return Math.max(0, Math.floor((value - 0.03) * 100) / 100);
 }
 
-function tbtBudget(value) {
-  return Math.max(
-    baseline.tbtNoiseAllowanceMs,
-    Math.ceil(value + baseline.tbtNoiseAllowanceMs),
-    Math.ceil(value * (1 + baseline.tbtRegressionAllowance)),
-  );
-}
-
 function matchingUrlPattern(path) {
   if (path === '/') return '^https?://[^/]+/$';
   const escaped = path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -53,10 +46,7 @@ function assertionsFor(route) {
       : ['warn', { minScore: minScore(route.performanceScore), ...median }],
     'cumulative-layout-shift': [
       'error',
-      {
-        maxNumericValue: maxBudget(route.clsBudgetBase ?? route.cls, 0.01, 1000),
-        ...median,
-      },
+      { maxNumericValue: releaseBudgets.CLS, ...median },
     ],
     'speed-index': [
       'warn',
@@ -72,23 +62,19 @@ function assertionsFor(route) {
     ],
   };
 
+  assertions['largest-contentful-paint'] = [
+    'error',
+    { maxNumericValue: releaseBudgets.LCP, ...median },
+  ];
+  assertions['total-blocking-time'] = [
+    'error',
+    { maxNumericValue: releaseBudgets.TBT, ...median },
+  ];
+
   if (route.lcpMs == null) {
     assertions['first-contentful-paint'] = [
       'warn',
       { maxNumericValue: maxBudget(route.fcpMs), ...median },
-    ];
-    assertions['largest-contentful-paint'] = [
-      'warn',
-      { maxNumericValue: baseline.fieldBudgets.LCP, ...median },
-    ];
-  } else {
-    assertions['largest-contentful-paint'] = [
-      'warn',
-      { maxNumericValue: maxBudget(route.lcpMs), ...median },
-    ];
-    assertions['total-blocking-time'] = [
-      'warn',
-      { maxNumericValue: tbtBudget(route.tbtMs), ...median },
     ];
   }
 
@@ -99,7 +85,7 @@ module.exports = {
   ci: {
     collect: {
       staticDistDir: './dist',
-      numberOfRuns: 3,
+      numberOfRuns: releaseBudgets.runs,
       url: routes.map((route) => `http://localhost${route.path}`),
       settings: {
         onlyCategories: ['performance'],

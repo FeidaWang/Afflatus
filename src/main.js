@@ -36,8 +36,12 @@ function installLocaleLinks() {
 function allowRichMotion() {
   const reducedMotion = typeof matchMedia === 'function'
     && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compactOrTouch = typeof matchMedia === 'function'
+    && matchMedia('(max-width: 860px), (pointer: coarse)').matches;
   const saveData = Boolean(navigator.connection?.saveData);
-  return !reducedMotion && !saveData;
+  const constrainedMemory = Number.isFinite(navigator.deviceMemory) && navigator.deviceMemory < 4;
+  const constrainedCpu = Number.isFinite(navigator.hardwareConcurrency) && navigator.hardwareConcurrency < 4;
+  return !reducedMotion && !compactOrTouch && !saveData && !constrainedMemory && !constrainedCpu;
 }
 
 function loadBlackHoleObservatory() {
@@ -141,7 +145,7 @@ function installVisibilityLoaders() {
           if (!initAlphardForge()) stardrive.classList.remove('has-motion-shell');
         })
         .catch(() => { stardrive.classList.remove('has-motion-shell'); });
-    }, { rootMargin: '240px 0px' });
+    }, { rootMargin: '80px 0px' });
     forgeObserver.observe(stardrive);
   }
 
@@ -150,7 +154,7 @@ function installVisibilityLoaders() {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       observer.disconnect();
       void loadHomeExperience().catch(() => {});
-    }, { rootMargin: '720px 0px' });
+    }, { rootMargin: '240px 0px' });
     experienceObserver.observe(portfolio);
   }
 }

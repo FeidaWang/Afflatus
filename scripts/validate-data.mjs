@@ -99,8 +99,12 @@ if (existsSync('public/novels-index.json')) {
       if (!existsSync(p)) { console.error(`FAIL: ${p} referenced by novels-index.json but missing`); anyFail = true; checked++; continue; }
       const data = JSON.parse(readFileSync(p, 'utf8'));
       const { ok, errors } = validateNovelBook(data);
+      if (data.id !== n.id) errors.push(`top-level id ${JSON.stringify(data.id)} does not match index id ${JSON.stringify(n.id)}`);
+      if (data.chapters.length !== n.chapterCount) {
+        errors.push(`index chapterCount is ${n.chapterCount}, but the published book contains ${data.chapters.length} chapters`);
+      }
       checked++;
-      if (!ok) { console.error(`FAIL: ${p} (${errors.length}):`); errors.forEach((e) => console.error(`  - ${e}`)); anyFail = true; }
+      if (!ok || errors.length) { console.error(`FAIL: ${p} (${errors.length}):`); errors.forEach((e) => console.error(`  - ${e}`)); anyFail = true; }
       else console.log(`OK: ${p}`);
     }
   } catch (e) {

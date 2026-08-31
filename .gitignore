@@ -10,3 +10,7 @@ probe_delete_test.txt
 playwright-report/
 test-results/
 .lighthouseci/
+
+# Local audit evidence and unpublished editorial drafts
+artifacts/
+content-drafts/

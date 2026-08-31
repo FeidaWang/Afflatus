@@ -6,6 +6,7 @@
    a book is opened. See serial.html's boot()/selectNovel(). */
 
 function isNonEmptyString(v) { return typeof v === 'string' && v.trim().length > 0; }
+const MIN_PUBLISHED_CHAPTER_CHARACTERS = 700;
 // Chapter/book ids are plain numbers in the real data (e.g. chapter.id: 1),
 // not strings — accept either, just not empty-string/NaN/missing.
 function isValidId(v) { return isNonEmptyString(v) || (typeof v === 'number' && !Number.isNaN(v)); }
@@ -44,12 +45,37 @@ export function validateNovelBook(data) {
   if (!data || typeof data !== 'object' || !isNonEmptyString(data.id) || !Array.isArray(data.chapters)) {
     return { ok: false, errors: ['top-level: must be an object with a non-empty "id" and a "chapters" array'] };
   }
+  const ids = new Set();
   for (const [i, c] of data.chapters.entries()) {
     const tag = `chapters[${i}]`;
     if (!c || typeof c !== 'object') { pushErr(errors, `${tag}: not an object`); continue; }
     if (!isValidId(c.id)) pushErr(errors, `${tag}.id: missing or empty`);
+    else if (ids.has(String(c.id))) pushErr(errors, `${tag}.id: duplicate ${JSON.stringify(c.id)}`);
+    else ids.add(String(c.id));
     if (!isNonEmptyString(c.title)) pushErr(errors, `${tag}.title: missing or empty`);
-    if (!Array.isArray(c.blocks)) pushErr(errors, `${tag}.blocks: must be an array`);
+    if (!Array.isArray(c.blocks)) {
+      pushErr(errors, `${tag}.blocks: must be an array`);
+      continue;
+    }
+    const visibleCharacterCount = c.blocks
+      .map((block) => (block && typeof block.text === 'string' ? block.text : ''))
+      .join('')
+      .replace(/\s/gu, '')
+      .length;
+    if (!Number.isInteger(c.wordCount) || c.wordCount <= 0) {
+      pushErr(errors, `${tag}.wordCount: must be a positive integer`);
+    } else if (c.wordCount !== visibleCharacterCount) {
+      pushErr(
+        errors,
+        `${tag}.wordCount: declares ${c.wordCount}, but the visible body contains ${visibleCharacterCount} non-whitespace characters`,
+      );
+    }
+    if (visibleCharacterCount < MIN_PUBLISHED_CHAPTER_CHARACTERS) {
+      pushErr(
+        errors,
+        `${tag}: published chapter contains ${visibleCharacterCount} characters; minimum is ${MIN_PUBLISHED_CHAPTER_CHARACTERS}`,
+      );
+    }
   }
   return { ok: errors.length === 0, errors };
 }

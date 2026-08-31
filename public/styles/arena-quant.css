@@ -51,7 +51,7 @@
 .qm-controls legend{color:var(--muted);font:700 8.5px/1 var(--font-hud);letter-spacing:.17em;margin-bottom:11px}
 .qm-controls label{display:grid;grid-template-columns:1fr auto;gap:7px 12px;align-items:center;color:#c4d0e6;font:600 10px/1.2 var(--font-mono)}
 .qm-controls output{color:var(--acid);font:700 10px/1 var(--font-mono);font-variant-numeric:tabular-nums}
-.qm-controls input[type="range"]{grid-column:1/-1;width:100%;height:18px;margin:0;accent-color:var(--acid);cursor:ew-resize}
+.qm-controls input[type="range"]{grid-column:1/-1;width:100%;height:44px;margin:-13px 0;accent-color:var(--acid);cursor:ew-resize}
 .qm-controls select{background:#080d18;color:var(--cyan);border:1px solid var(--qm-line);font:700 10px/1 var(--font-mono);padding:6px 22px 6px 8px}
 .qm-constraints{padding-top:17px;border-top:1px solid var(--qm-dim)}
 .qm-compile{width:100%;margin-top:20px;border:1px solid var(--acid);background:var(--acid);color:#03100a;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;font:800 10px/1 var(--font-hud);letter-spacing:.13em;cursor:pointer}

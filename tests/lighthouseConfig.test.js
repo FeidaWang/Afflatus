@@ -30,6 +30,13 @@ describe('Lighthouse regression contract', () => {
       CLS: 0.1,
       percentile: 75,
     });
+    expect(baseline.releaseBudgets).toEqual({
+      LCP: 2500,
+      TBT: 200,
+      CLS: 0.1,
+      aggregationMethod: 'median',
+      runs: 3,
+    });
     expect(baseline.dimensions).toEqual(['route', 'locale', 'device_tier']);
     expect(baseline.regressionAllowance).toBe(0.05);
     expect(baseline.tbtNoiseAllowanceMs).toBe(100);
@@ -54,29 +61,25 @@ describe('Lighthouse regression contract', () => {
     }
   });
 
-  it('hard-gates deterministic metrics and reports runner-sensitive timing as warnings', () => {
+  it('hard-gates release vitals and deterministic metrics over three-run medians', () => {
     for (const [index, row] of lighthouse.ci.assert.assertMatrix.entries()) {
       const route = baseline.routes[index];
       expect(row.matchingUrlPattern).toMatch(/^\^https/);
       expect(row.assertions['cumulative-layout-shift'][0]).toBe('error');
-      expect(row.assertions['cumulative-layout-shift'][1].maxNumericValue)
-        .toBeLessThanOrEqual(Math.max(0.01, route.clsBudgetBase * 1.05 + 0.001));
+      expect(row.assertions['cumulative-layout-shift'][1].maxNumericValue).toBe(0.1);
       expect(row.assertions['speed-index'][0]).toBe('warn');
       expect(row.assertions['resource-summary:script:size'][0]).toBe('error');
       expect(row.assertions['resource-summary:total:size'][0]).toBe('warn');
-      expect(row.assertions['largest-contentful-paint'][0]).toBe('warn');
+      expect(row.assertions['largest-contentful-paint']).toEqual([
+        'error',
+        { maxNumericValue: 2500, aggregationMethod: 'median' },
+      ]);
+      expect(row.assertions['total-blocking-time']).toEqual([
+        'error',
+        { maxNumericValue: 200, aggregationMethod: 'median' },
+      ]);
       if (route.lcpMs == null) {
         expect(row.assertions['first-contentful-paint'][0]).toBe('warn');
-      }
-      if (route.tbtMs != null) {
-        const tbtAssertion = row.assertions['total-blocking-time'];
-        expect(tbtAssertion[0]).toBe('warn');
-        expect(tbtAssertion[1].aggregationMethod).toBe('median');
-        expect(tbtAssertion[1].maxNumericValue).toBe(Math.max(
-          baseline.tbtNoiseAllowanceMs,
-          Math.ceil(route.tbtMs + baseline.tbtNoiseAllowanceMs),
-          Math.ceil(route.tbtMs * (1 + baseline.tbtRegressionAllowance)),
-        ));
       }
     }
   });

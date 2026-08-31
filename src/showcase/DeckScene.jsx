@@ -208,7 +208,7 @@ export function DeckScene({ mode, onFpsChange }) {
   return <div className="deck-scene" ref={hostRef} aria-hidden="true" />;
 }
 
-export function RadarCanvas({ combat }) {
+export function RadarCanvas({ combat, language = "en" }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -273,5 +273,5 @@ export function RadarCanvas({ combat }) {
     return () => { running = false; cancelAnimationFrame(raf); };
   }, [combat]);
 
-  return <canvas className="radar-canvas" ref={canvasRef} aria-label="Tactical radar simulation" />;
+  return <canvas className="radar-canvas" ref={canvasRef} aria-label={language === "zh" ? "战术雷达模拟" : "Tactical radar simulation"} />;
 }

@@ -150,9 +150,14 @@ import { courseNodes } from '../data/courseNodes.js';
     const verticalInset = 22;
     const availableWidth = Math.max(1, atlasViewport.clientWidth - horizontalInset);
     const availableHeight = Math.max(1, atlasViewport.clientHeight - verticalInset);
-    mapFitScale = Math.min(1, availableWidth / atlasBoard.offsetWidth, availableHeight / atlasBoard.offsetHeight);
-    mapScale = Math.max(0.16, Math.floor(mapFitScale * 1000) / 1000);
-    mapWasZoomed = false;
+    const naturalFitScale = Math.min(1, availableWidth / atlasBoard.offsetWidth, availableHeight / atlasBoard.offsetHeight);
+    // A full-board fit made the 76px cards 19–25px tall on phones. Preserve
+    // a 44px physical hit area and let the existing drag interaction pan the
+    // readable board instead of shrinking targets into thumbnails.
+    const minimumInteractiveScale = window.innerWidth < 720 ? (44 / 76) : 0.16;
+    mapFitScale = Math.max(minimumInteractiveScale, naturalFitScale);
+    mapScale = Math.floor(mapFitScale * 1000) / 1000;
+    mapWasZoomed = mapFitScale > naturalFitScale + 0.005;
     sizeAtlas();
     if (!keepFocus) {
       atlasViewport.scrollLeft = 0;

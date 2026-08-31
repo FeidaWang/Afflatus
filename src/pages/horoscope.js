@@ -594,7 +594,10 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       ascSign: ascDeg == null ? null : signOf(ascDeg),
       elements: state.mineChart ? state.mineChart.elements : null,
     });
-    const radar = renderRadar(dims.map((d) => ({ key: d.key, label: T(d.label.en, d.label.zh), value: d.value })));
+    const radar = renderRadar(
+      dims.map((d) => ({ key: d.key, label: T(d.label.en, d.label.zh), value: d.value })),
+      { language: state.lang },
+    );
     const rows = dims.map((d) => `<div class="l2-dim" data-dim="${d.key}"><div class="dh"><span class="dn">${T(d.label.en, d.label.zh)}</span><span class="dv">${d.value}</span></div><p>${T(d.text.en, d.text.zh)}</p></div>`).join('');
     return `<div class="l2-radar-wrap"><div class="l2-radar">${radar}</div><div class="l2-detail">${rows}</div></div>`;
   }
@@ -617,9 +620,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     }
     const termsHTML = terms.map((k) => `<div class="l3-term"><b>${T(ASPECT_T[k].en, ASPECT_T[k].zh)}</b> — ${T(ASPECT_T[k].dEn, ASPECT_T[k].dZh)}</div>`).join('')
       || `<div class="l3-term">${T('No major aspects within orb right now.', '当前无明显相位。')}</div>`;
-    $('l3Body').innerHTML = `<div class="l3-wheel-card">${renderWheel({ ascDeg: ascDeg == null ? 0 : ascDeg, planets: all })}<div class="l3-legend">${legend}</div></div>`
+    $('l3Body').innerHTML = `<div class="l3-wheel-card">${renderWheel({ ascDeg: ascDeg == null ? 0 : ascDeg, planets: all, language: state.lang })}<div class="l3-legend">${legend}</div></div>`
       + (ascDeg == null ? `<p class="bz-caveat">${T('Ascendant unknown (need birth hour + lat/lon above) — houses shown from 0° Aries.', '上升未知（需时辰+经纬度）——宫位按白羊 0° 起算。')}</p>` : '')
-      + `<div class="l3-grid-wrap">${renderAspectGrid(all)}</div>`
+      + `<div class="l3-grid-wrap">${renderAspectGrid(all, { language: state.lang })}</div>`
       + `<div class="l3-terms">${termsHTML}</div>`;
   }
 
@@ -1522,7 +1525,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
         <div class="pq-name">${T('Overall EQ-style score', '综合情商风格分')}</div>
         <p class="pq-desc">${T(`Higher than ~${eqPercentile(r.overall)}% of people on a self-report model — self-rated EQ runs generous, hence the shifted baseline.`,
           `按自评分布模型约高于 ${eqPercentile(r.overall)}% 的人——自评情商普遍偏高，基线已相应右移。`)}</p>
-        <div class="l2-radar">${renderRadar(r.dims.map((d) => ({ key: d.key, label: T(d.en, d.zh), value: d.value })))}</div>
+        <div class="l2-radar">${renderRadar(r.dims.map((d) => ({ key: d.key, label: T(d.en, d.zh), value: d.value })), { language: state.lang })}</div>
       </div>`,
     resultButtons: () => `<button class="btn btn--seal" type="button" data-quiz-share="eq">${T('Save result card ⤓', '保存结果卡 ⤓')}</button>`,
       });

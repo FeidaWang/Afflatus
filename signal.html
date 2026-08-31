@@ -21,8 +21,8 @@
     s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
     document.head.appendChild(s);
   }
-  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 3000});
-  else setTimeout(loadGtag, 2000);
+  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 8000});
+  else setTimeout(loadGtag, 6000);
 })();
 </script>
 <meta charset="utf-8">
@@ -286,7 +286,7 @@
 <div class="scpbg" aria-hidden="true"><canvas id="scpCanvas"></canvas><div class="wm"><b>CLASSIFIED</b></div></div>
 <div class="readProgress" aria-hidden="true"></div>
 
-<nav class="chapterRail" aria-label="Chapter navigation">
+<nav class="chapterRail" aria-label="Chapter navigation" data-aria-en="Chapter navigation" data-aria-zh="章节导航">
   <a href="#treasuryYieldBoard" data-chapter="chlive"><b>10/30</b><span data-en="Live Yields" data-zh="实时收益率">Live Yields</span></a>
   <a href="#ch00" data-chapter="ch00"><b>00</b><span data-en="Policy Story" data-zh="政策故事线">Policy Story</span></a>
   <a href="#ch01" data-chapter="ch01"><b>01</b><span data-en="Compass" data-zh="罗盘">Compass</span></a>
@@ -303,10 +303,19 @@
       </span>
       <span class="afflatus-brand__sr">Afflatus</span>
     </a>
-    <nav class="nav" aria-label="Primary" data-afflatus-nav>
+    <nav class="nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav>
       <button class="lang-toggle" type="button">中文</button>
     </nav>
   </header>
+
+  <nav class="mobileChapterIndex" aria-label="Chapter index" data-aria-en="Chapter index" data-aria-zh="章节索引">
+    <a href="#treasuryYieldBoard" data-en="Yields" data-zh="收益率">Yields</a>
+    <a href="#ch00" data-en="Policy" data-zh="政策">Policy</a>
+    <a href="#ch01" data-en="Compass" data-zh="罗盘">Compass</a>
+    <a href="#ch02" data-en="Matrix" data-zh="矩阵">Matrix</a>
+    <a href="#ch03" data-en="Incidents" data-zh="事件">Incidents</a>
+    <a href="#ch04" data-en="Industries" data-zh="产业">Industries</a>
+  </nav>
 
   <section class="hero">
     <div class="hzbar hz" aria-hidden="true"></div>
@@ -321,16 +330,16 @@
         <span data-en="OBJECT CLASS:&nbsp;<b><button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;keter&quot;>KETER (ECONOMIC)</button></b>" data-zh="项目等级：&nbsp;<b><button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;keter&quot;>Keter（经济）</button></b>" data-i18n-html>OBJECT CLASS:&nbsp;<b><button type="button" class="term" data-term="keter">KETER (ECONOMIC)</button></b></span>
         <span data-en="ASSIGNED MTF:&nbsp;ALPHA-1 / EPSILON-11" data-zh="指派机动特遣队：Alpha-1 / Epsilon-11">ASSIGNED MTF:&nbsp;ALPHA-1 / EPSILON-11</span>
       </div>
-      <h1 data-i18n-html data-en="ONE HAND CONTAINS THE <span class='x'>██████</span> MARKET" data-zh="一只手收容着 <span class='x'>██████</span> 市场">ONE HAND CONTAINS THE <span class="x">██████</span> MARKET</h1>
+      <h1 data-i18n-html data-en="ONE HAND CONTAINS THE <span class='x'>██████</span> <span class='hero-market'>MARKET</span>" data-zh="一只手收容着 <span class='x'>██████</span> <span class='hero-market'>市场</span>">ONE HAND CONTAINS THE <span class="x">██████</span> <span class="hero-market">MARKET</span></h1>
       <p class="lead" data-en="The latest FOMC decision keeps the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes." data-zh="最近一次FOMC决议把联邦基金目标区间维持在3.50%–3.75%。纽约联储8月14日至9月14日的计划仅含170亿美元机构证券本金再投资购买，不含新增储备管理购买：这是维持充足准备金的政策执行，不是QE、紧急救市，也不是压制长端收益率。与影响FOMC十二票相比，白宫对产业政策的直接杠杆更清晰，重点覆盖AI出口、本土芯片、能源与电网、战略材料、国防供应链和住房供给。">The latest FOMC decision keeps the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes.</p>
-      <div class="heroActions" aria-label="Live market shortcuts">
+      <div class="heroActions" aria-label="Live market shortcuts" data-aria-en="Live market shortcuts" data-aria-zh="实时市场快捷入口">
         <a class="heroYieldCta" href="#treasuryYieldBoard" data-en="VIEW LIVE 10Y / 30Y YIELDS ↓" data-zh="查看10年／30年期实时收益率 ↓">VIEW LIVE 10Y / 30Y YIELDS ↓</a>
         <span data-en="30-SECOND REFRESH · DELAY POSSIBLE" data-zh="每30秒刷新 · 行情可能延迟">30-SECOND REFRESH · DELAY POSSIBLE</span>
       </div>
-      <div class="heroRead" id="heroRead" aria-label="Current hawk-dove reading">
+      <div class="heroRead" id="heroRead" aria-label="Current hawk-dove reading" data-aria-en="Current hawk-dove reading" data-aria-zh="当前鹰鸽倾向">
         <b id="heroHdLabel">—</b><span id="heroHdScore">(—)</span>
       </div>
-      <div class="heroCountdown" aria-label="Next containment test">
+      <div class="heroCountdown" aria-label="Next containment test" data-aria-en="Next containment test" data-aria-zh="下一次通胀遏制检验">
         <span class="tag" data-en="CONTAINMENT REVIEW" data-zh="收容复核">CONTAINMENT REVIEW</span>
         <span id="eventTypeLabel" data-en="NEXT CONTAINMENT TEST" data-zh="下一次收容测试">NEXT CONTAINMENT TEST</span>
         <span class="bias" data-en="TAPE BIAS · QUALITY BARBELL" data-zh="盘面倾向 · 质量杠铃">TAPE BIAS · QUALITY BARBELL</span>
@@ -359,7 +368,7 @@
         <h3 id="operationBriefHeading" data-en="Current intervention posture" data-zh="近期市场干预态势">Current intervention posture</h3>
         <p class="operationLead" data-en="The Desk is still supporting ample reserves, but the newest schedule steps down active buying: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap." data-zh="纽约联储公开市场操作台仍在维持充足准备金，但最新计划已下调主动买入：8月14日至9月14日仅安排170亿美元再投资购买，没有新增储备管理购买。这属于流动性执行，并非危机救助，也不是对长期国债收益率设上限。">The Desk is still supporting ample reserves, but the newest schedule steps down active buying: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap.</p>
 
-        <div class="operationMetrics" aria-label="Current Federal Reserve operation metrics">
+        <div class="operationMetrics" aria-label="Current Federal Reserve operation metrics" data-aria-en="Current Federal Reserve operation metrics" data-aria-zh="当前美联储操作指标">
           <div><span data-en="CURRENT REINVESTMENT" data-zh="本期再投资">CURRENT REINVESTMENT</span><b>$17.0B</b><small>14 AUG → 14 SEP</small></div>
           <div><span data-en="NEW RMP THIS WINDOW" data-zh="本期新增储备购买">NEW RMP THIS WINDOW</span><b>$0</b><small data-en="PRIOR WINDOW · $10B" data-zh="上期 · 100亿美元">PRIOR WINDOW · $10B</small></div>
           <div><span data-en="IORB / STANDING REPO" data-zh="准备金利率／常备回购">IORB / STANDING REPO</span><b>3.65 / 3.75%</b><small data-en="IMPLEMENTATION CORRIDOR" data-zh="政策执行走廊">IMPLEMENTATION CORRIDOR</small></div>
@@ -399,14 +408,14 @@
         </div>
 
         <div class="yieldCards">
-          <section class="yieldCard flat" data-yield-tenor="10Y" aria-label="10-year U.S. Treasury yield">
+          <section class="yieldCard flat" data-yield-tenor="10Y" aria-label="10-year U.S. Treasury yield" data-aria-en="10-year U.S. Treasury yield" data-aria-zh="10 年期美国国债收益率">
             <div class="yieldCardTop"><span data-en="10-YEAR" data-zh="10年期">10-YEAR</span><b>US10Y</b></div>
             <div class="yieldValue" data-yield-value>—</div>
             <div class="yieldChange" data-yield-change>—</div>
             <div class="yieldIntraday"><span data-en="OPEN" data-zh="开盘">OPEN</span><b data-yield-open>—</b><span data-en="DAY RANGE" data-zh="日内区间">DAY RANGE</span><b data-yield-range>—</b></div>
             <div class="yieldRange" data-yield-position style="--position:50%"><i></i></div>
           </section>
-          <section class="yieldCard flat" data-yield-tenor="30Y" aria-label="30-year U.S. Treasury yield">
+          <section class="yieldCard flat" data-yield-tenor="30Y" aria-label="30-year U.S. Treasury yield" data-aria-en="30-year U.S. Treasury yield" data-aria-zh="30 年期美国国债收益率">
             <div class="yieldCardTop"><span data-en="30-YEAR" data-zh="30年期">30-YEAR</span><b>US30Y</b></div>
             <div class="yieldValue" data-yield-value>—</div>
             <div class="yieldChange" data-yield-change>—</div>
@@ -471,7 +480,7 @@
         <p class="policyMapHint" data-en="Active nodes follow the chapter beside the map." data-zh="高亮节点随右侧章节变化。">Active nodes follow the chapter beside the map.</p>
       </div>
 
-      <ol class="policySteps" aria-label="Policy transmission story">
+      <ol class="policySteps" aria-label="Policy transmission story" data-aria-en="Policy transmission story" data-aria-zh="政策传导路径">
         <li class="policyStep" data-policy-step="0" tabindex="0">
           <span>00</span>
           <h3 data-en="Current state: restrictive hold, ample-reserve implementation" data-zh="当前态势：限制性维持，充足准备金执行">Current state: restrictive hold, ample-reserve implementation</h3>
@@ -501,7 +510,7 @@
     </div>
   </section>
 
-  <section class="chapter compass" id="ch01" aria-label="Hawk-dove compass">
+  <section class="chapter compass" id="ch01" aria-label="Hawk-dove compass" data-aria-en="Hawk-dove compass" data-aria-zh="鹰鸽罗盘">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 01 · O5 BEHAVIORAL MODEL" data-zh="第一章 · O5 行为模型">CHAPTER 01 · O5 BEHAVIORAL MODEL</div>
       <h2 data-en="Hawk-Dove Compass" data-zh="鹰鸽罗盘">Hawk-Dove Compass</h2>
@@ -516,7 +525,7 @@
     <p class="method" id="hdMethod"></p>
   </section>
 
-  <section class="chapter pillars" id="ch02" aria-label="Five-pillar signal matrix">
+  <section class="chapter pillars" id="ch02" aria-label="Five-pillar signal matrix" data-aria-en="Five-pillar signal matrix" data-aria-zh="五支柱信号矩阵">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 02 · CURRENT STATE" data-zh="第二章 · 当前态势">CHAPTER 02 · CURRENT STATE</div>
       <h2 data-en="Five-Pillar Signal Matrix" data-zh="五维信号矩阵">Five-Pillar Signal Matrix</h2>
@@ -571,18 +580,18 @@
   </div>
   </section>
 
-  <section class="chapter incidents" id="ch03" aria-label="Incident log">
+  <section class="chapter incidents" id="ch03" aria-label="Incident log" data-aria-en="Incident log" data-aria-zh="事件记录">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 03 · CONTAINMENT BREACHES" data-zh="第三章 · 收容失效记录">CHAPTER 03 · CONTAINMENT BREACHES</div>
       <h2 data-en="Incident Archive" data-zh="事件档案">Incident Archive</h2>
       <p class="dek" data-en="Verified event windows: pre-release baseline → print → rates → equities → industry transmission · not advice" data-zh="可核实事件窗口：发布前基线 → 实际数据 → 利率重定价 → 股市反应 → 行业传导 · 非投资建议">Verified event windows: pre-release baseline → print → rates → equities → industry transmission · not advice</p>
     </div>
     <p class="incidentMethod reveal" data-en="TRACKING RULE · Closing or early-session windows are labelled. When oil, earnings or policy shocks overlap, the archive records the confounder instead of forcing a single-cause story." data-zh="追踪规则 · 明确标注收盘或盘中观察窗口；若油价、财报或政策冲击同时发生，档案会记录交叉因素，而不强行归因于单一事件。">TRACKING RULE · Closing or early-session windows are labelled. When oil, earnings or policy shocks overlap, the archive records the confounder instead of forcing a single-cause story.</p>
-    <div class="filterChips" id="incidentFilters" role="group" aria-label="Filter incidents"></div>
+    <div class="filterChips" id="incidentFilters" role="group" aria-label="Filter incidents" data-aria-en="Filter incidents" data-aria-zh="筛选事件"></div>
     <div class="incidentList" id="incidentList"></div>
   </section>
 
-  <section class="chapter watch" id="ch04" aria-label="Policy-aligned industry watch">
+  <section class="chapter watch" id="ch04" aria-label="Policy-aligned industry watch" data-aria-en="Policy-aligned industry watch" data-aria-zh="政策相关行业观察">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 04 · O5 PROJECTION" data-zh="第四章 · O5 推演">CHAPTER 04 · O5 PROJECTION</div>
       <h2 data-en="Policy-Aligned Industry Watch" data-zh="政策同向行业监控">Policy-Aligned Industry Watch</h2>
@@ -673,7 +682,15 @@
     if (s <= 0 && s > -5400) { clk.textContent = 'IN SESSION'; clk.classList.add('amber'); return; } s = Math.max(0, s);
     var d = Math.floor(s / 86400); s -= d * 86400; var h = Math.floor(s / 3600); s -= h * 3600; var mi = Math.floor(s / 60); var se = s - mi * 60;
     clk.textContent = d + 'd ' + pad(h) + ':' + pad(mi) + ':' + pad(se);
-    if (se !== last) { last = se; clk.classList.remove('tick'); void clk.offsetWidth; clk.classList.add('tick'); }
+    if (se !== last) {
+      last = se;
+      if (typeof clk.animate === 'function' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        clk.animate(
+          [{ transform:'scale(1)' }, { transform:'scale(1.03)', color:'#8a1a14' }, { transform:'scale(1)' }],
+          { duration:300, easing:'ease' }
+        );
+      }
+    }
   }
   tick(); setInterval(tick, 1000);
   // no separate lang-change listener needed: setBilingual() writes real data-en/data-zh

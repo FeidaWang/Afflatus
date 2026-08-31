@@ -19,6 +19,7 @@ const canvas = document.querySelector('[data-city-canvas]');
 const timeline = document.querySelector('[data-city-timeline]');
 const dayOutput = document.querySelector('[data-city-day]');
 const seedOutput = document.querySelector('[data-city-seed]');
+const loadButton = document.querySelector('[data-city-load]');
 const playButton = document.querySelector('[data-city-play]');
 const tourButton = document.querySelector('[data-city-tour]');
 const viewButton = document.querySelector('[data-city-view]');
@@ -375,6 +376,12 @@ function setReadyStatus() {
 }
 
 async function mountCity(seed, day = 0, profileKey = profileFromLocation()) {
+  setStatus('Preparing deterministic city geometry…', '正在准备确定性城市几何…');
+  stage?.setAttribute('aria-busy', 'true');
+  setRendererAvailable(false);
+  // Let the loading state and static poster paint before the optional WebGL
+  // scene performs its synchronous setup work.
+  await new Promise((resolve) => window.requestAnimationFrame(resolve));
   plan = generateSandboxCity(seed, profileKey);
   assetVisibility = createCityAssetVisibility();
   assetInventory = null;
@@ -382,10 +389,6 @@ async function mountCity(seed, day = 0, profileKey = profileFromLocation()) {
   if (seedOutput) seedOutput.textContent = seed;
   updateProfileUi(plan.profile.key);
   updateDay(day);
-  setStatus('Preparing deterministic city geometry…', '正在准备确定性城市几何…');
-  stage?.setAttribute('aria-busy', 'true');
-  setRendererAvailable(false);
-
   try {
     sceneModule ??= await import('../scene/citySandbox.js');
     assetInventory = sceneModule.createCitySceneAssetInventory(plan);
@@ -669,11 +672,38 @@ if (deviceAuditMode) {
 
 setDataPanelOpen(false, { announce: false });
 setLayerPanelOpen(false, { announce: false });
-stage?.setAttribute('aria-busy', 'true');
-setStatus('Preparing deterministic city geometry…', '正在准备确定性城市几何…');
-const mountInitialCity = () => mountCity(seedFromLocation(), 0, profileFromLocation());
-if ('requestIdleCallback' in window) {
-  window.requestIdleCallback(mountInitialCity, { timeout: 600 });
+let initialCityPromise = null;
+let initialCityTimer = 0;
+const mountInitialCity = () => {
+  if (!initialCityPromise) {
+    if (initialCityTimer) window.clearTimeout(initialCityTimer);
+    if (loadButton) loadButton.hidden = true;
+    initialCityPromise = mountCity(seedFromLocation(), 0, profileFromLocation());
+  }
+  return initialCityPromise;
+};
+loadButton?.addEventListener('click', () => { void mountInitialCity(); });
+
+// The poster and page copy are complete without WebGL. Constrained devices
+// upgrade only from the explicit control; desktop starts after first paint.
+const constrainedDevice = window.matchMedia?.('(max-width: 760px), (pointer: coarse)')?.matches
+  || (Number.isFinite(navigator.deviceMemory) && navigator.deviceMemory < 4)
+  || (Number.isFinite(navigator.hardwareConcurrency) && navigator.hardwareConcurrency < 4);
+if (constrainedDevice) {
+  if (loadButton) loadButton.hidden = false;
+  stage?.setAttribute('aria-busy', 'false');
+  setStatus(
+    'Static city ready. Choose Load 3D to start the optional scene.',
+    '静态城市已就绪。选择「加载 3D」即可启动可选场景。',
+  );
 } else {
-  window.setTimeout(mountInitialCity, 0);
+  stage?.setAttribute('aria-busy', 'true');
+  setStatus('Preparing deterministic city geometry…', '正在准备确定性城市几何…');
+  initialCityTimer = window.setTimeout(() => {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(mountInitialCity, { timeout: 900 });
+    } else {
+      void mountInitialCity();
+    }
+  }, 240);
 }

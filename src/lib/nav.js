@@ -19,6 +19,8 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
   // NAV_ROUTES is derived from the manifest and already sorted by nav.order.
   const SITE = NAV_ROUTES;
   const LABS_LABEL = { en: 'Labs', zh: '实验室' };
+  const MOBILE_MENU_LABEL = { en: 'Menu', zh: '菜单' };
+  const mobileNavControllers = [];
   // Exposed read-only for consumers that need route metadata without the DOM
   // rendering behaviour below.
   window.AfflatusSite = SITE.slice();
@@ -157,18 +159,86 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
         }
       });
       navEl.insertBefore(frag, navEl.firstChild);
+      installMobileDisclosure(navEl, renderedLocale);
     });
 
     // close any open Labs menu on an outside click, Escape, scroll or resize
     // (scroll/resize would leave a stale-positioned fixed panel behind)
-    document.addEventListener('click', () => closeLabsMenus());
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLabsMenus(); });
-    window.addEventListener('scroll', () => closeLabsMenus(), { passive: true });
-    window.addEventListener('resize', () => closeLabsMenus());
+    document.addEventListener('click', () => {
+      closeLabsMenus();
+      closeMobileNavs();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      closeLabsMenus();
+      closeMobileNavs({ restoreFocus:true });
+    });
+    window.addEventListener('scroll', () => {
+      closeLabsMenus();
+      closeMobileNavs();
+    }, { passive: true });
+    window.addEventListener('resize', () => {
+      closeLabsMenus();
+      closeMobileNavs();
+    });
 
     // translate freshly-rendered links to the current language
     try { if (window.AfflatusI18N) window.AfflatusI18N.apply(); } catch (e) {}
     applyLocale(renderedLocale);
+  }
+
+  function installMobileDisclosure(navEl, renderedLocale) {
+    if (document.body.matches('.showcase-page, .home-page')) return;
+    const header = navEl.closest('.site-header--follow');
+    if (!header || header.querySelector(':scope > .afflatus-mobile-nav-toggle')) return;
+    const menuId = navEl.id || `afflatus-primary-nav-${mobileNavControllers.length + 1}`;
+    navEl.id = menuId;
+    navEl.classList.add('afflatus-mobile-nav-panel');
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'afflatus-mobile-nav-toggle';
+    toggle.setAttribute('aria-controls', menuId);
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', renderedLocale === 'zh' ? '打开主导航' : 'Open primary navigation');
+    toggle.textContent = MOBILE_MENU_LABEL[renderedLocale === 'zh' ? 'zh' : 'en'];
+    header.appendChild(toggle);
+    document.documentElement.classList.add('afflatus-nav-enhanced');
+
+    const close = ({ restoreFocus = false } = {}) => {
+      if (!header.classList.contains('mobile-nav-open')) return;
+      header.classList.remove('mobile-nav-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', renderedLocale === 'zh' ? '打开主导航' : 'Open primary navigation');
+      if (restoreFocus) toggle.focus();
+    };
+    const open = () => {
+      closeMobileNavs({ except:header });
+      const rect = header.getBoundingClientRect();
+      navEl.style.setProperty('--afflatus-mobile-nav-top', `${Math.round(rect.bottom + 8)}px`);
+      header.classList.add('mobile-nav-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', renderedLocale === 'zh' ? '关闭主导航' : 'Close primary navigation');
+    };
+    mobileNavControllers.push({ header, close });
+
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (header.classList.contains('mobile-nav-open')) close();
+      else open();
+    });
+    navEl.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const link = event.target.closest('a, button');
+      if (!link || link.classList.contains('nav-labs__trigger')) return;
+      close();
+    });
+  }
+
+  function closeMobileNavs({ except = null, restoreFocus = false } = {}) {
+    mobileNavControllers.forEach((controller) => {
+      if (controller.header !== except) controller.close({ restoreFocus });
+    });
   }
 
   // Anchors the portaled panel under its trigger using the trigger's own

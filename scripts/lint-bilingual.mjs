@@ -93,6 +93,16 @@ function htmlPairIssues(node, file) {
       { path: `${path} aria-label`, maxChars: UI_LABEL_LIMITS.ariaLabel, markup: false },
     ));
   }
+  if ('aria-label' in attrs
+      && !('data-aria-en' in attrs)
+      && !('data-aria-zh' in attrs)
+      && !('data-i18n-static-aria' in attrs)) {
+    issues.push({
+      code: 'MISSING_ARIA_LOCALE_PAIR',
+      path: `${path} aria-label`,
+      message: 'static aria-label requires data-aria-en/data-aria-zh or an explicit data-i18n-static-aria exemption',
+    });
+  }
   return issues;
 }
 

@@ -105,13 +105,26 @@ describe('validateNovelsIndex / validateNovelBook (U21 §2.5 split)', () => {
   });
 
   it('accepts a well-formed book file', () => {
-    const book = { id: 'a', chapters: [{ id: 'c1', title: 'Ch1', blocks: [{ type: 'p', text: 'hi' }] }] };
+    const text = '正文'.repeat(350);
+    const book = { id: 'a', chapters: [{ id: 'c1', title: 'Ch1', wordCount: 700, blocks: [{ type: 'p', text }] }] };
     expect(validateNovelBook(book)).toEqual({ ok: true, errors: [] });
   });
 
   it('accepts a numeric chapter.id (the real data shape — chapter ids are ints like 1, 2, 3)', () => {
-    const book = { id: 'a', chapters: [{ id: 1, title: 'Ch1', blocks: [{ type: 'p', text: 'hi' }] }] };
+    const text = '正文'.repeat(350);
+    const book = { id: 'a', chapters: [{ id: 1, title: 'Ch1', wordCount: 700, blocks: [{ type: 'p', text }] }] };
     expect(validateNovelBook(book)).toEqual({ ok: true, errors: [] });
+  });
+
+  it('rejects placeholder chapters and declared counts that do not match the visible body', () => {
+    const book = {
+      id: 'a',
+      chapters: [{ id: 1, title: 'Ch1', wordCount: 10_600, blocks: [{ type: 'p', text: '一句占位文案' }] }],
+    };
+    const { ok, errors } = validateNovelBook(book);
+    expect(ok).toBe(false);
+    expect(errors.some((error) => error.includes('visible body contains'))).toBe(true);
+    expect(errors.some((error) => error.includes('minimum is 700'))).toBe(true);
   });
 
   it('accepts the real split public/novels/*.json files as-is', () => {

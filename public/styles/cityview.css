@@ -912,7 +912,7 @@ button {
 
 .city-actions {
   display: grid;
-  grid-template-columns: minmax(230px, 2.7fr) repeat(7, minmax(0, 1fr));
+  grid-template-columns: minmax(230px, 2.7fr) repeat(8, minmax(0, 1fr));
   gap: 7px;
   margin-top: 12px;
   padding-top: 12px;
@@ -967,6 +967,10 @@ button {
   font-weight: 680;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.city-action[hidden] {
+  display: none;
 }
 
 .city-action--primary {
@@ -1311,6 +1315,44 @@ button {
   .city-stage {
     height: 620px;
     min-height: 620px;
+  }
+}
+
+@media (max-width: 620px) {
+  html.afflatus-nav-enhanced .cityview-page .city-header.site-header--follow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    min-block-size: 64px;
+  }
+
+  html.afflatus-nav-enhanced .cityview-page .city-header.site-header--follow > .city-nav {
+    position: fixed;
+    z-index: 99000;
+    inset-block-start: var(--afflatus-mobile-nav-top, 86px);
+    inset-inline-end: 10px;
+    inline-size: min(340px, calc(100vw - 20px));
+    display: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  html.afflatus-nav-enhanced .cityview-page .city-header.site-header--follow.mobile-nav-open > .city-nav {
+    display: grid;
+  }
+
+  html.afflatus-nav-enhanced .cityview-page .city-header.site-header--follow > .city-nav > a,
+  html.afflatus-nav-enhanced .cityview-page .city-header.site-header--follow > .city-nav .nav-labs__trigger,
+  html.afflatus-nav-enhanced .cityview-page .city-header.site-header--follow > .city-nav > .lang-toggle {
+    min-inline-size: 0;
+    inline-size: 100%;
+    min-block-size: 44px;
+    padding-inline: 10px;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+
+  .city-intro {
+    top: 92px;
   }
 }
 

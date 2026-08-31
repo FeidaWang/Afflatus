@@ -82,7 +82,7 @@ const TASKS = [
     line: 'archive index /log', cls: '', run: () => fetchJson('novels-index').then((d) => {
       const ch = d.novels.reduce((s, n) => s + (n.chapterCount || 0), 0);
       $('bLog').textContent = `${d.novels.length} BOOKS`; $('bLog').classList.remove('off');
-      $('dLog').innerHTML = `${ch} chapters on file<br>长夜清减 · 万界种春 · 御西宫词`;
+      $('dLog').innerHTML = `${ch} published chapters<br>长夜请柬 · 万界种春 · 玉熙宫词`;
       return `${d.novels.length} books`;
     })
   },

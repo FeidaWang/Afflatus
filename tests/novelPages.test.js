@@ -87,4 +87,9 @@ describe('pre-rendered novel documents', () => {
     expect(chapterLinks).toHaveLength(entry.chapters.length);
     expect(entry.chapters).toHaveLength(15);
   });
+
+  it('preserves work-level URLs and metadata until a chapter is explicitly entered', () => {
+    expect(source).toContain("var preserveBookLanding = mode === 'none' && currentRoute && currentRoute.chapterId == null;");
+    expect(source).toContain("route && route.chapterId != null ? 'replace' : 'none'");
+  });
 });

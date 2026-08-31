@@ -348,18 +348,23 @@ export function initAlphardForge() {
   }
 
   section.classList.add('is-live'); size();
-  let running = false, raf = 0, loopLastT = 0, renderSurface = null;
+  let running = false, raf = 0, loopLastT = 0, lastRenderedT = 0, renderSurface = null;
   function loop(t) {
-    const frameMs = loopLastT ? t - loopLastT : 0;
-    loopLastT = t;
-    render(t);
-    renderSurface?.reportFrame(frameMs);
+    const targetFrameMs = renderPolicy.qualityTier === 'high' ? 1000 / 60 : 1000 / 30;
+    if (!lastRenderedT || t - lastRenderedT >= targetFrameMs - 1) {
+      const frameMs = loopLastT ? t - loopLastT : 0;
+      loopLastT = t;
+      lastRenderedT = t;
+      render(t);
+      renderSurface?.reportFrame(frameMs);
+    }
     if (running) raf = requestAnimationFrame(loop);
   }
   function start() {
     if (!running && contextReady) {
       running = true;
       loopLastT = 0;
+      lastRenderedT = 0;
       raf = requestAnimationFrame(loop);
     }
   }
