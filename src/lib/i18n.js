@@ -17,7 +17,8 @@ import {
    ============================================================ */
 (() => {
   'use strict';
-  let lang = getLocale('en');
+  const routeLocale = document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  let lang = getLocale(routeLocale);
 
   function currentSectionHash() {
     try {

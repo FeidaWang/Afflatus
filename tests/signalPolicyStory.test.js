@@ -45,6 +45,13 @@ describe('signal policy reaction story', () => {
   it('renders the historical-data warning with dark text on the paper surface', () => {
     expect(css).toMatch(/\.signal-stale-notice\{[^}]*color:#533b00;[^}]*font:700/s);
     expect(css).toMatch(/\.signal-stale-notice\{[^}]*text-shadow:none/s);
+    expect(html).toContain('id="marketDeskKicker"');
+    expect(html).toContain('id="operationStatusLabel"');
+    expect(html).toContain('ARCHIVE DESK · DATA THROUGH');
+    expect(html).toContain('ARCHIVED SNAPSHOT · RESERVE MANAGEMENT');
+    expect(html).toContain("classList.toggle('signal-data-fresh', !stale)");
+    expect(css).toMatch(/\.signal-data-stale \.operationStatus \.pulse\{animation:none;box-shadow:none\}/);
+    expect(css).toMatch(/\.signal-data-stale \.heroCountdown \.live::before\{animation:none\}/);
   });
 
   it('keeps the localized language link dark on its amber control', () => {

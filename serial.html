@@ -253,7 +253,6 @@
 
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
-<link rel="stylesheet" href="/styles/afflatus-navigation.css">
 <script type="module" src="/src/entry/dataBridge.js"></script>
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
@@ -1088,7 +1087,27 @@
 
   /* ---------- timed page turning / waterfall auto-scroll ---------- */
   var AUTO_PAGE_INTERVAL = 6500;
-  var AUTO_SCROLL_PX = 0.65;
+  var AUTO_SCROLL_PX_PER_MS = 0.65 / 16;
+  var autoTimerKind = '';
+  var autoScrollLastFrame = 0;
+  function stepAutoScroll(timestamp) {
+    if (!state.autoTimer || autoTimerKind !== 'frame' || !state.waterfall) return;
+    var elapsed = autoScrollLastFrame ? Math.min(64, timestamp - autoScrollLastFrame) : 0;
+    autoScrollLastFrame = timestamp;
+    if (elapsed > 0) window.scrollBy(0, AUTO_SCROLL_PX_PER_MS * elapsed);
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
+      if (!wfDone) {
+        wfLoadNext();
+      } else {
+        stopAuto();
+        toast('已经是最新一章啦，明天再来吧～');
+        return;
+      }
+    }
+    if (state.autoTimer && autoTimerKind === 'frame') {
+      state.autoTimer = requestAnimationFrame(stepAutoScroll);
+    }
+  }
   function startAuto() {
     if (narrationPlayer) narrationPlayer.pause();
     stopAuto();
@@ -1097,25 +1116,22 @@
     btn.classList.add('active');
     btn.setAttribute('aria-label', state.waterfall ? T('Stop automatic scrolling', '停止自动滚动') : T('Stop automatic page turning', '停止自动翻页'));
     if (state.waterfall) {
-      state.autoTimer = setInterval(function () {
-        window.scrollBy(0, AUTO_SCROLL_PX);
-        if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
-          if (!wfDone) {
-            wfLoadNext();
-          } else {
-            stopAuto();
-            toast('已经是最新一章啦，明天再来吧～');
-          }
-        }
-      }, 16);
+      autoTimerKind = 'frame';
+      autoScrollLastFrame = 0;
+      state.autoTimer = requestAnimationFrame(stepAutoScroll);
     } else {
+      autoTimerKind = 'interval';
       state.autoTimer = setInterval(function () {
         if (!pagedBook || !pagedBook.turn(1)) stopAuto();
       }, AUTO_PAGE_INTERVAL);
     }
   }
   function stopAuto() {
-    clearInterval(state.autoTimer); state.autoTimer = 0;
+    if (autoTimerKind === 'frame') cancelAnimationFrame(state.autoTimer);
+    if (autoTimerKind === 'interval') clearInterval(state.autoTimer);
+    state.autoTimer = 0;
+    autoTimerKind = '';
+    autoScrollLastFrame = 0;
     var btn = document.getElementById('autoToggle');
     btn.innerHTML = '▶<span class="lbl"> ' + (state.waterfall ? '自动滚动' : '自动翻页') + '</span>';
     btn.classList.remove('active');

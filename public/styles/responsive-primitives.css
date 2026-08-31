@@ -35,7 +35,7 @@ body {
   max-inline-size: 100%;
   min-block-size: var(--viewport-small-height);
   margin-inline: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 :where(button, summary, select, textarea, input, [role="button"], [role="tab"], [role="menuitem"]) {

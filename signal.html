@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<script>try{var s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}document.documentElement.lang=v==='zh'?'zh-CN':'en';if(v==='zh'){var d=document.documentElement,u=function(){d.style.removeProperty('visibility')};d.style.visibility='hidden';var t=setTimeout(u,1500),p=function(r,h){var q=[],m='[data-en],[data-en-ph],[data-aria-en],.lang-toggle';if(r.nodeType===1&&r.matches(m))q.push(r);if(r.querySelectorAll)q.push.apply(q,r.querySelectorAll(m));q.forEach(function(e){var z;if(e.hasAttribute('data-en')&&(z=e.getAttribute('data-zh'))!==null){if(e.hasAttribute('data-i18n-html')){if(h&&e.innerHTML!==z)e.innerHTML=z}else if(e.textContent!==z)e.textContent=z}if(e.hasAttribute('data-en-ph'))e.setAttribute('placeholder',e.getAttribute('data-zh-ph')||e.getAttribute('data-en-ph'));if(e.hasAttribute('data-aria-en'))e.setAttribute('aria-label',e.getAttribute('data-aria-zh')||e.getAttribute('data-aria-en'));if(e.classList.contains('lang-toggle')){e.textContent='EN';e.setAttribute('aria-label','Switch to English');if(!e.matches('a[href]'))e.setAttribute('aria-pressed','true')}})},o=new MutationObserver(function(rs){rs.forEach(function(r){r.addedNodes.forEach(function(x){p(x,false)})})});o.observe(d,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',function(){try{p(document,true)}finally{clearTimeout(t);o.disconnect();u()}},{once:true})}}catch(e){}</script>
+<script>try{var f=document.documentElement.lang.toLowerCase().indexOf('zh')===0?'zh':'en',s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}if(!v)v=f;document.documentElement.lang=v==='zh'?'zh-CN':'en';if(v==='zh'){var d=document.documentElement,u=function(){d.style.removeProperty('visibility')};d.style.visibility='hidden';var t=setTimeout(u,1500),p=function(r,h){var q=[],m='[data-en],[data-en-ph],[data-aria-en],.lang-toggle';if(r.nodeType===1&&r.matches(m))q.push(r);if(r.querySelectorAll)q.push.apply(q,r.querySelectorAll(m));q.forEach(function(e){var z;if(e.hasAttribute('data-en')&&(z=e.getAttribute('data-zh'))!==null){if(e.hasAttribute('data-i18n-html')){if(h&&e.innerHTML!==z)e.innerHTML=z}else if(e.textContent!==z)e.textContent=z}if(e.hasAttribute('data-en-ph'))e.setAttribute('placeholder',e.getAttribute('data-zh-ph')||e.getAttribute('data-en-ph'));if(e.hasAttribute('data-aria-en'))e.setAttribute('aria-label',e.getAttribute('data-aria-zh')||e.getAttribute('data-aria-en'));if(e.classList.contains('lang-toggle')){e.textContent='EN';e.setAttribute('aria-label','Switch to English');if(!e.matches('a[href]'))e.setAttribute('aria-pressed','true')}})},o=new MutationObserver(function(rs){rs.forEach(function(r){r.addedNodes.forEach(function(x){p(x,false)})})});o.observe(d,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',function(){try{p(document,true)}finally{clearTimeout(t);o.disconnect();u()}},{once:true})}}catch(e){}</script>
 <script type="module" src="/src/entry/performance.js"></script>
 <script src="/lib/data-bridge.js"></script>
 <!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
@@ -343,7 +343,7 @@
         <span class="tag" data-en="CONTAINMENT REVIEW" data-zh="收容复核">CONTAINMENT REVIEW</span>
         <span id="eventTypeLabel" data-en="NEXT CONTAINMENT TEST" data-zh="下一次收容测试">NEXT CONTAINMENT TEST</span>
         <span class="bias" data-en="TAPE BIAS · QUALITY BARBELL" data-zh="盘面倾向 · 质量杠铃">TAPE BIAS · QUALITY BARBELL</span>
-        <span class="live" id="signalLiveState" data-en="MONITORING · LIVE" data-zh="监控中 · 实时">MONITORING · LIVE</span>
+        <span class="live" id="signalLiveState" data-en="CHECKING DATA STATUS" data-zh="正在核验数据状态">CHECKING DATA STATUS</span>
         <span class="clock" id="fomcClock" aria-live="off">--d --:--:--</span>
         <span class="when"><span id="eventWhenLabel" data-en="REVIEW" data-zh="复核">REVIEW</span> <b id="fomcDate">—</b> · <span id="eventTime">2:00 PM ET</span> — <span id="eventDirectiveLabel" data-en="DIRECTIVE" data-zh="指令">DIRECTIVE</span> <span class="bc" id="eventDirective" data-en="HOLD 3.50–3.75% · WATCH THE DOTS" data-zh="维持 3.50–3.75% · 紧盯点阵图">HOLD 3.50–3.75% · WATCH THE DOTS</span></span>
       </div>
@@ -354,7 +354,7 @@
   <div class="chapters">
   <section class="chapter marketDesk" id="chlive" aria-labelledby="marketDeskHeading">
     <div class="chapterHead reveal">
-      <div class="kicker" data-en="LIVE DESK · UPDATED 21 AUG 2026" data-zh="实时看板 · 更新于2026年8月21日">LIVE DESK · UPDATED 21 AUG 2026</div>
+      <div class="kicker" id="marketDeskKicker" data-en="ARCHIVE DESK · DATA THROUGH 21 AUG 2026" data-zh="历史档案 · 数据截至2026年8月21日">ARCHIVE DESK · DATA THROUGH 21 AUG 2026</div>
       <h2 id="marketDeskHeading" data-en="Fed operations &amp; the long end" data-zh="美联储操作与长端利率">Fed operations &amp; the long end</h2>
       <p class="dek" data-en="Separate routine reserve management from emergency intervention, then watch the 10s–30s curve transmit the signal." data-zh="先区分常规储备管理与紧急市场干预，再通过10年—30年曲线观察信号如何传导。">Separate routine reserve management from emergency intervention, then watch the 10s–30s curve transmit the signal.</p>
     </div>
@@ -363,7 +363,7 @@
       <article class="operationBrief reveal" aria-labelledby="operationBriefHeading">
         <div class="operationStatus">
           <span class="pulse" aria-hidden="true"></span>
-          <span data-en="ACTIVE · RESERVE MANAGEMENT" data-zh="进行中 · 储备管理">ACTIVE · RESERVE MANAGEMENT</span>
+          <span id="operationStatusLabel" data-en="ARCHIVED SNAPSHOT · RESERVE MANAGEMENT" data-zh="历史快照 · 储备管理">ARCHIVED SNAPSHOT · RESERVE MANAGEMENT</span>
         </div>
         <h3 id="operationBriefHeading" data-en="Current intervention posture" data-zh="近期市场干预态势">Current intervention posture</h3>
         <p class="operationLead" data-en="The Desk is still supporting ample reserves, but the newest schedule steps down active buying: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap." data-zh="纽约联储公开市场操作台仍在维持充足准备金，但最新计划已下调主动买入：8月14日至9月14日仅安排170亿美元再投资购买，没有新增储备管理购买。这属于流动性执行，并非危机救助，也不是对长期国债收益率设上限。">The Desk is still supporting ample reserves, but the newest schedule steps down active buying: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap.</p>
@@ -448,7 +448,7 @@
     <div class="policyStory">
       <div class="policyMap" role="img" aria-label="Macro data flows through Fed policy into rates and assets" data-aria-en="Macro data flows through Fed policy into rates and assets" data-aria-zh="宏观数据经过美联储政策，传导至利率与资产">
         <div class="policyMapTop">
-          <span id="reactionMapLabel" data-en="LIVE REACTION MAP" data-zh="实时反应图">LIVE REACTION MAP</span>
+          <span id="reactionMapLabel" data-en="POLICY REACTION MAP" data-zh="政策反应图">POLICY REACTION MAP</span>
           <b data-en="BASE CASE · HOLD / DATA-DEPENDENT" data-zh="基准情景 · 维持利率／取决于数据">BASE CASE · HOLD / DATA-DEPENDENT</b>
         </div>
         <div class="policyColumns">
@@ -817,6 +817,7 @@
       pillarSummaryEl = document.getElementById('pillarSummaryText'),
       heroHdLabel = document.getElementById('heroHdLabel'), heroHdScore = document.getElementById('heroHdScore'),
       signalLiveState = document.getElementById('signalLiveState'), signalStaleNotice = document.getElementById('signalStaleNotice'),
+      marketDeskKicker = document.getElementById('marketDeskKicker'), operationStatusLabel = document.getElementById('operationStatusLabel'),
       reactionMapLabel = document.getElementById('reactionMapLabel'), assetWatchDek = document.getElementById('assetWatchDek');
   if (!pillarGrid && !hdNeedle) return;
   var DATA = null;
@@ -848,7 +849,14 @@
       hdAsOf.textContent = badge.text;
       var stale = badge.tier === 'red' || badge.tier === 'seed';
       document.body.classList.toggle('signal-data-stale', stale);
+      document.body.classList.toggle('signal-data-fresh', !stale);
       if (signalLiveState) signalLiveState.textContent = stale ? T('ARCHIVE MODE', '历史模式') : T('MONITORING · LIVE', '监控中 · 实时');
+      if (marketDeskKicker) marketDeskKicker.textContent = stale
+        ? T(`ARCHIVE DESK · DATA THROUGH ${DATA.updated || 'UNKNOWN'}`, `历史档案 · 数据截至 ${DATA.updated || '日期不明'}`)
+        : T(`LIVE DESK · UPDATED ${DATA.updated || 'UNKNOWN'}`, `实时看板 · 更新于 ${DATA.updated || '日期不明'}`);
+      if (operationStatusLabel) operationStatusLabel.textContent = stale
+        ? T('ARCHIVED SNAPSHOT · RESERVE MANAGEMENT', '历史快照 · 储备管理')
+        : T('ACTIVE · RESERVE MANAGEMENT', '进行中 · 储备管理');
       if (reactionMapLabel) reactionMapLabel.textContent = stale ? T('HISTORICAL REACTION MODEL', '历史反应模型') : T('LIVE REACTION MAP', '实时反应图');
       if (assetWatchDek) assetWatchDek.textContent = stale
         ? T('Official instruments · historical policy snapshot · not company endorsement or investment advice', '正式政策工具 · 历史政策快照 · 不代表公司背书，也不构成投资建议')

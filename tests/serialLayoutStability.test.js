@@ -14,6 +14,7 @@ describe('serial layout stability', () => {
     expect(html).toContain('rel="preload"');
     expect(html).not.toContain('fonts.googleapis.com');
     expect(html).not.toContain('fonts.gstatic.com');
+    expect(html).not.toContain('/styles/afflatus-navigation.css');
   });
 
   it('reserves asynchronous bookshelf, HUD, hero and chapter regions', () => {
@@ -36,6 +37,8 @@ describe('serial layout stability', () => {
     expect(brandCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
     expect(responsiveCss).not.toMatch(/html\s*\{[^}]*overflow-x\s*:/s);
     expect(responsiveCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
+    expect(responsiveCss).toMatch(/body\s*\{[^}]*overflow-wrap:\s*break-word;/s);
+    expect(responsiveCss).not.toMatch(/body\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
     expect(brandCss).toMatch(/\.site-header--follow\s*\{[^}]*position:\s*-webkit-sticky;[^}]*position:\s*sticky;/s);
     expect(css).toMatch(/\.novels-page \.site-header--follow\{position:relative;inset-block-start:auto\}/);
     expect(css).toMatch(/\.toolbar\{position:sticky;top:var\(--safe-t\);/);
@@ -64,6 +67,9 @@ describe('serial layout stability', () => {
     expect(html).toContain('id="layoutToggle"');
     expect(html).toContain('id="readerWaterfall"');
     expect(html).toContain('id="wfSentinel"');
+    expect(html).toContain('requestAnimationFrame(stepAutoScroll)');
+    expect(html).toContain('cancelAnimationFrame(state.autoTimer)');
+    expect(html).not.toContain('}, 16);');
     expect(html).not.toContain('id="pageSoundToggle"');
     expect(css).toMatch(/\.book-stage\{[^}]*width:min\(100%,560px\)[^}]*aspect-ratio:140\/203/);
     expect(css).toContain('.reader .wf-chapter .body{min-height:0}');
