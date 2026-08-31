@@ -31,6 +31,18 @@ describe('pre-rendered novel documents', () => {
     ]));
   });
 
+  it('redirects unsupported English book and chapter routes without a catch-all splat', () => {
+    expect(vercel.redirects).toEqual(expect.arrayContaining([
+      { source: '/en/novels/:book', destination: '/zh/novels/:book', permanent: true },
+      { source: '/en/novels/:book/', destination: '/zh/novels/:book/', permanent: true },
+      { source: '/en/novels/:book/:chapter', destination: '/zh/novels/:book/:chapter', permanent: true },
+      { source: '/en/novels/:book/:chapter/', destination: '/zh/novels/:book/:chapter/', permanent: true },
+    ]));
+    expect(vercel.redirects).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ source: '/en/novels/:path*' }),
+    ]));
+  });
+
   it('keeps reading music paused until the player button is explicitly pressed', () => {
     expect(source).toContain(
       "btnPlay.addEventListener('click', function () { audio.paused ? play() : pause(); });",

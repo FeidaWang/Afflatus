@@ -63,8 +63,23 @@
       "permanent": true
     },
     {
-      "source": "/en/novels/:path*",
-      "destination": "/zh/novels/:path*",
+      "source": "/en/novels/:book",
+      "destination": "/zh/novels/:book",
+      "permanent": true
+    },
+    {
+      "source": "/en/novels/:book/",
+      "destination": "/zh/novels/:book/",
+      "permanent": true
+    },
+    {
+      "source": "/en/novels/:book/:chapter",
+      "destination": "/zh/novels/:book/:chapter",
+      "permanent": true
+    },
+    {
+      "source": "/en/novels/:book/:chapter/",
+      "destination": "/zh/novels/:book/:chapter/",
       "permanent": true
     }
   ],
