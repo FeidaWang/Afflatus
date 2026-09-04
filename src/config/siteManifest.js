@@ -206,26 +206,6 @@ export const ROUTE_SEO = Object.freeze({
     },
     structuredData: { kind: 'course' },
   },
-  cityview: {
-    social: {
-      background: 'assets/og-backgrounds/cityview.jpg',
-      eyebrow: { en: 'URBAN OBSERVATORY', zh: '城市推演台' },
-      title: { en: 'Cityview', zh: '城市推演台' },
-      subtitle: {
-        en: 'Verified real-city packages, with procedural generation isolated in Sandbox.',
-        zh: '真实城市须经验证，程序化生成仅存在于沙盒。',
-      },
-      alt: {
-        en: 'Cityview reality-gated urban observatory and synthetic Sandbox',
-        zh: 'Cityview 真实数据门控城市观测台与合成沙盒',
-      },
-      images: {
-        en: routeOgImage('cityview', 'en'),
-        zh: routeOgImage('cityview', 'zh'),
-      },
-    },
-    structuredData: { kind: 'cityview' },
-  },
 });
 
 export const SITE_MANIFEST = Object.freeze([
@@ -570,32 +550,6 @@ export const SITE_MANIFEST = Object.freeze([
     locales: {
       en: { title: 'MSI Prediction Archive', description: 'Archived MSI prediction experience.' },
       zh: { title: 'MSI 竞猜存档', description: '已归档的 MSI 竞猜体验。' },
-    },
-  },
-  {
-    id: 'cityview',
-    file: 'cityview.html',
-    path: '/cityview.html',
-    status: 'active',
-    build: true,
-    sitemap: true,
-    defaultLocale: 'en',
-    nav: { order: 90, group: 'labs', en: 'Cityview', zh: '城市' },
-    themeColor: '#e7e8e5',
-    schema: ['WebApplication'],
-    seo: ROUTE_SEO.cityview,
-    capabilities: ['webgl', 'construction-timeline', 'simulated-data'],
-    metadata: {
-      title: 'Cityview — Reality-Gated Urban Observatory · Afflatus',
-      description: 'Explore verified real-city packages only after source, licence and release approval. Procedural construction remains explicitly isolated in Sandbox.',
-      canonical: 'https://feida.au/cityview.html',
-      ogTitle: 'Cityview — Reality-Gated Urban Observatory',
-      ogDescription: 'Real Shanghai, Melbourne and Hong Kong packages fail closed until approved; procedural construction remains in Sandbox.',
-      ogImage: ROUTE_SEO.cityview.social.images.en,
-    },
-    locales: {
-      en: { title: 'Cityview — Reality-Gated Urban Observatory', description: 'Verified real-city packages for Shanghai, Melbourne and Hong Kong, with procedural construction isolated in Sandbox.' },
-      zh: { title: '城市推演台 — 真实数据门控城市观测台', description: '上海、墨尔本与香港仅加载已验证真实城市包，程序化建造仅限沙盒。' },
     },
   },
   {

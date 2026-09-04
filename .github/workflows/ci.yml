@@ -77,8 +77,8 @@ jobs:
         run: npx playwright install chromium webkit
 
       - name: Browser, keyboard, axe and visual gates
-        # One browser worker per runner keeps the WebGL-heavy Cityview tests
-        # isolated while the three device projects still execute in parallel.
+        # One browser worker per runner keeps heavy visual tests isolated while
+        # the three device projects still execute in parallel.
         run: npm run test:e2e -- --project=${{ matrix.project }} --workers=1
 
       - name: Upload browser reports

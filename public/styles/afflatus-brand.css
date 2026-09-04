@@ -730,53 +730,6 @@
   50% { transform: translateX(4px); }
 }
 
-/* ── CITYVIEW / cadastral growth instrument ────────────────────── */
-
-.cityview-page { --afflatus-header-bg: #e7e8e5; }
-
-[data-brand-persona="cityview"] {
-  --afflatus-brand-ink: #262c29;
-  --afflatus-brand-accent: #6f8e76;
-  --afflatus-brand-accent-2: #c96f40;
-  --afflatus-brand-font: ui-monospace, "SFMono-Regular", "IBM Plex Mono", monospace;
-}
-
-[data-brand-persona="cityview"] .afflatus-brand__stage {
-  font-size: 19px;
-  font-weight: 720;
-  letter-spacing: -.045em;
-}
-
-:root[data-afflatus-brand-state="compact"] [data-brand-persona="cityview"] .afflatus-brand__stage::before {
-  inset: 4px auto auto 0;
-  inline-size: 52px;
-  block-size: 25px;
-  border: 1px solid rgba(111, 142, 118, .5);
-  background:
-    linear-gradient(rgba(111, 142, 118, .2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(111, 142, 118, .2) 1px, transparent 1px);
-  background-size: 6px 6px;
-}
-
-:root[data-afflatus-brand-state="compact"] [data-brand-persona="cityview"] .afflatus-brand__signal {
-  inset: 9px auto auto 48px;
-  inline-size: 26px;
-  block-size: 16px;
-  border-block-end: 2px solid var(--afflatus-brand-accent);
-  background: linear-gradient(to top, var(--afflatus-brand-accent) 0 48%, transparent 48%) 1px 100% / 5px 10px no-repeat,
-    linear-gradient(to top, var(--afflatus-brand-accent) 0 76%, transparent 76%) 9px 100% / 5px 14px no-repeat,
-    linear-gradient(to top, var(--afflatus-brand-accent-2) 0 62%, transparent 62%) 17px 100% / 5px 12px no-repeat;
-}
-
-:root[data-afflatus-brand-state="compact"] [data-brand-persona="cityview"] .afflatus-brand__core {
-  inset: 12px auto auto 78px;
-  inline-size: 9px;
-  block-size: 9px;
-  border: 1px solid var(--afflatus-brand-accent-2);
-  border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(201, 111, 64, .12);
-}
-
 /* ── BOOT / bridge operating intelligence ──────────────────────── */
 
 .boot-page { --afflatus-header-bg: #04060a; }
@@ -923,10 +876,6 @@
   animation: afflatus-serial-resolve 900ms var(--afflatus-brand-ease) both;
 }
 
-:root[data-afflatus-brand-state="compact"] [data-brand-persona="cityview"] .afflatus-brand__stage {
-  animation: afflatus-cityview-resolve 760ms var(--afflatus-brand-ease) both;
-}
-
 :root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__stage::before {
   inset: 3px auto auto 0;
   inline-size: 50px;
@@ -1052,12 +1001,6 @@
 @keyframes afflatus-serial-resolve {
   0% { transform: rotateX(18deg) scale(.78); filter: blur(1px); }
   64% { transform: rotateX(-3deg) scale(1.03); filter: blur(0); }
-  100% { transform: none; }
-}
-
-@keyframes afflatus-cityview-resolve {
-  0% { transform: translateY(5px) scaleY(.72); filter: blur(1px); }
-  64% { transform: translateY(-1px) scaleY(1.04); filter: blur(0); }
   100% { transform: none; }
 }
 

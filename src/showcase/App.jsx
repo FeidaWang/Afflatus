@@ -29,7 +29,6 @@ const navGroups = [
     items: [
       [{ en: "QF-01 Quant Foundry", zh: "QF-01 量化铸造舱" }, "/arena.html"],
       [{ en: "US–China AI model war", zh: "中美 AI 模型战争" }, "/sectors.html"],
-      [{ en: "Melbourne Cityview", zh: "墨尔本城市推演" }, "/cityview.html"],
       [{ en: "Local-first astrology", zh: "本地优先星盘" }, "/horoscope.html"],
     ],
   },

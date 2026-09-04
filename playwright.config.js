@@ -24,7 +24,6 @@ const galaxyS26Ultra = {
 
 export default defineConfig({
   testDir: './e2e',
-  testIgnore: ['**/city-analysis-candidate.spec.js'],
   outputDir: 'test-results',
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
