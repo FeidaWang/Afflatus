@@ -144,7 +144,7 @@ function stageLandmarkAdmission(manifest, reality) {
   manifest.precinct.boundsWgs84 = structuredClone(contract.precinct.boundsWgs84);
   manifest.canonicalViews = contractCanonicalViews(contract, manifest.precinct.anchorWgs84);
   const admission = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     packageId: manifest.packageId,
     cityId: manifest.cityId,
     truthClass: 'rights-cleared-city-landmark-set',
@@ -184,6 +184,21 @@ function stageLandmarkAdmission(manifest, reality) {
         byteLength: 1,
       }))
     )),
+    silhouetteMasks: contract.landmarkAssetContract.nightGoldenCameraIds.flatMap((cameraId) => (
+      contract.landmarkAssetContract.nightGoldenPlatforms.map((platform) => ({
+        cameraId,
+        platform,
+        uri: `/assets/city/packages/${manifest.packageId}/goldens/${cameraId}-${platform}-silhouette-mask.png`,
+        sha256: '0'.repeat(64),
+        byteLength: 1,
+      }))
+    )),
+    performanceTraces: contract.landmarkAssetContract.nightGoldenPlatforms.map((platform) => ({
+      platform,
+      uri: `/assets/city/packages/${manifest.packageId}/performance/${platform}-30m.json`,
+      sha256: '0'.repeat(64),
+      byteLength: 1,
+    })),
   };
   const artifacts = {};
   for (const asset of admission.assets) {
@@ -197,12 +212,41 @@ function stageLandmarkAdmission(manifest, reality) {
       artifacts[lod.uri] = { bytes };
     }
   }
-  for (const golden of admission.nightGoldens) {
+  for (const golden of [...admission.nightGoldens, ...admission.silhouetteMasks]) {
     const bytes = Buffer.alloc(32);
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(bytes);
     golden.sha256 = createHash('sha256').update(bytes).digest('hex');
     golden.byteLength = bytes.length;
     artifacts[golden.uri] = { bytes };
+  }
+  for (const trace of admission.performanceTraces) {
+    const report = {
+      schemaVersion: 1,
+      packageId: admission.packageId,
+      platform: trace.platform,
+      durationMs: 30 * 60 * 1_000,
+      canonicalCameraIds: contract.landmarkAssetContract.nightGoldenCameraIds,
+      environmentStates: ['day', 'twilight', 'night'],
+      longTaskCount: 0,
+      longTaskTotalMs: 0,
+      samples: contract.landmarkAssetContract.nightGoldenCameraIds.flatMap((cameraId) => (
+        ['day', 'twilight', 'night'].map((environment) => ({
+          cameraId,
+          environment,
+          renderer: 'webgl',
+          budgetWithinLimits: true,
+          drawCalls: 20,
+          triangles: 80_000,
+          p95Ms: trace.platform === 'desktop' ? 16 : 30,
+          activeGpuBytes: 64 * 1024 * 1024,
+          horizontalOverflowPx: 0,
+        }))
+      )),
+    };
+    const bytes = Buffer.from(JSON.stringify(report));
+    trace.sha256 = createHash('sha256').update(bytes).digest('hex');
+    trace.byteLength = bytes.length;
+    artifacts[trace.uri] = { bytes };
   }
   const admissionBytes = Buffer.from(JSON.stringify(admission));
   manifest.landmarkAssets = {

@@ -13,7 +13,7 @@ const shanghai = reality.cities.find(({ id }) => id === 'shanghai');
 
 function fixture() {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     packageId: 'shanghai-v1',
     cityId: 'shanghai',
     truthClass: 'rights-cleared-city-landmark-set',
@@ -54,6 +54,21 @@ function fixture() {
         byteLength: 128,
       }))
     )),
+    silhouetteMasks: shanghai.landmarkAssetContract.nightGoldenCameraIds.flatMap((cameraId) => (
+      shanghai.landmarkAssetContract.nightGoldenPlatforms.map((platform) => ({
+        cameraId,
+        platform,
+        uri: `/assets/city/packages/shanghai-v1/goldens/${cameraId}-${platform}-silhouette-mask.png`,
+        sha256: 'e'.repeat(64),
+        byteLength: 128,
+      }))
+    )),
+    performanceTraces: shanghai.landmarkAssetContract.nightGoldenPlatforms.map((platform) => ({
+      platform,
+      uri: `/assets/city/packages/shanghai-v1/performance/${platform}-30m.json`,
+      sha256: 'd'.repeat(64),
+      byteLength: 128,
+    })),
   };
 }
 
@@ -83,12 +98,41 @@ function stage(admission) {
       assetsByUri[lod.uri] = { bytes };
     }
   }
-  for (const golden of admission.nightGoldens) {
+  for (const golden of [...admission.nightGoldens, ...admission.silhouetteMasks]) {
     const bytes = Buffer.alloc(32);
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(bytes);
     golden.sha256 = createHash('sha256').update(bytes).digest('hex');
     golden.byteLength = bytes.length;
     assetsByUri[golden.uri] = { bytes };
+  }
+  for (const trace of admission.performanceTraces) {
+    const report = {
+      schemaVersion: 1,
+      packageId: admission.packageId,
+      platform: trace.platform,
+      durationMs: 30 * 60 * 1_000,
+      canonicalCameraIds: shanghai.landmarkAssetContract.nightGoldenCameraIds,
+      environmentStates: ['day', 'twilight', 'night'],
+      longTaskCount: 0,
+      longTaskTotalMs: 0,
+      samples: shanghai.landmarkAssetContract.nightGoldenCameraIds.flatMap((cameraId) => (
+        ['day', 'twilight', 'night'].map((environment) => ({
+          cameraId,
+          environment,
+          renderer: 'webgl',
+          budgetWithinLimits: true,
+          drawCalls: 20,
+          triangles: 80_000,
+          p95Ms: trace.platform === 'desktop' ? 16 : 30,
+          activeGpuBytes: 64 * 1024 * 1024,
+          horizontalOverflowPx: 0,
+        }))
+      )),
+    };
+    const bytes = Buffer.from(JSON.stringify(report));
+    trace.sha256 = createHash('sha256').update(bytes).digest('hex');
+    trace.byteLength = bytes.length;
+    assetsByUri[trace.uri] = { bytes };
   }
   return assetsByUri;
 }
@@ -124,6 +168,16 @@ describe('City landmark asset admission', () => {
     ]));
   });
 
+  it('requires ordered silhouette masks and 30-minute desktop/mobile performance traces', () => {
+    const changed = fixture();
+    changed.silhouetteMasks.pop();
+    changed.performanceTraces.reverse();
+    expect(validateCityLandmarkAssetAdmission(changed, shanghai).errors).toEqual(expect.arrayContaining([
+      'silhouetteMasks: must cover every canonical camera on desktop and mobile in order',
+      'performanceTraces: must contain ordered desktop and mobile traces',
+    ]));
+  });
+
   it('verifies checksums and required material groups inside the staged GLBs', () => {
     const admission = fixture();
     const assetsByUri = stage(admission);
@@ -145,5 +199,27 @@ describe('City landmark asset admission', () => {
       'oriental-pearl.lod0: missing declared light material landmark-light-oriental-pearl',
       'oriental-pearl.lod0: missing declared light material aviation-light-oriental-pearl',
     ]));
+  });
+
+  it('rejects altered silhouette masks and performance samples outside release budgets', () => {
+    const admission = fixture();
+    const assetsByUri = stage(admission);
+    const mask = admission.silhouetteMasks[0];
+    assetsByUri[mask.uri].bytes = Buffer.from(assetsByUri[mask.uri].bytes);
+    assetsByUri[mask.uri].bytes[mask.byteLength - 1] ^= 1;
+
+    const trace = admission.performanceTraces[0];
+    const report = JSON.parse(assetsByUri[trace.uri].bytes.toString('utf8'));
+    report.durationMs -= 1;
+    report.samples[0].activeGpuBytes = 221 * 1024 * 1024;
+    assetsByUri[trace.uri].bytes = Buffer.from(JSON.stringify(report));
+
+    expect(validateCityLandmarkAssetReferences(admission, shanghai, assetsByUri).errors)
+      .toEqual(expect.arrayContaining([
+        'bund-east-skyline.desktop.silhouetteMask: SHA-256 does not match admission manifest',
+        'desktop.performanceTrace: SHA-256 does not match admission manifest',
+        'desktop.performanceTrace.durationMs: must cover at least 30 minutes',
+        'desktop.performanceTrace.samples[0].activeGpuBytes: exceeds desktop release budget',
+      ]));
   });
 });

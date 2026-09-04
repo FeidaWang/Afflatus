@@ -4,7 +4,17 @@ const SHA256_RE = /^[a-f0-9]{64}$/;
 const ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const LOCAL_GLB_RE = /^\/assets\/city\/packages\/[a-z0-9-/]+\.glb$/;
 const LOCAL_GOLDEN_RE = /^\/assets\/city\/packages\/[a-z0-9-/]+\.(?:png|webp)$/;
+const LOCAL_TRACE_RE = /^\/assets\/city\/packages\/[a-z0-9-/]+\.json$/;
 const REQUIRED_RIGHTS = Object.freeze(['mesh', 'textures', 'signage']);
+const PERFORMANCE_TRACE_MINIMUM_DURATION_MS = 30 * 60 * 1_000;
+const MAX_ACTIVE_GPU_BYTES = Object.freeze({
+  desktop: 220 * 1024 * 1024,
+  mobile: 140 * 1024 * 1024,
+});
+const RENDER_BUDGETS = Object.freeze({
+  desktop: Object.freeze({ drawCalls: 120, triangles: 350_000, p95Ms: 18 }),
+  mobile: Object.freeze({ drawCalls: 70, triangles: 120_000, p95Ms: 34 }),
+});
 
 const object = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 const text = (value) => typeof value === 'string' && value.trim().length > 0;
@@ -12,6 +22,33 @@ const validSha = (value) => typeof value === 'string' && SHA256_RE.test(value);
 
 function sameArray(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function cameraPlatformPairs(cityContract) {
+  const pairs = [];
+  for (const cameraId of cityContract.landmarkAssetContract?.nightGoldenCameraIds || []) {
+    for (const platform of cityContract.landmarkAssetContract?.nightGoldenPlatforms || []) {
+      pairs.push(`${cameraId}:${platform}`);
+    }
+  }
+  return pairs;
+}
+
+function validateArtifactReference(artifact, {
+  field,
+  packageId,
+  uriPattern,
+  kind,
+}, errors) {
+  if (!validSha(artifact?.sha256)) errors.push(`${field}.sha256: must be SHA-256`);
+  if (!uriPattern.test(String(artifact?.uri || ''))) {
+    errors.push(`${field}.uri: must be a local ${kind}`);
+  } else if (!artifact.uri.startsWith(`/assets/city/packages/${packageId}/`)) {
+    errors.push(`${field}.uri: must remain inside package ${packageId}`);
+  }
+  if (!Number.isSafeInteger(artifact?.byteLength) || artifact.byteLength <= 0) {
+    errors.push(`${field}.byteLength: must be positive`);
+  }
 }
 
 function validateAnchor(anchor, bounds, field, errors) {
@@ -121,7 +158,7 @@ export function validateCityLandmarkAssetAdmission(data, cityContract) {
   const errors = [];
   if (!object(data)) return { ok: false, errors: ['top-level: must be an object'] };
   if (!object(cityContract)) return { ok: false, errors: ['cityContract: must be an object'] };
-  if (data.schemaVersion !== 1) errors.push('schemaVersion: must be 1');
+  if (data.schemaVersion !== 2) errors.push('schemaVersion: must be 2');
   if (!ID_RE.test(String(data.packageId || ''))) errors.push('packageId: invalid id');
   if (data.cityId !== cityContract.id) errors.push(`cityId: must be ${cityContract.id}`);
   if (data.truthClass !== 'rights-cleared-city-landmark-set') {
@@ -137,12 +174,7 @@ export function validateCityLandmarkAssetAdmission(data, cityContract) {
     ));
   }
 
-  const expectedGoldens = [];
-  for (const cameraId of cityContract.landmarkAssetContract?.nightGoldenCameraIds || []) {
-    for (const platform of cityContract.landmarkAssetContract?.nightGoldenPlatforms || []) {
-      expectedGoldens.push(`${cameraId}:${platform}`);
-    }
-  }
+  const expectedGoldens = cameraPlatformPairs(cityContract);
   if (!Array.isArray(data.nightGoldens)) {
     errors.push('nightGoldens: must be an array');
   } else {
@@ -151,15 +183,46 @@ export function validateCityLandmarkAssetAdmission(data, cityContract) {
       errors.push('nightGoldens: must cover every canonical camera on desktop and mobile in order');
     }
     for (const [index, golden] of data.nightGoldens.entries()) {
-      if (!validSha(golden?.sha256)) errors.push(`nightGoldens[${index}].sha256: must be SHA-256`);
-      if (!LOCAL_GOLDEN_RE.test(String(golden?.uri || ''))) {
-        errors.push(`nightGoldens[${index}].uri: must be a local PNG or WebP`);
-      } else if (!golden.uri.startsWith(`/assets/city/packages/${data.packageId}/`)) {
-        errors.push(`nightGoldens[${index}].uri: must remain inside package ${data.packageId}`);
-      }
-      if (!Number.isSafeInteger(golden?.byteLength) || golden.byteLength <= 0) {
-        errors.push(`nightGoldens[${index}].byteLength: must be positive`);
-      }
+      validateArtifactReference(golden, {
+        field: `nightGoldens[${index}]`,
+        packageId: data.packageId,
+        uriPattern: LOCAL_GOLDEN_RE,
+        kind: 'PNG or WebP',
+      }, errors);
+    }
+  }
+
+  if (!Array.isArray(data.silhouetteMasks)) {
+    errors.push('silhouetteMasks: must be an array');
+  } else {
+    const actualMasks = data.silhouetteMasks.map((mask) => `${mask?.cameraId}:${mask?.platform}`);
+    if (!sameArray(actualMasks, expectedGoldens)) {
+      errors.push('silhouetteMasks: must cover every canonical camera on desktop and mobile in order');
+    }
+    for (const [index, mask] of data.silhouetteMasks.entries()) {
+      validateArtifactReference(mask, {
+        field: `silhouetteMasks[${index}]`,
+        packageId: data.packageId,
+        uriPattern: LOCAL_GOLDEN_RE,
+        kind: 'PNG or WebP',
+      }, errors);
+    }
+  }
+
+  const expectedPlatforms = cityContract.landmarkAssetContract?.nightGoldenPlatforms || [];
+  if (!Array.isArray(data.performanceTraces)) {
+    errors.push('performanceTraces: must be an array');
+  } else {
+    if (!sameArray(data.performanceTraces.map((trace) => trace?.platform), expectedPlatforms)) {
+      errors.push('performanceTraces: must contain ordered desktop and mobile traces');
+    }
+    for (const [index, trace] of data.performanceTraces.entries()) {
+      validateArtifactReference(trace, {
+        field: `performanceTraces[${index}]`,
+        packageId: data.packageId,
+        uriPattern: LOCAL_TRACE_RE,
+        kind: 'JSON trace',
+      }, errors);
     }
   }
   return { ok: errors.length === 0, errors };
@@ -196,6 +259,96 @@ function hasEmission(material) {
     || material?.extras?.wholeEnvelopeEmission === true
     || (Array.isArray(material?.emissiveFactor)
       && material.emissiveFactor.some((value) => Number.isFinite(value) && value > 0));
+}
+
+function imageFormat(bytes) {
+  const png = bytes.byteLength >= 8
+    && bytes[0] === 0x89 && bytes[1] === 0x50
+    && bytes[2] === 0x4e && bytes[3] === 0x47;
+  const webp = bytes.byteLength >= 12
+    && new TextDecoder().decode(bytes.subarray(0, 4)) === 'RIFF'
+    && new TextDecoder().decode(bytes.subarray(8, 12)) === 'WEBP';
+  return png || webp;
+}
+
+function validateReferencedBytes(reference, assetsByUri, field, errors) {
+  const entry = assetsByUri[reference.uri];
+  if (!object(entry) || !(entry.bytes instanceof Uint8Array)) {
+    errors.push(`${field}: staged bytes are required`);
+    return null;
+  }
+  const actualSha = createHash('sha256').update(entry.bytes).digest('hex');
+  if (actualSha !== reference.sha256) errors.push(`${field}: SHA-256 does not match admission manifest`);
+  if (entry.bytes.byteLength !== reference.byteLength) {
+    errors.push(`${field}: byte length does not match admission manifest`);
+  }
+  return entry.bytes;
+}
+
+function validatePerformanceTrace(bytes, reference, data, cityContract, field, errors) {
+  let trace;
+  try {
+    trace = JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    errors.push(`${field}: bytes are not valid JSON`);
+    return;
+  }
+  if (!object(trace) || trace.schemaVersion !== 1) errors.push(`${field}.schemaVersion: must be 1`);
+  if (trace?.packageId !== data.packageId) errors.push(`${field}.packageId: must match admission package`);
+  if (trace?.platform !== reference.platform) errors.push(`${field}.platform: must match trace reference`);
+  if (!Number.isFinite(trace?.durationMs) || trace.durationMs < PERFORMANCE_TRACE_MINIMUM_DURATION_MS) {
+    errors.push(`${field}.durationMs: must cover at least 30 minutes`);
+  }
+  const cameraIds = cityContract.landmarkAssetContract?.nightGoldenCameraIds || [];
+  if (!sameArray(trace?.canonicalCameraIds, cameraIds)) {
+    errors.push(`${field}.canonicalCameraIds: must cover every canonical camera in order`);
+  }
+  const environmentStates = ['day', 'twilight', 'night'];
+  if (!sameArray(trace?.environmentStates, environmentStates)) {
+    errors.push(`${field}.environmentStates: must be day, twilight, night`);
+  }
+  if (!Number.isSafeInteger(trace?.longTaskCount) || trace.longTaskCount < 0) {
+    errors.push(`${field}.longTaskCount: must be a non-negative integer`);
+  }
+  if (!Number.isFinite(trace?.longTaskTotalMs) || trace.longTaskTotalMs < 0) {
+    errors.push(`${field}.longTaskTotalMs: must be non-negative`);
+  }
+  if (!Array.isArray(trace?.samples) || trace.samples.length === 0) {
+    errors.push(`${field}.samples: non-empty measured samples are required`);
+    return;
+  }
+  const expectedPairs = cameraIds.flatMap((cameraId) => (
+    environmentStates.map((environment) => `${cameraId}:${environment}`)
+  ));
+  const actualPairs = new Set(trace.samples.map((sample) => `${sample?.cameraId}:${sample?.environment}`));
+  for (const pair of expectedPairs) {
+    if (!actualPairs.has(pair)) errors.push(`${field}.samples: missing ${pair}`);
+  }
+  const budget = RENDER_BUDGETS[reference.platform];
+  if (!budget) {
+    errors.push(`${field}.platform: unsupported release platform`);
+    return;
+  }
+  for (const [index, sample] of trace.samples.entries()) {
+    const sampleField = `${field}.samples[${index}]`;
+    if (!cameraIds.includes(sample?.cameraId)) errors.push(`${sampleField}.cameraId: unknown camera`);
+    if (!environmentStates.includes(sample?.environment)) errors.push(`${sampleField}.environment: invalid state`);
+    if (sample?.renderer !== 'webgl') errors.push(`${sampleField}.renderer: must remain webgl`);
+    if (sample?.budgetWithinLimits !== true) errors.push(`${sampleField}.budgetWithinLimits: must be true`);
+    for (const metric of ['drawCalls', 'triangles', 'p95Ms']) {
+      if (!Number.isFinite(sample?.[metric]) || sample[metric] < 0 || sample[metric] > budget[metric]) {
+        errors.push(`${sampleField}.${metric}: exceeds ${reference.platform} release budget`);
+      }
+    }
+    if (!Number.isFinite(sample?.activeGpuBytes) || sample.activeGpuBytes < 0
+      || sample.activeGpuBytes > MAX_ACTIVE_GPU_BYTES[reference.platform]) {
+      errors.push(`${sampleField}.activeGpuBytes: exceeds ${reference.platform} release budget`);
+    }
+    if (!Number.isFinite(sample?.horizontalOverflowPx) || sample.horizontalOverflowPx < 0
+      || sample.horizontalOverflowPx > 2) {
+      errors.push(`${sampleField}.horizontalOverflowPx: must be between 0 and 2`);
+    }
+  }
 }
 
 export function validateCityLandmarkAssetReferences(data, cityContract, assetsByUri) {
@@ -257,23 +410,18 @@ export function validateCityLandmarkAssetReferences(data, cityContract, assetsBy
   }
   for (const golden of data.nightGoldens) {
     const field = `${golden.cameraId}.${golden.platform}.nightGolden`;
-    const entry = assetsByUri[golden.uri];
-    if (!object(entry) || !(entry.bytes instanceof Uint8Array)) {
-      errors.push(`${field}: staged image bytes are required`);
-      continue;
-    }
-    const actualSha = createHash('sha256').update(entry.bytes).digest('hex');
-    if (actualSha !== golden.sha256) errors.push(`${field}: SHA-256 does not match admission manifest`);
-    if (entry.bytes.byteLength !== golden.byteLength) {
-      errors.push(`${field}: byte length does not match admission manifest`);
-    }
-    const png = entry.bytes.byteLength >= 8
-      && entry.bytes[0] === 0x89 && entry.bytes[1] === 0x50
-      && entry.bytes[2] === 0x4e && entry.bytes[3] === 0x47;
-    const webp = entry.bytes.byteLength >= 12
-      && new TextDecoder().decode(entry.bytes.subarray(0, 4)) === 'RIFF'
-      && new TextDecoder().decode(entry.bytes.subarray(8, 12)) === 'WEBP';
-    if (!png && !webp) errors.push(`${field}: bytes are not PNG or WebP`);
+    const bytes = validateReferencedBytes(golden, assetsByUri, field, errors);
+    if (bytes && !imageFormat(bytes)) errors.push(`${field}: bytes are not PNG or WebP`);
+  }
+  for (const mask of data.silhouetteMasks) {
+    const field = `${mask.cameraId}.${mask.platform}.silhouetteMask`;
+    const bytes = validateReferencedBytes(mask, assetsByUri, field, errors);
+    if (bytes && !imageFormat(bytes)) errors.push(`${field}: bytes are not PNG or WebP`);
+  }
+  for (const trace of data.performanceTraces) {
+    const field = `${trace.platform}.performanceTrace`;
+    const bytes = validateReferencedBytes(trace, assetsByUri, field, errors);
+    if (bytes) validatePerformanceTrace(bytes, trace, data, cityContract, field, errors);
   }
   return { ok: errors.length === 0, errors };
 }

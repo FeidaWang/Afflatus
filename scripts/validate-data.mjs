@@ -341,6 +341,8 @@ if (
       const assetUris = [
         ...(admissionData?.assets || []).flatMap((asset) => (asset?.lods || []).map(({ uri }) => uri)),
         ...(admissionData?.nightGoldens || []).map(({ uri }) => uri),
+        ...(admissionData?.silhouetteMasks || []).map(({ uri }) => uri),
+        ...(admissionData?.performanceTraces || []).map(({ uri }) => uri),
       ].filter((uri) => typeof uri === 'string');
       for (const uri of assetUris) {
         const path = `public${uri}`;
