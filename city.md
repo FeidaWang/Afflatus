@@ -646,7 +646,7 @@ Overture 是跨城开放数据集合，不是上海官方数据。它在缺少�
 | 20 | `CITY-REAL-P3-00` 独立街景入口 | P2-01 | 三城各一条授权示范走廊；全景按需加载、归属/隐私/返回相机完整，不抽图 |
 | 21 | `CITY-REAL-P3-01` 扩区、神经渲染与更多城市 | P3-00 | 先证明维护成本、LOD、许可和真机预算；Gaussian Splat/NeRF 仅作可关闭英雄点 |
 
-### 5.1 当前真实城市迁移状态（2026-08-16）
+### 5.1 当前真实城市迁移状态（2026-09-05）
 
 | 工作项 | 状态 | 当前证据 | 下一出口 |
 | --- | --- | --- | --- |
@@ -655,13 +655,13 @@ Overture 是跨城开放数据集合，不是上海官方数据。它在缺少�
 | `CITY-REAL-P0-02` | 已完成（2026-08-15） | `CityPackageManifest/Provenance/Registry` 类型与运行时 schema 已落地；生产入口迁至 `cityScene.js + createCitySceneRenderer(renderPlan)`；空生产 registry 明确三城无真实包；prebuild 同时校验 manifest hash、package 四方批准和 ledger layer 的独立 production approval | 保持旧 `citySandbox.js` 只作兼容桥；支持 P0-03A/03B，但不把工程 fixture 当 production package |
 | `CITY-REAL-P0-03A` | 已完成工程证据（2026-08-16；production 未批） | 七层 inventory / CRS / vertical datum / fixture / CI 均闭环；40 个可信控制点的 published coordinate residual 最大 `0.011509 m`；32 个地面控制比较在 DEM 已发布 `12.5 m / 5 m` 精度包络内全部通过；cross-layer QA 无 blocker、保留四项 warning | 警告项随 package 保留，不通过移动控制点或重采样 DEM 强行消除；后续 production 仍需独立签署 |
 | `CITY-REAL-P0-03B` | 工程候选已完成（2026-08-16；production 未批） | 非公开 candidate 已冻结 4 × 5 个 250 m tile、LOD0/1/2、10,156 个 vector entity 与 9,761 个未重采样 native DEM cell；60 个 Meshopt Analysis GLB 共 6,596,972 bytes，最大单 asset 332,980 bytes、最大 6 draw calls，manifest/index/asset hash、tile seam、membership、dependency 与 provenance 已纳入 `data:check` | 保持 candidate 不进入 `public/`；转入 P0-04 本地 Analysis renderer 与视觉/预算基线，签署仍独立进行 |
-| `CITY-REAL-P0-04` | 进行中（本地 full-precinct Analysis path 已接入） | loopback/Vite-only 预览已覆盖 20 个 spatial tile × LOD0/1/2；固定首帧纠正为 4 个直接 ownership dependency assets、428,448 bytes、22 draw calls、6,640 triangles；真实 Chromium 连续跨区/LOD 后保持 ≤18 decoded assets / ≤2.5 MB，并实际触发 10 次释放；production build 不含入口或 candidate bytes | 补稳定视觉基线、长窗口内存/p95、无障碍与 desktop/iPhone/Samsung 签署，并保持 public Cityview 不切换 |
-| `CITY-REAL-P0-05` | 部分完成（非公开 runtime 契约） | reusable verified session、直接 dependency、camera-driven LOD hysteresis、引用计数 LRU/释放、取消/原子切换、`_FEATURE_ID_0` picking 与 manifest attribution 已在本地 adapter 通过；尚未接公开 adapter | 完成 public-shell DOM/poster fallback、package mismatch/checksum/404/禁网回归和 attribution UI 审查；未签署前不接 production registry |
-| `CITY-REAL-P0-06` | 未开始 | 现有场景无独立当地环境时间和 Day/Night 材质栈 | 先在墨尔本实现太阳/时区/黄昏纯函数与可复现四时截图 |
-| `CITY-REAL-P0-07` | 未开始 | 既有真机采集器只签白模概念负载 | 真实墨尔本包 + Day/Night 进入实体 iPhone/Samsung 预算与热稳定签署 |
+| `CITY-REAL-P0-04` | 自动工程证据完成（人工/实体签署未完成） | loopback/Vite-only 预览覆盖 20 个 spatial tile × LOD0/1/2；固定首帧为 4 个直接 ownership dependency assets、428,448 bytes、22 draw calls、6,640 triangles；跨区/LOD、回收、reset、picking、失败矩阵、视觉基线与 30 分钟 18-view soak 通过，candidate bytes 不进入 production build | 补人工无障碍与 desktop/iPhone/Samsung 实体签署，并保持 public Cityview 不加载未批准 candidate |
+| `CITY-REAL-P0-05` | 工程 runtime 已完成（production fail-closed） | registry/path/hash/identity/四方批准、首帧 dependency closure、Meshopt/LOD/LRU/cancellation、来源/CRS/datum attribution、DOM/poster fallback、404/checksum/禁网、canonical view 原子切换与失败回滚均已覆盖；registry 仍为空 | 只有同包 landmark admission、canonical views、goldens、资产 hash 与四方批准全部通过后才可登记真实包 |
+| `CITY-REAL-P0-06` | 工程路径基本完成（参考校准与 production 签署未完成） | 独立 `EnvironmentClock`、三城 IANA 时区与 DST、太阳高度连续的 Analysis/Day/Sunset/Night、Auto-local 隐藏页暂停/恢复、PBR 天空/IBL/阴影/窗光/水体和 accessible controls 已进入 production-capable path；缺失来源灯光保持为零 | 补获批 landmark mesh/light rig、固定参考相机 day/night 校准与 desktop/mobile goldens；没有权利证据不得补造资产 |
+| `CITY-REAL-P0-07` | 自动门禁推进完成（实体签署未完成） | 2026-09-05 City Chromium 回归 `16/16`、active metadata/keyboard/Axe `3/3`、Vitest `1928/1928`、production build 与 57 份数据证据通过；三轮 Lighthouse performance 均 `1.00`，中位 FCP/LCP/Speed Index `1352.74 ms`、TBT `0 ms`、CLS `0.02` | 当前 registry 为空，以上不构成真实包签署；仍需真实包四环境视觉、人工无障碍与实体 iPhone/Samsung GPU/热/手势证据 |
 | `CITY-REAL-P1+` | 未开始 | 上海、香港数据源已经研究，但无已批准数据包、adapter 或真实渲染 | P0 墨尔本管线通过后再复制；不为赶视觉并行造三套不可维护 ETL |
 
-**当前真相**：生产页已经公开，公共 Sandbox 已退场，但三个城市仍是程序化过渡概念。墨尔本已有 `7 acquisition-approved layers / 7 isolated raw artifacts / 1 passed-with-findings cross-layer QA / 1 non-public candidate CityPackage / 1 loopback-only real Analysis streaming adapter / 0 production-approved CityPackage / 0 production runtime adapter / 0 authorised imagery package`。candidate 只存在于 `data/city/candidates/`；四项 package approval 仍为 review，不能进入 `public/`、production registry 或当前网页。
+**当前真相**：生产页已经公开，公共 Sandbox 已退场，但三个城市仍是程序化过渡概念。墨尔本已有 `7 acquisition-approved layers / 7 isolated raw artifacts / 1 passed-with-findings cross-layer QA / 1 non-public candidate CityPackage / 1 production-capable fail-closed runtime / 0 production-approved CityPackage / 0 authorised imagery package`。candidate 只存在于 `data/city/candidates/`；四项 package approval 仍为 review，production registry 继续为空，当前网页不会把 candidate 或生成几何冒充真实城市。
 
 #### `CITY-REAL-P0-01` 关闭证据（2026-08-15）
 
@@ -1165,9 +1165,9 @@ CITY_STABILITY_MS=1800000 npx playwright test e2e/cityview.stability.spec.js --p
 5. `CITY-REAL-P0-03A` — **工程证据已关闭（2026-08-16；production 未批）**：七层 inventory/fixture/QA 与 source CRS → local frame 均纳入 CI；Survey Control + DEM 已关闭 horizontal/AHD authority 缺口，跨层报告无 blocker 并保留显式 warning。
 6. `CITY-REAL-P0-03B` — **工程候选已关闭（2026-08-16；production 未批）**：20 个 250 m tile × LOD0/1/2、metadata/index、稳定实体 ID、完整 asset hash、60 个 GPU-ready Meshopt GLB 与 runtime byte/triangle/draw-call 基线可重复构建；candidate 在签署前继续留在 `data/city/candidates/`。
 7. `CITY-REAL-P0-04` — **进行中（本地 full-precinct Analysis path 与 shell fallback 已接入）**：20 spatial tiles × LOD0/1/2 已由相机调度；首帧为 428,448 bytes / 22 draw calls / 6,640 triangles，decoded LRU 保持 ≤18 assets / ≤2.5 MB，真实 Chromium 跨区/LOD、回收、reset、picking、success/404/checksum/offline 矩阵及可重复成功/poster 视觉基线通过。正式 30 分钟 18-view soak 为 3,373 次切换 / 1,499 heap 样本 / 稳态中位数 `+115,752 bytes` / slope `−9,569 bytes/min` / cold-warm CPU p95 `0.3/0.2 ms`，全样本预算与 lifecycle 通过；下一出口是人工无障碍与实体真机签署，继续不发布。
-8. `CITY-REAL-P0-05` — **非公开 runtime 契约已覆盖 Analysis 阶段**：reusable verified session、直接 ownership dependency、LOD hysteresis、引用计数 LRU/释放、取消/原子切换、stable feature picking、manifest attribution、共享 manifest/首屏校验、public-shell DOM/poster fallback 与 404/checksum/offline 回归均已覆盖；production build 不含 adapter/runtime/候选资产，后续随 Day/Night 继续扩展同城降级链。
-9. `CITY-REAL-P0-06` — 加 `EnvironmentClock` 与 Analysis/Day/Sunset/Night；使用三城 IANA 时区和 `astronomy-engine`，夜景为语义壳 + deterministic emissive，不压暗 baked photomesh。
-10. `CITY-REAL-P0-07` — **Analysis desktop 自动部分完成**：Chromium、Axe、成功/poster 视觉与 30 分钟长稳已通过；继续完成 Lighthouse、未来四环境视觉、人工无障碍与 iPhone/Samsung 实体真机 GPU/热/手势签署。真实包不通过时不开始三城复制。
+8. `CITY-REAL-P0-05` — **production-capable runtime 已完成并保持 fail-closed**：reusable verified session、直接 ownership dependency、LOD hysteresis、引用计数 LRU/释放、取消/原子切换、stable feature picking、manifest attribution、共享 manifest/首屏校验、public-shell DOM/poster fallback、canonical view 回滚与 404/checksum/offline 回归均已覆盖；production build 可包含通用 runtime，但 registry 为空且不含候选资产，未批准真实包不可达。
+9. `CITY-REAL-P0-06` — **工程路径基本完成，资产/校准受阻**：独立 `EnvironmentClock`、三城 IANA 时区、太阳高度连续的 Analysis/Day/Sunset/Night、Auto-local lifecycle、PBR 环境、deterministic emissive 与 fail-closed landmark admission 已完成；下一步只接获批 landmark mesh/light rig 与固定参考相机 goldens，不以程序化资产代替权利证据。
+10. `CITY-REAL-P0-07` — **自动部分完成，实体签署待办**：Chromium、Axe、成功/poster 视觉、30 分钟长稳、三轮 Lighthouse、production build 与数据门禁已通过；继续完成真实包四环境视觉、人工无障碍与 iPhone/Samsung 实体真机 GPU/热/手势签署。当前 registry 为空，自动结果不构成真实包发布批准。
 11. `CITY-REAL-P1-00/01` — 上海 Overture 裁剪、官方地标参数与地图合规分别签署；完成黄浦江两岸 Day/Night 品牌切片及独立真机/rollback。
 12. `CITY-REAL-P1-02/03` — 香港 LandsD/CSDI 数据包、HK80/HKPD/ENU、真实维港/山地/3D 步行与昼夜双栈；TPB 规划层无书面许可即保持 unavailable。
 13. `CITY-REAL-P1-04/05` — 三城统一真实相机/巡游/施工代理/数据卡，移除独立 Tour 重置施工日的 legacy 行为并退役公开概念 profiles；三城分别完成 package、来源、视觉、性能和真机签署。
