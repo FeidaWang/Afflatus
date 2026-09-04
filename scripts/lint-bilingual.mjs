@@ -18,6 +18,7 @@ const ROOT = resolve(import.meta.dirname, '..');
 const SOURCE_EXTENSIONS = new Set(['.js', '.mjs', '.ts']);
 const SKIP_DIRECTORIES = new Set([
   '.git',
+  'data',
   'dist',
   'node_modules',
   'playwright-report',
