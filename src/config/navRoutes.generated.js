@@ -33,13 +33,6 @@ export const NAV_ROUTES = Object.freeze([
     "zh": "信号"
   },
   {
-    "id": "stats",
-    "path": "/stats.html",
-    "en": "Stats",
-    "zh": "战绩",
-    "group": "labs"
-  },
-  {
     "id": "horoscope",
     "path": "/horoscope.html",
     "en": "Horoscope",

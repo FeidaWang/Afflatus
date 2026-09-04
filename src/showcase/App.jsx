@@ -20,7 +20,6 @@ const navGroups = [
     items: [
       [{ en: "Federal Reserve watch", zh: "美联储观察" }, "/signal.html"],
       [{ en: "10Y / 30Y yield monitor", zh: "10年 / 30年期收益率" }, "/signal.html#treasuryYieldBoard"],
-      [{ en: "Prediction record", zh: "预测记录" }, "/stats.html"],
       [{ en: "FY25/26 flight record", zh: "FY25/26 飞行记录" }, "/portfolio.html#fy2026Performance"],
     ],
   },

@@ -5,7 +5,6 @@ const ROUTES = [
   ['/arena.html', 'arena'],
   ['/sectors.html', 'sectors'],
   ['/signal.html', 'signal'],
-  ['/stats.html', 'stats'],
   ['/horoscope.html', 'horoscope'],
   ['/serial.html', 'serial'],
   ['/course.html', 'course'],

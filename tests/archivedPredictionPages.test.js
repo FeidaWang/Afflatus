@@ -1,4 +1,5 @@
-import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const gamesHtml = readFileSync('games.html', 'utf8');
@@ -7,11 +8,14 @@ const arenaHtml = readFileSync('arena.html', 'utf8');
 const leagueScript = readFileSync('src/pages/league.js', 'utf8');
 const leagueEntry = readFileSync('src/pages/leagueEntry.js', 'utf8');
 const i18nScript = readFileSync('src/lib/i18n.js', 'utf8');
-const gamesData = JSON.parse(readFileSync('public/games-data.json', 'utf8'));
+const gamesPath = 'data-archive/stats/2026-09-05/games-data.json';
+const leaguesPath = 'data-archive/stats/2026-09-05/leagues-data.json';
+const gamesData = JSON.parse(readFileSync(gamesPath, 'utf8'));
 const gamesScript = readFileSync('src/pages/games.js', 'utf8');
 const gamesEntry = readFileSync('src/pages/gamesEntry.js', 'utf8');
-const leagueData = JSON.parse(readFileSync('public/leagues-data.json', 'utf8'));
+const leagueData = JSON.parse(readFileSync(leaguesPath, 'utf8'));
 const vercel = JSON.parse(readFileSync('vercel.json', 'utf8'));
+const sha256 = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
 
 describe('completed prediction archives', () => {
   it('does not present the completed World Cup record as a live daily service', () => {
@@ -21,7 +25,7 @@ describe('completed prediction archives', () => {
     expect(gamesData.mode).toBe('archive');
     expect(gamesData.archiveSource.url).toContain('fifa.com/');
     expect(gamesData.record.note_en).not.toContain('Updated daily');
-    expect(gamesScript).toContain('The final scored match log now lives in the unified Stats archive.');
+    expect(gamesScript).toContain('The final scored match log is retained in the repository data archive.');
   });
 
   it('closes the MSI ledger with the verified Grand Final result', () => {
@@ -48,18 +52,20 @@ describe('completed prediction archives', () => {
     expect(gamesHtml).not.toMatch(/<h3[^>]*data-en[^>]*>[^<]*<span class="sub"/);
   });
 
-  it('switches legacy archive language in place and redirects unsupported locale URLs', () => {
+  it('keeps the retired source interfaces bilingual without publishing Stats redirects', () => {
     expect(gamesHtml).toContain('data-afflatus-locale="inline"');
     expect(leagueHtml).toContain('data-afflatus-locale="inline"');
     expect(i18nScript).toContain("dataset.afflatusLocale === 'inline'");
-    for (const [source, destination] of [
-      ['/en/games.html', '/en/stats.html'],
-      ['/zh/games.html', '/zh/stats.html'],
-      ['/en/league.html', '/en/stats.html'],
-      ['/zh/league.html', '/zh/stats.html'],
-    ]) {
-      expect(vercel.redirects).toContainEqual({ source, destination, permanent: true });
-    }
+    expect(vercel.redirects.some(({ source, destination }) => (
+      source.includes('stats.html') || destination.includes('stats.html')
+    ))).toBe(false);
+  });
+
+  it('retains exact, non-public snapshots of both prediction datasets', () => {
+    expect(existsSync('public/games-data.json')).toBe(false);
+    expect(existsSync('public/leagues-data.json')).toBe(false);
+    expect(sha256(gamesPath)).toBe('7761bb4d9b0e8289828999ddee9100960ad5d2d130c5fc4dc06bc44ab6c2a7e2');
+    expect(sha256(leaguesPath)).toBe('c25a6c48ecc98917e00c1b55059e613e8ce892f4dd8451ab373448f8d4ef22dc');
   });
 
   it('initializes locale state before either archive starts dynamic rendering', () => {

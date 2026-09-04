@@ -1,6 +1,8 @@
 # Leagues — MSI 2026 竞猜提示词（V1）
 
-用途：MSI 期间每日一跑（赛后触发），更新 `leagues-data.json`——已完场系列赛复盘计分 + 剩余场次预测 + 夺冠概率 + MVP 候选概率。7/12 决赛后收官一跑转 `mode:"archived"`。
+状态：任务已结束；最终数据只读保存在 `data-archive/stats/2026-09-05/leagues-data.json`，不得重新发布或覆盖。
+
+原用途：MSI 期间每日一跑（赛后触发），更新 `leagues-data.json`——已完场系列赛复盘计分 + 剩余场次预测 + 夺冠概率 + MVP 候选概率。7/12 决赛后收官一跑转 `mode:"archived"`。
 对应规格：ROADMAP §5c-4。赛程事实（2026-07-04 核实）：大田，Bracket Stage 7/3–7/12，双败淘汰，全 Bo5。
 
 ---

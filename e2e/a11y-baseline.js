@@ -63,17 +63,4 @@ export const A11Y_BASELINE = Object.freeze({
       ],
     },
   ],
-  stats: [
-    {
-      id: 'color-contrast',
-      impact: 'serious',
-      help: 'Elements must meet minimum color contrast ratio thresholds',
-      targets: [
-        '.in > .legend > span:nth-child(1) > span[data-en="correct"][data-zh="判对"]',
-        '.in > .legend > span:nth-child(2) > span[data-en="wrong"][data-zh="判错"]',
-        '.in > .legend > span:nth-child(3) > span[data-en="exact score"][data-zh="比分全中"]',
-        '.in > .note',
-      ],
-    },
-  ],
 });

@@ -53,16 +53,9 @@ describe('route SEO architecture', () => {
       activeRoutes.find((route) => route.id === 'arena'),
       { facts: facts.arena },
     );
-    const stats = buildRouteStructuredData(
-      activeRoutes.find((route) => route.id === 'stats'),
-      { facts: facts.stats },
-    );
-
     expect(graphTypes(sectors).has('Dataset')).toBe(false);
     expect(graphTypes(signal).has('NewsArticle')).toBe(false);
     expect(graphTypes(arena)).toContain('Dataset');
-    expect(graphTypes(stats)).toContain('DataCatalog');
-    expect(graphTypes(stats)).toContain('Dataset');
   });
 
   it('derives trustworthy route dates from declared public provenance', () => {

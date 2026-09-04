@@ -11,9 +11,8 @@
    nightly by a live scheduled task in the old shape (see Urgent.md U20),
    so force-migrating the live file risks a silent revert on its next run.
    pickedTeam()/pickedScoreLabel() below centralize the derivation so every
-   consumer (stats.html) reads it the same correct way today, and are the
-   single place to update if/when a future data file adopts the
-   unambiguous shape.
+   archived consumers read it the same correct way, and are the single place
+   to update if a future data migration adopts the unambiguous shape.
 
    §2.4 — finalsMvp is matched against mvp[].team by exact string equality
    (e.g. "Knight · BLG"); a stray space or a different separator character

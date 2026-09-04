@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-/* validate-data.mjs — single CI entry point that runs every public data
- * validator in one pass. Missing optional artifacts are skipped; malformed
- * present artifacts and unregistered public JSON fail closed. */
+/* validate-data.mjs — single CI entry point for active public data and
+ * explicitly retained data archives. Missing optional artifacts are skipped;
+ * malformed present artifacts and unregistered public JSON fail closed. */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { validateSectorsData } from '../src/lib/validateSectorsData.js';
@@ -33,8 +33,8 @@ const CHECKS = [
   { path: 'public/sectors-rivalry.json', validate: validateSectorsRivalry },
   { path: 'public/sectors-ecosystem.json', validate: validateSectorsEcosystem },
   { path: 'public/signal-events.json', validate: validateSignalEvents },
-  { path: 'public/leagues-data.json', validate: validateLeaguesData },
-  { path: 'public/games-data.json', validate: validateGamesData },
+  { path: 'data-archive/stats/2026-09-05/leagues-data.json', validate: validateLeaguesData },
+  { path: 'data-archive/stats/2026-09-05/games-data.json', validate: validateGamesData },
   { path: 'public/novels-index.json', validate: validateNovelsIndex },
   { path: 'public/arena-universe.json', validate: validateArenaUniverse },
   { path: 'public/arena-universe-s1.json', validate: validateArenaUniverseArchive },

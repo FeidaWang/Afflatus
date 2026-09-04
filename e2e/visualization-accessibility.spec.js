@@ -5,24 +5,6 @@ test.describe('visualization semantic and keyboard equivalents', () => {
     test.skip(testInfo.project.name !== 'desktop-chromium', 'The semantic DOM contract runs once in Chromium.');
   });
 
-  test('Stats interactive marks and log rows are keyboard-operable', async ({ page }) => {
-    await page.goto('/stats.html', { waitUntil: 'domcontentloaded' });
-    const chart = page.locator('#msiBars svg[role="group"]');
-    await expect(chart).toBeAttached();
-
-    const firstBar = chart.locator('rect[role="button"]').first();
-    await expect(firstBar).toHaveAttribute('tabindex', '0');
-    await firstBar.focus();
-    await page.keyboard.press('Enter');
-    await expect(page.locator('#msiDrawer')).toHaveClass(/show/);
-
-    const firstRow = page.locator('#msiLog tbody tr[role="button"]').first();
-    await expect(firstRow).toHaveAttribute('aria-label', /Open reasoning/);
-    await firstRow.focus();
-    await page.keyboard.press('Enter');
-    await expect(page.locator('#msiDrawer')).toHaveClass(/show/);
-  });
-
   test('Sectors canvas has a parallel node control list and keyboard selection', async ({ page }) => {
     await page.goto('/sectors.html', { waitUntil: 'domcontentloaded' });
 

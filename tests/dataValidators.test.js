@@ -12,8 +12,8 @@ import { validateNovelsIndex, validateNovelBook } from '../src/lib/validateNovel
    drift, exact-without-outcome-correct). */
 
 describe('validateLeaguesData', () => {
-  it('accepts the real public/leagues-data.json as-is', () => {
-    const data = JSON.parse(readFileSync('public/leagues-data.json', 'utf8'));
+  it('accepts the archived leagues-data.json as-is', () => {
+    const data = JSON.parse(readFileSync('data-archive/stats/2026-09-05/leagues-data.json', 'utf8'));
     const { ok, errors } = validateLeaguesData(data);
     expect(errors).toEqual([]);
     expect(ok).toBe(true);
@@ -55,8 +55,8 @@ describe('validateLeaguesData', () => {
 });
 
 describe('validateGamesData', () => {
-  it('accepts the real public/games-data.json as-is', () => {
-    const data = JSON.parse(readFileSync('public/games-data.json', 'utf8'));
+  it('accepts the archived games-data.json as-is', () => {
+    const data = JSON.parse(readFileSync('data-archive/stats/2026-09-05/games-data.json', 'utf8'));
     const { ok, errors } = validateGamesData(data);
     expect(errors).toEqual([]);
     expect(ok).toBe(true);

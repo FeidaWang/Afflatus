@@ -16,7 +16,6 @@ export const SOCIAL_CARD = Object.freeze({
   maxBytes: 400_000,
 });
 
-const LEGACY_OG_IMAGE = 'https://feida.au/assets/og/og-image.jpg';
 const routeOgImage = (routeId, locale) =>
   `https://feida.au/assets/og/${routeId}-${locale}.${SOCIAL_CARD.extension}`;
 
@@ -126,29 +125,6 @@ export const ROUTE_SEO = Object.freeze({
     structuredData: {
       kind: 'signal',
       provenance: [{ path: 'public/signal-events.json', dateField: 'updated' }],
-    },
-  },
-  stats: {
-    social: {
-      background: 'assets/og-backgrounds/stats.jpg',
-      eyebrow: { en: 'TRACK RECORD', zh: '战绩档案' },
-      title: { en: 'Prediction track record', zh: '竞猜记录存档' },
-      subtitle: {
-        en: 'Transparent outcomes, calibration, and model notes.',
-        zh: '公开结果、置信校准与模型备注。',
-      },
-      alt: {
-        en: 'Statistical calibration and prediction track record',
-        zh: '竞猜记录的统计校准与分布图',
-      },
-      images: { en: routeOgImage('stats', 'en'), zh: routeOgImage('stats', 'zh') },
-    },
-    structuredData: {
-      kind: 'stats',
-      provenance: [
-        { path: 'public/games-data.json', dateField: 'updated' },
-        { path: 'public/leagues-data.json', dateField: 'updated' },
-      ],
     },
   },
   horoscope: {
@@ -370,38 +346,6 @@ export const SITE_MANIFEST = Object.freeze([
     },
   },
   {
-    id: 'stats',
-    file: 'stats.html',
-    path: '/stats.html',
-    status: 'active',
-    build: true,
-    sitemap: true,
-    defaultLocale: 'zh',
-    nav: { order: 50, group: 'labs', en: 'Stats', zh: '战绩' },
-    themeColor: '#070a12',
-    schema: ['DataCatalog', 'Dataset'],
-    seo: ROUTE_SEO.stats,
-    capabilities: ['svg-viz', 'statistics'],
-    metadata: {
-      title: 'Project Afflatus · Stats — 竞猜战绩存档',
-      description: 'Project Afflatus 竞猜战绩存档：英雄联盟 MSI 2026 与 FIFA 世界杯 2026 全部预测的命中率、Wilson 置信区间、Brier 评分、可靠性校准图与 bootstrap 重采样，数据全部可回溯。',
-      canonical: 'https://feida.au/stats.html',
-      ogTitle: 'Project Afflatus · Stats — 竞猜战绩存档',
-      ogDescription: 'MSI 2026 与世界杯 2026 预测战绩全量图表：Wilson 区间、Brier 评分、可靠性校准、bootstrap 重采样。仅供娱乐。',
-      ogImage: ROUTE_SEO.stats.social.images.zh,
-    },
-    locales: {
-      en: {
-        title: 'Stats — Prediction Track Record · Project Afflatus',
-        description: 'A traceable MSI 2026 and World Cup 2026 prediction archive with Wilson intervals, Brier scores, calibration, and bootstrap analysis.',
-      },
-      zh: {
-        title: '战绩 — 竞猜记录存档 · Project Afflatus',
-        description: '可回溯的 MSI 2026 与世界杯 2026 竞猜记录，包含 Wilson 区间、Brier 评分、可靠性校准和 bootstrap 分析。',
-      },
-    },
-  },
-  {
     id: 'horoscope',
     file: 'horoscope.html',
     path: '/horoscope.html',
@@ -496,60 +440,6 @@ export const SITE_MANIFEST = Object.freeze([
         title: 'Forward Deployed Engineer 从 0 到 1 · Project Afflatus',
         description: '一条包含 36 个工程节点的 52 周双语路线，覆盖生产系统、可恢复智能体、记忆、安全、评测与受治理客户部署。',
       },
-    },
-  },
-  {
-    id: 'games',
-    file: 'games.html',
-    path: '/games.html',
-    status: 'redirect',
-    build: false,
-    sitemap: false,
-    defaultLocale: 'en',
-    nav: null,
-    redirectTo: '/stats.html',
-    redirectPermanent: true,
-    themeColor: '#1B2766',
-    schema: [],
-    capabilities: ['archived'],
-    metadata: {
-      title: 'Project Afflatus · World Cup 2026 Prediction Archive',
-      description: 'Archived World Cup 2026 predictions and final scorecard: 56 calls, 68% outcome hit rate, 10 exact scorelines, plus the final champion and player awards. Entertainment only.',
-      canonical: 'https://feida.au/games.html',
-      ogTitle: 'Project Afflatus · World Cup 2026 Prediction Archive',
-      ogDescription: 'The completed Fable 5 Max World Cup 2026 prediction record: 56 calls, final results and tournament awards.',
-      ogImage: LEGACY_OG_IMAGE,
-    },
-    locales: {
-      en: { title: 'World Cup Prediction Archive', description: 'Archived World Cup prediction experience.' },
-      zh: { title: '世界杯竞猜存档', description: '已归档的世界杯竞猜体验。' },
-    },
-  },
-  {
-    id: 'league',
-    file: 'league.html',
-    path: '/league.html',
-    status: 'redirect',
-    build: false,
-    sitemap: false,
-    defaultLocale: 'en',
-    nav: null,
-    redirectTo: '/stats.html',
-    redirectPermanent: true,
-    themeColor: '#0a1428',
-    schema: [],
-    capabilities: ['archived'],
-    metadata: {
-      title: 'Project Afflatus · MSI 2026 Prediction Archive',
-      description: "Archived MSI 2026 bracket predictions: 14 pre-match series calls, final outcomes, confidence, Fearless Draft pools, and HLE's 3–2 championship win. Entertainment only.",
-      canonical: 'https://feida.au/league.html',
-      ogTitle: 'Project Afflatus · MSI 2026 Prediction Archive',
-      ogDescription: "The completed Fable 5 Max MSI 2026 record: 14 pre-match calls, HLE's title and the final 50% outcome hit rate.",
-      ogImage: LEGACY_OG_IMAGE,
-    },
-    locales: {
-      en: { title: 'MSI Prediction Archive', description: 'Archived MSI prediction experience.' },
-      zh: { title: 'MSI 竞猜存档', description: '已归档的 MSI 竞猜体验。' },
     },
   },
   {

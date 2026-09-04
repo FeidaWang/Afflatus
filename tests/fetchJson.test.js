@@ -5,7 +5,6 @@ import { clearJsonCacheForTests, fetchJson, JsonDataError } from '../src/lib/fet
 const validIndex = {
   novels: [{ id: 'demo', novel: { title: 'Demo' }, chapterCount: 1 }],
 };
-const currentLeagues = JSON.parse(readFileSync('public/leagues-data.json', 'utf8'));
 const currentSignal = JSON.parse(readFileSync('public/signal-events.json', 'utf8'));
 const currentArenaPicks = JSON.parse(readFileSync('public/arena-picks.json', 'utf8'));
 const currentArenaDigest = JSON.parse(readFileSync('public/arena-daily-digest.json', 'utf8'));
@@ -96,35 +95,6 @@ describe('fetchJson', () => {
     now = 2000;
     await expect(fetchJson('novels-index', { freshness: 10 })).resolves.toEqual(validIndex);
     await vi.waitFor(() => expect(network).toHaveBeenCalledTimes(2));
-  });
-
-  it('loads trust-critical tournament records from the network before a fresh memory cache', async () => {
-    const staleLeagues = {
-      ...currentLeagues,
-      version: currentLeagues.version - 1,
-      note_en: 'Previous validated archive.',
-    };
-    const network = vi.fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify(staleLeagues), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify(currentLeagues), { status: 200 }));
-    vi.stubGlobal('fetch', network);
-
-    await expect(fetchJson('leagues')).resolves.toMatchObject({ version: currentLeagues.version - 1 });
-    await expect(fetchJson('leagues')).resolves.toMatchObject({ version: currentLeagues.version });
-
-    expect(network).toHaveBeenCalledTimes(2);
-    expect(network.mock.calls[1][1]).toMatchObject({ cache: 'no-cache' });
-  });
-
-  it('falls back to the last validated tournament record when revalidation is offline', async () => {
-    const network = vi.fn()
-      .mockResolvedValueOnce(new Response(JSON.stringify(currentLeagues), { status: 200 }))
-      .mockRejectedValueOnce(new TypeError('offline'));
-    vi.stubGlobal('fetch', network);
-
-    await fetchJson('leagues');
-    await expect(fetchJson('leagues')).resolves.toMatchObject({ version: currentLeagues.version });
-    expect(network).toHaveBeenCalledTimes(2);
   });
 
   it('revalidates Signal before returning a fresh browser cache entry', async () => {

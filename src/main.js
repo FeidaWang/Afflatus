@@ -167,7 +167,6 @@ function installNavigationMenu() {
     { path: '/arena.html', en: 'Arena', zh: '竞技场' },
     { path: '/sectors.html', en: 'Sectors', zh: '板块' },
     { path: '/signal.html', en: 'Signal', zh: '信号' },
-    { path: '/stats.html', en: 'Stats', zh: '战绩' },
     { path: '/horoscope.html', en: 'Horoscope', zh: '观星' },
     { path: '/serial.html', en: 'Novels', zh: '小说' },
     { path: '/course.html', en: 'Course', zh: '课程' },

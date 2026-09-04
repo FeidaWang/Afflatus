@@ -89,18 +89,6 @@
       "totalBytes": 154177
     },
     {
-      "id": "stats",
-      "path": "/stats.html",
-      "performanceScore": 0.78,
-      "lcpMs": 1653,
-      "tbtMs": 0,
-      "cls": 0.411,
-      "clsBudgetBase": 0.411,
-      "speedIndexMs": 1652,
-      "scriptBytes": 31365,
-      "totalBytes": 122760
-    },
-    {
       "id": "horoscope",
       "path": "/horoscope.html",
       "performanceScore": 0.6,

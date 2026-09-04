@@ -1,4 +1,4 @@
-/* Pure validation for public/games-data.json's schema (U21 Phase 1,
+/* Pure validation for the archived games-data.json schema (U21 Phase 1,
    rfcs/2026-07-12-u21-phase1-tech-audit.md §2.7). Unlike leagues-data.json,
    games-data.json has no full per-match array — record.log is a partial
    sample (11 entries for 52 resolved matches as of 2026-07-12), so the

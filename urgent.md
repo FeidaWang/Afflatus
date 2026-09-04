@@ -180,7 +180,10 @@ The highest-return work is not a framework migration. It is to turn the current 
 - Add `CollectionPage`/`ItemList` schema and `dateModified` from validated data. Use neutral “scenario/desk view” language consistently in EN/ZH.
 - Animate only state transitions: needle moves to a changed signal, new incident highlight, expanded body. Remove ambient motion that does not convey state on constrained tiers.
 
-### `/stats.html` — prediction archive and dashboards
+### `/stats.html` — retired 2026-09-05
+
+The page and its UI implementation were removed. Final source JSON is retained
+under `data-archive/stats/2026-09-05/`; the notes below are historical only.
 
 **Branches:** MSI and World Cup datasets; bars, Wilson curve, reliability plot, bootstrap histogram; reasoning drawers; recompute/error states.
 

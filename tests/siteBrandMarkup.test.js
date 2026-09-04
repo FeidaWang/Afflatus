@@ -25,7 +25,7 @@ describe('旧版品牌块退场', () => {
     expect(legacy).toBeUndefined();
   });
 
-  it.each(['stats.html', 'course.html'])('%s 已迁移到统一 Al 结构', (file) => {
+  it.each(['course.html'])('%s 已迁移到统一 Al 结构', (file) => {
     const doc = documentOf(file);
     const adaptive = [...walk(doc)].find((node) => node.tagName && classesOf(node).includes('afflatus-brand'));
     expect(adaptive?.tagName).toBe('a');

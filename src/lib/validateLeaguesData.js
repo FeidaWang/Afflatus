@@ -1,4 +1,4 @@
-/* Pure validation for public/leagues-data.json's schema (U21 Phase 1,
+/* Pure validation for the archived leagues-data.json schema (U21 Phase 1,
    rfcs/2026-07-12-u21-phase1-tech-audit.md §2.7). Same purpose as
    validateSectorsData.js / validateSignalEvents.js: the leagues-msi-daily
    scheduled task hand-writes this file unattended and nobody reviews the
@@ -8,7 +8,7 @@
    record.resolved etc. are hand-maintained aggregates of the series[]
    array and were observed to drift (13 series resolved, only 8 log
    entries) — this validator checks the two stay consistent so the drift
-   is caught here instead of surfacing as a wrong number on stats.html. */
+   is caught here instead of silently corrupting the retained archive. */
 
 function isNonEmptyString(v) { return typeof v === 'string' && v.trim().length > 0; }
 function pushErr(errors, msg) { errors.push(msg); }
@@ -77,8 +77,8 @@ export function validateLeaguesData(data) {
   if (data.mvp != null) validateProbBoard(data.mvp, 'mvp', errors, false);
 
   // §2.3 aggregate-drift guard: record.resolved/correctOutcome/exactScore
-  // must match what series[] itself says, computed the same way stats.html
-  // computes it (exact requires the outcome to be correct first — U19 fix).
+  // must match what series[] itself says (exact requires the outcome to be
+  // correct first — U19 fix).
   if (data.record && Array.isArray(data.series)) {
     const resolved = data.series.filter(seriesIsResolved);
     const scored = resolved.map((s) => {

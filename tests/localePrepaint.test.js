@@ -32,8 +32,7 @@ describe('adaptive locale pre-paint', () => {
     expect(source).toContain('finally{clearTimeout(t);o.disconnect();u()}');
   });
 
-  it('preserves each route default when no locale preference exists', () => {
-    expect(readFileSync('stats.html', 'utf8')).toContain('<html lang="zh-CN">');
+  it('preserves the route locale when no preference exists', () => {
     expect(i18nSource).toContain("document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'");
     expect(i18nSource).toContain('getLocale(routeLocale)');
   });

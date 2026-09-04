@@ -33,7 +33,7 @@
 
 ## 2. 目录结构与页面装配
 
-### 2.1 页面清单（11 个 Vite 入口；8 个活跃导航路由）
+### 2.1 页面清单（9 个 Vite 入口；8 个活跃导航路由）
 
 | 入口 | 身份 | 导航位置 | 状态 |
 | --- | --- | --- | --- |
@@ -41,9 +41,9 @@
 | arena.html | 美股 TA 仪表盘 + Autopilot 双模拟盘 | 顶层 | 常设 |
 | sectors.html | AI 产业公司故事网格 + 滚动叙事生态星图 + 后内存专题 + `?fx=starfield3d` 数据星域 | 顶层 | 常设 |
 | signal.html | 美联储观察（SCP 皮肤，Warsh 时代，U41 编辑部版式） | 顶层 | 常设 |
-| games.html | 世界杯竞猜（U38/U39/U40 阶段滑杆+缩放+季军赛） | — | 已下线 →302 到 stats（U18c，2026-07-20 决赛后）；文件保留待英雄联盟 S 赛复用 |
-| league.html | MSI 竞猜 | — | 已下线 →302 到 stats（U18） |
-| stats.html | 竞猜战绩存档（Wilson/Brier/bootstrap；MSI 2026 + 世界杯 2026 淘汰赛阶段） | Labs | 常设 |
+| games.html | 世界杯竞猜（U38/U39/U40 阶段滑杆+缩放+季军赛） | — | 已退役；仅保留未构建源码 |
+| league.html | MSI 竞猜 | — | 已退役；仅保留未构建源码 |
+| stats.html | 竞猜战绩存档 | — | 2026-09-05 已删除；底层 JSON 已迁入 `data-archive/stats/2026-09-05/` |
 | horoscope.html | 观星台：八字×占星×紫微，全本地零后端 | Labs | 常设 |
 | serial.html | 小说书架 ×3 部（阅读器三主题） | Labs | 常设 |
 | course.html | 个人 AI 工程课程 v3.0 + 每周一自动周报 | Labs | 常设 |
@@ -137,8 +137,8 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 | sectors-competition.json **(新增 2026-07-25)** | 编辑手动更新；定期复核来源 | sectors Red vs Blue 专区（评测雷达/基准矩阵/双榜十强/地缘评分板），`fetchJson` 键 `sectors-competition` | `competition/v1 {schemaVersion,updated,as_of,radarAxes[],benchColumns[],models[],equities[],scoreboard}`。每个数值叶子是 `{value,unit,tier,src}`，`tier∈verified\|reported\|estimate\|derived\|pending`；**`verified` 必须带 `src` URL**，由 `validateSectorsCompetition.js` 强制（含 `models[].pricing`/`bench[]`/`speed[]`、`equities[].conviction`/`kpis[]`、`scoreboard.axes[].tier` 全覆盖）。当前 12 模型（US 8/CN 4）、18 基准列（4 列因该名单无可比数据显式标 `status:"not_published"`/`"provider_dependent"` 并印出原因，绝不估算填充）、20 支股票（美 10/中 10，A 股+HKEX 合并一栏）、4 轴评分板（compute/algorithms/capital/data，权重 .35/.30/.20/.15 求和须为 1，`buildScoreboard()` 按权重和归一防越界）。`equities[].links[].to` 必须解析到 `models[]` 里存在的 `id`。 |
 | signal-events.json | signal-warsh-daily（交易日 07:00） | signal | schema v2：`{updated,version:2,as_of,hawkDoveCompass(-2..+2),pillarSummary,pillars[5],events[]}`；发布前 `validate-signal-events.mjs` 强制 |
 | signal-release-dates-2026.json / nyse-holidays-2026.json | 静态年更 | 任务守卫 | 发布日历/休市日查表，不为此调 API |
-| leagues-data.json | （任务过期待删） | stats | stats 前端实时计算全部统计 |
-| games-data.json | worldcup-games-daily（已于 7/20 决赛后完结，任务过期待删） | stats（games.html 已 302 下线） | `fixtures[]{result:null→home/draw/away}` + `bracket.{qf,sf,third,final}`（只增不删）+ `champions/players`（现为决赛后最终态：冠军/金球奖 100%）。7/20 一次性归档补充字段：`matches[]`（R16→决赛 16 场完整明细，含 conf/reason/result——`record.log` 只是 15 场部分样本，另 40 场小组赛结果从未逐场记录，仅计入 `record` 总计数）、`championsPreFinal`/`playersPreFinal`（决赛前概率盘快照，供 stats 按「事后不重打分」原则对照评分）、`goldenBall`/`goldenBoot` 得主字符串 |
+| `data-archive/stats/2026-09-05/leagues-data.json` | 已结束 | 无公开消费者 | MSI 2026 最终只读快照；SHA-256 与下线前线上文件一致，见同目录 `README.md` / `SHA256SUMS` |
+| `data-archive/stats/2026-09-05/games-data.json` | 已结束 | 无公开消费者 | 世界杯 2026 最终只读快照；含 `matches[]`、决赛前概率盘及最终奖项，SHA-256 与下线前线上文件一致 |
 | novels-index.json + novels/*.json | 手动/写作会话 | serial | U21 已分片（原 485KB 单文件拆索引+分册） |
 | transits-daily.json | horoscope-transits-daily（每日 06:30） | horoscope | <2KB 当日行星黄经，客户端零星历库算日运 |
 
@@ -224,10 +224,9 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 - **每页一个显式 import 链入口**（`xxxEntry.js`）——同页多个独立 `<script type="module">` 会被 Vite 8 静默丢码（§9-1）。
 - **Horoscope 功能边界（P7 / P1-04）**：`src/pages/horoscope.js` 保持唯一页面入口，出生/城市、个人命盘、合盘、测验和结果卡分别通过 `src/horoscope/*Feature.js` 动态导入。基础表单先就绪，命盘与合盘按真实资料触发，测验在距视口 200 px 时预取，PNG 渲染只在保存时加载；`fetchJson('transits')` 也不得回到关键入口。
 - **Horoscope 重计算通道**：专业星历与全行星合盘统一由 `horoscopeSynthesis.worker.js` 执行；`createLatestWorkerTask()` 每个功能通道最多保留一个 Worker，新盘、关闭面板或 `pagehide` 必须真正终止旧计算。`pagehide` 只取消而不永久销毁通道，因为浏览器可能把文档放进 bfcache；返回后必须能运行新任务。Worker 不可用时才动态导入同一纯函数做主线程兜底，结果仍须通过请求 epoch 与当前资料身份校验后才能落入 DOM。
-- **Stats 页面边界（P8 / P1-05）**：`stats.html` 只保留一个 `src/pages/stats.js` 模块入口；页面编排、归档数据适配、纯统计函数、图表投影与 Bootstrap Worker 分层。MSI / 世界杯复用同一图表契约，Bootstrap 使用固定 seed；不支持 Worker 时调用同一纯函数兜底。`pagehide` 只取消当前任务而不永久销毁通道，确保 bfcache 返回后仍可重新计算。
 - **Sectors 页面边界（P9 / P1-06）**：`sectors.html` 只保留 `src/pages/sectors.js` 业务入口，数据、卡片、详情、滚动故事、竞品矩阵、页面 chrome 与图形所有权分别由 `src/sectors/*Controller.js` 管理。默认 2D 图距故事 900 px 才激活；`createExclusiveRenderer()` 保证切换前销毁旧 renderer，3D 懒加载失败则恢复 2D。力布局的 360 / 220 次 settle 在 `sectorsForce.worker.js` 中完成并以 transferable `Float32Array` 回传；Worker 不可用时才延迟调用同一纯函数。后存储集合按 4 + 3 + 3 渐进挂载，IntersectionObserver 与按钮共用一个批次函数。bfcache 的 `pagehide.persisted` 不销毁控制器，最终离页才完整解绑。
-- **window 桥接模式**：经典内联 IIFE 需要 lazy `import()` 时，把 `import()` 放进 `type="module"` 块并暴露 `window.AfflatusXxx = {load:()=>import(...)}`；桥接模块就绪后 `dispatchEvent` 通知已在跑的 IIFE 重试（30j 时序 bug 的修复）。Stats 与 Sectors 已迁出此遗留模式。
-- **数据桥接例外**：Signal/Serial 的经典内联控制器调用 `AfflatusFetchJson()`；同步 `public/lib/data-bridge.js` 只负责等待，真正实现由 Vite 管理的 `src/entry/dataBridge.js` 注入并派发 `afflatus-data-ready`。Stats/Sectors 直接 import `fetchJson()`。经典脚本不得写裸 `import('/src/...')`，因为该字符串不会被 Vite 转换，生产构建会 404。
+- **window 桥接模式**：经典内联 IIFE 需要 lazy `import()` 时，把 `import()` 放进 `type="module"` 块并暴露 `window.AfflatusXxx = {load:()=>import(...)}`；桥接模块就绪后 `dispatchEvent` 通知已在跑的 IIFE 重试（30j 时序 bug 的修复）。Sectors 已迁出此遗留模式。
+- **数据桥接例外**：Signal/Serial 的经典内联控制器调用 `AfflatusFetchJson()`；同步 `public/lib/data-bridge.js` 只负责等待，真正实现由 Vite 管理的 `src/entry/dataBridge.js` 注入并派发 `afflatus-data-ready`。Sectors 直接 import `fetchJson()`。经典脚本不得写裸 `import('/src/...')`，因为该字符串不会被 Vite 转换，生产构建会 404。
 - **rAF 纪律**：新 renderer 必须注册 `RenderBudgetCoordinator`，通过 `onPause/onResume/onResize/onQualityChange/onDispose` 暴露边界；不得自建 `visibilitychange` / page-lifecycle / resize 全局策略。确需独立 rAF 的组件由协调器门控可见性并上报帧窗；页面 master loop 在 hidden/freeze/pagehide 完全停止，恢复时重置时钟并夹紧 `dt`。
 - **滚动纪律**：内容入场优先原生 `animation-timeline: view()/scroll()`（`@supports` 渐进增强 + 静态兜底）或 IntersectionObserver。只有 Canvas/WebGL 连续故事状态确实需要 0–1 精确进度时，才允许一个 passive `scroll` listener，并必须用单 rAF 合并、只读一次几何、hidden/offscreen 停画、destroy 完整解绑；Sectors v3 是当前唯一批准例外。
 

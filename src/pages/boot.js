@@ -71,14 +71,6 @@ const TASKS = [
     })
   },
   {
-    line: 'prediction record /intel', cls: '', run: () => fetchJson('games').then((d) => {
-      $('bIntel').textContent = `${d.record.winRate}% · ${d.record.resolved}`;
-      $('bIntel').classList.remove('off');
-      $('dIntel').innerHTML = `${d.record.exactScore} exact scores ⭐<br>${d.tournament}`;
-      return `${d.record.winRate}% WR`;
-    })
-  },
-  {
     line: 'archive index /log', cls: '', run: () => fetchJson('novels-index').then((d) => {
       const ch = d.novels.reduce((s, n) => s + (n.chapterCount || 0), 0);
       $('bLog').textContent = `${d.novels.length} BOOKS`; $('bLog').classList.remove('off');

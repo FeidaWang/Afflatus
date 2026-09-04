@@ -99,7 +99,7 @@ import { getLocale } from '../lib/localeStore.js';
   function renderFixtures() {
     const host = $('fixtures'); if (!host || !data) return;
     if (!data.fixtures.length) {
-      host.innerHTML = `<div class="empty">${T('The final scored match log now lives in the unified Stats archive.', '最终逐场计分记录已归入统一统计存档。')} <a href="/stats.html">${T('Open Stats →', '打开统计 →')}</a></div>`;
+      host.innerHTML = `<div class="empty">${T('The final scored match log is retained in the repository data archive.', '最终逐场计分记录已保留在仓库数据归档中。')}</div>`;
       return;
     }
     host.innerHTML = data.fixtures.map((f) => {

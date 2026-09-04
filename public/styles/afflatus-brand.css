@@ -458,48 +458,6 @@
   50% { clip-path: inset(35% 0 25% 0); opacity: .55; }
 }
 
-/* ── STATS / calibration lattice ───────────────────────────────── */
-
-.stats-page { --afflatus-header-bg: #080b10; }
-
-[data-brand-persona="stats"] {
-  --afflatus-brand-ink: #e8edf5;
-  --afflatus-brand-accent: #7edcf2;
-  --afflatus-brand-accent-2: #a7ffcf;
-  --afflatus-brand-font: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
-}
-
-:root[data-afflatus-brand-state="compact"] [data-brand-persona="stats"] .afflatus-brand__stage::before {
-  inset: 4px auto auto 0;
-  inline-size: 54px;
-  block-size: 25px;
-  background-image:
-    linear-gradient(rgba(126, 220, 242, .14) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(126, 220, 242, .14) 1px, transparent 1px);
-  background-size: 6px 6px;
-  border: 1px solid rgba(126, 220, 242, .32);
-}
-
-:root[data-afflatus-brand-state="compact"] [data-brand-persona="stats"] .afflatus-brand__signal {
-  inset: 9px auto auto 48px;
-  inline-size: 25px;
-  block-size: 14px;
-  background: linear-gradient(90deg, transparent 0 8%, var(--afflatus-brand-accent) 8% 12%, transparent 12% 31%, var(--afflatus-brand-accent-2) 31% 39%, transparent 39% 61%, var(--afflatus-brand-accent) 61% 65%, transparent 65%);
-  animation: afflatus-stats-sample 1.7s steps(3, end) infinite;
-}
-
-:root[data-afflatus-brand-state="compact"] [data-brand-persona="stats"] .afflatus-brand__core {
-  inset: 13px auto auto 76px;
-  inline-size: 7px;
-  block-size: 7px;
-  border: 1px solid var(--afflatus-brand-accent-2);
-  border-radius: 50%;
-}
-
-@keyframes afflatus-stats-sample {
-  50% { transform: scaleY(.62); opacity: .62; }
-}
-
 /* ── COURSE / censored microfilm terminal ──────────────────────── */
 
 .course-page { --afflatus-header-bg: #090909; }
@@ -841,10 +799,6 @@
   animation: afflatus-signal-resolve 680ms steps(5, end) both;
 }
 
-:root[data-afflatus-brand-state="compact"] [data-brand-persona="stats"] .afflatus-brand__stage {
-  animation: afflatus-stats-resolve 760ms var(--afflatus-brand-ease) both;
-}
-
 :root[data-afflatus-brand-state="compact"] [data-brand-persona="course"] .afflatus-brand__stage {
   animation: afflatus-course-resolve 640ms steps(4, end) both;
 }
@@ -956,12 +910,6 @@
 @keyframes afflatus-signal-resolve {
   0% { clip-path: inset(0 100% 0 0); opacity: .2; }
   100% { clip-path: inset(0); opacity: 1; }
-}
-
-@keyframes afflatus-stats-resolve {
-  0% { transform: scale(.86); filter: blur(2px); }
-  64% { transform: scale(1.03); filter: blur(0); }
-  100% { transform: none; }
 }
 
 @keyframes afflatus-course-resolve {

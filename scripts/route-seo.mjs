@@ -353,68 +353,6 @@ function buildSignalGraph(route, locale, facts, url) {
   ];
 }
 
-function buildStatsGraph(route, locale, facts, url) {
-  const key = localeKey(route, locale);
-  const catalogId = `${url}#catalog`;
-  const datasets = [
-    {
-      '@type': 'Dataset',
-      '@id': `${url}#world-cup-dataset`,
-      name: key === 'zh' ? '2026 世界杯竞猜记录' : '2026 World Cup prediction records',
-      description:
-        key === 'zh'
-          ? '包含赛前预测、置信度、最终比分与命中结果的可下载记录。'
-          : 'Downloadable records containing pre-match predictions, confidence, final scores, and outcomes.',
-      distribution: [
-        datasetDistribution('World Cup prediction records', '/games-data.json'),
-      ],
-      variableMeasured: ['prediction', 'confidence', 'score', 'outcome'],
-      measurementTechnique: ['Wilson interval', 'Brier score', 'bootstrap resampling'],
-      dateModified:
-        facts.provenance?.find((entry) => entry.path.endsWith('games-data.json'))?.date,
-      creator: { '@id': PROFILE_ID },
-      inLanguage: languageValue(route, locale),
-      isPartOf: { '@id': catalogId },
-    },
-    {
-      '@type': 'Dataset',
-      '@id': `${url}#msi-dataset`,
-      name: key === 'zh' ? '2026 MSI 竞猜记录' : '2026 MSI prediction records',
-      description:
-        key === 'zh'
-          ? '包含系列赛预测、置信度、最终比分与命中结果的可下载记录。'
-          : 'Downloadable records containing series predictions, confidence, final scores, and outcomes.',
-      distribution: [datasetDistribution('MSI prediction records', '/leagues-data.json')],
-      variableMeasured: ['prediction', 'confidence', 'score', 'outcome'],
-      measurementTechnique: ['Wilson interval', 'Brier score', 'bootstrap resampling'],
-      dateModified:
-        facts.provenance?.find((entry) => entry.path.endsWith('leagues-data.json'))?.date,
-      creator: { '@id': PROFILE_ID },
-      inLanguage: languageValue(route, locale),
-      isPartOf: { '@id': catalogId },
-    },
-  ];
-  const page = basePageNode(route, locale, facts, url);
-  page.mainEntity = { '@id': catalogId };
-  return [
-    personNode(),
-    websiteNode(languageValue(route, locale)),
-    imageNode(route, locale, url),
-    page,
-    {
-      '@type': 'DataCatalog',
-      '@id': catalogId,
-      name: key === 'zh' ? 'Project Afflatus 竞猜数据目录' : 'Project Afflatus prediction data catalog',
-      description: route.locales[key].description,
-      url,
-      dataset: datasets.map((dataset) => ({ '@id': dataset['@id'] })),
-      ...(facts.dateModified ? { dateModified: facts.dateModified } : {}),
-    },
-    ...datasets,
-    breadcrumbNode(route, locale, url),
-  ];
-}
-
 function buildHoroscopeGraph(route, locale, facts, url) {
   const key = localeKey(route, locale);
   const appId = `${url}#application`;
@@ -539,7 +477,6 @@ const BUILDERS = Object.freeze({
   arena: buildArenaGraph,
   sectors: buildSectorsGraph,
   signal: buildSignalGraph,
-  stats: buildStatsGraph,
   horoscope: buildHoroscopeGraph,
   serial: buildSerialGraph,
   course: buildCourseGraph,

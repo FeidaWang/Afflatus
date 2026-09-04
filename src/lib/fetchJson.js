@@ -32,8 +32,6 @@ const validators = {
   sectorsCompetition: lazyValidator(async () => (await import('./validateSectorsCompetition.js')).validateSectorsCompetition),
   sectorsRivalry: lazyValidator(async () => (await import('./validateSectorsRivalry.js')).validateSectorsRivalry),
   signal: lazyValidator(async () => (await import('./validateSignalEvents.js')).validateSignalEvents),
-  leagues: lazyValidator(async () => (await import('./validateLeaguesData.js')).validateLeaguesData),
-  games: lazyValidator(async () => (await import('./validateGamesData.js')).validateGamesData),
   novelsIndex: lazyValidator(async () => (await import('./validateNovelsData.js')).validateNovelsIndex),
   novelBook: lazyValidator(async () => (await import('./validateNovelsData.js')).validateNovelBook),
   arenaUniverse: lazyValidator(async () => (await import('./validateArenaUniverse.js')).validateArenaUniverse),
@@ -67,11 +65,6 @@ const STATIC_RESOURCES = Object.freeze({
   // newly published static analysis; revalidate first and retain the last
   // validated payload only as an offline fallback.
   signal: { url: '/signal-events.json', freshness: 15 * 60_000, validate: validators.signal, networkFirst: true },
-  // Tournament records are trust-critical: a freshly deployed correction
-  // must not sit behind a still-young CacheStorage entry. Load the network
-  // version first, while retaining the validated cache as an offline fallback.
-  leagues: { url: '/leagues-data.json', freshness: 60 * 60_000, validate: validators.leagues, networkFirst: true },
-  games: { url: '/games-data.json', freshness: 60 * 60_000, validate: validators.games, networkFirst: true },
   'novels-index': { url: '/novels-index.json', freshness: 5 * 60_000, validate: validators.novelsIndex },
   // Arena and daily transits are published by atomic scheduled transactions.
   // Revalidate them before rendering so a successful deployment can never sit

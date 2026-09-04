@@ -25,8 +25,8 @@ describe('TERMS glossary registry', () => {
     }
   });
 
-  it('covers the U46 first-wave terms (signal/stats/homepage)', () => {
-    for (const key of ['keter', 'sep', 'brier', 'bootstrap', 'sharpe', 'drawdown', 'beta']) {
+  it('covers the active Signal and homepage terms', () => {
+    for (const key of ['keter', 'sep', 'sharpe', 'drawdown', 'beta']) {
       expect(keys, key).toContain(key);
     }
   });

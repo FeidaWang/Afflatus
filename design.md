@@ -21,7 +21,6 @@
 | 金融市场/美股 TA | 赛博竞技场（arena）：模拟盘=Autopilot 双模型对战，基准=SPY/SMH 陪练 | arena |
 | 中美 AI 产业 | Red vs Blue 双阵营星域：子午线为界，US 落左侧蓝场、CN 落右侧红场，跨阵营共用供应商（台积电/SK 海力士）停在子午线上——共存论点即几何本身 | sectors |
 | 美联储政策 | SCP 机密档案：Fed=收容对象 FED-26，等级 Keter（经济），FOMC=收容测试，鹰鸽=罗盘 | signal |
-| 体育/电竞竞猜 | AI 预测日志：模型公开押注、战绩全量存档可回溯 | games/league/stats |
 | 传统命理 | RPG 化：神煞=暗黑2稀有度色阶，合盘=关系称号社交货币，签到=抽卡 collectible | horoscope |
 | 小说连载 | 复古未来主义书房：书架→阅读器，皇家木色三主题 | serial |
 
@@ -54,7 +53,6 @@
 | signal | 纸感档案 `--doc:#d6d4cc` on `#1b1b1e`，panel `#232327` | `--amber:#f5c400`（hazard）`--green:#3fb950` `--red:#b3261e`；mood 变量随 FOMC 偏向切换 | Oswald（disp）/ Space Mono |
 | sectors | 深黑 `#06070b` / 墨蓝黑层次，正文暖白；公司故事区保留明亮编辑部留白；Red vs Blue 各专区（雷达/矩阵/双榜/评分板）用暖白 ink `#EDEAE3` on `#07080C`（15.4:1）+ 展示衬线 `--rb-font-display` 收纳 anthropic.com 式留白节奏 | **两条并行色轴，互不覆盖**：①关系语义多色不变——模型紫、开放权重酸黄、云青、算力青柠、芯片珊瑚、存储金、制造雾蓝，品牌节点保留真实 Logo 色；②新增阵营轴（2026-07-25 RB-P0-01）——节点外环+辉光、雷达描边、榜位色条、评分条统一用 `--rb-blue:#2F6BFF`（US）/`--rb-red:#E5484D`（CN）/`--rb-neutral:#7EF0DC`（跨阵营供应商），阵营色永不单独承载含义，必与国旗徽章或文字并列 | 系统无衬线 + mono；Red vs Blue 展示字用 `"Iowan Old Style"/Palatino/"Songti SC"` 衬线栈 |
 | games | WC26 官方配色：藏青 `#1B2766` / 金 `#9F7D23` / 白（U40） | 品红/青赛博残留仅点缀 | mono 系 |
-| stats | `--bg:#070a12` `--panel:#0d1220` `--ink:#dce8f2` | `--teal:#4fd6c4` `--gold:#e8ad6f` `--red:#e0596b` `--green:#57c98a` | JetBrains Mono |
 | horoscope | 治愈系：暖奶油/鼠尾草绿/赤陶橙/淡金（V21 定调，逃离「深紫神棍风」）；星盘/夜间模块唯一允许深色=墨水蓝 `#1a2440`+淡金星点（「星图手账」非「水晶球」） | 文字一律深色变体，逐一过 WCAG AA | 中文衬线 + 几何无衬线 |
 | serial | 阅读区双主题（`.reader[data-theme]`，U-toolbar-redo 起）：green（默认·日间护眼）`#c8dfcb`/`#213325` · night（夜间琥珀·低蓝光）`#211a12`/`#e8c98a`（实测对比度 8.5–10.8:1 全过 AA）；退役的第三主题「皇木」`#2b1a16→#231411` 移作全站页面背景（`body{background}`），不再是可选阅读主题 | `--read-accent` 随主题 | 中文衬线（正文）+ mono（工具条） |
 | arena | `--bg:#05070e` `--panel:#0b0f1c` `--text:#eaf1ff` `--muted:#8590b5` | `--acid:#3dff9a`（涨/支撑/Model 系）`--cyan:#27e7ff`（世界/数据，链接·边框·标签）`--down:#ff5470`（跌/阻力）`--blue:#3a5bff`/`--magenta:#ff3df0`（点缀，Autopilot 双模型区分色之一）；双色温纪律在此页体现为「酸绿=活/涨，青=系统语汇，暖色不出现」 | Orbitron（展示）/ Rajdhani（HUD 标签）/ JetBrains Mono（数据体） |
@@ -76,7 +74,6 @@
 
 - **星门 sticky 缩放舞台**（首页 stardrive，30e→默认）：滚动进度 `--forge`(0→1) 驱动容器 `scale(.8→1)`+圆角 32px→0「星门迎面展开」；caption/tagline/strip 分层多向视差；缩小态带淡青描边光的「取景窗」框（裁切边 diegetic 化）；`prefers-reduced-motion` 直出终态。年化回报指标条（38.66% 四件套）锚定 hero「航向·奇点王座」正下方（U45）。
 - **观星台渐进功能加载（P7 / P1-04）**：首屏保留完整 hero、出生输入、免责声明与各功能章节标题；出生城市/时区数据就绪后表单立即可用。八字/紫微只在用户已有或提交个人资料后展开，合盘只在双方资料齐全后展开，三类测验在接近视口时预取，结果卡只在用户主动保存时加载。PRO 星历打开后先显示克制的双语加载占位，关闭即停算；快速换盘、换合盘对象或浏览器离页时旧结果不得闪回。Worker 是性能实现而非新视觉人格，既有暖奶油、鼠尾草、赤陶与墨水蓝星图手账语言保持不变。
-- **Stats 确定性计算反馈（P8 / P1-05）**：保留既有深蓝、金色、青绿的赛事统计身份与紧凑信息密度，MSI / 世界杯共用同一套柱图、命中曲线与校准图语言。Bootstrap 运行时按钮显示忙碌态，同一赛事只接受最新一次请求；固定种子使同一数据重复计算得到同一结果。图表 mark 保持键盘可达，语义表格继续提供等价数据层。
 - **Sectors 渐进卡片与渲染器所有权（P9 / P1-06）**：公司故事、模型观察与后存储卡继续使用现有编辑部卡片语言；10 张后存储卡先显示 4 张，再以每批 3 张展开，按钮保持 44 px 键盘/触控面积，同页动态重绘不收回已经展开的内容。2D 星图只在接近滚动故事时激活；显式进入 3D 星域时先停止 2D，退出 3D 后再恢复 2D，两个动画世界不得同时占用渲染资源。性能拆分不得改变阵营配色、节点身份、关系线或原有叙事节奏。
 - **滚动叙事**：signal 事件卡 `animation-timeline:view()` 错速浮入（奇偶卡不同 range/方向）；阅读进度条 `.readProgress`；普通内容入场零 JS 监听。只有 Canvas 连续故事状态可按 tech.md §5.3 的单 passive listener + rAF 合并例外执行。
 - **共享元素转场**（View Transitions API）：serial 书架封面→阅读器头图跨态 morph（`view-transition-name:novelMorph` 临时授予、转场后清空）；signal 事件卡点击展开 dossier。
@@ -91,7 +88,7 @@
 - **战斗视图**：3D 俯视战场默认 + 导演运镜（镜头库 tacticalTopdown/bridgeWide/mainGunAxis/missileTail/ciwsTurret/chaseCam/deckCam/towerCam/flybyCam）；起降完整生命周期叙事；尾焰彩带 billboard 三段色老化淡出；HMD v3 座舱。bloom/冲击波级别的「效果冲顶」曾整批被站主 revert（U25）——**战斗视觉的浓度以站主口味为准，宁欠勿过**。
 - **页间转场**：`transition.js` 按目标页选类型（warp/cannon/takeoff/control/cyber）+ Web Audio 环境音（`audio.js`）；语言切换=warp 折叠脉冲（400ms 一次性）。
 - **微反馈**：一切可点元素 hover/active/`:focus-visible` 三态；任何操作 200ms 内可见反馈；count-up 数字入场（IntersectionObserver 一次性触发）。
-- **OpenAI 基准图表几何**（arena/stats 图表层，U-viz-openai 起，2026-07-21 定稿）：借鉴 openai.com 基准对比图的**几何与行为**（非其中性灰调/字体）——无卡片边框/无图背景，图表直接落在页面底色上；栅格只留基线+顶线两条实线（`--viz-grid`），不留虚线网格；线宽 1.5px + 末端圆点标记（marker-terminated）；配色仍走各页自有色板（arena：Model A/B 用 acid/cyan 系，SPY/SMH 基准用虚线降透明度，虚线=「这是模拟基准线不是真实历史」的诚实标记，非装饰）；悬浮提示统一走 `--viz-tip-*` token（近黑面板、8px 圆角、无箭头、`Label: value` 纯文本行）。此几何一旦引入即全站图表共享语言，新图表复用 token 不重新发明。
+- **OpenAI 基准图表几何**（arena 图表层，U-viz-openai 起，2026-07-21 定稿）：借鉴 openai.com 基准对比图的**几何与行为**（非其中性灰调/字体）——无卡片边框/无图背景，图表直接落在页面底色上；栅格只留基线+顶线两条实线（`--viz-grid`），不留虚线网格；线宽 1.5px + 末端圆点标记（marker-terminated）；配色仍走页面自有色板（Model A/B 用 acid/cyan 系，SPY/SMH 基准用虚线降透明度，虚线=「这是模拟基准线不是真实历史」的诚实标记，非装饰）；悬浮提示统一走 `--viz-tip-*` token（近黑面板、8px 圆角、无箭头、`Label: value` 纯文本行）。此几何一旦引入即全站图表共享语言，新图表复用 token 不重新发明。
 - **价位标尺（Level Ladder，arena TA 面板）**：单价格轴上同屏叠加阻力/支撑/MA/枢轴/整数关口/突破位/缺口，真实价格位置（`trueY`，背景带/水平线）与文字标签位置（`labelY`，防重叠 declutter）分离——标签可被挤开但短引导线永远连回真实价位，禁止「标签飘走查无实据」。容器高度随标签拥挤程度自适应变高，而非压缩到不可读。
 - **锁定态（gated state，Part 4 §18.2.2/§20，2026-07-23 起）**：面板请求的标的若不在当日免管理员密钥可查名单内，不显示通用报错，而是专属锁态文案（🔒 + 双语说明）+ 内嵌解锁表单（密钥输入框 + 「解锁」按钮，提交即存入 `sessionStorage` 并重试该标的）；密钥被拒时文案切换为「该密钥未通过验证」而非重复通用说明。解锁成功后 hero 状态条出现 🔓 ADMIN UNLOCKED 常驻绿色 chip，点击可二次确认清空密钥重新锁定。延续「宪章②每个读数绑真实状态」——查询失败必须诚实区分「代码错了/网络错了」与「本来就被有意限制」，不可混为一谈。
 - **Arena 六态反馈（P1-07，2026-07-26）**：TA 面板把运行真相投影为唯一状态，不叠加互相打架的 spinner/error/旧内容。`loading` 清空旧标的并即时显示新代码；`ready` 不加噪音；`partial` 用冷青提示「实时报价不可用、改用最近完整收盘」；`stale` 用琥珀提示并打印缓存截止交易日；`gated` 延续专属锁态；`error` 才使用红色通用失败。旧请求被新 ticker 取代后不得闪回，刷新期间 `aria-busy=true`，状态提示是 `role=status`/`role=alert`；`STALE/EOD/LIVE` 文字与颜色并用，颜色永不成为唯一通道。
@@ -101,12 +98,12 @@
 
 ### 4.1 术语渐进披露（U46-乙-①，已上线组件）
 
-行话（用户可见的才算）统一走共享术语组件：点状下划线 + 简明白话浮层。**hover 专属信息零容忍（22c 铁律）→ `.term` 必须是可聚焦真按钮**，点按/Enter 同效，Esc/失焦/滚动关闭。注册表 `termGlossary.js`（sharpe/drawdown/beta/keter/sep/brier/bootstrap 首批），解释必须一句白话双语——写不短说明术语本身该换。落点：首页年化面板 Sharpe/Max Drawdown/Beta、signal Keter/SEP、stats Brier/Bootstrap。每页立项时增补，宁缺毋滥。
+行话（用户可见的才算）统一走共享术语组件：点状下划线 + 简明白话浮层。**hover 专属信息零容忍（22c 铁律）→ `.term` 必须是可聚焦真按钮**，点按/Enter 同效，Esc/失焦/滚动关闭。注册表 `termGlossary.js`（sharpe/drawdown/beta/keter/sep），解释必须一句白话双语——写不短说明术语本身该换。落点：首页年化面板 Sharpe/Max Drawdown/Beta、signal Keter/SEP。每页立项时增补，宁缺毋滥。
 
 ### 4.2 响应式降级（U46-乙-②，审计制非一刀切）
 
 - **规则**：凡 ≥2 列的 grid/flex 布局必须在 ≤480–768px 有单列（或自然塌陷）档——但以**逐页审计**落实，不写「<768px 全部强制单列」的空头立法（多数页早有 520–900px 降级段，盲目立法只会重复劳动）。2026-07-18 全站 9 页代码级审计结论：唯一真破版 = sectors `.macro`（已修）；horoscope `.zw-grid` 仅拥挤不溢出（fr 轨道，不动）。
-- **「横屏查看」提示组件**：设计保留（`.rotateHint` 虚线框、可点×关闭记 localStorage、**建议不拦截**——强制横屏遮罩与内容站身份冲突，U23 同源裁决）；**当前无落点不上线**——games 淘汰赛树已有 `overflow-x:auto`、stats 分布图是 viewBox 响应式 SVG。触发条件：未来出现真正无法回流的宽可视化时按此设计接入。
+- **「横屏查看」提示组件**：设计保留（`.rotateHint` 虚线框、可点×关闭记 localStorage、**建议不拦截**——强制横屏遮罩与内容站身份冲突，U23 同源裁决）；**当前无落点不上线**。触发条件：未来出现真正无法回流的宽可视化时按此设计接入。
 - **触控**：交互元素热区 ≥44px——`position:relative`+`::before{inset:...}` 扩热区**不改视觉尺寸**（D4 模式）；核心操作收拇指区；移动端裁剪（3D 星域粒子减半、节点封顶、`<560px` 关镜头震动）。Sectors 2D 故事星图不截断实体数据，改用确定性三列纵向拓扑与更小 Logo 牌；Canvas 声明 `touch-action:pan-y pinch-zoom`，不得抢占页面滚动或浏览器缩放。
 
 ### 4.3 阅读疲劳与暗色眩光（U46-乙-③）

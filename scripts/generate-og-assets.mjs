@@ -17,7 +17,6 @@ const ACCENTS = Object.freeze({
   arena: '#38f2c5',
   sectors: '#77b9ff',
   signal: '#f5d56a',
-  stats: '#71a7ff',
   horoscope: '#9a5a3d',
   serial: '#ffc4a0',
   course: '#729cff',

@@ -32,14 +32,6 @@ export const TERMS = {
     en: 'The Fed’s Summary of Economic Projections, released quarterly — includes the "dot plot" of rate expectations.',
     zh: '美联储经济预测摘要（SEP），每季度发布一次——包含利率预期的「点阵图」。',
   },
-  brier: {
-    en: 'Prediction accuracy score, 0 (perfect) to 1 (worst).',
-    zh: '预测准确度评分，0 最好 1 最差。',
-  },
-  bootstrap: {
-    en: 'A resampling technique — redraw the same data with replacement thousands of times to see how stable a result is.',
-    zh: '一种重采样技术——对同一批数据反复有放回抽样上千次，看结果有多稳。',
-  },
 };
 
 /**
