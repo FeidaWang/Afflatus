@@ -1,18 +1,11 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
-  Broadcast,
   CaretDown,
-  Crosshair,
   GlobeHemisphereEast,
   List,
-  Lightning,
-  ShieldCheck,
   X,
 } from "@phosphor-icons/react";
-
-const DeckScene = lazy(() => import("./DeckScene.jsx").then((module) => ({ default: module.DeckScene })));
-const RadarCanvas = lazy(() => import("./DeckScene.jsx").then((module) => ({ default: module.RadarCanvas })));
 
 const navGroups = [
   {
@@ -100,7 +93,6 @@ const showcaseCopy = {
       eyebrow: "QUIET TACTICAL ATLAS · 2026.08.22",
       title: <><span className="hero-title-line">Systems for</span><br /><span className="hero-title-line">uncertain worlds.</span></>,
       subtitle: "Capital, software and intelligence for long horizons.",
-      cta: "Open the deck",
     },
     systems: "OPERATING SYSTEMS",
     systemAxis: "CAPITAL · SOFTWARE · INTELLIGENCE",
@@ -126,10 +118,6 @@ const showcaseCopy = {
     longRoute: "LONG ROUTE",
     shortCycles: "SHORT CYCLES",
     verifiedEntries: "05 VERIFIED ENTRIES",
-    signatureEyebrow: "SIGNATURE DECK · AFFLATUS-01",
-    signatureTitle: <>Long range by design.<br />Built to survive uncertainty.</>,
-    signatureBody: "Open the adaptive Three.js command simulation: navigation, tactical radar, ship status, energy allocation and combat lock.",
-    signatureCta: "Enter full command deck",
     principles: "OPERATING PRINCIPLES",
     about: "ABOUT AFFLATUS",
     aboutTitle: "A personal command system.",
@@ -147,7 +135,6 @@ const showcaseCopy = {
       eyebrow: "安静的战术星图 · 2026.08.22",
       title: <><span className="hero-title-line">为不确定的世界</span><br /><span className="hero-title-line">构建系统。</span></>,
       subtitle: "资本、软件与情报，为长期主义而建。",
-      cta: "开启指挥舱",
     },
     systems: "运行系统",
     systemAxis: "资本 · 软件 · 情报",
@@ -173,10 +160,6 @@ const showcaseCopy = {
     longRoute: "长航线",
     shortCycles: "短周期",
     verifiedEntries: "05 条已验证记录",
-    signatureEyebrow: "标志性甲板 · AFFLATUS-01",
-    signatureTitle: <>为远航而设计。<br />为不确定性而生存。</>,
-    signatureBody: "进入自适应 Three.js 指挥模拟：星际航行、战术雷达、舰船状态、能源分配与战斗锁定。",
-    signatureCta: "进入完整指挥舱",
     principles: "运行原则",
     about: "关于 AFFLATUS",
     aboutTitle: "一套个人指挥系统。",
@@ -208,16 +191,14 @@ function ExternalLink({ href, language, className = "", children, onClick }) {
   );
 }
 
-function Header({ onOpenDeck, language }) {
+function Header({ language }) {
   const [openGroup, setOpenGroup] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [deckMenuOpen, setDeckMenuOpen] = useState(false);
 
   useEffect(() => {
     const close = (event) => {
       if (!event.target.closest("[data-nav-popover]")) {
         setOpenGroup(null);
-        setDeckMenuOpen(false);
       }
     };
     document.addEventListener("pointerdown", close);
@@ -225,8 +206,8 @@ function Header({ onOpenDeck, language }) {
   }, []);
 
   const translations = language === "zh"
-    ? { about: "关于", deck: "开启指挥舱", deckOptions: "指挥舱选项", home: "AFFLATUS 首页", menu: "打开导航", primaryNavigation: "主导航", switcher: "切换至英文", simulation: "指挥模拟", strategy: "策略甲板", research: "研究甲板", capital: "资本甲板" }
-    : { about: "About", deck: "Open Deck", deckOptions: "Deck options", home: "AFFLATUS home", menu: "Open navigation", primaryNavigation: "Primary navigation", switcher: "Switch to Chinese", simulation: "Command simulation", strategy: "Strategy deck", research: "Research deck", capital: "Capital deck" };
+    ? { about: "关于", home: "AFFLATUS 首页", menu: "打开导航", primaryNavigation: "主导航", switcher: "切换至英文" }
+    : { about: "About", home: "AFFLATUS home", menu: "Open navigation", primaryNavigation: "Primary navigation", switcher: "Switch to Chinese" };
   const languageHref = `${language === "en" ? "/zh/" : "/en/"}${window.location.search}${window.location.hash}`;
 
   return (
@@ -260,26 +241,6 @@ function Header({ onOpenDeck, language }) {
       </nav>
 
       <div className="header-actions">
-        <div className="deck-split" data-nav-popover>
-          <button type="button" className="deck-main" onClick={onOpenDeck}>{translations.deck}</button>
-          <button
-            type="button"
-            className="deck-more"
-            aria-label={translations.deckOptions}
-            aria-expanded={deckMenuOpen}
-            onClick={() => setDeckMenuOpen(!deckMenuOpen)}
-          >
-            <CaretDown aria-hidden="true" weight="thin" />
-          </button>
-          {deckMenuOpen && (
-            <div className="nav-popover deck-popover">
-              <button type="button" onClick={onOpenDeck}><span>{translations.simulation}</span><ArrowRight weight="thin" /></button>
-              <ExternalLink href="/signal.html" language={language}>{translations.strategy}</ExternalLink>
-              <ExternalLink href="/arena.html" language={language}>{translations.research}</ExternalLink>
-              <ExternalLink href="/portfolio.html#fy2026Performance" language={language}>{translations.capital}</ExternalLink>
-            </div>
-          )}
-        </div>
         <a
           id="langBtn"
           className="language-switch"
@@ -396,180 +357,7 @@ function CycleChart({ language }) {
   return <canvas className="cycle-chart" ref={canvasRef} aria-label={language === "zh" ? "五个已结清周期的持有时长与效率轨迹" : "Five closed-cycle holding-duration and efficiency trajectories"} />;
 }
 
-function DeckOverlay({ open, onClose, language }) {
-  const [mode, setMode] = useState("nav");
-  const [fps, setFps] = useState(60);
-  const overlayRef = useRef(null);
-  const closeButtonRef = useRef(null);
-  const previousFocusRef = useRef(null);
-
-  useEffect(() => {
-    if (!open) return undefined;
-    const overlay = overlayRef.current;
-    const background = overlay?.parentElement
-      ? Array.from(overlay.parentElement.children).filter((node) => node !== overlay)
-      : [];
-    const previousInert = background.map((node) => node.inert);
-    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    background.forEach((node) => { node.inert = true; });
-
-    const handleKeydown = (event) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-        return;
-      }
-      if (event.key !== "Tab" || !overlay) return;
-      const focusable = Array.from(overlay.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'))
-        .filter((node) => !node.hasAttribute("hidden") && node.getClientRects().length > 0);
-      if (!focusable.length) {
-        event.preventDefault();
-        overlay.focus();
-        return;
-      }
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    document.body.classList.add("deck-open");
-    window.addEventListener("keydown", handleKeydown);
-    requestAnimationFrame(() => closeButtonRef.current?.focus());
-    return () => {
-      document.body.classList.remove("deck-open");
-      window.removeEventListener("keydown", handleKeydown);
-      background.forEach((node, index) => { node.inert = previousInert[index]; });
-      previousFocusRef.current?.focus();
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
-  const combat = mode === "combat";
-  const deckCopy = language === "zh" ? {
-    titleNav: "远程航行",
-    titleCombat: "战术截击",
-    shipStatus: "舰船状态",
-    tacticalSphere: "战术球面",
-    tracks: "3 个目标",
-    passive: "静默监听",
-    power: "能源管理",
-    intercept: "截击航向已获取",
-    stable: "黑洞弹弓窗口稳定",
-    combatNote: "仅限模拟 · 武器保险已启用",
-    navNote: "自适应渲染 · 后台暂停 · 支持减少动态效果",
-    close: "关闭指挥舱",
-    dialog: "AFFLATUS 指挥舱模拟",
-    mode: "模拟模式",
-  } : {
-    titleNav: "LONG-RANGE NAVIGATION",
-    titleCombat: "TACTICAL INTERCEPT",
-    shipStatus: "SHIP STATUS",
-    tacticalSphere: "TACTICAL SPHERE",
-    tracks: "3 TRACKS",
-    passive: "PASSIVE",
-    power: "POWER MANAGEMENT",
-    intercept: "INTERCEPT VECTOR ACQUIRED",
-    stable: "BLACK-HOLE SLINGSHOT WINDOW STABLE",
-    combatNote: "Simulation only · weapons safed",
-    navNote: "Adaptive renderer · visibility-suspended · reduced-motion ready",
-    close: "Close command deck",
-    dialog: "AFFLATUS command deck simulation",
-    mode: "Simulation mode",
-  };
-  const segments = (active, total = 10) => Array.from({ length: total }, (_, index) => (
-    <i className={index < active ? "is-active" : ""} key={index} />
-  ));
-
-  return (
-    <section
-      className={`deck-overlay ${combat ? "is-combat" : ""}`}
-      ref={overlayRef}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="deck-overlay-title"
-      aria-label={deckCopy.dialog}
-      tabIndex="-1"
-    >
-      <Suspense fallback={<div className="deck-scene deck-loading" aria-hidden="true" />}>
-        <DeckScene mode={mode} onFpsChange={setFps} />
-      </Suspense>
-      <div className="deck-atmosphere" aria-hidden="true" />
-      <header className="deck-header">
-        <div>
-          <span className="eyebrow">AFFLATUS · COMMAND DECK / SIMULATION</span>
-          <strong id="deck-overlay-title">{combat ? deckCopy.titleCombat : deckCopy.titleNav}</strong>
-        </div>
-        <div className="deck-mode-switch" role="group" aria-label={deckCopy.mode}>
-          <button type="button" className={mode === "nav" ? "is-active" : ""} onClick={() => setMode("nav")}>NAV</button>
-          <button type="button" className={mode === "combat" ? "is-active" : ""} onClick={() => setMode("combat")}>COMBAT</button>
-        </div>
-        <div className="deck-header-meta">
-          <span><i /> {fps} FPS</span>
-          <span>SOL-3 · MELBOURNE</span>
-          <button ref={closeButtonRef} type="button" onClick={onClose} aria-label={deckCopy.close}><X weight="thin" /></button>
-        </div>
-      </header>
-
-      <aside className="deck-panel deck-panel-left">
-        <div className="deck-panel-heading"><ShieldCheck weight="thin" /><span>{deckCopy.shipStatus}</span><b>AFFLATUS-01</b></div>
-        {[
-          ["HULL", 10, "100%"],
-          ["SHIELD", combat ? 7 : 9, combat ? "74%" : "92%"],
-          ["REACTOR", combat ? 9 : 6, combat ? "91%" : "62%"],
-        ].map(([label, active, value]) => (
-          <div className="mfd-row" key={label}>
-            <span>{label}</span><div className="segment-bar">{segments(active)}</div><b>{value}</b>
-          </div>
-        ))}
-        <div className="deck-readout-grid">
-          <span><i>HDG</i><b>{combat ? "081.4°" : "274.3°"}</b></span>
-          <span><i>VEL</i><b>{combat ? "18.72" : "12.40"}<small> km/s</small></b></span>
-          <span><i>PITCH</i><b>{combat ? "+12.8°" : "+03.2°"}</b></span>
-          <span><i>G-FORCE</i><b>{combat ? "2.4 G" : "0.18 G"}</b></span>
-        </div>
-      </aside>
-
-      <div className="flight-reticle" aria-hidden="true">
-        <Crosshair weight="thin" />
-        <span>{combat ? "LOCK / 82%" : "VECTOR / STABLE"}</span>
-      </div>
-
-      <aside className="deck-panel deck-panel-right">
-        <div className="deck-panel-heading"><Broadcast weight="thin" /><span>{deckCopy.tacticalSphere}</span><b>{combat ? deckCopy.tracks : deckCopy.passive}</b></div>
-        <Suspense fallback={<div className="radar-canvas" aria-hidden="true" />}>
-          <RadarCanvas combat={combat} language={language} />
-        </Suspense>
-        <div className="target-list">
-          <span><i className="friend" />AFF-02<b>0.84 AU</b></span>
-          <span><i className={combat ? "hostile" : "unknown"} />{combat ? "RED-01" : "UNKNOWN"}<b>{combat ? "14.2 KM" : "2.40 AU"}</b></span>
-          <span><i className="friend" />LAGRANGE L1<b>LOCK</b></span>
-        </div>
-      </aside>
-
-      <footer className="deck-footer">
-        <div className="power-strip">
-          <span><Lightning weight="thin" /> {deckCopy.power}</span>
-          <div><i>ENGINES</i><b style={{ "--power": combat ? "84%" : "62%" }} /></div>
-          <div><i>SHIELDS</i><b style={{ "--power": combat ? "76%" : "48%" }} /></div>
-          <div><i>WEAPONS</i><b style={{ "--power": combat ? "91%" : "12%" }} /></div>
-        </div>
-        <div className="deck-message">
-          <span>{combat ? deckCopy.intercept : deckCopy.stable}</span>
-          <small>{combat ? deckCopy.combatNote : deckCopy.navNote}</small>
-        </div>
-      </footer>
-    </section>
-  );
-}
-
 export function App() {
-  const [deckOpen, setDeckOpen] = useState(false);
   const language = window.location.pathname.startsWith("/zh/") ? "zh" : "en";
   const copy = showcaseCopy[language];
 
@@ -582,17 +370,11 @@ export function App() {
       <section className="hero" id="top">
         <img className="hero-image" src="/assets/showcase/blackhole-hero.jpg" alt="" fetchPriority="high" decoding="async" />
         <div className="hero-shade" aria-hidden="true" />
-        <Header
-          onOpenDeck={() => setDeckOpen(true)}
-          language={language}
-        />
+        <Header language={language} />
         <div className="hero-content">
           <span className="eyebrow">{copy.hero.eyebrow}</span>
           <h1>{copy.hero.title}</h1>
           <p>{copy.hero.subtitle}</p>
-          <button type="button" className="editorial-link hero-cta" onClick={() => setDeckOpen(true)}>
-            <span>{copy.hero.cta}</span><ArrowRight aria-hidden="true" weight="thin" />
-          </button>
         </div>
         <div className="hero-telemetry" aria-label={language === "zh" ? "最新已验证信号快照" : "Latest verified signal snapshot"}>
           <span><i>POSITION</i><b>MELBOURNE / 37.8136° S</b></span>
@@ -677,25 +459,6 @@ export function App() {
           </div>
         </section>
 
-        <section className="signature-deck" aria-labelledby="signature-title">
-          <img className="signature-image" src="/assets/showcase/signature-vanguard.jpg" alt="" loading="lazy" decoding="async" />
-          <div className="signature-shade" aria-hidden="true" />
-          <div className="signature-copy">
-            <span className="eyebrow">{copy.signatureEyebrow}</span>
-            <h2 id="signature-title">{copy.signatureTitle}</h2>
-            <p>{copy.signatureBody}</p>
-            <button type="button" className="editorial-link signature-cta" onClick={() => setDeckOpen(true)}>
-              <span>{copy.signatureCta}</span><ArrowRight weight="thin" />
-            </button>
-          </div>
-          <div className="signature-facts">
-            <span><i>FED RANGE</i><b>3.50–3.75%</b></span>
-            <span><i>DESK WINDOW</i><b>$17.0BN</b></span>
-            <span><i>{copy.updatedLabel}</i><b>2026.08.21</b></span>
-          </div>
-          <div className="signature-status"><i /> {copy.systemNominal}</div>
-        </section>
-
         <section className="principles section-shell" aria-labelledby="principles-title">
           <div className="section-heading"><span className="eyebrow" id="principles-title">{copy.principles}</span></div>
           <div className="principles-grid">
@@ -735,8 +498,6 @@ export function App() {
           <span>MELBOURNE, AUSTRALIA — EARTH / SOL-3</span>
         </div>
       </footer>
-
-      <DeckOverlay open={deckOpen} onClose={() => setDeckOpen(false)} language={language} />
     </div>
   );
 }
