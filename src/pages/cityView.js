@@ -1545,7 +1545,7 @@ loadButton?.addEventListener('click', () => { void mountInitialCity(); });
 
 // The poster and page copy are complete without WebGL. Constrained devices
 // upgrade only from the explicit control; desktop starts after first paint.
-const constrainedDevice = !localAnalysisPreviewMode && (
+const constrainedDevice = !localAnalysisPreviewMode && !deviceAuditMode && (
   window.matchMedia?.('(max-width: 760px), (pointer: coarse)')?.matches
   || (Number.isFinite(navigator.deviceMemory) && navigator.deviceMemory < 4)
   || (Number.isFinite(navigator.hardwareConcurrency) && navigator.hardwareConcurrency < 4)

@@ -92,7 +92,10 @@ import {
   }
   window.AfflatusI18N = { get: () => lang, set, toggle: () => set(lang === 'zh' ? 'en' : 'zh'), apply };
 
-  document.addEventListener('click', (e) => { const b = e.target.closest && e.target.closest('.lang-toggle'); if (b) { e.preventDefault(); window.AfflatusI18N.toggle(); } });
+  // Handle the locale control before page-specific navigation delegates run.
+  // Mobile disclosures intentionally stop click propagation inside their panel;
+  // a bubbling listener would miss the language link and allow a full reload.
+  document.addEventListener('click', (e) => { const b = e.target.closest && e.target.closest('.lang-toggle'); if (b) { e.preventDefault(); window.AfflatusI18N.toggle(); } }, { capture: true });
 
   // Entry modules sit after page content, but a fast cached module can still
   // evaluate while the parser reports `loading`. Translate everything already

@@ -339,6 +339,10 @@ test('Cityview keeps controls reachable at a 200% zoom-equivalent short viewport
   await page.setViewportSize({ width: 640, height: 360 });
   await page.goto('/cityview.html?mode=sandbox&seed=zoom-contract', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
+  const loadButton = page.locator('[data-city-load]');
+  await expect(loadButton).toBeVisible();
+  await loadButton.click();
+  await expect(page.locator('[data-city-stage]')).toHaveAttribute('aria-busy', 'false');
 
   const layout = await page.evaluate(() => ({
     overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -928,6 +932,7 @@ test('Cityview physical-device audit stays opt-in and exports a local review art
   });
   await page.locator('[data-city-play]').click();
   await page.locator('[data-city-tour]').click();
+  await page.getByRole('button', { name: 'Open primary navigation' }).click();
   await page.locator('.city-lang').click();
   await expect(page.locator('#city-device-audit-title')).toHaveText('实体真机证据');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
