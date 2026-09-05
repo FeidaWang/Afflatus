@@ -190,12 +190,24 @@ describe('render budget coordinator', () => {
     });
 
     expect(onResume).not.toHaveBeenCalled();
+    observer.callback([{ target: element, isIntersecting: true, intersectionRatio: 0 }]);
+    expect(onResume).not.toHaveBeenCalled();
     observer.emit(element, true);
     expect(onResume).toHaveBeenCalledTimes(1);
+    const siblingResume = vi.fn();
+    const siblingPause = vi.fn();
+    const sibling = coordinator.register({ id: 'test:sibling', element, onResume: siblingResume, onPause: siblingPause });
+    // Late registration inherits the element's visibility, and both owners
+    // receive future visibility changes through the single observer.
+    expect(siblingResume).toHaveBeenCalledTimes(1);
     observer.emit(element, false);
     expect(onPause).toHaveBeenCalledTimes(1);
-
+    expect(siblingPause).toHaveBeenCalledTimes(1);
     handle.unregister();
+    expect(observer.observed.has(element)).toBe(true);
+    observer.emit(element, true);
+    expect(siblingResume).toHaveBeenCalledTimes(2);
+    sibling.unregister();
     expect(observer.observed.size).toBe(0);
   });
 

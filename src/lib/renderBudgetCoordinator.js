@@ -49,7 +49,7 @@ export function createRenderBudgetCoordinator(options = {}) {
   });
 
   const records = new Map();
-  const recordIdByElement = new WeakMap();
+  const recordIdsByElement = new WeakMap();
   let qualityTier = initialTier;
   let refreshHz = 60;
   let pageFrozen = Boolean(doc?.hidden);
@@ -66,11 +66,14 @@ export function createRenderBudgetCoordinator(options = {}) {
   const observer = IntersectionObserverClass
     ? new IntersectionObserverClass((entries) => {
       for (const entry of entries) {
-        const record = records.get(recordIdByElement.get(entry.target));
-        if (!record) continue;
-        record.inViewport = Boolean(entry.isIntersecting);
-        record.intersectionRatio = Number(entry.intersectionRatio) || 0;
-        reconcile(record);
+        for (const id of recordIdsByElement.get(entry.target) || []) {
+          const record = records.get(id);
+          if (!record) continue;
+          // Edge contact can be isIntersecting=true with zero visible pixels.
+          record.inViewport = Boolean(entry.isIntersecting) && Number(entry.intersectionRatio) > 0;
+          record.intersectionRatio = Number(entry.intersectionRatio) || 0;
+          reconcile(record);
+        }
       }
     }, { threshold: [0, 0.01, 0.25] })
     : null;
@@ -299,7 +302,14 @@ export function createRenderBudgetCoordinator(options = {}) {
 
     records.set(id, record);
     if (record.element && record.observe && observer) {
-      recordIdByElement.set(record.element, id);
+      const ids = recordIdsByElement.get(record.element) || new Set();
+      const existing = records.get(ids.values().next().value);
+      if (existing) {
+        record.inViewport = existing.inViewport;
+        record.intersectionRatio = existing.intersectionRatio;
+      }
+      ids.add(id);
+      recordIdsByElement.set(record.element, ids);
       observer.observe(record.element);
     }
     attachListeners();
@@ -318,8 +328,12 @@ export function createRenderBudgetCoordinator(options = {}) {
       record.enabled = false;
       reconcile(record);
       if (record.element && record.observe && observer) {
-        observer.unobserve(record.element);
-        recordIdByElement.delete(record.element);
+        const ids = recordIdsByElement.get(record.element);
+        ids?.delete(record.id);
+        if (!ids?.size) {
+          observer.unobserve(record.element);
+          recordIdsByElement.delete(record.element);
+        }
       }
       records.delete(id);
       if (dispose) callSafely(record.onDispose, undefined, `${id}:dispose`);
@@ -367,8 +381,12 @@ export function createRenderBudgetCoordinator(options = {}) {
       record.enabled = false;
       reconcile(record);
       if (record.element && record.observe && observer) {
-        observer.unobserve(record.element);
-        recordIdByElement.delete(record.element);
+        const ids = recordIdsByElement.get(record.element);
+        ids?.delete(record.id);
+        if (!ids?.size) {
+          observer.unobserve(record.element);
+          recordIdsByElement.delete(record.element);
+        }
       }
       callSafely(record.onDispose, undefined, `${record.id}:dispose`);
     }

@@ -1,253 +1,223 @@
+import * as THREE from 'three';
+import { prepareStarfieldIntro } from './starfieldIntro.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
-import { clamp, rand } from '../utils/math.js';
+import { canAcquireWebGLContext, createWebGLContextLifecycle, disposeThreeScene } from '../lib/webglLifecycle.js';
+import { STARFIELD_LIMITS, clampRotation, dampRotation, createStarfieldGeometry, starfieldBudget } from './starfieldModel.js';
 
-// Runs the star/warp draw loop in a Worker via OffscreenCanvas so the main
-// thread only pays for tiny postMessage calls each frame (pointer x/y +
-// warp intensity) instead of ~240 star draws + the warp-tunnel loop.
-// 2026-07-03: added as the "highest ROI" perf step from ROADMAP §6. Falls
-// back to the original main-thread canvas path (untouched below) on any
-// browser/engine that lacks transferControlToOffscreen or module Workers —
-// no feature gets worse, it just doesn't get the offload.
-function tryCreateWorkerScene(canvas, computeDpr) {
-  if (typeof OffscreenCanvas === 'undefined') return null;
-  if (typeof canvas.transferControlToOffscreen !== 'function') return null;
-  if (typeof Worker === 'undefined') return null;
-  try {
-    const offscreen = canvas.transferControlToOffscreen();
-    const worker = new Worker(new URL('./backgroundScene.worker.js', import.meta.url), { type: 'module' });
-    let width = 1, height = 1, dpr = 1;
-    let inited = false;
+const SURFACE_ID = 'home:orbital-starfield';
+const PAUSE_KEY = 'afflatus:starfield-paused:v1';
+let instance;
 
-    function resize() {
-      dpr = computeDpr(innerWidth, innerHeight);
-      width = Math.round(innerWidth * dpr);
-      height = Math.round(innerHeight * dpr);
-      canvas.style.width = `${innerWidth}px`;
-      canvas.style.height = `${innerHeight}px`;
-      const payload = { innerWidth, innerHeight, dpr };
-      if (!inited) {
-        inited = true;
-        worker.postMessage({ type: 'init', canvas: offscreen, ...payload }, [offscreen]);
-      } else {
-        worker.postMessage({ type: 'resize', ...payload });
-      }
-      return { width, height, dpr };
-    }
-
-    // Actual drawing happens inside the worker on its own timer; the real
-    // `draw` hook (assigned by createBackgroundScene below, since it needs
-    // getPointer/getWarpIntensity) just forwards the two live inputs the
-    // worker needs each time main.js's render loop calls it.
-    return {
-      resize,
-      draw: null, // replaced below once we know getPointer/getWarpIntensity
-      pause() { worker.postMessage({ type: 'stop' }); },
-      resume() { worker.postMessage({ type: 'start' }); },
-      destroy() { worker.terminate(); },
-      get width() { return width; },
-      get height() { return height; },
-      get dpr() { return dpr; },
-      _worker: worker,
-    };
-  } catch (err) {
-    console.warn('[backgroundScene] worker offload failed, falling back to main thread', err);
-    return null;
-  }
-}
-
-export function createBackgroundScene({ canvas, getPointer, getWarpIntensity }) {
+// Replaces the old backgroundScene Canvas2D / Worker renderer. Exactly one
+// instance owns #starfield; the combat master no longer drives a background.
+export function createBackgroundScene() {
+  if (instance) return instance;
+  const canvas = document.getElementById('starfield');
+  const host = document.getElementById('starfieldViewport');
+  const reset = document.getElementById('starfieldReset');
+  const pause = document.getElementById('starfieldPause');
+  const status = document.getElementById('starfieldStatus');
+  const replay = document.getElementById('starfieldReplay');
+  if (!canvas || !host) return null;
+  const intro = prepareStarfieldIntro(host);
   const coordinator = getRenderBudgetCoordinator();
-  let renderPolicy = coordinator.getPolicy({ cost: 'medium', targetFps: 60 });
-  const computeDpr = (width, height) => renderPolicy.computeDpr(width, height, { minDpr: 0.6 });
-  const workerScene = tryCreateWorkerScene(canvas, computeDpr);
-  if (workerScene) {
-    const worker = workerScene._worker;
-    let lastIntensity = null;
-    let sized = false;
-    workerScene.draw = () => {
-      const pointer = getPointer();
-      worker.postMessage({ type: 'pointer', x: pointer.x, y: pointer.y });
-      const intensity = getWarpIntensity();
-      if (intensity !== lastIntensity) {
-        lastIntensity = intensity;
-        worker.postMessage({ type: 'intensity', value: intensity });
-      }
-    };
-    const resize = () => {
-      sized = true;
-      return workerScene.resize();
-    };
-    const surface = coordinator.register({
-      id: 'home:background-worker',
-      element: canvas,
-      observe: false,
-      cost: 'medium',
-      targetFps: 60,
-      onPause: workerScene.pause,
-      onResume: workerScene.resume,
-      onQualityChange(nextPolicy) {
-        renderPolicy = nextPolicy;
-        if (sized) resize();
-      },
-    });
-    return {
-      draw: workerScene.draw,
-      resize,
-      pause: workerScene.pause,
-      resume: workerScene.resume,
-      destroy() {
-        surface.unregister();
-        workerScene.destroy();
-      },
-      get width() { return workerScene.width; },
-      get height() { return workerScene.height; },
-      get dpr() { return workerScene.dpr; },
-    };
+  const fine = matchMedia('(hover: hover) and (pointer: fine)');
+  const compact = matchMedia('(max-width: 860px)');
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const abort = new AbortController();
+  const listen = (target, event, callback, options = {}) => target?.addEventListener(event, callback, { ...options, signal: abort.signal });
+  let policy = coordinator.getPolicy({ cost: 'medium', targetFps: 60 });
+  let renderer, lifecycle, surface, scene, camera, points, material;
+  let raf = 0, lastTime = 0, elapsed = 0, active = false, contextReady = false, disposed = false, failed = false;
+  let paused = false;
+  try { paused = localStorage.getItem(PAUSE_KEY) === 'true'; } catch {}
+  let drag = null;
+  let forgeActive = coordinator.getTelemetry().surfaces.some(surface => surface.id === 'home:alphard-forge' && surface.active);
+  const rotation = { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0, hoverYaw: 0, hoverPitch: 0 };
+  const staticMode = () => motion.matches || !fine.matches || compact.matches || Boolean(navigator.connection?.saveData);
+  const commandMode = () => !document.body.classList.contains('hud-off');
+  const zh = () => document.documentElement.lang.toLowerCase().startsWith('zh');
+  const canDraw = () => active && contextReady && !staticMode() && !commandMode() && !forgeActive;
+
+  function updateStatus() {
+    host.dataset.state = failed ? 'fallback' : staticMode() ? 'static' : commandMode() || !active || forgeActive ? 'offscreen' : paused ? 'paused' : drag?.captured ? 'dragging' : 'idle';
+    host.tabIndex = staticMode() || failed ? -1 : 0;
+    reset.disabled = pause.disabled = staticMode() || failed || !contextReady;
+    replay.disabled = reset.disabled || paused || !canDraw();
+    pause.setAttribute('aria-pressed', String(paused));
+    pause.textContent = paused ? (zh() ? '继续动态' : 'Resume motion') : (zh() ? '暂停动态' : 'Pause motion');
+    const text = failed ? ['Static view · graphics unavailable', '静态视图 · 图形暂不可用']
+      : staticMode() ? ['Static view · scrolling stays available', '静态视图 · 可正常纵向滚动']
+      : paused ? ['Motion paused · view controls still available', '动态已暂停 · 仍可调整视角']
+      : ['Drag to rotate · arrows move · Home resets · Esc exits', '拖拽旋转 · 方向键调整 · Home 重置 · Esc 退出'];
+    status.textContent = text[zh() ? 1 : 0];
   }
-
-  // ---- Fallback: original main-thread Canvas2D implementation ----
-  const ctx = canvas.getContext('2d', { alpha: false });
-  let width = 1;
-  let height = 1;
-  let dpr = 1;
-  let stars = [];
-  let lastFrameAt = 0;
-  let sized = false;
-
-  function buildStars() {
-    stars = [];
-    const count = Math.min(280, Math.max(150, Math.floor(innerWidth * innerHeight / 4300)));
-    const cols = ['#e4eaf6', '#c4d0ea', '#7a89af'];
-    for (let i = 0; i < count; i += 1) {
-      const l = Math.random();
-      stars.push({
-        x: rand(-1.18, 1.18),
-        y: rand(-1.08, 1.08),
-        z: rand(0.18, 1.9),
-        speed: rand(0.72, 1.28),
-        r: l < 0.7 ? rand(0.32, 0.7) : rand(0.7, 1.5),
-        a: rand(0.28, 0.85),
-        l,
-        tw: Math.random() < 0.15 ? rand(2.8, 5.6) : 0,
-        ph: rand(0, Math.PI * 2),
-        col: cols[Math.floor(l * 3)],
-      });
+  function stop() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0; lastTime = 0;
+  }
+  function finishDrag() {
+    const previous = drag;
+    drag = null;
+    if (previous && host.hasPointerCapture(previous.id)) host.releasePointerCapture(previous.id);
+    host.classList.remove('is-dragging');
+    updateStatus();
+  }
+  function fallback() {
+    failed = true; contextReady = false; intro.cancel('failure'); stop(); finishDrag();
+    document.body.classList.remove('starfield-ready');
+    updateStatus();
+  }
+  function draw() {
+    if (!canDraw() || !renderer) return;
+    points.rotation.set(rotation.pitch, rotation.yaw, 0);
+    material.uniforms.uTime.value = elapsed;
+    material.uniforms.uIntro.value = intro.progress();
+    try { renderer.render(scene, camera); } catch { fallback(); }
+  }
+  function tick(now) {
+    raf = 0;
+    if (!canDraw() || paused) { lastTime = 0; return; }
+    const frameMs = lastTime ? now - lastTime : 0;
+    // Honour the existing coordinator's target even on high-refresh displays.
+    if (lastTime && frameMs < 1000 / policy.targetFps - .75) {
+      raf = requestAnimationFrame(tick);
+      return;
     }
+    const dt = Math.min(.05, frameMs / 1000);
+    lastTime = now; elapsed += dt;
+    rotation.yaw = dampRotation(rotation.yaw, clampRotation(rotation.targetYaw + rotation.hoverYaw, 'yaw'), dt);
+    rotation.pitch = dampRotation(rotation.pitch, clampRotation(rotation.targetPitch + rotation.hoverPitch, 'pitch'), dt);
+    draw();
+    if (frameMs) surface.reportFrame(frameMs, { drawCalls: renderer.info.render.calls, triangles: 0 });
+    if (canDraw() && !paused) raf = requestAnimationFrame(tick);
   }
-
-  function resetStar(star) {
-    star.x = rand(-1.18, 1.18);
-    star.y = rand(-1.08, 1.08);
-    star.z = rand(1.35, 1.95);
+  function start() {
+    if (raf || !canDraw() || paused) return;
+    lastTime = 0; raf = requestAnimationFrame(tick);
   }
-
+  function sync() {
+    stop();
+    if (paused || staticMode() || commandMode() || !active || forgeActive) intro.cancel('inactive');
+    if (staticMode() || commandMode() || !active || forgeActive) {
+      finishDrag();
+      document.body.classList.remove('starfield-ready');
+    } else if (contextReady) {
+      if (!paused) intro.begin();
+      draw();
+      if (contextReady) document.body.classList.add('starfield-ready');
+      start();
+    }
+    updateStatus();
+  }
   function resize() {
-    sized = true;
-    dpr = computeDpr(innerWidth, innerHeight);
-    width = canvas.width = innerWidth * dpr;
-    height = canvas.height = innerHeight * dpr;
-    canvas.style.width = `${innerWidth}px`;
-    canvas.style.height = `${innerHeight}px`;
-    buildStars();
-    lastFrameAt = 0;
-    return { width, height, dpr };
+    if (!renderer || !contextReady) return;
+    const rect = host.getBoundingClientRect();
+    const width = Math.max(1, rect.width), height = Math.max(1, rect.height);
+    const budget = starfieldBudget(policy.qualityTier);
+    const dpr = policy.computeDpr(width, height, { minDpr: .75, maxDpr: budget.dpr });
+    renderer.setPixelRatio(dpr); renderer.setSize(width, height, false);
+    camera.aspect = width / height; camera.updateProjectionMatrix();
+    points.geometry.setDrawRange(0, budget.count);
+    material.uniforms.uDpr.value = dpr;
+    host.dataset.particles = String(budget.count);
+    host.dataset.dpr = dpr.toFixed(2);
+    draw();
   }
-
-  function drawApproach(now, intensity, pointer) {
-    const compact = innerWidth < 880;
-    const cx = innerWidth * (compact ? 0.69 : 0.72);
-    const cy = innerHeight * (compact ? 0.35 : 0.38);
-    const dt = lastFrameAt ? clamp((now - lastFrameAt) / 1000, 0, 0.05) : 1 / 60;
-    lastFrameAt = now;
-    const travel = dt * (0.08 + intensity * 0.34);
-    const focal = compact ? 0.34 : 0.38;
-
-    ctx.save();
-    ctx.scale(dpr, dpr);
-    for (const s of stars) {
-      s.z -= travel * s.speed;
-      if (s.z < 0.14) resetStar(s);
-
-      const currentScale = focal / s.z;
-      const previousScale = focal / Math.max(s.z + travel * s.speed * (1.8 + intensity * 4.5), 0.15);
-      let x = cx + s.x * innerWidth * currentScale;
-      let y = cy + s.y * innerHeight * currentScale;
-      const px = cx + s.x * innerWidth * previousScale;
-      const py = cy + s.y * innerHeight * previousScale;
-
-      if (x < -80 || x > innerWidth + 80 || y < -80 || y > innerHeight + 80) {
-        resetStar(s);
-        continue;
-      }
-
-      const dxp = x - pointer.x;
-      const dyp = y - pointer.y;
-      const d2 = dxp * dxp + dyp * dyp;
-      if (d2 > 0 && d2 < 8100) {
-        const d = Math.sqrt(d2);
-        const nudge = (1 - d / 90) * 7;
-        x += (dxp / d) * nudge;
-        y += (dyp / d) * nudge;
-      }
-
-      const proximity = clamp(1 - s.z / 1.95, 0, 1);
-      const alpha = s.a * (0.24 + proximity * 0.76);
-      let twinkle = 1;
-      if (s.tw > 0) twinkle = 0.72 + 0.28 * Math.sin(now / s.tw + s.ph);
-      const lineLength = Math.hypot(x - px, y - py);
-      ctx.globalAlpha = alpha * twinkle;
-
-      if (lineLength > 0.7) {
-        const g = ctx.createLinearGradient(px, py, x, y);
-        g.addColorStop(0, 'rgba(220,230,250,0)');
-        g.addColorStop(1, s.col);
-        ctx.strokeStyle = g;
-        ctx.lineWidth = Math.min(1.75, s.r * (0.7 + proximity));
-        ctx.beginPath();
-        ctx.moveTo(px, py);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = s.col;
-        ctx.beginPath();
-        ctx.arc(x, y, Math.min(1.8, s.r * (0.55 + proximity)), 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    ctx.globalAlpha = 1;
-    ctx.restore();
+  function initialize() {
+    if (renderer || failed || staticMode() || disposed) return;
+    if (!canAcquireWebGLContext(SURFACE_ID)) { fallback(); return; }
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'low-power' });
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(42, 1, .1, 30);
+      camera.position.z = 5.8;
+      const data = createStarfieldGeometry(4000);
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(data.positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(data.colors, 3));
+      geometry.setAttribute('aSize', new THREE.BufferAttribute(data.sizes, 1));
+      geometry.setAttribute('aPhase', new THREE.BufferAttribute(data.phases, 1));
+      material = new THREE.ShaderMaterial({
+        transparent: true, depthWrite: false, vertexColors: true, blending: THREE.AdditiveBlending,
+        uniforms: { uTime: { value: 0 }, uDpr: { value: 1 }, uIntro: { value: 1 } },
+        vertexShader: `attribute float aSize; attribute float aPhase; uniform float uTime; uniform float uDpr; uniform float uIntro;
+          varying vec3 vColor; varying float vLight;
+          void main(){vColor=color; vLight=.86+.14*sin(uTime*.45+aPhase);
+            vec3 p=position*(1.+.45*(1.-uIntro));
+            p+=vec3(sin(aPhase),cos(aPhase*1.7),sin(aPhase*2.3))*.3*(1.-uIntro); p.y+=.018*sin(uTime*.22+aPhase);
+            vec4 view=modelViewMatrix*vec4(p,1.); gl_Position=projectionMatrix*view;
+            gl_PointSize=clamp(aSize*uDpr*8.0/max(1.,-view.z),1.,7.*uDpr);}`,
+        fragmentShader: `varying vec3 vColor; varying float vLight;
+          void main(){float r=length(gl_PointCoord-.5)*2.; if(r>1.) discard;
+            float a=pow(1.-r,1.2)*vLight; gl_FragColor=vec4(vColor,a);}`,
+      });
+      points = new THREE.Points(geometry, material); scene.add(points);
+      contextReady = true;
+      lifecycle = createWebGLContextLifecycle({ id: SURFACE_ID, canvas, showFallback: false,
+        onLost(){ contextReady=false; intro.cancel('context-loss'); stop(); finishDrag(); document.body.classList.remove('starfield-ready'); status.textContent=zh()?'静态视图 · 正在恢复图形':'Static view · restoring graphics'; },
+        onRestore(){ contextReady=true; renderer.resetState(); resize(); sync(); },
+        onFallback:fallback,
+      });
+      if (!lifecycle.canInitialize) { fallback(); return; }
+      resize();
+    } catch { fallback(); renderer?.dispose(); }
   }
-
-  function draw(now) {
-    const pointer = getPointer();
-    const intensity = getWarpIntensity();
-    // Opaque clearing prevents the old trail accumulation that produced
-    // parallel star bands. Every point now belongs to one perspective field.
-    ctx.fillStyle = '#04060a';
-    ctx.fillRect(0, 0, width, height);
-    drawApproach(now, intensity, pointer);
+  function moveView(yaw, pitch, immediate = paused) {
+    rotation.targetYaw = clampRotation(yaw, 'yaw'); rotation.targetPitch = clampRotation(pitch, 'pitch');
+    if (immediate) { rotation.yaw=rotation.targetYaw; rotation.pitch=rotation.targetPitch; draw(); }
+    else start();
   }
-
-  const surface = coordinator.register({
-    id: 'home:background-canvas',
-    element: canvas,
-    observe: false,
-    cost: 'medium',
-    targetFps: 60,
-    onQualityChange(nextPolicy) {
-      renderPolicy = nextPolicy;
-      if (sized) resize();
-    },
+  listen(host, 'pointerdown', event => {
+    if (!canDraw() || event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a,button,input,select,textarea')) return;
+    drag={id:event.pointerId,x:event.clientX,y:event.clientY,yaw:rotation.targetYaw,pitch:rotation.targetPitch,captured:false};
   });
-
-  return {
-    draw,
-    resize,
-    pause() {},
-    resume() {},
-    destroy() { surface.unregister(); },
-    get width() { return width; },
-    get height() { return height; },
-    get dpr() { return dpr; },
-  };
+  listen(host, 'pointermove', event => {
+    if (!canDraw() || event.pointerType !== 'mouse') return;
+    if (drag && drag.id === event.pointerId) {
+      const dx=event.clientX-drag.x, dy=event.clientY-drag.y;
+      if (!drag.captured && Math.hypot(dx,dy)<STARFIELD_LIMITS.dragThreshold) return;
+      if (!drag.captured) { drag.captured=true; host.setPointerCapture(event.pointerId); host.focus({preventScroll:true}); host.classList.add('is-dragging'); updateStatus(); }
+      rotation.hoverYaw=rotation.hoverPitch=0;
+      moveView(drag.yaw+dx*.004,drag.pitch+dy*.003);
+      event.preventDefault();
+    } else if (!paused) {
+      const r=host.getBoundingClientRect();
+      rotation.hoverYaw=((event.clientX-r.left)/r.width-.5)*.06;
+      rotation.hoverPitch=((event.clientY-r.top)/r.height-.5)*.04;
+    }
+  });
+  for (const type of ['pointerup','pointercancel','lostpointercapture']) listen(host,type,finishDrag);
+  listen(host,'pointerleave',()=>{rotation.hoverYaw=rotation.hoverPitch=0; if(drag&&!drag.captured) finishDrag();});
+  listen(host,'keydown',event=>{
+    if (!canDraw()) return;
+    const direction={ArrowLeft:[-.09,0],ArrowRight:[.09,0],ArrowUp:[0,-.07],ArrowDown:[0,.07]}[event.key];
+    if(direction){event.preventDefault(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(rotation.targetYaw+direction[0],rotation.targetPitch+direction[1]);}
+    if(event.key==='Home'){event.preventDefault(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(0,0,true);}
+    if(event.key==='Escape'){event.preventDefault(); finishDrag(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(rotation.yaw,rotation.pitch,true); reset.focus({preventScroll:true});}
+  });
+  listen(host,'afflatus:intro-end',draw);
+  listen(replay,'click',()=>{if (canDraw() && !paused) { intro.begin(true); draw(); start(); }});
+  listen(reset,'click',()=>{finishDrag(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(0,0,true);});
+  listen(pause,'click',()=>{paused=!paused; try{localStorage.setItem(PAUSE_KEY,String(paused));}catch{} sync();});
+  listen(window,'afflatus:command-mode',sync);
+  listen(window,'afflatus:forge-active',event=>{forgeActive=event.detail.active; sync();});
+  for(const query of [fine,compact,motion]) listen(query,'change',()=>{initialize(); resize(); sync();});
+  const languageObserver = new MutationObserver(updateStatus);
+  languageObserver.observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  surface = coordinator.register({ id:SURFACE_ID, element:host, cost:'medium', targetFps:60,
+    onResume(){active=true; initialize(); sync();},
+    onPause(){active=false; sync();},
+    onResize:resize,
+    onQualityChange(next){
+      const budgetChanged = next.qualityTier !== policy.qualityTier || next.pixelBudget !== policy.pixelBudget;
+      policy=next;
+      if (budgetChanged) resize();
+    },
+    onDispose(){disposed=true; stop(); finishDrag(); abort.abort(); languageObserver.disconnect(); lifecycle?.dispose(); if(scene) disposeThreeScene(scene,renderer); document.body.classList.remove('starfield-ready'); instance=null;},
+  });
+  updateStatus();
+  instance={destroy:()=>surface.dispose()};
+  listen(window,'pagehide',event=>{if(!event.persisted) instance?.destroy();});
+  return instance;
 }

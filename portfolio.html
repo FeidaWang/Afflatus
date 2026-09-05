@@ -2,6 +2,21 @@
 <html lang="en">
 <head>
 <script>try{var f=document.documentElement.lang.toLowerCase().indexOf('zh')===0?'zh':'en',s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}if(!v)v=f;document.documentElement.lang=v==='zh'?'zh-CN':'en';if(v==='zh'){var d=document.documentElement,u=function(){d.style.removeProperty('visibility')};d.style.visibility='hidden';var t=setTimeout(u,1500),p=function(r,h){var q=[],m='[data-en],[data-en-ph],[data-aria-en],.lang-toggle';if(r.nodeType===1&&r.matches(m))q.push(r);if(r.querySelectorAll)q.push.apply(q,r.querySelectorAll(m));q.forEach(function(e){var z;if(e.hasAttribute('data-en')&&(z=e.getAttribute('data-zh'))!==null){if(e.hasAttribute('data-i18n-html')){if(h&&e.innerHTML!==z)e.innerHTML=z}else if(e.textContent!==z)e.textContent=z}if(e.hasAttribute('data-en-ph'))e.setAttribute('placeholder',e.getAttribute('data-zh-ph')||e.getAttribute('data-en-ph'));if(e.hasAttribute('data-aria-en'))e.setAttribute('aria-label',e.getAttribute('data-aria-zh')||e.getAttribute('data-aria-en'));if(e.classList.contains('lang-toggle')){e.textContent='EN';e.setAttribute('aria-label','Switch to English');if(!e.matches('a[href]'))e.setAttribute('aria-pressed','true')}})},o=new MutationObserver(function(rs){rs.forEach(function(r){r.addedNodes.forEach(function(x){p(x,false)})})});o.observe(d,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',function(){try{p(document,true)}finally{clearTimeout(t);o.disconnect();u()}},{once:true})}}catch(e){}</script>
+<!-- Record early user intent even while the enhancement bundle is in flight. -->
+<script>
+(() => {
+  const root = document.documentElement, abort = new AbortController();
+  root.dataset.introEntry = String(performance.now());
+  const cancel = () => { root.dataset.introInterrupted = 'true'; abort.abort(); };
+  for (const type of ['wheel', 'touchstart', 'scroll', 'pagehide'])
+    addEventListener(type, cancel, { passive: true, signal: abort.signal });
+  for (const type of ['pointerdown', 'focusin', 'keydown'])
+    document.addEventListener(type, event => {
+      if (event.target.closest('a,button,input,select,textarea,[contenteditable]')) cancel();
+    }, { capture: true, signal: abort.signal });
+  setTimeout(() => abort.abort(), 1200);
+})();
+</script>
 <script type="module" src="/src/entry/performance.js"></script>
 <!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
      fetch + init only runs once the browser reports idle time (or after a
@@ -27,7 +42,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <style id="home-language-visibility">
-  #langMiniToggle{display:none}
+  #langMiniToggle{display:inline-flex}
   @media(max-width:860px){#langBtn{display:none}#langMiniToggle{display:inline-flex}}
 </style>
 <title>Portfolio · Project Afflatus</title>
@@ -146,7 +161,7 @@
 <link rel="preload" href="/vendor/black-hole/source-poster.jpg" as="image" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet" media="(min-width: 861px)">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&display=optional" rel="stylesheet" media="(min-width: 861px)">
 <style>
 /* U21 Phase 1 D1: wrapped in @layer overrides now that src/styles.css is
    @layer legacy — this block's own comment already says its job is to
@@ -171,9 +186,8 @@
 <link rel="preload" href="/vendor/black-hole/source-poster.jpg" as="image" fetchpriority="high">
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
-<body class="home-page hud-off">
+<body class="home-page hud-off starfield-layout">
 
-<canvas id="starfield"></canvas>
 <div id="blackhole-stage" aria-hidden="true">
   <div class="blackhole-poster" role="presentation"></div>
   <iframe
@@ -416,17 +430,22 @@
       <div class="top-stat mobile-hide top-energy"><span data-top="warp">WARP POWER</span><b class="energy-bar" id="throttleState" style="--energy:41%"><i></i><em>41%</em></b></div>
     </div>
   </div>
-  <div class="nav-right">
-    <button class="control-btn" id="commandModeBtn" data-hot>Command</button>
+  <div class="portfolio-controls">
+    <button class="control-btn" id="commandModeBtn" type="button" aria-pressed="false" data-hot>Command</button>
     <a class="lang-mini-toggle" id="langMiniToggle" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-i18n-static-aria data-active="en"><span data-mini="en">EN</span><span class="mini-sep">/</span><span data-mini="zh">中</span></a>
-    <button class="nav-menu-btn" type="button" data-hot aria-label="Open deck menu" data-aria-en="Open deck menu" data-aria-zh="打开甲板菜单">DECK</button>
-    <div class="nav-clock">
+    <details id="portfolioMenu" class="portfolio-menu">
+      <summary class="portfolio-menu-toggle" data-en="Menu" data-zh="菜单">Menu</summary>
+      <div class="portfolio-menu-links" aria-label="Site pages" data-aria-en="Site pages" data-aria-zh="站内页面">
+        <a href="/">Home</a><a href="/portfolio.html">Portfolio</a><a href="/arena.html">Arena</a><a href="/sectors.html">Sectors</a><a href="/signal.html">Signal</a><a href="/horoscope.html">Horoscope</a><a href="/zh/serial.html">小说</a><a href="/course.html">Course</a>
+      </div>
+    </details>
+    <div class="portfolio-clock" hidden>
       <span id="clockZone" aria-hidden="true"></span>
       <b id="melDateTime">---</b>
     </div>
     <!-- The language controls are native links so fixed-locale documents,
          canonical URLs, browser history and no-JS navigation stay aligned. -->
-    <a class="warp-btn verse-switch" id="langBtn" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-i18n-static-aria>以中文入梦</a>
+    <a class="portfolio-language-full" hidden id="langBtn" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-i18n-static-aria>以中文入梦</a>
   </div>
 </nav>
 <main id="mainContent">
@@ -439,18 +458,29 @@
       <button class="hero-command-cta" id="heroCommandCta" type="button" data-hot data-en="enter command mode" data-zh="进入指挥模式">enter command mode</button>
       <span class="coord" id="coord">bearing · singular throne</span>
     </div>
+    <aside class="portfolio-starfield" aria-labelledby="starfieldTitle">
+      <h2 id="starfieldTitle" data-en="Afflatus · orbital field" data-zh="Afflatus · 轨迹星场">Afflatus · orbital field</h2>
+      <div id="starfieldViewport" data-intro="complete" role="region" tabindex="-1" aria-label="Orbital starfield view" data-aria-en="Orbital starfield view" data-aria-zh="轨迹星场视图" aria-describedby="starfieldStatus" data-state="static">
+        <canvas id="starfield" aria-hidden="true"></canvas>
+      </div>
+      <p id="starfieldStatus" role="status" data-en="Static view · scrolling stays available" data-zh="静态视图 · 可正常纵向滚动">Static view · scrolling stays available</p>
+      <div class="starfield-controls">
+        <button id="starfieldReset" type="button" disabled data-en="Reset view" data-zh="重置视角">Reset view</button>
+        <button id="starfieldPause" type="button" disabled aria-pressed="false" data-en="Pause motion" data-zh="暂停动态">Pause motion</button>
+        <button id="starfieldReplay" type="button" disabled data-en="Replay opening" data-zh="重播开屏">Replay opening</button>
+      </div>
+    </aside>
+
   </section>
 
   <section class="stardrive" id="stardrive" aria-label="FY2025–26 modeled performance — approach to Alphard" data-aria-en="FY2025–26 modeled performance — approach to Alphard" data-aria-zh="2025–26 财年模型表现——驶近星宿一">
-    <div class="stardrive-stage">
-      <!-- U30 R2 (?fx=stage, default off): this wrapper is the sticky-scale
-           "stargate" stage — scale(.8)+visible border-radius growing to
-           scale(1)/radius 0 as --forge (already computed by alphardForge.js
-           for the existing pin/tagline/metrics) goes 0→1. Inert no-op
-           (transform:none via default --forge:1) unless the flag is set. -->
-      <div class="stardrive-scale">
-        <canvas id="alphardForge" aria-hidden="true"></canvas>
-        <div class="stardrive-veil" aria-hidden="true"></div>
+    <!-- One reserved runway, one existing sticky stage; data stays in flow. -->
+    <div class="stardrive-runway">
+      <div class="stardrive-stage">
+        <div class="stardrive-scale" aria-hidden="true">
+          <div class="stardrive-poster"></div>
+          <canvas id="alphardForge" aria-hidden="true"></canvas>
+        </div>
         <div class="stardrive-caption" aria-hidden="true">
           <span class="fc-kicker">ALPHARD JUMP POINT · APPROACH VECTOR</span>
           <span class="fc-sub">limit of charted space</span>
@@ -458,6 +488,8 @@
         <div class="forge-tagline" id="forgeTagline">
           <b data-en="Every return is a jump through the dark." data-zh="每一份回报，都是一次穿越深空的跃迁。">Every return is a jump through the dark.</b>
         </div>
+      </div>
+    </div>
         <div class="strip" id="strip">
           <div class="strip-cell hero-metric">
             <div class="strip-label" id="sl0">Annual return · upper bound</div>
@@ -480,8 +512,6 @@
             <div class="strip-foot" id="sf3">estimated · technology concentration vs SPX</div>
           </div>
         </div>
-      </div>
-    </div>
   </section>
 
   <section class="equity performance-dossier" id="fy2026Performance" aria-labelledby="s2title">

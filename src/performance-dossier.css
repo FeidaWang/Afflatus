@@ -186,26 +186,25 @@
 
   .core-telemetry dt {
     margin-bottom: 12px;
-    color: rgba(166,187,202,.54);
-    font: 500 8px/1.3 'JetBrains Mono', monospace;
-    letter-spacing: .16em;
+    color: #b9ccda;
+    font: 500 13px/1.5 'JetBrains Mono', monospace;
+    letter-spacing: .04em;
     text-transform: uppercase;
   }
 
   .core-telemetry dd {
-    overflow: hidden;
+    overflow-wrap: anywhere;
     color: #dff5ff;
     font: 400 clamp(22px, 2.4vw, 36px)/1 'Orbitron', sans-serif;
     font-variant-numeric: tabular-nums;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
   }
 
-  .core-telemetry small {
+  .core-telemetry .core-telemetry-note {
     display: block;
     margin-top: 9px;
-    color: rgba(166,187,202,.38);
-    font: 500 7px/1.3 'JetBrains Mono', monospace;
+    color: #b9ccda;
+    font: 500 13px/1.5 'JetBrains Mono', monospace;
     letter-spacing: .12em;
   }
 
@@ -753,7 +752,8 @@
     .cycle-efficiency strong { font-size: clamp(41px, 13vw, 56px); }
     .core-telemetry div { padding: 17px 12px; }
     .core-telemetry dd { font-size: 23px; }
-    .core-telemetry small { font-size: 6px; letter-spacing: .08em; }
+    .core-telemetry dd[data-en]:not(.core-telemetry-note) { font-size: 22px; line-height: 1.3; }
+  .core-telemetry .core-telemetry-note { font-size: 6px; letter-spacing: .08em; }
     .trade-route {
       grid-template-columns: 30px minmax(0, 1fr);
       grid-template-areas:
@@ -770,5 +770,64 @@
     .velocity-vector > .vector-rail::after { animation: none; }
     .velocity-field::after,
     .route-manifest::before { display: none; }
+  }
+}
+
+@layer components {
+  .performance-dossier { background-color: #04060a; }
+  .performance-dossier > .sec-desc { max-width: 64ch; opacity: 1; color: #c6d6df; font-size: 16px; line-height: 1.75; }
+  .performance-dossier .cycle-core-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+  .core-telemetry { background: #071019; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
+  .core-telemetry dd[data-en]:not(.core-telemetry-note) { font-size: 22px; line-height: 1.3; }
+  .core-telemetry .core-telemetry-note { font-size: 13px; line-height: 1.5; letter-spacing: .04em; margin-top: 10px; }
+  .performance-dossier :is(.core-note, .velocity-note, .methodology-seal p, .trade-route > p) { color: #b9ccda; font-size: 13px; line-height: 1.7; }
+  .performance-dossier .module-label { padding-block: 12px; }
+  .performance-dossier .module-label :is(span, em) { font-size: 12px; line-height: 1.5; }
+  .performance-dossier .module-label b { font-size: 14px; line-height: 1.5; }
+  .performance-dossier .methodology-seal span { font-size: 12px; }
+  .telemetry-static :is(.cycle-efficiency, .vector-rail, .route-track),
+  .telemetry-static .vector-rail::before,
+  .telemetry-static .route-track > i::after { animation: none; }
+  /* Data is below the clipped graphics viewport, never gated by --forge.
+     Use natural block size so translated labels and zoom cannot be clipped. */
+  .home-page .stardrive { height: auto; }
+  /* Geometry exists in CSS before scripts/fonts/WebGL. Only this stage pins. */
+  .home-page .stardrive-runway { height: 180svh; }
+  .home-page .stardrive .stardrive-stage { position: sticky; top: 80px; height: min(80svh, 760px); }
+  .home-page .stardrive .stardrive-scale {
+    transform: translateY(var(--forge-lift, 0%)) scale(var(--forge-scale, 1));
+    opacity: var(--forge-light, 1); transform-origin: 50% 35%; pointer-events: none;
+  }
+  .home-page .stardrive-poster { position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 98%, #03070d 0 48%, #d4f4ff 48.3%, #719baf 48.5%, #193341 49%, transparent 54%); }
+  .home-page .forge-ready .stardrive-poster { visibility: hidden; }
+  .home-page .stardrive:not(.forge-ready) #alphardForge { visibility: hidden; }
+  .home-page .stardrive .forge-tagline { top: 62%; transform: translateY(-50%); opacity: 1; }
+  .home-page .stardrive .forge-tagline b { max-width: 24ch; line-height: 1.45; }
+  .home-page .stardrive .stardrive-caption { opacity: 1; }
+  @media (max-width: 860px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .home-page .stardrive-runway { height: auto; }
+    .home-page .stardrive .stardrive-stage { position: relative; top: auto; height: min(65svh, 540px); }
+    .home-page .stardrive .stardrive-scale { transform: none; opacity: 1; }
+  }
+  .home-page .stardrive > .strip {
+    position: relative; inset: auto; width: auto; height: auto;
+    margin: 0 clamp(20px, 6vw, 96px); transform: none; opacity: 1;
+    background: #071019; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  }
+  .home-page .stardrive .strip-cell { height: auto; overflow: visible; opacity: 1; grid-template-rows: auto auto 1fr; padding: 22px 18px; gap: 14px; }
+  .home-page .stardrive :is(.strip-label, .strip-foot) { font-size: 13px; line-height: 1.6; letter-spacing: .04em; overflow-wrap: anywhere; }
+  .home-page .stardrive .stardrive-caption { bottom: 32px; }
+  @media (max-width: 860px) {
+    .home-page .stardrive > .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 480px) {
+    .core-telemetry, .home-page .stardrive > .strip { grid-template-columns: minmax(0, 1fr); }
+    .core-telemetry div:nth-child(even) { border-left: 0; }
+    .core-telemetry div + div { border-top: 1px solid rgba(154,229,255,.1); }
+    .performance-dossier .module-label { grid-template-columns: 1fr; }
+    .performance-dossier .module-label > * { grid-column: 1; grid-row: auto; }
+    .performance-dossier .trade-route { grid-template-columns: 28px minmax(0, 1fr); grid-template-areas: 'rank asset' '. efficiency' '. track' '. log'; }
+    .performance-dossier .route-efficiency { text-align: left; }
   }
 }

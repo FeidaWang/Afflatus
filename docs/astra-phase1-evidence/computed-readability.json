@@ -1,0 +1,34 @@
+[
+  {
+    "selector": ".hero-desc",
+    "color": "rgb(226, 235, 242)",
+    "background": "rgb(4, 6, 10)",
+    "font": "16px",
+    "weight": "500",
+    "combinedOpacity": 1
+  },
+  {
+    "selector": "#s2desc",
+    "color": "rgb(198, 214, 223)",
+    "background": "rgba(0, 0, 0, 0)",
+    "font": "16px",
+    "weight": "300",
+    "combinedOpacity": 1
+  },
+  {
+    "selector": ".core-telemetry-note",
+    "color": "rgb(185, 204, 218)",
+    "background": "rgba(0, 0, 0, 0)",
+    "font": "13px",
+    "weight": "500",
+    "combinedOpacity": 1
+  },
+  {
+    "selector": ".strip-foot",
+    "color": "rgb(169, 203, 232)",
+    "background": "rgba(0, 0, 0, 0)",
+    "font": "13px",
+    "weight": "300",
+    "combinedOpacity": 1
+  }
+]

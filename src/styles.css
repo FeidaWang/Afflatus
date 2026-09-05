@@ -9,7 +9,7 @@
    !important unnecessary for anything written from now on. New rules: put
    design tokens in `tokens`, ordinary new component styles in `components`,
    and any "this must win" override in `overrides` (that layer is also where
-   index.html's inline <style> block now lives, for the same reason — see
+   index.html's inline \3c style> block now lives, for the same reason — see
    its own comment). Never add to `legacy`; never add !important to a
    layered rule (legacy is exempt, since it predates this convention). */
 @layer legacy, tokens, components, overrides;
@@ -17,7 +17,7 @@
 @layer legacy {
   :root{--bg:#04060a;--ink:#e4e8f0;--dim:#8995aa;--faint:#1f2536;--cyan:#8db4c0;--warm:#e8b380;--line:rgba(228,232,240,.055);--hud-x:18px;--hud-gap:10px;--hud-bottom:14px;--hud-combat-h:232px;--hud-cols:minmax(145px,.25fr) minmax(360px,.58fr) minmax(185px,.30fr) minmax(610px,1.16fr)}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--bg);color:var(--ink);overflow-x:hidden;overflow-x:clip;cursor:none!important;}
+  html,body{background:var(--bg);color:var(--ink);overflow-x:hidden;overflow-x:clip;cursor:auto;}
   body{font-family:'Rajdhani','Noto Sans SC',sans-serif;font-weight:300;min-height:var(--viewport-small-height,100vh);line-height:1.65;-webkit-font-smoothing:antialiased;position:relative}
   /* Zero-JS/static scene poster: the gradients live on the canvas element
      itself, so the page keeps its deep-space identity before the deferred
@@ -3844,7 +3844,7 @@
   .hero{
     justify-content:flex-start!important;
     padding-top:clamp(76px,9vh,110px)!important;
-    min-height:96vh!important;
+    min-height:96vh;
   }
   .hero-num{
     margin-bottom:22px!important;
@@ -4201,7 +4201,7 @@
        .stardrive begins ("massive gap" complaint). Content (title+desc+cta)
        already runs ~550-650px on typical viewports, so 60vh is a floor for
        short viewports, not a forced empty block on normal ones. */
-    min-height:60vh!important;
+    min-height:60vh;
     padding-bottom:2vh!important;   /* U45 (2026-07-18): was 6vh — strip panel
       moved to the top of .stardrive-stage (above), so less pre-pin dead air
       is needed between the hero title and the stage engaging. */
@@ -4424,7 +4424,7 @@
     position: relative !important;
     z-index: 4 !important;
     padding-top: calc(clamp(84px, 8vh, 112px) + 1cm) !important;
-    min-height: calc(100svh - var(--hud-combat-h) - 54px) !important;
+    min-height: calc(100svh - var(--hud-combat-h) - 54px);
   }
 
   body.hud-off .hero-title,
@@ -4797,7 +4797,7 @@
 
     .hero {
       padding-top: 96px !important;
-      min-height: calc(100svh - var(--hud-combat-h)) !important;
+      min-height: calc(100svh - var(--hud-combat-h));
     }
 
     .hud-panels {
@@ -4951,12 +4951,12 @@
 
   .hero {
     padding-top: calc(92px + 1cm) !important;
-    min-height: calc(100svh - var(--hud-combat-h) - 66px) !important;
+    min-height: calc(100svh - var(--hud-combat-h) - 66px);
   }
 
   .hero-title {
-    font-size: clamp(48px, 4.6vw, 72px) !important;
-    max-width: min(1020px, 64vw) !important;
+    font-size: clamp(48px, 4.6vw, 72px);
+    max-width: min(1020px, 64vw);
   }
 
   .hero-num {
@@ -5397,16 +5397,16 @@
 
     .hero {
       padding-top: 88px !important;
-      min-height: calc(100svh - var(--hud-combat-h) - 12px) !important;
+      min-height: calc(100svh - var(--hud-combat-h) - 12px);
     }
 
     .hero-title {
-      font-size: clamp(24px, 7vw, 34px) !important;
-      max-width: 92vw !important;
+      font-size: clamp(24px, 7vw, 34px);
+      max-width: 92vw;
     }
 
     .hero-desc {
-      max-width: 82vw !important;
+      max-width: 82vw;
     }
 
     .hud-panels {
@@ -5563,7 +5563,7 @@
 
   .hero {
     padding-top: 118px !important;
-    min-height: calc(100svh - var(--hud-combat-h) - 28px) !important;
+    min-height: calc(100svh - var(--hud-combat-h) - 28px);
   }
 
   .hero-num {
@@ -6030,7 +6030,7 @@
 
     .hero {
       padding-top: 116px !important;
-      min-height: calc(100svh - var(--hud-combat-h) - 18px) !important;
+      min-height: calc(100svh - var(--hud-combat-h) - 18px);
     }
 
     .hud-panels {
@@ -6842,54 +6842,7 @@
      ============================================================ */
   .stardrive{position:relative;padding:0;margin:0;--forge:1}
   .stardrive-stage{position:relative;width:100%;height:100svh;overflow:hidden;z-index:2;isolation:isolate;background:transparent}
-  /* The entry module reserves this geometry before Three.js is imported.
-     Native sticky containment cannot cover content outside this section and
-     remains correct if rAF is paused, a tab is restored, or WebGL is lost. */
-  .stardrive.has-motion-shell{height:140svh;--forge:0}
-  .stardrive.has-motion-shell .stardrive-stage{position:sticky;top:0;left:0;right:0;height:100svh}
-  .stardrive.is-live .stardrive-stage.pin-fixed,
-  .stardrive.is-live .stardrive-stage.pin-end{position:sticky;top:0;bottom:auto}
-
-  /* B1 (2026-07-05): where CSS Scroll-Driven Animations are supported, the pin
-     itself moves to the compositor — a view-timeline named on the long-form wrapper
-     makes its "contain" phase match the available pin room, and a linear
-     transform animation over that phase keeps the (always position:absolute)
-     stage visually fixed without any scroll-listener/getBoundingClientRect work.
-     alphardForge.js feature-detects this (`CSS.supports('animation-timeline','view()')`)
-     and skips its .pin-fixed/.pin-end classList toggling + scroll listener entirely
-     when it's available, so the two mechanisms never fight — the JS fallback above
-     is untouched for browsers without support. The WebGL-driving --forge progress
-     number is unrelated to the pin and is still computed in the rAF loop either way.
-     2026-07-17 (station-master real-device mobile Chrome screenshots: a huge
-     dead-background stretch before the stargate's text ever appears, AND the
-     metrics strip crowding into "02 equity curve" right below it): both wrapper
-     and stage were sized in plain `vh`, which on mobile Chrome always equals the
-     LARGEST viewport (address bar hidden) — but the page loads/settles with the
-     address bar visible, i.e. a SMALLER real viewport. That mismatch means the
-     laid-out boxes are taller than what's actually on screen at rest, so (a)
-     reaching the stage's own content needs extra scroll distance beyond what
-     the pin math assumes (the "empty stretch"), and (b) the pin-end anchor and
-     the strip's `bottom:*vh` offset (below) land using the wrong reference
-     height, pushing the strip closer to (or into) .equity than intended (the
-     "overlap"). Switched every height/keyframe value that defines the pin's own
-     geometry to `svh` (small viewport height — pinned to the address-bar-visible
-     case, never jumps as the bar hides/shows), matching the fix already used on
-     .hero's own mobile min-height. Desktop is unaffected (svh==vh there, no
-     address bar to hide).
-     2026-07-18 (U45): the strip's anchor flipped from `bottom:*svh` to
-     `top:clamp(...)` (station-owner layout request — panel now sits right
-     under the hero title instead of at the foot of the scroll-through).
-     The svh-vs-vh lesson above still applies (that's why the new top offset
-     is also unitless-safe/clamp-bounded, not a bare vh value), it's just the
-     offset's *edge* that changed, not the underlying reasoning. */
-  /* The former view-timeline pin translated the whole stage by 100svh. At the
-     section entrance that forward-filled transform placed the first visible
-     star-gate frame exactly one viewport below the hero. Keep one pin owner:
-     alphardForge.js applies the existing .pin-fixed/.pin-end fallback while it
-     is already sampling scroll progress in the render loop. */
-
-  /* The eclipse is a transparent celestial layer over the same fixed universe
-     as the homepage black hole. Avoid raster filters that soften its limb. */
+  /* Portfolio's component owner reserves and pins the M05 runway. */
   #alphardForge{position:absolute;inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);display:block;z-index:0;background:transparent;filter:none;mask-image:none;-webkit-mask-image:none}
   /* The old full-width exposure shoulders changed the starfield brightness at
      the stage bounds, creating the two visible horizontal seams. The shader
@@ -6906,13 +6859,11 @@
   .fc-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.32em;color:#e9f5ff;padding:5px 9px 5px 12px;background:rgba(2,5,14,.78);border:1px solid rgba(126,184,255,.34);text-shadow:0 1px 3px #000,0 0 calc(8px + var(--forge)*16px) rgba(94,150,255,.58)}
   .fc-sub{font-family:'Orbitron',sans-serif;font-weight:300;font-size:13px;letter-spacing:.34em;color:rgba(199,222,255,.88);text-transform:uppercase}
 
-  /* the page tagline over the jump point — clauses typed out by the scroll */
+  /* Complete tagline over the jump point; layout is owned by performance-dossier.css. */
   .forge-tagline{position:absolute;left:0;right:0;top:43%;z-index:3;text-align:center;pointer-events:none;padding:0 8%;
     display:flex;flex-direction:column;align-items:center;gap:.22em;
     transform:translateY(-50%) scale(calc(.72 + var(--forge)*.46))}
-  .forge-tagline b,.tw-line{display:block;min-height:1.22em;font-family:'Orbitron',sans-serif;font-weight:500;font-size:clamp(20px,3.2vw,44px);line-height:1.22;letter-spacing:.05em;color:#f7fbff;text-shadow:0 2px 8px rgba(0,0,0,.96),0 0 22px rgba(82,136,255,.52),0 0 5px rgba(255,58,178,.36)}
-  .tw-cur{display:inline-block;width:.5ch;height:.95em;margin-left:3px;vertical-align:-0.1em;background:#f4f9ff;box-shadow:0 0 10px rgba(116,167,255,.88),0 0 18px rgba(255,42,170,.46);animation:twBlink .72s steps(1) infinite}
-  @keyframes twBlink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+  .forge-tagline b{display:block;min-height:1.22em;font-family:'Orbitron',sans-serif;font-weight:500;font-size:clamp(20px,3.2vw,44px);line-height:1.22;letter-spacing:.05em;color:#f7fbff;text-shadow:0 2px 8px rgba(0,0,0,.96),0 0 22px rgba(82,136,255,.52),0 0 5px rgba(255,58,178,.36)}
   @keyframes forgeBreath{0%,100%{opacity:.95}50%{opacity:1}}
 
   /* Telemetry occupies a compact lower HUD band instead of covering the
@@ -6921,7 +6872,7 @@
   .stardrive .strip-cell{min-width:0;overflow:hidden;padding:18px 20px;border-color:rgba(140,196,255,.16)}
   .stardrive .strip-label{margin-bottom:9px}
   .stardrive .strip-value{max-width:100%;margin-bottom:6px;font-size:clamp(28px,3vw,42px);font-variant-numeric:tabular-nums;white-space:nowrap}
-  .stardrive .strip-foot{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .stardrive .strip-foot{white-space:normal;overflow-wrap:anywhere}
   /* 2026-07-16 (station-master feedback, round 3): rounds 1-2 (hue swap,
      then a dark contact-shadow) still read as too faint — the remaining
      culprit is that every color here was still alpha-blended (rgba(...,.6
@@ -6957,7 +6908,6 @@
   .stardrive .hero-metric .strip-label{color:#bfe2ff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
 
   @media (max-width:640px){
-    .stardrive.is-live{height:170svh}
     .stardrive .strip{left:20px;right:20px;bottom:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
     .stardrive .strip-cell{padding:12px 14px}
     .stardrive .strip-value{font-size:clamp(24px,8vw,32px)}
@@ -6966,39 +6916,7 @@
     .fc-sub{font-size:11px;letter-spacing:.22em}
   }
 
-  /* U30 R2 (2026-07-16), ?fx=stage only — see index.html comment on
-     .stardrive-scale and the classList.add('fx-stage') in alphardForge.js.
-     Reuses --forge (already computed every frame for the existing pin/
-     tagline/metrics, U28) instead of adding a second scroll-driven number —
-     no new JS, no new scroll listener. Wrapper is a no-op (scale 1, radius 0)
-     whenever the flag is absent, so default homepage behaviour is untouched.
-     Under prefers-reduced-motion, --forge is pinned to 1 by the existing
-     rule below, which already resolves this to the fully-arrived static
-     state — no separate reduced-motion override needed here. */
   .stardrive-scale{position:absolute;inset:0}
-  .stardrive.fx-stage .stardrive-scale{
-    transform:scale(calc(.8 + var(--forge)*.2));
-    border-radius:calc((1 - var(--forge)) * 32px);
-    overflow:hidden;
-    /* 2026-07-16 fix (station-master screenshot #2): overflow:hidden alone
-       just crops the canvas at a bare rectangle — the "hard seam" that
-       persisted after the entry-gradient fix above was actually THIS clip
-       edge, since the ::before/::after fades live on the outer (unscaled)
-       .stardrive-stage and no longer line up with the now-smaller inner
-       box. Framing the crop with a glow + drop shadow (both fading to 0 at
-       --forge:1, same as the radius) turns "picture gets cut off" into "a
-       lit viewport panel" — reads as intentional, matches the diegetic-UI
-       framing used everywhere else on this page (U22 charter). */
-    box-shadow:
-      0 0 calc((1 - var(--forge)) * 48px) rgba(0,0,0,.35),
-      0 0 0 calc((1 - var(--forge)) * 1px) rgba(140,196,255,.2);
-  }
-  /* multidirectional parallax on the three existing text/data layers —
-     each drifts and tilts back to rest (0/0deg) at --forge:1, on top of
-     the scale/opacity/typing they already do */
-  .stardrive.fx-stage .stardrive-caption{transform:translateX(calc((1 - var(--forge)) * -18px)) rotate(calc((1 - var(--forge)) * -1.1deg))}
-  .stardrive.fx-stage .forge-tagline{transform:translateY(-50%) scale(calc(.72 + var(--forge)*.46)) translateX(calc((1 - var(--forge)) * 22px))}
-  .stardrive.fx-stage .strip{transform:translateY(calc((1 - var(--forge))*26px)) translateX(calc((1 - var(--forge)) * -14px)) rotate(calc((1 - var(--forge)) * .5deg))}
 
   /* Cross-document View Transitions — same opt-in as public/page-turn.css
      (see that file for the full rationale). index.html's own click/keyboard
@@ -7012,13 +6930,9 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .stardrive.has-motion-shell{height:auto;--forge:1}
-    .stardrive.has-motion-shell .stardrive-stage{position:relative;height:var(--viewport-small-height,100vh);top:auto;bottom:auto}
-    .stardrive.is-live .stardrive-stage.pin-fixed,.stardrive.is-live .stardrive-stage.pin-end{position:relative}
     .stardrive .strip{transform:none}
     .stardrive .hero-metric .strip-value{transform:none}
-    .forge-tagline b,.tw-line{animation:none}
-    .tw-cur{display:none}
+    .forge-tagline b{animation:none}
   }
 
   /* V22 §7.9 ③: .nav-menu-btn already has full visual styling (see the base
@@ -7639,7 +7553,7 @@
      every side (see base rule above), so the box now sizes to exactly its
      content + padding, and .stardrive (zero margin between the two
      sections) starts the instant the hero copy ends. */
-  .hero{min-height:0!important;padding-bottom:0!important}
+  .hero{min-height:0;padding-bottom:0!important}
 
 } /* end @layer legacy */
 

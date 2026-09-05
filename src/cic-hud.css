@@ -26,8 +26,8 @@
   font-family: "JetBrains Mono", monospace;
 }
 
-/* Cruise keeps only the telemetry needed to orient the reader. The full
- * command deck is deliberately opt-in so the portfolio remains the subject. */
+/* Cruise telemetry stays available in source; reading uses the recoverable
+ * Command entry instead of a persistent overlay. */
 .cic-cruise-strip {
   position: fixed;
   right: auto;
@@ -2051,3 +2051,6 @@ body:not(.hud-off) .route-arrows {
   #combatHud .cic-log-console,
   #combatHud .cic-log-boot { animation: none; transition: none; }
 }
+
+body.hud-off .cic-cruise-strip { display: none; }
+body.hud-off main { padding-bottom: 24px; }

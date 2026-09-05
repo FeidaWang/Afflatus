@@ -1,0 +1,52 @@
+{
+  "capturedAt": "2026-09-04T20:42:03.523Z",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "deviceDpr": 2,
+  "particles": "4000",
+  "dpr": "1.50",
+  "buffer": [
+    907,
+    691
+  ],
+  "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+  "telemetry": {
+    "qualityTier": "high",
+    "qualityCeiling": "high",
+    "refreshHz": 120,
+    "pageFrozen": false,
+    "activeSurfaces": 1,
+    "surfaces": [
+      {
+        "id": "home:alphard-forge",
+        "active": false,
+        "cost": "high",
+        "targetFps": 60,
+        "evaluatedWindows": 0,
+        "p95Ms": 0,
+        "drawCalls": 0,
+        "triangles": 0,
+        "thermalState": "nominal"
+      },
+      {
+        "id": "home:orbital-starfield",
+        "active": true,
+        "cost": "medium",
+        "targetFps": 60,
+        "evaluatedWindows": 6,
+        "p95Ms": 16.80000000000109,
+        "drawCalls": 1,
+        "triangles": 0,
+        "thermalState": "warm"
+      }
+    ]
+  },
+  "measuredWindow": {
+    "milliseconds": 10002.5,
+    "draws": 600,
+    "drawsPerSecond": 59.985003749062734
+  },
+  "errors": []
+}

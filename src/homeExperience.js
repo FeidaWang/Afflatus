@@ -17,7 +17,6 @@ import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
 import { getLocale, setLocale } from './lib/localeStore.js';
 import { getRenderBudgetCoordinator } from './lib/renderBudgetCoordinator.js';
 import { mountTermGlossary } from './lib/termGlossary.js';
-import { createBackgroundScene } from './scene/backgroundScene.js';
 import { createSpriteCraft } from './scene/spriteCraft.js';
 import { createCameraDirector } from './scene/cameraDirector.js';
 import { createCapitalFlyby } from './scene/capitalFlyby.js';
@@ -261,6 +260,7 @@ const hudFocusButtons=[...document.querySelectorAll('[data-cic-panel-focus]')];
 let focusedHudPanel=null;
 let voyageLogCtl=null;
 let voyageLogPromise=null;
+let readingPosition=null;
 function setHudPanelFocus(panelId=null){
   const next=panelId&&hudPanels[panelId]?panelId:null;
   focusedHudPanel=next;
@@ -292,10 +292,14 @@ function showBridgeCallout(text){
 }
 function updateCommandButton(){
   const isCruise=document.body.classList.contains('hud-off');
-  if(commandModeBtn) commandModeBtn.textContent=isCruise?(currentLang==='zh'?'指挥模式':'Command'):(currentLang==='zh'?'巡航模式':'Cruise');
+  if(commandModeBtn) {
+    commandModeBtn.textContent=isCruise?(currentLang==='zh'?'指挥模式':'Command'):(currentLang==='zh'?'返回阅读':'Read');
+    commandModeBtn.setAttribute('aria-pressed', String(!isCruise));
+  }
   combatHud?.setAttribute('aria-hidden',String(isCruise));
   if(combatHud) combatHud.inert=isCruise;
   cruiseStrip?.setAttribute('aria-hidden',String(!isCruise));
+  window.dispatchEvent(new Event('afflatus:command-mode'));
 }
 function updateJumpButton(){
   if(!jumpToggle) return;
@@ -313,28 +317,37 @@ function disengageBattleSystems(){
   if(halley){halley.attackStarted=false;halley.playerFired=false;halley.escortsFired=true;halley.escortsSpawned=false;}
 }
 function ensureSpaceSceneRunning(){
-  mainRenderSurface?.resume();
-  startMainLoop();
-  backgroundScene?.resume();
-  blackHoleFrame?.contentWindow?.postMessage(
-    {type:'black-hole-observatory:play'},
-    location.origin
-  );
+  const active=!cruiseModeActive()&&!hudRenderPolicy.reducedMotion;
+  if(active){ mainRenderSurface?.resume(); }
+  else { mainRenderSurface?.pause(); }
 }
 
 commandModeBtn?.addEventListener('click',(event)=>{
   event.preventDefault();
   event.stopPropagation();
   const toHudOff=!document.body.classList.contains('hud-off');
+  if(!toHudOff){
+    readingPosition={y:scrollY, focus:document.activeElement};
+    window.scrollTo({top:0, behavior:'instant'});
+  }
   document.body.classList.toggle('hud-off',toHudOff);
   if(toHudOff){
     disengageBattleSystems();
     setHudPanelFocus(null);
     voyageLogCtl?.close();
+    document.body.classList.remove('combat-mode');
+    if(readingPosition){
+      window.scrollTo({top:readingPosition.y, behavior:'instant'});
+      readingPosition.focus?.focus({preventScroll:true});
+      readingPosition=null;
+    }
   }
   showBridgeCallout(toHudOff?'Cruising mode on':'Commander mode on');
   updateCommandButton();
-  requestAnimationFrame(ensureSpaceSceneRunning);
+  ensureSpaceSceneRunning();
+});
+document.addEventListener('keydown',(event)=>{
+  if(event.key==='Escape'&&!cruiseModeActive()) commandModeBtn?.click();
 });
 jumpToggle?.addEventListener('click',()=>{
   const holdings=document.querySelector('.holdings'), hero=document.querySelector('.hero');
@@ -1665,15 +1678,9 @@ function drawShipLiveFeeds(now){
 }
 
 /* ===== STARS & WARP ===== */
-const sky=document.getElementById('starfield');
 const blackHoleFrame=document.getElementById('blackhole-gl');
-let W,H,DPR;
+let DPR=1;
 let warpIntensity=.18, warpTarget=.18;
-const backgroundScene=createBackgroundScene({
-  canvas:sky,
-  getPointer:()=>({x:mx,y:my}),
-  getWarpIntensity:()=>warpIntensity
-});
 
 // The homepage now hosts the source observatory renderer in an isolated
 // document. Only messages from this exact same-origin frame may change the
@@ -1701,10 +1708,7 @@ probeBlackHoleFrame();
 
 
 function resize(){
-  backgroundScene.resize();
-  DPR=backgroundScene.dpr;
-  W=backgroundScene.width;
-  H=backgroundScene.height;
+  DPR=hudRenderPolicy.computeDpr(innerWidth,innerHeight,{minDpr:.6,maxDpr:1.5});
 }
 /* ===== NEW COMET, WEAPONS & FX ===== */
 const evtCanvas=document.getElementById('event-layer');
@@ -3410,7 +3414,7 @@ function frame(now){
     // of a second to visibly arrive, reading as sluggish rather than a
     // stargate-jump snap. Still lerped (not instant) so it doesn't pop.
     warpIntensity=lerp(warpIntensity,warpTarget,.16);
-    backgroundScene.draw(now);
+    // The Hero starfield has its own existing-budget surface and pauses in Command.
     
     ectx.clearRect(0,0,evtCanvas.width,evtCanvas.height);
     const cruise=cruiseModeActive();
@@ -3452,7 +3456,7 @@ function frame(now){
 }
 
 function startMainLoop(){
-  if(mainLoopRunning) return;
+  if(mainLoopRunning || cruiseModeActive() || hudRenderPolicy.reducedMotion) return;
   mainLoopRunning=true;
   lastT=performance.now();
   mainLoopRaf=requestAnimationFrame(frame);
@@ -3467,12 +3471,16 @@ function stopMainLoop(){
 window.__launchTime = Date.now();
 mainRenderSurface=renderBudgetCoordinator.register({
   id:'home:master',
-  element:document.documentElement,
-  observe:false,
+  element:document.querySelector('.hero'),
+  enabled:false,
   cost:'medium',
   targetFps:60,
   onResume:startMainLoop,
   onPause:stopMainLoop,
+  onQualityChange(policy){
+    hudRenderPolicy=policy;
+    if(policy.reducedMotion) { stopMainLoop(); }
+  },
   onResize(){
     resize();
     resizeEvt();
@@ -3640,7 +3648,7 @@ function loadVoyageLog(){
   const root=document.documentElement;
   let tx=0,ty=0,cx=0,cy=0,raf=0,heroOn=false;
   addEventListener('pointermove',(e)=>{
-    if(e.pointerType!=='mouse'||!heroOn) return;
+    if(e.pointerType!=='mouse'||!heroOn||cruiseModeActive()||hudRenderPolicy.reducedMotion) return;
     tx=(e.clientX/innerWidth)*2-1;
     ty=(e.clientY/innerHeight)*2-1;
     if(!raf) raf=requestAnimationFrame(frame);

@@ -186,11 +186,13 @@
   }
 
   .hero-desc {
-    max-width: 590px;
+    max-width: 64ch;
     padding-left: 16px;
     border-left: 1px solid rgba(154, 229, 255, .25);
-    color: rgba(226, 235, 242, .86);
-    font-size: 15px;
+    color: #e2ebf2;
+    background: #04060a;
+    font-size: 16px;
+    font-weight: 500;
     opacity: 1;
   }
 
@@ -315,8 +317,8 @@
 
     .hero-desc {
       padding-left: 12px;
-      font-size: 12px;
-      line-height: 1.6;
+      font-size: 16px;
+      line-height: 1.7;
     }
 
     .hero-cta {
@@ -339,3 +341,94 @@
     .hero-title { animation: none; }
   }
 }
+
+@layer components {
+  /* Reading and native navigation remain usable before optional JS arrives. */
+  .home-page.hud-off #cursor { display: none; }
+
+  .home-page.hud-off :is(a, button, summary) { cursor: pointer; }
+  .home-page.hud-off :is(p, h1, h2, dt, dd) { cursor: text; }
+  .home-page :is(a, button, summary):focus-visible { outline: 2px solid #9ae5ff; outline-offset: 4px; }
+  .home-page ::selection { color: #04060a; background: #9ae5ff; }
+  .home-page .hero-record-cta { background: #142b37; font-size: 12px; letter-spacing: .06em; line-height: 1.5; }
+  .home-page .hero-command-cta { font-size: 12px; letter-spacing: .04em; line-height: 1.5; }
+  .home-page .portfolio-menu { position: relative; }
+  .home-page .portfolio-menu > summary { display: flex; align-items: center; min-height: 44px; padding: 0 12px; list-style: none; cursor: pointer; }
+  .portfolio-menu > summary::-webkit-details-marker { display: none; }
+  .home-page .portfolio-menu-links {
+    position: absolute; top: calc(100% + 8px); right: 0; z-index: 1000;
+    width: min(260px, calc(100vw - 32px)); max-height: calc(100svh - 96px);
+    overflow-y: auto; background: #071019; border: 1px solid #597688; padding: 8px;
+  }
+  .home-page .portfolio-menu-links a { display: flex; align-items: center; min-height: 44px; padding: 8px 12px; color: #e2ebf2; font: 14px/1.5 'JetBrains Mono', monospace; }
+  .home-page .portfolio-menu-links a[aria-current] { color: #e8b380; }
+  .home-page .portfolio-controls { grid-area: right; display: flex; align-items: center; justify-content: flex-end; gap: 12px; min-width: 0; }
+  .home-page .portfolio-menu-toggle { border: 1px solid #597688; color: #e2ebf2; background: #071019; font: 13px/1.5 'JetBrains Mono', monospace; }
+  .home-page #langMiniToggle { min-height: 44px; min-width: 44px; align-items: center; justify-content: center; color: #e2ebf2; font: 13px/1.5 'JetBrains Mono', monospace; }
+  @media (max-width: 860px) {
+    .home-page.hud-off #commandModeBtn { display: none; }
+    .home-page .portfolio-controls { gap: 8px; }
+    .home-page #langMiniToggle { min-width: 44px; min-height: 44px; }
+    .home-page #langBtn { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-page .hero-title, .home-page .hero-observatory * { animation: none; }
+    .home-page #cursor { display: none; }
+  }
+}
+
+@layer components {
+  /* M03: one bounded scene, with DOM controls outside the drag surface. */
+  .home-page.starfield-layout #blackhole-stage { display: none; }
+  .home-page.starfield-layout .hero { min-height: max(780px, 100svh); }
+  .home-page.starfield-layout .hero-title { animation: none; max-width: 51%; font-size: clamp(40px, 4.3vw, 72px); }
+  .home-page.starfield-layout :is(.hero-desc, .hero-cta) { max-width: 48%; }
+  .portfolio-starfield { position: absolute; right: 3vw; top: 150px; width: 42%; color: #c6d6df; }
+  .portfolio-starfield h2 { font: 500 12px/1.5 'JetBrains Mono', monospace; color: #9ae5ff; letter-spacing: .10em; }
+  #starfieldViewport {
+    position: relative; width: 100%; height: clamp(310px, 32vw, 520px); aspect-ratio: 1.3125;
+    overflow: hidden; border: 1px solid #243b47; border-radius: 50% 50% 8px 8px;
+    background: #04060a url('/vendor/black-hole/source-poster.jpg') 70% center / cover no-repeat;
+    touch-action: pan-y pinch-zoom; cursor: grab;
+  }
+  /* Forge takes the exposure as well as the render budget; a stopped hero
+     must not reveal its bright fallback poster behind the next scene. */
+  .home-page.forge-active #starfieldViewport { background-image: none; }
+  @supports (animation-timeline: view()) {
+    @media (min-width: 861px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+      .home-page .hero { view-timeline-name: --portfolio-hero; }
+      .home-page #starfield {
+        animation: hero-star-retreat linear both;
+        animation-timeline: --portfolio-hero;
+        animation-range: exit 0% exit 70%;
+      }
+      @keyframes hero-star-retreat { from { transform: scale(1); } to { transform: scale(.86); } }
+    }
+  }
+  #starfieldViewport.is-dragging { cursor: grabbing; }
+  #starfieldViewport:focus-visible { outline: 2px solid #9ae5ff; outline-offset: 4px; }
+  #starfieldViewport[data-state='static'], #starfieldViewport[data-state='fallback'] { cursor: auto; }
+  .home-page #starfield { position: absolute; inset: 0; width: 100%; height: 100%; background: #04060a; opacity: 0; pointer-events: none; }
+  .home-page.starfield-ready #starfield { opacity: 1; }
+  #starfieldViewport[data-intro="entering"] #starfield { transition: opacity 180ms linear; }
+  #starfieldStatus { min-height: 3.2em; margin: 14px 0 8px; color: #b9ccda; font: 13px/1.6 'JetBrains Mono', monospace; }
+  .starfield-controls { display: flex; flex-wrap: wrap; gap: 10px; }
+  .starfield-controls button { flex: 0 0 140px; inline-size: 140px; min-height: 44px; padding: 8px 14px; border: 1px solid #597688; color: #e2ebf2; background: #071019; font: 13px/1.5 'JetBrains Mono', monospace; cursor: pointer; }
+  .starfield-controls button:disabled { opacity: .5; cursor: default; }
+  .starfield-controls button[aria-pressed='true'] { border-color: #e8b380; color: #e8b380; }
+  @media (max-width: 1000px) {
+    .home-page.starfield-layout .hero { min-height: 0; }
+    .home-page.starfield-layout .hero-title { max-width: 100%; font-size: clamp(28px, 6vw, 54px); }
+    .home-page.starfield-layout :is(.hero-desc, .hero-cta) { max-width: 100%; }
+    .portfolio-starfield { position: relative; inset: auto; width: 100%; margin: 36px 0 32px; }
+    #starfieldViewport { height: clamp(230px, 48vw, 420px); }
+  }
+  @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+    #starfieldViewport { cursor: auto; }
+  }
+}
+
+/* Portfolio-only face policy: slow fonts stay on their first-paint fallback,
+   instead of swapping metrics after the scene/CTA has already been laid out. */
+@font-face { font-family: 'JetBrains Mono'; src: local('JetBrains Mono'), url('/assets/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2'); font-weight: 100 599; font-display: optional; }
+@font-face { font-family: 'JetBrains Mono'; src: local('JetBrains Mono'), url('/assets/fonts/jetbrains-mono-latin-700-normal.woff2') format('woff2'); font-weight: 600 950; font-display: optional; }
