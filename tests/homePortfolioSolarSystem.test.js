@@ -23,8 +23,8 @@ describe('homepage AI portfolio solar system', () => {
     expect(marketDeck).toContain('performance.now() < orbitSelectionLock.until');
     expect(marketDeck).toContain('const visibleConvoyCards = new Set()');
     expect(marketDeck).toContain('visibleConvoyCards.add(entry.target)');
-    expect(marketDeck).toContain("nodes.onclick = (event) => {");
-    expect(marketDeck).toContain('rect.left + rect.width / 2 - event.clientX');
+    expect(marketDeck).not.toContain("nodes.onclick = (event) => {");
+    expect(marketDeck).toContain("event.target.closest('.pcCover')");
   });
 
   it('renders detailed surfaces, atmospheres, rings and a deep-space environment', () => {

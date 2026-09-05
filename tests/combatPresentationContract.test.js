@@ -86,7 +86,8 @@ describe('combat presentation contract', () => {
     expect(source).toContain("canvas.addEventListener('pointerdown'");
     expect(source).toContain('topdownCV?.orbitCameraBy?.');
     expect(html).toContain('id="cicCameraReset"');
-    expect(source).toContain('requestAnimationFrame(ensureSpaceSceneRunning)');
+    expect(source).toContain('function ensureSpaceSceneRunning()');
+    expect(source).toContain('mainRenderSurface?.resume()');
     expect(source).toContain('event.stopPropagation()');
     expect(source).not.toContain("const j=mode==='combat'?0.6:0");
     expect(hmd).not.toContain('drawLeftColumn(ctx,w,h,now,mode,state);');

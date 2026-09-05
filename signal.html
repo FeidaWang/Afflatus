@@ -281,12 +281,13 @@
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/dataBridge.js"></script>
 <script type="module" src="/src/entry/viewport.js"></script>
+<link rel="stylesheet" href="/styles/reading-navigation.css">
 </head>
 <body class="signal-page scp">
 <div class="scpbg" aria-hidden="true"><canvas id="scpCanvas"></canvas><div class="wm"><b>CLASSIFIED</b></div></div>
 <div class="readProgress" aria-hidden="true"></div>
 
-<nav class="chapterRail" aria-label="Chapter navigation" data-aria-en="Chapter navigation" data-aria-zh="章节导航">
+<nav class="chapterRail" data-reading-nav aria-label="Chapter navigation" data-aria-en="Chapter navigation" data-aria-zh="章节导航">
   <a href="#treasuryYieldBoard" data-chapter="chlive"><b>10/30</b><span data-en="Live Yields" data-zh="实时收益率">Live Yields</span></a>
   <a href="#ch00" data-chapter="ch00"><b>00</b><span data-en="Policy Story" data-zh="政策故事线">Policy Story</span></a>
   <a href="#ch01" data-chapter="ch01"><b>01</b><span data-en="Compass" data-zh="罗盘">Compass</span></a>
@@ -308,7 +309,7 @@
     </nav>
   </header>
 
-  <nav class="mobileChapterIndex" aria-label="Chapter index" data-aria-en="Chapter index" data-aria-zh="章节索引">
+  <nav class="mobileChapterIndex" data-reading-nav aria-label="Chapter index" data-aria-en="Chapter index" data-aria-zh="章节索引">
     <a href="#treasuryYieldBoard" data-en="Yields" data-zh="收益率">Yields</a>
     <a href="#ch00" data-en="Policy" data-zh="政策">Policy</a>
     <a href="#ch01" data-en="Compass" data-zh="罗盘">Compass</a>
@@ -398,7 +399,7 @@
         </div>
       </article>
 
-      <article class="yieldBoard reveal" id="treasuryYieldBoard" aria-labelledby="yieldBoardHeading" aria-busy="true">
+      <article class="yieldBoard reveal" id="treasuryYieldBoard" tabindex="-1" aria-labelledby="yieldBoardHeading" aria-busy="true">
         <div class="yieldBoardHead">
           <div>
             <span class="eyebrow" data-en="U.S. TREASURY · TRADEWEB" data-zh="美国国债 · TRADEWEB">U.S. TREASURY · TRADEWEB</span>
@@ -438,7 +439,7 @@
     </div>
   </section>
 
-  <section class="chapter causalStory" id="ch00" data-step="0" aria-labelledby="policyStoryHeading">
+  <section class="chapter causalStory" id="ch00" tabindex="-1" data-step="0" aria-labelledby="policyStoryHeading">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 00 · POLICY REACTION FUNCTION" data-zh="第〇章 · 政策反应函数">CHAPTER 00 · POLICY REACTION FUNCTION</div>
       <h2 id="policyStoryHeading" data-en="How the market gets repriced" data-zh="市场如何被重新定价">How the market gets repriced</h2>
@@ -510,7 +511,7 @@
     </div>
   </section>
 
-  <section class="chapter compass" id="ch01" aria-label="Hawk-dove compass" data-aria-en="Hawk-dove compass" data-aria-zh="鹰鸽罗盘">
+  <section class="chapter compass" id="ch01" tabindex="-1" aria-label="Hawk-dove compass" data-aria-en="Hawk-dove compass" data-aria-zh="鹰鸽罗盘">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 01 · O5 BEHAVIORAL MODEL" data-zh="第一章 · O5 行为模型">CHAPTER 01 · O5 BEHAVIORAL MODEL</div>
       <h2 data-en="Hawk-Dove Compass" data-zh="鹰鸽罗盘">Hawk-Dove Compass</h2>
@@ -525,7 +526,7 @@
     <p class="method" id="hdMethod"></p>
   </section>
 
-  <section class="chapter pillars" id="ch02" aria-label="Five-pillar signal matrix" data-aria-en="Five-pillar signal matrix" data-aria-zh="五支柱信号矩阵">
+  <section class="chapter pillars" id="ch02" tabindex="-1" aria-label="Five-pillar signal matrix" data-aria-en="Five-pillar signal matrix" data-aria-zh="五支柱信号矩阵">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 02 · CURRENT STATE" data-zh="第二章 · 当前态势">CHAPTER 02 · CURRENT STATE</div>
       <h2 data-en="Five-Pillar Signal Matrix" data-zh="五维信号矩阵">Five-Pillar Signal Matrix</h2>
@@ -580,7 +581,7 @@
   </div>
   </section>
 
-  <section class="chapter incidents" id="ch03" aria-label="Incident log" data-aria-en="Incident log" data-aria-zh="事件记录">
+  <section class="chapter incidents" id="ch03" tabindex="-1" aria-label="Incident log" data-aria-en="Incident log" data-aria-zh="事件记录">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 03 · CONTAINMENT BREACHES" data-zh="第三章 · 收容失效记录">CHAPTER 03 · CONTAINMENT BREACHES</div>
       <h2 data-en="Incident Archive" data-zh="事件档案">Incident Archive</h2>
@@ -591,7 +592,7 @@
     <div class="incidentList" id="incidentList"></div>
   </section>
 
-  <section class="chapter watch" id="ch04" aria-label="Policy-aligned industry watch" data-aria-en="Policy-aligned industry watch" data-aria-zh="政策相关行业观察">
+  <section class="chapter watch" id="ch04" tabindex="-1" aria-label="Policy-aligned industry watch" data-aria-en="Policy-aligned industry watch" data-aria-zh="政策相关行业观察">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 04 · O5 PROJECTION" data-zh="第四章 · O5 推演">CHAPTER 04 · O5 PROJECTION</div>
       <h2 data-en="Policy-Aligned Industry Watch" data-zh="政策同向行业监控">Policy-Aligned Industry Watch</h2>
@@ -939,32 +940,11 @@
   steps.forEach(function (step) { observer.observe(step); });
 })();
 
-/* U41: chapter rail active-highlight + smooth scroll, scroll-reveal fade-up
-   for .reveal elements, and the compass needle's one-time sweep trigger —
+/* U41: scroll-reveal fade-up and the compass needle's one-time sweep.
+   M08 chapter links are enhanced by readingNavigation.ts —
    all IntersectionObserver-driven, zero scroll listeners (repo-wide rule). */
 (function () {
   var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
-
-  var rail = document.querySelector('.chapterRail');
-  var chapters = document.querySelectorAll('.chapter[id]');
-  if (rail && chapters.length && 'IntersectionObserver' in window) {
-    var links = {};
-    rail.querySelectorAll('a[data-chapter]').forEach(function (a) { links[a.dataset.chapter] = a; });
-    var cio = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        var link = links[e.target.id]; if (!link || !e.isIntersecting) return;
-        rail.querySelectorAll('a.active').forEach(function (a) { a.classList.remove('active'); });
-        link.classList.add('active');
-      });
-    }, { rootMargin: '-40% 0px -55% 0px' });
-    chapters.forEach(function (c) { cio.observe(c); });
-    rail.addEventListener('click', function (e) {
-      var a = e.target.closest('a[data-chapter]'); if (!a) return;
-      var target = document.getElementById(a.dataset.chapter); if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' });
-    });
-  }
 
   var reveals = document.querySelectorAll('.reveal');
   if (reveals.length) {

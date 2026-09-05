@@ -1,0 +1,26 @@
+[
+  {
+    "name": "hero text",
+    "foreground": "#e2ebf2",
+    "background": "#04060a",
+    "ratio": 16.8
+  },
+  {
+    "name": "reading text",
+    "foreground": "#c6d6df",
+    "background": "#04060a",
+    "ratio": 13.6
+  },
+  {
+    "name": "method notes",
+    "foreground": "#b9ccda",
+    "background": "#071019",
+    "ratio": 11.59
+  },
+  {
+    "name": "strip notes",
+    "foreground": "#a9cbe8",
+    "background": "#071019",
+    "ratio": 11.3
+  }
+]

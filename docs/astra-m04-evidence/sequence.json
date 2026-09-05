@@ -1,0 +1,17 @@
+[
+  {
+    "state": "pending",
+    "at": 435.89999997615814,
+    "entry": 36
+  },
+  {
+    "state": "entering",
+    "at": 551.3999999761581,
+    "entry": 36
+  },
+  {
+    "state": "complete",
+    "at": 1236,
+    "entry": 36
+  }
+]

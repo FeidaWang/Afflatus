@@ -1,0 +1,678 @@
+--- a/src/main.js
++++ b/src/main.js
+@@ -5,6 +5,7 @@
+ import './performance-dossier.css';
+ import './portfolio-convoy.css';
+ import './home-visual-upgrade.css';
++import { initPortfolioChartInspector } from './ui/portfolioChartInspector.js';
+ import { NAV_ROUTES, normalizeRoutePath } from './config/navRoutes.generated.js';
+ import { getLocale, localeFromPathname, localizePathname, localeSwitchHref, setLocale } from './lib/localeStore.js';
+ import { prepareStarfieldIntro } from './scene/starfieldIntro.js';
+@@ -158,6 +159,7 @@
+ installVisibilityLoaders();
+ initHomeScrollTelemetry();
+ initPortfolioChartGeometry();
++initPortfolioChartInspector();
+ 
+ // Hero background is independent of the optional combat bundle. Its single
+ // renderer replaces the old worker, and owns only the explicit scene region.
+--- a/src/ui/portfolioChartGeometry.js
++++ b/src/ui/portfolioChartGeometry.js
+@@ -32,7 +32,8 @@
+         const label = row.querySelector('[data-chart-value]');
+         label.dataset.en = 'No data';
+         label.dataset.zh = '无数据';
+-        label.textContent = document.documentElement.lang.startsWith('zh') ? '无数据' : 'No data';
++        const text = document.documentElement.lang.startsWith('zh') ? '无数据' : 'No data';
++        if (label.textContent !== text) label.textContent = text;
+       }
+       row.style.setProperty('--chart-zero', `${scale.zero}%`);
+       if (mark) {
+@@ -40,8 +41,10 @@
+         row.style.setProperty('--chart-width', `${mark.width}%`);
+         row.style.setProperty('--chart-point', `${mark.point}%`);
+       }
+-      row.querySelector('[data-axis-min]').textContent = scale.min;
+-      row.querySelector('[data-axis-max]').textContent = scale.max;
++      for (const [bound, value] of [['min', scale.min], ['max', scale.max]]) {
++        const label = row.querySelector(`[data-axis-${bound}]`);
++        if (label.textContent !== String(value)) label.textContent = value;
++      }
+     });
+   }
+ }
+--- a/e2e/astra-chart-geometry.spec.js
++++ b/e2e/astra-chart-geometry.spec.js
+@@ -25,9 +25,9 @@
+   await expect(page.locator('.allocation-note')).toContainText('2026-08-07');
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  });
+- test(`${locale} ${width}: no JS final figures stay readable`,async({browser})=>{
++ test(`${locale} ${width}: no JS final figures stay readable`,async({browser,baseURL})=>{
+   const context=await browser.newContext({javaScriptEnabled:false,viewport:{width,height:1000}});const page=await context.newPage();
+-  await page.goto(`http://127.0.0.1:4185/${locale}/portfolio.html#flightPathsTitle`);
++  await page.goto(`${baseURL}/${locale}/portfolio.html#flightPathsTitle`);
+   await expect(page.locator('.route-efficiency').first()).toContainText('+260.4%');
+   await expect(page.locator('.holdings-fallback li')).toHaveCount(10);
+   await expect(page.locator('.route-track').first()).toContainText('17.5');await context.close();
+--- /dev/null
++++ b/src/ui/chartExport.js
+@@ -0,0 +1,97 @@
++import { chartScale } from './portfolioChartGeometry.js';
++
++const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[char]);
++
++// Links contain a public chart identifier only. Never forward query strings,
++// selected records, account fields or arbitrary application state.
++export function chartLink(location, id) {
++  if (!/^chart-(core|cycles|benchmarks|allocation)$/.test(id)) throw new Error('Unknown chart');
++  const url = new URL(location.href);
++  url.search = '';
++  url.hash = id;
++  return url.href;
++}
++
++// Render a fresh, self-contained public-data figure, not a screenshot of the
++// page (which could include private UI, tooltips or an in-flight animation).
++export function chartSVG({ title, date, source, note, series, records, hidden = new Set(), labels }) {
++  let y = 28;
++  const parts = [];
++  const text = (value, x = 24, size = 15, color = '#182c37', width = 85) => {
++    const lines = String(value).split('\n').flatMap(line => {
++      const chars = Array.from(line); const out = [];
++      // Conservative character width also accommodates CJK labels.
++      while (chars.length) {
++        let length = Math.min(width, chars.length);
++        if (length < chars.length) {
++          const space = chars.slice(0, length).lastIndexOf(' ');
++          if (space > width / 2) length = space + 1;
++        }
++        out.push(chars.splice(0, length).join('').trim());
++      }
++      return out.length ? out : [''];
++    });
++    for (const line of lines) {
++      parts.push(`<text x="${x}" y="${y}" font-size="${size}" fill="${color}">${escape(line)}</text>`);
++      y += size + 7;
++    }
++  };
++  text(title, 24, 24, '#111315', 38);
++  text(date, 24, 14, '#364e60', 65);
++  text(source, 24, 14, '#364e60', 65);
++  text(note, 24, 14, '#364e60', 65);
++  for (const item of series) {
++    const rows = records.filter(row => row.series === item.id);
++    const scale = item.domain || chartScale(rows.map(row => row.value));
++    text(`${item.symbol} ${item.label} (${item.unit})${hidden.has(item.id) ? ` · ${labels.hidden}` : ''}`, 24, 18, '#111315', 52);
++    text(`${labels.scale}: ${scale.min} — ${scale.max} ${item.unit}`, 24, 14);
++    if (hidden.has(item.id)) continue;
++    for (const row of rows) {
++      text(`${row.label} · ${row.value == null ? labels.missing : row.value} ${row.unit} · ${row.status}`, 24, 15, '#182c37', 58);
++      const point = value => 30 + (value - scale.min) / (scale.max - scale.min) * 830;
++      const zero = point(0);
++      parts.push(`<path d="M30 ${y}H860 M${zero} ${y - 7}V${y + 7}" stroke="#80909b" fill="none"/>`);
++      if (Number.isFinite(row.value)) {
++        const end = point(row.value);
++        const color = row.value < 0 ? '#a82b36' : item.id === 'days' || item.id === 'spx' ? '#865017' : '#18607b';
++        if (item.symbol === '●') {
++          if (item.id === 'qqq') parts.push(`<path d="M${zero} ${y}H${end}" stroke="${color}"/>`);
++          parts.push(`<circle cx="${end}" cy="${y}" r="5" fill="${color}"/>`);
++        }
++        else if (item.symbol === '□') parts.push(`<path d="M${zero} ${y}H${end}" stroke="${color}" stroke-dasharray="5 4"/><rect x="${end - 4}" y="${y - 4}" width="8" height="8" fill="${color}"/>`);
++        else parts.push(`<rect x="${Math.min(zero, end)}" y="${y - 4}" width="${Math.abs(end - zero)}" height="8" fill="${color}"/>`);
++      }
++      y += 30;
++    }
++    y += 8;
++  }
++  text(labels.missingNote, 24, 14, '#364e60', 65);
++  return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="${y + 16}" viewBox="0 0 960 ${y + 16}" role="img"><title>${escape(title)}</title><desc>${escape(`${date} · ${source} · ${note}`)}</desc><rect width="960" height="${y + 16}" fill="#fff"/><g font-family="Arial, sans-serif">${parts.join('')}</g></svg>`;
++}
++
++export async function downloadChart(svg, format, filename) {
++  const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
++  const sourceURL = URL.createObjectURL(blob);
++  let outputURL = sourceURL;
++  try {
++    if (format === 'png') {
++      const image = new Image();
++      await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; image.src = sourceURL; });
++      const canvas = document.createElement('canvas');
++      canvas.width = image.naturalWidth * 2; canvas.height = image.naturalHeight * 2;
++      if (canvas.width * canvas.height > 32_000_000) throw new Error('Image too large');
++      const context = canvas.getContext('2d');
++      if (!context) throw new Error('Canvas unavailable');
++      context.drawImage(image, 0, 0, canvas.width, canvas.height);
++      const png = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
++      if (!png) throw new Error('PNG unavailable');
++      outputURL = URL.createObjectURL(png);
++    }
++    const link = document.createElement('a');
++    link.href = outputURL; link.download = `${filename}.${format}`;
++    link.click();
++  } finally {
++    // Keep object URLs alive long enough for Safari to start the download.
++    setTimeout(() => { URL.revokeObjectURL(sourceURL); if (outputURL !== sourceURL) URL.revokeObjectURL(outputURL); }, 60_000);
++  }
++}
+--- /dev/null
++++ b/src/ui/portfolioChartInspector.js
+@@ -0,0 +1,260 @@
++import { chartNumber, chartScale, initPortfolioChartGeometry } from './portfolioChartGeometry.js';
++import { chartLink, chartSVG, downloadChart } from './chartExport.js';
++import './portfolioChartInspector.css';
++
++const copy = {
++  en: {
++    core: 'Closed-cycle capital core', cycles: 'Closed-cycle trajectories', benchmarks: 'Model / benchmark', allocation: 'Research allocation',
++    efficiency: 'Annualized cycle efficiency', days: 'Holding days', weighted: 'Weighted capital days', count: 'Closed cycles', volatility: 'Annual volatility', weight: 'Research weight',
++    model: 'Model estimate', disclosed: 'Disclosed closed-cycle summary', research: 'Subjective research allocation · not account holdings',
++    date: 'As of: FY2025–26; exact cutoff not disclosed. Method: 2026-08-08.',
++    allocationDate: 'As of: 2026-08-07 08:29 ET',
++    source: 'Source: Portfolio published model / closed-cycle summary', allocationSource: 'Source: published allocation framework (content.js)',
++    note: 'Model / risk estimates, not audited returns. 365-day cycle projection is not achieved account return. Benchmark inputs and exact comparison dates are not disclosed.',
++    missing: 'No data', missingNote: 'No data means missing or undisclosed, never zero. Exact trade dates and private settlement details are not published.',
++    help: 'Hover or tap a mark. Focus this chart; use arrow keys to select records, Home/End for first/last. Esc or click outside to close. Full data below.',
++    table: 'Complete chart data', tableScroll: 'Scroll the table sideways to read all columns.', series: 'Series', record: 'Record', value: 'Value', unit: 'Unit', status: 'Status', dateHeading: 'Date / reporting basis',
++    copy: 'Copy chart link', copied: 'Link copied', copyFailed: 'Could not copy link', export: 'Export chart', download: 'Download started', exportFailed: 'Export failed', preparing: 'Preparing image…',
++    footnote: 'Source and method [1]', back: 'Back to chart', hidden: 'Hidden', scale: 'Scale', loading: 'Loading current data; inspection unavailable. The table shows the previous published snapshot.', empty: 'No records available', allHidden: 'All series hidden; complete data below.',
++  },
++  zh: {
++    core: '已结清周期资本核心', cycles: '已结清周期轨迹', benchmarks: '模型 / 基准倍数', allocation: '研究配置权重',
++    efficiency: '周期年化效率', days: '持有天数', weighted: '资金加权占用天数', count: '已结清周期数', volatility: '年波动率', weight: '研究权重',
++    model: '模型估算', disclosed: '公开已结清周期摘要', research: '主观研究配置 · 非账户实际持仓',
++    date: '截至：2025–26 财年；精确截止日未披露。方法日期：2026-08-08。',
++    allocationDate: '截至：2026-08-07 08:29 ET',
++    source: '来源：Portfolio 公开模型 / 已结清周期摘要', allocationSource: '来源：公开配置框架（content.js）',
++    note: '模型与风险估算，并非审计收益。365 天周期外推不等于账户实际收益。原始基准输入与精确比较日期未披露。',
++    missing: '无数据', missingNote: '无数据表示缺失或未披露，不等于零。精确交易日期与私人结算明细不公开。',
++    help: '悬停或轻触图形。聚焦图表后用方向键选择记录，Home/End 选择首尾。Esc 或外部点击关闭。下方提供完整数据。',
++    table: '完整图表数据', tableScroll: '在表格区域左右滑动，可阅读全部列。', series: '系列', record: '记录', value: '值', unit: '单位', status: '状态', dateHeading: '日期 / 统计口径',
++    copy: '复制图表链接', copied: '链接已复制', copyFailed: '复制失败', export: '导出图表', download: '已开始下载', exportFailed: '导出失败', preparing: '正在生成图片…',
++    footnote: '来源与方法 [1]', back: '返回图表', hidden: '已隐藏', scale: '坐标', loading: '正在加载当前数据，暂不可探查。表格显示上一份公开快照。', empty: '暂无记录', allHidden: '所有系列已隐藏；下方仍有完整数据。',
++  },
++};
++const element = (tag, text, attrs = {}) => {
++  const el = document.createElement(tag);
++  if (text) el.textContent = text;
++  for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
++  return el;
++};
++
++// All adapters read the same public DOM fields that the M10 owners draw.
++// No new financial values, account access, or shadow dataset is introduced.
++function readChart(kind, root, c, zh) {
++  const series = [];
++  const records = [];
++  const addSeries = (id, label, unit, symbol = '━', domain) => { series.push({ id, label, unit, symbol, domain }); };
++  const add = (node, label, id, status, valueNode = node.querySelector('[data-chart-value]')) => {
++    const item = series.find(s => s.id === id);
++    const value = chartNumber(valueNode?.textContent);
++    records.push({ node, label, series: id, value, unit: item.unit, status: value == null ? c.missing : status });
++  };
++  if (kind === 'cycles') {
++    addSeries('efficiency', c.efficiency, '%'); addSeries('days', c.days, zh ? '天' : 'days', '●');
++    root.querySelectorAll('.trade-route').forEach(row => {
++      const label = row.querySelector('header > span').textContent;
++      add(row.querySelector('.route-efficiency'), label, 'efficiency', c.model);
++      add(row.querySelector('.route-track'), label, 'days', c.disclosed);
++    });
++  } else if (kind === 'benchmarks') {
++    addSeries('qqq', zh ? '模型 / QQQ' : 'Model / QQQ', '×', '●'); addSeries('spx', zh ? '模型 / SPX' : 'Model / SPX', '×', '□');
++    root.querySelectorAll('.velocity-vector').forEach((node, i) => add(node, i ? 'SPX' : 'QQQ', i ? 'spx' : 'qqq', c.model));
++    // Filtering must not rescale one benchmark independently of the other.
++    const domain = chartScale(records.map(r => r.value));
++    series.forEach(s => { s.domain = domain; });
++  } else if (kind === 'allocation') {
++    addSeries('weight', c.weight, '%', '━', { min: 0, max: 100 });
++    root.querySelectorAll('.pick-card, .holdings-fallback li').forEach(row => {
++      const node = row.querySelector('.alloc-row') || row;
++      add(node, row.querySelector('.pick-ticker, strong').textContent, 'weight', c.research, row.querySelector('.alloc-num, b'));
++    });
++  } else {
++    addSeries('efficiency', c.efficiency, '%'); addSeries('weighted', c.weighted, zh ? '天' : 'days', '●');
++    addSeries('count', c.count, zh ? '条' : 'cycles'); addSeries('volatility', c.volatility, '%');
++    add(root.querySelector('.cycle-efficiency'), c.efficiency, 'efficiency', c.model, root.querySelector('.cycle-efficiency strong'));
++    root.querySelectorAll('.core-telemetry > div').forEach((row, i) => {
++      if (i < 3) add(row, series[i + 1].label, series[i + 1].id, i === 2 ? c.model : c.disclosed, row.querySelector('dd'));
++    });
++  }
++  return { title: c[kind], date: kind === 'allocation' ? c.allocationDate : c.date,
++    source: kind === 'allocation' ? c.allocationSource : c.source,
++    note: kind === 'allocation' ? c.research : c.note, records, series, labels: c };
++}
++
++export function initPortfolioChartInspector() {
++  const controllers = [];
++  for (const [kind, selector] of Object.entries({ core: '.cycle-core-grid', benchmarks: '.velocity-stage', cycles: '.route-manifest', allocation: '#pickGrid' })) {
++    const root = document.querySelector(selector);
++    if (!root || root.dataset.inspector) continue;
++    root.dataset.inspector = 'ready';
++    // Keep the allocation list's existing ID/semantics and dossier buttons.
++    const target = kind === 'allocation' ? root.parentElement : root;
++    target.id = `chart-${kind}`;
++    target.tabIndex = 0;
++    target.setAttribute('role', 'group');
++    const panel = element('section', '', { class: 'chart-inspector', 'aria-label': 'Chart data' });
++    root.after(panel);
++    const tooltip = element('div', '', { class: 'chart-tooltip', role: 'tooltip', id: `${target.id}-tooltip`, hidden: '' });
++    document.body.append(tooltip);
++    let data, c, active = 0, selectedNode, pinned = false, leaveTimer;
++    let hidden = new Set();
++    let live, status, tableRegion, menu;
++    const visible = () => data.records.filter(row => !hidden.has(row.series));
++    const busy = () => root.getAttribute('aria-busy') === 'true';
++    const close = () => {
++      clearTimeout(leaveTimer);
++      tooltip.hidden = true; pinned = false;
++      selectedNode?.removeAttribute('data-chart-selected'); selectedNode = null;
++      target.removeAttribute('aria-describedby');
++      if (live) live.textContent = '';
++    };
++    const place = node => {
++      const rect = node.getBoundingClientRect();
++      const viewport = window.visualViewport;
++      const left = viewport?.offsetLeft || 0, top = viewport?.offsetTop || 0;
++      const width = viewport?.width || innerWidth, height = viewport?.height || innerHeight;
++      tooltip.style.maxWidth = `${Math.max(1, width - 16)}px`;
++      tooltip.style.maxHeight = `${Math.max(1, height - 16)}px`;
++      const box = tooltip.getBoundingClientRect();
++      tooltip.style.left = `${Math.max(left + 8, Math.min(rect.left, left + width - box.width - 8))}px`;
++      const above = rect.top - box.height - 10;
++      tooltip.style.top = `${Math.max(top + 8, Math.min(above >= top + 8 ? above : rect.bottom + 10, top + height - box.height - 8))}px`;
++    };
++    const select = (index, keyboard = false) => {
++      clearTimeout(leaveTimer);
++      const rows = visible();
++      if (busy() || !rows.length) { close(); return; }
++      active = Math.max(0, Math.min(index, rows.length - 1));
++      const row = rows[active];
++      if (!row.node.isConnected) { close(); return; }
++      selectedNode?.removeAttribute('data-chart-selected'); selectedNode = row.node;
++      row.node.setAttribute('data-chart-selected', 'true');
++      const series = data.series.find(s => s.id === row.series);
++      const text = `${row.label} · ${series.label}\n${c.value}: ${row.value == null ? c.missing : row.value} ${row.unit}\n${c.status}: ${row.status}\n${data.date}`;
++      tooltip.textContent = text; tooltip.hidden = false;
++      target.setAttribute('aria-describedby', tooltip.id);
++      if (keyboard) { row.node.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' }); live.textContent = text; }
++      place(row.node);
++    };
++    const table = () => {
++      tableRegion.replaceChildren();
++      const el = element('table');
++      el.append(element('caption', `${data.title} — ${c.table}`));
++      const head = element('thead'), header = element('tr');
++      [c.record, c.value, c.unit, c.series, c.status, c.dateHeading].forEach(label => header.append(element('th', label, { scope: 'col' })));
++      head.append(header); el.append(head);
++      const body = element('tbody');
++      for (const row of data.records) {
++        const tr = element('tr'), item = data.series.find(s => s.id === row.series);
++        tr.append(element('th', row.label, { scope: 'row' }));
++        [row.value == null ? c.missing : String(row.value), row.unit, item.label + (hidden.has(row.series) ? ` · ${c.hidden}` : ''), row.status, data.date]
++          .forEach(value => tr.append(element('td', value)));
++        body.append(tr);
++      }
++      el.append(body); tableRegion.append(el);
++    };
++    const refresh = () => {
++      close(); active = 0;
++      if (kind === 'cycles' || kind === 'benchmarks') initPortfolioChartGeometry();
++      const zh = document.documentElement.lang.startsWith('zh'); c = copy[zh ? 'zh' : 'en'];
++      data = readChart(kind, root, c, zh);
++      target.setAttribute('aria-label', `${data.title}. ${c.help}`);
++      panel.setAttribute('aria-label', `${data.title} — ${c.table}`);
++      panel.replaceChildren();
++      const help = element('p', c.help);
++      const legend = element('div', '', { class: 'chart-series', 'aria-label': c.series });
++      for (const item of data.series) {
++        const label = `${item.symbol} ${item.label} (${item.unit})`;
++        const button = element(data.series.length > 1 ? 'button' : 'span', label);
++        const update = () => {
++          button.setAttribute('aria-pressed', String(!hidden.has(item.id)));
++          button.textContent = label + (hidden.has(item.id) ? ` · ${c.hidden}` : '');
++          data.records.filter(r => r.series === item.id).forEach(r => r.node.classList.toggle('chart-series-hidden', hidden.has(item.id)));
++        };
++        if (data.series.length > 1) {
++          button.type = 'button'; update();
++          button.addEventListener('click', () => { close(); active = 0; hidden.has(item.id) ? hidden.delete(item.id) : hidden.add(item.id); update(); table(); status.textContent = visible().length ? '' : c.allHidden; });
++        }
++        legend.append(button);
++      }
++      const actions = element('div', '', { class: 'chart-actions' });
++      const copyButton = element('button', c.copy, { type: 'button' });
++      copyButton.addEventListener('click', async () => {
++        status.textContent = '';
++        try { await navigator.clipboard.writeText(chartLink(location, target.id)); status.textContent = c.copied; }
++        catch { status.textContent = c.copyFailed; }
++      });
++      actions.append(copyButton);
++      // Only the public, finite-size DOM figures have a supported exporter.
++      if (!busy() && data.records.length && data.records.length <= 100) {
++        menu = element('details', '', { class: 'chart-export' });
++        const summary = element('summary', c.export); menu.append(summary);
++        for (const format of ['svg', 'png']) {
++          if (format === 'png' && !document.createElement('canvas').getContext('2d')) continue;
++          const button = element('button', format.toUpperCase(), { type: 'button' });
++          button.addEventListener('click', async () => {
++            close(); menu.open = false; summary.focus();
++            status.textContent = c.preparing; actions.setAttribute('aria-busy', 'true');
++            menu.querySelectorAll('button').forEach(b => { b.disabled = true; });
++            try { await downloadChart(chartSVG({ ...data, hidden }), format, target.id); status.textContent = c.download; }
++            catch { status.textContent = c.exportFailed; }
++            finally { actions.removeAttribute('aria-busy'); menu.querySelectorAll('button').forEach(b => { b.disabled = false; }); }
++          });
++          menu.append(button);
++        }
++        actions.append(menu);
++      }
++      status = element('p', busy() ? c.loading : data.records.length ? '' : c.empty, { role: 'status', class: 'chart-status' });
++      live = element('span', '', { role: 'status', class: 'chart-sr' });
++      const ref = element('a', c.footnote, { href: `#${target.id}-note`, class: 'chart-note-ref' });
++      tableRegion = element('div', '', { class: 'chart-table-region', tabindex: '0', role: 'region', 'aria-label': `${data.title} — ${c.table}`, 'aria-describedby': `${target.id}-note` });
++      const note = element('p', `${data.date} ${data.source}. ${data.note} ${c.missingNote} `, { id: `${target.id}-note`, tabindex: '-1', class: 'chart-footnote' });
++      note.append(element('a', c.back, { href: `#${target.id}` }));
++      panel.append(help, legend, actions, status, live, ref, element('p', c.tableScroll), tableRegion, note);
++      table();
++    };
++    target.addEventListener('focus', () => { pinned = true; select(active, true); });
++    target.addEventListener('keydown', event => {
++      if (event.target !== target) return;
++      const keys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
++      if (!keys.includes(event.key)) return;
++      event.preventDefault(); pinned = true;
++      select(event.key === 'Home' ? 0 : event.key === 'End' ? visible().length - 1 : active + (['ArrowLeft', 'ArrowUp'].includes(event.key) ? -1 : 1), true);
++    });
++    const hit = event => visible().findIndex(row => row.node.contains(event.target));
++    root.addEventListener('pointermove', event => { if (event.pointerType === 'touch') return; const index = hit(event); if (index >= 0) { pinned = false; select(index); } });
++    root.addEventListener('click', event => { const index = hit(event); if (index >= 0) { pinned = true; select(index); } });
++    root.addEventListener('pointerleave', event => { if (!pinned && !tooltip.contains(event.relatedTarget)) leaveTimer = setTimeout(close, 180); });
++    tooltip.addEventListener('pointerenter', () => clearTimeout(leaveTimer));
++    tooltip.addEventListener('pointerleave', event => { if (!pinned && !root.contains(event.relatedTarget)) leaveTimer = setTimeout(close, 180); });
++    target.addEventListener('focusout', () => close());
++    document.addEventListener('pointerdown', event => {
++      if (!root.contains(event.target) && !tooltip.contains(event.target)) close();
++      if (!menu?.contains(event.target)) { if (menu) menu.open = false; }
++    });
++    document.addEventListener('keydown', event => {
++      if (event.key !== 'Escape') return;
++      close();
++      if (menu?.open) { menu.open = false; menu.querySelector('summary').focus(); }
++    });
++    const reposition = () => { if (!tooltip.hidden && selectedNode) place(selectedNode); };
++    window.addEventListener('resize', reposition);
++    window.addEventListener('scroll', reposition, { passive: true });
++    window.visualViewport?.addEventListener('resize', reposition);
++    window.visualViewport?.addEventListener('scroll', reposition);
++    refresh();
++    // The allocation owner is lazy and can replace all cards. Discard the old
++    // record selection on every source update, including loading transitions.
++    new MutationObserver(refresh).observe(root, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['aria-busy'] });
++    window.addEventListener('afflatus-lang', refresh);
++    controllers.push({ target, close });
++  }
++  const navigate = () => {
++    controllers.forEach(controller => controller.close());
++    const controller = controllers.find(({ target }) => `#${target.id}` === location.hash);
++    if (controller) { controller.target.scrollIntoView({ block: 'start' }); controller.target.focus({ preventScroll: true }); }
++  };
++  window.addEventListener('hashchange', navigate);
++  if (controllers.some(({ target }) => `#${target.id}` === location.hash)) requestAnimationFrame(navigate);
++}
+--- /dev/null
++++ b/src/ui/portfolioChartInspector.css
+@@ -0,0 +1,38 @@
++@layer components {
++  [id^="chart-"] { scroll-margin-top: 100px; }
++  .chart-inspector { min-width: 0; max-width: 100%; padding: 0; margin-top: 24px; color: #c3d1da; font: 400 14px/1.65 system-ui, sans-serif; letter-spacing: 0; }
++  .chart-inspector p { margin: 10px 0; }
++  .chart-inspector { scroll-margin-top: 160px; }
++  .chart-actions, .chart-series { display: flex; flex-wrap: wrap; align-items: start; gap: 8px; margin: 12px 0; }
++  .chart-inspector :is(button, summary) { display: inline-block; padding: 10px 12px; min-height: 44px; border: 1px solid #566b7b; border-radius: 4px; background: #0b1b26; color: #e5f5ff; font: inherit; cursor: pointer; }
++  .chart-inspector button[aria-pressed="false"] { border-style: dashed; color: #b4c1ca; }
++  .chart-inspector button:hover, .chart-inspector summary:hover { background: #213947; }
++  .chart-inspector a { color: #9ae5ff; text-decoration: underline; }
++  .chart-inspector :focus-visible, [data-chart-selected="true"], [id^="chart-"]:focus-visible { outline: 2px solid #e8b380; outline-offset: 3px; }
++  .chart-export { position: relative; }
++  .chart-export[open] { padding-bottom: 8px; }
++  .chart-export button { margin: 4px; }
++  .chart-inspector .chart-status { min-height: 24px; }
++  .chart-table-region { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; margin: 14px 0; }
++  .chart-table-region table { border-collapse: separate; border-spacing: 0; min-width: 720px; width: 100%; color: #d8e5ee; font: inherit; }
++  .chart-table-region caption { text-align: left; font-weight: 600; padding: 10px 0; }
++  .chart-table-region :is(th, td) { padding: 10px 12px; border-bottom: 1px solid #304653; text-align: left; vertical-align: top; max-width: 320px; overflow-wrap: anywhere; }
++  .chart-table-region th:first-child { position: sticky; left: 0; min-width: 96px; background: #10212d; z-index: 1; overflow-wrap: normal; }
++  .chart-table-region thead th { white-space: nowrap; }
++  .chart-table-region :is(th, td):nth-child(4) { min-width: 160px; }
++  .chart-table-region :is(th, td):nth-child(2), .chart-table-region :is(th, td):nth-child(3) { min-width: 76px; white-space: nowrap; }
++  .chart-table-region :is(th, td):nth-child(5) { min-width: 180px; }
++  .chart-table-region :is(th, td):nth-child(6) { min-width: 240px; }
++  .chart-footnote { overflow-wrap: anywhere; }
++  .chart-tooltip { position: fixed; z-index: 10000; width: 340px; box-sizing: border-box; padding: 12px 16px; border: 1px solid #b6d8e7; border-radius: 5px; background: #08141c; color: #e5f5ff; font: 400 14px/1.65 system-ui, sans-serif; white-space: pre-line; overflow-wrap: anywhere; overflow: auto; box-shadow: 0 8px 28px #0008; }
++  .chart-tooltip[hidden] { display: none; }
++  .chart-series-hidden { visibility: hidden; }
++  .chart-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
++  .convoy-manifest, .blackbox-module, .blackbox-sequence { min-width: 0; }
++  @media print {
++    .chart-tooltip, .chart-actions, .chart-series, .chart-status, .chart-note-ref { display: none; }
++    .chart-table-region { overflow: visible; }
++    .chart-table-region table { min-width: 0; color: #111; font-size: 10px; }
++    .chart-table-region th:first-child { position: static; background: transparent; }
++  }
++}
+--- /dev/null
++++ b/tests/chartExport.test.js
+@@ -0,0 +1,31 @@
++import { describe, it, expect } from 'vitest';
++import { chartLink, chartSVG } from '../src/ui/chartExport.js';
++
++const fixture = {
++  title: 'Public <model>', date: 'FY2025–26; exact cutoff undisclosed; method 2026-08-08',
++  source: 'Published summary', note: 'MODEL ESTIMATE · not audited',
++  series: [{ id: 'return', label: 'Estimate', unit: '%', symbol: '━' }],
++  records: [{ label: 'A', series: 'return', value: -22, unit: '%', status: 'Estimate', accountBalance: 'PRIVATE-123' },
++    { label: 'B', series: 'return', value: null, unit: '%', status: 'No data' },
++    { label: 'C', series: 'return', value: 0, unit: '%', status: 'Estimate' }],
++  labels: { hidden: 'Hidden', scale: 'Scale', missing: 'No data', missingNote: 'Missing is not zero' },
++};
++describe('public chart sharing', () => {
++  it('strips private query and selection state from links', () => {
++    expect(chartLink({ href: 'https://feida.au/zh/portfolio.html?account=secret&token=private#position-123' }, 'chart-cycles'))
++      .toBe('https://feida.au/zh/portfolio.html#chart-cycles');
++    expect(() => chartLink({ href: 'https://feida.au/' }, 'account-secret')).toThrow();
++  });
++  it('exports metadata and marks from an explicit field allowlist', () => {
++    const svg = chartSVG(fixture);
++    for (const word of ['FY2025', 'Published summary', 'MODEL ESTIMATE', '-22', 'No data', 'Missing is not zero', 'Public &lt;model&gt;']) expect(svg).toContain(word);
++    for (const word of ['PRIVATE-123', 'accountBalance', '<foreignObject', '<script', '<animate', 'NaN']) expect(svg).not.toContain(word);
++    expect(svg.match(/<rect /g)).toHaveLength(3); // background, negative bar, zero bar; no missing mark
++  });
++  it('retains original scales and clear identities for filtered exports', () => {
++    const svg = chartSVG({ ...fixture, hidden: new Set(['return']) });
++    expect(svg).toContain('Estimate (%) · Hidden');
++    expect(svg).toContain('Scale: -25 — 0 %');
++    expect(svg).not.toContain('A · -22');
++  });
++});
+--- /dev/null
++++ b/e2e/astra-chart-inspection.spec.js
+@@ -0,0 +1,180 @@
++import { test, expect } from '@playwright/test';
++import { readFile } from 'node:fs/promises';
++
++const url = lang => `/${lang}/portfolio.html?embed=1#chart-cycles`;
++const tip = page => page.locator('#chart-cycles-tooltip');
++const panel = (page, kind = 'cycles') => page.locator(`[aria-label="${kind === 'cycles' ? 'Closed-cycle trajectories' : 'Model / benchmark'} — Complete chart data"]`).filter({ has: page.locator('table') }).first();
++
++for (const lang of ['en', 'zh']) for (const width of [1440, 390]) {
++  test(`${lang} ${width}: hover / focus / tap, bounded tooltip and full table`, async ({ page }) => {
++    await page.setViewportSize({ width, height: 900 });
++    await page.goto(url(lang));
++    const chart = page.locator('#chart-cycles');
++    await expect(chart).toBeFocused();
++    await expect(tip(page)).toContainText('260.4 %');
++    const focused = await tip(page).innerText();
++    await page.keyboard.press('Escape'); await expect(tip(page)).toBeHidden();
++    await chart.locator('.route-efficiency').first().hover();
++    await expect(tip(page)).toHaveText(focused);
++    await page.keyboard.press('Escape');
++    await chart.locator('.route-efficiency').first().tap();
++    await expect(tip(page)).toHaveText(focused);
++    await chart.focus(); await page.keyboard.press('ArrowRight');
++    await expect(tip(page)).toContainText('17.5');
++    await page.keyboard.press('End'); await expect(tip(page)).toContainText('XLE');
++    await page.keyboard.press('Home'); await expect(tip(page)).toContainText('AVGO');
++    const bounds = await tip(page).boundingBox();
++    expect(bounds.x).toBeGreaterThanOrEqual(0); expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
++    expect(bounds.y).toBeGreaterThanOrEqual(0); expect(bounds.y + bounds.height).toBeLessThanOrEqual(900);
++    await page.mouse.click(width - 2, 3); await expect(tip(page)).toBeHidden();
++    expect(await chart.locator('[tabindex="0"]').count()).toBe(0);
++    const data = chart.locator('+ .chart-inspector');
++    await expect(data.locator('tbody tr')).toHaveCount(10);
++    await expect(data.locator('caption')).toContainText(lang === 'zh' ? '完整图表数据' : 'Complete chart data');
++    await expect(data.locator('thead th[scope="col"]')).toHaveCount(6);
++    await expect(data.locator('tbody tr').first()).toContainText('260.4');
++    await expect(data.locator('.chart-footnote')).toContainText('2026-08-08');
++    await data.locator('.chart-table-region').evaluate(el => { el.scrollLeft = 400; });
++    expect(await data.locator('.chart-table-region').evaluate(el => el.scrollLeft)).toBe(width < 720 ? 400 : 0);
++    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
++    expect(await data.locator('td').first().evaluate(el => parseFloat(getComputedStyle(el).paddingLeft))).toBeGreaterThanOrEqual(10);
++    expect(await data.evaluate(el => el.getBoundingClientRect().width)).toBeGreaterThan(width < 720 ? width * .65 : 700);
++    await data.locator('.chart-table-region').evaluate(el => { el.scrollLeft = 0; });
++    await data.evaluate(el => el.scrollIntoView({ block: 'start' }));
++    await page.screenshot({ path: test.info().outputPath(`${lang}-${width}-table.png`) });
++  });
++}
++
++test('series filters keep scales, identities and complete table; footnote round trip', async ({ page }) => {
++  await page.goto(url('en'));
++  const data = panel(page);
++  const before = await page.locator('.route-efficiency').first().getAttribute('style');
++  const button = data.getByRole('button', { name: 'Annualized cycle efficiency', exact: false });
++  await button.click(); await expect(button).toHaveAttribute('aria-pressed', 'false');
++  await expect(page.locator('.route-efficiency').first()).toBeHidden();
++  await expect(data.locator('tbody tr')).toHaveCount(10);
++  await expect(data.locator('tbody tr').first()).toContainText('Hidden');
++  await page.locator('#chart-cycles').focus(); await expect(tip(page)).toContainText('Holding days');
++  await button.click(); expect(await page.locator('.route-efficiency').first().getAttribute('style')).toBe(before);
++  await data.getByRole('link', { name: 'Source and method [1]' }).click();
++  await expect(page).toHaveURL(/#chart-cycles-note$/);
++  await data.getByRole('link', { name: 'Back to chart' }).click();
++  await expect(page.locator('#chart-cycles')).toBeFocused();
++  await page.goBack(); await expect(page).toHaveURL(/#chart-cycles-note$/);
++});
++
++test('copy success / failure and public deep link reopens the same chart', async ({ page, context }) => {
++  await page.addInitScript(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async text => { window.copiedChart = text; } } }));
++  await page.goto('/en/portfolio.html?private=secret&record=123#chart-cycles');
++  const data = panel(page);
++  await data.getByRole('button', { name: 'Copy chart link' }).click();
++  await expect(data.locator('.chart-status')).toHaveText('Link copied');
++  const copied = await page.evaluate(() => window.copiedChart);
++  expect(new URL(copied).search).toBe('');
++  const reopened = await context.newPage(); await reopened.goto(copied);
++  await expect(reopened.locator('#chart-cycles')).toBeFocused(); await reopened.close();
++  await page.evaluate(() => { navigator.clipboard.writeText = async () => { throw new Error('Denied'); }; });
++  await data.getByRole('button', { name: 'Copy chart link' }).click();
++  await expect(data.locator('.chart-status')).toHaveText('Could not copy link');
++});
++
++test('tooltip remains readable at viewport edges and can itself be hovered', async ({ page }) => {
++  await page.setViewportSize({ width: 320, height: 300 });
++  await page.goto(url('zh'));
++  const chart = page.locator('#chart-cycles');
++  await chart.focus(); await page.keyboard.press('End');
++  const box = await tip(page).boundingBox();
++  expect(box.x).toBeGreaterThanOrEqual(8); expect(box.y).toBeGreaterThanOrEqual(8);
++  expect(box.x + box.width).toBeLessThanOrEqual(312); expect(box.y + box.height).toBeLessThanOrEqual(292);
++  await page.keyboard.press('Escape');
++  await page.setViewportSize({ width: 1440, height: 900 });
++  await chart.locator('.route-efficiency').first().hover();
++  await tip(page).hover(); await page.waitForTimeout(220);
++  await expect(tip(page)).toBeVisible();
++  await page.keyboard.press('Escape'); await expect(tip(page)).toBeHidden();
++});
++
++test('SVG and PNG downloads contain complete public figures, even with a tooltip open', async ({ page }) => {
++  await page.goto(url('en'));
++  const data = panel(page);
++  for (const format of ['SVG', 'PNG']) {
++    await page.locator('#chart-cycles').focus();
++    await data.locator('summary').click();
++    const downloadPromise = page.waitForEvent('download');
++    await data.getByRole('button', { name: format, exact: true }).click();
++    const download = await downloadPromise;
++    expect(download.suggestedFilename()).toBe(`chart-cycles.${format.toLowerCase()}`);
++    const file = await download.path(); const buffer = await readFile(file);
++    await download.saveAs(test.info().outputPath(`cycles.${format.toLowerCase()}`));
++    if (format === 'SVG') {
++      const svg = buffer.toString();
++      for (const text of ['Closed-cycle trajectories', 'Source:', 'FY2025', '2026-08-08', 'Model estimate', 'AVGO', 'XLE', '260.4', '246', 'days']) expect(svg).toContain(text);
++      expect(svg).not.toMatch(/tooltip|foreignObject|<animate|accountBalance/);
++    } else {
++      expect(buffer.subarray(1, 4).toString()).toBe('PNG');
++      expect(buffer.readUInt32BE(16)).toBe(1920); expect(buffer.readUInt32BE(20)).toBeGreaterThan(1000);
++    }
++    await expect(data.locator('.chart-status')).toHaveText('Download started');
++    await expect(tip(page)).toBeHidden();
++  }
++});
++
++test('all supported figures export localized titles, units, provenance and status', async ({ page }) => {
++  for (const lang of ['en', 'zh']) {
++    await page.goto(`/${lang}/portfolio.html?embed=1#chart-allocation`);
++    await expect(page.locator('.pick-card')).toHaveCount(10);
++    for (const kind of ['core', 'benchmarks', 'cycles', 'allocation']) {
++      const chart = page.locator(`#chart-${kind}`);
++      const data = kind === 'allocation' ? chart.locator('.chart-inspector') : chart.locator('+ .chart-inspector');
++      await data.locator('summary').click();
++      const pending = page.waitForEvent('download');
++      await data.getByRole('button', { name: 'SVG', exact: true }).click();
++      const download = await pending;
++      await download.saveAs(test.info().outputPath(`${lang}-${kind}.svg`));
++      const svg = await readFile(await download.path(), 'utf8');
++      expect(svg).toContain(lang === 'zh' ? '来源' : 'Source');
++      expect(svg).toContain(kind === 'allocation' ? '2026-08-07' : '2026-08-08');
++      expect(svg).toContain(kind === 'allocation' ? (lang === 'zh' ? '主观研究配置' : 'Subjective research') : (lang === 'zh' ? '模型' : 'Model'));
++      expect(svg).not.toMatch(/NaN|undefined|<animate|<foreignObject/);
++    }
++  }
++});
++
++test('missing values stay absent and thousands of points do not join Tab order', async ({ page }) => {
++  await page.goto(url('en'));
++  await page.locator('#chart-cycles').evaluate(root => {
++    const fragment = document.createDocumentFragment();
++    for (let i = 0; i < 1000; i++) fragment.append(root.querySelector('.trade-route').cloneNode(true));
++    root.append(fragment);
++    root.querySelector('[data-chart-value]').textContent = '—';
++  });
++  const data = panel(page);
++  await expect(data.locator('tbody tr')).toHaveCount(2010);
++  await expect(data.locator('tbody tr').first()).toContainText('No data');
++  expect(await page.locator('.efficiency-rail').first().evaluate(el => getComputedStyle(el, '::after').display)).toBe('none');
++  await page.locator('#chart-cycles').focus(); await page.keyboard.press('Home');
++  await expect(tip(page)).toContainText('No data');
++  expect(await page.locator('#chart-cycles [tabindex="0"]').count()).toBe(0);
++  // Oversized export is intentionally unavailable, full table remains accessible.
++  await expect(data.locator('summary')).toHaveCount(0);
++});
++
++test('lazy owner replacement and busy data never expose an old record', async ({ page }) => {
++  await page.route('**/homeExperience-*.js', async route => { await new Promise(resolve => setTimeout(resolve, 700)); await route.continue(); });
++  await page.goto('/en/portfolio.html?embed=1#chart-allocation');
++  const chart = page.locator('#chart-allocation'), tooltip = page.locator('#chart-allocation-tooltip');
++  await chart.focus(); await page.keyboard.press('End'); await expect(tooltip).toContainText('VRT');
++  await expect(page.locator('.pick-card')).toHaveCount(10);
++  await chart.focus(); await page.keyboard.press('Home'); await expect(tooltip).toContainText('NVDA');
++  await page.locator('#pickGrid').evaluate(el => el.setAttribute('aria-busy', 'true'));
++  await expect(tooltip).toBeHidden();
++  await page.keyboard.press('ArrowRight'); await expect(tooltip).toBeHidden();
++  await page.locator('#pickGrid').evaluate(el => {
++    el.querySelector('.pick-ticker').textContent = 'NEW-TEST-RECORD';
++    el.querySelector('.alloc-num').textContent = '0%';
++    el.removeAttribute('aria-busy');
++  });
++  await page.keyboard.press('Home'); await expect(tooltip).toContainText('NEW-TEST-RECORD');
++  await expect(tooltip).not.toContainText('NVDA');
++  await expect(chart.locator('tbody tr').first()).toContainText('0');
++});

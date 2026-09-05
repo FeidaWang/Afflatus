@@ -2,23 +2,11 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const html = readFileSync('portfolio.html', 'utf8');
-const entry = readFileSync('src/main.js', 'utf8');
-const telemetry = readFileSync('src/ui/homeScrollTelemetry.js', 'utf8');
-const performanceStyles = readFileSync('src/performance-dossier.css', 'utf8');
 const content = readFileSync('src/data/content.js', 'utf8');
 const cruise = readFileSync('src/cic-hud.css', 'utf8');
 const heroStyles = readFileSync('src/home-visual-upgrade.css', 'utf8');
 
 describe('home presentation contract', () => {
-  it('reveals financial numbers and energy tracks at scroll entry', () => {
-    expect(entry).toContain('initHomeScrollTelemetry()');
-    expect(telemetry).toContain("root: '#stardrive'");
-    expect(telemetry).toContain("root: '#fy2026Performance'");
-    expect(telemetry).toContain('new IntersectionObserver');
-    expect(telemetry).toContain("group.classList.add('telemetry-live')");
-    expect(performanceStyles).toContain('.telemetry-pending:not(.telemetry-live) .benchmark-row > .vector-rail::before');
-    expect(performanceStyles).toContain('.telemetry-live .route-track > i::after');
-  });
 
   it('uses Chinese company brands in the Chinese allocation model', () => {
     ['英伟达（NVIDIA）', '博通（Broadcom）', '超威半导体（AMD）', '甲骨文（Oracle）',

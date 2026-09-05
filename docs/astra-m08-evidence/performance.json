@@ -1,0 +1,248 @@
+{
+  "browser": "149.0.7827.55",
+  "viewport": "1440x1000",
+  "reducedMotion": "reduce",
+  "externalRequests": "blocked",
+  "samples": [
+    {
+      "name": "portfolio",
+      "phase": "before",
+      "run": 0,
+      "cls": 0.0043885907208478,
+      "lcp": 116,
+      "dcl": 91.39999997615814,
+      "load": 93.29999995231628,
+      "resourceBytes": 764524
+    },
+    {
+      "name": "portfolio",
+      "phase": "before",
+      "run": 1,
+      "cls": 0.0043885907208478,
+      "lcp": 112,
+      "dcl": 85.60000002384186,
+      "load": 87.69999998807907,
+      "resourceBytes": 764524
+    },
+    {
+      "name": "portfolio",
+      "phase": "before",
+      "run": 2,
+      "cls": 0.0043885907208478,
+      "lcp": 124,
+      "dcl": 94.80000001192093,
+      "load": 97.10000002384186,
+      "resourceBytes": 764524
+    },
+    {
+      "name": "portfolio",
+      "phase": "after",
+      "run": 0,
+      "cls": 0.0043885907208478,
+      "lcp": 112,
+      "dcl": 93.90000003576279,
+      "load": 94.69999998807907,
+      "resourceBytes": 770084
+    },
+    {
+      "name": "portfolio",
+      "phase": "after",
+      "run": 1,
+      "cls": 0.0043885907208478,
+      "lcp": 116,
+      "dcl": 100.40000003576279,
+      "load": 101,
+      "resourceBytes": 770084
+    },
+    {
+      "name": "portfolio",
+      "phase": "after",
+      "run": 2,
+      "cls": 0.0043885907208478,
+      "lcp": 116,
+      "dcl": 99.30000001192093,
+      "load": 100.20000004768372,
+      "resourceBytes": 770084
+    },
+    {
+      "name": "sectors",
+      "phase": "before",
+      "run": 0,
+      "cls": 0,
+      "lcp": 68,
+      "dcl": 34.39999997615814,
+      "load": 35.19999998807907,
+      "resourceBytes": 308755
+    },
+    {
+      "name": "sectors",
+      "phase": "before",
+      "run": 1,
+      "cls": 0.0022217697482638885,
+      "lcp": 88,
+      "dcl": 32,
+      "load": 32.700000047683716,
+      "resourceBytes": 308755
+    },
+    {
+      "name": "sectors",
+      "phase": "before",
+      "run": 2,
+      "cls": 0,
+      "lcp": 68,
+      "dcl": 31.900000035762787,
+      "load": 32.60000002384186,
+      "resourceBytes": 308755
+    },
+    {
+      "name": "sectors",
+      "phase": "after",
+      "run": 0,
+      "cls": 0.0022217697482638885,
+      "lcp": 88,
+      "dcl": 35,
+      "load": 35.5,
+      "resourceBytes": 314324
+    },
+    {
+      "name": "sectors",
+      "phase": "after",
+      "run": 1,
+      "cls": 0.0022217697482638885,
+      "lcp": 100,
+      "dcl": 45,
+      "load": 45.39999997615814,
+      "resourceBytes": 314324
+    },
+    {
+      "name": "sectors",
+      "phase": "after",
+      "run": 2,
+      "cls": 0.0022217697482638885,
+      "lcp": 92,
+      "dcl": 37.19999998807907,
+      "load": 37.69999998807907,
+      "resourceBytes": 314324
+    },
+    {
+      "name": "signal",
+      "phase": "before",
+      "run": 0,
+      "cls": 0.008037779405381945,
+      "lcp": 68,
+      "dcl": 59.5,
+      "load": 60.90000003576279,
+      "resourceBytes": 246499
+    },
+    {
+      "name": "signal",
+      "phase": "before",
+      "run": 1,
+      "cls": 0.00854542567877122,
+      "lcp": 68,
+      "dcl": 56.80000001192093,
+      "load": 58.10000002384186,
+      "resourceBytes": 246499
+    },
+    {
+      "name": "signal",
+      "phase": "before",
+      "run": 2,
+      "cls": 0.008037779405381945,
+      "lcp": 68,
+      "dcl": 56.30000001192093,
+      "load": 57.69999998807907,
+      "resourceBytes": 246499
+    },
+    {
+      "name": "signal",
+      "phase": "after",
+      "run": 0,
+      "cls": 0.006520494324483989,
+      "lcp": 72,
+      "dcl": 70.29999995231628,
+      "load": 71.5,
+      "resourceBytes": 252068
+    },
+    {
+      "name": "signal",
+      "phase": "after",
+      "run": 1,
+      "cls": 0.006520494324483989,
+      "lcp": 64,
+      "dcl": 62.5,
+      "load": 63.59999996423721,
+      "resourceBytes": 252068
+    },
+    {
+      "name": "signal",
+      "phase": "after",
+      "run": 2,
+      "cls": 0.006520494324483989,
+      "lcp": 64,
+      "dcl": 61.89999997615814,
+      "load": 63.09999996423721,
+      "resourceBytes": 252068
+    },
+    {
+      "name": "course",
+      "phase": "before",
+      "run": 0,
+      "cls": 0.0010575038580246912,
+      "lcp": 88,
+      "dcl": 60.89999997615814,
+      "load": 61.30000001192093,
+      "resourceBytes": 203150
+    },
+    {
+      "name": "course",
+      "phase": "before",
+      "run": 1,
+      "cls": 0,
+      "lcp": 108,
+      "dcl": 62.10000002384186,
+      "load": 73.80000001192093,
+      "resourceBytes": 203150
+    },
+    {
+      "name": "course",
+      "phase": "before",
+      "run": 2,
+      "cls": 0.0010575038580246912,
+      "lcp": 88,
+      "dcl": 62.09999996423721,
+      "load": 62.5,
+      "resourceBytes": 203150
+    },
+    {
+      "name": "course",
+      "phase": "after",
+      "run": 0,
+      "cls": 0.0010575038580246912,
+      "lcp": 92,
+      "dcl": 71.5,
+      "load": 71.90000003576279,
+      "resourceBytes": 208600
+    },
+    {
+      "name": "course",
+      "phase": "after",
+      "run": 1,
+      "cls": 0.0010575038580246912,
+      "lcp": 92,
+      "dcl": 71.89999997615814,
+      "load": 72.30000001192093,
+      "resourceBytes": 208600
+    },
+    {
+      "name": "course",
+      "phase": "after",
+      "run": 2,
+      "cls": 0.0010575038580246912,
+      "lcp": 92,
+      "dcl": 70.19999998807907,
+      "load": 70.69999998807907,
+      "resourceBytes": 208600
+    }
+  ]
+}

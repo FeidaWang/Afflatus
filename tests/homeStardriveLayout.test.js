@@ -11,27 +11,27 @@ describe('home stardrive layout contracts', () => {
   it('keeps the jump-point stage contained in a preallocated sticky shell', () => {
     expect(styles).not.toMatch(/@keyframes\s+stardrivePin/);
     expect(styles).not.toMatch(/translateY\(100svh\)/);
-    expect(styles).toMatch(/\.stardrive\.has-motion-shell\{height:140svh/);
-    expect(styles).toMatch(/\.stardrive\.has-motion-shell \.stardrive-stage\{position:sticky/);
-    expect(styles).not.toMatch(/\.stardrive\.is-live \.stardrive-stage\.pin-fixed\{position:fixed/);
-    expect(entry).toContain("stardrive.classList.add('has-motion-shell')");
-    expect(entry).toContain('if (!initAlphardForge())');
+    expect(performanceStyles).toContain('.home-page .stardrive-runway { height: 180svh; }');
+    expect(performanceStyles).toMatch(/\.stardrive \.stardrive-stage\s*\{position: sticky|\.stardrive \.stardrive-stage\s*\{ position: sticky/);
+    expect(entry).not.toContain("classList.add('has-motion-shell')");
     expect(forge).not.toContain("stageEl.classList.toggle('pin-fixed'");
     expect(forge).not.toContain("document.addEventListener('DOMContentLoaded', initAlphardForge");
   });
 
-  it('keeps the annualized-return value inside a fixed numeric slot', () => {
-    expect(styles).toMatch(/\.stardrive \.strip-cell\{[^}]*overflow:hidden/);
+  it('keeps complete metrics outside the clipped stage in natural flow', () => {
+    const html = readFileSync('portfolio.html', 'utf8');
+    expect(html).toMatch(/<\/div>\s*<\/div>\s*<div class="strip" id="strip">/);
+    expect(performanceStyles).toMatch(/\.home-page \.stardrive > \.strip\s*\{[^}]*position: relative[^}]*height: auto[^}]*opacity: 1/s);
+    expect(performanceStyles).toMatch(/\.home-page \.stardrive \.strip-cell\s*\{[^}]*height: auto; overflow: visible; opacity: 1/s);
     expect(styles).toMatch(/\.stardrive \.strip-value\{[^}]*font-variant-numeric:tabular-nums/);
-    expect(performanceStyles).toMatch(/\.stardrive \.strip-cell\s*\{[^}]*grid-template-rows:\s*34px auto minmax\(0, 1fr\)/s);
-    expect(styles).not.toMatch(/\.stardrive \.hero-metric \.strip-value\{[^}]*transform:scale/);
   });
 
-  it('derives the approach-caption clearance from the metric-strip geometry', () => {
-    expect(performanceStyles).toContain('--metric-strip-block-size: 146px');
-    expect(performanceStyles).toContain('--metric-caption-gap: 32px');
-    expect(performanceStyles).toMatch(/\.stardrive \.stardrive-caption\s*\{[^}]*bottom:\s*calc\(var\(--metric-strip-bottom\) \+ var\(--metric-strip-block-size\) \+ var\(--metric-caption-gap\)\)/s);
-    expect(performanceStyles).toMatch(/\.stardrive \.strip\s*\{[^}]*height:\s*var\(--metric-strip-block-size\)/s);
+  it('keeps progress in the existing single sampler and static layout on touch', () => {
+    expect((forge.match(/getBoundingClientRect\(/g) || []).length).toBe(1);
+    expect(forge).not.toMatch(/addEventListener\(['"](?:scroll|wheel)['"]/);
+    expect(forge).not.toContain('preventDefault');
+    expect(performanceStyles).toContain('@media (max-width: 860px), (pointer: coarse), (prefers-reduced-motion: reduce)');
+    expect(performanceStyles).toContain('.home-page .stardrive-runway { height: auto; }');
   });
 
   it('normalizes the localized language link decoration', () => {
@@ -45,12 +45,13 @@ describe('home stardrive layout contracts', () => {
     expect(forge).toContain('float diamondPhase=');
     expect(forge).toContain('float diamondCore=');
     expect(forge).toContain('float coronaRing=');
-    expect(forge).toContain('eclipseUniforms.uForge.value = p');
+    expect(forge).toContain('0.25 + 0.75 * smoothstep(0, 0.3, p)');
+    expect(forge).not.toContain('renderTagline');
   });
 
   it('keeps the eclipse crisp and removes the vine-like corona noise', () => {
-    expect(forge).toContain("renderPolicy.qualityTier === 'high'");
-    expect(forge).toContain('Math.min(nativeDpr, 2)');
+    expect(forge).toContain('renderPolicy.computeDpr(width, height');
+    expect(forge).toContain("maxDpr: renderPolicy.qualityTier === 'low' ? 1 : 1.5");
     expect(forge).toContain('float sidePlumes=');
     expect(forge).toContain('float equatorialFans=');
     expect(forge).toContain('for(int i=0;i<7;i++)');
@@ -75,7 +76,8 @@ describe('home stardrive layout contracts', () => {
     expect(forge).toContain('alpha: true, premultipliedAlpha: false');
     expect(forge).toContain('renderer.setClearColor(0x000000, 0)');
     expect(forge).toContain('gl_FragColor=vec4(col,celestialAlpha)');
-    expect(forge).toContain('const opacity = 1 - smoothstep(0.08, 0.46, p)');
+    expect(forge).toContain("document.body.classList.toggle('forge-active', active)");
+    expect(forge).not.toContain('blackHoleStage');
     expect(forge).not.toContain('float skyCloud=');
     expect(styles).toContain('filter:none;mask-image:none;-webkit-mask-image:none');
     expect(styles).toContain('.stardrive-veil,.stardrive-stage::before,.stardrive-stage::after{display:none}');

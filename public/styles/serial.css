@@ -132,6 +132,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .toc-drawer .note{font:400 10.5px/1.6 var(--mono);color:var(--chrome-dim);margin:0 0 14px}
 .toc-item{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;padding:11px 10px;border:1px solid rgba(236,226,207,.10);border-radius:2px;margin-bottom:7px;color:var(--chrome);min-height:44px}
 .toc-item:hover{border-color:var(--teal)}
+.toc-item[aria-current]{text-decoration:underline;text-underline-offset:4px}
 .toc-item.current{background:rgba(201,131,74,.16);border-color:var(--copper)}
 .toc-item .t{font:400 12.5px/1.4 var(--serif);flex:1}
 .toc-item .wc{font:400 9.5px/1 var(--mono);color:var(--chrome-dim);white-space:nowrap}

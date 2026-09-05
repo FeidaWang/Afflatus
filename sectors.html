@@ -340,6 +340,7 @@
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
 <script type="module" src="/src/pages/sectors.js"></script>
+<link rel="stylesheet" href="/styles/reading-navigation.css">
 </head>
 <body class="sectors-page">
 <main class="shell">
@@ -376,7 +377,7 @@
     </div>
   </section>
 
-  <nav class="rivalryIndex" aria-label="Section index" data-aria-en="Section index" data-aria-zh="章节索引">
+  <nav class="rivalryIndex" data-reading-nav aria-label="Section index" data-aria-en="Section index" data-aria-zh="章节索引">
     <a href="#k3Heading" data-en="K3 verdict" data-zh="K3 结论">K3 verdict</a>
     <a href="#labsHeading" data-en="Laboratories" data-zh="模型实验室">Laboratories</a>
     <a href="#marketHeading" data-en="Market repricing" data-zh="市场重估">Market repricing</a>
@@ -389,7 +390,7 @@
   <section class="rivalrySection rivalrySection--k3" aria-labelledby="k3Heading">
     <header class="rivalrySectionHead">
       <span>01 / KIMI K3</span>
-      <h2 id="k3Heading" data-en="Read the architecture before trading the headline" data-zh="先读架构，再交易标题">Read the architecture before trading the headline</h2>
+      <h2 id="k3Heading" tabindex="-1" data-en="Read the architecture before trading the headline" data-zh="先读架构，再交易标题">Read the architecture before trading the headline</h2>
       <p data-en="The fork, upstream repository, license and 47-page technical report were reviewed together. Marketing claims are labelled; infrastructure consequences are separated from benchmark results." data-zh="已交叉审阅 Fork、上游仓库、许可证与 47 页技术报告。营销声明均有标记；基础设施影响与基准结果分开呈现。">The fork, upstream repository, license and 47-page technical report were reviewed together. Marketing claims are labelled; infrastructure consequences are separated from benchmark results.</p>
     </header>
     <div id="rivalryK3"></div>
@@ -469,7 +470,7 @@
   <section class="rivalrySection rivalrySection--labs" aria-labelledby="labsHeading">
     <header class="rivalrySectionHead">
       <span>02 / FRONTIER LABS</span>
-      <h2 id="labsHeading" data-en="Ten laboratories enter. Two industrial systems leave." data-zh="十家实验室入场，最终留下两套工业体系">Ten laboratories enter. Two industrial systems leave.</h2>
+      <h2 id="labsHeading" tabindex="-1" data-en="Ten laboratories enter. Two industrial systems leave." data-zh="十家实验室入场，最终留下两套工业体系">Ten laboratories enter. Two industrial systems leave.</h2>
       <p data-en="This is not a logo wall. Each lab is scored on capability, deployment economics, distribution, compute security and weight portability — the five vectors that determine whether a model becomes a business." data-zh="这里不再是 Logo 墙。每家实验室按能力、部署经济性、分发、算力安全与权重可迁移性评分——这五条向量决定模型能否成为生意。">This is not a logo wall. Each lab is scored on capability, deployment economics, distribution, compute security and weight portability — the five vectors that determine whether a model becomes a business.</p>
     </header>
     <div id="rivalryLabs"></div>
@@ -478,7 +479,7 @@
   <section class="rivalrySection rivalrySection--market" aria-labelledby="marketHeading">
     <header class="rivalrySectionHead">
       <span>03 / MARKET TRANSMISSION</span>
-      <h2 id="marketHeading" data-en="K3 was a catalyst. It was not the whole selloff." data-zh="K3 是催化剂，但不是整场砸盘">K3 was a catalyst. It was not the whole selloff.</h2>
+      <h2 id="marketHeading" tabindex="-1" data-en="K3 was a catalyst. It was not the whole selloff." data-zh="K3 是催化剂，但不是整场砸盘">K3 was a catalyst. It was not the whole selloff.</h2>
       <p data-en="A four-window event study separates the pre-existing valuation unwind, the K3 narrative shock, China's scarcity-premium reset and the later cash-conversion selloff." data-zh="四段事件窗分别呈现既有估值回撤、K3 叙事冲击、中国稀缺性溢价重置，以及之后的现金转化抛售。">A four-window event study separates the pre-existing valuation unwind, the K3 narrative shock, China's scarcity-premium reset and the later cash-conversion selloff.</p>
     </header>
     <div id="rivalryEvent" class="eventStudy"></div>
@@ -492,7 +493,7 @@
   <section class="rivalrySection rivalrySection--equities" aria-labelledby="equitiesHeading">
     <header class="rivalrySectionHead">
       <span>04 / 10 × 10 PUBLIC MARKET BOARD</span>
-      <h2 id="equitiesHeading" data-en="Twenty listed instruments, repriced by the layer they own" data-zh="二十只上市标的，按真正控制的产业层重新定价">Twenty listed instruments, repriced by the layer they own</h2>
+      <h2 id="equitiesHeading" tabindex="-1" data-en="Twenty listed instruments, repriced by the layer they own" data-zh="二十只上市标的，按真正控制的产业层重新定价">Twenty listed instruments, repriced by the layer they own</h2>
       <p data-en="No unlisted proxy is smuggled into the ranking. China now includes the verified HKEX codes for Z.ai and MiniMax; every fair-value band states the denominator it uses." data-zh="榜单不再混入未上市代理标的。中国榜已使用 Z.ai 与 MiniMax 的港交所核验代码；每个合理估值区间都明确写出分母。">No unlisted proxy is smuggled into the ranking. China now includes the verified HKEX codes for Z.ai and MiniMax; every fair-value band states the denominator it uses.</p>
     </header>
     <div id="rivalryEquities"></div>
@@ -501,7 +502,7 @@
   <section class="rivalrySection rivalrySection--letter" aria-labelledby="letterHeading">
     <header class="rivalrySectionHead">
       <span>05 / OPEN-WEIGHTS LETTER AUDIT</span>
-      <h2 id="letterHeading" data-en="Who signed, who joined, and whose absence matters" data-zh="谁已签署、谁是新增、谁的缺席最重要">Who signed, who joined, and whose absence matters</h2>
+      <h2 id="letterHeading" tabindex="-1" data-en="Who signed, who joined, and whose absence matters" data-zh="谁已签署、谁是新增、谁的缺席最重要">Who signed, who joined, and whose absence matters</h2>
       <p data-en="All 50 companies visible in the supplied screenshot are transcribed below and compared with the latest NVIDIA-hosted PDF snapshot. A signature supports policy portability; it does not prove that the signer publishes frontier weights." data-zh="已录入截图中可见的全部 50 家公司，并与 NVIDIA 当前托管的 PDF 快照逐项对照。签名代表支持政策层面的可迁移性，并不证明签署方会发布前沿权重。">All 50 companies visible in the supplied screenshot are transcribed below and compared with the latest NVIDIA-hosted PDF snapshot. A signature supports policy portability; it does not prove that the signer publishes frontier weights.</p>
     </header>
     <div id="rivalryLetter"></div>
@@ -510,14 +511,14 @@
   <section class="rivalrySection rivalrySection--theses" aria-labelledby="thesesHeading">
     <header class="rivalrySectionHead">
       <span>06 / POST-MEMORY ERA</span>
-      <h2 id="thesesHeading" data-en="Ten theses after the model scarcity premium" data-zh="模型稀缺性溢价之后的十强论点卡">Ten theses after the model scarcity premium</h2>
+      <h2 id="thesesHeading" tabindex="-1" data-en="Ten theses after the model scarcity premium" data-zh="模型稀缺性溢价之后的十强论点卡">Ten theses after the model scarcity premium</h2>
       <p data-en="Each thesis states what to own and what would invalidate it. The aim is a falsifiable portfolio framework, not a pile of bullish cards." data-zh="每条论点都写明应持有的方向与失效条件。目标是可证伪的组合框架，而不是一堆看多卡片。">Each thesis states what to own and what would invalidate it. The aim is a falsifiable portfolio framework, not a pile of bullish cards.</p>
     </header>
     <div id="rivalryTheses" class="thesisGrid"></div>
   </section>
 
   <section class="rivalrySources" aria-labelledby="sourcesHeading">
-    <h2 id="sourcesHeading" data-en="Source ledger &amp; methodology" data-zh="来源账本与方法">Source ledger &amp; methodology</h2>
+    <h2 id="sourcesHeading" tabindex="-1" data-en="Source ledger &amp; methodology" data-zh="来源账本与方法">Source ledger &amp; methodology</h2>
     <div id="rivalrySources"></div>
   </section>
 

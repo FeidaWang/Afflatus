@@ -1,0 +1,76 @@
+{
+  "before": [
+    {
+      "id": "heroTitle",
+      "x": 96,
+      "y": 164.1484375,
+      "width": 636.4765625,
+      "height": 297.1875
+    },
+    {
+      "id": "heroDesc",
+      "x": 96,
+      "y": 509.3359375,
+      "width": 599.0390625,
+      "height": 84
+    },
+    {
+      "id": "scrollHint",
+      "x": 96,
+      "y": 625.3359375,
+      "width": 329.859375,
+      "height": 48
+    },
+    {
+      "id": "starfieldViewport",
+      "x": 792.0078125,
+      "y": 168,
+      "width": 604.796875,
+      "height": 460.796875
+    },
+    {
+      "id": "starfieldReplay",
+      "x": 1242.0078125,
+      "y": 692.390625,
+      "width": 140,
+      "height": 57
+    }
+  ],
+  "after": [
+    {
+      "id": "heroTitle",
+      "x": 96,
+      "y": 164.1484375,
+      "width": 636.4765625,
+      "height": 297.1875
+    },
+    {
+      "id": "heroDesc",
+      "x": 96,
+      "y": 509.3359375,
+      "width": 599.0390625,
+      "height": 84
+    },
+    {
+      "id": "scrollHint",
+      "x": 96,
+      "y": 625.3359375,
+      "width": 329.859375,
+      "height": 48
+    },
+    {
+      "id": "starfieldViewport",
+      "x": 792.0078125,
+      "y": 168,
+      "width": 604.796875,
+      "height": 460.796875
+    },
+    {
+      "id": "starfieldReplay",
+      "x": 1242.0078125,
+      "y": 692.390625,
+      "width": 140,
+      "height": 57
+    }
+  ]
+}

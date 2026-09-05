@@ -608,12 +608,19 @@
     var bm = getBookmark();
     updateBookmarkBtn(bm);
     state.chapters.forEach(function (c, i) {
-      var b = document.createElement('button');
+      var b = document.createElement('a');
+      b.href = serialApi.readerPath({ locale:serialApi.readerLocale(location.pathname, document.documentElement.dataset.afflatusLocale), bookId:state.novelId, chapterId:c.id });
+      if (i === state.idx) b.setAttribute('aria-current', 'page');
       b.className = 'toc-item' + (i === state.idx ? ' current' : '');
       b.innerHTML = '<span class="t">' + (visited.has(c.id) ? '' : '● ') + c.title + '</span><span class="wc">' +
         (c.wordCount || '') + '字' +
         (bm && bm.chapterId === c.id ? ' <span class="bk">☆</span>' : '') + '</span>';
-      b.addEventListener('click', function () { closeDrawer({ restoreFocus:false }); goToChapter(i, true); });
+      b.addEventListener('click', function (event) {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        closeDrawer({ restoreFocus:false });
+        goToChapter(i, true);
+      });
       list.appendChild(b);
     });
   }

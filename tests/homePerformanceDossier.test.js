@@ -17,7 +17,7 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(html).toContain('CLOSED-CYCLE CAPITAL VELOCITY');
     expect(html).toContain('Weighted capital days');
     expect(html).toContain('Annual volatility');
-    expect(html).toContain('VECTOR FIELD / NORMALIZED');
+    expect(html).toContain('MODEL / BENCHMARK · ×');
     expect(html).toContain('02-C / FLIGHT PATH MATRIX');
     expect(html).toContain('route-manifest');
     expect(html).not.toContain('DISCLOSURE BOUNDARY');
@@ -34,8 +34,8 @@ describe('FY2025–26 homepage performance dossier', () => {
     expect(publicRuntime).not.toContain('绝对收益率');
     expect(publicRuntime).not.toContain('--route-return');
     expect(publicRuntime).not.toMatch(/realized profitable|showing return/i);
-    expect(html).toContain('--route-duration:');
-    expect(html.match(/data-en="[\d.]+ D HOLD"/g)).toHaveLength(5);
+    expect(html).toContain('--chart-point:');
+    expect(html.match(/class="route-track"/g)).toHaveLength(5);
   });
 
   it('shows one explicitly labeled upper bound per headline metric', () => {
@@ -92,8 +92,8 @@ describe('FY2025–26 homepage performance dossier', () => {
     for (const annualized of ['+260.4%', '+208.5%', '+257.9%', '+32.6%', '+85.6%']) {
       expect(html).toContain(annualized);
     }
-    for (const duration of ['17.5 D HOLD', '3.0 D HOLD', '11.2 D HOLD', '246 D HOLD', '5.6 D HOLD']) {
-      expect(html).toContain(duration);
+    for (const duration of ['17.5', '3.0', '11.2', '246.0', '5.6']) {
+      expect(html).toContain(`<span data-chart-value>${duration}</span>`);
     }
   });
 

@@ -1,7 +1,7 @@
 import { PERIOD_META, genCandles, movingAverage } from '../data/marketSeries.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import { initPortfolioSolarSystem } from './portfolioSolarSystem.js';
-import { animateCountUp } from './viz.js';
+import { registerHomeReadingEntries } from './homeScrollTelemetry.js';
 
 export function initMarketDeck({
   getLang = () => 'en',
@@ -237,39 +237,11 @@ export function initMarketDeck({
     chartRaf = requestAnimationFrame(animateK);
   }
 
-  function animateCounter(el) {
-    const target = parseFloat(el.dataset.counter);
-    const suffix = el.dataset.suffix || '';
-    const fixed = el.dataset.fixed !== undefined ? parseInt(el.dataset.fixed, 10) : null;
-    animateCountUp(el, target, {
-      suffix,
-      duration: 1800,
-      format: v => (fixed !== null ? v.toFixed(fixed) : v.toFixed(1)),
-    });
-  }
-
-  function animatePick(el) {
-    const bar = el.querySelector('.alloc-bar i');
-    const num = el.querySelector('.alloc-num');
-    if (!bar || !num) return;
-    const target = parseFloat(bar.dataset.target);
-    const max = parseFloat(bar.dataset.max) || target || 1;
-    setTimeout(() => {
-      bar.style.width = `${Math.min(100, (target / max) * 100)}%`;
-    }, 100);
-    animateCountUp(null, target, {
-      duration: 2600,
-      onFrame: v => { num.childNodes[0].nodeValue = v.toFixed(1); },
-    });
-  }
-
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (!entry.isIntersecting || seen.has(entry.target)) return;
       seen.add(entry.target);
       const el = entry.target;
-      if (el.classList.contains('pick')) animatePick(el);
-      if (el.dataset?.counter !== undefined) animateCounter(el);
       if (el.id === 'chartFrame') startKChart();
     });
   }, { threshold: 0.25 });
@@ -427,6 +399,7 @@ export function initMarketDeck({
       if (scrollActivePick) activatePick(scrollActivePick);
     });
     el.addEventListener('focusin', () => activatePick(el));
+    el.addEventListener('click', event => { if (event.target.closest('.pcCover')) activatePick(el); });
     seen.delete(el);
     observer.observe(el);
     convoyObserver.observe(el);
@@ -442,7 +415,6 @@ export function initMarketDeck({
     grid.setAttribute('role', 'list');
     pickModels = picks;
     scrollActivePick = null;
-    const maxPct = Math.max(1, ...picks.map(pick => Number(pick.pct) || 0));
     const ctaLabel = langKey() === 'zh' ? '去 sectors 看研判 →' : 'FULL THESIS →';
     const catalystLabel = langKey() === 'zh' ? '主要催化剂' : 'PRIMARY CATALYST';
     const riskLabel = langKey() === 'zh' ? '主要风险' : 'CRITICAL RISK';
@@ -455,15 +427,18 @@ export function initMarketDeck({
       el.setAttribute('role', 'listitem');
       const href = SECTORS_ANCHORS.has(p.tk) ? `/sectors.html#card-${p.tk}` : '/sectors.html';
       const detailsLabel = langKey() === 'zh' ? `将 ${p.tk} 设为当前轨道档案` : `Focus ${p.tk} orbital dossier`;
-      el.innerHTML = `<button type="button" class="pcCover" aria-pressed="false" aria-label="${detailsLabel}"><div class="pick-overline"><span>${p.layer}</span><b>${String(i + 1).padStart(2, '0')} / 10</b></div><div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${p.pct}<span>%</span></div></div><div class="pick-name">${p.name}</div><p class="pick-role">${p.role}</p><p class="pick-thesis">${p.why}</p><div class="alloc-row"><div class="alloc-bar"><i data-target="${p.pct}" data-max="${maxPct}"></i></div><div class="alloc-num">0.0<span>%</span></div></div></button><div class="pcDetail"><div class="pick-signal catalyst"><span>${catalystLabel}</span><p>${p.catalyst}</p></div><div class="pick-signal risk"><span>${riskLabel}</span><p>${p.risk}</p></div><a class="pcCta" href="${href}">${ctaLabel}</a></div>`;
+      el.innerHTML = `<button type="button" class="pcCover" aria-pressed="false" aria-label="${detailsLabel}"><div class="pick-overline"><span>${p.layer}</span><b>${String(i + 1).padStart(2, '0')} / 10</b></div><div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${p.pct}<span>%</span></div></div><div class="pick-name">${p.name}</div><p class="pick-role">${p.role}</p><p class="pick-thesis">${p.why}</p><div class="alloc-row"><div class="alloc-bar" aria-hidden="true"><i style="width:${p.pct}%"></i></div><div class="alloc-num">${p.pct}<span>%</span></div><small class="allocation-scale" aria-hidden="true">0 — 100%</small></div></button><div class="pcDetail"><div class="pick-signal catalyst"><span>${catalystLabel}</span><p>${p.catalyst}</p></div><div class="pick-signal risk"><span>${riskLabel}</span><p>${p.risk}</p></div><a class="pcCta" href="${href}">${ctaLabel}</a></div>`;
       grid.appendChild(el);
+      const thesis = el.querySelector('.pick-thesis');
+      thesis.dataset.readingEntry = `holding-${p.tk}`;
+      thesis.dataset.readingOrder = String(i % 4);
+      registerHomeReadingEntries([thesis]);
       observePick(el);
 
       if (nodes) {
         const [x, y] = nodePositions[i] || [50, 50];
         const solarBody = p.layer.split('/')[0].trim();
-        const node = document.createElement('button');
-        node.type = 'button';
+        const node = document.createElement('span');
         node.className = `convoy-node ${i === 0 ? 'is-sun' : 'is-planet'}`;
         node.dataset.pickIndex = String(i);
         node.style.setProperty('--node-x', `${x}%`);
@@ -475,31 +450,6 @@ export function initMarketDeck({
         nodes.appendChild(node);
       }
     });
-    if (nodes) {
-      nodes.onclick = (event) => {
-        const nodeList = [...nodes.querySelectorAll('.convoy-node')];
-        const eventNode = event.target.closest('.convoy-node');
-        let selectedNode = eventNode;
-        if (event.detail !== 0 && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
-          selectedNode = nodeList.reduce((closest, node) => {
-            const rect = node.getBoundingClientRect();
-            const distance = (rect.left + rect.width / 2 - event.clientX) ** 2
-              + (rect.top + rect.height / 2 - event.clientY) ** 2;
-            return !closest || distance < closest.distance ? { node, distance } : closest;
-          }, null)?.node || eventNode;
-        }
-        const index = Number.parseInt(selectedNode?.dataset.pickIndex || '-1', 10);
-        const card = grid.querySelector(`.pick-card[data-pick-index="${index}"]`);
-        if (!card) return;
-        scrollActivePick = card;
-        lockOrbitSelection(card);
-        activatePick(card);
-        card.scrollIntoView({
-          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-          block: 'center',
-        });
-      };
-    }
     const solarCanvas = document.getElementById('convoySolarSystem');
     const orbitHost = solarCanvas?.closest('.orbit-field');
     if (!solarSystem && solarCanvas && orbitHost) {
@@ -552,16 +502,7 @@ export function initMarketDeck({
       }
     }
 
-    document.querySelectorAll('[data-counter]').forEach(el => observer.observe(el));
-    setTimeout(() => {
-      document.querySelectorAll('.strip [data-counter]').forEach(el => {
-        const r = el.getBoundingClientRect();
-        if (r.top < innerHeight && r.bottom > 0 && !seen.has(el)) {
-          seen.add(el);
-          animateCounter(el);
-        }
-      });
-    }, 400);
+
   }
 
   init();

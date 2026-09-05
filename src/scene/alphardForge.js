@@ -9,6 +9,7 @@
  * systems. Reduced-motion visitors receive the final, fully resolved frame.
  */
 import * as THREE from 'three';
+import { isDecorativePaused, onDecorativePause } from '../ui/homeMotionPreferences.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import {
   canAcquireWebGLContext,
@@ -54,7 +55,7 @@ void main(){
   float upperLimb=smoothstep(-0.12,0.34,lunar.y/moonRadius);
 
   // This surface deliberately has no private sky. Transparent pixels expose
-  // the fixed homepage starfield, shared with the relativistic black hole.
+  // the page background, without introducing a second sky.
   vec3 col=vec3(0.0);
 
   float bailyPhase=1.0-smoothstep(0.36,0.72,uForge);
@@ -157,41 +158,14 @@ export function initAlphardForge() {
   const canvas = document.getElementById('alphardForge');
   if (!section || !canvas) return null;
   const stageEl = section.querySelector('.stardrive-stage');
-  const blackHoleStage = document.getElementById('blackhole-stage');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const runway = section.querySelector('.stardrive-runway');
+  const compact = matchMedia('(max-width: 860px), (pointer: coarse)');
   const renderCoordinator = getRenderBudgetCoordinator();
   let renderPolicy = renderCoordinator.getPolicy({ cost: 'high', targetFps: 60 });
   let budgetActive = false;
   let contextReady = true;
   let stopForContext = () => {};
   let resumeAfterContext = () => {};
-  // U30 R2, default off (R3 WIP exception — flag-gated visual work doesn't
-  // count against the real-device review backlog): ?fx=stage turns on the
-  // sticky-scale "stargate" wrapper (styles.css .stardrive.fx-stage rules).
-  try { if (/[?&]fx=stage\b/.test(location.search)) section.classList.add('fx-stage'); } catch (e) {}
-
-  // ── bilingual tagline typed out by the scroll ──
-  const tagEl = document.getElementById('forgeTagline');
-  const CLAUSES = { en: ['Every return', 'is a jump', 'through the dark.'], zh: ['每一份回报，', '都是一次', '穿越深空的跃迁。'] };
-  function detectZh() { return (document.documentElement.lang || '').toLowerCase().startsWith('zh'); }
-  let curZh = detectZh(), lastTagKey = '';
-  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  function renderTagline(p) {
-    if (!tagEl) return;
-    const lines = CLAUSES[curZh ? 'zh' : 'en'], total = lines.reduce((s, l) => s + l.length, 0);
-    const tp = reduce ? 1 : clamp((p - 0.04) / 0.9, 0, 1), shown = Math.round(tp * total);
-    const key = (curZh ? 'z' : 'e') + ':' + shown; if (key === lastTagKey) return; lastTagKey = key;
-    let remaining = shown, html = '', caretDone = false;
-    for (const line of lines) {
-      const take = clamp(remaining, 0, line.length); remaining -= take;
-      const caret = (!caretDone && take < line.length && tp > 0 && tp < 1) ? '<i class="tw-cur"></i>' : ''; if (caret) caretDone = true;
-      html += '<span class="tw-line">' + esc(line.slice(0, take)) + caret + '</span>';
-    }
-    tagEl.innerHTML = html;
-  }
-  const languageObserver = new MutationObserver(() => { curZh = detectZh(); lastTagKey = ''; });
-  languageObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
-
   const sv0 = document.getElementById('sv0');
   const retPct = Math.abs(parseFloat(sv0?.dataset.counter || '38.66')) || 38.66;
   const uGain = clamp(0.9 + retPct / 300, 0.85, 1.3);
@@ -207,21 +181,21 @@ export function initAlphardForge() {
     onLost() {
       contextReady = false;
       stopForContext();
+      section.classList.remove('forge-ready');
     },
     onRestore() {
       renderer.resetState?.();
       contextReady = true;
       size();
-      render(performance.now());
       resumeAfterContext();
     },
     onFallback() {
       contextReady = false;
       stopForContext();
+      section.classList.remove('forge-ready');
     },
   });
   if (!webglLifecycle.canInitialize) {
-    languageObserver.disconnect();
     renderer.dispose();
     renderer.forceContextLoss?.();
     return null;
@@ -245,18 +219,16 @@ export function initAlphardForge() {
   eclipsePlane.position.z = -1200;
   camera.add(eclipsePlane);
 
-  let W = 1, H = 1;
+  let W = 1, H = 1, stageTop = 0, sized = false;
   function size() {
-    const r = canvas.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height);
-    // A one-draw analytic eclipse can afford full Retina density on the high
-    // tier. Balanced/low tiers still honor the shared thermal pixel budget.
-    const nativeDpr = Math.max(1, window.devicePixelRatio || 1);
-    const dpr = renderPolicy.qualityTier === 'high'
-      ? Math.min(nativeDpr, 2)
-      : renderPolicy.computeDpr(W, H, {
-        minDpr: 1,
-        maxDpr: renderPolicy.qualityTier === 'low' ? 1.35 : 1.7,
-      });
+    // Layout size is untransformed: shrinking the visual never resizes WebGL.
+    const width = Math.max(1, stageEl.clientWidth), height = Math.max(1, stageEl.clientHeight);
+    stageTop = parseFloat(getComputedStyle(stageEl).top) || 0;
+    const dpr = renderPolicy.computeDpr(width, height, {
+      minDpr: 1, maxDpr: renderPolicy.qualityTier === 'low' ? 1 : 1.5,
+    });
+    if (sized && width === W && height === H && renderer.getPixelRatio() === dpr) return;
+    W = width; H = height; sized = true;
     renderer.setPixelRatio(dpr); renderer.setSize(W, H, false);
     camera.aspect = W / H; camera.updateProjectionMatrix();
     eclipseUniforms.uRes.value.set(W * dpr, H * dpr);
@@ -266,146 +238,87 @@ export function initAlphardForge() {
     eclipsePlane.scale.set(fw, fh, 1);
   }
 
-  // Scroll-linked energy ramp is sampled inside the rAF loop; the scroll
-  // handler never performs WebGL work.
-  let lastScrollY = window.scrollY || 0, scrollVel = 0;
-  let lastBlackHoleOpacity = -1;
-  function blendSharedUniverse(p) {
-    if (!blackHoleStage) return;
-    // The black hole and eclipse both sit over #starfield. Cross-fading only
-    // the celestial plates preserves one continuous universe without letting
-    // the two high-energy phenomena bleach each other out.
-    const opacity = 1 - smoothstep(0.08, 0.46, p);
-    if (Math.abs(opacity - lastBlackHoleOpacity) < 0.004) return;
-    blackHoleStage.style.opacity = opacity.toFixed(3);
-    lastBlackHoleOpacity = opacity;
-  }
-
-  // The stage is pinned with position:sticky and never escapes its section.
-  // Earlier fixed-position class toggles could survive a first-load lifecycle
-  // pause and cover later content. JS now owns only visual progress; CSS owns
-  // layout, so a suspended render loop cannot leave an overlay behind.
-  // 2026-07-16 (station-master, live-inspected via devtools): the stage is
-  // exactly 100vh tall, same as the viewport, so it starts appearing at the
-  // very first pixel of scroll (its top is always vh below the wrapper's
-  // top) and is ALREADY ~95%+ on-screen by the time the wrapper's own top
-  // reaches the viewport top -- which is the old `-rect.top` zero point.
-  // Forge stayed clamped at 0 for that whole entrance (a full hero-height
-  // of scroll, since hero and the wrapper are the same height here), so the
-  // user was looking at an almost-fully-visible but still fully-dim stage
-  // for a stretch that reads as "empty background, nothing happening" --
-  // exactly the reported gap. Old formula only counted the post-entrance
-  // dwell (rect.top: 0 -> -100vh). New formula counts the whole journey a
-  // 100vh-tall stage makes through a 100vh viewport (rect.top: vh -> -vh,
-  // a 200vh span that equals the wrapper's own full height), so forge
-  // starts leaving 0 as soon as the stage is visible at all, not once
-  // it's already nearly filled the screen.
-  function progress() {
-    if (reduce) return 1;
-    const rect = section.getBoundingClientRect(), vh = window.innerHeight;
-    if (rect.height <= 0) return 0; return clamp((vh - rect.top) / rect.height, 0, 1);
-  }
-
+  // Existing Forge rAF is the sole continuous sampler. One geometry read per
+  // rendered frame; absolute progress has no catch-up inertia on fast/reverse
+  // scroll. CSS owns the single pin, so suspension cannot strand an overlay.
+  const staticMode = () => renderPolicy.reducedMotion || compact.matches || isDecorativePaused();
+  let staticFrame = '';
   function render(t) {
-    const p = progress();
+    if (!contextReady) return;
+    const frameKey = `${W}:${H}:${renderer.getPixelRatio()}`;
+    // Repeated coordinator policy notifications do not redraw a stable frame.
+    if (staticMode() && staticFrame === frameKey && section.classList.contains('forge-ready')) return;
+    staticFrame = staticMode() ? frameKey : '';
+    const rect = runway.getBoundingClientRect();
+    const p = staticMode() ? 1 : clamp((stageTop - rect.top) / Math.max(1, rect.height - H), 0, 1);
+    const retreat = smoothstep(0.3, 0.78, p);
     section.style.setProperty('--forge', p.toFixed(4));
-    blendSharedUniverse(p);
-    renderTagline(p);
-    const tm = t * 0.001;
-    // scroll speed (rAF-sampled delta, lerped) → flare intensity; decays back
-    // to the resting uPulse breathing cycle when scrolling stops.
-    const sy = window.scrollY || window.pageYOffset || 0;
-    const rawVel = Math.min(Math.abs(sy - lastScrollY), 80); lastScrollY = sy;
-    scrollVel += (rawVel - scrollVel) * 0.15;
-    const uScroll = clamp(scrollVel / 26, 0, 1);
-    eclipseUniforms.uForge.value = p; eclipseUniforms.uScroll.value = uScroll;
-    eclipseUniforms.uPulse.value = 0.5 + 0.5 * Math.sin(tm * (Math.PI * 2 / 7)); // slow atmospheric shimmer
+    section.style.setProperty('--forge-scale', (1 - retreat * 0.38).toFixed(4));
+    section.style.setProperty('--forge-lift', `${-retreat * 12}%`);
+    section.style.setProperty('--forge-light', staticMode() ? '1' : (1 - smoothstep(0.76, 1, p)).toFixed(4));
+    section.dataset.forgePhase = staticMode() ? 'static' : p < 0.3 ? 'establish' : p < 0.78 ? 'retreat' : 'data';
+    // No scroll-speed flare: the same position always resolves to the same
+    // exposure, including anchor navigation and a restored history position.
+    eclipseUniforms.uForge.value = staticMode() ? 1 : 0.25 + 0.75 * smoothstep(0, 0.3, p);
+    eclipseUniforms.uScroll.value = 0;
+    eclipseUniforms.uPulse.value = staticMode() ? 0.5 : 0.5 + 0.5 * Math.sin(t * 0.001 * (Math.PI * 2 / 7));
     renderer.render(scene, camera);
+    section.classList.add('forge-ready');
   }
 
-  size();
-  if (reduce) {
-    eclipseUniforms.uForge.value = 1; renderTagline(1); render(0);
-    const reducedSurface = renderCoordinator.register({
-      id: 'home:alphard-forge',
-      element: section,
-      cost: 'high',
-      targetFps: 60,
-      onResize() { size(); render(0); },
-      onQualityChange(nextPolicy) { renderPolicy = nextPolicy; },
-      onDispose() {
-        webglLifecycle.dispose();
-        disposeThreeScene(scene, renderer);
-      },
-    });
-    return {
-      destroy() {
-        languageObserver.disconnect();
-        blackHoleStage?.style.removeProperty('opacity');
-        reducedSurface.dispose();
-      },
-    };
+  let running = false, raf = 0, lastRenderedT = 0, renderSurface = null;
+  function handoff(active) {
+    document.body.classList.toggle('forge-active', active);
+    window.dispatchEvent(new CustomEvent('afflatus:forge-active', { detail: { active } }));
   }
-
-  section.classList.add('is-live'); size();
-  let running = false, raf = 0, loopLastT = 0, lastRenderedT = 0, renderSurface = null;
   function loop(t) {
+    raf = 0;
+    const frameMs = t - lastRenderedT;
     const targetFrameMs = renderPolicy.qualityTier === 'high' ? 1000 / 60 : 1000 / 30;
-    if (!lastRenderedT || t - lastRenderedT >= targetFrameMs - 1) {
-      const frameMs = loopLastT ? t - loopLastT : 0;
-      loopLastT = t;
-      lastRenderedT = t;
+    if (!lastRenderedT || frameMs >= targetFrameMs - 1) {
       render(t);
-      renderSurface?.reportFrame(frameMs);
+      if (lastRenderedT) renderSurface?.reportFrame(frameMs);
+      lastRenderedT = t;
     }
-    if (running) raf = requestAnimationFrame(loop);
+    if (running && !raf) raf = requestAnimationFrame(loop);
   }
   function start() {
-    if (!running && contextReady) {
-      running = true;
-      loopLastT = 0;
-      lastRenderedT = 0;
+    if (!budgetActive || !contextReady) return;
+    handoff(true);
+    // Sample immediately on re-entry; never expose the previous scroll state.
+    render(performance.now());
+    if (!running && !staticMode()) {
+      running = true; lastRenderedT = 0;
       raf = requestAnimationFrame(loop);
     }
   }
-  function stop() { running = false; if (raf) cancelAnimationFrame(raf); }
-  stopForContext = stop;
-  resumeAfterContext = () => { if (budgetActive) start(); };
-  render(performance.now());
+  function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
+  stopForContext = () => { stop(); handoff(false); };
+  resumeAfterContext = start;
+  const refreshMode = () => { stop(); size(); if (budgetActive) start(); };
+  compact.addEventListener('change', refreshMode);
+  const unsubscribePause = onDecorativePause(refreshMode);
+  size();
   renderSurface = renderCoordinator.register({
-    id: 'home:alphard-forge',
-    element: section,
-    cost: 'high',
-    targetFps: 60,
-    onResume() {
-      budgetActive = true;
-      start();
-    },
-    onPause() {
-      budgetActive = false;
-      stop();
-    },
-    onResize() {
-      size();
-      if (!running) render(performance.now());
-    },
+    id: 'home:alphard-forge', element: stageEl, cost: 'high', targetFps: 60,
+    onResume() { budgetActive = true; start(); },
+    onPause() { budgetActive = false; stop(); handoff(false); },
+    onResize() { size(); if (budgetActive && !running) render(performance.now()); },
     onQualityChange(nextPolicy) {
-      renderPolicy = nextPolicy;
+      renderPolicy = nextPolicy; size();
+      if (staticMode()) { stop(); if (budgetActive) render(0); }
+      else if (budgetActive && !running) start();
     },
-    onDispose() {
-      webglLifecycle.dispose();
-      disposeThreeScene(scene, renderer);
-    },
+    onDispose() { webglLifecycle.dispose(); disposeThreeScene(scene, renderer); },
   });
 
   return {
     destroy() {
-      stop();
-      languageObserver.disconnect();
-      blackHoleStage?.style.removeProperty('opacity');
-      section.classList.remove('is-live', 'has-motion-shell');
-      stageEl?.classList.remove('pin-fixed', 'pin-end');
-      section.style.removeProperty('--forge');
+      stop(); handoff(false); unsubscribePause();
+      compact.removeEventListener('change', refreshMode);
+      section.classList.remove('forge-ready');
+      delete section.dataset.forgePhase;
+      for (const prop of ['--forge', '--forge-scale', '--forge-lift', '--forge-light']) section.style.removeProperty(prop);
       renderSurface.dispose();
     },
   };

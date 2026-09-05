@@ -1,0 +1,142 @@
+[
+  {
+    "id": "",
+    "text": "TACTICAL",
+    "r": {
+      "x": 7,
+      "y": 99,
+      "width": 124,
+      "height": 48,
+      "top": 99,
+      "right": 131,
+      "bottom": 147,
+      "left": 7
+    }
+  },
+  {
+    "id": "",
+    "text": "FIRE",
+    "r": {
+      "x": 133,
+      "y": 99,
+      "width": 124,
+      "height": 48,
+      "top": 99,
+      "right": 257,
+      "bottom": 147,
+      "left": 133
+    }
+  },
+  {
+    "id": "",
+    "text": "INTEL",
+    "r": {
+      "x": 259,
+      "y": 99,
+      "width": 124,
+      "height": 48,
+      "top": 99,
+      "right": 383,
+      "bottom": 147,
+      "left": 259
+    }
+  },
+  {
+    "id": "apToggle",
+    "text": "AP\nAUTO",
+    "r": {
+      "x": 321,
+      "y": 338,
+      "width": 62,
+      "height": 48,
+      "top": 338,
+      "right": 383,
+      "bottom": 386,
+      "left": 321
+    }
+  },
+  {
+    "id": "",
+    "text": "▥\nCIWS\nREADY",
+    "r": {
+      "x": 6,
+      "y": 396,
+      "width": 93,
+      "height": 58,
+      "top": 396,
+      "right": 99,
+      "bottom": 454,
+      "left": 6
+    }
+  },
+  {
+    "id": "",
+    "text": "↗\nMISSILE\nREADY",
+    "r": {
+      "x": 103,
+      "y": 396,
+      "width": 93,
+      "height": 58,
+      "top": 396,
+      "right": 196,
+      "bottom": 454,
+      "left": 103
+    }
+  },
+  {
+    "id": "",
+    "text": "☢\nNUKE\nREADY",
+    "r": {
+      "x": 196,
+      "y": 396,
+      "width": 93,
+      "height": 58,
+      "top": 396,
+      "right": 289,
+      "bottom": 454,
+      "left": 196
+    }
+  },
+  {
+    "id": "",
+    "text": "✦\nMAIN GUN\nREADY",
+    "r": {
+      "x": 291,
+      "y": 396,
+      "width": 93,
+      "height": 58,
+      "top": 396,
+      "right": 384,
+      "bottom": 454,
+      "left": 291
+    }
+  },
+  {
+    "id": "jumpToggle",
+    "text": "Assets",
+    "r": {
+      "x": 257,
+      "y": 180,
+      "width": 48,
+      "height": 48,
+      "top": 180,
+      "right": 305,
+      "bottom": 228,
+      "left": 257
+    }
+  },
+  {
+    "id": "voyageLogClose",
+    "text": "",
+    "r": {
+      "x": 295.33599853515625,
+      "y": 262.2559814453125,
+      "width": 47.615966796875,
+      "height": 47.61602783203125,
+      "top": 262.2559814453125,
+      "right": 342.95196533203125,
+      "bottom": 309.87200927734375,
+      "left": 295.33599853515625
+    }
+  }
+]

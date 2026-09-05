@@ -1,0 +1,34 @@
+[
+  {
+    "width": 1024,
+    "titleRight": 520.3125,
+    "descRight": 495.359375,
+    "sceneLeft": 563.203125,
+    "overlap": false,
+    "overflow": false
+  },
+  {
+    "width": 1280,
+    "titleRight": 650.875,
+    "descRight": 618.234375,
+    "sceneLeft": 704.015625,
+    "overlap": false,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "titleRight": 732.46875,
+    "descRight": 695.03125,
+    "sceneLeft": 792.015625,
+    "overlap": false,
+    "overflow": false
+  },
+  {
+    "width": 1920,
+    "titleRight": 977.265625,
+    "descRight": 925.4375,
+    "sceneLeft": 1056.015625,
+    "overlap": false,
+    "overflow": false
+  }
+]

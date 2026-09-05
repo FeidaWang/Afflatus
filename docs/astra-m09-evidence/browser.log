@@ -1,0 +1,18 @@
+
+Running 11 tests using 1 worker
+
+(node:40290) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 e2e/astra-tabs.spec.js:18:3 › en 1440: keyboard, stable panels, offline rapid switching (1.6s)
+  ✓   2 e2e/astra-tabs.spec.js:54:3 › en 1440: uninitialized reference views remain sequential (747ms)
+  ✓   3 e2e/astra-tabs.spec.js:18:3 › en 390: keyboard, stable panels, offline rapid switching (1.2s)
+  ✓   4 e2e/astra-tabs.spec.js:54:3 › en 390: uninitialized reference views remain sequential (457ms)
+  ✓   5 e2e/astra-tabs.spec.js:18:3 › zh 1440: keyboard, stable panels, offline rapid switching (1.5s)
+  ✓   6 e2e/astra-tabs.spec.js:54:3 › zh 1440: uninitialized reference views remain sequential (766ms)
+  ✓   7 e2e/astra-tabs.spec.js:18:3 › zh 390: keyboard, stable panels, offline rapid switching (1.1s)
+  ✓   8 e2e/astra-tabs.spec.js:54:3 › zh 390: uninitialized reference views remain sequential (461ms)
+  ✓   9 e2e/astra-tabs.spec.js:63:1 › mobile long labels: edges, selected item visible, vertical gesture retained (1.1s)
+  ✓  10 e2e/astra-tabs.spec.js:73:1 › offline first selection reports unavailability without empty tabs (1.4s)
+  ✓  11 e2e/astra-tabs.spec.js:80:1 › touch vertical drag over tabs scrolls page; reduced motion disables fade (2.1s)
+
+  11 passed (12.7s)

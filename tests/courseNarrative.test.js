@@ -50,7 +50,7 @@ describe('course narrative progression', () => {
     expect(script).toContain('content must always win over its entrance effect');
     expect(script).toContain('const minimumInteractiveScale = window.innerWidth < 720 ? (44 / 76) : 0.16;');
     expect(script).not.toContain('filmLoader');
-    expect(script).toContain("revealHashTarget({ align: true })");
+    expect(script).toContain("revealHashTarget();");
     expect(script).toContain('requestAnimationFrame(stepAtlasPhysics)');
     expect(script).toContain('clusterEntries');
     expect(script).toContain('window scroll');

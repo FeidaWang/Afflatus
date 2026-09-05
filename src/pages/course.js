@@ -46,24 +46,15 @@ import { courseNodes } from '../data/courseNodes.js';
     transmissions.forEach(revealTransmission);
   }
 
-  const revealHashTarget = ({ align = false } = {}) => {
-    if (!window.location.hash) return;
+  const revealHashTarget = () => {
     let target;
-    try { target = document.querySelector(window.location.hash); } catch { return; }
-    revealTransmission(target?.closest('section'));
-    if (align) target?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch { return; }
+    const section = target?.closest('section');
+    if (section) section.classList.add('reading-destination');
+    revealTransmission(section);
   };
-  const settleHashTarget = () => {
-    revealHashTarget({ align: true });
-    /* A newly revealed section is still completing its 720 ms projector
-       translation. Align once more after it settles so the fixed header does
-       not cover the section title. */
-    window.setTimeout(() => revealHashTarget({ align: true }), 780);
-  };
-  window.addEventListener('hashchange', settleHashTarget);
-  if (window.location.hash) {
-    settleHashTarget();
-  }
+  window.addEventListener('hashchange', revealHashTarget);
+  revealHashTarget();
 
   const timecode = $('#signalTimecode');
   const timecodeStart = performance.now();

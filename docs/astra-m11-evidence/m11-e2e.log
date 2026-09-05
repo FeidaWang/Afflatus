@@ -1,0 +1,18 @@
+
+Running 11 tests using 1 worker
+
+(node:57196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 e2e/astra-chart-inspection.spec.js:9:3 › en 1440: hover / focus / tap, bounded tooltip and full table (2.0s)
+  ✓   2 e2e/astra-chart-inspection.spec.js:9:3 › en 390: hover / focus / tap, bounded tooltip and full table (1.7s)
+  ✓   3 e2e/astra-chart-inspection.spec.js:9:3 › zh 1440: hover / focus / tap, bounded tooltip and full table (1.9s)
+  ✓   4 e2e/astra-chart-inspection.spec.js:9:3 › zh 390: hover / focus / tap, bounded tooltip and full table (1.6s)
+  ✓   5 e2e/astra-chart-inspection.spec.js:48:1 › series filters keep scales, identities and complete table; footnote round trip (5.5s)
+  ✓   6 e2e/astra-chart-inspection.spec.js:66:1 › copy success / failure and public deep link reopens the same chart (1.7s)
+  ✓   7 e2e/astra-chart-inspection.spec.js:81:1 › tooltip remains readable at viewport edges and can itself be hovered (5.5s)
+  ✓   8 e2e/astra-chart-inspection.spec.js:97:1 › SVG and PNG downloads contain complete public figures, even with a tooltip open (1.5s)
+  ✓   9 e2e/astra-chart-inspection.spec.js:122:1 › all supported figures export localized titles, units, provenance and status (10.0s)
+  ✓  10 e2e/astra-chart-inspection.spec.js:143:1 › missing values stay absent and thousands of points do not join Tab order (2.4s)
+  ✓  11 e2e/astra-chart-inspection.spec.js:162:1 › lazy owner replacement and busy data never expose an old record (5.2s)
+
+  11 passed (39.3s)

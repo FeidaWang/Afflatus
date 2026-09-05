@@ -1,0 +1,32 @@
+[
+  {
+    "id": "starfieldInteract",
+    "width": 140,
+    "height": 44
+  },
+  {
+    "id": "starfieldReset",
+    "width": 140,
+    "height": 44
+  },
+  {
+    "id": "starfieldPause",
+    "width": 140,
+    "height": 44
+  },
+  {
+    "id": "starfieldReplay",
+    "width": 140,
+    "height": 44
+  },
+  {
+    "id": "forgePause",
+    "width": 78,
+    "height": 44
+  },
+  {
+    "id": "solarPause",
+    "width": 78,
+    "height": 44
+  }
+]

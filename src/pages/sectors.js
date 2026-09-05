@@ -1,3 +1,4 @@
+import '../lib/readingNavigation.ts';
 import './sectorsLibs.js';
 import { currentLanguage, emptyMessage } from '../sectors/content.js';
 import { createSectorsDataController } from '../sectors/dataController.js';

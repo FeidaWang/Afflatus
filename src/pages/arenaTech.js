@@ -273,10 +273,10 @@ import {
   const LIMIT_TAG = () => `<span class="ta-limit">${T('LIMIT ZONE', '限价参考区')}</span>`;
   const PIVOT_NAMES = { r3: 'R3', r2: 'R2', r1: 'R1', pp: 'PP', s1: 'S1', s2: 'S2', s3: 'S3' };
 
-  function levelRows(analysis) {
+  function levelRows(analysis, mode) {
     // Everything the ladder shows, tagged with kind + zone flags.
     const p = analysis.price;
-    const piv = analysis.pivots[state.mode];
+    const piv = analysis.pivots[mode];
     const rows = [];
     for (const k of Object.keys(PIVOT_NAMES)) rows.push({ kind: 'pivot', name: PIVOT_NAMES[k], level: piv[k], cls: k === 'pp' ? 'pp' : (k[0] === 'r' ? 'res' : 'sup') });
     analysis.swings.resistances.slice(0, 3).forEach((x, i) => rows.push({ kind: 'swing', name: `${T('High', '前高')}${i ? ' ' + (i + 1) : ''}·${x.touches}×`, level: x.level, cls: 'res' }));
@@ -302,9 +302,9 @@ import {
   // illegibly when many levels cluster close together.
   const LAD_H0 = 560;       // nominal ladder height (px); grows if labels don't fit
   const LAD_MIN_GAP = 16;   // px — enough for one line of label text + padding
-  function renderLadder(analysis) {
+  function renderLadder(analysis, mode, ladder) {
     const p = analysis.price;
-    const rows = levelRows(analysis);
+    const rows = levelRows(analysis, mode);
     const gaps = analysis.gaps.filter((g) => g.status !== 'filled').slice(0, 3)
       .filter((g) => Math.abs((g.top + g.bottom) / 2 - p) / p <= 0.15);
     const lo = Math.min(p, ...rows.map((r) => r.level), ...gaps.map((g) => g.bottom)) * 0.995;
@@ -317,7 +317,7 @@ import {
     rows.forEach((r) => items.push({ kind: 'row', ref: r, trueY: Y(r.level) }));
     gaps.forEach((g) => items.push({ kind: 'gap', ref: g, trueY: Y(g.top) }));
     items.push({ kind: 'price', trueY: Y(p) });
-    if (state.mode === 'post') {
+    if (mode === 'post') {
       items.push({ kind: 'sessH', trueY: Y(analysis.last.h) });
       items.push({ kind: 'sessL', trueY: Y(analysis.last.l) });
     }
@@ -360,14 +360,13 @@ import {
 
     // ---- POST mode: day high/low, same true-line + decluttered-label split ----
     let sessHtml = '';
-    if (state.mode === 'post') {
+    if (mode === 'post') {
       const h = items.find((it) => it.kind === 'sessH'), l = items.find((it) => it.kind === 'sessL');
       const hTrue = shift(h.trueY), hLab = shift(h.y), lTrue = shift(l.trueY), lLab = shift(l.y);
       sessHtml += `<div class="lad-sess-line" style="top:${hTrue.toFixed(1)}px"></div>${leader('sess', hTrue, hLab)}<div class="lad-sess" style="top:${hLab.toFixed(1)}px">${T('DAY H', '日高')} ${fmt(analysis.last.h)}</div>`;
       sessHtml += `<div class="lad-sess-line lo" style="top:${lTrue.toFixed(1)}px"></div>${leader('sess', lTrue, lLab)}<div class="lad-sess" style="top:${lLab.toFixed(1)}px">${T('DAY L', '日低')} ${fmt(analysis.last.l)}</div>`;
     }
 
-    const ladder = $('taLadder');
     ladder.style.height = size.toFixed(0) + 'px';
     ladder.innerHTML = `${gapBandsHtml}${zoneBandsHtml}${rowsHtml}${gapLabelsHtml}${sessHtml}${priceHtml}`;
   }
@@ -404,9 +403,9 @@ import {
       <details class="ta-method"><summary>${T('method', '算法说明')}</summary>${T('Simple MAs of daily closes. 5/10MA: short-term defense for momentum trades; 20MA: swing lifeline — pullbacks that hold it are add-on points; 60/200MA: bull/bear dividing line. Arrow = slope over the last 3 sessions.', '日收盘价简单均线。5/10MA：短线/动量股防守线；20MA：波段生命线——回踩不破常是加仓点；60/200MA：牛熊分界。箭头为最近 3 个交易日的斜率。')}</details></article>`;
   }
 
-  function pivotCard(a) {
-    const piv = a.pivots[state.mode];
-    const review = state.mode === 'post' ? Object.fromEntries(a.postReview.map((x) => [x.name, x])) : null;
+  function pivotCard(a, mode) {
+    const piv = a.pivots[mode];
+    const review = mode === 'post' ? Object.fromEntries(a.postReview.map((x) => [x.name, x])) : null;
     const rows = Object.keys(PIVOT_NAMES).map((k) => {
       const lvl = piv[k];
       const isPP = k === 'pp';
@@ -421,7 +420,7 @@ import {
       }
       return `<div class="ta-row ${cls} ${isPP ? 'ta-pp' : ''}"><span>${PIVOT_NAMES[k]}${k[0] === 's' && !review ? LIMIT_TAG() : ''}</span><b>$${fmt(lvl)}</b>${tag}</div>`;
     }).join('');
-    const src = state.mode === 'pre'
+    const src = mode === 'pre'
       ? T(`from last completed session (${a.last.t})`, `基于最近一根完整日K（${a.last.t}）`)
       : T(`plan from ${a.prev.t}, reviewed against ${a.last.t}`, `${a.prev.t} 计划位 · 复盘 ${a.last.t} 实际走势`);
     return `<article class="ta-card"><h3>${T('PIVOT POINTS', '枢轴点系统')} <small>${src}</small></h3>${rows}
@@ -437,7 +436,10 @@ import {
       <details class="ta-method"><summary>${T('method', '算法说明')}</summary>${T('Breakout: close above a ≤7%-range 20-bar box; "vol✓" when breakout volume >1.5× box average. A pullback that holds the breakout level is a classic buy signal — "lost" means price closed back below it. Gaps: daily bars whose range never overlaps the prior bar (≥0.5%); unfilled gaps act as strong support (up-gaps) or resistance (down-gaps).', '突破：收盘突破 20 根K线、总振幅≤7% 的横盘箱体；突破日成交量 >1.5× 箱体均量记「放量✓」。回踩突破位不破为经典买点——「失守」即收盘跌回位下。缺口：与前一日K线完全不重叠（≥0.5%）；未回补的向上缺口构成强支撑、向下缺口构成强阻力。')}</details></article>`;
   }
 
+  let disposeTabs = () => {};
   function renderPanel() {
+    const focusedTab = document.activeElement?.matches('.ta-mode') ? document.activeElement.id : null;
+    disposeTabs();
     const el = $('taPanel');
     const page = state.page;
     const sym = page.sym;
@@ -497,30 +499,75 @@ import {
       <div class="ta-head">
         <div class="ta-id"><b>${sym}</b><span>${u ? u.name : ''}</span><i class="ta-src ${page.status}">${page.status === ARENA_PAGE_STATUS.STALE ? T('STALE', '陈旧') : q ? 'LIVE' : T('EOD', '日线收盘')}</i></div>
         <div class="ta-quote ${up ? 'up' : 'down'}"><b>$${fmt(a.price)}</b><span>${up ? '▲' : '▼'} ${fmt(Math.abs(chg))} (${fmt(Math.abs(chgPct))}%)</span></div>
-        <div class="ta-modes" role="tablist">
-          <button class="ta-mode ${state.mode === 'pre' ? 'on' : ''}" data-m="pre" role="tab" aria-selected="${state.mode === 'pre'}">${T('PRE-MARKET', '盘前')}<i>${T('plan · next session', '计划 · 下一交易日')}</i></button>
-          <button class="ta-mode ${state.mode === 'post' ? 'on' : ''}" data-m="post" role="tab" aria-selected="${state.mode === 'post'}">${T('POST-MARKET', '盘后')}<i>${T('review · last session', '复盘 · 最近交易日')}</i></button>
-        </div>
+        <div class="ta-mode-scroll"><div class="ta-modes" role="tablist" aria-label="${T('Session analysis', '交易时段分析')}">
+          <button class="ta-mode ${state.mode === 'pre' ? 'on' : ''}" type="button" id="ta-tab-pre" aria-controls="ta-view-pre" tabindex="${state.mode === 'pre' ? 0 : -1}" data-m="pre" role="tab" aria-selected="${state.mode === 'pre'}">${T('PRE-MARKET', '盘前')}<i>${T('plan · next session', '计划 · 下一交易日')}</i></button>
+          <button class="ta-mode ${state.mode === 'post' ? 'on' : ''}" type="button" id="ta-tab-post" aria-controls="ta-view-post" tabindex="${state.mode === 'post' ? 0 : -1}" data-m="post" role="tab" aria-selected="${state.mode === 'post'}">${T('POST-MARKET', '盘后')}<i>${T('review · last session', '复盘 · 最近交易日')}</i></button>
+        </div></div>
         <button class="btn ta-refresh" id="taRefresh">${T('Refresh', '刷新')}</button>
       </div>
-      <div class="ta-body">
+      <div class="ta-views">${['pre', 'post'].map((mode) => `
+      <div class="ta-body" id="ta-view-${mode}" role="tabpanel" aria-labelledby="ta-tab-${mode}" tabindex="0">
         <div class="ta-ladwrap">
           <div class="sec-label">${T('LEVEL LADDER', '价位标尺')}</div>
-          <div class="ta-ladder" id="taLadder" role="img" aria-label="${T('All key levels on one price scale', '同一价格轴上的全部关键位')}"></div>
+          <div class="ta-ladder" id="taLadder-${mode}" role="img" aria-label="${T('All key levels on one price scale', '同一价格轴上的全部关键位')}"></div>
           <div class="ta-legend">
             <span class="lg res">${T('resistance', '阻力')}</span><span class="lg sup">${T('support', '支撑')}</span><span class="lg pp">PP</span><span class="lg ma">MA</span><span class="lg zone">${T('limit zone', '限价参考区')}</span><span class="lg gap">${T('gap', '缺口')}</span>
           </div>
         </div>
-        <div class="ta-cards">${keyLevelCard(a)}${maCard(a)}${pivotCard(a)}${specialCard(a)}</div>
+        <div class="ta-cards">${keyLevelCard(a)}${maCard(a)}${pivotCard(a, mode)}${specialCard(a)}</div>
       </div>
+      `).join('')}</div>
       <p class="ta-note">${T('Levels are mechanical references computed from public daily data — context (earnings, news, liquidity) decides whether they matter. Not investment advice.', '以上价位均为公开日线数据的机械计算参考——是否有效取决于财报、新闻与流动性等上下文。非投资建议。')}</p>`;
-    el.querySelectorAll('.ta-mode').forEach((b) => b.addEventListener('click', () => { state.mode = b.dataset.m; renderPanel(); }));
+    const tabs = [...el.querySelectorAll('.ta-mode')];
+    const strip = el.querySelector('.ta-modes');
+    const edge = () => {
+      strip.parentElement.classList.toggle('has-before', strip.scrollLeft > 2);
+      strip.parentElement.classList.toggle('has-after', strip.scrollWidth - strip.clientWidth - strip.scrollLeft > 2);
+    };
+    const activate = (tab) => {
+      state.mode = tab.dataset.m;
+      tabs.forEach((button) => {
+        const selected = button === tab;
+        button.setAttribute('aria-selected', String(selected));
+        button.tabIndex = selected ? 0 : -1;
+        button.classList.toggle('on', selected);
+        const panel = $(button.getAttribute('aria-controls'));
+        panel.inert = !selected;
+        panel.setAttribute('aria-hidden', String(!selected));
+      });
+      // Scroll only the horizontal strip; never scroll the document to focus a tab.
+      {
+        const box = tab.getBoundingClientRect(), viewport = strip.getBoundingClientRect();
+        if (box.left < viewport.left + 8) strip.scrollLeft += box.left - viewport.left - 8;
+        else if (box.right > viewport.right - 8) strip.scrollLeft += box.right - viewport.right + 8;
+      }
+      edge();
+    };
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => { tab.focus({ preventScroll: true }); activate(tab); });
+      tab.addEventListener('keydown', (event) => {
+        const next = event.key === 'ArrowRight' ? (index + 1) % tabs.length
+          : event.key === 'ArrowLeft' ? (index + tabs.length - 1) % tabs.length
+          : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : -1;
+        if (next < 0) return; // Native button Enter/Space dispatch click.
+        event.preventDefault();
+        tabs[next].focus({ preventScroll: true });
+        activate(tabs[next]);
+      });
+    });
+    // Both views are cheap, preloaded DOM. No fetch, analysis, media or frame loop on activation.
+    ['pre', 'post'].forEach((mode) => renderLadder(a, mode, $(`taLadder-${mode}`)));
+    activate(tabs.find((tab) => tab.dataset.m === state.mode));
+    strip.addEventListener('scroll', edge, { passive: true });
+    const resize = new ResizeObserver(() => activate(tabs.find((tab) => tab.dataset.m === state.mode)));
+    resize.observe(strip);
+    disposeTabs = () => resize.disconnect();
+    if (focusedTab) $(focusedTab)?.focus({ preventScroll: true });
     const rf = $('taRefresh');
     if (rf) rf.addEventListener('click', () => {
       clearHistory(sym);
       select(sym, { forceRefresh: true });
     });
-    renderLadder(a);
   }
 
   // ---- boot -------------------------------------------------------

@@ -1,0 +1,38 @@
+@layer components {
+  [id^="chart-"] { scroll-margin-top: 100px; }
+  .chart-inspector { min-width: 0; max-width: 100%; padding: 0; margin-top: 24px; color: #c3d1da; font: 400 14px/1.65 system-ui, sans-serif; letter-spacing: 0; }
+  .chart-inspector p { margin: 10px 0; }
+  .chart-inspector { scroll-margin-top: 160px; }
+  .chart-actions, .chart-series { display: flex; flex-wrap: wrap; align-items: start; gap: 8px; margin: 12px 0; }
+  .chart-inspector :is(button, summary) { display: inline-block; padding: 10px 12px; min-height: 44px; border: 1px solid #566b7b; border-radius: 4px; background: #0b1b26; color: #e5f5ff; font: inherit; cursor: pointer; }
+  .chart-inspector button[aria-pressed="false"] { border-style: dashed; color: #b4c1ca; }
+  .chart-inspector button:hover, .chart-inspector summary:hover { background: #213947; }
+  .chart-inspector a { color: #9ae5ff; text-decoration: underline; }
+  .chart-inspector :focus-visible, [data-chart-selected="true"], [id^="chart-"]:focus-visible { outline: 2px solid #e8b380; outline-offset: 3px; }
+  .chart-export { position: relative; }
+  .chart-export[open] { padding-bottom: 8px; }
+  .chart-export button { margin: 4px; }
+  .chart-inspector .chart-status { min-height: 24px; }
+  .chart-table-region { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; margin: 14px 0; }
+  .chart-table-region table { border-collapse: separate; border-spacing: 0; min-width: 720px; width: 100%; color: #d8e5ee; font: inherit; }
+  .chart-table-region caption { text-align: left; font-weight: 600; padding: 10px 0; }
+  .chart-table-region :is(th, td) { padding: 10px 12px; border-bottom: 1px solid #304653; text-align: left; vertical-align: top; max-width: 320px; overflow-wrap: anywhere; }
+  .chart-table-region th:first-child { position: sticky; left: 0; min-width: 96px; background: #10212d; z-index: 1; overflow-wrap: normal; }
+  .chart-table-region thead th { white-space: nowrap; }
+  .chart-table-region :is(th, td):nth-child(4) { min-width: 160px; }
+  .chart-table-region :is(th, td):nth-child(2), .chart-table-region :is(th, td):nth-child(3) { min-width: 76px; white-space: nowrap; }
+  .chart-table-region :is(th, td):nth-child(5) { min-width: 180px; }
+  .chart-table-region :is(th, td):nth-child(6) { min-width: 240px; }
+  .chart-footnote { overflow-wrap: anywhere; }
+  .chart-tooltip { position: fixed; z-index: 10000; width: 340px; box-sizing: border-box; padding: 12px 16px; border: 1px solid #b6d8e7; border-radius: 5px; background: #08141c; color: #e5f5ff; font: 400 14px/1.65 system-ui, sans-serif; white-space: pre-line; overflow-wrap: anywhere; overflow: auto; box-shadow: 0 8px 28px #0008; }
+  .chart-tooltip[hidden] { display: none; }
+  .chart-series-hidden { visibility: hidden; }
+  .chart-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .convoy-manifest, .blackbox-module, .blackbox-sequence { min-width: 0; }
+  @media print {
+    .chart-tooltip, .chart-actions, .chart-series, .chart-status, .chart-note-ref { display: none; }
+    .chart-table-region { overflow: visible; }
+    .chart-table-region table { min-width: 0; color: #111; font-size: 10px; }
+    .chart-table-region th:first-child { position: static; background: transparent; }
+  }
+}

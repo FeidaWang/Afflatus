@@ -1,0 +1,86 @@
+
+> project-afflatus@1.5.0 prebuild
+> npm run data:check && npm run site:check && npm run header:check && npm run css:check && npm run combat:asset:check && npm run lint:i18n && npm run og:check
+
+
+> project-afflatus@1.5.0 data:check
+> node scripts/validate-data.mjs
+
+OK: public/sectors-data.json
+OK: public/sectors-competition.json
+OK: public/sectors-rivalry.json
+OK: public/sectors-ecosystem.json
+OK: public/signal-events.json
+OK: data-archive/stats/2026-09-05/leagues-data.json
+OK: data-archive/stats/2026-09-05/games-data.json
+OK: public/novels-index.json
+OK: public/arena-universe.json
+OK: public/arena-universe-s1.json
+OK: public/arena-picks.json
+OK: public/arena-quant-model.json
+OK: public/arena-runlog.json
+OK: public/arena-daily-digest.json
+OK: public/arena-news.json
+OK: public/arena-ledger.json
+OK: public/arena-ledger-s1.json
+OK: public/arena-predlog.json
+OK: public/transits-daily.json
+OK: public/audio/playlist.json
+OK: public/nyse-holidays-2026.json
+OK: public/signal-release-dates-2026.json
+OK: public/novels/wanjie-zhongchun.json
+OK: public/novels/changye-qingjian.json
+OK: public/novels/yuxi-gongci.json
+
+25 file(s) checked.
+
+> project-afflatus@1.5.0 site:check
+> node scripts/site-manifest.mjs --check
+
+OK: site manifest (10 routes, 8 discoverable)
+
+> project-afflatus@1.5.0 header:check
+> node scripts/audit-header.mjs --check
+
+
+全站 Afflatus → AI 品牌审计
+
+页面          状态         人格          链接     跟随     SVG   反斜杠
+────────────────────────────────────────────────────────────────────────
+main        active     showcase    是      是      否     无
+portfolio   active     home        是      是      否     无
+arena       active     arena       是      是      否     无
+sectors     active     sectors     是      是      否     无
+signal      active     signal      是      是      否     无
+horoscope   active     horoscope   是      是      否     无
+serial      active     serial      是      是      否     无
+course      active     course      是      是      否     无
+boot        prototype  boot        是      是      否     无
+
+CSS AI 覆盖：9/9；独立视觉人格：9/9
+
+✔ 全部构建页面使用无反斜杠、同结构、不同人格的 AI 字标。
+
+
+> project-afflatus@1.5.0 css:check
+> node scripts/check-no-new-important.mjs && node scripts/check-css-architecture.mjs
+
+OK: src/styles.css — 2822 !important (baseline 2837, down)
+OK: src/cic-hud.css — 0 !important (baseline 0, unchanged)
+OK: index.html — 0 !important (baseline 2, down)
+OK: CSS architecture (2 migrated families, 3 layout bands + narrow guard)
+
+> project-afflatus@1.5.0 combat:asset:check
+> node scripts/check-combat-glb.mjs
+
+combat GLB ok (320036 bytes)
+
+> project-afflatus@1.5.0 lint:i18n
+> node scripts/lint-bilingual.mjs
+
+OK: bilingual content parity, tokens, markup, links, punctuation, glossary, and UI limits
+
+> project-afflatus@1.5.0 og:check
+> node scripts/validate-og-assets.mjs
+
+OK: 16 route social cards (1200×630, 2.24 MB total)

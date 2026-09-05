@@ -6,9 +6,10 @@ const entry = readFileSync('src/main.js', 'utf8');
 const experience = readFileSync('src/homeExperience.js', 'utf8');
 
 describe('home loading contract', () => {
-  it('keeps the LCP shell static and defers the combat runtime until idle or intent', () => {
+  it('keeps the LCP shell static and defers the combat runtime until visibility or intent', () => {
     expect(entry).toContain("import('./homeExperience.js')");
-    expect(entry).toContain('requestIdleCallback');
+    expect(entry).toContain('installVisibilityLoaders');
+    expect(entry).toContain("rootMargin: '240px 0px'");
     expect(entry).toContain("matchMedia('(max-width: 860px), (pointer: coarse)')");
     expect(entry).toContain('HOME_INTENT_SELECTOR');
     expect(entry).not.toMatch(/^import .*homeExperience/m);
@@ -29,8 +30,8 @@ describe('home loading contract', () => {
     expect(html).not.toMatch(/\s(?:src)="\/vendor\/black-hole\/background\.html"/u);
     expect(entry).toContain('navigator.connection?.saveData');
     expect(entry).toContain('prefers-reduced-motion: reduce');
-    expect(entry).toContain('function loadRichHomeExperience()');
-    expect(entry).toContain('window.setTimeout(start, 8000)');
+    expect(entry).toContain('function loadHomeExperience()');
+    expect(entry).toContain('experienceObserver.observe(portfolio)');
   });
 
   it('splits market and voyage features from the combat experience', () => {
@@ -49,9 +50,9 @@ describe('home loading contract', () => {
     expect(html).toMatch(/<div class="pick-grid" id="pickGrid">\s*<ol class="holdings-fallback"/u);
   });
 
-  it('keeps both home language switches crawlable without loading combat', () => {
+  it('keeps locale switch URLs available without loading combat', () => {
     expect(html).toMatch(/<a class="lang-mini-toggle" id="langMiniToggle" href="\/zh\/"/u);
-    expect(html).toMatch(/<a class="warp-btn verse-switch" id="langBtn" href="\/zh\/"/u);
+    expect(html).toMatch(/<a[^>]*id="langBtn"[^>]*href="\/zh\/"/u);
     expect(html).toContain('<style id="home-language-visibility">');
     expect(html).toContain('@media(max-width:860px){#langBtn{display:none}#langMiniToggle{display:inline-flex}}');
     expect(entry.match(/HOME_INTENT_SELECTOR[\s\S]*?\.join\(','\)/u)?.[0] || '').not.toContain('#langBtn');

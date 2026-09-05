@@ -22,6 +22,12 @@ import {
 
   function currentSectionHash() {
     try {
+      // A native chapter jump updates its URL before smooth scrolling ends.
+      // Keep that explicit destination instead of sampling the old section.
+      if (window.location.hash && document.querySelector('[data-reading-nav]')
+        && document.getElementById(decodeURIComponent(window.location.hash.slice(1)))) {
+        return window.location.hash;
+      }
       const readingLine = Math.min(280, Math.max(96, window.innerHeight * 0.24));
       const activeSection = [...document.querySelectorAll('main > section[id]')]
         .find((section) => {

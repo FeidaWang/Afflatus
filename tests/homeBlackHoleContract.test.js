@@ -12,7 +12,7 @@ function filesUnder(dir) {
 }
 
 describe('homepage relativistic black hole contract', () => {
-  it('replaces the synthetic gold ring with the source observatory background', () => {
+  it('retains the licensed observatory asset without eagerly loading it', () => {
     const html = readFileSync('portfolio.html', 'utf8');
     const main = readFileSync('src/homeExperience.js', 'utf8');
 
@@ -54,19 +54,15 @@ describe('homepage relativistic black hole contract', () => {
     expect(styles).not.toContain('mask-image: linear-gradient(90deg,transparent 0%,rgba(0,0,0,.72)');
   });
 
-  it('keeps the gravity well unobstructed and drives every star through one approach field', () => {
+  it('gives the orbital field a single owner outside the combat master', () => {
     const html = readFileSync('portfolio.html', 'utf8');
-    const fallback = readFileSync('src/scene/backgroundScene.js', 'utf8');
-    const worker = readFileSync('src/scene/backgroundScene.worker.js', 'utf8');
-
-    expect(html).not.toContain('class="blackhole-course-marker"');
-    expect(html).not.toContain('APPROACH VECTOR / ΔR NEGATIVE');
-    expect(fallback).toContain('function drawApproach');
-    expect(worker).toContain('function drawApproach');
-    expect(fallback).toContain("ctx.fillStyle = '#04060a'");
-    expect(worker).toContain("ctx.fillStyle = '#04060a'");
-    expect(fallback).not.toContain('eventR * 1.35');
-    expect(worker).not.toContain('eventR * 1.35');
+    const scene = readFileSync('src/scene/backgroundScene.js', 'utf8');
+    const combat = readFileSync('src/homeExperience.js', 'utf8');
+    expect(html.match(/id="starfield"/g)).toHaveLength(1);
+    expect(scene.match(/new THREE.WebGLRenderer/g)).toHaveLength(1);
+    expect(scene).not.toContain('new Worker');
+    expect(combat).not.toContain('createBackgroundScene');
+    expect(combat).not.toContain('backgroundScene.draw');
   });
 
   it('uses the doubled-size homepage observation plate', () => {
@@ -78,13 +74,14 @@ describe('homepage relativistic black hole contract', () => {
     expect(source).toContain('model.discTemperature.setValue(2700)');
   });
 
-  it('can explicitly resume the embedded observatory after a command-mode transition', () => {
+  it('keeps the old observatory dormant during command-mode transitions', () => {
     const source = readFileSync(`${vendorDir}/background.html`, 'utf8');
     const main = readFileSync('src/homeExperience.js', 'utf8');
 
     expect(source).toContain("event.data.type === 'black-hole-observatory:play'");
     expect(main).toContain('function ensureSpaceSceneRunning()');
-    expect(main).toContain("{type:'black-hole-observatory:play'}");
+    expect(main).not.toContain("{type:'black-hole-observatory:play'}");
+    expect(main).toContain("new Event('afflatus:command-mode')");
   });
 
   it('retains the renderer and star-catalogue license notice', () => {

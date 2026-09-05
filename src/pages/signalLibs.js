@@ -1,3 +1,4 @@
+import '../lib/readingNavigation.ts';
 /**
  * Signal page shared-lib load order, as a single ES module entry
  * (see homeLibs.js for why this pattern replaces individual script tags).

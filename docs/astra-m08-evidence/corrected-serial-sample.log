@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+(node:32523) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 e2e/astra-reading-navigation.spec.js:136:1 › Serial: chapter link opens independently and static chapter remains readable without JS (1.1s)
+
+  1 passed (1.5s)

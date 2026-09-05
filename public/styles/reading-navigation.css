@@ -1,0 +1,60 @@
+/* M08: one existing index per layout, native links and static anchor fallbacks. */
+:root { --reading-header: 100px; --reading-offset: 184px; }
+body [data-reading-nav]:not(.chapterRail) {
+  position: sticky;
+  top: var(--reading-header);
+  z-index: 30;
+  background: var(--bg, #04060a);
+  scroll-padding-inline: 12px;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+body [data-reading-nav] a { text-decoration: none; }
+body [data-reading-nav] a[aria-current] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  font-weight: 800;
+  opacity: 1;
+}
+body [data-reading-nav] a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -3px;
+}
+body :is(#fy2026Performance, #flightPathsTitle, #portfolioConvoy,
+  #k3Heading, #labsHeading, #marketHeading, #equitiesHeading, #letterHeading, #thesesHeading, #sourcesHeading,
+  #treasuryYieldBoard, #ch00, #ch01, #ch02, #ch03, #ch04),
+body.course-page main > section[id], body.course-page .proof-grid article[id] {
+  scroll-margin-top: var(--reading-offset);
+}
+.portfolio-index {
+  display: flex;
+  gap: 8px;
+  padding: 8px max(16px, env(safe-area-inset-left)) 8px max(16px, env(safe-area-inset-right));
+  overflow-x: auto;
+  border-block: 1px solid #344652;
+  scrollbar-width: thin;
+}
+.portfolio-index a {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 14px;
+  color: #e4e8f0;
+  font: 600 14px/1.4 'JetBrains Mono', monospace;
+}
+body .chapterRail a { min-height: 44px; align-items: center; }
+body .chapterRail a:focus-visible span { max-width: 140px; opacity: 1; }
+body.course-page section.reading-destination { transform: none; opacity: 1; transition: none; }
+@media (max-width: 1180px) {
+  :root { --reading-header: 104px; --reading-offset: 188px; }
+}
+@media print {
+  body [data-reading-nav] { display: none; }
+}
+
+/* A failed navigation enhancement leaves the full menu in normal document flow. */
+html:not(.afflatus-nav-enhanced) body.signal-page .site-header--follow { position: relative; }
+html:not(.afflatus-nav-enhanced) body.signal-page .mobileChapterIndex { top: 0; }
+html:not(.afflatus-nav-enhanced) body.signal-page .chapterHead.reveal,
+body.signal-page .chapter:target .chapterHead.reveal { opacity: 1; transform: none; transition: none; }

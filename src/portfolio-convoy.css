@@ -1127,3 +1127,25 @@
   .holdings-fallback strong,
   .holdings-fallback b { color: #e4e8f0; }
 }
+
+@layer components {
+  .portfolio-convoy { background-color: #04060a; }
+  .portfolio-convoy .portfolio-intro > .sec-desc { max-width: 64ch; opacity: 1; font-size: 16px; color: #c6d6df; }
+  .portfolio-convoy .pick-card { background-color: #071019; }
+  .portfolio-convoy .convoy-visual { grid-template-rows: auto auto minmax(0, 1fr) auto auto; }
+  .portfolio-convoy .pick-name { font-size: 13px; color: #b9ccda; white-space: normal; overflow: visible; overflow-wrap: anywhere; letter-spacing: .04em; line-height: 1.6; }
+  .portfolio-convoy .pick-thesis { opacity: 1; font-size: 16px; line-height: 1.75; color: #c6d6df; }
+  .portfolio-convoy .pick-signal p { font-size: 13px; line-height: 1.7; color: #c6d6df; }
+  .portfolio-convoy .pick-signal span { font-size: 12px; line-height: 1.5; color: #9ae5ff; }
+  .portfolio-convoy .pick-signal.risk span { color: #e8b380; }
+  .portfolio-convoy .pcCta { min-height: 44px; font-size: 13px; line-height: 1.5; color: #e8b380; }
+  .portfolio-convoy > .footnote { font-size: 13px; line-height: 1.7; color: #b9ccda; }
+}
+
+@layer components {
+  .portfolio-convoy .allocation-note{padding:16px 0;color:#aabfcc;font:400 14px/1.65 'JetBrains Mono',monospace}
+  .portfolio-convoy .alloc-row{flex-wrap:wrap}
+  .portfolio-convoy .alloc-bar{height:8px;border-left:1px solid #aabfcc;border-right:1px solid #aabfcc}
+  .portfolio-convoy .alloc-bar i{transition:none;box-shadow:none;background:#9ae5ff}
+  .portfolio-convoy .allocation-scale{font:400 12px/1.4 'JetBrains Mono',monospace;color:#aabfcc;white-space:nowrap}
+}

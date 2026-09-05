@@ -5,6 +5,7 @@
  * before the shared transition layer.
  */
 import './course.js';
+import '../lib/readingNavigation.ts';
 import '../lib/i18n.js';
 import '../lib/nav.js';
 import '../lib/audio.js';

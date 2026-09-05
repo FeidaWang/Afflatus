@@ -246,6 +246,7 @@
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
+<link rel="stylesheet" href="/styles/reading-navigation.css">
 </head>
 <body class="course-page" data-course-stage="0">
 <div class="paper-noise" aria-hidden="true"></div>
@@ -292,7 +293,7 @@
     <a class="scroll-cue" href="#signal" data-en="Advance transmission ↓" data-zh="继续传输 ↓">Advance transmission ↓</a>
   </section>
 
-  <nav class="course-index" aria-label="Course section index" data-aria-en="Course section index" data-aria-zh="课程章节索引">
+  <nav class="course-index" data-reading-nav aria-label="Course section index" data-aria-en="Course section index" data-aria-zh="课程章节索引">
     <a href="#signal" data-en="Role" data-zh="角色">Role</a>
     <a href="#agent-core" data-en="Agent core" data-zh="智能体核心">Agent core</a>
     <a href="#atlas" data-en="Map" data-zh="学习地图">Map</a>
@@ -302,7 +303,7 @@
     <a href="#review" data-en="Review" data-zh="复盘">Review</a>
   </nav>
 
-  <section class="signal-strip orientation-dossier" id="signal" aria-labelledby="signal-title">
+  <section class="signal-strip orientation-dossier" id="signal" tabindex="-1" aria-labelledby="signal-title">
     <div class="orientation-opening">
       <div class="section-intro">
         <div class="eyebrow" data-en="00 · ORIENTATION INTELLIGENCE" data-zh="00 · 定向情报">00 · ORIENTATION INTELLIGENCE</div>
@@ -373,7 +374,7 @@
     </div>
   </section>
 
-  <section class="curriculum-audit" id="agent-core" aria-labelledby="agent-core-title">
+  <section class="curriculum-audit" id="agent-core" tabindex="-1" aria-labelledby="agent-core-title">
     <div class="section-intro">
       <div class="eyebrow" data-en="01 · TEXTBOOK AUDIT / AGENT ENGINEERING" data-zh="01 · 教材审查 / 智能体工程">01 · TEXTBOOK AUDIT / AGENT ENGINEERING</div>
       <h2 id="agent-core-title" data-en="Do not read 318 pages in order. Turn the book into a production loop." data-zh="不要按顺序读完 318 页；把教材改造成一条生产闭环。">Do not read 318 pages in order. Turn the book into a production loop.</h2>
@@ -409,7 +410,7 @@
     </div>
   </section>
 
-  <section class="atlas-section" id="atlas" aria-labelledby="atlas-title">
+  <section class="atlas-section" id="atlas" tabindex="-1" aria-labelledby="atlas-title">
     <div class="atlas-sticky" id="atlasSticky">
       <div class="atlas-opening" id="atlasOpening">
         <div class="section-intro">
@@ -511,7 +512,7 @@
     </div>
   </dialog>
 
-  <section class="pathway" id="pathway" aria-labelledby="pathway-title">
+  <section class="pathway" id="pathway" tabindex="-1" aria-labelledby="pathway-title">
     <div class="section-intro">
       <div class="eyebrow" data-en="03 · 52-WEEK SEQUENCE" data-zh="03 · 52 周学习序列">03 · 52-WEEK SEQUENCE</div>
       <h2 id="pathway-title" data-en="A calendar with gates, not deadlines." data-zh="一份有闸门、没有死期限的日历。">A calendar with gates, not deadlines.</h2>
@@ -528,7 +529,7 @@
     </ol>
   </section>
 
-  <section class="education" id="education" aria-labelledby="education-title">
+  <section class="education" id="education" tabindex="-1" aria-labelledby="education-title">
     <div class="section-intro">
       <div class="eyebrow" data-en="04 · DEGREE, COURSE OR FIELD?" data-zh="04 · 学历、课程还是实战？">04 · DEGREE, COURSE OR FIELD?</div>
       <h2 id="education-title" data-en="Choose the missing signal, not the most prestigious label." data-zh="补齐缺失的信号，而不是追逐最响亮的标签。">Choose the missing signal, not the most prestigious label.</h2>
@@ -550,7 +551,7 @@
     </div>
   </section>
 
-  <section class="fieldwork" id="fieldwork" aria-labelledby="fieldwork-title">
+  <section class="fieldwork" id="fieldwork" tabindex="-1" aria-labelledby="fieldwork-title">
     <div class="section-intro">
       <div class="eyebrow" data-en="05 · THE SIX PORTFOLIO PROOFS" data-zh="05 · 六个作品证据">05 · THE SIX PORTFOLIO PROOFS</div>
       <h2 id="fieldwork-title" data-en="Build a ladder of evidence, not a pile of demos." data-zh="构建证据阶梯，而不是堆一堆演示。">Build a ladder of evidence, not a pile of demos.</h2>
@@ -578,7 +579,7 @@
     </div>
   </section>
 
-  <section class="review" id="review" aria-labelledby="review-title">
+  <section class="review" id="review" tabindex="-1" aria-labelledby="review-title">
     <div class="section-intro">
       <div class="eyebrow" data-en="07 · WEEKLY EVIDENCE LOOP" data-zh="07 · 每周证据闭环">07 · WEEKLY EVIDENCE LOOP</div>
       <h2 id="review-title" data-en="Your prompt and artifact become next week's curriculum." data-zh="你的提示词与作品，会变成下周的课程。">Your prompt and artifact become next week's curriculum.</h2>

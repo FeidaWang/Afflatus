@@ -444,7 +444,14 @@
              aria-label="Ticker suggestions" data-aria-en="Ticker suggestions" data-aria-zh="股票代码建议"></div>
       </div>
     </div>
-    <div class="ta-panelhost panel" id="taPanel"></div>
+    <div class="ta-panelhost panel" id="taPanel">
+      <div class="ta-fallback">
+        <p data-en="Ticker calculations require JavaScript and available daily history. Read both reference methods below, or inspect the published source data." data-zh="个股计算需要 JavaScript 与可用日线历史。下方可顺序阅读两种参考方法，或查看已发布源数据。">Ticker calculations require JavaScript and available daily history. Read both reference methods below, or inspect the published source data.</p>
+        <article><h3 data-en="PRE-MARKET · plan the next session" data-zh="盘前 · 计划下一交易日">PRE-MARKET · plan the next session</h3><p data-en="Use the latest completed session’s high, low and close to calculate the next session’s classic pivots. PP = (H + L + C) / 3; R1 = 2PP − L; S1 = 2PP − H." data-zh="用最近完整交易日的高、低、收盘计算下一交易日的经典枢轴点。PP = (H + L + C) / 3；R1 = 2PP − L；S1 = 2PP − H。">Use the latest completed session’s high, low and close to calculate the next session’s classic pivots. PP = (H + L + C) / 3; R1 = 2PP − L; S1 = 2PP − H.</p></article>
+        <article><h3 data-en="POST-MARKET · review the last session" data-zh="盘后 · 复盘最近交易日">POST-MARKET · review the last session</h3><p data-en="Calculate reference pivots from the preceding session, then compare them with the latest completed session’s range and close to review tested levels. Missing daily data cannot establish a test or breakout." data-zh="用前一交易日计算参考枢轴点，再对照最近完整交易日的价格区间和收盘，复盘触及的价位。日线数据缺失时不能确认触及或突破。">Calculate reference pivots from the preceding session, then compare them with the latest completed session’s range and close to review tested levels. Missing daily data cannot establish a test or breakout.</p></article>
+        <a href="/arena-picks.json" data-en="Read the published trade snapshot (JSON)" data-zh="阅读已发布交易快照（JSON）">Read the published trade snapshot (JSON)</a>
+      </div>
+    </div>
   </section>
 
   <!-- ===== V5/V6 · ARENA AUTOPILOT (S/P/T simulated ledgers, Part 4 §17) ===== -->

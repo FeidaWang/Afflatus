@@ -1,0 +1,29 @@
+{
+  "type": "navigate",
+  "pageshows": [
+    {
+      "persisted": false
+    },
+    {
+      "persisted": true
+    }
+  ],
+  "states": [
+    {
+      "state": "pending",
+      "at": 437,
+      "entry": 34
+    },
+    {
+      "state": "entering",
+      "at": 524.4000000357628,
+      "entry": 34
+    },
+    {
+      "state": "complete",
+      "at": 1234,
+      "entry": 34
+    }
+  ],
+  "y": 180
+}

@@ -1,0 +1,76 @@
+
+Running 31 tests using 1 worker
+
+(node:31901) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 e2e/astra-reading-navigation.spec.js:27:2 › portfolio en 1440: links, keyboard, history and deep link (6.1s)
+  ✓   2 e2e/astra-reading-navigation.spec.js:27:2 › portfolio en 390: links, keyboard, history and deep link (4.3s)
+  ✓   3 e2e/astra-reading-navigation.spec.js:27:2 › portfolio zh 1440: links, keyboard, history and deep link (4.3s)
+  ✓   4 e2e/astra-reading-navigation.spec.js:27:2 › portfolio zh 390: links, keyboard, history and deep link (311ms)
+  ✓   5 e2e/astra-reading-navigation.spec.js:27:2 › sectors en 1440: links, keyboard, history and deep link (603ms)
+  ✓   6 e2e/astra-reading-navigation.spec.js:27:2 › sectors en 390: links, keyboard, history and deep link (442ms)
+  ✓   7 e2e/astra-reading-navigation.spec.js:27:2 › sectors zh 1440: links, keyboard, history and deep link (530ms)
+  ✓   8 e2e/astra-reading-navigation.spec.js:27:2 › sectors zh 390: links, keyboard, history and deep link (425ms)
+  ✓   9 e2e/astra-reading-navigation.spec.js:27:2 › signal en 1440: links, keyboard, history and deep link (310ms)
+  ✓  10 e2e/astra-reading-navigation.spec.js:27:2 › signal en 390: links, keyboard, history and deep link (305ms)
+  ✓  11 e2e/astra-reading-navigation.spec.js:27:2 › signal zh 1440: links, keyboard, history and deep link (289ms)
+  ✓  12 e2e/astra-reading-navigation.spec.js:27:2 › signal zh 390: links, keyboard, history and deep link (260ms)
+  ✓  13 e2e/astra-reading-navigation.spec.js:27:2 › course en 1440: links, keyboard, history and deep link (2.4s)
+  ✓  14 e2e/astra-reading-navigation.spec.js:27:2 › course en 390: links, keyboard, history and deep link (2.3s)
+  ✓  15 e2e/astra-reading-navigation.spec.js:27:2 › course zh 1440: links, keyboard, history and deep link (2.3s)
+  ✓  16 e2e/astra-reading-navigation.spec.js:27:2 › course zh 390: links, keyboard, history and deep link (2.3s)
+  ✓  17 e2e/astra-reading-navigation.spec.js:49:2 › portfolio: no-JS native links and modified click (232ms)
+  ✓  18 e2e/astra-reading-navigation.spec.js:49:2 › sectors: no-JS native links and modified click (145ms)
+  ✓  19 e2e/astra-reading-navigation.spec.js:49:2 › signal: no-JS native links and modified click (179ms)
+  ✓  20 e2e/astra-reading-navigation.spec.js:49:2 › course: no-JS native links and modified click (2.0s)
+  ✓  21 e2e/astra-reading-navigation.spec.js:57:1 › Portfolio: real wheel updates only the current marker, normal motion and RM change (6.4s)
+  ✓  22 e2e/astra-reading-navigation.spec.js:71:1 › Portfolio: language link retains query and chosen section (9.2s)
+  ✓  23 e2e/astra-reading-navigation.spec.js:79:1 › Course: a quick second jump is not undone by a delayed first jump (1.3s)
+  ✓  24 e2e/astra-reading-navigation.spec.js:87:1 › Portfolio: modified click opens an independent native deep link (452ms)
+  ✓  25 e2e/astra-reading-navigation.spec.js:94:1 › Serial: existing drawer has real chapter URLs, current state and Esc return (1.4s)
+  ✓  26 e2e/astra-reading-navigation.spec.js:107:50 › sectors: locale switch retains query and section (5.6s)
+  ✓  27 e2e/astra-reading-navigation.spec.js:107:50 › signal: locale switch retains query and section (5.3s)
+  ✓  28 e2e/astra-reading-navigation.spec.js:107:50 › course: locale switch retains query and section (5.3s)
+  ✓  29 e2e/astra-reading-navigation.spec.js:112:1 › Four reading indexes: 320/768/1280 and landscape layouts retain accessible targets (5.3s)
+  ✓  30 e2e/astra-reading-navigation.spec.js:123:1 › Touch: horizontal directory browsing does not change page position or history (310ms)
+  ✘  31 e2e/astra-reading-navigation.spec.js:136:1 › Serial: chapter link opens independently and static chapter remains readable without JS (5.9s)
+
+
+  1) e2e/astra-reading-navigation.spec.js:136:1 › Serial: chapter link opens independently and static chapter remains readable without JS 
+
+    Error: expect(locator).not.toHaveCount(expected) failed
+
+    Locator:  locator('.prerender-toc a')
+    Expected: not 0
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "not toHaveCount" with timeout 5000ms
+      - waiting for locator('.prerender-toc a')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      144 |  const nojs=await browser.newContext({javaScriptEnabled:false});const staticPage=await nojs.newPage();
+      145 |  await staticPage.goto(`${baseURL}/zh/novels/wanjie-zhongchun/2/`,{waitUntil:'domcontentloaded'});
+    > 146 |  await expect(staticPage.locator('#readerNormal')).toHaveAttribute('data-prerendered','chapter');
+          |                                                           ^
+      147 |  expect((await staticPage.locator('#chapterBody').innerText()).length).toBeGreaterThan(1000);
+      148 |  await expect(staticPage.locator('.chapter-nav a').first()).toHaveAttribute('href',/\/1\/$/);
+      149 |  await nojs.close();
+        at /Users/feida/.codex/worktrees/9d3c/afflatus/e2e/astra-reading-navigation.spec.js:146:59
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../../tmp/afflatus-m08-results/astra-reading-navigation-S-c39ad-remains-readable-without-JS/test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../../../../../tmp/afflatus-m08-results/astra-reading-navigation-S-c39ad-remains-readable-without-JS/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../../../../../tmp/afflatus-m08-results/astra-reading-navigation-S-c39ad-remains-readable-without-JS/error-context.md
+
+  1 failed
+    e2e/astra-reading-navigation.spec.js:136:1 › Serial: chapter link opens independently and static chapter remains readable without JS 
+  30 passed (1.3m)

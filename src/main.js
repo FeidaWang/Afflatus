@@ -1,9 +1,15 @@
+import { initPortfolioChartGeometry } from './ui/portfolioChartGeometry.js';
+import './lib/readingNavigation.ts';
 import './styles.css';
 import './cic-hud.css';
 import './performance-dossier.css';
 import './portfolio-convoy.css';
 import './home-visual-upgrade.css';
-import { getLocale, localeSwitchHref, setLocale } from './lib/localeStore.js';
+import { initPortfolioChartInspector } from './ui/portfolioChartInspector.js';
+import { NAV_ROUTES, normalizeRoutePath } from './config/navRoutes.generated.js';
+import { getLocale, localeFromPathname, localizePathname, localeSwitchHref, setLocale } from './lib/localeStore.js';
+import { prepareStarfieldIntro } from './scene/starfieldIntro.js';
+import { initHomeMotionPreferences } from './ui/homeMotionPreferences.js';
 import { initHomeScrollTelemetry } from './ui/homeScrollTelemetry.js';
 
 const HOME_INTENT_SELECTOR = [
@@ -44,13 +50,6 @@ function allowRichMotion() {
   return !reducedMotion && !compactOrTouch && !saveData && !constrainedMemory && !constrainedCpu;
 }
 
-function loadBlackHoleObservatory() {
-  if (!allowRichMotion()) return;
-  const frame = document.getElementById('blackhole-gl');
-  const source = frame?.dataset.src;
-  if (frame && source && !frame.getAttribute('src')) frame.setAttribute('src', source);
-}
-
 export function loadHomeExperience() {
   if (experiencePromise) return experiencePromise;
   document.documentElement.dataset.homeExperience = 'loading';
@@ -68,37 +67,7 @@ export function loadHomeExperience() {
   return experiencePromise;
 }
 
-function loadRichHomeExperience() {
-  loadBlackHoleObservatory();
-  return loadHomeExperience();
-}
-
-function scheduleIdleExperience() {
-  const start = () => {
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(() => { void loadHomeExperience().catch(() => {}); }, { timeout: 4000 });
-    } else {
-      void loadHomeExperience().catch(() => {});
-    }
-  };
-  // Keep the optional combat runtime outside the initial vitals window. Any
-  // explicit command intent below still loads it immediately.
-  window.setTimeout(start, 8000);
-}
-
 function installIntentLoader() {
-  document.addEventListener('pointerover', (event) => {
-    if (event.target instanceof Element && event.target.closest(HOME_INTENT_SELECTOR)) {
-      void loadRichHomeExperience().catch(() => {});
-    }
-  }, { capture: true, passive: true });
-
-  document.addEventListener('focusin', (event) => {
-    if (event.target instanceof Element && event.target.closest(HOME_INTENT_SELECTOR)) {
-      void loadRichHomeExperience().catch(() => {});
-    }
-  }, { capture: true });
-
   document.addEventListener('click', async (event) => {
     if (experienceReady || !(event.target instanceof Element)) return;
     const target = event.target.closest(HOME_INTENT_SELECTOR);
@@ -106,10 +75,11 @@ function installIntentLoader() {
     event.preventDefault();
     event.stopImmediatePropagation();
     try {
-      await loadRichHomeExperience();
+      await loadHomeExperience();
       target.click();
     } catch {
-      // Static navigation and portfolio content remain usable if enhancement fails.
+      target.textContent = getLocale('en') === 'zh' ? '指挥模式暂不可用 · 正文仍可阅读' : 'Command unavailable · continue reading';
+      target.setAttribute('aria-disabled', 'true');
     }
   }, { capture: true });
 }
@@ -117,34 +87,18 @@ function installIntentLoader() {
 function installVisibilityLoaders() {
   const stardrive = document.getElementById('stardrive');
   const portfolio = document.getElementById('portfolioConvoy');
+  const loadForge = () => { void import('./scene/alphardForge.js').then(({ initAlphardForge }) => initAlphardForge()).catch(() => {}); };
   if (!('IntersectionObserver' in window)) {
-    if (stardrive && allowRichMotion()) {
-      stardrive.classList.add('has-motion-shell');
-      window.setTimeout(() => {
-        void import('./scene/alphardForge.js')
-          .then(({ initAlphardForge }) => {
-            if (!initAlphardForge()) stardrive.classList.remove('has-motion-shell');
-          })
-          .catch(() => { stardrive.classList.remove('has-motion-shell'); });
-      }, 1800);
-    }
+    if (stardrive && allowRichMotion()) window.setTimeout(loadForge, 1800);
     if (portfolio) window.setTimeout(() => { void loadHomeExperience().catch(() => {}); }, 2200);
     return;
   }
 
   if (stardrive && allowRichMotion()) {
-    // Reserve the complete scroll stage before Three.js arrives. This prevents
-    // late module evaluation from doubling the section height under a restored
-    // scroll position and keeps the enhancement inside the document flow.
-    stardrive.classList.add('has-motion-shell');
     const forgeObserver = new IntersectionObserver((entries, observer) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       observer.disconnect();
-      void import('./scene/alphardForge.js')
-        .then(({ initAlphardForge }) => {
-          if (!initAlphardForge()) stardrive.classList.remove('has-motion-shell');
-        })
-        .catch(() => { stardrive.classList.remove('has-motion-shell'); });
+      loadForge();
     }, { rootMargin: '80px 0px' });
     forgeObserver.observe(stardrive);
   }
@@ -160,56 +114,30 @@ function installVisibilityLoaders() {
 }
 
 function installNavigationMenu() {
-  const button = document.querySelector('.nav-menu-btn');
-  if (!(button instanceof HTMLElement)) return;
-  const pages = (window.AfflatusSite?.length ? [...window.AfflatusSite] : [
-    { path: '/', en: 'Home', zh: '首页' },
-    { path: '/arena.html', en: 'Arena', zh: '竞技场' },
-    { path: '/sectors.html', en: 'Sectors', zh: '板块' },
-    { path: '/signal.html', en: 'Signal', zh: '信号' },
-    { path: '/horoscope.html', en: 'Horoscope', zh: '观星' },
-    { path: '/serial.html', en: 'Novels', zh: '小说' },
-    { path: '/course.html', en: 'Course', zh: '课程' },
-  ]);
-  pages.push({ path: '/boot.html', en: 'Bridge Sim', zh: '舰桥模拟' });
-  const normalizePath = (path) => (path || '/').replace(/index\.html$/u, '') || '/';
-  const currentPath = normalizePath(location.pathname);
-  let panel = null;
-
-  function close() { panel?.classList.remove('open'); }
-  function build() {
-    if (!panel) {
-      panel = document.createElement('div');
-      panel.className = 'nav-labs__menu nav-site-menu';
-      for (const page of pages) {
-        const link = document.createElement('a');
-        link.href = page.path;
-        if (normalizePath(page.path) === currentPath) link.className = 'active';
-        panel.appendChild(link);
-      }
-      document.body.appendChild(panel);
-    }
-    const locale = document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
-    panel.querySelectorAll('a').forEach((link, index) => {
-      link.textContent = pages[index][locale];
-    });
-    return panel;
-  }
-
-  button.addEventListener('click', (event) => {
-    event.stopPropagation();
-    const menu = build();
-    if (menu.classList.contains('open')) { close(); return; }
-    const rect = button.getBoundingClientRect();
-    menu.style.top = `${Math.round(rect.bottom + 8)}px`;
-    menu.style.right = `${Math.max(8, Math.round(innerWidth - rect.right))}px`;
-    menu.style.left = 'auto';
-    menu.classList.add('open');
+  const menu = document.getElementById('portfolioMenu');
+  const button = menu?.querySelector('summary');
+  if (!menu || !button) return;
+  const locale = getLocale('en');
+  const routeLocale = localeFromPathname(location.pathname);
+  const panel = menu.querySelector('.portfolio-menu-links');
+  panel.replaceChildren(...NAV_ROUTES.map((route) => {
+    const link = document.createElement('a');
+    const published = route.publishedLocales;
+    const targetLocale = published && !published.includes(routeLocale) ? published[0] : routeLocale;
+    link.href = targetLocale ? localizePathname(route.path, targetLocale) : route.path;
+    link.textContent = route[locale];
+    if (normalizeRoutePath(route.path) === normalizeRoutePath(location.pathname)) link.setAttribute('aria-current', 'page');
+    return link;
+  }));
+  button.textContent = locale === 'zh' ? '菜单' : 'Menu';
+  const close = () => { menu.open = false; };
+  document.addEventListener('click', (event) => { if (!menu.contains(event.target)) close(); });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && menu.open) { close(); button.focus(); }
   });
-  document.addEventListener('click', close);
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
+  menu.addEventListener('focusout', (event) => { if (!menu.contains(event.relatedTarget)) close(); });
+  panel.addEventListener('click', close);
   addEventListener('scroll', close, { passive: true });
-  addEventListener('resize', close);
 }
 
 function installHeroCommandShortcut() {
@@ -219,10 +147,40 @@ function installHeroCommandShortcut() {
   });
 }
 
+initHomeMotionPreferences();
 installLocaleLinks();
+window.addEventListener('hashchange', () => {
+  const next = getLocale('en') === 'zh' ? 'en' : 'zh';
+  document.querySelectorAll('#langBtn, #langMiniToggle').forEach(link => { link.href = localeSwitchHref(location, next); });
+});
 installNavigationMenu();
 installHeroCommandShortcut();
 installIntentLoader();
 installVisibilityLoaders();
 initHomeScrollTelemetry();
-scheduleIdleExperience();
+initPortfolioChartGeometry();
+initPortfolioChartInspector();
+
+// Hero background is independent of the optional combat bundle. Its single
+// renderer replaces the old worker, and owns only the explicit scene region.
+const starfieldHost = document.getElementById('starfieldViewport');
+if (starfieldHost) {
+  const intro = prepareStarfieldIntro(starfieldHost);
+  let starfieldPromise;
+  const queries = ['(prefers-reduced-motion: reduce)', '(max-width: 860px)', '(hover: hover) and (pointer: fine)'].map(query => matchMedia(query));
+  const loadStarfield = () => {
+    if (starfieldPromise || queries[0].matches || queries[1].matches || !queries[2].matches || navigator.connection?.saveData) return;
+    starfieldPromise = import('./scene/backgroundScene.js').then(module => module.createBackgroundScene()).catch(() => {
+      intro.cancel('module-failure');
+      starfieldHost.dataset.state = 'fallback';
+      document.getElementById('starfieldStatus').textContent = getLocale('en') === 'zh' ? '静态视图 · 图形暂不可用' : 'Static view · graphics unavailable';
+    });
+  };
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) { loadStarfield(); if (starfieldPromise) observer.disconnect(); }
+    });
+    observer.observe(starfieldHost);
+  } else loadStarfield();
+  queries.forEach(query => query.addEventListener('change', loadStarfield));
+}

@@ -1,3 +1,4 @@
+import { isDecorativePaused, onDecorativePause } from './ui/homeMotionPreferences.js';
 import { createHudImages } from './assets/hudAssets.js';
 import { createCombatRuntime } from './combat/combatRuntime.js';
 import { createCombatState } from './combat/combatState.js';
@@ -17,7 +18,6 @@ import { COPY, HUD_COPY, getHudCopy } from './data/content.js';
 import { getLocale, setLocale } from './lib/localeStore.js';
 import { getRenderBudgetCoordinator } from './lib/renderBudgetCoordinator.js';
 import { mountTermGlossary } from './lib/termGlossary.js';
-import { createBackgroundScene } from './scene/backgroundScene.js';
 import { createSpriteCraft } from './scene/spriteCraft.js';
 import { createCameraDirector } from './scene/cameraDirector.js';
 import { createCapitalFlyby } from './scene/capitalFlyby.js';
@@ -103,11 +103,12 @@ function bindCombatOrbitControls(){
   if(combatOrbitBound) return;
   const canvas=document.getElementById('cicPilotFeed');
   const reset=document.getElementById('cicCameraReset');
+  const interact=document.getElementById('cicCameraInteract');
   if(!canvas) return;
   const controls=document.querySelector('#combatHud .cic-camera-controls');
   if(controls) controls.hidden=!topdownCV;
   combatOrbitBound=true;
-  let pointerId=null,lastX=0,lastY=0;
+  let pointerId=null,lastX=0,lastY=0,interacting=false;
   const release=(event)=>{
     if(pointerId===null || (event && event.pointerId!==pointerId)) return;
     try{canvas.releasePointerCapture(pointerId);}catch(error){}
@@ -115,8 +116,14 @@ function bindCombatOrbitControls(){
     canvas.classList.remove('is-camera-dragging');
     topdownCV?.endCameraOrbit?.(performance.now());
   };
+  const exitInteraction=()=>{interacting=false;release();canvas.tabIndex=-1;delete canvas.dataset.cameraInteracting;interact?.setAttribute('aria-pressed','false');if(interact)interact.textContent=document.documentElement.lang.startsWith('zh')?'控制镜头':'Orbit camera';};
+  interact?.addEventListener('click',()=>{
+    if(interacting){exitInteraction();return;}
+    interacting=true;canvas.tabIndex=0;canvas.dataset.cameraInteracting='true';interact.setAttribute('aria-pressed','true');interact.textContent=document.documentElement.lang.startsWith('zh')?'退出镜头':'Exit camera';canvas.focus({preventScroll:true});
+  });
+  window.addEventListener('afflatus:command-mode',()=>{if(cruiseModeActive())exitInteraction();});
   canvas.addEventListener('pointerdown',(event)=>{
-    if(event.button!==0 || pointerId!==null) return;
+    if(!interacting || event.button!==0 || pointerId!==null) return;
     pointerId=event.pointerId;lastX=event.clientX;lastY=event.clientY;
     canvas.setPointerCapture(pointerId);
     canvas.classList.add('is-camera-dragging');
@@ -134,10 +141,13 @@ function bindCombatOrbitControls(){
   canvas.addEventListener('pointercancel',release);
   canvas.addEventListener('lostpointercapture',release);
   canvas.addEventListener('wheel',(event)=>{
+    if(!interacting) return;
     topdownCV?.zoomCameraBy?.(event.deltaY,performance.now());
     event.preventDefault();
   },{passive:false});
   canvas.addEventListener('keydown',(event)=>{
+    if(!interacting || document.activeElement!==canvas) return;
+    if(event.key==='Escape'){event.preventDefault();event.stopPropagation();exitInteraction();interact?.focus({preventScroll:true});return;}
     const cameraKeys={ArrowLeft:[-18,0],ArrowRight:[18,0],ArrowUp:[0,-14],ArrowDown:[0,14]};
     const movement=cameraKeys[event.key];
     if(!movement) return;
@@ -149,7 +159,7 @@ function bindCombatOrbitControls(){
   reset?.addEventListener('click',(event)=>{
     event.stopPropagation();
     topdownCV?.resetCameraOrbit?.();
-    canvas.focus({preventScroll:true});
+    if(interacting) canvas.focus({preventScroll:true});
   });
 }
 function combatViewTopdown(){
@@ -259,8 +269,10 @@ const hudPanels={
 };
 const hudFocusButtons=[...document.querySelectorAll('[data-cic-panel-focus]')];
 let focusedHudPanel=null;
+let focusedHudTrigger=null;
 let voyageLogCtl=null;
 let voyageLogPromise=null;
+let readingPosition=null;
 function setHudPanelFocus(panelId=null){
   const next=panelId&&hudPanels[panelId]?panelId:null;
   focusedHudPanel=next;
@@ -275,12 +287,15 @@ function setHudPanelFocus(panelId=null){
 hudFocusButtons.forEach((button)=>button.addEventListener('click',(event)=>{
   event.stopPropagation();
   const panelId=button.dataset.cicPanelFocus;
+  focusedHudTrigger=button;
   setHudPanelFocus(focusedHudPanel===panelId?null:panelId);
 }));
 document.addEventListener('keydown',(event)=>{
   if(event.key==='Escape'&&focusedHudPanel){
+    event.preventDefault();
+    const trigger=focusedHudTrigger;
     setHudPanelFocus(null);
-    commandModeBtn?.focus({preventScroll:true});
+    trigger?.focus({preventScroll:true});
   }
 });
 function showBridgeCallout(text){
@@ -292,10 +307,14 @@ function showBridgeCallout(text){
 }
 function updateCommandButton(){
   const isCruise=document.body.classList.contains('hud-off');
-  if(commandModeBtn) commandModeBtn.textContent=isCruise?(currentLang==='zh'?'指挥模式':'Command'):(currentLang==='zh'?'巡航模式':'Cruise');
+  if(commandModeBtn) {
+    commandModeBtn.textContent=isCruise?(currentLang==='zh'?'指挥模式':'Command'):(currentLang==='zh'?'返回阅读':'Read');
+    commandModeBtn.setAttribute('aria-pressed', String(!isCruise));
+  }
   combatHud?.setAttribute('aria-hidden',String(isCruise));
   if(combatHud) combatHud.inert=isCruise;
   cruiseStrip?.setAttribute('aria-hidden',String(!isCruise));
+  window.dispatchEvent(new Event('afflatus:command-mode'));
 }
 function updateJumpButton(){
   if(!jumpToggle) return;
@@ -313,28 +332,37 @@ function disengageBattleSystems(){
   if(halley){halley.attackStarted=false;halley.playerFired=false;halley.escortsFired=true;halley.escortsSpawned=false;}
 }
 function ensureSpaceSceneRunning(){
-  mainRenderSurface?.resume();
-  startMainLoop();
-  backgroundScene?.resume();
-  blackHoleFrame?.contentWindow?.postMessage(
-    {type:'black-hole-observatory:play'},
-    location.origin
-  );
+  const active=!cruiseModeActive()&&!hudRenderPolicy.reducedMotion;
+  if(active){ mainRenderSurface?.resume(); }
+  else { mainRenderSurface?.pause(); }
 }
 
 commandModeBtn?.addEventListener('click',(event)=>{
   event.preventDefault();
   event.stopPropagation();
   const toHudOff=!document.body.classList.contains('hud-off');
+  if(!toHudOff){
+    readingPosition={y:scrollY, focus:document.activeElement};
+    window.scrollTo({top:0, behavior:'instant'});
+  }
   document.body.classList.toggle('hud-off',toHudOff);
   if(toHudOff){
     disengageBattleSystems();
     setHudPanelFocus(null);
     voyageLogCtl?.close();
+    document.body.classList.remove('combat-mode');
+    if(readingPosition){
+      window.scrollTo({top:readingPosition.y, behavior:'instant'});
+      readingPosition.focus?.focus({preventScroll:true});
+      readingPosition=null;
+    }
   }
   showBridgeCallout(toHudOff?'Cruising mode on':'Commander mode on');
   updateCommandButton();
-  requestAnimationFrame(ensureSpaceSceneRunning);
+  ensureSpaceSceneRunning();
+});
+document.addEventListener('keydown',(event)=>{
+  if(event.key==='Escape'&&!event.defaultPrevented&&!cruiseModeActive()) commandModeBtn?.click();
 });
 jumpToggle?.addEventListener('click',()=>{
   const holdings=document.querySelector('.holdings'), hero=document.querySelector('.hero');
@@ -1665,15 +1693,9 @@ function drawShipLiveFeeds(now){
 }
 
 /* ===== STARS & WARP ===== */
-const sky=document.getElementById('starfield');
 const blackHoleFrame=document.getElementById('blackhole-gl');
-let W,H,DPR;
+let DPR=1;
 let warpIntensity=.18, warpTarget=.18;
-const backgroundScene=createBackgroundScene({
-  canvas:sky,
-  getPointer:()=>({x:mx,y:my}),
-  getWarpIntensity:()=>warpIntensity
-});
 
 // The homepage now hosts the source observatory renderer in an isolated
 // document. Only messages from this exact same-origin frame may change the
@@ -1701,10 +1723,7 @@ probeBlackHoleFrame();
 
 
 function resize(){
-  backgroundScene.resize();
-  DPR=backgroundScene.dpr;
-  W=backgroundScene.width;
-  H=backgroundScene.height;
+  DPR=hudRenderPolicy.computeDpr(innerWidth,innerHeight,{minDpr:.6,maxDpr:1.5});
 }
 /* ===== NEW COMET, WEAPONS & FX ===== */
 const evtCanvas=document.getElementById('event-layer');
@@ -3410,7 +3429,7 @@ function frame(now){
     // of a second to visibly arrive, reading as sluggish rather than a
     // stargate-jump snap. Still lerped (not instant) so it doesn't pop.
     warpIntensity=lerp(warpIntensity,warpTarget,.16);
-    backgroundScene.draw(now);
+    // The Hero starfield has its own existing-budget surface and pauses in Command.
     
     ectx.clearRect(0,0,evtCanvas.width,evtCanvas.height);
     const cruise=cruiseModeActive();
@@ -3452,7 +3471,7 @@ function frame(now){
 }
 
 function startMainLoop(){
-  if(mainLoopRunning) return;
+  if(mainLoopRunning || cruiseModeActive() || hudRenderPolicy.reducedMotion) return;
   mainLoopRunning=true;
   lastT=performance.now();
   mainLoopRaf=requestAnimationFrame(frame);
@@ -3467,12 +3486,16 @@ function stopMainLoop(){
 window.__launchTime = Date.now();
 mainRenderSurface=renderBudgetCoordinator.register({
   id:'home:master',
-  element:document.documentElement,
-  observe:false,
+  element:document.querySelector('.hero'),
+  enabled:false,
   cost:'medium',
   targetFps:60,
   onResume:startMainLoop,
   onPause:stopMainLoop,
+  onQualityChange(policy){
+    hudRenderPolicy=policy;
+    if(policy.reducedMotion) { stopMainLoop(); }
+  },
   onResize(){
     resize();
     resizeEvt();
@@ -3636,11 +3659,15 @@ function loadVoyageLog(){
    — .hero and .stardrive are sequential sections, not stacked. */
 (function heroParallax(){
   const heroEl=document.querySelector('.hero');
-  if(!heroEl||REDUCED_MOTION) return;
+  if(!heroEl) return;
   const root=document.documentElement;
   let tx=0,ty=0,cx=0,cy=0,raf=0,heroOn=false;
+  const motion=matchMedia('(prefers-reduced-motion: reduce)'), fine=matchMedia('(hover: hover) and (pointer: fine)');
+  const reset=()=>{cancelAnimationFrame(raf);raf=0;tx=ty=cx=cy=0;root.style.setProperty('--mx','0');root.style.setProperty('--my','0');};
+  onDecorativePause(value=>{if(value)reset();});
+  for(const query of [motion,fine])query.addEventListener('change',()=>{if(motion.matches||!fine.matches)reset();});
   addEventListener('pointermove',(e)=>{
-    if(e.pointerType!=='mouse'||!heroOn) return;
+    if(e.pointerType!=='mouse'||!heroOn||cruiseModeActive()||motion.matches||!fine.matches||isDecorativePaused()) return;
     tx=(e.clientX/innerWidth)*2-1;
     ty=(e.clientY/innerHeight)*2-1;
     if(!raf) raf=requestAnimationFrame(frame);
