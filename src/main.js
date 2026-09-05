@@ -6,6 +6,7 @@ import './home-visual-upgrade.css';
 import { NAV_ROUTES, normalizeRoutePath } from './config/navRoutes.generated.js';
 import { getLocale, localeFromPathname, localizePathname, localeSwitchHref, setLocale } from './lib/localeStore.js';
 import { prepareStarfieldIntro } from './scene/starfieldIntro.js';
+import { initHomeMotionPreferences } from './ui/homeMotionPreferences.js';
 import { initHomeScrollTelemetry } from './ui/homeScrollTelemetry.js';
 
 const HOME_INTENT_SELECTOR = [
@@ -143,6 +144,7 @@ function installHeroCommandShortcut() {
   });
 }
 
+initHomeMotionPreferences();
 installLocaleLinks();
 installNavigationMenu();
 installHeroCommandShortcut();

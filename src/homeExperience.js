@@ -1,3 +1,4 @@
+import { isDecorativePaused, onDecorativePause } from './ui/homeMotionPreferences.js';
 import { createHudImages } from './assets/hudAssets.js';
 import { createCombatRuntime } from './combat/combatRuntime.js';
 import { createCombatState } from './combat/combatState.js';
@@ -102,11 +103,12 @@ function bindCombatOrbitControls(){
   if(combatOrbitBound) return;
   const canvas=document.getElementById('cicPilotFeed');
   const reset=document.getElementById('cicCameraReset');
+  const interact=document.getElementById('cicCameraInteract');
   if(!canvas) return;
   const controls=document.querySelector('#combatHud .cic-camera-controls');
   if(controls) controls.hidden=!topdownCV;
   combatOrbitBound=true;
-  let pointerId=null,lastX=0,lastY=0;
+  let pointerId=null,lastX=0,lastY=0,interacting=false;
   const release=(event)=>{
     if(pointerId===null || (event && event.pointerId!==pointerId)) return;
     try{canvas.releasePointerCapture(pointerId);}catch(error){}
@@ -114,8 +116,14 @@ function bindCombatOrbitControls(){
     canvas.classList.remove('is-camera-dragging');
     topdownCV?.endCameraOrbit?.(performance.now());
   };
+  const exitInteraction=()=>{interacting=false;release();canvas.tabIndex=-1;delete canvas.dataset.cameraInteracting;interact?.setAttribute('aria-pressed','false');if(interact)interact.textContent=document.documentElement.lang.startsWith('zh')?'控制镜头':'Orbit camera';};
+  interact?.addEventListener('click',()=>{
+    if(interacting){exitInteraction();return;}
+    interacting=true;canvas.tabIndex=0;canvas.dataset.cameraInteracting='true';interact.setAttribute('aria-pressed','true');interact.textContent=document.documentElement.lang.startsWith('zh')?'退出镜头':'Exit camera';canvas.focus({preventScroll:true});
+  });
+  window.addEventListener('afflatus:command-mode',()=>{if(cruiseModeActive())exitInteraction();});
   canvas.addEventListener('pointerdown',(event)=>{
-    if(event.button!==0 || pointerId!==null) return;
+    if(!interacting || event.button!==0 || pointerId!==null) return;
     pointerId=event.pointerId;lastX=event.clientX;lastY=event.clientY;
     canvas.setPointerCapture(pointerId);
     canvas.classList.add('is-camera-dragging');
@@ -133,10 +141,13 @@ function bindCombatOrbitControls(){
   canvas.addEventListener('pointercancel',release);
   canvas.addEventListener('lostpointercapture',release);
   canvas.addEventListener('wheel',(event)=>{
+    if(!interacting) return;
     topdownCV?.zoomCameraBy?.(event.deltaY,performance.now());
     event.preventDefault();
   },{passive:false});
   canvas.addEventListener('keydown',(event)=>{
+    if(!interacting || document.activeElement!==canvas) return;
+    if(event.key==='Escape'){event.preventDefault();event.stopPropagation();exitInteraction();interact?.focus({preventScroll:true});return;}
     const cameraKeys={ArrowLeft:[-18,0],ArrowRight:[18,0],ArrowUp:[0,-14],ArrowDown:[0,14]};
     const movement=cameraKeys[event.key];
     if(!movement) return;
@@ -148,7 +159,7 @@ function bindCombatOrbitControls(){
   reset?.addEventListener('click',(event)=>{
     event.stopPropagation();
     topdownCV?.resetCameraOrbit?.();
-    canvas.focus({preventScroll:true});
+    if(interacting) canvas.focus({preventScroll:true});
   });
 }
 function combatViewTopdown(){
@@ -258,6 +269,7 @@ const hudPanels={
 };
 const hudFocusButtons=[...document.querySelectorAll('[data-cic-panel-focus]')];
 let focusedHudPanel=null;
+let focusedHudTrigger=null;
 let voyageLogCtl=null;
 let voyageLogPromise=null;
 let readingPosition=null;
@@ -275,12 +287,15 @@ function setHudPanelFocus(panelId=null){
 hudFocusButtons.forEach((button)=>button.addEventListener('click',(event)=>{
   event.stopPropagation();
   const panelId=button.dataset.cicPanelFocus;
+  focusedHudTrigger=button;
   setHudPanelFocus(focusedHudPanel===panelId?null:panelId);
 }));
 document.addEventListener('keydown',(event)=>{
   if(event.key==='Escape'&&focusedHudPanel){
+    event.preventDefault();
+    const trigger=focusedHudTrigger;
     setHudPanelFocus(null);
-    commandModeBtn?.focus({preventScroll:true});
+    trigger?.focus({preventScroll:true});
   }
 });
 function showBridgeCallout(text){
@@ -347,7 +362,7 @@ commandModeBtn?.addEventListener('click',(event)=>{
   ensureSpaceSceneRunning();
 });
 document.addEventListener('keydown',(event)=>{
-  if(event.key==='Escape'&&!cruiseModeActive()) commandModeBtn?.click();
+  if(event.key==='Escape'&&!event.defaultPrevented&&!cruiseModeActive()) commandModeBtn?.click();
 });
 jumpToggle?.addEventListener('click',()=>{
   const holdings=document.querySelector('.holdings'), hero=document.querySelector('.hero');
@@ -3644,11 +3659,15 @@ function loadVoyageLog(){
    — .hero and .stardrive are sequential sections, not stacked. */
 (function heroParallax(){
   const heroEl=document.querySelector('.hero');
-  if(!heroEl||REDUCED_MOTION) return;
+  if(!heroEl) return;
   const root=document.documentElement;
   let tx=0,ty=0,cx=0,cy=0,raf=0,heroOn=false;
+  const motion=matchMedia('(prefers-reduced-motion: reduce)'), fine=matchMedia('(hover: hover) and (pointer: fine)');
+  const reset=()=>{cancelAnimationFrame(raf);raf=0;tx=ty=cx=cy=0;root.style.setProperty('--mx','0');root.style.setProperty('--my','0');};
+  onDecorativePause(value=>{if(value)reset();});
+  for(const query of [motion,fine])query.addEventListener('change',()=>{if(motion.matches||!fine.matches)reset();});
   addEventListener('pointermove',(e)=>{
-    if(e.pointerType!=='mouse'||!heroOn||cruiseModeActive()||hudRenderPolicy.reducedMotion) return;
+    if(e.pointerType!=='mouse'||!heroOn||cruiseModeActive()||motion.matches||!fine.matches||isDecorativePaused()) return;
     tx=(e.clientX/innerWidth)*2-1;
     ty=(e.clientY/innerHeight)*2-1;
     if(!raf) raf=requestAnimationFrame(frame);

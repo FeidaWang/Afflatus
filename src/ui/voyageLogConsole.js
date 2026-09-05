@@ -78,6 +78,7 @@ export function initVoyageLogConsole({ getLang = () => 'en', onOpen, onClose } =
   root.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();
+      event.stopPropagation();
       close();
       return;
     }

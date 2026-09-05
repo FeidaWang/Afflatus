@@ -1132,8 +1132,9 @@
   .portfolio-convoy { background-color: #04060a; }
   .portfolio-convoy .portfolio-intro > .sec-desc { max-width: 64ch; opacity: 1; font-size: 16px; color: #c6d6df; }
   .portfolio-convoy .pick-card { background-color: #071019; }
+  .portfolio-convoy .convoy-visual { grid-template-rows: auto auto minmax(0, 1fr) auto auto; }
   .portfolio-convoy .pick-name { font-size: 13px; color: #b9ccda; white-space: normal; overflow: visible; overflow-wrap: anywhere; letter-spacing: .04em; line-height: 1.6; }
-  .portfolio-convoy .pick-thesis { font-size: 16px; line-height: 1.75; color: #c6d6df; }
+  .portfolio-convoy .pick-thesis { opacity: 1; font-size: 16px; line-height: 1.75; color: #c6d6df; }
   .portfolio-convoy .pick-signal p { font-size: 13px; line-height: 1.7; color: #c6d6df; }
   .portfolio-convoy .pick-signal span { font-size: 12px; line-height: 1.5; color: #9ae5ff; }
   .portfolio-convoy .pick-signal.risk span { color: #e8b380; }

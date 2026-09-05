@@ -2054,3 +2054,33 @@ body:not(.hud-off) .route-arrows {
 
 body.hud-off .cic-cruise-strip { display: none; }
 body.hud-off main { padding-bottom: 24px; }
+
+
+/* M07 camera controls stay in this stylesheet's unlayered ownership. */
+#combatHud #cicPilotFeed { touch-action: pan-y pinch-zoom; cursor: auto; }
+#combatHud #cicPilotFeed[data-camera-interacting='true'] { touch-action: none; cursor: grab; }
+#combatHud .cic-camera-controls { flex-wrap: wrap; gap: 8px; width: max-content; max-width: 100%; }
+#combatHud .cic-camera-controls > span { display: none; }
+#combatHud .cic-camera-controls button { min-height: 44px; min-width: 44px; height: auto; padding: 8px; font-size: 11px; line-height: 1.4; }
+/* Actual button boxes, with room in their existing header/rail owners. */
+#combatHud :is(.cic-panel-focus, .cic-ap-toggle, .cic-log-toggle, .cic-deck-toggle, .cic-station-tabs button, .cic-camera-controls button, #voyageLogClose, .cic-weapon) { min-height: 48px; min-width: 48px; }
+#combatHud .cic-panel-head { min-height: 58px; }
+#combatHud .cic-fire-control { grid-template-rows: 58px minmax(0, 1fr); }
+#combatHud .cic-fire-control .cic-panel-head { padding-right: 146px; }
+#combatHud .cic-station-tabs { height: 48px; }
+#combatHud .cic-log-console { grid-template-rows: 58px minmax(0, 1fr); transition: opacity 180ms ease, transform 220ms ease; }
+#combatHud .cic-log-head { grid-template-columns: minmax(0, 1fr) auto 48px; }
+#combatHud .cic-shell { left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); }
+@media (min-width: 861px) {
+  #combatHud .cic-shell { height: min(330px, calc(100svh - 100px - env(safe-area-inset-bottom))); overflow: auto; }
+  #combatHud .cic-weapon-wells { grid-template-rows: repeat(4, minmax(48px, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #combatHud[data-cic-hud], #combatHud .cic-shell, #combatHud .cic-log-console { transition: none; animation: none; }
+}
+@media (max-width: 860px) {
+  #combatHud .cic-shell { left: max(4px, env(safe-area-inset-left)); right: max(4px, env(safe-area-inset-right)); }
+  #combatHud .cic-shell { height: min(400px, calc(100svh - 100px - env(safe-area-inset-bottom))); max-height: calc(100svh - 100px - env(safe-area-inset-bottom)); overflow: auto; padding-top: 56px; grid-template-rows: minmax(110px, 1fr) 120px; }
+  #combatHud .cic-fire-control { grid-template-rows: 58px minmax(0, 1fr); }
+  #combatHud .cic-intel { top: 58px; }
+}

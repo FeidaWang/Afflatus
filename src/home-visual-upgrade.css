@@ -432,3 +432,23 @@
    instead of swapping metrics after the scene/CTA has already been laid out. */
 @font-face { font-family: 'JetBrains Mono'; src: local('JetBrains Mono'), url('/assets/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2'); font-weight: 100 599; font-display: optional; }
 @font-face { font-family: 'JetBrains Mono'; src: local('JetBrains Mono'), url('/assets/fonts/jetbrains-mono-latin-700-normal.woff2') format('woff2'); font-weight: 600 950; font-display: optional; }
+
+
+@layer components {
+  .home-page .stage-motion-controls { position: relative; z-index: 4; display: flex; justify-content: flex-end; padding: 12px clamp(16px, 3vw, 48px); }
+  .home-page .stage-motion-controls button { min-width: 140px; min-height: 44px; padding: 8px 12px; color: #e2ebf2; background: #071019; border: 1px solid #597688; font: 13px/1.5 'JetBrains Mono', monospace; }
+  .home-page .stage-motion-controls button[aria-pressed='true'] { color: #e8b380; border-color: #e8b380; }
+  .home-page .stage-motion-controls button:focus-visible { outline: 2px solid #9ae5ff; outline-offset: 3px; }
+  .home-page #starfieldViewport { cursor: auto; }
+  .home-page #starfieldViewport[data-interacting='true'] { cursor: grab; }
+  .home-page :is(#alphardForge, #convoySolarSystem, .orbit-field) { touch-action: pan-y pinch-zoom; }
+  .home-page .convoy-nodes { pointer-events: none; }
+  .home-page .convoy-node { pointer-events: none; }
+  .home-page.portfolio-motion-paused :is(.hero-depth-field, .hero-lens-reticle, .hero-title, .convoy-visual, .orbit-field, .convoy-core)::before,
+  .home-page.portfolio-motion-paused :is(.hero-depth-field, .hero-lens-reticle, .hero-title, .convoy-visual, .orbit-field, .convoy-core)::after { animation: none; }
+  .home-page.portfolio-motion-paused #starfield { animation: none; }
+  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
+    .home-page :is(.hero-depth-field, .hero-lens-reticle, .hero-title, .convoy-visual, .orbit-field, .convoy-core)::before,
+    .home-page :is(.hero-depth-field, .hero-lens-reticle, .hero-title, .convoy-visual, .orbit-field, .convoy-core)::after { animation: none; }
+  }
+}

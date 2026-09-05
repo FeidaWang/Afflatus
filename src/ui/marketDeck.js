@@ -2,6 +2,7 @@ import { PERIOD_META, genCandles, movingAverage } from '../data/marketSeries.js'
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import { initPortfolioSolarSystem } from './portfolioSolarSystem.js';
 import { animateCountUp } from './viz.js';
+import { registerHomeReadingEntries } from './homeScrollTelemetry.js';
 
 export function initMarketDeck({
   getLang = () => 'en',
@@ -427,6 +428,7 @@ export function initMarketDeck({
       if (scrollActivePick) activatePick(scrollActivePick);
     });
     el.addEventListener('focusin', () => activatePick(el));
+    el.addEventListener('click', event => { if (event.target.closest('.pcCover')) activatePick(el); });
     seen.delete(el);
     observer.observe(el);
     convoyObserver.observe(el);
@@ -457,13 +459,16 @@ export function initMarketDeck({
       const detailsLabel = langKey() === 'zh' ? `将 ${p.tk} 设为当前轨道档案` : `Focus ${p.tk} orbital dossier`;
       el.innerHTML = `<button type="button" class="pcCover" aria-pressed="false" aria-label="${detailsLabel}"><div class="pick-overline"><span>${p.layer}</span><b>${String(i + 1).padStart(2, '0')} / 10</b></div><div class="pick-head"><div class="pick-ticker">${p.tk}</div><div class="pick-rank">${p.pct}<span>%</span></div></div><div class="pick-name">${p.name}</div><p class="pick-role">${p.role}</p><p class="pick-thesis">${p.why}</p><div class="alloc-row"><div class="alloc-bar"><i data-target="${p.pct}" data-max="${maxPct}"></i></div><div class="alloc-num">0.0<span>%</span></div></div></button><div class="pcDetail"><div class="pick-signal catalyst"><span>${catalystLabel}</span><p>${p.catalyst}</p></div><div class="pick-signal risk"><span>${riskLabel}</span><p>${p.risk}</p></div><a class="pcCta" href="${href}">${ctaLabel}</a></div>`;
       grid.appendChild(el);
+      const thesis = el.querySelector('.pick-thesis');
+      thesis.dataset.readingEntry = `holding-${p.tk}`;
+      thesis.dataset.readingOrder = String(i % 4);
+      registerHomeReadingEntries([thesis]);
       observePick(el);
 
       if (nodes) {
         const [x, y] = nodePositions[i] || [50, 50];
         const solarBody = p.layer.split('/')[0].trim();
-        const node = document.createElement('button');
-        node.type = 'button';
+        const node = document.createElement('span');
         node.className = `convoy-node ${i === 0 ? 'is-sun' : 'is-planet'}`;
         node.dataset.pickIndex = String(i);
         node.style.setProperty('--node-x', `${x}%`);
@@ -475,31 +480,6 @@ export function initMarketDeck({
         nodes.appendChild(node);
       }
     });
-    if (nodes) {
-      nodes.onclick = (event) => {
-        const nodeList = [...nodes.querySelectorAll('.convoy-node')];
-        const eventNode = event.target.closest('.convoy-node');
-        let selectedNode = eventNode;
-        if (event.detail !== 0 && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
-          selectedNode = nodeList.reduce((closest, node) => {
-            const rect = node.getBoundingClientRect();
-            const distance = (rect.left + rect.width / 2 - event.clientX) ** 2
-              + (rect.top + rect.height / 2 - event.clientY) ** 2;
-            return !closest || distance < closest.distance ? { node, distance } : closest;
-          }, null)?.node || eventNode;
-        }
-        const index = Number.parseInt(selectedNode?.dataset.pickIndex || '-1', 10);
-        const card = grid.querySelector(`.pick-card[data-pick-index="${index}"]`);
-        if (!card) return;
-        scrollActivePick = card;
-        lockOrbitSelection(card);
-        activatePick(card);
-        card.scrollIntoView({
-          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-          block: 'center',
-        });
-      };
-    }
     const solarCanvas = document.getElementById('convoySolarSystem');
     const orbitHost = solarCanvas?.closest('.orbit-field');
     if (!solarSystem && solarCanvas && orbitHost) {

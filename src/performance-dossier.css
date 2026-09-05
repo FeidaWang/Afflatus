@@ -831,3 +831,19 @@
     .performance-dossier .route-efficiency { text-align: left; }
   }
 }
+
+
+@layer components {
+  /* M06: only explicit Portfolio prose targets opt in after observation.
+     Delays have no backwards fill: waiting/failed JS leaves content visible. */
+  .home-page [data-reading-entry].reading-enter {
+    animation: portfolio-reading-enter 400ms cubic-bezier(.2, .7, .2, 1) var(--reading-delay, 0ms);
+  }
+  @keyframes portfolio-reading-enter {
+    from { opacity: .65; transform: translateY(16px); will-change: opacity, transform; }
+    to { opacity: 1; transform: none; will-change: auto; }
+  }
+  @media (prefers-reduced-motion: reduce), print {
+    .home-page [data-reading-entry].reading-enter { animation: none; opacity: 1; transform: none; will-change: auto; }
+  }
+}

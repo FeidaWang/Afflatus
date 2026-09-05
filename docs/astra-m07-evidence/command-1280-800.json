@@ -1,0 +1,142 @@
+[
+  {
+    "id": "",
+    "text": "",
+    "r": {
+      "x": 142,
+      "y": 467,
+      "width": 48,
+      "height": 48,
+      "top": 467,
+      "right": 190,
+      "bottom": 515,
+      "left": 142
+    }
+  },
+  {
+    "id": "apToggle",
+    "text": "AP\nAUTO",
+    "r": {
+      "x": 196,
+      "y": 468,
+      "width": 68,
+      "height": 48,
+      "top": 468,
+      "right": 264,
+      "bottom": 516,
+      "left": 196
+    }
+  },
+  {
+    "id": "",
+    "text": "PD-01\n▥\nCIWS\nREADY\nSYSTEM RECOMMENDS",
+    "r": {
+      "x": 40,
+      "y": 527,
+      "width": 225,
+      "height": 59.75,
+      "top": 527,
+      "right": 265,
+      "bottom": 586.75,
+      "left": 40
+    }
+  },
+  {
+    "id": "",
+    "text": "AA-47\n↗\nMISSILE\nREADY\nSYSTEM RECOMMENDS",
+    "r": {
+      "x": 35,
+      "y": 592.75,
+      "width": 232,
+      "height": 59.75,
+      "top": 592.75,
+      "right": 267,
+      "bottom": 652.5,
+      "left": 35
+    }
+  },
+  {
+    "id": "",
+    "text": "NX-02\n☢\nNUKE\nREADY\nSYSTEM RECOMMENDS",
+    "r": {
+      "x": 27,
+      "y": 658.5,
+      "width": 238,
+      "height": 59.75,
+      "top": 658.5,
+      "right": 265,
+      "bottom": 718.25,
+      "left": 27
+    }
+  },
+  {
+    "id": "",
+    "text": "EF-09\n✦\nMAIN GUN\nREADY\nSYSTEM RECOMMENDS",
+    "r": {
+      "x": 22,
+      "y": 724.25,
+      "width": 243,
+      "height": 59.75,
+      "top": 724.25,
+      "right": 265,
+      "bottom": 784,
+      "left": 22
+    }
+  },
+  {
+    "id": "",
+    "text": "",
+    "r": {
+      "x": 950,
+      "y": 467,
+      "width": 48,
+      "height": 48,
+      "top": 467,
+      "right": 998,
+      "bottom": 515,
+      "left": 950
+    }
+  },
+  {
+    "id": "voyageLogToggle",
+    "text": "VOYAGE NOTES",
+    "r": {
+      "x": 1162,
+      "y": 467,
+      "width": 82,
+      "height": 48,
+      "top": 467,
+      "right": 1244,
+      "bottom": 515,
+      "left": 1162
+    }
+  },
+  {
+    "id": "jumpToggle",
+    "text": "Assets",
+    "r": {
+      "x": 1184,
+      "y": 743,
+      "width": 72,
+      "height": 48,
+      "top": 743,
+      "right": 1256,
+      "bottom": 791,
+      "left": 1184
+    }
+  },
+  {
+    "id": "voyageLogClose",
+    "text": "",
+    "r": {
+      "x": 1229.3599853515625,
+      "y": 445.864013671875,
+      "width": 47.6160888671875,
+      "height": 47.615997314453125,
+      "top": 445.864013671875,
+      "right": 1276.97607421875,
+      "bottom": 493.4800109863281,
+      "left": 1229.3599853515625
+    }
+  }
+]

@@ -36,6 +36,13 @@
   z-index: 1200;
 }
 
+/* Portfolio's interactive deck must leave iPhone landscape edges usable. */
+.home-page.starfield-layout .site-header--follow {
+  inset-inline-start: env(safe-area-inset-left, 0px);
+  inset-inline-end: env(safe-area-inset-right, 0px);
+  inline-size: calc(100% - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+}
+
 :root[data-afflatus-brand-state="compact"] .site-header--follow {
   background-color: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 95%, transparent);
   box-shadow:

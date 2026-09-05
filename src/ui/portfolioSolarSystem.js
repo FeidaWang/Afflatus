@@ -1,3 +1,4 @@
+import { isDecorativePaused, onDecorativePause } from './homeMotionPreferences.js';
 import * as THREE from 'three';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import {
@@ -525,7 +526,9 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
   let running = false;
   let raf = 0;
   let lastFrame = 0;
-  let startTime = performance.now();
+  let animationTime = 0;
+  const coarse = matchMedia('(pointer: coarse)');
+  const staticMode = () => policy.reducedMotion || coarse.matches || isDecorativePaused();
   let activeIndex = 0;
   let currentPicks = picks;
   let surface = null;
@@ -547,8 +550,7 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
       contextReady = true;
       size();
       host.classList.add('solar-ready');
-      if (budgetActive) start();
-      else render(performance.now(), 0);
+      if (budgetActive) { render(performance.now(), 0); start(); }
     },
     onFallback() {
       contextReady = false;
@@ -799,13 +801,17 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
   }
 
   function render(now, delta) {
-    const elapsedSeconds = Math.max(0, now - startTime) / 1000;
+    if (!contextReady) return;
+    if (staticMode()) delta = 0;
+    animationTime += delta;
+    now = animationTime * 1000;
+    const elapsedSeconds = animationTime;
     const liveEpochDays = currentEpochDays + elapsedSeconds * LIVE_SIM_DAYS_PER_SECOND;
     updateCameraTour(delta);
     bodies.forEach((body, index) => {
       if (index > 0) body.group.position.copy(orbitalPosition(body.profile, liveEpochDays, orbitScratch));
       const targetScale = body.group.userData.targetScale;
-      body.group.userData.currentScale += (targetScale - body.group.userData.currentScale) * Math.min(1, delta * 5.6);
+      body.group.userData.currentScale = staticMode() ? targetScale : body.group.userData.currentScale + (targetScale - body.group.userData.currentScale) * Math.min(1, delta * 5.6);
       body.group.scale.setScalar(body.group.userData.currentScale);
 
       const rotationDirection = Math.sign(body.profile.rotationHours || 1);
@@ -834,9 +840,11 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
   }
 
   function loop(now) {
+    raf = 0;
+    if (!running || !budgetActive || !contextReady || staticMode()) return;
     const minFrame = 1000 / (policy.qualityTier === 'low' ? 30 : 45);
     if (lastFrame && now - lastFrame < minFrame) {
-      if (running) raf = requestAnimationFrame(loop);
+      if (running && !raf) raf = requestAnimationFrame(loop);
       return;
     }
     const frameDuration = lastFrame ? now - lastFrame : minFrame;
@@ -846,11 +854,11 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
       drawCalls: renderer.info.render.calls,
       triangles: renderer.info.render.triangles,
     });
-    if (running) raf = requestAnimationFrame(loop);
+    if (running && !raf) raf = requestAnimationFrame(loop);
   }
 
   function start() {
-    if (running || !contextReady || policy.reducedMotion) return;
+    if (running || !contextReady || !budgetActive || staticMode()) return;
     running = true;
     lastFrame = 0;
     raf = requestAnimationFrame(loop);
@@ -862,13 +870,16 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
     raf = 0;
   }
 
+  const syncMotion = () => { stop(); if (budgetActive && contextReady) { render(performance.now(), 0); start(); } };
+  const unsubscribePause = onDecorativePause(syncMotion);
+  coarse.addEventListener('change', syncMotion);
   if (epochLabel) {
     const epoch = new Date(epochMs).toISOString().slice(0, 10);
     epochLabel.textContent = `${epoch} UTC · J2000 EPHEMERIS`;
   }
   size();
   applyActiveState();
-  render(performance.now(), 1);
+  render(performance.now(), 0);
   host.classList.add('solar-ready', 'solar-atlas-ready');
   surface = renderCoordinator.register({
     id: SURFACE_ID,
@@ -877,7 +888,7 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
     targetFps: 45,
     onResume() {
       budgetActive = true;
-      start();
+      render(performance.now(), 0); start();
     },
     onPause() {
       budgetActive = false;
@@ -885,14 +896,19 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
     },
     onResize() {
       size();
-      if (!running) render(performance.now(), 0);
+      if (!running && budgetActive) render(performance.now(), 0);
     },
     onQualityChange(nextPolicy) {
+      const changed = policy.reducedMotion !== nextPolicy.reducedMotion
+        || policy.qualityTier !== nextPolicy.qualityTier
+        || policy.pixelBudget !== nextPolicy.pixelBudget;
       policy = nextPolicy;
+      if (!changed) return;
       size();
-      if (nextPolicy.reducedMotion) stop();
+      syncMotion();
     },
     onDispose() {
+      unsubscribePause(); coarse.removeEventListener('change', syncMotion);
       lifecycle.dispose();
       disposeThreeScene(scene, renderer, [glowTexture, blueGlowTexture, nebulaTexture, starPointTexture]);
       host.classList.remove('solar-ready', 'solar-atlas-ready');
@@ -901,19 +917,21 @@ export function initPortfolioSolarSystem({ canvas, host, picks = [] } = {}) {
 
   return {
     setActive(index) {
-      activeIndex = Math.trunc(clamp(Number(index) || 0, 0, bodies.length - 1));
+      const nextIndex = Math.trunc(clamp(Number(index) || 0, 0, bodies.length - 1));
+      if (nextIndex === activeIndex) return;
+      activeIndex = nextIndex;
       applyActiveState();
-      if (policy.reducedMotion) {
+      if (staticMode()) {
         bodies.forEach((body) => {
           body.group.userData.currentScale = body.group.userData.targetScale;
         });
       }
-      if (!running) render(performance.now(), 1 / 45);
+      if (!running && budgetActive) render(performance.now(), 0);
     },
     updatePicks(nextPicks = []) {
       currentPicks = nextPicks;
       applyActiveState();
-      if (!running) render(performance.now(), 1 / 45);
+      if (!running && budgetActive) render(performance.now(), 0);
     },
     destroy() {
       stop();

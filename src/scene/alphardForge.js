@@ -9,6 +9,7 @@
  * systems. Reduced-motion visitors receive the final, fully resolved frame.
  */
 import * as THREE from 'three';
+import { isDecorativePaused, onDecorativePause } from '../ui/homeMotionPreferences.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import {
   canAcquireWebGLContext,
@@ -240,7 +241,7 @@ export function initAlphardForge() {
   // Existing Forge rAF is the sole continuous sampler. One geometry read per
   // rendered frame; absolute progress has no catch-up inertia on fast/reverse
   // scroll. CSS owns the single pin, so suspension cannot strand an overlay.
-  const staticMode = () => renderPolicy.reducedMotion || compact.matches;
+  const staticMode = () => renderPolicy.reducedMotion || compact.matches || isDecorativePaused();
   let staticFrame = '';
   function render(t) {
     if (!contextReady) return;
@@ -296,6 +297,7 @@ export function initAlphardForge() {
   resumeAfterContext = start;
   const refreshMode = () => { stop(); size(); if (budgetActive) start(); };
   compact.addEventListener('change', refreshMode);
+  const unsubscribePause = onDecorativePause(refreshMode);
   size();
   renderSurface = renderCoordinator.register({
     id: 'home:alphard-forge', element: stageEl, cost: 'high', targetFps: 60,
@@ -312,7 +314,7 @@ export function initAlphardForge() {
 
   return {
     destroy() {
-      stop(); handoff(false);
+      stop(); handoff(false); unsubscribePause();
       compact.removeEventListener('change', refreshMode);
       section.classList.remove('forge-ready');
       delete section.dataset.forgePhase;

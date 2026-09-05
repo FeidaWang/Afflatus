@@ -313,9 +313,10 @@
           </div>
         </aside>
         <div class="cic-viewport">
-          <canvas class="cic-pilot-feed" id="cicPilotFeed" tabindex="0" aria-label="3D combat view. Drag to orbit, scroll to zoom, and use arrow keys to rotate." data-aria-en="3D combat view. Drag to orbit, scroll to zoom, and use arrow keys to rotate." data-aria-zh="互动三维战斗视图。拖动可环绕镜头，滚动可缩放，方向键可旋转。"></canvas>
+          <canvas class="cic-pilot-feed" id="cicPilotFeed" tabindex="-1" aria-label="3D combat view. Drag to orbit, scroll to zoom, and use arrow keys to rotate." data-aria-en="3D combat view. Drag to orbit, scroll to zoom, and use arrow keys to rotate." data-aria-zh="互动三维战斗视图。拖动可环绕镜头，滚动可缩放，方向键可旋转。"></canvas>
           <div class="cic-camera-controls" aria-label="Combat camera controls" data-aria-en="Combat camera controls" data-aria-zh="战斗镜头控制" hidden>
             <span aria-hidden="true">DRAG · ORBIT</span>
+            <button id="cicCameraInteract" type="button" aria-pressed="false" aria-controls="cicPilotFeed" data-en="Orbit camera" data-zh="控制镜头">Orbit camera</button>
             <button id="cicCameraReset" type="button">RESET VIEW</button>
           </div>
         </div>
@@ -465,8 +466,9 @@
       </div>
       <p id="starfieldStatus" role="status" data-en="Static view · scrolling stays available" data-zh="静态视图 · 可正常纵向滚动">Static view · scrolling stays available</p>
       <div class="starfield-controls">
+        <button id="starfieldInteract" type="button" disabled aria-pressed="false" aria-controls="starfieldViewport" data-en="Enter interaction" data-zh="进入互动">Enter interaction</button>
         <button id="starfieldReset" type="button" disabled data-en="Reset view" data-zh="重置视角">Reset view</button>
-        <button id="starfieldPause" type="button" disabled aria-pressed="false" data-en="Pause motion" data-zh="暂停动态">Pause motion</button>
+        <button id="starfieldPause" data-motion-pause type="button" disabled aria-pressed="false" data-en="Pause motion" data-zh="暂停动态">Pause motion</button>
         <button id="starfieldReplay" type="button" disabled data-en="Replay opening" data-zh="重播开屏">Replay opening</button>
       </div>
     </aside>
@@ -475,6 +477,7 @@
 
   <section class="stardrive" id="stardrive" aria-label="FY2025–26 modeled performance — approach to Alphard" data-aria-en="FY2025–26 modeled performance — approach to Alphard" data-aria-zh="2025–26 财年模型表现——驶近星宿一">
     <!-- One reserved runway, one existing sticky stage; data stays in flow. -->
+    <div class="stage-motion-controls"><button id="forgePause" type="button" data-motion-pause disabled aria-pressed="false" data-en="Pause motion" data-zh="暂停动态">Pause motion</button></div>
     <div class="stardrive-runway">
       <div class="stardrive-stage">
         <div class="stardrive-scale" aria-hidden="true">
@@ -516,12 +519,12 @@
 
   <section class="equity performance-dossier" id="fy2026Performance" aria-labelledby="s2title">
     <div class="sec-num" id="s2num">02 · <span>FY25/26 capital black box</span></div>
-    <h2 class="sec-title" id="s2title">Return is not one number.<br>It is a chain of <em>assumptions</em>.</h2>
-    <p class="sec-desc" id="s2desc">Three telemetry layers answer three useful questions: closed-cycle capital velocity, thrust relative to supplied benchmarks, and the holding-time geometry of five completed routes.</p>
+    <h2 class="sec-title" id="s2title" data-reading-entry="s2title">Return is not one number.<br>It is a chain of <em>assumptions</em>.</h2>
+    <p class="sec-desc" id="s2desc" data-reading-entry="s2desc">Three telemetry layers answer three useful questions: closed-cycle capital velocity, thrust relative to supplied benchmarks, and the holding-time geometry of five completed routes.</p>
 
     <div class="blackbox-sequence">
       <section class="blackbox-module cycle-core" aria-label="Closed-cycle capital core" data-aria-en="Closed-cycle capital core" data-aria-zh="已结清周期资本核心">
-        <header class="module-label">
+        <header class="module-label" data-reading-entry="cycle-heading">
           <span data-en="02-A / CYCLE CORE" data-zh="02-A / 周期核心">02-A / CYCLE CORE</span>
           <b data-en="CLOSED-CYCLE CAPITAL VELOCITY" data-zh="已结清周期资金速度">CLOSED-CYCLE CAPITAL VELOCITY</b>
           <em data-en="FY2025—26 / 365-DAY MODEL" data-zh="2025—26 财年 / 365 天模型">FY2025—26 / 365-DAY MODEL</em>
@@ -545,7 +548,7 @@
       </section>
 
       <section class="blackbox-module velocity-field" aria-label="Relative model velocity vectors" data-aria-en="Relative model velocity vectors" data-aria-zh="模型相对速度矢量">
-      <header class="module-label">
+      <header class="module-label" data-reading-entry="velocity-heading">
         <span data-en="02-B / RELATIVE VELOCITY" data-zh="02-B / 相对速度">02-B / RELATIVE VELOCITY</span>
         <b data-en="HEADLINE MODEL MAX / SUPPLIED BENCHMARK INPUT" data-zh="首屏模型上界 / 所提供基准输入">HEADLINE MODEL MAX / SUPPLIED BENCHMARK INPUT</b>
         <em data-en="VECTOR FIELD / NORMALIZED" data-zh="矢量场 / 标准化">VECTOR FIELD / NORMALIZED</em>
@@ -566,7 +569,7 @@
       </section>
 
       <section class="blackbox-module flight-paths" aria-labelledby="flightPathsTitle">
-      <header class="flight-path-head module-label">
+      <header class="flight-path-head module-label" data-reading-entry="flight-heading">
         <span data-en="02-C / FLIGHT PATH MATRIX" data-zh="02-C / 航线矩阵">02-C / FLIGHT PATH MATRIX</span>
         <h3 id="flightPathsTitle" data-en="Five closed-cycle trajectories" data-zh="五条已结清周期轨迹">Five closed-cycle trajectories</h3>
         <p data-en="Cycle efficiency, holding duration and execution chronology share one compact flight recorder." data-zh="周期效率、持仓时长与执行时间线集中在一台紧凑飞行记录仪中。">Cycle efficiency, holding duration and execution chronology share one compact flight recorder.</p>
@@ -617,7 +620,7 @@
       </section>
     </div>
 
-    <aside class="methodology-seal">
+    <aside class="methodology-seal" data-reading-entry="methodology">
       <span data-en="METHOD / 2026-08-08" data-zh="方法说明 / 2026-08-08">METHOD / 2026-08-08</span>
       <p data-en="Position outcomes, principal, transaction values, quantities and account balances are omitted. Cycle annualization, the single headline account-model maximum and risk measures remain method-dependent estimates, not audited results." data-zh="页面不展示单笔结果、本金、成交金额、数量与账户余额。周期年化、首屏唯一的账户模型上界与风险读数均依赖具体计算方法，并非审计结果。">Position outcomes, principal, transaction values, quantities and account balances are omitted. Cycle annualization, the single headline account-model maximum and risk measures remain method-dependent estimates, not audited results.</p>
     </aside>
@@ -626,8 +629,8 @@
   <section class="holdings portfolio-convoy" id="portfolioConvoy" aria-labelledby="s3title">
     <header class="portfolio-intro">
       <div class="sec-num" id="s3num">03 · <span>top 10 allocations · usa</span></div>
-      <h2 class="sec-title" id="s3title">十个 AI 引力源，<br>组成一座实时运行的<em>产业太阳系</em>。</h2>
-      <p class="sec-desc" id="s3desc">2026-08-07 08:29 ET · 非农发布前快照：最高权重 NVDA 是太阳，其余九支映射为水星至冥王星。星体按当前历元公转并依据真实自转方向动态演化；点击任意代码，可展开对应产业天体。</p>
+      <h2 class="sec-title" id="s3title" data-reading-entry="s3title">十个 AI 引力源，<br>组成一座实时运行的<em>产业太阳系</em>。</h2>
+      <p class="sec-desc" id="s3desc" data-reading-entry="s3desc">2026-08-07 08:29 ET · 非农发布前快照：最高权重 NVDA 是太阳，其余九支映射为水星至冥王星。星体按当前历元公转并依据真实自转方向动态演化；点击任意代码，可展开对应产业天体。</p>
     </header>
 
     <div class="convoy-shell">
@@ -637,6 +640,7 @@
           <b><i></i><span data-en="CURRENT EPOCH · 10 BODIES" data-zh="当前历元 · 10 个天体">CURRENT EPOCH · 10 BODIES</span></b>
         </header>
 
+        <div class="stage-motion-controls"><button id="solarPause" type="button" data-motion-pause disabled aria-pressed="false" data-en="Pause motion" data-zh="暂停动态">Pause motion</button></div>
         <div class="convoy-orbit">
           <div class="orbit-field">
             <canvas class="convoy-solar-canvas" id="convoySolarSystem" aria-hidden="true"></canvas>
@@ -646,7 +650,7 @@
             <i class="orbit-ring ring-c"></i>
             <i class="orbit-axis axis-x"></i>
             <i class="orbit-axis axis-y"></i>
-            <div class="convoy-nodes" id="convoyNodes"></div>
+            <div class="convoy-nodes" id="convoyNodes" aria-hidden="true"></div>
             <div class="convoy-core" aria-hidden="true">
               <span data-en="SOLAR" data-zh="太阳">SOLAR</span>
               <b data-en="ATLAS" data-zh="图鉴">ATLAS</b>
@@ -664,7 +668,7 @@
         <footer class="convoy-legend">
           <span><i></i><b data-en="SELECTED CELESTIAL BODY" data-zh="当前聚焦天体">SELECTED CELESTIAL BODY</b></span>
           <span><i></i><b data-en="LIVE ORBIT MODEL" data-zh="实时轨道模型">LIVE ORBIT MODEL</b></span>
-          <em data-en="CLICK A BODY TO OPEN THE ATLAS" data-zh="点击天体展开图鉴">CLICK A BODY TO OPEN THE ATLAS</em>
+          <em data-en="SELECT A DOSSIER FROM THE LIST" data-zh="从卡片列表选择天体">SELECT A DOSSIER FROM THE LIST</em>
         </footer>
       </aside>
 

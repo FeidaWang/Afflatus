@@ -1,11 +1,12 @@
 import * as THREE from 'three';
+import { isDecorativePaused, onDecorativePause } from '../ui/homeMotionPreferences.js';
 import { prepareStarfieldIntro } from './starfieldIntro.js';
 import { getRenderBudgetCoordinator } from '../lib/renderBudgetCoordinator.js';
 import { canAcquireWebGLContext, createWebGLContextLifecycle, disposeThreeScene } from '../lib/webglLifecycle.js';
 import { STARFIELD_LIMITS, clampRotation, dampRotation, createStarfieldGeometry, starfieldBudget } from './starfieldModel.js';
 
 const SURFACE_ID = 'home:orbital-starfield';
-const PAUSE_KEY = 'afflatus:starfield-paused:v1';
+
 let instance;
 
 // Replaces the old backgroundScene Canvas2D / Worker renderer. Exactly one
@@ -15,7 +16,7 @@ export function createBackgroundScene() {
   const canvas = document.getElementById('starfield');
   const host = document.getElementById('starfieldViewport');
   const reset = document.getElementById('starfieldReset');
-  const pause = document.getElementById('starfieldPause');
+  const interact = document.getElementById('starfieldInteract');
   const status = document.getElementById('starfieldStatus');
   const replay = document.getElementById('starfieldReplay');
   if (!canvas || !host) return null;
@@ -29,8 +30,7 @@ export function createBackgroundScene() {
   let policy = coordinator.getPolicy({ cost: 'medium', targetFps: 60 });
   let renderer, lifecycle, surface, scene, camera, points, material;
   let raf = 0, lastTime = 0, elapsed = 0, active = false, contextReady = false, disposed = false, failed = false;
-  let paused = false;
-  try { paused = localStorage.getItem(PAUSE_KEY) === 'true'; } catch {}
+  let paused = isDecorativePaused(), interacting = false;
   let drag = null;
   let forgeActive = coordinator.getTelemetry().surfaces.some(surface => surface.id === 'home:alphard-forge' && surface.active);
   const rotation = { yaw: 0, pitch: 0, targetYaw: 0, targetPitch: 0, hoverYaw: 0, hoverPitch: 0 };
@@ -41,15 +41,17 @@ export function createBackgroundScene() {
 
   function updateStatus() {
     host.dataset.state = failed ? 'fallback' : staticMode() ? 'static' : commandMode() || !active || forgeActive ? 'offscreen' : paused ? 'paused' : drag?.captured ? 'dragging' : 'idle';
-    host.tabIndex = staticMode() || failed ? -1 : 0;
-    reset.disabled = pause.disabled = staticMode() || failed || !contextReady;
+    host.tabIndex = interacting && !staticMode() && !failed ? 0 : -1;
+    host.dataset.interacting = String(interacting);
+    interact.disabled = reset.disabled = staticMode() || failed || !contextReady;
+    interact.setAttribute('aria-pressed', String(interacting));
+    interact.textContent = interacting ? (zh() ? '退出互动' : 'Exit interaction') : (zh() ? '进入互动' : 'Enter interaction');
     replay.disabled = reset.disabled || paused || !canDraw();
-    pause.setAttribute('aria-pressed', String(paused));
-    pause.textContent = paused ? (zh() ? '继续动态' : 'Resume motion') : (zh() ? '暂停动态' : 'Pause motion');
     const text = failed ? ['Static view · graphics unavailable', '静态视图 · 图形暂不可用']
       : staticMode() ? ['Static view · scrolling stays available', '静态视图 · 可正常纵向滚动']
       : paused ? ['Motion paused · view controls still available', '动态已暂停 · 仍可调整视角']
-      : ['Drag to rotate · arrows move · Home resets · Esc exits', '拖拽旋转 · 方向键调整 · Home 重置 · Esc 退出'];
+      : interacting ? ['Drag or arrows rotate · Home resets · Esc exits', '拖拽或方向键旋转 · Home 重置 · Esc 退出']
+      : ['Enter interaction to rotate · page scrolling stays available', '进入互动后可旋转 · 页面可正常滚动'];
     status.textContent = text[zh() ? 1 : 0];
   }
   function stop() {
@@ -64,7 +66,7 @@ export function createBackgroundScene() {
     updateStatus();
   }
   function fallback() {
-    failed = true; contextReady = false; intro.cancel('failure'); stop(); finishDrag();
+    failed = true; contextReady = false; interacting = false; intro.cancel('failure'); stop(); finishDrag();
     document.body.classList.remove('starfield-ready');
     updateStatus();
   }
@@ -100,6 +102,7 @@ export function createBackgroundScene() {
     stop();
     if (paused || staticMode() || commandMode() || !active || forgeActive) intro.cancel('inactive');
     if (staticMode() || commandMode() || !active || forgeActive) {
+      interacting = false;
       finishDrag();
       document.body.classList.remove('starfield-ready');
     } else if (contextReady) {
@@ -169,11 +172,11 @@ export function createBackgroundScene() {
     else start();
   }
   listen(host, 'pointerdown', event => {
-    if (!canDraw() || event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a,button,input,select,textarea')) return;
+    if (!interacting || !canDraw() || event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a,button,input,select,textarea')) return;
     drag={id:event.pointerId,x:event.clientX,y:event.clientY,yaw:rotation.targetYaw,pitch:rotation.targetPitch,captured:false};
   });
   listen(host, 'pointermove', event => {
-    if (!canDraw() || event.pointerType !== 'mouse') return;
+    if (!interacting || !canDraw() || event.pointerType !== 'mouse') return;
     if (drag && drag.id === event.pointerId) {
       const dx=event.clientX-drag.x, dy=event.clientY-drag.y;
       if (!drag.captured && Math.hypot(dx,dy)<STARFIELD_LIMITS.dragThreshold) return;
@@ -190,16 +193,17 @@ export function createBackgroundScene() {
   for (const type of ['pointerup','pointercancel','lostpointercapture']) listen(host,type,finishDrag);
   listen(host,'pointerleave',()=>{rotation.hoverYaw=rotation.hoverPitch=0; if(drag&&!drag.captured) finishDrag();});
   listen(host,'keydown',event=>{
-    if (!canDraw()) return;
+    if (!interacting || document.activeElement !== host || !canDraw()) return;
     const direction={ArrowLeft:[-.09,0],ArrowRight:[.09,0],ArrowUp:[0,-.07],ArrowDown:[0,.07]}[event.key];
     if(direction){event.preventDefault(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(rotation.targetYaw+direction[0],rotation.targetPitch+direction[1]);}
     if(event.key==='Home'){event.preventDefault(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(0,0,true);}
-    if(event.key==='Escape'){event.preventDefault(); finishDrag(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(rotation.yaw,rotation.pitch,true); reset.focus({preventScroll:true});}
+    if(event.key==='Escape'){event.preventDefault(); event.stopPropagation(); interacting=false; finishDrag(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(rotation.yaw,rotation.pitch,true); interact.focus({preventScroll:true});}
   });
   listen(host,'afflatus:intro-end',draw);
   listen(replay,'click',()=>{if (canDraw() && !paused) { intro.begin(true); draw(); start(); }});
   listen(reset,'click',()=>{finishDrag(); rotation.hoverYaw=rotation.hoverPitch=0; moveView(0,0,true);});
-  listen(pause,'click',()=>{paused=!paused; try{localStorage.setItem(PAUSE_KEY,String(paused));}catch{} sync();});
+  listen(interact,'click',()=>{interacting=!interacting; finishDrag(); if(interacting) host.focus({preventScroll:true});});
+  const unsubscribePause = onDecorativePause(value=>{paused=value; finishDrag(); rotation.hoverYaw=rotation.hoverPitch=0; sync();});
   listen(window,'afflatus:command-mode',sync);
   listen(window,'afflatus:forge-active',event=>{forgeActive=event.detail.active; sync();});
   for(const query of [fine,compact,motion]) listen(query,'change',()=>{initialize(); resize(); sync();});
@@ -214,7 +218,7 @@ export function createBackgroundScene() {
       policy=next;
       if (budgetChanged) resize();
     },
-    onDispose(){disposed=true; stop(); finishDrag(); abort.abort(); languageObserver.disconnect(); lifecycle?.dispose(); if(scene) disposeThreeScene(scene,renderer); document.body.classList.remove('starfield-ready'); instance=null;},
+    onDispose(){disposed=true; stop(); finishDrag(); abort.abort(); unsubscribePause(); languageObserver.disconnect(); lifecycle?.dispose(); if(scene) disposeThreeScene(scene,renderer); document.body.classList.remove('starfield-ready'); instance=null;},
   });
   updateStatus();
   instance={destroy:()=>surface.dispose()};

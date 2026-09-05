@@ -29,6 +29,7 @@ test('one renderer, 6px drag capture, cancel/up release, keyboard and reset', as
   await expect(host).toHaveAttribute('data-state','idle');
   await expect(host).toHaveAttribute('data-particles','4000');
   expect(Number(await host.getAttribute('data-dpr'))).toBeLessThanOrEqual(1.5);
+  await page.locator('#starfieldInteract').click();
   const r=await host.boundingBox();const x=r.x+r.width*.5,y=r.y+r.height*.5;
   await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+3,y);
   await expect(host).not.toHaveClass(/is-dragging/);
@@ -45,7 +46,7 @@ test('one renderer, 6px drag capture, cancel/up release, keyboard and reset', as
   const original=await page.locator("#starfield").screenshot();
   await host.press('ArrowRight');const turned=await page.locator("#starfield").screenshot();expect(turned.equals(original)).toBe(false);
   await host.press('Home');const restored=await page.locator("#starfield").screenshot();expect(restored.equals(original)).toBe(true);
-  await host.press('Escape');await expect(page.locator('#starfieldReset')).toBeFocused();
+  await host.press('Escape');await expect(page.locator('#starfieldInteract')).toBeFocused();
   await expect(page.locator('#blackhole-gl')).not.toHaveAttribute('src');
   await expect(page.locator('#starfield')).toHaveAttribute('aria-hidden','true');
   await page.locator('#scrollHint').click();await expect(page).toHaveURL(/#fy2026Performance$/);
@@ -69,14 +70,14 @@ test('pause survives reload; offscreen, Command and forge stop actual drawing', 
 test('dynamic reduced motion stops drawing and returns a stable poster', async ({ page }) => {
   await page.goto('/portfolio.html');await expect(page.locator('#starfieldViewport')).toHaveAttribute('data-state','idle');
   await page.emulateMedia({reducedMotion:'reduce'});await expect(page.locator('#starfieldViewport')).toHaveAttribute('data-state','static');
-  await expect(page.locator('#starfieldPause')).toBeDisabled();await unchanged(page);
+  await expect(page.locator('#starfieldPause')).toBeEnabled();await unchanged(page);
   await page.emulateMedia({reducedMotion:'no-preference'});await expect(page.locator('#starfieldViewport')).toHaveAttribute('data-state','idle');
 });
 
 test('WebGL failure leaves static subject, navigation and text available', async ({ page }) => {
   await page.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...rest){return type.includes('webgl')?null:original.call(this,type,...rest);};});
   await page.goto('/portfolio.html');await expect(page.locator('#starfieldViewport')).toHaveAttribute('data-state','fallback');
-  await expect(page.locator('#heroDesc')).toBeVisible();await expect(page.locator('#starfieldPause')).toBeDisabled();
+  await expect(page.locator('#heroDesc')).toBeVisible();await expect(page.locator('#starfieldPause')).toBeEnabled();
   await page.locator('#scrollHint').click();await expect(page).toHaveURL(/#fy2026Performance$/);
 });
 
@@ -84,7 +85,7 @@ test('touch uses static subject and preserves vertical pan', async ({ browser, b
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});const page=await context.newPage();
   await trackDraws(page);await page.goto(`${baseURL}/portfolio.html`);
   await expect(page.locator('#starfieldViewport')).toHaveAttribute('data-state','static');
-  await expect(page.locator('#starfieldPause')).toBeDisabled();
+  await expect(page.locator('#starfieldPause')).toBeEnabled();
   expect(await page.locator('#starfieldViewport').evaluate(e=>getComputedStyle(e).touchAction)).toContain('pan-y');
   expect(await draws(page)).toBe(0);
   const client=await page.context().newCDPSession(page);
@@ -111,12 +112,12 @@ test('real context loss restores once, then keeps the licensed poster', async ({
   const before=await draws(page);await expect.poll(()=>draws(page)).toBeGreaterThan(before);
   await canvas.evaluate(el=>el.getContext('webgl2').getExtension('WEBGL_lose_context').loseContext());
   await expect(host).toHaveAttribute('data-state','fallback');await unchanged(page);
-  await expect(page.locator('#starfieldPause')).toBeDisabled();
+  await expect(page.locator('#starfieldPause')).toBeEnabled();
   await page.locator('#scrollHint').click();await expect(page).toHaveURL(/#fy2026Performance$/);
 });
 
 test('starfield module failure and JavaScript disabled keep navigation usable', async ({page,browser,baseURL}) => {
-  await page.route('**/src/scene/backgroundScene.js*',route=>route.abort());
+  await page.route('**/*backgroundScene*.js*',route=>route.abort());
   await page.goto('/portfolio.html');
   await expect(page.locator('#starfieldViewport')).toHaveAttribute('data-state','fallback');
   await page.locator('#portfolioMenu summary').click();await expect(page.locator('#portfolioMenu .portfolio-menu-links')).toBeVisible();
