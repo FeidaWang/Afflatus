@@ -15,6 +15,7 @@ import {
 import { COPY } from '../src/data/content.js';
 import {
   NAV_ROUTES,
+  HOME_NAV_GROUPS,
   SITE_LOCALES,
   SITE_MANIFEST,
   findRouteByPath,
@@ -338,14 +339,15 @@ function localizeInternalNavigation(document, locale) {
 
 function injectStaticNavigation(document, route, locale) {
   const visibleLocale = locale || route.defaultLocale;
-  for (const nav of all(document, (node) => getAttr(node, 'data-afflatus-nav') != null)) {
+  for (const nav of all(document, (node) => getAttr(node, 'data-afflatus-nav') != null || getAttr(node, 'data-afflatus-static-only-nav') != null)) {
     for (const existing of all(nav, (node) => getAttr(node, 'data-afflatus-static-nav') != null)) removeNode(existing);
-    const links = NAV_ROUTES
+    const routes = route.id === 'main' ? HOME_NAV_GROUPS.flatMap(group => group.items.map(item => ({ id: item.routeId, path: item.href, en: item.label.en, zh: item.label.zh }))) : NAV_ROUTES;
+    const links = routes
       .filter((item) => !(route.id === 'main' && item.id === 'main'))
       .map((item) => {
         const href = locale ? localizedRoutePath(item.path, locale) : item.path;
         const label = visibleLocale === 'zh' ? item.zh : item.en;
-        const active = item.id === route.id ? ' class="active"' : '';
+        const active = item.id === route.id ? ' class="active" aria-current="page"' : '';
         return `<a${active} data-afflatus-static-nav href="${escapeAttribute(href)}">${escapeAttribute(label)}</a>`;
       })
       .join('');
@@ -624,6 +626,8 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
   const position = chapter ? entry.chapters.findIndex((item) => String(item.id) === String(chapter.id)) : -1;
   if (chapter) {
     setText(chapterTitle, chapter.title);
+    const indicator = byId(document, 'chapterIndicator');
+    if (indicator) setText(indicator, `第 ${position + 1} / ${entry.chapters.length} 章`);
     setText(chapterMeta, `${locale === 'en' ? 'Chapter' : '第'} ${position + 1} / ${entry.chapters.length} · ${chapter.wordCount || 0} ${locale === 'en' ? 'Chinese characters' : '字'}`);
     setHtml(chapterBody, renderNovelBlocks(chapter.blocks));
   } else {
@@ -640,6 +644,13 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
   if (chapterNav && chapter) {
     const previous = entry.chapters[position - 1];
     const next = entry.chapters[position + 1];
+    for (const [id, target] of [['prevChapter', previous], ['nextChapter', next]]) {
+      const link = byId(document, id);
+      if (link && target) {
+        setAttr(link, 'href', readerPath({ locale: fixedLocale, bookId: entry.id, chapterId: target.id }));
+        setAttr(link, 'aria-disabled', 'false');
+      }
+    }
     setHtmlFragmentAtEnd(chapterNav, `<nav class="prerender-chapter-nav" aria-label="${locale === 'en' ? 'Chapter links' : '章节链接'}">`
       + (previous ? `<a rel="prev" href="${escapeAttribute(readerPath({ locale: fixedLocale, bookId: entry.id, chapterId: previous.id }))}">← ${escapeHtml(previous.title)}</a>` : '<span></span>')
       + (next ? `<a rel="next" href="${escapeAttribute(readerPath({ locale: fixedLocale, bookId: entry.id, chapterId: next.id }))}">${escapeHtml(next.title)} →</a>` : '<span></span>')

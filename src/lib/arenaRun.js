@@ -24,6 +24,7 @@ import {
   checkStopLoss, checkExitBySweep, checkDailyCircuitBreaker, checkSeasonReset, resetSeason,
   computeMetrics,
 } from './arenaRules.js';
+import { assessNyseSession } from './marketSession.js';
 import { validateArenaExecutionQuoteReceipt } from './arenaExecution.js';
 
 const BOOKS = ['A', 'B', 'S', 'P', 'T'];
@@ -115,9 +116,11 @@ export function runArenaLedger(ledgerFull, book, opts) {
     if (requireExecutionQuoteReceipt) {
       if (!receipt) throw new Error(`runArenaLedger: missing execution quote receipt for ${order.sym}`);
       const validation = validateArenaExecutionQuoteReceipt(receipt, {
-        symbol: order.sym, refPx: priceMap[order.sym], executedAt: nowIso,
+        symbol: order.sym, refPx: priceMap[order.sym], executedAt: nowIso, executionWindow: executionWindow || 'open-window',
       });
       if (!validation.ok) throw new Error(`runArenaLedger: ${order.sym} ${validation.error}`);
+      const phase = assessNyseSession(new Date(nowIso)).state;
+      if (order.side === 'buy' && phase !== 'active') throw new Error(`runArenaLedger: new paper entries blocked: ${phase}`);
     }
     return receipt ? { ...order, executionQuote: { ...receipt } } : order;
   };

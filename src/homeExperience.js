@@ -43,6 +43,7 @@ import { applyDeviceBodyClasses, setText } from './utils/dom.js';
 import { clamp, easeOut, lerp, rand } from './utils/math.js';
 import { createCursor } from './ui/cursor.ts';
 
+let simulationDisposed=false;
 let currentLang=getLocale('en');
 // U46 46-乙-①: hero strip labels sl1(Sharpe)/sl2(Max Drawdown)/sl3(Beta) get a
 // term-glossary button; sl0(Annualized Return) is plain English, no term.
@@ -74,7 +75,7 @@ function getShip3D(){
   if(!ship3DTried){
     ship3DTried=true;
     import('./scene/capitalShip3D.js')
-      .then(m=>{ try{ ship3D=m.createCapitalShip3D(); }catch(e){ ship3D=null; } })
+      .then(m=>{ if(simulationDisposed) return; try{ ship3D=m.createCapitalShip3D(); }catch(e){ ship3D=null; } })
       .catch(()=>{ ship3D=null; });
   }
   return ship3D;
@@ -86,7 +87,7 @@ function getFighter3D(){
   if(!fighter3DTried){
     fighter3DTried=true;
     import('./scene/fighter3D.js')
-      .then(m=>{ try{ fighter3D=m.createFighter3D(); }catch(e){ fighter3D=null; } })
+      .then(m=>{ if(simulationDisposed) return; try{ fighter3D=m.createFighter3D(); }catch(e){ fighter3D=null; } })
       .catch(()=>{ fighter3D=null; });
   }
   return fighter3D;
@@ -174,7 +175,7 @@ function getTopdownCV(){
   if(!topdownTried){
     topdownTried=true;
     import('./scene/topdownCombat.js')
-      .then(m=>{ try{ topdownCanvas=document.createElement('canvas'); topdownCV=m.createTopdownCombat({canvas:topdownCanvas,surfaceId:'home:topdown-combat'}); bindCombatOrbitControls(); }catch(e){ topdownCV=null; } })
+      .then(m=>{ if(simulationDisposed) return; try{ topdownCanvas=document.createElement('canvas'); topdownCV=m.createTopdownCombat({canvas:topdownCanvas,surfaceId:'home:topdown-combat'}); bindCombatOrbitControls(); }catch(e){ topdownCV=null; } })
       .catch(()=>{ topdownCV=null; });
   }
   return topdownCV;
@@ -3486,7 +3487,8 @@ function stopMainLoop(){
 window.__launchTime = Date.now();
 mainRenderSurface=renderBudgetCoordinator.register({
   id:'home:master',
-  element:document.querySelector('.hero'),
+  element:document.documentElement,
+  observe:false,
   enabled:false,
   cost:'medium',
   targetFps:60,
@@ -3691,3 +3693,20 @@ function loadVoyageLog(){
     }
   });
 })();
+
+
+// Called synchronously before the optional simulation frame is removed.
+export function disposeSimulation(){
+  if(simulationDisposed) return;
+  simulationDisposed=true;
+  disengageBattleSystems();
+  for(const resource of [topdownCV,ship3D,fighter3D]){
+    try{ resource?.destroy(); }catch{}
+  }
+  renderBudgetCoordinator.destroy();
+  cancelAnimationFrame(mainLoopRaf);
+  topdownCV=null; ship3D=null; fighter3D=null;
+  document.documentElement.dataset.simulationDisposed='true';
+}
+window.addEventListener('afflatus:simulation-dispose',disposeSimulation,{once:true});
+window.addEventListener('pagehide',disposeSimulation,{once:true});

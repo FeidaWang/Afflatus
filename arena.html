@@ -1,29 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
+<meta name="referrer" content="no-referrer">
 <script>try{var f=document.documentElement.lang.toLowerCase().indexOf('zh')===0?'zh':'en',s=localStorage,k='afflatus:locale:v1',a='afflatus:lang',b='afflatus-lang',n=function(x){return x==='zh'||x==='zh-CN'?'zh':x==='en'?'en':''},v=n(s.getItem(k));if(!v){v=n(s.getItem(a))||n(s.getItem(b));if(v){s.setItem(k,v);if(s.getItem(k)===v){s.removeItem(a);s.removeItem(b)}}}else{s.removeItem(a);s.removeItem(b)}if(!v)v=f;document.documentElement.lang=v==='zh'?'zh-CN':'en';if(v==='zh'){var d=document.documentElement,u=function(){d.style.removeProperty('visibility')};d.style.visibility='hidden';var t=setTimeout(u,1500),p=function(r,h){var q=[],m='[data-en],[data-en-ph],[data-aria-en],.lang-toggle';if(r.nodeType===1&&r.matches(m))q.push(r);if(r.querySelectorAll)q.push.apply(q,r.querySelectorAll(m));q.forEach(function(e){var z;if(e.hasAttribute('data-en')&&(z=e.getAttribute('data-zh'))!==null){if(e.hasAttribute('data-i18n-html')){if(h&&e.innerHTML!==z)e.innerHTML=z}else if(e.textContent!==z)e.textContent=z}if(e.hasAttribute('data-en-ph'))e.setAttribute('placeholder',e.getAttribute('data-zh-ph')||e.getAttribute('data-en-ph'));if(e.hasAttribute('data-aria-en'))e.setAttribute('aria-label',e.getAttribute('data-aria-zh')||e.getAttribute('data-aria-en'));if(e.classList.contains('lang-toggle')){e.textContent='EN';e.setAttribute('aria-label','Switch to English');if(!e.matches('a[href]'))e.setAttribute('aria-pressed','true')}})},o=new MutationObserver(function(rs){rs.forEach(function(r){r.addedNodes.forEach(function(x){p(x,false)})})});o.observe(d,{childList:true,subtree:true});document.addEventListener('DOMContentLoaded',function(){try{p(document,true)}finally{clearTimeout(t);o.disconnect();u()}},{once:true})}}catch(e){}</script>
 <script type="module" src="/src/entry/performance.js"></script>
-<!-- Google tag (gtag.js) — deferred to idle (ROADMAP §9 SEO Phase 1): the
-     fetch + init only runs once the browser reports idle time (or after a
-     3s/2s fallback timeout for browsers without requestIdleCallback), so it
-     doesn't compete with render-critical work during first paint. Same
-     dataLayer/gtag('config',...) calls as before, just deferred. -->
-<script>
-(function(){
-  function loadGtag(){
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function(){ dataLayer.push(arguments); };
-    gtag('js', new Date());
-    gtag('config', 'G-M078NTBWRF');
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-M078NTBWRF';
-    document.head.appendChild(s);
-  }
-  if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, {timeout: 8000});
-  else setTimeout(loadGtag, 6000);
-})();
-</script>
+<!-- Sensitive input page: third-party analytics intentionally disabled. -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Arena · QF-01 Quant Foundry + US Stock TA — Afflatus</title>
@@ -285,8 +266,20 @@
 
   <section class="hero" aria-label="Status" data-aria-en="Status" data-aria-zh="状态">
     <div class="kicker" data-en="TRAXUS//CVKM · simulation deck" data-zh="TRAXUS//CVKM · 模拟终端">TRAXUS//CVKM · simulation deck</div>
-    <h2 data-i18n-html data-en="Read the levels. Let the <b>machines</b> trade." data-zh="看懂关键位，交给<b>机器</b>去交易。">Read the levels. Let the <b>machines</b> trade.</h2>
+    <h2 data-i18n-html data-en="Observe markets. Review <b>simulations</b>." data-zh="观察市场，复核<b>模拟记录</b>。">Observe markets. Review <b>simulations</b>.</h2>
     <p class="brief" data-en="Three simulated LLM ledgers trade the S&amp;P 500 under fixed risk rules and are scored against SPY/SMH. Review the latest published snapshot, or search any ticker for daily technicals. Historical simulation only — not investment advice." data-zh="三套模拟 LLM 账本按固定风控规则覆盖标普 500，并以 SPY/SMH 为基准计分。可回看最近发布的交易快照，或搜索代码查看日线技术面。仅为历史模拟，不构成投资建议。">Three simulated LLM ledgers trade the S&amp;P 500 under fixed risk rules and are scored against SPY/SMH. Review the latest published snapshot, or search any ticker for daily technicals. Historical simulation only — not investment advice.</p>
+    <nav class="arena-modes" aria-label="Research modes" data-aria-en="Research modes" data-aria-zh="研究模式">
+      <a href="#taDash"><b data-en="OBSERVE" data-zh="观察">OBSERVE</b><span data-en="Quote snapshots and daily history · read only" data-zh="报价快照与日线历史 · 只读">Quote snapshots and daily history · read only</span></a>
+      <a href="#apDash"><b data-en="REPLAY" data-zh="回放">REPLAY</b><span data-en="Published paper ledgers · historical records" data-zh="已发布模拟账本 · 历史记录">Published paper ledgers · historical records</span></a>
+      <a href="#quantFoundry"><b data-en="EXPERIMENTS" data-zh="实验">EXPERIMENTS</b><span data-en="Completed daily bars · isolated local runs" data-zh="已完成日线 · 隔离的本地实验">Completed daily bars · isolated local runs</span></a>
+      <button type="button" id="paperModeUnavailable" disabled aria-describedby="paperModeNote"><b data-en="INTRADAY PAPER · NOT ENABLED" data-zh="盘中模拟 · 未启用">INTRADAY PAPER · NOT ENABLED</b><span id="paperModeNote" data-en="Fresh authorized feed required · no execution controls here" data-zh="需要时效有效且获授权的数据源 · 本页没有执行控件">Fresh authorized feed required · no execution controls here</span></button>
+    </nav>
+    <p class="arena-mode-note" data-en="Mode, exchange session and data freshness are independent. This page sends no orders and uses no real money." data-zh="研究模式、交易时段与数据时效分别判断。本页不发送订单，不使用真实资金。">Mode, exchange session and data freshness are independent. This page sends no orders and uses no real money.</p>
+    <dl class="arena-status-grid">
+      <div><dt data-en="Feed" data-zh="数据源">Feed</dt><dd id="arenaFeedStatus" data-en="UNKNOWN · quote snapshots; entitlement and delay unverified" data-zh="未知 · 报价快照；权益与延迟未验证">UNKNOWN · quote snapshots; entitlement and delay unverified</dd></div>
+      <div><dt data-en="Execution" data-zh="执行">Execution</dt><dd data-en="NONE · intraday Paper unavailable" data-zh="无 · 盘中 Paper 未启用">NONE · intraday Paper unavailable</dd></div>
+      <div><dt data-en="Research clock" data-zh="研究时钟">Research clock</dt><dd data-en="Daily bars: completed sessions. Ledger: published record timestamps (UTC)." data-zh="日线：已完成交易日。账本：已发布记录时间（UTC）。">Daily bars: completed sessions. Ledger: published record timestamps (UTC).</dd></div>
+    </dl>
     <button class="brief-cta" id="openBriefBtn" type="button">
       <span class="brief-cta__tag" data-en="▣ TODAY" data-zh="▣ 今日">▣ TODAY</span>
       <span class="brief-cta__main" data-en="PRE-MARKET BRIEFING" data-zh="盘前简报">PRE-MARKET BRIEFING</span>
@@ -296,17 +289,97 @@
     <div class="strip">
       <span class="chip closed" id="statusChip"><span class="d"></span><span id="statusTxt">—</span></span>
       <span class="chip flat" id="sentChip"><span data-en="NEWS" data-zh="情绪">NEWS</span> · <span id="sentTxt">—</span></span>
-      <span class="chip open" id="adminChip" hidden style="cursor:pointer" title="Click to lock again"><span data-en="🔓 ADMIN UNLOCKED" data-zh="🔓 管理员已解锁">🔓 ADMIN UNLOCKED</span></span>
+      <span class="chip open" id="adminChip" hidden style="cursor:pointer" title="Clear the quota key; this is not account authentication"><span data-en="QUOTA KEY SET" data-zh="已设置配额密钥">QUOTA KEY SET</span></span>
     </div>
     <div class="opencd" id="openCd">
       <span class="opencd-label" id="cdLabel">US MARKET OPENS IN</span>
       <span class="opencd-clock" id="cdClock" aria-live="off">--:--:--</span>
-      <span class="opencd-sub" data-en="NYSE · 09:30–16:00 ET · Mon–Fri" data-zh="纽交所 · 美东 09:30–16:00 · 周一至周五">NYSE · 09:30–16:00 ET · Mon–Fri</span>
+      <span class="opencd-sub" data-en="NYSE core equities · holidays and early closes apply" data-zh="NYSE 常规股票交易时段 · 按节假日与提前收盘日历">NYSE core equities · holidays and early closes apply</span>
+      <span class="opencd-sub" id="sessionTimes">—</span>
     </div>
   </section>
 
+  <!-- ===== Part 4 §18.2.1 · PUBLISHED TRADE SNAPSHOT ===== -->
+  <div class="arena-workspace">
+  <section class="picks" id="picksDash" aria-label="Published trade snapshot" data-aria-en="Published trade snapshot" data-aria-zh="已发布交易快照">
+    <div class="picks-topbar">
+      <div class="sec-label" style="margin-bottom:0"><span data-en="Published Trade Snapshot" data-zh="已发布交易快照">Published Trade Snapshot</span></div>
+      <div class="picks-meta">
+        <span class="chip" id="picksDateChip">—</span>
+        <span class="chip" id="picksRegimeChip">—</span>
+      </div>
+    </div>
+    <p class="picks-note" id="picksNote"></p>
+    <h2 data-en="Published watchlist" data-zh="已发布观察列表">Published watchlist</h2>
+    <p data-en="Symbols come from the published quote allowlist. Select one to inspect available daily data, independently of archived proposals below." data-zh="标的来自已发布报价白名单。选择后查看可用日线数据，与下方归档提案分开。">Symbols come from the published quote allowlist. Select one to inspect available daily data, independently of archived proposals below.</p>
+    <div id="arenaWatchlist"><a href="/arena-picks.json" data-en="Read source watchlist (JSON)" data-zh="查看观察列表源文件（JSON）">Read source watchlist (JSON)</a></div>
+    <details class="arena-proposals"><summary data-en="Archived proposals and reasons" data-zh="归档提案与理由">Archived proposals and reasons</summary><p id="picksProvenance"></p><a href="/arena-picks.json" data-en="Inspect source snapshot (JSON)" data-zh="查看源快照（JSON）">Inspect source snapshot (JSON)</a><div class="picks-grid" id="picksGrid"></div></details>
+  </section>
+
+  <!-- ===== V13 · US STOCK TA DASHBOARD (key levels / MAs / pivots / special points) ===== -->
+  <section class="ta" id="taDash" data-arena-mode="observe" aria-label="US stock technical analysis dashboard" data-aria-en="US stock technical analysis dashboard" data-aria-zh="美股技术分析仪表板">
+    <div class="ta-topbar">
+      <div class="sec-label" style="margin-bottom:0"><span data-en="Search Any S&amp;P 500 Ticker" data-zh="搜索标普 500 任意代码">Search Any S&amp;P 500 Ticker</span></div>
+      <div class="ta-searchwrap">
+        <input id="taSearch" class="ta-search" type="search" autocomplete="off" spellcheck="false"
+               placeholder="Search ticker / name… (Enter loads any US symbol)"
+               data-en-ph="Search ticker / name… (Enter loads any US symbol)" data-zh-ph="搜索代码/名称…（回车可加载任意美股代码）"
+               aria-label="Search stocks" data-aria-en="Search stocks" data-aria-zh="搜索股票">
+        <div class="ta-suggest" id="taSuggest" hidden role="listbox"
+             aria-label="Ticker suggestions" data-aria-en="Ticker suggestions" data-aria-zh="股票代码建议"></div>
+      </div>
+    </div>
+    <p id="arenaSelection" role="status" data-en="Select a watchlist symbol or search to inspect daily data." data-zh="选择观察列表标的或搜索，查看日线数据。">Select a watchlist symbol or search to inspect daily data.</p>
+    <div class="ta-panelhost panel" id="taPanel" tabindex="-1" aria-label="Instrument detail" data-aria-en="Instrument detail" data-aria-zh="标的详情">
+      <div class="ta-fallback">
+        <p data-en="Ticker calculations require JavaScript and available daily history. Read both reference methods below, or inspect the published source data." data-zh="个股计算需要 JavaScript 与可用日线历史。下方可顺序阅读两种参考方法，或查看已发布源数据。">Ticker calculations require JavaScript and available daily history. Read both reference methods below, or inspect the published source data.</p>
+        <article><h3 data-en="PRE-MARKET · plan the next session" data-zh="盘前 · 计划下一交易日">PRE-MARKET · plan the next session</h3><p data-en="Use the latest completed session’s high, low and close to calculate the next session’s classic pivots. PP = (H + L + C) / 3; R1 = 2PP − L; S1 = 2PP − H." data-zh="用最近完整交易日的高、低、收盘计算下一交易日的经典枢轴点。PP = (H + L + C) / 3；R1 = 2PP − L；S1 = 2PP − H。">Use the latest completed session’s high, low and close to calculate the next session’s classic pivots. PP = (H + L + C) / 3; R1 = 2PP − L; S1 = 2PP − H.</p></article>
+        <article><h3 data-en="POST-MARKET · review the last session" data-zh="盘后 · 复盘最近交易日">POST-MARKET · review the last session</h3><p data-en="Calculate reference pivots from the preceding session, then compare them with the latest completed session’s range and close to review tested levels. Missing daily data cannot establish a test or breakout." data-zh="用前一交易日计算参考枢轴点，再对照最近完整交易日的价格区间和收盘，复盘触及的价位。日线数据缺失时不能确认触及或突破。">Calculate reference pivots from the preceding session, then compare them with the latest completed session’s range and close to review tested levels. Missing daily data cannot establish a test or breakout.</p></article>
+        <a href="/arena-picks.json" data-en="Read the published trade snapshot (JSON)" data-zh="阅读已发布交易快照（JSON）">Read the published trade snapshot (JSON)</a>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel pad arena-risk" id="arenaRisk" aria-labelledby="arenaRiskTitle">
+    <h2 id="arenaRiskTitle" data-en="Risk &amp; execution" data-zh="风险与执行">Risk &amp; execution</h2>
+    <p data-en="Read-only research. Selecting a symbol opens its daily analysis; it does not submit an order." data-zh="只读研究。选择标的仅打开其日线分析，不提交订单。">Read-only research. Selecting a symbol opens its daily analysis; it does not submit an order.</p>
+    <p data-en="Archived entry, stop and target levels describe the published proposal, not current executable prices. Model confidence is not a calibrated win probability." data-zh="归档的入场、止损与目标价描述当时提案，并非当前可执行价格。模型置信度不等于经校准的胜率。">Archived entry, stop and target levels describe the published proposal, not current executable prices. Model confidence is not a calibrated win probability.</p>
+    <a href="#quantFoundry" data-en="Inspect QF-01 daily constraints and assumptions ↓" data-zh="查看 QF-01 日线约束与假设 ↓">Inspect QF-01 daily constraints and assumptions ↓</a>
+  </aside>
+  </div>
+
+  <!-- ===== V5/V6 · ARENA AUTOPILOT (S/P/T simulated ledgers, Part 4 §17) ===== -->
+  <section class="ap" id="apDash" data-arena-mode="replay" aria-label="Arena Autopilot dashboard — three model ledgers" data-aria-en="Arena Autopilot dashboard — three model ledgers" data-aria-zh="竞技场自动驾驶仪表板——三套模型账本">
+    <div class="ap-topbar">
+      <div class="sec-label" style="margin-bottom:0"><span data-en="Autopilot" data-zh="自动交易">Autopilot</span></div>
+      <div class="ap-meta">
+        <span class="chip" id="apDayChip">—</span>
+        <span class="chip" id="apUpdChip">—</span>
+      </div>
+    </div>
+    <p class="ap-note" id="apNote"></p>
+
+    <div class="ap-chartwrap panel">
+      <div class="ap-chart-hd"><div class="ap-legend" id="apLegend"></div></div>
+      <svg class="ap-chart" id="apChart" viewBox="0 0 690 264" role="img" aria-label="Model S/P/T equity curves vs SPY/SMH" data-aria-en="Model S/P/T equity curves vs SPY/SMH" data-aria-zh="S/P/T 模型权益曲线与 SPY/SMH 对比" aria-describedby="apChartSummary"></svg>
+      <p class="sr-only" id="apChartSummary"></p>
+    </div>
+
+    <div class="ap-models" id="apModels"></div>
+    <section id="arenaTimeline" aria-labelledby="arenaTimelineTitle">
+      <h2 id="arenaTimelineTitle" data-en="Decision &amp; execution timeline" data-zh="决策与执行时间线">Decision &amp; execution timeline</h2>
+      <p data-en="Published fills and risk rejections, newest first. These records are not an intraday replay engine. Missing decision inputs remain unavailable." data-zh="已发布成交与风控拒绝记录，按时间倒序。这些记录不代表盘中回放引擎；缺失决策输入保持未提供。">Published fills and risk rejections, newest first. These records are not an intraday replay engine. Missing decision inputs remain unavailable.</p>
+      <div id="arenaTimelineRecords"><a href="/arena-ledger.json" data-en="Read source ledger (JSON)" data-zh="查看账本源文件（JSON）">Read source ledger (JSON)</a></div>
+    </section>
+  </section>
+
+  <div class="panel pad news" aria-label="Published market signal" data-aria-en="Published market signal" data-aria-zh="已发布市场信号">
+    <div class="sec-label"><span data-en="Published Market Signal" data-zh="已发布市场信号">Published Market Signal</span> <span id="newsDate"></span></div>
+    <div id="newsList"><div class="empty">…</div></div>
+  </div>
+
   <!-- ===== QF-01 · GS-QUANT-INSPIRED, BROWSER-NATIVE MODEL LAB ===== -->
-  <section class="qm" id="quantFoundry" aria-labelledby="qmTitle">
+  <section class="qm" id="quantFoundry" data-arena-mode="experiments" aria-labelledby="qmTitle">
     <header class="qm-header">
       <div class="qm-ident">
         <span class="qm-eyebrow" data-en="Q-FOUNDRY // INDEPENDENT RESEARCH ENGINE" data-zh="Q-FOUNDRY // 独立研究引擎">Q-FOUNDRY // INDEPENDENT RESEARCH ENGINE</span>
@@ -355,7 +428,7 @@
           <label for="qmRebalance"><span data-en="rebalance cadence" data-zh="再平衡周期">rebalance cadence</span><select id="qmRebalance"><option value="10">10D</option><option value="20" selected>20D</option><option value="40">40D</option></select></label>
         </fieldset>
 
-        <button class="qm-compile" id="qmCompile" type="button"><span data-en="COMPILE LIVE WALK-FORWARD" data-zh="编译实时滚动实验">COMPILE LIVE WALK-FORWARD</span><i aria-hidden="true">↗</i></button>
+        <button class="qm-compile" id="qmCompile" type="button"><span data-en="COMPILE HISTORICAL EXPERIMENT" data-zh="编译历史实验">COMPILE HISTORICAL EXPERIMENT</span><i aria-hidden="true">↗</i></button>
         <p class="qm-status" id="qmStatus" data-kind="idle" role="status" aria-live="polite">MODEL COLD</p>
       </aside>
 
@@ -418,68 +491,7 @@
     </div>
   </section>
 
-  <!-- ===== Part 4 §18.2.1 · PUBLISHED TRADE SNAPSHOT ===== -->
-  <section class="picks" id="picksDash" aria-label="Published trade snapshot" data-aria-en="Published trade snapshot" data-aria-zh="已发布交易快照">
-    <div class="picks-topbar">
-      <div class="sec-label" style="margin-bottom:0"><span data-en="Published Trade Snapshot" data-zh="已发布交易快照">Published Trade Snapshot</span></div>
-      <div class="picks-meta">
-        <span class="chip" id="picksDateChip">—</span>
-        <span class="chip" id="picksRegimeChip">—</span>
-      </div>
-    </div>
-    <p class="picks-note" id="picksNote"></p>
-    <div class="picks-grid" id="picksGrid"></div>
-  </section>
-
-  <!-- ===== V13 · US STOCK TA DASHBOARD (key levels / MAs / pivots / special points) ===== -->
-  <section class="ta" id="taDash" aria-label="US stock technical analysis dashboard" data-aria-en="US stock technical analysis dashboard" data-aria-zh="美股技术分析仪表板">
-    <div class="ta-topbar">
-      <div class="sec-label" style="margin-bottom:0"><span data-en="Search Any S&amp;P 500 Ticker" data-zh="搜索标普 500 任意代码">Search Any S&amp;P 500 Ticker</span></div>
-      <div class="ta-searchwrap">
-        <input id="taSearch" class="ta-search" type="search" autocomplete="off" spellcheck="false"
-               placeholder="Search ticker / name… (Enter loads any US symbol)"
-               data-en-ph="Search ticker / name… (Enter loads any US symbol)" data-zh-ph="搜索代码/名称…（回车可加载任意美股代码）"
-               aria-label="Search stocks" data-aria-en="Search stocks" data-aria-zh="搜索股票">
-        <div class="ta-suggest" id="taSuggest" hidden role="listbox"
-             aria-label="Ticker suggestions" data-aria-en="Ticker suggestions" data-aria-zh="股票代码建议"></div>
-      </div>
-    </div>
-    <div class="ta-panelhost panel" id="taPanel">
-      <div class="ta-fallback">
-        <p data-en="Ticker calculations require JavaScript and available daily history. Read both reference methods below, or inspect the published source data." data-zh="个股计算需要 JavaScript 与可用日线历史。下方可顺序阅读两种参考方法，或查看已发布源数据。">Ticker calculations require JavaScript and available daily history. Read both reference methods below, or inspect the published source data.</p>
-        <article><h3 data-en="PRE-MARKET · plan the next session" data-zh="盘前 · 计划下一交易日">PRE-MARKET · plan the next session</h3><p data-en="Use the latest completed session’s high, low and close to calculate the next session’s classic pivots. PP = (H + L + C) / 3; R1 = 2PP − L; S1 = 2PP − H." data-zh="用最近完整交易日的高、低、收盘计算下一交易日的经典枢轴点。PP = (H + L + C) / 3；R1 = 2PP − L；S1 = 2PP − H。">Use the latest completed session’s high, low and close to calculate the next session’s classic pivots. PP = (H + L + C) / 3; R1 = 2PP − L; S1 = 2PP − H.</p></article>
-        <article><h3 data-en="POST-MARKET · review the last session" data-zh="盘后 · 复盘最近交易日">POST-MARKET · review the last session</h3><p data-en="Calculate reference pivots from the preceding session, then compare them with the latest completed session’s range and close to review tested levels. Missing daily data cannot establish a test or breakout." data-zh="用前一交易日计算参考枢轴点，再对照最近完整交易日的价格区间和收盘，复盘触及的价位。日线数据缺失时不能确认触及或突破。">Calculate reference pivots from the preceding session, then compare them with the latest completed session’s range and close to review tested levels. Missing daily data cannot establish a test or breakout.</p></article>
-        <a href="/arena-picks.json" data-en="Read the published trade snapshot (JSON)" data-zh="阅读已发布交易快照（JSON）">Read the published trade snapshot (JSON)</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== V5/V6 · ARENA AUTOPILOT (S/P/T simulated ledgers, Part 4 §17) ===== -->
-  <section class="ap" id="apDash" aria-label="Arena Autopilot dashboard — three model ledgers" data-aria-en="Arena Autopilot dashboard — three model ledgers" data-aria-zh="竞技场自动驾驶仪表板——三套模型账本">
-    <div class="ap-topbar">
-      <div class="sec-label" style="margin-bottom:0"><span data-en="Autopilot" data-zh="自动交易">Autopilot</span></div>
-      <div class="ap-meta">
-        <span class="chip" id="apDayChip">—</span>
-        <span class="chip" id="apUpdChip">—</span>
-      </div>
-    </div>
-    <p class="ap-note" id="apNote"></p>
-
-    <div class="ap-chartwrap panel">
-      <div class="ap-chart-hd"><div class="ap-legend" id="apLegend"></div></div>
-      <svg class="ap-chart" id="apChart" viewBox="0 0 690 264" role="img" aria-label="Model S/P/T equity curves vs SPY/SMH" data-aria-en="Model S/P/T equity curves vs SPY/SMH" data-aria-zh="S/P/T 模型权益曲线与 SPY/SMH 对比" aria-describedby="apChartSummary"></svg>
-      <p class="sr-only" id="apChartSummary"></p>
-    </div>
-
-    <div class="ap-models" id="apModels"></div>
-  </section>
-
-  <div class="panel pad news" aria-label="Published market signal" data-aria-en="Published market signal" data-aria-zh="已发布市场信号">
-    <div class="sec-label"><span data-en="Published Market Signal" data-zh="已发布市场信号">Published Market Signal</span> <span id="newsDate"></span></div>
-    <div id="newsList"><div class="empty">…</div></div>
-  </div>
-
-  <footer class="foot" data-i18n-html data-en="For entertainment only — not investment advice. Quotes and daily history are real where available, otherwise modeled. Autopilot trades three simulated $10,000 ledgers (S/P/T) under strict risk limits — no real money, no real orders. Public live quotes are limited to symbols in the latest published trade snapshot." data-zh="仅供娱乐——非投资建议。报价与日线历史尽可能为真实数据，否则为建模。Autopilot 交易三本各 $10,000 的模拟账本（S/P/T），在严格风控限制下运作——无真实资金，无真实下单。公开实时行情仅覆盖最近一次发布的交易快照所含代码。">For entertainment only — not investment advice. Quotes and daily history are real where available, otherwise modeled. Autopilot trades three simulated $10,000 ledgers (S/P/T) under strict risk limits — no real money, no real orders. Public live quotes are limited to symbols in the latest published trade snapshot.</footer>
+  <footer class="foot" data-i18n-html data-en="For entertainment only — not investment advice. Quotes and daily history show provider snapshots when available; missing inputs remain unavailable. Autopilot trades three simulated $10,000 ledgers (S/P/T) under strict risk limits — no real money, no real orders. Public quote snapshots are limited to the published research allowlist." data-zh="仅供娱乐——非投资建议。报价与日线历史在可用时显示供应商快照；缺失输入保持不可用。Autopilot 交易三本各 $10,000 的模拟账本（S/P/T），在严格风控限制下运作——无真实资金，无真实下单。公开报价快照仅覆盖已发布的研究白名单。">For entertainment only — not investment advice. Quotes and daily history show provider snapshots when available; missing inputs remain unavailable. Autopilot trades three simulated $10,000 ledgers (S/P/T) under strict risk limits — no real money, no real orders. Public quote snapshots are limited to the published research allowlist.</footer>
 </main>
 
 <div id="briefing" hidden></div>

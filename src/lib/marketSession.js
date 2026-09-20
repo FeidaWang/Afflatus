@@ -1,6 +1,23 @@
 const ET_ZONE = 'America/New_York';
 const SESSION_CLOSE_MINUTES = 16 * 60;
+// NYSE published core-equity early closes, verified through 2028.
+const EARLY_CLOSE_DATES = new Set(['2025-07-03', '2025-11-28', '2025-12-24', '2026-11-27', '2026-12-24', '2027-11-26', '2028-07-03', '2028-11-24']);
+export function isEarlyCloseSession(date, extraEarlyCloses = []) {
+  return EARLY_CLOSE_DATES.has(date) || extraEarlyCloses.includes(date);
+}
+export function marketCloseMinutes(date, extraEarlyCloses = []) {
+  return isEarlyCloseSession(date, extraEarlyCloses) ? 13 * 60 : SESSION_CLOSE_MINUTES;
+}
+export function isValidMarketDate(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+export function hasVerifiedNyseCalendar(date) {
+  return isValidMarketDate(date) && Number(date.slice(0, 4)) >= 2025 && Number(date.slice(0, 4)) <= 2028;
+}
 
 function isoDate(date) {
   return date.toISOString().slice(0, 10);
@@ -55,7 +72,8 @@ function easterSunday(year) {
 
 export function nyseHolidayDates(year) {
   return new Set([
-    observedFixedHoliday(year, 1, 1),
+    ...(year === 2025 ? [utcDate(2025, 1, 9)] : []), // Announced national day of mourning.
+    ...(utcDate(year, 1, 1).getUTCDay() === 6 ? [] : [observedFixedHoliday(year, 1, 1)]),
     nthWeekday(year, 1, 1, 3), // Martin Luther King Jr. Day
     nthWeekday(year, 2, 1, 3), // Washington's Birthday
     addDays(easterSunday(year), -2),
@@ -88,23 +106,19 @@ export function easternTimeParts(value = new Date()) {
 }
 
 export function isNyseSession(dateString, extraHolidays = []) {
-  if (!DATE_RE.test(dateString)) return false;
+  if (!isValidMarketDate(dateString)) return false;
   const [year, month, day] = dateString.split('-').map(Number);
   const date = utcDate(year, month, day);
   const weekday = date.getUTCDay();
   if (weekday === 0 || weekday === 6) return false;
   const holidays = nyseHolidayDates(year);
-  // When New Year's Day lands on Saturday, its observed Friday belongs to the
-  // prior calendar year (for example 2021-12-31 for New Year 2022).
-  const nextNewYearObserved = isoDate(observedFixedHoliday(year + 1, 1, 1));
-  if (nextNewYearObserved.startsWith(`${year}-`)) holidays.add(nextNewYearObserved);
   for (const holiday of extraHolidays) holidays.add(holiday);
   return !holidays.has(dateString);
 }
 
 /** Return the Nth NYSE session strictly after dateString (DST-proof). */
 export function addNyseSessions(dateString, amount = 1, extraHolidays = []) {
-  if (!DATE_RE.test(String(dateString || '')) || !Number.isInteger(amount) || amount < 1) {
+  if (!isValidMarketDate(dateString) || !Number.isInteger(amount) || amount < 1) {
     throw new TypeError('addNyseSessions requires YYYY-MM-DD and a positive integer amount');
   }
   const cursor = utcDate(...dateString.split('-').map(Number));
@@ -122,7 +136,7 @@ export function lastCompletedMarketSession(value = new Date(), options = {}) {
   const { date, minutes } = easternTimeParts(value);
   const extraHolidays = options.extraHolidays || [];
   let candidate = utcDate(...date.split('-').map(Number));
-  if (minutes < (options.closeMinutes ?? SESSION_CLOSE_MINUTES)) {
+  if (minutes < (options.closeMinutes ?? marketCloseMinutes(date, options.extraEarlyCloses || []))) {
     candidate = addDays(candidate, -1);
   }
   while (!isNyseSession(isoDate(candidate), extraHolidays)) {
@@ -198,4 +212,34 @@ export function removeHistoryCache(storage, symbol) {
     if (key?.startsWith(prefix)) keys.push(key);
   }
   keys.forEach((key) => storage.removeItem(key));
+}
+
+
+// Core-equity calendar only: no inferred extended-session or halt coverage.
+// Use the offset at local midday on the target date, so DST weekends do not
+// turn next-open countdowns into fixed multiples of 24 hours.
+function sessionTimeMs(date, minutes) {
+  const midday = Date.parse(`${date}T12:00:00Z`);
+  const offsetMinutes = easternTimeParts(new Date(midday)).minutes - 12 * 60;
+  return Date.parse(`${date}T00:00:00Z`) + (minutes - offsetMinutes) * 60_000;
+}
+export function assessNyseSession(value = new Date(), options = {}) {
+  const now = value.getTime();
+  if (!Number.isFinite(now)) return { state: 'unknown', regularOpen: false, nextOpenMs: null, closeMs: null, date: null };
+  const { date, minutes } = easternTimeParts(value);
+  const known = hasVerifiedNyseCalendar(date);
+  const session = isNyseSession(date, options.extraHolidays || []);
+  const closeMinutes = marketCloseMinutes(date, options.extraEarlyCloses || []);
+  const regularOpen = known && session && minutes >= 570 && minutes < closeMinutes;
+  const state = !known ? 'unknown' : !session ? 'closed' : minutes < 570 ? 'prepare' : minutes < 575 ? 'warmup' : minutes < closeMinutes - 15 ? 'active' : minutes < closeMinutes ? 'close-only' : 'closed';
+  let nextOpenMs = null;
+  if (known) {
+    let candidate = date;
+    for (let i = 0; i < 15; i++) {
+      if (!hasVerifiedNyseCalendar(candidate)) break;
+      if (isNyseSession(candidate, options.extraHolidays || []) && sessionTimeMs(candidate, 570) > now) { nextOpenMs = sessionTimeMs(candidate, 570); break; }
+      candidate = isoDate(addDays(new Date(`${candidate}T00:00:00Z`), 1));
+    }
+  }
+  return { state, date, regularOpen, closeMinutes, earlyClose: isEarlyCloseSession(date, options.extraEarlyCloses || []), closeMs: known && session ? sessionTimeMs(date, closeMinutes) : null, nextOpenMs };
 }

@@ -402,6 +402,7 @@ function validateLiveQuoteReceipt(receipt, { symbol, run, executedAt }, errors, 
     symbol,
     refPx: receipt?.refPx,
     executedAt: executedAt || receipt?.observedAt,
+    executionWindow: run.window,
   });
   if (!validation.ok) {
     errors.push(`${tag}: ${validation.error}`);

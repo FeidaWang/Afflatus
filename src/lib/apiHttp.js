@@ -26,11 +26,12 @@ export function sendApiError(res, status, code, requestId, details = {}) {
   });
 }
 
-export async function fetchWithTimeout(url, init = {}, timeoutMs = 6000) {
+// Optional response reader keeps the deadline active through body consumption.
+export async function fetchWithTimeout(url, init = {}, timeoutMs = 6000, readResponse = response => response) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { ...init, signal: controller.signal });
+    return await readResponse(await fetch(url, { ...init, signal: controller.signal }));
   } finally {
     clearTimeout(timer);
   }

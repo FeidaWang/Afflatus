@@ -341,6 +341,7 @@
 <script type="module" src="/src/entry/viewport.js"></script>
 <script type="module" src="/src/pages/sectors.js"></script>
 <link rel="stylesheet" href="/styles/reading-navigation.css">
+<link rel="stylesheet" href="/styles/research-evidence.css">
 </head>
 <body class="sectors-page">
 <main class="shell">
@@ -356,6 +357,12 @@
     </nav>
   </header>
 
+  <section class="researchEvidence" aria-label="Evidence guide" data-aria-en="Evidence guide" data-aria-zh="证据说明">
+    <h2 data-en="An archived thesis, with inspectable relationships" data-zh="可核对关系证据的历史研究">An archived thesis, with inspectable relationships</h2>
+    <p data-en="ARCHIVE · Chapters describe a published view of the AI ecosystem. A page refresh does not verify today's companies or markets. Read source dates before using a claim." data-zh="历史档案 · 章节描述已发布的 AI 生态观点。刷新页面不代表已核验今天的公司或市场；使用论点前请核对来源日期。">ARCHIVE · Chapters describe a published view of the AI ecosystem. A page refresh does not verify today's companies or markets. Read source dates before using a claim.</p>
+    <p data-en="ASSUMPTIONS · Relationship weights and scenario valuations are editorial inputs, not measured correlations or observed returns. Measurements retain their stated units and historical windows." data-zh="推演假设 · 关系权重与情景估值是研究输入，不是实测相关系数或已实现收益。测量值保留各自注明的单位和历史窗口。">ASSUMPTIONS · Relationship weights and scenario valuations are editorial inputs, not measured correlations or observed returns. Measurements retain their stated units and historical windows.</p>
+    <a href="#relationshipReader" data-en="Read relationships without the graph ↓" data-zh="直接阅读图谱关系文字版 ↓">Read relationships without the graph ↓</a>
+  </section>
   <section class="rivalryHero" aria-labelledby="rivalryTitle">
     <div class="rivalryHeroGrid" aria-hidden="true"></div>
     <div class="rivalryHeroSignal rivalryHeroSignal--us" aria-hidden="true">US / CLOSED FRONTIER</div>
@@ -467,6 +474,14 @@
       <div id="mwTake" class="take"></div>
     </div>
   </section>
+  <section class="researchEvidence" id="relationshipReader" aria-labelledby="relationshipHeading">
+    <h2 id="relationshipHeading" data-en="Relationship evidence" data-zh="关系证据">Relationship evidence</h2>
+    <p id="relationshipSource" data-en="Graph archive metadata unavailable until loaded." data-zh="图谱档案元数据加载后显示。">Graph archive metadata unavailable until loaded.</p>
+    <label for="relationshipSelect" data-en="Select a directed relationship" data-zh="选择一条有方向的关系">Select a directed relationship</label>
+    <select id="relationshipSelect" disabled><option data-en="Loading relationships…" data-zh="正在加载关系…">Loading relationships…</option></select>
+    <div id="relationshipEvidence" aria-live="polite"></div>
+    <a href="/sectors-ecosystem.json" data-en="Open graph archive dataset" data-zh="打开图谱档案数据">Open graph archive dataset</a>
+  </section>
   <section class="rivalrySection rivalrySection--labs" aria-labelledby="labsHeading">
     <header class="rivalrySectionHead">
       <span>02 / FRONTIER LABS</span>
@@ -503,7 +518,7 @@
     <header class="rivalrySectionHead">
       <span>05 / OPEN-WEIGHTS LETTER AUDIT</span>
       <h2 id="letterHeading" tabindex="-1" data-en="Who signed, who joined, and whose absence matters" data-zh="谁已签署、谁是新增、谁的缺席最重要">Who signed, who joined, and whose absence matters</h2>
-      <p data-en="All 50 companies visible in the supplied screenshot are transcribed below and compared with the latest NVIDIA-hosted PDF snapshot. A signature supports policy portability; it does not prove that the signer publishes frontier weights." data-zh="已录入截图中可见的全部 50 家公司，并与 NVIDIA 当前托管的 PDF 快照逐项对照。签名代表支持政策层面的可迁移性，并不证明签署方会发布前沿权重。">All 50 companies visible in the supplied screenshot are transcribed below and compared with the latest NVIDIA-hosted PDF snapshot. A signature supports policy portability; it does not prove that the signer publishes frontier weights.</p>
+      <p data-en="All 50 companies visible in the supplied screenshot are transcribed below and compared with the archived NVIDIA-hosted PDF snapshot. A signature supports policy portability; it does not prove that the signer publishes frontier weights." data-zh="已录入截图中可见的全部 50 家公司，并与 NVIDIA 托管的历史 PDF 快照逐项对照。签名代表支持政策层面的可迁移性，并不证明签署方会发布前沿权重。">All 50 companies visible in the supplied screenshot are transcribed below and compared with the archived NVIDIA-hosted PDF snapshot. A signature supports policy portability; it does not prove that the signer publishes frontier weights.</p>
     </header>
     <div id="rivalryLetter"></div>
   </section>

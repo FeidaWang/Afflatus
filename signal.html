@@ -28,14 +28,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Project Afflatus · Signal — O5 Reserve Containment</title>
-<meta name="description" content="Signal: current Federal Reserve operations, live 10-year and 30-year Treasury yields, and Trump-administration industry priorities — evidence-first, bilingual and not investment advice.">
+<meta name="description" content="Signal: archived Federal Reserve research, timestamped 10-year and 30-year Treasury yield observations, and policy assumptions — evidence-first and bilingual.">
 <meta name="theme-color" content="#0c0d0a">
 <link rel="canonical" href="https://feida.au/signal.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Project Afflatus">
   <meta property="og:title" content="Project Afflatus · Signal — O5 Reserve Containment">
-  <meta property="og:description" content="Current Fed operations, live 10Y/30Y Treasury yields and Trump-administration industry priorities. Desk research, not advice.">
+  <meta property="og:description" content="Archived Fed research, timestamped 10Y/30Y yield observations and policy assumptions. Desk research, not advice.">
   <meta property="og:url" content="https://feida.au/signal.html">
   <meta property="og:locale" content="en_AU">
   <meta property="og:locale:alternate" content="zh_CN">
@@ -47,7 +47,7 @@
   <meta property="og:image:alt" content="Signal macroeconomic research dossier">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Project Afflatus · Signal — O5 Reserve Containment">
-  <meta name="twitter:description" content="Current Fed operations, live 10Y/30Y Treasury yields and Trump-administration industry priorities. Desk research, not advice.">
+  <meta name="twitter:description" content="Archived Fed research, timestamped 10Y/30Y yield observations and policy assumptions. Desk research, not advice.">
   <meta name="twitter:image" content="https://feida.au/assets/og/signal-en.jpg">
   <meta name="twitter:image:alt" content="Signal macroeconomic research dossier">
   <script type="application/ld+json" data-afflatus-route-schema="signal" lang="en-AU">
@@ -89,7 +89,7 @@
       "@id": "https://feida.au/signal.html#webpage",
       "url": "https://feida.au/signal.html",
       "name": "Signal — Federal Reserve Watch · Project Afflatus",
-      "description": "Current Federal Reserve operations, live 10-year and 30-year Treasury yields, and Trump-administration industry priorities. Desk research, not advice.",
+      "description": "Archived Federal Reserve research, timestamped 10-year and 30-year Treasury observations, and policy assumptions. Desk research, not advice.",
       "inLanguage": [
         "en-AU",
         "zh-CN"
@@ -282,13 +282,14 @@
 <script type="module" src="/src/entry/dataBridge.js"></script>
 <script type="module" src="/src/entry/viewport.js"></script>
 <link rel="stylesheet" href="/styles/reading-navigation.css">
+<link rel="stylesheet" href="/styles/research-evidence.css">
 </head>
 <body class="signal-page scp">
 <div class="scpbg" aria-hidden="true"><canvas id="scpCanvas"></canvas><div class="wm"><b>CLASSIFIED</b></div></div>
 <div class="readProgress" aria-hidden="true"></div>
 
 <nav class="chapterRail" data-reading-nav aria-label="Chapter navigation" data-aria-en="Chapter navigation" data-aria-zh="章节导航">
-  <a href="#treasuryYieldBoard" data-chapter="chlive"><b>10/30</b><span data-en="Live Yields" data-zh="实时收益率">Live Yields</span></a>
+  <a href="#treasuryYieldBoard" data-chapter="chlive"><b>10/30</b><span data-en="Yield observations" data-zh="收益率观测">Yield observations</span></a>
   <a href="#ch00" data-chapter="ch00"><b>00</b><span data-en="Policy Story" data-zh="政策故事线">Policy Story</span></a>
   <a href="#ch01" data-chapter="ch01"><b>01</b><span data-en="Compass" data-zh="罗盘">Compass</span></a>
   <a href="#ch02" data-chapter="ch02"><b>02</b><span data-en="Signal Matrix" data-zh="信号矩阵">Signal Matrix</span></a>
@@ -318,6 +319,16 @@
     <a href="#ch04" data-en="Industries" data-zh="产业">Industries</a>
   </nav>
 
+  <section class="researchEvidence" aria-label="Reading guide" data-aria-en="Reading guide" data-aria-zh="阅读说明">
+    <h2 data-en="Read the evidence in three layers" data-zh="分三层阅读证据">Read the evidence in three layers</h2>
+    <p data-en="OBSERVATIONS · The yield board refreshes separately. Inspect each tenor’s timestamp; a new request does not make old observations current." data-zh="观测数据 · 收益率看板独立刷新。请核对每个期限的时间；重新请求不会让旧观测变成当前数据。">OBSERVATIONS · The yield board refreshes separately. Inspect each tenor’s timestamp; a new request does not make old observations current.</p>
+    <p data-en="ARCHIVE · Policy chapters and the compass describe published research. ASSUMPTIONS · Causal maps are interpretations, not measured forecasts." data-zh="历史档案 · 政策章节与鹰鸽罗盘属于已发布研究。推演假设 · 因果图表达解读，不是实测预测。">ARCHIVE · Policy chapters and the compass describe published research. ASSUMPTIONS · Causal maps are interpretations, not measured forecasts.</p>
+    <a href="#treasuryYieldBoard" data-en="Inspect yield observations ↓" data-zh="查看收益率观测 ↓">Inspect yield observations ↓</a>
+    <details id="signalEvidence"><summary data-en="Inspect archive source &amp; dates" data-zh="查看档案来源与日期">Inspect archive source &amp; dates</summary>
+      <p id="signalEvidenceDates" data-en="Archive metadata unavailable until loaded. The chapters retain their own cited dates." data-zh="档案元数据加载后显示；各章节仍保留自身引用日期。">Archive metadata unavailable until loaded. The chapters retain their own cited dates.</p>
+      <a href="/signal-events.json" data-en="Open published Signal dataset" data-zh="打开 Signal 发布数据">Open published Signal dataset</a>
+    </details>
+  </section>
   <section class="hero">
     <div class="hzbar hz" aria-hidden="true"></div>
     <div class="pad">
@@ -332,12 +343,12 @@
         <span data-en="ASSIGNED MTF:&nbsp;ALPHA-1 / EPSILON-11" data-zh="指派机动特遣队：Alpha-1 / Epsilon-11">ASSIGNED MTF:&nbsp;ALPHA-1 / EPSILON-11</span>
       </div>
       <h1 data-i18n-html data-en="ONE HAND CONTAINS THE <span class='x'>██████</span> <span class='hero-market'>MARKET</span>" data-zh="一只手收容着 <span class='x'>██████</span> <span class='hero-market'>市场</span>">ONE HAND CONTAINS THE <span class="x">██████</span> <span class="hero-market">MARKET</span></h1>
-      <p class="lead" data-en="The latest FOMC decision keeps the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes." data-zh="最近一次FOMC决议把联邦基金目标区间维持在3.50%–3.75%。纽约联储8月14日至9月14日的计划仅含170亿美元机构证券本金再投资购买，不含新增储备管理购买：这是维持充足准备金的政策执行，不是QE、紧急救市，也不是压制长端收益率。与影响FOMC十二票相比，白宫对产业政策的直接杠杆更清晰，重点覆盖AI出口、本土芯片、能源与电网、战略材料、国防供应链和住房供给。">The latest FOMC decision keeps the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes.</p>
-      <div class="heroActions" aria-label="Live market shortcuts" data-aria-en="Live market shortcuts" data-aria-zh="实时市场快捷入口">
-        <a class="heroYieldCta" href="#treasuryYieldBoard" data-en="VIEW LIVE 10Y / 30Y YIELDS ↓" data-zh="查看10年／30年期实时收益率 ↓">VIEW LIVE 10Y / 30Y YIELDS ↓</a>
+      <p class="lead" data-en="The archived July 2026 FOMC decision kept the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes." data-zh="存档的2026年7月FOMC决议把联邦基金目标区间维持在3.50%–3.75%。纽约联储8月14日至9月14日的计划仅含170亿美元机构证券本金再投资购买，不含新增储备管理购买：这是维持充足准备金的政策执行，不是QE、紧急救市，也不是压制长端收益率。与影响FOMC十二票相比，白宫对产业政策的直接杠杆更清晰，重点覆盖AI出口、本土芯片、能源与电网、战略材料、国防供应链和住房供给。">The archived July 2026 FOMC decision kept the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes.</p>
+      <div class="heroActions" aria-label="Market evidence shortcuts" data-aria-en="Market evidence shortcuts" data-aria-zh="市场证据快捷入口">
+        <a class="heroYieldCta" href="#treasuryYieldBoard" data-en="VIEW 10Y / 30Y OBSERVATIONS ↓" data-zh="查看10年／30年期收益率观测 ↓">VIEW 10Y / 30Y OBSERVATIONS ↓</a>
         <span data-en="30-SECOND REFRESH · DELAY POSSIBLE" data-zh="每30秒刷新 · 行情可能延迟">30-SECOND REFRESH · DELAY POSSIBLE</span>
       </div>
-      <div class="heroRead" id="heroRead" aria-label="Current hawk-dove reading" data-aria-en="Current hawk-dove reading" data-aria-zh="当前鹰鸽倾向">
+      <div class="heroRead" id="heroRead" aria-label="Archived hawk-dove reading" data-aria-en="Archived hawk-dove reading" data-aria-zh="档案鹰鸽倾向">
         <b id="heroHdLabel">—</b><span id="heroHdScore">(—)</span>
       </div>
       <div class="heroCountdown" aria-label="Next containment test" data-aria-en="Next containment test" data-aria-zh="下一次通胀遏制检验">
@@ -366,11 +377,11 @@
           <span class="pulse" aria-hidden="true"></span>
           <span id="operationStatusLabel" data-en="ARCHIVED SNAPSHOT · RESERVE MANAGEMENT" data-zh="历史快照 · 储备管理">ARCHIVED SNAPSHOT · RESERVE MANAGEMENT</span>
         </div>
-        <h3 id="operationBriefHeading" data-en="Current intervention posture" data-zh="近期市场干预态势">Current intervention posture</h3>
-        <p class="operationLead" data-en="The Desk is still supporting ample reserves, but the newest schedule steps down active buying: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap." data-zh="纽约联储公开市场操作台仍在维持充足准备金，但最新计划已下调主动买入：8月14日至9月14日仅安排170亿美元再投资购买，没有新增储备管理购买。这属于流动性执行，并非危机救助，也不是对长期国债收益率设上限。">The Desk is still supporting ample reserves, but the newest schedule steps down active buying: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap.</p>
+        <h3 id="operationBriefHeading" data-en="Archived intervention posture" data-zh="近期市场干预态势">Archived intervention posture</h3>
+        <p class="operationLead" data-en="In the 21 August 2026 archive, the Desk supported ample reserves with a reduced purchase schedule: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap." data-zh="在2026年8月21日档案中，纽约联储公开市场操作台以缩减购买规模的计划维持充足准备金：8月14日至9月14日仅安排170亿美元再投资购买，没有新增储备管理购买。这属于流动性执行，并非危机救助，也不是对长期国债收益率设上限。">In the 21 August 2026 archive, the Desk supported ample reserves with a reduced purchase schedule: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap.</p>
 
-        <div class="operationMetrics" aria-label="Current Federal Reserve operation metrics" data-aria-en="Current Federal Reserve operation metrics" data-aria-zh="当前美联储操作指标">
-          <div><span data-en="CURRENT REINVESTMENT" data-zh="本期再投资">CURRENT REINVESTMENT</span><b>$17.0B</b><small>14 AUG → 14 SEP</small></div>
+        <div class="operationMetrics" aria-label="Archived Federal Reserve operation metrics" data-aria-en="Archived Federal Reserve operation metrics" data-aria-zh="档案美联储操作指标">
+          <div><span data-en="ARCHIVED REINVESTMENT" data-zh="档案期再投资">ARCHIVED REINVESTMENT</span><b>$17.0B</b><small>14 AUG → 14 SEP</small></div>
           <div><span data-en="NEW RMP THIS WINDOW" data-zh="本期新增储备购买">NEW RMP THIS WINDOW</span><b>$0</b><small data-en="PRIOR WINDOW · $10B" data-zh="上期 · 100亿美元">PRIOR WINDOW · $10B</small></div>
           <div><span data-en="IORB / STANDING REPO" data-zh="准备金利率／常备回购">IORB / STANDING REPO</span><b>3.65 / 3.75%</b><small data-en="IMPLEMENTATION CORRIDOR" data-zh="政策执行走廊">IMPLEMENTATION CORRIDOR</small></div>
           <div><span data-en="ON RRP / DAILY CAP" data-zh="隔夜逆回购／每日上限">ON RRP / DAILY CAP</span><b>3.50%</b><small data-en="$160B PER COUNTERPARTY" data-zh="每一对手方1600亿美元">$160B PER COUNTERPARTY</small></div>
@@ -387,7 +398,7 @@
           </div>
           <div class="operationEntry current">
             <time datetime="2026-08-14">14 AUG</time>
-            <p data-en="The new monthly schedule removes incremental RMPs while continuing reinvestment. Read-through: reserve conditions are currently judged ample enough to downshift the pace; the long end remains market-priced." data-zh="最新月度计划取消新增储备管理购买，但继续再投资。含义是：当前准备金状况足以让操作降档；长端利率仍由市场定价。">The new monthly schedule removes incremental RMPs while continuing reinvestment. Read-through: reserve conditions are currently judged ample enough to downshift the pace; the long end remains market-priced.</p>
+            <p data-en="The archived monthly schedule removed incremental RMPs while continuing reinvestment. Interpretation at that time: reserve conditions were judged ample enough to downshift the pace; the long end remained market-priced." data-zh="档案月度计划取消新增储备管理购买，但继续再投资。当时的解读是：准备金状况足以让操作降档；长端利率仍由市场定价。">The archived monthly schedule removed incremental RMPs while continuing reinvestment. Interpretation at that time: reserve conditions were judged ample enough to downshift the pace; the long end remained market-priced.</p>
           </div>
         </div>
 
@@ -403,7 +414,7 @@
         <div class="yieldBoardHead">
           <div>
             <span class="eyebrow" data-en="U.S. TREASURY · TRADEWEB" data-zh="美国国债 · TRADEWEB">U.S. TREASURY · TRADEWEB</span>
-            <h3 id="yieldBoardHeading" data-en="Long-end live monitor" data-zh="长端收益率实时监控">Long-end live monitor</h3>
+            <h3 id="yieldBoardHeading" data-en="Long-end yield observations" data-zh="长端收益率观测">Long-end yield observations</h3>
           </div>
           <span class="syncing" data-yield-status role="status" aria-live="polite" data-en="SYNCING YIELD FEED…" data-zh="正在同步收益率…">SYNCING YIELD FEED…</span>
         </div>
@@ -434,6 +445,7 @@
           <div><span data-en="LAST QUOTE" data-zh="最新报价">LAST QUOTE</span><b data-yield-time>—</b><small data-yield-source>Tradeweb · CNBC Quote Cache</small></div>
           <button type="button" data-yield-refresh data-en="↻ REFRESH" data-zh="↻ 刷新">↻ REFRESH</button>
         </div>
+        <details class="researchEvidence"><summary data-en="Inspect observations &amp; units" data-zh="查看观测时间与单位">Inspect observations &amp; units</summary><p data-yield-inspection data-en="Observation timestamps unavailable. Yield: %; change and spread: bp. 1 bp = 0.01 percentage point." data-zh="观测时间未提供。收益率：%；变动与利差：基点。1基点 = 0.01个百分点。">Observation timestamps unavailable. Yield: %; change and spread: bp. 1 bp = 0.01 percentage point.</p><a href="/api/treasury-yields" data-en="Inspect yield response" data-zh="查看收益率数据响应">Inspect yield response</a></details>
         <p class="yieldDisclaimer" data-en="Updates every 30 seconds while this tab is visible. Market data may be delayed or unavailable; values are monitoring references, not executable prices or investment advice." data-zh="页面可见时每30秒更新一次。行情可能延迟或暂时不可用；数值仅供监控参考，不是可成交报价，也不构成投资建议。">Updates every 30 seconds while this tab is visible. Market data may be delayed or unavailable; values are monitoring references, not executable prices or investment advice.</p>
       </article>
     </div>
@@ -484,7 +496,7 @@
       <ol class="policySteps" aria-label="Policy transmission story" data-aria-en="Policy transmission story" data-aria-zh="政策传导路径">
         <li class="policyStep" data-policy-step="0" tabindex="0">
           <span>00</span>
-          <h3 data-en="Current state: restrictive hold, ample-reserve implementation" data-zh="当前态势：限制性维持，充足准备金执行">Current state: restrictive hold, ample-reserve implementation</h3>
+          <h3 data-en="Archived state: restrictive hold, ample-reserve implementation" data-zh="档案态势：限制性维持，充足准备金执行">Archived state: restrictive hold, ample-reserve implementation</h3>
           <p data-en="The target remains 3.50–3.75% after a 9–3 vote. Operationally, IORB is 3.65%, standing repo 3.75% and ON RRP 3.50% with a $160bn daily counterparty cap; purchases are limited to bills and, if needed, Treasuries with no more than three years remaining." data-zh="9比3表决后，目标区间仍为3.50%–3.75%。执行层面，准备金利率为3.65%，常备回购为3.75%，隔夜逆回购为3.50%、单一对手方每日上限1600亿美元；购买范围限于国库券，必要时可扩展至剩余期限不超过三年的国债。">The target remains 3.50–3.75% after a 9–3 vote. Operationally, IORB is 3.65%, standing repo 3.75% and ON RRP 3.50% with a $160bn daily counterparty cap; purchases are limited to bills and, if needed, Treasuries with no more than three years remaining.</p>
         </li>
         <li class="policyStep" data-policy-step="1" tabindex="0">
@@ -528,7 +540,7 @@
 
   <section class="chapter pillars" id="ch02" tabindex="-1" aria-label="Five-pillar signal matrix" data-aria-en="Five-pillar signal matrix" data-aria-zh="五支柱信号矩阵">
     <div class="chapterHead reveal">
-      <div class="kicker" data-en="CHAPTER 02 · CURRENT STATE" data-zh="第二章 · 当前态势">CHAPTER 02 · CURRENT STATE</div>
+      <div class="kicker" data-en="CHAPTER 02 · ARCHIVED STATE" data-zh="第二章 · 档案态势">CHAPTER 02 · ARCHIVED STATE</div>
       <h2 data-en="Five-Pillar Signal Matrix" data-zh="五维信号矩阵">Five-Pillar Signal Matrix</h2>
       <p class="dek" data-en="July payrolls · July FOMC · Trump policy · AI transmission" data-zh="7月非农 · 7月FOMC · 特朗普政策 · AI传导">July payrolls · July FOMC · Trump policy · AI transmission</p>
     </div>
@@ -818,7 +830,6 @@
       pillarSummaryEl = document.getElementById('pillarSummaryText'),
       heroHdLabel = document.getElementById('heroHdLabel'), heroHdScore = document.getElementById('heroHdScore'),
       signalLiveState = document.getElementById('signalLiveState'), signalStaleNotice = document.getElementById('signalStaleNotice'),
-      marketDeskKicker = document.getElementById('marketDeskKicker'), operationStatusLabel = document.getElementById('operationStatusLabel'),
       reactionMapLabel = document.getElementById('reactionMapLabel'), assetWatchDek = document.getElementById('assetWatchDek');
   if (!pillarGrid && !hdNeedle) return;
   var DATA = null;
@@ -835,6 +846,32 @@
   function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
 
   function renderCompass() {
+    if (hdAsOf && window.AfflatusPublishedSignal) {
+      var snapshot = window.AfflatusPublishedSignal.publishedSignal(DATA);
+      hdAsOf.className = 'asof prov-badge';
+      hdAsOf.textContent = window.AfflatusPublishedSignal.signalPublicationLabel(snapshot, lang());
+      hdAsOf.dataset.publicationSource = snapshot.source;
+      hdAsOf.dataset.publicationState = snapshot.state;
+      var inspection = document.getElementById('signalEvidenceDates');
+      if (inspection) inspection.textContent = T('Source as of: ', '来源截至：') + (snapshot.asOf || '—') + T(' · Schema version: ', ' · 数据版本：') + (snapshot.version ?? '—') + T(' · Retrieval time: ', ' · 获取时间：') + (snapshot.retrievedAt || T('Unavailable (not recorded)', '未提供（未记录）')) + T(' · Z = UTC. A recent publication is still a research snapshot, not live policy verification.', ' · Z = UTC。近期发布仍是研究快照，不代表已核验当前政策。');
+      var stale = snapshot.state !== 'fresh';
+      document.body.classList.toggle('signal-data-stale', stale);
+      document.body.classList.toggle('signal-data-fresh', !stale);
+      if (signalLiveState) signalLiveState.textContent = window.AfflatusPublishedSignal.signalPublicationLabel(snapshot, lang());
+      if (reactionMapLabel) reactionMapLabel.textContent = T('HISTORICAL REACTION MODEL', '历史反应模型');
+      if (assetWatchDek) assetWatchDek.textContent = stale
+        ? T('Official instruments · historical policy snapshot · not company endorsement or investment advice', '正式政策工具 · 历史政策快照 · 不代表公司背书，也不构成投资建议')
+        : T('Official instruments and implementation constraints · sector map, not company endorsement or investment advice', '正式政策工具与执行约束 · 行业地图，不代表政府对公司背书，也不构成投资建议');
+      if (signalStaleNotice) {
+        signalStaleNotice.hidden = !stale;
+        signalStaleNotice.textContent = stale
+          ? T(
+            `Current policy has not been verified. Source as of ${snapshot.asOf || 'unknown'}; the yield board above refreshes separately.`,
+            `尚未核验当前政策。原始资料截至 ${snapshot.asOf || '日期不明'}；上方收益率看板独立刷新。`,
+          )
+          : '';
+      }
+    }
     if (!DATA || !DATA.hawkDoveCompass || !hdNeedle) return;
     var hd = DATA.hawkDoveCompass;
     hdPct = Math.max(0, Math.min(100, ((hd.score + 2) / 4) * 100)); // -2..+2 -> 0..100%
@@ -844,34 +881,6 @@
     if (hdLabel) hdLabel.textContent = T(hd.label_en, hd.label_zh);
     if (hdRationale) hdRationale.textContent = T(hd.rationale_en, hd.rationale_zh);
     if (hdMethod) hdMethod.textContent = T(hd.method_en, hd.method_zh);
-    if (hdAsOf && window.AfflatusProvenance) {
-      var badge = window.AfflatusProvenance.buildProvenanceBadge({ updatedAt: DATA.updated, version: DATA.version, lang: lang() });
-      hdAsOf.className = 'asof prov-badge prov-' + badge.tier;
-      hdAsOf.textContent = badge.text;
-      var stale = badge.tier === 'red' || badge.tier === 'seed';
-      document.body.classList.toggle('signal-data-stale', stale);
-      document.body.classList.toggle('signal-data-fresh', !stale);
-      if (signalLiveState) signalLiveState.textContent = stale ? T('ARCHIVE MODE', '历史模式') : T('MONITORING · LIVE', '监控中 · 实时');
-      if (marketDeskKicker) marketDeskKicker.textContent = stale
-        ? T(`ARCHIVE DESK · DATA THROUGH ${DATA.updated || 'UNKNOWN'}`, `历史档案 · 数据截至 ${DATA.updated || '日期不明'}`)
-        : T(`LIVE DESK · UPDATED ${DATA.updated || 'UNKNOWN'}`, `实时看板 · 更新于 ${DATA.updated || '日期不明'}`);
-      if (operationStatusLabel) operationStatusLabel.textContent = stale
-        ? T('ARCHIVED SNAPSHOT · RESERVE MANAGEMENT', '历史快照 · 储备管理')
-        : T('ACTIVE · RESERVE MANAGEMENT', '进行中 · 储备管理');
-      if (reactionMapLabel) reactionMapLabel.textContent = stale ? T('HISTORICAL REACTION MODEL', '历史反应模型') : T('LIVE REACTION MAP', '实时反应图');
-      if (assetWatchDek) assetWatchDek.textContent = stale
-        ? T('Official instruments · historical policy snapshot · not company endorsement or investment advice', '正式政策工具 · 历史政策快照 · 不代表公司背书，也不构成投资建议')
-        : T('Official instruments and implementation constraints · sector map, not company endorsement or investment advice', '正式政策工具与执行约束 · 行业地图，不代表政府对公司背书，也不构成投资建议');
-      if (signalStaleNotice) {
-        signalStaleNotice.hidden = !stale;
-        signalStaleNotice.textContent = stale
-          ? T(
-            `Archive automation is delayed. The incident archive and policy model were last updated ${DATA.updated || 'on an unknown date'}; the yield board above refreshes separately.`,
-            `事件档案自动任务当前延迟。事件档案与政策模型最后更新于 ${DATA.updated || '日期不明'}；上方收益率看板独立刷新。`,
-          )
-          : '';
-      }
-    }
     // U41 hero: the compass reading doubles as the hero's one-line conclusion
     // (same DATA.hawkDoveCompass, no second fetch).
     if (heroHdLabel) heroHdLabel.textContent = T(hd.label_en, hd.label_zh);
@@ -911,8 +920,10 @@
 
   function render() { renderCompass(); renderPillars(); }
   AfflatusFetchJson('signal').then(function (d) { DATA = d; render(); })
-    .catch(function () {});
+    .catch(function () { render(); });
   addEventListener('afflatus-lang', render);
+  addEventListener('afflatus-publication-ready', render);
+  setInterval(renderCompass, 60_000);
 })();
 
 /* Policy reaction story — one sticky causal map, state changed only when a
@@ -977,8 +988,9 @@
    src/lib/provenanceBadge.js; exposed on window since the render() blocks
    below are plain (non-module) inline scripts, same bridge pattern as
    sectors.html/AfflatusI18N. */
-import { buildProvenanceBadge } from '/src/lib/provenanceBadge.js';
-window.AfflatusProvenance = { buildProvenanceBadge };
+import { publishedSignal, signalPublicationLabel } from '/src/data/publishedSignal.js';
+window.AfflatusPublishedSignal = { publishedSignal, signalPublicationLabel };
+window.dispatchEvent(new Event('afflatus-publication-ready'));
 </script>
 <script type="module">
 /* U46 46-乙-①: term-glossary tooltip (Keter/SEP). i18n.js (signalLibs.js)

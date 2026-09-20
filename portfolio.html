@@ -183,7 +183,6 @@
 </style>
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
-<link rel="preload" href="/vendor/black-hole/source-poster.jpg" as="image" fetchpriority="high">
 <script type="module" src="/src/entry/viewport.js"></script>
 <link rel="stylesheet" href="/styles/reading-navigation.css">
 </head>
@@ -433,12 +432,11 @@
     </div>
   </div>
   <div class="portfolio-controls">
-    <button class="control-btn" id="commandModeBtn" type="button" aria-pressed="false" data-hot>Command</button>
+    <button class="control-btn" id="commandModeBtn" type="button" aria-pressed="false" data-hot data-en="Simulation" data-zh="模拟">Simulation</button>
     <a class="lang-mini-toggle" id="langMiniToggle" href="/zh/" hreflang="zh-CN" data-hot aria-label="切换到中文" data-i18n-static-aria data-active="en"><span data-mini="en">EN</span><span class="mini-sep">/</span><span data-mini="zh">中</span></a>
     <details id="portfolioMenu" class="portfolio-menu">
       <summary class="portfolio-menu-toggle" data-en="Menu" data-zh="菜单">Menu</summary>
-      <div class="portfolio-menu-links" aria-label="Site pages" data-aria-en="Site pages" data-aria-zh="站内页面">
-        <a href="/">Home</a><a href="/portfolio.html">Portfolio</a><a href="/arena.html">Arena</a><a href="/sectors.html">Sectors</a><a href="/signal.html">Signal</a><a href="/horoscope.html">Horoscope</a><a href="/zh/serial.html">小说</a><a href="/course.html">Course</a>
+      <div class="portfolio-menu-links" aria-label="Site pages" data-aria-en="Site pages" data-aria-zh="站内页面" data-afflatus-static-only-nav>
       </div>
     </details>
     <div class="portfolio-clock" hidden>
@@ -457,7 +455,7 @@
     <p class="hero-desc" id="heroDesc">A private FY2025–26 trading record retaining only model bounds, cycle annualization, holding duration and risk methodology; position outcomes and underlying financial data stay private.</p>
     <div class="hero-cta">
       <a class="scroll-hint hero-record-cta" href="#fy2026Performance" id="scrollHint" data-hot>open FY25/26 flight record</a>
-      <button class="hero-command-cta" id="heroCommandCta" type="button" data-hot data-en="enter command mode" data-zh="进入指挥模式">enter command mode</button>
+      <button class="hero-command-cta" id="heroCommandCta" type="button" data-hot data-en="Enter optional simulation" data-zh="进入可选模拟">Enter optional simulation</button>
       <span class="coord" id="coord">bearing · singular throne</span>
     </div>
     <aside class="portfolio-starfield" aria-labelledby="starfieldTitle">
@@ -474,6 +472,22 @@
       </div>
     </aside>
 
+  </section>
+
+  <section class="media-study" id="orbitalMediaStudy" data-media-compare aria-labelledby="media-study-title">
+    <h2 id="media-study-title" data-en="One motif, two compositions." data-zh="同一天体意象，两种构图。">One motif, two compositions.</h2>
+    <p data-en="Compare the existing Portfolio backdrop with the home cover. These are artistic views, not astronomical observations or financial data. Both complete images remain available below; enable the overlay to compare their composition." data-zh="对照现有 Portfolio 背景与首页封面。它们是艺术视图，不是天文观测或金融数据。下方可查看两张完整图片，也可开启叠加比较构图。">Compare the existing Portfolio backdrop with the home cover. These are artistic views, not astronomical observations or financial data. Both complete images remain available below; enable the overlay to compare their composition.</p>
+    <div class="media-compare-images">
+      <figure><img src="/vendor/black-hole/source-poster.jpg" width="1440" height="810" loading="lazy" decoding="async" alt="Portfolio black-hole backdrop" data-aria-en="Portfolio black-hole backdrop" data-aria-zh="Portfolio 黑洞背景"><figcaption data-en="Portfolio backdrop" data-zh="Portfolio 背景">Portfolio backdrop</figcaption></figure>
+      <figure><img src="/assets/showcase/blackhole-hero.jpg" width="1672" height="941" loading="lazy" decoding="async" alt="Home black-hole cover" data-aria-en="Home black-hole cover" data-aria-zh="首页黑洞封面"><figcaption data-en="Home cover" data-zh="首页封面">Home cover</figcaption></figure>
+    </div>
+    <div class="media-compare-controls" hidden>
+      <button type="button" data-compare-toggle aria-pressed="false" data-en="Overlay comparison" data-zh="叠加比较">Overlay comparison</button>
+      <div class="media-compare-range" hidden>
+        <label for="orbitalMediaPosition" data-en="Home cover revealed (arrow keys / Home / End)" data-zh="首页封面显示比例（方向键 / Home / End）">Home cover revealed (arrow keys / Home / End)</label>
+        <input id="orbitalMediaPosition" type="range" min="0" max="100" value="50" step="1"><output for="orbitalMediaPosition">50%</output>
+      </div>
+    </div>
   </section>
 
   <section class="stardrive" id="stardrive" aria-label="FY2025–26 modeled performance — approach to Alphard" data-aria-en="FY2025–26 modeled performance — approach to Alphard" data-aria-zh="2025–26 财年模型表现——驶近星宿一">
@@ -578,7 +592,7 @@
       <section class="blackbox-module flight-paths" aria-labelledby="flightPathsTitle">
       <header class="flight-path-head module-label" data-reading-entry="flight-heading">
         <span data-en="02-C / FLIGHT PATH MATRIX" data-zh="02-C / 航线矩阵">02-C / FLIGHT PATH MATRIX</span>
-        <h3 id="flightPathsTitle" tabindex="-1" data-en="Five closed-cycle trajectories" data-zh="五条已结清周期轨迹">Five closed-cycle trajectories</h3>
+        <h3 id="flightPathsTitle" tabindex="-1" data-en="Five closed-cycle observations" data-zh="五个已结清周期观测">Five closed-cycle observations</h3>
         <p data-en="Which cycles combine high annualized efficiency with short holding periods? Bars: modeled efficiency (%); circles: disclosed holding days. Shared zero-based scales, separate units. FY2025–26 · method dated 2026-08-08 · source: disclosed closed-cycle summary." data-zh="哪些周期兼有较高年化效率与较短持有时间？横条：模型效率（%）；圆点：披露持有天数。同列共用零起点尺度，单位分开。2025–26 财年 · 方法日期 2026-08-08 · 来源：公开已结清周期摘要。">Which cycles combine high annualized efficiency with short holding periods? Bars: modeled efficiency (%); circles: disclosed holding days. Shared zero-based scales, separate units. FY2025–26 · method dated 2026-08-08 · source: disclosed closed-cycle summary.</p>
       </header>
 
@@ -630,6 +644,7 @@
     <aside class="methodology-seal" data-reading-entry="methodology">
       <span data-en="METHOD / 2026-08-08" data-zh="方法说明 / 2026-08-08">METHOD / 2026-08-08</span>
       <p data-en="Position outcomes, principal, transaction values, quantities and account balances are omitted. Cycle annualization, the single headline account-model maximum and risk measures remain method-dependent estimates, not audited results." data-zh="页面不展示单笔结果、本金、成交金额、数量与账户余额。周期年化、首屏唯一的账户模型上界与风险读数均依赖具体计算方法，并非审计结果。">Position outcomes, principal, transaction values, quantities and account balances are omitted. Cycle annualization, the single headline account-model maximum and risk measures remain method-dependent estimates, not audited results.</p>
+      <p data-en="Formula, inputs and holding-day methodology remain private and cannot be independently reproduced. These independent cycle observations are not an account equity curve." data-zh="具体公式、输入和持有天数口径因隐私不公开，无法独立复算。各周期是独立观测，不是账户净值曲线。">Formula, inputs and holding-day methodology remain private and cannot be independently reproduced. These independent cycle observations are not an account equity curve.</p>
     </aside>
   </section>
 
@@ -723,12 +738,5 @@
 
 <script type="module" src="/src/pages/homeLibs.js"></script>
 <script type="module" src="/src/main.js"></script>
-<script type="module">
-  /* D3 (ROADMAP §1): topdownCombat.js's own harness only mounts when ?combat=topdown
-     is present, so gate the load itself rather than statically importing it on every
-     page view — this also fixes the vite INEFFECTIVE_DYNAMIC_IMPORT warning caused by
-     the module being both statically (here) and dynamically (main.js) imported. */
-  if (/[?&]combat=topdown\b/.test(location.search)) import('/src/scene/topdownCombat.js');
-</script>
 </body>
 </html>

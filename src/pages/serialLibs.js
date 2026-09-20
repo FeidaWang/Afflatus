@@ -37,6 +37,9 @@ document.querySelectorAll('[data-zh]').forEach((node) => {
   const value = node.getAttribute('data-zh');
   if (value != null) node.textContent = value;
 });
+document.querySelectorAll('[data-aria-zh]').forEach((node) => {
+  node.setAttribute('aria-label', node.getAttribute('data-aria-zh'));
+});
 window.dispatchEvent(new CustomEvent('afflatus-serial-ready'));
 
 // The backdrop is decorative. Keep it out of the reader's first-paint and
@@ -44,22 +47,34 @@ window.dispatchEvent(new CustomEvent('afflatus-serial-ready'));
 let backdropLoading = false;
 let backdropHandle = null;
 let backdropTimer = 0;
+let backdropEngaged = false;
 
 async function startBackdrop() {
-  if (backdropLoading) return;
+  backdropEngaged = true;
+  if (backdropLoading || backdropHandle || document.body.classList.contains('reading-focused')) return;
   backdropLoading = true;
   clearTimeout(backdropTimer);
   removeEventListener('pointerdown', startBackdrop, true);
   removeEventListener('keydown', startBackdrop, true);
   try {
     const { mountSerialBackdrop } = await import('../ui/ambientBackdrops.js');
-    backdropHandle = mountSerialBackdrop();
+    if (!document.body.classList.contains('reading-focused')) backdropHandle = mountSerialBackdrop();
   } catch {}
+  finally { backdropLoading = false; }
 }
 
 addEventListener('pointerdown', startBackdrop, { capture: true, passive: true, once: true });
 addEventListener('keydown', startBackdrop, { capture: true, once: true });
 backdropTimer = setTimeout(startBackdrop, 15_000);
+
+const readerObserver = new IntersectionObserver(([entry]) => {
+  document.body.classList.toggle('reading-focused', entry.isIntersecting);
+  if (entry.isIntersecting) {
+    backdropHandle?.destroy?.();
+    backdropHandle = null;
+  } else if (backdropEngaged) startBackdrop();
+});
+readerObserver.observe(document.getElementById('reader'));
 
 addEventListener('pagehide', () => {
   clearTimeout(backdropTimer);

@@ -58,8 +58,99 @@ export const NAV_ROUTES = Object.freeze([
   }
 ]);
 
-export function normalizeRoutePath(pathname) {
-  const withoutLocale = String(pathname || '/').replace(/^\/(?:en|zh)(?=\/|$)/, '') || '/';
-  const path = withoutLocale.replace(/index\.html$/, '');
-  return path === '' ? '/' : path;
-}
+export const HOME_NAV_GROUPS = Object.freeze([
+  {
+    "id": "markets",
+    "label": {
+      "en": "Markets",
+      "zh": "市场"
+    },
+    "items": [
+      {
+        "routeId": "signal",
+        "label": {
+          "en": "Federal Reserve watch",
+          "zh": "美联储观察"
+        },
+        "href": "/signal.html"
+      },
+      {
+        "routeId": "signal",
+        "hash": "#treasuryYieldBoard",
+        "label": {
+          "en": "10Y / 30Y yield monitor",
+          "zh": "10年 / 30年期收益率"
+        },
+        "href": "/signal.html#treasuryYieldBoard"
+      },
+      {
+        "routeId": "portfolio",
+        "hash": "#fy2026Performance",
+        "label": {
+          "en": "FY25/26 flight record",
+          "zh": "FY25/26 飞行记录"
+        },
+        "href": "/portfolio.html#fy2026Performance"
+      }
+    ]
+  },
+  {
+    "id": "lab",
+    "label": {
+      "en": "Lab",
+      "zh": "实验室"
+    },
+    "items": [
+      {
+        "routeId": "arena",
+        "label": {
+          "en": "QF-01 Quant Foundry",
+          "zh": "QF-01 量化铸造舱"
+        },
+        "href": "/arena.html"
+      },
+      {
+        "routeId": "sectors",
+        "label": {
+          "en": "US–China AI model war",
+          "zh": "中美 AI 模型战争"
+        },
+        "href": "/sectors.html"
+      },
+      {
+        "routeId": "horoscope",
+        "label": {
+          "en": "Local-first astrology",
+          "zh": "本地优先星盘"
+        },
+        "href": "/horoscope.html"
+      }
+    ]
+  },
+  {
+    "id": "writing",
+    "label": {
+      "en": "Writing",
+      "zh": "写作"
+    },
+    "items": [
+      {
+        "routeId": "course",
+        "label": {
+          "en": "Forward Deployed Engineer 0→1",
+          "zh": "前沿部署工程师 0→1"
+        },
+        "href": "/course.html"
+      },
+      {
+        "routeId": "serial",
+        "label": {
+          "en": "Original novels",
+          "zh": "原创小说"
+        },
+        "href": "/serial.html"
+      }
+    ]
+  }
+]);
+export { normalizeRoutePath } from '../lib/routePaths.js';

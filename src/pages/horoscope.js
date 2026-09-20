@@ -2,9 +2,10 @@
    HOROSCOPE page (V20) — 观星台. Fetch-free and server-free: all math in
    src/lib/bazi.js + src/lib/horoscopeEngine.js (pure, vitest-covered);
    this file only handles the form, localStorage persistence (profile +
-   daily check-in streak), share-link codec plumbing and DOM rendering.
+   daily check-in streak), data-free page links and DOM rendering.
    ENTERTAINMENT ONLY — the page says so, loudly.
    ============================================================ */
+import { parseBirthDetails, birthAssumptions, clearHoroscopeStorage } from '../horoscope/formDetails.js';
 import { createLatestWorkerTask } from '../lib/latestWorkerTask.js';
 import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&url';
 
@@ -13,7 +14,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const $ = (id) => document.getElementById(id);
   if (!$('birthForm')) return;
 
-  let normalizeBirthToCST, encodeShare, decodeShare, allRegions, citiesInRegion, findCityInRegion;
+  let allRegions, citiesInRegion, findCityInRegion;
   let pillarName, STEMS, BRANCHES, STEM_ELEMENT, BRANCH_ELEMENT, ELEMENTS_ZH, ELEMENTS_EN;
   let ANIMALS_ZH, ANIMALS_EN, zodiacIndex, ZODIAC_ZH, ZODIAC_EN, dailyFortune;
   let TEN_GOD_ZH, TEN_GOD_EN, tenGodOfStem, HIDDEN_STEMS, nayinOf, kongWangOf;
@@ -33,7 +34,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   let birthFeaturePromise;
   const loadBirthFeature = () => birthFeaturePromise || (birthFeaturePromise = import('../horoscope/birthFeature.js').then((feature) => {
-    ({ normalizeBirthToCST, encodeShare, decodeShare, allRegions, citiesInRegion, findCityInRegion } = feature);
+    ({ allRegions, citiesInRegion, findCityInRegion } = feature);
     return feature;
   }));
 
@@ -104,11 +105,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const todayStr = () => { const d = new Date(); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
   const dateStrPlus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); const p = (x) => String(x).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; };
 
-  // ---- GA event tracking (V23 Phase 4, roadmap module 2 "北极星指标"/"护栏指标") --
-  // window.gtag is defined synchronously by the idle-deferred snippet in
-  // <head> (ROADMAP §9 SEO Phase 1) even before the GA script itself has
-  // loaded — calling it here just queues into dataLayer, safe at any time.
-  const track = (name, params) => { try { window.gtag && window.gtag('event', name, params || {}); } catch {} };
+  // Sensitive page: no analytics events, including derived birth/quiz results.
+  const track = () => {};
 
   // ---- transits-daily.json (V23 Phase 3) ------------------------------------
   // Fetched once, cached for the whole session — it's a <2KB static JSON
@@ -237,7 +235,16 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     regionSel.addEventListener('change', () => {
       citySel.innerHTML = '';
       const region = regionSel.value;
-      if (!region) { citySel.disabled = true; return; }
+      if (!region) {
+        citySel.disabled = true;
+        tzSel.value = '';
+        if (latId) $(latId).value = '';
+        if (lonId) $(lonId).value = '';
+        $(tzSelId[0] + 'Dst').checked = false;
+        delete tzSel.dataset.restored;
+        tzSel.dispatchEvent(new Event('change'));
+        return;
+      }
       const isChina = provinceKeys.has(region);
       citiesInRegion(region, isChina).forEach((c) => addOpt(citySel, c.zh, c.isChina ? c.zh : `${c.zh} ${c.en}`));
       citySel.disabled = false;
@@ -251,23 +258,22 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       if (!city) return;
       if (latId && $(latId)) $(latId).value = String(city.lat);
       if (lonId && $(lonId)) $(lonId).value = String(city.lon);
+      delete tzSel.dataset.restored;
+      $(tzSelId[0] + 'Dst').checked = false;
       tzSel.value = city.isChina ? '' : String(city.utcOffset);
       tzSel.dispatchEvent(new Event('change'));
     });
   }
   wireRegionCityPicker('bRegionSel', 'bCitySel', 'bTz', 'bLat', 'bLon');
   wireRegionCityPicker('sRegionSel', 'sCitySel', 'sTz', null, null);
-  // The underlying tz-select/lat/lon fields (#bManualWrap/#sManualWrap) stay
-  // in the DOM — permanently hidden, no UI to reveal them — purely so the
-  // city picker above still has somewhere to write its result into without
-  // touching parseBirth()/normalizeBirthToCST(). Removed per an explicit
-  // follow-up request to keep the input page as compact as possible; the
-  // fields themselves were never load-bearing for anything a user typed
-  // directly (only for what the city picker fills in).
+  // Hidden intake fields remain owned by the existing city picker.
+  // Restored profiles explicitly use their already-normalized CST values.
 
   // ---- persistence ---------------------------------------------------------
   const loadProfile = () => { try { return JSON.parse(localStorage.getItem(PROFILE_KEY)); } catch { return null; } };
-  const saveProfile = (p) => { try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch {} };
+  const saveProfile = (p) => {
+    try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); return true; } catch { return false; }
+  };
   function bumpStreak() {
     let s = { last: null, n: 0 };
     try { s = JSON.parse(localStorage.getItem(STREAK_KEY)) || s; } catch {}
@@ -310,7 +316,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     wrap.innerHTML = `<div class="syn-book-h">${T('SAVED · TAP TO RE-CAST', '关系册 · 点击重新出盘')}</div>` +
       list.map((e, i) => {
         const label = e.hour == null ? `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')}` : `${e.y}-${String(e.m).padStart(2, '0')}-${String(e.d).padStart(2, '0')} · ${e.hour}h`;
-        return `<span class="syn-book-chip"><button type="button" class="syn-book-load" data-i="${i}">${e.name}<small>${label}</small></button><button type="button" class="syn-book-del" data-i="${i}" aria-label="${T('remove', '删除')}">×</button></span>`;
+        return `<span class="syn-book-chip"><button type="button" class="syn-book-load" data-i="${i}">${attr(e.name)}<small>${label}</small></button><button type="button" class="syn-book-del" data-i="${i}" aria-label="${T('remove', '删除')}">×</button></span>`;
       }).join('');
     wrap.querySelectorAll('.syn-book-load').forEach((btn) => btn.addEventListener('click', () => {
       const e = list[+btn.dataset.i];
@@ -322,13 +328,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     wrap.querySelectorAll('.syn-book-del').forEach((btn) => btn.addEventListener('click', () => removeFromBook(+btn.dataset.i)));
   }
 
-  const parseBirth = (dateVal, hourVal, tzVal, dstVal) => {
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateVal || '');
-    if (!m) return null;
-    const raw = { y: +m[1], m: +m[2], d: +m[3], hour: hourVal === '' ? null : +hourVal };
-    const tz = (tzVal == null || tzVal === '') ? null : { utcOffset: +tzVal, dst: !!dstVal };
-    return normalizeBirthToCST(raw, tz);
-  };
+  const parseBirth = parseBirthDetails;
 
   // ---- render: my daily reading -------------------------------------------
   const PILLAR_T = [['YEAR', '年柱'], ['MONTH', '月柱'], ['DAY', '日柱'], ['HOUR', '时柱']];
@@ -1598,11 +1598,11 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // ---- share link ------------------------------------------------------------
   $('shareBtn').addEventListener('click', async () => {
     if (!state.me || !state.other) return;
-    const url = `${location.origin}${location.pathname}?p=${encodeShare(state.me, state.other)}`;
+    const url = `${location.origin}${location.pathname}`;
     let ok = false;
     try { await navigator.clipboard.writeText(url); ok = true; } catch {}
     if (!ok) { try { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); ok = true; } catch {} }
-    $('shareTip').textContent = ok ? T('Copied — send it to them.', '已复制——发给对方吧。') : url;
+    $('shareTip').textContent = ok ? T('Page link copied — no birth data included.', '已复制页面链接——不含出生资料。') : url;
   });
 
   // ---- V23 Phase 1: L2 radar/list interaction + L3 PRO toggle (dynamic import) --
@@ -1680,65 +1680,132 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const clearBtn = $('clearDataBtn');
   if (clearBtn) clearBtn.addEventListener('click', () => {
     const ok = window.confirm(T(
-      'Clear everything this page has saved on your device (chart, streak, quiz results, saved contacts)? This cannot be undone.',
-      '清空本页在本机保存的全部数据（命盘、连续签到、测试结果、关系册）？此操作无法撤销。'
+      'Delete this page’s chart, streak, quiz results and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
+      '删除此浏览器中本页保存的命盘、连续签到、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
     ));
     if (!ok) return;
-    try { Object.keys(localStorage).filter((k) => k.startsWith('afflatus-horo:')).forEach((k) => localStorage.removeItem(k)); } catch {}
+    try { clearHoroscopeStorage(localStorage); } catch {
+      $('privacyStatus').textContent = T('Could not delete all saved data. Browser storage is blocked; use browser site-data settings to finish deleting it.', '未能删除全部保存数据。浏览器存储受限，请通过浏览器的网站数据设置完成删除。');
+      $('privacyStatus').focus();
+      return;
+    }
     location.href = location.pathname; // full reload, also drops any ?p= shared-link query
   });
 
   // ---- forms -------------------------------------------------------------------
-  $('birthForm').addEventListener('submit', (e) => {
+  const resultInputs = {};
+  function assumptionInput(prefix) {
+    return {
+      hour: $(prefix + 'Hour').value, timezone: $(prefix + 'Tz').value,
+      dst: $(prefix + 'Dst').checked, restored: !!$(prefix + 'Tz').dataset.restored,
+    };
+  }
+  function updateAssumptions(prefix) {
+    $(prefix + 'Assumptions').textContent = birthAssumptions(assumptionInput(prefix), state.lang);
+  }
+  function formError(prefix, message, field) {
+    const error = $(prefix + 'Error');
+    error.textContent = message;
+    if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+    else error.focus();
+  }
+  for (const [prefix, formId] of [['b', 'birthForm'], ['s', 'synForm']]) {
+    const form = $(formId);
+    form.noValidate = true;
+    form.addEventListener('change', () => updateAssumptions(prefix));
+    form.addEventListener('input', () => {
+      $(prefix + 'Error').textContent = '';
+      $(prefix + 'Date').removeAttribute('aria-invalid');
+    });
+    updateAssumptions(prefix);
+  }
+  function readBirth(prefix) {
+    const date = $(prefix + 'Date');
+    const b = parseBirth(date.value, $(prefix + 'Hour').value, $(prefix + 'Tz').value, $(prefix + 'Dst').checked);
+    if (!b) formError(prefix, T('Enter a valid birth date from 1900 to 2100.', '请输入 1900 至 2100 年之间的有效出生日期。'), date);
+    else { $(prefix + 'Error').textContent = ''; date.removeAttribute('aria-invalid'); }
+    return b;
+  }
+  function resultAssumptions(prefix) {
+    resultInputs[prefix] = assumptionInput(prefix);
+    $(prefix + 'ResultAssumptions').textContent = birthAssumptions(resultInputs[prefix], state.lang);
+  }
+  $('birthForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const b = parseBirth($('bDate').value, $('bHour').value, $('bTz').value, $('bDst').checked);
+    const b = readBirth('b');
     if (!b) return;
-    b.gender = $('bGender').value || null; // local profile only, never in share codes
+    b.gender = $('bGender').value || null;
     b.lat = $('bLat').value === '' ? null : Math.max(-90, Math.min(90, +$('bLat').value));
     b.lon = $('bLon').value === '' ? null : Math.max(-180, Math.min(180, +$('bLon').value));
-    state.me = b; saveProfile(b);
-    renderMine(); renderSyn();
+    const button = $('birthForm').querySelector('[type=submit]');
+    button.disabled = true;
+    $('birthForm').setAttribute('aria-busy', 'true');
+    state.me = b;
+    const saved = saveProfile(b);
+    $('bSaveStatus').textContent = saved ? T('Saved in this browser.', '已保存在此浏览器。') : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
+    resultAssumptions('b');
+    try { await renderMine(); await renderSyn(); }
+    catch { formError('b', T('The chart could not load. Reload the page and try again; your details stay local.', '星盘未能加载，请刷新页面后重试；资料仍仅保留在本机。')); }
+    finally { button.disabled = false; $('birthForm').removeAttribute('aria-busy'); }
   });
   // Shared by the form-submit path and the relationship-book quick-load path.
   function castSynastry(b) {
     state.other = b;
     renderSyn();
   }
-  $('synForm').addEventListener('submit', (e) => {
+  $('synForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!state.me) { $('synHint').textContent = T('Cast your own chart above first — synastry needs both.', '先在上方立好自己的盘——合盘需要两个人。'); return; }
-    const b = parseBirth($('sDate').value, $('sHour').value, $('sTz').value, $('sDst').checked);
+    if (!state.me) { formError('s', T('Cast your own chart above first — synastry needs both.', '先在上方立好自己的盘——合盘需要两个人。')); return; }
+    const b = readBirth('s');
     if (!b) return;
+    const button = $('synForm').querySelector('[type=submit]');
+    button.disabled = true;
     const name = $('sName').value.trim();
     if (name) upsertBook(name, b);
-    castSynastry(b);
+    state.other = b;
+    resultAssumptions('s');
+    try { await renderSyn(); }
+    catch { formError('s', T('The comparison could not load. Reload the page and try again.', '合盘未能加载，请刷新页面后重试。')); }
+    finally { button.disabled = false; }
   });
 
   const fillForm = (prefix, b) => {
     const p = (x) => String(x).padStart(2, '0');
     $(prefix + 'Date').value = `${b.y}-${p(b.m)}-${p(b.d)}`;
-    $(prefix + 'Hour').value = b.hour == null ? '' : String(b.hour);
+    // Persisted profiles already use CST, including even hours after conversion.
+    const hourSelect = $(prefix + 'Hour');
+    hourSelect.querySelectorAll('[data-restored-hour]').forEach(option => option.remove());
+    if (b.hour != null && !Array.from(hourSelect.options).some(option => option.value === String(b.hour))) {
+      const option = new Option(`${String(b.hour).padStart(2, '0')}:00 · UTC+8`, String(b.hour));
+      option.dataset.restoredHour = 'true'; hourSelect.add(option);
+    }
+    hourSelect.value = b.hour == null ? '' : String(b.hour);
+    $(prefix + 'RegionSel').value = '';
+    $(prefix + 'CitySel').innerHTML = '';
+    $(prefix + 'CitySel').disabled = true;
+    $(prefix + 'Tz').value = '8';
+    $(prefix + 'Tz').dataset.restored = 'true';
+    $(prefix + 'Dst').checked = false;
+    $(prefix + 'Dst').disabled = true;
+    updateAssumptions(prefix);
+    resultAssumptions(prefix);
     if (prefix === 'b' && $('bGender')) $('bGender').value = b.gender || '';
     if (prefix === 'b' && $('bLat')) { $('bLat').value = b.lat == null ? '' : String(b.lat); $('bLon').value = b.lon == null ? '' : String(b.lon); }
   };
 
-  // ---- boot: shared link beats saved profile ------------------------------------
+  // Restore local data only. Birth profiles never enter or come from URLs.
   renderBook();
-  const shared = (() => { try { return decodeShare(new URLSearchParams(location.search).get('p') || ''); } catch { return null; } })();
-  if (shared) {
-    state.me = shared.a; state.other = shared.b;
-    fillForm('b', shared.a); fillForm('s', shared.b);
-    renderMine(); renderSyn();
-    try { $('synSec').scrollIntoView({ block: 'start' }); } catch {}
-  } else {
+  {
     const saved = loadProfile();
     if (saved && parseBirth(`${saved.y}-${String(saved.m).padStart(2, '0')}-${String(saved.d).padStart(2, '0')}`, saved.hour == null ? '' : String(saved.hour))) {
-      state.me = saved; fillForm('b', saved); renderMine();
+      state.me = saved; fillForm('b', saved); renderMine().catch(() => formError('b', T('Saved chart could not load. Reload to retry.', '已保存的星盘加载失败，请刷新后重试。')));
     }
   }
 
   window.addEventListener('afflatus-lang', (e) => {
     state.lang = e.detail === 'zh' ? 'zh' : 'en';
+    updateAssumptions('b'); updateAssumptions('s');
+    for (const prefix of ['b', 's']) if (resultInputs[prefix]) $(prefix + 'ResultAssumptions').textContent = birthAssumptions(resultInputs[prefix], state.lang);
     renderMine(); renderSyn(); renderBook();
     if (quizzesReady) { renderPersona(); renderLogicQuiz(); renderEqQuiz(); }
   });

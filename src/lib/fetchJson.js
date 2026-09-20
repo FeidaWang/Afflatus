@@ -1,3 +1,5 @@
+import { validateQuote } from './validateQuote.js';
+
 const CACHE_NAME = 'afflatus-json-v1';
 const CACHE_TIME_HEADER = 'x-afflatus-cached-at';
 const DEFAULT_TIMEOUT_MS = 8000;
@@ -46,13 +48,6 @@ const validateHistory = (data) => ({
   errors: data && data.status === 'ok' && Array.isArray(data.values)
     ? []
     : ['history payload must have status="ok" and a values array'],
-});
-
-const validateQuote = (data) => ({
-  ok: Boolean(data && typeof data === 'object' && Number.isFinite(Number(data.c))),
-  errors: data && typeof data === 'object' && Number.isFinite(Number(data.c))
-    ? []
-    : ['quote payload must contain a finite current price "c"'],
 });
 
 const STATIC_RESOURCES = Object.freeze({
@@ -123,6 +118,7 @@ function resolveResource(key) {
       freshness: 12_000,
       validate: validateQuote,
       persistent: false,
+      memoryCache: false,
     };
   }
 
@@ -138,7 +134,8 @@ function resolveResource(key) {
       url: `/api/history?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}&outputsize=${outputsize}`,
       freshness: 60 * 60_000,
       validate: validateHistory,
-      persistent: true,
+      persistent: false,
+      memoryCache: false,
     };
   }
 
@@ -262,7 +259,7 @@ async function networkLoad(resource, { headers, timeoutMs }) {
     }
     await validateData(resource, data);
     const entry = { data, at: Date.now() };
-    memory.set(resource.url, entry);
+    if (resource.memoryCache !== false) memory.set(resource.url, entry);
     void cacheWrite(resource, entry);
     return data;
   } catch (error) {
@@ -284,6 +281,8 @@ async function networkLoad(resource, { headers, timeoutMs }) {
 }
 
 function sharedNetworkLoad(resource, options) {
+  // Credentialed market requests must never share a request across caller identities.
+  if (resource.memoryCache === false && options.headers) return networkLoad(resource, options);
   const requestKey = `${resource.url}\n${JSON.stringify(options.headers || {})}`;
   if (!inflight.has(requestKey)) {
     const request = networkLoad(resource, options).finally(() => inflight.delete(requestKey));
@@ -314,7 +313,7 @@ export async function fetchJson(key, options = {}) {
     : DEFAULT_TIMEOUT_MS;
   const loadOptions = { headers: options.headers, timeoutMs };
 
-  if (!options.forceRefresh) {
+  if (!options.forceRefresh && resource.memoryCache !== false) {
     const cached = memory.get(resource.url) || await cacheRead(resource);
     if (cached) {
       memory.set(resource.url, cached);

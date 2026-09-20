@@ -365,12 +365,12 @@
         </div>
         <div class="body book-measure" id="bookMeasure" aria-hidden="true"></div>
         <div class="chapter-nav">
-          <button id="prevChapter" type="button" aria-label="Previous chapter" data-aria-en="Previous chapter" data-aria-zh="阅读上一章">← 上一章</button>
+          <a id="prevChapter" rel="prev" aria-disabled="true" aria-label="Previous chapter" data-aria-en="Previous chapter" data-aria-zh="阅读上一章">← 上一章</a>
           <span class="ind" id="chapterIndicator">第 - / - 章</span>
-          <button id="nextChapter" type="button" aria-label="Next chapter" data-aria-en="Next chapter" data-aria-zh="阅读下一章">下一章 →</button>
+          <a id="nextChapter" rel="next" aria-disabled="true" aria-label="Next chapter" data-aria-en="Next chapter" data-aria-zh="阅读下一章">下一章 →</a>
         </div>
       </div>
-      <div class="pad reader-waterfall" id="readerWaterfall" hidden>
+      <div class="pad reader-waterfall" id="readerWaterfall" tabindex="-1" hidden>
         <span class="wf-chip" id="wfChip">第 - / - 章</span>
         <div id="waterfallList"></div>
         <div class="wf-sentinel" id="wfSentinel">
@@ -406,6 +406,13 @@
   };
   var serialApi = null, readerStore = null, fetchJson = null, pagedBook = null, narrationPlayer = null;
   var bootStarted = false, bootRetries = 0;
+  var initialMetadata = {
+    path:location.pathname, title:document.title,
+    nodes:Array.from(document.querySelectorAll('link[rel="canonical"], meta[name="description"], meta[property^="og:"]')).map(function (node) {
+      var attr = node.tagName === 'LINK' ? 'href' : 'content';
+      return { node:node, attr:attr, value:node.getAttribute(attr) };
+    })
+  };
   function isZh() { return (document.documentElement.lang || '').toLowerCase().startsWith('zh'); }
   function T(en, zh) { return isZh() ? zh : en; }
   // Schedule the core reader before optional control wiring below. A missing
@@ -468,8 +475,11 @@
   function syncReaderUrl(chapterId, mode) {
     if (!serialApi || !state.novelId) return;
     var currentRoute = serialApi.parseReaderPath(location.pathname);
-    var preserveBookLanding = mode === 'none' && currentRoute && currentRoute.chapterId == null;
-    if (!preserveBookLanding) syncReaderMetadata(chapterId);
+    var preserveLanding = mode === 'none' && (!currentRoute || currentRoute.chapterId == null);
+    if (preserveLanding && location.pathname === initialMetadata.path) {
+      document.title = initialMetadata.title;
+      initialMetadata.nodes.forEach(function (entry) { entry.node.setAttribute(entry.attr, entry.value); });
+    } else if (!preserveLanding) syncReaderMetadata(chapterId);
     if (mode === 'none') return;
     var locale = serialApi.readerLocale(
       location.pathname,
@@ -477,29 +487,25 @@
     );
     var path = serialApi.readerPath({ locale:locale, bookId:state.novelId, chapterId:chapterId });
     if (mode === 'push') {
-      if (currentRoute) {
-        var currentReaderState = readerState();
-        var currentOffset = currentReaderState.bookId === currentRoute.bookId &&
-          serialApi.chapterIdEquals(currentReaderState.chapterId, currentRoute.chapterId)
-          ? currentReaderState.offset
-          : currentReadingOffset();
-        history.replaceState({
-          bookId:currentRoute.bookId,
-          chapterId:currentRoute.chapterId,
-          offset:Math.max(0, Math.round(currentOffset))
-        }, '', location.href);
-      }
+      var previous = history.state && history.state.bookId ? history.state : readerState();
+      history.replaceState({
+        bookId:currentRoute ? currentRoute.bookId : previous.bookId,
+        chapterId:currentRoute && currentRoute.chapterId != null ? currentRoute.chapterId : previous.chapterId,
+        offset:Math.max(0, Math.round(previous.offset || 0)),
+        layout:previous.layout || readerState().layout
+      }, '', location.href);
     }
     if (location.pathname === path) {
       history.replaceState({
         bookId:state.novelId,
         chapterId:chapterId,
-        offset:currentReadingOffset()
+        offset:currentReadingOffset(),
+        layout:state.waterfall ? 'waterfall' : 'book'
       }, '', location.href);
       return;
     }
     history[mode === 'push' ? 'pushState' : 'replaceState'](
-      { bookId:state.novelId, chapterId:chapterId, offset:0 },
+      { bookId:state.novelId, chapterId:chapterId, offset:0, layout:state.waterfall ? 'waterfall' : 'book' },
       '',
       path + location.search + location.hash
     );
@@ -620,6 +626,7 @@
         event.preventDefault();
         closeDrawer({ restoreFocus:false });
         goToChapter(i, true);
+        document.getElementById(state.waterfall ? 'readerWaterfall' : 'bookStage').focus({ preventScroll:true });
       });
       list.appendChild(b);
     });
@@ -689,7 +696,8 @@
       history.replaceState({
         bookId:state.novelId,
         chapterId:chapterId,
-        offset:offset
+        offset:offset,
+        layout:state.waterfall ? 'waterfall' : 'book'
       }, '', location.href);
     }
   }
@@ -879,8 +887,14 @@
       '第 ' + (i + 1) + ' / ' + state.chapters.length + ' 章 · 约 ' + (c.wordCount || 0) + ' 字';
     document.getElementById('chapterIndicator').textContent =
       '第 ' + (i + 1) + ' / ' + state.chapters.length + ' 章';
-    document.getElementById('prevChapter').disabled = i === 0;
-    document.getElementById('nextChapter').disabled = i === state.chapters.length - 1;
+    [['prevChapter', i - 1], ['nextChapter', i + 1]].forEach(function (entry) {
+      var link = document.getElementById(entry[0]), target = state.chapters[entry[1]];
+      link.setAttribute('aria-disabled', String(!target));
+      if (target) {
+        link.href = serialApi.readerPath({ locale:serialApi.readerLocale(location.pathname, document.documentElement.dataset.afflatusLocale), bookId:state.novelId, chapterId:target.id });
+      } else link.removeAttribute('href');
+    });
+    syncReaderUrl(c.id, historyMode || 'replace');
     var book = ensurePagedBook();
     book.setChapterContext({
       hasPreviousChapter:i > 0,
@@ -888,12 +902,11 @@
     });
     book.setContent(renderBlocks(c.blocks), pageSettings || { pageIndex:0 });
     syncNarrationChapter(c);
-    syncReaderUrl(c.id, historyMode || 'replace');
     markVisited(c.id);
     renderToc();
     updateProgressBar();
     if (scrollToTop !== false) {
-      var targetOffset = Math.max(0, reader.offsetTop - 10);
+      var targetOffset = Math.max(0, reader.getBoundingClientRect().top + window.scrollY - toolbarEl.offsetHeight - 12);
       window.scrollTo({ top:targetOffset, behavior:'smooth' });
       persistProgress(currentPageIndex());
     } else {
@@ -912,11 +925,14 @@
     var direction = i > state.idx ? 1 : -1;
     loadChapter(i, scrollToTop, null, 'push', { direction:direction, pageIndex:0 });
   }
-  document.getElementById('prevChapter').addEventListener('click', function () {
-    goToChapter(state.idx - 1, true);
-  });
-  document.getElementById('nextChapter').addEventListener('click', function () {
-    goToChapter(state.idx + 1, true);
+  ['prevChapter', 'nextChapter'].forEach(function (id) {
+    document.getElementById(id).addEventListener('click', function (event) {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      if (this.getAttribute('aria-disabled') === 'true') return;
+      goToChapter(state.idx + (id === 'prevChapter' ? -1 : 1), true);
+      document.getElementById('bookStage').focus({ preventScroll:true });
+    });
   });
 
   /* ---------- waterfall / infinite-scroll reading ---------- */
@@ -1041,7 +1057,7 @@
       if (restoreOffset != null && restoreOffset > 0) {
         targetOffset = firstSection.getBoundingClientRect().top + window.scrollY + restoreOffset;
       } else if (scrollToTop !== false) {
-        targetOffset = Math.max(0, reader.offsetTop - 10);
+        targetOffset = Math.max(0, reader.getBoundingClientRect().top + window.scrollY - toolbarEl.offsetHeight - 12);
       }
       if (targetOffset != null) {
         window.scrollTo({
@@ -1391,6 +1407,7 @@
       : null;
     if (readerStore) readerStore.update({ bookId:n.id });
 
+    document.body.classList.add('reader-enhanced');
     if (state.waterfall) {
       initWaterfall(
         resumeIdx,
@@ -1406,6 +1423,9 @@
         resumeOffset,
         false
       );
+    }
+    if (!state.waterfall && (scrollToShelf || requestedChapterId != null || resumeOffset != null)) {
+      requestAnimationFrame(function () { reader.scrollIntoView({ behavior:'instant', block:'start' }); });
     }
     if (scrollToShelf && pagedBook && !state.waterfall) pagedBook.open(n.novel.title);
     if (resumeIdx > 0) toast('已为你恢复到上次的阅读位置');
@@ -1461,6 +1481,7 @@
           history.state.bookId === route.bookId &&
           serialApi.chapterIdEquals(history.state.chapterId, route.chapterId)) {
         initialOffset = history.state.offset;
+        if (history.state.layout) state.waterfall = history.state.layout === 'waterfall';
       }
       selectNovel(
         startIdx,
@@ -1479,9 +1500,12 @@
   window.addEventListener('popstate', function (event) {
     if (!serialApi || !state.novels.length) return;
     var route = serialApi.parseReaderPath(location.pathname);
-    if (!route) return;
-    var idx = state.novels.findIndex(function (n) { return n.id === route.bookId; });
-    if (idx >= 0) selectNovel(idx, false, route.chapterId, 'none', event.state && event.state.offset);
+    var saved = event.state || readerState();
+    if (saved.layout) state.waterfall = saved.layout === 'waterfall';
+    var bookId = route ? route.bookId : saved.bookId;
+    var chapterId = route && route.chapterId != null ? route.chapterId : saved.chapterId;
+    var idx = state.novels.findIndex(function (n) { return n.id === bookId; });
+    if (idx >= 0) selectNovel(idx, false, chapterId, 'none', saved.offset);
   });
   window.addEventListener('afflatus-serial-ready', boot, { once:true });
   if (document.readyState !== 'loading') boot(); else document.addEventListener('DOMContentLoaded', boot, { once:true });

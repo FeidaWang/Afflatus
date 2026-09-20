@@ -1,3 +1,6 @@
+import { normalizeRoutePath, resolveRouteHref } from '../lib/routePaths.js';
+export { normalizeRoutePath } from '../lib/routePaths.js';
+
 /**
  * Project Afflatus route manifest — the single source of truth for route
  * identity, build inclusion, navigation, sitemap membership and metadata.
@@ -328,20 +331,20 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['canvas', 'data-feed'],
     metadata: {
       title: 'Project Afflatus · Signal — O5 Reserve Containment',
-      description: 'Signal: current Federal Reserve operations, live 10-year and 30-year Treasury yields, and Trump-administration industry priorities — evidence-first, bilingual and not investment advice.',
+      description: 'Signal: archived Federal Reserve research, timestamped 10-year and 30-year Treasury yield observations, and policy assumptions — evidence-first and bilingual.',
       canonical: 'https://feida.au/signal.html',
       ogTitle: 'Project Afflatus · Signal — O5 Reserve Containment',
-      ogDescription: 'Current Fed operations, live 10Y/30Y Treasury yields and Trump-administration industry priorities. Desk research, not advice.',
+      ogDescription: 'Archived Fed research, timestamped 10Y/30Y yield observations and policy assumptions. Desk research, not advice.',
       ogImage: ROUTE_SEO.signal.social.images.en,
     },
     locales: {
       en: {
         title: 'Signal — Federal Reserve Watch · Project Afflatus',
-        description: 'Current Federal Reserve operations, live 10-year and 30-year Treasury yields, and Trump-administration industry priorities. Desk research, not advice.',
+        description: 'Archived Federal Reserve research, timestamped 10-year and 30-year Treasury observations, and policy assumptions. Desk research, not advice.',
       },
       zh: {
         title: '信号 — 美联储观察 · Project Afflatus',
-        description: '跟踪美联储近期操作、10年与30年期美债收益率，以及特朗普政府产业优先方向。案头研究，非投资建议。',
+        description: '美联储历史研究、注明观测时间的10年与30年期美债收益率，以及政策推演假设。案头研究，非投资建议。',
       },
     },
   },
@@ -360,7 +363,7 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['local-first', 'share-query', 'svg-viz'],
     metadata: {
       title: 'Project Afflatus · Horoscope — 观星台 · Bazi & Astrology',
-      description: '观星台: a warm, botanical Bazi (Four Pillars) + Western astrology playground — daily fortune from the real sexagenary calendar, two-person synastry with a shareable link. Entertainment only, not divination advice.',
+      description: '观星台: a warm, botanical Bazi (Four Pillars) + Western astrology playground — daily fortune from the real sexagenary calendar, local two-person synastry and downloadable result cards. Entertainment only, not divination advice.',
       canonical: 'https://feida.au/horoscope.html',
       ogTitle: 'Project Afflatus · 观星台 Horoscope',
       ogDescription: 'Daily Bazi + astrology readings and two-person synastry, in warm botanical colors. Entertainment only.',
@@ -510,6 +513,28 @@ export const NAV_ROUTES = Object.freeze(
     })),
 );
 
+// Homepage labels and grouping live with route metadata; URLs derive from NAV_ROUTES.
+export const HOME_NAV_GROUPS = Object.freeze([
+  { id: 'markets', label: { en: 'Markets', zh: '市场' }, items: [
+    { routeId: 'signal', label: { en: 'Federal Reserve watch', zh: '美联储观察' } },
+    { routeId: 'signal', hash: '#treasuryYieldBoard', label: { en: '10Y / 30Y yield monitor', zh: '10年 / 30年期收益率' } },
+    { routeId: 'portfolio', hash: '#fy2026Performance', label: { en: 'FY25/26 flight record', zh: 'FY25/26 飞行记录' } },
+  ] },
+  { id: 'lab', label: { en: 'Lab', zh: '实验室' }, items: [
+    { routeId: 'arena', label: { en: 'QF-01 Quant Foundry', zh: 'QF-01 量化铸造舱' } },
+    { routeId: 'sectors', label: { en: 'US–China AI model war', zh: '中美 AI 模型战争' } },
+    { routeId: 'horoscope', label: { en: 'Local-first astrology', zh: '本地优先星盘' } },
+  ] },
+  { id: 'writing', label: { en: 'Writing', zh: '写作' }, items: [
+    { routeId: 'course', label: { en: 'Forward Deployed Engineer 0→1', zh: '前沿部署工程师 0→1' } },
+    { routeId: 'serial', label: { en: 'Original novels', zh: '原创小说' } },
+  ] },
+].map(group => Object.freeze({ ...group, items: group.items.map(item => {
+  const route = NAV_ROUTES.find(route => route.id === item.routeId);
+  if (!route) throw new Error(`Unknown navigation route: ${item.routeId}`);
+  return Object.freeze({ ...item, href: `${route.path}${item.hash || ''}` });
+}) })));
+
 export const BUILD_ROUTES = Object.freeze(
   SITE_MANIFEST.filter((route) => route.build),
 );
@@ -525,26 +550,13 @@ export const SITEMAP_ROUTES = Object.freeze(
 export const SITE_LOCALES = Object.freeze(['en', 'zh']);
 
 export function localizedRoutePath(routeOrPath, locale) {
-  const path = typeof routeOrPath === 'string' ? routeOrPath : routeOrPath?.path;
-  const base = normalizeRoutePath(String(path || '/').replace(/^\/(?:en|zh)(?=\/|$)/, ''));
-  const route = typeof routeOrPath === 'string' ? findRouteByPath(base) : routeOrPath;
-  const requestedLocale = locale === 'zh' ? 'zh' : 'en';
-  const publishedLocales = route?.publishedLocales || SITE_LOCALES;
-  const normalizedLocale = publishedLocales.includes(requestedLocale)
-    ? requestedLocale
-    : (publishedLocales.includes(route?.defaultLocale) ? route.defaultLocale : publishedLocales[0]);
-  return base === '/' ? `/${normalizedLocale}/` : `/${normalizedLocale}${base}`;
+  return resolveRouteHref(routeOrPath, locale === 'zh' ? 'zh' : 'en', SITE_MANIFEST);
 }
 
 export function localizedRouteUrl(routeOrPath, locale) {
   return `https://feida.au${localizedRoutePath(routeOrPath, locale)}`;
 }
 
-export function normalizeRoutePath(pathname) {
-  const withoutLocale = String(pathname || '/').replace(/^\/(?:en|zh)(?=\/|$)/, '') || '/';
-  const path = withoutLocale.replace(/index\.html$/, '');
-  return path === '' ? '/' : path;
-}
 
 export function findRouteByPath(pathname) {
   const normalized = normalizeRoutePath(pathname);

@@ -1,3 +1,4 @@
+import { lastCompletedMarketSession } from '../lib/marketSession.js';
 import { fetchJson, JsonDataError } from '../lib/fetchJson.js';
 import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantModel.js';
 
@@ -219,6 +220,9 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
       id: `R${String((runs[0]?.sequence || 0) + 1).padStart(3, '0')}`,
       sequence: (runs[0]?.sequence || 0) + 1,
       at: new Date().toISOString(),
+      mode: 'experiments',
+      dataAsOf: state.result.model.asOf,
+      execution: 'none',
       version: state.config.version,
       weights: state.config.weights,
       settings: state.config.settings,
@@ -262,6 +266,7 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
     // provider credit/rate boundary can degrade the asset set instead of
     // halting the entire model after successfully loading several stocks.
     const symbols = orderedHistorySymbols(config);
+    const completedSession = lastCompletedMarketSession();
     const histories = {};
     const failures = [];
     await mapLimit(symbols, 4, async (symbol, index) => {
@@ -276,7 +281,7 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
             o: Number(value.open), h: Number(value.high), l: Number(value.low),
             c: Number(value.close), v: Number(value.volume) || 0,
           }))
-          .filter((candle) => Number.isFinite(candle.c) && candle.c > 0)
+          .filter((candle) => Number.isFinite(candle.c) && candle.c > 0 && candle.t <= completedSession)
           .reverse();
       } catch (error) { failures.push({ symbol, error }); }
     });
@@ -305,8 +310,8 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
       renderResult();
       const degraded = loaded.failures.length > 0;
       setStatus(degraded ? 'partial' : 'ready',
-        `${record.id} COMPILED · ${state.config.universe.length}/${state.base.universe.length} assets · no orders routed`,
-        `${record.id} 编译完成 · ${state.config.universe.length}/${state.base.universe.length} 个标的 · 未发送订单`);
+        `${record.id} HISTORICAL EXPERIMENT · ${state.config.universe.length}/${state.base.universe.length} assets · no orders routed`,
+        `${record.id} 历史实验 · ${state.config.universe.length}/${state.base.universe.length} 个标的 · 未发送订单`);
     } catch (error) {
       const gated = error instanceof JsonDataError && error.status === 403;
       setStatus('error',
@@ -331,6 +336,8 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
     if (!state.result || !state.config) return;
     const payload = {
       exportedAt: new Date().toISOString(),
+      mode: 'experiments',
+      execution: 'none',
       model: { id: state.config.id, version: state.config.version, provenance: state.config.provenance },
       config: { weights: state.config.weights, settings: state.config.settings, universe: state.config.universe, benchmark: state.config.benchmark },
       result: { model: state.result.model, backtest: { ...state.result.backtest, curve: undefined } },

@@ -1,3 +1,4 @@
+import { assessQuoteFreshness } from '../lib/marketFreshness.js';
 /* ============================================================
    ARENA · US STOCK TA DASHBOARD (V13) — watchlist + search + per-ticker
    technical analysis panel (key levels / MAs / pivots / special points).
@@ -21,6 +22,7 @@ import {
 } from '../lib/arenaPageState.js';
 import {
   lastCompletedMarketSession,
+  marketCloseMinutes,
   readHistoryCache,
   readLatestHistoryCache,
   removeHistoryCache,
@@ -69,8 +71,8 @@ import {
     return { date: `${p.year}-${p.month}-${p.day}`, mins: (Number(p.hour) % 24) * 60 + Number(p.minute), wd: p.weekday };
   }
   function defaultMode() {
-    const { mins } = etParts();
-    return (mins >= 16 * 60 || mins < 4 * 60) ? 'post' : 'pre';
+    const { date, mins } = etParts();
+    return (mins >= marketCloseMinutes(date) || mins < 4 * 60) ? 'post' : 'pre';
   }
 
   // ---- admin key (Part 4 §18.4/§20) --------------------------------
@@ -188,7 +190,7 @@ import {
     const { date, mins } = etParts();
     const candles = normalizeDaily(history.candles, {
       etDateStr: date,
-      sessionComplete: mins >= 16 * 60,
+      sessionComplete: mins >= marketCloseMinutes(date),
     });
     return {
       sym,
@@ -196,7 +198,7 @@ import {
       quote,
       quoteError,
       candles,
-      analysis: analyzeTicker(candles, { price: quote ? quote.c : undefined }),
+      analysis: analyzeTicker(candles, { price: assessQuoteFreshness(quote).state === 'fresh' ? quote.c : undefined }),
       fetchedAt: Date.now(),
     };
   }
@@ -443,6 +445,10 @@ import {
     const el = $('taPanel');
     const page = state.page;
     const sym = page.sym;
+    if (sym) {
+      $('arenaSelection').textContent = T(`Inspecting ${sym} · daily data, separate from archived proposals.`, `正在查看 ${sym} · 日线数据，与归档提案分开。`);
+      document.querySelectorAll('#arenaWatchlist button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.sym === sym)));
+    }
     el.dataset.arenaState = page.status;
     el.setAttribute('aria-busy', String(page.status === ARENA_PAGE_STATUS.LOADING));
     if (!sym) {
@@ -456,12 +462,12 @@ import {
     const d = page.data;
     if (page.status === ARENA_PAGE_STATUS.GATED) {
       const msg = page.keyRejected
-        ? T('That admin key was not accepted.', '该管理员密钥未通过验证。')
+        ? T('That quota key was not accepted.', '该配额密钥未通过验证。')
         : T('Live quotes are limited to symbols in the latest published snapshot.', '实时报价目前仅覆盖最近一次发布快照中的标的。');
       el.innerHTML = `<div class="ta-empty err gated" role="status">
         <div>🔒 ${sym} ${T('is outside the latest published live-data pool.', '不在最近一次发布的实时数据名单内。')} ${msg}</div>
         <form class="ta-unlock" id="taUnlockForm">
-          <input type="password" id="taUnlockInput" autocomplete="off" placeholder="${T('Admin key', '管理员密钥')}" aria-label="${T('Admin key', '管理员密钥')}">
+          <input type="password" id="taUnlockInput" autocomplete="off" placeholder="${T('Quota key', '配额密钥')}" aria-label="${T('Quota key', '配额密钥')}">
           <button type="submit" class="btn">${T('Unlock', '解锁')}</button>
         </form>
       </div>`;
@@ -477,9 +483,10 @@ import {
       el.innerHTML = `<div class="ta-empty err" role="alert">${T('Could not load', '加载失败')} ${sym} — ${T('check the ticker or try again in a moment.', '请确认代码是否正确，或稍后重试。')}</div>`;
       return;
     }
-    const a = d.analysis;
+    const quoteState = assessQuoteFreshness(d.quote);
+    const a = quoteState.state === 'fresh' ? d.analysis : analyzeTicker(d.candles);
     const u = state.universe.find((x) => x.sym === sym);
-    const q = d.quote;
+    const q = quoteState.state === 'fresh' ? d.quote : null;
     const chg = q ? q.c - q.pc : a.last.c - a.prev.c;
     const chgPct = q ? (q.pc ? (chg / q.pc) * 100 : 0) : ((a.last.c - a.prev.c) / a.prev.c) * 100;
     const up = chg >= 0;
@@ -488,16 +495,17 @@ import {
         `Latest completed session unavailable — showing history through ${d.history.session}.`,
         `最近完整交易日数据不可用——当前显示截至 ${d.history.session} 的历史记录。`,
       )}</p>`
-      : page.status === ARENA_PAGE_STATUS.PARTIAL
+      : !q
         ? `<p class="ta-state-note partial" role="status">${T(
-          'Live quote unavailable — analysis uses the latest completed daily close.',
-          '实时报价不可用——分析暂以最近完整交易日收盘价为准。',
+          'Current quote unavailable or stale — analysis uses the completed daily close.',
+          '当前报价不可用或已过期——分析使用已完成日线收盘价。',
         )}</p>`
         : '';
     el.innerHTML = `
       ${stateNotice}
+      <p class="ta-state-note" data-quote-state="${quoteState.state}">${T('OBSERVE · READ ONLY', '观察 · 只读')} · Finnhub · ${T('declared delay unknown', '声明延迟未知')} · ${T('source time', '原始时间')}: ${d.quote ? new Date(d.quote.t * 1000).toISOString() : '—'} · ${T(quoteState.state.toUpperCase(), { fresh: '时效有效', stale: '陈旧', unknown: '未知' }[quoteState.state])}</p>
       <div class="ta-head">
-        <div class="ta-id"><b>${sym}</b><span>${u ? u.name : ''}</span><i class="ta-src ${page.status}">${page.status === ARENA_PAGE_STATUS.STALE ? T('STALE', '陈旧') : q ? 'LIVE' : T('EOD', '日线收盘')}</i></div>
+        <div class="ta-id"><b>${sym}</b><span>${u ? u.name : ''}</span><i class="ta-src ${page.status}">${page.status === ARENA_PAGE_STATUS.STALE ? T('STALE', '陈旧') : q ? T('QUOTE SNAPSHOT', '报价快照') : T('EOD', '日线收盘')}</i></div>
         <div class="ta-quote ${up ? 'up' : 'down'}"><b>$${fmt(a.price)}</b><span>${up ? '▲' : '▼'} ${fmt(Math.abs(chg))} (${fmt(Math.abs(chgPct))}%)</span></div>
         <div class="ta-mode-scroll"><div class="ta-modes" role="tablist" aria-label="${T('Session analysis', '交易时段分析')}">
           <button class="ta-mode ${state.mode === 'pre' ? 'on' : ''}" type="button" id="ta-tab-pre" aria-controls="ta-view-pre" tabindex="${state.mode === 'pre' ? 0 : -1}" data-m="pre" role="tab" aria-selected="${state.mode === 'pre'}">${T('PRE-MARKET', '盘前')}<i>${T('plan · next session', '计划 · 下一交易日')}</i></button>
@@ -575,7 +583,7 @@ import {
   renderAdminChip();
   const adminChipEl = $('adminChip');
   if (adminChipEl) adminChipEl.addEventListener('click', () => {
-    if (getArenaKey() && confirm(T('Clear the admin key?', '清除管理员密钥？'))) {
+    if (getArenaKey() && confirm(T('Clear the quota key?', '清除配额密钥？'))) {
       setArenaKey('');
       if (state.page.sym) select(state.page.sym, { forceRefresh: true });
     }
@@ -621,4 +629,12 @@ import {
       select(state.page.sym, { forceRefresh: true });
     }
   });
+  let lastQuoteState = null;
+  setInterval(() => {
+    const data = state.page.data;
+    if (!data) return;
+    const next = assessQuoteFreshness(data.quote).state;
+    if (next !== lastQuoteState) { lastQuoteState = next; renderPanel(); }
+  }, 30_000);
+
 })();

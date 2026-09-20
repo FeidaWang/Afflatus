@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitest/config';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'path';
 import { BUILD_ROUTES } from './src/config/siteManifest.js';
 
@@ -23,8 +23,33 @@ const dataBridgePattern = /<script\s+src=["']\/lib\/data-bridge\.js["']\s*><\/sc
 // their co-located classic <script src="/x.js"> files stay in public/ as
 // static passthrough (unbundled) for now — see ROADMAP §6 for the follow-up
 // (converting those to ES modules for full bundling).
+// Match the static host: missing documents keep their URL and a real 404.
+// Vite's default SPA fallback would otherwise return the homepage with 200.
+function recoveryPage(server, directory, errorPage) {
+  return () => server.middlewares.use((req, res, next) => {
+    if (!['GET', 'HEAD'].includes(req.method) || !req.headers.accept?.includes('text/html')) return next();
+    let pathname;
+    try { pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); } catch { return next(); }
+    if (existsSync(resolve(directory, `.${pathname}`))) return next();
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.end(req.method === 'HEAD' ? undefined : readFileSync(errorPage));
+  });
+}
+
 export default defineConfig({
+  appType: 'mpa',
   plugins: [
+    {
+      name: 'static-404-recovery',
+      configureServer(server) {
+        return recoveryPage(server, server.config.root, resolve(server.config.publicDir, '404.html'));
+      },
+      configurePreviewServer(server) {
+        const directory = resolve(server.config.root, server.config.build.outDir);
+        return recoveryPage(server, directory, resolve(directory, '404.html'));
+      },
+    },
     {
       name: 'inline-critical-primitives',
       transformIndexHtml(html) {

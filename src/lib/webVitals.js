@@ -66,7 +66,7 @@ export function getDeviceTier(win = globalThis.window) {
 
 export function getTelemetryContext(win = globalThis.window) {
   const route = findPerformanceRoute(win?.location?.pathname);
-  if (!route) return null;
+  if (!route || ['horoscope', 'arena'].includes(route.id)) return null;
 
   return Object.freeze({
     route: route.id,
@@ -138,7 +138,7 @@ export function reportWebVital(metric, win = globalThis.window) {
 
 export function startWebVitals(win = globalThis.window) {
   if (started || !win?.document || win.__AFFLATUS_E2E__) return false;
-  if (!findPerformanceRoute(win.location?.pathname)) return false;
+  if (!getTelemetryContext(win)) return false;
 
   started = true;
   const report = (metric) => reportWebVital(metric, win);

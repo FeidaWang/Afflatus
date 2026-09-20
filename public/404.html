@@ -8,9 +8,12 @@
 <meta name="theme-color" content="#05070b">
 <link rel="icon" type="image/svg+xml" href="/favicons/home.svg?v=20260808">
 <style>
-html,body{margin:0;height:100%;background:#05070b;color:#e8f0ff;font-family:ui-monospace,SFMono-Regular,"JetBrains Mono",monospace}
-body{display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;box-sizing:border-box}
-.wrap{max-width:520px}
+html,body{margin:0;min-height:100%;background:#05070b;color:#e8f0ff;font-family:ui-monospace,SFMono-Regular,"JetBrains Mono",monospace}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;box-sizing:border-box}
+.wrap{max-width:560px;width:100%}
+nav{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+a{box-sizing:border-box;min-height:44px;max-width:100%}
+a:focus-visible{outline:3px solid #00e7ff;outline-offset:5px}
 .code{font-size:64px;font-weight:700;letter-spacing:.04em;color:#00e7ff;margin:0 0 8px}
 h1{font-size:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#caff00;margin:0 0 16px}
 p{font-size:14px;line-height:1.6;color:#9aa7b8;margin:0 0 24px}
@@ -20,11 +23,14 @@ a:hover{background:#00e7ff}
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 </head>
 <body>
-<div class="wrap">
+<main class="wrap" aria-labelledby="errorTitle">
   <p class="code">404</p>
-  <h1>Signal Lost / 信号丢失</h1>
-  <p>This page doesn't exist, or the coordinates have drifted.<br>该坐标不存在，或已发生漂移。</p>
-  <a href="/">Return to base / 返回舰桥</a>
-</div>
+  <h1 id="errorTitle">Page not found / <span lang="zh">页面不存在</span></h1>
+  <p>This address may be incorrect, or the page may have moved. Choose a homepage to continue.<br><span lang="zh">网址可能有误，或页面已移动。请选择首页继续浏览。</span></p>
+  <nav aria-label="Recovery / 返回首页">
+  <a href="/en/" lang="en">English homepage</a>
+  <a href="/zh/" lang="zh">返回中文首页</a>
+</nav>
+</main>
 </body>
 </html>

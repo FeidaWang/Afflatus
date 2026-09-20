@@ -4,7 +4,7 @@ import './portfolioChartInspector.css';
 
 const copy = {
   en: {
-    core: 'Closed-cycle capital core', cycles: 'Closed-cycle trajectories', benchmarks: 'Model / benchmark', allocation: 'Research allocation',
+    core: 'Closed-cycle capital core', cycles: 'Closed-cycle observations', benchmarks: 'Model / benchmark', allocation: 'Research allocation',
     efficiency: 'Annualized cycle efficiency', days: 'Holding days', weighted: 'Weighted capital days', count: 'Closed cycles', volatility: 'Annual volatility', weight: 'Research weight',
     model: 'Model estimate', disclosed: 'Disclosed closed-cycle summary', research: 'Subjective research allocation · not account holdings',
     date: 'As of: FY2025–26; exact cutoff not disclosed. Method: 2026-08-08.',
@@ -18,7 +18,7 @@ const copy = {
     footnote: 'Source and method [1]', back: 'Back to chart', hidden: 'Hidden', scale: 'Scale', loading: 'Loading current data; inspection unavailable. The table shows the previous published snapshot.', empty: 'No records available', allHidden: 'All series hidden; complete data below.',
   },
   zh: {
-    core: '已结清周期资本核心', cycles: '已结清周期轨迹', benchmarks: '模型 / 基准倍数', allocation: '研究配置权重',
+    core: '已结清周期资本核心', cycles: '已结清周期观测', benchmarks: '模型 / 基准倍数', allocation: '研究配置权重',
     efficiency: '周期年化效率', days: '持有天数', weighted: '资金加权占用天数', count: '已结清周期数', volatility: '年波动率', weight: '研究权重',
     model: '模型估算', disclosed: '公开已结清周期摘要', research: '主观研究配置 · 非账户实际持仓',
     date: '截至：2025–26 财年；精确截止日未披露。方法日期：2026-08-08。',

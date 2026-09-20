@@ -53,6 +53,7 @@ export function createRenderBudgetCoordinator(options = {}) {
   let qualityTier = initialTier;
   let refreshHz = 60;
   let pageFrozen = Boolean(doc?.hidden);
+  let suspended = false;
   let listenersAttached = false;
   let resizeFrame = 0;
   let refreshFrame = 0;
@@ -110,7 +111,7 @@ export function createRenderBudgetCoordinator(options = {}) {
   }
 
   function shouldRun(record) {
-    return record.enabled && !pageFrozen && (record.observe === false || record.inViewport);
+    return record.enabled && !pageFrozen && !suspended && (record.observe === false || record.inViewport);
   }
 
   function reconcile(record) {
@@ -398,6 +399,10 @@ export function createRenderBudgetCoordinator(options = {}) {
   return Object.freeze({
     register,
     destroy,
+    setSuspended(value) {
+      suspended = Boolean(value);
+      reconcileAll();
+    },
     getPolicy(spec = {}) {
       return policyFor(spec);
     },
@@ -407,6 +412,7 @@ export function createRenderBudgetCoordinator(options = {}) {
         qualityCeiling: initialTier,
         refreshHz,
         pageFrozen,
+        suspended,
         activeSurfaces: [...records.values()].filter((record) => record.active).length,
         surfaces: [...records.values()].map((record) => Object.freeze({
           id: record.id,

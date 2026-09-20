@@ -1,5 +1,6 @@
 import { NAV_ROUTES, normalizeRoutePath } from '../config/navRoutes.generated.js';
-import { getLocale, localeFromPathname, localizePathname } from './localeStore.js';
+import { getLocale, localeFromPathname } from './localeStore.js';
+import { navigationHref } from './siteNavigation.js';
 
 /* ============================================================
    Afflatus shared navigation — SINGLE SOURCE OF TRUTH.
@@ -28,25 +29,19 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
   const norm = normalizeRoutePath;
   const here = norm(location.pathname);
   const routeLocale = localeFromPathname(location.pathname);
-  const routeHref = (route) => {
-    const path = typeof route === 'string' ? route : route.path;
-    if (!routeLocale) return path;
-    const publishedLocales = typeof route === 'string' ? null : route.publishedLocales;
-    const locale = publishedLocales && !publishedLocales.includes(routeLocale)
-      ? publishedLocales[0]
-      : routeLocale;
-    return localizePathname(path, locale);
-  };
+  const routeHref = (route) => navigationHref(route.path, routeLocale);
   let i = SITE.findIndex((s) => norm(s.path) === here);
-  if (i < 0) i = 0;
+
 
   function applyLocale(locale = getLocale('en')) {
     const lang = locale === 'zh' ? 'zh' : 'en';
     document.querySelectorAll('[data-afflatus-nav] [data-en][data-zh], .nav-labs__menu [data-en][data-zh]')
       .forEach((el) => { el.textContent = el.dataset[lang]; });
+    mobileNavControllers.forEach(controller => controller.updateLocale(lang));
   }
 
   window.AfflatusNav = Object.freeze({ applyLocale });
+  window.addEventListener('afflatus-lang', event => applyLocale(event.detail));
 
   function run() {
     const renderedLocale = routeLocale || getLocale('en');
@@ -72,7 +67,7 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
         a.setAttribute('data-en', s.en);
         a.setAttribute('data-zh', s.zh);
         a.textContent = renderedLocale === 'zh' ? s.zh : s.en;
-        if (idx === i) a.className = 'active';
+        if (idx === i) { a.className = 'active'; a.setAttribute('aria-current', 'page'); }
 
         if (s.group === 'labs') {
           if (!labsWrap) {
@@ -89,7 +84,6 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
             labsTrigger.setAttribute('role', 'button');
             labsTrigger.setAttribute('data-en', LABS_LABEL.en);
             labsTrigger.setAttribute('data-zh', LABS_LABEL.zh);
-            labsTrigger.setAttribute('aria-haspopup', 'true');
             labsTrigger.setAttribute('aria-expanded', 'false');
             labsTrigger.textContent = LABS_LABEL[renderedLocale];
 
@@ -108,28 +102,43 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
             // CSS :hover/:focus-within (which required real DOM nesting).
             labsMenu = document.createElement('div');
             labsMenu.className = 'nav-labs__menu';
+            // Visibility must change synchronously so the next Tab can focus
+            // a link even while the decorative opacity/transform fades run.
+            labsMenu.style.transitionProperty = 'opacity, transform';
+            labsMenu.id = `afflatus-labs-${document.querySelectorAll('.nav-labs__menu').length + 1}`;
+            labsMenu.inert = true;
+            labsTrigger.setAttribute('aria-controls', labsMenu.id);
             document.body.appendChild(labsMenu);
 
             let clickPinned = false;
             const openMenu = ({ pin = false } = {}) => {
               closeLabsMenus(labsMenu);
               positionLabsMenu(labsTrigger, labsMenu);
+              cancelClose();
+              labsMenu.inert = false;
               labsWrap.classList.add('open');
               labsMenu.classList.add('open');
               labsTrigger.setAttribute('aria-expanded', 'true');
               if (pin) clickPinned = true;
             };
-            const closeMenu = () => {
+            const closeMenu = ({ restoreFocus = false } = {}) => {
+              cancelClose();
+              const ownsFocus = labsMenu.contains(document.activeElement) || document.activeElement === labsTrigger;
+              labsMenu.inert = true;
               clickPinned = false;
               labsWrap.classList.remove('open');
               labsMenu.classList.remove('open');
               labsTrigger.setAttribute('aria-expanded', 'false');
+              if (restoreFocus && ownsFocus) labsTrigger.focus();
             };
             labsMenu._afflatusClose = closeMenu;
+            labsMenu._afflatusTrigger = labsTrigger;
 
             let closeTimer = null;
             const cancelClose = () => { if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; } };
-            const scheduleClose = () => { cancelClose(); closeTimer = setTimeout(closeMenu, 160); };
+            const scheduleClose = () => { cancelClose(); closeTimer = setTimeout(() => {
+              if (!labsMenu.contains(document.activeElement) && document.activeElement !== labsTrigger) closeMenu();
+            }, 160); };
 
             labsTrigger.addEventListener('click', (e) => {
               e.preventDefault();
@@ -141,7 +150,26 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
             labsTrigger.addEventListener('mouseleave', () => { if (!clickPinned) scheduleClose(); });
             labsMenu.addEventListener('mouseenter', cancelClose);
             labsMenu.addEventListener('mouseleave', () => { if (!clickPinned) scheduleClose(); });
-            labsTrigger.addEventListener('focus', openMenu);
+            // Ordinary navigation disclosure, with explicit Space support for
+            // the role=button anchor retained for existing per-page styling.
+            labsTrigger.addEventListener('keydown', (event) => {
+              if (event.key === ' ') { event.preventDefault(); labsTrigger.click(); }
+              if (event.key === 'Tab' && !event.shiftKey && labsMenu.classList.contains('open')) {
+                event.preventDefault(); labsMenu.querySelector('a')?.focus();
+              }
+            });
+            labsMenu.addEventListener('keydown', (event) => {
+              if (event.key !== 'Tab') return;
+              const links = [...labsMenu.querySelectorAll('a')];
+              if (event.shiftKey && event.target === links[0]) {
+                event.preventDefault(); labsTrigger.focus();
+              } else if (!event.shiftKey && event.target === links.at(-1)) {
+                const controls = [...navEl.querySelectorAll('a, button')];
+                const next = controls[controls.indexOf(labsTrigger) + 1];
+                if (next) { event.preventDefault(); next.focus(); }
+                closeMenu();
+              }
+            });
             labsWrap.addEventListener('focusout', (e) => {
               if (!labsMenu.contains(e.relatedTarget) && e.relatedTarget !== labsTrigger) closeMenu();
             });
@@ -168,14 +196,23 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
       closeLabsMenus();
       closeMobileNavs();
     });
+    document.addEventListener('focusin', (event) => {
+      if (!event.target.closest('.site-header--follow, .nav-labs__menu')) closeMobileNavs();
+    });
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
-      closeLabsMenus();
+      if (closeLabsMenus(null, { restoreFocus: true })) { e.preventDefault(); return; }
       closeMobileNavs({ restoreFocus:true });
     });
     window.addEventListener('scroll', () => {
-      closeLabsMenus();
-      closeMobileNavs();
+      // Keyboard focus can scroll the page. Keep its disclosure reachable and
+      // move the portaled panel with the trigger rather than hiding focus.
+      document.querySelectorAll('.nav-labs__menu.open').forEach(menu => {
+        if (menu.contains(document.activeElement) || menu._afflatusTrigger === document.activeElement) {
+          positionLabsMenu(menu._afflatusTrigger, menu);
+        } else menu._afflatusClose();
+      });
+      if (!document.activeElement?.closest('.site-header--follow, .nav-labs__menu')) closeMobileNavs();
     }, { passive: true });
     window.addEventListener('resize', () => {
       closeLabsMenus();
@@ -191,6 +228,7 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
     if (document.body.matches('.showcase-page, .home-page')) return;
     const header = navEl.closest('.site-header--follow');
     if (!header || header.querySelector(':scope > .afflatus-mobile-nav-toggle')) return;
+    let currentLocale = renderedLocale;
     const menuId = navEl.id || `afflatus-primary-nav-${mobileNavControllers.length + 1}`;
     navEl.id = menuId;
     navEl.classList.add('afflatus-mobile-nav-panel');
@@ -200,16 +238,17 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
     toggle.className = 'afflatus-mobile-nav-toggle';
     toggle.setAttribute('aria-controls', menuId);
     toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', renderedLocale === 'zh' ? '打开主导航' : 'Open primary navigation');
+    toggle.setAttribute('aria-label', currentLocale === 'zh' ? '打开主导航' : 'Open primary navigation');
     toggle.textContent = MOBILE_MENU_LABEL[renderedLocale === 'zh' ? 'zh' : 'en'];
     header.appendChild(toggle);
     document.documentElement.classList.add('afflatus-nav-enhanced');
 
     const close = ({ restoreFocus = false } = {}) => {
       if (!header.classList.contains('mobile-nav-open')) return;
+      closeLabsMenus();
       header.classList.remove('mobile-nav-open');
       toggle.setAttribute('aria-expanded', 'false');
-      toggle.setAttribute('aria-label', renderedLocale === 'zh' ? '打开主导航' : 'Open primary navigation');
+      toggle.setAttribute('aria-label', currentLocale === 'zh' ? '打开主导航' : 'Open primary navigation');
       if (restoreFocus) toggle.focus();
     };
     const open = () => {
@@ -218,9 +257,21 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
       navEl.style.setProperty('--afflatus-mobile-nav-top', `${Math.round(rect.bottom + 8)}px`);
       header.classList.add('mobile-nav-open');
       toggle.setAttribute('aria-expanded', 'true');
-      toggle.setAttribute('aria-label', renderedLocale === 'zh' ? '关闭主导航' : 'Close primary navigation');
+      toggle.setAttribute('aria-label', currentLocale === 'zh' ? '关闭主导航' : 'Close primary navigation');
+      navEl.querySelector('a, button')?.focus();
     };
-    mobileNavControllers.push({ header, close });
+    const updateLocale = (locale) => {
+      currentLocale = locale;
+      toggle.textContent = MOBILE_MENU_LABEL[locale];
+      const expanded = header.classList.contains('mobile-nav-open');
+      toggle.setAttribute('aria-label', locale === 'zh'
+        ? (expanded ? '关闭主导航' : '打开主导航')
+        : (expanded ? 'Close primary navigation' : 'Open primary navigation'));
+    };
+    mobileNavControllers.push({ header, close, updateLocale });
+    header.addEventListener('focusout', (event) => {
+      if (!header.contains(event.relatedTarget) && !event.relatedTarget?.closest?.('.nav-labs__menu')) close();
+    });
 
     toggle.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -250,11 +301,13 @@ import { getLocale, localeFromPathname, localizePathname } from './localeStore.j
     menu.style.left = 'auto';
   }
 
-  function closeLabsMenus(except) {
+  function closeLabsMenus(except, options = {}) {
+    let closed = false;
     document.querySelectorAll('.nav-labs__menu.open').forEach((m) => {
       if (m === except) return;
-      if (m._afflatusClose) m._afflatusClose();
+      if (m._afflatusClose) { m._afflatusClose(options); closed = true; }
     });
+    return closed;
   }
 
   if (document.readyState !== 'loading') run();

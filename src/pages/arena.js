@@ -1,3 +1,4 @@
+import { assessNyseSession } from '../lib/marketSession.js';
 /* ============================================================
    ARENA · page chrome — TRAXUS//CVKM build — vanilla JS
    - Bilingual (EN/中) pre-market briefing modal + "Today's Signal" mini feed
@@ -28,10 +29,6 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
   const RM = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } })();
 
   // ---- market hours / session --------------------------------
-  function nyNow(d = new Date()) { const f = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); const p = Object.fromEntries(f.formatToParts(d).map((x) => [x.type, x.value])); const wd = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[p.weekday]; return { wd, sec: (Number(p.hour) % 24) * 3600 + Number(p.minute) * 60 + Number(p.second) }; }
-  const OPEN_S = 9 * 3600 + 30 * 60, CLOSE_S = 16 * 3600, PRE_S = 4 * 3600, POST_S = 20 * 3600;
-  function marketStatus() { const { wd, sec } = nyNow(), wk = wd >= 1 && wd <= 5; if (wk && sec >= OPEN_S && sec < CLOSE_S) return { state: 'open', label: 'Regular Session' }; if (wk && sec >= PRE_S && sec < OPEN_S) return { state: 'pre', label: 'Pre-Market' }; if (wk && sec >= CLOSE_S && sec < POST_S) return { state: 'post', label: 'After Hours' }; return { state: 'closed', label: 'Market Closed' }; }
-  function secsToNextOpen(wd, sec) { const wk = (d) => d >= 1 && d <= 5; if (wk(wd) && sec < OPEN_S) return OPEN_S - sec; let s = 86400 - sec, d = (wd + 1) % 7; for (let i = 0; i < 8; i++) { if (wk(d)) return s + OPEN_S; s += 86400; d = (d + 1) % 7; } return s + OPEN_S; }
   const fmtDur = (t) => window.AfflatusClock.fmtDurSec(t);   // shared util (public/lib/clock.js); t is in seconds
 
   // ---- sentiment ----------------------------------------------
@@ -90,8 +87,25 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     button.classList.toggle('is-stale', stale);
   }
 
-  function renderStatus() { const st = marketStatus(); $('statusChip').className = `chip ${st.state}`; $('statusTxt').textContent = st.label; const sl = sentLabel(state.sentiment); const stale = newsFreshness().stale; $('sentChip').className = `chip ${stale ? 'closed' : sl.tone}`; $('sentTxt').textContent = stale ? T(`HISTORICAL · ${sl.label}`, `历史快照 · ${localizedSentiment(sl)}`) : localizedSentiment(sl); renderBriefingCta(); }
-  function renderCountdown() { const { wd, sec } = nyNow(), open = wd >= 1 && wd <= 5 && sec >= OPEN_S && sec < CLOSE_S; $('openCd').classList.toggle('open', open); $('cdLabel').textContent = open ? 'US MARKET CLOSES IN' : 'US MARKET OPENS IN'; $('cdClock').textContent = fmtDur(open ? CLOSE_S - sec : secsToNextOpen(wd, sec)); }
+  function renderStatus() {
+    const session = assessNyseSession();
+    const labels = { prepare: T('PREPARE · CORE SESSION', '准备中 · 常规交易时段'), warmup: T('OPEN WARMUP', '开盘预热'), active: T('CORE SESSION OPEN', '常规交易时段开放'), 'close-only': T('CLOSE ONLY', '仅减仓时段'), closed: T('CORE SESSION CLOSED', '常规交易时段关闭'), unknown: T('CALENDAR UNVERIFIED', '日历未验证') };
+    $('statusChip').className = `chip ${session.regularOpen ? 'open' : 'closed'}`;
+    $('statusTxt').textContent = labels[session.state];
+    $('statusTxt').dataset.sessionState = session.state;
+    const sl = sentLabel(state.sentiment), stale = newsFreshness().stale;
+    $('sentChip').className = `chip ${stale ? 'closed' : sl.tone}`;
+    $('sentTxt').textContent = stale ? T(`HISTORICAL · ${sl.label}`, `历史快照 · ${localizedSentiment(sl)}`) : localizedSentiment(sl);
+    renderBriefingCta();
+  }
+  function renderCountdown() {
+    const now = new Date(), session = assessNyseSession(now);
+    const target = session.regularOpen ? session.closeMs : session.nextOpenMs;
+    $('openCd').classList.toggle('open', session.regularOpen);
+    $('cdLabel').textContent = session.regularOpen ? T('CORE SESSION CLOSES IN', '常规交易时段收盘倒计时') : T('NEXT CORE SESSION OPENS IN', '下一常规交易时段开盘倒计时');
+    $('cdClock').textContent = target === null ? '—' : fmtDur(Math.max(0, Math.floor((target - now.getTime()) / 1000)));
+    if ($('sessionTimes')) $('sessionTimes').textContent = target === null ? T('Calendar beyond verified coverage', '超出已核验日历范围') : ['America/New_York', 'Australia/Melbourne'].map(zone => `${zone}: ${new Intl.DateTimeFormat(state.lang === 'zh' ? 'zh-CN' : 'en-GB', { timeZone: zone, month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(target)}`).join(' · ');
+  }
   function renderNews() {
     const host = $('newsList'), n = state.news;
     const dateEl = $('newsDate');
@@ -204,7 +218,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
 
   const ob = $('openBriefBtn'); if (ob) ob.addEventListener('click', openBriefing);
   // language is owned by the shared i18n engine (.lang-toggle); arena re-renders on change
-  window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; renderStatus(); renderNews(); });
+  window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; renderStatus(); renderCountdown(); renderNews(); });
   if (EMBED) { document.body.classList.add('embed'); window.addEventListener('resize', postHeight); setInterval(postHeight, 1200); }
   initCursor();
   renderStatus(); renderNews(); renderCountdown();

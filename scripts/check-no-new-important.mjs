@@ -20,6 +20,10 @@ const BASELINES = {
   // 123 legacy priorities, lowering the accepted ratchet from 2,960 to 2,837.
   'src/styles.css': 2837,
   'src/cic-hud.css': 0,
+  // F06: include the active homepage and shared interaction owners.
+  'src/showcase/showcase.css': 3,
+  'public/styles/responsive-primitives.css': 0,
+  'public/styles/afflatus-brand.css': 3,
   'index.html': 2,
 };
 

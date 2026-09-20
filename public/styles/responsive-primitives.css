@@ -10,6 +10,16 @@
   --visual-viewport-center: 50vh;
   --keyboard-inset: 0px;
   --touch-target: 44px;
+  /* F06: shared interaction semantics. Route palettes and reading typography
+     remain local; adopt these tokens one component family at a time. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --control-font-size: 0.875rem;
+  --control-line-height: 1.5;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: var(--space-1);
 }
 
 @supports (height: 100svh) {
@@ -126,8 +136,8 @@ html[data-keyboard-open="true"] :where(input, textarea, select):focus {
 }
 
 .site-brand:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 4px;
+  outline: var(--focus-ring-width) solid currentColor;
+  outline-offset: var(--focus-ring-offset);
 }
 
 .site-brand__mark {

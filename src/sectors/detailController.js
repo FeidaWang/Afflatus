@@ -45,11 +45,13 @@ export function createDetailController(options = {}) {
       const connections = (graph.edges || [])
         .filter((edge) => edge.source === node.id || edge.target === node.id)
         .map((edge) => {
-          const other = nodeById.get(edge.source === node.id ? edge.target : edge.source);
+          const from = nodeById.get(edge.source);
+          const to = nodeById.get(edge.target);
           return `<a class="mwConnection" href="${escapeHtml(edge.source_url)}" target="_blank" rel="noopener">`
             + `<span><i class="edge-${escapeHtml(edge.type)}"></i>${escapeHtml(edgeNames[edge.type] || edge.type)}</span>`
-            + `<b>${escapeHtml(other?.label || '')}</b>`
-            + `<small>${escapeHtml(t(edge.label_en, edge.label_zh))}</small></a>`;
+            + `<b>${escapeHtml(`${from?.label || edge.source} → ${to?.label || edge.target}`)}</b>`
+            + `<small>${escapeHtml(t(edge.label_en, edge.label_zh))}</small></a>`
+            + `<p class="mwGap">${escapeHtml(t('Archive version', '档案版本'))} ${escapeHtml(graph.version ?? '—')} · ${escapeHtml(graph.updated || '—')} · ${escapeHtml(t('Observation date unavailable', '观测日期未提供'))}<br>${escapeHtml(t('Unitless display weight', '无量纲绘图权重'))}: ${escapeHtml(edge.strength ?? '—')} · ${escapeHtml(t('Not a measured correlation or probability.', '不是实测相关系数或概率。'))}</p>`;
         })
         .join('');
       return {
@@ -58,7 +60,7 @@ export function createDetailController(options = {}) {
         tagClass: 'ecosystem',
         bodyHtml: `<div class="mwLine">${escapeHtml(t(node.summary_en, node.summary_zh))}</div>`
           + (products ? `<div class="mwProducts">${products}</div>` : '')
-          + (connections ? `<div class="mwConnections"><strong>${escapeHtml(t('VERIFIED CONNECTIONS', '经核验关系'))}</strong>${connections}</div>` : '')
+          + (connections ? `<div class="mwConnections"><strong>${escapeHtml(t('ARCHIVED RELATIONSHIPS · INSPECT SOURCES', '档案关系 · 核对来源'))}</strong>${connections}</div>` : '')
           + `<a class="mwPrimarySource" href="${escapeHtml(node.source)}" target="_blank" rel="noopener">${escapeHtml(t('Primary product source ↗', '产品一手来源 ↗'))}</a>`,
       };
     }

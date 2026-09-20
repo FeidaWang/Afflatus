@@ -9,6 +9,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   NAV_ROUTES,
+  HOME_NAV_GROUPS,
   SITE_LOCALES,
   SITE_MANIFEST,
   SITEMAP_ROUTES,
@@ -88,11 +89,8 @@ function generatedNavModule() {
     '',
     `export const NAV_ROUTES = Object.freeze(${JSON.stringify(NAV_ROUTES, null, 2)});`,
     '',
-    'export function normalizeRoutePath(pathname) {',
-    "  const withoutLocale = String(pathname || '/').replace(/^\\/(?:en|zh)(?=\\/|$)/, '') || '/';",
-    "  const path = withoutLocale.replace(/index\\.html$/, '');",
-    "  return path === '' ? '/' : path;",
-    '}',
+    `export const HOME_NAV_GROUPS = Object.freeze(${JSON.stringify(HOME_NAV_GROUPS, null, 2)});`,
+    "export { normalizeRoutePath } from '../lib/routePaths.js';",
     '',
   ].join('\n');
 }

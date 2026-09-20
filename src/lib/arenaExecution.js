@@ -209,6 +209,7 @@ export function validateArenaExecutionQuoteReceipt(receipt, {
   refPx,
   executedAt,
   maxObservationLagMs = 30_000,
+  executionWindow = 'open-window',
 } = {}) {
   if (!receipt || typeof receipt !== 'object' || Array.isArray(receipt)) {
     return { ok: false, error: 'execution quote receipt must be an object' };
@@ -233,6 +234,10 @@ export function validateArenaExecutionQuoteReceipt(receipt, {
   if (observedMs > executedMs) return { ok: false, error: 'execution quote cannot be observed after trade execution' };
   if (executedMs - observedMs > maxObservationLagMs) {
     return { ok: false, error: 'execution quote observation is too far from trade execution' };
+  }
+  const maxProviderAgeMs = QUOTE_MAX_AGE_MS[executionWindow];
+  if (!Number.isFinite(maxProviderAgeMs) || executedMs - providerMs > maxProviderAgeMs) {
+    return { ok: false, error: 'execution quote provider print is stale or its window is unknown' };
   }
   if (providerMs > observedMs + QUOTE_FUTURE_TOLERANCE_MS) {
     return { ok: false, error: 'execution quote provider timestamp is in the future' };

@@ -39,10 +39,13 @@ const $ = (id) => document.getElementById(id);
 const fmtUsd = (n) => '$' + Math.round(n).toLocaleString('en-US');
 
 // ── real boot tasks (charter ②: the log is gated on these promises) ─────
-const scenePromise = import('../scene/topdownCombat.js');
+const GRAPHICS_OFF = new URLSearchParams(location.search).get('graphics') === 'off' || REDUCED;
+// Load only when the prototype needs the scene; failures are handled by the caller.
+let scenePromise;
+const loadScene = () => (scenePromise ||= import('../scene/topdownCombat.js'));
 const TASKS = [
   { line: 'BIOS: singular-throne · bearing locked', cls: 'b', run: () => Promise.resolve() },
-  { line: 'loading hull geometry (carrier · escorts)', cls: '', run: () => scenePromise },
+  { line: 'loading hull geometry (carrier · escorts)', cls: '', run: loadScene },
   {
     line: 'ledger uplink /arena', cls: '', run: () => fetchJson('arena-ledger').then((d) => {
       const summary = arenaBootSummary(d);
@@ -100,11 +103,11 @@ async function boot() {
     done++;
     bar.style.width = `${Math.round((done / TASKS.length) * 100)}%`;
   }
-  print('ALL STATIONS REPORTING · 各站就位 — TAKING THE BRIDGE', 'warm');
+  print('BOOT CHECKS FINISHED · 启动检查结束', 'warm');
   // auto-handover: no click gate (owner directive 2026-07-13); the progress
-  // bar above is real (task-gated), so arrival here means everything loaded.
+  // bar above tracks settled checks; individual failures remain OFFLINE.
   await pause(REDUCED ? 0 : 700);
-  takeBridge();
+  await takeBridge();
 }
 function print(text, cls) {
   const el = document.createElement('div');
@@ -121,15 +124,14 @@ const dots = (s) => '.'.repeat(Math.max(2, 44 - s.length));
 // needed; ?combatcam=tactical still opts out.)
 let td = null;
 async function takeBridge() {
-  overlay.classList.add('gone');
-  bridge.classList.add('on');
-  bridge.removeAttribute('aria-hidden');
+  showStations();
   let mod = null;
-  try { mod = await scenePromise; } catch (e) { mod = null; }
-  td = mod && mod.createTopdownCombat ? mod.createTopdownCombat({ canvas, surfaceId: 'boot:topdown-combat' }) : null;
+  try { mod = await loadScene(); } catch (e) { mod = null; }
+  try { td = mod?.createTopdownCombat?.({ canvas, surfaceId: 'boot:topdown-combat' }); } catch { td = null; }
   if (!td) { glFail.classList.add('on'); return; }
   sizeCanvas();
   td.start();
+  $('camToggle').disabled = false;
   startTelemetry();
 }
 
@@ -142,10 +144,10 @@ async function takeBridge() {
 // unmodified — createArmorDemoScene() matches createTopdownCombat()'s
 // { start, stop, resize } shape on purpose.
 async function runArmorDemo() {
-  overlay.classList.add('gone');
+  overlay.hidden = true;
   let mod = null;
   try { mod = await import('../bootengine/render/armorDemoScene'); } catch (e) { mod = null; }
-  td = mod && mod.createArmorDemoScene ? mod.createArmorDemoScene({ canvas }) : null;
+  try { td = mod?.createArmorDemoScene?.({ canvas }); } catch { td = null; }
   if (!td) { glFail.classList.add('on'); return; }
   sizeCanvas();
   td.start();
@@ -155,10 +157,10 @@ async function runArmorDemo() {
 // — skips the boot log/dock/telemetry, mounts p2FleetDemoScene.ts (kitbash
 // fleet + particle pools + laser beam VFX) onto the existing #bridgeCanvas.
 async function runFleetDemo() {
-  overlay.classList.add('gone');
+  overlay.hidden = true;
   let mod = null;
   try { mod = await import('../bootengine/render/p2FleetDemoScene'); } catch (e) { mod = null; }
-  td = mod && mod.createFleetDemoScene ? mod.createFleetDemoScene({ canvas }) : null;
+  try { td = mod?.createFleetDemoScene?.({ canvas }); } catch { td = null; }
   if (!td) { glFail.classList.add('on'); return; }
   sizeCanvas();
   td.start();
@@ -213,4 +215,23 @@ $('camToggle').addEventListener('click', () => {
   location.search = TACTICAL ? '?combatcam=director' : '?combatcam=tactical';
 });
 
-if (P2_ARMOR_DEMO) { runArmorDemo(); } else if (P2_FLEET_DEMO) { runFleetDemo(); } else { boot(); }
+function showStations() {
+  overlay.hidden = true;
+  bridge.classList.add('on');
+  bridge.removeAttribute('aria-hidden');
+  bridge.inert = false;
+}
+
+function showFallback() {
+  showStations();
+  glFail.classList.add('on');
+}
+
+if (GRAPHICS_OFF) {
+  showStations();
+  glFail.textContent = 'Graphics skipped. Choose a station or return home. / 已跳过图形，请选择站点或返回首页。';
+  glFail.classList.add('on');
+} else {
+  const startup = P2_ARMOR_DEMO ? runArmorDemo() : P2_FLEET_DEMO ? runFleetDemo() : boot();
+  startup.catch(showFallback);
+}

@@ -1,3 +1,6 @@
+import { installSimulationEntry, isSimulationFrame } from './ui/portfolioSimulation.js';
+import { initPortfolioReading } from './ui/portfolioReading.js';
+import { navigationHref } from './lib/siteNavigation.js';
 import { initPortfolioChartGeometry } from './ui/portfolioChartGeometry.js';
 import './lib/readingNavigation.ts';
 import './styles.css';
@@ -7,21 +10,12 @@ import './portfolio-convoy.css';
 import './home-visual-upgrade.css';
 import { initPortfolioChartInspector } from './ui/portfolioChartInspector.js';
 import { NAV_ROUTES, normalizeRoutePath } from './config/navRoutes.generated.js';
-import { getLocale, localeFromPathname, localizePathname, localeSwitchHref, setLocale } from './lib/localeStore.js';
+import { getLocale, localeFromPathname, localeSwitchHref, setLocale } from './lib/localeStore.js';
 import { prepareStarfieldIntro } from './scene/starfieldIntro.js';
 import { initHomeMotionPreferences } from './ui/homeMotionPreferences.js';
 import { initHomeScrollTelemetry } from './ui/homeScrollTelemetry.js';
 
-const HOME_INTENT_SELECTOR = [
-  '#commandModeBtn',
-  '#heroCommandCta',
-  '#voyageLogToggle',
-  '[data-cic-panel-focus]',
-  '[data-cic-weapon]',
-].join(',');
-
 let experiencePromise = null;
-let experienceReady = false;
 
 function installLocaleLinks() {
   const fallback = document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
@@ -51,11 +45,11 @@ function allowRichMotion() {
 }
 
 export function loadHomeExperience() {
+  if (!isSimulationFrame()) return Promise.reject(new Error('Simulation requires explicit entry'));
   if (experiencePromise) return experiencePromise;
   document.documentElement.dataset.homeExperience = 'loading';
   experiencePromise = import('./homeExperience.js')
     .then((module) => {
-      experienceReady = true;
       document.documentElement.dataset.homeExperience = 'ready';
       return module;
     })
@@ -67,30 +61,11 @@ export function loadHomeExperience() {
   return experiencePromise;
 }
 
-function installIntentLoader() {
-  document.addEventListener('click', async (event) => {
-    if (experienceReady || !(event.target instanceof Element)) return;
-    const target = event.target.closest(HOME_INTENT_SELECTOR);
-    if (!(target instanceof HTMLElement)) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    try {
-      await loadHomeExperience();
-      target.click();
-    } catch {
-      target.textContent = getLocale('en') === 'zh' ? '指挥模式暂不可用 · 正文仍可阅读' : 'Command unavailable · continue reading';
-      target.setAttribute('aria-disabled', 'true');
-    }
-  }, { capture: true });
-}
-
 function installVisibilityLoaders() {
   const stardrive = document.getElementById('stardrive');
-  const portfolio = document.getElementById('portfolioConvoy');
   const loadForge = () => { void import('./scene/alphardForge.js').then(({ initAlphardForge }) => initAlphardForge()).catch(() => {}); };
   if (!('IntersectionObserver' in window)) {
     if (stardrive && allowRichMotion()) window.setTimeout(loadForge, 1800);
-    if (portfolio) window.setTimeout(() => { void loadHomeExperience().catch(() => {}); }, 2200);
     return;
   }
 
@@ -103,14 +78,6 @@ function installVisibilityLoaders() {
     forgeObserver.observe(stardrive);
   }
 
-  if (portfolio) {
-    const experienceObserver = new IntersectionObserver((entries, observer) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      observer.disconnect();
-      void loadHomeExperience().catch(() => {});
-    }, { rootMargin: '240px 0px' });
-    experienceObserver.observe(portfolio);
-  }
 }
 
 function installNavigationMenu() {
@@ -122,9 +89,7 @@ function installNavigationMenu() {
   const panel = menu.querySelector('.portfolio-menu-links');
   panel.replaceChildren(...NAV_ROUTES.map((route) => {
     const link = document.createElement('a');
-    const published = route.publishedLocales;
-    const targetLocale = published && !published.includes(routeLocale) ? published[0] : routeLocale;
-    link.href = targetLocale ? localizePathname(route.path, targetLocale) : route.path;
+    link.href = navigationHref(route.path, routeLocale);
     link.textContent = route[locale];
     if (normalizeRoutePath(route.path) === normalizeRoutePath(location.pathname)) link.setAttribute('aria-current', 'page');
     return link;
@@ -140,13 +105,6 @@ function installNavigationMenu() {
   addEventListener('scroll', close, { passive: true });
 }
 
-function installHeroCommandShortcut() {
-  const shortcut = document.getElementById('heroCommandCta');
-  shortcut?.addEventListener('click', () => {
-    document.getElementById('commandModeBtn')?.click();
-  });
-}
-
 initHomeMotionPreferences();
 installLocaleLinks();
 window.addEventListener('hashchange', () => {
@@ -154,9 +112,11 @@ window.addEventListener('hashchange', () => {
   document.querySelectorAll('#langBtn, #langMiniToggle').forEach(link => { link.href = localeSwitchHref(location, next); });
 });
 installNavigationMenu();
-installHeroCommandShortcut();
-installIntentLoader();
-installVisibilityLoaders();
+installSimulationEntry(loadHomeExperience);
+if (!isSimulationFrame()) {
+  initPortfolioReading();
+  installVisibilityLoaders();
+}
 initHomeScrollTelemetry();
 initPortfolioChartGeometry();
 initPortfolioChartInspector();
@@ -164,7 +124,7 @@ initPortfolioChartInspector();
 // Hero background is independent of the optional combat bundle. Its single
 // renderer replaces the old worker, and owns only the explicit scene region.
 const starfieldHost = document.getElementById('starfieldViewport');
-if (starfieldHost) {
+if (starfieldHost && !isSimulationFrame()) {
   const intro = prepareStarfieldIntro(starfieldHost);
   let starfieldPromise;
   const queries = ['(prefers-reduced-motion: reduce)', '(max-width: 860px)', '(hover: hover) and (pointer: fine)'].map(query => matchMedia(query));

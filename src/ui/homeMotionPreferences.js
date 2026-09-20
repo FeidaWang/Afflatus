@@ -4,6 +4,11 @@ const KEY = 'afflatus:starfield-paused:v1';
 let paused = false;
 try { paused = localStorage.getItem(KEY) === 'true'; } catch {}
 const subscribers = new Set();
+export function setDecorativePaused(value) {
+  paused = Boolean(value);
+  try { localStorage.setItem(KEY, String(paused)); } catch {}
+  for (const callback of subscribers) callback(paused);
+}
 export const isDecorativePaused = () => paused;
 export function onDecorativePause(callback) {
   subscribers.add(callback);
@@ -20,11 +25,11 @@ export function initHomeMotionPreferences() {
       button.textContent = paused ? (zh ? '继续动态' : 'Resume motion') : (zh ? '暂停动态' : 'Pause motion');
     }
   };
+  onDecorativePause(update);
   const publish = () => { update(); for (const callback of subscribers) callback(paused); };
   buttons.forEach(button => button.addEventListener('click', () => {
-    paused = !paused;
-    try { localStorage.setItem(KEY, String(paused)); } catch {}
-    publish();
+    setDecorativePaused(!paused);
+    update();
   }));
   window.addEventListener('storage', event => { if (event.key === KEY || event.key === null) { paused = event.key === KEY && event.newValue === 'true'; publish(); } });
   new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });

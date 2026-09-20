@@ -60,7 +60,7 @@
   position: relative;
   inline-size: 132px;
   min-inline-size: 132px;
-  min-block-size: 44px;
+  min-block-size: var(--touch-target);
   display: inline-flex;
   align-items: center;
   justify-self: start;
@@ -71,8 +71,8 @@
 }
 
 .afflatus-brand:focus-visible {
-  outline: 2px solid var(--afflatus-brand-accent);
-  outline-offset: 4px;
+  outline: var(--focus-ring-width) solid var(--afflatus-brand-accent);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .afflatus-mobile-nav-toggle {
@@ -1073,7 +1073,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 8px 12px;
+    gap: var(--space-2) var(--space-3);
     min-block-size: 64px;
   }
 
@@ -1083,26 +1083,42 @@
     overflow-x: auto;
   }
 
+  /* The botanical identity nests its title next to the wordmark. Give the
+     title a full row instead of squeezing it between wordmark and toggle. */
+  body.horoscope-page .site-header--follow > .page-hero {
+    display: contents;
+  }
+
+  body.horoscope-page .site-header--follow > .page-hero > div {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  body.horoscope-page .site-header--follow > .afflatus-mobile-nav-toggle {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
   html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) .afflatus-mobile-nav-toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     justify-self: end;
     min-inline-size: 64px;
-    min-block-size: 44px;
-    padding-inline: 12px;
+    min-block-size: var(--touch-target);
+    padding-inline: var(--space-3);
     border: 1px solid color-mix(in srgb, var(--afflatus-brand-accent, currentColor) 42%, transparent);
     background: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 92%, transparent);
     color: inherit;
-    font: 700 11px/1 var(--afflatus-brand-font);
+    font: 700 var(--control-font-size)/var(--control-line-height) var(--afflatus-brand-font, ui-sans-serif, system-ui, sans-serif);
     letter-spacing: .09em;
     text-transform: uppercase;
     cursor: pointer;
   }
 
   html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) .afflatus-mobile-nav-toggle:focus-visible {
-    outline: 2px solid var(--afflatus-brand-accent, currentColor);
-    outline-offset: 3px;
+    outline: var(--focus-ring-width) solid var(--afflatus-brand-accent, currentColor);
+    outline-offset: var(--focus-ring-offset);
   }
 
   html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) .site-header--follow > [data-afflatus-nav],
@@ -1115,9 +1131,9 @@
     max-block-size: calc(100dvh - var(--afflatus-mobile-nav-top, 72px) - 12px);
     display: none;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    gap: var(--space-2);
     margin: 0;
-    padding: 10px;
+    padding: var(--space-3);
     overflow: auto;
     border: 1px solid color-mix(in srgb, var(--afflatus-brand-accent, currentColor) 36%, transparent);
     background: color-mix(in srgb, var(--afflatus-header-bg, #05070b) 96%, #000 4%);
@@ -1143,14 +1159,14 @@
   html.afflatus-nav-enhanced body:not(.showcase-page):not(.home-page) [data-afflatus-nav] > .hbtn {
     inline-size: 100%;
     min-inline-size: 0;
-    min-block-size: 44px;
+    min-block-size: var(--touch-target);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 10px;
+    padding: var(--space-2) var(--space-3);
     overflow: hidden;
-    font-size: 12px;
-    line-height: 1.2;
+    font-size: var(--control-font-size);
+    line-height: var(--control-line-height);
     letter-spacing: .04em;
     text-align: center;
     white-space: normal;

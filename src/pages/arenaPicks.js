@@ -30,6 +30,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
   const state = {
     lang: (window.AfflatusI18N && window.AfflatusI18N.get && window.AfflatusI18N.get()) || 'en',
     picks: null,
+    selected: null,
   };
   const T = (en, zh) => (state.lang === 'zh' ? zh : en);
   const fmtUsd = (x) => (x == null || !isFinite(x)) ? '—' : '$' + Number(x).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -40,8 +41,8 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     const thesis = escapeHtml(T(p.thesis_en, p.thesis_zh) || '');
     const symbol = escapeHtml(p.sym || '—');
     const signals = (p.signals || []).map((s) => `<span class="pick-tag">${escapeHtml(s)}</span>`).join('');
-    const interactive = stale ? '' : ` tabindex="0" role="button" aria-label="${T('Load', '加载')} ${symbol}"`;
-    return `<article class="pick-card" style="--pick-color:${color}" data-sym="${symbol}"${interactive}>
+
+    return `<article class="pick-card" style="--pick-color:${color}" data-sym="${symbol}">
       <div class="pick-hd"><span class="pick-model">${MODEL_LABEL[model] || model}</span><span class="pick-side">${T('LONG', '做多')}</span></div>
       <div class="pick-sym"><b>${symbol}</b></div>
       <div class="pick-conf"><div class="pick-conf-track"><div class="pick-conf-fill" style="width:${confPct}%"></div></div><span>${confPct}%</span></div>
@@ -53,6 +54,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
       ${p.exitBy ? `<div class="pick-exitby">${T('Exit by', '到期平仓')} ${escapeHtml(p.exitBy)}</div>` : ''}
       <p class="pick-thesis">${thesis}</p>
       <div class="pick-signals">${signals}</div>
+      <button type="button" class="arena-inspect" data-sym="${symbol}">${T('Inspect daily data', '查看日线数据')} · ${symbol}</button>
     </article>`;
   }
 
@@ -69,6 +71,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
   function render() {
     const d = state.picks;
     if (!d) {
+      $('arenaWatchlist').textContent = T('Watchlist unavailable.', '观察列表暂不可用。');
       $('picksGrid').innerHTML = `<div class="pick-empty">${T('Recommendations unavailable right now.', '推荐名单暂时无法加载。')}</div>`;
       $('picksDateChip').textContent = '—';
       $('picksRegimeChip').textContent = '—';
@@ -85,14 +88,24 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
       )
       : T(d.note_en || '', d.note_zh || '');
     host.classList.toggle('pick-stale', !!stale);
+    $('picksProvenance').textContent = T(`Published: ${d.generatedAt || 'Unavailable'} · Source: arena-picks.json. ${d.note_en || ''}`, `发布时间：${d.generatedAt || '未提供'} · 来源：arena-picks.json。${d.note_zh || ''}`);
     $('picksGrid').innerHTML = MODEL_ORDER.map((m) => modelColumn(m, (d.models && d.models[m]) || [], stale)).join('');
-    if (stale) return;
-    $('picksGrid').querySelectorAll('.pick-card').forEach((el) => {
+    const symbols = [...new Set((d.quoteAllowlist || []).filter(sym => /^[A-Z.\-]{1,12}$/.test(sym)))];
+    $('arenaWatchlist').innerHTML = symbols.length
+      ? symbols.map(sym => `<button type="button" data-sym="${escapeHtml(sym)}" aria-pressed="${state.selected === sym}">${escapeHtml(sym)}</button>`).join('')
+      : `<p>${T('No symbols published.', '未发布观察标的。')}</p>`;
+    host.querySelectorAll('button[data-sym]').forEach((el) => {
       const fire = () => window.dispatchEvent(new CustomEvent('arena-pick-select', { detail: { sym: el.dataset.sym } }));
       el.addEventListener('click', fire);
-      el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fire(); } });
+
     });
   }
+
+  window.addEventListener('arena-pick-select', (e) => {
+    state.selected = e.detail.sym;
+    host.querySelectorAll('#arenaWatchlist button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.sym === state.selected)));
+    $('taPanel').focus();
+  });
 
   fetchJson('arena-picks')
     .then((d) => { state.picks = d; render(); })

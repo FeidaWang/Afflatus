@@ -1,0 +1,42 @@
+/* Course's existing paper palette, with a linear alternative to the atlas. */
+.course-learning{padding:72px max(24px,calc((100vw - 1160px)/2));background:var(--paper);color:var(--void);scroll-margin-top:100px}
+.course-learning h2{max-width:840px;margin:16px 0 24px;font:400 clamp(34px,5vw,64px)/1.08 var(--serif);letter-spacing:-.035em}
+.course-learning>p{max-width:780px;font:400 15px/1.7 var(--sans)}
+.course-resume{margin:32px 0 16px;padding:24px;border-block:1px solid currentColor}
+.course-resume p{margin:0 0 12px;font:700 13px/1.5 var(--mono)}
+.course-learning button,.course-evidence button{min-height:44px;padding:10px 16px;border:1px solid currentColor;background:transparent;color:inherit;font:600 14px/1.5 var(--sans);cursor:pointer;overflow-wrap:anywhere;text-align:left}
+.course-learning button:focus-visible,.course-evidence :is(button,textarea,input):focus-visible{outline:3px solid currentColor;outline-offset:4px}
+.course-learning button[aria-pressed="true"],#courseResume{background:var(--void);color:var(--paper)}
+.course-learning button:disabled{cursor:default;opacity:.65}
+.course-view-controls{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.course-task-list{list-style:none;padding:0;margin:32px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px}
+.course-task-list li{min-width:0;padding:24px 0;border-top:1px solid #898981}
+.course-task-list small{display:block;font:600 11px/1.6 var(--mono);margin-bottom:10px}
+.course-task-list button{font:500 24px/1.25 var(--serif);border:0;padding:4px 0;text-decoration:underline;text-underline-offset:5px}
+.course-task-list p{font:400 14px/1.65 var(--sans);margin:12px 0}
+.course-task-list .course-prerequisite{font-size:12px}
+.course-task-status{display:inline-block;font:700 12px/1.5 var(--sans);padding:5px 10px;border:1px solid currentColor}
+.course-task-list [data-complete="true"] .course-task-status{background:var(--void);color:var(--paper)}
+#courseStorageMessage{font:600 13px/1.6 var(--sans)}
+.course-evidence{border-block:1px solid currentColor;margin:24px 0;padding:20px 0;font:400 14px/1.6 var(--sans)}
+.course-evidence label{display:block;font-weight:600;margin:12px 0}
+.course-evidence textarea{display:block;width:100%;box-sizing:border-box;resize:vertical;padding:12px;border:1px solid currentColor;background:transparent;color:inherit;font:400 16px/1.5 var(--sans)}
+.course-evidence .course-attestation{display:flex;align-items:flex-start;gap:12px}
+.course-attestation input{flex:none;min-width:22px;min-height:22px;accent-color:var(--void)}
+.course-evidence p{font-size:13px;overflow-wrap:anywhere}
+.course-evidence button:disabled{opacity:.6;cursor:default}
+.course-learning [hidden],.course-evidence[hidden],.atlas-section[hidden]{display:none}
+/* The explicit map view is immediately usable; the scroll scene remains the no-JS fallback. */
+.atlas-section.course-map-view{height:100svh;min-height:650px}
+.course-map-view .atlas-sticky{position:relative}
+.course-map-view .atlas-opening,.course-map-view .atlas-split-title{visibility:hidden}
+.course-map-view .atlas-map-shell{opacity:1;transform:none;pointer-events:auto}
+@media(max-width:700px){.course-learning{padding:48px 20px}.course-task-list{grid-template-columns:1fr}.course-resume{padding:20px 0}.course-learning button{max-width:100%}}
+.course-learning{scroll-margin-top:180px}
+.course-map-view .atlas-opening,.course-map-view .atlas-split-title{display:none}
+.course-map-view .atlas-sticky{height:100%;min-height:650px;overflow:hidden}
+.course-map-view .atlas-map-shell{position:absolute;inset:0;height:100%}
+.course-learning .eyebrow{color:var(--ink)}
+/* Evidence extends the original packet: keep the whole dialog scrollable at every zoom. */
+.node-dialog[open]{max-height:90svh;overflow:auto}
+.node-dialog-meta,.node-dialog-grid b{color:#8f211a}

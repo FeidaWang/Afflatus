@@ -243,6 +243,7 @@
 <link rel="icon" type="image/svg+xml" href="/favicons/course.svg?v=20260808">
 <link rel="stylesheet" href="/page-turn.css">
 <link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/course-progress.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
 <link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
@@ -285,7 +286,7 @@
       </div>
       <h1><span data-en="Forward deployed" data-zh="前线部署">Forward deployed</span><br><em data-en="engineer." data-zh="工程师。">engineer.</em></h1>
       <div class="hero-actions">
-        <a class="button button-dark" href="#atlas" data-en="Load the field map" data-zh="装载学习地图">Load the field map</a>
+        <a class="button button-dark" href="#courseLearning" data-en="Resume next task" data-zh="继续下一任务">Resume next task</a>
         <a class="button button-light" href="#review" data-en="Open weekly evidence" data-zh="打开每周证据">Open weekly evidence</a>
       </div>
     </div>
@@ -296,7 +297,7 @@
   <nav class="course-index" data-reading-nav aria-label="Course section index" data-aria-en="Course section index" data-aria-zh="课程章节索引">
     <a href="#signal" data-en="Role" data-zh="角色">Role</a>
     <a href="#agent-core" data-en="Agent core" data-zh="智能体核心">Agent core</a>
-    <a href="#atlas" data-en="Map" data-zh="学习地图">Map</a>
+    <a href="#courseLearning" data-en="Learning path" data-zh="学习路径">Learning path</a>
     <a href="#pathway" data-en="52 weeks" data-zh="52 周路线">52 weeks</a>
     <a href="#education" data-en="Education" data-zh="教育选择">Education</a>
     <a href="#fieldwork" data-en="Portfolio" data-zh="作品证据">Portfolio</a>
@@ -410,6 +411,24 @@
     </div>
   </section>
 
+  <section class="course-learning" id="courseLearning" tabindex="-1" aria-labelledby="courseLearningTitle">
+    <div class="eyebrow" data-en="YOUR LEARNING PATH" data-zh="你的学习路径">YOUR LEARNING PATH</div>
+    <h2 id="courseLearningTitle" data-en="One task. One piece of evidence." data-zh="一次任务，一份证据。">One task. One piece of evidence.</h2>
+    <p data-en="Follow the 36 packets in week order. Prerequisites are recommendations; every packet remains open to explore." data-zh="按周次完成 36 个任务包。前置任务为建议顺序；所有任务均可自由查看。">Follow the 36 packets in week order. Prerequisites are recommendations; every packet remains open to explore.</p>
+    <p data-en="Progress and evidence stay in this browser, without an account. Export a copy before clearing browser data. Completion is your own assessment, not an independent review." data-zh="进度与证据仅保存在此浏览器，无需账户。清除浏览器数据前请先导出。完成状态为个人自评，未经独立审核。">Progress and evidence stay in this browser, without an account. Export a copy before clearing browser data. Completion is your own assessment, not an independent review.</p>
+    <p id="courseStaticHelp"><a href="#atlas" data-en="Browse all 36 resources in the map. Progress tracking needs JavaScript." data-zh="在地图中浏览全部 36 份资料。进度记录需要启用 JavaScript。">Browse all 36 resources in the map. Progress tracking needs JavaScript.</a></p>
+    <div id="courseLearningControls" hidden>
+      <div class="course-resume"><p id="courseProgressCount" role="status"></p><button type="button" id="courseResume"></button></div>
+      <p id="courseStorageMessage" role="status"></p>
+      <div class="course-view-controls" role="group" data-aria-en="Course view and export" data-aria-zh="课程视图与导出" aria-label="Course view and export">
+        <button type="button" id="courseListView" aria-pressed="true" aria-controls="courseList" data-en="List · 36" data-zh="列表 · 36">List · 36</button>
+        <button type="button" id="courseMapView" aria-pressed="false" aria-controls="atlas" data-en="Map · 36" data-zh="地图 · 36">Map · 36</button>
+        <button type="button" id="courseExport" data-en="Export progress" data-zh="导出进度">Export progress</button>
+      </div>
+      <ol id="courseList" class="course-task-list"></ol>
+    </div>
+  </section>
+
   <section class="atlas-section" id="atlas" tabindex="-1" aria-labelledby="atlas-title">
     <div class="atlas-sticky" id="atlasSticky">
       <div class="atlas-opening" id="atlasOpening">
@@ -507,6 +526,18 @@
         <section><b data-en="BUILD" data-zh="动手构建">BUILD</b><p id="nodeDialogBuild"></p></section>
         <section><b data-en="BREAK" data-zh="故障注入">BREAK</b><p id="nodeDialogBreak"></p></section>
         <section><b data-en="EVIDENCE GATE" data-zh="证据闸门">EVIDENCE GATE</b><p id="nodeDialogGate"></p></section>
+      </div>
+      <div class="course-evidence" id="courseEvidence" hidden>
+        <p id="nodePrerequisites"></p>
+        <label for="nodeEvidence" data-en="Evidence link or summary" data-zh="证据链接或摘要">Evidence link or summary</label>
+        <textarea id="nodeEvidence" rows="4" aria-describedby="nodeEvidenceHelp"></textarea>
+        <p id="nodeEvidenceHelp" data-en="Record your deliverable and failure-test result against the evidence gate. Opening a resource never marks this task complete. Drafts save as you type." data-zh="对照证据要求，记录交付物与故障测试结果。打开资料不会标记完成。输入时自动保存草稿。">Record your deliverable and failure-test result against the evidence gate. Opening a resource never marks this task complete. Drafts save as you type.</p>
+        <label class="course-attestation"><input type="checkbox" id="nodeAttest"><span data-en="I have checked my deliverable against this evidence gate (self-assessed)." data-zh="我已按本任务的证据要求检查交付物（个人自评）。">I have checked my deliverable against this evidence gate (self-assessed).</span></label>
+        <div class="course-view-controls">
+          <button type="button" id="nodeSaveDraft" data-en="Save as draft" data-zh="保存为草稿">Save as draft</button>
+          <button type="button" id="nodeComplete" data-en="Mark self-assessed complete" data-zh="标记自评完成">Mark self-assessed complete</button>
+        </div>
+        <p id="nodeProgressMessage" role="status"></p>
       </div>
       <a class="button button-dark" id="nodeDialogSource" href="#" target="_blank" rel="noopener" data-en="Open transmission ↗" data-zh="打开资料或作业 ↗">Open transmission ↗</a>
     </div>

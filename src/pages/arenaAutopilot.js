@@ -58,6 +58,7 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
 
   function renderError() {
     $('apNote').textContent = T('Autopilot ledger unavailable right now.', 'Autopilot 账本暂时无法加载。');
+    $('arenaTimelineRecords').textContent = T('Published records unavailable.', '已发布记录暂不可用。');
     $('apLegend').innerHTML = '';
     $('apModels').innerHTML = `<div class="ap-model panel pad"><div class="empty">${T('No data.', '暂无数据。')}</div></div>`;
   }
@@ -137,6 +138,13 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     const W = PLOT_W + LABEL_MARGIN, TOTAL_H = H + BOTTOM_MARGIN;
     const keys = Object.keys(models);
     const first = models[keys[0]];
+    if (!first?.equityHistory?.length) {
+      $('apChart').replaceChildren();
+      $('apLegend').textContent = T('No published equity history.', '暂无已发布净值历史。');
+      $('apChartSummary').textContent = $('apLegend').textContent;
+      chartCtx = null;
+      return;
+    }
     const spy = benchmarkEndpoints(first.equityHistory, first.startEquity, bench.spyPct);
     const smh = benchmarkEndpoints(first.equityHistory, first.startEquity, bench.smhPct);
     const modelSeries = keys.map((k) => ({ key: k, series: models[k].equityHistory }));
@@ -273,6 +281,31 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     });
   }
 
+  function renderTimeline(d) {
+    const missing = T('Unavailable', '未提供');
+    const rows = Object.entries(d.models || {}).flatMap(([model, m]) => [
+      ...(m.trades || []).map(record => ({ model, version: m.promptVersion, kind: 'fill', record })),
+      ...(m.rejections || []).map(record => ({ model, version: m.promptVersion, kind: 'rejection', record })),
+    ]).sort((a, b) => (Date.parse(b.record.ts) || 0) - (Date.parse(a.record.ts) || 0));
+    const field = (label, value) => `<dt>${label}</dt><dd>${escapeHtml(String(value ?? missing))}</dd>`;
+    $('arenaTimelineRecords').innerHTML = rows.length ? rows.map(({ model, version, kind, record: r }) => {
+      const order = kind === 'fill' ? r : r.order || {};
+      const stamp = Number.isFinite(Date.parse(r.ts)) ? new Date(r.ts).toISOString() + ' · UTC' : missing;
+      return `<details><summary>${escapeHtml(stamp)} · ${escapeHtml(model)} · ${escapeHtml(order.sym || missing)} · ${kind === 'fill' ? T('Simulated fill', '模拟成交') : T('Risk rejection', '风控拒绝')}</summary><dl>
+        ${field(T('Action', '动作'), order.side)}
+        ${field(T('Reason / risk veto', '原因 / 风控否决'), r.reason)}
+        ${field(T('Input cutoff', '输入截止时间'), r.inputCutoff)}
+        ${field(T('Available at', '可用时间'), r.availableAt)}
+        ${field(T('Ledger model / prompt version', '账本模型 / 提示词版本'), version)}
+        ${field(T('Policy version', '策略版本'), r.policyVersion)}
+        ${field(T('Quantity', '数量'), order.qty)}
+        ${field(T('Fill price', '成交价'), kind === 'fill' ? fmtUsd(r.px) : null)}
+        ${field(T('Realized P&L', '已实现盈亏'), r.realizedPnl == null ? null : fmtUsd(r.realizedPnl))}
+        <dt>${T('Source', '来源')}</dt><dd><a href="/arena-ledger.json">arena-ledger.json</a> · ${escapeHtml(String(d.version ?? missing))} · ${escapeHtml(d.updated || missing)}</dd>
+      </dl></details>`;
+    }).join('') : `<p>${T('No published fills or risk rejections.', '暂无已发布成交或风控拒绝记录。')}</p>`;
+  }
+
   function render() {
     const d = state.ledger; if (!d) return;
     $('apDayChip').textContent = T(`DAY ${d.day} · SEASON ${d.season}`, `第 ${d.day} 日 · 赛季 ${d.season}`);
@@ -281,14 +314,13 @@ import { ARENA_PUBLICATION_MINUTES, assessMarketSnapshot } from '../lib/marketFr
     $('apUpdChip').textContent = badge.text;
     const freshness = assessMarketSnapshot(d.updated, new Date(), { availableFromMinutes: ARENA_PUBLICATION_MINUTES.postMarket });
     host.classList.toggle('ap-stale', freshness.stale);
-    $('apNote').textContent = freshness.stale
-      ? T(
-        `Historical simulation ledger · last settled ${d.updated || 'unknown'}. Automation is delayed; no current-session execution is implied.`,
-        `历史模拟账本 · 最后结算于 ${d.updated || '日期不明'}。自动任务当前延迟；不代表当前交易时段仍在执行。`,
-      )
-      : T(d.note_en || '', d.note_zh || '');
+    $('apNote').textContent = T(
+      `REPLAY · Published paper ledger · last settled ${d.updated || 'unknown'} · ${freshness.stale ? 'archived' : 'current publication'}. No real money, no orders from this page.`,
+      `回放 · 已发布模拟账本 · 最后结算于 ${d.updated || '日期不明'} · ${freshness.stale ? '历史发布' : '当前发布'}。无真实资金，本页不下单。`,
+    );
     renderChart(d.models, d.bench || {});
     renderModels(d.models);
+    renderTimeline(d);
   }
 
   window.addEventListener('afflatus-lang', (e) => { state.lang = e.detail === 'zh' ? 'zh' : 'en'; render(); });

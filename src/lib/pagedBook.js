@@ -324,7 +324,7 @@ export function createPagedBook(options) {
   function onKeyDown(event) {
     if (!isActive()) return;
     if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
-    if (event.target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+    if (event.shiftKey || event.target !== stage) return;
     if (event.key === 'ArrowRight' || event.key === 'PageDown') {
       event.preventDefault();
       turn(1);
@@ -341,7 +341,7 @@ export function createPagedBook(options) {
   stage.addEventListener('pointerdown', onPointerDown);
   stage.addEventListener('pointerup', onPointerUp);
   stage.addEventListener('pointercancel', () => { swipeStart = null; });
-  document.addEventListener('keydown', onKeyDown);
+  stage.addEventListener('keydown', onKeyDown);
 
   const resizeObserver = window.ResizeObserver
     ? new ResizeObserver(() => {

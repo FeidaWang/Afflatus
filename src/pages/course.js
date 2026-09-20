@@ -1,3 +1,4 @@
+import { initCourseProgress } from '../ui/courseProgress.js';
 import { courseStageForProgress } from '../lib/courseNarrative.js';
 import { atlasRelations, atlasSceneState } from '../lib/courseAtlas.js';
 import { courseNodes } from '../data/courseNodes.js';
@@ -459,6 +460,7 @@ import { courseNodes } from '../data/courseNodes.js';
     const detail = courseNodes[node?.dataset.node];
     if (!node || !detail || !nodeDialog) return;
     activeMapNode = node;
+    learningPath?.openNode(node.dataset.node);
     const code = $('i', node)?.textContent.trim() || `ARCHIVE / ${node.dataset.node}`;
     const cover = $('b', $('.cover', node))?.innerText.trim() || T('FIELD PACKET', '实战任务包');
     const title = $('strong', node)?.textContent.trim() || T('Course packet', '课程任务包');
@@ -478,6 +480,11 @@ import { courseNodes } from '../data/courseNodes.js';
       nodeDialogSource.rel = href.startsWith('#') ? '' : 'noopener';
     }
   }
+
+  const learningPath = initCourseProgress({ lang, openPacket: node => {
+    renderNodePacket(node);
+    nodeDialog.showModal();
+  } });
 
   $$('.map-node').forEach((node) => {
     node.addEventListener('pointerdown', () => {

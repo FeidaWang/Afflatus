@@ -1,3 +1,4 @@
+import { renderRelationshipReader } from '../sectors/relationshipReader.js';
 import '../lib/readingNavigation.ts';
 import './sectorsLibs.js';
 import { currentLanguage, emptyMessage } from '../sectors/content.js';
@@ -98,6 +99,7 @@ function scheduleGraph() {
 }
 
 function renderFailure() {
+  renderRelationshipReader(null);
   const message = emptyMessage(currentLanguage());
   const graphCanvas = byId('mwGraph');
   const graphEmpty = byId('mwEmpty');
@@ -112,6 +114,7 @@ dataController.load()
   .then((data) => {
     if (destroyed) return;
     sectorsData = data;
+    renderRelationshipReader(data);
     const asOf = byId('mwAsOf');
     if (asOf) {
       asOf.textContent = currentLanguage() === 'zh'
@@ -126,6 +129,7 @@ dataController.load()
 
 const onLanguage = () => {
   if (!sectorsData) return;
+  renderRelationshipReader(sectorsData);
   const asOf = byId('mwAsOf');
   if (asOf) {
     asOf.textContent = currentLanguage() === 'zh'

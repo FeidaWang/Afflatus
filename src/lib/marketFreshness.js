@@ -1,6 +1,6 @@
-import { easternTimeParts, isNyseSession } from './marketSession.js';
+import { validateQuote } from './validateQuote.js';
+import { easternTimeParts, isNyseSession, isEarlyCloseSession, isValidMarketDate } from './marketSession.js';
 
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 function addIsoDays(dateString, amount) {
   const [year, month, day] = dateString.split('-').map(Number);
@@ -25,7 +25,9 @@ function previousSession(dateString, extraHolidays) {
  */
 export function expectedMarketSnapshotDate(value = new Date(), options = {}) {
   const { date, minutes } = easternTimeParts(value);
-  const availableFromMinutes = options.availableFromMinutes ?? (9 * 60);
+  const normalMinutes = options.availableFromMinutes ?? (9 * 60);
+  const availableFromMinutes = isEarlyCloseSession(date, options.extraEarlyCloses || []) && normalMinutes >= 16 * 60
+    ? normalMinutes - 3 * 60 : normalMinutes;
   const extraHolidays = options.extraHolidays || [];
   if (isNyseSession(date, extraHolidays) && minutes >= availableFromMinutes) return date;
   return previousSession(date, extraHolidays);
@@ -33,7 +35,7 @@ export function expectedMarketSnapshotDate(value = new Date(), options = {}) {
 
 export function assessMarketSnapshot(snapshotDate, value = new Date(), options = {}) {
   const expectedDate = expectedMarketSnapshotDate(value, options);
-  if (!DATE_RE.test(String(snapshotDate || ''))) {
+  if (!isValidMarketDate(snapshotDate)) {
     return { state: 'missing', stale: true, snapshotDate: null, expectedDate };
   }
   if (snapshotDate > expectedDate) {
@@ -48,3 +50,10 @@ export const ARENA_PUBLICATION_MINUTES = Object.freeze({
   picks: 9 * 60,
   postMarket: 16 * 60 + 30,
 });
+
+
+export function assessQuoteFreshness(quote, now = Date.now(), maxAgeMs = 5 * 60_000) {
+  if (!validateQuote(quote, now).ok) return { state: 'unknown', ageMs: null };
+  const ageMs = now - quote.t * 1000;
+  return { state: ageMs > maxAgeMs ? 'stale' : 'fresh', ageMs };
+}

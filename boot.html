@@ -32,7 +32,6 @@
   #bootOverlay{position:fixed;inset:0;z-index:20;background:var(--bg);
     display:flex;flex-direction:column;justify-content:center;padding:8vh 8vw;
     transition:opacity .9s ease}
-  #bootOverlay.gone{opacity:0;pointer-events:none}
   #bootLog{font-size:clamp(10px,1.4vw,13px);line-height:1.9;letter-spacing:.06em;
     color:var(--cool-soft);white-space:pre-wrap;min-height:16em}
   #bootLog b{color:var(--cool);font-weight:400}
@@ -92,7 +91,29 @@
   .webgl-fallback button{min-height:44px;padding:0 14px;border:1px solid rgba(102,255,232,.44);border-radius:999px;background:transparent;color:#bfffee;font:600 11px/1 'JetBrains Mono',monospace;cursor:pointer}
   .webgl-fallback button:focus-visible{outline:2px solid #66ffe8;outline-offset:2px}
 
+  .prototype-recovery{position:fixed;top:0;left:0;right:0;z-index:30;padding:16px 24px;background:rgba(4,6,10,.96);border-bottom:1px solid var(--cool-line)}
+  .prototype-recovery h1{font-size:14px;line-height:1.5;font-weight:500;margin-bottom:8px}
+  .prototype-recovery nav{display:flex;flex-wrap:wrap;gap:8px 20px}
+  .prototype-recovery a{display:inline-flex;align-items:center;min-height:44px;color:var(--cool);font-size:13px;line-height:1.5}
+  .prototype-recovery a:focus-visible{outline:2px solid var(--warm);outline-offset:3px}
+  .prototype-recovery p{font-size:12px;line-height:1.6;color:var(--warm)}
+  #bootOverlay{padding-top:190px;overflow:auto;justify-content:flex-start}
+  #bootLog{overflow-wrap:anywhere;min-height:0}
+  #bootOverlay[hidden]{display:none}
+  #osTag,#telemetry{top:200px}
+  #dock{width:min(960px,calc(100% - 32px));max-height:55vh;overflow:auto}
+  .station{min-height:44px}
+  .station .badge.off{color:var(--warm)}
+  #glFail{inset:270px 24px auto;z-index:11;line-height:1.8;letter-spacing:0;text-align:center}
+  #glFail.on{display:block}
+  @media (max-height:650px){
+    #osTag,#telemetry{display:none}
+    #glFail{top:185px;font-size:11px}
+    #dock{max-height:calc(100dvh - 280px)}
+  }
   @media (prefers-reduced-motion: reduce){
+    #bootOverlay,#bridge,.station{transition:none}
+
     .station .detail{transition:none}
   }
   @media (max-width:640px){
@@ -106,11 +127,21 @@
 <script type="module" src="/src/entry/viewport.js"></script>
 </head>
 <body class="boot-page">
+<main>
+<section class="prototype-recovery" aria-labelledby="prototypeTitle">
+  <h1 id="prototypeTitle">Bridge simulation · Prototype / <span lang="zh">舰桥模拟 · 原型</span></h1>
+  <nav aria-label="Prototype recovery" data-aria-en="Prototype recovery" data-aria-zh="原型退出">
+    <a id="prototypeExit" href="/en/">Exit to home</a>
+    <a href="/zh/" lang="zh">退出并返回中文首页</a>
+    <a id="prototypeSkip" href="/boot.html?graphics=off">Skip graphics / <span lang="zh">跳过图形</span></a>
+  </nav>
+  <noscript><p>JavaScript is disabled. Use a home link to continue. / <span lang="zh">脚本已关闭，请通过上方链接返回首页。</span></p></noscript>
+</section>
 <canvas id="bridgeCanvas" aria-hidden="true"></canvas>
 
-<div id="glFail">SIGNAL LOST · WEBGL UNAVAILABLE · 显示核心离线</div>
+<div id="glFail" role="status">Graphics unavailable. The links remain usable. / <span lang="zh">图形不可用，仍可使用页面链接。</span></div>
 
-<div id="bridge" aria-hidden="true">
+<div id="bridge" aria-hidden="true" inert>
   <span class="corner tl"></span><span class="corner tr"></span>
   <span class="corner bl"></span><span class="corner br"></span>
   <div id="osTag">
@@ -139,7 +170,7 @@
     <a class="station" href="/serial.html" id="stLog">LOG
       <b class="badge off" id="bLog">—</b>
       <span class="detail" id="dLog">archive index pending</span></a>
-    <button class="station self" id="camToggle" type="button">CAM
+    <button class="station self" id="camToggle" type="button" disabled>CAM
       <b class="badge" id="camLabel">--</b>
       <span class="detail">switch camera rig · 切换运镜<br>director ↔ tactical</span></button>
     <a class="station self" href="/">EXIT SIM
@@ -153,6 +184,7 @@
   <div id="bootBar"><i></i></div>
 </div>
 
+</main>
 <script type="module" src="/src/pages/boot.js"></script>
 </body>
 </html>
