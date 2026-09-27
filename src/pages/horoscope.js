@@ -29,8 +29,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   let synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5;
   let mingzaoRank, percentileOf, MINGZAO_DIST;
   let synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, relationshipScores, synastryZiwei;
-  let PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS;
-  let LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile;
 
   let birthFeaturePromise;
   const loadBirthFeature = () => birthFeaturePromise || (birthFeaturePromise = import('../horoscope/birthFeature.js').then((feature) => {
@@ -64,14 +62,9 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     return feature;
   }));
 
-  let quizFeaturePromise;
-  const loadQuizFeature = () => quizFeaturePromise || (quizFeaturePromise = import('../horoscope/quizFeature.js').then((feature) => {
-    ({
-      PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS,
-      LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile, renderRadar,
-    } = feature);
-    return feature;
-  }));
+  // 命理实验室 (fused six-area daily guide + pro layers): lazy, after first paint.
+  let labFeaturePromise;
+  const loadLabFeature = () => labFeaturePromise || (labFeaturePromise = import('../horoscope/labFeature.js'));
 
   let shareFeaturePromise;
   const loadShareFeature = () => shareFeaturePromise || (shareFeaturePromise = import('../horoscope/shareFeature.js'));
@@ -556,6 +549,127 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const s = signOf(lon);
     return `${T(ZODIAC_EN[s], ZODIAC_ZH[s] + '座')} ${Math.floor(degInSign(lon))}°`;
   };
+  let selectedDayOffset = 0;
+  let activeHoroView = 'today';
+  const FUTURE_NOTE_KEY = 'afflatus-horo:future-note';
+  const feedbackKey = () => `afflatus-horo:feedback:${dayAtOffset(selectedDayOffset).dateStr}`;
+  const renderFeedback = () => {
+    let saved = '';
+    try { saved = localStorage.getItem(feedbackKey()) || ''; } catch { /* private browsing */ }
+    $('horoFeedback').querySelectorAll('[data-horo-feedback]').forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.horoFeedback === saved));
+    });
+  };
+  const renderSavedNote = () => {
+    let note = '';
+    try { note = localStorage.getItem(FUTURE_NOTE_KEY) || ''; } catch { /* private browsing */ }
+    $('horoNoteText').value = note;
+    $('horoSavedNote').textContent = note ? T('Note to your future self: ', '写给未来的自己：') + note : T('No note saved yet.', '还没有保存留言。');
+  };
+  const dayAtOffset = (offset) => {
+    const date = new Date();
+    date.setHours(12, 0, 0, 0);
+    date.setDate(date.getDate() + offset);
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    return { date, dateStr };
+  };
+  const renderDashboardDay = () => {
+    if (!state.me || !dailyFortune) return;
+    const locale = state.lang === 'zh' ? 'zh-CN' : 'en-AU';
+    $('horoDateStrip').innerHTML = [-2, -1, 0, 1, 2].map((offset) => {
+      const { date } = dayAtOffset(offset);
+      const day = offset === 0 ? T('TODAY', '今天') : new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(date);
+      const label = new Intl.DateTimeFormat(locale, { dateStyle: 'full' }).format(date);
+      return `<button type="button" data-day-offset="${offset}" aria-pressed="${offset === selectedDayOffset}" aria-label="${attr(label)}"><span>${attr(day)}</span><b>${date.getDate()}</b></button>`;
+    }).join('');
+    const { date, dateStr } = dayAtOffset(selectedDayOffset);
+    const reading = dailyFortune(state.me, dateStr);
+    const ranked = [...reading.domains].sort((a, b) => b.score - a.score);
+    const dateLabel = new Intl.DateTimeFormat(locale, { dateStyle: 'full' }).format(date);
+    const why = reading.branchEvents.length
+      ? reading.branchEvents.map((event) => `<li>${attr(T(event.en, event.zh))}</li>`).join('')
+      : `<li>${attr(T('No strong branch event for this day.', '此日地支与命局无明显合冲刑害。'))}</li>`;
+    const cards = (items) => items.map((item) => `<article class="horo-reading-card">
+      <h5>${attr(T(...DOM_NAMES[item.id]))}</h5>
+      <p>${attr(T(item.en, item.zh))}</p>
+      <details><summary>${T('How this reading was formed', '查看解读依据')} <span aria-hidden="true">→</span></summary>
+        <p>${attr(T(reading.tenGod.en, reading.tenGod.zh))} · ${attr(T(...REL_T[reading.relation]))}</p><ul>${why}</ul>
+      </details>
+    </article>`).join('');
+    $('horoDailyReading').innerHTML = `<div class="horo-reading-intro">
+      <p class="horo-eyebrow">${attr(dateLabel)} · ${T('PLAYFUL READING', '趣味解读')}</p>
+      <h3>${T('A note for today.', '今日的一点提醒。')}</h3>
+      <p class="horo-overall-line">${attr(T(reading.overall.en, reading.overall.zh))}</p>
+      <p>${T('A prompt for reflection, calculated from your chart and the selected day.', '根据你的命盘与所选日期生成的一份自我观察提示。')}</p>
+      <div class="horo-do-avoid"><p><b>${T('TO TRY', '宜')}</b> ${attr(reading.yi.map((item) => T(item.en, item.zh)).join(' · '))}</p><p><b>${T('TO NOTICE', '留意')}</b> ${attr(reading.ji.map((item) => T(item.en, item.zh)).join(' · '))}</p></div>
+    </div><p class="horo-section-label">${T('STRONGER THEMES', '较顺的主题')}</p>${cards(ranked.slice(0, 2))}
+    <p class="horo-section-label">${T('THEMES TO HANDLE GENTLY', '值得留意的主题')}</p>${cards(ranked.slice(2))}
+    <button type="button" class="horo-outline-action" id="horoOpenSynastry">${T('Compare a second chart →', '添加对方资料，试试合盘 →')}</button>
+    <button type="button" class="horo-outline-action" id="horoOpenReport">${T('Read the full chart report →', '查看完整命盘解读 →')}</button>
+    <p class="horo-reading-caveat">${T('For entertainment only. Scores are playful labels, not predictions or measures of personal worth.', '仅供娱乐。分数是趣味标签，不预测未来，也不衡量个人价值。')}</p>`;
+    renderFeedback();
+  };
+  const setHoroView = (view) => {
+    activeHoroView = view;
+    $('mineSec').dataset.horoView = view;
+    $('horoDashboard').querySelectorAll('[data-horo-view]').forEach((button) => {
+      if (button.dataset.horoView === (view === 'report' ? 'chart' : view)) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
+    });
+    $('horoDailyView').hidden = view !== 'today';
+    $('horoSavedView').hidden = view !== 'saved';
+    $('horoSettingsView').hidden = view !== 'settings';
+    if (view === 'chart' && $('l3Toggle')?.getAttribute('aria-expanded') !== 'true') $('l3Toggle').click();
+  };
+  const renderMobileDashboard = () => {
+    if (!state.me) return;
+    document.body.classList.add('has-horo-chart');
+    $('horoProfileSigns').textContent = `☉ ${signLabel(state.l1Sun)}   ☾ ${signLabel(state.l1Moon)}   ↑ ${state.l3AscDeg == null ? T('Rising unknown', '上升未知') : signLabel(state.l3AscDeg)}`;
+    $('horoSavedSummary').textContent = T('Birth date: ', '出生日期：') + `${state.me.y}-${String(state.me.m).padStart(2, '0')}-${String(state.me.d).padStart(2, '0')}`;
+    if (!state.other) {
+      $('synHint').dataset.en = 'Enter their birth date to compare two charts. Both profiles stay in this browser.';
+      $('synHint').dataset.zh = '填写对方出生日期即可合盘；两份资料都只保存在此浏览器。';
+      $('synHint').textContent = T($('synHint').dataset.en, $('synHint').dataset.zh);
+    }
+    $('horoBottomHome').href = state.lang === 'zh' ? '/zh/' : '/en/';
+    renderSavedNote();
+    renderDashboardDay();
+    setHoroView(activeHoroView);
+  };
+  const openExploration = (id) => {
+    document.querySelector('.more-explorations').open = true;
+    $(id).scrollIntoView({ block: 'start' });
+  };
+  $('horoDashboard').addEventListener('click', (event) => {
+    const tab = event.target.closest('.horo-tabs button[data-horo-view]');
+    if (tab) { setHoroView(tab.dataset.horoView); $('mineSec').scrollIntoView({ block: 'start' }); return; }
+    const day = event.target.closest('[data-day-offset]');
+    if (day) { selectedDayOffset = Number(day.dataset.dayOffset); renderDashboardDay(); return; }
+    if (event.target.closest('#horoOpenReport')) { setHoroView('report'); $('mineSec').scrollIntoView({ block: 'start' }); }
+    if (event.target.closest('#horoOpenSynastry')) openExploration('synSec');
+    const feedback = event.target.closest('[data-horo-feedback]');
+    if (feedback) {
+      try { localStorage.setItem(feedbackKey(), feedback.dataset.horoFeedback); } catch { /* usable without storage */ }
+      renderFeedback();
+    }
+    if (event.target.closest('#horoSaveNote')) {
+      const note = $('horoNoteText').value.trim();
+      if (!note) { $('horoNoteStatus').textContent = T('Write a note before saving.', '写下留言后再保存。'); return; }
+      try {
+        localStorage.setItem(FUTURE_NOTE_KEY, note);
+        $('horoNoteStatus').textContent = T('Saved on this device.', '已保存在此设备。');
+        renderSavedNote();
+      } catch { $('horoNoteStatus').textContent = T('Browser storage is unavailable.', '浏览器存储不可用，无法保存。'); }
+    }
+    if (event.target.closest('#horoSaveCard')) $('cardBtnMine').click();
+    if (event.target.closest('#horoDeleteData')) $('clearDataBtn').click();
+    if (event.target.closest('#horoEditBirth')) {
+      document.body.classList.add('horo-editing');
+      $('birthForm').scrollIntoView({ block: 'start' });
+    }
+  });
+  $('horoBottomSyn').addEventListener('click', () => openExploration('synSec'));
+  $('horoBottomMine').addEventListener('click', () => { setHoroView('today'); $('mineSec').scrollIntoView({ block: 'start' }); });
   // ---- V23 Phase 1 (roadmap §7.10): single-chart L1/L2/L3 progressive
   // disclosure. L1/L2 use only the existing light Sun/Moon/Ascendant calc
   // (astro.js) + the bazi element tally — zero jargon, zero ephemeris
@@ -612,6 +726,11 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     if (!state.l3 || !state.l3.planets) return;
     const ascDeg = state.l3.ascDeg;
     const all = l3AllPlanets();
+    const ascSign = ascDeg == null ? null : signOf(ascDeg);
+    const positions = all.map((planet) => {
+      const house = ascSign == null ? T('Unknown', '未知') : String((signOf(planet.lonDeg) - ascSign + 12) % 12 + 1);
+      return `<div class="horo-position-row"><span>${PLANET_GLYPH[planet.body] || ''} ${T(planet.body, PLANET_ZH[planet.body] || planet.body)}</span><span>${attr(signLabel(planet.lonDeg))}</span><span>${house}</span></div>`;
+    }).join('');
     const legend = all.map((p) => `<span>${PLANET_GLYPH[p.body] || p.body[0]} ${T(p.body, PLANET_ZH[p.body] || p.body)}</span>`).join('');
     const seen = new Set(); const terms = [];
     for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) {
@@ -620,7 +739,11 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     }
     const termsHTML = terms.map((k) => `<div class="l3-term"><b>${T(ASPECT_T[k].en, ASPECT_T[k].zh)}</b> — ${T(ASPECT_T[k].dEn, ASPECT_T[k].dZh)}</div>`).join('')
       || `<div class="l3-term">${T('No major aspects within orb right now.', '当前无明显相位。')}</div>`;
-    $('l3Body').innerHTML = `<div class="l3-wheel-card">${renderWheel({ ascDeg: ascDeg == null ? 0 : ascDeg, planets: all, language: state.lang })}<div class="l3-legend">${legend}</div></div>`
+    $('l3Body').innerHTML = `<div class="horo-chart-pages" data-chart-page="positions">
+      <div class="horo-chart-switch"><button type="button" data-chart-switch="positions" aria-pressed="true">${T('Positions', '星体位置')}</button><button type="button" data-chart-switch="wheel" aria-pressed="false">${T('Chart wheel', '星盘图')}</button></div>
+      <div class="horo-positions"><div class="horo-position-row horo-position-head"><span>${T('BODY', '星体')}</span><span>${T('SIGN', '星座')}</span><span>${T('HOUSE', '宫位')}</span></div>${positions}</div>
+      <div class="horo-wheel-view"><div class="l3-wheel-card">${renderWheel({ ascDeg: ascDeg == null ? 0 : ascDeg, planets: all, language: state.lang })}<div class="l3-legend">${legend}</div></div></div>
+      </div>`
       + (ascDeg == null ? `<p class="bz-caveat">${T('Ascendant unknown (need birth hour + lat/lon above) — houses shown from 0° Aries.', '上升未知（需时辰+经纬度）——宫位按白羊 0° 起算。')}</p>` : '')
       + `<div class="l3-grid-wrap">${renderAspectGrid(all, { language: state.lang })}</div>`
       + `<div class="l3-terms">${termsHTML}</div>`;
@@ -801,6 +924,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     ].join('');
     $('yiTxt').textContent = f.yi.map((x) => T(x.en, x.zh)).join(T(' · ', '　'));
     $('jiTxt').textContent = f.ji.map((x) => T(x.en, x.zh)).join(T(' · ', '　'));
+    renderMobileDashboard();
+    loadLabFeature().then((lab) => lab.renderLab({ me: state.me, lang: state.lang, root: $('labWrap') })).catch(() => {});
   }
 
   // ---- ZWDS deep layer (V25 Part 5 §25.6): 四化/aux-sha/大限 grid, click-
@@ -1304,6 +1429,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     // synchronous (reuses dailyPull, no fetch); the weather needs the
     // precomputed transits JSON, fetched once and cached.
     renderSynCalendar();
+    loadLabFeature().then((lab) => lab.renderLabSyn({ me: state.me, other: state.other, lang: state.lang, root: $('labSynWrap') })).catch(() => {});
     const weatherPairKey = pairKey;
     ensureTransits().then((transits) => {
       if (!transits || !state.me || !state.other) return;
@@ -1637,6 +1763,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   let l3Loading = false;
   let l3RequestEpoch = 0;
   const l3Toggle = $('l3Toggle'), l3Body = $('l3Body');
+  l3Body?.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-chart-switch]');
+    if (!button) return;
+    const pages = button.closest('.horo-chart-pages');
+    pages.dataset.chartPage = button.dataset.chartSwitch;
+    pages.querySelectorAll('[data-chart-switch]').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+  });
   if (l3Toggle) l3Toggle.addEventListener('click', async () => {
     const willOpen = !l3Body.classList.contains('open');
     l3Toggle.setAttribute('aria-expanded', String(willOpen));
@@ -1680,8 +1813,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const clearBtn = $('clearDataBtn');
   if (clearBtn) clearBtn.addEventListener('click', () => {
     const ok = window.confirm(T(
-      'Delete this page’s chart, streak, quiz results and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
-      '删除此浏览器中本页保存的命盘、连续签到、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
+      'Delete this page’s charts, streak and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
+      '删除此浏览器中本页保存的命盘、连续签到和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
     ));
     if (!ok) return;
     try { clearHoroscopeStorage(localStorage); } catch {
@@ -1741,10 +1874,13 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     button.disabled = true;
     $('birthForm').setAttribute('aria-busy', 'true');
     state.me = b;
+    selectedDayOffset = 0;
+    activeHoroView = 'today';
+    document.body.classList.remove('horo-editing');
     const saved = saveProfile(b);
     $('bSaveStatus').textContent = saved ? T('Saved in this browser.', '已保存在此浏览器。') : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
     resultAssumptions('b');
-    try { await renderMine(); await renderSyn(); }
+    try { await renderMine(); await renderSyn(); if (matchMedia('(max-width: 700px)').matches) $('mineSec').scrollIntoView({ block: 'start' }); }
     catch { formError('b', T('The chart could not load. Reload the page and try again; your details stay local.', '星盘未能加载，请刷新页面后重试；资料仍仅保留在本机。')); }
     finally { button.disabled = false; $('birthForm').removeAttribute('aria-busy'); }
   });
@@ -1807,7 +1943,6 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     updateAssumptions('b'); updateAssumptions('s');
     for (const prefix of ['b', 's']) if (resultInputs[prefix]) $(prefix + 'ResultAssumptions').textContent = birthAssumptions(resultInputs[prefix], state.lang);
     renderMine(); renderSyn(); renderBook();
-    if (quizzesReady) { renderPersona(); renderLogicQuiz(); renderEqQuiz(); }
   });
   window.addEventListener('pagehide', () => {
     // pagehide also fires when the document enters the back/forward cache.

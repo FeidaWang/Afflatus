@@ -49,11 +49,23 @@ export function computeDayun(birth, gender, count = 8) {
   const dir = dayunDirection(chart.year.stem, gender);
   const { birthJD, prevJD, nextJD } = adjacentSolarTerms(birth.y, birth.m, birth.d, birth.hour);
   const gapDays = dir === 1 ? nextJD - birthJD : birthJD - prevJD;
-  const ageYearsFloat = gapDays / 3; // 3 days = 1 year
-  const years = Math.floor(ageYearsFloat);
-  const months = Math.floor((ageYearsFloat - years) * 12);
-  // calendar year in which the first 大运 begins (month-precision rollover)
-  const startYear = birth.y + years + (birth.m + months > 12 ? 1 : 0);
+  // 3 days = 1 year, decomposed the way 寿星历/lunar-javascript (sect 2)
+  // does it: 4320 min = 1 year, 360 min = 1 month, 12 min = 1 day,
+  // 1 min = 2 hours. The start DATE is birth + that offset, and the first
+  // 大运's calendar year is that date's year (cross-checked against
+  // lunar-javascript in tests/baziExact.test.js).
+  const minutes = Math.round(gapDays * 1440);
+  const years = Math.floor(minutes / 4320);
+  const months = Math.floor((minutes % 4320) / 360);
+  const days = Math.floor((minutes % 360) / 12);
+  const hours = (minutes % 12) * 2;
+  const sd = new Date(Date.UTC(birth.y + years, birth.m - 1 + months, 1));
+  const lastDay = new Date(Date.UTC(sd.getUTCFullYear(), sd.getUTCMonth() + 1, 0)).getUTCDate();
+  sd.setUTCDate(Math.min(birth.d, lastDay));
+  sd.setUTCHours(birth.hour ?? 12);
+  sd.setTime(sd.getTime() + (days * 24 + hours) * 3600000);
+  const startDate = { y: sd.getUTCFullYear(), m: sd.getUTCMonth() + 1, d: sd.getUTCDate() };
+  const startYear = startDate.y;
 
   const mpIdx = ganzhiIndex(chart.month.stem, chart.month.branch);
   const pillars = [];
@@ -66,7 +78,7 @@ export function computeDayun(birth, gender, count = 8) {
       fromYear: startYear + 10 * i, toYear: startYear + 10 * i + 9,
     });
   }
-  return { direction: dir, startAge: { years, months }, startYear, pillars, chart };
+  return { direction: dir, startAge: { years, months, days }, startDate, startYear, pillars, chart };
 }
 
 // 流年 ganzhi for a calendar year (display convention, see header).
