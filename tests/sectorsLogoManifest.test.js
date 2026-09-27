@@ -30,3 +30,19 @@ describe('logo manifest', () => {
     expect(row.sha256).toMatch(/^[0-9a-f]{64}$/);
   });
 });
+
+// tests/sectorsLogoManifest.test.js  (part 3) — cropped web copies, portfolio-style tight viewBox
+describe('logo web crops', () => {
+  it.each(Object.entries(manifest).filter(([, r]) => r.status === 'ok'))('%s has a cropped web asset', (id, row) => {
+    expect(row.web_file).toMatch(new RegExp(`^/assets/sectors/logos/web/${id}\\.(svg|png)$`));
+    expect(existsSync(`public${row.web_file}`)).toBe(true);
+    expect(['wide', 'mark']).toContain(row.web_shape);
+    expect(row.web_shape === 'mark').toBe(row.web_aspect < 1.6);
+  });
+  it('cropped SVGs carry an explicit viewBox and size', () => {
+    for (const row of Object.values(manifest).filter((r) => r.web_file?.endsWith('.svg'))) {
+      const head = readFileSync(`public${row.web_file}`, 'utf8').match(/<svg\b[^>]*>/)[0];
+      expect(head).toMatch(/viewBox="[-\d. ]+" width="[\d.]+" height="[\d.]+"/);
+    }
+  });
+});

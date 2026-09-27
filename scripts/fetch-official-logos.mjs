@@ -51,12 +51,15 @@ for (const [id, , , , nameEn, , , , , , , , , domain] of COMPANIES) {
   writeFileSync(`${OUT}/${file}`, buf);
   const guide = BRAND_GUIDE[id];
   const fromFile = ext === 'svg' ? dominantSvgColor(buf.toString('utf8')) : null;
+  // Keep the hand-checked web crop (public/assets/sectors/logos/web) while the source bytes are unchanged.
+  const prev = manifest[id] ?? {};
+  const web = prev.sha256 === sha256 ? Object.fromEntries(Object.entries(prev).filter(([k]) => k.startsWith('web_'))) : {};
   manifest[id] = {
     name: nameEn, file: `/assets/sectors/logos/official/${file}`, source_page: entry.page, source_url: entry.asset,
     kind: entry.kind ?? 'file', retrieved_on: entry.retrieved_on ?? TODAY, sha256,
     brand_color: guide?.hex ?? fromFile ?? '#141413',
     color_basis: guide ? 'brand_guide' : fromFile ? 'logo_file' : 'fallback',
-    color_source_url: guide?.url ?? entry.page, background: entry.background ?? 'light', status: 'ok',
+    color_source_url: guide?.url ?? entry.page, background: entry.background ?? 'light', status: 'ok', ...web,
   };
 }
 writeFileSync(manifestPath, `${JSON.stringify(Object.fromEntries(Object.entries(manifest).sort()), null, 2)}\n`);
