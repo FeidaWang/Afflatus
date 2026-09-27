@@ -14,6 +14,16 @@ const LOGOS = {
   LLY: ['Eli Lilly', '/assets/portfolio/logos/lilly.svg', 'wide'],
   CRSP: ['CRISPR Therapeutics', '/assets/portfolio/logos/crispr.svg', 'mark'],
   COIN: ['Coinbase', '/assets/portfolio/logos/coinbase.svg', 'wide'],
+  // Official marks captured from each company's own site header.
+  MRVL: ['Marvell', '/assets/portfolio/logos/marvell.svg', 'wide'],
+  INTC: ['Intel', '/assets/portfolio/logos/intel.svg', 'wide'],
+  ASML: ['ASML', '/assets/sectors/logos/asml.svg', 'wide'],
+  GOOGL: ['Google', '/assets/portfolio/logos/google.svg', 'wide'],
+  META: ['Meta', '/assets/sectors/logos/meta.svg', 'mark'],
+  ALAB: ['Astera Labs', '/assets/sectors/logos/astera-labs.svg', 'wide'],
+  GEV: ['GE Vernova', '/assets/portfolio/logos/ge-vernova.svg', 'wide'],
+  ISRG: ['Intuitive', '/assets/portfolio/logos/intuitive.svg', 'wide'],
+  ASTS: ['AST SpaceMobile', '/assets/portfolio/logos/ast-spacemobile.svg', 'wide'],
 };
 
 export function portfolioLogo(symbol, { decorative = false } = {}) {

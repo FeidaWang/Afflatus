@@ -111,6 +111,9 @@
   <link rel="stylesheet" href="/styles/responsive-primitives.css">
   <script type="module" src="/src/entry/viewport.js"></script>
   <link rel="stylesheet" href="/styles/shared-header.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
   <link rel="stylesheet" href="/styles/portfolio-fy26.css">
   <script>try{const p=location.pathname,l=p.startsWith('/zh/')?'zh':p.startsWith('/en/')?'en':localStorage.getItem('afflatus:locale:v1')||'en';document.documentElement.lang=l==='zh'?'zh-CN':'en';document.documentElement.dataset.portfolioLocale=l}catch{}</script>
   <script type="module" src="/lib/header-controller.js"></script>
@@ -139,6 +142,7 @@
   <section class="pf-scrolly" id="pfScrolly" aria-label="FY 2025-26 in squares" data-aria-en="FY 2025-26 in squares" data-aria-zh="用方块看 2025-26 财年">
     <div class="pf-stage" id="pfStage" aria-hidden="true">
       <div class="pf-paper"></div>
+      <canvas id="pfGrid"></canvas>
       <canvas id="pfTiles"></canvas>
       <div class="pf-labels" id="pfLabels"></div>
     </div>
@@ -189,15 +193,15 @@
       <h2 data-en="Six trades that made the year." data-zh="成就这一年的六笔交易。">Six trades that made the year.</h2>
       <p data-en="Entry to exit, fees included. All six were held for a week or less." data-zh="从买入到卖出，已计入佣金。六笔持有期都不超过一周。">Entry to exit, fees included. Five of the six were held for a week or less.</p>
     </div>
-    <div class="pf-highlights" id="pfHighlights"></div>
+    <!-- Data owner for scripts/published-cycles.mjs (gross entry-to-exit moves); not rendered. -->
     <div class="pa-published-data" hidden aria-hidden="true">
-<article class="trade-route" data-rank="01"><header><span>SNDK</span></header><div class="route-efficiency"><strong data-chart-value>+33.1%</strong></div><div class="route-track"><span data-chart-value>3</span></div></article>
-<article class="trade-route" data-rank="02"><header><span>MRVL</span></header><div class="route-efficiency"><strong data-chart-value>+32.3%</strong></div><div class="route-track"><span data-chart-value>7</span></div></article>
-<article class="trade-route" data-rank="03"><header><span>INTC</span></header><div class="route-efficiency"><strong data-chart-value>+17.9%</strong></div><div class="route-track"><span data-chart-value>0</span></div></article>
-<article class="trade-route" data-rank="04"><header><span>DRAM</span></header><div class="route-efficiency"><strong data-chart-value>+16.5%</strong></div><div class="route-track"><span data-chart-value>2</span></div></article>
-<article class="trade-route" data-rank="05"><header><span>AMD</span></header><div class="route-efficiency"><strong data-chart-value>+15.9%</strong></div><div class="route-track"><span data-chart-value>0</span></div></article>
-<article class="trade-route" data-rank="06"><header><span>SPCX</span></header><div class="route-efficiency"><strong data-chart-value>+14.0%</strong></div><div class="route-track"><span data-chart-value>0</span></div></article>
+<article class="trade-route" data-rank="01"><header><span>DRAM</span></header><div class="route-efficiency"><strong data-chart-value>+16.7%</strong></div><div class="route-track"><span data-chart-value>2</span></div></article>
+<article class="trade-route" data-rank="02"><header><span>AMD</span></header><div class="route-efficiency"><strong data-chart-value>+16.0%</strong></div><div class="route-track"><span data-chart-value>1</span></div></article>
+<article class="trade-route" data-rank="03"><header><span>SPCX</span></header><div class="route-efficiency"><strong data-chart-value>+14.1%</strong></div><div class="route-track"><span data-chart-value>0</span></div></article>
+<article class="trade-route" data-rank="04"><header><span>SNDK</span></header><div class="route-efficiency"><strong data-chart-value>+13.8%</strong></div><div class="route-track"><span data-chart-value>34</span></div></article>
+<article class="trade-route" data-rank="05"><header><span>AMD</span></header><div class="route-efficiency"><strong data-chart-value>+8.9%</strong></div><div class="route-track"><span data-chart-value>3</span></div></article>
 </div>
+    <div class="pf-highlights" id="pfHighlights"></div>
   </section>
 
   <section class="pf-section pf-section--tint">
@@ -242,8 +246,17 @@
       <h2 data-en="Ten ideas for the next orbit." data-zh="下一程的十个方向。">Ten ideas for the next orbit.</h2>
       <p data-en="Ten US-listed companies across AI, semiconductors, power, space, biomedicine and web3, with the question that matters next for each." data-zh="十家美股公司，覆盖 AI、半导体、电力、太空、生物医药与 Web3，并列出每家接下来最值得关注的问题。">Ten US-listed companies across AI, semiconductors, power, space, biomedicine and web3, with the question that matters next for each.</p>
     </div>
+    <p class="pf-ideas-owner pf-hand" data-en="Astra's ten" data-zh="Astra 的十个">Astra's ten</p>
     <div class="pf-ideas" id="pfIdeas"></div>
     <p class="pf-fine pf-center" data-en="Research watchlist dated 26 September 2026. Order is editorial, not a target weight or ranking of expected returns." data-zh="研究观察名单，日期为 2026 年 9 月 26 日。排列顺序仅为编辑安排，不代表目标权重或预期收益排名。">Research watchlist dated 26 September 2026. Order is editorial, not a target weight or ranking of expected returns.</p>
+    <div class="pf-heading pf-heading--second pf-reveal">
+      <span data-en="07 / A SECOND OPINION" data-zh="07 / 第二种看法">07 / A SECOND OPINION</span>
+      <h2 data-en="Ten more, from Claude." data-zh="再加十个，来自 Claude。">Ten more, from Claude.</h2>
+      <p data-en="Chosen independently of Astra's list. Three names made both — they carry a ✦. Hover or tap one." data-zh="独立于 Astra 的名单选出。有三家两边都选了，标着 ✦——把鼠标移上去，或点一下。">Chosen independently of Astra's list. Three names made both — they carry a ✦. Hover or tap one.</p>
+    </div>
+    <p class="pf-ideas-owner pf-hand" data-en="Claude's ten" data-zh="Claude 的十个">Claude's ten</p>
+    <div class="pf-ideas pf-ideas--claude" id="pfIdeasClaude"></div>
+    <p class="pf-fine pf-center" data-en="Claude's list, 28 September 2026, based on public information available to Claude up to mid-2026. Research prompts, not recommendations; order is editorial." data-zh="Claude 的名单，2026 年 9 月 28 日，依据 Claude 截至 2026 年年中可获得的公开信息。仅为研究线索，不构成投资建议；排列顺序仅为编辑安排。">Claude's list, 28 September 2026, based on public information available to Claude up to mid-2026. Research prompts, not recommendations; order is editorial.</p>
   </section>
 
   <section class="pf-method">
@@ -252,8 +265,11 @@
     <p data-en="This page deliberately shows selected positive results and is not a complete performance record. Past results do not predict future returns, and nothing here is personal investment advice." data-zh="本页刻意只展示精选的正向结果，并非完整业绩记录。过往表现不预示未来收益，本页内容不构成个人投资建议。">This page deliberately shows selected positive results and is not a complete performance record. Past results do not predict future returns, and nothing here is personal investment advice.</p>
     <a class="pf-top" href="#top" data-en="Back to the beginning ↑" data-zh="回到开头 ↑">Back to the beginning ↑</a>
   </section>
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="pfWatercolor"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></svg>
-</main>
+  <section class="pf-finale" aria-hidden="true">
+    <p class="pf-finale-note pf-hand" data-en="…and the next season is already falling into place." data-zh="……下一季，已经开始落位。">…and the next season is already falling into place.</p>
+    <canvas id="pfFinale"></canvas>
+  </section>
+  </main>
 <footer class="pa-footer">
   <div class="pa-footer-inner">
     <a class="pa-footer-brand" href="/" aria-label="AFFLATUS home" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="pa-footer-brand-mark" aria-hidden="true"><span>A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></a>
