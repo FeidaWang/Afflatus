@@ -596,18 +596,22 @@ test('chapters still render when the logo manifest fails', async ({ page }) => {
   await expect(page.locator('#industrySources .industry-source-list li').first()).toBeAttached();
 });
 
-// Task 15 Lighthouse finding (open, needs a decision — see docs/sectors-81k-evidence/README.md):
-// on phones the shared header renders expanded (478px) until its script sets data-enhanced, so the
-// S0 heading first paints below the fold and is never an LCP candidate; the 13px stage legend becomes
-// the LCP element (lab LCP 3.6 s on the old page → 5.7 s). Un-fixme once the header or the S0 card changes.
-test.fixme('the S0 heading is the largest contentful paint', async ({ page }) => {
+// On phones the shared header used to render expanded (478px) until its script set data-enhanced, so
+// the S0 heading first painted below the fold and a 13px legend became the LCP element (3.6 s → 5.7 s).
+// shared-header.css now paints the collapsed header from the first frame when scripting is on, so the
+// S0 card (heading above the fold, lede as the largest text) owns LCP.
+test('the largest contentful paint comes from the S0 card, not the stage legend', async ({ page }) => {
   await page.setViewportSize({ width: 412, height: 823 });
   await page.addInitScript(() => {
     window.__lcp = [];
-    new PerformanceObserver((list) => { for (const e of list.getEntries()) window.__lcp.push(e.element?.tagName); })
-      .observe({ type: 'largest-contentful-paint', buffered: true });
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) window.__lcp.push({ inS0: Boolean(e.element?.closest('.stage-card[data-scene="0"]')), t: e.startTime });
+    }).observe({ type: 'largest-contentful-paint', buffered: true });
   });
   await page.goto('/en/sectors.html');
   await page.waitForTimeout(1500);
-  expect(await page.evaluate(() => window.__lcp.at(-1))).toBe('H1');
+  const last = await page.evaluate(() => window.__lcp.at(-1));
+  expect(last.inS0).toBe(true);
+  const h1 = await page.locator('.stage-card[data-scene="0"] h1').boundingBox();
+  expect(h1.y + h1.height).toBeLessThanOrEqual(823);
 });

@@ -68,16 +68,24 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header [hidden] { display: none; }
   body:has(> #afflatus-header) { padding-top: 60px; }
 }
+/* With scripting on, paint the collapsed geometry from the first frame so the header does not
+   shift the page when header-controller.js sets data-enhanced. */
 @media (scripting: enabled) {
   #afflatus-header:not([data-enhanced]) .af-brand-art { visibility: hidden; }
+  #afflatus-header:not([data-enhanced]) .af-header-dropdown { display: none; }
 }
-/* Static HTML exposes all destinations when enhancement is unavailable. */
-#afflatus-header:not([data-enhanced]) { position: relative; height: auto; }
-#afflatus-header:not([data-enhanced]) .af-header-inner { flex-wrap: wrap; }
-#afflatus-header:not([data-enhanced]) .af-header-nav { position: static; flex-wrap: wrap; }
-#afflatus-header:not([data-enhanced]) .af-header-dropdown { position: static; }
-#afflatus-header:not([data-enhanced]) button { display: none; }
-body:has(> #afflatus-header:not([data-enhanced])) { padding-top: 0; }
+@media (scripting: enabled) and (max-width: 979px) {
+  #afflatus-header:not([data-enhanced]) .af-header-nav { display: none; }
+}
+/* Static HTML exposes all destinations when scripting is unavailable. */
+@media (scripting: none) {
+  #afflatus-header:not([data-enhanced]) { position: relative; height: auto; }
+  #afflatus-header:not([data-enhanced]) .af-header-inner { flex-wrap: wrap; }
+  #afflatus-header:not([data-enhanced]) .af-header-nav { position: static; flex-wrap: wrap; }
+  #afflatus-header:not([data-enhanced]) .af-header-dropdown { position: static; }
+  #afflatus-header:not([data-enhanced]) button { display: none; }
+  body:has(> #afflatus-header:not([data-enhanced])) { padding-top: 0; }
+}
 @media (hover: hover) and (pointer: fine) {
   #afflatus-header :is(a, button) { transition: background-color .18s ease, box-shadow .18s ease, color .18s ease; }
   #afflatus-header :is(a, button):hover { background-color: #6689821c; box-shadow: 0 0 15px #66898236; }
