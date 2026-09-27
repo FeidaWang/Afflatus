@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { validateSectorsData } from '../src/lib/validateSectorsData.js';
 import { validateSectorsCompetition } from '../src/lib/validateSectorsCompetition.js';
 import { validateSectorsRivalry } from '../src/lib/validateSectorsRivalry.js';
+import { validateSnapshot } from '../src/sectors/frontier/frontier-core.mjs';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
@@ -27,7 +28,16 @@ import {
   validateSignalReleaseDates,
 } from '../src/lib/validateStaticPublicData.js';
 
+import { validateShipManifest } from '../src/lib/validateShipManifest.js';
+import { validateGlobeData } from '../src/showcase/validateGlobeData.js';
+
 const CHECKS = [
+  { path: 'public/data/sectors-frontier/2026-09-23.json', validate: (data) => {
+    const errors = validateSnapshot(data);
+    return { ok: errors.length === 0, errors };
+  } },
+  { path: 'public/assets/venator/manifest.json', validate: validateShipManifest },
+  { path: 'public/assets/globe/earth-land.json', validate: validateGlobeData },
   { path: 'public/sectors-data.json', validate: validateSectorsData },
   { path: 'public/sectors-competition.json', validate: validateSectorsCompetition },
   { path: 'public/sectors-rivalry.json', validate: validateSectorsRivalry },
