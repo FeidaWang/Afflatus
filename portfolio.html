@@ -111,13 +111,12 @@
   <link rel="stylesheet" href="/styles/responsive-primitives.css">
   <script type="module" src="/src/entry/viewport.js"></script>
   <link rel="stylesheet" href="/styles/shared-header.css">
-  <link rel="stylesheet" href="/styles/portfolio-2026.css?v=7">
+  <link rel="stylesheet" href="/styles/portfolio-fy26.css">
   <script>try{const p=location.pathname,l=p.startsWith('/zh/')?'zh':p.startsWith('/en/')?'en':localStorage.getItem('afflatus:locale:v1')||'en';document.documentElement.lang=l==='zh'?'zh-CN':'en';document.documentElement.dataset.portfolioLocale=l}catch{}</script>
   <script type="module" src="/lib/header-controller.js"></script>
-  <script type="module" src="/src/pages/portfolio2026.js"></script>
+  <script type="module" src="/src/pages/portfolioFY26.js"></script>
 </head>
 <body class="portfolio-story">
-<div class="ps-reading-progress" aria-hidden="true"><i id="readingProgress"></i></div>
 <!-- shared-header:start -->
 <header id="afflatus-header" data-afflatus-header>
   <div class="af-header-inner">
@@ -134,34 +133,126 @@
   </div>
 </header>
 <!-- shared-header:end -->
-<main id="mainContent" class="portfolio-atlas">
-  <div class="pa-progress" aria-hidden="true"><i id="paProgress"></i></div>
-  <nav class="pa-rail" aria-label="Portfolio chapters" data-i18n-static-aria><a href="#story">01 <span>Approach</span></a><a href="#performance">02 <span>Selected trades</span></a><a href="#outlook">03 <span>FY outlook</span></a><a href="#sectorOutlook">04 <span>Industries</span></a><a href="#ideas">05 <span>Ten ideas</span></a></nav>
-  <section class="pa-hero" id="top"><div class="pa-hero-copy"><p class="pa-kicker">AFFLATUS / FY 2025-26</p><h1>Where conviction met the tape.</h1><p class="pa-lead">A visual record of selected, verifiable portfolio decisions: thematic entries, timely exits and the opportunities still under observation.</p><div class="pa-actions"><a href="#story">Follow the decisions &darr;</a><a href="#ideas">Explore ten ideas &nearr;</a></div></div><div class="pa-fan" aria-hidden="true"><canvas id="paFan"></canvas><span>2025</span><span>2026</span></div><a class="pa-scroll" href="#story">SCROLL TO EXPLORE &darr;</a></section>
-  <section class="pa-intro"><p>The strongest decisions in this record share a pattern: identify a demand wave, act in a liquid instrument, and revisit the thesis quickly as price confirms or challenges it.</p><p class="pa-note">This is a curated selection of positive examples, not the account's full performance or an equity curve.</p></section>
-  <section class="pa-story" id="story"><div class="pa-sticky"><div class="pa-stage-head"><span>01 / FY 2025–26 · MODEL-ASSISTED REVIEW</span><span id="paStep">01 / 05</span></div><div class="pa-stage-grid"><div><h2>From trade evidence to a reviewable system.</h2><div class="pa-story-card" aria-live="polite"><span id="paStageName">RECONCILE</span><h3 id="paStageTitle"></h3><p id="paStageBody"></p></div><p class="pa-model-path">GPT-6 Astra <span>→</span> Fable 5.1 <span>→</span> Opus 5.5 <span>→</span> Jev <span>→</span> human review</p></div><div class="pa-task-visual"><div class="pa-calendar-head"><span>SELECTED EXECUTION FREQUENCY</span><strong>JUL 2025 — JUN 2026</strong></div><div class="pa-task-grid" id="paTaskGrid" role="group" data-aria-en="Fiscal year weekly execution calendar" data-aria-zh="财年每周成交日历"></div><div class="pa-calendar-detail" id="paCalendarDetail" aria-live="polite"></div><p id="paStageCaption"></p></div></div><div class="pa-stage-legend"><span><i></i> No selected event</span><span><i></i> One event</span><span><i></i> Two or more events</span></div><p class="pa-calendar-note">Calendar covers only the five selected completed examples shown below. A colored week counts documented entry and exit events, not individual broker fills; blank weeks do not establish that no other trading occurred.</p></div></section>
-  <section class="pa-workflow"><div class="pa-heading"><span>THE DESKTOP REVIEW BLUEPRINT</span><h2>Separate judgment from execution.</h2><p>Each model has a bounded role. Deterministic code owns prices, position math and orders; the desktop review keeps every assumption, decision and approval inspectable.</p></div><div class="pa-workflow-grid"><article><b>01 / INGEST</b><h3>Reconcile the ledger</h3><p>Use a Python import job to normalize broker CSVs into a local SQLite fill ledger. Store UTC timestamps, fees, FX, corporate actions and raw-file hashes; reconcile partial fills before calculating P&amp;L.</p><small>Output: immutable trade IDs and an exceptions queue.</small></article><article><b>02 / ASTRA + FABLE</b><h3>Review and challenge</h3><p>Astra coordinates the Vite desktop review UI and research pipeline. Fable independently challenges thesis labels and look-ahead leakage. Save prompt, model version and evidence IDs with each review.</p><small>Output: evidence-linked hypotheses and counterarguments.</small></article><article><b>03 / OPUS + JEV</b><h3>Verify the gate</h3><p>Opus reviews walk-forward tests and failure paths. Jev receives a compact JSON pre-trade state and returns typed probabilities; schema validation, a timeout and deterministic loss limits gate every candidate.</p><small>Output: replayable decisions, veto reasons and latency logs.</small></article><article><b>04 / DEPLOY</b><h3>Ship in stages</h3><p>Package the review UI as a signed desktop build with separate read-only, paper and live adapters. Promote only after replay and paper checks; require human approval, daily loss caps, audit logs and a kill switch.</p><small>Output: a desktop dashboard and a signed release checklist.</small></article></div><p class="pa-method">Jev is a typed decision model, not a proven market predictor. Model outputs should never be treated as guaranteed alpha. <a href="https://api.typesafe.ai/docs" target="_blank" rel="noopener noreferrer">Jev API</a> · <a href="https://developers.openai.com/api/docs/models/gpt-6-astra" target="_blank" rel="noopener noreferrer">Astra</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1" target="_blank" rel="noopener noreferrer">Fable</a> · <a href="https://www.anthropic.com/claude-opus-5-5" target="_blank" rel="noopener noreferrer">Opus</a></p></section>
-  <section class="pa-scenarios"><div class="pa-heading"><span>THREE RECURRING STRENGTHS</span><h2>One method, three expressions.</h2></div><div class="pa-scenario-grid"><article><small>01 / MEMORY</small><h3>Follow the bottleneck</h3><p>Memory exposure reappeared across the record, from a broad Roundhill memory ETF to individual chip names. Re-entry after a completed trade shows a thesis revisited rather than a single static bet.</p></article><article><small>02 / COMPUTE</small><h3>Move with confirmation</h3><p>Two AMD round trips in May show fast decisions around the compute theme. Both selected entry-to-exit price moves were positive, with different holding windows.</p></article><article><small>03 / FRONTIER</small><h3>Recognize the new category</h3><p>A completed SpaceX trade captured a sharp space-sector move. The wider record also reaches into optics, biotech and digital-asset infrastructure.</p></article></div></section>
-  <section class="pa-explorer" id="tradeExplorer"><div class="pa-heading"><span>INTERACTIVE TRADE EXPLORER</span><h2>Walk through the executions.</h2><p>Scroll or select a record to review each of five completed trades. The displayed average prices are execution endpoints, not intraday price history.</p></div><div class="pa-explorer-shell"><div class="pa-explorer-control"><span id="paExploreStep">01 / 05</span><h3 id="paExploreTitle"><img class="pa-brand-logo pa-brand-logo--mark" src="/assets/portfolio/logos/roundhill.svg" alt="Roundhill Investments logo" width="124" height="32"><span>Memory basket</span></h3><p id="paExploreBody"></p><div class="pa-explore-number" id="paExploreNumber">+16.7%</div><label for="paExploreRange">SELECT AN OBSERVATION</label><input id="paExploreRange" type="range" min="0" max="4" step="1" value="0"><div class="pa-explore-ends"><span>01</span><span>05</span></div><div class="pa-explorer-actions"><button type="button" id="paExplorePrev">Previous</button><button type="button" id="paExploreNext">Next</button></div></div><div class="pa-explorer-visual"><div class="pa-explorer-visual-head"><span>EXECUTION PRICE COMPARISON</span><b id="paExploreTicker"><img class="pa-brand-logo pa-brand-logo--mark" src="/assets/portfolio/logos/roundhill.svg" alt="Roundhill Investments logo" width="124" height="32"></b></div><svg id="paExploreSvg" viewBox="0 0 700 440" role="img" aria-label="Selected trade entry and exit price comparison" data-i18n-static-aria></svg><div class="pa-explorer-visual-foot"><span>ENTRY</span><span>EXIT</span></div></div></div></section>
-  <section class="pa-performance" id="performance"><div class="pa-heading"><span>02 / SELECTED TRADE OBSERVATIONS</span><h2>Five moments with measurable follow-through.</h2><p>Gross price move from the documented entry to exit. This does not include fees, taxes or currency translation.</p></div><div class="pa-published-data" hidden aria-hidden="true">
-<article class="trade-route" data-rank="01"><header><span>DRAM</span></header><div class="route-efficiency"><strong data-chart-value>+16.7%</strong></div><div class="route-track"><span data-chart-value>2</span></div></article>
-<article class="trade-route" data-rank="02"><header><span>AMD</span></header><div class="route-efficiency"><strong data-chart-value>+16.0%</strong></div><div class="route-track"><span data-chart-value>1</span></div></article>
-<article class="trade-route" data-rank="03"><header><span>SPCX</span></header><div class="route-efficiency"><strong data-chart-value>+14.1%</strong></div><div class="route-track"><span data-chart-value>0</span></div></article>
-<article class="trade-route" data-rank="04"><header><span>SNDK</span></header><div class="route-efficiency"><strong data-chart-value>+13.8%</strong></div><div class="route-track"><span data-chart-value>34</span></div></article>
-<article class="trade-route" data-rank="05"><header><span>AMD</span></header><div class="route-efficiency"><strong data-chart-value>+8.9%</strong></div><div class="route-track"><span data-chart-value>3</span></div></article>
-</div><div class="pa-chart-shell"><div class="pa-chart-top"><h3>Price change by selected trade</h3><div class="pa-switch" role="group" aria-label="Chart view" data-i18n-static-aria><button type="button" data-view="return" aria-pressed="true">Price move</button><button type="button" data-view="duration" aria-pressed="false">Holding window</button></div></div><div class="pa-chart" id="paTradeChart" role="img"></div><div class="pa-trade-cards" id="paTradeCards"></div></div><p class="pa-method">Selected profitable round trips only. Percentages are calculated from displayed average execution prices, before transaction costs. They are not time-weighted returns, account returns, or annualized projections.</p></section>
-  <section class="pa-growth-scroll" aria-label="Scroll through three illustrative portfolio paths" data-aria-en="Scroll through three illustrative portfolio paths" data-aria-zh="滚动查看三条组合情景路径"><div class="pa-growth-sticky"><div class="pa-growth-paper"><div class="pa-growth-title"><b>FY 2026–27 / ILLUSTRATIVE PORTFOLIO INDEX</b><span>START = 100 · BEFORE COSTS</span></div><svg id="paGrowthSvg" viewBox="0 0 1200 660" role="img" aria-label="Three illustrative portfolio paths unfold as the page scrolls" data-aria-en="Three illustrative portfolio paths unfold as the page scrolls" data-aria-zh="滚动展开三条组合情景路径"></svg><div class="pa-growth-axis"><span>JUL 2026</span><span>OCT</span><span>JAN 2027</span><span>APR</span><span>JUN 2027</span></div></div><div class="pa-growth-card"><small id="paGrowthStep">01 / 03</small><h2 id="paGrowthHeading">Three paths from the same starting point.</h2><p id="paGrowthText">Scroll to see how small differences in monthly compounding separate the illustrative year-end outcomes.</p></div></div></section>
-  <section class="pa-outlook" id="outlook"><div class="pa-heading"><span>FY 2026–27 / FORWARD SCENARIOS</span><h2>What annual growth would the next year require?</h2><p>Start with a portfolio index of 100. Compare three scenario paths, then select one to inspect its year-end index and required monthly compounding.</p></div><div class="pa-outlook-shell"><div class="pa-outlook-controls"><p class="pa-outlook-eyebrow">ILLUSTRATIVE PORTFOLIO FLOW</p><div class="pa-case-tabs" role="group" data-aria-en="Growth scenario" data-aria-zh="增长情景"><button type="button" data-case="bear" aria-pressed="false">Defensive</button><button type="button" data-case="base" aria-pressed="true">Planning</button><button type="button" data-case="bull" aria-pressed="false">Stretch</button></div><div class="pa-outlook-number" id="paOutlookNumber">+12%</div><p id="paOutlookSummary"></p><dl><div><dt>Opening index</dt><dd>100</dd></div><div><dt>June 2027 index</dt><dd id="paOutlookEnd">112</dd></div><div><dt>Monthly compound rate</dt><dd id="paOutlookMonthly">0.95%</dd></div></dl></div><div class="pa-outlook-plot"><div class="pa-plot-top"><span>JUL 2026 → JUN 2027</span><span>OPENING VALUE / SCENARIO CHANGE</span></div><svg id="paOutlookSvg" viewBox="0 0 720 380" role="img" data-i18n-static-aria aria-label="Illustrative annualized portfolio flow"></svg><div class="pa-plot-bottom"><span>OPENING INDEX · 100</span><span>YEAR-END INDEX</span></div></div></div><div class="pa-pay-study"><div class="pa-pay-heading"><span>AI ECONOMY / WAGE DISTRIBUTION</span><h3>Pay by occupation group, percent above the same economy without AI</h3><p>This separate US 2030 model illustrates how gains can diverge across workers. It is context for the scenarios, not an input to the portfolio targets above.</p></div><div id="paPayPanels" class="pa-pay-panels"></div><div class="pa-pay-legend"><span><i></i>Knowledge workers</span><span><i></i>All other workers</span><span><i></i>Average</span></div><p class="pa-pay-source">Source: <a href="https://www.anthropic.com/institute/econ-scenarios" target="_blank" rel="noopener noreferrer">Anthropic, Economic Scenarios for Transformative AI (2026)</a>. Values shown are its illustrative wage scenarios for 2030 versus an economy without AI.</p></div><p class="pa-method">Defensive −8%, planning +12%, and stretch +24% are editorial planning assumptions, not estimates derived from the five selected winning trades. They are portfolio index paths before tax, fees, FX and cash flows; no actual FY 2026–27 return is asserted.</p></section>
-  <section class="pa-sector-outlook" id="sectorOutlook"><div class="pa-heading"><span>2027 / THREE INDUSTRY FUTURES</span><h2>Where could the themes grow or contract?</h2><p>Switch between three cases. Each bar is an illustrative 2027 change in theme activity against a 2026 index of 100, not a forecast of stock returns.</p></div><div class="pa-sector-shell"><div class="pa-sector-tabs" role="group" data-aria-en="Industry scenario" data-aria-zh="产业情景"><button type="button" data-sector-case="bear" aria-pressed="false">Pressure</button><button type="button" data-sector-case="base" aria-pressed="true">Base</button><button type="button" data-sector-case="bull" aria-pressed="false">Acceleration</button></div><div class="pa-sector-chart-title"><span>2026 → 2027</span><strong>THREE POSSIBLE ACTIVITY INDEXES</strong></div><div id="paSectorBars" class="pa-sector-bars" role="img" data-i18n-static-aria aria-label="Illustrative 2027 industry changes"></div><p id="paSectorNarrative" class="pa-sector-narrative"></p></div><p class="pa-method">Assumptions dated 26 September 2026. The direction is informed by <a href="https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary" target="_blank" rel="noopener noreferrer">IEA data-centre demand and bottlenecks</a>, <a href="https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2026" target="_blank" rel="noopener noreferrer">FDA drug approvals</a>, and <a href="https://www.chainalysis.com/reports/the-2026-geography-of-cryptocurrency-report/" target="_blank" rel="noopener noreferrer">Chainalysis adoption research</a>. The displayed percentages are our scenario inputs; these sources do not publish or endorse them.</p></section>
-  <section class="pa-ideas" id="ideas">
-    <div class="pa-heading"><span>05 / NEXT RESEARCH UNIVERSE / SEP 2026</span><h2>Ten ideas, one research map.</h2><p>Ten US-listed stocks across AI, semiconductors, connected hardware and software, space, biomedicine and web3. Select a line to examine its thesis and the question that matters next.</p></div>
-    <div class="pa-solar-layout">
-      <div class="pa-universe"><div class="pa-universe-head"><span>RESEARCH UNIVERSE</span><span>10 OBSERVATIONS / 06 THEMES</span></div><div id="paIdeaList" class="pa-idea-list" role="group" aria-label="Stock ideas" data-i18n-static-aria></div><p class="pa-universe-foot">SELECT AN IDEA TO READ THE THESIS <span aria-hidden="true">↗</span></p></div>
-      <article class="pa-idea-detail" aria-live="polite"><div class="pa-idea-detail-head"><span>FIELD NOTE / <span id="paPlanet"></span></span><span>SEP 2026</span></div><h3 id="paIdeaName"></h3><b id="paIdeaTicker"></b><p id="paIdeaThesis"></p><div class="pa-idea-question"><span>WHAT TO WATCH</span><small id="paIdeaQuestion"></small></div></article>
+<main id="mainContent" class="pf">
+  <div class="pf-progress" aria-hidden="true"><i id="pfProgress"></i></div>
+
+  <section class="pf-scrolly" id="pfScrolly" aria-label="FY 2025-26 in squares" data-aria-en="FY 2025-26 in squares" data-aria-zh="用方块看 2025-26 财年">
+    <div class="pf-stage" id="pfStage" aria-hidden="true">
+      <div class="pf-paper"></div>
+      <canvas id="pfTiles"></canvas>
+      <div class="pf-labels" id="pfLabels"></div>
     </div>
-    <p class="pa-method">Research watchlist dated 26 September 2026. Display order is editorial, not a target weight or ranking of expected returns. These are speculative ideas, not personalized investment advice.</p>
+    <div class="pf-steps">
+      <article class="pf-step pf-step--hero" id="top">
+        <div class="pf-hero">
+          <p class="pf-kicker" data-en="AFFLATUS · FY 2025–26 TRADING RECORD" data-zh="AFFLATUS · 2025–26 财年交易记录">AFFLATUS · FY 2025–26 TRADING RECORD</p>
+          <h1><span class="pf-hero-num" data-count="24.0" data-prefix="+">+24.0%</span></h1>
+          <p class="pf-hero-lead" data-en="Return on capital invested in the financial year to 30 June 2026. Behind the number: 237 executions across 33 US-listed stocks." data-zh="截至 2026 年 6 月 30 日的财年，按投入资本计算的回报。数字背后，是 33 只美股上的 237 次成交。">Return on capital invested in the financial year to 30 June 2026. Behind the number: 237 executions across 33 US-listed stocks.</p>
+          <dl class="pf-hero-stats">
+            <div><dt data-en="Stocks closed with a profit" data-zh="实现盈利的标的">Stocks closed with a profit</dt><dd>17</dd></div>
+            <div><dt data-en="Best single trade" data-zh="最佳单笔交易">Best single trade</dt><dd>+33.1%</dd></div>
+            <div><dt data-en="Median hold on winners" data-zh="盈利交易持有中位数">Median hold on winners</dt><dd data-en="3 days" data-zh="3 天">3 days</dd></div>
+          </dl>
+          <a class="pf-scroll-cue" href="#pfStep1" data-en="Scroll to see the year ↓" data-zh="向下滚动，看这一年 ↓">Scroll to see the year ↓</a>
+        </div>
+      </article>
+      <article class="pf-step" id="pfStep1"><div class="pf-card">
+        <span class="pf-card-kicker">01 / 04</span>
+        <h2 data-en="Every square is one execution." data-zh="每个方块，都是一次成交。">Every square is one execution.</h2>
+        <p data-en="Lavender squares are buys, blue squares are sells: 237 of them over twelve months, across memory, chips, optics, space and more." data-zh="紫色是买入，蓝色是卖出：十二个月里共 237 次，横跨存储、芯片、光通信、太空等方向。">Lavender squares are buys, blue squares are sells: 237 of them over twelve months, across memory, chips, optics, space and more.</p>
+      </div></article>
+      <article class="pf-step"><div class="pf-card">
+        <span class="pf-card-kicker">02 / 04</span>
+        <h2 data-en="The year accelerated into its final quarter." data-zh="这一年，在最后一个季度加速。">The year accelerated into its final quarter.</h2>
+        <p data-en="April to June carried 194 of the 237 fills — 82% of the year's activity — as AI-hardware names moved fastest." data-zh="4 月到 6 月贡献了 237 次成交中的 194 次，占全年 82%，正是 AI 硬件股波动最剧烈的阶段。">April to June carried 194 of the 237 fills — 82% of the year's activity — as AI-hardware names moved fastest.</p>
+      </div></article>
+      <article class="pf-step"><div class="pf-card">
+        <span class="pf-card-kicker">03 / 04</span>
+        <h2 data-en="Seven themes, one supply chain." data-zh="七个主题，一条供应链。">Seven themes, one supply chain.</h2>
+        <p data-en="Sorted by theme, the record reads like a map of AI hardware: memory, compute, custom silicon, Korean chipmakers, foundry, optics and space." data-zh="按主题归类后，这份记录就像一张 AI 硬件地图：存储、算力、定制芯片、韩国芯片股、代工、光通信与太空。">Sorted by theme, the record reads like a map of AI hardware: memory, compute, custom silicon, Korean chipmakers, foundry, optics and space.</p>
+      </div></article>
+      <article class="pf-step"><div class="pf-card">
+        <span class="pf-card-kicker">04 / 04</span>
+        <h2 data-en="Where the gains came from." data-zh="收益从哪里来。">Where the gains came from.</h2>
+        <p data-en="Each square is 1% of realized gains. Memory and storage produced 46.5%. Add the Korea ETFs, led by memory makers, and the memory chain reaches 58%." data-zh="每个方块代表 1% 的已实现收益。存储与内存贡献 46.5%；加上以存储厂商为主要权重的韩国 ETF，存储链合计达 58%。">Each square is 1% of realized gains. Memory and storage produced 46.5%. Add the Korea ETFs, led by memory makers, and the memory chain reaches 58%.</p>
+      </div></article>
+    </div>
   </section>
-  <section class="pa-end"><canvas id="paEndFan" aria-hidden="true"></canvas><div><span>THE NEXT ORBIT</span><h2>The thesis stays in motion.</h2><p>Return to the evidence, revise the assumptions, and watch what the market confirms next.</p><a href="#top">Back to the beginning &uarr;</a></div></section>
+
+  <section class="pf-statement">
+    <p class="pf-reveal" data-en="One idea ran through the year: when AI demand hits a physical bottleneck, the bottleneck gets repriced. The best trades followed it — memory first, then custom silicon, then the chips around them." data-zh="贯穿全年的只有一个判断：当 AI 需求撞上物理瓶颈，瓶颈就会被重新定价。最好的交易都顺着它展开：先是存储，再是定制芯片，然后是周边的芯片公司。">One idea ran through the year: when AI demand hits a physical bottleneck, the bottleneck gets repriced. The best trades followed it — memory first, then custom silicon, then the chips around them.</p>
+  </section>
+
+  <section class="pf-section" id="fy2026Performance">
+    <div class="pf-heading pf-reveal">
+      <span data-en="02 / HIGHLIGHTS" data-zh="02 / 精彩操作">02 / HIGHLIGHTS</span>
+      <h2 data-en="Six trades that made the year." data-zh="成就这一年的六笔交易。">Six trades that made the year.</h2>
+      <p data-en="Entry to exit, fees included. All six were held for a week or less." data-zh="从买入到卖出，已计入佣金。六笔持有期都不超过一周。">Entry to exit, fees included. Five of the six were held for a week or less.</p>
+    </div>
+    <div class="pf-highlights" id="pfHighlights"></div>
+    <div class="pa-published-data" hidden aria-hidden="true">
+<article class="trade-route" data-rank="01"><header><span>SNDK</span></header><div class="route-efficiency"><strong data-chart-value>+33.1%</strong></div><div class="route-track"><span data-chart-value>3</span></div></article>
+<article class="trade-route" data-rank="02"><header><span>MRVL</span></header><div class="route-efficiency"><strong data-chart-value>+32.3%</strong></div><div class="route-track"><span data-chart-value>7</span></div></article>
+<article class="trade-route" data-rank="03"><header><span>INTC</span></header><div class="route-efficiency"><strong data-chart-value>+17.9%</strong></div><div class="route-track"><span data-chart-value>0</span></div></article>
+<article class="trade-route" data-rank="04"><header><span>DRAM</span></header><div class="route-efficiency"><strong data-chart-value>+16.5%</strong></div><div class="route-track"><span data-chart-value>2</span></div></article>
+<article class="trade-route" data-rank="05"><header><span>AMD</span></header><div class="route-efficiency"><strong data-chart-value>+15.9%</strong></div><div class="route-track"><span data-chart-value>0</span></div></article>
+<article class="trade-route" data-rank="06"><header><span>SPCX</span></header><div class="route-efficiency"><strong data-chart-value>+14.0%</strong></div><div class="route-track"><span data-chart-value>0</span></div></article>
+</div>
+  </section>
+
+  <section class="pf-section pf-section--tint">
+    <div class="pf-heading pf-reveal">
+      <span data-en="03 / SPEED" data-zh="03 / 速度">03 / SPEED</span>
+      <h2 data-en="Fast when right." data-zh="判断对了，就快。">Fast when right.</h2>
+      <p data-en="All 63 profitable round trips of the year, by holding period and return. Hover a square to see the trade." data-zh="全年 63 笔盈利往返交易，按持有期与收益率排列。将鼠标移到方块上查看详情。">All 63 profitable round trips of the year, by holding period and return. Hover a square to see the trade.</p>
+    </div>
+    <div class="pf-scatter-shell pf-reveal">
+      <div class="pf-scatter" id="pfScatter"><div class="pf-tip" id="pfScatterTip" hidden></div></div>
+      <div class="pf-legend" id="pfScatterLegend"></div>
+    </div>
+  </section>
+
+  <section class="pf-section">
+    <div class="pf-split">
+      <div class="pf-heading pf-heading--left pf-reveal">
+        <span data-en="04 / RIDING THE CYCLE" data-zh="04 / 顺势而为">04 / RIDING THE CYCLE</span>
+        <h2 data-en="Staying with the memory cycle." data-zh="始终跟着存储周期。">Staying with the memory cycle.</h2>
+        <p data-en="Price change from the first purchase of the year to the best exit achieved. The theme was harvested by returning to the same names again and again, not by holding once." data-zh="从年内首次买入价到最佳卖出价的涨幅。这个主题的收益，来自一次次回到同一批标的，而不是买入后一直持有。">Price change from the first purchase of the year to the best exit achieved. The theme was harvested by returning to the same names again and again, not by holding once.</p>
+        <p class="pf-fine" data-en="Measures the stock's move between two of our own executions, not a single-trade return." data-zh="衡量的是两次实际成交之间的股价变化，并非单笔交易收益。">Measures the stock's move between two of our own executions, not a single-trade return.</p>
+      </div>
+      <div class="pf-journeys" id="pfJourneys"></div>
+    </div>
+  </section>
+
+  <section class="pf-section pf-section--tint">
+    <div class="pf-split pf-split--book">
+      <div class="pf-waffle" id="pfBookWaffle" aria-hidden="true"></div>
+      <div class="pf-heading pf-heading--left pf-reveal">
+        <span data-en="05 / CLOSING BOOK" data-zh="05 / 期末持仓">05 / CLOSING BOOK</span>
+        <h2 data-en="Where the year ended." data-zh="这一年停在哪里。">Where the year ended.</h2>
+        <p data-en="Holdings at 30 June 2026 by market value. The whole book sat in the memory and custom-silicon chain the year had been trading." data-zh="2026 年 6 月 30 日按市值计算的持仓。全部仓位都落在这一年反复交易的存储与定制芯片链上。">Holdings at 30 June 2026 by market value. The whole book sat in the memory and custom-silicon chain the year had been trading.</p>
+        <ul class="pf-book-legend" id="pfBookLegend"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="pf-section pf-ideas-section" id="ideas">
+    <div class="pf-heading pf-reveal">
+      <span data-en="06 / NEXT RESEARCH UNIVERSE · SEP 2026" data-zh="06 / 下一阶段研究标的 · 2026 年 9 月">06 / NEXT RESEARCH UNIVERSE · SEP 2026</span>
+      <h2 data-en="Ten ideas for the next orbit." data-zh="下一程的十个方向。">Ten ideas for the next orbit.</h2>
+      <p data-en="Ten US-listed companies across AI, semiconductors, power, space, biomedicine and web3, with the question that matters next for each." data-zh="十家美股公司，覆盖 AI、半导体、电力、太空、生物医药与 Web3，并列出每家接下来最值得关注的问题。">Ten US-listed companies across AI, semiconductors, power, space, biomedicine and web3, with the question that matters next for each.</p>
+    </div>
+    <div class="pf-ideas" id="pfIdeas"></div>
+    <p class="pf-fine pf-center" data-en="Research watchlist dated 26 September 2026. Order is editorial, not a target weight or ranking of expected returns." data-zh="研究观察名单，日期为 2026 年 9 月 26 日。排列顺序仅为编辑安排，不代表目标权重或预期收益排名。">Research watchlist dated 26 September 2026. Order is editorial, not a target weight or ranking of expected returns.</p>
+  </section>
+
+  <section class="pf-method">
+    <h2 data-en="Method and sources" data-zh="方法与来源">Method and sources</h2>
+    <p data-en="Source: Stake financial-year report pack, 1 July 2025 – 30 June 2026 (US equities; no Australian equities were traded). Return on invested capital = (closing value − opening value − deposits) ÷ (opening value + deposits), in US dollars. Trade returns use first-in, first-out matching and include brokerage; positions held before 1 July 2025 are excluded from trade-level figures." data-zh="来源：Stake 财年报告，2025 年 7 月 1 日至 2026 年 6 月 30 日（美股；期间未交易澳股）。投入资本回报 =（期末市值 − 期初市值 − 入金）÷（期初市值 + 入金），以美元计。单笔收益按先进先出配对并计入佣金；2025 年 7 月 1 日前已持有的仓位不计入单笔统计。">Source: Stake financial-year report pack, 1 July 2025 – 30 June 2026 (US equities; no Australian equities were traded). Return on invested capital = (closing value − opening value − deposits) ÷ (opening value + deposits), in US dollars. Trade returns use first-in, first-out matching and include brokerage; positions held before 1 July 2025 are excluded from trade-level figures.</p>
+    <p data-en="This page deliberately shows selected positive results and is not a complete performance record. Past results do not predict future returns, and nothing here is personal investment advice." data-zh="本页刻意只展示精选的正向结果，并非完整业绩记录。过往表现不预示未来收益，本页内容不构成个人投资建议。">This page deliberately shows selected positive results and is not a complete performance record. Past results do not predict future returns, and nothing here is personal investment advice.</p>
+    <a class="pf-top" href="#top" data-en="Back to the beginning ↑" data-zh="回到开头 ↑">Back to the beginning ↑</a>
+  </section>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="pfWatercolor"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></svg>
 </main>
 <footer class="pa-footer">
   <div class="pa-footer-inner">
