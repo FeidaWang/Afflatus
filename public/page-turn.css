@@ -2,6 +2,11 @@
    Visitors without the commercial fonts get Anton / JetBrains Mono
    instead of Impact / Courier fallbacks. local() stays first so
    machines that own the real fonts keep using them. */
+@font-face{font-family:"Newsreader";src:url(/assets/fonts/newsreader-var.woff2) format("woff2");font-weight:200 800;font-display:swap}
+@font-face{font-family:"Hanken Grotesk";src:url(/assets/fonts/hanken-grotesk-var.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Noto Serif SC Subset";src:url(/assets/fonts/noto-serif-sc-subset.woff2) format("woff2");font-weight:600;font-display:swap}
+.sectors{--font-serif:"Newsreader",Georgia,serif;--font-sans:"Hanken Grotesk",system-ui,sans-serif;
+  --font-serif-zh:"Noto Serif SC Subset","Noto Serif SC","Songti SC",serif;--font-sans-zh:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
 @font-face{font-family:"Marathon Shapiro 65";src:local("Marathon Shapiro 65"),local("Shapiro 65"),local("Shapiro 65 Heavy"),url("/assets/fonts/anton-latin-400-normal.woff2") format("woff2");font-weight:100 950;font-display:swap}
 @font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");font-weight:100 599;font-display:swap}
 @font-face{font-family:"PP Fraktion Mono";src:local("PP Fraktion Mono"),local("Fraktion Mono"),local("FraktionMono"),url("/assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");font-weight:600 749;font-display:swap}
