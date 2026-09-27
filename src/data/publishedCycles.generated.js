@@ -2,32 +2,32 @@
 export const publishedCycles = [
   {
     "id": "01",
-    "asset": "AVGO",
-    "holdingDays": 17.5,
-    "efficiencyPercent": 260.4
+    "asset": "DRAM",
+    "holdingDays": 2,
+    "efficiencyPercent": 16.7
   },
   {
     "id": "02",
-    "asset": "DRAM",
-    "holdingDays": 3,
-    "efficiencyPercent": 208.5
+    "asset": "AMD",
+    "holdingDays": 1,
+    "efficiencyPercent": 16
   },
   {
     "id": "03",
-    "asset": "SNDK",
-    "holdingDays": 11.2,
-    "efficiencyPercent": 257.9
+    "asset": "SPCX",
+    "holdingDays": 0,
+    "efficiencyPercent": 14.1
   },
   {
     "id": "04",
-    "asset": "NVO",
-    "holdingDays": 246,
-    "efficiencyPercent": 32.6
+    "asset": "SNDK",
+    "holdingDays": 34,
+    "efficiencyPercent": 13.8
   },
   {
     "id": "05",
-    "asset": "XLE",
-    "holdingDays": 5.6,
-    "efficiencyPercent": 85.6
+    "asset": "AMD",
+    "holdingDays": 3,
+    "efficiencyPercent": 8.9
   }
 ];

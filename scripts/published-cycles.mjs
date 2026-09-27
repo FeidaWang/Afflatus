@@ -1,4 +1,6 @@
-// Portfolio's public HTML remains the data owner; the homepage consumes this projection.
+// Portfolio's public HTML remains the data owner. The legacy field name
+// `efficiencyPercent` now carries a selected gross entry-to-exit price move,
+// never an annualized or account-level return.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
@@ -17,7 +19,7 @@ export function readPublishedCycles(html) {
     const header = find(row, node => node.tagName === 'header')[0];
     const value = className => chartNumber(text(find(find(row, node => hasClass(node, className))[0], node => attr(node, 'data-chart-value') !== undefined)[0]));
     const cycle = { id: attr(row, 'data-rank'), asset: text(find(header, node => node.tagName === 'span')[0]), holdingDays: value('route-track'), efficiencyPercent: value('route-efficiency') };
-    if (!cycle.id || !cycle.asset || !Number.isFinite(cycle.holdingDays) || cycle.holdingDays <= 0 || !Number.isFinite(cycle.efficiencyPercent)) throw new Error('Incomplete public cycle summary');
+    if (!cycle.id || !cycle.asset || !Number.isFinite(cycle.holdingDays) || cycle.holdingDays < 0 || !Number.isFinite(cycle.efficiencyPercent)) throw new Error('Incomplete public cycle summary');
     return cycle;
   });
 }
