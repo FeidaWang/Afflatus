@@ -124,13 +124,24 @@ function termDateInYear(year, term) {
   if (!_termCache.has(key)) _termCache.set(key, solarTermDate(year, term.lon, term.m, term.d));
   return _termCache.get(key);
 }
-export function baziYear(y, m, d) {
+// `atJD` (optional, JD UTC of the actual birth instant): when the birth
+// hour is known, the 立春 boundary is decided by the exact solar-term
+// INSTANT rather than its calendar day — on the 节 day itself a birth
+// before the instant still belongs to the previous year/month (寿星历 /
+// lunar-javascript convention; cross-checked in tests/baziExact.test.js).
+const _lichunCache = new Map();
+function lichunJD(y) {
+  if (!_lichunCache.has(y)) _lichunCache.set(y, findSolarTermJD(315, julianDayUTC(y, 2, 4, 12)));
+  return _lichunCache.get(y);
+}
+export function baziYear(y, m, d, atJD) {
+  if (atJD != null) return atJD >= lichunJD(y) ? y : y - 1;
   const lichun = termDateInYear(y, MONTH_TERMS[1]); // 立春, lon 315
   const beforeLichun = m < lichun.m || (m === lichun.m && d < lichun.d);
   return beforeLichun ? y - 1 : y;
 }
-export function yearPillar(y, m, d) {
-  const by = baziYear(y, m, d);
+export function yearPillar(y, m, d, atJD) {
+  const by = baziYear(y, m, d, atJD);
   return { stem: mod(by - 4, 10), branch: mod(by - 4, 12), baziYear: by };
 }
 
@@ -150,7 +161,10 @@ const MONTH_TERMS = [
   { lon: 225, m: 11, d: 7, b: 11 }, // 立冬 → 亥月
   { lon: 255, m: 12, d: 7, b: 0 },  // 大雪 → 子月
 ];
-export function monthBranch(y, m, d) {
+export function monthBranch(y, m, d, atJD) {
+  // exact instant: the month branch follows the sun's apparent longitude
+  // (每个节 = 30° step starting 立春 315° → 寅).
+  if (atJD != null) return mod(Math.floor(mod(sunApparentLongitude(atJD) - 315, 360) / 30) + 2, 12);
   let b = 0; // dates before 小寒 fall in the 子月 that started the previous 大雪
   for (const t of MONTH_TERMS) {
     const td = termDateInYear(y, t);
@@ -159,9 +173,9 @@ export function monthBranch(y, m, d) {
   return b;
 }
 // 五虎遁: the 寅-month stem starts from 丙 for 甲/己 years, advancing 2 per pair.
-export function monthPillar(y, m, d) {
-  const yp = yearPillar(y, m, d);
-  const b = monthBranch(y, m, d);
+export function monthPillar(y, m, d, atJD) {
+  const yp = yearPillar(y, m, d, atJD);
+  const b = monthBranch(y, m, d, atJD);
   const startStem = mod((yp.stem % 5) * 2 + 2, 10);
   const offsetFromYin = mod(b - 2, 12);
   return { stem: mod(startStem + offsetFromYin, 10), branch: b };
@@ -255,8 +269,10 @@ export function hourPillar(dayStemIdx, hour) {
 export function computeBazi({ y, m, d, hour }) {
   let py = y, pm = m, pd = d;
   if (hour === 23) { const s = shiftHours(y, m, d, 23, 1); py = s.y; pm = s.m; pd = s.d; }
-  const yp = yearPillar(py, pm, pd);
-  const mp = monthPillar(py, pm, pd);
+  // Known hour → year/month pillars from the exact birth instant (CST).
+  const atJD = hour == null ? undefined : julianDayUTC(y, m, d, hour - 8);
+  const yp = yearPillar(py, pm, pd, atJD);
+  const mp = monthPillar(py, pm, pd, atJD);
   const dp = dayPillar(py, pm, pd);
   const hp = (hour == null) ? null : hourPillar(dp.stem, hour);
   const pillars = [yp, mp, dp, ...(hp ? [hp] : [])];
@@ -268,6 +284,11 @@ export function computeBazi({ y, m, d, hour }) {
     dayMasterElement: STEM_ELEMENT[dp.stem],
     animal: yp.branch,
     elements,
+    // Hour unknown on a 节 day: the year/month pillar depends on whether the
+    // birth fell before or after the solar-term instant — flag it so the UI
+    // can say so instead of silently guessing.
+    termDayAmbiguous: hour == null
+      && monthBranch(y, m, d, julianDayUTC(y, m, d, -8)) !== monthBranch(y, m, d, julianDayUTC(y, m, d, 16 - 1e-6)),
   };
 }
 

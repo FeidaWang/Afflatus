@@ -73,9 +73,22 @@ export function ziweiBranch(ju, lunarDay) {
 // Returns null when the hour is missing or the date is outside 1900–2100.
 export function computeZiwei({ y, m, d, hour }) {
   if (hour == null) return null;
-  const lunar = solarToLunar(y, m, d);
-  if (!lunar) return null;
-  const hb = hourBranchOf(hour); // 晚子时 → 子 branch, same day (documented)
+  // 晚子时 (23:00-23:59) takes the NEXT day's lunar day number (iztro's
+  // default dayDivide 'forward'; year and month stay those of the birth
+  // date, exactly as iztro does at a month end);
+  // a birth in the second half (day 16+) of a leap month counts as the
+  // following month (iztro fixLeap, the common 闰月后半月作下月 rule).
+  // `lunar` keeps the true calendar labels for display; lMonth/lDay/lYear
+  // are the values the star placement uses. Cross-checked against iztro
+  // in tests/baziExact.test.js.
+  const nd = hour === 23 ? new Date(Date.UTC(y, m - 1, d + 1)) : null;
+  const trueLunar = solarToLunar(y, m, d);
+  const calc = nd ? solarToLunar(nd.getUTCFullYear(), nd.getUTCMonth() + 1, nd.getUTCDate()) : trueLunar;
+  if (!trueLunar || !calc) return null;
+  let effMonth = trueLunar.lMonth, effYear = trueLunar.lYear;
+  if (trueLunar.isLeap && trueLunar.lDay > 15) { effMonth += 1; if (effMonth > 12) { effMonth = 1; effYear += 1; } }
+  const lunar = { ...trueLunar, lYear: effYear, lMonth: effMonth, lDay: calc.lDay };
+  const hb = hourBranchOf(hour);
   const yearStem = mod(lunar.lYear - 4, 10);
   const yearBranch = mod(lunar.lYear - 4, 12);
 
