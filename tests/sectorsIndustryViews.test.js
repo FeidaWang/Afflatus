@@ -44,3 +44,37 @@ describe('mountUsChina with a missing value', () => {
     expect(row.textContent).toContain('Not published');
   });
 });
+
+import { mountIpo } from '../src/sectors/industry/ipo-view.js';
+describe('mountIpo', () => {
+  it('hatches projections and sorts by amount raised', () => {
+    document.body.innerHTML = '<section id="c"><div class="ipo-bars"></div><div class="ipo-ladder"></div></section>';
+    const c = document.getElementById('c');
+    mountIpo(c, { industry, lang: 'zh' });
+    const bars = [...c.querySelectorAll('.ipo-bar')];
+    expect(bars.map((b) => Number(b.dataset.raised))).toEqual([...bars.map((b) => Number(b.dataset.raised))].sort((a, b) => a - b));
+    expect(c.querySelector('.ipo-bar[data-status="projection"] .status-tag').textContent).toBe('预期');
+  });
+
+  // Task 11 carry-over: a missing amount is "Not published", never a zero-length bar or a sort key.
+  it('writes "Not published" for a missing amount and keeps it out of the ranking and the scale', () => {
+    document.body.innerHTML = '<section id="c"><div class="ipo-bars"></div><div class="ipo-ladder"></div></section>';
+    const c = document.getElementById('c');
+    const gapped = structuredClone(industry);
+    gapped.facts.ipo[1].raised_usd_b = null;
+    gapped.facts.valuation[0].usd_b = null;
+    mountIpo(c, { industry: gapped, lang: 'en' });
+    const missingBar = c.querySelector(`.ipo-bar[data-id="${gapped.facts.ipo[1].id}"]`);
+    expect(missingBar.hasAttribute('data-missing')).toBe(true);
+    expect(missingBar.hasAttribute('data-raised')).toBe(false);
+    expect(missingBar.querySelector('i')).toBeNull();
+    expect(missingBar.textContent).toContain('Not published');
+    const ranked = [...c.querySelectorAll('.ipo-bar[data-raised]')].map((b) => Number(b.dataset.raised));
+    expect(ranked).toEqual([...ranked].sort((a, b) => a - b));
+    for (const w of [...c.querySelectorAll('.ipo-bar i')].map((i) => i.style.getPropertyValue('--w'))) expect(w).not.toMatch(/NaN|Infinity/);
+    const missingStep = c.querySelector(`.ladder-lane li[data-id="${gapped.facts.valuation[0].id}"]`);
+    expect(missingStep.hasAttribute('data-missing')).toBe(true);
+    expect(missingStep.querySelector('i')).toBeNull();
+    expect(missingStep.textContent).toContain('Not published');
+  });
+});
