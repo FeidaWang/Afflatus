@@ -27,15 +27,15 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Project Afflatus · Signal — O5 Reserve Containment</title>
-<meta name="description" content="Signal: archived Federal Reserve research, timestamped 10-year and 30-year Treasury yield observations, and policy assumptions — evidence-first and bilingual.">
+<title>Economic updates — Federal Reserve watch · AFFLATUS</title>
+<meta name="description" content="Read archived Federal Reserve research, dated Treasury yield observations and policy scenarios. Desk research, not investment advice.">
 <meta name="theme-color" content="#0c0d0a">
 <link rel="canonical" href="https://feida.au/signal.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Project Afflatus">
-  <meta property="og:title" content="Project Afflatus · Signal — O5 Reserve Containment">
-  <meta property="og:description" content="Archived Fed research, timestamped 10Y/30Y yield observations and policy assumptions. Desk research, not advice.">
+  <meta property="og:title" content="Economic updates — Federal Reserve watch · AFFLATUS">
+  <meta property="og:description" content="Read archived Federal Reserve research, dated Treasury yield observations and policy scenarios. Desk research, not investment advice.">
   <meta property="og:url" content="https://feida.au/signal.html">
   <meta property="og:locale" content="en_AU">
   <meta property="og:locale:alternate" content="zh_CN">
@@ -46,8 +46,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Signal macroeconomic research dossier">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Project Afflatus · Signal — O5 Reserve Containment">
-  <meta name="twitter:description" content="Archived Fed research, timestamped 10Y/30Y yield observations and policy assumptions. Desk research, not advice.">
+  <meta name="twitter:title" content="Economic updates — Federal Reserve watch · AFFLATUS">
+  <meta name="twitter:description" content="Read archived Federal Reserve research, dated Treasury yield observations and policy scenarios. Desk research, not investment advice.">
   <meta name="twitter:image" content="https://feida.au/assets/og/signal-en.jpg">
   <meta name="twitter:image:alt" content="Signal macroeconomic research dossier">
   <script type="application/ld+json" data-afflatus-route-schema="signal" lang="en-AU">
@@ -88,8 +88,8 @@
       "@type": "CollectionPage",
       "@id": "https://feida.au/signal.html#webpage",
       "url": "https://feida.au/signal.html",
-      "name": "Signal — Federal Reserve Watch · Project Afflatus",
-      "description": "Archived Federal Reserve research, timestamped 10-year and 30-year Treasury observations, and policy assumptions. Desk research, not advice.",
+      "name": "Economic updates — Federal Reserve watch · AFFLATUS",
+      "description": "Read archived Federal Reserve research, dated Treasury yield observations and policy scenarios. Desk research, not investment advice.",
       "inLanguage": [
         "en-AU",
         "zh-CN"
@@ -278,48 +278,80 @@
 <link rel="stylesheet" href="/page-turn.css">
 <link rel="stylesheet" href="/styles/signal.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
-<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/dataBridge.js"></script>
 <script type="module" src="/src/entry/viewport.js"></script>
 <link rel="stylesheet" href="/styles/reading-navigation.css">
 <link rel="stylesheet" href="/styles/research-evidence.css">
+<link rel="stylesheet" href="/styles/shared-header.css">
+<link rel="stylesheet" href="/styles/signal-dispatch.css">
 </head>
 <body class="signal-page scp">
-<div class="scpbg" aria-hidden="true"><canvas id="scpCanvas"></canvas><div class="wm"><b>CLASSIFIED</b></div></div>
+<!-- shared-header:start -->
+<header id="afflatus-header" data-afflatus-header>
+  <div class="af-header-inner">
+    <a class="af-wordmark" href="/en/" data-header-path="/" aria-label="AFFLATUS home" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="af-brand-art" aria-hidden="true"><span class="af-brand-full">AFFLATUS</span><span class="af-brand-compact"><span class="af-brand-a">A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></span></a>
+    <nav class="af-header-nav" id="af-primary-nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航">
+      <a href="/en/portfolio.html" data-header-path="/portfolio.html" ><span class="af-nav-label" data-en="Work" data-zh="作品">Work</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure aria-expanded="false" aria-controls="af-markets"><span class="af-nav-label" data-en="Markets" data-zh="市场">Markets</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg></button><div class="af-header-dropdown" id="af-markets"><a href="/en/arena.html" data-header-path="/arena.html" ><span class="af-nav-label" data-en="Stock observation" data-zh="股票观察">Stock observation</span></a><a href="/en/sectors.html" data-header-path="/sectors.html" ><span class="af-nav-label" data-en="AI industry" data-zh="AI 产业">AI industry</span></a><a href="/en/signal.html" data-header-path="/signal.html" ><span class="af-nav-label" data-en="Economic updates" data-zh="经济动态">Economic updates</span></a></div></div>
+      <a href="/en/course.html" data-header-path="/course.html" ><span class="af-nav-label" data-en="Learn" data-zh="学习">Learn</span></a>
+      <a href="/zh/serial.html" data-header-path="/serial.html" title="Original stories in Chinese / 原创中文小说"><span class="af-nav-label" data-en="Stories" data-zh="故事">Stories</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure aria-expanded="false" aria-controls="af-more"><span class="af-nav-label" data-en="More" data-zh="更多">More</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg></button><div class="af-header-dropdown" id="af-more"><a href="/en/horoscope.html" data-header-path="/horoscope.html" ><span class="af-nav-label" data-en="Astrology for fun" data-zh="趣味占星">Astrology for fun</span></a><a href="/en/#about" data-header-path="/#about" ><span class="af-nav-label" data-en="About" data-zh="关于">About</span></a></div></div>
+    </nav>
+    <a class="af-header-language" data-header-language href="/zh/" hreflang="zh-CN" aria-label="Switch to Chinese" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">中文</a>
+    <button type="button" class="af-header-menu" data-header-disclosure aria-expanded="false" aria-controls="af-primary-nav"><span class="af-nav-label" data-en="Menu" data-zh="菜单">Menu</span><span aria-hidden="true">☰</span></button>
+  </div>
+</header>
+<!-- shared-header:end -->
+
 <div class="readProgress" aria-hidden="true"></div>
 
-<nav class="chapterRail" data-reading-nav aria-label="Chapter navigation" data-aria-en="Chapter navigation" data-aria-zh="章节导航">
-  <a href="#treasuryYieldBoard" data-chapter="chlive"><b>10/30</b><span data-en="Yield observations" data-zh="收益率观测">Yield observations</span></a>
-  <a href="#ch00" data-chapter="ch00"><b>00</b><span data-en="Policy Story" data-zh="政策故事线">Policy Story</span></a>
-  <a href="#ch01" data-chapter="ch01"><b>01</b><span data-en="Compass" data-zh="罗盘">Compass</span></a>
-  <a href="#ch02" data-chapter="ch02"><b>02</b><span data-en="Signal Matrix" data-zh="信号矩阵">Signal Matrix</span></a>
-  <a href="#ch03" data-chapter="ch03"><b>03</b><span data-en="Incident Archive" data-zh="事件档案">Incident Archive</span></a>
-  <a href="#ch04" data-chapter="ch04"><b>04</b><span data-en="Industry Map" data-zh="产业地图">Industry Map</span></a>
-</nav>
 
-<main class="dossier">
-  <header class="top site-header--follow">
-    <a class="afflatus-brand" data-afflatus-brand data-brand-persona="signal" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
-      <span class="afflatus-brand__stage" aria-hidden="true">
-        <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
-      </span>
-      <span class="afflatus-brand__sr">Afflatus</span>
-    </a>
-    <nav class="nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav>
-      <button class="lang-toggle" type="button">中文</button>
-    </nav>
-  </header>
 
-  <nav class="mobileChapterIndex" data-reading-nav aria-label="Chapter index" data-aria-en="Chapter index" data-aria-zh="章节索引">
-    <a href="#treasuryYieldBoard" data-en="Yields" data-zh="收益率">Yields</a>
-    <a href="#ch00" data-en="Policy" data-zh="政策">Policy</a>
-    <a href="#ch01" data-en="Compass" data-zh="罗盘">Compass</a>
-    <a href="#ch02" data-en="Matrix" data-zh="矩阵">Matrix</a>
-    <a href="#ch03" data-en="Incidents" data-zh="事件">Incidents</a>
-    <a href="#ch04" data-en="Industries" data-zh="产业">Industries</a>
-  </nav>
+<main class="dossier"><section class="dispatchHero"><p class="dispatchEyebrow" data-en="SIGNAL / ECONOMIC DISPATCHES" data-zh="SIGNAL / 经济动态">SIGNAL / ECONOMIC DISPATCHES</p><h1  data-en="What changed, and what might it mean?" data-zh="发生了什么，会怎样影响市场？">What changed, and what might it mean?</h1><p  data-en="Read the observation, follow the possible effects, then check what remains uncertain." data-zh="先看发生了什么，再理解可能的影响，最后核对仍不确定的部分。">Read the observation, follow the possible effects, then check what remains uncertain.</p><nav><a href="#treasuryYieldBoard" data-en="Yield observations ↓" data-zh="收益率观测 ↓">Yield observations ↓</a><a href="#ch03" data-en="Historical dispatches ↓" data-zh="历史简报 ↓">Historical dispatches ↓</a></nav></section>
 
-  <section class="researchEvidence" aria-label="Reading guide" data-aria-en="Reading guide" data-aria-zh="阅读说明">
+
+
+
+
+      <article class="yieldBoard reveal" id="treasuryYieldBoard" tabindex="-1" aria-labelledby="yieldBoardHeading" aria-busy="true">
+        <div class="yieldBoardHead">
+          <div>
+            <span class="eyebrow" data-en="U.S. TREASURY · TRADEWEB" data-zh="美国国债 · TRADEWEB">U.S. TREASURY · TRADEWEB</span>
+            <h3 id="yieldBoardHeading" data-en="Long-end yield observations" data-zh="长端收益率观测">Long-end yield observations</h3>
+          </div>
+          <span class="syncing" data-yield-status role="status" aria-live="polite" data-en="SYNCING YIELD FEED…" data-zh="正在同步收益率…">SYNCING YIELD FEED…</span>
+        </div>
+
+        <p class="yieldUnits" data-en="Yield: % · Change and spread: basis points (1 bp = 0.01 percentage point). Observation times appear below." data-zh="收益率：% · 变动与利差：基点（1 基点 = 0.01 个百分点）。观测时间见下方。">Yield: % · Change and spread: basis points (1 bp = 0.01 percentage point). Observation times appear below.</p>
+        <div class="yieldCards">
+          <section class="yieldCard flat" data-yield-tenor="10Y" aria-label="10-year U.S. Treasury yield" data-aria-en="10-year U.S. Treasury yield" data-aria-zh="10 年期美国国债收益率">
+            <div class="yieldCardTop"><span data-en="10-YEAR" data-zh="10年期">10-YEAR</span><b>US10Y</b></div>
+            <div class="yieldValue" data-yield-value>—</div>
+            <div class="yieldChange" data-yield-change>—</div>
+            <div class="yieldIntraday"><span data-en="OPEN" data-zh="开盘">OPEN</span><b data-yield-open>—</b><span data-en="DAY RANGE" data-zh="日内区间">DAY RANGE</span><b data-yield-range>—</b></div>
+            <div class="yieldRange" data-yield-position style="--position:50%"><i></i></div>
+          </section>
+          <section class="yieldCard flat" data-yield-tenor="30Y" aria-label="30-year U.S. Treasury yield" data-aria-en="30-year U.S. Treasury yield" data-aria-zh="30 年期美国国债收益率">
+            <div class="yieldCardTop"><span data-en="30-YEAR" data-zh="30年期">30-YEAR</span><b>US30Y</b></div>
+            <div class="yieldValue" data-yield-value>—</div>
+            <div class="yieldChange" data-yield-change>—</div>
+            <div class="yieldIntraday"><span data-en="OPEN" data-zh="开盘">OPEN</span><b data-yield-open>—</b><span data-en="DAY RANGE" data-zh="日内区间">DAY RANGE</span><b data-yield-range>—</b></div>
+            <div class="yieldRange" data-yield-position style="--position:50%"><i></i></div>
+          </section>
+        </div>
+
+        <div class="curveReadout">
+          <div><span data-en="30Y − 10Y CURVE" data-zh="30年−10年利差">30Y − 10Y CURVE</span><b data-yield-spread>—</b></div>
+          <p data-en="A wider positive spread signals more term-premium pressure at the ultra-long end; it is not, by itself, a recession or inflation forecast." data-zh="正利差扩大代表超长端期限溢价压力更强；单独看它既不是衰退预测，也不是通胀预测。">A wider positive spread signals more term-premium pressure at the ultra-long end; it is not, by itself, a recession or inflation forecast.</p>
+        </div>
+
+        <div class="yieldBoardFoot">
+          <div><span data-en="LAST QUOTE" data-zh="最新报价">LAST QUOTE</span><b data-yield-time>—</b><small data-yield-source>Tradeweb · CNBC Quote Cache</small></div>
+          <button type="button" data-yield-refresh data-en="↻ REFRESH" data-zh="↻ 刷新">↻ REFRESH</button>
+        </div>
+        <details class="researchEvidence"><summary data-en="Inspect observations &amp; units" data-zh="查看观测时间与单位">Inspect observations &amp; units</summary><p data-yield-inspection data-en="Observation timestamps unavailable. Yield: %; change and spread: bp. 1 bp = 0.01 percentage point." data-zh="观测时间未提供。收益率：%；变动与利差：基点。1基点 = 0.01个百分点。">Observation timestamps unavailable. Yield: %; change and spread: bp. 1 bp = 0.01 percentage point.</p><a href="/api/treasury-yields" data-en="Inspect yield response" data-zh="查看收益率数据响应">Inspect yield response</a></details>
+        <p class="yieldDisclaimer" data-en="Updates every 30 seconds while this tab is visible. Market data may be delayed or unavailable; values are monitoring references, not executable prices or investment advice." data-zh="页面可见时每30秒更新一次。行情可能延迟或暂时不可用；数值仅供监控参考，不是可成交报价，也不构成投资建议。">Updates every 30 seconds while this tab is visible. Market data may be delayed or unavailable; values are monitoring references, not executable prices or investment advice.</p>
+      </article>  <section class="researchEvidence" aria-label="Reading guide" data-aria-en="Reading guide" data-aria-zh="阅读说明">
     <h2 data-en="Read the evidence in three layers" data-zh="分三层阅读证据">Read the evidence in three layers</h2>
     <p data-en="OBSERVATIONS · The yield board refreshes separately. Inspect each tenor’s timestamp; a new request does not make old observations current." data-zh="观测数据 · 收益率看板独立刷新。请核对每个期限的时间；重新请求不会让旧观测变成当前数据。">OBSERVATIONS · The yield board refreshes separately. Inspect each tenor’s timestamp; a new request does not make old observations current.</p>
     <p data-en="ARCHIVE · Policy chapters and the compass describe published research. ASSUMPTIONS · Causal maps are interpretations, not measured forecasts." data-zh="历史档案 · 政策章节与鹰鸽罗盘属于已发布研究。推演假设 · 因果图表达解读，不是实测预测。">ARCHIVE · Policy chapters and the compass describe published research. ASSUMPTIONS · Causal maps are interpretations, not measured forecasts.</p>
@@ -328,42 +360,7 @@
       <p id="signalEvidenceDates" data-en="Archive metadata unavailable until loaded. The chapters retain their own cited dates." data-zh="档案元数据加载后显示；各章节仍保留自身引用日期。">Archive metadata unavailable until loaded. The chapters retain their own cited dates.</p>
       <a href="/signal-events.json" data-en="Open published Signal dataset" data-zh="打开 Signal 发布数据">Open published Signal dataset</a>
     </details>
-  </section>
-  <section class="hero">
-    <div class="hzbar hz" aria-hidden="true"></div>
-    <div class="pad">
-      <div class="seal signal-lockup">
-        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="none" stroke="#f5c400" stroke-width="1.5"/><circle cx="24" cy="24" r="9" fill="none" stroke="#f5c400" stroke-width="1.5"/><g fill="#f5c400"><path d="M24 2 L29 13 L19 13 Z"/><path d="M46 24 L35 29 L35 19 Z"/><path d="M2 24 L13 19 L13 29 Z"/></g></svg>
-        <div><b>RESERVE CONTAINMENT INITIATIVE</b><small data-en="O5 COUNCIL · LEVEL 5 CLEARANCE" data-zh="O5 议会 · 五级权限">O5 COUNCIL · LEVEL 5 CLEARANCE</small></div>
-      </div>
-      <div class="stamp" aria-hidden="true">LEVEL 5<span data-en="EYES ONLY" data-zh="仅限阅">EYES ONLY</span></div>
-      <div class="meta">
-        <span data-en="ITEM #:&nbsp;<b>FED-26</b>" data-zh="项目编号：&nbsp;<b>FED-26</b>" data-i18n-html>ITEM #:&nbsp;<b>FED-26</b></span>
-        <span data-en="OBJECT CLASS:&nbsp;<b><button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;keter&quot;>KETER (ECONOMIC)</button></b>" data-zh="项目等级：&nbsp;<b><button type=&quot;button&quot; class=&quot;term&quot; data-term=&quot;keter&quot;>Keter（经济）</button></b>" data-i18n-html>OBJECT CLASS:&nbsp;<b><button type="button" class="term" data-term="keter">KETER (ECONOMIC)</button></b></span>
-        <span data-en="ASSIGNED MTF:&nbsp;ALPHA-1 / EPSILON-11" data-zh="指派机动特遣队：Alpha-1 / Epsilon-11">ASSIGNED MTF:&nbsp;ALPHA-1 / EPSILON-11</span>
-      </div>
-      <h1 data-i18n-html data-en="ONE HAND CONTAINS THE <span class='x'>██████</span> <span class='hero-market'>MARKET</span>" data-zh="一只手收容着 <span class='x'>██████</span> <span class='hero-market'>市场</span>">ONE HAND CONTAINS THE <span class="x">██████</span> <span class="hero-market">MARKET</span></h1>
-      <p class="lead" data-en="The archived July 2026 FOMC decision kept the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes." data-zh="存档的2026年7月FOMC决议把联邦基金目标区间维持在3.50%–3.75%。纽约联储8月14日至9月14日的计划仅含170亿美元机构证券本金再投资购买，不含新增储备管理购买：这是维持充足准备金的政策执行，不是QE、紧急救市，也不是压制长端收益率。与影响FOMC十二票相比，白宫对产业政策的直接杠杆更清晰，重点覆盖AI出口、本土芯片、能源与电网、战略材料、国防供应链和住房供给。">The archived July 2026 FOMC decision kept the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes.</p>
-      <div class="heroActions" aria-label="Market evidence shortcuts" data-aria-en="Market evidence shortcuts" data-aria-zh="市场证据快捷入口">
-        <a class="heroYieldCta" href="#treasuryYieldBoard" data-en="VIEW 10Y / 30Y OBSERVATIONS ↓" data-zh="查看10年／30年期收益率观测 ↓">VIEW 10Y / 30Y OBSERVATIONS ↓</a>
-        <span data-en="30-SECOND REFRESH · DELAY POSSIBLE" data-zh="每30秒刷新 · 行情可能延迟">30-SECOND REFRESH · DELAY POSSIBLE</span>
-      </div>
-      <div class="heroRead" id="heroRead" aria-label="Archived hawk-dove reading" data-aria-en="Archived hawk-dove reading" data-aria-zh="档案鹰鸽倾向">
-        <b id="heroHdLabel">—</b><span id="heroHdScore">(—)</span>
-      </div>
-      <div class="heroCountdown" aria-label="Next containment test" data-aria-en="Next containment test" data-aria-zh="下一次通胀遏制检验">
-        <span class="tag" data-en="CONTAINMENT REVIEW" data-zh="收容复核">CONTAINMENT REVIEW</span>
-        <span id="eventTypeLabel" data-en="NEXT CONTAINMENT TEST" data-zh="下一次收容测试">NEXT CONTAINMENT TEST</span>
-        <span class="bias" data-en="TAPE BIAS · QUALITY BARBELL" data-zh="盘面倾向 · 质量杠铃">TAPE BIAS · QUALITY BARBELL</span>
-        <span class="live" id="signalLiveState" data-en="CHECKING DATA STATUS" data-zh="正在核验数据状态">CHECKING DATA STATUS</span>
-        <span class="clock" id="fomcClock" aria-live="off">--d --:--:--</span>
-        <span class="when"><span id="eventWhenLabel" data-en="REVIEW" data-zh="复核">REVIEW</span> <b id="fomcDate">—</b> · <span id="eventTime">2:00 PM ET</span> — <span id="eventDirectiveLabel" data-en="DIRECTIVE" data-zh="指令">DIRECTIVE</span> <span class="bc" id="eventDirective" data-en="HOLD 3.50–3.75% · WATCH THE DOTS" data-zh="维持 3.50–3.75% · 紧盯点阵图">HOLD 3.50–3.75% · WATCH THE DOTS</span></span>
-      </div>
-      <p class="signal-stale-notice" id="signalStaleNotice" role="status" hidden></p>
-    </div>
-  </section>
-
-  <div class="chapters">
+  </section><section class="dispatchArchiveIntro"><p class="dispatchEyebrow" data-en="HISTORICAL RESEARCH / ORIGINAL PUBLICATION DATES" data-zh="历史研究 / 保留原始发布日期">HISTORICAL RESEARCH / ORIGINAL PUBLICATION DATES</p><h2  data-en="Read the archive in context" data-zh="回到当时，阅读事件">Read the archive in context</h2><p  data-en="The observations above refresh independently. The research below retains its published dates, assumptions and sources." data-zh="上方观测独立刷新；下方研究保留原有发布日期、假设与来源。">The observations above refresh independently. The research below retains its published dates, assumptions and sources.</p><p id="signalStaleNotice" class="signal-stale-notice" role="status" hidden></p></section>  <div class="chapters">
   <section class="chapter marketDesk" id="chlive" aria-labelledby="marketDeskHeading">
     <div class="chapterHead reveal">
       <div class="kicker" id="marketDeskKicker" data-en="ARCHIVE DESK · DATA THROUGH 21 AUG 2026" data-zh="历史档案 · 数据截至2026年8月21日">ARCHIVE DESK · DATA THROUGH 21 AUG 2026</div>
@@ -377,7 +374,7 @@
           <span class="pulse" aria-hidden="true"></span>
           <span id="operationStatusLabel" data-en="ARCHIVED SNAPSHOT · RESERVE MANAGEMENT" data-zh="历史快照 · 储备管理">ARCHIVED SNAPSHOT · RESERVE MANAGEMENT</span>
         </div>
-        <h3 id="operationBriefHeading" data-en="Archived intervention posture" data-zh="近期市场干预态势">Archived intervention posture</h3>
+        <h3 id="operationBriefHeading" data-en="Archived intervention posture" data-zh="历史市场干预态势">Archived intervention posture</h3>
         <p class="operationLead" data-en="In the 21 August 2026 archive, the Desk supported ample reserves with a reduced purchase schedule: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap." data-zh="在2026年8月21日档案中，纽约联储公开市场操作台以缩减购买规模的计划维持充足准备金：8月14日至9月14日仅安排170亿美元再投资购买，没有新增储备管理购买。这属于流动性执行，并非危机救助，也不是对长期国债收益率设上限。">In the 21 August 2026 archive, the Desk supported ample reserves with a reduced purchase schedule: the 14 Aug–14 Sep window contains $17.0bn of reinvestment purchases and no additional reserve-management purchases. This is liquidity implementation—not a crisis rescue or a long-bond yield cap.</p>
 
         <div class="operationMetrics" aria-label="Archived Federal Reserve operation metrics" data-aria-en="Archived Federal Reserve operation metrics" data-aria-zh="档案美联储操作指标">
@@ -410,48 +407,22 @@
         </div>
       </article>
 
-      <article class="yieldBoard reveal" id="treasuryYieldBoard" tabindex="-1" aria-labelledby="yieldBoardHeading" aria-busy="true">
-        <div class="yieldBoardHead">
-          <div>
-            <span class="eyebrow" data-en="U.S. TREASURY · TRADEWEB" data-zh="美国国债 · TRADEWEB">U.S. TREASURY · TRADEWEB</span>
-            <h3 id="yieldBoardHeading" data-en="Long-end yield observations" data-zh="长端收益率观测">Long-end yield observations</h3>
-          </div>
-          <span class="syncing" data-yield-status role="status" aria-live="polite" data-en="SYNCING YIELD FEED…" data-zh="正在同步收益率…">SYNCING YIELD FEED…</span>
-        </div>
 
-        <div class="yieldCards">
-          <section class="yieldCard flat" data-yield-tenor="10Y" aria-label="10-year U.S. Treasury yield" data-aria-en="10-year U.S. Treasury yield" data-aria-zh="10 年期美国国债收益率">
-            <div class="yieldCardTop"><span data-en="10-YEAR" data-zh="10年期">10-YEAR</span><b>US10Y</b></div>
-            <div class="yieldValue" data-yield-value>—</div>
-            <div class="yieldChange" data-yield-change>—</div>
-            <div class="yieldIntraday"><span data-en="OPEN" data-zh="开盘">OPEN</span><b data-yield-open>—</b><span data-en="DAY RANGE" data-zh="日内区间">DAY RANGE</span><b data-yield-range>—</b></div>
-            <div class="yieldRange" data-yield-position style="--position:50%"><i></i></div>
-          </section>
-          <section class="yieldCard flat" data-yield-tenor="30Y" aria-label="30-year U.S. Treasury yield" data-aria-en="30-year U.S. Treasury yield" data-aria-zh="30 年期美国国债收益率">
-            <div class="yieldCardTop"><span data-en="30-YEAR" data-zh="30年期">30-YEAR</span><b>US30Y</b></div>
-            <div class="yieldValue" data-yield-value>—</div>
-            <div class="yieldChange" data-yield-change>—</div>
-            <div class="yieldIntraday"><span data-en="OPEN" data-zh="开盘">OPEN</span><b data-yield-open>—</b><span data-en="DAY RANGE" data-zh="日内区间">DAY RANGE</span><b data-yield-range>—</b></div>
-            <div class="yieldRange" data-yield-position style="--position:50%"><i></i></div>
-          </section>
-        </div>
-
-        <div class="curveReadout">
-          <div><span data-en="30Y − 10Y CURVE" data-zh="30年−10年利差">30Y − 10Y CURVE</span><b data-yield-spread>—</b></div>
-          <p data-en="A wider positive spread signals more term-premium pressure at the ultra-long end; it is not, by itself, a recession or inflation forecast." data-zh="正利差扩大代表超长端期限溢价压力更强；单独看它既不是衰退预测，也不是通胀预测。">A wider positive spread signals more term-premium pressure at the ultra-long end; it is not, by itself, a recession or inflation forecast.</p>
-        </div>
-
-        <div class="yieldBoardFoot">
-          <div><span data-en="LAST QUOTE" data-zh="最新报价">LAST QUOTE</span><b data-yield-time>—</b><small data-yield-source>Tradeweb · CNBC Quote Cache</small></div>
-          <button type="button" data-yield-refresh data-en="↻ REFRESH" data-zh="↻ 刷新">↻ REFRESH</button>
-        </div>
-        <details class="researchEvidence"><summary data-en="Inspect observations &amp; units" data-zh="查看观测时间与单位">Inspect observations &amp; units</summary><p data-yield-inspection data-en="Observation timestamps unavailable. Yield: %; change and spread: bp. 1 bp = 0.01 percentage point." data-zh="观测时间未提供。收益率：%；变动与利差：基点。1基点 = 0.01个百分点。">Observation timestamps unavailable. Yield: %; change and spread: bp. 1 bp = 0.01 percentage point.</p><a href="/api/treasury-yields" data-en="Inspect yield response" data-zh="查看收益率数据响应">Inspect yield response</a></details>
-        <p class="yieldDisclaimer" data-en="Updates every 30 seconds while this tab is visible. Market data may be delayed or unavailable; values are monitoring references, not executable prices or investment advice." data-zh="页面可见时每30秒更新一次。行情可能延迟或暂时不可用；数值仅供监控参考，不是可成交报价，也不构成投资建议。">Updates every 30 seconds while this tab is visible. Market data may be delayed or unavailable; values are monitoring references, not executable prices or investment advice.</p>
-      </article>
     </div>
   </section>
 
-  <section class="chapter causalStory" id="ch00" tabindex="-1" data-step="0" aria-labelledby="policyStoryHeading">
+  <section class="chapter incidents" id="ch03" tabindex="-1" aria-label="Incident log" data-aria-en="Incident log" data-aria-zh="事件记录">
+    <div class="chapterHead reveal">
+      <div class="kicker" data-en="DISPATCHES / HISTORICAL EVENTS" data-zh="简报 / 历史事件">DISPATCHES / HISTORICAL EVENTS</div>
+      <h2 data-en="Incident Archive" data-zh="事件档案">Incident Archive</h2>
+      <p class="dek" data-en="Verified event windows: pre-release baseline → print → rates → equities → industry transmission · not advice" data-zh="可核实事件窗口：发布前基线 → 实际数据 → 利率重定价 → 股市反应 → 行业传导 · 非投资建议">Verified event windows: pre-release baseline → print → rates → equities → industry transmission · not advice</p>
+    </div>
+    <p class="incidentMethod reveal" data-en="TRACKING RULE · Closing or early-session windows are labelled. When oil, earnings or policy shocks overlap, the archive records the confounder instead of forcing a single-cause story." data-zh="追踪规则 · 明确标注收盘或盘中观察窗口；若油价、财报或政策冲击同时发生，档案会记录交叉因素，而不强行归因于单一事件。">TRACKING RULE · Closing or early-session windows are labelled. When oil, earnings or policy shocks overlap, the archive records the confounder instead of forcing a single-cause story.</p>
+    <div class="filterChips" id="incidentFilters" role="group" aria-label="Filter incidents" data-aria-en="Filter incidents" data-aria-zh="筛选事件"></div>
+    <div class="incidentList" id="incidentList"></div>
+  </section>
+
+<details class="dispatchResearch"><summary><span  data-en="Policy explanations & original research" data-zh="政策解读与原始研究">Policy explanations & original research</span></summary><p class="lead" data-en="The archived July 2026 FOMC decision kept the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes." data-zh="存档的2026年7月FOMC决议把联邦基金目标区间维持在3.50%–3.75%。纽约联储8月14日至9月14日的计划仅含170亿美元机构证券本金再投资购买，不含新增储备管理购买：这是维持充足准备金的政策执行，不是QE、紧急救市，也不是压制长端收益率。与影响FOMC十二票相比，白宫对产业政策的直接杠杆更清晰，重点覆盖AI出口、本土芯片、能源与电网、战略材料、国防供应链和住房供给。">The archived July 2026 FOMC decision kept the federal-funds target at 3.50–3.75%. The New York Fed's 14 Aug–14 Sep schedule contains $17.0bn of agency-principal reinvestment purchases and no new reserve-management purchases: implementation for ample reserves, not QE, emergency rescue or a cap on long yields. The White House has clearer direct leverage over industrial policy—AI exports, domestic chips, energy and grids, strategic materials, defense supply chains and housing supply—than over the FOMC's twelve votes.</p>  <section class="chapter causalStory" id="ch00" tabindex="-1" data-step="0" aria-labelledby="policyStoryHeading">
     <div class="chapterHead reveal">
       <div class="kicker" data-en="CHAPTER 00 · POLICY REACTION FUNCTION" data-zh="第〇章 · 政策反应函数">CHAPTER 00 · POLICY REACTION FUNCTION</div>
       <h2 id="policyStoryHeading" data-en="How the market gets repriced" data-zh="市场如何被重新定价">How the market gets repriced</h2>
@@ -525,7 +496,7 @@
 
   <section class="chapter compass" id="ch01" tabindex="-1" aria-label="Hawk-dove compass" data-aria-en="Hawk-dove compass" data-aria-zh="鹰鸽罗盘">
     <div class="chapterHead reveal">
-      <div class="kicker" data-en="CHAPTER 01 · O5 BEHAVIORAL MODEL" data-zh="第一章 · O5 行为模型">CHAPTER 01 · O5 BEHAVIORAL MODEL</div>
+      <div class="kicker" data-en="POLICY / ARCHIVED INTERPRETATION" data-zh="政策 / 历史解读">POLICY / ARCHIVED INTERPRETATION</div>
       <h2 data-en="Hawk-Dove Compass" data-zh="鹰鸽罗盘">Hawk-Dove Compass</h2>
       <p class="dek" data-en="v1 · manually scored · see method note below" data-zh="v1 · 人工打分 · 详见下方方法说明">v1 · manually scored · see method note below</p>
     </div>
@@ -581,7 +552,7 @@
     </article>
 
     <article class="file reveal">
-      <h2><span data-en="NEXT DECISION · THREAT BOARD" data-zh="下次决策 · 威胁面板">NEXT DECISION · THREAT BOARD</span><span class="c">04</span></h2>
+      <h2><span data-en="ARCHIVED DECISION CONTEXT" data-zh="历史决策背景">ARCHIVED DECISION CONTEXT</span><span class="c">04</span></h2>
       <div class="in"><div class="bars">
         <div class="row"><span data-en="core PCE · YoY" data-zh="核心PCE同比">core PCE · YoY</span><b class="red">3.3%</b><div class="bar r"><i style="--w:66%"></i></div></div>
         <div class="row"><span data-en="3-month payroll total" data-zh="三个月非农累计">3-month payroll total</span><b class="red">+60K</b><div class="bar r"><i style="--w:20%"></i></div></div>
@@ -593,20 +564,9 @@
   </div>
   </section>
 
-  <section class="chapter incidents" id="ch03" tabindex="-1" aria-label="Incident log" data-aria-en="Incident log" data-aria-zh="事件记录">
-    <div class="chapterHead reveal">
-      <div class="kicker" data-en="CHAPTER 03 · CONTAINMENT BREACHES" data-zh="第三章 · 收容失效记录">CHAPTER 03 · CONTAINMENT BREACHES</div>
-      <h2 data-en="Incident Archive" data-zh="事件档案">Incident Archive</h2>
-      <p class="dek" data-en="Verified event windows: pre-release baseline → print → rates → equities → industry transmission · not advice" data-zh="可核实事件窗口：发布前基线 → 实际数据 → 利率重定价 → 股市反应 → 行业传导 · 非投资建议">Verified event windows: pre-release baseline → print → rates → equities → industry transmission · not advice</p>
-    </div>
-    <p class="incidentMethod reveal" data-en="TRACKING RULE · Closing or early-session windows are labelled. When oil, earnings or policy shocks overlap, the archive records the confounder instead of forcing a single-cause story." data-zh="追踪规则 · 明确标注收盘或盘中观察窗口；若油价、财报或政策冲击同时发生，档案会记录交叉因素，而不强行归因于单一事件。">TRACKING RULE · Closing or early-session windows are labelled. When oil, earnings or policy shocks overlap, the archive records the confounder instead of forcing a single-cause story.</p>
-    <div class="filterChips" id="incidentFilters" role="group" aria-label="Filter incidents" data-aria-en="Filter incidents" data-aria-zh="筛选事件"></div>
-    <div class="incidentList" id="incidentList"></div>
-  </section>
-
   <section class="chapter watch" id="ch04" tabindex="-1" aria-label="Policy-aligned industry watch" data-aria-en="Policy-aligned industry watch" data-aria-zh="政策相关行业观察">
     <div class="chapterHead reveal">
-      <div class="kicker" data-en="CHAPTER 04 · O5 PROJECTION" data-zh="第四章 · O5 推演">CHAPTER 04 · O5 PROJECTION</div>
+      <div class="kicker" data-en="POLICY / POSSIBLE EFFECTS" data-zh="政策 / 可能影响">POLICY / POSSIBLE EFFECTS</div>
       <h2 data-en="Policy-Aligned Industry Watch" data-zh="政策同向行业监控">Policy-Aligned Industry Watch</h2>
       <p class="dek" id="assetWatchDek" data-en="Official instruments and implementation constraints · sector map, not company endorsement or investment advice" data-zh="正式政策工具与执行约束 · 行业地图，不代表政府对公司背书，也不构成投资建议">Official instruments and implementation constraints · sector map, not company endorsement or investment advice</p>
     </div>
@@ -621,103 +581,18 @@
       <div class="asset reveal"><div class="hd"><span class="dir flat" aria-hidden="true">◆</span><span class="nm" data-en="Housing Supply" data-zh="住房供给">Housing Supply</span><span class="cf" data-en="LOCAL EXECUTION" data-zh="地方执行">LOCAL EXECUTION</span></div><div class="tks">BUILDING MATERIALS · CONSTRUCTION · LAND · FINANCE</div><p class="rs" data-en="Housing-supply expansion is an explicit economic priority, but implementation relies heavily on state and local rules. Long Treasury yields and mortgage rates can offset permitting or supply-side gains." data-zh="扩大住房供给是明确经济优先项，但落地高度依赖州与地方规则。长期美债收益率和按揭利率可能抵消许可或供给侧改善。">Housing-supply expansion is an explicit economic priority, but implementation relies heavily on state and local rules. Long Treasury yields and mortgage rates can offset permitting or supply-side gains.</p></div>
     </div>
   </section>
+</details>
   </div>
-
-  <div class="mtf">
-    <article class="unit"><div class="hz" aria-hidden="true"></div><h3>MTF ALPHA-1<span class="cs">“RED RIGHT HAND”</span></h3><p data-en="Answers only to the O5 Council. The Reserve's open-market desk and emergency facilities — deployed when containment of the cost of money is in question." data-zh="只听命于 O5 议会。相当于联储的公开市场操作台与紧急工具——当货币成本的收容受到质疑时出动。">Answers only to the O5 Council. The Reserve's open-market desk and emergency facilities — deployed when containment of the cost of money is in question.</p></article>
-    <article class="unit"><div class="hz" aria-hidden="true"></div><h3>MTF EPSILON-11<span class="cs">“NINE-TAILED FOX”</span></h3><p data-en="Internal security &amp; re-containment. The regulatory and supervisory arm that restores order when a node of the financial system breaches." data-zh="内部安保与再收容。相当于监管与监督部门——当金融系统某个节点失控时，负责恢复秩序。">Internal security &amp; re-containment. The regulatory and supervisory arm that restores order when a node of the financial system breaches.</p></article>
-  </div>
-
-  <footer class="foot" data-i18n-html data-en="<b>SECURE. CONTAIN. PROTECT.</b> — DESK VIEW ONLY · NOT INVESTMENT ADVICE · O5 EYES ONLY" data-zh="<b>控制。收容。保护。</b> — 仅为个人案头观点 · 非投资建议 · O5 限阅"><b>SECURE. CONTAIN. PROTECT.</b> — DESK VIEW ONLY · NOT INVESTMENT ADVICE · O5 EYES ONLY</footer>
+  <footer class="foot" data-en="AFFLATUS · Dated research and observations · Not investment advice" data-zh="AFFLATUS · 注明日期的研究与观测 · 非投资建议">AFFLATUS · Dated research and observations · Not investment advice</footer>
 </main>
 
 <script>
-/* next-containment-test countdown — nearest of FOMC / CPI / NFP, not FOMC-only */
-(function () {
-  // type-specific bilingual copy: label / when-word / release time / directive-word / directive text
-  var COPY = {
-    FOMC: {
-      typeLabel: { en: 'NEXT FOMC DECISION', zh: '下次 FOMC 决议' },
-      whenWord: { en: 'REVIEW', zh: '复核' },
-      time: { en: '2:00 PM ET', zh: '美东 2:00 PM' },
-      dirWord: { en: 'DIRECTIVE', zh: '指令' }
-    },
-    CPI: {
-      typeLabel: { en: 'NEXT CPI PRINT', zh: '下一次 CPI 数据' },
-      whenWord: { en: 'RELEASE', zh: '发布' },
-      time: { en: '8:30 AM ET', zh: '美东 8:30 AM' },
-      dirWord: { en: 'READOUT', zh: '读数预期' }
-    },
-    NFP: {
-      typeLabel: { en: 'NEXT PAYROLLS PRINT', zh: '下一次非农数据' },
-      whenWord: { en: 'RELEASE', zh: '发布' },
-      time: { en: '8:30 AM ET', zh: '美东 8:30 AM' },
-      dirWord: { en: 'READOUT', zh: '读数预期' }
-    },
-    PCE: {
-      typeLabel: { en: 'NEXT PCE PRINT', zh: '下一次 PCE 数据' },
-      whenWord: { en: 'RELEASE', zh: '发布' },
-      time: { en: '8:30 AM ET', zh: '美东 8:30 AM' },
-      dirWord: { en: 'READOUT', zh: '读数预期' }
-    }
-  };
-  var CATALYSTS = [
-    { iso: '2026-07-14T12:30:00Z', label: 'Jul 14, 2026', type: 'CPI', directive: { en: 'JUNE CPI · CORE STILL THE SWING FACTOR', zh: '6 月 CPI · 核心通胀仍是摆动因素' } },
-    { iso: '2026-07-29T18:00:00Z', label: 'Jul 29, 2026', type: 'FOMC', directive: { en: 'HOLD LIKELY · HAWKISH TONE VS CRACKED LABOR DATA', zh: '大概率维持 · 鹰派基调迎战走弱就业数据' } },
-    { iso: '2026-08-12T12:30:00Z', label: 'Aug 12, 2026', type: 'CPI', directive: { en: 'JULY CPI · CONFIRM OR FADE THE COOLDOWN', zh: '7 月 CPI · 验证或证伪降温趋势' } },
-    { iso: '2026-08-26T12:30:00Z', label: 'Aug 26, 2026', type: 'PCE', directive: { en: 'JULY PCE · TEST THE PRICE-STABILITY CONSTRAINT', zh: '7 月 PCE · 检验价格稳定约束' } },
-    { iso: '2026-09-04T12:30:00Z', label: 'Sep 4, 2026', type: 'NFP', directive: { en: 'AUGUST PAYROLLS · WATCH PARTICIPATION', zh: '8 月非农 · 紧盯参与率' } },
-    { iso: '2026-09-16T18:00:00Z', label: 'Sep 16, 2026', type: 'FOMC', directive: { en: 'NEXT SEP · REAL DECISION POINT', zh: '下次 SEP · 真正的决策节点' } },
-    { iso: '2026-10-28T18:00:00Z', label: 'Oct 28, 2026', type: 'FOMC', directive: { en: 'HOLD 3.50–3.75% · WATCH THE DOTS', zh: '维持 3.50–3.75% · 紧盯点阵图' } },
-    { iso: '2026-12-09T19:00:00Z', label: 'Dec 9, 2026', type: 'FOMC', directive: { en: 'HOLD 3.50–3.75% · WATCH THE DOTS', zh: '维持 3.50–3.75% · 紧盯点阵图' } },
-    { iso: '2027-01-27T19:00:00Z', label: 'Jan 27, 2027', type: 'FOMC', directive: { en: 'HOLD 3.50–3.75% · WATCH THE DOTS', zh: '维持 3.50–3.75% · 紧盯点阵图' } }
-  ];
-  var clk = document.getElementById('fomcClock'), dt = document.getElementById('fomcDate'), last = '';
-  var typeLabelEl = document.getElementById('eventTypeLabel'), whenLabelEl = document.getElementById('eventWhenLabel'),
-      timeEl = document.getElementById('eventTime'), dirLabelEl = document.getElementById('eventDirectiveLabel'), dirEl = document.getElementById('eventDirective');
-  function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
-  function setBilingual(el, en, zh) { if (!el) return; el.setAttribute('data-en', en); el.setAttribute('data-zh', zh); el.textContent = lang() === 'zh' ? zh : en; }
-  function pick() { var now = Date.now(); for (var i = 0; i < CATALYSTS.length; i++) { var t = Date.parse(CATALYSTS[i].iso); if (t + 5400000 > now) return { t: t, c: CATALYSTS[i] }; } return null; }
-  function pad(n) { return String(n).padStart(2, '0'); }
-  var lastIso = null;
-  function paintCatalyst(c) {
-    if (lastIso === c.iso) return; lastIso = c.iso;
-    var cp = COPY[c.type] || COPY.FOMC;
-    setBilingual(typeLabelEl, cp.typeLabel.en, cp.typeLabel.zh);
-    setBilingual(whenLabelEl, cp.whenWord.en, cp.whenWord.zh);
-    setBilingual(timeEl, cp.time.en, cp.time.zh);
-    setBilingual(dirLabelEl, cp.dirWord.en, cp.dirWord.zh);
-    setBilingual(dirEl, c.directive.en, c.directive.zh);
-  }
-  function tick() {
-    var m = pick(); if (!m) { clk.textContent = 'NO DATE'; return; } dt.textContent = m.c.label; paintCatalyst(m.c);
-    var s = Math.floor((m.t - Date.now()) / 1000);
-    if (s <= 0 && s > -5400) { clk.textContent = 'IN SESSION'; clk.classList.add('amber'); return; } s = Math.max(0, s);
-    var d = Math.floor(s / 86400); s -= d * 86400; var h = Math.floor(s / 3600); s -= h * 3600; var mi = Math.floor(s / 60); var se = s - mi * 60;
-    clk.textContent = d + 'd ' + pad(h) + ':' + pad(mi) + ':' + pad(se);
-    if (se !== last) {
-      last = se;
-      if (typeof clk.animate === 'function' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        clk.animate(
-          [{ transform:'scale(1)' }, { transform:'scale(1.03)', color:'#8a1a14' }, { transform:'scale(1)' }],
-          { duration:300, easing:'ease' }
-        );
-      }
-    }
-  }
-  tick(); setInterval(tick, 1000);
-  // no separate lang-change listener needed: setBilingual() writes real data-en/data-zh
-  // attributes onto these elements, so the shared i18n.js apply() repaints them on toggle.
-})();
-
 /* incident log — fetched dossiers, baseline→print→window→rates→equities→industry, re-rendered on lang toggle */
 (function () {
   var list = document.getElementById('incidentList'); if (!list) return;
   var filterBox = document.getElementById('incidentFilters');
   var DATA = null, PILLARS = [];
-  // U41: single-select filter, either by pillar or by severity class — chip
-  // labels come from the same fetch's pillars[] (no new data), CLASS_LABEL
-  // below already existed for the per-card badge and is reused verbatim.
+  // Filter the existing archive by its published policy topics.
   var activeFilter = { type: 'all', value: null };
   function lang() { try { return window.AfflatusI18N ? window.AfflatusI18N.get() : 'en'; } catch (e) { return 'en'; } }
   function T(en, zh) { return lang() === 'zh' ? zh : en; }
@@ -725,7 +600,7 @@
   function escAttr(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function fmtDate(iso) {
     var d = new Date(iso + 'T00:00:00Z');
-    if (lang() === 'zh') return (d.getUTCMonth() + 1) + '月' + d.getUTCDate() + '日';
+    if (lang() === 'zh') return d.getUTCFullYear() + '年' + (d.getUTCMonth() + 1) + '月' + d.getUTCDate() + '日';
     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[d.getUTCMonth()] + ' ' + d.getUTCDate() + ', ' + d.getUTCFullYear();
   }
@@ -737,7 +612,6 @@
     ['equityReaction', 'EQUITY REACTION', '股市反应'],
     ['industryTransmission', 'POLICY / INDUSTRY', '政策／行业传导']
   ];
-  var CLASS_LABEL = { euclid: ['EUCLID', 'Euclid 级'], keter: ['KETER', 'Keter 级'], safe: ['SAFE', 'Safe 级'] };
   // U30 R1: cards render collapsed (id/date/class only) and expand to the
   // full dossier on click — which incidents are open survives re-render
   // (lang toggle) since it's tracked here, not read off the DOM.
@@ -746,7 +620,6 @@
     if (!filterBox) return;
     var chips = [{ type: 'all', value: null, en: 'ALL', zh: '全部' }];
     PILLARS.forEach(function (p) { chips.push({ type: 'pillar', value: p.id, en: p.name_en, zh: p.name_zh }); });
-    Object.keys(CLASS_LABEL).forEach(function (c) { chips.push({ type: 'class', value: c, en: CLASS_LABEL[c][0], zh: CLASS_LABEL[c][1] }); });
     filterBox.innerHTML = chips.map(function (c, i) {
       var active = activeFilter.type === c.type && activeFilter.value === c.value;
       var sep = i === 1 + PILLARS.length ? '<span class="sep" aria-hidden="true"></span>' : '';
@@ -768,8 +641,6 @@
         var field = ev[rk[0]] || {}; var k = T(rk[1], rk[2]); var v = esc(T(field.en || '', field.zh || ''));
         return '<div class="irow"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
       }).join('');
-      var clsPair = CLASS_LABEL[ev['class']] || [ev['class'], ev['class']];
-      var clsLabel = T(clsPair[0], clsPair[1]);
       var verdict = ev.verdict || {};
       var sources = ev.source ? [{ url: ev.source, label_en: 'PRIMARY RECORD ↗', label_zh: '原始文件 ↗' }] : [];
       (ev.marketSources || []).forEach(function (source) { sources.push(source); });
@@ -781,20 +652,19 @@
       var open = OPEN.has(ev.id);
       var bodyId = 'ibody-' + esc(ev.id);
       return '<article class="incident' + (open ? ' open' : '') + '" data-id="' + esc(ev.id) + '">'
-        + '<div class="ihead" role="button" tabindex="0" aria-expanded="' + open + '" aria-controls="' + bodyId + '"><span class="iid">' + esc(ev.id) + '</span><span class="idate">' + fmtDate(ev.date) + ' · ' + esc(ev.type) + '</span><span class="cls ' + esc(ev['class']) + '">' + clsLabel + '</span></div>'
+        + '<div class="ihead" role="button" tabindex="0" aria-expanded="' + open + '" aria-controls="' + bodyId + '"><span class="iid">' + esc(ev.id) + '</span><span class="idate">' + fmtDate(ev.date) + ' · ' + esc(ev.type) + '</span><span class="dispatchName">' + esc(T((ev.name || {}).en || '', (ev.name || {}).zh || '')) + '</span><span aria-hidden="true">＋</span></div>'
         + '<div class="ibody" id="' + bodyId + '">'
         + '<div class="iname">' + esc(T((ev.name || {}).en || '', (ev.name || {}).zh || '')) + '</div>'
         + sourceLinks
         + rows
-        + '<p class="verdict"><b>' + T('VERDICT', '裁定') + ':</b> ' + esc(T(verdict.en || '', verdict.zh || '')) + '</p>'
+        + '<p class="verdict"><b>' + T('Interpretation & uncertainty', '解读与不确定性') + ':</b> ' + esc(T(verdict.en || '', verdict.zh || '')) + '</p>'
         + '</div></article>';
     }).join('');
   }
   var RM = (function () { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
   function toggle(id) {
     if (OPEN.has(id)) OPEN.delete(id); else OPEN.add(id);
-    if (!RM && document.startViewTransition) document.startViewTransition(render);
-    else render();
+    render();
   }
   list.addEventListener('click', function (e) {
     var head = e.target.closest('.ihead'); if (!head) return;

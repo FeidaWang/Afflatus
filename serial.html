@@ -26,15 +26,15 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Project Afflatus · 小说连载书架</title>
-<meta name="description" content="Project Afflatus 小说书架：《万界种春》（无限流·种田·多女主）、《长夜请柬》（无限流·悬疑推理·大女主成长）等原创连载，复古未来主义视觉，纯中文护眼阅读，每日更新。">
+<title>故事 — 原创中文连载 · AFFLATUS</title>
+<meta name="description" content="原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。">
 <meta name="theme-color" content="#231411">
 <link rel="canonical" href="https://feida.au/serial.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Project Afflatus">
-  <meta property="og:title" content="Project Afflatus · 小说连载书架">
-  <meta property="og:description" content="多部无限流原创小说连载，护眼阅读，每日更新。">
+  <meta property="og:title" content="故事 — 原创中文连载 · AFFLATUS">
+  <meta property="og:description" content="原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。">
   <meta property="og:url" content="https://feida.au/serial.html">
   <meta property="og:locale" content="zh_CN">
   <meta property="og:image" content="https://feida.au/assets/og/serial-zh.jpg">
@@ -44,8 +44,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="原创连载小说的复古未来主义图书馆">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Project Afflatus · 小说连载书架">
-  <meta name="twitter:description" content="多部无限流原创小说连载，护眼阅读，每日更新。">
+  <meta name="twitter:title" content="故事 — 原创中文连载 · AFFLATUS">
+  <meta name="twitter:description" content="原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。">
   <meta name="twitter:image" content="https://feida.au/assets/og/serial-zh.jpg">
   <meta name="twitter:image:alt" content="原创连载小说的复古未来主义图书馆">
   <script type="application/ld+json" data-afflatus-route-schema="serial" lang="zh-CN">
@@ -83,8 +83,8 @@
       "@type": "CollectionPage",
       "@id": "https://feida.au/serial.html#webpage",
       "url": "https://feida.au/serial.html",
-      "name": "小说 — 原创连载书架 · Project Afflatus",
-      "description": "多部原创小说连载，以复古未来主义视觉提供纯中文护眼阅读体验。",
+      "name": "故事 — 原创中文连载 · AFFLATUS",
+      "description": "原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。",
       "inLanguage": "zh-CN",
       "isPartOf": {
         "@id": "https://feida.au/#website"
@@ -252,14 +252,31 @@
 <link rel="stylesheet" href="/styles/serial.css">
 
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
-<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/dataBridge.js"></script>
 <script type="module" src="/src/entry/viewport.js"></script>
+<link rel="stylesheet" href="/styles/stories-library.css">
+<link rel="stylesheet" href="/styles/shared-header.css">
 </head>
 <!-- The serial reader owns ArrowLeft/ArrowRight for its physical page
      surface, so it remains outside the site-wide route-turn system. -->
 <body class="novels-page retro" data-no-page-turn>
-<div class="crt-bg" aria-hidden="true"><canvas id="retroCanvas"></canvas><div class="scan"></div><div class="vig"></div></div>
+<!-- shared-header:start -->
+<header id="afflatus-header" data-afflatus-header>
+  <div class="af-header-inner">
+    <a class="af-wordmark" href="/en/" data-header-path="/" aria-label="AFFLATUS home" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="af-brand-art" aria-hidden="true"><span class="af-brand-full">AFFLATUS</span><span class="af-brand-compact"><span class="af-brand-a">A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></span></a>
+    <nav class="af-header-nav" id="af-primary-nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航">
+      <a href="/en/portfolio.html" data-header-path="/portfolio.html" ><span class="af-nav-label" data-en="Work" data-zh="作品">Work</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure aria-expanded="false" aria-controls="af-markets"><span class="af-nav-label" data-en="Markets" data-zh="市场">Markets</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg></button><div class="af-header-dropdown" id="af-markets"><a href="/en/arena.html" data-header-path="/arena.html" ><span class="af-nav-label" data-en="Stock observation" data-zh="股票观察">Stock observation</span></a><a href="/en/sectors.html" data-header-path="/sectors.html" ><span class="af-nav-label" data-en="AI industry" data-zh="AI 产业">AI industry</span></a><a href="/en/signal.html" data-header-path="/signal.html" ><span class="af-nav-label" data-en="Economic updates" data-zh="经济动态">Economic updates</span></a></div></div>
+      <a href="/en/course.html" data-header-path="/course.html" ><span class="af-nav-label" data-en="Learn" data-zh="学习">Learn</span></a>
+      <a href="/zh/serial.html" data-header-path="/serial.html" title="Original stories in Chinese / 原创中文小说"><span class="af-nav-label" data-en="Stories" data-zh="故事">Stories</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure aria-expanded="false" aria-controls="af-more"><span class="af-nav-label" data-en="More" data-zh="更多">More</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg></button><div class="af-header-dropdown" id="af-more"><a href="/en/horoscope.html" data-header-path="/horoscope.html" ><span class="af-nav-label" data-en="Astrology for fun" data-zh="趣味占星">Astrology for fun</span></a><a href="/en/#about" data-header-path="/#about" ><span class="af-nav-label" data-en="About" data-zh="关于">About</span></a></div></div>
+    </nav>
+    <a class="af-header-language" data-header-language href="/zh/" hreflang="zh-CN" aria-label="Switch to Chinese" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">中文</a>
+    <button type="button" class="af-header-menu" data-header-disclosure aria-expanded="false" aria-controls="af-primary-nav"><span class="af-nav-label" data-en="Menu" data-zh="菜单">Menu</span><span aria-hidden="true">☰</span></button>
+  </div>
+</header>
+<!-- shared-header:end -->
+
 
 <div class="toc-backdrop" id="tocBackdrop" aria-hidden="true"></div>
 <aside class="toc-drawer" id="tocDrawer" role="dialog" aria-modal="true" aria-labelledby="tocHeading" aria-hidden="true" inert>
@@ -270,18 +287,8 @@
 </aside>
 
 <main class="wrap">
-  <header class="top site-header--follow">
-    <div class="seal">
-      <a class="afflatus-brand" data-afflatus-brand data-brand-persona="serial" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
-        <span class="afflatus-brand__stage" aria-hidden="true">
-          <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
-        </span>
-        <span class="afflatus-brand__sr">Afflatus</span>
-      </a>
-      <div><b>小说连载</b><small>原创中文小说 · 书架</small></div>
-    </div>
-    <nav class="nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav></nav>
-  </header>
+  <nav class="reader-return" id="readerReturn" aria-label="阅读导航" data-aria-en="Reading navigation" data-aria-zh="阅读导航" hidden></nav>
+  <header class="library-intro"><p>故事 · STORIES</p><h2>在故事里，多停留一会儿。</h2><p>原创中文连载。选一本书，从上次停下的地方继续。</p><small>Stories are published in Chinese. Navigation language does not translate the prose.</small></header>
 
   <section class="shelf is-loading" id="shelf" aria-label="Novel shelf" data-aria-en="Novel shelf" data-aria-zh="书架" aria-busy="true">
     <span class="book-skeleton" aria-hidden="true"></span>
@@ -289,10 +296,8 @@
     <span class="book-skeleton" aria-hidden="true"></span>
   </section>
 
-  <div class="dossier-bridge" aria-hidden="true"><span>当前书档</span><i></i><small>CURRENT DOSSIER</small></div>
 
   <section class="hero">
-    <div class="bar" aria-hidden="true"></div>
     <div class="pad">
       <div class="kicker" id="novelKicker">无限流 · 种田 · 多女主 · 系统流</div>
       <h1 id="novelTitle">万界种春</h1>
@@ -311,6 +316,7 @@
 
   <section class="toolbar" id="toolbar" aria-label="Reading tools" data-aria-en="Reading tools" data-aria-zh="阅读工具">
     <button class="tbtn" id="tocOpen" type="button" aria-label="Open chapter list" data-aria-en="Open chapter list" data-aria-zh="打开章节目录" aria-haspopup="dialog" aria-controls="tocDrawer" aria-expanded="false">☰<span class="lbl"> 目录</span></button>
+    <details class="reading-tools"><summary>阅读工具</summary><div class="reading-tools-content">
     <div class="swatches" role="group" aria-label="Reading themes" data-aria-en="Reading themes" data-aria-zh="阅读主题（日间／夜间护眼）">
       <button class="swatch s-green on" type="button" data-theme="green" title="日间护眼（长时间阅读）" aria-label="Daytime reading theme" data-aria-en="Daytime reading theme" data-aria-zh="日间护眼主题"></button>
       <button class="swatch s-night" type="button" data-theme="night" title="夜间琥珀·低蓝光（长时间阅读）" aria-label="Night reading theme" data-aria-en="Night reading theme" data-aria-zh="夜间护眼主题"></button>
@@ -337,6 +343,8 @@
       <button id="plToggle" type="button" aria-label="Play or pause" data-aria-en="Play or pause" data-aria-zh="播放 / 暂停">♪</button>
       <button id="plNext" type="button" aria-label="Next track" data-aria-en="Next track" data-aria-zh="下一曲">⏭</button>
     </div>
+    <button class="tbtn" id="readingBookmarkGo" type="button">跳转书签</button>
+    </div></details>
     <div class="spacer"></div>
     <button class="tbtn" id="bookmarkBtn" type="button" aria-label="Save or view bookmark" data-aria-en="Save or view bookmark" data-aria-zh="保存或查看书签">☆<span class="lbl"> 书签</span></button>
   </section>
@@ -684,6 +692,7 @@
   }
   document.getElementById('bookmarkBtn').addEventListener('click', setBookmark);
   document.getElementById('fabBookmarkGo').addEventListener('click', goBookmark);
+  document.getElementById('readingBookmarkGo').addEventListener('click', goBookmark);
 
   /* ---------- reading progress (per-chapter + persisted "continue reading") ---------- */
   function persistProgress(offset) {
@@ -1299,10 +1308,11 @@
       var b = document.createElement('button');
       b.className = 'book' + (i === state.novelIdx ? ' active' : '');
       b.type = 'button';
-      b.innerHTML = '<span class="bk-badge">正在阅读</span>' +
-        '<span class="bk-title">' + escapeHtml(n.novel.title) + '</span>' +
-        '<p class="bk-sub">' + escapeHtml(n.novel.subtitle || '') + '</p>' +
-        '<p class="bk-meta">共 ' + n.chapterCount + ' 章 · ' + escapeHtml(n.novel.author || '') + '</p>';
+      b.innerHTML = '<span class="bk-cover"><span class="bk-title">' + escapeHtml(n.novel.title) + '</span><span class="bk-author">' + escapeHtml(n.novel.author || '') + '</span></span>' +
+        '<span class="bk-sub">' + escapeHtml(n.novel.subtitle || '') + '</span>' +
+        '<span class="bk-description">' + escapeHtml(n.novel.intro || '') + '</span>' +
+        '<span class="bk-meta">已发布 ' + n.chapterCount + ' 章 · ' + escapeHtml(n.novel.updateNote || '') + '</span>' +
+        '<span class="bk-read">' + (Object.keys((readerState().visited || {})[n.id] || {}).length ? '继续阅读' : '开始阅读') + ' ↗</span>';
       b.addEventListener('click', function () {
         if (pagedBook && !state.waterfall) pagedBook.unlockSound();
         if (i !== state.novelIdx) {

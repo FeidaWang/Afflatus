@@ -7,15 +7,15 @@
 <!-- Sensitive input page: third-party analytics intentionally disabled. -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Arena · QF-01 Quant Foundry + US Stock TA — Afflatus</title>
-<meta name="description" content="Arena: QF-01, a gs-quant-inspired browser-native factor, risk and walk-forward model lab, plus US stock technical analysis and simulated Autopilot ledgers. Not investment advice.">
+<title>Stock observation &amp; investment simulation · AFFLATUS</title>
+<meta name="description" content="Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.">
 <meta name="theme-color" content="#05070e">
 <link rel="canonical" href="https://feida.au/arena.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Project Afflatus">
-  <meta property="og:title" content="Project Afflatus · Arena">
-  <meta property="og:description" content="QF-01 factor and risk model lab + S&amp;P 500 TA + simulated Autopilot ledgers. Not investment advice.">
+  <meta property="og:title" content="Stock observation &amp; investment simulation · AFFLATUS">
+  <meta property="og:description" content="Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.">
   <meta property="og:url" content="https://feida.au/arena.html">
   <meta property="og:locale" content="en_AU">
   <meta property="og:locale:alternate" content="zh_CN">
@@ -26,8 +26,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Arena market intelligence data lanes">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Project Afflatus · Arena">
-  <meta name="twitter:description" content="QF-01 factor and risk model lab + S&amp;P 500 TA + simulated Autopilot ledgers. Not investment advice.">
+  <meta name="twitter:title" content="Stock observation &amp; investment simulation · AFFLATUS">
+  <meta name="twitter:description" content="Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.">
   <meta name="twitter:image" content="https://feida.au/assets/og/arena-en.jpg">
   <meta name="twitter:image:alt" content="Arena market intelligence data lanes">
   <script type="application/ld+json" data-afflatus-route-schema="arena" lang="en-AU">
@@ -68,8 +68,8 @@
       "@type": "WebPage",
       "@id": "https://feida.au/arena.html#webpage",
       "url": "https://feida.au/arena.html",
-      "name": "Arena — QF-01 Quant Foundry and US Stock TA · Afflatus",
-      "description": "A gs-quant-inspired browser-native factor, portfolio-risk and walk-forward research model, S&P 500 technical analysis and simulated model ledgers. Not investment advice.",
+      "name": "Stock observation & investment simulation · AFFLATUS",
+      "description": "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.",
       "inLanguage": [
         "en-AU",
         "zh-CN"
@@ -94,8 +94,8 @@
     {
       "@type": "WebApplication",
       "@id": "https://feida.au/arena.html#application",
-      "name": "Arena — QF-01 Quant Foundry and US Stock TA · Afflatus",
-      "description": "A gs-quant-inspired browser-native factor, portfolio-risk and walk-forward research model, S&P 500 technical analysis and simulated model ledgers. Not investment advice.",
+      "name": "Stock observation & investment simulation · AFFLATUS",
+      "description": "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.",
       "url": "https://feida.au/arena.html",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Any",
@@ -226,83 +226,49 @@
 <link rel="stylesheet" href="/styles/arena.css">
 <link rel="stylesheet" href="/styles/arena-quant.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
-<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
+<link rel="stylesheet" href="/styles/arena-market.css">
+<link rel="stylesheet" href="/styles/shared-header.css">
 </head>
 <body class="arena-page">
+<!-- shared-header:start -->
+<header id="afflatus-header" data-afflatus-header>
+  <div class="af-header-inner">
+    <a class="af-wordmark" href="/en/" data-header-path="/" aria-label="AFFLATUS home" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="af-brand-art" aria-hidden="true"><span class="af-brand-full">AFFLATUS</span><span class="af-brand-compact"><span class="af-brand-a">A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></span></a>
+    <nav class="af-header-nav" id="af-primary-nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航">
+      <a href="/en/portfolio.html" data-header-path="/portfolio.html" ><span class="af-nav-label" data-en="Work" data-zh="作品">Work</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure aria-expanded="false" aria-controls="af-markets"><span class="af-nav-label" data-en="Markets" data-zh="市场">Markets</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg></button><div class="af-header-dropdown" id="af-markets"><a href="/en/arena.html" data-header-path="/arena.html" ><span class="af-nav-label" data-en="Stock observation" data-zh="股票观察">Stock observation</span></a><a href="/en/sectors.html" data-header-path="/sectors.html" ><span class="af-nav-label" data-en="AI industry" data-zh="AI 产业">AI industry</span></a><a href="/en/signal.html" data-header-path="/signal.html" ><span class="af-nav-label" data-en="Economic updates" data-zh="经济动态">Economic updates</span></a></div></div>
+      <a href="/en/course.html" data-header-path="/course.html" ><span class="af-nav-label" data-en="Learn" data-zh="学习">Learn</span></a>
+      <a href="/zh/serial.html" data-header-path="/serial.html" title="Original stories in Chinese / 原创中文小说"><span class="af-nav-label" data-en="Stories" data-zh="故事">Stories</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure aria-expanded="false" aria-controls="af-more"><span class="af-nav-label" data-en="More" data-zh="更多">More</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg></button><div class="af-header-dropdown" id="af-more"><a href="/en/horoscope.html" data-header-path="/horoscope.html" ><span class="af-nav-label" data-en="Astrology for fun" data-zh="趣味占星">Astrology for fun</span></a><a href="/en/#about" data-header-path="/#about" ><span class="af-nav-label" data-en="About" data-zh="关于">About</span></a></div></div>
+    </nav>
+    <a class="af-header-language" data-header-language href="/zh/" hreflang="zh-CN" aria-label="Switch to Chinese" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">中文</a>
+    <button type="button" class="af-header-menu" data-header-disclosure aria-expanded="false" aria-controls="af-primary-nav"><span class="af-nav-label" data-en="Menu" data-zh="菜单">Menu</span><span aria-hidden="true">☰</span></button>
+  </div>
+</header>
+<!-- shared-header:end -->
 <a class="skip" href="#taSearch" data-en="Skip to the dashboard" data-zh="跳到仪表板">Skip to the dashboard</a>
 
-<div class="bg" aria-hidden="true">
-  <div class="bg-glow"></div>
-  <canvas id="bgCanvas" aria-hidden="true"></canvas>
-</div>
-
 <main class="arena">
-  <header class="hdr site-header--follow">
-    <a class="afflatus-brand" data-afflatus-brand data-brand-persona="arena" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
-      <span class="afflatus-brand__stage" aria-hidden="true">
-        <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
-      </span>
-      <span class="afflatus-brand__sr">Afflatus</span>
-    </a>
-    <nav class="nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav>
-      <button class="hbtn lang-toggle" type="button">中文</button>
-    </nav>
+  <header class="arena-intro">
+    <p class="arena-eyebrow" data-en="MARKETS / ARENA" data-zh="市场 / ARENA">MARKETS / ARENA</p>
+    <h1 data-en="Understand the market before testing a decision." data-zh="看懂市场，再试着做决定。">Understand the market before testing a decision.</h1>
+    <p data-en="US stocks · daily observations and historical simulations. Source dates accompany each view." data-zh="美股日线观察与历史模拟，数据日期随各视图显示。">US stocks · daily observations and historical simulations. Source dates accompany each view.</p>
   </header>
-
-  <div class="page-hero page-hero--route">
-      <div class="logo" aria-hidden="true">
-        <svg viewBox="0 0 64 64" width="32" height="32" role="img" aria-label="Arena" data-aria-en="Arena" data-aria-zh="竞技场">
-          <line x1="20" y1="14" x2="20" y2="50" stroke="#3dff9a" stroke-width="1.6"/><rect x="15" y="26" width="10" height="19" fill="#3dff9a"/><path d="M14 24l6-7 6 7" fill="none" stroke="#eafff4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <line x1="44" y1="13" x2="44" y2="49" stroke="#ff3df0" stroke-width="1.6"/><rect x="39" y="20" width="10" height="19" fill="#ff3df0"/><path d="M38 41l6 7 6-7" fill="none" stroke="#ffe6fb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="32" cy="32" r="6.4" fill="#05070e" stroke="#27e7ff" stroke-width="1.8"/><circle cx="32" cy="32" r="1.7" fill="#27e7ff"/>
-        </svg>
-      </div>
-      <div>
-        <h1>AFFLATUS<br><span>TRADING ARENA</span></h1>
-        <p data-en="Full S&amp;P 500 TA dashboard · Autopilot vs SPY/SMH" data-zh="标普 500 全市场技术面板 · Autopilot 对比大盘基准">Full S&amp;P 500 TA dashboard · Autopilot vs SPY/SMH</p>
-      </div>
-  </div>
-
-  <section class="hero" aria-label="Status" data-aria-en="Status" data-aria-zh="状态">
-    <div class="kicker" data-en="TRAXUS//CVKM · simulation deck" data-zh="TRAXUS//CVKM · 模拟终端">TRAXUS//CVKM · simulation deck</div>
-    <h2 data-i18n-html data-en="Observe markets. Review <b>simulations</b>." data-zh="观察市场，复核<b>模拟记录</b>。">Observe markets. Review <b>simulations</b>.</h2>
-    <p class="brief" data-en="Three simulated LLM ledgers trade the S&amp;P 500 under fixed risk rules and are scored against SPY/SMH. Review the latest published snapshot, or search any ticker for daily technicals. Historical simulation only — not investment advice." data-zh="三套模拟 LLM 账本按固定风控规则覆盖标普 500，并以 SPY/SMH 为基准计分。可回看最近发布的交易快照，或搜索代码查看日线技术面。仅为历史模拟，不构成投资建议。">Three simulated LLM ledgers trade the S&amp;P 500 under fixed risk rules and are scored against SPY/SMH. Review the latest published snapshot, or search any ticker for daily technicals. Historical simulation only — not investment advice.</p>
-    <nav class="arena-modes" aria-label="Research modes" data-aria-en="Research modes" data-aria-zh="研究模式">
-      <a href="#taDash"><b data-en="OBSERVE" data-zh="观察">OBSERVE</b><span data-en="Quote snapshots and daily history · read only" data-zh="报价快照与日线历史 · 只读">Quote snapshots and daily history · read only</span></a>
-      <a href="#apDash"><b data-en="REPLAY" data-zh="回放">REPLAY</b><span data-en="Published paper ledgers · historical records" data-zh="已发布模拟账本 · 历史记录">Published paper ledgers · historical records</span></a>
-      <a href="#quantFoundry"><b data-en="EXPERIMENTS" data-zh="实验">EXPERIMENTS</b><span data-en="Completed daily bars · isolated local runs" data-zh="已完成日线 · 隔离的本地实验">Completed daily bars · isolated local runs</span></a>
-      <button type="button" id="paperModeUnavailable" disabled aria-describedby="paperModeNote"><b data-en="INTRADAY PAPER · NOT ENABLED" data-zh="盘中模拟 · 未启用">INTRADAY PAPER · NOT ENABLED</b><span id="paperModeNote" data-en="Fresh authorized feed required · no execution controls here" data-zh="需要时效有效且获授权的数据源 · 本页没有执行控件">Fresh authorized feed required · no execution controls here</span></button>
-    </nav>
-    <p class="arena-mode-note" data-en="Mode, exchange session and data freshness are independent. This page sends no orders and uses no real money." data-zh="研究模式、交易时段与数据时效分别判断。本页不发送订单，不使用真实资金。">Mode, exchange session and data freshness are independent. This page sends no orders and uses no real money.</p>
-    <dl class="arena-status-grid">
-      <div><dt data-en="Feed" data-zh="数据源">Feed</dt><dd id="arenaFeedStatus" data-en="UNKNOWN · quote snapshots; entitlement and delay unverified" data-zh="未知 · 报价快照；权益与延迟未验证">UNKNOWN · quote snapshots; entitlement and delay unverified</dd></div>
-      <div><dt data-en="Execution" data-zh="执行">Execution</dt><dd data-en="NONE · intraday Paper unavailable" data-zh="无 · 盘中 Paper 未启用">NONE · intraday Paper unavailable</dd></div>
-      <div><dt data-en="Research clock" data-zh="研究时钟">Research clock</dt><dd data-en="Daily bars: completed sessions. Ledger: published record timestamps (UTC)." data-zh="日线：已完成交易日。账本：已发布记录时间（UTC）。">Daily bars: completed sessions. Ledger: published record timestamps (UTC).</dd></div>
-    </dl>
-    <button class="brief-cta" id="openBriefBtn" type="button">
-      <span class="brief-cta__tag" data-en="▣ TODAY" data-zh="▣ 今日">▣ TODAY</span>
-      <span class="brief-cta__main" data-en="PRE-MARKET BRIEFING" data-zh="盘前简报">PRE-MARKET BRIEFING</span>
-      <span class="brief-cta__sub" data-en="EN / 中文 · AI news + Fable calls" data-zh="中英双语 · AI 新闻 + Fable 研判">EN / 中文 · AI news + Fable calls</span>
-      <span class="brief-cta__go">▶</span>
-    </button>
-    <div class="strip">
-      <span class="chip closed" id="statusChip"><span class="d"></span><span id="statusTxt">—</span></span>
-      <span class="chip flat" id="sentChip"><span data-en="NEWS" data-zh="情绪">NEWS</span> · <span id="sentTxt">—</span></span>
-      <span class="chip open" id="adminChip" hidden style="cursor:pointer" title="Clear the quota key; this is not account authentication"><span data-en="QUOTA KEY SET" data-zh="已设置配额密钥">QUOTA KEY SET</span></span>
-    </div>
-    <div class="opencd" id="openCd">
-      <span class="opencd-label" id="cdLabel">US MARKET OPENS IN</span>
-      <span class="opencd-clock" id="cdClock" aria-live="off">--:--:--</span>
-      <span class="opencd-sub" data-en="NYSE core equities · holidays and early closes apply" data-zh="NYSE 常规股票交易时段 · 按节假日与提前收盘日历">NYSE core equities · holidays and early closes apply</span>
-      <span class="opencd-sub" id="sessionTimes">—</span>
-    </div>
-  </section>
+  <nav class="arena-modes" aria-label="Research modes" data-aria-en="Research modes" data-aria-zh="研究模式">
+    <a href="#taDash" data-workspace-mode="observe" aria-current="true"><b data-en="Observe" data-zh="观察">Observe</b><span data-en="Daily prices" data-zh="日线价位">Daily prices</span></a>
+    <a href="#apDash" data-workspace-mode="replay"><b data-en="Replay" data-zh="回放">Replay</b><span data-en="Published simulations" data-zh="已发布模拟">Published simulations</span></a>
+    <a href="#quantFoundry" data-workspace-mode="experiments"><b data-en="Simulate" data-zh="模拟">Simulate</b><span data-en="Test with past data" data-zh="用历史数据测试">Test with past data</span></a>
+  </nav>
+  <p class="arena-mode-note" data-en="Read-only observation · prices in USD · no real orders." data-zh="只读观察 · 价格单位为美元 · 无真实下单。">Read-only observation · prices in USD · no real orders.</p>
 
   <!-- ===== Part 4 §18.2.1 · PUBLISHED TRADE SNAPSHOT ===== -->
   <div class="arena-workspace">
   <section class="picks" id="picksDash" aria-label="Published trade snapshot" data-aria-en="Published trade snapshot" data-aria-zh="已发布交易快照">
-    <div class="picks-topbar">
+    <h2 data-en="Watchlist" data-zh="观察列表">Watchlist</h2>
+    <p class="watchlist-caption" data-en="Published research symbols" data-zh="已发布研究标的">Published research symbols</p>
+    <div id="arenaWatchlist"><a href="/arena-picks.json" data-en="Read source watchlist (JSON)" data-zh="查看观察列表源文件（JSON）">Read source watchlist (JSON)</a></div>
+    <details class="arena-proposals"><summary data-en="Archived proposals and reasons" data-zh="归档提案与理由">Archived proposals and reasons</summary>    <div class="picks-topbar">
       <div class="sec-label" style="margin-bottom:0"><span data-en="Published Trade Snapshot" data-zh="已发布交易快照">Published Trade Snapshot</span></div>
       <div class="picks-meta">
         <span class="chip" id="picksDateChip">—</span>
@@ -310,20 +276,17 @@
       </div>
     </div>
     <p class="picks-note" id="picksNote"></p>
-    <h2 data-en="Published watchlist" data-zh="已发布观察列表">Published watchlist</h2>
-    <p data-en="Symbols come from the published quote allowlist. Select one to inspect available daily data, independently of archived proposals below." data-zh="标的来自已发布报价白名单。选择后查看可用日线数据，与下方归档提案分开。">Symbols come from the published quote allowlist. Select one to inspect available daily data, independently of archived proposals below.</p>
-    <div id="arenaWatchlist"><a href="/arena-picks.json" data-en="Read source watchlist (JSON)" data-zh="查看观察列表源文件（JSON）">Read source watchlist (JSON)</a></div>
-    <details class="arena-proposals"><summary data-en="Archived proposals and reasons" data-zh="归档提案与理由">Archived proposals and reasons</summary><p id="picksProvenance"></p><a href="/arena-picks.json" data-en="Inspect source snapshot (JSON)" data-zh="查看源快照（JSON）">Inspect source snapshot (JSON)</a><div class="picks-grid" id="picksGrid"></div></details>
+<p id="picksProvenance"></p><a href="/arena-picks.json" data-en="Inspect source snapshot (JSON)" data-zh="查看源快照（JSON）">Inspect source snapshot (JSON)</a><div class="picks-grid" id="picksGrid"></div></details>
   </section>
 
   <!-- ===== V13 · US STOCK TA DASHBOARD (key levels / MAs / pivots / special points) ===== -->
   <section class="ta" id="taDash" data-arena-mode="observe" aria-label="US stock technical analysis dashboard" data-aria-en="US stock technical analysis dashboard" data-aria-zh="美股技术分析仪表板">
     <div class="ta-topbar">
-      <div class="sec-label" style="margin-bottom:0"><span data-en="Search Any S&amp;P 500 Ticker" data-zh="搜索标普 500 任意代码">Search Any S&amp;P 500 Ticker</span></div>
+      <div class="sec-label" style="margin-bottom:0"><span data-en="Find a stock" data-zh="选择一只股票">Find a stock</span></div>
       <div class="ta-searchwrap">
         <input id="taSearch" class="ta-search" type="search" autocomplete="off" spellcheck="false"
-               placeholder="Search ticker / name… (Enter loads any US symbol)"
-               data-en-ph="Search ticker / name… (Enter loads any US symbol)" data-zh-ph="搜索代码/名称…（回车可加载任意美股代码）"
+               placeholder="Ticker or company · Enter to view"
+               data-en-ph="Ticker or company · Enter to view" data-zh-ph="输入代码或公司名称，回车查看"
                aria-label="Search stocks" data-aria-en="Search stocks" data-aria-zh="搜索股票">
         <div class="ta-suggest" id="taSuggest" hidden role="listbox"
              aria-label="Ticker suggestions" data-aria-en="Ticker suggestions" data-aria-zh="股票代码建议"></div>
@@ -340,18 +303,18 @@
     </div>
   </section>
 
-  <aside class="panel pad arena-risk" id="arenaRisk" aria-labelledby="arenaRiskTitle">
-    <h2 id="arenaRiskTitle" data-en="Risk &amp; execution" data-zh="风险与执行">Risk &amp; execution</h2>
+  <details class="arena-risk" id="arenaRisk" aria-labelledby="arenaRiskTitle">
+    <summary id="arenaRiskTitle" data-en="How to read these references" data-zh="如何理解这些参考价位">How to read these references</summary>
     <p data-en="Read-only research. Selecting a symbol opens its daily analysis; it does not submit an order." data-zh="只读研究。选择标的仅打开其日线分析，不提交订单。">Read-only research. Selecting a symbol opens its daily analysis; it does not submit an order.</p>
     <p data-en="Archived entry, stop and target levels describe the published proposal, not current executable prices. Model confidence is not a calibrated win probability." data-zh="归档的入场、止损与目标价描述当时提案，并非当前可执行价格。模型置信度不等于经校准的胜率。">Archived entry, stop and target levels describe the published proposal, not current executable prices. Model confidence is not a calibrated win probability.</p>
     <a href="#quantFoundry" data-en="Inspect QF-01 daily constraints and assumptions ↓" data-zh="查看 QF-01 日线约束与假设 ↓">Inspect QF-01 daily constraints and assumptions ↓</a>
-  </aside>
+  </details>
   </div>
 
   <!-- ===== V5/V6 · ARENA AUTOPILOT (S/P/T simulated ledgers, Part 4 §17) ===== -->
   <section class="ap" id="apDash" data-arena-mode="replay" aria-label="Arena Autopilot dashboard — three model ledgers" data-aria-en="Arena Autopilot dashboard — three model ledgers" data-aria-zh="竞技场自动驾驶仪表板——三套模型账本">
     <div class="ap-topbar">
-      <div class="sec-label" style="margin-bottom:0"><span data-en="Autopilot" data-zh="自动交易">Autopilot</span></div>
+      <div class="sec-label" style="margin-bottom:0"><span data-en="Historical simulated accounts" data-zh="历史模拟账本">Historical simulated accounts</span></div>
       <div class="ap-meta">
         <span class="chip" id="apDayChip">—</span>
         <span class="chip" id="apUpdChip">—</span>
@@ -359,10 +322,13 @@
     </div>
     <p class="ap-note" id="apNote"></p>
 
-    <div class="ap-chartwrap panel">
+    <div class="ap-chartwrap panel" role="group" aria-labelledby="apFrameTitle">
+      <h3 id="apFrameTitle" data-en="How did the simulated account values change?" data-zh="模拟账户的金额如何变化？">How did the simulated account values change?</h3>
+      <p id="apFrameExplanation" data-en="The vertical axis shows account value in US dollars; the horizontal axis shows ledger days. Compare the model curves with SPY and SMH over the displayed period. These are historical simulations, not actual account returns." data-zh="纵轴为账户金额（美元），横轴为账本天数。在图示期间，将模型曲线与 SPY、SMH 对照。这是历史模拟，不是实际账户收益。">The vertical axis shows account value in US dollars; the horizontal axis shows ledger days. Compare the model curves with SPY and SMH over the displayed period. These are historical simulations, not actual account returns.</p>
       <div class="ap-chart-hd"><div class="ap-legend" id="apLegend"></div></div>
-      <svg class="ap-chart" id="apChart" viewBox="0 0 690 264" role="img" aria-label="Model S/P/T equity curves vs SPY/SMH" data-aria-en="Model S/P/T equity curves vs SPY/SMH" data-aria-zh="S/P/T 模型权益曲线与 SPY/SMH 对比" aria-describedby="apChartSummary"></svg>
+      <svg class="ap-chart" id="apChart" viewBox="0 0 690 264" role="img" aria-label="Model S/P/T equity curves vs SPY/SMH" data-aria-en="Model S/P/T equity curves vs SPY/SMH" data-aria-zh="S/P/T 模型权益曲线与 SPY/SMH 对比" aria-describedby="apFrameExplanation apChartSummary"></svg>
       <p class="sr-only" id="apChartSummary"></p>
+      <p class="arena-chart-source"><a href="/arena-ledger.json" data-en="View data: published ledger and dates (JSON)" data-zh="查看数据：已发布账本与日期（JSON）">View data: published ledger and dates (JSON)</a> · <a href="#arenaTimeline" data-en="Inspect the decisions behind the curves" data-zh="查看曲线背后的决策记录">Inspect the decisions behind the curves</a></p>
     </div>
 
     <div class="ap-models" id="apModels"></div>
@@ -373,45 +339,29 @@
     </section>
   </section>
 
+  <details class="arena-news"><summary data-en="Published market signal" data-zh="已发布市场信号">Published market signal</summary>
   <div class="panel pad news" aria-label="Published market signal" data-aria-en="Published market signal" data-aria-zh="已发布市场信号">
     <div class="sec-label"><span data-en="Published Market Signal" data-zh="已发布市场信号">Published Market Signal</span> <span id="newsDate"></span></div>
     <div id="newsList"><div class="empty">…</div></div>
   </div>
 
+  </details>
+
   <!-- ===== QF-01 · GS-QUANT-INSPIRED, BROWSER-NATIVE MODEL LAB ===== -->
   <section class="qm" id="quantFoundry" data-arena-mode="experiments" aria-labelledby="qmTitle">
-    <header class="qm-header">
-      <div class="qm-ident">
-        <span class="qm-eyebrow" data-en="Q-FOUNDRY // INDEPENDENT RESEARCH ENGINE" data-zh="Q-FOUNDRY // 独立研究引擎">Q-FOUNDRY // INDEPENDENT RESEARCH ENGINE</span>
-        <h2 id="qmTitle" data-en="A risk engine, not another stock picker." data-zh="这不是又一个荐股器，而是一台风险引擎。">A risk engine, not another stock picker.</h2>
-        <p data-en="QF-01 turns the current AI-factory research universe into a reproducible walk-forward experiment: completed daily bars enter a time-bounded data context, four cross-sectional factors become an explainable score, and hard portfolio constraints decide what survives." data-zh="QF-01 将当前 AI 工厂研究池变成可复现的滚动实验：已完成日线进入有明确时间边界的数据上下文，四个截面因子形成可解释得分，再由组合硬约束决定哪些信号能够存活。">QF-01 turns the current AI-factory research universe into a reproducible walk-forward experiment: completed daily bars enter a time-bounded data context, four cross-sectional factors become an explainable score, and hard portfolio constraints decide what survives.</p>
-      </div>
-      <div class="qm-stamp" aria-label="Model identity" data-aria-en="Model identity" data-aria-zh="模型身份">
-        <b id="qmVersion">QF-01</b>
-        <span><span data-en="manifest" data-zh="清单">manifest</span> · <i id="qmAsOf">—</i></span>
-        <span><span data-en="source commit" data-zh="源提交">source commit</span> · <i id="qmCommit">—</i></span>
-      </div>
-    </header>
-
-    <div class="qm-pipeline" aria-label="Quant model architecture" data-aria-en="Quant model architecture" data-aria-zh="量化模型架构">
-      <div><span>01</span><b>DATA CONTEXT</b><small data-en="completed sessions" data-zh="已完成交易日">completed sessions</small></div>
-      <div><span>02</span><b>FACTOR LENS</b><small data-en="robust cross-section" data-zh="稳健截面标准化">robust cross-section</small></div>
-      <div><span>03</span><b>RISK REGIME</b><small data-en="trend × volatility" data-zh="趋势 × 波动">trend × volatility</small></div>
-      <div><span>04</span><b>CONSTRAINT GATE</b><small data-en="name × sector caps" data-zh="个股 × 行业上限">name × sector caps</small></div>
-      <div><span>05</span><b>WALK-FORWARD</b><small data-en="costed out-of-sample" data-zh="含成本样本外检验">costed out-of-sample</small></div>
-    </div>
-
+    <header class="arena-simulation-intro"><h2 id="qmTitle" data-en="Try a decision with past data." data-zh="用过去的数据，试一次决定。">Try a decision with past data.</h2><p data-en="Choose a preset, adjust the limits, then run a local historical simulation against SPY. Hypothetical results include configured trading costs." data-zh="选择预设、调整限制，在本地运行历史模拟并与 SPY 对照。假设性结果包含设定的交易成本。">Choose a preset, adjust the limits, then run a local historical simulation against SPY. Hypothetical results include configured trading costs.</p></header>
     <div class="qm-workbench">
       <aside class="qm-console" aria-label="Model controls" data-aria-en="Model controls" data-aria-zh="模型控制">
         <div class="qm-console-head">
-          <div><span data-en="VARIANT PATCH BAY" data-zh="变体调参舱">VARIANT PATCH BAY</span><b><i id="qmRunCount">00</i> LOCAL RUNS</b></div>
+          <div><span data-en="Simulation preset" data-zh="模拟预设">Simulation preset</span><b><i id="qmRunCount">00</i> LOCAL RUNS</b></div>
           <div class="qm-presets" role="group" aria-label="Model presets" data-aria-en="Model presets" data-aria-zh="模型预设">
-            <button type="button" data-qm-preset="balanced" class="is-active">BAL</button>
-            <button type="button" data-qm-preset="momentum">MOM</button>
-            <button type="button" data-qm-preset="defensive">DEF</button>
+            <button type="button" data-qm-preset="balanced" class="is-active" data-en="Balanced" data-zh="均衡">Balanced</button>
+            <button type="button" data-qm-preset="momentum" data-en="Momentum" data-zh="动量">Momentum</button>
+            <button type="button" data-qm-preset="defensive" data-en="Defensive" data-zh="防御">Defensive</button>
           </div>
         </div>
 
+        <details class="arena-conditions"><summary data-en="Adjust conditions" data-zh="调整条件">Adjust conditions</summary>
         <fieldset class="qm-controls">
           <legend data-en="FACTOR MIX" data-zh="因子混合">FACTOR MIX</legend>
           <label for="qmMomentum"><span data-en="63D momentum ex-5D" data-zh="63日动量（剔除近5日）">63D momentum ex-5D</span><output id="qmMomentumValue">38%</output><input id="qmMomentum" type="range" min="0" max="70" step="1" value="38"></label>
@@ -428,7 +378,8 @@
           <label for="qmRebalance"><span data-en="rebalance cadence" data-zh="再平衡周期">rebalance cadence</span><select id="qmRebalance"><option value="10">10D</option><option value="20" selected>20D</option><option value="40">40D</option></select></label>
         </fieldset>
 
-        <button class="qm-compile" id="qmCompile" type="button"><span data-en="COMPILE HISTORICAL EXPERIMENT" data-zh="编译历史实验">COMPILE HISTORICAL EXPERIMENT</span><i aria-hidden="true">↗</i></button>
+        </details>
+        <button class="qm-compile" id="qmCompile" type="button"><span data-en="Run historical simulation" data-zh="运行历史模拟">Run historical simulation</span><i aria-hidden="true">↗</i></button>
         <p class="qm-status" id="qmStatus" data-kind="idle" role="status" aria-live="polite">MODEL COLD</p>
       </aside>
 
@@ -440,7 +391,7 @@
           <div class="qm-scope">
             <span>CONTEXT</span><i></i><span>FACTORS</span><i></i><span>PORTFOLIO</span><i></i><span>RISK</span>
           </div>
-          <p data-en="Compile when you want the browser to request the latest completed daily histories. Nothing here is annualized from a single trade, no future bar enters a signal, and every rebalance pays the configured cost." data-zh="需要时再编译，浏览器会请求最新的已完成日线。这里不会把单笔交易伪装成年化结果，不让未来 K 线进入信号，并且每次再平衡都扣除设定成本。">Compile when you want the browser to request the latest completed daily histories. Nothing here is annualized from a single trade, no future bar enters a signal, and every rebalance pays the configured cost.</p>
+          <p data-en="Run a simulation to load completed daily history and compare the chosen conditions with SPY. Results are hypothetical; each rebalance includes the configured cost." data-zh="运行模拟后，浏览器加载已完成日线，将所选条件与 SPY 对比。结果是假设性的；每次调整持仓都会扣除设定成本。">Run a simulation to load completed daily history and compare the chosen conditions with SPY. Results are hypothetical; each rebalance includes the configured cost.</p>
         </div>
 
         <div class="qm-result" id="qmResult" hidden>
@@ -470,13 +421,35 @@
       </div>
     </div>
 
+    <details class="arena-method"><summary data-en="How this is calculated" data-zh="如何计算">How this is calculated</summary>    <header class="qm-header">
+      <div class="qm-ident">
+        <span class="qm-eyebrow" data-en="Q-FOUNDRY // INDEPENDENT RESEARCH ENGINE" data-zh="Q-FOUNDRY // 独立研究引擎">Q-FOUNDRY // INDEPENDENT RESEARCH ENGINE</span>
+        <h2 id="qmMethodTitle" data-en="How QF-01 builds a simulation." data-zh="QF-01 如何生成模拟结果。">How QF-01 builds a simulation.</h2>
+        <p data-en="The model scores stocks using completed daily prices, then limits each position and sector. At each historical step, it uses only data available at that time and deducts the configured trading costs. Scores rank the inputs; they are not win probabilities." data-zh="模型用已完成日线为股票评分，再限制单只股票和行业的权重。历史模拟的每一步只使用当时已知的数据，并扣除设定的交易成本。得分用于排序，不代表胜率。">The model scores stocks using completed daily prices, then limits each position and sector. At each historical step, it uses only data available at that time and deducts the configured trading costs. Scores rank the inputs; they are not win probabilities.</p>
+      </div>
+      <div class="qm-stamp" aria-label="Model identity" data-aria-en="Model identity" data-aria-zh="模型身份">
+        <b id="qmVersion">QF-01</b>
+        <span><span data-en="manifest" data-zh="清单">manifest</span> · <i id="qmAsOf">—</i></span>
+        <span><span data-en="source commit" data-zh="源提交">source commit</span> · <i id="qmCommit">—</i></span>
+      </div>
+    </header>
+
+    <div class="qm-pipeline" aria-label="Quant model architecture" data-aria-en="Quant model architecture" data-aria-zh="量化模型架构">
+      <div><span>01</span><b>DATA CONTEXT</b><small data-en="completed sessions" data-zh="已完成交易日">completed sessions</small></div>
+      <div><span>02</span><b>FACTOR LENS</b><small data-en="robust cross-section" data-zh="稳健截面标准化">robust cross-section</small></div>
+      <div><span>03</span><b>RISK REGIME</b><small data-en="trend × volatility" data-zh="趋势 × 波动">trend × volatility</small></div>
+      <div><span>04</span><b>CONSTRAINT GATE</b><small data-en="name × sector caps" data-zh="个股 × 行业上限">name × sector caps</small></div>
+      <div><span>05</span><b>WALK-FORWARD</b><small data-en="costed out-of-sample" data-zh="含成本样本外检验">costed out-of-sample</small></div>
+    </div>
+
+    </details>
     <div class="qm-lower">
       <div class="qm-iterations">
-        <div><b data-en="LOCAL ITERATION TAPE" data-zh="本地迭代磁带">LOCAL ITERATION TAPE</b><span data-en="device-only · newest first" data-zh="仅此设备 · 最新优先">device-only · newest first</span></div>
+        <div><b data-en="Previous local runs" data-zh="本地模拟记录">Previous local runs</b><span data-en="device-only · newest first" data-zh="仅此设备 · 最新优先">device-only · newest first</span></div>
         <ol id="qmIterations"><li class="qm-no-run">—</li></ol>
       </div>
       <details class="qm-provenance">
-        <summary data-en="WHY THIS IS BASED ON GS-QUANT" data-zh="为什么它以 GS-QUANT 为基础">WHY THIS IS BASED ON GS-QUANT</summary>
+        <summary data-en="Model sources and limits" data-zh="模型来源与局限">Model sources and limits</summary>
         <p data-en="The implementation follows the repository's architectural seams, not its proprietary services: an explicit time context, a portfolio as a first-class object, factor and specific-risk diagnostics, then an optimizer gate with position, sector and turnover constraints. Arena replaces Marquee-bound calls with public completed-session data and a transparent local engine." data-zh="实现遵循的是仓库的架构接缝，而非它的专有服务：显式时间上下文、作为一等对象的组合、因子与特异风险诊断，最后通过含个股、行业与换手约束的优化门。Arena 用公开的已完成交易日数据与透明本地引擎，替换依赖 Marquee 的调用。">The implementation follows the repository's architectural seams, not its proprietary services: an explicit time context, a portfolio as a first-class object, factor and specific-risk diagnostics, then an optimizer gate with position, sector and turnover constraints. Arena replaces Marquee-bound calls with public completed-session data and a transparent local engine.</p>
         <div class="qm-source-links">
           <a href="https://github.com/FeidaWang/gs-quant" target="_blank" rel="noopener">FeidaWang/gs-quant ↗</a>
@@ -490,6 +463,22 @@
       </details>
     </div>
   </section>
+
+  <details class="arena-context"><summary data-en="Market session &amp; published news" data-zh="交易时段与已发布新闻">Market session &amp; published news</summary>
+    <p id="arenaFeedStatus" data-en="UNKNOWN · quote snapshots; entitlement and delay unverified" data-zh="未知 · 报价快照；权益与延迟未验证">UNKNOWN · quote snapshots; entitlement and delay unverified</p>
+    <div class="strip">
+      <span class="chip closed" id="statusChip"><span class="d"></span><span id="statusTxt">—</span></span>
+      <span class="chip flat" id="sentChip"><span data-en="NEWS" data-zh="情绪">NEWS</span> · <span id="sentTxt">—</span></span>
+      <span class="chip open" id="adminChip" hidden style="cursor:pointer" title="Clear the quota key; this is not account authentication"><span data-en="QUOTA KEY SET" data-zh="已设置配额密钥">QUOTA KEY SET</span></span>
+    </div>
+    <div class="opencd" id="openCd">
+      <span class="opencd-label" id="cdLabel">US MARKET OPENS IN</span>
+      <span class="opencd-clock" id="cdClock" aria-live="off">--:--:--</span>
+      <span class="opencd-sub" data-en="NYSE core equities · holidays and early closes apply" data-zh="NYSE 常规股票交易时段 · 按节假日与提前收盘日历">NYSE core equities · holidays and early closes apply</span>
+      <span class="opencd-sub" id="sessionTimes">—</span>
+    </div>
+    <button class="btn" id="openBriefBtn" type="button"><span class="brief-cta__tag" data-en="Published" data-zh="已发布">Published</span> <span class="brief-cta__main" data-en="Market briefing" data-zh="市场简报">Market briefing</span><span class="brief-cta__sub"></span></button>
+  </details>
 
   <footer class="foot" data-i18n-html data-en="For entertainment only — not investment advice. Quotes and daily history show provider snapshots when available; missing inputs remain unavailable. Autopilot trades three simulated $10,000 ledgers (S/P/T) under strict risk limits — no real money, no real orders. Public quote snapshots are limited to the published research allowlist." data-zh="仅供娱乐——非投资建议。报价与日线历史在可用时显示供应商快照；缺失输入保持不可用。Autopilot 交易三本各 $10,000 的模拟账本（S/P/T），在严格风控限制下运作——无真实资金，无真实下单。公开报价快照仅覆盖已发布的研究白名单。">For entertainment only — not investment advice. Quotes and daily history show provider snapshots when available; missing inputs remain unavailable. Autopilot trades three simulated $10,000 ledgers (S/P/T) under strict risk limits — no real money, no real orders. Public quote snapshots are limited to the published research allowlist.</footer>
 </main>

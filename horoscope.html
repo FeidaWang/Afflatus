@@ -8,15 +8,15 @@
 <!-- Sensitive input page: third-party analytics intentionally disabled. -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Project Afflatus · Horoscope — 观星台 · Bazi & Astrology</title>
-<meta name="description" content="观星台: a warm, botanical Bazi (Four Pillars) + Western astrology playground — daily fortune from the real sexagenary calendar, local two-person synastry and downloadable result cards. Entertainment only, not divination advice.">
+<title>Astrology for fun — Bazi &amp; Western astrology · AFFLATUS</title>
+<meta name="description" content="Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.">
 <meta name="theme-color" content="#F6EFE3">
 <link rel="canonical" href="https://feida.au/horoscope.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Project Afflatus">
-  <meta property="og:title" content="Project Afflatus · 观星台 Horoscope">
-  <meta property="og:description" content="Daily Bazi + astrology readings and two-person synastry, in warm botanical colors. Entertainment only.">
+  <meta property="og:title" content="Astrology for fun — Bazi &amp; Western astrology · AFFLATUS">
+  <meta property="og:description" content="Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.">
   <meta property="og:url" content="https://feida.au/horoscope.html">
   <meta property="og:locale" content="en_AU">
   <meta property="og:locale:alternate" content="zh_CN">
@@ -27,8 +27,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Botanical celestial chart for Bazi and astrology">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Project Afflatus · 观星台 Horoscope">
-  <meta name="twitter:description" content="Daily Bazi + astrology readings and two-person synastry, in warm botanical colors. Entertainment only.">
+  <meta name="twitter:title" content="Astrology for fun — Bazi &amp; Western astrology · AFFLATUS">
+  <meta name="twitter:description" content="Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.">
   <meta name="twitter:image" content="https://feida.au/assets/og/horoscope-en.jpg">
   <meta name="twitter:image:alt" content="Botanical celestial chart for Bazi and astrology">
   <script type="application/ld+json" data-afflatus-route-schema="horoscope" lang="en-AU">
@@ -69,8 +69,8 @@
       "@type": "WebPage",
       "@id": "https://feida.au/horoscope.html#webpage",
       "url": "https://feida.au/horoscope.html",
-      "name": "Horoscope — Bazi and Astrology · Project Afflatus",
-      "description": "A local-first Bazi and Western astrology playground with daily readings and two-person synastry. For entertainment only.",
+      "name": "Astrology for fun — Bazi & Western astrology · AFFLATUS",
+      "description": "Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.",
       "inLanguage": [
         "en-AU",
         "zh-CN"
@@ -91,8 +91,8 @@
     {
       "@type": "WebApplication",
       "@id": "https://feida.au/horoscope.html#application",
-      "name": "Horoscope — Bazi and Astrology · Project Afflatus",
-      "description": "A local-first Bazi and Western astrology playground with daily readings and two-person synastry. For entertainment only.",
+      "name": "Astrology for fun — Bazi & Western astrology · AFFLATUS",
+      "description": "Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.",
       "url": "https://feida.au/horoscope.html",
       "applicationCategory": "EntertainmentApplication",
       "operatingSystem": "Any",
@@ -158,10 +158,27 @@
 </script>
 <link rel="stylesheet" href="/styles/horoscope.css">
 <link rel="stylesheet" href="/styles/responsive-primitives.css">
-<link rel="stylesheet" href="/styles/afflatus-brand.css">
 <script type="module" src="/src/entry/viewport.js"></script>
+<link rel="stylesheet" href="/styles/horoscope-paper.css">
+<link rel="stylesheet" href="/styles/shared-header.css">
 </head>
 <body class="horoscope-page">
+<!-- shared-header:start -->
+<header id="afflatus-header" data-afflatus-header>
+  <div class="af-header-inner">
+    <a class="af-wordmark" href="/en/" data-header-path="/" aria-label="AFFLATUS home" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="af-brand-art" aria-hidden="true"><span class="af-brand-full">AFFLATUS</span><span class="af-brand-compact"><span class="af-brand-a">A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></span></a>
+    <nav class="af-header-nav" id="af-primary-nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航">
+      <a href="/en/portfolio.html" data-header-path="/portfolio.html" ><span class="af-nav-label" data-en="Work" data-zh="作品">Work</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure aria-expanded="false" aria-controls="af-markets"><span class="af-nav-label" data-en="Markets" data-zh="市场">Markets</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg></button><div class="af-header-dropdown" id="af-markets"><a href="/en/arena.html" data-header-path="/arena.html" ><span class="af-nav-label" data-en="Stock observation" data-zh="股票观察">Stock observation</span></a><a href="/en/sectors.html" data-header-path="/sectors.html" ><span class="af-nav-label" data-en="AI industry" data-zh="AI 产业">AI industry</span></a><a href="/en/signal.html" data-header-path="/signal.html" ><span class="af-nav-label" data-en="Economic updates" data-zh="经济动态">Economic updates</span></a></div></div>
+      <a href="/en/course.html" data-header-path="/course.html" ><span class="af-nav-label" data-en="Learn" data-zh="学习">Learn</span></a>
+      <a href="/zh/serial.html" data-header-path="/serial.html" title="Original stories in Chinese / 原创中文小说"><span class="af-nav-label" data-en="Stories" data-zh="故事">Stories</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure aria-expanded="false" aria-controls="af-more"><span class="af-nav-label" data-en="More" data-zh="更多">More</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg></button><div class="af-header-dropdown" id="af-more"><a href="/en/horoscope.html" data-header-path="/horoscope.html" ><span class="af-nav-label" data-en="Astrology for fun" data-zh="趣味占星">Astrology for fun</span></a><a href="/en/#about" data-header-path="/#about" ><span class="af-nav-label" data-en="About" data-zh="关于">About</span></a></div></div>
+    </nav>
+    <a class="af-header-language" data-header-language href="/zh/" hreflang="zh-CN" aria-label="Switch to Chinese" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">中文</a>
+    <button type="button" class="af-header-menu" data-header-disclosure aria-expanded="false" aria-controls="af-primary-nav"><span class="af-nav-label" data-en="Menu" data-zh="菜单">Menu</span><span aria-hidden="true">☰</span></button>
+  </div>
+</header>
+<!-- shared-header:end -->
 <a class="skip" href="#birthForm" data-en="Skip to the chart form" data-zh="跳到星盘表单">Skip to the chart form</a>
 
 <!-- V21 healing theme: warm cream page with original hand-drawn botanical
@@ -209,24 +226,6 @@
 </div>
 
 <main class="wrap">
-  <header class="hdr site-header--follow">
-    <div class="page-hero">
-      <a class="afflatus-brand" data-afflatus-brand data-brand-persona="horoscope" href="/" aria-label="Afflatus — Home" data-aria-en="Afflatus — Home" data-aria-zh="Afflatus — 返回首页">
-        <span class="afflatus-brand__stage" aria-hidden="true">
-          <span class="afflatus-brand__a">A</span><span class="afflatus-brand__before">ff</span><span class="afflatus-brand__l">l</span><span class="afflatus-brand__after">atus</span><span class="afflatus-brand__signal"></span><span class="afflatus-brand__core"></span>
-        </span>
-        <span class="afflatus-brand__sr">Afflatus</span>
-      </a>
-      <div>
-        <h1>AFFLATUS<br><span data-en="STAR TERRACE" data-zh="观星台">STAR TERRACE</span></h1>
-        <p data-en="Bazi × Astrology · ink & ephemeris" data-zh="八字 × 占星 · 水墨观象">Bazi × Astrology · ink & ephemeris</p>
-      </div>
-    </div>
-    <nav class="nav" aria-label="Primary" data-aria-en="Primary navigation" data-aria-zh="主导航" data-afflatus-nav>
-      <button class="lang-toggle" type="button">中文</button>
-    </nav>
-  </header>
-
   <section class="hero" aria-label="Introduction" data-aria-en="Introduction" data-aria-zh="简介">
     <svg class="hero-sprig" viewBox="0 0 200 120" aria-hidden="true" fill="none">
       <path class="sp-stem" d="M20,110 C60,80 110,60 180,50" stroke-width="2" stroke-linecap="round"/>
@@ -237,25 +236,22 @@
       </g>
       <g class="sp-berry"><circle cx="76" cy="72" r="3"/><circle cx="118" cy="58" r="2.5"/></g>
     </svg>
-    <div class="kicker" data-en="HEAVEN & HUMANITY AS ONE · 天人合一" data-zh="天人合一 · 观象授时">HEAVEN & HUMANITY AS ONE · 天人合一</div>
-    <h2 data-i18n-html data-en="Read the day the sky <b>wrote for you</b>" data-zh="读一读，今天的天象<b>为你写了什么</b>">Read the day the sky <b>wrote for you</b></h2>
-    <p class="sub" data-en="Cast your Four Pillars from the real sexagenary calendar, read a daily fortune drawn from today's actual day-pillar element, and lay two charts side by side to see how they interlock. The daily reading truly changes every day — it follows the calendar, not a random number." data-zh="以真实干支历排出你的四柱，用今日真实日柱的五行生克读一份日运；再把两个人的命盘并置，看地支如何相合相冲。日运每天真实变化——它跟着历法走，不是随机数。">Cast your Four Pillars from the real sexagenary calendar, read a daily fortune drawn from today's actual day-pillar element, and lay two charts side by side to see how they interlock. The daily reading truly changes every day — it follows the calendar, not a random number.</p>
+    <div class="kicker" data-en="A MOMENT UNDER THE STARS" data-zh="观星 · 片刻之间">A MOMENT UNDER THE STARS</div>
+    <h1 data-en="A star chart of your own." data-zh="一张属于你的星图。">A star chart of your own.</h1>
+    <p class="sub" data-en="Explore a playful reading of the sky through Bazi and astrology. Calculated on your device; your birth details stay in this browser." data-zh="用八字与占星，读一份关于天空的趣味解读。只在你的设备上计算，出生资料留在此浏览器。">Explore a playful reading of the sky through Bazi and astrology. Calculated on your device; your birth details stay in this browser.</p>
     <span class="ent-chip" data-en="⚠ ENTERTAINMENT ONLY · NOT ADVICE" data-zh="⚠ 仅供娱乐 · 不构成任何建议">⚠ ENTERTAINMENT ONLY · NOT ADVICE</span>
-    <div class="privacy-clear">
-      <button type="button" class="privacy-clear-btn" id="clearDataBtn" data-en="⌫ Delete this page’s saved data" data-zh="⌫ 删除本页保存的数据">⌫ Delete this page’s saved data</button>
-      <span class="privacy-clear-note" data-en="Deletes this page’s chart, streak, quiz results and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required." data-zh="删除此浏览器中本页的命盘、签到、测试结果和关系册；保留其他偏好及已下载卡片。删除前会再次确认。">Deletes this page’s chart, streak, quiz results and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required.</span>
-      <p id="privacyStatus" class="form-feedback" role="alert" tabindex="-1"></p>
-    </div>
+
   </section>
 
   <!-- ===== birth input ===== -->
-  <section class="sec" aria-label="Birth details" data-aria-en="Birth details" data-aria-zh="出生信息">
+  <section class="sec" id="birthSec" aria-label="Birth details" data-aria-en="Birth details" data-aria-zh="出生信息">
     <div class="sec-label"><span class="zh" data-en="CAST YOUR CHART" data-zh="立　盘">CAST YOUR CHART</span></div>
     <div class="panel">
       <p class="form-intro" data-en="Start with your birth date. Time and location are optional; all calculations stay in your browser." data-zh="先填写出生日期。时辰和地点可不填；全部推算在浏览器本地完成。">Start with your birth date. Time and location are optional; all calculations stay in your browser.</p>
       <form class="form-grid" id="birthForm" aria-describedby="bAssumptions">
         <div class="fld"><label for="bDate" data-en="Birth date" data-zh="出生日期">Birth date</label>
-          <input type="date" id="bDate" aria-describedby="bError" required min="1900-01-01" max="2100-12-31"></div>
+          <input type="date" id="bDate" aria-describedby="bDateHelp bError" required min="1900-01-01" max="2100-12-31"><small id="bDateHelp" data-en="Used to calculate the calendar pillars and sun sign." data-zh="用于计算历法四柱与太阳星座。">Used to calculate the calendar pillars and sun sign.</small></div>
+        <details class="chart-details" id="birthDetails"><summary data-en="Add details" data-zh="补充信息">Add details</summary><p class="form-note" data-en="Optional: time and place refine the chart. Leave the time unknown if you are unsure; the assumptions below explain what can be calculated." data-zh="选填：时辰和地点用于细化星图。不确定时请保留“不知道”；下方会说明计算采用的假设。">Optional: time and place refine the chart. Leave the time unknown if you are unsure; the assumptions below explain what can be calculated.</p><div class="chart-fields">
         <div class="fld"><label for="bHour" data-en="Hour (optional)" data-zh="时辰（可不填）">Hour (optional)</label>
           <select id="bHour" aria-describedby="bAssumptions"><option value="" data-en="Unknown" data-zh="不知道">Unknown</option></select></div>
         <div class="fld"><label for="bGender" data-en="Gender (for luck cycles)" data-zh="性别（排大运用）">Gender (for luck cycles)</label>
@@ -278,9 +274,10 @@
           <div class="fld"><label for="bLon" data-en="Longitude (E+ / W−)" data-zh="经度（东正西负）">Longitude (E+ / W−)</label>
             <input type="number" id="bLon" step="0.01" min="-180" max="180" placeholder="121.47"></div>
         </div>
+        </div></details>
         <p id="bAssumptions" class="form-assumptions" aria-live="polite"></p>
         <p id="bError" class="form-feedback" role="alert" tabindex="-1"></p>
-        <button class="btn" type="submit" data-en="Cast ◈" data-zh="起盘 ◈">Cast ◈</button>
+        <button class="btn" type="submit" data-en="Create my chart ↗" data-zh="生成我的星图 ↗">Create my chart ↗</button>
       </form>
       <p id="bSaveStatus" class="form-note" role="status"></p>
       <p class="form-note" data-en="Birth profiles are saved only in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only." data-zh="出生资料仅保存在此浏览器。页面链接不含出生资料；下载卡片可能包含个人结果。仅供娱乐。">Birth profiles are saved only in this browser. Page links contain no birth details; downloaded cards may contain personal results. Entertainment only.</p>
@@ -288,10 +285,62 @@
     </div>
   </section>
 
+  <details class="privacy-settings"><summary data-en="Saved data & privacy" data-zh="本地数据与隐私">Saved data & privacy</summary>
+    <div class="privacy-clear">
+      <button type="button" class="privacy-clear-btn" id="clearDataBtn" data-en="⌫ Delete this page’s saved data" data-zh="⌫ 删除本页保存的数据">⌫ Delete this page’s saved data</button>
+      <span class="privacy-clear-note" data-en="Deletes this page’s charts, streak and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required." data-zh="删除此浏览器中本页的命盘、签到和关系册；保留其他偏好及已下载卡片。删除前会再次确认。">Deletes this page’s charts, streak and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required.</span>
+      <p id="privacyStatus" class="form-feedback" role="alert" tabindex="-1"></p>
+    </div>
+  </details>
+
   <!-- ===== my chart + daily fortune ===== -->
   <section class="sec" id="mineSec" hidden aria-label="My chart and daily fortune" data-aria-en="My chart and daily fortune" data-aria-zh="我的星盘与每日运势">
     <div class="sec-label"><span class="zh" data-en="TODAY'S READING" data-zh="今日运程">TODAY'S READING</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
+    <div class="horo-dashboard" id="horoDashboard">
+      <div class="horo-profile">
+        <p class="horo-eyebrow" data-en="YOUR PRIVATE CHART" data-zh="你的私人星图">YOUR PRIVATE CHART</p>
+        <h2 data-en="You" data-zh="你">You</h2>
+        <p id="horoProfileSigns"></p>
+      </div>
+      <nav class="horo-tabs" aria-label="Chart views" data-aria-en="Chart views" data-aria-zh="星图视图">
+        <button type="button" data-horo-view="today" aria-current="page" data-en="Updates" data-zh="今日">Updates</button>
+        <button type="button" data-horo-view="chart" data-en="Chart" data-zh="星盘">Chart</button>
+        <button type="button" data-horo-view="saved" data-en="Saved" data-zh="已保存">Saved</button>
+        <button type="button" data-horo-view="settings" data-en="Settings" data-zh="设置">Settings</button>
+      </nav>
+      <section class="horo-daily-view" id="horoDailyView" aria-label="Daily reading" data-aria-en="Daily reading" data-aria-zh="每日解读">
+        <div class="horo-date-strip" id="horoDateStrip" aria-label="Select a day" data-aria-en="Select a day" data-aria-zh="选择日期"></div>
+        <div class="horo-daily-reading" id="horoDailyReading" aria-live="polite"></div>
+        <div class="horo-feedback" id="horoFeedback">
+          <span data-en="WAS THIS USEFUL?" data-zh="这份解读有帮助吗？">WAS THIS USEFUL?</span>
+          <button type="button" data-horo-feedback="yes" aria-pressed="false" data-en="Useful" data-zh="有帮助">Useful</button>
+          <button type="button" data-horo-feedback="no" aria-pressed="false" data-en="Not for me" data-zh="不太合适">Not for me</button>
+        </div>
+        <details class="horo-note">
+          <summary data-en="Write a note to your future self →" data-zh="给未来的自己留句话 →">Write a note to your future self →</summary>
+          <label for="horoNoteText" data-en="A note only you can read on this device" data-zh="这条留言只保存在此设备">A note only you can read on this device</label>
+          <textarea id="horoNoteText" maxlength="500" rows="4"></textarea>
+          <button type="button" class="horo-outline-action" id="horoSaveNote" data-en="Save note" data-zh="保存留言">Save note</button>
+          <p id="horoNoteStatus" role="status"></p>
+        </details>
+      </section>
+      <section class="horo-saved-view" id="horoSavedView" hidden>
+        <p class="horo-eyebrow" data-en="SAVED ON THIS DEVICE" data-zh="仅保存在此设备">SAVED ON THIS DEVICE</p>
+        <h3 data-en="Your chart, close at hand." data-zh="你的星图，随时可看。">Your chart, close at hand.</h3>
+        <p id="horoSavedSummary"></p>
+        <div class="horo-saved-note" id="horoSavedNote"></div>
+        <button type="button" class="horo-outline-action" id="horoSaveCard" data-en="Download chart card ↗" data-zh="下载生辰卡 ↗">Download chart card ↗</button>
+      </section>
+      <section class="horo-settings-view" id="horoSettingsView" hidden>
+        <p class="horo-eyebrow" data-en="PRIVACY & DATA" data-zh="隐私与数据">PRIVACY & DATA</p>
+        <h3 data-en="Your details stay here." data-zh="你的资料留在这里。">Your details stay here.</h3>
+        <p data-en="Calculations run in this browser. Your birth details are never added to the page link." data-zh="计算仅在此浏览器内进行；出生资料不会写入页面链接。">Calculations run in this browser. Your birth details are never added to the page link.</p>
+        <button type="button" class="horo-outline-action" id="horoEditBirth" data-en="Edit birth details" data-zh="修改出生信息">Edit birth details</button>
+        <button type="button" class="horo-outline-action" id="horoDeleteData" data-en="Delete saved chart and results" data-zh="删除保存的星图与结果">Delete saved chart and results</button>
+      </section>
+    </div>
     <div class="panel">
+      <p class="result-framing" data-en="A playful perspective, not a forecast. Scores are entertainment labels, never a measure of personal worth." data-zh="一种趣味视角，不是命运预告。分数只是娱乐标签，不代表个人价值。">A playful perspective, not a forecast. Scores are entertainment labels, never a measure of personal worth.</p>
       <p id="bResultAssumptions" class="form-assumptions"></p>
       <div class="today-head">
         <span class="today-gz" id="todayGz">—</span>
@@ -303,36 +352,6 @@
 
       <div class="pillars" id="pillarRow" style="margin-top:14px"></div>
       <div class="elems" id="elemRow"></div>
-
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="CHART DETAIL · 子平法" data-zh="生辰详批 · 子平法">CHART DETAIL · 子平法</span></div>
-      <div class="bz-wrap" id="bzWrap"></div>
-
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="CHART RANK · 命造评级" data-zh="命造评级">CHART RANK · 命造评级</span></div>
-      <div class="mz-wrap" id="mzWrap"></div>
-
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="LUCK CYCLES · 大运流年" data-zh="大运流年">LUCK CYCLES · 大运流年</span></div>
-      <div class="dy-wrap" id="dyWrap"></div>
-
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="WHO YOU ARE" data-zh="你是谁">WHO YOU ARE</span></div>
-      <div class="l1" id="l1Wrap"></div>
-
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="FIVE DIMENSIONS" data-zh="五维透视">FIVE DIMENSIONS</span></div>
-      <div class="l2" id="l2Wrap"></div>
-
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="PROFESSIONAL CHART" data-zh="专业星盘">PROFESSIONAL CHART</span></div>
-      <div class="l3" id="l3Wrap">
-        <button type="button" class="l3-toggle" id="l3Toggle" aria-expanded="false" aria-controls="l3Body">
-          <span data-en="PRO ▾ wheel + aspects (loads the ephemeris)" data-zh="PRO ▾ 展开专业星盘与相位（加载星历）">PRO ▾ wheel + aspects (loads the ephemeris)</span>
-          <span class="car" aria-hidden="true">▾</span>
-        </button>
-        <div class="l3-body" id="l3Body"></div>
-      </div>
-
-      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="ZIWEI · TWELVE PALACES" data-zh="紫微斗数 · 十二宫">ZIWEI · TWELVE PALACES</span></div>
-      <div class="zw-wrap" id="zwWrap"></div>
-
-      <div class="sec-label" style="margin-top:18px"><span data-en="ZWDS DEEP LAYER" data-zh="紫微斗数 · 深度层">ZWDS DEEP LAYER</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
-      <div class="zwd-wrap" id="zwdWrap"></div>
 
       <div class="overall">
         <div class="oring" aria-hidden="true">
@@ -350,6 +369,39 @@
         <div class="yj yi"><div class="t" data-en="DO" data-zh="宜">DO</div><p id="yiTxt">—</p></div>
         <div class="yj ji"><div class="t" data-en="AVOID" data-zh="忌">AVOID</div><p id="jiTxt">—</p></div>
       </div>
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="YOUR STAR CHART" data-zh="你的星图">YOUR STAR CHART</span></div>
+      <div class="l3" id="l3Wrap">
+        <button type="button" class="l3-toggle" id="l3Toggle" aria-expanded="false" aria-controls="l3Body">
+          <span data-en="Open chart & planetary aspects" data-zh="展开星图与行星相位">Open chart & planetary aspects</span>
+          <span class="car" aria-hidden="true">▾</span>
+        </button>
+        <div class="l3-body" id="l3Body"></div>
+      </div>
+
+      <details class="interpretation-details"><summary data-en="Explore the interpretation" data-zh="展开详细解读">Explore the interpretation</summary>
+      <p class="form-note" data-en="Scores and character descriptions belong to this entertainment system. They do not measure your worth or reliably predict your future." data-zh="分数与性格描述只是本娱乐系统的设定，不衡量个人价值，也不能可靠预测未来。">Scores and character descriptions belong to this entertainment system. They do not measure your worth or reliably predict your future.</p>
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="CHART DETAIL · 子平法" data-zh="生辰详批 · 子平法">CHART DETAIL · 子平法</span></div>
+      <div class="bz-wrap" id="bzWrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="PLAYFUL CHART SCORE" data-zh="趣味命盘评分">PLAYFUL CHART SCORE</span></div>
+      <div class="mz-wrap" id="mzWrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="LUCK CYCLES · 大运流年" data-zh="大运流年">LUCK CYCLES · 大运流年</span></div>
+      <div class="dy-wrap" id="dyWrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="CHARACTER INTERPRETATION" data-zh="性格趣味解读">CHARACTER INTERPRETATION</span></div>
+      <div class="l1" id="l1Wrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="FIVE DIMENSIONS" data-zh="五维透视">FIVE DIMENSIONS</span></div>
+      <div class="l2" id="l2Wrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span class="zh" data-en="ZIWEI · TWELVE PALACES" data-zh="紫微斗数 · 十二宫">ZIWEI · TWELVE PALACES</span></div>
+      <div class="zw-wrap" id="zwWrap"></div>
+
+      <div class="sec-label" style="margin-top:18px"><span data-en="ZWDS DEEP LAYER" data-zh="紫微斗数 · 深度层">ZWDS DEEP LAYER</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
+      <div class="zwd-wrap" id="zwdWrap"></div>
+
+      </details>
       <div class="share-row">
         <button class="btn" type="button" id="cardBtnMine" data-en="Save chart card ⤓" data-zh="保存生辰卡 ⤓">Save chart card ⤓</button>
         <span class="share-tip" data-en="Downloads a PNG in this page's palette — nothing is uploaded." data-zh="生成本页配色的 PNG 图片保存到本机——不会上传任何数据。">Downloads a PNG in this page's palette — nothing is uploaded.</span>
@@ -357,6 +409,7 @@
     </div>
   </section>
 
+  <details class="more-explorations"><summary data-en="More to explore · two charts" data-zh="更多趣味探索 · 合盘">More to explore · two charts</summary>
   <!-- ===== synastry ===== -->
   <section class="sec" id="synSec" aria-label="Two-person synastry" data-aria-en="Two-person synastry" data-aria-zh="双人合盘">
     <div class="sec-label"><span class="zh" data-en="SYNASTRY · TWO CHARTS" data-zh="合　盘">SYNASTRY · TWO CHARTS</span></div>
@@ -467,37 +520,18 @@
     </div>
   </section>
 
-  <!-- ===== sixteen-type quick quiz (V21 Phase 4, expanded) ===== -->
-  <section class="sec" id="personaSec" aria-label="Sixteen-type personality quiz" data-aria-en="Sixteen-type personality quiz" data-aria-zh="十六型人格测试">
-    <div class="sec-label"><span class="zh" data-en="SIXTEEN TYPES · QUICK QUIZ" data-zh="十六型人格速测">SIXTEEN TYPES · QUICK QUIZ</span></div>
-    <div class="panel">
-      <div id="personaWrap"></div>
-      <p class="form-note" data-en="An original 32-question quiz in the public four-axis tradition, with playful compatibility notes. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only." data-zh="按公开的四轴传统自编的 32 题速测，附带娱乐性的合拍/易摩擦提示。与 Myers-Briggs Type Indicator®（Myers & Briggs 基金会商标）及 16personalities 无任何关联。结果只保存在本机。仅供娱乐。">An original 32-question quiz in the public four-axis tradition, with playful compatibility notes. Not affiliated with or endorsed by the Myers-Briggs Type Indicator® (a trademark of The Myers & Briggs Foundation) or 16personalities. Result stays on this device. Entertainment only.</p>
-    </div>
-  </section>
-
-  <!-- ===== logic quiz (IQ-style, entertainment only) ===== -->
-  <section class="sec" id="logicSec" aria-label="Logic puzzle quiz" data-aria-en="Logic puzzle quiz" data-aria-zh="逻辑推理测试">
-    <div class="sec-label"><span class="zh" data-en="LOGIC & PATTERNS · QUICK QUIZ" data-zh="逻辑速测">LOGIC & PATTERNS · QUICK QUIZ</span></div>
-    <div class="panel">
-      <div id="logicWrap"></div>
-      <p class="form-note" data-en="An original 16-question puzzle set (sequences, analogies, odd-one-out, short logic). A fun brain-teaser, not a clinically validated or norm-referenced IQ test — no such claim is made here. Result stays on this device. Entertainment only." data-zh="原创 16 题趣味谜题（数列、类比、找不同、简单逻辑）。是好玩的脑力小测，不是经过临床验证或常模校准的智商测试，本页也不作此宣称。结果只保存在本机。仅供娱乐。">An original 16-question puzzle set (sequences, analogies, odd-one-out, short logic). A fun brain-teaser, not a clinically validated or norm-referenced IQ test — no such claim is made here. Result stays on this device. Entertainment only.</p>
-    </div>
-  </section>
-
-  <!-- ===== EQ scenario quiz (entertainment only) ===== -->
-  <section class="sec" id="eqSec" aria-label="Emotional intelligence scenario quiz" data-aria-en="Emotional intelligence scenario quiz" data-aria-zh="情绪智力情境测试">
-    <div class="sec-label"><span class="zh" data-en="EQ · SCENARIO QUIZ" data-zh="情商速测">EQ · SCENARIO QUIZ</span></div>
-    <div class="panel">
-      <div id="eqWrap"></div>
-      <p class="form-note" data-en="15 original everyday scenarios across five widely-discussed EQ dimensions (self-awareness, self-regulation, motivation, empathy, social skills). A reflective, entertainment-only quiz — not a validated psychometric instrument. Result stays on this device." data-zh="15 道原创生活情境题，覆盖五个常被讨论的情商维度（自我觉察、自我调节、内驱力、共情力、社交技巧）。是一次自我反思的娱乐小测，不是经过验证的心理测评工具。结果只保存在本机。">15 original everyday scenarios across five widely-discussed EQ dimensions (self-awareness, self-regulation, motivation, empathy, social skills). A reflective, entertainment-only quiz — not a validated psychometric instrument. Result stays on this device.</p>
-    </div>
-  </section>
+  </details>
 
   <footer class="foot" data-i18n-html
     data-en="STAR TERRACE · FOR ENTERTAINMENT ONLY — not divination, medical, relationship or financial advice. All calculation runs in your browser; birth profiles stay on this device. Page links contain no birth data; downloaded cards can contain personal results. Solar terms computed from real astronomy, China Standard Time."
     data-zh="观星台 · 仅供娱乐——不构成命理、医疗、情感或财务建议。全部推算在浏览器本地完成；出生资料保留在本机；页面链接不含出生资料，下载的卡片可能包含个人结果。节气按真实天文推算，以北京时间为准。">STAR TERRACE · FOR ENTERTAINMENT ONLY — not divination, medical, relationship or financial advice. All calculation runs in your browser; birth profiles stay on this device. Page links contain no birth data; downloaded cards can contain personal results. Solar terms computed from real astronomy, China Standard Time.</footer>
 </main>
+
+<nav class="horo-bottom-nav" aria-label="Mobile horoscope navigation" data-aria-en="Mobile horoscope navigation" data-aria-zh="观星台手机导航">
+  <a id="horoBottomHome" href="/en/" data-en="Home" data-zh="首页">Home</a>
+  <button type="button" id="horoBottomSyn" data-en="Two charts" data-zh="合盘">Two charts</button>
+  <button type="button" id="horoBottomMine" aria-current="page" data-en="You" data-zh="我的">You</button>
+</nav>
 
 <script type="module" src="/src/pages/horoscopeEntry.js"></script>
 </body>
