@@ -170,11 +170,14 @@ test.describe('frontier', () => {
     await host.locator('[name=metric]').selectOption(missingMetric.id);
     await expect(host.locator('.fc-exclusions')).toContainText('Not retrieved');
     await host.locator('[name=metric]').selectOption('intelligence');
-    const point = host.locator('.fc-point').last();
+    // Phones hide the SVG plot and show tappable paired bars (.fc-mobile-point) for the same observations.
+    const desktopPlot = await host.locator('.fc-desktop-plot').isVisible();
+    const point = host.locator(desktopPlot ? '.fc-point' : '.fc-mobile-point').last();
     const modelId = await point.getAttribute('data-model');
-    await point.focus();
+    if (desktopPlot) await point.focus();
+    else await point.click();
     await expect(host.locator('.fc-dossier h3')).toHaveText(snapshot.models.find(m => m.id === modelId).name);
-    await point.press('Enter');
+    if (desktopPlot) await point.press('Enter');
     const row = host.locator('tr[data-row]').first();
     await row.locator('button').click();
     await expect(host.locator('.fc-dossier h3')).toHaveText(await row.locator('button').textContent());
