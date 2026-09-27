@@ -16,6 +16,8 @@ import { mountSourceWall } from '../sectors/sourceWall.js';
 import { mountGeographyEditorial } from '../sectors/geographyEditorial.js';
 import { mountCompanyGlobe } from '../sectors/industry/globe-view.js';
 import { mountIndustryGraph } from '../sectors/industry/graph-view.js';
+import { mountHeadToHead } from '../sectors/industry/head-to-head-view.js';
+import { mountUsChina } from '../sectors/industry/rivalry-view.js';
 
 let sectorsData = null;
 let destroyed = false;
@@ -27,6 +29,9 @@ let destroyStage = () => {};
 let destroyGlobe = () => {};
 let globeData = null;
 let destroyGraph = () => {};
+let destroyLeaders = () => {};
+let destroyUsChina = () => {};
+let chapterData = null;
 const frontierAbort = new AbortController();
 
 const byId = (id) => document.getElementById(id);
@@ -34,7 +39,7 @@ const byId = (id) => document.getElementById(id);
 // The dot stage needs both the frontier snapshot and the industry dataset; until then its
 // cards render as static text (no data-mode), and on failure they simply stay that way.
 // The company globe reuses the same industry fetch, plus the logo manifest.
-if (byId('sectorsStage') || byId('industryGlobe') || byId('industryGraph')) {
+if (byId('sectorsStage') || byId('usLeaders') || byId('usChina') || byId('industryGlobe') || byId('industryGraph')) {
   Promise.all([
     fetchJson('sectors-frontier-2026-09-27', { signal: frontierAbort.signal }),
     fetchJson('sectors-industry-2026-09-27', { signal: frontierAbort.signal }),
@@ -43,6 +48,9 @@ if (byId('sectorsStage') || byId('industryGlobe') || byId('industryGraph')) {
     .then(([snapshot, industry, manifest]) => {
       if (destroyed) return;
       if (byId('sectorsStage')) destroyStage = mountStage(byId('sectorsStage'), { snapshot, industry });
+      chapterData = { snapshot, industry };
+      destroyLeaders = mountHeadToHead(byId('usLeaders'), { ...chapterData, lang: currentLanguage() });
+      destroyUsChina = mountUsChina(byId('usChina'), { ...chapterData, lang: currentLanguage() });
       globeData = { industry, manifest };
       if (byId('industryGlobe')) destroyGlobe = mountCompanyGlobe(byId('industryGlobe'), { ...globeData, lang: currentLanguage() });
       destroyGraph = mountIndustryGraph(byId('industryGraph'), { ...globeData, lang: currentLanguage() });
@@ -115,6 +123,13 @@ const onLanguage = () => {
   sourceWall?.setLanguage(currentLanguage());
   geography?.setLanguage(currentLanguage());
   taskStory?.setLanguage();
+  if (chapterData) {
+    // Chapters 02–03 render their copy at mount, so a language switch remounts them.
+    destroyLeaders();
+    destroyLeaders = mountHeadToHead(byId('usLeaders'), { ...chapterData, lang: currentLanguage() });
+    destroyUsChina();
+    destroyUsChina = mountUsChina(byId('usChina'), { ...chapterData, lang: currentLanguage() });
+  }
   if (globeData) {
     // The globe renders its copy at mount, so a language switch remounts it.
     destroyGlobe();
@@ -152,6 +167,8 @@ addEventListener('pagehide', (event) => {
   rivalry.destroy();
   destroyStory();
   destroyStage();
+  destroyLeaders();
+  destroyUsChina();
   destroyGlobe();
   destroyGraph();
   destroyChrome();
