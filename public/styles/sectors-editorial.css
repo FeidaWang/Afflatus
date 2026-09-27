@@ -296,7 +296,7 @@ body.sectors-page :is(.frontierEditorialHead > p:last-child, .geographyEditorial
 body.sectors-page .frontierEditorialControls { justify-content: flex-start; gap: 0; margin-bottom: 0; border-bottom: 1px solid var(--line); }
 body.sectors-page .frontierEditorialControls button { border: 0; border-radius: 0; padding: 12px 17px; min-height: 48px; color: var(--ink-soft); font-weight: 500; }
 body.sectors-page .frontierEditorialControls button[aria-pressed=true] { color: var(--ink); background: transparent; box-shadow: inset 0 -2px var(--ink); }
-body.sectors-page .frontierEditorialGrid { border-top: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; padding-top: 28px; }
+body.sectors-page .frontierEditorialGrid { border-top: 0; grid-template-columns: minmax(0, 1fr); gap: 48px; padding-top: 28px; }
 body.sectors-page .frontierEditorialBars { gap: 6px; }
 body.sectors-page .frontierEditorialRow { grid-template-columns: 22px minmax(0, 1fr) 42px; gap: 6px; min-height: 42px; }
 body.sectors-page .editorialLine { min-height: 36px; padding-inline: 12px; }
@@ -310,7 +310,7 @@ body.sectors-page .frontierEditorialDetail h3 { font-size: 34px; line-height: 1.
 body.sectors-page .editorialDetailValue { font-size: 46px; margin-bottom: 20px; letter-spacing: -.04em; }
 body.sectors-page .frontierEditorialDetail p:not(.editorialEyebrow) { font-size: 20px; line-height: 1.5; }
 .editorialChevron, .editorialInlineDetail { display: none; }
-body.sectors-page :is(.frontierEditorialNote, .geographyEditorialNote) { max-width: 640px; margin-top: 28px; color: #73746d; }
+body.sectors-page :is(.frontierEditorialNote, .geographyEditorialNote) { max-width: 640px; margin-top: 28px; color: var(--muted, #626861); }
 body.sectors-page .geographyMapWrap { border: 0; }
 body.sectors-page .geographyComparison { grid-template-columns: 230px minmax(0,1fr); gap: 56px; padding-block: 36px; }
 body.sectors-page .geographyRegionDetail h3 { font: 600 22px/1.3 var(--font); letter-spacing: -.025em; }

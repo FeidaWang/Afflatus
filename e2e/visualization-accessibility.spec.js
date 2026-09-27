@@ -5,20 +5,20 @@ test.describe('visualization semantic and keyboard equivalents', () => {
     test.skip(testInfo.project.name !== 'desktop-chromium', 'The semantic DOM contract runs once in Chromium.');
   });
 
-  test('Sectors canvas has a parallel node control list and keyboard selection', async ({ page }) => {
-    await page.goto('/sectors.html', { waitUntil: 'domcontentloaded' });
+  test('Sectors relationship graph has a parallel company picker and keyboard selection', async ({ page }) => {
+    await page.goto('/sectors.html#industryGraph', { waitUntil: 'domcontentloaded' });
 
-    const canvas = page.locator('#mwGraph');
-    await canvas.scrollIntoViewIfNeeded();
-    await expect(canvas).toBeVisible();
-    await expect(canvas).toHaveAttribute('aria-describedby', /mwGraphSummary/);
-    await expect(page.locator('#mwGraphSummary')).not.toBeEmpty();
-    expect(await page.locator('#mwGraphNodes button').count()).toBeGreaterThan(2);
+    const graph = page.locator('#industryGraph svg.graph');
+    await graph.scrollIntoViewIfNeeded();
+    await expect(graph).toBeVisible();
+    await expect(graph).toHaveAttribute('aria-label', /.+/);
+    expect(await page.locator('#industryGraph select.graph-picker option').count()).toBeGreaterThan(2);
 
-    await canvas.focus();
-    await page.keyboard.press('ArrowRight');
-    await expect(page.locator('#mwGraphNodes button[aria-pressed="true"]')).toHaveCount(1);
-    await expect(page.locator('#mwDetail')).toBeVisible();
+    const node = page.locator('#industryGraph .gnode[data-id="anthropic"]');
+    await node.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#industryGraph .gnode.is-focus')).toHaveCount(1);
+    await expect(page.locator('#industryGraph .graph-ledger li').first()).toBeVisible();
   });
 
   test('Arena equity chart exposes its latest values in text', async ({ page }) => {

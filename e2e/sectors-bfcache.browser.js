@@ -77,7 +77,7 @@ for (const locale of ['en', 'zh']) {
       document.documentElement.dataset.afflatusLocale = 'inline';
       window.AfflatusI18N.set(document.documentElement.lang.startsWith('zh') ? 'en' : 'zh');
     });
-    await expect(host.locator('.fc-header h2')).toContainText(locale === 'en' ? '同一条前沿' : 'One frontier');
+    await expect(host.locator('.fc-meta')).toContainText(locale === 'en' ? '采集于' : 'Retrieved');
     await expect(host.locator('.fc-controls')).toHaveCount(1);
     await expect(host.locator('.fc-static-fallback')).toHaveCount(0);
     await expect(page.locator('#afflatus-header')).toHaveCount(1);

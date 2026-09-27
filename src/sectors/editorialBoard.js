@@ -3,7 +3,6 @@ const METRICS = ['intelligence', 'terminal', 'scicode', 'lcr'];
 export function mountEditorialBoard(root, snapshot, language) {
   if (!root || !snapshot) return { destroy() {}, setLanguage() {} };
   const bars = root.querySelector('#frontierEditorialBars');
-  const detail = root.querySelector('#frontierEditorialDetail');
   const controls = [...root.querySelectorAll('[data-editorial-metric]')];
   const sourceById = new Map(snapshot.sources.map((source) => [source.id, source]));
   let metric = 'intelligence';
@@ -18,7 +17,7 @@ export function mountEditorialBoard(root, snapshot, language) {
 
   const unitFor = (observation) => ({ index_points: translate('index points', '指数分'), percent: '%', rating_points: translate('rating points', '评分点') })[observation.unit] || observation.unit.replaceAll('_', ' ');
 
-  function showDetail(model, observation, target = detail) {
+  function showDetail(model, observation, target) {
     target.replaceChildren();
     if (!model || !observation) return;
     const eyebrow = document.createElement('p');
@@ -89,8 +88,6 @@ export function mountEditorialBoard(root, snapshot, language) {
       inlineDetail.className = 'editorialInlineDetail';
       inlineDetail.hidden = model.id !== expanded;
       showDetail(model, observation, inlineDetail);
-      button.addEventListener('mouseenter', () => { if (matchMedia('(hover: hover)').matches) showDetail(model, observation); });
-      button.addEventListener('focus', () => showDetail(model, observation));
       button.addEventListener('click', () => {
         selected = model.id;
         expanded = expanded === model.id ? null : model.id;
@@ -100,12 +97,9 @@ export function mountEditorialBoard(root, snapshot, language) {
           row.setAttribute('aria-expanded', String(row.dataset.model === expanded));
           row.nextElementSibling.hidden = row.dataset.model !== expanded;
         });
-        showDetail(model, observation);
       });
       bars.append(button, inlineDetail);
     });
-    const active = available.find((item) => item.model.id === selected) || available[0];
-    showDetail(active?.model, active?.observation);
   }
 
   const onClick = (event) => {
@@ -119,6 +113,6 @@ export function mountEditorialBoard(root, snapshot, language) {
   render();
   return {
     setLanguage(next) { lang = next; render(); },
-    destroy() { root.removeEventListener('click', onClick); bars.replaceChildren(); detail.replaceChildren(); },
+    destroy() { root.removeEventListener('click', onClick); bars.replaceChildren(); },
   };
 }

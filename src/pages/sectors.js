@@ -13,7 +13,6 @@ import { initSectorsStoryController } from '../sectors/storyController.js';
 import { mountStage } from '../sectors/stage/stage.js';
 import { mountEditorialBoard } from '../sectors/editorialBoard.js';
 import { mountSourceWall } from '../sectors/sourceWall.js';
-import { mountGeographyEditorial } from '../sectors/geographyEditorial.js';
 import { mountCompanyGlobe } from '../sectors/industry/globe-view.js';
 import { mountIndustryGraph } from '../sectors/industry/graph-view.js';
 import { mountHeadToHead } from '../sectors/industry/head-to-head-view.js';
@@ -25,7 +24,6 @@ let destroyed = false;
 let frontier = null;
 let editorialBoard = null;
 let sourceWall = null;
-let geography = null;
 let destroyStage = () => {};
 let destroyGlobe = () => {};
 let globeData = null;
@@ -67,7 +65,6 @@ if (byId('sectorsFrontier')) {
       if (destroyed) return;
       editorialBoard = mountEditorialBoard(byId('frontierEditorial'), snapshot, currentLanguage());
       sourceWall = mountSourceWall(byId('sourceWall'), snapshot, currentLanguage());
-      geography = mountGeographyEditorial(byId('geographyEditorial'), snapshot, currentLanguage());
       frontier = mountFrontier(byId('sectorsFrontier'), snapshot, {
         language: currentLanguage(),
         ownLanguageToggle: false,
@@ -124,7 +121,6 @@ const onLanguage = () => {
   frontier?.setLanguage(currentLanguage());
   editorialBoard?.setLanguage(currentLanguage());
   sourceWall?.setLanguage(currentLanguage());
-  geography?.setLanguage(currentLanguage());
   taskStory?.setLanguage();
   if (chapterData) {
     // Chapters 02, 03 and 06 render their copy at mount, so a language switch remounts them.
@@ -164,7 +160,6 @@ addEventListener('pagehide', (event) => {
   frontier?.destroy();
   editorialBoard?.destroy();
   sourceWall?.destroy();
-  geography?.destroy();
   taskStory?.destroy();
 
   dataController.destroy();

@@ -49,3 +49,22 @@ describe('stage layouts', () => {
     expect(t.filter((p) => p.alpha === 1 && p.labelAnchor).map((p) => p.label).sort()).toEqual(['Alibaba', 'Broadcom', 'Micron', 'Xiaomi']);
   });
 });
+
+// §2.3 item 2: the geography module's country counts now live on the S1 card.
+import { regionCounts } from '../src/sectors/stage/region-counts.js';
+describe('regionCounts', () => {
+  it('counts scored configurations, open weights and the median index per region', () => {
+    const rows = regionCounts(snapshot);
+    expect(rows.map((r) => r.id)).toEqual(['US', 'CN']);
+    const scored = snapshot.models.filter((m) => m.status === 'reported_snapshot' && snapshot.observations.some((o) =>
+      o.model_id === m.id && o.metric_id === 'intelligence' && o.evidence_status === 'reported_snapshot' && Number.isFinite(o.value)));
+    expect(rows.reduce((n, r) => n + r.count, 0)).toBe(scored.filter((m) => ['US', 'CN'].includes(m.lab_geography)).length);
+    for (const r of rows) expect(r.open).toBe(scored.filter((m) => m.lab_geography === r.id && m.open_weights).length);
+  });
+  it('takes the middle of an even list', () => {
+    const tiny = { models: ['a', 'b'].map((id) => ({ id, status: 'reported_snapshot', lab_geography: 'US', open_weights: false })),
+      observations: [['a', 40], ['b', 50]].map(([model_id, value]) => ({ model_id, value, metric_id: 'intelligence', evidence_status: 'reported_snapshot' })) };
+    expect(regionCounts(tiny)[0]).toMatchObject({ id: 'US', count: 2, open: 0, median: 45 });
+    expect(regionCounts(tiny)[1]).toMatchObject({ id: 'CN', count: 0, median: null });
+  });
+});

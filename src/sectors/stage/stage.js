@@ -4,6 +4,7 @@ import { loadGlobeAsset } from '../../showcase/globeAsset.js';
 import { currentLanguage } from '../content.js';
 import { projectXyz } from './projection.js';
 import { SCENES, GLOBE_LON, buildDots, globeTargets, globeView, sceneTargets, interpolate } from './layouts.js';
+import { regionCounts } from './region-counts.js';
 
 const EXCERPT_MS = 7000;
 
@@ -37,6 +38,18 @@ export function mountStage(host, { snapshot, industry }) {
     showExcerpt(Number(button.dataset.excerptSelect));
   };
   host.addEventListener('click', onSelect);
+
+  // S1 card: per-region counts (numbers only; the labels are bilingual markup).
+  const counts = host.querySelector('.stage-counts');
+  if (counts) {
+    for (const r of regionCounts(snapshot)) {
+      const row = counts.querySelector(`[data-region="${r.id}"]`);
+      row.querySelector('[data-count]').textContent = r.count;
+      row.querySelector('[data-open]').textContent = r.open;
+      row.querySelector('[data-median]').textContent = r.median ?? '—';
+    }
+    counts.hidden = false;
+  }
 
   const dots = buildDots(snapshot);
   const layoutCtx = { dots, snapshot, industry, width: 0, height: 0 };
