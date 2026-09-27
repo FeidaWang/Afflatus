@@ -1,0 +1,93 @@
+.course-page{--hope-paper:#faf9f5;--hope-ink:#191a17;--hope-muted:#686f68;margin:0;background:var(--hope-paper);color:var(--hope-ink);font-family:Arial,Helvetica,sans-serif}
+.course-page [hidden]{display:none!important}
+.course-page #afflatus-header{background:var(--hope-paper);border:0;box-shadow:none}
+.course-page.hope-map-active #afflatus-header{transform:translateY(-100%);pointer-events:none}
+.course-page #afflatus-header .af-wordmark{color:var(--hope-ink)}
+.course-page :is(a,button):focus-visible{outline:2px solid #184f4d;outline-offset:4px}
+.course-page .hope-experience{height:215svh;position:relative;background:var(--hope-paper)}
+.course-page .hope-stage{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--hope-paper);isolation:isolate;--hope-reveal:0;--hope-copy:1}
+.course-page .hope-hero,.course-page .hope-map-section{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box}
+.course-page .hope-hero{z-index:2;display:grid;place-items:center;padding:90px 24px 85px;pointer-events:none}
+.course-page .hope-hero-inner{width:min(100%,940px);text-align:center;margin:auto;transform:translateY(-12px);opacity:var(--hope-copy);pointer-events:auto}
+.course-page .hope-stage.is-map-ready .hope-hero-inner{pointer-events:none}
+.course-page .hope-eyebrow{font:700 10px/1.4 Arial,sans-serif;letter-spacing:.22em;margin:0 0 23px;color:#747a71}
+.course-page .hope-hero h1{font:400 clamp(64px,8.5vw,120px)/.95 Georgia,serif;letter-spacing:-.065em;margin:0 0 43px;white-space:nowrap;opacity:0}
+.course-page .hope-hero h1 span+span{margin-left:.1em}
+.course-page .hope-intro{max-width:680px;margin:0 auto 25px;text-align:left;color:#68716a;font:400 clamp(15px,1.1vw,18px)/1.58 Arial,sans-serif;text-wrap:pretty}
+.course-page .hope-scroll{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);border:1px solid #d6d8cf;border-radius:7px;padding:10px 15px;text-decoration:none;color:#676f67;font:13px Arial,sans-serif;white-space:nowrap;opacity:var(--hope-copy);pointer-events:auto}
+.course-page .hope-scroll:hover{background:#e8eae2}
+.course-page .hope-map-section{z-index:1;opacity:var(--hope-reveal);pointer-events:none}
+.course-page .hope-map-section.is-interactive{pointer-events:auto}
+.course-page .hope-map-window{position:absolute;inset:0;overflow:hidden;cursor:default;touch-action:pan-y}
+.course-page .hope-map-window.is-zoomed{cursor:grab;touch-action:none}
+.course-page .hope-map-window.is-dragging{cursor:grabbing}
+.course-page .hope-map-canvas{position:absolute;left:0;top:0;width:1440px;height:900px;transform-origin:top left;transition:transform .45s cubic-bezier(.22,1,.36,1)}
+.course-page .hope-map-window.is-dragging .hope-map-canvas{transition:none}
+.course-page #hopeLines{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.course-page #hopeLines line{stroke:#3e514a;stroke-width:1;vector-effect:non-scaling-stroke;opacity:.18}
+.course-page .hope-topic{position:absolute;z-index:2;transform:translate(-50%,-50%);width:300px;text-align:center;pointer-events:none}
+.course-page .hope-topic-title{display:block;font:400 27px/1.06 Georgia,serif;letter-spacing:-.045em}
+.course-page .hope-topic-caption{display:block;max-width:250px;margin:9px auto 0;color:#768078;font:13px/1.35 Arial,sans-serif}
+.course-page .hope-node{--drift-x:0px;--drift-y:0px;--tilt:0deg;--book-scale:1;position:absolute;z-index:1;display:block;background-position:center;background-size:cover;border:0;padding:0;cursor:pointer;opacity:1;box-shadow:1px 2px 3px #1f2d2818;transform:translate(calc(-50% + var(--drift-x)),calc(-50% + var(--drift-y))) rotate(var(--tilt)) scale(calc(var(--book-scale) * var(--hope-spread,1)));transition:box-shadow .2s,filter .2s}
+.course-page .hope-node:hover,.course-page .hope-node:focus-visible{--book-scale:1.16;z-index:5;box-shadow:0 12px 28px #1f2d2840;filter:saturate(1.15)}
+.course-page .hope-stage-title{position:absolute;z-index:3;inset:0;pointer-events:none;color:var(--hope-ink);font:400 clamp(64px,8.5vw,120px)/.95 Georgia,serif;letter-spacing:-.065em}
+.course-page .hope-stage-title span{position:absolute;left:0;top:0;white-space:nowrap;will-change:transform;transform-origin:top left}
+.course-page .hope-map-hint{position:absolute;z-index:4;left:3.5vw;bottom:22px;margin:0;padding:10px 14px;border:1px solid #d7dad2;border-radius:6px;background:#faf9f5eb;color:#647067;font:12px Arial,sans-serif}
+.course-page .hope-map-controls{position:absolute;z-index:4;right:3.5vw;bottom:22px;display:flex;align-items:center;gap:7px;color:#647067;font:12px Arial,sans-serif}
+.course-page .hope-map-controls span{margin-right:5px}
+.course-page .hope-map-controls button{width:40px;height:40px;border:1px solid #d7dad2;border-radius:6px;background:#e8ebe3;color:var(--hope-ink);font:22px Arial,sans-serif;cursor:pointer}
+.course-page .hope-map-controls button:hover:not(:disabled){background:#dce4d9}
+.course-page .hope-map-controls button:disabled{opacity:.44;cursor:not-allowed}
+.course-page .footer{min-height:120px;box-sizing:border-box;background:#191a17;color:#faf9f5;display:grid;grid-template-columns:1fr auto;align-items:end;gap:20px;padding:20px 4vw;font:11px Arial,sans-serif;letter-spacing:.11em}
+.course-page .footer a{color:#faf9f5;text-decoration:none}
+@media(max-width:700px){
+  .course-page .hope-hero{padding:72px 22px 76px}
+  .course-page .hope-hero-inner{transform:translateY(-9px)}
+  .course-page .hope-hero h1{font-size:clamp(52px,12vw,78px);white-space:normal;margin-bottom:29px;line-height:1}
+  .course-page .hope-intro{font-size:14px;line-height:1.55}
+  .course-page .hope-scroll{bottom:21px}
+  .course-page .hope-stage-title{font-size:clamp(52px,12vw,78px);line-height:1}
+  .course-page .hope-stage.is-map-ready .hope-stage-title{opacity:0}
+  .course-page .hope-topic{width:270px}
+  .course-page .hope-topic-title{font-size:34px}
+  .course-page .hope-topic-caption{display:none}
+  .course-page .hope-map-hint{bottom:16px;left:16px;max-width:150px;font-size:10px;padding:7px 9px}
+  .course-page .hope-map-controls{right:12px;bottom:12px}
+  .course-page .hope-map-controls button{width:35px;height:35px}
+  .course-page .footer{min-height:180px;grid-template-columns:1fr auto;padding:18px}
+}
+@media(prefers-reduced-motion:reduce){
+  .course-page .hope-experience{height:200svh}
+  .course-page .hope-stage-title span{will-change:auto}
+  .course-page :is(.hope-map-canvas,.hope-node,.hope-primary){transition:none}
+}
+.course-page .hope-eyebrow{display:none}
+.course-page .hope-hero-inner{max-width:900px}
+.course-page .hope-hero h1,.course-page .hope-stage-title{font-family:Georgia,"Songti SC","Noto Serif SC",serif;font-weight:400;letter-spacing:-.065em;font-size:clamp(72px,8.5vw,128px)}
+.course-page .hope-node::after{content:attr(title);position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);width:max-content;max-width:190px;background:#191a17;color:#faf9f5;padding:7px 10px;font:12px/1.4 Arial,sans-serif;border-radius:3px;opacity:0;pointer-events:none}
+.course-page .hope-node:hover::after,.course-page .hope-node:focus-visible::after{opacity:1}
+.course-page .hope-topic-title{font-family:Georgia,"Songti SC","Noto Serif SC",serif}
+@media(max-width:700px){
+ .course-page .hope-hero h1,.course-page .hope-stage-title{font-size:clamp(50px,12vw,78px)}
+ .course-page .hope-intro{max-width:440px;font-size:15px;line-height:1.7}
+ .course-page .hope-node::after{display:none}
+ .course-page .footer{min-height:100px;display:flex;justify-content:space-between;font-size:9px}
+}
+.course-page .hope-primary{display:inline-flex;align-items:center;justify-content:center;background:#191a17;color:#fff;border:0;border-radius:6px;text-decoration:none;font:400 14px/1.2 Arial,sans-serif;padding:13px 18px;transition:background .2s}
+.course-page .hope-primary:hover{background:#41433b}
+
+@media(max-width:700px){.course-page .hope-map-window{bottom:64px}.course-page .hope-topic-title{font-size:30px}}
+
+/* Second edition: quiet paper, engraved covers, deliberate opening choreography. */
+.course-page{--hope-paper:#faf9f6;--hope-muted:#77776f}
+.course-page .hope-experience{height:230svh}
+.course-page .hope-intro{color:#77776f;line-height:1.6;max-width:680px}
+.course-page .hope-topic-caption{color:#7b7c74}
+.course-page #hopeLines line{stroke:#61665c;opacity:.23;stroke-width:.65;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--hope-reveal));}
+.course-page .hope-node{background-color:#eeeadd;box-shadow:0 1px 2px #25292112;transform:translate(calc(-50% + var(--drift-x) + var(--origin-x,0px) * (1 - var(--hope-reveal))),calc(-50% + var(--drift-y) + var(--origin-y,0px) * (1 - var(--hope-reveal)))) rotate(var(--tilt)) scale(calc(var(--book-scale) * var(--hope-spread,1)));opacity:clamp(0,calc(var(--hope-reveal) * 1.4 - var(--arrival) * .3),1)}
+.course-page .hope-node:hover,.course-page .hope-node:focus-visible{--book-scale:1.12;filter:none;box-shadow:2px 6px 12px #25292125}
+.course-page .hope-node::after{font-size:13px;font-weight:400;letter-spacing:0;background:#292c27}
+.course-page .hope-map-hint{background:#faf9f6ed;border-color:#deded7;color:#787b73}
+.course-page .hope-map-controls button{background:#eeeee7;border-color:#deded7}
+.course-page .hope-topic-title{letter-spacing:-.035em;line-height:1.14}
+@media(prefers-reduced-motion:reduce){.course-page .hope-node{--origin-x:0px;--origin-y:0px}.course-page .hope-experience{height:200svh}}

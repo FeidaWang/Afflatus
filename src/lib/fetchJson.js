@@ -30,6 +30,13 @@ const lazyValidator = (load) => {
 };
 
 const validators = {
+  sectorsFrontier: lazyValidator(async () => {
+    const { validateSnapshot } = await import('../sectors/frontier/frontier-core.mjs');
+    return (data) => {
+      const errors = validateSnapshot(data);
+      return { ok: errors.length === 0, errors };
+    };
+  }),
   sectors: lazyValidator(async () => (await import('./validateSectorsData.js')).validateSectorsData),
   sectorsCompetition: lazyValidator(async () => (await import('./validateSectorsCompetition.js')).validateSectorsCompetition),
   sectorsRivalry: lazyValidator(async () => (await import('./validateSectorsRivalry.js')).validateSectorsRivalry),
@@ -51,6 +58,7 @@ const validateHistory = (data) => ({
 });
 
 const STATIC_RESOURCES = Object.freeze({
+  'sectors-frontier-2026-09-23': { url: '/data/sectors-frontier/2026-09-23.json', freshness: 6 * 60 * 60_000, validate: validators.sectorsFrontier },
   sectors: { url: '/sectors-data.json', freshness: 60 * 60_000, validate: validators.sectors },
   'sectors-ecosystem': { url: '/sectors-ecosystem.json?v=4', freshness: 6 * 60 * 60_000, validate: objectWith('updated', 'nodes', 'edges', 'chapters') },
   'sectors-competition': { url: '/sectors-competition.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsCompetition },

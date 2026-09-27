@@ -1,0 +1,283 @@
+{
+  "snapshot_date": "2026-09-23",
+  "relationships": [
+    {
+      "id": "rel-01",
+      "from_entity": "anthropic",
+      "to_entity": "google",
+      "relationship_type": "uses_compute",
+      "effective_or_disclosed_on": "2025-10-23",
+      "status": "disclosed_use",
+      "source_ids": [
+        "ANT-COMPUTE"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Google TPU capacity use was disclosed; this does not quantify installed capacity today.",
+      "note_zh": "已披露使用 Google TPU 算力；不代表当前已安装产能。"
+    },
+    {
+      "id": "rel-02",
+      "from_entity": "anthropic",
+      "to_entity": "amazon",
+      "relationship_type": "uses_compute",
+      "effective_or_disclosed_on": "2025-10-23",
+      "status": "disclosed_use",
+      "source_ids": [
+        "ANT-COMPUTE"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Amazon Trainium use was disclosed; do not infer an exclusive supplier.",
+      "note_zh": "已披露使用 Amazon Trainium；不能据此推断独家供应。"
+    },
+    {
+      "id": "rel-03",
+      "from_entity": "anthropic",
+      "to_entity": "nvidia",
+      "relationship_type": "uses_compute",
+      "effective_or_disclosed_on": "2025-10-23",
+      "status": "disclosed_use",
+      "source_ids": [
+        "ANT-COMPUTE"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "NVIDIA GPUs are included in the disclosed compute mix.",
+      "note_zh": "NVIDIA GPU 属于已披露的算力组合。"
+    },
+    {
+      "id": "rel-04",
+      "from_entity": "openai",
+      "to_entity": "microsoft",
+      "relationship_type": "platform_partnership",
+      "effective_or_disclosed_on": "2026-02-27",
+      "status": "agreement_update",
+      "source_ids": [
+        "OAI-MSFT"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "The companies published a partnership update; terms and scope should be date-stamped.",
+      "note_zh": "双方发布了合作更新；条款与范围须按日期阅读。"
+    },
+    {
+      "id": "rel-05",
+      "from_entity": "openai",
+      "to_entity": "broadcom",
+      "relationship_type": "chip_codesign",
+      "effective_or_disclosed_on": "2026-06-24",
+      "status": "announced_with_samples",
+      "source_ids": [
+        "OAI-AVGO"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Jalapeno co-design; first deployment planned by end-2026, not verified commercial capacity.",
+      "note_zh": "Jalapeno 联合设计，计划于 2026 年底首次部署；商业产能尚未核验。"
+    },
+    {
+      "id": "rel-06",
+      "from_entity": "openai",
+      "to_entity": "celestica",
+      "relationship_type": "systems_integration",
+      "effective_or_disclosed_on": "2026-06-24",
+      "status": "announced_partnership",
+      "source_ids": [
+        "OAI-AVGO"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Board, rack and system integration role in the announced chip platform.",
+      "note_zh": "在已宣布的芯片平台中承担板卡、机架及系统集成工作。"
+    },
+    {
+      "id": "rel-07",
+      "from_entity": "micron",
+      "to_entity": "anthropic",
+      "relationship_type": "memory_storage_supply",
+      "effective_or_disclosed_on": "2026-06-22",
+      "status": "announced_supply_agreement",
+      "source_ids": [
+        "MU-ANT"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Memory and storage agreement; no contract value or delivery volume supplied here.",
+      "note_zh": "内存与存储协议；未提供合同金额或交付数量。"
+    },
+    {
+      "id": "rel-08",
+      "from_entity": "micron",
+      "to_entity": "anthropic",
+      "relationship_type": "equity_investment",
+      "effective_or_disclosed_on": "2026-06-22",
+      "status": "disclosed_investment",
+      "source_ids": [
+        "MU-ANT"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Investment disclosure is separate from a supply relationship; stake size is unknown here.",
+      "note_zh": "投资披露与供应关系分别记录；持股比例未知。"
+    },
+    {
+      "id": "rel-09",
+      "from_entity": "anthropic",
+      "to_entity": "micron",
+      "relationship_type": "enterprise_model_use",
+      "effective_or_disclosed_on": "2026-06-22",
+      "status": "disclosed_customer_use",
+      "source_ids": [
+        "MU-ANT"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Micron reports using Claude internally; not an independently measured productivity result.",
+      "note_zh": "Micron 披露内部使用 Claude；不代表独立测量的生产率提升。"
+    },
+    {
+      "id": "rel-10",
+      "from_entity": "micron",
+      "to_entity": "nvidia",
+      "relationship_type": "memory_platform_support",
+      "effective_or_disclosed_on": "2026-03-16",
+      "status": "vendor_reported_volume_production",
+      "source_ids": [
+        "MU-HBM"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "HBM4 and related memory products designed for Vera Rubin; no lab-level revenue attribution.",
+      "note_zh": "面向 Vera Rubin 的 HBM4 等内存产品；无法据此归属实验室收入。"
+    },
+    {
+      "id": "rel-11",
+      "from_entity": "alibaba",
+      "to_entity": "qwen",
+      "relationship_type": "model_developer",
+      "effective_or_disclosed_on": "2026-09-23",
+      "status": "evaluator_and_company_identification",
+      "source_ids": [
+        "AA-QWEN27"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Parent/company relationship is not a measure of Qwen attributable profit.",
+      "note_zh": "母公司与模型的关系，不代表 Qwen 可归属利润。"
+    },
+    {
+      "id": "rel-12",
+      "from_entity": "xiaomi",
+      "to_entity": "mimo",
+      "relationship_type": "model_developer",
+      "effective_or_disclosed_on": "2026-09-23",
+      "status": "provider_identification",
+      "source_ids": [
+        "XIAOMI-MIMO"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "The model belongs in Xiaomi capability research; do not value the full issuer by one benchmark.",
+      "note_zh": "模型属于 Xiaomi 能力研究范围；不能用一个基准为整个公司估值。"
+    }
+  ],
+  "sources": [
+    {
+      "id": "AA-QWEN27",
+      "title": "Qwen3.8 27B xhigh",
+      "url": "https://artificialanalysis.ai/models/qwen3-8-27b",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "XIAOMI-MIMO",
+      "title": "Xiaomi MiMo V2.6 Pro specifications",
+      "url": "https://mimo.mi.com/models/zh-CN/mimo-v2.6-pro",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "provider_claim",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Use the standard endpoint, not UltraSpeed. Modalities are declared support, not measured multimodal quality."
+    },
+    {
+      "id": "ANT-COMPUTE",
+      "title": "Anthropic compute platform disclosure",
+      "url": "https://www.anthropic.com/news/expanding-our-use-of-google-cloud-tpus-and-services",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2025-10-23",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Historical disclosure of Google TPU, Amazon Trainium and NVIDIA GPU use, not a current installed-capacity census."
+    },
+    {
+      "id": "OAI-MSFT",
+      "title": "OpenAI and Microsoft relationship update",
+      "url": "https://openai.com/index/continuing-microsoft-partnership/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-02-27",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "OAI-AVGO",
+      "title": "OpenAI and Broadcom Jalapeno announcement",
+      "url": "https://openai.com/index/openai-broadcom-jalapeno-inference-chip/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-06-24",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Initial deployment planned by end-2026. Engineering samples are not deployed commercial capacity."
+    },
+    {
+      "id": "MU-ANT",
+      "title": "Micron and Anthropic strategic agreement",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-and-Anthropic-Announce-Strategic-Agreement-to-Scale-Next-Generation-AI-Infrastructure/default.aspx",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-06-22",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "MU-HBM",
+      "title": "Micron HBM4 volume-production disclosure",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-in-High-Volume-Production-of-HBM4-Designed-for-NVIDIA-Vera-Rubin-PCIe-Gen6-SSD-and-SOCAMM2-03-16-2026/default.aspx",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-03-16",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    }
+  ]
+}

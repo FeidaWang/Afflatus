@@ -122,6 +122,7 @@ function roundedRect(ctx, x, y, width, height, radius) {
  *   summaryElement?:HTMLElement|null,
  *   tooltipElement?:HTMLElement|null,
  *   storyHost?:HTMLElement|null,
+ *   theme?:'paper'|'dark',
  *   progressElement?:HTMLElement|null
  * }} [opts]
  */
@@ -129,6 +130,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return { update() {}, destroy() {} };
 
+  const paper = opts.theme === 'paper';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const onSelect = typeof opts.onSelect === 'function' ? opts.onSelect : () => {};
   const labelFor = typeof opts.labelFor === 'function' ? opts.labelFor : (node) => node.label;
@@ -454,10 +456,12 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
   /** Bloc tint used for the plate ring and glow. Kind colour still drives the
    *  logo plate itself, so relationship type and geopolitics stay separable. */
   function blocColor(node) {
+    if (paper) return ({ US: '#809e4c', CN: '#789bbc' })[node.bloc] || '#8c927b';
     return BLOC_COLOR[node.bloc] || BLOC_COLOR.neutral;
   }
 
   function edgeColor(link) {
+    if (paper) return '#77856a';
     return EDGE_COLOR[link.type] || EDGE_COLOR[link.kind] || '#78D8FF';
   }
 
@@ -514,7 +518,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     const seed = Array.from(String(link.id || `${link.source}:${link.target}`))
       .reduce((sum, char) => sum + char.charCodeAt(0), 0);
     const sign = seed % 2 ? 1 : -1;
-    const bend = Math.min(44, Math.hypot(bx - ax, by - ay) * 0.11) * sign;
+    const bend = link.semantic ? link.semanticBend : Math.min(44, Math.hypot(bx - ax, by - ay) * 0.11) * sign;
     const dx = bx - ax;
     const dy = by - ay;
     const length = Math.max(1, Math.hypot(dx, dy));
@@ -617,7 +621,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       ctx.lineWidth = 1;
       ctx.globalAlpha = amount;
       ctx.shadowColor = rgba(blocColor(node), 0.8);
-      ctx.shadowBlur = 22;
+      ctx.shadowBlur = paper ? 0 : 22;
       ctx.stroke();
       ctx.shadowBlur = 0;
     }
@@ -627,7 +631,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     ctx.save();
     ctx.globalAlpha = amount * dim;
     ctx.shadowColor = rgba(bloc, focus ? 0.7 : 0.4);
-    ctx.shadowBlur = focus ? 26 : 16;
+    ctx.shadowBlur = paper ? 0 : (focus ? 26 : 16);
     roundedRect(ctx, x - width / 2, y - height / 2, width, height, 13);
     ctx.fillStyle = node.logo_bg || 'rgba(249,250,247,.96)';
     ctx.fill();
@@ -649,12 +653,12 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       const badgeX = x + width / 2 - badgeWidth * 0.72;
       const badgeY = y - height / 2 - 8;
       roundedRect(ctx, badgeX, badgeY, badgeWidth, 18, 9);
-      ctx.fillStyle = 'rgba(9,11,17,.94)';
+      ctx.fillStyle = paper ? '#faf9f5' : 'rgba(9,11,17,.94)';
       ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,.22)';
+      ctx.strokeStyle = paper ? '#bfc3b5' : 'rgba(255,255,255,.22)';
       ctx.lineWidth = 1;
       ctx.stroke();
-      ctx.fillStyle = '#F7F8FC';
+      ctx.fillStyle = paper ? '#292e24' : '#F7F8FC';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(badge, badgeX + badgeWidth / 2, badgeY + 9.4);
@@ -665,8 +669,8 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     ctx.globalAlpha = amount * dim;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
-    ctx.font = `${node.kind === 'model' ? 720 : 660} ${isMobile() ? 9.5 : 10.5}px "PP Fraktion Mono","IBM Plex Mono",monospace`;
-    ctx.fillStyle = focus ? '#FFFFFF' : 'rgba(241,244,252,.86)';
+    ctx.font = paper ? `500 ${isMobile() ? 11 : 12}px system-ui,sans-serif` : `${node.kind === 'model' ? 720 : 660} ${isMobile() ? 9.5 : 10.5}px "PP Fraktion Mono","IBM Plex Mono",monospace`;
+    ctx.fillStyle = paper ? '#33392d' : (focus ? '#FFFFFF' : 'rgba(241,244,252,.86)');
     ctx.fillText(labelFor(node), x, y + height / 2 + 17);
     ctx.restore();
   }
@@ -698,7 +702,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     ctx.clearRect(0, 0, W, H);
     const focusNode = dragging ? dragNode : (hoverNode || activeNode);
 
-    for (const dot of ambientDots) {
+    for (const dot of paper ? [] : ambientDots) {
       const pulse = reduce ? 0.22 : 0.18 + Math.sin(time * 0.28 + dot.phase) * 0.07;
       ctx.beginPath();
       ctx.arc(dot.x * W, dot.y * H, dot.r, 0, Math.PI * 2);
@@ -708,7 +712,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
 
     // The divide is the first thing to appear: act 1 draws it into an empty field
     // before any node ignites, so the geography is established before the actors.
-    drawMeridian(sim.mode === 'ecosystem' ? smoothstep(0.02, 0.16, storyProgress) : 0);
+    if (!opts.semanticOnly) drawMeridian(sim.mode === 'ecosystem' ? smoothstep(0.02, 0.16, storyProgress) : 0);
 
     for (const link of sim.links) {
       if (link.kind === 'pole' || link.kind === 'anchor') continue;
@@ -729,13 +733,24 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
       ctx.beginPath();
       ctx.moveTo(ax, ay);
       ctx.quadraticCurveTo(cx, cy, bx, by);
-      ctx.strokeStyle = edgeStroke(link, a, b, ax, ay, bx, by);
-      ctx.lineWidth = (connected && focusNode ? 1.9 : 0.85) + (link.weight || 0.5) * 0.95;
+      ctx.strokeStyle = link.semantic ? rgba(edgeColor(link), 0.82) : edgeStroke(link, a, b, ax, ay, bx, by);
+      ctx.lineWidth = link.semantic ? 1.5 : (connected && focusNode ? 1.9 : 0.85) + (link.weight || 0.5) * 0.95;
       ctx.shadowColor = rgba(color, connected ? 0.58 : 0.18);
-      ctx.shadowBlur = connected ? 10 : 3;
+      ctx.shadowBlur = paper ? 0 : (connected ? 10 : 3);
       ctx.stroke();
+      if (link.semantic) {
+        const position = 0.5;
+        const [lx, ly] = quadPoint(ax, ay, cx, cy, bx, by, position);
+        ctx.shadowBlur = 0;
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = paper ? '#eae9e1' : '#090d12';
+        ctx.fillRect(lx - 21, ly - 9, 42, 18);
+        ctx.fillStyle = paper ? '#33392d' : '#edeae3';
+        ctx.fillText(link.id, lx, ly + 4);
+      }
 
-      if (!reduce && amount > 0.7) {
+      if (!reduce && !link.semantic && amount > 0.7) {
         const packetCount = renderPolicy.qualityTier === 'low' ? 1 : 2;
         for (let packet = 0; packet < packetCount; packet++) {
           const progress = (time * (0.1 + (link.weight || 0.5) * 0.04) + packet / packetCount + link.a * 0.13) % 1;
@@ -1031,6 +1046,14 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
   resizeObserver?.observe(canvas);
 
   return {
+    resetFocus() {
+      activeNode = null;
+      hoverNode = null;
+      goHome();
+      cam.x = cam.tx; cam.y = cam.ty;
+      updateSemanticState();
+      draw(lastTime);
+    },
     update(data) {
       sim = buildSim(data || {});
       keyboardIndex = 0;

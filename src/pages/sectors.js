@@ -1,16 +1,49 @@
+import { mountTaskStory } from '../sectors/frontier/task-story.js';
+import { renderAtlas } from '../sectors/atlas.js';
+import { fetchJson } from '../lib/fetchJson.js';
+import { mountFrontier } from '../sectors/frontier/frontier-view.mjs';
 import { renderRelationshipReader } from '../sectors/relationshipReader.js';
 import '../lib/readingNavigation.ts';
 import './sectorsLibs.js';
-import { currentLanguage, emptyMessage } from '../sectors/content.js';
+import { currentLanguage } from '../sectors/content.js';
 import { createSectorsDataController } from '../sectors/dataController.js';
 import { initSectorsPageChrome } from '../sectors/pageChromeController.js';
 import { initSectorsRivalryController } from '../sectors/rivalryController.js';
 import { initSectorsStoryController } from '../sectors/storyController.js';
+import { mountSectorsEarth } from '../sectors/earthIntro.js';
+import { mountEditorialBoard } from '../sectors/editorialBoard.js';
+import { mountSourceWall } from '../sectors/sourceWall.js';
+import { mountGeographyEditorial } from '../sectors/geographyEditorial.js';
 
 let sectorsData = null;
 let destroyed = false;
+let frontier = null;
+let editorialBoard = null;
+let sourceWall = null;
+let geography = null;
+const frontierAbort = new AbortController();
 
 const byId = (id) => document.getElementById(id);
+const destroyEarth = mountSectorsEarth(byId('sectorsEarth'));
+
+if (byId('sectorsFrontier')) {
+  fetchJson('sectors-frontier-2026-09-23', { signal: frontierAbort.signal })
+    .then((snapshot) => {
+      if (destroyed) return;
+      editorialBoard = mountEditorialBoard(byId('frontierEditorial'), snapshot, currentLanguage());
+      sourceWall = mountSourceWall(byId('sourceWall'), snapshot, currentLanguage());
+      geography = mountGeographyEditorial(byId('geographyEditorial'), snapshot, currentLanguage());
+      frontier = mountFrontier(byId('sectorsFrontier'), snapshot, {
+        language: currentLanguage(),
+        ownLanguageToggle: false,
+      });
+    })
+    .catch(() => {
+      // The generated, bilingual source table remains readable on failure.
+    });
+}
+
+const taskStory = byId('frontierTaskStory') ? mountTaskStory(byId('frontierTaskStory')) : null;
 
 const dataController = createSectorsDataController();
 const destroyChrome = initSectorsPageChrome();
@@ -27,116 +60,46 @@ const rivalry = initSectorsRivalryController({
   sources: byId('rivalrySources'),
 });
 
-let graphObserver = null;
-let graph = null;
-let graphTask = null;
-
-async function loadGraphController() {
-  if (destroyed) return null;
-  if (!graphTask) {
-    graphTask = Promise.all([
-      import('../sectors/detailController.js'),
-      import('../sectors/graphController.js'),
-    ]).then(([detailModule, graphModule]) => {
-      const detail = detailModule.createDetailController({
-        getData: () => sectorsData,
-        getLanguage: currentLanguage,
-        host: byId('mwDetail'),
-      });
-      const controller = graphModule.createSectorsGraphController({
-        canvas: byId('mwGraph'),
-        controls: byId('mwGraphNodes'),
-        summary: byId('mwGraphSummary'),
-        progress: byId('mwStoryProgress'),
-        tooltip: byId('mwHover'),
-        detail: byId('mwDetail'),
-        empty: byId('mwEmpty'),
-        story: byId('storyGraphSection'),
-      }, {
-        getData: () => sectorsData,
-        detailController: detail,
-      });
-      if (destroyed) {
-        controller.destroy();
-        return null;
-      }
-      graph = controller;
-      return controller;
-    });
-  }
-  return graphTask;
-}
-
-async function renderGraph() {
-  try {
-    const controller = await loadGraphController();
-    await controller?.render();
-  } catch {
-    const canvas = byId('mwGraph');
-    const empty = byId('mwEmpty');
-    if (canvas) canvas.hidden = true;
-    if (empty) {
-      empty.hidden = false;
-      empty.textContent = emptyMessage(currentLanguage());
-    }
-  }
-}
-
-function scheduleGraph() {
-  const story = byId('storyGraphSection');
-  const requests3D = new URLSearchParams(location.search).get('fx') === 'starfield3d';
-  if (requests3D || !story || typeof IntersectionObserver !== 'function') {
-    void renderGraph();
-    return;
-  }
-  graphObserver = new IntersectionObserver((entries) => {
-    if (!entries.some((entry) => entry.isIntersecting)) return;
-    graphObserver.disconnect();
-    graphObserver = null;
-    void renderGraph();
-  }, { rootMargin: '900px 0px' });
-  graphObserver.observe(story);
-}
-
 function renderFailure() {
+  taskStory?.setData(null);
   renderRelationshipReader(null);
-  const message = emptyMessage(currentLanguage());
-  const graphCanvas = byId('mwGraph');
-  const graphEmpty = byId('mwEmpty');
-  if (graphCanvas) graphCanvas.hidden = true;
-  if (graphEmpty) {
-    graphEmpty.hidden = false;
-    graphEmpty.textContent = message;
-  }
+  renderAtlas(null);
+
 }
 
 dataController.load()
   .then((data) => {
     if (destroyed) return;
     sectorsData = data;
+    taskStory?.setData(data);
     renderRelationshipReader(data);
     const asOf = byId('mwAsOf');
     if (asOf) {
       asOf.textContent = currentLanguage() === 'zh'
-        ? `关系数据快照 · ${data.as_of || data.updated || ''}`
-        : `Relationship data snapshot · ${data.as_of || data.updated || ''}`;
+        ? `关系数据快照 · ${data.ecosystemGraph?.updated || data.as_of || data.updated || ''}`
+        : `Relationship data snapshot · ${data.ecosystemGraph?.updated || data.as_of || data.updated || ''}`;
     }
-    scheduleGraph();
+    renderAtlas(data);
   })
   .catch((error) => {
     if (error?.name !== 'AbortError') renderFailure();
   });
 
 const onLanguage = () => {
+  frontier?.setLanguage(currentLanguage());
+  editorialBoard?.setLanguage(currentLanguage());
+  sourceWall?.setLanguage(currentLanguage());
+  geography?.setLanguage(currentLanguage());
+  taskStory?.setLanguage();
   if (!sectorsData) return;
   renderRelationshipReader(sectorsData);
   const asOf = byId('mwAsOf');
   if (asOf) {
     asOf.textContent = currentLanguage() === 'zh'
-      ? `关系数据快照 · ${sectorsData.as_of || sectorsData.updated || ''}`
-      : `Relationship data snapshot · ${sectorsData.as_of || sectorsData.updated || ''}`;
+      ? `关系数据快照 · ${sectorsData.ecosystemGraph?.updated || sectorsData.as_of || sectorsData.updated || ''}`
+      : `Relationship data snapshot · ${sectorsData.ecosystemGraph?.updated || sectorsData.as_of || sectorsData.updated || ''}`;
   }
-  graph?.refreshLanguage();
+  renderAtlas(sectorsData);
 };
 addEventListener('afflatus-lang', onLanguage);
 
@@ -146,11 +109,18 @@ addEventListener('pagehide', (event) => {
   // keep the controllers reusable so returning to Sectors restores the page.
   if (event.persisted) return;
   destroyed = true;
-  graphObserver?.disconnect();
+  frontierAbort.abort();
+  frontier?.destroy();
+  editorialBoard?.destroy();
+  sourceWall?.destroy();
+  geography?.destroy();
+  taskStory?.destroy();
+
   dataController.destroy();
-  graph?.destroy();
+
   rivalry.destroy();
   destroyStory();
+  destroyEarth();
   destroyChrome();
   removeEventListener('afflatus-lang', onLanguage);
 });

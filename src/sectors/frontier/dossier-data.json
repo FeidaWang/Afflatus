@@ -1,0 +1,652 @@
+{
+  "reviewed_on": "2026-09-23",
+  "issuers": [
+    {
+      "id": "broadcom",
+      "name": {
+        "en": "Broadcom",
+        "zh": "博通"
+      },
+      "instruments": [
+        {
+          "exchange": "NASDAQ",
+          "symbol": "AVGO",
+          "currency": "USD",
+          "kind": {
+            "en": "Listed equity",
+            "zh": "上市股权"
+          }
+        }
+      ],
+      "source_ids": [
+        "OAI-AVGO"
+      ],
+      "role": {
+        "en": "Silicon implementation and networking for OpenAI’s announced inference platform.",
+        "zh": "为 OpenAI 宣布的推理平台提供芯片实现与网络技术。"
+      },
+      "watch": {
+        "en": "Deployment, customer concentration and cash conversion.",
+        "zh": "部署进度、客户集中度及现金转化。"
+      },
+      "risk": {
+        "en": "Execution delays and concentration may offset demand.",
+        "zh": "执行延期与客户集中风险可能抵消需求增长。"
+      },
+      "scope": "issuer_instrument_identity_confirmed; not a trading recommendation",
+      "legal_name": "Broadcom Inc.",
+      "roles": [
+        "supplier"
+      ],
+      "status": {
+        "en": "Engineering samples disclosed; initial deployment planned by end-2026. Delivery is not verified here.",
+        "zh": "已披露工程样片；计划于 2026 年底前初步部署。这里未核实实际交付。"
+      },
+      "materiality": {
+        "en": "Unknown: no attributable contract value or model profit is established in this dossier.",
+        "zh": "未知：本档案未确认可归属的合同价值或模型利润。"
+      },
+      "thesis_ids": [
+        "T04",
+        "T05",
+        "T08"
+      ]
+    },
+    {
+      "id": "micron",
+      "name": {
+        "en": "Micron Technology",
+        "zh": "美光"
+      },
+      "instruments": [
+        {
+          "exchange": "NASDAQ",
+          "symbol": "MU",
+          "currency": "USD",
+          "kind": {
+            "en": "Listed equity",
+            "zh": "上市股权"
+          }
+        }
+      ],
+      "source_ids": [
+        "MU-ANT",
+        "MU-HBM"
+      ],
+      "role": {
+        "en": "Memory supply to Anthropic, investment in Anthropic and internal Claude use are separate relationships.",
+        "zh": "向 Anthropic 供应存储、投资 Anthropic 及内部使用 Claude 是三种独立关系。"
+      },
+      "watch": {
+        "en": "Shipment mix, pricing, supply expansion and measured internal productivity.",
+        "zh": "出货组合、定价、供给扩张与实测内部生产率。"
+      },
+      "risk": {
+        "en": "Memory cycles and design changes can offset volume growth.",
+        "zh": "存储周期与设计变化可能抵消出货增长。"
+      },
+      "scope": "issuer_instrument_identity_confirmed; not a trading recommendation",
+      "legal_name": "Micron Technology, Inc.",
+      "roles": [
+        "supplier",
+        "investor",
+        "customer"
+      ],
+      "status": {
+        "en": "Supply agreement and investment disclosed; HBM4 volume shipments reported separately for NVIDIA Vera Rubin.",
+        "zh": "已披露供应协议及投资；另行报告面向 NVIDIA Vera Rubin 的 HBM4 批量出货。"
+      },
+      "materiality": {
+        "en": "Unknown: no attributable contract value or model profit is established in this dossier.",
+        "zh": "未知：本档案未确认可归属的合同价值或模型利润。"
+      },
+      "thesis_ids": [
+        "T04",
+        "T06",
+        "T08"
+      ]
+    },
+    {
+      "id": "alibaba",
+      "name": {
+        "en": "Alibaba Group",
+        "zh": "阿里巴巴"
+      },
+      "instruments": [
+        {
+          "exchange": "NYSE",
+          "symbol": "BABA",
+          "currency": "USD",
+          "kind": {
+            "en": "ADS · 1 ADS represents 8 ordinary shares",
+            "zh": "美国存托股 · 1 ADS 代表 8 股普通股"
+          }
+        },
+        {
+          "exchange": "HKEX",
+          "symbol": "9988",
+          "currency": "HKD",
+          "kind": {
+            "en": "Ordinary shares · currency counter",
+            "zh": "普通股 · 币种柜台"
+          }
+        },
+        {
+          "exchange": "HKEX",
+          "symbol": "89988",
+          "currency": "CNY",
+          "kind": {
+            "en": "Ordinary shares · currency counter",
+            "zh": "普通股 · 币种柜台"
+          }
+        }
+      ],
+      "source_ids": [
+        "BABA-CAPITAL",
+        "BABA-RESULTS",
+        "BABA-FAQ"
+      ],
+      "role": {
+        "en": "Qwen development, cloud services and commerce distribution belong to one diversified issuer.",
+        "zh": "Qwen 研发、云服务及商业分发属于同一多元化发行人。"
+      },
+      "watch": {
+        "en": "Paid cloud use, capital intensity and attributable model economics.",
+        "zh": "付费云使用、资本密集度与模型可归属经济收益。"
+      },
+      "risk": {
+        "en": "Adoption can grow without material model-level profit.",
+        "zh": "采用增长不一定带来显著的模型利润。"
+      },
+      "scope": "one issuer with multiple instruments; do not triple-count exposure",
+      "legal_name": "Alibaba Group Holding Limited",
+      "roles": [
+        "developer",
+        "supplier"
+      ],
+      "status": {
+        "en": "Company identifies Qwen and reports cloud operations; capital deployment plans are not completed capacity.",
+        "zh": "公司披露 Qwen 与云业务；资本投入计划不等于已建成产能。"
+      },
+      "materiality": {
+        "en": "Unknown: no attributable contract value or model profit is established in this dossier.",
+        "zh": "未知：本档案未确认可归属的合同价值或模型利润。"
+      },
+      "thesis_ids": [
+        "T02",
+        "T07",
+        "T08"
+      ]
+    },
+    {
+      "id": "xiaomi",
+      "name": {
+        "en": "Xiaomi Corporation",
+        "zh": "小米"
+      },
+      "instruments": [
+        {
+          "exchange": "HKEX",
+          "symbol": "1810",
+          "currency": "HKD",
+          "kind": {
+            "en": "Listed equity",
+            "zh": "上市股权"
+          }
+        }
+      ],
+      "source_ids": [
+        "XIAOMI-IR",
+        "XIAOMI-MIMO"
+      ],
+      "role": {
+        "en": "MiMo model development alongside consumer devices and services.",
+        "zh": "MiMo 模型研发，以及消费设备与服务业务。"
+      },
+      "watch": {
+        "en": "Device deployment, paid use and incremental margins.",
+        "zh": "设备部署、付费使用与增量利润率。"
+      },
+      "risk": {
+        "en": "Benchmark strength may not translate into issuer earnings.",
+        "zh": "基准表现可能无法转化为发行人盈利。"
+      },
+      "scope": "issuer_instrument_identity_confirmed; model-to-profit attribution unverified",
+      "legal_name": "Xiaomi Corporation",
+      "roles": [
+        "developer"
+      ],
+      "status": {
+        "en": "Official MiMo product page and issuer profile identify the business; device-wide deployment is not established here.",
+        "zh": "官方 MiMo 产品页与发行人简介确认业务；这里没有证据证明已全面部署到设备。"
+      },
+      "materiality": {
+        "en": "Unknown: no attributable contract value or model profit is established in this dossier.",
+        "zh": "未知：本档案未确认可归属的合同价值或模型利润。"
+      },
+      "thesis_ids": [
+        "T02",
+        "T07",
+        "T08"
+      ]
+    }
+  ],
+  "theses": [
+    {
+      "id": "T01",
+      "title": {
+        "en": "Frontier premiums depend on measured task advantage.",
+        "zh": "前沿溢价取决于可测的任务优势。"
+      },
+      "thesis": {
+        "en": "A premium model can justify higher cost on tasks where its completion quality or review savings is material.",
+        "zh": "高价模型只有在任务完成质量或人工复核节省具有实质优势时，才可能合理化其更高成本。"
+      },
+      "source_ids": [
+        "AA-FRONTIER",
+        "AA-FABLE"
+      ],
+      "evidence_status": "editorial_hypothesis",
+      "falsifier": {
+        "en": "Paired production tests show no meaningful advantage after retries, review and tools.",
+        "zh": "计入重试、复核与工具后，配对生产测试不再显示实质优势。"
+      },
+      "probability": null,
+      "uncertainty": {
+        "en": "No paired production evidence is supplied.",
+        "zh": "未提供配对生产证据。"
+      }
+    },
+    {
+      "id": "T02",
+      "title": {
+        "en": "Multiple China-origin families challenge different constraints.",
+        "zh": "不同中国模型家族，正在改变不同约束。"
+      },
+      "thesis": {
+        "en": "Capability, task economics and deployability form different comparison surfaces; no single score represents the entire ecosystem.",
+        "zh": "能力、任务经济性与部署条件构成不同的比较面，不能以一个分数代替整个生态。"
+      },
+      "source_ids": [
+        "AA-MIMO",
+        "AA-GLM-KIMI",
+        "AA-QWEN27"
+      ],
+      "evidence_status": "editorial_hypothesis",
+      "falsifier": {
+        "en": "Task-matched evaluations show the proposed specialization is not reproducible.",
+        "zh": "按任务匹配的评测无法复现所提出的专长。"
+      },
+      "probability": null,
+      "uncertainty": {
+        "en": "Benchmark coverage does not establish deployment fitness.",
+        "zh": "基准覆盖不能证明部署适用性。"
+      }
+    },
+    {
+      "id": "T03",
+      "title": {
+        "en": "US competition extends beyond model weights.",
+        "zh": "美国模型竞争延伸到权重之外。"
+      },
+      "thesis": {
+        "en": "Tooling, access, distribution, serving economics and compute arrangements may influence which products are adopted.",
+        "zh": "工具、访问方式、分发、服务成本与算力安排，可能影响产品采用。"
+      },
+      "source_ids": [
+        "ANT-FABLE",
+        "OAI-ASTRA",
+        "OAI-MSFT"
+      ],
+      "evidence_status": "editorial_hypothesis",
+      "falsifier": {
+        "en": "Adoption data explains changes entirely without those product or distribution differences.",
+        "zh": "采用数据能够在不考虑这些产品或分发差异的情况下完整解释变化。"
+      },
+      "probability": null,
+      "uncertainty": {
+        "en": "Adoption attribution is not measured here.",
+        "zh": "这里未测量采用变化的归因。"
+      }
+    },
+    {
+      "id": "T04",
+      "title": {
+        "en": "Efficiency does not mechanically determine aggregate compute demand.",
+        "zh": "效率不会机械地决定总算力需求。"
+      },
+      "thesis": {
+        "en": "Compute demand depends jointly on workload volume, tokens per workload and serving efficiency.",
+        "zh": "算力需求共同取决于工作量、每项工作 token 数与服务效率。"
+      },
+      "source_ids": [],
+      "evidence_status": "editorial_hypothesis",
+      "falsifier": {
+        "en": "Observed demand, token intensity and efficiency jointly imply a different sign from the proposed scenario.",
+        "zh": "观察到的需求、token 强度与效率共同给出了与所设情景相反的方向。"
+      },
+      "probability": null,
+      "uncertainty": {
+        "en": "Workload growth and token intensity are unknown.",
+        "zh": "工作量增长与 token 强度未知。"
+      }
+    },
+    {
+      "id": "T05",
+      "title": {
+        "en": "More compute architectures do not imply a single hardware winner.",
+        "zh": "更多算力架构，并不指向唯一硬件赢家。"
+      },
+      "thesis": {
+        "en": "Disclosed use of multiple platforms and custom-chip work suggests examining substitution and expansion separately.",
+        "zh": "多平台使用披露及定制芯片合作，提示应把替代效应与总量扩张分开考察。"
+      },
+      "source_ids": [
+        "ANT-COMPUTE",
+        "OAI-AVGO"
+      ],
+      "evidence_status": "editorial_hypothesis",
+      "falsifier": {
+        "en": "Delivered workloads remain concentrated despite planned diversification, or the planned systems do not ship.",
+        "zh": "尽管计划多元化，实际工作负载仍高度集中，或计划中的系统没有交付。"
+      },
+      "probability": null,
+      "uncertainty": {
+        "en": "Announced diversification may not be delivered.",
+        "zh": "宣布的多元化计划可能无法交付。"
+      }
+    },
+    {
+      "id": "T06",
+      "title": {
+        "en": "Memory exposure needs both architecture and economic evidence.",
+        "zh": "存储敞口需要架构与经济数据共同验证。"
+      },
+      "thesis": {
+        "en": "Supply agreements identify exposure; they do not establish contract value, sustainable pricing or margins.",
+        "zh": "供应协议确认业务联系，但不能据此确定合同价值、持续定价能力或利润率。"
+      },
+      "source_ids": [
+        "MU-ANT",
+        "MU-HBM"
+      ],
+      "evidence_status": "editorial_hypothesis",
+      "falsifier": {
+        "en": "Supply growth, pricing pressure or design changes offset volume gains.",
+        "zh": "供给增加、价格压力或设计变化抵消了数量增长。"
+      },
+      "probability": null,
+      "uncertainty": {
+        "en": "Contract economics and sustainable margins are unknown.",
+        "zh": "合同经济性与持续利润率未知。"
+      }
+    },
+    {
+      "id": "T07",
+      "title": {
+        "en": "Distribution advantages must reach paid use or measurable efficiency.",
+        "zh": "分发优势必须转化为付费使用或可测效率。"
+      },
+      "thesis": {
+        "en": "Device and cloud channels are routes to users; model popularity alone is not issuer profit.",
+        "zh": "设备与云渠道是触达用户的路径；模型热度本身不是公司利润。"
+      },
+      "source_ids": [
+        "BABA-RESULTS",
+        "XIAOMI-IR",
+        "XIAOMI-MIMO"
+      ],
+      "evidence_status": "editorial_hypothesis",
+      "falsifier": {
+        "en": "Adoption rises but attributable economics remain immaterial or negative.",
+        "zh": "采用率上升，但可归属的经济收益仍不显著或为负。"
+      },
+      "probability": null,
+      "uncertainty": {
+        "en": "Model-attributable profit is not established.",
+        "zh": "模型可归属利润尚未确定。"
+      }
+    },
+    {
+      "id": "T08",
+      "title": {
+        "en": "Benchmark leadership and equity returns are separate questions.",
+        "zh": "基准领先与股票回报，是两个问题。"
+      },
+      "thesis": {
+        "en": "An instrument needs its own price, valuation denominator, business mix and risk analysis.",
+        "zh": "证券需要独立的价格、估值分母、业务组合及风险分析。"
+      },
+      "source_ids": [],
+      "evidence_status": "analytical_guardrail",
+      "falsifier": {
+        "en": "No automatic benchmark-to-price mapping is permitted; this is a guardrail, not a return forecast.",
+        "zh": "不允许自动从基准映射股价；这是分析约束，而非收益预测。"
+      },
+      "probability": null,
+      "uncertainty": {
+        "en": "No dated valuation or return analysis is supplied.",
+        "zh": "未提供有日期的估值或回报分析。"
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "AA-FRONTIER",
+      "title": "Astra max vs Fable 5.1 max, default fallback",
+      "url": "https://artificialanalysis.ai/models/comparisons/gpt-6-astra-vs-claude-fable-5-1",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "AA-FABLE",
+      "title": "Fable 5.1 max endpoint",
+      "url": "https://artificialanalysis.ai/models/claude-fable-5-1/",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "AA-MIMO",
+      "title": "MiMo-V2.6-Pro",
+      "url": "https://artificialanalysis.ai/models/mimo-v2-6-pro",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "AA-GLM-KIMI",
+      "title": "GLM 5.3 max vs Kimi K3 max",
+      "url": "https://artificialanalysis.ai/models/comparisons/glm-5-3-vs-kimi-k3",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "AA-QWEN27",
+      "title": "Qwen3.8 27B xhigh",
+      "url": "https://artificialanalysis.ai/models/qwen3-8-27b",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "OAI-ASTRA",
+      "title": "OpenAI Astra announcement",
+      "url": "https://openai.com/index/gpt-6-astra/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "provider_claim",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "ANT-FABLE",
+      "title": "Anthropic Fable product and release details",
+      "url": "https://www.anthropic.com/claude/fable",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "provider_claim",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Fable 5.1 announcement is dated 2026-09-01; default fallback matters.",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "XIAOMI-MIMO",
+      "title": "Xiaomi MiMo V2.6 Pro specifications",
+      "url": "https://mimo.mi.com/models/zh-CN/mimo-v2.6-pro",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "provider_claim",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Use the standard endpoint, not UltraSpeed. Modalities are declared support, not measured multimodal quality.",
+      "verification": "read_primary_on_2026-09-23"
+    },
+    {
+      "id": "ANT-COMPUTE",
+      "title": "Anthropic compute platform disclosure",
+      "url": "https://www.anthropic.com/news/expanding-our-use-of-google-cloud-tpus-and-services",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2025-10-23",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Historical disclosure of Google TPU, Amazon Trainium and NVIDIA GPU use, not a current installed-capacity census.",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "OAI-MSFT",
+      "title": "OpenAI and Microsoft relationship update",
+      "url": "https://openai.com/index/continuing-microsoft-partnership/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-02-27",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "supplied_not_rechecked_in_p4"
+    },
+    {
+      "id": "OAI-AVGO",
+      "title": "OpenAI and Broadcom Jalapeno announcement",
+      "url": "https://openai.com/index/openai-broadcom-jalapeno-inference-chip/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-06-24",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Initial deployment planned by end-2026. Engineering samples are not deployed commercial capacity.",
+      "verification": "read_primary_on_2026-09-23"
+    },
+    {
+      "id": "MU-ANT",
+      "title": "Micron and Anthropic strategic agreement",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-and-Anthropic-Announce-Strategic-Agreement-to-Scale-Next-Generation-AI-Infrastructure/default.aspx",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-06-22",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "read_primary_on_2026-09-23"
+    },
+    {
+      "id": "MU-HBM",
+      "title": "Micron HBM4 volume-production disclosure",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-in-High-Volume-Production-of-HBM4-Designed-for-NVIDIA-Vera-Rubin-PCIe-Gen6-SSD-and-SOCAMM2-03-16-2026/default.aspx",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-03-16",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "read_primary_on_2026-09-23"
+    },
+    {
+      "id": "BABA-CAPITAL",
+      "title": "Alibaba placement completion",
+      "url": "https://www.alibabagroup.com/zh-HK/document-2029365886510432256",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-08-26",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "",
+      "verification": "read_primary_on_2026-09-23"
+    },
+    {
+      "id": "BABA-RESULTS",
+      "title": "Alibaba June-quarter results",
+      "url": "https://www.alibabagroup.com/zh-HK/document-2026456290057781248",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-08-20",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Company-reported operating performance is distinct from independent model evaluation.",
+      "verification": "read_primary_on_2026-09-23"
+    },
+    {
+      "id": "XIAOMI-IR",
+      "title": "Xiaomi issuer profile",
+      "url": "https://ir.mi.com/corporate-information/company-profile",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "issuer_registry",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Issuer identifies 1810.HK. Model capability is not a valuation of the whole company.",
+      "verification": "read_primary_on_2026-09-23"
+    },
+    {
+      "id": "BABA-FAQ",
+      "title": "Alibaba investor FAQ",
+      "url": "https://www.alibabagroup.com/en-US/faqs-investor-information",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "evidence_type": "issuer_registry",
+      "verification": "read_primary_on_2026-09-23"
+    }
+  ]
+}

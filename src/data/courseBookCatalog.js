@@ -1,0 +1,50 @@
+// Stable book IDs map to dedicated bilingual lesson documents.
+const titles = [
+  ['Labor-market signal', '劳动力市场信号'],
+  ['Deployment company', '部署成为一门业务'],
+  ['Live role anatomy', '当前岗位解剖'],
+  ['Delivery that compounds', '可复利的交付'],
+  ['Palantir AI FDE', 'Palantir AI FDE'],
+  ['The counterargument', '必须阅读的反方观点'],
+  ['Harvard · CS50x', '哈佛 · CS50x'],
+  ['Python systems', 'Python 系统能力'],
+  ['CMU · 15-445', 'CMU · 15-445'],
+  ['Data-intensive systems', '数据密集型系统'],
+  ['Site reliability', '站点可靠性'],
+  ['OpenTelemetry', 'OpenTelemetry'],
+  ['Textbook · Core loop', '教材 · 核心循环'],
+  ['Durable agent SDK', '持久智能体工具链'],
+  ['Managed-agent anatomy', '托管智能体解剖'],
+  ['Context engineering', '上下文工程'],
+  ['Tools for agents', '面向智能体的工具'],
+  ['MCP security', 'MCP 安全'],
+  ['Hybrid retrieval', '混合检索'],
+  ['Execution memory', '执行状态记忆'],
+  ['Event-driven runtime', '事件驱动运行时'],
+  ['A2A interoperability', 'A2A 互操作'],
+  ['Prompt-injection resistance', '提示注入防御'],
+  ['Agentic threat model', '智能体威胁模型'],
+  ['Agent evaluations', '智能体评测'],
+  ['Infrastructure noise', '评测基础设施噪声'],
+  ['ReliabilityBench', 'ReliabilityBench'],
+  ['AlphaEval', 'AlphaEval'],
+  ['BenchAgent', 'BenchAgent'],
+  ['Long-running harness', '长任务工具链'],
+  ['Security governance', '安全与治理'],
+  ['Five workflow interviews', '五次工作流访谈'],
+  ['ROI model', '投资回报模型'],
+  ['Governed pilot', '受治理的试点'],
+  ['Agent incident drill', '智能体事故演练'],
+  ['Outcome case study', '结果案例研究'],
+];
+
+export const courseBookCatalog = titles.map(([en, zh], index) => {
+  const id = String(index + 1).padStart(2, '0');
+  return {
+    id,
+    group: Math.floor(index / 6),
+    title: { en, zh },
+    cover: `/assets/course-covers/book-${id}.svg`,
+    href: `/course/book-${id}.html`,
+  };
+});

@@ -10,6 +10,12 @@
   --visual-viewport-center: 50vh;
   --keyboard-inset: 0px;
   --touch-target: 44px;
+  /* Anthropic economic scenarios: a protected masthead and a wider content rail. */
+  --af-layout-max: 1400px;
+  --af-header-outer-gap: 20px;
+  --af-header-inner-gap: 64px;
+  --af-header-compact-gap: 32px;
+  --af-content-gap: 24px;
   /* F06: shared interaction semantics. Route palettes and reading typography
      remain local; adopt these tokens one component family at a time. */
   --space-1: 4px;

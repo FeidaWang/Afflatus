@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "prebuild": "npm run data:check && node scripts/published-cycles.mjs --check && npm run site:check && npm run header:check && npm run css:check && npm run combat:asset:check && npm run lint:i18n && npm run og:check",
+    "prebuild": "node scripts/generate-course-pages.mjs && npm run data:check && node scripts/published-cycles.mjs --check && npm run site:check && npm run header:check && npm run css:check && npm run combat:asset:check && npm run lint:i18n && npm run og:check && node scripts/sectors-dossier.mjs",
     "build": "vite build && node scripts/localize-site.mjs --out-dir dist && node scripts/validate-emitted-seo.mjs --out-dir dist",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
@@ -30,7 +30,7 @@
     "data:arena:window": "node scripts/check-arena-window.mjs",
     "data:arena:picks:witness": "node scripts/validate-arena-picks-publication.mjs",
     "data:lock": "node scripts/data-orchestrator-lock.mjs",
-    "site:generate": "node scripts/site-manifest.mjs --write",
+    "site:generate": "node scripts/site-manifest.mjs --write && node scripts/shared-header.mjs --write",
     "site:check": "node scripts/site-manifest.mjs --check",
     "header:audit": "node scripts/audit-header.mjs",
     "header:check": "node scripts/audit-header.mjs --check",
@@ -42,7 +42,8 @@
     "og:check": "node scripts/validate-og-assets.mjs",
     "lint:i18n": "node scripts/lint-bilingual.mjs",
     "format:i18n": "node scripts/format-bilingual-content.mjs --write",
-    "linkcheck": "npm run build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\""
+    "linkcheck": "npm run build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\"",
+    "predev": "node scripts/generate-course-pages.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
