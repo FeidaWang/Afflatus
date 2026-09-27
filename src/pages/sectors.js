@@ -14,6 +14,7 @@ import { mountStage } from '../sectors/stage/stage.js';
 import { mountEditorialBoard } from '../sectors/editorialBoard.js';
 import { mountSourceWall } from '../sectors/sourceWall.js';
 import { mountGeographyEditorial } from '../sectors/geographyEditorial.js';
+import { mountCompanyGlobe } from '../sectors/industry/globe-view.js';
 
 let sectorsData = null;
 let destroyed = false;
@@ -22,20 +23,28 @@ let editorialBoard = null;
 let sourceWall = null;
 let geography = null;
 let destroyStage = () => {};
+let destroyGlobe = () => {};
+let globeData = null;
 const frontierAbort = new AbortController();
 
 const byId = (id) => document.getElementById(id);
 
 // The dot stage needs both the frontier snapshot and the industry dataset; until then its
 // cards render as static text (no data-mode), and on failure they simply stay that way.
-if (byId('sectorsStage')) {
+// The company globe reuses the same industry fetch, plus the logo manifest.
+if (byId('sectorsStage') || byId('industryGlobe')) {
   Promise.all([
     fetchJson('sectors-frontier-2026-09-27', { signal: frontierAbort.signal }),
     fetchJson('sectors-industry-2026-09-27', { signal: frontierAbort.signal }),
+    byId('industryGlobe') ? fetch('/assets/sectors/logos/manifest.json').then((r) => r.json()) : null,
   ])
-    .then(([snapshot, industry]) => {
+    .then(([snapshot, industry, manifest]) => {
       if (destroyed) return;
-      destroyStage = mountStage(byId('sectorsStage'), { snapshot, industry });
+      if (byId('sectorsStage')) destroyStage = mountStage(byId('sectorsStage'), { snapshot, industry });
+      if (byId('industryGlobe')) {
+        globeData = { industry, manifest };
+        destroyGlobe = mountCompanyGlobe(byId('industryGlobe'), { ...globeData, lang: currentLanguage() });
+      }
     })
     .catch(() => {});
 }
@@ -105,6 +114,11 @@ const onLanguage = () => {
   sourceWall?.setLanguage(currentLanguage());
   geography?.setLanguage(currentLanguage());
   taskStory?.setLanguage();
+  if (globeData) {
+    // The globe renders its copy at mount, so a language switch remounts it.
+    destroyGlobe();
+    destroyGlobe = mountCompanyGlobe(byId('industryGlobe'), { ...globeData, lang: currentLanguage() });
+  }
   if (!sectorsData) return;
   renderRelationshipReader(sectorsData);
   const asOf = byId('mwAsOf');
@@ -135,6 +149,7 @@ addEventListener('pagehide', (event) => {
   rivalry.destroy();
   destroyStory();
   destroyStage();
+  destroyGlobe();
   destroyChrome();
   removeEventListener('afflatus-lang', onLanguage);
 });
