@@ -2,16 +2,17 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { rankMetric } from '../src/sectors/frontier/frontier-core.mjs';
 
-const snapshot = JSON.parse(readFileSync('public/data/sectors-frontier/2026-09-23.json', 'utf8'));
-const dataPath = '**/data/sectors-frontier/2026-09-23.json';
+const snapshot = JSON.parse(readFileSync('public/data/sectors-frontier/2026-09-27.json', 'utf8'));
+const dataPath = '**/data/sectors-frontier/2026-09-27.json';
+const rankedCount = rankMetric(snapshot, 'intelligence').ranked.length;
 
 test('comparison filters, dossiers, evidence, language and persisted lifecycle', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/en/sectors.html');
   const host = page.locator('#sectorsFrontier');
-  await expect(host.locator('.fc-meta')).toContainText('23 September 2026');
-  await expect(host.locator('.fc-table-scroll tbody tr')).toHaveCount(13);
+  await expect(host.locator('.fc-meta')).toContainText('27 September 2026');
+  await expect(host.locator('.fc-table-scroll tbody tr')).toHaveCount(rankedCount);
   await expect(host.locator('.fc-exclusions')).toContainText('MiniMax-M3');
   await expect(host.locator('.fc-exclusions')).toContainText('Source conflict; unranked');
   for (const { id } of snapshot.metrics) {
@@ -79,7 +80,7 @@ test('mobile Chinese route stays within viewport with reduced motion', async ({ 
 test('billing uses entered tokens and empty filters recover without invented values', async ({ page }) => {
   await page.goto('/en/sectors.html');
   const host = page.locator('#sectorsFrontier');
-  await expect(host.locator('tr[data-row]')).toHaveCount(13);
+  await expect(host.locator('tr[data-row]')).toHaveCount(rankedCount);
   const priced = snapshot.models.find(m => m.status === 'reported_snapshot' && m.prices.cache_read !== null);
   await host.locator(`tr[data-row="${priced.id}"] button`).click();
   await host.locator('[name=uncachedInput]').fill('1000000');
@@ -107,7 +108,7 @@ test('billing uses entered tokens and empty filters recover without invented val
   await host.locator('[name=metric]').selectOption('intelligence');
   await host.locator('[name=geography]').selectOption('all');
   await host.locator('[name=openOnly]').uncheck();
-  await expect(host.locator('tr[data-row]')).toHaveCount(13);
+  await expect(host.locator('tr[data-row]')).toHaveCount(rankedCount);
 });
 
 test('snapshot fetch failure preserves localized source table', async ({ page }) => {

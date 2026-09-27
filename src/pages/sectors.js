@@ -27,7 +27,7 @@ const byId = (id) => document.getElementById(id);
 const destroyEarth = mountSectorsEarth(byId('sectorsEarth'));
 
 if (byId('sectorsFrontier')) {
-  fetchJson('sectors-frontier-2026-09-23', { signal: frontierAbort.signal })
+  fetchJson('sectors-frontier-2026-09-27', { signal: frontierAbort.signal })
     .then((snapshot) => {
       if (destroyed) return;
       editorialBoard = mountEditorialBoard(byId('frontierEditorial'), snapshot, currentLanguage());

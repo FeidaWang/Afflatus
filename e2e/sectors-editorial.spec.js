@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { rankMetric } from '../src/sectors/frontier/frontier-core.mjs';
+
+const snapshot = JSON.parse(readFileSync('public/data/sectors-frontier/2026-09-27.json', 'utf8'));
+const rankedCount = rankMetric(snapshot, 'intelligence').ranked.length;
 
 const copy = JSON.parse(readFileSync('docs/Afflatus-Sectors-Frontier-V2/data/editorial-copy.json', 'utf8'));
 const acts = ['capability', 'supply', 'migration', 'issuers', 'evidence'];
@@ -41,7 +45,7 @@ test('desktop and mobile retain one live board, navigable story and graph', asyn
     await page.setViewportSize({ width, height });
     await page.goto(`/${locale}/sectors.html`);
     await expect(page.locator('.fc-controls')).toHaveCount(1);
-    await expect(page.locator('#sectorsFrontier tr[data-row]')).toHaveCount(13);
+    await expect(page.locator('#sectorsFrontier tr[data-row]')).toHaveCount(rankedCount);
     await expect(page.locator('#afflatus-header')).toHaveCount(1);
     await page.screenshot({ path: `tmp/sectors-frontier-p1/${locale}-hero.png` });
     for (const act of acts) {

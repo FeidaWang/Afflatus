@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
+import { rankMetric } from '../src/sectors/frontier/frontier-core.mjs';
+
+const snapshot = JSON.parse(readFileSync('public/data/sectors-frontier/2026-09-27.json', 'utf8'));
+const rankedCount = rankMetric(snapshot, 'intelligence').ranked.length;
 
 for(const [locale,width] of [['en',1440],['zh',390]]) {
  test(`P3 constraints and evidence ${locale}`,async({page})=>{
@@ -7,7 +12,7 @@ for(const [locale,width] of [['en',1440],['zh',390]]) {
   await page.setViewportSize({width,height:width===390?844:1000});
   await page.goto(`/${locale}/sectors.html`);
   const host=page.locator('#sectorsFrontier');
-  await expect(host.locator('tr[data-row]')).toHaveCount(13);
+  await expect(host.locator('tr[data-row]')).toHaveCount(rankedCount);
   const explanation=host.locator('[data-lens-explanation]');
   const first=await explanation.innerText();
   await host.locator('[data-lens=routing]').focus();await page.keyboard.press('Enter');
@@ -35,7 +40,7 @@ for(const [locale,width] of [['en',1440],['zh',390]]) {
   await host.locator('[name=maxCost]').fill('');await page.keyboard.press('Tab');
   await host.locator('[name=context]').fill('0');await page.keyboard.press('Tab');
   await host.locator('[name=openOnly]').uncheck();
-  await expect(host.locator('tr[data-row]')).toHaveCount(13);
+  await expect(host.locator('tr[data-row]')).toHaveCount(rankedCount);
   await host.locator('[name=metric]').selectOption('cost_task');
   await expect(host.locator('[name=minScore]')).toBeDisabled();
   await host.locator('[name=metric]').selectOption('intelligence');
@@ -50,7 +55,7 @@ for(const [locale,width] of [['en',1440],['zh',390]]) {
 }
 
 test('P3 missing metadata and cost cannot satisfy a constraint',async({page})=>{
- await page.route('**/data/sectors-frontier/2026-09-23.json',async route=>{
+ await page.route('**/data/sectors-frontier/2026-09-27.json',async route=>{
   const response=await route.fetch();const data=await response.json();
   data.models.forEach(model=>model.context_tokens=null);
   await route.fulfill({response,json:data});

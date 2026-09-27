@@ -1,7 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync, mkdirSync } from 'node:fs';
+import { rankMetric } from '../src/sectors/frontier/frontier-core.mjs';
 
-const snapshot = JSON.parse(readFileSync('public/data/sectors-frontier/2026-09-23.json', 'utf8'));
+const snapshot = JSON.parse(readFileSync('public/data/sectors-frontier/2026-09-27.json', 'utf8'));
+const rankedCount = rankMetric(snapshot, 'intelligence').ranked.length;
+const ranked = rankMetric(snapshot, 'intelligence').ranked;
+const costOf = (id) => snapshot.observations.find((o) => o.model_id === id && o.metric_id === 'cost_task').value;
 const evidence = 'docs/sectors-reference-design-2026-09-27';
 mkdirSync(evidence, { recursive: true });
 
@@ -43,17 +47,17 @@ for (const locale of ['en', 'zh']) {
     await second.click();
     await expect(second).toHaveAttribute('aria-expanded', 'true');
     await expect(page.locator('.editorialInlineDetail:visible')).toHaveCount(1);
-    await expect(page.locator('.editorialInlineDetail:visible h3')).toHaveText('Claude Fable 5.1');
+    await expect(page.locator('.editorialInlineDetail:visible h3')).toHaveText(ranked[1].model.name);
     await page.screenshot({ path: `${evidence}/${locale}-mobile-detail.png` });
     await second.click();
     await expect(page.locator('.editorialInlineDetail:visible')).toHaveCount(0);
     const mobile = page.locator('.fc-mobile-point');
-    await expect(mobile).toHaveCount(13);
+    await expect(mobile).toHaveCount(rankedCount);
     await expect(page.locator('.fc-desktop-plot')).not.toBeVisible();
-    await expect(mobile.first().locator('strong')).toHaveText(['53', '$3.26']);
+    await expect(mobile.first().locator('strong')).toHaveText([String(ranked[0].value), `$${costOf(ranked[0].model.id).toFixed(2)}`]);
     await mobile.nth(1).click();
     await expect(mobile.nth(1)).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('.fc-dossier h3')).toHaveText('Claude Fable 5.1');
+    await expect(page.locator('.fc-dossier h3')).toHaveText(ranked[1].model.name);
     await page.locator('.fc-mobile-plot').scrollIntoViewIfNeeded();
     await page.screenshot({ path: `${evidence}/${locale}-mobile-pairs.png` });
     for (const width of [320, 390, 768, 1440]) {

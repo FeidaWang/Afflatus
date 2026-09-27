@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { rankMetric } from '../src/sectors/frontier/frontier-core.mjs';
 
-const snapshot = JSON.parse(readFileSync('public/data/sectors-frontier/2026-09-23.json', 'utf8'));
+const snapshot = JSON.parse(readFileSync('public/data/sectors-frontier/2026-09-27.json', 'utf8'));
+const rankedCount = rankMetric(snapshot, 'intelligence').ranked.length;
 
 async function probe(page) {
   return page.evaluate(() => {
@@ -27,7 +28,7 @@ for (const locale of ['en', 'zh']) {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(`/${locale}/sectors.html`);
     const host = page.locator('#sectorsFrontier');
-    await expect(host.locator('tr[data-row]')).toHaveCount(13);
+    await expect(host.locator('tr[data-row]')).toHaveCount(rankedCount);
     await host.locator('[name=metric]').selectOption('gdpval');
     await host.locator('[name=geography]').selectOption('CN');
     await host.locator('[name=openOnly]').check();

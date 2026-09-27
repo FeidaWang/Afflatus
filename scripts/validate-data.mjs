@@ -36,6 +36,10 @@ const CHECKS = [
     const errors = validateSnapshot(data);
     return { ok: errors.length === 0, errors };
   } },
+  { path: 'public/data/sectors-frontier/2026-09-27.json', validate: (data) => {
+    const errors = validateSnapshot(data);
+    return { ok: errors.length === 0, errors };
+  } },
   { path: 'public/assets/venator/manifest.json', validate: validateShipManifest },
   { path: 'public/assets/globe/earth-land.json', validate: validateGlobeData },
   { path: 'public/sectors-data.json', validate: validateSectorsData },
