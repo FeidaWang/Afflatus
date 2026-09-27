@@ -60,6 +60,7 @@ const validateHistory = (data) => ({
 const STATIC_RESOURCES = Object.freeze({
   'sectors-frontier-2026-09-23': { url: '/data/sectors-frontier/2026-09-23.json', freshness: 6 * 60 * 60_000, validate: validators.sectorsFrontier },
   'sectors-frontier-2026-09-27': { url: '/data/sectors-frontier/2026-09-27.json', freshness: 6 * 60 * 60_000, validate: validators.sectorsFrontier },
+  'sectors-industry-2026-09-27': { url: '/data/sectors-industry/2026-09-27.json', freshness: 6 * 60 * 60_000, validate: objectWith('companies', 'edges', 'facts', 'sources') },
   sectors: { url: '/sectors-data.json', freshness: 60 * 60_000, validate: validators.sectors },
   'sectors-ecosystem': { url: '/sectors-ecosystem.json?v=4', freshness: 6 * 60 * 60_000, validate: objectWith('updated', 'nodes', 'edges', 'chapters') },
   'sectors-competition': { url: '/sectors-competition.json?v=1', freshness: 6 * 60 * 60_000, validate: validators.sectorsCompetition },

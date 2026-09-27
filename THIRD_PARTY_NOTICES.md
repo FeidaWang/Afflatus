@@ -36,3 +36,11 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+## Company logos
+
+Files under `public/assets/sectors/logos/` are trademarks of their respective
+companies. They are used on the sectors page only to identify each company and
+imply no affiliation or endorsement. Each file's source page, source URL,
+retrieval date and SHA-256 are recorded in
+`public/assets/sectors/logos/manifest.json`.

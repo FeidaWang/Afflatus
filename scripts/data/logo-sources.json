@@ -1,0 +1,397 @@
+{
+  "anthropic": {
+    "page": "https://www.anthropic.com/",
+    "asset": "https://www.anthropic.com/",
+    "kind": "inline-svg",
+    "sha256": "83fe9d808606dda91360e96f68f6175afde2265a6e8be14c6fa7351df2a1fdf7",
+    "retrieved_on": "2026-09-27"
+  },
+  "openai": {
+    "page": "https://openai.com/",
+    "asset": "https://openai.com/",
+    "kind": "inline-svg",
+    "sha256": "e5bcb691ca07c334557d8f2ba9c1bd9a5756435269821c92d407f01bf222e6f9",
+    "retrieved_on": "2026-09-27"
+  },
+  "msft": {
+    "page": "https://www.microsoft.com/en-us/",
+    "asset": "https://uhf.microsoft.com/images/microsoft/RE1Mu3b.png",
+    "kind": "file",
+    "sha256": "112fec798b78aa02e102a724b5cb1990c0f909bc1d8b7b1fa256eab41bbc0960",
+    "retrieved_on": "2026-09-27"
+  },
+  "googl": {
+    "page": "https://www.google.com/",
+    "asset": "https://www.google.com/",
+    "kind": "inline-svg",
+    "sha256": "2264094976d426472737537a1818373cfbe782f0ea0dd3754ffca8338ace35a8",
+    "retrieved_on": "2026-09-27"
+  },
+  "amzn": {
+    "page": "https://www.aboutamazon.com/",
+    "asset": "https://www.aboutamazon.com/",
+    "kind": "inline-svg",
+    "sha256": "c318fee28309461f669af36e51d48120fec1ca6ec76047deee6173bb8b832bb9",
+    "retrieved_on": "2026-09-27"
+  },
+  "meta": {
+    "page": "https://www.meta.com/en-gb/about/",
+    "asset": "https://static.xx.fbcdn.net/rsrc.php/y9/r/tL_v571NdZ0.svg",
+    "kind": "file",
+    "sha256": "7a0430c375fc8563eafa7636869b5b132e6da4461711a81d384bc0044a20d039",
+    "retrieved_on": "2026-09-27"
+  },
+  "orcl": {
+    "page": "https://www.oracle.com/",
+    "asset": "https://www.oracle.com/",
+    "kind": "inline-svg",
+    "sha256": "e7ded174744b4780c945748b58d32fc157cb7b11167f52f3cc12c039bef6758f",
+    "retrieved_on": "2026-09-27"
+  },
+  "spcx": {
+    "page": "https://www.spacex.com/",
+    "asset": "https://www.spacex.com/",
+    "kind": "inline-svg",
+    "sha256": "1dee74d9db3cbf5165450c42c2694c8e55de71bc46403776d35eb5c8484dbae7",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "baba": {
+    "page": "https://www.alibabagroup.com/en-US/",
+    "asset": "https://www.alibabagroup.com/en-US/",
+    "kind": "inline-data-uri",
+    "sha256": "c2cb4773c5bbebafa1724c872fe7d3d662a143f72d7bb55933ab53efb27968ce",
+    "retrieved_on": "2026-09-27"
+  },
+  "bidu": {
+    "page": "https://www.baidu.com/",
+    "asset": "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png",
+    "kind": "file",
+    "sha256": "22eb1e51c92f3c013305ae0319ef4477c692dc26acbca1518776e2faf9d66a98",
+    "retrieved_on": "2026-09-27"
+  },
+  "deepseek": {
+    "page": "https://www.deepseek.com/en/",
+    "asset": "https://www.deepseek.com/en/",
+    "kind": "inline-svg",
+    "sha256": "e56a32fd3484dfa666ceac31ccbc733eed80eb74a10fdd4befd7d84864524eb6",
+    "retrieved_on": "2026-09-27"
+  },
+  "moonshot": {
+    "page": "https://www.moonshot.cn/",
+    "asset": "https://statics.kimi.ai/moonshot-ai/assets/static/moonshot-ai-wordmark.DeMGOuiG.svg",
+    "kind": "file",
+    "sha256": "441f80552221dbb5bac7af7b84265f0fee03655426359cd48d10952c65058c11",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "zhipu": {
+    "page": "https://www.zhipuai.cn/en",
+    "asset": "https://www.zhipuai.cn/logo-en.svg",
+    "kind": "file",
+    "sha256": "af5f01534523a053f23d4b330af1f64b730707c3ef289b16e8278403531a76dd",
+    "retrieved_on": "2026-09-27"
+  },
+  "minimax": {
+    "page": "https://www.minimax.io/",
+    "asset": "https://www.minimax.io/assets/logo/minimax-horizontal-brand-black.webp",
+    "kind": "file",
+    "sha256": "7459aaaecb55eeb47c9a754ecc4c982a469d73f783084adc044d538cb4e593c5",
+    "retrieved_on": "2026-09-27"
+  },
+  "nvda": {
+    "page": "https://www.nvidia.com/en-us/",
+    "asset": "https://www.nvidia.com/en-us/",
+    "kind": "inline-svg",
+    "sha256": "3a42aa59d0b0351b2b892662e85da97af59ef7fb4bf77a5c371fe880220e73d0",
+    "retrieved_on": "2026-09-27"
+  },
+  "avgo": {
+    "page": "https://www.broadcom.com/",
+    "asset": "https://www.broadcom.com/img/broadcom-logo.svg",
+    "kind": "file",
+    "sha256": "7cfeac006499e51f19f2c9a9dc62dee279b78c9a43c3e4c91d633cde87af1ab1",
+    "retrieved_on": "2026-09-27"
+  },
+  "amd": {
+    "page": "https://www.amd.com/en.html",
+    "asset": "https://www.amd.com/content/dam/code/images/header/amd-header-logo.svg",
+    "kind": "file",
+    "sha256": "637d36ef706c905033ec2de7023b78918bfd2c4e740ad108e2c34461fa17b820",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "mrvl": {
+    "page": "https://www.marvell.com/",
+    "asset": "https://www.marvell.com/content/dam/marvell/en/global/marvell-logo.svg",
+    "kind": "file",
+    "sha256": "703bd6973ac79b3493e8ce795b1fe36bdc7f5aa8f3164d394336fc8d2af3095a",
+    "retrieved_on": "2026-09-27"
+  },
+  "arm": {
+    "page": "https://www.arm.com/",
+    "asset": "https://www.arm.com/-/media/global/logos/arm-logo-blue-rgb.svg",
+    "kind": "file",
+    "sha256": "d9b831e3d9436e8ff252913fa7e00a1d8ef652ffe9b21dc7f7bda35cf5cd0508",
+    "retrieved_on": "2026-09-27"
+  },
+  "cbrs": {
+    "page": "https://www.cerebras.ai/",
+    "asset": "https://www.cerebras.ai/",
+    "kind": "inline-svg",
+    "sha256": "42800a6a802e2bdc4fe757f67c1591b58040e3c7745ca10d2795a7b4a34233a5",
+    "retrieved_on": "2026-09-27"
+  },
+  "intc": {
+    "page": "https://www.intel.com/content/www/us/en/homepage.html",
+    "asset": "https://www.intel.com/content/www/us/en/homepage.html",
+    "kind": "inline-svg",
+    "sha256": "d8fda4d78eb4748bc9ee73ce014fe3686ce75a6afdbb82620cec9b95c49911ad",
+    "retrieved_on": "2026-09-27"
+  },
+  "qcom": {
+    "page": "https://www.qualcomm.com/",
+    "asset": "https://www.qualcomm.com/",
+    "kind": "inline-svg",
+    "sha256": "27907defaa98dabe90821875154c99011f6a3bb41591b956c7834d3a802e2808",
+    "retrieved_on": "2026-09-27"
+  },
+  "tsm": {
+    "page": "https://www.tsmc.com/english",
+    "asset": "https://www.tsmc.com/themes/custom/bootstrap_sass/images/logo.png",
+    "kind": "file",
+    "sha256": "c8cc0e5e8e35b973a6c37d82b28264498e975dba6a634f8a998eab15ef251c66",
+    "retrieved_on": "2026-09-27"
+  },
+  "asml": {
+    "page": "https://www.asml.com/en",
+    "asset": "https://www.asml.com/images/icons/asml-logo.svg#logo",
+    "kind": "svg-symbol-resolved",
+    "sha256": "9624e9116ca47520281acd9be358b0af34cf9710203c55062490a2a3fbadb506",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "amat": {
+    "page": "https://www.appliedmaterials.com/us/en.html",
+    "asset": "https://www.appliedmaterials.com/content/dam/applied-materials/Applied-Materials-Logo-No-Tag-Line.png",
+    "kind": "file",
+    "sha256": "4b5b77ab118e8028c849e97d41e048e6bb4e158ef00ef66613f614a09e28e1fd",
+    "retrieved_on": "2026-09-27"
+  },
+  "lrcx": {
+    "page": "https://www.lamresearch.com/",
+    "asset": "https://www.lamresearch.com/",
+    "kind": "inline-svg-use-resolved",
+    "sha256": "fd82b150cecd112cf37ccd1e07fb8608c4fc9cba9279b03b09afd0907f87f921",
+    "retrieved_on": "2026-09-27"
+  },
+  "klac": {
+    "page": "https://www.kla.com/",
+    "asset": "https://www.kla.com/",
+    "kind": "inline-svg",
+    "sha256": "b7ae36d8be81f88e602d7c6b9367f6ff66b4efc7524b69c4e498ff46862872c4",
+    "retrieved_on": "2026-09-27"
+  },
+  "skhy": {
+    "page": "https://www.skhynix.com/",
+    "asset": "https://mis-prod-koce-skhynixhomepage-cdn-01-ep.azureedge.net/img/common/img_logo.png",
+    "kind": "file",
+    "sha256": "a72ec6bffcf6af2f7e456d2792999f66ae69c8fe3bd1df097c1edf098d993789",
+    "retrieved_on": "2026-09-27"
+  },
+  "mu": {
+    "page": "https://www.micron.com/",
+    "asset": "https://assets.micron.com/adobe/assets/urn:aaid:aem:652506f6-3869-4e9b-a1bd-d5b4209f850c/as/Micron-logo-white.svg?width=1500&preferwebp=true",
+    "kind": "file",
+    "sha256": "59ff13ed3262119ea305c650d4bf1cf40b2a7f8fa4520d91d1fbce95be691772",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "samsung": {
+    "page": "https://semiconductor.samsung.com/",
+    "asset": "https://semiconductor.samsung.com/etc.clientlibs/semiconductor/designs/global/common/resources/img/icon/global-samsung-logo.svg",
+    "kind": "file",
+    "sha256": "fd922b228c9b6f07f65fffcd83d015b294d06bfa1c9e7aa37d733c709b27a721",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "sndk": {
+    "page": "https://www.sandisk.com/",
+    "asset": "https://www.sandisk.com/content/dam/sandisk/en-us/assets/home-page/brand-logos/sandisk/sandisk-logo.svg",
+    "kind": "file",
+    "sha256": "e5d3668511cb786b68d6d0c5fe81a290910dbcc86d14b6e03f1eac6bf6f30c14",
+    "retrieved_on": "2026-09-27"
+  },
+  "wdc": {
+    "page": "https://www.westerndigital.com/",
+    "asset": "https://www.westerndigital.com/content/dam/store/en-us/assets/brand/wd/wd-header-main-logo.svg",
+    "kind": "file",
+    "sha256": "3cc8bfc6ad78678ad8964b3448785db41ac47ac66160f6f44ff5258a4eb0278b",
+    "retrieved_on": "2026-09-27"
+  },
+  "stx": {
+    "page": "https://www.seagate.com/au/en/",
+    "asset": "https://www.seagate.com/content/dam/seagate/migrated-assets/ww/redesign/assets/seagate-logo-text.svg",
+    "kind": "file",
+    "sha256": "70dabc8a89353fbbdbffc6c42a2df213402dc08a627782d30595e46ded73cc97",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "anet": {
+    "page": "https://www.arista.com/en/",
+    "asset": "https://www.arista.com/templates/arista_v2/img/logo_arista.png",
+    "kind": "file",
+    "sha256": "d0078f57417508b12822380bebc8bf197609c01f42c17d0891cf5fb51046441b",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "csco": {
+    "page": "https://www.cisco.com/",
+    "asset": "https://www.cisco.com/",
+    "kind": "inline-svg",
+    "sha256": "6b86b27ba7349ac6f93d5730745e8f13d71c521313b3d455fdd0ebeecfbf8753",
+    "retrieved_on": "2026-09-27"
+  },
+  "cohr": {
+    "page": "https://www.coherent.com/",
+    "asset": "https://www.coherent.com/",
+    "kind": "inline-svg",
+    "sha256": "7936cb8fc2f0f3174d6c933efcfc40b07ccbcc177a5db316fa3a5275a3a00338",
+    "retrieved_on": "2026-09-27"
+  },
+  "lite": {
+    "page": "https://www.lumentum.com/en",
+    "asset": "https://www.lumentum.com/images/logos/Logo.svg",
+    "kind": "file",
+    "sha256": "68a613f6e6a2d331c7a1135eaa14fb802038b52f09681d09258f365f95401aa6",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "crdo": {
+    "page": "https://credosemi.com/",
+    "asset": "https://credosemi.com/",
+    "kind": "inline-svg",
+    "sha256": "7d52670665ec4533e749eb4f3af710d97df677c9e6cb201dec8466b4453fae63",
+    "retrieved_on": "2026-09-27"
+  },
+  "alab": {
+    "page": "https://www.asteralabs.com/",
+    "asset": "https://www.asteralabs.com/wp-content/uploads/2024/07/logo__astera-labs-colored.svg",
+    "kind": "file",
+    "sha256": "d3dcf8379f184ee3cc5bfc65e404f2c68361ac0f1c93501d3d313265141bd561",
+    "retrieved_on": "2026-09-27"
+  },
+  "cien": {
+    "page": "https://www.ciena.com/",
+    "asset": "https://www.ciena.com/__data/assets/git_bridge/0015/101616/build/images/logo_light.svg?h=536960e%",
+    "kind": "file",
+    "sha256": "29040b76dd5ca64edcb68313cebf7f749c1a2a7afeeb9e4ebbe507a2f05ad481",
+    "retrieved_on": "2026-09-27"
+  },
+  "dell": {
+    "page": "https://www.dell.com/en-us",
+    "asset": "https://www.dell.com/en-us",
+    "kind": "inline-svg",
+    "sha256": "91c067c778e0268e82fc50b98ed304f77e683401b1fa026d425a9a8db824315e",
+    "retrieved_on": "2026-09-27"
+  },
+  "smci": {
+    "page": "https://www.supermicro.com/en/",
+    "asset": "https://www.supermicro.com/sites/default/files/Super_Micro_Computer_Logo.svg",
+    "kind": "file",
+    "sha256": "6ddfb4e0629427a2a2e754677530db906165ecf6c891d05cb2e7470dfb676fb6",
+    "retrieved_on": "2026-09-27"
+  },
+  "crwv": {
+    "page": "https://www.coreweave.com/",
+    "asset": "https://www.coreweave.com/",
+    "kind": "inline-svg",
+    "sha256": "52dbbbd653c849438fbecc9bca3aa12f326500346b9b46267e1aa1fab5884668",
+    "retrieved_on": "2026-09-27"
+  },
+  "nbis": {
+    "page": "https://nebius.com/",
+    "asset": "https://nebius.com/logo.svg",
+    "kind": "file",
+    "sha256": "35a8a56d0a07e7acb3813839126cf425e012a3f70307d405ede58aa784162374",
+    "retrieved_on": "2026-09-27"
+  },
+  "vrt": {
+    "page": "https://www.vertiv.com/en-us/",
+    "asset": "https://www.vertiv.com/Content/images/phase3/about/timeline/Vertiv-Logo.svg",
+    "kind": "file",
+    "sha256": "d555bd5399a1961800f74fb8da7cce312977c9da4802bf39134276c70cbc2beb",
+    "retrieved_on": "2026-09-27"
+  },
+  "gev": {
+    "page": "https://www.gevernova.com/",
+    "asset": "https://www.gevernova.com/themes/custom/ge_vernova_unified/logo.svg",
+    "kind": "file",
+    "sha256": "41fe550b0696969edb8529b078bb7cf142aceaa31a7495765206fbb66f714f89",
+    "retrieved_on": "2026-09-27"
+  },
+  "ceg": {
+    "page": "https://www.constellationenergy.com/",
+    "asset": "https://s7d1.scene7.com/is/image/constellation/constellationLogo2025-1?fmt=png-alpha",
+    "kind": "file",
+    "sha256": "cb50f612f3856e7c361037e83c3f873c3f0e8ef1dff2d06e2dd6d54f32694dac",
+    "retrieved_on": "2026-09-27"
+  },
+  "vst": {
+    "page": "https://vistracorp.com/",
+    "asset": "https://cdn-ilbfedf.nitrocdn.com/cCNHxjYMANxnjJnUBmcCqmSHlJrNjtdQ/assets/images/optimized/rev-0c0e8b9/www.vistracorp.com/wp-content/uploads/2016/10/Vistra-Energy.png",
+    "kind": "file",
+    "sha256": "4ef2abced543b1561d8b03b24f5ce2a5564091a4d2cf77792f5305d04babc691",
+    "retrieved_on": "2026-09-27"
+  },
+  "etn": {
+    "page": "https://www.eaton.com/us/en-us.html",
+    "asset": "https://www.eaton.com/content/dam/eaton/global/logos/eaton-logo-small.png",
+    "kind": "file",
+    "sha256": "95ecaaa683aab48663eb33ec06f8a1ea797ac2da8698359f54f71fad720e5ef6",
+    "retrieved_on": "2026-09-27"
+  },
+  "oklo": {
+    "page": "https://oklo.com/",
+    "asset": "https://oklo.com/oklo-logo.svg",
+    "kind": "file",
+    "sha256": "b4c4481d716f07872642b5058b504d9f1570308b03541e338b18f12494125c7f",
+    "retrieved_on": "2026-09-27",
+    "background": "dark"
+  },
+  "pltr": {
+    "page": "https://www.palantir.com/",
+    "asset": "https://www.palantir.com/",
+    "kind": "inline-svg",
+    "sha256": "d1714087f658ce34218fe0f70f7b8cbbf3a075793056a1333be66b9bd57b854d",
+    "retrieved_on": "2026-09-27"
+  },
+  "crm": {
+    "page": "https://www.salesforce.com/au/",
+    "asset": "https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/2024/11/logo-salesforce.svg",
+    "kind": "file",
+    "sha256": "29bc87240df68c546f04cb1bf3398b524b7d5e37a2d56f3b102b62f349244703",
+    "retrieved_on": "2026-09-27"
+  },
+  "now": {
+    "page": "https://www.servicenow.com/",
+    "asset": "https://www.servicenow.com/content/dam/servicenow-assets/images/naas/servicenow-header-logo.svg",
+    "kind": "file",
+    "sha256": "e5fd9b13b986472173ef1c6b77e752eb63aef409f8c499f59dc6cc5cf3038153",
+    "retrieved_on": "2026-09-27"
+  },
+  "snow": {
+    "page": "https://www.snowflake.com/en/",
+    "asset": "https://www.snowflake.com/en/",
+    "kind": "inline-svg",
+    "sha256": "85b1d489c7affaaccfb05987357d017c8c81dd89560d9c18ebaced3760f5e3ba",
+    "retrieved_on": "2026-09-27"
+  },
+  "adbe": {
+    "page": "https://www.adobe.com/",
+    "asset": "https://www.adobe.com/federal/assets/svgs/adobe-logo.svg",
+    "kind": "file",
+    "sha256": "54213e56d564e8174ec2de6aa5f91907aebadc38215f4c3597d1e9b83cce127a",
+    "retrieved_on": "2026-09-27"
+  }
+}

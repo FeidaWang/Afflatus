@@ -1,0 +1,3001 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "industry-2026-09-27",
+  "retrieved_on": "2026-09-27",
+  "companies": [
+    {
+      "id": "anthropic",
+      "ticker": null,
+      "exchange": null,
+      "listing": "pre_ipo",
+      "name": {
+        "en": "Anthropic",
+        "zh": "Anthropic"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Francisco",
+          "zh": "旧金山"
+        },
+        "lat": 37.79,
+        "lon": -122.4
+      },
+      "layer": "labs",
+      "tier": 1,
+      "role": {
+        "en": "Claude models; confidential S-1 filed June 2026",
+        "zh": "Claude 模型；2026 年 6 月秘密递交 S-1"
+      },
+      "official_domain": "anthropic.com"
+    },
+    {
+      "id": "openai",
+      "ticker": null,
+      "exchange": null,
+      "listing": "pre_ipo",
+      "name": {
+        "en": "OpenAI",
+        "zh": "OpenAI"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Francisco",
+          "zh": "旧金山"
+        },
+        "lat": 37.76,
+        "lon": -122.41
+      },
+      "layer": "labs",
+      "tier": 1,
+      "role": {
+        "en": "GPT models; confidential IPO filing June 2026",
+        "zh": "GPT 模型；2026 年 6 月秘密递交 IPO 申请"
+      },
+      "official_domain": "openai.com"
+    },
+    {
+      "id": "msft",
+      "ticker": "MSFT",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Microsoft",
+        "zh": "微软"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Redmond",
+          "zh": "雷德蒙德"
+        },
+        "lat": 47.67,
+        "lon": -122.12
+      },
+      "layer": "labs",
+      "tier": 1,
+      "role": {
+        "en": "Azure cloud; investor in OpenAI and Anthropic",
+        "zh": "Azure 云；OpenAI 与 Anthropic 的投资方"
+      },
+      "official_domain": "microsoft.com"
+    },
+    {
+      "id": "googl",
+      "ticker": "GOOGL",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Alphabet (Google)",
+        "zh": "Alphabet（谷歌）"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Mountain View",
+          "zh": "山景城"
+        },
+        "lat": 37.42,
+        "lon": -122.08
+      },
+      "layer": "labs",
+      "tier": 1,
+      "role": {
+        "en": "Gemini, Google Cloud and TPUs",
+        "zh": "Gemini、谷歌云与 TPU"
+      },
+      "official_domain": "google.com"
+    },
+    {
+      "id": "amzn",
+      "ticker": "AMZN",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Amazon",
+        "zh": "亚马逊"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Seattle",
+          "zh": "西雅图"
+        },
+        "lat": 47.61,
+        "lon": -122.33
+      },
+      "layer": "labs",
+      "tier": 1,
+      "role": {
+        "en": "AWS and Trainium",
+        "zh": "AWS 与 Trainium 芯片"
+      },
+      "official_domain": "aboutamazon.com"
+    },
+    {
+      "id": "meta",
+      "ticker": "META",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Meta",
+        "zh": "Meta"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Menlo Park",
+          "zh": "门洛帕克"
+        },
+        "lat": 37.48,
+        "lon": -122.15
+      },
+      "layer": "labs",
+      "tier": 2,
+      "role": {
+        "en": "Muse Spark models",
+        "zh": "Muse Spark 模型"
+      },
+      "official_domain": "meta.com"
+    },
+    {
+      "id": "orcl",
+      "ticker": "ORCL",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Oracle",
+        "zh": "甲骨文"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Austin",
+          "zh": "奥斯汀"
+        },
+        "lat": 30.27,
+        "lon": -97.74
+      },
+      "layer": "labs",
+      "tier": 2,
+      "role": {
+        "en": "Stargate cloud capacity",
+        "zh": "\"星际之门\"云算力"
+      },
+      "official_domain": "oracle.com"
+    },
+    {
+      "id": "spcx",
+      "ticker": "SPCX",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "SpaceX (incl. xAI)",
+        "zh": "SpaceX（含 xAI）"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Starbase",
+          "zh": "星舰基地"
+        },
+        "lat": 25.99,
+        "lon": -97.16
+      },
+      "layer": "labs",
+      "tier": 2,
+      "role": {
+        "en": "Grok models, Colossus compute, Cursor",
+        "zh": "Grok 模型、Colossus 算力、Cursor"
+      },
+      "official_domain": "spacex.com"
+    },
+    {
+      "id": "baba",
+      "ticker": "BABA",
+      "exchange": "NYSE",
+      "listing": "adr",
+      "name": {
+        "en": "Alibaba",
+        "zh": "阿里巴巴"
+      },
+      "country": "CN",
+      "hq": {
+        "city": {
+          "en": "Hangzhou",
+          "zh": "杭州"
+        },
+        "lat": 30.27,
+        "lon": 120.16
+      },
+      "layer": "labs",
+      "tier": 2,
+      "role": {
+        "en": "Qwen models and Alibaba Cloud",
+        "zh": "通义千问与阿里云"
+      },
+      "official_domain": "alibabagroup.com"
+    },
+    {
+      "id": "bidu",
+      "ticker": "BIDU",
+      "exchange": "NASDAQ",
+      "listing": "adr",
+      "name": {
+        "en": "Baidu",
+        "zh": "百度"
+      },
+      "country": "CN",
+      "hq": {
+        "city": {
+          "en": "Beijing",
+          "zh": "北京"
+        },
+        "lat": 40.05,
+        "lon": 116.3
+      },
+      "layer": "labs",
+      "tier": 3,
+      "role": {
+        "en": "Ernie models",
+        "zh": "文心大模型"
+      },
+      "official_domain": "baidu.com"
+    },
+    {
+      "id": "deepseek",
+      "ticker": null,
+      "exchange": null,
+      "listing": "private",
+      "name": {
+        "en": "DeepSeek",
+        "zh": "深度求索"
+      },
+      "country": "CN",
+      "hq": {
+        "city": {
+          "en": "Hangzhou",
+          "zh": "杭州"
+        },
+        "lat": 30.25,
+        "lon": 120.21
+      },
+      "layer": "labs",
+      "tier": 2,
+      "role": {
+        "en": "Open-weights models; not listed",
+        "zh": "开放权重模型；未上市"
+      },
+      "official_domain": "deepseek.com"
+    },
+    {
+      "id": "moonshot",
+      "ticker": null,
+      "exchange": null,
+      "listing": "private",
+      "name": {
+        "en": "Moonshot AI",
+        "zh": "月之暗面"
+      },
+      "country": "CN",
+      "hq": {
+        "city": {
+          "en": "Beijing",
+          "zh": "北京"
+        },
+        "lat": 39.98,
+        "lon": 116.31
+      },
+      "layer": "labs",
+      "tier": 3,
+      "role": {
+        "en": "Kimi models; not listed",
+        "zh": "Kimi 模型；未上市"
+      },
+      "official_domain": "moonshot.cn"
+    },
+    {
+      "id": "zhipu",
+      "ticker": null,
+      "exchange": "HKEX",
+      "listing": "non_us",
+      "name": {
+        "en": "Zhipu (Z.ai)",
+        "zh": "智谱"
+      },
+      "country": "CN",
+      "hq": {
+        "city": {
+          "en": "Beijing",
+          "zh": "北京"
+        },
+        "lat": 39.99,
+        "lon": 116.33
+      },
+      "layer": "labs",
+      "tier": 3,
+      "role": {
+        "en": "GLM models; listed in Hong Kong",
+        "zh": "GLM 模型；香港上市"
+      },
+      "official_domain": "zhipuai.cn"
+    },
+    {
+      "id": "minimax",
+      "ticker": null,
+      "exchange": "HKEX",
+      "listing": "non_us",
+      "name": {
+        "en": "MiniMax",
+        "zh": "MiniMax"
+      },
+      "country": "CN",
+      "hq": {
+        "city": {
+          "en": "Shanghai",
+          "zh": "上海"
+        },
+        "lat": 31.23,
+        "lon": 121.47
+      },
+      "layer": "labs",
+      "tier": 3,
+      "role": {
+        "en": "MiniMax models; listed in Hong Kong",
+        "zh": "MiniMax 模型；香港上市"
+      },
+      "official_domain": "minimax.io"
+    },
+    {
+      "id": "nvda",
+      "ticker": "NVDA",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "NVIDIA",
+        "zh": "英伟达"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Santa Clara",
+          "zh": "圣克拉拉"
+        },
+        "lat": 37.37,
+        "lon": -121.96
+      },
+      "layer": "compute",
+      "tier": 1,
+      "role": {
+        "en": "GPUs and systems",
+        "zh": "GPU 与整机系统"
+      },
+      "official_domain": "nvidia.com"
+    },
+    {
+      "id": "avgo",
+      "ticker": "AVGO",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Broadcom",
+        "zh": "博通"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Palo Alto",
+          "zh": "帕洛阿尔托"
+        },
+        "lat": 37.44,
+        "lon": -122.14
+      },
+      "layer": "compute",
+      "tier": 1,
+      "role": {
+        "en": "Custom accelerators (TPU, OpenAI) and networking",
+        "zh": "定制加速器（TPU、OpenAI）与网络芯片"
+      },
+      "official_domain": "broadcom.com"
+    },
+    {
+      "id": "amd",
+      "ticker": "AMD",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "AMD",
+        "zh": "AMD"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Santa Clara",
+          "zh": "圣克拉拉"
+        },
+        "lat": 37.38,
+        "lon": -121.96
+      },
+      "layer": "compute",
+      "tier": 2,
+      "role": {
+        "en": "Instinct GPUs",
+        "zh": "Instinct GPU"
+      },
+      "official_domain": "amd.com"
+    },
+    {
+      "id": "mrvl",
+      "ticker": "MRVL",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Marvell",
+        "zh": "迈威尔"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Santa Clara",
+          "zh": "圣克拉拉"
+        },
+        "lat": 37.38,
+        "lon": -121.97
+      },
+      "layer": "compute",
+      "tier": 2,
+      "role": {
+        "en": "Custom silicon and optics DSPs",
+        "zh": "定制芯片与光通信 DSP"
+      },
+      "official_domain": "marvell.com"
+    },
+    {
+      "id": "arm",
+      "ticker": "ARM",
+      "exchange": "NASDAQ",
+      "listing": "adr",
+      "name": {
+        "en": "Arm",
+        "zh": "Arm"
+      },
+      "country": "UK",
+      "hq": {
+        "city": {
+          "en": "Cambridge",
+          "zh": "剑桥"
+        },
+        "lat": 52.2,
+        "lon": 0.12
+      },
+      "layer": "compute",
+      "tier": 2,
+      "role": {
+        "en": "CPU architecture in AI servers",
+        "zh": "AI 服务器 CPU 架构"
+      },
+      "official_domain": "arm.com"
+    },
+    {
+      "id": "cbrs",
+      "ticker": "CBRS",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Cerebras",
+        "zh": "Cerebras"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Sunnyvale",
+          "zh": "桑尼维尔"
+        },
+        "lat": 37.37,
+        "lon": -122.04
+      },
+      "layer": "compute",
+      "tier": 3,
+      "role": {
+        "en": "Wafer-scale inference; IPO May 2026",
+        "zh": "晶圆级推理芯片；2026 年 5 月上市"
+      },
+      "official_domain": "cerebras.ai"
+    },
+    {
+      "id": "intc",
+      "ticker": "INTC",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Intel",
+        "zh": "英特尔"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Santa Clara",
+          "zh": "圣克拉拉"
+        },
+        "lat": 37.39,
+        "lon": -121.96
+      },
+      "layer": "compute",
+      "tier": 3,
+      "role": {
+        "en": "Server CPUs and foundry",
+        "zh": "服务器 CPU 与代工"
+      },
+      "official_domain": "intel.com"
+    },
+    {
+      "id": "qcom",
+      "ticker": "QCOM",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Qualcomm",
+        "zh": "高通"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Diego",
+          "zh": "圣地亚哥"
+        },
+        "lat": 32.9,
+        "lon": -117.2
+      },
+      "layer": "compute",
+      "tier": 3,
+      "role": {
+        "en": "On-device AI chips",
+        "zh": "端侧 AI 芯片"
+      },
+      "official_domain": "qualcomm.com"
+    },
+    {
+      "id": "tsm",
+      "ticker": "TSM",
+      "exchange": "NYSE",
+      "listing": "adr",
+      "name": {
+        "en": "TSMC",
+        "zh": "台积电"
+      },
+      "country": "TW",
+      "hq": {
+        "city": {
+          "en": "Hsinchu",
+          "zh": "新竹"
+        },
+        "lat": 24.78,
+        "lon": 120.99
+      },
+      "layer": "foundry",
+      "tier": 1,
+      "role": {
+        "en": "Leading-edge foundry for AI chips",
+        "zh": "AI 芯片先进制程代工"
+      },
+      "official_domain": "tsmc.com"
+    },
+    {
+      "id": "asml",
+      "ticker": "ASML",
+      "exchange": "NASDAQ",
+      "listing": "adr",
+      "name": {
+        "en": "ASML",
+        "zh": "阿斯麦"
+      },
+      "country": "NL",
+      "hq": {
+        "city": {
+          "en": "Veldhoven",
+          "zh": "费尔德霍芬"
+        },
+        "lat": 51.41,
+        "lon": 5.41
+      },
+      "layer": "foundry",
+      "tier": 1,
+      "role": {
+        "en": "EUV lithography",
+        "zh": "EUV 光刻机"
+      },
+      "official_domain": "asml.com"
+    },
+    {
+      "id": "amat",
+      "ticker": "AMAT",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Applied Materials",
+        "zh": "应用材料"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Santa Clara",
+          "zh": "圣克拉拉"
+        },
+        "lat": 37.37,
+        "lon": -121.99
+      },
+      "layer": "foundry",
+      "tier": 2,
+      "role": {
+        "en": "Deposition and etch tools",
+        "zh": "沉积与刻蚀设备"
+      },
+      "official_domain": "appliedmaterials.com"
+    },
+    {
+      "id": "lrcx",
+      "ticker": "LRCX",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Lam Research",
+        "zh": "泛林"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Fremont",
+          "zh": "弗里蒙特"
+        },
+        "lat": 37.52,
+        "lon": -121.98
+      },
+      "layer": "foundry",
+      "tier": 2,
+      "role": {
+        "en": "Etch tools for memory and logic",
+        "zh": "存储与逻辑芯片刻蚀设备"
+      },
+      "official_domain": "lamresearch.com"
+    },
+    {
+      "id": "klac",
+      "ticker": "KLAC",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "KLA",
+        "zh": "科磊"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Milpitas",
+          "zh": "米尔皮塔斯"
+        },
+        "lat": 37.43,
+        "lon": -121.91
+      },
+      "layer": "foundry",
+      "tier": 2,
+      "role": {
+        "en": "Process control and inspection",
+        "zh": "制程检测"
+      },
+      "official_domain": "kla.com"
+    },
+    {
+      "id": "skhy",
+      "ticker": "SKHY",
+      "exchange": "NASDAQ",
+      "listing": "adr",
+      "name": {
+        "en": "SK hynix",
+        "zh": "SK 海力士"
+      },
+      "country": "KR",
+      "hq": {
+        "city": {
+          "en": "Icheon",
+          "zh": "利川"
+        },
+        "lat": 37.27,
+        "lon": 127.44
+      },
+      "layer": "memory",
+      "tier": 1,
+      "role": {
+        "en": "HBM leader; ADR listed July 2026",
+        "zh": "HBM 龙头；2026 年 7 月 ADR 上市"
+      },
+      "official_domain": "skhynix.com"
+    },
+    {
+      "id": "mu",
+      "ticker": "MU",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Micron",
+        "zh": "美光"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Boise",
+          "zh": "博伊西"
+        },
+        "lat": 43.62,
+        "lon": -116.2
+      },
+      "layer": "memory",
+      "tier": 1,
+      "role": {
+        "en": "HBM, DRAM and SSD",
+        "zh": "HBM、DRAM 与固态硬盘"
+      },
+      "official_domain": "micron.com"
+    },
+    {
+      "id": "samsung",
+      "ticker": null,
+      "exchange": "KRX",
+      "listing": "non_us",
+      "name": {
+        "en": "Samsung Electronics",
+        "zh": "三星电子"
+      },
+      "country": "KR",
+      "hq": {
+        "city": {
+          "en": "Suwon",
+          "zh": "水原"
+        },
+        "lat": 37.26,
+        "lon": 127.03
+      },
+      "layer": "memory",
+      "tier": 1,
+      "role": {
+        "en": "HBM4 supplier; no US listing",
+        "zh": "HBM4 供应商；未在美上市"
+      },
+      "official_domain": "samsung.com"
+    },
+    {
+      "id": "sndk",
+      "ticker": "SNDK",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Sandisk",
+        "zh": "闪迪"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Milpitas",
+          "zh": "米尔皮塔斯"
+        },
+        "lat": 37.43,
+        "lon": -121.9
+      },
+      "layer": "memory",
+      "tier": 3,
+      "role": {
+        "en": "NAND flash",
+        "zh": "NAND 闪存"
+      },
+      "official_domain": "sandisk.com"
+    },
+    {
+      "id": "wdc",
+      "ticker": "WDC",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Western Digital",
+        "zh": "西部数据"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Jose",
+          "zh": "圣何塞"
+        },
+        "lat": 37.34,
+        "lon": -121.89
+      },
+      "layer": "memory",
+      "tier": 3,
+      "role": {
+        "en": "Data-centre hard drives",
+        "zh": "数据中心硬盘"
+      },
+      "official_domain": "westerndigital.com"
+    },
+    {
+      "id": "stx",
+      "ticker": "STX",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Seagate",
+        "zh": "希捷"
+      },
+      "country": "IE",
+      "hq": {
+        "city": {
+          "en": "Dublin",
+          "zh": "都柏林"
+        },
+        "lat": 53.35,
+        "lon": -6.26
+      },
+      "layer": "memory",
+      "tier": 3,
+      "role": {
+        "en": "Data-centre hard drives",
+        "zh": "数据中心硬盘"
+      },
+      "official_domain": "seagate.com"
+    },
+    {
+      "id": "anet",
+      "ticker": "ANET",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Arista Networks",
+        "zh": "Arista"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Santa Clara",
+          "zh": "圣克拉拉"
+        },
+        "lat": 37.38,
+        "lon": -121.97
+      },
+      "layer": "network",
+      "tier": 2,
+      "role": {
+        "en": "AI data-centre switches",
+        "zh": "AI 数据中心交换机"
+      },
+      "official_domain": "arista.com"
+    },
+    {
+      "id": "csco",
+      "ticker": "CSCO",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Cisco",
+        "zh": "思科"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Jose",
+          "zh": "圣何塞"
+        },
+        "lat": 37.41,
+        "lon": -121.95
+      },
+      "layer": "network",
+      "tier": 3,
+      "role": {
+        "en": "Networking",
+        "zh": "网络设备"
+      },
+      "official_domain": "cisco.com"
+    },
+    {
+      "id": "cohr",
+      "ticker": "COHR",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Coherent",
+        "zh": "Coherent"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Saxonburg",
+          "zh": "萨克森堡"
+        },
+        "lat": 40.75,
+        "lon": -79.81
+      },
+      "layer": "network",
+      "tier": 2,
+      "role": {
+        "en": "Optical transceivers",
+        "zh": "光模块"
+      },
+      "official_domain": "coherent.com"
+    },
+    {
+      "id": "lite",
+      "ticker": "LITE",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Lumentum",
+        "zh": "Lumentum"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Jose",
+          "zh": "圣何塞"
+        },
+        "lat": 37.34,
+        "lon": -121.89
+      },
+      "layer": "network",
+      "tier": 2,
+      "role": {
+        "en": "Lasers and optical components",
+        "zh": "激光器与光器件"
+      },
+      "official_domain": "lumentum.com"
+    },
+    {
+      "id": "crdo",
+      "ticker": "CRDO",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Credo",
+        "zh": "Credo"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Jose",
+          "zh": "圣何塞"
+        },
+        "lat": 37.34,
+        "lon": -121.89
+      },
+      "layer": "network",
+      "tier": 3,
+      "role": {
+        "en": "Active electrical cables",
+        "zh": "有源电缆"
+      },
+      "official_domain": "credosemi.com"
+    },
+    {
+      "id": "alab",
+      "ticker": "ALAB",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Astera Labs",
+        "zh": "Astera Labs"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Jose",
+          "zh": "圣何塞"
+        },
+        "lat": 37.34,
+        "lon": -121.89
+      },
+      "layer": "network",
+      "tier": 3,
+      "role": {
+        "en": "PCIe/CXL connectivity",
+        "zh": "PCIe/CXL 互连"
+      },
+      "official_domain": "asteralabs.com"
+    },
+    {
+      "id": "cien",
+      "ticker": "CIEN",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Ciena",
+        "zh": "Ciena"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Hanover",
+          "zh": "汉诺威"
+        },
+        "lat": 39.19,
+        "lon": -76.72
+      },
+      "layer": "network",
+      "tier": 3,
+      "role": {
+        "en": "Data-centre interconnect",
+        "zh": "数据中心互联"
+      },
+      "official_domain": "ciena.com"
+    },
+    {
+      "id": "dell",
+      "ticker": "DELL",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Dell Technologies",
+        "zh": "戴尔"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Round Rock",
+          "zh": "朗德罗克"
+        },
+        "lat": 30.51,
+        "lon": -97.68
+      },
+      "layer": "infra",
+      "tier": 2,
+      "role": {
+        "en": "AI servers",
+        "zh": "AI 服务器"
+      },
+      "official_domain": "dell.com"
+    },
+    {
+      "id": "smci",
+      "ticker": "SMCI",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Supermicro",
+        "zh": "超微电脑"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Jose",
+          "zh": "圣何塞"
+        },
+        "lat": 37.37,
+        "lon": -121.92
+      },
+      "layer": "infra",
+      "tier": 2,
+      "role": {
+        "en": "AI servers",
+        "zh": "AI 服务器"
+      },
+      "official_domain": "supermicro.com"
+    },
+    {
+      "id": "crwv",
+      "ticker": "CRWV",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "CoreWeave",
+        "zh": "CoreWeave"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Livingston",
+          "zh": "利文斯顿"
+        },
+        "lat": 40.79,
+        "lon": -74.31
+      },
+      "layer": "infra",
+      "tier": 2,
+      "role": {
+        "en": "GPU cloud",
+        "zh": "GPU 云"
+      },
+      "official_domain": "coreweave.com"
+    },
+    {
+      "id": "nbis",
+      "ticker": "NBIS",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Nebius",
+        "zh": "Nebius"
+      },
+      "country": "NL",
+      "hq": {
+        "city": {
+          "en": "Amsterdam",
+          "zh": "阿姆斯特丹"
+        },
+        "lat": 52.37,
+        "lon": 4.9
+      },
+      "layer": "infra",
+      "tier": 3,
+      "role": {
+        "en": "GPU cloud",
+        "zh": "GPU 云"
+      },
+      "official_domain": "nebius.com"
+    },
+    {
+      "id": "vrt",
+      "ticker": "VRT",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Vertiv",
+        "zh": "维谛"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Westerville",
+          "zh": "韦斯特维尔"
+        },
+        "lat": 40.13,
+        "lon": -82.93
+      },
+      "layer": "power",
+      "tier": 2,
+      "role": {
+        "en": "Power and liquid cooling",
+        "zh": "供电与液冷"
+      },
+      "official_domain": "vertiv.com"
+    },
+    {
+      "id": "gev",
+      "ticker": "GEV",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "GE Vernova",
+        "zh": "GE Vernova"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Cambridge, MA",
+          "zh": "剑桥（马萨诸塞）"
+        },
+        "lat": 42.37,
+        "lon": -71.11
+      },
+      "layer": "power",
+      "tier": 2,
+      "role": {
+        "en": "Gas turbines and grid equipment",
+        "zh": "燃气轮机与电网设备"
+      },
+      "official_domain": "gevernova.com"
+    },
+    {
+      "id": "ceg",
+      "ticker": "CEG",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Constellation Energy",
+        "zh": "星座能源"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Baltimore",
+          "zh": "巴尔的摩"
+        },
+        "lat": 39.29,
+        "lon": -76.61
+      },
+      "layer": "power",
+      "tier": 2,
+      "role": {
+        "en": "Nuclear power for data centres",
+        "zh": "为数据中心供应核电"
+      },
+      "official_domain": "constellationenergy.com"
+    },
+    {
+      "id": "vst",
+      "ticker": "VST",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Vistra",
+        "zh": "Vistra"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Irving",
+          "zh": "欧文"
+        },
+        "lat": 32.81,
+        "lon": -96.95
+      },
+      "layer": "power",
+      "tier": 3,
+      "role": {
+        "en": "Power generation",
+        "zh": "发电"
+      },
+      "official_domain": "vistracorp.com"
+    },
+    {
+      "id": "etn",
+      "ticker": "ETN",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Eaton",
+        "zh": "伊顿"
+      },
+      "country": "IE",
+      "hq": {
+        "city": {
+          "en": "Dublin",
+          "zh": "都柏林"
+        },
+        "lat": 53.35,
+        "lon": -6.26
+      },
+      "layer": "power",
+      "tier": 3,
+      "role": {
+        "en": "Electrical equipment",
+        "zh": "电气设备"
+      },
+      "official_domain": "eaton.com"
+    },
+    {
+      "id": "oklo",
+      "ticker": "OKLO",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Oklo",
+        "zh": "Oklo"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Santa Clara",
+          "zh": "圣克拉拉"
+        },
+        "lat": 37.35,
+        "lon": -121.95
+      },
+      "layer": "power",
+      "tier": 3,
+      "role": {
+        "en": "Small modular reactors",
+        "zh": "小型模块化反应堆"
+      },
+      "official_domain": "oklo.com"
+    },
+    {
+      "id": "pltr",
+      "ticker": "PLTR",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Palantir",
+        "zh": "Palantir"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Denver",
+          "zh": "丹佛"
+        },
+        "lat": 39.74,
+        "lon": -104.99
+      },
+      "layer": "apps",
+      "tier": 2,
+      "role": {
+        "en": "AI platforms for enterprise and government",
+        "zh": "面向企业与政府的 AI 平台"
+      },
+      "official_domain": "palantir.com"
+    },
+    {
+      "id": "crm",
+      "ticker": "CRM",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Salesforce",
+        "zh": "Salesforce"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Francisco",
+          "zh": "旧金山"
+        },
+        "lat": 37.79,
+        "lon": -122.4
+      },
+      "layer": "apps",
+      "tier": 3,
+      "role": {
+        "en": "Enterprise AI agents",
+        "zh": "企业 AI 智能体"
+      },
+      "official_domain": "salesforce.com"
+    },
+    {
+      "id": "now",
+      "ticker": "NOW",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "ServiceNow",
+        "zh": "ServiceNow"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Santa Clara",
+          "zh": "圣克拉拉"
+        },
+        "lat": 37.4,
+        "lon": -121.98
+      },
+      "layer": "apps",
+      "tier": 3,
+      "role": {
+        "en": "Workflow AI",
+        "zh": "工作流 AI"
+      },
+      "official_domain": "servicenow.com"
+    },
+    {
+      "id": "snow",
+      "ticker": "SNOW",
+      "exchange": "NYSE",
+      "listing": "listed",
+      "name": {
+        "en": "Snowflake",
+        "zh": "Snowflake"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "Bozeman",
+          "zh": "博兹曼"
+        },
+        "lat": 45.68,
+        "lon": -111.04
+      },
+      "layer": "apps",
+      "tier": 3,
+      "role": {
+        "en": "Data platform",
+        "zh": "数据平台"
+      },
+      "official_domain": "snowflake.com"
+    },
+    {
+      "id": "adbe",
+      "ticker": "ADBE",
+      "exchange": "NASDAQ",
+      "listing": "listed",
+      "name": {
+        "en": "Adobe",
+        "zh": "Adobe"
+      },
+      "country": "US",
+      "hq": {
+        "city": {
+          "en": "San Jose",
+          "zh": "圣何塞"
+        },
+        "lat": 37.33,
+        "lon": -121.89
+      },
+      "layer": "apps",
+      "tier": 3,
+      "role": {
+        "en": "Creative AI",
+        "zh": "创意 AI"
+      },
+      "official_domain": "adobe.com"
+    }
+  ],
+  "edges": [
+    {
+      "id": "spcx-ant-colossus",
+      "source": "spcx",
+      "target": "anthropic",
+      "type": "compute",
+      "as_of": "2026-05-06",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "All of Colossus 1 (Memphis): >300 MW, >220,000 NVIDIA GPUs",
+        "zh": "Colossus 1（孟菲斯）整体供给：300 MW 以上、22 万块以上 NVIDIA GPU"
+      },
+      "source_ids": [
+        "ANT-SPACEX",
+        "XAI-ANT"
+      ]
+    },
+    {
+      "id": "ant-spcx-pay",
+      "source": "anthropic",
+      "target": "spcx",
+      "type": "compute",
+      "as_of": "2026-05-20",
+      "amount_usd_b": 40,
+      "status": "reported",
+      "label": {
+        "en": "Anthropic pays $1.25B a month to May 2029 (>$40B); 90-day exit for either side",
+        "zh": "Anthropic 每月支付 12.5 亿美元至 2029 年 5 月（总额超过 400 亿）；双方均可提前 90 天退出"
+      },
+      "source_ids": [
+        "TC-ANT-SPACEX"
+      ]
+    },
+    {
+      "id": "ant-spcx-rival",
+      "source": "anthropic",
+      "target": "spcx",
+      "type": "competitor",
+      "as_of": "2026-01-12",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "Claude vs Grok; Anthropic cut xAI’s Claude access via Cursor, which SpaceX later bought for $60B",
+        "zh": "Claude 对 Grok；Anthropic 切断了 xAI 经 Cursor 使用 Claude 的权限，SpaceX 随后以 600 亿美元收购 Cursor"
+      },
+      "source_ids": [
+        "RUNDOWN-XAI",
+        "YAHOO-SPCX-CURSOR"
+      ]
+    },
+    {
+      "id": "googl-ant-invest",
+      "source": "googl",
+      "target": "anthropic",
+      "type": "investment",
+      "as_of": "2026-04-24",
+      "amount_usd_b": 40,
+      "status": "reported",
+      "label": {
+        "en": "Up to $40B: $10B now at a $350B valuation, $30B on milestones; 5 GW of Google Cloud",
+        "zh": "最多 400 亿美元：先投 100 亿（估值 3500 亿），300 亿按里程碑；另含 5 GW 谷歌云算力"
+      },
+      "source_ids": [
+        "TC-GOOG-ANT"
+      ]
+    },
+    {
+      "id": "googl-ant-tpu",
+      "source": "googl",
+      "target": "anthropic",
+      "type": "compute",
+      "as_of": "2025-10-23",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "Up to 1M TPUs; well over 1 GW online in 2026",
+        "zh": "最多 100 万块 TPU；2026 年上线远超 1 GW"
+      },
+      "source_ids": [
+        "GCLOUD-ANT-TPU"
+      ]
+    },
+    {
+      "id": "avgo-ant-tpu",
+      "source": "avgo",
+      "target": "anthropic",
+      "type": "chips",
+      "as_of": "2026-04-06",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "Multi-gigawatt next-generation TPU capacity from 2027 (with Google)",
+        "zh": "与谷歌合作，自 2027 年起提供数 GW 下一代 TPU 算力"
+      },
+      "source_ids": [
+        "ANT-AVGO"
+      ]
+    },
+    {
+      "id": "googl-ant-rival",
+      "source": "googl",
+      "target": "anthropic",
+      "type": "competitor",
+      "as_of": "2026-09",
+      "amount_usd_b": null,
+      "status": "independent",
+      "label": {
+        "en": "Gemini competes with Claude on the same leaderboards",
+        "zh": "Gemini 与 Claude 在同一榜单上竞争"
+      },
+      "source_ids": [
+        "AA-BOARD"
+      ]
+    },
+    {
+      "id": "amzn-ant-invest",
+      "source": "amzn",
+      "target": "anthropic",
+      "type": "investment",
+      "as_of": "2026-04-20",
+      "amount_usd_b": 25,
+      "status": "official",
+      "label": {
+        "en": "$5B now plus up to $20B more, on top of $8B earlier",
+        "zh": "先投 50 亿，追加最多 200 亿，此前已投 80 亿"
+      },
+      "source_ids": [
+        "ANT-AMZN"
+      ]
+    },
+    {
+      "id": "amzn-ant-cloud",
+      "source": "amzn",
+      "target": "anthropic",
+      "type": "compute",
+      "as_of": "2026-04-20",
+      "amount_usd_b": 100,
+      "status": "official",
+      "label": {
+        "en": ">$100B on AWS over 10 years; up to 5 GW (Graviton, Trainium2–4)",
+        "zh": "10 年在 AWS 投入超过 1000 亿；最多 5 GW（Graviton、Trainium2–4）"
+      },
+      "source_ids": [
+        "ANT-AMZN"
+      ]
+    },
+    {
+      "id": "msft-ant-invest",
+      "source": "msft",
+      "target": "anthropic",
+      "type": "investment",
+      "as_of": "2025-11-18",
+      "amount_usd_b": 5,
+      "status": "reported",
+      "label": {
+        "en": "Microsoft invests $5B",
+        "zh": "微软投资 50 亿美元"
+      },
+      "source_ids": [
+        "GEEKWIRE-MSFT-ANT"
+      ]
+    },
+    {
+      "id": "nvda-ant-invest",
+      "source": "nvda",
+      "target": "anthropic",
+      "type": "investment",
+      "as_of": "2025-11-18",
+      "amount_usd_b": 10,
+      "status": "reported",
+      "label": {
+        "en": "NVIDIA invests up to $10B; the two collaborate on design and engineering",
+        "zh": "NVIDIA 投资最多 100 亿美元，双方在设计与工程上合作"
+      },
+      "source_ids": [
+        "GEEKWIRE-MSFT-ANT",
+        "ANT-MSFT-NVDA"
+      ]
+    },
+    {
+      "id": "msft-ant-azure",
+      "source": "msft",
+      "target": "anthropic",
+      "type": "compute",
+      "as_of": "2025-11-18",
+      "amount_usd_b": 30,
+      "status": "reported",
+      "label": {
+        "en": "$30B Azure commitment; Claude in Foundry and Copilot",
+        "zh": "承诺在 Azure 投入 300 亿美元；Claude 进入 Foundry 与 Copilot"
+      },
+      "source_ids": [
+        "GEEKWIRE-MSFT-ANT"
+      ]
+    },
+    {
+      "id": "mu-ant-invest",
+      "source": "mu",
+      "target": "anthropic",
+      "type": "investment",
+      "as_of": "2026-06-22",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "Micron invests in Series H",
+        "zh": "美光参与 H 轮投资"
+      },
+      "source_ids": [
+        "MU-ANT",
+        "BLOCKS-MU"
+      ]
+    },
+    {
+      "id": "mu-ant-memory",
+      "source": "mu",
+      "target": "anthropic",
+      "type": "chips",
+      "as_of": "2026-06-22",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "HBM, DRAM and SSD supply agreement",
+        "zh": "HBM、DRAM 与固态硬盘供应协议"
+      },
+      "source_ids": [
+        "MU-ANT",
+        "BLOCKS-MU"
+      ]
+    },
+    {
+      "id": "msft-oai-invest",
+      "source": "msft",
+      "target": "openai",
+      "type": "investment",
+      "as_of": "2025-10-28",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "Microsoft holds roughly 27% after OpenAI’s recapitalisation",
+        "zh": "OpenAI 重组后微软持股约 27%"
+      },
+      "source_ids": [
+        "OAI-MSFT-NEXT"
+      ]
+    },
+    {
+      "id": "msft-oai-azure",
+      "source": "msft",
+      "target": "openai",
+      "type": "compute",
+      "as_of": "2025-10-28",
+      "amount_usd_b": 250,
+      "status": "official",
+      "label": {
+        "en": "OpenAI contracts an incremental $250B of Azure services",
+        "zh": "OpenAI 追加采购 2500 亿美元 Azure 服务"
+      },
+      "source_ids": [
+        "OAI-MSFT-NEXT"
+      ]
+    },
+    {
+      "id": "orcl-oai-stargate",
+      "source": "orcl",
+      "target": "openai",
+      "type": "compute",
+      "as_of": "2025-07-22",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "Stargate: 4.5 GW partnership",
+        "zh": "\"星际之门\"：4.5 GW 合作"
+      },
+      "source_ids": [
+        "OAI-ORCL"
+      ]
+    },
+    {
+      "id": "nvda-oai-chips",
+      "source": "nvda",
+      "target": "openai",
+      "type": "chips",
+      "as_of": "2025-09-22",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "10 GW letter of intent",
+        "zh": "10 GW 意向书"
+      },
+      "source_ids": [
+        "OAI-NVDA"
+      ]
+    },
+    {
+      "id": "nvda-oai-invest",
+      "source": "nvda",
+      "target": "openai",
+      "type": "investment",
+      "as_of": "2026-02-27",
+      "amount_usd_b": 30,
+      "status": "reported",
+      "label": {
+        "en": "About $30B in OpenAI’s 2026 round, scaled back from “up to $100B”",
+        "zh": "在 OpenAI 2026 年融资中投资约 300 亿美元，低于此前\"最多 1000 亿\"的意向"
+      },
+      "source_ids": [
+        "YAHOO-OAI-110",
+        "MALAYMAIL-NVDA-OAI"
+      ]
+    },
+    {
+      "id": "amd-oai-chips",
+      "source": "amd",
+      "target": "openai",
+      "type": "chips",
+      "as_of": "2025-10-06",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "6 GW of Instinct GPUs; warrant for up to 160M AMD shares",
+        "zh": "6 GW Instinct GPU；可认购最多 1.6 亿股 AMD 股票"
+      },
+      "source_ids": [
+        "AMD-OAI"
+      ]
+    },
+    {
+      "id": "avgo-oai-chips",
+      "source": "avgo",
+      "target": "openai",
+      "type": "chips",
+      "as_of": "2025-10-13",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "10 GW of custom accelerators",
+        "zh": "10 GW 定制加速器"
+      },
+      "source_ids": [
+        "OAI-AVGO"
+      ]
+    },
+    {
+      "id": "crwv-oai-compute",
+      "source": "crwv",
+      "target": "openai",
+      "type": "compute",
+      "as_of": "2025-09-25",
+      "amount_usd_b": 22.4,
+      "status": "official",
+      "label": {
+        "en": "Contracts worth up to about $22.4B in total",
+        "zh": "合同总额最多约 224 亿美元"
+      },
+      "source_ids": [
+        "CRWV-OAI"
+      ]
+    },
+    {
+      "id": "amzn-oai-cloud",
+      "source": "amzn",
+      "target": "openai",
+      "type": "compute",
+      "as_of": "2025-11-03",
+      "amount_usd_b": 38,
+      "status": "reported",
+      "label": {
+        "en": "$38B AWS agreement",
+        "zh": "380 亿美元 AWS 协议"
+      },
+      "source_ids": [
+        "TIPRANKS-AMZN-OAI"
+      ]
+    },
+    {
+      "id": "cbrs-oai-compute",
+      "source": "cbrs",
+      "target": "openai",
+      "type": "compute",
+      "as_of": "2026-01-14",
+      "amount_usd_b": 10,
+      "status": "reported",
+      "label": {
+        "en": ">$10B, about 750 MW through 2028",
+        "zh": "超过 100 亿美元，至 2028 年约 750 MW"
+      },
+      "source_ids": [
+        "OAI-CBRS",
+        "REG-CBRS"
+      ]
+    },
+    {
+      "id": "oai-ant-rival",
+      "source": "openai",
+      "target": "anthropic",
+      "type": "competitor",
+      "as_of": "2026-09",
+      "amount_usd_b": null,
+      "status": "independent",
+      "label": {
+        "en": "GPT-6 Astra vs Claude on the same index",
+        "zh": "GPT-6 Astra 与 Claude 在同一指数上竞争"
+      },
+      "source_ids": [
+        "AA-BOARD"
+      ]
+    },
+    {
+      "id": "oai-googl-rival",
+      "source": "openai",
+      "target": "googl",
+      "type": "competitor",
+      "as_of": "2026-09",
+      "amount_usd_b": null,
+      "status": "independent",
+      "label": {
+        "en": "GPT vs Gemini",
+        "zh": "GPT 对 Gemini"
+      },
+      "source_ids": [
+        "AA-BOARD"
+      ]
+    },
+    {
+      "id": "oai-spcx-rival",
+      "source": "openai",
+      "target": "spcx",
+      "type": "competitor",
+      "as_of": "2026-09",
+      "amount_usd_b": null,
+      "status": "independent",
+      "label": {
+        "en": "GPT vs Grok",
+        "zh": "GPT 对 Grok"
+      },
+      "source_ids": [
+        "AA-BOARD"
+      ]
+    },
+    {
+      "id": "googl-meta-tpu",
+      "source": "googl",
+      "target": "meta",
+      "type": "compute",
+      "as_of": "2026-02-26",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "Multibillion-dollar TPU rental deal",
+        "zh": "数十亿美元 TPU 租用协议"
+      },
+      "source_ids": [
+        "SILICON-GOOG-META"
+      ]
+    },
+    {
+      "id": "tsm-nvda-foundry",
+      "source": "tsm",
+      "target": "nvda",
+      "type": "chips",
+      "as_of": "2025-10-20",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "Blackwell wafers, including in Arizona",
+        "zh": "Blackwell 晶圆，含亚利桑那工厂"
+      },
+      "source_ids": [
+        "DCD-TSMC-AZ"
+      ]
+    },
+    {
+      "id": "asml-tsm-euv",
+      "source": "asml",
+      "target": "tsm",
+      "type": "chips",
+      "as_of": "2026-09-08",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "High-NA EUV for high-volume manufacturing from 2030",
+        "zh": "高数值孔径 EUV，2030 年起用于量产"
+      },
+      "source_ids": [
+        "ASML-TSMC-HNA"
+      ]
+    },
+    {
+      "id": "skhy-nvda-hbm",
+      "source": "skhy",
+      "target": "nvda",
+      "type": "chips",
+      "as_of": "2026-06-05",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "HBM4 for Vera Rubin",
+        "zh": "为 Vera Rubin 供应 HBM4"
+      },
+      "source_ids": [
+        "INVESTING-HBM4"
+      ]
+    },
+    {
+      "id": "mu-nvda-hbm",
+      "source": "mu",
+      "target": "nvda",
+      "type": "chips",
+      "as_of": "2026-03-16",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "HBM4 for Vera Rubin in volume production",
+        "zh": "为 Vera Rubin 量产 HBM4"
+      },
+      "source_ids": [
+        "MU-HBM",
+        "INVESTING-HBM4"
+      ]
+    },
+    {
+      "id": "samsung-nvda-hbm",
+      "source": "samsung",
+      "target": "nvda",
+      "type": "chips",
+      "as_of": "2026-06-05",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "HBM4 for Vera Rubin",
+        "zh": "为 Vera Rubin 供应 HBM4"
+      },
+      "source_ids": [
+        "INVESTING-HBM4"
+      ]
+    },
+    {
+      "id": "nvda-crwv-invest",
+      "source": "nvda",
+      "target": "crwv",
+      "type": "investment",
+      "as_of": "2026-01-26",
+      "amount_usd_b": 2,
+      "status": "official",
+      "label": {
+        "en": "NVIDIA invests $2B",
+        "zh": "NVIDIA 投资 20 亿美元"
+      },
+      "source_ids": [
+        "NVDA-CRWV"
+      ]
+    },
+    {
+      "id": "nbis-msft-compute",
+      "source": "nbis",
+      "target": "msft",
+      "type": "compute",
+      "as_of": "2025-09",
+      "amount_usd_b": 17.4,
+      "status": "reported",
+      "label": {
+        "en": "$17.4–19.4B GPU capacity contract",
+        "zh": "174–194 亿美元 GPU 算力合同"
+      },
+      "source_ids": [
+        "FOOL-NBIS"
+      ]
+    },
+    {
+      "id": "nbis-meta-compute",
+      "source": "nbis",
+      "target": "meta",
+      "type": "compute",
+      "as_of": "2026-04",
+      "amount_usd_b": 27,
+      "status": "reported",
+      "label": {
+        "en": "Up to $27B GPU capacity",
+        "zh": "最多 270 亿美元 GPU 算力"
+      },
+      "source_ids": [
+        "FOOL-NBIS"
+      ]
+    },
+    {
+      "id": "nvda-spcx-gpus",
+      "source": "nvda",
+      "target": "spcx",
+      "type": "chips",
+      "as_of": "2026-05",
+      "amount_usd_b": null,
+      "status": "official",
+      "label": {
+        "en": "GPUs for Colossus",
+        "zh": "为 Colossus 供应 GPU"
+      },
+      "source_ids": [
+        "XAI-ANT",
+        "ANT-SPACEX"
+      ]
+    },
+    {
+      "id": "moonshot-spcx-kimi",
+      "source": "moonshot",
+      "target": "spcx",
+      "type": "models",
+      "as_of": "2026-03-22",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "Cursor’s Composer 2 was built on Kimi K2.5 (before SpaceX bought Cursor)",
+        "zh": "Cursor 的 Composer 2 基于 Kimi K2.5（在 SpaceX 收购 Cursor 之前）"
+      },
+      "source_ids": [
+        "TC-CURSOR-KIMI",
+        "YAHOO-SPCX-CURSOR"
+      ]
+    },
+    {
+      "id": "ant-baba-rival",
+      "source": "anthropic",
+      "target": "baba",
+      "type": "competitor",
+      "as_of": "2026-09-10",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "Anthropic names Alibaba in a distillation report (151M exchanges)",
+        "zh": "Anthropic 在蒸馏报告中点名阿里巴巴（1.51 亿次交互）"
+      },
+      "source_ids": [
+        "TC-DISTILL"
+      ]
+    },
+    {
+      "id": "ant-moonshot-rival",
+      "source": "anthropic",
+      "target": "moonshot",
+      "type": "competitor",
+      "as_of": "2026-09-10",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "Named in the same distillation report",
+        "zh": "在同一份蒸馏报告中被点名"
+      },
+      "source_ids": [
+        "TC-DISTILL"
+      ]
+    },
+    {
+      "id": "ant-deepseek-rival",
+      "source": "anthropic",
+      "target": "deepseek",
+      "type": "competitor",
+      "as_of": "2026-09-10",
+      "amount_usd_b": null,
+      "status": "reported",
+      "label": {
+        "en": "Named in the same distillation report",
+        "zh": "在同一份蒸馏报告中被点名"
+      },
+      "source_ids": [
+        "TC-DISTILL"
+      ]
+    }
+  ],
+  "facts": {
+    "gap": [
+      {
+        "id": "epoch",
+        "value": 7,
+        "low": 4,
+        "high": 14,
+        "unit": "months",
+        "status": "independent",
+        "source_ids": [
+          "EPOCH-GAP"
+        ],
+        "label": {
+          "en": "Epoch AI: average lag since 2023",
+          "zh": "Epoch AI：2023 年以来平均落后"
+        }
+      },
+      {
+        "id": "caisi",
+        "value": 8,
+        "unit": "months",
+        "status": "official",
+        "source_ids": [
+          "NIST-CAISI"
+        ],
+        "label": {
+          "en": "NIST CAISI: DeepSeek V4 Pro vs leading US models",
+          "zh": "NIST CAISI：DeepSeek V4 Pro 对比美国领先模型"
+        }
+      },
+      {
+        "id": "mozilla",
+        "value": 4.4,
+        "unit": "months",
+        "status": "reported",
+        "source_ids": [
+          "MOZILLA-OSAI"
+        ],
+        "label": {
+          "en": "Mozilla: Chinese open weights vs US closed models",
+          "zh": "Mozilla：中国开放权重对比美国闭源模型"
+        }
+      }
+    ],
+    "dims": [
+      {
+        "id": "gpu_share",
+        "us": 75,
+        "cn": 15,
+        "unit": "pct",
+        "better": "higher",
+        "status": "independent",
+        "source_ids": [
+          "EPOCH-GPU"
+        ],
+        "label": {
+          "en": "Share of global GPU-cluster performance",
+          "zh": "全球 GPU 集群算力份额"
+        }
+      },
+      {
+        "id": "private_invest",
+        "us": 285.9,
+        "cn": 12.4,
+        "unit": "usd_b",
+        "better": "higher",
+        "status": "reported",
+        "source_ids": [
+          "STANFORD-2026"
+        ],
+        "label": {
+          "en": "Private AI investment, 2025",
+          "zh": "2025 年私人 AI 投资"
+        }
+      },
+      {
+        "id": "capex",
+        "us": 764,
+        "cn": 102,
+        "unit": "usd_b",
+        "better": "higher",
+        "status": "projection",
+        "source_ids": [
+          "ALJ-4CHARTS"
+        ],
+        "label": {
+          "en": "Hyperscaler capex, 2026 (forecast)",
+          "zh": "2026 年超大规模云厂商资本开支（预测）"
+        }
+      },
+      {
+        "id": "robots",
+        "us": 34200,
+        "cn": 295000,
+        "unit": "count",
+        "better": "higher",
+        "status": "reported",
+        "source_ids": [
+          "STANFORD-2026"
+        ],
+        "label": {
+          "en": "Industrial robots installed",
+          "zh": "工业机器人装机量"
+        }
+      },
+      {
+        "id": "papers",
+        "us": 12.6,
+        "cn": 23.2,
+        "unit": "pct",
+        "better": "higher",
+        "status": "reported",
+        "source_ids": [
+          "STANFORD-2026"
+        ],
+        "label": {
+          "en": "Share of AI publications",
+          "zh": "AI 论文份额"
+        }
+      }
+    ],
+    "shares": [
+      {
+        "id": "hf",
+        "geo": "CN",
+        "value": 41,
+        "unit": "pct",
+        "status": "reported",
+        "source_ids": [
+          "HF-41"
+        ],
+        "label": {
+          "en": "Chinese share of Hugging Face downloads (past year)",
+          "zh": "过去一年 Hugging Face 下载量中国份额"
+        }
+      },
+      {
+        "id": "openrouter",
+        "geo": "CN",
+        "value": 46,
+        "unit": "pct",
+        "status": "reported",
+        "source_ids": [
+          "FORKAST-OPENROUTER"
+        ],
+        "label": {
+          "en": "Peak weekly OpenRouter token share, Chinese models",
+          "zh": "中国模型在 OpenRouter 的单周 token 份额峰值"
+        }
+      }
+    ],
+    "flows": [
+      {
+        "id": "h200",
+        "from": "US",
+        "to": "CN",
+        "friction": true,
+        "status": "reported",
+        "source_ids": [
+          "MORGAN-BIS"
+        ],
+        "label": {
+          "en": "H200-class chips: case-by-case licences, capped at 50% of US volume",
+          "zh": "H200 级芯片：个案许可，上限为美国销量的 50%"
+        }
+      },
+      {
+        "id": "h200-first",
+        "from": "US",
+        "to": "CN",
+        "friction": false,
+        "status": "reported",
+        "source_ids": [
+          "TNW-H200"
+        ],
+        "label": {
+          "en": "First H200s arrived in the July quarter; NVIDIA guides to zero China data-centre revenue",
+          "zh": "首批 H200 于 7 月季度到货；NVIDIA 指引按零中国数据中心收入计"
+        }
+      },
+      {
+        "id": "hbm",
+        "from": "US",
+        "to": "CN",
+        "friction": true,
+        "status": "reported",
+        "source_ids": [
+          "SEMI-HUAWEI"
+        ],
+        "label": {
+          "en": "HBM is China’s bottleneck after the December 2024 ban",
+          "zh": "2024 年 12 月禁令后，HBM 成为中国的瓶颈"
+        }
+      },
+      {
+        "id": "distill",
+        "from": "US",
+        "to": "CN",
+        "friction": true,
+        "status": "reported",
+        "source_ids": [
+          "TC-DISTILL"
+        ],
+        "label": {
+          "en": "Anthropic reports ~200M distillation exchanges in five campaigns",
+          "zh": "Anthropic 报告五次蒸馏行动、约 2 亿次交互"
+        }
+      },
+      {
+        "id": "rare-earths",
+        "from": "CN",
+        "to": "US",
+        "friction": true,
+        "status": "reported",
+        "source_ids": [
+          "TECHTIMES-RE"
+        ],
+        "label": {
+          "en": "Seven heavy rare earths still under licence; yttrium to the US fell from over 333 t to 17 t (eight months before vs after)",
+          "zh": "7 种重稀土仍需许可；对美钇出口从 333 吨以上降至 17 吨（管制前后各 8 个月）"
+        }
+      },
+      {
+        "id": "qcom",
+        "from": "CN",
+        "to": "US",
+        "friction": false,
+        "status": "reported",
+        "source_ids": [
+          "LR-QCOM"
+        ],
+        "label": {
+          "en": "China was 46% of Qualcomm’s FY2025 revenue",
+          "zh": "中国占高通 2025 财年营收的 46%"
+        }
+      },
+      {
+        "id": "apple",
+        "from": "CN",
+        "to": "US",
+        "friction": false,
+        "status": "reported",
+        "source_ids": [
+          "MACOBS-APPLE"
+        ],
+        "label": {
+          "en": "Greater China: $18.8B of Apple’s fiscal Q3 2026 revenue",
+          "zh": "大中华区：苹果 2026 财年第三季度营收 188 亿美元"
+        }
+      },
+      {
+        "id": "airbnb",
+        "from": "CN",
+        "to": "US",
+        "friction": false,
+        "status": "reported",
+        "source_ids": [
+          "SCMP-AIRBNB",
+          "FORBES-AIRBNB"
+        ],
+        "label": {
+          "en": "Airbnb’s service agent relies heavily on Qwen",
+          "zh": "Airbnb 客服智能体大量使用通义千问"
+        }
+      },
+      {
+        "id": "cursor",
+        "from": "CN",
+        "to": "US",
+        "friction": false,
+        "status": "reported",
+        "source_ids": [
+          "TC-CURSOR-KIMI"
+        ],
+        "label": {
+          "en": "Cursor Composer 2 built on Kimi K2.5",
+          "zh": "Cursor Composer 2 基于 Kimi K2.5"
+        }
+      }
+    ],
+    "ipo": [
+      {
+        "id": "aramco",
+        "year": 2019,
+        "raised_usd_b": 29.4,
+        "status": "reported",
+        "source_ids": [
+          "ARABNEWS-ARAMCO"
+        ],
+        "label": {
+          "en": "Saudi Aramco (incl. greenshoe)",
+          "zh": "沙特阿美（含超额配售）"
+        }
+      },
+      {
+        "id": "spacex",
+        "year": 2026,
+        "raised_usd_b": 86,
+        "valuation_usd_b": 1770,
+        "status": "reported",
+        "source_ids": [
+          "WIKI-SPACEX-IPO"
+        ],
+        "label": {
+          "en": "SpaceX (priced 11 June 2026)",
+          "zh": "SpaceX（2026 年 6 月 11 日定价）"
+        }
+      },
+      {
+        "id": "anthropic",
+        "year": 2026,
+        "raised_usd_b": 100,
+        "valuation_usd_b": 2000,
+        "status": "projection",
+        "source_ids": [
+          "YAHOO-ANT-2T"
+        ],
+        "label": {
+          "en": "Anthropic (reported target, not priced)",
+          "zh": "Anthropic（报道目标，未定价）"
+        }
+      }
+    ],
+    "valuation": [
+      {
+        "id": "ant-g",
+        "company": "anthropic",
+        "date": "2026-02-12",
+        "usd_b": 380,
+        "status": "official",
+        "source_ids": [
+          "ANT-SERIES-G"
+        ],
+        "label": {
+          "en": "Series G",
+          "zh": "G 轮"
+        }
+      },
+      {
+        "id": "ant-h",
+        "company": "anthropic",
+        "date": "2026-05-28",
+        "usd_b": 965,
+        "status": "official",
+        "source_ids": [
+          "ANT-SERIES-H",
+          "FORTUNE-ANT-S1"
+        ],
+        "label": {
+          "en": "Series H",
+          "zh": "H 轮"
+        }
+      },
+      {
+        "id": "ant-ipo",
+        "company": "anthropic",
+        "date": "2026",
+        "usd_b": 2000,
+        "status": "projection",
+        "source_ids": [
+          "YAHOO-ANT-2T"
+        ],
+        "label": {
+          "en": "Reported IPO target",
+          "zh": "报道的 IPO 目标"
+        }
+      },
+      {
+        "id": "oai-mar",
+        "company": "openai",
+        "date": "2026-03",
+        "usd_b": 852,
+        "status": "reported",
+        "source_ids": [
+          "FORBES-OAI-IPO"
+        ],
+        "label": {
+          "en": "March 2026 round",
+          "zh": "2026 年 3 月融资"
+        }
+      }
+    ],
+    "scale": [
+      {
+        "id": "ant-rev",
+        "company": "anthropic",
+        "usd_b": 65,
+        "date": "2026-07",
+        "status": "reported",
+        "source_ids": [
+          "TC-ANT-65"
+        ],
+        "label": {
+          "en": "Annualised revenue",
+          "zh": "年化收入"
+        }
+      },
+      {
+        "id": "oai-rev",
+        "company": "openai",
+        "usd_b": 40,
+        "date": "2026-08",
+        "status": "reported",
+        "source_ids": [
+          "QUARTZ-OAI-40"
+        ],
+        "label": {
+          "en": "Annualised revenue (heading above)",
+          "zh": "年化收入（将超过）"
+        }
+      }
+    ],
+    "rsi": [
+      {
+        "id": "speedup",
+        "value": 52,
+        "unit": "x",
+        "status": "lab_claimed",
+        "source_ids": [
+          "ANT-RSI"
+        ],
+        "label": {
+          "en": "Claude speed-up on code-optimisation tasks (≈3× in 2025)",
+          "zh": "Claude 在代码优化任务上的提速（2025 年约 3 倍）"
+        }
+      },
+      {
+        "id": "w2s",
+        "value": 97,
+        "unit": "pct",
+        "status": "lab_claimed",
+        "source_ids": [
+          "ANT-RSI"
+        ],
+        "label": {
+          "en": "Weak-to-strong gap recovered on an open research problem",
+          "zh": "在一个开放研究问题上恢复的弱到强差距"
+        }
+      },
+      {
+        "id": "doubling",
+        "value": 4,
+        "unit": "months",
+        "status": "lab_claimed",
+        "source_ids": [
+          "ANT-RSI"
+        ],
+        "label": {
+          "en": "Task-length doubling time",
+          "zh": "任务长度翻倍时间"
+        }
+      },
+      {
+        "id": "critics",
+        "value": null,
+        "unit": null,
+        "status": "reported",
+        "source_ids": [
+          "SCIAM-RSI"
+        ],
+        "label": {
+          "en": "Critics call the RSI warning hype timed to the IPO",
+          "zh": "批评者认为 RSI 警告是配合 IPO 的炒作"
+        }
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "ANT-SPACEX",
+      "title": "Higher usage limits for Claude and a compute deal with SpaceX",
+      "url": "https://www.anthropic.com/news/higher-limits-spacex",
+      "publisher": "Anthropic",
+      "published_at": "2026-05-06"
+    },
+    {
+      "id": "XAI-ANT",
+      "title": "New Compute Partnership with Anthropic",
+      "url": "https://x.ai/news/anthropic-compute-partnership",
+      "publisher": "xAI",
+      "published_at": "2026-05-06"
+    },
+    {
+      "id": "TC-ANT-SPACEX",
+      "title": "Anthropic will pay xAI $1.25B per month for compute",
+      "url": "https://techcrunch.com/2026/05/20/anthropic-will-pay-xai-1-25-billion-per-month-for-compute/",
+      "publisher": "TechCrunch",
+      "published_at": "2026-05-20"
+    },
+    {
+      "id": "RUNDOWN-XAI",
+      "title": "Anthropic blocks xAI’s Claude access",
+      "url": "https://www.therundown.ai/p/anthropic-pulls-plug-on-xais-claude-access",
+      "publisher": "The Rundown",
+      "published_at": "2026-01-12"
+    },
+    {
+      "id": "YAHOO-SPCX-CURSOR",
+      "title": "SpaceX completes record $60 billion acquisition of AI coding platform Cursor",
+      "url": "https://finance.yahoo.com/technology/ai/articles/spacex-completes-record-60-billion-131311785.html",
+      "publisher": "Investing.com via Yahoo Finance",
+      "published_at": "2026-08-14"
+    },
+    {
+      "id": "TC-GOOG-ANT",
+      "title": "Google to invest up to $40B in Anthropic in cash and compute",
+      "url": "https://techcrunch.com/2026/04/24/google-to-invest-up-to-40b-in-anthropic-in-cash-and-compute/",
+      "publisher": "TechCrunch",
+      "published_at": "2026-04-24"
+    },
+    {
+      "id": "GCLOUD-ANT-TPU",
+      "title": "Anthropic to Expand Use of Google Cloud TPUs and Services",
+      "url": "https://www.googlecloudpresscorner.com/2025-10-23-Anthropic-to-Expand-Use-of-Google-Cloud-TPUs-and-Services",
+      "publisher": "Google Cloud",
+      "published_at": "2025-10-23"
+    },
+    {
+      "id": "ANT-AVGO",
+      "title": "Anthropic expands partnership with Google and Broadcom for multiple gigawatts of next-generation compute",
+      "url": "https://www.anthropic.com/news/google-broadcom-partnership-compute",
+      "publisher": "Anthropic",
+      "published_at": "2026-04-06"
+    },
+    {
+      "id": "AA-BOARD",
+      "title": "LLM Leaderboard",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "publisher": "Artificial Analysis",
+      "published_at": null
+    },
+    {
+      "id": "ANT-AMZN",
+      "title": "Anthropic and Amazon expand collaboration for up to 5 gigawatts of new compute",
+      "url": "https://www.anthropic.com/news/anthropic-amazon-compute",
+      "publisher": "Anthropic",
+      "published_at": "2026-04-20"
+    },
+    {
+      "id": "GEEKWIRE-MSFT-ANT",
+      "title": "Microsoft to invest $5B in Anthropic, as Claude maker commits $30B to Azure in new Nvidia alliance",
+      "url": "https://www.geekwire.com/2025/microsoft-to-invest-5b-in-anthropic-as-claude-maker-commits-30b-to-azure-in-new-nvidia-alliance/",
+      "publisher": "GeekWire",
+      "published_at": "2025-11-18"
+    },
+    {
+      "id": "ANT-MSFT-NVDA",
+      "title": "Microsoft, NVIDIA and Anthropic announce strategic partnerships",
+      "url": "https://www.anthropic.com/news/microsoft-nvidia-anthropic-announce-strategic-partnerships",
+      "publisher": "Anthropic",
+      "published_at": "2025-11-18"
+    },
+    {
+      "id": "MU-ANT",
+      "title": "Micron and Anthropic Announce Strategic Agreement to Scale Next-Generation AI Infrastructure",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-and-Anthropic-Announce-Strategic-Agreement-to-Scale-Next-Generation-AI-Infrastructure/default.aspx",
+      "publisher": "Micron",
+      "published_at": "2026-06-22"
+    },
+    {
+      "id": "BLOCKS-MU",
+      "title": "Micron Invests in Anthropic and Grants It a Supply Deal",
+      "url": "https://www.blocksandfiles.com/ai-ml/2026/06/23/micron-invests-in-anthropic-and-grants-it-a-supply-deal/5260050",
+      "publisher": "Blocks & Files",
+      "published_at": "2026-06-23"
+    },
+    {
+      "id": "MU-HBM",
+      "title": "Micron in High-Volume Production of HBM4 Designed for NVIDIA Vera Rubin, PCIe Gen6 SSD and SOCAMM2",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-in-High-Volume-Production-of-HBM4-Designed-for-NVIDIA-Vera-Rubin-PCIe-Gen6-SSD-and-SOCAMM2-03-16-2026/default.aspx",
+      "publisher": "Micron",
+      "published_at": "2026-03-16"
+    },
+    {
+      "id": "OAI-MSFT-NEXT",
+      "title": "The next chapter of the Microsoft–OpenAI partnership",
+      "url": "https://openai.com/index/next-chapter-of-microsoft-openai-partnership/",
+      "publisher": "OpenAI",
+      "published_at": "2025-10-28"
+    },
+    {
+      "id": "OAI-ORCL",
+      "title": "Stargate advances with 4.5 GW partnership with Oracle",
+      "url": "https://openai.com/index/stargate-advances-with-partnership-with-oracle/",
+      "publisher": "OpenAI",
+      "published_at": "2025-07-22"
+    },
+    {
+      "id": "OAI-NVDA",
+      "title": "OpenAI and NVIDIA announce strategic partnership to deploy 10 gigawatts of NVIDIA systems",
+      "url": "https://openai.com/index/openai-nvidia-systems-partnership/",
+      "publisher": "OpenAI",
+      "published_at": "2025-09-22"
+    },
+    {
+      "id": "YAHOO-OAI-110",
+      "title": "OpenAI’s $110 billion funding round draws investment from Amazon, Nvidia, SoftBank",
+      "url": "https://finance.yahoo.com/news/openais-110-billion-funding-round-145925079.html",
+      "publisher": "Reuters via Yahoo Finance",
+      "published_at": "2026-02-27"
+    },
+    {
+      "id": "MALAYMAIL-NVDA-OAI",
+      "title": "Nvidia said to near US$30b OpenAI investment, scaling back earlier US$100b plan",
+      "url": "https://www.malaymail.com/news/money/2026/02/20/nvidia-said-to-near-us30b-openai-investment-scaling-back-earlier-us100b-plan/209723",
+      "publisher": "Malay Mail",
+      "published_at": "2026-02-20"
+    },
+    {
+      "id": "AMD-OAI",
+      "title": "AMD and OpenAI Announce Strategic Partnership to Deploy 6 Gigawatts of AMD GPUs",
+      "url": "https://ir.amd.com/news-events/press-releases/detail/1260/amd-and-openai-announce-strategic-partnership-to-deploy-6-gigawatts-of-amd-gpus",
+      "publisher": "AMD",
+      "published_at": "2025-10-06"
+    },
+    {
+      "id": "OAI-AVGO",
+      "title": "OpenAI and Broadcom announce strategic collaboration to deploy 10 gigawatts of OpenAI-designed AI accelerators",
+      "url": "https://openai.com/index/openai-and-broadcom-announce-strategic-collaboration/",
+      "publisher": "OpenAI",
+      "published_at": "2025-10-13"
+    },
+    {
+      "id": "CRWV-OAI",
+      "title": "CoreWeave Expands Agreement with OpenAI by up to $6.5B",
+      "url": "https://investors.coreweave.com/news/news-details/2025/CoreWeave-Expands-Agreement-with-OpenAI-by-up-to-6-5B/default.aspx",
+      "publisher": "CoreWeave",
+      "published_at": "2025-09-25"
+    },
+    {
+      "id": "TIPRANKS-AMZN-OAI",
+      "title": "OpenAI Secures $38 Billion AWS Deal to Scale AI Infrastructure",
+      "url": "https://www.tipranks.com/news/private-companies/openai-secures-38-billion-aws-deal-to-scale-ai-infrastructure",
+      "publisher": "TipRanks",
+      "published_at": "2025-11-03"
+    },
+    {
+      "id": "OAI-CBRS",
+      "title": "OpenAI partners with Cerebras",
+      "url": "https://openai.com/index/cerebras-partnership/",
+      "publisher": "OpenAI",
+      "published_at": "2026-01-14"
+    },
+    {
+      "id": "REG-CBRS",
+      "title": "OpenAI to serve up ChatGPT on Cerebras’ AI dinner plates in $10B+ deal",
+      "url": "https://www.theregister.com/2026/01/15/openai_cerebras_ai/",
+      "publisher": "The Register",
+      "published_at": "2026-01-15"
+    },
+    {
+      "id": "SILICON-GOOG-META",
+      "title": "Google and Meta reportedly strike new, multibillion-dollar AI chip deal",
+      "url": "https://siliconangle.com/2026/02/26/google-meta-reportedly-strike-new-multibillion-dollar-ai-chip-deal/",
+      "publisher": "SiliconANGLE",
+      "published_at": "2026-02-26"
+    },
+    {
+      "id": "DCD-TSMC-AZ",
+      "title": "First US-made Nvidia Blackwell wafer manufactured at TSMC’s Arizona fab",
+      "url": "https://www.datacenterdynamics.com/en/news/first-us-made-nvidia-blackwell-wafer-manufactured-at-tsmcs-arizona-fab/",
+      "publisher": "DCD",
+      "published_at": "2025-10-20"
+    },
+    {
+      "id": "ASML-TSMC-HNA",
+      "title": "TSMC and ASML Announce Initiative to Pioneer Industry Transition to Large-Format Photomasks for High NA EUV",
+      "url": "https://www.asml.com/en/news/press-releases/2026/tsmc-and-asml-announce-industry-transition-to-large-format-photomasks-for-high-na-euv",
+      "publisher": "ASML",
+      "published_at": "2026-09-08"
+    },
+    {
+      "id": "INVESTING-HBM4",
+      "title": "Nvidia certifies Samsung, SK Hynix and Micron for Vera Rubin HBM4 supply",
+      "url": "https://www.investing.com/news/stock-market-news/nvidia-certifies-samsung-sk-hynix-and-micron-for-vera-rubin-hbm4-supply-4728612",
+      "publisher": "Investing.com",
+      "published_at": "2026-06-05"
+    },
+    {
+      "id": "NVDA-CRWV",
+      "title": "NVIDIA and CoreWeave Strengthen Collaboration to Accelerate Buildout of AI Factories",
+      "url": "https://nvidianews.nvidia.com/news/nvidia-and-coreweave-strengthen-collaboration-to-accelerate-buildout-of-ai-factories",
+      "publisher": "NVIDIA",
+      "published_at": "2026-01-26"
+    },
+    {
+      "id": "FOOL-NBIS",
+      "title": "Nebius Just Signed $46 Billion in AI Cloud Deals With Microsoft and Meta. Can This Stock 10X?",
+      "url": "https://www.fool.com/investing/2026/04/02/nebius-just-signed-46-billion-in-ai-cloud-deals-wi/",
+      "publisher": "Motley Fool",
+      "published_at": "2026-04-02"
+    },
+    {
+      "id": "TC-CURSOR-KIMI",
+      "title": "Cursor admits its new coding model was built on top of Moonshot AI’s Kimi",
+      "url": "https://techcrunch.com/2026/03/22/cursor-admits-its-new-coding-model-was-built-on-top-of-moonshot-ais-kimi",
+      "publisher": "TechCrunch",
+      "published_at": "2026-03-22"
+    },
+    {
+      "id": "TC-DISTILL",
+      "title": "Anthropic details distillation campaigns from Alibaba, Moonshot AI, and DeepSeek",
+      "url": "https://techcrunch.com/2026/09/10/anthropic-details-distillation-campaigns-from-alibaba-moonshot-ai-and-deepseek/",
+      "publisher": "TechCrunch",
+      "published_at": "2026-09-10"
+    },
+    {
+      "id": "EPOCH-GAP",
+      "title": "Chinese AI models have lagged the US frontier by 7 months on average since 2023",
+      "url": "https://epoch.ai/data-insights/us-vs-china-eci",
+      "publisher": "Epoch AI",
+      "published_at": "2026-01-02"
+    },
+    {
+      "id": "NIST-CAISI",
+      "title": "CAISI Evaluation of DeepSeek V4 Pro",
+      "url": "https://www.nist.gov/news-events/news/2026/05/caisi-evaluation-deepseek-v4-pro",
+      "publisher": "NIST",
+      "published_at": "2026-05-01"
+    },
+    {
+      "id": "MOZILLA-OSAI",
+      "title": "Chinese Open Models Are Only 4 Months Behind Top US AI While Costing 5x Less",
+      "url": "https://www.androidheadlines.com/2026/09/chinese-open-ai-models-narrow-gap-to-us-frontiers.html",
+      "publisher": "Android Headlines",
+      "published_at": "2026-09-17"
+    },
+    {
+      "id": "EPOCH-GPU",
+      "title": "The US hosts the majority of GPU cluster performance, followed by China",
+      "url": "https://epoch.ai/data-insights/ai-supercomputers-performance-share-by-country",
+      "publisher": "Epoch AI",
+      "published_at": "2025-06-05"
+    },
+    {
+      "id": "STANFORD-2026",
+      "title": "Stanford’s AI Index finds China has nearly closed the performance gap with the US despite spending 23 times less",
+      "url": "https://thenextweb.com/news/stanford-ai-index-2026-china-us-performance-gap",
+      "publisher": "The Next Web",
+      "published_at": "2026-04-19"
+    },
+    {
+      "id": "ALJ-4CHARTS",
+      "title": "China vs US: Who is winning the AI race, in four charts",
+      "url": "https://www.aljazeera.com/news/2026/9/24/china-vs-us-who-is-winning-the-ai-race-in-four-charts",
+      "publisher": "Al Jazeera",
+      "published_at": "2026-09-24"
+    },
+    {
+      "id": "HF-41",
+      "title": "Chinese Models Account for 41% of Hugging Face Downloads, Overtaking US",
+      "url": "https://equalocean.com/news/2026073122070-chinese-models-account-41-hugging-face-downloads-overtaking-us",
+      "publisher": "EqualOcean",
+      "published_at": "2026-07-31"
+    },
+    {
+      "id": "FORKAST-OPENROUTER",
+      "title": "Chinese AI Models Now Capture Up to 46% of US Enterprise Token Usage",
+      "url": "https://finance.yahoo.com/technology/ai/articles/chinese-ai-models-now-capture-020440715.html",
+      "publisher": "Forkast News via Yahoo Finance",
+      "published_at": "2026-07-08"
+    },
+    {
+      "id": "MORGAN-BIS",
+      "title": "BIS Revises Export Review Policy for Advanced AI Chips Destined for China and Macau",
+      "url": "https://www.morganlewis.com/pubs/2026/01/bis-revises-export-review-policy-for-advanced-ai-chips-destined-for-china-and-macau",
+      "publisher": "Morgan Lewis",
+      "published_at": "2026-01-16"
+    },
+    {
+      "id": "TNW-H200",
+      "title": "Nvidia ships first H200 chips to China, but expects no data-centre revenue from them",
+      "url": "https://thenextweb.com/news/nvidia-h200-china-zero-revenue-guidance-europe-gigafactories",
+      "publisher": "The Next Web",
+      "published_at": "2026-08-28"
+    },
+    {
+      "id": "SEMI-HUAWEI",
+      "title": "Huawei Ascend Production Ramp: Die Banks, TSMC Continued Production, HBM is The Bottleneck",
+      "url": "https://newsletter.semianalysis.com/p/huawei-ascend-production-ramp",
+      "publisher": "SemiAnalysis",
+      "published_at": "2025-09-08"
+    },
+    {
+      "id": "TECHTIMES-RE",
+      "title": "China Rare Earth Export Controls: April Curbs Still Bite After Beijing Summit",
+      "url": "https://www.techtimes.com/articles/317208/20260526/china-rare-earth-export-controls-april-curbs-still-bite-after-beijing-summit.htm",
+      "publisher": "Tech Times",
+      "published_at": "2026-05-26"
+    },
+    {
+      "id": "LR-QCOM",
+      "title": "Qualcomm defies US-China trade tensions",
+      "url": "https://www.lightreading.com/regulatory-politics/qualcomm-defies-us-china-trade-tensions",
+      "publisher": "Light Reading",
+      "published_at": "2025-11-06"
+    },
+    {
+      "id": "MACOBS-APPLE",
+      "title": "Apple Q3 2026 Earnings Results: Revenue Hits $109.4 Billion (Up 16%), EPS Jumps 29%",
+      "url": "https://www.macobserver.com/news/apple-q3-2026-earnings-results-revenue-hits-109-4-billion-up-16-eps-jumps-29/",
+      "publisher": "The Mac Observer",
+      "published_at": "2026-07-31"
+    },
+    {
+      "id": "SCMP-AIRBNB",
+      "title": "Airbnb picks Alibaba’s Qwen over ChatGPT in a win for Chinese open-source AI",
+      "url": "https://finance.yahoo.com/news/airbnb-picks-alibabas-qwen-over-093000045.html",
+      "publisher": "South China Morning Post via Yahoo Finance",
+      "published_at": "2025-10-22"
+    },
+    {
+      "id": "FORBES-AIRBNB",
+      "title": "Airbnb CEO Brian Chesky Called Chinese AI Fast And Cheap. Now, Congress Wants Answers",
+      "url": "https://www.forbes.com/sites/anishasircar/2026/05/21/airbnb-ceo-brian-chesky-called-chinese-ai-fast-and-cheap-now-congress-wants-answers/",
+      "publisher": "Forbes",
+      "published_at": "2026-05-21"
+    },
+    {
+      "id": "ARABNEWS-ARAMCO",
+      "title": "Aramco’s ‘greenshoe option’ pushes IPO to $29.4 billion",
+      "url": "https://www.arabnews.com/node/1611821/business-economy",
+      "publisher": "Arab News",
+      "published_at": "2020-01-12"
+    },
+    {
+      "id": "WIKI-SPACEX-IPO",
+      "title": "Initial public offering of SpaceX",
+      "url": "https://en.wikipedia.org/wiki/Initial_public_offering_of_SpaceX",
+      "publisher": "Wikipedia",
+      "published_at": null
+    },
+    {
+      "id": "YAHOO-ANT-2T",
+      "title": "Anthropic moving forward with $2 trillion IPO on Nasdaq",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/anthropic-moving-forward-2-trillion-123756375.html",
+      "publisher": "Yahoo Finance",
+      "published_at": "2026-09-15"
+    },
+    {
+      "id": "ANT-SERIES-G",
+      "title": "Anthropic raises $30 billion in Series G funding at $380 billion post-money valuation",
+      "url": "https://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation",
+      "publisher": "Anthropic",
+      "published_at": "2026-02-12"
+    },
+    {
+      "id": "ANT-SERIES-H",
+      "title": "Anthropic raises $65B in Series H funding at $965B post-money valuation",
+      "url": "https://www.anthropic.com/news/series-h",
+      "publisher": "Anthropic",
+      "published_at": "2026-05-28"
+    },
+    {
+      "id": "FORTUNE-ANT-S1",
+      "title": "Anthropic confidentially files for IPO after raising $65 billion in a funding round at a $965 billion valuation",
+      "url": "https://fortune.com/2026/06/01/anthropic-confidentially-files-ipo-965-billion-valuation/",
+      "publisher": "Fortune",
+      "published_at": "2026-06-01"
+    },
+    {
+      "id": "FORBES-OAI-IPO",
+      "title": "4 Things To Know As OpenAI Eyes IPO",
+      "url": "https://www.forbes.com/sites/investor-hub/article/openai-ipo-things-to-know/",
+      "publisher": "Forbes",
+      "published_at": "2026-05-26"
+    },
+    {
+      "id": "TC-ANT-65",
+      "title": "Anthropic’s annualized revenue surges to $65B",
+      "url": "https://techcrunch.com/2026/08/17/anthropics-annualized-revenue-surges-to-65b/",
+      "publisher": "TechCrunch",
+      "published_at": "2026-08-17"
+    },
+    {
+      "id": "QUARTZ-OAI-40",
+      "title": "OpenAI annualized revenue tops $40 billion ahead of IPO",
+      "url": "https://finance.yahoo.com/technology/ai/articles/openai-annualized-revenue-tops-40-111122841.html",
+      "publisher": "Quartz via Yahoo Finance",
+      "published_at": "2026-08-14"
+    },
+    {
+      "id": "ANT-RSI",
+      "title": "When AI builds itself",
+      "url": "https://www.anthropic.com/institute/recursive-self-improvement",
+      "publisher": "Anthropic Institute",
+      "published_at": "2026-09-18"
+    },
+    {
+      "id": "SCIAM-RSI",
+      "title": "Anthropic warns AI could soon start improving itself. Critics aren’t convinced",
+      "url": "https://www.scientificamerican.com/article/anthropic-warns-ai-may-soon-begin-recursive-self-improvement/",
+      "publisher": "Scientific American",
+      "published_at": "2026-06-05"
+    }
+  ]
+}

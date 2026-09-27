@@ -8,6 +8,7 @@ import { validateSectorsData } from '../src/lib/validateSectorsData.js';
 import { validateSectorsCompetition } from '../src/lib/validateSectorsCompetition.js';
 import { validateSectorsRivalry } from '../src/lib/validateSectorsRivalry.js';
 import { validateSnapshot } from '../src/sectors/frontier/frontier-core.mjs';
+import { validateIndustry } from '../src/sectors/industry/industry-core.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
 import { validateGamesData } from '../src/lib/validateGamesData.js';
@@ -38,6 +39,18 @@ const CHECKS = [
   } },
   { path: 'public/data/sectors-frontier/2026-09-27.json', validate: (data) => {
     const errors = validateSnapshot(data);
+    return { ok: errors.length === 0, errors };
+  } },
+  { path: 'public/data/sectors-industry/2026-09-27.json', validate: (data) => {
+    const errors = validateIndustry(data);
+    return { ok: errors.length === 0, errors };
+  } },
+  { path: 'public/assets/sectors/logos/manifest.json', validate: (data) => {
+    const errors = Object.entries(data ?? {}).flatMap(([id, row]) => (
+      row?.status === 'ok' && /^\/assets\/sectors\/logos\//.test(row.file ?? '') && /^https:\/\//.test(row.source_page ?? '')
+        && /^[0-9a-f]{64}$/.test(row.sha256 ?? '') && /^#[0-9A-F]{6}$/i.test(row.brand_color ?? '')
+        ? [] : [`logo ${id} is incomplete`]
+    ));
     return { ok: errors.length === 0, errors };
   } },
   { path: 'public/assets/venator/manifest.json', validate: validateShipManifest },
