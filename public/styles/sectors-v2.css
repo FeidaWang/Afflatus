@@ -1,0 +1,19 @@
+/* public/styles/sectors-v2.css — 81k redesign layer. Spec §3, §8.2. */
+.sectors{
+  --paper:#FAF9F5; --stage:#E8E6DC; --ink:#141413; --text:#30302E;
+  --muted:#66645E; --rule:#D6D4CC; --mark:#BFDE8D;
+  --us:#0A3161; --us-tint:rgba(10,49,97,.14);
+  --cn:#EE1C25; --cn-ink:#B8141B; --cn-tint:rgba(238,28,37,.12);
+  --other:#77756E;
+  --land:rgba(20,20,19,.18);
+  --w-text:640px; --w-module:1120px;
+  background:var(--paper); color:var(--text);
+}
+.sectors .is-us{color:var(--us)}
+.sectors .is-cn{color:var(--cn-ink)}
+.sectors .status-tag{font:600 11px/1 var(--font-sans,system-ui);letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid currentColor;border-radius:999px;padding:3px 7px;color:var(--muted);white-space:nowrap}
+.sectors .status-tag[data-status="projection"]{color:var(--ink);background:repeating-linear-gradient(135deg,transparent 0 4px,var(--rule) 4px 5px)}
+.sectors .status-tag[data-status="lab_claimed"]{color:var(--ink)}
+.sectors .edge-coop{stroke-width:1.5;fill:none}
+.sectors .edge-compete{stroke-width:1.5;fill:none;stroke-dasharray:6 4}
