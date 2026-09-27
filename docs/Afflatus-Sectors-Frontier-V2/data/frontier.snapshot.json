@@ -1,0 +1,3900 @@
+{
+  "schema_version": 2,
+  "snapshot_id": "frontier-selected-2026-09-23",
+  "retrieved_on": "2026-09-23",
+  "timezone": "Australia/Melbourne",
+  "coverage_description": "Selected public evaluator snapshots: 14 configurations from 11 named labs; not a full global leaderboard or a simultaneous rerun. Submetric coverage is narrower.",
+  "verification_level": "source_reported_not_rerun",
+  "cohorts": [
+    {
+      "id": "aa-selected-2026-09-23",
+      "evaluator": "Artificial Analysis",
+      "index_version": "4.3.2",
+      "source_ids": [
+        "AA-METHOD",
+        "AA-BOARD"
+      ],
+      "note": "Curated from indexed current primary pages. Full row-level run timestamps, patch-version exports and confidence intervals were unavailable. Freeze these observations; confirm before production publication."
+    }
+  ],
+  "metrics": [
+    {
+      "id": "intelligence",
+      "label": {
+        "en": "Overall index",
+        "zh": "综合指数"
+      },
+      "unit": "index_points",
+      "version": "4.3.2",
+      "direction": "higher",
+      "min": 0,
+      "max": 100,
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": "Rounded published index; not a percentage of human intelligence and not a ratio scale."
+    },
+    {
+      "id": "briefcase",
+      "label": {
+        "en": "Professional work: AA-Briefcase",
+        "zh": "专业工作：AA-Briefcase"
+      },
+      "unit": "rating_points",
+      "version": "1.1",
+      "direction": "higher",
+      "min": null,
+      "max": null,
+      "protocol_id": "aa-published-briefcase-1.1",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": "Published rating, not percent accuracy."
+    },
+    {
+      "id": "gdpval",
+      "label": {
+        "en": "Work products: GDPval-AA",
+        "zh": "工作产出：GDPval-AA"
+      },
+      "unit": "rating_points",
+      "version": "2.1",
+      "direction": "higher",
+      "min": null,
+      "max": null,
+      "protocol_id": "aa-published-gdpval-2.1",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": "Published rating, not percent accuracy."
+    },
+    {
+      "id": "automation",
+      "label": {
+        "en": "Workflow automation",
+        "zh": "流程自动化"
+      },
+      "unit": "percent",
+      "version": "AA-current",
+      "direction": "higher",
+      "min": 0,
+      "max": 100,
+      "protocol_id": "aa-published-automation-AA-current",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": "AutomationBench-AA objective score, not the percentage of fully completed tasks."
+    },
+    {
+      "id": "terminal",
+      "label": {
+        "en": "Terminal / agent coding",
+        "zh": "终端与代理编程"
+      },
+      "unit": "percent",
+      "version": "4.0",
+      "direction": "higher",
+      "min": 0,
+      "max": 100,
+      "protocol_id": "aa-published-terminal-4.0",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": "Artificial Analysis harness; never merge vendor-run Terminal-Bench scores or v2/v3."
+    },
+    {
+      "id": "scicode",
+      "label": {
+        "en": "Scientific coding",
+        "zh": "科学代码"
+      },
+      "unit": "percent",
+      "version": "AA-current",
+      "direction": "higher",
+      "min": 0,
+      "max": 100,
+      "protocol_id": "aa-published-scicode-AA-current",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": ""
+    },
+    {
+      "id": "hle",
+      "label": {
+        "en": "Hard reasoning: HLE",
+        "zh": "高难推理：HLE"
+      },
+      "unit": "percent",
+      "version": "AA-current",
+      "direction": "higher",
+      "min": 0,
+      "max": 100,
+      "protocol_id": "aa-published-hle-AA-current",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": ""
+    },
+    {
+      "id": "gdp_pdf",
+      "label": {
+        "en": "Document work: GDP.pdf",
+        "zh": "文档工作：GDP.pdf"
+      },
+      "unit": "percent",
+      "version": "AA-current",
+      "direction": "higher",
+      "min": 0,
+      "max": 100,
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": ""
+    },
+    {
+      "id": "critpt",
+      "label": {
+        "en": "Research physics: CritPt",
+        "zh": "科研物理：CritPt"
+      },
+      "unit": "percent",
+      "version": "AA-current",
+      "direction": "higher",
+      "min": 0,
+      "max": 100,
+      "protocol_id": "aa-published-critpt-AA-current",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": ""
+    },
+    {
+      "id": "omniscience",
+      "label": {
+        "en": "Knowledge / abstention index",
+        "zh": "知识与审慎作答指数"
+      },
+      "unit": "index_points",
+      "version": "AA-current",
+      "direction": "higher",
+      "min": -100,
+      "max": 100,
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": "May be negative. Do not clip to zero or relabel this index as accuracy."
+    },
+    {
+      "id": "lcr",
+      "label": {
+        "en": "Long-context reasoning",
+        "zh": "长上下文推理"
+      },
+      "unit": "percent",
+      "version": "1.1",
+      "direction": "higher",
+      "min": 0,
+      "max": 100,
+      "protocol_id": "aa-published-lcr-1.1",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": "Measured long-context benchmark, distinct from advertised context capacity."
+    },
+    {
+      "id": "cost_task",
+      "label": {
+        "en": "Cost per evaluation task",
+        "zh": "每项评测任务成本"
+      },
+      "unit": "USD_per_evaluation_task",
+      "version": "4.3.2",
+      "direction": "lower",
+      "min": 0,
+      "max": null,
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "source_ids": [
+        "AA-METHOD"
+      ],
+      "note": "Weighted evaluator workload cost; NOT cost per successful real-world task. Not a token list price."
+    }
+  ],
+  "models": [
+    {
+      "id": "astra-max",
+      "name": "GPT-6 Astra",
+      "lab": "OpenAI",
+      "lab_geography": "US",
+      "configuration": "max",
+      "open_weights": false,
+      "license": null,
+      "total_parameters_b": null,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-FRONTIER",
+        "OAI-ASTRA"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 10,
+        "output": 50,
+        "cache_read": 1,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-FRONTIER",
+          "OAI-ASTRA"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "",
+      "note_zh": ""
+    },
+    {
+      "id": "fable-max",
+      "name": "Claude Fable 5.1",
+      "lab": "Anthropic",
+      "lab_geography": "US",
+      "configuration": "adaptive max; default fallback",
+      "open_weights": false,
+      "license": null,
+      "total_parameters_b": null,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-FRONTIER",
+        "AA-FABLE",
+        "ANT-FABLE"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 10,
+        "output": 50,
+        "cache_read": 0.25,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-FRONTIER",
+          "AA-FABLE",
+          "ANT-FABLE"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "Default fallback is part of the measured configuration; do not present this as a raw unrestricted model run.",
+      "note_zh": "默认回退机制属于本次评测配置，不能把该成绩当作无回退的单一模型运行结果。"
+    },
+    {
+      "id": "opus-max",
+      "name": "Claude Opus 5",
+      "lab": "Anthropic",
+      "lab_geography": "US",
+      "configuration": "adaptive max",
+      "open_weights": false,
+      "license": null,
+      "total_parameters_b": null,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-OPUS"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 5,
+        "output": 25,
+        "cache_read": 0.5,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-OPUS"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "",
+      "note_zh": ""
+    },
+    {
+      "id": "muse-max",
+      "name": "Muse Spark 1.3",
+      "lab": "Meta",
+      "lab_geography": "US",
+      "configuration": "max",
+      "open_weights": false,
+      "license": null,
+      "total_parameters_b": null,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-MUSE"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 1.25,
+        "output": 4.25,
+        "cache_read": null,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-MUSE"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "",
+      "note_zh": ""
+    },
+    {
+      "id": "mimo-pro",
+      "name": "MiMo-V2.6-Pro",
+      "lab": "Xiaomi",
+      "lab_geography": "CN",
+      "configuration": "reasoning; standard endpoint",
+      "open_weights": true,
+      "license": "MIT",
+      "total_parameters_b": 1000,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image",
+        "audio",
+        "video"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-MIMO",
+        "XIAOMI-MIMO"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 0.435,
+        "output": 0.87,
+        "cache_read": 0.0036,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-MIMO",
+          "XIAOMI-MIMO"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "Released 2026-09-21. AA source reports 46 (rounded). Do not import the UltraSpeed endpoint price or speed into this row.",
+      "note_zh": "发布于 2026 年 9 月 21 日。来源报告的综合分数为 46（取整显示）；不要混入 UltraSpeed 端点的价格或速度。"
+    },
+    {
+      "id": "glm-max",
+      "name": "GLM-5.3",
+      "lab": "Z AI",
+      "lab_geography": "CN",
+      "configuration": "max",
+      "open_weights": true,
+      "license": "GLM-5.3 License",
+      "total_parameters_b": 753,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-GLM-KIMI",
+        "AA-GLM"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 1.4,
+        "output": 4.4,
+        "cache_read": 0.26,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-GLM-KIMI",
+          "AA-GLM"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "",
+      "note_zh": ""
+    },
+    {
+      "id": "kimi-max",
+      "name": "Kimi K3",
+      "lab": "Moonshot / Kimi",
+      "lab_geography": "CN",
+      "configuration": "max",
+      "open_weights": true,
+      "license": null,
+      "total_parameters_b": null,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-GLM-KIMI",
+        "AA-KIMI"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 3,
+        "output": 15,
+        "cache_read": 0.3,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-GLM-KIMI",
+          "AA-KIMI"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "",
+      "note_zh": ""
+    },
+    {
+      "id": "grok-xhigh",
+      "name": "Grok 4.6",
+      "lab": "SpaceXAI (evaluator label)",
+      "lab_geography": "US",
+      "configuration": "xhigh",
+      "open_weights": false,
+      "license": null,
+      "total_parameters_b": null,
+      "context_tokens": 500000,
+      "declared_input_modalities": [
+        "text",
+        "image"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-GROK"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 2,
+        "output": 6,
+        "cache_read": 0.5,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-GROK"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "Provider label follows this evaluator snapshot. Legal-entity and issuer mapping is a separate verification task.",
+      "note_zh": "提供商名称沿用评测来源的标签；法律实体和证券主体需要另外核验。"
+    },
+    {
+      "id": "glm-flash",
+      "name": "GLM 5.3 Flash",
+      "lab": "Z AI",
+      "lab_geography": "CN",
+      "configuration": "reasoning configuration as published",
+      "open_weights": true,
+      "license": "MIT",
+      "total_parameters_b": 320,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-GLM-FLASH",
+        "AA-GLM-FLASH-COMP"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 0.15,
+        "output": 0.5,
+        "cache_read": 0.026,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-GLM-FLASH",
+          "AA-GLM-FLASH-COMP"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "",
+      "note_zh": ""
+    },
+    {
+      "id": "gemini-flash-high",
+      "name": "Gemini 3.8 Flash",
+      "lab": "Google",
+      "lab_geography": "US",
+      "configuration": "high",
+      "open_weights": false,
+      "license": null,
+      "total_parameters_b": null,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image",
+        "audio",
+        "video"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-GEMINI"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 0.75,
+        "output": 3.75,
+        "cache_read": 0.075,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-GEMINI"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "Do not mix its pre-rebase launch score with the current index.",
+      "note_zh": "不要把指数重定标前的发布成绩与当前分数混在一起。"
+    },
+    {
+      "id": "qwen-flash-next",
+      "name": "Qwen3.8-Flash-Next",
+      "lab": "Alibaba",
+      "lab_geography": "CN",
+      "configuration": "configuration as published",
+      "open_weights": true,
+      "license": "Qwen Community License 1.0",
+      "total_parameters_b": 180,
+      "context_tokens": 256000,
+      "declared_input_modalities": [],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-DS-QWEN",
+        "AA-BOARD"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 0.15,
+        "output": 0.47,
+        "cache_read": 0.016,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-DS-QWEN",
+          "AA-BOARD"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "Final primary-source check retrieved weighted evaluation cost and open-weight metadata. Detailed table states 256k context; FAQ rounds to 260k. License terms still require a deployment-specific review.",
+      "active_parameters_b": 6,
+      "note_zh": "最后一次原始来源核对补齐了评测任务成本与权重信息。详细表列出 256k 上下文，问答部分取整为 260k；实际部署仍需审阅许可证条款。"
+    },
+    {
+      "id": "deepseek-flash-max",
+      "name": "DeepSeek V4.1 Flash",
+      "lab": "DeepSeek",
+      "lab_geography": "CN",
+      "configuration": "reasoning max",
+      "open_weights": true,
+      "license": null,
+      "total_parameters_b": 552,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-DS-QWEN",
+        "AA-DS",
+        "DS-UPDATES"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 0.3,
+        "output": 1.2,
+        "cache_read": 0.006,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-DS-QWEN",
+          "AA-DS",
+          "DS-UPDATES"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "Automation objective score is not full workflow completion. Official endpoint aliases require version pinning.",
+      "note_zh": "自动化子目标得分不等于完整工作流成功率。使用官方端点别名时需锁定对应版本。"
+    },
+    {
+      "id": "qwen27-xhigh",
+      "name": "Qwen3.8 27B",
+      "lab": "Alibaba",
+      "lab_geography": "CN",
+      "configuration": "xhigh",
+      "open_weights": true,
+      "license": "Apache-2.0",
+      "total_parameters_b": 27,
+      "context_tokens": 256000,
+      "declared_input_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "status": "reported_snapshot",
+      "source_ids": [
+        "AA-QWEN27"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 0.5,
+        "output": 3,
+        "cache_read": 0.05,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-QWEN27"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "Smaller weight footprint is not a claim that every device can serve it efficiently; account for precision, KV cache, concurrency and runtime.",
+      "note_zh": "较小的权重规模不代表所有设备都能高效运行；仍需考虑精度、KV 缓存、并发和推理框架。"
+    },
+    {
+      "id": "minimax-m3",
+      "name": "MiniMax-M3",
+      "lab": "MiniMax",
+      "lab_geography": "CN",
+      "configuration": "reasoning configuration as published",
+      "open_weights": true,
+      "license": null,
+      "total_parameters_b": null,
+      "context_tokens": 1000000,
+      "declared_input_modalities": [
+        "text",
+        "image",
+        "video"
+      ],
+      "status": "provisional_conflict",
+      "source_ids": [
+        "AA-MINIMAX"
+      ],
+      "prices": {
+        "currency": "USD",
+        "per_tokens": 1000000,
+        "input": 0.3,
+        "output": 1.2,
+        "cache_read": 0.06,
+        "cache_write": null,
+        "as_of": "2026-09-23",
+        "source_ids": [
+          "AA-MINIMAX"
+        ],
+        "note": "Published reference rate, not a guaranteed quote. Region, tier, long context, tools, batch and cache writes may change billed cost."
+      },
+      "note": "Recent page reports 29; older snapshot 30. Excluded from rankings until source-version reconciliation. This is a data-status warning, not a capability judgment.",
+      "note_zh": "近期页面显示 29，较旧快照显示 30；在版本与来源核对完成前默认不进入排名。这是证据状态提示，不是能力结论。"
+    }
+  ],
+  "observations": [
+    {
+      "model_id": "astra-max",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 53,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Overall index"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": 1569,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Professional work: AA-Briefcase"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": 1542,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Work products: GDPval-AA"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": 68,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Workflow automation"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": 59,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Terminal / agent coding"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": 56,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Scientific coding"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": 55,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Hard reasoning: HLE"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": 31,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Document work: GDP.pdf"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": 32,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Research physics: CritPt"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": 43,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Knowledge / abstention index"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": 81,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Long-context reasoning"
+    },
+    {
+      "model_id": "astra-max",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 3.26,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-ASTRA-COST"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GPT-6 Astra / max / Cost per evaluation task"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 53,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Overall index"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": 1678,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Professional work: AA-Briefcase"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": 1735,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Work products: GDPval-AA"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": 59,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Workflow automation"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": 52,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Terminal / agent coding"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": 63,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Scientific coding"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": 59,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Hard reasoning: HLE"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": 26,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Document work: GDP.pdf"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": 30,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Research physics: CritPt"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": 43,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Knowledge / abstention index"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": 85,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FRONTIER"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Long-context reasoning"
+    },
+    {
+      "model_id": "fable-max",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 7.63,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-FABLE"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Fable 5.1 / adaptive max; default fallback / Cost per evaluation task"
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 51,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-OPUS"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Opus 5 / adaptive max / Overall index"
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": null,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "opus-max",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 5.86,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-OPUS"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Claude Opus 5 / adaptive max / Cost per evaluation task"
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 48,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-MUSE"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Muse Spark 1.3 / max / Overall index"
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": null,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "muse-max",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 1.6,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-MUSE"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Muse Spark 1.3 / max / Cost per evaluation task"
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 46,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-MIMO"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "MiMo-V2.6-Pro / reasoning; standard endpoint / Overall index"
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": null,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "mimo-pro",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 0.13,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-MIMO"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "MiMo-V2.6-Pro / reasoning; standard endpoint / Cost per evaluation task"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 45,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Overall index"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": 1525,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Professional work: AA-Briefcase"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": 1646,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Work products: GDPval-AA"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": 62,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Workflow automation"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": 42,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Terminal / agent coding"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": 59,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Scientific coding"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": 42,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Hard reasoning: HLE"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": 11,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Document work: GDP.pdf"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": 19,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Research physics: CritPt"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": 14,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Knowledge / abstention index"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": 80,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Long-context reasoning"
+    },
+    {
+      "model_id": "glm-max",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 2.01,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM-5.3 / max / Cost per evaluation task"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 44,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Overall index"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": 1510,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Professional work: AA-Briefcase"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": 1524,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Work products: GDPval-AA"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": 58,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Workflow automation"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": 13,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Terminal / agent coding"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": 59,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Scientific coding"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": 47,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Hard reasoning: HLE"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": 22,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Document work: GDP.pdf"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": 23,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Research physics: CritPt"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": 20,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Knowledge / abstention index"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": 89,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Long-context reasoning"
+    },
+    {
+      "model_id": "kimi-max",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 2.0,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-KIMI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Kimi K3 / max / Cost per evaluation task"
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 44,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GROK"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Grok 4.6 / xhigh / Overall index"
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": null,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "grok-xhigh",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 2.32,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GROK"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Grok 4.6 / xhigh / Cost per evaluation task"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 42,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Overall index"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": 1459,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Professional work: AA-Briefcase"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": 1641,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Work products: GDPval-AA"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": 60,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Workflow automation"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": 33,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Terminal / agent coding"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": 52,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Scientific coding"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": 40,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Hard reasoning: HLE"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": 15,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Document work: GDP.pdf"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": 15,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Research physics: CritPt"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": 7,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Knowledge / abstention index"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": 80,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH-COMP"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Long-context reasoning"
+    },
+    {
+      "model_id": "glm-flash",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 0.25,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GLM-FLASH"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "GLM 5.3 Flash / reasoning configuration as published / Cost per evaluation task"
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 41,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GEMINI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Gemini 3.8 Flash / high / Overall index"
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": null,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "gemini-flash-high",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 1.24,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-GEMINI"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Gemini 3.8 Flash / high / Cost per evaluation task"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 40,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Overall index"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": 1597,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Professional work: AA-Briefcase"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": 1612,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Work products: GDPval-AA"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": 56,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Workflow automation"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": 25,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Terminal / agent coding"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": 51,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Scientific coding"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": 38,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Hard reasoning: HLE"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": 16,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Document work: GDP.pdf"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": 11,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Research physics: CritPt"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": -10,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Knowledge / abstention index"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": 80,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / configuration as published / Long-context reasoning"
+    },
+    {
+      "model_id": "qwen-flash-next",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 0.37,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8-Flash-Next / published configuration / Cost per Task / weighted Intelligence Index task"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 39,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Overall index"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": 1432,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Professional work: AA-Briefcase"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": 1600,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Work products: GDPval-AA"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": 69,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Workflow automation"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": 27,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Terminal / agent coding"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": 52,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Scientific coding"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": 39,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Hard reasoning: HLE"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": 13,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Document work: GDP.pdf"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": 14,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Research physics: CritPt"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": -5,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Knowledge / abstention index"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": 84,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Long-context reasoning"
+    },
+    {
+      "model_id": "deepseek-flash-max",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 0.27,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-DS-QWEN"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "DeepSeek V4.1 Flash / reasoning max / Cost per evaluation task"
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 34,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-QWEN27"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8 27B / xhigh / Overall index"
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": null,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "qwen27-xhigh",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 0.82,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-QWEN27"
+      ],
+      "evidence_status": "reported_snapshot",
+      "confidence_interval": null,
+      "source_locator": "Qwen3.8 27B / xhigh / Cost per evaluation task"
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "intelligence",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-intelligence-4.3.2",
+      "value": 29,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-MINIMAX"
+      ],
+      "evidence_status": "provisional_conflict",
+      "confidence_interval": null,
+      "source_locator": "MiniMax-M3 / reasoning configuration as published / Overall index"
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "briefcase",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-briefcase-1.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "gdpval",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdpval-2.1",
+      "value": null,
+      "unit": "rating_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "automation",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-automation-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "terminal",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-terminal-4.0",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "scicode",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-scicode-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "hle",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-hle-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "gdp_pdf",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-gdp_pdf-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "critpt",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-critpt-AA-current",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "omniscience",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-omniscience-AA-current",
+      "value": null,
+      "unit": "index_points",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "lcr",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-lcr-1.1",
+      "value": null,
+      "unit": "percent",
+      "display_precision": 0,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [],
+      "evidence_status": "not_retrieved",
+      "confidence_interval": null,
+      "source_locator": null
+    },
+    {
+      "model_id": "minimax-m3",
+      "metric_id": "cost_task",
+      "cohort_id": "aa-selected-2026-09-23",
+      "protocol_id": "aa-published-cost_task-4.3.2",
+      "value": 0.51,
+      "unit": "USD_per_evaluation_task",
+      "display_precision": 2,
+      "observed_on": "2026-09-23",
+      "measured_at": null,
+      "source_ids": [
+        "AA-MINIMAX"
+      ],
+      "evidence_status": "provisional_conflict",
+      "confidence_interval": null,
+      "source_locator": "MiniMax-M3 / reasoning configuration as published / Cost per evaluation task"
+    }
+  ],
+  "sources": [
+    {
+      "id": "REF",
+      "title": "Economic scenarios reference",
+      "url": "https://www.anthropic.com/institute/econ-scenarios",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "reference_structure",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Readable structure and controls observed. Live visual geometry and animation timing not captured."
+    },
+    {
+      "id": "AA-METHOD",
+      "title": "Intelligence Index v4.3 methodology",
+      "url": "https://artificialanalysis.ai/articles/artificial-analysis-intelligence-index-v4-3",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "methodology",
+      "published_at": "2026-09-07",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Current page discusses v4.3.2. Retain the published aggregate; do not reconstruct weights from inconsistent FAQ summaries."
+    },
+    {
+      "id": "AA-REBASE",
+      "title": "Intelligence Index v4.2 rebase",
+      "url": "https://artificialanalysis.ai/articles/artificial-analysis-intelligence-index-v4-2",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "methodology",
+      "published_at": "2026-09-04",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-BOARD",
+      "title": "Current model leaderboard",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Used to identify the current evaluation family. This package is a selected subset, not a complete export of this board."
+    },
+    {
+      "id": "AA-FRONTIER",
+      "title": "Astra max vs Fable 5.1 max, default fallback",
+      "url": "https://artificialanalysis.ai/models/comparisons/gpt-6-astra-vs-claude-fable-5-1",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-ASTRA-COST",
+      "title": "Astra / Fable release comparison",
+      "url": "https://artificialanalysis.ai/de/models/releases/comparisons/gpt-6-astra-vs-claude-fable-5-1",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Astra max cost/task $3.26. Never pair the low-effort cost with the max-effort score."
+    },
+    {
+      "id": "AA-FABLE",
+      "title": "Fable 5.1 max endpoint",
+      "url": "https://artificialanalysis.ai/models/claude-fable-5-1/",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-OPUS",
+      "title": "Opus 5 max",
+      "url": "https://artificialanalysis.ai/models/claude-opus-5",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-MUSE",
+      "title": "Muse Spark 1.3 max",
+      "url": "https://artificialanalysis.ai/models/muse-spark-1-3",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-GROK",
+      "title": "Grok 4.6 xhigh",
+      "url": "https://artificialanalysis.ai/models/grok-4-6-xhigh",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-GEMINI",
+      "title": "Gemini 3.8 Flash high",
+      "url": "https://artificialanalysis.ai/models/gemini-3-8-flash",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-MIMO",
+      "title": "MiMo-V2.6-Pro",
+      "url": "https://artificialanalysis.ai/models/mimo-v2-6-pro",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-GLM-KIMI",
+      "title": "GLM 5.3 max vs Kimi K3 max",
+      "url": "https://artificialanalysis.ai/models/comparisons/glm-5-3-vs-kimi-k3",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-GLM",
+      "title": "GLM 5.3 max",
+      "url": "https://artificialanalysis.ai/models/glm-5-3",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-KIMI",
+      "title": "Kimi K3 max",
+      "url": "https://artificialanalysis.ai/models/kimi-k3/",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-GLM-FLASH",
+      "title": "GLM 5.3 Flash",
+      "url": "https://artificialanalysis.ai/models/glm-5-3-flash/",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-GLM-FLASH-COMP",
+      "title": "GLM 5.3 Flash vs Kimi K3",
+      "url": "https://artificialanalysis.ai/pt/models/comparisons/glm-5-3-flash-vs-kimi-k3",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-DS-QWEN",
+      "title": "DeepSeek V4.1 Flash max vs Qwen3.8-Flash-Next",
+      "url": "https://artificialanalysis.ai/models/comparisons/deepseek-v4-1-flash-vs-qwen3-8-flash-next",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Rechecked in final review; Qwen cost/task $0.37, open weights, license and 180B/6B metadata retrieved. Detailed 256k context preferred over rounded FAQ 260k."
+    },
+    {
+      "id": "AA-DS",
+      "title": "DeepSeek V4.1 Flash max",
+      "url": "https://artificialanalysis.ai/models/deepseek-v4-1-flash",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-QWEN27",
+      "title": "Qwen3.8 27B xhigh",
+      "url": "https://artificialanalysis.ai/models/qwen3-8-27b",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-MINIMAX",
+      "title": "MiniMax M3 current trailing-slash snapshot",
+      "url": "https://artificialanalysis.ai/models/minimax-m3/",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "evaluator_report",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Recent snapshot reports 29; an older non-trailing-slash snapshot reported 30. Retained as provisional and excluded by default until a machine-readable version check resolves the difference."
+    },
+    {
+      "id": "AA-ENDPOINT",
+      "title": "Endpoint Accuracy Index",
+      "url": "https://artificialanalysis.ai/articles/endpoint-accuracy-index",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "methodology",
+      "published_at": "2026-08-04",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "AA-OPENNESS",
+      "title": "Openness Index",
+      "url": "https://artificialanalysis.ai/evaluations/artificial-analysis-openness-index",
+      "publisher": "Artificial Analysis",
+      "evidence_type": "methodology",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "OAI-ASTRA",
+      "title": "OpenAI Astra announcement",
+      "url": "https://openai.com/index/gpt-6-astra/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "provider_claim",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "ANT-FABLE",
+      "title": "Anthropic Fable product and release details",
+      "url": "https://www.anthropic.com/claude/fable",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "provider_claim",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Fable 5.1 announcement is dated 2026-09-01; default fallback matters."
+    },
+    {
+      "id": "XIAOMI-MIMO",
+      "title": "Xiaomi MiMo V2.6 Pro specifications",
+      "url": "https://mimo.mi.com/models/zh-CN/mimo-v2.6-pro",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "provider_claim",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Use the standard endpoint, not UltraSpeed. Modalities are declared support, not measured multimodal quality."
+    },
+    {
+      "id": "DS-UPDATES",
+      "title": "DeepSeek official model updates",
+      "url": "https://api-docs.deepseek.com/updates/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "provider_claim",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "V4.1 Flash release 2026-09-10. A later note retains V4 Pro; do not infer retirement from old notices."
+    },
+    {
+      "id": "ANT-COMPUTE",
+      "title": "Anthropic compute platform disclosure",
+      "url": "https://www.anthropic.com/news/expanding-our-use-of-google-cloud-tpus-and-services",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2025-10-23",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Historical disclosure of Google TPU, Amazon Trainium and NVIDIA GPU use, not a current installed-capacity census."
+    },
+    {
+      "id": "OAI-MSFT",
+      "title": "OpenAI and Microsoft relationship update",
+      "url": "https://openai.com/index/continuing-microsoft-partnership/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-02-27",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "OAI-CAPITAL",
+      "title": "OpenAI financing and infrastructure announcement",
+      "url": "https://openai.com/index/scaling-ai-for-everyone/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-02-27",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "OAI-AVGO",
+      "title": "OpenAI and Broadcom Jalapeno announcement",
+      "url": "https://openai.com/index/openai-broadcom-jalapeno-inference-chip/",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-06-24",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Initial deployment planned by end-2026. Engineering samples are not deployed commercial capacity."
+    },
+    {
+      "id": "MU-ANT",
+      "title": "Micron and Anthropic strategic agreement",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-and-Anthropic-Announce-Strategic-Agreement-to-Scale-Next-Generation-AI-Infrastructure/default.aspx",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-06-22",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "MU-HBM",
+      "title": "Micron HBM4 volume-production disclosure",
+      "url": "https://investors.micron.com/news/press-release/2026/Micron-in-High-Volume-Production-of-HBM4-Designed-for-NVIDIA-Vera-Rubin-PCIe-Gen6-SSD-and-SOCAMM2-03-16-2026/default.aspx",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-03-16",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "BABA-CAPITAL",
+      "title": "Alibaba placement completion",
+      "url": "https://www.alibabagroup.com/zh-HK/document-2029365886510432256",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-08-26",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": ""
+    },
+    {
+      "id": "BABA-RESULTS",
+      "title": "Alibaba June-quarter results",
+      "url": "https://www.alibabagroup.com/zh-HK/document-2026456290057781248",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "corporate_disclosure",
+      "published_at": "2026-08-20",
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Company-reported operating performance is distinct from independent model evaluation."
+    },
+    {
+      "id": "XIAOMI-IR",
+      "title": "Xiaomi issuer profile",
+      "url": "https://ir.mi.com/corporate-information/company-profile",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "issuer_registry",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Issuer identifies 1810.HK. Model capability is not a valuation of the whole company."
+    },
+    {
+      "id": "REPO-CONTROLLER",
+      "title": "Existing Afflatus rivalry renderer",
+      "url": "https://github.com/FeidaWang/Afflatus/blob/main/src/sectors/rivalryController.js",
+      "publisher": "Primary publisher identified by URL",
+      "evidence_type": "source_code",
+      "published_at": null,
+      "retrieved_on": "2026-09-23",
+      "extraction_method": "primary-source indexed text retrieved through web search",
+      "raw_run_export_available": false,
+      "note": "Read through GitHub connector; blob 345b399663c8fab47b4571a1c340e2851d70c1a5. Existing lab.vector and lab.score are not the new measured leaderboard."
+    }
+  ],
+  "warnings": [
+    "Published display rounding is preserved. Equal displayed scores do not prove statistical equivalence.",
+    "Numbers are public-source observations, not an Afflatus benchmark run.",
+    "No time series has been invented from one snapshot.",
+    "Current model capability is not a national, political or equity valuation score.",
+    "No latency ranking is included: inconsistent crawl snapshots and provider definitions need reconciliation.",
+    "Chinese-language, multimodal and private-deployment quality leaderboards require separate compatible task sets."
+  ]
+}

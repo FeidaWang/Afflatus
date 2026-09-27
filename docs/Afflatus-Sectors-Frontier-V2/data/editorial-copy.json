@@ -1,0 +1,138 @@
+{
+  "hero": {
+    "title": {
+      "en": "The frontier is a moving target. So is the value.",
+      "zh": "前沿在移动，价值也在迁移。"
+    },
+    "subtitle": {
+      "en": "Follow the competition between American frontier labs and China’s diverse model ecosystem—from capability and cost to infrastructure, distribution and public-market exposure. Compare configurations, not slogans.",
+      "zh": "从美国前沿实验室之间的竞争，到中国多层次模型生态的追赶与分化；沿能力与成本、基础设施、分发和上市主体，追踪价值可能如何迁移。比较具体配置，而不是口号。"
+    },
+    "label": {
+      "en": "AFFLATUS / FRONTIER COMPETITION OBSERVATORY",
+      "zh": "AFFLATUS / 前沿模型竞争观察站"
+    },
+    "date_notice": {
+      "en": "Public-source snapshot retrieved 23 September 2026. Not a live feed or an independent rerun.",
+      "zh": "公开来源快照，采集于 2026 年 9 月 23 日。并非实时行情或本站独立复测。"
+    }
+  },
+  "chapters": [
+    {
+      "id": "capability",
+      "title": {
+        "en": "The same headline score can hide different strengths.",
+        "zh": "相同总分，可能隐藏完全不同的长处。"
+      },
+      "body": {
+        "en": "In the selected current Artificial Analysis comparison, Astra max and Fable 5.1 max share a displayed overall score of 53. Their ordering changes across terminal work, scientific coding and long-context reasoning. The useful question is which configuration clears a particular task requirement at an acceptable total cost.",
+        "zh": "在本次选取的 Artificial Analysis 当前比较中，Astra max 与 Fable 5.1 max 的显示总分同为 53；但终端任务、科学代码与长上下文推理的排序并不相同。真正有用的问题，是哪种配置能够以可接受的总成本达到特定任务要求。"
+      },
+      "sources": [
+        "AA-FRONTIER"
+      ],
+      "kind": "source_reported_plus_interpretation"
+    },
+    {
+      "id": "us-competition",
+      "title": {
+        "en": "America’s frontier contest is also a contest over the workflow.",
+        "zh": "美国前沿模型的竞争，也是在争夺整个工作流。"
+      },
+      "body": {
+        "en": "Keep Anthropic and OpenAI at the centre, but include Google, Meta and Grok configurations rather than manufacturing a two-company market. Separate model evaluation from the products, tools, access restrictions, hosting channels and compute arrangements around it. A lower API rate or a higher aggregate score alone does not establish a better end-to-end product.",
+        "zh": "以 Anthropic 与 OpenAI 为中心，但同时纳入 Google、Meta 与 Grok 的具体配置，而不是把市场人为缩成两家公司。把模型评测与围绕它的产品、工具、访问限制、托管渠道及算力安排分开呈现。更低的 API 单价或更高的综合分，都不能单独证明端到端产品更适合用户。"
+      },
+      "sources": [
+        "AA-FRONTIER",
+        "AA-GEMINI",
+        "AA-MUSE",
+        "AA-GROK",
+        "ANT-FABLE",
+        "OAI-ASTRA"
+      ],
+      "kind": "analytical_framing"
+    },
+    {
+      "id": "china-spectrum",
+      "title": {
+        "en": "China is a spectrum of deployment choices, not one challenger.",
+        "zh": "中国模型是一组部署选择，而不是单一挑战者。"
+      },
+      "body": {
+        "en": "MiMo, GLM, Kimi, DeepSeek, Qwen and MiniMax must remain separate families. Compare high-capability configurations, efficient services, smaller weight footprints and declared multimodal support on their own terms. A broad index does not certify Chinese-language quality, private deployment performance or every modality.",
+        "zh": "MiMo、GLM、Kimi、DeepSeek、Qwen 与 MiniMax 必须作为不同家族呈现。高能力配置、高效率服务、较小权重规模与声明支持的多模态，应分别比较。综合指数并不能认证中文能力、私有部署性能或每一种模态的效果。"
+      },
+      "sources": [
+        "AA-MIMO",
+        "AA-GLM-KIMI",
+        "AA-DS-QWEN",
+        "AA-QWEN27",
+        "AA-MINIMAX"
+      ],
+      "kind": "source_reported_plus_interpretation"
+    },
+    {
+      "id": "supply",
+      "title": {
+        "en": "Different models can depend on overlapping infrastructure.",
+        "zh": "不同模型，可能依赖相互重叠的基础设施。"
+      },
+      "body": {
+        "en": "Read every relationship by type and date. A compute-service contract, a memory-supply agreement, an investment and a chip-design partnership are different facts. Published infrastructure plans are not the same as delivered capacity, and an edge in a graph is not a revenue share.",
+        "zh": "按类型和日期读取每一条关系。算力服务合同、存储供应协议、股权投资和芯片设计合作，是不同事实。公开建设计划不等于已交付产能；关系图的一条边，也不代表收入份额。"
+      },
+      "sources": [
+        "ANT-COMPUTE",
+        "OAI-AVGO",
+        "MU-ANT",
+        "MU-HBM"
+      ],
+      "kind": "source_reported_plus_interpretation"
+    },
+    {
+      "id": "migration",
+      "title": {
+        "en": "Cheaper inference changes the arithmetic—not just the headline.",
+        "zh": "更便宜的推理，改变的是算式，而不只是标题。"
+      },
+      "body": {
+        "en": "Model usage can grow while revenue per token falls. More agent steps can increase token demand while better serving systems reduce compute per token. Test those competing effects explicitly; neither hardware demand nor issuer profit follows automatically from a benchmark improvement.",
+        "zh": "模型用量可能增长，同时每个 token 的收入下降。更多代理步骤可能增加 token 需求，而更高效的服务系统又会减少每个 token 所需算力。应明确检验这些相反作用；硬件需求与公司利润，都不会由一次基准提升自动推出。"
+      },
+      "sources": [],
+      "kind": "analytical_hypothesis"
+    },
+    {
+      "id": "issuers",
+      "title": {
+        "en": "A model is not an investment instrument.",
+        "zh": "模型不是投资标的。"
+      },
+      "body": {
+        "en": "Map model developers to legal entities, then to verifiable listed instruments and material business exposures. Broadcom, Micron, Alibaba and Xiaomi illustrate different layers of the chain in this seed dataset. A relationship or an evaluation score does not determine fair value or expected returns.",
+        "zh": "先把模型开发者映射到法律主体，再映射到可核对的上市证券与实质业务敞口。本次种子数据中的博通、美光、阿里巴巴与小米，分别呈现链条的不同层次。合作关系或评测分数，不能直接决定合理估值或预期收益。"
+      },
+      "sources": [
+        "OAI-AVGO",
+        "MU-ANT",
+        "BABA-CAPITAL",
+        "XIAOMI-IR"
+      ],
+      "kind": "source_reported_plus_interpretation"
+    },
+    {
+      "id": "evidence",
+      "title": {
+        "en": "Every thesis needs a way to be wrong.",
+        "zh": "每一条论点，都需要明确的失效条件。"
+      },
+      "body": {
+        "en": "Keep published measurements, company disclosures, derived calculations and editorial hypotheses visibly separate. Preserve source dates, missing data and contrary evidence. The page should make a thesis easier to inspect, not make uncertainty disappear.",
+        "zh": "将公开测量、公司披露、推导计算与编辑假设清晰区分。保留来源日期、缺失数据和相反证据。页面应该让论点更容易被检验，而不是让不确定性消失。"
+      },
+      "sources": [],
+      "kind": "editorial_principle"
+    }
+  ]
+}

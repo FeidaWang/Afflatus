@@ -1,0 +1,1035 @@
+[
+  {
+    "id": "R00",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Shared header and entry navigation",
+    "target_component": "Shared Afflatus brand / route navigation",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "specified_not_fidelity_certified",
+    "proposed_choreography": "Keep the existing shared implementation; record reference hover/focus/menu states without creating a Sectors-only navbar.",
+    "data_contract": "Existing shared brand and menu state",
+    "guardrail": "Preserve current logo, focus order and language toggle; no proprietary logo or font copy.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implementation_task_defined",
+    "state_evidence": []
+  },
+  {
+    "id": "R01",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Question-led introduction and report/explorer entry points",
+    "target_component": "Question-led competition hero and two real entrances",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "specified_not_fidelity_certified",
+    "proposed_choreography": "One dominant title, short dated caveat; read-story anchor and model-explorer anchor.",
+    "data_contract": "editorial-copy.json / hero",
+    "guardrail": "No unverified live indicator, no historical verdict presented as current.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implementation_task_defined",
+    "state_evidence": []
+  },
+  {
+    "id": "R02",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Individual job and task decomposition",
+    "target_component": "One AI workload decomposed into subtasks",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "representative_desktop_mobile_states_reviewed",
+    "reference_motion_status": "settled_endpoints_only_timing_unverified",
+    "target_design_status": "original_event_driven_adaptation_not_pixel_or_motion_clone",
+    "proposed_choreography": "Stable task IDs separate reasoning, code, documents, tools, verification and human review. The viewer selects a workload lens.",
+    "data_contract": "Held-out workload records; until supplied, explicitly labelled schematic stages only",
+    "guardrail": "Task dots are a proposed implementation, not a verified extraction of the reference rendering technology.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "P2_local_stage_transitions_and_dependency_adapter_implemented",
+    "state_evidence": [
+      {
+        "id": "R02",
+        "mode": "desktop",
+        "label": "The economy is made out of tasks",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/desktop-R02.png",
+        "capturedAt": "2026-09-22T17:13:15.992Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 81,
+            "y": 521.1875,
+            "width": 382,
+            "height": 26.34375,
+            "top": 521.1875,
+            "right": 463,
+            "bottom": 547.53125,
+            "left": 81
+          },
+          "scrollY": 2249,
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "A dense task field with a foreground prose panel; no numeric task shares inferred.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      },
+      {
+        "id": "R02",
+        "mode": "mobile",
+        "label": "The economy is made out of tasks",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/mobile-R02.png",
+        "capturedAt": "2026-09-22T17:13:22.947Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 49,
+            "y": 442.375,
+            "width": 292,
+            "height": 23.25,
+            "top": 442.375,
+            "right": 341,
+            "bottom": 465.625,
+            "left": 49
+          },
+          "scrollY": 2276,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "A dense task field with a foreground prose panel; no numeric task shares inferred. Mobile prose overlays some task labels; Afflatus uses separate prose and lanes to retain readability.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      }
+    ],
+    "target_evidence": {
+      "keyboard": "e2e/sectors-p2.spec.js",
+      "reduced_motion": "e2e/sectors-p2.spec.js (default Playwright reduced motion)",
+      "unavailable": "e2e/sectors-p2.spec.js (script disabled and graph request aborted)",
+      "lifecycle": "e2e/sectors-p2.spec.js and e2e/sectors-bfcache.browser.js",
+      "screenshots": [
+        "tmp/sectors-frontier-p2/en-tasks.png",
+        "tmp/sectors-frontier-p2/zh-tasks.png",
+        "tmp/sectors-frontier-p2/en-network.png",
+        "tmp/sectors-frontier-p2/zh-network.png"
+      ]
+    }
+  },
+  {
+    "id": "R03",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Task augmentation explanation",
+    "target_component": "Human review plus model assistance",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "representative_desktop_mobile_states_reviewed",
+    "reference_motion_status": "settled_endpoints_only_timing_unverified",
+    "target_design_status": "original_event_driven_adaptation_not_pixel_or_motion_clone",
+    "proposed_choreography": "Keep the same task objects; change ownership labels and show measured review cost only when available.",
+    "data_contract": "Paired task runs and review logs, not the AA aggregate",
+    "guardrail": "Do not treat AutomationBench objective score as a completed-job count.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "P2_local_stage_transitions_and_dependency_adapter_implemented",
+    "state_evidence": [
+      {
+        "id": "R03",
+        "mode": "desktop",
+        "label": "Some tasks will get augmented",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/desktop-R03.png",
+        "capturedAt": "2026-09-22T17:13:17.113Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 81,
+            "y": 520.359375,
+            "width": 382,
+            "height": 26.34375,
+            "top": 520.359375,
+            "right": 463,
+            "bottom": 546.703125,
+            "left": 81
+          },
+          "scrollY": 6743,
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "Stable nurse task positions; assistance changes task colors, with a persistent legend.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      },
+      {
+        "id": "R03",
+        "mode": "mobile",
+        "label": "Some tasks will get augmented",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/mobile-R03.png",
+        "capturedAt": "2026-09-22T17:13:23.908Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 49,
+            "y": 442.4375,
+            "width": 292,
+            "height": 23.25,
+            "top": 442.4375,
+            "right": 341,
+            "bottom": 465.6875,
+            "left": 49
+          },
+          "scrollY": 6081,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "Stable nurse task positions; assistance changes task colors, with a persistent legend. Mobile prose overlays some task labels; Afflatus uses separate prose and lanes to retain readability.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      }
+    ],
+    "target_evidence": {
+      "keyboard": "e2e/sectors-p2.spec.js",
+      "reduced_motion": "e2e/sectors-p2.spec.js (default Playwright reduced motion)",
+      "unavailable": "e2e/sectors-p2.spec.js (script disabled and graph request aborted)",
+      "lifecycle": "e2e/sectors-p2.spec.js and e2e/sectors-bfcache.browser.js",
+      "screenshots": [
+        "tmp/sectors-frontier-p2/en-tasks.png",
+        "tmp/sectors-frontier-p2/zh-tasks.png",
+        "tmp/sectors-frontier-p2/en-network.png",
+        "tmp/sectors-frontier-p2/zh-network.png"
+      ]
+    }
+  },
+  {
+    "id": "R04",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Task automation explanation",
+    "target_component": "Single-model versus agent/tool workflow",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "representative_desktop_mobile_states_reviewed",
+    "reference_motion_status": "settled_endpoints_only_timing_unverified",
+    "target_design_status": "original_event_driven_adaptation_not_pixel_or_motion_clone",
+    "proposed_choreography": "Move stable task objects into model/tool/review lanes; source-supported objective scores remain fixed rather than counting from zero.",
+    "data_contract": "AA per-task objective / terminal metrics; per-attempt logs required for ownership shares",
+    "guardrail": "A model can score well on objectives while still requiring human review.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "P2_local_stage_transitions_and_dependency_adapter_implemented",
+    "state_evidence": [
+      {
+        "id": "R04",
+        "mode": "desktop",
+        "label": "Some tasks may get fully automated",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/desktop-R04.png",
+        "capturedAt": "2026-09-22T17:13:18.136Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 81,
+            "y": 520.703125,
+            "width": 382,
+            "height": 26.34375,
+            "top": 520.703125,
+            "right": 463,
+            "bottom": 547.046875,
+            "left": 81
+          },
+          "scrollY": 7889,
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "The same task layout gains automation-colored tasks; ownership is not encoded as a measured success rate.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      },
+      {
+        "id": "R04",
+        "mode": "mobile",
+        "label": "Some tasks may get fully automated",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/mobile-R04.png",
+        "capturedAt": "2026-09-22T17:13:24.879Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 49,
+            "y": 442.703125,
+            "width": 292,
+            "height": 23.25,
+            "top": 442.703125,
+            "right": 341,
+            "bottom": 465.953125,
+            "left": 49
+          },
+          "scrollY": 7050,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "The same task layout gains automation-colored tasks; ownership is not encoded as a measured success rate. Mobile prose overlays some task labels; Afflatus uses separate prose and lanes to retain readability.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      }
+    ],
+    "target_evidence": {
+      "keyboard": "e2e/sectors-p2.spec.js",
+      "reduced_motion": "e2e/sectors-p2.spec.js (default Playwright reduced motion)",
+      "unavailable": "e2e/sectors-p2.spec.js (script disabled and graph request aborted)",
+      "lifecycle": "e2e/sectors-p2.spec.js and e2e/sectors-bfcache.browser.js",
+      "screenshots": [
+        "tmp/sectors-frontier-p2/en-tasks.png",
+        "tmp/sectors-frontier-p2/zh-tasks.png",
+        "tmp/sectors-frontier-p2/en-network.png",
+        "tmp/sectors-frontier-p2/zh-network.png"
+      ]
+    }
+  },
+  {
+    "id": "R05",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "New tasks and productivity explanation",
+    "target_component": "Longer agent loops and expanded workload",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "representative_desktop_mobile_states_reviewed",
+    "reference_motion_status": "settled_endpoints_only_timing_unverified",
+    "target_design_status": "original_event_driven_adaptation_not_pixel_or_motion_clone",
+    "proposed_choreography": "Reveal retries, verification and new workflow stages as distinct billable activity.",
+    "data_contract": "Explicit illustrative assumptions or actual token/attempt records",
+    "guardrail": "More tokens are not automatically more useful work or more provider profit.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "P2_local_stage_transitions_and_dependency_adapter_implemented",
+    "state_evidence": [
+      {
+        "id": "R05",
+        "mode": "desktop",
+        "label": "And new tasks will appear",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/desktop-R05.png",
+        "capturedAt": "2026-09-22T17:13:19.128Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 81,
+            "y": 520.359375,
+            "width": 382,
+            "height": 26.34375,
+            "top": 520.359375,
+            "right": 463,
+            "bottom": 546.703125,
+            "left": 81
+          },
+          "scrollY": 8983,
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "New yellow review tasks appear without replacing existing task identities.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      },
+      {
+        "id": "R05",
+        "mode": "mobile",
+        "label": "And new tasks will appear",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/mobile-R05.png",
+        "capturedAt": "2026-09-22T17:13:25.845Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 49,
+            "y": 441.96875,
+            "width": 292,
+            "height": 23.25,
+            "top": 441.96875,
+            "right": 341,
+            "bottom": 465.21875,
+            "left": 49
+          },
+          "scrollY": 7960,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "New yellow review tasks appear without replacing existing task identities. Mobile prose overlays some task labels; Afflatus uses separate prose and lanes to retain readability.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      }
+    ],
+    "target_evidence": {
+      "keyboard": "e2e/sectors-p2.spec.js",
+      "reduced_motion": "e2e/sectors-p2.spec.js (default Playwright reduced motion)",
+      "unavailable": "e2e/sectors-p2.spec.js (script disabled and graph request aborted)",
+      "lifecycle": "e2e/sectors-p2.spec.js and e2e/sectors-bfcache.browser.js",
+      "screenshots": [
+        "tmp/sectors-frontier-p2/en-tasks.png",
+        "tmp/sectors-frontier-p2/zh-tasks.png",
+        "tmp/sectors-frontier-p2/en-network.png",
+        "tmp/sectors-frontier-p2/zh-network.png"
+      ]
+    }
+  },
+  {
+    "id": "R06",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Scaling from one job to the economy",
+    "target_component": "Scaling from model configuration to infrastructure and distribution",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "representative_desktop_mobile_states_reviewed",
+    "reference_motion_status": "settled_endpoints_only_timing_unverified",
+    "target_design_status": "original_event_driven_adaptation_not_pixel_or_motion_clone",
+    "proposed_choreography": "Zoom out once into the existing dependency graph, with stable node identities and typed edges.",
+    "data_contract": "value-chain.json plus audited adapter to existing graph IDs",
+    "guardrail": "Equal-width semantic edges when volume is missing; never pretend edge width measures capital or revenue.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "P2_local_stage_transitions_and_dependency_adapter_implemented",
+    "state_evidence": [
+      {
+        "id": "R06",
+        "mode": "desktop",
+        "label": "From tasks to the economy",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/desktop-R06.png",
+        "capturedAt": "2026-09-22T17:13:20.129Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 81,
+            "y": 521.015625,
+            "width": 382,
+            "height": 26.34375,
+            "top": 521.015625,
+            "right": 463,
+            "bottom": 547.359375,
+            "left": 81
+          },
+          "scrollY": 12316,
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "The task field changes scale and representation; the sampled screenshot is a transition endpoint, not a recovered easing curve.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      },
+      {
+        "id": "R06",
+        "mode": "mobile",
+        "label": "From tasks to the economy",
+        "screenshot": "docs/Afflatus-Sectors-Frontier-V2/evidence/reference-runtime/mobile-R06.png",
+        "capturedAt": "2026-09-22T17:13:26.818Z",
+        "interaction": "scroll into narrative state; settle 900ms",
+        "receipt": {
+          "rect": {
+            "x": 49,
+            "y": 442.765625,
+            "width": 292,
+            "height": 23.25,
+            "top": 442.765625,
+            "right": 341,
+            "bottom": 466.015625,
+            "left": 49
+          },
+          "scrollY": 10771,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "position": "static"
+        },
+        "status": "screenshot_and_geometry_reviewed",
+        "review": "The task field changes scale and representation; the sampled screenshot is a transition endpoint, not a recovered easing curve. Mobile prose overlays some task labels; Afflatus uses separate prose and lanes to retain readability.",
+        "limits": [
+          "One settled sample; intermediate timing/easing not measured.",
+          "Reference keyboard, reduced-motion and failure states not captured."
+        ]
+      }
+    ],
+    "target_evidence": {
+      "keyboard": "e2e/sectors-p2.spec.js",
+      "reduced_motion": "e2e/sectors-p2.spec.js (default Playwright reduced motion)",
+      "unavailable": "e2e/sectors-p2.spec.js (script disabled and graph request aborted)",
+      "lifecycle": "e2e/sectors-p2.spec.js and e2e/sectors-bfcache.browser.js",
+      "screenshots": [
+        "tmp/sectors-frontier-p2/en-tasks.png",
+        "tmp/sectors-frontier-p2/zh-tasks.png",
+        "tmp/sectors-frontier-p2/en-network.png",
+        "tmp/sectors-frontier-p2/zh-network.png"
+      ]
+    }
+  },
+  {
+    "id": "R07",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Three economic scenarios",
+    "target_component": "Three conditional industry lenses",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "Frontier premium / efficient multi-model routing / supply-constrained expansion. Labels and assumptions change the visible explanation; not probability-weighted forecasts.",
+    "data_contract": "Explicit assumptions; demandScenario() identity, with no share-price outputs",
+    "guardrail": "Do not reuse modest/substantial/extreme GDP data. Scenarios are non-exclusive analytical lenses.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_conditional_explanations",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "Three native buttons update non-exclusive lens explanations; no probabilities or forecasts.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R08",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Five-input expectations questionnaire",
+    "target_component": "Five-input task / deployment explorer",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "Task metric, minimum measured score, cost budget, deployment constraint and required context. All inputs filter actual eligible rows or state why evidence is unavailable.",
+    "data_contract": "Versioned observations, API/deployment metadata",
+    "guardrail": "No form submission, analytics tracking or fake survey population. Context capacity is not long-context performance.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_local_constraints",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "Task metric, minimum score, AA cost cap, open-weight requirement and context filter measured rows. Geography remains separate.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R09",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Public versus site-visitor expectations comparison",
+    "target_component": "Selected-model distributions and deployment cohorts",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "Reuse the comparative-panel rhythm to show distributions of measured configurations by selected metric / open-weight status. Display actual subset N.",
+    "data_contract": "The current selected cohort and per-metric nonmissing observations",
+    "guardrail": "Never reuse the public/visitor sample counts or label model counts as public opinion.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_shared_axis_distributions",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "Open/closed/unknown cohorts use identical axes, actual N and full text values; negative indices retained.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R10",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Personal predicted-future result",
+    "target_component": "Your constrained model shortlist and evidence dossier",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "Summarize the actual constraints; present the task-specific Pareto set, missing evidence and deployment caveats, not a universal recommendation.",
+    "data_contract": "rankMetric() and paretoFrontier()",
+    "guardrail": "No selected record means a genuine empty state. Do not silently relax constraints.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_constrained_shortlist",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "Constraints apply before ranking and Pareto dominance. No-match clears dossier and billing. Missing metadata has explicit reasons.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R11",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "GDP level and growth comparison across scenarios",
+    "target_component": "Capability–cost frontier and explicit workload accounting",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "Large numeric summaries plus a comparable frontier plot. A separate bill breakdown uses entered billable tokens. All labels use their real units.",
+    "data_contract": "Published AA scores / weighted task costs; estimateTokenBill() for hypothetical billing",
+    "guardrail": "No GDP totals, macro growth rates or rectangle sizes are relabelled as AI revenue, market share or model capability ratios.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_frontier_and_bill_breakdown",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "Task-specific quality versus fixed AA suite cost; disjoint hypothetical token bill breakdown with price date.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R12",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Job reallocation across occupational groups over time",
+    "target_component": "Workload routing across models / tools / review",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "An alluvial or transition-matrix view is allowed only with logged assignments or visibly marked user-entered routing assumptions. Preserve each task count.",
+    "data_contract": "Routing logs with task IDs or fully labelled scenario shares",
+    "guardrail": "No inferred traffic share from benchmark score, downloads, context length or company nationality.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_unavailable_state_missing_routing_logs",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "No routing logs were supplied. Explicit missing-data state; no synthetic traffic visualization.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R13",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Unemployment small multiples by scenario and group",
+    "target_component": "Failure / retries / review small multiples",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "Use identical axes for task families; each panel shows observed failures, retries and review where those denominators exist.",
+    "data_contract": "Per-attempt success/failure and review logs; missing-data state otherwise",
+    "guardrail": "Never derive failure rate as 100 minus a composite index or partial objective score.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_unavailable_state_missing_attempt_logs",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "No per-attempt failures/retries/review denominators were supplied. Explicit missing-data state.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R14",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Wages relative to a no-AI baseline",
+    "target_component": "Cost and quality changes against a fixed workload baseline",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "Compare the same task/harness/provider/configuration over dated snapshots. Baseline and denominator stay visible during transitions.",
+    "data_contract": "Two or more compatible archived observations, not launch headline scores",
+    "guardrail": "One snapshot cannot support a trend line. Index-version changes create an explicit break, not interpolation.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_unavailable_state_single_snapshot",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "No compatible historical pair exists in supplied data. No trend or interpolation; version-break rule stated.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R15",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Labor versus capital share with an expanding total",
+    "target_component": "Cost incidence, value capture and listed-issuer exposure",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "original_local_adaptation_not_reference_fidelity_certified",
+    "proposed_choreography": "Use a verified cost-stack breakdown for quantitative area; show model/cloud/hardware/distribution relationships qualitatively when accounts are not additive.",
+    "data_contract": "Disjoint billing buckets, issuer disclosures and typed relationships",
+    "guardrail": "Do not add overlapping cloud revenue, model revenue and hardware revenue into one fictitious 100% market pie.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implemented_disjoint_billing_and_qualitative_boundary",
+    "state_evidence": [
+      {
+        "scope": "target_only",
+        "states": [
+          "desktop",
+          "mobile_or_text_equivalent",
+          "keyboard",
+          "reduced_motion",
+          "empty_or_unavailable"
+        ],
+        "test": "e2e/sectors-p3.spec.js",
+        "limits": "Reference geometry, exact motion and source-site keyboard behavior not captured or certified in P3."
+      }
+    ],
+    "target_evidence": {
+      "unit": "tests/sectorsExplorerP3.test.js",
+      "browser": "e2e/sectors-p3.spec.js",
+      "regression": "e2e/sectors-frontier.spec.js",
+      "note": "Bill buckets are disjoint; value capture remains qualitative and links to existing dated dependency ledger. Issuer dossier remains P4.",
+      "screenshots": [
+        "tmp/sectors-frontier-p3/en-controls.png",
+        "tmp/sectors-frontier-p3/zh-distribution.png",
+        "tmp/sectors-frontier-p3/en-empty.png"
+      ]
+    }
+  },
+  {
+    "id": "R16",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Closing discussion and expandable model limitations",
+    "target_component": "Falsifiable theses and source ledger",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "specified_not_fidelity_certified",
+    "proposed_choreography": "Every thesis links to evidence, opposing conditions, date and a visible interpretation label. Disclosures expand natively.",
+    "data_contract": "theses.json, sources.json and conflict ledger",
+    "guardrail": "Evidence drawer must be reachable by keyboard/touch and preserve focus on close.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "seed_interaction_available",
+    "state_evidence": []
+  },
+  {
+    "id": "R17",
+    "source_ids": [
+      "REF"
+    ],
+    "reference_semantic_unit": "Footer and continuation links",
+    "target_component": "Sources, archive and next chapter",
+    "reference_evidence": "document_structure_observed",
+    "reference_geometry_status": "not_browser_verified",
+    "reference_motion_status": "not_browser_verified",
+    "target_design_status": "specified_not_fidelity_certified",
+    "proposed_choreography": "Continue into source records / archived K3 thesis without losing comparison state.",
+    "data_contract": "Existing footer and archive route / anchors",
+    "guardrail": "Preserve public routes and dates; no silent deletion of historical research.",
+    "required_states": [
+      "desktop",
+      "mobile_or_text_equivalent",
+      "keyboard",
+      "reduced_motion",
+      "empty_or_unavailable"
+    ],
+    "implementation_status": "implementation_task_defined",
+    "state_evidence": []
+  }
+]

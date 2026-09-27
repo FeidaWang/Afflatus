@@ -1,0 +1,287 @@
+{
+  "snapshot_date": "2026-09-23",
+  "mode": "typed_relationships_not_capital_flow",
+  "relationships": [
+    {
+      "id": "rel-01",
+      "from_entity": "anthropic",
+      "to_entity": "google",
+      "relationship_type": "uses_compute",
+      "effective_or_disclosed_on": "2025-10-23",
+      "status": "disclosed_use",
+      "source_ids": [
+        "ANT-COMPUTE"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Google TPU capacity use was disclosed; this does not quantify installed capacity today."
+    },
+    {
+      "id": "rel-02",
+      "from_entity": "anthropic",
+      "to_entity": "amazon",
+      "relationship_type": "uses_compute",
+      "effective_or_disclosed_on": "2025-10-23",
+      "status": "disclosed_use",
+      "source_ids": [
+        "ANT-COMPUTE"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Amazon Trainium use was disclosed; do not infer an exclusive supplier."
+    },
+    {
+      "id": "rel-03",
+      "from_entity": "anthropic",
+      "to_entity": "nvidia",
+      "relationship_type": "uses_compute",
+      "effective_or_disclosed_on": "2025-10-23",
+      "status": "disclosed_use",
+      "source_ids": [
+        "ANT-COMPUTE"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "NVIDIA GPUs are included in the disclosed compute mix."
+    },
+    {
+      "id": "rel-04",
+      "from_entity": "openai",
+      "to_entity": "microsoft",
+      "relationship_type": "platform_partnership",
+      "effective_or_disclosed_on": "2026-02-27",
+      "status": "agreement_update",
+      "source_ids": [
+        "OAI-MSFT"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "The companies published a partnership update; terms and scope should be date-stamped."
+    },
+    {
+      "id": "rel-05",
+      "from_entity": "openai",
+      "to_entity": "broadcom",
+      "relationship_type": "chip_codesign",
+      "effective_or_disclosed_on": "2026-06-24",
+      "status": "announced_with_samples",
+      "source_ids": [
+        "OAI-AVGO"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Jalapeno co-design; first deployment planned by end-2026, not verified commercial capacity."
+    },
+    {
+      "id": "rel-06",
+      "from_entity": "openai",
+      "to_entity": "celestica",
+      "relationship_type": "systems_integration",
+      "effective_or_disclosed_on": "2026-06-24",
+      "status": "announced_partnership",
+      "source_ids": [
+        "OAI-AVGO"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Board, rack and system integration role in the announced chip platform."
+    },
+    {
+      "id": "rel-07",
+      "from_entity": "micron",
+      "to_entity": "anthropic",
+      "relationship_type": "memory_storage_supply",
+      "effective_or_disclosed_on": "2026-06-22",
+      "status": "announced_supply_agreement",
+      "source_ids": [
+        "MU-ANT"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Memory and storage agreement; no contract value or delivery volume supplied here."
+    },
+    {
+      "id": "rel-08",
+      "from_entity": "micron",
+      "to_entity": "anthropic",
+      "relationship_type": "equity_investment",
+      "effective_or_disclosed_on": "2026-06-22",
+      "status": "disclosed_investment",
+      "source_ids": [
+        "MU-ANT"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Investment disclosure is separate from a supply relationship; stake size is unknown here."
+    },
+    {
+      "id": "rel-09",
+      "from_entity": "anthropic",
+      "to_entity": "micron",
+      "relationship_type": "enterprise_model_use",
+      "effective_or_disclosed_on": "2026-06-22",
+      "status": "disclosed_customer_use",
+      "source_ids": [
+        "MU-ANT"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Micron reports using Claude internally; not an independently measured productivity result."
+    },
+    {
+      "id": "rel-10",
+      "from_entity": "micron",
+      "to_entity": "nvidia",
+      "relationship_type": "memory_platform_support",
+      "effective_or_disclosed_on": "2026-03-16",
+      "status": "vendor_reported_volume_production",
+      "source_ids": [
+        "MU-HBM"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "HBM4 and related memory products designed for Vera Rubin; no lab-level revenue attribution."
+    },
+    {
+      "id": "rel-11",
+      "from_entity": "alibaba",
+      "to_entity": "qwen",
+      "relationship_type": "model_developer",
+      "effective_or_disclosed_on": "2026-09-23",
+      "status": "evaluator_and_company_identification",
+      "source_ids": [
+        "AA-QWEN27"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "Parent/company relationship is not a measure of Qwen attributable profit."
+    },
+    {
+      "id": "rel-12",
+      "from_entity": "xiaomi",
+      "to_entity": "mimo",
+      "relationship_type": "model_developer",
+      "effective_or_disclosed_on": "2026-09-23",
+      "status": "provider_identification",
+      "source_ids": [
+        "XIAOMI-MIMO"
+      ],
+      "financial_amount": null,
+      "capacity": null,
+      "edge_weight": null,
+      "note": "The model belongs in Xiaomi capability research; do not value the full issuer by one benchmark."
+    }
+  ],
+  "issuers": [
+    {
+      "id": "broadcom",
+      "name": "Broadcom",
+      "instruments": [
+        {
+          "exchange": "NASDAQ",
+          "symbol": "AVGO",
+          "currency": "USD"
+        }
+      ],
+      "source_ids": [
+        "OAI-AVGO"
+      ],
+      "role": "Custom silicon implementation and networking",
+      "watch": "Deployment milestones, delivered capacity, customer concentration, margin and cash conversion",
+      "risk": "Announcement-to-revenue timing, execution and concentration",
+      "scope": "issuer_instrument_identity_confirmed; not a trading recommendation"
+    },
+    {
+      "id": "micron",
+      "name": "Micron Technology",
+      "instruments": [
+        {
+          "exchange": "NASDAQ",
+          "symbol": "MU",
+          "currency": "USD"
+        }
+      ],
+      "source_ids": [
+        "MU-ANT",
+        "MU-HBM"
+      ],
+      "role": "HBM, DRAM and storage exposure",
+      "watch": "Shipment mix, memory intensity, pricing, capital expenditure and supply expansion",
+      "risk": "Cyclical pricing, oversupply and technology transitions",
+      "scope": "issuer_instrument_identity_confirmed; not a trading recommendation"
+    },
+    {
+      "id": "alibaba",
+      "name": "Alibaba Group",
+      "instruments": [
+        {
+          "exchange": "NYSE",
+          "symbol": "BABA",
+          "currency": "USD"
+        },
+        {
+          "exchange": "HKEX",
+          "symbol": "9988",
+          "currency": "HKD"
+        },
+        {
+          "exchange": "HKEX",
+          "symbol": "89988",
+          "currency": "CNY"
+        }
+      ],
+      "source_ids": [
+        "BABA-CAPITAL",
+        "BABA-RESULTS"
+      ],
+      "role": "Model development, cloud infrastructure and application distribution",
+      "watch": "External cloud revenue, paid AI use, capital intensity and model-attributable economics",
+      "risk": "Model adoption without profitable monetization; capital intensity",
+      "scope": "one issuer with multiple instruments; do not triple-count exposure"
+    },
+    {
+      "id": "xiaomi",
+      "name": "Xiaomi Corporation",
+      "instruments": [
+        {
+          "exchange": "HKEX",
+          "symbol": "1810",
+          "currency": "HKD"
+        }
+      ],
+      "source_ids": [
+        "XIAOMI-IR",
+        "XIAOMI-MIMO"
+      ],
+      "role": "Model development plus device / service distribution exposure",
+      "watch": "Evidence of deployment, paid use and incremental margins, separately from benchmark scores",
+      "risk": "Model capability may not translate into material issuer-level earnings",
+      "scope": "issuer_instrument_identity_confirmed; model-to-profit attribution unverified"
+    }
+  ],
+  "pending_issuer_audit": [
+    "Microsoft",
+    "Amazon",
+    "Alphabet",
+    "NVIDIA",
+    "Meta",
+    "TSMC",
+    "SK hynix",
+    "Tencent",
+    "Z AI / Zhipu",
+    "MiniMax",
+    "power/cooling/networking suppliers"
+  ],
+  "note": "Only the four issuer records above have instrument identities rechecked in this package. Pending rows are a research queue, not listed instruments or model proxies. No stock price, valuation or return forecast is supplied."
+}

@@ -1,0 +1,167 @@
+[
+  {
+    "id": "T01",
+    "title": {
+      "en": "Frontier premiums depend on measured task advantage.",
+      "zh": "前沿溢价取决于可测的任务优势。"
+    },
+    "thesis": {
+      "en": "A premium model can justify higher cost on tasks where its completion quality or review savings is material.",
+      "zh": "高价模型只有在任务完成质量或人工复核节省具有实质优势时，才可能合理化其更高成本。"
+    },
+    "source_ids": [
+      "AA-FRONTIER",
+      "AA-FABLE"
+    ],
+    "evidence_status": "editorial_hypothesis",
+    "falsifier": {
+      "en": "Paired production tests show no meaningful advantage after retries, review and tools.",
+      "zh": "计入重试、复核与工具后，配对生产测试不再显示实质优势。"
+    },
+    "probability": null
+  },
+  {
+    "id": "T02",
+    "title": {
+      "en": "Multiple China-origin families challenge different constraints.",
+      "zh": "不同中国模型家族，正在改变不同约束。"
+    },
+    "thesis": {
+      "en": "Capability, task economics and deployability form different comparison surfaces; no single score represents the entire ecosystem.",
+      "zh": "能力、任务经济性与部署条件构成不同的比较面，不能以一个分数代替整个生态。"
+    },
+    "source_ids": [
+      "AA-MIMO",
+      "AA-GLM-KIMI",
+      "AA-QWEN27"
+    ],
+    "evidence_status": "editorial_hypothesis",
+    "falsifier": {
+      "en": "Task-matched evaluations show the proposed specialization is not reproducible.",
+      "zh": "按任务匹配的评测无法复现所提出的专长。"
+    },
+    "probability": null
+  },
+  {
+    "id": "T03",
+    "title": {
+      "en": "US competition extends beyond model weights.",
+      "zh": "美国模型竞争延伸到权重之外。"
+    },
+    "thesis": {
+      "en": "Tooling, access, distribution, serving economics and compute arrangements may influence which products are adopted.",
+      "zh": "工具、访问方式、分发、服务成本与算力安排，可能影响产品采用。"
+    },
+    "source_ids": [
+      "ANT-FABLE",
+      "OAI-ASTRA",
+      "OAI-MSFT"
+    ],
+    "evidence_status": "editorial_hypothesis",
+    "falsifier": {
+      "en": "Adoption data explains changes entirely without those product or distribution differences.",
+      "zh": "采用数据能够在不考虑这些产品或分发差异的情况下完整解释变化。"
+    },
+    "probability": null
+  },
+  {
+    "id": "T04",
+    "title": {
+      "en": "Efficiency does not mechanically determine aggregate compute demand.",
+      "zh": "效率不会机械地决定总算力需求。"
+    },
+    "thesis": {
+      "en": "Compute demand depends jointly on workload volume, tokens per workload and serving efficiency.",
+      "zh": "算力需求共同取决于工作量、每项工作 token 数与服务效率。"
+    },
+    "source_ids": [],
+    "evidence_status": "editorial_hypothesis",
+    "falsifier": {
+      "en": "Observed demand, token intensity and efficiency jointly imply a different sign from the proposed scenario.",
+      "zh": "观察到的需求、token 强度与效率共同给出了与所设情景相反的方向。"
+    },
+    "probability": null
+  },
+  {
+    "id": "T05",
+    "title": {
+      "en": "More compute architectures do not imply a single hardware winner.",
+      "zh": "更多算力架构，并不指向唯一硬件赢家。"
+    },
+    "thesis": {
+      "en": "Disclosed use of multiple platforms and custom-chip work suggests examining substitution and expansion separately.",
+      "zh": "多平台使用披露及定制芯片合作，提示应把替代效应与总量扩张分开考察。"
+    },
+    "source_ids": [
+      "ANT-COMPUTE",
+      "OAI-AVGO"
+    ],
+    "evidence_status": "editorial_hypothesis",
+    "falsifier": {
+      "en": "Delivered workloads remain concentrated despite planned diversification, or the planned systems do not ship.",
+      "zh": "尽管计划多元化，实际工作负载仍高度集中，或计划中的系统没有交付。"
+    },
+    "probability": null
+  },
+  {
+    "id": "T06",
+    "title": {
+      "en": "Memory exposure needs both architecture and economic evidence.",
+      "zh": "存储敞口需要架构与经济数据共同验证。"
+    },
+    "thesis": {
+      "en": "Supply agreements identify exposure; they do not establish contract value, sustainable pricing or margins.",
+      "zh": "供应协议确认业务联系，但不能据此确定合同价值、持续定价能力或利润率。"
+    },
+    "source_ids": [
+      "MU-ANT",
+      "MU-HBM"
+    ],
+    "evidence_status": "editorial_hypothesis",
+    "falsifier": {
+      "en": "Supply growth, pricing pressure or design changes offset volume gains.",
+      "zh": "供给增加、价格压力或设计变化抵消了数量增长。"
+    },
+    "probability": null
+  },
+  {
+    "id": "T07",
+    "title": {
+      "en": "Distribution advantages must reach paid use or measurable efficiency.",
+      "zh": "分发优势必须转化为付费使用或可测效率。"
+    },
+    "thesis": {
+      "en": "Device and cloud channels are routes to users; model popularity alone is not issuer profit.",
+      "zh": "设备与云渠道是触达用户的路径；模型热度本身不是公司利润。"
+    },
+    "source_ids": [
+      "BABA-RESULTS",
+      "XIAOMI-IR",
+      "XIAOMI-MIMO"
+    ],
+    "evidence_status": "editorial_hypothesis",
+    "falsifier": {
+      "en": "Adoption rises but attributable economics remain immaterial or negative.",
+      "zh": "采用率上升，但可归属的经济收益仍不显著或为负。"
+    },
+    "probability": null
+  },
+  {
+    "id": "T08",
+    "title": {
+      "en": "Benchmark leadership and equity returns are separate questions.",
+      "zh": "基准领先与股票回报，是两个问题。"
+    },
+    "thesis": {
+      "en": "An instrument needs its own price, valuation denominator, business mix and risk analysis.",
+      "zh": "证券需要独立的价格、估值分母、业务组合及风险分析。"
+    },
+    "source_ids": [],
+    "evidence_status": "analytical_guardrail",
+    "falsifier": {
+      "en": "No automatic benchmark-to-price mapping is permitted; this is a guardrail, not a return forecast.",
+      "zh": "不允许自动从基准映射股价；这是分析约束，而非收益预测。"
+    },
+    "probability": null
+  }
+]
