@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parse } from 'parse5';
+import { courseBookCatalog } from '../src/data/courseBookCatalog.js';
 import { SOCIAL_CARD } from '../src/config/siteManifest.js';
 
 const SITE_URL = 'https://feida.au';
@@ -13,9 +14,7 @@ const SEO_END = '<!-- afflatus:route-seo:end -->';
 const LANGUAGE_TAGS = Object.freeze({ en: 'en-AU', zh: 'zh-CN' });
 const OG_LOCALES = Object.freeze({ en: 'en_AU', zh: 'zh_CN' });
 
-const COURSE_SECTIONS = Object.freeze([
-  { id: 'hopeMap', en: '36 illustrated field notes', zh: '36 本插画课程手记' },
-]);
+
 
 const escapeAttribute = (value) =>
   String(value)
@@ -427,11 +426,11 @@ function buildCourseGraph(route, locale, facts, url) {
   const key = localeKey(route, locale);
   const courseId = `${url}#course`;
   const outlineId = `${url}#outline`;
-  const outline = COURSE_SECTIONS.map((section, index) =>
+  const outline = courseBookCatalog.map((section, index) =>
     listItem(index + 1, {
       '@type': 'LearningResource',
-      name: section[key],
-      url: `${url}#${section.id}`,
+      name: section.heading[key],
+      url: `${SITE_URL}/${key}/course/book-${section.id}.html`,
       inLanguage: LANGUAGE_TAGS[key],
       isPartOf: { '@id': courseId },
     }),

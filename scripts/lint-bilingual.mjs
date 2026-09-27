@@ -8,6 +8,7 @@ import { extname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
 import ts from 'typescript';
+import { SITE_MANIFEST } from '../src/config/siteManifest.js';
 import {
   UI_LABEL_LIMITS,
   validateBilingualPair,
@@ -255,9 +256,9 @@ function uniqueIssues(issues) {
 
 export function lintBilingualRepository(root = ROOT) {
   const issues = [];
-  const htmlFiles = walkFiles(root, (path) => (
-    extname(path) === '.html' && !path.includes('/public/')
-  ));
+  // The manifest owns shipped HTML, including 404. Saved builds and design
+  // evidence are not source templates and must not change a release result.
+  const htmlFiles = SITE_MANIFEST.map(route => resolve(root, route.file)).filter(existsSync);
   for (const file of htmlFiles) issues.push(...lintHtmlSource(readFileSync(file, 'utf8'), file));
 
   const sourceFiles = walkFiles(resolve(root, 'src'), (path) => SOURCE_EXTENSIONS.has(extname(path)));

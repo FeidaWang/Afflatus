@@ -1,0 +1,78 @@
+MIT Missing Semester — 2026 syllabus|University course|Public syllabus and notes; selected reading, not all assignments.
+MIT — Course Overview and the Shell|University course|2026 notes; paths, pipes, redirection and safe practice.
+MIT — Debugging and Profiling|University course|2026 notes; reproduce and locate faults first; profiling as needed.
+MIT — Version Control (Git)|University course|2026 notes; use your own practice repository.
+MIT — Shipping Code|University course|2026 notes; build, delivery and versioning selections.
+MIT — Agentic Coding|University course|2026 notes; not all high-autonomy experiments are required.
+MIT — Code Quality|University course|2026 notes; types, formatting, tests and quality feedback.
+MIT — Beyond the Code|University course|2026 notes; maintenance and handoff supplements.
+Stanford CS146S — The Modern Software Developer, Fall 2026|University syllabus|Introduction and prerequisites in the manuscript; not a claim that all Fall materials are available.
+Stanford CS146S — Fall 2025 archive|Historical course archive|Earlier public materials; tool details may be outdated.
+Harvard CS50P — Introduction to Programming with Python|University course|Public materials; registration, certificates and formal assignments have separate rules.
+CS50P Week 0 — Functions, Variables|University course|Foundation bridge; JavaScript learners can compare concepts only.
+CS50P Week 5 — Unit Tests|University course|Inputs, expectations and test boundaries; no full Python migration required.
+CS50P Week 6 — File I/O|University course|Public file-handling material; retain the main stack.
+CS50P — Academic Honesty|Course policy|Formal assignments follow the current policy; personal projects are separate.
+Harvard CS50x 2026|University course|Select algorithms, memory and data structures according to gaps.
+Harvard CS50 SQL|University course|Querying, relationships, design and writes are the main selections.
+CS50 SQL Week 0 — Querying|University course|SELECT, filtering, ordering and aggregation.
+CS50 SQL Week 2 — Designing|University course|Keys, constraints, relationships and trade-offs.
+University of Helsinki — Full Stack Open|University course|Public course entry; not a complete-beginner route.
+Full Stack Open — About the course|Course description|Prerequisites, learning approach and scope.
+Full Stack Open Part 0 — Fundamentals of Web apps|University course|Part entry; select current sections, not assumed stable exercise numbers.
+Full Stack Open Part 1 — Introduction to React|University course|Components, state and events.
+Full Stack Open Part 3 — NodeJS and Express|University course|HTTP servers and deployment selections.
+Full Stack Open Part 9 — TypeScript|University course|Type-safety selections.
+MDN — Core learning modules|Official documentation|Web foundations; translations may not update together.
+MDN — JavaScript Guide|Official documentation|Syntax, control flow, collections, functions, async and modules.
+TypeScript Handbook — Introduction|Official documentation|Learn JavaScript first, then everyday types and narrowing.
+React — Quick Start|Official documentation|Components, data, events and state.
+Node.js — Learn|Official documentation|Runtime, async and HTTP; use a currently supported runtime when implementing.
+Pro Git — Online book|Official documentation|Basics, Branching and other chapters as needed.
+MDN — Overview of HTTP|Official documentation|Browser, server, request and response foundations.
+IETF RFC 5545 — iCalendar|Public technical standard|Event, time and identity fields; test client import behaviour separately.
+SQLite — FTS5 Extension|Official documentation|Full-text search and tokenisers; test Chinese retrieval with your own cases.
+W3C WAI — Web Accessibility Tutorials|Official guidance|Labels, structure, keyboard use and feedback.
+Hugging Face — Agents Course Introduction|Public technical course|Python and LLM prerequisites; certification and lab conditions are separate.
+Hugging Face — Introduction to Agents, Unit 1|Public technical course|Agent foundations; choose one implementation route.
+OpenAI Academy — Codex|Vendor training entry|Public entry in the source manuscript; not all activities or authenticated material verified.
+Claude Academy — Claude Code in Action|Vendor training entry|Course entry; authenticated labs not all completed.
+Berkeley — Advanced LLM Agents, Spring 2025|Historical course archive|Advanced elective; clearly labelled as a 2025 archive.
+Anthropic — Building effective agents|Original engineering article|19 December 2024; simple-first workflows; tool details may change.
+Anthropic — Demystifying evals for AI agents|Original engineering article|9 January 2026; outcome evaluation and process inspection.
+Anthropic — Effective context engineering for AI agents|Original engineering article|Context selection and management; model-specific experience is not permanent law.
+Anthropic — Effective harnesses for long-running agents|Original engineering article|Progress and handoff for long tasks; adopt according to actual failures.
+Anthropic — How AI assistance impacts the formation of coding skills|Original research account|Controlled study with bounded sample and tasks; not a claim about all AI-assisted learning.
+Anthropic — Managed Agents|Original engineering article|Runtime and removable control logic; not a compliance guarantee.
+OpenAI — Harness engineering|Original engineering article|11 February 2026; repositories, feedback and constraints, without assuming internal returns transfer.
+OpenAI Agents SDK for TypeScript|Official SDK documentation|Optional implementation; verify actual SDK version, model and authentication before use.
+LangGraph JavaScript — Persistence|Official SDK documentation|Optional persistent state; a simpler implementation may suffice.
+DSPy — Documentation|Official documentation|Later elective in the Python ecosystem; stack migration is not mandatory.
+GEPA — Reflective Prompt Evolution Can Outperform Reinforcement Learning|Research paper|Abstract and version in the manuscript; v2 dated 14 February 2026; experiments not reproduced.
+Sakana AI — Darwin Gödel Machine|Research-team article|30 May 2025; code-improvement research and limitations, not proof of unlimited self-evolution.
+OpenAI — Billing for ChatGPT and the API platform|Official billing guidance|Separate billing systems; subscriptions are not generic API credit.
+Codex — Usage and pricing entry|Official billing guidance|Manuscript records a redirect to learn.chatgpt.com/docs/pricing; pricing and capability change.
+Claude Code — Use with your Pro or Max plan|Official billing guidance|Distinguish subscription login from API-key authentication.
+Claude Agent SDK — Use with your Claude plan|Official billing guidance|Manuscript records June 15 pause of a proposed change; old credit announcements are not a current balance.
+MCP — Security Best Practices, 2026-07-28|Versioned protocol guidance|Pinned for traceability; check newer security changes when implementing.
+OWASP — LLM Prompt Injection Prevention Cheat Sheet|Security guidance|Layered controls; no single prompt guarantees injection prevention.
+OWASP — Secrets Management Cheat Sheet|Security guidance|Least privilege, rotation and secret management.
+OWASP — Authorization Cheat Sheet|Security guidance|Authentication is not authorisation; enforce server-side and object-level access.
+OWASP — Logging Cheat Sheet|Security guidance|Necessary logs and sensitive-data exclusion.
+OWASP — Server-Side Request Forgery Prevention Cheat Sheet|Security guidance|Fetch destinations and network boundaries; start with fixed public sources.
+OWASP — Cross Site Scripting Prevention Cheat Sheet|Security guidance|Output encoding, trusted templates and untrusted HTML.
+GitHub — Removing sensitive data from a repository|Official security documentation|Revoke or rotate first, then history and copies; complete removal of all copies is not promised.
+OpenTelemetry — Handling sensitive data|Official documentation|Minimisation and filtering; do not upload every prompt and output by default.
+NIST — AI Risk Management Framework|Official risk framework|Risk identification; not legal or compliance certification of a project.
+Google SRE — Monitoring Distributed Systems|Original engineering book|Select monitoring practices suitable for small personal services.
+Google SRE — Effective Troubleshooting|Original engineering book|Fault diagnosis and hypothesis testing.
+Google SRE — Postmortem Culture|Original engineering book|Brief incident analysis without importing heavyweight organisational processes.
+Docker — Get started|Official documentation|Optional environment isolation; default containers are not automatically strong sandboxes.
+Render — Deploy a Node Express App|Official deployment guide|Optional example; no deployment performed for the reader; current pricing and environment apply.
+Render — Cron Jobs|Official deployment guide|Optional scheduling; recheck runtime, billing and storage support.
+Render — Persistent Disks|Official deployment guide|Support varies by service type; do not treat temporary filesystems as databases.
+GOV.UK — Plan user research|Public service-design guidance|Problem-discovery methods; not authorisation to use an organisation's processes.
+GOV.UK — Moderated usability testing|Public service-design guidance|Task observation and recording.
+GOV.UK — Getting users' consent for research|Public service-design guidance|Consent questions; not a substitute for local legal advice.
+MDN — Content-Security-Policy|Official documentation|Distinguish response-header and meta support.
+MDN — Referrer-Policy|Official documentation|Assess referrer information sent to external links when publishing.

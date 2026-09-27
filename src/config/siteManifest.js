@@ -386,15 +386,15 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['learning-map'],
     metadata: {
       title: "Learn to build useful tools with AI · AFFLATUS",
-      description: "Explore 36 illustrated FDE field notes across six themes. Each book opens a dedicated lesson page.",
+      description: "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them.",
       canonical: 'https://feida.au/course.html',
       ogTitle: "Learn to build useful tools with AI · AFFLATUS",
-      ogDescription: "Explore 36 illustrated FDE field notes across six themes. Each book opens a dedicated lesson page.",
+      ogDescription: "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them.",
       ogImage: ROUTE_SEO.course.social.images.en,
     },
     locales: {
-      en: {"title": "Learn to build useful tools with AI · AFFLATUS", "description": "Explore 36 illustrated FDE field notes across six themes. Each book opens a dedicated lesson page."},
-      zh: {"title": "一步步，把 AI 做成能用的工具 · AFFLATUS", "description": "探索六个主题的 36 本 FDE 课程手记。每本书均有独立课程页面，内容即将更新。"},
+      en: {"title": "Learn to build useful tools with AI · AFFLATUS", "description": "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them."},
+      zh: {"title": "一步步，把 AI 做成能用的工具 · AFFLATUS", "description": "24 周双语实践课程：构建有用工具，验证 AI 智能体，学习部署、恢复与受控改进。"},
     },
   },
   {

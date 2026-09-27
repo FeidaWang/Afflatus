@@ -1,0 +1,73 @@
+/* V5: a paper field guide around the existing curriculum and progress owner. */
+.course-page{--paper:#f3efe7;--paper-hot:#faf8f3;--ink:#20252b;--void:#20252b;--signal:#795d3c;--red:#795d3c;--sans:"Helvetica Neue","PingFang SC",Arial,sans-serif;background:var(--paper);color:var(--ink);font:400 17px/1.65 var(--sans)}
+.course-page ::selection{background:#d9c5a9;color:var(--ink)}
+.course-page main{padding-top:0}
+.course-page main>section[id],.course-page details[id]{scroll-margin-top:88px}
+.course-intro{max-width:var(--af-layout-max);margin:auto;padding:82px var(--af-content-gap) 76px;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.8fr);gap:70px;align-items:center}
+.course-kicker{font-size:12px;letter-spacing:.14em;color:#795d3c;margin:0 0 28px}
+.course-intro h1{font:400 clamp(48px,5.5vw,82px)/1.08 var(--serif);letter-spacing:-.045em;text-wrap:balance;margin:0;max-width:860px}
+:lang(zh) .course-intro h1{line-height:1.22;letter-spacing:-.035em;font-size:clamp(40px,4.7vw,70px)}
+.course-lede{max-width:630px;margin:28px 0;color:#565b5b;font-size:18px;line-height:1.75}
+.course-intro-actions{display:flex;flex-wrap:wrap;gap:18px 26px;align-items:center;margin-top:30px;font-size:15px}
+.course-intro-actions a{display:inline-flex;align-items:center;min-height:48px;text-underline-offset:6px}
+.course-primary{background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:3px}
+.course-intro-actions a:hover{text-decoration:underline}
+.course-page :is(a,button,summary):focus-visible{outline:2px solid #795d3c;outline-offset:5px}
+.course-workbench{margin:0;padding:34px 30px 24px;background:#e9e2d6;border:1px solid #d6cbb9;transform:rotate(2deg);box-shadow:8px 12px 0 #e4dccd66}
+.course-workbench figcaption{font:400 27px/1.3 var(--serif);padding-bottom:22px;border-bottom:1px solid #c6bdaecc}
+.course-workbench ol{list-style:none;padding:0;margin:28px 0}
+.course-workbench li{display:flex;gap:18px;position:relative;padding-bottom:25px}
+.course-workbench li:last-child{padding-bottom:0}
+.course-workbench li>span{border:1px solid #9e9079;border-radius:50%;width:36px;height:36px;flex:none;text-align:center;line-height:34px;font-family:var(--serif)}
+.course-workbench strong{font-size:18px;font-weight:500}
+.course-workbench p{font-size:14px;color:#5d5a52;margin:4px 0 0;line-height:1.6}
+.course-workbench .course-workbench-note{border-top:1px solid #c6bdaecc;padding-top:16px;font-size:12px;letter-spacing:.04em}
+.course-page .course-learning{padding:60px max(24px,calc((100vw - 1352px)/2)) 64px;background:var(--paper-hot);border-block:1px solid #d6d0c6;scroll-margin-top:80px}
+.course-learning h2{font-size:clamp(34px,4vw,54px);max-width:900px;line-height:1.18;margin-bottom:20px}
+.course-learning>p{font-size:16px;color:#565b5b;max-width:820px}
+.course-learning .eyebrow{font:500 12px/1.5 var(--sans);letter-spacing:.1em;color:#795d3c}
+.course-resume{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 0;border-color:#d6d0c6;margin:28px 0 16px}
+.course-resume p{font:400 14px/1.6 var(--sans);margin:0}
+.course-learning button,#courseResume{border-radius:3px;font:500 14px/1.5 var(--sans)}
+.course-view-controls{gap:10px;margin:18px 0 30px}
+.course-page .course-task-list{display:block;margin-top:44px}
+.course-task-list .course-unit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.8fr);gap:8px 64px;padding:36px 0 44px;border-top:1px solid #c9c3b8}
+.course-unit h3{font:400 30px/1.25 var(--serif);margin:0;grid-column:1;align-self:start}
+.course-task-list .course-unit-goal{grid-column:1;font-size:16px;color:#64645c;margin:4px 0 0;max-width:330px}
+.course-unit-tasks{grid-column:2;grid-row:1 / span 2;list-style:none;margin:0;padding:0;min-width:0}
+.course-task-list .course-unit-tasks>li{padding:0;border-top:0;border-bottom:1px solid #ddd6cc}
+.course-task-list .course-unit-tasks>li:last-child{border-bottom:0}
+.course-unit summary{cursor:pointer;min-height:54px;padding:13px 28px 13px 0;font-size:18px;line-height:1.5;list-style:none;position:relative}
+.course-unit summary::-webkit-details-marker{display:none}
+.course-unit summary::after{content:'+';position:absolute;right:0;top:12px;color:#795d3c;font-size:22px}
+.course-unit details[open]>summary::after{content:'−'}
+.course-unit details[open]>summary{font-weight:600}
+.course-lesson-detail{padding:8px 0 24px}
+.course-lesson-detail h4{font-size:14px;margin:24px 0 4px;font-weight:600;color:#795d3c}
+.course-task-list .course-lesson-detail p{font:400 16px/1.7 var(--sans);margin:8px 0}
+.course-task-list .course-lesson-detail .course-prerequisite{font-size:13px;color:#62635d}
+.course-lesson-detail small{font:400 12px/1.6 var(--sans);letter-spacing:.04em;color:#62635d}
+.course-lesson-detail a{display:inline-block;min-height:44px;margin:20px 20px 8px 0;text-decoration:underline;text-underline-offset:5px;font-size:15px}
+.course-task-list .course-lesson-detail button{font:500 14px/1.5 var(--sans);padding:10px 14px;border:1px solid #a39a8c;text-decoration:none;margin:8px 12px 8px 0}
+.course-task-status{font:400 12px/1.5 var(--sans);border:0;padding:4px 0;color:#565b5b}
+.course-page .course-background{border-bottom:1px solid #c9c3b8;max-width:1280px;margin:auto;padding:0 40px}
+.course-background>summary{cursor:pointer;padding:25px 0;font:400 24px/1.4 var(--serif)}
+.course-background>section{padding:32px 0 48px;scroll-margin-top:88px}
+.course-background .course-index{position:static;display:flex;flex-wrap:wrap;background:transparent;color:var(--ink);padding:20px 0}
+.course-background :is(.signal-strip,.curriculum-audit,.definition,.pathway,.education,.fieldwork,.interview,.review){background:var(--paper);color:var(--ink)}
+.course-background :is(h2,h3){text-transform:none;letter-spacing:normal}
+.course-background .section-intro h2{font-size:clamp(30px,5vw,56px)}
+.course-page .node-dialog{background:var(--paper);color:var(--ink);border:1px solid #b7ac9b;box-shadow:0 24px 90px #0005}
+.course-page .node-dialog[open]{display:block;max-width:850px;width:calc(100% - 32px);max-height:85svh}
+.course-page .node-dialog-film{display:none}
+.course-page .node-dialog-copy{padding:36px}
+.course-page .node-dialog h3{font-size:34px;line-height:1.2}
+.course-page .node-dialog-grid p{font-size:16px;line-height:1.7}
+.course-page .node-dialog-meta,.course-page .node-dialog-grid b{color:#795d3c}
+.course-page .button{font:500 14px/1.5 var(--sans);min-height:44px;letter-spacing:normal;text-transform:none;box-shadow:none}
+.course-page .footer{background:var(--paper);color:var(--ink);border-top:0;padding:36px 40px;font:400 12px/1.5 var(--sans)}
+@media(max-width:1023px){.course-page main{padding-top:0}.course-intro{padding:60px 32px;gap:32px}.course-intro h1{font-size:54px}.course-workbench{padding:24px 20px}.course-task-list .course-unit{gap:12px 32px}}
+@media(max-width:700px){.course-intro{display:block;padding:44px 20px 42px}.course-intro h1,:lang(zh) .course-intro h1{font-size:42px}.course-kicker{margin-bottom:20px}.course-lede{font-size:17px;margin:24px 0}.course-intro-actions{gap:10px 20px;margin-top:24px}.course-workbench{margin:42px 4px 6px;transform:none}.course-workbench ol{display:flex;gap:16px}.course-workbench li{display:block;flex:1;padding:0;min-width:0}.course-workbench li>span{display:block;margin-bottom:12px}.course-workbench strong{font-size:16px}.course-workbench p{font-size:13px}.course-page .course-learning{padding:40px 20px}.course-resume{display:block}.course-resume p{margin-bottom:12px}.course-task-list .course-unit{display:block;padding:28px 0}.course-unit h3{font-size:28px}.course-task-list .course-unit-goal{margin:12px 0 20px}.course-unit summary{font-size:17px}.course-page .course-background{padding:0 20px}.course-background>summary{font-size:21px}.course-page .node-dialog-copy{padding:24px 20px}.course-page .footer{padding:32px 20px;gap:20px;flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.course-page{scroll-behavior:auto}.course-page *{scroll-behavior:auto}}
+.course-task-list .course-lesson-detail .course-glossary{font-size:14px;line-height:1.7;padding:16px 18px;margin-top:24px;border-left:2px solid #b19b7c;background:#f0ebe2;color:#565b5b}
+@media(max-width:700px){.course-intro,.course-page .course-learning,.course-page .course-background,.course-page .footer{padding-inline:var(--af-content-gap)}}

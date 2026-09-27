@@ -16,12 +16,12 @@ if (stage) {
   const motionWords = [...stage.querySelectorAll('.hope-stage-title span')];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const topics = [
-    ['What is worth building?', '什么值得构建？'],
-    ['Can the system recover?', '系统能否恢复？'],
-    ['What may an agent do?', '智能体可以做什么？'],
-    ['What should it remember?', '它应该记住什么？'],
-    ['How do we measure truth?', '怎样验证结果？'],
-    ['Will the work survive handoff?', '交接后还能运行吗？'],
+    ['Can I explain it?', '我能解释它吗？'],
+    ['Will I use it again?', '我会再次使用吗？'],
+    ['Where is the evidence?', '证据在哪里？'],
+    ['Can it recover?', '它能恢复吗？'],
+    ['Who controls the change?', '谁来决定改变？'],
+    ['What is worth keeping?', '什么值得留下？'],
   ];
   const layouts = {
     desktop: { width: 1440, height: 900, centers: [[250, 275], [715, 195], [1190, 270], [1170, 625], [715, 675], [260, 625]] },
@@ -65,7 +65,9 @@ if (stage) {
     button.id = `lesson-${book.id}`;
     button.className = 'hope-node';
     button.dataset.lesson = book.id;
-    button.style.backgroundImage = `url("${book.cover}")`;
+    button.dataset.bookPreview = book.id;
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.style.backgroundImage = `url("${book.covers[language()]}")`;
     button.style.setProperty('--arrival', String((index * 7 % 11) / 11));
     button.href = `/${language()}/course/book-${book.id}.html`;
     button.title = book.title[language()];
@@ -78,11 +80,11 @@ if (stage) {
 
   function positionFor(body) {
     const group = body.book.group;
-    const serial = body.index % 6;
+    const serial = body.index % 4;
     const [cx, cy] = layout.centers[group];
     if (layout === layouts.mobile) {
-      const xOffsets = [-250, -250, -85, 85, 250, 250];
-      const yOffsets = [-50, 50, -95, 95, -50, 50];
+      const xOffsets = [-245, -110, 110, 245];
+      const yOffsets = [-45, 85, -85, 45];
       return { x: cx + xOffsets[serial], y: cy + yOffsets[serial] };
     }
     const [x, y] = desktopPositions[group][serial];
@@ -274,10 +276,12 @@ if (stage) {
       button.setAttribute('aria-label', localize(`Book ${book.id}: ${book.title.en}`, `第 ${book.id} 本：${book.title.zh}`));
       button.href = `/${language()}/course/book-${book.id}.html`;
       button.title = book.title[language()];
+      button.style.backgroundImage = `url("${book.covers[language()]}")`;
     });
   }
 
-  const mapScrollTop = () => experience.offsetTop + experience.offsetHeight - stage.clientHeight;
+  const stageTop = () => parseFloat(getComputedStyle(stage).top) || 0;
+  const mapScrollTop = () => experience.offsetTop + experience.offsetHeight - stage.clientHeight - stageTop();
   const scrollToMap = () => window.scrollTo({ top: mapScrollTop(), behavior: reducedMotion.matches ? 'instant' : 'smooth' });
   document.querySelector('.hope-scroll')?.addEventListener('click', event => {
     event.preventDefault();
@@ -315,7 +319,7 @@ if (stage) {
   function renderScroll() {
     scrollFrame = 0;
     const travel = Math.max(1, experience.offsetHeight - stage.clientHeight);
-    const raw = clamp((window.scrollY - experience.offsetTop) / travel, 0, 1);
+    const raw = clamp((window.scrollY - experience.offsetTop + stageTop()) / travel, 0, 1);
     // The reference first clears the prose, then separates the two title words.
     // Books travel outward from their subject while fine connections draw in.
     const progress = reducedMotion.matches ? Number(raw >= .5) : smooth(clamp((raw - .12) / .78, 0, 1));

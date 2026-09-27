@@ -1,0 +1,35 @@
+.pa-footer,.pa-footer *{box-sizing:border-box}
+/* Course chrome matches portfolio.html; the course masthead always remains visible. */
+:is(.course-page,.course-reading) #afflatus-header{position:fixed;top:0;transform:none;background:#faf9f5;--af-paper:#faf9f5;border-bottom:1px solid #dedfd5;pointer-events:auto}
+.pa-footer{background:#222322;color:#f2f0e9;font:13px/1.6 Arial,sans-serif}.pa-footer a{color:inherit}.pa-footer nav a{text-decoration:none}
+/* The footer uses the same horizontal rail as the shared masthead. */
+.pa-footer{display:block;min-height:0;padding:56px 0 44px}
+.pa-footer-inner{display:grid;grid-template-columns:minmax(230px,1fr) minmax(330px,1.4fr) minmax(160px,.65fr);gap:40px;width:calc(100% - 2 * var(--af-header-outer-gap));max-width:var(--af-layout-max);margin:0 auto;padding:0 var(--af-header-inner-gap)}
+.pa-footer-brand{align-self:start;width:max-content;font-size:clamp(32px,3vw,42px);font-weight:700;line-height:1;letter-spacing:-.055em;text-decoration:none}
+.pa-footer-brand-mark{display:inline-flex;align-items:baseline}
+.pa-footer .pa-footer-pages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;margin:0}
+.pa-footer-pages a{width:max-content;max-width:100%;padding:5px 0;color:#d1d0ca;font-size:13px;line-height:1.35;text-decoration:none;transition:color .18s ease,text-shadow .18s ease}
+.pa-footer-pages a:hover,.pa-footer-brand:hover{color:#fff;text-shadow:0 0 14px #f2f0e970}
+.pa-footer-personal{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:0}
+.pa-footer-copyright{font-size:13px;letter-spacing:.01em;white-space:nowrap}
+.pa-footer .pa-footer-socials{display:flex;align-items:center;justify-content:flex-end;gap:0;margin:0}
+.pa-footer-socials a{display:inline-flex;align-items:center;justify-content:flex-start;width:34px;height:44px;color:inherit;border-radius:8px;transition:color .18s ease,filter .18s ease}
+.pa-footer-socials a:last-child{margin-right:-13px}
+.pa-footer-socials a:hover{color:#fff;filter:drop-shadow(0 0 9px #f2f0e9a6)}
+.pa-footer-socials a:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.pa-footer-socials svg{display:block;width:21px;height:21px;fill:currentColor}
+
+
+@media(max-width:979px){
+  .pa-footer-inner{width:100%;grid-template-columns:1fr;gap:28px;padding-inline:40px 16px}
+  .pa-footer-brand{font-size:38px}
+  .pa-footer .pa-footer-pages{max-width:520px;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:8px}
+  .pa-footer-pages a{width:100%;min-height:44px;justify-content:flex-start;text-align:left}
+  .pa-footer-personal{margin-right:0}
+  .pa-footer .pa-footer-socials{gap:4px}
+  .pa-footer-socials a{width:44px;justify-content:center}
+  .pa-footer-socials a:last-child{margin-right:0}
+}
+@media(max-width:440px){.pa-footer{padding-block:40px 30px}.pa-footer-inner{gap:25px}.pa-footer-brand{font-size:34px}.pa-footer-pages a{font-size:12px}}
+@media(max-width:360px){.pa-footer-inner{padding-left:28px}}
+@media(prefers-reduced-motion:reduce){.pa-footer-socials a,.pa-footer-pages a,body.portfolio-story main :is(button,.pa-actions a,.pa-end a):not(:disabled){transition:none}}

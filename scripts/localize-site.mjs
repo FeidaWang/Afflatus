@@ -159,6 +159,16 @@ function escapeHtml(value) {
 }
 
 function localizeDataAttributes(document, locale) {
+  // Course covers and deep links must also work before client JavaScript runs.
+  for (const node of all(document, candidate => candidate.tagName === 'img' && getAttr(candidate, 'data-cover-en') != null)) {
+    setAttr(node, 'src', getAttr(node, `data-cover-${locale}`) ?? getAttr(node, 'data-cover-en'));
+    setAttr(node, 'alt', getAttr(node, `data-title-${locale}`) ?? getAttr(node, 'alt'));
+  }
+  for (const node of all(document, candidate => candidate.tagName === 'a' && (getAttr(candidate, 'data-book-preview') != null || getAttr(candidate, 'data-course-companion') != null))) {
+    const href = getAttr(node, 'href');
+    if (href) setAttr(node, 'href', href.replace(/^\/(en|zh)\/course\//, `/${locale}/course/`));
+  }
+
   for (const node of all(document, (candidate) => candidate.tagName && getAttr(candidate, 'data-en') != null)) {
     const selected = getAttr(node, locale === 'zh' ? 'data-zh' : 'data-en') ?? getAttr(node, 'data-en');
     if (selected == null) continue;

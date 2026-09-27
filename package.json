@@ -59,6 +59,7 @@
     "@playwright/test": "^1.61.1",
     "@types/three": "^0.160.0",
     "linkinator": "^8.0.3",
+    "marked": "^18.0.9",
     "parse5": "^8.0.0",
     "postcss": "^8.5.15",
     "typescript": "^5.7.3",

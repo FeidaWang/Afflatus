@@ -1,0 +1,1250 @@
+[
+  {
+    "id": "R01",
+    "url": "https://missing.csail.mit.edu/",
+    "title": {
+      "zh": "MIT Missing Semester：2026 课程目录",
+      "en": "MIT Missing Semester — 2026 syllabus"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "公开目录与讲义；仅选读，不要求完成全部作业。",
+      "en": "Public syllabus and notes; selected reading, not all assignments."
+    }
+  },
+  {
+    "id": "R02",
+    "url": "https://missing.csail.mit.edu/2026/course-shell/",
+    "title": {
+      "zh": "MIT Missing Semester：Course Overview and the Shell",
+      "en": "MIT — Course Overview and the Shell"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "2026 讲义；选路径、管道、重定向与安全操作。",
+      "en": "2026 notes; paths, pipes, redirection and safe practice."
+    }
+  },
+  {
+    "id": "R03",
+    "url": "https://missing.csail.mit.edu/2026/debugging-profiling/",
+    "title": {
+      "zh": "MIT Missing Semester：Debugging and Profiling",
+      "en": "MIT — Debugging and Profiling"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "2026 讲义；先学重现、定位、调试，性能分析按需。",
+      "en": "2026 notes; reproduce and locate faults first; profiling as needed."
+    }
+  },
+  {
+    "id": "R04",
+    "url": "https://missing.csail.mit.edu/2026/version-control/",
+    "title": {
+      "zh": "MIT Missing Semester：Version Control (Git)",
+      "en": "MIT — Version Control (Git)"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "2026 讲义；课程实验应在自己的练习仓库进行。",
+      "en": "2026 notes; use your own practice repository."
+    }
+  },
+  {
+    "id": "R05",
+    "url": "https://missing.csail.mit.edu/2026/shipping-code/",
+    "title": {
+      "zh": "MIT Missing Semester：Shipping Code",
+      "en": "MIT — Shipping Code"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "2026 讲义；选构建、交付与版本相关部分。",
+      "en": "2026 notes; build, delivery and versioning selections."
+    }
+  },
+  {
+    "id": "R06",
+    "url": "https://missing.csail.mit.edu/2026/agentic-coding/",
+    "title": {
+      "zh": "MIT Missing Semester：Agentic Coding",
+      "en": "MIT — Agentic Coding"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "2026 讲义；本路线不要求执行其中所有高自主性实验。",
+      "en": "2026 notes; not all high-autonomy experiments are required."
+    }
+  },
+  {
+    "id": "R07",
+    "url": "https://missing.csail.mit.edu/2026/code-quality/",
+    "title": {
+      "zh": "MIT Missing Semester：Code Quality",
+      "en": "MIT — Code Quality"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "2026 讲义；选类型、格式、测试与代码质量反馈。",
+      "en": "2026 notes; types, formatting, tests and quality feedback."
+    }
+  },
+  {
+    "id": "R08",
+    "url": "https://missing.csail.mit.edu/2026/beyond-code/",
+    "title": {
+      "zh": "MIT Missing Semester：Beyond the Code",
+      "en": "MIT — Beyond the Code"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "2026 讲义；作为维护与交接的补充阅读。",
+      "en": "2026 notes; maintenance and handoff supplements."
+    }
+  },
+  {
+    "id": "R09",
+    "url": "https://themodernsoftware.dev/",
+    "title": {
+      "zh": "Stanford CS146S：The Modern Software Developer，Fall 2026",
+      "en": "Stanford CS146S — The Modern Software Developer, Fall 2026"
+    },
+    "kind": {
+      "zh": "大学课程主页",
+      "en": "University syllabus"
+    },
+    "note": {
+      "zh": "已核对课程介绍与先修要求；不代表秋季全部讲义和作业已开放。",
+      "en": "Introduction and prerequisites in the manuscript; not a claim that all Fall materials are available."
+    }
+  },
+  {
+    "id": "R10",
+    "url": "https://themodernsoftware.dev/fall2025",
+    "title": {
+      "zh": "Stanford CS146S：Fall 2025 档案",
+      "en": "Stanford CS146S — Fall 2025 archive"
+    },
+    "kind": {
+      "zh": "历史课程档案",
+      "en": "Historical course archive"
+    },
+    "note": {
+      "zh": "作为较早公开材料的入口；工具细节可能过时。",
+      "en": "Earlier public materials; tool details may be outdated."
+    }
+  },
+  {
+    "id": "R11",
+    "url": "https://cs50.harvard.edu/python/",
+    "title": {
+      "zh": "Harvard CS50P：Introduction to Programming with Python",
+      "en": "Harvard CS50P — Introduction to Programming with Python"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "公开课件；注册、证书与正式作业要求另查官方说明。",
+      "en": "Public materials; registration, certificates and formal assignments have separate rules."
+    }
+  },
+  {
+    "id": "R12",
+    "url": "https://cs50.harvard.edu/python/weeks/0/",
+    "title": {
+      "zh": "CS50P Week 0：Functions, Variables",
+      "en": "CS50P Week 0 — Functions, Variables"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "适合桥接基础；主线 JavaScript 学习者可只对照概念。",
+      "en": "Foundation bridge; JavaScript learners can compare concepts only."
+    }
+  },
+  {
+    "id": "R13",
+    "url": "https://cs50.harvard.edu/python/weeks/5/",
+    "title": {
+      "zh": "CS50P Week 5：Unit Tests",
+      "en": "CS50P Week 5 — Unit Tests"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "选输入、期望输出与测试边界，不必迁移整个项目到 Python。",
+      "en": "Inputs, expectations and test boundaries; no full Python migration required."
+    }
+  },
+  {
+    "id": "R14",
+    "url": "https://cs50.harvard.edu/python/weeks/6/",
+    "title": {
+      "zh": "CS50P Week 6：File I/O",
+      "en": "CS50P Week 6 — File I/O"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "文件读写相关公开材料；实际项目仍沿用主技术栈。",
+      "en": "Public file-handling material; retain the main stack."
+    }
+  },
+  {
+    "id": "R15",
+    "url": "https://cs50.harvard.edu/python/honesty/",
+    "title": {
+      "zh": "CS50P：Academic Honesty",
+      "en": "CS50P — Academic Honesty"
+    },
+    "kind": {
+      "zh": "课程政策",
+      "en": "Course policy"
+    },
+    "note": {
+      "zh": "正式作业必须遵守其当前政策；本文自有项目与正式作业分开。",
+      "en": "Formal assignments follow the current policy; personal projects are separate."
+    }
+  },
+  {
+    "id": "R16",
+    "url": "https://cs50.harvard.edu/x/",
+    "title": {
+      "zh": "Harvard CS50x 2026",
+      "en": "Harvard CS50x 2026"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "算法、内存与数据结构可按基础缺口选读。",
+      "en": "Select algorithms, memory and data structures according to gaps."
+    }
+  },
+  {
+    "id": "R17",
+    "url": "https://cs50.harvard.edu/sql/",
+    "title": {
+      "zh": "Harvard CS50 SQL",
+      "en": "Harvard CS50 SQL"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "公开目录；查询、关系、设计与写入是主线选读范围。",
+      "en": "Querying, relationships, design and writes are the main selections."
+    }
+  },
+  {
+    "id": "R18",
+    "url": "https://cs50.harvard.edu/sql/weeks/0/",
+    "title": {
+      "zh": "CS50 SQL Week 0：Querying",
+      "en": "CS50 SQL Week 0 — Querying"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "选 SELECT、筛选、排序与聚合。",
+      "en": "SELECT, filtering, ordering and aggregation."
+    }
+  },
+  {
+    "id": "R19",
+    "url": "https://cs50.harvard.edu/sql/weeks/2/",
+    "title": {
+      "zh": "CS50 SQL Week 2：Designing",
+      "en": "CS50 SQL Week 2 — Designing"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "选键、约束、关系和设计取舍。",
+      "en": "Keys, constraints, relationships and trade-offs."
+    }
+  },
+  {
+    "id": "R20",
+    "url": "https://fullstackopen.com/en/",
+    "title": {
+      "zh": "University of Helsinki：Full Stack Open",
+      "en": "University of Helsinki — Full Stack Open"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "公开课程入口；并非零基础入门路线。",
+      "en": "Public course entry; not a complete-beginner route."
+    }
+  },
+  {
+    "id": "R21",
+    "url": "https://fullstackopen.com/en/about/",
+    "title": {
+      "zh": "Full Stack Open：About the course",
+      "en": "Full Stack Open — About the course"
+    },
+    "kind": {
+      "zh": "大学课程说明",
+      "en": "Course description"
+    },
+    "note": {
+      "zh": "先修能力、学习方式与课程范围以此为准。",
+      "en": "Prerequisites, learning approach and scope."
+    }
+  },
+  {
+    "id": "R22",
+    "url": "https://fullstackopen.com/en/part0/",
+    "title": {
+      "zh": "Full Stack Open Part 0：Fundamentals of Web apps",
+      "en": "Full Stack Open Part 0 — Fundamentals of Web apps"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "核对分部入口；按页面当前小节选择，不承诺练习编号固定。",
+      "en": "Part entry; select current sections, not assumed stable exercise numbers."
+    }
+  },
+  {
+    "id": "R23",
+    "url": "https://fullstackopen.com/en/part1/",
+    "title": {
+      "zh": "Full Stack Open Part 1：Introduction to React",
+      "en": "Full Stack Open Part 1 — Introduction to React"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "核对分部入口；组件、状态和事件相关内容。",
+      "en": "Components, state and events."
+    }
+  },
+  {
+    "id": "R24",
+    "url": "https://fullstackopen.com/en/part3/",
+    "title": {
+      "zh": "Full Stack Open Part 3：Programming a server with NodeJS and Express",
+      "en": "Full Stack Open Part 3 — NodeJS and Express"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "核对分部入口；HTTP 服务与部署相关内容。",
+      "en": "HTTP servers and deployment selections."
+    }
+  },
+  {
+    "id": "R25",
+    "url": "https://fullstackopen.com/en/part9/",
+    "title": {
+      "zh": "Full Stack Open Part 9：TypeScript",
+      "en": "Full Stack Open Part 9 — TypeScript"
+    },
+    "kind": {
+      "zh": "大学公开课",
+      "en": "University course"
+    },
+    "note": {
+      "zh": "核对分部入口；类型安全相关内容。",
+      "en": "Type-safety selections."
+    }
+  },
+  {
+    "id": "R26",
+    "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core",
+    "title": {
+      "zh": "MDN：Core learning modules",
+      "en": "MDN — Core learning modules"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "Web 基础学习路线；多数资料有语言切换入口。",
+      "en": "Web foundations; translations may not update together."
+    }
+  },
+  {
+    "id": "R27",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide",
+    "title": {
+      "zh": "MDN：JavaScript Guide",
+      "en": "MDN — JavaScript Guide"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "按章读语法、控制流、集合、函数、异步与模块。",
+      "en": "Syntax, control flow, collections, functions, async and modules."
+    }
+  },
+  {
+    "id": "R28",
+    "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+    "title": {
+      "zh": "TypeScript Handbook：Introduction",
+      "en": "TypeScript Handbook — Introduction"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "主手册入口；先有 JavaScript 基础，再读日常类型与收窄。",
+      "en": "Learn JavaScript first, then everyday types and narrowing."
+    }
+  },
+  {
+    "id": "R29",
+    "url": "https://react.dev/learn",
+    "title": {
+      "zh": "React：Quick Start",
+      "en": "React — Quick Start"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "组件、数据、事件与状态入门。",
+      "en": "Components, data, events and state."
+    }
+  },
+  {
+    "id": "R30",
+    "url": "https://nodejs.org/learn",
+    "title": {
+      "zh": "Node.js：Learn",
+      "en": "Node.js — Learn"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "运行环境、异步与 HTTP 相关材料；使用实施时仍受支持的版本。",
+      "en": "Runtime, async and HTTP; use a currently supported runtime when implementing."
+    }
+  },
+  {
+    "id": "R31",
+    "url": "https://git-scm.com/book/en/v2",
+    "title": {
+      "zh": "Pro Git：在线书籍",
+      "en": "Pro Git — Online book"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "按需查 Basics、Branching 等章节。",
+      "en": "Basics, Branching and other chapters as needed."
+    }
+  },
+  {
+    "id": "R32",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview",
+    "title": {
+      "zh": "MDN：Overview of HTTP",
+      "en": "MDN — Overview of HTTP"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "浏览器、服务器、请求与响应的基础。",
+      "en": "Browser, server, request and response foundations."
+    }
+  },
+  {
+    "id": "R33",
+    "url": "https://www.rfc-editor.org/rfc/rfc5545.html",
+    "title": {
+      "zh": "IETF RFC 5545：iCalendar",
+      "en": "IETF RFC 5545 — iCalendar"
+    },
+    "kind": {
+      "zh": "公开技术标准",
+      "en": "Public technical standard"
+    },
+    "note": {
+      "zh": "只选事件、时间和标识字段；客户端导入行为另做测试。",
+      "en": "Event, time and identity fields; test client import behaviour separately."
+    }
+  },
+  {
+    "id": "R34",
+    "url": "https://sqlite.org/fts5.html",
+    "title": {
+      "zh": "SQLite：FTS5 Extension",
+      "en": "SQLite — FTS5 Extension"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "全文搜索与 tokenizer 入口；中文检索效果必须用自己的样例验证。",
+      "en": "Full-text search and tokenisers; test Chinese retrieval with your own cases."
+    }
+  },
+  {
+    "id": "R35",
+    "url": "https://www.w3.org/WAI/tutorials/",
+    "title": {
+      "zh": "W3C WAI：Web Accessibility Tutorials",
+      "en": "W3C WAI — Web Accessibility Tutorials"
+    },
+    "kind": {
+      "zh": "官方技术指南",
+      "en": "Official guidance"
+    },
+    "note": {
+      "zh": "选表单标签、页面结构、键盘与反馈。",
+      "en": "Labels, structure, keyboard use and feedback."
+    }
+  },
+  {
+    "id": "R36",
+    "url": "https://huggingface.co/learn/agents-course/en/unit0/introduction",
+    "title": {
+      "zh": "Hugging Face：Agents Course Introduction",
+      "en": "Hugging Face — Agents Course Introduction"
+    },
+    "kind": {
+      "zh": "公开技术课程",
+      "en": "Public technical course"
+    },
+    "note": {
+      "zh": "有 Python 与 LLM 基础要求；认证与练习条件另查。",
+      "en": "Python and LLM prerequisites; certification and lab conditions are separate."
+    }
+  },
+  {
+    "id": "R37",
+    "url": "https://huggingface.co/learn/agents-course/en/unit1/introduction",
+    "title": {
+      "zh": "Hugging Face：Introduction to Agents，Unit 1",
+      "en": "Hugging Face — Introduction to Agents, Unit 1"
+    },
+    "kind": {
+      "zh": "公开技术课程",
+      "en": "Public technical course"
+    },
+    "note": {
+      "zh": "Agent 基础单元；工具实现只选一条路线。",
+      "en": "Agent foundations; choose one implementation route."
+    }
+  },
+  {
+    "id": "R38",
+    "url": "https://openai.com/academy/codex/",
+    "title": {
+      "zh": "OpenAI Academy：Codex",
+      "en": "OpenAI Academy — Codex"
+    },
+    "kind": {
+      "zh": "厂商培训入口",
+      "en": "Vendor training entry"
+    },
+    "note": {
+      "zh": "已核对公开入口；完整活动、登录内容与权限不保证全部开放。",
+      "en": "Public entry in the source manuscript; not all activities or authenticated material verified."
+    }
+  },
+  {
+    "id": "R39",
+    "url": "https://academy.claude.com/courses/claude-code-in-action",
+    "title": {
+      "zh": "Claude Academy：Claude Code in Action",
+      "en": "Claude Academy — Claude Code in Action"
+    },
+    "kind": {
+      "zh": "厂商培训入口",
+      "en": "Vendor training entry"
+    },
+    "note": {
+      "zh": "已核对课程页；未逐一完成登录后实验。",
+      "en": "Course entry; authenticated labs not all completed."
+    }
+  },
+  {
+    "id": "R40",
+    "url": "https://llmagents-learning.org/sp25",
+    "title": {
+      "zh": "Berkeley：Advanced LLM Agents，Spring 2025",
+      "en": "Berkeley — Advanced LLM Agents, Spring 2025"
+    },
+    "kind": {
+      "zh": "历史课程档案",
+      "en": "Historical course archive"
+    },
+    "note": {
+      "zh": "进阶选修；2025 档案不标成 2026 新课。",
+      "en": "Advanced elective; clearly labelled as a 2025 archive."
+    }
+  },
+  {
+    "id": "R41",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "title": {
+      "zh": "Anthropic：Building effective agents",
+      "en": "Anthropic — Building effective agents"
+    },
+    "kind": {
+      "zh": "原始工程文章",
+      "en": "Original engineering article"
+    },
+    "note": {
+      "zh": "2024-12-19；用于简单方案与工作流概念，工具细节可能已变化。",
+      "en": "19 December 2024; simple-first workflows; tool details may change."
+    }
+  },
+  {
+    "id": "R42",
+    "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+    "title": {
+      "zh": "Anthropic：Demystifying evals for AI agents",
+      "en": "Anthropic — Demystifying evals for AI agents"
+    },
+    "kind": {
+      "zh": "原始工程文章",
+      "en": "Original engineering article"
+    },
+    "note": {
+      "zh": "2026-01-09；用于结果评测与过程检查的思路。",
+      "en": "9 January 2026; outcome evaluation and process inspection."
+    }
+  },
+  {
+    "id": "R43",
+    "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+    "title": {
+      "zh": "Anthropic：Effective context engineering for AI agents",
+      "en": "Anthropic — Effective context engineering for AI agents"
+    },
+    "kind": {
+      "zh": "原始工程文章",
+      "en": "Original engineering article"
+    },
+    "note": {
+      "zh": "上下文选择与管理；不把特定模型经验当永久规律。",
+      "en": "Context selection and management; model-specific experience is not permanent law."
+    }
+  },
+  {
+    "id": "R44",
+    "url": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents",
+    "title": {
+      "zh": "Anthropic：Effective harnesses for long-running agents",
+      "en": "Anthropic — Effective harnesses for long-running agents"
+    },
+    "kind": {
+      "zh": "原始工程文章",
+      "en": "Original engineering article"
+    },
+    "note": {
+      "zh": "长任务进度与交接；按自己的失败模式选用。",
+      "en": "Progress and handoff for long tasks; adopt according to actual failures."
+    }
+  },
+  {
+    "id": "R45",
+    "url": "https://www.anthropic.com/research/AI-assistance-coding-skills",
+    "title": {
+      "zh": "Anthropic：How AI assistance impacts the formation of coding skills",
+      "en": "Anthropic — How AI assistance impacts the formation of coding skills"
+    },
+    "kind": {
+      "zh": "原始研究说明",
+      "en": "Original research account"
+    },
+    "note": {
+      "zh": "受控编程学习研究；结论受样本和任务限制，不代表所有 AI 学习。",
+      "en": "Controlled study with bounded sample and tasks; not a claim about all AI-assisted learning."
+    }
+  },
+  {
+    "id": "R46",
+    "url": "https://www.anthropic.com/engineering/managed-agents",
+    "title": {
+      "zh": "Anthropic：Managed Agents 工程文章",
+      "en": "Anthropic — Managed Agents"
+    },
+    "kind": {
+      "zh": "原始工程文章",
+      "en": "Original engineering article"
+    },
+    "note": {
+      "zh": "用于运行环境与可删减控制逻辑的讨论，不作为平台合规承诺。",
+      "en": "Runtime and removable control logic; not a compliance guarantee."
+    }
+  },
+  {
+    "id": "R47",
+    "url": "https://openai.com/index/harness-engineering/",
+    "title": {
+      "zh": "OpenAI：Harness engineering",
+      "en": "OpenAI — Harness engineering"
+    },
+    "kind": {
+      "zh": "原始工程文章",
+      "en": "Original engineering article"
+    },
+    "note": {
+      "zh": "2026-02-11；学习仓库、反馈与约束，不照搬内部案例收益。",
+      "en": "11 February 2026; repositories, feedback and constraints, without assuming internal returns transfer."
+    }
+  },
+  {
+    "id": "R48",
+    "url": "https://openai.github.io/openai-agents-js/",
+    "title": {
+      "zh": "OpenAI Agents SDK for TypeScript",
+      "en": "OpenAI Agents SDK for TypeScript"
+    },
+    "kind": {
+      "zh": "官方 SDK 文档",
+      "en": "Official SDK documentation"
+    },
+    "note": {
+      "zh": "一种可选实现；使用前核对真实 SDK 版本、模型与认证路径。",
+      "en": "Optional implementation; verify actual SDK version, model and authentication before use."
+    }
+  },
+  {
+    "id": "R49",
+    "url": "https://docs.langchain.com/oss/javascript/langgraph/persistence",
+    "title": {
+      "zh": "LangGraph JavaScript：Persistence",
+      "en": "LangGraph JavaScript — Persistence"
+    },
+    "kind": {
+      "zh": "官方 SDK 文档",
+      "en": "Official SDK documentation"
+    },
+    "note": {
+      "zh": "持久状态选修；已有简单实现可不引入框架。",
+      "en": "Optional persistent state; a simpler implementation may suffice."
+    }
+  },
+  {
+    "id": "R50",
+    "url": "https://dspy.ai/current/",
+    "title": {
+      "zh": "DSPy：官方文档",
+      "en": "DSPy — Documentation"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "后期选修；Python 生态，主线不强制更换技术栈。",
+      "en": "Later elective in the Python ecosystem; stack migration is not mandatory."
+    }
+  },
+  {
+    "id": "R51",
+    "url": "https://arxiv.org/abs/2507.19457",
+    "title": {
+      "zh": "GEPA：Reflective Prompt Evolution Can Outperform Reinforcement Learning",
+      "en": "GEPA — Reflective Prompt Evolution Can Outperform Reinforcement Learning"
+    },
+    "kind": {
+      "zh": "研究论文入口",
+      "en": "Research paper"
+    },
+    "note": {
+      "zh": "核对摘要与版本信息；v2 为 2026-02-14，非已复现实验。",
+      "en": "Abstract and version in the manuscript; v2 dated 14 February 2026; experiments not reproduced."
+    }
+  },
+  {
+    "id": "R52",
+    "url": "https://sakana.ai/dgm/",
+    "title": {
+      "zh": "Sakana AI：Darwin Gödel Machine",
+      "en": "Sakana AI — Darwin Gödel Machine"
+    },
+    "kind": {
+      "zh": "研究团队原文",
+      "en": "Research-team article"
+    },
+    "note": {
+      "zh": "2025-05-30；代码改进研究与局限，不代表无限自进化已被证明。",
+      "en": "30 May 2025; code-improvement research and limitations, not proof of unlimited self-evolution."
+    }
+  },
+  {
+    "id": "R53",
+    "url": "https://help.openai.com/en/articles/9039756-managing-billing-for-chatgpt-and-the-api-platform",
+    "title": {
+      "zh": "OpenAI：ChatGPT 与 API 的计费管理",
+      "en": "OpenAI — Billing for ChatGPT and the API platform"
+    },
+    "kind": {
+      "zh": "官方计费说明",
+      "en": "Official billing guidance"
+    },
+    "note": {
+      "zh": "两个计费系统分别核对；不把订阅当成通用 API 余额。",
+      "en": "Separate billing systems; subscriptions are not generic API credit."
+    }
+  },
+  {
+    "id": "R54",
+    "url": "https://developers.openai.com/codex/pricing/",
+    "title": {
+      "zh": "Codex 使用与计费入口",
+      "en": "Codex — Usage and pricing entry"
+    },
+    "kind": {
+      "zh": "官方计费说明",
+      "en": "Official billing guidance"
+    },
+    "note": {
+      "zh": "核对时官方重定向至 https://learn.chatgpt.com/docs/pricing；价格与能力会变化。",
+      "en": "Manuscript records a redirect to learn.chatgpt.com/docs/pricing; pricing and capability change."
+    }
+  },
+  {
+    "id": "R55",
+    "url": "https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan",
+    "title": {
+      "zh": "Claude Code：Use with your Pro or Max plan",
+      "en": "Claude Code — Use with your Pro or Max plan"
+    },
+    "kind": {
+      "zh": "官方计费说明",
+      "en": "Official billing guidance"
+    },
+    "note": {
+      "zh": "订阅登录与 API key 路径分开核对，不共享认证。",
+      "en": "Distinguish subscription login from API-key authentication."
+    }
+  },
+  {
+    "id": "R56",
+    "url": "https://support.claude.com/en/articles/15036540-use-the-claude-agent-sdk-with-your-claude-plan",
+    "title": {
+      "zh": "Claude Agent SDK：Use with your Claude plan",
+      "en": "Claude Agent SDK — Use with your Claude plan"
+    },
+    "kind": {
+      "zh": "官方计费说明",
+      "en": "Official billing guidance"
+    },
+    "note": {
+      "zh": "页面 June 15 更新：拟议改制暂停，SDK 等仍计入订阅；旧 credits 公告不能当现行余额。",
+      "en": "Manuscript records June 15 pause of a proposed change; old credit announcements are not a current balance."
+    }
+  },
+  {
+    "id": "R57",
+    "url": "https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices",
+    "title": {
+      "zh": "MCP：Security Best Practices，2026-07-28 版",
+      "en": "MCP — Security Best Practices, 2026-07-28"
+    },
+    "kind": {
+      "zh": "协议官方文档",
+      "en": "Versioned protocol guidance"
+    },
+    "note": {
+      "zh": "固定文档版本便于追溯；实施时同时检查新版安全变更。",
+      "en": "Pinned for traceability; check newer security changes when implementing."
+    }
+  },
+  {
+    "id": "R58",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html",
+    "title": {
+      "zh": "OWASP：LLM Prompt Injection Prevention Cheat Sheet",
+      "en": "OWASP — LLM Prompt Injection Prevention Cheat Sheet"
+    },
+    "kind": {
+      "zh": "安全专业指南",
+      "en": "Security guidance"
+    },
+    "note": {
+      "zh": "安全思路与分层控制；没有单个提示词能保证阻止注入。",
+      "en": "Layered controls; no single prompt guarantees injection prevention."
+    }
+  },
+  {
+    "id": "R59",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+    "title": {
+      "zh": "OWASP：Secrets Management Cheat Sheet",
+      "en": "OWASP — Secrets Management Cheat Sheet"
+    },
+    "kind": {
+      "zh": "安全专业指南",
+      "en": "Security guidance"
+    },
+    "note": {
+      "zh": "最小权限、轮换与秘密管理。",
+      "en": "Least privilege, rotation and secret management."
+    }
+  },
+  {
+    "id": "R60",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+    "title": {
+      "zh": "OWASP：Authorization Cheat Sheet",
+      "en": "OWASP — Authorization Cheat Sheet"
+    },
+    "kind": {
+      "zh": "安全专业指南",
+      "en": "Security guidance"
+    },
+    "note": {
+      "zh": "认证不等于授权；访问检查落实到服务端和对象。",
+      "en": "Authentication is not authorisation; enforce server-side and object-level access."
+    }
+  },
+  {
+    "id": "R61",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
+    "title": {
+      "zh": "OWASP：Logging Cheat Sheet",
+      "en": "OWASP — Logging Cheat Sheet"
+    },
+    "kind": {
+      "zh": "安全专业指南",
+      "en": "Security guidance"
+    },
+    "note": {
+      "zh": "选必要日志与敏感数据排除。",
+      "en": "Necessary logs and sensitive-data exclusion."
+    }
+  },
+  {
+    "id": "R62",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+    "title": {
+      "zh": "OWASP：Server-Side Request Forgery Prevention Cheat Sheet",
+      "en": "OWASP — Server-Side Request Forgery Prevention Cheat Sheet"
+    },
+    "kind": {
+      "zh": "安全专业指南",
+      "en": "Security guidance"
+    },
+    "note": {
+      "zh": "服务端抓取的目标与网络边界；本课程先用固定公开来源。",
+      "en": "Fetch destinations and network boundaries; start with fixed public sources."
+    }
+  },
+  {
+    "id": "R63",
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html",
+    "title": {
+      "zh": "OWASP：Cross Site Scripting Prevention Cheat Sheet",
+      "en": "OWASP — Cross Site Scripting Prevention Cheat Sheet"
+    },
+    "kind": {
+      "zh": "安全专业指南",
+      "en": "Security guidance"
+    },
+    "note": {
+      "zh": "输出编码、可信模板与不可信 HTML 处理。",
+      "en": "Output encoding, trusted templates and untrusted HTML."
+    }
+  },
+  {
+    "id": "R64",
+    "url": "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository",
+    "title": {
+      "zh": "GitHub：Removing sensitive data from a repository",
+      "en": "GitHub — Removing sensitive data from a repository"
+    },
+    "kind": {
+      "zh": "官方安全文档",
+      "en": "Official security documentation"
+    },
+    "note": {
+      "zh": "先撤销或轮换泄露凭据，再处理历史；无法承诺清除所有副本。",
+      "en": "Revoke or rotate first, then history and copies; complete removal of all copies is not promised."
+    }
+  },
+  {
+    "id": "R65",
+    "url": "https://opentelemetry.io/docs/security/handling-sensitive-data/",
+    "title": {
+      "zh": "OpenTelemetry：Handling sensitive data",
+      "en": "OpenTelemetry — Handling sensitive data"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "遥测最小化、处理与过滤；不默认上传全部提示和输出。",
+      "en": "Minimisation and filtering; do not upload every prompt and output by default."
+    }
+  },
+  {
+    "id": "R66",
+    "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+    "title": {
+      "zh": "NIST：AI Risk Management Framework",
+      "en": "NIST — AI Risk Management Framework"
+    },
+    "kind": {
+      "zh": "官方风险框架",
+      "en": "Official risk framework"
+    },
+    "note": {
+      "zh": "风险识别参考，不构成对任何项目的法律或合规认证。",
+      "en": "Risk identification; not legal or compliance certification of a project."
+    }
+  },
+  {
+    "id": "R67",
+    "url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+    "title": {
+      "zh": "Google SRE：Monitoring Distributed Systems",
+      "en": "Google SRE — Monitoring Distributed Systems"
+    },
+    "kind": {
+      "zh": "原始工程书籍",
+      "en": "Original engineering book"
+    },
+    "note": {
+      "zh": "只选与小型个人服务有关的监测思路。",
+      "en": "Select monitoring practices suitable for small personal services."
+    }
+  },
+  {
+    "id": "R68",
+    "url": "https://sre.google/sre-book/effective-troubleshooting/",
+    "title": {
+      "zh": "Google SRE：Effective Troubleshooting",
+      "en": "Google SRE — Effective Troubleshooting"
+    },
+    "kind": {
+      "zh": "原始工程书籍",
+      "en": "Original engineering book"
+    },
+    "note": {
+      "zh": "故障定位与假设验证。",
+      "en": "Fault diagnosis and hypothesis testing."
+    }
+  },
+  {
+    "id": "R69",
+    "url": "https://sre.google/sre-book/postmortem-culture/",
+    "title": {
+      "zh": "Google SRE：Postmortem Culture",
+      "en": "Google SRE — Postmortem Culture"
+    },
+    "kind": {
+      "zh": "原始工程书籍",
+      "en": "Original engineering book"
+    },
+    "note": {
+      "zh": "简短事后分析；不要给个人小工具照搬大型流程。",
+      "en": "Brief incident analysis without importing heavyweight organisational processes."
+    }
+  },
+  {
+    "id": "R70",
+    "url": "https://docs.docker.com/get-started/",
+    "title": {
+      "zh": "Docker：Get started",
+      "en": "Docker — Get started"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "环境隔离选修；容器默认配置不自动等于强安全沙箱。",
+      "en": "Optional environment isolation; default containers are not automatically strong sandboxes."
+    }
+  },
+  {
+    "id": "R71",
+    "url": "https://render.com/docs/deploy-node-express-app",
+    "title": {
+      "zh": "Render：Deploy a Node Express App",
+      "en": "Render — Deploy a Node Express App"
+    },
+    "kind": {
+      "zh": "官方部署指南",
+      "en": "Official deployment guide"
+    },
+    "note": {
+      "zh": "可选托管实例；未代读者部署，费用和环境以当前控制台为准。",
+      "en": "Optional example; no deployment performed for the reader; current pricing and environment apply."
+    }
+  },
+  {
+    "id": "R72",
+    "url": "https://render.com/docs/cronjobs",
+    "title": {
+      "zh": "Render：Cron Jobs",
+      "en": "Render — Cron Jobs"
+    },
+    "kind": {
+      "zh": "官方部署指南",
+      "en": "Official deployment guide"
+    },
+    "note": {
+      "zh": "定时运行选修；运行限制、计费及存储支持按当前文档确认。",
+      "en": "Optional scheduling; recheck runtime, billing and storage support."
+    }
+  },
+  {
+    "id": "R73",
+    "url": "https://render.com/docs/disks",
+    "title": {
+      "zh": "Render：Persistent Disks",
+      "en": "Render — Persistent Disks"
+    },
+    "kind": {
+      "zh": "官方部署指南",
+      "en": "Official deployment guide"
+    },
+    "note": {
+      "zh": "持久盘不是所有服务类型均支持；不可把临时文件系统当数据库。",
+      "en": "Support varies by service type; do not treat temporary filesystems as databases."
+    }
+  },
+  {
+    "id": "R74",
+    "url": "https://www.gov.uk/service-manual/user-research/plan-user-research-for-your-service",
+    "title": {
+      "zh": "GOV.UK Service Manual：Plan user research",
+      "en": "GOV.UK — Plan user research"
+    },
+    "kind": {
+      "zh": "公开服务设计指南",
+      "en": "Public service-design guidance"
+    },
+    "note": {
+      "zh": "借鉴问题发现方法；不是对特定机构流程的授权。",
+      "en": "Problem-discovery methods; not authorisation to use an organisation's processes."
+    }
+  },
+  {
+    "id": "R75",
+    "url": "https://www.gov.uk/service-manual/user-research/using-moderated-usability-testing",
+    "title": {
+      "zh": "GOV.UK Service Manual：Moderated usability testing",
+      "en": "GOV.UK — Moderated usability testing"
+    },
+    "kind": {
+      "zh": "公开服务设计指南",
+      "en": "Public service-design guidance"
+    },
+    "note": {
+      "zh": "选任务观察与记录方法。",
+      "en": "Task observation and recording."
+    }
+  },
+  {
+    "id": "R76",
+    "url": "https://www.gov.uk/service-manual/user-research/getting-users-consent-for-research",
+    "title": {
+      "zh": "GOV.UK Service Manual：Getting users’ consent for research",
+      "en": "GOV.UK — Getting users' consent for research"
+    },
+    "kind": {
+      "zh": "公开服务设计指南",
+      "en": "Public service-design guidance"
+    },
+    "note": {
+      "zh": "用于知情同意的基本问题清单，不替代当地法律意见。",
+      "en": "Consent questions; not a substitute for local legal advice."
+    }
+  },
+  {
+    "id": "R77",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy",
+    "title": {
+      "zh": "MDN：Content-Security-Policy",
+      "en": "MDN — Content-Security-Policy"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "区分 HTTP 响应头与 meta 的支持范围。",
+      "en": "Distinguish response-header and meta support."
+    }
+  },
+  {
+    "id": "R78",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy",
+    "title": {
+      "zh": "MDN：Referrer-Policy",
+      "en": "MDN — Referrer-Policy"
+    },
+    "kind": {
+      "zh": "官方技术文档",
+      "en": "Official documentation"
+    },
+    "note": {
+      "zh": "发布时评估外链来源信息泄露。",
+      "en": "Assess referrer information sent to external links when publishing."
+    }
+  }
+]
