@@ -560,3 +560,31 @@ test.describe('reference-design', () => {
     });
   }
 });
+
+// Task 15: the first column heading ("Power & cooling") started at x=-12 and right-hand tickers were cut at the frame.
+test('relationship graph text stays inside its frame on desktop', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/en/sectors.html#industryGraph');
+  await page.locator('#industryGraph .gnode').first().waitFor({ state: 'attached' });
+  const cut = await page.locator('#industryGraph svg.graph').evaluate((svg) => {
+    const box = svg.getBoundingClientRect();
+    return [...svg.querySelectorAll('text')].filter((t) => { const r = t.getBoundingClientRect(); return r.width && (r.left < box.left - 0.5 || r.right > box.right + 0.5); }).map((t) => t.textContent);
+  });
+  expect(cut).toEqual([]);
+});
+
+// Task 15 Lighthouse finding (open, needs a decision — see docs/sectors-81k-evidence/README.md):
+// on phones the shared header renders expanded (478px) until its script sets data-enhanced, so the
+// S0 heading first paints below the fold and is never an LCP candidate; the 13px stage legend becomes
+// the LCP element (lab LCP 3.6 s on the old page → 5.7 s). Un-fixme once the header or the S0 card changes.
+test.fixme('the S0 heading is the largest contentful paint', async ({ page }) => {
+  await page.setViewportSize({ width: 412, height: 823 });
+  await page.addInitScript(() => {
+    window.__lcp = [];
+    new PerformanceObserver((list) => { for (const e of list.getEntries()) window.__lcp.push(e.element?.tagName); })
+      .observe({ type: 'largest-contentful-paint', buffered: true });
+  });
+  await page.goto('/en/sectors.html');
+  await page.waitForTimeout(1500);
+  expect(await page.evaluate(() => window.__lcp.at(-1))).toBe('H1');
+});
