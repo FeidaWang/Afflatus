@@ -339,6 +339,12 @@ function localizeInternalNavigation(document, locale) {
 
 function injectStaticNavigation(document, route, locale) {
   const visibleLocale = locale || route.defaultLocale;
+  for (const link of all(document, node => getAttr(node, 'data-header-path') != null)) {
+    const path = getAttr(link, 'data-header-path');
+    setAttr(link, 'href', locale ? localizedRoutePath(path, locale) : path);
+    if (!path.includes('#') && findRouteByPath(path)?.id === route.id) setAttr(link, 'aria-current', 'page');
+    else removeAttr(link, 'aria-current');
+  }
   for (const nav of all(document, (node) => getAttr(node, 'data-afflatus-nav') != null || getAttr(node, 'data-afflatus-static-only-nav') != null)) {
     for (const existing of all(nav, (node) => getAttr(node, 'data-afflatus-static-nav') != null)) removeNode(existing);
     const routes = route.id === 'main' ? HOME_NAV_GROUPS.flatMap(group => group.items.map(item => ({ id: item.routeId, path: item.href, en: item.label.en, zh: item.label.zh }))) : NAV_ROUTES;
@@ -355,12 +361,23 @@ function injectStaticNavigation(document, route, locale) {
   }
 }
 
+function markChineseOnlyLanguage(node, href) {
+  setAttr(node, 'href', href);
+  setAttr(node, 'hreflang', 'zh-CN');
+  setAttr(node, 'title', 'Original text is published in Chinese only / 小说原文仅有中文');
+  setAttr(node, 'aria-label', 'Original text is published in Chinese only / 小说原文仅有中文');
+  setAttr(node, 'data-aria-en', 'Original text is published in Chinese only');
+  setAttr(node, 'data-aria-zh', '小说原文仅有中文');
+  setAttr(node, 'aria-disabled', 'true');
+  setText(node, '仅中文');
+}
+
 function convertLanguageLinks(document, route, locale) {
   const visibleLocale = locale || route.defaultLocale;
   const nextLocale = visibleLocale === 'zh' ? 'en' : 'zh';
   const nextHref = localizedRoutePath(route, nextLocale);
   const candidates = all(document, (node) => (
-    hasClass(node, 'lang-toggle')
+    (hasClass(node, 'lang-toggle') || getAttr(node, 'data-header-language') != null)
     || getAttr(node, 'id') === 'langBtn'
     || getAttr(node, 'id') === 'langMiniToggle'
   ));
@@ -373,7 +390,11 @@ function convertLanguageLinks(document, route, locale) {
     setAttr(node, 'href', nextHref);
     setAttr(node, 'hreflang', nextLocale === 'zh' ? 'zh-CN' : 'en');
     setAttr(node, 'aria-label', nextLocale === 'zh' ? '切换到中文' : 'Switch to English');
-    if (getAttr(node, 'id') === 'langBtn') setText(node, COPY[visibleLocale].langBtn);
+    if (getAttr(node, 'data-header-language') != null) {
+      setText(node, nextLocale === 'zh' ? '中文' : 'EN');
+      if (route.id === 'serial') markChineseOnlyLanguage(node, localizedRoutePath(route, 'zh'));
+    }
+    else if (getAttr(node, 'id') === 'langBtn') setText(node, COPY[visibleLocale].langBtn);
     else if (getAttr(node, 'id') !== 'langMiniToggle') setText(node, nextLocale === 'zh' ? '中文' : 'EN');
   }
 }
@@ -394,7 +415,7 @@ function validateLocalizedDocument(document, route, locale) {
   const h1s = all(document, (node) => node.tagName === 'h1');
   const alternates = all(document, (node) => node.tagName === 'link' && getAttr(node, 'rel') === 'alternate');
   const languageLinks = all(document, (node) => (
-    hasClass(node, 'lang-toggle')
+    (hasClass(node, 'lang-toggle') || getAttr(node, 'data-header-language') != null)
     || getAttr(node, 'id') === 'langBtn'
     || getAttr(node, 'id') === 'langMiniToggle'
   ));
@@ -411,7 +432,7 @@ function validateLocalizedDocument(document, route, locale) {
   if (!chineseOnly && (!languageLinks.length || languageLinks.some((node) => node.tagName !== 'a' || !getAttr(node, 'href')))) {
     errors.push('language switch is not a crawlable link');
   }
-  if (chineseOnly && languageLinks.length) errors.push('Chinese-only serial route still has a language switch');
+  if (chineseOnly && languageLinks.some(node => getAttr(node, 'data-header-language') == null)) errors.push('Chinese-only serial route has a prose language switch');
   if (all(document, (node) => node.tagName === 'script' && textContent(node).includes('document.documentElement.lang') && textContent(node).includes('afflatus:locale:v1')).length) {
     errors.push('adaptive locale prepaint remains in fixed locale document');
   }
@@ -426,7 +447,9 @@ export function transformLocalizedDocument(source, route, locale) {
   setAttr(html, 'data-afflatus-locale', locale);
   removeAdaptivePrepaint(document);
   localizeDataAttributes(document, locale);
-  if (route.id === 'portfolio') localizeHome(document, locale);
+  // The narrative portfolio owns its copy through data-en/data-zh attributes.
+  // Keep the legacy COPY projection only for the previous home template.
+  if (route.id === 'portfolio' && !all(document, node => node.tagName === 'body' && hasClass(node, 'portfolio-story')).length) localizeHome(document, locale);
   localizeInternalNavigation(document, locale);
   injectStaticNavigation(document, route, locale);
   convertLanguageLinks(document, route, locale);
@@ -513,10 +536,11 @@ function injectNovelShelf(document, catalog, locale) {
     `<a class="book" href="${escapeAttribute(readerPath({
       locale: novelLocale(locale),
       bookId: entry.id,
-    }))}"><span class="bk-badge">${locale === 'en' ? 'READING' : '正在阅读'}</span>`
-    + `<h3>${escapeHtml(entry.novel.title)}</h3>`
-    + `<p class="bk-sub">${escapeHtml(entry.novel.subtitle || '')}</p>`
-    + `<p class="bk-meta">${locale === 'en' ? `${entry.chapters.length} chapters` : `共 ${entry.chapters.length} 章`} · ${escapeHtml(entry.novel.author || '')}</p></a>`
+    }))}"><span class="bk-cover"><span class="bk-title">${escapeHtml(entry.novel.title)}</span><span class="bk-author">${escapeHtml(entry.novel.author || '')}</span></span>`
+    + `<span class="bk-sub">${escapeHtml(entry.novel.subtitle || '')}</span>`
+    + `<span class="bk-description">${escapeHtml(entry.novel.intro || '')}</span>`
+    + `<span class="bk-meta">已发布 ${entry.chapters.length} 章 · ${escapeHtml(entry.novel.updateNote || '')}</span>`
+    + '<span class="bk-read">开始阅读 ↗</span></a>'
   )).join(''));
 }
 
@@ -593,6 +617,13 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
   const pageCopy = novelPageCopy(locale, entry, chapter);
   const routeInput = { bookId: entry.id, ...(chapter ? { chapterId: chapter.id } : {}) };
   const canonical = readerUrl({ ...routeInput, locale: fixedLocale });
+  const returnNav = byId(document, 'readerReturn');
+  if (returnNav) {
+    removeAttr(returnNav, 'hidden');
+    setHtml(returnNav, '<a href="/zh/serial.html">← 返回书架</a>'
+      + (chapter ? `<a href="${escapeAttribute(readerPath({ locale: fixedLocale, bookId: entry.id }))}">本书介绍与目录</a>` : ''));
+  }
+
   const title = element(document, 'title');
   if (title) setText(title, pageCopy.title);
   setMetaContent(document, { name: 'description' }, pageCopy.description);
@@ -659,9 +690,8 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
     if (head && previous) setHtmlFragmentAtEnd(head, `<link rel="prev" href="${escapeAttribute(readerUrl({ locale: fixedLocale, bookId: entry.id, chapterId: previous.id }))}">`);
     if (head && next) setHtmlFragmentAtEnd(head, `<link rel="next" href="${escapeAttribute(readerUrl({ locale: fixedLocale, bookId: entry.id, chapterId: next.id }))}">`);
   }
-  for (const languageLink of all(document, (node) => hasClass(node, 'lang-toggle'))) {
-    const targetLocale = locale === 'en' ? 'zh' : 'en';
-    setAttr(languageLink, 'href', readerPath({ ...routeInput, locale: targetLocale }));
+  for (const languageLink of all(document, (node) => (hasClass(node, 'lang-toggle') || getAttr(node, 'data-header-language') != null))) {
+    markChineseOnlyLanguage(languageLink, readerPath({ ...routeInput, locale: 'zh' }));
   }
   const body = element(document, 'body');
   if (body) setAttr(body, 'data-reader-route', chapter ? 'chapter' : 'book');
