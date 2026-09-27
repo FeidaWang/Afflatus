@@ -573,6 +573,29 @@ test('relationship graph text stays inside its frame on desktop', async ({ page 
   expect(cut).toEqual([]);
 });
 
+// Final review: the company list sat under the globe (right column empty), and US/China land was not tinted.
+test('company globe: list beside the globe on desktop, US and China land tinted', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/en/sectors.html#industryGlobe');
+  await page.locator('#industryGlobe .marker').first().waitFor({ state: 'attached' });
+  await expect(page.locator('#industryGlobe path.globe-land.is-us')).toHaveAttribute('d', /M/);
+  await expect(page.locator('#industryGlobe path.globe-land.is-cn')).toHaveAttribute('d', /M/, { timeout: 8000 });
+  const [globe, list] = await Promise.all(['svg.globe', '.globe-list'].map((s) => page.locator(`#industryGlobe ${s}`).boundingBox()));
+  expect(list.x).toBeGreaterThanOrEqual(globe.x + globe.width);
+  expect(list.y).toBeLessThan(globe.y + globe.height);
+});
+
+// Final review: a failed logo-manifest fetch used to blank the stage and chapters 02, 03 and 06.
+test('chapters still render when the logo manifest fails', async ({ page }) => {
+  await page.route('**/assets/sectors/logos/manifest.json', (r) => r.abort());
+  await page.goto('/en/sectors.html');
+  await expect(page.locator('#usLeaders .h2h-row').first()).toBeAttached();
+  await expect(page.locator('#usChina .dim-row').first()).toBeAttached();
+  await expect(page.locator('#capital .ipo-bar').first()).toBeAttached();
+  await expect(page.locator('#industryGraph .gnode').first()).toBeAttached();
+  await expect(page.locator('#industrySources .industry-source-list li').first()).toBeAttached();
+});
+
 // Task 15 Lighthouse finding (open, needs a decision — see docs/sectors-81k-evidence/README.md):
 // on phones the shared header renders expanded (478px) until its script sets data-enhanced, so the
 // S0 heading first paints below the fold and is never an LCP candidate; the 13px stage legend becomes

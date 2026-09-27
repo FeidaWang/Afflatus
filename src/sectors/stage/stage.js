@@ -5,6 +5,7 @@ import { currentLanguage } from '../content.js';
 import { projectXyz } from './projection.js';
 import { SCENES, GLOBE_LON, buildDots, globeTargets, globeView, sceneTargets, interpolate } from './layouts.js';
 import { regionCounts } from './region-counts.js';
+import { staticFrameSvg } from './static-frames.js';
 
 const EXCERPT_MS = 7000;
 
@@ -123,10 +124,14 @@ export function mountStage(host, { snapshot, industry }) {
   const goStatic = () => {
     stop();
     host.dataset.mode = 'static';
-    cards.forEach((c) => c.removeAttribute('data-active'));
+    cards.forEach((c) => {
+      c.removeAttribute('data-active');
+      if (!c.querySelector('.stage-frame')) c.insertAdjacentHTML('beforeend', staticFrameSvg(SCENES[Number(c.dataset.scene)], layoutCtx, currentLanguage()));
+    });
   };
   const goLive = () => {
     host.dataset.mode = 'live';
+    host.querySelectorAll('.stage-frame').forEach((f) => f.remove());
     loadGlobeAsset().then((g) => { land = g.points; }).catch(() => {});
     io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; last = 0; });
     io.observe(host);

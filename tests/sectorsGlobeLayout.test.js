@@ -29,3 +29,22 @@ describe('clusterMarkers', () => {
     expect(clusterMarkers(m).flatMap((k) => k.ids)).toHaveLength(m.length);
   });
 });
+
+// Spec §8.3 chapter 4: US and China land dots are tinted. Coarse territory test on (lat, lon).
+import { landRegion, xyzRegion } from '../src/sectors/industry/globe-layout.js';
+import { spherePoint } from '../src/showcase/globeMath.js';
+describe('landRegion', () => {
+  const cases = [
+    ['San Francisco', 37.77, -122.42, 'US'], ['New York', 40.71, -74.0, 'US'], ['Austin', 30.27, -97.74, 'US'], ['Seattle', 47.61, -122.33, 'US'],
+    ['Miami', 25.76, -80.19, 'US'], ['Anchorage', 61.22, -149.9, 'US'],
+    ['Beijing', 39.9, 116.4, 'CN'], ['Shanghai', 31.23, 121.47, 'CN'], ['Shenzhen', 22.54, 114.06, 'CN'], ['Hangzhou', 30.27, 120.16, 'CN'], ['Chengdu', 30.57, 104.07, 'CN'], ['Urumqi', 43.83, 87.62, 'CN'],
+    ['Toronto', 43.65, -79.38, null], ['Vancouver', 49.28, -123.12, null], ['Tijuana', 32.51, -117.04, null], ['Mexico City', 19.43, -99.13, null],
+    ['Seoul', 37.57, 126.98, null], ['Tokyo', 35.68, 139.69, null], ['Taipei', 25.03, 121.57, null], ['Ulaanbaatar', 47.89, 106.91, null], ['London', 51.5, -0.13, null],
+  ];
+  it.each(cases)('%s', (_, lat, lon, want) => expect(landRegion(lat, lon)).toBe(want));
+  it('reads unit-sphere points in the globe frame', () => {
+    expect(xyzRegion(spherePoint(37.77, -122.42, 1))).toBe('US');
+    expect(xyzRegion(spherePoint(39.9, 116.4, 1))).toBe('CN');
+    expect(xyzRegion(spherePoint(51.5, -0.13, 1))).toBe(null);
+  });
+});

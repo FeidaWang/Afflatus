@@ -2,6 +2,7 @@
 import { EDGE_LABEL, EDGE_TYPES, GRAPH_COLUMNS, LAYER_LABEL, STATUS_LABEL } from './industry-core.js';
 import { STORIES, edgesOf, layoutIndustryGraph } from './graph-layout.js';
 import { escapeHtml, translate } from '../content.js';
+import { logoAsset } from './logo.js';
 
 export function mountIndustryGraph(host, { industry, manifest, lang }) {
   if (!host) return () => {};
@@ -33,6 +34,13 @@ export function mountIndustryGraph(host, { industry, manifest, lang }) {
       <p>${escapeHtml(t(e.label))}</p><small>${links}</small></li>`;
   }
 
+  // Node logo: the paper-ready web file; a dark-background original sits on an ink chip (as on the globe).
+  function nodeLogo(c, r) {
+    const a = logoAsset(c, manifest);
+    if (!a.src) return '';
+    return `${a.chip ? `<circle r="${r * 0.75}" class="logo-chip-bg"/>` : ''}<image href="${a.src}" x="${-r * 0.6}" y="${-r * 0.6}" width="${r * 1.2}" height="${r * 1.2}"/>`;
+  }
+
   function render() {
     const { nodes, edges } = layoutIndustryGraph(industry, { width: W, height: H, ...state });
     // Each cross-border edge fades from its own US endpoint to its own China endpoint.
@@ -44,7 +52,7 @@ export function mountIndustryGraph(host, { industry, manifest, lang }) {
       ${GRAPH_COLUMNS.map((col, i) => `<text class="graph-col" x="${36 + i * ((W - 72) / 7)}" y="16">${escapeHtml(t(LAYER_LABEL[col]))}</text>`).join('')}
       ${edges.map((e) => `<path data-id="${e.id}" d="${e.path}" class="edge ${e.stance === 'compete' ? 'edge-compete' : 'edge-coop'} edge-${e.type}${e.dim ? ' is-dim' : ''}"${e.crossBorder ? ` style="stroke:url(#usCn-${e.id})"` : ''}/>`).join('')}
       ${nodes.map((n) => { const c = byId[n.id]; return `<g class="gnode${n.dim ? ' is-dim' : ''}${n.id === state.focus ? ' is-focus' : ''}" data-id="${n.id}" tabindex="0" role="button" aria-label="${escapeHtml(t(c.name))}" transform="translate(${n.x} ${n.y})">
-        <circle r="${n.r}" class="ring-${n.country}"/><image href="${manifest[n.id]?.file ?? ''}" x="${-n.r * 0.6}" y="${-n.r * 0.6}" width="${n.r * 1.2}" height="${n.r * 1.2}"/>
+        <circle r="${n.r}" class="ring-${n.country}"/>${nodeLogo(c, n.r)}
         <text x="${n.r + 4}" dy="4">${escapeHtml(c.ticker ?? t(c.name))}</text></g>`; }).join('')}`;
     const list = state.focus ? edgesOf(industry, state.focus).filter((e) => state.types.includes(e.type) && (!state.edgeIds || state.edgeIds.includes(e.id))) : [];
     ledger.innerHTML = state.focus
@@ -60,8 +68,11 @@ export function mountIndustryGraph(host, { industry, manifest, lang }) {
     const s = STORIES.find((x) => x.id === b.dataset.story); const active = state.edgeIds === s.edgeIds;
     stories.querySelectorAll('[data-story]').forEach((x) => x.setAttribute('aria-pressed', String(!active && x === b)));
     state = active ? { ...state, focus: null, edgeIds: null } : { ...state, focus: s.focus, edgeIds: s.edgeIds }; render(); };
-  const onNode = (e) => { const g = e.target.closest('[data-id]'); if (!g) return; if (e.type === 'keydown' && !['Enter', ' '].includes(e.key)) return;
-    e.preventDefault?.(); state = { ...state, focus: state.focus === g.dataset.id ? null : g.dataset.id, edgeIds: null }; render(); };
+  // Only company nodes select; edge paths also carry data-id and must not.
+  const onNode = (e) => { const g = e.target.closest('.gnode[data-id]'); if (!g) return; if (e.type === 'keydown' && !['Enter', ' '].includes(e.key)) return;
+    e.preventDefault?.(); const id = g.dataset.id; state = { ...state, focus: state.focus === id ? null : id, edgeIds: null }; render();
+    // render() replaces the SVG content; keep the keyboard user on the node they activated.
+    svg.querySelector(`.gnode[data-id="${id}"]`)?.focus(); };
   const onPick = () => { state = { ...state, focus: picker.value || null, edgeIds: null }; render(); };
 
   filters.addEventListener('click', onFilter); stories.addEventListener('click', onStory);

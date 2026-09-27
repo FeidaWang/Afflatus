@@ -18,6 +18,7 @@ import { mountIndustryGraph } from '../sectors/industry/graph-view.js';
 import { mountHeadToHead } from '../sectors/industry/head-to-head-view.js';
 import { mountUsChina } from '../sectors/industry/rivalry-view.js';
 import { mountIpo } from '../sectors/industry/ipo-view.js';
+import { mountIndustrySources } from '../sectors/industry/sources-view.js';
 
 let sectorsData = null;
 let destroyed = false;
@@ -31,33 +32,50 @@ let destroyGraph = () => {};
 let destroyLeaders = () => {};
 let destroyUsChina = () => {};
 let destroyIpo = () => {};
+let destroySources = () => {};
 let chapterData = null;
 const frontierAbort = new AbortController();
 
 const byId = (id) => document.getElementById(id);
+// Each module mounts on its own: one failing view must not leave the others empty.
+const mountSafely = (name, mount) => {
+  try { return mount() ?? (() => {}); } catch (error) { console.error(`sectors: ${name} failed to render`, error); return () => {}; }
+};
 
 // The dot stage needs both the frontier snapshot and the industry dataset; until then its
 // cards render as static text (no data-mode), and on failure they simply stay that way.
 // The company globe reuses the same industry fetch, plus the logo manifest.
-if (byId('sectorsStage') || byId('usLeaders') || byId('usChina') || byId('industryGlobe') || byId('industryGraph') || byId('capital')) {
+if (byId('sectorsStage') || byId('usLeaders') || byId('usChina') || byId('industryGlobe') || byId('industryGraph') || byId('capital') || byId('industrySources')) {
+  // Logos are optional: without the manifest the globe and graph fall back to monograms.
+  const manifestRequest = byId('industryGlobe') || byId('industryGraph') || byId('industrySources')
+    ? fetch('/assets/sectors/logos/manifest.json', { signal: frontierAbort.signal }).then((r) => (r.ok ? r.json() : {})).catch(() => ({}))
+    : {};
   Promise.all([
     fetchJson('sectors-frontier-2026-09-27', { signal: frontierAbort.signal }),
     fetchJson('sectors-industry-2026-09-27', { signal: frontierAbort.signal }),
-    byId('industryGlobe') || byId('industryGraph') ? fetch('/assets/sectors/logos/manifest.json').then((r) => r.json()) : null,
+    manifestRequest,
   ])
     .then(([snapshot, industry, manifest]) => {
       if (destroyed) return;
-      if (byId('sectorsStage')) destroyStage = mountStage(byId('sectorsStage'), { snapshot, industry });
+      if (byId('sectorsStage')) destroyStage = mountSafely('stage', () => mountStage(byId('sectorsStage'), { snapshot, industry }));
       chapterData = { snapshot, industry };
-      destroyLeaders = mountHeadToHead(byId('usLeaders'), { ...chapterData, lang: currentLanguage() });
-      destroyUsChina = mountUsChina(byId('usChina'), { ...chapterData, lang: currentLanguage() });
-      destroyIpo = mountIpo(byId('capital'), { industry, lang: currentLanguage() });
       globeData = { industry, manifest };
-      if (byId('industryGlobe')) destroyGlobe = mountCompanyGlobe(byId('industryGlobe'), { ...globeData, lang: currentLanguage() });
-      destroyGraph = mountIndustryGraph(byId('industryGraph'), { ...globeData, lang: currentLanguage() });
+      mountChapters();
     })
-    .catch(() => {});
+    .catch((error) => { if (error?.name !== 'AbortError') console.error('sectors: chapter data unavailable', error); });
 }
+
+// Chapters 02–06 and the source ledger render their copy at mount, so a language switch remounts them.
+function mountChapters() {
+  const lang = currentLanguage();
+  destroyLeaders = mountSafely('chapter 02', () => mountHeadToHead(byId('usLeaders'), { ...chapterData, lang }));
+  destroyUsChina = mountSafely('chapter 03', () => mountUsChina(byId('usChina'), { ...chapterData, lang }));
+  destroyIpo = mountSafely('chapter 06', () => mountIpo(byId('capital'), { industry: chapterData.industry, lang }));
+  if (byId('industryGlobe')) destroyGlobe = mountSafely('chapter 04', () => mountCompanyGlobe(byId('industryGlobe'), { ...globeData, lang }));
+  destroyGraph = mountSafely('chapter 05', () => mountIndustryGraph(byId('industryGraph'), { ...globeData, lang }));
+  destroySources = mountSafely('source ledger', () => mountIndustrySources(byId('industrySources'), { ...globeData, lang }));
+}
+const destroyChapters = () => { destroyLeaders(); destroyUsChina(); destroyIpo(); destroyGlobe(); destroyGraph(); destroySources(); };
 
 if (byId('sectorsFrontier')) {
   fetchJson('sectors-frontier-2026-09-27', { signal: frontierAbort.signal })
@@ -122,22 +140,7 @@ const onLanguage = () => {
   editorialBoard?.setLanguage(currentLanguage());
   sourceWall?.setLanguage(currentLanguage());
   taskStory?.setLanguage();
-  if (chapterData) {
-    // Chapters 02, 03 and 06 render their copy at mount, so a language switch remounts them.
-    destroyLeaders();
-    destroyLeaders = mountHeadToHead(byId('usLeaders'), { ...chapterData, lang: currentLanguage() });
-    destroyUsChina();
-    destroyUsChina = mountUsChina(byId('usChina'), { ...chapterData, lang: currentLanguage() });
-    destroyIpo();
-    destroyIpo = mountIpo(byId('capital'), { industry: chapterData.industry, lang: currentLanguage() });
-  }
-  if (globeData) {
-    // The globe renders its copy at mount, so a language switch remounts it.
-    destroyGlobe();
-    destroyGlobe = mountCompanyGlobe(byId('industryGlobe'), { ...globeData, lang: currentLanguage() });
-    destroyGraph();
-    destroyGraph = mountIndustryGraph(byId('industryGraph'), { ...globeData, lang: currentLanguage() });
-  }
+  if (chapterData) { destroyChapters(); mountChapters(); }
   if (!sectorsData) return;
   renderRelationshipReader(sectorsData);
   const asOf = byId('mwAsOf');
@@ -167,11 +170,7 @@ addEventListener('pagehide', (event) => {
   rivalry.destroy();
   destroyStory();
   destroyStage();
-  destroyLeaders();
-  destroyUsChina();
-  destroyIpo();
-  destroyGlobe();
-  destroyGraph();
+  destroyChapters();
   destroyChrome();
   removeEventListener('afflatus-lang', onLanguage);
 });

@@ -49,6 +49,9 @@
 .stage-jump{position:absolute;left:50%;top:calc(100vh - 56px);transform:translateX(-50%);font:600 13px/1 var(--font-sans,system-ui);color:var(--ink)}
 .stage-credit{position:absolute;left:max(20px,calc((100vw - var(--w-module))/2));bottom:12px;margin:0;max-width:60ch;font:12px/1.5 var(--font-sans,system-ui);color:var(--muted)}
 .stage-static{display:none}
+.stage-frame{display:block;width:100%;height:auto;margin:16px 0 0;background:var(--stage)}
+.stage-frame .frame-disc{fill:none;stroke:var(--rule)}.stage-frame text{font:600 13px/1 var(--font-sans,system-ui);fill:var(--ink)}
+.stage:not([data-mode="static"]) .stage-frame{display:none}
 .stage[data-mode="static"]{height:auto}
 .stage[data-mode="static"] .stage-sticky{display:none}
 .stage[data-mode="static"] .stage-cards{position:static;display:grid;gap:24px;padding:48px 20px}
@@ -69,16 +72,19 @@
 .layer-cards button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
 .layer-no{font:400 28px/1 var(--font-serif,Georgia);color:var(--ink)}
 .layer-logos{display:flex;gap:6px}
-.globe-wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px;align-items:start}
+.globe-wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);grid-template-areas:"globe list" "presets list";gap:12px 32px;align-items:start}
+.globe{grid-area:globe}.globe-presets{grid-area:presets}.globe-list{grid-area:list}
 .globe{width:100%;height:auto;touch-action:none}
 .globe-disc{fill:var(--stage)}
-.globe-land{stroke:var(--land);stroke-width:1.2}
+/* The --us-tint / --cn-tint tokens (14% alpha) are fills; as 1.6px dots on --stage they vanished, so the dots take the flag colour at reduced opacity. */
+.globe-land{stroke:var(--land);stroke-width:1.6}
+.globe-land.is-us{stroke:var(--us);stroke-opacity:.45}.globe-land.is-cn{stroke:var(--cn);stroke-opacity:.45}
 .marker circle{fill:var(--paper);stroke-width:2}
 .marker.is-unlisted circle{fill:none;stroke-dasharray:3 2}
 .marker text{font:600 12px var(--font-sans,system-ui);text-anchor:middle;fill:var(--ink)}
 .marker:focus-visible circle{stroke:var(--ink);stroke-width:3}
 .logo-chip-bg{fill:var(--ink)}
-.globe-presets{display:flex;gap:8px;margin-top:12px}
+.globe-presets{display:flex;gap:8px}
 .globe-presets button{font:600 12px/1 var(--font-sans,system-ui);padding:6px 9px;border:1px solid var(--rule);border-radius:999px;background:transparent;color:var(--muted);cursor:pointer}
 .globe-list{list-style:none;padding:0;max-height:560px;overflow:auto;display:grid;gap:16px}
 .globe-list li{display:grid;grid-template-columns:28px 1fr;gap:12px}
@@ -86,7 +92,7 @@
 .logo-fallback{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--brand,var(--ink));color:#fff;font:700 9px var(--font-sans,system-ui)}
 .logo-chip{display:inline-grid;place-items:center;background:var(--ink);border-radius:4px}
 .logo-chip img{max-width:80%;max-height:80%}
-@media (max-width:768px){.layer-cards{grid-template-columns:repeat(2,1fr)}.globe-wrap{grid-template-columns:1fr}}
+@media (max-width:768px){.layer-cards{grid-template-columns:repeat(2,1fr)}.globe-wrap{grid-template-columns:1fr;grid-template-areas:"globe" "presets" "list"}}
 
 /* Relationship network, stories and phone ledger (Task 10, chapter 5). */
 .graph-wrap{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px}
@@ -151,6 +157,8 @@
 .ladder-lane li[data-status="projection"] i{background:repeating-linear-gradient(135deg,var(--us) 0 3px,transparent 3px 7px);outline:1px solid var(--us)}
 .ipo-na{font-weight:400;color:var(--muted)}
 .ipo-bar .status-tag,.ladder-lane .status-tag{justify-self:start}
+.fact-meta{display:grid;gap:4px;justify-items:start}
+.fact-sources{font:12px/1.4 var(--font-sans,system-ui);color:var(--muted)}.fact-sources a{color:inherit}
 @media (max-width:640px){.ipo-bar{grid-template-columns:1fr}.ladder-lane ol{gap:8px}.ladder-lane .status-tag{padding:3px 5px;letter-spacing:.02em}}
 .chapter-head h2{font:400 40px/1.15 var(--font-serif,Georgia);letter-spacing:-.01em;color:var(--ink);text-wrap:balance;margin:12px 0}
 .chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font:400 20px/1.6 var(--font-serif,Georgia);max-width:var(--w-text)}
@@ -158,3 +166,9 @@
 :lang(zh) .chapter-head h2{font-family:var(--font-serif-zh,"Noto Serif SC",serif);font-weight:600}
 @media (max-width:640px){.chapter{margin-top:96px}.chapter-head h2{font-size:30px}.chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font-size:18px}}
 .sectors .megaFoot{--ink-faint:var(--muted)}
+.industrySources summary{font:600 18px/1.4 var(--font-sans,system-ui);color:var(--ink);cursor:pointer}
+.industrySources h3{font:600 15px/1.4 var(--font-sans,system-ui);margin:24px 0 8px}
+.industrySources ol{padding-left:20px;display:grid;gap:6px;font:14px/1.5 var(--font-sans,system-ui);color:var(--text)}
+.industrySources table{width:100%;border-collapse:collapse;font:13px/1.4 var(--font-sans,system-ui)}
+.industrySources :is(th,td){text-align:left;padding:6px 12px 6px 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere}
+.industrySources td:last-child{white-space:nowrap}

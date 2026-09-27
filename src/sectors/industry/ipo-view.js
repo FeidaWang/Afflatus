@@ -3,13 +3,16 @@
 // ranking and the scale (same rule as the US–China chapter).
 import { STATUS_LABEL, renderable } from './industry-core.js';
 import { escapeHtml, translate } from '../content.js';
+import { factSourceLinks } from './sources-view.js';
 
 const known = (v) => typeof v === 'number' && Number.isFinite(v);
 
 export function mountIpo(host, { industry, lang }) {
   if (!host) return () => {};
   const t = (v) => (lang === 'zh' ? v.zh : v.en);
-  const tag = (f) => `<span class="status-tag" data-status="${f.status}">${escapeHtml(t(STATUS_LABEL[f.status]))}</span>`;
+  const byId = Object.fromEntries(industry.sources.map((s) => [s.id, s]));
+  // Status tag + source links as one grid item (the bar row is a fixed four-column grid).
+  const tag = (f) => `<span class="fact-meta"><span class="status-tag" data-status="${f.status}">${escapeHtml(t(STATUS_LABEL[f.status]))}</span><small class="fact-sources">${factSourceLinks(f, byId)}</small></span>`;
   const na = `<b class="ipo-na">${escapeHtml(translate('Not published', '未公布', lang))}</b>`;
   const usd = (b) => {
     if (lang !== 'zh') return `$${b}B`;

@@ -1,24 +1,13 @@
 // src/sectors/industry/globe-view.js
 import { loadGlobeAsset } from '../../showcase/globeAsset.js';
 import { projectXyz } from '../stage/projection.js';
-import { clusterMarkers, companyMarkers } from './globe-layout.js';
+import { clusterMarkers, companyMarkers, xyzRegion } from './globe-layout.js';
 import { LAYERS, LAYER_LABEL } from './industry-core.js';
 import { escapeHtml, translate } from '../content.js';
+import { logoAsset } from './logo.js';
 
 const RING = { US: 'var(--us)', CN: 'var(--cn)' };
 const byId = (list) => Object.fromEntries(list.map((x) => [x.id, x]));
-
-// Which asset to draw for a company's logo (controller ruling 1): prefer the
-// cropped/recoloured web_file; fall back to the original official file, and
-// when that fallback is a dark-background asset, flag it for an ink chip.
-function logoAsset(c, manifest) {
-  const m = manifest[c.id];
-  const initials = escapeHtml((c.ticker ?? c.name.en).slice(0, 2));
-  const brand = m?.brand_color ?? null;
-  if (m?.web_file) return { src: m.web_file, chip: false, initials, brand };
-  if (m?.file) return { src: m.file, chip: m.background === 'dark', initials, brand };
-  return { src: null, chip: false, initials, brand };
-}
 
 export function mountCompanyGlobe(host, { industry, manifest, lang }) {
   if (!host) return () => {};
@@ -28,7 +17,7 @@ export function mountCompanyGlobe(host, { industry, manifest, lang }) {
   const list = host.querySelector('.globe-list');
   const cards = host.querySelector('.layer-cards');
   let view = { lat0: 30, lon0: -100, radius: 300, cx: 320, cy: 320 };
-  let layer = null, land = [], drag = null;
+  let layer = null, land = [], landRegions = [], drag = null;
 
   // HTML logo (layer cards, company list): plain <img> carrying its own
   // fallback data so the delegated error listener below can replace it.
@@ -63,13 +52,14 @@ export function mountCompanyGlobe(host, { industry, manifest, lang }) {
 
   function draw() {
     const clusters = clusterMarkers(companyMarkers(industry.companies, view, { layer }));
-    const dots = [];
-    for (let i = 0; i < land.length; i += 9) {
+    // Every land point, grouped so US and China territory can take their tints (spec §8.3 chapter 4).
+    const dots = { other: [], US: [], CN: [] };
+    for (let i = 0; i < land.length; i += 3) {
       const p = projectXyz([land[i], land[i + 1], land[i + 2]], view);
-      if (p.visible) dots.push(`M${p.x.toFixed(1)} ${p.y.toFixed(1)}h1.2`);
+      if (p.visible) dots[landRegions[i / 3] ?? 'other'].push(`M${p.x.toFixed(1)} ${p.y.toFixed(1)}h1.2`);
     }
     svg.innerHTML = `<circle cx="${view.cx}" cy="${view.cy}" r="${view.radius}" class="globe-disc"/>
-      <path d="${dots.join('')}" class="globe-land"/>
+      <path d="${dots.other.join('')}" class="globe-land"/><path d="${dots.US.join('')}" class="globe-land is-us"/><path d="${dots.CN.join('')}" class="globe-land is-cn"/>
       ${clusters.map((k) => {
         const c = companies[k.ids[0]];
         // A bubble is hollow (not US-listed) only when none of its members is listed.
@@ -147,7 +137,11 @@ export function mountCompanyGlobe(host, { industry, manifest, lang }) {
   cards.addEventListener('click', onLayer);
   presets.forEach((b) => b.addEventListener('click', onPreset));
   host.addEventListener('error', onAssetError, true);
-  loadGlobeAsset().then((g) => { land = g.points; draw(); }).catch(() => draw());
+  loadGlobeAsset().then((g) => {
+    land = g.points;
+    landRegions = Array.from({ length: land.length / 3 }, (_, k) => xyzRegion([land[3 * k], land[3 * k + 1], land[3 * k + 2]]));
+    draw();
+  }).catch(() => draw());
   draw(); show(industry.companies.filter((c) => c.tier === 1).map((c) => c.id));
 
   return () => {
