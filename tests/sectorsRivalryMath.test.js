@@ -52,4 +52,14 @@ describe('divergingShares', () => {
   it('keeps a 50/50 split when both values are zero', () => {
     expect(divergingShares([{ id: 'z', us: 0, cn: 0, better: 'higher' }])[0].usShare).toBe(0.5);
   });
+  it('names no leader and no shares when either side is missing', () => {
+    const [a, b] = divergingShares([
+      { id: 'no_cn', us: 58, cn: null, better: 'higher' },
+      { id: 'no_us', us: null, cn: 1.2, better: 'lower' },
+    ]);
+    for (const r of [a, b]) {
+      expect(r.leader).toBeNull(); expect(r.usShare).toBeNull(); expect(r.cnShare).toBeNull();
+    }
+    expect(a.us).toBe(58); expect(b.cn).toBe(1.2);
+  });
 });

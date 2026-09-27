@@ -36,9 +36,14 @@ export function snapshotDims(snapshot) {
   ];
 }
 
-/** Split each dimension into US/CN shares of the pair total and name the leader by `better`. */
+/**
+ * Split each dimension into US/CN shares of the pair total and name the leader by `better`.
+ * When either side is unpublished (null / not finite), `leader`, `usShare` and `cnShare` are null:
+ * the view shows "Not published" and nobody is counted as leading.
+ */
 export function divergingShares(dims) {
   return dims.map((d) => {
+    if (!Number.isFinite(d.us) || !Number.isFinite(d.cn)) return { ...d, usShare: null, cnShare: null, leader: null };
     const total = d.us + d.cn;
     const usShare = total > 0 ? d.us / total : 0.5;
     const leader = d.us === d.cn ? 'tie' : (d.us > d.cn) === (d.better !== 'lower') ? 'US' : 'CN';
