@@ -17,3 +17,40 @@
 .sectors .status-tag[data-status="lab_claimed"]{color:var(--ink)}
 .sectors .edge-coop{stroke-width:1.5;fill:none}
 .sectors .edge-compete{stroke-width:1.5;fill:none;stroke-dasharray:6 4}
+
+/* Sticky dot stage (Task 8, spec §2.1). Live mode: 6 screens of scroll over one sticky canvas.
+   Static mode (reduced motion / no canvas): the six cards stack as plain text. */
+.stage{position:relative;background:var(--stage);height:calc(100vh * 6)}
+.stage-sticky{position:sticky;top:0;height:100vh}
+.stage-canvas{width:100%;height:100%;display:block}
+.stage-cards{position:absolute;inset:0;pointer-events:none}
+.stage-card{position:absolute;left:max(20px,calc((100vw - var(--w-module))/2));top:calc(var(--i,0) * 100vh + 22vh);
+  max-width:440px;background:var(--paper);padding:24px;border:1px solid var(--rule);pointer-events:auto;transition:opacity .4s}
+.stage[data-mode="live"] .stage-card{opacity:.35}
+.stage[data-mode="live"] .stage-card[data-active]{opacity:1}
+.stage-card:nth-child(1){--i:0}.stage-card:nth-child(2){--i:1}.stage-card:nth-child(3){--i:2}
+.stage-card:nth-child(4){--i:3}.stage-card:nth-child(5){--i:4}.stage-card:nth-child(6){--i:5}
+.stage-card h1,.stage-card h2{margin:0 0 12px;color:var(--ink);font-size:clamp(24px,2.6vw,34px);line-height:1.15}
+.stage-card h1{font-size:clamp(30px,3.6vw,48px)}
+.stage-card p{margin:0 0 12px;color:var(--text);font-size:15px;line-height:1.6}
+.stage-card .stage-kicker{font:600 11px/1.4 var(--font-sans,system-ui);letter-spacing:.08em;color:var(--muted)}
+.stage-excerpt-controls{display:flex;gap:8px;margin-top:16px}
+.stage-excerpt-controls button{font:600 12px/1 var(--font-sans,system-ui);padding:6px 9px;border:1px solid var(--rule);border-radius:999px;background:transparent;color:var(--muted);cursor:pointer}
+.stage-excerpt-controls button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);background:var(--mark)}
+.stage-excerpts{min-height:52px;border-left:2px solid var(--rule);padding-left:14px;margin-top:14px}
+.stage-excerpts p{margin:0;color:var(--ink)}
+.stage[data-mode="live"] .stage-excerpts p:not([hidden]){animation:stage-type 1.4s steps(48,end) both}
+@keyframes stage-type{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.stage-legend{position:absolute;right:24px;bottom:24px;margin:0;font:500 13px/1.4 var(--font-sans,system-ui);color:var(--muted)}
+.stage-jump{position:absolute;left:50%;top:calc(100vh - 56px);transform:translateX(-50%);font:600 13px/1 var(--font-sans,system-ui);color:var(--ink)}
+.stage-credit{position:absolute;left:max(20px,calc((100vw - var(--w-module))/2));bottom:12px;margin:0;max-width:60ch;font:12px/1.5 var(--font-sans,system-ui);color:var(--muted)}
+.stage-static{display:none}
+.stage[data-mode="static"]{height:auto}
+.stage[data-mode="static"] .stage-sticky{display:none}
+.stage[data-mode="static"] .stage-cards{position:static;display:grid;gap:24px;padding:48px 20px}
+.stage[data-mode="static"] .stage-card{position:static;opacity:1;max-width:var(--w-text);margin:0 auto}
+.stage[data-mode="static"] .stage-jump,.stage[data-mode="static"] .stage-credit{position:static;display:block;transform:none;margin:0 auto;padding:0 20px 24px;max-width:var(--w-text)}
+@media (max-width:899px){.stage{height:calc(100vh * 6 + 96px)}
+  .stage-card{left:20px;right:20px;max-width:none;top:calc(var(--i,0) * 100vh + 52vh)}
+  .stage-legend{right:16px;top:60px;bottom:auto}
+  .stage-jump{top:calc(52vh - 36px);left:auto;right:20px;transform:none}}

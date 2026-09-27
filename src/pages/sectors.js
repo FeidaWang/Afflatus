@@ -10,7 +10,7 @@ import { createSectorsDataController } from '../sectors/dataController.js';
 import { initSectorsPageChrome } from '../sectors/pageChromeController.js';
 import { initSectorsRivalryController } from '../sectors/rivalryController.js';
 import { initSectorsStoryController } from '../sectors/storyController.js';
-import { mountSectorsEarth } from '../sectors/earthIntro.js';
+import { mountStage } from '../sectors/stage/stage.js';
 import { mountEditorialBoard } from '../sectors/editorialBoard.js';
 import { mountSourceWall } from '../sectors/sourceWall.js';
 import { mountGeographyEditorial } from '../sectors/geographyEditorial.js';
@@ -21,10 +21,24 @@ let frontier = null;
 let editorialBoard = null;
 let sourceWall = null;
 let geography = null;
+let destroyStage = () => {};
 const frontierAbort = new AbortController();
 
 const byId = (id) => document.getElementById(id);
-const destroyEarth = mountSectorsEarth(byId('sectorsEarth'));
+
+// The dot stage needs both the frontier snapshot and the industry dataset; until then its
+// cards render as static text (no data-mode), and on failure they simply stay that way.
+if (byId('sectorsStage')) {
+  Promise.all([
+    fetchJson('sectors-frontier-2026-09-27', { signal: frontierAbort.signal }),
+    fetchJson('sectors-industry-2026-09-27', { signal: frontierAbort.signal }),
+  ])
+    .then(([snapshot, industry]) => {
+      if (destroyed) return;
+      destroyStage = mountStage(byId('sectorsStage'), { snapshot, industry });
+    })
+    .catch(() => {});
+}
 
 if (byId('sectorsFrontier')) {
   fetchJson('sectors-frontier-2026-09-27', { signal: frontierAbort.signal })
@@ -120,7 +134,7 @@ addEventListener('pagehide', (event) => {
 
   rivalry.destroy();
   destroyStory();
-  destroyEarth();
+  destroyStage();
   destroyChrome();
   removeEventListener('afflatus-lang', onLanguage);
 });

@@ -368,28 +368,49 @@
 <main class="shell sectors">
 
 
-<section class="sectors-earth" id="sectorsEarth" data-pending="true" aria-label="Interactive Earth industry story" data-aria-en="Interactive Earth industry story" data-aria-zh="交互式地球产业叙事">
-  <div class="departure-viewport">
-    <div class="earth-stage" aria-hidden="true"><img class="earth-poster" src="/assets/globe/departure.svg" alt=""></div>
-    <div class="earth-story">
-      <div class="earth-panel" data-story-phase="0">
-        <p class="earth-kicker" data-en="AFFLATUS / THE AI INDUSTRY" data-zh="AFFLATUS / AI 产业观察">AFFLATUS / THE AI INDUSTRY</p>
-        <h1 data-en="Where does AI's value go?" data-zh="AI 的价值，流向哪里？">Where does AI's value go?</h1>
-        <p class="earth-lede" data-en="A field guide to the models, infrastructure and companies behind the AI economy. Follow the evidence from capability to deployment, and from deployment to value." data-zh="从模型能力，到部署所需的基础设施，再到价值可能落向的公司——沿证据阅读 AI 产业。">A field guide to the models, infrastructure and companies behind the AI economy. Follow the evidence from capability to deployment, and from deployment to value.</p>
-        <div class="earth-excerpt-controls" role="group" aria-label="Choose a research question" data-aria-en="Choose a research question" data-aria-zh="选择研究问题"><button type="button" data-excerpt-select="0" aria-pressed="true" aria-label="Question 1" data-aria-en="Question 1" data-aria-zh="问题 1">01</button><button type="button" data-excerpt-select="1" aria-pressed="false" aria-label="Question 2" data-aria-en="Question 2" data-aria-zh="问题 2">02</button><button type="button" data-excerpt-select="2" aria-pressed="false" aria-label="Question 3" data-aria-en="Question 3" data-aria-zh="问题 3">03</button></div>
-        <div class="earth-excerpts" aria-live="polite">
-          <p data-excerpt data-en="A benchmark measures one model configuration, not an entire company." data-zh="基准衡量一种模型配置，不是整家公司。">A benchmark measures one model configuration, not an entire company.</p>
-          <p data-excerpt hidden data-en="Lower cost can expand usage while changing revenue per task." data-zh="成本下降可能扩大使用量，也会改变每项任务的收入。">Lower cost can expand usage while changing revenue per task.</p>
-          <p data-excerpt hidden data-en="Different labs can depend on the same compute and memory suppliers." data-zh="不同实验室，可能依赖同一批算力与存储供应商。">Different labs can depend on the same compute and memory suppliers.</p>
-        </div>
-
-      </div>
-      <div class="earth-panel" data-story-phase="1"><p class="earth-kicker" data-en="01 / CAPABILITY" data-zh="01 / 模型能力">01 / CAPABILITY</p><h2 data-en="The same score can hide different strengths." data-zh="相同总分，隐藏着不同长处。">The same score can hide different strengths.</h2><p data-en="Terminal work, research and long-context reasoning produce different rankings. Select a workload to see what changes." data-zh="终端任务、科研工作与长上下文推理，会给出不同的排序。选择任务，观察差异。">Terminal work, research and long-context reasoning produce different rankings. Select a workload to see what changes.</p><a href="#frontierEditorial" data-en="Explore the model board ↓" data-zh="探索模型看板 ↓">Explore the model board ↓</a></div>
-      <div class="earth-panel" data-story-phase="2"><p class="earth-kicker" data-en="02 / DEPENDENCIES" data-zh="02 / 产业依赖">02 / DEPENDENCIES</p><h2 data-en="Follow the system behind the model." data-zh="继续追踪模型背后的系统。">Follow the system behind the model.</h2><p data-en="Compute, memory, distribution and ownership connect across borders. Read each relationship by type, date and evidence." data-zh="算力、存储、分发与所有权跨越地域相连。每条关系都应按类型、日期和证据阅读。">Compute, memory, distribution and ownership connect across borders. Read each relationship by type, date and evidence.</p><a href="#supply" data-en="Trace the supply chain ↓" data-zh="追踪供应链 ↓">Trace the supply chain ↓</a></div>
-    </div>
-    <a class="earth-jump" href="#editorialIntro" data-en="Jump to story ↓" data-zh="跳至正文 ↓">Jump to story ↓</a>
-    <p class="earth-credit" data-en="Illustrative Earth geometry: Natural Earth (public domain). Dots do not represent respondents or company locations." data-zh="地球示意几何：Natural Earth（公有领域）。点阵不代表受访者或公司地点。">Illustrative Earth geometry: Natural Earth (public domain). Dots do not represent respondents or company locations.</p>
+<section class="stage" id="sectorsStage" aria-label="Scroll story: from models to value" data-aria-en="Scroll story: from models to value" data-aria-zh="滚动叙事：从模型到价值">
+  <div class="stage-sticky">
+    <canvas class="stage-canvas" aria-hidden="true"></canvas>
+    <p class="stage-legend" data-scene-legend="obs" data-en="Each dot is one observation" data-zh="每个点 = 一条观测">Each dot is one observation</p>
+    <p class="stage-legend" data-scene-legend="entity" hidden data-en="Each dot is one model or company" data-zh="每个点 = 一个模型或公司">Each dot is one model or company</p>
   </div>
+  <div class="stage-cards">
+    <article class="stage-card" data-scene="0">
+      <p class="stage-kicker" data-en="AFFLATUS / THE AI INDUSTRY" data-zh="AFFLATUS / AI 产业观察">AFFLATUS / THE AI INDUSTRY</p>
+      <h1 data-en="Where does AI's value go?" data-zh="AI 的价值，流向哪里？">Where does AI's value go?</h1>
+      <p class="stage-lede" data-en="A field guide to the models, infrastructure and companies behind the AI economy. Follow the evidence from capability to deployment, and from deployment to value." data-zh="从模型能力，到部署所需的基础设施，再到价值可能落向的公司——沿证据阅读 AI 产业。">A field guide to the models, infrastructure and companies behind the AI economy. Follow the evidence from capability to deployment, and from deployment to value.</p>
+      <div class="stage-excerpt-controls" role="group" aria-label="Choose a research question" data-aria-en="Choose a research question" data-aria-zh="选择研究问题"><button type="button" data-excerpt-select="0" aria-pressed="true" aria-label="Question 1" data-aria-en="Question 1" data-aria-zh="问题 1">01</button><button type="button" data-excerpt-select="1" aria-pressed="false" aria-label="Question 2" data-aria-en="Question 2" data-aria-zh="问题 2">02</button><button type="button" data-excerpt-select="2" aria-pressed="false" aria-label="Question 3" data-aria-en="Question 3" data-aria-zh="问题 3">03</button></div>
+      <div class="stage-excerpts" aria-live="polite">
+        <p data-excerpt data-en="A benchmark measures one model configuration, not an entire company." data-zh="基准衡量一种模型配置，不是整家公司。">A benchmark measures one model configuration, not an entire company.</p>
+        <p data-excerpt hidden data-en="Lower cost can expand usage while changing revenue per task." data-zh="成本下降可能扩大使用量，也会改变每项任务的收入。">Lower cost can expand usage while changing revenue per task.</p>
+        <p data-excerpt hidden data-en="Different labs can depend on the same compute and memory suppliers." data-zh="不同实验室，可能依赖同一批算力与存储供应商。">Different labs can depend on the same compute and memory suppliers.</p>
+      </div>
+    </article>
+    <article class="stage-card" data-scene="1">
+      <p class="stage-kicker" data-en="02 / GEOGRAPHY OF THE SELECTED COHORT" data-zh="02 / 选定样本的地域分布">02 / GEOGRAPHY OF THE SELECTED COHORT</p>
+      <h2 data-en="Two ecosystems, one connected frontier." data-zh="两套生态，共同构成这条前沿。">Two ecosystems, one connected frontier.</h2>
+      <p data-en="The selected snapshot contains configurations from US- and China-based labs. Use the map to inspect the two groups; markers show lab origin at country level, not exact offices, servers or users." data-zh="这份选定快照包含美国与中国实验室的模型配置。地图标记的是国家层面的开发地归属，不是精确的办公室、服务器或用户位置。">The selected snapshot contains configurations from US- and China-based labs. Use the map to inspect the two groups; markers show lab origin at country level, not exact offices, servers or users.</p>
+    </article>
+    <article class="stage-card" data-scene="2">
+      <h2 data-en="The same headline score can hide different strengths." data-zh="相同总分，可能隐藏完全不同的长处。">The same headline score can hide different strengths.</h2>
+      <p data-en="In the selected current Artificial Analysis comparison, Astra max and Fable 5.1 max share a displayed overall score of 53. Their ordering changes across terminal work, scientific coding and long-context reasoning. The useful question is which configuration clears a particular task requirement at an acceptable total cost." data-zh="在本次选取的 Artificial Analysis 当前比较中，Astra max 与 Fable 5.1 max 的显示总分同为 53；但终端任务、科学代码与长上下文推理的排序并不相同。真正有用的问题，是哪种配置能够以可接受的总成本达到特定任务要求。">In the selected current Artificial Analysis comparison, Astra max and Fable 5.1 max share a displayed overall score of 53. Their ordering changes across terminal work, scientific coding and long-context reasoning. The useful question is which configuration clears a particular task requirement at an acceptable total cost.</p>
+    </article>
+    <article class="stage-card" data-scene="3">
+      <h2 data-en="One frontier. Many different strengths." data-zh="同一条前沿，不同的能力长处。">One frontier. Many different strengths.</h2>
+      <p data-en="Compare measured configurations, not brands or slogans. This is a selected public-source snapshot, not a live feed, a global model census or an independent rerun." data-zh="比较经过标注的模型配置，而不是品牌或口号。这是选定公开来源的快照，并非实时数据、全球模型普查或本站独立复测。">Compare measured configurations, not brands or slogans. This is a selected public-source snapshot, not a live feed, a global model census or an independent rerun.</p>
+    </article>
+    <article class="stage-card" data-scene="4">
+      <h2 data-en="Different models can depend on overlapping infrastructure." data-zh="不同模型，可能依赖相互重叠的基础设施。">Different models can depend on overlapping infrastructure.</h2>
+      <p data-en="Read every relationship by type and date. A compute-service contract, a memory-supply agreement, an investment and a chip-design partnership are different facts. Published infrastructure plans are not the same as delivered capacity, and an edge in a graph is not a revenue share." data-zh="按类型和日期读取每一条关系。算力服务合同、存储供应协议、股权投资和芯片设计合作，是不同事实。公开建设计划不等于已交付产能；关系图的一条边，也不代表收入份额。">Read every relationship by type and date. A compute-service contract, a memory-supply agreement, an investment and a chip-design partnership are different facts. Published infrastructure plans are not the same as delivered capacity, and an edge in a graph is not a revenue share.</p>
+    </article>
+    <article class="stage-card" data-scene="5">
+      <h2 data-en="A model is not an investment instrument." data-zh="模型不是投资标的。">A model is not an investment instrument.</h2>
+      <p data-en="Map model developers to legal entities, then to verifiable listed instruments and material business exposures. Broadcom, Micron, Alibaba and Xiaomi illustrate different layers of the chain in this seed dataset." data-zh="先把模型开发者映射到法律主体，再映射到可核对的上市证券与实质业务敞口。本次种子数据中的博通、美光、阿里巴巴与小米，分别呈现链条的不同层次。">Map model developers to legal entities, then to verifiable listed instruments and material business exposures. Broadcom, Micron, Alibaba and Xiaomi illustrate different layers of the chain in this seed dataset.</p>
+    </article>
+  </div>
+  <figure class="stage-static" aria-hidden="true"></figure>
+  <a class="stage-jump" href="#editorialIntro" data-en="Jump to story ↓" data-zh="跳至正文 ↓">Jump to story ↓</a>
+  <p class="stage-credit" data-en="Earth geometry: Natural Earth (public domain). Model dots are placed at country level, not at offices or servers." data-zh="地球几何：Natural Earth（公有领域）。模型点按国家层面放置，不代表办公室或服务器位置。">Earth geometry: Natural Earth (public domain). Model dots are placed at country level, not at offices or servers.</p>
 </section>
 <section class="editorialIntro" id="editorialIntro" aria-labelledby="editorialIntroTitle">
   <p class="editorialEyebrow" data-en="THE RESEARCH / 23 SEPTEMBER 2026" data-zh="研究快照 / 2026 年 9 月 23 日">THE RESEARCH / 23 SEPTEMBER 2026</p>
