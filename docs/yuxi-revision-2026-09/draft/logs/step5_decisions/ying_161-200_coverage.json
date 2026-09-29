@@ -1,0 +1,362 @@
+[
+ {
+  "row": 1876,
+  "ch": 161,
+  "status": "not-duplicate",
+  "note": "时代/年数与明幕、第160/165章冲突，属事实统一"
+ },
+ {
+  "row": 1885,
+  "ch": 162,
+  "status": "not-duplicate",
+  "note": "楼层差数字（24层写成40层）"
+ },
+ {
+  "row": 1898,
+  "ch": 163,
+  "status": "handled",
+  "note": "删b87，留b88；体征错误属事实工序"
+ },
+ {
+  "row": 1900,
+  "ch": 163,
+  "status": "handled",
+  "note": "重复诊断删b49–50、留b36–37；清单要求的判断→风墙→汽笛顺序调整属时序工序，未做"
+ },
+ {
+  "row": 1911,
+  "ch": 164,
+  "status": "handled",
+  "note": "删b110–115，留第165章实际执行的b116–122版"
+ },
+ {
+  "row": 1915,
+  "ch": 164,
+  "status": "not-duplicate",
+  "note": "铜丝来源（机修间/洗漱间）连续性"
+ },
+ {
+  "row": 1918,
+  "ch": 164,
+  "status": "not-duplicate",
+  "note": "银簪/银针道具名不一"
+ },
+ {
+  "row": 1921,
+  "ch": 165,
+  "status": "handled",
+  "note": "回敲管道两版，留b52–56，删b57–69"
+ },
+ {
+  "row": 1922,
+  "ch": 165,
+  "status": "handled",
+  "note": "潜入三版合为一版（留b81–82、b89–105），前后多版反应/返回也去重，只剩900秒一套计时；保留版内“不到三分钟/880秒”数字仍待统一"
+ },
+ {
+  "row": 1924,
+  "ch": 165,
+  "status": "needs-author",
+  "note": "暗号来历b39–42与b44–47两种讲法，含义与第161章冲突；须作者先定补明幕伏笔还是改成“第一次用”，再决定留哪版"
+ },
+ {
+  "row": 1927,
+  "ch": 165,
+  "status": "not-duplicate",
+  "note": "“四十层”应为二十四层，数字"
+ },
+ {
+  "row": 1934,
+  "ch": 166,
+  "status": "handled",
+  "note": "删b72"
+ },
+ {
+  "row": 1952,
+  "ch": 167,
+  "status": "not-duplicate",
+  "note": "两年/两个月时长不一"
+ },
+ {
+  "row": 1953,
+  "ch": 167,
+  "status": "not-duplicate",
+  "note": "血糖数值与药汤对象，事实"
+ },
+ {
+  "row": 1958,
+  "ch": 167,
+  "status": "not-duplicate",
+  "note": "背景说明过长需压缩改写，非重复稿；且本章含原167半勺白糖移植段落"
+ },
+ {
+  "row": 1964,
+  "ch": 168,
+  "status": "handled",
+  "note": "删b76"
+ },
+ {
+  "row": 1979,
+  "ch": 169,
+  "status": "handled",
+  "note": "删b95–97，以b94作结"
+ },
+ {
+  "row": 1992,
+  "ch": 170,
+  "status": "handled",
+  "note": "删复述块b4–14，留b3、b15–16"
+ },
+ {
+  "row": 2015,
+  "ch": 172,
+  "status": "not-duplicate",
+  "note": "术前镇痛倒叙位置，时序调整；同章老吴烫伤两遍另作一组处理（删b62）"
+ },
+ {
+  "row": 2022,
+  "ch": 173,
+  "status": "handled",
+  "note": "本章留b47一段数据+b82影像，删b49–53、b73；与第171/174章的重复记入跨章"
+ },
+ {
+  "row": 2034,
+  "ch": 174,
+  "status": "handled",
+  "note": "跨章重复（第174章重新解密、重看、重哭），只记录在cross_chapter，未删"
+ },
+ {
+  "row": 2038,
+  "ch": 174,
+  "status": "handled",
+  "note": "删b69–72"
+ },
+ {
+  "row": 2047,
+  "ch": 175,
+  "status": "handled",
+  "note": "删b74–78，留b68–73和b79"
+ },
+ {
+  "row": 2049,
+  "ch": 175,
+  "status": "handled",
+  "note": "收束留b80–86、b89，删b87–88、b90–98"
+ },
+ {
+  "row": 2078,
+  "ch": 177,
+  "status": "not-duplicate",
+  "note": "白糖誓言独白过长需改写压缩，非重复稿；属原177移植段落，未动"
+ },
+ {
+  "row": 2098,
+  "ch": 179,
+  "status": "not-duplicate",
+  "note": "缺少老陈组织负三层的铺垫，需补写，非重复"
+ },
+ {
+  "row": 2101,
+  "ch": 180,
+  "status": "handled",
+  "note": "整段删除b58–68"
+ },
+ {
+  "row": 2102,
+  "ch": 180,
+  "status": "handled",
+  "note": "选第二种起源，删b71–72"
+ },
+ {
+  "row": 2106,
+  "ch": 180,
+  "status": "not-duplicate",
+  "note": "同章时间跨度三种说法，数字统一"
+ },
+ {
+  "row": 2114,
+  "ch": 181,
+  "status": "handled",
+  "note": "删凯恩版b64–66，会议合成一场；b59–60焊门令与第182章表决重复记入跨章"
+ },
+ {
+  "row": 2121,
+  "ch": 181,
+  "status": "handled",
+  "note": "删b46，裁掉b51末句"
+ },
+ {
+  "row": 2123,
+  "ch": 182,
+  "status": "handled",
+  "note": "出发冲门只留一版：删b77–78、b83–84、b86–87"
+ },
+ {
+  "row": 2124,
+  "ch": 182,
+  "status": "handled",
+  "note": "删b24、b29–30、b34"
+ },
+ {
+  "row": 2132,
+  "ch": 183,
+  "status": "handled",
+  "note": "删b17、b18–19；宪兵砸窗段（b26–28）挪到转锁之前属时序调整，未做"
+ },
+ {
+  "row": 2133,
+  "ch": 183,
+  "status": "handled",
+  "note": "删b41–43，留b39与铁蛋一例"
+ },
+ {
+  "row": 2134,
+  "ch": 183,
+  "status": "handled",
+  "note": "重逢留b75–80，删b67–69、b73–74；另把插在中间的一版简报b70–72删去"
+ },
+ {
+  "row": 2135,
+  "ch": 183,
+  "status": "handled",
+  "note": "删b90–91"
+ },
+ {
+  "row": 2162,
+  "ch": 185,
+  "status": "not-duplicate",
+  "note": "花木与地点事实（桉树花/悬铃木）"
+ },
+ {
+  "row": 2177,
+  "ch": 186,
+  "status": "not-duplicate",
+  "note": "泰晤士河闪回与已知幕不符，事实"
+ },
+ {
+  "row": 2182,
+  "ch": 187,
+  "status": "not-duplicate",
+  "note": "楼层编号体系混乱，事实"
+ },
+ {
+  "row": 2186,
+  "ch": 187,
+  "status": "not-duplicate",
+  "note": "兵团编制说明需压缩改写，非重复稿"
+ },
+ {
+  "row": 2198,
+  "ch": 188,
+  "status": "not-duplicate",
+  "note": "老陈断腿/独眼人物连续性"
+ },
+ {
+  "row": 2199,
+  "ch": 188,
+  "status": "not-duplicate",
+  "note": "“数字幽灵的围剿”、展览馆钟声无出处，事实核对"
+ },
+ {
+  "row": 2209,
+  "ch": 189,
+  "status": "not-duplicate",
+  "note": "通信兵提前说出后续情节、倒计时数字，时序/数字"
+ },
+ {
+  "row": 2212,
+  "ch": 189,
+  "status": "not-duplicate",
+  "note": "横穿冰原经历无出处，事实"
+ },
+ {
+  "row": 2214,
+  "ch": 189,
+  "status": "handled",
+  "note": "狂欢段删b50–53、b56，留b48、b49（另留非狂欢的b54烫伤膏、b55白糖甜汤）；与第185/187章同套路记入跨章"
+ },
+ {
+  "row": 2219,
+  "ch": 190,
+  "status": "not-duplicate",
+  "note": "“四百年前的墨尔本”等无出处前史，事实"
+ },
+ {
+  "row": 2220,
+  "ch": 190,
+  "status": "handled",
+  "note": "与第191章跨章重演，只记录在cross_chapter，未删（清单指向删第190章后半）"
+ },
+ {
+  "row": 2225,
+  "ch": 191,
+  "status": "handled",
+  "note": "同2220，跨章记录，未删"
+ },
+ {
+  "row": 2236,
+  "ch": 192,
+  "status": "not-duplicate",
+  "note": "“五十年”时长错误，事实"
+ },
+ {
+  "row": 2239,
+  "ch": 192,
+  "status": "not-duplicate",
+  "note": "学徒“小林”与护工小林重名，人名"
+ },
+ {
+  "row": 2241,
+  "ch": 192,
+  "status": "not-duplicate",
+  "note": "墨尔本皇家展览馆等虚构前史，事实"
+ },
+ {
+  "row": 2242,
+  "ch": 192,
+  "status": "not-duplicate",
+  "note": "三十/二十/二十四小时时长不一，数字"
+ },
+ {
+  "row": 2243,
+  "ch": 192,
+  "status": "not-duplicate",
+  "note": "切断馈线的理由前后不一，事实"
+ },
+ {
+  "row": 2244,
+  "ch": 192,
+  "status": "not-duplicate",
+  "note": "争吵戏参数过多、缺第186章死亡记忆，人物改写"
+ },
+ {
+  "row": 2278,
+  "ch": 195,
+  "status": "handled",
+  "note": "删b11、b32、b34–35，裁掉b10/b12/b13“核心判定”和b15“系统附加评语”；与第194章重复记入跨章"
+ },
+ {
+  "row": 2297,
+  "ch": 197,
+  "status": "not-duplicate",
+  "note": "云吞面描写过长需压缩，非重复稿"
+ },
+ {
+  "row": 2315,
+  "ch": 199,
+  "status": "not-duplicate",
+  "note": "采购清单过长需压缩，非重复稿"
+ },
+ {
+  "row": 2326,
+  "ch": 200,
+  "status": "not-duplicate",
+  "note": "续作钩子空洞宏大需压缩改写，非重复稿"
+ },
+ {
+  "row": 2327,
+  "ch": 200,
+  "status": "handled",
+  "note": "删b55–57三段总结，以b54、b58具体画面收尾"
+ }
+]
