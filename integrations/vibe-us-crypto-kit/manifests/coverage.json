@@ -4532,6 +4532,7 @@
         "GET"
       ],
       "name": "get_run_code",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4541,6 +4542,7 @@
         "GET"
       ],
       "name": "get_run_pine",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4550,6 +4552,7 @@
         "GET"
       ],
       "name": "get_run_factor",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4559,6 +4562,7 @@
         "GET"
       ],
       "name": "get_run_result",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4568,6 +4572,7 @@
         "GET"
       ],
       "name": "get_run_positions_sectors",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4577,6 +4582,7 @@
         "GET"
       ],
       "name": "list_runs",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4586,6 +4592,7 @@
         "GET"
       ],
       "name": "get_run_attribution",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4595,6 +4602,7 @@
         "POST"
       ],
       "name": "create_session",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4604,6 +4612,7 @@
         "GET"
       ],
       "name": "list_sessions",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4613,6 +4622,7 @@
         "GET"
       ],
       "name": "get_session",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4622,6 +4632,7 @@
         "POST"
       ],
       "name": "create_session_goal",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4631,6 +4642,7 @@
         "GET"
       ],
       "name": "get_session_goal",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4640,6 +4652,7 @@
         "PATCH"
       ],
       "name": "update_session_goal",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4649,6 +4662,7 @@
         "POST"
       ],
       "name": "add_session_goal_evidence",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4658,6 +4672,7 @@
         "PATCH"
       ],
       "name": "update_session_goal_status",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4667,6 +4682,7 @@
         "DELETE"
       ],
       "name": "delete_session",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4676,6 +4692,7 @@
         "PATCH"
       ],
       "name": "update_session",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4685,6 +4702,7 @@
         "POST"
       ],
       "name": "auto_title_session",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4694,6 +4712,7 @@
         "POST"
       ],
       "name": "send_message",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4703,6 +4722,7 @@
         "POST"
       ],
       "name": "cancel_session",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4712,6 +4732,7 @@
         "GET"
       ],
       "name": "get_messages",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4721,6 +4742,7 @@
         "GET"
       ],
       "name": "session_events",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4730,6 +4752,7 @@
         "GET"
       ],
       "name": "liveness_probe",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4739,6 +4762,7 @@
         "GET"
       ],
       "name": "health_check",
+      "type": "APIRoute",
       "decision": "retain",
       "reason": "Shared observability/catalog concept; bridge exposes its own restricted surface, not this upstream route."
     },
@@ -4748,6 +4772,7 @@
         "GET"
       ],
       "name": "readiness_probe",
+      "type": "APIRoute",
       "decision": "retain",
       "reason": "Shared observability/catalog concept; bridge exposes its own restricted surface, not this upstream route."
     },
@@ -4757,6 +4782,7 @@
         "GET"
       ],
       "name": "get_correlation_matrix",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -4766,6 +4792,7 @@
         "GET"
       ],
       "name": "get_correlation_regime",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -4775,6 +4802,7 @@
         "POST"
       ],
       "name": "shutdown_local_api",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4784,6 +4812,7 @@
         "GET"
       ],
       "name": "list_skills",
+      "type": "APIRoute",
       "decision": "retain",
       "reason": "Shared observability/catalog concept; bridge exposes its own restricted surface, not this upstream route."
     },
@@ -4793,6 +4822,7 @@
         "GET"
       ],
       "name": "api_info",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Upstream API documentation/catalog is an audit artifact, not a website proxy."
     },
@@ -4802,6 +4832,7 @@
         "GET"
       ],
       "name": "openapi_schema",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Upstream API documentation/catalog is an audit artifact, not a website proxy."
     },
@@ -4811,6 +4842,7 @@
         "GET"
       ],
       "name": "swagger_ui",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Upstream API documentation/catalog is an audit artifact, not a website proxy."
     },
@@ -4820,6 +4852,7 @@
         "GET"
       ],
       "name": "redoc_ui",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Upstream API documentation/catalog is an audit artifact, not a website proxy."
     },
@@ -4829,6 +4862,7 @@
         "GET"
       ],
       "name": "get_llm_settings",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4838,6 +4872,7 @@
         "PUT"
       ],
       "name": "update_llm_settings",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4847,6 +4882,7 @@
         "POST"
       ],
       "name": "list_llm_models",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4856,6 +4892,7 @@
         "GET"
       ],
       "name": "get_data_source_settings",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4865,6 +4902,7 @@
         "PUT"
       ],
       "name": "update_data_source_settings",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4874,6 +4912,7 @@
         "GET"
       ],
       "name": "get_generated_report",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4883,6 +4922,7 @@
         "GET"
       ],
       "name": "get_shadow_report",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4892,6 +4932,7 @@
         "POST"
       ],
       "name": "upload_file",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4901,6 +4942,7 @@
         "GET"
       ],
       "name": "channels_status",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4910,6 +4952,7 @@
         "POST"
       ],
       "name": "channels_start",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4919,6 +4962,7 @@
         "POST"
       ],
       "name": "channels_stop",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4928,6 +4972,7 @@
         "POST"
       ],
       "name": "channels_pairing_command",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4937,6 +4982,7 @@
         "GET"
       ],
       "name": "get_channels_config",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4946,6 +4992,7 @@
         "PUT"
       ],
       "name": "put_channel_config",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4955,6 +5002,7 @@
         "POST"
       ],
       "name": "post_channel_test",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -4964,6 +5012,7 @@
         "GET"
       ],
       "name": "list_swarm_presets",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4973,6 +5022,7 @@
         "POST"
       ],
       "name": "create_swarm_run",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4982,6 +5032,7 @@
         "GET"
       ],
       "name": "list_swarm_runs",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -4991,6 +5042,7 @@
         "GET"
       ],
       "name": "get_swarm_run",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5000,6 +5052,7 @@
         "GET"
       ],
       "name": "swarm_run_events",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5009,6 +5062,7 @@
         "POST"
       ],
       "name": "cancel_swarm_run",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5018,6 +5072,7 @@
         "POST"
       ],
       "name": "retry_swarm_run",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5027,6 +5082,7 @@
         "POST"
       ],
       "name": "commit_mandate_endpoint",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5036,6 +5092,7 @@
         "GET"
       ],
       "name": "list_live_accounts_endpoint",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5045,6 +5102,7 @@
         "POST"
       ],
       "name": "halt_live_endpoint",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5054,6 +5112,7 @@
         "POST"
       ],
       "name": "resume_live_endpoint",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5063,6 +5122,7 @@
         "GET"
       ],
       "name": "live_status_endpoint",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5072,6 +5132,7 @@
         "POST"
       ],
       "name": "live_authorize_endpoint",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5081,6 +5142,7 @@
         "POST"
       ],
       "name": "verify_connector_endpoint",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5090,6 +5152,7 @@
         "POST"
       ],
       "name": "start_runner_endpoint",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5099,6 +5162,7 @@
         "POST"
       ],
       "name": "stop_runner_endpoint",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5108,6 +5172,7 @@
         "GET"
       ],
       "name": "latest_portfolio",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5117,6 +5182,7 @@
         "POST"
       ],
       "name": "refresh_portfolio",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5126,6 +5192,7 @@
         "GET"
       ],
       "name": "portfolio_refresh_status",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5135,6 +5202,7 @@
         "POST"
       ],
       "name": "reconnect_portfolio_source",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5144,6 +5212,7 @@
         "GET"
       ],
       "name": "portfolio_reconnect_status",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5153,6 +5222,7 @@
         "GET"
       ],
       "name": "portfolio_settings",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5162,6 +5232,7 @@
         "PUT"
       ],
       "name": "update_portfolio_settings",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5171,6 +5242,7 @@
         "GET"
       ],
       "name": "portfolio_history",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5180,6 +5252,7 @@
         "GET"
       ],
       "name": "portfolio_analysis_context",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5189,6 +5262,7 @@
         "GET"
       ],
       "name": "export_portfolio_csv",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5198,6 +5272,7 @@
         "GET"
       ],
       "name": "list_connections",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5207,6 +5282,7 @@
         "POST"
       ],
       "name": "create_connection",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5216,6 +5292,7 @@
         "PUT"
       ],
       "name": "update_connection",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5225,6 +5302,7 @@
         "GET"
       ],
       "name": "list_connection_accounts",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5234,6 +5312,7 @@
         "PUT"
       ],
       "name": "select_connection_account",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5243,6 +5322,7 @@
         "POST"
       ],
       "name": "save_connection_credentials",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5252,6 +5332,7 @@
         "POST"
       ],
       "name": "check_local_connection",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5261,6 +5342,7 @@
         "DELETE"
       ],
       "name": "delete_connection",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5270,6 +5352,7 @@
         "GET"
       ],
       "name": "list_alphas",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -5279,6 +5362,7 @@
         "GET"
       ],
       "name": "get_alpha",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -5288,6 +5372,7 @@
         "POST"
       ],
       "name": "kick_off_bench",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -5297,6 +5382,7 @@
         "GET"
       ],
       "name": "stream_bench",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -5306,6 +5392,7 @@
         "POST"
       ],
       "name": "kick_off_compare",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -5315,6 +5402,7 @@
         "GET"
       ],
       "name": "stream_compare",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -5324,6 +5412,7 @@
         "POST"
       ],
       "name": "options_payoff",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -5333,6 +5422,7 @@
         "GET"
       ],
       "name": "options_chain",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Adapt only the US/crypto research operation; validate data/math/jobs; upstream route is not mounted."
     },
@@ -5342,6 +5432,7 @@
         "POST"
       ],
       "name": "mint_sse_ticket",
+      "type": "APIRoute",
       "decision": "exclude",
       "reason": "Operator/system/live configuration and execution are outside the dashboard surface."
     },
@@ -5351,6 +5442,7 @@
         "POST"
       ],
       "name": "create_scheduled_run",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5360,6 +5452,7 @@
         "GET"
       ],
       "name": "list_scheduled_runs",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5369,6 +5462,7 @@
         "GET"
       ],
       "name": "get_scheduled_research_status",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5378,6 +5472,7 @@
         "POST"
       ],
       "name": "commit_scheduled_research_proposal",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5387,6 +5482,7 @@
         "POST"
       ],
       "name": "discard_scheduled_research_proposal",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5396,6 +5492,7 @@
         "PATCH"
       ],
       "name": "update_scheduled_run",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5405,6 +5502,7 @@
         "DELETE"
       ],
       "name": "delete_scheduled_run",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5414,6 +5512,7 @@
         "GET"
       ],
       "name": "list_research_playbooks",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5423,6 +5522,7 @@
         "GET"
       ],
       "name": "get_research_playbook",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5432,6 +5532,7 @@
         "POST"
       ],
       "name": "create_scheduled_run_from_playbook",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     },
@@ -5441,6 +5542,7 @@
         "GET"
       ],
       "name": "get_scheduled_run",
+      "type": "APIRoute",
       "decision": "conditional",
       "reason": "Owner identity, object authorization, bounded workers/uploads and connector capabilities required; route is not exposed."
     }

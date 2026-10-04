@@ -29,7 +29,7 @@
 |CR04|情绪文本评分与恐惧贪婪指数|P2|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
 |CR05|永续合约回测：费用、资金费、逐仓/全仓、强平|P3|NOT_IMPLEMENTED|永续源码存在，未适配；strict 需真实 funding/mark/保证金历史输入，不能降级冒充|
 |CR06|合约证据事件、保证金与对账验证|P3|NOT_IMPLEMENTED|永续源码存在，未适配；strict 需真实 funding/mark/保证金历史输入，不能降级冒充|
-|CR07|Funding/Basis、清算图、稳定币流、解锁与 DeFi 收益研究|P4|UNAVAILABLE_DATA / TEMPLATE_ONLY|90 个技能模板已审阅；funding/basis/清算图/on-chain/稳定币/解锁/DeFi 未接数据|
+|CR07|Funding/Basis、清算图、稳定币流、解锁与 DeFi 收益研究|P4|UNAVAILABLE_DATA / TEMPLATE_ONLY|90 个技能模板已盘点并条件分类；funding/basis/清算图/on-chain/稳定币/解锁/DeFi 未接数据|
 |Q01|技术指标、图表形态识别|P2|PARTIAL|已复用固定源码 RSI/MACD/BB/SMA/EMA/volume；形态识别未适配|
 |Q02|通用美股回测、仓位、滑点与收益指标|P3|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
 |Q03|现货策略回测|P3|NOT_IMPLEMENTED|尚无独立现货现金/资产账本；不能用 CryptoEngine leverage=1 代替|

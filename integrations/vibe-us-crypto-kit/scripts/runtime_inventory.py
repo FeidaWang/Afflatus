@@ -53,8 +53,9 @@ def enumerate_source(upstream: Path) -> dict:
             report["mcp_error"] = traceback.format_exc()
         try:
             import api_server
-            report["api_routes"] = [{"path": r.path, "methods": sorted(r.methods or []),
-                                     "name": r.name} for r in api_server.app.routes if hasattr(r, "methods")]
+            report["api_routes"] = [{"path": r.path, "methods": sorted(getattr(r, 'methods', None) or []),
+                                     "name": getattr(r, 'name', None), "type": type(r).__name__}
+                                    for r in api_server.app.routes if hasattr(r, 'path')]
             report["openapi"] = api_server.app.openapi()
         except Exception:
             report["api_error"] = traceback.format_exc()

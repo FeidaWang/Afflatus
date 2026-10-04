@@ -9007,714 +9007,816 @@
       "methods": [
         "GET"
       ],
-      "name": "get_run_code"
+      "name": "get_run_code",
+      "type": "APIRoute"
     },
     {
       "path": "/runs/{run_id}/pine",
       "methods": [
         "GET"
       ],
-      "name": "get_run_pine"
+      "name": "get_run_pine",
+      "type": "APIRoute"
     },
     {
       "path": "/runs/{run_id}/factor",
       "methods": [
         "GET"
       ],
-      "name": "get_run_factor"
+      "name": "get_run_factor",
+      "type": "APIRoute"
     },
     {
       "path": "/runs/{run_id}",
       "methods": [
         "GET"
       ],
-      "name": "get_run_result"
+      "name": "get_run_result",
+      "type": "APIRoute"
     },
     {
       "path": "/runs/{run_id}/positions/sectors",
       "methods": [
         "GET"
       ],
-      "name": "get_run_positions_sectors"
+      "name": "get_run_positions_sectors",
+      "type": "APIRoute"
     },
     {
       "path": "/runs",
       "methods": [
         "GET"
       ],
-      "name": "list_runs"
+      "name": "list_runs",
+      "type": "APIRoute"
     },
     {
       "path": "/runs/{run_id}/attribution",
       "methods": [
         "GET"
       ],
-      "name": "get_run_attribution"
+      "name": "get_run_attribution",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions",
       "methods": [
         "POST"
       ],
-      "name": "create_session"
+      "name": "create_session",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions",
       "methods": [
         "GET"
       ],
-      "name": "list_sessions"
+      "name": "list_sessions",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}",
       "methods": [
         "GET"
       ],
-      "name": "get_session"
+      "name": "get_session",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/goal",
       "methods": [
         "POST"
       ],
-      "name": "create_session_goal"
+      "name": "create_session_goal",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/goal",
       "methods": [
         "GET"
       ],
-      "name": "get_session_goal"
+      "name": "get_session_goal",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/goal",
       "methods": [
         "PATCH"
       ],
-      "name": "update_session_goal"
+      "name": "update_session_goal",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/goal/evidence",
       "methods": [
         "POST"
       ],
-      "name": "add_session_goal_evidence"
+      "name": "add_session_goal_evidence",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/goal/status",
       "methods": [
         "PATCH"
       ],
-      "name": "update_session_goal_status"
+      "name": "update_session_goal_status",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}",
       "methods": [
         "DELETE"
       ],
-      "name": "delete_session"
+      "name": "delete_session",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}",
       "methods": [
         "PATCH"
       ],
-      "name": "update_session"
+      "name": "update_session",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/title/auto",
       "methods": [
         "POST"
       ],
-      "name": "auto_title_session"
+      "name": "auto_title_session",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/messages",
       "methods": [
         "POST"
       ],
-      "name": "send_message"
+      "name": "send_message",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/cancel",
       "methods": [
         "POST"
       ],
-      "name": "cancel_session"
+      "name": "cancel_session",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/messages",
       "methods": [
         "GET"
       ],
-      "name": "get_messages"
+      "name": "get_messages",
+      "type": "APIRoute"
     },
     {
       "path": "/sessions/{session_id}/events",
       "methods": [
         "GET"
       ],
-      "name": "session_events"
+      "name": "session_events",
+      "type": "APIRoute"
     },
     {
       "path": "/live",
       "methods": [
         "GET"
       ],
-      "name": "liveness_probe"
+      "name": "liveness_probe",
+      "type": "APIRoute"
     },
     {
       "path": "/health",
       "methods": [
         "GET"
       ],
-      "name": "health_check"
+      "name": "health_check",
+      "type": "APIRoute"
     },
     {
       "path": "/ready",
       "methods": [
         "GET"
       ],
-      "name": "readiness_probe"
+      "name": "readiness_probe",
+      "type": "APIRoute"
     },
     {
       "path": "/correlation",
       "methods": [
         "GET"
       ],
-      "name": "get_correlation_matrix"
+      "name": "get_correlation_matrix",
+      "type": "APIRoute"
     },
     {
       "path": "/correlation/regime",
       "methods": [
         "GET"
       ],
-      "name": "get_correlation_regime"
+      "name": "get_correlation_regime",
+      "type": "APIRoute"
     },
     {
       "path": "/system/shutdown",
       "methods": [
         "POST"
       ],
-      "name": "shutdown_local_api"
+      "name": "shutdown_local_api",
+      "type": "APIRoute"
     },
     {
       "path": "/skills",
       "methods": [
         "GET"
       ],
-      "name": "list_skills"
+      "name": "list_skills",
+      "type": "APIRoute"
     },
     {
       "path": "/api",
       "methods": [
         "GET"
       ],
-      "name": "api_info"
+      "name": "api_info",
+      "type": "APIRoute"
     },
     {
       "path": "/openapi.json",
       "methods": [
         "GET"
       ],
-      "name": "openapi_schema"
+      "name": "openapi_schema",
+      "type": "APIRoute"
     },
     {
       "path": "/docs",
       "methods": [
         "GET"
       ],
-      "name": "swagger_ui"
+      "name": "swagger_ui",
+      "type": "APIRoute"
     },
     {
       "path": "/redoc",
       "methods": [
         "GET"
       ],
-      "name": "redoc_ui"
+      "name": "redoc_ui",
+      "type": "APIRoute"
     },
     {
       "path": "/settings/llm",
       "methods": [
         "GET"
       ],
-      "name": "get_llm_settings"
+      "name": "get_llm_settings",
+      "type": "APIRoute"
     },
     {
       "path": "/settings/llm",
       "methods": [
         "PUT"
       ],
-      "name": "update_llm_settings"
+      "name": "update_llm_settings",
+      "type": "APIRoute"
     },
     {
       "path": "/settings/llm/models",
       "methods": [
         "POST"
       ],
-      "name": "list_llm_models"
+      "name": "list_llm_models",
+      "type": "APIRoute"
     },
     {
       "path": "/settings/data-sources",
       "methods": [
         "GET"
       ],
-      "name": "get_data_source_settings"
+      "name": "get_data_source_settings",
+      "type": "APIRoute"
     },
     {
       "path": "/settings/data-sources",
       "methods": [
         "PUT"
       ],
-      "name": "update_data_source_settings"
+      "name": "update_data_source_settings",
+      "type": "APIRoute"
     },
     {
       "path": "/api/reports/{report_id}",
       "methods": [
         "GET"
       ],
-      "name": "get_generated_report"
+      "name": "get_generated_report",
+      "type": "APIRoute"
     },
     {
       "path": "/shadow-reports/{shadow_id}",
       "methods": [
         "GET"
       ],
-      "name": "get_shadow_report"
+      "name": "get_shadow_report",
+      "type": "APIRoute"
     },
     {
       "path": "/upload",
       "methods": [
         "POST"
       ],
-      "name": "upload_file"
+      "name": "upload_file",
+      "type": "APIRoute"
     },
     {
       "path": "/channels/status",
       "methods": [
         "GET"
       ],
-      "name": "channels_status"
+      "name": "channels_status",
+      "type": "APIRoute"
     },
     {
       "path": "/channels/start",
       "methods": [
         "POST"
       ],
-      "name": "channels_start"
+      "name": "channels_start",
+      "type": "APIRoute"
     },
     {
       "path": "/channels/stop",
       "methods": [
         "POST"
       ],
-      "name": "channels_stop"
+      "name": "channels_stop",
+      "type": "APIRoute"
     },
     {
       "path": "/channels/pairing/command",
       "methods": [
         "POST"
       ],
-      "name": "channels_pairing_command"
+      "name": "channels_pairing_command",
+      "type": "APIRoute"
     },
     {
       "path": "/channels/config",
       "methods": [
         "GET"
       ],
-      "name": "get_channels_config"
+      "name": "get_channels_config",
+      "type": "APIRoute"
     },
     {
       "path": "/channels/config/{name}",
       "methods": [
         "PUT"
       ],
-      "name": "put_channel_config"
+      "name": "put_channel_config",
+      "type": "APIRoute"
     },
     {
       "path": "/channels/{name}/test",
       "methods": [
         "POST"
       ],
-      "name": "post_channel_test"
+      "name": "post_channel_test",
+      "type": "APIRoute"
     },
     {
       "path": "/swarm/presets",
       "methods": [
         "GET"
       ],
-      "name": "list_swarm_presets"
+      "name": "list_swarm_presets",
+      "type": "APIRoute"
     },
     {
       "path": "/swarm/runs",
       "methods": [
         "POST"
       ],
-      "name": "create_swarm_run"
+      "name": "create_swarm_run",
+      "type": "APIRoute"
     },
     {
       "path": "/swarm/runs",
       "methods": [
         "GET"
       ],
-      "name": "list_swarm_runs"
+      "name": "list_swarm_runs",
+      "type": "APIRoute"
     },
     {
       "path": "/swarm/runs/{run_id}",
       "methods": [
         "GET"
       ],
-      "name": "get_swarm_run"
+      "name": "get_swarm_run",
+      "type": "APIRoute"
     },
     {
       "path": "/swarm/runs/{run_id}/events",
       "methods": [
         "GET"
       ],
-      "name": "swarm_run_events"
+      "name": "swarm_run_events",
+      "type": "APIRoute"
     },
     {
       "path": "/swarm/runs/{run_id}/cancel",
       "methods": [
         "POST"
       ],
-      "name": "cancel_swarm_run"
+      "name": "cancel_swarm_run",
+      "type": "APIRoute"
     },
     {
       "path": "/swarm/runs/{run_id}/retry",
       "methods": [
         "POST"
       ],
-      "name": "retry_swarm_run"
+      "name": "retry_swarm_run",
+      "type": "APIRoute"
     },
     {
       "path": "/mandate/commit",
       "methods": [
         "POST"
       ],
-      "name": "commit_mandate_endpoint"
+      "name": "commit_mandate_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/live/accounts",
       "methods": [
         "GET"
       ],
-      "name": "list_live_accounts_endpoint"
+      "name": "list_live_accounts_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/live/halt",
       "methods": [
         "POST"
       ],
-      "name": "halt_live_endpoint"
+      "name": "halt_live_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/live/resume",
       "methods": [
         "POST"
       ],
-      "name": "resume_live_endpoint"
+      "name": "resume_live_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/live/status",
       "methods": [
         "GET"
       ],
-      "name": "live_status_endpoint"
+      "name": "live_status_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/live/authorize",
       "methods": [
         "POST"
       ],
-      "name": "live_authorize_endpoint"
+      "name": "live_authorize_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/live/connectors/{profile_id}/verify",
       "methods": [
         "POST"
       ],
-      "name": "verify_connector_endpoint"
+      "name": "verify_connector_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/live/runner/start",
       "methods": [
         "POST"
       ],
-      "name": "start_runner_endpoint"
+      "name": "start_runner_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/live/runner/stop",
       "methods": [
         "POST"
       ],
-      "name": "stop_runner_endpoint"
+      "name": "stop_runner_endpoint",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio",
       "methods": [
         "GET"
       ],
-      "name": "latest_portfolio"
+      "name": "latest_portfolio",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/refresh",
       "methods": [
         "POST"
       ],
-      "name": "refresh_portfolio"
+      "name": "refresh_portfolio",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/refresh-status",
       "methods": [
         "GET"
       ],
-      "name": "portfolio_refresh_status"
+      "name": "portfolio_refresh_status",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/sources/{source_id}/reconnect",
       "methods": [
         "POST"
       ],
-      "name": "reconnect_portfolio_source"
+      "name": "reconnect_portfolio_source",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/reconnect-status",
       "methods": [
         "GET"
       ],
-      "name": "portfolio_reconnect_status"
+      "name": "portfolio_reconnect_status",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/settings",
       "methods": [
         "GET"
       ],
-      "name": "portfolio_settings"
+      "name": "portfolio_settings",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/settings",
       "methods": [
         "PUT"
       ],
-      "name": "update_portfolio_settings"
+      "name": "update_portfolio_settings",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/history",
       "methods": [
         "GET"
       ],
-      "name": "portfolio_history"
+      "name": "portfolio_history",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/analysis-context",
       "methods": [
         "GET"
       ],
-      "name": "portfolio_analysis_context"
+      "name": "portfolio_analysis_context",
+      "type": "APIRoute"
     },
     {
       "path": "/api/portfolio/export.csv",
       "methods": [
         "GET"
       ],
-      "name": "export_portfolio_csv"
+      "name": "export_portfolio_csv",
+      "type": "APIRoute"
     },
     {
       "path": "/api/connections",
       "methods": [
         "GET"
       ],
-      "name": "list_connections"
+      "name": "list_connections",
+      "type": "APIRoute"
     },
     {
       "path": "/api/connections",
       "methods": [
         "POST"
       ],
-      "name": "create_connection"
+      "name": "create_connection",
+      "type": "APIRoute"
     },
     {
       "path": "/api/connections/{connection_id}",
       "methods": [
         "PUT"
       ],
-      "name": "update_connection"
+      "name": "update_connection",
+      "type": "APIRoute"
     },
     {
       "path": "/api/connections/{connection_id}/accounts",
       "methods": [
         "GET"
       ],
-      "name": "list_connection_accounts"
+      "name": "list_connection_accounts",
+      "type": "APIRoute"
     },
     {
       "path": "/api/connections/{connection_id}/account",
       "methods": [
         "PUT"
       ],
-      "name": "select_connection_account"
+      "name": "select_connection_account",
+      "type": "APIRoute"
     },
     {
       "path": "/api/connections/{connection_id}/credentials",
       "methods": [
         "POST"
       ],
-      "name": "save_connection_credentials"
+      "name": "save_connection_credentials",
+      "type": "APIRoute"
     },
     {
       "path": "/api/connections/{connection_id}/check",
       "methods": [
         "POST"
       ],
-      "name": "check_local_connection"
+      "name": "check_local_connection",
+      "type": "APIRoute"
     },
     {
       "path": "/api/connections/{connection_id}",
       "methods": [
         "DELETE"
       ],
-      "name": "delete_connection"
+      "name": "delete_connection",
+      "type": "APIRoute"
     },
     {
       "path": "/alpha/list",
       "methods": [
         "GET"
       ],
-      "name": "list_alphas"
+      "name": "list_alphas",
+      "type": "APIRoute"
     },
     {
       "path": "/alpha/{alpha_id}",
       "methods": [
         "GET"
       ],
-      "name": "get_alpha"
+      "name": "get_alpha",
+      "type": "APIRoute"
     },
     {
       "path": "/alpha/bench",
       "methods": [
         "POST"
       ],
-      "name": "kick_off_bench"
+      "name": "kick_off_bench",
+      "type": "APIRoute"
     },
     {
       "path": "/alpha/bench/{job_id}/stream",
       "methods": [
         "GET"
       ],
-      "name": "stream_bench"
+      "name": "stream_bench",
+      "type": "APIRoute"
     },
     {
       "path": "/alpha/compare",
       "methods": [
         "POST"
       ],
-      "name": "kick_off_compare"
+      "name": "kick_off_compare",
+      "type": "APIRoute"
     },
     {
       "path": "/alpha/compare/{job_id}/stream",
       "methods": [
         "GET"
       ],
-      "name": "stream_compare"
+      "name": "stream_compare",
+      "type": "APIRoute"
     },
     {
       "path": "/options/payoff",
       "methods": [
         "POST"
       ],
-      "name": "options_payoff"
+      "name": "options_payoff",
+      "type": "APIRoute"
     },
     {
       "path": "/options/chain",
       "methods": [
         "GET"
       ],
-      "name": "options_chain"
+      "name": "options_chain",
+      "type": "APIRoute"
     },
     {
       "path": "/auth/sse-ticket",
       "methods": [
         "POST"
       ],
-      "name": "mint_sse_ticket"
+      "name": "mint_sse_ticket",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs",
       "methods": [
         "POST"
       ],
-      "name": "create_scheduled_run"
+      "name": "create_scheduled_run",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs",
       "methods": [
         "GET"
       ],
-      "name": "list_scheduled_runs"
+      "name": "list_scheduled_runs",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/status",
       "methods": [
         "GET"
       ],
-      "name": "get_scheduled_research_status"
+      "name": "get_scheduled_research_status",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/proposals/{proposal_id}/commit",
       "methods": [
         "POST"
       ],
-      "name": "commit_scheduled_research_proposal"
+      "name": "commit_scheduled_research_proposal",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/proposals/{proposal_id}/discard",
       "methods": [
         "POST"
       ],
-      "name": "discard_scheduled_research_proposal"
+      "name": "discard_scheduled_research_proposal",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/{job_id}",
       "methods": [
         "PATCH"
       ],
-      "name": "update_scheduled_run"
+      "name": "update_scheduled_run",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/{job_id}",
       "methods": [
         "DELETE"
       ],
-      "name": "delete_scheduled_run"
+      "name": "delete_scheduled_run",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/playbooks",
       "methods": [
         "GET"
       ],
-      "name": "list_research_playbooks"
+      "name": "list_research_playbooks",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/playbooks/{slug}",
       "methods": [
         "GET"
       ],
-      "name": "get_research_playbook"
+      "name": "get_research_playbook",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/playbooks/{slug}",
       "methods": [
         "POST"
       ],
-      "name": "create_scheduled_run_from_playbook"
+      "name": "create_scheduled_run_from_playbook",
+      "type": "APIRoute"
     },
     {
       "path": "/scheduled-runs/{job_id}",
       "methods": [
         "GET"
       ],
-      "name": "get_scheduled_run"
+      "name": "get_scheduled_run",
+      "type": "APIRoute"
     }
   ],
   "openapi": {
