@@ -89,7 +89,12 @@ export function mountVibeMarkets(root, { locale = 'en', getHeaders = () => ({}) 
       table.append(body); tableWrap.append(table);
     } catch (error) {
       if (disposed || active !== controller || active.signal.aborted) return;
-      status.textContent = `${t.failed} (${error.message})`; chart.textContent = t.empty;
+      const serviceMessages = {
+        FEATURE_DISABLED: locale === 'zh' ? '线上研究服务尚未启用，数据查询和计算暂不可用。' : 'The online research service is not enabled. Data queries and calculations are unavailable.',
+        SERVICE_NOT_CONFIGURED: locale === 'zh' ? '研究服务尚未连接，数据暂不可用。' : 'The research service is not connected. Data is unavailable.',
+        PRIVATE_RESEARCH_ONLY: locale === 'zh' ? '此研究数据需要已授权的访问权限。' : 'This research data requires authorized access.',
+      };
+      status.textContent = serviceMessages[error.message] || t.failed; chart.textContent = t.empty;
     }
   }
   function changePool() {

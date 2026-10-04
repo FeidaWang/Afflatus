@@ -2,7 +2,7 @@
 
 当前交付：P2 研究工作台基础上，新增 P3 有界任务与中英文量化工作台：美股/独立现货 Decimal 回测、期权链与模型、DCF/可比估值/三表、限定美股因子、组合风险与归因；财报日历的固定 Futu 只读适配也已补齐。真实本地数据链与离线算例分别验收，不代表所有原始能力都完整迁移。SEC 缺真实 VIBE_TRADING_SEC_UA；日历缺可用 OpenD/SDK；严格永续缺真实历史风险快照。按用户要求，P4/P5 的 owner identity 阻塞继续保留，个人计算仅提供本机 CLI。
 
-此前用户授权的 P2/排版版本 df8c8630 已推送 origin/main 与功能分支，并在 Vercel production READY（feida.au，生产研究开关关闭）。本轮新增 P3 代码尚未发布；付费资源、公开研究数据和实盘仍关闭。
+此前 P2/排版版本 df8c8630 已在 feida.au 上线。本轮已获用户明确上线授权：发布 P3 与服务状态提示至 origin/main 和功能分支，并开启生产页面 VITE_VIBE_MARKETS_ENABLED / VITE_VIBE_QUANT_ENABLED。生产研究桥接 URL/token 尚未配置，服务端研究开关仍关闭；页面可见不代表在线查询或计算已可用。付费资源、公开研究数据和实盘仍关闭。最终部署结果以 Vercel 对应提交及线上验收为准。
 
 ## 阶段与修改文件
 
@@ -13,7 +13,7 @@
 |P2|研究适配完成可推进部分；配置/connector/数据范围阻塞另列|bridge/{research,research_models,patterns}.py / research-contract.json; api/vibe-research.js; fixed BFF DTO; research.js / sentiment.js / index.js|见 integrations/vibe-us-crypto-kit/validation/P2_TEST_REPORT.md；SEC 缺真实联系信息，US09 缺 connector，国内研报未伪装美股；下一步是在真实配置/connector 到位后补验收|
 |P3|限定模块本地验收；外部数据与个人持久化保留阻塞|有界任务、完整账本、数学模型、限定因子/组合、严格快照 CLI|不支持用户策略代码、共享个人现金流/账户或伪造风险数据|
 |P4/P5|OWNER_REQUIRED，按用户要求保留阻塞|仅本机数值辅助计算，无私有产物服务|没有真实身份、对象授权、研究会话或账户/订单 API|
-|P6|默认关闭、私有代理、取消与回滚路径已验证|此前 P2 版本已获授权生产部署；本轮 P3 未发布|无新增付费资源、MCP 配置或公开数据可见性|
+|P6|默认关闭、私有代理、取消与回滚路径已验证|P3 与页面展示已获授权发布；服务端计算仍待真实生产配置|无新增付费资源、MCP 配置或公开数据可见性|
 
 ## 每项功能状态
 

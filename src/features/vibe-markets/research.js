@@ -22,6 +22,9 @@ const labels = {
   asks: ['Asks · amount in base asset', '卖盘 · 数量单位基础币'], impact: ['Simulated impact · quote notional in USDT', '模拟冲击 · 名义金额单位 USDT'], index: ['Bitcoin index', '比特币指数'],
   SEC_CONTACT_REQUIRED: ['Configure a real SEC operator contact before fetching.', '请先配置真实 SEC 运营联系人。'],
   SOURCE_UNAVAILABLE: ['The source is unavailable. Retry when it recovers.', '数据源暂不可用，可在恢复后重试。'],
+  FEATURE_DISABLED: ['The online research service is not enabled. Data queries are unavailable.', '线上研究服务尚未启用，数据查询暂不可用。'],
+  SERVICE_NOT_CONFIGURED: ['The research service is not connected. Data is unavailable.', '研究服务尚未连接，数据暂不可用。'],
+  PRIVATE_RESEARCH_ONLY: ['This research data requires authorized access.', '此研究数据需要已授权的访问权限。'],
   NO_DATA: ['No data reported for this section.', '此项没有数据披露。'], CHANGES_UNAVAILABLE: ['Prior-quarter data unavailable for comparison.', '缺少上一季度数据，暂不能比较。'],
   UNSUPPORTED_FUND_STRUCTURE: ['This unit investment trust does not file N-PORT. Select IVV for the N-PORT adapter.', '此单位投资信托不提交 N-PORT；可选择 IVV 查看该数据适配。'],
   CURRENT_SNAPSHOT_NOT_POINT_IN_TIME: ['Current provider snapshot; unsuitable for historical point-in-time backtests.', '当前供应商快照，不能用于历史时点回测。'],
@@ -115,7 +118,7 @@ export function mountResearch(root, instrument, { locale = 'en', getHeaders = ()
         }
         content.append(details);
       }
-    } catch (error) { if (!disposed && controller === active && !controller.signal.aborted) status.textContent = error.message === 'INVALID_DATE' ? (zh ? '请选择最多七天的有效日期区间。' : 'Choose a valid date window of at most seven days.') : text('SOURCE_UNAVAILABLE'); }
+    } catch (error) { if (!disposed && controller === active && !controller.signal.aborted) status.textContent = error.message === 'INVALID_DATE' ? (zh ? '请选择最多七天的有效日期区间。' : 'Choose a valid date window of at most seven days.') : text(['FEATURE_DISABLED', 'SERVICE_NOT_CONFIGURED', 'PRIVATE_RESEARCH_ONLY'].includes(error.message) ? error.message : 'SOURCE_UNAVAILABLE'); }
     finally { if (!disposed && controller === active) button.disabled = false; }
   });
   return () => { disposed = true; active?.abort(); root.replaceChildren(); };
