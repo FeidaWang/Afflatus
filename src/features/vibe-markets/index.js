@@ -90,7 +90,9 @@ export function mountVibeMarkets(root, { locale = 'en', getHeaders = () => ({}) 
     } catch (error) {
       if (disposed || active !== controller || active.signal.aborted) return;
       const serviceMessages = {
-        FEATURE_DISABLED: locale === 'zh' ? '线上研究服务尚未启用，数据查询和计算暂不可用。' : 'The online research service is not enabled. Data queries and calculations are unavailable.',
+        FEATURE_DISABLED: import.meta.env.VITE_VIBE_MODELS_ENABLED === 'true'
+          ? (locale === 'zh' ? '行情研究服务尚未启用。下方可运行假设模型计算。' : 'The market research service is not enabled. Assumption-based models are available below.')
+          : (locale === 'zh' ? '线上研究服务尚未启用，数据查询和计算暂不可用。' : 'The online research service is not enabled. Data queries and calculations are unavailable.'),
         SERVICE_NOT_CONFIGURED: locale === 'zh' ? '研究服务尚未连接，数据暂不可用。' : 'The research service is not connected. Data is unavailable.',
         PRIVATE_RESEARCH_ONLY: locale === 'zh' ? '此研究数据需要已授权的访问权限。' : 'This research data requires authorized access.',
       };

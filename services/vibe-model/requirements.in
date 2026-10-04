@@ -1,0 +1,6 @@
+# Vercel stateless model function only. No data providers, agents or broker SDKs.
+numpy==2.4.6
+pandas==2.3.3
+scipy==1.17.1
+pydantic==2.13.5
+defusedxml==0.7.1

@@ -69,5 +69,12 @@
       "source": "/api/(.*)",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
     }
-  ]
+  ],
+  "functions": {
+    "api/vibe-model.py": {
+      "maxDuration": 30,
+      "includeFiles": "services/vibe-model/**",
+      "excludeFiles": "{node_modules/**,dist/**,public/**,integrations/**,tests/**,e2e/**,prototypes/**,output/**,content/**,data/**,.git/**,artifacts/**,src/**,scripts/**}"
+    }
+  }
 }

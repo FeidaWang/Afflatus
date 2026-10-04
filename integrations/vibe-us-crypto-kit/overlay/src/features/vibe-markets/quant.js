@@ -24,6 +24,7 @@ const names = {
   CALENDAR_MISMATCH: ['Dates and source day boundaries must match.', '交易日和数据源日线边界必须一致。'],
   OWNER_REQUIRED: ['This operation requires a real owner identity.', '此操作需要真实所有者身份。'],
   WORKER_LIMIT: ['The calculation reached its time limit.', '计算已达到时间上限。'], NO_DATA: ['No data was returned.', '没有返回数据。'],
+  MODEL_UNAVAILABLE: ['The model calculator is unavailable.', '模型计算暂不可用。'],
   source: ['Source', '来源'], source_url: ['Source reference', '来源说明'], quote_as_of: ['Market quote time', '市场报价时间'],
   queued: ['Queued', '排队中'], running: ['Computing', '计算中'], cancelled: ['Cancelled', '已取消'], complete: ['Complete', '已完成'],
   long_only: ['Long only', '仅做多'], no_borrowing: ['No borrowing', '无借贷'], dividends_excluded: ['Dividends excluded', '不含股息'],
@@ -47,6 +48,9 @@ export function mountQuant(root, instrument, { locale = 'en', getHeaders = () =>
   const selectLabel = node('label', zh ? '计算模块' : 'Calculation'), select = node('select');
   select.setAttribute('aria-label', selectLabel.textContent);
   for (const module of applicableQuantModules(instrument)) { const option = node('option', label(module)); option.value = module; select.append(option); }
+  const modelsEnabled = import.meta.env.VITE_VIBE_MODELS_ENABLED === 'true';
+  const instant = () => modelsEnabled && ['option_model', 'option_payoff', 'catalogue'].includes(select.value);
+  if (modelsEnabled) select.value = applicableQuantModules(instrument).includes('option_model') ? 'option_model' : 'catalogue';
   selectLabel.append(select); controls.append(selectLabel);
   const fields = node('div', undefined, 'vibe-markets__controls');
   const status = node('p', '', 'vibe-markets__status'); status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
@@ -56,6 +60,7 @@ export function mountQuant(root, instrument, { locale = 'en', getHeaders = () =>
   const actions = node('div', undefined, 'vibe-markets__controls'); actions.append(button, cancel);
   const form = node('form'); form.append(controls, fields, actions);
   root.replaceChildren(heading, node('p', zh ? '仅作研究模拟。历史行情、模型假设和市场期权报价分别显示；个人现金流、策略写入和账户尚未开放。' : 'Research simulations only. Historical data, model assumptions and market option quotes are shown separately. Personal cash flows, strategy writes and accounts remain unavailable.', 'vibe-markets__muted'), form, status, content);
+  if (modelsEnabled) form.before(node('p', zh ? '欧式定价、多腿到期收益和固定目录可在线计算。模型使用你填写的假设，不读取市场报价。行情回测等模块仍需研究服务。' : 'European pricing, multi-leg expiry payoff and the fixed catalogue are available online. Models use your assumptions, without market quotes. Historical research still requires the research service.', 'vibe-markets__muted'));
 
   async function stop() {
     active?.abort(); active = undefined;
@@ -68,6 +73,7 @@ export function mountQuant(root, instrument, { locale = 'en', getHeaders = () =>
   }
   function configure() {
     stop(); fields.replaceChildren(); content.replaceChildren(); status.textContent = ''; button.disabled = false; cancel.hidden = true;
+    cancel.textContent = instant() ? (zh ? '停止等待' : 'Stop waiting') : (zh ? '停止计算' : 'Stop calculation');
     if (select.value === 'backtest') {
       const wrapper = node('label', zh ? '固定策略' : 'Fixed strategy'), strategy = node('select'); strategy.name = 'strategy'; strategy.setAttribute('aria-label', wrapper.textContent);
       for (const [id, text] of [['sma_cross', zh ? '均线交叉' : 'SMA crossover'], ['buy_hold', zh ? '买入持有' : 'Buy & hold']]) { const option = node('option', text); option.value = id; strategy.append(option); }
@@ -100,7 +106,7 @@ export function mountQuant(root, instrument, { locale = 'en', getHeaders = () =>
       if (QUANT_MODULES[module].history) { const end = new Date(), start = new Date(end); start.setUTCDate(start.getUTCDate() - days); request.start_date = start.toISOString().slice(0, 10); request.end_date = end.toISOString().slice(0, 10); }
       authHeaders = await getHeaders();
       let job = await createQuantJob({ request, headers: authHeaders, signal: controller.signal });
-      if (disposed || active !== controller) { await cancelQuantJob({ id: job.id, headers: authHeaders }); return; }
+      if (disposed || active !== controller) { if (job.status !== 'complete') await cancelQuantJob({ id: job.id, headers: authHeaders }); return; }
       jobId = job.id;
       const deadline = Date.now() + 180000;
       while (['queued', 'running'].includes(job.status)) {

@@ -26,3 +26,7 @@ services/vibe-bridge/**/__pycache__/
 
 # Temporary browser CLI sessions
 .playwright-cli/
+
+# Stateless model runtime bytecode
+api/__pycache__/
+services/vibe-model/**/__pycache__/
