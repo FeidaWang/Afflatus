@@ -1,9 +1,10 @@
 import { getDailyBars } from './client.js';
 import { mountResearch, mountTextSentiment, renderPatterns } from './research.js';
+import { mountQuant } from './quant.js';
 import './styles.css';
 
 const pools = {
-  us: [['US:AAPL', 'AAPL'], ['US:MSFT', 'MSFT'], ['US:NVDA', 'NVDA'], ['US:MU', 'MU'], ['US:SPY', 'SPY'], ['US:QQQ', 'QQQ'], ['US:IVV', 'IVV']],
+  us: [['US:AAPL', 'AAPL'], ['US:MSFT', 'MSFT'], ['US:NVDA', 'NVDA'], ['US:MU', 'MU'], ['US:AMZN', 'AMZN'], ['US:GOOGL', 'GOOGL'], ['US:SPY', 'SPY'], ['US:QQQ', 'QQQ'], ['US:IVV', 'IVV']],
   okx: [['CRYPTO:OKX:BTC-USDT:SPOT', 'BTC / USDT'], ['CRYPTO:OKX:ETH-USDT:SPOT', 'ETH / USDT'], ['CRYPTO:OKX:SOL-USDT:SPOT', 'SOL / USDT']],
   binance: [['CRYPTO:BINANCE:BTC-USDT:SPOT', 'BTC / USDT'], ['CRYPTO:BINANCE:ETH-USDT:SPOT', 'ETH / USDT'], ['CRYPTO:BINANCE:SOL-USDT:SPOT', 'SOL / USDT']],
 };
@@ -22,7 +23,7 @@ function element(tag, text, className) {
 export function mountVibeMarkets(root, { locale = 'en', getHeaders = () => ({}) } = {}) {
   if (!(root instanceof HTMLElement)) throw new TypeError('mount root is required');
   const t = strings[locale] || strings.en;
-  let controller, disposeResearch, disposed = false;
+  let controller, disposeResearch, disposeQuant, disposed = false;
   root.classList.add('vibe-markets');
   const title = element('h2', t.title);
   const hint = element('p', t.status, 'vibe-markets__muted');
@@ -44,15 +45,17 @@ export function mountVibeMarkets(root, { locale = 'en', getHeaders = () => ({}) 
   const meta = element('p', '', 'vibe-markets__muted');
   const technical = element('div', undefined, 'vibe-markets__technical');
   const research = element('div', undefined, 'vibe-markets__research');
+  const quant = element('div', undefined, 'vibe-markets__research');
   const sentiment = element('div'); mountTextSentiment(sentiment, locale);
   const details = element('details'); details.append(element('summary', t.table));
   const tableWrap = element('div', undefined, 'vibe-markets__table'); details.append(tableWrap);
-  root.replaceChildren(title, hint, controls, status, value, chart, meta, technical, details, research, sentiment, element('p', t.scope, 'vibe-markets__muted'));
+  root.replaceChildren(title, hint, controls, status, value, chart, meta, technical, details, research, quant, sentiment, element('p', t.scope, 'vibe-markets__muted'));
   title.id = 'vibe-market-research-title'; root.setAttribute('aria-labelledby', title.id);
 
   async function refresh() {
     controller?.abort(); controller = new AbortController();
     disposeResearch?.(); disposeResearch = mountResearch(research, symbol.value, { locale, getHeaders });
+    disposeQuant?.(); if (import.meta.env.VITE_VIBE_QUANT_ENABLED === 'true') disposeQuant = mountQuant(quant, symbol.value, { locale, getHeaders, days: Number(period.value) });
     const active = controller;
     status.textContent = t.loading; value.textContent = ''; chart.textContent = t.empty; meta.textContent = ''; tableWrap.replaceChildren(); technical.replaceChildren();
     const end = new Date(); const start = new Date(end); start.setUTCDate(start.getUTCDate() - Number(period.value));
@@ -98,7 +101,7 @@ export function mountVibeMarkets(root, { locale = 'en', getHeaders = () => ({}) 
   market.addEventListener('change', changePool); exchange.addEventListener('change', changePool);
   symbol.addEventListener('change', refresh); period.addEventListener('change', refresh);
   refresh();
-  return () => { disposed = true; controller?.abort(); disposeResearch?.(); root.replaceChildren(); root.classList.remove('vibe-markets'); };
+  return () => { disposed = true; controller?.abort(); disposeResearch?.(); disposeQuant?.(); root.replaceChildren(); root.classList.remove('vibe-markets'); };
 }
 function draw(container, bars, label, locale) {
   const ns = 'http://www.w3.org/2000/svg';

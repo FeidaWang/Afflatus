@@ -20,7 +20,7 @@ def main() -> None:
         request = BarsRequest.model_validate_json(payload)
     instrument = INSTRUMENTS[request.instrument_id]
     from .upstream import verify_runtime_source
-    verify_runtime_source(Path(os.environ['VIBE_UPSTREAM_AGENT']))
+    verify_runtime_source(Path(os.environ['VIBE_UPSTREAM_AGENT']), quant=research and request.module == 'earnings')
     # Keep dependency print statements out of the machine-readable stdout.
     with contextlib.redirect_stdout(sys.stderr):
         if research:

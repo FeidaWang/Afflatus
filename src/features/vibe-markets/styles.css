@@ -32,3 +32,8 @@
 .vibe-markets__research p { overflow-wrap: anywhere; }
 .vibe-markets__research td { max-width: 28rem; white-space: normal; overflow-wrap: anywhere; min-width: 6rem; vertical-align: top; }
 .vibe-markets__research a { color: inherit; text-decoration: underline; }
+.vibe-markets__quant-result { min-width: 0; overflow-wrap: anywhere; }
+.vibe-markets__quant-result td { white-space: normal; overflow-wrap: anywhere; max-width: 22rem; }
+.vibe-markets form { min-width: 0; }
+.vibe-markets__controls > label { max-width: 100%; }
+.vibe-markets__controls > p { width: 100%; }

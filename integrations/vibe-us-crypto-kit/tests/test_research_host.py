@@ -13,6 +13,55 @@ pytestmark = pytest.mark.skipif(not os.getenv('VIBE_TEST_HOST_ROOT') or not os.g
 def pinned(monkeypatch):
     monkeypatch.syspath_prepend(os.environ['VIBE_UPSTREAM_TEST_AGENT'])
     monkeypatch.delenv('VIBE_TRADING_SEC_UA', raising=False)
+    monkeypatch.delenv('VIBE_FUTU_CALENDAR_ENABLED', raising=False)
+
+
+def test_calendar_requires_operator_gateway_and_seven_day_window(monkeypatch):
+    from bridge.research_models import ResearchRequest
+    from bridge.research import load_research
+    from bridge.calendar import gateway_settings
+    today = datetime.now(timezone.utc).date()
+    fields = dict(instrument_id='US:AAPL', module='earnings', begin_date=today, end_date=today + timedelta(days=6))
+    request = ResearchRequest(**fields)
+    assert load_research(request)['reason'] == 'US_CONNECTOR_REQUIRED'
+    for patch in [dict(end_date=today + timedelta(days=7)), dict(end_date=today - timedelta(days=1)), dict(begin_date=None), dict(instrument_id='US:SPY'), dict(host='127.0.0.1')]:
+        with pytest.raises(ValueError): ResearchRequest(**(fields | patch))
+    monkeypatch.setenv('VIBE_FUTU_CALENDAR_ENABLED', 'true')
+    for host, port in [('broker.example.com', '11111'), ('127.0.0.1', '65536'), ('127.0.0.1', 'not-a-port')]:
+        monkeypatch.setenv('VIBE_FUTU_CALENDAR_HOST', host); monkeypatch.setenv('VIBE_FUTU_CALENDAR_PORT', port)
+        assert gateway_settings() is None
+
+
+def test_calendar_calls_real_pinned_quote_adapter_and_filters_company(monkeypatch):
+    from types import SimpleNamespace
+    import pandas as pd
+    from bridge.research_models import ResearchRequest
+    from bridge.research import load_research, SourceUnavailable
+    from src.trading.connectors.futu import sdk
+    today = datetime.now(timezone.utc).date(); day = today.isoformat()
+    request = ResearchRequest(instrument_id='US:AAPL', module='earnings', begin_date=today, end_date=today + timedelta(days=6))
+    monkeypatch.setenv('VIBE_FUTU_CALENDAR_ENABLED', 'true'); monkeypatch.setenv('VIBE_FUTU_CALENDAR_HOST', '127.0.0.1'); monkeypatch.setenv('VIBE_FUTU_CALENDAR_PORT', '11111')
+    rows = [dict(code='US.AAPL', name='Apple', earnings_date=day, earnings_timestamp=datetime.combine(today, datetime.min.time(), timezone.utc).timestamp(), pub_type='AFTER', period_text='2026Q4', secret='never-forward'),
+            dict(code='US.MSFT', name='Microsoft', earnings_date=day), dict(code='HK.AAPL', name='Different listing', earnings_date=day)]
+    calls = []
+    class Quote:
+        def get_earnings_calendar(self, **kwargs):
+            calls.append(kwargs); return 0, pd.DataFrame(rows)
+        def close(self): calls.append('closed')
+    def quote(config):
+        assert config.readonly and config.host == '127.0.0.1' and config.port == 11111 and config.filter_trdmarket == 'US'
+        return Quote()
+    def forbidden(*args, **kwargs): raise AssertionError('account/session operation must not be called')
+    monkeypatch.setattr(sdk, '_quote_ctx', quote); monkeypatch.setattr(sdk, '_trade_ctx', forbidden); monkeypatch.setattr(sdk, 'load_config', forbidden)
+    monkeypatch.setattr(sdk, '_require_futu', lambda: SimpleNamespace(Market=SimpleNamespace(US='US_ENUM'), RET_OK=0))
+    result = load_research(request)
+    assert calls == [dict(market='US_ENUM', begin_date=day, end_date=request.end_date.isoformat()), 'closed']
+    assert result['source'] == 'futu_opend' and result['as_of'] is None and result['status'] == 'available'
+    assert len(result['sections'][0]['rows']) == 1 and result['sections'][0]['rows'][0]['symbol'] == 'AAPL'
+    assert 'never-forward' not in json.dumps(result) and 'SCHEDULE_MAY_CHANGE' in result['notes']
+    rows[0]['earnings_date'] = (today + timedelta(days=7)).isoformat()
+    with pytest.raises(SourceUnavailable): load_research(request)
+    assert calls[-1] == 'closed'
 
 
 def test_scope_rejects_arbitrary_tool_market_path_and_arguments():
@@ -121,7 +170,7 @@ def test_industry_uses_declared_us_taxonomy_and_reports_missing_peer(monkeypatch
     result = load_research(ResearchRequest(module='industry', instrument_id='US:NVDA'))
     assert result['source'] == 'yahoo' and result['as_of'] is None
     peers = next(s for s in result['sections'] if s['id'] == 'peers')['rows']
-    assert {r['symbol'] for r in peers} == {'AAPL', 'MU'}
+    assert {r['symbol'] for r in peers} == {'AAPL', 'MU', 'AMZN', 'GOOGL'}
     assert 'PEER_DATA_INCOMPLETE' in result['notes'] and 'DEPLOYED_BASKET_NOT_SECTOR_UNIVERSE' in result['notes']
 
 

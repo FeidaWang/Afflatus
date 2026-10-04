@@ -10,8 +10,9 @@ class RequestBodyLimit:
         self.app, self.maximum = app, maximum
 
     async def __call__(self, scope, receive, send):
-        if scope["type"] != "http" or scope.get("path") != "/v1/bars" or scope.get("method") != "POST":
+        if scope["type"] != "http" or scope.get("path") not in ("/v1/bars", "/v1/research", "/v1/quant/jobs") or scope.get("method") != "POST":
             return await self.app(scope, receive, send)
+        maximum = 32768 if scope.get('path') == '/v1/quant/jobs' else self.maximum
 
         async def reject(status: int, code: str):
             await JSONResponse({"error": {"code": code}}, status_code=status, headers={
@@ -22,7 +23,7 @@ class RequestBodyLimit:
         if lengths:
             if len(lengths) != 1 or not lengths[0].isdigit():
                 return await reject(400, "INVALID_CONTENT_LENGTH")
-            if len(lengths[0]) > 8 or int(lengths[0]) > self.maximum:
+            if len(lengths[0]) > 8 or int(lengths[0]) > maximum:
                 return await reject(413, "REQUEST_TOO_LARGE")
 
         async def read_all():
@@ -33,7 +34,7 @@ class RequestBodyLimit:
                     return None
                 data = message.get("body", b"")
                 total += len(data)
-                if total > self.maximum:
+                if total > maximum:
                     raise OverflowError
                 pieces.append(data)
                 if not message.get("more_body", False):

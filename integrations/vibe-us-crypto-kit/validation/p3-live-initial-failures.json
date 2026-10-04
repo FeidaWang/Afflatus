@@ -1,0 +1,150 @@
+{
+  "observed_at": "2026-10-04T18:16:00.194Z",
+  "layer": "real_localhost_host_bff_pinned_worker",
+  "synthetic_data": false,
+  "checks": [
+    {
+      "module": "backtest",
+      "instrument": "US:AAPL",
+      "range": {
+        "start_date": "2025-01-01",
+        "end_date": "2025-12-31"
+      },
+      "created_http": 202,
+      "final_http": 200,
+      "job_status": "complete",
+      "result_status": "available",
+      "reason": null,
+      "upstream_commit": "251b094320c1f97d1486626d3618113526914d4c",
+      "request_hash": "35a6ee268eec5582bb8120208951c7dd163884a240784125da3dc534eef47997",
+      "source_snapshots": [
+        {
+          "source": "yahoo",
+          "requested_source": "yahoo",
+          "quote_currency": "USD",
+          "currency_basis": "provider_declared",
+          "adjustment": "split_dividend",
+          "volume_unit": "shares",
+          "bar_timezone": "America/New_York",
+          "date_label_basis": "exchange_session_date",
+          "quality": "complete_daily_bars",
+          "interval": "1D",
+          "bar_time_semantics": "provider_daily_bar_date_not_execution_timestamp",
+          "observed_at": "2026-10-04T18:16:01.059118+00:00",
+          "last_bar_date": "2025-12-30",
+          "delay_status": "unknown",
+          "is_realtime_quote": false,
+          "fallback_used": false,
+          "bars_sha256": "ccb95d68e79fb286d868ee88f066d835ec36d5606f55d25b3246fb1e26f7d4dc"
+        }
+      ],
+      "summary": {
+        "fill_count": 18,
+        "equity_count": 229,
+        "fees": "156.12614192",
+        "final_equity": "8433.33794873",
+        "currency": "USD",
+        "total_return": -0.156666205127
+      }
+    },
+    {
+      "module": "backtest",
+      "instrument": "CRYPTO:OKX:BTC-USDT:SPOT",
+      "range": {
+        "start_date": "2025-01-01",
+        "end_date": "2025-12-31"
+      },
+      "created_http": 202,
+      "final_http": 502,
+      "job_status": null,
+      "result_status": null,
+      "reason": "UPSTREAM_SCHEMA",
+      "upstream_commit": null,
+      "request_hash": null,
+      "source_snapshots": [],
+      "summary": null
+    },
+    {
+      "module": "backtest",
+      "instrument": "CRYPTO:BINANCE:BTC-USDT:SPOT",
+      "range": {
+        "start_date": "2025-01-01",
+        "end_date": "2025-12-31"
+      },
+      "created_http": 202,
+      "final_http": 502,
+      "job_status": null,
+      "result_status": null,
+      "reason": "UPSTREAM_SCHEMA",
+      "upstream_commit": null,
+      "request_hash": null,
+      "source_snapshots": [],
+      "summary": null
+    },
+    {
+      "module": "portfolio",
+      "instrument": "US:AAPL",
+      "range": {
+        "start_date": "2025-01-01",
+        "end_date": "2025-12-31"
+      },
+      "created_http": 202,
+      "final_http": 200,
+      "job_status": "complete",
+      "result_status": "unavailable",
+      "reason": "INPUT_INVALID",
+      "upstream_commit": "251b094320c1f97d1486626d3618113526914d4c",
+      "request_hash": "4213e7fad9f66a925ad4ee0471e63554fedc1cb125bb6fede39d104401f76a7d",
+      "source_snapshots": [],
+      "summary": {}
+    },
+    {
+      "module": "options_chain",
+      "instrument": "US:AAPL",
+      "range": null,
+      "created_http": 202,
+      "final_http": 200,
+      "job_status": "complete",
+      "result_status": "available",
+      "reason": null,
+      "upstream_commit": "251b094320c1f97d1486626d3618113526914d4c",
+      "request_hash": "e89f704b0bfb444f635341e0ddda916a7c11b2aa4f03f7e49ac214a86838f5a0",
+      "source_snapshots": [],
+      "summary": {
+        "source": "yahoo",
+        "quote_as_of": null,
+        "call_count": 41,
+        "put_count": 35
+      }
+    },
+    {
+      "module": "factors",
+      "instrument": "US:AAPL",
+      "range": {
+        "start_date": "2025-01-01",
+        "end_date": "2025-12-31"
+      },
+      "created_http": 202,
+      "final_http": 200,
+      "job_status": "complete",
+      "result_status": "unavailable",
+      "reason": "INPUT_INVALID",
+      "upstream_commit": "251b094320c1f97d1486626d3618113526914d4c",
+      "request_hash": "3b1397da14b2e34fa8cdc3c30df892f645193a244cb74114830d6792146cba07",
+      "source_snapshots": [],
+      "summary": {}
+    },
+    {
+      "module": "earnings",
+      "http": 200,
+      "result_status": "unavailable",
+      "reason": "US_CONNECTOR_REQUIRED"
+    },
+    {
+      "module": "filings",
+      "http": 200,
+      "result_status": "unavailable",
+      "reason": "SEC_CONTACT_REQUIRED"
+    }
+  ]
+}

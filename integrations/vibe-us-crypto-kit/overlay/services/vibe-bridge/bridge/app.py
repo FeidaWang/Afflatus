@@ -5,6 +5,7 @@ import hmac
 import os
 import time
 from collections import OrderedDict
+from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.responses import JSONResponse
@@ -13,12 +14,23 @@ from .models import BarsRequest, INSTRUMENTS
 from .limits import RequestBodyLimit
 from .normalize import SourceUnavailable
 from .provider import fetch_bars
+from .research_models import ResearchRequest
+from .research import envelope, sec_contact_valid
+from .quant_models import QuantRequest
+from .quant_jobs import QuantJobs
 
-app = FastAPI(title="Afflatus Vibe Market Bridge", docs_url=None, redoc_url=None, openapi_url=None)
+@asynccontextmanager
+async def lifespan(_app):
+    yield
+    await quant_jobs.close()
+
+
+app = FastAPI(title="Afflatus Vibe Market Bridge", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
 # Single process only. Multiple replicas need a shared budget/cache before scaling.
 slots = asyncio.Semaphore(2)
 cache: OrderedDict[str, tuple[float, dict]] = OrderedDict()
 inflight: dict[str, asyncio.Task] = {}
+quant_jobs = QuantJobs(slots)
 
 
 async def require_token(authorization: str | None = Header(default=None)) -> None:
@@ -51,9 +63,9 @@ async def instruments():
     return {"instruments": [{k: v for k, v in x.items() if k != "upstream_symbol"} for x in INSTRUMENTS.values()]}
 
 
-async def _load(request: BarsRequest, key: str) -> dict:
+async def _load(request, key: str, *, research=False) -> dict:
     async with slots:
-        result = await fetch_bars(request)
+        result = await fetch_bars(request, research=True) if research else await fetch_bars(request)
         cache[key] = (time.monotonic() + 60, result)
         cache.move_to_end(key)
         while len(cache) > 128:
@@ -63,14 +75,49 @@ async def _load(request: BarsRequest, key: str) -> dict:
 
 @app.post("/v1/bars", dependencies=[Depends(require_token)])
 async def bars(request: BarsRequest):
-    key = request.model_dump_json()
+    return await cached_operation(request, 'bars')
+
+
+@app.post("/v1/research", dependencies=[Depends(require_token)])
+async def research(request: ResearchRequest):
+    # Fail before spawning/importing a network worker when contact is absent.
+    if request.module in ('filings', 'financials', 'institutions', 'etf') and not sec_contact_valid(os.getenv('VIBE_TRADING_SEC_UA')):
+        return envelope(request, 'SEC_CONTACT_REQUIRED')
+    if request.module == 'earnings':
+        from .calendar import gateway_settings
+        if gateway_settings() is None:
+            return envelope(request, 'US_CONNECTOR_REQUIRED')
+    return await cached_operation(request, 'research')
+
+
+@app.post('/v1/quant/jobs', dependencies=[Depends(require_token)], status_code=202)
+async def start_quant_job(request: QuantRequest):
+    return quant_jobs.submit(request)
+
+
+@app.get('/v1/quant/jobs/{identifier}', dependencies=[Depends(require_token)])
+async def read_quant_job(identifier: str):
+    if len(identifier) != 32 or any(char not in '0123456789abcdef' for char in identifier):
+        raise HTTPException(404, 'JOB_NOT_FOUND')
+    return quant_jobs.view(identifier)
+
+
+@app.delete('/v1/quant/jobs/{identifier}', dependencies=[Depends(require_token)])
+async def cancel_quant_job(identifier: str):
+    if len(identifier) != 32 or any(char not in '0123456789abcdef' for char in identifier):
+        raise HTTPException(404, 'JOB_NOT_FOUND')
+    return await quant_jobs.cancel(identifier)
+
+
+async def cached_operation(request, operation):
+    key = operation + ':' + request.model_dump_json()
     entry = cache.get(key)
     if entry and entry[0] > time.monotonic():
         return entry[1]
     if key not in inflight:
         if len(inflight) >= 8:
             raise HTTPException(429, "SERVICE_BUSY", headers={"Retry-After": "10"})
-        task = asyncio.create_task(_load(request, key))
+        task = asyncio.create_task(_load(request, key, research=operation == 'research'))
         inflight[key] = task
         def finish(done):
             inflight.pop(key, None)
@@ -80,4 +127,5 @@ async def bars(request: BarsRequest):
     try:
         return await asyncio.shield(inflight[key])
     except SourceUnavailable:
+        if operation == 'research': return envelope(request, 'SOURCE_UNAVAILABLE')
         return JSONResponse({"error": {"code": "SOURCE_UNAVAILABLE"}}, status_code=503)

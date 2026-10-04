@@ -1,0 +1,46 @@
+{
+  "repository": "https://github.com/HKUDS/Vibe-Trading.git",
+  "commit": "251b094320c1f97d1486626d3618113526914d4c",
+  "inspected_on": "2026-10-05",
+  "sentinel_blobs": {
+    "LICENSE": "08701c0ee954c73edbc0d64178641cadd7faf58a",
+    "agent/api_server.py": "304b4164ad2902d5d25a681cbf8a5635578a137e",
+    "agent/src/market_data.py": "f2864a7de8e3edcad64e50686a2c0b3240abaecd",
+    "agent/backtest/engines/crypto.py": "8bfcf6b4059a33ca3b203fbc569190a7e7382792",
+    "agent/backtest/engines/global_equity.py": "b7ae6ffce2a5456b53a80c698140f9c1dbd118b2",
+    "agent/backtest/loaders/yahoo_loader.py": "ffcf741115dd9d741c87e7e0fef84cc1e8ceb42f",
+    "agent/backtest/loaders/yahoo_client.py": "66bd4653c70b59a5fadeb775d874730bed8ad925",
+    "agent/backtest/loaders/okx.py": "84c04e7381a80106a5be39d0345fb55502161236",
+    "agent/src/tools/technical_indicator_tool.py": "c364a12a34ee902728eb5b78ea9b339b191babdd",
+    "agent/src/tools/stock_profile_tool.py": "c95d0856bf49a54b3ec49bafeb348f97eb5f0fa1",
+    "agent/src/tools/sec_filings_tool.py": "a72c0676ded0d28fd7ed7dbea0d17affdd2f7159",
+    "agent/src/tools/financial_statements_tool.py": "53a87cb04f93fc2100765026f874c7ae179e0b70",
+    "agent/src/tools/institutional_holdings_tool.py": "825798fddc727a7277266475c5761fc94f32b757",
+    "agent/src/tools/etf_holdings_tool.py": "34654b1c6f3a12aad21f1bc131e8f2de7430ccd2",
+    "agent/src/tools/stock_news_tool.py": "3cff06686a6cd1fe722c1397ec9dbb0fceba7b8e",
+    "agent/src/tools/market_screener_tool.py": "66a1b9a8e6d7d7780abca9776d0be938aa897c10",
+    "agent/src/tools/orderbook_depth_tool.py": "1112066c1648ef0558d42e291763551d9f23dbfa",
+    "agent/src/tools/sentiment_tool.py": "e29041d1de7016a82fd104fcef45095144667ba4",
+    "agent/src/tools/pattern_tool.py": "628d5e1e06d99423fd9b1afaf2213610f04261d4",
+    "agent/backtest/loaders/sec_edgar_client.py": "1073e6eb4cecf4753c37a371dab919e55abbd254",
+    "agent/backtest/loaders/sec_frames.py": "664012f06838ff20799af2bca547790ad523b76c",
+    "agent/backtest/loaders/binance_loader.py": "06cc49f89b6e386f76859faba3277c9eee6b86e3",
+    "agent/backtest/loaders/ccxt_loader.py": "1b410896a32d36225cc5968088692f52fabfc3af",
+    "agent/backtest/loaders/eastmoney_client.py": "67093a1319fc25795a3a7e8ee982e70f991fdec6",
+    "agent/backtest/loaders/_http.py": "89fe6ab4238410a4236022bdf378f01ba2fa4064"
+  },
+  "host_repository": "https://github.com/FeidaWang/Afflatus",
+  "host_observed": {
+    "framework": "Vite MPA",
+    "vite": "^8.0.14",
+    "react": "^19.2.0",
+    "route_manifest": "src/config/siteManifest.js",
+    "integration_candidate": "arena.html",
+    "existing_data_endpoints": [
+      "api/quote.js",
+      "api/history.js",
+      "api/treasury-yields.js"
+    ]
+  },
+  "notes": "Pin and sentinel validation are mandatory. A mismatch stops extraction; do not silently fetch latest. Full upstream source is NOT embedded in this kit."
+}

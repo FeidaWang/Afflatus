@@ -40,6 +40,26 @@
     "label": "Micron"
   },
   {
+    "id": "US:GOOGL",
+    "market": "us_equity",
+    "symbol": "GOOGL",
+    "upstream_symbol": "GOOGL.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "Alphabet"
+  },
+  {
+    "id": "US:AMZN",
+    "market": "us_equity",
+    "symbol": "AMZN",
+    "upstream_symbol": "AMZN.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "Amazon"
+  },
+  {
     "id": "US:SPY",
     "market": "us_etf",
     "symbol": "SPY",
@@ -77,7 +97,7 @@
     "source": "okx",
     "quote_currency": "USDT",
     "venue": "OKX",
-    "label": "Bitcoin / USDT \u00b7 Spot"
+    "label": "Bitcoin / USDT · Spot"
   },
   {
     "id": "CRYPTO:OKX:ETH-USDT:SPOT",
@@ -87,7 +107,7 @@
     "source": "okx",
     "quote_currency": "USDT",
     "venue": "OKX",
-    "label": "Ether / USDT \u00b7 Spot"
+    "label": "Ether / USDT · Spot"
   },
   {
     "id": "CRYPTO:OKX:SOL-USDT:SPOT",
@@ -97,7 +117,7 @@
     "source": "okx",
     "quote_currency": "USDT",
     "venue": "OKX",
-    "label": "Solana / USDT \u00b7 Spot"
+    "label": "Solana / USDT · Spot"
   },
   {
     "id": "CRYPTO:BINANCE:BTC-USDT:SPOT",
@@ -107,7 +127,7 @@
     "source": "binance",
     "quote_currency": "USDT",
     "venue": "BINANCE",
-    "label": "Bitcoin / USDT \u00b7 Spot"
+    "label": "Bitcoin / USDT · Spot"
   },
   {
     "id": "CRYPTO:BINANCE:ETH-USDT:SPOT",
@@ -117,7 +137,7 @@
     "source": "binance",
     "quote_currency": "USDT",
     "venue": "BINANCE",
-    "label": "Ether / USDT \u00b7 Spot"
+    "label": "Ether / USDT · Spot"
   },
   {
     "id": "CRYPTO:BINANCE:SOL-USDT:SPOT",
@@ -127,6 +147,6 @@
     "source": "binance",
     "quote_currency": "USDT",
     "venue": "BINANCE",
-    "label": "Solana / USDT \u00b7 Spot"
+    "label": "Solana / USDT · Spot"
   }
 ]

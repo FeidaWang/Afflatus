@@ -1,0 +1,30 @@
+{
+  "createdHttp": 202,
+  "cancelHttp": 200,
+  "cancelStatus": "cancelled",
+  "browserHeaders": [
+    {
+      "method": "POST",
+      "names": [
+        "sec-ch-ua-platform",
+        "referer",
+        "user-agent",
+        "sec-ch-ua",
+        "content-type",
+        "sec-ch-ua-mobile"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "names": [
+        "sec-ch-ua-platform",
+        "referer",
+        "user-agent",
+        "sec-ch-ua",
+        "content-type",
+        "sec-ch-ua-mobile"
+      ]
+    }
+  ],
+  "staleResult": ""
+}

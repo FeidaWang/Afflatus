@@ -1,53 +1,12 @@
 import { randomUUID, timingSafeEqual } from 'node:crypto';
 
-export const INSTRUMENT_IDS = new Set([
-  'US:AAPL', 'US:MSFT', 'US:NVDA', 'US:MU', 'US:SPY', 'US:QQQ',
-  'CRYPTO:OKX:BTC-USDT:SPOT', 'CRYPTO:OKX:ETH-USDT:SPOT', 'CRYPTO:OKX:SOL-USDT:SPOT',
-]);
-const allowedQuery = new Set(['instrument', 'start', 'end']);
-const DAY = 86_400_000;
-
+import { INSTRUMENT_IDS, parseQuery, validateSeries, projectSeries } from './vibeMarketContract.js';
+import { parseResearchQuery, validateResearch, projectResearch } from './vibeResearchContract.js';
+export { INSTRUMENT_IDS, parseQuery, validateSeries };
 export function secretEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string' || b.length < 32) return false;
   const x = Buffer.from(a), y = Buffer.from(b);
   return x.length === y.length && timingSafeEqual(x, y);
-}
-function validDate(text) {
-  if (typeof text !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
-  const time = Date.parse(text);
-  return Number.isFinite(time) && new Date(time).toISOString().slice(0, 10) === text;
-}
-export function parseQuery(query, now = Date.now()) {
-  if (!query || Object.keys(query).some(k => !allowedQuery.has(k))) throw new Error('INVALID_QUERY');
-  const { instrument, start, end } = query;
-  if (typeof instrument !== 'string' || !INSTRUMENT_IDS.has(instrument)) throw new Error('INVALID_INSTRUMENT');
-  if (!validDate(start) || !validDate(end)) throw new Error('INVALID_DATE');
-  const span = (Date.parse(end) - Date.parse(start)) / DAY;
-  if (span < 1 || span > 366 || Date.parse(end) > Math.floor(now / DAY) * DAY) throw new Error('INVALID_RANGE');
-  return { instrument_id: instrument, start_date: start, end_date: end, interval: '1D' };
-}
-export function validateSeries(value, requestedId, request = null) {
-  const crypto = requestedId.startsWith('CRYPTO:OKX:');
-  const currency = crypto ? 'USDT' : 'USD';
-  const market = crypto ? 'crypto_spot' : ['US:SPY', 'US:QQQ'].includes(requestedId) ? 'us_etf' : 'us_equity';
-  const source = crypto ? 'okx' : 'yahoo';
-  const p = value?.provenance;
-  if (!value || value.schema_version !== 1 || value.instrument?.id !== requestedId ||
-      value.instrument?.market !== market || value.instrument?.quote_currency !== currency ||
-      !Array.isArray(value.bars) || !value.bars.length || value.bars.length > 400 ||
-      p?.is_realtime_quote !== false || p?.source !== source || p?.quote_currency !== currency ||
-      p?.fallback_used !== false || p?.interval !== '1D' || !validDate(p?.last_bar_date) ||
-      typeof p?.observed_at !== 'string' || !Number.isFinite(Date.parse(p.observed_at))) return false;
-  let previous = '';
-  const valid = value.bars.every(row => {
-    if (!row || !validDate(row.date) || row.date <= previous) return false;
-    if (request && (row.date < request.start_date || row.date >= request.end_date)) return false;
-    previous = row.date;
-    if (!['open', 'high', 'low', 'close'].every(k => typeof row[k] === 'number' && Number.isFinite(row[k]) && row[k] > 0)) return false;
-    if (row.volume !== null && !(typeof row.volume === 'number' && Number.isFinite(row.volume) && row.volume >= 0)) return false;
-    return row.low <= Math.min(row.open, row.close) && Math.max(row.open, row.close) <= row.high;
-  });
-  return valid && p.last_bar_date === previous;
 }
 async function boundedJson(response) {
   if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('UPSTREAM_SCHEMA');
@@ -63,9 +22,8 @@ async function boundedJson(response) {
   return JSON.parse(Buffer.concat(parts).toString('utf8'));
 }
 
-export function createHandler({ env = process.env, fetchImpl = fetch, now = Date.now } = {}) {
+export function createHandler({ env = process.env, fetchImpl = fetch, now = Date.now, research = false, calls = [] } = {}) {
   // Warm-instance budget only. The private bridge supplies the second cap.
-  const calls = [];
   return async function handler(req, res) {
     const requestId = randomUUID();
     for (const [key, value] of Object.entries({
@@ -77,10 +35,10 @@ export function createHandler({ env = process.env, fetchImpl = fetch, now = Date
     if (req.method !== 'GET') { res.setHeader('Allow', 'GET'); return fail(405, 'METHOD_NOT_ALLOWED'); }
     if (env.VIBE_FEATURE_ENABLED !== 'true') return fail(404, 'FEATURE_DISABLED');
     let body;
-    try { body = parseQuery(req.query, now()); } catch (error) { return fail(400, error.message); }
+    try { body = (research ? parseResearchQuery : parseQuery)(req.query, now()); } catch (error) { return fail(400, error.message); }
     const privateAllowed = secretEqual(req.headers?.['x-arena-key'], env.ARENA_ADMIN_KEY);
     const publicIds = new Set((env.VIBE_PUBLIC_INSTRUMENTS || '').split(',').map(x => x.trim()).filter(Boolean));
-    const publicAllowed = env.VIBE_ENABLE_PUBLIC_MARKET_DATA === 'true' &&
+    const publicAllowed = !research && env.VIBE_ENABLE_PUBLIC_MARKET_DATA === 'true' &&
       env.VIBE_PUBLIC_DATA_RIGHTS_ACK === 'APPROVED' && publicIds.has(body.instrument_id);
     if (!privateAllowed && !publicAllowed) return fail(403, 'PRIVATE_RESEARCH_ONLY');
     let upstream;
@@ -90,7 +48,7 @@ export function createHandler({ env = process.env, fetchImpl = fetch, now = Date
       if (upstream.protocol !== 'https:' && !(local && upstream.protocol === 'http:')) throw new Error();
       if (upstream.username || upstream.password || upstream.search || upstream.hash) throw new Error();
       if (!env.VIBE_BRIDGE_TOKEN || env.VIBE_BRIDGE_TOKEN.length < 32) throw new Error();
-      upstream = new URL('/v1/bars', upstream.origin);
+      upstream = new URL(research ? '/v1/research' : '/v1/bars', upstream.origin);
     } catch { return fail(503, 'SERVICE_NOT_CONFIGURED'); }
     const current = now();
     while (calls.length && calls[0] <= current - 60_000) calls.shift();
@@ -106,8 +64,8 @@ export function createHandler({ env = process.env, fetchImpl = fetch, now = Date
       });
       if (!response.ok) return fail(response.status === 429 ? 429 : 503, response.status === 429 ? 'SERVICE_BUSY' : 'SOURCE_UNAVAILABLE');
       const result = await boundedJson(response);
-      if (!validateSeries(result, body.instrument_id, body)) return fail(502, 'UPSTREAM_SCHEMA');
-      return res.status(200).json(result);
+      if (!(research ? validateResearch(result, body) : validateSeries(result, body.instrument_id, body))) return fail(502, 'UPSTREAM_SCHEMA');
+      return res.status(200).json(research ? projectResearch(result) : projectSeries(result));
     } catch (error) {
       return fail(controller.signal.aborted ? 504 : 502, controller.signal.aborted ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_FETCH');
     } finally { clearTimeout(timer); }

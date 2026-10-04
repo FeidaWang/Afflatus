@@ -1,4 +1,5 @@
 import { createHandler } from '../src/lib/vibeBridgeProxy.mjs';
+import { createQuantHandler } from '../src/lib/vibeQuantProxy.mjs';
 
 const loopback = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1', 'localhost', '[::1]']);
 
@@ -7,7 +8,7 @@ const loopback = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1', 'localhost', '
  */
 export function vibeDevPlugin(env = process.env) {
   const calls = [];
-  const handlers = { '/api/vibe-market': createHandler({ env, calls }), '/api/vibe-research': createHandler({ env, research: true, calls }) };
+  const handlers = { '/api/vibe-market': createHandler({ env, calls }), '/api/vibe-research': createHandler({ env, research: true, calls }), '/api/vibe-quant': createQuantHandler({ env }) };
   function mount(server) {
     server.middlewares.use(async (req, res, next) => {
       const handler = handlers[req.url?.split('?')[0]];
@@ -33,7 +34,15 @@ export function vibeDevPlugin(env = process.env) {
       // Explicit local operator opt-in; shared quota key is server-side only.
       const headers = { ...req.headers };
       if (env.VIBE_LOCAL_RESEARCH === 'true' && env.NODE_ENV !== 'production') headers['x-arena-key'] = env.ARENA_ADMIN_KEY;
-      await handler({ method: req.method, query, headers }, {
+      let body;
+      if (req.method === 'POST') {
+        try {
+          const parts = []; let bytes = 0;
+          for await (const part of req) { bytes += part.length; if (bytes > 32768) return fail('REQUEST_TOO_LARGE'); parts.push(part); }
+          body = JSON.parse(Buffer.concat(parts).toString('utf8'));
+        } catch { return fail('INVALID_REQUEST'); }
+      }
+      await handler({ method: req.method, query, headers, body }, {
         setHeader: (key, value) => res.setHeader(key, value),
         status(status) { res.statusCode = status; return this; },
         json(value) { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(value)); },

@@ -1,0 +1,12 @@
+{
+  "mounted": 0,
+  "api": {
+    "http": 404,
+    "value": {
+      "error": {
+        "code": "FEATURE_DISABLED",
+        "requestId": "0a31838a-0309-400f-87c8-90c603f7e9c4"
+      }
+    }
+  }
+}

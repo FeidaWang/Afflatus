@@ -1,0 +1,396 @@
+{
+  "schema_version": 1,
+  "commit": "251b094320c1f97d1486626d3618113526914d4c",
+  "modules": {
+    "backtest": {
+      "parameters": [
+        "strategy",
+        "initial_capital",
+        "commission_bps",
+        "slippage_bps",
+        "participation",
+        "fast",
+        "slow"
+      ],
+      "output_keys": [
+        "fills",
+        "equity",
+        "fees",
+        "final_equity",
+        "total_return",
+        "max_drawdown",
+        "benchmark",
+        "currency",
+        "assumptions",
+        "execution",
+        "engine",
+        "warmup_bars",
+        "ledger_precision",
+        "shorting",
+        "leverage",
+        "funding",
+        "liquidation",
+        "dividends_included",
+        "ending_position",
+        "liquidity_proxy"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf",
+        "crypto_spot"
+      ],
+      "history": true,
+      "local_only": false
+    },
+    "options_chain": {
+      "parameters": [
+        "expiration"
+      ],
+      "output_keys": [
+        "expiration",
+        "expirations",
+        "calls",
+        "puts",
+        "truncated",
+        "theoretical_model",
+        "source",
+        "source_url",
+        "quote_as_of"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf"
+      ],
+      "history": false,
+      "local_only": false
+    },
+    "option_model": {
+      "parameters": [
+        "spot",
+        "strike",
+        "years",
+        "rate",
+        "volatility",
+        "dividend_yield",
+        "right"
+      ],
+      "output_keys": [
+        "price",
+        "greeks",
+        "assumptions",
+        "exercise_style",
+        "quote_source"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf"
+      ],
+      "history": false,
+      "local_only": false
+    },
+    "option_payoff": {
+      "parameters": [
+        "legs",
+        "spots",
+        "entry_spot",
+        "years",
+        "rate",
+        "volatility",
+        "multiplier",
+        "commission_rate"
+      ],
+      "output_keys": [
+        "spot_grid",
+        "payoff",
+        "net_premium",
+        "entry_commission",
+        "entry_cost",
+        "breakevens",
+        "breakeven_intervals",
+        "max_profit",
+        "max_loss",
+        "profit_unbounded",
+        "loss_unbounded",
+        "premium_source"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf"
+      ],
+      "history": false,
+      "local_only": false
+    },
+    "dcf": {
+      "parameters": [
+        "inputs",
+        "capital_structure_basis",
+        "discounting_convention",
+        "terminal_value_method",
+        "gdp_growth_ceiling"
+      ],
+      "output_keys": [
+        "model",
+        "assumptions"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf"
+      ],
+      "history": false,
+      "local_only": false
+    },
+    "comps": {
+      "parameters": [
+        "target",
+        "peers",
+        "calendarisation_policy"
+      ],
+      "output_keys": [
+        "model",
+        "assumptions"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf"
+      ],
+      "history": false,
+      "local_only": false
+    },
+    "three_statement": {
+      "parameters": [
+        "opening",
+        "drivers",
+        "assumption_basis"
+      ],
+      "output_keys": [
+        "model",
+        "assumptions"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf"
+      ],
+      "history": false,
+      "local_only": false
+    },
+    "factors": {
+      "parameters": [
+        "factor",
+        "commission_bps",
+        "slippage_bps"
+      ],
+      "output_keys": [
+        "factor",
+        "metadata",
+        "universe",
+        "ic",
+        "ic_mean",
+        "ic_std",
+        "ir",
+        "groups",
+        "costs",
+        "training",
+        "validation",
+        "timing"
+      ],
+      "markets": [
+        "us_equity"
+      ],
+      "history": true,
+      "local_only": false
+    },
+    "portfolio": {
+      "parameters": [
+        "instruments",
+        "weights",
+        "benchmark_weights"
+      ],
+      "output_keys": [
+        "instruments",
+        "currency",
+        "dates",
+        "correlation",
+        "risk",
+        "total_return",
+        "calendar_policy",
+        "source_timezones",
+        "weights",
+        "arithmetic_return_contribution",
+        "attribution",
+        "benchmark_total_return"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf",
+        "crypto_spot"
+      ],
+      "history": true,
+      "local_only": false
+    },
+    "catalogue": {
+      "parameters": [],
+      "output_keys": [
+        "strategies",
+        "factors",
+        "evidence_policy"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf",
+        "crypto_spot"
+      ],
+      "history": false,
+      "local_only": false
+    },
+    "perpetual": {
+      "parameters": [
+        "perpetual_id",
+        "initial_capital",
+        "leverage",
+        "maker_bps",
+        "taker_bps",
+        "slippage_bps",
+        "liquidation_bps",
+        "margin_mode",
+        "strategy",
+        "fast",
+        "slow"
+      ],
+      "output_keys": [
+        "instrument",
+        "snapshot_hash",
+        "events",
+        "summary",
+        "fills",
+        "equity",
+        "assumptions",
+        "precision",
+        "fidelity",
+        "live_execution"
+      ],
+      "markets": [
+        "crypto_spot"
+      ],
+      "history": false,
+      "local_only": false
+    },
+    "cashflows": {
+      "parameters": [
+        "currency",
+        "flows",
+        "valuations",
+        "flow_timing"
+      ],
+      "output_keys": [
+        "fund_multiples",
+        "xirr",
+        "time_weighted_return",
+        "modified_dietz_return",
+        "money_weighted_return",
+        "currency",
+        "precision",
+        "sign_convention"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf",
+        "crypto_spot"
+      ],
+      "history": false,
+      "local_only": true
+    },
+    "rigor": {
+      "parameters": [
+        "operation",
+        "values"
+      ],
+      "output_keys": [
+        "verification",
+        "precision"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf",
+        "crypto_spot"
+      ],
+      "history": false,
+      "local_only": true
+    },
+    "audit": {
+      "parameters": [
+        "text",
+        "seed",
+        "sample_rate",
+        "checks"
+      ],
+      "output_keys": [
+        "extraction",
+        "verdict",
+        "sampling_seed"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf",
+        "crypto_spot"
+      ],
+      "history": false,
+      "local_only": true
+    },
+    "decay": {
+      "parameters": [
+        "current_status",
+        "ic_ratio",
+        "ir",
+        "ic_positive_ratio",
+        "sharpe",
+        "prior_signals"
+      ],
+      "output_keys": [
+        "evaluation",
+        "persistence"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf",
+        "crypto_spot"
+      ],
+      "history": false,
+      "local_only": true
+    },
+    "reconcile": {
+      "parameters": [
+        "account",
+        "risk",
+        "observed",
+        "expected_timestamp",
+        "tolerance"
+      ],
+      "output_keys": [
+        "reconciliation",
+        "scope"
+      ],
+      "markets": [
+        "us_equity",
+        "us_etf",
+        "crypto_spot"
+      ],
+      "history": false,
+      "local_only": true
+    }
+  },
+  "reasons": [
+    "INPUT_REQUIRED",
+    "INPUT_INVALID",
+    "INSUFFICIENT_HISTORY",
+    "VOLUME_UNIT_REQUIRED",
+    "EXECUTION_REJECTED",
+    "SOURCE_UNAVAILABLE",
+    "WORKER_LIMIT",
+    "PERPETUAL_DATA_REQUIRED",
+    "OWNER_REQUIRED",
+    "CURRENCY_MISMATCH",
+    "CALENDAR_MISMATCH",
+    "NO_DATA",
+    "FACTOR_UNIVERSE_UNSUPPORTED"
+  ]
+}

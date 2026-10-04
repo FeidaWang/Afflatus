@@ -25,7 +25,7 @@ async def _bounded_read(stream, maximum: int) -> bytes:
         chunks.append(chunk)
 
 
-async def fetch_bars(request: BarsRequest) -> dict:
+async def fetch_bars(request: BarsRequest, *, research=False, quant=False) -> dict:
     upstream = Path(os.environ.get("VIBE_UPSTREAM_AGENT", "/nonexistent")).resolve()
     if not (upstream / "src" / "market_data.py").is_file():
         raise SourceUnavailable("upstream not installed")
@@ -38,9 +38,21 @@ async def fetch_bars(request: BarsRequest) -> dict:
             "HOME": home, "USERPROFILE": home, "VIBE_TRADING_HOME": home,
             "PYTHONPATH": os.pathsep.join([str(service_root), str(upstream)]),
             "PYTHONUNBUFFERED": "1", "PYTHONNOUSERSITE": "1",
+            "VIBE_UPSTREAM_AGENT": str(upstream), "PYTHONDONTWRITEBYTECODE": "1",
         })
+        if research:
+            from .research import sec_contact_valid
+            contact = os.getenv('VIBE_TRADING_SEC_UA')
+            if sec_contact_valid(contact): env['VIBE_TRADING_SEC_UA'] = contact
+            env['VIBE_TRADING_SEC_MIN_INTERVAL'] = '0.3'
+            env['VIBE_WORKER_OPERATION'] = 'research'
+            if request.module == 'earnings':
+                from .calendar import gateway_settings
+                settings = gateway_settings()
+                if settings:
+                    env.update(VIBE_FUTU_CALENDAR_ENABLED='true', VIBE_FUTU_CALENDAR_HOST=settings[0], VIBE_FUTU_CALENDAR_PORT=str(settings[1]))
         process = await asyncio.create_subprocess_exec(
-            sys.executable, "-m", "bridge.worker", cwd=home, env=env,
+            sys.executable, "-m", "bridge.quant_worker" if quant else "bridge.worker", cwd=home, env=env,
             stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
@@ -57,7 +69,7 @@ async def fetch_bars(request: BarsRequest) -> dict:
                 raise SourceUnavailable("upstream read failed")
             return json.loads(out)
         try:
-            return await asyncio.wait_for(exchange(), timeout=20)
+            return await asyncio.wait_for(exchange(), timeout=120 if quant else 20)
         except asyncio.CancelledError:
             if process.returncode is None:
                 process.kill()

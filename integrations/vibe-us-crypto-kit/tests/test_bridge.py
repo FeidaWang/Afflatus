@@ -205,8 +205,8 @@ def fetch_market_data(**kw):
 ''')
     monkeypatch.setenv('VIBE_UPSTREAM_AGENT',str(upstream))
     for key in ['OPENAI_API_KEY','BINANCE_API_SECRET','ARENA_ADMIN_KEY']:monkeypatch.setenv(key,'synthetic-private-key')
-    if __import__('os').environ.get('VIBE_TEST_HOST_ROOT'):
-        # The host now verifies pinned blobs before importing any loader.
+    if __import__('importlib').util.find_spec('bridge.upstream'):
+        # Host and synchronized overlay verify pinned blobs before imports.
         # Keep this synthetic source as a rejection test, and inspect the
         # actual process environment without bypassing that verification.
         create = asyncio.create_subprocess_exec

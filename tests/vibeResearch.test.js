@@ -17,6 +17,16 @@ async function invoke(config = {}, fetcher = async () => Response.json(fixture()
   return response;
 }
 describe('P2 research boundary', () => {
+  it('bounds calendar dates and checks the selected US company identity', () => {
+    const now = Date.parse('2026-10-04T12:00:00Z'), q = { instrument: 'US:AAPL', module: 'earnings', begin: '2026-10-04', end: '2026-10-10' };
+    const req = parseResearchQuery(q, now);
+    for (const patch of [{ end: '2026-10-11' }, { begin: '2026-10-12' }, { begin: '2026-02-30' }, { host: '127.0.0.1' }, { instrument: 'US:SPY' }, { module: 'profile' }]) expect(() => parseResearchQuery({ ...q, ...patch }, now)).toThrow();
+    const value = { ...fixture(), module: 'earnings', source: 'futu_opend', source_url: 'https://openapi.futunn.com/futu-api-doc/en/quote/get-earnings-calendar.html', quality: 'connector_calendar', status: 'available', reason: null,
+      sections: [{ id: 'events', status: 'available', reason: null, rows: [{ symbol: 'AAPL', name: 'Apple', earnings_date: '2026-10-07', release_at: null, publish_session: 'AFTER', period: '2026Q4' }] }] };
+    expect(validateResearch(value, req)).toBe(true);
+    value.sections[0].rows[0].symbol = 'MSFT'; expect(validateResearch(value, req)).toBe(false);
+    value.sections[0].rows[0].symbol = 'AAPL'; value.sections[0].rows[0].earnings_date = '2026-10-11'; expect(validateResearch(value, req)).toBe(false);
+  });
   it('rejects duplicate arguments, foreign markets, arbitrary actions and owner placeholders', () => {
     for (const patch of [{ module: ['profile', 'news'] }, { module: 'execute' }, { url: 'https://example.com' },
       { instrument: 'HK:0700' }, { instrument: 'CRYPTO:OKX:BTC-USDT:PERP' }, { module: 'orderbook' },
