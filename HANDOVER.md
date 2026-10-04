@@ -3,7 +3,7 @@
 ## Current checkpoint and scope
 
 - Worktree: `/Users/feida/.codex/worktrees/5615/afflatus`; branch: `codex/vibe-us-crypto-integration`.
-- P0/P1 implementation: `c3fee505`; prior handover: `97f2f893`. This P2 continuation is the latest local commit after final verification; inspect `git log -3 --oneline`.
+- P0/P1 implementation: `c3fee505`; prior handover: `97f2f893`; P2 implementation: `3f6815e9`. The latest local commit is the subsequent Arena alignment follow-up; inspect `git log -3 --oneline`.
 - User scope: **暂保留 P4/P5 阻塞，本轮完成 P2**. Do not start personal research/accounts without real owner identity. No push, deployment, paid resources or live orders authorized or performed.
 - Upstream remains `251b094320c1f97d1486626d3618113526914d4c`, in ignored `integrations/vibe-us-crypto-kit/vendor/vibe-trading`. Runtime blob verification covers every enabled pinned adapter/helper; do not substitute main.
 - Read root `IMPLEMENTATION_STATUS.md` and kit `validation/P2_TEST_REPORT.md` first. Original P0/P1 evidence remains in `validation/IMPLEMENTATION_TEST_REPORT.md`; source inventories and original capability IDs remain intact. Do not repeat the full inventory scan.
@@ -17,6 +17,8 @@ The registry now has 13 entries: AAPL/MSFT/NVDA/MU/SPY/QQQ/IVV and BTC/ETH/SOL-U
 Q01 includes pinned retrospective candlestick/head-and-shoulders/double-top-bottom/triangle/broadening/support-resistance/trend helpers. All calculations use complete unsampled bars; the candlestick chart displays the last 80. Centered pivots are labelled retrospective with a confirmation snapshot, not causal trading signals. Warmup gaps remain unavailable.
 
 Browser research is action-triggered, bilingual and typed. Financial cutoff/cadence and fixed manager controls appear only for their modules. Selection changes cancel requests and clear old data. Missing source values stay null. Sentiment text stays in the browser and uses the pinned English lexicon with Python-compatible four-decimal rounding. Alternative.me attribution is adjacent to the index.
+
+The 5 October layout follow-up scopes the published Arena content to the masthead logo/language edges in `src/pages/arena-layout.css`. Main/research/footer share one rail; copyright and the final social link/icon align with the language key. Mobile menu precedes that key in both visual and keyboard order. Narrow index spacing, popup/dialog/toast bounds are retained within the rail. Chromium checks cover 18 EN/ZH viewport cases from 320 to 1920 px plus both built fixed-language routes at 440/1440 px; evidence and screenshots are in `output/playwright/vibe/arena-alignment-*`. No other page's shared stylesheet was changed.
 
 ## Boundaries and files
 

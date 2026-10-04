@@ -25,3 +25,7 @@ The user authorized publishing this exact dashboard at the bilingual /en/arena.h
 The user requires all English typography on Afflatus, including this published dashboard and Canvas chart labels, to use Anthropic Sans. This supersedes the earlier English font choices. Preserve the selected layout and the existing Chinese fallback families. The production font files and shared declarations live in the root `public/assets/fonts/` and `public/styles/typography.css`.
 
 The user subsequently requested a smaller, lighter sitewide type hierarchy against Anthropic's site. Journal titles and company headings now use regular 400 weight, with smaller responsive sizes; watchlist headings use 500. Shared navigation stays at 15px/400, footer links at 12px/400, and the masthead wordmark at 22px/600. Preserve the dashboard composition and Chinese fallback families while applying this scale.
+
+## Horizontal alignment — 5 October 2026
+
+The user requires the Arena dashboard and added research content, on desktop and mobile, to remain between the masthead logo's left edge and language-switch button's right edge. Align the footer copyright and rightmost social link/icon with that language-button edge. Use the existing shared masthead geometry as the source of these boundaries; retain the selected dashboard composition. The published host scopes these rules in `src/pages/arena-layout.css`; on mobile the menu sits before the rightmost language key.

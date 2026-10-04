@@ -1,0 +1,897 @@
+{
+  "environment": "local Chromium, viewport simulation; responsive header settled for two animation frames",
+  "content_tolerance_px": 1,
+  "alignment_tolerance_px": 0.1,
+  "checks": [
+    {
+      "locale": "zh",
+      "width": 320,
+      "documentWidth": 320,
+      "logo": {
+        "left": 24,
+        "right": 144
+      },
+      "language": {
+        "left": 240.59375,
+        "right": 296
+      },
+      "main": {
+        "left": 24,
+        "right": 296
+      },
+      "research": {
+        "left": 24,
+        "right": 296
+      },
+      "footer": {
+        "left": 24,
+        "right": 296
+      },
+      "copyright": {
+        "left": 220.765625,
+        "right": 296
+      },
+      "lastLink": {
+        "left": 252,
+        "right": 296
+      },
+      "lastIcon": {
+        "left": 275,
+        "right": 296
+      },
+      "violations": []
+    },
+    {
+      "locale": "zh",
+      "width": 375,
+      "documentWidth": 375,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 287.59375,
+        "right": 343
+      },
+      "main": {
+        "left": 32,
+        "right": 343
+      },
+      "research": {
+        "left": 32,
+        "right": 343
+      },
+      "footer": {
+        "left": 32,
+        "right": 343
+      },
+      "copyright": {
+        "left": 267.765625,
+        "right": 343
+      },
+      "lastLink": {
+        "left": 299,
+        "right": 343
+      },
+      "lastIcon": {
+        "left": 322,
+        "right": 343
+      },
+      "violations": []
+    },
+    {
+      "locale": "zh",
+      "width": 440,
+      "documentWidth": 440,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 352.59375,
+        "right": 408
+      },
+      "main": {
+        "left": 32,
+        "right": 408
+      },
+      "research": {
+        "left": 32,
+        "right": 408
+      },
+      "footer": {
+        "left": 32,
+        "right": 408
+      },
+      "copyright": {
+        "left": 332.765625,
+        "right": 408
+      },
+      "lastLink": {
+        "left": 364,
+        "right": 408
+      },
+      "lastIcon": {
+        "left": 387,
+        "right": 408
+      },
+      "violations": []
+    },
+    {
+      "locale": "zh",
+      "width": 768,
+      "documentWidth": 768,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 680.59375,
+        "right": 736
+      },
+      "main": {
+        "left": 32,
+        "right": 736
+      },
+      "research": {
+        "left": 32,
+        "right": 736
+      },
+      "footer": {
+        "left": 32,
+        "right": 736
+      },
+      "copyright": {
+        "left": 660.765625,
+        "right": 736
+      },
+      "lastLink": {
+        "left": 692,
+        "right": 736
+      },
+      "lastIcon": {
+        "left": 715,
+        "right": 736
+      },
+      "violations": []
+    },
+    {
+      "locale": "zh",
+      "width": 979,
+      "documentWidth": 979,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 891.59375,
+        "right": 947
+      },
+      "main": {
+        "left": 32,
+        "right": 947
+      },
+      "research": {
+        "left": 32,
+        "right": 947
+      },
+      "footer": {
+        "left": 32,
+        "right": 947
+      },
+      "copyright": {
+        "left": 871.765625,
+        "right": 947
+      },
+      "lastLink": {
+        "left": 903,
+        "right": 947
+      },
+      "lastIcon": {
+        "left": 926,
+        "right": 947
+      },
+      "violations": []
+    },
+    {
+      "locale": "zh",
+      "width": 980,
+      "documentWidth": 980,
+      "logo": {
+        "left": 84,
+        "right": 228
+      },
+      "language": {
+        "left": 840.59375,
+        "right": 896
+      },
+      "main": {
+        "left": 84,
+        "right": 896
+      },
+      "research": {
+        "left": 84,
+        "right": 896
+      },
+      "footer": {
+        "left": 84,
+        "right": 896
+      },
+      "copyright": {
+        "left": 820.765625,
+        "right": 896
+      },
+      "lastLink": {
+        "left": 862,
+        "right": 896
+      },
+      "lastIcon": {
+        "left": 875,
+        "right": 896
+      },
+      "violations": []
+    },
+    {
+      "locale": "zh",
+      "width": 1024,
+      "documentWidth": 1024,
+      "logo": {
+        "left": 84,
+        "right": 228
+      },
+      "language": {
+        "left": 884.59375,
+        "right": 940
+      },
+      "main": {
+        "left": 84,
+        "right": 940
+      },
+      "research": {
+        "left": 84,
+        "right": 940
+      },
+      "footer": {
+        "left": 84,
+        "right": 940
+      },
+      "copyright": {
+        "left": 864.75,
+        "right": 939.984375
+      },
+      "lastLink": {
+        "left": 905.984375,
+        "right": 939.984375
+      },
+      "lastIcon": {
+        "left": 918.984375,
+        "right": 939.984375
+      },
+      "violations": []
+    },
+    {
+      "locale": "zh",
+      "width": 1440,
+      "documentWidth": 1440,
+      "logo": {
+        "left": 84,
+        "right": 228
+      },
+      "language": {
+        "left": 1300.59375,
+        "right": 1356
+      },
+      "main": {
+        "left": 84,
+        "right": 1356
+      },
+      "research": {
+        "left": 84,
+        "right": 1356
+      },
+      "footer": {
+        "left": 84,
+        "right": 1356
+      },
+      "copyright": {
+        "left": 1280.75,
+        "right": 1355.984375
+      },
+      "lastLink": {
+        "left": 1321.984375,
+        "right": 1355.984375
+      },
+      "lastIcon": {
+        "left": 1334.984375,
+        "right": 1355.984375
+      },
+      "violations": []
+    },
+    {
+      "locale": "zh",
+      "width": 1920,
+      "documentWidth": 1920,
+      "logo": {
+        "left": 324,
+        "right": 468
+      },
+      "language": {
+        "left": 1540.59375,
+        "right": 1596
+      },
+      "main": {
+        "left": 324,
+        "right": 1596
+      },
+      "research": {
+        "left": 324,
+        "right": 1596
+      },
+      "footer": {
+        "left": 324,
+        "right": 1596
+      },
+      "copyright": {
+        "left": 1520.75,
+        "right": 1595.984375
+      },
+      "lastLink": {
+        "left": 1561.984375,
+        "right": 1595.984375
+      },
+      "lastIcon": {
+        "left": 1574.984375,
+        "right": 1595.984375
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 320,
+      "documentWidth": 320,
+      "logo": {
+        "left": 24,
+        "right": 144
+      },
+      "language": {
+        "left": 232,
+        "right": 296
+      },
+      "main": {
+        "left": 24,
+        "right": 296
+      },
+      "research": {
+        "left": 24,
+        "right": 296
+      },
+      "footer": {
+        "left": 24,
+        "right": 296
+      },
+      "copyright": {
+        "left": 220.765625,
+        "right": 296
+      },
+      "lastLink": {
+        "left": 252,
+        "right": 296
+      },
+      "lastIcon": {
+        "left": 275,
+        "right": 296
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 375,
+      "documentWidth": 375,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 279,
+        "right": 343
+      },
+      "main": {
+        "left": 32,
+        "right": 343
+      },
+      "research": {
+        "left": 32,
+        "right": 343
+      },
+      "footer": {
+        "left": 32,
+        "right": 343
+      },
+      "copyright": {
+        "left": 267.765625,
+        "right": 343
+      },
+      "lastLink": {
+        "left": 299,
+        "right": 343
+      },
+      "lastIcon": {
+        "left": 322,
+        "right": 343
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 440,
+      "documentWidth": 440,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 344,
+        "right": 408
+      },
+      "main": {
+        "left": 32,
+        "right": 408
+      },
+      "research": {
+        "left": 32,
+        "right": 408
+      },
+      "footer": {
+        "left": 32,
+        "right": 408
+      },
+      "copyright": {
+        "left": 332.765625,
+        "right": 408
+      },
+      "lastLink": {
+        "left": 364,
+        "right": 408
+      },
+      "lastIcon": {
+        "left": 387,
+        "right": 408
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 768,
+      "documentWidth": 768,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 672,
+        "right": 736
+      },
+      "main": {
+        "left": 32,
+        "right": 736
+      },
+      "research": {
+        "left": 32,
+        "right": 736
+      },
+      "footer": {
+        "left": 32,
+        "right": 736
+      },
+      "copyright": {
+        "left": 660.765625,
+        "right": 736
+      },
+      "lastLink": {
+        "left": 692,
+        "right": 736
+      },
+      "lastIcon": {
+        "left": 715,
+        "right": 736
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 979,
+      "documentWidth": 979,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 883,
+        "right": 947
+      },
+      "main": {
+        "left": 32,
+        "right": 947
+      },
+      "research": {
+        "left": 32,
+        "right": 947
+      },
+      "footer": {
+        "left": 32,
+        "right": 947
+      },
+      "copyright": {
+        "left": 871.765625,
+        "right": 947
+      },
+      "lastLink": {
+        "left": 903,
+        "right": 947
+      },
+      "lastIcon": {
+        "left": 926,
+        "right": 947
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 980,
+      "documentWidth": 980,
+      "logo": {
+        "left": 84,
+        "right": 228
+      },
+      "language": {
+        "left": 832,
+        "right": 896
+      },
+      "main": {
+        "left": 84,
+        "right": 896
+      },
+      "research": {
+        "left": 84,
+        "right": 896
+      },
+      "footer": {
+        "left": 84,
+        "right": 896
+      },
+      "copyright": {
+        "left": 820.765625,
+        "right": 896
+      },
+      "lastLink": {
+        "left": 862,
+        "right": 896
+      },
+      "lastIcon": {
+        "left": 875,
+        "right": 896
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 1024,
+      "documentWidth": 1024,
+      "logo": {
+        "left": 84,
+        "right": 228
+      },
+      "language": {
+        "left": 876,
+        "right": 940
+      },
+      "main": {
+        "left": 84,
+        "right": 940
+      },
+      "research": {
+        "left": 84,
+        "right": 940
+      },
+      "footer": {
+        "left": 84,
+        "right": 940
+      },
+      "copyright": {
+        "left": 864.75,
+        "right": 939.984375
+      },
+      "lastLink": {
+        "left": 905.984375,
+        "right": 939.984375
+      },
+      "lastIcon": {
+        "left": 918.984375,
+        "right": 939.984375
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "documentWidth": 1440,
+      "logo": {
+        "left": 84,
+        "right": 228
+      },
+      "language": {
+        "left": 1292,
+        "right": 1356
+      },
+      "main": {
+        "left": 84,
+        "right": 1356
+      },
+      "research": {
+        "left": 84,
+        "right": 1356
+      },
+      "footer": {
+        "left": 84,
+        "right": 1356
+      },
+      "copyright": {
+        "left": 1280.75,
+        "right": 1355.984375
+      },
+      "lastLink": {
+        "left": 1321.984375,
+        "right": 1355.984375
+      },
+      "lastIcon": {
+        "left": 1334.984375,
+        "right": 1355.984375
+      },
+      "violations": []
+    },
+    {
+      "locale": "en",
+      "width": 1920,
+      "documentWidth": 1920,
+      "logo": {
+        "left": 324,
+        "right": 468
+      },
+      "language": {
+        "left": 1532,
+        "right": 1596
+      },
+      "main": {
+        "left": 324,
+        "right": 1596
+      },
+      "research": {
+        "left": 324,
+        "right": 1596
+      },
+      "footer": {
+        "left": 324,
+        "right": 1596
+      },
+      "copyright": {
+        "left": 1520.75,
+        "right": 1595.984375
+      },
+      "lastLink": {
+        "left": 1561.984375,
+        "right": 1595.984375
+      },
+      "lastIcon": {
+        "left": 1574.984375,
+        "right": 1595.984375
+      },
+      "violations": []
+    }
+  ],
+  "built_fixed_locale_checks": [
+    {
+      "locale": "zh",
+      "width": 440,
+      "documentWidth": 440,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 352.59375,
+        "right": 408
+      },
+      "main": {
+        "left": 32,
+        "right": 408
+      },
+      "footer": {
+        "left": 32,
+        "right": 408
+      },
+      "copyright": {
+        "left": 332.765625,
+        "right": 408
+      },
+      "lastLink": {
+        "left": 364,
+        "right": 408
+      },
+      "lastIcon": {
+        "left": 387,
+        "right": 408
+      },
+      "researchSections": 0
+    },
+    {
+      "locale": "zh",
+      "width": 1440,
+      "documentWidth": 1440,
+      "logo": {
+        "left": 84,
+        "right": 228
+      },
+      "language": {
+        "left": 1300.59375,
+        "right": 1356
+      },
+      "main": {
+        "left": 84,
+        "right": 1356
+      },
+      "footer": {
+        "left": 84,
+        "right": 1356
+      },
+      "copyright": {
+        "left": 1280.75,
+        "right": 1355.984375
+      },
+      "lastLink": {
+        "left": 1321.984375,
+        "right": 1355.984375
+      },
+      "lastIcon": {
+        "left": 1334.984375,
+        "right": 1355.984375
+      },
+      "researchSections": 0
+    },
+    {
+      "locale": "en",
+      "width": 440,
+      "documentWidth": 440,
+      "logo": {
+        "left": 32,
+        "right": 152
+      },
+      "language": {
+        "left": 344,
+        "right": 408
+      },
+      "main": {
+        "left": 32,
+        "right": 408
+      },
+      "footer": {
+        "left": 32,
+        "right": 408
+      },
+      "copyright": {
+        "left": 332.765625,
+        "right": 408
+      },
+      "lastLink": {
+        "left": 364,
+        "right": 408
+      },
+      "lastIcon": {
+        "left": 387,
+        "right": 408
+      },
+      "researchSections": 0
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "documentWidth": 1440,
+      "logo": {
+        "left": 84,
+        "right": 228
+      },
+      "language": {
+        "left": 1292,
+        "right": 1356
+      },
+      "main": {
+        "left": 84,
+        "right": 1356
+      },
+      "footer": {
+        "left": 84,
+        "right": 1356
+      },
+      "copyright": {
+        "left": 1280.75,
+        "right": 1355.984375
+      },
+      "lastLink": {
+        "left": 1321.984375,
+        "right": 1355.984375
+      },
+      "lastIcon": {
+        "left": 1334.984375,
+        "right": 1355.984375
+      },
+      "researchSections": 0
+    }
+  ],
+  "interactions": {
+    "desktopMore": {
+      "left": 1028,
+      "right": 1268,
+      "inside": true
+    },
+    "mobileDialog": {
+      "left": 24,
+      "right": 296,
+      "inside": true
+    },
+    "mobileMenu": {
+      "visibleItems": 5,
+      "inside": true
+    },
+    "keyboardAfterMenu": "af-header-language"
+  },
+  "tested_date": "2026-10-05",
+  "timezone": "Australia/Melbourne",
+  "loaded_profile_checks": [
+    {
+      "width": 320,
+      "documentWidth": 320,
+      "loadedRows": 36,
+      "cardLeft": 24,
+      "cardRight": 296,
+      "logoLeft": 24,
+      "languageRight": 296
+    },
+    {
+      "width": 375,
+      "documentWidth": 375,
+      "loadedRows": 36,
+      "cardLeft": 32,
+      "cardRight": 343,
+      "logoLeft": 32,
+      "languageRight": 343
+    },
+    {
+      "width": 1440,
+      "documentWidth": 1440,
+      "loadedRows": 36,
+      "cardLeft": 84,
+      "cardRight": 1356,
+      "logoLeft": 84,
+      "languageRight": 1356
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "top": "output/playwright/vibe/arena-alignment-desktop-top.png",
+      "footer": "output/playwright/vibe/arena-alignment-desktop-footer.png",
+      "dataRows": 36,
+      "documentWidth": 1440
+    },
+    {
+      "name": "mobile",
+      "width": 375,
+      "top": "output/playwright/vibe/arena-alignment-mobile-top.png",
+      "footer": "output/playwright/vibe/arena-alignment-mobile-footer.png",
+      "dataRows": 36,
+      "documentWidth": 375
+    }
+  ],
+  "typecheck": "passed",
+  "build": "passed, including existing data/site/header/CSS/combat/i18n/OG/SEO checks"
+}

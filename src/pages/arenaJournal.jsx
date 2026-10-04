@@ -2,6 +2,12 @@ import React, { Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '../../prototypes/us-equities-dashboard/src/App.jsx';
 import '../../prototypes/us-equities-dashboard/src/styles.css';
+import './arena-layout.css';
+
+// Match keyboard order to the mobile masthead's menu → language layout.
+const languageKey = document.querySelector('#afflatus-header .af-header-language');
+const menuKey = document.querySelector('#afflatus-header .af-header-menu');
+if (languageKey && menuKey) languageKey.before(menuKey);
 
 // A non-secret UI flag; the independent BFF flag and data gate still apply.
 const Markets = import.meta.env.VITE_VIBE_MARKETS_ENABLED === 'true'

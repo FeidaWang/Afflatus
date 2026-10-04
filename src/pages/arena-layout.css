@@ -1,0 +1,68 @@
+/* Arena content follows the masthead's logo and language-button edges. */
+body.arena-page {
+  --arena-content-edge: calc(max(var(--af-header-outer-gap), (100vw - var(--af-layout-max)) / 2) + var(--af-header-inner-gap));
+}
+
+body.arena-page :is(.main-content, .site-footer, .pa-footer-inner) {
+  box-sizing: border-box;
+  width: calc(100% - 2 * var(--arena-content-edge));
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+}
+
+body.arena-page .pa-footer-socials a {
+  justify-content: flex-end;
+}
+
+body.arena-page .pa-footer-socials a:last-child {
+  margin-right: 0;
+}
+
+body.arena-page .skip-link {
+  left: var(--arena-content-edge);
+  max-width: calc(100vw - 2 * var(--arena-content-edge));
+}
+
+body.arena-page .toast {
+  max-width: calc(100vw - 2 * var(--arena-content-edge));
+  white-space: normal;
+}
+
+body.arena-page .stock-dialog {
+  width: min(580px, calc(100vw - 2 * var(--arena-content-edge)));
+}
+
+body.arena-page #afflatus-header #af-more {
+  left: auto;
+  right: 0;
+}
+
+@media (max-width: 979px) {
+  body.arena-page {
+    --arena-content-edge: var(--af-header-compact-gap);
+  }
+
+  /* Keep the language key on the same right edge as the page and footer. */
+  body.arena-page #afflatus-header .af-header-menu {
+    order: 1;
+    margin-left: auto;
+  }
+
+  body.arena-page #afflatus-header .af-header-language {
+    order: 2;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  body.arena-page {
+    --af-header-compact-gap: 24px;
+  }
+}
+
+@media (max-width: 440px) {
+  body.arena-page .index-item + .index-item {
+    padding-left: 4px;
+  }
+}
