@@ -71,7 +71,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .book:hover{border-color:var(--copper-b);transform:perspective(700px) rotateY(-5deg) translateY(-3px);box-shadow:9px 12px 0 rgba(0,0,0,.26),inset -8px 0 14px rgba(0,0,0,.18)}
 .book.active{border-color:var(--teal);background:var(--panel2)}
 .book.active::before{opacity:1}
-.book .bk-title{display:block;font:700 15px/1.3 var(--serif);color:var(--chrome);margin:0 0 6px}
+.book .bk-title{display:block;font:700 15px/1.3 var(--serif);color:var(--chrome);margin:0 0 6px;font-weight:var(--af-weight-medium)}
 .book .bk-sub{font:400 9.5px/1.5 var(--mono);letter-spacing:.08em;color:var(--teal);text-transform:uppercase;margin:0 0 8px}
 .book .bk-meta{font:400 10.5px/1.6 var(--mono);color:var(--chrome-dim)}
 .book .bk-badge{position:absolute;top:10px;right:10px;font:400 9px/1 var(--mono);color:#0d211f;background:var(--teal);padding:3px 7px;border-radius:10px;display:none}
@@ -83,7 +83,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .hero .bar{height:5px;background:linear-gradient(90deg,var(--copper),var(--teal))}
 .hero .pad{padding:clamp(16px,4vw,28px);min-height:260px}
 .kicker{font:400 10.5px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
-.hero h1{font:400 clamp(26px,7vw,42px)/1.2 var(--disp);color:var(--chrome);margin:12px 0 8px;letter-spacing:.01em}
+.hero h1{font:400 clamp(26px,7vw,42px)/1.2 var(--disp);color:var(--chrome);margin:12px 0 8px;letter-spacing:-.015em;font-size:var(--af-type-hero);font-weight:var(--af-weight-regular)}
 .hero .sub{font:400 12.5px/1.6 var(--mono);color:var(--copper-b);letter-spacing:.03em;margin:0 0 12px}
 .hero .intro{max-width:66ch;color:var(--chrome-dim);font:400 13.5px/1.8 var(--serif)}
 .tags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 0}
@@ -147,7 +147,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .reader-progress{position:sticky;top:calc(var(--safe-t) + var(--toolbar-h));height:3px;background:var(--read-line);z-index:2}
 .reader-progress i{display:block;height:100%;width:0;background:var(--read-accent);transition:width .1s linear}
 .reader .pad{padding:clamp(18px,5vw,34px) clamp(16px,5vw,40px) clamp(24px,5vw,40px)}
-.reader h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px}
+.reader h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px;font-weight:var(--af-weight-medium)}
 .reader .meta{font:400 11px/1.6 var(--mono);color:var(--read-ink-dim);letter-spacing:.04em;margin:0 0 20px;text-transform:uppercase}
 /* U46 46-乙-③: cap the reading column at 68ch (same rule U41 set on
    signal.html) — line-height was already 1.95 (well past the 1.7 floor),
@@ -223,7 +223,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 /* ---- waterfall / infinite-scroll reading ---- */
 .reader-waterfall{min-height:70vh}
 .wf-chapter{max-width:68ch;margin:0 auto 8px}
-.wf-chapter h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px}
+.wf-chapter h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px;font-weight:var(--af-weight-medium)}
 .wf-chapter .meta{font:400 11px/1.6 var(--mono);color:var(--read-ink-dim);letter-spacing:.04em;margin:0 0 20px;text-transform:uppercase}
 .reader .wf-chapter .body{min-height:0}
 .wf-divider{display:flex;align-items:center;gap:12px;max-width:68ch;margin:8px auto 30px;color:var(--read-ink-dim);font:400 11px/1 var(--mono);letter-spacing:.1em}
@@ -249,7 +249,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 .toast{position:fixed;left:50%;bottom:calc(90px + var(--safe-b) + var(--keyboard-inset,0px));transform:translate(-50%,10px);z-index:50;background:var(--panel2);border:1px solid var(--teal-d);color:var(--chrome);font:400 11.5px/1.5 var(--mono);padding:10px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;max-width:88vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-.foot{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font:400 10.5px/1.7 var(--mono);letter-spacing:.04em;color:var(--chrome-dim);text-transform:uppercase}
+.foot{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font:400 10.5px/1.7 var(--mono);letter-spacing:.04em;color:var(--chrome-dim);text-transform:uppercase;font-size:var(--af-type-footer);font-weight:var(--af-weight-regular)}
 .foot b{color:var(--copper-b)}
 
 @media(max-width:640px){
@@ -317,4 +317,9 @@ body:not(.reader-enhanced) .chapter-nav > a:not([href]){display:none}
   .chapter-nav{flex-wrap:wrap}
   .chapter-nav .ind{flex-basis:100%;order:-1;text-align:center}
   .chapter-nav > a{white-space:nowrap}
+}
+
+body.novels-page .library-intro h2 {
+  font: var(--af-weight-regular) var(--af-type-section)/1.3 var(--af-font-sans);
+  letter-spacing: -.015em;
 }

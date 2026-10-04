@@ -13,7 +13,7 @@ body [data-reading-nav] a[aria-current] {
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 6px;
-  font-weight: 800;
+  font-weight: var(--af-weight-medium);
   opacity: 1;
 }
 body [data-reading-nav] a:focus-visible {

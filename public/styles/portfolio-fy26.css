@@ -44,7 +44,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 .pf-step a{pointer-events:auto}
 .pf-hero{max-width:860px;padding:40px 24px;background:radial-gradient(closest-side,var(--pf-paper) 62%,rgba(250,249,245,.0));}
 .pf-kicker{font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--pf-muted)}
-.pf-hero h1{font-size:clamp(88px,17vw,220px);line-height:.95;letter-spacing:-.045em;margin:18px 0 20px;font-variant-numeric:tabular-nums}
+.pf-hero h1{font-size:clamp(64px, 10vw, 144px);line-height:1.05;letter-spacing:var(--af-tracking-heading);margin:18px 0 20px;font-variant-numeric:tabular-nums}
 .pf-hero-lead{max-width:640px;margin:0 auto;font:clamp(19px,1.8vw,23px)/1.5 var(--pf-serif);color:#3b3a36}
 .pf-hero-stats{display:flex;justify-content:center;gap:clamp(16px,4vw,56px);margin:36px 0 0;padding:0}
 .pf-hero-stats div{display:flex;flex-direction:column-reverse;gap:2px}
@@ -65,7 +65,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 .pf-section--tint{background:var(--pf-paper-2)}
 .pf-heading{max-width:760px;margin:0 auto 56px;text-align:center}
 .pf-heading>span{font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--pf-accent)}
-.pf-heading h2{font-size:clamp(38px,4.8vw,64px);line-height:1.08;margin:14px 0 16px}
+.pf-heading h2{font-size:var(--af-type-section);line-height:1.15;margin:14px 0 16px}
 .pf-heading p{font:19px/1.55 var(--pf-serif);color:var(--pf-muted)}
 .pf-heading--left{text-align:left;margin:0}
 .pf-fine{font-size:13px;line-height:1.55;color:var(--pf-muted)}
@@ -198,13 +198,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 /* footer (shared rail) */
 .pa-footer{display:block;min-height:0;padding:56px 0 44px;background:#1f1e1d;color:#f2f0e9}
 .pa-footer-inner{display:grid;grid-template-columns:minmax(230px,1fr) minmax(330px,1.4fr) minmax(160px,.65fr);gap:40px;width:calc(100% - 2 * var(--af-header-outer-gap,24px));max-width:var(--af-layout-max,1440px);margin:0 auto;padding:0 var(--af-header-inner-gap,16px)}
-.pa-footer-brand{align-self:start;width:max-content;font-size:clamp(32px,3vw,42px);font-weight:700;line-height:1;letter-spacing:-.055em;text-decoration:none}
+.pa-footer-brand{align-self:start;width:max-content;font-size:clamp(28px, 2.3vw, 34px);font-weight:var(--af-weight-brand);line-height:1;letter-spacing:var(--af-tracking-heading);text-decoration:none}
 .pa-footer-brand-mark{display:inline-flex;align-items:baseline}
 .pa-footer .pa-footer-pages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px;margin:0}
-.pa-footer-pages a{width:max-content;max-width:100%;padding:5px 0;color:#d1d0ca;font-size:13px;line-height:1.35;text-decoration:none;transition:color .18s ease}
+.pa-footer-pages a{width:max-content;max-width:100%;padding:5px 0;color:#d1d0ca;font-size:var(--af-type-footer);line-height:1.4;text-decoration:none;transition:color .18s ease;font-weight:var(--af-weight-regular)}
 .pa-footer-pages a:hover,.pa-footer-brand:hover{color:#fff}
 .pa-footer-personal{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:0}
-.pa-footer-copyright{font-size:13px;white-space:nowrap}
+.pa-footer-copyright{font-size:var(--af-type-footer);white-space:nowrap}
 .pa-footer .pa-footer-socials{display:flex;align-items:center;justify-content:flex-end;gap:0;margin:0}
 .pa-footer-socials a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:44px;color:inherit}
 /* the last icon's edge lines up with the copyright's right edge */

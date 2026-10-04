@@ -18,6 +18,35 @@
   unicode-range: U+0000-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF, U+2122, U+2191, U+2193, U+2212;
 }
 
-:where(html) { font-family: "Anthropic Sans", system-ui, sans-serif; }
+:root {
+  /* One scale for the public pages: navigation follows the reference's
+     15px/400 text; footer links use 12px/400. Display sizes stay fluid. */
+  --af-font-sans: "Anthropic Sans", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --af-type-hero: clamp(40px, 4.25vw, 64px);
+  --af-type-section: clamp(28px, 2.45vw, 36px);
+  --af-type-subheading: clamp(22px, 1.85vw, 28px);
+  --af-type-lede: clamp(17px, 1.4vw, 20px);
+  --af-type-body: 16px;
+  --af-type-nav: 15px;
+  --af-type-caption: 12px;
+  --af-type-footer: 12px;
+  --af-type-brand: 22px;
+  --af-weight-regular: 400;
+  --af-weight-medium: 500;
+  --af-weight-brand: 600;
+  --af-leading-heading: 1.12;
+  --af-tracking-heading: -.025em;
+}
+
+@media (max-width: 700px) {
+  :root {
+    --af-type-hero: clamp(34px, 8.5vw, 44px);
+    --af-type-section: clamp(26px, 6.4vw, 32px);
+    --af-type-subheading: clamp(22px, 5.6vw, 26px);
+    --af-type-brand: 21px;
+  }
+}
+
+:where(html) { font-family: var(--af-font-sans); font-synthesis: none; }
 :where(button, input, select, textarea) { font-family: inherit; }
 :where(code, pre, kbd, samp) { font-family: "Anthropic Sans", ui-monospace, monospace; }

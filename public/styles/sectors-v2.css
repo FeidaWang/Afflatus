@@ -30,8 +30,8 @@
 .stage[data-mode="live"] .stage-card[data-active]{opacity:1}
 .stage-card:nth-child(1){--i:0}.stage-card:nth-child(2){--i:1}.stage-card:nth-child(3){--i:2}
 .stage-card:nth-child(4){--i:3}.stage-card:nth-child(5){--i:4}.stage-card:nth-child(6){--i:5}
-.stage-card h1,.stage-card h2{margin:0 0 12px;color:var(--ink);font-size:clamp(24px,2.6vw,34px);line-height:1.15}
-.stage-card h1{font-size:clamp(30px,3.6vw,48px)}
+.stage-card h1,.stage-card h2{margin:0 0 12px;color:var(--ink);font-size:clamp(24px,2.6vw,34px);line-height:1.2;font-weight:var(--af-weight-regular);letter-spacing:var(--af-tracking-heading)}
+.stage-card h1{font-size:min(var(--af-type-hero), 48px)}
 .stage-card p{margin:0 0 12px;color:var(--text);font-size:15px;line-height:1.6}
 .stage-card .stage-kicker{font:600 11px/1.4 var(--font-sans,system-ui);letter-spacing:.08em;color:var(--muted)}
 .stage-excerpt-controls{display:flex;gap:8px;margin-top:16px}
@@ -160,14 +160,14 @@
 .fact-meta{display:grid;gap:4px;justify-items:start}
 .fact-sources{font:12px/1.4 var(--font-sans,system-ui);color:var(--muted)}.fact-sources a{color:inherit}
 @media (max-width:640px){.ipo-bar{grid-template-columns:1fr}.ladder-lane ol{gap:8px}.ladder-lane .status-tag{padding:3px 5px;letter-spacing:.02em}}
-.chapter-head h2{font:400 40px/1.15 var(--font-serif,Georgia);letter-spacing:-.01em;color:var(--ink);text-wrap:balance;margin:12px 0}
+.chapter-head h2{font:400 40px/1.15 var(--font-serif,Georgia);letter-spacing:-.01em;color:var(--ink);text-wrap:balance;margin:12px 0;font-size:var(--af-type-section)}
 .chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font:400 20px/1.6 var(--font-serif,Georgia);max-width:var(--w-text)}
 :lang(zh) .chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font:400 17px/1.8 var(--font-sans-zh,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif);max-width:38em}
-:lang(zh) .chapter-head h2{font-family:"Anthropic Sans", var(--font-serif-zh,"Noto Serif SC",serif);font-weight:600}
-@media (max-width:640px){.chapter{margin-top:96px}.chapter-head h2{font-size:30px}.chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font-size:18px}}
+:lang(zh) .chapter-head h2{font-family:"Anthropic Sans", var(--font-serif-zh,"Noto Serif SC",serif);font-weight:var(--af-weight-medium)}
+@media (max-width:640px){.chapter{margin-top:96px}.chapter-head h2{font-size:var(--af-type-section)}.chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font-size:18px}}
 .sectors .megaFoot{--ink-faint:var(--muted)}
 .industrySources summary{font:600 18px/1.4 var(--font-sans,system-ui);color:var(--ink);cursor:pointer}
-.industrySources h3{font:600 15px/1.4 var(--font-sans,system-ui);margin:24px 0 8px}
+.industrySources h3{font:600 15px/1.4 var(--font-sans,system-ui);margin:24px 0 8px;font-weight:var(--af-weight-medium)}
 .industrySources ol{padding-left:20px;display:grid;gap:6px;font:14px/1.5 var(--font-sans,system-ui);color:var(--text)}
 .industrySources table{width:100%;border-collapse:collapse;font:13px/1.4 var(--font-sans,system-ui)}
 .industrySources :is(th,td){text-align:left;padding:6px 12px 6px 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere}

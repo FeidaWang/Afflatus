@@ -288,7 +288,7 @@ export function App() {
       <section className="hero" id="top">
         <img className="hero-image" src="/assets/showcase/blackhole-hero.jpg" alt="" fetchPriority="high" decoding="async" />
         <div className="hero-shade" aria-hidden="true" />
-        <Header language={language} />
+        {!document.querySelector('[data-afflatus-header]') && <Header language={language} />}
         <MediaMotion language={language} />
         <div className="hero-content">
           <span className="eyebrow">{copy.hero.eyebrow}</span>
