@@ -4,7 +4,7 @@ const language=()=>document.documentElement.lang.startsWith('zh')?'zh':'en';
 const dialog=document.createElement('dialog');
 dialog.className='course-book-dialog';
 dialog.setAttribute('aria-labelledby','book-preview-title');
-dialog.innerHTML='<button type="button" class="book-preview-close"></button><div class="book-preview-art"><img width="480" height="640"></div><div class="book-preview-copy"><p class="book-preview-week"></p><h2 id="book-preview-title"></h2><p class="book-preview-description"></p><p class="book-preview-theme"></p><a class="book-preview-read"></a></div>';
+dialog.innerHTML='<button type="button" class="book-preview-close"></button><div class="book-preview-art"><img width="480" height="492"></div><div class="book-preview-copy"><p class="book-preview-week"></p><h2 id="book-preview-title"></h2><p class="book-preview-description"></p><p class="book-preview-theme"></p><a class="book-preview-read"></a></div>';
 document.body.append(dialog);
 let activeBook=null, opener=null, previousOverflow='';
 function render(){

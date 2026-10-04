@@ -39,6 +39,7 @@ function recoveryPage(server, directory, errorPage) {
 
 export default defineConfig({
   appType: 'mpa',
+  resolve: { dedupe: ['react', 'react-dom'] },
   plugins: [
     {
       name: 'static-404-recovery',

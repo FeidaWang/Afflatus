@@ -210,7 +210,7 @@ if (stage) {
       body.anchorY = body.y = position.y;
       body.vx = body.vy = body.angle = body.angularVelocity = 0;
       body.width = size;
-      body.height = size * 176 / 132;
+      body.height = size * 246 / 240;
       body.button.style.left = `${position.x}px`;
       body.button.style.top = `${position.y}px`;
       body.button.style.width = `${body.width}px`;

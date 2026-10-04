@@ -1,0 +1,97 @@
+/* Shared across page themes. Colors and desktop height observed on the reference;
+   motion and compact geometry use the I01 defaults. */
+#afflatus-header, #afflatus-header * { box-sizing: border-box; }
+#afflatus-header {
+  --af-height: 68px; --af-paper: #e8e6dc; --af-ink: #0f0f0e;
+  position: fixed; inset: 0 0 auto; z-index: 10000; width: 100%; height: var(--af-height);
+  margin: 0; padding: 0; border: 0; border-bottom: 1px solid #d1d0c8;
+  background: var(--af-paper); color: var(--af-ink); color-scheme: light;
+  font: 400 15px/1.4 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0; text-align: left; text-transform: none;
+  box-shadow: none; transform: none; isolation: isolate;
+}
+#afflatus-header .af-header-inner { display: flex; align-items: center; gap: 24px; width: calc(100% - 2 * var(--af-header-outer-gap)); max-width: var(--af-layout-max); height: 100%; margin: 0 auto; padding: 0 var(--af-header-inner-gap); }
+#afflatus-header a, #afflatus-header button {
+  display: inline-flex; align-items: center; justify-content: flex-start; gap: 8px; min-height: 44px;
+  width: auto; max-width: none; margin: 0; padding: 0 8px; border: 0; border-radius: 0;
+  color: inherit; background: transparent; font: inherit; letter-spacing: 0;
+  text-decoration: none; text-transform: none; white-space: nowrap; cursor: pointer;
+  box-shadow: none; transform: none;
+}
+#afflatus-header a::before, #afflatus-header a::after, #afflatus-header button::before, #afflatus-header button::after { content: none; }
+#afflatus-header :is(a, button):focus-visible { outline: 2px solid #486f76; outline-offset: 3px; }
+#afflatus-header .af-wordmark { flex: 0 0 calc(160px - var(--af-collapse, 0) * 120px); min-width: 0; padding: 0; overflow: hidden; }
+#afflatus-header .af-home-link { flex: 0 0 auto; padding: 0; font-weight: 600; }
+#afflatus-header .af-brand-art { position: relative; display: block; flex: none; width: 160px; height: 28px; font: 650 25px/28px Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+#afflatus-header .af-brand-full,
+#afflatus-header .af-brand-compact { position: absolute; left: 0; top: 0; display: block; height: 28px; white-space: nowrap; }
+#afflatus-header .af-brand-full { width: max-content; opacity: var(--af-suffix-opacity, 1); }
+#afflatus-header .af-brand-compact { display: flex; align-items: baseline; opacity: var(--af-compact-opacity, 0); }
+#afflatus-header .af-brand-a { display: block; height: 28px; line-height: 28px; }
+/* Sitewide AI_ shorthand: the cursor shares the letter baseline at every size. */
+.af-brand-i { display: inline-flex; align-items: baseline; margin-left: 1px; line-height: inherit; }
+.af-brand-underscore { display: inline-block; flex: none; width: .36em; height: .12em; margin-left: .08em; background: currentColor; animation: af-brand-blink 1.15s steps(1, end) infinite; }
+@keyframes af-brand-blink { 50% { opacity: .15; } }
+#afflatus-header .af-header-nav { display: flex; align-items: center; gap: 20px; height: 100%; margin: 0 0 0 auto; padding: 0; border: 0; background: transparent; position: static; }
+#afflatus-header .af-header-group { position: relative; display: flex; align-items: center; align-self: stretch; }
+#afflatus-header .af-nav-label { position: relative; }
+#afflatus-header .af-nav-label::after { content: ''; position: absolute; left: 0; right: 0; bottom: -5px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 160ms cubic-bezier(.22,.61,.36,1); }
+#afflatus-header .af-nav-caret { display: block; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.3; transform-origin: center; transition: transform 180ms cubic-bezier(.22,.61,.36,1); }
+#afflatus-header :is(a, button):focus-visible .af-nav-label::after,
+#afflatus-header .af-header-group:is([data-open="true"], [data-focus="true"]) > button .af-nav-label::after { transform: scaleX(1); }
+#afflatus-header button:focus-visible .af-nav-caret,
+#afflatus-header .af-header-group:is([data-open="true"], [data-focus="true"]) .af-nav-caret { transform: rotate(180deg); }
+#afflatus-header a[aria-current="page"] { font-weight: 650; }
+#afflatus-header .af-header-dropdown { position: absolute; top: 100%; left: 0; width: 240px; padding: 12px; border: 1px solid #d1d0c8; background: var(--af-paper); max-height: calc(100dvh - var(--af-height) - 16px); overflow-y: auto; animation: af-menu-in 160ms ease-out; }
+#afflatus-header .af-header-dropdown a { display: flex; white-space: normal; padding: 10px 12px; }
+#afflatus-header a.af-header-language { min-height: 36px; padding: 0 16px; border: 1px solid #161616; border-radius: 8px; background: #161616; color: #fff; font-size: 14px; font-weight: 600; }
+#afflatus-header .af-header-menu { display: none; }
+#afflatus-header [hidden] { display: none; }
+body:has(> #afflatus-header) { padding-top: 68px; }
+@media (hover: hover) and (pointer: fine) {
+  #afflatus-header a:hover .af-nav-label::after,
+  #afflatus-header .af-header-group:hover > button .af-nav-label::after { transform: scaleX(1); }
+  #afflatus-header .af-header-group:hover .af-nav-caret { transform: rotate(180deg); }
+}
+@keyframes af-menu-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (max-width: 979px) {
+  #afflatus-header { --af-height: 60px; }
+  #afflatus-header .af-header-inner { width: 100%; padding: 0 var(--af-header-compact-gap); gap: 8px; }
+  #afflatus-header .af-wordmark { flex-basis: calc(125px - var(--af-collapse, 0) * 94px); }
+  #afflatus-header .af-brand-art { transform: scale(.78); transform-origin: left center; }
+  #afflatus-header .af-header-language { margin-left: auto; }
+  #afflatus-header .af-header-menu { display: inline-flex; padding-right: 0; }
+  #afflatus-header .af-header-nav { position: absolute; top: 100%; left: 0; right: 0; display: flex; height: auto; flex-direction: column; align-items: stretch; gap: 4px; margin: 0; padding: 16px var(--af-header-compact-gap) 24px; background: var(--af-paper); max-height: calc(100dvh - var(--af-height)); overflow-y: auto; border-bottom: 1px solid #d1d0c8; animation: af-menu-in 160ms ease-out; }
+  #afflatus-header .af-header-nav > a, #afflatus-header .af-header-group > button { width: 100%; font-size: 17px; }
+  #afflatus-header .af-header-group { display: block; }
+  #afflatus-header .af-header-dropdown { position: static; width: 100%; border: 0; padding: 0 0 8px 16px; max-height: none; }
+  #afflatus-header [hidden] { display: none; }
+  body:has(> #afflatus-header) { padding-top: 60px; }
+}
+/* With scripting on, paint the collapsed geometry from the first frame so the header does not
+   shift the page when header-controller.js sets data-enhanced. */
+@media (scripting: enabled) {
+  #afflatus-header:not([data-enhanced]) .af-brand-art { visibility: hidden; }
+  #afflatus-header:not([data-enhanced]) .af-header-dropdown { display: none; }
+}
+@media (scripting: enabled) and (max-width: 979px) {
+  #afflatus-header:not([data-enhanced]) .af-header-nav { display: none; }
+}
+/* Static HTML exposes all destinations when scripting is unavailable. */
+@media (scripting: none) {
+  #afflatus-header:not([data-enhanced]) { position: relative; height: auto; }
+  #afflatus-header:not([data-enhanced]) .af-header-inner { flex-wrap: wrap; }
+  #afflatus-header:not([data-enhanced]) .af-header-nav { position: static; flex-wrap: wrap; }
+  #afflatus-header:not([data-enhanced]) .af-header-dropdown { position: static; }
+  #afflatus-header:not([data-enhanced]) button { display: none; }
+  body:has(> #afflatus-header:not([data-enhanced])) { padding-top: 0; }
+}
+@media (hover: hover) and (pointer: fine) {
+  #afflatus-header :is(a, button) { transition: background-color .18s ease, box-shadow .18s ease, color .18s ease; }
+  #afflatus-header :is(a, button):hover { background-color: #6689821c; box-shadow: 0 0 15px #66898236; }
+  #afflatus-header a.af-header-language:hover { background-color: #394d49; color: #fff; box-shadow: 0 0 0 4px #66898224, 0 0 18px #6689828c; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #afflatus-header *, #afflatus-header *::after { animation: none; transition: none; }
+  .af-brand-underscore { animation: none; opacity: 1; }
+}

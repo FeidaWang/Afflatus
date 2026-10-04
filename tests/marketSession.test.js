@@ -35,7 +35,10 @@ describe('NYSE market sessions', () => {
     expect(isNyseSession('2026-07-03')).toBe(false);
     expect(lastCompletedMarketSession(new Date('2026-07-06T15:00:00Z'))).toBe('2026-07-02');
     expect(isNyseSession('2026-04-03')).toBe(false);
-    expect(isNyseSession('2021-12-31')).toBe(false);
+    // NYSE does not observe a Saturday New Year's Day on the preceding Friday.
+    expect(isNyseSession('2021-12-31')).toBe(true);
+    expect(isNyseSession('2021-06-18')).toBe(true); // Juneteenth trading closure began in 2022.
+    expect(isNyseSession('2022-06-20')).toBe(false);
   });
 });
 

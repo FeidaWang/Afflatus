@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" width="480" height="640" viewBox="0 0 240 320"><title>Knowledge into action</title><defs><clipPath id="art-13"><rect width="240" height="246"/></clipPath></defs><g clip-path="url(#art-13)">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" width="480" height="492" viewBox="0 0 240 246"><title>Knowledge into action</title><defs><clipPath id="art-13"><rect width="240" height="246"/></clipPath></defs><g clip-path="url(#art-13)">
 <g clip-path="url(#clip0_4_701)">
 <path d="M240 0H0V320H240V0Z" fill="#D2D9BE"/>
 <path d="M240 0H0V262H240V0Z" fill="#5C7661"/>
@@ -44,4 +44,4 @@
 <rect width="240" height="320" fill="white"/>
 </clipPath>
 </defs>
-</g><rect y="246" width="240" height="74" fill="#f2eee4"/><path d="M15 255H225" stroke="#33392e" stroke-width=".5"/><text x="15" y="269" fill="#545b50" font-family="Arial,sans-serif" font-size="7" letter-spacing="1.2">WEEK 13 · AFFLATUS</text><text x="15" y="289" fill="#22291f" font-family="Georgia,serif" font-size="16">Knowledge into action</text></svg>
+</g></svg>
