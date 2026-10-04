@@ -89,7 +89,7 @@ function targetXY(halley, w, h) {
   return { x: nx * w, y: ny * h };
 }
 function label(ctx, s, x, y, size, col, align) {
-  ctx.font = `${size}px 'JetBrains Mono',monospace`; ctx.fillStyle = col; ctx.textAlign = align || 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s, x, y);
+  ctx.font = `${size}px "Anthropic Sans", 'JetBrains Mono',monospace`; ctx.fillStyle = col; ctx.textAlign = align || 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s, x, y);
 }
 // AIM-120 AMRAAM drawn nose-up (-y) at origin: white body, long ogive radome,
 // twin gold/tan bands, slim mid strakes, large swept cruciform tail fins, glowing

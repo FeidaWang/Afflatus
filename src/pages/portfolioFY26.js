@@ -244,7 +244,7 @@ function renderLabels() {
 }
 
 let stepFloat = 0, drawn = -1;
-const WELL_FONT = `600 ${W < 720 ? 10 : 11}px Inter, system-ui, sans-serif`;
+const WELL_FONT = `600 ${W < 720 ? 10 : 11}px "Anthropic Sans", Inter, system-ui, sans-serif`;
 // Where each execution square sits while the opening games are on screen.
 function heroLayout() {
   const out = new Array(tiles.length);

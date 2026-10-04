@@ -28,7 +28,7 @@ function OriginalMarketChart({asset,period='1M',compact=false,english=false,unit
         ctx.lineWidth=.6;ctx.strokeStyle='rgba(130,126,117,.09)';
         for(let i=0;i<=28;i++){const gx=pad.l+i/28*w;ctx.beginPath();ctx.moveTo(gx,pad.t);ctx.lineTo(gx,pad.t+h);ctx.stroke();}
         for(let i=0;i<=12;i++){const gy=pad.t+i/12*h;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(pad.l+w,gy);ctx.stroke();}
-        ctx.font='13px Inter, system-ui, sans-serif';ctx.fillStyle='#64655f';ctx.textAlign='right';
+        ctx.font='13px "Anthropic Sans", Inter, system-ui, sans-serif';ctx.fillStyle='#64655f';ctx.textAlign='right';
         const step=(max-min)/3;
         for(let i=0;i<=3;i++){const value=min+i*step,gy=y(value);ctx.fillText(value>=100?Math.round(value).toLocaleString('en-US'):value.toFixed(1),pad.l-14,gy+4);ctx.strokeStyle='rgba(126,122,114,.18)';ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(pad.l+w,gy);ctx.stroke();}
         ctx.textAlign='center';
@@ -42,8 +42,10 @@ function OriginalMarketChart({asset,period='1M',compact=false,english=false,unit
       const size=compact?6:14;ctx.globalAlpha=.85;ctx.fillStyle=asset.color;ctx.fillRect(x(120)-size/2,y(series[120])-size/2,size,size);ctx.globalAlpha=1;ctx.lineWidth=1;ctx.strokeStyle=compact?asset.color:'#514a66';ctx.strokeRect(x(120)-size/2,y(series[120])-size/2,size,size);
       if(hover!==null&&!compact){ctx.strokeStyle='#9284b9';ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(x(hover),pad.t);ctx.lineTo(x(hover),pad.t+h);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#7d6fe0';ctx.beginPath();ctx.arc(x(hover),y(series[hover]),4,0,Math.PI*2);ctx.fill();}
     };
+    let disposed=false;
+    document.fonts.ready.then(()=>{if(!disposed)draw();});
     draw();const observer=new ResizeObserver(draw);observer.observe(frame);wash.addEventListener('load',draw);
-    return()=>{observer.disconnect();wash.removeEventListener('load',draw);};
+    return()=>{disposed=true;observer.disconnect();wash.removeEventListener('load',draw);};
   },[asset,period,compact,hover,english]);
   const move=event=>{if(compact||!geometry.current)return;const{pad,w}=geometry.current;const cursor=event.clientX-frameRef.current.getBoundingClientRect().left;setHover(Math.max(0,Math.min(120,Math.round((cursor-pad.l)/w*120))));};
   return <div ref={frameRef} className={compact?'sparkline':'market-chart'} tabIndex={compact?undefined:0} role={compact?undefined:'img'}

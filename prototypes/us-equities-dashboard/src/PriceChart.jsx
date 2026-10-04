@@ -27,7 +27,7 @@ export function PriceChart({asset,period='M',chartStyle='candles',english=false,
       ctx.lineWidth=.6;ctx.strokeStyle='rgba(130,126,117,.09)';
       for(let i=0;i<=28;i++){const gx=pad.l+i/28*w;ctx.beginPath();ctx.moveTo(gx,pad.t);ctx.lineTo(gx,pad.t+h);ctx.stroke();}
       for(let i=0;i<=12;i++){const gy=pad.t+i/12*h;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(pad.l+w,gy);ctx.stroke();}
-      ctx.font='13px Inter,system-ui,sans-serif';ctx.fillStyle='#64655f';ctx.textAlign='right';
+      ctx.font='13px "Anthropic Sans", Inter,system-ui,sans-serif';ctx.fillStyle='#64655f';ctx.textAlign='right';
       for(let i=0;i<=3;i++){const price=min+i*(max-min)/3;ctx.fillText(price>=100?Math.round(price).toLocaleString('en-US'):price.toFixed(1),pad.l-14,y(price)+4);ctx.strokeStyle='rgba(126,122,114,.18)';ctx.beginPath();ctx.moveTo(pad.l,y(price));ctx.lineTo(pad.l+w,y(price));ctx.stroke();}
       ctx.textAlign='center';const indices=[...new Set([0,Math.floor((bars.length-1)/4),Math.floor((bars.length-1)/2),Math.floor((bars.length-1)*3/4),bars.length-1])];
       const label=c=>period==='D'?c.t.slice(11,16):new Intl.DateTimeFormat(english?'en-US':'zh-CN',{month:'short',day:'numeric',...(period==='MAX'?{year:'2-digit'}:{}),timeZone:'UTC'}).format(new Date(c.t.slice(0,10)+'T00:00:00Z'));
@@ -48,7 +48,9 @@ export function PriceChart({asset,period='M',chartStyle='candles',english=false,
       ink.globalCompositeOperation='destination-out';ink.fillStyle='#000';for(let i=0;i<w*h/7;i++){const gx=pad.l+(i*17.371%w),gy=pad.t+(i*29.137%h);ink.globalAlpha=.12+(i%5)*.06;ink.fillRect(gx,gy,.65,.7);}ink.globalAlpha=1;ctx.drawImage(brush,0,0,width,height);
       if(hover!==null&&bars[hover]){ctx.strokeStyle='#9284b9';ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(x(hover),pad.t);ctx.lineTo(x(hover),pad.t+h);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#7d6fe0';ctx.beginPath();ctx.arc(x(hover),y(bars[hover].c),3,0,Math.PI*2);ctx.fill();}
     };
-    draw();const observer=new ResizeObserver(draw);observer.observe(frame);wash.addEventListener('load',draw);return()=>{observer.disconnect();wash.removeEventListener('load',draw);};
+    let disposed=false;
+    document.fonts.ready.then(()=>{if(!disposed)draw();});
+    draw();const observer=new ResizeObserver(draw);observer.observe(frame);wash.addEventListener('load',draw);return()=>{disposed=true;observer.disconnect();wash.removeEventListener('load',draw);};
   },[asset,period,chartStyle,english,position,hover,zoom]);
   const move=event=>{const g=geometry.current;if(!g)return;const rect=frameRef.current.getBoundingClientRect();if(drag.current&&view.maxStart){setPosition(Math.max(0,Math.min(1,drag.current.position-(event.clientX-drag.current.x)/g.w*view.count/view.maxStart)));setHover(null);}else setHover(Math.max(0,Math.min(g.bars.length-1,Math.floor((event.clientX-rect.left-g.pad.l)/g.w*g.bars.length))));};
   return <>

@@ -1,3 +1,5 @@
+@import url("/styles/typography.css");
+
 /* Shared across page themes. Colors and desktop height observed on the reference;
    motion and compact geometry use the I01 defaults. */
 #afflatus-header, #afflatus-header * { box-sizing: border-box; }
@@ -6,7 +8,7 @@
   position: fixed; inset: 0 0 auto; z-index: 10000; width: 100%; height: var(--af-height);
   margin: 0; padding: 0; border: 0; border-bottom: 1px solid #d1d0c8;
   background: var(--af-paper); color: var(--af-ink); color-scheme: light;
-  font: 400 15px/1.4 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font: 400 15px/1.4 "Anthropic Sans", Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   letter-spacing: 0; text-align: left; text-transform: none;
   box-shadow: none; transform: none; isolation: isolate;
 }
@@ -22,7 +24,7 @@
 #afflatus-header :is(a, button):focus-visible { outline: 2px solid #486f76; outline-offset: 3px; }
 #afflatus-header .af-wordmark { flex: 0 0 calc(160px - var(--af-collapse, 0) * 120px); min-width: 0; padding: 0; overflow: hidden; }
 #afflatus-header .af-home-link { flex: 0 0 auto; padding: 0; font-weight: 600; }
-#afflatus-header .af-brand-art { position: relative; display: block; flex: none; width: 160px; height: 28px; font: 650 25px/28px Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+#afflatus-header .af-brand-art { position: relative; display: block; flex: none; width: 160px; height: 28px; font: 650 25px/28px "Anthropic Sans", Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 #afflatus-header .af-brand-full,
 #afflatus-header .af-brand-compact { position: absolute; left: 0; top: 0; display: block; height: 28px; white-space: nowrap; }
 #afflatus-header .af-brand-full { width: max-content; opacity: var(--af-suffix-opacity, 1); }

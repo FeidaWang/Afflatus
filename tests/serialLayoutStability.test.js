@@ -10,7 +10,7 @@ const pagedBook = readFileSync('src/lib/pagedBook.js', 'utf8');
 
 describe('serial layout stability', () => {
   it('uses self-hosted UI fonts without a render-blocking Google font payload', () => {
-    expect(html).toContain('jetbrains-mono-latin-400-normal.woff2');
+    expect(html).toContain('anthropic-sans-roman.woff2');
     expect(html).toContain('rel="preload"');
     expect(html).not.toContain('fonts.googleapis.com');
     expect(html).not.toContain('fonts.gstatic.com');

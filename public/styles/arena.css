@@ -3,9 +3,9 @@
   --acid:#3dff9a;--cyan:#27e7ff;--blue:#3a5bff;--magenta:#ff3df0;
   --up:#3dff9a;--down:#ff5470;--text:#eaf1ff;--muted:#8590b5;
   --line:rgba(61,255,154,.34);--line-b:rgba(58,91,255,.40);
-  --font-display:'Orbitron','Marathon Shapiro 65',system-ui,sans-serif;
-  --font-hud:'Rajdhani','Orbitron',sans-serif;
-  --font-mono:'JetBrains Mono','PP Fraktion Mono',ui-monospace,monospace;
+  --font-display:"Anthropic Sans", 'Orbitron','Marathon Shapiro 65',system-ui,sans-serif;
+  --font-hud:"Anthropic Sans", 'Rajdhani','Orbitron',sans-serif;
+  --font-mono:"Anthropic Sans", 'JetBrains Mono','PP Fraktion Mono',ui-monospace,monospace;
   --radius:4px;
   --viz-axis:rgba(234,241,255,.26);--viz-grid:rgba(234,241,255,.07);--viz-tick:var(--muted);
   --viz-line-w:1.8px;--viz-marker-r:3;--viz-tip-bg:rgba(5,7,14,.96);--viz-tip-line:rgba(234,241,255,.14);--viz-tip-radius:8px;
@@ -14,7 +14,7 @@
 html,body{margin:0;min-height:100%}
 body{
   background:var(--bg);color:var(--text);
-  font-family:var(--font-mono);font-size:15px;line-height:1.45;letter-spacing:.01em;
+  font-family:"Anthropic Sans", var(--font-mono);font-size:15px;line-height:1.45;letter-spacing:.01em;
   -webkit-font-smoothing:antialiased;
 }
 a{color:inherit;text-decoration:none}
@@ -159,7 +159,7 @@ a{color:inherit;text-decoration:none}
 /* ===== prominent briefing CTA ===== */
 .brief-cta{display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 2px;cursor:pointer;text-align:left;
   border:2px solid var(--acid);background:linear-gradient(90deg,rgba(61,255,154,.16),rgba(58,91,255,.10) 60%,transparent);color:var(--text);
-  padding:14px 16px;position:relative;overflow:hidden;font-family:var(--font-hud)}
+  padding:14px 16px;position:relative;overflow:hidden;font-family:"Anthropic Sans", var(--font-hud)}
 .brief-cta::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);transform:translateX(-120%);animation:sheen 3.4s ease-in-out infinite}
 @keyframes sheen{0%,60%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
 .brief-cta__tag{font:700 10px/1 var(--font-hud);letter-spacing:.16em;color:#04060d;background:var(--acid);padding:5px 7px}

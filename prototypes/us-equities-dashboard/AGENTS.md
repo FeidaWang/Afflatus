@@ -19,3 +19,7 @@ The user explicitly requires direct reuse of the previous conversation's final m
 ## Publication scope — 4 October 2026
 
 The user authorized publishing this exact dashboard at the bilingual /en/arena.html and /zh/arena.html routes, together with the course cover changes. Remove the main-page stock search, the NYSE calendar link, and the short “Design sample · Not live” labels. Preserve the remaining small data provenance text; quotes have not been connected to a live market feed. The root MPA imports this prototype directly, without duplicating the visual implementation. Fixed-language pages follow their URL and use normal links to their language peer.
+
+## Typography update — 4 October 2026
+
+The user requires all English typography on Afflatus, including this published dashboard and Canvas chart labels, to use Anthropic Sans. This supersedes the earlier English font choices. Preserve the selected layout and the existing Chinese fallback families. The production font files and shared declarations live in the root `public/assets/fonts/` and `public/styles/typography.css`.

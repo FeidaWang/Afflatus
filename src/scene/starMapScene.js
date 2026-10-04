@@ -145,7 +145,7 @@ export function createStarMapScene(){
         ctx.fillStyle='rgba(155,231,255,.78)';
         ctx.beginPath();ctx.arc(bx,by,1.8,0,TAU);ctx.fill();
       }
-      ctx.font=`${b.gold?Math.max(7,w*.026):Math.max(5.5,w*.018)}px 'JetBrains Mono',monospace`;
+      ctx.font=`${b.gold?Math.max(7,w*.026):Math.max(5.5,w*.018)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
       ctx.textAlign='center';ctx.textBaseline='top';
       ctx.shadowColor=b.gold?'rgba(255,196,105,.8)':'rgba(140,232,255,.6)';
       ctx.shadowBlur=8;
@@ -177,7 +177,7 @@ export function createStarMapScene(){
 
     // header strip
     ctx.fillStyle='rgba(214,246,255,.80)';
-    ctx.font=`${Math.max(6,Math.min(9,w*.026))}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(6,Math.min(9,w*.026))}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='top';
     ctx.fillText(lang==='zh'?'阿尔法德星域 · 远征航线':'ALPHARD SECTOR · VOYAGE PLOT',8,6);
     ctx.textAlign='right';

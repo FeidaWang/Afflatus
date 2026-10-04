@@ -561,7 +561,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     ctx.fillStyle = node.mark === 'aws' ? '#232F3E' : '#11141B';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `${node.mark === '25×' ? 800 : 750} ${Math.min(20, height * 0.38)}px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif`;
+    ctx.font = `${node.mark === '25×' ? 800 : 750} ${Math.min(20, height * 0.38)}px "Anthropic Sans", -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif`;
     ctx.fillText(node.mark || labelFor(node).slice(0, 3), x, y + 1);
     if (node.mark === 'aws') {
       ctx.beginPath();
@@ -648,7 +648,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     if (badge) {
       ctx.save();
       ctx.globalAlpha = amount * dim;
-      ctx.font = '700 8.5px -apple-system,BlinkMacSystemFont,"Apple Color Emoji","Segoe UI Emoji",sans-serif';
+      ctx.font = '700 8.5px "Anthropic Sans", -apple-system,BlinkMacSystemFont,"Apple Color Emoji","Segoe UI Emoji",sans-serif';
       const badgeWidth = Math.ceil(ctx.measureText(badge).width) + 12;
       const badgeX = x + width / 2 - badgeWidth * 0.72;
       const badgeY = y - height / 2 - 8;
@@ -669,7 +669,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
     ctx.globalAlpha = amount * dim;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
-    ctx.font = paper ? `500 ${isMobile() ? 11 : 12}px system-ui,sans-serif` : `${node.kind === 'model' ? 720 : 660} ${isMobile() ? 9.5 : 10.5}px "PP Fraktion Mono","IBM Plex Mono",monospace`;
+    ctx.font = paper ? `500 ${isMobile() ? 11 : 12}px "Anthropic Sans", system-ui,sans-serif` : `${node.kind === 'model' ? 720 : 660} ${isMobile() ? 9.5 : 10.5}px "Anthropic Sans", "PP Fraktion Mono","IBM Plex Mono",monospace`;
     ctx.fillStyle = paper ? '#33392d' : (focus ? '#FFFFFF' : 'rgba(241,244,252,.86)');
     ctx.fillText(labelFor(node), x, y + height / 2 + 17);
     ctx.restore();
@@ -742,7 +742,7 @@ export function initSectorsGraph(canvas, sectorsData, opts = {}) {
         const position = 0.5;
         const [lx, ly] = quadPoint(ax, ay, cx, cy, bx, by, position);
         ctx.shadowBlur = 0;
-        ctx.font = '12px sans-serif';
+        ctx.font = '12px "Anthropic Sans", sans-serif';
         ctx.textAlign = 'center';
         ctx.fillStyle = paper ? '#eae9e1' : '#090d12';
         ctx.fillRect(lx - 21, ly - 9, 42, 18);

@@ -64,7 +64,7 @@
     margin-inline: 0;
     margin-bottom: clamp(64px, 8vw, 112px);
     color: rgba(213,227,237,.66);
-    font: 400 clamp(12px, 1vw, 15px)/1.8 'JetBrains Mono', monospace;
+    font: 400 clamp(12px, 1vw, 15px)/1.8 "Anthropic Sans", 'JetBrains Mono', monospace;
   }
 
   .convoy-shell {
@@ -148,7 +148,7 @@
     padding: 0 20px;
     border-bottom: 1px solid rgba(154,229,255,.14);
     color: rgba(195,215,228,.62);
-    font: 500 8px/1 'JetBrains Mono', monospace;
+    font: 500 8px/1 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .2em;
     text-transform: uppercase;
   }
@@ -251,7 +251,7 @@
   .solar-epoch i,
   .solar-epoch b {
     color: rgba(201,226,243,.54);
-    font: 500 6px/1.4 'JetBrains Mono', monospace;
+    font: 500 6px/1.4 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .14em;
     text-transform: uppercase;
   }
@@ -345,13 +345,13 @@
 
   .convoy-core span {
     color: #f6f7f4;
-    font: 400 clamp(20px, 2.6vw, 38px)/.9 'Orbitron', sans-serif;
+    font: 400 clamp(20px, 2.6vw, 38px)/.9 "Anthropic Sans", 'Orbitron', sans-serif;
     letter-spacing: -.04em;
   }
 
   .convoy-core b {
     color: rgba(232,179,128,.78);
-    font: 500 clamp(5px, .55vw, 8px)/1 'JetBrains Mono', monospace;
+    font: 500 clamp(5px, .55vw, 8px)/1 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .22em;
   }
 
@@ -416,7 +416,7 @@
     padding: 3px 5px;
     background: rgba(2,5,9,.78);
     color: rgba(218,234,243,.58);
-    font: 500 6px/1 'JetBrains Mono', monospace;
+    font: 500 6px/1 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .1em;
     white-space: nowrap;
     transform: translateX(-50%);
@@ -541,7 +541,7 @@
     display: block;
     margin-bottom: 10px;
     color: rgba(154,229,255,.66);
-    font: 500 7px/1 'JetBrains Mono', monospace;
+    font: 500 7px/1 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .22em;
     text-transform: uppercase;
   }
@@ -555,19 +555,19 @@
 
   .convoy-readout b {
     color: #f2f7fa;
-    font: 300 clamp(34px, 4.2vw, 58px)/.9 'Orbitron', sans-serif;
+    font: 300 clamp(34px, 4.2vw, 58px)/.9 "Anthropic Sans", 'Orbitron', sans-serif;
     letter-spacing: -.04em;
   }
 
   .convoy-readout strong {
     color: #e8b380;
-    font: 400 clamp(18px, 2vw, 28px)/1 'Orbitron', sans-serif;
+    font: 400 clamp(18px, 2vw, 28px)/1 "Anthropic Sans", 'Orbitron', sans-serif;
   }
 
   .convoy-readout p {
     margin: 10px 0 0;
     color: rgba(207,223,232,.62);
-    font: 400 10px/1.5 'JetBrains Mono', monospace;
+    font: 400 10px/1.5 "Anthropic Sans", 'JetBrains Mono', monospace;
   }
 
   .convoy-legend {
@@ -582,7 +582,7 @@
     border: 0;
     border-top: 1px solid rgba(154,229,255,.09);
     color: rgba(164,188,202,.45);
-    font: 500 6px/1.4 'JetBrains Mono', monospace;
+    font: 500 6px/1.4 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .12em;
     text-transform: uppercase;
   }
@@ -736,7 +736,7 @@
     gap: 16px;
     margin-bottom: 21px;
     color: rgba(154,229,255,.56);
-    font: 500 7px/1 'JetBrains Mono', monospace;
+    font: 500 7px/1 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .17em;
     text-transform: uppercase;
   }
@@ -760,7 +760,7 @@
   .portfolio-convoy .pick-rank {
     color: #e8b380;
     font-size: clamp(17px, 1.55vw, 23px);
-    font-family: 'Orbitron', sans-serif;
+    font-family: "Anthropic Sans", 'Orbitron', sans-serif;
     letter-spacing: -.02em;
   }
 
@@ -780,14 +780,14 @@
   .portfolio-convoy .pick-role {
     margin: 0 0 13px;
     color: rgba(236,244,248,.82);
-    font: 400 13px/1.35 'Orbitron', sans-serif;
+    font: 400 13px/1.35 "Anthropic Sans", 'Orbitron', sans-serif;
   }
 
   .portfolio-convoy .pick-thesis {
     flex: none;
     margin: 0;
     color: rgba(198,214,223,.62);
-    font: 400 10px/1.65 'JetBrains Mono', monospace;
+    font: 400 10px/1.65 "Anthropic Sans", 'JetBrains Mono', monospace;
   }
 
   .portfolio-convoy .pick-thesis em {
@@ -842,7 +842,7 @@
     display: block;
     margin-bottom: 8px;
     color: rgba(154,229,255,.52);
-    font: 500 6px/1 'JetBrains Mono', monospace;
+    font: 500 6px/1 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .18em;
     text-transform: uppercase;
   }
@@ -854,7 +854,7 @@
   .portfolio-convoy .pick-signal p {
     margin: 0;
     color: rgba(205,219,228,.63);
-    font: 400 9px/1.55 'JetBrains Mono', monospace;
+    font: 400 9px/1.55 "Anthropic Sans", 'JetBrains Mono', monospace;
   }
 
   .portfolio-convoy .pcCta {
@@ -1121,7 +1121,7 @@
     border: 1px solid rgba(154, 229, 255, .16);
     background: rgba(4, 9, 14, .74);
     color: rgba(228, 232, 240, .76);
-    font: 500 12px/1.4 'JetBrains Mono', monospace;
+    font: 500 12px/1.4 "Anthropic Sans", 'JetBrains Mono', monospace;
   }
 
   .holdings-fallback strong,
@@ -1143,9 +1143,9 @@
 }
 
 @layer components {
-  .portfolio-convoy .allocation-note{padding:16px 0;color:#aabfcc;font:400 14px/1.65 'JetBrains Mono',monospace}
+  .portfolio-convoy .allocation-note{padding:16px 0;color:#aabfcc;font:400 14px/1.65 "Anthropic Sans", 'JetBrains Mono',monospace}
   .portfolio-convoy .alloc-row{flex-wrap:wrap}
   .portfolio-convoy .alloc-bar{height:8px;border-left:1px solid #aabfcc;border-right:1px solid #aabfcc}
   .portfolio-convoy .alloc-bar i{transition:none;box-shadow:none;background:#9ae5ff}
-  .portfolio-convoy .allocation-scale{font:400 12px/1.4 'JetBrains Mono',monospace;color:#aabfcc;white-space:nowrap}
+  .portfolio-convoy .allocation-scale{font:400 12px/1.4 "Anthropic Sans", 'JetBrains Mono',monospace;color:#aabfcc;white-space:nowrap}
 }

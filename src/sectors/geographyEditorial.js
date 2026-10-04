@@ -79,9 +79,9 @@ export function mountGeographyEditorial(root, snapshot, language) {
       context.fillStyle = region.color + (position === index ? 'dd' : 'aa'); context.fill();
       context.lineWidth = (position === index ? 3 : 1.5) / zoom;
       context.strokeStyle = '#172018'; context.stroke();
-      context.fillStyle = '#142015'; context.font = `700 ${Math.max(11, 13 / zoom)}px system-ui`;
+      context.fillStyle = '#142015'; context.font = `700 ${Math.max(11, 13 / zoom)}px "Anthropic Sans", system-ui`;
       context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(String(count), x, y);
-      context.font = `600 ${Math.max(10, 12 / zoom)}px system-ui`;
+      context.font = `600 ${Math.max(10, 12 / zoom)}px "Anthropic Sans", system-ui`;
       context.fillText(region[lang], x, y + radius + 20 / zoom);
     });
     context.restore();

@@ -128,7 +128,7 @@ export function initMarketDeck({
       kctx.lineTo(w - pad.r, y);
       kctx.stroke();
       kctx.fillStyle = 'rgba(105,116,140,0.55)';
-      kctx.font = `${9.5 * dpr}px 'JetBrains Mono',monospace`;
+      kctx.font = `${9.5 * dpr}px "Anthropic Sans", 'JetBrains Mono',monospace`;
       kctx.textAlign = 'left';
       kctx.fillText((maxV - (maxV - minV) * (i / 4)).toFixed(1), w - pad.r + 8 * dpr, y + 3.5 * dpr);
     }

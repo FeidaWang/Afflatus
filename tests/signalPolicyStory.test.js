@@ -34,12 +34,10 @@ describe('signal policy reaction story', () => {
   });
 
   it('uses preloaded self-hosted fonts so the dossier does not reflow', () => {
-    expect(html).toContain('anton-latin-400-normal.woff2');
-    expect(html).toContain('jetbrains-mono-latin-400-normal.woff2');
+    expect(html).toContain('anthropic-sans-roman.woff2');
     expect(html).not.toContain('fonts.googleapis.com');
     expect(html).not.toContain('fonts.gstatic.com');
-    expect(css).toContain("'Marathon Shapiro 65'");
-    expect(css).toContain("'JetBrains Mono'");
+    expect(css).toContain('"Anthropic Sans"');
   });
 
   it('renders the historical-data warning with dark text on the paper surface', () => {

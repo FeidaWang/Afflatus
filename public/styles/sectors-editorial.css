@@ -7,7 +7,7 @@ body.sectors-page {
   --ink-soft: #4d514d;
   --line: #cecec5;
   --accent: #7c9a3c;
-  --rb-font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", serif;
+  --rb-font-display: "Anthropic Sans", "Iowan Old Style", "Palatino Linotype", Palatino, "Songti SC", serif;
   background: var(--bg-soft);
   color: var(--ink);
 }
@@ -327,7 +327,7 @@ body.sectors-page .frontierDimensions dd { font: 400 16px/1.6 var(--font); }
 body.sectors-page .frontier-observatory { --fc-bg: #faf9f5; --fc-panel: #f0efe8; --fc-ink: #191a17; --fc-soft: #64655e; --fc-line: #d5d4cc; --fc-accent: #617f31; --fc-us: #8cab55; --fc-cn: #86a8c9; }
 body.sectors-page .fc-header { margin-bottom: 48px; }
 body.sectors-page .fc-kicker { font: 600 11px/1.5 var(--font); color: var(--ink-soft); letter-spacing: .07em; }
-body.sectors-page :is(.fc-meta, .fc-status, .fc-scope, .fc-unit, .fc-plot-summary, .fc-configuration) { font-family: var(--font); color: var(--ink-soft); }
+body.sectors-page :is(.fc-meta, .fc-status, .fc-scope, .fc-unit, .fc-plot-summary, .fc-configuration) { font-family: "Anthropic Sans", var(--font); color: var(--ink-soft); }
 body.sectors-page :is(.fc-lenses h3, .fc-distributions h3, .fc-section-title h3, .fc-evidence-gaps h3) { font: 600 22px/1.3 var(--font); letter-spacing: -.025em; }
 body.sectors-page .fc-lenses { padding: 28px 0; margin: 0; }
 body.sectors-page .fc-lens-buttons { gap: 0; margin-top: 20px; }
@@ -352,7 +352,7 @@ body.sectors-page .fc-distribution-panels ul { padding: 0; list-style: none; fon
 body.sectors-page .fc-distribution-panels li { padding-block: 3px; border-bottom: 1px solid #e5e5dc; }
 body.sectors-page .fc-plot { padding: 24px 0 0; border: 0; border-top: 1px solid var(--line); background: transparent; }
 body.sectors-page .fc-grid { stroke: #dcdfd4; stroke-dasharray: none; stroke-width: .7; }
-body.sectors-page .fc-axis-text, body.sectors-page .fc-axis-label { font-family: var(--font); fill: #686b62; }
+body.sectors-page .fc-axis-text, body.sectors-page .fc-axis-label { font-family: "Anthropic Sans", var(--font); fill: #686b62; }
 body.sectors-page .fc-frontier-path { stroke: #6e775b; stroke-width: 1.2; opacity: .9; }
 body.sectors-page .fc-dot { stroke: #faf9f5; stroke-width: 1; }
 body.sectors-page .fc-ink-ring { fill: none; stroke: #626854; stroke-width: .7; opacity: .75; pointer-events: none; }
@@ -484,7 +484,7 @@ body.sectors-page .atlasArchive .rivalrySectionHead { grid-template-columns: 130
 body.sectors-page .atlasArchive .rivalrySectionHead h2 { font-size: clamp(25px,3vw,36px); }
 body.sectors-page .atlasArchive .rivalrySectionHead p { grid-column: 2; max-width: 65ch; }
 body.sectors-page .atlasArchive .rivalryStat b { font: 400 32px/1.1 var(--rb-font-display); }
-body.sectors-page .atlasArchive .thesisCard > span { color: #dedfd5; font-family: var(--rb-font-display); }
+body.sectors-page .atlasArchive .thesisCard > span { color: #dedfd5; font-family: "Anthropic Sans", var(--rb-font-display); }
 body.sectors-page .atlasArchive .rivalryIndex a { border-radius: 3px; font-weight: 500; }
 @media(max-width:700px) {
   body.sectors-page .atlasArchive .rivalrySectionHead { grid-template-columns: 1fr; }

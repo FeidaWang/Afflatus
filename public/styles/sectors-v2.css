@@ -163,7 +163,7 @@
 .chapter-head h2{font:400 40px/1.15 var(--font-serif,Georgia);letter-spacing:-.01em;color:var(--ink);text-wrap:balance;margin:12px 0}
 .chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font:400 20px/1.6 var(--font-serif,Georgia);max-width:var(--w-text)}
 :lang(zh) .chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font:400 17px/1.8 var(--font-sans-zh,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif);max-width:38em}
-:lang(zh) .chapter-head h2{font-family:var(--font-serif-zh,"Noto Serif SC",serif);font-weight:600}
+:lang(zh) .chapter-head h2{font-family:"Anthropic Sans", var(--font-serif-zh,"Noto Serif SC",serif);font-weight:600}
 @media (max-width:640px){.chapter{margin-top:96px}.chapter-head h2{font-size:30px}.chapter :is(.chapter-head,:scope)>p:not(.chapter-no){font-size:18px}}
 .sectors .megaFoot{--ink-faint:var(--muted)}
 .industrySources summary{font:600 18px/1.4 var(--font-sans,system-ui);color:var(--ink);cursor:pointer}

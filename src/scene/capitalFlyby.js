@@ -260,7 +260,7 @@ export function createCapitalFlyby(){
     ctx.fillStyle='rgba(0,0,0,.82)';ctx.fillRect(0,0,w,bar);ctx.fillRect(0,h-bar,w,bar);
     const label=lang==='zh'?'执法者号 · 粒子脊柱充能':'ENFORCER · PARTICLE SPINE CHARGING';
     ctx.fillStyle='rgba(255,235,235,.88)';
-    ctx.font=`${Math.max(7,Math.min(w,h)*.046)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(7,Math.min(w,h)*.046)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='middle';
     ctx.fillText(label,10,bar*.5);
     ctx.textAlign='right';
@@ -308,7 +308,7 @@ export function createCapitalFlyby(){
     const grad=ctx.createLinearGradient(0,0,0,bar);
     grad.addColorStop(0,'rgba(0,0,0,.72)');grad.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle=grad;ctx.fillRect(0,0,w,bar);
-    ctx.font=`${Math.max(6,Math.min(w,h)*.052)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(6,Math.min(w,h)*.052)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textBaseline='top';
     ctx.fillStyle='rgba(214,246,255,.85)';
     ctx.textAlign='left';

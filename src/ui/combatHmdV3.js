@@ -36,7 +36,7 @@ export function drawSCHeadingTape(ctx,w,h,heading){
   const fs=Math.max(7,Math.min(10,w*.018));
   ctx.save();
   ctx.strokeStyle='rgba(148,228,255,.62)';ctx.lineWidth=1;
-  ctx.font=`${fs}px 'JetBrains Mono',monospace`;
+  ctx.font=`${fs}px "Anthropic Sans", 'JetBrains Mono',monospace`;
   ctx.textAlign='center';ctx.textBaseline='bottom';
   const from=Math.ceil((heading-halfSpan)/2)*2;
   for(let deg=from;deg<=heading+halfSpan;deg+=2){
@@ -58,7 +58,7 @@ export function drawSCHeadingTape(ctx,w,h,heading){
   ctx.fillStyle='rgba(226,246,255,.92)';
   ctx.beginPath();ctx.moveTo(w*.5,cy-4);ctx.lineTo(w*.5-4.5,cy+2);ctx.lineTo(w*.5+4.5,cy+2);ctx.closePath();ctx.fill();
   ctx.textBaseline='top';
-  ctx.font=`${fs*1.15}px 'JetBrains Mono',monospace`;
+  ctx.font=`${fs*1.15}px "Anthropic Sans", 'JetBrains Mono',monospace`;
   ctx.fillText(String(((heading%360)+360)%360),w*.5,cy+4);
   ctx.restore();
 }
@@ -117,7 +117,7 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
   const [cr,cg,cb]=ac;
   const rgba=(a)=>`rgba(${cr},${cg},${cb},${a})`;
   const AMBER='rgba(255,214,102,';
-  const mono=(px)=>`${px}px 'JetBrains Mono',monospace`;
+  const mono=(px)=>`${px}px "Anthropic Sans", 'JetBrains Mono',monospace`;
   const wpnColorBase=WPN_COLOR_BASE[dash.weapon]||AMBER;
   const warpIntensity=clamp(dash.warpIntensity||0,0,1.4);
   const cdRatio=clamp(dash.cdRatio??1,0,1);
@@ -226,7 +226,7 @@ export function drawCockpitFrame(ctx,w,h,now,landing=false,boot=1,dash={}){
       const bell=Math.sin(fT*Math.PI);
       ctx.globalAlpha=bell;
       ctx.globalCompositeOperation='lighter';
-      ctx.font=`${Math.max(9,w*.028)}px 'Orbitron',sans-serif`;
+      ctx.font=`${Math.max(9,w*.028)}px "Anthropic Sans", 'Orbitron',sans-serif`;
       ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.shadowColor=rgba(.9);ctx.shadowBlur=18*bell;
       ctx.fillStyle='rgba(226,246,255,.96)';
@@ -278,7 +278,7 @@ export function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
     // cardinal labels (N/S/E/W) just outside the ring
     if(major){
       const labels=['N','E','S','W'];
-      ctx.font=`${Math.max(6,fs*.88)}px 'JetBrains Mono',monospace`;
+      ctx.font=`${Math.max(6,fs*.88)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
       ctx.fillStyle='rgba(148,228,255,.46)';ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.fillText(labels[i/2],tx+Math.cos(a)*(R+13),ty+Math.sin(a)*(R+13));
     }
@@ -299,7 +299,7 @@ export function drawSCZoomScope(ctx,w,h,tx,ty,lockT,range,now){
   ctx.restore();
 
   // Labels — top: weapon name; right: range + lock status
-  ctx.font=`${fs}px 'JetBrains Mono',monospace`;ctx.textAlign='center';
+  ctx.font=`${fs}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='center';
   ctx.fillStyle='rgba(148,228,255,.72)';
   ctx.fillText('ENFORCER CANNON',tx,ty-R-12);
   ctx.textAlign='left';
@@ -402,14 +402,14 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
       ctx.stroke();
     });
     const fs=Math.max(7,Math.min(9,size*.24));
-    ctx.font=`${fs}px 'JetBrains Mono',monospace`;
+    ctx.font=`${fs}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='middle';
     ctx.fillStyle='rgba(226,246,255,.78)';
     ctx.fillText(`HALLEY · ${rangePx}px`,cx+size+8,cy-size*.35);
     ctx.textAlign='center';ctx.textBaseline='top';
     ctx.fillStyle='rgba(226,246,255,.92)';
     ctx.fillText('1P/HALLEY',cx,cy+size+8);
-    ctx.font=`${fs*.9}px 'JetBrains Mono',monospace`;
+    ctx.font=`${fs*.9}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(180,225,255,.64)';
     ctx.fillText(`${rangePx}px [${Number.isFinite(speed)?`${speed.toFixed(1)}km/s`:'—'}]`,cx,cy+size+8+fs*1.3);
     // single hull bar, below the two text lines
@@ -439,7 +439,7 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.strokeStyle='rgba(255,205,128,.22)';ctx.setLineDash([3,6]);
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(lx,ly);ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle='rgba(255,205,128,.42)';
-    ctx.font=`${Math.max(6,w*.013)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(6,w*.013)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='top';
     ctx.fillText('LEAD',lx+9,ly-5);
     ctx.restore();
@@ -457,7 +457,7 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     const combatMode=['missile','nukeAuth','nemp','mainGun','ciws'].includes(mode);
     const x=w*.045;
     ctx.save();
-    ctx.font=`${Math.max(7,Math.min(9,w*.015))}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(7,Math.min(9,w*.015))}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.textBaseline='top';
     // mode chip
     ctx.fillStyle='rgba(226,246,255,.85)';
@@ -485,14 +485,14 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.fillStyle='rgba(226,246,255,.92)';
     ctx.fillRect(tapeX-5,markY-1.5,10,3);
     // big m/s number
-    ctx.font=`${Math.max(16,Math.min(26,w*.045))}px 'Orbitron',sans-serif`;
+    ctx.font=`${Math.max(16,Math.min(26,w*.045))}px "Anthropic Sans", 'Orbitron',sans-serif`;
     ctx.fillStyle='rgba(226,246,255,.95)';
     ctx.textBaseline='alphabetic';
     ctx.fillText(Number.isFinite(speed)?speed.toFixed(1):'—',x,tapeY+tapeH+28);
-    ctx.font=`${Math.max(6,w*.011)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(6,w*.011)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(180,225,255,.5)';
     ctx.fillText('km/s TRACK',x,tapeY+tapeH+38);
-    ctx.font=`${Math.max(7,w*.013)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(7,w*.013)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(148,228,255,.7)';
     ctx.fillText(`AMMO ${Math.round(state?.fleet?.ammoPct??0)}%`,x,h*.92);
     ctx.fillText(`DECK ${Math.round(state?.fleet?.deckPct??0)}%`,x,h*.92+13);
@@ -515,7 +515,7 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     const rx=w*.955;
     const kills=state?.fleet?.kills??(getKillCount?getKillCount():0);
     ctx.save();
-    ctx.font=`${Math.max(7,Math.min(9,w*.014))}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(7,Math.min(9,w*.014))}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign='right';ctx.textBaseline='top';
     ctx.fillStyle='rgba(148,228,255,.6)';
     ctx.fillText(`KILLS ${kills}`,rx,h*.10);
@@ -532,13 +532,13 @@ export function createCombatHmdV3({ getHalley, getWarpIntensity, getShipRecoil, 
     ctx.fillStyle='rgba(120,255,178,.7)';ctx.fillRect(barX-barW,barY+barH-baseH-bodyH,barW,bodyH);
     const p95=state?.telemetry?.frameP95Ms??0;
     ctx.textAlign='right';ctx.textBaseline='alphabetic';
-    ctx.font=`${Math.max(8,w*.016)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(8,w*.016)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(226,246,255,.85)';
     ctx.fillText(p95?p95.toFixed(1):'—',rx,h*.62);
-    ctx.font=`${Math.max(6,w*.011)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(6,w*.011)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(180,225,255,.5)';
     ctx.fillText('MS P95',rx,h*.62+11);
-    ctx.font=`${Math.max(7,w*.013)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(7,w*.013)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.fillStyle='rgba(148,228,255,.7)';
     ctx.fillText(`${Math.round(state?.fleet?.deckPct??0)}% DECK`,rx,h*.92);
     ctx.restore();

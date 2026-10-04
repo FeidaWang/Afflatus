@@ -42,8 +42,7 @@ const cardHtml = ({
   route,
   locale,
   backgroundDataUrl,
-  monoFont,
-  displayFont,
+  sansFont,
 }) => {
   const social = route.seo.social;
   if (social.precomposed) {
@@ -66,14 +65,13 @@ const cardHtml = ({
 <head>
 <meta charset="utf-8">
 <style>
-@font-face { font-family: "Afflatus Display"; src: url("${displayFont}") format("woff2"); font-weight: 400; }
-@font-face { font-family: "Afflatus Mono"; src: url("${monoFont}") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Anthropic Sans"; src: url("${sansFont}") format("woff2"); font-weight: 300 800; }
 * { box-sizing: border-box; }
 html, body { width: ${SOCIAL_CARD.width}px; height: ${SOCIAL_CARD.height}px; margin: 0; overflow: hidden; }
 body {
   color: ${light ? '#24170f' : '#f5f7fb'};
   background: ${light ? '#f6efe3' : '#020409'};
-  font-family: "Afflatus Mono", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: "Anthropic Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 .background, .wash, .grain, .frame { position: absolute; inset: 0; }
 .background { width: 100%; height: 100%; object-fit: cover; }
@@ -96,7 +94,7 @@ body {
 }
 .eyebrow::before { content: ""; width: 34px; height: 2px; background: currentColor; }
 h1 {
-  max-width: 800px; margin: auto 0 16px; font-family: "Afflatus Display", Impact, "Arial Black", "PingFang SC", sans-serif;
+  max-width: 800px; margin: auto 0 16px; font-family: "Anthropic Sans", "PingFang SC", sans-serif;
   font-size: ${locale === 'zh' ? '76px' : '82px'}; line-height: .98; letter-spacing: ${locale === 'zh' ? '.02em' : '.01em'};
   font-weight: 400; text-wrap: balance; text-shadow: ${light ? 'none' : '0 3px 32px rgba(0,0,0,.65)'};
 }
@@ -132,12 +130,8 @@ h1 {
 };
 
 await mkdir(OUTPUT_DIR, { recursive: true });
-const monoFont = await asDataUrl(
-  path.join(FONT_DIR, 'jetbrains-mono-latin-700-normal.woff2'),
-  'font/woff2',
-);
-const displayFont = await asDataUrl(
-  path.join(FONT_DIR, 'anton-latin-400-normal.woff2'),
+const sansFont = await asDataUrl(
+  path.join(FONT_DIR, 'anthropic-sans-roman.woff2'),
   'font/woff2',
 );
 
@@ -157,7 +151,7 @@ try {
 
     for (const locale of SITE_LOCALES) {
       await page.setContent(
-        cardHtml({ route, locale, backgroundDataUrl, monoFont, displayFont }),
+        cardHtml({ route, locale, backgroundDataUrl, sansFont }),
         { waitUntil: 'load' },
       );
       await page.evaluate(() => document.fonts.ready);

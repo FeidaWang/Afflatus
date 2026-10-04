@@ -42,7 +42,7 @@ import { getLocale } from '../lib/localeStore.js';
       const g = ctx.createLinearGradient(0, 0, cv.width, cv.height); g.addColorStop(0, '#1c1608'); g.addColorStop(.5, '#3a2f14'); g.addColorStop(1, '#150f06');
       ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height);
       for (let i = 0; i < cv.width * cv.height / 900; i++) { ctx.fillStyle = `rgba(255,255,255,${Math.random() * .14})`; ctx.fillRect(Math.random() * cv.width, Math.random() * cv.height, 2, 2); }
-      ctx.fillStyle = 'rgba(200,170,110,.9)'; ctx.font = '700 11px "IBM Plex Mono",monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'rgba(200,170,110,.9)'; ctx.font = '700 11px "Anthropic Sans", "IBM Plex Mono",monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(lang === 'zh' ? '◤ 点击或刮开揭晓比分 ◢' : '◤ TAP OR SCRATCH TO REVEAL ◢', cv.width / 2, cv.height / 2);
     }
     const pos = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };

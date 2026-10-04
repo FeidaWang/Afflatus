@@ -6,8 +6,8 @@
 .sectors-earth .earth-story { position: relative; z-index: 1; grid-column: 1; grid-row: 1; }
 .sectors-earth .earth-panel { max-width: 490px; margin: 0 0 36px; }
 .sectors-earth .earth-panel:last-child { margin-bottom: 0; }
-.sectors-earth .earth-kicker { margin: 0 0 20px; color: #c5a47d; font: 600 12px/1.4 ui-monospace, monospace; letter-spacing: .13em; }
-.sectors-earth h2 { margin: 0 0 24px; color: #edeae3; font: 400 clamp(34px, 4.2vw, 60px)/1.08 "Iowan Old Style", Palatino, "Songti SC", serif; letter-spacing: -.035em; }
+.sectors-earth .earth-kicker { margin: 0 0 20px; color: #c5a47d; font: 600 12px/1.4 "Anthropic Sans", ui-monospace, monospace; letter-spacing: .13em; }
+.sectors-earth h2 { margin: 0 0 24px; color: #edeae3; font: 400 clamp(34px, 4.2vw, 60px)/1.08 "Anthropic Sans", "Iowan Old Style", Palatino, "Songti SC", serif; letter-spacing: -.035em; }
 .sectors-earth:lang(zh) h2 { max-width: 7.5em; font-size: clamp(36px, 3.6vw, 48px); line-height: 1.18; letter-spacing: 0; }
 .sectors-earth .earth-panel > p:not(.earth-kicker), .sectors-earth .earth-excerpts p { max-width: 48ch; color: #b7c1cb; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.7; }
 .sectors-earth .earth-excerpts { min-height: 62px; border-left: 1px solid #728b81; padding-left: 18px; margin: 26px 0 16px; }
@@ -18,7 +18,7 @@
 .sectors-earth button[aria-pressed="true"] { color: #090d12; background: #b7d7c7; border-color: #b7d7c7; }
 .sectors-earth a { display: inline-flex; min-height: 44px; align-items: center; color: #b7d7c7; text-decoration: underline; text-underline-offset: 5px; }
 .sectors-earth :is(a, button):focus-visible { outline: 2px solid #b7d7c7; outline-offset: 4px; }
-.sectors-earth .earth-credit { position: absolute; bottom: 18px; left: clamp(24px, 4vw, 56px); right: 24px; margin: 0; color: #9da9b3; font: 11px/1.5 ui-monospace, monospace; }
+.sectors-earth .earth-credit { position: absolute; bottom: 18px; left: clamp(24px, 4vw, 56px); right: 24px; margin: 0; color: #9da9b3; font: 11px/1.5 "Anthropic Sans", ui-monospace, monospace; }
 .sectors-earth[data-enhanced="true"] { min-height: 290svh; overflow: visible; }
 .sectors-earth[data-enhanced="true"] .departure-viewport { position: sticky; top: 68px; height: calc(100svh - 68px); min-height: 0; display: block; overflow: hidden; }
 .sectors-earth[data-enhanced="true"] .earth-stage { position: absolute; inset: 0; aspect-ratio: auto; }

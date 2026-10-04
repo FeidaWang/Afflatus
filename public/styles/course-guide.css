@@ -1,5 +1,5 @@
 /* V5: a paper field guide around the existing curriculum and progress owner. */
-.course-page{--paper:#f3efe7;--paper-hot:#faf8f3;--ink:#20252b;--void:#20252b;--signal:#795d3c;--red:#795d3c;--sans:"Helvetica Neue","PingFang SC",Arial,sans-serif;background:var(--paper);color:var(--ink);font:400 17px/1.65 var(--sans)}
+.course-page{--paper:#f3efe7;--paper-hot:#faf8f3;--ink:#20252b;--void:#20252b;--signal:#795d3c;--red:#795d3c;--sans:"Anthropic Sans", "Helvetica Neue","PingFang SC",Arial,sans-serif;background:var(--paper);color:var(--ink);font:400 17px/1.65 var(--sans)}
 .course-page ::selection{background:#d9c5a9;color:var(--ink)}
 .course-page main{padding-top:0}
 .course-page main>section[id],.course-page details[id]{scroll-margin-top:88px}
@@ -18,7 +18,7 @@
 .course-workbench ol{list-style:none;padding:0;margin:28px 0}
 .course-workbench li{display:flex;gap:18px;position:relative;padding-bottom:25px}
 .course-workbench li:last-child{padding-bottom:0}
-.course-workbench li>span{border:1px solid #9e9079;border-radius:50%;width:36px;height:36px;flex:none;text-align:center;line-height:34px;font-family:var(--serif)}
+.course-workbench li>span{border:1px solid #9e9079;border-radius:50%;width:36px;height:36px;flex:none;text-align:center;line-height:34px;font-family:"Anthropic Sans", var(--serif)}
 .course-workbench strong{font-size:18px;font-weight:500}
 .course-workbench p{font-size:14px;color:#5d5a52;margin:4px 0 0;line-height:1.6}
 .course-workbench .course-workbench-note{border-top:1px solid #c6bdaecc;padding-top:16px;font-size:12px;letter-spacing:.04em}

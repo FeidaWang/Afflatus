@@ -135,7 +135,7 @@
     padding: 0 0 8px 16px;
     border-bottom: 1px solid rgba(154, 229, 255, .16);
     border-left: 1px solid rgba(154, 229, 255, .11);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "Anthropic Sans", 'JetBrains Mono', monospace;
     text-align: right;
     text-transform: uppercase;
   }
@@ -218,7 +218,7 @@
     border: 1px solid rgba(154, 229, 255, .28);
     background: rgba(3, 9, 14, .66);
     color: #dff7ff;
-    font: 500 9px/1 'JetBrains Mono', monospace;
+    font: 500 9px/1 "Anthropic Sans", 'JetBrains Mono', monospace;
     letter-spacing: .17em;
     text-decoration: none;
     text-transform: uppercase;
@@ -360,11 +360,11 @@
     width: min(260px, calc(100vw - 32px)); max-height: calc(100svh - 96px);
     overflow-y: auto; background: #071019; border: 1px solid #597688; padding: 8px;
   }
-  .home-page .portfolio-menu-links a { display: flex; align-items: center; min-height: 44px; padding: 8px 12px; color: #e2ebf2; font: 14px/1.5 'JetBrains Mono', monospace; }
+  .home-page .portfolio-menu-links a { display: flex; align-items: center; min-height: 44px; padding: 8px 12px; color: #e2ebf2; font: 14px/1.5 "Anthropic Sans", 'JetBrains Mono', monospace; }
   .home-page .portfolio-menu-links a[aria-current] { color: #e8b380; }
   .home-page .portfolio-controls { grid-area: right; display: flex; align-items: center; justify-content: flex-end; gap: 12px; min-width: 0; }
-  .home-page .portfolio-menu-toggle { border: 1px solid #597688; color: #e2ebf2; background: #071019; font: 13px/1.5 'JetBrains Mono', monospace; }
-  .home-page #langMiniToggle { min-height: 44px; min-width: 44px; align-items: center; justify-content: center; color: #e2ebf2; font: 13px/1.5 'JetBrains Mono', monospace; }
+  .home-page .portfolio-menu-toggle { border: 1px solid #597688; color: #e2ebf2; background: #071019; font: 13px/1.5 "Anthropic Sans", 'JetBrains Mono', monospace; }
+  .home-page #langMiniToggle { min-height: 44px; min-width: 44px; align-items: center; justify-content: center; color: #e2ebf2; font: 13px/1.5 "Anthropic Sans", 'JetBrains Mono', monospace; }
   @media (max-width: 860px) {
     .home-page.hud-off #commandModeBtn { display: none; }
     .home-page .portfolio-controls { gap: 8px; }
@@ -384,7 +384,7 @@
   .home-page.starfield-layout .hero-title { animation: none; max-width: 51%; font-size: clamp(40px, 4.3vw, 72px); }
   .home-page.starfield-layout :is(.hero-desc, .hero-cta) { max-width: 48%; }
   .portfolio-starfield { position: absolute; right: 3vw; top: 150px; width: 42%; color: #c6d6df; }
-  .portfolio-starfield h2 { font: 500 12px/1.5 'JetBrains Mono', monospace; color: #9ae5ff; letter-spacing: .10em; }
+  .portfolio-starfield h2 { font: 500 12px/1.5 "Anthropic Sans", 'JetBrains Mono', monospace; color: #9ae5ff; letter-spacing: .10em; }
   #starfieldViewport {
     position: relative; width: 100%; height: clamp(310px, 32vw, 520px); aspect-ratio: 1.3125;
     overflow: hidden; border: 1px solid #243b47; border-radius: 50% 50% 8px 8px;
@@ -411,9 +411,9 @@
   .home-page #starfield { position: absolute; inset: 0; width: 100%; height: 100%; background: #04060a; opacity: 0; pointer-events: none; }
   .home-page.starfield-ready #starfield { opacity: 1; }
   #starfieldViewport[data-intro="entering"] #starfield { transition: opacity 180ms linear; }
-  #starfieldStatus { min-height: 3.2em; margin: 14px 0 8px; color: #b9ccda; font: 13px/1.6 'JetBrains Mono', monospace; }
+  #starfieldStatus { min-height: 3.2em; margin: 14px 0 8px; color: #b9ccda; font: 13px/1.6 "Anthropic Sans", 'JetBrains Mono', monospace; }
   .starfield-controls { display: flex; flex-wrap: wrap; gap: 10px; }
-  .starfield-controls button { flex: 0 0 140px; inline-size: 140px; min-height: 44px; padding: 8px 14px; border: 1px solid #597688; color: #e2ebf2; background: #071019; font: 13px/1.5 'JetBrains Mono', monospace; cursor: pointer; }
+  .starfield-controls button { flex: 0 0 140px; inline-size: 140px; min-height: 44px; padding: 8px 14px; border: 1px solid #597688; color: #e2ebf2; background: #071019; font: 13px/1.5 "Anthropic Sans", 'JetBrains Mono', monospace; cursor: pointer; }
   .starfield-controls button:disabled { opacity: .5; cursor: default; }
   .starfield-controls button[aria-pressed='true'] { border-color: #e8b380; color: #e8b380; }
   @media (max-width: 1000px) {
@@ -436,7 +436,7 @@
 
 @layer components {
   .home-page .stage-motion-controls { position: relative; z-index: 4; display: flex; justify-content: flex-end; padding: 12px clamp(16px, 3vw, 48px); }
-  .home-page .stage-motion-controls button { min-width: 140px; min-height: 44px; padding: 8px 12px; color: #e2ebf2; background: #071019; border: 1px solid #597688; font: 13px/1.5 'JetBrains Mono', monospace; }
+  .home-page .stage-motion-controls button { min-width: 140px; min-height: 44px; padding: 8px 12px; color: #e2ebf2; background: #071019; border: 1px solid #597688; font: 13px/1.5 "Anthropic Sans", 'JetBrains Mono', monospace; }
   .home-page .stage-motion-controls button[aria-pressed='true'] { color: #e8b380; border-color: #e8b380; }
   .home-page .stage-motion-controls button:focus-visible { outline: 2px solid #9ae5ff; outline-offset: 3px; }
   .home-page #starfieldViewport { cursor: auto; }

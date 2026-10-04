@@ -66,7 +66,7 @@ export function chartSVG({ title, date, source, note, series, records, hidden = 
     y += 8;
   }
   text(labels.missingNote, 24, 14, '#364e60', 65);
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="${y + 16}" viewBox="0 0 960 ${y + 16}" role="img"><title>${escape(title)}</title><desc>${escape(`${date} · ${source} · ${note}`)}</desc><rect width="960" height="${y + 16}" fill="#fff"/><g font-family="Arial, sans-serif">${parts.join('')}</g></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="${y + 16}" viewBox="0 0 960 ${y + 16}" role="img"><title>${escape(title)}</title><desc>${escape(`${date} · ${source} · ${note}`)}</desc><rect width="960" height="${y + 16}" fill="#fff"/><g font-family="'Anthropic Sans', Arial, sans-serif">${parts.join('')}</g></svg>`;
 }
 
 export async function downloadChart(svg, format, filename) {

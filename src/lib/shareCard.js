@@ -67,18 +67,18 @@ function frame(ctx, titleZh, titleEn, lang, titleOverride) {
   ctx.strokeStyle = C.line; ctx.lineWidth = 2; roundRect(ctx, 70, 90, W - 140, H - 200, 28); ctx.stroke();
   // header
   ctx.fillStyle = C.terraDeep;
-  ctx.font = '700 26px "Spectral","Noto Serif SC",serif';
+  ctx.font = '700 26px "Anthropic Sans", "Spectral","Noto Serif SC",serif';
   ctx.textAlign = 'center';
   ctx.fillText(lang === 'zh' ? '观 星 台' : 'STAR TERRACE', W / 2, 170);
   ctx.fillStyle = C.text;
   const big = titleOverride || (lang === 'zh' ? titleZh : titleEn);
-  ctx.font = `900 ${titleOverride && big.length > 8 ? 40 : titleOverride ? 48 : 56}px "Noto Serif SC",serif`;
+  ctx.font = `900 ${titleOverride && big.length > 8 ? 40 : titleOverride ? 48 : 56}px "Anthropic Sans", "Noto Serif SC",serif`;
   ctx.fillText(big, W / 2, 245);
   // footer
   ctx.fillStyle = C.dim;
-  ctx.font = '500 24px "Spectral","Noto Serif SC",serif';
+  ctx.font = '500 24px "Anthropic Sans", "Spectral","Noto Serif SC",serif';
   ctx.fillText('feida.au/horoscope.html', W / 2, H - 60);
-  ctx.font = '500 20px "Noto Serif SC",serif';
+  ctx.font = '500 20px "Anthropic Sans", "Noto Serif SC",serif';
   ctx.fillText(lang === 'zh' ? '仅供娱乐 · 不构成任何建议' : 'Entertainment only · not advice', W / 2, H - 28);
 }
 
@@ -116,11 +116,11 @@ function drawPillarTiles(ctx, pillars, cx, y, tileW, tileH, gap) {
     ctx.fillStyle = C.card2; roundRect(ctx, x, y, tileW, tileH, 18); ctx.fill();
     ctx.strokeStyle = C.line; ctx.lineWidth = 2; roundRect(ctx, x, y, tileW, tileH, 18); ctx.stroke();
     ctx.fillStyle = C.dim;
-    ctx.font = `600 ${Math.round(tileW * 0.14)}px "Noto Serif SC",serif`;
+    ctx.font = `600 ${Math.round(tileW * 0.14)}px "Anthropic Sans", "Noto Serif SC",serif`;
     ctx.textAlign = 'center';
     ctx.fillText(p.label, x + tileW / 2, y + tileH * 0.17);
     ctx.fillStyle = C.el[p.el] || C.text;
-    ctx.font = `900 ${Math.round(tileW * 0.42)}px "Noto Serif SC",serif`;
+    ctx.font = `900 ${Math.round(tileW * 0.42)}px "Anthropic Sans", "Noto Serif SC",serif`;
     ctx.fillText(p.gz[0] || '', x + tileW / 2, y + tileH * 0.52);
     ctx.fillText(p.gz[1] || '', x + tileW / 2, y + tileH * 0.86);
     x += tileW + gap;
@@ -142,7 +142,7 @@ export function renderShareCard(canvas, type, payload) {
   if (type === 'persona') {
     frame(ctx, '十六型人格', 'SIXTEEN TYPES', lang, payload.type);
     ctx.fillStyle = C.sageDeep;
-    ctx.font = '700 40px "Noto Serif SC",serif';
+    ctx.font = '700 40px "Anthropic Sans", "Noto Serif SC",serif';
     ctx.textAlign = 'center';
     ctx.fillText(payload.name, W / 2, 340);
     // four axis bars, stacked
@@ -151,7 +151,7 @@ export function renderShareCard(canvas, type, payload) {
       const y = barTop + k * gap;
       const pct = ax.a / (ax.a + ax.b);
       ctx.fillStyle = C.dim;
-      ctx.font = '700 26px "IBM Plex Mono",monospace';
+      ctx.font = '700 26px "Anthropic Sans", "IBM Plex Mono",monospace';
       ctx.textAlign = 'left';
       ctx.fillText(payload.axisLetters[k][0], barX, y - 16);
       ctx.textAlign = 'right';
@@ -164,12 +164,12 @@ export function renderShareCard(canvas, type, payload) {
     // U3: population-share line ("~2.1% of people"), pre-resolved string
     if (payload.freqLine) {
       ctx.fillStyle = C.terraDeep;
-      ctx.font = '700 32px "Noto Serif SC",serif';
+      ctx.font = '700 32px "Anthropic Sans", "Noto Serif SC",serif';
       ctx.textAlign = 'center';
       ctx.fillText(payload.freqLine, W / 2, 405);
     }
     ctx.fillStyle = C.text;
-    ctx.font = '400 28px "Noto Serif SC",serif';
+    ctx.font = '400 28px "Anthropic Sans", "Noto Serif SC",serif';
     ctx.textAlign = 'center';
     ctx.fillText(lang === 'zh' ? '原创速测 · 与官方 MBTI 无关联' : 'Original quiz · not affiliated with MBTI®', W / 2, barTop + 4 * gap + 20);
   } else if (type === 'quiz') {
@@ -183,23 +183,23 @@ export function renderShareCard(canvas, type, payload) {
     ctx.beginPath(); ctx.arc(W / 2, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.max(0.02, Math.min(1, payload.ringFrac ?? 0.5)));
     ctx.strokeStyle = C.terra; ctx.lineCap = 'round'; ctx.stroke();
     ctx.fillStyle = C.text;
-    ctx.font = '900 110px "IBM Plex Mono",monospace';
+    ctx.font = '900 110px "Anthropic Sans", "IBM Plex Mono",monospace';
     ctx.textAlign = 'center';
     ctx.fillText(String(payload.score), W / 2, cy + 36);
     ctx.fillStyle = C.dim;
-    ctx.font = '600 26px "Spectral","Noto Serif SC",serif';
+    ctx.font = '600 26px "Anthropic Sans", "Spectral","Noto Serif SC",serif';
     ctx.fillText(payload.scoreLabel, W / 2, cy + 78);
     ctx.fillStyle = C.sageDeep;
-    ctx.font = '700 46px "Noto Serif SC",serif';
+    ctx.font = '700 46px "Anthropic Sans", "Noto Serif SC",serif';
     ctx.fillText(payload.band, W / 2, 830);
     if (payload.pctLine) {
       ctx.fillStyle = C.terraDeep;
-      ctx.font = '700 36px "Noto Serif SC",serif';
+      ctx.font = '700 36px "Anthropic Sans", "Noto Serif SC",serif';
       ctx.fillText(payload.pctLine, W / 2, 910);
     }
     if (payload.caveat) {
       ctx.fillStyle = C.text;
-      ctx.font = '400 26px "Noto Serif SC",serif';
+      ctx.font = '400 26px "Anthropic Sans", "Noto Serif SC",serif';
       wrapCentered(ctx, payload.caveat, W / 2, 1000, W - 260, 36, 2);
     }
   } else if (type === 'mine') {
@@ -207,22 +207,22 @@ export function renderShareCard(canvas, type, payload) {
     drawPillarTiles(ctx, payload.pillars, W / 2, 330, 190, 420, 24);
     // identity chips
     ctx.fillStyle = C.sageDeep;
-    ctx.font = '700 40px "Noto Serif SC",serif';
+    ctx.font = '700 40px "Anthropic Sans", "Noto Serif SC",serif';
     ctx.textAlign = 'center';
     ctx.fillText(payload.chips.join('　·　'), W / 2, 850);
     if (payload.dateStr) {
       ctx.fillStyle = C.dim;
-      ctx.font = '500 30px "IBM Plex Mono",monospace';
+      ctx.font = '500 30px "Anthropic Sans", "IBM Plex Mono",monospace';
       ctx.fillText(payload.dateStr, W / 2, 910);
     }
     // U5: chart-rank line (命造总分 + 样本百分位), pre-resolved string
     if (payload.rankLine) {
       ctx.fillStyle = C.terraDeep;
-      ctx.font = '700 34px "Noto Serif SC",serif';
+      ctx.font = '700 34px "Anthropic Sans", "Noto Serif SC",serif';
       ctx.fillText(payload.rankLine, W / 2, 970);
     }
     ctx.fillStyle = C.text;
-    ctx.font = '400 30px "Noto Serif SC",serif';
+    ctx.font = '400 30px "Anthropic Sans", "Noto Serif SC",serif';
     ctx.fillText(lang === 'zh' ? '扫历法而出，非随机数。' : 'Cast from the real sexagenary calendar.', W / 2, payload.rankLine ? 1040 : 990);
   } else {
     // payload.title (V23 Phase 2): plain, already-language-resolved string —
@@ -233,7 +233,7 @@ export function renderShareCard(canvas, type, payload) {
     drawPillarTiles(ctx, payload.a.pillars, W / 2, 310, 120, 260, 14);
     drawPillarTiles(ctx, payload.b.pillars, W / 2, 830, 120, 260, 14);
     ctx.fillStyle = C.dim;
-    ctx.font = '600 26px "Noto Serif SC",serif';
+    ctx.font = '600 26px "Anthropic Sans", "Noto Serif SC",serif';
     ctx.textAlign = 'center';
     ctx.fillText(payload.a.h + (payload.a.zodiacGlyph ? ' ' + payload.a.zodiacGlyph : ''), W / 2 - 380, 340);
     ctx.fillText(payload.b.h + (payload.b.zodiacGlyph ? ' ' + payload.b.zodiacGlyph : ''), W / 2 - 380, 860);
@@ -244,17 +244,17 @@ export function renderShareCard(canvas, type, payload) {
     ctx.beginPath(); ctx.arc(W / 2, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (payload.score / 100));
     ctx.strokeStyle = C.terra; ctx.lineCap = 'round'; ctx.stroke();
     ctx.fillStyle = C.text;
-    ctx.font = '900 76px "IBM Plex Mono",monospace';
+    ctx.font = '900 76px "Anthropic Sans", "IBM Plex Mono",monospace';
     ctx.fillText(String(payload.score), W / 2, cy + 26);
     ctx.fillStyle = C.dim;
-    ctx.font = '600 22px "Spectral",serif';
+    ctx.font = '600 22px "Anthropic Sans", "Spectral",serif';
     ctx.fillText(lang === 'zh' ? (payload.title ? '共鸣指数' : '底盘缘分') : (payload.title ? 'RESONANCE' : 'BASE BOND'), W / 2, cy + 60);
     // hookLine (V23 Phase 2): plain, already-language-resolved — the single
     // most-shareable attraction/red-flag line, drawn in the gap below the
     // second chart row and above the footer.
     if (payload.hookLine) {
       ctx.fillStyle = C.terraDeep;
-      ctx.font = '600 27px "Noto Serif SC",serif';
+      ctx.font = '600 27px "Anthropic Sans", "Noto Serif SC",serif';
       ctx.textAlign = 'center';
       wrapCentered(ctx, payload.hookLine, W / 2, 1140, W - 280, 38, 2);
     }

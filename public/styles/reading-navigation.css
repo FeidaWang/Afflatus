@@ -41,7 +41,7 @@ body.course-page main > section[id], body.course-page .proof-grid article[id] {
   min-height: 44px;
   padding: 0 14px;
   color: #e4e8f0;
-  font: 600 14px/1.4 'JetBrains Mono', monospace;
+  font: 600 14px/1.4 "Anthropic Sans", 'JetBrains Mono', monospace;
 }
 body .chapterRail a { min-height: 44px; align-items: center; }
 body .chapterRail a:focus-visible span { max-width: 140px; opacity: 1; }

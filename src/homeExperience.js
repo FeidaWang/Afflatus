@@ -884,7 +884,7 @@ function drawRadar(state=combatSnapshot){
   if(!compact){
     rctx.save();
     rctx.textAlign='center';rctx.textBaseline='middle';
-    rctx.font=`${Math.max(7,min*.024)}px 'JetBrains Mono',monospace`;
+    rctx.font=`${Math.max(7,min*.024)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     rctx.fillStyle='rgba(200,245,235,.72)';
     rctx.fillText(navDegNum===null?'AZ —':`AZ ${String(navDegNum).padStart(3,'0')}°`,-radarR*.26,radarR*ELLIPSE+16);
     rctx.fillStyle='rgba(200,245,235,.55)';
@@ -895,7 +895,7 @@ function drawRadar(state=combatSnapshot){
   if(!radarScanning && !compact){
     rctx.save();
     rctx.fillStyle='rgba(120,230,215,.5)';
-    rctx.font=`${Math.max(4.2,min*.016)}px 'JetBrains Mono',monospace`;
+    rctx.font=`${Math.max(4.2,min*.016)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     rctx.textAlign='center';rctx.textBaseline='middle';
     rctx.fillText(currentLang==='zh'?'静默守望':'SILENT WATCH',0,0);
     rctx.restore();
@@ -999,7 +999,7 @@ function drawRadar(state=combatSnapshot){
       if(c.kind==='comet'){rctx.moveTo(x,y-s*2);rctx.lineTo(x+s*2,y);rctx.lineTo(x,y+s*2);rctx.lineTo(x-s*2,y);rctx.closePath();rctx.fill();rctx.stroke();}
       else if(c.kind==='ally'){rctx.moveTo(x,y-s*2.4);rctx.lineTo(x+s*2.2,y+s*1.8);rctx.lineTo(x-s*2.2,y+s*1.8);rctx.closePath();rctx.fill();rctx.stroke();}
       else if(c.kind==='missile'){rctx.arc(x,y,s,0,Math.PI*2);rctx.fill();rctx.stroke();}
-      else if(c.kind==='nuke'){rctx.font=`${s*5}px 'JetBrains Mono',monospace`;rctx.textAlign='center';rctx.textBaseline='middle';rctx.fillText('☢',x,y);}
+      else if(c.kind==='nuke'){rctx.font=`${s*5}px "Anthropic Sans", 'JetBrains Mono',monospace`;rctx.textAlign='center';rctx.textBaseline='middle';rctx.fillText('☢',x,y);}
       else{rctx.rect(x-s*1.6,y-s*1.6,s*3.2,s*3.2);rctx.fill();rctx.stroke();}
     };
     if(targetLume>0){
@@ -1045,7 +1045,7 @@ function drawAttitude(now){
   ctx.strokeStyle='rgba(255,255,255,.72)';ctx.lineWidth=1.4;
   ctx.beginPath();ctx.moveTo(cx-54,cy);ctx.lineTo(cx-16,cy);ctx.moveTo(cx+16,cy);ctx.lineTo(cx+54,cy);ctx.moveTo(cx,cy-7);ctx.lineTo(cx,cy+7);ctx.stroke();
   ctx.strokeStyle='rgba(232,179,128,.55)';ctx.beginPath();ctx.arc(cx,cy,38,Math.PI*.08,Math.PI*.92);ctx.stroke();
-  ctx.fillStyle='rgba(154,229,255,.75)';ctx.font="8px 'JetBrains Mono',monospace";
+  ctx.fillStyle='rgba(154,229,255,.75)';ctx.font="8px 'Anthropic Sans', 'JetBrains Mono',monospace";
   const trackHeading=combatSnapshot.telemetry.headingDeg;
   ctx.fillText(`${currentLang==='zh'?'目标航向':'TRACK HDG'} ${Number.isFinite(trackHeading)?`${String(Math.round(trackHeading)).padStart(3,'0')}°`:'—'}`,12,16);
   ctx.fillText(`${currentLang==='zh'?'舰体姿态':'SHIP ATT'} —`,12,rect.height-10);
@@ -1103,7 +1103,7 @@ function drawAIM120Model(ctx,len=34,stage='locked'){
   ctx.beginPath();ctx.moveTo(-len*.23,r);ctx.lineTo(-len*.14,r*3.1);ctx.lineTo(-len*.05,r);ctx.closePath();ctx.fill();
   ctx.beginPath();ctx.moveTo(len*.13,-r);ctx.lineTo(len*.22,-r*3);ctx.lineTo(len*.31,-r);ctx.closePath();ctx.fill();
   ctx.beginPath();ctx.moveTo(len*.13,r);ctx.lineTo(len*.22,r*3);ctx.lineTo(len*.31,r);ctx.closePath();ctx.fill();
-  ctx.fillStyle='rgba(30,38,44,.65)';ctx.font=`${Math.max(4,len*.08)}px 'JetBrains Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(30,38,44,.65)';ctx.font=`${Math.max(4,len*.08)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
   if(len>24) ctx.fillText('AIM-120',len*.02,-r*.18);
   if(stage!=='drop'){
     const flame=ctx.createRadialGradient(-len*.55,0,0,-len*.7,0,len*.28);
@@ -1151,7 +1151,7 @@ function drawFeedContact(ctx,x,y,c){
     if(c.nuke){
       ctx.strokeStyle='rgba(255,212,93,.9)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(-9,4);ctx.lineTo(7,-3);ctx.stroke();
       ctx.fillStyle='rgba(255,212,93,.95)';ctx.beginPath();ctx.arc(7,-3,2.2,0,Math.PI*2);ctx.fill();
-      ctx.font="8px 'JetBrains Mono',monospace";ctx.fillText('☢',11,-5);
+      ctx.font="8px 'Anthropic Sans', 'JetBrains Mono',monospace";ctx.fillText('☢',11,-5);
     }else{
       drawAIM120Model(ctx,22,'locked');
     }
@@ -1201,7 +1201,7 @@ function drawCapitalFeed(feed,now,contacts,cannonFx){
   for(let x=0;x<w;x+=Math.max(24,w/20)){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
   for(let y=0;y<h;y+=Math.max(12,h/10)){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
   const title=currentLang==='zh'?'实况战舰透视 · 12点方向':'LIVE CAPITAL VIEW · 12 O CLOCK';
-  ctx.fillStyle='rgba(220,232,245,.74)';ctx.font=`${Math.max(8,u*.045)}px 'JetBrains Mono',monospace`;ctx.textBaseline='top';ctx.textAlign='left';ctx.fillText(title,10,8);
+  ctx.fillStyle='rgba(220,232,245,.74)';ctx.font=`${Math.max(8,u*.045)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textBaseline='top';ctx.textAlign='left';ctx.fillText(title,10,8);
   const power=(0.69+warpIntensity*.22).toFixed(2);
   ctx.textAlign='right';ctx.fillStyle=document.body.classList.contains('warp-hover')?'rgba(93,255,157,.92)':'rgba(154,229,255,.82)';
   ctx.fillText(`${currentLang==='zh'?'动力':'DRIVE'} ${power}C`,w-10,8);
@@ -1211,7 +1211,7 @@ function drawCapitalFeed(feed,now,contacts,cannonFx){
   const eg=ctx.createLinearGradient(0,eY+eH,0,eY);
   eg.addColorStop(0,'rgba(93,255,157,.35)');eg.addColorStop(.55,'rgba(154,229,255,.72)');eg.addColorStop(1,'rgba(120,104,255,.7)');
   ctx.fillStyle=eg;ctx.fillRect(eX+1,eY+eH-(eH-2)*energy/100,eW-2,(eH-2)*energy/100);
-  ctx.save();ctx.translate(eX-4,eY+eH/2);ctx.rotate(-Math.PI/2);ctx.fillStyle='rgba(154,229,255,.58)';ctx.textAlign='center';ctx.font=`${Math.max(6,u*.026)}px 'JetBrains Mono',monospace`;ctx.fillText(`${currentLang==='zh'?'跃迁功率':'WARP'} ${Math.round(energy)}%`,0,0);ctx.restore();
+  ctx.save();ctx.translate(eX-4,eY+eH/2);ctx.rotate(-Math.PI/2);ctx.fillStyle='rgba(154,229,255,.58)';ctx.textAlign='center';ctx.font=`${Math.max(6,u*.026)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.fillText(`${currentLang==='zh'?'跃迁功率':'WARP'} ${Math.round(energy)}%`,0,0);ctx.restore();
   const recoil=cannonFx?.mode==='fire' ? (1-cannonFx.t)*u*.03 : 0;
   ctx.save();ctx.translate(0,recoil);
   const hull=ctx.createLinearGradient(0,h*.08,0,h*.82);
@@ -1334,7 +1334,7 @@ function drawCapitalFeed(feed,now,contacts,cannonFx){
     ctx.fillStyle=empty?'rgba(154,229,255,.025)':'rgba(255,255,255,.035)';
     ctx.fillRect(x,y,bw,bw);ctx.strokeRect(x,y,bw,bw);
     ctx.fillStyle=empty?'rgba(154,229,255,.38)':'rgba(220,232,245,.76)';
-    ctx.font=`${Math.max(5,u*.026)}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
+    ctx.font=`${Math.max(5,u*.026)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
     ctx.fillText(empty?'OUT':type.toUpperCase(),x+4,y+bw-4);
     if(!empty) drawFeedCraft(ctx,x+bw*.52,y+bw*.48,type,bw*.12,-Math.PI/2,'rgba(116,130,145,.86)');
     else{
@@ -1349,7 +1349,7 @@ function drawCapitalFeed(feed,now,contacts,cannonFx){
     if(c.kind==='craft'&&c.returning){x=w*(.28+Math.sin(now/360+c.x*.01)*.44);y=h*(.70+Math.cos(now/410+c.y*.01)*.16);}
     drawFeedContact(ctx,clamp(x,8,w-8),clamp(y,24,h-10),c);
   });
-  ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
   ctx.fillText(`AMMO ${Math.round(combatSnapshot.fleet.ammoPct)}%`,10,h-10);
   ctx.textAlign='center';ctx.fillText(`${currentLang==='zh'?'机库':'BAY'} 8 · ${currentLang==='zh'?'主炮脊柱':'CANNON SPINE'}`,w*.5,h-10);
   ctx.restore();
@@ -1364,7 +1364,7 @@ function drawCapitalFeedV2(feed,now,contacts,cannonFx){
   for(let x=0;x<w;x+=Math.max(24,w/22)){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
   for(let y=0;y<h;y+=Math.max(12,h/11)){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
   const title=currentLang==='zh'?'实况战舰侧视 · 12点方向':'LIVE CAPITAL SIDE · 12 O CLOCK';
-  ctx.fillStyle='rgba(220,232,245,.76)';ctx.font=`${Math.max(8,u*.044)}px 'JetBrains Mono',monospace`;ctx.textBaseline='top';ctx.textAlign='left';ctx.fillText(title,10,8);
+  ctx.fillStyle='rgba(220,232,245,.76)';ctx.font=`${Math.max(8,u*.044)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textBaseline='top';ctx.textAlign='left';ctx.fillText(title,10,8);
   const power=(0.69+warpIntensity*.22).toFixed(2);
   ctx.textAlign='right';ctx.fillStyle=document.body.classList.contains('warp-hover')?'rgba(93,255,157,.94)':'rgba(154,229,255,.84)';
   ctx.fillText(`${currentLang==='zh'?'动力':'DRIVE'} ${power}C`,w-10,8);
@@ -1373,7 +1373,7 @@ function drawCapitalFeedV2(feed,now,contacts,cannonFx){
   const eg=ctx.createLinearGradient(0,eY+eH,0,eY);
   eg.addColorStop(0,'rgba(93,255,157,.38)');eg.addColorStop(.55,'rgba(154,229,255,.74)');eg.addColorStop(1,'rgba(120,104,255,.72)');
   ctx.fillStyle=eg;ctx.fillRect(eX+1,eY+eH-(eH-2)*energy/100,eW-2,(eH-2)*energy/100);
-  ctx.save();ctx.translate(eX-4,eY+eH/2);ctx.rotate(-Math.PI/2);ctx.fillStyle='rgba(154,229,255,.58)';ctx.textAlign='center';ctx.font=`${Math.max(6,u*.026)}px 'JetBrains Mono',monospace`;ctx.fillText(`${currentLang==='zh'?'跃迁功率':'WARP'} ${Math.round(energy)}%`,0,0);ctx.restore();
+  ctx.save();ctx.translate(eX-4,eY+eH/2);ctx.rotate(-Math.PI/2);ctx.fillStyle='rgba(154,229,255,.58)';ctx.textAlign='center';ctx.font=`${Math.max(6,u*.026)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.fillText(`${currentLang==='zh'?'跃迁功率':'WARP'} ${Math.round(energy)}%`,0,0);ctx.restore();
 
   ctx.save();
   ctx.globalCompositeOperation='source-over';
@@ -1417,7 +1417,7 @@ function drawCapitalFeedV2(feed,now,contacts,cannonFx){
     if(c.kind==='craft'&&c.returning){x=w*(.28+Math.sin(now/360+c.x*.01)*.44);y=h*(.64+Math.cos(now/410+c.y*.01)*.16);}
     drawFeedContact(ctx,clamp(x,8,w-8),clamp(y,24,h-10),c);
   });
-  ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
   ctx.fillText(`DECK ${Math.round(combatSnapshot.fleet.deckPct)}%`,10,h-10);
   ctx.textAlign='center';ctx.fillText(`${currentLang==='zh'?'PNG 战舰实况':'PNG CAPITAL FEED'} · AIM-120`,w*.5,h-10);
   ctx.restore();
@@ -1553,7 +1553,7 @@ function drawCapitalFeedV2(feed,now,contacts,cannonFx){
     ctx.fillRect(x,y,bw,bw);ctx.strokeRect(x,y,bw,bw);
     if(!empty) drawFeedCraft(ctx,x+bw*.52,y+bw*.50,type,bw*.115,-Math.PI/2,'rgba(116,130,145,.86)');
     ctx.fillStyle=empty?'rgba(154,229,255,.38)':'rgba(220,232,245,.76)';
-    ctx.font=`${Math.max(5,u*.023)}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
+    ctx.font=`${Math.max(5,u*.023)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
     ctx.fillText(empty?'OUT':type.toUpperCase(),x+3,y+bw-3);
   });
 
@@ -1563,7 +1563,7 @@ function drawCapitalFeedV2(feed,now,contacts,cannonFx){
     if(c.kind==='craft'&&c.returning){x=w*(.30+Math.sin(now/360+c.x*.01)*.40);y=h*(.62+Math.cos(now/410+c.y*.01)*.15);}
     drawFeedContact(ctx,clamp(x,8,w-8),clamp(y,24,h-10),c);
   });
-  ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillStyle='rgba(154,229,255,.64)';ctx.font=`${Math.max(7,u*.033)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='left';ctx.textBaseline='bottom';
   ctx.fillText(`HULL ${Math.round(combatSnapshot.fleet.hpPct)}%`,10,h-10);
   ctx.textAlign='center';ctx.fillText(`${currentLang==='zh'?'机库':'BAY'} 8 · AIM-120`,w*.5,h-10);
   ctx.restore();
@@ -1622,7 +1622,7 @@ function drawCapitalOverlay(feed,mode,now,contacts,cannonFx){
     ? (currentLang==='zh'?'母舰侧向 WebGL 实况':'MOTHERSHIP SIDE · WEBGL LIVE')
     : (currentLang==='zh'?'尾部推进 WebGL 实况':'AFT DRIVE · WEBGL LIVE');
   ctx.fillStyle='rgba(181,236,255,.72)';
-  ctx.font=`${Math.max(6,Math.min(9,w*.025))}px 'JetBrains Mono',monospace`;
+  ctx.font=`${Math.max(6,Math.min(9,w*.025))}px "Anthropic Sans", 'JetBrains Mono',monospace`;
   ctx.textAlign='left';ctx.textBaseline='top';
   ctx.fillText(label,8,7);
   ctx.textAlign='right';
@@ -1650,7 +1650,7 @@ function drawCapitalOverlay(feed,mode,now,contacts,cannonFx){
     if(c.kind==='craft'){
       drawF47Vector(ctx,x,y,c.type==='b2'?0.16:0.14,c.angle||-Math.PI/2,c.returning?'rgba(154,229,255,.72)':'rgba(93,255,157,.82)');
       ctx.fillStyle='rgba(93,255,157,.70)';
-      ctx.font=`${Math.max(5,w*.017)}px 'JetBrains Mono',monospace`;
+      ctx.font=`${Math.max(5,w*.017)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
       ctx.textAlign='center';ctx.textBaseline='top';
       ctx.fillText('F-47',x,y+13);
       return;
@@ -1677,7 +1677,7 @@ function drawCapitalOverlay(feed,mode,now,contacts,cannonFx){
       ctx.setLineDash([]);
       ctx.globalCompositeOperation='source-over';
       ctx.fillStyle='rgba(255,210,120,.72)';
-      ctx.font=`${Math.max(5,w*.017)}px 'JetBrains Mono',monospace`;
+      ctx.font=`${Math.max(5,w*.017)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
       ctx.textAlign='left';ctx.textBaseline='middle';
       ctx.fillText(c.big?'GIANT COMET':'COMET',x+9,y);
     }
@@ -2936,7 +2936,7 @@ function drawPilotSystemSequence(ctx,w,h,phase,landing=false){
   ctx.lineWidth=1;
   ctx.fillRect(x,y,pw,ph);
   ctx.strokeRect(x,y,pw,ph);
-  ctx.font=`${Math.max(6,w*.018)}px 'JetBrains Mono',monospace`;
+  ctx.font=`${Math.max(6,w*.018)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
   ctx.textAlign='left';
   ctx.textBaseline='top';
   ctx.fillStyle=landing?green:cyan;
@@ -2957,7 +2957,7 @@ function drawPilotSystemSequence(ctx,w,h,phase,landing=false){
   if(landing&&phase>.72){
     ctx.globalAlpha=clamp((phase-.72)/.28,0,1);
     ctx.fillStyle='rgba(220,255,235,.92)';
-    ctx.font=`${Math.max(8,w*.026)}px 'Orbitron',sans-serif`;
+    ctx.font=`${Math.max(8,w*.026)}px "Anthropic Sans", 'Orbitron',sans-serif`;
     ctx.textAlign='center';
     ctx.textBaseline='middle';
     ctx.fillText('COMBAT FEED CLOSED',w*.5,h*.36);
@@ -2973,14 +2973,14 @@ function drawPilotMissilePOV(ctx,w,h,now,wpn){
     ctx.strokeStyle='rgba(154,229,255,.22)';
     ctx.strokeRect(w*.18,6,w*.26,h*.22);ctx.strokeRect(w*.56,6,w*.26,h*.22);
     ctx.save();ctx.translate(w*.5,h*.36+Math.sin(now/110)*2);ctx.rotate(Math.PI/2+.05*Math.sin(now/180));drawAIM120Model(ctx,Math.min(70,w*.18),'drop');ctx.restore();
-    ctx.fillStyle='rgba(220,232,245,.7)';ctx.font="8px 'JetBrains Mono',monospace";ctx.textAlign='center';
+    ctx.fillStyle='rgba(220,232,245,.7)';ctx.font="8px 'Anthropic Sans', 'JetBrains Mono',monospace";ctx.textAlign='center';
     ctx.fillText(currentLang==='zh'?'弹仓释放 · 未点火':'BAY DROP · MOTOR SAFE',w*.5,h*.2);
   }else if(stage==='ignite'){
     const flame=ctx.createRadialGradient(w*.5,h*1.08,0,w*.5,h*1.08,w*.52);
     flame.addColorStop(0,'rgba(255,255,255,.78)');flame.addColorStop(.28,'rgba(255,168,72,.46)');flame.addColorStop(1,'rgba(255,80,40,0)');
     ctx.fillStyle=flame;ctx.beginPath();ctx.arc(w*.5,h*1.08,w*.52,0,Math.PI*2);ctx.fill();
     ctx.save();ctx.translate(w*.5,h*.62);ctx.rotate(-Math.PI/2);drawAIM120Model(ctx,Math.min(82,w*.22),'ignite');ctx.restore();
-    ctx.fillStyle='rgba(255,210,120,.84)';ctx.font="8px 'JetBrains Mono',monospace";ctx.textAlign='center';
+    ctx.fillStyle='rgba(255,210,120,.84)';ctx.font="8px 'Anthropic Sans', 'JetBrains Mono',monospace";ctx.textAlign='center';
     ctx.fillText(currentLang==='zh'?'固体火箭点火':'BOOSTER IGNITION',w*.5,h*.78);
   }
   if(halley&&!halley.destroyed){
@@ -2991,7 +2991,7 @@ function drawPilotMissilePOV(ctx,w,h,now,wpn){
     const r=lerp(34,9,dist);
     ctx.strokeStyle='rgba(255,77,91,.86)';ctx.lineWidth=1.4;ctx.setLineDash([6,4]);
     ctx.beginPath();ctx.arc(tx,ty,r,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
-    ctx.fillStyle='rgba(255,77,91,.74)';ctx.font="8px 'JetBrains Mono',monospace";ctx.textAlign='left';
+    ctx.fillStyle='rgba(255,77,91,.74)';ctx.font="8px 'Anthropic Sans', 'JetBrains Mono',monospace";ctx.textAlign='left';
     ctx.fillText(`${currentLang==='zh'?'终端制导':'TERMINAL'} ${(100-dist*100).toFixed(0)}%`,tx+12,ty-12);
   }
   drawPilotHmd(ctx,w,h,now,stage==='drop'?'MISSILE DROP':stage==='ignite'?'MISSILE IGNITION':'MISSILE POV','missile');
@@ -3118,7 +3118,7 @@ function drawCiwsCamera(ctx,w,h,now,mode,elapsed){
     const p=clamp(elapsed,0,1);
     ctx.fillStyle='rgba(1,5,9,.80)';ctx.fillRect(0,0,w,h);
     ctx.fillStyle='rgba(220,245,255,.88)';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font=`${Math.max(10,w*.038)}px 'Orbitron',sans-serif`;
+    ctx.font=`${Math.max(10,w*.038)}px "Anthropic Sans", 'Orbitron',sans-serif`;
     ctx.fillText(p<.42?'TARGET ELIMINATED':p<.78?'AMMO RELOADING':'AFFLATUS OFFLINE',w*.5,h*.46);
     ctx.font=HMD.font(Math.max(6,w*.017));
     ctx.fillStyle=HMD.cyanSoft;
@@ -3136,9 +3136,9 @@ function drawNukeAuthCamera(ctx,w,h,now,elapsed){
   const cyan='rgba(116,240,255,.78)', red='rgba(255,77,91,.88)', gold='rgba(255,212,93,.86)';
   ctx.strokeStyle='rgba(255,77,91,.36)';ctx.fillStyle='rgba(26,5,9,.54)';
   ctx.strokeRect(w*.12,h*.16,w*.76,h*.60);ctx.fillRect(w*.12,h*.16,w*.76,h*.60);
-  ctx.fillStyle=red;ctx.font=`${Math.max(10,w*.032)}px 'Orbitron',sans-serif`;ctx.textAlign='center';
+  ctx.fillStyle=red;ctx.font=`${Math.max(10,w*.032)}px "Anthropic Sans", 'Orbitron',sans-serif`;ctx.textAlign='center';
   ctx.fillText(currentLang==='zh'?'AUTOMATION KEY CARD AUTHORISATION':'AUTOMATION KEY CARD AUTHORISATION',w*.5,h*.25);
-  ctx.font=`${Math.max(7,w*.019)}px 'JetBrains Mono',monospace`;ctx.fillStyle=gold;
+  ctx.font=`${Math.max(7,w*.019)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.fillStyle=gold;
   ctx.fillText(currentLang==='zh'?'警报，侦测到在途的核聚变打击':'NUCLEAR FUSION STRIKE INBOUND',w*.5,h*.34);
   const cardW=w*.48, cardH=h*.16, cardX=w*.26, cardY=h*.44;
   ctx.strokeStyle='rgba(255,212,93,.54)';ctx.fillStyle='rgba(3,8,12,.84)';
@@ -3148,9 +3148,9 @@ function drawNukeAuthCamera(ctx,w,h,now,elapsed){
   ctx.fillStyle=cyan;ctx.textAlign='left';
   ctx.fillText('KEYCARD: AFFLATUS-CMD',cardX+12,cardY+cardH*.42);
   ctx.fillText(`AUTH HASH ${(Math.sin(now/43)*99999|0).toString(16).replace('-','').padStart(5,'0').toUpperCase()}`,cardX+12,cardY+cardH*.68);
-  ctx.fillStyle='rgba(255,77,91,.90)';ctx.font=`${Math.max(22,w*.07)}px 'Orbitron',sans-serif`;
+  ctx.fillStyle='rgba(255,77,91,.90)';ctx.font=`${Math.max(22,w*.07)}px "Anthropic Sans", 'Orbitron',sans-serif`;
   ctx.fillText('☢',w*.46,h*.68);
-  ctx.fillStyle=red;ctx.font=`${Math.max(8,w*.022)}px 'JetBrains Mono',monospace`;ctx.textAlign='center';
+  ctx.fillStyle=red;ctx.font=`${Math.max(8,w*.022)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='center';
   ctx.fillText(`T-${Math.max(0,(1-elapsed)*5).toFixed(2)}`,w*.55,h*.68);
   drawPilotHmd(ctx,w,h,now,'NUCLEAR KEYCARD','nukeAuth');
   ctx.restore();
@@ -3171,11 +3171,11 @@ function drawNempIncomingCamera(ctx,w,h,now,elapsed){
   ctx.strokeRect(w*.20,h*.32,w*.60,h*.24);
   ctx.fillRect(w*.20,h*.32,w*.60,h*.24);
   ctx.fillStyle='rgba(255,220,220,.94)';
-  ctx.font=`${Math.max(14,w*.052)}px 'Orbitron',sans-serif`;
+  ctx.font=`${Math.max(14,w*.052)}px "Anthropic Sans", 'Orbitron',sans-serif`;
   ctx.textAlign='center';
   ctx.textBaseline='middle';
   ctx.fillText('NEMP INCOMING',w*.5,h*.42);
-  ctx.font=`${Math.max(7,w*.022)}px 'JetBrains Mono',monospace`;
+  ctx.font=`${Math.max(7,w*.022)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
   ctx.fillStyle='rgba(255,212,93,.9)';
   ctx.fillText(currentLang==='zh'?'全舰屏蔽 · 准备白噪音冲击':'HARDENING BUS · WHITE-NOISE IMPACT',w*.5,h*.51);
   drawPilotHmd(ctx,w,h,now,'NUCLEAR IMPACT WINDOW','nukeAuth');
@@ -3205,7 +3205,7 @@ function drawMainGunCamera(ctx,w,h,now,elapsed,firing=false,fx=null){
     ctx.fillStyle='rgba(2,6,12,.72)';
     ctx.beginPath();ctx.moveTo(w*.50,h*.95);ctx.lineTo(w*.40,h*.70);ctx.lineTo(w*.60,h*.70);ctx.closePath();ctx.fill();
     ctx.strokeStyle=cyan;ctx.stroke();
-    ctx.fillStyle=cyan;ctx.font=`${Math.max(7,w*.02)}px 'JetBrains Mono',monospace`;ctx.textAlign='center';
+    ctx.fillStyle=cyan;ctx.font=`${Math.max(7,w*.02)}px "Anthropic Sans", 'JetBrains Mono',monospace`;ctx.textAlign='center';
     ctx.fillText('MAIN GUN FIRING',w*.5,24);
   }
   if(firing){
@@ -3408,7 +3408,7 @@ function drawPilotFeed(now,state=combatSnapshot){
       ctx.fillStyle=`rgba(${v},${v+rand(-18,18)|0},${v+rand(-24,24)|0},${.38+Math.random()*.55})`;
       ctx.fillRect(x,y,cell,cell);
     }
-    ctx.fillStyle='rgba(255,255,255,.82)';ctx.font="10px 'JetBrains Mono',monospace";ctx.textAlign='center';ctx.fillText('TARGET IMAGE LOST',w*.5,h*.52);
+    ctx.fillStyle='rgba(255,255,255,.82)';ctx.font="10px 'Anthropic Sans', 'JetBrains Mono',monospace";ctx.textAlign='center';ctx.fillText('TARGET IMAGE LOST',w*.5,h*.52);
   }
   ctx.restore();
 }

@@ -1526,10 +1526,10 @@ function maybeMountHarness() {
   cv.style.cssText = 'width:100%;height:100%;display:block';
   const close = document.createElement('button');
   close.textContent = 'CLOSE COMBAT LAB';
-  close.style.cssText = "position:absolute;top:14px;right:14px;z-index:1;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;color:#bfe3ff;background:rgba(6,12,20,.7);border:1px solid rgba(150,210,255,.4);padding:8px 12px;cursor:pointer";
+  close.style.cssText = "position:absolute;top:14px;right:14px;z-index:1;font-family:'Anthropic Sans', 'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;color:#bfe3ff;background:rgba(6,12,20,.7);border:1px solid rgba(150,210,255,.4);padding:8px 12px;cursor:pointer";
   const label = document.createElement('div');
   label.textContent = 'CIC SENSOR FUSION · 舰桥传感融合 · WEBGL';
-  label.style.cssText = "position:absolute;top:16px;left:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.34em;color:#aee0ff;pointer-events:none";
+  label.style.cssText = "position:absolute;top:16px;left:16px;font-family:'Anthropic Sans', 'JetBrains Mono',monospace;font-size:11px;letter-spacing:.34em;color:#aee0ff;pointer-events:none";
   wrap.append(cv, close, label);
   document.body.appendChild(wrap);
   const scene = createTopdownCombat({ canvas: cv, surfaceId: 'lab:topdown-combat' });

@@ -75,13 +75,13 @@ export function createCameraDirector(sprite){
     ctx.fillStyle='rgba(0,0,0,.55)';
     ctx.fillRect(0,0,w,18);ctx.fillRect(0,h-16,w,16);
     ctx.fillStyle='rgba(154,229,255,.85)';
-    ctx.font=`${Math.max(7,Math.min(w,h)*.045)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(7,Math.min(w,h)*.045)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign='center';ctx.textBaseline='top';
     ctx.fillText(label,w*.5,4);
     ctx.fillStyle=`rgba(255,77,91,${.5+.4*Math.sin(now/180)})`;
     ctx.beginPath();ctx.arc(12,9,3,0,TAU);ctx.fill();
     ctx.fillStyle='rgba(220,232,245,.6)';
-    ctx.font=`${Math.max(6,Math.min(w,h)*.032)}px 'JetBrains Mono',monospace`;
+    ctx.font=`${Math.max(6,Math.min(w,h)*.032)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign='left';ctx.fillText('REC',20,5);
     ctx.restore();
   }

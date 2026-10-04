@@ -14,10 +14,10 @@
 }
 #simulationDialog[open] { display: flex; flex-direction: column; }
 #simulationDialog > header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 16px; border-bottom: 1px solid #46505e; }
-#simulationTitle { margin: 0; font: 500 16px/1.4 system-ui, sans-serif; }
-#simulationDialog button { min-height: 44px; padding: 8px 14px; border: 1px solid #8197aa; border-radius: 6px; background: #111c29; color: #edf3f9; font: 500 14px/1.5 system-ui, sans-serif; cursor: pointer; }
+#simulationTitle { margin: 0; font: 500 16px/1.4 "Anthropic Sans", system-ui, sans-serif; }
+#simulationDialog button { min-height: 44px; padding: 8px 14px; border: 1px solid #8197aa; border-radius: 6px; background: #111c29; color: #edf3f9; font: 500 14px/1.5 "Anthropic Sans", system-ui, sans-serif; cursor: pointer; }
 #simulationDialog button:focus-visible { outline: 2px solid #bceaff; outline-offset: 3px; }
-#simulationDialog > p { margin: 12px 16px; font: 16px/1.5 system-ui, sans-serif; }
+#simulationDialog > p { margin: 12px 16px; font: 16px/1.5 "Anthropic Sans", system-ui, sans-serif; }
 #simulationFrame { width: 100%; flex: 1; min-height: 0; border: 0; }
 html[data-simulation-frame] .home-page.starfield-layout #blackhole-stage { display: block; }
 html[data-simulation-frame] #mainContent,

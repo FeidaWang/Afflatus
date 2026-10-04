@@ -82,7 +82,7 @@ export function mountStage(host, { snapshot, industry }) {
     if (alpha <= 0) return;
     const zh = currentLanguage() === 'zh';
     ctx2d.globalAlpha = alpha; ctx2d.fillStyle = '#141413';
-    ctx2d.font = '600 13px system-ui, sans-serif'; ctx2d.textBaseline = 'middle';
+    ctx2d.font = '600 13px "Anthropic Sans", system-ui, sans-serif'; ctx2d.textBaseline = 'middle';
     for (const q of targets) if (q.labelAnchor) ctx2d.fillText(zh ? q.labelZh : q.label, q.x + q.r + 6, q.y);
     ctx2d.globalAlpha = 1;
   };

@@ -54,7 +54,7 @@
   --afflatus-brand-ink: currentColor;
   --afflatus-brand-accent: #9ae5ff;
   --afflatus-brand-accent-2: #e8b380;
-  --afflatus-brand-font: ui-monospace, "SFMono-Regular", "Cascadia Code", "JetBrains Mono", monospace;
+  --afflatus-brand-font: "Anthropic Sans", ui-monospace, "SFMono-Regular", "Cascadia Code", "JetBrains Mono", monospace;
   --afflatus-brand-ease: cubic-bezier(.22, 1, .36, 1);
   --afflatus-brand-duration: 620ms;
   position: relative;
@@ -87,7 +87,7 @@
   align-items: center;
   overflow: hidden;
   color: inherit;
-  font-family: var(--afflatus-brand-font);
+  font-family: "Anthropic Sans", var(--afflatus-brand-font);
   font-size: 19px;
   font-weight: 680;
   line-height: 32px;
@@ -255,7 +255,7 @@
   --afflatus-brand-ink: #eaf6ff;
   --afflatus-brand-accent: #8fe9ff;
   --afflatus-brand-accent-2: #e7b77a;
-  --afflatus-brand-font: "Orbitron", "Rajdhani", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "Orbitron", "Rajdhani", ui-monospace, monospace;
 }
 
 [data-brand-persona="home"] .afflatus-brand__stage {
@@ -314,7 +314,7 @@
   --afflatus-brand-ink: #efefe9;
   --afflatus-brand-accent: #7ee3ff;
   --afflatus-brand-accent-2: #a8f346;
-  --afflatus-brand-font: "IBM Plex Mono", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "IBM Plex Mono", ui-monospace, monospace;
 }
 
 [data-brand-persona="showcase"] .afflatus-brand__stage {
@@ -335,7 +335,7 @@
   --afflatus-brand-ink: #effff6;
   --afflatus-brand-accent: #3dff9a;
   --afflatus-brand-accent-2: #ff4fbd;
-  --afflatus-brand-font: "Rajdhani", "Chakra Petch", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "Rajdhani", "Chakra Petch", ui-monospace, monospace;
 }
 
 [data-brand-persona="arena"] .afflatus-brand__stage {
@@ -382,7 +382,7 @@
   --afflatus-brand-ink: #f1eee6;
   --afflatus-brand-accent: #5b8dff;
   --afflatus-brand-accent-2: #ff6161;
-  --afflatus-brand-font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --afflatus-brand-font: "Anthropic Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 [data-brand-persona="sectors"] .afflatus-brand__stage {
@@ -433,7 +433,7 @@
   --afflatus-brand-ink: #f4f1e6;
   --afflatus-brand-accent: #f5c400;
   --afflatus-brand-accent-2: #c5483c;
-  --afflatus-brand-font: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 }
 
 :root[data-afflatus-brand-state="compact"] [data-brand-persona="signal"] .afflatus-brand__stage::before {
@@ -473,7 +473,7 @@
   --afflatus-brand-ink: #f2ede8;
   --afflatus-brand-accent: #ff3f8f;
   --afflatus-brand-accent-2: #ff5b4d;
-  --afflatus-brand-font: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 }
 
 [data-brand-persona="course"] .afflatus-brand__stage { text-shadow: 1px 0 rgba(255, 63, 143, .45); }
@@ -523,7 +523,7 @@
   --afflatus-brand-ink: #4a453d;
   --afflatus-brand-accent: #667a59;
   --afflatus-brand-accent-2: #c96f4a;
-  --afflatus-brand-font: "Spectral", "Noto Serif SC", Georgia, serif;
+  --afflatus-brand-font: "Anthropic Sans", "Spectral", "Noto Serif SC", Georgia, serif;
 }
 
 [data-brand-persona="horoscope"] .afflatus-brand__stage {
@@ -572,7 +572,7 @@
   --afflatus-brand-ink: #f2f5ff;
   --afflatus-brand-accent: #25e9ff;
   --afflatus-brand-accent-2: #d4af37;
-  --afflatus-brand-font: "Chakra Petch", "Share Tech Mono", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "Chakra Petch", "Share Tech Mono", ui-monospace, monospace;
 }
 
 [data-brand-persona="games"] .afflatus-brand__stage { font-size: 21px; font-weight: 700; }
@@ -618,7 +618,7 @@
   --afflatus-brand-ink: #edf3f4;
   --afflatus-brand-accent: #d8bc72;
   --afflatus-brand-accent-2: #6ad6d4;
-  --afflatus-brand-font: "Rajdhani", "Cinzel", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "Rajdhani", "Cinzel", ui-monospace, monospace;
 }
 
 [data-brand-persona="league"] .afflatus-brand__stage { font-size: 21px; font-weight: 700; }
@@ -662,7 +662,7 @@
   --afflatus-brand-ink: #ddd2c2;
   --afflatus-brand-accent: #d4935d;
   --afflatus-brand-accent-2: #67c5bd;
-  --afflatus-brand-font: "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
 }
 
 :root[data-afflatus-brand-state="compact"] [data-brand-persona="serial"] .afflatus-brand__stage::before {
@@ -703,7 +703,7 @@
   --afflatus-brand-ink: #dff8ff;
   --afflatus-brand-accent: #9ae5ff;
   --afflatus-brand-accent-2: #e8b380;
-  --afflatus-brand-font: "Rajdhani", "JetBrains Mono", ui-monospace, monospace;
+  --afflatus-brand-font: "Anthropic Sans", "Rajdhani", "JetBrains Mono", ui-monospace, monospace;
 }
 
 [data-brand-persona="boot"] .afflatus-brand__stage { font-size: 20px; font-weight: 600; letter-spacing: .02em; }

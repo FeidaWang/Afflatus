@@ -181,7 +181,7 @@ import { orderedHistorySymbols, runQuantExperiment } from '../lib/arenaQuantMode
     const x = (index) => padding.left + (index / Math.max(1, curve.length - 1)) * (width - padding.left - padding.right);
     const y = (value) => padding.top + ((max - value) / (max - min)) * (height - padding.top - padding.bottom);
     const styles = getComputedStyle(host);
-    context.font = '10px JetBrains Mono, monospace';
+    context.font = '10px "Anthropic Sans", JetBrains Mono, monospace';
     context.textAlign = 'right';
     context.textBaseline = 'middle';
     for (let line = 0; line <= 4; line += 1) {

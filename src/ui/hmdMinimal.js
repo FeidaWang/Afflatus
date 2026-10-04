@@ -16,7 +16,7 @@ export const HMD={
   red:'rgba(255,92,98,.92)',
   amber:'rgba(255,205,128,.9)',
   ink:'rgba(226,240,248,.92)',
-  font:(px)=>`${px}px 'JetBrains Mono',monospace`,
+  font:(px)=>`${px}px "Anthropic Sans", 'JetBrains Mono',monospace`,
 };
 
 /** Four thin corner ticks instead of a full frame. */

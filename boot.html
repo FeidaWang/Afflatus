@@ -25,7 +25,7 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;background:var(--bg);color:var(--cool);overflow:hidden;
-    font-family:'JetBrains Mono',monospace}
+    font-family:"Anthropic Sans", 'JetBrains Mono',monospace}
   canvas#bridgeCanvas{position:fixed;inset:0;width:100vw;height:var(--visual-viewport-height,var(--viewport-dynamic-height,100vh));display:block}
 
   /* ── boot overlay ─────────────────────────────────────────────── */
@@ -87,8 +87,8 @@
     justify-content:center;color:var(--warm);font-size:12px;letter-spacing:.3em}
   #glFail.on{display:flex}
   canvas[data-renderer="poster"]{background:radial-gradient(circle at 50% 45%,rgba(102,255,232,.13),transparent 34%),#03050a}
-  .webgl-fallback{position:fixed;left:50%;bottom:calc(max(18px,var(--safe-bottom,0px)) + var(--keyboard-inset,0px));z-index:8;display:flex;align-items:center;gap:12px;max-width:min(90vw,620px);padding:9px 10px 9px 14px;transform:translateX(-50%);border:1px solid rgba(102,255,232,.3);border-radius:999px;background:rgba(3,5,10,.92);color:#dce9e7;font:500 11px/1.35 'JetBrains Mono',monospace}
-  .webgl-fallback button{min-height:44px;padding:0 14px;border:1px solid rgba(102,255,232,.44);border-radius:999px;background:transparent;color:#bfffee;font:600 11px/1 'JetBrains Mono',monospace;cursor:pointer}
+  .webgl-fallback{position:fixed;left:50%;bottom:calc(max(18px,var(--safe-bottom,0px)) + var(--keyboard-inset,0px));z-index:8;display:flex;align-items:center;gap:12px;max-width:min(90vw,620px);padding:9px 10px 9px 14px;transform:translateX(-50%);border:1px solid rgba(102,255,232,.3);border-radius:999px;background:rgba(3,5,10,.92);color:#dce9e7;font:500 11px/1.35 "Anthropic Sans", 'JetBrains Mono',monospace}
+  .webgl-fallback button{min-height:44px;padding:0 14px;border:1px solid rgba(102,255,232,.44);border-radius:999px;background:transparent;color:#bfffee;font:600 11px/1 "Anthropic Sans", 'JetBrains Mono',monospace;cursor:pointer}
   .webgl-fallback button:focus-visible{outline:2px solid #66ffe8;outline-offset:2px}
 
   .prototype-recovery{position:fixed;top:0;left:0;right:0;z-index:30;padding:16px 24px;background:rgba(4,6,10,.96);border-bottom:1px solid var(--cool-line)}

@@ -12,7 +12,7 @@
  * render as em dashes; this surface never invents propellant, shield or
  * countermeasure values.
  */
-const F = "'JetBrains Mono','Orbitron',monospace";
+const F = "'Anthropic Sans', 'JetBrains Mono','Orbitron',monospace";
 const COL = { cy: '#5fd0ff', cyD: 'rgba(95,208,255,.45)', gr: '#5dff9d', rd: '#ff5c66', am: '#ffb020', grn: '#39d98a', dim: 'rgba(150,200,230,.5)' };
 
 function txt(ctx, s, x, y, size, color, align, weight) {

@@ -110,12 +110,12 @@ export function createCapitalShip3D() {
   // the Odin hull had zero decals (B9, ROADMAP §4 V15 "收尾项").
   const mkTex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const tx = new THREE.CanvasTexture(c); tx.anisotropy = 4; return tx; };
   const decal = (tex, p, s, r) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(s[0], s[1]), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })); m.position.set(p[0], p[1], p[2]); m.rotation.set(r ? r[0] : -Math.PI / 2, r ? r[1] : 0, r ? r[2] : 0); m.renderOrder = 2; ship.add(m); return m; };
-  const textTex = (txt, col, fs) => mkTex(256, 64, (x, w, h) => { x.clearRect(0, 0, w, h); x.fillStyle = col || 'rgba(198,208,216,.94)'; x.font = `bold ${fs || 44}px Arial`; x.textBaseline = 'middle'; x.textAlign = 'center'; x.fillText(txt, w / 2, h / 2 + 2); });
+  const textTex = (txt, col, fs) => mkTex(256, 64, (x, w, h) => { x.clearRect(0, 0, w, h); x.fillStyle = col || 'rgba(198,208,216,.94)'; x.font = `bold ${fs || 44}px "Anthropic Sans", Arial`; x.textBaseline = 'middle'; x.textAlign = 'center'; x.fillText(txt, w / 2, h / 2 + 2); });
   const dangerTex = () => mkTex(256, 80, (x, w, h) => {
     x.clearRect(0, 0, w, h);
     for (let i = -h; i < w; i += 16) { x.fillStyle = (Math.floor((i + h) / 16) % 2) ? '#f2c200' : '#111'; x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 8, 0); x.lineTo(i + 8 + 22, 22); x.lineTo(i + 22, 22); x.closePath(); x.fill(); }
     x.fillStyle = 'rgba(10,10,10,.92)'; x.fillRect(0, 24, w, h - 24);
-    x.fillStyle = '#ffb000'; x.font = 'bold 22px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('DANGER EJECTION PORT', w / 2, 52);
+    x.fillStyle = '#ffb000'; x.font = 'bold 22px "Anthropic Sans", Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('DANGER EJECTION PORT', w / 2, 52);
   });
 
   if (useOdin) {
@@ -323,7 +323,7 @@ export function createCapitalShip3D() {
     const bar = Math.max(10, h * .075);
     ctx.fillStyle = 'rgba(0,0,0,.82)'; ctx.fillRect(0, 0, w, bar); ctx.fillRect(0, h - bar, w, bar);
     ctx.fillStyle = 'rgba(255,235,235,.9)';
-    ctx.font = `${Math.max(7, Math.min(w, h) * .046)}px 'JetBrains Mono',monospace`;
+    ctx.font = `${Math.max(7, Math.min(w, h) * .046)}px "Anthropic Sans", 'JetBrains Mono',monospace`;
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillText(lang === 'zh' ? '执法者号 · 粒子脊柱充能' : 'CONDOR · PARTICLE SPINE CHARGING', 10, bar * .5);
     ctx.textAlign = 'right';

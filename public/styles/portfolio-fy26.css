@@ -2,21 +2,21 @@
 :root{
   --pf-paper:#faf9f5;--pf-paper-2:#f3f1ea;--pf-ink:#141413;--pf-muted:#6b6a64;--pf-line:#e3e0d6;
   --pf-grid:rgba(20,20,19,.065);--pf-accent:#7d6fe0;--pf-lav:#9d90ec;--pf-blue:#83b0ec;
-  --pf-serif:'Newsreader','Songti SC','Noto Serif SC','Source Han Serif SC',Georgia,serif;
-  --pf-hand:'Caveat','Kaiti SC','STKaiti','KaiTi',cursive;
-  --pf-sans:'Inter','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;
+  --pf-serif:"Anthropic Sans", 'Newsreader','Songti SC','Noto Serif SC','Source Han Serif SC',Georgia,serif;
+  --pf-hand:"Anthropic Sans", 'Caveat','Kaiti SC','STKaiti','KaiTi',cursive;
+  --pf-sans:"Anthropic Sans", 'Inter','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:24px}
 body.portfolio-story{margin:0;background:var(--pf-paper);color:var(--pf-ink);font:16px/1.6 var(--pf-sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body.portfolio-story #afflatus-header{background:rgba(250,249,245,.94);border-bottom-color:transparent;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .2s;backdrop-filter:blur(6px)}
 body.portfolio-story #afflatus-header[data-enhanced][data-scroll-visibility="hidden"]{transform:translateY(calc(-100% - 4px))}
-.pf-hand{font-family:var(--pf-hand);font-weight:600;letter-spacing:.01em}
+.pf-hand{font-family:"Anthropic Sans", var(--pf-hand);font-weight:600;letter-spacing:.01em}
 button{font:inherit}
 a{color:inherit}
 a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-offset:3px}
 .pf{display:block;width:100%;max-width:none;margin:0;padding:0;background:var(--pf-paper)}
-.pf h1,.pf h2,.pf h3{font-family:var(--pf-serif);font-weight:400;letter-spacing:-.02em;margin:0}
+.pf h1,.pf h2,.pf h3{font-family:"Anthropic Sans", var(--pf-serif);font-weight:400;letter-spacing:-.02em;margin:0}
 .pf p{margin:0}
 
 .pf-progress{position:fixed;inset:0 0 auto;height:3px;z-index:10001;pointer-events:none}
