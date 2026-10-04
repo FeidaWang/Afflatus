@@ -1,36 +1,36 @@
 # IMPLEMENTATION STATUS — 2026-10-05 (Australia/Melbourne)
 
-当前交付：P0 源码与能力核对完成；P1 的本地真实日线闭环已集成；继续实现了 P2/Q01 的技术指标子模块。P2 整阶段、P3–P6 尚未完成。所有高级项目保留在矩阵中，没有可点击的空壳功能。未 push、未 deploy、未扩大公开数据、未启用付费工具或实盘。
+当前交付：P2 可推进的研究接口与中英文工作台已接入：公司档案、新闻、限定美股筛选/行业比较、OKX/Binance 现货日线与盘口、比特币恐惧贪婪指数、英文词典评分及回顾性形态。SEC/三表/13F/N-PORT 适配与离线验证完成，但缺真实 VIBE_TRADING_SEC_UA，实网验收未完成。US09 财报日历仍缺真实 US connector；上游国内研报分支不适用于美股。因此 P2 不标为整阶段完成。按用户本轮明确范围，P4/P5 继续保留 owner identity 阻塞；P3–P6 的所有原项目逐项保留。未 push、未 deploy、未扩大公开数据、未启用付费工具或实盘。
 
 ## 阶段与修改文件
 
 |阶段|结果|文件|验收/下一阶段|
 |---|---|---|---|
 |P0|源码核对完成，宿主既有门禁失败另列|integrations/vibe-us-crypto-kit/{scripts,manifests,extracted}; HOST_BASELINE.md / CAPABILITY_COVERAGE.md / DEPENDENCY_MAP.md|固定 SHA + 5 blob；142 静态候选、109 local tools、76 MCP、102 API、90 skills、16 frontend routes；差集未分类为 0|
-|P1|限定日线模块本地通过；US01 全范围仍部分实现|api/vibe-market.js; services/vibe-bridge/; src/lib/vibe{BridgeProxy,MarketContract}; src/features/vibe-markets/; Arena entry/App slot; scripts/vibe-{local,dev-plugin}|AAPL/SPY/BTC-USDT 实网 loader 与本地 HTTP 均 200；默认关闭、私有访问、错误态、桌面/移动/键盘、关闭 flag 已验证；下一步完成 P2 各卡|
-|P2/Q01|技术指标子模块完成，整阶段未完成|bridge/technical.py / worker.py / upstream.py; fixed DTO; research panel|调用固定上游纯计算，完整原始 bars 计算；warmup 不足明确 unavailable；下一模块 US03 公司档案，之后 US04/US05/US06/CR02–04/形态|
+|P1|限定日线模块本地通过；US01 全范围仍部分实现|api/vibe-market.js; services/vibe-bridge/; src/lib/vibe{BridgeProxy,MarketContract}; src/features/vibe-markets/; Arena entry/App slot; scripts/vibe-{local,dev-plugin}|AAPL/SPY/BTC-USDT 实网 loader 与本地 HTTP 均 200；默认关闭、私有访问、错误态、桌面/移动/键盘、关闭 flag 已验证；P2 新增 IVV/Binance|
+|P2|研究适配完成可推进部分；配置/connector/数据范围阻塞另列|bridge/{research,research_models,patterns}.py / research-contract.json; api/vibe-research.js; fixed BFF DTO; research.js / sentiment.js / index.js|见 integrations/vibe-us-crypto-kit/validation/P2_TEST_REPORT.md；SEC 缺真实联系信息，US09 缺 connector，国内研报未伪装美股；下一步是在真实配置/connector 到位后补验收|
 |P3–P6|未实现/未开始|仅保留源码出处、依赖与能力状态|没有挂载回测、个人研究、账户、订单、付费或 shell/MCP 配置 API|
 
 ## 每项功能状态
 
 |ID|能力|阶段|宿主状态|缺项/来源边界|
 |---|---|---|---|---|
-|US01|美股 / ETF 标的识别、搜索、自选池|P1|PARTIAL|9 个显式标的可选择；完整上游搜索、自选持久化和标的扩展尚未适配|
+|US01|美股 / ETF 标的识别、搜索、自选池|P1|PARTIAL|13 个显式标的可选择（7 US/ETF + 6 交易所明确的现货对）；完整上游搜索、自选持久化和标的扩展尚未适配|
 |US02|OHLCV、历史区间、数据源降级与来源信息|P1|DAILY_IMPLEMENTED|日线真实闭环；盘中/周/月及更多供应商未实现|
-|US03|公司档案、估值、分析师预期|P2|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
-|US04|SEC 文件、三张财务报表、时点安全基本面|P2|NOT_IMPLEMENTED / CONFIG_REQUIRED|SEC/财务适配尚未实现；缺真实联系信息 VIBE_TRADING_SEC_UA|
-|US05|13F 机构持仓及环比、ETF 穿透|P2|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
-|US06|新闻、市场筛选、行业比较|P2|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
+|US03|公司档案、估值、分析师预期|P2|LOCAL_VALIDATED|固定 Yahoo 工具；listing symbol/quote/financial currency 区分；估值、目标价、EPS/收入修订、评级；AAPL 实网 worker/BFF/UI 验证，asOf 未声明时保持未知；非历史时点数据|
+|US04|SEC 文件、三张财务报表、时点安全基本面|P2|ADAPTER_OFFLINE_VALIDATED / CONFIG_REQUIRED|SEC 文件、固定概念三表与 filed cutoff 已适配；每值保留单位/start/end/filed/accession；排除未来重述/YTD、年度季度不混用；不推算 Q4，不是完整 ratios/get_fundamentals 产品；实网缺真实 VIBE_TRADING_SEC_UA|
+|US05|13F 机构持仓及环比、ETF 穿透|P2|ADAPTER_OFFLINE_VALIDATED / CONFIG_REQUIRED|Berkshire/Bridgewater 固定 CIK 组合+环比，修订不完整/上一期缺失明确显示；ETF 固定 US SEC N-PORT 分支（新增 IVV），保留报告期、filing、滞后与排名截取；不推断基金结构；缺 SEC 真实联系人，尚无实网成功声明|
+|US06|新闻、市场筛选、行业比较|P2|PARTIAL_LOCAL_VALIDATED|Yahoo 美股新闻+词典评分、Eastmoney 明确 US universe；行业比较用 Yahoo assetProfile，仅已接入同板块股票；worker/HTTP 实网成功，筛选也保留一次真实源失败；上游 sector/research_reports 的 A 股分支不适用，未接完整行业 universe 或美股研报|
 |US07|期权链、Black–Scholes、Greeks、多腿到期收益|P3|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
 |US08|DCF、可比估值、三表情景模型|P3|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
-|CR01|加密货币交易对、交易所、现货历史行情|P1|SPOT_DAILY_IMPLEMENTED|OKX BTC/ETH/SOL-USDT 真实现货日线；其他交易所/计价币未实现|
-|CR02|OKX / Binance / CCXT 多交易所数据|P2|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
-|CR03|L2 盘口、价差、深度不平衡、冲击成本|P2|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
-|CR04|情绪文本评分与恐惧贪婪指数|P2|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
+|CR01|加密货币交易对、交易所、现货历史行情|P1|SPOT_DAILY_IMPLEMENTED|OKX 和 Binance（CCXT）BTC/ETH/SOL-USDT 限定现货；OKX/Binance BTC-USDT 实网成功；无静默交易所替换，其他交易所/计价币未实现|
+|CR02|OKX / Binance / CCXT 多交易所数据|P2|LIMITED_LOCAL_VALIDATED|OKX 原生 loader + Binance 固定 CCXT loader；显式交易所和 source，OKX UTC+8/Binance UTC 日线，完整开闭时间；两交易所 BTC 现货日线与盘口实网成功；不开放任意 CCXT exchange 或代理绕过|
+|CR03|L2 盘口、价差、深度不平衡、冲击成本|P2|LOCAL_VALIDATED|固定上游 orderbook 工具，10 层展示、10,000 USDT 名义模拟；基础币/USDT 单位分离；两交易所实网/BFF 成功；venue time 与 local fetch time 区分，陈旧拒绝、部分填充标注；非历史订单簿或清算图|
+|CR04|情绪文本评分与恐惧贪婪指数|P2|LOCAL_VALIDATED|固定英文词典在浏览器本地计算，含 Python float 四位 ties-to-even 边界；新闻标题用固定 Python helper；Alternative.me API 保留 index timestamp，旁置归属；比特币指数不是所选币种/美股情绪，不调用 LLM|
 |CR05|永续合约回测：费用、资金费、逐仓/全仓、强平|P3|NOT_IMPLEMENTED|永续源码存在，未适配；strict 需真实 funding/mark/保证金历史输入，不能降级冒充|
 |CR06|合约证据事件、保证金与对账验证|P3|NOT_IMPLEMENTED|永续源码存在，未适配；strict 需真实 funding/mark/保证金历史输入，不能降级冒充|
 |CR07|Funding/Basis、清算图、稳定币流、解锁与 DeFi 收益研究|P4|UNAVAILABLE_DATA / TEMPLATE_ONLY|90 个技能模板已盘点并条件分类；funding/basis/清算图/on-chain/稳定币/解锁/DeFi 未接数据|
-|Q01|技术指标、图表形态识别|P2|PARTIAL|已复用固定源码 RSI/MACD/BB/SMA/EMA/volume；形态识别未适配|
+|Q01|技术指标、图表形态识别|P2|LOCAL_VALIDATED|RSI/MACD/BB/SMA/EMA/volume + 蜡烛/头肩/双顶底/三角/扩散/支撑阻力/趋势纯 helper；完整 bars 先算、图仅显示末 80 根；warmup 无填充；峰谷明确回顾性且确认快照单列，不能冒充可交易的无 lookahead 信号|
 |Q02|通用美股回测、仓位、滑点与收益指标|P3|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
 |Q03|现货策略回测|P3|NOT_IMPLEMENTED|尚无独立现货现金/资产账本；不能用 CryptoEngine leverage=1 代替|
 |Q04|因子 IC/IR、分层回测、Alpha Zoo|P3|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
@@ -46,30 +46,28 @@
 |TR02|Paper execution / 实盘订单权限路径|P5|NOT_IMPLEMENTED / OWNER_REQUIRED|没有连接账户；先真实身份、只读 connector 能力与 paper sandbox 验证；实盘默认禁用|
 |CTX01|FRED 宏观、网页、文档、论文和预测市场证据|P4|NOT_IMPLEMENTED / OWNER_REQUIRED|先实现真实 owner identity、对象权限、私有存储/预算隔离；ARENA_ADMIN_KEY 仅为配额门|
 |EXT01|可选付费数据市场 / 外部 MCP 扩展|P6|DISABLED|付费与任意 MCP 配置保持关闭；未授权资源/数据权利/费用|
-|US09|美国财报日历、预期与事件研究|P2|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
+|US09|美国财报日历、预期与事件研究|P2|US_CONNECTOR_REQUIRED / NOT_IMPLEMENTED|固定源码 earnings_calendar 依赖 Futu/OpenD 等真实 connector；当前未连接，也不把 Yahoo earnings estimates 当成已验证财报日历；不显示空壳入口|
 |Q08|Decimal 数值验证与报告审计|P3|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
 |Q09|研究假设、回测关联与策略衰减|P3|NOT_IMPLEMENTED|源码/模板已经盘点；宿主适配和对应验收尚未完成|
 |AI05|跨会话记忆与多模态研究|P4|NOT_IMPLEMENTED / OWNER_REQUIRED|先实现真实 owner identity、对象权限、私有存储/预算隔离；ARENA_ADMIN_KEY 仅为配额门|
 
 每项源码根目录和验收见 `integrations/vibe-us-crypto-kit/manifests/capabilities.json`；逐工具/路由/技能决定及理由见 `manifests/coverage.json`。源码存在、方法模板、真实数据、宿主可用四种状态分别记录。
 
-## 测试真实性
+## 本轮 P2 测试真实性
 
-- Kit 原版离线 Python：82 passed（新增 host/pinned 检查默认 skip）；原版 Node：51 passed。
-- 宿主版 kit Python：87 passed / 3 pinned-only skipped；真实固定模块环境 Python：90 passed。宿主版 Node：51 passed。新增 Vitest：7 passed。
-- 固定上游适用测试：175 passed，禁止 socket，属于离线源码测试；不称为实网。
-- 实网 loader 契约：AAPL/SPY/BTC-USDT 全 PASS。首次测试真实失败原因 trade_date 不匹配已保留；修复后重测通过。
-- 真实本地浏览器/HTTP → BFF → bridge → pinned loader：三标的均 200；技术指标同一 bars/source/asOf。浏览器 offline 故障测试显示 unavailable 并清空图表。
-- 宿主 typecheck、build 及 prebuild 的 data/site/header/css/combat/i18n/OG/SEO 检查通过。
-- 宿主 unit 仍有原来的 19 文件 / 96 项失败；新增 7 项通过。没有关闭旧测试。
-- 宿主 browser-quality-gates：54 failed / 2 passed / 16 skipped。用 c7901191 原入口/App 重建对照，失败集合相同，新增失败为 0。不能声称整站浏览器门禁通过。
-- 新模块本地 Chromium：1440×1000 桌面、440×956 移动 viewport，英文/中文、真实数据、键盘与关闭 flag 验证。移动 documentWidth=440；这是视口模拟，不是真机验收。
-- 验收日志位于 `integrations/vibe-us-crypto-kit/validation/`；截图位于 `output/playwright/vibe/`；无线上测试/部署声明。
+- 宿主 kit Python：105 passed；其中 11 项新增 P2 测试为合成 fixtures / mocked transport，调用真实固定 helper；不称为实网。
+- 固定上游所选 P2 模块：366 passed，socket 禁止，属于离线源码验证。
+- Host Node BFF：51 passed；新增/扩展 Vitest：16 passed；typecheck / build 与 data/site/header/css/combat/i18n/OG/SEO 门禁通过。
+- 实网短生命周期 worker：profile/news/US screener、Yahoo US 行业分类、OKX/Binance 盘口、Bitcoin F&G 及 AAPL/SPY/IVV/OKX BTC/Binance BTC 日线均成功。真实本地 HTTP/BFF 验证独立记录；筛选第一次 HTTP 源失败保留，后续结果见报告，不静默兜底。
+- SEC 联系人未提供：worker 与 HTTP 返回 SEC_CONTACT_REQUIRED，未发送不合规 SEC 请求；财务/13F/N-PORT 实网验收未完成。
+- 整站 unit 与 browser 的既有失败保留，逐项集合对照见 p2-unit-comparison.json / p2-browser-gates-comparison.json；新增失败另列，不能声称整站门禁全绿。
+- 本地 Chromium 新功能：1440×1000 桌面与 440×956 移动视口，中英文、键盘、来源、浏览器无服务器鉴权/配额头与故障态单独验证。不是线上或真机验收。
+- 汇总与限制见 integrations/vibe-us-crypto-kit/validation/P2_TEST_REPORT.md。原 P0/P1 测试历史仍留在 validation/IMPLEMENTATION_TEST_REPORT.md 与 HANDOVER.md。
 
 ## 配置、数据与回滚
 
 本地可运行 `python3 scripts/vibe-local.py`；它生成临时服务端凭据，绑定 127.0.0.1，不把服务/交易密钥交给浏览器。默认生产代码 flag 关闭。已有 quote/history/published pipeline 未改动；既有设计示例价格也没有被改名成真实报价。
 
-服务端所需名称：VIBE_FEATURE_ENABLED、VIBE_BRIDGE_URL、VIBE_BRIDGE_TOKEN、VIBE_UPSTREAM_AGENT、ARENA_ADMIN_KEY；UI 仅用非密钥 VITE_VIBE_MARKETS_ENABLED；本地临时授权用 VIBE_LOCAL_RESEARCH。SEC 后续缺 VIBE_TRADING_SEC_UA；个人模块缺真实身份系统，不假设填写一个环境变量即可获得 owner identity。部分高级项目缺实际数据 adapter，不能仅靠 API key 或技能文档补齐。
+服务端所需名称：VIBE_FEATURE_ENABLED、VIBE_BRIDGE_URL、VIBE_BRIDGE_TOKEN、VIBE_UPSTREAM_AGENT、ARENA_ADMIN_KEY；UI 仅用非密钥 VITE_VIBE_MARKETS_ENABLED；本地临时授权用 VIBE_LOCAL_RESEARCH。SEC/财务/13F/N-PORT 现已适配，但仍缺真实 VIBE_TRADING_SEC_UA；个人模块缺真实身份系统，不假设填写一个环境变量即可获得 owner identity。部分高级项目缺实际数据 adapter，不能仅靠 API key 或技能文档补齐。
 
 公开数据与付费/实盘保持关闭。回滚先关闭 VITE_VIBE_MARKETS_ENABLED / VIBE_FEATURE_ENABLED，停止本地桥，再 revert 本次本地实现 commit；不要按初始 overlay 回执删除已修改文件，不删除任何个人数据。

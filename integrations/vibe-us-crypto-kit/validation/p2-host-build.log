@@ -1,0 +1,166 @@
+
+> project-afflatus@1.5.0 prebuild
+> node scripts/subset-cjk-fonts.mjs && node scripts/generate-course-pages.mjs && npm run data:check && node scripts/published-cycles.mjs --check && npm run site:check && npm run header:check && npm run css:check && npm run combat:asset:check && npm run lint:i18n && npm run og:check && node scripts/sectors-dossier.mjs
+
+subset-cjk-fonts: source font missing, keeping committed subset
+Built 48 localized vector covers from the existing Figma illustrations.
+Generated 48 complete weekly lessons, six companion pages, and the static 24-week index.
+
+> project-afflatus@1.5.0 data:check
+> node scripts/validate-data.mjs
+
+OK: public/data/sectors-frontier/2026-09-23.json
+OK: public/data/sectors-frontier/2026-09-27.json
+OK: public/data/sectors-industry/2026-09-27.json
+OK: public/assets/sectors/logos/manifest.json
+SKIP: public/assets/venator/manifest.json does not exist yet
+OK: public/assets/globe/earth-land.json
+OK: public/sectors-data.json
+OK: public/sectors-competition.json
+OK: public/sectors-rivalry.json
+OK: public/sectors-ecosystem.json
+OK: public/signal-events.json
+OK: data-archive/stats/2026-09-05/leagues-data.json
+OK: data-archive/stats/2026-09-05/games-data.json
+OK: public/novels-index.json
+OK: public/arena-universe.json
+OK: public/arena-universe-s1.json
+OK: public/arena-picks.json
+OK: public/arena-quant-model.json
+OK: public/arena-runlog.json
+OK: public/arena-daily-digest.json
+OK: public/arena-news.json
+OK: public/arena-ledger.json
+OK: public/arena-ledger-s1.json
+OK: public/arena-predlog.json
+OK: public/transits-daily.json
+OK: public/audio/playlist.json
+OK: public/nyse-holidays-2026.json
+OK: public/signal-release-dates-2026.json
+OK: public/novels/wanjie-zhongchun.json
+OK: public/novels/changye-qingjian.json
+OK: public/novels/yuxi-gongci.json
+
+30 file(s) checked.
+Published cycle projection matches Portfolio
+
+> project-afflatus@1.5.0 site:check
+> node scripts/site-manifest.mjs --check
+
+OK: site manifest (9 routes, 8 discoverable)
+
+> project-afflatus@1.5.0 header:check
+> node scripts/audit-header.mjs --check
+
+Shared header: 9 source templates passed (structure, links, disclosure targets, styles).
+
+> project-afflatus@1.5.0 css:check
+> node scripts/check-no-new-important.mjs && node scripts/check-css-architecture.mjs
+
+OK: src/styles.css — 2822 !important (baseline 2837, down)
+OK: src/cic-hud.css — 0 !important (baseline 0, unchanged)
+OK: src/showcase/showcase.css — 3 !important (baseline 3, unchanged)
+OK: public/styles/responsive-primitives.css — 0 !important (baseline 0, unchanged)
+OK: public/styles/afflatus-brand.css — 3 !important (baseline 3, unchanged)
+OK: index.html — 0 !important (baseline 2, down)
+OK: CSS architecture (2 migrated families, 3 layout bands + narrow guard)
+
+> project-afflatus@1.5.0 combat:asset:check
+> node scripts/check-combat-glb.mjs
+
+combat GLB ok (320036 bytes)
+
+> project-afflatus@1.5.0 lint:i18n
+> node scripts/lint-bilingual.mjs
+
+OK: bilingual content parity, tokens, markup, links, punctuation, glossary, and UI limits
+
+> project-afflatus@1.5.0 og:check
+> node scripts/validate-og-assets.mjs
+
+OK: 16 route social cards (1200×630, 2.07 MB total)
+Sectors issuer/thesis dossier: current
+
+> project-afflatus@1.5.0 build
+> vite build && node scripts/localize-site.mjs --out-dir dist && node scripts/validate-emitted-seo.mjs --out-dir dist
+
+vite v8.2.0 building client environment for production...
+[2K
+transforming...
+/src/showcase/departure.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+
+/src/showcase/launchIntro.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+
+/src/showcase/homeHighlights.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+
+/styles/stories-library.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+
+/styles/signal-dispatch.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+
+/styles/horoscope-paper.css doesn't exist at build time, it will remain unchanged to be resolved at runtime
+✓ 4733 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/assets/sectorsForce.worker-B6Po3lQx.js           2.35 kB
+dist/index.html                                      15.83 kB │ gzip:  4.92 kB
+dist/arena.html                                      22.69 kB │ gzip:  6.98 kB
+dist/portfolio.html                                  33.69 kB │ gzip: 11.13 kB
+dist/horoscope.html                                  45.72 kB │ gzip: 13.44 kB
+dist/course.html                                     49.18 kB │ gzip: 11.30 kB
+dist/assets/horoscopeSynthesis.worker-D_KO8k2G.js    59.05 kB
+dist/serial.html                                     79.71 kB │ gzip: 22.29 kB
+dist/signal.html                                     94.80 kB │ gzip: 27.85 kB
+dist/sectors.html                                   135.02 kB │ gzip: 35.30 kB
+dist/assets/main-Ci74HZl9.css                        18.09 kB │ gzip:  4.49 kB
+dist/assets/arena-DSvPCvIZ.css                       24.11 kB │ gzip:  5.34 kB
+dist/assets/arenaWindowGate-CM4kDfQC.js               0.18 kB │ gzip:  0.11 kB
+dist/assets/dataBridge-CGTc2gYn.js                    0.19 kB │ gzip:  0.17 kB
+dist/assets/posterScene-d5u4hnZI.js                   0.87 kB │ gzip:  0.51 kB
+dist/assets/audio-Bf-hWNJ5.js                         0.92 kB │ gzip:  0.53 kB
+dist/assets/latestWorkerTask-DfIgBTZb.js              0.94 kB │ gzip:  0.52 kB
+dist/assets/preload-helper-Czpn1I53.js                1.19 kB │ gzip:  0.67 kB
+dist/assets/validateArenaUniverse-Q83NJgLg.js         1.80 kB │ gzip:  0.78 kB
+dist/assets/validateNovelsData-LYjJsWKi.js            1.99 kB │ gzip:  0.84 kB
+dist/assets/validateArenaQuantModel-BaiTv1On.js       2.37 kB │ gzip:  0.96 kB
+dist/assets/i18n-XJedVRr3.js                          2.45 kB │ gzip:  1.04 kB
+dist/assets/astro-CZ-1hSCM.js                         2.52 kB │ gzip:  1.53 kB
+dist/assets/validateArenaNews-DzdWHCBg.js             2.65 kB │ gzip:  1.20 kB
+dist/assets/ambientBackdrops-DA01gRDJ.js              2.88 kB │ gzip:  1.36 kB
+dist/assets/nav-Ddw96FLG.js                           3.22 kB │ gzip:  1.28 kB
+dist/assets/validateSignalEvents-CDksToil.js          3.49 kB │ gzip:  1.36 kB
+dist/assets/viewport-B21O90Rt.js                      3.57 kB │ gzip:  1.49 kB
+dist/assets/viz-b7aYnVK6.js                           4.05 kB │ gzip:  1.74 kB
+dist/assets/validateSectorsRivalry-_P-yhl6N.js        4.28 kB │ gzip:  1.56 kB
+dist/assets/validateArenaDigest-ChpDPCPe.js           4.43 kB │ gzip:  1.75 kB
+dist/assets/publishedSignal-CjPQhUC2.js               4.96 kB │ gzip:  1.40 kB
+dist/assets/header-controller-C6OA7wdQ.js             5.22 kB │ gzip:  2.38 kB
+dist/assets/frontier-core-DpEkrfVg.js                 6.15 kB │ gzip:  2.52 kB
+dist/assets/validateSectorsCompetition-CP3jYybd.js    6.40 kB │ gzip:  2.17 kB
+dist/assets/validateSectorsData-Cx7u08lE.js           6.41 kB │ gzip:  1.84 kB
+dist/assets/astroChart-BG3btZOi.js                    6.84 kB │ gzip:  2.85 kB
+dist/assets/shareFeature-05vWSa3K.js                  6.87 kB │ gzip:  2.66 kB
+dist/assets/signal-DSCpO3EI.js                        7.69 kB │ gzip:  3.79 kB
+dist/assets/renderBudgetCoordinator-DKegZx_Y.js       8.22 kB │ gzip:  3.08 kB
+dist/assets/horoscopeSynthesis-B8cCzPK9.js            8.55 kB │ gzip:  4.68 kB
+dist/assets/synastryFeature-DjHah2fH.js               8.78 kB │ gzip:  5.02 kB
+dist/assets/fetchJson-4dYgNCaW.js                     9.70 kB │ gzip:  3.24 kB
+dist/assets/webVitals-BEDMORie.js                    10.51 kB │ gzip:  4.15 kB
+dist/assets/validateArenaPicks-DMABTQFf.js           10.86 kB │ gzip:  4.52 kB
+dist/assets/transition-CbLbOE9p.js                   11.16 kB │ gzip:  3.72 kB
+dist/assets/serial-B4JACUjf.js                       11.29 kB │ gzip:  4.72 kB
+dist/assets/course-B10ZdMGz.js                       23.07 kB │ gzip:  8.95 kB
+dist/assets/quizFeature-EymMITTz.js                  24.24 kB │ gzip: 12.62 kB
+dist/assets/mineFeature-FWPk8d5c.js                  27.94 kB │ gzip: 13.29 kB
+dist/assets/ziwei-ssAQ_8lw.js                        28.53 kB │ gzip: 14.33 kB
+dist/assets/main-DKgVxkZz.js                         32.62 kB │ gzip: 11.89 kB
+dist/assets/birthFeature-DhwQc9D_.js                 39.89 kB │ gzip: 12.23 kB
+dist/assets/arena-Dgo-a4OF.js                        40.44 kB │ gzip: 14.70 kB
+dist/assets/vendor-astronomy-Dd4wKPl8.js             46.26 kB │ gzip: 20.23 kB
+dist/assets/portfolio-CrcuGMJw.js                    51.62 kB │ gzip: 22.70 kB
+dist/assets/horoscope-Cj7CSF9q.js                    72.59 kB │ gzip: 29.24 kB
+dist/assets/sectors-DhHpPxuF.js                     138.07 kB │ gzip: 52.86 kB
+dist/assets/X.es-Cy4QAyv9.js                        192.63 kB │ gzip: 60.75 kB
+
+✓ built in 415ms
+OK: emitted 15 fixed-locale documents + 456 novel documents in dist
+OK: emitted SEO (23 route documents + 456 novel documents; serial is Chinese-only)

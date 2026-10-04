@@ -1,0 +1,3 @@
+
+> project-afflatus@1.5.0 typecheck
+> tsc --noEmit

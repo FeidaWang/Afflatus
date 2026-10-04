@@ -6,10 +6,12 @@ const loopback = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1', 'localhost', '
  * No secret is sent to the browser. This plugin is never part of a deploy.
  */
 export function vibeDevPlugin(env = process.env) {
-  const handler = createHandler({ env });
+  const calls = [];
+  const handlers = { '/api/vibe-market': createHandler({ env, calls }), '/api/vibe-research': createHandler({ env, research: true, calls }) };
   function mount(server) {
     server.middlewares.use(async (req, res, next) => {
-      if (req.url?.split('?')[0] !== '/api/vibe-market') return next();
+      const handler = handlers[req.url?.split('?')[0]];
+      if (!handler) return next();
       const fail = code => {
         res.statusCode = 403;
         res.setHeader('Content-Type', 'application/json');

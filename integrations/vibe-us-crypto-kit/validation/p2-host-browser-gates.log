@@ -1,0 +1,2907 @@
+
+> project-afflatus@1.5.0 test:e2e:smoke
+> playwright test e2e/quality-gates.spec.js
+
+[WebServer] (node:49230) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 72 tests using 7 workers
+
+(node:49282) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49283) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49281) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49279) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49285) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   6 [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation (8.8s)
+  ✘   2 [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport (8.8s)
+  ✘   1 [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport (8.9s)
+  ✘   3 [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation (8.9s)
+(node:49531) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49533) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49534) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   5 [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation (9.2s)
+  ✘   7 [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport (9.2s)
+  ✘   4 [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport (9.3s)
+(node:49551) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49553) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   9 [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport (8.5s)
+  ✘  11 [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport (8.5s)
+  ✘  10 [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation (8.5s)
+(node:49567) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49566) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   8 [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation (8.8s)
+  ✘  12 [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation (8.4s)
+(node:49581) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49582) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  13 [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport (8.6s)
+  ✘  14 [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation (8.6s)
+(node:49591) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  17 [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › main / matches the audited serious/critical WCAG baseline (859ms)
+  ✓  19 [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › arena /arena.html matches the audited serious/critical WCAG baseline (825ms)
+(node:49603) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  21 [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › signal /signal.html matches the audited serious/critical WCAG baseline (955ms)
+  ✘  18 [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › portfolio /portfolio.html matches the audited serious/critical WCAG baseline (1.3s)
+(node:49612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49613) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  22 [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › serial /serial.html matches the audited serious/critical WCAG baseline (887ms)
+  ✘  23 [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › horoscope /horoscope.html matches the audited serious/critical WCAG baseline (754ms)
+(node:49627) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  20 [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › sectors /sectors.html matches the audited serious/critical WCAG baseline (2.1s)
+(node:49644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  24 [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › course /course.html matches the audited serious/critical WCAG baseline (686ms)
+(node:49652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  16 [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation (8.4s)
+  ✘  15 [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport (8.4s)
+(node:49702) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49703) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  26 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation (9.1s)
+  ✘  25 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport (9.2s)
+  ✘  29 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport (8.9s)
+(node:49728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49729) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49730) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  28 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation (9.5s)
+  ✘  27 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport (9.6s)
+(node:49751) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49761) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  30 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation (8.8s)
+(node:49793) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  31 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport (10.2s)
+(node:49806) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  33 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport (9.0s)
+  ✘  34 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation (8.9s)
+(node:49819) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  35 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport (8.8s)
+  ✘  36 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation (8.8s)
+(node:49828) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  41 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › main / matches the audited serious/critical WCAG baseline
+  ✘  32 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation (9.9s)
+  -  42 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › portfolio /portfolio.html matches the audited serious/critical WCAG baseline
+  -  43 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › arena /arena.html matches the audited serious/critical WCAG baseline
+(node:49873) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  44 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › signal /signal.html matches the audited serious/critical WCAG baseline
+  -  45 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › horoscope /horoscope.html matches the audited serious/critical WCAG baseline
+  -  47 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › serial /serial.html matches the audited serious/critical WCAG baseline
+  -  48 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › course /course.html matches the audited serious/critical WCAG baseline
+(node:49890) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  46 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › sectors /sectors.html matches the audited serious/critical WCAG baseline
+(node:49891) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49894) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  37 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport (9.0s)
+(node:49908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  38 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation (8.9s)
+(node:49915) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  39 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport (8.8s)
+  ✘  40 [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation (8.7s)
+(node:49920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49921) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  49 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport (8.9s)
+  ✘  50 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation (8.9s)
+(node:49930) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49931) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  51 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport (9.0s)
+(node:49940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  52 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation (9.0s)
+(node:49945) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  53 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport (8.5s)
+(node:49950) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  54 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation (8.6s)
+(node:49955) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  55 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport (8.8s)
+(node:49960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  57 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport (8.6s)
+  ✘  56 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation (8.8s)
+(node:49965) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49966) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  58 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation (8.6s)
+(node:49975) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  65 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › main / matches the audited serious/critical WCAG baseline
+  -  66 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › portfolio /portfolio.html matches the audited serious/critical WCAG baseline
+  -  67 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › arena /arena.html matches the audited serious/critical WCAG baseline
+  -  68 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › sectors /sectors.html matches the audited serious/critical WCAG baseline
+  -  69 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › signal /signal.html matches the audited serious/critical WCAG baseline
+  -  70 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › horoscope /horoscope.html matches the audited serious/critical WCAG baseline
+  -  71 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › serial /serial.html matches the audited serious/critical WCAG baseline
+  -  72 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › course /course.html matches the audited serious/critical WCAG baseline
+  ✘  59 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport (8.4s)
+  ✘  60 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation (8.4s)
+  ✘  61 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport (8.7s)
+  ✘  62 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation (8.7s)
+  ✘  63 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport (8.4s)
+  ✘  64 [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation (8.4s)
+
+
+  1) [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-990f1--entry-and-route-navigation-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-990f1--entry-and-route-navigation-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-990f1--entry-and-route-navigation-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-990f1--entry-and-route-navigation-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-8e856--entry-and-route-navigation-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-8e856--entry-and-route-navigation-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-8e856--entry-and-route-navigation-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-8e856--entry-and-route-navigation-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-73a29--entry-and-route-navigation-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-73a29--entry-and-route-navigation-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-73a29--entry-and-route-navigation-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-73a29--entry-and-route-navigation-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  12) [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13) [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  14) [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-af53e--entry-and-route-navigation-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-af53e--entry-and-route-navigation-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-af53e--entry-and-route-navigation-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-af53e--entry-and-route-navigation-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  15) [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  16) [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  17) [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › main / matches the audited serious/critical WCAG baseline
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-1c018-ious-critical-WCAG-baseline-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-axe-WCAG-reg-1c018-ious-critical-WCAG-baseline-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-1c018-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-axe-WCAG-reg-1c018-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  18) [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › portfolio /portfolio.html matches the audited serious/critical WCAG baseline
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 21
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "help": "Elements must meet minimum color contrast ratio thresholds",
+    +     "id": "color-contrast",
+    +     "impact": "serious",
+    +     "targets": Array [
+    +       "#pfStep1 > .pf-card > .pf-card-kicker",
+    +       "#pfStep1 > .pf-card > p",
+    +       ".pf-step:nth-child(3) > .pf-card > .pf-card-kicker",
+    +       ".pf-step:nth-child(3) > .pf-card > p",
+    +       ".pf-step:nth-child(4) > .pf-card > .pf-card-kicker",
+    +       ".pf-step:nth-child(4) > .pf-card > p",
+    +       ".pf-step:nth-child(5) > .pf-card > .pf-card-kicker",
+    +       ".pf-step:nth-child(5) > .pf-card > p",
+    +       "h2[data-en=\"Every square is one execution.\"]",
+    +       "h2[data-en=\"Where the gains came from.\"]",
+    +       "h2[data-zh=\"七个主题，一条供应链。\"]",
+    +       "h2[data-zh=\"这一年，在最后一个季度加速。\"]",
+    +     ],
+    +   },
+    + ]
+
+      154 |           : [];
+      155 |       });
+    > 156 |       expect(unexpected).toEqual([]);
+          |                          ^
+      157 |     });
+      158 |   }
+      159 | });
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:156:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-a22d7-ious-critical-WCAG-baseline-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-axe-WCAG-reg-a22d7-ious-critical-WCAG-baseline-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-a22d7-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-axe-WCAG-reg-a22d7-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  19) [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › signal /signal.html matches the audited serious/critical WCAG baseline
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 10
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "help": "Elements must meet minimum color contrast ratio thresholds",
+    +     "id": "color-contrast",
+    +     "impact": "serious",
+    +     "targets": Array [
+    +       "#signalStaleNotice",
+    +     ],
+    +   },
+    + ]
+
+      154 |           : [];
+      155 |       });
+    > 156 |       expect(unexpected).toEqual([]);
+          |                          ^
+      157 |     });
+      158 |   }
+      159 | });
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:156:26
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-ea626-ious-critical-WCAG-baseline-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-axe-WCAG-reg-ea626-ious-critical-WCAG-baseline-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-ea626-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-axe-WCAG-reg-ea626-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  20) [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › horoscope /horoscope.html matches the audited serious/critical WCAG baseline
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-898d9-ious-critical-WCAG-baseline-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-axe-WCAG-reg-898d9-ious-critical-WCAG-baseline-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-898d9-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-axe-WCAG-reg-898d9-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  21) [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › serial /serial.html matches the audited serious/critical WCAG baseline
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-d0678-ious-critical-WCAG-baseline-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-axe-WCAG-reg-d0678-ious-critical-WCAG-baseline-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-d0678-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-axe-WCAG-reg-d0678-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  22) [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › course /course.html matches the audited serious/critical WCAG baseline
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  -  1
+    + Received  + 40
+
+    - Array []
+    + Array [
+    +   Object {
+    +     "help": "Elements must meet minimum color contrast ratio thresholds",
+    +     "id": "color-contrast",
+    +     "impact": "serious",
+    +     "targets": Array [
+    +       ".directory-group:nth-child(2) > .directory-group-heading > span",
+    +       ".directory-group:nth-child(3) > .directory-group-heading > span",
+    +       ".directory-group:nth-child(4) > .directory-group-heading > span",
+    +       ".directory-group:nth-child(5) > .directory-group-heading > span",
+    +       ".directory-group:nth-child(6) > .directory-group-heading > span",
+    +       ".directory-group:nth-child(7) > .directory-group-heading > span",
+    +       "p[data-en=\"THE COMPLETE ROUTE\"]",
+    +       "span[data-en=\"WEEK 01\"]",
+    +       "span[data-en=\"WEEK 02\"]",
+    +       "span[data-en=\"WEEK 03\"]",
+    +       "span[data-en=\"WEEK 04\"]",
+    +       "span[data-en=\"WEEK 05\"]",
+    +       "span[data-en=\"WEEK 06\"]",
+    +       "span[data-en=\"WEEK 07\"]",
+    +       "span[data-en=\"WEEK 08\"]",
+    +       "span[data-en=\"WEEK 09\"]",
+    +       "span[data-en=\"WEEK 10\"]",
+    +       "span[data-en=\"WEEK 11\"]",
+    +       "span[data-en=\"WEEK 12\"]",
+    +       "span[data-en=\"WEEK 13\"]",
+    +       "span[data-en=\"WEEK 14\"]",
+    +       "span[data-en=\"WEEK 15\"]",
+    +       "span[data-en=\"WEEK 16\"]",
+    +       "span[data-en=\"WEEK 17\"]",
+    +       "span[data-en=\"WEEK 18\"]",
+    +       "span[data-en=\"WEEK 19\"]",
+    +       "span[data-en=\"WEEK 20\"]",
+    +       "span[data-en=\"WEEK 21\"]",
+    +       "span[data-en=\"WEEK 22\"]",
+    +       "span[data-en=\"WEEK 23\"]",
+    +       "span[data-en=\"WEEK 24\"]",
+    +     ],
+    +   },
+    + ]
+
+      154 |           : [];
+      155 |       });
+    > 156 |       expect(unexpected).toEqual([]);
+          |                          ^
+      157 |     });
+      158 |   }
+      159 | });
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:156:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-8b5c9-ious-critical-WCAG-baseline-desktop-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-axe-WCAG-reg-8b5c9-ious-critical-WCAG-baseline-desktop-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-axe-WCAG-reg-8b5c9-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-axe-WCAG-reg-8b5c9-ious-critical-WCAG-baseline-desktop-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  23) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  24) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.nav-menu-btn')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 8000ms
+      - waiting for locator('.nav-menu-btn')
+
+
+      75 |       if (usesMobileHomeMenu) {
+      76 |         const deckButton = page.locator('.nav-menu-btn');
+    > 77 |         await expect(deckButton).toBeVisible();
+         |                                  ^
+      78 |         await deckButton.focus();
+      79 |         await page.keyboard.press('Enter');
+      80 |         await expect(page.locator('.nav-site-menu.open')).toBeVisible();
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:77:34
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-990f1--entry-and-route-navigation-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-990f1--entry-and-route-navigation-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-990f1--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-990f1--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  25) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  26) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-8e856--entry-and-route-navigation-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-8e856--entry-and-route-navigation-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-8e856--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-8e856--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  27) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  28) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  29) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  30) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  31) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  32) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-73a29--entry-and-route-navigation-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-73a29--entry-and-route-navigation-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-73a29--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-73a29--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  33) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  34) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  35) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  36) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-af53e--entry-and-route-navigation-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-af53e--entry-and-route-navigation-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-af53e--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-af53e--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  37) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  38) [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-iphone-16-pro-max-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-iphone-16-pro-max-webkit/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-iphone-16-pro-max-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  39) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-37a4b-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  40) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.nav-menu-btn')
+    Expected: visible
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 8000ms
+      - waiting for locator('.nav-menu-btn')
+
+
+      75 |       if (usesMobileHomeMenu) {
+      76 |         const deckButton = page.locator('.nav-menu-btn');
+    > 77 |         await expect(deckButton).toBeVisible();
+         |                                  ^
+      78 |         await deckButton.focus();
+      79 |         await page.keyboard.press('Enter');
+      80 |         await expect(page.locator('.nav-site-menu.open')).toBeVisible();
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:77:34
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-990f1--entry-and-route-navigation-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-990f1--entry-and-route-navigation-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-990f1--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-990f1--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  41) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-3eb33-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  42) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-8e856--entry-and-route-navigation-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-8e856--entry-and-route-navigation-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-8e856--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-8e856--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  43) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-4db5f-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  44) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-b7d9a--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  45) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-258db-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  46) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-c1f4e--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  47) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-1c7d5-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  48) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-73a29--entry-and-route-navigation-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-73a29--entry-and-route-navigation-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-73a29--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-73a29--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  49) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-fedbe-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  50) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-4f8dc--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  51) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-20365-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  52) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    Error: The page must not emit console errors or uncaught exceptions
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "console.error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+       at site-fixture.js:86
+
+      84 |       contentType: 'application/json',
+      85 |     });
+    > 86 |     expect(browserErrors, 'The page must not emit console errors or uncaught exceptions').toEqual([]);
+         |                                                                                           ^
+      87 |   },
+      88 | });
+      89 |
+        at Object.page (/Users/feida/.codex/worktrees/5615/afflatus/e2e/site-fixture.js:86:91)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-af53e--entry-and-route-navigation-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-af53e--entry-and-route-navigation-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-af53e--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-af53e--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  53) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('[data-afflatus-nav]')
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('[data-afflatus-nav]')
+
+
+      27 |       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+      28 |       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
+    > 29 |       await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+         |                                                         ^
+      30 |       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
+      31 |
+      32 |       const documentState = await page.evaluate(() => ({
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-1d050-adata-and-a-stable-viewport-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  54) [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation
+
+    Error: expect(locator).toBeAttached() failed
+
+    Locator: locator('.nav-labs__trigger').first()
+    Expected: attached
+    Timeout: 8000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeAttached" with timeout 8000ms
+      - waiting for locator('.nav-labs__trigger').first()
+
+
+      86 |       } else {
+      87 |         const labsTrigger = page.locator('.nav-labs__trigger').first();
+    > 88 |         await expect(labsTrigger).toBeAttached();
+         |                                   ^
+      89 |         await labsTrigger.focus();
+      90 |         await page.keyboard.press('Escape');
+      91 |         await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
+        at /Users/feida/.codex/worktrees/5615/afflatus/e2e/quality-gates.spec.js:88:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-galaxy-s26-ultra-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-galaxy-s26-ultra-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/quality-gates-active-route-83ebc--entry-and-route-navigation-galaxy-s26-ultra-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  54 failed
+    [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport
+    [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation
+    [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport
+    [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation
+    [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport
+    [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation
+    [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport
+    [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation
+    [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport
+    [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation
+    [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport
+    [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation
+    [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport
+    [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation
+    [desktop-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport
+    [desktop-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation
+    [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › main / matches the audited serious/critical WCAG baseline
+    [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › portfolio /portfolio.html matches the audited serious/critical WCAG baseline
+    [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › signal /signal.html matches the audited serious/critical WCAG baseline
+    [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › horoscope /horoscope.html matches the audited serious/critical WCAG baseline
+    [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › serial /serial.html matches the audited serious/critical WCAG baseline
+    [desktop-chromium] › e2e/quality-gates.spec.js:124:5 › axe WCAG regression gate › course /course.html matches the audited serious/critical WCAG baseline
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport
+    [iphone-16-pro-max-webkit] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › main / renders with metadata and a stable viewport
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › main / supports keyboard entry and route navigation
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › portfolio /portfolio.html renders with metadata and a stable viewport
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › portfolio /portfolio.html supports keyboard entry and route navigation
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › arena /arena.html renders with metadata and a stable viewport
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › arena /arena.html supports keyboard entry and route navigation
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › sectors /sectors.html renders with metadata and a stable viewport
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › sectors /sectors.html supports keyboard entry and route navigation
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › signal /signal.html renders with metadata and a stable viewport
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › signal /signal.html supports keyboard entry and route navigation
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › horoscope /horoscope.html renders with metadata and a stable viewport
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › horoscope /horoscope.html supports keyboard entry and route navigation
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › serial /serial.html renders with metadata and a stable viewport
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › serial /serial.html supports keyboard entry and route navigation
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:19:5 › active-route browser gates › course /course.html renders with metadata and a stable viewport
+    [galaxy-s26-ultra-chromium] › e2e/quality-gates.spec.js:51:5 › active-route browser gates › course /course.html supports keyboard entry and route navigation
+  16 skipped
+  2 passed (1.2m)

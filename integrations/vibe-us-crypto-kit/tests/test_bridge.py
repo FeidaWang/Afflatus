@@ -119,7 +119,7 @@ def test_missing_secret_is_not_open(service,monkeypatch):
 def test_registry_only_and_no_private_data(service):
     _,client=service
     r=client.get('/v1/instruments',headers={'Authorization':'Bearer '+TOKEN})
-    assert r.status_code==200 and len(r.json()['instruments'])==9
+    assert r.status_code==200 and {item['id'] for item in r.json()['instruments']} == set(INSTRUMENTS)
     assert 'upstream_symbol' not in r.text
 
 

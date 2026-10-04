@@ -1,0 +1,7 @@
+{
+  "previous_failed": 54,
+  "current_failed": 54,
+  "new_failures": [],
+  "removed_failures": [],
+  "current_source": "built preview, UI flag off; new-feature browser tests separate"
+}

@@ -24,6 +24,15 @@ describe('Vibe host boundary', () => {
     const raw = fixture(); raw.technical = { as_of: '2025-01-03' };
     expect(validateSeries(raw, 'US:AAPL')).toBe(false);
   });
+  it('requires complete crypto timestamps with the selected venue alignment', () => {
+    const raw = fixture();
+    raw.instrument = { id: 'CRYPTO:BINANCE:BTC-USDT:SPOT', market: 'crypto_spot', quote_currency: 'USDT' };
+    Object.assign(raw.provenance, { source: 'binance', quote_currency: 'USDT' });
+    expect(validateSeries(raw, raw.instrument.id)).toBe(false);
+    Object.assign(raw.bars[0], { bar_open_at: '2025-01-02T00:00:00Z', bar_close_at: '2025-01-03T00:00:00Z' });
+    expect(validateSeries(raw, raw.instrument.id)).toBe(true);
+    raw.bars[0].bar_open_at = '2025-01-02T16:00:00Z'; expect(validateSeries(raw, raw.instrument.id)).toBe(false);
+  });
   it('keeps local BFF unavailable without the independent server flag', async () => {
     let middleware; vibeDevPlugin({}).configureServer({ middlewares: { use: fn => { middleware = fn; } } });
     let status, data;

@@ -1,0 +1,15 @@
+{
+  "previous": {
+    "numPassedTests": 1848,
+    "numFailedTests": 96,
+    "numTotalTests": 1944
+  },
+  "current": {
+    "numPassedTests": 1857,
+    "numFailedTests": 96,
+    "numTotalTests": 1953
+  },
+  "new_failures": [],
+  "removed_failures": [],
+  "failed_files": 19
+}

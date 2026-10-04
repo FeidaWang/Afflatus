@@ -23,3 +23,12 @@
 .vibe-markets__technical dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
 .vibe-markets__technical dt { font-weight: 500; }
 .vibe-markets__technical dd { margin: .4rem 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.vibe-markets [hidden] { display: none; }
+.vibe-markets input, .vibe-markets textarea, .vibe-markets button { font: inherit; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: .5rem; padding: .7rem; min-width: 0; }
+.vibe-markets textarea { display: block; box-sizing: border-box; width: 100%; margin-block: .5rem; resize: vertical; }
+.vibe-markets button { cursor: pointer; align-self: end; }
+.vibe-markets button:disabled { cursor: wait; opacity: .6; }
+.vibe-markets__research { border-top: 1px solid currentColor; margin-top: 1.5rem; min-width: 0; }
+.vibe-markets__research p { overflow-wrap: anywhere; }
+.vibe-markets__research td { max-width: 28rem; white-space: normal; overflow-wrap: anywhere; min-width: 6rem; vertical-align: top; }
+.vibe-markets__research a { color: inherit; text-decoration: underline; }

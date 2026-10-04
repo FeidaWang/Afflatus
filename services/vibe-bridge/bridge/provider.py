@@ -25,7 +25,7 @@ async def _bounded_read(stream, maximum: int) -> bytes:
         chunks.append(chunk)
 
 
-async def fetch_bars(request: BarsRequest) -> dict:
+async def fetch_bars(request: BarsRequest, *, research=False) -> dict:
     upstream = Path(os.environ.get("VIBE_UPSTREAM_AGENT", "/nonexistent")).resolve()
     if not (upstream / "src" / "market_data.py").is_file():
         raise SourceUnavailable("upstream not installed")
@@ -40,6 +40,12 @@ async def fetch_bars(request: BarsRequest) -> dict:
             "PYTHONUNBUFFERED": "1", "PYTHONNOUSERSITE": "1",
             "VIBE_UPSTREAM_AGENT": str(upstream), "PYTHONDONTWRITEBYTECODE": "1",
         })
+        if research:
+            from .research import sec_contact_valid
+            contact = os.getenv('VIBE_TRADING_SEC_UA')
+            if sec_contact_valid(contact): env['VIBE_TRADING_SEC_UA'] = contact
+            env['VIBE_TRADING_SEC_MIN_INTERVAL'] = '0.3'
+            env['VIBE_WORKER_OPERATION'] = 'research'
         process = await asyncio.create_subprocess_exec(
             sys.executable, "-m", "bridge.worker", cwd=home, env=env,
             stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,

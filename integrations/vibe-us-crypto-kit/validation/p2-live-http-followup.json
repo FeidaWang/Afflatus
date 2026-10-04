@@ -1,0 +1,48 @@
+[
+  {
+    "mocked": false,
+    "instrument": "US:NVDA",
+    "module": "industry",
+    "http_status": 200,
+    "status": "available",
+    "reason": null,
+    "source": "yahoo",
+    "as_of": null,
+    "notes": [
+      "DEPLOYED_BASKET_NOT_SECTOR_UNIVERSE",
+      "CURRENT_SNAPSHOT_NOT_POINT_IN_TIME",
+      "PROVIDER_TIME_UNKNOWN"
+    ],
+    "sections": [
+      {
+        "id": "company",
+        "rows": 1
+      },
+      {
+        "id": "peers",
+        "rows": 3
+      }
+    ]
+  },
+  {
+    "mocked": false,
+    "instrument": "US:AAPL",
+    "module": "screener",
+    "http_status": 200,
+    "status": "available",
+    "reason": null,
+    "source": "eastmoney",
+    "as_of": null,
+    "notes": [
+      "US_UNIVERSE_ONLY",
+      "PROVIDER_TIME_UNKNOWN",
+      "RANKED_SLICE"
+    ],
+    "sections": [
+      {
+        "id": "leaders",
+        "rows": 20
+      }
+    ]
+  }
+]

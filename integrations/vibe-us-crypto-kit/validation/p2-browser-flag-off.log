@@ -1,0 +1,6 @@
+### Result
+{"url":"http://127.0.0.1:4179/arena.html","researchSections":0,"addStockButtons":1,"marketRequests":0}
+### Ran Playwright code
+```js
+await (async (page) => { return { url: page.url(), researchSections: await page.locator(".vibe-markets").count(), addStockButtons: await page.getByRole("button", { name: "Add a stock", exact: true }).count(), marketRequests: await page.evaluate(() => performance.getEntriesByType("resource").filter(item => item.name.includes("/api/vibe-")).length) }; })(page);
+```

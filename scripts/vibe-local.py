@@ -17,6 +17,8 @@ def main():
     base = {k: os.environ[k] for k in ('PATH', 'SYSTEMROOT', 'SSL_CERT_FILE', 'SSL_CERT_DIR') if k in os.environ}
     bridge_env = {**base, 'VIBE_BRIDGE_TOKEN': token, 'VIBE_UPSTREAM_AGENT': str(KIT/'vendor/vibe-trading/agent'),
                   'PYTHONDONTWRITEBYTECODE': '1'}
+    if os.environ.get('VIBE_TRADING_SEC_UA'):
+        bridge_env['VIBE_TRADING_SEC_UA'] = os.environ['VIBE_TRADING_SEC_UA']
     host_env = {**base, 'VITE_VIBE_MARKETS_ENABLED': 'true', 'VIBE_FEATURE_ENABLED': 'true',
                 'VIBE_LOCAL_RESEARCH': 'true', 'VIBE_BRIDGE_URL': 'http://127.0.0.1:8765',
                 'VIBE_BRIDGE_TOKEN': token, 'ARENA_ADMIN_KEY': quota,

@@ -69,8 +69,9 @@ def normalize_payload(raw: dict[str, Any], request: BarsRequest) -> dict[str, An
             if 'T' not in label and ' ' not in label:
                 raise SourceUnavailable('missing crypto bar-open timestamp')
             opened = timestamp.replace(tzinfo=timezone.utc) if timestamp.tzinfo is None else timestamp.astimezone(timezone.utc)
-            if opened.hour != 16 or opened.minute or opened.second or opened.microsecond:
-                raise SourceUnavailable('unexpected OKX daily alignment')
+            expected_hour = 16 if instrument['source'] == 'okx' else 0
+            if opened.hour != expected_hour or opened.minute or opened.second or opened.microsecond:
+                raise SourceUnavailable('unexpected exchange daily alignment')
             if opened + timedelta(days=1) > datetime.now(timezone.utc):
                 continue
         if not request.start_date <= day < request.end_date:
@@ -104,7 +105,7 @@ def normalize_payload(raw: dict[str, Any], request: BarsRequest) -> dict[str, An
             "currency_basis": "provider_declared" if declared_currency else "registered_instrument",
             "adjustment": provenance.get("adjustment", "unknown"),
             "volume_unit": provenance.get("volume_unit"),
-            "bar_timezone": "UTC+08:00" if instrument['market'] == 'crypto_spot' else "America/New_York",
+            "bar_timezone": ("UTC+08:00" if source == 'okx' else "UTC") if instrument['market'] == 'crypto_spot' else "America/New_York",
             "date_label_basis": "UTC_bar_open_date" if instrument['market'] == 'crypto_spot' else "exchange_session_date",
             "quality": "complete_daily_bars",
             "interval": "1D",

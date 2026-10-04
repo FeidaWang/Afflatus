@@ -1,64 +1,62 @@
 # Afflatus Vibe integration handover — 2026-10-05 Melbourne
 
-## Git / scope
+## Current checkpoint and scope
 
-- Worktree: `/Users/feida/.codex/worktrees/5615/afflatus`.
-- Branch: `codex/vibe-us-crypto-integration`.
-- Starting host commit: `c7901191`; initial diff/status were empty.
-- Implementation commit: `c3fee505` (`feat: integrate pinned US and crypto daily research`). This handover and final inventory clarification are committed separately; use `git log -2 --oneline` for both commits. No push/deploy/paid resource/live order.
-- Original external kit at `/Users/feida/Developer/afflatus/vibe-us-crypto-kit` was read/copied, not edited.
-- Fixed upstream commit: `251b094320c1f97d1486626d3618113526914d4c`, ignored checkout at `integrations/vibe-us-crypto-kit/vendor/vibe-trading`. Original 5 blobs pass; bridge adds runtime blob verification for loader/technical files. Never substitute main.
+- Worktree: `/Users/feida/.codex/worktrees/5615/afflatus`; branch: `codex/vibe-us-crypto-integration`.
+- P0/P1 implementation: `c3fee505`; prior handover: `97f2f893`. This P2 continuation is the latest local commit after final verification; inspect `git log -3 --oneline`.
+- User scope: **暂保留 P4/P5 阻塞，本轮完成 P2**. Do not start personal research/accounts without real owner identity. No push, deployment, paid resources or live orders authorized or performed.
+- Upstream remains `251b094320c1f97d1486626d3618113526914d4c`, in ignored `integrations/vibe-us-crypto-kit/vendor/vibe-trading`. Runtime blob verification covers every enabled pinned adapter/helper; do not substitute main.
+- Read root `IMPLEMENTATION_STATUS.md` and kit `validation/P2_TEST_REPORT.md` first. Original P0/P1 evidence remains in `validation/IMPLEMENTATION_TEST_REPORT.md`; source inventories and original capability IDs remain intact. Do not repeat the full inventory scan.
 
-## Already done — do not rescan the whole repo
+## P2 delivered
 
-Read `IMPLEMENTATION_STATUS.md`, kit `HOST_BASELINE.md`, `CAPABILITY_COVERAGE.md`, `DEPENDENCY_MAP.md`, and `validation/IMPLEMENTATION_TEST_REPORT.md`. Full P0 records are in `manifests/coverage.json`, `extracted/runtime.json`, and `extracted/p0-verified/inventory.json`. Runtime: 109 local / 76 MCP / 102 API / 90 skill / 16 frontend routes. Static 142 tool candidates, no unresolved names. Conditional skill classification is not a completed script/data/market acceptance.
+Fixed read-only research modules: company profile/analyst estimates, SEC filings, filed-cutoff financial facts, two fixed 13F manager portfolios and changes, N-PORT ETF disclosures, US news/headline lexicon, US market leaders, limited Yahoo industry comparison, OKX/Binance order books, and Alternative.me Bitcoin Fear & Greed. SEC adapters have offline acceptance only until an operator supplies a real SEC contact.
 
-P1 local daily slice is real: AAPL/SPY/BTC-USDT loader and HTTP chains pass; allowlist contains 6 US/ETF and 3 OKX spot pairs. The first real test failed because upstream uses trade_date; fixed and before/after evidence retained. OKX opens at 16:00 UTC (UTC+8 midnight): preserve open/close timestamps and reject incomplete 24-hour candles. Unknown volume units remain unknown. No CryptoEngine spot substitution, fallback or fake prices.
+The registry now has 13 entries: AAPL/MSFT/NVDA/MU/SPY/QQQ/IVV and BTC/ETH/SOL-USDT spot on each of OKX/Binance. Explicit exchange choice, exact source identity, UTC+8 vs UTC daily boundaries and complete 24-hour bars are preserved. No silent exchange fallback or perpetual-to-spot substitution.
 
-Q01 technical subset uses pinned pure helpers on the same validated unsampled bars: RSI/MACD/BB/SMA/EMA/volume. Insufficient warmup => unavailable. Pattern recognition is still not adapted. Entire P2 and P3–P6 are not complete.
+Q01 includes pinned retrospective candlestick/head-and-shoulders/double-top-bottom/triangle/broadening/support-resistance/trend helpers. All calculations use complete unsampled bars; the candlestick chart displays the last 80. Centered pivots are labelled retrospective with a confirmation snapshot, not causal trading signals. Warmup gaps remain unavailable.
 
-## Code diff to review
+Browser research is action-triggered, bilingual and typed. Financial cutoff/cadence and fixed manager controls appear only for their modules. Selection changes cancel requests and clear old data. Missing source values stay null. Sentiment text stays in the browser and uses the pinned English lexicon with Python-compatible four-decimal rounding. Alternative.me attribution is adjacent to the index.
 
-`api/vibe-market.js`; `services/vibe-bridge/bridge/{models,normalize,provider,worker,technical,upstream,app,limits}.py` plus registry/lock; `src/lib/vibe{MarketContract.js,BridgeProxy.mjs}`; `src/features/vibe-markets/`; `scripts/vibe-{local.py,dev-plugin.mjs}`; `tests/vibeMarket.test.js` and kit host/upstream tests. Host changes are small: optional App research slot and feature-gated lazy Arena entry, local BFF plugin, attribution/ignore entries. Most added lines are imported kit/audit metadata/logs, not rewritten app code.
+## Boundaries and files
 
-Arena uses `src/pages/arenaJournal.jsx` and the existing prototype App, not arenaEntry.js. No Next.js/router/Electron. The original quote/history/treasury APIs, manifest/navigation/published pipeline are unchanged. Original journal values remain explicitly fictional; new sourced daily research is separate inside the same dashboard. All new production flags are off by default.
+- `services/vibe-bridge/bridge/{research,research_models,patterns}.py` and `research-contract.json`; expanded registry and upstream blob lock.
+- `api/vibe-research.js`, `src/lib/vibeResearchContract.js`, fixed BFF endpoint dispatch and loopback local plugin.
+- `src/features/vibe-markets/{index,research,sentiment,client,styles}`. No router/Next.js/Electron migration or original quote/history API replacement.
+- Shared JSON DTO fixes module/scope/source/section/field/quality/reason/note contracts for Python, BFF and browser. Arbitrary tools, URLs, commands, credentials and owner placeholders are rejected. Research remains private even if public daily flags and data-rights acknowledgement are enabled.
+- Short-lived workers receive a filtered environment, temporary home and only the validated optional SEC contact. They are not an untrusted-strategy sandbox. Existing request/output/time/cache/concurrency limits remain enforced.
+- Arena still mounts `arenaJournal.jsx` plus the existing prototype App. Original journal examples remain explicitly fictional. Production flags remain off; personal/account/order/MCP/shell routes are not mounted.
 
-## Actual tests and unresolved host gates
+## Validation
 
-- Original kit: Python 82 passed / 8 host-only skipped; Node 51 passed.
-- Host kit: Python 87 passed / 3 pinned-only skipped; Node 51 passed.
-- Real pinned modules + host Python: 90 passed. Fixed upstream applicable tests: 175 passed with socket denied (offline source tests).
-- New Vitest: 7 passed. Host unit: 1848 passed / 96 failed, 19 failed files, same pre-existing failures; do not disable tests.
-- Host typecheck/build and data/site/header/css/combat/i18n/OG/SEO gates passed.
-- Host browser gates: 54 failed / 2 passed / 16 skipped. Rebuilt pre-integration Arena entry/App from c7901191 via Vite load override; failure sets match exactly, no new failures (`validation/host/browser-comparison.json`). This is not an all-green release.
-- Local Chromium new feature: desktop 1440×1000, mobile viewport 440×956; English/Chinese, source metadata, keyboard, offline clears chart, one Add Stock, documentWidth=440, flag-off no research section. Actual browser request has no server auth/quota headers. Screenshots in `output/playwright/vibe/`.
-- No production/physical-device claim. All real network reports explicitly have mocked=false; offline fixtures are separate.
+- Host kit Python: **105 passed**; 11 P2 tests use synthetic fixtures/mocked transport with real pinned helpers. Fixed selected upstream P2 tests: **366 passed** with sockets denied.
+- Node BFF: **51 passed**. Focused host Vitest: **16 passed**. Typecheck, build and existing data/site/header/CSS/combat/i18n/OG/SEO checks pass.
+- Real workers and localhost BFF: AAPL profile/news, US screener, NVDA industry basket, both exchange books and Bitcoin index succeed. AAPL/SPY/IVV and both BTC spot daily loaders succeed. The first screener HTTP source failure is retained alongside its later real success; no fallback was added.
+- SEC worker/BFF returns `SEC_CONTACT_REQUIRED` before any source call. No fabricated contact or live SEC success claim.
+- Entire host unit: **1857 passed / 96 failed / 19 failed files**; exact same failure set as P1. Browser quality gates: **54 failed / 2 passed / 16 skipped**, same failure set. See `p2-unit-comparison.json` and `p2-browser-gates-comparison.json`; this is not an all-green release.
+- New-feature Chromium: desktop 1440×1000 and mobile 440×956, English/Chinese, profile/source display, keyboard SEC loading, no browser server-auth/quota headers, both exchange books, adjacent index attribution, offline removal of stale chart/price/research and flag-off behavior. Screenshots: `output/playwright/vibe/p2-*`. Viewport simulation, not physical-device/production acceptance.
 
-## Configuration and local preview
+## Remaining P2 gates
 
-`python3 scripts/vibe-local.py` starts loopback bridge 8765 + host 5175 with ephemeral server-only secrets, private data enabled locally, anonymous public flag false. It verifies upstream first. Existing local process may still be running; don't start a duplicate without checking ports. UI: http://127.0.0.1:5175/arena.html. Temporary baseline preview on 4173 and flag-off preview on 4177 can be stopped after checks. Browser CLI sessions are ignored; no credentials in repo.
+1. **US04/US05: real `VIBE_TRADING_SEC_UA` operator contact.** Do not reuse example.com. Once supplied via server configuration, run real filings, annual/quarterly cutoff facts, both manager changes, and supported ETF N-PORT tests. Preserve report/filing dates, per-value units/accessions and amendment/lag limitations. Do not infer fund eligibility from hard-coded historical structure.
+2. **US09: real US earnings calendar connector.** The pinned branch requires Futu/OpenD or another actual supported US connector. It is unimplemented, not replaced by analyst estimates or an empty UI.
+3. **US06 partial scope:** upstream sector/research_reports branches are A-share-only. Host comparison uses provider-declared Yahoo sector/industry within four deployed US equities; it is not a complete industry universe, fund-flow ranking or US research-report feed. Those broader datasets/adapters remain absent.
 
-Required production server names: VIBE_FEATURE_ENABLED / VIBE_BRIDGE_URL / VIBE_BRIDGE_TOKEN / VIBE_UPSTREAM_AGENT / ARENA_ADMIN_KEY (quota only). Non-secret UI: VITE_VIBE_MARKETS_ENABLED. VIBE_LOCAL_RESEARCH is only for loopback developer opt-in. Public rights/paid/live remain closed. Do not search for or print secret values.
+P3–P6 remain individually marked in the root status table. P4/P5 explicitly stay blocked by owner identity/object authorization; `ARENA_ADMIN_KEY` is only a quota gate, not an identity system. DeFi/on-chain/unlocks/liquidation/funding require real data adapters, not invented environment variables.
 
-US04 SEC needs a real operator contact in VIBE_TRADING_SEC_UA; upstream example.com default is not a real contact. Personal research/accounts require an actual owner identity architecture and object authorization, not ARENA_ADMIN_KEY. DeFi/on-chain/unlocks/liquidation/funding require real dataset adapters. Other unimplemented modules are not falsely described as environment-variable-only blockers.
+## Local preview, configuration and next commands
 
-## Next module and next command
+`python3 scripts/vibe-local.py` starts loopback bridge 8765 + host 5175 with ephemeral server-only secrets and private local opt-in. Check ports before starting a duplicate. UI: http://127.0.0.1:5175/arena.html. No credentials are committed or printed.
 
-Continue P2 with US03 company profile, preserving exact source identity and private gate. Start from the already pinned source rather than a new repo scan:
-
-```sh
-sed -n '275,420p' integrations/vibe-us-crypto-kit/vendor/vibe-trading/agent/src/tools/stock_profile_tool.py
-```
-
-Review the US symbol normalization and upstream stock-profile tests; then add a narrowly typed fixed-module worker/BFF/card, genuine no-data state and real network contract tests. Do not expose generic tool names/arguments or the entire upstream API. After US03 acceptance, US04 with real SEC contact, then US05/US06/CR02–04/pattern. Retain all original IDs and added US09/Q08/Q09/AI05. Do not jump to personal P4/P5 without owner identity, or call the current spot price path a spot backtest ledger.
-
-Useful existing validation commands:
+Server names: `VIBE_FEATURE_ENABLED`, `VIBE_BRIDGE_URL`, `VIBE_BRIDGE_TOKEN`, `VIBE_UPSTREAM_AGENT`, `ARENA_ADMIN_KEY`; optional real contact: `VIBE_TRADING_SEC_UA`. UI: `VITE_VIBE_MARKETS_ENABLED`. `VIBE_LOCAL_RESEARCH` is loopback development only. Public rights/paid/live remain closed.
 
 ```sh
-python3 integrations/vibe-us-crypto-kit/scripts/build_coverage.py
 VIBE_TEST_HOST_ROOT="$PWD" VIBE_UPSTREAM_TEST_AGENT="$PWD/integrations/vibe-us-crypto-kit/vendor/vibe-trading/agent" integrations/vibe-us-crypto-kit/.venv/bin/python -m pytest integrations/vibe-us-crypto-kit/tests -q
 VIBE_TEST_HOST_ROOT="$PWD" node --test integrations/vibe-us-crypto-kit/tests/proxy.test.mjs
-integrations/vibe-us-crypto-kit/.venv/bin/python integrations/vibe-us-crypto-kit/scripts/verify_live_loaders.py
+npx vitest run tests/vibeMarket.test.js tests/vibeResearch.test.js
+npm run typecheck
+npm run build
+integrations/vibe-us-crypto-kit/.venv/bin/python integrations/vibe-us-crypto-kit/scripts/verify_live_research.py
 ```
 
-Existing inventory output directories are intentionally persistent; don't rerun inventory into the same directory or redo the full source scan unnecessarily. Rollback by flags then Git revert; don't delete edited files via the original overlay receipt. No private data was created.
+The live verification command overwrites its report, so save earlier evidence before rerunning. Restore network after browser offline checks. Rollback by disabling UI/server flags, stopping the local bridge, then reverting the P2 local commit. Do not delete edited files through the original overlay receipt; no personal data was created.

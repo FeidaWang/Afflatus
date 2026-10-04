@@ -1,0 +1,6 @@
+### Result
+{"keyboardFocused":"Load research","result":"SEC_CONTACT_REQUIRED","headers":[{"authorization":false,"quota":false}],"sourceVisible":true}
+### Ran Playwright code
+```js
+await (async (page) => { const section = page.locator(".vibe-markets"); const headers = []; const listener = request => { if (request.url().includes("/api/vibe-research")) { const values = request.headers(); headers.push({ authorization: Boolean(values.authorization), quota: Boolean(values["x-arena-key"]) }); } }; page.on("request", listener); await section.getByLabel("Research module").focus(); await page.keyboard.press("Tab"); const focused = await page.evaluate(() => document.activeElement.textContent); await page.keyboard.press("Enter"); await section.getByRole("status").filter({ hasText: "Configure a real SEC operator contact" }).waitFor({ timeout: 5000 }); page.off("request", listener); return { keyboardFocused: focused, result: "SEC_CONTACT_REQUIRED", headers, sourceVisible: (await section.locator(".vibe-markets__research").innerText()).includes("sec_edgar") }; })(page);
+```

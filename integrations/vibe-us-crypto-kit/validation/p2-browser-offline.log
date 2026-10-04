@@ -1,0 +1,12 @@
+### Result
+{"offline":true,"chartCount":0,"researchTables":0,"researchSourceLinks":0,"oldPriceVisible":false,"documentWidth":440}
+### Ran Playwright code
+```js
+await (async (page) => { await page.context().setOffline(true); try { await page.getByRole("combobox", { name: "历史区间", exact: true }).selectOption("180"); await page.getByText(/数据暂不可用/).waitFor({ timeout: 15000 }); await page.getByRole("button", { name: "加载研究", exact: true }).click(); await page.getByText("数据源暂不可用，可在恢复后重试。", { exact: true }).waitFor({ timeout: 15000 }); const section = page.locator(".vibe-markets"); await section.screenshot({ path: "output/playwright/vibe/p2-mobile-zh-offline.png" }); return { offline: true, chartCount: await section.locator(".vibe-markets__chart svg").count(), researchTables: await section.locator(".vibe-markets__research table").count(), researchSourceLinks: await section.locator(".vibe-markets__research a").count(), oldPriceVisible: (await section.locator(".vibe-markets__value").innerText()).length > 0, documentWidth: await page.evaluate(() => document.documentElement.scrollWidth) }; } finally { await page.context().setOffline(false); } })(page);
+```
+### Page
+- Page URL: http://127.0.0.1:5175/arena.html
+- Page Title: 美股看板 · AFFLATUS
+- Console: 2 errors, 0 warnings
+### Events
+- New console entries: .playwright-cli/console-2026-10-04T15-53-52-053Z.log#L3-L4

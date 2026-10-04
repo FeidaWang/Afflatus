@@ -1,0 +1,6 @@
+### Result
+{"sourceVisible":true,"width":{"viewport":1440,"document":1440},"chartCount":1}
+### Ran Playwright code
+```js
+await (async (page) => { const section = page.locator(".vibe-markets"); await section.getByRole("status").filter({ hasText: "Data loaded" }).waitFor({ timeout: 30000 }); await section.screenshot({ path: "output/playwright/vibe/p2-desktop-profile.png" }); return { sourceVisible: (await section.locator(".vibe-markets__research").innerText()).includes("yahoo"), width: await page.evaluate(() => ({ viewport: innerWidth, document: document.documentElement.scrollWidth })), chartCount: await section.locator(".vibe-markets__chart svg").count() }; })(page);
+```

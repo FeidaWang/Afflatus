@@ -1,0 +1,50 @@
+{
+  "commit": "251b094320c1f97d1486626d3618113526914d4c",
+  "reasons": ["SEC_CONTACT_REQUIRED", "SOURCE_UNAVAILABLE", "NO_DATA", "UNSUPPORTED_FUND_STRUCTURE", "CHANGES_UNAVAILABLE"],
+  "notes": ["CURRENT_SNAPSHOT_NOT_POINT_IN_TIME", "DISCLOSED_HOLDINGS_NOT_LIVE", "RANKED_SLICE", "AMENDMENT_INCOMPLETE", "US_UNIVERSE_ONLY", "PROVIDER_TIME_UNKNOWN", "ENGLISH_LEXICON", "BITCOIN_INDEX_NOT_INSTRUMENT_SENTIMENT", "LOCAL_BOOK_TIME", "PARTIAL_DEPTH_FILL", "RAW_REPORTED_QUARTERS_NO_SYNTHETIC_Q4", "FILED_CUTOFF_APPLIED", "DEPLOYED_BASKET_NOT_SECTOR_UNIVERSE", "PEER_DATA_INCOMPLETE"],
+  "modules": {
+    "profile": {"source":"yahoo", "scope":"equity", "quality":"provider_snapshot", "sections": {
+      "listing":{"symbol":"text","exchange":"text","exchange_name":"text","quote_type":"text","currency":"text","financial_currency":"text"},
+      "key_stats":{"metric":"text","value":"number"},
+      "financials":{"metric":"text","value":"scalar"},
+      "earnings_trend":{"period":"text","end_date":"text","eps_avg":"number","eps_low":"number","eps_high":"number","eps_analysts":"number","revenue_avg":"number","eps_trend_7d_ago":"number","eps_trend_30d_ago":"number","eps_revisions_up_30d":"number","eps_revisions_down_30d":"number"},
+      "recommendation_trend":{"period":"text","strong_buy":"number","buy":"number","hold":"number","sell":"number","strong_sell":"number"}
+    }},
+    "filings":{"source":"sec_edgar","scope":"equity","quality":"filed_reports","sections":{
+      "filings":{"form":"text","accession_number":"text","filing_date":"date","report_date":"date","document_url":"sec_url"}
+    }},
+    "financials":{"source":"sec_edgar","scope":"equity","quality":"filed_reports","sections":{
+      "balance":{"concept":"text","value":"number","unit":"text","period_start":"date","period_end":"date","filed_at":"date","accession":"text","form":"text","document_url":"sec_url"},
+      "income":{"concept":"text","value":"number","unit":"text","period_start":"date","period_end":"date","filed_at":"date","accession":"text","form":"text","document_url":"sec_url"},
+      "cashflow":{"concept":"text","value":"number","unit":"text","period_start":"date","period_end":"date","filed_at":"date","accession":"text","form":"text","document_url":"sec_url"}
+    }},
+    "institutions":{"source":"sec_edgar_13f","scope":"equity","quality":"filed_reports","sections":{
+      "filing":{"manager":"text","cik":"text","period_end":"date","filing_date":"date","accession":"text","resolution":"text","prior_period_end":"date","prior_accession":"text"},
+      "positions":{"issuer":"text","cusip":"text","put_call":"text","share_type":"text","shares":"number","value_usd":"number","weight_pct":"number"},
+      "changes":{"action":"text","issuer":"text","cusip":"text","put_call":"text","shares_before":"number","shares_after":"number","shares_change_pct":"number","value_usd_before":"number","value_usd_after":"number"}
+    }},
+    "etf":{"source":"sec_nport","scope":"etf","quality":"filed_reports","sections":{
+      "filing":{"symbol":"text","series_name":"text","cik":"text","series_id":"text","as_of":"date","filing_date":"date","accession":"text","disclosure_lag_days":"number","holdings_in_filing":"number","document_url":"sec_url"},
+      "holdings":{"name":"text","ticker":"text","cusip":"text","pct_of_net_assets":"number","value_usd":"number","balance":"number","balance_units":"text","currency":"text"}
+    }},
+    "news":{"source":"yahoo","scope":"us","quality":"provider_snapshot","sections":{
+      "articles":{"title":"text","source":"text","published":"text","url":"url","score":"number","positive":"number","negative":"number"}
+    }},
+    "screener":{"source":"eastmoney","scope":"us","quality":"provider_snapshot","sections":{
+      "leaders":{"code":"text","name":"text","price":"number","change_pct":"number","volume":"number","amount":"number","turnover_rate":"number"}
+    }},
+    "industry":{"source":"yahoo","scope":"equity","quality":"provider_snapshot","sections":{
+      "company":{"symbol":"text","sector":"text","industry":"text","currency":"text","market_cap":"number","forward_pe":"number","profit_margin":"number"},
+      "peers":{"symbol":"text","sector":"text","industry":"text","currency":"text","market_cap":"number","forward_pe":"number","profit_margin":"number"}
+    }},
+    "orderbook":{"source":"ccxt","scope":"crypto","quality":"book_snapshot","sections":{
+      "snapshot":{"exchange":"text","symbol":"text","timestamp":"text","timestamp_source":"text","mid_price":"number","spread_quote":"number","spread_bps":"number","imbalance":"number","notional_quote":"number"},
+      "bids":{"price":"number","amount_base":"number"},
+      "asks":{"price":"number","amount_base":"number"},
+      "impact":{"side":"text","filled_base_qty":"number","filled_notional_quote":"number","avg_price":"number","fully_filled":"boolean","unfilled_base_qty":"number","slippage_bps":"number"}
+    }},
+    "fear_greed":{"source":"alternative_me","scope":"crypto","quality":"crypto_index","sections":{
+      "index":{"value":"number","classification":"text","index_at":"text"}
+    }}
+  }
+}

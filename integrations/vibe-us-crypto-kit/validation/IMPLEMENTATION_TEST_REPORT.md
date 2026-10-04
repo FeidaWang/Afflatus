@@ -2,6 +2,8 @@
 
 本报告区分原包离线测试、固定源码离线测试、本地实网链路和宿主门禁。没有生产部署或线上验收。
 
+本文件保留 P0/P1 验收历史；2026-10-05 继续实现的 P2 状态、105/366/51/16 项测试及最新门禁对照见 [P2_TEST_REPORT.md](P2_TEST_REPORT.md)。SEC 实网仍缺真实联系人，P4/P5 按用户本轮范围保持阻塞。
+
 |层级|结果|证据|
 |---|---|---|
 |Bootstrap SHA / blobs|PASS，固定 251b094320c1f97d1486626d3618113526914d4c，原 5 blob 校验；runtime 再校验 loader/指标 blob|runtime-summary.log；bridge/upstream-lock.json|

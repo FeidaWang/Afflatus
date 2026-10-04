@@ -1,11 +1,132 @@
 [
-  {"id":"US:AAPL","market":"us_equity","symbol":"AAPL","upstream_symbol":"AAPL.US","source":"yahoo","quote_currency":"USD","venue":"US","label":"Apple"},
-  {"id":"US:MSFT","market":"us_equity","symbol":"MSFT","upstream_symbol":"MSFT.US","source":"yahoo","quote_currency":"USD","venue":"US","label":"Microsoft"},
-  {"id":"US:NVDA","market":"us_equity","symbol":"NVDA","upstream_symbol":"NVDA.US","source":"yahoo","quote_currency":"USD","venue":"US","label":"NVIDIA"},
-  {"id":"US:MU","market":"us_equity","symbol":"MU","upstream_symbol":"MU.US","source":"yahoo","quote_currency":"USD","venue":"US","label":"Micron"},
-  {"id":"US:SPY","market":"us_etf","symbol":"SPY","upstream_symbol":"SPY.US","source":"yahoo","quote_currency":"USD","venue":"US","label":"SPDR S&P 500 ETF"},
-  {"id":"US:QQQ","market":"us_etf","symbol":"QQQ","upstream_symbol":"QQQ.US","source":"yahoo","quote_currency":"USD","venue":"US","label":"Invesco QQQ ETF"},
-  {"id":"CRYPTO:OKX:BTC-USDT:SPOT","market":"crypto_spot","symbol":"BTC-USDT","upstream_symbol":"BTC-USDT","source":"okx","quote_currency":"USDT","venue":"OKX","label":"Bitcoin / USDT · Spot"},
-  {"id":"CRYPTO:OKX:ETH-USDT:SPOT","market":"crypto_spot","symbol":"ETH-USDT","upstream_symbol":"ETH-USDT","source":"okx","quote_currency":"USDT","venue":"OKX","label":"Ether / USDT · Spot"},
-  {"id":"CRYPTO:OKX:SOL-USDT:SPOT","market":"crypto_spot","symbol":"SOL-USDT","upstream_symbol":"SOL-USDT","source":"okx","quote_currency":"USDT","venue":"OKX","label":"Solana / USDT · Spot"}
+  {
+    "id": "US:AAPL",
+    "market": "us_equity",
+    "symbol": "AAPL",
+    "upstream_symbol": "AAPL.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "Apple"
+  },
+  {
+    "id": "US:MSFT",
+    "market": "us_equity",
+    "symbol": "MSFT",
+    "upstream_symbol": "MSFT.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "Microsoft"
+  },
+  {
+    "id": "US:NVDA",
+    "market": "us_equity",
+    "symbol": "NVDA",
+    "upstream_symbol": "NVDA.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "NVIDIA"
+  },
+  {
+    "id": "US:MU",
+    "market": "us_equity",
+    "symbol": "MU",
+    "upstream_symbol": "MU.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "Micron"
+  },
+  {
+    "id": "US:SPY",
+    "market": "us_etf",
+    "symbol": "SPY",
+    "upstream_symbol": "SPY.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "SPDR S&P 500 ETF"
+  },
+  {
+    "id": "US:QQQ",
+    "market": "us_etf",
+    "symbol": "QQQ",
+    "upstream_symbol": "QQQ.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "Invesco QQQ ETF"
+  },
+  {
+    "id": "US:IVV",
+    "market": "us_etf",
+    "symbol": "IVV",
+    "upstream_symbol": "IVV.US",
+    "source": "yahoo",
+    "quote_currency": "USD",
+    "venue": "US",
+    "label": "iShares Core S&P 500 ETF"
+  },
+  {
+    "id": "CRYPTO:OKX:BTC-USDT:SPOT",
+    "market": "crypto_spot",
+    "symbol": "BTC-USDT",
+    "upstream_symbol": "BTC-USDT",
+    "source": "okx",
+    "quote_currency": "USDT",
+    "venue": "OKX",
+    "label": "Bitcoin / USDT \u00b7 Spot"
+  },
+  {
+    "id": "CRYPTO:OKX:ETH-USDT:SPOT",
+    "market": "crypto_spot",
+    "symbol": "ETH-USDT",
+    "upstream_symbol": "ETH-USDT",
+    "source": "okx",
+    "quote_currency": "USDT",
+    "venue": "OKX",
+    "label": "Ether / USDT \u00b7 Spot"
+  },
+  {
+    "id": "CRYPTO:OKX:SOL-USDT:SPOT",
+    "market": "crypto_spot",
+    "symbol": "SOL-USDT",
+    "upstream_symbol": "SOL-USDT",
+    "source": "okx",
+    "quote_currency": "USDT",
+    "venue": "OKX",
+    "label": "Solana / USDT \u00b7 Spot"
+  },
+  {
+    "id": "CRYPTO:BINANCE:BTC-USDT:SPOT",
+    "market": "crypto_spot",
+    "symbol": "BTC-USDT",
+    "upstream_symbol": "BTC-USDT",
+    "source": "binance",
+    "quote_currency": "USDT",
+    "venue": "BINANCE",
+    "label": "Bitcoin / USDT \u00b7 Spot"
+  },
+  {
+    "id": "CRYPTO:BINANCE:ETH-USDT:SPOT",
+    "market": "crypto_spot",
+    "symbol": "ETH-USDT",
+    "upstream_symbol": "ETH-USDT",
+    "source": "binance",
+    "quote_currency": "USDT",
+    "venue": "BINANCE",
+    "label": "Ether / USDT \u00b7 Spot"
+  },
+  {
+    "id": "CRYPTO:BINANCE:SOL-USDT:SPOT",
+    "market": "crypto_spot",
+    "symbol": "SOL-USDT",
+    "upstream_symbol": "SOL-USDT",
+    "source": "binance",
+    "quote_currency": "USDT",
+    "venue": "BINANCE",
+    "label": "Solana / USDT \u00b7 Spot"
+  }
 ]

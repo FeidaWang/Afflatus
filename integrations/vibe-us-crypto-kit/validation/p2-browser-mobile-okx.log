@@ -1,0 +1,6 @@
+### Result
+{"locale":"美股看板 · AFFLATUS","viewport":{"width":440,"height":956},"documentWidth":440,"exchange":"okx","bookRows":23,"sourceVisible":true}
+### Ran Playwright code
+```js
+await (async (page) => { await page.getByText("数据已加载", { exact: true }).waitFor({ timeout: 25000 }); await page.locator(".vibe-markets").screenshot({ path: "output/playwright/vibe/p2-mobile-zh-okx-book.png" }); return { locale: await page.title(), viewport: page.viewportSize(), documentWidth: await page.evaluate(() => document.documentElement.scrollWidth), exchange: await page.getByRole("combobox", { name: "现货交易所" }).inputValue(), bookRows: await page.locator(".vibe-markets__research tbody tr").count(), sourceVisible: await page.getByRole("link", { name: "ccxt", exact: true }).isVisible() }; })(page);
+```

@@ -1,0 +1,67 @@
+{
+  "tested_at": "2026-10-04T16:11:57.994308+00:00",
+  "environment": "local Chromium, real network except explicit offline check, viewport simulation",
+  "results": {
+    "profile": {
+      "sourceVisible": true,
+      "width": {
+        "viewport": 1440,
+        "document": 1440
+      },
+      "chartCount": 1
+    },
+    "keyboard-sec": {
+      "keyboardFocused": "Load research",
+      "result": "SEC_CONTACT_REQUIRED",
+      "headers": [
+        {
+          "authorization": false,
+          "quota": false
+        }
+      ],
+      "sourceVisible": true
+    },
+    "mobile-okx": {
+      "locale": "\u7f8e\u80a1\u770b\u677f \u00b7 AFFLATUS",
+      "viewport": {
+        "width": 440,
+        "height": 956
+      },
+      "documentWidth": 440,
+      "exchange": "okx",
+      "bookRows": 23,
+      "sourceVisible": true
+    },
+    "mobile-binance": {
+      "locale": "\u7f8e\u80a1\u770b\u677f \u00b7 AFFLATUS",
+      "viewport": {
+        "width": 440,
+        "height": 956
+      },
+      "documentWidth": 440,
+      "exchange": "binance",
+      "bookRows": 23,
+      "sourceVisible": true
+    },
+    "fear-greed": {
+      "sourceVisible": true,
+      "bitcoinScopeVisible": true,
+      "chartCount": 1,
+      "documentWidth": 440
+    },
+    "offline": {
+      "offline": true,
+      "chartCount": 0,
+      "researchTables": 0,
+      "researchSourceLinks": 0,
+      "oldPriceVisible": false,
+      "documentWidth": 440
+    },
+    "flag-off": {
+      "url": "http://127.0.0.1:4179/arena.html",
+      "researchSections": 0,
+      "addStockButtons": 1,
+      "marketRequests": 0
+    }
+  }
+}

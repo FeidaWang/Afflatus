@@ -1,0 +1,6 @@
+### Result
+{"sourceVisible":true,"bitcoinScopeVisible":true,"chartCount":1,"documentWidth":440}
+### Ran Playwright code
+```js
+await (async (page) => { await page.getByText("数据已加载", { exact: true }).waitFor({ timeout: 25000 }); const section = page.locator(".vibe-markets"); await section.screenshot({ path: "output/playwright/vibe/p2-mobile-zh-fear-greed.png" }); return { sourceVisible: await section.getByRole("link", { name: "Alternative.me", exact: true }).isVisible(), bitcoinScopeVisible: (await section.innerText()).includes("不代表所选币种或美股的情绪"), chartCount: await section.locator(".vibe-markets__chart svg").count(), documentWidth: await page.evaluate(() => document.documentElement.scrollWidth) }; })(page);
+```

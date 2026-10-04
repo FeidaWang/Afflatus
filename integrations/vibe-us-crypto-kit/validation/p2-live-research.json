@@ -1,0 +1,243 @@
+{
+  "layer": "real_network_pinned_workers",
+  "mocked": false,
+  "tested_at": "2026-10-04T15:38:12.092028+00:00",
+  "results": [
+    {
+      "instrument": "US:AAPL",
+      "module": "profile",
+      "status": "available",
+      "reason": null,
+      "source": "yahoo",
+      "as_of": null,
+      "sections": [
+        {
+          "id": "listing",
+          "status": "available",
+          "rows": 1
+        },
+        {
+          "id": "key_stats",
+          "status": "available",
+          "rows": 14
+        },
+        {
+          "id": "financials",
+          "status": "available",
+          "rows": 13
+        },
+        {
+          "id": "earnings_trend",
+          "status": "available",
+          "rows": 4
+        },
+        {
+          "id": "recommendation_trend",
+          "status": "available",
+          "rows": 4
+        }
+      ],
+      "bar_count": 0
+    },
+    {
+      "instrument": "US:AAPL",
+      "module": "news",
+      "status": "available",
+      "reason": null,
+      "source": "yahoo",
+      "as_of": null,
+      "sections": [
+        {
+          "id": "articles",
+          "status": "available",
+          "rows": 9
+        }
+      ],
+      "bar_count": 0
+    },
+    {
+      "instrument": "US:AAPL",
+      "module": "screener",
+      "status": "available",
+      "reason": null,
+      "source": "eastmoney",
+      "as_of": null,
+      "sections": [
+        {
+          "id": "leaders",
+          "status": "available",
+          "rows": 20
+        }
+      ],
+      "bar_count": 0
+    },
+    {
+      "instrument": "US:AAPL",
+      "module": "filings",
+      "status": "unavailable",
+      "reason": "SEC_CONTACT_REQUIRED",
+      "source": "sec_edgar",
+      "as_of": null,
+      "sections": [],
+      "bar_count": 0
+    },
+    {
+      "instrument": "US:AAPL",
+      "module": "financials",
+      "status": "unavailable",
+      "reason": "SEC_CONTACT_REQUIRED",
+      "source": "sec_edgar",
+      "as_of": null,
+      "sections": [],
+      "bar_count": 0
+    },
+    {
+      "instrument": "US:AAPL",
+      "module": "institutions",
+      "status": "unavailable",
+      "reason": "SEC_CONTACT_REQUIRED",
+      "source": "sec_edgar_13f",
+      "as_of": null,
+      "sections": [],
+      "bar_count": 0
+    },
+    {
+      "instrument": "US:IVV",
+      "module": "etf",
+      "status": "unavailable",
+      "reason": "SEC_CONTACT_REQUIRED",
+      "source": "sec_nport",
+      "as_of": null,
+      "sections": [],
+      "bar_count": 0
+    },
+    {
+      "instrument": "CRYPTO:OKX:BTC-USDT:SPOT",
+      "module": "orderbook",
+      "status": "available",
+      "reason": null,
+      "source": "ccxt",
+      "as_of": "2026-10-04T15:38:27.856000+00:00",
+      "sections": [
+        {
+          "id": "snapshot",
+          "status": "available",
+          "rows": 1
+        },
+        {
+          "id": "bids",
+          "status": "available",
+          "rows": 10
+        },
+        {
+          "id": "asks",
+          "status": "available",
+          "rows": 10
+        },
+        {
+          "id": "impact",
+          "status": "available",
+          "rows": 2
+        }
+      ],
+      "bar_count": 0
+    },
+    {
+      "instrument": "CRYPTO:BINANCE:BTC-USDT:SPOT",
+      "module": "orderbook",
+      "status": "available",
+      "reason": null,
+      "source": "ccxt",
+      "as_of": "2026-10-04T15:38:32.200529+00:00",
+      "sections": [
+        {
+          "id": "snapshot",
+          "status": "available",
+          "rows": 1
+        },
+        {
+          "id": "bids",
+          "status": "available",
+          "rows": 10
+        },
+        {
+          "id": "asks",
+          "status": "available",
+          "rows": 10
+        },
+        {
+          "id": "impact",
+          "status": "available",
+          "rows": 2
+        }
+      ],
+      "bar_count": 0
+    },
+    {
+      "instrument": "CRYPTO:OKX:BTC-USDT:SPOT",
+      "module": "fear_greed",
+      "status": "available",
+      "reason": null,
+      "source": "alternative_me",
+      "as_of": "2026-10-04T00:00:00+00:00",
+      "sections": [
+        {
+          "id": "index",
+          "status": "available",
+          "rows": 1
+        }
+      ],
+      "bar_count": 0
+    },
+    {
+      "instrument": "US:AAPL",
+      "module": "bars",
+      "status": "available",
+      "reason": null,
+      "source": "yahoo",
+      "as_of": "2025-01-14",
+      "sections": [],
+      "bar_count": 8
+    },
+    {
+      "instrument": "US:SPY",
+      "module": "bars",
+      "status": "available",
+      "reason": null,
+      "source": "yahoo",
+      "as_of": "2025-01-14",
+      "sections": [],
+      "bar_count": 8
+    },
+    {
+      "instrument": "US:IVV",
+      "module": "bars",
+      "status": "available",
+      "reason": null,
+      "source": "yahoo",
+      "as_of": "2025-01-14",
+      "sections": [],
+      "bar_count": 8
+    },
+    {
+      "instrument": "CRYPTO:OKX:BTC-USDT:SPOT",
+      "module": "bars",
+      "status": "available",
+      "reason": null,
+      "source": "okx",
+      "as_of": "2025-01-14",
+      "sections": [],
+      "bar_count": 13
+    },
+    {
+      "instrument": "CRYPTO:BINANCE:BTC-USDT:SPOT",
+      "module": "bars",
+      "status": "available",
+      "reason": null,
+      "source": "binance",
+      "as_of": "2025-01-14",
+      "sections": [],
+      "bar_count": 13
+    }
+  ]
+}

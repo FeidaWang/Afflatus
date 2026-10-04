@@ -1,14 +1,15 @@
 # Dependency and permission map
 
-The immutable reference is HKUDS/Vibe-Trading `251b094320c1f97d1486626d3618113526914d4c`. Five original sentinel blobs pass. Bridge runtime additionally hashes Yahoo/OKX loader and technical indicator files against blobs from that same commit before importing them. The copied MIT license/root NOTICE are in `licenses/`; no upstream fonts or Electron frontend are shipped. Mixed-market source stays in the ignored reference checkout, behind the bridge's exact instrument/source boundary. Factor subcomponent notices must accompany any future factor extraction.
+The immutable reference is HKUDS/Vibe-Trading `251b094320c1f97d1486626d3618113526914d4c`. Five original sentinel blobs pass. Bridge runtime additionally hashes the enabled Yahoo/OKX/Binance loaders, P2 research transports/tools and technical/pattern helpers against blobs from that same commit before importing them. The copied MIT license/root NOTICE are in `licenses/`; no upstream fonts or Electron frontend are shipped. Mixed-market source stays in the ignored reference checkout, behind the bridge's exact instrument/source boundary. Factor subcomponent notices must accompany any future factor extraction.
 
 |Surface|Reused source/dependency|Enabled implementation|Remaining gate|
 |---|---|---|---|
-|US daily|src.market_data; Yahoo direct loader; pandas/requests|AAPL/MSFT/NVDA/MU/SPY/QQQ allowlist|Private by default; more symbols/search not yet adapted|
-|Crypto spot daily|src.market_data; OKX spot loader|BTC/ETH/SOL-USDT; no CryptoEngine|UTC+8 bar-open/close semantics; undeclared volume unit remains unknown|
-|Technical|src.tools.technical_indicator_tool pure helpers|RSI/MACD/BB/SMA/EMA/volume stats on complete unsampled bars|Q01 pattern tools not yet adapted; insufficient warmup = unavailable|
-|SEC/financials|sec_edgar_client, filings/statements tools|Source audited; not yet mounted|Operator `VIBE_TRADING_SEC_UA` with a real contact; no upstream example.com contact reused|
-|Profile/institutions/ETF/news|Yahoo and mixed-market tools|Source audited; not yet mounted|US branch/point-in-time/source contracts and real failure tests still needed; template ≠ flow data|
+|US daily|src.market_data; Yahoo direct loader; pandas/requests|AAPL/MSFT/NVDA/MU/SPY/QQQ/IVV allowlist|Private by default; more symbols/search not yet adapted|
+|Crypto spot daily|src.market_data; OKX native / Binance CCXT loaders|BTC/ETH/SOL-USDT on the explicitly selected exchange; no CryptoEngine|OKX UTC+8 / Binance UTC alignment; venue/source match and full 24-hour completion; undeclared volume unit remains unknown|
+|Technical|src.tools.technical_indicator_tool pure helpers|RSI/MACD/BB/SMA/EMA/volume stats on complete unsampled bars|Pinned retrospective pattern helpers adapted; insufficient warmup = unavailable; pivots never advertised as causal trading signals|
+|Order book / sentiment|Pinned orderbook helper, pinned English lexicon, Alternative.me documented endpoint|OKX/Binance snapshots; exact units, timestamp provenance, partial fills; local browser lexicon; Bitcoin index timestamp retained|No historical depth/liquidation map, no LLM, no stock-index substitution; Alternative.me attribution next to data|
+|SEC/financials|sec_edgar_client, filings/statements tools|Read-only filing/fact adapters + per-value filed cutoff; offline accepted|Operator `VIBE_TRADING_SEC_UA` with a real contact; no upstream example.com contact reused|
+|Profile/institutions/ETF/news|Yahoo and mixed-market tools|Profile/news/screener plus limited Yahoo US basket comparison validated; 13F/N-PORT adapters offline accepted|SEC contact missing for disclosed holdings; upstream A-share sector/reports excluded; template ≠ flow data|
 |US options/factors/backtests|Options helpers; GlobalEquityEngine; metadata/strategy store|Not mounted|Worker isolation; validated costs/borrow/calendar; retain nested licenses|
 |Spot backtest|Independent cash/asset ledger required|Not implemented|CryptoEngine is perpetual; leverage=1 cannot satisfy spot acceptance|
 |Strict perpetual|CryptoEngine|Not mounted|Historical funding/mark/margin/risk inputs; no fixed-funding substitution|

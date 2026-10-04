@@ -26,3 +26,5 @@ All 90 skill documents are methods or examples, not evidence of available data. 
 ## Host acceptance limits
 
 P0 source reconciliation passes; host baseline unit failures remain separately recorded. P1 implementation and data-chain tests do not complete P2–P6. See IMPLEMENTATION_STATUS.md.
+
+P2 host continuation now adapts the bounded research modules and patterns; actual source/fixture/browser evidence and remaining SEC contact, US09 connector and US06 broader-data gates are recorded in [validation/P2_TEST_REPORT.md](validation/P2_TEST_REPORT.md). This does not change the fixed-source inventory classifications or complete P3–P6. P4/P5 remain blocked by real owner identity under the user's current scope.

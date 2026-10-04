@@ -1,0 +1,23 @@
+{
+  "mocked": false,
+  "instrument": "US:NVDA",
+  "module": "industry",
+  "status": "available",
+  "source": "yahoo",
+  "as_of": null,
+  "notes": [
+    "DEPLOYED_BASKET_NOT_SECTOR_UNIVERSE",
+    "CURRENT_SNAPSHOT_NOT_POINT_IN_TIME",
+    "PROVIDER_TIME_UNKNOWN"
+  ],
+  "sections": [
+    {
+      "id": "company",
+      "rows": 1
+    },
+    {
+      "id": "peers",
+      "rows": 3
+    }
+  ]
+}
