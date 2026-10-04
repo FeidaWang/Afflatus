@@ -1,0 +1,210 @@
+### Page
+- Page URL: http://127.0.0.1:5175/arena.html
+- Page Title: Market journal · AFFLATUS
+- Console: 1 errors, 0 warnings
+### Snapshot
+```yaml
+- generic [active] [ref=f5e1]:
+  - banner [ref=f5e2]:
+    - generic [ref=f5e3]:
+      - link "AFFLATUS home" [ref=f5e4] [cursor=pointer]:
+        - /url: /en/
+        - generic [aria-hidden] [ref=f5e5]:
+          - generic [ref=f5e6]: AFFLATUS
+          - generic [ref=f5e7]:
+            - generic [ref=f5e8]: A
+            - generic [ref=f5e9]: I
+      - link "切换至中文" [ref=f5e11] [cursor=pointer]:
+        - /url: /zh/arena.html
+        - text: 中文
+      - button "Menu" [ref=f5e12] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f5e14]: ☰
+  - generic [ref=f5e16]:
+    - link "Skip to chart" [ref=f5e17] [cursor=pointer]:
+      - /url: "#main-content"
+    - main [ref=f5e18]:
+      - region [ref=f5e19]:
+        - generic [ref=f5e20]:
+          - paragraph [ref=f5e21]: WATCHLIST / COMPANY JOURNAL
+          - heading "Good companies, in focus." [level=1] [ref=f5e22]
+          - paragraph [ref=f5e23]: Less noise. More attention to the companies creating value.
+        - generic [ref=f5e25]:
+          - strong [ref=f5e26]: Next US market open
+          - paragraph [ref=f5e27]: 22:48:48
+          - generic [ref=f5e28]: Melbourne · Tue, 6 Oct, 00:30 AEDT
+      - region "Market indices" [ref=f5e29]:
+        - button "S&P 500 4,376.95 +53.71 +1.24%" [ref=f5e30] [cursor=pointer]:
+          - generic [ref=f5e31]: S&P 500
+          - generic [ref=f5e32]:
+            - strong [ref=f5e33]: 4,376.95
+            - generic [ref=f5e34]:
+              - text: "+53.71"
+              - generic [ref=f5e35]: +1.24%
+        - button "Nasdaq Composite 13,689.57 +210.32 +1.56%" [ref=f5e36] [cursor=pointer]:
+          - generic [ref=f5e37]: Nasdaq Composite
+          - generic [ref=f5e38]:
+            - strong [ref=f5e39]: 13,689.57
+            - generic [ref=f5e40]:
+              - text: "+210.32"
+              - generic [ref=f5e41]: +1.56%
+        - button "Dow Jones 33,507.50 +289.41 +0.87%" [ref=f5e42] [cursor=pointer]:
+          - generic [ref=f5e43]: Dow Jones
+          - generic [ref=f5e44]:
+            - strong [ref=f5e45]: 33,507.50
+            - generic [ref=f5e46]:
+              - text: "+289.41"
+              - generic [ref=f5e47]: +0.87%
+      - region "Market workspace" [ref=f5e48]:
+        - region [ref=f5e49]:
+          - heading "Micron Technology" [level=2] [ref=f5e50]
+          - paragraph [ref=f5e51]: MU · Memory chips
+          - generic [ref=f5e52]:
+            - strong [ref=f5e53]: "176.28"
+            - generic [ref=f5e54]: USD
+            - generic [ref=f5e55]: +3.43%
+          - paragraph [ref=f5e56]: Oct 2, 16:00 ET
+          - generic "Chart period" [ref=f5e57]:
+            - button "D" [ref=f5e58] [cursor=pointer]
+            - button "M" [pressed] [ref=f5e59] [cursor=pointer]
+            - button "3M" [ref=f5e60] [cursor=pointer]
+            - button "YTD" [ref=f5e61] [cursor=pointer]
+            - button "Y" [ref=f5e62] [cursor=pointer]
+            - button "MAX" [ref=f5e63] [cursor=pointer]
+          - group "Chart style" [ref=f5e64]:
+            - button "Candles" [pressed] [ref=f5e65] [cursor=pointer]
+            - button "Line" [ref=f5e66] [cursor=pointer]
+          - paragraph [ref=f5e67]: USD
+          - img "Micron Technology M fictional sample chart. Use arrow keys to inspect." [ref=f5e68]
+          - generic [ref=f5e70]:
+            - generic [ref=f5e71]: 2026-09-02
+            - slider "Drag to browse chart dates" [ref=f5e72]: "1000"
+            - generic [ref=f5e73]: 2026-10-02
+            - button "Zoom in" [ref=f5e74] [cursor=pointer]: ＋
+            - button "Zoom out" [ref=f5e75] [cursor=pointer]: −
+          - paragraph [ref=f5e76]: Sample chart · USD
+          - generic [ref=f5e77]:
+            - heading "Research focus" [level=3] [ref=f5e78]
+            - paragraph [ref=f5e79]: Follow demand, supply constraints and company fundamentals.
+        - complementary [ref=f5e80]:
+          - generic [ref=f5e81]:
+            - heading "My watchlist" [level=2] [ref=f5e82]
+            - button "Add a stock" [ref=f5e83] [cursor=pointer]
+          - generic [ref=f5e86]:
+            - generic [ref=f5e87]: Company
+            - generic [ref=f5e88]: Price USD
+            - button "Sort daily change descending" [ref=f5e89] [cursor=pointer]: Day change
+            - generic [ref=f5e92]: Past month
+          - generic [ref=f5e93]:
+            - generic [ref=f5e94]:
+              - button "NVDA 英伟达, +2.58%" [ref=f5e95] [cursor=pointer]:
+                - generic [ref=f5e96]:
+                  - generic [ref=f5e97]: NVDA
+                  - generic [ref=f5e98]: NVIDIA Corporation
+                - strong [ref=f5e99]: "183.24"
+                - generic [ref=f5e100]: +2.58%
+              - button "Remove NVDA" [ref=f5e103] [cursor=pointer]
+            - generic [ref=f5e106]:
+              - button "MSFT 微软, +1.32%" [ref=f5e107] [cursor=pointer]:
+                - generic [ref=f5e108]:
+                  - generic [ref=f5e109]: MSFT
+                  - generic [ref=f5e110]: Microsoft Corporation
+                - strong [ref=f5e111]: "517.36"
+                - generic [ref=f5e112]: +1.32%
+              - button "Remove MSFT" [ref=f5e115] [cursor=pointer]
+            - generic [ref=f5e118]:
+              - button "AVGO 博通, +1.56%" [ref=f5e119] [cursor=pointer]:
+                - generic [ref=f5e120]:
+                  - generic [ref=f5e121]: AVGO
+                  - generic [ref=f5e122]: Broadcom Inc.
+                - strong [ref=f5e123]: "322.08"
+                - generic [ref=f5e124]: +1.56%
+              - button "Remove AVGO" [ref=f5e127] [cursor=pointer]
+            - generic [ref=f5e130]:
+              - button "MU 美光科技, +3.43%" [pressed] [ref=f5e131] [cursor=pointer]:
+                - generic [ref=f5e132]:
+                  - generic [ref=f5e133]: MU
+                  - generic [ref=f5e134]: Micron Technology
+                - strong [ref=f5e135]: "176.28"
+                - generic [ref=f5e136]: +3.43%
+              - button "Remove MU" [ref=f5e139] [cursor=pointer]
+            - generic [ref=f5e142]:
+              - button "TSM 台积电, +2.04%" [ref=f5e143] [cursor=pointer]:
+                - generic [ref=f5e144]:
+                  - generic [ref=f5e145]: TSM
+                  - generic [ref=f5e146]: Taiwan Semiconductor
+                - strong [ref=f5e147]: "311.06"
+                - generic [ref=f5e148]: +2.04%
+              - button "Remove TSM" [ref=f5e151] [cursor=pointer]
+            - generic [ref=f5e154]:
+              - button "VRT 维谛技术, −0.70%" [ref=f5e155] [cursor=pointer]:
+                - generic [ref=f5e156]:
+                  - generic [ref=f5e157]: VRT
+                  - generic [ref=f5e158]: Vertiv Holdings Co.
+                - strong [ref=f5e159]: "142.17"
+                - generic [ref=f5e160]: −0.70%
+              - button "Remove VRT" [ref=f5e163] [cursor=pointer]
+      - region [ref=f5e166]:
+        - heading "Market research" [level=2] [ref=f5e167]
+        - paragraph [ref=f5e168]: Daily bars · not a live quote
+        - generic [ref=f5e169]:
+          - generic [ref=f5e170]:
+            - text: Market
+            - combobox "Market" [ref=f5e171]:
+              - option "US stocks & ETFs" [selected]
+              - option "Crypto spot"
+          - generic [ref=f5e172]:
+            - text: Instrument
+            - combobox "Instrument" [ref=f5e173]:
+              - option "AAPL" [selected]
+              - option "MSFT"
+              - option "NVDA"
+              - option "MU"
+              - option "SPY"
+              - option "QQQ"
+          - generic [ref=f5e174]:
+            - text: History
+            - combobox "History" [ref=f5e175]:
+              - option "90 days" [selected]
+              - option "180 days"
+              - option "365 days"
+        - status [ref=f5e176]: Data unavailable (Failed to fetch)
+        - paragraph
+        - generic [ref=f5e177]: No chart until a data source is available.
+        - paragraph
+        - group [ref=f5e178]:
+          - generic "Inspect daily bars" [ref=f5e179] [cursor=pointer]
+        - paragraph [ref=f5e180]: Research only. Spot ≠ perpetual. USD ≠ USDT.
+    - contentinfo [ref=f5e181]:
+      - paragraph [ref=f5e182]: The stock journal uses fictional design data. Daily market research shows separately sourced historical data. Not investment advice.
+  - contentinfo [ref=f5e183]:
+    - generic [ref=f5e184]:
+      - link "AFFLATUS home" [ref=f5e185] [cursor=pointer]:
+        - /url: /en/
+        - generic [aria-hidden] [ref=f5e186]:
+          - generic [ref=f5e187]: A
+          - generic [ref=f5e188]: I
+      - navigation "Explore the site" [ref=f5e190]:
+        - link "Portfolio" [ref=f5e191] [cursor=pointer]:
+          - /url: /en/portfolio.html
+        - link "Arena" [ref=f5e192] [cursor=pointer]:
+          - /url: /en/arena.html
+        - link "AI industry" [ref=f5e193] [cursor=pointer]:
+          - /url: /en/sectors.html
+        - link "Economic updates" [ref=f5e194] [cursor=pointer]:
+          - /url: /en/signal.html
+        - link "Learn" [ref=f5e195] [cursor=pointer]:
+          - /url: /en/course.html
+        - link "Stories" [ref=f5e196] [cursor=pointer]:
+          - /url: /zh/serial.html
+        - link "Astrology for fun" [ref=f5e197] [cursor=pointer]:
+          - /url: /en/horoscope.html
+      - generic [ref=f5e198]:
+        - generic [ref=f5e199]: © 2026 RSI AI
+        - navigation "Social profiles" [ref=f5e200]:
+          - link "LinkedIn" [ref=f5e201] [cursor=pointer]:
+            - /url: https://www.linkedin.com/in/feida-wang/
+          - link "GitHub" [ref=f5e204] [cursor=pointer]:
+            - /url: https://github.com/FeidaWang
+          - link "知乎" [ref=f5e207] [cursor=pointer]:
+            - /url: https://www.zhihu.com/people/ye-piao-xue
+```

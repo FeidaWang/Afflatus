@@ -1,0 +1,1751 @@
+{
+  "schema_version": 1,
+  "scope": [
+    "us_equity",
+    "us_etf",
+    "us_options_research",
+    "crypto_spot",
+    "crypto_perpetual_research"
+  ],
+  "current_bridge_enabled": [
+    "us_equity_daily_bars",
+    "us_etf_daily_bars",
+    "crypto_spot_daily_bars"
+  ],
+  "all_advanced_features_migrated": false,
+  "tools": {
+    "get_market_data": {
+      "decision": "retain",
+      "phase": "P1",
+      "features": [
+        "US01",
+        "US02",
+        "CR01",
+        "CR02"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "search_symbol": {
+      "decision": "retain",
+      "phase": "P1",
+      "features": [
+        "US01",
+        "CR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_stock_profile": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "US03"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_sec_filings": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "US04"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_financial_statements": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "US04"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_fundamentals": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "US04"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_institutional_holdings": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "US05"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "etf_holdings": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P2",
+      "features": [
+        "US05"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_stock_news": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P2",
+      "features": [
+        "US06"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "screen_market": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P2",
+      "features": [
+        "US06"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_sector_info": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P2",
+      "features": [
+        "US06"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_research_reports": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P2",
+      "features": [
+        "US06"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_options_chain": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P3",
+      "features": [
+        "US07"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "analyze_options": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "US07"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "analyze_options_payoff": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "US07"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "quantlib_call": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "US08",
+        "Q06"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "orderbook_depth": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "CR03"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "sentiment": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "CR04"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "backtest": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "CR05",
+        "CR06",
+        "Q02",
+        "Q03"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "load_skill": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "CR07",
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "run_swarm": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "CR07",
+        "AI03"
+      ],
+      "runtime_default": "private_worker_only_after_security_gate",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "technical_indicators": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "Q01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "pattern_recognition": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "Q01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "factor_analysis": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P3",
+      "features": [
+        "Q04"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "alpha_zoo": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P3",
+      "features": [
+        "Q04"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "alpha_bench": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P3",
+      "features": [
+        "Q04"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "list_strategies": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "Q05"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "query_strategies": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "Q05"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_strategy_evidence": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "Q05"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "refresh_strategy_evidence": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "Q05"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "cashflow_performance": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "Q06",
+        "Q07"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "start_research_goal": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_research_goal": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "add_goal_evidence": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "update_research_goal_status": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "read_run_artifact": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI01",
+        "AI04"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "list_skills": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "read_file": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "private_worker_only_after_security_gate",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "write_file": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "private_worker_only_after_security_gate",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "list_swarm_presets": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI03"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_swarm_status": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI03"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_run_result": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI03"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "list_runs": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI03"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "reap_stale_runs": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI03"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "retry_run": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "AI03"
+      ],
+      "runtime_default": "private_worker_only_after_security_gate",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "analyze_trade_journal": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "SH01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "extract_shadow_strategy": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "SH01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "run_shadow_backtest": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "SH01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "render_shadow_report": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "SH01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "scan_shadow_signals": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "SH01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "trading_connections": {
+      "decision": "retain",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "trading_select_connection": {
+      "decision": "retain",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "trading_check": {
+      "decision": "retain",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "trading_account": {
+      "decision": "retain",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "trading_positions": {
+      "decision": "retain",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "trading_orders": {
+      "decision": "retain",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "trading_quote": {
+      "decision": "retain",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "trading_history": {
+      "decision": "retain",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_macro_series": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "CTX01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "web_search": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "CTX01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "read_url": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "CTX01"
+      ],
+      "runtime_default": "private_worker_only_after_security_gate",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "read_document": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "CTX01"
+      ],
+      "runtime_default": "private_worker_only_after_security_gate",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "research_papers": {
+      "decision": "retain",
+      "phase": "P4",
+      "features": [
+        "CTX01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "prediction_market": {
+      "decision": "retain_only_verified_us_crypto_branches",
+      "phase": "P4",
+      "features": [
+        "CTX01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "qveris_search": {
+      "decision": "retain",
+      "phase": "P6",
+      "features": [
+        "EXT01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "qveris_inspect": {
+      "decision": "retain",
+      "phase": "P6",
+      "features": [
+        "EXT01"
+      ],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "qveris_execute": {
+      "decision": "retain",
+      "phase": "P6",
+      "features": [
+        "EXT01"
+      ],
+      "runtime_default": "private_worker_only_after_security_gate",
+      "runtime_observed": true,
+      "reason": "See feature acceptance boundary; retain only validated US/crypto argument branches. Not currently exposed by the bridge."
+    },
+    "get_dragon_tiger": {
+      "decision": "exclude_from_target_product",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "get_northbound_flow": {
+      "decision": "exclude_from_target_product",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "get_southbound_flow": {
+      "decision": "exclude_from_target_product",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "get_block_trades": {
+      "decision": "exclude_from_target_product",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "get_shareholder_count": {
+      "decision": "exclude_from_target_product",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "get_lockup_expiry": {
+      "decision": "exclude_from_target_product",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "iwencai_search": {
+      "decision": "exclude_from_target_product",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "get_fund_flow": {
+      "decision": "quarantine_until_us_crypto_implementation_proven",
+      "phase": "P2",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "get_margin_trading": {
+      "decision": "quarantine_until_us_crypto_implementation_proven",
+      "phase": "P2",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "runtime_observed": true,
+      "reason": "Original manifest explicitly excludes this outside-scope capability."
+    },
+    "alpha_compare": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q04"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Compare only alphas whose universe, columns and warmup support the selected US/crypto instruments.",
+      "runtime_observed": true
+    },
+    "analyze_image": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private skill/code workspace needs owner identity and a separate execution sandbox; no arbitrary path accepted.",
+      "runtime_observed": true
+    },
+    "edit_file": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private skill/code workspace needs owner identity and a separate execution sandbox; no arbitrary path accepted.",
+      "runtime_observed": true
+    },
+    "save_skill": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private skill/code workspace needs owner identity and a separate execution sandbox; no arbitrary path accepted.",
+      "runtime_observed": true
+    },
+    "patch_skill": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private skill/code workspace needs owner identity and a separate execution sandbox; no arbitrary path accepted.",
+      "runtime_observed": true
+    },
+    "delete_skill": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private skill/code workspace needs owner identity and a separate execution sandbox; no arbitrary path accepted.",
+      "runtime_observed": true
+    },
+    "skill_file": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private skill/code workspace needs owner identity and a separate execution sandbox; no arbitrary path accepted.",
+      "runtime_observed": true
+    },
+    "scaffold_signal_engine": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private skill/code workspace needs owner identity and a separate execution sandbox; no arbitrary path accepted.",
+      "runtime_observed": true
+    },
+    "remember": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI05"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private cross-session memory and context need owner isolation; image interpretation additionally needs an explicitly budgeted model.",
+      "runtime_observed": true
+    },
+    "compact": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI05"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private cross-session memory and context need owner isolation; image interpretation additionally needs an explicitly budgeted model.",
+      "runtime_observed": true
+    },
+    "session_search": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI05"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private cross-session memory and context need owner isolation; image interpretation additionally needs an explicitly budgeted model.",
+      "runtime_observed": true
+    },
+    "financial_rigor": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "Q08"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Deterministic decimal verification and report numeric audit are source code, not a data provider.",
+      "runtime_observed": true
+    },
+    "report_audit": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "Q08"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Deterministic decimal verification and report numeric audit are source code, not a data provider.",
+      "runtime_observed": true
+    },
+    "create_hypothesis": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "update_hypothesis": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "link_backtest": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "search_hypotheses": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "sdm_register": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "sdm_status": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "sdm_decay_scan": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "generate_backtest_config": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "link_autopilot_backtest": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research hypotheses, backtest linkage and strategy decay monitoring require owned persistent storage and verified samples.",
+      "runtime_observed": true
+    },
+    "run_research_autopilot": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Research autopilot requires owned hypotheses, bounded worker budget and cancellation.",
+      "runtime_observed": true
+    },
+    "scheduled_research": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI04"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Scheduled tool produces proposals; persistent jobs require owner identity, explicit commit, timezone and idempotency.",
+      "runtime_observed": true
+    },
+    "options_payoff": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "US07"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Source implementations for European Black-Scholes theoretical pricing and expiry math; real US option chain remains separate.",
+      "runtime_observed": true
+    },
+    "options_pricing": {
+      "decision": "retain",
+      "phase": "P3",
+      "features": [
+        "US07"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Source implementations for European Black-Scholes theoretical pricing and expiry math; real US option chain remains separate.",
+      "runtime_observed": true
+    },
+    "pattern": {
+      "decision": "retain",
+      "phase": "P2",
+      "features": [
+        "Q01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Actual runtime name for pattern detection; accept only verified continuous bars.",
+      "runtime_observed": true
+    },
+    "portfolio_risk_xray": {
+      "decision": "conditional",
+      "phase": "P3",
+      "features": [
+        "Q06"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Risk calculation needs verified prices and explicit currency/calendar/benchmark; forbid implicit source fallback.",
+      "runtime_observed": true
+    },
+    "portfolio_summary": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private connector snapshot or read needs owner identity, a real configured connector and explicit capability validation.",
+      "runtime_observed": true
+    },
+    "trading_rehab": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private connector snapshot or read needs owner identity, a real configured connector and explicit capability validation.",
+      "runtime_observed": true
+    },
+    "trading_capital_flow": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private connector snapshot or read needs owner identity, a real configured connector and explicit capability validation.",
+      "runtime_observed": true
+    },
+    "trading_capital_distribution": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private connector snapshot or read needs owner identity, a real configured connector and explicit capability validation.",
+      "runtime_observed": true
+    },
+    "trading_history_deals": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private connector snapshot or read needs owner identity, a real configured connector and explicit capability validation.",
+      "runtime_observed": true
+    },
+    "trading_acc_cash_flow": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private connector snapshot or read needs owner identity, a real configured connector and explicit capability validation.",
+      "runtime_observed": true
+    },
+    "trading_financials": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private connector snapshot or read needs owner identity, a real configured connector and explicit capability validation.",
+      "runtime_observed": true
+    },
+    "etoro_search_instruments": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR01"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Private connector snapshot or read needs owner identity, a real configured connector and explicit capability validation.",
+      "runtime_observed": true
+    },
+    "trading_earnings_calendar": {
+      "decision": "conditional",
+      "phase": "P2",
+      "features": [
+        "US09"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "US connector earnings calendar exists; requires configured connector and US-only symbol validation.",
+      "runtime_observed": true
+    },
+    "trading_place_order": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Order mutation source exists; disabled. Paper sandbox must be independently validated. No live authorization in this request.",
+      "runtime_observed": true
+    },
+    "trading_cancel_order": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Order mutation source exists; disabled. Paper sandbox must be independently validated. No live authorization in this request.",
+      "runtime_observed": true
+    },
+    "etoro_close_position": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Order mutation source exists; disabled. Paper sandbox must be independently validated. No live authorization in this request.",
+      "runtime_observed": true
+    },
+    "etoro_cancel_close_order": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Order mutation source exists; disabled. Paper sandbox must be independently validated. No live authorization in this request.",
+      "runtime_observed": true
+    },
+    "etoro_edit_position_stops": {
+      "decision": "conditional",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Order mutation source exists; disabled. Paper sandbox must be independently validated. No live authorization in this request.",
+      "runtime_observed": true
+    },
+    "propose_mandate_profiles": {
+      "decision": "exclude",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Live mandate/copy orchestration is outside authorized dashboard/paper scope and is never exposed.",
+      "runtime_observed": true
+    },
+    "etoro_copy_precheck": {
+      "decision": "exclude",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Live mandate/copy orchestration is outside authorized dashboard/paper scope and is never exposed.",
+      "runtime_observed": true
+    },
+    "etoro_copy_start": {
+      "decision": "exclude",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Live mandate/copy orchestration is outside authorized dashboard/paper scope and is never exposed.",
+      "runtime_observed": true
+    },
+    "etoro_copy_poll": {
+      "decision": "exclude",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Live mandate/copy orchestration is outside authorized dashboard/paper scope and is never exposed.",
+      "runtime_observed": true
+    },
+    "etoro_copy_close": {
+      "decision": "exclude",
+      "phase": "P5",
+      "features": [
+        "TR02"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Live mandate/copy orchestration is outside authorized dashboard/paper scope and is never exposed.",
+      "runtime_observed": true
+    },
+    "bash": {
+      "decision": "exclude",
+      "phase": "P6",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "OS process-control is not a website capability; no shell or background process endpoints.",
+      "runtime_observed": false
+    },
+    "background_run": {
+      "decision": "exclude",
+      "phase": "P6",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "OS process-control is not a website capability; no shell or background process endpoints.",
+      "runtime_observed": false
+    },
+    "check_background": {
+      "decision": "exclude",
+      "phase": "P6",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "OS process-control is not a website capability; no shell or background process endpoints.",
+      "runtime_observed": true
+    },
+    "cancel_background": {
+      "decision": "exclude",
+      "phase": "P6",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "OS process-control is not a website capability; no shell or background process endpoints.",
+      "runtime_observed": false
+    },
+    "get_taiwan_stock_data": {
+      "decision": "exclude",
+      "phase": "P6",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "Taiwan equity data is outside US/crypto scope.",
+      "runtime_observed": false
+    },
+    "add": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "Decorator is in an upstream test fixture, not a shipped finance tool.",
+      "runtime_observed": false
+    },
+    "echo": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "Decorator is in an upstream test fixture, not a shipped finance tool.",
+      "runtime_observed": false
+    },
+    "fail": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "Decorator is in an upstream test fixture, not a shipped finance tool.",
+      "runtime_observed": false
+    },
+    "get_metrics": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "Decorator is in an upstream test fixture, not a shipped finance tool.",
+      "runtime_observed": false
+    },
+    "get_portfolio": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "Decorator is in an upstream test fixture, not a shipped finance tool.",
+      "runtime_observed": false
+    },
+    "say": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "Decorator is in an upstream test fixture, not a shipped finance tool.",
+      "runtime_observed": false
+    },
+    "args": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "SKILL.md configuration-table field, not a tool; retained as an audited inventory candidate.",
+      "runtime_observed": false
+    },
+    "command": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "SKILL.md configuration-table field, not a tool; retained as an audited inventory candidate.",
+      "runtime_observed": false
+    },
+    "env": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "SKILL.md configuration-table field, not a tool; retained as an audited inventory candidate.",
+      "runtime_observed": false
+    },
+    "headers": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "SKILL.md configuration-table field, not a tool; retained as an audited inventory candidate.",
+      "runtime_observed": false
+    },
+    "type": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "SKILL.md configuration-table field, not a tool; retained as an audited inventory candidate.",
+      "runtime_observed": false
+    },
+    "url": {
+      "decision": "exclude",
+      "phase": "P0",
+      "features": [],
+      "runtime_default": "not_exposed",
+      "reason": "SKILL.md configuration-table field, not a tool; retained as an audited inventory candidate.",
+      "runtime_observed": false
+    },
+    "rapid": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI05"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Named OCR backend, not a BaseTool. User documents require upload isolation; llm-vision additionally requires a configured, budgeted model; rapid requires optional OCR packages.",
+      "runtime_observed": false
+    },
+    "llm-vision": {
+      "decision": "conditional",
+      "phase": "P4",
+      "features": [
+        "AI05"
+      ],
+      "runtime_default": "not_exposed",
+      "reason": "Named OCR backend, not a BaseTool. User documents require upload isolation; llm-vision additionally requires a configured, budgeted model; rapid requires optional OCR packages.",
+      "runtime_observed": false
+    }
+  },
+  "features": [
+    {
+      "id": "US01",
+      "name": "美股 / ETF 标的识别、搜索、自选池",
+      "markets": "US",
+      "phase": "P1",
+      "tools": "get_market_data search_symbol",
+      "source_roots": "agent/src/market_data.py; agent/backtest/loaders/",
+      "evidence": "已审阅市场识别和行情入口；完整搜索实现待本地枚举",
+      "acceptance": "保留现有 api/quote.js、api/history.js；新增显式 instrumentId，不从 ticker 猜全球市场"
+    },
+    {
+      "id": "US02",
+      "name": "OHLCV、历史区间、数据源降级与来源信息",
+      "markets": "US+Crypto",
+      "phase": "P1",
+      "tools": "get_market_data",
+      "source_roots": "agent/src/market_data.py; agent/backtest/loaders/",
+      "evidence": "已审阅关键实现",
+      "acceptance": "本包日线桥已实现；盘中、周月线和更多供应商在后续阶段；禁止抽样 OHLC 当连续 K 线"
+    },
+    {
+      "id": "US03",
+      "name": "公司档案、估值、分析师预期",
+      "markets": "US",
+      "phase": "P2",
+      "tools": "get_stock_profile",
+      "source_roots": "agent/src/tools/; agent/mcp_server.py",
+      "evidence": "上游工具文档声明，函数定位由提取器生成",
+      "acceptance": "缺数据返回 unavailable，不能用 0 或 LLM 填空"
+    },
+    {
+      "id": "US04",
+      "name": "SEC 文件、三张财务报表、时点安全基本面",
+      "markets": "US",
+      "phase": "P2",
+      "tools": "get_sec_filings get_financial_statements get_fundamentals",
+      "source_roots": "agent/src/tools/; agent/backtest/loaders/",
+      "evidence": "上游工具文档声明",
+      "acceptance": "保存 filedAt、报告期、原文来源；同一报告截止日的年度/季度不可混用"
+    },
+    {
+      "id": "US05",
+      "name": "13F 机构持仓及环比、ETF 穿透",
+      "markets": "US",
+      "phase": "P2",
+      "tools": "get_institutional_holdings etf_holdings",
+      "source_roots": "agent/src/tools/",
+      "evidence": "上游工具文档声明",
+      "acceptance": "展示披露滞后；ETF 穿透不是实时持仓；只接美股适用分支"
+    },
+    {
+      "id": "US06",
+      "name": "新闻、市场筛选、行业比较",
+      "markets": "US+Crypto",
+      "phase": "P2",
+      "tools": "get_stock_news screen_market get_sector_info get_research_reports",
+      "source_roots": "agent/src/tools/",
+      "evidence": "上游工具文档声明，逐工具市场适用性待验证",
+      "acceptance": "不能把 A 股行业资金流或国内研报接口更名为美股接口"
+    },
+    {
+      "id": "US07",
+      "name": "期权链、Black–Scholes、Greeks、多腿到期收益",
+      "markets": "US",
+      "phase": "P3",
+      "tools": "get_options_chain analyze_options analyze_options_payoff",
+      "source_roots": "agent/src/quantlib/; agent/backtest/engines/options_portfolio.py",
+      "evidence": "工具文档声明 + 源文件存在性",
+      "acceptance": "理论定价和真实报价分栏；注明欧式假设和美式期权局限"
+    },
+    {
+      "id": "US08",
+      "name": "DCF、可比估值、三表情景模型",
+      "markets": "US",
+      "phase": "P3",
+      "tools": "quantlib_call",
+      "source_roots": "agent/src/quantlib/; agent/src/tools/",
+      "evidence": "README/工具层声明；具体入口待枚举",
+      "acceptance": "缺参数必须 NOT_RUNNABLE，不补造增长率或资本成本"
+    },
+    {
+      "id": "CR01",
+      "name": "加密货币交易对、交易所、现货历史行情",
+      "markets": "Crypto",
+      "phase": "P1",
+      "tools": "get_market_data search_symbol",
+      "source_roots": "agent/src/market_data.py; agent/backtest/loaders/",
+      "evidence": "已审阅入口，支持源目录已确认",
+      "acceptance": "本包初始仅 OKX 三个 USDT 现货对；更多交易所/计价币列为扩展而非删除"
+    },
+    {
+      "id": "CR02",
+      "name": "OKX / Binance / CCXT 多交易所数据",
+      "markets": "Crypto",
+      "phase": "P2",
+      "tools": "get_market_data",
+      "source_roots": "agent/backtest/loaders/",
+      "evidence": "工具文档声明 + loaders 存在性",
+      "acceptance": "同币不同交易所不得静默替换；地域不可用返回状态，不能绕过限制"
+    },
+    {
+      "id": "CR03",
+      "name": "L2 盘口、价差、深度不平衡、冲击成本",
+      "markets": "Crypto",
+      "phase": "P2",
+      "tools": "orderbook_depth",
+      "source_roots": "agent/src/tools/",
+      "evidence": "上游工具文档声明",
+      "acceptance": "不是历史完整订单簿或清算热力图；必须显示交易所和快照时间"
+    },
+    {
+      "id": "CR04",
+      "name": "情绪文本评分与恐惧贪婪指数",
+      "markets": "Crypto+US",
+      "phase": "P2",
+      "tools": "sentiment",
+      "source_roots": "agent/src/tools/",
+      "evidence": "上游工具文档声明",
+      "acceptance": "本地词典评分不等于 LLM 判断；美国股票与 crypto 指数不可混同"
+    },
+    {
+      "id": "CR05",
+      "name": "永续合约回测：费用、资金费、逐仓/全仓、强平",
+      "markets": "Crypto perpetual",
+      "phase": "P3",
+      "tools": "backtest",
+      "source_roots": "agent/backtest/engines/crypto.py; agent/backtest/perpetual_*",
+      "evidence": "已审阅 CryptoEngine 关键实现",
+      "acceptance": "默认关闭；perpetual_strict 要 funding_mode=data；明确 spot ≠ perp；缺历史风险输入则拒绝严格回测"
+    },
+    {
+      "id": "CR06",
+      "name": "合约证据事件、保证金与对账验证",
+      "markets": "Crypto perpetual",
+      "phase": "P3",
+      "tools": "backtest",
+      "source_roots": "agent/backtest/perpetual_*; agent/backtest/binance_*",
+      "evidence": "引擎代码引用与源码路径已确认",
+      "acceptance": "保存成交/资金费/强平序列，严格模式不得降级成固定资金费又宣称真实"
+    },
+    {
+      "id": "CR07",
+      "name": "Funding/Basis、清算图、稳定币流、解锁与 DeFi 收益研究",
+      "markets": "Crypto",
+      "phase": "P4",
+      "tools": "load_skill run_swarm",
+      "source_roots": "agent/skills/; agent/src/swarm/",
+      "evidence": "主要为技能/团队研究范围，不保证有即用数据接口",
+      "acceptance": "逐项验证数据工具；没有数据源时明确“方法模板/需数据”，不能伪造图表"
+    },
+    {
+      "id": "Q01",
+      "name": "技术指标、图表形态识别",
+      "markets": "US+Crypto",
+      "phase": "P2",
+      "tools": "technical_indicators pattern_recognition",
+      "source_roots": "agent/src/tools/; agent/src/quantlib/",
+      "evidence": "工具文档声明",
+      "acceptance": "复用上游实现；RSI/MACD 等先计算在连续原始 bars 上，再采样展示"
+    },
+    {
+      "id": "Q02",
+      "name": "通用美股回测、仓位、滑点与收益指标",
+      "markets": "US",
+      "phase": "P3",
+      "tools": "backtest",
+      "source_roots": "agent/backtest/engines/global_equity.py; agent/backtest/engines/base.py",
+      "evidence": "已审阅 GlobalEquityEngine",
+      "acceptance": "显式 market=us；上游 US commission=0 是简化，需补实际费用、借券与成交约束"
+    },
+    {
+      "id": "Q03",
+      "name": "现货策略回测",
+      "markets": "Crypto spot",
+      "phase": "P3",
+      "tools": "backtest",
+      "source_roots": "agent/backtest/engines/crypto.py (不得直接代用)",
+      "evidence": "不是已确认独立现货引擎；需要适配并验证",
+      "acceptance": "禁止因 leverage=1 就把永续引擎标为 spot；无借贷/无资金费/无强平的现货成交账本单测"
+    },
+    {
+      "id": "Q04",
+      "name": "因子 IC/IR、分层回测、Alpha Zoo",
+      "markets": "US+Crypto*",
+      "phase": "P3",
+      "tools": "factor_analysis alpha_zoo alpha_bench",
+      "source_roots": "agent/src/factors/; agent/backtest/factor_costs.py",
+      "evidence": "工具文档声明 + 模块存在性",
+      "acceptance": "按 __alpha_meta__ universe、columns、warmup 过滤；GTJA191 中国专用；股票基本面因子不自动支持 crypto"
+    },
+    {
+      "id": "Q05",
+      "name": "策略浏览、查询、证据缓存与策略发现",
+      "markets": "US+Crypto",
+      "phase": "P3",
+      "tools": "list_strategies query_strategies get_strategy_evidence refresh_strategy_evidence",
+      "source_roots": "agent/src/strategy_store/; agent/src/strategy_discovery/",
+      "evidence": "工具文档声明 + 模块存在性",
+      "acceptance": "来源、样本区间、训练/验证集、费用假设与证据行均需留存"
+    },
+    {
+      "id": "Q06",
+      "name": "组合、相关性、风险画像与归因",
+      "markets": "US+Crypto",
+      "phase": "P3",
+      "tools": "quantlib_call cashflow_performance",
+      "source_roots": "agent/src/portfolio/; agent/src/entities/; agent/backtest/correlation.py; agent/src/quantlib/",
+      "evidence": "模块存在性与工具文档声明",
+      "acceptance": "USD 与 USDT 不自动按 1:1 合并；时区/交易日/缺失值/基准口径显式"
+    },
+    {
+      "id": "Q07",
+      "name": "现金流绩效 XIRR/MOIC/DPI/TVPI/TWR/Modified Dietz",
+      "markets": "US+Crypto",
+      "phase": "P3",
+      "tools": "cashflow_performance",
+      "source_roots": "agent/src/entities/; agent/src/quantlib/",
+      "evidence": "上游工具文档声明",
+      "acceptance": "个人现金流不得写入 public/、静态 JSON 或 CDN"
+    },
+    {
+      "id": "AI01",
+      "name": "研究会话、目标、证据、历史与产物",
+      "markets": "US+Crypto",
+      "phase": "P4",
+      "tools": "start_research_goal get_research_goal add_goal_evidence update_research_goal_status read_run_artifact",
+      "source_roots": "agent/src/session/; agent/src/goal/; agent/src/governance/; agent/src/api/",
+      "evidence": "会话/路由已审阅，模块存在性确认",
+      "acceptance": "需要所有者身份及 object-level authorization；现有 ARENA_ADMIN_KEY 只是配额门，不是用户系统"
+    },
+    {
+      "id": "AI02",
+      "name": "可组合技能、提示词、策略代码生成",
+      "markets": "US+Crypto",
+      "phase": "P4",
+      "tools": "list_skills load_skill read_file write_file",
+      "source_roots": "agent/skills/; agent/src/skills/; agent/src/security/",
+      "evidence": "工具文档声明",
+      "acceptance": "通用知识保留；工作目录隔离；生成代码只能在无交易密钥的隔离 worker 中跑"
+    },
+    {
+      "id": "AI03",
+      "name": "多 Agent Swarm、团队预设与重试",
+      "markets": "US+Crypto",
+      "phase": "P4",
+      "tools": "list_swarm_presets run_swarm get_swarm_status get_run_result list_runs reap_stale_runs retry_run",
+      "source_roots": "agent/src/swarm/",
+      "evidence": "工具文档声明 + 模块存在性",
+      "acceptance": "每用户预算/并发/token/重试上限；一次点击不是无限团队循环"
+    },
+    {
+      "id": "AI04",
+      "name": "定时研究、时区、报告和审计",
+      "markets": "US+Crypto",
+      "phase": "P4",
+      "tools": "read_run_artifact",
+      "source_roots": "agent/src/scheduled_research/; agent/src/governance/; agent/src/api/",
+      "evidence": "API assembler 引用已确认",
+      "acceptance": "持久 job、幂等、防 DST 重复；公共发布必须单独审批脱敏"
+    },
+    {
+      "id": "SH01",
+      "name": "交易日志诊断 → 影子策略 → 回测 → 报告 → 信号",
+      "markets": "US+Crypto",
+      "phase": "P4",
+      "tools": "analyze_trade_journal extract_shadow_strategy run_shadow_backtest render_shadow_report scan_shadow_signals",
+      "source_roots": "agent/src/shadow_account/; agent/src/tools/",
+      "evidence": "上游工具文档明确完整研究链路",
+      "acceptance": "Shadow Account 是反事实研究，不等于实时 paper broker，也不是实盘执行"
+    },
+    {
+      "id": "TR01",
+      "name": "券商/交易所连接配置与只读账户",
+      "markets": "US+Crypto",
+      "phase": "P5",
+      "tools": "trading_connections trading_select_connection trading_check trading_account trading_positions trading_orders trading_quote trading_history",
+      "source_roots": "agent/src/trading/; agent/src/live/; agent/src/api/",
+      "evidence": "工具文档及 API assembler 确认",
+      "acceptance": "按 connector 的实际 capabilities 区分 paper / live-readonly / mandate-gated；不能“一键全开”"
+    },
+    {
+      "id": "TR02",
+      "name": "Paper execution / 实盘订单权限路径",
+      "markets": "US+Crypto",
+      "phase": "P5",
+      "tools": "runtime discovery required",
+      "source_roots": "agent/src/trading/; agent/src/live/",
+      "evidence": "确认存在 live 路由；不同 connector 能力需逐一实测",
+      "acceptance": "默认 disabled；本包不挂载订单路由；先 paper 和 kill switch，再由用户明确批准 live；密钥禁提现"
+    },
+    {
+      "id": "CTX01",
+      "name": "FRED 宏观、网页、文档、论文和预测市场证据",
+      "markets": "US+Crypto context",
+      "phase": "P4",
+      "tools": "get_macro_series web_search read_url read_document research_papers prediction_market",
+      "source_roots": "agent/src/tools/",
+      "evidence": "上游工具文档声明",
+      "acceptance": "仅作研究上下文；URL 读取防 SSRF、上传隔离；预测市场概率不是股价预测"
+    },
+    {
+      "id": "EXT01",
+      "name": "可选付费数据市场 / 外部 MCP 扩展",
+      "markets": "US+Crypto optional",
+      "phase": "P6",
+      "tools": "qveris_search qveris_inspect qveris_execute",
+      "source_roots": "agent/src/providers/; agent/src/tools/; agent/mcp_server.py",
+      "evidence": "上游工具文档声明",
+      "acceptance": "默认不启用；付费需运营者配置预算；禁止用户传 command/args/env/mcpServers"
+    },
+    {
+      "id": "US09",
+      "name": "美国财报日历、预期与事件研究",
+      "markets": "US",
+      "phase": "P2",
+      "tools": "trading_earnings_calendar",
+      "source_roots": "agent/src/tools/trading_tool.py; agent/src/trading/",
+      "evidence": "runtime class + schema",
+      "acceptance": "需真实 US connector；不是免费公共日历承诺"
+    },
+    {
+      "id": "Q08",
+      "name": "Decimal 数值验证与报告审计",
+      "markets": "US+Crypto",
+      "phase": "P3",
+      "tools": "financial_rigor report_audit",
+      "source_roots": "agent/src/tools/financial_rigor_tool.py; agent/src/tools/report_audit_tool.py",
+      "evidence": "runtime class + schema",
+      "acceptance": "确定性计算与数据采集分离；来源数值不补造"
+    },
+    {
+      "id": "Q09",
+      "name": "研究假设、回测关联与策略衰减",
+      "markets": "US+Crypto",
+      "phase": "P3",
+      "tools": "create_hypothesis update_hypothesis link_backtest search_hypotheses sdm_register sdm_status sdm_decay_scan",
+      "source_roots": "agent/src/tools/hypothesis_tool.py; agent/src/tools/sdm_tool.py",
+      "evidence": "runtime class + schema",
+      "acceptance": "持久写入先有 owner identity；严格样本/成本/时点验证"
+    },
+    {
+      "id": "AI05",
+      "name": "跨会话记忆与多模态研究",
+      "markets": "US+Crypto",
+      "phase": "P4",
+      "tools": "remember compact session_search analyze_image",
+      "source_roots": "agent/src/tools/; agent/src/memory/",
+      "evidence": "runtime class + schema",
+      "acceptance": "个人记忆按 owner 隔离；图片解释需要预算化模型、不是行情源"
+    }
+  ],
+  "gate": "Unknown tools from local AST / docs / runtime registry must be classified. Source inventory is not proof of production readiness."
+}

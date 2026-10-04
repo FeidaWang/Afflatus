@@ -1,0 +1,18 @@
+.vibe-markets { font: inherit; color: inherit; border: 1px solid currentColor; border-radius: 1rem; padding: clamp(1rem, 3vw, 2rem); contain: layout style; }
+.vibe-markets h2 { margin-block: 0 .5rem; }
+.vibe-markets__controls { display: flex; flex-wrap: wrap; gap: 1rem; margin-block: 1.5rem; }
+.vibe-markets__controls label { display: grid; gap: .4rem; min-width: min(100%, 10rem); flex: 1; }
+.vibe-markets select { font: inherit; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: .5rem; padding: .7rem; width: 100%; }
+.vibe-markets select option { color: CanvasText; background: Canvas; }
+.vibe-markets :focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.vibe-markets__muted { opacity: .75; font-size: .875rem; line-height: 1.65; overflow-wrap: anywhere; }
+.vibe-markets__status { min-height: 1.5em; }
+.vibe-markets__value { font-size: clamp(1.25rem, 3vw, 2rem); font-variant-numeric: tabular-nums; }
+.vibe-markets__chart { min-height: 10rem; display: grid; place-items: center; }
+.vibe-markets__chart svg { width: 100%; height: auto; display: block; }
+.vibe-markets__table { overflow-x: auto; }
+.vibe-markets table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.vibe-markets th, .vibe-markets td { text-align: end; padding: .6rem; border-bottom: 1px solid currentColor; white-space: nowrap; }
+.vibe-markets th:first-child, .vibe-markets td:first-child { text-align: start; }
+.vibe-markets summary { cursor: pointer; padding-block: 1rem; }
+@media (prefers-reduced-motion: reduce) { .vibe-markets * { scroll-behavior: auto; } }

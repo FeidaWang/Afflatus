@@ -1,0 +1,2 @@
+# Optional in-memory Chromium smoke test. Install your own local Chromium.
+playwright==1.57.0

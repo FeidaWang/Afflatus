@@ -1,0 +1,20 @@
+你现在在我的线上看板项目 Afflatus 工作区。请执行 integrations/vibe-us-crypto-kit/ 内的工作包；若解压目录不同，先定位 START_HERE.md。
+
+目标：从 HKUDS/Vibe-Trading 固定源码提取所有适用于 US stocks/ETF/美国期权研究和 Crypto（现货、永续研究）的能力，逐项接入现有看板。不是另起一套站点，也不是只写计划。将源码能力、技能模板、需要额外数据的项目严格区分。
+
+先阅读宿主根目录的开发指引和 git diff，然后读取本包 START_HERE.md、manifests/upstream-lock.json、manifests/capabilities.json、docs/01_FEATURE_MATRIX.md、docs/04_PRIORITIZED_ROADMAP.md。当前已观察宿主是 Vite MPA/React，不是 Next.js；以实际工作区为准。
+
+请直接执行 P0→P1→后续各阶段，每个模块通过对应验收再继续：
+1. 固定并校验上游 SHA 与关键 blob；运行 bootstrap_upstream.py 和 inventory_upstream.py。不能默默换 main；网络/权限导致不能读取时记录真实阻塞，不编造源码。
+2. 在隔离环境补运行时 tools/API/frontend/skills 全量清单，与 capabilities 做差集。新发现的 US/Crypto 功能必须补入；不明确的保留 UNCLASSIFIED，不为通过测试而删除。
+3. 审阅 overlay 后非破坏性复制，保持现有 api/quote.js、api/history.js、Arena布局、导航、数据发布机制和全部质量门禁。不要引入 Next.js、第二个路由器、整套 Electron 或先做大重构。
+4. 先完成 US 与 Crypto spot 的真实数据日线闭环。源码里的 CryptoEngine 是永续模型，不得拿 leverage=1 假装现货。日线close不是实时quote；保留source/asOf/单位/复权信息；不得mock生产行情。
+5. 按矩阵迁移技术指标、SEC/财务/机构/ETF、新闻筛选、期权、因子策略与风险、回测、研究/Swarm/Shadow/定时报告、最后只读连接器与paper。能复用上游就不重写；技能没有数据时明确unavailable。
+6. 默认关闭公开新数据源、付费工具、实盘、shell、任意路径/URL/MCP配置；不给浏览器任何服务或交易密钥。需要个人数据的阶段先实现真实owner identity；ARENA_ADMIN_KEY只是配额门。
+7. 运行本包Python/Node测试，补真实loader契约测试和上游适用测试，再跑宿主unit/typecheck/build/站点门禁及桌面移动端浏览器验收。不得将离线mock测试声称为实网/上线测试。
+
+执行约束：不覆盖我已有改动；本地新分支工作；不自动push/deploy，不扩大线上可见范围，不开付费资源，不实盘下单。遇到依赖/配置阻塞先完成可做部分，并输出明确所缺的环境变量名称而非要求我重复已给信息。任何高级能力未实现必须在IMPLEMENTATION_STATUS.md标明，不做可点击的假功能。
+
+每一阶段交付：修改文件、真实通过/失败测试、功能ID状态、下一阶段。上下文不足时写HANDOVER.md记录commit、diff、测试、阻塞、下一条命令，禁止重新全仓扫描浪费预算。
+
+现在开始P0，随后实际完成P1代码集成，不要只返回新的路线图。

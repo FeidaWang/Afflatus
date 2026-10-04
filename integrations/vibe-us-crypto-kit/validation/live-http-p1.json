@@ -1,0 +1,75 @@
+{
+  "layer": "real_local_http_bff_bridge_pinned_loader",
+  "mocked": false,
+  "results": [
+    {
+      "instrument": "US:AAPL",
+      "status": 200,
+      "bars_count": 8,
+      "provenance": {
+        "source": "yahoo",
+        "requested_source": "yahoo",
+        "quote_currency": "USD",
+        "currency_basis": "provider_declared",
+        "adjustment": "split_dividend",
+        "volume_unit": "shares",
+        "bar_timezone": "America/New_York",
+        "date_label_basis": "exchange_session_date",
+        "quality": "complete_daily_bars",
+        "interval": "1D",
+        "bar_time_semantics": "provider_daily_bar_date_not_execution_timestamp",
+        "observed_at": "2026-10-04T14:25:14.218254+00:00",
+        "last_bar_date": "2025-01-14",
+        "delay_status": "unknown",
+        "is_realtime_quote": false,
+        "fallback_used": false
+      }
+    },
+    {
+      "instrument": "US:SPY",
+      "status": 200,
+      "bars_count": 8,
+      "provenance": {
+        "source": "yahoo",
+        "requested_source": "yahoo",
+        "quote_currency": "USD",
+        "currency_basis": "provider_declared",
+        "adjustment": "split_dividend",
+        "volume_unit": "shares",
+        "bar_timezone": "America/New_York",
+        "date_label_basis": "exchange_session_date",
+        "quality": "complete_daily_bars",
+        "interval": "1D",
+        "bar_time_semantics": "provider_daily_bar_date_not_execution_timestamp",
+        "observed_at": "2026-10-04T14:25:15.124315+00:00",
+        "last_bar_date": "2025-01-14",
+        "delay_status": "unknown",
+        "is_realtime_quote": false,
+        "fallback_used": false
+      }
+    },
+    {
+      "instrument": "CRYPTO:OKX:BTC-USDT:SPOT",
+      "status": 200,
+      "bars_count": 13,
+      "provenance": {
+        "source": "okx",
+        "requested_source": "okx",
+        "quote_currency": "USDT",
+        "currency_basis": "registered_instrument",
+        "adjustment": "na",
+        "volume_unit": null,
+        "bar_timezone": "UTC+08:00",
+        "date_label_basis": "UTC_bar_open_date",
+        "quality": "complete_daily_bars",
+        "interval": "1D",
+        "bar_time_semantics": "provider_daily_bar_date_not_execution_timestamp",
+        "observed_at": "2026-10-04T14:25:15.929104+00:00",
+        "last_bar_date": "2025-01-14",
+        "delay_status": "unknown",
+        "is_realtime_quote": false,
+        "fallback_used": false
+      }
+    }
+  ]
+}

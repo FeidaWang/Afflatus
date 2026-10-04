@@ -1,0 +1,23 @@
+{
+  "layer": "real_network_pinned_loader_and_host_normalizer",
+  "commit": "251b094320c1f97d1486626d3618113526914d4c",
+  "tested_at": "2026-10-04T14:20:13.993116+00:00",
+  "results": [
+    {
+      "instrument": "US:AAPL",
+      "status": "FAIL",
+      "code": "SourceUnavailable"
+    },
+    {
+      "instrument": "US:SPY",
+      "status": "FAIL",
+      "code": "SourceUnavailable"
+    },
+    {
+      "instrument": "CRYPTO:OKX:BTC-USDT:SPOT",
+      "status": "FAIL",
+      "code": "SourceUnavailable"
+    }
+  ],
+  "mocked": false
+}

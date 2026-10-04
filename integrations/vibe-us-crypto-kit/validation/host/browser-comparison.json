@@ -1,0 +1,8 @@
+{
+  "baseline_failed": 54,
+  "integrated_failed": 54,
+  "new_failures": [],
+  "removed_failures": [],
+  "baseline_source": "c7901191 Arena entry/App loaded via Vite pre-load override; all other browser source files unchanged",
+  "mocked_market_data": false
+}

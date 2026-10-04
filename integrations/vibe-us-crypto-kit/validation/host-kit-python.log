@@ -1,0 +1,9 @@
+........................................................................ [ 80%]
+...............sss                                                       [100%]
+=============================== warnings summary ===============================
+integrations/vibe-us-crypto-kit/.venv-tests/lib/python3.12/site-packages/starlette/testclient.py:45
+  /Users/feida/.codex/worktrees/5615/afflatus/integrations/vibe-us-crypto-kit/.venv-tests/lib/python3.12/site-packages/starlette/testclient.py:45: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+87 passed, 3 skipped, 1 warning in 0.87s

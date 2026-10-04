@@ -19,3 +19,10 @@ data/city/work/
 artifacts/
 content-drafts/
 scripts/fonts-src/
+
+# Local source extraction and bridge runtime
+services/vibe-bridge/*.egg-info/
+services/vibe-bridge/**/__pycache__/
+
+# Temporary browser CLI sessions
+.playwright-cli/

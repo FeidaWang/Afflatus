@@ -1,0 +1,22 @@
+{
+  "repository": "https://github.com/HKUDS/Vibe-Trading.git",
+  "commit": "251b094320c1f97d1486626d3618113526914d4c",
+  "inspected_on": "2026-10-05",
+  "sentinel_blobs": {
+    "LICENSE": "08701c0ee954c73edbc0d64178641cadd7faf58a",
+    "agent/api_server.py": "304b4164ad2902d5d25a681cbf8a5635578a137e",
+    "agent/src/market_data.py": "f2864a7de8e3edcad64e50686a2c0b3240abaecd",
+    "agent/backtest/engines/crypto.py": "8bfcf6b4059a33ca3b203fbc569190a7e7382792",
+    "agent/backtest/engines/global_equity.py": "b7ae6ffce2a5456b53a80c698140f9c1dbd118b2"
+  },
+  "host_repository": "https://github.com/FeidaWang/Afflatus",
+  "host_observed": {
+    "framework": "Vite MPA",
+    "vite": "^8.0.14",
+    "react": "^19.2.0",
+    "route_manifest": "src/config/siteManifest.js",
+    "integration_candidate": "arena.html",
+    "existing_data_endpoints": ["api/quote.js", "api/history.js", "api/treasury-yields.js"]
+  },
+  "notes": "Pin and sentinel validation are mandatory. A mismatch stops extraction; do not silently fetch latest. Full upstream source is NOT embedded in this kit."
+}

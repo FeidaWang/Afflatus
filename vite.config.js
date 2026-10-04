@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'path';
 import { BUILD_ROUTES } from './src/config/siteManifest.js';
+import { vibeDevPlugin } from './scripts/vibe-dev-plugin.mjs';
 
 const buildInputs = Object.fromEntries(
   BUILD_ROUTES.map((route) => [route.id, resolve(import.meta.dirname, route.file)]),
@@ -41,6 +42,7 @@ export default defineConfig({
   appType: 'mpa',
   resolve: { dedupe: ['react', 'react-dom'] },
   plugins: [
+    vibeDevPlugin(),
     {
       name: 'static-404-recovery',
       configureServer(server) {

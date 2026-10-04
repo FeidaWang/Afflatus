@@ -147,3 +147,7 @@ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
+
+## Vibe-Trading research integration
+
+Private daily data adapters and technical indicator calls use HKUDS/Vibe-Trading at commit 251b094320c1f97d1486626d3618113526914d4c. Upstream MIT license and root NOTICE: integrations/vibe-us-crypto-kit/licenses/. No upstream font files are included. Original source remains an ignored, pinned local reference; code permission does not establish market-data redistribution permission.

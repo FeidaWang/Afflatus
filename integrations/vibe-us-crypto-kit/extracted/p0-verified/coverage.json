@@ -1,0 +1,10 @@
+{
+  "files": 2447,
+  "tools": 142,
+  "routes": 105,
+  "skills": 90,
+  "unclassified_tools": [],
+  "policy_tools_not_found": [],
+  "parse_errors": [],
+  "status": "REQUIRES_RUNTIME_REGISTRY_AND_SKILL_REVIEW"
+}

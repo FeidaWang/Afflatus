@@ -1,0 +1,316 @@
+TAP version 13
+# Subtest: registries agree across Python and JS
+ok 1 - registries agree across Python and JS
+  ---
+  duration_ms: 5.177448
+  type: 'test'
+  ...
+# Subtest: secret comparison is type-safe and refuses short configured keys
+ok 2 - secret comparison is type-safe and refuses short configured keys
+  ---
+  duration_ms: 0.317597
+  type: 'test'
+  ...
+# Subtest: valid query creates only fixed daily schema
+ok 3 - valid query creates only fixed daily schema
+  ---
+  duration_ms: 0.748087
+  type: 'test'
+  ...
+# Subtest: query rejects extra
+ok 4 - query rejects extra
+  ---
+  duration_ms: 0.335968
+  type: 'test'
+  ...
+# Subtest: query rejects array
+ok 5 - query rejects array
+  ---
+  duration_ms: 0.173653
+  type: 'test'
+  ...
+# Subtest: query rejects unsupported
+ok 6 - query rejects unsupported
+  ---
+  duration_ms: 0.13528
+  type: 'test'
+  ...
+# Subtest: query rejects perp
+ok 7 - query rejects perp
+  ---
+  duration_ms: 0.071758
+  type: 'test'
+  ...
+# Subtest: query rejects reverse
+ok 8 - query rejects reverse
+  ---
+  duration_ms: 0.09949
+  type: 'test'
+  ...
+# Subtest: query rejects future
+ok 9 - query rejects future
+  ---
+  duration_ms: 0.240086
+  type: 'test'
+  ...
+# Subtest: query rejects tooLong
+ok 10 - query rejects tooLong
+  ---
+  duration_ms: 3.43214
+  type: 'test'
+  ...
+# Subtest: query rejects impossibleDate
+ok 11 - query rejects impossibleDate
+  ---
+  duration_ms: 0.229708
+  type: 'test'
+  ...
+# Subtest: query rejects badDate
+ok 12 - query rejects badDate
+  ---
+  duration_ms: 0.073528
+  type: 'test'
+  ...
+# Subtest: default feature off does not fetch
+ok 13 - default feature off does not fetch
+  ---
+  duration_ms: 0.846545
+  type: 'test'
+  ...
+# Subtest: wrong method is blocked
+ok 14 - wrong method is blocked
+  ---
+  duration_ms: 0.122668
+  type: 'test'
+  ...
+# Subtest: anonymous is denied by default
+ok 15 - anonymous is denied by default
+  ---
+  duration_ms: 0.126114
+  type: 'test'
+  ...
+# Subtest: invalid private key is not accepted
+ok 16 - invalid private key is not accepted
+  ---
+  duration_ms: 0.181882
+  type: 'test'
+  ...
+# Subtest: public flag alone does not establish rights
+ok 17 - public flag alone does not establish rights
+  ---
+  duration_ms: 3.249953
+  type: 'test'
+  ...
+# Subtest: approved public allowlist can read only explicitly included id
+ok 18 - approved public allowlist can read only explicitly included id
+  ---
+  duration_ms: 44.095879
+  type: 'test'
+  ...
+# Subtest: server credential and fixed destination only, no caller credentials forwarded
+ok 19 - server credential and fixed destination only, no caller credentials forwarded
+  ---
+  duration_ms: 0.636087
+  type: 'test'
+  ...
+# Subtest: production rejects unsafe bridge URL http://private.example.invalid
+ok 20 - production rejects unsafe bridge URL http://private.example.invalid
+  ---
+  duration_ms: 0.286262
+  type: 'test'
+  ...
+# Subtest: production rejects unsafe bridge URL http://127.0.0.1:8765
+ok 21 - production rejects unsafe bridge URL http://127.0.0.1:8765
+  ---
+  duration_ms: 0.186805
+  type: 'test'
+  ...
+# Subtest: production rejects unsafe bridge URL https://user:pass@example.invalid
+ok 22 - production rejects unsafe bridge URL https://user:pass@example.invalid
+  ---
+  duration_ms: 0.126751
+  type: 'test'
+  ...
+# Subtest: production rejects unsafe bridge URL https://example.invalid/?x=1
+ok 23 - production rejects unsafe bridge URL https://example.invalid/?x=1
+  ---
+  duration_ms: 3.102738
+  type: 'test'
+  ...
+# Subtest: production rejects unsafe bridge URL https://example.invalid/\#secret
+ok 24 - production rejects unsafe bridge URL https://example.invalid/\#secret
+  ---
+  duration_ms: 0.157641
+  type: 'test'
+  ...
+# Subtest: local nonproduction HTTP explicitly allowed
+ok 25 - local nonproduction HTTP explicitly allowed
+  ---
+  duration_ms: 0.56163
+  type: 'test'
+  ...
+# Subtest: unconfigured server token is not open
+ok 26 - unconfigured server token is not open
+  ---
+  duration_ms: 0.222946
+  type: 'test'
+  ...
+# Subtest: network failures return generic error without endpoint/secret
+ok 27 - network failures return generic error without endpoint/secret
+  ---
+  duration_ms: 1.516483
+  type: 'test'
+  ...
+# Subtest: non-JSON is refused
+ok 28 - non-JSON is refused
+  ---
+  duration_ms: 0.51449
+  type: 'test'
+  ...
+# Subtest: oversized response is refused
+ok 29 - oversized response is refused
+  ---
+  duration_ms: 5.410032
+  type: 'test'
+  ...
+# Subtest: upstream 401 returns unavailable
+ok 30 - upstream 401 returns unavailable
+  ---
+  duration_ms: 0.434003
+  type: 'test'
+  ...
+# Subtest: upstream 403 returns unavailable
+ok 31 - upstream 403 returns unavailable
+  ---
+  duration_ms: 0.263277
+  type: 'test'
+  ...
+# Subtest: upstream 500 returns unavailable
+ok 32 - upstream 500 returns unavailable
+  ---
+  duration_ms: 4.321398
+  type: 'test'
+  ...
+# Subtest: upstream 503 returns unavailable
+ok 33 - upstream 503 returns unavailable
+  ---
+  duration_ms: 0.521153
+  type: 'test'
+  ...
+# Subtest: busy upstream is not reported as successful data
+ok 34 - busy upstream is not reported as successful data
+  ---
+  duration_ms: 0.341759
+  type: 'test'
+  ...
+# Subtest: quota is bounded per warm instance
+ok 35 - quota is bounded per warm instance
+  ---
+  duration_ms: 9.968975
+  type: 'test'
+  ...
+# Subtest: valid series is accepted
+ok 36 - valid series is accepted
+  ---
+  duration_ms: 0.120255
+  type: 'test'
+  ...
+# Subtest: series rejects realtime
+ok 37 - series rejects realtime
+  ---
+  duration_ms: 0.09394
+  type: 'test'
+  ...
+# Subtest: series rejects currency
+ok 38 - series rejects currency
+  ---
+  duration_ms: 0.055696
+  type: 'test'
+  ...
+# Subtest: series rejects source
+ok 39 - series rejects source
+  ---
+  duration_ms: 0.050126
+  type: 'test'
+  ...
+# Subtest: series rejects fallback
+ok 40 - series rejects fallback
+  ---
+  duration_ms: 0.198185
+  type: 'test'
+  ...
+# Subtest: series rejects identity
+ok 41 - series rejects identity
+  ---
+  duration_ms: 0.171709
+  type: 'test'
+  ...
+# Subtest: series rejects market
+ok 42 - series rejects market
+  ---
+  duration_ms: 0.073992
+  type: 'test'
+  ...
+# Subtest: series rejects nan
+ok 43 - series rejects nan
+  ---
+  duration_ms: 0.078553
+  type: 'test'
+  ...
+# Subtest: series rejects boolean
+ok 44 - series rejects boolean
+  ---
+  duration_ms: 0.063465
+  type: 'test'
+  ...
+# Subtest: series rejects badOHLC
+ok 45 - series rejects badOHLC
+  ---
+  duration_ms: 0.114779
+  type: 'test'
+  ...
+# Subtest: series rejects duplicate
+ok 46 - series rejects duplicate
+  ---
+  duration_ms: 0.071863
+  type: 'test'
+  ...
+# Subtest: series rejects empty
+ok 47 - series rejects empty
+  ---
+  duration_ms: 0.056008
+  type: 'test'
+  ...
+# Subtest: series rejects sampled
+ok 48 - series rejects sampled
+  ---
+  duration_ms: 0.062682
+  type: 'test'
+  ...
+# Subtest: series rejects badTimestamp
+ok 49 - series rejects badTimestamp
+  ---
+  duration_ms: 0.055912
+  type: 'test'
+  ...
+# Subtest: series rejects lastDate
+ok 50 - series rejects lastDate
+  ---
+  duration_ms: 0.106214
+  type: 'test'
+  ...
+# Subtest: series rejects outOfRange
+ok 51 - series rejects outOfRange
+  ---
+  duration_ms: 0.067118
+  type: 'test'
+  ...
+1..51
+# tests 51
+# suites 0
+# pass 51
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 319.909593

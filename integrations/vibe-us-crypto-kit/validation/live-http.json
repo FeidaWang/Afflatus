@@ -1,0 +1,105 @@
+{
+  "layer": "real_local_http_bff_bridge_pinned_loader_and_technical",
+  "mocked": false,
+  "results": [
+    {
+      "instrument": "US:AAPL",
+      "status": 200,
+      "bars_count": 64,
+      "provenance": {
+        "source": "yahoo",
+        "requested_source": "yahoo",
+        "quote_currency": "USD",
+        "currency_basis": "provider_declared",
+        "adjustment": "split_dividend",
+        "volume_unit": "shares",
+        "bar_timezone": "America/New_York",
+        "date_label_basis": "exchange_session_date",
+        "quality": "complete_daily_bars",
+        "interval": "1D",
+        "bar_time_semantics": "provider_daily_bar_date_not_execution_timestamp",
+        "observed_at": "2026-10-04T14:41:38.804943+00:00",
+        "last_bar_date": "2026-10-02",
+        "delay_status": "unknown",
+        "is_realtime_quote": false,
+        "fallback_used": false
+      },
+      "technical": {
+        "rsi_14": "available",
+        "macd": "available",
+        "bollinger": "available",
+        "sma_20": "available",
+        "sma_50": "available",
+        "sma_200": "unavailable",
+        "ema_20": "available",
+        "volume": "available"
+      }
+    },
+    {
+      "instrument": "US:SPY",
+      "status": 200,
+      "bars_count": 64,
+      "provenance": {
+        "source": "yahoo",
+        "requested_source": "yahoo",
+        "quote_currency": "USD",
+        "currency_basis": "provider_declared",
+        "adjustment": "split_dividend",
+        "volume_unit": "shares",
+        "bar_timezone": "America/New_York",
+        "date_label_basis": "exchange_session_date",
+        "quality": "complete_daily_bars",
+        "interval": "1D",
+        "bar_time_semantics": "provider_daily_bar_date_not_execution_timestamp",
+        "observed_at": "2026-10-04T14:41:40.194648+00:00",
+        "last_bar_date": "2026-10-02",
+        "delay_status": "unknown",
+        "is_realtime_quote": false,
+        "fallback_used": false
+      },
+      "technical": {
+        "rsi_14": "available",
+        "macd": "available",
+        "bollinger": "available",
+        "sma_20": "available",
+        "sma_50": "available",
+        "sma_200": "unavailable",
+        "ema_20": "available",
+        "volume": "available"
+      }
+    },
+    {
+      "instrument": "CRYPTO:OKX:BTC-USDT:SPOT",
+      "status": 200,
+      "bars_count": 91,
+      "provenance": {
+        "source": "okx",
+        "requested_source": "okx",
+        "quote_currency": "USDT",
+        "currency_basis": "registered_instrument",
+        "adjustment": "na",
+        "volume_unit": null,
+        "bar_timezone": "UTC+08:00",
+        "date_label_basis": "UTC_bar_open_date",
+        "quality": "complete_daily_bars",
+        "interval": "1D",
+        "bar_time_semantics": "provider_daily_bar_date_not_execution_timestamp",
+        "observed_at": "2026-10-04T14:41:41.572982+00:00",
+        "last_bar_date": "2026-10-02",
+        "delay_status": "unknown",
+        "is_realtime_quote": false,
+        "fallback_used": false
+      },
+      "technical": {
+        "rsi_14": "available",
+        "macd": "available",
+        "bollinger": "available",
+        "sma_20": "available",
+        "sma_50": "available",
+        "sma_200": "unavailable",
+        "ema_20": "available",
+        "volume": "available"
+      }
+    }
+  ]
+}

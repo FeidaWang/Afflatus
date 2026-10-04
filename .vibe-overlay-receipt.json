@@ -1,0 +1,64 @@
+{
+  "files": [
+    {
+      "path": "api/vibe-market.js",
+      "sha256": "11c1c4b80e77ef3ff36fd22429ac59a84600b65bd9c4fc9267493ff8ab7638d0"
+    },
+    {
+      "path": "services/vibe-bridge/.env.example",
+      "sha256": "1c17492d80b05fec78bf0ec578d7b784a3dbdd97170a36d7d78ea714e79cc15c"
+    },
+    {
+      "path": "services/vibe-bridge/bridge/__init__.py",
+      "sha256": "a4c3565c134f0d0c5d6c7f8f6c7309fd08ec269ea13b0f88da16c11b8eee9469"
+    },
+    {
+      "path": "services/vibe-bridge/bridge/app.py",
+      "sha256": "d86886af72b7ec5dd5a614c15fb11bc2f634f02b9bcbd18ff4a2eb9c26651d84"
+    },
+    {
+      "path": "services/vibe-bridge/bridge/instruments.json",
+      "sha256": "0a078e80dfdbd5d9d33ce96d06a91c7b1f6d81d5967475026e0e42b84396ad1c"
+    },
+    {
+      "path": "services/vibe-bridge/bridge/limits.py",
+      "sha256": "c3f7e06eeaeead350890a039be8e56d345e3a4f99daf7f12bce9830af6080e88"
+    },
+    {
+      "path": "services/vibe-bridge/bridge/models.py",
+      "sha256": "50ecdbc08425fb89f60ee3339b9cd74efeed8b6b1f62f12851a36df8fa0897a4"
+    },
+    {
+      "path": "services/vibe-bridge/bridge/normalize.py",
+      "sha256": "d54e3b059925c85128727c0cb6d5ad80275b3dfd94d81302f7c31e210ba4fd11"
+    },
+    {
+      "path": "services/vibe-bridge/bridge/provider.py",
+      "sha256": "50ceab996be0de35ab773af2585fd437fdb2ec935fe97d6d749b015d252399bc"
+    },
+    {
+      "path": "services/vibe-bridge/bridge/worker.py",
+      "sha256": "7adb75b9728b5c51f798e48e389b8e9c6213949a42b864e845a782facd527b73"
+    },
+    {
+      "path": "services/vibe-bridge/pyproject.toml",
+      "sha256": "e3c01af8ebb5976069e145ab35f5c53856541acfd17ec95958577eba3e3f413a"
+    },
+    {
+      "path": "src/features/vibe-markets/client.js",
+      "sha256": "f219dd433260de89579f87a373f78501ea115e6885bce5ad4525c0eb85ff6301"
+    },
+    {
+      "path": "src/features/vibe-markets/index.js",
+      "sha256": "15e296d76dab790354f9aaefbd2b31146a07a939aa0eef1b6ed3653ae65480d3"
+    },
+    {
+      "path": "src/features/vibe-markets/styles.css",
+      "sha256": "f8bbfa2b8583d7c00b045d96d3791bcef268adb1ef3a4e395ebae55c6f4ea22c"
+    },
+    {
+      "path": "src/lib/vibeBridgeProxy.mjs",
+      "sha256": "f5ce2b8d7964ee0832ad3462d752ae7677b0555667246919fac8c029905ad4aa"
+    }
+  ]
+}

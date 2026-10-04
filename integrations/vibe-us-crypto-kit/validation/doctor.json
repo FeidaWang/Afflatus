@@ -1,0 +1,15 @@
+{
+  "python": "3.12.13",
+  "python_ok": true,
+  "git": true,
+  "node": true,
+  "python_modules": {
+    "fastapi": true,
+    "pydantic": true,
+    "uvicorn": true,
+    "httpx": true,
+    "pytest": true
+  },
+  "upstream_present": true,
+  "mode": "offline; no production changes"
+}

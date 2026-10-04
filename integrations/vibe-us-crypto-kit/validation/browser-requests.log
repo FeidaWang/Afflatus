@@ -1,0 +1,9 @@
+### Result
+36. [GET] http://127.0.0.1:5175/api/vibe-market?instrument=US%3AAAPL&start=2026-07-06&end=2026-10-04 => [200] OK
+40. [GET] http://127.0.0.1:5175/api/vibe-market?instrument=US%3ASPY&start=2026-07-06&end=2026-10-04 => [200] OK
+41. [GET] http://127.0.0.1:5175/api/vibe-market?instrument=CRYPTO%3AOKX%3ABTC-USDT%3ASPOT&start=2026-07-06&end=2026-10-04 => [200] OK
+42. [GET] blob:http://127.0.0.1:5175/2bd009de-79d2-4e3c-b8d7-b53687d10d4f
+78. [GET] http://127.0.0.1:5175/api/vibe-market?instrument=US%3AAAPL&start=2026-07-06&end=2026-10-04 => [200] OK
+82. [GET] http://127.0.0.1:5175/api/vibe-market?instrument=CRYPTO%3AOKX%3ABTC-USDT%3ASPOT&start=2026-07-06&end=2026-10-04 => [200] OK
+
+Note: 76 static requests not shown, run with --static option to see them.

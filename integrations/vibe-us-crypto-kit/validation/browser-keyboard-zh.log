@@ -1,0 +1,238 @@
+### Page
+- Page URL: http://127.0.0.1:5175/arena.html
+- Page Title: 美股看板 · AFFLATUS
+- Console: 1 errors, 0 warnings
+### Snapshot
+```yaml
+- generic [ref=f5e1]:
+  - banner [ref=f5e2]:
+    - generic [ref=f5e3]:
+      - link "AFFLATUS 首页" [ref=f5e271] [cursor=pointer]:
+        - /url: /zh/
+        - generic [aria-hidden] [ref=f5e5]:
+          - generic [ref=f5e6]: AFFLATUS
+          - generic [ref=f5e7]:
+            - generic [ref=f5e8]: A
+            - generic [ref=f5e9]: I
+      - link "Switch to English" [ref=f5e272] [cursor=pointer]:
+        - /url: /en/arena.html
+        - text: EN
+      - button "菜单" [ref=f5e273] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f5e14]: ☰
+  - generic [ref=f5e16]:
+    - link "跳至主图表" [ref=f5e274] [cursor=pointer]:
+      - /url: "#main-content"
+    - main [ref=f5e18]:
+      - region [ref=f5e275]:
+        - generic [ref=f5e20]:
+          - paragraph [ref=f5e21]: WATCHLIST / 自选观察
+          - heading "把注意力，留给好公司。" [level=1] [ref=f5e276]
+          - paragraph [ref=f5e23]: 在噪声中，寻找真正创造价值的企业。
+        - generic [ref=f5e25]:
+          - strong [ref=f5e26]: 距美股下一次开盘
+          - paragraph [ref=f5e27]: 22:46:30
+          - generic [ref=f5e28]: 墨尔本 · 10月6日周二 GMT+11 00:30
+      - region "市场指数" [ref=f5e277]:
+        - button "标普 500 4,376.95 +53.71 +1.24%" [ref=f5e278] [cursor=pointer]:
+          - generic [ref=f5e31]: 标普 500
+          - generic [ref=f5e32]:
+            - strong [ref=f5e33]: 4,376.95
+            - generic [ref=f5e34]:
+              - text: "+53.71"
+              - generic [ref=f5e35]: +1.24%
+        - button "纳斯达克 13,689.57 +210.32 +1.56%" [ref=f5e279] [cursor=pointer]:
+          - generic [ref=f5e37]: 纳斯达克
+          - generic [ref=f5e38]:
+            - strong [ref=f5e39]: 13,689.57
+            - generic [ref=f5e40]:
+              - text: "+210.32"
+              - generic [ref=f5e41]: +1.56%
+        - button "道琼斯 33,507.50 +289.41 +0.87%" [ref=f5e280] [cursor=pointer]:
+          - generic [ref=f5e43]: 道琼斯
+          - generic [ref=f5e44]:
+            - strong [ref=f5e45]: 33,507.50
+            - generic [ref=f5e46]:
+              - text: "+289.41"
+              - generic [ref=f5e47]: +0.87%
+      - region "行情工作台" [ref=f5e281]:
+        - region [ref=f5e49]:
+          - heading "Micron Technology" [level=2] [ref=f5e50]
+          - paragraph [ref=f5e51]: MU · 美光科技 · 存储芯片
+          - generic [ref=f5e52]:
+            - strong [ref=f5e53]: "176.28"
+            - generic [ref=f5e54]: USD
+            - generic [ref=f5e55]: +3.43%
+          - paragraph [ref=f5e56]: 10月2日 16:00 ET
+          - generic "图表时间范围" [ref=f5e282]:
+            - button "D" [ref=f5e58] [cursor=pointer]
+            - button "M" [pressed] [ref=f5e59] [cursor=pointer]
+            - button "3M" [ref=f5e60] [cursor=pointer]
+            - button "YTD" [ref=f5e61] [cursor=pointer]
+            - button "Y" [ref=f5e62] [cursor=pointer]
+            - button "MAX" [ref=f5e63] [cursor=pointer]
+          - group "图表样式" [ref=f5e283]:
+            - button "烛形图" [pressed] [ref=f5e284] [cursor=pointer]
+            - button "折线图" [ref=f5e285] [cursor=pointer]
+          - paragraph [ref=f5e67]: USD
+          - img "Micron Technology M 示例图表，方向键查看行情。" [ref=f5e286]
+          - generic [ref=f5e70]:
+            - generic [ref=f5e71]: 2026-09-02
+            - slider "左右拖动查看历史日期" [ref=f5e287]: "1000"
+            - generic [ref=f5e73]: 2026-10-02
+            - button "放大" [ref=f5e288] [cursor=pointer]: ＋
+            - button "缩小" [ref=f5e289] [cursor=pointer]: −
+          - paragraph [ref=f5e76]: 示例走势 · USD
+          - generic [ref=f5e77]:
+            - heading "观察焦点" [level=3] [ref=f5e290]
+            - paragraph [ref=f5e79]: HBM 供给、存储周期与毛利率。
+        - complementary [ref=f5e291]:
+          - generic [ref=f5e81]:
+            - heading "我的自选" [level=2] [ref=f5e292]
+            - button "添加自选" [ref=f5e293] [cursor=pointer]
+          - generic [ref=f5e86]:
+            - generic [ref=f5e87]: 公司
+            - generic [ref=f5e88]: 价格 USD
+            - button "按今日涨跌降序排列" [ref=f5e294] [cursor=pointer]: 今日涨跌
+            - generic [ref=f5e92]: 近一月
+          - generic [ref=f5e93]:
+            - generic [ref=f5e94]:
+              - button "NVDA 英伟达, +2.58%" [ref=f5e95] [cursor=pointer]:
+                - generic [ref=f5e96]:
+                  - generic [ref=f5e97]: NVDA
+                  - generic [ref=f5e98]: NVIDIA Corporation
+                - strong [ref=f5e99]: "183.24"
+                - generic [ref=f5e100]: +2.58%
+              - button "移除自选 NVDA" [ref=f5e295] [cursor=pointer]
+            - generic [ref=f5e106]:
+              - button "MSFT 微软, +1.32%" [ref=f5e107] [cursor=pointer]:
+                - generic [ref=f5e108]:
+                  - generic [ref=f5e109]: MSFT
+                  - generic [ref=f5e110]: Microsoft Corporation
+                - strong [ref=f5e111]: "517.36"
+                - generic [ref=f5e112]: +1.32%
+              - button "移除自选 MSFT" [ref=f5e296] [cursor=pointer]
+            - generic [ref=f5e118]:
+              - button "AVGO 博通, +1.56%" [ref=f5e119] [cursor=pointer]:
+                - generic [ref=f5e120]:
+                  - generic [ref=f5e121]: AVGO
+                  - generic [ref=f5e122]: Broadcom Inc.
+                - strong [ref=f5e123]: "322.08"
+                - generic [ref=f5e124]: +1.56%
+              - button "移除自选 AVGO" [ref=f5e297] [cursor=pointer]
+            - generic [ref=f5e130]:
+              - button "MU 美光科技, +3.43%" [pressed] [ref=f5e131] [cursor=pointer]:
+                - generic [ref=f5e132]:
+                  - generic [ref=f5e133]: MU
+                  - generic [ref=f5e134]: Micron Technology
+                - strong [ref=f5e135]: "176.28"
+                - generic [ref=f5e136]: +3.43%
+              - button "移除自选 MU" [ref=f5e298] [cursor=pointer]
+            - generic [ref=f5e142]:
+              - button "TSM 台积电, +2.04%" [ref=f5e143] [cursor=pointer]:
+                - generic [ref=f5e144]:
+                  - generic [ref=f5e145]: TSM
+                  - generic [ref=f5e146]: Taiwan Semiconductor
+                - strong [ref=f5e147]: "311.06"
+                - generic [ref=f5e148]: +2.04%
+              - button "移除自选 TSM" [ref=f5e299] [cursor=pointer]
+            - generic [ref=f5e154]:
+              - button "VRT 维谛技术, −0.70%" [ref=f5e155] [cursor=pointer]:
+                - generic [ref=f5e156]:
+                  - generic [ref=f5e157]: VRT
+                  - generic [ref=f5e158]: Vertiv Holdings Co.
+                - strong [ref=f5e159]: "142.17"
+                - generic [ref=f5e160]: −0.70%
+              - button "移除自选 VRT" [ref=f5e300] [cursor=pointer]
+      - region [ref=f5e301]:
+        - heading "市场研究" [level=2] [ref=f5e302]
+        - paragraph [ref=f5e303]: 日线数据 · 非实时价格
+        - generic [ref=f5e304]:
+          - generic [ref=f5e305]:
+            - text: 市场
+            - combobox "市场" [active] [ref=f5e306]:
+              - option "美股与 ETF" [selected]
+              - option "加密货币现货"
+          - generic [ref=f5e307]:
+            - text: 标的
+            - combobox "标的" [ref=f5e308]:
+              - option "AAPL" [selected]
+              - option "MSFT"
+              - option "NVDA"
+              - option "MU"
+              - option "SPY"
+              - option "QQQ"
+          - generic [ref=f5e309]:
+            - text: 历史区间
+            - combobox "历史区间" [ref=f5e310]:
+              - option "90 天" [selected]
+              - option "180 天"
+              - option "365 天"
+        - status [ref=f5e311]: 日线数据 · 非实时价格
+        - paragraph [ref=f5e312]: "最近日线收盘: 333.690002 USD"
+        - img "AAPL · 日线数据 · 非实时价格" [ref=f5e314]
+        - paragraph [ref=f5e316]: "数据源: yahoo · 最后一根日线: 2026-10-02 · 抓取时间: 2026-10-04T14:41:38.734224+00:00 · 复权: split_dividend · 成交量单位: shares · 日线时区: America/New_York · 质量: complete_daily_bars"
+        - generic [ref=f5e317]:
+          - heading "技术指标" [level=3] [ref=f5e318]
+          - generic [ref=f5e319]:
+            - generic [ref=f5e320]:
+              - term [ref=f5e321]: RSI 14
+              - definition [ref=f5e322]: "54.630"
+            - generic [ref=f5e323]:
+              - term [ref=f5e324]: MACD
+              - definition [ref=f5e325]: "macd_line: 3.688 · signal_line: 4.645 · histogram: -0.957"
+            - generic [ref=f5e326]:
+              - term [ref=f5e327]: BOLLINGER
+              - definition [ref=f5e328]: "upper: 346.620 · middle: 331.890 · lower: 317.170"
+            - generic [ref=f5e329]:
+              - term [ref=f5e330]: SMA 20
+              - definition [ref=f5e331]: "331.895"
+            - generic [ref=f5e332]:
+              - term [ref=f5e333]: SMA 50
+              - definition [ref=f5e334]: "322.355"
+            - generic [ref=f5e335]:
+              - term [ref=f5e336]: SMA 200
+              - definition [ref=f5e337]: 不可用 · 需要 200 根日线
+            - generic [ref=f5e338]:
+              - term [ref=f5e339]: EMA 20
+              - definition [ref=f5e340]: "331.346"
+            - generic [ref=f5e341]:
+              - term [ref=f5e342]: VOLUME
+              - definition [ref=f5e343]: "latest: 33245500.000 · sma_20: 42234205.000 · ratio_20: 0.787"
+          - paragraph [ref=f5e344]: 2026-10-02 · yahoo · Vibe-Trading 251b094
+        - group [ref=f5e345]:
+          - generic "检查日线数据" [ref=f5e346] [cursor=pointer]
+        - paragraph [ref=f5e347]: 仅供研究。现货不等于永续合约；USD 不等于 USDT。
+    - contentinfo [ref=f5e181]:
+      - paragraph [ref=f5e182]: 个股观察区使用虚构设计数据；日线研究区使用注明来源的历史数据。非投资建议。
+  - contentinfo [ref=f5e183]:
+    - generic [ref=f5e184]:
+      - link "AFFLATUS 首页" [ref=f5e348] [cursor=pointer]:
+        - /url: /zh/
+        - generic [aria-hidden] [ref=f5e186]:
+          - generic [ref=f5e187]: A
+          - generic [ref=f5e188]: I
+      - navigation "探索站点" [ref=f5e349]:
+        - link "作品集" [ref=f5e350] [cursor=pointer]:
+          - /url: /zh/portfolio.html
+        - link "竞技场" [ref=f5e351] [cursor=pointer]:
+          - /url: /zh/arena.html
+        - link "AI 产业" [ref=f5e352] [cursor=pointer]:
+          - /url: /zh/sectors.html
+        - link "经济动态" [ref=f5e353] [cursor=pointer]:
+          - /url: /zh/signal.html
+        - link "学习" [ref=f5e354] [cursor=pointer]:
+          - /url: /zh/course.html
+        - link "故事" [ref=f5e355] [cursor=pointer]:
+          - /url: /zh/serial.html
+        - link "趣味占星" [ref=f5e356] [cursor=pointer]:
+          - /url: /zh/horoscope.html
+      - generic [ref=f5e198]:
+        - generic [ref=f5e199]: © 2026 RSI AI
+        - navigation "社交主页" [ref=f5e357]:
+          - link "LinkedIn" [ref=f5e201] [cursor=pointer]:
+            - /url: https://www.linkedin.com/in/feida-wang/
+          - link "GitHub" [ref=f5e204] [cursor=pointer]:
+            - /url: https://github.com/FeidaWang
+          - link "知乎" [ref=f5e207] [cursor=pointer]:
+            - /url: https://www.zhihu.com/people/ye-piao-xue
+```

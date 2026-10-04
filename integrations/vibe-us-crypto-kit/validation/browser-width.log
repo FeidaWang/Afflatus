@@ -1,0 +1,22 @@
+### Result
+{
+  "viewport": 440,
+  "documentWidth": 440,
+  "charts": 0,
+  "addButtons": 1
+}
+### Ran Playwright code
+```js
+await page.evaluate('() => ({ viewport:innerWidth, documentWidth:document.documentElement.scrollWidth, charts:document.querySelectorAll("[data-vibe-markets] svg").length, addButtons:[...document.querySelectorAll("button")].filter(b=>b.textContent.includes("Add a stock")).length })');
+```
+### Result
+{
+  "viewport": 440,
+  "documentWidth": 440,
+  "charts": 1,
+  "addButtons": 1
+}
+### Ran Playwright code
+```js
+await page.evaluate('() => ({ viewport:innerWidth, documentWidth:document.documentElement.scrollWidth, charts:document.querySelectorAll("[data-vibe-markets] svg").length, addButtons:[...document.querySelectorAll("button")].filter(b=>b.textContent.includes("Add a stock")).length })');
+```

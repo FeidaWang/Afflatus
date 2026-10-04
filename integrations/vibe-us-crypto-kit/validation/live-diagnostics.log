@@ -1,0 +1,4 @@
+{"id": "US:AAPL", "keys": ["AAPL.US", "_provenance"], "rows": 9, "row_keys": ["trade_date", "open", "high", "low", "close", "volume"], "provenance": {"AAPL.US": {"source": "yahoo", "requested_source": "yahoo", "detected_source": "yahoo", "fallback_used": false, "currency_conversion": "none", "volume_unit": "shares", "adjustment": "split_dividend", "quote_currency": "USD"}}, "unresolved": null}
+SourceUnavailable missing date label
+{"id": "CRYPTO:OKX:BTC-USDT:SPOT", "keys": ["BTC-USDT", "_provenance"], "rows": 14, "row_keys": ["trade_date", "open", "high", "low", "close", "volume"], "provenance": {"BTC-USDT": {"source": "okx", "requested_source": "okx", "detected_source": "okx", "fallback_used": false, "currency_conversion": "none", "volume_unit": null, "adjustment": "na"}}, "unresolved": null}
+SourceUnavailable missing date label

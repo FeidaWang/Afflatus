@@ -1,0 +1,5 @@
+# 宿主实际实现状态
+
+请阅读 [根目录 IMPLEMENTATION_STATUS.md](../../IMPLEMENTATION_STATUS.md)。
+
+本包原始 validation/TEST_REPORT.md 是导入前的离线包测试，不能替代当前宿主/固定源码/实网报告；本次结果见 validation/IMPLEMENTATION_TEST_REPORT.md。PACKAGE_CONTENTS.json 是原始包清单，适配后的文件以 Git diff 和宿主状态为准。

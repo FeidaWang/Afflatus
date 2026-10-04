@@ -1,0 +1,9 @@
+### Result
+{
+  "researchSections": 0,
+  "addButtons": 1
+}
+### Ran Playwright code
+```js
+await page.evaluate('() => ({researchSections:document.querySelectorAll("[data-vibe-markets]").length,addButtons:[...document.querySelectorAll("button")].filter(b=>b.textContent.includes("Add a stock")).length})');
+```

@@ -1,0 +1,18 @@
+{
+  "harness": "in-memory Chromium DOM, module imports/exports removed in harness; not Vite or Afflatus build; no networking",
+  "data": "synthetic fixtures only",
+  "checks": [
+    "English US daily chart and non-live label",
+    "US quote currency",
+    "Crypto switch, OKX source and USDT identity",
+    "30 inspectable data rows",
+    "Chinese mobile rendering",
+    "390px mobile no page overflow",
+    "Keyboard-focusable control",
+    "403 has explicit unavailable state and no fake chart",
+    "Cleanup unmount",
+    "No browser JavaScript errors"
+  ],
+  "passed": 10,
+  "page_errors": []
+}
