@@ -1,5 +1,19 @@
 # Shared header typography and language button QA — 6 October 2026
 
+## Restoration after the later shared-header update
+
+The later header update tied language text to the 28px/600 logo and removed the
+approved control scales. Restored the 22px desktop logo, 12.8px/400 language text,
+35.2px language button and 22.4 × 16.8px menu artwork. Language typography remains
+independent of logo sizing, with a 44px pointer target and no green hover fill.
+The latest mobile AI_ behavior and navigation destinations are retained.
+
+Production build, header/CSS/bilingual/SEO gates, type-check and bundle budgets
+passed. Browser verification covered desktop, 390px and 320px, English/Chinese
+language switching, expanded mobile menu text and the new AI Observatory route.
+All header text uses Anthropic Sans, control centers align within rounding, and
+the checked pages have no horizontal overflow or browser console errors.
+
 final result: passed
 
 ## Findings

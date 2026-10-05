@@ -4,7 +4,7 @@
    motion and compact geometry use the I01 defaults. */
 #afflatus-header, #afflatus-header * { box-sizing: border-box; font-family: var(--af-font-sans); font-synthesis: none; }
 #afflatus-header {
-  --af-height: 68px; --af-type-brand: 28px; --af-brand-width: 184px; --af-brand-height: 34px; --af-paper: #e8e6dc; --af-ink: #0f0f0e;
+  --af-height: 68px; --af-brand-width: 144px; --af-brand-height: 28px; --af-control-scale: .8; --af-menu-scale: .7; --af-paper: #e8e6dc; --af-ink: #0f0f0e;
   position: fixed; inset: 0 0 auto; z-index: 10000; width: 100%; height: var(--af-height);
   margin: 0; padding: 0; border: 0; border-bottom: 1px solid #d1d0c8;
   background: var(--af-paper); color: var(--af-ink); color-scheme: light;
@@ -23,7 +23,7 @@
 }
 #afflatus-header a::before, #afflatus-header a::after, #afflatus-header button::before, #afflatus-header button::after { content: none; }
 #afflatus-header :is(a, button):focus-visible { outline: 2px solid #486f76; outline-offset: 3px; }
-#afflatus-header .af-wordmark { flex: 0 0 calc(var(--af-brand-width) - var(--af-collapse, 0) * 140px); min-width: 0; padding: 0; overflow: hidden; }
+#afflatus-header .af-wordmark { flex: 0 0 calc(var(--af-brand-width) - var(--af-collapse, 0) * 108px); min-width: 0; padding: 0; overflow: hidden; }
 #afflatus-header .af-home-link { flex: 0 0 auto; padding: 0; font-weight: var(--af-weight-medium); }
 #afflatus-header .af-brand-art { position: relative; display: block; flex: none; width: var(--af-brand-width); height: var(--af-brand-height); font: var(--af-weight-brand) var(--af-type-brand)/var(--af-brand-height) var(--af-font-sans); letter-spacing: .015em; }
 #afflatus-header .af-brand-full,
@@ -47,9 +47,12 @@
 #afflatus-header a[aria-current="page"] { font-weight: var(--af-weight-medium); }
 #afflatus-header .af-header-dropdown { position: absolute; top: 100%; left: 0; width: 240px; padding: 12px; border: 1px solid #d1d0c8; background: var(--af-paper); max-height: calc(100dvh - var(--af-height) - 16px); overflow-y: auto; animation: af-menu-in 160ms ease-out; }
 #afflatus-header .af-header-dropdown a { display: flex; white-space: normal; padding: 10px 12px; }
-#afflatus-header a.af-header-language { flex: none; justify-content: center; min-height: 44px; padding: 0 12px 2px; border: 1px solid #161616; border-radius: 8px; background: #161616; color: #fff; font-size: var(--af-type-brand); line-height: var(--af-brand-height); font-weight: var(--af-weight-brand); }
+/* Keep the approved language typography and control scale independent of the logo. */
+#afflatus-header a.af-header-language { position: relative; flex: none; justify-content: center; min-height: calc(44px * var(--af-control-scale)); padding: 0 calc(20px * var(--af-control-scale)) 2px; border: 0; border-radius: calc(10px * var(--af-control-scale)); background: #141413; color: #faf9f5; font: var(--af-weight-regular) calc(16px * var(--af-control-scale))/1.25 var(--af-font-sans); }
+/* The visible button is smaller; its transparent pointer target remains 44px high. */
+#afflatus-header a.af-header-language::before { content: ''; position: absolute; inset-block: calc((44px * var(--af-control-scale) - 44px) / 2); inset-inline: 0; }
 #afflatus-header .af-header-menu { display: none; }
-#afflatus-header .af-menu-icon { display: block; flex: none; width: 28px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+#afflatus-header .af-menu-icon { display: block; flex: none; width: calc(32px * var(--af-menu-scale)); height: calc(24px * var(--af-menu-scale)); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 #afflatus-header [hidden] { display: none; }
 body:has(> #afflatus-header) { padding-top: 68px; }
 @media (hover: hover) and (pointer: fine) {
@@ -62,6 +65,7 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header { --af-height: 60px; }
   #afflatus-header .af-header-inner { width: 100%; padding: 0 var(--af-header-compact-gap); }
   #afflatus-header .af-wordmark { flex-basis: 44px; flex-shrink: 0; }
+  #afflatus-header .af-brand-art { transform: scale(.83); transform-origin: left center; }
   #afflatus-header .af-brand-full { opacity: 0; }
   #afflatus-header .af-brand-compact { opacity: 1; }
   #afflatus-header .af-header-language { margin-left: auto; }
