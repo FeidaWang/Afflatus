@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-06",
+  "baseline": {
+    "passed": 1889,
+    "failed": 94
+  },
+  "implementation": {
+    "passed": 1903,
+    "failed": 93
+  },
+  "addedFailures": [],
+  "resolvedFailures": [
+    "tests/sectorsMediaContract.test.js :: sectors media contract reserves the mobile header and model-war hero and defers the graph visualizer"
+  ],
+  "existingFailedFiles": [
+    "tests/afflatusBrand.test.js",
+    "tests/archivedPredictionPages.test.js",
+    "tests/arenaApiAccess.test.js",
+    "tests/catchUpArena.test.js",
+    "tests/combatPresentationContract.test.js",
+    "tests/courseNarrative.test.js",
+    "tests/courseTerminology.test.js",
+    "tests/homeBlackHoleContract.test.js",
+    "tests/homeLoadingContract.test.js",
+    "tests/homePerformanceDossier.test.js",
+    "tests/homePortfolioSolarSystem.test.js",
+    "tests/homePresentationContract.test.js",
+    "tests/homeStardriveLayout.test.js",
+    "tests/localizedSite.test.js",
+    "tests/novelPages.test.js",
+    "tests/serialLayoutStability.test.js",
+    "tests/siteBrandMarkup.test.js"
+  ],
+  "focused": {
+    "files": 28,
+    "passed": 342,
+    "failed": 0
+  },
+  "build": "passed",
+  "snapshotDownload": {
+    "downloadInteractionTested": true,
+    "matchesFinalBuiltSnapshot": true
+  },
+  "curation": {
+    "organizations": 100,
+    "industryLayers": 14,
+    "models": 18,
+    "milestones": 23,
+    "sources": 34,
+    "listedHeadquartersMarkets": 13
+  },
+  "finalBrowser": {
+    "language": "zh-CN",
+    "viewportReset": true,
+    "outerHorizontalOverflow": 0,
+    "consoleWarningsOrErrorsAfterFinalReload": 0
+  }
+}

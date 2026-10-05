@@ -1,0 +1,3738 @@
+{
+  "schema_version": 1,
+  "snapshot": "2026-10-06",
+  "updated": "2026-10-06",
+  "model_index_version": "4.3.2",
+  "selection": {
+    "en": "An editorial map of critical industry nodes, not an exhaustive register or a claim that every company is irreplaceable. Primary categories simplify companies that span several layers.",
+    "zh": "关键产业节点的编辑精选，并非穷尽名录，也不意味着每家公司都不可替代。主分类简化了跨多层经营的公司。"
+  },
+  "layers": [
+    {
+      "id": "labs",
+      "name": {
+        "en": "Frontier models",
+        "zh": "前沿模型"
+      },
+      "description": {
+        "en": "The intelligence layer: closed services and open weights.",
+        "zh": "智能底座：闭源服务与开放权重。"
+      }
+    },
+    {
+      "id": "cloud",
+      "name": {
+        "en": "Cloud & distribution",
+        "zh": "云与分发"
+      },
+      "description": {
+        "en": "Access, training capacity and routes to customers.",
+        "zh": "接入、训练容量与客户分发渠道。"
+      }
+    },
+    {
+      "id": "compute",
+      "name": {
+        "en": "Accelerators",
+        "zh": "加速芯片"
+      },
+      "description": {
+        "en": "GPUs, custom silicon and inference systems.",
+        "zh": "GPU、定制芯片与推理系统。"
+      }
+    },
+    {
+      "id": "foundry",
+      "name": {
+        "en": "Chip design & manufacturing",
+        "zh": "设计与制造"
+      },
+      "description": {
+        "en": "EDA, fabrication, packaging, testing and the equipment behind them.",
+        "zh": "EDA、制造、封装、测试与上游设备。"
+      }
+    },
+    {
+      "id": "memory",
+      "name": {
+        "en": "Memory & storage",
+        "zh": "存储与内存"
+      },
+      "description": {
+        "en": "HBM, DRAM, flash and durable storage.",
+        "zh": "HBM、DRAM、闪存与持久存储。"
+      }
+    },
+    {
+      "id": "network",
+      "name": {
+        "en": "Networking",
+        "zh": "高速互连"
+      },
+      "description": {
+        "en": "Moving data across the cluster.",
+        "zh": "在集群内部与数据中心之间搬运数据。"
+      }
+    },
+    {
+      "id": "infra",
+      "name": {
+        "en": "Servers & GPU clouds",
+        "zh": "服务器与算力云"
+      },
+      "description": {
+        "en": "The infrastructure that turns chips into available compute.",
+        "zh": "把芯片转化为可用算力的基础设施。"
+      }
+    },
+    {
+      "id": "power",
+      "name": {
+        "en": "Energy & cooling",
+        "zh": "能源与散热"
+      },
+      "description": {
+        "en": "Electricity, grid connections and thermal limits.",
+        "zh": "电力、并网与散热约束。"
+      }
+    },
+    {
+      "id": "coding",
+      "name": {
+        "en": "Coding agents",
+        "zh": "编程智能体"
+      },
+      "description": {
+        "en": "From writing a line to owning a development task.",
+        "zh": "从补全一行代码，到承接开发任务。"
+      }
+    },
+    {
+      "id": "data",
+      "name": {
+        "en": "Data & developer tools",
+        "zh": "数据与开发工具"
+      },
+      "description": {
+        "en": "Datasets, evaluation, orchestration and retrieval.",
+        "zh": "数据集、评测、编排与检索。"
+      }
+    },
+    {
+      "id": "apps",
+      "name": {
+        "en": "Enterprise & search",
+        "zh": "企业应用与搜索"
+      },
+      "description": {
+        "en": "Workflow integration and useful answers.",
+        "zh": "嵌入工作流，让能力变成实用结果。"
+      }
+    },
+    {
+      "id": "media",
+      "name": {
+        "en": "Creative & voice AI",
+        "zh": "创意与语音"
+      },
+      "description": {
+        "en": "Image, video, sound and interactive speech.",
+        "zh": "图像、视频、声音与语音交互。"
+      }
+    },
+    {
+      "id": "robotics",
+      "name": {
+        "en": "Physical AI",
+        "zh": "机器人与具身智能"
+      },
+      "description": {
+        "en": "Intelligence that must work in the physical world.",
+        "zh": "必须在真实物理世界中工作的智能。"
+      }
+    },
+    {
+      "id": "science",
+      "name": {
+        "en": "Science & evaluation",
+        "zh": "科学与独立评测"
+      },
+      "description": {
+        "en": "Drug discovery and tests of genuine generalization.",
+        "zh": "药物发现，以及对泛化能力的独立检验。"
+      }
+    }
+  ],
+  "regions": {
+    "US": {
+      "en": "United States",
+      "zh": "美国"
+    },
+    "CN": {
+      "en": "China",
+      "zh": "中国"
+    },
+    "TW": {
+      "en": "Taiwan",
+      "zh": "台湾"
+    },
+    "KR": {
+      "en": "South Korea",
+      "zh": "韩国"
+    },
+    "NL": {
+      "en": "Netherlands",
+      "zh": "荷兰"
+    },
+    "GB": {
+      "en": "United Kingdom",
+      "zh": "英国"
+    },
+    "FR": {
+      "en": "France",
+      "zh": "法国"
+    },
+    "CA": {
+      "en": "Canada",
+      "zh": "加拿大"
+    },
+    "DE": {
+      "en": "Germany",
+      "zh": "德国"
+    },
+    "IN": {
+      "en": "India",
+      "zh": "印度"
+    },
+    "AE": {
+      "en": "UAE",
+      "zh": "阿联酋"
+    },
+    "IL": {
+      "en": "Israel",
+      "zh": "以色列"
+    },
+    "IE": {
+      "en": "Ireland",
+      "zh": "爱尔兰"
+    },
+    "JP": {
+      "en": "Japan",
+      "zh": "日本"
+    }
+  },
+  "companies": [
+    {
+      "id": "anthropic",
+      "name": {
+        "en": "Anthropic",
+        "zh": "Anthropic"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.79,
+      "lon": -122.4,
+      "layer": "labs",
+      "role": {
+        "en": "Claude and Claude Code; frontier models and agent workflows.",
+        "zh": "Claude 与 Claude Code；前沿模型与智能体工作流。"
+      },
+      "url": "https://www.anthropic.com/",
+      "logo": "/assets/sectors/logos/web/anthropic.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "openai",
+      "name": {
+        "en": "OpenAI",
+        "zh": "OpenAI"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.76,
+      "lon": -122.41,
+      "layer": "labs",
+      "role": {
+        "en": "GPT, Codex and the API platform.",
+        "zh": "GPT、Codex 与 API 平台。"
+      },
+      "url": "https://openai.com/",
+      "logo": "/assets/sectors/logos/web/openai.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "msft",
+      "name": {
+        "en": "Microsoft",
+        "zh": "微软"
+      },
+      "country": "US",
+      "city": {
+        "en": "Redmond",
+        "zh": "雷德蒙德"
+      },
+      "lat": 47.67,
+      "lon": -122.12,
+      "layer": "cloud",
+      "role": {
+        "en": "Azure cloud; investor in OpenAI and Anthropic",
+        "zh": "Azure 云；OpenAI 与 Anthropic 的投资方"
+      },
+      "url": "https://www.microsoft.com/en-us/",
+      "logo": "/assets/sectors/logos/web/msft.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "googl",
+      "name": {
+        "en": "Alphabet (Google)",
+        "zh": "Alphabet（谷歌）"
+      },
+      "country": "US",
+      "city": {
+        "en": "Mountain View",
+        "zh": "山景城"
+      },
+      "lat": 37.42,
+      "lon": -122.08,
+      "layer": "labs",
+      "role": {
+        "en": "Gemini, Google Cloud and TPUs",
+        "zh": "Gemini、谷歌云与 TPU"
+      },
+      "url": "https://www.google.com/",
+      "logo": "/assets/sectors/logos/web/googl.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "amzn",
+      "name": {
+        "en": "Amazon",
+        "zh": "亚马逊"
+      },
+      "country": "US",
+      "city": {
+        "en": "Seattle",
+        "zh": "西雅图"
+      },
+      "lat": 47.61,
+      "lon": -122.33,
+      "layer": "cloud",
+      "role": {
+        "en": "AWS and Trainium",
+        "zh": "AWS 与 Trainium 芯片"
+      },
+      "url": "https://www.aboutamazon.com/",
+      "logo": "/assets/sectors/logos/web/amzn.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "meta",
+      "name": {
+        "en": "Meta",
+        "zh": "Meta"
+      },
+      "country": "US",
+      "city": {
+        "en": "Menlo Park",
+        "zh": "门洛帕克"
+      },
+      "lat": 37.48,
+      "lon": -122.15,
+      "layer": "labs",
+      "role": {
+        "en": "Muse Spark models",
+        "zh": "Muse Spark 模型"
+      },
+      "url": "https://www.meta.com/en-gb/about/",
+      "logo": "/assets/sectors/logos/web/meta.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "orcl",
+      "name": {
+        "en": "Oracle",
+        "zh": "甲骨文"
+      },
+      "country": "US",
+      "city": {
+        "en": "Austin",
+        "zh": "奥斯汀"
+      },
+      "lat": 30.27,
+      "lon": -97.74,
+      "layer": "cloud",
+      "role": {
+        "en": "Oracle Cloud infrastructure and database distribution.",
+        "zh": "Oracle Cloud 基础设施与数据库分发。"
+      },
+      "url": "https://www.oracle.com/",
+      "logo": "/assets/sectors/logos/web/orcl.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "spcx",
+      "name": {
+        "en": "SpaceX (incl. xAI)",
+        "zh": "SpaceX（含 xAI）"
+      },
+      "country": "US",
+      "city": {
+        "en": "Starbase",
+        "zh": "星舰基地"
+      },
+      "lat": 25.99,
+      "lon": -97.16,
+      "layer": "labs",
+      "role": {
+        "en": "Grok models, Colossus compute, Cursor",
+        "zh": "Grok 模型、Colossus 算力、Cursor"
+      },
+      "url": "https://www.spacex.com/",
+      "logo": "/assets/sectors/logos/web/spcx.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "baba",
+      "name": {
+        "en": "Alibaba",
+        "zh": "阿里巴巴"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Hangzhou",
+        "zh": "杭州"
+      },
+      "lat": 30.27,
+      "lon": 120.16,
+      "layer": "labs",
+      "role": {
+        "en": "Qwen models and Alibaba Cloud",
+        "zh": "通义千问与阿里云"
+      },
+      "url": "https://www.alibabagroup.com/en-US/",
+      "logo": "/assets/sectors/logos/web/baba.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "bidu",
+      "name": {
+        "en": "Baidu",
+        "zh": "百度"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Beijing",
+        "zh": "北京"
+      },
+      "lat": 40.05,
+      "lon": 116.3,
+      "layer": "labs",
+      "role": {
+        "en": "Ernie models",
+        "zh": "文心大模型"
+      },
+      "url": "https://www.baidu.com/",
+      "logo": "/assets/sectors/logos/web/bidu.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "deepseek",
+      "name": {
+        "en": "DeepSeek",
+        "zh": "深度求索"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Hangzhou",
+        "zh": "杭州"
+      },
+      "lat": 30.25,
+      "lon": 120.21,
+      "layer": "labs",
+      "role": {
+        "en": "Open-weights models and efficient inference.",
+        "zh": "开放权重模型与高效推理。"
+      },
+      "url": "https://www.deepseek.com/en/",
+      "logo": "/assets/sectors/logos/web/deepseek.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "moonshot",
+      "name": {
+        "en": "Moonshot AI",
+        "zh": "月之暗面"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Beijing",
+        "zh": "北京"
+      },
+      "lat": 39.98,
+      "lon": 116.31,
+      "layer": "labs",
+      "role": {
+        "en": "Kimi models and long-context agents.",
+        "zh": "Kimi 模型与长上下文智能体。"
+      },
+      "url": "https://www.moonshot.cn/",
+      "logo": "/assets/sectors/logos/web/moonshot.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "zhipu",
+      "name": {
+        "en": "Zhipu (Z.ai)",
+        "zh": "智谱"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Beijing",
+        "zh": "北京"
+      },
+      "lat": 39.99,
+      "lon": 116.33,
+      "layer": "labs",
+      "role": {
+        "en": "GLM models and developer APIs.",
+        "zh": "GLM 模型与开发者 API。"
+      },
+      "url": "https://www.zhipuai.cn/en",
+      "logo": "/assets/sectors/logos/web/zhipu.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "minimax",
+      "name": {
+        "en": "MiniMax",
+        "zh": "MiniMax"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Shanghai",
+        "zh": "上海"
+      },
+      "lat": 31.23,
+      "lon": 121.47,
+      "layer": "labs",
+      "role": {
+        "en": "Language, voice and video generation.",
+        "zh": "语言、语音与视频生成。"
+      },
+      "url": "https://www.minimax.io/",
+      "logo": "/assets/sectors/logos/web/minimax.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "nvda",
+      "name": {
+        "en": "NVIDIA",
+        "zh": "英伟达"
+      },
+      "country": "US",
+      "city": {
+        "en": "Santa Clara",
+        "zh": "圣克拉拉"
+      },
+      "lat": 37.37,
+      "lon": -121.96,
+      "layer": "compute",
+      "role": {
+        "en": "GPUs and systems",
+        "zh": "GPU 与整机系统"
+      },
+      "url": "https://www.nvidia.com/en-us/",
+      "logo": "/assets/sectors/logos/web/nvda.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "avgo",
+      "name": {
+        "en": "Broadcom",
+        "zh": "博通"
+      },
+      "country": "US",
+      "city": {
+        "en": "Palo Alto",
+        "zh": "帕洛阿尔托"
+      },
+      "lat": 37.44,
+      "lon": -122.14,
+      "layer": "compute",
+      "role": {
+        "en": "Custom accelerators and data-centre networking.",
+        "zh": "定制加速器与数据中心网络。"
+      },
+      "url": "https://www.broadcom.com/",
+      "logo": "/assets/sectors/logos/web/avgo.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "amd",
+      "name": {
+        "en": "AMD",
+        "zh": "AMD"
+      },
+      "country": "US",
+      "city": {
+        "en": "Santa Clara",
+        "zh": "圣克拉拉"
+      },
+      "lat": 37.38,
+      "lon": -121.96,
+      "layer": "compute",
+      "role": {
+        "en": "Instinct GPUs",
+        "zh": "Instinct GPU"
+      },
+      "url": "https://www.amd.com/en.html",
+      "logo": "/assets/sectors/logos/web/amd.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "mrvl",
+      "name": {
+        "en": "Marvell",
+        "zh": "迈威尔"
+      },
+      "country": "US",
+      "city": {
+        "en": "Santa Clara",
+        "zh": "圣克拉拉"
+      },
+      "lat": 37.38,
+      "lon": -121.97,
+      "layer": "compute",
+      "role": {
+        "en": "Custom silicon and optics DSPs",
+        "zh": "定制芯片与光通信 DSP"
+      },
+      "url": "https://www.marvell.com/",
+      "logo": "/assets/sectors/logos/web/mrvl.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "arm",
+      "name": {
+        "en": "Arm",
+        "zh": "Arm"
+      },
+      "country": "GB",
+      "city": {
+        "en": "Cambridge",
+        "zh": "剑桥"
+      },
+      "lat": 52.2,
+      "lon": 0.12,
+      "layer": "compute",
+      "role": {
+        "en": "CPU architecture in AI servers",
+        "zh": "AI 服务器 CPU 架构"
+      },
+      "url": "https://www.arm.com/",
+      "logo": "/assets/sectors/logos/web/arm.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "cbrs",
+      "name": {
+        "en": "Cerebras",
+        "zh": "Cerebras"
+      },
+      "country": "US",
+      "city": {
+        "en": "Sunnyvale",
+        "zh": "桑尼维尔"
+      },
+      "lat": 37.37,
+      "lon": -122.04,
+      "layer": "compute",
+      "role": {
+        "en": "Wafer-scale compute and inference systems.",
+        "zh": "晶圆级计算与推理系统。"
+      },
+      "url": "https://www.cerebras.ai/",
+      "logo": "/assets/sectors/logos/web/cbrs.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "intc",
+      "name": {
+        "en": "Intel",
+        "zh": "英特尔"
+      },
+      "country": "US",
+      "city": {
+        "en": "Santa Clara",
+        "zh": "圣克拉拉"
+      },
+      "lat": 37.39,
+      "lon": -121.96,
+      "layer": "compute",
+      "role": {
+        "en": "Server CPUs and foundry",
+        "zh": "服务器 CPU 与代工"
+      },
+      "url": "https://www.intel.com/content/www/us/en/homepage.html",
+      "logo": "/assets/sectors/logos/web/intc.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "qcom",
+      "name": {
+        "en": "Qualcomm",
+        "zh": "高通"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Diego",
+        "zh": "圣地亚哥"
+      },
+      "lat": 32.9,
+      "lon": -117.2,
+      "layer": "compute",
+      "role": {
+        "en": "On-device AI chips",
+        "zh": "端侧 AI 芯片"
+      },
+      "url": "https://www.qualcomm.com/",
+      "logo": "/assets/sectors/logos/web/qcom.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "tsm",
+      "name": {
+        "en": "TSMC",
+        "zh": "台积电"
+      },
+      "country": "TW",
+      "city": {
+        "en": "Hsinchu",
+        "zh": "新竹"
+      },
+      "lat": 24.78,
+      "lon": 120.99,
+      "layer": "foundry",
+      "role": {
+        "en": "Leading-edge foundry for AI chips",
+        "zh": "AI 芯片先进制程代工"
+      },
+      "url": "https://www.tsmc.com/english",
+      "logo": "/assets/sectors/logos/web/tsm.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "asml",
+      "name": {
+        "en": "ASML",
+        "zh": "阿斯麦"
+      },
+      "country": "NL",
+      "city": {
+        "en": "Veldhoven",
+        "zh": "费尔德霍芬"
+      },
+      "lat": 51.41,
+      "lon": 5.41,
+      "layer": "foundry",
+      "role": {
+        "en": "EUV lithography",
+        "zh": "EUV 光刻机"
+      },
+      "url": "https://www.asml.com/en",
+      "logo": "/assets/sectors/logos/web/asml.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "amat",
+      "name": {
+        "en": "Applied Materials",
+        "zh": "应用材料"
+      },
+      "country": "US",
+      "city": {
+        "en": "Santa Clara",
+        "zh": "圣克拉拉"
+      },
+      "lat": 37.37,
+      "lon": -121.99,
+      "layer": "foundry",
+      "role": {
+        "en": "Deposition and etch tools",
+        "zh": "沉积与刻蚀设备"
+      },
+      "url": "https://www.appliedmaterials.com/us/en.html",
+      "logo": "/assets/sectors/logos/web/amat.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "lrcx",
+      "name": {
+        "en": "Lam Research",
+        "zh": "泛林"
+      },
+      "country": "US",
+      "city": {
+        "en": "Fremont",
+        "zh": "弗里蒙特"
+      },
+      "lat": 37.52,
+      "lon": -121.98,
+      "layer": "foundry",
+      "role": {
+        "en": "Etch tools for memory and logic",
+        "zh": "存储与逻辑芯片刻蚀设备"
+      },
+      "url": "https://www.lamresearch.com/",
+      "logo": "/assets/sectors/logos/web/lrcx.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "klac",
+      "name": {
+        "en": "KLA",
+        "zh": "科磊"
+      },
+      "country": "US",
+      "city": {
+        "en": "Milpitas",
+        "zh": "米尔皮塔斯"
+      },
+      "lat": 37.43,
+      "lon": -121.91,
+      "layer": "foundry",
+      "role": {
+        "en": "Process control and inspection",
+        "zh": "制程检测"
+      },
+      "url": "https://www.kla.com/",
+      "logo": "/assets/sectors/logos/web/klac.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "skhy",
+      "name": {
+        "en": "SK hynix",
+        "zh": "SK 海力士"
+      },
+      "country": "KR",
+      "city": {
+        "en": "Icheon",
+        "zh": "利川"
+      },
+      "lat": 37.27,
+      "lon": 127.44,
+      "layer": "memory",
+      "role": {
+        "en": "HBM and advanced DRAM for accelerators.",
+        "zh": "面向加速器的 HBM 与先进 DRAM。"
+      },
+      "url": "https://www.skhynix.com/",
+      "logo": "/assets/sectors/logos/web/skhy.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "mu",
+      "name": {
+        "en": "Micron",
+        "zh": "美光"
+      },
+      "country": "US",
+      "city": {
+        "en": "Boise",
+        "zh": "博伊西"
+      },
+      "lat": 43.62,
+      "lon": -116.2,
+      "layer": "memory",
+      "role": {
+        "en": "HBM, DRAM and SSD",
+        "zh": "HBM、DRAM 与固态硬盘"
+      },
+      "url": "https://www.micron.com/",
+      "logo": "/assets/sectors/logos/web/mu.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "samsung",
+      "name": {
+        "en": "Samsung Electronics",
+        "zh": "三星电子"
+      },
+      "country": "KR",
+      "city": {
+        "en": "Suwon",
+        "zh": "水原"
+      },
+      "lat": 37.26,
+      "lon": 127.03,
+      "layer": "memory",
+      "role": {
+        "en": "HBM, DRAM, NAND and foundry services.",
+        "zh": "HBM、DRAM、NAND 与晶圆代工。"
+      },
+      "url": "https://semiconductor.samsung.com/",
+      "logo": "/assets/sectors/logos/web/samsung.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "sndk",
+      "name": {
+        "en": "Sandisk",
+        "zh": "闪迪"
+      },
+      "country": "US",
+      "city": {
+        "en": "Milpitas",
+        "zh": "米尔皮塔斯"
+      },
+      "lat": 37.43,
+      "lon": -121.9,
+      "layer": "memory",
+      "role": {
+        "en": "NAND flash",
+        "zh": "NAND 闪存"
+      },
+      "url": "https://www.sandisk.com/",
+      "logo": "/assets/sectors/logos/web/sndk.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "wdc",
+      "name": {
+        "en": "Western Digital",
+        "zh": "西部数据"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.34,
+      "lon": -121.89,
+      "layer": "memory",
+      "role": {
+        "en": "Data-centre hard drives",
+        "zh": "数据中心硬盘"
+      },
+      "url": "https://www.westerndigital.com/",
+      "logo": "/assets/sectors/logos/web/wdc.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "stx",
+      "name": {
+        "en": "Seagate",
+        "zh": "希捷"
+      },
+      "country": "IE",
+      "city": {
+        "en": "Dublin",
+        "zh": "都柏林"
+      },
+      "lat": 53.35,
+      "lon": -6.26,
+      "layer": "memory",
+      "role": {
+        "en": "Data-centre hard drives",
+        "zh": "数据中心硬盘"
+      },
+      "url": "https://www.seagate.com/au/en/",
+      "logo": "/assets/sectors/logos/web/stx.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "anet",
+      "name": {
+        "en": "Arista Networks",
+        "zh": "Arista"
+      },
+      "country": "US",
+      "city": {
+        "en": "Santa Clara",
+        "zh": "圣克拉拉"
+      },
+      "lat": 37.38,
+      "lon": -121.97,
+      "layer": "network",
+      "role": {
+        "en": "AI data-centre switches",
+        "zh": "AI 数据中心交换机"
+      },
+      "url": "https://www.arista.com/en/",
+      "logo": "/assets/sectors/logos/web/anet.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "csco",
+      "name": {
+        "en": "Cisco",
+        "zh": "思科"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.41,
+      "lon": -121.95,
+      "layer": "network",
+      "role": {
+        "en": "Networking",
+        "zh": "网络设备"
+      },
+      "url": "https://www.cisco.com/",
+      "logo": "/assets/sectors/logos/web/csco.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "cohr",
+      "name": {
+        "en": "Coherent",
+        "zh": "Coherent"
+      },
+      "country": "US",
+      "city": {
+        "en": "Saxonburg",
+        "zh": "萨克森堡"
+      },
+      "lat": 40.75,
+      "lon": -79.81,
+      "layer": "network",
+      "role": {
+        "en": "Optical transceivers",
+        "zh": "光模块"
+      },
+      "url": "https://www.coherent.com/",
+      "logo": "/assets/sectors/logos/web/cohr.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "lite",
+      "name": {
+        "en": "Lumentum",
+        "zh": "Lumentum"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.34,
+      "lon": -121.89,
+      "layer": "network",
+      "role": {
+        "en": "Lasers and optical components",
+        "zh": "激光器与光器件"
+      },
+      "url": "https://www.lumentum.com/en",
+      "logo": "/assets/sectors/logos/web/lite.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "crdo",
+      "name": {
+        "en": "Credo",
+        "zh": "Credo"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.34,
+      "lon": -121.89,
+      "layer": "network",
+      "role": {
+        "en": "Active electrical cables",
+        "zh": "有源电缆"
+      },
+      "url": "https://credosemi.com/",
+      "logo": "/assets/sectors/logos/web/crdo.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "alab",
+      "name": {
+        "en": "Astera Labs",
+        "zh": "Astera Labs"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.34,
+      "lon": -121.89,
+      "layer": "network",
+      "role": {
+        "en": "PCIe/CXL connectivity",
+        "zh": "PCIe/CXL 互连"
+      },
+      "url": "https://www.asteralabs.com/",
+      "logo": "/assets/sectors/logos/web/alab.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "cien",
+      "name": {
+        "en": "Ciena",
+        "zh": "Ciena"
+      },
+      "country": "US",
+      "city": {
+        "en": "Hanover",
+        "zh": "汉诺威"
+      },
+      "lat": 39.19,
+      "lon": -76.72,
+      "layer": "network",
+      "role": {
+        "en": "Data-centre interconnect",
+        "zh": "数据中心互联"
+      },
+      "url": "https://www.ciena.com/",
+      "logo": "/assets/sectors/logos/web/cien.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "dell",
+      "name": {
+        "en": "Dell Technologies",
+        "zh": "戴尔"
+      },
+      "country": "US",
+      "city": {
+        "en": "Round Rock",
+        "zh": "朗德罗克"
+      },
+      "lat": 30.51,
+      "lon": -97.68,
+      "layer": "infra",
+      "role": {
+        "en": "AI servers",
+        "zh": "AI 服务器"
+      },
+      "url": "https://www.dell.com/en-us",
+      "logo": "/assets/sectors/logos/web/dell.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "smci",
+      "name": {
+        "en": "Supermicro",
+        "zh": "超微电脑"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.37,
+      "lon": -121.92,
+      "layer": "infra",
+      "role": {
+        "en": "AI servers",
+        "zh": "AI 服务器"
+      },
+      "url": "https://www.supermicro.com/en/",
+      "logo": "/assets/sectors/logos/web/smci.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "crwv",
+      "name": {
+        "en": "CoreWeave",
+        "zh": "CoreWeave"
+      },
+      "country": "US",
+      "city": {
+        "en": "Livingston",
+        "zh": "利文斯顿"
+      },
+      "lat": 40.79,
+      "lon": -74.31,
+      "layer": "infra",
+      "role": {
+        "en": "GPU cloud",
+        "zh": "GPU 云"
+      },
+      "url": "https://www.coreweave.com/",
+      "logo": "/assets/sectors/logos/web/crwv.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "nbis",
+      "name": {
+        "en": "Nebius",
+        "zh": "Nebius"
+      },
+      "country": "NL",
+      "city": {
+        "en": "Amsterdam",
+        "zh": "阿姆斯特丹"
+      },
+      "lat": 52.37,
+      "lon": 4.9,
+      "layer": "infra",
+      "role": {
+        "en": "GPU cloud",
+        "zh": "GPU 云"
+      },
+      "url": "https://nebius.com/",
+      "logo": "/assets/sectors/logos/web/nbis.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "vrt",
+      "name": {
+        "en": "Vertiv",
+        "zh": "维谛"
+      },
+      "country": "US",
+      "city": {
+        "en": "Westerville",
+        "zh": "韦斯特维尔"
+      },
+      "lat": 40.13,
+      "lon": -82.93,
+      "layer": "power",
+      "role": {
+        "en": "Power and liquid cooling",
+        "zh": "供电与液冷"
+      },
+      "url": "https://www.vertiv.com/en-us/",
+      "logo": "/assets/sectors/logos/web/vrt.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "gev",
+      "name": {
+        "en": "GE Vernova",
+        "zh": "GE Vernova"
+      },
+      "country": "US",
+      "city": {
+        "en": "Cambridge, MA",
+        "zh": "剑桥（马萨诸塞）"
+      },
+      "lat": 42.37,
+      "lon": -71.11,
+      "layer": "power",
+      "role": {
+        "en": "Gas turbines and grid equipment",
+        "zh": "燃气轮机与电网设备"
+      },
+      "url": "https://www.gevernova.com/",
+      "logo": "/assets/sectors/logos/web/gev.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "ceg",
+      "name": {
+        "en": "Constellation Energy",
+        "zh": "星座能源"
+      },
+      "country": "US",
+      "city": {
+        "en": "Baltimore",
+        "zh": "巴尔的摩"
+      },
+      "lat": 39.29,
+      "lon": -76.61,
+      "layer": "power",
+      "role": {
+        "en": "Nuclear power for data centres",
+        "zh": "为数据中心供应核电"
+      },
+      "url": "https://www.constellationenergy.com/",
+      "logo": "/assets/sectors/logos/web/ceg.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "vst",
+      "name": {
+        "en": "Vistra",
+        "zh": "Vistra"
+      },
+      "country": "US",
+      "city": {
+        "en": "Irving",
+        "zh": "欧文"
+      },
+      "lat": 32.81,
+      "lon": -96.95,
+      "layer": "power",
+      "role": {
+        "en": "Power generation",
+        "zh": "发电"
+      },
+      "url": "https://vistracorp.com/",
+      "logo": "/assets/sectors/logos/web/vst.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "etn",
+      "name": {
+        "en": "Eaton",
+        "zh": "伊顿"
+      },
+      "country": "IE",
+      "city": {
+        "en": "Dublin",
+        "zh": "都柏林"
+      },
+      "lat": 53.35,
+      "lon": -6.26,
+      "layer": "power",
+      "role": {
+        "en": "Electrical equipment",
+        "zh": "电气设备"
+      },
+      "url": "https://www.eaton.com/us/en-us.html",
+      "logo": "/assets/sectors/logos/web/etn.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "oklo",
+      "name": {
+        "en": "Oklo",
+        "zh": "Oklo"
+      },
+      "country": "US",
+      "city": {
+        "en": "Santa Clara",
+        "zh": "圣克拉拉"
+      },
+      "lat": 37.35,
+      "lon": -121.95,
+      "layer": "power",
+      "role": {
+        "en": "Small modular reactors",
+        "zh": "小型模块化反应堆"
+      },
+      "url": "https://oklo.com/",
+      "logo": "/assets/sectors/logos/web/oklo.png",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "pltr",
+      "name": {
+        "en": "Palantir",
+        "zh": "Palantir"
+      },
+      "country": "US",
+      "city": {
+        "en": "Denver",
+        "zh": "丹佛"
+      },
+      "lat": 39.74,
+      "lon": -104.99,
+      "layer": "apps",
+      "role": {
+        "en": "AI platforms for enterprise and government",
+        "zh": "面向企业与政府的 AI 平台"
+      },
+      "url": "https://www.palantir.com/",
+      "logo": "/assets/sectors/logos/web/pltr.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "crm",
+      "name": {
+        "en": "Salesforce",
+        "zh": "Salesforce"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.79,
+      "lon": -122.4,
+      "layer": "apps",
+      "role": {
+        "en": "Enterprise AI agents",
+        "zh": "企业 AI 智能体"
+      },
+      "url": "https://www.salesforce.com/au/",
+      "logo": "/assets/sectors/logos/web/crm.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "now",
+      "name": {
+        "en": "ServiceNow",
+        "zh": "ServiceNow"
+      },
+      "country": "US",
+      "city": {
+        "en": "Santa Clara",
+        "zh": "圣克拉拉"
+      },
+      "lat": 37.4,
+      "lon": -121.98,
+      "layer": "apps",
+      "role": {
+        "en": "Workflow AI",
+        "zh": "工作流 AI"
+      },
+      "url": "https://www.servicenow.com/",
+      "logo": "/assets/sectors/logos/web/now.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "snow",
+      "name": {
+        "en": "Snowflake",
+        "zh": "Snowflake"
+      },
+      "country": "US",
+      "city": {
+        "en": "Bozeman",
+        "zh": "博兹曼"
+      },
+      "lat": 45.68,
+      "lon": -111.04,
+      "layer": "apps",
+      "role": {
+        "en": "Data platform",
+        "zh": "数据平台"
+      },
+      "url": "https://www.snowflake.com/en/",
+      "logo": "/assets/sectors/logos/web/snow.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "adbe",
+      "name": {
+        "en": "Adobe",
+        "zh": "Adobe"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.33,
+      "lon": -121.89,
+      "layer": "media",
+      "role": {
+        "en": "Creative AI",
+        "zh": "创意 AI"
+      },
+      "url": "https://www.adobe.com/",
+      "logo": "/assets/sectors/logos/web/adbe.svg",
+      "checked": "2026-09-27"
+    },
+    {
+      "id": "mistral",
+      "name": {
+        "en": "Mistral AI",
+        "zh": "Mistral AI"
+      },
+      "country": "FR",
+      "city": {
+        "en": "Paris",
+        "zh": "巴黎"
+      },
+      "lat": 48.86,
+      "lon": 2.35,
+      "layer": "labs",
+      "role": {
+        "en": "European models and enterprise AI deployment.",
+        "zh": "欧洲模型与企业 AI 部署。"
+      },
+      "url": "https://mistral.ai/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "cohere",
+      "name": {
+        "en": "Cohere",
+        "zh": "Cohere"
+      },
+      "country": "CA",
+      "city": {
+        "en": "Toronto",
+        "zh": "多伦多"
+      },
+      "lat": 43.65,
+      "lon": -79.38,
+      "layer": "labs",
+      "role": {
+        "en": "Enterprise models, retrieval and private deployment.",
+        "zh": "企业模型、检索与私有部署。"
+      },
+      "url": "https://cohere.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "xiaomi",
+      "name": {
+        "en": "Xiaomi",
+        "zh": "小米"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Beijing",
+        "zh": "北京"
+      },
+      "lat": 39.9,
+      "lon": 116.4,
+      "layer": "labs",
+      "role": {
+        "en": "MiMo models and device AI.",
+        "zh": "MiMo 模型与设备端 AI。"
+      },
+      "url": "https://mimo.xiaomi.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "tencent",
+      "name": {
+        "en": "Tencent",
+        "zh": "腾讯"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Shenzhen",
+        "zh": "深圳"
+      },
+      "lat": 22.54,
+      "lon": 114.06,
+      "layer": "labs",
+      "role": {
+        "en": "Hunyuan models and consumer distribution.",
+        "zh": "混元模型与消费端分发。"
+      },
+      "url": "https://hunyuan.tencent.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "bytedance",
+      "name": {
+        "en": "ByteDance",
+        "zh": "字节跳动"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Beijing",
+        "zh": "北京"
+      },
+      "lat": 39.9,
+      "lon": 116.4,
+      "layer": "labs",
+      "role": {
+        "en": "Seed models, Doubao and multimodal products.",
+        "zh": "Seed 模型、豆包与多模态产品。"
+      },
+      "url": "https://seed.bytedance.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "stepfun",
+      "name": {
+        "en": "StepFun",
+        "zh": "阶跃星辰"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Shanghai",
+        "zh": "上海"
+      },
+      "lat": 31.23,
+      "lon": 121.47,
+      "layer": "labs",
+      "role": {
+        "en": "Step models and multimodal reasoning.",
+        "zh": "Step 模型与多模态推理。"
+      },
+      "url": "https://www.stepfun.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "huawei",
+      "name": {
+        "en": "Huawei",
+        "zh": "华为"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Shenzhen",
+        "zh": "深圳"
+      },
+      "lat": 22.54,
+      "lon": 114.06,
+      "layer": "compute",
+      "role": {
+        "en": "Ascend accelerators and the domestic compute ecosystem.",
+        "zh": "昇腾加速器与国产算力生态。"
+      },
+      "url": "https://www.hiascend.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "cursor",
+      "name": {
+        "en": "Cursor",
+        "zh": "Cursor"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "coding",
+      "role": {
+        "en": "Agent development inside the editor and in the cloud.",
+        "zh": "编辑器内与云端的智能体开发。"
+      },
+      "url": "https://cursor.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "cognition",
+      "name": {
+        "en": "Cognition",
+        "zh": "Cognition"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "coding",
+      "role": {
+        "en": "Devin: delegated software engineering tasks.",
+        "zh": "Devin：承接软件工程任务。"
+      },
+      "url": "https://cognition.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "replit",
+      "name": {
+        "en": "Replit",
+        "zh": "Replit"
+      },
+      "country": "US",
+      "city": {
+        "en": "Foster City",
+        "zh": "福斯特城"
+      },
+      "lat": 37.56,
+      "lon": -122.27,
+      "layer": "coding",
+      "role": {
+        "en": "Build and deploy applications with an agent.",
+        "zh": "借助智能体构建并部署应用。"
+      },
+      "url": "https://replit.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "github",
+      "name": {
+        "en": "GitHub",
+        "zh": "GitHub"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "coding",
+      "role": {
+        "en": "Copilot and the repository-to-pull-request workflow.",
+        "zh": "Copilot 与仓库到 PR 的开发工作流。"
+      },
+      "url": "https://github.com/features/copilot",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "huggingface",
+      "name": {
+        "en": "Hugging Face",
+        "zh": "Hugging Face"
+      },
+      "country": "US",
+      "city": {
+        "en": "New York",
+        "zh": "纽约"
+      },
+      "lat": 40.71,
+      "lon": -74,
+      "layer": "data",
+      "role": {
+        "en": "Shared models, datasets and open ML tooling.",
+        "zh": "共享模型、数据集与开放机器学习工具。"
+      },
+      "url": "https://huggingface.co/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "databricks",
+      "name": {
+        "en": "Databricks",
+        "zh": "Databricks"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "data",
+      "role": {
+        "en": "Lakehouse data infrastructure and enterprise AI.",
+        "zh": "Lakehouse 数据基础设施与企业 AI。"
+      },
+      "url": "https://www.databricks.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "scale",
+      "name": {
+        "en": "Scale AI",
+        "zh": "Scale AI"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "data",
+      "role": {
+        "en": "Training data, evaluation and enterprise deployment.",
+        "zh": "训练数据、评测与企业部署。"
+      },
+      "url": "https://scale.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "langchain",
+      "name": {
+        "en": "LangChain",
+        "zh": "LangChain"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "data",
+      "role": {
+        "en": "Agent orchestration, tracing and evaluation.",
+        "zh": "智能体编排、追踪与评测。"
+      },
+      "url": "https://www.langchain.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "pinecone",
+      "name": {
+        "en": "Pinecone",
+        "zh": "Pinecone"
+      },
+      "country": "US",
+      "city": {
+        "en": "New York",
+        "zh": "纽约"
+      },
+      "lat": 40.71,
+      "lon": -74,
+      "layer": "data",
+      "role": {
+        "en": "Vector retrieval for grounded AI applications.",
+        "zh": "为有依据的 AI 应用提供向量检索。"
+      },
+      "url": "https://www.pinecone.io/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "perplexity",
+      "name": {
+        "en": "Perplexity",
+        "zh": "Perplexity"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "apps",
+      "role": {
+        "en": "Search, answer synthesis and research workflows.",
+        "zh": "搜索、答案综合与研究工作流。"
+      },
+      "url": "https://www.perplexity.ai/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "runway",
+      "name": {
+        "en": "Runway",
+        "zh": "Runway"
+      },
+      "country": "US",
+      "city": {
+        "en": "New York",
+        "zh": "纽约"
+      },
+      "lat": 40.71,
+      "lon": -74,
+      "layer": "media",
+      "role": {
+        "en": "Video generation and world models.",
+        "zh": "视频生成与世界模型。"
+      },
+      "url": "https://runway.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "elevenlabs",
+      "name": {
+        "en": "ElevenLabs",
+        "zh": "ElevenLabs"
+      },
+      "country": "GB",
+      "city": {
+        "en": "London",
+        "zh": "伦敦"
+      },
+      "lat": 51.51,
+      "lon": -0.13,
+      "layer": "media",
+      "role": {
+        "en": "Speech synthesis and conversational voice agents.",
+        "zh": "语音合成与对话式语音智能体。"
+      },
+      "url": "https://elevenlabs.io/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "bfl",
+      "name": {
+        "en": "Black Forest Labs",
+        "zh": "Black Forest Labs"
+      },
+      "country": "DE",
+      "city": {
+        "en": "Freiburg",
+        "zh": "弗赖堡"
+      },
+      "lat": 48,
+      "lon": 7.85,
+      "layer": "media",
+      "role": {
+        "en": "FLUX image generation and editing.",
+        "zh": "FLUX 图像生成与编辑。"
+      },
+      "url": "https://bfl.ai/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "midjourney",
+      "name": {
+        "en": "Midjourney",
+        "zh": "Midjourney"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "media",
+      "role": {
+        "en": "Creative image generation.",
+        "zh": "创意图像生成。"
+      },
+      "url": "https://www.midjourney.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "stability",
+      "name": {
+        "en": "Stability AI",
+        "zh": "Stability AI"
+      },
+      "country": "GB",
+      "city": {
+        "en": "London",
+        "zh": "伦敦"
+      },
+      "lat": 51.51,
+      "lon": -0.13,
+      "layer": "media",
+      "role": {
+        "en": "Open generative media models.",
+        "zh": "开放的生成式媒体模型。"
+      },
+      "url": "https://stability.ai/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "figure",
+      "name": {
+        "en": "Figure",
+        "zh": "Figure"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.34,
+      "lon": -121.89,
+      "layer": "robotics",
+      "role": {
+        "en": "Humanoid robots and embodied AI.",
+        "zh": "人形机器人与具身智能。"
+      },
+      "url": "https://www.figure.ai/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "unitree",
+      "name": {
+        "en": "Unitree",
+        "zh": "宇树科技"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Hangzhou",
+        "zh": "杭州"
+      },
+      "lat": 30.27,
+      "lon": 120.15,
+      "layer": "robotics",
+      "role": {
+        "en": "Quadruped and humanoid robot hardware.",
+        "zh": "四足与人形机器人硬件。"
+      },
+      "url": "https://www.unitree.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "tesla",
+      "name": {
+        "en": "Tesla",
+        "zh": "特斯拉"
+      },
+      "country": "US",
+      "city": {
+        "en": "Austin",
+        "zh": "奥斯汀"
+      },
+      "lat": 30.27,
+      "lon": -97.74,
+      "layer": "robotics",
+      "role": {
+        "en": "Autonomous driving and humanoid robotics.",
+        "zh": "自动驾驶与人形机器人。"
+      },
+      "url": "https://www.tesla.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "pi",
+      "name": {
+        "en": "Physical Intelligence",
+        "zh": "Physical Intelligence"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "robotics",
+      "role": {
+        "en": "General-purpose robot foundation models.",
+        "zh": "通用机器人基础模型。"
+      },
+      "url": "https://www.physicalintelligence.company/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "isomorphic",
+      "name": {
+        "en": "Isomorphic Labs",
+        "zh": "Isomorphic Labs"
+      },
+      "country": "GB",
+      "city": {
+        "en": "London",
+        "zh": "伦敦"
+      },
+      "lat": 51.51,
+      "lon": -0.13,
+      "layer": "science",
+      "role": {
+        "en": "AI-driven drug discovery.",
+        "zh": "AI 驱动的药物发现。"
+      },
+      "url": "https://www.isomorphiclabs.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "recursion",
+      "name": {
+        "en": "Recursion",
+        "zh": "Recursion"
+      },
+      "country": "US",
+      "city": {
+        "en": "Salt Lake City",
+        "zh": "盐湖城"
+      },
+      "lat": 40.76,
+      "lon": -111.89,
+      "layer": "science",
+      "role": {
+        "en": "Biological data and computational drug discovery.",
+        "zh": "生物数据与计算药物发现。"
+      },
+      "url": "https://www.recursion.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "metr",
+      "name": {
+        "en": "METR",
+        "zh": "METR"
+      },
+      "country": "US",
+      "city": {
+        "en": "Berkeley",
+        "zh": "伯克利"
+      },
+      "lat": 37.87,
+      "lon": -122.27,
+      "layer": "science",
+      "role": {
+        "en": "Independent evaluation of autonomous task capability.",
+        "zh": "独立评测自主任务能力。"
+      },
+      "url": "https://metr.org/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "arcprize",
+      "name": {
+        "en": "ARC Prize",
+        "zh": "ARC Prize"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Francisco",
+        "zh": "旧金山"
+      },
+      "lat": 37.77,
+      "lon": -122.42,
+      "layer": "science",
+      "role": {
+        "en": "Benchmarks for generalization to unfamiliar tasks.",
+        "zh": "评测对陌生任务的泛化能力。"
+      },
+      "url": "https://arcprize.org/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "sarvam",
+      "name": {
+        "en": "Sarvam AI",
+        "zh": "Sarvam AI"
+      },
+      "country": "IN",
+      "city": {
+        "en": "Bengaluru",
+        "zh": "班加罗尔"
+      },
+      "lat": 12.97,
+      "lon": 77.59,
+      "layer": "labs",
+      "role": {
+        "en": "Language models for India and local-language access.",
+        "zh": "印度语言模型与本地语言接入。"
+      },
+      "url": "https://www.sarvam.ai/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "g42",
+      "name": {
+        "en": "G42",
+        "zh": "G42"
+      },
+      "country": "AE",
+      "city": {
+        "en": "Abu Dhabi",
+        "zh": "阿布扎比"
+      },
+      "lat": 24.45,
+      "lon": 54.38,
+      "layer": "cloud",
+      "role": {
+        "en": "Regional AI infrastructure and deployment.",
+        "zh": "区域 AI 基础设施与部署。"
+      },
+      "url": "https://www.g42.ai/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "upstage",
+      "name": {
+        "en": "Upstage",
+        "zh": "Upstage"
+      },
+      "country": "KR",
+      "city": {
+        "en": "Seoul",
+        "zh": "首尔"
+      },
+      "lat": 37.57,
+      "lon": 126.98,
+      "layer": "labs",
+      "role": {
+        "en": "Solar models and document intelligence.",
+        "zh": "Solar 模型与文档智能。"
+      },
+      "url": "https://www.upstage.ai/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "smic",
+      "name": {
+        "en": "SMIC",
+        "zh": "中芯国际"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Shanghai",
+        "zh": "上海"
+      },
+      "lat": 31.23,
+      "lon": 121.47,
+      "layer": "foundry",
+      "role": {
+        "en": "Domestic logic-chip fabrication.",
+        "zh": "国内逻辑芯片制造。"
+      },
+      "url": "https://www.smics.com/en/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "cambricon",
+      "name": {
+        "en": "Cambricon",
+        "zh": "寒武纪"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Beijing",
+        "zh": "北京"
+      },
+      "lat": 39.9,
+      "lon": 116.4,
+      "layer": "compute",
+      "role": {
+        "en": "AI processors and software for domestic deployment.",
+        "zh": "面向国内部署的 AI 处理器与软件。"
+      },
+      "url": "https://www.cambricon.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "naura",
+      "name": {
+        "en": "NAURA",
+        "zh": "北方华创"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Beijing",
+        "zh": "北京"
+      },
+      "lat": 39.9,
+      "lon": 116.4,
+      "layer": "foundry",
+      "role": {
+        "en": "Semiconductor manufacturing equipment.",
+        "zh": "半导体制造设备。"
+      },
+      "url": "https://www.naura.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "amec",
+      "name": {
+        "en": "AMEC",
+        "zh": "中微公司"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Shanghai",
+        "zh": "上海"
+      },
+      "lat": 31.23,
+      "lon": 121.47,
+      "layer": "foundry",
+      "role": {
+        "en": "Etch and deposition equipment for chip manufacturing.",
+        "zh": "芯片制造所需的刻蚀与沉积设备。"
+      },
+      "url": "https://www.amec-inc.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "gds",
+      "name": {
+        "en": "GDS",
+        "zh": "万国数据"
+      },
+      "country": "CN",
+      "city": {
+        "en": "Shanghai",
+        "zh": "上海"
+      },
+      "lat": 31.23,
+      "lon": 121.47,
+      "layer": "infra",
+      "role": {
+        "en": "High-performance data-centre infrastructure.",
+        "zh": "高性能数据中心基础设施。"
+      },
+      "url": "https://www.gds-services.com/en",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "tel",
+      "name": {
+        "en": "Tokyo Electron",
+        "zh": "东京电子"
+      },
+      "country": "JP",
+      "city": {
+        "en": "Tokyo",
+        "zh": "东京"
+      },
+      "lat": 35.68,
+      "lon": 139.69,
+      "layer": "foundry",
+      "role": {
+        "en": "Semiconductor production equipment.",
+        "zh": "半导体生产设备。"
+      },
+      "url": "https://www.tel.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "advantest",
+      "name": {
+        "en": "Advantest",
+        "zh": "爱德万测试"
+      },
+      "country": "JP",
+      "city": {
+        "en": "Tokyo",
+        "zh": "东京"
+      },
+      "lat": 35.68,
+      "lon": 139.69,
+      "layer": "foundry",
+      "role": {
+        "en": "Test systems for advanced semiconductors.",
+        "zh": "先进半导体测试系统。"
+      },
+      "url": "https://www.advantest.com/en/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "preferred",
+      "name": {
+        "en": "Preferred Networks",
+        "zh": "Preferred Networks"
+      },
+      "country": "JP",
+      "city": {
+        "en": "Tokyo",
+        "zh": "东京"
+      },
+      "lat": 35.68,
+      "lon": 139.69,
+      "layer": "compute",
+      "role": {
+        "en": "AI accelerators and industrial deep-learning systems.",
+        "zh": "AI 加速器与工业深度学习系统。"
+      },
+      "url": "https://www.preferred.jp/en/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "synopsys",
+      "name": {
+        "en": "Synopsys",
+        "zh": "新思科技"
+      },
+      "country": "US",
+      "city": {
+        "en": "Sunnyvale",
+        "zh": "森尼韦尔"
+      },
+      "lat": 37.37,
+      "lon": -122.04,
+      "layer": "foundry",
+      "role": {
+        "en": "EDA, semiconductor IP and chip-to-system verification.",
+        "zh": "EDA、半导体 IP 与芯片到系统的验证。"
+      },
+      "url": "https://www.synopsys.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "cadence",
+      "name": {
+        "en": "Cadence",
+        "zh": "楷登电子"
+      },
+      "country": "US",
+      "city": {
+        "en": "San Jose",
+        "zh": "圣何塞"
+      },
+      "lat": 37.34,
+      "lon": -121.89,
+      "layer": "foundry",
+      "role": {
+        "en": "EDA, verification, multiphysics and chiplet design tools.",
+        "zh": "EDA、验证、多物理场与芯粒设计工具。"
+      },
+      "url": "https://www.cadence.com/en_US/home.html",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "ase",
+      "name": {
+        "en": "ASE Technology",
+        "zh": "日月光"
+      },
+      "country": "TW",
+      "city": {
+        "en": "Kaohsiung",
+        "zh": "高雄"
+      },
+      "lat": 22.63,
+      "lon": 120.3,
+      "layer": "foundry",
+      "role": {
+        "en": "Advanced semiconductor packaging and testing.",
+        "zh": "先进半导体封装与测试。"
+      },
+      "url": "https://www.aseglobal.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    },
+    {
+      "id": "amkor",
+      "name": {
+        "en": "Amkor Technology",
+        "zh": "安靠科技"
+      },
+      "country": "US",
+      "city": {
+        "en": "Tempe",
+        "zh": "坦佩"
+      },
+      "lat": 33.43,
+      "lon": -111.94,
+      "layer": "foundry",
+      "role": {
+        "en": "Advanced packaging, chiplet integration and semiconductor testing.",
+        "zh": "先进封装、芯粒集成与半导体测试。"
+      },
+      "url": "https://amkor.com/",
+      "logo": null,
+      "checked": "2026-10-06"
+    }
+  ],
+  "models": [
+    {
+      "id": "opus55",
+      "name": "Claude Opus 5.5",
+      "maker": "Anthropic",
+      "country": "US",
+      "score": 58,
+      "cost": 5.98,
+      "speed": 93,
+      "latency": 679.56,
+      "context": "1M",
+      "configuration": "max · fallback",
+      "open": false,
+      "note": {
+        "en": "Overall capability leader; high deliberation latency.",
+        "zh": "综合能力领先；深度推理的等待时间较长。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "sonnet55",
+      "name": "Claude Sonnet 5.5",
+      "maker": "Anthropic",
+      "country": "US",
+      "score": 56,
+      "cost": 7.67,
+      "speed": 139,
+      "latency": 441.14,
+      "context": "1M",
+      "configuration": "max · fallback",
+      "open": false,
+      "note": {
+        "en": "Strong agent coding; this max configuration is costly.",
+        "zh": "智能体编程值得关注；此 max 配置的任务成本较高。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "fable51",
+      "name": "Claude Fable 5.1",
+      "maker": "Anthropic",
+      "country": "US",
+      "score": 53,
+      "cost": 7.63,
+      "speed": 68,
+      "latency": 214.52,
+      "context": "1M",
+      "configuration": "max · fallback",
+      "open": false,
+      "note": {
+        "en": "A separate frontier family; compare access and task fit.",
+        "zh": "独立的前沿模型系列；需结合可用性与任务适配比较。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "astra",
+      "name": "GPT-6 Astra",
+      "maker": "OpenAI",
+      "country": "US",
+      "score": 53,
+      "cost": 3.26,
+      "speed": 54,
+      "latency": 341.88,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "High-end reasoning in OpenAI’s frontier stack.",
+        "zh": "OpenAI 前沿体系中的高阶推理模型。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "argon",
+      "name": "Gemini 4 Argon",
+      "maker": "Google",
+      "country": "US",
+      "score": 53,
+      "cost": 1.99,
+      "speed": null,
+      "latency": null,
+      "context": "1M",
+      "configuration": "high",
+      "open": false,
+      "note": {
+        "en": "Frontier capability; speed is not reported in this snapshot.",
+        "zh": "前沿能力；本快照尚未报告速度。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "sol61",
+      "name": "GPT-6.1 Sol",
+      "maker": "OpenAI",
+      "country": "US",
+      "score": 52,
+      "cost": 0.72,
+      "speed": 63,
+      "latency": 291.08,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "A useful capability–cost compromise for agent work.",
+        "zh": "智能体任务中值得比较的能力与成本组合。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "muse",
+      "name": "Muse Spark 1.3",
+      "maker": "Meta",
+      "country": "US",
+      "score": 48,
+      "cost": 1.6,
+      "speed": 152,
+      "latency": 51.47,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "A competitive alternative with faster output.",
+        "zh": "具有竞争力的替代选择，输出速度较快。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "grok",
+      "name": "Grok 4.7",
+      "maker": "SpaceXAI",
+      "country": "US",
+      "score": 46,
+      "cost": 3.74,
+      "speed": 81,
+      "latency": 49.32,
+      "context": "500k",
+      "configuration": "xhigh",
+      "open": false,
+      "note": {
+        "en": "Relevant to long-running development workflows.",
+        "zh": "值得关注其长时开发工作流表现。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "mimo",
+      "name": "MiMo-V2.6-Pro",
+      "maker": "Xiaomi",
+      "country": "CN",
+      "score": 46,
+      "cost": 0.13,
+      "speed": 46,
+      "latency": 4.08,
+      "context": "1M",
+      "configuration": "standard",
+      "open": true,
+      "note": {
+        "en": "Best open-weights score in the selected snapshot.",
+        "zh": "本精选快照中开放权重模型的最高分。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "qwenmax",
+      "name": "Qwen3.8 Max 0902",
+      "maker": "Alibaba",
+      "country": "CN",
+      "score": 45,
+      "cost": 5.41,
+      "speed": 39,
+      "latency": 2.69,
+      "context": "984k",
+      "configuration": "0902",
+      "open": false,
+      "note": {
+        "en": "Closed service: do not label all Qwen models open.",
+        "zh": "闭源服务：不能把所有 Qwen 模型都标为开放权重。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "glm",
+      "name": "GLM-5.3",
+      "maker": "Z AI",
+      "country": "CN",
+      "score": 45,
+      "cost": 2.01,
+      "speed": 71,
+      "latency": 3.42,
+      "context": "1M",
+      "configuration": "max",
+      "open": true,
+      "note": {
+        "en": "A strong open-weights frontier candidate.",
+        "zh": "值得关注的开放权重前沿候选。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "step",
+      "name": "Step 5 Preview",
+      "maker": "StepFun",
+      "country": "CN",
+      "score": 44,
+      "cost": 0.72,
+      "speed": 86,
+      "latency": 3.07,
+      "context": "1M",
+      "configuration": "preview",
+      "open": null,
+      "note": {
+        "en": "Competitive preview; deployment terms need checking.",
+        "zh": "具有竞争力的预览版；部署条款仍需核对。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "kimi",
+      "name": "Kimi K3",
+      "maker": "Moonshot",
+      "country": "CN",
+      "score": 44,
+      "cost": 2,
+      "speed": 34,
+      "latency": 4.53,
+      "context": "1.05M",
+      "configuration": "max",
+      "open": true,
+      "note": {
+        "en": "Long-context, open-weights alternative.",
+        "zh": "长上下文的开放权重替代选择。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "glmflash",
+      "name": "GLM-5.3-Flash",
+      "maker": "Z AI",
+      "country": "CN",
+      "score": 42,
+      "cost": 0.25,
+      "speed": 54,
+      "latency": 3.21,
+      "context": "1M",
+      "configuration": "standard",
+      "open": true,
+      "note": {
+        "en": "Efficient companion to the larger GLM.",
+        "zh": "大型 GLM 之外的高效补充。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "geminiflash",
+      "name": "Gemini 3.8 Flash",
+      "maker": "Google",
+      "country": "US",
+      "score": 41,
+      "cost": 1.24,
+      "speed": 249,
+      "latency": 18.95,
+      "context": "1M",
+      "configuration": "high",
+      "open": false,
+      "note": {
+        "en": "Fast output for interactive workloads.",
+        "zh": "适合交互式任务的快速输出。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "qwenflash",
+      "name": "Qwen3.8-Flash-Next",
+      "maker": "Alibaba",
+      "country": "CN",
+      "score": 40,
+      "cost": 0.37,
+      "speed": 54,
+      "latency": 2.46,
+      "context": "256k",
+      "configuration": "standard",
+      "open": true,
+      "note": {
+        "en": "An open-weights efficiency option.",
+        "zh": "开放权重的效率型选择。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "deepseekflash",
+      "name": "DeepSeek V4.1 Flash",
+      "maker": "DeepSeek",
+      "country": "CN",
+      "score": 39,
+      "cost": 0.27,
+      "speed": 209,
+      "latency": 0.95,
+      "context": "1M",
+      "configuration": "max",
+      "open": true,
+      "note": {
+        "en": "Low first-chunk latency and fast generation.",
+        "zh": "首段延迟低、生成速度快。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "luna",
+      "name": "GPT-6 Luna",
+      "maker": "OpenAI",
+      "country": "US",
+      "score": 38,
+      "cost": 0.07,
+      "speed": 131,
+      "latency": 128.78,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "An economical option retained for its cost advantage.",
+        "zh": "因任务成本优势而保留的经济型选择。"
+      },
+      "source": "aa"
+    }
+  ],
+  "sources": [
+    {
+      "id": "aa",
+      "title": {
+        "en": "Artificial Analysis · model leaderboard",
+        "zh": "Artificial Analysis · 模型榜"
+      },
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "date": "2026-10-06",
+      "accessed": "2026-10-06",
+      "kind": "independent",
+      "scope": "Model scores, configurations, task cost, output speed and latency; v4.3.2."
+    },
+    {
+      "id": "stanford",
+      "title": {
+        "en": "Stanford · AI Index 2026",
+        "zh": "斯坦福 · 2026 AI Index"
+      },
+      "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+      "date": "2026-04",
+      "accessed": "2026-10-06",
+      "kind": "research",
+      "scope": "2025 private investment; March 2026 model gap; supply-chain context."
+    },
+    {
+      "id": "seriesh",
+      "title": {
+        "en": "Anthropic · Series H",
+        "zh": "Anthropic · H 轮融资"
+      },
+      "url": "https://www.anthropic.com/news/series-h",
+      "date": "2026-05-28",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Funding, post-money valuation and annualized revenue run-rate."
+    },
+    {
+      "id": "ipo",
+      "title": {
+        "en": "Reuters · reported IPO prospectus",
+        "zh": "路透社 · 招股材料报道"
+      },
+      "url": "https://www.investing.com/news/stock-market-news/exclusiveanthropics-ipo-prospectus-shows-sweeping-ai-vision-surging-costs-4921382",
+      "date": "2026-09-28",
+      "accessed": "2026-10-06",
+      "kind": "reported",
+      "scope": "2025 revenue, loss composition and customer concentration; reported confidential filing."
+    },
+    {
+      "id": "computecommit",
+      "title": {
+        "en": "Reuters · compute commitments",
+        "zh": "路透社 · 算力承诺"
+      },
+      "url": "https://www.investing.com/news/stock-market-news/anthropics-518-billion-ai-buildout-hinges-largely-on-deals-that-cannot-be-canceled-filing-shows-4922031",
+      "date": "2026-09-29",
+      "accessed": "2026-10-06",
+      "kind": "reported",
+      "scope": "Ten-year commitments and non-cancelable proportion."
+    },
+    {
+      "id": "opus",
+      "title": {
+        "en": "Anthropic · Opus 5.5",
+        "zh": "Anthropic · Opus 5.5"
+      },
+      "url": "https://www.anthropic.com/claude-opus-5-5",
+      "date": "2026-09-22",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Vendor benchmark results and evaluation limitations."
+    },
+    {
+      "id": "sonnet",
+      "title": {
+        "en": "Anthropic · Sonnet 5.5",
+        "zh": "Anthropic · Sonnet 5.5"
+      },
+      "url": "https://www.anthropic.com/claude-sonnet-5-5",
+      "date": "2026-09-28",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Terminal-Bench 4.0 vendor result."
+    },
+    {
+      "id": "metr",
+      "title": {
+        "en": "METR · task time horizons",
+        "zh": "METR · 任务时间跨度"
+      },
+      "url": "https://metr.org/time-horizons/",
+      "date": "2026-05-08",
+      "accessed": "2026-10-06",
+      "kind": "research",
+      "scope": "Methodology; 50% and 80% reliability are different. No current numerical horizon inferred."
+    },
+    {
+      "id": "arc",
+      "title": {
+        "en": "ARC-AGI-3 · launch baseline",
+        "zh": "ARC-AGI-3 · 发布基线"
+      },
+      "url": "https://arcprize.org/blog/arc-agi-3-launch",
+      "date": "2026-03-25",
+      "accessed": "2026-10-06",
+      "kind": "research",
+      "scope": "Historical launch comparison, not an October leaderboard."
+    },
+    {
+      "id": "arclive",
+      "title": {
+        "en": "ARC Prize · current leaderboard",
+        "zh": "ARC Prize · 当前榜单"
+      },
+      "url": "https://arcprize.org/leaderboard",
+      "date": "2026-10-06",
+      "accessed": "2026-10-06",
+      "kind": "research",
+      "scope": "Live results; no numerical result transcribed in this snapshot."
+    },
+    {
+      "id": "devin",
+      "title": {
+        "en": "Devin puts the agent in a workspace",
+        "zh": "Devin 把智能体放进工作空间"
+      },
+      "url": "https://cognition.com/blog/introducing-devin",
+      "date": "2024-03-12",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "mcp",
+      "title": {
+        "en": "MCP opens a tool-connection layer",
+        "zh": "MCP 开放工具连接层"
+      },
+      "url": "https://www.anthropic.com/news/model-context-protocol",
+      "date": "2024-11-25",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "devinga",
+      "title": {
+        "en": "Devin becomes generally available",
+        "zh": "Devin 正式开放"
+      },
+      "url": "https://cognition.com/blog/devin-generally-available",
+      "date": "2024-12-10",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "copilotmode",
+      "title": {
+        "en": "Copilot adds agent mode",
+        "zh": "Copilot 加入 Agent Mode"
+      },
+      "url": "https://github.blog/news-insights/product-news/github-copilot-the-agent-awakens/",
+      "date": "2025-02-06",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "claudecode",
+      "title": {
+        "en": "Claude Code enters research preview",
+        "zh": "Claude Code 进入研究预览"
+      },
+      "url": "https://www.anthropic.com/news/claude-3-7-sonnet",
+      "date": "2025-02-24",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "codexcloud",
+      "title": {
+        "en": "Codex delegates work to cloud sandboxes",
+        "zh": "Codex 在云端沙箱承接任务"
+      },
+      "url": "https://openai.com/index/introducing-codex/",
+      "date": "2025-05-16",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "copilotpr",
+      "title": {
+        "en": "Copilot takes issues through to PRs",
+        "zh": "Copilot 从 Issue 走向 PR"
+      },
+      "url": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
+      "date": "2025-05-19",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "claude4",
+      "title": {
+        "en": "Claude 4 and Claude Code GA",
+        "zh": "Claude 4 与 Claude Code 正式版"
+      },
+      "url": "https://www.anthropic.com/news/claude-4",
+      "date": "2025-05-22",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "geminicli",
+      "title": {
+        "en": "Gemini CLI brings an open-source agent",
+        "zh": "Gemini CLI 开源终端智能体"
+      },
+      "url": "https://blog.google/technology/developers/introducing-gemini-cli/",
+      "date": "2025-06-25",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "codexupgrade",
+      "title": {
+        "en": "GPT-5-Codex specializes for agent coding",
+        "zh": "GPT-5-Codex 面向智能体编程"
+      },
+      "url": "https://openai.com/index/introducing-upgrades-to-codex/",
+      "date": "2025-09-15",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "sonnet45",
+      "title": {
+        "en": "Sonnet 4.5 pushes sustained coding",
+        "zh": "Sonnet 4.5 推进持续编程"
+      },
+      "url": "https://www.anthropic.com/news/claude-sonnet-4-5",
+      "date": "2025-09-29",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "cursorlong",
+      "title": {
+        "en": "Cursor studies long-running agents",
+        "zh": "Cursor 研究长时运行智能体"
+      },
+      "url": "https://cursor.com/blog/scaling-agents",
+      "date": "2026-01-14",
+      "accessed": "2026-10-06",
+      "kind": "research",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "codexapp",
+      "title": {
+        "en": "The Codex app coordinates parallel work",
+        "zh": "Codex App 协调并行工作"
+      },
+      "url": "https://openai.com/index/introducing-the-codex-app/",
+      "date": "2026-02-02",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "arc3",
+      "title": {
+        "en": "ARC-AGI-3 tests unfamiliar interactive worlds",
+        "zh": "ARC-AGI-3 检验陌生交互世界"
+      },
+      "url": "https://arcprize.org/arc-agi/3",
+      "date": "2026-03-25",
+      "accessed": "2026-10-06",
+      "kind": "research",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "cursorindustry",
+      "title": {
+        "en": "Cursor joins SpaceX",
+        "zh": "Cursor 加入 SpaceX"
+      },
+      "url": "https://cursor.com/blog/joining-spacex",
+      "date": "2026-08-14",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "opusmilestone",
+      "title": {
+        "en": "Opus 5.5 advances the coding frontier",
+        "zh": "Opus 5.5 推进编程前沿"
+      },
+      "url": "https://www.anthropic.com/claude-opus-5-5",
+      "date": "2026-09-22",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "sonnetmilestone",
+      "title": {
+        "en": "Sonnet 5.5 raises the agent benchmark",
+        "zh": "Sonnet 5.5 提升智能体基准"
+      },
+      "url": "https://www.anthropic.com/claude-sonnet-5-5",
+      "date": "2026-09-28",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "devday",
+      "title": {
+        "en": "DevDay expands shared agent workflows",
+        "zh": "DevDay 扩展协作式智能体工作流"
+      },
+      "url": "https://openai.com/index/devday-2026-recap/",
+      "date": "2026-09-29",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Agentic coding milestone."
+    },
+    {
+      "id": "governance",
+      "title": {
+        "en": "Anthropic · company & governance",
+        "zh": "Anthropic · 公司与治理"
+      },
+      "url": "https://www.anthropic.com/company",
+      "date": "2026-10-06",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Public Benefit Corporation and Long-Term Benefit Trust; current company statement."
+    },
+    {
+      "id": "codexcli",
+      "title": {
+        "en": "OpenAI · Codex CLI launch",
+        "zh": "OpenAI · Codex CLI 发布"
+      },
+      "url": "https://openai.com/index/introducing-o3-and-o4-mini/",
+      "date": "2025-04-16",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Dated milestone; interpretation is editorial."
+    },
+    {
+      "id": "cursorbackground",
+      "title": {
+        "en": "Cursor · background agents preview",
+        "zh": "Cursor · 后台智能体预览"
+      },
+      "url": "https://cursor.com/changelog/0-50",
+      "date": "2025-05-15",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Dated milestone; interpretation is editorial."
+    },
+    {
+      "id": "composer",
+      "title": {
+        "en": "Cursor · 2.0 and Composer",
+        "zh": "Cursor · 2.0 与 Composer"
+      },
+      "url": "https://cursor.com/blog/2-0",
+      "date": "2025-10-29",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Dated milestone; interpretation is editorial."
+    },
+    {
+      "id": "antigravity",
+      "title": {
+        "en": "Google · Antigravity launch",
+        "zh": "Google · Antigravity 发布"
+      },
+      "url": "https://antigravity.google/blog/introducing-google-antigravity",
+      "date": "2025-11-18",
+      "accessed": "2026-10-06",
+      "kind": "primary",
+      "scope": "Dated milestone; interpretation is editorial."
+    },
+    {
+      "id": "mirrorcode",
+      "title": {
+        "en": "METR · MirrorCode preliminary results",
+        "zh": "METR · MirrorCode 初步结果"
+      },
+      "url": "https://metr.org/blog/2026-04-10-mirrorcode-preliminary-results/",
+      "date": "2026-04-10",
+      "accessed": "2026-10-06",
+      "kind": "research",
+      "scope": "Dated milestone; interpretation is editorial."
+    }
+  ],
+  "events": [
+    {
+      "id": "devin",
+      "date": "2024-03-12",
+      "title": {
+        "en": "Devin puts the agent in a workspace",
+        "zh": "Devin 把智能体放进工作空间"
+      },
+      "body": {
+        "en": "A task-oriented system combines planning, terminal, editor and browser. The precursor to delegating development rather than requesting snippets.",
+        "zh": "规划、终端、编辑器与浏览器组合成任务系统，为委派开发任务铺路。"
+      },
+      "type": "product",
+      "source": "devin"
+    },
+    {
+      "id": "mcp",
+      "date": "2024-11-25",
+      "title": {
+        "en": "MCP opens a tool-connection layer",
+        "zh": "MCP 开放工具连接层"
+      },
+      "body": {
+        "en": "A common protocol makes external data and tools accessible to models. It helps agent integrations move beyond one-off connectors.",
+        "zh": "统一协议让模型连接外部数据与工具，减少一次性的连接开发。"
+      },
+      "type": "protocol",
+      "source": "mcp"
+    },
+    {
+      "id": "devinga",
+      "date": "2024-12-10",
+      "title": {
+        "en": "Devin becomes generally available",
+        "zh": "Devin 正式开放"
+      },
+      "body": {
+        "en": "Delegated software engineering becomes a purchasable workflow; availability is distinct from guaranteed autonomous success.",
+        "zh": "委派软件工程成为可采购的工作流；正式开放不代表任务必然自主成功。"
+      },
+      "type": "product",
+      "source": "devinga"
+    },
+    {
+      "id": "copilotmode",
+      "date": "2025-02-06",
+      "title": {
+        "en": "Copilot adds agent mode",
+        "zh": "Copilot 加入 Agent Mode"
+      },
+      "body": {
+        "en": "The IDE assistant can iterate on edits and commands, bringing tool use into the developer’s everyday environment.",
+        "zh": "IDE 助手开始迭代修改并执行命令，让工具使用进入日常开发环境。"
+      },
+      "type": "product",
+      "source": "copilotmode"
+    },
+    {
+      "id": "claudecode",
+      "date": "2025-02-24",
+      "title": {
+        "en": "Claude Code enters research preview",
+        "zh": "Claude Code 进入研究预览"
+      },
+      "body": {
+        "en": "The terminal becomes an agent interface, with repository context, file edits and command execution.",
+        "zh": "终端成为智能体界面，结合仓库上下文、文件修改与命令执行。"
+      },
+      "type": "product",
+      "source": "claudecode"
+    },
+    {
+      "id": "codexcli",
+      "date": "2025-04-16",
+      "title": {
+        "en": "Codex CLI brings the agent to the terminal",
+        "zh": "Codex CLI 把智能体带进终端"
+      },
+      "body": {
+        "en": "An open-source local interface gives reasoning models access to repository code and terminal tools. Local work joins the emerging cloud workflow.",
+        "zh": "开源本地界面连接推理模型、仓库代码与终端工具。本地工作成为云端工作流的重要补充。"
+      },
+      "type": "product",
+      "source": "codexcli"
+    },
+    {
+      "id": "cursorbackground",
+      "date": "2025-05-15",
+      "title": {
+        "en": "Cursor moves tasks into the background",
+        "zh": "Cursor 让任务在后台运行"
+      },
+      "body": {
+        "en": "Background agents enter preview in separate remote environments. Developers can monitor, redirect or take over asynchronous repository tasks.",
+        "zh": "后台智能体进入预览，在独立远程环境执行任务。开发者可以查看、调整或接管异步仓库工作。"
+      },
+      "type": "product",
+      "source": "cursorbackground"
+    },
+    {
+      "id": "codexcloud",
+      "date": "2025-05-16",
+      "title": {
+        "en": "Codex delegates work to cloud sandboxes",
+        "zh": "Codex 在云端沙箱承接任务"
+      },
+      "body": {
+        "en": "Parallel isolated tasks turn the coding agent into an asynchronous collaborator. Results still need review and testing.",
+        "zh": "并行隔离任务使编程智能体成为异步协作者，结果仍需要审查和测试。"
+      },
+      "type": "product",
+      "source": "codexcloud"
+    },
+    {
+      "id": "copilotpr",
+      "date": "2025-05-19",
+      "title": {
+        "en": "Copilot takes issues through to PRs",
+        "zh": "Copilot 从 Issue 走向 PR"
+      },
+      "body": {
+        "en": "Repository tasks connect to the pull-request review loop. The unit of work becomes an issue, rather than a completion.",
+        "zh": "仓库任务接入 PR 审查环节，工作单元从代码补全变为 Issue。"
+      },
+      "type": "product",
+      "source": "copilotpr"
+    },
+    {
+      "id": "claude4",
+      "date": "2025-05-22",
+      "title": {
+        "en": "Claude 4 and Claude Code GA",
+        "zh": "Claude 4 与 Claude Code 正式版"
+      },
+      "body": {
+        "en": "Longer tool workflows and a generally available command-line product make agent coding more broadly accessible.",
+        "zh": "更长的工具工作流与正式版命令行产品，扩大智能体编程的可用范围。"
+      },
+      "type": "product",
+      "source": "claude4"
+    },
+    {
+      "id": "geminicli",
+      "date": "2025-06-25",
+      "title": {
+        "en": "Gemini CLI brings an open-source agent",
+        "zh": "Gemini CLI 开源终端智能体"
+      },
+      "body": {
+        "en": "An open-source command-line agent broadens the ecosystem beyond proprietary editors and cloud services.",
+        "zh": "开源命令行智能体让生态扩展到专有编辑器与云服务之外。"
+      },
+      "type": "product",
+      "source": "geminicli"
+    },
+    {
+      "id": "codexupgrade",
+      "date": "2025-09-15",
+      "title": {
+        "en": "GPT-5-Codex specializes for agent coding",
+        "zh": "GPT-5-Codex 面向智能体编程"
+      },
+      "body": {
+        "en": "An agent-oriented model emphasizes extended coding and review workflows, alongside improvements to the coding product.",
+        "zh": "面向智能体的模型强调长程编程与审查工作流，产品能力同步演进。"
+      },
+      "type": "product",
+      "source": "codexupgrade"
+    },
+    {
+      "id": "sonnet45",
+      "date": "2025-09-29",
+      "title": {
+        "en": "Sonnet 4.5 pushes sustained coding",
+        "zh": "Sonnet 4.5 推进持续编程"
+      },
+      "body": {
+        "en": "The focus shifts toward longer software tasks and agent scaffolding. Vendor demonstrations remain distinct from independent reliability tests.",
+        "zh": "关注点转向更长的软件任务与智能体框架；厂商演示需与独立可靠性评测区分。"
+      },
+      "type": "product",
+      "source": "sonnet45"
+    },
+    {
+      "id": "composer",
+      "date": "2025-10-29",
+      "title": {
+        "en": "Composer and a workspace for parallel agents",
+        "zh": "Composer 与并行智能体工作空间"
+      },
+      "body": {
+        "en": "Cursor 2.0 pairs a coding model with parallel agents, isolated worktrees and browser verification. Review and testing become central parts of the interface.",
+        "zh": "Cursor 2.0 将编程模型、并行智能体、独立工作树与浏览器验证结合，审查与测试成为界面的核心环节。"
+      },
+      "type": "product",
+      "source": "composer"
+    },
+    {
+      "id": "antigravity",
+      "date": "2025-11-18",
+      "title": {
+        "en": "Antigravity connects editor, terminal and browser",
+        "zh": "Antigravity 连接编辑器、终端与浏览器"
+      },
+      "body": {
+        "en": "Google launches a public preview with an agent manager and reviewable artifacts. Work is organized around delegated tasks spanning multiple development surfaces.",
+        "zh": "Google 发布公开预览，提供智能体管理与可审查的成果。工作围绕跨越多种开发界面的委派任务组织。"
+      },
+      "type": "product",
+      "source": "antigravity"
+    },
+    {
+      "id": "cursorlong",
+      "date": "2026-01-14",
+      "title": {
+        "en": "Cursor studies long-running agents",
+        "zh": "Cursor 研究长时运行智能体"
+      },
+      "body": {
+        "en": "Research on planners and workers explores extended autonomous coding. A successful experiment does not establish general unattended reliability.",
+        "zh": "规划者与执行者研究探索长时自主编程；成功实验仍不能证明普遍的无人值守可靠性。"
+      },
+      "type": "research",
+      "source": "cursorlong"
+    },
+    {
+      "id": "codexapp",
+      "date": "2026-02-02",
+      "title": {
+        "en": "The Codex app coordinates parallel work",
+        "zh": "Codex App 协调并行工作"
+      },
+      "body": {
+        "en": "A dedicated app organizes multiple agents, isolated worktrees and automations around a developer’s projects.",
+        "zh": "专用应用围绕项目组织多个智能体、隔离工作树与自动化。"
+      },
+      "type": "product",
+      "source": "codexapp"
+    },
+    {
+      "id": "arc3",
+      "date": "2026-03-25",
+      "title": {
+        "en": "ARC-AGI-3 tests unfamiliar interactive worlds",
+        "zh": "ARC-AGI-3 检验陌生交互世界"
+      },
+      "body": {
+        "en": "Evaluation asks agents to explore and learn unseen environments. Coding success alone is insufficient evidence of general intelligence.",
+        "zh": "评测要求智能体探索并学习未见环境，编程成功本身不足以证明通用智能。"
+      },
+      "type": "research",
+      "source": "arc3"
+    },
+    {
+      "id": "mirrorcode",
+      "date": "2026-04-10",
+      "title": {
+        "en": "MirrorCode tests some weeks-long coding tasks",
+        "zh": "MirrorCode 测试部分需要数周的编程任务"
+      },
+      "body": {
+        "en": "METR and Epoch AI report preliminary evidence on selected long coding tasks. Success on some tasks is consequential, but does not establish reliable autonomy across arbitrary weeks-long projects.",
+        "zh": "METR 与 Epoch AI 报告部分长程编程任务的初步证据。完成某些任务意义重大，但不能证明对任意数周项目都具备可靠自主能力。"
+      },
+      "type": "research",
+      "source": "mirrorcode"
+    },
+    {
+      "id": "cursorindustry",
+      "date": "2026-08-14",
+      "title": {
+        "en": "Cursor joins SpaceX",
+        "zh": "Cursor 加入 SpaceX"
+      },
+      "body": {
+        "en": "A major agent-coding product moves into a larger model and compute ecosystem. Product names and parent companies must be distinguished.",
+        "zh": "主要编程智能体产品进入更大的模型与算力生态；产品名称与母公司应区分。"
+      },
+      "type": "industry",
+      "source": "cursorindustry"
+    },
+    {
+      "id": "opusmilestone",
+      "date": "2026-09-22",
+      "title": {
+        "en": "Opus 5.5 advances the coding frontier",
+        "zh": "Opus 5.5 推进编程前沿"
+      },
+      "body": {
+        "en": "New benchmark results broaden the frontier comparison. Different effort settings and fallback policies must remain visible.",
+        "zh": "新基准结果扩展前沿比较；推理配置与回退策略必须保持可见。"
+      },
+      "type": "product",
+      "source": "opusmilestone"
+    },
+    {
+      "id": "sonnetmilestone",
+      "date": "2026-09-28",
+      "title": {
+        "en": "Sonnet 5.5 raises the agent benchmark",
+        "zh": "Sonnet 5.5 提升智能体基准"
+      },
+      "body": {
+        "en": "Anthropic reports 70.6% on Terminal-Bench 4.0. This is a vendor result on a defined task suite, not an AGI milestone percentage.",
+        "zh": "Anthropic 报告 Terminal-Bench 4.0 成绩 70.6%；这是特定任务集的厂商成绩，不是 AGI 完成比例。"
+      },
+      "type": "product",
+      "source": "sonnetmilestone"
+    },
+    {
+      "id": "devday",
+      "date": "2026-09-29",
+      "title": {
+        "en": "DevDay expands shared agent workflows",
+        "zh": "DevDay 扩展协作式智能体工作流"
+      },
+      "body": {
+        "en": "GPT-6.1 Sol and Codex workflow updates put more emphasis on shared environments, review and coordinated agent work.",
+        "zh": "GPT-6.1 Sol 与 Codex 工作流更新，更强调共享环境、审查与智能体协作。"
+      },
+      "type": "product",
+      "source": "devday"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "tools",
+      "title": {
+        "en": "Useful specialist tools",
+        "zh": "实用的专项工具"
+      },
+      "status": {
+        "en": "Established",
+        "zh": "已有充分证据"
+      },
+      "body": {
+        "en": "Models write code, use tools and solve many bounded tasks. The selected leaderboard tracks capability, cost and speed; none measures all of intelligence.",
+        "zh": "模型能编写代码、使用工具并解决大量有边界的任务。精选榜追踪能力、成本与速度，但没有一项覆盖全部智能。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "agents",
+      "title": {
+        "en": "Supervised agents",
+        "zh": "受监督的智能体"
+      },
+      "status": {
+        "en": "Current frontier",
+        "zh": "当前前沿"
+      },
+      "body": {
+        "en": "Coding agents can iterate in real environments. Sonnet 5.5’s 70.6% Terminal-Bench 4.0 result shows progress on a specific test, with substantial failures remaining.",
+        "zh": "编程智能体能在真实环境中迭代。Sonnet 5.5 的 Terminal-Bench 4.0 成绩 70.6% 显示特定测试上的进步，也意味着仍有相当比例的失败。"
+      },
+      "source": "sonnet",
+      "benchmark": {
+        "label": "Terminal-Bench 4.0 · Sonnet 5.5",
+        "value": 70.6,
+        "date": "2026-09-28",
+        "basis": {
+          "en": "Vendor-reported success rate",
+          "zh": "厂商报告的成功率"
+        }
+      }
+    },
+    {
+      "id": "long",
+      "title": {
+        "en": "Reliable long-horizon work",
+        "zh": "可靠的长程任务"
+      },
+      "status": {
+        "en": "Partially demonstrated",
+        "zh": "部分得到验证"
+      },
+      "body": {
+        "en": "Working longer is different from succeeding reliably. METR distinguishes 50% and 80% task-success horizons measured in human expert task time. A task horizon is not an agent’s wall-clock runtime or a guarantee across arbitrary projects.",
+        "zh": "运行更久与可靠成功是不同的事。METR 区分 50% 与 80% 成功率的任务跨度，并以人类专家完成任务的时间衡量。任务跨度不是智能体实际运行时间，也不能保证任意项目都成功。"
+      },
+      "source": "metr"
+    },
+    {
+      "id": "general",
+      "title": {
+        "en": "Adaptive general intelligence",
+        "zh": "自适应通用智能"
+      },
+      "status": {
+        "en": "Not established",
+        "zh": "尚未得到证明"
+      },
+      "body": {
+        "en": "Robust transfer, learning in unfamiliar environments and dependable control still need evidence. ARC-AGI-3 reported frontier systems below 1% at its March launch; that historical baseline is not today’s leaderboard.",
+        "zh": "稳健迁移、陌生环境学习与可靠控制仍需要证据。ARC-AGI-3 在 3 月发布时报告前沿系统低于 1%；这是历史发布基线，不是今日榜单。"
+      },
+      "source": "arc"
+    }
+  ],
+  "comparison": [
+    {
+      "id": "capability",
+      "title": {
+        "en": "Frontier model capability",
+        "zh": "前沿模型能力"
+      },
+      "unit": {
+        "en": "AA index points · 2026-10-06",
+        "zh": "AA 指数分 · 2026-10-06"
+      },
+      "us": 58,
+      "cn": 46,
+      "source": "aa",
+      "note": {
+        "en": "Best selected model configuration: Opus 5.5 vs MiMo-V2.6-Pro. A 12-point index gap is not a percentage or a measure of national scientific capability.",
+        "zh": "精选模型最高配置：Opus 5.5 对 MiMo-V2.6-Pro。12 个指数点的差距，不是百分比，也不等于国家整体科研能力差距。"
+      }
+    },
+    {
+      "id": "investment",
+      "title": {
+        "en": "Private AI investment",
+        "zh": "AI 私人投资"
+      },
+      "unit": {
+        "en": "US$ billion · 2025",
+        "zh": "十亿美元 · 2025 年"
+      },
+      "us": 285.9,
+      "cn": 12.4,
+      "source": "stanford",
+      "note": {
+        "en": "AI Index 2026 reports 2025 private investment. China’s public funding is not captured equivalently; this is not total national AI spending.",
+        "zh": "2026 AI Index 报告的是 2025 年私人投资。中国公共资金未被等价覆盖；这不是两国 AI 总投入。"
+      }
+    }
+  ],
+  "anthropic": {
+    "listingStatus": "reported confidential filing; public terms unverified",
+    "facts": [
+      {
+        "id": "valuation",
+        "value": 965,
+        "unit": "USD billion",
+        "period": "2026-05-28",
+        "status": "official",
+        "source": "seriesh"
+      },
+      {
+        "id": "seriesH",
+        "value": 65,
+        "unit": "USD billion",
+        "period": "2026-05-28",
+        "status": "official",
+        "source": "seriesh"
+      },
+      {
+        "id": "runRate",
+        "value": 47,
+        "unit": "USD billion/year, annualized",
+        "period": "2026-05",
+        "status": "official",
+        "source": "seriesh"
+      },
+      {
+        "id": "revenue",
+        "value": 4.6,
+        "unit": "USD billion",
+        "period": "FY2025",
+        "status": "reported",
+        "source": "ipo"
+      },
+      {
+        "id": "computeCommitments",
+        "value": 518,
+        "unit": "USD billion",
+        "period": "approximately ten years",
+        "status": "reported",
+        "source": "computecommit"
+      },
+      {
+        "id": "nonCancelable",
+        "value": 80,
+        "unit": "percent of commitments, approximate",
+        "period": "multiyear obligations",
+        "status": "reported",
+        "source": "computecommit"
+      },
+      {
+        "id": "netLoss",
+        "value": 42,
+        "unit": "USD billion, approximate",
+        "period": "FY2025",
+        "status": "reported",
+        "source": "ipo"
+      },
+      {
+        "id": "financingFairValueCharge",
+        "value": 34,
+        "unit": "USD billion, approximate",
+        "period": "FY2025",
+        "status": "reported",
+        "source": "ipo"
+      },
+      {
+        "id": "operatingLoss",
+        "value": 8,
+        "unit": "USD billion, greater than",
+        "period": "FY2025",
+        "status": "reported",
+        "source": "ipo"
+      }
+    ]
+  },
+  "battlegrounds": [
+    {
+      "id": "research",
+      "title": {
+        "en": "Research and industrial deployment",
+        "zh": "研究与工业部署"
+      },
+      "us": {
+        "en": "AI Index 2026 reports more top-tier models and higher-impact patents.",
+        "zh": "2026 AI Index 报告美国拥有更多顶尖模型和高影响力专利。"
+      },
+      "cn": {
+        "en": "The report finds a lead in publication volume, citations, patent output and industrial robot installations.",
+        "zh": "该报告认为中国在论文数量、引用、专利产出与工业机器人安装量上领先。"
+      },
+      "note": {
+        "en": "These measure different parts of the ecosystem, not a single winner or the reliability of a deployed agent.",
+        "zh": "它们衡量生态的不同部分，不能合成一个胜者，也不能证明部署智能体的可靠性。"
+      },
+      "source": "stanford"
+    },
+    {
+      "id": "weights",
+      "title": {
+        "en": "Control over the model",
+        "zh": "对模型的控制"
+      },
+      "us": {
+        "en": "The leading selected OpenAI and Anthropic configurations are closed services.",
+        "zh": "精选榜领先的 OpenAI 与 Anthropic 配置采用闭源服务。"
+      },
+      "cn": {
+        "en": "MiMo, GLM, Kimi and Qwen Flash offer open-weight alternatives in this shortlist.",
+        "zh": "本精选榜中的 MiMo、GLM、Kimi 与 Qwen Flash 提供开放权重替代方案。"
+      },
+      "note": {
+        "en": "Compare the actual licence, deployment cost and operational responsibility. Neither every Chinese model nor every American model follows one approach.",
+        "zh": "比较具体许可证、部署成本与运维责任。不能把中国或美国的全部模型归入同一种路线。"
+      },
+      "source": "aa"
+    },
+    {
+      "id": "dependencies",
+      "title": {
+        "en": "The shared hardware constraint",
+        "zh": "共同的硬件约束"
+      },
+      "us": {
+        "en": "Chip design and hyperscale infrastructure are strengths; leading AI chip fabrication remains highly concentrated at TSMC.",
+        "zh": "芯片设计与超大规模基础设施是优势，领先 AI 芯片制造仍高度集中于台积电。"
+      },
+      "cn": {
+        "en": "Domestic accelerators and fabrication are strategic nodes to watch, alongside access to the global equipment and memory stack.",
+        "zh": "国产加速芯片与制造是战略观察点，同时仍需关注全球设备与内存产业体系的可获得性。"
+      },
+      "note": {
+        "en": "Taiwanese fabrication, Dutch lithography and Korean memory make this a global supply-chain contest. This is a structural interpretation, not a claim of technological self-sufficiency.",
+        "zh": "台湾制造、荷兰光刻与韩国内存，让竞争成为全球供应链问题。这是结构性分析，不是技术自给的断言。"
+      },
+      "source": "stanford"
+    }
+  ]
+}

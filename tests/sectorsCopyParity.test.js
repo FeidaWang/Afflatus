@@ -1,23 +1,20 @@
-// tests/sectorsCopyParity.test.js
-import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { extractCopy } from '../scripts/sectors-copy-parity.mjs';
+import { renderPage } from '../src/sectors/observatory/render.js';
 
-// §2.3 deletions: strings that may disappear. Fill with the exact data-en values of the removed elements.
-const ALLOWED_REMOVALS = JSON.parse(readFileSync('scripts/data/sectors-allowed-removals.json', 'utf8'));
-const before = extractCopy(execSync('git show main:sectors.html', { encoding: 'utf8' }));
-const after = extractCopy(readFileSync('sectors.html', 'utf8'));
+const html = readFileSync('sectors.html', 'utf8');
+const data = JSON.parse(readFileSync('src/sectors/observatory/data.json', 'utf8'));
 
-describe('sectors copy parity', () => {
-  it('drops only strings listed in the §2.3 deletion list', () => {
-    const lost = [...before].filter((s) => !after.has(s) && !ALLOWED_REMOVALS.includes(s));
-    expect(lost).toEqual([]);
+describe('sectors generated copy parity', () => {
+  it('publishes the complete replacement from its dated evidence snapshot', () => {
+    // October's brief replaces the September page and its survey shell.
+    // Protect the complete new content rather than requiring deleted legacy copy.
+    const generated = html.split('<!-- observatory:start -->\n')[1]?.split('\n<!-- observatory:end -->')[0];
+    expect(generated).toBe(renderPage(data));
+    expect(html).not.toContain('id="researchArchive"');
+    expect(html).not.toContain('id="rivalryHero"');
   });
   it('keeps en/zh paired on every element', () => {
-    const html = readFileSync('sectors.html', 'utf8');
-    const en = (html.match(/\sdata-en="/g) ?? []).length;
-    const zh = (html.match(/\sdata-zh="/g) ?? []).length;
-    expect(en).toBe(zh);
+    expect((html.match(/\sdata-en="/g) ?? []).length).toBe((html.match(/\sdata-zh="/g) ?? []).length);
   });
 });

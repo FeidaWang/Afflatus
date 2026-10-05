@@ -1,185 +1,128 @@
-# Shared header typography and language button QA — 6 October 2026
+# AI Observatory · Design QA
+
+**Final result: passed**
+
+没有剩余的可操作 P0/P1/P2 视觉问题。此结论针对本次 sectors 页面改版的设计和交互验收；全仓库测试仍有 93 项既有失败，见下方验证记录。
+
+## 对照对象与证据
+
+- 参考页面：[Anthropic · What 81,000 people want from AI](https://www.anthropic.com/features/81k-interviews)。实际打开页面、检查控件并捕获桌面和手机状态。
+- 实现：[中文](http://127.0.0.1:4174/zh/sectors.html)、[English](http://127.0.0.1:4174/en/sectors.html)，由最终 `npm run build` 的 `dist` 提供。
+- 参考内容是访谈调查；实现内容是 AI 行业观察。用户明确要求抛弃调查原文，因此比较的是视觉语言和交互模式，文字、品牌、条目数量、数据含义属于有意改动。
+- 截图为页面内容，不包含浏览器外框。CSS 视口与输出像素一致，均按 1× 比较，未将高密度截图与低密度截图直接比较。拼图上额外增加了 30–32 px 的说明带。
+
+| 状态 | CSS 视口；单张像素 | 参考原图 | 实现原图 | 同一图像输入中的并排比较 |
+| --- | --- | --- | --- | --- |
+| 桌面首屏，默认第一场景，英文 | 1280 × 720 | `docs/sectors-observatory-evidence/reference-hero-1440.jpg`，实际尺寸为 1280 × 720，旧文件名保留 | `docs/sectors-observatory-evidence/implementation-hero-1280-en-v5.jpg` | `docs/sectors-observatory-evidence/comparison-desktop-hero-final.jpg`，2560 × 752 |
+| 手机首屏，默认场景，英文 | 390 × 844 | `docs/sectors-observatory-evidence/reference-hero-390-v2.jpg` | `docs/sectors-observatory-evidence/implementation-hero-390-en-v5.jpg` | `docs/sectors-observatory-evidence/comparison-mobile-hero-final.jpg`，780 × 876 |
+| 桌面目录弹窗，默认分组，空搜索 | 1440 × 900 | `docs/sectors-observatory-evidence/reference-wall-1440.jpg` | `docs/sectors-observatory-evidence/implementation-directory-1440-zh.jpg` | `docs/sectors-observatory-evidence/comparison-directory-final.jpg`，2880 × 932 |
+| 桌面交互条形图，默认能力排序 | 1440 × 900 | `docs/sectors-observatory-evidence/reference-bars-1440.jpg` | `docs/sectors-observatory-evidence/implementation-models-1440-zh.jpg` | `docs/sectors-observatory-evidence/comparison-bars-final.jpg`，2880 × 932 |
+
+以上四张拼图均作为单一图像输入进行实际检查。首屏采用全视图检查构图；目录与图表另外检查实际截图裁切组成的 `comparison-directory-focused-final.jpg` 和 `comparison-bars-focused-final.jpg`，以读清搜索、筛选、条形图、名称、数值和卡片排版。裁切没有重画或替换 UI。
+
+中文最终首屏另见 `implementation-hero-1280-zh-v6.jpg`、`implementation-hero-390-zh-v6.jpg`。其他关键状态见 `implementation-models-390-zh-v2.jpg`、`implementation-directory-320-en.jpg`、`implementation-directory-390-zh.jpg`、`implementation-rivalry-390-zh-v2.jpg`、`implementation-agi-detail-1280-zh.jpg`。
+
+## Findings · 已修复问题与比较历史
+
+1. **[P2] 首屏引言偏离中心。**
+   - 位置：`.ob-hero-lede`。
+   - 初始证据：`comparison-desktop-hero-v1.jpg`、`comparison-mobile-hero-v1.jpg`。参考页引言与中心文字区对齐，实现的段落被更高优先级的全局 `p` 规则覆盖自动边距，偏到文字容器左侧。
+   - 影响：首屏构图和阅读顺序失衡。
+   - 修复：使用 `.observatory .ob-hero-lede` 设置 `margin: 0 auto`，手机规则保持同等优先级。
+   - 复查：桌面和手机 final 首屏拼图，引言区已居中，段内保持左对齐。
+
+2. **[P2] 目录滚动使标题和关闭操作离开可视范围。**
+   - 位置：`#ob-directory`、`.ob-dialog-content`。
+   - 初始证据：`implementation-directory-1280-zh.jpg`。
+   - 影响：用户浏览大量公司后难以定位搜索和关闭。
+   - 修复：弹窗改为纵向 flex，标题和搜索区不收缩，结果区独立滚动，分类栏 sticky；保留原生 dialog 的 Escape、焦点约束和恢复行为。
+   - 复查：`implementation-directory-1280-zh-v2.jpg`、`comparison-directory-final.jpg`、320/390 手机目录截图。标题、搜索和关闭按钮保持可达，内部无横向溢出。
+
+3. **[P2] 手机地球尺寸过小。**
+   - 位置：`createGlobe` 的手机首屏半径。
+   - 初始证据：`comparison-mobile-hero-v1.jpg`。参考地球直径约 310 px，实现约 250 px。
+   - 影响：改变首屏主要区域的占比，削弱参考设计的地理叙事。
+   - 修复：手机半径系数设为视口宽度的 0.4；桌面保持原比例。使用真实 Natural Earth 地理数据绘制陆地、海岸和机构总部标记。
+   - 复查：`comparison-mobile-hero-final.jpg`，390 px 视口内地球约 312 px，标题和交互保持可读。
+
+4. **[P2] 新增中文字符没有全部进入本地字体子集。**
+   - 位置：`public/assets/fonts/noto-serif-sc-subset.woff2` 与字体生成输入。
+   - 证据：初次字形覆盖检查有 140 个新字符缺失，可能回退成另一种字体。
+   - 影响：中文显示字体和字重不一致。
+   - 修复：从 Google Fonts 官方 Noto Serif SC 源文件生成静态 600 字重子集；保留原有字符，并纳入新数据、HTML、控制器和保留清单。提交 OFL 许可证和来源说明。
+   - 复查：最终保留 984 个码位；对当前中文文案的字体检查缺失为 0。中文桌面和手机 v6 首屏未见替代方框或突兀字形。
+
+5. **[P2] 手机章节导航标签收缩并相互覆盖。**
+   - 位置：`.ob-chapter-nav a`。
+   - 初始证据：`implementation-model-detail-390-zh.jpg`、`implementation-rivalry-390-zh.jpg`。
+   - 影响：持久导航难以辨认和点击。
+   - 修复：链接 `flex-shrink: 0`，手机点击高度 44 px，容器横向滚动。
+   - 复查：`implementation-models-390-zh-v2.jpg`、`implementation-rivalry-390-zh-v2.jpg`；标签保持完整宽度，整页无横向溢出。
+
+6. **[P2] 标题换行与参考首屏的主要区域比例不一致。**
+   - 位置：双语 hero 标题及 `.ob-hero-copy`。
+   - 证据：前期英文短标题容易落成单行，中文断行不稳定。
+   - 修复：中英文各定义有意义的两行标题，`white-space: pre-line`，调整桌面和手机标题区顶部位置。
+   - 复查：两张 final 首屏拼图及中文 v6；标题、引言、地球和底部场景构成稳定层级。
+
+另外在最终中文首屏发现一个 P3 断行细节：引言末行只剩单字“业”。对 `.ob-hero-lede` 先增加 pretty 断行（v4），复查后使用 balance 平衡两行长度（v5），最终为中文补充居中和语义断行（v6），英文保留 v5。没有修改事实或数据。重新构建并捕获最终截图；字体加载完成，中文两行围绕标题中心对齐，没有孤字行。中文 v6 与英文参考的并排图为 `comparison-desktop-hero-zh-final.jpg` 和 `comparison-mobile-hero-zh-final.jpg`；原参考没有中文版本，比较的是本地化后的构图、状态与视觉语言，不能声称中文字体/字数完全相同。手机源图是在原站逐字动画中捕获，原访谈正文未用作本页内容对齐目标。
+
+各 P2 问题修复前的比较结果为 blocked；上述修复后的证据复查通过。构建成功没有被当作视觉修复的替代证据。
+
+## 五个必要的视觉检查面
+
+| 检查面 | 最终判断与有意差异 |
+| --- | --- |
+| 字体与排版 | 英文 Newsreader 显示字体与 Hanken Grotesk UI，中文本地 Noto Serif SC 子集与系统 UI 字体。保持参考的衬线标题、长文窄栏、紧凑无衬线控件、两行首屏层级。采用现有可用字体而非复制参考站专属字体；中文静态字重与已有字体声明一致。模型名称更小，以容纳 18 个可比较项目。 |
+| 间距与布局 | 首屏地理舞台、640 px 长文栏、1056 px 交互宽栏、浅边框卡片、居中章节开篇、桌面双栏详情和手机纵向结构成立。目录采用均匀公司卡片，替代原访谈的大小引言卡片，这是内容类型造成的有意差异。 |
+| 颜色与状态 | 使用纸色 `#faf9f5`、舞台色 `#e8e6dc`、墨色 `#141413`、次要文字 `#615f57`、浅绿条形图和深绿选中态；当前按钮有明确底色，focus-visible 为蓝色轮廓。国别图使用蓝/褐区分，全部数值同时用文字表达。 |
+| 图像与资产 | 地球是实际地理数据驱动的图表，不是手画装饰球体；机构点与近似总部相对应。沿用本地已核查的机构标识，文字名称在没有图片时仍可识别。自己的站点品牌替代参考站品牌；未复制原访谈照片、头像或调查数据。截图无明显压缩、透明边缘或占位图问题。 |
+| 内容与文案 | 双语重新研究和编写，章节说明、空状态、控件名、ARIA 文案、方法和来源齐全。排名显示配置和口径，缺失数据保留 `—`；财务时期及报道状态可辨。AGI 的能力关卡不标虚构完成率。页面没有“克隆参考页”等实现说明泄漏。 |
+
+## 主要交互与响应式验证
+
+浏览器实际验证：
+
+- 3 个首屏场景按钮更新文案和地球视角；滚动切换场景；开始阅读与章节锚点。
+- 产业筛选、国家选择、结果数量、地图放大/重置和鼠标拖动旋转。
+- 公司目录搜索（命中/无结果）、行业/地区分组、分类过滤、独立结果滚动；关闭按钮、Escape、Tab 焦点约束和返回触发器。
+- 模型四种排序口径、US/CN 来源筛选、仅开放权重；正确空状态；悬停/焦点/点击更新详情；散点图键盘 Enter 更新同一选中模型。手机点选后的详情滚动可见。
+- 中美对照指标的选择和前后切换；两个地区下拉和四个箭头；连线图的焦点联动。
+- 时间轴年份筛选、展开收起、前后事件切换。
+- AGI 四个关卡和来源、方法说明；当前基准成绩单独标注测试名、日期和厂商报告性质。
+- 来源类型筛选、复制引用、实际下载 JSON。最终下载重新执行并比对最终 `dist` 快照。
+- 中英文固定路由互换；手机站点导航展开/关闭。
+
+视口检查：320 × 740（英文）、390 × 844（中英文）、768 × 1024（中文）、1280 × 720（中英文）、1440 × 900（中文）。以上检查整页无横向溢出；320 px 目录关闭/搜索仍可操作，390 px 章节导航保持完整标签。
+
+可访问性：原生按钮/select/details/dialog，双语标签、pressed/current/status 状态、可见键盘焦点、图表旁文本数值和目录文本替代。降低动态偏好对应的 CSS/JS 分支经过代码检查；没有模拟操作系统偏好，因此不声称完成该偏好的浏览器实测。没有声称完成自动化 WCAG 审计或屏幕阅读器审计。
+
+控制台检查：常规页面和核心操作没有新应用异常。响应式验证期间有一次浏览器原生跨文档 View Transition 被视口调整中断的 `InvalidStateError`；源头为现有 `page-turn.css` 的原生页面导航转场，正常导航可完成，不影响页面操作。该测试环境事件保留记录，未把它伪报成应用日志全空。
+
+## 构建与回归
+
+- `npx vitest run tests/sectors*.test.js tests/routeSeo.test.js tests/siteManifest.test.js tests/bilingualContent.test.js`：28 文件，342 项通过。
+- `npm run build`：通过；包括快照生成一致性、数据、站点/i18n 和最终 SEO 检查。
+- `git diff --check`：通过。
+- 完整测试对比：干净 HEAD 基线为 1889 通过 / 94 失败；实现为 1903 通过 / 93 失败；失败集合无新增，减少的是被改版替代的 sectors 旧界面断言。失败文件列表和机器可读计数见 `docs/sectors-observatory-evidence/verification.json`。
+- 原有 dossier/archive 的测试保留，通过种子标记 fixture 测试历史生成器；新 live 页面采用独立数据和生成契约。SEO 检查仍要求单个 HTML 标题，仅排除 SVG 点位自带的可访问性 `<title>`。
+- 最后的标题换行和 AGI 说明文案修改之后重新运行相关测试和生产构建；随后调整首屏平衡断行和中文引言的语义换行，再次运行相关 342 项测试、生产构建和浏览器视觉复查，均通过。完整基线比较发生在这些最终文案/断行调整之前。
+
+## Open Questions
+
+无影响交付的未决设计问题。部署没有执行；本地预览与线上旧页面是两个状态。
+
+## Implementation Checklist
+
+- [x] 真实参考页面与实现截图同图输入比较，包含桌面/手机及局部控件。
+- [x] 修复并复查全部发现的 P2 问题。
+- [x] 覆盖五个必要视觉面与双语排版。
+- [x] 验证主要交互、空状态、手机布局和下载。
+- [x] 相关测试、生产构建与现有失败基线对比。
+- [x] 保存研究/控件清单、快照、截图和验收记录。
+
+## Follow-up Polish
+
+无需要阻止交付的 P3 项。残余验证范围为降低动态偏好的真实设备实测、屏幕阅读器实测和完整站点的既有测试失败；这些未被宣称已完成。
 
 final result: passed
-
-## Findings
-
-No actionable P0/P1/P2 findings in the combined source/implementation comparison.
-The user's current request controls this pass: logo, menu text (including dropdowns
-and mobile menus), and language text use Anthropic Sans; the language button follows
-the supplied dark rounded button, with its arrow compartment and divider omitted.
-The user's follow-up requires the language button and mobile menu control to be
-proportionally smaller. Both visible controls now use a shared 0.8 scale.
-The latest request aligns language text and the menu with the logo, reduces the
-menu one further size, and removes green pointer-hover backgrounds across pages.
-Language geometry retains the 0.8 scale; the menu now uses its own 0.7 scale.
-
-## Evidence and normalization
-
-- Source visual truth: `artifacts/header-typography/reference-button.png`, copied
-  from the user's attachment (380 × 108 image pixels; button height 72px).
-- Preview: http://127.0.0.1:4185/en/ and its `/zh/` peer.
-- Browser captures: `desktop-en.jpg` and `desktop-zh.jpg` at 1440 × 900 CSS/image
-  pixels; `mobile-zh.jpg` and `mobile-menu-zh.jpg` at 390 × 844; `mobile-320-en.jpg`
-  at 320 × 740; `arena-mobile-zh.jpg` at 390 × 844. All are in
-  `artifacts/header-typography/`, captured at one image pixel per CSS pixel.
-- Focused captures: `header-en.jpg` (1440 × 100), `button-en.jpg` (79 × 60), and
-  `button-zh.jpg` (88 × 60). Button crops include 8px of surrounding context.
-- Opened combined comparison: `artifacts/header-typography/comparison.png`.
-  It includes the complete reference, both language labels, the desktop header,
-  and mobile header. Button crops are enlarged by 72/44 for comparison at the
-  reference button height; header captures remain at 1:1. Copy and overall width
-  differ intentionally because these are language controls, not a Try Claude CTA.
-- State: page top, menus closed; the separate mobile-menu capture verifies the
-  expanded menu. The existing film-player QA below concerns a different component.
-- Latest follow-up evidence: `after-resize-mobile.jpg` (640 × 90),
-  `after-resize-320-zh.jpg` (320 × 90), `after-resize-390-zh.jpg` (390 × 90),
-  and `after-resize-desktop-en.jpg` / `after-resize-desktop-zh.jpg` (1440 × 100).
-  Opened `resize-comparison.png` compares the previous and current Chinese
-  homepage header at the same 390px width, page-top state, and 1:1 density,
-  alongside the supplied button-style reference. The original comparison above
-  records the preceding iteration rather than the final control dimensions.
-- Final alignment evidence: `aligned-home-zh-390.jpg`, `aligned-home-compact-390.jpg`,
-  and `aligned-{home,portfolio,arena,course,sectors,signal,serial,horoscope,lesson,404}-390.jpg`
-  (390 × 90). `alignment-routes.json` records the final control geometry for all
-  ten inspected page types. `alignment-comparison.png` was opened and reviewed
-  with the original button reference and the preceding same-size Chinese header.
-- Real pointer-hover evidence: `header-hover-desktop.jpg` (1440 × 100),
-  `horoscope-hover.jpg` (260 × 80), and `course-hover-desktop.jpg` (1440 × 900).
-
-## Required fidelity surfaces
-
-| Surface | Result |
-| --- | --- |
-| Fonts and typography | All shared-header descendants directly declare the Anthropic Sans stack and disable synthetic faces. Computed styles confirm this for the full/compact logo, menu/dropdown labels, mobile labels, and language control. Logo remains 22px/600 on desktop and menus 15px/400. Follow-up scales language text from 16px to 12.8px/400. Existing CJK fallbacks remain available. |
-| Spacing and layout | Language geometry is 35.2px high, with 16px horizontal padding and an 8px radius. Menu artwork is now 22.4 × 16.8px, one step below the preceding 25.6 × 19.2px size. Its hit target remains 44 × 44px; transparent vertical extension keeps the language hit target 44px high. Shared controls explicitly align to the same row; 2px bottom padding optically centers language text. At 390px, logo/EN/menu ink centers all measure y=29px. All ten inspected page types have equal control-box center lines (within subpixel rounding). No header overflow at 320px/390px, including the full and compact logo states. |
-| Colors and tokens | Near-black #141413 background and warm-white #faf9f5 text match the reference treatment. Removed the shared green hover fill/glow and local green hover backgrounds in course, course lessons, sectors, horoscope, serial reading, Arena/legacy controls, and 404 recovery. Actual hovered navigation stays transparent with no shadow; course and horoscope buttons retain their normal fill and text color. Keyboard focus outlines and selected states remain available. |
-| Image quality and assets | Existing local Anthropic Sans font assets are reused. No new image/icon substitutes are introduced; the requested arrow is absent. Screenshot crops are comparison evidence only. |
-| Copy and content | Language labels remain 中文/EN, accessible labels remain localized, and the control remains a direct language link. |
-
-## Validation and comparison history
-
-First final comparison passed with no P0/P1/P2 visual fixes required. Actual
-English→Chinese and Chinese→English navigation, desktop dropdown open/Escape,
-and mobile menu open/Escape were exercised. Homepage, course, and Arena shared
-headers were inspected. Browser error logs were empty during verification.
-
-Follow-up: the user found both controls visually oversized. Applied the same 20%
-reduction to button typography, padding, height, radius, and menu artwork. The
-same-size before/after comparison shows the requested reduction with no remaining
-P0/P1/P2 mismatch. Verified mobile menu open/Escape, both language directions,
-320px overflow, the extended language hit target, and desktop EN/中文 states.
-Computed visible dimensions are 35.195px button height and 25.594 × 19.195px menu
-artwork (browser subpixel rounding). Browser error logs and the renewed production
-build passed; temporary viewport overrides were reset.
-
-Latest alignment pass: the first comparison identified the menu's optical center
-1px above the logo. Removed that offset and recaptured the comparison; logo,
-EN text, and menu strokes now all have an ink center of y=29px on the 390px Chinese
-homepage. Both full and compact logo states were reviewed. Ten page types passed
-the final geometry check, with no overflow. Header hover was exercised with the
-real pointer and computed transparent background/no shadow. Horoscope and course
-buttons were also actually hovered: their background and text colors remain at
-the non-hover values. A source scan found no remaining known green background/glow
-declarations in hover rules. The final production build, header/CSS/bilingual/SEO
-checks, and whitespace check passed. Temporary QA tab was closed, viewport reset,
-and the user's original preview tab refreshed and retained.
-
-Production build passed, including header, CSS, bilingual-content, localization,
-and emitted SEO checks. Temporary viewport overrides were reset, and the preview
-tab is retained. No additional tests were introduced for this reversible CSS edit.
-
-## Implementation checklist and limits
-
-- [x] Anthropic Sans explicitly scoped to every shared-header descendant.
-- [x] Reference-based text-only language button and hover/focus states.
-- [x] Combined visual comparison, desktop/mobile interactions, and production build.
-- [x] Final optical alignment, another menu-size reduction, all-page green-hover removal.
-
-Physical-device rendering was not separately tested. No remaining P3 polish items.
-
----
-
-# Homepage film player QA
-
-final result: passed
-
-## Findings
-
-No actionable P0/P1/P2 findings remain in the final combined visual comparisons. A return-to-page arrow pointing the wrong way was found in the first icon comparison and corrected before this pass.
-
-## Reference and implementation evidence
-
-Source visual truth is the user's attached screenshots, saved in `artifacts/film-player/`:
-
-- `reference-main.png` (866 × 578), `reference-mini.png` and `reference-header.png` (570 × 360): original player composition.
-- `reference-seek-inline.png` (1562 × 250) and `reference-seek-mini.png` (1060 × 124): toolbar/seek spacing and split-track pill thumb.
-- `reference-icons.png` (310 × 110) and `reference-window-actions.png` (309 × 126): sound/fullscreen and mini window actions.
-- `reference-mini-fraction.png` (866 × 602): a small floating film with an unobstructed picture-in-picture stage.
-- `reference-volume.png` (225 × 128) and `reference-muted.png` (226 × 129): volume capsule and solid slashed speaker.
-
-Later user instructions override the original screenshots: no ordinary-player brand, a custom mark plus `rsiagent.app` only in the mini header, mini instead of a settings menu, no bottom-right mini buttons, a translucent white play surface, centered 10-second digits, proportional controls, pointer-leave hiding, 1× playback, and reduced download access.
-
-Browser-rendered implementation captures:
-
-- `ui-updated-inline.jpg` (968 × 1150), `ui-updated-inline.png` (865 × 487): ordinary controls and tighter seek spacing.
-- `ui-volume-48.jpg` and `ui-volume-muted.jpg` (640 × 853), with full-player crops `ui-volume-48-player.png` and `ui-volume-muted-player.png` (574 × 323): actual drag to 48%, then mute. The mute capture uses the final solid speaker/slash asset.
-- `ui-mini-final-desktop.jpg` (968 × 1150) and `ui-mini-final.png` (570 × 321): final corrected outward-arrow icon, glass play surface, centered skip digits, and pill seek thumb.
-- `ui-mini-mobile-320.jpg` (320 × 740), `ui-mini-320.png` (240 × 136), `ui-mini-mobile-390.jpg` (390 × 844), `ui-mini-390.png` (257 × 146): final corrected icon on narrow layouts.
-- `ui-mini-quiet-context.jpg` (640 × 853), `ui-mini-quiet-422.png` (422 × 238), and `ui-mini-hidden.png` (570 × 321): pointer outside, no controls or dark shade over the movie.
-
-The film comparisons are paused at 0:30 / 3:33. The volume pair intentionally uses 48% for the adjustment state and mute for the slashed speaker state. The reference's blue outline is keyboard focus chrome; mouse activation in the implementation does not force a persistent blue border. A blue focus outline remains available for keyboard use.
-
-Screenshots use one image pixel per CSS pixel. Full mini comparison places the original 570 × 360 reference beside the final 570 × 321 implementation without resizing either. Blank padding accounts for the requested replacement film's 16:9 aspect ratio. Main source and implementation are normalized to 570px width; focused source/implementation crops are normalized to a common width for shape and spacing inspection. Enlarged icon references are detail crops, not evidence that controls should grow to those pixel sizes. The page-context fraction comparison has different surrounding content and video frame, and is used only to check the requested picture-in-picture composition, not pixel equality.
-
-Combined comparisons opened and reviewed:
-
-- Full views: `ui-comparison-mini.png`, `ui-comparison-inline.png`, `ui-comparison-fraction.png`.
-- Focused regions: `ui-comparison-actions.png`, `ui-comparison-seek.png`, `ui-comparison-volume.png`, `ui-comparison-muted.png`.
-
-Preview: http://127.0.0.1:4173/en/ (Chinese route also available at `/zh/`). The user's existing tab remains open with its viewing state preserved. Temporary viewport overrides were reset and separate QA tabs were closed.
-
-## Required fidelity surfaces
-
-| Surface | Result |
-| --- | --- |
-| Fonts and typography | Product sans typography matches the reference's control/wordmark role. Wordmark, times, and labels scale with the actual mini width. No wrapping or clipped brand at 320px or 390px. Movie typography belongs to the supplied film and is not reconstructed as overlays. |
-| Spacing and layout | The main seek track sits 6px below the toolbar rather than 18px. The mini track has a tall pill with gaps on both sides. Header spacing separates logo/wordmark from utility actions. Mini width is 66vw with a 240px minimum and 570px maximum, constrained by viewport width/height. Compact width is 44vw with a 360px maximum. The 240px mini separates center play and seek hit regions. |
-| Colors and tokens | White sound, slashed mute, square fullscreen corners, minimize, outward return arrow, and close follow the requested shapes. Central play is translucent white with blur and a subtle white border. Header, center controls, footer, and dark shade all disappear when the pointer leaves. Brand remains the requested copper generated mark. |
-| Image quality and assets | The requested H.264/AAC 1920 × 1080 movie is contained at 16:9. Its 82,576,797-byte web encode preserves source audio and fast-start metadata. Generated logo transparency is retained. Official Material SVGs supply `back_to_tab` and `volume_off`; existing Phosphor icons supply other controls. No image placeholders or handcrafted asset substitutes were introduced. |
-| Copy and content | Ordinary/fullscreen player has no upper-left brand. Mini reads `rsiagent.app`; inline slot displays a localized picture-in-picture caption. Accessible labels remain bilingual. No settings, speed selector, movie download links, or bottom-right mini buttons remain. |
-
-## Comparison and fix history
-
-1. Earlier main/mini passes enlarged control text, fixed a narrow central-button/seek overlap, replaced settings with fullscreen, and moved mini access into the previous fullscreen slot. Normal branding was removed; the generated RSI mark and requested mini header were added. Footer actions were removed and controls made container-relative.
-2. The user's seek references exposed the mini circular thumb and excessive ordinary toolbar gap. The mini now has a tall rounded thumb and interrupted track; the ordinary gap was reduced by 12px. Post-fix evidence: `ui-comparison-seek.png`, `ui-comparison-inline.png`.
-3. The next references exposed missing ordinary volume adjustment, oversized mobile mini dimensions, permanent mini chrome, a blue play surface, off-center skip digits, and icon differences. Added a functioning volume capsule; bounded the mini by 66vw/44vw; hid all overlays on pointer leave; changed play to white glass; centered digits; used solid sound and square-corner fullscreen icons. Narrow captures verify readable controls with no overlap. Post-fix evidence: final desktop/mobile captures and the combined mini/volume comparisons.
-4. The final muted reference exposed the outlined speaker mismatch. Replaced it with the official solid `volume_off` asset. Actual volume drag and mute/unmute were verified; `ui-comparison-muted.png` shows the final state.
-5. First focused window-action comparison found the return arrow pointing inward after rotation. Replaced that asset with official `back_to_tab` and removed rotation. Recaptured desktop, 320px, and 390px implementations. Final `ui-comparison-actions.png` and `ui-comparison-mini.png` show the outward upper-left arrow and filled lower-right small window.
-
-## Interaction and validation
-
-- Actual pointer drag moved the ordinary volume slider from 100% to 48%. Muting set the rendered state to zero; unmuting restored 48%. Earlier in the iteration, setting the slider to zero and unmuting restored the remembered 35% volume.
-- At a 640 × 853 viewport, mini bounds are x 201.602px, y 598.531px, width 422.398px, height 238.469px. When the pointer leaves, all four overlay layers report opacity 0 and pointer-events none. Actual pointer entry reveals controls again.
-- At 320 × 740, mini bounds are x 64px, y 588.125px, width 240px, height 135.875px. Utility/skip targets are 36px and central play is 44px. All visible button centers hit their own buttons. Central play ends at 670.063px; seek begins at 671.406px. There is no overlap or horizontal overflow.
-- At 390 × 844, mini bounds are x 116.602px, y 682.344px, width 257.398px, height 145.656px. Center-to-seek clearance is 6.234px. There is no horizontal overflow.
-- Skip digits measure zero offset from their button center in both axes. Mini seeking, actual narrow play/pause, return-to-page, compact sizing, close, and keyboard movement were exercised across the accumulated iteration. Final return preserved the explicit pause at 30s and current/default playback rate 1.
-- Native fullscreen pause retention and ±10-second movement were verified in the preceding player pass. Those actions remain unchanged.
-- Both video elements retain rate locking and browser download/speed/remote hints. Right-click suppression, public movie HTTP 206, and obsolete movie HTTP 404 were verified in the previous pass.
-- 19 tests passed across playback, drag, and localized static-homepage suites, including rate reset at 0.5×, 1.5×, and 2× plus default-rate changes and cleanup.
-- Latest production build, stylesheet checks, localization, and emitted SEO validation passed. Final independent QA page reported no browser console errors. `git diff --check` passed.
-
-## Follow-up polish and limits
-
-P3: icon strokes and font antialiasing can differ slightly from browser-native controls. Physical touch devices and the native-controls cinema fallback were not separately exercised. Touch controls use a 2.8-second hide timer; keyboard-visible focus keeps them accessible.
-
-The supplied replacement film differs in frame composition and aspect ratio from the reference movie. These are expected content changes. Native control hints vary by browser; UI download restrictions cannot prevent network extraction or screen capture. The original high-quality film remains outside the served directory.
-
-The RSI logo prompt is recorded in `artifacts/film-player/rsiagent-logo-prompt.txt`. Material asset source links and Apache 2.0 license location are recorded in `docs/home-film.md`.
-
-## Implementation checklist
-
-- [x] Correct source film and aspect ratio; original remains unchanged.
-- [x] Main and mini control layout, volume slider, muted glyph, responsive mini size, pointer hiding, centered digits, and glass play surface.
-- [x] Combined full-view and focused visual comparisons, desktop/narrow interaction checks, browser console check.
-- [x] Production build, relevant tests, whitespace check, preview handoff, and viewport/tab cleanup.

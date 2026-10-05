@@ -27,7 +27,9 @@ describe('P4 issuer and thesis evidence contract', () => {
   for (const i of data.issuers) for (const id of i.thesis_ids) expect(data.theses.some(t => t.id === id)).toBe(true);
  });
  it('ships complete static bilingual content with unique IDs and resolvable anchors', () => {
-  const html=readFileSync('sectors.html','utf8'); expect(updatePage(html)).toBe(html);
+  // The archived dossier still generates a complete, repeatable document, but
+  // the live sectors route now hosts the observatory requested in October.
+  const html=updatePage('<section id="issuers"><!-- P4 issuers start --><!-- P4 issuers end --></section><section><!-- P4 theses start --><!-- P4 theses end --></section><details id="researchArchive"></details>'); expect(updatePage(html)).toBe(html);
   const nodes=[]; const visit=n=>{nodes.push(n);n.childNodes?.forEach(visit);};visit(parse(html));
   const attr=(n,key)=>n.attrs?.find(a=>a.name===key)?.value;
   const ids=nodes.map(n=>attr(n,'id')).filter(Boolean);

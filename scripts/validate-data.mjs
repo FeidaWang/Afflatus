@@ -8,6 +8,7 @@ import { validateSectorsData } from '../src/lib/validateSectorsData.js';
 import { validateSectorsCompetition } from '../src/lib/validateSectorsCompetition.js';
 import { validateSectorsRivalry } from '../src/lib/validateSectorsRivalry.js';
 import { validateSnapshot } from '../src/sectors/frontier/frontier-core.mjs';
+import { validateObservatory } from '../src/sectors/observatory/validate.js';
 import { validateIndustry } from '../src/sectors/industry/industry-core.js';
 import { validateSignalEvents } from '../src/lib/validateSignalEvents.js';
 import { validateLeaguesData } from '../src/lib/validateLeaguesData.js';
@@ -33,6 +34,7 @@ import { validateShipManifest } from '../src/lib/validateShipManifest.js';
 import { validateGlobeData } from '../src/showcase/validateGlobeData.js';
 
 const CHECKS = [
+  { path: 'public/data/sectors-observatory/2026-10-06.json', validate: validateObservatory },
   { path: 'public/version.json', validate: (data) => {
     const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
     const errors = [];

@@ -1,0 +1,21 @@
+import {readFileSync,existsSync} from 'node:fs';
+import {describe,it,expect} from 'vitest';
+import {parse} from 'parse5';
+import {rankModels,selectCompanies,metricValue} from '../src/sectors/observatory/core.js';
+import {validateObservatory} from '../src/sectors/observatory/validate.js';
+import {renderPage} from '../src/sectors/observatory/render.js';
+const data=JSON.parse(readFileSync('src/sectors/observatory/data.json','utf8'));
+const copy=()=>structuredClone(data);
+describe('AI observatory evidence integrity',()=>{
+ it('validates the dated bilingual snapshot and includes every industry layer',()=>{expect(validateObservatory(data)).toEqual({ok:true,errors:[]});expect(data.companies.length).toBeGreaterThan(90);expect(new Set(data.models.map(m=>m.name)).size).toBe(data.models.length);});
+ it('returns actionable validation errors for malformed or incomplete lists',()=>{const d=copy();d.models={};d.companies=[null];const result=validateObservatory(d);expect(result.ok).toBe(false);expect(result.errors.join(' ')).toMatch(/models: required non-empty list/);expect(result.errors.join(' ')).toMatch(/companies: missing ids/);});
+ it('rejects missing provenance and unknown headquarters regions',()=>{const d=copy();d.models[0].source='untraceable';d.companies[0].country='XX';expect(validateObservatory(d).errors.join(' ')).toMatch(/missing source/);expect(validateObservatory(d).errors.join(' ')).toMatch(/country/);});
+ it('rejects future events and turning a benchmark into an AGI completion percentage',()=>{const d=copy();d.events.at(-1).date='2027-01-01';d.checkpoints[1].percentComplete=70.6;const errors=validateObservatory(d).errors.join(' ');expect(errors).toMatch(/chronology/);expect(errors).toMatch(/AGI completion/);});
+ it('retains null speed rather than claiming an unavailable model is slow',()=>{const argon=data.models.find(m=>m.id==='argon');expect(argon.speed).toBeNull();expect(rankModels(data.models,{metric:'speed'}).at(-1).id).toBe('argon');expect(metricValue(argon,'speed')).toBe('—');});
+ it('preserves score ties and reranks within a filtered comparison',()=>{const rows=rankModels(data.models);expect(rows.filter(m=>m.score===53).map(m=>m.rank)).toEqual([3,3,3]);const china=rankModels(data.models,{country:'CN'});expect(china[0]).toMatchObject({id:'mimo',rank:1});expect(china.every(m=>m.country==='CN')).toBe(true);});
+ it('keeps closed Qwen Max and unverified Step terms out of open-weight results',()=>{const rows=rankModels(data.models,{open:true});expect(rows.some(m=>m.id==='qwenmax'||m.id==='step')).toBe(false);expect(rows.some(m=>m.id==='qwenflash')).toBe(true);expect(rows[0].id).toBe('mimo');});
+ it('compares dollars per task independently from intelligence',()=>{const rows=rankModels(data.models,{metric:'cost'});expect(rows[0].id).toBe('luna');expect(rows[0].cost).toBe(.07);expect(rows.at(-1).id).toBe('sonnet55');});
+ it('supports Chinese search, city search, intersecting groups and honest empty states',()=>{expect(selectCompanies(data,{query:'寒武纪'}).map(c=>c.id)).toEqual(['cambricon']);expect(selectCompanies(data,{query:'伦敦'}).length).toBeGreaterThan(1);expect(selectCompanies(data,{country:'CN',layer:'compute'}).map(c=>c.id)).toEqual(['huawei','cambricon']);expect(selectCompanies(data,{query:'no-such-company-88'})).toEqual([]);});
+ it('publishes the exact same snapshot consumed by the page',()=>{expect(JSON.parse(readFileSync(`public/data/sectors-observatory/${data.snapshot}.json`,'utf8'))).toEqual(data);});
+ it('has complete bilingual static content, unique IDs and functional source targets without JavaScript',()=>{const html=renderPage(data),tree=parse(html),ids=[];function walk(n){const attrs=Object.fromEntries((n.attrs||[]).map(a=>[a.name,a.value]));if(attrs.id)ids.push(attrs.id);if('data-en'in attrs)expect(attrs['data-zh'],n.tagName).toBeTruthy();for(const child of n.childNodes||[])walk(child);}walk(tree);expect(new Set(ids).size).toBe(ids.length);for(const c of data.companies){expect(html).toContain(`data-company="${c.id}"`);expect(html).toContain(c.url);if(c.logo)expect(existsSync('public'+c.logo)).toBe(true);}for(const id of ['overview','models','rivalry','anthropic','coding','agi','sources'])expect(ids).toContain(id);});
+});

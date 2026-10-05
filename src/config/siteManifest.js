@@ -84,18 +84,18 @@ export const ROUTE_SEO = Object.freeze({
   sectors: {
     social: {
       background: 'assets/og-backgrounds/sectors.jpg',
-      eyebrow: { en: 'MODEL WAR', zh: '模型战争' },
+      eyebrow: { en: 'AI OBSERVATORY', zh: 'AI 观察站' },
       title: {
-        en: 'Open weights. Closed frontier.',
-        zh: '开放权重，闭源前沿。',
+        en: 'The world building AI',
+        zh: '谁在构建 AI 的世界',
       },
       subtitle: {
-        en: 'Kimi K3 and the repricing of the US–China AI stack.',
-        zh: 'Kimi K3 与中美 AI 产业链重估。',
+        en: 'Companies, frontier models, agentic coding and the path to AGI.',
+        zh: '产业公司、前沿模型、编程智能体与通向 AGI 的能力关卡。',
       },
       alt: {
-        en: 'US and China frontier AI systems in a model-war briefing',
-        zh: '中美前沿 AI 体系模型战争简报',
+        en: 'Global AI industry observatory',
+        zh: '全球 AI 产业观察站',
       },
       images: {
         en: routeOgImage('sectors', 'en'),
@@ -105,8 +105,7 @@ export const ROUTE_SEO = Object.freeze({
     structuredData: {
       kind: 'sectors',
       provenance: [
-        { path: 'public/sectors-ecosystem.json', dateField: 'updated' },
-        { path: 'public/sectors-rivalry.json', dateField: 'updated' },
+        { path: 'public/data/sectors-observatory/2026-10-06.json', dateField: 'updated' },
       ],
     },
   },
@@ -275,21 +274,21 @@ export const SITE_MANIFEST = Object.freeze([
     sitemap: true,
     defaultLocale: 'en',
     nav: { order: 30, group: null, en: 'Sectors', zh: '板块' },
-    themeColor: '#000000',
+    themeColor: '#e8e6dc',
     schema: ['CollectionPage', 'ItemList'],
     seo: ROUTE_SEO.sectors,
-    capabilities: ['canvas', 'webgl', 'graph'],
+    capabilities: ['canvas', 'graph'],
     metadata: {
-      title: "AI industry — From chips to useful tools · AFFLATUS",
-      description: "Explore the AI industry chain, model competition and hypothetical market scenarios, with data sources and assumptions. Not investment advice.",
+      title: "AI Observatory — The world building AI · AFFLATUS",
+      description: "Explore global AI companies, selected frontier models, US–China competition, Anthropic before its IPO, agentic coding milestones and evidence on the path to AGI.",
       canonical: 'https://feida.au/sectors.html',
-      ogTitle: "AI industry — From chips to useful tools · AFFLATUS",
-      ogDescription: "Explore the AI industry chain, model competition and hypothetical market scenarios, with data sources and assumptions. Not investment advice.",
+      ogTitle: "AI Observatory — The world building AI · AFFLATUS",
+      ogDescription: "Explore global AI companies, selected frontier models, US–China competition, Anthropic before its IPO, agentic coding milestones and evidence on the path to AGI.",
       ogImage: ROUTE_SEO.sectors.social.images.en,
     },
     locales: {
-      en: {"title": "AI industry — From chips to useful tools · AFFLATUS", "description": "Explore the AI industry chain, model competition and hypothetical market scenarios, with data sources and assumptions. Not investment advice."},
-      zh: {"title": "AI 产业 — 从芯片到能用的工具 · AFFLATUS", "description": "从芯片、算力到模型与应用，理解 AI 产业链、模型竞争和假设情景，查看数据来源与推演条件。非投资建议。"},
+      en: {"title": "AI Observatory — The world building AI · AFFLATUS", "description": "Explore global AI companies, selected frontier models, US–China competition, Anthropic before its IPO, agentic coding milestones and evidence on the path to AGI."},
+      zh: {"title": "AI 观察站 — 谁在构建 AI 的世界 · AFFLATUS", "description": "全球 AI 公司、精选前沿模型、中美竞逐、Anthropic 上市观察、编程智能体里程碑与通向 AGI 的能力证据。"},
     },
   },
   {

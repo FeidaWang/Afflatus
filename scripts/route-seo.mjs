@@ -69,12 +69,12 @@ export async function loadRouteSeoFacts(root, routes) {
     );
 
     if (route.id === 'sectors') {
-      const ecosystem = await readJson(root, 'public/sectors-ecosystem.json');
-      routeFacts.items = ecosystem.nodes.map((node) => ({
+      const ecosystem = await readJson(root, 'public/data/sectors-observatory/2026-10-06.json');
+      routeFacts.items = ecosystem.companies.map((node) => ({
         id: node.id,
-        name: node.label,
-        category: node.kind,
-        url: node.source,
+        name: node.name,
+        category: node.layer,
+        url: node.url,
       }));
     }
 
@@ -287,7 +287,7 @@ function buildSectorsGraph(route, locale, facts, url) {
   const items = (facts.items || []).map((entry, index) =>
     listItem(index + 1, {
       '@type': 'Organization',
-      name: entry.name,
+      name: typeof entry.name === 'object' ? entry.name[key] : entry.name,
       ...(entry.category ? { category: entry.category } : {}),
       ...(entry.url ? { sameAs: entry.url } : {}),
     }),
@@ -302,7 +302,7 @@ function buildSectorsGraph(route, locale, facts, url) {
     {
       '@type': 'ItemList',
       '@id': itemListId,
-      name: key === 'zh' ? '中美 AI 生态实体' : 'US–China AI ecosystem entities',
+      name: key === 'zh' ? '全球 AI 产业机构' : 'Global AI industry organizations',
       numberOfItems: items.length,
       itemListElement: items,
     },

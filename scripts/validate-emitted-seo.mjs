@@ -124,7 +124,7 @@ for (const route of activeRoutes) {
     const expected = expectedDocument(route, locale);
 
     const html = one(relativePath, document, (node) => node.tagName === 'html', 'html');
-    const titleNode = one(relativePath, document, (node) => node.tagName === 'title', 'title');
+    const titleNode = one(relativePath, document, (node) => node.tagName === 'title' && node.namespaceURI === 'http://www.w3.org/1999/xhtml', 'HTML title');
     const canonical = one(
       relativePath,
       document,

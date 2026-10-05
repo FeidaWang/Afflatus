@@ -1,25 +1,26 @@
-// tests/sectorsPageCopy.test.js — static copy must agree with the data it sits next to (final review, Task 15).
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const html = readFileSync('sectors.html', 'utf8');
-const industry = JSON.parse(readFileSync('public/data/sectors-industry/2026-09-27.json', 'utf8'));
-const attr = (re) => html.match(re)?.[1];
+const data = JSON.parse(readFileSync('public/data/sectors-observatory/2026-10-06.json', 'utf8'));
 
-describe('sectors page copy', () => {
-  it('dates the modules fed by the 2026-09-27 snapshot as 27 September', () => {
-    // #editorialIntro eyebrow, the evidence wall and the model board all render the 09-27 snapshot.
-    expect(attr(/<p class="editorialEyebrow" data-en="(THE RESEARCH[^"]*)"/)).toMatch(/27 SEPTEMBER 2026/);
-    expect(attr(/data-en="(SELECTED MODEL EVIDENCE[^"]*)"/)).toMatch(/2026-09-27/);
-    expect(attr(/class="frontierEditorialNote" data-en="([^"]*)"/)).toMatch(/27 September 2026/);
-    // The no-script fallback table is the 14-model 09-23 snapshot and keeps its own date.
-    expect(attr(/data-en="(2026-09-2\d · Artificial Analysis[^"]*)"/)).toMatch(/^2026-09-23/);
+describe('sectors page measurement copy', () => {
+  it('dates the research snapshot separately from source publication periods', () => {
+    expect(data.snapshot).toBe('2026-10-06');
+    expect(html).toContain('Research cut-off: 6 October 2026');
+    const investment = data.comparison.find(c => c.id === 'investment');
+    expect(investment.note.en).toContain('2025');
+    expect(investment.unit.en).toContain('2025');
+    expect(html).toContain('Reported · FY2025');
+    expect(html).toContain('Official · May 2026');
+    for (const source of data.sources) expect(html).toContain(`<time>${source.date}</time>`);
   });
-  it('does not claim every globe company is US-listed', () => {
-    const unlisted = industry.companies.filter((c) => !['listed', 'adr'].includes(c.listing));
-    expect(unlisted.length).toBeGreaterThan(2);
-    const lede = attr(/<h2 id="industryGlobeTitle"[^>]*>[^<]*<\/h2>\s*<p data-en="([^"]*)"/);
-    expect(lede).not.toMatch(/^Every company/);
-    expect(lede).toMatch(/[Hh]ollow markers/);
+  it('identifies directory counts, IPO reporting and AGI gates without implying stronger evidence', () => {
+    expect(html).toContain(`${data.companies.length}`);
+    expect(html).toContain('counts do not represent independent parent companies');
+    expect(html).toContain('not market shares, capacity or national rankings');
+    expect(html).toContain('not a market capitalization');
+    expect(html).toContain('neither a countdown nor an estimate of completion');
+    expect(data.anthropic.listingStatus).toContain('public terms unverified');
   });
 });
