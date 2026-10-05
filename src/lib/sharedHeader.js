@@ -17,7 +17,7 @@ export function renderSharedHeader() {
       ${group('more', 'More', '更多', link('/horoscope.html', 'Astrology for fun', '趣味占星') + link('/#about', 'About', '关于'))}
     </nav>
     <a class="af-header-language" data-header-language href="/zh/" hreflang="zh-CN" aria-label="Switch to Chinese" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">中文</a>
-    <button type="button" class="af-header-menu" data-header-disclosure aria-expanded="false" aria-controls="af-primary-nav">${text('Menu', '菜单')}<span aria-hidden="true">☰</span></button>
+    <button type="button" class="af-header-menu" data-header-disclosure aria-expanded="false" aria-controls="af-primary-nav" aria-label="Open navigation" data-aria-en="Open navigation" data-aria-zh="打开导航"><svg class="af-menu-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 24"><path d="M2 2h28M2 12h28M2 22h12" /></svg></button>
   </div>
 </header>`;
 }

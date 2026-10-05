@@ -48,6 +48,7 @@
 #afflatus-header .af-header-dropdown a { display: flex; white-space: normal; padding: 10px 12px; }
 #afflatus-header a.af-header-language { min-height: 36px; padding: 0 16px; border: 1px solid #161616; border-radius: 8px; background: #161616; color: #fff; font-size: var(--af-type-nav); font-weight: var(--af-weight-regular); }
 #afflatus-header .af-header-menu { display: none; }
+#afflatus-header .af-menu-icon { display: block; flex: none; width: 32px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 #afflatus-header [hidden] { display: none; }
 body:has(> #afflatus-header) { padding-top: 68px; }
 @media (hover: hover) and (pointer: fine) {
@@ -58,11 +59,11 @@ body:has(> #afflatus-header) { padding-top: 68px; }
 @keyframes af-menu-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 @media (max-width: 979px) {
   #afflatus-header { --af-height: 60px; }
-  #afflatus-header .af-header-inner { width: 100%; padding: 0 var(--af-header-compact-gap); gap: 8px; }
-  #afflatus-header .af-wordmark { flex-basis: calc(120px - var(--af-collapse, 0) * 90px); }
+  #afflatus-header .af-header-inner { width: 100%; padding: 0 var(--af-header-compact-gap); }
+  #afflatus-header .af-wordmark { flex-basis: calc(120px - var(--af-collapse, 0) * 90px); flex-shrink: 1; }
   #afflatus-header .af-brand-art { transform: scale(.83); transform-origin: left center; }
   #afflatus-header .af-header-language { margin-left: auto; }
-  #afflatus-header .af-header-menu { display: inline-flex; padding-right: 0; }
+  #afflatus-header .af-header-menu { display: inline-flex; flex: none; justify-content: center; width: 44px; padding: 0; }
   #afflatus-header .af-header-nav { position: absolute; top: 100%; left: 0; right: 0; display: flex; height: auto; flex-direction: column; align-items: stretch; gap: 4px; margin: 0; padding: 16px var(--af-header-compact-gap) 24px; background: var(--af-paper); max-height: calc(100dvh - var(--af-height)); overflow-y: auto; border-bottom: 1px solid #d1d0c8; animation: af-menu-in 160ms ease-out; }
   #afflatus-header .af-header-nav > a, #afflatus-header .af-header-group > button { width: 100%; font-size: 16px; }
   #afflatus-header .af-header-group { display: block; }
