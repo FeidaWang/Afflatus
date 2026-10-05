@@ -33,7 +33,7 @@ const socials = [
 
 export function PremiereFooter({ language }) {
   const zh = language === 'zh';
-  return <footer className="pa-footer" id="about">
+  return <footer className="pa-footer">
     <div className="pa-footer-inner">
       <a className="pa-footer-brand" href={navigationHref('/', language)} aria-label={zh ? 'AFFLATUS 首页' : 'AFFLATUS home'}>
         <span className="pa-footer-brand-mark" aria-hidden="true"><span>A</span><span className="af-brand-i">I<span className="af-brand-underscore" /></span></span>

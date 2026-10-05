@@ -115,37 +115,50 @@ export function createFilmDrag(element, { position = null, onPosition = () => {}
   } };
 }
 
-export function createFilmStretch(stage, frame) {
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const fine = matchMedia('(hover: hover) and (pointer: fine)');
-  let current = 0, target = 0, raf = 0, last = 0;
-  const draw = now => {
-    const elapsed = Math.min(64, last ? now - last : 16);
-    last = now;
-    current += (target - current) * (1 - Math.exp(-elapsed / 105));
-    if (Math.abs(target - current) < .05) current = target;
-    frame.style.setProperty('--film-inset', `${current.toFixed(2)}px`);
-    raf = current === target ? 0 : requestAnimationFrame(draw);
+// Expand the gutters in normal document flow; never pin or stretch the film vertically.
+export function createFilmScroll(shell) {
+  const doc = shell.ownerDocument, win = doc.defaultView;
+  const reduced = win.matchMedia('(prefers-reduced-motion: reduce)');
+  const rail = doc.querySelector('.premiere-intro');
+  shell.setAttribute('data-scroll-ready', '');
+  let raf = 0, startInset = 0, startTop = 0, endTop = 0;
+  const draw = () => {
+    raf = 0;
+    const rect = shell.getBoundingClientRect();
+    const progress = reduced.matches ? 0 : Math.max(0, Math.min(1, (startTop - rect.top) / (startTop - endTop)));
+    const eased = progress * progress * (3 - 2 * progress);
+    const inset = startInset * (1 - eased);
+    shell.style.setProperty('--film-expansion', eased);
+    shell.style.setProperty('--film-inset', `${inset}px`);
+    shell.style.setProperty('--film-radius', `${12 * (1 - eased)}px`);
+    // Reserve the film's largest natural height so growing it cannot push the
+    // following text away from a viewer who is scrolling toward that text.
+    // The same slot remains in the document during mini/native fullscreen.
+    const slotWidth = reduced.matches ? shell.clientWidth - 2 * startInset : shell.clientWidth;
+    shell.style.setProperty('--film-slot-height', `${slotWidth * 9 / 16}px`);
   };
-  const schedule = () => { if (!raf) { last = 0; raf = requestAnimationFrame(draw); } };
-  const move = event => {
-    if (reduced.matches || !fine.matches || event.pointerType === 'touch') return;
-    const rect = stage.getBoundingClientRect();
-    const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
-    target = Math.abs(x * 2 - 1) * Math.min(36, rect.width * .028);
+  const schedule = () => { if (!raf) raf = win.requestAnimationFrame(draw); };
+  const measure = () => {
+    const style = win.getComputedStyle(rail);
+    const startWidth = rail.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    startInset = Math.max(0, (shell.clientWidth - startWidth) / 2);
+    const documentTop = shell.getBoundingClientRect().top + win.scrollY;
+    endTop = (doc.querySelector('#afflatus-header')?.clientHeight || 68) + 16;
+    startTop = Math.max(endTop + 1, Math.min(win.innerHeight * .45, documentTop));
     schedule();
   };
-  const reset = () => { target = 0; schedule(); };
-  const stop = () => { cancelAnimationFrame(raf); raf = 0; current = target = 0; frame.style.setProperty('--film-inset', '0px'); };
-  const preference = () => { if (reduced.matches || !fine.matches) stop(); };
-  const visibility = () => { if (document.hidden) stop(); };
-  stage.addEventListener('pointermove', move, { passive: true });
-  stage.addEventListener('pointerleave', reset);
-  reduced.addEventListener('change', preference); fine.addEventListener('change', preference);
-  document.addEventListener('visibilitychange', visibility);
+  const observer = win.ResizeObserver ? new win.ResizeObserver(measure) : null;
+  observer?.observe(rail);
+  win.addEventListener('scroll', schedule, { passive: true });
+  win.addEventListener('resize', measure, { passive: true });
+  win.addEventListener('pageshow', measure);
+  reduced.addEventListener('change', measure);
+  measure();
   return () => {
-    stop(); stage.removeEventListener('pointermove', move); stage.removeEventListener('pointerleave', reset);
-    reduced.removeEventListener('change', preference); fine.removeEventListener('change', preference);
-    document.removeEventListener('visibilitychange', visibility);
+    win.cancelAnimationFrame(raf); observer?.disconnect();
+    win.removeEventListener('scroll', schedule); win.removeEventListener('resize', measure);
+    win.removeEventListener('pageshow', measure); reduced.removeEventListener('change', measure);
+    // Retain the slot geometry while the player is floating; returning to the
+    // page creates a fresh controller at the current scroll position.
   };
 }

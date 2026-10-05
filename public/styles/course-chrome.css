@@ -13,23 +13,23 @@
 .pa-footer-personal{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:0}
 .pa-footer-copyright{font-size:var(--af-type-footer);letter-spacing:.01em;white-space:nowrap}
 .pa-footer .pa-footer-socials{display:flex;align-items:center;justify-content:flex-end;gap:0;margin:0}
-.pa-footer-socials a{display:inline-flex;align-items:center;justify-content:flex-start;width:34px;height:44px;color:inherit;border-radius:8px;transition:color .18s ease,filter .18s ease}
-.pa-footer-socials a:last-child{margin-right:-13px}
+.pa-footer-socials a{display:inline-flex;align-items:center;justify-content:flex-end;width:34px;height:44px;color:inherit;border-radius:8px;transition:color .18s ease,filter .18s ease}
+.pa-footer-socials a:last-child{margin-right:0}
 .pa-footer-socials a:hover{color:#fff;filter:drop-shadow(0 0 9px #f2f0e9a6)}
 .pa-footer-socials a:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 .pa-footer-socials svg{display:block;width:21px;height:21px;fill:currentColor}
 
 
 @media(max-width:979px){
-  .pa-footer-inner{width:100%;grid-template-columns:1fr;gap:28px;padding-inline:40px 16px}
+  .pa-footer-inner{width:100%;grid-template-columns:1fr;gap:28px;padding-inline:var(--af-header-compact-gap)}
   .pa-footer-brand{font-size:clamp(28px, 2.3vw, 34px);font-weight:var(--af-weight-brand);letter-spacing:var(--af-tracking-heading)}
   .pa-footer .pa-footer-pages{max-width:520px;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:8px}
   .pa-footer-pages a{width:100%;min-height:44px;justify-content:flex-start;text-align:left;font-size:var(--af-type-footer);font-weight:var(--af-weight-regular);line-height:1.4}
   .pa-footer-personal{margin-right:0}
   .pa-footer .pa-footer-socials{gap:4px}
   .pa-footer-socials a{width:44px;justify-content:center}
+  .pa-footer-socials a:last-child{justify-content:flex-end}
   .pa-footer-socials a:last-child{margin-right:0}
 }
 @media(max-width:440px){.pa-footer{padding-block:40px 30px;font-size:var(--af-type-footer);font-weight:var(--af-weight-regular)}.pa-footer-inner{gap:25px}.pa-footer-brand{font-size:clamp(28px, 2.3vw, 34px);font-weight:var(--af-weight-brand);letter-spacing:var(--af-tracking-heading)}.pa-footer-pages a{font-size:var(--af-type-footer);font-weight:var(--af-weight-regular);line-height:1.4}}
-@media(max-width:360px){.pa-footer-inner{padding-left:28px}}
 @media(prefers-reduced-motion:reduce){.pa-footer-socials a,.pa-footer-pages a,body.portfolio-story main :is(button,.pa-actions a,.pa-end a):not(:disabled){transition:none}}

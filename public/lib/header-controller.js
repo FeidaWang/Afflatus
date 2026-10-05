@@ -47,7 +47,7 @@ if (header && !header.dataset.enhanced) {
     lastScrollY = y;
     // DESIGN defaults; exact reference timeline remains unmeasured.
     const raw = Math.max(0, Math.min(1, (y - 8) / 88));
-    const p = reduced.matches ? Number(y >= 96) : expanding ? smooth(.75, .95, raw) : raw;
+    const p = compact.matches ? 1 : reduced.matches ? Number(y >= 96) : expanding ? smooth(.75, .95, raw) : raw;
     if (p === lastProgress) return;
     lastProgress = p;
     header.style.setProperty('--af-collapse', p);

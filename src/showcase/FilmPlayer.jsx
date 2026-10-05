@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { CornersOut, CornersIn, ArrowClockwise, ArrowCounterClockwise, Pause, Play, SpeakerHigh, PictureInPicture, Minus, X } from '@phosphor-icons/react';
-import { createFilmDrag, createFilmPlayback, createFilmStretch, lockFilmPlaybackRate } from './filmMotion.js';
+import { createFilmDrag, createFilmPlayback, createFilmScroll, lockFilmPlaybackRate } from './filmMotion.js';
+import { enterFilmFullscreen, lockFilmLandscape, unlockFilmOrientation } from './filmFullscreen.js';
 
 export const FILM_SOURCE = '/film/claude_clawd_pv/r07-mv/review/r07-stream-film-1080p-16x9.mp4';
 export const FILM_POSTER = '/assets/film/afflatus-r07-poster.jpg';
@@ -8,15 +9,15 @@ const clock = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(second
 
 export function FilmPlayer({ language }) {
   const zh = language === 'zh';
-  const video = useRef(null), stage = useRef(null), frame = useRef(null), player = useRef(null);
+  const video = useRef(null), player = useRef(null), shell = useRef(null);
   const playback = useRef(null), dialog = useRef(null), cinema = useRef(null), cinemaStart = useRef(0);
-  const miniPosition = useRef(null), miniButton = useRef(null), miniControlsTimer = useRef(null), audibleVolume = useRef(1);
+  const miniPosition = useRef(null), miniButton = useRef(null), controlsTimer = useRef(null), audibleVolume = useRef(1);
   const [playing, setPlaying] = useState(false), [muted, setMuted] = useState(true);
-  const [volume, setVolume] = useState(1), [miniControls, setMiniControls] = useState(false);
+  const [volume, setVolume] = useState(1), [controlsVisible, setControlsVisible] = useState(false);
   const [elapsed, setElapsed] = useState(0), [duration, setDuration] = useState(213);
   const [ready, setReady] = useState(false), [failed, setFailed] = useState(false), [blocked, setBlocked] = useState(false);
   const [fullscreen, setFullscreen] = useState(false), [mini, setMini] = useState(false);
-  const [compact, setCompact] = useState(false);
+  const [compact, setCompact] = useState(false), [landscape, setLandscape] = useState(false);
   const [autoplay] = useState(() => !matchMedia('(prefers-reduced-motion: reduce)').matches && !navigator.connection?.saveData);
   useEffect(() => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -24,40 +25,51 @@ export function FilmPlayer({ language }) {
     const unlockInlineRate = lockFilmPlaybackRate(video.current), unlockCinemaRate = lockFilmPlaybackRate(cinema.current);
     playback.current = ctl;
     const preference = () => { if (reduced.matches) ctl.pause(); };
-    const full = () => setFullscreen(document.fullscreenElement === player.current);
+    const inline = video.current;
+    const full = () => {
+      const active = document.fullscreenElement === player.current || inline.webkitDisplayingFullscreen === true;
+      setFullscreen(active);
+      if (!active) { setLandscape(false); unlockFilmOrientation(); }
+    };
+    const nativeBegin = () => {
+      setFullscreen(true);
+      void lockFilmLandscape();
+    };
+    const nativeEnd = () => { setFullscreen(false); setLandscape(false); unlockFilmOrientation(); };
     reduced.addEventListener('change', preference); document.addEventListener('fullscreenchange', full);
-    return () => { reduced.removeEventListener('change', preference); document.removeEventListener('fullscreenchange', full); unlockInlineRate(); unlockCinemaRate(); ctl.destroy(); playback.current = null; };
+    inline.addEventListener('webkitbeginfullscreen', nativeBegin); inline.addEventListener('webkitendfullscreen', nativeEnd);
+    return () => { reduced.removeEventListener('change', preference); document.removeEventListener('fullscreenchange', full); inline.removeEventListener('webkitbeginfullscreen', nativeBegin); inline.removeEventListener('webkitendfullscreen', nativeEnd); unlockFilmOrientation(); unlockInlineRate(); unlockCinemaRate(); ctl.destroy(); playback.current = null; };
   }, [autoplay]);
   useEffect(() => {
-    if (!mini && !fullscreen) return createFilmStretch(stage.current, frame.current);
+    if (!mini && !fullscreen) return createFilmScroll(shell.current);
   }, [mini, fullscreen]);
+  useEffect(() => { playback.current?.setFloating(mini || fullscreen); }, [mini, fullscreen]);
   useLayoutEffect(() => {
     if (!mini || fullscreen) return;
     const drag = createFilmDrag(player.current, { position: miniPosition.current, onPosition: point => { miniPosition.current = point; } });
     return () => drag.destroy();
   }, [mini, fullscreen]);
   useEffect(() => {
-    const hide = () => setMiniControls(false);
+    const hide = () => setControlsVisible(false);
     window.addEventListener('blur', hide);
-    return () => { window.removeEventListener('blur', hide); clearTimeout(miniControlsTimer.current); };
+    return () => { window.removeEventListener('blur', hide); clearTimeout(controlsTimer.current); };
   }, []);
-  const revealMiniControls = event => {
-    if (!mini) return;
-    clearTimeout(miniControlsTimer.current); setMiniControls(true);
-    if (event.pointerType !== 'mouse') miniControlsTimer.current = setTimeout(() => setMiniControls(false), 2800);
+  const revealControls = event => {
+    clearTimeout(controlsTimer.current); setControlsVisible(true);
+    if (event.pointerType !== 'mouse') controlsTimer.current = setTimeout(() => setControlsVisible(false), 2800);
   };
-  const leaveMini = event => {
+  const hideControls = event => {
     if (event.pointerType === 'touch') return;
-    clearTimeout(miniControlsTimer.current); setMiniControls(false);
+    clearTimeout(controlsTimer.current); setControlsVisible(false);
   };
   const returnToPage = () => {
-    clearTimeout(miniControlsTimer.current); setMiniControls(false); setMini(false); setCompact(false); playback.current?.setFloating(false);
+    clearTimeout(controlsTimer.current); setControlsVisible(false); setMini(false); setCompact(false); playback.current?.setFloating(false);
     requestAnimationFrame(() => miniButton.current?.focus({ preventScroll: true }));
   };
   const toggleMini = async () => {
     if (mini) { returnToPage(); return; }
     if (document.fullscreenElement) await document.exitFullscreen();
-    miniPosition.current = null; setMiniControls(false); playback.current?.setFloating(true); setMini(true);
+    miniPosition.current = null; setControlsVisible(false); playback.current?.setFloating(true); setMini(true);
   };
   const togglePlayback = () => {
     if (video.current.paused) { setBlocked(false); playback.current?.play(); }
@@ -88,19 +100,19 @@ export function FilmPlayer({ language }) {
   };
   const closeCinema = () => {
     if (cinema.current.readyState >= 1 && video.current.readyState >= 1) video.current.currentTime = cinema.current.currentTime;
-    cinema.current.pause(); playback.current?.suspend(false);
+    cinema.current.pause(); playback.current?.suspend(false); setLandscape(false);
   };
   const toggleFullscreen = async () => {
     if (document.fullscreenElement) { await document.exitFullscreen(); return; }
-    try {
-      if (!player.current.requestFullscreen) { openCinema(); return; }
-      await player.current.requestFullscreen();
-      if (document.fullscreenElement !== player.current) openCinema();
-    } catch { openCinema(); }
+    if (video.current.webkitDisplayingFullscreen) { video.current.webkitExitFullscreen(); return; }
+    const mobile = matchMedia('(pointer: coarse)').matches;
+    setLandscape(mobile);
+    const mode = await enterFilmFullscreen(player.current, video.current, { mobile });
+    if (mode === 'fallback') openCinema();
   };
-  return <div className="film-shell">
-  <div className={`film-player${mini ? ' film-player--mini' : ''}${compact ? ' film-player--compact' : ''}${miniControls ? ' film-player--controls' : ''}`} ref={player} id="film" aria-label={zh ? 'AFFLATUS 宣传片播放器' : 'AFFLATUS film player'} onContextMenu={event => event.preventDefault()} onPointerEnter={revealMiniControls} onPointerDown={revealMiniControls} onPointerLeave={leaveMini}>
-    <div className="film-stage" ref={stage}><div className="film-frame" ref={frame}>
+  return <div className="film-shell" ref={shell}>
+  <div className={`film-player${mini ? ' film-player--mini' : ''}${compact ? ' film-player--compact' : ''}${controlsVisible ? ' film-player--controls' : ''}${landscape ? ' film-player--landscape' : ''}`} ref={player} id="film" aria-label={zh ? 'AFFLATUS 宣传片播放器' : 'AFFLATUS film player'} onContextMenu={event => event.preventDefault()}>
+    <div className="film-stage"><div className="film-frame" onPointerEnter={revealControls} onPointerMove={revealControls} onPointerDown={revealControls} onPointerLeave={hideControls}>
       <video ref={video} className="premiere-film" src={FILM_SOURCE} poster={FILM_POSTER} width="1920" height="1080"
         autoPlay={autoplay} muted={muted} playsInline loop preload="metadata" controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback aria-label={zh ? 'AFFLATUS 宣传片' : 'The AFFLATUS film'}
         onPlay={() => { setPlaying(true); setBlocked(false); }} onPause={() => setPlaying(false)}
@@ -133,7 +145,7 @@ export function FilmPlayer({ language }) {
     </div>
     </div></div>
     {(failed || blocked) && <p className="film-status" role="status">{failed ? (zh ? '影片暂时无法加载。' : 'The film could not be loaded.') : (zh ? '点击播放即可开始观看。' : 'Press play to start the film.')}{failed && <button type="button" onClick={retryFilm}>{zh ? '重试播放' : 'Retry playback'}</button>}</p>}
-    <dialog className="film-dialog" ref={dialog} aria-labelledby="cinema-title" onClose={closeCinema} onClick={event => { if (event.target === event.currentTarget) dialog.current.close(); }}>
+    <dialog className={`film-dialog${landscape ? ' film-dialog--landscape' : ''}`} ref={dialog} aria-labelledby="cinema-title" onClose={closeCinema} onClick={event => { if (event.target === event.currentTarget) dialog.current.close(); }}>
       <div className="cinema-heading"><h2 id="cinema-title">{zh ? 'AFFLATUS 宣传片' : 'The AFFLATUS film'}</h2><button className="icon-button" type="button" autoFocus onClick={() => dialog.current.close()} aria-label={zh ? '关闭影片' : 'Close film'}><X /></button></div>
       <video ref={cinema} src={FILM_SOURCE} poster={FILM_POSTER} controls playsInline preload="none" controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback aria-label={zh ? '完整影片' : 'Full film'} onLoadedMetadata={() => { cinema.current.currentTime = cinemaStart.current; }} />
     </dialog>

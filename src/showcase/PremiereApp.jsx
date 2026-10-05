@@ -18,8 +18,8 @@ export function App() {
   return <>
     <a className="skip-link" href="#home-content">{zh ? '跳至主要内容' : 'Skip to content'}</a>
     <main id="home-content" className="site-root" tabIndex={-1}>
-      <section className="premiere section-shell" id="top" aria-labelledby="home-title">
-        <div className="premiere-intro">
+      <section className="premiere" id="top" aria-labelledby="home-title">
+        <div className="premiere-intro section-shell">
           <h1 id="home-title">{zh ? <><span>从这颗星球，</span><span>驶向更远的</span><span>地方。</span></> : <><span>From this world,</span>{' '}<span>into what comes</span>{' '}<span>next.</span></>}</h1>
           <div className="premiere-copy">
             <p>{zh ? '关于我们写下的故事、亲手做出的作品，以及理解这个世界的新方法。' : 'Stories we write, things we build, and new ways to understand the world around us.'}</p>
@@ -43,7 +43,7 @@ export function App() {
       </section>
       <section className="destinations section-shell" id="destinations" aria-labelledby="destinations-title">
         <h2 id="destinations-title">{zh ? '找到你的入口。' : 'Find your way in.'}</h2>
-        <nav aria-label={zh ? '站点入口' : 'Explore AFFLATUS'}>{[['/serial.html', 'Stories', '故事'], ['/portfolio.html', 'Work', '作品'], ['/course.html', 'Learn', '学习'], ['/arena.html', 'Markets', '市场']].map(([href, en, cn]) => <SiteLink key={href} href={href} language={language}>{zh ? cn : en}</SiteLink>)}</nav>
+        <nav aria-label={zh ? '站点入口' : 'Explore AFFLATUS'}>{[['/serial.html', 'Stories', '故事'], ['/portfolio.html', 'Portfolio', '作品集'], ['/course.html', 'Learn', '学习'], ['/arena.html', 'Markets', '市场']].map(([href, en, cn]) => <SiteLink key={href} href={href} language={language}>{zh ? cn : en}</SiteLink>)}</nav>
       </section>
     </main>
     <PremiereFooter language={language} />

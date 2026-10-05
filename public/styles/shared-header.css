@@ -4,7 +4,7 @@
    motion and compact geometry use the I01 defaults. */
 #afflatus-header, #afflatus-header * { box-sizing: border-box; font-family: var(--af-font-sans); font-synthesis: none; }
 #afflatus-header {
-  --af-height: 68px; --af-paper: #e8e6dc; --af-ink: #0f0f0e; --af-control-scale: .8; --af-menu-scale: .7;
+  --af-height: 68px; --af-type-brand: 28px; --af-brand-width: 184px; --af-brand-height: 34px; --af-paper: #e8e6dc; --af-ink: #0f0f0e;
   position: fixed; inset: 0 0 auto; z-index: 10000; width: 100%; height: var(--af-height);
   margin: 0; padding: 0; border: 0; border-bottom: 1px solid #d1d0c8;
   background: var(--af-paper); color: var(--af-ink); color-scheme: light;
@@ -23,14 +23,14 @@
 }
 #afflatus-header a::before, #afflatus-header a::after, #afflatus-header button::before, #afflatus-header button::after { content: none; }
 #afflatus-header :is(a, button):focus-visible { outline: 2px solid #486f76; outline-offset: 3px; }
-#afflatus-header .af-wordmark { flex: 0 0 calc(144px - var(--af-collapse, 0) * 108px); min-width: 0; padding: 0; overflow: hidden; }
+#afflatus-header .af-wordmark { flex: 0 0 calc(var(--af-brand-width) - var(--af-collapse, 0) * 140px); min-width: 0; padding: 0; overflow: hidden; }
 #afflatus-header .af-home-link { flex: 0 0 auto; padding: 0; font-weight: var(--af-weight-medium); }
-#afflatus-header .af-brand-art { position: relative; display: block; flex: none; width: 144px; height: 28px; font: var(--af-weight-brand) var(--af-type-brand)/28px var(--af-font-sans); letter-spacing: .015em; }
+#afflatus-header .af-brand-art { position: relative; display: block; flex: none; width: var(--af-brand-width); height: var(--af-brand-height); font: var(--af-weight-brand) var(--af-type-brand)/var(--af-brand-height) var(--af-font-sans); letter-spacing: .015em; }
 #afflatus-header .af-brand-full,
-#afflatus-header .af-brand-compact { position: absolute; left: 0; top: 0; display: block; height: 28px; white-space: nowrap; }
+#afflatus-header .af-brand-compact { position: absolute; left: 0; top: 0; display: block; height: var(--af-brand-height); white-space: nowrap; }
 #afflatus-header .af-brand-full { width: max-content; opacity: var(--af-suffix-opacity, 1); }
 #afflatus-header .af-brand-compact { display: flex; align-items: baseline; opacity: var(--af-compact-opacity, 0); }
-#afflatus-header .af-brand-a { display: block; height: 28px; line-height: 28px; }
+#afflatus-header .af-brand-a { display: block; height: var(--af-brand-height); line-height: var(--af-brand-height); }
 /* Sitewide AI_ shorthand: the cursor shares the letter baseline at every size. */
 .af-brand-i { display: inline-flex; align-items: baseline; margin-left: 1px; line-height: inherit; }
 .af-brand-underscore { display: inline-block; flex: none; width: .36em; height: .12em; margin-left: .08em; background: currentColor; animation: af-brand-blink 1.15s steps(1, end) infinite; }
@@ -47,13 +47,9 @@
 #afflatus-header a[aria-current="page"] { font-weight: var(--af-weight-medium); }
 #afflatus-header .af-header-dropdown { position: absolute; top: 100%; left: 0; width: 240px; padding: 12px; border: 1px solid #d1d0c8; background: var(--af-paper); max-height: calc(100dvh - var(--af-height) - 16px); overflow-y: auto; animation: af-menu-in 160ms ease-out; }
 #afflatus-header .af-header-dropdown a { display: flex; white-space: normal; padding: 10px 12px; }
-/* Scale the visible controls together while retaining generous pointer targets. */
-#afflatus-header a.af-header-language { position: relative; flex: none; justify-content: center; min-height: calc(44px * var(--af-control-scale)); padding: 0 calc(20px * var(--af-control-scale)); border: 0; border-radius: calc(10px * var(--af-control-scale)); background: #141413; color: #faf9f5; font: var(--af-weight-regular) calc(16px * var(--af-control-scale))/1.25 var(--af-font-sans); }
-/* Align the text and menu strokes with the wordmark's optical center. */
-#afflatus-header a.af-header-language { padding-block-end: 2px; }
-#afflatus-header a.af-header-language::before { content: ''; position: absolute; inset-block: calc((44px * var(--af-control-scale) - 44px) / 2); inset-inline: 0; }
+#afflatus-header a.af-header-language { flex: none; justify-content: center; min-height: 44px; padding: 0 12px 2px; border: 1px solid #161616; border-radius: 8px; background: #161616; color: #fff; font-size: var(--af-type-brand); line-height: var(--af-brand-height); font-weight: var(--af-weight-brand); }
 #afflatus-header .af-header-menu { display: none; }
-#afflatus-header .af-menu-icon { display: block; flex: none; width: calc(32px * var(--af-menu-scale)); height: calc(24px * var(--af-menu-scale)); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+#afflatus-header .af-menu-icon { display: block; flex: none; width: 28px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 #afflatus-header [hidden] { display: none; }
 body:has(> #afflatus-header) { padding-top: 68px; }
 @media (hover: hover) and (pointer: fine) {
@@ -65,10 +61,11 @@ body:has(> #afflatus-header) { padding-top: 68px; }
 @media (max-width: 979px) {
   #afflatus-header { --af-height: 60px; }
   #afflatus-header .af-header-inner { width: 100%; padding: 0 var(--af-header-compact-gap); }
-  #afflatus-header .af-wordmark { flex-basis: calc(120px - var(--af-collapse, 0) * 90px); flex-shrink: 1; }
-  #afflatus-header .af-brand-art { transform: scale(.83); transform-origin: left center; }
+  #afflatus-header .af-wordmark { flex-basis: 44px; flex-shrink: 0; }
+  #afflatus-header .af-brand-full { opacity: 0; }
+  #afflatus-header .af-brand-compact { opacity: 1; }
   #afflatus-header .af-header-language { margin-left: auto; }
-  #afflatus-header .af-header-menu { display: inline-flex; flex: none; justify-content: center; width: 44px; padding: 0; }
+  #afflatus-header .af-header-menu { display: inline-flex; flex: none; justify-content: flex-end; width: 44px; padding: 0; }
   #afflatus-header .af-header-nav { position: absolute; top: 100%; left: 0; right: 0; display: flex; height: auto; flex-direction: column; align-items: stretch; gap: 4px; margin: 0; padding: 16px var(--af-header-compact-gap) 24px; background: var(--af-paper); max-height: calc(100dvh - var(--af-height)); overflow-y: auto; border-bottom: 1px solid #d1d0c8; animation: af-menu-in 160ms ease-out; }
   #afflatus-header .af-header-nav > a, #afflatus-header .af-header-group > button { width: 100%; font-size: 16px; }
   #afflatus-header .af-header-group { display: block; }
@@ -84,6 +81,7 @@ body:has(> #afflatus-header) { padding-top: 68px; }
 }
 @media (scripting: enabled) and (max-width: 979px) {
   #afflatus-header:not([data-enhanced]) .af-header-nav { display: none; }
+  #afflatus-header:not([data-enhanced]) .af-brand-art { visibility: visible; }
 }
 /* Static HTML exposes all destinations when scripting is unavailable. */
 @media (scripting: none) {
