@@ -1,71 +1,83 @@
-# Homepage film premiere: design QA
+# Homepage film player QA
 
 final result: passed
 
-Source visual truth: `/Users/feida/.codex/generated_images/01a108b2-64a7-78d0-82d6-2826451d74a7/exec-ebc1bf71-b1d6-4334-a54c-98b73235b5d1.png` (the first displayed option selected by the user).
+## Findings
 
-Implementation: `http://127.0.0.1:5179/en/`, current inline screenshot `artifacts/home-redesign/desktop-controls-final.png`, floating screenshot `artifacts/home-redesign/mini-desktop.png`.
+No actionable P0/P1/P2 findings remain in the final combined visual comparisons. A return-to-page arrow pointing the wrong way was found in the first icon comparison and corrected before this pass.
 
-Viewport: 1440 × 1600 CSS px; source 1190 × 1322 pixels normalized to 1440 × 1600 for comparison. The browser's full-page capture is 1440 × 2466 pixels (1×); its first 1600 pixels are used for the comparison without scaling. State: page top, English, complete actual film frame at 00:18, paused to make comparison reproducible. The mock's playback label shows 00:00 despite depicting this frame; actual runtime time is retained.
+## Reference and implementation evidence
 
-Full-view comparison: `artifacts/home-redesign/comparison-final.png`, both artifacts combined into one 2880 × 1600 image. Inspected the actual reference and browser capture together. Focused comparisons: `comparison-typography.png` and `comparison-controls.png`, each containing the reference and implementation together.
+Source visual truth is the user's attached screenshots, saved in `artifacts/film-player/`:
 
-Current control revision comparison: `comparison-controls-update.png`, again containing the selected source and current implementation together at 1440 × 1600 per side. Changes to the film controls below are explicitly requested by the user; typography, composition and imagery retain the approved direction.
+- `reference-main.png` (866 × 578), `reference-mini.png` and `reference-header.png` (570 × 360): original player composition.
+- `reference-seek-inline.png` (1562 × 250) and `reference-seek-mini.png` (1060 × 124): toolbar/seek spacing and split-track pill thumb.
+- `reference-icons.png` (310 × 110) and `reference-window-actions.png` (309 × 126): sound/fullscreen and mini window actions.
+- `reference-mini-fraction.png` (866 × 602): a small floating film with an unobstructed picture-in-picture stage.
+- `reference-volume.png` (225 × 128) and `reference-muted.png` (226 × 129): volume capsule and solid slashed speaker.
 
-## Iteration 1
+Later user instructions override the original screenshots: no ordinary-player brand, a custom mark plus `rsiagent.app` only in the mini header, mini instead of a settings menu, no bottom-right mini buttons, a translucent white play surface, centered 10-second digits, proportional controls, pointer-leave hiding, 1× playback, and reduced download access.
 
-- [P2, fixed] Introductory paragraph wrapping differed from the selected composition. Its first line included “and”, changing the editorial balance. Narrowed the desktop serif paragraph to 450px while preserving the responsive column and font size.
-- [P2, fixed] The desktop navigation spacing override also applied to the mobile disclosure. Scoped it to desktop widths ≥980px.
+Browser-rendered implementation captures:
 
-## Iteration 2
+- `ui-updated-inline.jpg` (968 × 1150), `ui-updated-inline.png` (865 × 487): ordinary controls and tighter seek spacing.
+- `ui-volume-48.jpg` and `ui-volume-muted.jpg` (640 × 853), with full-player crops `ui-volume-48-player.png` and `ui-volume-muted-player.png` (574 × 323): actual drag to 48%, then mute. The mute capture uses the final solid speaker/slash asset.
+- `ui-mini-final-desktop.jpg` (968 × 1150) and `ui-mini-final.png` (570 × 321): final corrected outward-arrow icon, glass play surface, centered skip digits, and pill seek thumb.
+- `ui-mini-mobile-320.jpg` (320 × 740), `ui-mini-320.png` (240 × 136), `ui-mini-mobile-390.jpg` (390 × 844), `ui-mini-390.png` (257 × 146): final corrected icon on narrow layouts.
+- `ui-mini-quiet-context.jpg` (640 × 853), `ui-mini-quiet-422.png` (422 × 238), and `ui-mini-hidden.png` (570 × 321): pointer outside, no controls or dark shade over the movie.
 
-The final full-view and focused comparisons confirm the selected three-line title, three-line introduction, shared gutter, rounded film and horizontal controls. Mobile navigation spacing is verified at 320px and 390px. No unresolved P0, P1 or P2 issues remain.
+The film comparisons are paused at 0:30 / 3:33. The volume pair intentionally uses 48% for the adjustment state and mute for the slashed speaker state. The reference's blue outline is keyboard focus chrome; mouse activation in the implementation does not force a persistent blue border. A blue focus outline remains available for keyboard use.
 
-Accepted differences: project fonts retain the site's typography; the actual film preserves its 1616:1080 aspect ratio and detailed artwork; the seek control displays the actual paused time and uses an accessible native range input. The slightly taller film shifts the subsequent sections down without changing their hierarchy.
+Screenshots use one image pixel per CSS pixel. Full mini comparison places the original 570 × 360 reference beside the final 570 × 321 implementation without resizing either. Blank padding accounts for the requested replacement film's 16:9 aspect ratio. Main source and implementation are normalized to 570px width; focused source/implementation crops are normalized to a common width for shape and spacing inspection. Enlarged icon references are detail crops, not evidence that controls should grow to those pixel sizes. The page-context fraction comparison has different surrounding content and video frame, and is used only to check the requested picture-in-picture composition, not pixel equality.
 
-## Iteration 3: requested mini player
+Combined comparisons opened and reviewed:
 
-- Removed “Watch the full film” and extended the desktop progress bar to 952.37px at a 1440px viewport. Fullscreen and mini-player icons are adjacent.
-- The same video becomes a 360px floating card, placed 16px from the bottom and right edges. Its time, sound and explicit pause state survive entry and return. The original film area reserves its space and offers a return action.
-- Real pointer dragging moved the desktop card from (1064, 616.75) to (564, 276.75). A subsequent mobile drag was clamped to (16, 16). Pointer capture supports drag cancellation; the handle also supports arrow keys.
-- [P2, fixed] The shared header originally covered the card's top controls when dragged to the top edge. Raised the card above the header, then verified its Close action at (16, 16). It returned to the inline player at 00:18, still paused and muted, with focus restored to the mini-player button.
-- Floating playback continued while the original page position was off screen. Native fullscreen entry and exit from the floating player passed.
-- Browser resize keeps the card inside the viewport. English and Chinese at 320 × 800px showed no horizontal overflow, with a 288px card and 44 × 44px controls. At 800 × 390px, the 360 × 268px card fit with 16px edge spacing and retained the complete film frame.
-- Inspected `mini-desktop.png`, `mini-mobile.png` and `mini-mobile-zh.png`. No unresolved P0, P1 or P2 issues remain. The production preview reported no console errors or warnings.
-- Latest validation: 31 tests passed across six relevant suites; the complete production build, prebuild checks and emitted SEO validation passed. Build log: `artifacts/home-redesign/build-mini.log`.
+- Full views: `ui-comparison-mini.png`, `ui-comparison-inline.png`, `ui-comparison-fraction.png`.
+- Focused regions: `ui-comparison-actions.png`, `ui-comparison-seek.png`, `ui-comparison-volume.png`, `ui-comparison-muted.png`.
 
-## Iteration 4: shared course footer and publication
+Preview: http://127.0.0.1:4173/en/ (Chinese route also available at `/zh/`). The user's existing tab remains open with its viewing state preserved. Temporary viewport overrides were reset and separate QA tabs were closed.
 
-- Replaced the homepage footer with the course page's `pa-footer` structure and shared `course-chrome.css`, retaining all seven page destinations and three social profiles. English and Chinese static fallbacks match the rendered component.
-- Desktop at 1440 × 800px: both footers are 231.1875px high, with the brand at x=84 and columns 390.812px / 547.148px / 254.031px. Mobile at 390 × 800px: both are 416.1953px high, with the brand at x=40 and a 334px single-column content rail. No horizontal overflow.
-- Inspected `footer-desktop-comparison.png` and `footer-mobile-comparison.png`, with course and homepage captures together. No unresolved P0, P1 or P2 issues.
-- All 33 tests across the seven relevant film, footer, locale and SEO suites passed (`artifacts/home-redesign/test-home-final.log`).
-- Production build and typecheck passed. Full unit suite: 1,885 passed, 96 failed. An isolated archive of `origin/main` at `419b35f6` reproduces all 96 failed tests; comparison found no new failure identities. Existing contract tests still expect older homepage, course, brand and Arena structures, and existing imports/API fixtures also fail. Evidence is in `artifacts/home-redesign/test-production.log`, `test-baseline.log`, and `baseline-comparison.json`.
+## Required fidelity surfaces
 
-## Fidelity surfaces
+| Surface | Result |
+| --- | --- |
+| Fonts and typography | Product sans typography matches the reference's control/wordmark role. Wordmark, times, and labels scale with the actual mini width. No wrapping or clipped brand at 320px or 390px. Movie typography belongs to the supplied film and is not reconstructed as overlays. |
+| Spacing and layout | The main seek track sits 6px below the toolbar rather than 18px. The mini track has a tall pill with gaps on both sides. Header spacing separates logo/wordmark from utility actions. Mini width is 66vw with a 240px minimum and 570px maximum, constrained by viewport width/height. Compact width is 44vw with a 360px maximum. The 240px mini separates center play and seek hit regions. |
+| Colors and tokens | White sound, slashed mute, square fullscreen corners, minimize, outward return arrow, and close follow the requested shapes. Central play is translucent white with blur and a subtle white border. Header, center controls, footer, and dark shade all disappear when the pointer leaves. Brand remains the requested copper generated mark. |
+| Image quality and assets | The requested H.264/AAC 1920 × 1080 movie is contained at 16:9. Its 82,576,797-byte web encode preserves source audio and fast-start metadata. Generated logo transparency is retained. Official Material SVGs supply `back_to_tab` and `volume_off`; existing Phosphor icons supply other controls. No image placeholders or handcrafted asset substitutes were introduced. |
+| Copy and content | Ordinary/fullscreen player has no upper-left brand. Mini reads `rsiagent.app`; inline slot displays a localized picture-in-picture caption. Accessible labels remain bilingual. No settings, speed selector, movie download links, or bottom-right mini buttons remain. |
 
-- Typography: project Anthropic Sans for bold display and navigation; bundled Newsreader for the serif introduction. Title and introduction follow the selected line wrapping. Existing 15px navigation is retained as a sitewide control size.
-- Spacing: warm paper surface, two-column introduction, common page gutter, rounded expansive film and plain three-column work links match the selected hierarchy. Stage retains the real 1616:1080 ratio; its extra height compared with the generated mock's slightly flattened imagery is intentional, preserving the user's complete original frame.
-- Color: paper #f0eee6, ink #111110 and fine #ceccc3 separators; visible focus outlines.
-- Imagery: supplied actual film and full-resolution extracted poster, without substitutions or cropping. The original manga and AI interface differ in detail from Image Gen's interpretation; the source film is authoritative.
-- Copy: selected headline, introduction, film action and three work destinations. “Projects” replaces “products” to describe the existing personal site; subsequent editorial content follows the existing static homepage. Every destination and all playback labels have Chinese equivalents.
+## Comparison and fix history
 
-## Functional evidence
+1. Earlier main/mini passes enlarged control text, fixed a narrow central-button/seek overlap, replaced settings with fullscreen, and moved mini access into the previous fullscreen slot. Normal branding was removed; the generated RSI mark and requested mini header were added. Footer actions were removed and controls made container-relative.
+2. The user's seek references exposed the mini circular thumb and excessive ordinary toolbar gap. The mini now has a tall rounded thumb and interrupted track; the ordinary gap was reduced by 12px. Post-fix evidence: `ui-comparison-seek.png`, `ui-comparison-inline.png`.
+3. The next references exposed missing ordinary volume adjustment, oversized mobile mini dimensions, permanent mini chrome, a blue play surface, off-center skip digits, and icon differences. Added a functioning volume capsule; bounded the mini by 66vw/44vw; hid all overlays on pointer leave; changed play to white glass; centered digits; used solid sound and square-corner fullscreen icons. Narrow captures verify readable controls with no overlap. Post-fix evidence: final desktop/mobile captures and the combined mini/volume comparisons.
+4. The final muted reference exposed the outlined speaker mismatch. Replaced it with the official solid `volume_off` asset. Actual volume drag and mute/unmute were verified; `ui-comparison-muted.png` shows the final state.
+5. First focused window-action comparison found the return arrow pointing inward after rotation. Replaced that asset with official `back_to_tab` and removed rotation. Recaptured desktop, 320px, and 390px implementations. Final `ui-comparison-actions.png` and `ui-comparison-mini.png` show the outward upper-left arrow and filled lower-right small window.
 
-- Muted inline autoplay, loop and duration 213.013 seconds confirmed in the browser.
-- Pause and keyboard seeking confirmed; explicit pause survives scrolling away and back.
-- Real pointer drag changed frame width from 1287.375 to 1222.75px with aspect ratio remaining 1.4963. Stage height and controls stayed fixed.
-- Sound toggle, seeking and native fullscreen entry/exit confirmed through real controls and accessible state.
-- Cinema playback opens at the inline film's time. Escape closes it, restores focus to the opener and retains the viewer's previous pause intent.
-- Desktop Markets disclosure supports keyboard opening and Escape closing. Mobile Menu and Markets disclose real destinations and restore focus when closed.
-- English and Chinese language links navigate to the correct fixed-locale homepages. Chinese-only Stories destinations are retained.
-- No horizontal overflow at English 320px, 390px, 768px and 1440px, and Chinese 320px, 390px and 768px. Mobile playback buttons are 44 × 44px.
-- Final responsive captures: `mobile-en.png` and `mobile-zh.png` at 390 × 1000px, `tablet-zh.png` at 768 × 1024px. Full desktop page is retained in `desktop-full.png`.
-- Reduced-motion and Save-Data preferences disable automatic playback; reduced motion, touch and coarse pointers suppress pointer stretching. Lifecycle tests cover manual playback and intent preservation.
-- Film playback lifecycle and fixed-locale fallback tests: 25 passed across five relevant suites.
-- Production build and all required prebuild checks passed.
-- Fresh production-preview tab reported no console errors or warnings after playback and navigation interactions.
+## Interaction and validation
 
-## Existing repository limitations
+- Actual pointer drag moved the ordinary volume slider from 100% to 48%. Muting set the rendered state to zero; unmuting restored 48%. Earlier in the iteration, setting the slider to zero and unmuting restored the remembered 35% volume.
+- At a 640 × 853 viewport, mini bounds are x 201.602px, y 598.531px, width 422.398px, height 238.469px. When the pointer leaves, all four overlay layers report opacity 0 and pointer-events none. Actual pointer entry reveals controls again.
+- At 320 × 740, mini bounds are x 64px, y 588.125px, width 240px, height 135.875px. Utility/skip targets are 36px and central play is 44px. All visible button centers hit their own buttons. Central play ends at 670.063px; seek begins at 671.406px. There is no overlap or horizontal overflow.
+- At 390 × 844, mini bounds are x 116.602px, y 682.344px, width 257.398px, height 145.656px. Center-to-seek clearance is 6.234px. There is no horizontal overflow.
+- Skip digits measure zero offset from their button center in both axes. Mini seeking, actual narrow play/pause, return-to-page, compact sizing, close, and keyboard movement were exercised across the accumulated iteration. Final return preserved the explicit pause at 30s and current/default playback rate 1.
+- Native fullscreen pause retention and ±10-second movement were verified in the preceding player pass. Those actions remain unchanged.
+- Both video elements retain rate locking and browser download/speed/remote hints. Right-click suppression, public movie HTTP 206, and obsolete movie HTTP 404 were verified in the previous pass.
+- 19 tests passed across playback, drag, and localized static-homepage suites, including rate reset at 0.5×, 1.5×, and 2× plus default-rate changes and cleanup.
+- Latest production build, stylesheet checks, localization, and emitted SEO validation passed. Final independent QA page reported no browser console errors. `git diff --check` passed.
 
-The unrelated `tests/localizedSite.test.js` has an obsolete hard-coded Arena title assertion; the current title is already present in the unmodified HEAD manifest. It failed during exploratory testing, while the two other tests in that suite passed. Vite also reports pre-existing missing stylesheet references on Signal, Stories and Horoscope; none are requested homepage resources.
+## Follow-up polish and limits
+
+P3: icon strokes and font antialiasing can differ slightly from browser-native controls. Physical touch devices and the native-controls cinema fallback were not separately exercised. Touch controls use a 2.8-second hide timer; keyboard-visible focus keeps them accessible.
+
+The supplied replacement film differs in frame composition and aspect ratio from the reference movie. These are expected content changes. Native control hints vary by browser; UI download restrictions cannot prevent network extraction or screen capture. The original high-quality film remains outside the served directory.
+
+The RSI logo prompt is recorded in `artifacts/film-player/rsiagent-logo-prompt.txt`. Material asset source links and Apache 2.0 license location are recorded in `docs/home-film.md`.
+
+## Implementation checklist
+
+- [x] Correct source film and aspect ratio; original remains unchanged.
+- [x] Main and mini control layout, volume slider, muted glyph, responsive mini size, pointer hiding, centered digits, and glass play surface.
+- [x] Combined full-view and focused visual comparisons, desktop/narrow interaction checks, browser console check.
+- [x] Production build, relevant tests, whitespace check, preview handoff, and viewport/tab cleanup.

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createFilmPlayback } from '../src/showcase/filmMotion.js';
+import { createFilmPlayback, lockFilmPlaybackRate } from '../src/showcase/filmMotion.js';
 
 function fixture(options = {}) {
   const doc = new EventTarget();
@@ -87,5 +87,37 @@ describe('homepage film playback intent', () => {
     ctl.play(); await Promise.resolve(); expect(onBlocked).toHaveBeenCalledTimes(1);
     ctl.play(); await Promise.resolve(); expect(video.play).toHaveBeenCalledTimes(2);
     ctl.destroy();
+  });
+});
+
+describe('film normal-speed policy', () => {
+  function media() {
+    return Object.assign(new EventTarget(), { playbackRate: 1, defaultPlaybackRate: 1, paused: true, currentTime: 30 });
+  }
+  it.each([0.5, 1.5, 2])('restores a requested %sx speed without changing pause or progress', rate => {
+    const video = media(), unlock = lockFilmPlaybackRate(video);
+    video.playbackRate = rate;
+    video.dispatchEvent(new Event('ratechange'));
+    expect(video.playbackRate).toBe(1);
+    expect(video.paused).toBe(true);
+    expect(video.currentTime).toBe(30);
+    unlock();
+  });
+  it('resets existing speed and future playback defaults on installation and rate changes', () => {
+    const video = media();
+    video.playbackRate = 0.5; video.defaultPlaybackRate = 2;
+    const unlock = lockFilmPlaybackRate(video);
+    expect([video.playbackRate, video.defaultPlaybackRate]).toEqual([1, 1]);
+    video.defaultPlaybackRate = 0.5;
+    video.dispatchEvent(new Event('ratechange'));
+    expect(video.defaultPlaybackRate).toBe(1);
+    unlock();
+  });
+  it('releases its listener when the player is removed', () => {
+    const video = media(), unlock = lockFilmPlaybackRate(video);
+    unlock();
+    video.playbackRate = 2;
+    video.dispatchEvent(new Event('ratechange'));
+    expect(video.playbackRate).toBe(2);
   });
 });

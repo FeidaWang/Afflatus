@@ -33,6 +33,14 @@ import { validateShipManifest } from '../src/lib/validateShipManifest.js';
 import { validateGlobeData } from '../src/showcase/validateGlobeData.js';
 
 const CHECKS = [
+  { path: 'public/version.json', validate: (data) => {
+    const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
+    const errors = [];
+    if (data?.name !== 'AFFLATUS') errors.push('name: must identify AFFLATUS');
+    if (data?.version !== version) errors.push('version: must match package.json');
+    if (data?.displayVersion !== `v${version.replace(/\.0$/, '')}`) errors.push('displayVersion: must match the release version');
+    return { ok: errors.length === 0, errors };
+  } },
   { path: 'public/data/sectors-frontier/2026-09-23.json', validate: (data) => {
     const errors = validateSnapshot(data);
     return { ok: errors.length === 0, errors };

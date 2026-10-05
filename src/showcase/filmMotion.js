@@ -1,3 +1,14 @@
+// Keep browser/media controls at the film's intended playback speed.
+export function lockFilmPlaybackRate(video) {
+  const restore = () => {
+    if (video.defaultPlaybackRate !== 1) video.defaultPlaybackRate = 1;
+    if (video.playbackRate !== 1) video.playbackRate = 1;
+  };
+  video.addEventListener('ratechange', restore);
+  restore();
+  return () => video.removeEventListener('ratechange', restore);
+}
+
 // Visibility suspends playback; it never overwrites a viewer's explicit pause.
 export function createFilmPlayback(video, { autoplay = true, onBlocked = () => {}, Observer = globalThis.IntersectionObserver } = {}) {
   const doc = video.ownerDocument;

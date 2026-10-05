@@ -86,7 +86,7 @@ const TASKS = [
 
 // ── boot log: each line prints when its real task settles ───────────────
 async function boot() {
-  print('AFFLATUS OS v1.5 — DEEP-SPACE CAPITAL FLEET', 'b');
+  print('AFFLATUS OS v2.0 — DEEP-SPACE CAPITAL FLEET', 'b');
   let done = 0;
   for (const t of TASKS) {
     const el = print(`${t.line} ...`, t.cls);
