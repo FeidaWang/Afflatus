@@ -6,6 +6,9 @@
 
 const PILLAR_KEYS = ['inflation_data', 'fed_policy', 'labor_market', 'earnings_guidance', 'industry_tech', 'geopolitics_trade'];
 const TONES = ['green', 'amber', 'red'];
+const INDEX_TOPICS = ['fed', 'fiscal', 'government', 'macro'];
+const INDEX_STATUSES = ['decision', 'record', 'speech', 'action', 'implementation', 'guidance', 'proposal', 'pledge'];
+const INDUSTRIES = ['compute', 'cloud', 'power', 'applications', 'security'];
 
 function isNonEmptyString(v) {
   return typeof v === 'string' && v.trim().length > 0;
@@ -114,5 +117,44 @@ export function validateSignalEvents(data) {
   validateBilingual(data.pillarSummary, 'pillarSummary', errors);
   validatePillars(data.pillars, errors);
   validateEvents(data.events, errors);
+  if (data.indexVersion != null) validatePolicyIndex(data, errors);
   return { ok: errors.length === 0, errors };
+}
+
+function validDate(value) {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    && Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
+}
+
+function validatePolicyIndex(data, errors) {
+  if (data.indexVersion !== 1) errors.push('indexVersion: expected 1');
+  for (const key of ['checked_at', 'coverage_start', 'updated']) {
+    if (!validDate(data[key])) errors.push(`${key}: expected a real ISO date`);
+  }
+  if (data.coverage_start > data.checked_at) errors.push('coverage_start: must not follow checked_at');
+  if (data.checked_at > data.updated) errors.push('checked_at: must not follow updated');
+  validateBilingual(data.coverage_note, 'coverage_note', errors);
+  validateBilingual(data.overview?.summary, 'overview.summary', errors);
+  const rate = data.overview?.policyRate;
+  if (!rate || !Number.isFinite(rate.lower) || !Number.isFinite(rate.upper) || rate.lower >= rate.upper || !validDate(rate.date) || !isHttpsUrl(rate.source)) {
+    errors.push('overview.policyRate: requires bounds, date and HTTPS source');
+  }
+  const events = Array.isArray(data.events) ? data.events : [];
+  for (const [i, event] of events.entries()) {
+    const tag = `events[${i}]`;
+    if (!event || typeof event !== 'object') continue;
+    if (!validDate(event.date) || event.date < data.coverage_start || event.date > data.checked_at) errors.push(`${tag}.date: must fall within the verified coverage period`);
+    if (!INDEX_TOPICS.includes(event.topic)) errors.push(`${tag}.topic: unknown topic`);
+    if (!INDEX_STATUSES.includes(event.status)) errors.push(`${tag}.status: unknown policy status`);
+    if (!isNonEmptyString(event.agency)) errors.push(`${tag}.agency: required`);
+    if (!Array.isArray(event.sectors) || !event.sectors.length || event.sectors.some(key => !INDUSTRIES.includes(key))) errors.push(`${tag}.sectors: requires known industries`);
+    if (event.rate && (event.topic !== 'fed' || event.status !== 'decision' || !Number.isFinite(event.rate.lower) || !Number.isFinite(event.rate.upper) || event.rate.lower >= event.rate.upper || !Number.isFinite(event.rate.changeBps) || !isNonEmptyString(event.rate.vote))) errors.push(`${tag}.rate: invalid FOMC decision`);
+  }
+  const latest = events.filter(event => event?.rate && validDate(event.date)).sort((a, b) => b.date.localeCompare(a.date))[0];
+  if (!latest || latest.date !== rate?.date || latest.rate.lower !== rate?.lower || latest.rate.upper !== rate?.upper || latest.source !== rate?.source) errors.push('overview.policyRate: must match the latest recorded decision');
+  if (!Array.isArray(data.schedule)) errors.push('schedule: requires an array');
+  else for (const [i, item] of data.schedule.entries()) {
+    if (!item || !validDate(item.date) || !isHttpsUrl(item.source)) errors.push(`schedule[${i}]: requires date and HTTPS source`);
+    validateBilingual(item?.name, `schedule[${i}].name`, errors);
+  }
 }

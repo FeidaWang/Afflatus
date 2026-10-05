@@ -1,23 +1,23 @@
 {
-  "updated": "2026-08-21",
+  "updated": "2026-10-05",
   "version": 2,
-  "as_of": "2026-08-21T12:00:00Z",
-  "note_en": "Evidence-first macro monitor refreshed after the August 19 release of the July 28-29 FOMC minutes and the current New York Fed operations schedule. Official records are separated from market observation windows; policy and operations come from the Federal Reserve and New York Fed, inflation from BEA, payrolls from BLS, and Trump-administration industry measures from official White House actions.",
-  "note_zh": "证据优先的宏观监测已纳入 8 月 19 日发布的 7 月 28 至 29 日 FOMC 会议纪要及纽约联储当前操作计划。正式记录与市场观察窗口严格分开；货币政策与操作来自美联储及纽约联储，通胀来自 BEA，就业来自 BLS，特朗普政府产业措施来自白宫正式文件。",
+  "as_of": "2026-10-05T08:00:00Z",
+  "note_en": "Primary-source research. Facts and conditional AI-sector analysis are labelled separately. Historical observations retain their original dates.",
+  "note_zh": "一手来源研究。官方事实与附条件的AI产业分析分别标注；历史观测保留原始日期。",
   "hawkDoveCompass": {
-    "score": 0,
+    "score": 1,
     "scale": "-2 (dovish) .. +2 (hawkish)",
-    "label_en": "TWO-SIDED HOLD",
-    "label_zh": "双向风险／维持偏置",
-    "rationale_en": "July payrolls fell 23,000 and participation slipped to 61.4%, a materially dovish labor impulse. But June core PCE was still 3.3% year over year, the Fed held 3.50–3.75% by 9–3, and the August 19 minutes add detail without creating a new directional rate signal. The compass therefore remains balanced.",
-    "rationale_zh": "7月非农减少2.3万人、劳动参与率降至61.4%，构成明显的鸽派就业冲击。但6月核心PCE同比仍为3.3%，美联储以9比3维持3.50%–3.75%，8月19日会议纪要只是补充细节，并未形成新的方向性利率信号，因此罗盘维持均衡。",
-    "asOf": "2026-08-21T12:00:00Z",
-    "method_en": "Editorial score from official BLS, BEA, Federal Reserve and New York Fed releases, including the August 19 FOMC minutes. It is a qualitative reaction-function label, not a futures probability, rate forecast or investment advice.",
-    "method_zh": "依据 BLS、BEA、美联储与纽约联储正式发布资料（包括8月19日FOMC会议纪要）进行编辑评分；它是政策反应函数的定性标签，不是期货概率、利率预测或投资建议。"
+    "label_en": "SEPTEMBER HIKE",
+    "label_zh": "9月加息",
+    "rationale_en": "The FOMC unanimously raised the target to 3.75–4.00% on September 16 to address elevated inflation.",
+    "rationale_zh": "FOMC于9月16日一致加息至3.75%–4.00%，以应对偏高通胀。",
+    "asOf": "2026-10-05T08:00:00Z",
+    "method_en": "Qualitative editorial context, not a market probability. Current policy is verified from the September statement.",
+    "method_zh": "编辑定性背景，不是市场概率。当前政策依据9月声明核实。"
   },
   "pillarSummary": {
-    "en": "The FOMC still holds 3.50–3.75%, while the current New York Fed schedule contains $17.0bn of reinvestment purchases and no new reserve-management purchases. That is ample-reserve implementation, not QE or long-end yield control. Trump-administration industry policy is broader than AI: it prioritizes domestic chips, energy and grids, polysilicon and solar inputs, resilient supply chains, defense capacity and housing supply, each with material cost and execution constraints.",
-    "zh": "FOMC仍把目标区间维持在3.50%–3.75%；纽约联储当前计划含170亿美元再投资购买，不含新增储备管理购买。这是充足准备金框架下的政策执行，不是QE或长端收益率控制。特朗普政府产业政策不只覆盖AI，还优先本土芯片、能源与电网、多晶硅与太阳能投入品、韧性供应链、国防产能和住房供给；每一项都伴随实质成本与执行约束。"
+    "en": "September’s unanimous hike lifted the policy range to 3.75–4.00%. Follow the cost of capital, public funding and AI’s changing effects on productivity and prices.",
+    "zh": "9月一致加息使政策利率升至3.75%–4.00%。持续追踪资本成本、公共资金，以及AI对生产率与价格的变化影响。"
   },
   "pillars": [
     {
@@ -25,8 +25,8 @@
       "key": "inflation_data",
       "name_en": "Inflation Data",
       "name_zh": "通胀数据",
-      "status_en": "PCE STILL ABOVE TARGET",
-      "status_zh": "PCE仍高于目标",
+      "status_en": "DATED CONTEXT",
+      "status_zh": "注明日期的背景",
       "tone": "red",
       "read_en": "BEA reported June headline PCE down 0.1% month over month but still up 3.7% year over year; core PCE rose 0.1% monthly and 3.3% yearly. Real consumption grew 0.4%, while the saving rate fell to 2.7%. Disinflation resumed, but the level and household buffer still constrain policy.",
       "read_zh": "美国经济分析局公布：6月整体PCE环比下降0.1%，同比仍上涨3.7%；核心PCE环比上涨0.1%、同比上涨3.3%。实际消费增长0.4%，储蓄率降至2.7%。通胀重新降温，但其绝对水平与家庭缓冲仍约束政策。",
@@ -37,20 +37,20 @@
       "key": "fed_policy",
       "name_en": "Fed Policy",
       "name_zh": "货币政策",
-      "status_en": "JULY MINUTES RELEASED; 9-3 HOLD REMAINS THE POLICY RECORD",
-      "status_zh": "7 月会议纪要已发布；9 比 3 维持利率仍是政策记录",
+      "status_en": "3.75–4.00% AFTER SEPTEMBER HIKE",
+      "status_zh": "9月加息后3.75%–4.00%",
       "tone": "amber",
-      "read_en": "The August 19 minutes document the July 9–3 hold at 3.50–3.75%. IORB is 3.65%, standing repo 3.75%, and ON RRP 3.50% with a $160bn daily counterparty cap. For 14 August–14 September the Desk plans $17.0bn of reinvestment purchases and no new RMPs, so the long end remains market-priced.",
-      "read_zh": "8月19日会议纪要记录了7月以9比3维持3.50%–3.75%的决定。准备金利率为3.65%，常备回购为3.75%，隔夜逆回购为3.50%、单一对手方每日上限1600亿美元。8月14日至9月14日操作台计划170亿美元再投资购买、不做新增储备管理购买，因此长端仍由市场定价。",
-      "asOf": "2026-08-21"
+      "read_en": "September’s unanimous hike lifted the policy range to 3.75–4.00%. Follow the cost of capital, public funding and AI’s changing effects on productivity and prices.",
+      "read_zh": "9月一致加息使政策利率升至3.75%–4.00%。持续追踪资本成本、公共资金，以及AI对生产率与价格的变化影响。",
+      "asOf": "2026-09-16"
     },
     {
       "id": 3,
       "key": "labor_market",
       "name_en": "Labor & Earnings",
       "name_zh": "就业与薪资",
-      "status_en": "PAYROLLS CONTRACT; PARTICIPATION FALLS",
-      "status_zh": "非农转负，参与率下滑",
+      "status_en": "DATED CONTEXT",
+      "status_zh": "注明日期的背景",
       "tone": "red",
       "read_en": "July nonfarm payrolls fell 23,000 versus an 87,000 consensus. May and June were revised down 103,000 combined; the three-month net gain is only 60,000. Unemployment fell to 4.1% as participation slipped to 61.4%, while hourly earnings growth slowed to 3.2% year over year.",
       "read_zh": "7月非农减少2.3万人，而市场共识为增加8.7万人。5月与6月合计下修10.3万人，三个月净增仅6万人。失业率降至4.1%的同时，劳动参与率降至61.4%；时薪同比增速放缓至3.2%。",
@@ -61,8 +61,8 @@
       "key": "industry_tech",
       "name_en": "Industry Policy",
       "name_zh": "产业政策",
-      "status_en": "BROADER ONSHORING, HIGHER COST HURDLES",
-      "status_zh": "本土化范围扩大，成本门槛提高",
+      "status_en": "DATED CONTEXT",
+      "status_zh": "注明日期的背景",
       "tone": "amber",
       "read_en": "Official priorities now span full-stack AI exports, domestic chips and equipment, energy and grid capacity, polysilicon and solar inputs, resilient industrial and defense supply chains, and housing supply. Incentives and protection can improve domestic demand visibility, while tariffs, minimum import prices, financing and local execution can raise costs.",
       "read_zh": "正式优先方向现覆盖全栈AI出口、本土芯片与设备、能源与电网产能、多晶硅与太阳能投入品、产业及国防供应链韧性和住房供给。激励与保护可提高本土需求能见度，关税、最低进口价、融资与地方执行也可能抬高成本。",
@@ -73,8 +73,8 @@
       "key": "geopolitics_trade",
       "name_en": "Trump, Trade & Fed Influence",
       "name_zh": "特朗普、贸易与联储影响力",
-      "status_en": "INDIRECT RATE POWER; DIRECT INDUSTRIAL POWER",
-      "status_zh": "利率权力间接，产业权力直接",
+      "status_en": "DATED CONTEXT",
+      "status_zh": "注明日期的背景",
       "tone": "amber",
       "read_en": "Trump shaped Fed leadership through nomination and can influence expectations publicly, but cannot cast the other FOMC votes or decree either the policy rate or long Treasury yields. His stronger direct channel is industrial policy: tariffs, exemptions, minimum import prices, export support, procurement and permitting redistribute demand and costs toward selected US capacity.",
       "read_zh": "特朗普可通过提名塑造联储领导层，也能以公开表态影响预期，但不能代替其他FOMC票委投票，更不能以命令设定政策利率或长期美债收益率。他更强的直接渠道是产业政策：关税、豁免、最低进口价、出口支持、采购与许可会把需求和成本重新导向特定美国本土产能。",
@@ -82,6 +82,399 @@
     }
   ],
   "events": [
+    {
+      "id": "WALLER-FRED-2026-10-01",
+      "date": "2026-10-01",
+      "topic": "fed",
+      "status": "speech",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/speech/waller20261001a.htm",
+      "sectors": [
+        "applications",
+        "security"
+      ],
+      "name": {
+        "en": "Waller: trusted data in an AI economy",
+        "zh": "Waller：AI经济中的可信数据"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Waller highlighted FRED’s role in data provenance and warned that AI can hallucinate, obscure assumptions and confuse correlation with causation.",
+        "zh": "Waller强调FRED在数据溯源中的作用，提醒AI可能幻觉、隐藏假设或混淆相关性与因果关系。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Demand for data infrastructure and auditable analytics grows with AI use. Trace outputs back to the original statistical series.",
+        "zh": "AI使用扩大可带动数据基础设施与可审计分析需求。输出应追溯至原始统计序列。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/speech/waller20261001a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "WH-SI-2026-09-29",
+      "date": "2026-09-29",
+      "topic": "government",
+      "status": "action",
+      "agency": "White House",
+      "type": "GOVERNMENT",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.whitehouse.gov/fact-sheets/2026/09/fact-sheet-president-donald-j-trump-inaugurates-the-era-of-super-intelligence/",
+      "sectors": [
+        "applications"
+      ],
+      "name": {
+        "en": "Executive-branch AI terminology order",
+        "zh": "行政部门AI术语命令"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The White House fact sheet describes an order replacing AI terminology with “Super Intelligence” in executive-branch communications and non-statutory documents.",
+        "zh": "白宫事实清单介绍一项命令：行政部门通信和非成文法文件以“超级智能”替代AI术语。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Track changes in official terminology when searching policy documents. A naming directive alone does not establish new appropriations or measurable capability gains.",
+        "zh": "检索政策文件时需追踪官方术语变化。命名指令本身并不意味着新增拨款或可测量的能力跃升。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.whitehouse.gov/fact-sheets/2026/09/fact-sheet-president-donald-j-trump-inaugurates-the-era-of-super-intelligence/",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "WALLER-PAYMENTS-2026-09-29",
+      "date": "2026-09-29",
+      "topic": "fed",
+      "status": "speech",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/speech/waller20260928a.htm",
+      "sectors": [
+        "applications",
+        "security"
+      ],
+      "name": {
+        "en": "Waller: payments in the age of AI agents",
+        "zh": "Waller：AI智能体时代的支付"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Waller discussed AI in cross-border payments and agentic commerce, emphasizing authentication, liability, fraud prevention and trust.",
+        "zh": "Waller讨论跨境支付和智能体商业中的AI应用，强调身份验证、责任归属、反欺诈与信任。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Payments, identity and cybersecurity infrastructure become enabling layers for agent commerce; permission controls remain important.",
+        "zh": "支付、身份与网络安全成为智能体商业的基础层；授权控制仍然重要。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/speech/waller20260928a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "COOK-AI-2026-09-28",
+      "date": "2026-09-28",
+      "topic": "fed",
+      "status": "speech",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/speech/cook20260928a.htm",
+      "sectors": [
+        "compute",
+        "power",
+        "applications"
+      ],
+      "name": {
+        "en": "Cook: near-term inflation, later productivity gains",
+        "zh": "Cook：短期通胀与较晚的生产率收益"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Cook distinguished AI-sector relative-price shocks from broader pressure on construction and energy. She did not expect productivity relief to offset broadening inflation later this year.",
+        "zh": "Cook区分AI行业相对价格冲击与施工、能源等更广泛的压力。她预计生产率的降通胀作用无法及时抵消今年稍后的广泛价格压力。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Power and construction bottlenecks may persist even as models improve. The timing of cost pressure and productivity relief is crucial.",
+        "zh": "即使模型进步，电力与施工瓶颈也可能持续。成本压力与生产率改善出现的时间差至关重要。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/speech/cook20260928a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "FED-IMPLEMENTATION-2026-09-16",
+      "date": "2026-09-16",
+      "topic": "fed",
+      "status": "implementation",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a1.htm",
+      "sectors": [
+        "cloud",
+        "compute"
+      ],
+      "name": {
+        "en": "September implementation corridor",
+        "zh": "9月政策执行利率走廊"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The implementation note sets IORB at 3.90%, standing repo at 4.00%, and ON RRP at 3.75%, effective September 17.",
+        "zh": "执行说明将准备金利率设为3.90%、常备回购利率4.00%、隔夜逆回购利率3.75%，9月17日生效。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Reserve-management operations support rate implementation. They do not constitute a promise to cap long-term Treasury yields.",
+        "zh": "准备金管理操作服务于政策利率执行，不代表承诺压低长期国债收益率。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a1.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "FED-2026-09-16",
+      "date": "2026-09-16",
+      "topic": "fed",
+      "status": "decision",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
+      ],
+      "name": {
+        "en": "September hike: 3.75–4.00%",
+        "zh": "9月加息：3.75%–4.00%"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The FOMC raised the target by 25 bp to 3.75–4.00%, unanimously, while continuing ample-reserve implementation. Inflation remained elevated.",
+        "zh": "FOMC一致加息25基点至3.75%–4.00%，继续实行充足准备金框架。通胀仍偏高。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Financing costs and discount rates affect AI infrastructure and long-duration earnings. A policy decision alone does not establish an equity-price reaction.",
+        "zh": "融资成本与贴现率影响AI基础设施及远期收益估值。单次政策决定不足以证明股票价格反应。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ],
+      "rate": {
+        "lower": 3.75,
+        "upper": 4,
+        "changeBps": 25,
+        "vote": "12–0"
+      }
+    },
+    {
+      "id": "WARSH-JH-2026-08-28",
+      "date": "2026-08-28",
+      "topic": "fed",
+      "status": "speech",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/speech/warsh20260828a.htm",
+      "sectors": [
+        "compute",
+        "applications",
+        "cloud"
+      ],
+      "name": {
+        "en": "Warsh: AI changes the policy questions",
+        "zh": "Warsh：AI改变政策所面对的问题"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "At Jackson Hole, Warsh discussed AI’s possible effects on productivity, labor and capital intensity, and questioned the practice of forward guidance.",
+        "zh": "Warsh在杰克逊霍尔讨论AI对生产率、劳动力与资本密集度的潜在影响，并质疑前瞻指引的做法。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Assess realized productivity and funding needs separately from technological optimism; this speech is not a committee rate commitment.",
+        "zh": "将实际生产率和融资需求与技术乐观预期分别评估；个人讲话并非委员会的利率承诺。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/speech/warsh20260828a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
     {
       "id": "FED-MINUTES-2026-07-29",
       "date": "2026-08-19",
@@ -128,6 +521,14 @@
           "label_en": "Federal Reserve release calendar: August 19, 2:00 p.m. EDT",
           "label_zh": "美联储发布日历：8 月 19 日美东时间下午 2 时"
         }
+      ],
+      "topic": "fed",
+      "agency": "Federal Reserve",
+      "status": "record",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
       ]
     },
     {
@@ -176,6 +577,75 @@
           "label_en": "Federal Reserve: operating parameters",
           "label_zh": "美联储：操作参数"
         }
+      ],
+      "topic": "fed",
+      "agency": "New York Fed",
+      "status": "record",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
+      ]
+    },
+    {
+      "id": "NFP-2026-07",
+      "date": "2026-08-07",
+      "type": "LABOR",
+      "pillar": 3,
+      "class": "keter",
+      "hawkDove": -1.5,
+      "source": "https://www.bls.gov/news.release/archives/empsit_08072026.htm",
+      "name": {
+        "en": "July Employment Situation",
+        "zh": "7月就业形势"
+      },
+      "before": {
+        "en": "Economists expected payrolls to rise 87,000. Before the release, traders viewed a September hike as slightly more likely than not, while the soft-landing case still required positive job growth and stable participation.",
+        "zh": "经济学家预期非农增加8.7万人。数据发布前，交易员认为9月加息概率略高于不加息；软着陆叙事仍要求就业保持正增长并维持稳定参与率。"
+      },
+      "print": {
+        "en": "Payrolls fell 23,000; May and June were revised down 103,000 combined. Private payrolls still rose 30,000, but local-government education fell 50,000, retail 19,000 and financial activities 14,000; health care added 22,000. Unemployment was 4.1%, participation 61.4%, hourly earnings growth 3.2% year over year, and temporary layoffs rose 153,000 to 921,000.",
+        "zh": "非农减少2.3万人；5月与6月合计下修10.3万人。私人部门仍增加3万人，但地方政府教育减少5万人、零售减少1.9万人、金融活动减少1.4万人，医疗保健增加2.2万人。失业率为4.1%，劳动参与率61.4%，时薪同比增长3.2%，临时失业人数增加15.3万至92.1万。"
+      },
+      "marketWindow": {
+        "en": "Observation window: 8:30 ET release through early US trading; it is provisional, not a closing return. Oil and an ongoing AI valuation correction remained parallel market drivers.",
+        "zh": "观察窗口：美东8:30发布至美股早盘；这是盘中暂定读数，不是收盘收益。油价与仍在进行的AI估值调整也是并行驱动因素。"
+      },
+      "repricing": {
+        "en": "The 10-year Treasury yield fell from 4.67% immediately before the release to 4.60%. CME pricing cited by Axios cut the September hike probability to 44%, reversing a slightly-better-than-even pre-release chance; this is less-hawkish repricing, not evidence of an automatic cut.",
+        "zh": "10年期美债收益率从发布前的4.67%降至4.60%。Axios引用的CME定价把9月加息概率降至44%，逆转此前略高于五成的概率；这是偏鸽重定价，而非“自动降息”的证据。"
+      },
+      "equityReaction": {
+        "en": "In early trading, the S&P 500 rose 0.4%, the Nasdaq 1.1% and the Dow slipped 0.1%; S&P futures had gained 0.5%. The initial move treated weaker jobs as rate relief, but the window is not yet a final session verdict.",
+        "zh": "美股早盘标普500上涨0.4%、纳指上涨1.1%、道指下跌0.1%；此前标普期货上涨0.5%。初始交易把就业走弱视为利率缓解，但该窗口尚不是最终收盘裁决。"
+      },
+      "industryTransmission": {
+        "en": "Rate relief helps profitable AI leaders with long-duration cash flows. The sector details are less benign: retail and finance job losses point to demand and credit caution, while health care remained the only clear large-sector cushion. Quality dispersion is stronger than blanket risk-on.",
+        "zh": "利率缓解有利于拥有长期现金流的盈利型AI龙头；行业明细却并不完全乐观：零售与金融就业下降提示需求和信贷谨慎，医疗保健是唯一清晰的大行业缓冲。质量分化强于全面risk-on。"
+      },
+      "verdict": {
+        "en": "Dovish labor shock, but not a clean soft landing: the falling unemployment rate was accompanied by labor-force exit. Not investment advice.",
+        "zh": "这是鸽派就业冲击，却不是干净的软着陆：失业率下降伴随着劳动力退出。非投资建议。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.axios.com/2026/08/07/july-jobs-report-employment-losses",
+          "label_en": "Axios: consensus and Fed pricing",
+          "label_zh": "Axios：共识与联储定价"
+        },
+        {
+          "url": "https://apnews.com/article/9636095906bbb689a1f612bce9a07343",
+          "label_en": "AP early market window",
+          "label_zh": "美联社早盘市场窗口"
+        }
+      ],
+      "topic": "macro",
+      "agency": "BLS",
+      "status": "record",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
       ]
     },
     {
@@ -224,58 +694,68 @@
           "label_en": "White House CEA: 2026 industrial priorities",
           "label_zh": "白宫经济顾问委员会：2026产业优先方向"
         }
+      ],
+      "topic": "government",
+      "agency": "White House",
+      "status": "action",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
       ]
     },
     {
-      "id": "FED-2026-07-29",
-      "date": "2026-07-29",
-      "type": "FED_POLICY",
-      "pillar": 2,
-      "class": "keter",
-      "hawkDove": 1.5,
-      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260729a.htm",
+      "id": "TREASURY-REFUNDING-2026-08-05",
+      "date": "2026-08-05",
+      "topic": "fiscal",
+      "status": "record",
+      "agency": "Treasury",
+      "type": "FISCAL",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://home.treasury.gov/news/press-releases/sb0590",
+      "sectors": [
+        "cloud",
+        "power"
+      ],
       "name": {
-        "en": "FOMC Holds as Three Voters Prefer a Hike",
-        "zh": "FOMC维持利率，三名票委主张加息"
+        "en": "2026-08 quarterly refunding",
+        "zh": "2026-08季度再融资"
       },
       "before": {
-        "en": "Most economists expected another hold. A minority of one to three hike dissents was plausible because inflation remained elevated, investment was solid and the Middle East energy shock had lifted the inflation tail.",
-        "zh": "多数经济学家预期继续维持利率。由于通胀仍高、投资稳健且中东能源冲击抬高通胀尾部风险，一至三张加息异议票并非意外。"
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
       },
       "print": {
-        "en": "The Committee held 3.50–3.75% by a 9–3 vote; three members preferred a 25bp hike.",
-        "zh": "委员会以9比3维持3.50%–3.75%；三名成员主张加息25个基点。"
+        "en": "Treasury announced $125bn in 3-, 10- and 30-year securities, raising approximately $28.7bn in new cash after refinancing maturities.",
+        "zh": "财政部公布1250亿美元的3年、10年和30年期国债发行，用于到期再融资后，新增融资约287亿美元。"
       },
       "marketWindow": {
-        "en": "Observation window: July 29 statement through the US close. Oil surged on a fresh Iran shock, so the rates and equity moves below are observed jointly and are not attributed to the Fed alone.",
-        "zh": "观察窗口：7月29日声明发布至美股收盘。伊朗局势新冲击同时推高油价，因此下述利率与股市波动是联合观察结果，不能全部归因于美联储。"
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
       },
       "repricing": {
-        "en": "The 2-year yield fell about 3.7bp while the 10-year rose about 6.7bp to 4.67%: a bearish steepening consistent with long-run inflation and term-premium risk, not a simple near-term hike repricing. July payroll weakness later reduced September hike odds.",
-        "zh": "2年期收益率下降约3.7个基点，10年期上升约6.7个基点至4.67%：这更像长期通胀与期限溢价驱动的熊市陡峭化，而非简单的近期加息重定价。随后7月非农走弱又压低了9月加息概率。"
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
       },
       "equityReaction": {
-        "en": "At the close, the Dow fell 2.2%, the S&P 500 1.5% and the Nasdaq 1.7%. The hawkish hold and higher long yields pressured duration, but the concurrent oil shock materially contaminated the window.",
-        "zh": "收盘时，道指下跌2.2%、标普500下跌1.5%、纳指下跌1.7%。鹰派维持与长端收益率上行压制长久期资产，但同期油价冲击显著污染了事件窗口。"
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
       },
       "industryTransmission": {
-        "en": "Higher long yields raise the hurdle rate for AI projects with distant cash flows; the split favors already-profitable platforms and bottleneck suppliers over leveraged capacity stories. Energy inflation also raises data-center power and cooling costs.",
-        "zh": "长端收益率上升会提高远期现金流型AI项目的资本门槛；政策分歧更有利于已盈利平台和瓶颈供应商，而非高杠杆扩产叙事。能源通胀还会抬高数据中心电力与散热成本。"
+        "en": "Treasury supply and investor demand affect long-term financing conditions for data centers. Debt issuance is separate from the Fed’s policy-rate decision.",
+        "zh": "国债供给和投资者需求影响数据中心长期融资环境。国债发行与联储政策利率决定属于不同机制。"
       },
       "verdict": {
-        "en": "Hawkish hold before payrolls: inflation credibility remained the binding constraint. Not investment advice.",
-        "zh": "非农发布前属于鹰派维持：通胀可信度仍是硬约束。非投资建议。"
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
       },
       "marketSources": [
         {
-          "url": "https://finance.yahoo.com/markets/stocks/articles/equities-tumble-following-fed-apos-202733412.html",
-          "label_en": "Market close: yields and indexes",
-          "label_zh": "收盘记录：收益率与指数"
-        },
-        {
-          "url": "https://finance.yahoo.com/markets/stocks/articles/markets-news-july-29-2026-110123938.html",
-          "label_en": "Cross-check: Fed and oil shock",
-          "label_zh": "交叉核验：美联储与油价冲击"
+          "url": "https://home.treasury.gov/news/press-releases/sb0590",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
         }
       ]
     },
@@ -330,60 +810,82 @@
           "label_en": "Reuters: June inflation context",
           "label_zh": "路透：6月通胀背景"
         }
+      ],
+      "topic": "macro",
+      "agency": "BEA",
+      "status": "record",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
       ]
     },
     {
-      "id": "NFP-2026-07",
-      "date": "2026-08-07",
-      "type": "LABOR",
-      "pillar": 3,
+      "id": "FED-2026-07-29",
+      "date": "2026-07-29",
+      "type": "FED_POLICY",
+      "pillar": 2,
       "class": "keter",
-      "hawkDove": -1.5,
-      "source": "https://www.bls.gov/news.release/empsit.nr0.htm",
+      "hawkDove": 1.5,
+      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260729a.htm",
       "name": {
-        "en": "July Employment Situation",
-        "zh": "7月就业形势"
+        "en": "FOMC Holds as Three Voters Prefer a Hike",
+        "zh": "FOMC维持利率，三名票委主张加息"
       },
       "before": {
-        "en": "Economists expected payrolls to rise 87,000. Before the release, traders viewed a September hike as slightly more likely than not, while the soft-landing case still required positive job growth and stable participation.",
-        "zh": "经济学家预期非农增加8.7万人。数据发布前，交易员认为9月加息概率略高于不加息；软着陆叙事仍要求就业保持正增长并维持稳定参与率。"
+        "en": "Most economists expected another hold. A minority of one to three hike dissents was plausible because inflation remained elevated, investment was solid and the Middle East energy shock had lifted the inflation tail.",
+        "zh": "多数经济学家预期继续维持利率。由于通胀仍高、投资稳健且中东能源冲击抬高通胀尾部风险，一至三张加息异议票并非意外。"
       },
       "print": {
-        "en": "Payrolls fell 23,000; May and June were revised down 103,000 combined. Private payrolls still rose 30,000, but local-government education fell 50,000, retail 19,000 and financial activities 14,000; health care added 22,000. Unemployment was 4.1%, participation 61.4%, hourly earnings growth 3.2% year over year, and temporary layoffs rose 153,000 to 921,000.",
-        "zh": "非农减少2.3万人；5月与6月合计下修10.3万人。私人部门仍增加3万人，但地方政府教育减少5万人、零售减少1.9万人、金融活动减少1.4万人，医疗保健增加2.2万人。失业率为4.1%，劳动参与率61.4%，时薪同比增长3.2%，临时失业人数增加15.3万至92.1万。"
+        "en": "The Committee held 3.50–3.75% by a 9–3 vote; three members preferred a 25bp hike.",
+        "zh": "委员会以9比3维持3.50%–3.75%；三名成员主张加息25个基点。"
       },
       "marketWindow": {
-        "en": "Observation window: 8:30 ET release through early US trading; it is provisional, not a closing return. Oil and an ongoing AI valuation correction remained parallel market drivers.",
-        "zh": "观察窗口：美东8:30发布至美股早盘；这是盘中暂定读数，不是收盘收益。油价与仍在进行的AI估值调整也是并行驱动因素。"
+        "en": "Observation window: July 29 statement through the US close. Oil surged on a fresh Iran shock, so the rates and equity moves below are observed jointly and are not attributed to the Fed alone.",
+        "zh": "观察窗口：7月29日声明发布至美股收盘。伊朗局势新冲击同时推高油价，因此下述利率与股市波动是联合观察结果，不能全部归因于美联储。"
       },
       "repricing": {
-        "en": "The 10-year Treasury yield fell from 4.67% immediately before the release to 4.60%. CME pricing cited by Axios cut the September hike probability to 44%, reversing a slightly-better-than-even pre-release chance; this is less-hawkish repricing, not evidence of an automatic cut.",
-        "zh": "10年期美债收益率从发布前的4.67%降至4.60%。Axios引用的CME定价把9月加息概率降至44%，逆转此前略高于五成的概率；这是偏鸽重定价，而非“自动降息”的证据。"
+        "en": "The 2-year yield fell about 3.7bp while the 10-year rose about 6.7bp to 4.67%: a bearish steepening consistent with long-run inflation and term-premium risk, not a simple near-term hike repricing. July payroll weakness later reduced September hike odds.",
+        "zh": "2年期收益率下降约3.7个基点，10年期上升约6.7个基点至4.67%：这更像长期通胀与期限溢价驱动的熊市陡峭化，而非简单的近期加息重定价。随后7月非农走弱又压低了9月加息概率。"
       },
       "equityReaction": {
-        "en": "In early trading, the S&P 500 rose 0.4%, the Nasdaq 1.1% and the Dow slipped 0.1%; S&P futures had gained 0.5%. The initial move treated weaker jobs as rate relief, but the window is not yet a final session verdict.",
-        "zh": "美股早盘标普500上涨0.4%、纳指上涨1.1%、道指下跌0.1%；此前标普期货上涨0.5%。初始交易把就业走弱视为利率缓解，但该窗口尚不是最终收盘裁决。"
+        "en": "At the close, the Dow fell 2.2%, the S&P 500 1.5% and the Nasdaq 1.7%. The hawkish hold and higher long yields pressured duration, but the concurrent oil shock materially contaminated the window.",
+        "zh": "收盘时，道指下跌2.2%、标普500下跌1.5%、纳指下跌1.7%。鹰派维持与长端收益率上行压制长久期资产，但同期油价冲击显著污染了事件窗口。"
       },
       "industryTransmission": {
-        "en": "Rate relief helps profitable AI leaders with long-duration cash flows. The sector details are less benign: retail and finance job losses point to demand and credit caution, while health care remained the only clear large-sector cushion. Quality dispersion is stronger than blanket risk-on.",
-        "zh": "利率缓解有利于拥有长期现金流的盈利型AI龙头；行业明细却并不完全乐观：零售与金融就业下降提示需求和信贷谨慎，医疗保健是唯一清晰的大行业缓冲。质量分化强于全面risk-on。"
+        "en": "Higher long yields raise the hurdle rate for AI projects with distant cash flows; the split favors already-profitable platforms and bottleneck suppliers over leveraged capacity stories. Energy inflation also raises data-center power and cooling costs.",
+        "zh": "长端收益率上升会提高远期现金流型AI项目的资本门槛；政策分歧更有利于已盈利平台和瓶颈供应商，而非高杠杆扩产叙事。能源通胀还会抬高数据中心电力与散热成本。"
       },
       "verdict": {
-        "en": "Dovish labor shock, but not a clean soft landing: the falling unemployment rate was accompanied by labor-force exit. Not investment advice.",
-        "zh": "这是鸽派就业冲击，却不是干净的软着陆：失业率下降伴随着劳动力退出。非投资建议。"
+        "en": "Hawkish hold before payrolls: inflation credibility remained the binding constraint. Not investment advice.",
+        "zh": "非农发布前属于鹰派维持：通胀可信度仍是硬约束。非投资建议。"
       },
       "marketSources": [
         {
-          "url": "https://www.axios.com/2026/08/07/july-jobs-report-employment-losses",
-          "label_en": "Axios: consensus and Fed pricing",
-          "label_zh": "Axios：共识与联储定价"
+          "url": "https://finance.yahoo.com/markets/stocks/articles/equities-tumble-following-fed-apos-202733412.html",
+          "label_en": "Market close: yields and indexes",
+          "label_zh": "收盘记录：收益率与指数"
         },
         {
-          "url": "https://apnews.com/article/9636095906bbb689a1f612bce9a07343",
-          "label_en": "AP early market window",
-          "label_zh": "美联社早盘市场窗口"
+          "url": "https://finance.yahoo.com/markets/stocks/articles/markets-news-july-29-2026-110123938.html",
+          "label_en": "Cross-check: Fed and oil shock",
+          "label_zh": "交叉核验：美联储与油价冲击"
         }
-      ]
+      ],
+      "topic": "fed",
+      "agency": "Federal Reserve",
+      "status": "decision",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
+      ],
+      "rate": {
+        "lower": 3.5,
+        "upper": 3.75,
+        "changeBps": 0,
+        "vote": "9–3"
+      }
     },
     {
       "id": "TRUMP-AI-2026-07-23",
@@ -394,16 +896,16 @@
       "hawkDove": 0,
       "source": "https://www.whitehouse.gov/releases/2026/07/president-trumps-ratepayer-protection-pledge-secures-american-ai-dominance-protects-consumers/",
       "name": {
-        "en": "AI Ratepayer Protection Pledge Expands",
-        "zh": "AI电费承担承诺扩大"
+        "en": "Ratepayer pledge expands to utilities and states",
+        "zh": "电力用户保护承诺扩大至公用事业与州政府"
       },
       "before": {
         "en": "AI data-center demand was colliding with grid capacity, financing needs and public resistance to higher household power bills.",
         "zh": "AI数据中心需求正与电网容量、融资需求及居民对电费上涨的抵触发生碰撞。"
       },
       "print": {
-        "en": "The White House expanded the voluntary pledge to more than 200 additional utilities, developers, cooperatives and states, claiming coverage of 80% of US power deliveries. Large data-center operators commit to fund the generation and grid infrastructure their projects require.",
-        "zh": "白宫把自愿承诺扩大至另外200多家公用事业、开发商、合作社与州，并称其覆盖美国80%的电力配送。大型数据中心运营商承诺承担项目所需新增发电与电网基础设施成本。"
+        "en": "The White House reported more than 200 additional participants joining the Ratepayer Protection Pledge. Large data-center operators are to fund the generation and infrastructure their projects require.",
+        "zh": "白宫表示，超过200家新增参与者加入电力用户保护承诺。大型数据中心运营商将承担项目所需发电与基础设施费用。"
       },
       "marketWindow": {
         "en": "Policy window, not a clean trading event. The July 23 announcement overlapped earnings, power-market news and geopolitical risk; no standalone stock or rate move is assigned.",
@@ -418,8 +920,8 @@
         "zh": "不主张存在可归因的指数波动。该政策制造的是相对价值分化，而非广泛AI beta信号：资金充足的瓶颈环节议价力上升，边缘开发商的全成本提高。"
       },
       "industryTransmission": {
-        "en": "Cash-rich hyperscalers can internalize generation and grid upgrades; utilities, baseload generation, electrical equipment, cooling and networking gain visible demand. The pledge is non-binding, so state tariffs, interconnection contracts and cost-allocation rules decide whether claimed household savings appear.",
-        "zh": "现金充裕的超大规模云厂商可以内部化新增发电与电网升级；公用事业、基荷电源、电气设备、散热与网络获得更清晰需求。由于承诺不具约束力，最终能否兑现居民电费节省，取决于州级费率、并网合同与成本分摊规则。"
+        "en": "Power and grid suppliers may see demand, while operators must fund incremental capacity. The White House’s projected consumer benefits are claims to track, not independently verified realized savings.",
+        "zh": "电力与电网供应商可能获得需求，但运营商需为新增容量融资。白宫预期的用户收益是待跟踪的说法，并非已独立核验的实际节省。"
       },
       "verdict": {
         "en": "Direct industrial-policy support, with higher self-funded capex intensity. Not investment advice.",
@@ -427,16 +929,1038 @@
       },
       "marketSources": [
         {
-          "url": "https://www.epa.gov/newsreleases/president-trump-expands-historic-ratepayer-protection-pledge-protect-american",
-          "label_en": "EPA: implementation and PJM mechanism",
-          "label_zh": "美国环保署：落地与PJM机制"
-        },
+          "url": "https://www.whitehouse.gov/releases/2026/07/president-trumps-ratepayer-protection-pledge-secures-american-ai-dominance-protects-consumers/",
+          "label_en": "White House release",
+          "label_zh": "白宫发布"
+        }
+      ],
+      "topic": "government",
+      "agency": "White House",
+      "status": "pledge",
+      "sectors": [
+        "power",
+        "cloud"
+      ]
+    },
+    {
+      "id": "FED-MINUTES-2026-06-17",
+      "date": "2026-07-08",
+      "topic": "fed",
+      "status": "record",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+      "sectors": [
+        "compute",
+        "cloud"
+      ],
+      "name": {
+        "en": "2026-06-17 FOMC minutes",
+        "zh": "2026-06-17 FOMC会议纪要"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The published minutes provide the detailed discussion of the 2026-06-17 meeting. They are a retrospective record, not a new rate decision.",
+        "zh": "纪要提供2026-06-17会议的详细讨论，是对当时会议的回顾记录，不是新的利率决定。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Use the minutes to examine inflation, labor, investment and financing risks; distinguish meeting-period observations from today’s conditions.",
+        "zh": "借助纪要分析通胀、就业、投资和融资风险；区分会议期间的观察与当前状况。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
         {
-          "url": "https://apnews.com/article/490ea7e4c7227d5e550b00a0056c33c9",
-          "label_en": "AP: voluntary-pledge limits",
-          "label_zh": "美联社：自愿承诺的边界"
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260617.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
         }
       ]
+    },
+    {
+      "id": "FED-2026-06-17",
+      "date": "2026-06-17",
+      "topic": "fed",
+      "status": "decision",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
+      ],
+      "name": {
+        "en": "June unanimous hold under the new chair",
+        "zh": "6月新主席任内一致维持利率"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "A 12–0 vote held 3.50–3.75% and reaffirmed ample reserves. The statement stressed strong productivity and investment alongside elevated inflation.",
+        "zh": "委员会以12比0维持3.50%–3.75%，重申充足准备金框架。声明强调生产率与投资强劲，同时通胀仍偏高。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Financing costs and discount rates affect AI infrastructure and long-duration earnings. A policy decision alone does not establish an equity-price reaction.",
+        "zh": "融资成本与贴现率影响AI基础设施及远期收益估值。单次政策决定不足以证明股票价格反应。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ],
+      "rate": {
+        "lower": 3.5,
+        "upper": 3.75,
+        "changeBps": 0,
+        "vote": "12–0"
+      }
+    },
+    {
+      "id": "WH-AI-SECURITY-2026-06-05",
+      "date": "2026-06-05",
+      "topic": "government",
+      "status": "action",
+      "agency": "White House",
+      "type": "GOVERNMENT",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.whitehouse.gov/presidential-actions/2026/06/national-security-presidential-memorandum-nspm-11/",
+      "sectors": [
+        "security",
+        "compute",
+        "applications"
+      ],
+      "name": {
+        "en": "NSPM-11: AI in national security",
+        "zh": "NSPM-11：国家安全领域AI"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The memorandum establishes a framework for AI adoption and governance across national-security agencies, including secure and responsible use.",
+        "zh": "备忘录为国家安全机构的AI采用及治理建立框架，包括安全和负责任使用要求。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Secure models, infrastructure and defense applications may gain procurement opportunities, subject to appropriations, agency requirements and contract execution.",
+        "zh": "安全模型、基础设施和国防应用可能获得采购机会，仍受拨款、机构要求和合同执行约束。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.whitehouse.gov/presidential-actions/2026/06/national-security-presidential-memorandum-nspm-11/",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "COOK-AI-2026-05-27",
+      "date": "2026-05-27",
+      "topic": "fed",
+      "status": "speech",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/speech/cook20260527a.htm",
+      "sectors": [
+        "compute",
+        "power",
+        "cloud",
+        "security"
+      ],
+      "name": {
+        "en": "Cook: AI investment, inflation and financial stability",
+        "zh": "Cook：AI投资、通胀与金融稳定"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Cook linked AI investment to equipment, construction and energy price pressure, while discussing productivity gains, workforce disruption and debt-financed buildout.",
+        "zh": "Cook将AI投资与设备、施工及能源价格压力联系起来，同时讨论生产率收益、就业冲击与债务融资扩张。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Track capacity bottlenecks and credit exposure alongside demand growth; benefits and financing risks can coexist.",
+        "zh": "除需求增长外，还需追踪产能瓶颈与信贷敞口；收益与融资风险可能同时存在。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/speech/cook20260527a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "FED-MINUTES-2026-04-29",
+      "date": "2026-05-20",
+      "topic": "fed",
+      "status": "record",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+      "sectors": [
+        "compute",
+        "cloud"
+      ],
+      "name": {
+        "en": "2026-04-29 FOMC minutes",
+        "zh": "2026-04-29 FOMC会议纪要"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The published minutes provide the detailed discussion of the 2026-04-29 meeting. They are a retrospective record, not a new rate decision.",
+        "zh": "纪要提供2026-04-29会议的详细讨论，是对当时会议的回顾记录，不是新的利率决定。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Use the minutes to examine inflation, labor, investment and financing risks; distinguish meeting-period observations from today’s conditions.",
+        "zh": "借助纪要分析通胀、就业、投资和融资风险；区分会议期间的观察与当前状况。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260429.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "TREASURY-REFUNDING-2026-05-06",
+      "date": "2026-05-06",
+      "topic": "fiscal",
+      "status": "record",
+      "agency": "Treasury",
+      "type": "FISCAL",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://home.treasury.gov/news/press-releases/sb0489",
+      "sectors": [
+        "cloud",
+        "power"
+      ],
+      "name": {
+        "en": "2026-05 quarterly refunding",
+        "zh": "2026-05季度再融资"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Treasury announced $125bn in 3-, 10- and 30-year securities, raising approximately $41.7bn in new cash after refinancing maturities.",
+        "zh": "财政部公布1250亿美元的3年、10年和30年期国债发行，用于到期再融资后，新增融资约417亿美元。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Treasury supply and investor demand affect long-term financing conditions for data centers. Debt issuance is separate from the Fed’s policy-rate decision.",
+        "zh": "国债供给和投资者需求影响数据中心长期融资环境。国债发行与联储政策利率决定属于不同机制。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://home.treasury.gov/news/press-releases/sb0489",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "FED-2026-04-29",
+      "date": "2026-04-29",
+      "topic": "fed",
+      "status": "decision",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260429a.htm",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
+      ],
+      "name": {
+        "en": "April hold; disagreement on the easing bias",
+        "zh": "4月维持利率；对宽松倾向存在分歧"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Rates remained 3.50–3.75%. Miran sought a cut; Hammack, Kashkari and Logan supported holding but opposed the statement’s easing bias.",
+        "zh": "利率保持3.50%–3.75%。Miran要求降息；Hammack、Kashkari与Logan支持维持利率，但反对声明中的宽松倾向。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Financing costs and discount rates affect AI infrastructure and long-duration earnings. A policy decision alone does not establish an equity-price reaction.",
+        "zh": "融资成本与贴现率影响AI基础设施及远期收益估值。单次政策决定不足以证明股票价格反应。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260429a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ],
+      "rate": {
+        "lower": 3.5,
+        "upper": 3.75,
+        "changeBps": 0,
+        "vote": "8–4"
+      }
+    },
+    {
+      "id": "FED-MINUTES-2026-03-18",
+      "date": "2026-04-08",
+      "topic": "fed",
+      "status": "record",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+      "sectors": [
+        "compute",
+        "cloud"
+      ],
+      "name": {
+        "en": "2026-03-18 FOMC minutes",
+        "zh": "2026-03-18 FOMC会议纪要"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The published minutes provide the detailed discussion of the 2026-03-18 meeting. They are a retrospective record, not a new rate decision.",
+        "zh": "纪要提供2026-03-18会议的详细讨论，是对当时会议的回顾记录，不是新的利率决定。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Use the minutes to examine inflation, labor, investment and financing risks; distinguish meeting-period observations from today’s conditions.",
+        "zh": "借助纪要分析通胀、就业、投资和融资风险；区分会议期间的观察与当前状况。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260318.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "OMB-SEQUESTER-2026-04-03",
+      "date": "2026-04-03",
+      "topic": "fiscal",
+      "status": "action",
+      "agency": "White House / OMB",
+      "type": "FISCAL",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.whitehouse.gov/presidential-actions/2026/04/sequestration-order-for-fiscal-year-2027-pursuant-to-section-251a-of-the-balanced-budgetand-emergency-deficit-control-act-as-amended/",
+      "sectors": [
+        "applications"
+      ],
+      "name": {
+        "en": "FY2027 sequestration order",
+        "zh": "2027财年自动削支命令"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The order directs reductions in non-exempt direct-spending accounts on October 1, 2026, based on OMB’s April 3 report.",
+        "zh": "命令依据OMB的4月3日报告，要求自2026年10月1日起削减非豁免直接支出账户。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Evaluate program-level funding rather than equating policy support for AI with unrestricted spending. This order is not a stand-alone AI appropriation.",
+        "zh": "应逐项评估项目资金，不能将支持AI的政策等同于无限制支出。此命令不是单独的AI拨款。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.whitehouse.gov/presidential-actions/2026/04/sequestration-order-for-fiscal-year-2027-pursuant-to-section-251a-of-the-balanced-budgetand-emergency-deficit-control-act-as-amended/",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "WH-AI-FRAMEWORK-2026-03-20",
+      "date": "2026-03-20",
+      "topic": "government",
+      "status": "proposal",
+      "agency": "White House",
+      "type": "GOVERNMENT",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.whitehouse.gov/releases/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/",
+      "sectors": [
+        "applications",
+        "security",
+        "cloud"
+      ],
+      "name": {
+        "en": "National AI legislative framework",
+        "zh": "全国AI立法框架"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The administration proposed a uniform national framework covering children, communities, intellectual property, speech, innovation and workforce development. It called for Congressional legislation.",
+        "zh": "政府提出覆盖儿童、社区、知识产权、言论、创新和劳动力发展的全国统一框架，呼吁国会立法。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "A uniform framework could reduce fragmented compliance, but legislative passage and implementation are unresolved; the proposal is not enacted law.",
+        "zh": "统一框架可能减少分散合规成本，但立法通过与执行尚待落实；提案不是已经生效的法律。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.whitehouse.gov/releases/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "FED-2026-03-18",
+      "date": "2026-03-18",
+      "topic": "fed",
+      "status": "decision",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260318a.htm",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
+      ],
+      "name": {
+        "en": "March hold amid Middle East uncertainty",
+        "zh": "3月维持利率，中东局势增添不确定性"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The target stayed at 3.50–3.75%. Miran preferred a 25 bp cut. The statement added uncertainty from Middle East developments.",
+        "zh": "目标区间仍为3.50%–3.75%，Miran主张降息25基点。声明新增中东局势带来的不确定性。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Financing costs and discount rates affect AI infrastructure and long-duration earnings. A policy decision alone does not establish an equity-price reaction.",
+        "zh": "融资成本与贴现率影响AI基础设施及远期收益估值。单次政策决定不足以证明股票价格反应。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260318a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ],
+      "rate": {
+        "lower": 3.5,
+        "upper": 3.75,
+        "changeBps": 0,
+        "vote": "11–1"
+      }
+    },
+    {
+      "id": "WH-AI-POWER-2026-03-04",
+      "date": "2026-03-04",
+      "topic": "government",
+      "status": "pledge",
+      "agency": "White House",
+      "type": "GOVERNMENT",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.whitehouse.gov/presidential-actions/2026/03/ratepayer-protection-pledge-proclamation/",
+      "sectors": [
+        "power",
+        "cloud"
+      ],
+      "name": {
+        "en": "Ratepayer Protection Pledge",
+        "zh": "电力用户保护承诺"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The proclamation records seven technology companies accepting a pledge intended to protect household electricity costs as data centers expand.",
+        "zh": "公告记录七家科技公司接受承诺，旨在数据中心扩张时保护居民电价。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Large operators face incremental power and grid funding obligations. Track utility agreements and project execution rather than assuming household savings are realized.",
+        "zh": "大型运营商面临新增电力与电网投入责任。需跟踪公用事业协议与项目执行，不能假设居民电费节省已实现。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.whitehouse.gov/presidential-actions/2026/03/ratepayer-protection-pledge-proclamation/",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "WALLER-AI-2026-02-24",
+      "date": "2026-02-24",
+      "topic": "fed",
+      "status": "speech",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/speech/waller20260224a.htm",
+      "sectors": [
+        "applications",
+        "security"
+      ],
+      "name": {
+        "en": "Waller: operationalizing AI at the Fed",
+        "zh": "Waller：联储内部的AI落地"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Waller outlined a coordinated, System-wide approach to AI adoption, shared infrastructure and operational efficiency at the Federal Reserve.",
+        "zh": "Waller介绍联储采用AI的全系统协同模式、共享基础设施和运营效率目标。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Institutional adoption can create demand for secure AI tooling; resilience and data governance remain deployment requirements.",
+        "zh": "机构采用AI可带来安全工具需求；韧性与数据治理仍是落地条件。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/speech/waller20260224a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "COOK-AI-2026-02-24",
+      "date": "2026-02-24",
+      "topic": "fed",
+      "status": "speech",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/speech/cook20260224a.htm",
+      "sectors": [
+        "applications"
+      ],
+      "name": {
+        "en": "Cook: AI and productivity",
+        "zh": "Cook：AI与生产率"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Cook’s opening remarks addressed how AI adoption and productivity may reshape the economy and the measurement of its performance.",
+        "zh": "Cook在开场讲话中讨论AI采用和生产率如何改变经济及其衡量方式。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Separate firm-level efficiency from economy-wide productivity; organizational changes and diffusion take time.",
+        "zh": "区分单个企业效率与全经济生产率；组织调整和技术扩散需要时间。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/speech/cook20260224a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "FED-MINUTES-2026-01-28",
+      "date": "2026-02-18",
+      "topic": "fed",
+      "status": "record",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+      "sectors": [
+        "compute",
+        "cloud"
+      ],
+      "name": {
+        "en": "2026-01-28 FOMC minutes",
+        "zh": "2026-01-28 FOMC会议纪要"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The published minutes provide the detailed discussion of the 2026-01-28 meeting. They are a retrospective record, not a new rate decision.",
+        "zh": "纪要提供2026-01-28会议的详细讨论，是对当时会议的回顾记录，不是新的利率决定。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Use the minutes to examine inflation, labor, investment and financing risks; distinguish meeting-period observations from today’s conditions.",
+        "zh": "借助纪要分析通胀、就业、投资和融资风险；区分会议期间的观察与当前状况。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260128.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "BARR-AI-2026-02-17",
+      "date": "2026-02-17",
+      "topic": "fed",
+      "status": "speech",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/speech/barr20260217a.htm",
+      "sectors": [
+        "applications",
+        "cloud"
+      ],
+      "name": {
+        "en": "Barr: AI, work and transition risk",
+        "zh": "Barr：AI、就业与转型风险"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Barr described AI’s potential for productivity and innovation, while warning that labor-market disruption can precede longer-run gains.",
+        "zh": "Barr指出AI可提升生产率与创新能力，但劳动力市场冲击可能先于长期收益出现。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Workforce retraining and adoption timing matter for enterprise software demand. Productivity benefits do not ensure a near-term rate cut.",
+        "zh": "再培训与采用速度影响企业软件需求。生产率收益不意味着短期必然降息。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/speech/barr20260217a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "TREASURY-REFUNDING-2026-02-04",
+      "date": "2026-02-04",
+      "topic": "fiscal",
+      "status": "record",
+      "agency": "Treasury",
+      "type": "FISCAL",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://home.treasury.gov/news/press-releases/sb0384",
+      "sectors": [
+        "cloud",
+        "power"
+      ],
+      "name": {
+        "en": "2026-02 quarterly refunding",
+        "zh": "2026-02季度再融资"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Treasury announced $125bn in 3-, 10- and 30-year securities, raising approximately $34.8bn in new cash after refinancing maturities.",
+        "zh": "财政部公布1250亿美元的3年、10年和30年期国债发行，用于到期再融资后，新增融资约348亿美元。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Treasury supply and investor demand affect long-term financing conditions for data centers. Debt issuance is separate from the Fed’s policy-rate decision.",
+        "zh": "国债供给和投资者需求影响数据中心长期融资环境。国债发行与联储政策利率决定属于不同机制。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://home.treasury.gov/news/press-releases/sb0384",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    },
+    {
+      "id": "FED-2026-01-28",
+      "date": "2026-01-28",
+      "topic": "fed",
+      "status": "decision",
+      "agency": "Federal Reserve",
+      "type": "FED",
+      "pillar": 2,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260128a.htm",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
+      ],
+      "name": {
+        "en": "January hold; two dissent for a cut",
+        "zh": "1月维持利率；两人主张降息"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "The FOMC held 3.50–3.75%. Miran and Waller preferred a 25 bp cut; the statement described elevated inflation and stabilizing unemployment.",
+        "zh": "FOMC维持3.50%–3.75%。Miran与Waller主张降息25基点；声明指出通胀偏高、失业率出现企稳迹象。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Financing costs and discount rates affect AI infrastructure and long-duration earnings. A policy decision alone does not establish an equity-price reaction.",
+        "zh": "融资成本与贴现率影响AI基础设施及远期收益估值。单次政策决定不足以证明股票价格反应。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260128a.htm",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ],
+      "rate": {
+        "lower": 3.5,
+        "upper": 3.75,
+        "changeBps": 0,
+        "vote": "10–2"
+      }
     },
     {
       "id": "TRUMP-CHIPS-2026-01",
@@ -494,7 +2018,119 @@
           "label_en": "Reuters: after-hours reaction",
           "label_zh": "路透：盘后反应"
         }
+      ],
+      "topic": "government",
+      "agency": "White House",
+      "status": "action",
+      "sectors": [
+        "compute",
+        "cloud",
+        "power"
       ]
+    },
+    {
+      "id": "IRS-DEPRECIATION-2026-01-14",
+      "date": "2026-01-14",
+      "topic": "fiscal",
+      "status": "guidance",
+      "agency": "Treasury / IRS",
+      "type": "FISCAL",
+      "pillar": 4,
+      "class": "euclid",
+      "hawkDove": null,
+      "source": "https://www.irs.gov/newsroom/treasury-irs-issue-guidance-on-the-additional-first-year-depreciation-deduction-amended-as-part-of-the-one-big-beautiful-bill",
+      "sectors": [
+        "compute",
+        "power"
+      ],
+      "name": {
+        "en": "100% bonus depreciation guidance",
+        "zh": "100%额外首年折旧指引"
+      },
+      "before": {
+        "en": "Dated primary-source record.",
+        "zh": "注明日期的一手资料记录。"
+      },
+      "print": {
+        "en": "Notice 2026-11 clarifies the permanent 100% first-year deduction for eligible property acquired after January 19, 2025, under the 2025 law.",
+        "zh": "Notice 2026-11澄清2025年法律下，对2025年1月19日后取得的合格资产永久适用100%首年折旧扣除的规则。"
+      },
+      "marketWindow": {
+        "en": "Document evidence; no event-window prices verified.",
+        "zh": "官方文件证据；未核实事件窗口行情。"
+      },
+      "repricing": {
+        "en": "Transmission analysis is conditional; no observed market move is asserted.",
+        "zh": "传导分析以条件成立为前提，不声称已观测到市场涨跌。"
+      },
+      "equityReaction": {
+        "en": "No attributable equity return verified.",
+        "zh": "未核实可归因的股票回报。"
+      },
+      "industryTransmission": {
+        "en": "Eligible equipment investment may gain a cash-flow timing benefit. Asset eligibility and taxable income matter; do not assume every data-center cost qualifies.",
+        "zh": "合格设备投资可能获得现金流时间优势。资产资格和应税收入重要，不能假设所有数据中心成本都符合条件。"
+      },
+      "verdict": {
+        "en": "Track implementation and subsequent official evidence.",
+        "zh": "跟踪执行情况和后续官方证据。"
+      },
+      "marketSources": [
+        {
+          "url": "https://www.irs.gov/newsroom/treasury-irs-issue-guidance-on-the-additional-first-year-depreciation-deduction-amended-as-part-of-the-one-big-beautiful-bill",
+          "label_en": "Official document",
+          "label_zh": "官方文件"
+        }
+      ]
+    }
+  ],
+  "checked_at": "2026-10-05",
+  "coverage_start": "2026-01-01",
+  "indexVersion": 1,
+  "overview": {
+    "policyRate": {
+      "lower": 3.75,
+      "upper": 4,
+      "date": "2026-09-16",
+      "source": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm"
+    },
+    "stance": {
+      "en": "Inflation first",
+      "zh": "优先应对通胀"
+    },
+    "summary": {
+      "en": "September’s unanimous hike lifted the policy range to 3.75–4.00%. Follow the cost of capital, public funding and AI’s changing effects on productivity and prices.",
+      "zh": "9月一致加息使政策利率升至3.75%–4.00%。持续追踪资本成本、公共资金，以及AI对生产率与价格的变化影响。"
+    }
+  },
+  "coverage_note": {
+    "en": "Selected primary records since 1 January 2026, including all six FOMC decisions released to date and all five available 2026 meeting minutes. Not an exhaustive archive of every Fed publication.",
+    "zh": "精选2026年1月1日起的一手资料，包含截至核验日全部六次FOMC决议及已发布的五份2026年会议纪要；不代表收录联储所有出版物。"
+  },
+  "schedule": [
+    {
+      "date": "2026-10-07",
+      "name": {
+        "en": "September FOMC minutes",
+        "zh": "9月FOMC会议纪要"
+      },
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+    },
+    {
+      "date": "2026-10-28",
+      "name": {
+        "en": "October FOMC decision",
+        "zh": "10月FOMC利率决议"
+      },
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+    },
+    {
+      "date": "2026-12-09",
+      "name": {
+        "en": "December FOMC decision + projections",
+        "zh": "12月FOMC决议与经济预测"
+      },
+      "source": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
     }
   ]
 }
