@@ -41,8 +41,8 @@ failed phase. No material change means no routine notification.
 
 - Production build, localized SEO, data schemas, header/CSS/i18n gates and
   TypeScript check passed.
-- 39 focused tests passed across the policy-index, Signal validator, data
-  pipeline validators and JSON cache delivery suites.
+- 41 focused tests passed across the policy-index, Signal validator, data
+  pipeline validators, JSON cache delivery and existing footer suites.
 - Browser checks in English and Chinese passed: intersecting topic/month/search
   filters, industry shortcuts, evidence disclosures, table view, clearing and
   loading more records; locale links retain the selected section.
@@ -57,10 +57,16 @@ failed phase. No material change means no routine notification.
   separate fixture error requiring a local `main` ref. Obsolete Signal narrative tests
   were replaced by the index contracts, and the cache test now uses a coherent
   previous snapshot.
+- Emitted English and Chinese Signal footers match the corresponding Portfolio
+  footer exactly. The shared footer was checked at 1280, 390 and 320 CSS pixels,
+  including localized destinations, social icons and absence of page overflow.
 - Browser regression specifications were updated for the new index. The new
   specifications have not been run through the CI browser matrix in this task;
   the behaviors above were verified through the browser UI.
 
-Production publication remains pending while the repository's full-test gate
-fails. Weekly research is scheduled, but successful unattended publication must
-not be claimed until the initial release and these gates succeed.
+The initial interactive release includes the Portfolio footer in both languages;
+Portfolio and Signal now load the same footer stylesheet. The user requested
+production publication with the documented baseline failures still present.
+Weekly research is scheduled, but unattended publication remains subject to
+the complete existing test gates; successful automatic publication must not be
+claimed while those gates fail.
