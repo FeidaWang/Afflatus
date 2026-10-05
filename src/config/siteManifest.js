@@ -197,10 +197,10 @@ export const SITE_MANIFEST = Object.freeze([
     sitemap: true,
     defaultLocale: 'en',
     nav: { order: 10, group: null, en: 'Home', zh: '首页' },
-    themeColor: '#090d12',
+    themeColor: '#f0eee6',
     schema: ['WebSite', 'ProfilePage'],
     seo: ROUTE_SEO.main,
-    capabilities: ['canvas', 'webgl', 'combat'],
+    capabilities: ['video'],
     metadata: {
       title: "AFFLATUS — From this world, into what comes next.",
       description: "Stories, things I build, practical AI learning, and clear market tools.",
