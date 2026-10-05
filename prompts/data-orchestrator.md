@@ -126,8 +126,11 @@ When it reports `due:false`, make no repository change.
   with `npm run data:arena:earnings:candidates -- --output=<temporary-directory>
   --earnings-input=<outside-repo-json>` and publish only
   `arena-earnings-digest`. If there is no new official report, make no change.
-- `signal-macro`: refresh only from authoritative releases and attributable
-  market reporting when older than seven days or after a material event.
+- `signal-macro`: review every Monday at 09:00 `Australia/Melbourne`, or after a
+  material event, following `prompts/signal-warsh.md`. Preserve the Policy & AI
+  Index history from 1 January 2026, verify official facts and policy status,
+  and update Chinese and English evidence together. A completed weekly source
+  review may refresh the checked date even without a new announcement.
 - `sectors-research`: refresh the complete four-file group when older than
   fourteen days; preserve balanced US/CN sourcing and provenance tiers.
 - `horoscope-transits`: generate its candidate once per Melbourne day with

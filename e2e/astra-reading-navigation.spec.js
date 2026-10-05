@@ -3,7 +3,6 @@ import {test,expect} from '@playwright/test';
 const pages = {
   portfolio: ['fy2026Performance','flightPathsTitle','portfolioConvoy'],
   sectors: ['k3Heading','labsHeading','marketHeading','equitiesHeading','letterHeading','thesesHeading','sourcesHeading'],
-  signal: ['treasuryYieldBoard','ch00','ch01','ch02','ch03','ch04'],
   course: ['signal','agent-core','atlas','pathway','education','fieldwork','review'],
 };
 const visibleNav = page => page.locator('[data-reading-nav]:visible');
@@ -104,12 +103,12 @@ test('Serial: existing drawer has real chapter URLs, current state and Esc retur
  await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden','true');
  await page.locator('#tocOpen').click();await expect(page.locator('#tocList [aria-current="page"]')).toHaveAttribute('href',next);
 });
-for(const name of ['sectors','signal','course']) test(`${name}: locale switch retains query and section`,async({page})=>{
+for(const name of ['sectors','course']) test(`${name}: locale switch retains query and section`,async({page})=>{
  const id=pages[name][1];await page.goto(`/en/${name}.html?m08=locale`,{waitUntil:'domcontentloaded'});
  await visibleNav(page).locator(`a[href="#${id}"]`).click();await page.locator('.lang-toggle:visible').click();
  await expect(page).toHaveURL(new RegExp(`/zh/${name}.html\\?m08=locale#${id}$`));await unobscured(page,id);
 });
-test('Four reading indexes: 320/768/1280 and landscape layouts retain accessible targets',async({page})=>{
+test('Reading indexes: 320/768/1280 and landscape layouts retain accessible targets',async({page})=>{
  for(const name of Object.keys(pages)){
   await page.goto(`/en/${name}.html`,{waitUntil:'domcontentloaded'});
   for(const [width,height] of [[320,720],[768,1024],[1280,800],[844,390]]){

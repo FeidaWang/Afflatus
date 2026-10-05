@@ -98,20 +98,27 @@ describe('fetchJson', () => {
   });
 
   it('revalidates Signal before returning a fresh browser cache entry', async () => {
+    const newestEvent = [...currentSignal.events].sort((a, b) => b.date.localeCompare(a.date))[0];
+    const previousDate = new Date(Date.parse(newestEvent.date) - 86_400_000).toISOString().slice(0, 10);
+    const previousEvents = currentSignal.events.filter(event => event.date <= previousDate);
+    const previousDecision = [...previousEvents].filter(event => event.rate).sort((a, b) => b.date.localeCompare(a.date))[0];
     const staleSignal = {
       ...currentSignal,
-      updated: '2026-08-06',
-      events: currentSignal.events.slice(0, 4),
+      updated: previousDate,
+      checked_at: previousDate,
+      as_of: `${previousDate}T12:00:00Z`,
+      overview: { ...currentSignal.overview, policyRate: { ...previousDecision.rate, date: previousDecision.date, source: previousDecision.source } },
+      events: previousEvents,
     };
     const network = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify(staleSignal), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify(currentSignal), { status: 200 }));
     vi.stubGlobal('fetch', network);
 
-    await expect(fetchJson('signal')).resolves.toMatchObject({ updated: '2026-08-06' });
+    await expect(fetchJson('signal')).resolves.toMatchObject({ updated: previousDate });
     await expect(fetchJson('signal')).resolves.toMatchObject({
       updated: currentSignal.updated,
-      events: expect.arrayContaining([expect.objectContaining({ id: 'NFP-2026-07' })]),
+      events: expect.arrayContaining([expect.objectContaining({ id: newestEvent.id })]),
     });
 
     expect(network).toHaveBeenCalledTimes(2);
