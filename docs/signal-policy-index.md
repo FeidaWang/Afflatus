@@ -54,7 +54,7 @@ failed phase. No material change means no routine notification.
 - Full unit suite: 1,886 passed and 94 failed in 18 files. A separate clone of
   unchanged commit `f30aed08` reproduced every remaining failure name; there
   are no newly introduced failure names. Its run had 96 failed tests and a
-  separate missing-generated-file suite error. Obsolete Signal narrative tests
+  separate fixture error requiring a local `main` ref. Obsolete Signal narrative tests
   were replaced by the index contracts, and the cache test now uses a coherent
   previous snapshot.
 - Browser regression specifications were updated for the new index. The new
