@@ -181,7 +181,7 @@ button{font-family:inherit;border:none;background:none;color:inherit;cursor:poin
 @keyframes fadeDepartingPageText{0%,12%{opacity:1;filter:blur(0)}50%{opacity:.05;filter:blur(.8px)}100%{opacity:0;filter:blur(1.2px)}}
 @keyframes revealArrivingPageText{0%,48%{opacity:0;filter:blur(1px)}72%{opacity:.62;filter:blur(.35px)}100%{opacity:1;filter:blur(0)}}
 .book-hotspot{position:absolute;top:0;bottom:11px;z-index:10;width:12%;min-width:46px;display:grid;place-items:center;font:300 38px/1 var(--serif);color:var(--read-ink-dim);opacity:.12;transition:opacity .2s ease,background .2s ease}
-.book-hotspot:hover,.book-hotspot:focus-visible{opacity:.75;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--read-accent) 10%,transparent))}
+.book-hotspot:hover,.book-hotspot:focus-visible{opacity:.75}
 .book-hotspot:disabled{opacity:0;cursor:default}
 .book-hotspot-previous{left:0;border-radius:5px 0 0 5px}
 .book-hotspot-next{right:11px;border-radius:0 10px 10px 0}

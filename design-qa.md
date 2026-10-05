@@ -1,3 +1,105 @@
+# Shared header typography and language button QA — 6 October 2026
+
+final result: passed
+
+## Findings
+
+No actionable P0/P1/P2 findings in the combined source/implementation comparison.
+The user's current request controls this pass: logo, menu text (including dropdowns
+and mobile menus), and language text use Anthropic Sans; the language button follows
+the supplied dark rounded button, with its arrow compartment and divider omitted.
+The user's follow-up requires the language button and mobile menu control to be
+proportionally smaller. Both visible controls now use a shared 0.8 scale.
+The latest request aligns language text and the menu with the logo, reduces the
+menu one further size, and removes green pointer-hover backgrounds across pages.
+Language geometry retains the 0.8 scale; the menu now uses its own 0.7 scale.
+
+## Evidence and normalization
+
+- Source visual truth: `artifacts/header-typography/reference-button.png`, copied
+  from the user's attachment (380 × 108 image pixels; button height 72px).
+- Preview: http://127.0.0.1:4185/en/ and its `/zh/` peer.
+- Browser captures: `desktop-en.jpg` and `desktop-zh.jpg` at 1440 × 900 CSS/image
+  pixels; `mobile-zh.jpg` and `mobile-menu-zh.jpg` at 390 × 844; `mobile-320-en.jpg`
+  at 320 × 740; `arena-mobile-zh.jpg` at 390 × 844. All are in
+  `artifacts/header-typography/`, captured at one image pixel per CSS pixel.
+- Focused captures: `header-en.jpg` (1440 × 100), `button-en.jpg` (79 × 60), and
+  `button-zh.jpg` (88 × 60). Button crops include 8px of surrounding context.
+- Opened combined comparison: `artifacts/header-typography/comparison.png`.
+  It includes the complete reference, both language labels, the desktop header,
+  and mobile header. Button crops are enlarged by 72/44 for comparison at the
+  reference button height; header captures remain at 1:1. Copy and overall width
+  differ intentionally because these are language controls, not a Try Claude CTA.
+- State: page top, menus closed; the separate mobile-menu capture verifies the
+  expanded menu. The existing film-player QA below concerns a different component.
+- Latest follow-up evidence: `after-resize-mobile.jpg` (640 × 90),
+  `after-resize-320-zh.jpg` (320 × 90), `after-resize-390-zh.jpg` (390 × 90),
+  and `after-resize-desktop-en.jpg` / `after-resize-desktop-zh.jpg` (1440 × 100).
+  Opened `resize-comparison.png` compares the previous and current Chinese
+  homepage header at the same 390px width, page-top state, and 1:1 density,
+  alongside the supplied button-style reference. The original comparison above
+  records the preceding iteration rather than the final control dimensions.
+- Final alignment evidence: `aligned-home-zh-390.jpg`, `aligned-home-compact-390.jpg`,
+  and `aligned-{home,portfolio,arena,course,sectors,signal,serial,horoscope,lesson,404}-390.jpg`
+  (390 × 90). `alignment-routes.json` records the final control geometry for all
+  ten inspected page types. `alignment-comparison.png` was opened and reviewed
+  with the original button reference and the preceding same-size Chinese header.
+- Real pointer-hover evidence: `header-hover-desktop.jpg` (1440 × 100),
+  `horoscope-hover.jpg` (260 × 80), and `course-hover-desktop.jpg` (1440 × 900).
+
+## Required fidelity surfaces
+
+| Surface | Result |
+| --- | --- |
+| Fonts and typography | All shared-header descendants directly declare the Anthropic Sans stack and disable synthetic faces. Computed styles confirm this for the full/compact logo, menu/dropdown labels, mobile labels, and language control. Logo remains 22px/600 on desktop and menus 15px/400. Follow-up scales language text from 16px to 12.8px/400. Existing CJK fallbacks remain available. |
+| Spacing and layout | Language geometry is 35.2px high, with 16px horizontal padding and an 8px radius. Menu artwork is now 22.4 × 16.8px, one step below the preceding 25.6 × 19.2px size. Its hit target remains 44 × 44px; transparent vertical extension keeps the language hit target 44px high. Shared controls explicitly align to the same row; 2px bottom padding optically centers language text. At 390px, logo/EN/menu ink centers all measure y=29px. All ten inspected page types have equal control-box center lines (within subpixel rounding). No header overflow at 320px/390px, including the full and compact logo states. |
+| Colors and tokens | Near-black #141413 background and warm-white #faf9f5 text match the reference treatment. Removed the shared green hover fill/glow and local green hover backgrounds in course, course lessons, sectors, horoscope, serial reading, Arena/legacy controls, and 404 recovery. Actual hovered navigation stays transparent with no shadow; course and horoscope buttons retain their normal fill and text color. Keyboard focus outlines and selected states remain available. |
+| Image quality and assets | Existing local Anthropic Sans font assets are reused. No new image/icon substitutes are introduced; the requested arrow is absent. Screenshot crops are comparison evidence only. |
+| Copy and content | Language labels remain 中文/EN, accessible labels remain localized, and the control remains a direct language link. |
+
+## Validation and comparison history
+
+First final comparison passed with no P0/P1/P2 visual fixes required. Actual
+English→Chinese and Chinese→English navigation, desktop dropdown open/Escape,
+and mobile menu open/Escape were exercised. Homepage, course, and Arena shared
+headers were inspected. Browser error logs were empty during verification.
+
+Follow-up: the user found both controls visually oversized. Applied the same 20%
+reduction to button typography, padding, height, radius, and menu artwork. The
+same-size before/after comparison shows the requested reduction with no remaining
+P0/P1/P2 mismatch. Verified mobile menu open/Escape, both language directions,
+320px overflow, the extended language hit target, and desktop EN/中文 states.
+Computed visible dimensions are 35.195px button height and 25.594 × 19.195px menu
+artwork (browser subpixel rounding). Browser error logs and the renewed production
+build passed; temporary viewport overrides were reset.
+
+Latest alignment pass: the first comparison identified the menu's optical center
+1px above the logo. Removed that offset and recaptured the comparison; logo,
+EN text, and menu strokes now all have an ink center of y=29px on the 390px Chinese
+homepage. Both full and compact logo states were reviewed. Ten page types passed
+the final geometry check, with no overflow. Header hover was exercised with the
+real pointer and computed transparent background/no shadow. Horoscope and course
+buttons were also actually hovered: their background and text colors remain at
+the non-hover values. A source scan found no remaining known green background/glow
+declarations in hover rules. The final production build, header/CSS/bilingual/SEO
+checks, and whitespace check passed. Temporary QA tab was closed, viewport reset,
+and the user's original preview tab refreshed and retained.
+
+Production build passed, including header, CSS, bilingual-content, localization,
+and emitted SEO checks. Temporary viewport overrides were reset, and the preview
+tab is retained. No additional tests were introduced for this reversible CSS edit.
+
+## Implementation checklist and limits
+
+- [x] Anthropic Sans explicitly scoped to every shared-header descendant.
+- [x] Reference-based text-only language button and hover/focus states.
+- [x] Combined visual comparison, desktop/mobile interactions, and production build.
+- [x] Final optical alignment, another menu-size reduction, all-page green-hover removal.
+
+Physical-device rendering was not separately tested. No remaining P3 polish items.
+
+---
+
 # Homepage film player QA
 
 final result: passed

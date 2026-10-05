@@ -2,9 +2,9 @@
 
 /* Shared across page themes. Colors and desktop height observed on the reference;
    motion and compact geometry use the I01 defaults. */
-#afflatus-header, #afflatus-header * { box-sizing: border-box; }
+#afflatus-header, #afflatus-header * { box-sizing: border-box; font-family: var(--af-font-sans); font-synthesis: none; }
 #afflatus-header {
-  --af-height: 68px; --af-paper: #e8e6dc; --af-ink: #0f0f0e;
+  --af-height: 68px; --af-paper: #e8e6dc; --af-ink: #0f0f0e; --af-control-scale: .8; --af-menu-scale: .7;
   position: fixed; inset: 0 0 auto; z-index: 10000; width: 100%; height: var(--af-height);
   margin: 0; padding: 0; border: 0; border-bottom: 1px solid #d1d0c8;
   background: var(--af-paper); color: var(--af-ink); color-scheme: light;
@@ -13,6 +13,7 @@
   box-shadow: none; transform: none; isolation: isolate;
 }
 #afflatus-header .af-header-inner { display: flex; align-items: center; gap: 24px; width: calc(100% - 2 * var(--af-header-outer-gap)); max-width: var(--af-layout-max); height: 100%; margin: 0 auto; padding: 0 var(--af-header-inner-gap); }
+#afflatus-header .af-header-inner > :is(.af-wordmark, .af-header-language, .af-header-menu) { align-self: center; }
 #afflatus-header a, #afflatus-header button {
   display: inline-flex; align-items: center; justify-content: flex-start; gap: 8px; min-height: 44px;
   width: auto; max-width: none; margin: 0; padding: 0 8px; border: 0; border-radius: 0;
@@ -46,9 +47,13 @@
 #afflatus-header a[aria-current="page"] { font-weight: var(--af-weight-medium); }
 #afflatus-header .af-header-dropdown { position: absolute; top: 100%; left: 0; width: 240px; padding: 12px; border: 1px solid #d1d0c8; background: var(--af-paper); max-height: calc(100dvh - var(--af-height) - 16px); overflow-y: auto; animation: af-menu-in 160ms ease-out; }
 #afflatus-header .af-header-dropdown a { display: flex; white-space: normal; padding: 10px 12px; }
-#afflatus-header a.af-header-language { min-height: 36px; padding: 0 16px; border: 1px solid #161616; border-radius: 8px; background: #161616; color: #fff; font-size: var(--af-type-nav); font-weight: var(--af-weight-regular); }
+/* Scale the visible controls together while retaining generous pointer targets. */
+#afflatus-header a.af-header-language { position: relative; flex: none; justify-content: center; min-height: calc(44px * var(--af-control-scale)); padding: 0 calc(20px * var(--af-control-scale)); border: 0; border-radius: calc(10px * var(--af-control-scale)); background: #141413; color: #faf9f5; font: var(--af-weight-regular) calc(16px * var(--af-control-scale))/1.25 var(--af-font-sans); }
+/* Align the text and menu strokes with the wordmark's optical center. */
+#afflatus-header a.af-header-language { padding-block-end: 2px; }
+#afflatus-header a.af-header-language::before { content: ''; position: absolute; inset-block: calc((44px * var(--af-control-scale) - 44px) / 2); inset-inline: 0; }
 #afflatus-header .af-header-menu { display: none; }
-#afflatus-header .af-menu-icon { display: block; flex: none; width: 32px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+#afflatus-header .af-menu-icon { display: block; flex: none; width: calc(32px * var(--af-menu-scale)); height: calc(24px * var(--af-menu-scale)); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 #afflatus-header [hidden] { display: none; }
 body:has(> #afflatus-header) { padding-top: 68px; }
 @media (hover: hover) and (pointer: fine) {
@@ -88,11 +93,6 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header:not([data-enhanced]) .af-header-dropdown { position: static; }
   #afflatus-header:not([data-enhanced]) button { display: none; }
   body:has(> #afflatus-header:not([data-enhanced])) { padding-top: 0; }
-}
-@media (hover: hover) and (pointer: fine) {
-  #afflatus-header :is(a, button) { transition: background-color .18s ease, box-shadow .18s ease, color .18s ease; }
-  #afflatus-header :is(a, button):hover { background-color: #6689821c; box-shadow: 0 0 15px #66898236; }
-  #afflatus-header a.af-header-language:hover { background-color: #394d49; color: #fff; box-shadow: 0 0 0 4px #66898224, 0 0 18px #6689828c; }
 }
 @media (prefers-reduced-motion: reduce) {
   #afflatus-header *, #afflatus-header *::after { animation: none; transition: none; }

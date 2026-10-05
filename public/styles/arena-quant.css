@@ -55,7 +55,7 @@
 .qm-controls select{background:#080d18;color:var(--cyan);border:1px solid var(--qm-line);font:700 10px/1 var(--font-mono);padding:6px 22px 6px 8px}
 .qm-constraints{padding-top:17px;border-top:1px solid var(--qm-dim)}
 .qm-compile{width:100%;margin-top:20px;border:1px solid var(--acid);background:var(--acid);color:#03100a;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;font:800 10px/1 var(--font-hud);letter-spacing:.13em;cursor:pointer}
-.qm-compile:hover,.qm-compile:focus-visible{background:#dfffee;border-color:#dfffee}
+.qm-compile:focus-visible{background:#dfffee;border-color:#dfffee}
 .qm-compile:disabled{cursor:wait;opacity:.6}
 .qm-compile.is-running i{animation:qmSpin 1s linear infinite}
 @keyframes qmSpin{to{transform:rotate(360deg)}}

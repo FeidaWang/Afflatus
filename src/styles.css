@@ -2813,9 +2813,6 @@
     grid-template-rows:auto minmax(0,auto) auto!important;
     align-content:center!important;
   }
-  .notebook-login button:hover{
-    background:linear-gradient(180deg,rgba(161,255,0,.24),rgba(6,11,6,.92));
-  }
 
   @media(max-width:1180px){
     .hud-left #radarCanvas{
@@ -6175,7 +6172,6 @@
     align-self:center!important;
     justify-self:end!important;
   }
-  .starmap-toggle:hover{background:#caff00!important;border-color:#caff00!important}
   .terminal-starmap.active{display:block!important;height:100%!important;min-height:0!important}
   .notebook-login{
     grid-template-columns:1fr 1fr auto!important;
