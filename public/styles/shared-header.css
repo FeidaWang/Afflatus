@@ -4,7 +4,7 @@
    motion and compact geometry use the I01 defaults. */
 #afflatus-header, #afflatus-header * { box-sizing: border-box; font-family: var(--af-font-sans); font-synthesis: none; }
 #afflatus-header {
-  --af-height: 68px; --af-brand-width: 144px; --af-brand-height: 28px; --af-control-scale: .8; --af-menu-scale: .7; --af-paper: #e8e6dc; --af-ink: #0f0f0e;
+  --af-height: 68px; --af-type-brand: 24px; --af-brand-width: 144px; --af-brand-height: 28px; --af-control-scale: .8; --af-menu-scale: .7; --af-paper: #e8e6dc; --af-ink: #0f0f0e;
   position: fixed; inset: 0 0 auto; z-index: 10000; width: 100%; height: var(--af-height);
   margin: 0; padding: 0; border: 0; border-bottom: 1px solid #d1d0c8;
   background: var(--af-paper); color: var(--af-ink); color-scheme: light;
@@ -62,7 +62,7 @@ body:has(> #afflatus-header) { padding-top: 68px; }
 }
 @keyframes af-menu-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 @media (max-width: 979px) {
-  #afflatus-header { --af-height: 60px; }
+  #afflatus-header { --af-height: 60px; --af-type-brand: 23px; }
   #afflatus-header .af-header-inner { width: 100%; padding: 0 var(--af-header-compact-gap); }
   #afflatus-header .af-wordmark { flex-basis: 44px; flex-shrink: 0; }
   #afflatus-header .af-brand-art { transform: scale(.83); transform-origin: left center; }
