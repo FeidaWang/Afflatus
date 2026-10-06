@@ -2,12 +2,15 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const html = readFileSync('sectors.html', 'utf8');
-const data = JSON.parse(readFileSync('public/data/sectors-observatory/2026-10-06.json', 'utf8'));
+const active = JSON.parse(readFileSync('src/sectors/observatory/data.json', 'utf8'));
+const data = JSON.parse(readFileSync(`public/data/sectors-observatory/${active.snapshot}.json`, 'utf8'));
+const displayDate = value => new Date(`${value}T00:00:00Z`).toLocaleDateString('en-AU', {day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'});
 
 describe('sectors page measurement copy', () => {
   it('dates the research snapshot separately from source publication periods', () => {
-    expect(data.snapshot).toBe('2026-10-06');
-    expect(html).toContain('Research cut-off: 6 October 2026');
+    expect(data.snapshot).toBe(active.snapshot);
+    expect(html).toContain(`Research cut-off: ${displayDate(data.snapshot)}`);
+    expect(html).toContain(`Model observations: ${displayDate(data.sources.find(s => s.id === 'aa').date)}`);
     const investment = data.comparison.find(c => c.id === 'investment');
     expect(investment.note.en).toContain('2025');
     expect(investment.unit.en).toContain('2025');
