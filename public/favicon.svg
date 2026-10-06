@@ -1,18 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <radialGradient id="bg" cx="50%" cy="42%" r="70%"><stop stop-color="#102536"/><stop offset="1" stop-color="#02060c"/></radialGradient>
-    <linearGradient id="hull" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4fbff"/><stop offset=".42" stop-color="#78bfd3"/><stop offset="1" stop-color="#203c52"/></linearGradient>
-    <linearGradient id="drive" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fff"/><stop offset=".28" stop-color="#9ae5ff"/><stop offset="1" stop-color="#2e72ff" stop-opacity="0"/></linearGradient>
-    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <rect width="64" height="64" rx="13" fill="url(#bg)"/>
-  <path d="M7 14h8M7 14v8M57 50h-8M57 50v-8" fill="none" stroke="#7eeaff" stroke-opacity=".55" stroke-width="1.2"/>
-  <circle cx="49" cy="13" r="1" fill="#fff"/><circle cx="14" cy="45" r=".7" fill="#8ddcff"/>
-  <g transform="translate(4 2)">
-    <path d="M8 44 26 16l4-9 4 9 18 28-17-7-5 12-5-12Z" fill="url(#hull)" stroke="#dffaff" stroke-width="1" stroke-linejoin="round"/>
-    <path d="M30 12v27M16 38l10-7m18 7-10-7" fill="none" stroke="#12354a" stroke-width="2" stroke-linecap="round"/>
-    <path d="M25 25h10l-2 8h-6Z" fill="#06101a" stroke="#7eeaff" stroke-width="1"/>
-    <path d="M16 44h9l-4 11H9Zm28 0h-9l4 11h12Z" fill="url(#drive)" filter="url(#glow)" opacity=".95"/>
-    <path d="M27 48h6l-3 10Z" fill="#e9b677" filter="url(#glow)"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x=".5" y=".5" width="63" height="63" rx="12.5" fill="#fff" stroke="#d9d9d6"/><g fill="#0f0f0e" transform="translate(32 32) scale(0.83) translate(-25.33 -24)"><path fill-rule="evenodd" d="M0 42L11.39 6H17.11L28.5 42H22.68L19.77 32.82H8.73L5.82 42ZM14.25 15.37L18.29 28.14H10.21Z"/><rect x="32.1" y="6" width="5.2" height="36"/><rect x="41.3" y="38.62" width="9.36" height="3.38"/></g></svg>

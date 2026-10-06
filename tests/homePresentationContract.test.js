@@ -33,8 +33,8 @@ describe('home presentation contract', () => {
     expect(heroStyles).toContain('.hero-record-cta');
   });
 
-  it('uses a dedicated battleship favicon on the home page', () => {
-    expect(html).toContain('/favicons/home.svg?v=20260808');
+  it('uses the unified AI_ favicon on the home page', () => {
+    expect(html).toContain('/favicons/home.svg?v=20261007');
     expect(readFileSync('public/favicons/home.svg', 'utf8')).toContain('<path');
   });
 });
