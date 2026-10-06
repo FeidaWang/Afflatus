@@ -6,7 +6,7 @@
    motion and compact geometry use the I01 defaults. */
 #afflatus-header, #afflatus-header * { box-sizing: border-box; font-family: var(--af-font-sans); font-synthesis: none; }
 #afflatus-header {
-  --af-height: var(--af-header-height); --af-type-brand: 24px; --af-brand-width: 144px; --af-brand-height: 28px; --af-control-scale: .8; --af-menu-scale: .7; --af-paper: #e8e6dc; --af-ink: #0f0f0e; --af-menu-paper: #faf9f5; --af-menu-width: 320px; --af-menu-radius: 20px; --af-menu-serif: Georgia, "Songti SC", "Noto Serif SC", serif;
+  --af-height: var(--af-header-height); --af-type-brand: 24px; --af-brand-width: 144px; --af-brand-height: 28px; --af-control-scale: .8; --af-menu-scale: .7; --af-paper: #e8e6dc; --af-ink: #0f0f0e; --af-menu-paper: #faf9f5; --af-menu-width: 320px; --af-menu-radius: 20px;
   position: fixed; inset: 0 0 auto; z-index: 10000; width: 100%; height: var(--af-height);
   margin: 0; padding: 0; border: 0; border-bottom: 1px solid #d1d0c8;
   background: var(--af-paper); color: var(--af-ink); color-scheme: light;
@@ -52,8 +52,7 @@
 #afflatus-header .af-header-group:last-child .af-header-dropdown { left: auto; right: 0; translate: none; }
 #afflatus-header .af-header-group[data-open="true"]::after { content: ''; position: absolute; top: 100%; left: 50%; translate: -50% 0; width: var(--af-menu-width); height: 13px; }
 #afflatus-header .af-header-group:last-child[data-open="true"]::after { left: auto; right: 0; translate: none; }
-#afflatus-header .af-header-dropdown a { display: flex; align-items: center; white-space: normal; min-height: 44px; padding: 7px 0; font: 400 21px/1.3 var(--af-menu-serif); }
-#afflatus-header .af-header-dropdown .af-nav-label { font-family: var(--af-menu-serif); }
+#afflatus-header .af-header-dropdown a { display: flex; align-items: center; white-space: normal; min-height: 44px; padding: 7px 0; font: inherit; }
 #afflatus-header .af-header-dropdown a + a { margin-top: 4px; }
 #afflatus-header .af-header-dropdown a[aria-current="page"] { font-weight: 400; }
 #afflatus-header .af-header-dropdown a[aria-current="page"] .af-nav-label::after { transform: scaleX(1); }
@@ -87,7 +86,7 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header .af-header-group > button { justify-content: space-between; }
   #afflatus-header .af-header-group[data-open="true"]::after { content: none; }
   #afflatus-header .af-header-dropdown { position: static; translate: none; width: 100%; border: 0; border-radius: 12px; padding: 10px 16px; margin: 6px 0 12px; max-height: none; background: #f0eee7; box-shadow: none; }
-  #afflatus-header .af-header-dropdown a { font-size: 20px; }
+  #afflatus-header .af-header-dropdown a { font-size: 16px; }
   #afflatus-header [hidden] { display: none; }
   body:has(> #afflatus-header) { padding-top: 60px; }
 }

@@ -41,3 +41,7 @@ Implementation applies through `public/styles/shared-header.css`, already loaded
 ## Follow-up: chapter navigation gap
 
 The shared header now exposes its actual breakpoint height through `--af-header-height`; the eight-chapter sticky navigation consumes that variable at all widths. Browser measurements at 1280, 980, 979, 674, 620 and 390px show `chapterTop - headerBottom = 0`. Build passed. Evidence: `docs/global-menu-evidence/chapter-gap-fixed-390.png`.
+
+## Follow-up: menu typography
+
+The latest revision supersedes the serif dropdown typography above. Dropdown items now inherit the same Anthropic Sans stack as the navigation trigger: 15px on desktop and 16px in compact navigation. Computed styles for the trigger, link and label were identical at 1280px and 390px. Existing card geometry is unchanged. Production build passed.
