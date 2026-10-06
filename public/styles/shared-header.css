@@ -1,10 +1,12 @@
 @import url("/styles/typography.css");
 
+:root { --af-header-height: 68px; }
+
 /* Shared across page themes. Colors and desktop height observed on the reference;
    motion and compact geometry use the I01 defaults. */
 #afflatus-header, #afflatus-header * { box-sizing: border-box; font-family: var(--af-font-sans); font-synthesis: none; }
 #afflatus-header {
-  --af-height: 68px; --af-type-brand: 24px; --af-brand-width: 144px; --af-brand-height: 28px; --af-control-scale: .8; --af-menu-scale: .7; --af-paper: #e8e6dc; --af-ink: #0f0f0e;
+  --af-height: var(--af-header-height); --af-type-brand: 24px; --af-brand-width: 144px; --af-brand-height: 28px; --af-control-scale: .8; --af-menu-scale: .7; --af-paper: #e8e6dc; --af-ink: #0f0f0e; --af-menu-paper: #faf9f5; --af-menu-width: 320px; --af-menu-radius: 20px; --af-menu-serif: Georgia, "Songti SC", "Noto Serif SC", serif;
   position: fixed; inset: 0 0 auto; z-index: 10000; width: 100%; height: var(--af-height);
   margin: 0; padding: 0; border: 0; border-bottom: 1px solid #d1d0c8;
   background: var(--af-paper); color: var(--af-ink); color-scheme: light;
@@ -45,8 +47,16 @@
 #afflatus-header button:focus-visible .af-nav-caret,
 #afflatus-header .af-header-group:is([data-open="true"], [data-focus="true"]) .af-nav-caret { transform: rotate(180deg); }
 #afflatus-header a[aria-current="page"] { font-weight: var(--af-weight-medium); }
-#afflatus-header .af-header-dropdown { position: absolute; top: 100%; left: 0; width: 240px; padding: 12px; border: 1px solid #d1d0c8; background: var(--af-paper); max-height: calc(100dvh - var(--af-height) - 16px); overflow-y: auto; animation: af-menu-in 160ms ease-out; }
-#afflatus-header .af-header-dropdown a { display: flex; white-space: normal; padding: 10px 12px; }
+/* Detached paper panels; the last disclosure stays inside the header's right edge. */
+#afflatus-header .af-header-dropdown { position: absolute; top: calc(100% + 12px); left: 50%; translate: -50% 0; width: var(--af-menu-width); padding: 24px; border: 1px solid #eeece5; border-radius: var(--af-menu-radius); background: var(--af-menu-paper); box-shadow: 0 2px 0 #e2dfd580, 0 12px 28px #29271e0a; max-height: calc(100dvh - var(--af-height) - 36px); overflow-y: auto; overscroll-behavior: contain; animation: af-menu-in 180ms ease-out; }
+#afflatus-header .af-header-group:last-child .af-header-dropdown { left: auto; right: 0; translate: none; }
+#afflatus-header .af-header-group[data-open="true"]::after { content: ''; position: absolute; top: 100%; left: 50%; translate: -50% 0; width: var(--af-menu-width); height: 13px; }
+#afflatus-header .af-header-group:last-child[data-open="true"]::after { left: auto; right: 0; translate: none; }
+#afflatus-header .af-header-dropdown a { display: flex; align-items: center; white-space: normal; min-height: 44px; padding: 7px 0; font: 400 21px/1.3 var(--af-menu-serif); }
+#afflatus-header .af-header-dropdown .af-nav-label { font-family: var(--af-menu-serif); }
+#afflatus-header .af-header-dropdown a + a { margin-top: 4px; }
+#afflatus-header .af-header-dropdown a[aria-current="page"] { font-weight: 400; }
+#afflatus-header .af-header-dropdown a[aria-current="page"] .af-nav-label::after { transform: scaleX(1); }
 /* Keep the approved language typography and control scale independent of the logo. */
 #afflatus-header a.af-header-language { position: relative; flex: none; justify-content: center; min-height: calc(44px * var(--af-control-scale)); padding: 0 calc(20px * var(--af-control-scale)) 2px; border: 0; border-radius: calc(10px * var(--af-control-scale)); background: #141413; color: #faf9f5; font: var(--af-weight-regular) calc(16px * var(--af-control-scale))/1.25 var(--af-font-sans); }
 /* The visible button is smaller; its transparent pointer target remains 44px high. */
@@ -62,7 +72,8 @@ body:has(> #afflatus-header) { padding-top: 68px; }
 }
 @keyframes af-menu-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 @media (max-width: 979px) {
-  #afflatus-header { --af-height: 60px; --af-type-brand: 23px; }
+  :root { --af-header-height: 60px; }
+  #afflatus-header { --af-type-brand: 23px; }
   #afflatus-header .af-header-inner { width: 100%; padding: 0 var(--af-header-compact-gap); }
   #afflatus-header .af-wordmark { flex-basis: 44px; flex-shrink: 0; }
   #afflatus-header .af-brand-art { transform: scale(.83); transform-origin: left center; }
@@ -70,10 +81,13 @@ body:has(> #afflatus-header) { padding-top: 68px; }
   #afflatus-header .af-brand-compact { opacity: 1; }
   #afflatus-header .af-header-language { margin-left: auto; }
   #afflatus-header .af-header-menu { display: inline-flex; flex: none; justify-content: flex-end; width: 44px; padding: 0; }
-  #afflatus-header .af-header-nav { position: absolute; top: 100%; left: 0; right: 0; display: flex; height: auto; flex-direction: column; align-items: stretch; gap: 4px; margin: 0; padding: 16px var(--af-header-compact-gap) 24px; background: var(--af-paper); max-height: calc(100dvh - var(--af-height)); overflow-y: auto; border-bottom: 1px solid #d1d0c8; animation: af-menu-in 160ms ease-out; }
+  #afflatus-header .af-header-nav { position: absolute; top: calc(100% + 12px); left: 16px; right: 16px; display: flex; height: auto; flex-direction: column; align-items: stretch; gap: 4px; margin: 0; padding: 20px; border: 1px solid #eeece5; border-radius: var(--af-menu-radius); background: var(--af-menu-paper); box-shadow: 0 2px 0 #e2dfd580, 0 12px 28px #29271e0a; max-height: calc(100dvh - var(--af-height) - 28px); overflow-y: auto; overscroll-behavior: contain; animation: af-menu-in 180ms ease-out; }
   #afflatus-header .af-header-nav > a, #afflatus-header .af-header-group > button { width: 100%; font-size: 16px; }
   #afflatus-header .af-header-group { display: block; }
-  #afflatus-header .af-header-dropdown { position: static; width: 100%; border: 0; padding: 0 0 8px 16px; max-height: none; }
+  #afflatus-header .af-header-group > button { justify-content: space-between; }
+  #afflatus-header .af-header-group[data-open="true"]::after { content: none; }
+  #afflatus-header .af-header-dropdown { position: static; translate: none; width: 100%; border: 0; border-radius: 12px; padding: 10px 16px; margin: 6px 0 12px; max-height: none; background: #f0eee7; box-shadow: none; }
+  #afflatus-header .af-header-dropdown a { font-size: 20px; }
   #afflatus-header [hidden] { display: none; }
   body:has(> #afflatus-header) { padding-top: 60px; }
 }
@@ -91,8 +105,8 @@ body:has(> #afflatus-header) { padding-top: 68px; }
 @media (scripting: none) {
   #afflatus-header:not([data-enhanced]) { position: relative; height: auto; }
   #afflatus-header:not([data-enhanced]) .af-header-inner { flex-wrap: wrap; }
-  #afflatus-header:not([data-enhanced]) .af-header-nav { position: static; flex-wrap: wrap; }
-  #afflatus-header:not([data-enhanced]) .af-header-dropdown { position: static; }
+  #afflatus-header:not([data-enhanced]) .af-header-nav { position: static; flex-wrap: wrap; max-height: none; border: 0; box-shadow: none; }
+  #afflatus-header:not([data-enhanced]) .af-header-dropdown { position: static; translate: none; max-height: none; }
   #afflatus-header:not([data-enhanced]) button { display: none; }
   body:has(> #afflatus-header:not([data-enhanced])) { padding-top: 0; }
 }

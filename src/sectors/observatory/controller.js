@@ -1,7 +1,9 @@
+import {initResearch} from './research.js';
 import {selectCompanies,rankModels,escape as e} from './core.js';
 import {b,t,companyCard,modelRows,modelDetail,comparison,checkpoint,timeline,modelScatter,regionCompare} from './render.js';
 import {createGlobe} from './globe.js';
 export function initObservatory(data){
+ initResearch(data);
  const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
  const language=()=>window.AfflatusI18N?.get?.()||'en';
  const local=v=>v[language()];

@@ -69,7 +69,7 @@ export async function loadRouteSeoFacts(root, routes) {
     );
 
     if (route.id === 'sectors') {
-      const ecosystem = await readJson(root, 'public/data/sectors-observatory/2026-10-06.json');
+      const ecosystem = await readJson(root, 'public/data/sectors-observatory/2026-10-07.json');
       routeFacts.items = ecosystem.companies.map((node) => ({
         id: node.id,
         name: node.name,

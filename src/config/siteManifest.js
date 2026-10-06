@@ -105,7 +105,7 @@ export const ROUTE_SEO = Object.freeze({
     structuredData: {
       kind: 'sectors',
       provenance: [
-        { path: 'public/data/sectors-observatory/2026-10-06.json', dateField: 'updated' },
+        { path: 'public/data/sectors-observatory/2026-10-07.json', dateField: 'updated' },
       ],
     },
   },

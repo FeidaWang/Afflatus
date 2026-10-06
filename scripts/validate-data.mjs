@@ -35,6 +35,7 @@ import { validateGlobeData } from '../src/showcase/validateGlobeData.js';
 
 const CHECKS = [
   { path: 'public/data/sectors-observatory/2026-10-06.json', validate: validateObservatory },
+  { path: 'public/data/sectors-observatory/2026-10-07.json', validate: validateObservatory },
   { path: 'public/version.json', validate: (data) => {
     const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
     const errors = [];

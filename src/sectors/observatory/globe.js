@@ -2,7 +2,7 @@ import {loadGlobeAsset} from '../../showcase/globeAsset.js';
 import {projectXyz,projectLatLon} from '../stage/projection.js';
 export function createGlobe(canvas,companies,{hero=false}={}) {
  const ctx=canvas.getContext('2d'); if(!ctx) return {update(){},zoom(){},reset(){},dispose(){}};
- let land,selected=companies,width=0,height=0,lon=hero?-75:10,lat=20,scale=1,drag,disposed=false;
+ let land,selected=companies,width=0,height=0,lon=hero?-75:10,lat=20,scale=1,drag,disposed=false,animation=0;
  const colors={US:'#547a97',CN:'#aa785e'};
  function draw(){
   canvas.dataset.zoom=String(scale);canvas.dataset.longitude=String(lon);
@@ -23,5 +23,5 @@ export function createGlobe(canvas,companies,{hero=false}={}) {
  const resize=new ResizeObserver(entries=>{const box=entries[0].contentRect;width=box.width;height=box.height;draw();});resize.observe(canvas);
  loadGlobeAsset().then(d=>{land=d;draw();}).catch(()=>{canvas.dataset.fallback='true';draw();});
  if(!hero){canvas.addEventListener('pointerdown',event=>{drag={x:event.clientX,y:event.clientY,lon,lat};canvas.setPointerCapture(event.pointerId);});canvas.addEventListener('pointermove',event=>{if(!drag)return;lon=drag.lon-(event.clientX-drag.x)*.35;lat=Math.max(-60,Math.min(60,drag.lat+(event.clientY-drag.y)*.25));draw();});const end=()=>{drag=undefined;};canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);}
- return {update(rows,{longitude}={}){selected=rows;if(longitude!=null)lon=longitude;draw();},zoom(direction){scale=Math.max(.75,Math.min(2,scale+direction*.25));draw();},reset(){scale=1;lon=10;lat=20;draw();},dispose(){disposed=true;resize.disconnect();}};
+ return {update(rows,{longitude}={}){selected=rows;cancelAnimationFrame(animation);if(longitude==null||matchMedia('(prefers-reduced-motion:reduce)').matches){if(longitude!=null)lon=longitude;draw();return;}const start=lon,delta=((longitude-start+540)%360)-180,at=performance.now();function step(now){if(disposed)return;const p=Math.min(1,(now-at)/850);lon=start+delta*(1-Math.pow(1-p,3));draw();if(p<1)animation=requestAnimationFrame(step);}animation=requestAnimationFrame(step);},zoom(direction){scale=Math.max(.75,Math.min(2,scale+direction*.25));draw();},reset(){scale=1;lon=10;lat=20;draw();},dispose(){disposed=true;cancelAnimationFrame(animation);resize.disconnect();}};
 }

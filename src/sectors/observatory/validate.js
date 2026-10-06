@@ -17,5 +17,11 @@ export function validateObservatory(data){
  for(const c of data.comparison){pair(c.title,`comparison ${c.id}`);pair(c.unit,`comparison ${c.id} unit`);pair(c.note,`comparison ${c.id} limitation`);problem(sources.has(c.source),`comparison ${c.id}: missing source`);problem(Number.isFinite(c.us)&&Number.isFinite(c.cn)&&c.us>=0&&c.cn>=0,`comparison ${c.id}: invalid values`);}
  for(const row of data.battlegrounds||[]){for(const key of ['title','us','cn','note'])pair(row[key],`battleground ${row.id} ${key}`);problem(sources.has(row.source),`battleground ${row.id}: missing source`);}
  for(const f of data.anthropic?.facts||[]){problem(Number.isFinite(f.value)&&f.value>=0,`finance ${f.id}: invalid value`);problem(sources.has(f.source)&&typeof f.period==='string'&&f.period.length>0&&['official','reported'].includes(f.status),`finance ${f.id}: needs period, source and status`);}
+ if(data.research){
+ const r=data.research;problem(date(r.asOf)&&r.asOf<=data.snapshot,'research: invalid measurement date');
+ for(const row of [...r.spending,...r.monetization]){pair(row.label,'research bar label');pair(row.note,'research bar basis');problem(Number.isFinite(row.value)&&row.value>=0&&row.value<=100,'research: invalid percentage');}
+ for(const c of r.comparisons){pair(c.label,'research comparison label');pair(c.title,'research comparison title');pair(c.note,'research comparison basis');for(const v of c.values){pair(v.label,'research value label');problem(Number.isFinite(v.bar)&&v.bar>=0&&v.bar<=100,'research: invalid comparison bar');}}
+ for(const c of r.cards){pair(c.title,'research card title');pair(c.body,'research card body');problem(sources.has(c.source),'research card: missing source');problem(['adoption','product','value'].includes(c.topic),'research card: unknown topic');}
+ }
  return {ok:errors.length===0,errors};
 }
