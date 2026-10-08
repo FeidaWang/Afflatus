@@ -280,15 +280,15 @@ export const SITE_MANIFEST = Object.freeze([
     capabilities: ['canvas', 'graph'],
     metadata: {
       title: "AI Observatory — The world building AI · AFFLATUS",
-      description: "Explore global AI companies, selected frontier models, US–China competition, Anthropic before its IPO, agentic coding milestones and evidence on the path to AGI.",
+      description: "Explore AI companies and frontier models including Haiku 5.5, compare capability and cost, and investigate subscription economics with original analysis.",
       canonical: 'https://feida.au/sectors.html',
       ogTitle: "AI Observatory — The world building AI · AFFLATUS",
-      ogDescription: "Explore global AI companies, selected frontier models, US–China competition, Anthropic before its IPO, agentic coding milestones and evidence on the path to AGI.",
+      ogDescription: "Explore AI companies and frontier models including Haiku 5.5, compare capability and cost, and investigate subscription economics with original analysis.",
       ogImage: ROUTE_SEO.sectors.social.images.en,
     },
     locales: {
-      en: {"title": "AI Observatory — The world building AI · AFFLATUS", "description": "Explore global AI companies, selected frontier models, US–China competition, Anthropic before its IPO, agentic coding milestones and evidence on the path to AGI."},
-      zh: {"title": "AI 观察站 — 谁在构建 AI 的世界 · AFFLATUS", "description": "全球 AI 公司、精选前沿模型、中美竞逐、Anthropic 上市观察、编程智能体里程碑与通向 AGI 的能力证据。"},
+      en: {"title": "AI Observatory — The world building AI · AFFLATUS", "description": "Explore AI companies and frontier models including Haiku 5.5, compare capability and cost, and investigate subscription economics with original analysis."},
+      zh: {"title": "AI 观察站 — 谁在构建 AI 的世界 · AFFLATUS", "description": "探索全球 AI 公司与 Haiku 5.5 等前沿模型，按厂商比较能力与成本，并通过原创分析和交互实验理解订阅经济。"},
     },
   },
   {

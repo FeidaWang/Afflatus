@@ -3,14 +3,18 @@ export function selectCompanies(data, {query = '', layer = 'all', country = 'all
   const q = query.trim().normalize('NFKC').toLocaleLowerCase();
   return data.companies.filter(c => (layer === 'all' || c.layer === layer) && (country === 'all' || c.country === country) && (!q || [c.name.en,c.name.zh,c.role.en,c.role.zh,c.city.en,c.city.zh,c.country,c.url].join(' ').normalize('NFKC').toLocaleLowerCase().includes(q)));
 }
-export function rankModels(models, {metric = 'score', country = 'all', open = false} = {}) {
-  const rows = models.filter(m => (country === 'all' || m.country === country) && (!open || m.open === true));
+export function rankModels(models, {metric = 'score', country = 'all', maker = 'all', query = '', open = false} = {}) {
+  const q = query.trim().normalize('NFKC').toLocaleLowerCase();
+  const rows = models.filter(m => (country === 'all' || m.country === country) && (maker === 'all' || m.maker === maker) && (!open || m.open === true) && (!q || `${m.name} ${m.maker} ${m.configuration}`.normalize('NFKC').toLocaleLowerCase().includes(q)));
   rows.sort((a,b) => {
     if (a[metric] == null) return b[metric] == null ? a.name.localeCompare(b.name) : 1;
     if (b[metric] == null) return -1;
     return (metric === 'cost' || metric === 'latency' ? a[metric]-b[metric] : b[metric]-a[metric]) || a.name.localeCompare(b.name);
   });
   return rows.map((m,i) => ({...m,rank:m[metric]==null ? null : i && rows[i-1][metric]===m[metric] ? rows.findIndex(r=>r[metric]===m[metric])+1 : i+1}));
+}
+export function costFrontier(models) {
+  return models.filter(m => Number.isFinite(m.cost) && Number.isFinite(m.score) && !models.some(other => other.cost <= m.cost && other.score >= m.score && (other.cost < m.cost || other.score > m.score))).sort((a,b) => a.cost-b.cost || a.name.localeCompare(b.name));
 }
 export function metricValue(model, metric) {
   if (model[metric] == null) return '—';

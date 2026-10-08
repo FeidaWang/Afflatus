@@ -1686,7 +1686,7 @@
         "zh": "纽约"
       },
       "lat": 40.71,
-      "lon": -74.0,
+      "lon": -74,
       "layer": "data",
       "role": {
         "en": "Shared models, datasets and open ML tooling.",
@@ -1774,7 +1774,7 @@
         "zh": "纽约"
       },
       "lat": 40.71,
-      "lon": -74.0,
+      "lon": -74,
       "layer": "data",
       "role": {
         "en": "Vector retrieval for grounded AI applications.",
@@ -1818,7 +1818,7 @@
         "zh": "纽约"
       },
       "lat": 40.71,
-      "lon": -74.0,
+      "lon": -74,
       "layer": "media",
       "role": {
         "en": "Video generation and world models.",
@@ -1861,7 +1861,7 @@
         "en": "Freiburg",
         "zh": "弗赖堡"
       },
-      "lat": 48.0,
+      "lat": 48,
       "lon": 7.85,
       "layer": "media",
       "role": {

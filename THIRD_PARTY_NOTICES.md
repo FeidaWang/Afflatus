@@ -45,6 +45,11 @@ imply no affiliation or endorsement. Each file's source page, source URL,
 retrieval date and SHA-256 are recorded in
 `public/assets/sectors/logos/manifest.json`.
 
+The October 2026 observatory adds Xiaomi and StepFun official SVG marks.
+Their original URLs and SHA-256 digests are recorded in the `makers` registry
+of `public/data/sectors-observatory/2026-10-09.json`. These trademarks are used
+for identification; representative chart colors are editorial choices.
+
 ## Fonts on the sectors page (SIL Open Font License 1.1)
 
 `public/assets/fonts/newsreader-var.woff2`, `hanken-grotesk-var.woff2` and

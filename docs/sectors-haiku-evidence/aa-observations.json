@@ -1,0 +1,431 @@
+{
+  "observed": "2026-10-09",
+  "source": "https://artificialanalysis.ai/leaderboards/models",
+  "index": "v4.3.2",
+  "basis": "One frozen visible-table read; speed and latency vary; missing values preserved.",
+  "models": [
+    {
+      "id": "opus55",
+      "name": "Claude Opus 5.5",
+      "maker": "Anthropic",
+      "country": "US",
+      "score": 58,
+      "cost": 5.98,
+      "speed": 95,
+      "latency": 731.47,
+      "context": "1M",
+      "configuration": "max · fallback",
+      "open": false,
+      "note": {
+        "en": "Overall capability leader; high deliberation latency.",
+        "zh": "综合能力领先；深度推理的等待时间较长。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/claude-opus-5-5"
+    },
+    {
+      "id": "sonnet55",
+      "name": "Claude Sonnet 5.5",
+      "maker": "Anthropic",
+      "country": "US",
+      "score": 56,
+      "cost": 5.46,
+      "speed": 129,
+      "latency": 460.74,
+      "context": "1M",
+      "configuration": "max · fallback",
+      "open": false,
+      "note": {
+        "en": "Strong coding capability. Task cost now reflects the cache-read price cut; max still adds a long wait.",
+        "zh": "编程能力强。任务成本已反映缓存读取降价；max 档仍伴随较长等待。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/claude-sonnet-5-5"
+    },
+    {
+      "id": "fable51",
+      "name": "Claude Fable 5.1",
+      "maker": "Anthropic",
+      "country": "US",
+      "score": 53,
+      "cost": 7.63,
+      "speed": 66,
+      "latency": 293.68,
+      "context": "1M",
+      "configuration": "max · fallback",
+      "open": false,
+      "note": {
+        "en": "A separate frontier family; compare access and task fit.",
+        "zh": "独立的前沿模型系列；需结合可用性与任务适配比较。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/claude-fable-5-1"
+    },
+    {
+      "id": "astra",
+      "name": "GPT-6 Astra",
+      "maker": "OpenAI",
+      "country": "US",
+      "score": 53,
+      "cost": 3.26,
+      "speed": 48,
+      "latency": 414.3,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "High-end reasoning in OpenAI’s frontier stack.",
+        "zh": "OpenAI 前沿体系中的高阶推理模型。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/gpt-6-astra"
+    },
+    {
+      "id": "argon",
+      "name": "Gemini 4 Argon",
+      "maker": "Google",
+      "country": "US",
+      "score": 53,
+      "cost": 1.99,
+      "speed": null,
+      "latency": null,
+      "context": "1M",
+      "configuration": "high",
+      "open": false,
+      "note": {
+        "en": "Frontier capability; speed is not reported in this snapshot.",
+        "zh": "前沿能力；本快照尚未报告速度。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/gemini-4-argon"
+    },
+    {
+      "id": "sol61",
+      "name": "GPT-6.1 Sol",
+      "maker": "OpenAI",
+      "country": "US",
+      "score": 52,
+      "cost": 0.72,
+      "speed": 55,
+      "latency": 329.91,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "A useful capability–cost compromise for agent work.",
+        "zh": "智能体任务中值得比较的能力与成本组合。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/gpt-6-1-sol"
+    },
+    {
+      "id": "muse",
+      "name": "Muse Spark 1.3",
+      "maker": "Meta",
+      "country": "US",
+      "score": 48,
+      "cost": 1.6,
+      "speed": 209,
+      "latency": 54.81,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "A competitive alternative with faster output.",
+        "zh": "具有竞争力的替代选择，输出速度较快。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/muse-spark-1-3"
+    },
+    {
+      "id": "grok",
+      "name": "Grok 4.7",
+      "maker": "SpaceXAI",
+      "country": "US",
+      "score": 46,
+      "cost": 3.74,
+      "speed": 73,
+      "latency": 73.93,
+      "context": "500k",
+      "configuration": "xhigh",
+      "open": false,
+      "note": {
+        "en": "Relevant to long-running development workflows.",
+        "zh": "值得关注其长时开发工作流表现。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/grok-4-7"
+    },
+    {
+      "id": "mimo",
+      "name": "MiMo-V2.6-Pro",
+      "maker": "Xiaomi",
+      "country": "CN",
+      "score": 46,
+      "cost": 0.13,
+      "speed": 38,
+      "latency": 4.92,
+      "context": "1M",
+      "configuration": "standard",
+      "open": true,
+      "note": {
+        "en": "Best open-weights score in the selected snapshot.",
+        "zh": "本精选快照中开放权重模型的最高分。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/mimo-v2-6-pro"
+    },
+    {
+      "id": "qwenmax",
+      "name": "Qwen3.8 Max 0902",
+      "maker": "Alibaba",
+      "country": "CN",
+      "score": 45,
+      "cost": 5.41,
+      "speed": 37,
+      "latency": 2.74,
+      "context": "984k",
+      "configuration": "0902",
+      "open": false,
+      "note": {
+        "en": "Closed service: do not label all Qwen models open.",
+        "zh": "闭源服务：不能把所有 Qwen 模型都标为开放权重。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/qwen3-8-max"
+    },
+    {
+      "id": "glm",
+      "name": "GLM-5.3",
+      "maker": "Z AI",
+      "country": "CN",
+      "score": 45,
+      "cost": 2.01,
+      "speed": 79,
+      "latency": 2.74,
+      "context": "1M",
+      "configuration": "max",
+      "open": true,
+      "note": {
+        "en": "A strong open-weights frontier candidate.",
+        "zh": "值得关注的开放权重前沿候选。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/glm-5-3"
+    },
+    {
+      "id": "step",
+      "name": "Step 5 Preview",
+      "maker": "StepFun",
+      "country": "CN",
+      "score": 44,
+      "cost": 0.72,
+      "speed": 89,
+      "latency": 2.85,
+      "context": "1M",
+      "configuration": "preview",
+      "open": null,
+      "note": {
+        "en": "Competitive preview; deployment terms need checking.",
+        "zh": "具有竞争力的预览版；部署条款仍需核对。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/step-5"
+    },
+    {
+      "id": "kimi",
+      "name": "Kimi K3",
+      "maker": "Moonshot",
+      "country": "CN",
+      "score": 44,
+      "cost": 2,
+      "speed": 42,
+      "latency": 3.54,
+      "context": "1.05M",
+      "configuration": "max",
+      "open": true,
+      "note": {
+        "en": "Long-context, open-weights alternative.",
+        "zh": "长上下文的开放权重替代选择。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/kimi-k3"
+    },
+    {
+      "id": "glmflash",
+      "name": "GLM-5.3-Flash",
+      "maker": "Z AI",
+      "country": "CN",
+      "score": 42,
+      "cost": 0.25,
+      "speed": 51,
+      "latency": 3.17,
+      "context": "1M",
+      "configuration": "standard",
+      "open": true,
+      "note": {
+        "en": "Efficient companion to the larger GLM.",
+        "zh": "大型 GLM 之外的高效补充。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/glm-5-3-flash"
+    },
+    {
+      "id": "geminiflash",
+      "name": "Gemini 3.8 Flash",
+      "maker": "Google",
+      "country": "US",
+      "score": 41,
+      "cost": 1.24,
+      "speed": 125,
+      "latency": 24.33,
+      "context": "1M",
+      "configuration": "high",
+      "open": false,
+      "note": {
+        "en": "Fast output for interactive workloads.",
+        "zh": "适合交互式任务的快速输出。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/gemini-3-8-flash"
+    },
+    {
+      "id": "qwenflash",
+      "name": "Qwen3.8-Flash-Next",
+      "maker": "Alibaba",
+      "country": "CN",
+      "score": 40,
+      "cost": 0.37,
+      "speed": 56,
+      "latency": 2.47,
+      "context": "256k",
+      "configuration": "standard",
+      "open": true,
+      "note": {
+        "en": "An open-weights efficiency option.",
+        "zh": "开放权重的效率型选择。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/qwen3-8-flash-next"
+    },
+    {
+      "id": "deepseekflash",
+      "name": "DeepSeek V4.1 Flash",
+      "maker": "DeepSeek",
+      "country": "CN",
+      "score": 39,
+      "cost": 0.27,
+      "speed": 216,
+      "latency": 1.12,
+      "context": "1M",
+      "configuration": "max",
+      "open": true,
+      "note": {
+        "en": "Low first-chunk latency and fast generation.",
+        "zh": "首段延迟低、生成速度快。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/deepseek-v4-1-flash"
+    },
+    {
+      "id": "luna",
+      "name": "GPT-6 Luna",
+      "maker": "OpenAI",
+      "country": "US",
+      "score": 38,
+      "cost": 0.07,
+      "speed": 129,
+      "latency": 111.31,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "An economical option retained for its cost advantage.",
+        "zh": "因任务成本优势而保留的经济型选择。"
+      },
+      "source": "aa",
+      "observed": "2026-10-09",
+      "url": "https://artificialanalysis.ai/models/gpt-6-luna"
+    },
+    {
+      "id": "haiku55",
+      "name": "Claude Haiku 5.5",
+      "maker": "Anthropic",
+      "country": "US",
+      "score": 43,
+      "cost": 0.21,
+      "speed": 242,
+      "latency": 432.21,
+      "context": "1M",
+      "configuration": "max",
+      "open": false,
+      "note": {
+        "en": "A new efficiency option. Max raises capability and reasoning time; use the effort comparison below to choose a task fit.",
+        "zh": "新的效率型选择。max 提高能力，也增加推理等待；结合下方档位比较选择任务适配。"
+      },
+      "source": "aa",
+      "url": "https://artificialanalysis.ai/models/claude-haiku-5-5",
+      "observed": "2026-10-09",
+      "released": "2026-10-07"
+    }
+  ],
+  "haikuEfforts": [
+    {
+      "id": "low",
+      "score": 29,
+      "cost": 0.02,
+      "speed": 178,
+      "latency": 9.93,
+      "url": "https://artificialanalysis.ai/models/claude-haiku-5-5-low"
+    },
+    {
+      "id": "medium",
+      "score": 34,
+      "cost": 0.05,
+      "speed": 137,
+      "latency": 13.4,
+      "url": "https://artificialanalysis.ai/models/claude-haiku-5-5-medium"
+    },
+    {
+      "id": "high",
+      "score": 38,
+      "cost": 0.08,
+      "speed": 160,
+      "latency": 28.01,
+      "url": "https://artificialanalysis.ai/models/claude-haiku-5-5-high"
+    },
+    {
+      "id": "xhigh",
+      "score": 41,
+      "cost": 0.12,
+      "speed": 187,
+      "latency": 86.97,
+      "url": "https://artificialanalysis.ai/models/claude-haiku-5-5-xhigh"
+    },
+    {
+      "id": "max",
+      "score": 43,
+      "cost": 0.21,
+      "speed": 242,
+      "latency": 432.21,
+      "url": "https://artificialanalysis.ai/models/claude-haiku-5-5"
+    }
+  ]
+}

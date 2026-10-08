@@ -4,10 +4,26 @@ export function validateObservatory(data){
  const pair=(v,label)=>problem(v&&typeof v.en==='string'&&v.en.trim()&&typeof v.zh==='string'&&v.zh.trim(),`${label}: needs complete English and Chinese`);
  const date=(v)=>typeof v==='string'&&/^\d{4}-\d{2}(?:-\d{2})?$/.test(v)&&Number.isFinite(Date.parse(v));
  const url=(v)=>{try{return new URL(v).protocol==='https:';}catch{return false;}};
- problem(data?.schema_version===1,'schema_version: unsupported');problem(date(data?.snapshot),'snapshot: invalid date');problem(data?.updated===data?.snapshot,'updated: must match snapshot');pair(data?.selection,'selection');
+ problem([1,2].includes(data?.schema_version),'schema_version: unsupported');problem(date(data?.snapshot),'snapshot: invalid date');problem(data?.updated===data?.snapshot,'updated: must match snapshot');pair(data?.selection,'selection');
  for(const key of ['layers','companies','models','sources','events','checkpoints','comparison']){const list=Array.isArray(data?.[key])?data[key]:[];problem(list.length>0,`${key}: required non-empty list`);const ids=list.map(x=>x?.id);problem(ids.every(id=>typeof id==='string'&&id.length>0),`${key}: missing ids`);problem(new Set(ids).size===ids.length,`${key}: duplicate ids`);}
  if(errors.length)return {ok:false,errors};
  const layers=new Set(data.layers.map(l=>l.id)),sources=new Set(data.sources.map(s=>s.id));
+ if(data.schema_version===2){
+ problem(Boolean(data.makers)&&Object.keys(data.makers).length>0,'makers: identity registry required');
+ for(const [name,m] of Object.entries(data.makers||{})){
+  problem(/^#[0-9a-f]{6}$/i.test(m.color),`maker ${name}: invalid representative color`);
+  problem(/^\/assets\/sectors\/logos\//.test(m.logo)&&url(m.sourcePage)&&url(m.sourceAsset),`maker ${name}: missing official logo provenance`);
+  problem(/^[0-9a-f]{64}$/.test(m.sha256),`maker ${name}: missing asset digest`);
+ }
+ for(const m of data.models){problem(Boolean(data.makers?.[m.maker]),`model ${m.id}: missing maker identity`);problem(url(m.url)&&date(m.observed)&&m.observed<=data.snapshot,`model ${m.id}: missing observation provenance`);}
+ }
+ if(data.haiku){
+  problem(sources.has(data.haiku.source),'haiku: missing official source');
+  problem(data.haiku.efforts?.map(v=>v.id).join(',')==='low,medium,high,xhigh,max','haiku: incomplete effort ladder');
+  for(const row of data.haiku.efforts||[])for(const key of ['score','cost','speed','latency'])problem(Number.isFinite(row[key])&&row[key]>=0,`haiku ${row.id}: invalid ${key}`);
+  problem(data.haiku.pricing?.threshold===100000,'haiku: missing prompt pricing threshold');
+  for(const tier of ['short','long','previous','sonnet'])for(const key of ['input','read','write','output'])problem(Number.isFinite(data.haiku.pricing?.[tier]?.[key])&&data.haiku.pricing[tier][key]>=0,`haiku ${tier}: invalid ${key} rate`);
+ }
  for(const l of data.layers){pair(l.name,`layer ${l.id}`);pair(l.description,`layer ${l.id} description`);problem(data.companies.some(c=>c.layer===l.id),`layer ${l.id}: empty`);}
  for(const c of data.companies){pair(c.name,`company ${c.id}`);pair(c.role,`company ${c.id} role`);pair(c.city,`company ${c.id} city`);problem(layers.has(c.layer),`company ${c.id}: unknown layer`);pair(data.regions?.[c.country],`company ${c.id} country`);problem(Number.isFinite(c.lat)&&Math.abs(c.lat)<=90&&Number.isFinite(c.lon)&&Math.abs(c.lon)<=180,`company ${c.id}: invalid coordinates`);problem(url(c.url),`company ${c.id}: invalid official URL`);problem(date(c.checked),`company ${c.id}: missing check date`);problem(!c.logo||/^\/assets\/sectors\/logos\//.test(c.logo),`company ${c.id}: unsupported logo asset`);}
  for(const m of data.models){problem(typeof m.name==='string'&&m.name.length>0&&typeof m.configuration==='string'&&m.configuration.length>0,`model ${m.id}: name/configuration required`);pair(m.note,`model ${m.id} note`);problem(Number.isFinite(m.score)&&m.score>=0&&m.score<=100,`model ${m.id}: invalid score`);problem(Number.isFinite(m.cost)&&m.cost>=0,`model ${m.id}: invalid task cost`);for(const k of ['speed','latency'])problem(m[k]===null||Number.isFinite(m[k])&&m[k]>=0,`model ${m.id}: invalid ${k}`);problem([true,false,null].includes(m.open),`model ${m.id}: openness must remain explicit or unknown`);problem(sources.has(m.source),`model ${m.id}: missing source`);problem(Boolean(data.regions?.[m.country]),`model ${m.id}: unknown origin`);}
