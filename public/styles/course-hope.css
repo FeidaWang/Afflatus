@@ -39,7 +39,7 @@
 .course-page .footer{min-height:120px;box-sizing:border-box;background:#191a17;color:#faf9f5;display:grid;grid-template-columns:1fr auto;align-items:end;gap:20px;padding:20px 4vw;font:11px "Anthropic Sans", Arial,sans-serif;letter-spacing:.11em}
 .course-page .footer a{color:#faf9f5;text-decoration:none}
 @media(max-width:700px){
-  .course-page .hope-hero{padding:72px 22px 76px}
+  .course-page .hope-hero{padding:24px 22px 148px}
   .course-page .hope-hero-inner{transform:translateY(-9px)}
   .course-page .hope-hero h1{font-size:var(--af-type-hero);white-space:normal;margin-bottom:29px;line-height:var(--af-leading-heading);letter-spacing:var(--af-tracking-heading)}
   .course-page .hope-intro{font-size:14px;line-height:1.55}

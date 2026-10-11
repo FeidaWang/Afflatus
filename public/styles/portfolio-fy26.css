@@ -50,7 +50,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 .pf-hero-stats{display:flex;justify-content:center;gap:clamp(16px,4vw,56px);margin:36px 0 0;padding:0}
 .pf-hero-stats div{display:flex;flex-direction:column-reverse;gap:2px}
 .pf-hero-stats dt{font-size:12px;color:var(--pf-muted)}
-.pf-hero-stats dd{margin:0;font:400 30px/1.1 var(--pf-serif);font-variant-numeric:tabular-nums}
+.pf-hero-stats dd{margin:0;white-space:nowrap;font:400 30px/1.1 var(--pf-serif);font-variant-numeric:tabular-nums}
 .pf-scroll-cue{display:inline-block;margin-top:44px;padding:9px 18px;border:1px solid var(--pf-line);border-radius:999px;background:var(--pf-paper);font-size:13px;text-decoration:none;transition:background .2s,transform .2s}
 .pf-scroll-cue:hover{background:#fff;transform:translateY(2px)}
 .pf-card{max-width:400px;padding:22px 24px 24px;border:1px solid #dcd8cc;border-radius:10px;background:rgba(250,249,245,.94);box-shadow:0 10px 40px rgba(20,20,19,.07);backdrop-filter:blur(2px);opacity:.25;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}

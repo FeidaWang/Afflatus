@@ -38,7 +38,7 @@ export function App() {
         <p className="eyebrow">{zh ? '研究笔记' : 'A FIELD NOTE'}</p>
         <div className="essay-grid"><h2 id="essay-title">{zh ? '每一个判断，都需要被证伪的可能。' : 'Every thesis needs a way to be wrong.'}</h2><div>
           <p>{zh ? '区分测量、披露、计算与假设，让缺失的证据也清晰可见。' : 'Keep measurements, disclosures, calculations and hypotheses separate, then make the missing evidence visible.'}</p>
-          <SiteLink href="/sectors.html#evidence" language={language}>{zh ? '阅读研究' : 'Read the research'}</SiteLink>
+          <SiteLink href="/sectors.html#sources" language={language}>{zh ? '阅读研究' : 'Read the research'}</SiteLink>
         </div></div>
       </section>
       <section className="destinations section-shell" id="destinations" aria-labelledby="destinations-title">
