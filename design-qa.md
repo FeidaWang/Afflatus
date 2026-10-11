@@ -1,47 +1,57 @@
-# Global header menus — design QA
+# 移动阅读与每日观星设计验收
 
 final result: passed
 
-Source: user screenshot, preserved at `docs/global-menu-evidence/reference.png` (566 × 816 pixels, cropped reference; CSS viewport/density unknown).
-Implementation: `menu-en-1280.png` (1280 × 800 CSS/pixels, density 1), `menu-more-980.png`, `menu-zh-390.png` (390 × 844), and `menu-zh-portfolio-1280.png` in the same directory.
+范围：用户优先要求的手机阅读、继续阅读和每日观星首轮实现。通过表示这些已实现流程与视觉方向可交付本地预览，不表示长期提案、全部设备或整站测试已完成。上一份导航验收已保存到 `docs/lab-redesign-2026-10-11/previous-design-qa.md`。
 
-The reference and desktop implementation were emitted together for visual comparison. The reference is a cropped, enlarged menu; comparisons assess the requested panel geometry, positioning and silhouette, not exact source text size or content-dependent height. No image resampling was used.
+## 视觉依据
 
-## Fidelity surfaces
+来源为 `docs/lab-redesign-2026-10-11/concept-1.png`（1728×910）、`concept-3.png`（1322×1190）、`concept-2.png`（1310×1201），对应正文、继续阅读和观星。用户明确选择此组合并融合夜间模式。
 
-- Typography: navigation retains the existing local Anthropic Sans. Dropdown destinations now use a 21px serif stack with Chinese Songti fallback, following the reference's contrast between sans-serif triggers and serif destinations. Links wrap within the panel; a 44px minimum target remains.
-- Layout: desktop panel is 320px wide with 24px internal padding, centered on the trigger, 12px below the header. The last group aligns its right edge with the trigger to stay inside the viewport. An invisible pointer bridge covers the gap. Compact navigation uses 16px viewport insets, 20px padding and an inline nested panel.
-- Colors: dropdowns use #faf9f5 paper against the #e8e6dc header; subtle warm edge and restrained shadow follow the supplied reference. Mobile nested groups use #f0eee7.
-- Assets: existing caret and menu assets are unchanged; the supplied reference contains no new raster assets to produce.
-- Copy: destination names and bilingual labels are preserved. No new categories or links were introduced.
+生成稿包含两屏。截取对应内容区域后按宽 390px 等比缩放，未拉伸高度。生成稿的屏幕比例与标称 390×844 不完全一致，对照保留空白；评估版式、字体、色彩、密度与交互，不宣称逐像素一致。实际截图均为 390×844 CSS 像素、390×844 图片像素，密度 1。
 
-## Findings
+以下合成图将参考与实现放在同一图中，已打开检查：
 
-No remaining actionable P0/P1/P2 findings. The reference's long, grouped menu has more destinations than Afflatus's three-link Markets menu and single-link More menu, so panel heights intentionally follow their content. Mobile uses an inset expandable navigation card to fit existing responsive behavior.
+- `docs/lab-redesign-2026-10-11/implementation/reader-comparison.png`
+- `docs/lab-redesign-2026-10-11/implementation/library-comparison.png`
+- `docs/lab-redesign-2026-10-11/implementation/observatory-comparison.png`
 
-Full-view evidence shows the floating panel relative to the header and page. Focused panel details are readable in the desktop screenshot and the source crop. Mobile screenshot verifies panel insets, nesting, rounded edges and text wrapping.
+正文比较同一本书第二章，正式原文取代概念图的示例文字。参考中注释打开，正文主对照为关闭态；弹层独立实测见 `11-reader-annotation-390.jpg`，不将不同状态当作像素误差。观星比较同一天的日常入口，实际短句由原创内容轮换产生，不固定使用概念稿的示例句。
 
-## Verification
+## 必检视觉面
 
-- Production build passed, including shared-header, CSS, localization, site and emitted SEO gates.
-- In-app browser: English sectors Markets menu at 1280px; English arena More menu at 980px; Chinese sectors navigation and nested Markets at 390px and 320px; Chinese portfolio Markets at 1280px.
-- At 980px the last menu's right edge is 814.4px within the viewport. At 320px the compact menu's right edge is 304px and bottom is 527px in a 568px-high viewport, with no document overflow.
-- Escape closes a nested group, then the compact navigation and returns the existing controller's focus behavior.
-- Fresh final browser console error logs: empty.
-- No controller logic or browser installation changed. No new tests added for this CSS-only presentation edit.
+- **字体**：单独引入本地 400 字重 Noto Serif SC 用于长文与星象标题；沿用 Anthropic Sans 作为站点导航与控制字体。修正误用旧 600 字重子集导致的过重正文。中文默认 19px、行高 1.85，可调整。
+- **版式**：正文取消木色外壳与拟真书页阴影；保留 24px 手机边距。继续阅读保留大标题、风景、书名、进度和一个主按钮。观星保留七天日期、月亮图、短句、主行动与三条深入入口。底部工具和导航可单手访问。
+- **色彩**：纸白 #f4f0e7 / #272922；夜间 #202320 / #e4e3db。正文对比度 12.94:1 / 12.33:1；纸白次级文字 4.77:1，观星夜间次级文字 8.29:1。该计算不是整站无障碍认证。
+- **素材**：独立生成并压缩为 WebP 的书架与月亮图，没有将整张设计稿作页面。书架去掉人物与招牌，作为氛围插画；月亮不表示实时月相。图标来自 Phosphor，MIT 许可保留。
+- **文案与状态**：小说与章节数为实际内容；书签与进度来自本机。签笺、短句与五领域明确为原创反思；没有伪造订阅、账户或生成成功状态。
 
-Implementation applies through `public/styles/shared-header.css`, already loaded by all public templates. Existing no-script geometry and reduced-motion behavior remain supported in the stylesheet.
+390px 全宽对照可读清字体和间距。音乐与注释另有完整弹层截图检查小控件，未仅靠缩略整页图判定。
 
-## Checklist
+## 发现与修复历史
 
-- Completed shared desktop and compact geometry, contour, spacing and typography.
-- Completed representative bilingual route and breakpoint verification.
-- Kept the local preview; no deployment, commit or push.
+| 等级 | 问题 | 修复与复核 |
+| --- | --- | --- |
+| P1 | 旧木色外壳和拟真书边挤占正文 | 平面纸色阅读器和统一夜间色；`08-reader-paper-final-390.jpg`、`05-reader-night-390.jpg` |
+| P1 | 长段落整段移页和连续重排导致稀疏页、位置倒退 | 填满剩余页高；独立保留正文锚点，不重设为新页首。重排单测、字号调整与刷新恢复实测通过 |
+| P1 | 工具拥挤、曲目状态隐藏，观星新旧区域混杂 | 底栏与原生弹层、完整音乐控制、四个可导航入口；每日签和手记完成保存恢复 |
+| P2 | 紧凑字标被透明度规则隐藏，头部重复占位 | 局部恢复完整字标并修正页面头部布局，最终截图无重叠 |
+| P2 | 正文实际使用 600 字重 | 新增 400 字重子集，不改其他页面的字体，最终日夜截图已复核 |
+| P2 | 继续阅读首屏过松，观星把“时间”拆行 | 收紧顶部与书签区域，采用有意义的分行，观星三条深入入口进入首屏 |
+| P2 | 注释原文过长 | 精简为当前页摘录并显示章节依据；修复后弹层重新截图 |
 
-## Follow-up: chapter navigation gap
+上述首轮范围没有未处理的 P0/P1/P2 视觉问题。
 
-The shared header now exposes its actual breakpoint height through `--af-header-height`; the eight-chapter sticky navigation consumes that variable at all widths. Browser measurements at 1280, 980, 979, 674, 620 and 390px show `chapterTop - headerBottom = 0`. Build passed. Evidence: `docs/global-menu-evidence/chapter-gap-fixed-390.png`.
+## 流程与检查
 
-## Follow-up: menu typography
+实际操作通过：章节切换；改字号仍保留原段落；刷新恢复；分页与连续阅读切换；目录 Escape 关闭并归还焦点；注释关闭归还焦点；自动翻页推进并可暂停；音乐实际播放到 0:07 后暂停、睡眠定时选择；每日签刷新保持；手记刷新恢复；出生表单生成三柱盘。最终阅读预览控制台 error 列表为空。
 
-The latest revision supersedes the serif dropdown typography above. Dropdown items now inherit the same Anthropic Sans stack as the navigation trigger: 15px on desktop and 16px in compact navigation. Computed styles for the trigger, link and label were identical at 1280px and 390px. Existing card geometry is unchanged. Production build passed.
+两页主视口为 390×844。阅读器另验证 320×568，文档宽 320、底栏底边 568，无横向溢出，见 `07-reader-320.jpg`。观星 320px 设置尝试实际仍返回 390px，未计入通过；截图按真实尺寸命名为 `12-observatory-viewport-recheck-390.jpg`。其他设备与桌面完整验收没有在本轮宣称通过。
+
+类型检查和完整生产构建通过；核心 8 文件、44 测试通过。全站 1936 通过、91 失败；原始提交复测有 93 失败，按名称没有新增失败，见 `implementation/test-baseline.json`。多浏览器 CLI 规格已更新但未执行，浏览器操作使用内置浏览器，未改变用户安装的浏览器。
+
+## 有意保留的差异和后续验证
+
+沿用网站共享头部及语言入口，替代独立 App 图中的顶栏。正式小说、实际曲目与动态短句取代示例内容。音乐进入完整面板，正文保持安静；首批词条仅作当前页原文回看。全量 AI 注释、设定审核插图、邮件订阅和深度算法校勘仍属后续阶段，见 `docs/lab-redesign-2026-10-11/IMPLEMENTATION.md`。
+
+P3 后续：真实手机安全区、软键盘、锁屏音频、系统字号、屏幕阅读器、更多设备与桌面检查；进一步丰富短句和词条。没有据截图声称完整 WCAG 合规或真实性能指标。

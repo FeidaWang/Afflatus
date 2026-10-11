@@ -698,6 +698,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const f = dailyFortune(state.me, todayStr());
     state.mineChart = f.chart; // kept for the share-card button
     $('mineSec').hidden = false;
+    document.dispatchEvent(new CustomEvent('afflatus-chart-updated'));
 
     $('todayGz').textContent = T('Today: ', '今日 ') + pillarName(f.todayPillar) + T(' day', '日');
     const [ty, tm, td] = todayStr().split('-').map(Number);
@@ -1680,8 +1681,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   const clearBtn = $('clearDataBtn');
   if (clearBtn) clearBtn.addEventListener('click', () => {
     const ok = window.confirm(T(
-      'Delete this page’s chart, streak, quiz results and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
-      '删除此浏览器中本页保存的命盘、连续签到、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
+      'Delete this page’s chart, streak, daily draws, journal, quiz results and saved contacts from this browser? Other site preferences and downloaded files are kept. This cannot be undone.',
+      '删除此浏览器中本页保存的命盘、连续签到、每日签、手记、测试结果和关系册？其他页面偏好与已下载文件将保留。此操作无法撤销。'
     ));
     if (!ok) return;
     try { clearHoroscopeStorage(localStorage); } catch {
@@ -1744,7 +1745,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
     const saved = saveProfile(b);
     $('bSaveStatus').textContent = saved ? T('Saved in this browser.', '已保存在此浏览器。') : T('Calculated for this visit only; browser storage is unavailable.', '仅供本次使用；浏览器存储不可用，未保存。');
     resultAssumptions('b');
-    try { await renderMine(); await renderSyn(); }
+    try { await renderMine(); await renderSyn(); document.dispatchEvent(new CustomEvent('afflatus-chart-created')); }
     catch { formError('b', T('The chart could not load. Reload the page and try again; your details stay local.', '星盘未能加载，请刷新页面后重试；资料仍仅保留在本机。')); }
     finally { button.disabled = false; $('birthForm').removeAttribute('aria-busy'); }
   });

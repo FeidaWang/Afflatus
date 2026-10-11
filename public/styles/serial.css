@@ -1,325 +1,172 @@
-:root{
-  /* retro-futurism chrome: gunmetal chassis + copper/teal duotone */
-  --chassis:#15120f;--chassis2:#1c1712;--panel:#211b15;--panel2:#281f17;
-  --copper:#c9834a;--copper-b:#e8ad6f;--teal:#4fd6c4;--teal-d:#2b7f78;
-  --chrome:#ece2cf;--chrome-dim:#a89a83;--line:rgba(201,131,74,.32);
-  --disp:"Anthropic Sans", 'JetBrains Mono',ui-sans-serif,system-ui;--mono:"Anthropic Sans", 'JetBrains Mono',ui-monospace,monospace;
-  --serif:"Anthropic Sans", 'Noto Serif SC',"Songti SC","STSong",serif;
-  --safe-t:var(--safe-top,env(safe-area-inset-top,0px));--safe-b:var(--safe-bottom,env(safe-area-inset-bottom,0px));
-  --safe-l:var(--safe-left,env(safe-area-inset-left,0px));--safe-r:var(--safe-right,env(safe-area-inset-right,0px));
-  --read-fs:18px;--toolbar-h:58px;
-}
-/* ---- reading-mode palettes (low-blue, long-read friendly) ----
-   U15e: green white point lowered (~10-11% luminance cut) to ease
-   OLED/LED night-reading glare; --read-ink/--read-ink-dim contrast against
-   the new backgrounds verified >=4.6:1 (WCAG AA floor is 4.5:1). Night
-   theme is already dark and untouched.
-   U-toolbar-redo: retired the third ("皇木" imperial-wood) reading theme —
-   it duplicated the page's own dark chrome (see body{} below) rather than
-   giving readers a distinct option. Only two eye-care choices remain: this
-   base rule *is* day/green now (no separate [data-theme="green"] override
-   needed since it's the default), with night as the sole variant. */
-.reader{
-  --read-bg:#c8dfcb;--read-bg2:#bad5be;--read-ink:#213325;--read-ink-dim:#4b6350;--read-accent:#2f6b46;--read-line:rgba(33,51,37,.14);--read-tex:none;
-}
-.reader[data-theme="night"]{--read-bg:#211a12;--read-bg2:#291f15;--read-ink:#e8c98a;--read-ink-dim:#b8945f;--read-accent:#e8c98a;--read-line:rgba(232,201,138,.14);--read-tex:none;}
-
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+@font-face{font-family:'Reader Serif';src:url('/assets/fonts/labs-serif-regular.woff2') format('woff2');font-display:swap}
+:root{--read-fs:19px;--read-lh:1.85;--toolbar-h:74px;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);--serif:'Reader Serif','Songti SC',STSong,Georgia,serif;--mono:'Anthropic Sans',system-ui,sans-serif}
+*{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
-/* U-toolbar-redo: the "皇木"(imperial wood) zitan→nanmu gradient used to
-   live as a selectable *reading* theme (.reader[data-theme="imperial"]);
-   it duplicated the site's own dark chrome and read as a no-op background
-   swap. Retired as a reading option and re-homed here as the actual page
-   background instead — moved, not deleted. */
-/* Keep both document roots at their default visible overflow. Setting
-   overflow-x on either html or body can establish a non-viewport scrolling
-   box in WebKit, causing the site header and reader toolbar to scroll away. */
-body{background:linear-gradient(160deg,#2b1a16 0%,#231411 100%);color:var(--chrome);font-family:"Anthropic Sans", var(--mono);font-size:14px;line-height:1.6}
+body{--paper:#f4f0e7;--ink:#272922;--muted:#696b60;--rule:#d9d6cc;--accent:#606a53;--surface:#e9e7dd;background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:16px;line-height:1.65}
+body[data-reader-theme="night"]{--paper:#202320;--ink:#e4e3db;--muted:#b4b7a9;--rule:#43483f;--accent:#bac4aa;--surface:#2d312b;color-scheme:dark}
+body[data-reader-theme="green"]{--paper:#e5e9dc;--ink:#28342a;--muted:#596353;--rule:#c9d1c0;--surface:#dbe0cf;--accent:#566445}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
 a{color:inherit;text-decoration:none}
-button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
-:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
-
-/* ---- retro CRT backdrop ---- */
-.crt-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.crt-bg canvas{width:100%;height:100%;display:block;opacity:.55}
-.crt-bg .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);opacity:.4}
-.crt-bg .vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
-
-.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:calc(14px + var(--safe-t)) clamp(12px,4vw,26px) calc(120px + var(--safe-b))}
-
-/* ---- top bar ---- */
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid var(--line);background:linear-gradient(90deg,rgba(201,131,74,.10),transparent 60%),var(--panel);padding:11px 14px;border-radius:2px}
-/* The serial landing chrome is contextual, not persistent. Let it leave the
-   viewport so the reader controls own the full sticky area while reading. */
-.novels-page .site-header--follow{position:relative;inset-block-start:auto}
-.seal{display:flex;align-items:center;gap:10px;min-width:0}
-.seal svg{width:34px;height:34px;flex:0 0 34px}
-.seal b{font:400 15px/1.2 var(--disp);letter-spacing:.04em;color:var(--chrome);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.seal small{font:400 9.5px/1.5 var(--mono);letter-spacing:.12em;color:var(--copper-b);display:block;margin-top:3px;text-transform:uppercase}
-.nav{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.nav a{position:relative;font:600 10.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--chrome-dim);border:1px solid rgba(236,226,207,.14);padding:8px 9px;border-radius:2px}
-.nav a::before{content:'';position:absolute;top:-8px;bottom:-8px;left:-1px;right:-1px}
-.nav a:hover{border-color:var(--teal);color:var(--teal)}
-.nav a.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
-/* ---- bookshelf ---- */
-.shelf{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
-.book-skeleton{display:block;min-height:112px;border:1px solid var(--line);background:linear-gradient(105deg,var(--panel) 35%,var(--panel2) 48%,var(--panel) 61%);background-size:220% 100%;animation:shelfScan 1.35s linear infinite}
-@keyframes shelfScan{to{background-position:-220% 0}}
-.book{text-align:left;border:1px solid var(--line);background:linear-gradient(110deg,#17110d 0 7px,var(--panel2) 8px 12px,var(--panel) 13px 100%);padding:16px 16px 14px 22px;border-radius:2px 7px 7px 2px;cursor:pointer;position:relative;overflow:hidden;min-height:126px;box-shadow:5px 7px 0 rgba(0,0,0,.28),inset -8px 0 14px rgba(0,0,0,.18);transform-origin:left center;transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}
-.book::before{content:"";position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--copper),var(--teal));opacity:.62;box-shadow:2px 0 5px rgba(0,0,0,.45);transition:opacity .2s ease}
-.book::after{content:"";position:absolute;inset:5px;border:1px solid rgba(232,173,111,.13);border-radius:1px 5px 5px 1px;pointer-events:none}
-.book:hover{border-color:var(--copper-b);transform:perspective(700px) rotateY(-5deg) translateY(-3px);box-shadow:9px 12px 0 rgba(0,0,0,.26),inset -8px 0 14px rgba(0,0,0,.18)}
-.book.active{border-color:var(--teal);background:var(--panel2)}
-.book.active::before{opacity:1}
-.book .bk-title{display:block;font:700 15px/1.3 var(--serif);color:var(--chrome);margin:0 0 6px;font-weight:var(--af-weight-medium)}
-.book .bk-sub{font:400 9.5px/1.5 var(--mono);letter-spacing:.08em;color:var(--teal);text-transform:uppercase;margin:0 0 8px}
-.book .bk-meta{font:400 10.5px/1.6 var(--mono);color:var(--chrome-dim)}
-.book .bk-badge{position:absolute;top:10px;right:10px;font:400 9px/1 var(--mono);color:#0d211f;background:var(--teal);padding:3px 7px;border-radius:10px;display:none}
-.book.active .bk-badge{display:inline-block}
-.dossier-bridge{display:none}
-
-/* ---- hero ---- */
-.hero{margin-top:14px;border:1px solid var(--line);background:linear-gradient(160deg,var(--panel2),var(--panel));position:relative;overflow:hidden;border-radius:2px}
-.hero .bar{height:5px;background:linear-gradient(90deg,var(--copper),var(--teal))}
-.hero .pad{padding:clamp(16px,4vw,28px);min-height:260px}
-.kicker{font:400 10.5px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--teal)}
-.hero h1{font:400 clamp(26px,7vw,42px)/1.2 var(--disp);color:var(--chrome);margin:12px 0 8px;letter-spacing:-.015em;font-size:var(--af-type-hero);font-weight:var(--af-weight-regular)}
-.hero .sub{font:400 12.5px/1.6 var(--mono);color:var(--copper-b);letter-spacing:.03em;margin:0 0 12px}
-.hero .intro{max-width:66ch;color:var(--chrome-dim);font:400 13.5px/1.8 var(--serif)}
-.tags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 0}
-.tag{font:400 10.5px/1 var(--mono);letter-spacing:.06em;color:var(--teal);border:1px solid var(--teal-d);padding:6px 9px;border-radius:20px}
-.author-row{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px 20px;font:400 11px/1.6 var(--mono);color:var(--chrome-dim);border-top:1px dashed rgba(236,226,207,.16);padding-top:12px}
-.author-row b{color:var(--chrome)}
-
-/* ---- HUD gauges ---- */
-.hud{margin-top:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;min-height:114px}
-.gauge{border:1px solid var(--line);background:var(--panel);padding:11px 13px;border-radius:2px}
-.gauge .lb{font:400 9.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--chrome-dim);display:flex;justify-content:space-between}
-.gauge .lb b{color:var(--copper-b);font-weight:400}
-.gauge .track{margin-top:8px;height:7px;background:rgba(0,0,0,.4);border:1px solid rgba(236,226,207,.1)}
-.gauge .track i{display:block;height:100%;background:linear-gradient(90deg,var(--teal-d),var(--teal))}
-@media(min-width:640px){.hud{grid-template-columns:repeat(4,1fr)}}
-
-/* ---- toolbar ---- */
-/* Once the reader reaches the viewport, its controls become the only sticky
-   bar and use the entire top edge (plus any device safe-area inset). */
-.toolbar{position:sticky;top:var(--safe-t);z-index:5;margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(6px);padding:9px 10px;border-radius:2px}
-.tbtn{display:inline-flex;align-items:center;gap:6px;font:400 11.5px/1 var(--mono);letter-spacing:.03em;color:var(--chrome);border:1px solid rgba(236,226,207,.16);padding:9px 11px;border-radius:2px;min-height:38px}
-.tbtn:hover{border-color:var(--teal);color:var(--teal)}
-.tbtn.active{background:var(--copper);border-color:var(--copper);color:#1a1410}
-/* U16c: compact "第N章" bookmark chip — mobile-only (desktop's .lbl already
-   shows the truncated chapter title, showing both would be redundant). */
-.tbtn .bk-ch{display:none;white-space:nowrap}
-.swatches{display:flex;gap:6px}
-.swatch{width:26px;height:26px;border-radius:50%;border:2px solid rgba(236,226,207,.25);cursor:pointer;padding:0}
-.swatch.on{border-color:var(--teal);box-shadow:0 0 0 2px rgba(79,214,196,.25)}
-.swatch.s-green{background:#c8dfcb}.swatch.s-night{background:#2a2015}
-.fsize{display:flex;align-items:center;gap:2px;border:1px solid rgba(236,226,207,.16);border-radius:2px}
-.fsize button{padding:9px 12px;min-height:38px;font:700 13px/1 var(--mono)}
-.fsize button:hover{color:var(--teal)}
-.spacer{flex:1 1 auto}
-/* U-ambient-player: compact playback controls */
-.player{display:flex;align-items:center;gap:2px;border:1px solid rgba(236,226,207,.16);border-radius:2px}
-.player button{display:inline-grid;place-items:center;padding:9px 10px;min-height:38px;font:400 12.5px/1 var(--mono);color:var(--chrome)}
-.player button:hover{color:var(--teal)}
-.player button.active{color:var(--teal)}
-
-/* ---- reader shell / TOC drawer ---- */
-.reader-shell{position:relative;margin-top:14px}
-.toc-drawer{position:fixed;inset:0 auto 0 0;z-index:40;width:min(320px,86vw);background:var(--chassis2);border-right:1px solid var(--line);transform:translateX(-105%);transition:transform .28s ease;overflow-y:auto;padding:calc(14px + var(--safe-t)) 14px calc(20px + var(--safe-b));box-shadow:8px 0 30px rgba(0,0,0,.5)}
+button,a,summary{touch-action:manipulation}
+button:disabled{opacity:.45;cursor:default}
+[hidden]{display:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+button:focus-visible,a:focus-visible{border-radius:4px}
+img{max-width:100%}
+button img{flex:none}
+body[data-reader-theme="night"] button img,body[data-reader-theme="night"] .book-hotspot img{filter:invert(1)}
+.novels-page #afflatus-header{background:var(--paper);color:var(--ink);border-bottom:1px solid var(--rule);position:relative}
+.novels-page #afflatus-header .af-wordmark,.novels-page #afflatus-header button{color:var(--ink)}
+.novels-page #afflatus-header .af-brand-full{display:inline}
+.novels-page #afflatus-header .af-brand-compact{display:none}
+.wrap{max-width:840px;margin:0 auto;padding:24px 24px calc(36px + var(--safe-b))}
+.muted{color:var(--muted);font-size:13px}
+.library-intro{margin:0 0 26px}
+.library-eyebrow{display:flex;align-items:center;justify-content:space-between;font-size:11px;letter-spacing:.12em;color:var(--muted)}
+.icon-button{width:44px;height:44px;display:inline-grid;place-items:center}
+.library-intro h1{font-size:clamp(38px,7vw,58px);line-height:1.2;letter-spacing:-.06em;margin:16px 0 10px;font-weight:650}
+.library-intro h1 span{color:#90573f}
+.library-intro p{font:18px/1.7 var(--serif);margin:0}
+.reading-landscape{display:block;aspect-ratio:16/9;object-fit:cover;width:100%;background:var(--surface)}
+.resume-kicker{display:flex;gap:12px;font-size:12px;color:var(--muted);margin:18px 0 7px}
+.resume-kicker span{color:var(--accent)}
+.continue-reading h2{font:500 34px/1.4 var(--serif);margin:4px 0}
+#resumeAuthor{margin:0 0 18px;color:var(--muted);font-size:14px}
+#resumeProgress{display:block;width:100%;height:3px;appearance:none;border:0;background:var(--rule);accent-color:var(--accent)}
+#resumeProgress::-webkit-progress-bar{background:var(--rule)}
+#resumeProgress::-webkit-progress-value{background:var(--accent)}
+#resumeProgress::-moz-progress-bar{background:var(--accent)}
+#resumePosition{margin:10px 0 18px}
+.primary-action{display:flex;align-items:center;justify-content:center;gap:18px;min-height:50px;width:100%;background:var(--ink);color:var(--paper);border:1px solid var(--ink);border-radius:5px;padding:12px 20px;font-size:15px}
+.primary-action img{filter:invert(1)}
+body[data-reader-theme="night"] .primary-action img{filter:none}
+.outline-action{min-height:46px;padding:10px 14px;border:1px solid var(--rule);border-radius:5px}
+.library-row{width:100%;display:flex;align-items:center;gap:12px;min-height:76px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:26px;text-align:left}
+.library-row small{margin-left:auto;color:var(--muted);font-size:12px}
+.shelf-heading{display:flex;align-items:center;justify-content:space-between;margin-top:30px}
+.shelf-heading h2{font:500 23px var(--serif)}
+.shelf-heading span{font-size:12px;color:var(--muted)}
+.shelf{display:grid;grid-template-columns:1fr;min-height:216px}
+.book{display:grid;grid-template-columns:1fr auto;gap:5px 16px;text-align:left;width:100%;padding:17px 0;border-top:1px solid var(--rule);min-height:76px}
+.book.active{color:var(--accent)}
+.bk-title{font:500 20px/1.5 var(--serif)}
+.bk-author{font-size:13px;color:var(--muted);margin-left:14px}
+.bk-cover{grid-column:1}
+.bk-meta{grid-column:1;font-size:11px;color:var(--muted)}
+.bk-read{grid-column:2;grid-row:1/3;align-self:center;font-size:12px}
+.bk-description,.bk-sub{display:none}
+.book-skeleton{display:block;min-height:72px;background:var(--surface);margin-bottom:8px}
+.hero .pad{min-height:200px;padding:24px 0}
+.hero .intro{font:17px/1.8 var(--serif)}
+.tags,.author-row{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.hud{display:none;min-height:0}
+.reader-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px}
+.reader-topbar >button{display:flex;align-items:center;gap:6px;min-height:44px;font-size:14px}
+#readerBookName{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reader-enhanced .hero{display:none}
+.reader-enhanced[data-reader-view="library"] .reader-shell,.reader-enhanced[data-reader-view="library"] .toolbar,.reader-enhanced[data-reader-view="library"] .reader-topbar{display:none}
+.reader-enhanced[data-reader-view="reading"] .library-home,.reader-enhanced[data-reader-view="reading"] .foot{display:none}
+.reader-enhanced[data-reader-view="reading"] .wrap{max-width:820px;padding-top:0;padding-bottom:calc(95px + var(--safe-b))}
+.reader{--read-ink:var(--ink);--read-ink-dim:var(--muted);--read-accent:var(--accent);--read-line:var(--rule);background:var(--paper);color:var(--ink);scroll-margin-top:20px;position:relative}
+.reader .pad{padding:8px 0 0}
+.reader h2{font:500 clamp(26px,5vw,36px)/1.45 var(--serif);margin:10px 0 12px}
+.reader .meta{color:var(--muted);font-size:12px;margin:0 0 22px}
+.reader .body{min-height:0;margin:0;max-width:none;font:400 var(--read-fs)/var(--read-lh) var(--serif);overflow-wrap:break-word}
+.reader .body p,.book-turn-face p{font:400 var(--read-fs)/var(--read-lh) var(--serif);margin:0 0 1em;text-indent:0;letter-spacing:0}
+.reader .body p.page-continuation{margin-top:0}
+.reader-progress{height:2px;background:var(--rule);position:relative}
+.reader-progress i{display:block;height:100%;background:var(--accent);width:0}
+.book-stage{position:relative;width:100%;height:clamp(180px,calc(100svh - 310px),760px);margin:0;touch-action:pan-y;user-select:text}
+.book-page{height:100%;position:relative;padding:0 0 48px}
+.book-page-content{height:100%;overflow:hidden}
+.book-folio{position:absolute;bottom:0;left:48px;right:48px;min-height:44px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:4px 12px;color:var(--muted);font-size:11px}
+#bookAuthor{display:none}
+#readerSaveStatus{font-size:10px}
+.book-stack,.book-turn{display:none}
+.book-hotspot{position:absolute;bottom:0;width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--rule);border-radius:50%}
+.book-hotspot-previous{left:0}.book-hotspot-next{right:0}
+.book-hotspot:disabled{opacity:.25}
+.reader .book-measure{position:fixed;left:-200vw;top:0;visibility:hidden;pointer-events:none;overflow:hidden}
+.page-oversize{overflow:auto;max-height:100%}
+.reader .body .sys{padding:16px;margin:0 0 1em;background:var(--surface);border-left:2px solid var(--accent);font-family:var(--mono)}
+.sys-head{font-size:12px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;gap:8px}
+.sys-body{font-size:calc(var(--read-fs) - 2px);white-space:pre-wrap}
+.sys-dot{display:none}
+.chapter-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding-top:14px;border-top:1px solid var(--rule);font-size:12px}
+.chapter-nav a{display:flex;align-items:center;min-height:44px}
+.chapter-nav [aria-disabled="true"]{opacity:.4}
+.chapter-nav .ind{color:var(--muted)}
+.toolbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,820px);padding:10px 18px calc(10px + var(--safe-b));display:flex;justify-content:space-around;background:var(--paper);border-top:1px solid var(--rule);z-index:20}
+.toolbar button{display:flex;align-items:center;flex-direction:column;gap:5px;min-width:60px;min-height:50px;font-size:12px;padding:4px}
+.reader-dialog{background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:18px 18px 0 0;padding:24px 24px calc(28px + var(--safe-b));max-height:85svh;overflow:auto;width:min(100%,520px);max-width:100%;margin:auto auto 0;box-shadow:0 -8px 40px #0002}
+.reader-dialog::backdrop{background:#0007}
+.reader-dialog header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.reader-dialog h2{font:500 24px/1.5 var(--serif);margin:0}
+.reader-dialog header button{display:grid;place-items:center;width:44px;height:44px;flex:none}
+.reader-dialog .muted{margin:8px 0 20px}
+.setting-group{padding:12px 0}
+.swatches{display:flex;gap:10px;margin:12px 0}
+.swatch{flex:1;min-height:46px;border:1px solid var(--rule);border-radius:5px;font-size:14px}
+.swatch.on{outline:2px solid var(--accent);outline-offset:2px}
+.swatch[data-theme="paper"]{background:#f4f0e7;color:#272922}.swatch[data-theme="green"]{background:#e5e9dc;color:#28342a}.swatch[data-theme="night"]{background:#202320;color:#e4e3db}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.setting-row input[type="range"]{max-width:48%;flex:1;min-width:50px;accent-color:var(--accent);min-height:32px}
+.setting-row select{max-width:60%;min-height:44px;padding:8px;background:var(--surface);border:1px solid var(--rule);border-radius:5px;font-size:14px}
+.fsize{display:flex;align-items:center;gap:12px}.fsize button{width:44px;height:44px;font-size:22px;background:var(--surface);border-radius:4px}
+.setting-actions{display:grid;gap:12px;margin-top:24px}
+.saved-bookmark{display:block;width:100%;text-align:left;padding:20px 0;border-bottom:1px solid var(--rule)}
+.saved-bookmark strong{font:500 18px var(--serif)}.saved-bookmark span{display:block;font-size:13px;color:var(--muted);margin-top:8px}
+.track-heading{display:flex;align-items:center;gap:16px;margin:24px 0}
+.track-heading img{object-fit:cover;border-radius:4px;flex:none}
+.track-heading h3{margin:0;font-size:16px}.track-heading p{margin:4px 0}
+.playback-buttons{display:flex;align-items:center;justify-content:center;gap:26px;padding:12px 0}
+.playback-buttons button{display:grid;place-items:center;width:48px;height:48px}
+#plToggle{background:var(--surface);border-radius:50%;width:64px;height:64px}
+#musicSeek{width:100%;accent-color:var(--accent)}
+#musicTime{display:block;font-size:12px;color:var(--muted);margin-top:6px}
+#musicStatus{font-size:13px;color:var(--muted)}
+.narration-player{padding-top:20px;border-top:1px solid var(--rule)}
+.reader-waterfall{min-height:70vh}.wf-chapter{margin:0 auto 48px}.wf-chip{position:sticky;top:0;display:block;background:var(--paper);z-index:3;padding:12px 0;font-size:12px;color:var(--muted)}
+.wf-divider,.wf-sentinel{font-size:12px;color:var(--muted);padding:24px 0;border-top:1px solid var(--rule)}
+.toc-drawer{position:fixed;inset:0 auto 0 0;z-index:50;width:min(360px,90vw);background:var(--paper);border-right:1px solid var(--rule);transform:translateX(-105%);transition:transform .22s ease;overflow-y:auto;padding:calc(24px + var(--safe-t)) 24px 36px}
 .toc-drawer.open{transform:translateX(0)}
-.toc-drawer .toc-title{font:400 13px/1 var(--disp);letter-spacing:.05em;color:var(--copper-b);margin:0 0 4px;text-transform:uppercase}
-.toc-drawer .note{font:400 10.5px/1.6 var(--mono);color:var(--chrome-dim);margin:0 0 14px}
-.toc-item{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;padding:11px 10px;border:1px solid rgba(236,226,207,.10);border-radius:2px;margin-bottom:7px;color:var(--chrome);min-height:44px}
-.toc-item:hover{border-color:var(--teal)}
-.toc-item[aria-current]{text-decoration:underline;text-underline-offset:4px}
-.toc-item.current{background:rgba(201,131,74,.16);border-color:var(--copper)}
-.toc-item .t{font:400 12.5px/1.4 var(--serif);flex:1}
-.toc-item .wc{font:400 9.5px/1 var(--mono);color:var(--chrome-dim);white-space:nowrap}
-.toc-item .bk{color:var(--copper-b);flex:0 0 auto}
-.toc-backdrop{position:fixed;inset:0;z-index:39;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .28s ease}
-.toc-backdrop.open{opacity:1;pointer-events:auto}
-.novels-page.toc-open{overflow:hidden}
-.toc-close{position:absolute;top:calc(10px + var(--safe-t));right:10px;font:700 18px/1 var(--mono);color:var(--chrome-dim);padding:10px;min-width:44px;min-height:44px}
-
-/* ---- reader (eye-comfort palette lives here only) ---- */
-.reader{background:var(--read-tex,none),linear-gradient(160deg,var(--read-bg) 0%,var(--read-bg2) 100%);color:var(--read-ink);border:1px solid rgba(0,0,0,.15);box-shadow:0 8px 0 rgba(0,0,0,.35);border-radius:2px;position:relative;transition:background .25s ease,color .25s ease}
-.reader-progress{position:sticky;top:calc(var(--safe-t) + var(--toolbar-h));height:3px;background:var(--read-line);z-index:2}
-.reader-progress i{display:block;height:100%;width:0;background:var(--read-accent);transition:width .1s linear}
-.reader .pad{padding:clamp(18px,5vw,34px) clamp(16px,5vw,40px) clamp(24px,5vw,40px)}
-.reader h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px;font-weight:var(--af-weight-medium)}
-.reader .meta{font:400 11px/1.6 var(--mono);color:var(--read-ink-dim);letter-spacing:.04em;margin:0 0 20px;text-transform:uppercase}
-/* U46 46-乙-③: cap the reading column at 68ch (same rule U41 set on
-   signal.html) — line-height was already 1.95 (well past the 1.7 floor),
-   but nothing capped line length, so at the 900px .wrap it ran ~90+ char.
-   margin:0 auto centers the capped column inside .reader .pad -- without
-   it the column hugs the left edge and leaves a large dead gap on the
-   right on any viewport wide enough for 68ch to matter (desktop only;
-   mobile's narrower .pad is already at or under 68ch so it never showed). */
-.reader .body{max-width:68ch;min-height:60vh;margin:0 auto}
-.reader .body p{font:400 var(--read-fs)/1.95 var(--serif);color:var(--read-ink);margin:0 0 1.35em;text-indent:2em;letter-spacing:.02em}
-
-/* ---- physical paged-book reader ---- */
-.book-stage{position:relative;width:min(100%,560px);height:auto;aspect-ratio:140/203;margin:8px auto 0;perspective:1900px;isolation:isolate;touch-action:pan-y;user-select:text;filter:drop-shadow(0 16px 18px rgba(0,0,0,.24))}
-.book-stage::before{content:"";position:absolute;inset:7px 2px 5px 9px;z-index:-1;border-radius:4px 11px 11px 5px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--read-ink) 12%,var(--read-bg2)) 0 1px,var(--read-bg2) 1px 3px);box-shadow:7px 8px 0 color-mix(in srgb,var(--read-ink) 18%,transparent),12px 13px 18px rgba(0,0,0,.25)}
-.book-stack{position:absolute;inset:3px 8px 8px 5px;z-index:0;border:1px solid color-mix(in srgb,var(--read-ink) 21%,transparent);border-radius:5px 10px 10px 5px;background:var(--read-bg2);box-shadow:3px 3px 0 color-mix(in srgb,var(--read-bg2) 72%,var(--read-ink)),6px 6px 0 color-mix(in srgb,var(--read-bg2) 84%,var(--read-ink))}
-.book-page{position:absolute;inset:0 11px 11px 0;z-index:2;overflow:hidden;padding:clamp(22px,4vw,40px) clamp(28px,6vw,62px) 48px;border:1px solid color-mix(in srgb,var(--read-ink) 22%,transparent);border-radius:5px 10px 10px 5px;background:repeating-linear-gradient(0deg,transparent 0 27px,color-mix(in srgb,var(--read-ink) 2.8%,transparent) 27px 28px),radial-gradient(circle at 15% 12%,color-mix(in srgb,var(--read-bg) 92%,white) 0,var(--read-bg) 42%,var(--read-bg2) 100%);box-shadow:inset 15px 0 28px rgba(0,0,0,.08),inset -2px 0 0 rgba(255,255,255,.18)}
-.book-page::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.09),transparent 5%,transparent 94%,rgba(0,0,0,.045)),repeating-radial-gradient(circle at 20% 30%,rgba(58,43,23,.022) 0 1px,transparent 1px 4px);mix-blend-mode:multiply}
-.reader .book-page-content,.reader .book-measure,.book-turn-face .body{position:relative;z-index:1;width:100%;height:100%;max-width:none;min-height:0;margin:0;overflow:hidden}
-.reader .book-page-content p,.reader .book-measure p,.book-turn-face .body p{font:400 var(--read-fs)/1.95 var(--serif);color:var(--read-ink);margin:0 0 1.35em;text-indent:2em;letter-spacing:.02em}
-.reader .book-page-content p.page-continuation,.reader .book-measure p.page-continuation,.book-turn-face p.page-continuation{text-indent:0}
-.book-folio{position:absolute;left:clamp(28px,6vw,62px);right:clamp(28px,6vw,62px);bottom:17px;z-index:2;display:flex;justify-content:space-between;gap:12px;padding-top:9px;border-top:1px solid var(--read-line);font:400 10px/1 var(--mono);letter-spacing:.08em;color:var(--read-ink-dim)}
-.book-turn{position:absolute;inset:0 11px 11px 0;z-index:8;display:none;transform-style:preserve-3d;pointer-events:none}
-.book-turn-face{position:absolute;inset:0;overflow:hidden;padding:clamp(22px,4vw,40px) clamp(28px,6vw,62px) 48px;backface-visibility:hidden;border:1px solid color-mix(in srgb,var(--read-ink) 22%,transparent);border-radius:5px 10px 10px 5px;background:radial-gradient(circle at 15% 12%,color-mix(in srgb,var(--read-bg) 92%,white) 0,var(--read-bg) 42%,var(--read-bg2) 100%);box-shadow:inset 15px 0 28px rgba(0,0,0,.08)}
-.book-turn-back{transform:rotateY(180deg);box-shadow:inset -16px 0 30px rgba(0,0,0,.12)}
-.book-stage.is-turning-next .book-turn{display:block;transform-origin:left center;animation:turnPaperNext .72s cubic-bezier(.45,.03,.2,1)}
-.book-stage.is-turning-previous .book-turn{display:block;transform-origin:right center;animation:turnPaperPrevious .72s cubic-bezier(.45,.03,.2,1)}
-.book-stage.is-turning-next .book-turn-front .body,.book-stage.is-turning-previous .book-turn-front .body{animation:fadeDepartingPageText .72s cubic-bezier(.45,.03,.2,1) both}
-.book-stage.is-turning-next .book-turn-back .body,.book-stage.is-turning-previous .book-turn-back .body{animation:revealArrivingPageText .72s cubic-bezier(.45,.03,.2,1) both}
-@keyframes turnPaperNext{0%{transform:rotateY(0);filter:brightness(1)}48%{filter:brightness(.72)}100%{transform:rotateY(-180deg);filter:brightness(1)}}
-@keyframes turnPaperPrevious{0%{transform:rotateY(0);filter:brightness(1)}48%{filter:brightness(.72)}100%{transform:rotateY(180deg);filter:brightness(1)}}
-@keyframes fadeDepartingPageText{0%,12%{opacity:1;filter:blur(0)}50%{opacity:.05;filter:blur(.8px)}100%{opacity:0;filter:blur(1.2px)}}
-@keyframes revealArrivingPageText{0%,48%{opacity:0;filter:blur(1px)}72%{opacity:.62;filter:blur(.35px)}100%{opacity:1;filter:blur(0)}}
-.book-hotspot{position:absolute;top:0;bottom:11px;z-index:10;width:12%;min-width:46px;display:grid;place-items:center;font:300 38px/1 var(--serif);color:var(--read-ink-dim);opacity:.12;transition:opacity .2s ease,background .2s ease}
-.book-hotspot:hover,.book-hotspot:focus-visible{opacity:.75}
-.book-hotspot:disabled{opacity:0;cursor:default}
-.book-hotspot-previous{left:0;border-radius:5px 0 0 5px}
-.book-hotspot-next{right:11px;border-radius:0 10px 10px 0}
-.reader .book-measure{transition-property:none;position:fixed;left:-200vw;top:0;z-index:-20;visibility:hidden;pointer-events:none}
-.page-oversize{max-height:100%;overflow:hidden}
-.book-stage::after{content:attr(data-cover-title);position:absolute;inset:-2px 9px 9px -2px;z-index:20;display:grid;place-items:center;padding:32px;border:2px solid #a36a3d;border-radius:4px 12px 12px 4px;background:radial-gradient(circle at 70% 20%,rgba(232,173,111,.18),transparent 30%),linear-gradient(120deg,#241510,#4a281b 55%,#2c1812);box-shadow:inset 8px 0 12px rgba(0,0,0,.45),inset 0 0 0 8px rgba(232,173,111,.08),10px 13px 18px rgba(0,0,0,.35);color:#e8c98a;font:700 clamp(24px,5vw,42px)/1.5 var(--serif);letter-spacing:.14em;text-align:center;transform-origin:left center;transform:rotateY(-105deg);opacity:0;pointer-events:none}
-.book-stage.is-opening::after{animation:openHardCover .88s cubic-bezier(.2,.7,.18,1) both}
-@keyframes openHardCover{0%{transform:rotateY(0);opacity:1}65%{opacity:1}100%{transform:rotateY(-112deg);opacity:0}}
-/* ---- U-sys-panel: 系统播报块 = cross-world game terminal ----
-   The novel's system prompts (技能升级/结算面板/规则卡) now render as a
-   sci-fi "screen" instead of an inline quote box: cool low-blue teal
-   terminal against the warm serif prose, mono type, scanlines, corner
-   status bar + pulsing link-dot ("同契终端"). Distinction is the point —
-   readers should feel a device switched on mid-page. Eye-care kept:
-   muted duotone (no pure white/black, no saturated glow), body ink vs
-   panel bg measured ≥7:1 in both reading themes; pulse animation is
-   opacity-only and disabled under prefers-reduced-motion. */
-.reader{--sys-bg:#223230;--sys-bg2:#1a2826;--sys-ink:#bde5da;--sys-dim:#83bbaf;--sys-accent:#59cfba;--sys-line:rgba(89,207,186,.35)}
-.reader[data-theme="night"]{--sys-bg:#101b1d;--sys-bg2:#0c1618;--sys-ink:#a9ddd3;--sys-dim:#6fa89e;--sys-accent:#4fd6c4;--sys-line:rgba(79,214,196,.3)}
-.reader .body .sys{position:relative;margin:0 0 1.6em;text-indent:0;border:1px solid var(--sys-line);border-radius:6px;background:linear-gradient(165deg,var(--sys-bg),var(--sys-bg2));box-shadow:0 0 0 3px color-mix(in srgb,var(--sys-accent) 8%,transparent),inset 0 0 26px rgba(0,0,0,.28);overflow:hidden}
-.reader .body .sys::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,color-mix(in srgb,var(--sys-accent) 6%,transparent) 0 1px,transparent 1px 3px);opacity:.45}
-.reader .body .sys::after{content:"";position:absolute;inset:5px;pointer-events:none;border:1px dashed color-mix(in srgb,var(--sys-accent) 22%,transparent);border-radius:4px}
-.sys-head{display:flex;align-items:center;gap:8px;padding:9px 13px;font:600 10.5px/1.4 var(--mono);letter-spacing:.16em;color:var(--sys-accent);border-bottom:1px solid var(--sys-line);background:color-mix(in srgb,var(--sys-accent) 7%,transparent);position:relative;z-index:1}
-.sys-head .sys-tag{margin-left:auto;font-weight:400;font-size:9.5px;color:var(--sys-dim);letter-spacing:.12em;white-space:nowrap}
-.sys-dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--sys-accent);box-shadow:0 0 6px var(--sys-accent);animation:sysPulse 2.2s ease-in-out infinite}
-@keyframes sysPulse{0%,100%{opacity:1}50%{opacity:.3}}
-.reader .body .sys .sys-body{font:400 calc(var(--read-fs) - 3px)/1.85 var(--mono);color:var(--sys-ink);padding:12px 14px 14px;white-space:pre-wrap;position:relative;z-index:1;letter-spacing:.01em}
-.chapter-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:26px;padding-top:16px;border-top:1px dashed var(--read-line)}
-.chapter-nav > a{font:400 12px/1 var(--mono);color:var(--read-ink);border:1px solid var(--read-ink-dim);padding:11px 14px;border-radius:2px;min-height:44px}
-.chapter-nav > a[aria-disabled="true"]{opacity:.35;cursor:default}
-.chapter-nav > a[href]:hover{border-color:var(--read-accent);color:var(--read-accent)}
-.chapter-nav .ind{font:400 11px/1 var(--mono);color:var(--read-ink-dim)}
-.prerender-toc{list-style:none;margin:0;padding:0}
-.prerender-toc li{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--read-line);padding:10px 0}
-.prerender-toc a{color:var(--read-ink);font:600 var(--read-fs)/1.6 var(--serif);flex:1}
-.prerender-toc span{color:var(--read-ink-dim);font:400 10px/1 var(--mono)}
-.prerender-chapter-nav{display:none}
-
-/* ---- waterfall / infinite-scroll reading ---- */
-.reader-waterfall{min-height:70vh}
-.wf-chapter{max-width:68ch;margin:0 auto 8px}
-.wf-chapter h2{font:700 clamp(19px,5vw,27px)/1.4 var(--serif);color:var(--read-ink);margin:0 0 4px;font-weight:var(--af-weight-medium)}
-.wf-chapter .meta{font:400 11px/1.6 var(--mono);color:var(--read-ink-dim);letter-spacing:.04em;margin:0 0 20px;text-transform:uppercase}
-.reader .wf-chapter .body{min-height:0}
-.wf-divider{display:flex;align-items:center;gap:12px;max-width:68ch;margin:8px auto 30px;color:var(--read-ink-dim);font:400 11px/1 var(--mono);letter-spacing:.1em}
-.wf-divider::before,.wf-divider::after{content:"";flex:1;height:1px;background:var(--read-line)}
-.wf-sentinel{display:flex;align-items:center;justify-content:center;gap:10px;padding:26px 10px;color:var(--read-ink-dim);font:400 12px/1 var(--mono)}
-.wf-sentinel .eq{display:flex;gap:3px;align-items:flex-end;height:14px}
-.wf-sentinel .eq i{width:3px;background:var(--read-accent);height:4px;display:block;animation:wfeq 1.1s ease-in-out infinite}
-.wf-sentinel .eq i:nth-child(2){animation-delay:.15s}.wf-sentinel .eq i:nth-child(3){animation-delay:.3s}
-@keyframes wfeq{0%,100%{height:4px}50%{height:13px}}
-.wf-sentinel.done .eq{display:none}
-.wf-chip{position:sticky;top:calc(var(--safe-t) + var(--toolbar-h) + 12px);z-index:3;display:none;align-self:flex-start;font:400 10.5px/1 var(--mono);letter-spacing:.06em;color:var(--read-ink);background:color-mix(in srgb,var(--read-bg) 92%,transparent);border:1px solid var(--read-line);padding:6px 10px;border-radius:20px;margin:0 0 18px;box-shadow:0 4px 14px rgba(0,0,0,.12);backdrop-filter:blur(8px)}
-.wf-chip.show{display:inline-flex}
-
-/* ---- mobile FAB quick-nav (thumb-reachable) ---- */
-.fab{position:fixed;right:calc(14px + var(--safe-r));bottom:calc(16px + var(--safe-b) + var(--keyboard-inset,0px));z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-.fab-toggle{width:52px;height:52px;border-radius:50%;background:var(--copper);color:#1a1410;font:700 20px/1 var(--mono);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.5);border:1px solid var(--copper-b)}
-.fab-menu{display:flex;flex-direction:column;gap:8px;align-items:flex-end;max-height:0;overflow:hidden;transition:max-height .25s ease}
-.fab-menu.open{max-height:320px}
-.fab-menu button{display:flex;align-items:center;gap:8px;font:400 11.5px/1 var(--mono);color:var(--chrome);background:var(--panel2);border:1px solid var(--line);padding:10px 13px;border-radius:24px;min-height:44px;white-space:nowrap}
-.fab-menu button:hover{border-color:var(--teal);color:var(--teal)}
-
-/* ---- toast ---- */
-.toast{position:fixed;left:50%;bottom:calc(90px + var(--safe-b) + var(--keyboard-inset,0px));transform:translate(-50%,10px);z-index:50;background:var(--panel2);border:1px solid var(--teal-d);color:var(--chrome);font:400 11.5px/1.5 var(--mono);padding:10px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;max-width:88vw;text-align:center}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-
-.foot{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font:400 10.5px/1.7 var(--mono);letter-spacing:.04em;color:var(--chrome-dim);text-transform:uppercase;font-size:var(--af-type-footer);font-weight:var(--af-weight-regular)}
-.foot b{color:var(--copper-b)}
-
-@media(max-width:640px){
-  /* Keep the shelf a compact selector instead of three full-height cards
-     stacked immediately above a second rendering of the active title. The
-     next cover remains visibly peeking in to advertise horizontal swiping. */
-  .shelf{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:min(78vw,292px);overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding:0 1px 9px}
-  .shelf::-webkit-scrollbar{display:none}
-  .book,.book-skeleton{scroll-snap-align:start;min-height:118px}
-  .dossier-bridge{display:flex;align-items:center;gap:9px;margin:4px 0 -4px;color:var(--chrome-dim);font:600 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
-  .dossier-bridge span{color:var(--copper-b)}
-  .dossier-bridge i{height:1px;flex:1;background:linear-gradient(90deg,var(--line),transparent)}
-  .dossier-bridge small{font:inherit;font-size:8px;color:var(--teal)}
-  /* V22: collapse the two-row wrap into one scrollable row — icon-only
-     buttons (text labels hidden via .lbl) plus flex-wrap:nowrap so it
-     can never re-wrap; overflow-x:auto is a safety net if it's ever a
-     few px too wide rather than breaking back into 2 rows. */
-  .toolbar{gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .toolbar::-webkit-scrollbar{display:none}
-  .toolbar .lbl{display:none}
-  /* U16c: with .lbl hidden, keep a short "第N章" chip on the bookmark
-     button so mobile still shows which chapter is saved; a few characters
-     wide, and the toolbar is nowrap + overflow-x:auto anyway, so it can
-     never spill outside the bar. */
-  .toolbar .bk-ch{display:inline}
-  .tbtn{padding:8px 9px;font-size:11px;flex:0 0 auto;min-width:44px;min-height:44px}
-  /* U28: 自动翻页加长一倍 + 顺带补 44px 触控目标（22c 欠账） */
-  #autoToggle{min-width:72px;min-height:44px}
-  .swatches,.fsize,.player{flex:0 0 auto}
-  .swatch,.fsize button{min-width:44px;min-height:44px}
-  .player button{padding:8px 8px;min-height:44px}
-  .fsize button{padding:8px 9px}
-  .spacer{display:none}
-  .hero .pad{padding-bottom:20px}
-  .book-page,.book-turn-face{padding:22px 25px 45px}
-  .book-folio{left:25px;right:25px;bottom:15px}
-  .book-folio span:last-child{display:none}
-  .sys-head .sys-tag{display:none}
-  .book-hotspot{width:15%;opacity:.18}
-}
-@media (prefers-reduced-motion: reduce){
-  .book-skeleton{animation:none}
-  .toc-drawer,.toc-backdrop,.fab-menu,.reader-progress i,.toast{transition:none}
-  .sys-dot{animation:none}
-  .book-stage.is-turning-next .book-turn,.book-stage.is-turning-previous .book-turn,.book-stage.is-turning-next .book-turn-face .body,.book-stage.is-turning-previous .book-turn-face .body,.book-stage.is-opening::after{animation:none}
-  /* U30 R1: kill the shelf→hero morph animation, keep the instant swap */
-  ::view-transition-group(novelMorph),::view-transition-old(novelMorph),::view-transition-new(novelMorph){animation:none!important}
-}
-
-/* F13: the shelf keeps its atmosphere; prose has no looping decoration. */
-body.reading-focused .crt-bg{visibility:hidden}
-.reader{scroll-margin-top:calc(var(--toolbar-h) + var(--safe-t) + 12px)}
-.reader .body .sys::before,.reader .body .sys::after{display:none}
-.reader .sys-dot,.reader .wf-sentinel .eq i{animation:none}
-.chapter-nav > a{text-decoration:none;display:inline-flex;align-items:center}
-.chapter-nav > a:focus-visible{outline:var(--focus-ring-width,2px) solid var(--read-accent);outline-offset:var(--focus-ring-offset,4px)}
-
-/* Static chapter HTML stays fully readable if scripts or data loading fail. */
-body:not(.reader-enhanced) .book-stage{aspect-ratio:auto;filter:none}
-body:not(.reader-enhanced) .book-page{position:relative;inset:auto;min-height:0}
-body:not(.reader-enhanced) .book-page-content{height:auto;overflow:visible}
-body:not(.reader-enhanced) .book-hotspot,body:not(.reader-enhanced) .book-stack,body:not(.reader-enhanced) .book-folio{display:none}
-body:not(.reader-enhanced) .chapter-nav > a:not([href]){display:none}
-@media(max-width:400px){
-  .chapter-nav{flex-wrap:wrap}
-  .chapter-nav .ind{flex-basis:100%;order:-1;text-align:center}
-  .chapter-nav > a{white-space:nowrap}
-}
-
-body.novels-page .library-intro h2 {
-  font: var(--af-weight-regular) var(--af-type-section)/1.3 var(--af-font-sans);
-  letter-spacing: -.015em;
-}
+.toc-title{font:500 26px var(--serif);margin:10px 0}.toc-drawer .note{font-size:12px;color:var(--muted);margin-bottom:24px}
+.toc-item{display:flex;align-items:center;gap:10px;min-height:58px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.toc-item .t{flex:1;font-size:15px}.toc-item .wc{font-size:11px;color:var(--muted)}
+.toc-item.current{color:var(--accent);font-weight:600}.toc-item[aria-current]{text-decoration:underline;text-underline-offset:4px}
+.toc-close{position:absolute;right:14px;top:16px;width:44px;height:44px;font-size:26px}
+.toc-backdrop{position:fixed;inset:0;z-index:49;background:#0007;opacity:0;pointer-events:none;transition:opacity .2s ease}
+.toc-backdrop.open{opacity:1;pointer-events:auto}.toc-open{overflow:hidden}
+.fab{display:none}
+.toast{position:fixed;bottom:calc(94px + var(--safe-b));left:50%;transform:translateX(-50%);max-width:90vw;padding:12px 20px;border-radius:8px;background:var(--ink);color:var(--paper);font-size:13px;z-index:70;opacity:0;pointer-events:none;transition:opacity .18s}
+.toast.show{opacity:1}
+.foot{margin-top:40px;border-top:1px solid var(--rule);padding-top:18px;font-size:11px;color:var(--muted)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+body:not(.reader-enhanced) .book-stage{height:auto}body:not(.reader-enhanced) .book-page-content{height:auto;overflow:visible}body:not(.reader-enhanced) .book-hotspot{display:none}
+@media(min-width:700px){.library-home{max-width:650px;margin:auto}.reader-topbar{margin-bottom:15px}.reader-dialog{margin:auto;border-radius:16px}.reader-enhanced[data-reader-view="reading"] .wrap{padding-inline:40px}.book-stage{height:clamp(360px,calc(100svh - 335px),760px)}}
+@media(max-width:360px){.wrap{padding-inline:20px}.library-intro h1{font-size:36px}.reader-topbar{gap:6px}.book-folio{font-size:10px}.setting-row{gap:8px}}
+@media(prefers-reduced-motion:reduce){.toc-drawer,.toc-backdrop,.toast{transition:none}::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none}}
+body.novels-page:has(> #afflatus-header){padding-top:0}
+.novels-page #afflatus-header{--af-paper:var(--paper);--af-ink:var(--ink);--af-menu-paper:var(--surface)}
+.novels-page #afflatus-header .af-brand-full{opacity:1}
+.novels-page #afflatus-header .af-wordmark{flex:0 0 124px;overflow:visible}
+.novels-page #afflatus-header .af-header-inner{gap:12px}
+.toc-drawer{z-index:10002}.toc-backdrop{z-index:10001}
+.reader-enhanced .reader-return{display:none}
+body[data-reader-route="chapter"]:not(.reader-enhanced) .library-home{display:none}
+@media(max-width:979px){.novels-page #afflatus-header .af-header-inner{padding-inline:24px}}
+.reader-enhanced .prerender-chapter-nav{display:none}
+#readerAutoStatus{font-size:11px;min-height:32px;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.library-intro{position:relative;margin-bottom:22px}
+.library-eyebrow{position:absolute;right:0;top:0}
+.library-eyebrow >span{display:none}
+.library-intro h1{font-size:clamp(42px,7vw,58px);margin-top:8px;max-width:calc(100% - 44px)}
+.resume-kicker{margin-top:12px}
+#resumeAuthor{margin-bottom:12px}
+.library-row{min-height:60px;margin-top:20px}
+.shelf-heading{margin-top:18px}
+.reader-term{display:inline;padding:0;border:0;border-bottom:1px dotted var(--accent);border-radius:0;font:inherit;line-height:inherit;color:inherit;text-align:inherit}
+.reader-term:hover{color:var(--accent)}
+.reader-note-dialog blockquote{font:17px/1.85 var(--serif);margin:18px 0;padding-left:16px;border-left:2px solid var(--accent)}
+@media(max-width:360px){.library-intro h1{font-size:36px}}

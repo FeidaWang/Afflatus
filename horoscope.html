@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Astrology for fun — Bazi &amp; Western astrology · AFFLATUS</title>
 <meta name="description" content="Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.">
-<meta name="theme-color" content="#F6EFE3">
+<meta name="theme-color" content="#202320">
 <link rel="canonical" href="https://feida.au/horoscope.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
@@ -160,7 +160,8 @@
 <link rel="preload" href="/assets/fonts/anthropic-sans-roman.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/styles/shared-header.css">
 </head>
-<body class="horoscope-page">
+<body class="horoscope-page observatory-page" data-lab-theme="night">
+<script>try{if(localStorage.getItem('afflatus-horo:theme')==='paper')document.body.dataset.labTheme='paper';}catch(e){}</script>
 <!-- shared-header:start -->
 <header id="afflatus-header" data-afflatus-header>
   <div class="af-header-inner">
@@ -177,72 +178,41 @@
   </div>
 </header>
 <!-- shared-header:end -->
-<a class="skip" href="#birthForm" data-en="Skip to the chart form" data-zh="跳到星盘表单">Skip to the chart form</a>
-
-<!-- V21 healing theme: warm cream page with original hand-drawn botanical
-     sprigs (sage/eucalyptus line art) as corner decor. The former ink-night
-     board + dragon/horse art was removed per V21 Phase 0 (roadmap §7.8.1). -->
-<div class="bg" aria-hidden="true">
-  <svg class="bg-sprig bg-sprig--tr" viewBox="0 0 400 400" fill="none">
-    <path class="sp-stem" d="M340,370 C300,300 280,220 300,130 C308,95 322,65 345,40" stroke-width="2.5" stroke-linecap="round"/>
-    <g class="sp-leaf">
-      <path d="M318,330 C295,325 275,310 268,290 C292,292 310,305 318,330 Z"/>
-      <path d="M330,300 C350,285 358,265 355,243 C338,257 328,277 330,300 Z"/>
-      <path d="M303,265 C280,258 264,242 259,222 C282,226 298,241 303,265 Z"/>
-      <path d="M310,232 C328,216 334,195 330,174 C314,189 306,210 310,232 Z"/>
-      <path d="M298,195 C276,187 262,170 258,150 C280,155 295,171 298,195 Z"/>
-      <path d="M312,160 C328,143 333,122 328,102 C313,118 306,139 312,160 Z"/>
-      <path d="M315,120 C295,111 283,94 280,74 C301,80 314,97 315,120 Z"/>
-      <path d="M330,85 C343,70 347,52 343,34 C330,48 324,67 330,85 Z"/>
-    </g>
-    <g class="sp-berry">
-      <circle cx="285" cy="240" r="4"/>
-      <circle cx="292" cy="130" r="3.5"/>
-      <circle cx="336" cy="58" r="3"/>
-    </g>
-    <path class="sp-stem" d="M312,250 C280,235 255,210 245,180" stroke-width="2" stroke-linecap="round"/>
-    <g class="sp-leaf sp-leaf--lite">
-      <path d="M280,232 C262,230 247,220 240,206 C257,207 271,217 280,232 Z"/>
-      <path d="M258,205 C242,200 231,189 226,175 C242,178 253,189 258,205 Z"/>
-    </g>
-  </svg>
-  <svg class="bg-sprig bg-sprig--bl" viewBox="0 0 400 400" fill="none">
-    <path class="sp-stem" d="M340,370 C300,300 280,220 300,130 C308,95 322,65 345,40" stroke-width="2.5" stroke-linecap="round"/>
-    <g class="sp-leaf">
-      <path d="M318,330 C295,325 275,310 268,290 C292,292 310,305 318,330 Z"/>
-      <path d="M330,300 C350,285 358,265 355,243 C338,257 328,277 330,300 Z"/>
-      <path d="M303,265 C280,258 264,242 259,222 C282,226 298,241 303,265 Z"/>
-      <path d="M310,232 C328,216 334,195 330,174 C314,189 306,210 310,232 Z"/>
-      <path d="M298,195 C276,187 262,170 258,150 C280,155 295,171 298,195 Z"/>
-      <path d="M312,160 C328,143 333,122 328,102 C313,118 306,139 312,160 Z"/>
-    </g>
-    <g class="sp-berry">
-      <circle cx="285" cy="240" r="4"/>
-      <circle cx="292" cy="130" r="3.5"/>
-    </g>
-  </svg>
-</div>
+<a id="chartSkip" class="skip" href="#self" data-en="Skip to the chart form" data-zh="跳到星盘表单">Skip to the chart form</a>
 
 <main class="wrap">
-  <section class="hero" aria-label="Introduction" data-aria-en="Introduction" data-aria-zh="简介">
-    <svg class="hero-sprig" viewBox="0 0 200 120" aria-hidden="true" fill="none">
-      <path class="sp-stem" d="M20,110 C60,80 110,60 180,50" stroke-width="2" stroke-linecap="round"/>
-      <g class="sp-leaf">
-        <path d="M56,88 C48,74 48,60 56,48 C64,60 64,74 56,88 Z"/>
-        <path d="M96,70 C86,58 82,44 86,30 C96,40 100,55 96,70 Z"/>
-        <path d="M138,58 C130,46 128,32 132,20 C142,30 144,45 138,58 Z"/>
-      </g>
-      <g class="sp-berry"><circle cx="76" cy="72" r="3"/><circle cx="118" cy="58" r="2.5"/></g>
-    </svg>
-    <div class="kicker" data-en="A MOMENT UNDER THE STARS" data-zh="观星 · 片刻之间">A MOMENT UNDER THE STARS</div>
-    <h1 data-en="A star chart of your own." data-zh="一张属于你的星图。">A star chart of your own.</h1>
-    <p class="sub" data-en="Explore a playful reading of the sky through Bazi and astrology. Calculated on your device; your birth details stay in this browser." data-zh="用八字与占星，读一份关于天空的趣味解读。只在你的设备上计算，出生资料留在此浏览器。">Explore a playful reading of the sky through Bazi and astrology. Calculated on your device; your birth details stay in this browser.</p>
-    <span class="ent-chip" data-en="⚠ ENTERTAINMENT ONLY · NOT ADVICE" data-zh="⚠ 仅供娱乐 · 不构成任何建议">⚠ ENTERTAINMENT ONLY · NOT ADVICE</span>
-
+  <section id="observatoryToday" class="obs-today" aria-labelledby="obsTitle">
+    <div class="obs-topline"><p id="obsDateLabel"></p><button id="obsTheme" type="button" aria-label="切换日间模式" data-aria-en="Switch to day mode" data-aria-zh="切换日间模式" aria-pressed="true"><img src="/assets/labs/icons/moon.svg" width="22" height="22" alt=""></button></div>
+    <nav id="obsDates" class="obs-dates" aria-label="最近七天" data-aria-en="Last seven days" data-aria-zh="最近七天"></nav>
+    <div class="obs-hero"><img src="/assets/labs/observatory-moon.webp" class="obs-moon" width="600" height="660" alt="" aria-hidden="true"><p class="obs-eyebrow" data-en="A MOMENT FOR YOU" data-zh="今日 · 给自己的片刻">今日 · 给自己的片刻</p><h1 id="obsTitle">把心事放轻。</h1><p id="obsAction" class="obs-action"></p></div>
+    <button id="obsWriteNote" class="obs-primary" type="button" data-en="Leave a note for today" data-zh="留一句今日手记">留一句今日手记</button>
+    <p class="obs-caption" data-en="Set down a thought. Let today rest here." data-zh="收起一个念头，让今天到这里。">收起一个念头，让今天到这里。</p>
+    <div class="obs-rows">
+      <button type="button" id="obsDrawButton" class="obs-row"><img src="/assets/labs/icons/sun.svg" width="24" height="24" alt=""><span data-en="Daily reflection draw" data-zh="今日一签">今日一签</span><small id="obsDrawStatus">待开启</small><img src="/assets/labs/icons/forward.svg" width="20" height="20" alt=""></button>
+      <button type="button" id="obsAreasButton" class="obs-row" aria-expanded="false" aria-controls="obsAreas"><img src="/assets/labs/icons/people.svg" width="24" height="24" alt=""><span data-en="Five areas of life" data-zh="五个生活面向">五个生活面向</span><small data-en="Explore" data-zh="查看">查看</small><img src="/assets/labs/icons/forward.svg" width="20" height="20" alt=""></button>
+      <section id="obsAreas" class="obs-expand" hidden aria-label="日常反思" data-aria-en="Everyday reflections" data-aria-zh="日常反思"></section>
+      <button type="button" id="obsSourcesButton" class="obs-row" aria-expanded="false" aria-controls="obsSources"><img src="/assets/labs/icons/book.svg" width="24" height="24" alt=""><span data-en="Behind this reading" data-zh="今日依据">今日依据</span><small data-en="Read" data-zh="了解">了解</small><img src="/assets/labs/icons/forward.svg" width="20" height="20" alt=""></button>
+      <section id="obsSources" class="obs-expand" hidden>
+        <h2 data-en="A prompt, not a prediction." data-zh="留一个问题，给自己。">留一个问题，给自己。</h2>
+        <p data-en="Daily sentences rotate by calendar date. The five areas are original reflection exercises; they are not calculated from your birth chart. A draw is random and stays the same for the day on this device." data-zh="每日短句按日历日期轮换；五个生活面向是本站原创反思练习，不由出生资料推断。每日签为随机抽取，同一天在这台设备上保留同一结果。">每日短句按日历日期轮换；五个生活面向是本站原创反思练习，不由出生资料推断。每日签为随机抽取，同一天在这台设备上保留同一结果。</p>
+        <p data-en="Your chart has separate calendar and traditional interpretations. These are cultural perspectives, not validated forecasts of health, money or relationships." data-zh="「自我」中的星图单独提供历法与传统解释。这些是文化视角，不是经过验证的健康、财富或关系预测。">「自我」中的星图单独提供历法与传统解释。这些是文化视角，不是经过验证的健康、财富或关系预测。</p>
+        <a href="https://www.hko.gov.hk/en/gts/time/conversion.htm" target="_blank" rel="noopener" data-en="Hong Kong Observatory calendar reference ↗" data-zh="香港天文台历法参考 ↗">香港天文台历法参考 ↗</a>
+      </section>
+    </div>
+    <button type="button" id="obsChartLink" class="obs-text-link" data-en="Explore my birth chart" data-zh="探索我的星图">探索我的星图</button>
+    <p class="obs-footnote" id="obsTimeZone"></p>
   </section>
+  <section id="observatoryJournal" class="obs-journal" hidden aria-labelledby="obsJournalTitle">
+    <p class="obs-eyebrow" data-en="A LITTLE SPACE OF YOUR OWN" data-zh="留给自己的空间">留给自己的空间</p><h2 id="obsJournalTitle" data-en="Your days, in words." data-zh="把日子，慢慢写下。">把日子，慢慢写下。</h2>
+    <label for="obsNoteText" id="obsNoteDay"></label><textarea id="obsNoteText" rows="6" maxlength="2000" placeholder="此刻，我想记下……" data-en-ph="Right now, I want to remember…" data-zh-ph="此刻，我想记下……"></textarea>
+    <button type="button" id="obsSaveNote" class="obs-primary" data-en="Save this moment" data-zh="保存这一刻">保存这一刻</button><p id="obsNoteStatus" class="obs-footnote" role="status"></p>
+    <div class="obs-journal-heading"><h2 data-en="Earlier moments" data-zh="过去的片刻">过去的片刻</h2><button type="button" id="obsExport" data-en="Export notes" data-zh="导出手记">导出手记</button></div><p id="obsJournalEmpty" class="obs-footnote" data-en="Your first note will appear here. No streaks to keep." data-zh="第一条手记会留在这里。不必连续，每次回来都算数。">第一条手记会留在这里。不必连续，每次回来都算数。</p><div id="obsJournalList"></div>
+    <p class="obs-footnote" data-en="Stored only in this browser. Export a backup before clearing site data." data-zh="仅保存在此浏览器；清除网站数据前，请先导出备份。">仅保存在此浏览器；清除网站数据前，请先导出备份。</p>
+  </section>
+  <section class="hero obs-self" aria-label="Introduction" data-aria-en="Introduction" data-aria-zh="简介"><p class="obs-eyebrow" data-en="GET TO KNOW YOURSELF" data-zh="自我 · 慢慢了解">自我 · 慢慢了解</p><h2 data-en="A sky of your own." data-zh="一张属于你的星图。">一张属于你的星图。</h2><p class="sub" data-en="Start with a date. Explore calendar facts and traditional interpretations, with their limits in view." data-zh="从一个日期开始。探索历法与传统解释，也看见它们的边界。">从一个日期开始。探索历法与传统解释，也看见它们的边界。</p></section>
 
   <!-- ===== birth input ===== -->
-  <section class="sec" id="birthSec" aria-label="Birth details" data-aria-en="Birth details" data-aria-zh="出生信息">
+  <section class="sec obs-self" id="birthSec" aria-label="Birth details" data-aria-en="Birth details" data-aria-zh="出生信息">
     <div class="sec-label"><span class="zh" data-en="CAST YOUR CHART" data-zh="立　盘">CAST YOUR CHART</span></div>
     <div class="panel">
       <p class="form-intro" data-en="Start with your birth date. Time and location are optional; all calculations stay in your browser." data-zh="先填写出生日期。时辰和地点可不填；全部推算在浏览器本地完成。">Start with your birth date. Time and location are optional; all calculations stay in your browser.</p>
@@ -273,7 +243,7 @@
             <input type="number" id="bLon" step="0.01" min="-180" max="180" placeholder="121.47"></div>
         </div>
         </div></details>
-        <p id="bAssumptions" class="form-assumptions" aria-live="polite"></p>
+        <details class="assumption-details"><summary data-en="Calculation assumptions" data-zh="查看计算假设">查看计算假设</summary><p id="bAssumptions" class="form-assumptions" aria-live="polite"></p></details>
         <p id="bError" class="form-feedback" role="alert" tabindex="-1"></p>
         <button class="btn" type="submit" data-en="Create my chart ↗" data-zh="生成我的星图 ↗">Create my chart ↗</button>
       </form>
@@ -283,60 +253,17 @@
     </div>
   </section>
 
-  <details class="privacy-settings"><summary data-en="Saved data & privacy" data-zh="本地数据与隐私">Saved data & privacy</summary>
+  <details class="privacy-settings obs-self"><summary data-en="Saved data & privacy" data-zh="本地数据与隐私">Saved data & privacy</summary>
     <div class="privacy-clear">
       <button type="button" class="privacy-clear-btn" id="clearDataBtn" data-en="⌫ Delete this page’s saved data" data-zh="⌫ 删除本页保存的数据">⌫ Delete this page’s saved data</button>
-      <span class="privacy-clear-note" data-en="Deletes this page’s charts, streak and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required." data-zh="删除此浏览器中本页的命盘、签到和关系册；保留其他偏好及已下载卡片。删除前会再次确认。">Deletes this page’s charts, streak and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required.</span>
+      <span class="privacy-clear-note" data-en="Deletes this page’s charts, streak, daily draws, journal and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required." data-zh="删除此浏览器中本页的命盘、签到、每日签、手记和关系册；保留其他偏好及已下载卡片。删除前会再次确认。">Deletes this page’s charts, streak, daily draws, journal and contacts in this browser. Other preferences and downloaded cards stay. Confirmation required.</span>
       <p id="privacyStatus" class="form-feedback" role="alert" tabindex="-1"></p>
     </div>
   </details>
 
   <!-- ===== my chart + daily fortune ===== -->
-  <section class="sec" id="mineSec" hidden aria-label="My chart and daily fortune" data-aria-en="My chart and daily fortune" data-aria-zh="我的星盘与每日运势">
-    <div class="sec-label"><span class="zh" data-en="TODAY'S READING" data-zh="今日运程">TODAY'S READING</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
-    <div class="horo-dashboard" id="horoDashboard">
-      <div class="horo-profile">
-        <p class="horo-eyebrow" data-en="YOUR PRIVATE CHART" data-zh="你的私人星图">YOUR PRIVATE CHART</p>
-        <h2 data-en="You" data-zh="你">You</h2>
-        <p id="horoProfileSigns"></p>
-      </div>
-      <nav class="horo-tabs" aria-label="Chart views" data-aria-en="Chart views" data-aria-zh="星图视图">
-        <button type="button" data-horo-view="today" aria-current="page" data-en="Updates" data-zh="今日">Updates</button>
-        <button type="button" data-horo-view="chart" data-en="Chart" data-zh="星盘">Chart</button>
-        <button type="button" data-horo-view="saved" data-en="Saved" data-zh="已保存">Saved</button>
-        <button type="button" data-horo-view="settings" data-en="Settings" data-zh="设置">Settings</button>
-      </nav>
-      <section class="horo-daily-view" id="horoDailyView" aria-label="Daily reading" data-aria-en="Daily reading" data-aria-zh="每日解读">
-        <div class="horo-date-strip" id="horoDateStrip" aria-label="Select a day" data-aria-en="Select a day" data-aria-zh="选择日期"></div>
-        <div class="horo-daily-reading" id="horoDailyReading" aria-live="polite"></div>
-        <div class="horo-feedback" id="horoFeedback">
-          <span data-en="WAS THIS USEFUL?" data-zh="这份解读有帮助吗？">WAS THIS USEFUL?</span>
-          <button type="button" data-horo-feedback="yes" aria-pressed="false" data-en="Useful" data-zh="有帮助">Useful</button>
-          <button type="button" data-horo-feedback="no" aria-pressed="false" data-en="Not for me" data-zh="不太合适">Not for me</button>
-        </div>
-        <details class="horo-note">
-          <summary data-en="Write a note to your future self →" data-zh="给未来的自己留句话 →">Write a note to your future self →</summary>
-          <label for="horoNoteText" data-en="A note only you can read on this device" data-zh="这条留言只保存在此设备">A note only you can read on this device</label>
-          <textarea id="horoNoteText" maxlength="500" rows="4"></textarea>
-          <button type="button" class="horo-outline-action" id="horoSaveNote" data-en="Save note" data-zh="保存留言">Save note</button>
-          <p id="horoNoteStatus" role="status"></p>
-        </details>
-      </section>
-      <section class="horo-saved-view" id="horoSavedView" hidden>
-        <p class="horo-eyebrow" data-en="SAVED ON THIS DEVICE" data-zh="仅保存在此设备">SAVED ON THIS DEVICE</p>
-        <h3 data-en="Your chart, close at hand." data-zh="你的星图，随时可看。">Your chart, close at hand.</h3>
-        <p id="horoSavedSummary"></p>
-        <div class="horo-saved-note" id="horoSavedNote"></div>
-        <button type="button" class="horo-outline-action" id="horoSaveCard" data-en="Download chart card ↗" data-zh="下载生辰卡 ↗">Download chart card ↗</button>
-      </section>
-      <section class="horo-settings-view" id="horoSettingsView" hidden>
-        <p class="horo-eyebrow" data-en="PRIVACY & DATA" data-zh="隐私与数据">PRIVACY & DATA</p>
-        <h3 data-en="Your details stay here." data-zh="你的资料留在这里。">Your details stay here.</h3>
-        <p data-en="Calculations run in this browser. Your birth details are never added to the page link." data-zh="计算仅在此浏览器内进行；出生资料不会写入页面链接。">Calculations run in this browser. Your birth details are never added to the page link.</p>
-        <button type="button" class="horo-outline-action" id="horoEditBirth" data-en="Edit birth details" data-zh="修改出生信息">Edit birth details</button>
-        <button type="button" class="horo-outline-action" id="horoDeleteData" data-en="Delete saved chart and results" data-zh="删除保存的星图与结果">Delete saved chart and results</button>
-      </section>
-    </div>
+  <section class="sec obs-self" id="mineSec" hidden aria-label="My chart and daily fortune" data-aria-en="My chart and daily fortune" data-aria-zh="我的星盘与每日运势">
+    <div class="sec-label"><span class="zh" data-en="MY CHART" data-zh="我的星图">TODAY'S READING</span> <span class="beta-badge" data-en="Beta" data-zh="内测">Beta</span></div>
     <div class="panel">
       <p class="result-framing" data-en="A playful perspective, not a forecast. Scores are entertainment labels, never a measure of personal worth." data-zh="一种趣味视角，不是命运预告。分数只是娱乐标签，不代表个人价值。">A playful perspective, not a forecast. Scores are entertainment labels, never a measure of personal worth.</p>
       <p id="bResultAssumptions" class="form-assumptions"></p>
@@ -525,11 +452,13 @@
     data-zh="观星台 · 仅供娱乐——不构成命理、医疗、情感或财务建议。全部推算在浏览器本地完成；出生资料保留在本机；页面链接不含出生资料，下载的卡片可能包含个人结果。节气按真实天文推算，以北京时间为准。">STAR TERRACE · FOR ENTERTAINMENT ONLY — not divination, medical, relationship or financial advice. All calculation runs in your browser; birth profiles stay on this device. Page links contain no birth data; downloaded cards can contain personal results. Solar terms computed from real astronomy, China Standard Time.</footer>
 </main>
 
-<nav class="horo-bottom-nav" aria-label="Mobile horoscope navigation" data-aria-en="Mobile horoscope navigation" data-aria-zh="观星台手机导航">
-  <a id="horoBottomHome" href="/en/" data-en="Home" data-zh="首页">Home</a>
-  <button type="button" id="horoBottomSyn" data-en="Two charts" data-zh="合盘">Two charts</button>
-  <button type="button" id="horoBottomMine" aria-current="page" data-en="You" data-zh="我的">You</button>
+<nav class="horo-bottom-nav" aria-label="观星导航" data-aria-en="Observatory navigation" data-aria-zh="观星导航">
+  <button type="button" data-observatory-nav="today" aria-current="page"><img src="/assets/labs/icons/sun.svg" width="24" height="24" alt=""><span data-en="Today" data-zh="今日">今日</span></button>
+  <button type="button" data-observatory-nav="self"><img src="/assets/labs/icons/user.svg" width="24" height="24" alt=""><span data-en="You" data-zh="自我">自我</span></button>
+  <button type="button" data-observatory-nav="relationships"><img src="/assets/labs/icons/people.svg" width="24" height="24" alt=""><span data-en="Relations" data-zh="关系">关系</span></button>
+  <button type="button" data-observatory-nav="journal"><img src="/assets/labs/icons/note.svg" width="24" height="24" alt=""><span data-en="Journal" data-zh="手记">手记</span></button>
 </nav>
+<dialog id="drawDialog" class="obs-draw-dialog" aria-labelledby="drawTitle"><header><span data-en="ORIGINAL REFLECTION SLIP" data-zh="今日一签 · 原创签笺">今日一签 · 原创签笺</span><button type="button" data-draw-close aria-label="关闭每日签" data-aria-en="Close daily draw" data-aria-zh="关闭每日签"><img src="/assets/labs/icons/close.svg" width="24" height="24" alt=""></button></header><p id="drawDate"></p><h2 id="drawTitle" data-en="A moment to pause." data-zh="停一停，听听自己。">停一停，听听自己。</h2><p id="drawText"></p><p id="drawAction"></p><p id="drawSaveStatus" role="status"></p><button type="button" id="drawWriteNote" class="obs-primary" data-en="Write a reflection" data-zh="写下此刻的感受">写下此刻的感受</button><small data-en="An original random reflection; not a Senso-ji fortune or a prediction." data-zh="本站原创随机反思签，不是浅草寺原签，也不预测命运。">本站原创随机反思签，不是浅草寺原签，也不预测命运。</small></dialog>
 
 <script type="module" src="/src/pages/horoscopeEntry.js"></script>
 </body>

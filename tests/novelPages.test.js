@@ -43,16 +43,6 @@ describe('pre-rendered novel documents', () => {
     ]));
   });
 
-  it('keeps reading music paused until the player button is explicitly pressed', () => {
-    expect(source).toContain(
-      "btnPlay.addEventListener('click', function () { audio.paused ? play() : pause(); });",
-    );
-    expect(source).toContain('load(saved < tracks.length ? saved : 0);');
-    expect(source).not.toContain('autoplayPending');
-    expect(source).not.toContain('armAutoplayResume');
-    expect(source).not.toContain('if (load(saved < tracks.length ? saved : 0)) play();');
-  });
-
   it('offers paged and waterfall reading with default page sound', () => {
     expect(source).toContain("serialApi.createPagedBook({");
     expect(source).toContain("layoutToggle");

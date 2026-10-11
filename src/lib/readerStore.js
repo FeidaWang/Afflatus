@@ -1,7 +1,7 @@
 export const READER_STORE_KEY = 'afflatus:reader:v1';
-export const READER_STORE_VERSION = 2;
+export const READER_STORE_VERSION = 3;
 
-const THEMES = new Set(['green', 'night']);
+const THEMES = new Set(['paper', 'green', 'night']);
 const LAYOUTS = new Set(['book', 'waterfall']);
 
 export const DEFAULT_READER_STATE = Object.freeze({
@@ -9,8 +9,13 @@ export const DEFAULT_READER_STATE = Object.freeze({
   bookId: null,
   chapterId: null,
   offset: 0,
-  theme: 'green',
-  fontSize: 18,
+  theme: 'paper',
+  fontSize: 19,
+  lineHeight: 1.85,
+  motion: 'gentle',
+  anchor: null,
+  positions: Object.freeze({}),
+  savedBookmarks: Object.freeze([]),
   layout: 'book',
   bookmarks: Object.freeze({}),
   visited: Object.freeze({}),
@@ -18,6 +23,7 @@ export const DEFAULT_READER_STATE = Object.freeze({
 });
 
 function finiteInteger(value, fallback, min = 0, max = Number.MAX_SAFE_INTEGER) {
+  if (value == null || value === '') return fallback;
   const number = Number(value);
   return Number.isFinite(number)
     ? Math.max(min, Math.min(max, Math.round(number)))
@@ -39,11 +45,17 @@ function sanitizeBookmark(value) {
     chapterTitle: String(value.chapterTitle || ''),
     offset: finiteInteger(value.offset ?? value.scrollY, 0),
     updatedAt: finiteInteger(value.updatedAt ?? value.ts, 0),
+    ...(sanitizeAnchor(value.anchor) ? { anchor: sanitizeAnchor(value.anchor) } : {}),
   };
 }
 
+function sanitizeAnchor(value) {
+  if (!value || typeof value !== 'object' || !Number.isFinite(value.offset)) return null;
+  return { offset: finiteInteger(value.offset, 0), quote: String(value.quote || '').slice(0, 80) };
+}
+
 function sanitizeState(value = {}) {
-  const isCurrentVersion = Number(value.version) === READER_STORE_VERSION;
+  const isCurrentVersion = Number(value.version) >= 2;
   const bookmarks = {};
   for (const [bookId, bookmark] of Object.entries(value.bookmarks || {})) {
     const clean = sanitizeBookmark(bookmark);
@@ -56,13 +68,26 @@ function sanitizeState(value = {}) {
     visited[bookId] = [...new Set(chapterIds.map(chapterIdentity).filter((id) => id != null))];
   }
 
+  const positions = {};
+  for (const [bookId, position] of Object.entries(value.positions || {})) {
+    const clean = sanitizeBookmark(position);
+    if (bookId && clean) positions[bookId] = clean;
+  }
+  const savedBookmarks = (Array.isArray(value.savedBookmarks) ? value.savedBookmarks : Object.entries(bookmarks).map(([bookId, entry]) => ({ ...entry, bookId })))
+    .map((entry) => { const clean = sanitizeBookmark(entry); return clean && typeof entry.bookId === 'string' ? { ...clean, bookId: entry.bookId } : null; })
+    .filter(Boolean);
   return {
     version: READER_STORE_VERSION,
     bookId: typeof value.bookId === 'string' && value.bookId ? value.bookId : null,
     chapterId: chapterIdentity(value.chapterId),
     offset: finiteInteger(value.offset, 0),
     theme: THEMES.has(value.theme) ? value.theme : DEFAULT_READER_STATE.theme,
-    fontSize: finiteInteger(value.fontSize, DEFAULT_READER_STATE.fontSize, 15, 24),
+    fontSize: finiteInteger(value.fontSize, DEFAULT_READER_STATE.fontSize, 16, 28),
+    lineHeight: Math.max(1.6, Math.min(2.2, Number(value.lineHeight) || 1.85)),
+    motion: value.motion === 'none' ? 'none' : 'gentle',
+    anchor: sanitizeAnchor(value.anchor),
+    positions,
+    savedBookmarks,
     layout: isCurrentVersion && LAYOUTS.has(value.layout)
       ? value.layout
       : DEFAULT_READER_STATE.layout,
@@ -135,10 +160,11 @@ export function createReaderStore(adapter, options = {}) {
   const listeners = new Set();
   let state = sanitizeState(readJson(adapter, READER_STORE_KEY) || DEFAULT_READER_STATE);
   let migrated = readJson(adapter, READER_STORE_KEY) != null;
+  let persisted = true;
 
   function persist(next) {
     state = sanitizeState(next);
-    writeState(adapter, state);
+    persisted = writeState(adapter, state);
     listeners.forEach((listener) => listener(state));
     return state;
   }
@@ -152,7 +178,7 @@ export function createReaderStore(adapter, options = {}) {
       migrated = true;
       return state;
     }
-    const persisted = writeState(adapter, migration.state);
+    persisted = writeState(adapter, migration.state);
     state = migration.state;
     migrated = true;
     if (persisted && typeof adapter.removeItem === 'function') {
@@ -169,17 +195,19 @@ export function createReaderStore(adapter, options = {}) {
     getState() {
       return state;
     },
+    isPersisted() { return persisted; },
     update(patch) {
       const value = typeof patch === 'function' ? patch(state) : { ...state, ...patch };
       return persist(value);
     },
-    setProgress(bookId, chapterId, offset = 0) {
-      return persist({ ...state, bookId, chapterId, offset });
+    setProgress(bookId, chapterId, offset = 0, anchor = null) {
+      return persist({ ...state, bookId, chapterId, offset, anchor, positions: { ...state.positions, [bookId]: { chapterId, offset, anchor, updatedAt: Date.now() } } });
     },
     setBookmark(bookId, bookmark) {
       return persist({
         ...state,
         bookmarks: { ...state.bookmarks, [bookId]: sanitizeBookmark(bookmark) },
+        savedBookmarks: [...state.savedBookmarks.filter((entry) => !(entry.bookId === bookId && String(entry.chapterId) === String(bookmark.chapterId) && (entry.anchor?.offset ?? entry.offset) === (bookmark.anchor?.offset ?? bookmark.offset))), { ...bookmark, bookId }],
       });
     },
     markVisited(bookId, chapterId) {

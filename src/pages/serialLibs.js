@@ -6,6 +6,10 @@
 import '../lib/nav.js';
 import '../lib/transition.js';
 import { createPagedBook } from '../lib/pagedBook.js';
+import { mountReaderExperience } from '../lib/readerExperience.js';
+import { mountCompanionAudio } from '../lib/companionAudio.js';
+import { anchorFromVisibleBlock, scrollToTextAnchor } from '../lib/readerAnchors.js';
+import { mountReaderNotes } from '../lib/readerNotes.js';
 import {
   createReaderStore,
   createStorageAdapter,
@@ -22,6 +26,11 @@ import {
 window.AfflatusSerial = Object.freeze({
   chapterIdEquals,
   createPagedBook,
+  mountReaderExperience,
+  mountCompanionAudio,
+  anchorFromVisibleBlock,
+  scrollToTextAnchor,
+  mountReaderNotes,
   createReaderStore,
   createStorageAdapter,
   parseReaderPath,
@@ -41,42 +50,3 @@ document.querySelectorAll('[data-aria-zh]').forEach((node) => {
   node.setAttribute('aria-label', node.getAttribute('data-aria-zh'));
 });
 window.dispatchEvent(new CustomEvent('afflatus-serial-ready'));
-
-// The backdrop is decorative. Keep it out of the reader's first-paint and
-// first-input budget; hydrate it after engagement or a long idle dwell.
-let backdropLoading = false;
-let backdropHandle = null;
-let backdropTimer = 0;
-let backdropEngaged = false;
-
-async function startBackdrop() {
-  backdropEngaged = true;
-  if (backdropLoading || backdropHandle || document.body.classList.contains('reading-focused')) return;
-  backdropLoading = true;
-  clearTimeout(backdropTimer);
-  removeEventListener('pointerdown', startBackdrop, true);
-  removeEventListener('keydown', startBackdrop, true);
-  try {
-    const { mountSerialBackdrop } = await import('../ui/ambientBackdrops.js');
-    if (!document.body.classList.contains('reading-focused')) backdropHandle = mountSerialBackdrop();
-  } catch {}
-  finally { backdropLoading = false; }
-}
-
-addEventListener('pointerdown', startBackdrop, { capture: true, passive: true, once: true });
-addEventListener('keydown', startBackdrop, { capture: true, once: true });
-backdropTimer = setTimeout(startBackdrop, 15_000);
-
-const readerObserver = new IntersectionObserver(([entry]) => {
-  document.body.classList.toggle('reading-focused', entry.isIntersecting);
-  if (entry.isIntersecting) {
-    backdropHandle?.destroy?.();
-    backdropHandle = null;
-  } else if (backdropEngaged) startBackdrop();
-});
-readerObserver.observe(document.getElementById('reader'));
-
-addEventListener('pagehide', () => {
-  clearTimeout(backdropTimer);
-  backdropHandle?.destroy?.();
-}, { once: true });

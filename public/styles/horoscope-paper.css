@@ -1,0 +1,99 @@
+/* Daily observatory: concept 2, with local-first journal and optional daylight. */
+@font-face{font-family:'Lab Serif';src:url('/assets/fonts/labs-serif-regular.woff2') format('woff2');font-display:swap}
+.observatory-page{--bg:#202320;--card:#262a25;--card2:#30352e;--text:#e4e3db;--dim:#b9bdaf;--line:#464c40;--sage-deep:#c1cbb1;--terra-deep:#dfb8a3;--gold-deep:#d5c399;--wood:#c1cbb1;--fire:#e1b5a9;--earth:#d5c399;--metal:#cacbc4;--water:#aac7d1;--shadow:none;--serif:'Lab Serif','Songti SC',Georgia,serif;--obs-button:#c1cbb1;--obs-button-ink:#202320;background:var(--bg);color:var(--text);color-scheme:dark}
+.observatory-page[data-lab-theme="paper"]{--bg:#f4f0e7;--card:#f4f0e7;--card2:#e9e7dd;--text:#272922;--dim:#62685a;--line:#d2d5c8;--sage-deep:#516041;--terra-deep:#8e503a;--gold-deep:#705922;--wood:#516041;--fire:#8e503a;--earth:#705922;--metal:#626558;--water:#3b6070;--obs-button:#272922;--obs-button-ink:#f4f0e7;color-scheme:light}
+.observatory-page [hidden]{display:none}
+.observatory-page button,.observatory-page input,.observatory-page textarea,.observatory-page select{font-family:var(--af-font-sans,system-ui);font-size:15px;color:inherit}
+.observatory-page button{touch-action:manipulation;cursor:pointer}
+.observatory-page button:disabled{opacity:.45;cursor:default}
+.observatory-page :focus-visible{outline:2px solid var(--sage-deep);outline-offset:4px}
+.observatory-page #afflatus-header{--af-paper:var(--bg);--af-ink:var(--text);--af-menu-paper:var(--card);color-scheme:inherit;border-bottom:1px solid var(--line)}
+.observatory-page #afflatus-header .af-brand-full{display:block;opacity:1}
+.observatory-page #afflatus-header .af-brand-compact{display:none}
+.observatory-page #afflatus-header .af-wordmark{flex:0 0 124px;overflow:visible}
+.observatory-page #afflatus-header .af-header-inner{gap:12px}
+.observatory-page #afflatus-header .af-header-language{border:1px solid var(--line)}
+.observatory-page .wrap{max-width:800px;padding:22px 24px calc(116px + env(safe-area-inset-bottom,0px))}
+.obs-today,.obs-journal{max-width:620px;margin:auto}
+.obs-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;font-size:11px;letter-spacing:.04em;color:var(--dim)}
+.obs-topline p{margin:0}
+#obsTheme{width:44px;height:44px;border:0;background:none;display:grid;place-items:center}
+.observatory-page:not([data-lab-theme="paper"]) :is(.obs-row,.horo-bottom-nav,dialog,#obsTheme,.obs-journal-entry) img{filter:invert(1);opacity:.88}
+.obs-dates{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-bottom:10px;max-width:440px}
+.obs-date{border:0;background:none;border-radius:24px;min-width:0;min-height:60px;padding:8px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.obs-date span{font-size:12px;font-weight:400;color:var(--dim)}
+.obs-date b{font-size:15px;font-weight:400}
+.obs-date[aria-pressed="true"]{background:#ebe2cf;color:#272922}
+.obs-date[aria-pressed="true"] span{color:#4b5144}
+.obs-hero{position:relative;isolation:isolate;min-height:235px;padding:24px 0 16px}
+.obs-moon{position:absolute;width:180px;height:198px;object-fit:cover;right:-24px;top:0;z-index:-1;opacity:.62;pointer-events:none}
+.observatory-page[data-lab-theme="paper"] .obs-moon{opacity:.17;mix-blend-mode:multiply}
+.obs-eyebrow{font:400 11px/1.5 var(--af-font-sans,system-ui);letter-spacing:.15em;color:var(--dim);margin:0 0 24px}
+.obs-hero h1{max-width:310px;margin:0 0 27px;font:400 clamp(34px,8.5vw,49px)/1.48 var(--serif);letter-spacing:.02em;text-wrap:balance;white-space:pre-line}
+.obs-action{max-width:440px;font:400 18px/1.85 var(--serif);margin:0;color:var(--text)}
+.obs-primary{display:block;width:100%;min-height:52px;background:var(--obs-button);color:var(--obs-button-ink);border:0;border-radius:30px;padding:14px 24px;font-weight:550;font-size:16px}
+.observatory-page .obs-primary{color:var(--obs-button-ink)}
+.obs-caption{text-align:center;color:var(--dim);font:13px/1.8 var(--serif);margin:14px 0 22px}
+.obs-rows{border-top:1px solid var(--line)}
+.obs-row{display:flex;align-items:center;gap:14px;min-height:66px;width:100%;padding:14px 0;text-align:left;border:0;border-bottom:1px solid var(--line);background:none}
+.obs-row span{font:400 19px var(--serif)}
+.obs-row small{margin-left:auto;font-size:12px;color:var(--dim);white-space:nowrap}
+.obs-row img{flex:none;object-fit:contain}
+.obs-expand{padding:20px 0;border-bottom:1px solid var(--line)}
+.obs-expand h2{font:400 23px var(--serif)}
+.obs-expand p{font-size:15px;line-height:1.8;color:var(--dim)}
+.obs-expand a{font-size:13px;text-decoration:underline;text-underline-offset:4px}
+.obs-expand details{padding:16px 0;border-top:1px solid var(--line)}
+.obs-expand summary{font:400 17px/1.6 var(--serif);min-height:32px;cursor:pointer}
+.obs-expand small{font-size:11px;color:var(--dim)}
+.obs-expand .obs-question{color:var(--text)}
+.obs-text-link{display:block;margin:22px 0 12px;padding:8px 0;min-height:44px;background:none;border:0;color:var(--sage-deep);text-decoration:underline;text-underline-offset:6px}
+.obs-footnote{font-size:11px;line-height:1.8;color:var(--dim);margin-top:16px}
+.horo-bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,800px);display:flex;justify-content:space-around;padding:9px 14px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--bg);z-index:50}
+.horo-bottom-nav button{display:flex;flex-direction:column;gap:6px;align-items:center;min-height:55px;min-width:60px;padding:6px 4px;background:none;border:0;color:var(--dim);font-size:12px}
+.horo-bottom-nav [aria-current]{border-bottom:2px solid var(--sage-deep);color:var(--sage-deep)}
+.obs-journal >h2{font:400 clamp(30px,7vw,40px)/1.5 var(--serif);margin:10px 0 30px}
+#obsNoteDay{font-size:13px;color:var(--dim);display:block;margin-bottom:12px}
+#obsNoteText{width:100%;background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:18px;resize:vertical;min-height:220px;line-height:1.85;display:block;margin-bottom:18px;font-family:var(--serif)}
+#obsNoteText::placeholder{color:var(--dim)}
+.obs-journal-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--line);margin-top:36px;padding-top:14px}
+.obs-journal-heading h2{font:400 23px var(--serif)}
+#obsExport{background:none;border:0;text-decoration:underline;text-underline-offset:4px;min-height:44px;font-size:12px}
+.obs-journal-entry{width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:20px 0;display:grid;grid-template-columns:24px 1fr;gap:8px 14px}
+.obs-journal-entry strong{font-size:14px;font-weight:500}.obs-journal-entry span{grid-column:2;font:15px/1.7 var(--serif);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.obs-draw-dialog{background:var(--bg);color:var(--text);width:min(100% - 32px,430px);max-height:85svh;border:1px solid var(--line);border-radius:14px;padding:24px;overflow:auto}
+.obs-draw-dialog::backdrop{background:#0008}
+.obs-draw-dialog header{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--dim)}
+.obs-draw-dialog header button{display:grid;place-items:center;width:44px;height:44px;background:none;border:0}
+.obs-draw-dialog h2{font:400 16px var(--serif);color:var(--dim);margin:32px 0 16px}
+#drawDate{font-size:12px;color:var(--dim)}
+#drawText{font:400 32px/1.65 var(--serif);margin:20px 0}
+#drawAction{font:17px/1.8 var(--serif)}
+#drawSaveStatus,.obs-draw-dialog small{font-size:11px;line-height:1.8;color:var(--dim)}
+.obs-draw-dialog small{display:block;margin-top:20px}
+.obs-draw-dialog .obs-primary{margin-top:28px}
+/* Existing charts retain their computation and URLs behind the Self tab. */
+.observatory-page[data-observatory-view]:not([data-observatory-view="self"]) .obs-self{display:none}
+.observatory-page[data-observatory-view]:not([data-observatory-view="relationships"]) .more-explorations{display:none}
+.observatory-page .hero{background:none;box-shadow:none;border:0;padding:16px 0;margin:0 0 24px}
+.observatory-page .hero::after,.observatory-page .sec-label::before{display:none}
+.observatory-page .hero h2{font:400 34px/1.55 var(--serif);margin:12px 0}
+.observatory-page .panel{background:var(--card);border-color:var(--line);border-radius:8px;box-shadow:none;padding:20px}
+.observatory-page .sec{margin-top:28px}
+.observatory-page .form-grid{display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
+.observatory-page .chart-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.observatory-page .fld{min-width:0;width:auto}
+.observatory-page .fld input,.observatory-page .fld select{width:100%;max-width:100%;min-height:48px;background:var(--card2);color:var(--text);border-color:var(--line);font-size:16px;padding:10px}
+.observatory-page .fld--check input{width:24px;min-height:24px}
+.observatory-page .btn,.observatory-page .privacy-clear-btn{min-height:48px;border-radius:6px;letter-spacing:0;text-transform:none;font-size:14px;line-height:1.4}
+.observatory-page .btn::before{display:none}
+.observatory-page .form-note{font-size:12px;color:var(--dim)}
+.observatory-page summary{cursor:pointer;min-height:44px;padding:8px 0;font-size:14px}
+.observatory-page .form-assumptions{background:var(--card2);color:var(--dim);font-size:12px;border-color:var(--sage-deep);line-height:1.8}
+.observatory-page .more-explorations >summary{font:400 30px var(--serif);padding:20px 0}
+.observatory-page .obs-self :is(.today-head,.today-detail,.star-draw,.overall,.domains,.lucky-row,.yiji,.result-framing){display:none}
+.observatory-page .foot{font-size:11px;color:var(--dim);border-color:var(--line);margin-top:40px}
+.observatory-page[data-observatory-view="today"] .foot,.observatory-page[data-observatory-view="journal"] .foot{display:none}
+@media(min-width:700px){.obs-hero{padding-block:40px;min-height:300px}.obs-moon{right:0;width:240px;height:264px}.obs-dates{max-width:480px}.obs-today{padding-inline:22px}.obs-hero h1{max-width:400px}.obs-row{min-height:86px}}
+@media(max-width:360px){.observatory-page .wrap{padding-inline:20px}.obs-row{gap:9px}.obs-row span{font-size:17px}.obs-dates{gap:2px}.obs-hero h1{font-size:33px}.obs-hero{min-height:300px}.observatory-page #afflatus-header .af-header-inner{gap:6px}}
+@media(prefers-reduced-motion:no-preference){.obs-draw-dialog[open]{animation:obs-reveal .24s ease-out}@keyframes obs-reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}

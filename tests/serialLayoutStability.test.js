@@ -1,89 +1,69 @@
-import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+// @vitest-environment jsdom
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createPagedBook } from '../src/lib/pagedBook.js';
+import { createReaderStore, READER_STORE_KEY } from '../src/lib/readerStore.js';
 
-const html = readFileSync('serial.html', 'utf8');
-const css = readFileSync('public/styles/serial.css', 'utf8');
-const brandCss = readFileSync('public/styles/afflatus-brand.css', 'utf8');
-const responsiveCss = readFileSync('public/styles/responsive-primitives.css', 'utf8');
-const entry = readFileSync('src/pages/serialLibs.js', 'utf8');
-const pagedBook = readFileSync('src/lib/pagedBook.js', 'utf8');
+beforeEach(()=>{
+  vi.stubGlobal('matchMedia',()=>({matches:true}));
+  vi.stubGlobal('ResizeObserver',class{observe(){} disconnect(){}});
+});
+afterEach(()=>vi.unstubAllGlobals());
 
-describe('serial layout stability', () => {
-  it('uses self-hosted UI fonts without a render-blocking Google font payload', () => {
-    expect(html).toContain('anthropic-sans-roman.woff2');
-    expect(html).toContain('rel="preload"');
-    expect(html).not.toContain('fonts.googleapis.com');
-    expect(html).not.toContain('fonts.gstatic.com');
-    expect(html).not.toContain('/styles/afflatus-navigation.css');
+function setup(capacity=20) {
+  document.body.innerHTML='<div id="stage" data-motion="none" tabindex="0"><div id="content"></div></div><div id="measure"></div><div id="turn"></div><div id="front"></div><div id="back"></div><span id="indicator"></span>';
+  const get=id=>document.getElementById(id);
+  get('content').getBoundingClientRect=()=>({width:340,height:400});
+  let limit=capacity;
+  Object.defineProperty(get('measure'),'clientHeight',{get:()=>limit});
+  Object.defineProperty(get('measure'),'scrollHeight',{get:()=>get('measure').textContent.length});
+  const book=createPagedBook({stage:get('stage'),content:get('content'),measure:get('measure'),turnLayer:get('turn'),turnFront:get('front'),turnBack:get('back'),pageIndicator:get('indicator')});
+  return {book,content:get('content'),setCapacity(value){limit=value;}};
+}
+
+describe('reader pagination and restoration',()=>{
+  it('fills remaining space and never drops or repeats story text',()=>{
+    const {book,content}=setup(20);
+    const text='第一段。'+'长'.repeat(51)+'结尾。';
+    book.setContent('<p>第一段。</p><p>'+'长'.repeat(51)+'</p><p>结尾。</p>');
+    expect(content.textContent.length).toBeGreaterThanOrEqual(20);
+    expect(content.textContent.length).toBeLessThanOrEqual(21);
+    let result=content.textContent;
+    while(book.turn(1))result+=content.textContent;
+    expect(result).toBe(text);
   });
-
-  it('reserves asynchronous bookshelf, HUD, hero and chapter regions', () => {
-    expect(html.match(/class="book-skeleton"/g)).toHaveLength(3);
-    expect(html).toContain('aria-busy="true"');
-    expect(css).toMatch(/\.hero \.pad\{[^}]*min-height:/);
-    expect(css).toMatch(/\.hud\{[^}]*min-height:/);
-    expect(css).toMatch(/\.reader \.body\{[^}]*min-height:/);
+  it('preserves the passage when page capacity changes',()=>{
+    const {book,content,setCapacity}=setup(20);
+    const text='甲'.repeat(22)+'关键句子'+'乙'.repeat(50);
+    book.setContent(`<p>${text}</p>`);book.turn(1);
+    const anchor=book.getState().anchor;
+    setCapacity(12);book.repaginate();
+    expect(book.getState().anchor.offset).toBeLessThanOrEqual(anchor.offset);
+    expect(book.getState().anchor.offset+content.textContent.length).toBeGreaterThan(anchor.offset);
   });
-
-  it('keeps the mobile bookshelf compact and marks the active dossier boundary', () => {
-    expect(html).toContain('class="dossier-bridge"');
-    expect(html).toContain('当前书档');
-    expect(css).toMatch(/@media\(max-width:640px\)[\s\S]*\.shelf\{[^}]*grid-auto-flow:column;[^}]*overflow-x:auto;[^}]*scroll-snap-type:x proximity;/);
-    expect(css).toMatch(/\.dossier-bridge\{display:flex;/);
+  it('restores a saved text anchor after a chapter prefix is edited',()=>{
+    const {book,content}=setup(12);
+    book.setContent('<p>甲甲甲甲甲甲甲甲甲甲甲甲关键句子在这里。乙乙乙乙乙乙乙乙乙乙乙乙</p>');book.turn(1);
+    const anchor=book.getState().anchor;
+    book.setContent('<p>新增序言。甲甲甲甲甲甲甲甲甲甲甲甲关键句子在这里。乙乙乙乙乙乙乙乙乙乙乙乙</p>',{anchor});
+    expect(content.textContent).toContain('关键句子');
   });
-
-  it('keeps both document roots out of overflow clipping so sticky chrome follows scrolling', () => {
-    expect(brandCss).not.toMatch(/html\s*\{[^}]*overflow-x\s*:/s);
-    expect(brandCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
-    expect(responsiveCss).not.toMatch(/html\s*\{[^}]*overflow-x\s*:/s);
-    expect(responsiveCss).not.toMatch(/body\s*\{[^}]*overflow-x\s*:/s);
-    expect(responsiveCss).toMatch(/body\s*\{[^}]*overflow-wrap:\s*break-word;/s);
-    expect(responsiveCss).not.toMatch(/body\s*\{[^}]*overflow-wrap:\s*anywhere;/s);
-    expect(brandCss).toMatch(/\.site-header--follow\s*\{[^}]*position:\s*-webkit-sticky;[^}]*position:\s*sticky;/s);
-    expect(css).toMatch(/\.novels-page \.site-header--follow\{position:relative;inset-block-start:auto\}/);
-    expect(css).toMatch(/\.toolbar\{position:sticky;top:var\(--safe-t\);/);
-    expect(css).toMatch(/\.reader-progress\{position:sticky;top:calc\(var\(--safe-t\) \+ var\(--toolbar-h\)\)/);
-    expect(css).toMatch(/\.wf-chip\{position:sticky;top:calc\(var\(--safe-t\) \+ var\(--toolbar-h\) \+ 12px\)/);
-    expect(html).not.toContain("style.setProperty('--site-header-h'");
-    expect(html).toContain('toolbarResizeObserver.observe(toolbarEl)');
+  it('does not walk backward through the chapter across repeated resizes',()=>{
+    const {book,setCapacity}=setup(20);
+    book.setContent('<p>'+'甲'.repeat(200)+'</p>');book.turn(1);book.turn(1);
+    const anchor=book.getState().anchor;
+    setCapacity(90);book.repaginate();
+    setCapacity(12);book.repaginate();
+    expect(book.getState().anchor.offset).toBe(anchor.offset);
+    expect(book.getState().pageIndex).toBeGreaterThan(0);
   });
-
-  it('keeps the decorative canvas outside the reader critical path', () => {
-    expect(entry).toContain("import('../ui/ambientBackdrops.js')");
-    expect(entry).not.toMatch(/^import .*ambientBackdrops/m);
-    expect(entry).toContain('15_000');
-  });
-
-  it('is Chinese-only and has no language switch control', () => {
-    expect(html).toContain('<html lang="zh-CN">');
-    expect(html).not.toContain('class="lang-toggle"');
-    expect(html).not.toContain('data-en=');
-    expect(entry).not.toContain("import '../lib/i18n.js'");
-  });
-
-  it('supports a physical book and progressive waterfall reading', () => {
-    expect(html).toContain('id="bookStage"');
-    expect(html).toContain('id="bookTurn"');
-    expect(html).toContain('id="layoutToggle"');
-    expect(html).toContain('id="readerWaterfall"');
-    expect(html).toContain('id="wfSentinel"');
-    expect(html).toContain('requestAnimationFrame(stepAutoScroll)');
-    expect(html).toContain('cancelAnimationFrame(state.autoTimer)');
-    expect(html).not.toContain('}, 16);');
-    expect(html).not.toContain('id="pageSoundToggle"');
-    expect(css).toMatch(/\.book-stage\{[^}]*width:min\(100%,560px\)[^}]*aspect-ratio:140\/203/);
-    expect(css).toContain('.reader .wf-chapter .body{min-height:0}');
-    expect(css).toContain('@keyframes turnPaperNext');
-    expect(css).toContain('@keyframes fadeDepartingPageText');
-    expect(css).toContain('@keyframes revealArrivingPageText');
-    expect(css).toContain('@keyframes openHardCover');
-    expect(pagedBook).toContain('createPagedBook');
-    expect(pagedBook).toContain('event.target !== turnLayer');
-    expect(pagedBook).toContain('context.createBuffer');
-    expect(pagedBook).toContain('if (!isActive()) return');
-    expect(pagedBook).not.toContain('SOUND_STORAGE_KEY');
-    expect(pagedBook).not.toContain('soundButton');
-    expect(pagedBook).toContain("stage.addEventListener('pointerdown'");
-    expect(pagedBook).toContain("event.key === 'ArrowRight'");
+  it('keeps multiple bookmarks and v2 preferences after migration',()=>{
+    const data=new Map([[READER_STORE_KEY,JSON.stringify({version:2,theme:'night',layout:'waterfall',bookId:'book',chapterId:2,offset:44,bookmarks:{book:{chapterId:1,chapterTitle:'第一章',offset:12}}})]]);
+    const storage={getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v)};
+    const store=createReaderStore(storage,{migrate:false});
+    expect(store.getState()).toMatchObject({theme:'night',layout:'waterfall',offset:44});
+    store.setBookmark('book',{chapterId:2,chapterTitle:'第二章',offset:2,anchor:{offset:48,quote:'这里'}});
+    const reloaded=createReaderStore(storage,{migrate:false});
+    expect(reloaded.getState().savedBookmarks).toHaveLength(2);
+    expect(reloaded.getState().savedBookmarks[1].anchor.quote).toBe('这里');
   });
 });

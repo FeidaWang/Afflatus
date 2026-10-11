@@ -1,99 +1,55 @@
-import { expect, settlePage, test } from './site-fixture.js';
+import { test, expect } from '@playwright/test';
 
-async function expectReadingToolbarOnly(page, header, toolbar) {
-  await page.evaluate(() => scrollTo(0, 1200));
-  await expect.poll(async () => {
-    const headerBox = await header.boundingBox();
-    const toolbarBox = await toolbar.boundingBox();
-    if (!headerBox || !toolbarBox) return null;
-    return {
-      headerHasLeftViewport: Math.round(headerBox.y + headerBox.height) <= 0,
-      toolbarTop: Math.round(toolbarBox.y),
-    };
-  }).toEqual({ headerHasLeftViewport: true, toolbarTop: 0 });
-
-  const toolbarIsTopmost = await toolbar.evaluate((element) => {
-    const rect = element.getBoundingClientRect();
-    const target = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    return target === element || element.contains(target);
-  });
-  expect(toolbarIsTopmost).toBe(true);
-}
-
-test('Chinese serial landing header scrolls away while reader toolbar remains visible', async ({ page }) => {
-  await page.goto('/zh/serial.html', { waitUntil: 'domcontentloaded' });
-  await settlePage(page);
-
-  const header = page.locator('.site-header--follow');
-  const toolbar = page.locator('#toolbar');
-  await expect(header).toHaveCount(1);
-  await expect(toolbar).toHaveCount(1);
-  await expect(header).toBeVisible();
-  await expect(toolbar).toBeVisible();
-
-  const rootOverflow = await page.evaluate(() => ({
-    html: getComputedStyle(document.documentElement).overflowX,
-    body: getComputedStyle(document.body).overflowX,
-  }));
-  expect(rootOverflow).toEqual({ html: 'visible', body: 'visible' });
-
-  await expectReadingToolbarOnly(page, header, toolbar);
-
-  const layoutToggle = page.locator('#layoutToggle');
-  await expect(layoutToggle).toHaveAttribute('aria-pressed', 'false');
-  await layoutToggle.click();
-  await expect(layoutToggle).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#readerWaterfall')).toBeVisible();
-  await expectReadingToolbarOnly(page, header, toolbar);
+// Mobile-first reader contract. Uses the project's isolated CI browsers.
+test('library opens a reader with reachable controls and returns to the same passage', async ({ page }) => {
+  await page.goto('/zh/serial.html');
+  await expect(page.locator('#continueReading')).toBeVisible();
+  await page.locator('#continueReading').click();
+  await expect(page.locator('#chapterBody')).toContainText('顾星辞');
+  await page.locator('#pageNextHotspot').click();
+  const passage = (await page.locator('#chapterBody').innerText()).slice(0, 20);
+  await page.locator('#bookmarkBtn').click();
+  await page.getByRole('button', { name: '阅读设置', exact: true }).click();
+  await page.locator('#fsPlus').click();
+  await page.getByRole('button', { name: '关闭阅读设置', exact: true }).click();
+  await expect(page.locator('#chapterBody')).toContainText(passage);
+  await page.locator('#readerBack').click();
+  await expect(page.locator('#continueReading')).toBeVisible();
+  await page.reload();
+  await page.locator('#continueReading').click();
+  await expect(page.locator('#chapterBody')).toContainText(passage);
+  const bounds = await page.locator('#toolbar').boundingBox();
+  expect(bounds.y + bounds.height).toBeLessThanOrEqual(page.viewportSize().height + 1);
 });
 
-test('mobile serial shelf is a contained selector with a clear dossier handoff', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name === 'desktop-chromium', 'Mobile shelf geometry is covered by the two phone profiles.');
-  await page.addInitScript(() => {
-    localStorage.setItem('afflatus:reader:v1', JSON.stringify({
-      version: 2,
-      bookId: 'changye-qingjian',
-      chapterId: 1,
-      offset: 0,
-      theme: 'green',
-      fontSize: 18,
-      layout: 'book',
-      bookmarks: {},
-      visited: {},
-      audioTrack: 0,
-    }));
-  });
-  await page.goto('/zh/serial.html', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#shelf .book')).toHaveCount(3);
-  await expect(page.locator('#novelTitle')).toHaveText('长夜请柬');
+test('chapter links, night mode and contents retain the reading context', async ({ page }) => {
+  await page.goto('/zh/novels/wanjie-zhongchun/2/');
+  await expect(page.locator('#chapterTitle')).toContainText('枯藤夜行');
+  await page.getByRole('button', { name: '阅读设置', exact: true }).click();
+  await page.getByRole('button', { name: '夜间', exact: true }).click();
+  await page.getByRole('button', { name: '关闭阅读设置', exact: true }).click();
+  await expect(page.locator('body')).toHaveAttribute('data-reader-theme', 'night');
+  await page.locator('#tocOpen').click();
+  await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden', 'false');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#tocDrawer')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('#tocOpen')).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});
 
-  const geometry = await page.evaluate(() => {
-    const shelf = document.getElementById('shelf');
-    const bridge = document.querySelector('.dossier-bridge');
-    const shelfStyle = getComputedStyle(shelf);
-    return {
-      flow: shelfStyle.gridAutoFlow,
-      overflowX: shelfStyle.overflowX,
-      hasHorizontalShelf: shelf.scrollWidth > shelf.clientWidth,
-      bridgeVisible: getComputedStyle(bridge).display === 'flex',
-      activeFullyVisible: (() => {
-        const activeBox = shelf.querySelector('.book.active').getBoundingClientRect();
-        const shelfBox = shelf.getBoundingClientRect();
-        return activeBox.left >= shelfBox.left && activeBox.right <= shelfBox.right;
-      })(),
-      pageFitsViewport: document.documentElement.scrollWidth === innerWidth,
-    };
-  });
-  expect(geometry).toEqual({
-    flow: 'column',
-    overflowX: 'auto',
-    hasHorizontalShelf: true,
-    bridgeVisible: true,
-    activeFullyVisible: true,
-    pageFitsViewport: true,
-  });
-
-  await page.locator('#shelf .book').first().click();
-  await expect(page.locator('#novelTitle')).toHaveText('万界种春');
-  await expect(page.locator('#shelf .book').first()).toHaveClass(/active/);
+test('daily draw and private note survive a return visit without a birth profile', async ({ page }) => {
+  await page.goto('/zh/horoscope.html');
+  await expect(page.locator('#observatoryToday')).toBeVisible();
+  await page.locator('#obsDrawButton').click();
+  const draw = await page.locator('#drawText').innerText();
+  await page.locator('#drawWriteNote').click();
+  await page.locator('#obsNoteText').fill('给自己留一点时间。');
+  await page.locator('#obsSaveNote').click();
+  await expect(page.locator('#obsNoteStatus')).toContainText('已保存');
+  await page.reload();
+  await page.getByRole('button', { name: '手记', exact: true }).click();
+  await expect(page.locator('#obsNoteText')).toHaveValue('给自己留一点时间。');
+  await page.getByRole('button', { name: '今日', exact: true }).click();
+  await page.locator('#obsDrawButton').click();
+  await expect(page.locator('#drawText')).toHaveText(draw);
 });

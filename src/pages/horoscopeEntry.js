@@ -8,3 +8,6 @@ import '../lib/i18n.js';
 import '../lib/nav.js';
 import '../lib/audio.js';
 import '../lib/transition.js';
+
+import { mountDailyExperience } from '../horoscope/dailyExperience.js';
+mountDailyExperience();

@@ -1,3 +1,4 @@
+import { createTextAnchor, resolveTextAnchor } from './readerAnchors.js';
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
 function clamp(value, min, max) {
@@ -32,6 +33,9 @@ export function createPagedBook(options) {
 
   let sourceHtml = '';
   let pages = [''];
+  let pageOffsets = [0];
+  let sourceText = '';
+  let readingAnchor = null;
   let pageIndex = 0;
   let hasPreviousChapter = false;
   let hasNextChapter = false;
@@ -155,6 +159,7 @@ export function createPagedBook(options) {
           }
         }
 
+        if (best === 0 && measure.childNodes.length) { flush(); continue; }
         best = Math.max(1, best);
         const piece = node.cloneNode(false);
         if (continuation) piece.classList.add('page-continuation');
@@ -172,6 +177,12 @@ export function createPagedBook(options) {
       if (measureFits()) continue;
       node.remove();
 
+      // Fill the remaining space instead of pushing an entire long paragraph
+      // onto the next page. This also avoids one-sentence pages on phones.
+      if (node.tagName === 'P') {
+        appendParagraphInPieces(node);
+        continue;
+      }
       if (measure.childNodes.length) flush();
       measure.appendChild(node);
       if (measureFits()) continue;
@@ -207,10 +218,7 @@ export function createPagedBook(options) {
   function notifyPageChange() {
     updateControls();
     if (typeof onPageChange === 'function') {
-      onPageChange({
-        pageIndex,
-        pageCount: pages.length,
-      });
+      onPageChange(getState());
     }
   }
 
@@ -229,6 +237,12 @@ export function createPagedBook(options) {
 
   function animate(direction, previousHtml, nextHtml, withSound = true) {
     clearAnimation();
+    if (stage.dataset.motion !== 'paper') {
+      if (!matchMedia(REDUCED_MOTION).matches && stage.dataset.motion !== 'none') {
+        content.animate?.([{ opacity: 0.35, transform: `translateX(${direction * 8}px)` }, { opacity: 1, transform: 'translateX(0)' }], { duration: 180, easing: 'ease-out' });
+      }
+      return;
+    }
     if (withSound) playPageSound(direction);
 
     if (matchMedia(REDUCED_MOTION).matches) return;
@@ -256,9 +270,12 @@ export function createPagedBook(options) {
     const previousHtml = content.innerHTML;
     sourceHtml = String(html || '');
     pages = paginate(sourceHtml);
+    indexPages();
     pageIndex = settings.pageIndex === 'last'
       ? pages.length - 1
       : clamp(Number(settings.pageIndex) || 0, 0, pages.length - 1);
+    if (settings.anchor) pageIndex = pageForAnchor(settings.anchor);
+    readingAnchor = createTextAnchor(sourceText, settings.anchor ? resolveTextAnchor(sourceText, settings.anchor) : pageOffsets[pageIndex]);
     renderPage();
     if (settings.direction && previousHtml) {
       animate(settings.direction, previousHtml, content.innerHTML, settings.withSound !== false);
@@ -268,11 +285,11 @@ export function createPagedBook(options) {
 
   function turn(direction) {
     if (animating || !direction) return false;
-    unlockSound();
     const target = pageIndex + (direction > 0 ? 1 : -1);
     if (target >= 0 && target < pages.length) {
       const previousHtml = content.innerHTML;
       pageIndex = target;
+      readingAnchor = createTextAnchor(sourceText, pageOffsets[pageIndex]);
       renderPage();
       animate(direction, previousHtml, content.innerHTML);
       return true;
@@ -284,16 +301,19 @@ export function createPagedBook(options) {
   }
 
   function repaginate() {
-    if (!sourceHtml || animating) return;
-    const oldCount = pages.length;
-    const oldIndex = pageIndex;
+    if (!sourceHtml || animating || !isActive()) return;
+    const anchor = getState().anchor;
     pages = paginate(sourceHtml);
-    const ratio = oldCount > 1 ? oldIndex / (oldCount - 1) : 0;
-    pageIndex = clamp(Math.round(ratio * Math.max(0, pages.length - 1)), 0, pages.length - 1);
+    indexPages();
+    pageIndex = pageForAnchor(anchor);
+    // Preserve the intended text position even when it now falls halfway
+    // through a page. A second resize must not walk backwards to page starts.
+    readingAnchor = createTextAnchor(sourceText, resolveTextAnchor(sourceText, anchor));
     renderPage();
   }
 
   function open(title) {
+    if (stage.dataset.motion !== 'paper') return;
     unlockSound();
     stage.dataset.coverTitle = title ? `《${title}》` : '小说连载';
     stage.classList.remove('is-opening');
@@ -304,7 +324,28 @@ export function createPagedBook(options) {
   }
 
   function getState() {
-    return { pageIndex, pageCount: pages.length };
+    return { pageIndex, pageCount: pages.length, anchor: readingAnchor || createTextAnchor(sourceText, pageOffsets[pageIndex] || 0) };
+  }
+
+  function indexPages() {
+    let offset = 0;
+    const template = document.createElement('template');
+    sourceText = '';
+    pageOffsets = pages.map((html) => {
+      template.innerHTML = html;
+      const text = template.content.textContent || '';
+      const start = offset;
+      sourceText += text;
+      offset += text.length;
+      return start;
+    });
+  }
+
+  function pageForAnchor(anchor) {
+    const offset = resolveTextAnchor(sourceText, anchor);
+    let index = 0;
+    while (index + 1 < pageOffsets.length && pageOffsets[index + 1] <= offset) index++;
+    return index;
   }
 
   function onPointerDown(event) {
@@ -317,6 +358,7 @@ export function createPagedBook(options) {
     const dx = event.clientX - swipeStart.x;
     const dy = event.clientY - swipeStart.y;
     swipeStart = null;
+    if (window.getSelection()?.toString()) return;
     if (Math.abs(dx) < 54 || Math.abs(dx) <= Math.abs(dy) * 1.2) return;
     turn(dx < 0 ? 1 : -1);
   }

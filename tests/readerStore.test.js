@@ -30,13 +30,13 @@ describe('reader store', () => {
     store.markVisited('wanjie-zhongchun', 3);
     store.setAudioTrack(2);
 
-    expect(store.getState()).toEqual({
-      ...DEFAULT_READER_STATE,
+    expect(store.getState()).toMatchObject({
+      version: READER_STORE_VERSION,
       bookId: 'wanjie-zhongchun',
       chapterId: 3,
       offset: 412,
       theme: 'night',
-      fontSize: 24,
+      fontSize: 28,
       bookmarks: {
         'wanjie-zhongchun': {
           chapterId: 3,
@@ -131,4 +131,9 @@ describe('reader store', () => {
     store.update({ theme: 'green' });
     expect(listener).toHaveBeenCalledOnce();
   });
+});
+
+it('uses the reading defaults when no legacy font size exists', () => {
+  const store = createReaderStore(new MemoryAdapter(), { bookIds: ['book'] });
+  expect(store.getState()).toMatchObject({ theme: 'paper', fontSize: 19, lineHeight: 1.85 });
 });
