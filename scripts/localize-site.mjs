@@ -26,6 +26,7 @@ import {
   readerPath,
   readerUrl,
 } from '../src/lib/serialRoutes.js';
+import { renderNovelBlocks } from '../src/lib/novelBlocks.js';
 import {
   buildRouteStructuredData,
   loadRouteSeoFacts,
@@ -517,22 +518,6 @@ function novelPageCopy(locale, entry, chapter = null) {
     };
 }
 
-function renderNovelBlocks(blocks) {
-  return (blocks || []).map((block) => {
-    if (block.type === 'sys') {
-      let text = String(block.text || '');
-      let heading = '幕间讯号';
-      const match = text.match(/^【([^】]+)】\s*/);
-      if (match) {
-        heading = match[1];
-        text = text.slice(match[0].length);
-      }
-      return `<div class="sys"><div class="sys-head"><i class="sys-dot" aria-hidden="true"></i><span>系统播报 ⟨ ${escapeHtml(heading)} ⟩</span><span class="sys-tag">同契终端 · 明幕</span></div><div class="sys-body">${escapeHtml(text)}</div></div>`;
-    }
-    return `<p>${escapeHtml(block.text || '')}</p>`;
-  }).join('');
-}
-
 function removeLinksByRel(document, rel) {
   for (const link of all(document, (node) => node.tagName === 'link' && getAttr(node, 'rel') === rel)) {
     removeNode(link);
@@ -587,12 +572,16 @@ function setNovelJsonLd(document, entry, chapter, locale) {
       author: { '@type': 'Person', name: entry.novel.author },
       isPartOf: { '@id': `${bookUrl}#series` },
       url: bookUrl,
-      hasPart: entry.chapters.map((item) => ({
-        '@type': 'Chapter',
-        name: item.title,
-        position: entry.chapters.indexOf(item) + 1,
-        url: readerUrl({ locale, bookId: entry.id, chapterId: item.id }),
-      })),
+      // The full chapter list belongs to the book landing only; repeating it
+      // on every chapter page added ~30 KB per document.
+      ...(chapter ? {} : {
+        hasPart: entry.chapters.map((item) => ({
+          '@type': 'Chapter',
+          name: item.title,
+          position: entry.chapters.indexOf(item) + 1,
+          url: readerUrl({ locale, bookId: entry.id, chapterId: item.id }),
+        })),
+      }),
     },
   ];
   if (chapter) {
