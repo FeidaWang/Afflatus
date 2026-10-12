@@ -81,8 +81,8 @@
   "functions": {
     "api/vibe-model.py": {
       "maxDuration": 30,
-      "includeFiles": "services/vibe-model/**",
-      "excludeFiles": "{node_modules/**,dist/**,public/**,integrations/**,tests/**,e2e/**,prototypes/**,output/**,content/**,data/**,.git/**,artifacts/**,src/**,scripts/**}"
+      "includeFiles": "{services/vibe-model/**,services/vibe-bridge/bridge/**}",
+      "excludeFiles": "{node_modules/**,dist/**,public/**,prototypes/**,content/**,data/**,.git/**,.github/**,artifacts/**,src/**,scripts/**,assets/**,api/*.js,*.html,*.md,*.mjs,*.cjs,*.js,*.command}"
     },
     "api/arena-fsi.mjs": {
       "maxDuration": 180

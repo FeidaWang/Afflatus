@@ -1,0 +1,13 @@
+# Deploy-time ignore: only what the build and the Python function do not need.
+# Build inputs (scripts/, src/, content/, public/, assets/, services/, api/) stay.
+docs/
+rfcs/
+prompts/
+assets-archive/
+data-archive/
+dist_*/
+e2e/
+tests/
+integrations/
+output/
+tools/
