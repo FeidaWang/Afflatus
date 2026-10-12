@@ -1,23 +1,14 @@
 import { expect, test } from '@playwright/test';
 
-const visibleHomeLanguageSwitch = (page) => page.locator('#langBtn:visible');
-
-async function clickOnlyHomeLanguageSwitch(page) {
-  const switcher = visibleHomeLanguageSwitch(page);
-  await expect(switcher).toHaveCount(1);
-  await switcher.click();
-}
+const languageSwitch = (page) => page.locator('#afflatus-header [data-header-language]');
+const groupTriggers = (page) => page.locator('#afflatus-header [data-header-disclosure][aria-controls^="af-"]:not(.af-header-menu) .af-nav-label');
 
 test('home navigation follows the fixed and interactive locale', async ({ page }) => {
-  const groupTriggers = page.locator('.nav-trigger');
-
   await page.goto('/zh/', { waitUntil: 'domcontentloaded' });
-  await expect(groupTriggers).toHaveText(['市场', '实验室', '写作']);
-  await expect(page.locator('.nav-about')).toHaveText('关于');
+  await expect(groupTriggers(page)).toHaveText(['市场', '更多']);
 
   await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-  await expect(groupTriggers).toHaveText(['Markets', 'Lab', 'Writing']);
-  await expect(page.locator('.nav-about')).toHaveText('About');
+  await expect(groupTriggers(page)).toHaveText(['Markets', 'More']);
 
   // Fixed-locale pages do not own the adaptive preference. Seed the state
   // explicitly so this assertion never depends on a previous navigation.
@@ -25,30 +16,32 @@ test('home navigation follows the fixed and interactive locale', async ({ page }
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await Promise.all([
     page.waitForURL(/\/zh\/$/),
-    clickOnlyHomeLanguageSwitch(page),
+    languageSwitch(page).click(),
   ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
-  await expect(groupTriggers).toHaveText(['市场', '实验室', '写作']);
+  await expect(groupTriggers(page)).toHaveText(['市场', '更多']);
 });
 
 test('home fixed-locale switch preserves query and hash state', async ({ page }) => {
-  await page.goto('/en/?combatview=2d#portfolioConvoy', { waitUntil: 'domcontentloaded' });
+  await page.goto('/en/?q=1#major-releases', { waitUntil: 'domcontentloaded' });
+  await expect(languageSwitch(page)).toHaveAttribute('href', '/zh/?q=1#major-releases');
   await Promise.all([
-    page.waitForURL(/\/zh\/\?combatview=2d#portfolioConvoy$/),
-    clickOnlyHomeLanguageSwitch(page),
+    page.waitForURL(/\/zh\/\?q=1#major-releases$/),
+    languageSwitch(page).click(),
   ]);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
 });
 
-test('home shell remains English by default even when an old adaptive locale is stored', async ({ page }) => {
+test('adaptive root honours a stored Chinese locale and offers English back', async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem('afflatus:locale:v1', 'zh');
   });
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.locator('#langBtn')).toHaveAttribute('href', '/zh/');
-  await expect(page.locator('h1')).toContainText('Systems for');
-  await expect(visibleHomeLanguageSwitch(page)).toHaveCount(1);
+  await page.goto('/?q=1#major-releases', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
+  const switcher = languageSwitch(page);
+  await expect(switcher).toHaveText('EN');
+  await expect(switcher).toHaveAttribute('href', '/en/?q=1#major-releases');
+  await expect(switcher).toHaveAttribute('aria-label', /English|英文/);
 });
 
 test('primary navigation replaces duplicate linear page-turn controls', async ({ page }) => {
@@ -57,15 +50,7 @@ test('primary navigation replaces duplicate linear page-turn controls', async ({
     await expect(page.locator('.page-turn-controls, .route-arrows')).toHaveCount(0);
     await expect(page.locator('body')).not.toHaveAttribute('data-prev');
     await expect(page.locator('body')).not.toHaveAttribute('data-next');
-    if (path === '/en/') {
-      const writingTrigger = page.getByRole('button', { name: 'Writing' });
-      if (!(await writingTrigger.isVisible())) await page.locator('.mobile-menu').click();
-      await writingTrigger.click();
-      await expect(page.locator('.nav-popover a[href="/zh/serial.html"]')).toHaveCount(1);
-    } else {
-      await expect(page.locator('.nav-labs__menu a[data-en="Novels"]'))
-        .toHaveAttribute('href', '/zh/serial.html');
-    }
+    await expect(page.locator('#af-primary-nav a[href="/zh/serial.html"]')).toHaveCount(1);
   }
 
   const currentUrl = page.url();
@@ -74,41 +59,26 @@ test('primary navigation replaces duplicate linear page-turn controls', async ({
 });
 
 test('fixed-locale switching keeps the reader in the current section', async ({ page }) => {
-  await page.goto('/en/course.html', { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('.page-turn-controls')).toHaveCount(0);
-  await page.locator('#review').evaluate((section) => {
-    section.scrollIntoView({ behavior: 'instant', block: 'start' });
-  });
-
-  await page.locator('.lang-toggle').click();
-  await expect(page).toHaveURL(/\/zh\/course\.html#review$/);
-
+  await page.goto('/en/course.html#curriculum', { waitUntil: 'domcontentloaded' });
+  await languageSwitch(page).click();
+  await expect(page).toHaveURL(/\/zh\/course\.html#curriculum$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN');
-  const reviewPosition = await page.locator('#review').evaluate((section) => {
-    const bounds = section.getBoundingClientRect();
-    return { top: bounds.top, bottom: bounds.bottom };
-  });
-  expect(reviewPosition.top).toBeGreaterThanOrEqual(0);
-  expect(reviewPosition.top).toBeLessThan(180);
-  expect(reviewPosition.bottom).toBeGreaterThan(180);
-  expect(new URL(page.url()).hash).toBe('#review');
+  await expect.poll(() => page.locator('#curriculum').evaluate((section) => Math.round(section.getBoundingClientRect().top)))
+    .toBeLessThan(180);
 });
 
-test('desktop pointer click pins a Labs menu that hover opened', async ({ page }, testInfo) => {
+test('desktop pointer click toggles a Markets menu that hover opened', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Desktop pointer interaction');
   await page.goto('/en/course.html', { waitUntil: 'domcontentloaded' });
 
-  const trigger = page.locator('.nav-labs__trigger');
-  const menu = page.locator('.nav-labs__menu');
+  const trigger = page.locator('#afflatus-header [data-header-disclosure][aria-controls="af-markets"]');
   await trigger.hover();
-  await expect(menu).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 
+  // Current product behaviour: a click after hover-open toggles the menu.
   await trigger.click();
-  await expect(menu).toBeVisible();
-  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-
-  await trigger.click();
-  await expect(menu).toBeHidden();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 });

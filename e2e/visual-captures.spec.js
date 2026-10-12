@@ -38,9 +38,14 @@ for (const route of activeRoutes) {
   test(`${route.id} emits two deterministic viewport captures`, async ({ page }, testInfo) => {
     await page.goto(route.path, { waitUntil: 'domcontentloaded' });
     await settlePage(page);
-    await page.addStyleTag({
-      content: 'canvas, video, iframe { visibility: hidden !important; }',
-    });
+    // Portfolio's opening is the scrollytelling canvas; on short viewports the
+    // active card sits below the fold, so hiding the canvas would leave a blank
+    // capture.
+    if (route.id !== 'portfolio') {
+      await page.addStyleTag({
+        content: 'canvas, video, iframe { visibility: hidden !important; }',
+      });
+    }
     await capture(page, testInfo, route.id, 'top');
 
     await page.evaluate(() => {

@@ -2,7 +2,7 @@
 /* Portfolio · FY 2025-26 trading record — warm paper, graph grid, watercolor squares. */
 :root{
   --pf-paper:#faf9f5;--pf-paper-2:#f3f1ea;--pf-ink:#141413;--pf-muted:#6b6a64;--pf-line:#e3e0d6;
-  --pf-grid:rgba(20,20,19,.065);--pf-accent:#7d6fe0;--pf-lav:#9d90ec;--pf-blue:#83b0ec;
+  --pf-grid:rgba(20,20,19,.065);--pf-accent:#7d6fe0;--pf-accent-text:#6b5fc1;--pf-lav:#9d90ec;--pf-blue:#83b0ec;
   --pf-serif:"Anthropic Sans", 'Newsreader','Songti SC','Noto Serif SC','Source Han Serif SC',Georgia,serif;
   --pf-hand:"Anthropic Sans", 'Caveat','Kaiti SC','STKaiti','KaiTi',cursive;
   --pf-sans:"Anthropic Sans", 'Inter','PingFang SC','Hiragino Sans GB','Microsoft YaHei',system-ui,sans-serif;
@@ -37,7 +37,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 .pf-tile-label.is-compact{font-size:9.5px}.pf-tile-label.is-compact small{font-size:9px}
 .pf-tile-label--side{transform:translateY(-50%);align-items:flex-start}
 .pf-tile-label--side b{font:400 17px/1.2 var(--pf-serif)}
-.pf-tile-label--side small{font-size:13px;color:var(--pf-accent);font-weight:600}
+.pf-tile-label--side small{font-size:13px;color:var(--pf-accent-text);font-weight:600}
 
 .pf-steps{position:relative;z-index:2;margin-top:-100vh;margin-top:-100svh;pointer-events:none}
 .pf-step{min-height:115vh;min-height:115svh;display:flex;align-items:center;padding:0 clamp(20px,6vw,96px)}
@@ -55,7 +55,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 .pf-scroll-cue:hover{background:#fff;transform:translateY(2px)}
 .pf-card{max-width:400px;padding:22px 24px 24px;border:1px solid #dcd8cc;border-radius:10px;background:rgba(250,249,245,.94);box-shadow:0 10px 40px rgba(20,20,19,.07);backdrop-filter:blur(2px);opacity:.25;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
 .pf-step.is-active .pf-card{opacity:1;transform:none}
-.pf-card-kicker{font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--pf-accent)}
+.pf-card-kicker{font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--pf-accent-text)}
 .pf-card h2{font-size:clamp(24px,2.2vw,30px);line-height:1.2;margin:8px 0 10px}
 .pf-card p{font:17px/1.55 var(--pf-serif);color:#3b3a36}
 
@@ -65,7 +65,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 .pf-section{padding:clamp(90px,10vw,150px) clamp(20px,5vw,80px);position:relative}
 .pf-section--tint{background:var(--pf-paper-2)}
 .pf-heading{max-width:760px;margin:0 auto 56px;text-align:center}
-.pf-heading>span{font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--pf-accent)}
+.pf-heading>span{font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--pf-accent-text)}
 .pf-heading h2{font-size:var(--af-type-section);line-height:1.15;margin:14px 0 16px}
 .pf-heading p{font:19px/1.55 var(--pf-serif);color:var(--pf-muted)}
 .pf-heading--left{text-align:left;margin:0}
@@ -113,7 +113,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 .pf-sc-grid text{font:11px var(--pf-sans);fill:var(--pf-muted)}
 .pf-sc-grid .pf-sc-axis{font-size:12px}
 .pf-sc-band{fill:var(--pf-accent);mix-blend-mode:multiply}
-.pf-sc-bandlabel{font-size:21px;fill:var(--pf-accent)}
+.pf-sc-bandlabel{font-size:21px;fill:var(--pf-accent-text)}
 .pf-sc-note{font-size:23px;fill:var(--pf-ink)}
 .pf-sc-arrow path{fill:var(--pf-ink);opacity:.8}
 .pf-sc-ink{mix-blend-mode:multiply;transition:transform .2s}

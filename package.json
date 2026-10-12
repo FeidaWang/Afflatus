@@ -12,7 +12,7 @@
     "pretest:e2e": "npm run build",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test e2e/quality-gates.spec.js",
-    "test:e2e:visual": "playwright test e2e/visual-captures.spec.js e2e/combat-hud.visual.spec.js",
+    "test:e2e:visual": "playwright test e2e/visual-captures.spec.js",
     "test:e2e:report": "playwright show-report",
     "pretest:lighthouse": "npm run build",
     "test:lighthouse": "node scripts/run-lighthouse.mjs",
