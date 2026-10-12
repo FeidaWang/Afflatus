@@ -62,6 +62,25 @@ async function installDeterministicRuntime(page) {
 
     await route.abort('blockedbyclient');
   });
+
+  // `vite preview` has no serverless functions. Answer the market-data APIs
+  // (Arena journal) with deterministic data instead of letting them 404.
+  await page.route('**/api/quote?**', (route) => {
+    const symbol = new URL(route.request().url()).searchParams.get('symbol') || '';
+    const c = 100 + [...symbol].reduce((sum, char) => sum + char.charCodeAt(0), 0) % 400;
+    const pc = c / 1.01;
+    return route.fulfill({ json: { c, pc, o: pc, h: c * 1.005, l: pc * 0.995, t: FIXED_TIME / 1000 - 3600, d: c - pc, dp: 1 } });
+  });
+  await page.route('**/api/history?**', (route) => {
+    const values = [];
+    for (let day = 0; values.length < 300; day += 1) {
+      const date = new Date(FIXED_TIME - day * 86_400_000);
+      if (date.getUTCDay() === 0 || date.getUTCDay() === 6) continue;
+      const close = 150 + Math.sin(values.length / 9) * 10;
+      values.push({ datetime: date.toISOString().slice(0, 10), open: String(close - 1), high: String(close + 2), low: String(close - 3), close: String(close), volume: '1000' });
+    }
+    return route.fulfill({ json: { status: 'ok', meta: { interval: '1day' }, values } });
+  });
 }
 
 export const test = base.extend({
