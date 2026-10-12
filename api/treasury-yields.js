@@ -45,7 +45,16 @@ export default async function handler(req, res) {
     return;
   }
 
-  const rl = checkRateLimit(hits, clientIp(req), { ...RATE_LIMIT, now: Date.now() });
+  const now = Date.now();
+  // Bound expired per-IP entries in the process-local limiter.
+  for (const [ip, entry] of hits) if (now - entry.start >= RATE_LIMIT.windowMs) hits.delete(ip);
+  const ip = clientIp(req);
+  if (!hits.has(ip) && hits.size >= 10_000) {
+    res.setHeader('Retry-After', '60');
+    sendApiError(res, 429, 'RATE_LIMITED', requestId);
+    return;
+  }
+  const rl = checkRateLimit(hits, ip, { ...RATE_LIMIT, now });
   if (!rl.allowed) {
     res.setHeader('Retry-After', Math.ceil(rl.resetMs / 1000));
     sendApiError(res, 429, 'RATE_LIMITED', requestId);
@@ -53,15 +62,16 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Read the body inside the deadline so a stalled upstream body times out.
     const upstream = await fetchWithTimeout(UPSTREAM_URL, {
       headers: { Accept: 'application/json', 'User-Agent': 'Afflatus-Signal/1.0' },
-    }, 6000);
+    }, 6000, async (response) => (response.ok ? { ok: true, raw: await response.json() } : { ok: false, status: response.status }));
     if (!upstream.ok) {
       sendApiError(res, 502, 'UPSTREAM_HTTP', requestId, { upstreamStatus: upstream.status });
       return;
     }
 
-    const raw = await upstream.json();
+    const { raw } = upstream;
     const quotes = raw?.QuickQuoteResult?.QuickQuote;
     const yields = Array.isArray(quotes) ? quotes.map(normaliseQuote).filter(Boolean) : [];
     yields.sort((a, b) => Number.parseInt(a.tenor, 10) - Number.parseInt(b.tenor, 10));

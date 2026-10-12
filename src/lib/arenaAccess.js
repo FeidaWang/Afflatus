@@ -49,7 +49,8 @@ export function isSymbolAllowed(symbol, allowlist) {
  */
 export function checkAdminKey(providedKey, configuredKey) {
   if (typeof providedKey !== 'string' || !providedKey) return false;
-  if (typeof configuredKey !== 'string' || !configuredKey) return false;
+  // A short configured key is guessable; treat it as not configured.
+  if (typeof configuredKey !== 'string' || configuredKey.length < 32) return false;
   const a = Buffer.from(providedKey, 'utf8');
   const b = Buffer.from(configuredKey, 'utf8');
   if (a.length !== b.length) return false;

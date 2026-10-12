@@ -14,6 +14,38 @@ function routeLabel(route) {
   return `${route.id} ${route.path}`;
 }
 
+/**
+ * Portfolio dims every scrollytelling card except the active step and fades
+ * reveal blocks in on view. Audit each element in the state a reader sees it:
+ * reveal the page, audit it with inactive steps excluded, then activate each
+ * step by scrolling and audit that step on its own.
+ */
+async function analyzePortfolio(page, axe) {
+  await page.evaluate(async () => {
+    const frame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    for (let y = 0; y < document.documentElement.scrollHeight; y += Math.round(innerHeight / 2)) {
+      scrollTo(0, y);
+      await frame();
+    }
+  });
+  await expect(page.locator('.pf-reveal:not(.is-in)')).toHaveCount(0);
+  await page.evaluate(() => scrollTo(0, 0));
+
+  const violations = [];
+  const steps = page.locator('#pfScrolly .pf-step');
+  violations.push(...(await axe().exclude('#pfScrolly .pf-step:not(.is-active)').analyze()).violations);
+  for (let index = 0; index < await steps.count(); index += 1) {
+    const step = steps.nth(index);
+    const selector = await step.evaluate((element) => {
+      element.scrollIntoView({ block: 'end' });
+      return `#pfScrolly .pf-step:nth-child(${[...element.parentElement.children].indexOf(element) + 1})`;
+    });
+    await expect(step).toHaveClass(/\bis-active\b/);
+    violations.push(...(await axe().include(selector).analyze()).violations);
+  }
+  return violations;
+}
+
 test.describe('active-route browser gates', () => {
   for (const route of activeRoutes) {
     test(`${routeLabel(route)} renders with metadata and a stable viewport`, async ({ page }, testInfo) => {
@@ -26,7 +58,7 @@ test.describe('active-route browser gates', () => {
       await expect(page).toHaveTitle(/\S/);
       await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', route.metadata.canonical);
-      await expect(page.locator('[data-afflatus-nav]')).toBeAttached();
+      await expect(page.locator('#afflatus-header #af-primary-nav')).toBeAttached();
       await expect(page.locator('.vite-error-overlay')).toHaveCount(0);
 
       const documentState = await page.evaluate(() => ({
@@ -70,32 +102,25 @@ test.describe('active-route browser gates', () => {
         expect(focusedInteractive, 'Tab must enter an interactive control').toBe(true);
       }
 
-      const usesMobileHomeMenu = route.id === 'main' && testInfo.project.name !== 'desktop-chromium';
-      let routeLinks;
-      if (usesMobileHomeMenu) {
-        const deckButton = page.locator('.nav-menu-btn');
-        await expect(deckButton).toBeVisible();
-        await deckButton.focus();
-        await page.keyboard.press('Enter');
-        await expect(page.locator('.nav-site-menu.open')).toBeVisible();
-        await page.keyboard.press('Escape');
-        await expect(page.locator('.nav-site-menu.open')).toHaveCount(0);
-        await page.keyboard.press('Enter');
-        await expect(page.locator('.nav-site-menu.open')).toBeVisible();
-        routeLinks = page.locator('.nav-site-menu a[href]');
-      } else {
-        const labsTrigger = page.locator('.nav-labs__trigger').first();
-        await expect(labsTrigger).toBeAttached();
-        await labsTrigger.focus();
-        await page.keyboard.press('Escape');
-        await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
-        await page.keyboard.press('Enter');
-        await expect(labsTrigger).toHaveAttribute('aria-expanded', 'true');
-        await page.keyboard.press('Escape');
-        await expect(labsTrigger).toHaveAttribute('aria-expanded', 'false');
-        routeLinks = page.locator('[data-afflatus-nav] a[href]:not([href="#"])');
+      // Below the desktop breakpoint the primary nav sits behind the header
+      // menu. Escape inside a submenu would close the whole menu by design, so
+      // the menu is opened once and the submenu is exercised inside it.
+      const headerMenu = page.locator('#afflatus-header .af-header-menu');
+      if (await headerMenu.isVisible()) {
+        await headerMenu.click();
+        await expect(headerMenu).toHaveAttribute('aria-expanded', 'true');
       }
 
+      const marketsTrigger = page.locator('#afflatus-header [data-header-disclosure][aria-controls="af-markets"]');
+      await expect(marketsTrigger).toBeVisible();
+      await marketsTrigger.focus();
+      await page.keyboard.press('Enter');
+      await expect(marketsTrigger).toHaveAttribute('aria-expanded', 'true');
+      await page.keyboard.press('Escape');
+      await expect(marketsTrigger).toHaveAttribute('aria-expanded', 'false');
+      await expect(marketsTrigger).toBeFocused();
+
+      const routeLinks = page.locator('#af-primary-nav > a[href]');
       const destination = await routeLinks.evaluateAll((links, currentPath) => {
           const normalize = (path) => path.replace(/index\.html$/, '') || '/';
           const match = links.find((link) => normalize(new URL(link.href).pathname) !== normalize(currentPath));
@@ -103,11 +128,7 @@ test.describe('active-route browser gates', () => {
         }, route.path);
       expect(destination).not.toBeNull();
 
-      const routeLink = page.locator(
-        usesMobileHomeMenu
-          ? `.nav-site-menu a[href="${destination}"]`
-          : `[data-afflatus-nav] a[href="${destination}"]`,
-      );
+      const routeLink = page.locator(`#af-primary-nav > a[href="${destination}"]`);
       await expect(routeLink).toHaveCount(1);
       await routeLink.focus();
       await Promise.all([
@@ -129,10 +150,11 @@ test.describe('axe WCAG regression gate', () => {
       await page.goto(route.path, { waitUntil: 'domcontentloaded' });
       await settlePage(page);
 
-      const results = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-        .analyze();
-      const violations = results.violations
+      const axe = () => new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']);
+      const results = route.id === 'portfolio'
+        ? await analyzePortfolio(page, axe)
+        : (await axe().analyze()).violations;
+      const violations = results
         .filter((violation) => violation.impact === 'serious' || violation.impact === 'critical')
         .map((violation) => ({
           id: violation.id,

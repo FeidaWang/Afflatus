@@ -36,6 +36,18 @@ const TRANSIT_MEANING = {
   Saturn: { zh: '今天适合谈现实问题，别硬撑气氛', en: "today favors practical talk — don't force the mood" },
 };
 
+// transits-daily.json is dated by the Melbourne calendar day it was
+// generated for (scripts/gen-transits-daily.mjs); compare against that day,
+// not the visitor's own local date.
+const TRANSITS_DAY = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Australia/Melbourne', year: 'numeric', month: '2-digit', day: '2-digit',
+});
+
+/** Whether a transits-daily.json `date` is the current Melbourne day. */
+export function transitsAreCurrent(date, now = new Date()) {
+  return date === TRANSITS_DAY.format(now);
+}
+
 /**
  * @param {Record<string,number>} transitPlanets - today's degrees, from transits-daily.json's "planets" field
  * @param {{Sun:number, Moon:number}} meNatal

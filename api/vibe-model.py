@@ -2,6 +2,7 @@
 import importlib.util
 import json
 import os
+import sys
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -47,7 +48,9 @@ class handler(BaseHTTPRequestHandler):
             result = runtime.calculate(body)
         except (ValueError, TypeError, RecursionError, UnicodeError):
             return self.reply(400, {'error': {'code': 'INVALID_REQUEST'}})
-        except Exception:
+        except Exception as error:
+            # Class name only: never log the submitted assumptions.
+            print(f'vibe-model: MODEL_UNAVAILABLE {type(error).__name__}', file=sys.stderr)
             return self.reply(503, {'error': {'code': 'MODEL_UNAVAILABLE'}})
         return self.reply(200, result)
 

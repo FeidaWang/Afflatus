@@ -1,3 +1,4 @@
+import '../lib/nav.js';
 import { portfolioLogo } from './portfolioLogos.js';
 import { seeded, drawPen, drawInkGrid, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
 import { TetrisScript, drawWell, drawWellCells, shapeCells, TYPES } from './portfolioTetris.js';

@@ -91,7 +91,10 @@ describe('pre-rendered novel documents', () => {
   });
 
   it('preserves work-level URLs and metadata until a chapter is explicitly entered', () => {
-    expect(source).toContain("var preserveBookLanding = mode === 'none' && currentRoute && currentRoute.chapterId == null;");
+    expect(source).toContain("var preserveLanding = mode === 'none' && (!currentRoute || currentRoute.chapterId == null);");
+    // Booting on a book landing shows the library view but keeps the book's own
+    // canonical, og:url and title instead of the library's.
+    expect(source).toContain("if (landingRoute && landingRoute.bookId === n.id) syncReaderUrl(state.chapters[resumeIdx].id, 'none');");
     expect(source).toContain("route && route.chapterId != null ? 'replace' : 'none'");
   });
 });

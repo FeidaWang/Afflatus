@@ -1349,7 +1349,11 @@
     state.idx = resumeIdx;
     if (!scrollToShelf && requestedChapterId == null) {
       experience.setView('library');
-      syncLibraryMetadata();
+      // A book landing keeps its own work-level metadata; only the shelf
+      // itself takes the library's.
+      var landingRoute = serialApi.parseReaderPath(location.pathname);
+      if (landingRoute && landingRoute.bookId === n.id) syncReaderUrl(state.chapters[resumeIdx].id, 'none');
+      else syncLibraryMetadata();
       return;
     }
     experience.setView('reading');

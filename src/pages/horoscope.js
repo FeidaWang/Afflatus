@@ -28,7 +28,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   let computeZiweiDeep, sanFangSiZheng, partnershipRead, daXianAges, liunianZiweiPalace;
   let synthesizeR1, synthesizeR2, synthesizeR3, synthesizeR4, synthesizeR5;
   let mingzaoRank, percentileOf, MINGZAO_DIST;
-  let synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, relationshipScores, synastryZiwei;
+  let synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, transitsAreCurrent, relationshipScores, synastryZiwei;
   let PERSONA_QUESTIONS, scorePersona, PERSONA_TYPES, PERSONA_MATCH, PERSONA_FREQ, AXIS_LETTERS;
   let LOGIC_QUESTIONS, scoreLogic, EQ_QUESTIONS, scoreEQ, iqPercentile, eqPercentile;
 
@@ -60,7 +60,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
 
   let synastryFeaturePromise;
   const loadSynastryFeature = () => synastryFeaturePromise || (synastryFeaturePromise = import('../horoscope/synastryFeature.js').then((feature) => {
-    ({ synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, relationshipScores, synastryZiwei } = feature);
+    ({ synastry, dailyPull, crossBranchMatrix, dailyCoupleWeather, transitsAreCurrent, relationshipScores, synastryZiwei } = feature);
     return feature;
   }));
 
@@ -1311,7 +1311,7 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
       const curKey = `${state.me.y}-${state.me.m}-${state.me.d}-${state.me.hour}|${state.other.y}-${state.other.m}-${state.other.d}-${state.other.hour}`;
       if (curKey !== weatherPairKey) return; // pair changed while the fetch was in flight
       const wWrap = $('synWeatherWrap');
-      if (transits.date !== todayStr()) {
+      if (!transitsAreCurrent(transits.date)) {
         wWrap.hidden = false;
         $('synWeather').textContent = T(
           `Daily transit automation is delayed (last published ${transits.date || 'unknown'}). Today's transit weather is unavailable; no older sky data has been reused.`,

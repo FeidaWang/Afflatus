@@ -101,6 +101,7 @@ function makeFixtureRepository(tempRoot) {
     'src/lib/validateArenaLedger.js',
     'src/lib/validateArenaPredlog.js',
     'src/lib/validateArenaRunlog.js',
+    'src/lib/validateQuote.js',
   ];
   for (const source of sourceFiles) {
     const destination = join(root, source);

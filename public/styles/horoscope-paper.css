@@ -95,5 +95,9 @@
 .observatory-page .foot{font-size:11px;color:var(--dim);border-color:var(--line);margin-top:40px}
 .observatory-page[data-observatory-view="today"] .foot,.observatory-page[data-observatory-view="journal"] .foot{display:none}
 @media(min-width:700px){.obs-hero{padding-block:40px;min-height:300px}.obs-moon{right:0;width:240px;height:264px}.obs-dates{max-width:480px}.obs-today{padding-inline:22px}.obs-hero h1{max-width:400px}.obs-row{min-height:86px}}
-@media(max-width:360px){.observatory-page .wrap{padding-inline:20px}.obs-row{gap:9px}.obs-row span{font-size:17px}.obs-dates{gap:2px}.obs-hero h1{font-size:33px}.obs-hero{min-height:300px}.observatory-page #afflatus-header .af-header-inner{gap:6px}}
+@media(max-width:360px){.observatory-page .wrap{padding-inline:20px}.obs-moon{right:-20px}.obs-row{gap:9px}.obs-row span{font-size:17px}.obs-dates{gap:2px}.obs-hero h1{font-size:33px}.obs-hero{min-height:300px}.observatory-page #afflatus-header .af-header-inner{gap:6px}}
 @media(prefers-reduced-motion:no-preference){.obs-draw-dialog[open]{animation:obs-reveal .24s ease-out}@keyframes obs-reveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
+
+/* Touch targets: on narrow screens the week strip runs edge to edge so each day reaches 44px. */
+@media(max-width:419px){.obs-dates{margin-inline:-20px;gap:0}}
+@media(max-width:360px){.obs-dates{margin-inline:-16px;gap:0}}

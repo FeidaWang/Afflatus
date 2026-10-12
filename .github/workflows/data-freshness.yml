@@ -2,9 +2,15 @@ name: Data pipeline health
 
 on:
   schedule:
-    - cron: '17 0,6,12,18 * * *'
+    # Just after Melbourne midnight in both AEDT (13:00 UTC) and AEST
+    # (14:00 UTC); the off-season run regenerates the same day as a no-op.
+    # 20:05 is a retry in case the midnight run failed.
+    - cron: '5 13,14,20 * * *'
   workflow_dispatch:
 
+# The token is never stored in .git/config (persist-credentials: false) and
+# npm install scripts are disabled, so dependency code cannot push to main;
+# only the final publish step is handed the token.
 permissions:
   contents: write
 
@@ -17,15 +23,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
           fetch-depth: 0
-      - uses: actions/setup-node@v7
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # The generator and validators only need astronomy-engine.
+      - run: npm ci --omit=dev --ignore-scripts
 
       - name: Refresh deterministic Melbourne transits
         run: node scripts/gen-transits-daily.mjs
@@ -39,6 +47,8 @@ jobs:
         run: node scripts/check-data-freshness.mjs
 
       - name: Publish a changed daily transit artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if git diff --quiet -- public/transits-daily.json; then
             echo "Transit artifact already represents the current Melbourne day."
@@ -48,5 +58,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/transits-daily.json
           git commit -m "data: refresh Melbourne daily transits"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git pull --rebase "$remote" main
+          git push "$remote" HEAD:main

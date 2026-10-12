@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { dailyCoupleWeather } from '../src/lib/dailyTransits.js';
+import { dailyCoupleWeather, transitsAreCurrent } from '../src/lib/dailyTransits.js';
 
 describe('dailyCoupleWeather', () => {
   it('finds a hit when a transiting body conjuncts a natal point', () => {
@@ -33,5 +33,26 @@ describe('dailyCoupleWeather', () => {
   it('tolerates missing transit bodies or missing natal points without throwing', () => {
     expect(() => dailyCoupleWeather({ Sun: 10 }, { Sun: 10 }, { Sun: 10 })).not.toThrow();
     expect(() => dailyCoupleWeather({}, { Sun: 10, Moon: 20 }, { Sun: 10, Moon: 20 })).not.toThrow();
+  });
+});
+
+describe('transitsAreCurrent', () => {
+  // transits-daily.json is dated by the Melbourne calendar day, so a visitor's
+  // own local date must not decide whether it is stale.
+  const published = '2026-10-12';
+  it.each([
+    ['Los Angeles evening, 11 Oct local', '2026-10-12T03:00:00Z'],
+    ['London morning, 12 Oct local', '2026-10-12T08:00:00Z'],
+    ['Shanghai evening, 12 Oct local', '2026-10-12T12:30:00Z'],
+    ['Melbourne just after midnight', '2026-10-11T13:05:00Z'],
+  ])('is current for %s', (_label, iso) => {
+    expect(transitsAreCurrent(published, new Date(iso))).toBe(true);
+  });
+  it('is stale once the Melbourne day has moved on', () => {
+    expect(transitsAreCurrent(published, new Date('2026-10-12T13:05:00Z'))).toBe(false);
+    expect(transitsAreCurrent('2026-10-11', new Date('2026-10-12T03:00:00Z'))).toBe(false);
+  });
+  it('treats a missing date as stale', () => {
+    expect(transitsAreCurrent(undefined, new Date('2026-10-12T03:00:00Z'))).toBe(false);
   });
 });
