@@ -88,7 +88,12 @@ describe('siteManifest', () => {
     for (const route of SITE_MANIFEST.filter((item) => item.status === 'active')) {
       expect(route.metadata.title).toBeTruthy();
       expect(route.metadata.description).toBeTruthy();
-      expect(route.metadata.canonical).toBe(`https://feida.au${route.path}`);
+      // A route published in a single locale (the Chinese-only serial)
+      // canonicalizes its adaptive URL to that locale's document.
+      const published = route.publishedLocales || [];
+      expect(route.metadata.canonical).toBe(published.length === 1
+        ? `https://feida.au/${published[0]}${route.path}`
+        : `https://feida.au${route.path}`);
       expect(route.metadata.ogTitle).toBeTruthy();
       expect(route.metadata.ogDescription).toBeTruthy();
       expect(route.metadata.ogImage).toMatch(/^https:\/\/feida\.au\//);

@@ -1,42 +1,12 @@
 /**
- * Novels page shared-lib load order, as a single ES module entry
+ * Novels page entry: shared site libs, then the reader controller
  * (see homeLibs.js for why this pattern replaces individual script tags).
- * Order matches the original <script> tag order exactly.
  */
 import '../lib/nav.js';
 import '../lib/transition.js';
-import { createPagedBook } from '../lib/pagedBook.js';
-import { mountReaderExperience } from '../lib/readerExperience.js';
-import { mountCompanionAudio } from '../lib/companionAudio.js';
-import { anchorFromVisibleBlock, scrollToTextAnchor } from '../lib/readerAnchors.js';
-import { mountReaderNotes } from '../lib/readerNotes.js';
-import {
-  createReaderStore,
-  createStorageAdapter,
-} from '../lib/readerStore.js';
-import {
-  chapterIdEquals,
-  parseReaderPath,
-  readerLocale,
-  readerPath,
-} from '../lib/serialRoutes.js';
+import { mountSerialReader } from './serialReader.js';
 /* U16a: page-turn.js no longer imported — serial.html removed its edge
    arrows and opts out of prev/next turns via body[data-no-page-turn]. */
-
-window.AfflatusSerial = Object.freeze({
-  chapterIdEquals,
-  createPagedBook,
-  mountReaderExperience,
-  mountCompanionAudio,
-  anchorFromVisibleBlock,
-  scrollToTextAnchor,
-  mountReaderNotes,
-  createReaderStore,
-  createStorageAdapter,
-  parseReaderPath,
-  readerLocale,
-  readerPath,
-});
 
 // This route is intentionally Chinese-only. nav.js still emits its shared
 // bilingual data attributes, so select the Chinese labels locally without
@@ -49,4 +19,4 @@ document.querySelectorAll('[data-zh]').forEach((node) => {
 document.querySelectorAll('[data-aria-zh]').forEach((node) => {
   node.setAttribute('aria-label', node.getAttribute('data-aria-zh'));
 });
-window.dispatchEvent(new CustomEvent('afflatus-serial-ready'));
+mountSerialReader();

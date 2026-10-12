@@ -360,7 +360,9 @@ export const SITE_MANIFEST = Object.freeze([
     metadata: {
       title: "故事 — 原创中文连载 · AFFLATUS",
       description: "原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。",
-      canonical: 'https://feida.au/serial.html',
+      // Chinese-only: the adaptive /serial.html serves the same document as
+      // /zh/serial.html, so it canonicalizes there instead of to itself.
+      canonical: 'https://feida.au/zh/serial.html',
       ogTitle: "故事 — 原创中文连载 · AFFLATUS",
       ogDescription: "原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。",
       ogImage: ROUTE_SEO.serial.social.images.zh,

@@ -5,6 +5,7 @@ import { transformNovelPageDocument } from '../scripts/localize-site.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const source = readFileSync(resolve(root, 'serial.html'), 'utf8');
+const readerSource = readFileSync(resolve(root, 'src/pages/serialReader.js'), 'utf8');
 const vercel = JSON.parse(readFileSync(resolve(root, 'vercel.json'), 'utf8'));
 const index = JSON.parse(readFileSync(resolve(root, 'public/novels-index.json'), 'utf8'));
 const indexedBook = index.novels.find((item) => item.id === 'wanjie-zhongchun');
@@ -44,13 +45,13 @@ describe('pre-rendered novel documents', () => {
   });
 
   it('offers paged and waterfall reading with default page sound', () => {
-    expect(source).toContain("serialApi.createPagedBook({");
+    expect(readerSource).toContain("serialApi.createPagedBook({");
     expect(source).toContain("layoutToggle");
-    expect(source).toContain("initWaterfall(");
-    expect(source).toContain("wfSentinelObserver");
+    expect(readerSource).toContain("initWaterfall(");
+    expect(readerSource).toContain("wfSentinelObserver");
     expect(source).toContain("pagePreviousHotspot");
     expect(source).toContain("pageNextHotspot");
-    expect(source).toContain("pageIndex:direction > 0 ? 0 : 'last'");
+    expect(readerSource).toContain("pageIndex:direction > 0 ? 0 : 'last'");
     expect(source).not.toContain("pageSoundToggle");
   });
 
@@ -91,10 +92,10 @@ describe('pre-rendered novel documents', () => {
   });
 
   it('preserves work-level URLs and metadata until a chapter is explicitly entered', () => {
-    expect(source).toContain("var preserveLanding = mode === 'none' && (!currentRoute || currentRoute.chapterId == null);");
+    expect(readerSource).toContain("var preserveLanding = mode === 'none' && (!currentRoute || currentRoute.chapterId == null);");
     // Booting on a book landing shows the library view but keeps the book's own
     // canonical, og:url and title instead of the library's.
-    expect(source).toContain("if (landingRoute && landingRoute.bookId === n.id) syncReaderUrl(state.chapters[resumeIdx].id, 'none');");
-    expect(source).toContain("route && route.chapterId != null ? 'replace' : 'none'");
+    expect(readerSource).toContain("if (landingRoute && landingRoute.bookId === n.id) syncReaderUrl(state.chapters[resumeIdx].id, 'none');");
+    expect(readerSource).toContain("route && route.chapterId != null ? 'replace' : 'none'");
   });
 });

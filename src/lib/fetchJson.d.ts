@@ -26,5 +26,6 @@ export interface FetchJsonOptions {
 }
 
 export function fetchJson<T = unknown>(key: string, options?: FetchJsonOptions): Promise<T>;
+export function purgeCachedJson(pattern: RegExp): Promise<void>;
 export function clearJsonCacheForTests(): void;
 export const JSON_RESOURCE_KEYS: readonly string[];

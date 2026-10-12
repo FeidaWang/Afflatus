@@ -39,6 +39,34 @@ export function validateNovelsIndex(data) {
   return { ok: errors.length === 0, errors };
 }
 
+function validateChapter(c, tag, errors) {
+  if (!isValidId(c.id)) pushErr(errors, `${tag}.id: missing or empty`);
+  if (!isNonEmptyString(c.title)) pushErr(errors, `${tag}.title: missing or empty`);
+  if (!Array.isArray(c.blocks)) {
+    pushErr(errors, `${tag}.blocks: must be an array`);
+    return;
+  }
+  const visibleCharacterCount = c.blocks
+    .map((block) => (block && typeof block.text === 'string' ? block.text : ''))
+    .join('')
+    .replace(/\s/gu, '')
+    .length;
+  if (!Number.isInteger(c.wordCount) || c.wordCount <= 0) {
+    pushErr(errors, `${tag}.wordCount: must be a positive integer`);
+  } else if (c.wordCount !== visibleCharacterCount) {
+    pushErr(
+      errors,
+      `${tag}.wordCount: declares ${c.wordCount}, but the visible body contains ${visibleCharacterCount} non-whitespace characters`,
+    );
+  }
+  if (visibleCharacterCount < MIN_PUBLISHED_CHAPTER_CHARACTERS) {
+    pushErr(
+      errors,
+      `${tag}: published chapter contains ${visibleCharacterCount} characters; minimum is ${MIN_PUBLISHED_CHAPTER_CHARACTERS}`,
+    );
+  }
+}
+
 /** @param {unknown} data parsed public/novels/<id>.json */
 export function validateNovelBook(data) {
   const errors = [];
@@ -49,33 +77,33 @@ export function validateNovelBook(data) {
   for (const [i, c] of data.chapters.entries()) {
     const tag = `chapters[${i}]`;
     if (!c || typeof c !== 'object') { pushErr(errors, `${tag}: not an object`); continue; }
-    if (!isValidId(c.id)) pushErr(errors, `${tag}.id: missing or empty`);
-    else if (ids.has(String(c.id))) pushErr(errors, `${tag}.id: duplicate ${JSON.stringify(c.id)}`);
-    else ids.add(String(c.id));
-    if (!isNonEmptyString(c.title)) pushErr(errors, `${tag}.title: missing or empty`);
-    if (!Array.isArray(c.blocks)) {
-      pushErr(errors, `${tag}.blocks: must be an array`);
-      continue;
-    }
-    const visibleCharacterCount = c.blocks
-      .map((block) => (block && typeof block.text === 'string' ? block.text : ''))
-      .join('')
-      .replace(/\s/gu, '')
-      .length;
-    if (!Number.isInteger(c.wordCount) || c.wordCount <= 0) {
-      pushErr(errors, `${tag}.wordCount: must be a positive integer`);
-    } else if (c.wordCount !== visibleCharacterCount) {
-      pushErr(
-        errors,
-        `${tag}.wordCount: declares ${c.wordCount}, but the visible body contains ${visibleCharacterCount} non-whitespace characters`,
-      );
-    }
-    if (visibleCharacterCount < MIN_PUBLISHED_CHAPTER_CHARACTERS) {
-      pushErr(
-        errors,
-        `${tag}: published chapter contains ${visibleCharacterCount} characters; minimum is ${MIN_PUBLISHED_CHAPTER_CHARACTERS}`,
-      );
-    }
+    if (isValidId(c.id) && ids.has(String(c.id))) pushErr(errors, `${tag}.id: duplicate ${JSON.stringify(c.id)}`);
+    else if (isValidId(c.id)) ids.add(String(c.id));
+    validateChapter(c, tag, errors);
   }
+  return { ok: errors.length === 0, errors };
+}
+
+/** @param {unknown} data build-split /novels-data/<id>/toc.json (scripts/novel-chunks.mjs) */
+export function validateNovelToc(data) {
+  const errors = [];
+  if (!data || typeof data !== 'object' || !isNonEmptyString(data.id) || !Array.isArray(data.chapters) || !data.chapters.length) {
+    return { ok: false, errors: ['top-level: must be an object with a non-empty "id" and a non-empty "chapters" array'] };
+  }
+  for (const [i, c] of data.chapters.entries()) {
+    const tag = `chapters[${i}]`;
+    if (!c || typeof c !== 'object') { pushErr(errors, `${tag}: not an object`); continue; }
+    if (!isValidId(c.id)) pushErr(errors, `${tag}.id: missing or empty`);
+    if (!isNonEmptyString(c.title)) pushErr(errors, `${tag}.title: missing or empty`);
+    if (Array.isArray(c.blocks)) pushErr(errors, `${tag}.blocks: the table of contents must not embed chapter bodies`);
+  }
+  return { ok: errors.length === 0, errors };
+}
+
+/** @param {unknown} data build-split /novels-data/<id>/chapters/<chapterId>.json */
+export function validateNovelChapter(data) {
+  const errors = [];
+  if (!data || typeof data !== 'object') return { ok: false, errors: ['top-level: must be a chapter object'] };
+  validateChapter(data, 'chapter', errors);
   return { ok: errors.length === 0, errors };
 }

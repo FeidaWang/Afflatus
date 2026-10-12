@@ -53,10 +53,10 @@ describe('fetchJson', () => {
 
   it('returns a typed schema error for an invalid resource', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response('{"novels":[]}', { status: 200 })));
-    await expect(fetchJson('novel:demo')).rejects.toMatchObject({
+    await expect(fetchJson('novel-toc:demo')).rejects.toMatchObject({
       name: 'JsonDataError',
       code: 'SCHEMA',
-      key: 'novel:demo',
+      key: 'novel-toc:demo',
       retriable: false,
     });
   });
