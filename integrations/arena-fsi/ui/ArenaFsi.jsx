@@ -406,9 +406,8 @@ export default function ArenaFsi({ locale: suppliedLocale, apiBase = '/api/arena
     document.title = locale === 'zh' ? 'Arena · 研究与模拟交易 · AFFLATUS' : 'Arena · Research & paper trading · AFFLATUS';
     document.querySelectorAll('#afflatus-header [data-en], .pa-footer [data-en]').forEach(element => {const value=element.dataset[locale];if(value !== undefined)element.textContent=value;});
     document.querySelectorAll('#afflatus-header [data-aria-en], .pa-footer [data-aria-en]').forEach(element => {const value=element.getAttribute(locale === 'zh' ? 'data-aria-zh' : 'data-aria-en');if(value)element.setAttribute('aria-label',value);});
-    document.querySelectorAll('#afflatus-header [data-header-path]').forEach(element => {const path=element.getAttribute('data-header-path');if(path?.startsWith('/'))element.setAttribute('href',`/${locale}${path}`);});
-    const toggle=document.querySelector('#afflatus-header [data-header-language]');
-    if(toggle){const path=window.location.pathname.replace(/^\/(en|zh)(?=\/)/,'');toggle.textContent=locale === 'zh' ? 'EN' : '中文';toggle.setAttribute('href',`/${locale === 'zh' ? 'en' : 'zh'}${path}`);toggle.setAttribute('hreflang',locale === 'zh' ? 'en' : 'zh-CN');toggle.setAttribute('aria-label',locale === 'zh' ? 'Switch to English' : '切换至中文');}
+    // Header links and the language switch follow the shared site navigation (e.g. Chinese-only stories).
+    window.AfflatusNav?.applyLocale(locale);
   },[locale]);
   const refreshStatus = useCallback(async ({signal,quiet=false} = {}) => {
     if (!quiet) setLoading(true);

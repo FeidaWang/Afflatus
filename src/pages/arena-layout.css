@@ -11,6 +11,11 @@ body.arena-page :is(.main-content, .site-footer, .pa-footer-inner) {
   padding-inline: 0;
 }
 
+/* Reserve the first viewport for the app so mounting it does not push the footer (layout shift). */
+body.arena-page #root {
+  min-height: var(--viewport-small-height, 100vh);
+}
+
 body.arena-page .pa-footer-socials a {
   justify-content: flex-end;
 }
