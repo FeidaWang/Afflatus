@@ -65,7 +65,8 @@ export function mountReaderExperience({ store, getNovel, getChapter, getPage, on
     const chapterIndex = novel.chapters.findIndex((item) => item.id === chapter.id);
     const position = saved.positions[novel.id];
     const anchor = page?.anchor || (String(position?.chapterId) === String(chapter.id) ? position.anchor : null);
-    const length = chapter.blocks.reduce((sum, block) => sum + (block.text || '').length, 0);
+    // From the build-split table of contents; the body may not be loaded yet.
+    const length = chapter.textLength || 0;
     const fraction = anchor ? Math.min(1, anchor.offset / Math.max(1, length)) : 0;
     const progress = Math.round(100 * (chapterIndex + fraction) / novel.chapters.length);
     $('resumeProgress').value = progress;

@@ -42,7 +42,8 @@ const validators = {
   sectorsRivalry: lazyValidator(async () => (await import('./validateSectorsRivalry.js')).validateSectorsRivalry),
   signal: lazyValidator(async () => (await import('./validateSignalEvents.js')).validateSignalEvents),
   novelsIndex: lazyValidator(async () => (await import('./validateNovelsData.js')).validateNovelsIndex),
-  novelBook: lazyValidator(async () => (await import('./validateNovelsData.js')).validateNovelBook),
+  novelToc: lazyValidator(async () => (await import('./validateNovelsData.js')).validateNovelToc),
+  novelChapter: lazyValidator(async () => (await import('./validateNovelsData.js')).validateNovelChapter),
   arenaUniverse: lazyValidator(async () => (await import('./validateArenaUniverse.js')).validateArenaUniverse),
   arenaPicks: lazyValidator(async () => (await import('./validateArenaPicks.js')).validateArenaPicks),
   arenaQuantModel: lazyValidator(async () => (await import('./validateArenaQuantModel.js')).validateArenaQuantModel),
@@ -112,12 +113,23 @@ function normalizeTicker(value) {
 function resolveResource(key) {
   if (STATIC_RESOURCES[key]) return { key, ...STATIC_RESOURCES[key] };
 
-  if (key.startsWith('novel:')) {
-    const id = key.slice(6);
+  // Build-split novel data (scripts/novel-chunks.mjs): a small per-book table
+  // of contents plus one file per chapter, so a reader never downloads a
+  // whole book to show one chapter.
+  if (key.startsWith('novel-toc:')) {
+    const id = key.slice(10);
     if (!/^[a-z0-9-]{1,80}$/.test(id)) {
       throw new JsonDataError('INVALID_KEY', `Invalid novel resource key: ${key}`, { key, retriable: false });
     }
-    return { key, url: `/novels/${id}.json`, freshness: 60 * 60_000, validate: validators.novelBook };
+    return { key, url: `/novels-data/${id}/toc.json`, freshness: 60 * 60_000, validate: validators.novelToc };
+  }
+
+  if (key.startsWith('novel-chapter:')) {
+    const [, id = '', chapterId = ''] = key.split(':');
+    if (!/^[a-z0-9-]{1,80}$/.test(id) || !/^[a-z0-9-]{1,40}$/i.test(chapterId)) {
+      throw new JsonDataError('INVALID_KEY', `Invalid novel resource key: ${key}`, { key, retriable: false });
+    }
+    return { key, url: `/novels-data/${id}/chapters/${chapterId}.json`, freshness: 60 * 60_000, validate: validators.novelChapter };
   }
 
   if (key.startsWith('quote:')) {
@@ -338,6 +350,23 @@ export async function fetchJson(key, options = {}) {
   }
 
   return raceAbort(sharedNetworkLoad(resource, loadOptions), options.signal, resource);
+}
+
+/**
+ * Drop persisted entries whose URL path matches `pattern`. Used to retire
+ * payloads no client requests any more (e.g. the pre-split whole-book novel
+ * files), which would otherwise occupy CacheStorage indefinitely.
+ */
+export async function purgeCachedJson(pattern) {
+  if (typeof caches === 'undefined') return;
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    for (const request of await cache.keys()) {
+      if (pattern.test(new URL(request.url).pathname)) await cache.delete(request);
+    }
+  } catch {
+    // CacheStorage is optional; a failed cleanup only leaves unused bytes.
+  }
 }
 
 export function clearJsonCacheForTests() {

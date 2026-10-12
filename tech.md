@@ -139,7 +139,7 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 | signal-release-dates-2026.json / nyse-holidays-2026.json | 静态年更 | 任务守卫 | 发布日历/休市日查表，不为此调 API |
 | `data-archive/stats/2026-09-05/leagues-data.json` | 已结束 | 无公开消费者 | MSI 2026 最终只读快照；SHA-256 与下线前线上文件一致，见同目录 `README.md` / `SHA256SUMS` |
 | `data-archive/stats/2026-09-05/games-data.json` | 已结束 | 无公开消费者 | 世界杯 2026 最终只读快照；含 `matches[]`、决赛前概率盘及最终奖项，SHA-256 与下线前线上文件一致 |
-| novels-index.json + novels/*.json | 手动/写作会话 | serial | U21 已分片（原 485KB 单文件拆索引+分册） |
+| novels-index.json + novels/*.json | 手动/写作会话 | serial | U21 已分片（原 485KB 单文件拆索引+分册）；构建时再拆为 `/novels-data/<id>/toc.json` + 每章一个文件（`scripts/novel-chunks.mjs`），阅读器只按章读取 |
 | transits-daily.json | horoscope-transits-daily（每日 06:30） | horoscope | <2KB 当日行星黄经，客户端零星历库算日运 |
 
 ## 4. 核心算法与逻辑实现
@@ -226,7 +226,7 @@ P0-09 后，浏览器 JSON 读取统一走 `fetchJson.js` 的封闭资源键注�
 - **Horoscope 重计算通道**：专业星历与全行星合盘统一由 `horoscopeSynthesis.worker.js` 执行；`createLatestWorkerTask()` 每个功能通道最多保留一个 Worker，新盘、关闭面板或 `pagehide` 必须真正终止旧计算。`pagehide` 只取消而不永久销毁通道，因为浏览器可能把文档放进 bfcache；返回后必须能运行新任务。Worker 不可用时才动态导入同一纯函数做主线程兜底，结果仍须通过请求 epoch 与当前资料身份校验后才能落入 DOM。
 - **Sectors 页面边界（P9 / P1-06）**：`sectors.html` 只保留 `src/pages/sectors.js` 业务入口，数据、卡片、详情、滚动故事、竞品矩阵、页面 chrome 与图形所有权分别由 `src/sectors/*Controller.js` 管理。默认 2D 图距故事 900 px 才激活；`createExclusiveRenderer()` 保证切换前销毁旧 renderer，3D 懒加载失败则恢复 2D。力布局的 360 / 220 次 settle 在 `sectorsForce.worker.js` 中完成并以 transferable `Float32Array` 回传；Worker 不可用时才延迟调用同一纯函数。后存储集合按 4 + 3 + 3 渐进挂载，IntersectionObserver 与按钮共用一个批次函数。bfcache 的 `pagehide.persisted` 不销毁控制器，最终离页才完整解绑。
 - **window 桥接模式**：经典内联 IIFE 需要 lazy `import()` 时，把 `import()` 放进 `type="module"` 块并暴露 `window.AfflatusXxx = {load:()=>import(...)}`；桥接模块就绪后 `dispatchEvent` 通知已在跑的 IIFE 重试（30j 时序 bug 的修复）。Sectors 已迁出此遗留模式。
-- **数据桥接例外**：Signal/Serial 的经典内联控制器调用 `AfflatusFetchJson()`；同步 `public/lib/data-bridge.js` 只负责等待，真正实现由 Vite 管理的 `src/entry/dataBridge.js` 注入并派发 `afflatus-data-ready`。Sectors 直接 import `fetchJson()`。经典脚本不得写裸 `import('/src/...')`，因为该字符串不会被 Vite 转换，生产构建会 404。
+- **数据桥接例外**：Signal 的经典内联控制器调用 `AfflatusFetchJson()`；同步 `public/lib/data-bridge.js` 只负责等待，真正实现由 Vite 管理的 `src/entry/dataBridge.js` 注入并派发 `afflatus-data-ready`。Sectors 和 Serial（`src/pages/serialReader.js`）直接 import `fetchJson()`。经典脚本不得写裸 `import('/src/...')`，因为该字符串不会被 Vite 转换，生产构建会 404。
 - **rAF 纪律**：新 renderer 必须注册 `RenderBudgetCoordinator`，通过 `onPause/onResume/onResize/onQualityChange/onDispose` 暴露边界；不得自建 `visibilitychange` / page-lifecycle / resize 全局策略。确需独立 rAF 的组件由协调器门控可见性并上报帧窗；页面 master loop 在 hidden/freeze/pagehide 完全停止，恢复时重置时钟并夹紧 `dt`。
 - **滚动纪律**：内容入场优先原生 `animation-timeline: view()/scroll()`（`@supports` 渐进增强 + 静态兜底）或 IntersectionObserver。只有 Canvas/WebGL 连续故事状态确实需要 0–1 精确进度时，才允许一个 passive `scroll` listener，并必须用单 rAF 合并、只读一次几何、hidden/offscreen 停画、destroy 完整解绑；Sectors v3 是当前唯一批准例外。
 

@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'path';
 import { BUILD_ROUTES } from './src/config/siteManifest.js';
 import { vibeDevPlugin } from './scripts/vibe-dev-plugin.mjs';
+import { novelChunksPlugin } from './scripts/novel-chunks.mjs';
 
 const buildInputs = Object.fromEntries(
   BUILD_ROUTES.map((route) => [route.id, resolve(import.meta.dirname, route.file)]),
@@ -43,6 +44,7 @@ export default defineConfig({
   resolve: { dedupe: ['react', 'react-dom'] },
   plugins: [
     vibeDevPlugin(),
+    novelChunksPlugin(import.meta.dirname),
     {
       name: 'static-404-recovery',
       configureServer(server) {
