@@ -50,14 +50,30 @@ function geoLongitude(body, date) {
   return ((lon % 360) + 360) % 360;
 }
 
+// 12:00 Melbourne on the given YYYY-MM-DD day. DST switches at 02:00/03:00
+// local, so the offset read at that day's 23:00 local also holds at noon.
+function melbourneNoon(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  const probe = new Date(Date.UTC(y, m - 1, d, 12));
+  const offset = new Intl.DateTimeFormat('en-US', { timeZone: 'Australia/Melbourne', timeZoneName: 'longOffset' })
+    .formatToParts(probe).find((part) => part.type === 'timeZoneName').value; // e.g. "GMT+11:00"
+  const [, sign, hh, mm] = offset.match(/GMT([+-])(\d{2}):(\d{2})/);
+  const minutes = (sign === '-' ? -1 : 1) * (Number(hh) * 60 + Number(mm));
+  return new Date(Date.UTC(y, m - 1, d, 12) - minutes * 60_000);
+}
+
 const now = new Date(option('now', new Date().toISOString()));
 if (Number.isNaN(now.getTime())) throw new Error('invalid --now timestamp');
+// The sky is sampled at a fixed instant of the Melbourne day, so every run on
+// the same day writes identical bytes and the scheduled job commits once a day.
+const date = zonedDate(now, 'Australia/Melbourne');
+const instant = melbourneNoon(date);
 const planets = {};
-for (const body of BODIES) planets[body] = Number(geoLongitude(body, now).toFixed(4));
+for (const body of BODIES) planets[body] = Number(geoLongitude(body, instant).toFixed(4));
 
 const out = {
-  generatedAt: now.toISOString(),
-  date: zonedDate(now, 'Australia/Melbourne'),
+  generatedAt: instant.toISOString(),
+  date,
   planets,
 };
 
