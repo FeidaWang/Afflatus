@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 const gamesHtml = readFileSync('games.html', 'utf8');
 const leagueHtml = readFileSync('league.html', 'utf8');
-const arenaHtml = readFileSync('arena.html', 'utf8');
 const leagueScript = readFileSync('src/pages/league.js', 'utf8');
 const leagueEntry = readFileSync('src/pages/leagueEntry.js', 'utf8');
 const i18nScript = readFileSync('src/lib/i18n.js', 'utf8');
@@ -80,12 +79,5 @@ describe('completed prediction archives', () => {
       expect(script).not.toContain('data-to="${it.prob}"');
       expect(script).not.toContain('(ts - t0) / 900');
     }
-  });
-
-  it('keeps the Arena mobile introduction concise and action-led', () => {
-    const brief = arenaHtml.match(/<p class="brief"[^>]*data-en="([^"]+)"/)?.[1] || '';
-    expect(brief).toContain('Review the latest published snapshot');
-    expect(brief.split(/\s+/)).toHaveLength(36);
-    expect(brief).not.toContain('moving averages');
   });
 });

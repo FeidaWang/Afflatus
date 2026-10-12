@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import App from '../../integrations/arena-fsi/ui/ArenaFsi.jsx';
 import '../../integrations/arena-fsi/ui/styles.css';
 import './arena-layout.css';
+import '../lib/nav.js';
 
 // Match keyboard order to the mobile masthead's menu → language layout.
 const languageKey = document.querySelector('#afflatus-header .af-header-language');

@@ -13,3 +13,6 @@
 .signal-hero h1{text-wrap:balance}.signal-hero .muted-title{display:block}
 .legacy-anchor{display:block;scroll-margin-top:140px}
 @media(max-width:760px){.signal-sidebar nav a{flex:0 0 auto}}
+
+/* Touch targets reach 44px on narrow screens. */
+@media(max-width:760px){.topic-filters button,.view-toggle button,.record-card summary,.yieldBoardFoot button,.yieldBoard .researchEvidence summary{min-height:44px}.record-card summary,.yieldBoard .researchEvidence summary{display:flex;align-items:center}}

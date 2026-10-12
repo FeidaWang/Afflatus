@@ -65,23 +65,28 @@ describe('isSymbolAllowed', () => {
 });
 
 describe('checkAdminKey', () => {
+  const KEY = 'arena-admin-' + 'k'.repeat(32);
+  const OTHER = 'arena-admin-' + 'k'.repeat(31) + 'j';
   it('accepts a matching key', () => {
-    expect(checkAdminKey('secret123', 'secret123')).toBe(true);
+    expect(checkAdminKey(KEY, KEY)).toBe(true);
   });
   it('rejects a wrong key of the same length', () => {
-    expect(checkAdminKey('secret124', 'secret123')).toBe(false);
+    expect(checkAdminKey(OTHER, KEY)).toBe(false);
   });
   it('rejects a key of a different length (no throw)', () => {
-    expect(() => checkAdminKey('short', 'secret123')).not.toThrow();
-    expect(checkAdminKey('short', 'secret123')).toBe(false);
+    expect(() => checkAdminKey('short', KEY)).not.toThrow();
+    expect(checkAdminKey('short', KEY)).toBe(false);
+  });
+  it('fails closed when the configured key is shorter than 32 characters', () => {
+    expect(checkAdminKey('secret123', 'secret123')).toBe(false);
   });
   it('fails closed when no key is configured server-side', () => {
     expect(checkAdminKey('anything', undefined)).toBe(false);
     expect(checkAdminKey('anything', '')).toBe(false);
   });
   it('fails closed when no key is provided by the client', () => {
-    expect(checkAdminKey(undefined, 'secret123')).toBe(false);
-    expect(checkAdminKey('', 'secret123')).toBe(false);
+    expect(checkAdminKey(undefined, KEY)).toBe(false);
+    expect(checkAdminKey('', KEY)).toBe(false);
   });
   it('fails closed when both are empty (never "gate disabled")', () => {
     expect(checkAdminKey('', '')).toBe(false);
