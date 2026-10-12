@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-12",
+  "financialServices": {
+    "repository": "https://github.com/FeidaWang/financial-services",
+    "commit": "574ed3624aebd0418c7e96cd101262f30210ab26",
+    "license": "Apache-2.0"
+  },
+  "host": {
+    "repository": "https://github.com/FeidaWang/Afflatus",
+    "commit": "edec43a8698d0e17ad9400728bafeeb82602a0f7",
+    "url": "https://feida.au/arena.html",
+    "entry": "src/pages/arenaJournal.jsx",
+    "stack": "React 19 / Vite 8 / Vercel Node Functions"
+  },
+  "implementation": "Original executable application code derived from audited workflow and accounting requirements; does not claim upstream supplies an execution engine."
+}

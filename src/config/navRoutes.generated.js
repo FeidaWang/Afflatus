@@ -104,8 +104,8 @@ export const HOME_NAV_GROUPS = Object.freeze([
       {
         "routeId": "arena",
         "label": {
-          "en": "QF-01 Quant Foundry",
-          "zh": "QF-01 量化铸造舱"
+          "en": "Stock research & AI paper trading",
+          "zh": "股票研究与 AI 模拟交易"
         },
         "href": "/arena.html"
       },

@@ -1,0 +1,10 @@
+import { writeFile, mkdir } from 'node:fs/promises';
+import { ArenaService } from '../server/service.mjs';
+import { StateStore, MemoryAdapter } from '../server/store.mjs';
+const now='2026-10-12T15:00:00.000Z';
+const service=new ArenaService({store:new StateStore(new MemoryAdapter()),env:{ARENA_MODE:'demo'},clock:()=>now});
+await service.run({mode:'demo',idempotencyKey:'packaged-demo-001'});
+await mkdir('validation',{recursive:true});
+await writeFile('validation/demo-run.json',JSON.stringify(await service.export('demo'),null,2)+'\n');
+await writeFile('validation/demo-status.json',JSON.stringify(await service.status('demo'),null,2)+'\n');
+console.log('Generated clearly identified DEMO run and status from the real execution engine.');

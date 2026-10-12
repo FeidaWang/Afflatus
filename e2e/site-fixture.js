@@ -1,7 +1,20 @@
 import { expect, test as base } from '@playwright/test';
+import { createHandler } from '../integrations/arena-fsi/server/http.mjs';
+import { ArenaService } from '../integrations/arena-fsi/server/service.mjs';
+import { MemoryAdapter, StateStore } from '../integrations/arena-fsi/server/store.mjs';
 
 const FIXED_TIME = Date.parse('2026-07-25T12:00:00+10:00');
 const LOCAL_HOSTS = new Set(['127.0.0.1', 'localhost']);
+
+// `vite preview` has no serverless functions. Serve the real Arena API as an
+// unconfigured live deployment: no database, provider keys or network access.
+const ARENA_ENV = { ARENA_MODE: 'live' };
+const arenaApi = createHandler(new ArenaService({
+  store: new StateStore(new MemoryAdapter()),
+  env: ARENA_ENV,
+  clock: () => new Date(FIXED_TIME).toISOString(),
+  fetcher: async () => { throw new Error('Browser gates never reach market or model providers'); },
+}), ARENA_ENV);
 
 function isExpectedNetworkNoise(message) {
   return /Failed to load resource: net::ERR_(?:ABORTED|BLOCKED_BY_CLIENT)/.test(message);
@@ -37,6 +50,20 @@ async function installDeterministicRuntime(page) {
   await page.route('**/*', async (route) => {
     const request = route.request();
     const url = new URL(request.url());
+    if (LOCAL_HOSTS.has(url.hostname) && url.pathname === '/api/arena-fsi') {
+      const response = await arenaApi(new Request(url, {
+        method: request.method(),
+        headers: request.headers(),
+        body: request.postDataBuffer() ?? undefined,
+      }));
+      await route.fulfill({
+        status: response.status,
+        headers: Object.fromEntries(response.headers),
+        body: Buffer.from(await response.arrayBuffer()),
+      });
+      return;
+    }
+
     if (LOCAL_HOSTS.has(url.hostname)) {
       await route.continue();
       return;

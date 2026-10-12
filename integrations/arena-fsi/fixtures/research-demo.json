@@ -1,0 +1,306 @@
+{
+  "synthetic": true,
+  "classification": "SYNTHETIC_DEMONSTRATION_ONLY",
+  "description": "Every company, quote, source, financial amount, forecast, and thesis in this file is fictional. It must never be presented as live market data or real investment research.",
+  "anchorAsOf": "2025-01-15T20:00:00Z",
+  "datePolicy": "The demo service may shift every date by the same delta from anchorAsOf to its current demo snapshot, preserving all publication, availability, forecast, and resolution ordering.",
+  "sources": [
+    {
+      "id": "synthetic-filing",
+      "synthetic": true,
+      "kind": "filing",
+      "title": "SYNTHETIC: Fictional annual results, not an actual filing",
+      "url": "https://example.invalid/synthetic/filing",
+      "publishedAt": "2025-01-14T20:00:00Z",
+      "availableAt": "2025-01-14T20:01:00Z",
+      "retrievedAt": "2025-01-15T19:55:00Z"
+    },
+    {
+      "id": "synthetic-market-data",
+      "synthetic": true,
+      "kind": "market_data",
+      "title": "SYNTHETIC: Frozen demonstration quote",
+      "url": "https://example.invalid/synthetic/quote",
+      "publishedAt": "2025-01-15T19:59:00Z",
+      "availableAt": "2025-01-15T19:59:01Z",
+      "retrievedAt": "2025-01-15T19:59:02Z"
+    }
+  ],
+  "quotes": [
+    {
+      "synthetic": true,
+      "symbol": "SYNTH",
+      "name": "Synthetic Demonstration Company",
+      "price": 42,
+      "currency": "USD",
+      "changePct": 0.012,
+      "asOf": "2025-01-15T19:59:00Z",
+      "receivedAt": "2025-01-15T19:59:02Z",
+      "mode": "demo",
+      "session": "regular",
+      "sourceId": "synthetic-market-data"
+    }
+  ],
+  "research": {
+    "synthetic": true,
+    "symbol": "SYNTH",
+    "snapshotAt": "2025-01-15T20:00:00Z",
+    "facts": [
+      {
+        "id": "revenue-fact",
+        "claim": "SYNTHETIC: The demonstration fixture contains annual revenue of 1000 USD million.",
+        "sourceIds": [
+          "synthetic-filing"
+        ],
+        "numericClaims": [
+          {
+            "name": "annual revenue",
+            "value": 1000,
+            "unit": "USD million",
+            "sourceIds": [
+              "synthetic-filing"
+            ]
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "growth-assumption",
+        "claim": "SYNTHETIC: Base-case revenue growth assumption is 10%.",
+        "rationale": "A deliberately invented scenario input for demonstrating the calculation engine.",
+        "value": 0.1,
+        "unit": "ratio"
+      }
+    ],
+    "inferences": [
+      {
+        "id": "projected-revenue",
+        "claim": "SYNTHETIC: Applying the 10% scenario growth assumption yields revenue of 1100 USD million.",
+        "basedOn": [
+          "revenue-fact",
+          "growth-assumption"
+        ],
+        "value": 1100,
+        "unit": "USD million",
+        "calculation": {
+          "method": "revenue * (1 + growth)",
+          "inputIds": [
+            "revenue-fact",
+            "growth-assumption"
+          ]
+        }
+      }
+    ],
+    "decision": {
+      "action": "hold",
+      "confidence": 0.5,
+      "rationale": "SYNTHETIC: Demonstrate the evidence flow without interpreting fictional information as a live signal.",
+      "evidenceIds": [
+        "revenue-fact"
+      ]
+    }
+  },
+  "dcf": {
+    "synthetic": true,
+    "asOf": "2025-01-15T20:00:00Z",
+    "currency": "USD",
+    "units": "millions",
+    "debt": 300,
+    "cash": 100,
+    "shares": {
+      "basic": 100000000,
+      "incremental": 5000000
+    },
+    "scenarios": {
+      "bear": {
+        "fcff": [
+          80,
+          85,
+          90,
+          92,
+          94
+        ],
+        "wacc": 0.12,
+        "terminalGrowth": 0.015
+      },
+      "base": {
+        "fcff": [
+          100,
+          110,
+          121,
+          130,
+          138
+        ],
+        "wacc": 0.1,
+        "terminalGrowth": 0.025
+      },
+      "bull": {
+        "fcff": [
+          120,
+          138,
+          157,
+          178,
+          198
+        ],
+        "wacc": 0.085,
+        "terminalGrowth": 0.03
+      }
+    }
+  },
+  "peers": [
+    {
+      "synthetic": true,
+      "symbol": "SYNTH",
+      "currency": "USD",
+      "units": "millions",
+      "asOf": "2025-01-15T20:00:00Z",
+      "period": {
+        "basis": "TTM",
+        "end": "2024-12-31",
+        "accounting": "GAAP"
+      },
+      "sector": "software",
+      "marketCap": 4200,
+      "enterpriseValue": 4400,
+      "revenue": 1000,
+      "revenuePrior": 850,
+      "grossProfit": 700,
+      "ebitda": 230,
+      "netIncome": 150,
+      "fcf": 180,
+      "sourceIds": [
+        "synthetic-filing",
+        "synthetic-market-data"
+      ]
+    },
+    {
+      "synthetic": true,
+      "symbol": "SYNTHB",
+      "currency": "USD",
+      "units": "millions",
+      "asOf": "2025-01-15T20:00:00Z",
+      "period": {
+        "basis": "TTM",
+        "end": "2024-12-31",
+        "accounting": "GAAP"
+      },
+      "sector": "software",
+      "marketCap": 3600,
+      "enterpriseValue": 3650,
+      "revenue": 900,
+      "revenuePrior": 790,
+      "grossProfit": 603,
+      "ebitda": 180,
+      "netIncome": 100,
+      "fcf": 126,
+      "sourceIds": [
+        "synthetic-filing",
+        "synthetic-market-data"
+      ]
+    },
+    {
+      "synthetic": true,
+      "symbol": "SYNTHC",
+      "currency": "USD",
+      "units": "millions",
+      "asOf": "2025-01-15T20:00:00Z",
+      "period": {
+        "basis": "TTM",
+        "end": "2024-12-31",
+        "accounting": "GAAP"
+      },
+      "sector": "software",
+      "marketCap": 2400,
+      "enterpriseValue": 2200,
+      "revenue": 650,
+      "revenuePrior": 500,
+      "grossProfit": 455,
+      "ebitda": -20,
+      "netIncome": -60,
+      "fcf": -10,
+      "sourceIds": [
+        "synthetic-filing",
+        "synthetic-market-data"
+      ]
+    }
+  ],
+  "earnings": {
+    "actual": {
+      "revenue": 270,
+      "eps": 0.45,
+      "grossMargin": 0.7,
+      "freeCashFlow": 48
+    },
+    "consensus": {
+      "revenue": 260,
+      "eps": 0.42,
+      "grossMargin": 0.69,
+      "freeCashFlow": 45
+    },
+    "prior": {
+      "revenue": 235,
+      "eps": 0.36,
+      "grossMargin": 0.68,
+      "freeCashFlow": 38
+    }
+  },
+  "earningsMetadata": {
+    "synthetic": true,
+    "description": "All earnings values above are fictional and pre-normalized; revenue/FCF use USD million, EPS uses USD per share, and margins are decimal ratios. GAAP basis and the same fictional quarter apply to all three columns.",
+    "sourceIds": [
+      "synthetic-filing"
+    ]
+  },
+  "thesis": {
+    "synthetic": true,
+    "id": "synthetic-thesis",
+    "symbol": "SYNTH",
+    "statement": "SYNTHETIC: A fictional software company may expand margins as recurring revenue scales.",
+    "createdAt": "2025-01-08T20:00:00Z",
+    "pillars": [
+      {
+        "id": "growth",
+        "expectation": "SYNTHETIC: Annual revenue growth remains above 15%.",
+        "invalidation": "SYNTHETIC: Two observed quarters below 10% growth."
+      },
+      {
+        "id": "cash",
+        "expectation": "SYNTHETIC: Free cash flow margin exceeds 15%.",
+        "invalidation": "SYNTHETIC: Sustained negative free cash flow."
+      }
+    ],
+    "risks": [
+      "SYNTHETIC: Competition lowers prices.",
+      "SYNTHETIC: Higher infrastructure costs reduce margins."
+    ],
+    "stopTrigger": "SYNTHETIC: Review when either falsifiable pillar is disproved.",
+    "conviction": "medium",
+    "targetPrice": 50
+  },
+  "thesisUpdate": {
+    "synthetic": true,
+    "id": "synthetic-thesis-event-1",
+    "at": "2025-01-15T19:00:00Z",
+    "type": "evidence",
+    "description": "SYNTHETIC: The fictional cash margin weakened in the latest fixture.",
+    "pillarId": "cash",
+    "impact": "weakens",
+    "sourceIds": [
+      "synthetic-filing"
+    ]
+  },
+  "catalysts": [
+    {
+      "synthetic": true,
+      "symbol": "SYNTH",
+      "title": "SYNTHETIC: Fictional investor-day demonstration",
+      "scheduledAt": "2025-01-17T20:00:00Z",
+      "availableAt": "2025-01-14T20:01:00Z",
+      "sourceIds": [
+        "synthetic-filing"
+      ]
+    }
+  ],
+  "probabilityContract": "probability is P(the named instrument's price return over the specified horizon is positive), excluding cash dividends. It is independent of buy/sell/hold; a sell forecast may legitimately have low probability. Never reinterpret action confidence as this event probability."
+}

@@ -30,3 +30,6 @@ services/vibe-bridge/**/__pycache__/
 # Stateless model runtime bytecode
 api/__pycache__/
 services/vibe-model/**/__pycache__/
+
+# Local rollback originals created by the Arena FSI installer
+/integrations/arena-fsi-install-backup/

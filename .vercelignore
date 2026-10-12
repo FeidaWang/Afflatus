@@ -8,6 +8,15 @@ data-archive/
 dist_*/
 e2e/
 tests/
-integrations/
+integrations/*
+# Arena FSI: the arena.html UI (build) and /api/arena-fsi (runtime) import only these paths.
+!integrations/arena-fsi/
+integrations/arena-fsi/*
+!integrations/arena-fsi/server/
+!integrations/arena-fsi/src/
+!integrations/arena-fsi/ui/
+integrations/arena-fsi/ui/*
+!integrations/arena-fsi/ui/ArenaFsi.jsx
+!integrations/arena-fsi/ui/styles.css
 output/
 tools/
