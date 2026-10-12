@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { stockWindow, aggregateCandles, normalizeIntraday } from '../prototypes/us-equities-dashboard/src/stockChartUtils.js';
-import { assessNyseSession, isNyseSession, nyseHolidayDates } from '../prototypes/us-equities-dashboard/src/marketSession.js';
+import { stockWindow, aggregateCandles, normalizeDaily } from '../src/features/arena-journal/stockChartUtils.js';
+import { assessNyseSession, isNyseSession, nyseHolidayDates } from '../src/lib/marketSession.js';
 
 const days = (start, end) => {
   const rows = [];
@@ -34,10 +34,13 @@ describe('stock chart windows', () => {
     ];
     expect(aggregateCandles(rows, 1)).toEqual({ step: 3, candles: [{ t: 'a', end: 'c', o: 100, h: 120, l: 85, c: 105, v: 15 }] });
   });
-  it('excludes malformed, nonfinite and extended-session intraday bars', () => {
-    const row = datetime => ({ datetime, open: '100', high: '110', low: '90', close: '105' });
-    const values = [row('2026-10-02 10:00:00'), row('2026-10-02 08:00:00'), row('2026-10-02 16:00:00'), row('bad'), { ...row('2026-10-02 10:05:00'), high: '101' }, { ...row('2026-10-02 10:10:00'), close: 'NaN' }];
-    expect(normalizeIntraday(values).map(c => c.t)).toEqual(['2026-10-02 10:00:00']);
+  it('orders daily bars oldest first and drops malformed or nonfinite ones', () => {
+    const row = datetime => ({ datetime, open: '100', high: '110', low: '90', close: '105', volume: '7' });
+    const values = [row('2026-10-02'), row('2026-10-01'), row('bad'), { ...row('2026-09-30'), high: '101' }, { ...row('2026-09-29'), close: 'NaN' }];
+    expect(normalizeDaily(values)).toEqual([
+      { t: '2026-10-01', o: 100, h: 110, l: 90, c: 105, v: 7 },
+      { t: '2026-10-02', o: 100, h: 110, l: 90, c: 105, v: 7 },
+    ]);
   });
 });
 

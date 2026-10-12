@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from '../../prototypes/us-equities-dashboard/src/App.jsx';
-import '../../prototypes/us-equities-dashboard/src/styles.css';
+import { App } from '../features/arena-journal/App.jsx';
+import '../features/arena-journal/styles.css';
 import './arena-layout.css';
 import '../lib/nav.js';
 
