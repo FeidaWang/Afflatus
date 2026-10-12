@@ -58,6 +58,12 @@ describe.each(headerFiles)('%s shared header', (file) => {
     }
   });
 
+  // nav.js imports the controller into the hashed bundle and localises the
+  // language switch; only the unbuilt 404 page may load the raw public copy.
+  it.skipIf(file === 'public/404.html')('loads the header controller only through the bundle', () => {
+    expect(source).not.toContain('src="/lib/header-controller.js"');
+  });
+
   it('has exactly one h1, outside the header', () => {
     const headings = nodes.filter((node) => node.tagName === 'h1');
     expect(headings).toHaveLength(1);

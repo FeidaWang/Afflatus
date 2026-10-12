@@ -66,3 +66,26 @@ body.arena-page #afflatus-header #af-more {
     padding-left: 4px;
   }
 }
+
+/* Touch targets: every journal control reaches 44px on narrow screens. */
+@media (max-width: 760px) {
+  body.arena-page .periods button,
+  body.arena-page .chart-style-toggle button,
+  body.arena-page .primary-button,
+  body.arena-page .sort-button {
+    min-height: 44px;
+  }
+
+  body.arena-page .price-navigation button {
+    width: 44px;
+    min-height: 44px;
+  }
+
+  body.arena-page .remove-stock {
+    top: -6px;
+    right: -10px;
+    min-width: 44px;
+    min-height: 44px;
+    background: transparent;
+  }
+}

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from '../../prototypes/us-equities-dashboard/src/App.jsx';
 import '../../prototypes/us-equities-dashboard/src/styles.css';
 import './arena-layout.css';
+import '../lib/nav.js';
 
 // Match keyboard order to the mobile masthead's menu → language layout.
 const languageKey = document.querySelector('#afflatus-header .af-header-language');
