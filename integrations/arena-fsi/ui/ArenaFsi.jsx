@@ -403,7 +403,7 @@ export default function ArenaFsi({ locale: suppliedLocale, apiBase = '/api/arena
   useEffect(() => {
     document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
     document.documentElement.dataset.afflatusLocale = locale;
-    document.title = locale === 'zh' ? 'Arena · 研究与模拟交易 · AFFLATUS' : 'Arena · Research & paper trading · AFFLATUS';
+    document.title = locale === 'zh' ? '股票研究与 AI 模拟交易 · AFFLATUS' : 'Stock research & AI paper trading · AFFLATUS';
     document.querySelectorAll('#afflatus-header [data-en], .pa-footer [data-en]').forEach(element => {const value=element.dataset[locale];if(value !== undefined)element.textContent=value;});
     document.querySelectorAll('#afflatus-header [data-aria-en], .pa-footer [data-aria-en]').forEach(element => {const value=element.getAttribute(locale === 'zh' ? 'data-aria-zh' : 'data-aria-en');if(value)element.setAttribute('aria-label',value);});
     // Header links and the language switch follow the shared site navigation (e.g. Chinese-only stories).
