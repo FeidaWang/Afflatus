@@ -19,6 +19,51 @@ import { fetchWithTimeout, getRequestId, isAbortError, sendApiError, setApiHeade
 const SYMBOL_RE = /^[A-Za-z]{1,5}([.\-][A-Za-z]{1,2})?$/;
 const RATE_LIMIT = { limit: 20, windowMs: 60000 };
 const hits = new Map();
+// Every caller (fetchJson, the Arena scripts) asks for daily bars with these
+// parameters only. Anything else would only vary the CDN cache key.
+const QUERY_KEYS = new Set(['symbol', 'interval', 'outputsize']);
+const INTERVALS = new Set(['1day']);
+// Upstream is asked for the next bucket up and the response is sliced, so
+// nearby sizes share one provider call in the per-instance cache below.
+const OUTPUT_BUCKETS = [10, 30, 60, 120, 250, 500, 1000, 5000];
+const PUBLIC_TTL_MS = 15 * 60_000;
+const publicCache = new Map();
+const inflight = new Map();
+
+async function loadHistory(symbol, interval, outputsize, key) {
+  const u = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}&outputsize=${outputsize}`;
+  return fetchWithTimeout(u, { headers: { Authorization: `apikey ${key}` } }, 7000, async (r) => {
+    if (!r.ok) return { status: 502, code: 'UPSTREAM_HTTP', upstreamStatus: r.status };
+    const j = await r.json();
+    if (!j || j.status !== 'ok' || !Array.isArray(j.values)) return { status: 502, code: 'UPSTREAM_SCHEMA' };
+    // Project known market fields only; never forward arbitrary upstream metadata.
+    const pick = (value, fields) => Object.fromEntries(fields.filter(field =>
+      value && ['string', 'number'].includes(typeof value[field])).map(field => [field, value[field]]));
+    return {
+      status: 200,
+      data: {
+        status: 'ok',
+        meta: pick(j.meta, ['symbol', 'interval', 'currency', 'exchange_timezone', 'exchange', 'mic_code', 'type']),
+        values: j.values.map(value => pick(value, ['datetime', 'open', 'high', 'low', 'close', 'volume'])),
+      },
+    };
+  });
+}
+
+function loadPublicHistory(symbol, interval, outputsize, key) {
+  const cacheKey = `${symbol}|${interval}|${outputsize}`;
+  const now = Date.now();
+  for (const [entryKey, entry] of publicCache) if (entry.expiresAt <= now) publicCache.delete(entryKey);
+  const cached = publicCache.get(cacheKey);
+  if (cached) return Promise.resolve(cached.result);
+  if (!inflight.has(cacheKey)) {
+    inflight.set(cacheKey, loadHistory(symbol, interval, outputsize, key).then((result) => {
+      if (result.status === 200) publicCache.set(cacheKey, { result, expiresAt: Date.now() + PUBLIC_TTL_MS });
+      return result;
+    }).finally(() => inflight.delete(cacheKey)));
+  }
+  return inflight.get(cacheKey);
+}
 
 export default async function handler(req, res) {
   const requestId = getRequestId(req);
@@ -32,39 +77,47 @@ export default async function handler(req, res) {
     sendApiError(res, 405, 'METHOD_NOT_ALLOWED', requestId);
     return;
   }
-  const symbol = typeof req.query?.symbol === 'string' ? req.query.symbol.trim().toUpperCase() : '';
-  const interval = (req.query.interval || '').toString().trim();
-  const outputsize = Math.min(5000, parseInt(req.query.outputsize, 10) || 100);
-  if (!symbol || !SYMBOL_RE.test(symbol) || !/^[0-9a-z]{1,6}$/.test(interval)) { sendApiError(res, 400, 'INVALID_PARAMS', requestId); return; }
-  const rl = checkRateLimit(hits, clientIp(req), { ...RATE_LIMIT, now: Date.now() });
+  const query = req.query || {};
+  const symbol = typeof query.symbol === 'string' ? query.symbol.trim().toUpperCase() : '';
+  const interval = typeof query.interval === 'string' ? query.interval.trim() : '';
+  const rawSize = query.outputsize === undefined ? '100' : String(query.outputsize).trim();
+  const requested = /^\d{1,4}$/.test(rawSize) ? Number(rawSize) : 0;
+  if (Object.keys(query).some((name) => !QUERY_KEYS.has(name))
+    || !symbol || !SYMBOL_RE.test(symbol) || !INTERVALS.has(interval)
+    || !(requested >= 1 && requested <= 5000)) { sendApiError(res, 400, 'INVALID_PARAMS', requestId); return; }
+  const now = Date.now();
+  // Bound expired per-IP entries in the process-local limiter.
+  for (const [ip, entry] of hits) if (now - entry.start >= RATE_LIMIT.windowMs) hits.delete(ip);
+  const ip = clientIp(req);
+  if (!hits.has(ip) && hits.size >= 10_000) {
+    res.setHeader('Retry-After', '60');
+    sendApiError(res, 429, 'RATE_LIMITED', requestId);
+    return;
+  }
+  const rl = checkRateLimit(hits, ip, { ...RATE_LIMIT, now });
   if (!rl.allowed) { res.setHeader('Retry-After', Math.ceil(rl.resetMs / 1000)); sendApiError(res, 429, 'RATE_LIMITED', requestId); return; }
 
-  const allowlist = getPublishedArenaAllowlist();
-  if (!isSymbolAllowed(symbol, allowlist)) {
-    const adminKey = req.headers?.['x-arena-key'];
-    if (!checkAdminKey(adminKey, process.env.ARENA_ADMIN_KEY)) {
-      sendApiError(res, 403, 'ARENA_KEY_REQUIRED', requestId, { message: "symbol outside today's pool — admin unlock required" });
-      return;
-    }
+  const publicSymbol = isSymbolAllowed(symbol, getPublishedArenaAllowlist());
+  const admin = checkAdminKey(req.headers?.['x-arena-key'], process.env.ARENA_ADMIN_KEY);
+  if (!publicSymbol && !admin) {
+    sendApiError(res, 403, 'ARENA_KEY_REQUIRED', requestId, { message: "symbol outside today's pool — admin unlock required" });
+    return;
   }
 
-  const privateRequest = !isSymbolAllowed(symbol, allowlist) || req.headers?.['x-arena-key'] !== undefined || req.headers?.authorization !== undefined;
+  // Only a verified admin read is private (fresh and uncached). An unverified
+  // key or Authorization header is anonymous and must not skip the caches.
+  const privateRequest = admin;
   const key = process.env.TWELVE_KEY;
   if (!key) { sendApiError(res, 500, 'SERVICE_NOT_CONFIGURED', requestId); return; }
   try {
-    const u = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}&interval=${encodeURIComponent(interval)}&outputsize=${outputsize}`;
-    const r = await fetchWithTimeout(u, { headers: { Authorization: `apikey ${key}` } }, 7000);
-    if (!r.ok) { sendApiError(res, 502, 'UPSTREAM_HTTP', requestId, { upstreamStatus: r.status }); return; }
-    const j = await r.json();
-    if (!j || j.status !== 'ok' || !Array.isArray(j.values)) { sendApiError(res, 502, 'UPSTREAM_SCHEMA', requestId); return; }
-    // Project known market fields only; never forward arbitrary upstream metadata.
-    const pick = (value, fields) => Object.fromEntries(fields.filter(field =>
-      value && ['string', 'number'].includes(typeof value[field])).map(field => [field, value[field]]));
-    const data = {
-      status: 'ok',
-      meta: pick(j.meta, ['symbol', 'interval', 'currency', 'exchange_timezone', 'exchange', 'mic_code', 'type']),
-      values: j.values.map(value => pick(value, ['datetime', 'open', 'high', 'low', 'close', 'volume'])),
-    };
+    const result = privateRequest
+      ? await loadHistory(symbol, interval, requested, key)
+      : await loadPublicHistory(symbol, interval, OUTPUT_BUCKETS.find((size) => size >= requested), key);
+    if (result.status !== 200) {
+      sendApiError(res, result.status, result.code, requestId, { upstreamStatus: result.upstreamStatus });
+      return;
+    }
+    const data = { ...result.data, values: result.data.values.slice(0, requested) };
     if (!privateRequest) {
       res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400');
       res.setHeader('CDN-Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');

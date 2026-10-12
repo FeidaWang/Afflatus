@@ -1,12 +1,11 @@
-import { randomUUID, timingSafeEqual } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
+import { checkAdminKey } from './arenaAccess.js';
 
 import { INSTRUMENT_IDS, parseQuery, validateSeries, projectSeries } from './vibeMarketContract.js';
 import { parseResearchQuery, validateResearch, projectResearch } from './vibeResearchContract.js';
 export { INSTRUMENT_IDS, parseQuery, validateSeries };
 export function secretEqual(a, b) {
-  if (typeof a !== 'string' || typeof b !== 'string' || b.length < 32) return false;
-  const x = Buffer.from(a), y = Buffer.from(b);
-  return x.length === y.length && timingSafeEqual(x, y);
+  return checkAdminKey(a, b);
 }
 async function boundedJson(response) {
   if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('UPSTREAM_SCHEMA');

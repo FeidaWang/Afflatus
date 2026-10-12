@@ -22,7 +22,7 @@ afterEach(() => {
 describe('Arena API access gate', () => {
   it('lets a deployed picks symbol reach the quote provider without an admin key', async () => {
     vi.stubEnv('FINNHUB_KEY', 'test-finnhub-key');
-    const upstream = vi.fn(async () => ({ ok: true, json: async () => ({ c: 123.45, pc: 122 }) }));
+    const upstream = vi.fn(async () => ({ ok: true, json: async () => ({ c: 123.45, pc: 122, o: 122.5, h: 124, l: 121.8, t: Math.floor(Date.now() / 1000) - 60 }) }));
     vi.stubGlobal('fetch', upstream);
     const recorder = responseRecorder();
 

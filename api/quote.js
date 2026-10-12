@@ -76,11 +76,14 @@ export default async function handler(req, res) {
 
   const allowlist = getPublishedArenaAllowlist();
   const publicSymbol = isSymbolAllowed(symbol, allowlist);
-  if (!publicSymbol && !checkAdminKey(req.headers?.['x-arena-key'], process.env.ARENA_ADMIN_KEY)) {
+  const admin = checkAdminKey(req.headers?.['x-arena-key'], process.env.ARENA_ADMIN_KEY);
+  if (!publicSymbol && !admin) {
     sendApiError(res, 403, 'ARENA_KEY_REQUIRED', requestId, { message: "symbol outside today's pool — admin unlock required" });
     return;
   }
-  const privateRequest = !publicSymbol || req.headers?.['x-arena-key'] !== undefined || req.headers?.authorization !== undefined;
+  // Only a verified admin read is private. An unverified key or Authorization
+  // header is anonymous and must not skip the public cache and coalescing.
+  const privateRequest = admin;
   const key = process.env.FINNHUB_KEY;
   if (!key) { sendApiError(res, 500, 'SERVICE_NOT_CONFIGURED', requestId); return; }
   try {
