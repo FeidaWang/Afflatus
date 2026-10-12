@@ -83,6 +83,9 @@
       "maxDuration": 30,
       "includeFiles": "services/vibe-model/**",
       "excludeFiles": "{node_modules/**,dist/**,public/**,integrations/**,tests/**,e2e/**,prototypes/**,output/**,content/**,data/**,.git/**,artifacts/**,src/**,scripts/**}"
+    },
+    "api/arena-fsi.mjs": {
+      "maxDuration": 180
     }
   }
 }

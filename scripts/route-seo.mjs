@@ -200,39 +200,40 @@ function buildProfileGraph(route, locale, facts, url) {
 }
 
 function buildArenaGraph(route, locale, facts, url) {
+  // arena-fsi-metadata:v1 — the downloadable QF-01 dataset remains a legacy archive.
   const key = localeKey(route, locale);
-  const datasetId = `${url}#dataset`;
-  const appId = `${url}#application`;
-  const methodologyId = `${url}#methodology`;
+  const datasetId = url + '#dataset';
+  const appId = url + '#application';
+  const methodologyId = url + '#methodology';
   const dataset = {
     '@type': 'Dataset',
     '@id': datasetId,
-    name: key === 'zh' ? '竞技场公开模拟记录' : 'Arena public simulation records',
+    name: key === 'zh' ? 'QF-01 历史模拟档案' : 'QF-01 legacy simulation archive',
     description:
       key === 'zh'
-        ? '用于竞技场界面的 QF-01 模型清单、模拟交易运行日志、预测日志与股票池。'
-        : 'QF-01 model manifest, simulation run logs, prediction logs, and equity universe used by the Arena interface.',
+        ? '归档的 QF-01 模型清单、历史模拟运行日志、预测日志与股票池。下载文件仅描述旧系统，不代表当前竞技场模拟账本、当前行情或当前 AI 运行结果。'
+        : 'Archived QF-01 model manifests, historical simulation run logs, prediction logs and equity-universe files. These downloads describe the legacy system, not the active Arena paper ledger, current quotes or current AI runs.',
     url,
     inLanguage: languageValue(route, locale),
     creator: { '@id': PROFILE_ID },
     measurementTechnique: [
-      'rule-constrained model simulation',
-      'benchmark-relative return tracking',
-      'costed walk-forward factor simulation',
+      'archived rule-constrained model simulation',
+      'archived benchmark-relative return tracking',
+      'archived costed walk-forward factor simulation',
     ],
     variableMeasured: [
-      'model prediction',
-      'simulated position',
-      'simulated return',
-      'benchmark return',
-      'factor score',
-      'constrained portfolio weight',
+      'historical model prediction',
+      'historical simulated position',
+      'historical simulated return',
+      'historical benchmark return',
+      'historical factor score',
+      'historical constrained portfolio weight',
     ],
     distribution: [
-      datasetDistribution('Arena run log', '/arena-runlog.json'),
-      datasetDistribution('Arena prediction log', '/arena-predlog.json'),
-      datasetDistribution('Arena equity universe', '/arena-universe.json'),
-      datasetDistribution('QF-01 model manifest', '/arena-quant-model.json'),
+      datasetDistribution('Legacy archive: Arena run log', '/arena-runlog.json'),
+      datasetDistribution('Legacy archive: Arena prediction log', '/arena-predlog.json'),
+      datasetDistribution('Legacy archive: Arena equity universe', '/arena-universe.json'),
+      datasetDistribution('Legacy archive: QF-01 model manifest', '/arena-quant-model.json'),
     ],
     ...(facts.dateModified ? { dateModified: facts.dateModified } : {}),
   };
@@ -248,27 +249,35 @@ function buildArenaGraph(route, locale, facts, url) {
     inLanguage: languageValue(route, locale),
     isAccessibleForFree: true,
     offers: { '@type': 'Offer', price: 0, priceCurrency: 'AUD' },
-    mainEntity: { '@id': datasetId },
+    featureList: [
+      'Frozen evidence snapshots with sources and timestamps',
+      'AI analyst and critic review when configured',
+      'Deterministic portfolio risk checks',
+      'Separate auditable USD paper ledgers with fees and slippage',
+      'Provider quote quality labels and isolated synthetic demos',
+    ],
+    mainEntity: { '@id': methodologyId },
   };
   const methodology = {
     '@type': 'Article',
     '@id': methodologyId,
     headline:
-      key === 'zh' ? '竞技场模拟方法与边界' : 'Arena simulation methodology and limits',
+      key === 'zh' ? '竞技场研究、复核与模拟执行方法' : 'Arena research, review and paper execution methodology',
     description:
       key === 'zh'
-        ? 'QF-01 在含交易成本的无前视滚动窗口中执行因子评分、市场状态识别与组合硬约束；三套模型模拟账本另与 SPY、SMH 对照。所有结果均为研究模拟，非投资建议。'
-        : 'QF-01 applies factor scoring, regime detection and hard portfolio constraints in a costed, no-look-ahead walk-forward window; three separate model ledgers are compared with SPY and SMH. All outcomes are research simulations, not investment advice.',
-    url: `${url}#briefing`,
+        ? '当前流程冻结带来源与时间的证据，经 AI 分析与复核后，重新核验成交报价与确定性组合约束，并在独立可审计账本中记录包含费用与滑点的模拟订单。真实行情与 AI 运行取决于服务器配置和数据授权；演示数据明确标记并隔离。QF-01 下载文件仅作为历史档案保留。'
+        : 'The current workflow freezes evidence with sources and timestamps, runs analyst and critic reviews, validates new execution quotes and deterministic portfolio limits, and records paper orders with fees and slippage in separate auditable ledgers. Provider quotes and AI runs depend on server configuration and data entitlements; synthetic demos are labeled and isolated. QF-01 downloads remain a legacy archive.',
+    url,
     inLanguage: languageValue(route, locale),
     author: { '@id': PROFILE_ID },
     publisher: { '@id': PROFILE_ID },
-    about: { '@id': datasetId },
-    isPartOf: { '@id': `${url}#webpage` },
+    about: { '@id': appId },
+    isPartOf: { '@id': url + '#webpage' },
   };
-  const page = basePageNode(route, locale, facts, url);
+  // Legacy data timestamps describe the archive, not the new application's update date.
+  const page = basePageNode(route, locale, {}, url);
   page.mainEntity = { '@id': appId };
-  page.hasPart = { '@id': methodologyId };
+  page.hasPart = [{ '@id': methodologyId }, { '@id': datasetId }];
   return [
     personNode(),
     websiteNode(languageValue(route, locale)),

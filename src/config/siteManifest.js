@@ -253,16 +253,16 @@ export const SITE_MANIFEST = Object.freeze([
     seo: ROUTE_SEO.arena,
     capabilities: ['live-data', 'canvas', 'svg-viz', 'admin-session'],
     metadata: {
-      title: "Stock observation & investment simulation · AFFLATUS",
-      description: "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.",
+      title: "Stock research & AI paper trading · AFFLATUS",
+      description: "Provider quotes when configured; frozen snapshots, AI analysis and review, risk checks, and auditable paper trades. QF-01 is a legacy archive.",
       canonical: 'https://feida.au/arena.html',
-      ogTitle: "Stock observation & investment simulation · AFFLATUS",
-      ogDescription: "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.",
+      ogTitle: "Stock research & AI paper trading · AFFLATUS",
+      ogDescription: "Provider quotes when configured; frozen snapshots, AI analysis and review, risk checks, and auditable paper trades. QF-01 is a legacy archive.",
       ogImage: ROUTE_SEO.arena.social.images.en,
     },
     locales: {
-      en: {"title": "Stock observation & investment simulation · AFFLATUS", "description": "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice."},
-      zh: {"title": "股票观察与模拟投资 · AFFLATUS", "description": "查看股票图表、技术分析，并用历史数据测试模拟投资。模拟结果并非真实账户收益，非投资建议。"},
+      en: {"title": "Stock research & AI paper trading · AFFLATUS", "description": "Provider quotes when configured; frozen snapshots, AI analysis and review, risk checks, and auditable paper trades. QF-01 is a legacy archive."},
+      zh: {"title": "股票研究与 AI 模拟交易 · AFFLATUS", "description": "按配置展示带来源与时间的真实行情，以冻结快照开展 AI 分析、复核与风控，并记录可审计的模拟交易；QF-01 数据保留为历史档案。"},
     },
   },
   {
@@ -446,7 +446,7 @@ export const HOME_NAV_GROUPS = Object.freeze([
     { routeId: 'portfolio', hash: '#fy2026Performance', label: { en: 'FY25/26 flight record', zh: 'FY25/26 飞行记录' } },
   ] },
   { id: 'lab', label: { en: 'Lab', zh: '实验室' }, items: [
-    { routeId: 'arena', label: { en: 'QF-01 Quant Foundry', zh: 'QF-01 量化铸造舱' } },
+    { routeId: 'arena', label: { en: 'Stock research & AI paper trading', zh: '股票研究与 AI 模拟交易' } },
     { routeId: 'sectors', label: { en: 'US–China AI model war', zh: '中美 AI 模型战争' } },
     { routeId: 'horoscope', label: { en: 'Local-first astrology', zh: '本地优先星盘' } },
   ] },

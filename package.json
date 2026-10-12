@@ -43,7 +43,11 @@
     "lint:i18n": "node scripts/lint-bilingual.mjs",
     "format:i18n": "node scripts/format-bilingual-content.mjs --write",
     "linkcheck": "npm run build && linkinator dist --recurse --silent --skip \"googletagmanager.com|fonts.gstatic.com|fonts.googleapis.com|twelvedata.com|feida.au\"",
-    "predev": "node scripts/generate-course-pages.mjs"
+    "predev": "node scripts/generate-course-pages.mjs",
+    "arena:fsi:test": "node --test integrations/arena-fsi/tests/*.test.mjs",
+    "arena:fsi:check": "node integrations/arena-fsi/scripts/check.mjs",
+    "arena:fsi:migrate": "node --env-file-if-exists=.env.local integrations/arena-fsi/scripts/migrate.mjs",
+    "arena:fsi:doctor": "node --env-file-if-exists=.env.local integrations/arena-fsi/scripts/doctor.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -51,7 +55,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "three": "^0.160.1",
-    "web-vitals": "^6.0.0"
+    "web-vitals": "^6.0.0",
+    "@neondatabase/serverless": "1.0.2"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
