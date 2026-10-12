@@ -113,8 +113,8 @@ import synthesisWorkerUrl from '../workers/horoscopeSynthesis.worker.js?worker&u
   // (scripts/gen-transits-daily.mjs, refreshed by a daily scheduled task),
   // not an ephemeris library, so this carries no bundle-weight concern.
   let transitsPromise = null;
-  const ensureTransits = () => transitsPromise || (transitsPromise = import('../lib/fetchJson.js')
-    .then(({ fetchJson }) => fetchJson('transits'))
+  const ensureTransits = () => transitsPromise || (transitsPromise = import('../lib/loadTransits.js')
+    .then(({ loadTransits }) => loadTransits())
     .catch(() => null));
 
   // ---- 时辰 selects -------------------------------------------------------
