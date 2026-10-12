@@ -67,6 +67,35 @@ body.arena-page #afflatus-header #af-more {
   }
 }
 
+/* React replaces the prerendered intro with the full dashboard; reserve the
+   dashboard's height up front so the site footer does not jump (CLS). */
+body.arena-page #root {
+  min-height: 100vh;
+}
+
+@media (max-width: 760px) {
+  body.arena-page #root {
+    min-height: calc(100vh - 60px);
+  }
+}
+
+/* The watchlist has no sparkline column: company, price, day change. */
+body.arena-page .table-head,
+body.arena-page .stock-select {
+  grid-template-columns: minmax(0, 1.25fr) minmax(64px, .8fr) minmax(74px, .85fr);
+}
+
+/* Loading / unavailable message shown in place of the daily chart. */
+body.arena-page .chart-status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
 /* Touch targets: every journal control reaches 44px on narrow screens. */
 @media (max-width: 760px) {
   body.arena-page .periods button,

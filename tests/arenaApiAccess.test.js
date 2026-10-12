@@ -58,8 +58,8 @@ describe('Arena API access gate', () => {
   });
 
   it.each([
-    ['quote', quoteHandler, { symbol: 'AAPL' }],
-    ['history', historyHandler, { symbol: 'AAPL', interval: '1day', outputsize: '2' }],
+    ['quote', quoteHandler, { symbol: 'IBM' }],
+    ['history', historyHandler, { symbol: 'IBM', interval: '1day', outputsize: '2' }],
   ])('keeps an unpublished %s symbol behind the admin gate', async (_name, handler, query) => {
     const upstream = vi.fn();
     vi.stubGlobal('fetch', upstream);

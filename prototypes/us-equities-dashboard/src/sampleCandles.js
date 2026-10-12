@@ -1,5 +1,5 @@
 import {makeSeries} from './marketData.js';
-import {isNyseSession} from './marketSession.js';
+import {isNyseSession} from '../../../src/lib/marketSession.js';
 import {stockWindow} from './stockChartUtils.js';
 
 // These are the original prototype's fictional prices, never live market bars.

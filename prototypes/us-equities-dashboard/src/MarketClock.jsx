@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from 'react';
-import {assessNyseSession} from './marketSession.js';
+import {assessNyseSession} from '../../../src/lib/marketSession.js';
 
 export function MarketClock({english}) {
   const[now,setNow]=useState(()=>new Date());
