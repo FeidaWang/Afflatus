@@ -60,11 +60,11 @@ export const ROUTE_SEO = Object.freeze({
   arena: {
     social: {
       background: 'assets/og-backgrounds/arena.jpg',
-      eyebrow: { en: 'MARKET INTELLIGENCE', zh: '市场情报' },
+      eyebrow: { en: 'US STOCK JOURNAL', zh: '美股看板' },
       title: { en: 'Arena', zh: '竞技场' },
       subtitle: {
-        en: 'QF-01 quant foundry, technical analysis and model ledgers.',
-        zh: 'QF-01 量化铸造舱、技术分析与模型账本。',
+        en: 'Latest quotes and daily charts for AI-era US companies.',
+        zh: 'AI 时代美股公司的最新报价与日线走势。',
       },
       alt: {
         en: 'Arena market intelligence data lanes',
@@ -72,14 +72,7 @@ export const ROUTE_SEO = Object.freeze({
       },
       images: { en: routeOgImage('arena', 'en'), zh: routeOgImage('arena', 'zh') },
     },
-    structuredData: {
-      kind: 'arena',
-      provenance: [
-        { path: 'public/arena-quant-model.json', dateField: 'updated' },
-        { path: 'public/arena-daily-digest.json', dateField: 'generatedAt' },
-        { path: 'public/arena-news.json', dateField: 'generatedAt' },
-      ],
-    },
+    structuredData: { kind: 'arena' },
   },
   sectors: {
     social: {
@@ -249,20 +242,20 @@ export const SITE_MANIFEST = Object.freeze([
     defaultLocale: 'en',
     nav: { order: 20, group: null, en: 'Arena', zh: '竞技场' },
     themeColor: '#05070e',
-    schema: ['WebApplication', 'Article', 'Dataset'],
+    schema: ['WebApplication'],
     seo: ROUTE_SEO.arena,
     capabilities: ['live-data', 'canvas', 'svg-viz', 'admin-session'],
     metadata: {
-      title: "Stock observation & investment simulation · AFFLATUS",
-      description: "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.",
+      title: "US stock journal · AFFLATUS",
+      description: "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
       canonical: 'https://feida.au/arena.html',
-      ogTitle: "Stock observation & investment simulation · AFFLATUS",
-      ogDescription: "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.",
+      ogTitle: "US stock journal · AFFLATUS",
+      ogDescription: "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
       ogImage: ROUTE_SEO.arena.social.images.en,
     },
     locales: {
-      en: {"title": "Stock observation & investment simulation · AFFLATUS", "description": "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice."},
-      zh: {"title": "股票观察与模拟投资 · AFFLATUS", "description": "查看股票图表、技术分析，并用历史数据测试模拟投资。模拟结果并非真实账户收益，非投资建议。"},
+      en: {"title": "US stock journal · AFFLATUS", "description": "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice."},
+      zh: {"title": "美股看板 · AFFLATUS", "description": "关注 AI 时代的美股公司：Finnhub 最新报价与 Twelve Data 日线走势。报价可能有延迟，不构成投资建议。"},
     },
   },
   {
@@ -448,7 +441,7 @@ export const HOME_NAV_GROUPS = Object.freeze([
     { routeId: 'portfolio', hash: '#fy2026Performance', label: { en: 'FY25/26 flight record', zh: 'FY25/26 飞行记录' } },
   ] },
   { id: 'lab', label: { en: 'Lab', zh: '实验室' }, items: [
-    { routeId: 'arena', label: { en: 'QF-01 Quant Foundry', zh: 'QF-01 量化铸造舱' } },
+    { routeId: 'arena', label: { en: 'US stock journal', zh: '美股看板' } },
     { routeId: 'sectors', label: { en: 'US–China AI model war', zh: '中美 AI 模型战争' } },
     { routeId: 'horoscope', label: { en: 'Local-first astrology', zh: '本地优先星盘' } },
   ] },

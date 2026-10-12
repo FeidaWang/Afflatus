@@ -7,15 +7,15 @@
 <!-- Sensitive input page: third-party analytics intentionally disabled. -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Stock observation &amp; investment simulation · AFFLATUS</title>
-<meta name="description" content="Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.">
+<title>US stock journal · AFFLATUS</title>
+<meta name="description" content="Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.">
 <meta name="theme-color" content="#05070e">
 <link rel="canonical" href="https://feida.au/arena.html">
   <!-- afflatus:route-seo:start -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Project Afflatus">
-  <meta property="og:title" content="Stock observation &amp; investment simulation · AFFLATUS">
-  <meta property="og:description" content="Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.">
+  <meta property="og:title" content="US stock journal · AFFLATUS">
+  <meta property="og:description" content="Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.">
   <meta property="og:url" content="https://feida.au/arena.html">
   <meta property="og:locale" content="en_AU">
   <meta property="og:locale:alternate" content="zh_CN">
@@ -26,8 +26,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Arena market intelligence data lanes">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Stock observation &amp; investment simulation · AFFLATUS">
-  <meta name="twitter:description" content="Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.">
+  <meta name="twitter:title" content="US stock journal · AFFLATUS">
+  <meta name="twitter:description" content="Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.">
   <meta name="twitter:image" content="https://feida.au/assets/og/arena-en.jpg">
   <meta name="twitter:image:alt" content="Arena market intelligence data lanes">
   <script type="application/ld+json" data-afflatus-route-schema="arena" lang="en-AU">
@@ -68,8 +68,8 @@
       "@type": "WebPage",
       "@id": "https://feida.au/arena.html#webpage",
       "url": "https://feida.au/arena.html",
-      "name": "Stock observation & investment simulation · AFFLATUS",
-      "description": "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.",
+      "name": "US stock journal · AFFLATUS",
+      "description": "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
       "inLanguage": [
         "en-AU",
         "zh-CN"
@@ -83,19 +83,15 @@
       "breadcrumb": {
         "@id": "https://feida.au/arena.html#breadcrumb"
       },
-      "dateModified": "2026-08-20T13:30:21.737Z",
       "mainEntity": {
         "@id": "https://feida.au/arena.html#application"
-      },
-      "hasPart": {
-        "@id": "https://feida.au/arena.html#methodology"
       }
     },
     {
       "@type": "WebApplication",
       "@id": "https://feida.au/arena.html#application",
-      "name": "Stock observation & investment simulation · AFFLATUS",
-      "description": "Explore stock charts, technical analysis and investment simulations using historical data. Simulated results are not account returns or investment advice.",
+      "name": "US stock journal · AFFLATUS",
+      "description": "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
       "url": "https://feida.au/arena.html",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Any",
@@ -109,87 +105,7 @@
         "@type": "Offer",
         "price": 0,
         "priceCurrency": "AUD"
-      },
-      "mainEntity": {
-        "@id": "https://feida.au/arena.html#dataset"
       }
-    },
-    {
-      "@type": "Article",
-      "@id": "https://feida.au/arena.html#methodology",
-      "headline": "Arena simulation methodology and limits",
-      "description": "QF-01 applies factor scoring, regime detection and hard portfolio constraints in a costed, no-look-ahead walk-forward window; three separate model ledgers are compared with SPY and SMH. All outcomes are research simulations, not investment advice.",
-      "url": "https://feida.au/arena.html#briefing",
-      "inLanguage": [
-        "en-AU",
-        "zh-CN"
-      ],
-      "author": {
-        "@id": "https://feida.au/#person"
-      },
-      "publisher": {
-        "@id": "https://feida.au/#person"
-      },
-      "about": {
-        "@id": "https://feida.au/arena.html#dataset"
-      },
-      "isPartOf": {
-        "@id": "https://feida.au/arena.html#webpage"
-      }
-    },
-    {
-      "@type": "Dataset",
-      "@id": "https://feida.au/arena.html#dataset",
-      "name": "Arena public simulation records",
-      "description": "QF-01 model manifest, simulation run logs, prediction logs, and equity universe used by the Arena interface.",
-      "url": "https://feida.au/arena.html",
-      "inLanguage": [
-        "en-AU",
-        "zh-CN"
-      ],
-      "creator": {
-        "@id": "https://feida.au/#person"
-      },
-      "measurementTechnique": [
-        "rule-constrained model simulation",
-        "benchmark-relative return tracking",
-        "costed walk-forward factor simulation"
-      ],
-      "variableMeasured": [
-        "model prediction",
-        "simulated position",
-        "simulated return",
-        "benchmark return",
-        "factor score",
-        "constrained portfolio weight"
-      ],
-      "distribution": [
-        {
-          "@type": "DataDownload",
-          "name": "Arena run log",
-          "encodingFormat": "application/json",
-          "contentUrl": "https://feida.au/arena-runlog.json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "Arena prediction log",
-          "encodingFormat": "application/json",
-          "contentUrl": "https://feida.au/arena-predlog.json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "Arena equity universe",
-          "encodingFormat": "application/json",
-          "contentUrl": "https://feida.au/arena-universe.json"
-        },
-        {
-          "@type": "DataDownload",
-          "name": "QF-01 model manifest",
-          "encodingFormat": "application/json",
-          "contentUrl": "https://feida.au/arena-quant-model.json"
-        }
-      ],
-      "dateModified": "2026-08-20T13:30:21.737Z"
     },
     {
       "@type": "BreadcrumbList",

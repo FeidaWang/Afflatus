@@ -55,7 +55,9 @@ describe('route SEO architecture', () => {
     );
     expect(graphTypes(sectors).has('Dataset')).toBe(false);
     expect(graphTypes(signal).has('NewsArticle')).toBe(false);
-    expect(graphTypes(arena)).toContain('Dataset');
+    // The journal shows third-party quotes at view time; it publishes no dataset.
+    expect(graphTypes(arena).has('Dataset')).toBe(false);
+    expect(graphTypes(arena)).toContain('WebApplication');
   });
 
   it('derives trustworthy route dates from declared public provenance', () => {
