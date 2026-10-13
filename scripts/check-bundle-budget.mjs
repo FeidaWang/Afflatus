@@ -21,9 +21,6 @@ const ASSETS = join(DIST, 'assets');
 // doesn't need a budget bump just to exist.
 const BUDGETS = {
   main: 250 * 1024,
-  // Re-recorded at 703 kB on 2026-08-19 after the current Three.js feature
-  // set landed. Keep roughly 1% headroom so real growth still fails CI.
-  'vendor-three': 710 * 1024,
   'vendor-astronomy': 60 * 1024, // astronomy-engine, ~46 kB
 };
 const DEFAULT_BUDGET = 300 * 1024;

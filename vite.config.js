@@ -104,10 +104,6 @@ export default defineConfig({
         // chunk becomes shared/cacheable across every page that imports
         // it (currently duplicated per-page-bundle).
         manualChunks(id) {
-          // Keep official Three.js addons out of the stable core chunk so
-          // loaders, controls and helpers have their own cache boundary.
-          if (id.includes('node_modules/three/examples/jsm/')) return 'vendor-three-addons';
-          if (id.includes('node_modules/three')) return 'vendor-three';
           if (id.includes('node_modules/astronomy-engine')) return 'vendor-astronomy';
         }
       }
