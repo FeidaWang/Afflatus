@@ -34,7 +34,7 @@
     "site:check": "node scripts/site-manifest.mjs --check",
     "header:audit": "node scripts/audit-header.mjs",
     "header:check": "node scripts/audit-header.mjs --check",
-    "css:check": "node scripts/check-no-new-important.mjs && node scripts/check-css-architecture.mjs",
+    "css:check": "node scripts/check-no-new-important.mjs",
     "seo:check": "node scripts/validate-emitted-seo.mjs --out-dir dist",
     "og:generate": "node scripts/generate-og-assets.mjs",
     "og:check": "node scripts/validate-og-assets.mjs",
@@ -58,7 +58,6 @@
     "linkinator": "^8.0.3",
     "marked": "^18.0.9",
     "parse5": "^8.0.0",
-    "postcss": "^8.5.15",
     "typescript": "^5.7.3",
     "vite": "^8.0.14",
     "vitest": "^4.1.9"

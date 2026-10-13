@@ -1,14 +1,8 @@
 #!/usr/bin/env node
-/* check-no-new-important.mjs — U21 Phase 1 D1 discipline
- * (rfcs/2026-07-12-u21-phase1-tech-audit.md §1.3): now that src/styles.css
- * is wrapped in `@layer legacy` and empty `tokens`/`components`/`overrides`
- * layers exist above it in priority, !important is no longer needed for
- * anything written from now on — a layered rule with zero specificity
- * still beats every legacy rule. This is a frozen-baseline guard, not a
- * full CSS parser: it just fails if the total !important count in the
- * checked files grows past the latest accepted ratchet. `legacy` itself
- * is exempt — it predates this rule and mass-editing every remaining
- * declaration is not the goal.
+/* check-no-new-important.mjs — frozen-baseline guard for !important.
+ * This is not a full CSS parser: it just fails if the !important count in the
+ * checked live stylesheets grows past the latest accepted ratchet. New rules
+ * should win through cascade layers or specificity instead.
  *
  * Usage: node scripts/check-no-new-important.mjs
  * A real reduction (cleanup work) simply lowers the number below and the
@@ -16,14 +10,12 @@
 import { readFileSync } from 'node:fs';
 
 const BASELINES = {
-  // P1-11: Home brand + primary-navigation-link family migrations removed
-  // 123 legacy priorities, lowering the accepted ratchet from 2,960 to 2,837.
-  'src/styles.css': 2837,
-  'src/cic-hud.css': 0,
   // F06: include the active homepage and shared interaction owners.
-  'src/showcase/showcase.css': 3,
+  'src/showcase/premiere.css': 0,
   'public/styles/responsive-primitives.css': 0,
   'public/styles/afflatus-brand.css': 3,
+  'public/styles/horoscope.css': 1,
+  'public/styles/course-hope.css': 1,
   'index.html': 2,
 };
 
@@ -38,7 +30,7 @@ for (const [path, baseline] of Object.entries(BASELINES)) {
   }
   const count = (content.match(/!important/g) || []).length;
   if (count > baseline) {
-    console.error(`FAIL: ${path} has ${count} "!important" declarations, above the accepted ratchet of ${baseline}. New rules should use the @layer overrides layer instead — see src/styles.css's top-of-file comment.`);
+    console.error(`FAIL: ${path} has ${count} "!important" declarations, above the accepted ratchet of ${baseline}. Win the cascade with layers or specificity instead.`);
     anyFail = true;
   } else {
     console.log(`OK: ${path} — ${count} !important (baseline ${baseline}, ${count < baseline ? 'down' : 'unchanged'})`);
