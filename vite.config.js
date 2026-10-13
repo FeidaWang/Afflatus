@@ -86,7 +86,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       // Route inclusion is declared once in siteManifest.js. Retired archive
-      // experiences are preserved in source/history but ship only as redirects.
+      // experiences remain in git history; their URLs ship only as redirects.
       input: buildInputs,
       output: {
         // U21 Phase 1 D3 (rfcs/2026-07-12-u21-tech-audit.md §1.2/§1.4): the
