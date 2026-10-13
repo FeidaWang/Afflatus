@@ -220,7 +220,11 @@ for (const indexedNovel of novelsIndex.novels || []) {
       'utf8',
     ),
   );
-  for (const locale of ['adaptive', 'zh']) {
+  // Root /novels/… URLs are redirects (vercel.json), never emitted documents.
+  if (existsSync(path.join(outputRoot, 'novels', indexedNovel.id))) {
+    fail(`novels/${indexedNovel.id}`, 'root novel documents must not be emitted; they redirect to /zh/novels/');
+  }
+  for (const locale of ['zh']) {
     for (const chapter of [null, ...(book.chapters || [])]) {
       const routeInput = {
         locale,

@@ -98,7 +98,8 @@ export const ROUTE_SEO = Object.freeze({
     structuredData: {
       kind: 'sectors',
       provenance: [
-        { path: 'public/data/sectors-observatory/2026-10-07.json', dateField: 'updated' },
+        // Resolved to the newest dated snapshot in the directory at build time.
+        { directory: 'public/data/sectors-observatory', dateField: 'updated' },
       ],
     },
   },
@@ -196,7 +197,9 @@ export const SITE_MANIFEST = Object.freeze([
     metadata: {
       title: "AFFLATUS — From this world, into what comes next.",
       description: "Stories, things I build, practical AI learning, and clear market tools.",
-      canonical: 'https://feida.au/',
+      // Root URLs adapt to the visitor's language; their canonical is the
+      // default-locale document (/en/…, or /zh/ for the Chinese-only serial).
+      canonical: 'https://feida.au/en/',
       ogTitle: "AFFLATUS — From this world, into what comes next.",
       ogDescription: "Stories, things I build, practical AI learning, and clear market tools.",
       ogImage: ROUTE_SEO.main.social.images.en,
@@ -222,7 +225,7 @@ export const SITE_MANIFEST = Object.freeze([
     metadata: {
       title: "Portfolio performance atlas · AFFLATUS",
       description: "Selected positive trade examples, forward scenarios and a ten-stock research watchlist.",
-      canonical: 'https://feida.au/portfolio.html',
+      canonical: 'https://feida.au/en/portfolio.html',
       ogTitle: "Portfolio performance atlas · AFFLATUS",
       ogDescription: "Selected positive trade examples, forward scenarios and a ten-stock research watchlist.",
       ogImage: ROUTE_SEO.portfolio.social.images.en,
@@ -248,7 +251,7 @@ export const SITE_MANIFEST = Object.freeze([
     metadata: {
       title: "US stock journal · AFFLATUS",
       description: "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
-      canonical: 'https://feida.au/arena.html',
+      canonical: 'https://feida.au/en/arena.html',
       ogTitle: "US stock journal · AFFLATUS",
       ogDescription: "Follow a watchlist of AI-era US companies with the latest Finnhub quotes and Twelve Data daily charts. Quotes may be delayed. Not investment advice.",
       ogImage: ROUTE_SEO.arena.social.images.en,
@@ -274,7 +277,7 @@ export const SITE_MANIFEST = Object.freeze([
     metadata: {
       title: "AI Observatory — The world building AI · AFFLATUS",
       description: "Explore AI companies and frontier models including Haiku 5.5, compare capability and cost, and investigate subscription economics with original analysis.",
-      canonical: 'https://feida.au/sectors.html',
+      canonical: 'https://feida.au/en/sectors.html',
       ogTitle: "AI Observatory — The world building AI · AFFLATUS",
       ogDescription: "Explore AI companies and frontier models including Haiku 5.5, compare capability and cost, and investigate subscription economics with original analysis.",
       ogImage: ROUTE_SEO.sectors.social.images.en,
@@ -300,7 +303,7 @@ export const SITE_MANIFEST = Object.freeze([
     metadata: {
       title: "Economic updates — Federal Reserve watch · AFFLATUS",
       description: "Explore Federal Reserve decisions, U.S. fiscal policy and AI industry transmission since January 2026, with dated primary sources.",
-      canonical: 'https://feida.au/signal.html',
+      canonical: 'https://feida.au/en/signal.html',
       ogTitle: "Economic updates — Federal Reserve watch · AFFLATUS",
       ogDescription: "Explore Federal Reserve decisions, U.S. fiscal policy and AI industry transmission since January 2026, with dated primary sources.",
       ogImage: ROUTE_SEO.signal.social.images.en,
@@ -326,7 +329,7 @@ export const SITE_MANIFEST = Object.freeze([
     metadata: {
       title: "Astrology for fun — Bazi & Western astrology · AFFLATUS",
       description: "Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.",
-      canonical: 'https://feida.au/horoscope.html',
+      canonical: 'https://feida.au/en/horoscope.html',
       ogTitle: "Astrology for fun — Bazi & Western astrology · AFFLATUS",
       ogDescription: "Explore Bazi, Western astrology and two-person synastry calculated on your device. For entertainment only.",
       ogImage: ROUTE_SEO.horoscope.social.images.en,
@@ -381,7 +384,7 @@ export const SITE_MANIFEST = Object.freeze([
     metadata: {
       title: "Learn to build useful tools with AI · AFFLATUS",
       description: "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them.",
-      canonical: 'https://feida.au/course.html',
+      canonical: 'https://feida.au/en/course.html',
       ogTitle: "Learn to build useful tools with AI · AFFLATUS",
       ogDescription: "A 24-week bilingual course: build useful tools, verify AI agents, and learn to deploy, recover and improve them.",
       ogImage: ROUTE_SEO.course.social.images.en,

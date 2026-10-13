@@ -32,6 +32,15 @@ describe('pre-rendered novel documents', () => {
     ]));
   });
 
+  it('redirects root book and chapter routes to their /zh/ documents', () => {
+    expect(vercel.redirects).toEqual(expect.arrayContaining([
+      { source: '/novels/:book([a-z0-9-]+)', destination: '/zh/novels/:book', permanent: true },
+      { source: '/novels/:book([a-z0-9-]+)/', destination: '/zh/novels/:book/', permanent: true },
+      { source: '/novels/:book([a-z0-9-]+)/:chapter([a-z0-9-]+)', destination: '/zh/novels/:book/:chapter', permanent: true },
+      { source: '/novels/:book([a-z0-9-]+)/:chapter([a-z0-9-]+)/', destination: '/zh/novels/:book/:chapter/', permanent: true },
+    ]));
+  });
+
   it('redirects unsupported English book and chapter routes without a catch-all splat', () => {
     expect(vercel.redirects).toEqual(expect.arrayContaining([
       { source: '/en/novels/:book', destination: '/zh/novels/:book', permanent: true },

@@ -14,12 +14,32 @@
     },
     {
       "source": "/novels",
-      "destination": "/serial.html",
+      "destination": "/zh/serial.html",
+      "permanent": true
+    },
+    {
+      "source": "/novels/:book([a-z0-9-]+)",
+      "destination": "/zh/novels/:book",
+      "permanent": true
+    },
+    {
+      "source": "/novels/:book([a-z0-9-]+)/",
+      "destination": "/zh/novels/:book/",
+      "permanent": true
+    },
+    {
+      "source": "/novels/:book([a-z0-9-]+)/:chapter([a-z0-9-]+)",
+      "destination": "/zh/novels/:book/:chapter",
+      "permanent": true
+    },
+    {
+      "source": "/novels/:book([a-z0-9-]+)/:chapter([a-z0-9-]+)/",
+      "destination": "/zh/novels/:book/:chapter/",
       "permanent": true
     },
     {
       "source": "/novels/",
-      "destination": "/serial.html",
+      "destination": "/zh/serial.html",
       "permanent": true
     },
     {

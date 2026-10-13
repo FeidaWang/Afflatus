@@ -19,6 +19,12 @@ const graphTypes = (graph) =>
   );
 
 describe('route SEO architecture', () => {
+  it('dates the sectors route from its newest published snapshot', async () => {
+    const { readdirSync } = await import('node:fs');
+    const newest = readdirSync('public/data/sectors-observatory').filter((name) => /^\d{4}-\d{2}-\d{2}\.json$/.test(name)).sort().at(-1);
+    expect(facts.sectors.provenance[0].path).toBe(`public/data/sectors-observatory/${newest}`);
+  });
+
   it('builds valid adaptive and fixed-locale graphs for every active route', () => {
     for (const route of activeRoutes) {
       for (const locale of ['adaptive', ...SITE_LOCALES]) {

@@ -21,9 +21,12 @@ export function parseReaderPath(pathname) {
   };
 }
 
-export function readerPath({ locale = 'adaptive', bookId, chapterId = null }) {
+// Novels are published only in Chinese: root /novels/… and /en/novels/… URLs
+// redirect to /zh/novels/… (vercel.json), so every generated link and
+// canonical uses the /zh/ path whatever locale the caller is rendering.
+export function readerPath({ bookId, chapterId = null }) {
   const safeBookId = safeSegment(bookId, SEGMENT_RE, 'book');
-  const prefix = LOCALES.has(locale) ? `/${locale}` : '';
+  const prefix = '/zh';
   const chapter = chapterId == null
     ? ''
     : `/${encodeURIComponent(safeSegment(chapterId, CHAPTER_RE, 'chapter'))}`;
