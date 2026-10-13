@@ -7,9 +7,9 @@ import { FILM_POSTER, FILM_SOURCE } from '../src/showcase/FilmPlayer.jsx';
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-function stubMedia({ reducedMotion = false } = {}) {
+function stubMedia({ reducedMotion = false, touch = false } = {}) {
   window.matchMedia = vi.fn((query) => ({
-    matches: reducedMotion && query.includes('prefers-reduced-motion'),
+    matches: (reducedMotion && query.includes('prefers-reduced-motion')) || (touch && query.includes('pointer: coarse')),
     addEventListener() {},
     removeEventListener() {},
   }));
@@ -70,5 +70,15 @@ describe('premiere homepage', () => {
     stubMedia({ reducedMotion: true });
     const page = await render('en');
     expect(page.querySelector('video.premiere-film').autoplay).toBe(false);
+  });
+
+  it('loads nothing until play on touch and small screens, and preloads metadata on desktop', async () => {
+    stubMedia({ touch: true });
+    const touch = (await render('en')).querySelector('video.premiere-film');
+    expect(touch.autoplay).toBe(false);
+    expect(touch.getAttribute('preload')).toBe('none');
+    root.unmount(); container.remove();
+    stubMedia();
+    expect((await render('en')).querySelector('video.premiere-film').getAttribute('preload')).toBe('metadata');
   });
 });
