@@ -322,8 +322,15 @@ function setRouteJsonLd(document, route, locale) {
   );
 }
 
+// Adaptive (root) documents link to adaptive root URLs; a route published in
+// a single locale (the Chinese-only serial) is linked at that locale instead.
+function adaptiveRoutePath(route) {
+  return route.publishedLocales?.length === 1 ? localizedRoutePath(route, route.publishedLocales[0]) : route.path;
+}
+
+// locale null = adaptive document.
 function localizeInternalHref(value, locale) {
-  if (!locale || typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return value;
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return value;
   let url;
   try {
     url = new URL(value, 'https://feida.au');
@@ -332,7 +339,7 @@ function localizeInternalHref(value, locale) {
   }
   const route = findRouteByPath(url.pathname);
   if (!route || route.status !== 'active') return value;
-  return `${localizedRoutePath(route, locale)}${url.search}${url.hash}`;
+  return `${locale ? localizedRoutePath(route, locale) : adaptiveRoutePath(route)}${url.search}${url.hash}`;
 }
 
 function localizeInternalNavigation(document, locale) {
@@ -352,7 +359,7 @@ function injectStaticNavigation(document, route, locale) {
   const visibleLocale = locale || route.defaultLocale;
   for (const link of all(document, node => getAttr(node, 'data-header-path') != null)) {
     const path = getAttr(link, 'data-header-path');
-    setAttr(link, 'href', locale ? localizedRoutePath(path, locale) : path);
+    setAttr(link, 'href', localizeInternalHref(path, locale));
     if (!path.includes('#') && findRouteByPath(path)?.id === route.id) setAttr(link, 'aria-current', 'page');
     else removeAttr(link, 'aria-current');
   }
@@ -362,7 +369,7 @@ function injectStaticNavigation(document, route, locale) {
     const links = routes
       .filter((item) => !(route.id === 'main' && item.id === 'main'))
       .map((item) => {
-        const href = locale ? localizedRoutePath(item.path, locale) : item.path;
+        const href = localizeInternalHref(item.path, locale);
         const label = visibleLocale === 'zh' ? item.zh : item.en;
         const active = item.id === route.id ? ' class="active" aria-current="page"' : '';
         return `<a${active} data-afflatus-static-nav href="${escapeAttribute(href)}">${escapeAttribute(label)}</a>`;
@@ -476,6 +483,7 @@ export function transformAdaptiveDocument(source, route) {
   const document = parse(source);
   const html = element(document, 'html');
   setAttr(html, 'data-afflatus-locale', 'adaptive');
+  localizeInternalNavigation(document, null);
   injectStaticNavigation(document, route, null);
   convertLanguageLinks(document, route, null);
   setDocumentMetadata(document, route, null);
@@ -709,6 +717,8 @@ export function generateNovelDocuments(outputRoot, catalog = loadNovelCatalog())
     const indexDocument = parse(source);
     injectNovelShelf(indexDocument, catalog, locale);
     writeFileSync(sourcePath, serialize(indexDocument));
+    // Book and chapter pages exist only under /zh/ (root URLs redirect there).
+    if (locale !== 'zh') continue;
     for (const entry of catalog) {
       for (const chapter of [null, ...entry.chapters]) {
         const path = readerPath({

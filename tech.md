@@ -41,13 +41,13 @@
 | arena.html | 美股 TA 仪表盘 + Autopilot 双模拟盘 | 顶层 | 常设 |
 | sectors.html | AI 产业公司故事网格 + 滚动叙事生态星图 + 后内存专题 + `?fx=starfield3d` 数据星域 | 顶层 | 常设 |
 | signal.html | 美联储观察（SCP 皮肤，Warsh 时代，U41 编辑部版式） | 顶层 | 常设 |
-| games.html | 世界杯竞猜（U38/U39/U40 阶段滑杆+缩放+季军赛） | — | 已退役；仅保留未构建源码 |
-| league.html | MSI 竞猜 | — | 已退役；仅保留未构建源码 |
-| stats.html | 竞猜战绩存档 | — | 2026-09-05 已删除；底层 JSON 已迁入 `data-archive/stats/2026-09-05/` |
+| games.html | 世界杯竞猜（U38/U39/U40 阶段滑杆+缩放+季军赛） | — | 2026-10 源码已删除，URL 301 到首页；数据在 `data-archive/stats/2026-09-05/` |
+| league.html | MSI 竞猜 | — | 2026-10 源码已删除，URL 301 到首页 |
+| stats.html | 竞猜战绩存档 | — | 2026-09-05 已删除，URL 301 到首页；底层 JSON 已迁入 `data-archive/stats/2026-09-05/` |
 | horoscope.html | 观星台：八字×占星×紫微，全本地零后端 | Labs | 常设 |
 | serial.html | 小说书架 ×3 部（阅读器三主题） | Labs | 常设 |
 | course.html | 个人 AI 工程课程 v3.0 + 每周一自动周报 | Labs | 常设 |
-| boot.html | 「AFFLATUS ENGINE」全游戏化舰桥原型（noindex，不进 nav） | 无 | 可抛弃原型 |
+| boot.html | 「AFFLATUS ENGINE」全游戏化舰桥原型（noindex，不进 nav） | 无 | 2026-10 源码已删除，URL 301 到首页 |
 
 ### 2.2 目录树
 

@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parse } from 'parse5';
 import { courseBookCatalog } from '../src/data/courseBookCatalog.js';
@@ -50,16 +50,26 @@ async function readJson(root, relativePath) {
   return JSON.parse(await readFile(path.join(root, relativePath), 'utf8'));
 }
 
+// Newest YYYY-MM-DD.json snapshot in a published data directory.
+async function latestSnapshot(root, directory) {
+  const files = (await readdir(path.join(root, directory)))
+    .filter((name) => /^\d{4}-\d{2}-\d{2}\.json$/.test(name))
+    .sort();
+  if (!files.length) throw new Error(`No dated snapshot in ${directory}`);
+  return `${directory}/${files.at(-1)}`;
+}
+
 export async function loadRouteSeoFacts(root, routes) {
   const facts = {};
 
   for (const route of routes.filter((entry) => entry.status === 'active')) {
     const routeFacts = { provenance: [] };
     for (const source of route.seo?.structuredData?.provenance || []) {
-      const data = await readJson(root, source.path);
+      const sourcePath = source.directory ? await latestSnapshot(root, source.directory) : source.path;
+      const data = await readJson(root, sourcePath);
       const date = data[source.dateField] || null;
       routeFacts.provenance.push({
-        path: source.path,
+        path: sourcePath,
         dateField: source.dateField,
         date,
       });
@@ -69,7 +79,7 @@ export async function loadRouteSeoFacts(root, routes) {
     );
 
     if (route.id === 'sectors') {
-      const ecosystem = await readJson(root, 'public/data/sectors-observatory/2026-10-07.json');
+      const ecosystem = await readJson(root, await latestSnapshot(root, 'public/data/sectors-observatory'));
       routeFacts.items = ecosystem.companies.map((node) => ({
         id: node.id,
         name: node.name,

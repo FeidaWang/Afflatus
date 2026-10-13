@@ -32,7 +32,7 @@ describe('localized site generator', () => {
     expect(html).toContain('rel="canonical" href="https://feida.au/zh/arena.html"');
     expect(html).toContain('hreflang="en" href="https://feida.au/en/arena.html"');
     expect(html).toContain('hreflang="zh-CN" href="https://feida.au/zh/arena.html"');
-    expect(html).toContain('hreflang="x-default" href="https://feida.au/arena.html"');
+    expect(html).toContain('hreflang="x-default" href="https://feida.au/en/arena.html"');
     expect(html).toContain('<h1 data-en="English heading" data-zh="中文标题">中文标题</h1>');
     expect(html).toContain('读取<b>关键位</b>。');
     expect(html).toContain('placeholder="股票代码"');
@@ -46,7 +46,10 @@ describe('localized site generator', () => {
     const html = transformAdaptiveDocument(fixture, arena);
     expect(html).toContain('data-afflatus-locale="adaptive"');
     expect(html).toContain('data-afflatus-static-nav');
-    expect(html).toContain('href="/serial.html"');
+    // The Chinese-only serial is linked at its /zh/ document, other routes at root.
+    expect(html).toContain('href="/zh/serial.html"');
+    expect(html).not.toContain('href="/serial.html"');
+    expect(html).toContain('href="/sectors.html"');
     expect(html).toContain('href="/zh/arena.html" hreflang="zh-CN"');
     expect(html).toContain('document.documentElement.lang');
   });

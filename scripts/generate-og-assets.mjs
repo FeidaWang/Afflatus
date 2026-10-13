@@ -46,10 +46,15 @@ const cardHtml = ({
 }) => {
   const social = route.seo.social;
   if (social.precomposed) {
+    // The artwork carries its English title; the Chinese card adds the
+    // localized eyebrow and subtitle in the clear area above that title.
+    const zhCaption = locale === 'zh'
+      ? `<div style="position:absolute;left:44px;top:232px;max-width:330px;color:#efe6d6;font-family:'PingFang SC','Microsoft YaHei',sans-serif;text-shadow:0 2px 12px rgba(0,0,0,.85)"><div style="font-size:18px;letter-spacing:.18em;color:#d9483b">${escapeHtml(social.eyebrow.zh)}</div><div style="font-size:24px;line-height:1.35;margin-top:8px;max-width:250px">${escapeHtml(social.subtitle.zh)}</div></div>`
+      : '';
     return `<!doctype html>
 <html lang="${locale === 'zh' ? 'zh-CN' : 'en-AU'}">
-<head><meta charset="utf-8"><style>*{box-sizing:border-box}html,body{width:${SOCIAL_CARD.width}px;height:${SOCIAL_CARD.height}px;margin:0;overflow:hidden}img{display:block;width:100%;height:100%;object-fit:cover}</style></head>
-<body><img src="${backgroundDataUrl}" alt=""></body>
+<head><meta charset="utf-8"><style>*{box-sizing:border-box}html,body{width:${SOCIAL_CARD.width}px;height:${SOCIAL_CARD.height}px;margin:0;overflow:hidden;position:relative}img{display:block;width:100%;height:100%;object-fit:cover}</style></head>
+<body><img src="${backgroundDataUrl}" alt="">${zhCaption}</body>
 </html>`;
   }
   const light = route.id === 'horoscope';

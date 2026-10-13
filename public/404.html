@@ -49,6 +49,28 @@ body{min-height:100svh;box-sizing:border-box}
   <a href="/zh/" lang="zh">返回中文首页</a>
 </nav>
 </main>
+<script>
+// Vercel serves this one file for every missing path; under /zh/ show the
+// Chinese version first (header labels, links and the message).
+(function () {
+  if (!/^\/zh(?:\/|$)/.test(location.pathname)) return;
+  var root = document.documentElement;
+  root.lang = 'zh-CN';
+  document.title = '404 — 页面不存在 · AFFLATUS';
+  document.querySelectorAll('#afflatus-header [data-zh]').forEach(function (node) { node.textContent = node.getAttribute('data-zh'); });
+  document.querySelectorAll('#afflatus-header [data-aria-zh]').forEach(function (node) { node.setAttribute('aria-label', node.getAttribute('data-aria-zh')); });
+  document.querySelectorAll('#afflatus-header [data-header-path]').forEach(function (link) {
+    var path = link.getAttribute('data-header-path');
+    link.href = path === '/' ? '/zh/' : '/zh' + path;
+  });
+  var language = document.querySelector('[data-header-language]');
+  language.href = '/en/'; language.hreflang = 'en'; language.textContent = 'EN';
+  document.getElementById('errorTitle').innerHTML = '页面不存在。<span lang="en">Page not found.</span>';
+  document.querySelector('.recovery > p:not(.code)').innerHTML = '网址可能有误，或页面已移动。请选择首页继续浏览。<br><span lang="en">This address may be incorrect, or the page may have moved. Choose a homepage to continue.</span>';
+  var nav = document.querySelector('.recovery nav');
+  nav.insertBefore(nav.querySelector('a[lang="zh"]'), nav.firstChild);
+})();
+</script>
 <script type="module" src="/lib/header-controller.js"></script>
 </body>
 </html>

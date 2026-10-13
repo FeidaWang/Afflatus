@@ -8,7 +8,7 @@ import {
 } from '../src/lib/serialRoutes.js';
 
 describe('serial reader routes', () => {
-  it('round-trips adaptive and fixed-locale book/chapter paths', () => {
+  it('builds /zh/ book/chapter paths and still parses legacy ones', () => {
     expect(readerPath({
       locale: 'zh', bookId: 'wanjie-zhongchun', chapterId: 12,
     })).toBe('/zh/novels/wanjie-zhongchun/12/');
@@ -17,12 +17,18 @@ describe('serial reader routes', () => {
       bookId: 'wanjie-zhongchun',
       chapterId: '12',
     });
+    // Chinese-only: every locale links the /zh/ document (root and /en/ redirect).
     expect(readerPath({
       locale: 'adaptive', bookId: 'changye-qingjian',
-    })).toBe('/novels/changye-qingjian/');
+    })).toBe('/zh/novels/changye-qingjian/');
     expect(readerUrl({
       locale: 'en', bookId: 'changye-qingjian', chapterId: '7',
-    })).toBe('https://feida.au/en/novels/changye-qingjian/7/');
+    })).toBe('https://feida.au/zh/novels/changye-qingjian/7/');
+    expect(parseReaderPath('/novels/changye-qingjian/7/')).toEqual({
+      locale: 'adaptive',
+      bookId: 'changye-qingjian',
+      chapterId: '7',
+    });
   });
 
   it('rejects malformed route segments and unrelated paths', () => {
