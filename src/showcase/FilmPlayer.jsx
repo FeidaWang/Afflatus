@@ -3,8 +3,9 @@ import { CornersOut, CornersIn, ArrowClockwise, ArrowCounterClockwise, Pause, Pl
 import { createFilmDrag, createFilmPlayback, createFilmScroll, lockFilmPlaybackRate } from './filmMotion.js';
 import { enterFilmFullscreen, lockFilmLandscape, unlockFilmOrientation } from './filmFullscreen.js';
 
-export const FILM_SOURCE = '/film/claude_clawd_pv/r07-mv/review/r07-stream-film-1080p-16x9.mp4';
-export const FILM_POSTER = '/assets/film/afflatus-r07-poster.jpg';
+export const FILM_SOURCE = '/assets/film/afflatus-r07-1080p-c3c5ab54.mp4';
+export const FILM_POSTER = '/assets/film/afflatus-r07-poster-1920-d66c73ad.avif';
+const FILM_POSTER_SMALL = '/assets/film/afflatus-r07-poster-960-bc1c3921.avif';
 const clock = seconds => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 
 export function FilmPlayer({ language }) {
@@ -18,7 +19,9 @@ export function FilmPlayer({ language }) {
   const [ready, setReady] = useState(false), [failed, setFailed] = useState(false), [blocked, setBlocked] = useState(false);
   const [fullscreen, setFullscreen] = useState(false), [mini, setMini] = useState(false);
   const [compact, setCompact] = useState(false), [landscape, setLandscape] = useState(false);
-  const [autoplay] = useState(() => !matchMedia('(prefers-reduced-motion: reduce)').matches && !navigator.connection?.saveData);
+  // The 80 MB film only starts by itself on a desktop-class screen; phones and touch devices load it when the viewer presses play.
+  const [poster] = useState(() => window.innerWidth * (window.devicePixelRatio || 1) <= 960 ? FILM_POSTER_SMALL : FILM_POSTER);
+  const [autoplay] = useState(() => !matchMedia('(prefers-reduced-motion: reduce)').matches && !navigator.connection?.saveData && !matchMedia('(pointer: coarse), (max-width: 767px)').matches);
   useEffect(() => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const ctl = createFilmPlayback(video.current, { autoplay, onBlocked: () => setBlocked(true) });
@@ -113,14 +116,14 @@ export function FilmPlayer({ language }) {
   return <div className="film-shell" ref={shell}>
   <div className={`film-player${mini ? ' film-player--mini' : ''}${compact ? ' film-player--compact' : ''}${controlsVisible ? ' film-player--controls' : ''}${landscape ? ' film-player--landscape' : ''}`} ref={player} id="film" aria-label={zh ? 'AFFLATUS 宣传片播放器' : 'AFFLATUS film player'} onContextMenu={event => event.preventDefault()}>
     <div className="film-stage"><div className="film-frame" onPointerEnter={revealControls} onPointerMove={revealControls} onPointerDown={revealControls} onPointerLeave={hideControls}>
-      <video ref={video} className="premiere-film" src={FILM_SOURCE} poster={FILM_POSTER} width="1920" height="1080"
-        autoPlay={autoplay} muted={muted} playsInline loop preload="metadata" controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback aria-label={zh ? 'AFFLATUS 宣传片' : 'The AFFLATUS film'}
+      <video ref={video} className="premiere-film" src={FILM_SOURCE} poster={poster} width="1920" height="1080"
+        autoPlay={autoplay} muted={muted} playsInline loop preload={autoplay ? 'metadata' : 'none'} controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback aria-label={zh ? 'AFFLATUS 宣传片' : 'The AFFLATUS film'}
         onPlay={() => { setPlaying(true); setBlocked(false); }} onPause={() => setPlaying(false)}
         onVolumeChange={() => { setMuted(video.current.muted); setVolume(video.current.volume); if (video.current.volume > 0) audibleVolume.current = video.current.volume; }} onTimeUpdate={() => setElapsed(Math.floor(video.current.currentTime))}
         onLoadedMetadata={() => { if (Number.isFinite(video.current.duration)) { setDuration(video.current.duration); setReady(true); } }} onError={() => { setFailed(true); setPlaying(false); }} />
     <div className="film-mini-shade" aria-hidden="true" />
     {mini && !fullscreen && <div className="film-mini-toolbar">
-      <button className="film-drag-handle film-brand" type="button" aria-label={zh ? 'rsiagent.app · 拖动或使用方向键移动小窗' : 'rsiagent.app · Move mini player with drag or arrow keys'} title={zh ? '拖动或使用方向键移动' : 'Drag or use arrow keys to move'}><img className="film-brand-mark" src="/assets/film/rsiagent-mark.png" width="32" height="32" alt="" /><span>rsiagent.app</span></button>
+      <button className="film-drag-handle film-brand" type="button" aria-label={zh ? 'rsiagent.app · 拖动或使用方向键移动小窗' : 'rsiagent.app · Move mini player with drag or arrow keys'} title={zh ? '拖动或使用方向键移动' : 'Drag or use arrow keys to move'}><img className="film-brand-mark" src="/assets/film/rsiagent-mark-859853d8.png" width="32" height="32" alt="" /><span>rsiagent.app</span></button>
       <div className="film-window-actions">
         <button className="icon-button" type="button" onClick={() => setCompact(value => !value)} aria-pressed={compact} aria-label={compact ? (zh ? '展开小窗' : 'Expand mini player') : (zh ? '缩小小窗' : 'Minimize mini player')}><Minus weight="bold" /></button>
         <button className="icon-button" type="button" onClick={returnToPage} aria-label={zh ? '返回页面播放' : 'Return film to page'} title={zh ? '返回页面播放' : 'Return film to page'}><img className="film-pip-restore" src="/assets/film/player-back-to-tab.svg" width="24" height="24" alt="" /></button>
@@ -147,7 +150,7 @@ export function FilmPlayer({ language }) {
     {(failed || blocked) && <p className="film-status" role="status">{failed ? (zh ? '影片暂时无法加载。' : 'The film could not be loaded.') : (zh ? '点击播放即可开始观看。' : 'Press play to start the film.')}{failed && <button type="button" onClick={retryFilm}>{zh ? '重试播放' : 'Retry playback'}</button>}</p>}
     <dialog className={`film-dialog${landscape ? ' film-dialog--landscape' : ''}`} ref={dialog} aria-labelledby="cinema-title" onClose={closeCinema} onClick={event => { if (event.target === event.currentTarget) dialog.current.close(); }}>
       <div className="cinema-heading"><h2 id="cinema-title">{zh ? 'AFFLATUS 宣传片' : 'The AFFLATUS film'}</h2><button className="icon-button" type="button" autoFocus onClick={() => dialog.current.close()} aria-label={zh ? '关闭影片' : 'Close film'}><X /></button></div>
-      <video ref={cinema} src={FILM_SOURCE} poster={FILM_POSTER} controls playsInline preload="none" controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback aria-label={zh ? '完整影片' : 'Full film'} onLoadedMetadata={() => { cinema.current.currentTime = cinemaStart.current; }} />
+      <video ref={cinema} src={FILM_SOURCE} poster={poster} controls playsInline preload="none" controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback aria-label={zh ? '完整影片' : 'Full film'} onLoadedMetadata={() => { cinema.current.currentTime = cinemaStart.current; }} />
     </dialog>
   </div>
   <div className="film-inline-placeholder" hidden={!mini}>

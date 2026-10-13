@@ -92,7 +92,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicons/home.svg?v=20261007">
   <link rel="stylesheet" href="/styles/responsive-primitives.css">
   <link rel="stylesheet" href="/src/showcase/premiere.css">
-  <link rel="preload" href="/assets/film/afflatus-r07-poster.jpg" as="image" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" imagesrcset="/assets/film/afflatus-r07-poster-960-bc1c3921.avif 960w, /assets/film/afflatus-r07-poster-1920-d66c73ad.avif 1920w" imagesizes="100vw" fetchpriority="high">
   <script type="module" src="/src/entry/performance.js"></script>
   <script type="module" src="/src/entry/viewport.js"></script>
   <script type="module" src="/src/showcase-main.jsx"></script>
@@ -127,7 +127,7 @@
         </div>
         <div class="film-shell"><div class="film-player" id="film">
           <div class="film-stage"><div class="film-frame">
-            <img class="film-poster" src="/assets/film/afflatus-r07-poster.jpg" width="1920" height="1080" alt="AFFLATUS film: illustrated stories and an AI conversation" fetchpriority="high">
+            <picture><source type="image/avif" srcset="/assets/film/afflatus-r07-poster-960-bc1c3921.avif 960w, /assets/film/afflatus-r07-poster-1920-d66c73ad.avif 1920w" sizes="100vw"><img class="film-poster" src="/assets/film/afflatus-r07-poster.jpg" width="1920" height="1080" alt="AFFLATUS film: illustrated stories and an AI conversation" fetchpriority="high"></picture>
           </div></div>
           <noscript><p class="film-status" data-en="Enable JavaScript to watch the film." data-zh="开启 JavaScript 后即可播放影片。">Enable JavaScript to watch the film.</p></noscript>
         </div></div>
