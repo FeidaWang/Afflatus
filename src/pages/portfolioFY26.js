@@ -1,6 +1,6 @@
 import '../lib/nav.js';
 import { portfolioLogo } from './portfolioLogos.js';
-import { seeded, warmPenSprite, drawPen, drawInkGrid, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
+import { seeded, warmPenSprite, drawPen, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
 import { createProgressiveGame } from './portfolioGame.js';
 import { drawWell, drawWellCells, shapeCells, TYPES } from './portfolioTetris.js';
 
@@ -78,14 +78,13 @@ const scrolly = $('#pfScrolly');
 const steps = $$('.pf-step', scrolly);
 const ctx = canvas.getContext('2d');
 const rnd = seeded(20260630);
-const gridCanvas = $('#pfGrid');
 const tiles = FILLS.map((fill, i) => ({ ...fill, i, variant: i % 12, rot: (rnd() - .5) * .07, delay: rnd() }));
 let W = 0, H = 0, S = 12, layouts = [], labelSets = [];
 // Opening: two self-playing wells either side of the headline.
 const wideGames = [];
 const phoneGames = new Map();
 let heroGames = wideGames;
-let wells = [], heroT = 26, heroFrames = [], gridAbort;
+let wells = [], heroT = 26, heroFrames = [];
 
 const monthIndex = f => (f.y - 2025) * 12 + f.m - 7; // Jul 2025 = 0
 const MONTHS_EN = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
@@ -97,15 +96,6 @@ function buildLayouts() {
   canvas.width = W * dpr; canvas.height = H * dpr;
   canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  if (gridCanvas) {
-    gridCanvas.width = W * dpr; gridCanvas.height = H * dpr;
-    gridCanvas.style.width = `${W}px`; gridCanvas.style.height = `${H}px`;
-    const g = gridCanvas.getContext('2d');
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.clearRect(0, 0, W, H);
-    gridAbort?.abort(); gridAbort=new AbortController();
-    void drawInkGrid(g, W, H, { step: W < 720 ? 16 : 20, major: 4, seed: 7, strength: .8, signal:gridAbort.signal });
-  }
   const narrow = W < 720;
   // hero wells: in the margins on wide screens, faint behind the headline on narrow ones
   const side = W >= 1000 ? (W - Math.min(860, W * .6)) / 2 : W * .5;

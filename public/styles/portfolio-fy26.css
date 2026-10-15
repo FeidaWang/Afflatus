@@ -27,7 +27,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
 .pf-scrolly{position:relative}
 .pf-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
 .pf-paper{position:absolute;inset:0;background-color:var(--pf-paper)}
-#pfGrid{position:absolute;inset:0;display:block;opacity:.9;
+#pfGrid{position:absolute;inset:0;display:block;opacity:.9;background:url("/assets/portfolio/grid-20.webp") 0 0/320px 320px repeat;
   -webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
 .pf-stage canvas{position:absolute;inset:0;display:block}
 .pf-labels{position:absolute;inset:0;pointer-events:none}
@@ -229,3 +229,5 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pf-accent);outline-
   .pf-reveal,.pf-hl-reveal,.pf-hl-dot,.pf-sc-dot,.pf-jr-bar,.pf-wf-cell,.pf-card,.pf-idea-ring path{transition:none}
   .pf-idea.is-in .pf-idea-stamp{animation:none}
 }
+
+@media(max-width:719px){#pfGrid{background-image:url("/assets/portfolio/grid-16.webp")}}
