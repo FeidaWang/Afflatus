@@ -370,6 +370,18 @@ const onView = (el, fn, threshold = .3) => {
   }), { threshold });
   io.observe(el);
 };
+// Preserve SVG viewBox sizing and event listeners, but keep distant chart
+// internals in a fragment until the visitor approaches them.
+function deferChart(svg) {
+  const content=document.createDocumentFragment();
+  while(svg.firstChild) content.append(svg.firstChild);
+  const observer=new IntersectionObserver(entries=>{
+    if(entries.some(entry=>entry.isIntersecting)) {
+      svg.append(content); observer.disconnect();
+    }
+  },{rootMargin:'800px'});
+  observer.observe(svg);
+}
 $$('[data-count]').forEach(el => onView(el, () => countUp(el, +el.dataset.count, {
   decimals: +(el.dataset.decimals ?? 1), prefix: el.dataset.prefix || '', suffix: el.dataset.suffix ?? '%',
 }), .6));
@@ -471,6 +483,7 @@ for (const [idx,h] of HIGHLIGHTS.entries()) {
   const span = h.from === h.to ? fmtDate(h.from) : `${fmtDate(h.from)} → ${fmtDate(h.to)}`;
   card.querySelector('.pf-hl-dates').textContent = isZh ? `2026 年 ${span}` : `${span} 2026`;
   card.querySelector('.pf-hl-copy').textContent = isZh ? h.zh : h.en;
+  deferChart(card.querySelector('.pf-hl-chart'));
   hlHost.append(card);
   onView(card, node => node.classList.add('is-in'), .25);
   const num = card.querySelector('[data-count]');
@@ -561,6 +574,7 @@ async function buildScatter() {
     dots.append(arrow, tx);
   });
   svg.append(dots);
+  deferChart(svg);
   host.prepend(svg);
   onView(host, () => host.classList.add('is-in'), .3);
   const legend = $('#pfScatterLegend');
@@ -638,6 +652,7 @@ const waffle = $('#pfBookWaffle');
   }
   waffle.innerHTML = `<svg viewBox="0 0 466 466" aria-hidden="true">${body}</svg>`;
 }
+deferChart(waffle.firstElementChild);
 onView(waffle, () => waffle.classList.add('is-in'), .3);
 const bookLegend = $('#pfBookLegend');
 BOOK.forEach(([t, , pct, , color]) => {

@@ -153,3 +153,5 @@ reports and generated diagnostic directories.
 ### Final responsiveness follow-up
 
 Cloud run 38729000857 passed Python, unit/build and all three browser profiles, but retained a Portfolio TBT failure and a 59-byte library script overage. Placement search now runs entirely in the worker (including its former 32-move preview); chart construction yields between small batches. Reader element lookup calls share one helper to reduce transferred code without changing behavior. Local unit suite: 1,430 passed; typecheck passed. Original Lighthouse assertions remain unchanged.
+
+Cloud run 38730414665 passed all browser profiles and script-size gates. Remaining TBT medians were Portfolio 269ms and library 204ms. Distant SVG contents now remain in document fragments until within 800px of the viewport, preserving viewBox geometry and listeners. A whole-section content-visibility experiment was rejected after its footer-scroll regression; it is not included. The library hero now uses 480/960 WebP variants (18/55KB) and async decoding, preserving original artwork. Browser coverage explicitly verifies lazy scatter and waffle restoration.
