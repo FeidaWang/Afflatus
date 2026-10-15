@@ -1,6 +1,13 @@
 import {describe,it,expect} from 'vitest';
+import {createProgressiveGame} from '../src/pages/portfolioGame.js';
 import {TetrisScript} from '../src/pages/portfolioTetris.js';
 describe('progressive portfolio simulation',()=>{
+  it('keeps placement search out of main-thread startup',()=>{
+    const game=createProgressiveGame({seed:2026,length:300});
+    expect(game.moves).toHaveLength(1);
+    expect(game.frame(26).cells).toEqual([]);
+    expect(game.complete).toBe(false);
+  });
   it.each([
     {seed:20250701},
     {cols:26,rows:10,seed:2026,ceiling:.8},

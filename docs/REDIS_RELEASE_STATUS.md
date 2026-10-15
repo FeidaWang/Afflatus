@@ -149,3 +149,7 @@ A fresh exact-head CI and clean-source production candidate are still required.
 Diagnostic source manifests were checked: local env files are excluded, and
 final publication is packaged from tracked immutable source, excluding local
 reports and generated diagnostic directories.
+
+### Final responsiveness follow-up
+
+Cloud run 38729000857 passed Python, unit/build and all three browser profiles, but retained a Portfolio TBT failure and a 59-byte library script overage. Placement search now runs entirely in the worker (including its former 32-move preview); chart construction yields between small batches. Reader element lookup calls share one helper to reduce transferred code without changing behavior. Local unit suite: 1,430 passed; typecheck passed. Original Lighthouse assertions remain unchanged.

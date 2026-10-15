@@ -13,6 +13,8 @@ const L = (en, zh) => (isZh ? zh : en);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const yieldToBrowser = () => new Promise(resolve => setTimeout(resolve, 0));
+let burstCanvas = null, burstParts = [], burstRaf = 0;
+const lastPlayed = new WeakMap();
 const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 function localizeMarkup() {
@@ -448,7 +450,7 @@ function highlightChart(h, tone, idx, rise) {
 }
 
 const hlHost = $('#pfHighlights');
-HIGHLIGHTS.forEach((h, idx) => {
+for (const [idx,h] of HIGHLIGHTS.entries()) {
   const theme = THEMES[TICKER_THEME[h.t]];
   const card = document.createElement('article');
   card.className = 'pf-hl pf-reveal';
@@ -473,14 +475,15 @@ HIGHLIGHTS.forEach((h, idx) => {
   onView(card, node => node.classList.add('is-in'), .25);
   const num = card.querySelector('[data-count]');
   onView(num, () => countUp(num, h.r, { prefix: '+' }), .6);
-});
+  await yieldToBrowser();
+}
 
 await yieldToBrowser();
 
 /* --------------------------------------------------------- scatter chart */
 const SVGNS = 'http://www.w3.org/2000/svg';
 const svgEl = (name, attrs = {}) => { const el = document.createElementNS(SVGNS, name); Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v)); return el; };
-function buildScatter() {
+async function buildScatter() {
   const host = $('#pfScatter');
   const tip = $('#pfScatterTip');
   const Wv = 960, Hv = 500, m = { l: 64, r: 28, t: 26, b: 64 };
@@ -515,7 +518,7 @@ function buildScatter() {
   svg.append(bandLabel);
   const dots = svgEl('g', { class: 'pf-sc-dots' });
   const jitter = seeded(7);
-  ROUND_TRIPS.forEach(([t, b, s, d, v], idx) => {
+  for (const [idx,[t,b,s,d,v]] of ROUND_TRIPS.entries()) {
     const tone = THEMES[TICKER_THEME[t] || 'other'].color;
     const g = svgEl('g', { class: 'pf-sc-dot', style: `--d:${idx * 18}ms` });
     const cx = xs(d) + (jitter() - .5) * 10, cy = ys(v);
@@ -544,7 +547,8 @@ function buildScatter() {
     });
     g.addEventListener('pointerleave', () => { tip.hidden = true; });
     dots.append(g);
-  });
+    if (idx % 4 === 3) await yieldToBrowser();
+  }
   // annotate the two headline trades in handwriting, with pen arrows
   [['SNDK', 3, 33.1, 58, 30], ['MRVL', 7, 32.3, 70, 44]].forEach(([t, d, v, dx, dy]) => {
     const x = xs(d), y = ys(v);
@@ -568,7 +572,7 @@ function buildScatter() {
     legend.append(sp);
   });
 }
-buildScatter();
+await buildScatter();
 await yieldToBrowser();
 
 /* ----------------------------------------------------- cycle journeys bars */
@@ -616,7 +620,7 @@ const waffle = $('#pfBookWaffle');
   // 10 x 10 face of hand-inked squares, like one side of a marker-drawn cube.
   const r = seeded(630), cell = 46, gap = 0;
   let idx = 0, body = '';
-  BOOK.forEach(([t, n, pct, theme, color]) => {
+  for (const [t,n,pct,theme,color] of BOOK) {
     for (let k = 0; k < n; k++, idx++) {
       const c = idx % 10, row = Math.floor(idx / 10), x = c * (cell + gap) + 3, y = row * (cell + gap) + 3, s = cell - 6;
       let g = `<path d="${polyD(wobblyQuad(x, y, s, s, r, 1.2))}" opacity="${(.28 + r() * .14).toFixed(2)}"/>`;
@@ -628,9 +632,10 @@ const waffle = $('#pfBookWaffle');
           : `<path d="${inkLineD(x - 1, y + off, x + s + 1, y + off + (r() - .5) * 3, s / 2.6, r, { taper: .1 })}" opacity="${(.36 + r() * .46).toFixed(2)}"/>`;
       }
       const edges = penSquareEdges(x, y, s, s, r, 3.5).map(([p1, p2]) => `<path class="pf-wf-edge" d="${inkLineD(p1[0], p1[1], p2[0], p2[1], 1.5, r, { taper: .3 })}" style="fill:${shade(color, .55)}"/>`).join('');
+      if (idx % 4 === 3) await yieldToBrowser();
       body += `<g class="pf-wf-cell" style="--d:${idx * 9}ms;--r:${((idx * 37) % 7 - 3) * .5}deg;fill:${color}"><g filter="url(#pf-mk-marker)">${g}</g>${edges}</g>`;
     }
-  });
+  }
   waffle.innerHTML = `<svg viewBox="0 0 466 466" aria-hidden="true">${body}</svg>`;
 }
 onView(waffle, () => waffle.classList.add('is-in'), .3);
@@ -692,13 +697,16 @@ function ideaCard(host, [ticker, name, sector, thesis, watch], idx, tone, owner)
   return card;
 }
 const ideaHost = $('#pfIdeas');
-IDEAS.forEach((idea, idx) => ideaCard(ideaHost, idea, idx, IDEA_TONES[idx], 'astra'));
+for (const [idx,idea] of IDEAS.entries()) {
+  ideaCard(ideaHost, idea, idx, IDEA_TONES[idx], 'astra');
+  await yieldToBrowser();
+}
 const claudeHost = $('#pfIdeasClaude');
 if (claudeHost) {
-  CLAUDE_IDEAS.forEach((idea, idx) => {
+  for (const [idx,idea] of CLAUDE_IDEAS.entries()) {
     const card = ideaCard(claudeHost, idea, idx, THEMES[idea[5]].color, 'claude');
     const twin = astraIndex.get(idea[0]);
-    if (twin === undefined) return;
+    if (twin === undefined) { await yieldToBrowser(); continue; }
     card.classList.add('is-shared');
     ideaCards.astra.get(idea[0])?.classList.add('is-shared');
     const stamp = document.createElement('button');
@@ -710,12 +718,12 @@ if (claudeHost) {
     const play = () => celebrate(card, ideaCards.astra.get(idea[0]), THEMES[idea[5]].color);
     stamp.addEventListener('click', play);
     card.addEventListener('pointerenter', ev => { if (ev.pointerType === 'mouse') play(); });
-  });
+    await yieldToBrowser();
+  }
 }
 
 /* ------------------------------------------------ easter egg: shared picks */
 // A pen loop drawn around both cards, and a handful of tetrominoes tossed into the air.
-let burstCanvas = null, burstParts = [], burstRaf = 0;
 function ring(card, tone) {
   if (!card) return;
   card.querySelector('.pf-idea-ring')?.remove();
@@ -773,7 +781,6 @@ function burstTick() {
   burstRaf = burstParts.length ? requestAnimationFrame(burstTick) : 0;
   if (!burstRaf) g.clearRect(0, 0, innerWidth, innerHeight);
 }
-const lastPlayed = new WeakMap();
 function celebrate(card, twin, tone) {
   const now = performance.now();
   if (now - (lastPlayed.get(card) || 0) < 1800) return;

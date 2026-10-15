@@ -19,10 +19,10 @@ function getWorker() {
   }
   return worker;
 }
-// The initial frame uses move 26. A deterministic 32-move prefix preserves it
-// while the full decorative simulation is computed off the main thread.
+// Keep an empty well until worker data arrives; even the short simulation
+// can block slower phones. All placement search belongs in the worker.
 export function createProgressiveGame(options,ready=()=>{}) {
-  const game=new TetrisScript({...options,length:32});
+  const game=new TetrisScript({...options,length:0});
   game.complete=false;
   try {
     const active=getWorker(),id=++sequence;

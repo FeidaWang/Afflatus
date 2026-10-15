@@ -16,8 +16,10 @@ import {
   readerPath,
 } from '../lib/serialRoutes.js';
 
+const byId = id => document.getElementById(id);
+
 export function mountSerialReader() {
-  var reader = document.getElementById('reader');
+  var reader = byId('reader');
   document.body.dataset.readerReady = 'false';
   var state = {
     data:null, novels:[], novelId:null, novelIdx:0, chapters:[], idx:0,
@@ -37,8 +39,8 @@ export function mountSerialReader() {
   // adopt it as that chapter's content instead of downloading it again.
   var prerenderedChapter = (function () {
     var route = parseReaderPath(location.pathname);
-    if (document.getElementById('readerNormal').dataset.prerendered !== 'chapter' || !route || route.chapterId == null) return null;
-    return { bookId:route.bookId, chapterId:route.chapterId, html:document.getElementById('chapterBody').innerHTML };
+    if (byId('readerNormal').dataset.prerendered !== 'chapter' || !route || route.chapterId == null) return null;
+    return { bookId:route.bookId, chapterId:route.chapterId, html:byId('chapterBody').innerHTML };
   })();
   var initialMetadata = {
     path:location.pathname, title:document.title,
@@ -163,7 +165,7 @@ export function mountSerialReader() {
 
   /* The landing header scrolls away; only the reader toolbar is sticky. Its
      height still varies across widths, so keep downstream offsets live. */
-  var toolbarEl = document.getElementById('toolbar');
+  var toolbarEl = byId('toolbar');
   function syncToolbarH() {
     document.documentElement.style.setProperty('--toolbar-h', toolbarEl.offsetHeight + 'px');
   }
@@ -175,7 +177,7 @@ export function mountSerialReader() {
   }
 
   function toast(msg, ms) {
-    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    var t = byId('toast'); t.textContent = msg; t.classList.add('show');
     clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove('show'); }, ms || 2200);
   }
 
@@ -198,13 +200,13 @@ export function mountSerialReader() {
     return px;
   }
   var curFs = 18;
-  document.getElementById('fsMinus').addEventListener('click', function () { curFs = applyFs(curFs - 1); });
-  document.getElementById('fsPlus').addEventListener('click', function () { curFs = applyFs(curFs + 1); });
+  byId('fsMinus').addEventListener('click', function () { curFs = applyFs(curFs - 1); });
+  byId('fsPlus').addEventListener('click', function () { curFs = applyFs(curFs + 1); });
 
   /* ---------- TOC drawer ---------- */
-  var drawer = document.getElementById('tocDrawer'), backdrop = document.getElementById('tocBackdrop');
+  var drawer = byId('tocDrawer'), backdrop = byId('tocBackdrop');
   var mainWrap = document.querySelector('main.wrap');
-  var tocTriggers = [document.getElementById('tocOpen'), document.getElementById('fabToc')];
+  var tocTriggers = [byId('tocOpen'), byId('fabToc')];
   var lastTocTrigger = null;
   function drawerFocusables() {
     return Array.from(drawer.querySelectorAll('button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'));
@@ -216,10 +218,10 @@ export function mountSerialReader() {
     drawer.classList.add('open');
     backdrop.classList.add('open');
     if (mainWrap) mainWrap.inert = true;
-    document.getElementById('afflatus-header').inert = true;
+    byId('afflatus-header').inert = true;
     document.body.classList.add('toc-open');
     tocTriggers.forEach(function (trigger) { trigger.setAttribute('aria-expanded', 'true'); });
-    window.requestAnimationFrame(function () { document.getElementById('tocClose').focus(); });
+    window.requestAnimationFrame(function () { byId('tocClose').focus(); });
   }
   function closeDrawer(options) {
     var restoreFocus = !options || options.restoreFocus !== false;
@@ -228,13 +230,13 @@ export function mountSerialReader() {
     drawer.inert = true;
     backdrop.classList.remove('open');
     if (mainWrap) mainWrap.inert = false;
-    document.getElementById('afflatus-header').inert = false;
+    byId('afflatus-header').inert = false;
     document.body.classList.remove('toc-open');
     tocTriggers.forEach(function (trigger) { trigger.setAttribute('aria-expanded', 'false'); });
     if (restoreFocus && lastTocTrigger && document.contains(lastTocTrigger)) lastTocTrigger.focus();
   }
   tocTriggers.forEach(function (trigger) { trigger.addEventListener('click', openDrawer); });
-  document.getElementById('tocClose').addEventListener('click', function () { closeDrawer(); });
+  byId('tocClose').addEventListener('click', function () { closeDrawer(); });
   backdrop.addEventListener('click', function () { closeDrawer(); });
   document.addEventListener('keydown', function (event) {
     if (!drawer.classList.contains('open')) return;
@@ -260,10 +262,10 @@ export function mountSerialReader() {
   function markVisited(id) { if (readerStore && state.novelId) readerStore.markVisited(state.novelId, id); }
 
   function renderToc() {
-    var list = document.getElementById('tocList'); list.innerHTML = '';
+    var list = byId('tocList'); list.innerHTML = '';
     var curNovel = state.novels[state.novelIdx];
     var updateNote = (curNovel && curNovel.novel.updateNote) || '连载更新';
-    document.getElementById('tocNote').textContent = '共 ' + state.chapters.length + ' 章 · ' + updateNote;
+    byId('tocNote').textContent = '共 ' + state.chapters.length + ' 章 · ' + updateNote;
     var visited = visitedSet();
     var bm = getBookmark();
     updateBookmarkBtn(bm);
@@ -280,7 +282,7 @@ export function mountSerialReader() {
         event.preventDefault();
         closeDrawer({ restoreFocus:false });
         goToChapter(i, true);
-        document.getElementById(state.waterfall ? 'readerWaterfall' : 'bookStage').focus({ preventScroll:true });
+        byId(state.waterfall ? 'readerWaterfall' : 'bookStage').focus({ preventScroll:true });
       });
       list.appendChild(b);
     });
@@ -293,7 +295,7 @@ export function mountSerialReader() {
   function getBookmark() { return (readerState().bookmarks || {})[state.novelId] || null; }
   function truncateTitle(s, n) { return s && s.length > n ? s.slice(0, n) + '…' : (s || ''); }
   function updateBookmarkBtn(bm) {
-    var btn = document.getElementById('bookmarkBtn');
+    var btn = byId('bookmarkBtn');
     btn.setAttribute('aria-label', bm ? '保存当前位置为新书签（已有书签）' : '保存当前位置为书签');
     btn.setAttribute('aria-pressed', String(!!bm));
     btn.classList.toggle('is-saved', !!bm);
@@ -316,13 +318,13 @@ export function mountSerialReader() {
     if (!bm) { toast('还没有书签，先在想要标记的地方点一下「书签」吧'); return; }
     var i = state.chapters.findIndex(function (c) { return serialApi.chapterIdEquals(c.id, bm.chapterId); });
     if (i < 0) { toast('书签指向的章节不存在了'); return; }
-    document.getElementById('bookmarksDialog').close();
+    byId('bookmarksDialog').close();
     selectNovel(state.novelIdx, true, bm.chapterId, 'push', bm.offset, bm.anchor);
     toast('已跳转到书签位置');
   }
-  document.getElementById('bookmarkBtn').addEventListener('click', setBookmark);
-  document.getElementById('fabBookmarkGo').addEventListener('click', goBookmark);
-  document.getElementById('readingBookmarkGo').addEventListener('click', goBookmark);
+  byId('bookmarkBtn').addEventListener('click', setBookmark);
+  byId('fabBookmarkGo').addEventListener('click', goBookmark);
+  byId('readingBookmarkGo').addEventListener('click', goBookmark);
 
   /* ---------- reading progress (per-chapter + persisted "continue reading") ---------- */
   function persistProgress(offset) {
@@ -365,7 +367,7 @@ export function mountSerialReader() {
       var waterfallPct = state.chapters.length
         ? Math.min(100, ((state.idx + chapterProgress) / state.chapters.length) * 100)
         : 0;
-      document.getElementById('progressBar').style.width = waterfallPct + '%';
+      byId('progressBar').style.width = waterfallPct + '%';
       return;
     }
     var page = pagedBook ? pagedBook.getState() : { pageIndex:0, pageCount:1 };
@@ -373,7 +375,7 @@ export function mountSerialReader() {
     var pct = state.chapters.length
       ? Math.min(100, ((state.idx + chapterProgress) / state.chapters.length) * 100)
       : 0;
-    document.getElementById('progressBar').style.width = pct + '%';
+    byId('progressBar').style.width = pct + '%';
   }
 
   /* ---------- chapter data: table of contents first, bodies on demand ---------- */
@@ -417,9 +419,9 @@ export function mountSerialReader() {
   // book's chapter list) with an error message; a toast is enough.
   function showLoadError() {
     toast('网络不太稳定，暂时无法读取小说数据，请稍后刷新重试', 5000);
-    var body = document.getElementById('chapterBody');
+    var body = byId('chapterBody');
     if (body.textContent.trim()) return;
-    document.getElementById('chapterTitle').textContent = '内容加载失败';
+    byId('chapterTitle').textContent = '内容加载失败';
     body.innerHTML = '<p>' +
       '暂时无法读取小说数据，请刷新页面重试。' +
       '</p>';
@@ -450,7 +452,7 @@ export function mountSerialReader() {
       if (revealVersion !== narrationRevealVersion || !context ||
           context.bookId !== state.novelId ||
           !serialApi.chapterIdEquals(context.chapterId, state.chapters[state.idx] && state.chapters[state.idx].id)) return;
-      var scope = document.getElementById('chapterBody');
+      var scope = byId('chapterBody');
       if (state.waterfall) {
         scope = Array.from(document.querySelectorAll('#waterfallList .wf-chapter')).find(function (section) {
           return serialApi.chapterIdEquals(section.dataset.chapterId, context.chapterId);
@@ -487,7 +489,7 @@ export function mountSerialReader() {
   }
 
   function initNarrationPlayer() {
-    var root = document.getElementById('narrationPlayer');
+    var root = byId('narrationPlayer');
     if (!root || !serialApi || typeof serialApi.createNarrationPlayer !== 'function') return;
     narrationPlayer = serialApi.createNarrationPlayer({
       root:root,
@@ -508,15 +510,15 @@ export function mountSerialReader() {
   function ensurePagedBook() {
     if (pagedBook) return pagedBook;
     pagedBook = serialApi.createPagedBook({
-      stage:document.getElementById('bookStage'),
-      content:document.getElementById('chapterBody'),
-      measure:document.getElementById('bookMeasure'),
-      turnLayer:document.getElementById('bookTurn'),
-      turnFront:document.getElementById('bookTurnFront'),
-      turnBack:document.getElementById('bookTurnBack'),
-      pageIndicator:document.getElementById('pageIndicator'),
-      previousHotspot:document.getElementById('pagePreviousHotspot'),
-      nextHotspot:document.getElementById('pageNextHotspot'),
+      stage:byId('bookStage'),
+      content:byId('chapterBody'),
+      measure:byId('bookMeasure'),
+      turnLayer:byId('bookTurn'),
+      turnFront:byId('bookTurnFront'),
+      turnBack:byId('bookTurnBack'),
+      pageIndicator:byId('pageIndicator'),
+      previousHotspot:byId('pagePreviousHotspot'),
+      nextHotspot:byId('pageNextHotspot'),
       isActive:function () { return !state.waterfall && document.body.dataset.readerView === 'reading'; },
       onBoundary:function (direction) {
         var target = state.idx + direction;
@@ -550,13 +552,13 @@ export function mountSerialReader() {
     withChapter(i, function () {
       state.idx = i;
       var c = state.chapters[i];
-      document.getElementById('chapterTitle').textContent = c.title;
-      document.getElementById('chapterMeta').textContent =
+      byId('chapterTitle').textContent = c.title;
+      byId('chapterMeta').textContent =
         '第 ' + (i + 1) + ' / ' + state.chapters.length + ' 章 · 约 ' + (c.wordCount || 0) + ' 字';
-      document.getElementById('chapterIndicator').textContent =
+      byId('chapterIndicator').textContent =
         '第 ' + (i + 1) + ' / ' + state.chapters.length + ' 章';
       [['prevChapter', i - 1], ['nextChapter', i + 1]].forEach(function (entry) {
-        var link = document.getElementById(entry[0]), target = state.chapters[entry[1]];
+        var link = byId(entry[0]), target = state.chapters[entry[1]];
         link.setAttribute('aria-disabled', String(!target));
         if (target) {
           link.href = serialApi.readerPath({ locale:serialApi.readerLocale(location.pathname, document.documentElement.dataset.afflatusLocale), bookId:state.novelId, chapterId:target.id });
@@ -598,27 +600,27 @@ export function mountSerialReader() {
     loadChapter(i, scrollToTop, null, 'push', { direction:direction, pageIndex:0 });
   }
   ['prevChapter', 'nextChapter'].forEach(function (id) {
-    document.getElementById(id).addEventListener('click', function (event) {
+    byId(id).addEventListener('click', function (event) {
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       // Before the small TOC has arrived, keep the prerendered href usable.
       if (!state.chapters.length) return;
       event.preventDefault();
       if (this.getAttribute('aria-disabled') === 'true') return;
       goToChapter(state.idx + (id === 'prevChapter' ? -1 : 1), true);
-      document.getElementById('bookStage').focus({ preventScroll:true });
+      byId('bookStage').focus({ preventScroll:true });
     });
   });
 
   /* ---------- waterfall / infinite-scroll reading ---------- */
-  var wfList = document.getElementById('waterfallList');
-  var wfSentinel = document.getElementById('wfSentinel');
-  var wfSentinelText = document.getElementById('wfSentinelText');
-  var wfChip = document.getElementById('wfChip');
+  var wfList = byId('waterfallList');
+  var wfSentinel = byId('wfSentinel');
+  var wfSentinelText = byId('wfSentinelText');
+  var wfChip = byId('wfChip');
   var wfHeaderObserver = null, wfSentinelObserver = null;
   var wfDone = false;
 
   function updateLayoutToggle() {
-    var btn = document.getElementById('layoutToggle');
+    var btn = byId('layoutToggle');
     btn.classList.toggle('active', state.waterfall);
     btn.textContent = state.waterfall ? '切回分页阅读' : '切换连续阅读';
     btn.setAttribute('aria-pressed', String(state.waterfall));
@@ -777,8 +779,8 @@ export function mountSerialReader() {
   function initWaterfall(fromIdx, scrollToTop, historyMode, restoreOffset, restoreAnchor) {
     state.waterfall = true;
     stopAuto();
-    document.getElementById('readerNormal').hidden = true;
-    document.getElementById('readerWaterfall').hidden = false;
+    byId('readerNormal').hidden = true;
+    byId('readerWaterfall').hidden = false;
     wfChip.classList.add('show');
     if (!wfHeaderObserver) setupWfObservers();
     if (readerStore) readerStore.update({ layout:'waterfall' });
@@ -793,8 +795,8 @@ export function mountSerialReader() {
     wfLoading = false;
     state.waterfall = false;
     stopAuto();
-    document.getElementById('readerWaterfall').hidden = true;
-    document.getElementById('readerNormal').hidden = false;
+    byId('readerWaterfall').hidden = true;
+    byId('readerNormal').hidden = false;
     wfChip.classList.remove('show');
     if (readerStore) readerStore.update({ layout:'book' });
     updateLayoutToggle();
@@ -804,9 +806,9 @@ export function mountSerialReader() {
     if (openCover) ensurePagedBook().open(state.novels[state.novelIdx].novel.title);
   }
 
-  document.getElementById('layoutToggle').addEventListener('click', function () {
+  byId('layoutToggle').addEventListener('click', function () {
     var anchor = currentReadingAnchor();
-    document.getElementById('settingsDialog').close();
+    byId('settingsDialog').close();
     if (state.waterfall) {
       initBook(state.idx, true, 'replace', 0, false, anchor);
       toast('已切回分页阅读');
@@ -842,11 +844,11 @@ export function mountSerialReader() {
   function startAuto() {
     if (narrationPlayer) narrationPlayer.pause();
     stopAuto();
-    var btn = document.getElementById('autoToggle');
+    var btn = byId('autoToggle');
     btn.textContent = state.waterfall ? '停止滚动' : '停止翻页';
     btn.setAttribute('aria-pressed', 'true');
-    document.getElementById('readerAutoStatus').hidden = false;
-    document.getElementById('readerSaveStatus').hidden = true;
+    byId('readerAutoStatus').hidden = false;
+    byId('readerSaveStatus').hidden = true;
     btn.classList.add('active');
     btn.setAttribute('aria-label', state.waterfall ? T('Stop automatic scrolling', '停止自动滚动') : T('Stop automatic page turning', '停止自动翻页'));
     if (state.waterfall) {
@@ -858,7 +860,7 @@ export function mountSerialReader() {
       state.autoTimer = setInterval(function () {
         if (document.hidden || window.getSelection().toString()) { stopAuto(); return; }
         if (!pagedBook || !pagedBook.turn(1)) stopAuto();
-      }, Number(document.getElementById('autoSpeed').value) || AUTO_PAGE_INTERVAL);
+      }, Number(byId('autoSpeed').value) || AUTO_PAGE_INTERVAL);
     }
   }
   function stopAuto() {
@@ -867,17 +869,17 @@ export function mountSerialReader() {
     state.autoTimer = 0;
     autoTimerKind = '';
     autoScrollLastFrame = 0;
-    var btn = document.getElementById('autoToggle');
+    var btn = byId('autoToggle');
     btn.textContent = state.waterfall ? '开始自动滚动' : '开始自动翻页';
     btn.setAttribute('aria-pressed', 'false');
-    document.getElementById('readerAutoStatus').hidden = true;
-    document.getElementById('readerSaveStatus').hidden = false;
+    byId('readerAutoStatus').hidden = true;
+    byId('readerSaveStatus').hidden = false;
     btn.classList.remove('active');
     btn.setAttribute('aria-label', state.waterfall ? T('Start automatic scrolling', '开始自动滚动') : T('Start automatic page turning', '开始自动翻页'));
   }
-  document.getElementById('readerAutoStatus').addEventListener('click', stopAuto);
-  document.getElementById('autoToggle').addEventListener('click', function () {
-    if (state.autoTimer) stopAuto(); else { startAuto(); document.getElementById('settingsDialog').close(); }
+  byId('readerAutoStatus').addEventListener('click', stopAuto);
+  byId('autoToggle').addEventListener('click', function () {
+    if (state.autoTimer) stopAuto(); else { startAuto(); byId('settingsDialog').close(); }
   });
   document.addEventListener('visibilitychange', function () { if (document.hidden) stopAuto(); });
   window.addEventListener('pagehide', stopAuto);
@@ -892,10 +894,10 @@ export function mountSerialReader() {
   });
 
   /* ---------- FAB ---------- */
-  var fabMenu = document.getElementById('fabMenu'), fabToggle = document.getElementById('fabToggle');
+  var fabMenu = byId('fabMenu'), fabToggle = byId('fabToggle');
   fabToggle.addEventListener('click', function () { fabMenu.classList.toggle('open'); });
-  document.getElementById('fabTop').addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); fabMenu.classList.remove('open'); });
-  document.getElementById('fabTheme').addEventListener('click', function () {
+  byId('fabTop').addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); fabMenu.classList.remove('open'); });
+  byId('fabTheme').addEventListener('click', function () {
     var order = ['green','night']; var cur = reader.getAttribute('data-theme'); var next = order[(order.indexOf(cur) + 1) % order.length];
     applyTheme(next);
     fabMenu.classList.remove('open');
@@ -915,7 +917,7 @@ export function mountSerialReader() {
   }
 
   function renderShelf() {
-    var shelf = document.getElementById('shelf'); shelf.innerHTML = '';
+    var shelf = byId('shelf'); shelf.innerHTML = '';
     state.novels.forEach(function (n, i) {
       var b = document.createElement('button');
       b.className = 'book' + (i === state.novelIdx ? ' active' : '');
@@ -934,7 +936,7 @@ export function mountSerialReader() {
   }
 
   function renderHud(hud) {
-    var panel = document.getElementById('hudPanel'); panel.innerHTML = '';
+    var panel = byId('hudPanel'); panel.innerHTML = '';
     (hud || []).forEach(function (g) {
       var div = document.createElement('div'); div.className = 'gauge';
       div.innerHTML = '<div class="lb"><span>' + escapeHtml(g.label) + '</span><b>' + escapeHtml(g.value) + '</b></div>' +
@@ -994,15 +996,15 @@ export function mountSerialReader() {
     state.chapters = n.chapters;
 
     function paintHero() {
-      document.getElementById('novelKicker').textContent = (n.novel.tags || []).slice(0, 4).join(' · ') || '无限流 · 连载中';
-      document.getElementById('novelTitle').textContent = n.novel.title;
-      document.getElementById('novelSub').textContent = n.novel.subtitle || '';
-      document.getElementById('novelIntro').textContent = n.novel.intro;
-      document.getElementById('novelAuthor').textContent = n.novel.author;
-      document.getElementById('bookAuthor').textContent = n.novel.author + ' · 连载手稿';
-      document.getElementById('novelUpdateNote').textContent = n.novel.updateNote;
-      document.getElementById('novelStart').textContent = n.novel.startDate;
-      var tagsEl = document.getElementById('novelTags'); tagsEl.innerHTML = '';
+      byId('novelKicker').textContent = (n.novel.tags || []).slice(0, 4).join(' · ') || '无限流 · 连载中';
+      byId('novelTitle').textContent = n.novel.title;
+      byId('novelSub').textContent = n.novel.subtitle || '';
+      byId('novelIntro').textContent = n.novel.intro;
+      byId('novelAuthor').textContent = n.novel.author;
+      byId('bookAuthor').textContent = n.novel.author + ' · 连载手稿';
+      byId('novelUpdateNote').textContent = n.novel.updateNote;
+      byId('novelStart').textContent = n.novel.startDate;
+      var tagsEl = byId('novelTags'); tagsEl.innerHTML = '';
       (n.novel.tags || []).forEach(function (tg) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = tg; tagsEl.appendChild(s); });
       renderHud(n.novel.hud);
       renderShelf();
@@ -1014,7 +1016,7 @@ export function mountSerialReader() {
        there) since there's no prior visual to morph from. */
     if (scrollToShelf && document.startViewTransition) {
       try {
-        var shelfEl = document.getElementById('shelf');
+        var shelfEl = byId('shelf');
         var clickedBtn = shelfEl && shelfEl.children[idx];
         if (clickedBtn) clickedBtn.style.viewTransitionName = 'novelMorph';
         var vt = document.startViewTransition(function () {
@@ -1082,7 +1084,7 @@ export function mountSerialReader() {
     if (scrollToShelf && pagedBook && !state.waterfall) pagedBook.open(n.novel.title);
     if (resumeIdx > 0 && requestedChapterId != null) toast('已为你恢复到上次的阅读位置');
     experience.sync();
-    if (scrollToShelf) document.getElementById('bookStage').focus({preventScroll:true});
+    if (scrollToShelf) byId('bookStage').focus({preventScroll:true});
   }
 
   /* ---------- boot ---------- */
@@ -1113,7 +1115,7 @@ export function mountSerialReader() {
         var locale = serialApi.readerLocale(location.pathname, document.documentElement.dataset.afflatusLocale);
         history.pushState({view:'library', bookId:state.novelId}, '', (locale === 'adaptive' ? '' : '/' + locale) + '/serial.html');
         window.scrollTo({top:0, behavior:'instant'});
-        document.getElementById('continueReading').focus({preventScroll:true});
+        byId('continueReading').focus({preventScroll:true});
       },
       onBookmark:function (entry) {
         var idx = state.novels.findIndex(function (novel) { return novel.id === entry.bookId; });
@@ -1127,7 +1129,7 @@ export function mountSerialReader() {
         companionAudio ||= import('../lib/companionAudio.js').then(function (module) {
           return module.mountCompanionAudio({ store:readerStore });
         });
-        companionAudio.catch(function () { document.getElementById('audioEmpty').textContent = '伴读音乐暂不可用，请刷新页面重试。'; });
+        companionAudio.catch(function () { byId('audioEmpty').textContent = '伴读音乐暂不可用，请刷新页面重试。'; });
       });
     });
     initNarrationPlayer();
