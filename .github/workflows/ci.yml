@@ -69,7 +69,7 @@ jobs:
           python-version-file: .python-version
           cache: pip
 
-      - run: pip install --require-hashes --only-binary=:all: -r requirements.txt
+      - run: 'pip install --require-hashes --only-binary=:all: -r requirements.txt'
       - run: pip check
 
       - name: Model function tests
