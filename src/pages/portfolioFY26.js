@@ -1,6 +1,6 @@
 import '../lib/nav.js';
 import { portfolioLogo } from './portfolioLogos.js';
-import { seeded, drawPen, drawInkGrid, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
+import { seeded, penSprite, drawPen, drawInkGrid, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
 import { createProgressiveGame } from './portfolioGame.js';
 import { drawWell, drawWellCells, shapeCells, TYPES } from './portfolioTetris.js';
 
@@ -85,7 +85,7 @@ let W = 0, H = 0, S = 12, layouts = [], labelSets = [];
 const wideGames = [];
 const phoneGames = new Map();
 let heroGames = wideGames;
-let wells = [], heroT = 26, heroFrames = [];
+let wells = [], heroT = 26, heroFrames = [], gridAbort;
 
 const monthIndex = f => (f.y - 2025) * 12 + f.m - 7; // Jul 2025 = 0
 const MONTHS_EN = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
@@ -103,7 +103,8 @@ function buildLayouts() {
     const g = gridCanvas.getContext('2d');
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, W, H);
-    drawInkGrid(g, W, H, { step: W < 720 ? 16 : 20, major: 4, seed: 7, strength: .8 });
+    gridAbort?.abort(); gridAbort=new AbortController();
+    void drawInkGrid(g, W, H, { step: W < 720 ? 16 : 20, major: 4, seed: 7, strength: .8, signal:gridAbort.signal });
   }
   const narrow = W < 720;
   // hero wells: in the margins on wide screens, faint behind the headline on narrow ones
@@ -249,13 +250,33 @@ function renderLabels() {
   });
 }
 
-let stepFloat = 0, drawn = -1;
+let stepFloat = 0, drawn = -1, heroReady=false, heroVersion=0;
 const WELL_FONT = `600 ${W < 720 ? 10 : 11}px "Anthropic Sans", Inter, system-ui, sans-serif`;
 // Where each execution square sits while the opening games are on screen.
-function refreshHeroGames() {
+async function refreshHeroGames() {
+  const version=++heroVersion;
+  heroReady=false;
   heroFrames=heroGames.map(game=>game.frame(heroT));
-  canvas.dataset.simulationReady=String(heroGames.every(game=>game.complete));
-  drawn=-1;draw();
+  if(!heroGames.every(game=>game.complete))return;
+  // Rasterize each reusable pen texture in a separate task before drawing the
+  // first populated well. Animation can then reuse the warmed sprite cache.
+  const textures=new Map();
+  const add=(color,variant,mode)=>textures.set(`${color}|${variant}|${mode}`,[color,variant,mode]);
+  for(const frame of heroFrames) {
+    add(PIECE_COLORS[frame.next],5,'ghost');
+    for(const cell of frame.cells) {
+      add(PIECE_COLORS[cell.type],cell.id%12,cell.mode);
+      if(cell.outlineUnder)add(PIECE_COLORS[cell.type],cell.id%12,'ghost');
+    }
+  }
+  for(const texture of textures.values()) {
+    if(version!==heroVersion)return;
+    penSprite(...texture); await yieldToBrowser();
+  }
+  if(version!==heroVersion)return;
+  heroReady=true;
+  canvas.dataset.simulationReady='true';
+  drawn=-1;draw();startHero();
 }
 function heroLayout() {
   const out = new Array(tiles.length);
@@ -276,7 +297,7 @@ function drawHero(alpha = 1) {
   wells.forEach((w, wi) => {
     drawWell(ctx, { ...w, alpha: alpha * (W < 1000 && W >= 720 ? .5 : 1), lines: heroFrames[wi].lines, next: heroFrames[wi].next, colors: PIECE_COLORS, font: WELL_FONT });
   });
-  if (alpha >= .999) wells.forEach((w, wi) => drawWellCells(ctx, heroFrames[wi], { ...w, colors: PIECE_COLORS, alpha: faint }));
+  if (alpha >= .999 && heroReady) wells.forEach((w, wi) => drawWellCells(ctx, heroFrames[wi], { ...w, colors: PIECE_COLORS, alpha: faint }));
 }
 function draw() {
   if (!layouts.length) return;
@@ -319,7 +340,7 @@ function heroTick(now) {
   heroRaf = requestAnimationFrame(heroTick);
 }
 function startHero() {
-  if (reduced.matches || heroRaf) return;
+  if (!heroReady || reduced.matches || heroRaf) return;
   heroLast = 0;
   heroRaf = requestAnimationFrame(heroTick);
 }
@@ -370,14 +391,11 @@ const onView = (el, fn, threshold = .3) => {
   }), { threshold });
   io.observe(el);
 };
-// Preserve SVG viewBox sizing and event listeners, but keep distant chart
-// internals in a fragment until the visitor approaches them.
-function deferChart(svg) {
-  const content=document.createDocumentFragment();
-  while(svg.firstChild) content.append(svg.firstChild);
+// Keep viewBox geometry stable; calculate decorative ink only on approach.
+function deferChart(svg,create) {
   const observer=new IntersectionObserver(entries=>{
     if(entries.some(entry=>entry.isIntersecting)) {
-      svg.append(content); observer.disconnect();
+      observer.disconnect(); void create(svg);
     }
   },{rootMargin:'800px'});
   observer.observe(svg);
@@ -469,7 +487,7 @@ for (const [idx,h] of HIGHLIGHTS.entries()) {
   card.style.setProperty('--tone', theme.color);
   card.style.setProperty('--i', idx);
   const rise = 150 - h.r * 3.6;
-  const chart = highlightChart(h, theme.color, idx, rise);
+  const chart = `<svg class="pf-hl-chart" viewBox="0 0 300 170" aria-hidden="true"></svg>`;
   card.innerHTML = `
     <header><span class="pf-hl-rank">${String(idx + 1).padStart(2, '0')}</span><span class="pf-hl-theme"></span></header>
     <h3><span class="pf-hl-logo">${portfolioLogo(h.t, { decorative: true })}</span><span class="pf-hl-name"></span></h3>
@@ -483,7 +501,11 @@ for (const [idx,h] of HIGHLIGHTS.entries()) {
   const span = h.from === h.to ? fmtDate(h.from) : `${fmtDate(h.from)} → ${fmtDate(h.to)}`;
   card.querySelector('.pf-hl-dates').textContent = isZh ? `2026 年 ${span}` : `${span} 2026`;
   card.querySelector('.pf-hl-copy').textContent = isZh ? h.zh : h.en;
-  deferChart(card.querySelector('.pf-hl-chart'));
+  deferChart(card.querySelector('.pf-hl-chart'),node=>{
+    const template=document.createElement('template');
+    template.innerHTML=highlightChart(h,theme.color,idx,rise);
+    node.replaceChildren(...template.content.firstElementChild.childNodes);
+  });
   hlHost.append(card);
   onView(card, node => node.classList.add('is-in'), .25);
   const num = card.querySelector('[data-count]');
@@ -496,12 +518,14 @@ await yieldToBrowser();
 /* --------------------------------------------------------- scatter chart */
 const SVGNS = 'http://www.w3.org/2000/svg';
 const svgEl = (name, attrs = {}) => { const el = document.createElementNS(SVGNS, name); Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v)); return el; };
-async function buildScatter() {
+async function buildScatter(svg) {
   const host = $('#pfScatter');
   const tip = $('#pfScatterTip');
   const Wv = 960, Hv = 500, m = { l: 64, r: 28, t: 26, b: 64 };
   const r = seeded(63);
-  const svg = svgEl('svg', { viewBox: `0 0 ${Wv} ${Hv}`, role: 'img', 'aria-label': L('Profitable round trips by holding period and return', '盈利往返交易：持有天数与收益率') });
+  svg.removeAttribute('aria-hidden');
+  svg.setAttribute('role','img');
+  svg.setAttribute('aria-label',L('Profitable round trips by holding period and return', '盈利往返交易：持有天数与收益率'));
   const xs = d => m.l + Math.log1p(d) / Math.log1p(180) * (Wv - m.l - m.r);
   const ys = v => Hv - m.b - v / 35 * (Hv - m.t - m.b);
   // one-week band: a loose marker wash laid down in vertical passes
@@ -574,8 +598,6 @@ async function buildScatter() {
     dots.append(arrow, tx);
   });
   svg.append(dots);
-  deferChart(svg);
-  host.prepend(svg);
   onView(host, () => host.classList.add('is-in'), .3);
   const legend = $('#pfScatterLegend');
   ['mem', 'cpu', 'net', 'kor', 'fab', 'opt', 'space', 'other'].forEach(k => {
@@ -586,7 +608,9 @@ async function buildScatter() {
     legend.append(sp);
   });
 }
-await buildScatter();
+const scatterPlaceholder=svgEl('svg',{viewBox:'0 0 960 500','aria-hidden':'true'});
+$('#pfScatter').prepend(scatterPlaceholder);
+deferChart(scatterPlaceholder,buildScatter);
 await yieldToBrowser();
 
 /* ----------------------------------------------------- cycle journeys bars */
@@ -630,7 +654,7 @@ JOURNEYS.forEach((j, idx) => {
 /* ---------------------------------------------------- closing book waffle */
 const BOOK = [['DRAM', 46, 46.39, 'mem', THEMES.mem.color], ['MU', 30, 30.21, 'mem', '#b3a9ef'], ['MRVL', 24, 23.39, 'net', THEMES.net.color]];
 const waffle = $('#pfBookWaffle');
-{
+async function buildWaffle(svg) {
   // 10 x 10 face of hand-inked squares, like one side of a marker-drawn cube.
   const r = seeded(630), cell = 46, gap = 0;
   let idx = 0, body = '';
@@ -650,9 +674,10 @@ const waffle = $('#pfBookWaffle');
       body += `<g class="pf-wf-cell" style="--d:${idx * 9}ms;--r:${((idx * 37) % 7 - 3) * .5}deg;fill:${color}"><g filter="url(#pf-mk-marker)">${g}</g>${edges}</g>`;
     }
   }
-  waffle.innerHTML = `<svg viewBox="0 0 466 466" aria-hidden="true">${body}</svg>`;
+  svg.innerHTML = body;
 }
-deferChart(waffle.firstElementChild);
+waffle.innerHTML='<svg viewBox="0 0 466 466" aria-hidden="true"></svg>';
+deferChart(waffle.firstElementChild,buildWaffle);
 onView(waffle, () => waffle.classList.add('is-in'), .3);
 const bookLegend = $('#pfBookLegend');
 BOOK.forEach(([t, , pct, , color]) => {

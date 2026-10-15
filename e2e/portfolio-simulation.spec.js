@@ -11,6 +11,10 @@ test('distant charts retain geometry and render when approached',async({page})=>
   const scatter=page.locator('#pfScatter > svg');
   await expect(scatter).toHaveCount(1);
   await expect(scatter.locator('.pf-sc-dot')).toHaveCount(0);
+  const highlight=page.locator('#pfHighlights .pf-hl-chart').first();
+  await expect(highlight.locator('path')).toHaveCount(0);
+  await highlight.scrollIntoViewIfNeeded();
+  await expect(highlight.locator('.pf-hl-ink')).toHaveCount(2);
   await scatter.scrollIntoViewIfNeeded();
   await expect(scatter.locator('.pf-sc-dot')).toHaveCount(63);
   const waffle=page.locator('#pfBookWaffle > svg');

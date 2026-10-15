@@ -141,7 +141,7 @@ export function drawPen(ctx, color, variant, mode, x, y, size, alpha = 1, reveal
 /* ---------------------------------------------------------------- ruled grid */
 // A hand-ruled graph paper: lines are drawn in short pen passes whose weight,
 // opacity and tint drift, and every fourth line is a heavier major rule.
-export function drawInkGrid(ctx, W, H, { step = 18, major = 4, seed = 11, ink = '#87867F', tints = ['#6A9BCC', '#9d90ec', '#d98aa0'], strength = 1, x0 = 0, y0 = 0 } = {}) {
+export async function drawInkGrid(ctx, W, H, { step = 18, major = 4, seed = 11, ink = '#87867F', tints = ['#6A9BCC', '#9d90ec', '#d98aa0'], strength = 1, x0 = 0, y0 = 0, signal } = {}) {
   const rnd = seeded(seed);
   const pass = (x1, y1, x2, y2, isMajor) => {
     const len = Math.hypot(x2 - x1, y2 - y1);
@@ -159,8 +159,16 @@ export function drawInkGrid(ctx, W, H, { step = 18, major = 4, seed = 11, ink = 
       t = t2 + (rnd() < .1 ? rnd() * 6 : 0);
     }
   };
-  for (let i = 0, x = x0; x <= W; i++, x += step) pass(x + (rnd() - .5) * .8, -4, x + (rnd() - .5) * 1.4, H + 4, i % major === 0);
-  for (let i = 0, y = y0; y <= H; i++, y += step) pass(-4, y + (rnd() - .5) * .8, W + 4, y + (rnd() - .5) * 1.4, i % major === 0);
+  for (let i = 0, x = x0; x <= W; i++, x += step) {
+    if(signal?.aborted)return;
+    pass(x + (rnd() - .5) * .8, -4, x + (rnd() - .5) * 1.4, H + 4, i % major === 0);
+    if(i%4===3)await new Promise(resolve=>setTimeout(resolve,0));
+  }
+  for (let i = 0, y = y0; y <= H; i++, y += step) {
+    if(signal?.aborted)return;
+    pass(-4, y + (rnd() - .5) * .8, W + 4, y + (rnd() - .5) * 1.4, i % major === 0);
+    if(i%4===3)await new Promise(resolve=>setTimeout(resolve,0));
+  }
 }
 
 /* ------------------------------------------------------------- SVG filters */
