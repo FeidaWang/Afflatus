@@ -42,6 +42,8 @@ test('adaptive root honours a stored Chinese locale and offers English back', as
   await expect(switcher).toHaveText('EN');
   await expect(switcher).toHaveAttribute('href', '/en/?q=1#major-releases');
   await expect(switcher).toHaveAttribute('aria-label', /English|英文/);
+  await expect(page.locator('#home-title')).toContainText('从这颗星球');
+  await expect(page.getByRole('link', { name: '探索作品', exact: true })).toHaveAttribute('href', '/zh/portfolio.html');
 });
 
 test('primary navigation replaces duplicate linear page-turn controls', async ({ page }) => {

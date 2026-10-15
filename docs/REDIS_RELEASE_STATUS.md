@@ -1,101 +1,165 @@
-# Redis release checkpoint — 2026-10-15 (Melbourne)
+# Redis / Python / performance release — 2026-10-15 Melbourne
 
-## Scope and constraints
+**Status: candidate verification. Final publication awaits successful cloud CI
+and fresh production-environment API/browser acceptance.** The previous public
+deployment remains active, honoring the user's all-checks-pass requirement.
 
-User authorized Redis distributed rate limiting, Python dependency repair,
-verification, then production deployment. Additional user constraint: **free
-plans only, no paid options in this website**. Never enable automatic upgrades,
-choose a paid Redis plan, or add purchase/upgrade UI. Preserve installed browser
-app bundles and personal profiles; browser checks use isolated Playwright cache.
+## User constraints and target
 
-Workspace: `/Users/feida/.codex/worktrees/53ac/afflatus`.
-Branch: `codex/redis-free-rate-limit`; base: `0bfe3bf0`.
-Vercel target: `feidawangs-projects/afflatus`, project
-`prj_BzzQ0aus6yHaqaqpeBS0ghrfD0VP`, production alias `feida.au`.
+Free plans only. Never enable automatic upgrades, paid add-ons or payment
+options. Preserve installed browser bundles and personal profiles. The user
+explicitly included existing whole-site Lighthouse failures in this release.
 
-## Implemented
+Workspace `/Users/feida/.codex/worktrees/53ac/afflatus`, branch
+`codex/redis-free-rate-limit`, repository `FeidaWang/Afflatus`.
+Vercel project `feidawangs-projects/afflatus`,
+`prj_BzzQ0aus6yHaqaqpeBS0ghrfD0VP`; public domain `https://feida.au`.
 
-- Atomic Redis REST EVAL counter + expiring keys for quote/history/treasury and
-  Python models. Environment/route scoped hashed IPs, platform client header,
-  2s Redis timeout, 429 + Retry-After, 503 on Redis failure/missing config.
-- Python models: 20/client/minute and 120/global/minute before calculation.
-- Existing Node route rates retained: quote 60, history 20, treasury 45 per minute.
-- Only local development can use bounded in-memory counters. Production cannot.
-- Python 3.12 direct/transitive requirements now include hashes. CI installs
-  binary wheels with `--require-hashes --only-binary=:all:` and runs `pip check`.
-- Existing versions installed successfully; no dependency conflict was reproduced.
-  Linux manylinux_2_28 wheels are available. manylinux2014 is too old for this
-  NumPy wheel and is not the production compatibility target.
-- No new client UI, paid service, feature flag change, or production release.
+## Free Redis and Python acceptance
 
-## Verified locally
+Resource `afflatus-rate-limit` / `store_TOk293RjbNXZklJZ` is connected to
+production only. Actual storage API metadata verified: plan **free**,
+**autoUpgrade=false**, **prodPack=false**, **eviction=false**, iad1,
+paymentMethodRequired=false, preauthorizationAmount=0, 500000 monthly commands.
+Vercel team plan is **Hobby/active**. No paid resource or upgrade was selected.
+The provider exposes no balance information here; no billing balance is inferred.
 
-- Existing JS baseline before edit: 1,415 passed, 0 failed.
-- Updated complete Vitest suite: 1,421 passed, 0 failed.
-- Python HTTP/model/limiter tests: 11 passed, including fail-closed, per-client
-  and global gate, input boundaries, fixed-source integrity, synthetic maths,
-  Redis errors/schema/timeout, no credential disclosure.
-- Clean Python 3.12 environment: all 13 dependencies installed, pip check passed.
-- All 13 Linux x86_64/manylinux_2_28 wheels installed into an isolated target with
-  binary-only and hash verification (wheel availability, not execution on Linux).
-- Typecheck, full prebuild/build, emitted SEO and bundle budget passed.
-- Isolated preview on port 4189: 24 active-route render/metadata/viewport smoke
-  tests passed across desktop Chromium, iPhone WebKit and Android Chromium.
-  Initial port-4173 checks reused an existing unrelated preview; WebKit reported
-  TLS failures there. Those results are superseded by the isolated current build.
-  The existing port-4173 service was not modified or terminated.
-- Full browser accessibility/visual suite was not run for this backend change.
+Atomic REST EVAL counters and expiry cover the Node quote/history/treasury
+routes and Python models. Models enforce 20/client/minute and 120 globally;
+Node per-client limits remain 60/20/45. Keys use environment/route namespaces
+and hashed trusted client IPs. Redis failures/missing config fail closed with
+503; exhausted counters return 429 and Retry-After. Only local development may
+use a bounded Map. This does not claim an account-wide provider-data quota.
 
-## External blocker and remaining release steps
+Real Redis test: 12 simultaneous Node/Python calls shared one counter; exactly
+7 allowed and 5 denied at limit 7; count 12; TTL, expiry and recovery passed.
+Temporary test key removed. Real deployed model/DTO/input/method checks and 429
+were also verified before the performance work; fresh release checks remain
+required. No assumptions or raw IPs are stored in Redis, and no tokens appear
+in reports, source, or command arguments. Local env files are ignored/private.
 
-`vercel integration installations` returns no installations. Redis provisioning
-stopped with `integration_terms_acceptance_required`, `userActionRequired=true`.
-The operator must personally complete the terms page:
-https://vercel.com/feidawangs-projects/~/integrations/accept-terms/upstash?source=cli
-The user's free-only reply is not evidence that this external step completed.
-Do not claim Redis provisioned, actual Redis concurrency tested, or deployed.
+Clean Python 3.12 installed all 13 pinned dependencies. Hash-checked Linux
+binary wheels and pip check passed; 11 Python model/HTTP/limiter tests passed.
+Existing versions were compatible; no dependency conflict was reproduced.
+Root requirements now include hashes, and CI uses binary-only/hash verification.
 
-After acceptance, retry exactly this free-only provision (no resources have been
-created by the failed command):
+## Whole-site performance changes
 
-```sh
-vercel integration add upstash/upstash-kv --name afflatus-rate-limit --plan free -m primaryRegion=iad1 -m autoUpgrade=false -m eviction=false -m prodPack=false -e production --no-claim --no-env-pull
-```
+The pre-change CI failures were existing: all 31 JS/CSS assets requested in its
+reports were byte-identical between `0bfe3bf0` and `359589b5`. The user then
+authorized repairing the entire performance gate rather than waiving it.
 
-Verify the actual plan is free, auto-upgrade disabled, and project connected.
-Do not proceed if any payment/card/paid requirement appears. Keep tokens out of
-logs, reports, command arguments and Git. Verify real Redis atomic counts and
-expiry using a temporary test namespace; never substitute mocks for acceptance.
+- Preact 11.0.1 compatibility replaces the heavy browser rendering runtime.
+  Existing component interfaces remain; actual server/dev JSX paths and icon
+  dependencies are configured consistently and tested.
+- Home/Arena ship HTML generated from their real components and hydrate it.
+  When the visitor's stored language, watchlist or layout differs, rebuild instead of hydrating
+  mismatched links. Fixed English/Chinese pages preserve their own locale.
+- Local CSS is inlined with original cascade/media/import order and correct
+  asset URLs. Enhancement begins after actual first contentful paint, with
+  early button clicks replayed; there is no arbitrary multi-second delay.
+- Complete normal font character/weight coverage is retained in smaller text
+  optical instances. The optical-size axis is fixed at 28 instead of automatic
+  per-size variation; original font files remain preserved for reproduction.
+  Lab UI and library glyph subsets avoid downloading the full reading font.
+- Responsive AVIF versions preserve the original illustrations/texture. Hidden
+  music artwork and reading-only pagination/anchors/notes/block rendering/audio
+  load when needed. The music player does not preload its playlist on the shelf.
+- Sectors evidence is a separately cached JSON asset rather than executable JS.
+- Horoscope reserves its date/copy space before initialization. The shelf hides
+  the unopened reader. Static chapter/book content and links still work without
+  JavaScript, including when metadata requests fail.
+- A reading button stays disabled until metadata is ready; native chapter hrefs
+  remain usable before enhancement. Delayed-response, passage recovery, locale
+  links and opt-in audio have explicit browser regression coverage.
+- The public model-only panel exposes three available calculations without
+  requesting the disabled private research bridge. Limit/unavailable errors
+  have bilingual retry messages. Private research and owner features stay off.
 
-Current production `dpl_4NA3YuTTPBiN23Zv5EUjTDJErJnp` is READY, with model server
-and UI flags false. After Redis readiness, enable only `VIBE_MODELS_ENABLED`
-and `VITE_VIBE_MODELS_ENABLED` for this release. Existing private bridge and
-research capabilities remain independently gated. Stage a production build with
-`--prod --skip-domain`, verify actual option_model/option_payoff/catalogue DTOs,
-429 and Retry-After, then promote that same deployment. Verify feida.au and both
-EN/ZH Arena pages. Record exact deployment ID, commit and live results here.
-Do not switch production aliases before acceptance passes.
+No Lighthouse threshold, baseline, route selection or device profile was
+relaxed. CI builds and browser/performance tests now enable the actual public
+model UI flag used in production.
 
-Rollback candidate: keep existing production deployment above; restore the two
-model flags if needed. Redis failure must not silently bypass limits.
+## Local measurements and checks
 
+Lighthouse mobile, three-run medians, unchanged LCP <=2500 ms / TBT <=200 ms /
+CLS <=.1 and original per-route script ceilings:
 
-## Provisioning and real Redis verification — continued 2026-10-15
+| Route | Previous CI LCP ms | Local improved LCP ms |
+|---|---:|---:|
+| Home | 3280 | 2103 |
+| Portfolio | 2535 | 1502 |
+| Arena, models enabled | 3225 | 1801 |
+| Sectors | 3492 | 2402 |
+| Signal | 3490 | 2102 |
+| Horoscope | 6809 | 1951 |
+| Serial | 7696 | 2252 |
+| Course | 4854 | 2178 |
 
-The operator completed terms. Resource `store_TOk293RjbNXZklJZ`
-(`afflatus-rate-limit`) is available, connected to production only. Actual Vercel
-storage API metadata confirms `autoUpgrade=false`, `prodPack=false`,
-`eviction=false`, primary region iad1. Billing plan ID is `free`, payment method
-not required, preauthorization 0, monthly commands 500000. Vercel team billing
-plan is `hobby`/active. No paid resource or upgrade was selected.
+CLS is <=.006 in these runs. Existing advisory total-size warnings are distinct
+from mandatory failures. Measurements are lab browser emulation, not field p75
+or physical-device certification. Cloud CI must confirm the exact release head.
 
-`node --env-file=.env.production.local scripts/verify-redis-rate-limit.mjs`
-passed against this real Redis: PING/PONG; 12 concurrent Node and Python calls
-share one counter, exactly 7 allowed and 5 blocked at limit 7; count 12;
-positive TTL; expiry and subsequent recovery passed. Test keys were removed.
-No token values are included in this report or command arguments.
+Latest complete unit suite: **1425 passed, 0 failed**. Typecheck, full build,
+data/site/header/CSS/i18n/OG/SEO checks and bundle budgets passed. A CSS cascade/
+URL regression test was added. Browser regression covers all three configured
+profiles, with targeted additions for delayed reader startup, offline native
+links, no-JS book/chapter content, locale links and opt-in companion audio.
+The exact-head full cloud run is pending; do not report it green prematurely.
 
-Found and fixed the model UI's dependency on two unrelated UI flags: Arena and
-quant mount when the independent model UI flag is enabled. Server research
-flags remain off. Only the two model flags were enabled in production config.
-Staging deployment and actual deployed API/browser acceptance remain pending.
+Original installed browsers remain untouched. Diagnostics use isolated cached
+Playwright browsers or the provided IAB, and dedicated local ports. Earlier
+interleaved development Lighthouse runs are not release acceptance evidence.
+
+## Publication and rollback
+
+Current public rollback deployment:
+`dpl_4NA3YuTTPBiN23Zv5EUjTDJErJnp`,
+`https://afflatus-fv4ddpw1m-feidawangs-projects.vercel.app`.
+The prior model candidate was temporarily promoted, then restored when full-site
+performance failed. It is not the final active release.
+
+After exact-head CI succeeds: verify Free/auto-upgrade settings, stage a
+production build without switching domains, validate the real model DTOs,
+429/Retry-After and EN/ZH browser results, then promote that verified deployment.
+Record final commit, CI URL, deployment ID, public aliases and error-log result.
+Production model server/UI flags are true for candidates; old rollback retains
+its captured false flags. No private bridge/research server gate was enabled.
+
+Rollback: restore the deployment above or disable the two model flags. Keep
+Redis failures fail-closed, and do not enable a paid service to resolve a quota.
+
+## Cloud candidate follow-up
+
+Exact-head CI for `164b504a` passed unit/build, Python and all three complete
+browser jobs. All eight LCP/CLS/script budgets passed; the only mandatory
+failure was Portfolio TBT (884 ms median versus 200 ms ceiling).
+
+The decorative Tetris constructor precomputed long desktop/mobile/footer games
+synchronously. The follow-up keeps an identical deterministic 32-move initial
+preview, computes full scripts in a browser Worker, avoids unused desktop games
+on phones and initializes the footer game on view. Typed board buffers are
+transferred; no new backend or service is involved. Startup also yields between
+chart setup phases. Pure frame/structured-clone tests and real Worker completion
+checks across all three browsers pass. Local three-run Portfolio metrics after
+this fix: LCP 1502 ms, TBT 3 ms, CLS 0. Mandatory budgets remain unchanged.
+
+Latest complete unit suite with simulation regression coverage: 1429 passed.
+A fresh exact-head CI and clean-source production candidate are still required.
+Diagnostic source manifests were checked: local env files are excluded, and
+final publication is packaged from tracked immutable source, excluding local
+reports and generated diagnostic directories.
+
+### Final responsiveness follow-up
+
+Cloud run 38729000857 passed Python, unit/build and all three browser profiles, but retained a Portfolio TBT failure and a 59-byte library script overage. Placement search now runs entirely in the worker (including its former 32-move preview); chart construction yields between small batches. Reader element lookup calls share one helper to reduce transferred code without changing behavior. Local unit suite: 1,430 passed; typecheck passed. Original Lighthouse assertions remain unchanged.
+
+Cloud run 38730414665 passed all browser profiles and script-size gates. Remaining TBT medians were Portfolio 269ms and library 204ms. Distant SVG contents now remain in document fragments until within 800px of the viewport, preserving viewBox geometry and listeners. A whole-section content-visibility experiment was rejected after its footer-scroll regression; it is not included. The library hero now uses 480/960 WebP variants (18/55KB) and async decoding, preserving original artwork. Browser coverage explicitly verifies lazy scatter and waffle restoration.
+
+Cloud run 38732172670 passed Portfolio (TBT 123ms) and library (106ms), leaving only Course (244ms). Course map cover backgrounds now load on approach instead of startup, and its 70 collision warm-up iterations yield every five iterations, cancelling obsolete layout generations. All three local course profiles pass map-entry, navigation, accessibility applicability and captures (13 passed, 2 applicability skips). No threshold changed.
+
+Cloud run 38733574915 passed Course and all browser profiles but Portfolio TBT varied back above 200ms. Its chart ink is now calculated only on approach, with permanent SVG geometry; the first well frame warms each pen sprite in separate tasks, and background grid drawing yields with resize cancellation. Native lazy logo loading avoids distant image decode. Local final Portfolio gates: 16 passed, 2 existing applicability skips; typecheck passed. Unit suite: 1,430 passed.
+
+Cloud run 38735404008 passed seven routes and every browser profile, but headless Portfolio canvas blocking remained above budget despite local TBT 0. Pen textures now resolve to reusable ImageBitmaps before animation, and decorative playback is capped at 24fps. Local browser gates: 16 passed, 2 existing applicability skips; 1,430 units passed. Failed CI Portfolio runs retain trace/devtools assets for diagnosis; passing runs discard extra trace files. Original assertions and all eight routes remain unchanged.
+
+Failed-run traces from 38737164865 localized the remaining long tasks to drawInkGrid's timer callbacks: 211–266ms wall time with roughly 1–2ms thread CPU, alongside virtualized GPU waits. The same seeded hand-ruled grid is now baked into lossless 2× WebP tiles (30KB desktop / 38KB phone), removing runtime grid canvas work. The live simulation remains; local visual review and 16 browser gates pass (2 existing applicability skips). Portfolio sitemap dates regenerated for the changed source document.

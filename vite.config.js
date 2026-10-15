@@ -41,7 +41,17 @@ function recoveryPage(server, directory, errorPage) {
 
 export default defineConfig({
   appType: 'mpa',
-  resolve: { dedupe: ['react', 'react-dom'] },
+  resolve: {
+    dedupe: ['preact'],
+    alias: [
+      { find: /^react-dom\/client$/, replacement: 'preact/compat/client' },
+      { find: /^react-dom\/server$/, replacement: 'preact-render-to-string' },
+      { find: /^react-dom$/, replacement: 'preact/compat' },
+      { find: /^react\/jsx-dev-runtime$/, replacement: 'preact/jsx-dev-runtime' },
+      { find: /^react\/jsx-runtime$/, replacement: 'preact/jsx-runtime' },
+      { find: /^react$/, replacement: 'preact/compat' },
+    ],
+  },
   plugins: [
     vibeDevPlugin(),
     novelChunksPlugin(import.meta.dirname),
@@ -70,6 +80,7 @@ export default defineConfig({
       },
     },
   ],
+  ssr: { noExternal: ['@phosphor-icons/react'] },
   test: {
     // Keep Playwright's browser specs out of Vitest's default *.spec.js
     // discovery. All existing pure/unit suites live under tests/.

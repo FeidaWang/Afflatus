@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
+import { getLocale } from '../lib/localeStore.js';
 import { App } from '../features/arena-journal/App.jsx';
 import '../features/arena-journal/styles.css';
 import './arena-layout.css';
@@ -11,8 +12,27 @@ const menuKey = document.querySelector('#afflatus-header .af-header-menu');
 if (languageKey && menuKey) languageKey.before(menuKey);
 
 // A non-secret UI flag; the independent BFF flag and data gate still apply.
-const Markets = (import.meta.env.VITE_VIBE_MARKETS_ENABLED === 'true' || import.meta.env.VITE_VIBE_MODELS_ENABLED === 'true')
-  ? lazy(() => import('../features/vibe-markets/Markets.jsx')) : null;
+const Markets = import.meta.env.VITE_VIBE_MARKETS_ENABLED === 'true'
+  ? lazy(() => import('../features/vibe-markets/Markets.jsx'))
+  : import.meta.env.VITE_VIBE_MODELS_ENABLED === 'true'
+    ? lazy(() => import('../features/vibe-markets/ModelPanel.jsx')) : null;
 const researchPanel = Markets ? locale => <Suspense fallback={null}><Markets locale={locale} /></Suspense> : null;
 
-createRoot(document.getElementById('root')).render(<React.StrictMode><App researchPanel={researchPanel} /></React.StrictMode>);
+const root = document.getElementById('root');
+const tree = <React.StrictMode><App researchPanel={researchPanel} /></React.StrictMode>;
+const locale = getLocale(document.documentElement.lang.startsWith('zh') ? 'zh' : 'en');
+function matchesSavedWorkspace() {
+  try {
+    const watchlist = localStorage.getItem('afflatus:journal-watchlist:v1');
+    if (watchlist !== null) {
+      const rendered = [...root.querySelectorAll('.stock-select .stock-name b')].map(node => node.textContent);
+      if (JSON.stringify(JSON.parse(watchlist)) !== JSON.stringify(rendered)) return false;
+    }
+    const split = localStorage.getItem('afflatus:journal-split:v1');
+    return split === null || Number(split) === Number(root.querySelector('.workspace-slider')?.getAttribute('aria-valuenow'));
+  } catch { return false; }
+}
+// Hydration intentionally skips mismatched attributes; saved personal layout
+// must be rendered fresh rather than inheriting the generic server defaults.
+if (root.dataset.prerenderedLocale === locale && matchesSavedWorkspace()) hydrateRoot(root, tree);
+else createRoot(root).render(tree);

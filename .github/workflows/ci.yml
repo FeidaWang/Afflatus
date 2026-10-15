@@ -48,6 +48,8 @@ jobs:
         run: npm run lint:i18n
 
       - name: Build
+        env:
+          VITE_VIBE_MODELS_ENABLED: 'true'
         run: npm run build
 
       - name: Bundle size budget
@@ -102,6 +104,8 @@ jobs:
         run: npx playwright install chromium webkit
 
       - name: Browser, keyboard, axe and visual gates
+        env:
+          VITE_VIBE_MODELS_ENABLED: 'true'
         # One browser worker per runner keeps heavy visual tests isolated while
         # the three device projects still execute in parallel.
         run: npm run test:e2e -- --project=${{ matrix.project }} --workers=1
@@ -134,6 +138,8 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+        env:
+          VITE_VIBE_MODELS_ENABLED: 'true'
 
       - name: Install Lighthouse Chromium
         run: npx playwright install chromium

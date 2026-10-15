@@ -2,7 +2,12 @@ import { test, expect } from '@playwright/test';
 
 // Mobile-first reader contract. Uses the project's isolated CI browsers.
 test('library opens a reader with reachable controls and returns to the same passage', async ({ page }) => {
+  let releaseToc;
+  const tocReady=new Promise(resolve=>{releaseToc=resolve;});
+  await page.route('**/novels-data/**/toc.json',async route=>{await tocReady;await route.continue();});
   await page.goto('/zh/serial.html');
+  await expect(page.locator('#continueReading')).toBeDisabled();
+  releaseToc();
   await expect(page.locator('#continueReading')).toBeVisible();
   await page.locator('#continueReading').click();
   await expect(page.locator('#chapterBody')).toContainText('顾星辞');
@@ -52,4 +57,18 @@ test('daily draw and private note survive a return visit without a birth profile
   await page.getByRole('button', { name: '今日', exact: true }).click();
   await page.locator('#obsDrawButton').click();
   await expect(page.locator('#drawText')).toHaveText(draw);
+});
+
+
+test('companion audio loads only when its dialog is opened', async ({page}) => {
+  const paths=[];
+  page.on('request',request=>paths.push(new URL(request.url()).pathname));
+  await page.goto('/zh/serial.html');
+  await page.locator('#continueReading').click();
+  await expect(page.locator('#chapterBody')).toContainText('顾星辞');
+  expect(paths).not.toContain('/audio/playlist.json');
+  await page.locator('[data-reader-dialog="audioDialog"]').click();
+  await expect(page.locator('#ambientPlayer')).toBeVisible();
+  expect(paths).toContain('/audio/playlist.json');
+  await expect(page.locator('#plToggle')).toHaveAttribute('aria-pressed','false');
 });

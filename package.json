@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "prebuild": "node scripts/subset-cjk-fonts.mjs && node scripts/generate-course-pages.mjs && npm run data:check && npm run site:check && npm run header:check && npm run css:check && npm run lint:i18n && npm run og:check && node scripts/build-sectors-observatory.mjs --check",
-    "build": "vite build && node scripts/localize-site.mjs --out-dir dist && node scripts/validate-emitted-seo.mjs --out-dir dist",
+    "build": "vite build && node scripts/localize-site.mjs --out-dir dist && node scripts/prerender-apps.mjs && node scripts/optimize-static-output.mjs dist && node scripts/validate-emitted-seo.mjs --out-dir dist",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
     "pretest:e2e": "npm run build",
@@ -46,6 +46,7 @@
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "astronomy-engine": "^2.1.19",
+    "preact": "11.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "web-vitals": "^6.0.0"
@@ -58,6 +59,8 @@
     "linkinator": "^8.0.3",
     "marked": "^18.0.9",
     "parse5": "^8.0.0",
+    "preact-render-to-string": "6.8.1",
+    "sharp": "0.35.5",
     "typescript": "^5.7.3",
     "vite": "^8.0.14",
     "vitest": "^4.1.9"

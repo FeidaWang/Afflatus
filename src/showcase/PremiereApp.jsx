@@ -12,8 +12,8 @@ const work = [
 function SiteLink({ href, language, children }) {
   return <a className="text-link" href={navigationHref(href, language)}><span>{children}</span><ArrowRight aria-hidden="true" /></a>;
 }
-export function App() {
-  const language = getLocale(document.documentElement.lang.startsWith('zh') ? 'zh' : 'en');
+export function App({ language: initialLanguage } = {}) {
+  const language = initialLanguage || getLocale(document.documentElement.lang.startsWith('zh') ? 'zh' : 'en');
   const zh = language === 'zh';
   return <>
     <a className="skip-link" href="#home-content">{zh ? '跳至主要内容' : 'Skip to content'}</a>

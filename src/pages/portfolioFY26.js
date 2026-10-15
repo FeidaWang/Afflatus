@@ -1,7 +1,8 @@
 import '../lib/nav.js';
 import { portfolioLogo } from './portfolioLogos.js';
-import { seeded, drawPen, drawInkGrid, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
-import { TetrisScript, drawWell, drawWellCells, shapeCells, TYPES } from './portfolioTetris.js';
+import { seeded, warmPenSprite, drawPen, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
+import { createProgressiveGame } from './portfolioGame.js';
+import { drawWell, drawWellCells, shapeCells, TYPES } from './portfolioTetris.js';
 
 // FY 2025-26 trading record, derived from the Stake financial-year report pack
 // (1 Jul 2025 - 30 Jun 2026). Only percentages are published; no dollar amounts.
@@ -11,6 +12,9 @@ const isZh = document.documentElement.lang.toLowerCase().startsWith('zh');
 const L = (en, zh) => (isZh ? zh : en);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const yieldToBrowser = () => new Promise(resolve => setTimeout(resolve, 0));
+let burstCanvas = null, burstParts = [], burstRaf = 0;
+const lastPlayed = new WeakMap();
 const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 function localizeMarkup() {
@@ -74,11 +78,10 @@ const scrolly = $('#pfScrolly');
 const steps = $$('.pf-step', scrolly);
 const ctx = canvas.getContext('2d');
 const rnd = seeded(20260630);
-const gridCanvas = $('#pfGrid');
 const tiles = FILLS.map((fill, i) => ({ ...fill, i, variant: i % 12, rot: (rnd() - .5) * .07, delay: rnd() }));
 let W = 0, H = 0, S = 12, layouts = [], labelSets = [];
 // Opening: two self-playing wells either side of the headline.
-const wideGames = [new TetrisScript({ seed: 20250701, length: 240 }), new TetrisScript({ seed: 20260630, length: 240 })];
+const wideGames = [];
 const phoneGames = new Map();
 let heroGames = wideGames;
 let wells = [], heroT = 26, heroFrames = [];
@@ -93,14 +96,6 @@ function buildLayouts() {
   canvas.width = W * dpr; canvas.height = H * dpr;
   canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  if (gridCanvas) {
-    gridCanvas.width = W * dpr; gridCanvas.height = H * dpr;
-    gridCanvas.style.width = `${W}px`; gridCanvas.style.height = `${H}px`;
-    const g = gridCanvas.getContext('2d');
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.clearRect(0, 0, W, H);
-    drawInkGrid(g, W, H, { step: W < 720 ? 16 : 20, major: 4, seed: 7, strength: .8 });
-  }
   const narrow = W < 720;
   // hero wells: in the margins on wide screens, faint behind the headline on narrow ones
   const side = W >= 1000 ? (W - Math.min(860, W * .6)) / 2 : W * .5;
@@ -111,11 +106,12 @@ function buildLayouts() {
     { x: Math.round(side / 2 - wellS * 5), y: wy, S: wellS, cols: 10, rows: 20, seed: 3, label: L('BUYS', '买入') },
     { x: Math.round(W - side / 2 - wellS * 5), y: wy, S: wellS, cols: 10, rows: 20, seed: 9, label: L('SELLS', '卖出') },
   ];
+  if (W >= 720 && !wideGames.length) wideGames.push(...[20250701,20260630].map(seed=>createProgressiveGame({seed,length:240},refreshHeroGames)));
   heroGames = wideGames;
   if (W < 720) {
     // phones: one wide, shallow well in the band above the headline
     const pS = 14, pCols = Math.floor((W - 40) / pS), pRows = clamp(Math.floor((H * .5 - 230) / pS), 6, 11);
-    if (!phoneGames.has(pCols * 100 + pRows)) phoneGames.set(pCols * 100 + pRows, new TetrisScript({ cols: pCols, rows: pRows, seed: 2026, length: 300, ceiling: .8 }));
+    if (!phoneGames.has(pCols * 100 + pRows)) phoneGames.set(pCols * 100 + pRows, createProgressiveGame({ cols: pCols, rows: pRows, seed: 2026, length: 300, ceiling: .8 },refreshHeroGames));
     heroGames = [phoneGames.get(pCols * 100 + pRows)];
     wells = [{ x: Math.round((W - pCols * pS) / 2), y: 44, S: pS, cols: pCols, rows: pRows, seed: 5, label: L('BUYS · SELLS', '买入 · 卖出') }];
   } else if (W < 1000) { wells[0].x = Math.round(W * .03); wells[1].x = Math.round(W * .97 - wellS * 10); }
@@ -244,9 +240,34 @@ function renderLabels() {
   });
 }
 
-let stepFloat = 0, drawn = -1;
+let stepFloat = 0, drawn = -1, heroReady=false, heroVersion=0;
 const WELL_FONT = `600 ${W < 720 ? 10 : 11}px "Anthropic Sans", Inter, system-ui, sans-serif`;
 // Where each execution square sits while the opening games are on screen.
+async function refreshHeroGames() {
+  const version=++heroVersion;
+  heroReady=false;
+  heroFrames=heroGames.map(game=>game.frame(heroT));
+  if(!heroGames.every(game=>game.complete))return;
+  // Rasterize each reusable pen texture in a separate task before drawing the
+  // first populated well. Animation can then reuse the warmed sprite cache.
+  const textures=new Map();
+  const add=(color,variant,mode)=>textures.set(`${color}|${variant}|${mode}`,[color,variant,mode]);
+  for(const frame of heroFrames) {
+    add(PIECE_COLORS[frame.next],5,'ghost');
+    for(const cell of frame.cells) {
+      add(PIECE_COLORS[cell.type],cell.id%12,cell.mode);
+      if(cell.outlineUnder)add(PIECE_COLORS[cell.type],cell.id%12,'ghost');
+    }
+  }
+  for(const texture of textures.values()) {
+    if(version!==heroVersion)return;
+    await warmPenSprite(...texture); await yieldToBrowser();
+  }
+  if(version!==heroVersion)return;
+  heroReady=true;
+  canvas.dataset.simulationReady='true';
+  drawn=-1;draw();startHero();
+}
 function heroLayout() {
   const out = new Array(tiles.length);
   let k = 0;
@@ -266,7 +287,7 @@ function drawHero(alpha = 1) {
   wells.forEach((w, wi) => {
     drawWell(ctx, { ...w, alpha: alpha * (W < 1000 && W >= 720 ? .5 : 1), lines: heroFrames[wi].lines, next: heroFrames[wi].next, colors: PIECE_COLORS, font: WELL_FONT });
   });
-  if (alpha >= .999) wells.forEach((w, wi) => drawWellCells(ctx, heroFrames[wi], { ...w, colors: PIECE_COLORS, alpha: faint }));
+  if (alpha >= .999 && heroReady) wells.forEach((w, wi) => drawWellCells(ctx, heroFrames[wi], { ...w, colors: PIECE_COLORS, alpha: faint }));
 }
 function draw() {
   if (!layouts.length) return;
@@ -301,6 +322,7 @@ let heroRaf = 0, heroLast = 0;
 function heroTick(now) {
   heroRaf = 0;
   if (stepFloat > .0005 || scrollY > scrolly.offsetTop + innerHeight) return;
+  if(heroLast&&now-heroLast<1000/24){heroRaf=requestAnimationFrame(heroTick);return;}
   const dt = heroLast ? Math.min(64, now - heroLast) : 16;
   heroLast = now;
   heroT += dt * .00105;
@@ -309,7 +331,7 @@ function heroTick(now) {
   heroRaf = requestAnimationFrame(heroTick);
 }
 function startHero() {
-  if (reduced.matches || heroRaf) return;
+  if (!heroReady || reduced.matches || heroRaf) return;
   heroLast = 0;
   heroRaf = requestAnimationFrame(heroTick);
 }
@@ -338,6 +360,7 @@ function setup() { buildLayouts(); drawn = -1; onScroll(); draw(); }
 setup();
 addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(setup, 120); });
 addEventListener('scroll', () => requestAnimationFrame(onScroll), { passive: true });
+await yieldToBrowser();
 
 /* ------------------------------------------------------------- hero count */
 function countUp(el, to, { decimals = 1, prefix = '', suffix = '%', duration = 1600 } = {}) {
@@ -359,6 +382,15 @@ const onView = (el, fn, threshold = .3) => {
   }), { threshold });
   io.observe(el);
 };
+// Keep viewBox geometry stable; calculate decorative ink only on approach.
+function deferChart(svg,create) {
+  const observer=new IntersectionObserver(entries=>{
+    if(entries.some(entry=>entry.isIntersecting)) {
+      observer.disconnect(); void create(svg);
+    }
+  },{rootMargin:'800px'});
+  observer.observe(svg);
+}
 $$('[data-count]').forEach(el => onView(el, () => countUp(el, +el.dataset.count, {
   decimals: +(el.dataset.decimals ?? 1), prefix: el.dataset.prefix || '', suffix: el.dataset.suffix ?? '%',
 }), .6));
@@ -439,14 +471,14 @@ function highlightChart(h, tone, idx, rise) {
 }
 
 const hlHost = $('#pfHighlights');
-HIGHLIGHTS.forEach((h, idx) => {
+for (const [idx,h] of HIGHLIGHTS.entries()) {
   const theme = THEMES[TICKER_THEME[h.t]];
   const card = document.createElement('article');
   card.className = 'pf-hl pf-reveal';
   card.style.setProperty('--tone', theme.color);
   card.style.setProperty('--i', idx);
   const rise = 150 - h.r * 3.6;
-  const chart = highlightChart(h, theme.color, idx, rise);
+  const chart = `<svg class="pf-hl-chart" viewBox="0 0 300 170" aria-hidden="true"></svg>`;
   card.innerHTML = `
     <header><span class="pf-hl-rank">${String(idx + 1).padStart(2, '0')}</span><span class="pf-hl-theme"></span></header>
     <h3><span class="pf-hl-logo">${portfolioLogo(h.t, { decorative: true })}</span><span class="pf-hl-name"></span></h3>
@@ -460,21 +492,31 @@ HIGHLIGHTS.forEach((h, idx) => {
   const span = h.from === h.to ? fmtDate(h.from) : `${fmtDate(h.from)} → ${fmtDate(h.to)}`;
   card.querySelector('.pf-hl-dates').textContent = isZh ? `2026 年 ${span}` : `${span} 2026`;
   card.querySelector('.pf-hl-copy').textContent = isZh ? h.zh : h.en;
+  deferChart(card.querySelector('.pf-hl-chart'),node=>{
+    const template=document.createElement('template');
+    template.innerHTML=highlightChart(h,theme.color,idx,rise);
+    node.replaceChildren(...template.content.firstElementChild.childNodes);
+  });
   hlHost.append(card);
   onView(card, node => node.classList.add('is-in'), .25);
   const num = card.querySelector('[data-count]');
   onView(num, () => countUp(num, h.r, { prefix: '+' }), .6);
-});
+  await yieldToBrowser();
+}
+
+await yieldToBrowser();
 
 /* --------------------------------------------------------- scatter chart */
 const SVGNS = 'http://www.w3.org/2000/svg';
 const svgEl = (name, attrs = {}) => { const el = document.createElementNS(SVGNS, name); Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v)); return el; };
-function buildScatter() {
+async function buildScatter(svg) {
   const host = $('#pfScatter');
   const tip = $('#pfScatterTip');
   const Wv = 960, Hv = 500, m = { l: 64, r: 28, t: 26, b: 64 };
   const r = seeded(63);
-  const svg = svgEl('svg', { viewBox: `0 0 ${Wv} ${Hv}`, role: 'img', 'aria-label': L('Profitable round trips by holding period and return', '盈利往返交易：持有天数与收益率') });
+  svg.removeAttribute('aria-hidden');
+  svg.setAttribute('role','img');
+  svg.setAttribute('aria-label',L('Profitable round trips by holding period and return', '盈利往返交易：持有天数与收益率'));
   const xs = d => m.l + Math.log1p(d) / Math.log1p(180) * (Wv - m.l - m.r);
   const ys = v => Hv - m.b - v / 35 * (Hv - m.t - m.b);
   // one-week band: a loose marker wash laid down in vertical passes
@@ -504,7 +546,7 @@ function buildScatter() {
   svg.append(bandLabel);
   const dots = svgEl('g', { class: 'pf-sc-dots' });
   const jitter = seeded(7);
-  ROUND_TRIPS.forEach(([t, b, s, d, v], idx) => {
+  for (const [idx,[t,b,s,d,v]] of ROUND_TRIPS.entries()) {
     const tone = THEMES[TICKER_THEME[t] || 'other'].color;
     const g = svgEl('g', { class: 'pf-sc-dot', style: `--d:${idx * 18}ms` });
     const cx = xs(d) + (jitter() - .5) * 10, cy = ys(v);
@@ -533,7 +575,8 @@ function buildScatter() {
     });
     g.addEventListener('pointerleave', () => { tip.hidden = true; });
     dots.append(g);
-  });
+    if (idx % 4 === 3) await yieldToBrowser();
+  }
   // annotate the two headline trades in handwriting, with pen arrows
   [['SNDK', 3, 33.1, 58, 30], ['MRVL', 7, 32.3, 70, 44]].forEach(([t, d, v, dx, dy]) => {
     const x = xs(d), y = ys(v);
@@ -546,7 +589,6 @@ function buildScatter() {
     dots.append(arrow, tx);
   });
   svg.append(dots);
-  host.prepend(svg);
   onView(host, () => host.classList.add('is-in'), .3);
   const legend = $('#pfScatterLegend');
   ['mem', 'cpu', 'net', 'kor', 'fab', 'opt', 'space', 'other'].forEach(k => {
@@ -557,7 +599,10 @@ function buildScatter() {
     legend.append(sp);
   });
 }
-buildScatter();
+const scatterPlaceholder=svgEl('svg',{viewBox:'0 0 960 500','aria-hidden':'true'});
+$('#pfScatter').prepend(scatterPlaceholder);
+deferChart(scatterPlaceholder,buildScatter);
+await yieldToBrowser();
 
 /* ----------------------------------------------------- cycle journeys bars */
 const JOURNEYS = [
@@ -600,11 +645,11 @@ JOURNEYS.forEach((j, idx) => {
 /* ---------------------------------------------------- closing book waffle */
 const BOOK = [['DRAM', 46, 46.39, 'mem', THEMES.mem.color], ['MU', 30, 30.21, 'mem', '#b3a9ef'], ['MRVL', 24, 23.39, 'net', THEMES.net.color]];
 const waffle = $('#pfBookWaffle');
-{
+async function buildWaffle(svg) {
   // 10 x 10 face of hand-inked squares, like one side of a marker-drawn cube.
   const r = seeded(630), cell = 46, gap = 0;
   let idx = 0, body = '';
-  BOOK.forEach(([t, n, pct, theme, color]) => {
+  for (const [t,n,pct,theme,color] of BOOK) {
     for (let k = 0; k < n; k++, idx++) {
       const c = idx % 10, row = Math.floor(idx / 10), x = c * (cell + gap) + 3, y = row * (cell + gap) + 3, s = cell - 6;
       let g = `<path d="${polyD(wobblyQuad(x, y, s, s, r, 1.2))}" opacity="${(.28 + r() * .14).toFixed(2)}"/>`;
@@ -616,11 +661,14 @@ const waffle = $('#pfBookWaffle');
           : `<path d="${inkLineD(x - 1, y + off, x + s + 1, y + off + (r() - .5) * 3, s / 2.6, r, { taper: .1 })}" opacity="${(.36 + r() * .46).toFixed(2)}"/>`;
       }
       const edges = penSquareEdges(x, y, s, s, r, 3.5).map(([p1, p2]) => `<path class="pf-wf-edge" d="${inkLineD(p1[0], p1[1], p2[0], p2[1], 1.5, r, { taper: .3 })}" style="fill:${shade(color, .55)}"/>`).join('');
+      if (idx % 4 === 3) await yieldToBrowser();
       body += `<g class="pf-wf-cell" style="--d:${idx * 9}ms;--r:${((idx * 37) % 7 - 3) * .5}deg;fill:${color}"><g filter="url(#pf-mk-marker)">${g}</g>${edges}</g>`;
     }
-  });
-  waffle.innerHTML = `<svg viewBox="0 0 466 466" aria-hidden="true">${body}</svg>`;
+  }
+  svg.innerHTML = body;
 }
+waffle.innerHTML='<svg viewBox="0 0 466 466" aria-hidden="true"></svg>';
+deferChart(waffle.firstElementChild,buildWaffle);
 onView(waffle, () => waffle.classList.add('is-in'), .3);
 const bookLegend = $('#pfBookLegend');
 BOOK.forEach(([t, , pct, , color]) => {
@@ -680,13 +728,16 @@ function ideaCard(host, [ticker, name, sector, thesis, watch], idx, tone, owner)
   return card;
 }
 const ideaHost = $('#pfIdeas');
-IDEAS.forEach((idea, idx) => ideaCard(ideaHost, idea, idx, IDEA_TONES[idx], 'astra'));
+for (const [idx,idea] of IDEAS.entries()) {
+  ideaCard(ideaHost, idea, idx, IDEA_TONES[idx], 'astra');
+  await yieldToBrowser();
+}
 const claudeHost = $('#pfIdeasClaude');
 if (claudeHost) {
-  CLAUDE_IDEAS.forEach((idea, idx) => {
+  for (const [idx,idea] of CLAUDE_IDEAS.entries()) {
     const card = ideaCard(claudeHost, idea, idx, THEMES[idea[5]].color, 'claude');
     const twin = astraIndex.get(idea[0]);
-    if (twin === undefined) return;
+    if (twin === undefined) { await yieldToBrowser(); continue; }
     card.classList.add('is-shared');
     ideaCards.astra.get(idea[0])?.classList.add('is-shared');
     const stamp = document.createElement('button');
@@ -698,12 +749,12 @@ if (claudeHost) {
     const play = () => celebrate(card, ideaCards.astra.get(idea[0]), THEMES[idea[5]].color);
     stamp.addEventListener('click', play);
     card.addEventListener('pointerenter', ev => { if (ev.pointerType === 'mouse') play(); });
-  });
+    await yieldToBrowser();
+  }
 }
 
 /* ------------------------------------------------ easter egg: shared picks */
 // A pen loop drawn around both cards, and a handful of tetrominoes tossed into the air.
-let burstCanvas = null, burstParts = [], burstRaf = 0;
 function ring(card, tone) {
   if (!card) return;
   card.querySelector('.pf-idea-ring')?.remove();
@@ -761,7 +812,6 @@ function burstTick() {
   burstRaf = burstParts.length ? requestAnimationFrame(burstTick) : 0;
   if (!burstRaf) g.clearRect(0, 0, innerWidth, innerHeight);
 }
-const lastPlayed = new WeakMap();
 function celebrate(card, twin, tone) {
   const now = performance.now();
   if (now - (lastPlayed.get(card) || 0) < 1800) return;
@@ -797,12 +847,13 @@ if (finale) {
     finale.style.width = `${Wf}px`; finale.style.height = `${Hf}px`;
     fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     geo = { x: Math.round((Wf - cols * S2) / 2), y: 3 * S2, S: S2, cols, W: Wf, H: Hf };
-    game = new TetrisScript({ cols, rows, seed: 2027, length: 320, ceiling: .9 });
+    game = visible ? createProgressiveGame({ cols, rows, seed: 2027, length: 320, ceiling: .9 },()=>{finale.dataset.simulationReady='true';fDraw();}) : null;
     fDraw();
   };
   const fTick = now => {
     fRaf = 0;
     if (!visible) return;
+    if(fLast&&now-fLast<1000/24){fRaf=requestAnimationFrame(fTick);return;}
     fT += (fLast ? Math.min(64, now - fLast) : 16) * .0011;
     fLast = now;
     fDraw();
@@ -810,6 +861,7 @@ if (finale) {
   };
   new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting;
+    if (visible && !game) fSetup();
     if (visible && !reduced.matches && !fRaf) { fLast = 0; fRaf = requestAnimationFrame(fTick); }
   }).observe(finale);
   addEventListener('scroll', () => { if (visible && reduced.matches) fDraw(); }, { passive: true });

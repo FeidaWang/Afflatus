@@ -119,3 +119,15 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 ## Vibe-Trading research integration
 
 Private daily data adapters, technical indicators, retrospective pattern helpers and P2 research tools use HKUDS/Vibe-Trading at commit 251b094320c1f97d1486626d3618113526914d4c. The English sentiment lexicon and tokenizer in src/features/vibe-markets/sentiment.js are derived from agent/src/tools/sentiment_tool.py, Copyright (c) 2026 Vibe-Trading Contributors, MIT License. Upstream MIT license and root NOTICE: integrations/vibe-us-crypto-kit/licenses/. No upstream font files are included. Original source remains an ignored, pinned local reference; code permission does not establish market-data redistribution permission. The Bitcoin Fear & Greed Index is attributed to Alternative.me beside its displayed data.
+
+## Lightweight component rendering
+
+The frontend resolves React-compatible component imports through Preact 11.0.1
+(`preact/compat`); the original React packages remain for package peer contracts.
+Preact is MIT licensed: https://github.com/preactjs/preact/blob/main/LICENSE.
+Build-time HTML rendering uses `preact-render-to-string`, also MIT licensed.
+
+`public/assets/fonts/labs-serif-ui.woff2` is a further subset of the existing
+OFL Noto Serif SC reading font. The original font and license remain available
+for complete novel text. Reproduction: `scripts/subset-labs-font.py` with
+fontTools 4.67.0 and its WOFF dependencies. No new font or paid service is used.

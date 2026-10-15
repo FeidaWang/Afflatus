@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { act, createElement } from 'react';
+import { createElement } from 'react';
+import { act } from 'preact/test-utils';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../src/showcase/PremiereApp.jsx';

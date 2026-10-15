@@ -4,6 +4,7 @@ import {
   readFileSync,
   readdirSync,
   unlinkSync,
+  renameSync,
 } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -87,5 +88,22 @@ for (let attempt = 1; attempt <= 2; attempt += 1) {
     continue;
   }
   break;
+}
+// Keep failed Portfolio traces for diagnosis without adding large trace
+// uploads to passing releases. The assertion result still controls exit status.
+if(process.env.CI==='true') {
+  const {getLhrFilenamePrefix}=await import('../node_modules/lighthouse/report/generator/file-namer.js');
+  const prefixes=new Set();
+  if(result.status!==0)for(const file of readdirSync(reportDir)) {
+    if(!/^lhr-.*\.json$/.test(file))continue;
+    const report=JSON.parse(readFileSync(new URL(`../.lighthouseci/${file}`,import.meta.url),'utf8'));
+    if(new URL(report.requestedUrl).pathname==='/portfolio.html')prefixes.add(getLhrFilenamePrefix(report));
+  }
+  for(const file of readdirSync(root)) {
+    if(!/^localhost_\d{4}-\d{2}-\d{2}_.*\.(?:trace|devtoolslog)\.json$/.test(file))continue;
+    const source=new URL(`../${file}`,import.meta.url);
+    if([...prefixes].some(prefix=>file.startsWith(prefix+'-')))renameSync(source,new URL(`../.lighthouseci/${file}`,import.meta.url));
+    else unlinkSync(source);
+  }
 }
 process.exit(result.status ?? 1);

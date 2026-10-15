@@ -1,3 +1,4 @@
+import {getLocale} from '../../lib/localeStore.js';
 import React,{useEffect,useRef,useState} from 'react';
 import {MagnifyingGlass,Plus,X,Check,ArrowDown,ArrowUp} from '@phosphor-icons/react';
 import {JOURNAL_STOCKS,INITIAL_WATCHLIST,searchStocks} from './journalStocks.js';
@@ -16,8 +17,8 @@ const strings={
   en:{kicker:'WATCHLIST / COMPANY JOURNAL',headline:'Good companies, in focus.',lead:'Less noise. More attention to the companies creating value.',mine:'My watchlist',add:'Add a stock',company:'Company',price:'Price USD',change:'Day change',focus:'Research focus',chartNote:'Daily · USD · Source: Twelve Data',notice:'Quotes from Finnhub and daily candles from Twelve Data; they may be delayed. For observation only, not investment advice.',quoteUnavailable:'Quote unavailable right now',modalTitle:'Your next company, in view.',modalLead:'Search a ticker or company, then add it to your list.',modalSearch:'Search a ticker or company, e.g. AAPL',added:'Watching',join:'Add',noResults:'No matching companies',tryAgain:'Try another ticker or company name.',empty:'Your watchlist is empty',emptyLead:'Use “Add a stock” above to start following a company.'},
 };
 
-export function App({researchPanel=null}={}){
-  const[locale,setLocale]=useState(()=>{const fixed=document.documentElement.dataset.afflatusLocale;return fixed==='en'||fixed==='zh'?fixed:(document.documentElement.lang.startsWith('zh')?'zh':'en');}),[selected,setSelected]=useState(JOURNAL_STOCKS[3]),[period,setPeriod]=useState('M');
+export function App({researchPanel=null,initialLocale="en"}={}){
+  const[locale,setLocale]=useState(()=>{if(typeof document==='undefined')return initialLocale;const fixed=document.documentElement.dataset.afflatusLocale;return fixed==='en'||fixed==='zh'?fixed:getLocale(document.documentElement.lang.startsWith('zh')?'zh':'en');}),[selected,setSelected]=useState(JOURNAL_STOCKS[3]),[period,setPeriod]=useState('M');
   const[watchlist,setWatchlist]=useState(()=>{try{const saved=JSON.parse(localStorage.getItem('afflatus:journal-watchlist:v1'));if(Array.isArray(saved))return [...new Set(saved.filter(sym=>JOURNAL_STOCKS.some(asset=>asset.symbol===sym)))];}catch{}return INITIAL_WATCHLIST;}),[sort,setSort]=useState(null);
   const[modalOpen,setModalOpen]=useState(false),[modalQuery,setModalQuery]=useState(''),[toast,setToast]=useState('');
   // symbol → {status:'loading'|'ok'|'error', quote} and {status, candles}.

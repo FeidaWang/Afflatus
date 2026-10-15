@@ -3,9 +3,8 @@
    so the reader can adopt a prerendered chapter's DOM as-is. Sys blocks render
    as a "cross-world terminal" card: a leading 【…】 becomes the title chip, the
    rest is the screen body. Styling lives in serial.css (.sys / .sys-head). */
-export function escapeHtml(value) {
-  return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
+import { escapeHtml } from './escapeHtml.js';
+export { escapeHtml };
 
 export function renderNovelBlocks(blocks) {
   return (blocks || []).map((block, blockIndex) => {

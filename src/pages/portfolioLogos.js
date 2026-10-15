@@ -29,7 +29,7 @@ const LOGOS = {
 export function portfolioLogo(symbol, { decorative = false } = {}) {
   const [name, src, shape] = LOGOS[symbol] || [];
   if (!src) return `<span class="pa-logo-fallback">${symbol}</span>`;
-  return `<img class="pa-brand-logo pa-brand-logo--${shape}" data-brand="${symbol}" src="${src}" alt="${decorative ? '' : `${name} logo`}" width="124" height="32" decoding="async">`;
+  return `<img class="pa-brand-logo pa-brand-logo--${shape}" data-brand="${symbol}" src="${src}" alt="${decorative ? '' : `${name} logo`}" width="124" height="32" decoding="async" loading="lazy">`;
 }
 
 export function portfolioLogoName(symbol) {
