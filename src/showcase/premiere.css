@@ -1,4 +1,4 @@
-@font-face { font-family: "Newsreader"; src: url("/assets/fonts/newsreader-var.woff2") format("woff2"); font-weight: 200 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Newsreader"; src: url("/assets/fonts/newsreader-var.woff2") format("woff2"); font-weight: 200 800; font-style: normal; font-display: optional; }
 :root {
   color-scheme: light;
   --home-paper: #f0eee6; --home-ink: #111110; --home-muted: #5c5b55; --home-line: #ceccc3;

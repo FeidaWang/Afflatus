@@ -483,6 +483,8 @@ export function transformAdaptiveDocument(source, route) {
   const document = parse(source);
   const html = element(document, 'html');
   setAttr(html, 'data-afflatus-locale', 'adaptive');
+  // Default documents start with coherent visible copy, before enhancement.
+  localizeDataAttributes(document, route.id === 'serial' ? 'zh' : 'en');
   localizeInternalNavigation(document, null);
   injectStaticNavigation(document, route, null);
   convertLanguageLinks(document, route, null);
@@ -701,7 +703,15 @@ export function transformNovelPageDocument(source, catalog, entry, chapter, loca
     markChineseOnlyLanguage(languageLink, readerPath({ ...routeInput, locale: 'zh' }));
   }
   const body = element(document, 'body');
-  if (body) setAttr(body, 'data-reader-route', chapter ? 'chapter' : 'book');
+  if (body) {
+    setAttr(body, 'data-reader-route', chapter ? 'chapter' : 'book');
+    setAttr(body, 'data-reader-view', chapter ? 'reading' : 'library');
+    if (!chapter) {
+      // Enhancement starts on the shelf, but a no-JS book landing must still
+      // expose its prerendered introduction and complete chapter links.
+      setHtmlFragmentAtEnd(body, '<noscript><style>body.reader-enhanced[data-reader-route="book"][data-reader-view="library"] .hero,body.reader-enhanced[data-reader-route="book"][data-reader-view="library"] .reader-shell{display:block}</style></noscript>');
+    }
+  }
   setNovelJsonLd(document, entry, chapter, fixedLocale);
   return serialize(document);
 }

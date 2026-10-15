@@ -30,5 +30,8 @@ test('Serial: chapter link opens independently and static chapter remains readab
  await expect(staticPage.locator('#readerNormal')).toHaveAttribute('data-prerendered','chapter');
  expect((await staticPage.locator('#chapterBody').innerText()).length).toBeGreaterThan(1000);
  await expect(staticPage.locator('.chapter-nav a').first()).toHaveAttribute('href',/\/1\/$/);
+ await staticPage.goto(`${baseURL}/zh/novels/wanjie-zhongchun/`,{waitUntil:'domcontentloaded'});
+ await expect(staticPage.locator('#novelTitle')).toBeVisible();
+ await expect(staticPage.locator('#chapterBody .prerender-toc a').first()).toBeVisible();
  await nojs.close();
 });

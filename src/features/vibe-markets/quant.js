@@ -17,6 +17,8 @@ const names = {
   PERPETUAL_DATA_REQUIRED: ['Historical perpetual risk inputs are required.', '需要真实永续历史风险数据。'],
   VOLUME_UNIT_REQUIRED: ['The source has not established the required volume unit.', '数据源未确定所需的成交量单位。'],
   INSUFFICIENT_HISTORY: ['There is not enough complete history.', '完整历史数据不足。'], SOURCE_UNAVAILABLE: ['The source is unavailable.', '数据源暂不可用。'],
+  RATE_LIMITED: ['Too many requests. Please wait a moment and try again.', '请求过于频繁，请稍后再试。'],
+  RATE_LIMIT_UNAVAILABLE: ['Calculations are temporarily unavailable. Please try again later.', '计算暂不可用，请稍后重试。'],
   FEATURE_DISABLED: ['The online research service is not enabled. Calculations are unavailable.', '线上研究服务尚未启用，计算暂不可用。'],
   SERVICE_NOT_CONFIGURED: ['The research service is not connected. Calculations are unavailable.', '研究服务尚未连接，计算暂不可用。'],
   PRIVATE_RESEARCH_ONLY: ['This calculation requires authorized access.', '此计算需要已授权的访问权限。'],
@@ -40,14 +42,14 @@ const names = {
 };
 const node = (tag, text, className) => { const el = document.createElement(tag); if (text !== undefined) el.textContent = text; if (className) el.className = className; return el; };
 
-export function mountQuant(root, instrument, { locale = 'en', getHeaders = () => ({}), days = 365 } = {}) {
+export function mountQuant(root, instrument, { locale = 'en', getHeaders = () => ({}), days = 365, modelsOnly = false } = {}) {
   const zh = locale === 'zh', label = key => names[key]?.[zh ? 1 : 0] || key.replaceAll('_', ' ');
   let active, jobId, authHeaders, disposed = false;
   const heading = node('h3', zh ? '量化研究' : 'Quantitative research');
   const controls = node('div', undefined, 'vibe-markets__controls');
   const selectLabel = node('label', zh ? '计算模块' : 'Calculation'), select = node('select');
   select.setAttribute('aria-label', selectLabel.textContent);
-  for (const module of applicableQuantModules(instrument)) { const option = node('option', label(module)); option.value = module; select.append(option); }
+  for (const module of applicableQuantModules(instrument).filter(module => !modelsOnly || ['option_model','option_payoff','catalogue'].includes(module))) { const option = node('option', label(module)); option.value = module; select.append(option); }
   const modelsEnabled = import.meta.env.VITE_VIBE_MODELS_ENABLED === 'true';
   const instant = () => modelsEnabled && ['option_model', 'option_payoff', 'catalogue'].includes(select.value);
   if (modelsEnabled) select.value = applicableQuantModules(instrument).includes('option_model') ? 'option_model' : 'catalogue';

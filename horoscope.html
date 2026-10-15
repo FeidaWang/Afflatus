@@ -160,7 +160,7 @@
 <link rel="preload" href="/assets/fonts/anthropic-sans-roman.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/styles/shared-header.css">
 </head>
-<body class="horoscope-page observatory-page" data-lab-theme="night">
+<body class="horoscope-page observatory-page" data-observatory-view="today" data-lab-theme="night">
 <script>try{if(localStorage.getItem('afflatus-horo:theme')==='paper')document.body.dataset.labTheme='paper';}catch(e){}</script>
 <!-- shared-header:start -->
 <header id="afflatus-header" data-afflatus-header>
@@ -184,7 +184,7 @@
   <section id="observatoryToday" class="obs-today" aria-labelledby="obsTitle">
     <div class="obs-topline"><p id="obsDateLabel"></p><button id="obsTheme" type="button" aria-label="切换日间模式" data-aria-en="Switch to day mode" data-aria-zh="切换日间模式" aria-pressed="true"><img src="/assets/labs/icons/moon.svg" width="22" height="22" alt=""></button></div>
     <nav id="obsDates" class="obs-dates" aria-label="最近七天" data-aria-en="Last seven days" data-aria-zh="最近七天"></nav>
-    <div class="obs-hero"><img src="/assets/labs/observatory-moon.webp" class="obs-moon" width="600" height="660" alt="" aria-hidden="true"><p class="obs-eyebrow" data-en="A MOMENT FOR YOU" data-zh="今日 · 给自己的片刻">今日 · 给自己的片刻</p><h1 id="obsTitle">把心事放轻。</h1><p id="obsAction" class="obs-action"></p></div>
+    <div class="obs-hero"><img src="/assets/labs/observatory-moon.webp" class="obs-moon" width="600" height="660" alt="" aria-hidden="true"><p class="obs-eyebrow" data-en="A MOMENT FOR YOU" data-zh="今日 · 给自己的片刻">今日 · 给自己的片刻</p><h1 id="obsTitle" data-en="Take a moment for yourself." data-zh="把心事放轻。">Take a moment for yourself.</h1><p id="obsAction" class="obs-action"></p></div>
     <button id="obsWriteNote" class="obs-primary" type="button" data-en="Leave a note for today" data-zh="留一句今日手记">留一句今日手记</button>
     <p class="obs-caption" data-en="Set down a thought. Let today rest here." data-zh="收起一个念头，让今天到这里。">收起一个念头，让今天到这里。</p>
     <div class="obs-rows">

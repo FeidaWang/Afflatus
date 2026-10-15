@@ -18,6 +18,8 @@ function recordRequests(page) {
 async function openReader(page, path) {
   await page.goto(path, { waitUntil: 'load' });
   await expect(page.locator('body')).toHaveAttribute('data-reader-view', 'reading');
+  // The view now exists in static HTML; await actual enhancement readiness.
+  await expect(page.locator('body')).toHaveAttribute('data-reader-ready', 'true');
 }
 
 test('a chapter page reads its prerendered body without downloading the book', async ({ page }) => {
@@ -70,6 +72,11 @@ test('a failed data request keeps the prerendered chapter on screen', async ({ p
   await expect(page.locator('#chapterTitle')).toHaveText(chapter(100).title);
   await expect(page.locator('#chapterBody')).toContainText(firstLine(100));
   await expect(page.locator('#chapterBody')).not.toContainText('暂时无法读取小说数据');
+
+  // With metadata unavailable, the real prerendered href must still work.
+  await page.locator('#nextChapter').click();
+  await expect(page).toHaveURL(/\/zh\/novels\/yuxi-gongci\/101\/$/);
+  await expect(page.locator('#chapterBody')).toContainText(firstLine(101));
 });
 
 test('whole-book entries cached by earlier versions are ignored and dropped', async ({ page }) => {

@@ -20,8 +20,8 @@ export function FilmPlayer({ language }) {
   const [fullscreen, setFullscreen] = useState(false), [mini, setMini] = useState(false);
   const [compact, setCompact] = useState(false), [landscape, setLandscape] = useState(false);
   // The 80 MB film only starts by itself on a desktop-class screen; phones and touch devices load it when the viewer presses play.
-  const [poster] = useState(() => window.innerWidth * (window.devicePixelRatio || 1) <= 960 ? FILM_POSTER_SMALL : FILM_POSTER);
-  const [autoplay] = useState(() => !matchMedia('(prefers-reduced-motion: reduce)').matches && !navigator.connection?.saveData && !matchMedia('(pointer: coarse), (max-width: 767px)').matches);
+  const [poster] = useState(() => typeof window === 'undefined' || window.innerWidth * (window.devicePixelRatio || 1) <= 960 ? FILM_POSTER_SMALL : FILM_POSTER);
+  const [autoplay] = useState(() => typeof window !== 'undefined' && !matchMedia('(prefers-reduced-motion: reduce)').matches && !navigator.connection?.saveData && !matchMedia('(pointer: coarse), (max-width: 767px)').matches);
   useEffect(() => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const ctl = createFilmPlayback(video.current, { autoplay, onBlocked: () => setBlocked(true) });
@@ -47,6 +47,9 @@ export function FilmPlayer({ language }) {
     if (!mini && !fullscreen) return createFilmScroll(shell.current);
   }, [mini, fullscreen]);
   useEffect(() => { playback.current?.setFloating(mini || fullscreen); }, [mini, fullscreen]);
+  useLayoutEffect(() => {
+    if (video.current && video.current.poster !== new URL(poster, location.href).href) video.current.poster = poster;
+  }, [poster]);
   useLayoutEffect(() => {
     if (!mini || fullscreen) return;
     const drag = createFilmDrag(player.current, { position: miniPosition.current, onPosition: point => { miniPosition.current = point; } });

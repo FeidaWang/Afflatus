@@ -256,7 +256,7 @@
 </head>
 <!-- The serial reader owns ArrowLeft/ArrowRight for its physical page
      surface, so it remains outside the site-wide route-turn system. -->
-<body class="novels-page" data-no-page-turn>
+<body class="novels-page reader-enhanced" data-reader-view="library" data-no-page-turn>
 <script>(function(){try{var theme=JSON.parse(localStorage.getItem('afflatus:reader:v1')||'{}').theme;if(['paper','green','night'].includes(theme))document.body.dataset.readerTheme=theme;}catch(e){}})();</script>
 <!-- shared-header:start -->
 <header id="afflatus-header" data-afflatus-header>
@@ -289,11 +289,11 @@
   <section class="library-home" aria-label="我的书架" data-aria-en="My library" data-aria-zh="我的书架">
     <header class="library-intro"><div class="library-eyebrow"><span>STORIES · 原创连载</span><button id="libraryTheme" type="button" class="icon-button" aria-label="切换夜间模式" data-aria-en="Switch to night mode" data-aria-zh="切换夜间模式" aria-pressed="false"><img src="/assets/labs/icons/moon.svg" alt="" width="22" height="22"></button></div><h1 id="libraryTitle">再读一会儿<span>。</span></h1><p>从你停下的地方，走回故事里。</p></header>
     <section class="continue-reading" aria-label="继续阅读" data-aria-en="Continue reading" data-aria-zh="继续阅读">
-      <img class="reading-landscape" src="/assets/labs/reading-landscape.webp" width="1200" height="675" alt="薄雾中的旧粮仓与藤蔓，阅读氛围插画" fetchpriority="high">
+      <img class="reading-landscape" src="/assets/labs/reading-landscape.webp" srcset="/assets/labs/reading-landscape-480.avif 480w, /assets/labs/reading-landscape-960.avif 960w" sizes="(max-width: 700px) calc(100vw - 48px), 650px" width="1200" height="675" alt="薄雾中的旧粮仓与藤蔓，阅读氛围插画" fetchpriority="high">
       <p class="resume-kicker">正在读 <span id="resumeChapter">正在准备书架…</span></p>
       <h2 id="resumeTitle">万界种春</h2><p id="resumeAuthor">槐酿</p>
       <progress id="resumeProgress" max="100" value="0" aria-label="全书阅读进度" data-aria-en="Book reading progress" data-aria-zh="全书阅读进度"></progress><p id="resumePosition" class="muted">你的阅读位置会自动保留</p>
-      <button id="continueReading" class="primary-action" type="button">继续阅读 <img src="/assets/labs/icons/forward.svg" alt="" width="22" height="22"></button>
+      <button id="continueReading" class="primary-action" type="button" disabled aria-busy="true">继续阅读 <img src="/assets/labs/icons/forward.svg" alt="" width="22" height="22"></button>
       <button id="resumeBookmarks" class="library-row" type="button"><img src="/assets/labs/icons/bookmark.svg" alt="" width="24" height="24"><span>我的书签</span><small id="resumeBookmarksCount">收藏你的片刻</small><img src="/assets/labs/icons/forward.svg" alt="" width="20" height="20"></button>
     </section>
     <div class="shelf-heading"><h2>书架</h2><span>原创中文故事</span></div>
@@ -392,7 +392,7 @@
   <p class="muted">由你开始，随时暂停。</p>
   <p id="audioEmpty" class="muted">正在读取伴读曲目…</p>
   <div class="player" id="ambientPlayer" role="group" aria-label="伴读音乐" data-aria-en="Reading music" data-aria-zh="伴读音乐" hidden>
-    <div class="track-heading"><img src="/assets/labs/reading-landscape.webp" width="60" height="60" alt=""><div><h3 id="trackTitle">伴读音乐</h3><p id="trackArtist" class="muted"></p></div></div>
+    <div class="track-heading"><img src="/assets/labs/reading-landscape-480.avif" loading="lazy" width="60" height="60" alt=""><div><h3 id="trackTitle">伴读音乐</h3><p id="trackArtist" class="muted"></p></div></div>
     <div class="playback-buttons"><button id="plPrev" type="button" aria-label="上一曲" data-aria-en="Previous track" data-aria-zh="上一曲"><img src="/assets/labs/icons/previous.svg" alt="" width="24" height="24"></button><button id="plToggle" type="button" aria-label="播放音乐" data-aria-en="Play music" data-aria-zh="播放音乐" aria-pressed="false"><img src="/assets/labs/icons/play.svg" alt="" width="28" height="28"></button><button id="plNext" type="button" aria-label="下一曲" data-aria-en="Next track" data-aria-zh="下一曲"><img src="/assets/labs/icons/next.svg" alt="" width="24" height="24"></button></div>
     <label class="sr-only" for="musicSeek">音乐进度</label><input id="musicSeek" type="range" min="0" max="100" value="0" step="0.1"><output id="musicTime">0:00 / 0:00</output>
     <div class="setting-row"><label for="musicVolume">音量</label><input id="musicVolume" type="range" min="0" max="100" value="32"></div>

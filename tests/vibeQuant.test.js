@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { parseQuantRequest, validateQuantJob, projectQuantJob, QUANT_COMMIT } from '../src/lib/vibeQuantContract.js';
 import { createQuantHandler } from '../src/lib/vibeQuantProxy.mjs';
 import { mountQuant } from '../src/features/vibe-markets/quant.js';
-import { mountVibeMarkets } from '../src/features/vibe-markets/index.js';
+import { mountAssumptionModels } from '../src/features/vibe-markets/models.js';
 import ledgerFixture from '../integrations/vibe-us-crypto-kit/validation/p3-offline-ledger-fixture.json';
 
 const request = { instrument_id: 'US:AAPL', module: 'catalogue', parameters: {} };
@@ -118,14 +118,34 @@ describe('independent model UI gate', () => {
     vi.stubEnv('VITE_VIBE_QUANT_ENABLED', 'false');
     vi.stubGlobal('fetch', vi.fn(async () => Response.json({ error: { code: 'FEATURE_DISABLED' } }, { status: 404 })));
     const root = document.createElement('div');
-    const dispose = mountVibeMarkets(root, { locale: 'en' });
+    const dispose = mountAssumptionModels(root, { locale: 'en' });
     try {
       expect(root.querySelector('[name="volatility"]')).not.toBeNull();
       expect(root.textContent).toContain('available online');
-      expect(fetch.mock.calls.some(([url]) => url.includes('/api/vibe-model'))).toBe(false);
+      expect(fetch).not.toHaveBeenCalled();
+      expect([...root.querySelector('select[aria-label="Calculation"]').options].map(option=>option.value)).toEqual(['option_model','option_payoff','catalogue']);
       await new Promise(resolve => setTimeout(resolve, 0));
     } finally {
       dispose(); vi.unstubAllGlobals(); vi.unstubAllEnvs();
     }
   });
+});
+
+
+it.each([
+  [429, 'RATE_LIMITED', 'Too many requests.'],
+  [503, 'RATE_LIMIT_UNAVAILABLE', 'Calculations are temporarily unavailable.'],
+])('public models explain HTTP %i and allow retry', async (status, code, message) => {
+  vi.stubEnv('VITE_VIBE_MODELS_ENABLED', 'true');
+  vi.stubGlobal('fetch', vi.fn(async () => Response.json({error:{code}}, {status})));
+  const root=document.createElement('div');
+  const dispose=mountAssumptionModels(root);
+  try {
+    const select=root.querySelector('select[aria-label="Calculation"]');
+    select.value='catalogue'; select.dispatchEvent(new Event('change'));
+    root.querySelector('form').dispatchEvent(new Event('submit',{cancelable:true}));
+    await vi.waitFor(()=>expect(root.textContent).toContain(message));
+    await vi.waitFor(()=>expect(root.querySelector('button[type="submit"]').disabled).toBe(false));
+    expect(fetch.mock.calls[0][0]).toBe('/api/vibe-model');
+  }finally{dispose();vi.unstubAllGlobals();vi.unstubAllEnvs();}
 });

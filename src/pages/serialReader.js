@@ -2,12 +2,9 @@
    novel pages share one cached, minified module instead of each inlining
    ~46 KB of script. */
 import { fetchJson, purgeCachedJson } from '../lib/fetchJson.js';
-import { escapeHtml, renderNovelBlocks } from '../lib/novelBlocks.js';
-import { createPagedBook } from '../lib/pagedBook.js';
+import { escapeHtml } from '../lib/escapeHtml.js';
+let renderNovelBlocks;
 import { mountReaderExperience } from '../lib/readerExperience.js';
-import { mountCompanionAudio } from '../lib/companionAudio.js';
-import { anchorFromVisibleBlock, scrollToTextAnchor } from '../lib/readerAnchors.js';
-import { mountReaderNotes } from '../lib/readerNotes.js';
 import {
   createReaderStore,
   createStorageAdapter,
@@ -21,15 +18,16 @@ import {
 
 export function mountSerialReader() {
   var reader = document.getElementById('reader');
+  document.body.dataset.readerReady = 'false';
   var state = {
     data:null, novels:[], novelId:null, novelIdx:0, chapters:[], idx:0,
     autoTimer:0, waterfall:false, wfIndex:0, lang:'zh'
   };
   var serialApi = {
-    chapterIdEquals:chapterIdEquals, createPagedBook:createPagedBook,
-    mountReaderExperience:mountReaderExperience, mountCompanionAudio:mountCompanionAudio,
-    anchorFromVisibleBlock:anchorFromVisibleBlock, scrollToTextAnchor:scrollToTextAnchor,
-    mountReaderNotes:mountReaderNotes, createReaderStore:createReaderStore,
+    chapterIdEquals:chapterIdEquals, createPagedBook:null,
+    mountReaderExperience:mountReaderExperience,
+    anchorFromVisibleBlock:null, scrollToTextAnchor:null,
+    createReaderStore:createReaderStore,
     createStorageAdapter:createStorageAdapter, parseReaderPath:parseReaderPath,
     readerLocale:readerLocale, readerPath:readerPath
   };
@@ -584,6 +582,7 @@ export function mountSerialReader() {
       }
       // Prefetch the next chapter so turning past this one is instant.
       if (i + 1 < state.chapters.length) ensureChapter(state.novelId, state.chapters[i + 1]).catch(function () {});
+      document.body.dataset.readerReady = 'true';
       if (after) setTimeout(after, 260);
     });
   }
@@ -601,6 +600,8 @@ export function mountSerialReader() {
   ['prevChapter', 'nextChapter'].forEach(function (id) {
     document.getElementById(id).addEventListener('click', function (event) {
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      // Before the small TOC has arrived, keep the prerendered href usable.
+      if (!state.chapters.length) return;
       event.preventDefault();
       if (this.getAttribute('aria-disabled') === 'true') return;
       goToChapter(state.idx + (id === 'prevChapter' ? -1 : 1), true);
@@ -739,6 +740,7 @@ export function mountSerialReader() {
       wfLoading = false;
       state.wfIndex = i;
       var firstSection = wfAppendChapter(i);
+      if (firstSection) document.body.dataset.readerReady = 'true';
       if (i + 1 >= state.chapters.length) {
         finishWaterfall();
       } else if (chapterReady(state.novelId, state.chapters[i + 1])) {
@@ -954,6 +956,17 @@ export function mountSerialReader() {
   }
   function selectNovel(idx, scrollToShelf, requestedChapterId, historyMode, requestedOffset, requestedAnchor) {
     var n = state.novels[idx]; if (!n) return;
+    if ((scrollToShelf || requestedChapterId != null) && !serialApi.createPagedBook) {
+      import('../lib/readerRuntime.js').then(function (module) {
+        serialApi.createPagedBook = module.createPagedBook;
+        renderNovelBlocks = module.renderNovelBlocks;
+        serialApi.anchorFromVisibleBlock = module.anchorFromVisibleBlock;
+        serialApi.scrollToTextAnchor = module.scrollToTextAnchor;
+        readerNotes = module.mountReaderNotes({ getBookId:function () { return state.novelId; }, getChapter:function () { return state.chapters[state.idx]; } });
+        selectNovel(idx, scrollToShelf, requestedChapterId, historyMode, requestedOffset, requestedAnchor);
+      }).catch(showLoadError);
+      return;
+    }
     if (!n.chapters) {
       fetchJson('novel-toc:' + n.id, { timeoutMs:NOVEL_TIMEOUT_MS }).then(function (data) {
         n.chapters = data.chapters;
@@ -1036,6 +1049,7 @@ export function mountSerialReader() {
     state.idx = resumeIdx;
     if (!scrollToShelf && requestedChapterId == null) {
       experience.setView('library');
+      document.body.dataset.readerReady = 'true';
       // A book landing keeps its own work-level metadata; only the shelf
       // itself takes the library's.
       var landingRoute = serialApi.parseReaderPath(location.pathname);
@@ -1107,8 +1121,15 @@ export function mountSerialReader() {
       },
       onTypography:function () { if (pagedBook) pagedBook.repaginate(); }
     });
-    readerNotes = serialApi.mountReaderNotes({ getBookId:function () { return state.novelId; }, getChapter:function () { return state.chapters[state.idx]; } });
-    serialApi.mountCompanionAudio({ store:readerStore });
+    var companionAudio;
+    document.querySelectorAll('[data-reader-dialog="audioDialog"]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        companionAudio ||= import('../lib/companionAudio.js').then(function (module) {
+          return module.mountCompanionAudio({ store:readerStore });
+        });
+        companionAudio.catch(function () { document.getElementById('audioEmpty').textContent = '伴读音乐暂不可用，请刷新页面重试。'; });
+      });
+    });
     initNarrationPlayer();
 
     fetchJson('novels-index', { timeoutMs:NOVEL_TIMEOUT_MS }).then(function (data) {

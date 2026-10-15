@@ -1,5 +1,5 @@
-@font-face{font-family:'Reader Serif';src:url('/assets/fonts/labs-serif-regular.woff2') format('woff2');font-display:swap}
-:root{--read-fs:19px;--read-lh:1.85;--toolbar-h:74px;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);--serif:'Reader Serif','Songti SC',STSong,Georgia,serif;--mono:'Anthropic Sans',system-ui,sans-serif}
+@import url('/styles/labs-ui-font.css');
+:root{--read-fs:19px;--read-lh:1.85;--toolbar-h:74px;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);--serif:'Library Serif','Songti SC',STSong,Georgia,serif;--mono:'Anthropic Sans',system-ui,sans-serif}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
 body{--paper:#f4f0e7;--ink:#272922;--muted:#696b60;--rule:#d9d6cc;--accent:#606a53;--surface:#e9e7dd;background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:16px;line-height:1.65}
@@ -129,8 +129,8 @@ body[data-reader-theme="night"] .primary-action img{filter:none}
 .narration-player{padding-top:20px;border-top:1px solid var(--rule)}
 .reader-waterfall{min-height:70vh}.wf-chapter{margin:0 auto 48px}.wf-chip{position:sticky;top:0;display:block;background:var(--paper);z-index:3;padding:12px 0;font-size:12px;color:var(--muted)}
 .wf-divider,.wf-sentinel{font-size:12px;color:var(--muted);padding:24px 0;border-top:1px solid var(--rule)}
-.toc-drawer{position:fixed;inset:0 auto 0 0;z-index:50;width:min(360px,90vw);background:var(--paper);border-right:1px solid var(--rule);transform:translateX(-105%);transition:transform .22s ease;overflow-y:auto;padding:calc(24px + var(--safe-t)) 24px 36px}
-.toc-drawer.open{transform:translateX(0)}
+.toc-drawer{visibility:hidden;position:fixed;inset:0 auto 0 0;z-index:50;width:min(360px,90vw);background:var(--paper);border-right:1px solid var(--rule);transform:translateX(-105%);transition:transform .22s ease;overflow-y:auto;padding:calc(24px + var(--safe-t)) 24px 36px}
+.toc-drawer.open{visibility:visible;transform:translateX(0)}
 .toc-title{font:500 26px var(--serif);margin:10px 0}.toc-drawer .note{font-size:12px;color:var(--muted);margin-bottom:24px}
 .toc-item{display:flex;align-items:center;gap:10px;min-height:58px;padding:12px 0;border-bottom:1px solid var(--rule)}
 .toc-item .t{flex:1;font-size:15px}.toc-item .wc{font-size:11px;color:var(--muted)}
@@ -170,3 +170,10 @@ body[data-reader-route="chapter"]:not(.reader-enhanced) .library-home{display:no
 .reader-term:hover{color:var(--accent)}
 .reader-note-dialog blockquote{font:17px/1.85 var(--serif);margin:18px 0;padding-left:16px;border-left:2px solid var(--accent)}
 @media(max-width:360px){.library-intro h1{font-size:36px}}
+
+/* The complete novel font is needed only inside an opened reader. */
+.reader-shell{--serif:'Reader Serif','Songti SC',STSong,Georgia,serif}
+
+.library-home{--serif:'Library Serif','Songti SC',STSong,Georgia,serif}
+
+.saved-bookmark strong,.reader-note-dialog blockquote{font-family:'Reader Serif','Songti SC',STSong,Georgia,serif}

@@ -56,6 +56,8 @@ export function mountReaderExperience({ store, getNovel, getChapter, getPage, on
 
   function sync() {
     const novel = getNovel(), chapter = getChapter();
+    $('continueReading').disabled = !novel || !chapter;
+    $('continueReading').setAttribute('aria-busy', String(!novel || !chapter));
     if (!novel || !chapter) return;
     const saved = store.getState();
     const page = getPage();
