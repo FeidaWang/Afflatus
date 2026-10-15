@@ -51,6 +51,8 @@ if (stage) {
   let scrollFrame = 0;
   let mapVisible = true;
   let motionEndpoints = [];
+  let coversLoaded = false;
+  let settling = 0, layoutVersion = 0;
 
   const labels = topics.map(() => {
     const node = document.createElement('div');
@@ -67,7 +69,6 @@ if (stage) {
     button.dataset.lesson = book.id;
     button.dataset.bookPreview = book.id;
     button.setAttribute('aria-haspopup', 'dialog');
-    button.style.backgroundImage = `url("${book.covers[language()]}")`;
     button.style.setProperty('--arrival', String((index * 7 % 11) / 11));
     button.href = `/${language()}/course/book-${book.id}.html`;
     button.title = book.title[language()];
@@ -188,13 +189,14 @@ if (stage) {
     animationFrame = requestAnimationFrame(tick);
   }
   function startPhysics() {
-    if (!animationFrame && !reducedMotion.matches && mapVisible && map.classList.contains('is-interactive') && !document.hidden) {
+    if (!settling && !animationFrame && !reducedMotion.matches && mapVisible && map.classList.contains('is-interactive') && !document.hidden) {
       lastTime = 0;
       animationFrame = requestAnimationFrame(tick);
     }
   }
 
   function layoutMap() {
+    cancelAnimationFrame(animationFrame); animationFrame=0;
     layout = windowEl.clientWidth <= 700 ? layouts.mobile : layouts.desktop;
     canvas.style.width = `${layout.width}px`;
     canvas.style.height = `${layout.height}px`;
@@ -218,7 +220,18 @@ if (stage) {
       body.button.style.setProperty('--origin-x', `${(layout.centers[body.book.group][0] - position.x) * .65}px`);
       body.button.style.setProperty('--origin-y', `${(layout.centers[body.book.group][1] - position.y) * .65}px`);
     });
-    for (let i = 0; i < 70; i++) resolveCollisions(.4);
+    const version=++layoutVersion;
+    settling=version;
+    async function settle() {
+      for(let i=0;i<70;i++) {
+        if(version!==layoutVersion)return;
+        resolveCollisions(.4);
+        if(i%5===4)await new Promise(resolve=>setTimeout(resolve,0));
+      }
+      if(version!==layoutVersion)return;
+      settling=0;paintBodies();startPhysics();
+    }
+    void settle();
     paintBodies();
   }
   function renderTransform() {
@@ -276,7 +289,7 @@ if (stage) {
       button.setAttribute('aria-label', localize(`Book ${book.id}: ${book.title.en}`, `第 ${book.id} 本：${book.title.zh}`));
       button.href = `/${language()}/course/book-${book.id}.html`;
       button.title = book.title[language()];
-      button.style.backgroundImage = `url("${book.covers[language()]}")`;
+      if(coversLoaded)button.style.backgroundImage = `url("${book.covers[language()]}")`;
     });
   }
 
@@ -320,6 +333,10 @@ if (stage) {
     scrollFrame = 0;
     const travel = Math.max(1, experience.offsetHeight - stage.clientHeight);
     const raw = clamp((window.scrollY - experience.offsetTop + stageTop()) / travel, 0, 1);
+    if(raw>.02 && !coversLoaded) {
+      coversLoaded=true;
+      for(const {book,button} of bodies)button.style.backgroundImage=`url("${book.covers[language()]}")`;
+    }
     // The reference first clears the prose, then separates the two title words.
     // Books travel outward from their subject while fine connections draw in.
     const progress = reducedMotion.matches ? Number(raw >= .5) : smooth(clamp((raw - .12) / .78, 0, 1));
