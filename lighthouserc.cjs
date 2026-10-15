@@ -89,6 +89,7 @@ module.exports = {
       url: routes.map((route) => `http://localhost${route.path}`),
       settings: {
         onlyCategories: ['performance'],
+        saveAssets: process.env.CI === 'true',
         blockedUrlPatterns: [
           '*googletagmanager.com*',
           '*google-analytics.com*',

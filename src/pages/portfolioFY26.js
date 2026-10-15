@@ -1,6 +1,6 @@
 import '../lib/nav.js';
 import { portfolioLogo } from './portfolioLogos.js';
-import { seeded, penSprite, drawPen, drawInkGrid, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
+import { seeded, warmPenSprite, drawPen, drawInkGrid, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
 import { createProgressiveGame } from './portfolioGame.js';
 import { drawWell, drawWellCells, shapeCells, TYPES } from './portfolioTetris.js';
 
@@ -271,7 +271,7 @@ async function refreshHeroGames() {
   }
   for(const texture of textures.values()) {
     if(version!==heroVersion)return;
-    penSprite(...texture); await yieldToBrowser();
+    await warmPenSprite(...texture); await yieldToBrowser();
   }
   if(version!==heroVersion)return;
   heroReady=true;
@@ -332,6 +332,7 @@ let heroRaf = 0, heroLast = 0;
 function heroTick(now) {
   heroRaf = 0;
   if (stepFloat > .0005 || scrollY > scrolly.offsetTop + innerHeight) return;
+  if(heroLast&&now-heroLast<1000/24){heroRaf=requestAnimationFrame(heroTick);return;}
   const dt = heroLast ? Math.min(64, now - heroLast) : 16;
   heroLast = now;
   heroT += dt * .00105;
@@ -862,6 +863,7 @@ if (finale) {
   const fTick = now => {
     fRaf = 0;
     if (!visible) return;
+    if(fLast&&now-fLast<1000/24){fRaf=requestAnimationFrame(fTick);return;}
     fT += (fLast ? Math.min(64, now - fLast) : 16) * .0011;
     fLast = now;
     fDraw();

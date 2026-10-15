@@ -123,6 +123,15 @@ export function penSprite(color, variant = 0, mode = 'full') {
   return c;
 }
 
+// Resolve canvas rasterization before the first populated animation frame.
+// ImageBitmap can be drawn repeatedly without flushing a source canvas.
+export async function warmPenSprite(color,variant=0,mode='full') {
+  const source=penSprite(color,variant,mode);
+  if(typeof createImageBitmap!=='function'||(typeof ImageBitmap==='function'&&source instanceof ImageBitmap))return;
+  try { cache.set(`${color}|${variant}|${mode}`,await createImageBitmap(source)); }
+  catch { /* Canvas remains a supported fallback. */ }
+}
+
 // Draw a sprite into a cell of size `size` whose top-left is (x, y).
 export function drawPen(ctx, color, variant, mode, x, y, size, alpha = 1, reveal = 1) {
   if (alpha < .01 || size < .5) return;
