@@ -11,7 +11,7 @@ const menuKey = document.querySelector('#afflatus-header .af-header-menu');
 if (languageKey && menuKey) languageKey.before(menuKey);
 
 // A non-secret UI flag; the independent BFF flag and data gate still apply.
-const Markets = import.meta.env.VITE_VIBE_MARKETS_ENABLED === 'true'
+const Markets = (import.meta.env.VITE_VIBE_MARKETS_ENABLED === 'true' || import.meta.env.VITE_VIBE_MODELS_ENABLED === 'true')
   ? lazy(() => import('../features/vibe-markets/Markets.jsx')) : null;
 const researchPanel = Markets ? locale => <Suspense fallback={null}><Markets locale={locale} /></Suspense> : null;
 

@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { parseQuantRequest, validateQuantJob, projectQuantJob, QUANT_COMMIT } from '../src/lib/vibeQuantContract.js';
 import { createQuantHandler } from '../src/lib/vibeQuantProxy.mjs';
 import { mountQuant } from '../src/features/vibe-markets/quant.js';
+import { mountVibeMarkets } from '../src/features/vibe-markets/index.js';
 import ledgerFixture from '../integrations/vibe-us-crypto-kit/validation/p3-offline-ledger-fixture.json';
 
 const request = { instrument_id: 'US:AAPL', module: 'catalogue', parameters: {} };
@@ -107,5 +108,24 @@ describe('P3 browser behavior', () => {
     select.value = 'option_model'; select.dispatchEvent(new Event('change'));
     await vi.waitFor(() => expect(calls.some(call => call.method === 'DELETE')).toBe(true));
     expect(root.textContent).not.toContain('2025-06-01'); dispose(); vi.unstubAllGlobals();
+  });
+});
+
+
+describe('independent model UI gate', () => {
+  it('mounts model inputs with private research UI gates disabled', async () => {
+    vi.stubEnv('VITE_VIBE_MODELS_ENABLED', 'true');
+    vi.stubEnv('VITE_VIBE_QUANT_ENABLED', 'false');
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ error: { code: 'FEATURE_DISABLED' } }, { status: 404 })));
+    const root = document.createElement('div');
+    const dispose = mountVibeMarkets(root, { locale: 'en' });
+    try {
+      expect(root.querySelector('[name="volatility"]')).not.toBeNull();
+      expect(root.textContent).toContain('available online');
+      expect(fetch.mock.calls.some(([url]) => url.includes('/api/vibe-model'))).toBe(false);
+      await new Promise(resolve => setTimeout(resolve, 0));
+    } finally {
+      dispose(); vi.unstubAllGlobals(); vi.unstubAllEnvs();
+    }
   });
 });

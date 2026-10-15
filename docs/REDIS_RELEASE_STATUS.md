@@ -78,3 +78,24 @@ Do not switch production aliases before acceptance passes.
 
 Rollback candidate: keep existing production deployment above; restore the two
 model flags if needed. Redis failure must not silently bypass limits.
+
+
+## Provisioning and real Redis verification — continued 2026-10-15
+
+The operator completed terms. Resource `store_TOk293RjbNXZklJZ`
+(`afflatus-rate-limit`) is available, connected to production only. Actual Vercel
+storage API metadata confirms `autoUpgrade=false`, `prodPack=false`,
+`eviction=false`, primary region iad1. Billing plan ID is `free`, payment method
+not required, preauthorization 0, monthly commands 500000. Vercel team billing
+plan is `hobby`/active. No paid resource or upgrade was selected.
+
+`node --env-file=.env.production.local scripts/verify-redis-rate-limit.mjs`
+passed against this real Redis: PING/PONG; 12 concurrent Node and Python calls
+share one counter, exactly 7 allowed and 5 blocked at limit 7; count 12;
+positive TTL; expiry and subsequent recovery passed. Test keys were removed.
+No token values are included in this report or command arguments.
+
+Found and fixed the model UI's dependency on two unrelated UI flags: Arena and
+quant mount when the independent model UI flag is enabled. Server research
+flags remain off. Only the two model flags were enabled in production config.
+Staging deployment and actual deployed API/browser acceptance remain pending.

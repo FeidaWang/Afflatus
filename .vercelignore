@@ -11,3 +11,7 @@ tests/
 integrations/
 output/
 tools/
+
+# Locally installed provider guidance is not a runtime input.
+.agents/
+skills-lock.json

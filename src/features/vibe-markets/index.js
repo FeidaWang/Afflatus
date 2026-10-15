@@ -55,7 +55,7 @@ export function mountVibeMarkets(root, { locale = 'en', getHeaders = () => ({}) 
   async function refresh() {
     controller?.abort(); controller = new AbortController();
     disposeResearch?.(); disposeResearch = mountResearch(research, symbol.value, { locale, getHeaders });
-    disposeQuant?.(); if (import.meta.env.VITE_VIBE_QUANT_ENABLED === 'true') disposeQuant = mountQuant(quant, symbol.value, { locale, getHeaders, days: Number(period.value) });
+    disposeQuant?.(); if (import.meta.env.VITE_VIBE_QUANT_ENABLED === 'true' || import.meta.env.VITE_VIBE_MODELS_ENABLED === 'true') disposeQuant = mountQuant(quant, symbol.value, { locale, getHeaders, days: Number(period.value) });
     const active = controller;
     status.textContent = t.loading; value.textContent = ''; chart.textContent = t.empty; meta.textContent = ''; tableWrap.replaceChildren(); technical.replaceChildren();
     const end = new Date(); const start = new Date(end); start.setUTCDate(start.getUTCDate() - Number(period.value));
