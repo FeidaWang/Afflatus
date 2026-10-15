@@ -1,7 +1,8 @@
 import '../lib/nav.js';
 import { portfolioLogo } from './portfolioLogos.js';
 import { seeded, drawPen, drawInkGrid, installInkFilters, inkLineD, inkPathD, polyD, wobblyQuad, penSquareEdges, strokeOutline, shade } from './portfolioInk.js';
-import { TetrisScript, drawWell, drawWellCells, shapeCells, TYPES } from './portfolioTetris.js';
+import { createProgressiveGame } from './portfolioGame.js';
+import { drawWell, drawWellCells, shapeCells, TYPES } from './portfolioTetris.js';
 
 // FY 2025-26 trading record, derived from the Stake financial-year report pack
 // (1 Jul 2025 - 30 Jun 2026). Only percentages are published; no dollar amounts.
@@ -11,6 +12,7 @@ const isZh = document.documentElement.lang.toLowerCase().startsWith('zh');
 const L = (en, zh) => (isZh ? zh : en);
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const yieldToBrowser = () => new Promise(resolve => setTimeout(resolve, 0));
 const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 function localizeMarkup() {
@@ -78,7 +80,7 @@ const gridCanvas = $('#pfGrid');
 const tiles = FILLS.map((fill, i) => ({ ...fill, i, variant: i % 12, rot: (rnd() - .5) * .07, delay: rnd() }));
 let W = 0, H = 0, S = 12, layouts = [], labelSets = [];
 // Opening: two self-playing wells either side of the headline.
-const wideGames = [new TetrisScript({ seed: 20250701, length: 240 }), new TetrisScript({ seed: 20260630, length: 240 })];
+const wideGames = [];
 const phoneGames = new Map();
 let heroGames = wideGames;
 let wells = [], heroT = 26, heroFrames = [];
@@ -111,11 +113,12 @@ function buildLayouts() {
     { x: Math.round(side / 2 - wellS * 5), y: wy, S: wellS, cols: 10, rows: 20, seed: 3, label: L('BUYS', '买入') },
     { x: Math.round(W - side / 2 - wellS * 5), y: wy, S: wellS, cols: 10, rows: 20, seed: 9, label: L('SELLS', '卖出') },
   ];
+  if (W >= 720 && !wideGames.length) wideGames.push(...[20250701,20260630].map(seed=>createProgressiveGame({seed,length:240},refreshHeroGames)));
   heroGames = wideGames;
   if (W < 720) {
     // phones: one wide, shallow well in the band above the headline
     const pS = 14, pCols = Math.floor((W - 40) / pS), pRows = clamp(Math.floor((H * .5 - 230) / pS), 6, 11);
-    if (!phoneGames.has(pCols * 100 + pRows)) phoneGames.set(pCols * 100 + pRows, new TetrisScript({ cols: pCols, rows: pRows, seed: 2026, length: 300, ceiling: .8 }));
+    if (!phoneGames.has(pCols * 100 + pRows)) phoneGames.set(pCols * 100 + pRows, createProgressiveGame({ cols: pCols, rows: pRows, seed: 2026, length: 300, ceiling: .8 },refreshHeroGames));
     heroGames = [phoneGames.get(pCols * 100 + pRows)];
     wells = [{ x: Math.round((W - pCols * pS) / 2), y: 44, S: pS, cols: pCols, rows: pRows, seed: 5, label: L('BUYS · SELLS', '买入 · 卖出') }];
   } else if (W < 1000) { wells[0].x = Math.round(W * .03); wells[1].x = Math.round(W * .97 - wellS * 10); }
@@ -247,6 +250,11 @@ function renderLabels() {
 let stepFloat = 0, drawn = -1;
 const WELL_FONT = `600 ${W < 720 ? 10 : 11}px "Anthropic Sans", Inter, system-ui, sans-serif`;
 // Where each execution square sits while the opening games are on screen.
+function refreshHeroGames() {
+  heroFrames=heroGames.map(game=>game.frame(heroT));
+  canvas.dataset.simulationReady=String(heroGames.every(game=>game.complete));
+  drawn=-1;draw();
+}
 function heroLayout() {
   const out = new Array(tiles.length);
   let k = 0;
@@ -338,6 +346,7 @@ function setup() { buildLayouts(); drawn = -1; onScroll(); draw(); }
 setup();
 addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(setup, 120); });
 addEventListener('scroll', () => requestAnimationFrame(onScroll), { passive: true });
+await yieldToBrowser();
 
 /* ------------------------------------------------------------- hero count */
 function countUp(el, to, { decimals = 1, prefix = '', suffix = '%', duration = 1600 } = {}) {
@@ -466,6 +475,8 @@ HIGHLIGHTS.forEach((h, idx) => {
   onView(num, () => countUp(num, h.r, { prefix: '+' }), .6);
 });
 
+await yieldToBrowser();
+
 /* --------------------------------------------------------- scatter chart */
 const SVGNS = 'http://www.w3.org/2000/svg';
 const svgEl = (name, attrs = {}) => { const el = document.createElementNS(SVGNS, name); Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v)); return el; };
@@ -558,6 +569,7 @@ function buildScatter() {
   });
 }
 buildScatter();
+await yieldToBrowser();
 
 /* ----------------------------------------------------- cycle journeys bars */
 const JOURNEYS = [
@@ -797,7 +809,7 @@ if (finale) {
     finale.style.width = `${Wf}px`; finale.style.height = `${Hf}px`;
     fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     geo = { x: Math.round((Wf - cols * S2) / 2), y: 3 * S2, S: S2, cols, W: Wf, H: Hf };
-    game = new TetrisScript({ cols, rows, seed: 2027, length: 320, ceiling: .9 });
+    game = visible ? createProgressiveGame({ cols, rows, seed: 2027, length: 320, ceiling: .9 },()=>{finale.dataset.simulationReady='true';fDraw();}) : null;
     fDraw();
   };
   const fTick = now => {
@@ -810,6 +822,7 @@ if (finale) {
   };
   new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting;
+    if (visible && !game) fSetup();
     if (visible && !reduced.matches && !fRaf) { fLast = 0; fRaf = requestAnimationFrame(fTick); }
   }).observe(finale);
   addEventListener('scroll', () => { if (visible && reduced.matches) fDraw(); }, { passive: true });

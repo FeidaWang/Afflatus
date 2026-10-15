@@ -128,3 +128,24 @@ its captured false flags. No private bridge/research server gate was enabled.
 
 Rollback: restore the deployment above or disable the two model flags. Keep
 Redis failures fail-closed, and do not enable a paid service to resolve a quota.
+
+## Cloud candidate follow-up
+
+Exact-head CI for `164b504a` passed unit/build, Python and all three complete
+browser jobs. All eight LCP/CLS/script budgets passed; the only mandatory
+failure was Portfolio TBT (884 ms median versus 200 ms ceiling).
+
+The decorative Tetris constructor precomputed long desktop/mobile/footer games
+synchronously. The follow-up keeps an identical deterministic 32-move initial
+preview, computes full scripts in a browser Worker, avoids unused desktop games
+on phones and initializes the footer game on view. Typed board buffers are
+transferred; no new backend or service is involved. Startup also yields between
+chart setup phases. Pure frame/structured-clone tests and real Worker completion
+checks across all three browsers pass. Local three-run Portfolio metrics after
+this fix: LCP 1502 ms, TBT 3 ms, CLS 0. Mandatory budgets remain unchanged.
+
+Latest complete unit suite with simulation regression coverage: 1429 passed.
+A fresh exact-head CI and clean-source production candidate are still required.
+Diagnostic source manifests were checked: local env files are excluded, and
+final publication is packaged from tracked immutable source, excluding local
+reports and generated diagnostic directories.
