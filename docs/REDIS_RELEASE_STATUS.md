@@ -53,7 +53,7 @@ authorized repairing the entire performance gate rather than waiving it.
   Existing component interfaces remain; actual server/dev JSX paths and icon
   dependencies are configured consistently and tested.
 - Home/Arena ship HTML generated from their real components and hydrate it.
-  When the visitor's stored language differs, rebuild instead of hydrating
+  When the visitor's stored language, watchlist or layout differs, rebuild instead of hydrating
   mismatched links. Fixed English/Chinese pages preserve their own locale.
 - Local CSS is inlined with original cascade/media/import order and correct
   asset URLs. Enhancement begins after actual first contentful paint, with

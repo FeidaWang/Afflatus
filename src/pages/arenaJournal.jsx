@@ -21,5 +21,18 @@ const researchPanel = Markets ? locale => <Suspense fallback={null}><Markets loc
 const root = document.getElementById('root');
 const tree = <React.StrictMode><App researchPanel={researchPanel} /></React.StrictMode>;
 const locale = getLocale(document.documentElement.lang.startsWith('zh') ? 'zh' : 'en');
-if (root.dataset.prerenderedLocale === locale) hydrateRoot(root, tree);
+function matchesSavedWorkspace() {
+  try {
+    const watchlist = localStorage.getItem('afflatus:journal-watchlist:v1');
+    if (watchlist !== null) {
+      const rendered = [...root.querySelectorAll('.stock-select .stock-name b')].map(node => node.textContent);
+      if (JSON.stringify(JSON.parse(watchlist)) !== JSON.stringify(rendered)) return false;
+    }
+    const split = localStorage.getItem('afflatus:journal-split:v1');
+    return split === null || Number(split) === Number(root.querySelector('.workspace-slider')?.getAttribute('aria-valuenow'));
+  } catch { return false; }
+}
+// Hydration intentionally skips mismatched attributes; saved personal layout
+// must be rendered fresh rather than inheriting the generic server defaults.
+if (root.dataset.prerenderedLocale === locale && matchesSavedWorkspace()) hydrateRoot(root, tree);
 else createRoot(root).render(tree);

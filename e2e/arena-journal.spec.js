@@ -79,3 +79,16 @@ test('only journal companies can be added to the watchlist', async ({ page }) =>
   await page.getByRole('searchbox').fill('IBM');
   await expect(page.locator('.empty-search')).toBeVisible();
 });
+
+test('saved watchlist and workspace split replace the default prerendered state', async ({page}) => {
+  await page.addInitScript(()=>{
+    localStorage.setItem('afflatus:journal-watchlist:v1',JSON.stringify(['AAPL']));
+    localStorage.setItem('afflatus:journal-split:v1','66');
+  });
+  await mockProviders(page,{quotes:false,history:false});
+  await page.goto('/en/arena.html',{waitUntil:'networkidle'});
+  await expect(page.locator('.stock-select')).toHaveCount(1);
+  await expect(page.locator('.stock-select')).toContainText('AAPL');
+  await expect(page.locator('.stock-select')).toHaveAttribute('aria-label',/^AAPL /);
+  await expect(page.locator('.workspace-slider')).toHaveAttribute('aria-valuenow','66');
+});
