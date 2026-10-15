@@ -3,12 +3,7 @@
  * module-level state or Date.now() defaults — same discipline as
  * arenaRules.js / validateSignalEvents.js.
  *
- * NOT a distributed limiter: Vercel serverless functions are per-container,
- * so this only throttles bursts hitting the SAME warm container. That's
- * still the actual attack shape we're guarding against (a script or a
- * runaway client hammering one instance), and it's the "quick win" tier —
- * a real distributed limiter (Upstash/KV) is a separate, larger task if
- * quota pressure shows it's needed.
+ * Local development primitive. Production routes use distributedRateLimit.js.
  */
 export function checkRateLimit(store, key, { limit, windowMs, now = Date.now() } = {}) {
   let entry = store.get(key);

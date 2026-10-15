@@ -2,7 +2,7 @@
    CNBC's quote cache exposes Tradeweb yield quotes without a client key. The
    browser only calls this same-origin endpoint, so the upstream can be changed
    without coupling the Signal page to a third-party response shape. */
-import { checkRateLimit, clientIp } from '../src/lib/rateLimit.js';
+import { enforceRateLimit } from '../src/lib/distributedRateLimit.js';
 import { fetchWithTimeout, getRequestId, isAbortError, sendApiError, setApiHeaders } from '../src/lib/apiHttp.js';
 
 const UPSTREAM_URL = 'https://quote.cnbc.com/quote-html-webservice/quote.htm?symbols=US10Y%7CUS30Y&output=json';
@@ -46,20 +46,7 @@ export default async function handler(req, res) {
   }
 
   const now = Date.now();
-  // Bound expired per-IP entries in the process-local limiter.
-  for (const [ip, entry] of hits) if (now - entry.start >= RATE_LIMIT.windowMs) hits.delete(ip);
-  const ip = clientIp(req);
-  if (!hits.has(ip) && hits.size >= 10_000) {
-    res.setHeader('Retry-After', '60');
-    sendApiError(res, 429, 'RATE_LIMITED', requestId);
-    return;
-  }
-  const rl = checkRateLimit(hits, ip, { ...RATE_LIMIT, now });
-  if (!rl.allowed) {
-    res.setHeader('Retry-After', Math.ceil(rl.resetMs / 1000));
-    sendApiError(res, 429, 'RATE_LIMITED', requestId);
-    return;
-  }
+  if (!await enforceRateLimit(req, res, requestId, hits, 'treasury-yields:ip', { ...RATE_LIMIT, now })) return;
 
   try {
     // Read the body inside the deadline so a stalled upstream body times out.

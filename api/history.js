@@ -11,7 +11,7 @@
 
    Part 4 (urgent.md §18.4/§20, 2026-07-23): same allowlist + admin-key gate
    as api/quote.js — see that file's header for the full rationale. */
-import { checkRateLimit, clientIp } from '../src/lib/rateLimit.js';
+import { enforceRateLimit } from '../src/lib/distributedRateLimit.js';
 import { isSymbolAllowed, checkAdminKey } from '../src/lib/arenaAccess.js';
 import { getPublishedArenaAllowlist } from '../src/lib/arenaPublishedAccess.js';
 import { fetchWithTimeout, getRequestId, isAbortError, sendApiError, setApiHeaders } from '../src/lib/apiHttp.js';
@@ -86,16 +86,7 @@ export default async function handler(req, res) {
     || !symbol || !SYMBOL_RE.test(symbol) || !INTERVALS.has(interval)
     || !(requested >= 1 && requested <= 5000)) { sendApiError(res, 400, 'INVALID_PARAMS', requestId); return; }
   const now = Date.now();
-  // Bound expired per-IP entries in the process-local limiter.
-  for (const [ip, entry] of hits) if (now - entry.start >= RATE_LIMIT.windowMs) hits.delete(ip);
-  const ip = clientIp(req);
-  if (!hits.has(ip) && hits.size >= 10_000) {
-    res.setHeader('Retry-After', '60');
-    sendApiError(res, 429, 'RATE_LIMITED', requestId);
-    return;
-  }
-  const rl = checkRateLimit(hits, ip, { ...RATE_LIMIT, now });
-  if (!rl.allowed) { res.setHeader('Retry-After', Math.ceil(rl.resetMs / 1000)); sendApiError(res, 429, 'RATE_LIMITED', requestId); return; }
+  if (!await enforceRateLimit(req, res, requestId, hits, 'history:ip', { ...RATE_LIMIT, now })) return;
 
   const publicSymbol = isSymbolAllowed(symbol, getPublishedArenaAllowlist());
   const admin = checkAdminKey(req.headers?.['x-arena-key'], process.env.ARENA_ADMIN_KEY);

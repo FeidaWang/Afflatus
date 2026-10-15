@@ -34,6 +34,9 @@ class Models(unittest.TestCase):
     def tearDownClass(cls):
         cls.server.shutdown(); cls.thread.join(); cls.server.server_close()
 
+    def setUp(self):
+        api.rate_limit._local.clear()
+
     def call(self, value=EXAMPLE, *, enabled=True, method='POST', query='', content_type='application/json'):
         raw = value if isinstance(value, bytes) else json.dumps(value).encode()
         request = Request(f'http://127.0.0.1:{self.server.server_port}/api/vibe-model{query}',
@@ -109,6 +112,56 @@ class Models(unittest.TestCase):
         self.assertEqual(job['result']['status'],'unavailable')
         self.assertEqual(job['result']['reason'],'INPUT_INVALID')
         self.assertEqual(job['result']['data'],{})
+
+    def test_http_rate_limit_and_failure_skip_calculation(self):
+        with patch.object(api.rate_limit, 'check', return_value=(False, 59201)), patch.object(api.runtime, 'calculate') as calculate:
+            status, headers, result = self.call()
+            self.assertEqual(status, 429)
+            self.assertEqual(headers['Retry-After'], '60')
+            self.assertEqual(result['error']['code'], 'RATE_LIMITED')
+            calculate.assert_not_called()
+        with patch.object(api.rate_limit, 'check', side_effect=api.rate_limit.Unavailable), patch.object(api.runtime, 'calculate') as calculate:
+            status, headers, result = self.call()
+            self.assertEqual(status, 503)
+            self.assertEqual(result['error']['code'], 'RATE_LIMIT_UNAVAILABLE')
+            calculate.assert_not_called()
+
+    def test_redis_atomic_contract_and_no_production_fallback(self):
+        from unittest.mock import MagicMock
+        limiter = api.rate_limit
+        with patch.dict(os.environ, {'VERCEL': '1', 'VERCEL_ENV': 'production',
+                'UPSTASH_REDIS_REST_URL': 'https://redis.example.test', 'UPSTASH_REDIS_REST_TOKEN': 'test-token'}):
+            response = MagicMock()
+            response.__enter__.return_value.read.return_value = b'{"result":[21,59000]}'
+            with patch.object(limiter, 'urlopen', return_value=response) as fetch:
+                self.assertEqual(limiter.check('model:ip', '1.2.3.4', 20), (False, 59000))
+                command = json.loads(fetch.call_args.args[0].data)
+                self.assertEqual(command[0], 'EVAL')
+                self.assertIn('PEXPIRE', command[1])
+                self.assertNotIn('1.2.3.4', command[3])
+            for raw in (b'{"error":"secret"}', b'{"result":[1,-1]}', b'{"result":[true,60000]}'):
+                response.__enter__.return_value.read.return_value = raw
+                with patch.object(limiter, 'urlopen', return_value=response), self.assertRaises(limiter.Unavailable):
+                    limiter.check('model:ip', '1.2.3.4', 20)
+            with patch.object(limiter, 'urlopen', side_effect=TimeoutError), self.assertRaises(limiter.Unavailable):
+                limiter.check('model:ip', '1.2.3.4', 20)
+            self.assertEqual(limiter._local, {})
+
+    def test_no_redis_configuration_on_vercel_fails_closed(self):
+        with patch.dict(os.environ, {'VERCEL': '1', 'VERCEL_ENV': 'production',
+                'UPSTASH_REDIS_REST_URL': '', 'UPSTASH_REDIS_REST_TOKEN': '',
+                'KV_REST_API_URL': '', 'KV_REST_API_TOKEN': ''}):
+            with self.assertRaises(api.rate_limit.Unavailable):
+                api.rate_limit.check('model:ip', '1.2.3.4', 20)
+            self.assertEqual(api.rate_limit.client_ip({'x-forwarded-for': 'spoofed'}, '127.0.0.1'), 'unknown')
+            self.assertEqual(api.rate_limit.client_ip({'x-vercel-forwarded-for': '1.2.3.4', 'x-forwarded-for': 'spoofed'}, '127.0.0.1'), '1.2.3.4')
+        self.assertEqual(api.rate_limit._local, {})
+
+    def test_global_quota_runs_before_model(self):
+        with patch.object(api.rate_limit, 'check', side_effect=[(True, 60000), (False, 5000)]) as check, patch.object(api.runtime, 'calculate') as calculate:
+            self.assertEqual(self.call()[0], 429)
+            self.assertEqual([call.args[0] for call in check.call_args_list], ['model:ip', 'model:global'])
+            calculate.assert_not_called()
 
     def test_source_drift_blocks_calculation(self):
         with patch.object(api.runtime,'verify_sources',side_effect=RuntimeError('SOURCE_BLOB_MISMATCH')):
