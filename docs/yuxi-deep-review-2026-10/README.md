@@ -350,3 +350,8 @@
 - 星 28（ch064，挖墓）：4B 开始；章末“十一个绿点，一齐晚了半拍”
 - 星 29（ch065，手环）：对峙在 207 年二月；锁点警告第三次（她想替罗辑开口）；章末事由一栏“危机纪元二年八月十三日”
 - 星 30（ch066，围巾）：听证 207 年三月，他当众认错，并自己说出冬眠名单那件事；她在走廊把围巾给他；208 年元旦改元威慑纪元；庄颜母女醒没醒不点明；大史周二送饭；两人再次同时冬眠；章末手伸向红色中止键、离它两指宽
+
+## 上线记录
+
+- 2026-10-16：PR FeidaWang/Afflatus#18 squash 合并（626c7d4），线上为新稿第 1–66 章 + 旧稿第 93–200 章重编号为第 67–174 章，共 174 章；旧网址 /175–/200 跳转到旧号减 26；作者署名长岛冰茶，简介按圣经修正并标“含成人亲密描写”。
+- 再次上线：在 origin/main 上新开分支，运行 `python3 docs/yuxi-deep-review-2026-10/tools/build_live.py <已修订章数> <保留的第一个旧章号>` 生成 json（脚本在本目录 tools/，需从含改稿的工作树运行后把 json 拷过去），改 `public/novels-index.json` 的 chapterCount/hud/updateNote，按新的旧号→新号映射更新 vercel.json 里 yuxi-gongci 的跳转，然后 `npm run site:generate`、`npm run data:check`、`npm run build`。
