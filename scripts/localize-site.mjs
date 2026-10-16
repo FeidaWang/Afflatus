@@ -17,6 +17,7 @@ import {
   NAV_ROUTES,
   HOME_NAV_GROUPS,
   SITE_LOCALES,
+  SITE_NAME,
   SITE_MANIFEST,
   findRouteByPath,
   localizedRoutePath,
@@ -229,14 +230,14 @@ function setDocumentMetadata(document, route, locale = null) {
   if (fixed) {
     const social = route.seo.social;
     setMetaContent(document, { name: 'description' }, fixed.description);
-    setMetaContent(document, { property: 'og:title' }, fixed.title);
-    setMetaContent(document, { property: 'og:description' }, fixed.description);
+    setMetaContent(document, { property: 'og:title' }, fixed.ogTitle || fixed.title);
+    setMetaContent(document, { property: 'og:description' }, fixed.ogDescription || fixed.description);
     setMetaContent(document, { property: 'og:url' }, canonical);
     setMetaContent(document, { property: 'og:image' }, social.images[metadataLocale]);
     setMetaContent(document, { property: 'og:image:secure_url' }, social.images[metadataLocale]);
     setMetaContent(document, { property: 'og:image:alt' }, social.alt[metadataLocale]);
-    setMetaContent(document, { name: 'twitter:title' }, fixed.title);
-    setMetaContent(document, { name: 'twitter:description' }, fixed.description);
+    setMetaContent(document, { name: 'twitter:title' }, fixed.ogTitle || fixed.title);
+    setMetaContent(document, { name: 'twitter:description' }, fixed.ogDescription || fixed.description);
     setMetaContent(document, { name: 'twitter:image' }, social.images[metadataLocale]);
     setMetaContent(document, { name: 'twitter:image:alt' }, social.alt[metadataLocale]);
   }
@@ -509,21 +510,21 @@ function novelPageCopy(locale, entry, chapter = null) {
   if (chapter) {
     return locale === 'en'
       ? {
-        title: `${chapter.title} — ${entry.novel.title} · Project Afflatus`,
+        title: `${chapter.title} — ${entry.novel.title} · ${SITE_NAME}`,
         description: `Read ${chapter.title} from the original Chinese serialized novel ${entry.novel.title}.`,
       }
       : {
-        title: `${chapter.title} — 《${entry.novel.title}》· Project Afflatus`,
+        title: `${chapter.title} — 《${entry.novel.title}》· ${SITE_NAME}`,
         description: `原创中文连载《${entry.novel.title}》${chapter.title}，护眼阅读。`,
       };
   }
   return locale === 'en'
     ? {
-      title: `${entry.novel.title} — Chinese Serialized Novel · Project Afflatus`,
+      title: `${entry.novel.title} — Chinese Serial Fiction · ${SITE_NAME}`,
       description: `${entry.novel.intro} Original Chinese serialized fiction.`,
     }
     : {
-      title: `《${entry.novel.title}》— 原创中文连载 · Project Afflatus`,
+      title: `《${entry.novel.title}》— 原创中文连载 · ${SITE_NAME}`,
       description: entry.novel.intro,
     };
 }

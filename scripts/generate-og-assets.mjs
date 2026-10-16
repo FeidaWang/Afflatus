@@ -1,11 +1,14 @@
 #!/usr/bin/env node
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readFile, copyFile } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium } from 'playwright';
+import { profileCardHtml } from './og-profile-card.mjs';
 import {
   SITE_LOCALES,
   SITE_MANIFEST,
   SOCIAL_CARD,
+  socialCardFilename,
+  SITE_NAME,
 } from '../src/config/siteManifest.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
@@ -45,6 +48,7 @@ const cardHtml = ({
   sansFont,
 }) => {
   const social = route.seo.social;
+  if(route.id==='main')return profileCardHtml({locale,sansFont,previews});
   if (social.precomposed) {
     // The artwork carries its English title; the Chinese card adds the
     // localized eyebrow and subtitle in the clear area above that title.
@@ -127,7 +131,7 @@ h1 {
     <p class="subtitle">${escapeHtml(social.subtitle[locale])}</p>
     <div class="footer">
       <span class="route">${escapeHtml(pageLabel)}</span>
-      <span class="locale">${languageLabel} · PROJECT AFFLATUS</span>
+      <span class="locale">${languageLabel} · ${SITE_NAME.toUpperCase()}</span>
     </div>
   </main>
 </body>
@@ -140,6 +144,7 @@ const sansFont = await asDataUrl(
   'font/woff2',
 );
 
+const previews=Object.fromEntries(await Promise.all(['research','finance','learning'].map(async key=>[key,await asDataUrl(path.join(ROOT,`public/assets/og-previews/${key}.jpg`),'image/jpeg')])));
 const browser = await chromium.launch();
 try {
   const page = await browser.newPage({
@@ -162,13 +167,17 @@ try {
       await page.evaluate(() => document.fonts.ready);
       const outputPath = path.join(
         OUTPUT_DIR,
-        `${route.id}-${locale}.${SOCIAL_CARD.extension}`,
+        socialCardFilename(route.id, locale),
       );
       await page.screenshot({
         path: outputPath,
         type: 'jpeg',
         quality: SOCIAL_CARD.quality,
       });
+      if(route.id==='main') {
+        await copyFile(outputPath,path.join(OUTPUT_DIR,`main-${locale}.jpg`));
+        if(locale==='en')await copyFile(outputPath,path.join(OUTPUT_DIR,'og-image.jpg'));
+      }
       console.log(`GENERATED: ${path.relative(ROOT, outputPath)}`);
     }
   }

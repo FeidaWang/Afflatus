@@ -2,6 +2,7 @@
    novel pages share one cached, minified module instead of each inlining
    ~46 KB of script. */
 import { fetchJson, purgeCachedJson } from '../lib/fetchJson.js';
+import { SITE_NAME } from '../config/siteIdentity.js';
 import { escapeHtml } from '../lib/escapeHtml.js';
 let renderNovelBlocks;
 import { mountReaderExperience } from '../lib/readerExperience.js';
@@ -98,7 +99,7 @@ export function mountSerialReader() {
     );
     var path = serialApi.readerPath({ locale:locale, bookId:state.novelId, chapterId:chapter.id });
     var canonicalUrl = 'https://feida.au' + path;
-    var title = chapter.title + ' — 《' + currentNovel.novel.title + '》· Project Afflatus';
+    var title = chapter.title + ' — 《' + currentNovel.novel.title + '》· ' + SITE_NAME;
     var description = '原创中文连载《' + currentNovel.novel.title + '》' + chapter.title + '，护眼阅读。';
     document.title = title;
     var canonical = document.querySelector('link[rel="canonical"]');
