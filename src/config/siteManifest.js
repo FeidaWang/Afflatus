@@ -154,11 +154,11 @@ export const ROUTE_SEO = Object.freeze({
       eyebrow: { en: 'SERIAL FICTION', zh: '原创连载' },
       title: { en: 'Original Chinese fiction', zh: '原创中文小说连载' },
       subtitle: {
-        en: 'Three serialized worlds by Feida Wang.',
+        en: 'Three serialised worlds by Feida Wang.',
         zh: '王飞达创作的三个连载世界。',
       },
       alt: {
-        en: 'Retro-futurist library for original serialized fiction',
+        en: 'Retro-futurist library for original serialised fiction',
         zh: '原创连载小说的复古未来主义图书馆',
       },
       images: { en: routeOgImage('serial', 'en'), zh: routeOgImage('serial', 'zh') },
@@ -369,7 +369,7 @@ export const SITE_MANIFEST = Object.freeze([
       ogImage: ROUTE_SEO.serial.social.images.zh,
     },
     locales: {
-      en: {"title": "Stories — Original Chinese fiction · AFFLATUS", "description": "Original serialized fiction in Chinese. Choose a book and continue reading, with reading preferences and progress on your device."},
+      en: {"title": "Stories — Original Chinese fiction · AFFLATUS", "description": "Original serialised fiction in Chinese. Choose a book and continue reading, with reading preferences and progress on your device."},
       zh: {"title": "故事 — 原创中文连载 · AFFLATUS", "description": "原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。"},
     },
   },
