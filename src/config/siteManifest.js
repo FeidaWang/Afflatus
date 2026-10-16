@@ -1,3 +1,5 @@
+import { SITE_NAME } from './siteIdentity.js';
+export { SITE_NAME } from './siteIdentity.js';
 import { normalizeRoutePath, resolveRouteHref } from '../lib/routePaths.js';
 export { normalizeRoutePath } from '../lib/routePaths.js';
 
@@ -19,22 +21,25 @@ export const SOCIAL_CARD = Object.freeze({
   maxBytes: 400_000,
 });
 
+export const socialCardFilename = (routeId, locale) =>
+  `${routeId}-${locale}${routeId === 'main' ? '-personal-portfolio' : ''}.${SOCIAL_CARD.extension}`;
+
 const routeOgImage = (routeId, locale) =>
-  `https://feida.au/assets/og/${routeId}-${locale}.${SOCIAL_CARD.extension}`;
+  `https://feida.au/assets/og/${socialCardFilename(routeId, locale)}`;
 
 export const ROUTE_SEO = Object.freeze({
   main: {
     social: {
       background: 'assets/og-backgrounds/home.jpg',
-      eyebrow: { en: 'AFFLATUS · COMMAND ATLAS', zh: 'AFFLATUS · 指挥星图' },
-      title: { en: 'Systems for uncertain worlds', zh: '为不确定的世界构建系统' },
+      eyebrow: { en: 'FEIDA WANG · AFFLATUS', zh: '王飞达 FEIDA WANG · AFFLATUS' },
+      title: { en: 'Design. Build. Research.', zh: '设计。构建。研究。' },
       subtitle: {
-        en: 'Capital, software and intelligence for long horizons.',
-        zh: '资本、软件与情报，为长期主义而建。',
+        en: 'AI Engineering · Product Design · Financial & Industry Research',
+        zh: 'AI 工程 · 产品设计 · 金融与产业研究',
       },
       alt: {
-        en: 'AFFLATUS black-hole command atlas',
-        zh: 'AFFLATUS 黑洞指挥星图',
+        en: 'Feida Wang personal portfolio: AI engineering, product design, financial modelling and industry research',
+        zh: '王飞达个人作品集：AI 工程、产品设计、金融建模与产业研究',
       },
       images: { en: routeOgImage('main', 'en'), zh: routeOgImage('main', 'zh') },
     },
@@ -149,11 +154,11 @@ export const ROUTE_SEO = Object.freeze({
       eyebrow: { en: 'SERIAL FICTION', zh: '原创连载' },
       title: { en: 'Original Chinese fiction', zh: '原创中文小说连载' },
       subtitle: {
-        en: 'Three serialized worlds by Feida Wang.',
+        en: 'Three serialised worlds by Feida Wang.',
         zh: '王飞达创作的三个连载世界。',
       },
       alt: {
-        en: 'Retro-futurist library for original serialized fiction',
+        en: 'Retro-futurist library for original serialised fiction',
         zh: '原创连载小说的复古未来主义图书馆',
       },
       images: { en: routeOgImage('serial', 'en'), zh: routeOgImage('serial', 'zh') },
@@ -195,18 +200,18 @@ export const SITE_MANIFEST = Object.freeze([
     seo: ROUTE_SEO.main,
     capabilities: ['video'],
     metadata: {
-      title: "AFFLATUS — From this world, into what comes next.",
-      description: "Stories, things I build, practical AI learning, and clear market tools.",
+      title: "Feida Wang | AI Engineering, Product Design & Research",
+      description: "Explore Feida Wang’s work in full-stack development, UI/UX design, agentic coding, financial modelling and AI industry research through working products.",
       // Root URLs adapt to the visitor's language; their canonical is the
       // default-locale document (/en/…, or /zh/ for the Chinese-only serial).
       canonical: 'https://feida.au/en/',
-      ogTitle: "AFFLATUS — From this world, into what comes next.",
-      ogDescription: "Stories, things I build, practical AI learning, and clear market tools.",
+      ogTitle: "Feida Wang — From Ideas to Working Products",
+      ogDescription: "A personal portfolio connecting AI-assisted engineering, thoughtful design, financial analysis and industry research.",
       ogImage: ROUTE_SEO.main.social.images.en,
     },
     locales: {
-      en: {"title": "AFFLATUS — From this world, into what comes next.", "description": "Stories, things I build, practical AI learning, and clear market tools."},
-      zh: {"title": "AFFLATUS — 从这颗星球，驶向更远的地方。", "description": "故事、作品、AI 学习，以及用简单图表看懂市场的工具。"},
+      en: {title: "Feida Wang | AI Engineering, Product Design & Research", description: "Explore Feida Wang’s work in full-stack development, UI/UX design, agentic coding, financial modelling and AI industry research through working products.", ogTitle: "Feida Wang — From Ideas to Working Products", ogDescription: "A personal portfolio connecting AI-assisted engineering, thoughtful design, financial analysis and industry research."},
+      zh: {title: "王飞达 Feida Wang｜AI 工程、产品设计与跨领域研究", description: "通过真实运行的产品，探索王飞达在全栈开发、UI/UX 设计、编程智能体、金融建模与 AI 产业研究中的跨领域实践。", ogTitle: "王飞达 Feida Wang — 从想法到真实运行的产品", ogDescription: "连接 AI 辅助工程、产品设计、金融分析与产业研究的个人作品集。"},
     },
   },
   {
@@ -364,7 +369,7 @@ export const SITE_MANIFEST = Object.freeze([
       ogImage: ROUTE_SEO.serial.social.images.zh,
     },
     locales: {
-      en: {"title": "Stories — Original Chinese fiction · AFFLATUS", "description": "Original serialized fiction in Chinese. Choose a book and continue reading, with reading preferences and progress on your device."},
+      en: {"title": "Stories — Original Chinese fiction · AFFLATUS", "description": "Original serialised fiction in Chinese. Choose a book and continue reading, with reading preferences and progress on your device."},
       zh: {"title": "故事 — 原创中文连载 · AFFLATUS", "description": "原创中文连载。选一本书，从上次停下的地方继续，阅读偏好与进度保存在你的设备上。"},
     },
   },

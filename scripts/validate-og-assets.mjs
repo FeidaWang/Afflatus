@@ -5,6 +5,7 @@ import {
   SITE_LOCALES,
   SITE_MANIFEST,
   SOCIAL_CARD,
+  socialCardFilename,
 } from '../src/config/siteManifest.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
@@ -56,7 +57,7 @@ function jpegDimensions(buffer) {
 }
 
 async function validateCard(route, locale) {
-  const expectedPath = `/assets/og/${route.id}-${locale}.${SOCIAL_CARD.extension}`;
+  const expectedPath = `/assets/og/${socialCardFilename(route.id, locale)}`;
   const url = route.seo.social.images[locale];
   let parsed;
   try {

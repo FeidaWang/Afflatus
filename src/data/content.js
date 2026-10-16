@@ -33,7 +33,7 @@ export const PICKS_EN = [
 
 export const COPY = {
   zh:{
-    title:'Project Afflatus - 深空舰长日志',lang:'zh-CN',langBtn:'Dream in English',
+    title:'王飞达 Feida Wang｜AI 工程、产品设计与跨领域研究',lang:'zh-CN',langBtn:'Dream in English',
     heroNum:'FY25/26 · <span>资本飞行记录仪</span> · 财年战后报告',
     heroTitle:'我让资本高速跃迁。<br>回撤则提醒我：<br>速度的<em>代价</em>。',
     heroDesc:'一份私人的 2025—26 财年交易记录：仅公开模型上界、周期年化、持仓时长与风险口径；单笔结果及底层财务数据全部保密。',
@@ -53,7 +53,7 @@ export const COPY = {
     picks:PICKS_ZH,
   },
   en:{
-    title:'Project Afflatus - Deep-Space Captain Log',lang:'en',langBtn:'以中文入梦',
+    title:'Feida Wang | AI Engineering, Product Design & Research',lang:'en',langBtn:'以中文入梦',
     heroNum:'FY25/26 · <span>capital flight recorder</span> · after-action report',
     heroTitle:'I made capital move fast.<br> The drawdown taught me<br> what speed <em>costs</em>.',
     heroDesc:'A private FY2025–26 trading record retaining only model bounds, cycle annualization, holding duration and risk methodology; position outcomes and underlying financial data stay private.',

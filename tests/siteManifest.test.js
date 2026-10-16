@@ -97,7 +97,7 @@ describe('siteManifest', () => {
       for (const locale of SITE_LOCALES) {
         const image = route.seo.social.images[locale];
         expect(image).toBe(
-          `https://feida.au/assets/og/${route.id}-${locale}.${SOCIAL_CARD.extension}`,
+          `https://feida.au/assets/og/${route.id}-${locale}${route.id === 'main' ? '-personal-portfolio' : ''}.${SOCIAL_CARD.extension}`,
         );
         expect(socialImages.has(image)).toBe(false);
         socialImages.add(image);

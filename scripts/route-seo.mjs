@@ -2,10 +2,9 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parse } from 'parse5';
 import { courseBookCatalog } from '../src/data/courseBookCatalog.js';
-import { SOCIAL_CARD } from '../src/config/siteManifest.js';
+import { SOCIAL_CARD, SITE_NAME } from '../src/config/siteManifest.js';
 
 const SITE_URL = 'https://feida.au';
-const SITE_NAME = 'Project Afflatus';
 const PROFILE_ID = `${SITE_URL}/#person`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
 const SEO_START = '<!-- afflatus:route-seo:start -->';
@@ -481,11 +480,11 @@ export function renderRouteSeoBlock(route, {
     locale === 'adaptive' ? route.metadata.ogImage : route.seo.social.images[key];
   const alt = route.seo.social.alt[key];
   const title =
-    locale === 'adaptive' ? route.metadata.ogTitle : route.locales[key].title;
+    locale === 'adaptive' ? route.metadata.ogTitle : (route.locales[key].ogTitle || route.locales[key].title);
   const description =
     locale === 'adaptive'
       ? route.metadata.ogDescription
-      : route.locales[key].description;
+      : (route.locales[key].ogDescription || route.locales[key].description);
   const graph = buildRouteStructuredData(route, { locale, facts });
 
   return [
