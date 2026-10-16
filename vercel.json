@@ -91,6 +91,266 @@
       "source": "/en/novels/:book/:chapter/",
       "destination": "/zh/novels/:book/:chapter/",
       "permanent": true
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/175",
+      "destination": "/zh/novels/yuxi-gongci/149",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/175/",
+      "destination": "/zh/novels/yuxi-gongci/149/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/176",
+      "destination": "/zh/novels/yuxi-gongci/150",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/176/",
+      "destination": "/zh/novels/yuxi-gongci/150/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/177",
+      "destination": "/zh/novels/yuxi-gongci/151",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/177/",
+      "destination": "/zh/novels/yuxi-gongci/151/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/178",
+      "destination": "/zh/novels/yuxi-gongci/152",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/178/",
+      "destination": "/zh/novels/yuxi-gongci/152/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/179",
+      "destination": "/zh/novels/yuxi-gongci/153",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/179/",
+      "destination": "/zh/novels/yuxi-gongci/153/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/180",
+      "destination": "/zh/novels/yuxi-gongci/154",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/180/",
+      "destination": "/zh/novels/yuxi-gongci/154/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/181",
+      "destination": "/zh/novels/yuxi-gongci/155",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/181/",
+      "destination": "/zh/novels/yuxi-gongci/155/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/182",
+      "destination": "/zh/novels/yuxi-gongci/156",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/182/",
+      "destination": "/zh/novels/yuxi-gongci/156/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/183",
+      "destination": "/zh/novels/yuxi-gongci/157",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/183/",
+      "destination": "/zh/novels/yuxi-gongci/157/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/184",
+      "destination": "/zh/novels/yuxi-gongci/158",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/184/",
+      "destination": "/zh/novels/yuxi-gongci/158/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/185",
+      "destination": "/zh/novels/yuxi-gongci/159",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/185/",
+      "destination": "/zh/novels/yuxi-gongci/159/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/186",
+      "destination": "/zh/novels/yuxi-gongci/160",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/186/",
+      "destination": "/zh/novels/yuxi-gongci/160/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/187",
+      "destination": "/zh/novels/yuxi-gongci/161",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/187/",
+      "destination": "/zh/novels/yuxi-gongci/161/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/188",
+      "destination": "/zh/novels/yuxi-gongci/162",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/188/",
+      "destination": "/zh/novels/yuxi-gongci/162/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/189",
+      "destination": "/zh/novels/yuxi-gongci/163",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/189/",
+      "destination": "/zh/novels/yuxi-gongci/163/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/190",
+      "destination": "/zh/novels/yuxi-gongci/164",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/190/",
+      "destination": "/zh/novels/yuxi-gongci/164/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/191",
+      "destination": "/zh/novels/yuxi-gongci/165",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/191/",
+      "destination": "/zh/novels/yuxi-gongci/165/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/192",
+      "destination": "/zh/novels/yuxi-gongci/166",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/192/",
+      "destination": "/zh/novels/yuxi-gongci/166/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/193",
+      "destination": "/zh/novels/yuxi-gongci/167",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/193/",
+      "destination": "/zh/novels/yuxi-gongci/167/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/194",
+      "destination": "/zh/novels/yuxi-gongci/168",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/194/",
+      "destination": "/zh/novels/yuxi-gongci/168/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/195",
+      "destination": "/zh/novels/yuxi-gongci/169",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/195/",
+      "destination": "/zh/novels/yuxi-gongci/169/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/196",
+      "destination": "/zh/novels/yuxi-gongci/170",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/196/",
+      "destination": "/zh/novels/yuxi-gongci/170/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/197",
+      "destination": "/zh/novels/yuxi-gongci/171",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/197/",
+      "destination": "/zh/novels/yuxi-gongci/171/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/198",
+      "destination": "/zh/novels/yuxi-gongci/172",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/198/",
+      "destination": "/zh/novels/yuxi-gongci/172/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/199",
+      "destination": "/zh/novels/yuxi-gongci/173",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/199/",
+      "destination": "/zh/novels/yuxi-gongci/173/",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/200",
+      "destination": "/zh/novels/yuxi-gongci/174",
+      "permanent": false
+    },
+    {
+      "source": "/zh/novels/yuxi-gongci/200/",
+      "destination": "/zh/novels/yuxi-gongci/174/",
+      "permanent": false
     }
   ],
   "headers": [
