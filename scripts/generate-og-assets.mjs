@@ -48,7 +48,7 @@ const cardHtml = ({
   sansFont,
 }) => {
   const social = route.seo.social;
-  if(route.id==='main')return profileCardHtml({locale,sansFont,previews});
+  if(route.id==='main')return profileCardHtml({locale,sansFont,serifFont,poster});
   if (social.precomposed) {
     // The artwork carries its English title; the Chinese card adds the
     // localized eyebrow and subtitle in the clear area above that title.
@@ -144,7 +144,8 @@ const sansFont = await asDataUrl(
   'font/woff2',
 );
 
-const previews=Object.fromEntries(await Promise.all(['research','finance','learning'].map(async key=>[key,await asDataUrl(path.join(ROOT,`public/assets/og-previews/${key}.jpg`),'image/jpeg')])));
+const serifFont=await asDataUrl(path.join(FONT_DIR,'newsreader-var.woff2'),'font/woff2');
+const poster=await asDataUrl(path.join(ROOT,'public/assets/film/afflatus-r07-poster.jpg'),'image/jpeg');
 const browser = await chromium.launch();
 try {
   const page = await browser.newPage({
