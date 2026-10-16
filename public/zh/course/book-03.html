@@ -1,0 +1,120 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="学会接管故障：Git、依赖、调试与最小修复"><meta name="theme-color" content="#faf9f5"><meta name="referrer" content="strict-origin-when-cross-origin"><title>学会接管故障 · AFFLATUS</title><link rel="canonical" href="https://feida.au/zh/course/book-03.html"><link rel="alternate" hreflang="en" href="https://feida.au/en/course/book-03.html"><link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/course/book-03.html"><link rel="icon" href="/favicons/course.svg"><link rel="stylesheet" href="/styles/responsive-primitives.css"><link rel="preload" href="/assets/fonts/anthropic-sans-roman.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/styles/shared-header.css"><link rel="stylesheet" href="/styles/course-chrome.css"><link rel="stylesheet" href="/styles/course-lesson.css"><meta property="og:type" content="article"><meta property="og:title" content="学会接管故障"><meta property="og:description" content="学会接管故障：Git、依赖、调试与最小修复"><meta property="og:url" content="https://feida.au/zh/course/book-03.html"><script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"学会接管故障","description":"学会接管故障：Git、依赖、调试与最小修复","inLanguage":"zh-CN","url":"https://feida.au/zh/course/book-03.html","learningResourceType":"Self-study lesson","isAccessibleForFree":true,"dateModified":"2026-09-27","isPartOf":{"@type":"Course","name":"From vibe coding to a personal FDE","url":"https://feida.au/zh/course.html"}}</script></head><body class="course-reading"><a class="reader-skip" href="#lesson-body">跳到课程正文</a>
+<header id="afflatus-header" data-afflatus-header="">
+  <div class="af-header-inner">
+    <a class="af-wordmark" href="/zh/" data-header-path="/" aria-label="AFFLATUS 首页" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="af-brand-art" aria-hidden="true"><span class="af-brand-full">AFFLATUS</span><span class="af-brand-compact"><span class="af-brand-a">A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></span></a>
+    <nav class="af-header-nav" id="af-primary-nav" aria-label="主导航" data-aria-en="Primary navigation" data-aria-zh="主导航">
+      <a href="/zh/portfolio.html" data-header-path="/portfolio.html"><span class="af-nav-label" data-en="Portfolio" data-zh="作品集">作品集</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure="" aria-expanded="false" aria-controls="af-markets"><span class="af-nav-label" data-en="Markets" data-zh="市场">市场</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button><div class="af-header-dropdown" id="af-markets"><a href="/zh/arena.html" data-header-path="/arena.html"><span class="af-nav-label" data-en="Stock observation" data-zh="股票观察">股票观察</span></a><a href="/zh/sectors.html" data-header-path="/sectors.html"><span class="af-nav-label" data-en="AI industry" data-zh="AI 产业">AI 产业</span></a><a href="/zh/signal.html" data-header-path="/signal.html"><span class="af-nav-label" data-en="Economic updates" data-zh="经济动态">经济动态</span></a></div></div>
+      <a href="/zh/course.html" data-header-path="/course.html" aria-current="page"><span class="af-nav-label" data-en="Learn" data-zh="学习">学习</span></a>
+      <a href="/zh/serial.html" data-header-path="/serial.html" title="Original stories in Chinese / 原创中文小说"><span class="af-nav-label" data-en="Stories" data-zh="故事">故事</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure="" aria-expanded="false" aria-controls="af-more"><span class="af-nav-label" data-en="More" data-zh="更多">更多</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button><div class="af-header-dropdown" id="af-more"><a href="/zh/horoscope.html" data-header-path="/horoscope.html"><span class="af-nav-label" data-en="Astrology for fun" data-zh="趣味占星">趣味占星</span></a></div></div>
+    </nav>
+    <a class="af-header-language" data-header-language="" href="/en/course/book-03.html" hreflang="en" aria-label="Switch to English" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">EN</a>
+    <button type="button" class="af-header-menu" data-header-disclosure="" aria-expanded="false" aria-controls="af-primary-nav" aria-label="打开导航" data-aria-en="Open navigation" data-aria-zh="打开导航"><svg class="af-menu-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 24"><path d="M1 2h30M1 12h30M1 22h13"></path></svg></button>
+  </div>
+</header>
+<div class="reading-progress" aria-hidden="true"><i></i></div><main id="mainContent"><div class="reader-breadcrumb"><a href="/zh/course.html#curriculum">课程书架</a><span>/</span><span>自学公开课程</span></div><section class="reader-hero"><div class="reader-hero-copy"><p class="reader-eyebrow">第 03 周 <span>/ 24</span> · 理解基础</p><h1>学会接管故障</h1><p class="reader-deck">学会接管故障：Git、依赖、调试与最小修复</p><div class="reader-meta"><span>10 小时核心 + 2 小时机动</span><span>学习 · 实验 · 独立练习</span></div><a class="reader-start" href="#lesson-body">开始阅读 ↓</a></div><div class="reader-cover"><img src="/assets/course-covers/week-03-zh.svg" width="480" height="492" alt="学会接管故障" fetchpriority="high"><span>24 周个人 FDE 实践路线</span></div></section><div class="reader-layout"><aside class="reader-toc"><details open><summary>本页目录</summary><nav aria-label="文章目录"><a href="#section-1" class="toc-level-2">学习内容与理解目标</a><a href="#section-2" class="toc-level-2">学习链接与选读范围</a><a href="#section-3" class="toc-level-2">实战拆解</a><a href="#section-4" class="toc-level-2">交付与验收</a><a href="#section-5" class="toc-level-2">本周可复制的协作提示</a><a href="#section-6" class="toc-level-2">本周来源与核对范围</a></nav></details><a class="toc-back" href="/zh/course.html#curriculum">← 24 周课程</a></aside><article id="lesson-body" class="lesson-prose"><blockquote>
+<p><strong>本周要回答：</strong> 当 AI 改坏了项目，或者换一台干净环境时，你能把它恢复到可用状态吗？</p>
+</blockquote>
+<p><strong>进入本周前：</strong> 已有小工具与基本测试，能读懂核心函数；准备一个不含秘密的练习仓库。</p>
+<figure class="lesson-figure"><div class="figure-top"><span>图 03.1</span><span>本周的思考路径</span></div><ol class="learning-flow"><li><span>01</span><strong>复现故障</strong></li><li><span>02</span><strong>提出假设</strong></li><li><span>03</span><strong>最小修复</strong></li><li><span>04</span><strong>验证与恢复</strong></li></ol><figcaption>课程示意图 · 根据本周实验步骤绘制，表示建议流程，不是实测结果。</figcaption></figure><h2 id="section-1">学习内容与理解目标</h2>
+<p>本周学习变更历史、工作区、提交、分支、差异和撤销的关系。目标不是背所有 Git 命令，而是能回答“改了什么、为什么改、怎样回退”。同时认识依赖清单、锁文件、运行时版本和配置的区别：别人电脑上可复现，靠的是可解释的环境，而不是复制整个私人目录。</p>
+<p>调试采用复现、缩小、假设、验证的顺序。先看错误位置和调用关系，再做最小修改；不要连续把完整日志和整个仓库扔给不同模型碰运气。补充一点复杂度直觉：遍历一次列表、嵌套遍历与集合查找有什么不同，先理解再测量，不为了“优化”过早重写。</p>
+<h2 id="section-2">学习链接与选读范围</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="课程表格，可横向滚动"><table>
+<thead>
+<tr>
+<th>级别</th>
+<th>官方或原始资料</th>
+<th>本周只读这些</th>
+<th align="right">阅读预算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>必读</td>
+<td><a href="https://missing.csail.mit.edu/2026/version-control/" rel="noreferrer">R04 · MIT Missing Semester：Version Control (Git)</a></td>
+<td>提交、差异、分支和恢复相关部分。</td>
+<td align="right">40 分钟</td>
+</tr>
+<tr>
+<td>必读</td>
+<td><a href="https://missing.csail.mit.edu/2026/debugging-profiling/" rel="noreferrer">R03 · MIT Missing Semester：Debugging and Profiling</a></td>
+<td>复现错误、调试器、日志和定位方法。</td>
+<td align="right">45 分钟</td>
+</tr>
+<tr>
+<td>选读</td>
+<td><a href="https://missing.csail.mit.edu/2026/code-quality/" rel="noreferrer">R07 · MIT Missing Semester：Code Quality</a></td>
+<td>类型与代码质量反馈；只接入当前真正需要的检查。</td>
+<td align="right">35 分钟</td>
+</tr>
+</tbody></table></div>
+<h2 id="section-3">实战拆解</h2>
+<ol>
+<li><p>把现有可运行状态存为一个清楚的提交。加入运行说明和依赖锁文件，并检查待提交内容；不把依赖目录、凭据、原始记录和构建缓存一起推送。</p>
+</li>
+<li><p>人为制造一个小错误，例如分钟被当成小时、重复项不再去重。先记下如何触发、实际与期望差异，再用日志或调试器找到出错函数。</p>
+</li>
+<li><p>只修复导致问题的最小范围，运行相关测试并检查差异。记录“假设—证据—修复”，不要用大量截图代替故障说明。</p>
+</li>
+<li><p>在临时干净目录中按说明恢复项目，安装已确认的依赖并运行测试。清楚标记哪些操作可能联网；新依赖执行前先核对来源和安装脚本。</p>
+</li>
+<li><p>实际演练一次回退：恢复到上个可用版本，再恢复修复版本。涉及已共享分支时优先保留清楚的变更历史，不随意强推覆盖别人的工作。</p>
+</li>
+</ol>
+<h2 id="section-4">交付与验收</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="课程表格，可横向滚动"><table>
+<thead>
+<tr>
+<th>本周交付</th>
+<th>怎样确认真的完成</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可复现运行说明</td>
+<td>从干净目录按步骤能启动；运行时、包管理器和锁文件关系清楚。</td>
+</tr>
+<tr>
+<td>一条可解释的修复</td>
+<td>包含故障样例、最小差异和验证结果。</td>
+</tr>
+<tr>
+<td>回退演练</td>
+<td>本人实际操作过，不只是 README 里写了一句“可回滚”。</td>
+</tr>
+</tbody></table></div>
+<p><strong>不用代码生成器的练习：</strong> 关闭代码生成器，定位一个预先放入的小 bug；允许查官方文档，但先写自己的原因假设，再修改并检查差异。</p>
+<p><strong>隐私与安全检查：</strong> <code>.gitignore</code> 不能撤回已经泄露的秘密，也不能从已提交历史中自动删除数据。误提交凭据应先撤销或轮换，再按平台指南处理历史；不要把“删文件”当泄露已经解决。参考 <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository" rel="noreferrer">R64 · GitHub：Removing sensitive data from a repository</a>。</p>
+<p><strong>落到日常生活：</strong> 给工具增加一个可靠的“坏了之后怎么办”入口。下一次报错先保留最小可复现例子，避免重新做一遍整个项目。</p>
+<p><strong>过关或补课判断：</strong> 能从错误信息定位到相关函数，能看懂补丁并恢复旧版本才过关。无法解释的大规模改写应拆小，而不是用通过一个测试来安慰自己。</p>
+<h2 id="section-5">本周可复制的协作提示</h2>
+<pre><code class="language-text">请不要重写整个项目。先复现指定故障，提出一个可验证的原因，做最小补丁并运行相关检查。给出干净环境复现与回退步骤，然后让我独立定位第二个小错误。
+</code></pre>
+<h2 id="section-6">本周来源与核对范围</h2><p class="source-baseline">来源编号与核对说明沿用课程原文，基线为 2026-09-27。未逐一登录完成外部实验；实施前请核对最新版本与访问条件。</p><ol class="source-list"><li id="R03"><span>R03</span><div><a href="https://missing.csail.mit.edu/2026/debugging-profiling/" rel="noreferrer">MIT Missing Semester：Debugging and Profiling ↗</a><p>2026 讲义；先学重现、定位、调试，性能分析按需。</p></div></li><li id="R04"><span>R04</span><div><a href="https://missing.csail.mit.edu/2026/version-control/" rel="noreferrer">MIT Missing Semester：Version Control (Git) ↗</a><p>2026 讲义；课程实验应在自己的练习仓库进行。</p></div></li><li id="R07"><span>R07</span><div><a href="https://missing.csail.mit.edu/2026/code-quality/" rel="noreferrer">MIT Missing Semester：Code Quality ↗</a><p>2026 讲义；选类型、格式、测试与代码质量反馈。</p></div></li><li id="R64"><span>R64</span><div><a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository" rel="noreferrer">GitHub：Removing sensitive data from a repository ↗</a><p>先撤销或轮换泄露凭据，再处理历史；无法承诺清除所有副本。</p></div></li></ol></article></div><nav class="reader-adjacent" aria-label="前后课程"><a href="book-02.html"><span>上一周 · 02</span><strong>让输入可信 ←</strong></a><a href="book-04.html"><span>下一周 · 04</span><strong>让记录可信 →</strong></a></nav><nav class="reader-support" aria-label="课程资料"><a href="guide.html">课程导读 ↗</a><a href="handbook.html">手册与七张模板 ↗</a><a href="resources.html">78 项来源索引 ↗</a><a href="/en/course/book-03.html" hreflang="en">Read in English ↗</a></nav></main><footer class="pa-footer">
+  <div class="pa-footer-inner">
+    <a class="pa-footer-brand" href="/zh/" aria-label="AFFLATUS 首页" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="pa-footer-brand-mark" aria-hidden="true"><span>A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></a>
+    <nav class="pa-footer-pages" aria-label="探索站点" data-aria-en="Explore the site" data-aria-zh="探索站点">
+      <a href="/zh/portfolio.html" data-en="Portfolio" data-zh="作品集">作品集</a>
+      <a href="/zh/arena.html" data-en="Arena" data-zh="竞技场">竞技场</a>
+      <a href="/zh/sectors.html" data-en="AI industry" data-zh="AI 产业">AI 产业</a>
+      <a href="/zh/signal.html" data-en="Economic updates" data-zh="经济动态">经济动态</a>
+      <a href="/zh/course.html" data-en="Learn" data-zh="学习">学习</a>
+      <a href="/zh/serial.html" data-en="Stories" data-zh="故事">故事</a>
+      <a href="/zh/horoscope.html" data-en="Astrology for fun" data-zh="趣味占星">趣味占星</a>
+    </nav>
+    <div class="pa-footer-personal">
+      <span class="pa-footer-copyright">© 2026 RSI AI</span>
+      <nav class="pa-footer-socials" aria-label="社交主页" data-aria-en="Social profiles" data-aria-zh="社交主页">
+        <a href="https://www.linkedin.com/in/feida-wang/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-i18n-static-aria="">
+          <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M216,24H40A16,16,0,0,0,24,40V216a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V40A16,16,0,0,0,216,24ZM96,176a8,8,0,0,1-16,0V112a8,8,0,0,1,16,0ZM88,96a12,12,0,1,1,12-12A12,12,0,0,1,88,96Zm96,80a8,8,0,0,1-16,0V140a20,20,0,0,0-40,0v36a8,8,0,0,1-16,0V112a8,8,0,0,1,15.79-1.78A36,36,0,0,1,184,140Z"></path></svg>
+        </a>
+        <a href="https://github.com/FeidaWang" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-i18n-static-aria="">
+          <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M216,104v8a56.06,56.06,0,0,1-48.44,55.47A39.8,39.8,0,0,1,176,192v40a8,8,0,0,0-8,8H104a8,8,0,0,1-8-8V216H72a40,40,0,0,1-40-40A24,24,0,0,0,8,152a8,8,0,0,1,0-16,40,40,0,0,1,40,40,24,24,0,0,0,24,24H96v-8a39.8,39.8,0,0,1,8.44-24.53A56.06,56.06,0,0,1,56,112v-8a58.14,58.14,0,0,1,7.69-28.32A59.78,59.78,0,0,1,69.07,28,8,8,0,0,1,76,24a59.75,59.75,0,0,1,48,24h24a59.75,59.75,0,0,1,48-24,8,8,0,0,1,6.93,4,59.74,59.74,0,0,1,5.37,47.68A58,58,0,0,1,216,104Z"></path></svg>
+        </a>
+        <a href="https://www.zhihu.com/people/ye-piao-xue" target="_blank" rel="noopener noreferrer" aria-label="知乎" data-i18n-static-aria="">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.721 0C2.251 0 0 2.25 0 5.719V18.28C0 21.751 2.252 24 5.721 24h12.56C21.751 24 24 21.75 24 18.281V5.72C24 2.249 21.75 0 18.281 0zm1.964 4.078c-.271.73-.5 1.434-.68 2.11h4.587c.545-.006.445 1.168.445 1.171H9.384a58.104 58.104 0 01-.112 3.797h2.712c.388.023.393 1.251.393 1.266H9.183a9.223 9.223 0 01-.408 2.102l.757-.604c.452.456 1.512 1.712 1.906 2.177.473.681.063 2.081.063 2.081l-2.794-3.382c-.653 2.518-1.845 3.607-1.845 3.607-.523.468-1.58.82-2.64.516 2.218-1.73 3.44-3.917 3.667-6.497H4.491c0-.015.197-1.243.806-1.266h2.71c.024-.32.086-3.254.086-3.797H6.598c-.136.406-.158.447-.268.753-.594 1.095-1.603 1.122-1.907 1.155.906-1.821 1.416-3.6 1.591-4.064.425-1.124 1.671-1.125 1.671-1.125zM13.078 6h6.377v11.33h-2.573l-2.184 1.373-.401-1.373h-1.219zm1.313 1.219v8.86h.623l.263.937 1.455-.938h1.456v-8.86z"></path></svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</footer><script type="module" src="/lib/course-reader.js"></script></body></html>

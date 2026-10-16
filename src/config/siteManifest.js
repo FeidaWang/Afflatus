@@ -22,7 +22,7 @@ export const SOCIAL_CARD = Object.freeze({
 });
 
 export const socialCardFilename = (routeId, locale) =>
-  `${routeId}-${locale}${routeId === 'main' ? '-personal-portfolio' : ''}.${SOCIAL_CARD.extension}`;
+  `${routeId}-${locale}${routeId === 'main' ? '-studio' : ''}.${SOCIAL_CARD.extension}`;
 
 const routeOgImage = (routeId, locale) =>
   `https://feida.au/assets/og/${socialCardFilename(routeId, locale)}`;
@@ -32,14 +32,14 @@ export const ROUTE_SEO = Object.freeze({
     social: {
       background: 'assets/og-backgrounds/home.jpg',
       eyebrow: { en: 'FEIDA WANG · AFFLATUS', zh: '王飞达 FEIDA WANG · AFFLATUS' },
-      title: { en: 'Design. Build. Research.', zh: '设计。构建。研究。' },
+      title: { en: 'From this world, into what comes next.', zh: '从这颗星球，驶向更远的地方。' },
       subtitle: {
-        en: 'AI Engineering · Product Design · Financial & Industry Research',
-        zh: 'AI 工程 · 产品设计 · 金融与产业研究',
+        en: 'Agentic coding, AI products and research — designed, built and shipped as working software.',
+        zh: '编程智能体、AI 产品与研究——设计、构建，并作为真实运行的软件上线。',
       },
       alt: {
-        en: 'Feida Wang personal portfolio: AI engineering, product design, financial modelling and industry research',
-        zh: '王飞达个人作品集：AI 工程、产品设计、金融建模与产业研究',
+        en: 'Feida Wang: AI engineering, agentic coding, product design and research, with a still from the homepage film',
+        zh: '王飞达：AI 工程、编程智能体、产品设计与研究，配首页影片画面',
       },
       images: { en: routeOgImage('main', 'en'), zh: routeOgImage('main', 'zh') },
     },
@@ -205,13 +205,13 @@ export const SITE_MANIFEST = Object.freeze([
       // Root URLs adapt to the visitor's language; their canonical is the
       // default-locale document (/en/…, or /zh/ for the Chinese-only serial).
       canonical: 'https://feida.au/en/',
-      ogTitle: "Feida Wang — From Ideas to Working Products",
-      ogDescription: "A personal portfolio connecting AI-assisted engineering, thoughtful design, financial analysis and industry research.",
+      ogTitle: "Feida Wang — AI Engineering, Agentic Coding & Research",
+      ogDescription: "A personal studio of working AI-era products, built solo with coding agents: an AI industry atlas, a Forward Deployed Engineer course, market research and original fiction.",
       ogImage: ROUTE_SEO.main.social.images.en,
     },
     locales: {
-      en: {title: "Feida Wang | AI Engineering, Product Design & Research", description: "Explore Feida Wang’s work in full-stack development, UI/UX design, agentic coding, financial modelling and AI industry research through working products.", ogTitle: "Feida Wang — From Ideas to Working Products", ogDescription: "A personal portfolio connecting AI-assisted engineering, thoughtful design, financial analysis and industry research."},
-      zh: {title: "王飞达 Feida Wang｜AI 工程、产品设计与跨领域研究", description: "通过真实运行的产品，探索王飞达在全栈开发、UI/UX 设计、编程智能体、金融建模与 AI 产业研究中的跨领域实践。", ogTitle: "王飞达 Feida Wang — 从想法到真实运行的产品", ogDescription: "连接 AI 辅助工程、产品设计、金融分析与产业研究的个人作品集。"},
+      en: {title: "Feida Wang | AI Engineering, Product Design & Research", description: "Explore Feida Wang’s work in full-stack development, UI/UX design, agentic coding, financial modelling and AI industry research through working products.", ogTitle: "Feida Wang — AI Engineering, Agentic Coding & Research", ogDescription: "A personal studio of working AI-era products, built solo with coding agents: an AI industry atlas, a Forward Deployed Engineer course, market research and original fiction."},
+      zh: {title: "王飞达 Feida Wang｜AI 工程、产品设计与跨领域研究", description: "通过真实运行的产品，探索王飞达在全栈开发、UI/UX 设计、编程智能体、金融建模与 AI 产业研究中的跨领域实践。", ogTitle: "王飞达 Feida Wang — AI 工程 · 编程智能体 · 产业研究", ogDescription: "用编程智能体独立构建的 AI 时代个人工作室：AI 产业图鉴、FDE 实战课程、市场研究与原创小说。"},
     },
   },
   {

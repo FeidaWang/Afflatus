@@ -22,6 +22,7 @@ export function App({ language: initialLanguage } = {}) {
         <div className="premiere-intro section-shell">
           <h1 id="home-title">{zh ? <><span>从这颗星球，</span><span>驶向更远的</span><span>地方。</span></> : <><span>From this world,</span>{' '}<span>into what comes</span>{' '}<span>next.</span></>}</h1>
           <div className="premiere-copy">
+            <p className="premiere-role">{zh ? '王飞达 · AI 工程、编程智能体与研究' : 'Feida Wang · AI engineering, agentic coding & research'}</p>
             <p>{zh ? '关于我们写下的故事、亲手做出的作品，以及理解这个世界的新方法。' : 'Stories we write, things we build, and new ways to understand the world around us.'}</p>
             <SiteLink href="/portfolio.html" language={language}>{zh ? '探索作品' : 'Explore the work'}</SiteLink>
           </div>

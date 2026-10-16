@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Turn a program into a usable page: the Web, HTTP and API boundaries"><meta name="theme-color" content="#faf9f5"><meta name="referrer" content="strict-origin-when-cross-origin"><title>From code to interface · AFFLATUS</title><link rel="canonical" href="https://feida.au/en/course/book-05.html"><link rel="alternate" hreflang="en" href="https://feida.au/en/course/book-05.html"><link rel="alternate" hreflang="zh-CN" href="https://feida.au/zh/course/book-05.html"><link rel="icon" href="/favicons/course.svg"><link rel="stylesheet" href="/styles/responsive-primitives.css"><link rel="preload" href="/assets/fonts/anthropic-sans-roman.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/styles/shared-header.css"><link rel="stylesheet" href="/styles/course-chrome.css"><link rel="stylesheet" href="/styles/course-lesson.css"><meta property="og:type" content="article"><meta property="og:title" content="From code to interface"><meta property="og:description" content="Turn a program into a usable page: the Web, HTTP and API boundaries"><meta property="og:url" content="https://feida.au/en/course/book-05.html"><script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"From code to interface","description":"Turn a program into a usable page: the Web, HTTP and API boundaries","inLanguage":"en","url":"https://feida.au/en/course/book-05.html","learningResourceType":"Self-study lesson","isAccessibleForFree":true,"dateModified":"2026-09-27","isPartOf":{"@type":"Course","name":"From vibe coding to a personal FDE","url":"https://feida.au/en/course.html"}}</script></head><body class="course-reading"><a class="reader-skip" href="#lesson-body">Skip to lesson</a>
+<header id="afflatus-header" data-afflatus-header="">
+  <div class="af-header-inner">
+    <a class="af-wordmark" href="/en/" data-header-path="/" aria-label="AFFLATUS home" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="af-brand-art" aria-hidden="true"><span class="af-brand-full">AFFLATUS</span><span class="af-brand-compact"><span class="af-brand-a">A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></span></a>
+    <nav class="af-header-nav" id="af-primary-nav" aria-label="Primary navigation" data-aria-en="Primary navigation" data-aria-zh="主导航">
+      <a href="/en/portfolio.html" data-header-path="/portfolio.html"><span class="af-nav-label" data-en="Portfolio" data-zh="作品集">Portfolio</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure="" aria-expanded="false" aria-controls="af-markets"><span class="af-nav-label" data-en="Markets" data-zh="市场">Markets</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button><div class="af-header-dropdown" id="af-markets"><a href="/en/arena.html" data-header-path="/arena.html"><span class="af-nav-label" data-en="Stock observation" data-zh="股票观察">Stock observation</span></a><a href="/en/sectors.html" data-header-path="/sectors.html"><span class="af-nav-label" data-en="AI industry" data-zh="AI 产业">AI industry</span></a><a href="/en/signal.html" data-header-path="/signal.html"><span class="af-nav-label" data-en="Economic updates" data-zh="经济动态">Economic updates</span></a></div></div>
+      <a href="/en/course.html" data-header-path="/course.html" aria-current="page"><span class="af-nav-label" data-en="Learn" data-zh="学习">Learn</span></a>
+      <a href="/zh/serial.html" data-header-path="/serial.html" title="Original stories in Chinese / 原创中文小说"><span class="af-nav-label" data-en="Stories" data-zh="故事">Stories</span></a>
+      <div class="af-header-group"><button type="button" data-header-disclosure="" aria-expanded="false" aria-controls="af-more"><span class="af-nav-label" data-en="More" data-zh="更多">More</span><svg class="af-nav-caret" aria-hidden="true" viewBox="0 0 16 16"><path d="m4 6 4 4 4-4"></path></svg></button><div class="af-header-dropdown" id="af-more"><a href="/en/horoscope.html" data-header-path="/horoscope.html"><span class="af-nav-label" data-en="Astrology for fun" data-zh="趣味占星">Astrology for fun</span></a></div></div>
+    </nav>
+    <a class="af-header-language" data-header-language="" href="/zh/course/book-05.html" hreflang="zh-CN" aria-label="切换到中文" data-aria-en="Switch to Chinese" data-aria-zh="切换至英文">中文</a>
+    <button type="button" class="af-header-menu" data-header-disclosure="" aria-expanded="false" aria-controls="af-primary-nav" aria-label="Open navigation" data-aria-en="Open navigation" data-aria-zh="打开导航"><svg class="af-menu-icon" aria-hidden="true" focusable="false" viewBox="0 0 32 24"><path d="M1 2h30M1 12h30M1 22h13"></path></svg></button>
+  </div>
+</header>
+<div class="reading-progress" aria-hidden="true"><i></i></div><main id="mainContent"><div class="reader-breadcrumb"><a href="/en/course.html#curriculum">The collection</a><span>/</span><span>AN OPEN STUDY ROUTE</span></div><section class="reader-hero"><div class="reader-hero-copy"><p class="reader-eyebrow">WEEK 05 <span>/ 24</span> · Make something useful</p><h1>From code to interface</h1><p class="reader-deck">Turn a program into a usable page: the Web, HTTP and API boundaries</p><div class="reader-meta"><span>10 core hours + 2 optional</span><span>READ · BUILD · PRACTISE</span></div><a class="reader-start" href="#lesson-body">Begin the lesson ↓</a></div><div class="reader-cover"><img src="/assets/course-covers/week-05-en.svg" width="480" height="492" alt="From code to interface" fetchpriority="high"><span>THE PERSONAL FDE FIELD LIBRARY</span></div></section><div class="reader-layout"><aside class="reader-toc"><details open><summary>ON THIS PAGE</summary><nav aria-label="Article contents"><a href="#section-1" class="toc-level-2">Concepts and learning objectives</a><a href="#section-2" class="toc-level-2">Reading and selected sections</a><a href="#section-3" class="toc-level-2">Studio lab</a><a href="#section-4" class="toc-level-2">Deliverables and acceptance</a><a href="#section-5" class="toc-level-2">A reusable collaboration prompt</a><a href="#section-6" class="toc-level-2">Sources and verification scope</a></nav></details><a class="toc-back" href="/en/course.html#curriculum">← 24-week curriculum</a></aside><article id="lesson-body" class="lesson-prose"><blockquote>
+<p><strong>The question:</strong> After a click, where is the data processed, who receives it, and what does the user see when something fails?</p>
+</blockquote>
+<p><strong>Before you begin:</strong> Understand data structures and core processing functions. Read Web fundamentals before attempting an entire full-stack course.</p>
+<figure class="lesson-figure"><div class="figure-top"><span>FIG. 05.1</span><span>THIS WEEK’S REASONING PATH</span></div><ol class="learning-flow"><li><span>01</span><strong>User event</strong></li><li><span>02</span><strong>Local state</strong></li><li><span>03</span><strong>Mock request</strong></li><li><span>04</span><strong>Visible feedback</strong></li></ol><figcaption>Teaching diagram · Derived from this week’s lab; a suggested process, not observed results.</figcaption></figure><h2 id="section-1">Concepts and learning objectives</h2>
+<p>Distinguish four execution locations: browser, server, database and external model. Learn methods, status codes, JSON, timeouts and asynchronous handling. Interfaces need empty, loading, success and error states. Learn only the React components, props, state and events required for this task.</p>
+<p>The browser alone may be sufficient for the local planner. Add a backend only for a concrete reason. Browser environment variables and build output cannot conceal API keys. Authentication and permissions are not a matter of displaying a button. Use mock APIs before connecting accounts.</p>
+<h2 id="section-2">Reading and selected sections</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Course table, scroll horizontally"><table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Source and selected sections</th>
+<th align="right">Budget</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Required</td>
+<td><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview" rel="noreferrer">R32 · MDN — Overview of HTTP</a> — Requests, responses, clients and servers.</td>
+<td align="right">35 min</td>
+</tr>
+<tr>
+<td>Required</td>
+<td><a href="https://react.dev/learn" rel="noreferrer">R29 · React — Quick Start</a> — Components, rendering data, events and state; build a minimal form.</td>
+<td align="right">50 min</td>
+</tr>
+<tr>
+<td>Foundation</td>
+<td><a href="https://fullstackopen.com/en/part0/" rel="noreferrer">R22 · Full Stack Open Part 0 — Fundamentals of Web apps</a> — Browser/server interaction and the network panel.</td>
+<td align="right">35 min</td>
+</tr>
+</tbody></table></div>
+<h2 id="section-3">Studio lab</h2>
+<ol>
+<li>Build a page with only necessary fields, reusing pure functions and tests. Walk through one common task using synthetic input.</li>
+<li>Inspect a request in the browser network panel. Explain method, path, status and body. If nothing is sent, establish that from observation.</li>
+<li>Simulate a slow response, offline operation, a server error and malformed data. Show an actionable recovery message. Prevent accidental repeated clicks while recognising that server-side deduplication is still needed.</li>
+<li>Render user and model content as text. Do not trust arbitrary HTML merely to support Markdown. Check keyboard access, labels and error placement.</li>
+<li>Draw the data flow: local fields, transmitted fields and retention. Remove unnecessary requests and third-party components.</li>
+</ol>
+<h2 id="section-4">Deliverables and acceptance</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Course table, scroll horizontally"><table>
+<thead>
+<tr>
+<th>Deliverable</th>
+<th>Evidence of completion</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Minimal interactive page</td>
+<td>All four states can be demonstrated and the core flow works by keyboard.</td>
+</tr>
+<tr>
+<td>Data-flow explanation</td>
+<td>Trace an input through the interface, processing and output.</td>
+</tr>
+<tr>
+<td>Boundary checks</td>
+<td>No secrets in the page or build; untrusted content cannot execute as HTML.</td>
+</tr>
+</tbody></table></div>
+<p><strong>Independent exercise:</strong> Add an error state or extract a long event handler into a testable function. Describe the trigger first.</p>
+<p><strong>Privacy and safety:</strong> CORS is not authentication, and a hidden button is not authorisation. Use controlled Markdown rendering; see <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" rel="noreferrer">R63</a>. Identify the exact step when data leaves the device.</p>
+<p><strong>Everyday use:</strong> Put the tool somewhere you naturally open, such as a bookmark. Reminders cannot compensate for an unnecessarily difficult workflow.</p>
+<p><strong>Pass or revisit:</strong> Explain observed requests and demonstrate failure paths. A screenshot alone does not demonstrate understanding.</p>
+<h2 id="section-5">A reusable collaboration prompt</h2>
+<pre><code class="language-text">Connect existing pure logic to a minimal page. Add empty, loading, success and error states using synthetic input and a mock API. Explain each network request and let me independently add one error handler. Avoid a new large architecture.
+</code></pre>
+<h2 id="section-6">Sources and verification scope</h2><p class="source-baseline">Reference IDs and scope follow the supplied manuscript, baseline 2026-09-27. External authenticated labs were not all completed; recheck versions and access before implementation.</p><ol class="source-list"><li id="R22"><span>R22</span><div><a href="https://fullstackopen.com/en/part0/" rel="noreferrer">Full Stack Open Part 0 — Fundamentals of Web apps ↗</a><p>Part entry; select current sections, not assumed stable exercise numbers.</p></div></li><li id="R29"><span>R29</span><div><a href="https://react.dev/learn" rel="noreferrer">React — Quick Start ↗</a><p>Components, data, events and state.</p></div></li><li id="R32"><span>R32</span><div><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview" rel="noreferrer">MDN — Overview of HTTP ↗</a><p>Browser, server, request and response foundations.</p></div></li><li id="R63"><span>R63</span><div><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" rel="noreferrer">OWASP — Cross Site Scripting Prevention Cheat Sheet ↗</a><p>Output encoding, trusted templates and untrusted HTML.</p></div></li></ol></article></div><nav class="reader-adjacent" aria-label="Adjacent lessons"><a href="book-04.html"><span>PREVIOUS WEEK · 04</span><strong>Records you can trust ←</strong></a><a href="book-06.html"><span>NEXT WEEK · 06</span><strong>The first release →</strong></a></nav><nav class="reader-support" aria-label="Course materials"><a href="guide.html">Start here ↗</a><a href="handbook.html">Handbook & templates ↗</a><a href="resources.html">78-source library ↗</a><a href="/zh/course/book-05.html" hreflang="zh">阅读中文版 ↗</a></nav></main><footer class="pa-footer">
+  <div class="pa-footer-inner">
+    <a class="pa-footer-brand" href="/en/" aria-label="AFFLATUS home" data-aria-en="AFFLATUS home" data-aria-zh="AFFLATUS 首页"><span class="pa-footer-brand-mark" aria-hidden="true"><span>A</span><span class="af-brand-i">I<span class="af-brand-underscore"></span></span></span></a>
+    <nav class="pa-footer-pages" aria-label="Explore the site" data-aria-en="Explore the site" data-aria-zh="探索站点">
+      <a href="/en/portfolio.html" data-en="Portfolio" data-zh="作品集">Portfolio</a>
+      <a href="/en/arena.html" data-en="Arena" data-zh="竞技场">Arena</a>
+      <a href="/en/sectors.html" data-en="AI industry" data-zh="AI 产业">AI industry</a>
+      <a href="/en/signal.html" data-en="Economic updates" data-zh="经济动态">Economic updates</a>
+      <a href="/en/course.html" data-en="Learn" data-zh="学习">Learn</a>
+      <a href="/zh/serial.html" data-en="Stories" data-zh="故事">Stories</a>
+      <a href="/en/horoscope.html" data-en="Astrology for fun" data-zh="趣味占星">Astrology for fun</a>
+    </nav>
+    <div class="pa-footer-personal">
+      <span class="pa-footer-copyright">© 2026 RSI AI</span>
+      <nav class="pa-footer-socials" aria-label="Social profiles" data-aria-en="Social profiles" data-aria-zh="社交主页">
+        <a href="https://www.linkedin.com/in/feida-wang/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" data-i18n-static-aria="">
+          <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M216,24H40A16,16,0,0,0,24,40V216a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V40A16,16,0,0,0,216,24ZM96,176a8,8,0,0,1-16,0V112a8,8,0,0,1,16,0ZM88,96a12,12,0,1,1,12-12A12,12,0,0,1,88,96Zm96,80a8,8,0,0,1-16,0V140a20,20,0,0,0-40,0v36a8,8,0,0,1-16,0V112a8,8,0,0,1,15.79-1.78A36,36,0,0,1,184,140Z"></path></svg>
+        </a>
+        <a href="https://github.com/FeidaWang" target="_blank" rel="noopener noreferrer" aria-label="GitHub" data-i18n-static-aria="">
+          <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path d="M216,104v8a56.06,56.06,0,0,1-48.44,55.47A39.8,39.8,0,0,1,176,192v40a8,8,0,0,0-8,8H104a8,8,0,0,1-8-8V216H72a40,40,0,0,1-40-40A24,24,0,0,0,8,152a8,8,0,0,1,0-16,40,40,0,0,1,40,40,24,24,0,0,0,24,24H96v-8a39.8,39.8,0,0,1,8.44-24.53A56.06,56.06,0,0,1,56,112v-8a58.14,58.14,0,0,1,7.69-28.32A59.78,59.78,0,0,1,69.07,28,8,8,0,0,1,76,24a59.75,59.75,0,0,1,48,24h24a59.75,59.75,0,0,1,48-24,8,8,0,0,1,6.93,4,59.74,59.74,0,0,1,5.37,47.68A58,58,0,0,1,216,104Z"></path></svg>
+        </a>
+        <a href="https://www.zhihu.com/people/ye-piao-xue" target="_blank" rel="noopener noreferrer" aria-label="知乎" data-i18n-static-aria="">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.721 0C2.251 0 0 2.25 0 5.719V18.28C0 21.751 2.252 24 5.721 24h12.56C21.751 24 24 21.75 24 18.281V5.72C24 2.249 21.75 0 18.281 0zm1.964 4.078c-.271.73-.5 1.434-.68 2.11h4.587c.545-.006.445 1.168.445 1.171H9.384a58.104 58.104 0 01-.112 3.797h2.712c.388.023.393 1.251.393 1.266H9.183a9.223 9.223 0 01-.408 2.102l.757-.604c.452.456 1.512 1.712 1.906 2.177.473.681.063 2.081.063 2.081l-2.794-3.382c-.653 2.518-1.845 3.607-1.845 3.607-.523.468-1.58.82-2.64.516 2.218-1.73 3.44-3.917 3.667-6.497H4.491c0-.015.197-1.243.806-1.266h2.71c.024-.32.086-3.254.086-3.797H6.598c-.136.406-.158.447-.268.753-.594 1.095-1.603 1.122-1.907 1.155.906-1.821 1.416-3.6 1.591-4.064.425-1.124 1.671-1.125 1.671-1.125zM13.078 6h6.377v11.33h-2.573l-2.184 1.373-.401-1.373h-1.219zm1.313 1.219v8.86h.623l.263.937 1.455-.938h1.456v-8.86z"></path></svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</footer><script type="module" src="/lib/course-reader.js"></script></body></html>
