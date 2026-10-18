@@ -22,7 +22,7 @@ export const publishedBooks = [
     "id": "yuxi-gongci",
     "title": "玉熙宫词",
     "author": "长岛冰茶",
-    "chapterCount": 174,
+    "chapterCount": 133,
     "firstChapterId": 1,
     "excerpt": "雨从傍晚下到现在，没有要停的意思。唐人街口一辆绿白两色的电车摇着铃过去，轨道上的积水被碾开，又合上。",
     "source": "/novels/yuxi-gongci.json"
