@@ -665,4 +665,5 @@
 ## 上线记录
 
 - 2026-10-16：PR FeidaWang/Afflatus#18 squash 合并（626c7d4），线上为新稿第 1–66 章 + 旧稿第 93–200 章重编号为第 67–174 章，共 174 章；旧网址 /175–/200 跳转到旧号减 26；作者署名长岛冰茶，简介按圣经修正并标“含成人亲密描写”。
+- 2026-10-18：PR FeidaWang/Afflatus#21 squash 合并（539ce83），线上为修订稿全书 133 章（明幕 36、星幕 61、营幕 33、结局 3），旧稿全部下线；`build_live.py 133 999`；/134–/174（上次上线的编号，旧号 = 网址 + 26）与 /175–/200（原编号）跳转到最近的新章：旧 161–196 → 旧号 − 63，旧 159–160 → 97，旧 197–200 → 133；更新说明与 HUD 改为修订完成。注意 `npm run build` 会在 public/en/course、public/zh/course 生成未跟踪文件，提交时别带上。
 - 再次上线：在 origin/main 上新开分支，运行 `python3 docs/yuxi-deep-review-2026-10/tools/build_live.py <已修订章数> <保留的第一个旧章号>` 生成 json（脚本在本目录 tools/，需从含改稿的工作树运行后把 json 拷过去），改 `public/novels-index.json` 的 chapterCount/hud/updateNote，按新的旧号→新号映射更新 vercel.json 里 yuxi-gongci 的跳转，然后 `npm run site:generate`、`npm run data:check`、`npm run build`。
